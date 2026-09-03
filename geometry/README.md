@@ -25,13 +25,16 @@
 - games/minmax/ - 최대·최소 큐브 챌린지
 - games/paper-fold/ - 한 번·두 번 접어 자르기, 구멍, 숫자 색종이, 맨 위 수
 - games/paper-turn/ - 색종이 접고 돌리고 뒤집기
-- games/mirror-manor/ - 거울 저택
-- games/geoboard/ - 점판 공작소
+- games/mirror-manor/ - 거울 저택: 반쪽 칠하기·같은 거리·물건 배치·기호 반사·두 거울 5단계, 50문제
+- games/geoboard/ - 점판 공작소: 열린 선·도형 재현·정사각형·정삼각형·도형 분할 5단계, 55문제
 - games/polyomino/ - 도형 조각 정원: 회전·반사 찾기와 정확 덮기 5레벨, 50문제
+- games/piece-play/ - 조각 놀이: 같은 모양·빈칸·가리기·담요·한 칸 옮기기·빠진 조각·다른 방법의 Kinder/Kids 활동 7종
 - games/net-observatory/ - 전개도 전망대: 전개도 접기·면 관계·방향·정다면체 5단계, 50문제
 - games/dice-roll/ - 주사위 굴리기: 격자 경로를 따라 윗면·앞면·오른쪽 면 변화를 추적하는 5단계, 50문제
-- games/path-walk/ - 길 잇기 산책로: 타일 회전·갈림길·최단 경로·숨은 타일 5단계, 50문제
+- games/path-walk/ - 길 잇기 산책로: 한 길·숨은 타일·갈림길·막힌 길·최단 경로 5단계, 50문제
 - games/hidden-shape/ - 숨은 도형 탐정: 삼각형·정사각형·직사각형 세기 5단계, 50문제
+- games/equal-partition/ - 똑같이 나누기: 같은 넓이·합동·수 조건 분할 5단계, 50문제
+- games/soma-cube/ - 소마큐브 공방: 7조각 회전·2~3조각 합성·3×3×3 완성 5단계, 50문제
 
 ## 색종이 생각 놀이터
 
@@ -46,7 +49,7 @@
 
 RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 않는 후속 영역을 정리했습니다.
 
-- 거울 저택
+- 거울 저택: 입문·초급·중급 5단계와 인쇄 활동지
 - 점판 공작소
 - 폴리오미노 퍼즐
 - 똑같이 나누기
@@ -58,8 +61,8 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 새 SVG 제너레이터와 절차형 개념 설명은 `docs/15_EVIDENCE_GATED_SVG_WORKFLOW.md`의
 원본·수학 모델·단일정답·가시성·학습자 적합성·PC/모바일/A4·negative control 관문을 통과해야 합니다.
 
-인쇄 학습지는 `worksheet/paper-fold/`, `worksheet/path-walk/`, `worksheet/hidden-shape/`,
-`worksheet/net-observatory/`, `worksheet/dice-roll/`에서 각 게임의 검증 데이터를 그대로 사용해 만듭니다.
+인쇄 학습지는 `worksheet/paper-fold/`, `worksheet/mirror-manor/`, `worksheet/path-walk/`, `worksheet/hidden-shape/`,
+`worksheet/net-observatory/`, `worksheet/dice-roll/`, `worksheet/geoboard/`에서 각 게임의 검증 데이터를 그대로 사용해 만듭니다.
 
 ## 공통 성장 요소
 
@@ -72,3 +75,54 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 ## 로컬 실행
 
 정적 파일 서버의 루트를 이 폴더로 설정하고 /world-map/에서 시작합니다.
+
+## 공간·입체 배포 회귀 검사
+
+전개도 전망대, 주사위 굴리기, 소마큐브 공방, 점판 공작소와 세 인쇄 학습지의 데이터·브라우저 검사를 한 번에 순차 실행합니다. 입체 게임은 별도 3차원 계산으로, 점판은 독립 격자·평면 분할 계산으로 정답을 다시 검산합니다.
+
+```powershell
+node geometry/geometry-release.browsercheck.mjs
+```
+
+같은 검사를 실제 공개 사이트에 실행할 때는 기준 주소를 지정합니다.
+
+```powershell
+$env:GFIELD_BASE_URL='https://lete-on.gfieldacademy.net'
+node geometry/geometry-release.browsercheck.mjs
+```
+
+## 길 잇기 산책로 배포 회귀 검사
+
+길 잇기 50문항의 독립 정답, 5단계 자동 진행·화면·키보드·네 언어, A4 학습지를 검사합니다.
+
+```powershell
+node geometry/games/path-walk/path-walk-content-audit.mjs
+node geometry/games/path-walk/path-walk.selftest.mjs
+node geometry/games/path-walk/path-walk.browsercheck.mjs
+node geometry/worksheet/path-walk/path-walk-sheet.browsercheck.mjs
+```
+
+## 거울 저택 배포 회귀 검사
+
+거울 반사 50문항의 독립 정답, 보기 위치, 출처 계약, 키보드 대체 조작, 자동 진행,
+가로·세로 화면, 네 언어와 A4 활동지를 검사합니다.
+
+```powershell
+node geometry/games/mirror-manor/mirror-manor-content-audit.mjs
+node geometry/games/mirror-manor/mirror-manor.selftest.mjs
+node geometry/games/mirror-manor/mirror-manor.browsercheck.mjs
+node geometry/worksheet/mirror-manor/mirror-manor-sheet.browsercheck.mjs
+```
+
+## 점판 공작소 배포 회귀 검사
+
+점판 55문항의 독립 격자·분할 정답, 초급·중급 난이도 계약, 표시 못 조건, 자동 진행,
+화살표 키와 터치 조작, 입체 재질, 가로·세로 화면, 네 언어와 A4 활동지를 검사합니다.
+
+```powershell
+node geometry/games/geoboard/geoboard-content-audit.mjs
+node geometry/games/geoboard/geoboard.selftest.mjs
+node geometry/games/geoboard/geoboard.browsercheck.mjs
+node geometry/games/piece-play/piece-play.selftest.mjs
+node geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs
+```

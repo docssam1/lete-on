@@ -96,3 +96,36 @@ test("새 시험지 분류는 한 번만 추가되고 다른 내용으로 재등
   changed.questions[0].typeLabel = "삼각형의 넓이비 구하기";
   assert.throws(() => recorder.merge(added.database, value, changed), /덮어쓰지 않습니다/);
 });
+
+test("정답 이견 문항은 근거·설명·잠금과 candidate 또는 excluded 사용 상태만 허용한다", () => {
+  const value = ledger();
+  value.questions[0].type.typeId = require("../scripts/build-dolpa-work-ledger.cjs").stableTypeId("중2-1", "일차함수", "두 직선의 교점 구하기");
+  const database = builder.buildDatabase(value, null, "1".repeat(64));
+  const question = database.questions[0];
+  question.answerCheck = { status: "disputed", evidence: ["private.answer.conflict"], note: "원본 답과 독립 검산이 일치하지 않음" };
+  question.usageProfiles = question.usageProfiles.map(profile => ({ ...profile, status: "candidate", evidence: [] }));
+  database.summary = builder.summarize(database);
+  assert.equal(auditor.audit(database).ok, true);
+
+  const noEvidence = structuredClone(database);
+  noEvidence.questions[0].answerCheck.evidence = [];
+  assert.equal(auditor.audit(noEvidence).issues.some(issue => issue.startsWith("answer_dispute_evidence:")), true);
+
+  const released = structuredClone(database);
+  released.questions[0].releaseStatus = "released";
+  assert.equal(auditor.audit(released).issues.some(issue => issue.startsWith("answer_dispute_release:")), true);
+
+  for (const unsafeStatus of ["source_verified", "approved"]) {
+    const unsafe = structuredClone(database);
+    unsafe.questions[0].usageProfiles[0] = { ...unsafe.questions[0].usageProfiles[0], status: unsafeStatus, evidence: ["unsafe"] };
+    assert.equal(auditor.audit(unsafe).issues.some(issue => issue.startsWith("answer_dispute_usage:")), true);
+  }
+});
+
+test("문항 DB 감사는 철자 변형 정답 키를 통한 비공개 이견 답값 주입을 막는다", () => {
+  const value = ledger();
+  value.questions[0].type.typeId = require("../scripts/build-dolpa-work-ledger.cjs").stableTypeId("중2-1", "일차함수", "두 직선의 교점 구하기");
+  const database = builder.buildDatabase(value, null, "1".repeat(64));
+  database.questions[0].official_answer = "490";
+  assert.equal(auditor.audit(database).issues.some(issue => issue.startsWith("forbidden:")), true);
+});

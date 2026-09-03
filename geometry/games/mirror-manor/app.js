@@ -19,8 +19,8 @@
 import {
   levels, readyLevels, validateLevels, classifyCell, classifyPlacement,
   reflectCell, mirrorDistance, isGivenSide, inGrid, GAME_ID, PROGRESS_KEY
-} from "./levels.js?v=mirror-manor-6";
-import { messages, text } from "./i18n.js?v=mirror-manor-6";
+} from "./levels.js?v=mirror-manor-11";
+import { messages, text } from "./i18n.js?v=mirror-manor-11";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
@@ -53,6 +53,11 @@ const state = {
   solved: false,
   distanceChoice: null,
   symbolChoice: null,
+  selectedTrayPiece: null,
+  hintCells: new Set(),
+  hintSourceCells: new Set(),
+  hintChoice: null,
+  hintTrayPiece: null,
   wrong: 0,
   hints: 0,
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
@@ -72,6 +77,25 @@ const t = (key, vars) => text(state.lang, key, vars);
 const levelData = () => levels.find((level) => level.id === state.level);
 const problem = () => state.queue[state.problem];
 const cellId = (cell) => cell.join(",");
+let autoAdvanceTimer = 0;
+
+function focusToken() {
+  const active = document.activeElement;
+  if (active?.classList.contains("cell")) return { kind: "cell", x: active.dataset.x, y: active.dataset.y };
+  if (active?.classList.contains("tray-piece")) return { kind: "tray", index: active.dataset.index };
+  if (active?.classList.contains("distance-choice")) return { kind: "distance", x: active.dataset.x, y: active.dataset.y };
+  if (active?.classList.contains("symbol-choice")) return { kind: "symbol", choice: active.dataset.choice };
+  return null;
+}
+
+function restoreFocus(token) {
+  if (!token || state.solved) return;
+  const selector = token.kind === "cell" ? `.cell[data-x="${token.x}"][data-y="${token.y}"]`
+    : token.kind === "tray" ? `.tray-piece[data-index="${token.index}"]`
+      : token.kind === "distance" ? `.distance-choice[data-x="${token.x}"][data-y="${token.y}"]`
+        : `.symbol-choice[data-choice="${token.choice}"]`;
+  ui.board.closest(".manor-shell")?.querySelector(selector)?.focus();
+}
 
 /* ------------------------------------------------------------------ session */
 
@@ -171,20 +195,24 @@ function renderBoard() {
 }
 
 function renderCells() {
+  const token = focusToken();
   const p = problem();
   const { grid, axis } = p;
   ui.cells.classList.toggle("distance-cells", p.interaction === "distance-match");
   ui.cells.classList.toggle("symbol-cells", p.interaction === "symbol-reflection");
   if (p.interaction === "distance-match") {
     renderDistanceNodes(p);
+    restoreFocus(token);
     return;
   }
   if (p.interaction === "symbol-reflection") {
     renderSymbolNodes(p);
+    restoreFocus(token);
     return;
   }
   const doubleMirror = p.interaction === "double-mirror";
   const paint = p.interaction === "paint-reflection" || doubleMirror;
+  const dragBoard = p.interaction === "drag-reflection";
   const givenIds = paint
     ? new Set(p.sourceCells.map(cellId))
     : new Set(p.givens.flatMap((given) => given.cells.map(cellId)));
@@ -193,7 +221,7 @@ function renderCells() {
   for (let y = 0; y < grid.rows; y += 1) {
     for (let x = 0; x < grid.cols; x += 1) {
       const cell = [x, y];
-      const node = document.createElement(paint ? "button" : "div");
+      const node = document.createElement(paint || dragBoard ? "button" : "div");
       node.className = "cell";
       node.dataset.x = x;
       node.dataset.y = y;
@@ -204,16 +232,22 @@ function renderCells() {
       if (!given) node.classList.add("answer-side");
       if (paint && givenIds.has(cellId(cell))) node.classList.add("given");
       if (paint && state.painted.has(cellId(cell))) node.classList.add("painted");
-      if (paint) {
+      if (state.hintCells.has(cellId(cell))) node.classList.add("hinted");
+      if (state.hintSourceCells.has(cellId(cell))) node.classList.add("hint-source");
+      if (paint || dragBoard) {
         node.type = "button";
         node.disabled = given || state.solved;
-        const status = node.classList.contains("given") || node.classList.contains("painted") ? t("cellFilled") : t("cellEmpty");
+        const occupiedCell = dragBoard && occupied(cell);
+        if (occupiedCell) node.classList.add("occupied");
+        if (occupiedCell) node.disabled = true;
+        const status = node.classList.contains("given") || node.classList.contains("painted") || occupiedCell ? t("cellFilled") : t("cellEmpty");
         node.setAttribute("aria-label", `${t("cellAria", { row: y + 1, col: x + 1 })} ${status}`);
       }
       fragment.append(node);
     }
   }
   ui.cells.replaceChildren(fragment);
+  restoreFocus(token);
 }
 
 function distanceDotPosition(cell, grid) {
@@ -243,6 +277,7 @@ function renderDistanceNodes(p) {
   source.style.left = sourcePosition.left;
   source.style.top = sourcePosition.top;
   source.setAttribute("aria-label", t("sourceDotAria"));
+  if (state.hints) source.classList.add("hinted");
   ui.cells.replaceChildren(gridDots, source);
 
   p.choices.forEach((choice, index) => {
@@ -257,6 +292,7 @@ function renderDistanceNodes(p) {
     button.style.top = position.top;
     button.setAttribute("aria-label", t("choiceDotAria", { number: index + 1 }));
     if (state.distanceChoice === cellId(choice)) button.classList.add("selected");
+    if (state.hintChoice === cellId(choice)) button.classList.add("hinted");
     button.append(document.createElement("i"));
     ui.cells.append(button);
   });
@@ -282,6 +318,7 @@ function renderSymbolNodes(p) {
     button.disabled = state.solved;
     button.setAttribute("aria-label", t("choiceSymbolAria", { number: index + 1 }));
     if (state.symbolChoice === choice.id) button.classList.add("selected");
+    if (state.hintChoice === choice.id) button.classList.add("hinted");
     const glyph = document.createElement("span");
     glyph.className = `symbol-glyph symbol-${choice.kind}`;
     glyph.textContent = choice.text;
@@ -316,6 +353,7 @@ function renderPieces() {
 }
 
 function renderTray() {
+  const token = focusToken();
   const p = problem();
   ui.tray.setAttribute("aria-label", t("trayAria"));
   ui.tray.replaceChildren();
@@ -331,7 +369,10 @@ function renderTray() {
     button.style.gridTemplateColumns = `repeat(${width}, var(--tc))`;
     button.style.gridTemplateRows = `repeat(${height}, var(--tc))`;
     button.setAttribute("aria-label", t("pieceAria", { name: t(piece.nameKey) }));
+    button.setAttribute("aria-pressed", String(state.selectedTrayPiece === index));
     if (state.usedTrayPieces.has(index)) button.classList.add("used");
+    if (state.selectedTrayPiece === index) button.classList.add("selected");
+    if (state.hintTrayPiece === index) button.classList.add("hinted");
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
         const dot = document.createElement("i");
@@ -341,6 +382,7 @@ function renderTray() {
     }
     ui.tray.append(button);
   });
+  restoreFocus(token);
 }
 
 /* --------------------------------------------------------- distance guides */
@@ -413,6 +455,7 @@ function onCellClick(event) {
   if (problem().interaction === "distance-match") return onDistanceClick(event);
   if (problem().interaction === "symbol-reflection") return onSymbolClick(event);
   if (problem().interaction === "double-mirror") return onDoubleMirrorClick(event);
+  if (problem().interaction === "drag-reflection") return onDragCellClick(event);
   const node = event.target.closest(".cell");
   if (!node || problem().interaction !== "paint-reflection" || state.solved) return;
   const p = problem();
@@ -463,7 +506,10 @@ function onDoubleMirrorClick(event) {
 }
 
 function onDistanceClick(event) {
-  const node = event.target.closest(".distance-choice");
+  const node = event.target.closest(".distance-choice") || [...ui.cells.querySelectorAll(".distance-choice")].find((choice) => {
+    const rect = choice.getBoundingClientRect();
+    return event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+  });
   if (!node || state.solved) return;
   const cell = [Number(node.dataset.x), Number(node.dataset.y)];
   const p = problem();
@@ -476,7 +522,10 @@ function onDistanceClick(event) {
 }
 
 function onSymbolClick(event) {
-  const node = event.target.closest(".symbol-choice");
+  const node = event.target.closest(".symbol-choice") || [...ui.cells.querySelectorAll(".symbol-choice")].find((choice) => {
+    const rect = choice.getBoundingClientRect();
+    return event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+  });
   if (!node || state.solved) return;
   const choice = problem().choices.find((item) => item.id === node.dataset.choice);
   if (!choice) return;
@@ -491,6 +540,22 @@ function onSymbolClick(event) {
 /* ----------------------------------------------------------- level 2: drag */
 
 let drag = null;
+
+function onTrayClick(event) {
+  const button = event.target.closest(".tray-piece");
+  if (!button || state.solved) return;
+  const index = Number(button.dataset.index);
+  if (state.usedTrayPieces.has(index)) return;
+  state.selectedTrayPiece = state.selectedTrayPiece === index ? null : index;
+  state.hintTrayPiece = null;
+  renderTray();
+}
+
+function onDragCellClick(event) {
+  const node = event.target.closest(".cell");
+  if (!node || state.solved || state.selectedTrayPiece === null) return;
+  placePiece(state.selectedTrayPiece, [Number(node.dataset.x), Number(node.dataset.y)], node);
+}
 
 function boardMetrics() {
   const rect = ui.board.getBoundingClientRect();
@@ -569,6 +634,47 @@ function occupied(cell) {
   return taken.has(cellId(cell));
 }
 
+function placePiece(index, anchor, focusNode = null) {
+  const p = problem();
+  const piece = p.tray[index];
+  if (!piece || state.usedTrayPieces.has(index)) return false;
+  const cells = piece.shape.map(([dx, dy]) => [anchor[0] + dx, anchor[1] + dy]);
+  const legal = cells.every((cell) => inGrid(cell, p.grid) && !isGivenSide(cell, p.axis)) && !cells.some((cell) => occupied(cell));
+  if (!legal) {
+    if (focusNode) reportWrong("miss", focusNode);
+    else {
+      playTone("wrong");
+      state.wrong += 1;
+      toast(t("blockedSpot"));
+    }
+    return false;
+  }
+
+  const remaining = p.targets.filter((_, slot) => !state.usedTargets.has(slot));
+  const verdict = classifyPlacement(cells, p, remaining);
+  if (verdict !== "correct") {
+    reportWrong(verdict, focusNode, cells);
+    return false;
+  }
+
+  const placedIds = new Set(cells.map(cellId));
+  const slot = p.targets.findIndex((target, position) =>
+    !state.usedTargets.has(position) && target.cells.length === placedIds.size && target.cells.every((cell) => placedIds.has(cellId(cell))));
+  state.usedTargets.add(slot);
+  state.usedTrayPieces.add(index);
+  state.placements.push({ cells, nameKey: piece.nameKey });
+  state.selectedTrayPiece = null;
+  state.hintCells.clear();
+  state.hintTrayPiece = null;
+  playTone("place");
+  renderCells();
+  renderPieces();
+  renderTray();
+  renderStatus();
+  if (state.usedTargets.size === p.targets.length) solveProblem();
+  return true;
+}
+
 function endDrag(event) {
   if (!drag) return;
   const { piece, anchor, ghost, button, index } = drag;
@@ -585,23 +691,7 @@ function endDrag(event) {
     return;
   }
 
-  const p = problem();
-  const cells = piece.shape.map(([dx, dy]) => [anchor[0] + dx, anchor[1] + dy]);
-  const remaining = p.targets.filter((_, slot) => !state.usedTargets.has(slot));
-  const verdict = classifyPlacement(cells, p, remaining);
-  if (verdict !== "correct") return reportWrong(verdict, null, cells);
-
-  const placedIds = new Set(cells.map(cellId));
-  const slot = p.targets.findIndex((target, position) =>
-    !state.usedTargets.has(position) && target.cells.length === placedIds.size && target.cells.every((cell) => placedIds.has(cellId(cell))));
-  state.usedTargets.add(slot);
-  state.usedTrayPieces.add(index);
-  state.placements.push({ cells, nameKey: piece.nameKey });
-  playTone("place");
-  renderPieces();
-  renderTray();
-  renderStatus();
-  if (state.usedTargets.size === p.targets.length) solveProblem();
+  placePiece(index, anchor);
 }
 
 /* ------------------------------------------------------------- feedback */
@@ -643,6 +733,8 @@ function solveProblem() {
   renderCells();
   renderTray();
   renderStatus();
+  clearTimeout(autoAdvanceTimer);
+  autoAdvanceTimer = setTimeout(nextProblem, reducedMotion ? 700 : 1150);
 }
 
 function showSuccess() {
@@ -651,6 +743,8 @@ function showSuccess() {
   ui.success.classList.remove("show");
   void ui.success.offsetWidth;
   ui.success.classList.add("show");
+  clearTimeout(showSuccess.timer);
+  showSuccess.timer = setTimeout(() => ui.success.classList.remove("show"), reducedMotion ? 650 : 1160);
 }
 
 // Points follow paper-fold exactly: one award per problem id ever, and only for a
@@ -691,6 +785,7 @@ function renderStatus() {
           ? t("doubleProgress", { done: state.painted.size, total: p.targetCells.length })
           : t("symbolProgress", { done: state.symbolChoice ? 1 : 0 });
   ui.next.hidden = !state.solved;
+  ui.answerPrompt.classList.toggle("solved", state.solved);
 }
 
 function renderAll() {
@@ -700,6 +795,7 @@ function renderAll() {
 }
 
 function resetProblem() {
+  clearTimeout(autoAdvanceTimer);
   state.painted = new Set();
   state.placements = [];
   state.usedTargets = new Set();
@@ -707,13 +803,24 @@ function resetProblem() {
   state.solved = false;
   state.distanceChoice = null;
   state.symbolChoice = null;
+  state.selectedTrayPiece = null;
+  state.hintCells = new Set();
+  state.hintSourceCells = new Set();
+  state.hintChoice = null;
+  state.hintTrayPiece = null;
   state.wrong = 0;
   state.hints = 0;
   ui.guide.classList.remove("show");
+  ui.board.classList.remove("hint-axis");
   renderAll();
+  requestAnimationFrame(() => {
+    const first = ui.cells.querySelector("button:not(:disabled)") || ui.tray.querySelector("button:not(:disabled)");
+    first?.focus();
+  });
 }
 
 function nextProblem() {
+  clearTimeout(autoAdvanceTimer);
   if (!state.solved) return;
   if (state.problem < state.queue.length - 1) {
     state.problem += 1;
@@ -726,9 +833,11 @@ function showComplete() {
   $("#completeTitle").textContent = t("levelComplete", { level: state.level });
   $("#completeText").textContent = t("completeText");
   const hasNext = levels.find((level) => level.id === state.level + 1)?.ready;
-  $("#nextLevelButton").textContent = hasNext ? t("nextLevel") : t("worldMap");
+  $("#nextLevelButton").textContent = t("nextLevel");
+  $("#nextLevelButton").hidden = !hasNext;
   ui.complete.hidden = false;
   cubiSays(t("guideComplete"));
+  requestAnimationFrame(() => (hasNext ? $("#nextLevelButton") : $("#practiceButton")).focus());
 }
 
 function renderLevelList() {
@@ -740,7 +849,8 @@ function renderLevelList() {
     button.disabled = !level.ready;
     button.innerHTML = `<span>${level.id}</span><strong></strong><small></small>${level.ready ? "" : "<em></em>"}`;
     button.querySelector("strong").textContent = t(level.titleKey);
-    button.querySelector("small").textContent = t(level.descKey);
+    button.querySelector("small").textContent = `${t(level.difficultyKey)} · ${t(level.descKey)}`;
+    if (level.id === state.level) button.classList.add("current");
     if (!level.ready) button.querySelector("em").textContent = t("comingSoon");
     if (level.ready) button.addEventListener("click", () => location.assign(`?level=${level.id}`));
     ui.levelList.append(button);
@@ -781,6 +891,7 @@ function applyLanguage() {
   $("#levelButton").textContent = t("levels");
   $("#hintButton").textContent = t("hint");
   $("#retryButton").textContent = t("retry");
+  $("#worksheetLink").textContent = t("worksheet");
   $("#toolPanel").setAttribute("aria-label", t("toolsAria"));
   ui.next.textContent = t("next");
   $("#dialogTitle").textContent = t("chooseLevel");
@@ -792,28 +903,70 @@ function applyLanguage() {
   $("#soundButton").classList.toggle("muted", !state.audio);
 }
 
-/* ------------------------------------------------------------------ events */
-
-ui.cells.addEventListener("pointerdown", onCellPointerDown);
-ui.cells.addEventListener("click", onCellClick);
-ui.tray.addEventListener("pointerdown", onTrayPointerDown);
-window.addEventListener("pointermove", moveDrag);
-window.addEventListener("pointerup", endDrag);
-window.addEventListener("pointercancel", (event) => { if (drag) endDrag(event); });
-
-$("#hintButton").addEventListener("click", () => {
-  state.hints += 1;
+function showHint() {
   const current = problem();
+  state.hints += 1;
+  state.hintCells.clear();
+  state.hintSourceCells.clear();
+  state.hintChoice = null;
+  state.hintTrayPiece = null;
+  ui.board.classList.remove("hint-axis");
+
+  if (current.interaction === "paint-reflection") {
+    const missing = current.targetCells.filter((cell) => !state.painted.has(cellId(cell)));
+    const target = missing[(state.hints - 1) % Math.max(1, missing.length)];
+    if (target) {
+      const source = current.sourceCells.find((cell) => cellId(reflectCell(cell, current.axis)) === cellId(target));
+      if (source) {
+        state.hintSourceCells.add(cellId(source));
+        showGuides([{ cell: source, side: "given" }]);
+      }
+    }
+  } else if (current.interaction === "drag-reflection") {
+    const sourceSlot = current.targets.findIndex((_, slot) => !state.usedTargets.has(slot));
+    const given = current.givens[sourceSlot];
+    if (given) {
+      given.cells.forEach((cell) => state.hintSourceCells.add(cellId(cell)));
+      showGuides([{ cell: nearestCell(given.cells, current.axis), side: "given" }]);
+    }
+  } else if (current.interaction === "distance-match") {
+    showGuides([{ cell: current.sourceCell, side: "given" }]);
+  } else if (current.interaction === "symbol-reflection") {
+    ui.board.classList.add("hint-axis");
+  } else {
+    const source = current.sourceCells[(state.hints - 1) % current.sourceCells.length];
+    state.hintSourceCells.add(cellId(source));
+    ui.board.classList.add("hint-axis");
+  }
+
+  renderCells();
+  renderPieces();
+  renderTray();
   const hintKey = current.interaction === "paint-reflection"
     ? (current.axis.kind === "horizontal" ? "hintPaintHorizontal" : "hintPaintVertical")
     : current.interaction === "drag-reflection" ? "hintDrag"
       : current.interaction === "distance-match" ? "hintDistance"
         : current.interaction === "double-mirror" ? "hintDouble" : "hintSymbol";
   cubiSays(t(hintKey));
-});
+}
+
+/* ------------------------------------------------------------------ events */
+
+ui.cells.addEventListener("pointerdown", onCellPointerDown);
+ui.cells.addEventListener("click", onCellClick);
+ui.tray.addEventListener("pointerdown", onTrayPointerDown);
+ui.tray.addEventListener("click", onTrayClick);
+window.addEventListener("pointermove", moveDrag);
+window.addEventListener("pointerup", endDrag);
+window.addEventListener("pointercancel", (event) => { if (drag) endDrag(event); });
+
+$("#hintButton").addEventListener("click", showHint);
 $("#retryButton").addEventListener("click", resetProblem);
 ui.next.addEventListener("click", nextProblem);
-$("#levelButton").addEventListener("click", () => { ui.levelDialog.hidden = false; });
+$("#levelButton").addEventListener("click", () => {
+  ui.levelDialog.hidden = false;
+  requestAnimationFrame(() => ui.levelList.querySelector(".level-card.current")?.focus());
+});
 $("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });
 ui.tutorialNext.addEventListener("click", () => {
@@ -835,6 +988,22 @@ $("#soundButton").addEventListener("click", () => {
   localStorage.setItem("gfield-audio-muted", String(!state.audio));
   if (!state.audio && "speechSynthesis" in window) speechSynthesis.cancel();
   applyLanguage();
+});
+document.addEventListener("keydown", (event) => {
+  const visibleDialog = [...document.querySelectorAll(".dialog:not([hidden]) [role='dialog']")].at(-1);
+  if (event.key === "Tab" && visibleDialog) {
+    const focusable = [...visibleDialog.querySelectorAll("button:not(:disabled):not([hidden]), a[href]")];
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    return;
+  }
+  if (event.key === "Escape" && !ui.levelDialog.hidden) {
+    ui.levelDialog.hidden = true;
+    $("#levelButton").focus();
+  }
 });
 
 loadSession();

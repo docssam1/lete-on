@@ -346,6 +346,72 @@ function verifyAnswer(p, w, range) {
     return null;
   }
 
+  /* ── WP5 점검하기 ─────────────────────────────────────────
+     spot     — 세 보기 중 **정확히 하나만** 연산과 계산이 둘 다 맞아야 한다.
+                오답은 한쪽씩만 틀린 것이라야 훈련이 된다: 하나는 연산이 맞고
+                계산이 틀린 것, 하나는 계산이 맞고 연산이 틀린 것.
+     mean     — 정답이 targets[0]('구하는 것')이고, 물음에 찍힌 수가 실제 계산
+                결과와 같아야 한다. 결과가 아닌 수를 찍으면 문항이 거짓이 된다.
+     estimate — 방향(크다/작다)이 연산에서 나오는가. +·×면 커지고 −·÷면 작아진다.
+                ×·÷에서 둘째 수가 1이면 방향이 사라지므로 그런 상황은 나오면 안 된다.
+     ─────────────────────────────────────────────────────── */
+  if (w.mode === 'spot' || w.mode === 'mean' || w.mode === 'estimate') {
+    const r = w.op === '+' ? w.n1 + w.n2 : w.op === '−' ? w.n1 - w.n2
+            : w.op === '×' ? w.n1 * w.n2 : w.n1 / w.n2;
+    /* 답 표기 — 생성기와 따로 다시 짠다(같은 함수를 부르면 둘이 같이 틀린다) */
+    const rtext = v => {
+      if (range !== 'C') return String(v);
+      const den = /\//.test(w.t1) ? parseInt(w.t1.split('/')[1], 10) : 0;
+      return den ? `${Math.round(v * den)}/${den}` : String(Math.round(v * 10) / 10);
+    };
+
+    if (w.mode === 'spot') {
+      const right = `${w.t1} ${w.op} ${w.t2} = ${rtext(r)}`;
+      if (chosen !== right) return `spot: 고른 보기 "${chosen}"이 바른 풀이 "${right}"와 다름`;
+      if (p.choices.length !== 3) return `spot: 보기가 3개가 아님(${p.choices.length})`;
+      if (new Set(p.choices).size !== 3) return `spot: 보기에 같은 문장이 두 번 나옴 (${p.choices.join(' / ')})`;
+      /* 보기를 하나하나 뜯어 '연산이 맞나 · 계산이 맞나'를 따로 센다 */
+      let bothRight = 0, opRightCalcWrong = 0, calcRightOpWrong = 0;
+      for (const c of p.choices) {
+        const m = c.match(/^(\S+) ([+−×÷]) (\S+) = (\S+)$/);
+        if (!m) return `spot: 보기 꼴이 "수 기호 수 = 수"가 아님 ("${c}")`;
+        const num = t => /\//.test(t) ? (parseInt(t.split('/')[0],10) / parseInt(t.split('/')[1],10)) : parseFloat(t);
+        const x = num(m[1]), o = m[2], y = num(m[3]), z = num(m[4]);
+        const val = o === '+' ? x + y : o === '−' ? x - y : o === '×' ? x * y : x / y;
+        const calcOk = Math.abs(val - z) < 1e-9;
+        const opOk = o === w.op;
+        if (opOk && calcOk) bothRight++;
+        else if (opOk && !calcOk) opRightCalcWrong++;
+        else if (!opOk && calcOk) calcRightOpWrong++;
+      }
+      if (bothRight !== 1) return `spot: 연산과 계산이 둘 다 맞는 보기가 ${bothRight}개 — 유일해가 아님 (${p.choices.join(' / ')})`;
+      if (!opRightCalcWrong) return `spot: '계산만 틀린' 오답이 없어 계산 확인 훈련이 안 됨 (${p.choices.join(' / ')})`;
+      if (!calcRightOpWrong) return `spot: '연산만 틀린' 오답이 없어 연산 확인 훈련이 안 됨 (${p.choices.join(' / ')})`;
+      return null;
+    }
+
+    if (w.mode === 'mean') {
+      if (chosen !== w.correct) return `mean: 고른 보기가 '구하는 것'이 아님 ("${chosen}" ≠ "${w.correct}")`;
+      if (p.choices.length !== 3) return `mean: 보기가 3개가 아님(${p.choices.length})`;
+      if (p.wordAsk.indexOf(rtext(r)) < 0)
+        return `mean: 물음에 찍힌 답이 계산 결과 ${rtext(r)}와 다름 ("${p.wordAsk}")`;
+      return null;
+    }
+
+    /* estimate */
+    if ((w.op === '×' || w.op === '÷') && w.n2 === 1)
+      return `estimate: ${w.op}인데 둘째 수가 1이라 답이 처음 수와 같아진다`;
+    const grows = w.op === '+' || w.op === '×';
+    const want = grows ? `${w.t1}보다 큽니다` : `${w.t1}보다 작습니다`;
+    if (chosen !== want) return `estimate: 고른 보기 "${chosen}"이 ${w.op} 상황의 "${want}"와 다름`;
+    /* 방향이 실제 결과와도 맞는가 — 규칙과 산술이 어긋나면 규칙이 틀린 것이다 */
+    if (grows ? !(r > w.n1) : !(r < w.n1))
+      return `estimate: ${w.op}인데 결과 ${r}가 ${w.n1}보다 ${grows ? '크지' : '작지'} 않음`;
+    if (p.choices.indexOf('똑같습니다') < 0)
+      return `estimate: '똑같습니다' 보기가 없음 (${p.choices.join(' / ')})`;
+    return null;
+  }
+
   if (w.mode === 'need') {
     if (w.noise == null) return 'need: 잡음 수가 기록되지 않음';
     if (p.answer !== w.noise) return `need: 답 ${p.answer}이 잡음 수 ${w.noise}와 다름`;
@@ -438,6 +504,7 @@ console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1, 2, 3].forEach(lv => sweep('WP1', lv));
 [1, 2, 3].forEach(lv => sweep('WP3', lv));
 [1, 2, 3].forEach(lv => sweep('WP4', lv));
+[1, 2, 3].forEach(lv => sweep('WP5', lv));
 
 console.log(`\n검산한 문항: ${checks}건 · 그릇 크기 검사 ${vesselChecks}건 × 3개 언어`);
 /* 검사가 한 번도 안 돌면 통과가 아니다 — 못 잡는 검사는 아무것도 증명하지 못한다 */

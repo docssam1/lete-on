@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f3f7fa" />
   <title>필즈 더 클래식 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=20260829h" />
+  <link rel="stylesheet" href="./styles.css?v=20260902a" />
 </head>
 <body>
   <header class="app-header">
@@ -27,6 +27,12 @@
         <button type="button" data-mode="type">유형별</button>
         <a id="resultDiagnosisLink" href="./result-diagnosis.html">시험 결과 진단</a>
         <a id="goldenBellLink" href="./golden-bell.html">골든벨 학습</a>
+      </div>
+
+      <div class="bank-search" role="search">
+        <label for="bankSearch"><span aria-hidden="true">⌕</span><input id="bankSearch" type="search" autocomplete="off" placeholder="낱말이나 단원을 검색하세요" /></label>
+        <button id="clearBankSearch" type="button" aria-label="검색어 지우기" hidden>×</button>
+        <small id="bankSearchStatus">낱말·권·단원·유형·대표 개념 검색</small>
       </div>
 
       <div class="builder-body">
@@ -113,6 +119,6 @@
   <script src="../../geometry/worksheet/generators.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/render.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/card.js?v=20260829g"></script>
-  <script type="module" src="./app.js?v=20260829h"></script>
+  <script type="module" src="./app.js?v=20260902b"></script>
 </body>
 </html>

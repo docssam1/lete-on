@@ -50,7 +50,7 @@ window.NM_UNITS['C-25'] = {
         desc:{ko:'소수 곱셈은 결국 <b>소수점 스키</b>예요. ①0.1인지 0.01인지 확인 ②칸 수 정하기: 0.1은 한 칸, 0.01은 두 칸 ③왼쪽으로 미끄러뜨리기! 예: 5.6×0.01 → 두 칸 왼쪽 → 0.056. 빈 칸은 0으로 채워요.',
               en:'Decimal multiplication is really <b>decimal-point skiing</b>. ①Check whether it\'s 0.1 or 0.01 ②Count the places: 0.1 is one, 0.01 is two ③Slide left! E.g. 5.6×0.01 → two places left → 0.056. Fill empty spots with zeros.',
               zh:'小数乘法其实是<b>小数点滑雪</b>。①看清是0.1还是0.01 ②数格数：0.1一格，0.01两格 ③向左滑！例：5.6×0.01→左滑两格→0.056。空位补0。'},
-        mathSteps:['5.6 × 0.01','왼쪽 두 칸','= 0.056'],
+        mathSteps:['5.6 × 0.01',{ko:'왼쪽 두 칸',en:'\\text{left two cells}',zh:'左边两格'},'= 0.056'],
         result:{ko:'칸 수만 세면 끝! 소수점 스키 완성.',en:'Just count the places! Decimal skiing mastered.',zh:'数好格数就行！小数点滑雪完成。'},
         book:null }
     ],

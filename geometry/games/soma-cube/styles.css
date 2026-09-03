@@ -14,7 +14,10 @@
 .rotate-tools button span{font-size:10px;font-weight:950;white-space:normal;word-break:keep-all}
 @media(max-height:590px) and (orientation:landscape){.viewer-panel.choice-mode .choice-grid{inset:31px 0 0;padding:9px 13px}.choice-card img{padding:6px}.rotate-tools{grid-template-columns:repeat(3,53px)}.rotate-tools button{grid-template-columns:16px 1fr;padding:2px}.rotate-tools button b{font-size:14px}.rotate-tools button span{font-size:8px}}
 @media(max-width:800px) and (orientation:landscape){.rotate-tools{grid-template-columns:repeat(3,49px)}.rotate-tools button{grid-template-columns:14px 1fr}.rotate-tools button b{font-size:13px}.rotate-tools button span{font-size:8px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.choice-card.eliminated{opacity:.34;filter:grayscale(1);cursor:default}
+@media(max-height:590px) and (orientation:landscape){.workbench{grid-template-rows:minmax(0,1fr);min-height:0}.piece-tray,.tool-rail,.rotate-tools{min-height:0;height:100%}.tool-rail button{min-height:0}}
 [hidden]{display:none!important}
 .cubi-guide{bottom:132px}.guide-bubble{margin-bottom:58px}
+button:focus-visible,a:focus-visible,.viewer-host:focus-visible{outline:3px solid #ffd34f;outline-offset:2px}
 @media(max-height:590px) and (orientation:landscape){.cubi-guide{display:none}.cubi-guide.show{display:flex;bottom:101px}.cubi-guide.show .guide-bubble{display:block;max-width:210px;margin-bottom:35px;font-size:10px}}

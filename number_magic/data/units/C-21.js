@@ -36,7 +36,7 @@ window.NM_UNITS['C-21'] = {
         desc:{ko:'피자 한 판을 <b>7조각</b>으로 잘랐어요. 내가 2조각을 가지면 <b>2/7</b>. 아래 수(분모 7)는 <b>조각의 크기</b>(한 판을 몇 개로 잘랐나), 위 수(분자 2)는 <b>내가 가진 개수</b>예요. 분수를 읽을 때 항상 "몇 조각짜리 중의 몇 개"로 떠올려요!',
               en:'A pizza cut into <b>7 slices</b>. Take 2 slices — that\'s <b>2/7</b>. The bottom number (denominator 7) is the <b>slice size</b> (how many cuts per pizza); the top (numerator 2) is <b>how many you hold</b>. Always read a fraction as "this many pieces of that size"!',
               zh:'一张披萨切成<b>7块</b>。我拿2块就是<b>2/7</b>。下面的数(分母7)是<b>块的大小</b>(一张切成几块)，上面的数(分子2)是<b>我拿的个数</b>。读分数时永远想成"某种大小的块拿了几个"！'},
-        mathSteps:['\\text{분모 = 조각 크기 (몇 등분?)}','\\text{분자 = 조각 개수 (몇 개?)}','\\dfrac{2}{7} = \\text{7등분 중 2개}'],
+        mathSteps:[{ko:'\\text{분모 = 조각 크기 (몇 등분?)}',en:'\\text{denominator = size of piece (cut into how many?)}',zh:'\\text{分母 = 每块的大小（分成几份？）}'},{ko:'\\text{분자 = 조각 개수 (몇 개?)}',en:'\\text{numerator = number of pieces (how many?)}',zh:'\\text{分子 = 块数（有几块？）}'},{ko:'\\dfrac{2}{7} = \\text{7등분 중 2개}',en:'\\dfrac{2}{7} = \\text{2 of 7 equal parts}',zh:'\\dfrac{2}{7} = \\text{7份中的2份}'}],
         result:{ko:'분모는 크기, 분자는 개수! 이것만 기억하면 분수가 쉬워요.',en:'Denominator = size, numerator = count! Remember this and fractions get easy.',zh:'分母是大小，分子是个数！记住这个，分数就简单。'},
         book:{ko:'분모(分母)는 "나눈 어머니", 분자(分子)는 "가진 아이"라는 한자예요. 어머니(분모)가 조각 세계를 만들고, 아이(분자)가 그 안에서 개수를 세요.',
               en:'In the Korean/Chinese terms, the denominator is the "mother" that creates the world of pieces, and the numerator is the "child" counting inside it.',

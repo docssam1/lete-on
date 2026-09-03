@@ -101,6 +101,42 @@ function mergeExisting(seed, existing) {
   });
 }
 
+function validatePartialVariantPaper(paper, papersById, questionsById) {
+  const fail = detail => { throw new Error(`부분 교체 시험지 연결을 확인해 주세요: ${paper.paperId}:${detail}`); };
+  if (!paper.variant || paper.variant.kind !== "partial_question_variant") fail("kind");
+  const primary = papersById.get(paper.variant.primaryPaperId);
+  if (!primary || primary.paperId === paper.paperId || primary.variant) fail("primary");
+  const effectiveIds = Array.isArray(paper.questionIds) ? paper.questionIds : [];
+  const shared = Array.isArray(paper.variant.sharedQuestionLinks) ? paper.variant.sharedQuestionLinks : [];
+  const overrideIds = Array.isArray(paper.variant.overrideQuestionIds) ? paper.variant.overrideQuestionIds : [];
+  if (!Number.isSafeInteger(paper.questionCount) || paper.questionCount < 1 || paper.questionCount !== effectiveIds.length
+    || !shared.length || !overrideIds.length || shared.length + overrideIds.length !== paper.questionCount) fail("coverage");
+  const occupied = new Set();
+  const sharedCanonicalIds = new Set();
+  shared.forEach(link => {
+    const number = link && link.number;
+    const questionId = link && link.questionId;
+    const row = questionsById.get(questionId);
+    if (!Number.isSafeInteger(number) || number < 1 || number > paper.questionCount || occupied.has(number)
+      || !questionId || !(primary.questionIds || []).includes(questionId)
+      || effectiveIds[number - 1] !== questionId || !row || row.paperId !== primary.paperId
+      || row.sourceId !== primary.sourceId || !Number.isSafeInteger(link.page) || link.page < 1
+      || !Number.isSafeInteger(link.slot) || link.slot < 1 || !(link.evidence || []).length) fail(`shared-${number}`);
+    occupied.add(number);
+    sharedCanonicalIds.add(questionId);
+  });
+  overrideIds.forEach(questionId => {
+    const row = questionsById.get(questionId);
+    if (!questionId || sharedCanonicalIds.has(questionId) || !row || row.paperId !== paper.paperId
+      || row.sourceId !== paper.sourceId || !Number.isSafeInteger(row.number) || row.number < 1
+      || row.number > paper.questionCount || occupied.has(row.number) || effectiveIds[row.number - 1] !== questionId) {
+      fail(`override-${questionId}`);
+    }
+    occupied.add(row.number);
+  });
+  if (occupied.size !== paper.questionCount) fail("coverage");
+}
+
 function rebuildTypeCatalog(questions) {
   const map = new Map();
   questions.forEach(question => {
@@ -152,6 +188,7 @@ function rebuildTypeCatalog(questions) {
 function rebuildPapers(questions, ledger, existing) {
   const sourceById = new Map(ledger.sources.map(source => [source.sourceId, source]));
   const oldPapersById = new Map(((existing && existing.papers) || []).map(paper => [paper.paperId, paper]));
+  const questionById = new Map(questions.map(question => [question.questionId, question]));
   const map = new Map();
   questions.forEach(question => {
     if (!map.has(question.paperId)) {
@@ -172,15 +209,61 @@ function rebuildPapers(questions, ledger, existing) {
   });
   return Array.from(map.values()).map(paper => {
     const old = oldPapersById.get(paper.paperId);
+    if (old && old.variant) {
+      const effectiveIds = Array.isArray(old.questionIds) ? old.questionIds : [];
+      const overrideIds = Array.isArray(old.variant.overrideQuestionIds) ? old.variant.overrideQuestionIds : [];
+      if (old.questionCount !== effectiveIds.length || effectiveIds.some(id => !questionById.has(id))) {
+        throw new Error(`부분 교체 시험지의 공유 문항 연결이 끊겼습니다: ${old.paperId}`);
+      }
+      if (overrideIds.some(id => {
+        const row = questionById.get(id);
+        return !row || row.paperId !== old.paperId || row.sourceId !== old.sourceId;
+      })) throw new Error(`부분 교체 시험지의 교체 문항 연결이 끊겼습니다: ${old.paperId}`);
+      const source = sourceById.get(old.sourceId);
+      return {
+        ...old,
+        sourceFingerprint: source ? source.sourceFingerprint : old.sourceFingerprint,
+        questionCount: effectiveIds.length,
+        questionIds: effectiveIds
+      };
+    }
     return {
       ...paper,
       ...(old && old.coverage ? { coverage: old.coverage } : {}),
+      ...(old && old.placementContext ? { placementContext: old.placementContext } : {}),
       ...(old && old.equivalentSources ? { equivalentSources: old.equivalentSources } : {}),
       questionCount: paper.questionIds.length,
       questionIds: paper.questionIds.sort()
     };
   })
     .sort((a, b) => a.paperId.localeCompare(b.paperId));
+}
+
+function questionSeedsForBuild(ledger, existing) {
+  const variantPaperIds = new Set();
+  const variantOwnedIds = new Set();
+  const existingPapersById = new Map((((existing && existing.papers) || [])).map(paper => [paper.paperId, paper]));
+  const existingQuestionsById = new Map((((existing && existing.questions) || [])).map(question => [question.questionId, question]));
+  ((existing && existing.papers) || []).forEach(paper => {
+    if (!paper.variant) return;
+    validatePartialVariantPaper(paper, existingPapersById, existingQuestionsById);
+    variantPaperIds.add(paper.paperId);
+    (paper.variant.overrideQuestionIds || []).forEach(id => variantOwnedIds.add(id));
+  });
+  const seed = ledger.questions
+    .filter(question => !variantPaperIds.has(question.paperId) || variantOwnedIds.has(question.questionId))
+    .map(fromLedgerQuestion);
+  const merged = mergeExisting(seed, existing);
+  const present = new Set(merged.map(question => question.questionId));
+  ((existing && existing.questions) || []).forEach(question => {
+    if (!variantOwnedIds.has(question.questionId) || present.has(question.questionId)) return;
+    if (question.questionId !== ledgerCore.stableQuestionId(question.sourceId, question.number)) {
+      throw new Error(`부분 교체 시험지의 기존 문항 ID를 확인해 주세요: ${question.questionId}`);
+    }
+    merged.push(question);
+    present.add(question.questionId);
+  });
+  return merged;
 }
 
 function summarize(database) {
@@ -201,8 +284,8 @@ function summarize(database) {
 }
 
 function buildDatabase(ledger, existing, ledgerSha256) {
-  const seed = ledger.questions.map(fromLedgerQuestion);
-  const questions = mergeExisting(seed, existing).sort((a, b) => a.sourceId.localeCompare(b.sourceId) || a.number - b.number);
+  const questions = questionSeedsForBuild(ledger, existing)
+    .sort((a, b) => a.sourceId.localeCompare(b.sourceId) || a.number - b.number);
   const database = {
     schemaVersion: 1,
     taxonomyVersion: ledger.taxonomyVersion,
@@ -248,8 +331,10 @@ module.exports = Object.freeze({
   initialUsageProfiles,
   fromLedgerQuestion,
   mergeExisting,
+  validatePartialVariantPaper,
   rebuildTypeCatalog,
   rebuildPapers,
+  questionSeedsForBuild,
   summarize,
   buildDatabase
 });

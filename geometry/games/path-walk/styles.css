@@ -3,3 +3,149 @@
 @media(orientation:portrait) and (max-width:620px){body{overflow:auto}.walk-shell{height:auto;min-height:var(--app-dvh);grid-template-rows:54px auto auto 66px}.level-button{display:none}.mission{display:block}.mission p{max-width:none;margin-top:6px;text-align:left}.play-stage{grid-template-columns:1fr;padding:7px}.trail-panel{min-height:88px;grid-template-columns:78px 1fr 120px;grid-template-rows:1fr;align-items:center}.trail-character{width:72px}.guide-copy{padding:5px}.guide-copy p{font-size:10px}.trail-panel dl{grid-template-columns:1fr}.trail-panel dl div{padding:5px 7px}.board-panel{min-height:530px;padding:0 8px 12px}.game-board{width:min(88vw,460px)}.action-bar{position:sticky;bottom:0;z-index:20;padding:7px}.action-bar button,.action-bar a{min-height:44px;padding:7px 12px;font-size:12px}.level-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(orientation:landscape) and (max-height:520px){.walk-shell{min-height:0;grid-template-rows:46px 50px minmax(0,1fr) 56px}.topbar>*{min-height:34px}.mission h1{font-size:16px}.mission p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.play-stage{grid-template-columns:165px minmax(0,1fr)}.trail-panel{grid-template-rows:90px auto auto}.trail-character{width:90px}.guide-copy{padding:3px}.guide-copy p{display:none}.game-board{width:min(63vh,48vw,390px)}.action-bar button,.action-bar a{min-height:38px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Tactile path-board material: painted enamel tiles in a recessed wood tray. */
+.game-board {
+  border: 7px solid #33584b;
+  border-radius: 7px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.42), transparent 38%),
+    repeating-linear-gradient(90deg, #b78c58 0 2px, #a87c4b 2px 5px, #bc925f 5px 8px);
+  box-shadow:
+    0 18px 28px rgba(36,70,56,.22),
+    0 5px 0 #25483d,
+    inset 0 4px 8px rgba(24,45,38,.28),
+    inset 0 0 0 2px rgba(255,255,255,.42);
+}
+.route-cell,.grid-cell {
+  border-color:#809d91;
+  background:
+    radial-gradient(circle at 20% 18%,rgba(255,255,255,.76) 0 1px,transparent 1.5px),
+    linear-gradient(160deg,#fffef9 0%,#f3efe4 58%,#ddd8cb 100%);
+  background-size:18px 18px,auto;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.9),
+    inset 0 -4px 7px rgba(55,77,67,.13);
+}
+.route-cell::before,.grid-cell::after {
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:1px 1px auto;
+  height:24%;
+  border-radius:3px 3px 50% 50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.54),transparent);
+  pointer-events:none;
+}
+.route-cell.empty {
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.25),transparent 44%),
+    repeating-linear-gradient(90deg,#b9cbbd 0 3px,#aec2b3 3px 7px);
+  box-shadow:inset 0 0 0 5px rgba(80,111,96,.16),inset 0 6px 10px rgba(47,71,60,.13);
+}
+.route-cell.editable {
+  background:
+    radial-gradient(circle at 18% 16%,rgba(255,255,255,.9) 0 1px,transparent 1.5px),
+    linear-gradient(155deg,#fffdf2,#f6ecc9 62%,#d8bd68);
+  background-size:18px 18px,auto;
+  box-shadow:
+    inset 0 2px 0 #fff,
+    inset 0 -5px 8px rgba(126,89,24,.22),
+    inset 0 0 0 3px #e3bc43;
+  transition:transform 170ms ease,box-shadow 170ms ease,filter 170ms ease;
+}
+.route-cell.editable:active,.tile-choice:active {
+  transform:translateY(2px);
+  box-shadow:inset 0 5px 10px rgba(85,61,25,.25),inset 0 0 0 3px #d8a82b;
+}
+.route-cell.hint,.tile-choice.hinted {
+  z-index:3;
+  outline:4px solid #3e9b70;
+  outline-offset:-5px;
+  box-shadow:inset 0 0 0 7px rgba(87,181,133,.24),0 0 0 2px #fff;
+}
+.route-cell svg,.tile-choice svg {
+  position:relative;
+  z-index:2;
+  filter:drop-shadow(0 4px 2px rgba(81,56,21,.28));
+}
+.road-groove { fill:none;stroke:#6f4a22;stroke-width:31;stroke-linecap:round;opacity:.48; }
+.road-shadow { stroke:#8d5c25;stroke-width:25; }
+.road-line { stroke:#edb93e;stroke-width:18; }
+.road-highlight { fill:none;stroke:#ffe69a;stroke-width:4;stroke-linecap:round;opacity:.82;transform:translateY(-3px); }
+.road-center-shadow { fill:#80531f;opacity:.62; }
+.road-center { fill:#eeb73d;stroke:#9b6828;stroke-width:3; }
+.road-center-highlight { fill:#ffe59a;opacity:.78; }
+.hidden-mark {
+  z-index:3;
+  border-color:#8c672d;
+  background:linear-gradient(155deg,#fff9dc,#ead08b);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -4px 8px rgba(108,76,24,.2);
+  text-shadow:0 1px #fff;
+}
+.choice-tray { align-items:center; }
+.tile-choice {
+  border-color:#a98955;
+  background:linear-gradient(155deg,#fffef8,#eee4d2 65%,#d0bea0);
+  box-shadow:0 5px 9px rgba(70,53,29,.18),inset 0 2px 0 #fff,inset 0 -3px 6px rgba(91,65,28,.18);
+  transition:transform 170ms ease,box-shadow 170ms ease,border-color 170ms ease;
+}
+.tile-choice.eliminated {
+  opacity:.34;
+  filter:grayscale(1);
+  box-shadow:none;
+}
+.grid-cell.blocked {
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.5),transparent 42%),
+    repeating-linear-gradient(135deg,#d8ae65 0 8px,#bd8743 8px 16px);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.38),inset 0 -5px 8px rgba(92,57,20,.28);
+}
+.grid-cell.walked {
+  background:linear-gradient(155deg,#e9f8ef,#b9dfca);
+  box-shadow:inset 0 2px 0 #fff,inset 0 -4px 7px rgba(37,98,72,.18);
+}
+.grid-cell.walked::after {
+  z-index:2;
+  inset:31%;
+  height:auto;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 28%,#83c49e 0 16%,#3c8d69 18% 66%,#246147 70%);
+  box-shadow:0 3px 5px rgba(29,75,55,.25),inset 0 1px 0 rgba(255,255,255,.5);
+}
+.complete-actions [hidden] { display:none!important; }
+.level-card[aria-current="true"] { outline:3px solid #e2b442;outline-offset:-4px;background:#fff9e7; }
+
+@media(orientation:portrait) and (max-width:620px) {
+  body { overflow:hidden; }
+  .walk-shell { height:var(--app-dvh);min-height:0;grid-template-rows:54px auto minmax(0,1fr) 60px;overflow:hidden; }
+  .level-button { display:grid;min-height:40px;padding:0 9px; }
+  .play-stage { min-height:0;grid-template-rows:104px minmax(0,1fr);overflow:hidden; }
+  .trail-panel { min-height:0; }
+  .trail-panel dl { grid-template-columns:1fr 1fr;gap:5px; }
+  .trail-panel dl div { padding:5px; }
+  .board-panel { min-height:0; }
+  .game-board { width:min(76vw,300px); }
+  .choice-tray { padding-top:6px; }
+  .tile-choice { width:62px; }
+}
+
+@media(orientation:landscape) and (max-height:520px) {
+  .play-stage { grid-template-columns:150px minmax(0,1fr); }
+  .trail-panel { grid-template-rows:78px auto auto; }
+  .trail-character { width:78px; }
+  .board-panel { grid-template-rows:38px minmax(0,1fr);padding:0 8px 7px;overflow:hidden; }
+  .board-heading { min-height:0; }
+  .board-heading h2 { font-size:14px; }
+  .game-board { width:min(44vh,34vw,190px);border-width:5px;box-shadow:0 8px 14px rgba(36,70,56,.2),0 3px 0 #25483d,inset 0 3px 6px rgba(24,45,38,.25); }
+  .board-panel:has(.choice-tray:not([hidden])) { grid-template-columns:minmax(0,1fr) 62px;grid-template-rows:38px minmax(0,1fr); }
+  .board-panel:has(.choice-tray:not([hidden])) .board-heading { grid-column:1/-1; }
+  .board-panel:has(.choice-tray:not([hidden])) .game-board { grid-column:1;grid-row:2; }
+  .choice-tray { grid-column:2;grid-row:2;flex-direction:column;gap:4px;padding:0; }
+  .tile-choice { width:50px; }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation:none!important;transition:none!important;scroll-behavior:auto!important; }
+  .success.show { opacity:1; }
+}

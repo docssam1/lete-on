@@ -1,0 +1,41 @@
+/* Shared Geometry World visual language: clear workbook surfaces and enamel objects. */
+body {
+  background: linear-gradient(145deg, #edf5f3, #fbfcfa 48%, #e5eff1);
+}
+
+.tower-mark i {
+  border-color: #3e6270;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .62), inset -4px -5px 8px rgba(35, 78, 91, .2), 0 6px 10px rgba(35, 59, 66, .13);
+}
+
+.tower-mark i:nth-child(1) { background: linear-gradient(145deg, #8ed8d4, #2c99a5); }
+.tower-mark i:nth-child(2) { background: linear-gradient(145deg, #f7d46b, #e6a83f); }
+.tower-mark i:nth-child(3) { background: linear-gradient(145deg, #f39a89, #df665d); }
+
+.level-card {
+  border-color: #a9bcc0;
+  background: #fff;
+  box-shadow: 0 6px 15px rgba(36, 64, 71, .09);
+}
+
+.level-card:hover {
+  border-color: #43818a;
+  box-shadow: 0 12px 24px rgba(34, 66, 75, .15);
+}
+
+.level-card img,
+.dice-card-art {
+  border-bottom-color: #c3d2d5;
+  background: #eaf2f1;
+}
+
+.soma-shape i {
+  border-color: #3e6270;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .65), inset -3px -4px 7px rgba(36, 79, 91, .2), 0 5px 8px rgba(35, 62, 70, .12);
+}
+
+.soma-shape i:nth-child(1) { background: linear-gradient(145deg, #8ed8d4, #329ca8); }
+.soma-shape i:nth-child(2) { background: linear-gradient(145deg, #f6d36c, #e5aa43); }
+.soma-shape i:nth-child(3) { background: linear-gradient(145deg, #f39b8b, #dc675f); }
+.soma-shape i:nth-child(4) { background: linear-gradient(145deg, #a8d889, #69ad61); }
+.soma-shape i:nth-child(5) { background: linear-gradient(145deg, #bcaee7, #8d7bc8); }

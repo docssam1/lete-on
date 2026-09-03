@@ -27,6 +27,11 @@ function firstDifferentRotation(mask, offset) {
   return mask;
 }
 
+function rotationDistance(from, to) {
+  for (let turns = 0; turns < 4; turns += 1) if (rotateMask(from, turns) === to) return turns;
+  return 4;
+}
+
 const transforms = [
   { coord: (r, c, n) => [r, c], dir: (dir) => dir },
   { coord: (r, c, n) => [c, n - 1 - r], dir: (dir) => ({ N: "E", E: "S", S: "W", W: "N" })[dir] },
@@ -83,7 +88,9 @@ function makeTileProblem(id, spec, variant, sourceRef) {
     initial,
     editable,
     endpoints: shape.endpoints.map((endpoint) => ({ ...endpoint, index: indexOf(shape.cols, endpoint.cell[0], endpoint.cell[1]) })),
-    sourceRef
+    sourceRef,
+    sourceKind: "source-backed-variation",
+    reasoningSteps: editable.length + editable.reduce((sum, cellIndex) => sum + rotationDistance(initial[cellIndex], solved[cellIndex]), 0)
   };
 }
 
@@ -94,7 +101,9 @@ function makeHiddenProblem(id, spec, variant) {
   const answerMask = solved[hiddenIndex];
   const rotations = distinctRotations(answerMask);
   if (rotations.length < 3) throw new Error(`${id}: hidden tile needs at least three orientations`);
-  const choices = [rotations[1], answerMask, rotations[2]];
+  const answer = (Number(id.match(/\d+$/)?.[0]) - 1) % 3;
+  const choices = [rotations[1], rotations[2]];
+  choices.splice(answer, 0, answerMask);
   const visible = [...solved];
   visible[hiddenIndex] = 0;
   return {
@@ -107,9 +116,11 @@ function makeHiddenProblem(id, spec, variant) {
     editable: [],
     hiddenIndex,
     choices,
-    answer: 1,
+    answer,
     endpoints: shape.endpoints.map((endpoint) => ({ ...endpoint, index: indexOf(shape.cols, endpoint.cell[0], endpoint.cell[1]) })),
-    sourceRef: "GFIELD-path-extension-hidden-tile"
+    sourceRef: "GFIELD-path-extension-hidden-tile",
+    sourceKind: "internal-extension",
+    reasoningSteps: 7
   };
 }
 
@@ -276,7 +287,10 @@ const shortestProblems = shortestSpecs.map(([blocked, start, goal], index) => {
     interaction: "draw-shortest",
     rows: 6, cols: 6, blocked, start, goal, answerPath,
     shortest: answerPath.length - 1,
-    sourceRef: "RAY-B4-2-p74-shortest-grid-path"
+    sourceRef: "RAY-B4-2-book-p74-pdf-p64-shortest-grid-path",
+    sourceKind: "source-backed-variation",
+    reasoningSteps: answerPath.length + 5,
+    answerPolicy: "any-shortest-path"
   };
 });
 
@@ -289,9 +303,9 @@ export const levels = [
   },
   {
     id: 2, difficulty: "초급",
-    title: { ko: "막힌 길 피하기", zh: "避开断路", ja: "行き止まりを避ける", en: "Avoid Broken Roads" },
-    description: { ko: "빈칸과 막힌 곳을 피해 길이 끊기지 않게 이어요.", zh: "避开空格，让道路不断开。", ja: "空きマスを避けて道をつなぎます。", en: "Route around empty cells without any broken ends." },
-    problems: transformedSet("path-avoid", [avoidBaseA, avoidBaseB], "RAY-B4-2-p68-71-path-cards")
+    title: { ko: "숨은 타일 추론", zh: "推理隐藏拼片", ja: "かくれたタイル", en: "Infer the Hidden Tile" },
+    description: { ko: "앞뒤 길 단서를 보고 가려진 타일의 방향을 찾아요.", zh: "根据两侧道路判断隐藏拼片的方向。", ja: "前後の道から隠れた向きを考えます。", en: "Use neighboring route clues to infer the hidden tile." },
+    problems: transformedSet("path-hidden", [avoidBaseA, avoidBaseB], null, makeHiddenProblem)
   },
   {
     id: 3, difficulty: "초급",
@@ -301,15 +315,15 @@ export const levels = [
   },
   {
     id: 4, difficulty: "중급",
-    title: { ko: "가장 가까운 길", zh: "最短路线", ja: "いちばん近い道", en: "Shortest Walk" },
-    description: { ko: "막힌 칸을 피해 같은 칸을 두 번 밟지 않고 최단 길을 그려요.", zh: "避开障碍，不重复格子，画出最短路线。", ja: "同じマスを通らず最短の道を描きます。", en: "Avoid blocks and draw a shortest route without revisiting cells." },
-    problems: shortestProblems
+    title: { ko: "막힌 길 피하기", zh: "避开断路", ja: "行き止まりを避ける", en: "Avoid Broken Roads" },
+    description: { ko: "빈칸과 막힌 곳을 피해 길이 끊기지 않게 이어요.", zh: "避开空格，让道路不断开。", ja: "空きマスを避けて道をつなぎます。", en: "Route around empty cells without any broken ends." },
+    problems: transformedSet("path-avoid", [avoidBaseA, avoidBaseB], "RAY-B4-2-p68-71-path-cards")
   },
   {
     id: 5, difficulty: "중급",
-    title: { ko: "숨은 타일 추론", zh: "推理隐藏拼片", ja: "かくれたタイル", en: "Infer the Hidden Tile" },
-    description: { ko: "앞뒤 길 단서를 보고 가려진 타일의 방향을 찾아요.", zh: "根据两侧道路判断隐藏拼片的方向。", ja: "前後の道から隠れた向きを考えます。", en: "Use neighboring route clues to infer the hidden tile." },
-    problems: transformedSet("path-hidden", [avoidBaseA, avoidBaseB], null, makeHiddenProblem)
+    title: { ko: "가장 가까운 길", zh: "最短路线", ja: "いちばん近い道", en: "Shortest Walk" },
+    description: { ko: "막힌 칸을 피해 같은 칸을 두 번 밟지 않고 최단 길을 그려요.", zh: "避开障碍，不重复格子，画出最短路线。", ja: "同じマスを通らず最短の道を描きます。", en: "Avoid blocks and draw a shortest route without revisiting cells." },
+    problems: shortestProblems
   }
 ];
 
@@ -322,6 +336,7 @@ export function validateLevels() {
       if (ids.has(problem.id)) throw new Error(`Duplicate problem id: ${problem.id}`);
       ids.add(problem.id);
       if (!problem.sourceRef) throw new Error(`${problem.id}: missing sourceRef`);
+      if (!problem.sourceKind || !Number.isInteger(problem.reasoningSteps) || problem.reasoningSteps < 1) throw new Error(`${problem.id}: missing reasoning metadata`);
       if (problem.interaction === "draw-shortest") {
         const path = shortestGridPath(problem.rows, problem.cols, problem.blocked, problem.start, problem.goal);
         if (!path || path.length - 1 !== problem.shortest) throw new Error(`${problem.id}: shortest path mismatch`);

@@ -139,6 +139,8 @@ function academyQuestionDb() {
     }]
   }, null, "1".repeat(64));
   database.questions[0].locator = { page: 3, slot: null, status: "verified", evidence: ["paper.a"] };
+  database.questions[0].answerCheck = { status: "verified", evidence: ["private.answer.audit"] };
+  database.questions[0].learnerFit = { overall: "pass", dimensions: { language: "pass", representations: "pass", prerequisites: "pass", reasoningLoad: "pass", responseMode: "pass" } };
   database.summary = dolpaDbBuilder.summarize(database);
   return database;
 }
@@ -159,7 +161,9 @@ function projectQuestionIndex() {
     items: [{
       itemId: "WONMATH-M21:R01-Q01", sourceBankId: "WONMATH-M21", sourceItemId: "R01-Q01", sourceTypeId: "WM-U1",
       conceptFamilyId: null, canonicalConceptFamilyId: null, conceptStatus: "unit_only", classificationStatus: "verified_unit_only",
-      detailPrecision: "unit_only", academyFits: [{ profileId: "WM_BASIC", status: "source_verified" }]
+      detailPrecision: "unit_only", answerStatus: "verified",
+      learnerFit: { overall: "pass", dimensions: { language: "pass", representations: "pass", prerequisites: "pass", reasoningLoad: "pass", responseMode: "pass" } },
+      academyFits: [{ profileId: "WM_BASIC", status: "source_verified" }]
     }],
     summary: {
       sourceBankCount: 1, itemCount: 1, mappedItemCount: 0, unitOnlyItemCount: 1, pendingItemCount: 0,
@@ -364,6 +368,7 @@ test("academy profile catalog is admin-only and returns safe classified Dolpa ro
   assert.equal(response.headers.get("cache-control"), "no-store");
   const packet = await response.json();
   assert.equal(packet.count, 1);
+  assert.deepEqual(packet.representativeAnalyses, []);
   assert.equal(packet.items[0].majorUnit, "함수");
   assert.equal(packet.items[0].minorUnit, "일차함수");
   assert.equal(packet.items[0].profiles[0].label, "돌파형");

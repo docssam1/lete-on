@@ -1,0 +1,340 @@
+{
+  "version": 1,
+  "task": {
+    "id": "hselementary-4-2-u4-angle-audit",
+    "title": "4학년 2학기 사각형 두 각도 유형 검수",
+    "domain": "math",
+    "objective": "원본과 답 형식이 일치하고 각 위치를 하나로 읽을 수 있는 두 사각형 심화 유형 검수",
+    "learner_stage": "초등 4학년 2학기 심화",
+    "release_authority": "사용자",
+    "updated": "2026-08-30",
+    "gate_set_version": "hse-question-bank-v1",
+    "validator_version": "pipeline-gate-v1"
+  },
+  "items": [
+    {
+      "id": "4-2-u4-t2-4",
+      "title": "평행선 사이 두 각으로 표시된 바깥쪽 각 구하기",
+      "work_key": "cbc97f50c611c8c6cf3b6154e30a70c83216d91bde1eac114cd03a544a118192",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "eligible",
+      "owner": "Codex",
+      "source_records": [],
+      "reason": "",
+      "claims": [
+        {
+          "id": "answer",
+          "contract": "single-value",
+          "verifier": "삼각형의 남은 각과 평각을 생성기와 분리해 계산",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/quadrilateral-taxonomy-audit.js"
+            }
+          ]
+        }
+      ],
+      "gates": [
+        {
+          "id": "source-shape",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "source",
+              "locator": "source-memory:hs-elementary.unit.4-2-4-quad#4-2-u4-t2-4",
+              "note": "비공개 카탈로그의 검증된 원문 위치에서 평행선, 두 빗선, 세 각 영역을 대조"
+            }
+          ]
+        },
+        {
+          "id": "type-identity",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/source-item-taxonomy-audit.js"
+            }
+          ]
+        },
+        {
+          "id": "answer-determinacy",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/quadrilateral-taxonomy-audit.js",
+              "note": "세 난이도에서 한 각도 답을 독립 계산"
+            }
+          ]
+        },
+        {
+          "id": "learner-fit",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#learner-fit",
+              "learner_stage": "초등 4학년 2학기 심화",
+              "criteria": [
+                "language",
+                "representations",
+                "prerequisites",
+                "reasoning-load",
+                "response-mode"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "geometry-visibility",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/source-4-2-quadrilateral-parallel-v-browser-audit.js",
+              "note": "선분 각도와 세 각호의 꼭짓점·방향·글자 영역을 역산"
+            },
+            {
+              "role": "render",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#실제-화면-확인"
+            }
+          ]
+        },
+        {
+          "id": "notation",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/math-notation-audit.js"
+            }
+          ]
+        },
+        {
+          "id": "desktop-mobile-a4",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/source-4-2-quadrilateral-parallel-v-browser-audit.js"
+            },
+            {
+              "role": "render",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#실제-화면-확인",
+              "note": "PC·375px 모바일·실제 A4 PDF를 직접 열어 확인"
+            }
+          ]
+        },
+        {
+          "id": "rights",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "hselementary/question-bank/EVIDENCE_PIPELINE.md#작업-계약",
+              "note": "공개 장부에는 원문·답안·비공개 절대 경로 없이 근거 ID와 검수 위치만 기록"
+            }
+          ]
+        },
+        {
+          "id": "negative-control",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#negative-control",
+              "note": "임시 복사본에서 left-exterior 역할을 깨뜨리자 PC·모바일 6문항이 모두 실패"
+            }
+          ]
+        },
+        {
+          "id": "regression",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/runtime-availability-audit.js"
+            },
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/source-item-taxonomy-audit.js"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4-2-u4-t1-9",
+      "title": "수직인 두 직선 사이의 표시된 두 각 구하기",
+      "work_key": "de401023cc3f640375d22843c5ed65935316479274f8fe16e33278e37c0590a2",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "eligible",
+      "owner": "Codex",
+      "source_records": [],
+      "reason": "",
+      "claims": [
+        {
+          "id": "answers",
+          "contract": "ordered",
+          "verifier": "각 주어진 각을 직각에서 따로 빼고 ㉠·㉡ 순서를 확인",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/quadrilateral-taxonomy-audit.js"
+            }
+          ]
+        }
+      ],
+      "gates": [
+        {
+          "id": "source-shape",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "source",
+              "locator": "source-memory:hs-elementary.unit.4-2-4-quad#4-2-u4-t1-9",
+              "note": "비공개 카탈로그의 검증된 원문 위치에서 수직인 두 직선, 두 빗선, 네 각 영역을 대조"
+            }
+          ]
+        },
+        {
+          "id": "type-identity",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/source-item-taxonomy-audit.js"
+            }
+          ]
+        },
+        {
+          "id": "answer-determinacy",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/quadrilateral-taxonomy-audit.js",
+              "note": "세 난이도에서 순서가 있는 두 각도 답을 독립 계산"
+            }
+          ]
+        },
+        {
+          "id": "learner-fit",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#learner-fit",
+              "learner_stage": "초등 4학년 2학기 심화",
+              "criteria": [
+                "language",
+                "representations",
+                "prerequisites",
+                "reasoning-load",
+                "response-mode"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "geometry-visibility",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/source-4-2-quadrilateral-two-angles-browser-audit.js",
+              "note": "선분 각도와 네 각호의 꼭짓점·방향·글자 영역을 역산"
+            },
+            {
+              "role": "render",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#실제-화면-확인"
+            }
+          ]
+        },
+        {
+          "id": "notation",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/math-notation-audit.js"
+            }
+          ]
+        },
+        {
+          "id": "desktop-mobile-a4",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/source-4-2-quadrilateral-two-angles-browser-audit.js"
+            },
+            {
+              "role": "render",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#실제-화면-확인",
+              "note": "PC·375px 모바일·실제 A4 PDF를 직접 열어 확인"
+            }
+          ]
+        },
+        {
+          "id": "rights",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "hselementary/question-bank/EVIDENCE_PIPELINE.md#작업-계약",
+              "note": "공개 장부에는 원문·답안·비공개 절대 경로 없이 근거 ID와 검수 위치만 기록"
+            }
+          ]
+        },
+        {
+          "id": "negative-control",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/AUDIT_4_2_U4_ANGLES.md#negative-control",
+              "note": "임시 복사본에서 target-left 역할을 깨뜨리자 PC·모바일 6문항이 모두 실패"
+            }
+          ]
+        },
+        {
+          "id": "regression",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/runtime-availability-audit.js"
+            },
+            {
+              "role": "test",
+              "locator": "hselementary/question-bank/source-item-taxonomy-audit.js"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

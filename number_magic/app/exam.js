@@ -13,9 +13,22 @@
   const s = document.createElement('style');
   s.id = 'nm-print-style';
   s.textContent = `
+.nm-print-wm { display: none; }
 @media print {
   body > *:not(.nm-print-sheet) { display: none !important; }
   .nm-print-sheet { display: block !important; font-family: sans-serif; }
+  /* 이름 워터마크 — fixed는 인쇄에서 페이지마다 반복된다. 문제를 가리지 않게
+     아주 옅게(6%), 흑백 프린터에서도 회색 띠가 아닌 큰 글자로 남는다. */
+  .nm-print-plan { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+  .nm-print-plan th, .nm-print-plan td { border: 1px solid #999; padding: 7px 9px; text-align: left; vertical-align: top; }
+  .nm-print-plan th { background: #f0f0f0; font-size: 0.85em; }
+  .nm-print-plan .nm-pp-cal { white-space: nowrap; font-weight: 700; }
+  .nm-print-plan .nm-pp-magic { font-weight: 700; }
+  .nm-pp-note { margin-top: 12px; font-size: 0.85em; color: #555; }
+  .nm-print-wm { display: block !important; position: fixed; top: 46%; left: 0; right: 0;
+    text-align: center; transform: rotate(-27deg); font-size: 46px; font-weight: 900;
+    color: #1A2233; opacity: .06; letter-spacing: .12em; pointer-events: none; z-index: 0;
+    white-space: nowrap; }
   .nm-print-answer-key { page-break-before: always; }
   .nm-print-header { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 16px; }
   .nm-print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -533,6 +546,22 @@ function examLang(){
 }
 /* main.js의 lk(ko,en,zh)와 같은 꼴 — 그쪽 관례를 그대로 쓴다(새 관례를 만들지 않음). */
 function lk(ko, en, zh){ const l = examLang(); return l === 'en' ? en : l === 'zh' ? zh : ko; }
+
+/* 학생 이름(프로필) — 인쇄 워터마크용. 앱 상태가 없는 페이지(drill.html)에서도
+   같은 저장본을 읽으므로 로그인해 쓰던 브라우저면 이름이 나온다. 없으면 빈 문자열. */
+function printStudentName(){
+  try{
+    const st=JSON.parse(localStorage.getItem(NM_LANG_KEY)||'null');
+    return (st&&typeof st.name==='string')?st.name.trim():'';
+  }catch(e){return '';}
+}
+/* 워터마크 블록 — position:fixed라 인쇄 시 모든 페이지에 반복된다.
+   이름이 없으면 앱 이름만으로도 찍는다(학습지 출처 표시). */
+function printWatermarkHtml(){
+  const nm=printStudentName();
+  const text=nm?nm+' · Numbers of Magic':'Numbers of Magic';
+  return `<div class="nm-print-wm" aria-hidden="true">${esc(text)}</div>`;
+}
 /* main.js의 L(obj)와 같은 꼴 — {ko,en,zh} 필드에서 한 벌 고르기. 옛 pickKo를 대신한다.
    문자열이 그대로 오는 경우(호출부가 실어 보낸 topicName 등 한국어 전용 값)도 받는다. */
 function pickL(field){
@@ -554,9 +583,11 @@ function pickChoices(p){
    렌더 후 '.nm-cp-tex'에 renderKaTeX을 돌려야 한다. */
 function mathStepsHtmlPrint(steps){
   if(!steps || !steps.length) return '';
-  return `<div class="nm-cp-mathsteps">` + steps.map((tex,i) =>
-    (i ? '<div class="nm-cp-arrow">↓</div>' : '') + `<div class="nm-cp-tex" data-tex="${esc(tex)}"></div>`
-  ).join('') + `</div>`;
+  /* 항목은 문자열(언어 중립) 또는 {ko,en,zh} — main.js mathStepsExpr와 같은 계약 */
+  return `<div class="nm-cp-mathsteps">` + steps.map((step,i) => {
+    const tex = typeof step === 'string' ? step : pickL(step);
+    return (i ? '<div class="nm-cp-arrow">↓</div>' : '') + `<div class="nm-cp-tex" data-tex="${esc(tex)}"></div>`;
+  }).join('') + `</div>`;
 }
 
 /* 유형 하나(스레드+레벨)의 개념 블록 — 관련 유닛이 있으면 그 유닛의 마법 노트(제목·앞
@@ -1224,8 +1255,28 @@ function parseVert(tex){
 /* ── 문장제(Word Problem) 변환 ─────────────────────────
    단순 사칙 "a OP b = □" 문제를 교과서식 문장제로 감싼다.
    시드 rng로 이름·소재를 뽑아 인쇄 재현성 유지. */
-const WP_NAMES=['민수','지우','서연','하준','다은','시우','유나','도윤','예준','소율'];
-const WP_ITEMS=[['사과','개'],['구슬','개'],['색종이','장'],['스티커','장'],['사탕','개'],['동화책','권'],['연필','자루'],['쿠키','개'],['딱지','장'],['블록','개']];
+/* 이름·사물은 언어마다 그 언어에서 자연스러운 것을 따로 쓴다 —
+   engine/threads/wp.js NAMES/OBJECTS와 같은 관례(이름 짝도 그대로). */
+const WP_NAMES=[
+  {ko:'민수',en:'Emma',pr:'She',zh:'小明'},{ko:'지우',en:'Liam',pr:'He',zh:'小红'},
+  {ko:'서연',en:'Olivia',pr:'She',zh:'小刚'},{ko:'하준',en:'Noah',pr:'He',zh:'小美'},
+  {ko:'다은',en:'Mia',pr:'She',zh:'小强'},{ko:'시우',en:'Lucas',pr:'He',zh:'小丽'},
+  {ko:'유나',en:'Ava',pr:'She',zh:'小龙'},{ko:'도윤',en:'Ethan',pr:'He',zh:'小雨'},
+  {ko:'예준',en:'Sophie',pr:'She',zh:'小云'},{ko:'소율',en:'Ben',pr:'He',zh:'小杰'}];
+/* ko=[명사,수량사] · en=[단수,복수] · zh=[명사,양사] */
+const WP_ITEMS=[
+  {ko:['사과','개'],en:['apple','apples'],zh:['苹果','个']},
+  {ko:['구슬','개'],en:['marble','marbles'],zh:['珠子','颗']},
+  {ko:['색종이','장'],en:['sheet of colored paper','sheets of colored paper'],zh:['彩纸','张']},
+  {ko:['스티커','장'],en:['sticker','stickers'],zh:['贴纸','张']},
+  {ko:['사탕','개'],en:['candy','candies'],zh:['糖果','颗']},
+  {ko:['동화책','권'],en:['storybook','storybooks'],zh:['故事书','本']},
+  {ko:['연필','자루'],en:['pencil','pencils'],zh:['铅笔','支']},
+  {ko:['쿠키','개'],en:['cookie','cookies'],zh:['饼干','块']},
+  {ko:['캐릭터 카드','장'],en:['character card','character cards'],zh:['角色卡片','张']},
+  {ko:['블록','개'],en:['block','blocks'],zh:['积木','块']}];
+/* n개의 사물 — 단복수 일치 */
+function enCount(n,pair){ return n+' '+(n===1?pair[0]:pair[1]); }
 function kJosa(word, withBatchim, without){
   const code = word.charCodeAt(word.length-1);
   if(code<0xAC00||code>0xD7A3) return word+without;
@@ -1237,23 +1288,37 @@ function wordifyProblem(p, rng){
   if(v.a.indexOf('.')>=0 || v.b.indexOf('.')>=0) return null; /* 소수는 숫자식 유지 */
   const a=+v.a, b=+v.b;
   if(!isFinite(a)||!isFinite(b)||a>100000||b>100000) return null;
-  const name = WP_NAMES[(rng()*WP_NAMES.length)|0];
+  const who = WP_NAMES[(rng()*WP_NAMES.length)|0];
   const pick = WP_ITEMS[(rng()*WP_ITEMS.length)|0];
-  const item=pick[0], unit=pick[1];
-  const nameJ = kJosa(name,'이는','는');
+  const item=pick.ko[0], unit=pick.ko[1];
+  const enPair=pick.en, enMany=pick.en[1], zhN=pick.zh[0], zhU=pick.zh[1];
+  const nameJ = kJosa(who.ko,'이는','는');
   const itemJ = kJosa(item,'을','를');
   const bUnitJ = b+kJosa(unit,'을','를');
+  /* 세 언어를 한 번에 만든다 — 이름·사물은 같은 index라 언어를 바꿔도 같은 상황. */
   switch(v.op){
     case '+':
-      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${bUnitJ} 더 받으면 모두 몇 ${unit}일까요?`;
+      return {
+        ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${bUnitJ} 더 받으면 모두 몇 ${unit}일까요?`,
+        en:`${who.en} has ${enCount(a,enPair)}. ${who.pr} gets ${b} more. How many ${enMany} are there in all?`,
+        zh:`${who.zh}有${a}${zhU}${zhN}。再得到${b}${zhU}，一共有多少${zhU}？`};
     case '−': case '-':
       if(a<b) return null;
-      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있었는데 ${bUnitJ} 친구에게 주었어요. 남은 ${kJosa(item,'은','는')} 몇 ${unit}일까요?`;
+      return {
+        ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있었는데 ${bUnitJ} 친구에게 주었어요. 남은 ${kJosa(item,'은','는')} 몇 ${unit}일까요?`,
+        en:`${who.en} had ${enCount(a,enPair)} and gave ${b} to a friend. How many ${enMany} are left?`,
+        zh:`${who.zh}原来有${a}${zhU}${zhN}，送给朋友${b}${zhU}。还剩多少${zhU}？`};
     case '×':
-      return `${item} 한 묶음에 ${a}${unit}씩 들어 있어요. ${b}묶음에는 ${kJosa(item,'이','가')} 모두 몇 ${unit} 있을까요?`;
+      return {
+        ko:`${item} 한 묶음에 ${a}${unit}씩 들어 있어요. ${b}묶음에는 ${kJosa(item,'이','가')} 모두 몇 ${unit} 있을까요?`,
+        en:`Each pack holds ${enCount(a,enPair)}. How many ${enMany} are in ${b} ${b===1?'pack':'packs'}?`,
+        zh:`每包有${a}${zhU}${zhN}。${b}包一共有多少${zhU}？`};
     case '÷':
-      if(b===0 || a%b!==0) return null; /* 나머지 있으면 문장제 제외 */
-      return `${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${b}명이 똑같이 나누어 가지면 한 명이 몇 ${unit}씩 가질까요?`;
+      if(b===0 || b===1 || a%b!==0) return null; /* 나머지 있거나 ÷1이면 문장제 제외(상황이 안 만들어짐) */
+      return {
+        ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${b}명이 똑같이 나누어 가지면 한 명이 몇 ${unit}씩 가질까요?`,
+        en:`${who.en} has ${enCount(a,enPair)}. If ${b} children share them equally, how many does each child get?`,
+        zh:`${who.zh}有${a}${zhU}${zhN}。${b}个小朋友平分，每人分到多少${zhU}？`};
   }
   return null;
 }
@@ -1264,10 +1329,9 @@ function applyWordProblems(problems, wordType, numericSeed){
   problems.forEach((p,i)=>{
     if(wordType==='mix' && i%3!==1) return;
     const w = wordifyProblem(p, rng);
-    /* 이 래퍼가 만드는 문장은 한국어 조사까지 붙여 조립한 한국어 전용 글이다(위
-       kJosa 참조) — 번역본이 없으므로 ko 한 벌만 싣고, pickL이 그 한 벌로 떨어진다.
-       WP 스레드(engine/threads/wp.js)는 세 언어를 다 갖고 있어 이 경로를 안 탄다. */
-    if(w) p.word = { ko: w };
+    /* wordifyProblem이 ko·en·zh 세 벌을 함께 만든다(2026-09-01 한영 확장) —
+       pickL이 화면 언어에 맞는 벌을 고른다. WP 스레드는 원래부터 3언어. */
+    if(w) p.word = w;
   });
   return problems;
 }
@@ -1342,8 +1406,12 @@ const NM_EXAM = {
      drill.html의 서랍장 미리보기가 재사용(2026-08-28, 리디자인). 생성 로직은 그대로. */
   buildProblems,
 
+  /* 문장제 변환 노출 — drill.html 미리보기가 유형(숫자/문장제) 선택을 그대로 비추는 데 쓴다. */
+  applyWordProblems,
+
   /* ── 1. 시험 설정 화면 ── */
-  renderExamSetup(container, onStart){
+  renderExamSetup(container, onStart, opts){
+    opts = opts || {};
     /* 2026-07-13: 디딤돌 연산 실제 목차(사용자 캡처, ebook.didimdol.co.kr) 기준 교과 순서 +
        docssam만의 2단 구성 — 각 학기는 두 층으로 이뤄진다:
        ① 교과 핵심: 실제 디딤돌 책의 학습 진행 순서 그대로 (학년 배치·순서 검증됨)
@@ -1576,10 +1644,337 @@ const NM_EXAM = {
       <div class="nm-ex-sec-name">수의 마법 탐험</div>
       <div class="nm-ex-sec-desc">스레드 직접 선택</div>
     </button>
+    <button class="nm-ex-sec-card" data-sec="road">
+      <div class="nm-ex-sec-emo">🛤️</div>
+      <div class="nm-ex-sec-name">${esc(lk('연산 로드맵','Course Road','运算路线图'))}</div>
+      <div class="nm-ex-sec-desc">${esc(lk('과정 순서 그대로 뽑기','Print along the course path','按课程路线打印'))}</div>
+    </button>
   </div>
 </div>`;
       container.querySelector('[data-sec="grade"]').addEventListener('click', showGradePick);
       container.querySelector('[data-sec="magic"]').addEventListener('click', showMagicForm);
+      container.querySelector('[data-sec="road"]').addEventListener('click', showRoadPick);
+    }
+
+    /* ── 연산 로드맵(과정 1~N) 피커 ──────────────────────────────
+       data/courses.js의 NM_COURSES(과정 → 세션 → 드릴/마법)를 티어별로
+       펼쳐 보여주고, 세션 하나를 그대로 학습지로 인쇄한다(NM_EXAM.renderPrintMulti
+       재사용 — 편지함 봉투 인쇄와 같은 경로). opts.currentCourse/opts.tiers는
+       main.js screenExam()이 넘겨준다(없어도 동작: 폴백 라벨·자동오픈 없음). */
+    function showRoadPick(){
+      const NM_COURSES = window.NM_COURSES || {};
+      const list = Object.keys(NM_COURSES)
+        .map(key => ({ key, c: NM_COURSES[key] }))
+        .sort((a,b) => (a.c.order||0) - (b.c.order||0));
+
+      let openCourse = (opts.currentCourse && NM_COURSES[opts.currentCourse]) ? opts.currentCourse : null;
+      let scrolledOnce = false;
+      /* 인쇄 옵션 — 교과/마법 흐름과 같은 4종(문항수·문장제 유형·개념·표지).
+         countMode 'default'=세션 편성 그대로, 숫자=드릴마다 그 문항수로 통일. */
+      let roadWordType = 'none';     // 'none'|'mix'|'all'
+      let roadCountMode = 'default'; // 'default'|10|20
+      /* 주기(주 1회/주 2회) — 연산 로드맵 화면과 같은 S.roadCadence를 공유
+         (opts.cadence로 받고, 바꾸면 opts.onCadence로 저장을 부탁한다). */
+      let roadCadence = (opts.cadence==='w2') ? 'w2' : 'w1';
+
+      /* ── 개인별 주차 라벨 ─────────────────────────────────
+         "현재 과정의 첫 세션 = 이번 주"를 닻으로, 이후 세션에 달력 주차를
+         붙인다. 주 1회면 세션마다 1주(9월 1주차, 9월 2주차…), 주 2회면
+         두 세션이 한 주(9월 1-1주차, 9월 1-2주차…). 몇째 주는 그 주
+         월요일이 그 달에서 몇 번째 7일 구간에 있는지로 센다. */
+      function mondayOfThisWeek(){
+        const d=new Date(); d.setHours(0,0,0,0);
+        const day=(d.getDay()+6)%7; // 월=0
+        d.setDate(d.getDate()-day);
+        return d;
+      }
+      const EN_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      function calLabelFor(offset){ // offset = 현재 위치부터 몇 번째 세션인가(0-base)
+        const perWeek = roadCadence==='w2' ? 2 : 1;
+        const weekOff = Math.floor(offset/perWeek);
+        const kth = (offset%perWeek)+1;
+        const mon = mondayOfThisWeek();
+        mon.setDate(mon.getDate()+weekOff*7);
+        const m = mon.getMonth()+1;
+        const nth = Math.floor((mon.getDate()-1)/7)+1;
+        if(perWeek===1) return lk(`${m}월 ${nth}주차`, `${EN_MON[m-1]} W${nth}`, `${m}月第${nth}周`);
+        return lk(`${m}월 ${nth}-${kth}주차`, `${EN_MON[m-1]} W${nth}-${kth}`, `${m}月第${nth}周·第${kth}次`);
+      }
+      /* 과정키 → 그 과정 첫 세션의 전역 offset (현재 과정 첫 세션=0).
+         현재 과정 이전은 지난 과정이라 라벨을 붙이지 않는다(null). */
+      function courseStartOffset(courseKey){
+        let acc=0, curSeen=false;
+        for(const x of list){
+          if(x.key===opts.currentCourse) curSeen=true;
+          if(x.key===courseKey) return curSeen ? acc : null;
+          if(curSeen) acc += (x.c.sessions||[]).length;
+        }
+        return null;
+      }
+
+      /* ── 개인 로드맵 한 장 인쇄 — 다음 12세션을 주차·과정·구성으로 표에 ──
+         roadmap demo(진단 리포트)의 "○○○ 학생의 현재 로드맵" 표와 같은 정신:
+         추천 계획일 뿐 순서는 자유(잠금 없음)라는 문구를 함께 찍는다. */
+      function printPersonalPlan(){
+        const rows=[];
+        let started=false;
+        outer:
+        for(const x of list){
+          if(x.key===opts.currentCourse) started=true;
+          if(!started) continue;
+          const sess=x.c.sessions||[];
+          for(let i=0;i<sess.length;i++){
+            const off=rows.length;
+            const s=sess[i];
+            const items=s.test?(s.pool||[]):(s.drills||[]);
+            rows.push({
+              cal:calLabelFor(off),
+              course:`${x.c.order}. ${pickL(x.c.title)||x.key}`,
+              sess:s.test?lk('과정 시험','Course Test','课程测验'):`${lk('세션','Session','课节')} ${i+1}`,
+              magic:(!s.test&&s.magic&&s.magic.length)?s.magic.map(magicLabel).join(' · '):'',
+              drills:items.map(d=>`${threadLabel(d.t)}×${d.n}`).join(' · ')
+            });
+            if(rows.length>=12) break outer;
+          }
+        }
+        if(!rows.length) return;
+        const old=document.querySelector('.nm-print-sheet');
+        if(old) old.remove();
+        const sheet=document.createElement('div');
+        sheet.className='nm-print-sheet';
+        sheet.setAttribute('aria-hidden','true');
+        sheet.setAttribute('lang',examLang());
+        const nm=printStudentName();
+        const cadTxt=roadCadence==='w2'?lk('주 2회','Twice a week','每周2次'):lk('주 1회','Once a week','每周1次');
+        const today=new Date();
+        sheet.innerHTML=`
+${printWatermarkHtml()}
+<div class="nm-print-header">
+  <h2 style="margin:0">Numbers of Magic — 🗓 ${esc(nm?nm+lk('의 로드맵',"'s Roadmap",'的路线图'):lk('개인 로드맵','My Roadmap','个人路线图'))}</h2>
+  <div style="margin-top:6px;font-size:0.9em">${esc(lk('기준','Pace','频率'))}: ${esc(cadTxt)} · ${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}</div>
+</div>
+<table class="nm-print-plan">
+  <thead><tr>
+    <th>${esc(lk('주차','Week','周次'))}</th><th>${esc(lk('과정','Course','课程'))}</th>
+    <th>${esc(lk('세션','Session','课节'))}</th><th>${esc(lk('구성','Contents','内容'))}</th>
+  </tr></thead>
+  <tbody>
+    ${rows.map(r=>`<tr>
+      <td class="nm-pp-cal">${esc(r.cal)}</td>
+      <td>${esc(r.course)}</td>
+      <td>${esc(r.sess)}</td>
+      <td>${r.magic?`<span class="nm-pp-magic">✨ ${esc(r.magic)}</span><br>`:''}${esc(r.drills)}</td>
+    </tr>`).join('')}
+  </tbody>
+</table>
+<p class="nm-pp-note">${esc(lk('이 표는 추천 계획이에요. 순서는 언제든 자유롭게 바꿔도 좋아요.','This is a suggested plan — feel free to change the order any time.','这是推荐计划，顺序可以随时自由调整。'))}</p>`;
+        document.body.appendChild(sheet);
+        setTimeout(()=>{window.print();},250);
+      }
+
+      function tierInfo(tierKey){
+        const found = (opts.tiers || []).find(x => x.key === tierKey);
+        if(found) return found;
+        return { key: tierKey, name: { ko: tierKey, en: tierKey, zh: tierKey }, band: { ko:'', en:'', zh:'' } };
+      }
+      /* 마법 슬롯 id는 유닛(N-06 등)이거나, 유닛이 아니라 스레드 자체가 마법인
+         경우(ML10 등)가 있다(courses.js 주석 참조) — 둘 다 받는다. */
+      function magicLabel(id){
+        const u = (window.NM_UNITS || {})[id];
+        if(u && u.title) return pickL(u.title) || id;
+        const th = (window.NM_THREADS || {})[id];
+        return th ? (pickL(th.name) || id) : id;
+      }
+      function threadLabel(t){
+        const th = (window.NM_THREADS || {})[t];
+        return th ? (pickL(th.name) || t) : t;
+      }
+
+      function sessionChipsHtml(s){
+        const items = s.test ? (s.pool||[]) : (s.drills||[]);
+        return items.map(d => `<span class="nm-ex-road-chip">${esc(threadLabel(d.t))} × ${d.n}</span>`).join('');
+      }
+
+      function sessionRowHtml(s, i, courseKey){
+        const isMagic = !s.test && s.magic && s.magic.length;
+        const startOff = courseStartOffset(courseKey);
+        const calHtml = (startOff===null) ? ''
+          : `<span class="nm-ex-road-cal">🗓 ${esc(calLabelFor(startOff+i))}</span>`;
+        const nameHtml = (s.test
+          ? `${esc(lk('세션','Session','课节'))} ${i+1} · ${esc(lk('과정 시험','Course Test','课程测验'))}`
+          : `${esc(lk('세션','Session','课节'))} ${i+1}`) + calHtml;
+        const magicHtml = isMagic
+          ? `<span class="nm-ex-road-magic">✨ ${s.magic.map(magicLabel).map(esc).join(' · ')}</span>` : '';
+        return `<div class="nm-ex-road-session">
+          <div class="nm-ex-road-session-head">
+            <span class="nm-ex-road-session-name">${nameHtml}</span>
+          </div>
+          ${magicHtml}
+          <div class="nm-ex-road-chips">${sessionChipsHtml(s)}</div>
+          <button class="nm-ex-road-print-btn" data-course="${esc(courseKey)}" data-session="${i}">
+            🖨 ${esc(lk('학습지','Worksheet','学习单'))}
+          </button>
+        </div>`;
+      }
+
+      function courseRowHtml(x){
+        const c = x.c;
+        const isOpen = openCourse === x.key;
+        const isCurrent = opts.currentCourse === x.key;
+        const soon = !!c.comingSoon;
+        const sessCount = (c.sessions||[]).length;
+        return `<div class="nm-ex-road-course${isOpen?' open':''}${soon?' soon':''}" data-course-wrap="${esc(x.key)}">
+          <button class="nm-ex-road-course-row" data-course-toggle="${esc(x.key)}" ${soon?'disabled':''}>
+            <span class="nm-ex-road-course-num">${c.order}</span>
+            <span class="nm-ex-road-course-body">
+              <b>${esc(pickL(c.title))}${c.boss?' 👑':''}</b>
+              <span class="nm-ex-road-course-meta">${sessCount} ${esc(lk('세션','sessions','节'))}</span>
+            </span>
+            ${isCurrent ? `<span class="nm-ex-road-here">📍 ${esc(lk('지금 여기','You are here','当前位置'))}</span>` : ''}
+            ${soon ? `<span class="nm-ex-road-soon">🚧 ${esc(lk('준비 중','Coming soon','准备中'))}</span>` : ''}
+            ${soon ? '' : `<span class="nm-ex-road-caret">${isOpen?'▲':'▼'}</span>`}
+          </button>
+          ${(isOpen && !soon) ? `<div class="nm-ex-road-sessions">
+            ${(c.sessions||[]).map((s,i) => sessionRowHtml(s,i,x.key)).join('')}
+          </div>` : ''}
+        </div>`;
+      }
+
+      function render(){
+        let prevTier = null;
+        const seenTier = {};
+        let body = '';
+        list.forEach(x => {
+          if(x.c.tier !== prevTier){
+            const info = tierInfo(x.c.tier);
+            /* 대수·미적분Ⅰ처럼 과정 번호가 순서상 흩어져 같은 티어가 두 번
+               서는 경우(story-mode 로드맵의 "이어서"와 같은 자리, main.js
+               nm-cr-station 참조) — 두 번째부터는 밴드(학년대) 설명을 생략하고
+               "이어서"만 붙인다. 티어를 합치지 않는 이유: 과정 번호 순서를
+               흐트러뜨리면 안 되기 때문(연속 구간으로만 끊는다). */
+            const again = !!seenTier[x.c.tier];
+            seenTier[x.c.tier] = true;
+            body += `<div class="nm-ex-road-tier">
+              <div class="nm-ex-road-tier-head">
+                <span class="nm-ex-road-tier-name">${esc(pickL(info.name))}${again ? ` <em class="nm-ex-road-tier-again">${esc(lk('이어서','continued','续'))}</em>` : ''}</span>
+                ${(!again && pickL(info.band)) ? `<span class="nm-ex-road-tier-band">${esc(pickL(info.band))}</span>` : ''}
+              </div>
+              <div class="nm-ex-road-course-list">`;
+            prevTier = x.c.tier;
+          }
+          body += courseRowHtml(x);
+          const isLastOfTier = (list.indexOf(x) === list.length-1) || list[list.indexOf(x)+1].c.tier !== x.c.tier;
+          if(isLastOfTier) body += `</div></div>`;
+        });
+
+        container.innerHTML = `
+<div class="nm-ex-form-wrap nm-ex-road-wrap">
+  <div class="nm-ex-form-head">
+    <button class="nm-ex-back-btn" id="nm-ex-back-road">← ${esc(lk('뒤로','Back','返回'))}</button>
+    <span class="nm-ex-form-title">🛤️ ${esc(lk('연산 로드맵','Course Road','运算路线图'))}</span>
+  </div>
+  <div class="nm-ex-road-opts">
+    <div class="nm-ex-road-opt-row">
+      <span class="nm-ex-road-opt-label">${esc(lk('유형','Style','题型'))}</span>
+      <div class="nm-ex-road-seg" id="nm-road-word">
+        <button data-w="none" class="${roadWordType==='none'?'sel':''}">${esc(lk('숫자 연산','Numbers','数字运算'))}</button>
+        <button data-w="mix" class="${roadWordType==='mix'?'sel':''}">${esc(lk('문장제 섞기','Mix word','混合应用题'))}</button>
+        <button data-w="all" class="${roadWordType==='all'?'sel':''}">${esc(lk('문장제만','All word','全部应用题'))}</button>
+      </div>
+    </div>
+    <div class="nm-ex-road-opt-row">
+      <span class="nm-ex-road-opt-label">${esc(lk('문항 수','Count','题量'))}</span>
+      <div class="nm-ex-road-seg" id="nm-road-count">
+        <button data-c="default" class="${roadCountMode==='default'?'sel':''}">${esc(lk('세션 그대로','As planned','按课程'))}</button>
+        <button data-c="10" class="${roadCountMode===10?'sel':''}">${esc(lk('10문항씩','10 each','每题型10'))}</button>
+        <button data-c="20" class="${roadCountMode===20?'sel':''}">${esc(lk('20문항씩','20 each','每题型20'))}</button>
+      </div>
+    </div>
+    <div class="nm-ex-road-opt-row">
+      <span class="nm-ex-road-opt-label">${esc(lk('주기','Pace','频率'))}</span>
+      <div class="nm-ex-road-seg" id="nm-road-cad">
+        <button data-cad="w1" class="${roadCadence==='w1'?'sel':''}">${esc(lk('주 1회','1×/week','每周1次'))}</button>
+        <button data-cad="w2" class="${roadCadence==='w2'?'sel':''}">${esc(lk('주 2회','2×/week','每周2次'))}</button>
+      </div>
+      <button class="nm-ex-road-plan-btn" id="nm-road-plan">🗓 ${esc(lk('개인 로드맵 인쇄','Print my roadmap','打印个人路线图'))}</button>
+    </div>
+    <div class="nm-ex-road-opt-row">
+      ${coverToggleRowHtml()}
+      ${conceptToggleRowHtml()}
+    </div>
+  </div>
+  <div class="nm-ex-form-body nm-ex-road-body">
+    ${body || `<p class="nm-ex-label">${esc(lk('로드맵 데이터를 불러오지 못했어요.','Course data failed to load.','课程数据加载失败。'))}</p>`}
+  </div>
+</div>`;
+
+        container.querySelector('#nm-ex-back-road').addEventListener('click', showSectionPick);
+
+        container.querySelectorAll('[data-course-toggle]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const k = btn.dataset.courseToggle;
+            openCourse = (openCourse === k) ? null : k;
+            render();
+          });
+        });
+
+        bindCoverToggle(container);
+        bindConceptToggle(container);
+        /* 옵션 클릭 재렌더 — 스크롤 위치 보존(펼쳐 둔 과정이 도로 위로 튀지 않게) */
+        function rerenderKeepScroll(){
+          const sc = container.closest('.nm-step-body') || container;
+          const top = sc.scrollTop;
+          render();
+          sc.scrollTop = top;
+        }
+        container.querySelectorAll('#nm-road-word button').forEach(b => {
+          b.addEventListener('click', () => { roadWordType = b.dataset.w; rerenderKeepScroll(); });
+        });
+        container.querySelectorAll('#nm-road-count button').forEach(b => {
+          b.addEventListener('click', () => {
+            roadCountMode = b.dataset.c==='default' ? 'default' : parseInt(b.dataset.c,10);
+            rerenderKeepScroll();
+          });
+        });
+        container.querySelectorAll('#nm-road-cad button').forEach(b => {
+          b.addEventListener('click', () => {
+            roadCadence = b.dataset.cad;
+            if(opts.onCadence) opts.onCadence(roadCadence);
+            rerenderKeepScroll();
+          });
+        });
+        const planBtn = container.querySelector('#nm-road-plan');
+        if(planBtn) planBtn.addEventListener('click', printPersonalPlan);
+
+        container.querySelectorAll('.nm-ex-road-print-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const courseKey = btn.dataset.course;
+            const sessionIdx = parseInt(btn.dataset.session, 10);
+            const course = NM_COURSES[courseKey];
+            const session = course && course.sessions && course.sessions[sessionIdx];
+            if(!session) return;
+            const raw = session.test ? (session.pool||[]) : (session.drills||[]);
+            const items = raw.map(d => ({
+              thread: d.t, level: d.lv,
+              count: roadCountMode==='default' ? d.n : roadCountMode,
+              wordType: roadWordType,
+              seed: NM_RNG.newCode(),
+            }));
+            if(!items.length) return;
+            const off = courseStartOffset(courseKey);
+            const cal = (off===null) ? '' : calLabelFor(off+sessionIdx)+' · ';
+            NM_EXAM.renderPrintMulti(items, `${cal}${courseKey}-S${sessionIdx+1}`);
+          });
+        });
+
+        if(!scrolledOnce && opts.currentCourse){
+          scrolledOnce = true;
+          const cur = container.querySelector(`[data-course-wrap="${opts.currentCourse}"]`);
+          if(cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'center' });
+        }
+      }
+      render();
     }
 
     /* ── 과정(영역)별 코스 구성: GRADES에서 스레드 접두사로 묶어 파생 ── */
@@ -1910,9 +2305,12 @@ const NM_EXAM = {
 
   /* ── 2. 시험 실행 (순차) ── */
   runExam(config, container, onDone){
-    const { thread, level, count, timer, seed } = config;
+    const { thread, level, count, timer, seed, wordType } = config;
     const numericSeed = NM_RNG.hashSeed(seed);
     const problems = buildProblems(thread, level, count, numericSeed);
+    /* 문장제 유형 — 인쇄(renderPrint)만 적용되고 화면 풀이는 빠져 있던 것을 통일
+       (2026-08-31, 문제은행에서 문장제 선택 지원). 렌더는 아래 p.word 분기가 이미 처리. */
+    applyWordProblems(problems, wordType, numericSeed);
     const answers  = new Array(count).fill(null);
     let current    = 0;
     let startTime  = Date.now();
@@ -1955,11 +2353,11 @@ const NM_EXAM = {
     <input id="nm-ex-ans" type="text" inputmode="decimal"
            placeholder="${isMulti ? lk('예: 3, 5','e.g. 3, 5','例：3, 5')
               : (pickChoices(p) ? lk('보기 번호','Choice number','选项序号') : lk('답 / Answer','Answer','答案'))}" autocomplete="off">
-    <button id="nm-ex-submit" class="nm-btn nm-btn-primary">확인 ✓</button>
+    <button id="nm-ex-submit" class="nm-btn nm-btn-primary">${lk('확인 ✓','OK ✓','确定 ✓')}</button>
   </div>
   <div class="nm-exam-nav">
-    <button id="nm-ex-prev" class="nm-btn nm-btn-small" ${current===0?'disabled':''}>← 이전</button>
-    <button id="nm-ex-skip" class="nm-btn nm-btn-small">건너뛰기 →</button>
+    <button id="nm-ex-prev" class="nm-btn nm-btn-small" ${current===0?'disabled':''}>${lk('← 이전','← Back','← 上一题')}</button>
+    <button id="nm-ex-skip" class="nm-btn nm-btn-small">${lk('건너뛰기 →','Skip →','跳过 →')}</button>
   </div>
 </div>`;
 
@@ -2107,6 +2505,7 @@ const NM_EXAM = {
     const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
 
     sheet.innerHTML = `
+${printWatermarkHtml()}
 ${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
@@ -2183,6 +2582,7 @@ ${conceptHtml}
 </div>`).join('');
 
     sheet.innerHTML = `
+${printWatermarkHtml()}
 ${coverHtml}
 ${conceptHtml}
 <div class="nm-print-header">
@@ -2211,13 +2611,13 @@ ${answerSectionsHtml}`;
 window.NM_EXAM = NM_EXAM;
 
 /* ── 전역 진입 함수 (main.js에서 호출) ── */
-window.examScreen = function(container){
+window.examScreen = function(container, opts){
   if(!container){ container = document.getElementById('nm-main') || document.body; }
   container.innerHTML = '';
 
   function showSetup(){
     container.innerHTML = '';
-    NM_EXAM.renderExamSetup(container, cfg => showExam(cfg));
+    NM_EXAM.renderExamSetup(container, cfg => showExam(cfg), opts);
   }
 
   /* ── 그리드 학습지 (11math 스타일) ── */

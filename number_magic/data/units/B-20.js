@@ -47,7 +47,7 @@ window.NM_UNITS['B-20'] = {
         desc:{ko:'20×50: 20에 0이 하나, 50에 0이 하나 → 합 2개. 2×5=10이니까 10에 0이 하나 더 있어요. <b>최종 0의 개수 = 10의 0(1개) + 추가(2개) = 3개</b>!',
               en:'20×50: one zero in 20, one in 50 → two from the multiplicands. But 2×5=10 already has a zero! <b>Total zeros = 1 (from 10) + 2 (from tens) = 3</b>!',
               zh:'20×50：20中一个0，50中一个0→两个。但2×5=10本身有一个0！<b>总共0的个数=1（来自10）+2（来自十位）=3个</b>！'},
-        mathSteps:['20×50: 0이 각 1개씩 → 합 2개','2×5=10','→ 1000 (0이 3개! 10의 0 포함)'],
+        mathSteps:[{ko:'20×50: 0이 각 1개씩 → 합 2개',en:'20×50: \\text{one zero each → 2 in all}',zh:'20×50：各1个0 → 共2个'},'2×5=10',{ko:'→ 1000 (0이 3개! 10의 0 포함)',en:'→ 1000 \\text{ (3 zeros! counting the one from 10)}',zh:'→ 1000（3个0！含10的0）'}],
         result:{ko:'20×50=1000! 구구단 결과에도 0이 있으면 함께 세야 해요.',en:'20×50=1000! If the times-table result also ends in zero, count that one too.',zh:'20×50=1000！如果口诀结果本身也有0，要一起数！'},
         book:{ko:'0의 개수를 셀 때는 두 수의 0 개수를 더하고, 구구단 결과에도 0이 있으면 그것도 더해요. 예: 20×50=2×5×100=10×100=1000. 10에서 0이 하나, 100에서 0이 둘 → 총 0이 세 개.',
               en:'Count zeros: add the zeros from both multipliers, and also count any zeros in the times-table result. e.g. 20×50=2×5×100=10×100=1000. One zero from 10, two from 100 → three zeros total.',

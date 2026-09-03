@@ -1,6 +1,9 @@
 /* Numbers of Magic — 캐릭터 꾸미기 화면
    window.screenCloset(container, opts)
-   opts = { char, unlocked, coins, lang, onSave(newChar, newUnlocked, coinsSpent) } */
+   opts = { char, avatarKind, unlocked, coins, lang,
+            onSave(newChar, newUnlocked, coinsSpent), onSaveAvatar(kind) }
+   'me' 탭(사람 아바타 boy/girl)은 동행 캐릭터(char)와 별개 축 — 항상 무료,
+   unlocked/coins를 안 타고 onSaveAvatar로 바로 저장(마을세계관-설계.md §1). */
 (function(){
 'use strict';
 
@@ -11,18 +14,30 @@ window.screenCloset = function(container, opts){
   const lang = opts.lang || 'ko';
   const L = (item) => item[lang] || item.ko || item.en || '';
 
-  let cur = Object.assign({number:3,color:'blue',bg:'plain',cape:'none'}, opts.char || {});
+  let cur = Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'}, opts.char || {});
   let unlocked = Object.assign({}, opts.unlocked || {});
   let coins = +(opts.coins || 0);
   let dirty = 0;  // 소비한 코인 누적
+  /* 사람 아바타(나) — 동행 캐릭터(cur)와는 별개 축. 무료 2종(boy/girl)뿐이라
+     unlocked/coins 흐름을 안 타고 'me' 탭에서 바로 select()로 전환한다(마을세계관-설계.md §1). */
+  let avatarKind = opts.avatarKind || 'boy';
 
   const TABS = [
+    {key:'me',    ko:'나',    en:'Me',       zh:'我'},
     {key:'number',ko:'캐릭터',en:'Character',zh:'角色'},
+    {key:'symbol',ko:'기호',  en:'Symbols',  zh:'符号'},
     {key:'color', ko:'색',    en:'Color',    zh:'颜色'},
     {key:'cape',  ko:'망토',  en:'Cape',     zh:'斗篷'},
+    {key:'hat',   ko:'모자',  en:'Hat',      zh:'帽子'},
     {key:'bg',    ko:'배경',  en:'BG',       zh:'背景'},
   ];
   let activeTab = 'number';
+
+  /* 잠금 안내(코인 가격과 병기) · 과정 보상 배지 — 캐릭터-승급-설계.md §4 */
+  function courseNote(n){
+    return lang==='en' ? `Course ${n}` : lang==='zh' ? `第${n}阶段解锁` : `과정 ${n} 도달 시`;
+  }
+  const rewardBadgeTxt = lang==='en' ? '✨ Course Reward' : lang==='zh' ? '✨ 进度奖励' : '✨ 과정 보상';
 
   /* ── 잠금 해제 확인 ── */
   function ulKey(type, id){ return type+'_'+id; }
@@ -66,10 +81,17 @@ window.screenCloset = function(container, opts){
 
   /* ── 선택 ── */
   function select(type, val){
+    if(type==='avatar'){                       // 사람 아바타 — 동행(cur)과 별개 축, 항상 무료
+      avatarKind = val;
+      if(opts.onSaveAvatar) opts.onSaveAvatar(avatarKind);
+      redraw();
+      return;
+    }
     if(!isUnlocked(type, val)){
       if(!buy(type, val)) return;
     }
-    if(type==='number') cur.number = +val;
+    if(type==='number'){ cur.number = +val; delete cur.symbol; }      // 숫자를 고르면 기호 해제(둘 중 하나만)
+    else if(type==='symbol') cur.symbol = val;
     else cur[type] = val;
     save();
     redraw();
@@ -81,17 +103,39 @@ window.screenCloset = function(container, opts){
     return rndr(Object.assign({}, cur, overrides), sz||52);
   }
 
+  /* 잠금/보상 안내 한 줄(가격 칩 + 도달 안내 칩, 잠긴 특별 항목 공용) */
+  function lockInfoHTML(item, unl){
+    if(unl) return item.course!=null ? `<div class="nmc-ibadge">${rewardBadgeTxt}</div>` : '';
+    let h = '';
+    if(item.price) h += `<div class="nmc-iprice">🪙${item.price}</div>`;
+    if(item.course!=null) h += `<div class="nmc-icourse">${courseNote(item.course)}</div>`;
+    return h;
+  }
+
   /* ── 탭 항목 HTML ── */
   function tabItemsHTML(){
+    if(activeTab==='me'){
+      const kinds=[
+        {id:'boy', ko:'남자아이',en:'Boy', zh:'男孩'},
+        {id:'girl',ko:'여자아이',en:'Girl',zh:'女孩'},
+      ];
+      return kinds.map(k=>{
+        const sel = avatarKind===k.id ? 'sel' : '';
+        return `<button class="nmc-item ${sel}" data-type="avatar" data-id="${k.id}">
+          <div class="nmc-thumb">${window.renderHumanChar?window.renderHumanChar(k.id,64):''}</div>
+          <div class="nmc-iname">${L(k)}</div>
+        </button>`;
+      }).join('');
+    }
     if(activeTab==='number'){
       const items = av.numbers || [];
       const singles = items.filter(it=>+it.id < 10);
       const specials = items.filter(it=>+it.id >= 10);
       let html = singles.map(item=>{
         const n = +item.id;
-        const sel = cur.number===n ? 'sel' : '';
+        const sel = (cur.number===n && !cur.symbol) ? 'sel' : '';
         return `<button class="nmc-num-btn ${sel}" data-type="number" data-id="${item.id}">
-          ${rndr ? rndr({...cur,number:n},54) : n}
+          ${rndr ? rndr({...cur,number:n,symbol:undefined},54) : n}
         </button>`;
       }).join('');
       if(specials.length){
@@ -100,17 +144,29 @@ window.screenCloset = function(container, opts){
         html += specials.map(item=>{
           const n = +item.id;
           const unl = isUnlocked('number', item.id);
-          const sel = cur.number===n ? 'sel' : '';
+          const sel = (cur.number===n && !cur.symbol) ? 'sel' : '';
           return `<button class="nmc-item ${sel}${unl?'':' locked'}" data-type="number" data-id="${item.id}">
-            <div class="nmc-thumb">${miniPreview({number:n},52)}</div>
+            <div class="nmc-thumb">${miniPreview({number:n,symbol:undefined},52)}</div>
             <div class="nmc-iname">${n}</div>
-            ${unl?'':item.price?`<div class="nmc-iprice">🪙${item.price}</div>`:''}
+            ${lockInfoHTML(item, unl)}
           </button>`;
         }).join('');
       }
       return html;
     }
-    const typeItems = {color:'colors',bg:'bgs',cape:'capes'};
+    if(activeTab==='symbol'){
+      const items = av.symbols || [];
+      return items.map(item=>{
+        const unl = isUnlocked('symbol', item.id);
+        const sel = cur.symbol===item.id ? 'sel' : '';
+        return `<button class="nmc-item ${sel}${unl?'':' locked'}" data-type="symbol" data-id="${item.id}">
+          <div class="nmc-thumb">${miniPreview({symbol:item.id},52)}</div>
+          <div class="nmc-iname">${item.glyph} ${L(item)}</div>
+          ${lockInfoHTML(item, unl)}
+        </button>`;
+      }).join('');
+    }
+    const typeItems = {color:'colors',bg:'bgs',cape:'capes',hat:'hats'};
     const items = av[typeItems[activeTab]] || [];
     return items.map(item=>{
       const unl = isUnlocked(activeTab, item.id);
@@ -124,11 +180,17 @@ window.screenCloset = function(container, opts){
     }).join('');
   }
 
+  /* 큰 미리보기(사람 아바타 + 동행 합성) — renderPartyHtml 없으면 동행만이라도 보여준다 */
+  function bigPreview(){
+    if(window.renderPartyHtml) return window.renderPartyHtml(avatarKind, cur, 110);
+    return rndr ? rndr(cur, 110) : '';
+  }
+
   /* ── 전체 재렌더 ── */
   function redraw(){
     // 미리보기
     const pv = container.querySelector('#nmc-preview');
-    if(pv && rndr) pv.innerHTML = rndr(cur, 110);
+    if(pv) pv.innerHTML = bigPreview();
     // 코인
     const ci = container.querySelector('#nmc-coins');
     if(ci) ci.textContent = '🪙 '+coins;
@@ -149,19 +211,23 @@ window.screenCloset = function(container, opts){
   const titleTxt = lang==='en'?'My Character':lang==='zh'?'我的角色':'내 캐릭터';
 
   /* 목록(왼쪽)이 바로 보이도록 미리보기는 오른쪽 사이드에 고정 */
+  const hintTxt = lang==='en'?'Decorate your friend with 🪙 from attendance & learning'
+    :lang==='zh'?'用出勤和学习得到的🪙装饰朋友'
+    :'출석·학습으로 모은 🪙로 내 친구를 꾸며요';
   container.innerHTML = `
 <div class="nmc-wrap">
   <div class="nmc-head">
     <div class="nmc-title">✨ ${titleTxt}</div>
     <div id="nmc-coins" class="nmc-coins">🪙 ${coins}</div>
   </div>
+  <div class="nmc-hint">${hintTxt}</div>
   <div class="nmc-main">
     <div class="nmc-left">
       <div class="nmc-tab-bar">${tabsHTML}</div>
       <div id="nmc-grid" class="nmc-grid">${tabItemsHTML()}</div>
     </div>
     <div class="nmc-preview-area">
-      <div id="nmc-preview">${rndr ? rndr(cur,110) : ''}</div>
+      <div id="nmc-preview">${bigPreview()}</div>
       <div class="nmc-preview-label">${lang==='en'?'Tap items to customize!':lang==='zh'?'点击项目来定制！':'골라서 꾸며보세요!'}</div>
     </div>
   </div>

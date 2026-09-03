@@ -124,6 +124,16 @@
 
 ## 생성기와 검증
 
+### `learner-fit` 게이트
+
+- `learner_stage`: 필즈 더 클래식 1과정 N30 · 5권 개념 활동
+- `language`: 조합·순열 기호 없이 원본 활동 수준의 짧은 행동 문장 사용
+- `representations`: 수 배열 경로, 달력, 최단거리 격자, 숫자 카드, 곱셈 매트릭스, 짝 연결, 수 삼각형의 원본 표현 유지
+- `prerequisites`: 수 세기, 덧셈·뺄셈, 기초 곱셈, 자리값, 요일의 7일 주기
+- `reasoning-load`: 개념 단계는 유형마다 한 번에 한 행동씩 3단계로 제시하고 유형·연습·심화 조건을 앞당기지 않음
+- `response-mode`: 생성된 문제의 수·빈칸·그리기 응답 형식을 유지하고 개념 설명과 접힌 풀이에서는 현재 문제의 답을 노출하지 않음
+- 판정: `pass` — 활동 문제번호 19종 대조, 정적 근거 감사, PC·모바일·A4 렌더 감사로 확인
+
 - 교재 연결 유형: 38종
 - 전용 생성기: `book05-generators.js` 47종
 - 전용 렌더러: `book05-renderers.js`
@@ -132,14 +142,18 @@
 - 원본 문항 배정: 154문항, 누락 0, 중복 0
 - 단원 테스트 연결: 25문항, 테스트 전용 세부 유형 16종, 누락 0
 - 단계별 선택 가능 유형: 개념 19종, 유형 13종, 연습 31종, 심화 13종
+- 개념 학습: 활동 문제번호를 근거로 대표 개념 10개와 유형별 3단계 튜토리얼 19종 연결
 - 정답 검증: 본문과 단원 테스트의 고유 54유형 중 생성형 52유형을 난이도별 각 1,000회, 총 156,000문항(Geometry Worksheet 2유형은 독립 검산 경로 재사용)
 - 화면 검증: 단원 테스트 25문항 PC·모바일·인쇄, 가로 넘침·빈 그림·빈 답 0건
+- 개념 화면 검증: 전체 원본 근거 수업 85종의 마우스·키보드 미리보기, 모바일 390px, A4 두 문항 1쪽, 답 노출 0건
 - 답 노출 검사: 달력에서 구할 날짜는 물음표 칸으로 숨김
 - 같은 난이도 화면 변형: 모든 생성 유형 최소 3종
 
 ```powershell
 node fields-classic/question-bank/curriculum-stage-audit.mjs
 node fields-classic/question-bank/book05-audit.mjs 1000
+node fields-classic/question-bank/concept-quality-audit.mjs
+node fields-classic/question-bank/curriculum-concept-browser-audit.mjs
 ```
 
 공개 조건은 원본 풀이 구조 일치, 단일 정답, 학년 수준 문장, 난이도별 구조 차이, 그림 가시성, 난수 1,000회 실패 0건을 모두 만족하는 것이다.

@@ -33,7 +33,7 @@ window.NM_UNITS['N-13'] = {
         desc:{ko:'위 2 + 아래 3 = 5! 왼쪽+오른쪽도 5가 되게!',
           en:'Top 2 + bottom 3 = 5! Left+right must be 5 too!',
           zh:'上2＋下3＝5！左＋右也要是5！'},
-        mathSteps:['위+아래 = 왼쪽+오른쪽','한쪽 합을 구해요','빈칸을 거꾸로 계산!'],
+        mathSteps:[{ko:'위+아래 = 왼쪽+오른쪽',en:'top+bottom = left+right',zh:'上+下 = 左+右'},{ko:'한쪽 합을 구해요',en:'Find one side\'s sum',zh:'先算出一边的和'},{ko:'빈칸을 거꾸로 계산!',en:'Work the blank out backwards!',zh:'倒过来算出空格！'}],
         result:{ko:'양쪽 합이 똑같아야 해요!',en:'Both sums must match!',zh:'两边的和要一样！'} }
     ],
     rule:{ ko:'위+아래 = 왼쪽+오른쪽!',

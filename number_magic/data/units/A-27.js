@@ -19,10 +19,10 @@ window.NM_UNITS['A-27'] = {
     stages:[
       { tag:{ ko:'① 세어서 확인해봐요', en:'1) Check by counting', zh:'① 数一数验证' },
         head:{ ko:'작은 예시로 공식을 확인해요', en:'Verify the formula with a small example', zh:'用小例子验证公式' },
-        desc:{ ko:'3부터 7까지 정수: 3, 4, 5, 6, 7 → 5개. 7-3+1=5! 공식이 맞아요.',
-               en:'Integers from 3 to 7: 3, 4, 5, 6, 7 → 5 numbers. 7−3+1=5! The formula works.',
-               zh:'从3到7的整数：3、4、5、6、7 → 5个。7-3+1=5！公式正确。' },
-        mathSteps:['3부터 7까지: 3, 4, 5, 6, 7','개수 = 7 - 3 + 1','= 4 + 1 = 5개'],
+        desc:{ ko:'3부터 7까지 정수: 3, 4, 5, 6, 7 → 5개. 7-3+1=5! <b>공식이 맞아요</b>.',
+               en:'Integers from 3 to 7: 3, 4, 5, 6, 7 → 5 numbers. 7−3+1=5! <b>The formula works</b>.',
+               zh:'从3到7的整数：3、4、5、6、7 → 5个。7-3+1=5！<b>公式正确</b>。' },
+        mathSteps:[{ko:'3부터 7까지: 3, 4, 5, 6, 7',en:'\\text{from 3 to 7: } 3, 4, 5, 6, 7',zh:'从3到7：3, 4, 5, 6, 7'},{ko:'개수 = 7 - 3 + 1',en:'\\text{count} = 7 - 3 + 1',zh:'个数 = 7 - 3 + 1'},{ko:'= 4 + 1 = 5개',en:'= 4 + 1 = 5 \\text{ numbers}',zh:'= 4 + 1 = 5个'}],
         result:{ ko:'3~7은 5개 ✓', en:'3 to 7: 5 numbers ✓', zh:'3到7共5个 ✓' },
         book:{ ko:'"끝 - 시작 + 1" 공식은 양쪽 끝을 모두 포함해서 세기 때문이에요.', en:'"End − Start + 1" counts both endpoints, that\'s why we add 1.', zh:'"结束-开始+1"是因为两端都要计入，所以要加1。' } },
       { tag:{ ko:'② 큰 수에서도 공식이 편해요', en:'2) Formula works for big ranges too', zh:'② 大范围也能用公式' },
@@ -30,7 +30,7 @@ window.NM_UNITS['A-27'] = {
         desc:{ ko:'15부터 63까지 정수는 몇 개? 63-15+1=49개! 직접 세면 힘들지요?',
                en:'How many integers from 15 to 63? 63−15+1=49! Counting by hand would be exhausting.',
                zh:'从15到63有多少整数？63-15+1=49个！手工数太累了吧？' },
-        mathSteps:['15부터 63까지: ?','개수 = 63 - 15 + 1','= 48 + 1 = 49개'],
+        mathSteps:[{ko:'15부터 63까지: ?',en:'\\text{from 15 to 63: ?}',zh:'从15到63：？'},{ko:'개수 = 63 - 15 + 1',en:'\\text{count} = 63 - 15 + 1',zh:'个数 = 63 - 15 + 1'},{ko:'= 48 + 1 = 49개',en:'= 48 + 1 = 49 \\text{ numbers}',zh:'= 48 + 1 = 49个'}],
         result:{ ko:'15~63은 49개 ✓', en:'15 to 63: 49 numbers ✓', zh:'15到63共49个 ✓' },
         book:null }
     ],
@@ -41,9 +41,9 @@ window.NM_UNITS['A-27'] = {
 
   check:{
     fills:[
-      { tex:'3\\text{부터}~7\\text{까지}: 7-3+\\square=5', answer:1,
+      { tex:{ko:'3\\text{부터}~7\\text{까지}: 7-3+\\square=5',en:'3~\\text{to}~7: 7-3+\\square=5',zh:'3\\text{到}7: 7-3+\\square=5'}, answer:1,
         hint:{ ko:'끝-시작에 1을 더해요', en:'End minus start, plus 1', zh:'结束-开始，再+1' } },
-      { tex:'15\\text{부터}~63\\text{까지 개수}: 63-15+1=\\square', answer:49,
+      { tex:{ko:'15\\text{부터}~63\\text{까지 개수}: 63-15+1=\\square',en:'\\text{count from }15~\\text{to }63: 63-15+1=\\square',zh:'15\\text{到}63\\text{的个数}: 63-15+1=\\square'}, answer:49,
         hint:{ ko:'63-15=48, 48+1=49', en:'63−15=48, 48+1=49', zh:'63-15=48，48+1=49' } }
     ],
     open:{ ko:'a부터 b까지 정수의 개수가 b-a+1인 이유를 설명해봐요.', en:'Explain why the count of integers from a to b is b−a+1.', zh:'说说为什么从a到b的整数个数是b-a+1。' },

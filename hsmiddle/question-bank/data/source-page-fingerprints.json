@@ -1,0 +1,1152 @@
+{
+  "schemaVersion": "hsmiddle-question-bank-v1",
+  "algorithm": "sha256",
+  "assets": [
+    {
+      "assetId": "diagnostic-similar-q01-p01",
+      "assetPath": "hsmiddle/assets/similar/q01/page-1.png",
+      "bytes": 161308,
+      "sha256": "2c7ab3d224370c8036de0e6abd74725673968694540eba019d6487b1c0987607"
+    },
+    {
+      "assetId": "diagnostic-similar-q01-p02",
+      "assetPath": "hsmiddle/assets/similar/q01/page-2.png",
+      "bytes": 126905,
+      "sha256": "99d1ccacba9b7c94ac8df27234260c4043c0f64e3df3920823b129ac54239756"
+    },
+    {
+      "assetId": "diagnostic-similar-q01-p03",
+      "assetPath": "hsmiddle/assets/similar/q01/page-3.png",
+      "bytes": 118449,
+      "sha256": "61b312de72bed36e1ca482448fd66d78a93fdd0d348546909e62cc266c5d5867"
+    },
+    {
+      "assetId": "diagnostic-similar-q01-p04",
+      "assetPath": "hsmiddle/assets/similar/q01/page-4.png",
+      "bytes": 60726,
+      "sha256": "0039486851d4a45b58e2eedee2f21494219c64e60be7fb570651562255e72056"
+    },
+    {
+      "assetId": "diagnostic-similar-q01-p05",
+      "assetPath": "hsmiddle/assets/similar/q01/page-5.png",
+      "bytes": 294847,
+      "sha256": "e00db1669aeb8118f79e0c67cb809fcfb26cd29eaecfd6f7fffd4e34d7b96e0c"
+    },
+    {
+      "assetId": "diagnostic-similar-q01-p06",
+      "assetPath": "hsmiddle/assets/similar/q01/page-6.png",
+      "bytes": 103942,
+      "sha256": "abe8931db8208f5d442498ccccfb10d35812bccb844edcaee5bdb022a19eecb5"
+    },
+    {
+      "assetId": "diagnostic-similar-q02-p01",
+      "assetPath": "hsmiddle/assets/similar/q02/page-1.png",
+      "bytes": 146554,
+      "sha256": "eb531dd3d0cbe2e8ce89f1698a487b8bdd9e55bd0e6ca29b51a2abcdc2196aae"
+    },
+    {
+      "assetId": "diagnostic-similar-q02-p02",
+      "assetPath": "hsmiddle/assets/similar/q02/page-2.png",
+      "bytes": 102002,
+      "sha256": "8d7a7eb2c6cb73d96da49bc2a8ba7d2e5e5ba39a13698b3ecd23bbc99514bbc9"
+    },
+    {
+      "assetId": "diagnostic-similar-q02-p03",
+      "assetPath": "hsmiddle/assets/similar/q02/page-3.png",
+      "bytes": 57986,
+      "sha256": "bf42c4b1da642a3c67deca5a563ac51bbfd88a791e6075e2e7b11a1b7f19eeb6"
+    },
+    {
+      "assetId": "diagnostic-similar-q02-p04",
+      "assetPath": "hsmiddle/assets/similar/q02/page-4.png",
+      "bytes": 190880,
+      "sha256": "a479270fdc65aa046dbc201fa9dace8b95a9392e8152dbd5129c52c22af14b4a"
+    },
+    {
+      "assetId": "diagnostic-similar-q03-p01",
+      "assetPath": "hsmiddle/assets/similar/q03/page-1.png",
+      "bytes": 121001,
+      "sha256": "4b4f2770c10186558399989f642ac22ad15ab9cf5ab5418a2f6a403b2f1f6a86"
+    },
+    {
+      "assetId": "diagnostic-similar-q03-p02",
+      "assetPath": "hsmiddle/assets/similar/q03/page-2.png",
+      "bytes": 104046,
+      "sha256": "500407fffde6bc65807d8b7e0f5980277f4ea7a4149a76ab100c7b553c3ee734"
+    },
+    {
+      "assetId": "diagnostic-similar-q03-p03",
+      "assetPath": "hsmiddle/assets/similar/q03/page-3.png",
+      "bytes": 75795,
+      "sha256": "9f3a7094e35cfe8250c57cf6c0e6ce047f84c89d4243c3a5a143e9f31b75b3de"
+    },
+    {
+      "assetId": "diagnostic-similar-q03-p04",
+      "assetPath": "hsmiddle/assets/similar/q03/page-4.png",
+      "bytes": 37857,
+      "sha256": "52a1777876209e855115c5debeb9cd8bc7c1c179df84d0e156db8f4032153dd8"
+    },
+    {
+      "assetId": "diagnostic-similar-q03-p05",
+      "assetPath": "hsmiddle/assets/similar/q03/page-5.png",
+      "bytes": 234319,
+      "sha256": "5f387cc7032edaf810e86488347d1c55a1f84bb26d499f6e20fe2da0b86803e6"
+    },
+    {
+      "assetId": "diagnostic-similar-q04-p01",
+      "assetPath": "hsmiddle/assets/similar/q04/page-1.png",
+      "bytes": 121282,
+      "sha256": "c8ed03e155685ac83a19aad4a46c05f573ae5375b33fcde16a7a468f97e83ae1"
+    },
+    {
+      "assetId": "diagnostic-similar-q04-p02",
+      "assetPath": "hsmiddle/assets/similar/q04/page-2.png",
+      "bytes": 108936,
+      "sha256": "6716ab4b25ac20dff65e59491c33bcf1a8eeb676f86dbd3ecc45cf639e7826c3"
+    },
+    {
+      "assetId": "diagnostic-similar-q04-p03",
+      "assetPath": "hsmiddle/assets/similar/q04/page-3.png",
+      "bytes": 98074,
+      "sha256": "24c5b573e6d0bf160838f9179caa0da3cb905adadbd68a544e04df7c028f4984"
+    },
+    {
+      "assetId": "diagnostic-similar-q04-p04",
+      "assetPath": "hsmiddle/assets/similar/q04/page-4.png",
+      "bytes": 92622,
+      "sha256": "39fcec593772cdd1504a70ca11b428c25e62de5a65ecf64756b3b722a6ebcf53"
+    },
+    {
+      "assetId": "diagnostic-similar-q04-p05",
+      "assetPath": "hsmiddle/assets/similar/q04/page-5.png",
+      "bytes": 50024,
+      "sha256": "11f91b37792d0f439b491e6cb704120bf263b90b7632ec033eb6a4305b7f4ad4"
+    },
+    {
+      "assetId": "diagnostic-similar-q04-p06",
+      "assetPath": "hsmiddle/assets/similar/q04/page-6.png",
+      "bytes": 238797,
+      "sha256": "012318d87a9e229f3f9fa12f46023d0ac9a038d84fa59dc250d504f2360023a0"
+    },
+    {
+      "assetId": "diagnostic-similar-q04-p07",
+      "assetPath": "hsmiddle/assets/similar/q04/page-7.png",
+      "bytes": 272170,
+      "sha256": "c5058c2600b14a7d79ec92bab17bc8d1c8eb2b01a3034f0de326e5c4ffdbe1f3"
+    },
+    {
+      "assetId": "diagnostic-similar-q05-p01",
+      "assetPath": "hsmiddle/assets/similar/q05/page-1.png",
+      "bytes": 134124,
+      "sha256": "789e04496ead007d018eabb4856124d7280a74db8308db94bd7881aacbcd6410"
+    },
+    {
+      "assetId": "diagnostic-similar-q05-p02",
+      "assetPath": "hsmiddle/assets/similar/q05/page-2.png",
+      "bytes": 115534,
+      "sha256": "8c31f6b3139229646c225d9dff2ec18efac03d981bc6a0911abb034fc2657c30"
+    },
+    {
+      "assetId": "diagnostic-similar-q05-p03",
+      "assetPath": "hsmiddle/assets/similar/q05/page-3.png",
+      "bytes": 57147,
+      "sha256": "565b57396789a5f5ac98c30b3ea1dfe51f282af729fc2bc64974448817907ba6"
+    },
+    {
+      "assetId": "diagnostic-similar-q05-p04",
+      "assetPath": "hsmiddle/assets/similar/q05/page-4.png",
+      "bytes": 34247,
+      "sha256": "f0f7b57986e071bd58451569945fd8d3cfd7e4dd5b7a32c185cc66975881e5c3"
+    },
+    {
+      "assetId": "diagnostic-similar-q05-p05",
+      "assetPath": "hsmiddle/assets/similar/q05/page-5.png",
+      "bytes": 214690,
+      "sha256": "29bc340ccf370651cb173a8eb07a9ce6e3168e8e396c2da2519b3fba8d8e9f04"
+    },
+    {
+      "assetId": "diagnostic-similar-q05-p06",
+      "assetPath": "hsmiddle/assets/similar/q05/page-6.png",
+      "bytes": 87829,
+      "sha256": "4bc6a221834d294b7211d40430d0a30f5449d7263d39476bf21dfcb1da2dd0c5"
+    },
+    {
+      "assetId": "diagnostic-similar-q06-p01",
+      "assetPath": "hsmiddle/assets/similar/q06/page-1.png",
+      "bytes": 108306,
+      "sha256": "ce306a00c00db7ae52193d5364e052cd03488de846d12454ed9c52c17fac76f0"
+    },
+    {
+      "assetId": "diagnostic-similar-q06-p02",
+      "assetPath": "hsmiddle/assets/similar/q06/page-2.png",
+      "bytes": 24616,
+      "sha256": "1f0e68d1d60b1d05bda2eaeca089beee78c317d42161da9230916e7c0e50d7e3"
+    },
+    {
+      "assetId": "diagnostic-similar-q06-p03",
+      "assetPath": "hsmiddle/assets/similar/q06/page-3.png",
+      "bytes": 100226,
+      "sha256": "1c64a5f58efc0c8f58b8baee9441f6eed9cd248cbb2740a7dfbb4bc8cf202d0c"
+    },
+    {
+      "assetId": "diagnostic-similar-q07-p01",
+      "assetPath": "hsmiddle/assets/similar/q07/page-1.png",
+      "bytes": 134388,
+      "sha256": "2ed97239aeea3171fac507c4359c2231cb52995a51367eb903d91bc9e81831a2"
+    },
+    {
+      "assetId": "diagnostic-similar-q07-p02",
+      "assetPath": "hsmiddle/assets/similar/q07/page-2.png",
+      "bytes": 120533,
+      "sha256": "db4c9497da584e2961ed51ce88c0f7246f82737bfa73290ecdc8e5d7f4ee6c9c"
+    },
+    {
+      "assetId": "diagnostic-similar-q07-p03",
+      "assetPath": "hsmiddle/assets/similar/q07/page-3.png",
+      "bytes": 87890,
+      "sha256": "76d31c00133dc94b7fbd45b616f635bf4a7c8b6c8fa6dd1ce3f77d829411b8f4"
+    },
+    {
+      "assetId": "diagnostic-similar-q07-p04",
+      "assetPath": "hsmiddle/assets/similar/q07/page-4.png",
+      "bytes": 46497,
+      "sha256": "29951848eaf57eff59286597fab4240fe7fa2d1aba25930d7dc001496b279272"
+    },
+    {
+      "assetId": "diagnostic-similar-q07-p05",
+      "assetPath": "hsmiddle/assets/similar/q07/page-5.png",
+      "bytes": 179324,
+      "sha256": "1ffa346213c8fa681063fa3c764bbf7e22040ab6473b8d07366277e00185d927"
+    },
+    {
+      "assetId": "diagnostic-similar-q07-p06",
+      "assetPath": "hsmiddle/assets/similar/q07/page-6.png",
+      "bytes": 85072,
+      "sha256": "7ce47a15548d1b941923315de68a700ee4c4b4465acb73129e82d6e2d4af6a6a"
+    },
+    {
+      "assetId": "diagnostic-similar-q08-p01",
+      "assetPath": "hsmiddle/assets/similar/q08/page-1.png",
+      "bytes": 152193,
+      "sha256": "bffd51354aa10bf781c7387b6d5ff10afcae382722bd1ab8a9d466a2b886336e"
+    },
+    {
+      "assetId": "diagnostic-similar-q08-p02",
+      "assetPath": "hsmiddle/assets/similar/q08/page-2.png",
+      "bytes": 88280,
+      "sha256": "f0d4c65f589fb14adeb5c9fcc2d101f3d3c8d16a19e591b35077eea750484934"
+    },
+    {
+      "assetId": "diagnostic-similar-q08-p03",
+      "assetPath": "hsmiddle/assets/similar/q08/page-3.png",
+      "bytes": 33738,
+      "sha256": "fc11d0d9176c583d6f8b5e4f87745bc12946255086107c694e56134f6f0081a8"
+    },
+    {
+      "assetId": "diagnostic-similar-q08-p04",
+      "assetPath": "hsmiddle/assets/similar/q08/page-4.png",
+      "bytes": 206622,
+      "sha256": "db916cf572b69083ca6099176bf7cf482b6278d533ff719d9626801fd153d2eb"
+    },
+    {
+      "assetId": "diagnostic-similar-q09-p01",
+      "assetPath": "hsmiddle/assets/similar/q09/page-1.png",
+      "bytes": 131736,
+      "sha256": "2e9e88453a79456dbd10c8aef5d4a486d1813e1288ae82abb1df7a72c4a50ddb"
+    },
+    {
+      "assetId": "diagnostic-similar-q09-p02",
+      "assetPath": "hsmiddle/assets/similar/q09/page-2.png",
+      "bytes": 109943,
+      "sha256": "ed78accd6b92e235851e515b793046bb60715ea1b03e97292bdc4d6a58049fd1"
+    },
+    {
+      "assetId": "diagnostic-similar-q09-p03",
+      "assetPath": "hsmiddle/assets/similar/q09/page-3.png",
+      "bytes": 82412,
+      "sha256": "559a4a28bda91ebe1261592ced73d7054ce79d382df50aae89afdad03e1e0d91"
+    },
+    {
+      "assetId": "diagnostic-similar-q09-p04",
+      "assetPath": "hsmiddle/assets/similar/q09/page-4.png",
+      "bytes": 38488,
+      "sha256": "849aac37840240f0d7daf4434547578dfb8d5c6116ec7764889b89bc72983afe"
+    },
+    {
+      "assetId": "diagnostic-similar-q09-p05",
+      "assetPath": "hsmiddle/assets/similar/q09/page-5.png",
+      "bytes": 211647,
+      "sha256": "a6a4d682164c6a95d61a297581e2266febc984f0b4b6fe73cc5c48ba5d519f34"
+    },
+    {
+      "assetId": "diagnostic-similar-q09-p06",
+      "assetPath": "hsmiddle/assets/similar/q09/page-6.png",
+      "bytes": 41765,
+      "sha256": "dfc4bb15d14cb843d88db1f2f296a6ead9f067255bac83c88962fc8c14532a01"
+    },
+    {
+      "assetId": "diagnostic-similar-q10-p01",
+      "assetPath": "hsmiddle/assets/similar/q10/page-1.png",
+      "bytes": 155685,
+      "sha256": "98813ccf9f53084f3c78caff758b9b04d0328e8c10f0ed25854db5d4c1f37730"
+    },
+    {
+      "assetId": "diagnostic-similar-q10-p02",
+      "assetPath": "hsmiddle/assets/similar/q10/page-2.png",
+      "bytes": 129375,
+      "sha256": "be217bdf325e1ab1a7d24abe0839269ff4bdbd1a095fea41baaa00252f1c6b32"
+    },
+    {
+      "assetId": "diagnostic-similar-q10-p03",
+      "assetPath": "hsmiddle/assets/similar/q10/page-3.png",
+      "bytes": 77215,
+      "sha256": "6b3bc673417b39a0e32a0e4769f6d3f1b3657d20af599d7956d69afb8c9c1c73"
+    },
+    {
+      "assetId": "diagnostic-similar-q10-p04",
+      "assetPath": "hsmiddle/assets/similar/q10/page-4.png",
+      "bytes": 33661,
+      "sha256": "c87f4fe2ec22fb0443562cf515042665c5a2092e3d6fc0af20b26f55ddaa9be7"
+    },
+    {
+      "assetId": "diagnostic-similar-q10-p05",
+      "assetPath": "hsmiddle/assets/similar/q10/page-5.png",
+      "bytes": 249542,
+      "sha256": "ce30b20c82963976511ff75d4729381bd13666e5ab8b313d53a2871e808f42ef"
+    },
+    {
+      "assetId": "diagnostic-similar-q10-p06",
+      "assetPath": "hsmiddle/assets/similar/q10/page-6.png",
+      "bytes": 164895,
+      "sha256": "5e684d0b1bd6065f8c7ffb26e274ee579c50c8417caf9ab4407e9c4c0c99bd4b"
+    },
+    {
+      "assetId": "diagnostic-similar-q11-p01",
+      "assetPath": "hsmiddle/assets/similar/q11/page-1.png",
+      "bytes": 106443,
+      "sha256": "082afc96448b58d1e519ae1e8b18db8dda4132d15904d76f0563f2579c8db3d3"
+    },
+    {
+      "assetId": "diagnostic-similar-q11-p02",
+      "assetPath": "hsmiddle/assets/similar/q11/page-2.png",
+      "bytes": 48539,
+      "sha256": "d094eb3da660fcb181aeb2f2fe28474feb79597edde3cfdc6e16c11b9a696ac6"
+    },
+    {
+      "assetId": "diagnostic-similar-q11-p03",
+      "assetPath": "hsmiddle/assets/similar/q11/page-3.png",
+      "bytes": 27460,
+      "sha256": "efeee815e3ebfafbf67ae37400af3029b817bfad8103ea5a8d2674896e139770"
+    },
+    {
+      "assetId": "diagnostic-similar-q11-p04",
+      "assetPath": "hsmiddle/assets/similar/q11/page-4.png",
+      "bytes": 187111,
+      "sha256": "ce3e6e9a0098ca768c2581045b1209e58e0fa825fecab8269fa40560c1bc5eea"
+    },
+    {
+      "assetId": "diagnostic-similar-q12-p01",
+      "assetPath": "hsmiddle/assets/similar/q12/page-1.png",
+      "bytes": 149727,
+      "sha256": "4be95fe4681e20b11209f424d8718abb3b6e6025f17d92a2094c567f3df62223"
+    },
+    {
+      "assetId": "diagnostic-similar-q12-p02",
+      "assetPath": "hsmiddle/assets/similar/q12/page-2.png",
+      "bytes": 44526,
+      "sha256": "05e7e279acb6c5a22a15877afc916aef62cba70bae41a6538adbfd9878a7c15a"
+    },
+    {
+      "assetId": "diagnostic-similar-q12-p03",
+      "assetPath": "hsmiddle/assets/similar/q12/page-3.png",
+      "bytes": 31168,
+      "sha256": "33ea4b51e7c2838947d026f03a6507ffdda9c62d0cf97cefc156692e28c13ce9"
+    },
+    {
+      "assetId": "diagnostic-similar-q12-p04",
+      "assetPath": "hsmiddle/assets/similar/q12/page-4.png",
+      "bytes": 136235,
+      "sha256": "f6fde2e07da9b5987d05dcb5c7eb0b1c9bf8f7bbaf215a0d6356ee9140303a04"
+    },
+    {
+      "assetId": "diagnostic-similar-q13-p01",
+      "assetPath": "hsmiddle/assets/similar/q13/page-1.png",
+      "bytes": 115760,
+      "sha256": "dd419c0eab02075c9f78bf27872e9026b2733c50371c62a4ebd2e4239be3290c"
+    },
+    {
+      "assetId": "diagnostic-similar-q13-p02",
+      "assetPath": "hsmiddle/assets/similar/q13/page-2.png",
+      "bytes": 138141,
+      "sha256": "52c221d64350646d19ccccf858de6bdd3234f79650f037fb5d55de9a0ae810bb"
+    },
+    {
+      "assetId": "diagnostic-similar-q13-p03",
+      "assetPath": "hsmiddle/assets/similar/q13/page-3.png",
+      "bytes": 71004,
+      "sha256": "e0264a63ef3b613d5a833600f4465059d7117d0f9db77d6cd107608f68ded483"
+    },
+    {
+      "assetId": "diagnostic-similar-q13-p04",
+      "assetPath": "hsmiddle/assets/similar/q13/page-4.png",
+      "bytes": 33740,
+      "sha256": "fbd053a9349c475e7aeb2a315b27a5a3f64aa31173180ec98ff24bea8a605074"
+    },
+    {
+      "assetId": "diagnostic-similar-q13-p05",
+      "assetPath": "hsmiddle/assets/similar/q13/page-5.png",
+      "bytes": 231794,
+      "sha256": "76db9b8ad6c48d87977f7830abcae3b620f85f6c77b304576b8d170c6621e49f"
+    },
+    {
+      "assetId": "diagnostic-similar-q13-p06",
+      "assetPath": "hsmiddle/assets/similar/q13/page-6.png",
+      "bytes": 111028,
+      "sha256": "8e52c7892f61314519108419257bebc9f5b2ab66f94c2f2e257601deee634476"
+    },
+    {
+      "assetId": "diagnostic-similar-q14-p01",
+      "assetPath": "hsmiddle/assets/similar/q14/page-1.png",
+      "bytes": 218909,
+      "sha256": "6a27bd3634a4808b0561955386e7f72e327504696c59cfb69b0f5698e5d4c477"
+    },
+    {
+      "assetId": "diagnostic-similar-q14-p02",
+      "assetPath": "hsmiddle/assets/similar/q14/page-2.png",
+      "bytes": 205054,
+      "sha256": "9b5e779aa8258172c61a0de23a7d85911d19bbcd9a804fe93b886b1cc69fd6ae"
+    },
+    {
+      "assetId": "diagnostic-similar-q14-p03",
+      "assetPath": "hsmiddle/assets/similar/q14/page-3.png",
+      "bytes": 142581,
+      "sha256": "7f947087787f2fc39da5b98a60c0c0de018a88527a07db68ff902056739b03dd"
+    },
+    {
+      "assetId": "diagnostic-similar-q14-p04",
+      "assetPath": "hsmiddle/assets/similar/q14/page-4.png",
+      "bytes": 49047,
+      "sha256": "66b9054247e6ac289bbadb1f45e3e91253b6ea9d4b5bbad8ad4a72951a7f178b"
+    },
+    {
+      "assetId": "diagnostic-similar-q14-p05",
+      "assetPath": "hsmiddle/assets/similar/q14/page-5.png",
+      "bytes": 225214,
+      "sha256": "7ee111543ad8e77bbce7092cc31779aabc3e7a8040bc75f47f41a206e633163e"
+    },
+    {
+      "assetId": "diagnostic-similar-q15-p01",
+      "assetPath": "hsmiddle/assets/similar/q15/page-1.png",
+      "bytes": 112350,
+      "sha256": "1a4f4ee96ce2b630e60759eb394230500d815e75db8b9d41e1d8052966e7856e"
+    },
+    {
+      "assetId": "diagnostic-similar-q15-p02",
+      "assetPath": "hsmiddle/assets/similar/q15/page-2.png",
+      "bytes": 97407,
+      "sha256": "725286869da8537ee4328f21d266932ca38fbbfa21d97ca578c7b63d798e0293"
+    },
+    {
+      "assetId": "diagnostic-similar-q15-p03",
+      "assetPath": "hsmiddle/assets/similar/q15/page-3.png",
+      "bytes": 96658,
+      "sha256": "a7e34b446926cebb30c708f4ecf6838b0a2e4ad5e3a5b967b678c99c305fc068"
+    },
+    {
+      "assetId": "diagnostic-similar-q15-p04",
+      "assetPath": "hsmiddle/assets/similar/q15/page-4.png",
+      "bytes": 66045,
+      "sha256": "1e65e9fbb43276c8c5f3c11e7f2c3b28476dc0fcd4d282839880e7d34fcb11e2"
+    },
+    {
+      "assetId": "diagnostic-similar-q15-p05",
+      "assetPath": "hsmiddle/assets/similar/q15/page-5.png",
+      "bytes": 217177,
+      "sha256": "562a063247433e08c72d3deab7c255fa910a383cec6802a552120e69154ea716"
+    },
+    {
+      "assetId": "diagnostic-similar-q15-p06",
+      "assetPath": "hsmiddle/assets/similar/q15/page-6.png",
+      "bytes": 97784,
+      "sha256": "3d9ed5405062421a28f01ea30d00aa27d1caf77df1641d86236e4028368cdce0"
+    },
+    {
+      "assetId": "diagnostic-similar-q16-p01",
+      "assetPath": "hsmiddle/assets/similar/q16/page-1.png",
+      "bytes": 169723,
+      "sha256": "f2c57dbf922b0882df246980a2914b2c8a5240ce1a8f79b7166b302bafa35174"
+    },
+    {
+      "assetId": "diagnostic-similar-q16-p02",
+      "assetPath": "hsmiddle/assets/similar/q16/page-2.png",
+      "bytes": 69901,
+      "sha256": "71f594d8cafdae5a6201c09b810ce723ed795e683bced20f7591f966e25c1199"
+    },
+    {
+      "assetId": "diagnostic-similar-q16-p03",
+      "assetPath": "hsmiddle/assets/similar/q16/page-3.png",
+      "bytes": 37914,
+      "sha256": "8c34cbaff3b3fd7a6c161535f42f98d76e092a3eaf0644015824d37e67d6baf7"
+    },
+    {
+      "assetId": "diagnostic-similar-q16-p04",
+      "assetPath": "hsmiddle/assets/similar/q16/page-4.png",
+      "bytes": 199243,
+      "sha256": "cb5e5f10dab8ad1eb672f98b6811e070f28101be7657b16dead768ccded14c12"
+    },
+    {
+      "assetId": "diagnostic-similar-q17-p01",
+      "assetPath": "hsmiddle/assets/similar/q17/page-1.png",
+      "bytes": 75137,
+      "sha256": "c1015fb3d2042efff197684d03f0d9efd21a00cb413ce06285366be25e789325"
+    },
+    {
+      "assetId": "diagnostic-similar-q17-p02",
+      "assetPath": "hsmiddle/assets/similar/q17/page-2.png",
+      "bytes": 58417,
+      "sha256": "a2f2b95243a92b6293d01ac5b10c46be62c5ce6fc0d39689126a7dd349eded21"
+    },
+    {
+      "assetId": "diagnostic-similar-q17-p03",
+      "assetPath": "hsmiddle/assets/similar/q17/page-3.png",
+      "bytes": 33244,
+      "sha256": "7110e03db66a3806509f76e7f38a3c36f0ca4e29a395e1286d978ea7e13ce23b"
+    },
+    {
+      "assetId": "diagnostic-similar-q17-p04",
+      "assetPath": "hsmiddle/assets/similar/q17/page-4.png",
+      "bytes": 243575,
+      "sha256": "5447846cc9476100ac249ec098830aeca4d021f18d684b6d51dc0f63cac63bc8"
+    },
+    {
+      "assetId": "diagnostic-similar-q18-p01",
+      "assetPath": "hsmiddle/assets/similar/q18/page-1.png",
+      "bytes": 181082,
+      "sha256": "4306745f1522ecbf33bc2edc63f575972df58ac8e30e4ea8946f570c91b3c8fd"
+    },
+    {
+      "assetId": "diagnostic-similar-q18-p02",
+      "assetPath": "hsmiddle/assets/similar/q18/page-2.png",
+      "bytes": 197279,
+      "sha256": "b0897dec4da226444f07b02c1446a46179519adc57e688e60bb5ebdc845af9ba"
+    },
+    {
+      "assetId": "diagnostic-similar-q18-p03",
+      "assetPath": "hsmiddle/assets/similar/q18/page-3.png",
+      "bytes": 87547,
+      "sha256": "7d2b973718440b14e1d3b3540a70415fd4a127229e6b64a41b09c47ea945d168"
+    },
+    {
+      "assetId": "diagnostic-similar-q18-p04",
+      "assetPath": "hsmiddle/assets/similar/q18/page-4.png",
+      "bytes": 38120,
+      "sha256": "3ff062d0b4ef21b0dfc55a4f50528bddefed5be727511c818ec7d7706916694b"
+    },
+    {
+      "assetId": "diagnostic-similar-q18-p05",
+      "assetPath": "hsmiddle/assets/similar/q18/page-5.png",
+      "bytes": 192435,
+      "sha256": "3c298d534e4c4079659cb11be662de4479aaa42c48cc63d1d41e4e57f2d19244"
+    },
+    {
+      "assetId": "diagnostic-similar-q18-p06",
+      "assetPath": "hsmiddle/assets/similar/q18/page-6.png",
+      "bytes": 41028,
+      "sha256": "f190b501e7a1c733ea6ba9f3cee07b7d5f63a4d696691f1211a763a774fe2b4b"
+    },
+    {
+      "assetId": "diagnostic-similar-q19-p01",
+      "assetPath": "hsmiddle/assets/similar/q19/page-1.png",
+      "bytes": 206088,
+      "sha256": "724e2fd2cc64954f6eab66fcc0423f2227c4edf53f4986a5c27f026a37cb829d"
+    },
+    {
+      "assetId": "diagnostic-similar-q19-p02",
+      "assetPath": "hsmiddle/assets/similar/q19/page-2.png",
+      "bytes": 155370,
+      "sha256": "0d531f4009ef12c370cc9eead665458a281dfc208b26c0175c140c255c9670cf"
+    },
+    {
+      "assetId": "diagnostic-similar-q19-p03",
+      "assetPath": "hsmiddle/assets/similar/q19/page-3.png",
+      "bytes": 31964,
+      "sha256": "6cf0d66d956cd94881717606de41eab9acc86ad00e36a47b5a6055268cfc81cb"
+    },
+    {
+      "assetId": "diagnostic-similar-q19-p04",
+      "assetPath": "hsmiddle/assets/similar/q19/page-4.png",
+      "bytes": 175780,
+      "sha256": "cdba6576b6cfca82edc100bc1311392240c5d41bd02af0e40a5e606614acfa33"
+    },
+    {
+      "assetId": "diagnostic-similar-q20-p01",
+      "assetPath": "hsmiddle/assets/similar/q20/page-1.png",
+      "bytes": 151243,
+      "sha256": "a41cf5525484e825e88c9c9ac4def46095a1ff1be36ae1a721bf9beb776884c3"
+    },
+    {
+      "assetId": "diagnostic-similar-q20-p02",
+      "assetPath": "hsmiddle/assets/similar/q20/page-2.png",
+      "bytes": 60256,
+      "sha256": "2e2f2f0019f43c2c1038fd18401a35324db707f4a282e11371d5aa823b759338"
+    },
+    {
+      "assetId": "diagnostic-similar-q20-p03",
+      "assetPath": "hsmiddle/assets/similar/q20/page-3.png",
+      "bytes": 29702,
+      "sha256": "0020674c43c0b65c4fc5b558f8e30363c0202c8f67a5c4984c265e8cc146a92a"
+    },
+    {
+      "assetId": "diagnostic-similar-q20-p04",
+      "assetPath": "hsmiddle/assets/similar/q20/page-4.png",
+      "bytes": 237663,
+      "sha256": "02c085f8df5287d67749fc032ff6c66b620a551339045d94ccae2f1b73fb46c9"
+    },
+    {
+      "assetId": "diagnostic-similar-q21-p01",
+      "assetPath": "hsmiddle/assets/similar/q21/page-1.png",
+      "bytes": 87019,
+      "sha256": "698c4c5091b8b8cb60ae27876b2e9f3ed4afca5aa7a27b35cb76e4d7a945f791"
+    },
+    {
+      "assetId": "diagnostic-similar-q21-p02",
+      "assetPath": "hsmiddle/assets/similar/q21/page-2.png",
+      "bytes": 23752,
+      "sha256": "74e21b90827fe04cf54a828dbf8150e9c106537f16cd7cb84b277baf9964695d"
+    },
+    {
+      "assetId": "diagnostic-similar-q21-p03",
+      "assetPath": "hsmiddle/assets/similar/q21/page-3.png",
+      "bytes": 89565,
+      "sha256": "a5f7a859c45959f2fa862de90ffa10eef03b5226b3536976a03abb35e28e1be2"
+    },
+    {
+      "assetId": "diagnostic-similar-q22-p01",
+      "assetPath": "hsmiddle/assets/similar/q22/page-1.png",
+      "bytes": 69434,
+      "sha256": "2fd4b116f51c2355fe207538f81344ee530784e92fd064fb613e991d303b45fb"
+    },
+    {
+      "assetId": "diagnostic-similar-q22-p02",
+      "assetPath": "hsmiddle/assets/similar/q22/page-2.png",
+      "bytes": 26519,
+      "sha256": "37e5a16fd6e498abc6859db25900c2634518b4bb0dba4c41c6ba968452770b05"
+    },
+    {
+      "assetId": "diagnostic-similar-q22-p03",
+      "assetPath": "hsmiddle/assets/similar/q22/page-3.png",
+      "bytes": 65913,
+      "sha256": "f47432bbf239073668d5bba049cb0fc172e71d3ce557160644e354af99ce7598"
+    },
+    {
+      "assetId": "diagnostic-similar-q23-p01",
+      "assetPath": "hsmiddle/assets/similar/q23/page-1.png",
+      "bytes": 174936,
+      "sha256": "f6c8e2b9b3e89ab5c715b3e5303449ac9dc27cc094c6e6923f67941c3daea983"
+    },
+    {
+      "assetId": "diagnostic-similar-q23-p02",
+      "assetPath": "hsmiddle/assets/similar/q23/page-2.png",
+      "bytes": 139209,
+      "sha256": "eefe79467b59f3f74fc4ab6cafbfe5afe0e098ce4372b0d7538362bb3ca4da07"
+    },
+    {
+      "assetId": "diagnostic-similar-q23-p03",
+      "assetPath": "hsmiddle/assets/similar/q23/page-3.png",
+      "bytes": 94471,
+      "sha256": "e6d12d9b249f4d049c61c09b6e43cc40f05a28161e2c99c1d77189d9c40c2fa6"
+    },
+    {
+      "assetId": "diagnostic-similar-q23-p04",
+      "assetPath": "hsmiddle/assets/similar/q23/page-4.png",
+      "bytes": 40275,
+      "sha256": "5a23bd78da2b5f6c852496c39d5dcc2d648759cbbb937850a3f49b259e5a8145"
+    },
+    {
+      "assetId": "diagnostic-similar-q23-p05",
+      "assetPath": "hsmiddle/assets/similar/q23/page-5.png",
+      "bytes": 217075,
+      "sha256": "57c6889d1afe2116ff93d89cd2f247cf363e80ad3a22021e035490ea5beab5d2"
+    },
+    {
+      "assetId": "diagnostic-similar-q23-p06",
+      "assetPath": "hsmiddle/assets/similar/q23/page-6.png",
+      "bytes": 81466,
+      "sha256": "0ecd9fd3d739e8788d589484d4b0385f2c7e450d2469ba0f33715caff571ad9e"
+    },
+    {
+      "assetId": "diagnostic-similar-q24-p01",
+      "assetPath": "hsmiddle/assets/similar/q24/page-1.png",
+      "bytes": 109135,
+      "sha256": "372310a628fee9765715a33d92b2909761c24aac40c26db4e2fb10c89df2b77f"
+    },
+    {
+      "assetId": "diagnostic-similar-q24-p02",
+      "assetPath": "hsmiddle/assets/similar/q24/page-2.png",
+      "bytes": 62155,
+      "sha256": "2f7704f386debf18cdcb74b03e9fa8b9619e9cdd879aec8d85cbbf998aa04467"
+    },
+    {
+      "assetId": "diagnostic-similar-q24-p03",
+      "assetPath": "hsmiddle/assets/similar/q24/page-3.png",
+      "bytes": 33776,
+      "sha256": "438f4f4c0eccd0831f63cec1f3b9c1d3d2f84ba2c585e9d29386ffc3243f5d61"
+    },
+    {
+      "assetId": "diagnostic-similar-q24-p04",
+      "assetPath": "hsmiddle/assets/similar/q24/page-4.png",
+      "bytes": 155079,
+      "sha256": "7c9bee5811d812102f73b5a822f8138c7c43a59100a9a867a4e29d80d6a7d0a6"
+    },
+    {
+      "assetId": "diagnostic-similar-q24-p05",
+      "assetPath": "hsmiddle/assets/similar/q24/page-5.png",
+      "bytes": 42640,
+      "sha256": "efcb6437b701bf21fceb8d8388f5f195eab77ce952589c86b7705ad140f7ee81"
+    },
+    {
+      "assetId": "diagnostic-similar-q25-p01",
+      "assetPath": "hsmiddle/assets/similar/q25/page-1.png",
+      "bytes": 131774,
+      "sha256": "55b0fea40477ff17bbd66191e0cd8e24c1943bed0ac94450a5dd40546667e8c6"
+    },
+    {
+      "assetId": "diagnostic-similar-q25-p02",
+      "assetPath": "hsmiddle/assets/similar/q25/page-2.png",
+      "bytes": 6978,
+      "sha256": "2a402b31eb11d870d8094057046dd218e12c55efe2d54df03c226dcc3ae25ab2"
+    },
+    {
+      "assetId": "diagnostic-similar-q25-p03",
+      "assetPath": "hsmiddle/assets/similar/q25/page-3.png",
+      "bytes": 93044,
+      "sha256": "d9197e2909869ed651c54997fb409ebe64963b341c9e0a8d11a7dcbbe5de12d7"
+    },
+    {
+      "assetId": "diagnostic-similar-q25-p04",
+      "assetPath": "hsmiddle/assets/similar/q25/page-4.png",
+      "bytes": 6978,
+      "sha256": "2a402b31eb11d870d8094057046dd218e12c55efe2d54df03c226dcc3ae25ab2"
+    },
+    {
+      "assetId": "diagnostic-similar-q26-p01",
+      "assetPath": "hsmiddle/assets/similar/q26/page-1.png",
+      "bytes": 173149,
+      "sha256": "c44b7bf54d50e3ea3801352f34a1a229f1a98756969244f1d33c70df9bb93a75"
+    },
+    {
+      "assetId": "diagnostic-similar-q26-p02",
+      "assetPath": "hsmiddle/assets/similar/q26/page-2.png",
+      "bytes": 55558,
+      "sha256": "d8bc49809c9f591720e214dc049e2b077fe26d07d50b28b4c5c80cc858ae7879"
+    },
+    {
+      "assetId": "diagnostic-similar-q26-p03",
+      "assetPath": "hsmiddle/assets/similar/q26/page-3.png",
+      "bytes": 30685,
+      "sha256": "1bd0bfe0ea5f4c9e7e2fc7ae21d894a5a8452c8ce7cdf08bdafb4555f4167c4a"
+    },
+    {
+      "assetId": "diagnostic-similar-q26-p04",
+      "assetPath": "hsmiddle/assets/similar/q26/page-4.png",
+      "bytes": 182728,
+      "sha256": "9579c6f0c14be7c796c3a927d7100ee50fa55e0c8cac5e87a4dec5a4e387d077"
+    },
+    {
+      "assetId": "diagnostic-similar-q27-p01",
+      "assetPath": "hsmiddle/assets/similar/q27/page-1.png",
+      "bytes": 117493,
+      "sha256": "e16f36089bbd37bdf4592ce06f70d95095a40c2b775a48077ce65a620c7483bc"
+    },
+    {
+      "assetId": "diagnostic-similar-q27-p02",
+      "assetPath": "hsmiddle/assets/similar/q27/page-2.png",
+      "bytes": 6978,
+      "sha256": "2a402b31eb11d870d8094057046dd218e12c55efe2d54df03c226dcc3ae25ab2"
+    },
+    {
+      "assetId": "diagnostic-similar-q27-p03",
+      "assetPath": "hsmiddle/assets/similar/q27/page-3.png",
+      "bytes": 133378,
+      "sha256": "5d1390ed10939928226b9b88f509f1142909e8182e8ea77a3eaddbbaa212044a"
+    },
+    {
+      "assetId": "diagnostic-similar-q27-p04",
+      "assetPath": "hsmiddle/assets/similar/q27/page-4.png",
+      "bytes": 6978,
+      "sha256": "2a402b31eb11d870d8094057046dd218e12c55efe2d54df03c226dcc3ae25ab2"
+    },
+    {
+      "assetId": "diagnostic-similar-q28-p01",
+      "assetPath": "hsmiddle/assets/similar/q28/page-1.png",
+      "bytes": 185564,
+      "sha256": "0e8405a9a488f94faf09693cd3b89e38d00a6a009a2e4ea568c6da2152004dfe"
+    },
+    {
+      "assetId": "diagnostic-similar-q28-p02",
+      "assetPath": "hsmiddle/assets/similar/q28/page-2.png",
+      "bytes": 173386,
+      "sha256": "50e8148ecd407c1d9ce0b09343f4168c7447e6dc43b8b08e71dd8b07ac2b306c"
+    },
+    {
+      "assetId": "diagnostic-similar-q28-p03",
+      "assetPath": "hsmiddle/assets/similar/q28/page-3.png",
+      "bytes": 127376,
+      "sha256": "51c2a3180f92481a53c18a2960318b3030c92f40218267411d168bd5ce1e4134"
+    },
+    {
+      "assetId": "diagnostic-similar-q28-p04",
+      "assetPath": "hsmiddle/assets/similar/q28/page-4.png",
+      "bytes": 6978,
+      "sha256": "2a402b31eb11d870d8094057046dd218e12c55efe2d54df03c226dcc3ae25ab2"
+    },
+    {
+      "assetId": "diagnostic-similar-q28-p05",
+      "assetPath": "hsmiddle/assets/similar/q28/page-5.png",
+      "bytes": 298347,
+      "sha256": "fb52023cd3853efdcbd57cc29809cdb5f7f6382f8fa31187cdcca67e1951d393"
+    },
+    {
+      "assetId": "diagnostic-similar-q28-p06",
+      "assetPath": "hsmiddle/assets/similar/q28/page-6.png",
+      "bytes": 382122,
+      "sha256": "0b00fcfba6ec953fd31464113a868ca79ff98dd5780a976869921a65cf4bcf27"
+    },
+    {
+      "assetId": "diagnostic-similar-q28-p07",
+      "assetPath": "hsmiddle/assets/similar/q28/page-7.png",
+      "bytes": 32270,
+      "sha256": "24f28c6886a226c142115c746a9618815b06ecb90bbba1fa3ff16028d03796c6"
+    },
+    {
+      "assetId": "diagnostic-similar-q28-p08",
+      "assetPath": "hsmiddle/assets/similar/q28/page-8.png",
+      "bytes": 6978,
+      "sha256": "2a402b31eb11d870d8094057046dd218e12c55efe2d54df03c226dcc3ae25ab2"
+    },
+    {
+      "assetId": "diagnostic-similar-q29-p01",
+      "assetPath": "hsmiddle/assets/similar/q29/page-1.png",
+      "bytes": 114976,
+      "sha256": "bec44d9bd072dfcd99716b61bd7a46e8ab2e4b78dbb23d2b5cec5b502274a207"
+    },
+    {
+      "assetId": "diagnostic-similar-q29-p02",
+      "assetPath": "hsmiddle/assets/similar/q29/page-2.png",
+      "bytes": 100330,
+      "sha256": "1131cd04f03f908a07d438770c8477878543fd7438385622fa2b38645fdd4136"
+    },
+    {
+      "assetId": "diagnostic-similar-q29-p03",
+      "assetPath": "hsmiddle/assets/similar/q29/page-3.png",
+      "bytes": 34602,
+      "sha256": "db3aa6b94a2690f9e19b5350bdba625ac9ac981d56ff7acc2692a6fc68651693"
+    },
+    {
+      "assetId": "diagnostic-similar-q29-p04",
+      "assetPath": "hsmiddle/assets/similar/q29/page-4.png",
+      "bytes": 153351,
+      "sha256": "25dc4178353bb6b2da522b390048ab864a9f19051e7d27a14a932a12876b7889"
+    },
+    {
+      "assetId": "diagnostic-similar-q30-p01",
+      "assetPath": "hsmiddle/assets/similar/q30/page-1.png",
+      "bytes": 154488,
+      "sha256": "52b8e066876d70a28dee021689a6bd31c9a90b9bf840234ba80470ef1df7ae47"
+    },
+    {
+      "assetId": "diagnostic-similar-q30-p02",
+      "assetPath": "hsmiddle/assets/similar/q30/page-2.png",
+      "bytes": 175501,
+      "sha256": "89bb26fa85b70226ce19459286ad2ab8ea0e0d520f4061c99cb12c50e5aa0e40"
+    },
+    {
+      "assetId": "diagnostic-similar-q30-p03",
+      "assetPath": "hsmiddle/assets/similar/q30/page-3.png",
+      "bytes": 140800,
+      "sha256": "f783d71d24cabb1b5e1fa115289d849b07466458b008939c3dda6ca0ce5bb700"
+    },
+    {
+      "assetId": "diagnostic-similar-q30-p04",
+      "assetPath": "hsmiddle/assets/similar/q30/page-4.png",
+      "bytes": 6978,
+      "sha256": "2a402b31eb11d870d8094057046dd218e12c55efe2d54df03c226dcc3ae25ab2"
+    },
+    {
+      "assetId": "diagnostic-similar-q30-p05",
+      "assetPath": "hsmiddle/assets/similar/q30/page-5.png",
+      "bytes": 274082,
+      "sha256": "70ec2151fb2138b5922fe1d3bf8aa1a20b805018967ee6bc92f9bdab8fd601d3"
+    },
+    {
+      "assetId": "diagnostic-similar-q30-p06",
+      "assetPath": "hsmiddle/assets/similar/q30/page-6.png",
+      "bytes": 299722,
+      "sha256": "d59832e36b9c6cf2452fc31fc58662188dae375de1da94229679ede590776ac1"
+    },
+    {
+      "assetId": "diagnostic-similar-q30-p07",
+      "assetPath": "hsmiddle/assets/similar/q30/page-7.png",
+      "bytes": 62350,
+      "sha256": "6614c67996e973de098a68d2ad11de62864403d1edf8fae4139afc5e5b58ec92"
+    },
+    {
+      "assetId": "diagnostic-similar-q30-p08",
+      "assetPath": "hsmiddle/assets/similar/q30/page-8.png",
+      "bytes": 6978,
+      "sha256": "2a402b31eb11d870d8094057046dd218e12c55efe2d54df03c226dcc3ae25ab2"
+    },
+    {
+      "assetId": "diagnostic-similar-q31-p01",
+      "assetPath": "hsmiddle/assets/similar/q31/page-1.png",
+      "bytes": 92441,
+      "sha256": "ae602db3710233811bd935790751fc84e72cd2b2c87aa7d8f682127d9a779b11"
+    },
+    {
+      "assetId": "diagnostic-similar-q31-p02",
+      "assetPath": "hsmiddle/assets/similar/q31/page-2.png",
+      "bytes": 25085,
+      "sha256": "be9ef6441daec5f9f8ad8a196df8c767449e4e8dc6c0beb01dfa8462715abfd3"
+    },
+    {
+      "assetId": "diagnostic-similar-q31-p03",
+      "assetPath": "hsmiddle/assets/similar/q31/page-3.png",
+      "bytes": 106732,
+      "sha256": "94ff2044b6e6e46fc7cdb1efce31cfafbfbb120ca59eb9cd7b0e531f5b56ada4"
+    },
+    {
+      "assetId": "diagnostic-similar-q32-p01",
+      "assetPath": "hsmiddle/assets/similar/q32/page-1.png",
+      "bytes": 113007,
+      "sha256": "5424412de232a05e5244e40edfe42a1ae26c163ee1c3e970bd747a635a9c3326"
+    },
+    {
+      "assetId": "diagnostic-similar-q32-p02",
+      "assetPath": "hsmiddle/assets/similar/q32/page-2.png",
+      "bytes": 91356,
+      "sha256": "4e3092280b30cee8c50a650cc3d669e1cf455e48eeb88c44065d57632fda440c"
+    },
+    {
+      "assetId": "diagnostic-similar-q32-p03",
+      "assetPath": "hsmiddle/assets/similar/q32/page-3.png",
+      "bytes": 111183,
+      "sha256": "4b72d7f513492c03a0195f31c9c6edd35eb372f9e1814630854a31addb4883a5"
+    },
+    {
+      "assetId": "diagnostic-similar-q32-p04",
+      "assetPath": "hsmiddle/assets/similar/q32/page-4.png",
+      "bytes": 104371,
+      "sha256": "4976054accbbe7b58ab5df730b94a26b798d42b3693978d7a5a5b281329c132a"
+    },
+    {
+      "assetId": "diagnostic-similar-q32-p05",
+      "assetPath": "hsmiddle/assets/similar/q32/page-5.png",
+      "bytes": 43216,
+      "sha256": "c78a98b9b676d509cda178516dff3fdd890d789ef126b06ada9196fba5259de6"
+    },
+    {
+      "assetId": "diagnostic-similar-q32-p06",
+      "assetPath": "hsmiddle/assets/similar/q32/page-6.png",
+      "bytes": 190268,
+      "sha256": "ee15c8aa5d63b7d1d565a473985e5253f0d9421f1d550b7fa910bb1fd8e46ca1"
+    },
+    {
+      "assetId": "diagnostic-similar-q32-p07",
+      "assetPath": "hsmiddle/assets/similar/q32/page-7.png",
+      "bytes": 234518,
+      "sha256": "6cc34a69b00f8d562ed14d20b39b2220a32fedeed669ab98f2685f33680e376d"
+    },
+    {
+      "assetId": "diagnostic-similar-q33-p01",
+      "assetPath": "hsmiddle/assets/similar/q33/page-1.png",
+      "bytes": 143688,
+      "sha256": "ec694f6eba47b3d7c411e407774ecfc980516c36af35f58d06ea3ff4cec7b3d7"
+    },
+    {
+      "assetId": "diagnostic-similar-q33-p02",
+      "assetPath": "hsmiddle/assets/similar/q33/page-2.png",
+      "bytes": 159979,
+      "sha256": "d1a8f4dc4b8ebc17b4526589073ce822d4e34cd8efe39484b8ddc3ed9c28fb27"
+    },
+    {
+      "assetId": "diagnostic-similar-q33-p03",
+      "assetPath": "hsmiddle/assets/similar/q33/page-3.png",
+      "bytes": 256991,
+      "sha256": "3ef632699e74faedaa68cd3fc09f93504e80a38241fc15259930bfc0edeb9159"
+    },
+    {
+      "assetId": "diagnostic-similar-q33-p04",
+      "assetPath": "hsmiddle/assets/similar/q33/page-4.png",
+      "bytes": 81477,
+      "sha256": "5a0608f8743b178e4df3ab2d680329257127aa040bba78f5fd009539595c29c5"
+    },
+    {
+      "assetId": "diagnostic-similar-q34-p01",
+      "assetPath": "hsmiddle/assets/similar/q34/page-1.png",
+      "bytes": 146003,
+      "sha256": "0e9b719b8bdaa7bf8c08e1740c49eccad4465c932d17b154d2f5eb34df2f50be"
+    },
+    {
+      "assetId": "diagnostic-similar-q34-p02",
+      "assetPath": "hsmiddle/assets/similar/q34/page-2.png",
+      "bytes": 45599,
+      "sha256": "8ecc83076497e042316cfa0b71c4c6a9656375c5aa7587ef58c543175e3a7444"
+    },
+    {
+      "assetId": "diagnostic-similar-q34-p03",
+      "assetPath": "hsmiddle/assets/similar/q34/page-3.png",
+      "bytes": 30431,
+      "sha256": "0b16f197cb5202255c147adb0e2882f19b632c6e318a19db6f804a395b0120e7"
+    },
+    {
+      "assetId": "diagnostic-similar-q34-p04",
+      "assetPath": "hsmiddle/assets/similar/q34/page-4.png",
+      "bytes": 140267,
+      "sha256": "816c1920782af15e4236b4bc64d618cdf3443380062430158d6c48c4b4e0cc6b"
+    },
+    {
+      "assetId": "diagnostic-similar-q35-p01",
+      "assetPath": "hsmiddle/assets/similar/q35/page-1.png",
+      "bytes": 175152,
+      "sha256": "739677cd238e306f0f537fcb55457530ed5ca1f15fb3bad2e1f8c6eee85ea699"
+    },
+    {
+      "assetId": "diagnostic-similar-q35-p02",
+      "assetPath": "hsmiddle/assets/similar/q35/page-2.png",
+      "bytes": 65044,
+      "sha256": "3398e2cac372e9f7b0fce5c9c3a70c0e9fb93e17ab40d69f687227b3656fe21d"
+    },
+    {
+      "assetId": "diagnostic-similar-q35-p03",
+      "assetPath": "hsmiddle/assets/similar/q35/page-3.png",
+      "bytes": 34894,
+      "sha256": "4494b69f1e54ec7a05fd4cb7c2f4d7935ec12994190369bc7fec0c189293e0c4"
+    },
+    {
+      "assetId": "diagnostic-similar-q35-p04",
+      "assetPath": "hsmiddle/assets/similar/q35/page-4.png",
+      "bytes": 254298,
+      "sha256": "9be1ca5715907c8eb6330f0f7ffda7c59ef65afa061df8f881f2d002dbbcee66"
+    },
+    {
+      "assetId": "diagnostic-similar-q36-p01",
+      "assetPath": "hsmiddle/assets/similar/q36/page-1.png",
+      "bytes": 261314,
+      "sha256": "8618c743c9e2499f18ebc7b1e65f6a03f6ae2830e0354ba84eb85c87ba19f54d"
+    },
+    {
+      "assetId": "diagnostic-similar-q36-p02",
+      "assetPath": "hsmiddle/assets/similar/q36/page-2.png",
+      "bytes": 156945,
+      "sha256": "aa5ca6588f79f7c521ab788b4e9fbb43a38fdf523ee5cb82da39c30283c88f00"
+    },
+    {
+      "assetId": "diagnostic-similar-q36-p03",
+      "assetPath": "hsmiddle/assets/similar/q36/page-3.png",
+      "bytes": 31088,
+      "sha256": "e5e75c7e3004fd92ea725c7d918eb2cf2ebf9706b7c1b76b4965127b95c70328"
+    },
+    {
+      "assetId": "diagnostic-similar-q36-p04",
+      "assetPath": "hsmiddle/assets/similar/q36/page-4.png",
+      "bytes": 207516,
+      "sha256": "ee0a61060f6975358b23603a1182a805784a6910afd87c49faab1f376140bec3"
+    },
+    {
+      "assetId": "diagnostic-similar-q37-p01",
+      "assetPath": "hsmiddle/assets/similar/q37/page-1.png",
+      "bytes": 122761,
+      "sha256": "ad99bd35d7adddf7e448f83a3c3de9651181347e6d19202bdad049dbb37f5f93"
+    },
+    {
+      "assetId": "diagnostic-similar-q37-p02",
+      "assetPath": "hsmiddle/assets/similar/q37/page-2.png",
+      "bytes": 25141,
+      "sha256": "f5e5f4e600d8a17717f75e12028aab48c484b533ef8f335a17c8bda37898c609"
+    },
+    {
+      "assetId": "diagnostic-similar-q37-p03",
+      "assetPath": "hsmiddle/assets/similar/q37/page-3.png",
+      "bytes": 117498,
+      "sha256": "edf3b7b49fcef0a2914d8a8bc8d376b49c55140f526c53781080804ceaf4928b"
+    },
+    {
+      "assetId": "diagnostic-similar-q38-p01",
+      "assetPath": "hsmiddle/assets/similar/q38/page-1.png",
+      "bytes": 76552,
+      "sha256": "29e7e279e7c85a4782c69a1a1f2d788ccbe37b8fa43db22935844742f598a1f6"
+    },
+    {
+      "assetId": "diagnostic-similar-q38-p02",
+      "assetPath": "hsmiddle/assets/similar/q38/page-2.png",
+      "bytes": 29753,
+      "sha256": "195534c342e920e35161405e0305da88594f3c7eaf4f1215f330200d6836d1aa"
+    },
+    {
+      "assetId": "diagnostic-similar-q38-p03",
+      "assetPath": "hsmiddle/assets/similar/q38/page-3.png",
+      "bytes": 29254,
+      "sha256": "7b8bd7cdc00e21ffc4da7afabf1e246a61b59a9a0d2e6023117f560919d7c303"
+    },
+    {
+      "assetId": "diagnostic-similar-q38-p04",
+      "assetPath": "hsmiddle/assets/similar/q38/page-4.png",
+      "bytes": 107777,
+      "sha256": "dcbdd5f52455a2385ab080d63da023e4cde83d362c02ffe07920c444ca92f309"
+    },
+    {
+      "assetId": "diagnostic-similar-q38-p05",
+      "assetPath": "hsmiddle/assets/similar/q38/page-5.png",
+      "bytes": 22969,
+      "sha256": "8c48c53e293718eef161fbf93e21d90a3c61dbee306350f892c94ba77ad46aa1"
+    },
+    {
+      "assetId": "diagnostic-similar-q39-p01",
+      "assetPath": "hsmiddle/assets/similar/q39/page-1.png",
+      "bytes": 87339,
+      "sha256": "a01da2c748a3acd3a2c3c9ff21d475de5d2341630c0b404e79fa45041e8e0d5e"
+    },
+    {
+      "assetId": "diagnostic-similar-q39-p02",
+      "assetPath": "hsmiddle/assets/similar/q39/page-2.png",
+      "bytes": 60414,
+      "sha256": "57557d003ae0966dd2a03bae7c02bde1072189e24fe1fbeef0dc42aacfa2f9fb"
+    },
+    {
+      "assetId": "diagnostic-similar-q39-p03",
+      "assetPath": "hsmiddle/assets/similar/q39/page-3.png",
+      "bytes": 28382,
+      "sha256": "d526473ec007108e7c47b99c8b03400e6ccfc9b0b769357b8b4eabb24bc053a2"
+    },
+    {
+      "assetId": "diagnostic-similar-q39-p04",
+      "assetPath": "hsmiddle/assets/similar/q39/page-4.png",
+      "bytes": 234451,
+      "sha256": "ee3501aa0227899be32727b9a155bd1c90ef0f38394f555e11c788b102ae4fb5"
+    },
+    {
+      "assetId": "diagnostic-similar-q40-p01",
+      "assetPath": "hsmiddle/assets/similar/q40/page-1.png",
+      "bytes": 180837,
+      "sha256": "4c6287c61c3819e142b4fd98f4e6698affaa154e458b9ac731cdce6996e4d2f7"
+    },
+    {
+      "assetId": "diagnostic-similar-q40-p02",
+      "assetPath": "hsmiddle/assets/similar/q40/page-2.png",
+      "bytes": 86432,
+      "sha256": "93fb1e745697df0279c36f269c163c34d88f820c2c32efd2722e18f578822149"
+    },
+    {
+      "assetId": "diagnostic-similar-q40-p03",
+      "assetPath": "hsmiddle/assets/similar/q40/page-3.png",
+      "bytes": 28418,
+      "sha256": "fe6a38ad264d4a96b49a001932ac3f208001e8a7e04c8b36cc3a7e90e5d59013"
+    },
+    {
+      "assetId": "diagnostic-similar-q40-p04",
+      "assetPath": "hsmiddle/assets/similar/q40/page-4.png",
+      "bytes": 247517,
+      "sha256": "117d38c633b318093d758ca58d7575e25d884d02e49eaa5fa292647d22304e31"
+    }
+  ]
+}

@@ -37,7 +37,7 @@ window.LESSONS['sl12'] = {
         'Echo lost her voice because she argued with Hera',
         'Narcissus was punished for admiring flowers in the forest',
         'The myth explains why mountains produce echoing sounds',
-        'The story shows the consequences of pride and unrequited love',
+        'The story shows the results of pride and unreturned love',
       ], 'D', 'The passage follows both Echo and Narcissus, showing how Echo\'s unreturned love and Narcissus\'s pride lead to tragic consequences. Option D captures the full scope of the myth.'],
 
       ['Recalling Facts and Details', 'According to the passage, what curse did Hera place on Echo?', [
@@ -65,7 +65,7 @@ window.LESSONS['sl12'] = {
         'Both were punished by the same goddess for the same offense',
         'Both fell in love with someone who loved them in return',
         'Both were eventually transformed into natural objects',
-        'Both suffered because of an inability to form a real two-way connection',
+        'Both suffered from being unable to form a real two-way bond',
       ], 'D', 'Echo could not speak her own words, making genuine communication impossible. Narcissus could only love his reflection, not a real person. Both were trapped in one-sided connections.'],
 
       ['Making Predictions', 'If Narcissus had shown kindness to Echo instead of rejecting her, what would MOST LIKELY have happened?', [
@@ -105,13 +105,13 @@ window.LESSONS['sl12'] = {
 
       ['Interpreting Figurative Language', 'What does the expression "Echo\'s voice outlasted her body like a shadow that survives the sun" most likely mean?', [
         'Echo\'s shadow grew larger and darker as she slowly faded away',
-        'Echo\'s voice continued to exist even after her physical form had vanished',
+        'Echo\'s voice went on existing after her body had vanished',
         'Shadows are more powerful than sunlight in ancient Greek belief',
         'Echo was protected from the sun\'s heat by her own shadow',
       ], 'B', 'The expression compares Echo\'s persistent voice to a shadow that remains even after the sun sets. Just as a shadow is a trace left by something physical, Echo\'s voice lingered long after her body was gone.'],
 
       ['Distinguishing Between Real and Make-believe', 'Which detail from the story could NOT happen in real life?', [
-        'A person physically transforming into a flower after staring at their reflection',
+        'A person turning into a flower after staring at their reflection',
         'A young man spending long hours gazing at his reflection in still water',
         'A woman losing her ability to speak freely due to an injury or illness',
         'People hearing echoing sounds when they call out in mountain valleys',
@@ -157,7 +157,7 @@ window.LESSONS['sl12'] = {
 
       ['Comparing and Contrasting', 'How is Leo SIMILAR to Narcissus from the myth?', [
         'Both were punished by powerful beings who were angry at their selfishness',
-        'Both became so focused on their own image that they neglected real connections',
+        'Both became so focused on their own image that they neglected real bonds',
         'Both eventually forgot what they actually looked like in real life',
         'Both fell deeply in love with someone who did not love them back',
       ], 'B', 'Narcissus was trapped by love for his reflection; Leo was trapped by love for his online image. Both lost touch with real relationships because of self-focused obsession.'],
@@ -194,13 +194,13 @@ window.LESSONS['sl12'] = {
         'To explain step by step how talent shows are judged in schools',
         'To entertain readers with a funny story about a student who lost his phone',
         'To describe the history and development of social media platforms for students',
-        'To show how an ancient myth connects to modern struggles with vanity and real relationships',
+        'To show how an ancient myth connects to modern struggles with vanity',
       ], 'D', 'The passage draws a direct comparison between Leo and Narcissus, using the modern story to echo the ancient myth\'s lesson about vanity and lost connections.'],
 
       ['Interpreting Figurative Language', 'What does the expression "Like Narcissus staring at his reflection, Leo was falling in love with an image that could not love him back" most likely mean?', [
         'Leo spent too much time staring at his own face in mirrors at school',
         'Leo had read the myth of Narcissus and was repeating his mistakes on purpose',
-        'Leo was so focused on his online image that he had lost touch with real relationships',
+        'Leo was so focused on his online image that he lost touch with real life',
         'The author believes social media is exactly as deadly as a deep forest pool',
       ], 'C', 'The comparison to Narcissus highlights that Leo\'s online profile — his photos and likes — is as hollow as a reflection. He cannot receive genuine love from an image.'],
 

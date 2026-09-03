@@ -127,6 +127,41 @@ revokedAt
 
 승인은 시험별 행으로 저장합니다. 정적 파일에는 이름이나 승인번호 원문을 넣지 않습니다.
 
+## UserExamLibrary
+
+사용자가 만든 시험은 문제·정답·해설·PDF를 복사해 저장하지 않습니다. 문항 ID와 현재 버전, 순서, 배점, 선택 조건, 재현용 시드만 담은 작은 `recipe`로 보관하고 실제 시험지는 열 때 다시 만듭니다.
+
+```text
+UserExamPlan
+  planId
+  maxSavedExamCount
+  maxRecentExamCount
+  temporaryRetentionDays
+
+UserExamEntitlement
+  kind = academy_semester | academy_all | all_learning
+  academyId?       # all_learning에는 없음
+  semesterId?      # academy_semester에만 있음
+
+UserExamRecipe
+  examId, ownerId
+  state = temporary | saved
+  createdAt, updatedAt, expiresAt?
+  generationMode = academy_prep | learning
+  selectionSnapshot = academyId? + semesterId + conditions
+  seed, parentExamId?
+  items[] = itemId + itemVersionId + order + score
+  layout? = paperSize + columns + itemsPerPage + fontScale
+```
+
+- `academy_prep`은 학원과 학기를 한 권한 행에서 함께 확인합니다. 서로 다른 권한 행의 학원과 학기를 섞어 허용하지 않습니다.
+- `academy_all`은 한 학원의 모든 학기를, `all_learning`은 학원 선택이 없는 일반 학습 시험을 허용합니다. `all_learning`으로 학원 대비 시험을 열 수 없습니다.
+- `temporary` 시험은 요금제의 보관 기간과 최근 목록 수를 넘으면 자동 정리합니다. `saved` 시험만 저장 개수 한도에 포함합니다.
+- 유사 시험은 부모 시험 ID, 문항 버전, 선택 조건, 파생 순서를 묶어 새 시드를 만듭니다. 같은 입력은 같은 파생 정보를 냅니다.
+- 브라우저 저장소는 최근 목록을 빨리 여는 캐시에만 사용합니다. 원본 레시피는 서버 저장소가 기준입니다.
+- Supabase에서는 사용자별 RLS를 적용하고, 관리자가 부여한 요금제·학원·학기 권한을 `user_metadata`가 아닌 별도 권한표에서 읽습니다.
+- 원문, 정답, 풀이, 원본 경로, Drive 경로, PDF 주소와 스캔 파일은 `recipe`에 넣지 않습니다.
+
 ## ItemReviewStatus
 
 ```text

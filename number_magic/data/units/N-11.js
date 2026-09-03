@@ -33,7 +33,7 @@ window.NM_UNITS['N-11'] = {
         desc:{ko:'빈 칸은 앞 수에 1을 더하면 돼요!',
           en:'For a blank, just add 1 to the number before!',
           zh:'空格就是前面的数加1！'},
-        mathSteps:['앞 수 + 1 = 빈 칸','점을 세어요','같은 수끼리 이어요!'],
+        mathSteps:[{ko:'앞 수 + 1 = 빈 칸',en:'Previous number + 1 = the blank',zh:'前一个数 + 1 = 空格'},{ko:'점을 세어요',en:'Count the dots',zh:'数一数点点'},{ko:'같은 수끼리 이어요!',en:'Match the same numbers!',zh:'把相同的数连起来！'}],
         result:{ko:'수 4와 점 4개는 쌍둥이!',en:'The number 4 and four dots are twins!',zh:'数字4和4个点是双胞胎！'} }
     ],
     rule:{ ko:'앞 수 +1! 점은 세어서 같은 수와 이어요!',

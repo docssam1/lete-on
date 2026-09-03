@@ -40,7 +40,7 @@ window.NM_UNITS['C-29'] = {
         desc:{ko:'200을 100명에게 나눠주면 한 명당 2개(200÷100=2)예요. 그런데 25명에게 나눠주면 <b>사람 수가 4분의 1</b>이 되니까 한 명이 받는 몫은 <b>네 배</b>가 돼요: 2×4=<b>8</b>. 나누는 사람 수가 4분의 1이 되면 몫은 그만큼 커져요 — 100=25×4니까 100으로 나눈 몫에 4를 곱하면 25로 나눈 몫이 나와요!',
               en:'Sharing 200 among 100 people gives 2 each (200÷100=2). But share it among 25 people — <b>a quarter as many</b> — and each share becomes <b>four times</b> bigger: 2×4=<b>8</b>. Since 100=25×4, multiplying the ÷100 result by 4 gives the ÷25 result!',
               zh:'200分给100人，每人2个(200÷100=2)。但分给25人——<b>人数只有四分之一</b>——每人分到的就变成<b>四倍</b>：2×4=<b>8</b>。因为100=25×4，把除以100的结果乘4就是除以25的结果！'},
-        mathSteps:['200 ÷ 100 = 2','사람 수 4분의 1 → 몫은 네 배','2 × 4 = 8'],
+        mathSteps:['200 ÷ 100 = 2',{ko:'사람 수 4분의 1 → 몫은 네 배',en:'\\text{a quarter of the people → 4× the share}',zh:'人数变四分之一 → 每人份变4倍'},'2 × 4 = 8'],
         result:{ko:'200÷25=8! 100으로 나눈 몫의 네 배.',en:'200÷25=8! Four times what ÷100 gives you.',zh:'200÷25=8！是除以100结果的四倍。'},
         book:null },
 

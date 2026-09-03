@@ -6,6 +6,29 @@ const dbCore = require("./build-dolpa-question-db.cjs");
 const dbAudit = require("./audit-dolpa-question-db.cjs");
 
 const DEFAULT_ALLOWED_STATUSES = Object.freeze(["source_verified", "approved"]);
+const LEARNER_FIT_DIMENSIONS = Object.freeze(["language", "representations", "prerequisites", "reasoningLoad", "responseMode"]);
+
+function learnerFitStatus(value) {
+  const status = typeof value === "string" ? value : value && value.status;
+  return ["pass", "pending", "fail"].includes(status) ? status : "pending";
+}
+
+function normalizeLearnerFit(value) {
+  const source = value && typeof value === "object" ? value : {};
+  const dimensions = Object.fromEntries(LEARNER_FIT_DIMENSIONS.map(name => [name, learnerFitStatus((source.dimensions || {})[name])]));
+  return Object.freeze({ overall: learnerFitStatus(source.overall), dimensions: Object.freeze(dimensions) });
+}
+
+function learnerFitPassed(value) {
+  const normalized = normalizeLearnerFit(value);
+  return normalized.overall === "pass" && LEARNER_FIT_DIMENSIONS.every(name => normalized.dimensions[name] === "pass");
+}
+
+function releaseBlockReason(question) {
+  if (!learnerFitPassed(question.learnerFit)) return "learner_fit_not_passed";
+  if (!question.answerCheck || question.answerCheck.status !== "verified") return "answer_check_not_verified";
+  return null;
+}
 
 function profileByToken(token) {
   const normalized = String(token || "").trim().toLowerCase();
@@ -41,9 +64,13 @@ function selectQuestions(database, profileTokens, allowedStatuses = DEFAULT_ALLO
   if (!profiles.length || profiles.some(profile => !profile)) throw new Error("시험형을 확인해 주세요.");
   const profileIds = new Set(profiles.map(profile => profile.profileId));
   const statuses = new Set(allowedStatuses);
-  const questions = database.questions.filter(question => question.usageProfiles.some(usage =>
-    profileIds.has(usage.profileId) && statuses.has(usage.status)
-  )).sort(compareQuestions).map(question => ({
+  const candidateInspection = statuses.has("candidate");
+  const questions = database.questions.filter(question => {
+    const matchingUsage = question.usageProfiles.filter(usage => profileIds.has(usage.profileId) && statuses.has(usage.status));
+    if (!matchingUsage.length) return false;
+    if (!releaseBlockReason(question)) return true;
+    return candidateInspection;
+  }).sort(compareQuestions).map(question => ({
     questionId: question.questionId,
     sourceId: question.sourceId,
     paperId: question.paperId,
@@ -56,12 +83,16 @@ function selectQuestions(database, profileTokens, allowedStatuses = DEFAULT_ALLO
     typeLabel: question.classification.typeLabel,
     difficulty: question.difficulty,
     responseFormat: question.responseFormat,
+    learnerFit: normalizeLearnerFit(question.learnerFit),
+    releaseEligible: releaseBlockReason(question) === null,
+    releaseBlockReason: releaseBlockReason(question),
     reviewChecks: {
       classification: question.classification.status === "verified",
       locator: question.locator.status === "verified",
       difficulty: question.difficulty.status === "verified",
       response: question.responseFormat.status === "verified",
       keyCheck: question.answerCheck.status === "verified",
+      learnerFit: learnerFitPassed(question.learnerFit),
       method: question.method.status === "verified",
       variants: question.variantSet.status === "verified",
       usageApproval: question.usageProfiles.some(usage => profileIds.has(usage.profileId) && usage.status === "approved")
@@ -89,4 +120,13 @@ function main(args) {
 }
 
 if (require.main === module) main(process.argv.slice(2));
-module.exports = Object.freeze({ DEFAULT_ALLOWED_STATUSES, profileByToken, compareQuestions, selectQuestions });
+module.exports = Object.freeze({
+  DEFAULT_ALLOWED_STATUSES,
+  LEARNER_FIT_DIMENSIONS,
+  normalizeLearnerFit,
+  learnerFitPassed,
+  releaseBlockReason,
+  profileByToken,
+  compareQuestions,
+  selectQuestions
+});

@@ -85,17 +85,17 @@
     SM: Object.freeze({
       programId: "SM",
       displayName: "생수",
-      paperStyle: "추천 샘플을 현행 교육과정으로 재분류한 공통수학 진단형",
-      defaultDuration: "확인 필요",
-      difficultyFlow: "삼각비·부등식의 기본에서 응용 심화까지 단계화",
-      reportTitle: "생수 추천문제 진단",
-      primaryAxes: Object.freeze(["단원 도달도", "세부유형", "풀이 구조", "난이도", "유사문제 준비도"]),
+      paperStyle: "중2-2·중3-1·중3-2를 대수 15문항과 기하 15문항으로 나누는 30문항 입반형",
+      defaultDuration: "180분 · 공통수학1 기본 입반",
+      difficultyFlow: "2022 구판 모의 참고지의 유형 구조를 유지하되 조건 결합·풀이 단계·역추론을 강화",
+      reportTitle: "생수 공통수학1 입반 진단",
+      primaryAxes: Object.freeze(["대수 수행률", "기하 수행률", "학년·학기", "단원·세부유형", "난이도", "유사문제 준비도"]),
       evaluationCriteria: Object.freeze([
-        "샘플 3회는 공식 실제 기출과 구분해 평가",
-        "현행 교육과정의 대단원·소단원·세부유형으로 다시 분류",
-        "공식 상품명·시간·커트 확인 전에는 합격 판정을 표시하지 않음"
+        "중2-2·중3-1·중3-2 범위와 대수 15·기하 15 균형을 함께 평가",
+        "2022 구판 모의 참고지 2회는 현행 공식 기출과 구분하고 범위 밖 문항은 대표본에서 제외",
+        "현재 시험이 구판보다 어렵다는 사용자 직접 관찰은 제작 난도 보정에만 쓰고 학원 공식 발표로 표시하지 않음"
       ]),
-      decisionPolicy: "추천 진단 전용 · 공식 입학 판정 없음"
+      decisionPolicy: "동일 공통수학1 기본 입반 공지에만 20/30 기준을 참고로 표시하며 대표본은 생수형 공통수학1 입반 대비 추정 구성으로 구분"
     })
   });
 
@@ -107,7 +107,8 @@
     "wm-middle21-basic-entry-r01": Object.freeze({ scope: "중1 대수 20 + 중1 기하 20 · 통계 제외", duration: "각 50분 · 전체 전형 창 120분", paperVariant: "원수학 중2-1 기본반 신입" }),
     "wm-algebra-geometry-diagnostic": Object.freeze({ scope: "중등대수 25 + 중등기하 25 목표", duration: "90분 + 20분 + 90분 공개 사례", paperVariant: "원수학 대수·기하" }),
     "ed-middle1-entry": Object.freeze({ scope: "초5 12 + 초6 18", duration: "확인 필요", paperVariant: "이든 중1 시작" }),
-    "ed-high-advance-entry": Object.freeze({ scope: "중2·중3 학기별 누적", duration: "확인 필요", paperVariant: "이든 고등선행" })
+    "ed-high-advance-entry": Object.freeze({ scope: "중2·중3 학기별 누적", duration: "확인 필요", paperVariant: "이든 고등선행" }),
+    "sm-common1-entry": Object.freeze({ scope: "중2-2·중3-1·중3-2 · 대수 15 + 기하 15", duration: "180분", paperVariant: "생수형 공통수학1 입반 대비 추정 구성" })
   });
 
   function resolve(examId, programId) {

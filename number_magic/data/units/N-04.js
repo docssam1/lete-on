@@ -33,7 +33,7 @@ window.NM_UNITS['N-04'] = {
         desc:{ko:'막대 4개는 그대로, 5번째는 사선으로 묶어요!',
           en:'Four strokes plain, the 5th bundled with a line!',
           zh:'四笔直接画，第五笔斜着捆一下！'},
-        mathSteps:['1,2,3,4 (막대 4개)','5번째는 사선으로 묶어요','6,7,8,9는 옆에 하나씩 더!'],
+        mathSteps:[{ko:'1,2,3,4 (막대 4개)',en:'1,2,3,4 (4 sticks)',zh:'1,2,3,4（4根小棒）'},{ko:'5번째는 사선으로 묶어요',en:'The 5th stick ties the bundle across',zh:'第5根斜着捆起来'},{ko:'6,7,8,9는 옆에 하나씩 더!',en:'6,7,8,9 add one more beside!',zh:'6,7,8,9在旁边再加一根！'}],
         result:{ko:'수는 숫자로도, 막대로도 나타내요!',en:'A number can look like this or that!',zh:'数字可以写成数字，也能画成符号！'} }
     ],
     rule:{ ko:'4개는 그대로, 5번째는 사선으로 묶어요!',

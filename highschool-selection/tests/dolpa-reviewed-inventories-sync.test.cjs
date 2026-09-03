@@ -59,3 +59,16 @@ test("같은 검수 기록을 다시 합쳐도 DB가 달라지지 않는다", ()
   const twice = syncModule.syncReviewedInventories(once);
   assert.deepEqual(twice, once);
 });
+
+test("기존 정답 이견 상태는 검수 완료 inventory로도 verified로 덮지 않는다", () => {
+  const input = database();
+  const target = input.questions.find(item => item.paperId === "DP-M22-202404" && item.number === 1);
+  target.answerCheck = { status: "disputed", evidence: ["private.answer.conflict"], note: "원본 답과 독립 검산이 일치하지 않음" };
+  target.usageProfiles = target.usageProfiles.map(profile => ({ ...profile, status: "candidate", evidence: [] }));
+  input.summary = builder.summarize(input);
+  const output = syncModule.syncReviewedInventories(input);
+  const preserved = output.questions.find(item => item.questionId === target.questionId);
+  assert.deepEqual(preserved.answerCheck, target.answerCheck);
+  assert.equal(preserved.usageProfiles.every(profile => profile.status === "candidate"), true);
+  assert.equal(auditModule.audit(output).ok, true);
+});

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>루트 사냥꾼 — 수의 마법 개념실험실</title>
+<!-- Numbers of Magic 개념실험실 6호: 제곱근을 "조여서" 잡는 실험 (M-15 짝꿍)
+     √를 설명만 듣던 것에서 → 넓이 슬라이더 · 이분법 사냥으로 직접 손에 넣는다.
+     콘텐츠 전부 창작. 3개 언어(nm_state_v1의 lang을 따름 — 앱과 같은 규약).
+     내레이션: Web Speech 폴백(언어별 보이스). -->
+<style>
+:root{
+  --blue:#16417C;--blue-deep:#0E2C57;--gold:#EAC996;--gold-deep:#C9A063;
+  --ink:#1A2233;--sub:#4a5468;--paper:#FBFAF7;--mist:#F1F0EC;--line:#E4E2DC;
+  --ok:#2E9E6B;--no:#D9534F;--root:#8a6d46;--root-deep:#6b5334;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Pretendard',-apple-system,sans-serif;color:var(--ink);
+  background:radial-gradient(900px 500px at 30% -10%,#f4efe4,transparent 60%),var(--paper);
+  min-height:100dvh;padding:18px 14px 60px}
+.wrap{max-width:640px;margin:0 auto}
+.hero{text-align:center;padding:10px 0 18px}
+.hero h1{font-size:clamp(24px,6.5vw,32px);font-weight:900;letter-spacing:-.03em;color:var(--root-deep)}
+.hero p{font-size:14px;color:var(--sub);margin-top:6px}
+.tabs{display:flex;gap:8px;justify-content:center;margin:14px 0 18px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:9px 16px;
+  font-size:14px;font-weight:800;color:var(--sub);cursor:pointer;font-family:inherit}
+.tab.on{background:var(--root-deep);border-color:var(--root-deep);color:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;
+  box-shadow:0 12px 30px -22px rgba(107,83,52,.4);display:none}
+.card.on{display:block}
+.card h2{font-size:17px;color:var(--root-deep);margin-bottom:12px}
+.story p{font-size:15px;line-height:1.75;margin-bottom:12px}
+.story b{background:linear-gradient(transparent 58%,rgba(245,217,139,.75) 58% 94%,transparent 94%);
+  padding:0 .12em;border-radius:3px;color:var(--blue-deep)}
+.story .legend{font-size:12.5px;color:var(--sub);background:var(--mist);border-radius:11px;padding:9px 12px}
+.speak{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;
+  font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;margin-bottom:12px}
+.btn{border:none;background:var(--root-deep);color:#fff;border-radius:13px;padding:12px 20px;
+  font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+.btn.gold{background:var(--gold-deep)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;justify-content:center}
+.stage{display:flex;justify-content:center;margin:8px 0}
+.caption{text-align:center;font-size:15px;font-weight:800;color:var(--root-deep);min-height:26px;margin-top:10px}
+.formula{text-align:center;font-size:clamp(17px,5vw,22px);font-weight:900;color:var(--ink);
+  margin-top:6px;min-height:30px;font-variant-numeric:tabular-nums}
+.formula b{color:var(--gold-deep)}
+.slider{width:min(340px,86vw);margin:10px auto 0;display:block;accent-color:var(--root-deep)}
+.qline{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;
+  font-size:16px;font-weight:800;margin-top:14px}
+.qline input{width:104px;padding:10px;border:2px solid var(--line);border-radius:11px;
+  font-size:18px;font-weight:800;text-align:center;font-family:inherit;color:var(--ink)}
+.qline input:focus{outline:none;border-color:var(--root-deep)}
+.fb{text-align:center;font-size:14.5px;font-weight:800;min-height:24px;margin-top:10px}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--no)}.fb.mid{color:var(--gold-deep)}
+.log{max-width:380px;margin:10px auto 0;font-size:13px;font-variant-numeric:tabular-nums}
+.log div{display:flex;justify-content:space-between;padding:4px 10px;border-radius:8px;margin-bottom:3px;background:var(--mist)}
+.log .hi{color:var(--no)}.log .lo{color:var(--blue)}
+.trophies{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 12px}
+.trophy{border:2px solid var(--line);border-radius:99px;padding:5px 12px;font-size:14px;
+  font-weight:900;color:#b8bcc6;background:var(--mist);opacity:.6;font-variant-numeric:tabular-nums}
+.trophy.got{border-color:var(--root-deep);background:#f6efe2;color:var(--root-deep);opacity:1}
+.trophy.got::before{content:'🌰 '}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<script src="lab-lang.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>🌰 <span data-t="title"></span></h1>
+    <p data-t="tag"></p>
+  </header>
+
+  <nav class="tabs" aria-label="stages">
+    <button class="tab on" data-p="p1">① <span data-t="tab1"></span></button>
+    <button class="tab" data-p="p2">② <span data-t="tab2"></span></button>
+    <button class="tab" data-p="p3">③ <span data-t="tab3"></span></button>
+  </nav>
+
+  <!-- ① 이야기 -->
+  <section class="card on story" id="p1">
+    <h2 data-t="s1h"></h2>
+    <button class="speak" data-say="story">🔊 <span data-t="listen"></span></button>
+    <div id="storyBody"></div>
+    <div class="legend" id="storyLegend"></div>
+    <div class="row"><button class="btn" data-go="p2" data-t="toP2"></button></div>
+  </section>
+
+  <!-- ② 넓이로 조준 -->
+  <section class="card" id="p2">
+    <h2 data-t="s2h"></h2>
+    <div class="caption" id="aimGoal"></div>
+    <div class="stage"><svg id="aimSvg" viewBox="0 0 260 200" style="width:min(320px,84vw)"></svg></div>
+    <input type="range" class="slider" id="aimSlider" min="100" max="400" value="150" step="1">
+    <div class="formula" id="aimFormula"></div>
+    <div class="fb" id="aimFb"></div>
+    <div class="row">
+      <button class="btn gold" id="aimNew" data-t="newTarget"></button>
+      <button class="btn" data-go="p3" data-t="toP3"></button>
+    </div>
+  </section>
+
+  <!-- ③ 이분법 사냥 -->
+  <section class="card" id="p3">
+    <h2 data-t="s3h"></h2>
+    <div class="trophies" id="trophyRow"></div>
+    <div class="caption" id="huntGoal"></div>
+    <div class="stage"><svg id="huntSvg" viewBox="0 0 340 90" style="width:min(380px,88vw)"></svg></div>
+    <div class="qline">
+      <span id="huntQ"></span>
+      <input id="huntIn" inputmode="decimal" maxlength="6">
+      <button class="btn" id="huntBtn" data-t="shoot"></button>
+    </div>
+    <div class="fb" id="huntFb"></div>
+    <div class="log" id="huntLog"></div>
+    <div class="row"><button class="btn gold" id="huntNew" data-t="newHunt"></button></div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* 언어는 공용 레이어(labs/lab-lang.js)가 nm_state_v1에서 읽어 온다 */
+var T=LabLang.T;
+
+var STR={
+  title:{ko:'루트 사냥꾼',en:'Root Hunter',zh:'求根猎人'},
+  tag:{ko:'√를 설명으로 듣지 말고, 조여서 직접 잡아 봐요.',en:'Don\'t just hear about √ — squeeze it and catch it yourself.',zh:'别只听√的讲解——亲手把它夹住抓到！'},
+  tab1:{ko:'이야기',en:'Story',zh:'故事'},
+  tab2:{ko:'넓이로 조준',en:'Aim by Area',zh:'用面积瞄准'},
+  tab3:{ko:'조여서 사냥',en:'Squeeze Hunt',zh:'夹逼狩猎'},
+  listen:{ko:'읽어 주기',en:'Read aloud',zh:'朗读'},
+  s1h:{ko:'네모를 거꾸로 묻는 문제',en:'The square question, asked backwards',zh:'把正方形反过来问'},
+  toP2:{ko:'넓이로 조준하러 가기 →',en:'Go aim by area →',zh:'去用面积瞄准 →'},
+  s2h:{ko:'변을 밀어 넓이를 명중시켜요',en:'Slide the side, hit the area',zh:'拖动边长，命中面积'},
+  newTarget:{ko:'🎯 새 목표',en:'🎯 New target',zh:'🎯 新目标'},
+  toP3:{ko:'사냥하러 가기 →',en:'Go hunting →',zh:'去狩猎 →'},
+  s3h:{ko:'√를 상자 안에 몰아넣기',en:'Corner √ inside a box',zh:'把√逼进夹子里'},
+  shoot:{ko:'쏘기',en:'Shoot',zh:'射击'},
+  newHunt:{ko:'🌰 새 사냥',en:'🌰 New hunt',zh:'🌰 新狩猎'},
+};
+
+LabLang.fill(STR); LabLang.title(STR.title);
+
+/* ── ① 이야기 본문 ── */
+var STORY={
+  ko:'<p>넓이가 <b>9</b>인 정사각형의 한 변은? 3×3=9니까 <b>3</b>이죠. 이렇게 넓이에서 변을 '
+    +'거꾸로 찾는 게 <b>제곱근(√)</b>이에요.</p>'
+    +'<p>그런데 넓이가 <b>7</b>이라면요? 2×2=4는 모자라고, 3×3=9는 넘쳐요. '
+    +'√7은 <b>2와 3 사이 어딘가</b>에 숨어 있어요. 자연수 중엔 답이 없죠!</p>'
+    +'<p>수학자들의 방법은 의외로 단순해요 — <b>양쪽에서 조여 가기</b>. 2.6²=6.76(모자람), '
+    +'2.7²=7.29(넘침) → √7은 2.6과 2.7 사이! 이렇게 상자를 반씩 좁히면 '
+    +'아무리 꼭꼭 숨은 루트도 잡을 수 있어요. 계산기 속 √ 버튼도 사실 이 사냥을 눈 깜짝할 새 하는 것뿐이랍니다.</p>',
+  en:'<p>A square has area <b>9</b> — how long is its side? 3×3=9, so <b>3</b>. Finding the side '
+    +'backwards from the area is the <b>square root (√)</b>.</p>'
+    +'<p>But what if the area is <b>7</b>? 2×2=4 is too small, 3×3=9 is too big. '
+    +'√7 hides <b>somewhere between 2 and 3</b> — no whole number works!</p>'
+    +'<p>The mathematicians\' trick is surprisingly simple: <b>squeeze from both sides</b>. '
+    +'2.6²=6.76 (too small), 2.7²=7.29 (too big) → √7 is between 2.6 and 2.7! Shrink the box '
+    +'step by step and even the best-hidden root gets caught. The √ button on a calculator just runs this very hunt in a blink.</p>',
+  zh:'<p>面积是<b>9</b>的正方形，边长是多少？3×3=9，所以是<b>3</b>。从面积反过来找边长，'
+    +'这就是<b>平方根(√)</b>。</p>'
+    +'<p>可要是面积是<b>7</b>呢？2×2=4不够，3×3=9又超了。√7藏在<b>2和3之间</b>——整数里没有答案！</p>'
+    +'<p>数学家的办法出奇地简单——<b>从两边夹逼</b>。2.6²=6.76（不够），2.7²=7.29（超了）→ '
+    +'√7在2.6和2.7之间！把夹子一步步收紧，再会藏的根也会被抓住。计算器上的√键，其实就是眨眼间做完这场狩猎。</p>'
+};
+var LEGEND={
+  ko:'※ √ 기호는 라틴어 radix(뿌리)의 첫 글자 r이 흘려 쓰이며 변한 것으로 전해져요. 나무(넓이)를 보고 뿌리(변)를 찾는 셈!',
+  en:'※ The √ sign is said to come from a hurried letter r, for the Latin radix, "root." See the tree (area), find the root (side)!',
+  zh:'※ 据说√来自拉丁语radix（根）的首字母r的连笔。看见树（面积），找出根（边长）！'
+};
+document.getElementById('storyBody').innerHTML=T(STORY);
+document.getElementById('storyLegend').innerHTML=T(LEGEND);
+
+/* ── 탭 ── */
+function show(id){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.p===id)});
+  document.querySelectorAll('.card').forEach(function(c){c.classList.toggle('on',c.id===id)});
+  window.speechSynthesis&&speechSynthesis.cancel();
+}
+document.querySelectorAll('.tab').forEach(function(t){t.onclick=function(){show(t.dataset.p)}});
+document.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){show(b.dataset.go)}});
+
+/* ── 읽어 주기 ── */
+LabLang.speak({
+  ko:'넓이가 9인 정사각형의 한 변은 3이에요. 넓이에서 변을 거꾸로 찾는 게 제곱근이에요. 넓이가 7이면? 2는 모자라고 3은 넘쳐요. 그래서 양쪽에서 조여 가요. 2.6은 모자라고 2.7은 넘치니, 루트 7은 그 사이! 상자를 좁힐수록 루트가 잡혀요.',
+  en:'A square of area nine has side three. Finding the side backwards from the area is the square root. If the area is seven, two is too small and three is too big. So we squeeze from both sides. 2.6 is too small, 2.7 is too big, so root seven is in between! The tighter the box, the closer the catch.',
+  zh:'面积为9的正方形边长是3。从面积反过来找边长就是平方根。面积是7呢？2不够，3超了。所以我们从两边夹逼。2.6不够，2.7超了，根号7就在中间！夹子越紧，抓得越准。'
+});
+
+/* ══ ② 넓이로 조준: 변 슬라이더 → 넓이 명중 ══ */
+var aimN=7, aimHit=false;
+var aimSvg=document.getElementById('aimSvg');
+var aimSlider=document.getElementById('aimSlider');
+function fmt(x){return (Math.round(x*100)/100).toString();}
+function aimGoalText(){
+  var m={ko:'목표: 넓이가 정확히 '+aimN+'인 정사각형 만들기',
+         en:'Goal: make a square with area exactly '+aimN,
+         zh:'目标：做出面积恰好是'+aimN+'的正方形'};
+  document.getElementById('aimGoal').textContent=T(m);
+}
+function drawAim(){
+  var s=aimSlider.value/100;            /* 변 1.00~4.00 */
+  var area=s*s;
+  var scale=44;                          /* 변 1 → 44px */
+  var px=s*scale;
+  var err=area-aimN;
+  var close=Math.abs(err)<0.05;
+  var col=close?'#2E9E6B':(err<0?'#16417C':'#D9534F');
+  aimSvg.innerHTML=
+    '<rect x="'+(130-px/2)+'" y="'+(108-px/2)+'" width="'+px+'" height="'+px+'" rx="6" '
+    +'fill="'+col+'" fill-opacity=".18" stroke="'+col+'" stroke-width="3"/>'
+    +'<text x="130" y="'+(108)+'" text-anchor="middle" dominant-baseline="middle" font-size="17" font-weight="800" fill="'+col+'">'+fmt(area)+'</text>'
+    +'<line x1="'+(130-px/2)+'" y1="'+(108+px/2+10)+'" x2="'+(130+px/2)+'" y2="'+(108+px/2+10)+'" stroke="#8a6d46" stroke-width="2.5"/>'
+    +'<text x="130" y="'+(108+px/2+26)+'" text-anchor="middle" font-size="13" font-weight="800" fill="#8a6d46">'+fmt(s)+'</text>';
+  document.getElementById('aimFormula').innerHTML=fmt(s)+' × '+fmt(s)+' = <b>'+fmt(area)+'</b>';
+  var fb=document.getElementById('aimFb');
+  if(close){
+    fb.className='fb ok';
+    fb.textContent=T({ko:'🎯 명중! √'+aimN+' ≈ '+fmt(s)+' — 변이 바로 제곱근이에요!',
+                      en:'🎯 Hit! √'+aimN+' ≈ '+fmt(s)+' — the side IS the square root!',
+                      zh:'🎯 命中！√'+aimN+' ≈ '+fmt(s)+'——边长就是平方根！'});
+    aimHit=true;
+  }else if(err<0){
+    fb.className='fb mid';
+    fb.textContent=T({ko:'아직 모자라요 — 변을 조금 늘려요',en:'Too small — push the side up a bit',zh:'还不够——把边长再拉大一点'});
+  }else{
+    fb.className='fb mid';
+    fb.textContent=T({ko:'넘쳤어요 — 변을 조금 줄여요',en:'Too big — pull the side back a bit',zh:'超了——把边长收回来一点'});
+  }
+}
+var AIM_TARGETS=[2,3,5,6,7,8,10,11,12,13];
+document.getElementById('aimNew').onclick=function(){
+  var next=AIM_TARGETS[Math.floor(Math.random()*AIM_TARGETS.length)];
+  if(next===aimN)next=AIM_TARGETS[(AIM_TARGETS.indexOf(next)+1)%AIM_TARGETS.length];
+  aimN=next;aimHit=false;
+  aimSlider.value=150;
+  aimGoalText();drawAim();
+};
+aimSlider.addEventListener('input',drawAim);
+aimGoalText();drawAim();
+
+/* ══ ③ 이분법 사냥: 추측 → 제곱 판정 → 구간이 조여진다 ══ */
+var TROPHIES=[2,3,5,6,7,8,10];
+function loadTr(){try{return JSON.parse(localStorage.getItem('nm_root_trophies')||'[]')}catch(e){return[]}}
+function saveTr(a){try{localStorage.setItem('nm_root_trophies',JSON.stringify(a))}catch(e){}}
+var got=loadTr();
+function drawTrophies(){
+  var r=document.getElementById('trophyRow');r.innerHTML='';
+  TROPHIES.forEach(function(n){
+    var d=document.createElement('span');
+    d.className='trophy'+(got.indexOf(n)>=0?' got':'');
+    d.textContent='√'+n;r.appendChild(d);
+  });
+}
+drawTrophies();
+
+var huntN=7, lo=0, hi=0, shots=0, caught=false;
+var huntSvg=document.getElementById('huntSvg');
+function newHunt(){
+  huntN=TROPHIES[Math.floor(Math.random()*TROPHIES.length)];
+  lo=Math.floor(Math.sqrt(huntN)); hi=lo+1; shots=0; caught=false;
+  document.getElementById('huntLog').innerHTML='';
+  document.getElementById('huntFb').textContent='';
+  document.getElementById('huntFb').className='fb';
+  var i=document.getElementById('huntIn');i.value='';i.disabled=false;
+  document.getElementById('huntBtn').disabled=false;
+  document.getElementById('huntGoal').textContent=
+    T({ko:'사냥감: √'+huntN+' — 지금은 '+lo+'과 '+hi+' 사이에 있어요',
+       en:'Prey: √'+huntN+' — right now it hides between '+lo+' and '+hi,
+       zh:'猎物：√'+huntN+'——它现在藏在'+lo+'和'+hi+'之间'});
+  document.getElementById('huntQ').textContent=T({ko:'추측:',en:'Guess:',zh:'猜测:'});
+  drawHunt();
+}
+function drawHunt(){
+  /* 구간 [floor√N, floor√N+1]을 340px 축에 그린다. lo/hi 괄호가 조여드는 게 핵심 그림 */
+  var base=Math.floor(Math.sqrt(huntN)), x0=24, x1=316;
+  function X(v){return x0+(v-base)*(x1-x0);}
+  var root=Math.sqrt(huntN);
+  var s='<line x1="'+x0+'" y1="52" x2="'+x1+'" y2="52" stroke="#1A2233" stroke-width="2.5"/>';
+  [0,0.5,1].forEach(function(t){
+    var v=base+t, x=X(v);
+    s+='<line x1="'+x+'" y1="46" x2="'+x+'" y2="58" stroke="#1A2233" stroke-width="2"/>'
+      +'<text x="'+x+'" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#4a5468">'+(Math.round(v*10)/10)+'</text>';
+  });
+  /* 조인 구간 — 금색 띠 */
+  s+='<rect x="'+X(lo)+'" y="44" width="'+Math.max(X(hi)-X(lo),2)+'" height="16" rx="4" fill="#F5D98B" fill-opacity=".55"/>';
+  /* lo/hi 집게 */
+  s+='<path d="M '+X(lo)+' 30 L '+X(lo)+' 52" stroke="#16417C" stroke-width="3" stroke-linecap="round"/>'
+    +'<text x="'+X(lo)+'" y="22" text-anchor="middle" font-size="11.5" font-weight="800" fill="#16417C">'+fmt(lo)+'</text>'
+    +'<path d="M '+X(hi)+' 30 L '+X(hi)+' 52" stroke="#D9534F" stroke-width="3" stroke-linecap="round"/>'
+    +'<text x="'+X(hi)+'" y="22" text-anchor="middle" font-size="11.5" font-weight="800" fill="#D9534F">'+fmt(hi)+'</text>';
+  /* 사냥감(진짜 √N)은 잡기 전엔 그림자만 */
+  if(caught){
+    s+='<circle cx="'+X(root)+'" cy="52" r="6" fill="#2E9E6B"/>'
+      +'<text x="'+X(root)+'" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#2E9E6B">√'+huntN+'</text>';
+  }else{
+    s+='<circle cx="'+X(root)+'" cy="52" r="5" fill="#8a6d46" fill-opacity=".25"/>';
+  }
+  huntSvg.innerHTML=s;
+}
+document.getElementById('huntBtn').onclick=function(){
+  var i=document.getElementById('huntIn'),fb=document.getElementById('huntFb');
+  var g=parseFloat(i.value);
+  if(isNaN(g)||g<=0){i.value='';return;}
+  var sq=g*g, log=document.getElementById('huntLog');
+  shots++;
+  var line=document.createElement('div');
+  if(Math.abs(sq-huntN)<0.02){          /* 소수 첫째 자리 명중 (예: 2.6²=6.76 → 7과 0.24 차...) */
+    /* 명중 판정은 아래 별도 — 여기는 제곱 로그만 */
+  }
+  if(sq<huntN){
+    line.innerHTML='<span>'+fmt(g)+'² = '+fmt(sq)+'</span><span class="lo">'+T({ko:'모자람 ↑',en:'too small ↑',zh:'不够 ↑'})+'</span>';
+    if(g>lo)lo=g;
+  }else{
+    line.innerHTML='<span>'+fmt(g)+'² = '+fmt(sq)+'</span><span class="hi">'+T({ko:'넘침 ↓',en:'too big ↓',zh:'超了 ↓'})+'</span>';
+    if(g<hi)hi=g;
+  }
+  log.prepend(line);
+  drawHunt();
+  /* 잡았다 = 구간 폭이 0.1 이하로 조여짐 */
+  if(hi-lo<=0.100001){
+    caught=true;drawHunt();
+    fb.className='fb ok';
+    fb.textContent=T({ko:'🌰 잡았다! √'+huntN+'은 '+fmt(lo)+'과 '+fmt(hi)+' 사이 — '+shots+'발 만에 사냥 성공!',
+                      en:'🌰 Caught! √'+huntN+' is between '+fmt(lo)+' and '+fmt(hi)+' — hunted down in '+shots+' shots!',
+                      zh:'🌰 抓到了！√'+huntN+'在'+fmt(lo)+'和'+fmt(hi)+'之间——'+shots+'枪完成狩猎！'});
+    i.disabled=true;document.getElementById('huntBtn').disabled=true;
+    if(got.indexOf(huntN)<0){got.push(huntN);saveTr(got);drawTrophies();}
+  }else{
+    fb.className='fb mid';
+    fb.textContent=T({ko:'상자가 좁아졌어요: '+fmt(lo)+' ~ '+fmt(hi)+' (폭 '+fmt(hi-lo)+') — 0.1까지 조이면 사냥 성공!',
+                      en:'The box tightened: '+fmt(lo)+' ~ '+fmt(hi)+' (width '+fmt(hi-lo)+') — squeeze to 0.1 to catch it!',
+                      zh:'夹子收紧了：'+fmt(lo)+' ~ '+fmt(hi)+'（宽'+fmt(hi-lo)+'）——夹到0.1就算抓住！'});
+  }
+  i.value='';i.focus();
+};
+document.getElementById('huntIn').addEventListener('keydown',function(e){
+  if(e.key==='Enter')document.getElementById('huntBtn').click();
+});
+document.getElementById('huntNew').onclick=newHunt;
+newHunt();
+})();
+</script>
+</body>
+</html>

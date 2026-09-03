@@ -35,9 +35,9 @@ window.NM_UNITS['H-13'] = {
       { tag:{ko:'① 0을 다 세면 단위가 보여요',en:'1) Count every zero to see the unit',zh:'① 数完所有0就能看出单位'},
         head:{ko:'1000 × 1000만?? 얼마인가요?',en:'1000 × 10,000,000?? What is it?',zh:'1000 × 1000万？？是多少呢？'},
         desc:{ko:'1000×1000만을 순간적으로 대답하기란 쉽지 않아요. 이럴 땐 <b>0의 개수를 세는 것</b>이 열쇠예요! 1000에는 0이 <b>3개</b>, 1000만에는 0이 <b>7개</b> — 다 더하면 0이 <b>10개</b>예요. 0이 4개씩 모일 때마다 만→억→조로 한 계단씩 올라가요: 0이 8개면 억, 0이 10개면 억보다 두 계단 위 — 100억! 실제로 1000×1000만=<b>100억</b>이에요.',
-              en:'Answering 1000×10,000,000 in a flash isn\'t easy — the key is <b>counting the zeros</b>! 1000 has <b>3</b> zeros, 10,000,000 has <b>7</b> — together, <b>10</b> zeros. Every 4 more zeros climbs one unit step: 만→억→조. 8 zeros means 억(hundred-million); 10 zeros lands two steps past that — 10 billion! Indeed, 1000×10,000,000=<b>10,000,000,000</b>.',
+              en:'Answering 1000×10,000,000 in a flash isn\'t easy — the key is <b>counting the zeros</b>! 1000 has <b>3</b> zeros, 10,000,000 has <b>7</b> — together, <b>10</b> zeros. Every 4 more zeros climbs one unit step: man→eok→jo. 8 zeros means eok (a hundred million); 10 zeros lands two steps past that — 10 billion! Indeed, 1000×10,000,000=<b>10,000,000,000</b>.',
               zh:'要马上答出1000×1000万可不容易——关键是<b>数0的个数</b>！1000有<b>3</b>个0，1000万有<b>7</b>个——加起来<b>10</b>个0。每多4个0就往上跳一级：万→亿→万亿。8个0是亿；10个0比亿再多跳一点——100亿！确实，1000×1000万=<b>100亿</b>。'},
-        mathSteps:['1000: 0이 3개','1000만: 0이 7개','3+7 = 10 (총 0의 개수)','0이 8개=억 → 100억'],
+        mathSteps:[{ko:'1000: 0이 3개',en:'1000: \\text{3 zeros}',zh:'1000：3个0'},{ko:'1000만: 0이 7개',en:'\\text{10 million: 7 zeros}',zh:'1000万：7个0'},{ko:'3+7 = 10 (총 0의 개수)',en:'3+7 = 10 \\text{ (zeros in all)}',zh:'3+7 = 10（0的总数）'},{ko:'0이 8개=억 → 100억',en:'\\text{8 zeros = 100 million → 10 billion}',zh:'8个0=亿 → 100亿'}],
         result:{ko:'1000×1000만=100억! 0의 개수만 세면 단위가 저절로 보여요.',en:'1000×10,000,000=10 billion! Just count the zeros to see the unit.',zh:'1000×1000万=100亿！数一数0，单位自然就出来了。'},
         book:{ko:'우리나라 수 단위는 4자리씩 끊어 읽어요(만·억·조), 영어권은 3자리씩 끊어요(thousand·million·billion) — 그래서 번역할 때 헷갈리기 쉬워요.',
               en:'Korean groups digits by 4 (ten-thousand, hundred-million, trillion), while English groups by 3 (thousand, million, billion) — that mismatch is why translating between them trips people up.',
@@ -48,7 +48,7 @@ window.NM_UNITS['H-13'] = {
         desc:{ko:'큰 수는 교실 밖에서도 계속 만나요. 컴퓨터의 1킬로바이트는 1000이 아니라 <b>1024(=2¹⁰)</b>예요! 나라 예산, 인구 수, 별까지의 거리도 전부 만·억·조 단위로 이야기해요. 0의 개수 세는 습관을 들이면, 어떤 큰 수를 만나도 "이게 억 단위구나, 조 단위구나" 바로 감이 와요.',
               en:'Big numbers show up outside the classroom too. A computer\'s kilobyte isn\'t 1000 — it\'s <b>1024 (=2¹⁰)</b>! National budgets, populations, and distances to stars are all discussed in these huge units. Once you build the habit of counting zeros, any big number instantly tells you its scale.',
               zh:'大数在课堂外也随处可见。电脑里的1千字节不是1000，而是<b>1024（=2¹⁰）</b>！国家预算、人口、到星星的距离，都用这些巨大的单位来说。养成数0的习惯后，遇到任何大数都能立刻感觉出它的量级。'},
-        mathSteps:['2¹⁰ = 1024 (컴퓨터의 1킬로바이트)'],
+        mathSteps:[{ko:'2¹⁰ = 1024 (컴퓨터의 1킬로바이트)',en:'2¹⁰ = 1024 \\text{ (a computer kilobyte)}',zh:'2¹⁰ = 1024（电脑的1KB）'}],
         result:{ko:'큰 수를 다루는 감각은 교실 밖에서도 계속 쓰여요.',en:'A feel for big numbers keeps being useful outside the classroom.',zh:'处理大数的直觉走出课堂也一样有用。'},
         book:{ko:'경시의 탑에서는 억·조까지 다뤘지만, 그 위로도 경(京)·해(垓)처럼 단위가 계속 이어져요 — 끝없이 큰 수가 있다는 뜻이에요.',
               en:'The Tower reaches up to trillion, but Korean has even bigger units above that — a hint that numbers can grow without end.',
@@ -61,9 +61,9 @@ window.NM_UNITS['H-13'] = {
 
   check:{
     fills:[
-      { tex:'10000 \\times 10000 = \\square\\,\\text{(억)}', answer:1,
+      { tex:{ko:'10000 \\times 10000 = \\square\\,\\text{(억)}',en:'10000 \\times 10000 = \\square\\,\\text{(in eok)}',zh:'10000 \\times 10000 = \\square\\,\\text{(亿)}'}, answer:1,
         hint:{ ko:'0이 4+4=8개 → 억 1개', en:'zeros 4+4=8 → 1 hundred-million', zh:'0是4+4=8个 → 1亿' } },
-      { tex:'100 \\times 1000000 = \\square\\,\\text{(억)}', answer:1,
+      { tex:{ko:'100 \\times 1000000 = \\square\\,\\text{(억)}',en:'100 \\times 1000000 = \\square\\,\\text{(in eok)}',zh:'100 \\times 1000000 = \\square\\,\\text{(亿)}'}, answer:1,
         hint:{ ko:'0이 2+6=8개 → 억 1개', en:'zeros 2+6=8 → 1 hundred-million', zh:'0是2+6=8个 → 1亿' } }
     ],
     open:{ ko:'100만×100만을 0의 개수로 풀고, 몇 조인지 말해 봐요.',

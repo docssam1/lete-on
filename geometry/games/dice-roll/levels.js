@@ -80,24 +80,37 @@ function makeFaceProblem({ id, level, rows, cols, start, directions, orientation
   };
 }
 
+function orientationForAnswer(directions, faceKey, answer, seed) {
+  const orientationFace = faceKey === "front" ? "south" : faceKey === "right" ? "east" : "top";
+  const matches = orientations.filter((orientation) => rollMany(orientation, directions)[orientationFace] === answer);
+  return matches[seed % matches.length];
+}
+
 const oneRollDirections = ["N", "E", "S", "W", "E", "N", "W", "S", "N", "E"];
-const level1 = oneRollDirections.map((direction, index) => makeFaceProblem({
-  id: `dice-l1-${String(index + 1).padStart(2, "0")}`, level: 1, rows: 3, cols: 3,
-  start: direction === "N" ? [1, 1] : direction === "S" ? [1, 1] : direction === "E" ? [1, 0] : [1, 2],
-  directions: [direction], orientation: orientations[(index * 5) % orientations.length], faceKey: "top",
-  sourceType: "attached-source; one-grid-step dice roll"
-}));
+const balancedAnswers = [1, 2, 3, 4, 5, 6, 1, 2, 3, 4];
+const level1 = oneRollDirections.map((direction, index) => {
+  const directions = [direction];
+  return makeFaceProblem({
+    id: `dice-l1-${String(index + 1).padStart(2, "0")}`, level: 1, rows: 3, cols: 3,
+    start: direction === "N" ? [1, 1] : direction === "S" ? [1, 1] : direction === "E" ? [1, 0] : [1, 2],
+    directions, orientation: orientationForAnswer(directions, "top", balancedAnswers[index], index), faceKey: "top",
+    sourceType: "internal-variation; user-attached example pattern: one-grid-step dice roll"
+  });
+});
 
 const shortRoutes = [
   ["S", "E"], ["E", "N"], ["N", "W"], ["W", "S"], ["S", "E", "N"],
   ["E", "S", "W"], ["N", "E", "S"], ["W", "N", "E"], ["S", "S", "E"], ["E", "E", "N"]
 ];
 const shortStarts = [[0,0],[2,0],[2,2],[0,2],[0,0],[0,0],[2,0],[2,2],[0,0],[2,0]];
-const level2 = shortRoutes.map((directions, index) => makeFaceProblem({
-  id: `dice-l2-${String(index + 1).padStart(2, "0")}`, level: 2, rows: 3, cols: 3,
-  start: shortStarts[index], directions, orientation: orientations[(index * 7 + 3) % orientations.length],
-  faceKey: ["top", "front", "right"][index % 3], sourceType: "attached-source; consecutive grid dice rolls"
-}));
+const level2 = shortRoutes.map((directions, index) => {
+  const faceKey = ["top", "front", "right"][index % 3];
+  return makeFaceProblem({
+    id: `dice-l2-${String(index + 1).padStart(2, "0")}`, level: 2, rows: 3, cols: 3,
+    start: shortStarts[index], directions, orientation: orientationForAnswer(directions, faceKey, balancedAnswers[index], index + 3),
+    faceKey, sourceType: "internal-variation; user-attached example pattern: consecutive grid dice rolls"
+  });
+});
 
 const loopRoutes = [
   { start:[1,0], route:["S","E","N"], turn:"counterclockwise" },
@@ -135,7 +148,7 @@ const level3 = loopRoutes.map((spec, index) => {
     id:`dice-l3-${String(index + 1).padStart(2, "0")}`, level:3, interaction:"orientation-answer",
     rows:3, cols:3, path:pathFrom(spec.start, spec.route), directions:spec.route, turn:spec.turn,
     startOrientation, finalOrientation, choices, answer:choices.findIndex((choice) => visibleKey(choice) === visibleKey(finalOrientation)),
-    sourceRef:"attached-source; clockwise and counterclockwise dice path"
+    sourceRef:"internal-variation; user-attached example pattern: clockwise and counterclockwise dice path"
   };
 });
 
@@ -145,11 +158,14 @@ const longRoutes = [
   ["W","S","S","E","N","E"], ["E","E","S","S","W","N"], ["S","E","N","E","S","W"]
 ];
 const longStarts = [[1,0],[0,0],[2,0],[3,2],[1,0],[0,2],[3,0],[0,2],[0,0],[0,0]];
-const level4 = longRoutes.map((directions, index) => makeFaceProblem({
-  id:`dice-l4-${String(index + 1).padStart(2, "0")}`, level:4, rows:4, cols:4,
-  start:longStarts[index], directions, orientation:orientations[(index * 13 + 1) % orientations.length],
-  faceKey:["front","right","top","right","front"][index % 5], sourceType:"attached-source extension; long grid dice route"
-}));
+const level4 = longRoutes.map((directions, index) => {
+  const faceKey = ["front","right","top","right","front"][index % 5];
+  return makeFaceProblem({
+    id:`dice-l4-${String(index + 1).padStart(2, "0")}`, level:4, rows:4, cols:4,
+    start:longStarts[index], directions, orientation:orientationForAnswer(directions, faceKey, balancedAnswers[index], index + 7),
+    faceKey, sourceType:"internal-variation; user-attached example pattern: long grid dice route"
+  });
+});
 
 const reverseRouteSets = [
   [["E","S"],["S","E"],["E","E"]], [["N","W"],["W","N"],["N","N"]],
@@ -170,15 +186,15 @@ const level5 = reverseRouteSets.map((routes, index) => {
     id:`dice-l5-${String(index + 1).padStart(2, "0")}`, level:5, interaction:"route-answer",
     rows:4, cols:4, path:[[...reverseStarts[index]]], directions:[], startOrientation, finalOrientation,
     routeChoices:routes, choices:routes, answer:correctIndex,
-    sourceRef:"attached-source extension; infer a dice route from its final faces"
+    sourceRef:"internal-variation; user-attached example pattern: infer a dice route from its final faces"
   };
 });
 
 export const levels = [
-  { id:1, band:"입문", title:"한 칸 굴리기", subtitle:"한 번 굴린 뒤 윗면 찾기", problems:level1 },
-  { id:2, band:"입문", title:"이어 굴리기", subtitle:"두세 칸의 면 변화 따라가기", problems:level2 },
+  { id:1, band:"초급", title:"한 칸 굴리기", subtitle:"한 번 굴린 뒤 윗면 찾기", problems:level1 },
+  { id:2, band:"초급", title:"이어 굴리기", subtitle:"두세 칸의 면 변화 따라가기", problems:level2 },
   { id:3, band:"초급", title:"시계 방향 돌기", subtitle:"시계·반시계 경로의 눈 변화", problems:level3 },
-  { id:4, band:"초급", title:"격자 길 따라가기", subtitle:"긴 경로의 앞·오른쪽 면 추적", problems:level4 },
+  { id:4, band:"중급", title:"격자 길 따라가기", subtitle:"긴 경로의 앞·오른쪽 면 추적", problems:level4 },
   { id:5, band:"중급", title:"거꾸로 경로 찾기", subtitle:"도착한 주사위를 보고 이동 추리", problems:level5 }
 ];
 

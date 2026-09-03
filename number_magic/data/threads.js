@@ -1697,6 +1697,15 @@ WP4:{ name:{ko:'문장제 — 식으로 나타내기',en:'Word Problems — Writ
   levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
           {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
           {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
+WP5:{ name:{ko:'문장제 — 점검하기',en:'Word Problems — Check Your Work',zh:'应用题 — 检查'},
+  gen:'wp5_check', prereq:['WP4'],
+  concept:{ko:'답을 구했으면 끝이 아니에요. 두 가지를 다시 봐요. 첫째, 연산을 바르게 골랐나 — 계산이 맞아도 더하기 자리에 빼기를 썼으면 틀린 답이에요. 둘째, 그 답이 무엇을 나타내나 — "17"이 지금 가진 수인지 더 받은 수인지 말할 수 있어야 해요. 계산하기 전에 어림해 두면 더 쉬워요: 더하면 처음보다 커지고, 빼면 작아져요.',
+    en:'Getting an answer is not the end. Check two things. First, did you pick the right operation? An answer can be calculated correctly and still be wrong if you subtracted where you should have added. Second, what does the answer stand for? You should be able to say whether 17 is what she has now or what she was given. Estimating first makes this easier: adding makes it bigger than you started with, subtracting makes it smaller.',
+    zh:'算出答案还不算完，要再看两件事。第一，运算选对了吗——就算算得对，该加的地方用了减，答案也是错的。第二，这个答案表示什么——要能说出17是现在有的数，还是又得到的数。先估一估会更容易：加会比原来大，减会比原来小。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
+          {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

@@ -9,6 +9,7 @@ import {
   problemSignature,
   validateLevels
 } from "./levels.js";
+import { auditSomaContent } from "./soma-cube-content-audit.mjs";
 
 const cellKey = (cell) => cell.join(",");
 const target = new Set(CUBE_TARGET.map(cellKey));
@@ -18,6 +19,11 @@ assert.equal(ROTATIONS.length, 24);
 assert.equal(PIECES.reduce((sum, piece) => sum + piece.cells.length, 0), 27);
 assert.equal(new Set(PIECES.map((piece) => canonical(piece.cells))).size, 7);
 assert.deepEqual(levels.map((level) => level.stage), ["키즈", "Pre", "입문", "초급", "중급"]);
+assert.deepEqual(levels.map((level) => level.difficulty), ["하", "하", "중", "중", "상"]);
+assert.deepEqual(
+  (({ levels: levelCount, problems, independentRotations, distinctPieces }) => ({ levelCount, problems, independentRotations, distinctPieces }))(auditSomaContent()),
+  { levelCount: 5, problems: 50, independentRotations: 24, distinctPieces: 7 }
+);
 
 for (const level of levels) {
   assert.equal(level.problems.length, 10, `level ${level.id} problem count`);
@@ -56,4 +62,16 @@ for (const level of levels) {
 assert.deepEqual([...new Set(levels[3].problems.map((problem) => problem.fixed.length))].sort(), [2, 3, 4]);
 assert.deepEqual([...new Set(levels[4].problems.map((problem) => problem.fixed.length))].sort(), [1, 2]);
 
-console.log("Soma Cube self-test passed: 5 stages, 50 unique challenges, 24 rotations, two verified final assemblies.");
+const brokenGround = levels.map((level) => ({ ...level, problems: structuredClone(level.problems) }));
+brokenGround[1].problems[9].target = brokenGround[1].problems[9].target.map(([x, y, z]) => [x, y + 1, z]);
+brokenGround[1].problems[9].reference = brokenGround[1].problems[9].reference.map((placement) => ({
+  ...placement,
+  cells: placement.cells.map(([x, y, z]) => [x, y + 1, z])
+}));
+assert.throws(() => auditSomaContent(brokenGround), /does not touch the floor/);
+
+const brokenReasoning = levels.map((level) => ({ ...level, problems: structuredClone(level.problems) }));
+brokenReasoning[0].problems[0].reasoningSteps = 0;
+assert.throws(() => auditSomaContent(brokenReasoning), /needs reasoningSteps/);
+
+console.log("Soma Cube self-test passed: 5 stages, 50 independently audited challenges, 24 rotations, grounded builds, and two verified final assemblies.");

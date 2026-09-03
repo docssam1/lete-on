@@ -28,7 +28,7 @@ window.NM_UNITS['B-15'] = {
         desc:{ko:'7단과 9단이 만나는 곳: <b>7×9=63</b>! 곱셈은 순서를 바꿔도 결과가 같아요. 교환법칙 덕분에 두 단을 배우면 사실 두 배의 곱셈식을 알게 되는 거예요!',
               en:"Where 7s and 9s meet: <b>7×9=63</b>! Multiplication is commutative — swap the order and the result stays the same. Knowing both tables means you cover twice as many facts!",
               zh:'7和9的交汇点：<b>7×9=63</b>！乘法满足交换律——交换顺序结果不变。掌握这两个口诀，实际上记住了双倍数量的乘法事实！'},
-        mathSteps:['7×9 = 63','9×7 = 63','교환법칙: 순서 바꿔도 같아요!'],
+        mathSteps:['7×9 = 63','9×7 = 63',{ko:'교환법칙: 순서 바꿔도 같아요!',en:'\\text{commutative: order does not matter!}',zh:'交换律：换顺序也一样！'}],
         result:{ko:'7×9와 9×7은 모두 63! 하나를 외우면 다른 것도 자동으로 알아요.', en:'7×9 and 9×7 are both 63! Know one and you know the other automatically.', zh:'7×9和9×7都等于63！知道一个就自动知道另一个。'},
         book:{ko:'교환법칙: a×b = b×a. 7단과 9단을 각 9개씩 배우면, 교환법칙으로 18쌍 36가지 곱셈식을 커버해요.', en:'Commutative property: a×b = b×a. Learn 9 facts each for 7s and 9s; commutativity doubles your coverage.', zh:'交换律：a×b = b×a。学会7和9各9个事实；利用交换律覆盖范围翻倍。'} },
 
@@ -37,7 +37,7 @@ window.NM_UNITS['B-15'] = {
         desc:{ko:'모르는 문제가 나왔을 때! <b>7단이면 이전 답+7</b>, <b>9단이면 10배에서 n 빼기</b>. 두 가지 전략을 기억하면 어떤 문제도 풀 수 있어요!',
               en:"When you're stuck! <b>For 7s, add 7 to the previous answer</b>; <b>for 9s, multiply by 10 then subtract n</b>. Two strategies to solve any problem!",
               zh:'遇到不会的题！<b>7的口诀就在前一个答案上加7</b>，<b>9的口诀就用10倍减去n</b>。记住这两个策略，任何题都能解决！'},
-        mathSteps:['7×8: 7×7=49, 49+7=56','9×8: 10×8=80, 80-8=72','패턴 전략으로 빠르게!'],
+        mathSteps:['7×8: 7×7=49, 49+7=56','9×8: 10×8=80, 80-8=72',{ko:'패턴 전략으로 빠르게!',en:'\\text{fast with pattern strategies!}',zh:'用规律更快！'}],
         result:{ko:'7단엔 이전+7, 9단엔 ×10−n! 두 전략으로 모든 7단·9단 문제를 해결해요.', en:'For 7s use prev+7, for 9s use ×10−n! Two strategies to conquer all 7s and 9s.', zh:'7的口诀用前一个+7，9的口诀用×10−n！两个策略搞定7和9的全部口诀！'},
         book:{ko:'7단 전략: 7×n = 7×(n−1)+7. 9단 전략: 9×n = 10×n−n. 두 전략을 기억해 두면 암산 속도가 훨씬 빨라져요.', en:'7s: 7×n = 7×(n−1)+7. 9s: 9×n = 10×n−n. Both strategies dramatically speed up mental calculation.', zh:'7的口诀：7×n = 7×(n−1)+7。9的口诀：9×n = 10×n−n。两个策略都能大幅提升心算速度。'} },
 
@@ -46,7 +46,7 @@ window.NM_UNITS['B-15'] = {
         desc:{ko:'7단과 9단을 마스터하면 <b>2단부터 9단까지 모두 완성</b>! 한 자리 수끼리의 모든 곱셈, 총 72가지를 알게 되는 거예요. 이건 정말 엄청난 성취예요!',
               en:'With 7s and 9s mastered, <b>all times tables from 2 to 9 are complete</b>! That covers all 72 single-digit multiplication facts — a truly amazing achievement!',
               zh:'掌握了7和9的口诀，<b>从2到9的乘法口诀就全部完成了</b>！这涵盖了所有72个一位数乘法事实——真是了不起的成就！'},
-        mathSteps:['2~9단: 각 9개씩','= 72가지 곱셈','→ 이제 모든 한 자리 곱셈 OK!'],
+        mathSteps:[{ko:'2~9단: 각 9개씩',en:'\\text{tables 2–9: 9 facts each}',zh:'2~9的口诀：各9个'},{ko:'= 72가지 곱셈',en:'= \\text{72 multiplications}',zh:'= 72个乘法'},{ko:'→ 이제 모든 한 자리 곱셈 OK!',en:'→ \\text{every 1-digit product, done!}',zh:'→ 所有一位数乘法都会了！'}],
         result:{ko:'2단, 3단, 4단, 5단, 6단, 7단, 8단, 9단 — 전부 완성! 이제 세 자리 곱셈도 무섭지 않아요!', en:'2s, 3s, 4s, 5s, 6s, 7s, 8s, 9s — all done! Now even 3-digit multiplication has no secrets for you!', zh:'2、3、4、5、6、7、8、9的口诀——全部完成！现在就连三位数乘法也不再可怕了！'},
         book:null }
     ],

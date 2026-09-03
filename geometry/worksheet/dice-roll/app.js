@@ -1,4 +1,4 @@
-import { levels, directionInfo, roll, rollMany, visibleFaces } from "../../games/dice-roll/levels.js?v=dice-roll-2";
+import { levels, directionInfo, roll, rollMany, visibleFaces } from "../../games/dice-roll/levels.js?v=dice-roll-3";
 
 const $=(selector)=>document.querySelector(selector);let offset=0;
 const select=$("#levelSelect"),toggle=$("#answerToggle"),grid=$("#problemGrid");

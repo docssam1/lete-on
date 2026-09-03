@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { levels, PIECE_BY_ID, normalize, orientations, canonical, canonicalArrangement, solveExactCover, viewsOf, validateLevels, PROGRESS_KEY } from "./levels.js?v=soma-2";
-import { getLanguage, t } from "./i18n.js?v=soma-3";
+import { levels, PIECE_BY_ID, normalize, orientations, canonical, canonicalArrangement, solveExactCover, viewsOf, validateLevels, PROGRESS_KEY } from "./levels.js?v=soma-3";
+import { getLanguage, t } from "./i18n.js?v=soma-5";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 const validation = validateLevels();
@@ -23,14 +23,15 @@ const requested = Number(new URLSearchParams(location.search).get("level"));
 const state = {
   lang:getLanguage(),
   levelIndex:Number.isInteger(requested) && requested >= 1 && requested <= 5 ? requested - 1 : Math.max(0, Math.min(4, Number(saved.levelIndex) || 0)),
-  queue:[], problemIndex:0, placements:[], selectedId:null, selectedShape:null, solved:false, sound:localStorage.getItem("gfield-sound-muted") !== "1", tutorialStep:-1, hintPlacement:null,
-  firstAssemblySignature:null, secondAssemblyGuide:null, transitioning:false, firstAssemblyTimer:0
+  queue:[], problemIndex:0, placements:[], selectedId:null, selectedShape:null, solved:false, sound:localStorage.getItem("gfield-sound-muted") !== "1", tutorialStep:-1, hintPlacement:null, hintStep:0,
+  firstAssemblySignature:null, secondAssemblyGuide:null, transitioning:false, firstAssemblyTimer:0, autoNextTimer:0
 };
 
 const key = ([x,y,z]) => `${x},${y},${z}`;
 const sameCells = (a,b) => a.length === b.length && [...a].map(key).sort().join("|") === [...b].map(key).sort().join("|");
 const currentLevel = () => levels[state.levelIndex];
 const currentProblem = () => state.queue[state.problemIndex];
+const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fixedCount = () => currentProblem()?.fixed?.length || 0;
 const placedIds = () => new Set(state.placements.map((placement) => placement.pieceId));
 const allPieceIds = () => [...(currentProblem().pieceIds || []), ...(currentProblem().fixed || []).map((placement) => placement.pieceId)];
@@ -45,7 +46,7 @@ function applyCopy() {
   ui.tutorialSkip.textContent = t(state.lang,"tutorialSkip"); ui.rotateMessage.textContent = t(state.lang,"rotate"); ui.rotateExit.textContent = t(state.lang,"exit");
   const rotateActions = t(state.lang,"rotateActions");
   document.querySelectorAll("[data-rotate]").forEach((button,index)=>{const label=rotateActions[index];button.title=label;button.setAttribute("aria-label",label);button.querySelector("span").textContent=label});
-  ui.soundButton.classList.toggle("muted",!state.sound); ui.soundButton.textContent = state.sound ? "♪" : "×";
+  ui.soundButton.classList.toggle("muted",!state.sound); ui.soundButton.textContent = state.sound ? "♪" : "×"; ui.soundButton.setAttribute("aria-label",t(state.lang,state.sound?"soundOn":"soundOff"));
 }
 
 function showToast(message) {
@@ -84,22 +85,23 @@ function awardPoints(problemId) {
 const cubeGeometry = new RoundedBoxGeometry(.92,.92,.92,4,.07);
 const markerGeometry = new THREE.SphereGeometry(.2,18,12);
 
-function woodTexture() {
+function enamelTexture() {
   const canvas=document.createElement("canvas"); canvas.width=256; canvas.height=256; const context=canvas.getContext("2d");
-  const gradient=context.createLinearGradient(0,0,256,256); gradient.addColorStop(0,"#f4d7a2"); gradient.addColorStop(.5,"#d39a5c"); gradient.addColorStop(1,"#b8733e"); context.fillStyle=gradient; context.fillRect(0,0,256,256);
-  context.globalAlpha=.16; context.strokeStyle="#704421"; for(let y=12;y<256;y+=18){context.beginPath();for(let x=0;x<=256;x+=8)context.lineTo(x,y+Math.sin(x*.045+y)*3);context.stroke()} context.globalAlpha=1;
+  const gradient=context.createLinearGradient(0,0,256,256); gradient.addColorStop(0,"#ffffff"); gradient.addColorStop(.48,"#eef6f5"); gradient.addColorStop(1,"#cbdde1"); context.fillStyle=gradient; context.fillRect(0,0,256,256);
+  context.fillStyle="rgba(44,86,99,.055)"; for(let y=9;y<256;y+=13)for(let x=9;x<256;x+=13){context.beginPath();context.arc(x+(y%2)*2, y, .65, 0, Math.PI*2);context.fill()}
   const texture=new THREE.CanvasTexture(canvas); texture.colorSpace=THREE.SRGBColorSpace; texture.wrapS=texture.wrapT=THREE.RepeatWrapping; return texture;
 }
-const woodMap=woodTexture();
+const enamelMap=enamelTexture();
 
 function makeViewer(host, interactive=false) {
-  const scene=new THREE.Scene(); scene.background=new THREE.Color(0xf7f1e4);
+  host.dataset.material="satin-enamel";
+  const scene=new THREE.Scene(); scene.background=new THREE.Color(0xf1f7f6);
   const camera=new THREE.PerspectiveCamera(34,1,.1,100); camera.position.set(5.2,4.8,6.4);
   const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setPixelRatio(Math.min(devicePixelRatio,1.7)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; host.append(renderer.domElement);
   const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.enablePan=false; controls.minDistance=4; controls.maxDistance=11; controls.target.set(0,1,0); controls.enabled=true;
-  scene.add(new THREE.HemisphereLight(0xfff5dc,0x6f776f,1.8)); const sun=new THREE.DirectionalLight(0xffffff,2.1); sun.position.set(5,8,5); sun.castShadow=true; scene.add(sun);
-  const floor=new THREE.Mesh(new THREE.BoxGeometry(4.2,.18,4.2),new THREE.MeshStandardMaterial({map:woodMap,color:0xdab174,roughness:.72})); floor.position.y=-.14; floor.receiveShadow=true; scene.add(floor);
-  const grid=new THREE.GridHelper(3,3,0x80613d,0xb39368); grid.position.y=-.04; scene.add(grid);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x9fb7bd,1.85)); const sun=new THREE.DirectionalLight(0xffffff,2.15); sun.position.set(5,8,5); sun.castShadow=true; scene.add(sun);
+  const floor=new THREE.Mesh(new THREE.BoxGeometry(4.2,.18,4.2),new THREE.MeshPhysicalMaterial({color:0xe2eceb,roughness:.68,metalness:.01,clearcoat:.16,clearcoatRoughness:.62})); floor.position.y=-.14; floor.receiveShadow=true; scene.add(floor);
+  const grid=new THREE.GridHelper(3,3,0x597984,0x9ab0b5); grid.position.y=-.04; scene.add(grid);
   const content=new THREE.Group(); const markers=new THREE.Group(); scene.add(content,markers);
   const viewer={host,scene,camera,renderer,controls,content,markers,interactive,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2(),down:null};
   const resize=()=>{const rect=host.getBoundingClientRect(); if(!rect.width||!rect.height)return; renderer.setSize(rect.width,rect.height,false); camera.aspect=rect.width/rect.height; camera.updateProjectionMatrix()};
@@ -110,7 +112,7 @@ const targetView=makeViewer(ui.targetViewer,false);
 const buildView=makeViewer(ui.buildViewer,true);
 
 function materialFor(id, transparent=false) {
-  return new THREE.MeshStandardMaterial({color:PIECE_BY_ID[id]?.color || 0xd8a467,map:woodMap,roughness:.56,metalness:.02,transparent,opacity:transparent?.28:1,depthWrite:!transparent});
+  return new THREE.MeshPhysicalMaterial({color:PIECE_BY_ID[id]?.color || 0x5bb8c4,map:enamelMap,roughness:.28,metalness:.01,clearcoat:.52,clearcoatRoughness:.3,transparent,opacity:transparent?.28:1,depthWrite:!transparent});
 }
 
 function boundsOf(cells) {
@@ -154,7 +156,7 @@ function renderTarget() {
   else if(problem.mode==="assemble"&&problem.reference?.length) {
     problem.reference.forEach((placement)=>addPiece(targetView.content,placement,bounds));
   } else {
-    cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,new THREE.MeshStandardMaterial({color:0xd6b378,map:woodMap,roughness:.62}));mesh.position.copy(worldCell(cell,bounds));mesh.castShadow=true;mesh.receiveShadow=true;targetView.content.add(mesh)});
+    cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,new THREE.MeshPhysicalMaterial({color:0xb8dfe2,map:enamelMap,roughness:.3,metalness:.01,clearcoat:.45,clearcoatRoughness:.34}));mesh.position.copy(worldCell(cell,bounds));mesh.castShadow=true;mesh.receiveShadow=true;targetView.content.add(mesh)});
     addOutlineCells(targetView.content,cells,bounds);
   }
   frameViewer(targetView,cells);
@@ -187,6 +189,7 @@ function renderBuild() {
     const marker=new THREE.Mesh(markerGeometry,new THREE.MeshStandardMaterial({color:index===0?0xffd94a:0x54c7c4,emissive:0x2b7778,emissiveIntensity:.45,transparent:true,opacity:.72})); marker.position.copy(center); marker.userData={candidate:placement}; buildView.markers.add(marker);
   });
   if(state.hintPlacement){const hint=addPiece(buildView.markers,state.hintPlacement,bounds,{ghost:true});hint.traverse((node)=>{if(node.material){node.material.color.set(0xffdf51);node.material.opacity=.38}})}
+  ui.buildViewer.dataset.candidateCount=String(candidatePlacements().length);
   frameViewer(buildView,problem.target);
 }
 
@@ -199,17 +202,17 @@ const thumbnailContent = new THREE.Group();
 let thumbnailMaterial = null;
 thumbnailRenderer.setSize(240,180,false);
 thumbnailRenderer.setPixelRatio(1);
-thumbnailScene.add(new THREE.HemisphereLight(0xffffff,0x7d746b,2),thumbnailContent);
+thumbnailScene.add(new THREE.HemisphereLight(0xffffff,0x9fb7bd,2),thumbnailContent);
 const thumbnailLight = new THREE.DirectionalLight(0xffffff,2);
 thumbnailLight.position.set(4,6,5);
 thumbnailScene.add(thumbnailLight);
 
-function makeThumbnail(cells,color="#d9a365") {
+function makeThumbnail(cells,color="#5bb8c4") {
   const cacheKey = `${color}:${normalize(cells).map(key).join(";")}`;
   if (thumbnailCache.has(cacheKey)) return thumbnailCache.get(cacheKey);
   thumbnailContent.clear();
   thumbnailMaterial?.dispose();
-  thumbnailMaterial=new THREE.MeshStandardMaterial({color,map:woodMap,roughness:.58});
+  thumbnailMaterial=new THREE.MeshPhysicalMaterial({color,map:enamelMap,roughness:.3,metalness:.01,clearcoat:.48,clearcoatRoughness:.32});
   const bounds=boundsOf(cells);
   cells.forEach((cell)=>{const mesh=new THREE.Mesh(cubeGeometry,thumbnailMaterial);mesh.position.copy(worldCell(cell,bounds));thumbnailContent.add(mesh)});
   const span=Math.max(...bounds.max.map((value,axis)=>value-bounds.min[axis]+1));
@@ -222,12 +225,12 @@ function renderChoices() {
   const problem=currentProblem(); const recognize=problem.mode==="recognize"; ui.choiceGrid.replaceChildren(); ui.choiceGrid.hidden=!recognize; ui.buildViewer.closest(".viewer-panel").classList.toggle("choice-mode",recognize);
   if(!recognize)return;
   ui.choiceGrid.style.gridTemplateColumns=`repeat(${problem.options.length},minmax(0,1fr))`;
-  problem.options.forEach((cells,index)=>{const button=document.createElement("button");button.type="button";button.className="choice-card";button.innerHTML=`<img alt="" src="${makeThumbnail(cells)}"><span>${index+1}</span>`;button.addEventListener("click",()=>chooseOption(index,button));ui.choiceGrid.append(button)});
+  problem.options.forEach((cells,index)=>{const button=document.createElement("button");button.type="button";button.className="choice-card";button.setAttribute("aria-label",t(state.lang,"choiceLabel",{number:index+1}));button.innerHTML=`<img alt="" src="${makeThumbnail(cells)}"><span>${index+1}</span>`;button.addEventListener("click",()=>chooseOption(index,button));ui.choiceGrid.append(button)});
 }
 
 function renderTray() {
   const problem=currentProblem(); ui.pieceTray.replaceChildren(); const ids=problem.mode==="recognize"?[]:problem.pieceIds;
-  ids.forEach((id)=>{const piece=PIECE_BY_ID[id];const shownCells=state.selectedId===id&&state.selectedShape?state.selectedShape:piece.cells;const button=document.createElement("button");button.type="button";button.className="piece-card";button.dataset.piece=id;button.innerHTML=`<img alt="" src="${makeThumbnail(shownCells,piece.color)}"><span>${id}</span>`;const isPlaced=placedIds().has(id);button.classList.toggle("placed",isPlaced);button.classList.toggle("selected",state.selectedId===id);button.addEventListener("click",()=>selectPiece(id));ui.pieceTray.append(button)});
+  ids.forEach((id)=>{const piece=PIECE_BY_ID[id];const shownCells=state.selectedId===id&&state.selectedShape?state.selectedShape:piece.cells;const button=document.createElement("button");button.type="button";button.className="piece-card";button.dataset.piece=id;button.setAttribute("aria-label",t(state.lang,"pieceLabel",{id}));button.innerHTML=`<img alt="" src="${makeThumbnail(shownCells,piece.color)}"><span>${id}</span>`;const isPlaced=placedIds().has(id);button.classList.toggle("placed",isPlaced);button.classList.toggle("selected",state.selectedId===id);button.disabled=isPlaced;button.addEventListener("click",()=>selectPiece(id));ui.pieceTray.append(button)});
   ui.pieceStatus.textContent=problem.mode==="recognize"?"":t(state.lang,"pieces",{done:state.placements.length-fixedCount(),total:problem.pieceIds.length});
 }
 
@@ -237,7 +240,7 @@ function renderViewClues() {
 }
 
 function renderStatus() {
-  const level=currentLevel(); ui.stageLabel.textContent=`${t(state.lang,"stageNames")[state.levelIndex]} · ${t(state.lang,"difficultyLabels")[level.difficulty]}`; ui.problemLabel.textContent=`${state.problemIndex+1} / ${state.queue.length}`; ui.stageDots.textContent="●".repeat(state.levelIndex+1)+"○".repeat(4-state.levelIndex); ui.missionTitle.textContent=t(state.lang,"levelTitles")[state.levelIndex]; ui.prompt.textContent=state.levelIndex===4&&state.firstAssemblySignature?t(state.lang,"secondWayPrompt"):t(state.lang,"prompts")[state.levelIndex];
+  const level=currentLevel(); const problem=currentProblem(); const done=state.placements.length-fixedCount(); const total=problem.mode==="recognize"?0:problem.pieceIds.length; const shell=document.querySelector(".game-shell"); shell.dataset.problemId=problem.id; shell.dataset.mode=problem.mode; shell.dataset.stage=level.stage; ui.stageLabel.textContent=`${t(state.lang,"stageNames")[state.levelIndex]} · ${t(state.lang,"difficultyLabels")[level.difficulty]}`; ui.problemLabel.textContent=`${state.problemIndex+1} / ${state.queue.length}`; ui.stageDots.textContent="●".repeat(state.levelIndex+1)+"○".repeat(4-state.levelIndex); ui.missionTitle.textContent=t(state.lang,"levelTitles")[state.levelIndex]; ui.prompt.textContent=state.levelIndex===4&&state.firstAssemblySignature?t(state.lang,"secondWayPrompt"):t(state.lang,"prompts")[state.levelIndex]; ui.targetViewer.setAttribute("aria-label",t(state.lang,"targetViewerLabel",{count:problem.target.length})); ui.buildViewer.setAttribute("aria-label",t(state.lang,"buildViewerLabel",{done,total}));
   const recognize=currentProblem().mode==="recognize";ui.pieceTray.closest(".piece-tray").hidden=recognize;document.querySelector(".rotate-tools").hidden=recognize;ui.clearButton.hidden=recognize;ui.clearButton.disabled=recognize||state.placements.length===fixedCount(); document.querySelectorAll("[data-rotate]").forEach((button)=>button.disabled=!state.selectedId||state.solved); ui.hintButton.disabled=state.solved; ui.skipButton.textContent=t(state.lang,"skip");
   ui.clearButton.disabled ||= state.transitioning; ui.hintButton.disabled ||= state.transitioning; ui.skipButton.disabled=state.transitioning;
 }
@@ -266,7 +269,7 @@ function tryPlace(candidate) {
     : completions.length>0;
   if(!hasCompletion){showToast(t(state.lang,"invalid"));return}
   if(state.levelIndex===4&&state.firstAssemblySignature&&proposed.flatMap((placement)=>placement.cells).length===problem.target.length&&canonicalArrangement(proposed)===state.firstAssemblySignature){showGuide(t(state.lang,"anotherWay"),2600);return}
-  state.placements=proposed; state.selectedId=null; state.selectedShape=null; state.hintPlacement=null; placementSound(); renderAll(); checkComplete();
+  state.placements=proposed; state.selectedId=null; state.selectedShape=null; state.hintPlacement=null; state.hintStep=0; placementSound(); renderAll(); checkComplete();
 }
 
 function removePlacement(index) {
@@ -277,32 +280,41 @@ function checkComplete() {
   const problem=currentProblem();const occupied=state.placements.flatMap((placement)=>placement.cells);if(occupied.length!==problem.target.length||new Set(occupied.map(key)).size!==problem.target.length||!problem.target.every((cell)=>occupied.some((other)=>key(other)===key(cell))))return;
   if(state.levelIndex===4&&!state.firstAssemblySignature){
     state.firstAssemblySignature=canonicalArrangement(state.placements);state.secondAssemblyGuide=problem.verifiedAssemblies?.find((assembly)=>canonicalArrangement(assembly)!==state.firstAssemblySignature)||null;state.transitioning=true;successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,"firstWaySolved"),2600);renderStatus();
-    const problemId=problem.id;state.firstAssemblyTimer=setTimeout(()=>{if(currentProblem().id!==problemId||state.solved)return;state.placements=(problem.fixed||[]).map((placement)=>({pieceId:placement.pieceId,cells:placement.cells.map((cell)=>[...cell])}));state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;state.transitioning=false;renderAll();showGuide(t(state.lang,"secondWayPrompt"),2800)},1350);return;
+    const problemId=problem.id;state.firstAssemblyTimer=setTimeout(()=>{if(currentProblem().id!==problemId||state.solved)return;state.placements=(problem.fixed||[]).map((placement)=>({pieceId:placement.pieceId,cells:placement.cells.map((cell)=>[...cell])}));state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;state.hintStep=0;state.transitioning=false;renderAll();showGuide(t(state.lang,"secondWayPrompt"),2800)},reducedMotion()?120:1350);return;
   }
-  state.solved=true;awardPoints(problem.id);saveGameProgress(PROGRESS_KEY,{levelIndex:state.levelIndex,problemIndex:state.problemIndex,completedProblem:problem.id});successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,state.levelIndex===4?"twoWaysSolved":"solved"),2600);renderStatus();
+  state.solved=true;awardPoints(problem.id);saveGameProgress(PROGRESS_KEY,{levelIndex:state.levelIndex,problemIndex:state.problemIndex,completedProblem:problem.id});successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,state.levelIndex===4?"twoWaysSolved":"solved"),2600);renderStatus();scheduleAutoAdvance();
 }
 
 function chooseOption(index,button) {
   if(state.solved)return; const problem=currentProblem();if(index!==problem.answer){button.classList.add("wrong");setTimeout(()=>button.classList.remove("wrong"),500);showToast(t(state.lang,"wrongChoice"));return}
-  state.solved=true;button.classList.add("correct");awardPoints(problem.id);successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,"correctChoice"),2400);renderStatus();
+  state.solved=true;button.classList.add("correct");awardPoints(problem.id);successSound();ui.success.classList.remove("burst");void ui.success.offsetWidth;ui.success.classList.add("burst");showGuide(t(state.lang,"correctChoice"),2400);renderStatus();scheduleAutoAdvance();
 }
 
 function giveHint() {
-  if(state.solved||state.transitioning)return;const problem=currentProblem();if(problem.mode==="recognize"){const answer=ui.choiceGrid.children[problem.answer];answer?.classList.add("correct");setTimeout(()=>answer?.classList.remove("correct"),1200);showGuide(t(state.lang,"hintText"));return}
-  if(state.levelIndex===4&&state.firstAssemblySignature&&state.secondAssemblyGuide){const used=placedIds();const occupied=new Set(state.placements.flatMap((placement)=>placement.cells.map(key)));const guided=state.secondAssemblyGuide.find((placement)=>!used.has(placement.pieceId)&&placement.cells.every((cell)=>!occupied.has(key(cell)))&&placement.cells.some(([x,y,z])=>y===0||occupied.has(key([x,y-1,z]))));if(guided){state.selectedId=guided.pieceId;state.selectedShape=normalize(guided.cells);state.hintPlacement={pieceId:guided.pieceId,cells:guided.cells.map((cell)=>[...cell])};renderTray();ui.pieceTray.querySelector(`[data-piece="${guided.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintText"));return}}
-  let next=null;let nextShape=null;const used=placedIds();for(const id of problem.pieceIds){if(used.has(id))continue;for(const shape of orientations(PIECE_BY_ID[id].cells)){const candidate=candidatesFor(id,shape).find((placement)=>{const proposed=[...state.placements,placement];if(!solveExactCover(problem.target,allPieceIds(),proposed,1).length)return false;if(state.levelIndex===4&&state.firstAssemblySignature&&proposed.flatMap((item)=>item.cells).length===problem.target.length&&canonicalArrangement(proposed)===state.firstAssemblySignature)return false;return true});if(candidate){next=candidate;nextShape=shape;break}}if(next)break}if(!next){showToast(t(state.lang,"invalid"));return}state.selectedId=next.pieceId;state.selectedShape=nextShape;state.hintPlacement={pieceId:next.pieceId,cells:next.cells.map((cell)=>[...cell])};renderTray();ui.pieceTray.querySelector(`[data-piece="${next.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintText"));
+  if(state.solved||state.transitioning)return;const problem=currentProblem();if(problem.mode==="recognize"){if(state.hintStep===0){const wrong=[...ui.choiceGrid.children].find((_,index)=>index!==problem.answer);if(wrong){wrong.disabled=true;wrong.classList.add("eliminated")}state.hintStep=1;showGuide(t(state.lang,"hintEliminate"));return}const answer=ui.choiceGrid.children[problem.answer];answer?.classList.add("correct");setTimeout(()=>answer?.classList.remove("correct"),1200);showGuide(t(state.lang,"hintText"));return}
+  if(state.levelIndex===4&&state.firstAssemblySignature&&state.secondAssemblyGuide){const used=placedIds();const occupied=new Set(state.placements.flatMap((placement)=>placement.cells.map(key)));const guided=state.secondAssemblyGuide.find((placement)=>!used.has(placement.pieceId)&&placement.cells.every((cell)=>!occupied.has(key(cell)))&&placement.cells.some(([x,y,z])=>y===0||occupied.has(key([x,y-1,z]))));if(guided){state.selectedId=guided.pieceId;if(state.hintStep===0){state.selectedShape=normalize(PIECE_BY_ID[guided.pieceId].cells);state.hintPlacement=null;state.hintStep=1;renderTray();ui.pieceTray.querySelector(`[data-piece="${guided.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintPiece"));return}state.selectedShape=normalize(guided.cells);state.hintPlacement={pieceId:guided.pieceId,cells:guided.cells.map((cell)=>[...cell])};state.hintStep=0;renderTray();ui.pieceTray.querySelector(`[data-piece="${guided.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintText"));return}}
+  let next=null;let nextShape=null;const used=placedIds();for(const id of problem.pieceIds){if(used.has(id))continue;for(const shape of orientations(PIECE_BY_ID[id].cells)){const candidate=candidatesFor(id,shape).find((placement)=>{const proposed=[...state.placements,placement];if(!solveExactCover(problem.target,allPieceIds(),proposed,1).length)return false;if(state.levelIndex===4&&state.firstAssemblySignature&&proposed.flatMap((item)=>item.cells).length===problem.target.length&&canonicalArrangement(proposed)===state.firstAssemblySignature)return false;return true});if(candidate){next=candidate;nextShape=shape;break}}if(next)break}if(!next){showToast(t(state.lang,"invalid"));return}state.selectedId=next.pieceId;if(state.hintStep===0){state.selectedShape=normalize(PIECE_BY_ID[next.pieceId].cells);state.hintPlacement=null;state.hintStep=1;renderTray();ui.pieceTray.querySelector(`[data-piece="${next.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintPiece"));return}state.selectedShape=nextShape;state.hintPlacement={pieceId:next.pieceId,cells:next.cells.map((cell)=>[...cell])};state.hintStep=0;renderTray();ui.pieceTray.querySelector(`[data-piece="${next.pieceId}"]`)?.classList.add("hint");renderBuild();renderStatus();showGuide(t(state.lang,"hintText"));
 }
 
 function clearMovable() {if(currentProblem().mode==="recognize")return;if(!confirm(t(state.lang,"clearConfirm")))return;state.placements=state.placements.slice(0,fixedCount());state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;renderAll()}
 
 function advanceProblem() {
   if(!state.solved&&!confirm(t(state.lang,"skipConfirm")))return;
-  if(state.problemIndex>=state.queue.length-1){ui.completeDialog.hidden=false;return}
+  clearTimeout(state.autoNextTimer);state.autoNextTimer=0;
+  if(state.problemIndex>=state.queue.length-1){ui.nextLevelButton.hidden=state.levelIndex>=levels.length-1;ui.completeDialog.hidden=false;return}
   state.problemIndex+=1;loadProblem();
 }
 
+function scheduleAutoAdvance() {
+  clearTimeout(state.autoNextTimer);
+  const problemId=currentProblem().id;
+  state.autoNextTimer=setTimeout(()=>{
+    if(state.solved&&currentProblem().id===problemId)advanceProblem();
+  },reducedMotion()?120:1150);
+}
+
 function loadProblem() {
-  clearTimeout(state.firstAssemblyTimer);const problem=currentProblem();state.placements=(problem.fixed||[]).map((placement)=>({pieceId:placement.pieceId,cells:placement.cells.map((cell)=>[...cell])}));state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;state.solved=false;state.firstAssemblySignature=null;state.secondAssemblyGuide=null;state.transitioning=false;saveGameProgress(PROGRESS_KEY,{levelIndex:state.levelIndex,problemIndex:state.problemIndex});renderAll();
+  clearTimeout(state.firstAssemblyTimer);clearTimeout(state.autoNextTimer);state.autoNextTimer=0;const problem=currentProblem();state.placements=(problem.fixed||[]).map((placement)=>({pieceId:placement.pieceId,cells:placement.cells.map((cell)=>[...cell])}));state.selectedId=null;state.selectedShape=null;state.hintPlacement=null;state.hintStep=0;state.solved=false;state.firstAssemblySignature=null;state.secondAssemblyGuide=null;state.transitioning=false;saveGameProgress(PROGRESS_KEY,{levelIndex:state.levelIndex,problemIndex:state.problemIndex});renderAll();
   if(shouldTutorial())openTutorial();
 }
 
@@ -314,10 +326,10 @@ function renderLevels() {
   ui.levelList.replaceChildren();levels.forEach((level,index)=>{const button=document.createElement("button");button.type="button";button.className="level-card";button.classList.toggle("active",index===state.levelIndex);button.innerHTML=`<span>${t(state.lang,"stageNames")[index]} · ${t(state.lang,"difficultyLabels")[level.difficulty]}</span><b>${t(state.lang,"levelTitles")[index]}</b><small>${t(state.lang,"levelDescriptions")[index]}</small>`;button.addEventListener("click",()=>selectLevel(index));ui.levelList.append(button)});
 }
 
-function shouldTutorial(){return state.levelIndex===0&&state.problemIndex===0&&(new URLSearchParams(location.search).get("tutorial")==="1"||localStorage.getItem("gfield-soma-tutorial-v1")!=="done")}
+function shouldTutorial(){return state.levelIndex===1&&state.problemIndex===0&&(new URLSearchParams(location.search).get("tutorial")==="1"||localStorage.getItem("gfield-soma-controls-tutorial-v1")!=="done")}
 function renderTutorial(){const messages=t(state.lang,"tutorial");ui.tutorialText.textContent=messages[state.tutorialStep];ui.tutorialNext.textContent=state.tutorialStep===messages.length-1?t(state.lang,"tutorialDone"):t(state.lang,"tutorialNext");ui.tutorialDots.replaceChildren(...messages.map((_,index)=>{const dot=document.createElement("i");dot.classList.toggle("active",index===state.tutorialStep);return dot}))}
 function openTutorial(){state.tutorialStep=0;ui.tutorial.hidden=false;renderTutorial()}
-function closeTutorial(){state.tutorialStep=-1;ui.tutorial.hidden=true;localStorage.setItem("gfield-soma-tutorial-v1","done")}
+function closeTutorial(){state.tutorialStep=-1;ui.tutorial.hidden=true;localStorage.setItem("gfield-soma-controls-tutorial-v1","done")}
 function nextTutorial(){const messages=t(state.lang,"tutorial");if(state.tutorialStep>=messages.length-1){closeTutorial();return}state.tutorialStep+=1;renderTutorial()}
 
 function pointerPosition(event,viewer){const rect=viewer.renderer.domElement.getBoundingClientRect();viewer.pointer.set(((event.clientX-rect.left)/rect.width)*2-1,-((event.clientY-rect.top)/rect.height)*2+1)}
@@ -327,7 +339,7 @@ buildView.renderer.domElement.addEventListener("pointerup",(event)=>{if(!buildVi
 document.querySelectorAll("[data-rotate]").forEach((button)=>button.addEventListener("click",()=>rotateSelected(button.dataset.rotate)));
 ui.hintButton.addEventListener("click",giveHint);ui.clearButton.addEventListener("click",clearMovable);ui.skipButton.addEventListener("click",advanceProblem);ui.levelButton.addEventListener("click",()=>ui.levelDialog.hidden=false);ui.closeLevels.addEventListener("click",()=>ui.levelDialog.hidden=true);
 ui.soundButton.addEventListener("click",()=>{state.sound=!state.sound;localStorage.setItem("gfield-sound-muted",state.sound?"0":"1");applyCopy()});
-ui.tutorialSkip.addEventListener("click",closeTutorial);ui.tutorialNext.addEventListener("click",nextTutorial);ui.nextLevelButton.addEventListener("click",()=>{ui.completeDialog.hidden=true;selectLevel(Math.min(4,state.levelIndex+1))});ui.practiceButton.addEventListener("click",()=>{const url=new URL(location.href);url.searchParams.set("level",String(state.levelIndex+1));url.searchParams.set("practice","1");url.searchParams.delete("tutorial");location.assign(url)});
+ui.tutorialSkip.addEventListener("click",closeTutorial);ui.tutorialNext.addEventListener("click",nextTutorial);ui.nextLevelButton.addEventListener("click",()=>{if(state.levelIndex>=levels.length-1)return;ui.completeDialog.hidden=true;selectLevel(state.levelIndex+1)});ui.practiceButton.addEventListener("click",()=>{const url=new URL(location.href);url.searchParams.set("level",String(state.levelIndex+1));url.searchParams.set("practice","1");url.searchParams.delete("tutorial");location.assign(url)});
 document.addEventListener("keydown",(event)=>{if(event.key==="Escape"){if(!ui.tutorial.hidden)closeTutorial();else if(!ui.levelDialog.hidden)ui.levelDialog.hidden=true;else if(!ui.completeDialog.hidden)ui.completeDialog.hidden=true}if(event.key==="Enter"&&state.selectedId&&!state.solved)placeFirstCandidate()});
 
 function animate(){requestAnimationFrame(animate);targetView.controls.update();buildView.controls.update();targetView.renderer.render(targetView.scene,targetView.camera);buildView.renderer.render(buildView.scene,buildView.camera)}
