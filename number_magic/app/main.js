@@ -2587,7 +2587,6 @@ function screenTitle(){
         <div class="nm-title-sub-row">
           <button class="nm-title-pill" id="ttStory">🗺 ${lk('스토리 모드','Story Mode','故事模式')}</button>
           <button class="nm-title-pill" id="ttDex">📖 ${lk('기호 도감','Symbol Dex','符号图鉴')}</button>
-          <button class="nm-title-pill" id="ttIntro">🎬 ${lk('인트로 다시 보기','Replay intro','重看片头')}</button>
         </div>
       </div>
     </div>
@@ -2599,7 +2598,6 @@ function screenTitle(){
   $('#ttRoad').onclick=()=>{ S.view='courseroad'; save(); render(); };
   $('#ttStory').onclick=()=>{ S.view='roadmap'; save(); render(); };
   $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
-  $('#ttIntro').onclick=()=>{ location.href='index.html?intro=1'; };
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
 function lineageBadgeRowHtml(){

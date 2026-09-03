@@ -26,14 +26,10 @@ html.skip-intro #nm-intro{display:none}
       본체(main.js maybeShowTitle)가 타이틀(모드 선택)을 띄운다.
    신규 사용자만 인트로 영상 → 철학(about) → 캐릭터 만들기 순서를 밟는다. */
 (function(){
+  /* 인트로 영상은 매번 접속할 때 나온다(원장 지시 2026-09-03 "그냥 인트로 접속하게").
+     건너뛰는 경우는 딥링크(?enter=1 · ?ws=)뿐. 영상이 끝난 뒤 어디로 갈지는 아래
+     부팅 스크립트: 항상 철학 소개(about.html) → 상단 "넘어가기" → 앱. */
   var skip=/[?&]enter=1\b/.test(location.search)||/[?&]ws=/.test(location.search);
-  var replay=/[?&]intro=1\b/.test(location.search);   // 타이틀의 "인트로 다시 보기"
-  if(!skip&&!replay){
-    try{
-      var st=JSON.parse(localStorage.getItem('nm_state_v1')||'null');
-      if(st&&st.onboarded)skip=true;
-    }catch(e){}
-  }
   if(skip)document.documentElement.classList.add('skip-intro');
 })();
 </script>
@@ -337,12 +333,10 @@ html.skip-intro #nm-intro{display:none}
   var vid=document.getElementById('nm-introVid');
   var skip=document.getElementById('nm-skip');
   var snd=document.getElementById('nm-sound');
-  var replay=/[?&]intro=1\b/.test(location.search);
   var ended=false;
+  /* 영상 뒤에는 누구나 철학 소개(about.html)로 — 거기 상단 "넘어가기"가 index.html?enter=1로 보낸다 */
   function toAbout(){
     if(ended)return; ended=true;
-    /* 다시 보기(재접속 사용자)는 철학 소개로 넘기지 않고 영상만 닫는다 */
-    if(replay){ intro.classList.add('hide'); setTimeout(function(){ if(intro.parentNode)intro.parentNode.removeChild(intro); },650); return; }
     location.href='about.html';
   }
   // 소리 켜기(탭 시 음소거 해제)
