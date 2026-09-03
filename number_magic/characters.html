@@ -194,6 +194,16 @@ p.lead{font-size:15.5px;color:var(--sub);max-width:62ch;margin:0}
     </div>
   </section>
 
+  <!-- 03 · 사람들 (마을세계관-설계.md §1 "사람 아바타 + 동행") -->
+  <section class="chapter">
+    <div class="chapter-inner">
+      <div class="folio"><span class="folio-num">03</span><span class="folio-label" data-i18n="sec3Kicker">People · 사람들</span></div>
+      <h2 data-i18n="sec3H2">사람들</h2>
+      <p class="lead reveal" data-i18n="sec3Lead">마을을 걷는 나, 그리고 마을에서 만나는 사람들이에요.</p>
+      <div class="grid reveal" id="peopleGrid" aria-live="polite"></div>
+    </div>
+  </section>
+
   <footer class="site-foot">
     <div class="site-foot-inner">
       <span class="wordmark">Numbers <b>of</b> Magic</span>
@@ -219,6 +229,8 @@ const CH_TR = {
     sec2Kicker:'Number Friends · 숫자 친구들', sec2H2:'숫자 친구들',
     sec2Lead:'0부터 10까지, 언제나 자유롭게 고를 수 있는 첫 친구들이에요.',
     numFree:'처음부터 자유롭게 함께해요',
+    sec3Kicker:'People · 사람들', sec3H2:'사람들',
+    sec3Lead:'마을을 걷는 나, 그리고 마을에서 만나는 사람들이에요.',
     footText:'GFIELD · Numbers of Magic — 캐릭터 소개',
   },
   en:{
@@ -231,6 +243,8 @@ const CH_TR = {
     sec2Kicker:'Number Friends', sec2H2:'Number Friends',
     sec2Lead:'0 through 10 — the first friends you can always choose freely.',
     numFree:'Free to play with from the very start',
+    sec3Kicker:'People', sec3H2:'People',
+    sec3Lead:'You, walking the village, and the people you meet there.',
     footText:'GFIELD · Numbers of Magic — Character Guide',
   },
   zh:{
@@ -243,6 +257,8 @@ const CH_TR = {
     sec2Kicker:'数字朋友们', sec2H2:'数字朋友们',
     sec2Lead:'0到10，随时可以自由选择的第一批朋友。',
     numFree:'从一开始就能自由同行',
+    sec3Kicker:'人物', sec3H2:'人物',
+    sec3Lead:'走在村子里的我，还有在村子里遇到的人物。',
     footText:'GFIELD · Numbers of Magic — 角色介绍',
   }
 };
@@ -311,10 +327,39 @@ function numCardHtml(n, lang){
   </article>`;
 }
 
+/* 사람 4명(마을세계관-설계.md §1) — 숫자/기호처럼 잠금 해제 흐름이 없는 고정 캐스트라
+   NM_AVATAR가 아니라 이 페이지에 직접 둔다(app/closet.js의 'me' 탭·app/main.js의
+   avatarKind() 목록과 kind 문자열을 그대로 맞출 것: boy/girl/elder/doc). */
+const NM_HUMANS = [
+  {id:'boy',  img:'kid-boy.png',  ko:'남자아이', en:'Boy',   zh:'男孩',
+    intro:{ko:'나 — 마을을 걷는 주인공', en:'You — the hero who walks the village', zh:'我——走在村子里的主角'}},
+  {id:'girl', img:'kid-girl.png', ko:'여자아이', en:'Girl',  zh:'女孩',
+    intro:{ko:'나 — 마을을 걷는 주인공', en:'You — the hero who walks the village', zh:'我——走在村子里的主角'}},
+  {id:'elder',img:'elder.png',    ko:'할아버지', en:'Elder', zh:'爷爷',
+    intro:{ko:'마을 어른, 정자에서 숫자 이야기를 들려줘요', en:'The village elder — tells number stories at the gazebo', zh:'村里的长辈，在凉亭里讲数字故事'}},
+  {id:'doc',  img:'docssam.png',  ko:'독쌤',    en:'Doc',   zh:'独老师',
+    intro:{ko:'선생님, 도서관에서 오늘의 마법을 알려줘요', en:'The teacher — reveals today’s magic at the library', zh:'老师，在图书馆讲解今天的魔法'}},
+];
+function humanCardHtml(h, lang){
+  const name = h[lang] || h.ko;
+  const intro = (h.intro && (h.intro[lang] || h.intro.ko)) || '';
+  return `<article class="card num-card">
+    <div class="card-fig">
+      <span class="fig-aura blue"></span>
+      <img src="assets/characters/${h.img}" alt="${name}" draggable="false">
+    </div>
+    <div class="card-body">
+      <h3 class="card-name">${name}</h3>
+      <p class="card-desc">${intro}</p>
+    </div>
+  </article>`;
+}
+
 function renderCards(lang){
   const AV = window.NM_AVATAR || {symbols:[], numbers:[]};
   const symGrid = document.getElementById('symGrid');
   const numGrid = document.getElementById('numGrid');
+  const peopleGrid = document.getElementById('peopleGrid');
 
   symGrid.innerHTML = (AV.symbols || []).map(s => symCardHtml(s, lang)).join('');
 
@@ -324,6 +369,8 @@ function renderCards(lang){
   numGrid.innerHTML = (AV.numbers || [])
     .filter(n => Number(n.id) <= 10)
     .map(n => numCardHtml(n, lang)).join('');
+
+  if(peopleGrid) peopleGrid.innerHTML = NM_HUMANS.map(h => humanCardHtml(h, lang)).join('');
 }
 
 /* ---------- 언어 상태 (about.html과 localStorage nm_state_v1 공유) ---------- */

@@ -1,6 +1,9 @@
 /* Numbers of Magic — 캐릭터 꾸미기 화면
    window.screenCloset(container, opts)
-   opts = { char, unlocked, coins, lang, onSave(newChar, newUnlocked, coinsSpent) } */
+   opts = { char, avatarKind, unlocked, coins, lang,
+            onSave(newChar, newUnlocked, coinsSpent), onSaveAvatar(kind) }
+   'me' 탭(사람 아바타 boy/girl)은 동행 캐릭터(char)와 별개 축 — 항상 무료,
+   unlocked/coins를 안 타고 onSaveAvatar로 바로 저장(마을세계관-설계.md §1). */
 (function(){
 'use strict';
 
@@ -15,8 +18,12 @@ window.screenCloset = function(container, opts){
   let unlocked = Object.assign({}, opts.unlocked || {});
   let coins = +(opts.coins || 0);
   let dirty = 0;  // 소비한 코인 누적
+  /* 사람 아바타(나) — 동행 캐릭터(cur)와는 별개 축. 무료 2종(boy/girl)뿐이라
+     unlocked/coins 흐름을 안 타고 'me' 탭에서 바로 select()로 전환한다(마을세계관-설계.md §1). */
+  let avatarKind = opts.avatarKind || 'boy';
 
   const TABS = [
+    {key:'me',    ko:'나',    en:'Me',       zh:'我'},
     {key:'number',ko:'캐릭터',en:'Character',zh:'角色'},
     {key:'symbol',ko:'기호',  en:'Symbols',  zh:'符号'},
     {key:'color', ko:'색',    en:'Color',    zh:'颜色'},
@@ -74,6 +81,12 @@ window.screenCloset = function(container, opts){
 
   /* ── 선택 ── */
   function select(type, val){
+    if(type==='avatar'){                       // 사람 아바타 — 동행(cur)과 별개 축, 항상 무료
+      avatarKind = val;
+      if(opts.onSaveAvatar) opts.onSaveAvatar(avatarKind);
+      redraw();
+      return;
+    }
     if(!isUnlocked(type, val)){
       if(!buy(type, val)) return;
     }
@@ -101,6 +114,19 @@ window.screenCloset = function(container, opts){
 
   /* ── 탭 항목 HTML ── */
   function tabItemsHTML(){
+    if(activeTab==='me'){
+      const kinds=[
+        {id:'boy', ko:'남자아이',en:'Boy', zh:'男孩'},
+        {id:'girl',ko:'여자아이',en:'Girl',zh:'女孩'},
+      ];
+      return kinds.map(k=>{
+        const sel = avatarKind===k.id ? 'sel' : '';
+        return `<button class="nmc-item ${sel}" data-type="avatar" data-id="${k.id}">
+          <div class="nmc-thumb">${window.renderHumanChar?window.renderHumanChar(k.id,64):''}</div>
+          <div class="nmc-iname">${L(k)}</div>
+        </button>`;
+      }).join('');
+    }
     if(activeTab==='number'){
       const items = av.numbers || [];
       const singles = items.filter(it=>+it.id < 10);
@@ -154,11 +180,17 @@ window.screenCloset = function(container, opts){
     }).join('');
   }
 
+  /* 큰 미리보기(사람 아바타 + 동행 합성) — renderPartyHtml 없으면 동행만이라도 보여준다 */
+  function bigPreview(){
+    if(window.renderPartyHtml) return window.renderPartyHtml(avatarKind, cur, 110);
+    return rndr ? rndr(cur, 110) : '';
+  }
+
   /* ── 전체 재렌더 ── */
   function redraw(){
     // 미리보기
     const pv = container.querySelector('#nmc-preview');
-    if(pv && rndr) pv.innerHTML = rndr(cur, 110);
+    if(pv) pv.innerHTML = bigPreview();
     // 코인
     const ci = container.querySelector('#nmc-coins');
     if(ci) ci.textContent = '🪙 '+coins;
@@ -191,7 +223,7 @@ window.screenCloset = function(container, opts){
       <div id="nmc-grid" class="nmc-grid">${tabItemsHTML()}</div>
     </div>
     <div class="nmc-preview-area">
-      <div id="nmc-preview">${rndr ? rndr(cur,110) : ''}</div>
+      <div id="nmc-preview">${bigPreview()}</div>
       <div class="nmc-preview-label">${lang==='en'?'Tap items to customize!':lang==='zh'?'点击项目来定制！':'골라서 꾸며보세요!'}</div>
     </div>
   </div>

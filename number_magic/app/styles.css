@@ -520,6 +520,13 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   animation:nbping .7s ease-out forwards}
 @keyframes nbping{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.5);opacity:0}}
 
+/* ── 사람 아바타 + 동행(마을세계관-설계.md §1) ──
+   .nm-human = 사람 원본 PNG 그대로(재염색 없음). .nm-party = 아바타 + 오른쪽 아래로
+   살짝 겹쳐 서는 동행 숫자/기호 캐릭터(.nm-party-buddy). */
+.nm-human img{width:100%;height:100%;object-fit:contain;display:block}
+.nm-party{position:relative;display:inline-block}
+.nm-party .nm-party-buddy{position:absolute;right:-22%;bottom:0}
+
 /* ── 온보딩: 이름 중복 안내 ── */
 .nm-ob-dupico{font-size:46px;margin-bottom:8px}
 .nm-ob-card .nm-btn.ghost{margin-top:10px}
@@ -648,6 +655,16 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   border-radius:14px;padding:14px;cursor:pointer;transition:.15s;font-family:'Pretendard',sans-serif}
 .nm-ob-go:hover{background:#1a4d93}
 .nm-ob-go:active{transform:scale(.97)}
+.nm-ob-go:disabled{opacity:.4;cursor:not-allowed}
+.nm-ob-go:disabled:hover{background:var(--blue)}
+
+/* 아바타(나) 선택 카드 — 온보딩 1단계 + 마을 이주 모달(§1)에서 공용 */
+.nm-av-row{display:flex;gap:14px;width:100%;justify-content:center;margin-bottom:18px}
+.nm-av-card{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 10px;background:#fff;border:2.5px solid var(--line);border-radius:20px;
+  cursor:pointer;transition:.18s;font-family:'Pretendard',sans-serif;font-size:14px;font-weight:800;color:var(--blue-deep)}
+.nm-av-card:hover{border-color:var(--blue);box-shadow:0 8px 24px -8px rgba(22,65,124,.2)}
+.nm-av-card.sel{border-color:var(--blue);background:#eef3fb;box-shadow:0 0 0 3px rgba(22,65,124,.14)}
 
 /* 구름 등장 연출 */
 .nm-ob-reveal{position:relative;height:230px;display:flex;align-items:center;justify-content:center;overflow:visible}

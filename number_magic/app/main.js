@@ -510,6 +510,10 @@ function startAmbience(){
 
 /* ---------- 최상단 렌더 ---------- */
 let townCleanup=null;
+/* 사람 아바타 kind — S.avatar는 onboarded와 같은 이유로 defaults()에 없다(§ 위 주석
+   "onboarded는 defaults()에 넣지 않음" 참고): 기존 저장본(온보딩 이전)과 병합돼도
+   "아직 안 골랐음"을 구분해야 마을 이주 모달이 뜬다. 읽을 땐 항상 이 헬퍼로. */
+function avatarKind(){ return (S.avatar&&S.avatar.kind)||'boy'; }
 /* 캐릭터 라벨(이름 없을 때 표시) — 기호 캐릭터는 숫자 대신 글리프로. */
 function charIdLabel(ch){
   if(ch && ch.symbol){
@@ -518,10 +522,15 @@ function charIdLabel(ch){
   }
   return '#'+(ch&&ch.number!=null?ch.number:3);
 }
-function charChipHTML(){
-  const mini = window.renderNumiChar ? window.renderNumiChar(S.character, 30) : '🪄';
+/* 상단 칩의 내용물(사람 아바타 미니 렌더 + 이름표) — 옷장에서 라이브 패치할 때도
+   이 함수로 innerHTML만 갈아끼운다(버튼 요소 자체는 유지해 onclick이 안 끊긴다). */
+function charChipInner(){
+  const mini = window.renderHumanChar ? window.renderHumanChar(avatarKind(), 30) : '🪄';
   const label = S.name ? esc(S.name) : charIdLabel(S.character);
-  return `<button class="nm-char-chip" id="charChipBtn">${mini}<span class="nm-char-chip-name">${label}</span></button>`;
+  return `${mini}<span class="nm-char-chip-name">${label}</span>`;
+}
+function charChipHTML(){
+  return `<button class="nm-char-chip" id="charChipBtn">${charChipInner()}</button>`;
 }
 function render(){
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
@@ -579,19 +588,46 @@ function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];
    ============================================================ */
 function screenWelcome(){
   const scr=$('#screen');
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const ob = { number:S.character.number||3, color:S.character.color||'blue',
     bg:S.character.bg||'plain', cape:S.character.cape||'none',
-    hat:S.character.hat||'none', name:'' };
+    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&S.avatar.kind)||null };
   const NUMS=[0,1,2,3,4,5,6,7,8,9];
+
+  /* 1단계 — 나(사람 아바타) 고르기. 고를 때까지 "다음"이 비활성. */
+  function stepAvatar(){
+    scr.innerHTML=`
+    <div class="nm-ob">
+      <div class="nm-ob-card">
+        <h1 class="nm-ob-title">${lk('넌 누구야?','Who are you?','你是谁？')}</h1>
+        <p class="nm-ob-sub">${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
+        <div class="nm-av-row">
+          <button class="nm-av-card${ob.avatar==='boy'?' sel':''}" data-av="boy">
+            ${window.renderHumanChar?window.renderHumanChar('boy',120):''}
+            <span>${lk('남자아이','Boy','男孩')}</span>
+          </button>
+          <button class="nm-av-card${ob.avatar==='girl'?' sel':''}" data-av="girl">
+            ${window.renderHumanChar?window.renderHumanChar('girl',120):''}
+            <span>${lk('여자아이','Girl','女孩')}</span>
+          </button>
+        </div>
+        <button class="nm-btn nm-ob-go" id="obAvNext"${ob.avatar?'':' disabled'}>${lk('다음 ›','Next ›','下一步 ›')}</button>
+      </div>
+    </div>`;
+    scr.querySelectorAll('[data-av]').forEach(b=>{
+      b.onclick=()=>{ ob.avatar=b.dataset.av; stepAvatar(); };
+    });
+    $('#obAvNext').onclick=()=>{ if(ob.avatar) draw(); };
+  }
 
   function draw(){
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
-        <h1 class="nm-ob-title">${t('obTitle')}</h1>
+        <h1 class="nm-ob-title">${lk('함께 갈 숫자 친구를 골라요','Pick a number friend to go with you','选一个一起走的数字朋友')}</h1>
         <p class="nm-ob-sub">${t('obSub')}</p>
         <div class="nm-ob-stage" id="obStage">
-          <div class="nm-ob-pick" id="obChar">${window.renderNumiChar?window.renderNumiChar(ob,120):''}</div>
+          <div class="nm-ob-pick" id="obChar">${window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'')}</div>
         </div>
         <div class="nm-ob-nav">
           <button class="nm-ob-arrow" id="obPrev">‹</button>
@@ -609,7 +645,7 @@ function screenWelcome(){
     $('#obGo').onclick=go;
   }
   function drawChar(){
-    $('#obChar').innerHTML = window.renderNumiChar?window.renderNumiChar(ob,120):'';
+    $('#obChar').innerHTML = window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'');
     $('.nm-ob-num').textContent='#'+ob.number;
   }
 
@@ -675,7 +711,7 @@ function screenWelcome(){
       <div class="nm-ob-card">
         <div class="nm-ob-reveal" id="obReveal">
           <div class="ncloud nm-ob-rcloud" id="obCloud">${puffHtml}</div>
-          <div class="nm-ob-rchar" id="obRchar">${window.renderNumiChar?window.renderNumiChar(ob,140):''}</div>
+          <div class="nm-ob-rchar" id="obRchar">${window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,140):(window.renderNumiChar?window.renderNumiChar(ob,140):'')}</div>
           <div class="nm-ob-welcome" id="obWelcomeMsg">${esc(t('obWelcome')(name))}</div>
         </div>
       </div>
@@ -690,6 +726,7 @@ function screenWelcome(){
 
   function finish(){
     S.character = {number:ob.number,color:ob.color,bg:ob.bg,cape:ob.cape,hat:ob.hat};
+    S.avatar = {kind:ob.avatar};
     S.name = ob.name;
     S.onboarded = true;
     if(ob.claimed)S.cloudLinked = true;   // 이름 클레임 성공 → 이후 진행상황 자동 동기화
@@ -697,7 +734,7 @@ function screenWelcome(){
     render();
   }
 
-  draw();
+  stepAvatar();
 }
 
 /* ============================================================
@@ -768,7 +805,18 @@ function screenTown(){
         ${zones}
         <div class="nb nb-player" id="nbNumi"><div class="speech"></div>
           <div class="nb-name">${S.name?esc(S.name):'#'+S.character.number}</div>
-          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,52):'<img src="assets/characters/numi-0.png" alt="Numi">'}</div>
+          <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar(avatarKind(),56):'<img src="assets/characters/kid-boy.png" alt="">'}</div>
+          <div class="shadow"></div></div>
+        <div class="nb nb-buddy" id="nbBuddy"><div class="speech"></div>
+          <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,44):''}</div>
+          <div class="shadow"></div></div>
+        <div class="nb nb-elder" id="nbElder"><div class="speech"></div>
+          <div class="nb-name">할아버지</div>
+          <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar('elder',52):''}</div>
+          <div class="shadow"></div></div>
+        <div class="nb nb-doc" id="nbDoc"><div class="speech"></div>
+          <div class="nb-name">독쌤</div>
+          <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar('doc',52):''}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbPoco"><div class="speech"></div>
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar({number:3,color:'gold',bg:'plain'},52):'<img src="assets/characters/poco-3.png" alt="Poco">'}</div>
@@ -813,6 +861,36 @@ function screenTown(){
   const cr=$('#townCourseRoad');if(cr)cr.onclick=()=>{S._roadFocus=null;S.view='courseroad';save();render();};
   const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
   maybeShowR0Banner(scr);
+  if(S.onboarded && !S.avatar) showAvatarMigrateModal();
+}
+
+/* ── 마을 이주 모달(§1) — 온보딩 이전(구버전)에 만들어진 저장본은 S.avatar가 없다.
+   마을에 들어올 때 딱 한 번, 사람 아바타를 고르게 한다(닫기 버튼 없음 — 반드시 골라야 함).
+   #tmodal(등급 소개용 텍스트 모달)과는 별개 오버레이 — body에 직접 붙였다 뗀다
+   (gateModalHtml/showGateModal과 같은 패턴). */
+function showAvatarMigrateModal(){
+  if($('#nmAvMigrate'))return;
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const wrap=document.createElement('div');
+  wrap.className='nm-gate-overlay';
+  wrap.id='nmAvMigrate';
+  wrap.innerHTML=`<div class="nm-gate-card">
+    <h3>${lk('너는 누구야?','Who are you?','你是谁？')}</h3>
+    <p>${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
+    <div class="nm-av-row">
+      <button class="nm-av-card" data-av="boy">${window.renderHumanChar?window.renderHumanChar('boy',110):''}<span>${lk('남자아이','Boy','男孩')}</span></button>
+      <button class="nm-av-card" data-av="girl">${window.renderHumanChar?window.renderHumanChar('girl',110):''}<span>${lk('여자아이','Girl','女孩')}</span></button>
+    </div>
+  </div>`;
+  document.body.appendChild(wrap);
+  wrap.querySelectorAll('[data-av]').forEach(b=>{
+    b.onclick=()=>{
+      S.avatar={kind:b.dataset.av};
+      save();
+      wrap.remove();
+      render();
+    };
+  });
 }
 
 /* ── R0 추천 배너 — N-15(수의 나라) 최초 완주 직후 다음 마을 진입 때 1회 ──
@@ -1951,7 +2029,7 @@ function screenCourseRoad(){
           :isDoing?`${prog.done}/${prog.total}`
           :'';
         html+=`<div class="nm-cr-row ${ci%2?'right':'left'}">
-          ${isNow?`<div class="nm-cr-here">${window.renderNumiChar?window.renderNumiChar(S.character,44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
+          ${isNow?`<div class="nm-cr-here">${window.renderHumanChar?window.renderHumanChar(avatarKind(),44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
           <button class="nm-cr-node ${st}${locked?' trial-locked':''}" data-c="${x.key}" style="--acc:${tierDef.accent}"${isNow?' id="crNow"':''}>
             <span class="nm-cr-num">${x.num}${isDone?'<i class="nm-cr-flag">🏳️</i>':''}</span>
             <span class="nm-cr-nbody">
@@ -2311,7 +2389,7 @@ function screenTitle(){
         <div class="nm-title-logo-kr">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
         <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','수의 마법','数字魔法')}</div>
       </div>
-      <div class="nm-title-char">${window.renderNumiChar?window.renderNumiChar(S.character,88):''}</div>
+      <div class="nm-title-char">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,88):''}</div>
       <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
       <div class="nm-title-stats">
         <span class="nm-title-chip">🪙 ${S.coins}</span>
@@ -2932,25 +3010,36 @@ function initTownWorld(scr){
     world.appendChild(s);setTimeout(()=>s.remove(),8000);
   },600);
 
-  /* 걸어다니는 숫자친구 — nbNumi는 "내가 만든 캐릭터"(플레이어): 지도를 탭하면
-     그 자리로 걸어간다. Poco/Momo는 NPC로 계속 자유 배회. */
+  /* 걸어다니는 숫자친구 — nbNumi는 "나"(사람 아바타, 플레이어): 지도를 탭하면
+     그 자리로 걸어간다. nbBuddy(동행 숫자/기호 캐릭터)는 플레이어를 살짝 뒤에서
+     따라다닌다(pick() 대상 아님). nbElder·nbDoc는 정자·도서관 앞에 서 있는 정지
+     NPC(spd:0, still:true — walk()에서 아예 움직이지 않는다). Poco/Momo는 계속 자유 배회. */
   const myName=S.name?S.name:('#'+S.character.number);
   const nbs=[
     {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
-      lines:[`안녕! 난 ${myName}(이)야 ✨`,'지도를 콕 찍으면 내가 걸어가!','오늘은 어떤 마법을 배울까?']},
+      lines:[`안녕! 난 ${myName}(이)야 ✨`,'지도를 콕 찍으면 내가 걸어가!']},
+    {el:scr.querySelector('#nbBuddy'),x:37,y:63,tx:37,ty:63,spd:.22,buddy:true,
+      lines:['오늘은 어떤 마법을 배울까?','내가 옆에서 도와줄게!']},
+    {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
+      lines:['허허, 마을에 온 걸 환영하네','정자에 앉아 숫자 이야기 들려줄까?','천천히 해도 괜찮단다']},
+    {el:scr.querySelector('#nbDoc'),x:47,y:60,tx:47,ty:60,spd:0,still:true,
+      lines:['안녕! 나는 독쌤이야 📚','오늘 배울 마법은 도서관에 있어','모르면 언제든 물어봐!']},
     {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
     {el:scr.querySelector('#nbMomo'),x:37,y:66,tx:37,ty:66,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
   ];
   nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
   function pick(n){const sp=[[38,58],[44,62],[36,66],[42,68],[48,57],[34,60]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
-  nbs.forEach(n=>{if(!n.player)pick(n);});
+  nbs.forEach(n=>{if(!n.player&&!n.buddy&&!n.still)pick(n);});
   let walkRAF;
   let muted=true;
   let stopAmbience=null;
+  const player=nbs[0];
   function walk(){
     nbs.forEach(n=>{
+      if(n.still)return;                                    // 할아버지·독쌤은 제자리 고정
+      if(n.buddy){n.tx=player.x-3;n.ty=player.y+1.2;}        // 동행은 플레이어를 살짝 뒤에서 따라간다
       const dx=n.tx-n.x,dy=n.ty-n.y,d=Math.hypot(dx,dy);
-      if(d<.3){if(!n.player&&Math.random()<.012)pick(n);return;}   // 플레이어는 도착하면 그 자리에 머문다
+      if(d<.3){if(!n.player&&!n.buddy&&Math.random()<.012)pick(n);return;}   // 플레이어·동행은 도착하면 그 자리에 머문다
       n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
       n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
@@ -3889,6 +3978,7 @@ function screenCloset(){
   if(window.screenCloset){
     window.screenCloset(document.getElementById('nm-closet-cnt'),{
       char: S.character,
+      avatarKind: avatarKind(),
       unlocked: S.character_unlocked,
       coins: S.coins,
       lang: S.lang,
@@ -3899,12 +3989,15 @@ function screenCloset(){
         save();
         // 상단 칩만 업데이트
         const chip=$('#charChipBtn');
-        if(chip&&window.renderNumiChar){
-          const lbl=S.name?esc(S.name):charIdLabel(S.character);
-          chip.innerHTML=window.renderNumiChar(S.character,30)+`<span class="nm-char-chip-name">${lbl}</span>`;
-        }
+        if(chip)chip.innerHTML=charChipInner();
         const ci=$('.nm-coins b');
         if(ci)ci.textContent=S.coins;
+      },
+      onSaveAvatar(kind){
+        S.avatar={kind};
+        save();
+        const chip=$('#charChipBtn');
+        if(chip)chip.innerHTML=charChipInner();
       }
     });
   }
@@ -3926,7 +4019,7 @@ function renderSlotCards(){
       const nm=S.name?esc(S.name):('#'+S.character.number);
       cards+=`<div class="nm-slot-card active">
         <span class="nm-slot-badge">${ko?'지금':en?'Now':'当前'}</span>
-        <div class="nm-slot-fig">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,56):''}</div>
         <div class="nm-slot-name">${nm}</div>
       </div>`;
       continue;
@@ -3935,10 +4028,11 @@ function renderSlotCards(){
     const hasData = st && (st.onboarded || st.name);
     if(hasData){
       const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
+      const avk=(st.avatar&&st.avatar.kind)||'boy';
       const nm=st.name?esc(st.name):('#'+ch.number);
       cards+=`<button class="nm-slot-card" data-slot="${n}" title="${ko?'전환':en?'Switch':'切换'}">
         <span class="nm-slot-del" data-del="${n}" title="${ko?'지우기':en?'Delete':'删除'}">✕</span>
-        <div class="nm-slot-fig">${window.renderNumiChar?window.renderNumiChar(ch,56):''}</div>
+        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avk,ch,56):''}</div>
         <div class="nm-slot-name">${nm}</div>
       </button>`;
     } else {

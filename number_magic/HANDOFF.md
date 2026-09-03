@@ -93,6 +93,12 @@ crossSum · sortBasket(count/compare) · tallyBuild(build/read)
 - 장식: 숫자 구름·분수·걷는 숫자 캐릭터(탭=말풍선+TTS)·Web Audio 합성 배경음(🔇/🔈 토글).
 - 건물 매핑: 📖BASIC(좌상 책건물·**이제 열림**) · 🏛️PRIME(TOWN HALL) · ⛰️CHALLENGE(정자·잠김) ·
   🏠ADVANCE(우하단 집) · 🎬Magic Theater(영상·준비중).
+- **사람 아바타 + 동행** ✅ 구현됨(2026-09-03, 마을세계관-설계.md §1). 아이는 이제 사람
+  (`S.avatar={kind:'boy'|'girl'}`, `renderHumanChar`/`renderPartyHtml` — `app/numi-render.js`)이고,
+  기존에 아이 자신이던 숫자/기호 캐릭터(`S.character`)는 옆에서 따라다니는 동행이 됨. 마을에
+  정지 NPC 2명(할아버지 `#nbElder`·독쌤 `#nbDoc`) 추가. 온보딩 2단계(나→동행)로 나뉨, 기존
+  저장본(온보딩 이전)은 마을 진입 시 이주 모달로 1회 선택 강제. 옷장(`app/closet.js`) 'me' 탭에서
+  전환 가능.
 
 ---
 
@@ -127,7 +133,7 @@ engine/threads/*.js 로 구현되어 있고, 유아용 NL 스레드(nl.js)가 �
 | 배경음 톤/볼륨 피드백 | 원장 확인 대기 |
 | Magic Theater 영상 | 준비중 안내만 |
 | §8 Workflow 파이프라인 실행 | 미착수 |
-| 캐릭터를 학습 흐름 더 넓게 쓰기 | 미착수. 게임·아레나는 호스트 배치 완료(8628a38) — 리포트·편지함·레벨업·마을 NPC는 아직 |
+| 캐릭터를 학습 흐름 더 넓게 쓰기 | 미착수. 게임·아레나는 호스트 배치 완료(8628a38) — 리포트·편지함·레벨업은 아직. 마을 NPC(할아버지·독쌤)는 ✅ 완료(2026-09-03, 사람 아바타+동행) |
 
 ---
 

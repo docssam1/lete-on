@@ -3,6 +3,10 @@
    char = {number:0-99, color:'blue', bg:'plain', cape:'none', hat:'none'}
    size = 픽셀 너비 (기본 120, 높이 = size×1.25)
 
+   + window.renderHumanChar(kind, size) / window.renderPartyHtml(avatarKind, char, size)
+     — 사람 아바타(아이 boy/girl, 마을 NPC elder/doc) + 동행 캐릭터 합성 렌더.
+     마을세계관-설계.md §1 "사람 아바타 + 동행" 참고.
+
    구성: [오라(글로우, color)] + [배경 장식 SVG(bg)] + [망토 SVG(cape, 캐릭터 뒤)]
         + [캐릭터 PNG(number) × color 톤] + [모자 SVG(hat, 캐릭터 위)]
    - color: 캐릭터 PNG 전체(신발·몸통·무늬 전부)에 CSS 필터로 색조를 입힘 —
@@ -341,6 +345,29 @@ onload="var s=this.parentNode&&this.parentNode.querySelector('[data-symfallback]
 onerror="this.style.display='none'"
 style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);max-width:92%;max-height:96%;object-fit:contain;filter:${shadow}">`;
 }
+
+/* ── 사람 아바타(아이) / 마을 NPC 렌더 ── 마을세계관-설계.md §1
+   window.renderHumanChar(kind, size) → HTML 문자열
+   kind: 'boy'|'girl'(아이, S.avatar) · 'elder'(할아버지) · 'doc'(독쌤 선생님)
+   원본 PNG를 그대로 쓴다 — 숫자 캐릭터와 달리 색조 필터·모자/망토 오버레이 없음
+   (사람은 이미 완성된 일러스트라 재염색 대상이 아니다). 모르는 kind는 boy로 폴백. */
+const HUMAN_IMG = {boy:'kid-boy.png', girl:'kid-girl.png', elder:'elder.png', doc:'docssam.png'};
+window.renderHumanChar = function(kind, size){
+  size = size || 120;
+  const file = HUMAN_IMG[kind] || HUMAN_IMG.boy;
+  const base = window.NM_CHAR_BASE || 'assets/characters/';
+  const ph = Math.round(size * 1.25);
+  return `<div class="nm-human" style="width:${size}px;height:${ph}px"><img src="${base}${file}" alt="" draggable="false"></div>`;
+};
+
+/* window.renderPartyHtml(avatarKind, character, size) → 아바타(사람) + 오른쪽 아래로 살짝
+   겹쳐 서 있는 동행 숫자/기호 캐릭터. character는 renderNumiChar와 같은 형식. */
+window.renderPartyHtml = function(avatarKind, character, size){
+  size = size || 120;
+  const human = window.renderHumanChar ? window.renderHumanChar(avatarKind, size) : '';
+  const buddy = window.renderNumiChar ? window.renderNumiChar(character, Math.round(size*.75)) : '';
+  return `<div class="nm-party">${human}<span class="nm-party-buddy">${buddy}</span></div>`;
+};
 
 /* ── 메인 렌더 ── */
 window.renderNumiChar = function(char, size){
