@@ -10,9 +10,11 @@ import {
 
 const $ = (selector) => document.querySelector(selector);
 const select = $("#levelSelect");
+const countInput = $("#countInput");
 const toggle = $("#answerToggle");
 const coverToggle = $("#coverToggle");
-const grid = $("#problemGrid");
+const worksheet = $("#worksheet");
+const sheetTemplate = $("#sheetTemplate");
 let offset = 0;
 
 const copy = {
@@ -31,6 +33,10 @@ const initialSamples = {
   5: [0, 1, 3, 5, 7, 9]
 };
 
+const allOption = document.createElement("option");
+allOption.value = "all";
+allOption.textContent = `전체 유형 · ${levels.reduce((sum, level) => sum + level.problems.length, 0)}문항`;
+select.append(allOption);
 levels.forEach((level) => {
   const option = document.createElement("option");
   option.value = String(level.id);
@@ -38,9 +44,52 @@ levels.forEach((level) => {
   select.append(option);
 });
 
-function problemSet(level) {
-  const indexes = initialSamples[level.id];
-  return indexes.map((index) => level.problems[(index + offset) % level.problems.length]);
+function requestedCount() {
+  const count = Math.max(1, Math.min(20, Math.round(Number(countInput.value) || 6)));
+  countInput.value = String(count);
+  return count;
+}
+
+function orderedProblems(level) {
+  const preferred = initialSamples[level.id];
+  const indexes = [...preferred, ...level.problems.map((_, index) => index).filter((index) => !preferred.includes(index))];
+  return indexes.map((index) => level.problems[index]);
+}
+
+function balancedEntries(count) {
+  const pools = new Map(levels.map((level) => [level.id, orderedProblems(level)]));
+  return Array.from({ length: count }, (_, index) => {
+    const position = index + offset;
+    const level = levels[position % levels.length];
+    const pool = pools.get(level.id);
+    const problemIndex = Math.floor(position / levels.length) % pool.length;
+    return { level, problem: pool[problemIndex] };
+  });
+}
+
+function selectedEntries() {
+  const count = requestedCount();
+  const level = levels.find((item) => String(item.id) === select.value);
+  if (!level || count > level.problems.length) {
+    select.value = "all";
+    return balancedEntries(count);
+  }
+  const pool = orderedProblems(level);
+  return Array.from({ length: count }, (_, index) => ({ level, problem: pool[(offset + index) % pool.length] }));
+}
+
+function splitEvenly(entries) {
+  const pageCount = Math.ceil(entries.length / 6);
+  const baseSize = Math.floor(entries.length / pageCount);
+  const extra = entries.length % pageCount;
+  const pages = [];
+  let cursor = 0;
+  for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
+    const size = baseSize + (pageIndex < extra ? 1 : 0);
+    pages.push(entries.slice(cursor, cursor + size));
+    cursor += size;
+  }
+  return pages;
 }
 
 const closePoints = (points) => [...points, points[0]];
@@ -153,35 +202,50 @@ function problemContent(problem, showAnswer) {
 }
 
 function render() {
-  const level = levels[Number(select.value || 1) - 1];
   const showAnswer = toggle.checked;
-  const selected = problemSet(level);
-  const band = curriculumBandLabel("geoboard", level.id, "ko");
-  $("#sheetTitle").textContent = `${level.id}단계 · ${copy[level.id].title}`;
-  $("#sheetDescription").textContent = `${band} · ${copy[level.id].description}  |  ${level.stage} ${level.difficulty}`;
-  $("#coverTitle").textContent = copy[level.id].title;
-  $("#coverSubtitle").textContent = copy[level.id].description;
-  $("#coverLevel").textContent = band;
-  $("#coverCount").textContent = `${selected.length} QUESTIONS`;
+  const entries = selectedEntries();
+  const selectedLevel = levels.find((item) => String(item.id) === select.value);
+  const title = selectedLevel ? `${selectedLevel.id}단계 · ${copy[selectedLevel.id].title}` : "점판 도형 종합 활동";
+  const description = selectedLevel
+    ? `${curriculumBandLabel("geoboard", selectedLevel.id, "ko")} · ${copy[selectedLevel.id].description}  |  ${selectedLevel.stage} ${selectedLevel.difficulty}`
+    : "1031 입문 · 입문 · 1031 초급 · 다섯 유형을 고르게 연습해 보세요.";
+  $("#coverTitle").textContent = selectedLevel ? copy[selectedLevel.id].title : "점판 도형 종합 활동";
+  $("#coverSubtitle").textContent = selectedLevel ? copy[selectedLevel.id].description : "선분 만들기부터 도형 나누기까지 차례로 연습합니다.";
+  $("#coverLevel").textContent = selectedLevel ? curriculumBandLabel("geoboard", selectedLevel.id, "ko") : "1031 입문 · 초급";
+  $("#coverCount").textContent = `${entries.length} QUESTIONS`;
   $("#coverSheet").hidden = !coverToggle.checked;
-  grid.replaceChildren();
-  selected.forEach((problem, index) => {
-    const content = problemContent(problem, showAnswer);
-    const article = document.createElement("article");
-    article.className = `problem kind-${problem.kind}${showAnswer ? " showing-answer" : ""}`;
-    article.dataset.problemId = problem.id;
-    article.dataset.kind = problem.kind;
-    article.innerHTML = `<header><b>${index + 1}</b><span>${content.prompt}</span></header><div class="visual">${content.visual}</div><div class="answer-line">${content.answer}</div>`;
-    grid.append(article);
+  worksheet.querySelectorAll(".sheet").forEach((sheet) => sheet.remove());
+  let problemNumber = 1;
+  const pages = splitEvenly(entries);
+  pages.forEach((pageEntries, pageIndex) => {
+    const sheet = sheetTemplate.content.firstElementChild.cloneNode(true);
+    sheet.dataset.page = String(pageIndex + 1);
+    sheet.querySelector(".sheet-title").textContent = title;
+    sheet.querySelector(".sheet-description").textContent = description;
+    sheet.querySelector(".page-number").textContent = `${pageIndex + 1} / ${pages.length}`;
+    const grid = sheet.querySelector(".problem-grid");
+    grid.style.setProperty("--row-count", String(Math.ceil(pageEntries.length / 2)));
+    pageEntries.forEach(({ level, problem }) => {
+      const content = problemContent(problem, showAnswer);
+      const article = document.createElement("article");
+      article.className = `problem kind-${problem.kind}${showAnswer ? " showing-answer" : ""}`;
+      article.dataset.problemId = problem.id;
+      article.dataset.kind = problem.kind;
+      article.dataset.level = String(level.id);
+      article.innerHTML = `<header><b>${problemNumber}</b><span><small>${level.id}. ${copy[level.id].title}</small>${content.prompt}</span></header><div class="visual">${content.visual}</div><div class="answer-line">${content.answer}</div>`;
+      grid.append(article);
+      problemNumber += 1;
+    });
+    worksheet.append(sheet);
   });
 }
 
 select.addEventListener("change", () => { offset = 0; render(); });
+countInput.addEventListener("change", () => { offset = 0; render(); });
 toggle.addEventListener("change", render);
 coverToggle.addEventListener("change", render);
 $("#refreshButton").addEventListener("click", () => {
-  const level = levels[Number(select.value || 1) - 1];
-  offset = (offset + 1) % level.problems.length;
+  offset = (offset + requestedCount()) % 55;
   render();
 });
 $("#printButton").addEventListener("click", () => window.print());

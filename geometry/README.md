@@ -63,6 +63,8 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 
 인쇄 학습지는 `worksheet/paper-fold/`, `worksheet/mirror-manor/`, `worksheet/path-walk/`, `worksheet/hidden-shape/`,
 `worksheet/net-observatory/`, `worksheet/dice-roll/`, `worksheet/geoboard/`에서 각 게임의 검증 데이터를 그대로 사용해 만듭니다.
+거울 저택과 점판 공작소 학습지는 1~20문항을 만들 수 있습니다. 전체 유형 20문항은 다섯 단계에서
+4문항씩 중복 없이 뽑고, 표지 1장 뒤에 5문항씩 정렬한 A4 문제지 4장을 생성합니다.
 
 ## 공통 성장 요소
 
