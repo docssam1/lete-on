@@ -22,7 +22,15 @@
     'bike-library': 'The read-aloud service seems most useful because it creates a learning experience, not just a delivery. It can also help children who cannot yet read alone.',
     'paper-bridge': 'Changing your mind can show strength when new evidence appears. Joon listened to the test result and improved the team’s bridge.',
     'community-fridge': 'I would begin with clear rules and volunteers instead of locks. Locks could make people feel unwelcome, while shared responsibility supports the purpose of the fridge.',
-    'two-brooms': 'Choosing first was not enough to make the job fair. Fairness meant matching each tool to the work and giving both children a useful role.'
+    'two-brooms': 'Choosing first was not enough to make the job fair. Fairness meant matching each tool to the work and giving both children a useful role.',
+    'forest-partners': 'Something can be important even when we cannot see it. The fungal threads are hidden, but they help a plant reach water and nutrients while receiving sugars in return.',
+    'quiet-channel': 'Quiet work can be just as valuable as loud work. The ants solved the real problem by joining many tiny paths into one channel, even though Woodpecker barely noticed them.',
+    'night-migration': 'Tall buildings should dim unnecessary lights during migration weeks. The passage explains that bright lights can confuse birds and cause them to circle or strike glass.',
+    'moth-lantern': 'Pip learned that the brightest sign is not always the most reliable guide. He needed to compare the lantern with the hill and moon before changing direction.',
+    'moving-bridges': 'A bridge would not be safer with every gap removed. Small, controlled spaces let its materials expand and contract without building harmful pressure.',
+    'jar-basket': 'The basket showed greater strength because it adjusted without losing its purpose. Its flexibility protected the apples and also made room for the damaged jar.',
+    'seed-banks': 'Communities should support seed banks before a disaster happens. A backup is useful because no one can predict which variety may be needed after disease or environmental change.',
+    'finch-seeds': 'Wren was wise to share because she saved part of the harvest first. Helping Finch did not remove her backup, and it gave both birds more choices for the next season.'
   };
 
   const state = {
@@ -191,7 +199,7 @@
         <p>${timingCopy} Keep listening while the other students speak because I may ask for your response at any time.</p>
         <dl class="brief-facts">
           <div><dt>Set</dt><dd>${esc(set.label)} · ${esc(set.theme)}</dd></div>
-          <div><dt>Rounds</dt><dd>${state.sessionMode === 'full' ? '1. Nonfiction · 2. Fiction' : `1. ${esc(set.passages[0].genre)}`}</dd></div>
+          <div><dt>Rounds</dt><dd>${state.sessionMode === 'full' ? `1. ${esc(set.passages[0].genre)} · 2. ${esc(set.passages[1].genre)}` : `1. ${esc(set.passages[0].genre)}`}</dd></div>
           <div><dt>Timing</dt><dd>${state.sessionMode === 'full' ? '60 seconds for each passage' : '60 seconds'}</dd></div>
           <div><dt>Focus</dt><dd>Summary · evidence · opinion · vocabulary · listening</dd></div>
         </dl>
@@ -820,7 +828,7 @@
     const scores = feedback.scores;
     if (scores.evidence <= 2) return 'Which exact detail from the passage best supports what you just said?';
     if (scores.organization <= 2) return 'Can you state your main point first and then give one supporting detail?';
-    if (item.type === 'summary') return passage.genre === 'Fiction'
+    if (item.type === 'summary') return passage.genre !== 'Nonfiction'
       ? 'Which event changed the main character’s thinking the most, and why?'
       : 'Which fact is most important for understanding the author’s main idea, and why?';
     if (item.kind === 'ambush') return `What is one point ${item.peerName} did not mention?`;
@@ -930,7 +938,7 @@
     const focus = weakest.map((key) => skillName(key)).join(', ');
     return [
       { title: 'Memory snapshot', task: 'Read for 60 seconds, cover the text, and state the main idea plus two details.' },
-      { title: 'Summary frame', task: 'Give one nonfiction and one fiction summary in 30 seconds each.' },
+      { title: 'Summary frame', task: 'Give one nonfiction and one fiction or fable summary in 30 seconds each.' },
       { title: 'Vocabulary defense', task: 'Explain five words through context clues and use each in a new sentence.' },
       { title: 'Follow-up ladder', task: 'Answer one question, then handle three rounds of “Why?”, “Which detail?”, and “What if?”' },
       { title: 'Peer listening', task: 'Listen to a family member’s answer and respond with listen–link–add.' },

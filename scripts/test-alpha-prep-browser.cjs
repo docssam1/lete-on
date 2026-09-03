@@ -128,14 +128,19 @@ async function main() {
 
     await page.goto(url, { waitUntil: 'networkidle' });
     await assertVisibleText(page, 'Walk in ready to listen.');
+    assert.equal(await page.locator('#set-select option').count(), 10, 'practice set selector should contain 10 sets');
     await page.screenshot({ path: path.join(outDir, 'desktop-lobby.png'), fullPage: true });
     await assertNoViewportOverflow(page, 'desktop lobby');
     await page.locator('#student-name').fill('Alex');
+    await page.locator('#set-select').selectOption('9');
+    assert.equal(await page.locator('#set-select').inputValue(), '9');
     await page.locator('[data-action="seat"][data-seat="3"]').click();
     await page.locator('[data-action="enter-room"]').click();
     await assertVisibleText(page, 'Good afternoon, everyone.');
+    await assertVisibleText(page, 'Protecting Tomorrow');
     await assertVisibleText(page, 'two passages, one at a time');
     await assertVisibleText(page, '60 seconds for each passage');
+    await assertVisibleText(page, '1. Nonfiction · 2. Fable');
     await assertNoViewportOverflow(page, 'desktop briefing');
     await page.screenshot({ path: path.join(outDir, 'desktop-briefing.png'), fullPage: true });
     await page.locator('[data-action="prepare-reading"]').click();
@@ -143,6 +148,7 @@ async function main() {
     assert.equal(await page.locator('.genre-stamp').textContent(), 'Nonfiction');
     await page.locator('[data-action="start-reading"]').click();
     await assertVisibleText(page, '1:00');
+    await assertNoViewportOverflow(page, 'desktop nonfiction reading');
     await page.screenshot({ path: path.join(outDir, 'desktop-reading.png'), fullPage: true });
     const firstParagraph = await page.locator('.passage-copy p').first().textContent();
     await page.evaluate(() => window.__ALPHA_PREP_TEST__.expireReading());
@@ -154,10 +160,12 @@ async function main() {
 
     await page.locator('[data-action="next-passage"]').click();
     await assertVisibleText(page, 'PASSAGE 2 OF 2');
-    assert.equal(await page.locator('.genre-stamp').textContent(), 'Fiction');
+    assert.equal(await page.locator('.genre-stamp').textContent(), 'Fable');
     assert.equal(await page.evaluate(() => window.__ALPHA_PREP_TEST__.state.secondsLeft), 60, 'second passage must receive a fresh 60-second timer');
     await page.locator('[data-action="start-reading"]').click();
     await assertVisibleText(page, '1:00');
+    await assertNoViewportOverflow(page, 'desktop fable reading');
+    await page.screenshot({ path: path.join(outDir, 'desktop-fable-reading.png'), fullPage: true });
     await page.evaluate(() => window.__ALPHA_PREP_TEST__.expireReading());
     await page.locator('[data-action="begin-interview"]').click();
     await runPassageInterview(page, 1);
@@ -182,6 +190,10 @@ async function main() {
     await assertVisibleText(page, 'one minute for each passage');
     await assertNoViewportOverflow(page, 'mobile briefing');
     await page.screenshot({ path: path.join(outDir, 'mobile-briefing.png'), fullPage: true });
+    await page.locator('[data-action="prepare-reading"]').click();
+    await page.locator('[data-action="start-reading"]').click();
+    await assertNoViewportOverflow(page, 'mobile nonfiction reading');
+    await page.screenshot({ path: path.join(outDir, 'mobile-reading.png'), fullPage: true });
 
     const townPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     const townPageErrors = [];

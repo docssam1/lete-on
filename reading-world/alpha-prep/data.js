@@ -335,6 +335,226 @@
           ]
         )
       ]
+    },
+    {
+      id: 'set-7',
+      label: 'Set 7',
+      theme: 'Forest Connections',
+      level: 'CARS D / Bricks 300 Part 1 target band',
+      passages: [
+        passage(
+          'forest-partners',
+          'Nonfiction',
+          'Partners Beneath the Forest',
+          [
+            'Many forest plants have partners hidden below the soil. Thin threads made by certain fungi grow around or inside plant roots. These threads reach into tiny spaces that roots cannot enter easily. This lets them collect water and nutrients, including phosphorus.',
+            'The fungus passes some of these materials to the plant. In return, the plant shares sugars that it made using sunlight. This exchange can help both partners survive. It is especially useful where soil is dry or poor. One fungus may connect with several plants and form a wide underground network.',
+            'Scientists study these connections carefully. A network does not mean that every tree freely sends food to every other tree. Plants and fungi can compete. They can also cooperate. Local conditions affect what moves through the soil. Still, the partnership shows that a forest is more than a collection of separate trunks. Some of its most important relationships are too small to see.'
+          ],
+          [
+            ['fungi', 'living things such as mushrooms and molds', '균류'],
+            ['nutrients', 'substances that living things need to grow', '영양분'],
+            ['exchange', 'the act of giving one thing and receiving another', '교환'],
+            ['network', 'a group of connected parts', '연결망'],
+            ['cooperate', 'to work together', '협력하다']
+          ],
+          [
+            { type: 'summary', prompt: 'Explain how a plant and a fungus can help each other.' },
+            { type: 'evidence', prompt: 'What does the fungus provide, and what does the plant provide in return?' },
+            { type: 'opinion', prompt: 'Can something be important even when people cannot see it? Use the passage in your answer.' },
+            { type: 'vocabulary', prompt: 'What does "network" mean in this passage?' }
+          ]
+        ),
+        passage(
+          'quiet-channel',
+          'Fable',
+          'The Quiet Channel',
+          [
+            'Woodpecker liked everyone to hear him work. Each morning he struck a dead branch and announced, “No one helps this forest more loudly than I do.” Below him, a line of ants carried crumbs and bits of leaf beneath a fallen log.',
+            'After a storm, mud blocked the narrow spring where animals drank. Woodpecker pecked at branches above the water, but his beak could not move the wet soil. “Stand back,” he called, trying again until he was tired.',
+            'The ants did not answer. Hundreds of them followed cracks through the mud, carrying one grain at a time. Their narrow paths joined into a channel. Soon a thin stream reached the thirsty animals, and the pool slowly filled again.',
+            'Woodpecker looked at the small workers he had barely noticed. “Your work made almost no sound,” he said. “But everyone can see its result.” From then on, he listened before deciding who was useful. The ants kept working, no louder than before.'
+          ],
+          [
+            ['announced', 'said something clearly for others to hear', '분명히 알렸다'],
+            ['blocked', 'closed so that nothing could pass', '막힌'],
+            ['channel', 'a narrow path through which water can flow', '물길'],
+            ['result', 'what happens because of an action', '결과'],
+            ['deciding', 'making a choice or judgment', '판단하는 것']
+          ],
+          [
+            { type: 'summary', prompt: 'Retell the problem at the spring and how it was solved.' },
+            { type: 'character', prompt: 'How did Woodpecker judge the ants at first, and how did his view change?' },
+            { type: 'opinion', prompt: 'Is loud work more valuable than quiet work? Explain with a story detail.' },
+            { type: 'vocabulary', prompt: 'What is a "channel" in the story, and why was it useful?' }
+          ]
+        )
+      ]
+    },
+    {
+      id: 'set-8',
+      label: 'Set 8',
+      theme: 'Night Travelers',
+      level: 'CARS D / Bricks 300 Part 1 target band',
+      passages: [
+        passage(
+          'night-migration',
+          'Nonfiction',
+          'Why Many Birds Travel at Night',
+          [
+            'Many small songbirds travel hundreds or thousands of kilometers between nesting and wintering areas. A surprising number begin each part of the journey after sunset. Night air is often cooler than daytime air. It may be calmer too. These conditions can help birds avoid overheating and use less energy.',
+            'Flying at night also leaves daylight for feeding and resting. To stay on course, birds combine several clues. They may use the stars and the fading light at sunset. Familiar landforms and Earth’s magnetic field can also help. No single clue guides every bird on every trip.',
+            'Artificial light can interrupt this journey. Bright windows and beams may attract or confuse migrating birds. The danger can grow when clouds hide other clues. Birds may circle buildings until they are exhausted. They may also strike glass. During busy migration weeks, some cities dim unnecessary lights at night. A darker route does not remove every danger, but it can give night travelers a safer path.'
+          ],
+          [
+            ['migrating', 'traveling from one region to another with the seasons', '이동하는'],
+            ['nesting', 'building or using a place to lay eggs and raise young', '둥지를 트는'],
+            ['course', 'the direction or path of travel', '이동 경로'],
+            ['magnetic', 'related to the force of a magnet', '자기의'],
+            ['artificial', 'made by people rather than occurring naturally', '인공적인']
+          ],
+          [
+            { type: 'summary', prompt: 'Explain why many birds migrate at night and how they find their way.' },
+            { type: 'cause', prompt: 'How can artificial light create danger for migrating birds?' },
+            { type: 'opinion', prompt: 'Should tall buildings dim unnecessary lights during migration weeks? Explain.' },
+            { type: 'vocabulary', prompt: 'What does "stay on course" mean in the second paragraph?' }
+          ]
+        ),
+        passage(
+          'moth-lantern',
+          'Fable',
+          'The Moth and the Lantern',
+          [
+            'At dusk, an old moth led a group toward a grove where night flowers had opened. “Keep the dark hill on your left and follow the steady moon,” she said. A young moth named Pip noticed a lantern beside a cottage.',
+            '“That light is brighter, so it must be a better guide,” Pip insisted. He left the group and flew toward it. As he drew near, the lantern seemed to move around him. Pip circled again and again until his wings felt heavy.',
+            'A firefly found him resting on a fence. She flashed slowly and led him away from the cottage. Once the lantern was behind them, Pip could see the hill and moon again. They reached the grove just before the flowers closed.',
+            'Pip thanked the firefly. “I chose the loudest-looking answer without checking where it led,” he admitted. On the next journey, he still noticed every bright light, but he compared it with the other signs before changing direction.'
+          ],
+          [
+            ['steady', 'not changing or shaking', '한결같은'],
+            ['insisted', 'said firmly that something was true', '우겼다'],
+            ['circled', 'moved around something repeatedly', '빙빙 돌았다'],
+            ['direction', 'the way in which something travels', '방향'],
+            ['compared', 'looked at things to notice similarities or differences', '비교했다']
+          ],
+          [
+            { type: 'summary', prompt: 'Retell Pip’s choice, the problem it caused, and how he found the grove.' },
+            { type: 'inference', prompt: 'Why did the lantern seem like a better guide to Pip at first?' },
+            { type: 'opinion', prompt: 'What lesson did Pip learn about choosing a guide? Do you agree?' },
+            { type: 'vocabulary', prompt: 'What does "steady" mean in the first paragraph?' }
+          ]
+        )
+      ]
+    },
+    {
+      id: 'set-9',
+      label: 'Set 9',
+      theme: 'Built to Change',
+      level: 'CARS D / Bricks 300 Part 1 target band',
+      passages: [
+        passage(
+          'moving-bridges',
+          'Nonfiction',
+          'Why Bridges Need Room to Move',
+          [
+            'A bridge may look completely still, but its materials move a little every day. Steel and concrete expand when they become warmer. They contract when they cool. A long bridge can change length by several centimeters as the temperature rises or falls.',
+            'Traffic and wind create movement too. If every part were locked tightly in place, pressure could build. A surface might then crack or bend. Engineers therefore install expansion joints between sections of the road. They also use bearings. These parts let the bridge deck slide or turn by a small amount.',
+            'Moving parts must be inspected and repaired. A damaged joint may let water and dirt reach pieces below the road. Too large a gap can also make travel rough. Allowing movement does not make a bridge weak. Controlled flexibility protects the larger structure. It gives ordinary changes a safe place to happen.'
+          ],
+          [
+            ['expand', 'to become larger', '팽창하다'],
+            ['contract', 'to become smaller or shorter', '수축하다'],
+            ['pressure', 'a force that pushes on something', '압력'],
+            ['inspected', 'examined carefully for problems', '점검된'],
+            ['flexibility', 'the ability to bend or change without breaking', '유연성']
+          ],
+          [
+            { type: 'summary', prompt: 'Explain why bridges move and how engineers manage that movement.' },
+            { type: 'cause', prompt: 'What could happen if every bridge part were locked tightly in place?' },
+            { type: 'opinion', prompt: 'Would a bridge be safer with no gaps at all? Use evidence from the passage.' },
+            { type: 'vocabulary', prompt: 'What does "controlled flexibility" mean in the final paragraph?' }
+          ]
+        ),
+        passage(
+          'jar-basket',
+          'Fable',
+          'The Jar and the Woven Basket',
+          [
+            'On a merchant’s cart, a tall clay jar stood beside a woven basket. “You bend whenever the road turns,” the jar told the basket. “A proper container should hold one perfect shape.”',
+            'The cart reached a rocky hill. At each bump, the basket shifted and pressed gently around the apples inside it. The jar remained rigid. It knocked against the wooden rail and gained a thin crack.',
+            'The driver stopped and wrapped the jar in cloth. The basket leaned to make room. “You are changing shape again,” the jar whispered. “Yes,” said the basket, “so that neither of us has to fall.”',
+            'When they reached the market, every apple was safe, and the jar was still in one piece. The jar no longer mistook movement for weakness. On the trip home, it asked the basket where to lean before the road became rough.'
+          ],
+          [
+            ['woven', 'made by crossing threads or strips over and under', '엮어 만든'],
+            ['proper', 'correct or suitable for a situation', '알맞은'],
+            ['rigid', 'stiff and unable to bend', '딱딱한'],
+            ['wrapped', 'covered by folding material around something', '감쌌다'],
+            ['mistook', 'understood something incorrectly', '잘못 생각했다']
+          ],
+          [
+            { type: 'summary', prompt: 'Retell what happened to the jar and basket on the rocky road.' },
+            { type: 'cause', prompt: 'Why did the basket protect its apples better than the jar protected itself?' },
+            { type: 'opinion', prompt: 'Which object showed greater strength? Explain what strength means in this story.' },
+            { type: 'vocabulary', prompt: 'What does "rigid" mean, and how did being rigid affect the jar?' }
+          ]
+        )
+      ]
+    },
+    {
+      id: 'set-10',
+      label: 'Set 10',
+      theme: 'Protecting Tomorrow',
+      level: 'CARS D / Bricks 300 Part 1 target band',
+      passages: [
+        passage(
+          'seed-banks',
+          'Nonfiction',
+          'A Library Made of Seeds',
+          [
+            'A seed bank is a place that stores seeds for the future. Workers collect seeds from many varieties of crops and wild plants. Each sample is labeled with information such as the plant’s name, where it grew, and when it was collected.',
+            'Before storage, many seeds are cleaned and dried. They are then kept cold, which slows the changes that happen as seeds age. Workers sometimes remove a few seeds and test whether they can still germinate. If too few sprout, they grow new plants and collect fresh seeds.',
+            'Important samples may be stored in more than one location. A backup collection can help after a fire, flood, war, plant disease, or other loss. Seed banks do not replace farms or natural habitats, because living plants must continue to grow and adapt. Instead, they preserve choices. A small envelope today may provide useful traits for tomorrow’s food or restoration work.'
+          ],
+          [
+            ['varieties', 'different kinds of the same general plant', '품종들'],
+            ['sample', 'a small amount that represents a larger group', '표본'],
+            ['storage', 'the act of keeping something for later use', '보관'],
+            ['germinate', 'to begin to grow from a seed', '싹트다'],
+            ['preserve', 'to protect something so it lasts', '보존하다']
+          ],
+          [
+            { type: 'summary', prompt: 'Explain how a seed bank stores seeds and why that work matters.' },
+            { type: 'sequence', prompt: 'What happens to seeds before, during, and after long-term storage?' },
+            { type: 'opinion', prompt: 'Should communities support seed banks even when the seeds may not be used for years? Explain.' },
+            { type: 'vocabulary', prompt: 'What does "preserve choices" mean in the final paragraph?' }
+          ]
+        ),
+        passage(
+          'finch-seeds',
+          'Fable',
+          'The Finch’s Favorite Seed',
+          [
+            'Finch and Wren prepared gardens before the rainy season. Finch planted only round red seeds because they had produced the sweetest berries the year before. Wren planted red seeds, small blue seeds, and several wrinkled brown ones.',
+            '“Why waste space on seeds that may taste worse?” Finch asked. Wren replied, “I do not know what weather is coming, so I am giving the garden more than one chance.”',
+            'The rains began late. Finch’s young red plants withered in the dry soil. Some of Wren’s plants failed too, but the brown variety grew deep roots and survived. Wren saved part of its harvest and shared the rest with Finch.',
+            'Finch expected a lecture, but Wren simply handed over a pouch. “Last year taught you which berry was sweetest,” she said. “This year can teach us which seed endures.” The next season, Finch planted his favorite again, but not alone.'
+          ],
+          [
+            ['prepared', 'made something ready', '준비했다'],
+            ['variety', 'one particular kind within a larger group', '품종'],
+            ['withered', 'became dry and weak', '시들었다'],
+            ['survived', 'continued to live through difficulty', '살아남았다'],
+            ['endures', 'continues through a difficult condition', '견뎌 낸다']
+          ],
+          [
+            { type: 'summary', prompt: 'Retell how Finch’s and Wren’s different choices affected their gardens.' },
+            { type: 'inference', prompt: 'Why did Wren plant several kinds of seeds instead of only her favorite?' },
+            { type: 'opinion', prompt: 'Was Wren wise to share her harvest with Finch? Explain.' },
+            { type: 'vocabulary', prompt: 'What does "endures" mean in Wren’s final sentence?' }
+          ]
+        )
+      ]
     }
   ];
 
