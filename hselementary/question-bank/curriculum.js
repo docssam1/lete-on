@@ -79,14 +79,38 @@
     reviewLocked,
     reviewReason
   });
+  const factorMultipleLockReasons = {
+    "5-1-u2-e5-example-5-4": "세 쌍의 최대공약수만으로 세 수의 최소공배수는 하나로 정해지지 않습니다. 예를 들어 (90, 36, 60)과 (630, 36, 60)은 같은 조건을 만족하지만 최소공배수가 다릅니다.",
+    "5-1-u2-e5-mission-6": "공통으로 나누는 수가 정해지지 않아 세 수가 하나로 정해지지 않습니다. 몫이 2, 3, 5인 세 수는 공통 수에 따라 여러 가지가 됩니다.",
+    "5-1-u2-e7-example-7-1": "원문 조건에는 학생 수가 7명과 14명인 경우가 모두 들어맞아 답이 하나로 정해지지 않습니다.",
+    "5-1-u2-e7-mission-3": "원문 수를 계산하면 학생 수의 공약수는 3뿐이지만, 6개가 남으려면 학생 수가 6보다 커야 하므로 가능한 답이 없습니다."
+  };
   const sourceItem52 = (label, sourceItemId, exploration, reviewLocked = exploration > 4) => {
     const pdfPage = 13 + (exploration - 1) * 2;
     const isMission = sourceItemId.includes("-mission-");
+    const reviewedExploration = exploration === 5 || exploration === 7;
+    const shouldLock = reviewedExploration ? Boolean(factorMultipleLockReasons[sourceItemId]) : exploration === 6 ? false : reviewLocked;
+    const reviewReason = factorMultipleLockReasons[sourceItemId]
+      ? factorMultipleLockReasons[sourceItemId]
+      : "현행 원본 구조는 확인했지만, 항목별 계산과 단일 정답 검산 전에는 공개하지 않습니다.";
     return {
-      ...sourceItem51(label, 1, sourceItemId, pdfPage + (isMission ? 1 : 0), pdfPage + 1 + (isMission ? 1 : 0), reviewLocked,
-        reviewLocked ? "현행 원본 구조는 확인했지만, 항목별 계산과 단일 정답 검산 전에는 공개하지 않습니다." : "현행 원본 구조와 독립 계산 검산 완료"),
+      ...sourceItem51(label, 1, sourceItemId, pdfPage + (isMission ? 1 : 0), pdfPage + 1 + (isMission ? 1 : 0), shouldLock,
+        shouldLock ? reviewReason : "현행 원본 구조와 독립 계산 검산 완료"),
       sourceTier: "advanced"
     };
+  };
+  const sourceItem53 = (label, sourceItemId, exploration) => {
+    const pdfPage = 31 + (exploration - 1) * 2;
+    const isMission = sourceItemId.includes("-mission-");
+    return sourceItem51(
+      label,
+      1,
+      sourceItemId,
+      pdfPage + (isMission ? 1 : 0),
+      pdfPage + 1 + (isMission ? 1 : 0),
+      true,
+      "원문 문제 구조는 확인했지만, 대응 규칙과 그림·부호 조건을 독립 계산하고 답 하나가 되는지 검산하기 전에는 공개하지 않습니다."
+    );
   };
   const factorMultipleGroups = [
     ["약수와 배수", 1, [
@@ -121,6 +145,24 @@
     ["최대공약수와 최소공배수의 관계", 8, [
       ["exploration", "곱과 최대공약수로 차가 가장 작은 두 수와 최소공배수 찾기"], ["example-8-1", "최대공약수와 최소공배수로 가능한 두 수의 합 모두 찾기"], ["example-8-2", "곱과 최소공배수로 공약수의 합 찾기"], ["example-8-3", "최대공약수·최소공배수·차로 큰 수 찾기"], ["example-8-4", "여러 최대공약수와 최소공배수 조건으로 세 수 중 하나 찾기"],
       ["mission-1", "한 수와 최대공약수·최소공배수로 다른 수 찾기"], ["mission-2", "가장 큰 정사각형 조각과 가장 작은 정사각형 배열로 다른 변 찾기"], ["mission-3", "최대공약수와 최소공배수로 가능한 두 수의 합 모두 찾기"], ["mission-4", "최대공약수·최소공배수·차로 두 수 찾기"], ["mission-5", "두 쌍의 최대공약수와 최소공배수로 세 수의 합 찾기"], ["mission-6", "곱과 최대공약수·최소공배수로 세 수 찾기"]
+    ]]
+  ];
+  const correspondenceGroups = [
+    ["대응의 규칙", 1, [
+      ["exploration", "알파벳을 일정한 만큼 옮긴 암호 풀기"], ["example-1-1", "상자 규칙으로 바뀐 수 찾기"], ["example-1-2", "말한 수에 따라 답하는 수의 규칙 찾기"], ["example-1-3", "기호 계산판으로 도형 수식의 값 구하기"], ["example-1-4", "점과 선으로 만든 부호에서 날짜 읽기"],
+      ["mission-1", "두 번 바뀌는 상자 규칙으로 나온 수 찾기"], ["mission-2", "대응 규칙으로 큰 수에 짝인 수 찾기"], ["mission-3", "기호 계산판으로 도형식의 값 구하기"], ["mission-4", "계산기를 여러 번 눌러 1이 되는 수의 합 구하기"], ["mission-5", "자음과 모음 암호로 낱말 풀기"], ["mission-6", "색칠한 모눈의 규칙으로 나타낸 수 구하기"]
+    ]],
+    ["대응표와 대응 관계", 2, [
+      ["exploration", "두 수직선의 연결 규칙으로 대응표와 식 완성하기"], ["example-2-1", "대응표의 두 수 관계를 식으로 나타내기"], ["example-2-2", "세 기호 대응표에서 처음 기호와 끝 기호의 관계 나타내기"], ["example-2-3", "가위바위보 이긴 횟수와 계단 수의 관계 나타내기"],
+      ["mission-1", "대응표의 두 기호 관계와 큰 값의 짝 구하기"], ["mission-2", "세 기호 대응표에서 두 기호의 관계 나타내기"], ["mission-3", "세 줄 대응표에서 두 값의 합 구하기"], ["mission-4", "철사 길이와 직사각형 가로·세로의 관계 나타내기"], ["mission-5", "날짜와 줄넘기 횟수의 관계 나타내기"], ["mission-6", "깨진 도자기 수와 받은 돈의 관계 나타내기"]
+    ]],
+    ["규칙과 대응의 활용 ①", 3, [
+      ["exploration", "직선 수와 나뉜 영역 수의 최대 관계 구하기"], ["example-3-1", "겹쳐 그린 정사각형 수와 삼각형 수의 관계 구하기"], ["example-3-2", "바둑돌 배열에서 흰 돌과 검은 돌 수의 차 구하기"], ["example-3-3", "붙인 정사각형 수와 나눔쪽 수의 관계 구하기"],
+      ["mission-1", "직선 수와 만나는 점 수의 최대 관계 구하기"], ["mission-2", "계단 모양 배열 순서와 사각형 조각 수의 관계 구하기"], ["mission-3", "성냥개비 배열 순서와 가장 작은 정삼각형 수의 관계 구하기"], ["mission-4", "겹쳐 붙인 정사각형 수와 둘레의 관계 구하기"], ["mission-5", "나열된 도형 순서와 큰·작은 삼각형 수의 관계 구하기"], ["mission-6", "바깥쪽 길이와 색 타일 수의 차 구하기"]
+    ]],
+    ["규칙과 대응의 활용 ②", 4, [
+      ["exploration", "지난 시간과 남은 초 길이의 관계로 시각 구하기"], ["example-4-1", "두 사람 나이의 관계로 현재 나이 구하기"], ["example-4-2", "물 넣는 시간과 가득 차는 시간의 관계 구하기"], ["example-4-3", "세 도시 시각의 관계로 전화할 시각 구하기"],
+      ["mission-1", "어머니와 아들 나이의 관계로 몇 년 뒤 구하기"], ["mission-2", "탁자 수와 앉을 수 있는 사람 수의 관계 구하기"], ["mission-3", "원형 길과 나무 사이 거리로 둘레 구하기"], ["mission-4", "주차 시간과 요금의 관계 나타내기"], ["mission-5", "기온과 소리의 빠르기로 번개 친 곳까지 거리 구하기"], ["mission-6", "도시 시각과 동전 쌓는 시간으로 다른 도시 시각 구하기"]
     ]]
   ];
 
@@ -719,7 +761,7 @@
         ])
       ],
       ["약수와 배수", ...factorMultipleGroups.map(([name, exploration, items]) => detailed(name, `factorMultipleE${exploration}`, items.map(([suffix, label], variant) => sourceItem52(label, `5-1-u2-e${exploration}-${suffix}`, exploration))))],
-      ["규칙과 대응", "규칙과 대응", "대응표와 대응 관계", "규칙과 대응의 활용 ①", "규칙과 대응의 활용 ②"],
+      ["규칙과 대응", ...correspondenceGroups.map(([name, exploration, items]) => detailed(name, `correspondenceE${exploration}`, items.map(([suffix, label]) => sourceItem53(label, `5-1-u3-e${exploration}-${suffix}`, exploration))))],
       ["약분과 통분", "크기가 같은 분수", "약분과 기약분수", "통분과 분수의 크기 비교", "조건에 맞는 분수 찾기"],
       ["분수의 덧셈과 뺄셈", "분수의 덧셈", "분수의 뺄셈", "식 세워 풀기", "단위분수와 부분분수"],
       ["다각형의 둘레와 넓이", "다각형의 둘레", "직사각형과 직각삼각형의 넓이", "둘레와 넓이", "여러 가지 사각형의 넓이"]

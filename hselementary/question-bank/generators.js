@@ -18612,6 +18612,245 @@
       const answer = candidates.at(-1);
       return result(`두 자리 수 □□${last}에 ${addend}을 더한 수가 36의 배수일 때, 가장 큰 두 자리 수 □□을 구하세요.${tag("largest-two-digit-before-fixed-last", [last, addend], "single-value")}`, answer, `조건을 만족하는 두 자리 수는 ${setAnswer(candidates)}이고, 이 중 가장 큰 수는 ${answer}입니다.`);
     },
+    factorMultipleE5({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 13 || variant === 5 || variant === 13) throw new Error("약수와 배수 개념탐구 5의 답이 하나인 원문 분기만 생성할 수 있습니다.");
+      const tag = (kind, values, contract) => `<span hidden data-factor-multiple-e5-kind="${kind}" data-factor-multiple-e5-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
+      const setAnswer = values => values.join(", ");
+      const choose = pools => pick(rng, pools[level]);
+      const gcdLcmResult = (values, kind) => {
+        const greatest = gcdMany(values);
+        const least = lcmMany(values);
+        return result(`세 수 ${values.join(", ")}의 최대공약수와 최소공배수를 차례로 구하세요.${tag(kind, values, "ordered")}`, `${greatest}, ${least}`, `세 수의 최대공약수는 ${greatest}이고 최소공배수는 ${least}입니다. 따라서 ${greatest}, ${least}입니다.`);
+      };
+
+      if (variant === 0 || variant === 1 || variant === 6 || variant === 7) {
+        const pools = variant === 0
+          ? [[[84, 70, 126], [72, 90, 120], [96, 144, 180]], [[84, 126, 210], [120, 168, 240], [180, 252, 360]], [[180, 252, 420], [240, 360, 504], [360, 504, 630]]]
+          : variant === 1
+            ? [[[156, 330, 360], [84, 180, 252], [120, 210, 330]], [[180, 360, 420], [264, 396, 504], [360, 540, 756]], [[420, 630, 840], [504, 756, 1008], [630, 840, 1260]]]
+            : variant === 6
+              ? [[[48, 72, 180], [36, 60, 84], [54, 90, 126]], [[72, 120, 180], [84, 126, 210], [108, 180, 252]], [[180, 252, 360], [210, 315, 420], [252, 378, 504]]]
+              : [[[140, 210, 168], [84, 126, 196], [90, 150, 210]], [[168, 252, 360], [180, 270, 420], [210, 315, 490]], [[360, 504, 630], [420, 630, 840], [504, 756, 980]]];
+        return gcdLcmResult(choose(pools), variant === 0 ? "three-gcd-lcm-exploration" : variant === 1 ? "three-gcd-lcm-example" : `three-gcd-lcm-mission-${variant}`);
+      }
+      if (variant === 2 || variant === 8) {
+        const pools = variant === 2
+          ? [[[4, 27], [7, 28], [5, 36]], [[8, 45], [9, 40], [7, 54]], [[12, 63], [14, 60], [15, 56]]]
+          : [[[7, 18], [12, 35], [15, 20]], [[9, 28], [14, 30], [15, 32]], [[12, 35], [18, 28], [21, 30]]];
+        const factors = pools[level];
+        const values = factors.map(pair => pair[0] * pair[1]);
+        const greatest = gcdMany(values);
+        const least = lcmMany(values);
+        return result(`다음 세 수의 최대공약수와 최소공배수를 차례로 구하세요.<br>${factors.map(pair => `${pair[0]} × ${pair[1]}`).join(", ")}${tag(variant === 2 ? "product-three-gcd-lcm-example" : "product-three-gcd-lcm-mission", factors.flat(), "ordered")}`, `${greatest}, ${least}`, `세 수는 ${values.join(", ")}입니다. 최대공약수는 ${greatest}, 최소공배수는 ${least}이므로 답은 ${greatest}, ${least}입니다.`);
+      }
+      if (variant === 3) {
+        const [first, second, third, scale] = choose([[[12, 15, 18, 5], [8, 12, 20, 6], [6, 10, 15, 8]], [[12, 15, 18, 10], [14, 21, 28, 8], [15, 20, 24, 9]], [[18, 24, 30, 12], [20, 24, 30, 15], [21, 28, 35, 12]]]);
+        const least = lcmMany([first, second, third]) * scale;
+        const values = [first, second, third].map(value => value * scale);
+        return result(`세 자연수 ${first} × ㉠, ${second} × ㉠, ${third} × ㉠의 최소공배수가 ${least}일 때, 세 자연수의 합을 구하세요.${tag("scaled-three-number-sum", [first, second, third, least], "single-value")}`, values.reduce((total, value) => total + value, 0), `${first}, ${second}, ${third}의 최소공배수는 ${lcmMany([first, second, third])}입니다. 따라서 ㉠은 ${least} ÷ ${lcmMany([first, second, third])} = ${scale}이고, 세 수의 합은 ${values.join(" + ")} = ${values.reduce((total, value) => total + value, 0)}입니다.`);
+      }
+      if (variant === 4) {
+        const prefix = choose([[378, 426, 534], [651, 714, 825], [462, 693, 861]]);
+        const divisors = [4, 6, 7];
+        const base = lcmMany(divisors);
+        const candidates = range(100, 999).filter(tail => (prefix * 1000 + tail) % base === 0);
+        const answer = candidates.at(-1);
+        return result(`여섯 자리 자연수 ${prefix}□□□가 ${divisors.join(", ")}으로 나누어떨어질 때, 빈칸에 들어갈 가장 큰 세 자리 수를 구하세요.${tag("largest-divisible-tail", [prefix, ...divisors], "single-value")}`, answer, `${divisors.join(", ")}의 최소공배수는 ${base}입니다. ${prefix}□□□ 중 ${base}의 배수가 되는 가장 큰 수를 찾으면 빈칸은 ${answer}입니다.`);
+      }
+      if (variant === 9) {
+        const [first, second, third, remainder, target] = choose([[[4, 5, 6, 3, 300], [3, 4, 6, 2, 250], [4, 6, 8, 1, 350]], [[6, 8, 9, 4, 700], [5, 6, 8, 3, 500], [7, 8, 9, 2, 900]], [[8, 9, 12, 5, 1600], [10, 12, 15, 4, 2000], [12, 15, 20, 3, 2500]]]);
+        const base = lcmMany([first, second, third]);
+        const lowerIndex = Math.floor((target - remainder) / base);
+        const lower = remainder + lowerIndex * base;
+        const upper = lower + base;
+        if (target - lower === upper - target) throw new Error("가장 가까운 수가 하나가 아닙니다.");
+        const answer = target - lower < upper - target ? lower : upper;
+        return result(`${first}, ${second}, ${third}의 어떤 수로 나누어도 ${remainder}이 남는 수 중에서 ${target}에 가장 가까운 수를 구하세요.${tag("nearest-same-remainder", [first, second, third, remainder, target], "single-value")}`, answer, `조건을 만족하는 수는 ${base}의 배수에 ${remainder}을 더한 수입니다. ${target}의 앞뒤 수 ${lower}, ${upper}을 비교하면 ${answer}이 더 가깝습니다.`);
+      }
+      if (variant === 10) {
+        const values = choose([[[21, 35, 63], [18, 30, 42], [20, 28, 45]], [[28, 45, 60], [30, 42, 56], [36, 45, 60]], [[42, 56, 70], [45, 60, 84], [54, 72, 90]]]);
+        const base = lcmMany(values);
+        const answer = Math.ceil(1000 / base) * base;
+        return result(`${values.join(", ")}의 어느 수로 나누어도 나누어떨어지는 네 자리의 자연수 중에서 가장 작은 수를 구하세요.${tag("smallest-four-digit-common-multiple", values, "single-value")}`, answer, `${values.join(", ")}의 최소공배수는 ${base}입니다. 네 자리 수가 되는 가장 작은 ${base}의 배수는 ${answer}입니다.`);
+      }
+      if (variant === 11) {
+        const [lower, upper, first, second, remainder] = choose([[[100, 200, 3, 7, 2], [100, 200, 4, 7, 2], [100, 200, 5, 8, 2]], [[200, 400, 5, 7, 2], [200, 400, 4, 9, 2], [200, 400, 6, 7, 4]], [[400, 700, 7, 9, 2], [400, 700, 8, 11, 4], [400, 700, 9, 10, 4]]]);
+        const candidates = range(lower + 1, upper - 1).filter(value => value % 2 === 0 && value % first === remainder && value % second === remainder);
+        if (!candidates.length) throw new Error("나머지 조건을 만족하는 짝수가 없습니다.");
+        return result(`${lower}보다 크고 ${upper}보다 작은 짝수 중에서 ${first}으로 나누어도 ${second}으로 나누어도 나머지가 ${remainder}인 자연수를 모두 구하세요.${tag("bounded-even-same-remainder-set", [lower, upper, first, second, remainder], "set")}`, setAnswer(candidates), `범위 안의 짝수를 차례로 확인하면 조건을 만족하는 수는 ${setAnswer(candidates)}입니다.`);
+      }
+      const prefix = choose([[56789, 43216, 67894], [54321, 68732, 72841], [83456, 91234, 76543]]);
+      const divisors = [4, 5, 9];
+      const base = lcmMany(divisors);
+      const candidates = range(100, 999).filter(tail => (prefix * 1000 + tail) % base === 0);
+      return result(`여덟 자리 자연수 ${prefix}□□□가 ${divisors.join("와 ")}로 나누어떨어질 때, 빈칸에 들어갈 세 자리 자연수를 모두 구하세요.${tag("all-divisible-three-digit-tails", [prefix, ...divisors], "set")}`, setAnswer(candidates), `${divisors.join(", ")}의 최소공배수는 ${base}입니다. ${prefix}□□□ 중 ${base}의 배수가 되는 세 자리 수는 ${setAnswer(candidates)}입니다.`);
+    },
+    factorMultipleE6({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("약수와 배수 개념탐구 6 원문 분기는 0부터 10까지여야 합니다.");
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-factor-multiple-e6-kind="${kind}" data-factor-multiple-e6-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
+      const choose = pools => pick(rng, pools[level]);
+      const clockText = totalMinutes => {
+        const minutes = ((totalMinutes % 1440) + 1440) % 1440;
+        const period = minutes < 720 ? "오전" : "오후";
+        const hour = Math.floor(minutes / 60) % 12 || 12;
+        return `${period} ${hour}시 ${minutes % 60}분`;
+      };
+
+      if (variant === 0) {
+        const [onA, offA, onB, offB, onC, offC, duration] = choose([[[5, 3, 7, 3, 9, 3, 1800], [6, 4, 8, 4, 10, 5, 1800], [7, 3, 9, 3, 12, 3, 1800]], [[8, 4, 11, 5, 17, 3, 3600], [9, 3, 13, 5, 16, 4, 3600], [10, 5, 14, 4, 17, 7, 3600]], [[13, 5, 17, 7, 23, 7, 7200], [14, 7, 19, 8, 25, 10, 7200], [17, 7, 23, 7, 31, 5, 7200]]]);
+        const cycles = [onA + offA, onB + offB, onC + offC];
+        const interval = lcmMany(cycles);
+        const answer = Math.floor(duration / interval);
+        return result(`서로 다른 색의 전구 세 개가 있습니다. 파란 전구는 ${onA}초 동안 켜지고 ${offA}초 동안 꺼지며, 빨간 전구는 ${onB}초 동안 켜지고 ${offB}초 동안 꺼지고, 초록 전구는 ${onC}초 동안 켜지고 ${offC}초 동안 꺼집니다. 세 전구가 지금 동시에 꺼지기 시작했다면 앞으로 ${duration / 60}분 동안 세 전구가 동시에 꺼지기 시작하는 순간은 모두 몇 번입니까? (지금은 세지 않습니다.)${tag("three-light-off-events", [onA, offA, onB, offB, onC, offC, duration])}`, answer, `세 전구가 꺼지기 시작하는 간격은 각각 ${cycles.join(", ")}초입니다. 세 간격의 최소공배수는 ${interval}초이므로 ${duration} ÷ ${interval} = ${answer}번입니다.`);
+      }
+      if (variant === 1) {
+        const [first, second, start] = choose([[[12, 18, 510], [15, 20, 555], [18, 24, 600]], [[30, 18, 624], [24, 36, 645], [28, 42, 570]], [[36, 48, 500], [45, 60, 615], [54, 72, 660]]]);
+        const interval = lcm(first, second);
+        const answerMinutes = start + interval;
+        return result(`어느 기차역에서 두 기차가 각각 ${first}분, ${second}분마다 출발합니다. ${clockText(start)}에 두 기차가 처음으로 동시에 출발했다면 이후 처음으로 동시에 출발하는 시각을 구하세요.${tag("next-shared-departure", [first, second, start])}`, clockText(answerMinutes), `두 기차가 함께 출발하는 간격은 ${first}과 ${second}의 최소공배수 ${interval}분입니다. ${clockText(start)}에서 ${interval}분 뒤는 ${clockText(answerMinutes)}입니다.`);
+      }
+      if (variant === 2) {
+        const [plusDivisor, minusDivisor, offset] = choose([[[12, 18, 3], [20, 30, 5], [18, 24, 3]], [[30, 24, 27], [28, 20, 6], [42, 30, 9]], [[56, 40, 12], [72, 54, 9], [84, 60, 18]]]);
+        const upper = lcm(plusDivisor, minusDivisor) * 3 + offset;
+        const candidates = range(offset + 1, upper).filter(value => (value + offset) % plusDivisor === 0 && (value - offset) % minusDivisor === 0);
+        if (!candidates.length) throw new Error("더하고 뺀 두 수가 배수가 되는 자연수를 만들지 못했습니다.");
+        const answer = candidates[0];
+        return result(`어떤 자연수보다 ${offset} 큰 수는 ${plusDivisor}의 배수이고, ${offset} 작은 수는 ${minusDivisor}의 배수입니다. 이러한 자연수 중 가장 작은 수를 구하세요.${tag("smallest-plus-minus-multiples", [plusDivisor, minusDivisor, offset])}`, answer, `${offset}을 더한 수가 ${plusDivisor}의 배수이고 ${offset}을 뺀 수가 ${minusDivisor}의 배수인 수를 작은 수부터 확인하면 ${answer}입니다.`);
+      }
+      if (variant === 3) {
+        const [first, second, third, short] = choose([[[4, 5, 6, 2], [5, 6, 8, 3], [6, 8, 9, 4]], [[8, 7, 6, 2], [9, 8, 6, 3], [10, 9, 8, 4]], [[12, 15, 20, 5], [14, 18, 21, 6], [16, 18, 24, 8]]]);
+        const base = lcmMany([first, second, third]);
+        const answer = base - short;
+        return result(`어떤 수를 ${first}로 나누면 ${first - short}이 남고, ${second}로 나누면 ${second - short}이 남고, ${third}으로 나누면 ${third - short}이 남습니다. 이러한 수 중 가장 작은 자연수를 구하세요.${tag("smallest-shared-shortage", [first, second, third, short])}`, answer, `어떤 수에 ${short}을 더하면 ${first}, ${second}, ${third}의 공배수가 됩니다. 가장 작은 공배수는 ${base}이므로 답은 ${base}-${short}=${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const teeth = choose([[[24, 18, 12], [30, 20, 15], [36, 24, 18]], [[84, 36, 12], [72, 40, 24], [90, 42, 30]], [[120, 54, 36], [144, 60, 40], [180, 84, 45]]]);
+        const sharedTeeth = lcmMany(teeth);
+        const answer = sharedTeeth / teeth[0];
+        return result(`가, 나, 다 톱니바퀴가 이 순서로 서로 맞물려 있습니다. 톱니 수는 각각 ${teeth.join(", ")}개입니다.<div class="equation">가 톱니바퀴 ↔ 나 톱니바퀴 ↔ 다 톱니바퀴</div>세 톱니바퀴가 처음 맞물렸던 자리에서 다시 만나려면 가 톱니바퀴는 몇 바퀴 돌아야 합니까?${tag("first-gear-return-turns", teeth)}`, answer, `처음 맞물린 톱니가 다시 만날 때까지 지나가는 톱니 수는 ${teeth.join(", ")}의 최소공배수 ${sharedTeeth}개입니다. 가 톱니바퀴는 ${sharedTeeth} ÷ ${teeth[0]} = ${answer}바퀴 돕니다.`);
+      }
+      if (variant === 5) {
+        const [first, second, third, short, target] = choose([[[8, 6, 4, 1, 150], [10, 8, 6, 2, 200], [12, 9, 6, 3, 250]], [[14, 6, 4, 3, 300], [15, 10, 6, 5, 500], [18, 12, 8, 6, 700]], [[20, 18, 15, 7, 1200], [24, 20, 18, 8, 1800], [30, 24, 20, 10, 2500]]]);
+        const base = lcmMany([first, second, third]);
+        const lower = Math.floor((target + short) / base) * base - short;
+        const upper = lower + base;
+        if (target - lower === upper - target) throw new Error("기준값에 가장 가까운 수가 둘입니다.");
+        const answer = target - lower < upper - target ? lower : upper;
+        return result(`어떤 수를 ${first}로 나누면 ${first - short}이 남고, ${second}로 나누면 ${second - short}이 남고, ${third}으로 나누면 ${third - short}이 남습니다. 가능한 수 중 ${target}에 가장 가까운 수를 구하세요.${tag("nearest-shared-shortage", [first, second, third, short, target])}`, answer, `조건에 맞는 수에 ${short}을 더하면 ${base}의 배수입니다. ${target}의 앞뒤 후보 ${lower}, ${upper}을 비교하면 ${answer}이 더 가깝습니다.`);
+      }
+      if (variant === 6) {
+        const divisorPools = [[[11, 17], [13, 19], [17, 23]], [[17, 29], [19, 31], [23, 37]], [[29, 41], [31, 43], [37, 47]]];
+        for (let attempt = 0; attempt < 500; attempt += 1) {
+          const [first, second] = pick(rng, divisorPools[level]);
+          const prefix = Math.floor(rng() * 800) + 100;
+          const last = Math.floor(rng() * 10);
+          const remainder = Math.floor(rng() * Math.min(first, second));
+          const candidates = range(10, 99).filter(blank => (prefix * 1000 + blank * 10 + last) % first === remainder && (prefix * 1000 + blank * 10 + last) % second === remainder);
+          if (candidates.length !== 1) continue;
+          return result(`여섯 자리 자연수 ${prefix}□□${last}을 ${first}로 나누어도 ${second}로 나누어도 나머지가 ${remainder}입니다. 두 자리 자연수 □□를 구하세요.${tag("fixed-six-digit-two-blanks", [prefix, last, first, second, remainder])}`, candidates[0], `두 자리 수를 10부터 99까지 넣어 두 나눗셈을 모두 확인하면 조건을 만족하는 수는 ${candidates[0]} 하나입니다.`);
+        }
+        throw new Error("나머지 조건의 두 자리 빈칸 답을 하나로 만들지 못했습니다.");
+      }
+      if (variant === 7) {
+        const presets = choose([[[3, 7, 8, 3], [5, 7, 9, 3], [6, 7, 8, 5]], [[4, 11, 9, 10], [5, 13, 11, 10], [7, 13, 11, 11]], [[6, 17, 13, 4], [7, 19, 15, 3], [8, 23, 17, 3]]]);
+        const [hundreds, plusDivisor, minusDivisor, offset] = presets;
+        const candidates = range(hundreds * 100, hundreds * 100 + 99).filter(value => (value + offset) % plusDivisor === 0 && (value - offset) % minusDivisor === 0);
+        if (candidates.length !== 1) throw new Error("백의 자리와 두 배수 조건의 답이 하나가 아닙니다.");
+        return result(`백의 자리 숫자가 ${hundreds}인 세 자리 수가 있습니다. 이 수보다 ${offset} 큰 수는 ${plusDivisor}의 배수이고, ${offset} 작은 수는 ${minusDivisor}의 배수입니다. 세 자리 수를 구하세요.${tag("fixed-hundreds-plus-minus", [hundreds, plusDivisor, minusDivisor, offset])}`, candidates[0], `${hundreds * 100}부터 ${hundreds * 100 + 99}까지에서 두 조건을 함께 만족하는 수를 확인하면 ${candidates[0]} 하나입니다.`);
+      }
+      if (variant === 8) {
+        const [first, second, today] = choose([[[4, 6, 1], [6, 9, 2], [8, 12, 3]], [[6, 15, 2], [8, 18, 1], [10, 14, 4]], [[12, 18, 5], [15, 24, 3], [16, 28, 6]]]);
+        const dayNames = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+        const interval = lcm(first, second);
+        const answerDay = dayNames[(today + interval) % 7];
+        return result(`가 화분에는 ${first}일마다, 나 화분에는 ${second}일마다 물을 줍니다. 오늘 두 화분에 모두 물을 주었고 오늘이 ${dayNames[today]}이라면, 다음번에 두 화분에 모두 물을 주는 날은 무슨 요일입니까?${tag("shared-watering-weekday", [first, second, today])}`, answerDay, `두 화분에 함께 물을 주는 간격은 ${first}과 ${second}의 최소공배수 ${interval}일입니다. ${interval}일 뒤는 ${answerDay}입니다.`);
+      }
+      if (variant === 9) {
+        const [ratioB, ratioC, totalLcm] = choose([[[2, 3, 72], [2, 5, 120], [3, 5, 180]], [[3, 4, 144], [4, 6, 240], [5, 6, 360]], [[4, 9, 720], [6, 10, 900], [8, 15, 1440]]]);
+        const ratioLcm = lcmMany([1, ratioB, ratioC]);
+        const firstTeeth = totalLcm / ratioLcm;
+        const thirdTeeth = firstTeeth * ratioC;
+        const answer = totalLcm / thirdTeeth;
+        return result(`서로 맞물린 가, 나, 다 톱니바퀴가 있습니다. 나의 톱니 수는 가의 ${ratioB}배이고, 다의 톱니 수는 가의 ${ratioC}배입니다. 세 톱니 수의 최소공배수는 ${totalLcm}입니다. 처음 자리에서 다시 만날 때 다 톱니바퀴는 적어도 몇 바퀴 돌아야 합니까?${tag("ratio-gears-third-turns", [ratioB, ratioC, totalLcm])}`, answer, `가의 톱니 수를 한 묶음으로 보면 세 톱니 수의 비는 1:${ratioB}:${ratioC}입니다. 가의 톱니 수는 ${totalLcm} ÷ ${ratioLcm} = ${firstTeeth}개, 다는 ${thirdTeeth}개이므로 ${totalLcm} ÷ ${thirdTeeth} = ${answer}바퀴입니다.`);
+      }
+      const [first, second, third, start, intervals] = choose([[[8, 12, 16, 420, 8], [10, 15, 20, 480, 7], [12, 18, 24, 510, 6]], [[16, 12, 8, 390, 19], [18, 24, 30, 420, 2], [20, 30, 40, 450, 5]], [[28, 36, 42, 360, 3], [32, 48, 60, 390, 2], [36, 54, 72, 420, 4]]]);
+      const interval = lcmMany([first, second, third]);
+      const end = start + interval * intervals;
+      const answer = intervals + 1;
+      if (end >= 1440) throw new Error("같은 날의 마지막 출발 시각이어야 합니다.");
+      return result(`어느 기차역에서 세 방향 기차가 각각 ${first}분, ${second}분, ${third}분마다 출발합니다. ${clockText(start)}에 세 기차가 동시에 처음 출발하고 ${clockText(end)}에 마지막으로 함께 출발했다면, 이 날 세 기차가 동시에 출발한 것은 모두 몇 번입니까?${tag("shared-train-departure-count", [first, second, third, start, end])}`, answer, `세 기차가 함께 출발하는 간격은 ${interval}분입니다. 처음부터 마지막까지 ${end - start}분이므로 간격은 ${(end - start) / interval}번이고, 처음 출발도 세면 모두 ${answer}번입니다.`);
+    },
+    factorMultipleE7({ rng, level, variant = 0 }) {
+      if (![0, 2, 3, 4, 5, 6, 8, 9, 10].includes(variant)) throw new Error("약수와 배수 개념탐구 7의 잠금 항목은 생성할 수 없습니다.");
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-factor-multiple-e7-kind="${kind}" data-factor-multiple-e7-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const choose = pools => pick(rng, pools[level]);
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 어떤 수들의 최대공약수를 구해야 하는지 먼저 찾아보세요."
+        : level === 2
+          ? " 답을 구한 뒤 처음 조건에 모두 맞는지 하나씩 다시 확인하세요."
+          : "";
+
+      if (variant === 0) {
+        const [students, riceGroups, acornGroups, peanutGroups, riceShort, acornLeft, peanutShort] = choose([[[7, 5, 6, 8, 2, 3, 1], [11, 4, 5, 7, 3, 2, 4], [13, 5, 7, 8, 4, 3, 2]], [[15, 6, 5, 7, 8, 5, 4], [17, 7, 8, 9, 6, 5, 4], [19, 8, 9, 10, 7, 4, 6]], [[23, 11, 12, 13, 8, 7, 5], [29, 12, 13, 15, 9, 8, 7], [31, 14, 15, 17, 11, 9, 8]]]);
+        const rice = students * riceGroups - riceShort;
+        const acorns = students * acornGroups + acornLeft;
+        const peanuts = students * peanutGroups - peanutShort;
+        return result(`쌀과자 ${rice}개, 도토리 ${acorns}개, 땅콩 ${peanuts}개를 몇 명의 학생에게 각각 똑같이 나누어 주려고 합니다. 쌀과자는 ${riceShort}개가 부족하고, 도토리는 ${acornLeft}개가 남고, 땅콩은 ${peanutShort}개가 부족합니다. 학생은 몇 명입니까?${difficultyInstruction}${tag("short-left-student-count", [rice, riceShort, acorns, acornLeft, peanuts, peanutShort])}`, students, `쌀과자에 ${riceShort}을 더한 ${rice + riceShort}, 도토리에서 ${acornLeft}을 뺀 ${acorns - acornLeft}, 땅콩에 ${peanutShort}을 더한 ${peanuts + peanutShort}의 공약수를 찾습니다. 남거나 부족한 수보다 커야 하는 공약수는 ${students}뿐입니다.`);
+      }
+      if (variant === 2) {
+        const [width, height] = choose([[[18, 24], [20, 28], [24, 32]], [[24, 32], [30, 42], [36, 48]], [[54, 72], [70, 90], [84, 108]]]);
+        const interval = gcd(width, height);
+        const answer = 2 * (width + height) / interval;
+        return result(`가로가 ${width}m, 세로가 ${height}m인 직사각형 땅의 둘레에 같은 간격으로 나무를 심습니다. 네 꼭짓점에도 반드시 한 그루씩 심고 나무 사이의 거리를 가장 멀게 할 때, 필요한 나무는 모두 몇 그루입니까?${difficultyInstruction}${tag("rectangle-perimeter-tree-count", [width, height])}`, answer, `가장 넓은 간격은 ${width}와 ${height}의 최대공약수 ${interval}m입니다. 둘레는 ${2 * (width + height)}m이므로 나무는 ${2 * (width + height)} ÷ ${interval} = ${answer}그루입니다.`);
+      }
+      if (variant === 3) {
+        const [widthNumerator, heightNumerator, denominator] = choose([[[20, 28, 3], [27, 36, 5], [32, 44, 5]], [[40, 52, 7], [45, 60, 8], [56, 72, 11]], [[84, 126, 11], [96, 144, 13], [150, 210, 17]]]);
+        const sideNumerator = gcd(widthNumerator, heightNumerator);
+        const answer = fraction(sideNumerator, denominator);
+        return result(`가로가 ${mixedFractionMarkup(widthNumerator, denominator)}m, 세로가 ${mixedFractionMarkup(heightNumerator, denominator)}m인 직사각형 땅을 같은 크기의 가장 큰 정사각형 타일로 빈틈없이 덮습니다. 정사각형 한 변의 길이는 몇 m입니까?${difficultyInstruction}${tag("fraction-rectangle-largest-square", [widthNumerator, heightNumerator, denominator])}`, answer, `두 길이를 분모가 ${denominator}인 분수로 보면 분자는 ${widthNumerator}, ${heightNumerator}입니다. 가장 큰 정사각형의 한 변은 두 분자의 최대공약수 ${sideNumerator}를 분자로 한 ${fractionMarkup(sideNumerator, denominator)}m입니다.`);
+      }
+      if (variant === 4) {
+        const [cubeEdge, widthScale, lengthScale, heightScale, foam] = choose([[[10, 3, 4, 2, 2], [12, 4, 5, 3, 2], [15, 3, 5, 4, 3]], [[40, 5, 9, 2, 5], [24, 5, 7, 3, 4], [30, 4, 7, 3, 5]], [[36, 7, 11, 5, 6], [42, 8, 13, 5, 7], [48, 9, 14, 5, 8]]]);
+        const insideWidth = cubeEdge * widthScale;
+        const insideLength = cubeEdge * lengthScale;
+        const height = cubeEdge * heightScale;
+        const outerWidth = insideWidth + 2 * foam;
+        const outerLength = insideLength + 2 * foam;
+        return result(`화물차 적재함의 바닥은 가로 ${outerWidth}cm, 세로 ${outerLength}cm이고 높이는 ${height}cm입니다. 바닥의 네 가장자리를 따라 두께 ${foam}cm인 보호재를 붙여 가로와 세로가 각각 양쪽에서 ${foam}cm씩 줄어듭니다. 남은 공간에 같은 크기의 정육면체 상자를 빈틈없이 실을 때, 가능한 가장 큰 상자 한 모서리의 길이는 몇 cm입니까?${difficultyInstruction}${tag("foam-lined-largest-cube", [outerWidth, outerLength, height, foam])}`, cubeEdge, `보호재를 뺀 안쪽 가로는 ${outerWidth}-2×${foam}=${insideWidth}cm, 세로는 ${outerLength}-2×${foam}=${insideLength}cm입니다. ${insideWidth}, ${insideLength}, ${height}의 최대공약수는 ${cubeEdge}이므로 한 모서리는 ${cubeEdge}cm입니다.`);
+      }
+      if (variant === 5) {
+        const [firstDistance, secondDistance] = choose([[[18, 30], [24, 36], [28, 42]], [[42, 70], [48, 80], [54, 90]], [[84, 126], [96, 144], [120, 168]]]);
+        const interval = gcd(firstDistance, secondDistance);
+        const answer = (firstDistance + secondDistance) / interval + 1;
+        return result(`한 직선 도로 위에 가, 나, 다 지점이 이 순서로 있습니다. 가에서 나까지는 ${firstDistance}km, 나에서 다까지는 ${secondDistance}km입니다.<div class="equation">가 ─── 나 ─── 다</div>세 지점에 모두 표지판을 세우고 그 사이에도 같은 간격으로 세울 때, 필요한 표지판 수를 가장 적게 하려면 모두 몇 개가 필요합니까?${difficultyInstruction}${tag("straight-road-minimum-signs", [firstDistance, secondDistance])}`, answer, `표지판 간격을 가장 넓게 해야 하므로 ${firstDistance}와 ${secondDistance}의 최대공약수 ${interval}km로 세웁니다. 전체 거리는 ${firstDistance + secondDistance}km이고 양 끝을 모두 세므로 ${firstDistance + secondDistance}÷${interval}+1=${answer}개입니다.`);
+      }
+      if (variant === 6) {
+        const [tangerines, peaches] = choose([[[24, 36], [30, 42], [40, 56]], [[40, 56], [54, 72], [66, 90]], [[84, 126], [120, 168], [156, 204]]]);
+        const people = gcd(tangerines, peaches);
+        const perTangerine = tangerines / people;
+        const perPeach = peaches / people;
+        return result(`귤 ${tangerines}개와 복숭아 ${peaches}개를 가능한 한 많은 사람에게 남김없이 똑같이 나누어 줍니다. 한 사람에게 귤과 복숭아를 각각 몇 개씩 나누어 줄 수 있습니까?${difficultyInstruction}${tag("fruit-counts-per-person", [tangerines, peaches], "ordered")}`, `${perTangerine}, ${perPeach}`, `나누어 줄 사람 수는 ${tangerines}와 ${peaches}의 최대공약수 ${people}명입니다. 한 사람에게 귤은 ${tangerines}÷${people}=${perTangerine}개, 복숭아는 ${peaches}÷${people}=${perPeach}개입니다.`);
+      }
+      if (variant === 8) {
+        const [width, height] = choose([[[24, 36], [30, 42], [40, 56]], [[84, 96], [72, 108], [90, 120]], [[132, 180], [168, 216], [210, 270]]]);
+        const interval = gcd(width, height);
+        const answer = 2 * (width + height) / interval;
+        return result(`가로가 ${width}m, 세로가 ${height}m인 직사각형 땅의 둘레에 같은 간격으로 가로등을 세웁니다. 네 꼭짓점에도 반드시 한 개씩 세울 때, 필요한 가로등은 적어도 몇 개입니까?${difficultyInstruction}${tag("rectangle-perimeter-minimum-lights", [width, height])}`, answer, `가장 넓은 간격은 ${width}와 ${height}의 최대공약수 ${interval}m입니다. 직사각형 둘레는 ${2 * (width + height)}m이므로 ${2 * (width + height)}÷${interval}=${answer}개입니다.`);
+      }
+      if (variant === 9) {
+        const [width, height] = choose([[[18, 12], [20, 12], [30, 18]], [[42, 12], [48, 30], [60, 36]], [[84, 60], [108, 72], [150, 90]]]);
+        const commonDivisors = allDivisors(gcd(width, height)).sort((left, right) => right - left);
+        const side = commonDivisors[1];
+        const answer = width / side * (height / side);
+        return result(`가로 ${width}칸, 세로 ${height}칸인 모눈종이를 눈금에 맞추어 크기가 같은 정사각형으로 남는 부분 없이 자릅니다. 만들 수 있는 정사각형 중 두 번째로 큰 정사각형으로 자르면 모두 몇 개가 됩니까?${difficultyInstruction}${tag("second-largest-grid-square-count", [width, height])}`, answer, `${width}와 ${height}의 공약수를 큰 순서로 놓으면 ${commonDivisors.join(", ")}입니다. 두 번째로 큰 한 변은 ${side}칸이므로 (${width}÷${side})×(${height}÷${side})=${answer}개입니다.`);
+      }
+      const [appleCount, orangeCount, bananaCount, applePrice, orangePrice, bananaPrice] = choose([[[12, 18, 24, 700, 500, 300], [18, 24, 30, 800, 600, 400], [20, 30, 40, 900, 600, 400]], [[24, 30, 48, 1000, 800, 500], [36, 48, 60, 1200, 900, 600], [42, 56, 70, 1500, 1000, 700]], [[84, 126, 168, 1800, 1200, 900], [108, 144, 180, 2000, 1500, 1000], [132, 198, 264, 2500, 1800, 1200]]]);
+      const sets = gcdMany([appleCount, orangeCount, bananaCount]);
+      const answer = appleCount / sets * applePrice + orangeCount / sets * orangePrice + bananaCount / sets * bananaPrice;
+      return result(`한 개에 ${applePrice.toLocaleString()}원인 사과 ${appleCount}개, 한 개에 ${orangePrice.toLocaleString()}원인 오렌지 ${orangeCount}개, 한 개에 ${bananaPrice.toLocaleString()}원인 바나나 ${bananaCount}개를 같은 구성의 세트로 남김없이 만듭니다. 세트를 가장 많이 만들 때 한 세트의 가격은 얼마입니까?${difficultyInstruction}${tag("maximum-equal-set-price", [appleCount, orangeCount, bananaCount, applePrice, orangePrice, bananaPrice])}`, answer, `세트 수는 ${appleCount}, ${orangeCount}, ${bananaCount}의 최대공약수 ${sets}개입니다. 한 세트에는 각각 ${appleCount / sets}, ${orangeCount / sets}, ${bananaCount / sets}개가 들어가므로 가격은 ${answer.toLocaleString()}원입니다.`);
+    },
     threeNumberGcdLcmAdvanced({ rng, level }) {
       const common = pick(rng, [2, 3, 4, 5, 6].slice(0, 3 + level));
       const scales = level === 2 ? [6, 10, 15] : pick(rng, [[2, 3, 5], [3, 4, 5], [4, 5, 7], [6, 7, 10]]);
@@ -19152,6 +19391,9 @@
     [type => type.id?.startsWith("5-1-u2-e1-"), "factorMultipleE1"],
     [type => type.id?.startsWith("5-1-u2-e3-"), "factorMultipleE3"],
     [type => type.id?.startsWith("5-1-u2-e4-"), "factorMultipleE4"],
+    [type => type.id?.startsWith("5-1-u2-e5-"), "factorMultipleE5"],
+    [type => type.id?.startsWith("5-1-u2-e6-"), "factorMultipleE6"],
+    [type => type.id?.startsWith("5-1-u2-e7-"), "factorMultipleE7"],
     [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],

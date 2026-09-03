@@ -137,8 +137,8 @@ function verifyOriginalAnchors() {
 }
 
 if (types.length !== 96 || e3.length !== 12 || inventory.items.length !== 96) failures.push("5-1 2단원은 원문 96유형, 탐구 3은 12유형이어야 합니다.");
-if (inventory.items.filter(item => item.implementationStatus === "ready").length !== 49 || inventory.items.filter(item => item.implementationStatus === "review-locked").length !== 47) failures.push("공개 49유형, 잠금 47유형이어야 합니다.");
-for (const type of types) if (!type.sourceVerified || (!type.reviewLocked && !["factorMultipleE1", "factorMultipleE2", "factorMultipleE3", "factorMultipleE4"].includes(api.generatorKey(type))) || (type.reviewLocked && api.generatorKey(type))) failures.push(`${type.id}: 원본·잠금·생성기 연결이 다릅니다.`);
+if (inventory.items.filter(item => item.implementationStatus === "ready").length !== 81 || inventory.items.filter(item => item.implementationStatus === "review-locked").length !== 15) failures.push("공개 81유형, 잠금 15유형이어야 합니다.");
+for (const type of types) if (!type.sourceVerified || (!type.reviewLocked && !["factorMultipleE1", "factorMultipleE2", "factorMultipleE3", "factorMultipleE4", "factorMultipleE5", "factorMultipleE6", "factorMultipleE7"].includes(api.generatorKey(type))) || (type.reviewLocked && api.generatorKey(type))) failures.push(`${type.id}: 원본·잠금·생성기 연결이 다릅니다.`);
 verifyOriginalAnchors();
 
 for (const type of e3) {
@@ -164,4 +164,4 @@ if (failures.length) {
   console.error(`5-1 약수와 배수 개념탐구 3 감사 실패: ${failures.length}건\n${failures.slice(0, 100).join("\n")}`);
   process.exit(1);
 }
-console.log(`5-1 약수와 배수 개념탐구 3 감사 통과: 원문 96유형 · 공개 49/잠금 47 · ${checked.toLocaleString()}회 지문 독립 계산·정답 유일성·답 형식·난이도 검사`);
+console.log(`5-1 약수와 배수 개념탐구 3 감사 통과: 원문 96유형 · 공개 81/잠금 15 · ${checked.toLocaleString()}회 지문 독립 계산·정답 유일성·답 형식·난이도 검사`);
