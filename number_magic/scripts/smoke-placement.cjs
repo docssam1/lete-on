@@ -20,12 +20,22 @@ function check(cond, msg){ if(!cond) fail.push(msg); console.log((cond?'  ok   '
 
 async function onboard(page, errors){
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('#obName, #townCourseRoad, .nm-town', { timeout: 20000 });
+  /* 2026-09-03: 온보딩이 2단계(나 고르기 → 숫자 친구·이름)가 되었고, 설정된 기기는
+     타이틀 화면(#ttGame)이 먼저 뜬다. 세 경우 모두 마을까지 간다. */
+  await page.waitForSelector('.nm-av-card, #obName, #ttGame, #townCourseRoad, .nm-town', { timeout: 20000 });
+  if (await page.$('.nm-av-card')){
+    await page.click('.nm-av-card');
+    await page.click('#obAvNext');
+    await page.waitForSelector('#obName', { timeout: 10000 });
+  }
   if (await page.$('#obName')){
     await page.fill('#obName', '진단이');
     await page.click('#obGo');
   }
+  const tt = await page.waitForSelector('#ttGame, #townCourseRoad', { timeout: 30000 });
+  if (await page.$('#ttGame')) await page.click('#ttGame');
   await page.waitForSelector('#townCourseRoad', { timeout: 30000 });
+  for (let i = 0; i < 4; i++){ const c = await page.$('#nmUnlockOverlayClose, .nm-attend-card'); if(!c) break; await c.click().catch(()=>{}); await page.waitForTimeout(200); }
   check(true, 'onboarding → town reached');
 }
 
