@@ -44,6 +44,7 @@ function question(number, overrides = {}) {
     difficultyLabel: number === 1 ? "기본" : "응용",
     prompt: number === 1 ? "3 < 5인지 확인하고 조건을 만족하는 수를 구하세요." : "조건에 맞는 순서를 구하세요.",
     releaseStatus: "verified",
+    scoringEligible: true,
     lockReasons: [],
     signedAssetUrl: `${PROJECT_URL}/storage/v1/object/sign/hf-mock-private/utilization/01/q${String(number).padStart(2, "0")}.png?token=question-${number}`,
     assetAlt: number === 1 ? "숫자 카드 \"그림\"" : "순서 조건 그림",
@@ -66,6 +67,7 @@ function loadExamResponse(overrides = {}) {
     subtitle: "20분 · 2문항",
     description: "검증을 통과한 프리미어 모의고사입니다.",
     questionCount: 2,
+    sourceQuestionCount: 2,
     signedUrlExpiresIn: 900,
     ...overrides
   };
@@ -150,6 +152,13 @@ function harness(options = {}) {
     listExams: { exams: [examSummary()] },
     loadExam: loadExamResponse(),
     loadAnswers: answerResponse(),
+    startNewAttempt: {
+      exam: examSummary(),
+      attemptId: "22222222-2222-4222-8222-222222222222",
+      attemptNo: 2,
+      attemptStatus: "in_progress",
+      manifestRevision: 7
+    },
     ...(options.responses || {})
   };
   const client = {
@@ -228,14 +237,28 @@ async function load(h) {
 
 async function testFeatureGateHasNoSideEffects() {
   const h = harness({ featureEnabled: false });
-  assert.deepEqual(Object.keys(h.api).sort(), ["listExams", "loadAnswers", "loadExam", "saveAttempt"]);
+  assert.deepEqual(Object.keys(h.api).sort(), ["listExams", "loadAnswers", "loadExam", "saveAttempt", "startNewAttempt"]);
   assert(Object.isFrozen(h.api));
   await rejectsCode(h.api.listExams(), "HF_SECURE_MOCK_FEATURE_DISABLED");
   await rejectsCode(h.api.loadExam("premier-utilization-01"), "HF_SECURE_MOCK_FEATURE_DISABLED");
   await rejectsCode(h.api.loadAnswers(ATTEMPT_ID), "HF_SECURE_MOCK_FEATURE_DISABLED");
+  await rejectsCode(h.api.startNewAttempt("premier-utilization-01"), "HF_SECURE_MOCK_FEATURE_DISABLED");
   await rejectsCode(h.api.saveAttempt({}), "HF_SECURE_MOCK_FEATURE_DISABLED");
   assert.equal(h.calls.length, 0);
   assert.equal(h.storage.writes.length, 0, "feature off 상태에서 sessionStorage를 변경하면 안 됩니다.");
+}
+
+async function testRetakeRequiresExplicitDedicatedAction() {
+  const h = harness();
+  const result = await h.api.startNewAttempt("premier-utilization-01");
+  assert.equal(result.attemptNo, 2);
+  assert.equal(result.attemptStatus, "in_progress");
+  const call = h.calls.at(-1);
+  assert.equal(call.body.action, "startNewAttempt");
+  assert.deepEqual(Object.keys(call.body).sort(), ["action", "examId", "retakeEventId"]);
+  assert.match(call.body.retakeEventId, /^[0-9a-f-]{36}$/i);
+  assert.equal(h.storage.values.has("hf-secure-mock:retake:v1:premier-utilization-01"), false,
+    "성공한 재응시 키는 다음 명시적 재응시를 위해 제거해야 합니다.");
 }
 
 async function testEdgeOnlyPayloadContractsAndLocalImageMarkup() {
@@ -358,12 +381,24 @@ async function testClientCannotSubmitDerivedOrIdentityFields() {
 
 async function testProblemResponseSecurityGates() {
   for (const releaseStatus of ["locked", "review_pending"]) {
-    const response = loadExamResponse({ questions: [question(1, { releaseStatus, lockReasons: ["재검수"] }), question(2)] });
+    const response = loadExamResponse({ questions: [question(1, { releaseStatus, scoringEligible: false, lockReasons: ["source_review_excluded"] }), question(2)] });
     await rejectsCode(
       load(harness({ responses: { loadExam: response } })),
       "HF_SECURE_MOCK_QUESTION_LOCKED"
     );
   }
+
+  const excluded = pageExamResponse({
+    questions: [
+      pageQuestion(1, { releaseStatus: "excluded", scoringEligible: false, lockReasons: ["source_review_excluded"] }),
+      pageQuestion(2)
+    ],
+    questionCount: 1,
+    sourceQuestionCount: 2
+  });
+  const excludedDocument = await load(harness({ responses: { loadExam: excluded } }));
+  assert.equal(excludedDocument.questions[0].scoringEligible, false);
+  assert.equal(excludedDocument.questionCount, 1);
 
   const secretCases = [
     { metadata: { answerCandidates: [4] } },
@@ -527,6 +562,7 @@ function testCheckedInEdgeContractMatchesClient() {
   const listBody = extractFunctionBody("listExams");
   const loadBody = extractFunctionBody("loadExam");
   const answerBody = extractFunctionBody("loadAnswers");
+  const retakeBody = extractFunctionBody("startNewAttempt");
   const saveBody = extractFunctionBody("saveAttempt");
 
   const normalizeExamStart = edgeSource.indexOf("function normalizeExam(");
@@ -542,6 +578,8 @@ function testCheckedInEdgeContractMatchesClient() {
   ].forEach(field => assert.match(loadBody, new RegExp(`\\b${field}\\b`)));
   ["attemptId", "attemptStatus", "manifestRevision", "answersViewedAt", "answers"]
     .forEach(field => assert.match(answerBody, new RegExp(`\\b${field}\\b`)));
+  ["exam", "attemptId", "attemptNo", "attemptStatus", "manifestRevision"]
+    .forEach(field => assert.match(retakeBody, new RegExp(`\\b${field}\\b`)));
   [
     "attemptId", "submissionId", "attemptNo", "status", "manifestRevision", "correctCount",
     "questionCount", "score", "wrongQuestionKeys", "wrongTypeKeys", "submittedAt"
@@ -554,11 +592,13 @@ function testCheckedInEdgeContractMatchesClient() {
 
   assert.match(loadBody, /requireExactKeys\(payload, \["action", "examId", "loadEventId"\]\)/);
   assert.match(answerBody, /requireExactKeys\(payload, \["action", "attemptId"\]\)/);
+  assert.match(retakeBody, /requireExactKeys\(payload, \["action", "examId", "retakeEventId"\]\)/);
   assert.match(saveBody, /requireExactKeys\(payload, \["action", "attemptId", "submissionId", "marks"\]\)/);
 }
 
 async function main() {
   await testFeatureGateHasNoSideEffects();
+  await testRetakeRequiresExplicitDedicatedAction();
   await testEdgeOnlyPayloadContractsAndLocalImageMarkup();
   await testRetryIdentifiersAreStable();
   await testSecurePageImageContract();

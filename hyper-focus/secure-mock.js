@@ -12,6 +12,7 @@
   ]);
   const LOAD_ID_PREFIX = "hf-secure-mock:load:v1:";
   const SUBMISSION_ID_PREFIX = "hf-secure-mock:submission:v1:";
+  const RETAKE_ID_PREFIX = "hf-secure-mock:retake:v1:";
   const examContexts = new Map();
   const attemptContexts = new Map();
 
@@ -45,6 +46,7 @@
     ["entitlement_required", "HF_SECURE_MOCK_ENTITLEMENT_REQUIRED"],
     ["attempt_not_available", "HF_SECURE_MOCK_ATTEMPT_NOT_AVAILABLE"],
     ["attempt_conflict", "HF_SECURE_MOCK_ATTEMPT_CONFLICT"],
+    ["attempt_limit_reached", "HF_SECURE_MOCK_ATTEMPT_LIMIT"],
     ["submission_conflict", "HF_SECURE_MOCK_SUBMISSION_CONFLICT"],
     ["revision_conflict", "HF_SECURE_MOCK_REVISION_CONFLICT"],
     ["answers_not_available", "HF_SECURE_MOCK_ANSWERS_NOT_AVAILABLE"],
@@ -186,6 +188,7 @@
       HF_SECURE_MOCK_ENTITLEMENT_REQUIRED: "이 모의고사의 학습 권한이 없습니다.",
       HF_SECURE_MOCK_ATTEMPT_NOT_AVAILABLE: "이용할 수 있는 응시 기록이 아닙니다.",
       HF_SECURE_MOCK_ATTEMPT_CONFLICT: "기존 응시 기록과 요청이 일치하지 않습니다.",
+      HF_SECURE_MOCK_ATTEMPT_LIMIT: "이 모의고사는 최대 3회까지 응시할 수 있습니다.",
       HF_SECURE_MOCK_SUBMISSION_CONFLICT: "이미 저장된 제출 내용과 현재 표시가 다릅니다.",
       HF_SECURE_MOCK_REVISION_CONFLICT: "문제와 답안의 판본이 일치하지 않습니다.",
       HF_SECURE_MOCK_ANSWERS_NOT_AVAILABLE: "정답은 아직 확인할 수 없습니다.",
@@ -482,17 +485,19 @@
       question,
       new Set([
         "number", "questionKey", "revision", "areaKey", "areaLabel", "typeKey", "typeTitle",
-        "typeId", "typeCode", "difficultyLabel", "prompt", "releaseStatus", "lockReasons",
+        "typeId", "typeCode", "difficultyLabel", "prompt", "releaseStatus", "scoringEligible", "lockReasons",
         "signedAssetUrl", "assetAlt", "mimeType"
       ]),
       trail,
       "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID",
       false
     );
-    if (question.releaseStatus === "locked" || question.releaseStatus === "review_pending") {
-      throw failure("HF_SECURE_MOCK_QUESTION_LOCKED", `${trail}: 검수 완료되지 않은 문항은 공개할 수 없습니다.`);
-    }
-    if (question.releaseStatus !== "verified" || !Array.isArray(question.lockReasons) || question.lockReasons.length) {
+    const verified = question.releaseStatus === "verified" && question.scoringEligible === true
+      && Array.isArray(question.lockReasons) && question.lockReasons.length === 0;
+    const excluded = question.releaseStatus === "excluded" && question.scoringEligible === false
+      && Array.isArray(question.lockReasons) && question.lockReasons.length > 0
+      && question.lockReasons.every(reason => /^[a-z][a-z0-9_-]{1,79}$/.test(String(reason)));
+    if (!verified && !excluded) {
       throw failure("HF_SECURE_MOCK_QUESTION_LOCKED", `${trail}: 공개 가능한 검증 상태가 아닙니다.`);
     }
     const questionKey = String(question.questionKey || "");
@@ -547,8 +552,9 @@
       typeCode,
       difficultyLabel,
       prompt,
-      releaseStatus: "verified",
-      lockReasons: [],
+      releaseStatus: question.releaseStatus,
+      scoringEligible: question.scoringEligible,
+      lockReasons: question.lockReasons.slice(),
       problemHtml,
       sourceMode: "secure-edge-asset"
     };
@@ -565,13 +571,18 @@
       question,
       new Set([
         "number", "questionKey", "revision", "areaKey", "areaLabel", "typeKey", "typeTitle",
-        "typeId", "typeCode", "difficultyLabel", "prompt", "releaseStatus", "lockReasons"
+        "typeId", "typeCode", "difficultyLabel", "prompt", "releaseStatus", "scoringEligible", "lockReasons"
       ]),
       trail,
       "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID",
       false
     );
-    if (question.releaseStatus !== "verified" || !Array.isArray(question.lockReasons) || question.lockReasons.length) {
+    const verified = question.releaseStatus === "verified" && question.scoringEligible === true
+      && Array.isArray(question.lockReasons) && question.lockReasons.length === 0;
+    const excluded = question.releaseStatus === "excluded" && question.scoringEligible === false
+      && Array.isArray(question.lockReasons) && question.lockReasons.length > 0
+      && question.lockReasons.every(reason => /^[a-z][a-z0-9_-]{1,79}$/.test(String(reason)));
+    if (!verified && !excluded) {
       throw failure("HF_SECURE_MOCK_QUESTION_LOCKED", `${trail}: 공개 가능한 검증 상태가 아닙니다.`);
     }
     const questionKey = String(question.questionKey || "");
@@ -600,8 +611,9 @@
       typeCode: safePlainText(question.typeCode, 80, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail} 유형 코드`, true),
       difficultyLabel: safePlainText(question.difficultyLabel, 40, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail} 난이도`, true),
       prompt: safePlainText(question.prompt, 10000, "HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", `${trail} 문제 문장`, false),
-      releaseStatus: "verified",
-      lockReasons: [],
+      releaseStatus: question.releaseStatus,
+      scoringEligible: question.scoringEligible,
+      lockReasons: question.lockReasons.slice(),
       problemHtml: "",
       sourceMode: "secure-page-image"
     };
@@ -633,7 +645,7 @@
     const allowedTop = new Set([
       "exam", "attemptId", "attemptNo", "serverSeed", "manifestRevision", "questions",
       "attemptStatus", "title", "durationMinutes", "subtitle", "description", "questionCount",
-      "signedUrlExpiresIn", "deliveryMode", "pages"
+      "signedUrlExpiresIn", "deliveryMode", "pages", "sourceQuestionCount"
     ]);
     assertAllowedKeys(data, allowedTop, "response", "HF_SECURE_MOCK_EDGE_RESPONSE_INVALID", false);
     inspectObject({ subtitle: data.subtitle, description: data.description }, "response", PROBLEM_FORBIDDEN_KEYS, {
@@ -677,8 +689,10 @@
     if (new Set(compoundKeys).size !== compoundKeys.length) {
       throw failure("HF_SECURE_MOCK_QUESTION_ID_INVALID", "서버 문제지에 중복 문항이 있습니다.");
     }
-    if (data.questionCount !== questions.length) {
-      throw failure("HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", "서버 문제지의 문항 수 요약이 실제 문항과 다릅니다.");
+    const scoringQuestions = questions.filter(question => question.scoringEligible);
+    if (!scoringQuestions.length || data.questionCount !== scoringQuestions.length
+      || data.sourceQuestionCount !== questions.length) {
+      throw failure("HF_SECURE_MOCK_QUESTION_CONTRACT_INVALID", "서버 문제지의 채점 문항 수 요약이 실제 문항과 다릅니다.");
     }
     const signedUrlExpiresIn = validatePositiveInteger(
       data.signedUrlExpiresIn,
@@ -727,7 +741,8 @@
       manifestRevision,
       serverSeed,
       seed: serverSeed,
-      questionCount: questions.length,
+      questionCount: scoringQuestions.length,
+      sourceQuestionCount: questions.length,
       signedUrlExpiresIn,
       deliveryMode,
       pages,
@@ -750,6 +765,49 @@
     return normalizeExamResponse(data, examId, loadEventId);
   }
 
+  function normalizeRetakeResponse(data, requestedExamId) {
+    assertAllowedKeys(
+      data,
+      new Set(["exam", "attemptId", "attemptNo", "attemptStatus", "manifestRevision"]),
+      "response",
+      "HF_SECURE_MOCK_EDGE_RESPONSE_INVALID",
+      false
+    );
+    const manifestRevision = validatePositiveInteger(
+      data.manifestRevision,
+      "HF_SECURE_MOCK_REVISION_INVALID",
+      "새 응시의 문제 revision이 올바르지 않습니다.",
+      32767
+    );
+    const exam = normalizeExamSummary(data.exam, manifestRevision);
+    if (!UUID_RE.test(requestedExamId) && exam.id !== requestedExamId) {
+      throw failure("HF_SECURE_MOCK_EXAM_MISMATCH", "요청한 회차와 새 응시 회차가 다릅니다.");
+    }
+    const attemptId = validateUuid(data.attemptId, "HF_SECURE_MOCK_ATTEMPT_INVALID", "새 응시 식별자가 올바르지 않습니다.");
+    const attemptNo = validatePositiveInteger(data.attemptNo, "HF_SECURE_MOCK_ATTEMPT_INVALID", "새 응시 차수가 올바르지 않습니다.", 3);
+    if (attemptNo < 2 || !["in_progress", "grading"].includes(data.attemptStatus)) {
+      throw failure("HF_SECURE_MOCK_ATTEMPT_INVALID", "명시적으로 시작한 재응시 상태가 올바르지 않습니다.");
+    }
+    examContexts.delete(exam.id);
+    attemptContexts.clear();
+    try {
+      sessionStorage.removeItem(`${LOAD_ID_PREFIX}${exam.id}`);
+      sessionStorage.removeItem(`${RETAKE_ID_PREFIX}${exam.id}`);
+    } catch (_) {}
+    return deepFreeze({ exam, attemptId, attemptNo, attemptStatus: data.attemptStatus, manifestRevision });
+  }
+
+  async function startNewAttempt(examIdValue) {
+    assertFeatureEnabled();
+    if (arguments.length !== 1) {
+      throw failure("HF_SECURE_MOCK_CLIENT_FIELD_FORBIDDEN", "재응시는 회차만 지정할 수 있습니다.");
+    }
+    const examId = validateExamId(examIdValue);
+    const retakeEventId = stableSessionUuid(`${RETAKE_ID_PREFIX}${examId}`);
+    const data = await invoke("startNewAttempt", { examId, retakeEventId });
+    return normalizeRetakeResponse(data, examId);
+  }
+
   function requireAttemptContext(value) {
     const attemptId = validateUuid(value, "HF_SECURE_MOCK_ATTEMPT_INVALID", "응시 식별자가 올바르지 않습니다.");
     const context = attemptContexts.get(attemptId);
@@ -770,7 +828,8 @@
     if (String(data.attemptId || "") !== attemptId || data.manifestRevision !== context.document.manifestRevision) {
       throw failure("HF_SECURE_MOCK_ANSWER_MISMATCH", "문제와 보호 답안의 응시 또는 revision이 다릅니다.");
     }
-    if (!Array.isArray(data.answers) || data.answers.length !== context.document.questions.length) {
+    const scoringQuestions = context.document.questions.filter(question => question.scoringEligible);
+    if (!Array.isArray(data.answers) || data.answers.length !== scoringQuestions.length) {
       throw failure("HF_SECURE_MOCK_ANSWER_MISMATCH", "문제와 보호 답안의 문항 수가 다릅니다.");
     }
     if (!["grading", "submitted"].includes(data.attemptStatus)) {
@@ -796,7 +855,7 @@
         "HF_SECURE_MOCK_ANSWER_MANIFEST_INVALID",
         false
       );
-      const question = context.document.questions[index];
+      const question = scoringQuestions[index];
       if (entry.questionKey !== question.questionKey || entry.revision !== question.revision) {
         throw failure("HF_SECURE_MOCK_ANSWER_MISMATCH", `${trail}: 문제와 연결되지 않는 답안입니다.`);
       }
@@ -881,7 +940,8 @@
     ) {
       throw failure("HF_SECURE_MOCK_SAVE_RESPONSE_INVALID", "서버 응시 저장 응답이 현재 문제지와 다릅니다.");
     }
-    const questionCount = context.document.questions.length;
+    const scoringQuestions = context.document.questions.filter(question => question.scoringEligible);
+    const questionCount = scoringQuestions.length;
     const correctCount = Object.values(marks).filter(mark => mark === "o").length;
     const expectedScore = Math.round(correctCount * 100 / questionCount);
     if (
@@ -890,7 +950,7 @@
     ) {
       throw failure("HF_SECURE_MOCK_SAVE_RESPONSE_INVALID", "서버가 계산한 채점 결과가 현재 O/X 표시와 다릅니다.");
     }
-    const expectedWrongQuestionKeys = context.document.questions
+    const expectedWrongQuestionKeys = scoringQuestions
       .filter(question => marks[String(question.number)] === "x")
       .map(question => question.questionKey);
     if (!Array.isArray(data.wrongQuestionKeys)
@@ -899,7 +959,7 @@
       || data.wrongTypeKeys.some(key => !TYPE_KEY_RE.test(String(key)))) {
       throw failure("HF_SECURE_MOCK_SAVE_RESPONSE_INVALID", "서버가 계산한 오답 진단 결과가 안전 계약과 다릅니다.");
     }
-    const expectedTypeKeys = [...new Set(context.document.questions
+    const expectedTypeKeys = [...new Set(scoringQuestions
       .filter(question => marks[String(question.number)] === "x")
       .map(question => question.typeKey))];
     if (JSON.stringify(data.wrongTypeKeys) !== JSON.stringify(expectedTypeKeys)) {
@@ -930,7 +990,7 @@
     assertFeatureEnabled();
     assertAllowedKeys(payload, new Set(["attemptId", "submissionId", "marks"]), "request", "HF_SECURE_MOCK_CLIENT_FIELD_FORBIDDEN", true);
     const { attemptId, context } = requireAttemptContext(payload.attemptId);
-    const marks = normalizeMarks(payload.marks, context.document.questions);
+    const marks = normalizeMarks(payload.marks, context.document.questions.filter(question => question.scoringEligible));
     const submissionId = stableSessionUuid(`${SUBMISSION_ID_PREFIX}${attemptId}`, payload.submissionId);
     const data = await invoke("saveAttempt", { attemptId, submissionId, marks });
     return normalizeSaveResponse(data, attemptId, submissionId, context, marks);
@@ -940,6 +1000,7 @@
     listExams,
     loadExam,
     loadAnswers,
-    saveAttempt
+    saveAttempt,
+    startNewAttempt
   });
 })(typeof window !== "undefined" ? window : globalThis);

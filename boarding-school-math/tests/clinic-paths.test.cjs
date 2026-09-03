@@ -21,7 +21,7 @@ test("all reviewed Grade 6 clusters receive a private-data-free concept route", 
 });
 
 test("reviewed clusters open workbooks with completion-gated rechecks", function () {
-  ["6.RP.A", "6.NS.A", "6.NS.B", "6.NS.C", "6.EE.A", "6.EE.B", "6.G.A"].forEach(function (cluster) {
+  ["6.RP.A", "6.NS.A", "6.NS.B", "6.NS.C", "6.EE.A", "6.EE.B", "6.EE.C", "6.G.A"].forEach(function (cluster) {
     const before = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: false });
     assert.equal(before.workbook.state, "available");
     assert.equal(before.workbook.url, `./clinic-practice.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
@@ -36,6 +36,10 @@ test("reviewed clusters open workbooks with completion-gated rechecks", function
   const geometry = paths.routeFor("6.G.A", { workbookCompleted: true });
   assert.equal(geometry.workbook.packId, "gfield-grade6-g-a-clinic-v1");
   assert.equal(geometry.recheck.state, "available");
+  const variables = paths.routeFor("6.EE.C", { workbookCompleted: true });
+  assert.equal(variables.workbook.packId, "gfield-grade6-ee-c-clinic-v1");
+  assert.equal(variables.animated.state, "review-pending");
+  assert.equal(variables.recheck.state, "available");
 });
 
 test("only exact cluster matches open reviewed animated clinic lessons", function () {

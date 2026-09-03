@@ -29,11 +29,11 @@
 <main id="pages" class="pages"><div class="sheet"><div class="empty">문제지를 만드는 중입니다.</div></div></main>
 <script src="../../config.js"></script>
 <script src="../data.js"></script>
-<script src="../supabase-config.js?v=hf-supabase-live-20260828a"></script>
+<script src="../supabase-config.js?v=hf-supabase-live-20260903a"></script>
 <script src="../supabase-client.js"></script>
-<script src="../portal-auth.js?v=hf-supabase-live-20260828a"></script>
-<script src="../secure-mock.js"></script>
-<script src="./access-policy.js"></script>
+<script src="../portal-auth.js?v=hf-supabase-live-20260903a"></script>
+<script src="../secure-mock.js?v=hf-secure-mock-20260903a"></script>
+<script src="./access-policy.js?v=hf-practice-safe-20260903a"></script>
 <script src="../generator/q01.js"></script>
 <script src="../generator/stacking.js"></script>
 <script src="../generator/spatial.js"></script>
@@ -45,8 +45,8 @@
 <script src="./exam-blueprints.js"></script>
 <script src="./premier-release-catalog.js"></script>
 <script src="./variation-bank.js"></script>
-<script src="./mock-core.js"></script>
-<script src="./secure-flow.js"></script>
+<script src="./mock-core.js?v=hf-practice-safe-20260903a"></script>
+<script src="./secure-flow.js?v=hf-secure-mock-20260903a"></script>
 <script>
 (async function(){
   const params=new URLSearchParams(location.search);
@@ -82,7 +82,8 @@
   }
   const student=HFMock.safeStudent(portalSession?.name||requestedStudent);
   const portalPaid=window.GFieldHFPortalAuth?.canAccess(portalSession,'hyperfocus-extra')||window.GFieldHFPortalAuth?.canAccess(portalSession,'problem-bank');
-  const accessTier=remoteMode?(portalPaid?'paid':'free'):(portalPaid||storedAccess.paid?'paid':'free');
+  const paidPracticeReady=HFAccessPolicy.paidPracticeReady();
+  const accessTier=paidPracticeReady&&(remoteMode?portalPaid:(portalPaid||storedAccess.paid))?'paid':'free';
   let doc;
   try{
     if(mode==='practice')await HFMock.preparePractice(typeIds);else if(!remoteMode)await HFMock.prepareExam(examId);
@@ -118,7 +119,7 @@
   const publicRelease=remoteExam?releaseRound(doc.id):null;
   const videoLink=document.getElementById('videoLink');
   if(remoteExam&&publicRelease?.videoUrl){videoLink.href=publicRelease.videoUrl;videoLink.hidden=false}
-  if(remoteExam&&publicRelease?.answersAvailable===true){answerButton.onclick=async function(){if(document.querySelector('.solutions')){toggleSolutions(this);return}this.disabled=true;this.textContent='보호 답안 확인 중';setViewerError('');try{const bundle=await secureMock.loadAnswers(doc.attemptId);const rows=doc.questions.map((question,index)=>{const answer=bundle.answers[index];if(!answer||answer.questionKey!==question.questionKey||answer.revision!==question.revision)throw new Error('문제와 보호 답안이 일치하지 않습니다.');return{number:question.number,typeTitle:question.typeTitle,answerText:answer.answerText}});pages.insertAdjacentHTML('beforeend',solutionHtml(rows));try{sessionStorage.setItem(secureFlow.gradingSignalKey(doc.attemptId),String(doc.manifestRevision))}catch(e){}this.disabled=false;toggleSolutions(this)}catch(error){this.disabled=false;this.textContent='정답·풀이 다시 확인';setViewerError(String(error?.message||'보호 답안을 불러오지 못했습니다.'))}}}else if(allowLocalSolutions){answerButton.onclick=function(){toggleSolutions(this)}}else answerButton.style.display='none';
+  if(remoteExam&&publicRelease?.answersAvailable===true){answerButton.onclick=async function(){if(document.querySelector('.solutions')){toggleSolutions(this);return}this.disabled=true;this.textContent='보호 답안 확인 중';setViewerError('');try{const bundle=await secureMock.loadAnswers(doc.attemptId);const scoringQuestions=doc.questions.filter(question=>question.scoringEligible!==false);const rows=scoringQuestions.map((question,index)=>{const answer=bundle.answers[index];if(!answer||answer.questionKey!==question.questionKey||answer.revision!==question.revision)throw new Error('문제와 보호 답안이 일치하지 않습니다.');return{number:question.number,typeTitle:question.typeTitle,answerText:answer.answerText}});pages.insertAdjacentHTML('beforeend',solutionHtml(rows));try{sessionStorage.setItem(secureFlow.gradingSignalKey(doc.attemptId),String(doc.manifestRevision))}catch(e){}this.disabled=false;toggleSolutions(this)}catch(error){this.disabled=false;this.textContent='정답·풀이 다시 확인';setViewerError(String(error?.message||'보호 답안을 불러오지 못했습니다.'))}}}else if(allowLocalSolutions){answerButton.onclick=function(){toggleSolutions(this)}}else answerButton.style.display='none';
   document.getElementById('regenBtn').onclick=function(){if(remoteExam)return;params.set('seed',HFMock.makeSeed());if(remoteMode)params.delete('student');else params.set('student',student);location.search=params;};
 })();
 </script>

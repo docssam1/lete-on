@@ -21,6 +21,7 @@
    npx -y supabase@2.115.0 db push --linked
    npx -y supabase@2.115.0 config push
    npx -y supabase@2.115.0 functions deploy admin-students
+   npx -y supabase@2.115.0 functions deploy admin-vip
    npx -y supabase@2.115.0 functions deploy signed-asset-url
    npx -y supabase@2.115.0 functions deploy secure-mock
    ```

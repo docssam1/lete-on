@@ -128,14 +128,20 @@
     document.getElementById("nav-diagnostic").textContent = c.navDiagnostic;
     document.getElementById("nav-concept").textContent = c.navConcept;
     document.getElementById("nav-concept").href = paths.conceptUrl(state.cluster, true);
-    document.getElementById("nav-animated").textContent = c.navAnimated;
     const animatedRoute = paths.routeFor(state.cluster, { fromDiagnostic: true, workbookCompleted: workbookComplete() }).animated;
-    document.getElementById("nav-animated").href = animatedRoute.url.replace(/locale=[^&]+/, "locale=" + state.locale);
+    const navAnimated = document.getElementById("nav-animated");
+    navAnimated.textContent = c.navAnimated;
+    navAnimated.hidden = animatedRoute.state !== "available";
+    if (animatedRoute.state === "available") navAnimated.href = animatedRoute.url.replace(/locale=[^&]+/, "locale=" + state.locale);
+    else navAnimated.removeAttribute("href");
     document.getElementById("trail-analysis").textContent = c.trailAnalysis;
     document.getElementById("trail-concept").textContent = c.trailConcept;
     document.getElementById("trail-concept").href = paths.conceptUrl(state.cluster, true);
-    document.getElementById("trail-animated").textContent = c.trailAnimated;
-    document.getElementById("trail-animated").href = document.getElementById("nav-animated").href;
+    const trailAnimated = document.getElementById("trail-animated");
+    trailAnimated.textContent = c.trailAnimated;
+    trailAnimated.hidden = animatedRoute.state !== "available";
+    if (animatedRoute.state === "available") trailAnimated.href = navAnimated.href;
+    else trailAnimated.removeAttribute("href");
     document.getElementById("footer-back").textContent = state.locale === "ko" ? state.cluster + " 개념으로 돌아가기" : (state.locale === "zh-Hans" ? "返回" + state.cluster + "概念" : "Back to the " + state.cluster + " concept");
     document.getElementById("footer-back").href = paths.conceptUrl(state.cluster, true);
     document.getElementById("footer-note").textContent = c.footerNote;
@@ -206,7 +212,7 @@
 
     const row = el("div", "response-row");
     const input = el("input");
-    input.type = "text"; input.inputMode = ["ratio-pair", "comparison-symbol", "signed-rational", "rational-exact", "simplest-fraction"].includes(item.responseFormat) ? "text" : "decimal";
+    input.type = "text"; input.inputMode = ["ratio-pair", "comparison-symbol", "signed-rational", "rational-exact", "simplest-fraction", "variable-symbol"].includes(item.responseFormat) ? "text" : "decimal";
     input.placeholder = c.answerPlaceholder; input.setAttribute("aria-label", String(index + 1) + " " + c.answerPlaceholder);
     input.autocomplete = "off"; input.spellcheck = false;
     const button = el("button", "", c.check); button.type = "button";
@@ -249,8 +255,16 @@
     const heading = el("header", "section-heading");
     heading.append(el("h2", "", text(source.pack.ui.sectionLabels[section])), el("span", "", items.length + " " + c.sectionCount));
     const grid = el("div", "problem-grid");
-    items.forEach(function (item, index) { grid.append(renderProblem(item, offset + index)); });
-    wrap.append(heading, grid);
+    const lead = el("div", "section-lead");
+    const rows = [];
+    items.forEach(function (item, index) {
+      const rowIndex = Math.floor(index / 2);
+      if (!rows[rowIndex]) rows[rowIndex] = el("div", "problem-row");
+      rows[rowIndex].append(renderProblem(item, offset + index));
+    });
+    lead.append(heading, rows.shift());
+    grid.append(lead, ...rows);
+    wrap.append(grid);
     return wrap;
   }
 

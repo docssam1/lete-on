@@ -10,7 +10,10 @@
     adminEmail: "docssam1@gmail.com",
     sdkUrl: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3/+esm",
     features: Object.freeze({
-      secureMockDelivery: true
+      secureMockDelivery: true,
+      // Keep paid 3+ practice questions closed until a server-side problem
+      // source and delivery endpoint are deployed. The free two remain live.
+      securePracticeDelivery: false
     })
   });
 })(window);

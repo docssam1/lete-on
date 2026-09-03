@@ -37,13 +37,17 @@
     return Array.isArray(permissions) && permissions.includes(PAID_PERMISSION);
   }
 
+  function paidPracticeReady() {
+    return global.GFIELD_HF_SUPABASE_CONFIG?.features?.securePracticeDelivery === true;
+  }
+
   async function verifyCode(code, config) {
     const normalized = normalizeCode(code);
     if (!normalized) return { valid: false, paid: false, hash: "", permissions: [] };
     const cfg = configOrEmpty(config);
     const hash = await sha256Hex(`${cfg.salt}:${normalized}`);
     const permissions = permissionsForHash(hash, config);
-    return { valid: permissions.length > 0, paid: hasPaidPermission(permissions), hash, permissions };
+    return { valid: permissions.length > 0, paid: hasPaidPermission(permissions) && paidPracticeReady(), hash, permissions };
   }
 
   function saveVerifiedHash(hash) {
@@ -57,11 +61,11 @@
     let hash = "";
     try { hash = global.localStorage.getItem(STORAGE_KEY) || ""; } catch (error) {}
     const permissions = permissionsForHash(hash, config);
-    return { hash, permissions, paid: hasPaidPermission(permissions) };
+    return { hash, permissions, paid: hasPaidPermission(permissions) && paidPracticeReady() };
   }
 
   function tier(value) {
-    return value === "paid" ? "paid" : "free";
+    return value === "paid" && paidPracticeReady() ? "paid" : "free";
   }
 
   function limitForTier(value) {
@@ -75,6 +79,9 @@
     const accessTier = tier(opts.accessTier);
     if (!DIFFICULTIES.includes(difficulty)) throw new Error("약점 문제 난이도를 쉽게·같게·어렵게 중에서 골라 주세요.");
     if (!Number.isInteger(count) || count < 1) throw new Error("약점 유형별 문제 수를 1개 이상 직접 정해 주세요.");
+    if (opts.accessTier === "paid" && !paidPracticeReady() && count > FREE_PER_DIFFICULTY) {
+      throw new Error("추가 문제는 비공개 서버 전달 준비 중입니다. 현재는 난이도별 2문항만 이용할 수 있습니다.");
+    }
     const limit = limitForTier(accessTier);
     if (count > limit) {
       if (accessTier === "free") throw new Error(`난이도별 무료 유사문제는 ${FREE_PER_DIFFICULTY}문항까지입니다. ${FREE_PER_DIFFICULTY + 1}번째부터는 유료 추가 문제입니다.`);
@@ -92,6 +99,7 @@
     normalizeCode,
     permissionsForHash,
     hasPaidPermission,
+    paidPracticeReady,
     verifyCode,
     saveVerifiedHash,
     storedAccess,

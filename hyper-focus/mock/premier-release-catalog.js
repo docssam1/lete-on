@@ -20,7 +20,7 @@
   });
 
   root.GFIELD_HF_PREMIER_RELEASE_CATALOG = Object.freeze({
-    version: "2026-08-25",
+    version: "2026-08-31",
     series: Object.freeze([
       Object.freeze({
         key: "utilization",
@@ -29,34 +29,34 @@
           round("premier-utilization-01", "활용 모의고사 1회", 20, 0, false, {
             releaseStatus: "published",
             videoUrl: "https://www.youtube.com/watch?v=iIlWZpVmdgY",
-            answersAvailable: false
+            answersAvailable: true
           }),
-          round("premier-utilization-02", "활용 모의고사 2회", 14, 6, true),
-          round("premier-utilization-03", "활용 모의고사 3회", 16, 4, true),
-          round("premier-utilization-04", "활용 모의고사 4회", 13, 7, true),
-          round("premier-utilization-05", "활용 모의고사 5회", 17, 3, true),
-          round("premier-utilization-06", "활용 모의고사 6회", 13, 7, true),
-          round("premier-utilization-07", "활용 모의고사 7회", 12, 8, true),
-          round("premier-utilization-08", "활용 모의고사 8회", 16, 4, true)
+          round("premier-utilization-02", "활용 모의고사 2회", 14, 6, false, { releaseStatus: "published", videoUrl: "https://www.youtube.com/watch?v=Ixn7bAp7Y2s", answersAvailable: true }),
+          round("premier-utilization-03", "활용 모의고사 3회", 16, 4, false, { releaseStatus: "published", videoUrl: "https://www.youtube.com/watch?v=-1AyqqI85go", answersAvailable: true }),
+          round("premier-utilization-04", "활용 모의고사 4회", 13, 7, false, { releaseStatus: "published", videoUrl: "https://www.youtube.com/watch?v=5LT2UXzeEF0", answersAvailable: true }),
+          round("premier-utilization-05", "활용 모의고사 5회", 17, 3, false, { releaseStatus: "published", videoUrl: "https://www.youtube.com/watch?v=7MUoHS7Iq38", answersAvailable: true }),
+          round("premier-utilization-06", "활용 모의고사 6회", 13, 7, false, { releaseStatus: "published", videoUrl: "https://www.youtube.com/watch?v=aBAvLdLdDpw", answersAvailable: true }),
+          round("premier-utilization-07", "활용 모의고사 7회", 12, 8, false, { releaseStatus: "published", videoUrl: "https://www.youtube.com/watch?v=V7jbGOS3Rvk", answersAvailable: true }),
+          round("premier-utilization-08", "활용 모의고사 8회", 16, 4, false, { releaseStatus: "published", videoUrl: "https://www.youtube.com/watch?v=aFQHp2Zixo4", answersAvailable: true })
         ])
       }),
       Object.freeze({
         key: "final",
         label: "파이널 모의고사",
         rounds: Object.freeze([
-          round("premier-final-01", "파이널 모의고사 1회", 8, 12, true),
-          round("premier-final-02", "파이널 모의고사 2회", 14, 6, true),
-          round("premier-final-03", "파이널 모의고사 3회", 16, 4, true)
+          round("premier-final-01", "파이널 모의고사 1회", 8, 12, false, { releaseStatus: "published", answersAvailable: true }),
+          round("premier-final-02", "파이널 모의고사 2회", 14, 6, false, { releaseStatus: "published", answersAvailable: true }),
+          round("premier-final-03", "파이널 모의고사 3회", 16, 4, false, { releaseStatus: "published", answersAvailable: true })
         ])
       }),
       Object.freeze({
         key: "last",
         label: "최종 모의고사",
         rounds: Object.freeze([
-          round("premier-last-01", "최종 모의고사 1회", 16, 4, true),
-          round("premier-last-02", "최종 모의고사 2회", 17, 3, true),
-          round("premier-last-03", "최종 모의고사 3회", 14, 6, true),
-          round("premier-last-04", "최종 모의고사 4회", 15, 5, true)
+          round("premier-last-01", "최종 모의고사 1회", 16, 4, false, { releaseStatus: "published", answersAvailable: true }),
+          round("premier-last-02", "최종 모의고사 2회", 17, 3, false, { releaseStatus: "published", answersAvailable: true }),
+          round("premier-last-03", "최종 모의고사 3회", 14, 6, false, { releaseStatus: "published", answersAvailable: true }),
+          round("premier-last-04", "최종 모의고사 4회", 15, 5, false, { releaseStatus: "published", answersAvailable: true })
         ])
       })
     ])

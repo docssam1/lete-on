@@ -35,9 +35,9 @@ function testPureRemoteSummaryAndBothSubmissionPaths() {
   const document = {
     attemptId: "11111111-1111-4111-8111-111111111111",
     questions: [
-      { number: 1, questionKey: "premier:final-01:q01", typeKey: "paper-folding", typeTitle: "색종이 접기", typeId: null },
-      { number: 2, questionKey: "premier:final-01:q02", typeKey: "stacking-cubes", typeTitle: "쌓기나무", typeId: 2 },
-      { number: 3, questionKey: "premier:final-01:q03", typeKey: "stacking-cubes", typeTitle: "쌓기나무", typeId: 2 }
+      { number: 1, questionKey: "premier:final-01:q01", areaKey: "spatial", areaLabel: "도형과 공간", typeKey: "paper-folding", typeTitle: "색종이 접기", typeId: null },
+      { number: 2, questionKey: "premier:final-01:q02", areaKey: "spatial", areaLabel: "도형과 공간", typeKey: "stacking-cubes", typeTitle: "쌓기나무", typeId: 2 },
+      { number: 3, questionKey: "premier:final-01:q03", areaKey: "logic", areaLabel: "논리와 관계", typeKey: "stacking-cubes", typeTitle: "쌓기나무", typeId: 2 }
     ]
   };
   const marks = { 1: "x", 2: "x", 3: "o" };
@@ -59,6 +59,10 @@ function testPureRemoteSummaryAndBothSubmissionPaths() {
     ["paper-folding", 0, 1],
     ["stacking-cubes", 1, 2]
   ]);
+  assert.deepEqual(Array.from(summary.byArea, row => [row.areaKey, row.correct, row.total]), [
+    ["spatial", 0, 2],
+    ["logic", 1, 1]
+  ]);
 
   assert.throws(
     () => flow.buildRemoteSummary(document, { ...marks, 1: "o" }, receipt, 5),
@@ -74,8 +78,8 @@ function testStaticUiSecurityContract() {
 
   [indexHtml, viewerHtml].forEach((html, index) => {
     const label = index ? "viewer" : "index";
-    assert.match(html, /<script src="\.\.\/secure-mock\.js"><\/script>/, `${label}: secure-mock.js 연결 누락`);
-    assert.match(html, /<script src="\.\/secure-flow\.js"><\/script>/, `${label}: secure-flow.js 연결 누락`);
+    assert.match(html, /<script src="\.\.\/secure-mock\.js(?:\?v=[^"]+)?"><\/script>/, `${label}: secure-mock.js 연결 누락`);
+    assert.match(html, /<script src="\.\/secure-flow\.js(?:\?v=[^"]+)?"><\/script>/, `${label}: secure-flow.js 연결 누락`);
     assert.doesNotMatch(html, /canAccess\(portalSession\s*,\s*['"]mock['"]\)/, `${label}: 전역 mock 권한으로 선차단하면 안 됩니다.`);
     assert.doesNotMatch(html, /innerHTML\s*=.*(?:error\?\.|error\.message|String\(error)/, `${label}: 오류 문자열을 innerHTML에 넣으면 안 됩니다.`);
   });
@@ -93,16 +97,20 @@ function testStaticUiSecurityContract() {
   assert.match(viewerHtml, /class="secure-page-image"[\s\S]*referrerpolicy="no-referrer"/, "비공개 쪽 이미지는 referrer를 보내면 안 됩니다.");
   assert.match(viewerHtml, /\.sheet\.secure-page-sheet\{min-height:0;padding:0\}/, "원본 쪽 이미지는 HTML 문제지 여백으로 재편집하면 안 됩니다.");
   assert.match(indexHtml, /secureMock\.saveAttempt\(\{attemptId:exam\.attemptId,marks\}\)/);
+  assert.match(indexHtml, /confirm\(`이 회차의 \$\{exam\.attemptNo\+1\}번째 응시를 새로 시작할까요\?/,
+    "재응시는 확인 동작을 거쳐야 합니다.");
+  assert.match(indexHtml, /secureMock\.startNewAttempt\(exam\.id\)/);
+  assert.match(indexHtml, /attemptStatus==='submitted'&&exam\.attemptNo<3/);
   assert.doesNotMatch(indexHtml, /saveAttempt\(\{[^}]*\b(?:student|seed|score|correctCount|wrongTypeIds)\b/);
 
   assert.match(indexHtml, /secureFlow\.canGrade\(attemptStatus\)/);
   assert.match(indexHtml, /해설 영상 또는 정답·풀이를 보며 각 문항을 O\/X로 표시하세요/);
   assert.match(indexHtml, /attemptStatus==='submitted'\?'제출 완료'/, "제출 완료 응시는 버튼 문구도 잠겨야 합니다.");
-  assert.match(indexHtml, /if\(remoteMode\)renderQuestions\(\)/, "서버 제출 영수증 뒤 O\/X와 제출 버튼을 즉시 잠가야 합니다.");
+  assert.match(indexHtml, /if\(remoteMode\)\{renderQuestions\(\);refreshRetakeButton\(\)\}/, "서버 제출 영수증 뒤 O\/X와 제출 버튼을 즉시 잠가야 합니다.");
   assert.match(indexHtml, /secureFlow\.buildRemoteSummary\(exam,marks,receipt/);
   assert.match(indexHtml, /else\{summary=HFMock\.resultFromMarks\(exam,marks\)/, "로컬 채점 흐름은 유지해야 합니다.");
   assert.doesNotMatch(indexHtml, /if\(remoteMode\)[\s\S]{0,120}HFMock\.resultFromMarks/);
-  assert.match(indexHtml, /if\(remoteMode\|\|exam\.questions\.every[^\n]+newExamBtn[^\n]+display='none'/);
+  assert.match(indexHtml, /if\(remoteMode\)refreshRetakeButton\(\);else if\(exam\.questions\.every[^\n]+newExamBtn[^\n]+display='none'/);
   assert.match(viewerHtml, /if\(remoteExam\|\|doc\.questions\.every[^\n]+regenBtn[^\n]+display='none'/);
   assert.match(viewerHtml, /if\(remoteExam\)return;params\.set\('seed'/, "원격 regenerate 핸들러는 동작하면 안 됩니다.");
 

@@ -8,9 +8,10 @@
 
 1. 이 문서
 2. 저장소 최상위 `AGENTS.md`
-3. `hyper-focus/docs/HANDOFF_PORTAL_ARCHITECTURE.md`
-4. `hyper-focus/supabase/README.md`
-5. 쌓기나무·색·접기 등 시각 문항을 만들거나 고칠 때: `E:\Codex\skills\gfield-single-answer-visibility\SKILL.md`
+3. `hyper-focus/docs/HF_EVIDENCE_GATE_WORKFLOW.md`
+4. `hyper-focus/docs/HANDOFF_PORTAL_ARCHITECTURE.md`
+5. `hyper-focus/supabase/README.md`
+6. 쌓기나무·색·접기 등 시각 문항을 만들거나 고칠 때: `E:\Codex\skills\gfield-single-answer-visibility\SKILL.md`
 
 다른 제품(황소 초등·중등, 필즈 더 클래식, 고등 선발, 공통 루트 파일)은 **읽기 전용 참고만 가능**하며 수정·포맷·커밋·배포하지 않는다. 공용 파일이 꼭 필요하면 영향 파일을 먼저 사용자에게 알리고 승인을 받는다.
 
@@ -28,9 +29,9 @@ git log -5 --oneline
 ```
 
 - 현재 작업 브랜치: `codex/hf-program-hub`
-- 마지막 로컬·배포 기준 커밋: `b4f7b5e6e14b0fad5fc977654a8b4c5084c0381d`
-- 이 기준에서는 `origin/main`과 작업 브랜치가 같은 커밋이었다.
-- 2026-08-30에 GitHub 직접 조회는 네트워크 제한으로 재확인하지 못했다. 따라서 새 작업 시작 시 반드시 `git fetch origin --prune` 후 실제 원격 SHA를 확인한다.
+- 2026-08-30에 다시 가져와 통합한 `origin/main` 기준: `f2eb564eb40eb4e389a20dcf28ecff67c065b2b2`
+- 승인번호 입력 표시 수정까지 실제 Hyper Focus 배포를 확인한 커밋: `6b7f80ea62517c89b600c55c03fbec0ee4ee10f7`
+- 이후에도 새 작업 시작 시 반드시 `git fetch origin --prune` 후 실제 원격 SHA와 이 문서의 기준을 다시 비교한다.
 - 기존 C: 작업본(참고 전용): `C:\Users\user\.codex\.chatgpt-projects\g-p-6a33de2990d481918518a9a957dbb24e\lete-on-hf-hub`
 - E:의 동명 사본은 `supabase-config.js`가 `enabled:false`인 **이전 사본**으로 확인됐다. 작업·배포 기준으로 사용하지 않는다.
 
@@ -147,6 +148,11 @@ node hyper-focus/qa/verify_q04_q09_visual_contract.js
 사용자가 이전에 영상 오류와 그림 교정을 지정한 파이널/최종 문항도 있다. 하지만 대본/스크린샷만으로 답을 확정하지 말고, 해당 원본 페이지와 독립 계산을 다시 확인한 뒤 정답 자산에 반영한다.
 
 ## 5. Hyper Focus 유사문제 작업 규칙
+
+작업을 시작하기 전에 `hyper-focus/docs/HF_EVIDENCE_GATE_WORKFLOW.md`의 작업 계약을 만들고,
+작업·근거·공개 상태를 분리한다. 새 문항이나 수정 문항은 `learner-fit` 다섯 기준과 적용되는 필수
+관문을 통과하기 전까지 `locked` 또는 `review_pending`으로 유지한다. 풀이 순서 자체가 학습 내용인
+경우에만 같은 문서의 절차형 화이트보드 계약을 적용한다.
 
 원본별 기준 파일:
 
