@@ -18975,6 +18975,148 @@
       const least = lcm(left, right);
       return result(`서로 다른 두 자연수의 곱은 ${product.toLocaleString()}이고 최대공약수는 ${common}입니다. 이 두 수의 최소공배수를 구하세요.`, least, `두 자연수의 곱은 최대공약수와 최소공배수의 곱과 같습니다. 따라서 최소공배수는 ${product.toLocaleString()} ÷ ${common} = ${least.toLocaleString()}입니다.`);
     },
+    correspondenceE1({ rng, level, variant = 0 }) {
+      const readyVariants = new Set([0, 1, 2, 5, 6, 8, 9]);
+      if (!readyVariants.has(variant)) throw new Error("규칙과 대응 개념탐구 1의 그림 검수 대기 항목은 생성할 수 없습니다.");
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-correspondence-e1-kind="${kind}" data-correspondence-e1-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const choose = pools => pick(rng, pools[level]);
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 주어진 두세 짝에 같은 규칙을 적용해 보세요."
+        : level === 2
+          ? " 답을 구한 뒤 모든 짝에 같은 규칙이 적용되는지 다시 확인하세요."
+          : "";
+      const caesar = (text, shift) => [...text].map(letter => {
+        if (letter === " ") return " ";
+        return String.fromCharCode(65 + (letter.charCodeAt(0) - 65 + shift) % 26);
+      }).join("");
+
+      if (variant === 0) {
+        const knownWords = [
+          ["MATH", "STAR", "BOOK", "HOPE", "NOTE", "CODE", "RULE", "LOVE"],
+          ["BE CAREFUL", "GOOD WORK", "TRY AGAIN", "FIND A RULE", "CHECK THIS", "MATH FIRST", "LOOK AGAIN", "KEEP GOING"],
+          ["THINK FIRST", "CHECK AGAIN", "FIND A RULE", "SOLVE IT", "TRY ANOTHER", "FOLLOW STEPS", "READ CLOSELY", "WORK IT OUT"]
+        ];
+        const targetWords = [
+          ["LOVE", "MATH", "STAR", "HOPE", "BOOK", "NOTE", "CODE", "RULE"],
+          ["NUMBER", "PATTERN", "QUESTION", "ANSWER", "FIGURE", "PUZZLE", "REASON", "COMPARE"],
+          ["CHALLENGE", "RELATION", "SEQUENCE", "DISCOVER", "CALCULATE", "EXPLAIN", "COMPLETE", "DIAGRAM"]
+        ];
+        let known = pick(rng, knownWords[level]);
+        let target = pick(rng, targetWords[level]);
+        if (known === target) target = targetWords[level][(targetWords[level].indexOf(target) + 1) % targetWords[level].length];
+        const shift = int(rng, 2 + level * 2, 7 + level * 3);
+        const knownCode = caesar(known, shift);
+        const targetCode = caesar(target, shift);
+        return result(`알파벳을 같은 칸 수만큼 뒤로 옮겨 암호를 만들었습니다. ${knownCode}를 풀면 ${known}입니다. 같은 규칙으로 ${targetCode}를 푸세요.${difficultyInstruction}${tag("caesar-decode", [targetCode.replaceAll(" ", "_"), shift])}`, target, `암호의 각 글자를 알파벳에서 ${shift}칸씩 앞으로 되돌리면 ${target}입니다.`);
+      }
+      if (variant === 1 || variant === 5) {
+        const multiplier = int(rng, [2, 4, 7][level], [5, 9, 13][level]);
+        const addend = int(rng, [1, -7, -18][level], [8, 11, 19][level]);
+        const target = int(rng, [12, 30, 55][level], [36, 78, 140][level]);
+        const samples = [2, 5, 9].map(input => `${input}→${multiplier * input + addend}`).join(", ");
+        const answer = multiplier * target + addend;
+        return result(`수 상자는 ${samples}처럼 수를 바꿉니다. ${target}을 넣으면 나오는 수를 구하세요.${difficultyInstruction}${tag("affine-rule", [multiplier, addend, target])}`, answer, `들어간 수에 ${multiplier}을 곱한 뒤 ${addend >= 0 ? `${addend}을 더하는` : `${Math.abs(addend)}을 빼는`} 규칙입니다. 따라서 ${target}은 ${answer}로 바뀝니다.`);
+      }
+      if (variant === 2 || variant === 6) {
+        const divisor = pick(rng, [[2, 3, 4, 5], [4, 5, 6, 8, 9], [6, 8, 9, 12, 15]][level]);
+        const addend = int(rng, [0, -2, -6][level], [5, 7, 11][level]);
+        const sampleStart = Math.max(2, 1 - addend);
+        const sampleFactors = [sampleStart, sampleStart + 2, sampleStart + 5];
+        const targetFactor = int(rng, sampleStart + 7 + level * 4, sampleStart + 20 + level * 14);
+        const samples = sampleFactors.map(factor => `${divisor * factor}→${factor + addend}`).join(", ");
+        const target = divisor * targetFactor;
+        const answer = targetFactor + addend;
+        return result(`두 수의 짝이 ${samples}입니다. 같은 규칙에서 ${target}과 짝인 수를 구하세요.${difficultyInstruction}${tag("divide-add-rule", [divisor, addend, target])}`, answer, `${target}을 ${divisor}로 나눈 ${targetFactor}에 ${addend >= 0 ? `${addend}을 더하면` : `${Math.abs(addend)}을 빼면`} ${answer}입니다.`);
+      }
+      if (variant === 8) {
+        const presses = choose([[2, 3, 4], [3, 4, 5], [5, 6, 7]]);
+        let possible = new Set([1]);
+        for (let count = 0; count < presses; count += 1) {
+          const previous = new Set();
+          for (const value of possible) {
+            previous.add(value * 2);
+            if (value % 2 === 0) previous.add(value + 1);
+          }
+          possible = previous;
+        }
+        const candidates = [...possible].sort((left, right) => left - right);
+        const answer = candidates.reduce((sum, value) => sum + value, 0);
+        return result(`계산기는 짝수를 넣으면 2로 나눈 수를, 홀수를 넣으면 1 작은 수를 내보냅니다. 이 계산기를 연속해서 ${presses}번 사용했을 때 1이 되는 자연수를 모두 찾아 그 합을 구하세요.${difficultyInstruction}${tag("repeat-even-odd-rule", [presses])}`, answer, `1에서 규칙을 거꾸로 ${presses}번 따라가면 가능한 처음 수는 ${candidates.join(", ")}입니다. 합은 ${answer}입니다.`);
+      }
+      const consonantCodes = { "ㄱ": "A", "ㄴ": "B", "ㄷ": "C", "ㄹ": "D", "ㅁ": "E", "ㅂ": "F", "ㅅ": "G", "ㅇ": "H", "ㅈ": "I", "ㅊ": "J", "ㅋ": "K", "ㅌ": "L", "ㅍ": "M", "ㅎ": "N" };
+      const vowelCodes = { "ㅏ": "1", "ㅑ": "2", "ㅓ": "3", "ㅔ": "310", "ㅕ": "4", "ㅗ": "5", "ㅛ": "6", "ㅜ": "7", "ㅠ": "8", "ㅡ": "9", "ㅣ": "10" };
+      const initials = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+      const vowels = ["ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"];
+      const finals = ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ", "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+      const encodeKorean = text => [...text].map(character => {
+        const index = character.charCodeAt(0) - 0xAC00;
+        if (index < 0 || index >= 11172) throw new Error("한글 암호에는 완성된 한글만 사용할 수 있습니다.");
+        const initial = initials[Math.floor(index / 588)];
+        const vowel = vowels[Math.floor((index % 588) / 28)];
+        const final = finals[index % 28];
+        if (!consonantCodes[initial] || !vowelCodes[vowel] || (final && !consonantCodes[final])) throw new Error("원문의 자음·모음 표로 나타낼 수 없는 글자입니다.");
+        return `${consonantCodes[initial]}${vowelCodes[vowel]}${final ? consonantCodes[final] : ""}`;
+      }).join("");
+      const phrase = pick(rng, [
+        ["가자", "모두가자", "기다려요", "좋은하루", "답을찾아요", "보고싶어요", "우리모두", "같은규칙"],
+        ["우리모두가자", "규칙을찾아요", "수학이좋아요", "차근차근풀어요", "만나고싶어요", "답을찾아요", "기다려요", "같은규칙"],
+        ["우리같이가자", "우리모두가자", "하나더풀어요", "차근차근풀어요", "규칙을찾아요", "수학이좋아요", "만나고싶어요", "살려주세요"]
+      ][level]);
+      const code = encodeKorean(phrase);
+      return result(`한글 자음은 ㄱ부터 ㅎ까지 A부터 차례로, 모음은 ㅏ부터 ㅣ까지 1부터 차례로 나타냅니다. 암호 ${code}를 한글로 풀어 쓰세요.${difficultyInstruction}${tag("korean-letter-code", [code])}`, phrase, `자음과 모음을 표의 순서대로 바꾸어 이어 읽으면 '${phrase}'입니다.`);
+    },
+    correspondenceE2({ rng, level, variant = 0 }) {
+      const readyVariants = new Set([1, 2, 3, 4, 5, 6, 7, 9]);
+      if (!readyVariants.has(variant)) throw new Error("규칙과 대응 개념탐구 2의 화면·여러 칸 답 검수 대기 항목은 생성할 수 없습니다.");
+      const tag = (kind, values, contract = "ordered") => `<span hidden data-correspondence-e2-kind="${kind}" data-correspondence-e2-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const choose = pools => pick(rng, pools[level]);
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 표의 수가 어떻게 바뀌는지 먼저 식으로 나타내세요."
+        : level === 2
+          ? " 구한 관계식이 표의 모든 짝에 맞는지 다시 확인하세요."
+          : "";
+
+      if (variant === 1 || variant === 4) {
+        const [multiplier, addend, target] = variant === 1
+          ? choose([[[3, 1, 24], [4, -2, 31]], [[6, -2, 137], [5, 3, 84]], [[9, -7, 248], [12, 5, 315]]])
+          : choose([[[2, 4, 30], [3, -2, 40]], [[4, -10, 50], [6, -8, 72]], [[9, -25, 140], [12, -34, 205]]]);
+        const inputs = [5, 8, 11];
+        const table = inputs.map(input => `${input}↔${multiplier * input + addend}`).join(", ");
+        const value = multiplier * target + addend;
+        return result(`두 양의 짝이 ${table}입니다. 첫째 양을 □, 둘째 양을 △라 할 때 관계식을 쓰고, □=${target}일 때 △를 구하세요.${difficultyInstruction}${tag("affine-table", [multiplier, addend, target])}`, `△=${multiplier}×□${addend >= 0 ? `+${addend}` : addend}, ${value}`, `표에서 □가 1 늘 때 △는 ${multiplier}씩 늘어납니다. 관계식은 △=${multiplier}×□${addend >= 0 ? `+${addend}` : addend}이고, □=${target}을 넣으면 △=${value}입니다.`);
+      }
+      if (variant === 2 || variant === 5) {
+        const [numerator, denominator, target] = choose([
+          [[2, 3, 90], [3, 4, 80]],
+          [[3, 4, 244], [5, 6, 318]],
+          [[7, 9, 603], [11, 12, 876]]
+        ]);
+        const value = target * numerator / denominator;
+        return result(`대응표에서 △와 ◆의 짝은 일정한 비로 바뀝니다. △가 ${denominator}일 때 ◆은 ${numerator}이고, △가 ${denominator * 2}일 때 ◆은 ${numerator * 2}입니다. 두 양의 관계식을 쓰고 △=${target}일 때 ◆을 구하세요.${difficultyInstruction}${tag("ratio-table", [numerator, denominator, target])}`, `◆=△×${numerator}÷${denominator}, ${value}`, `△를 ${denominator}으로 나눈 뒤 ${numerator}을 곱하므로 ◆=△×${numerator}÷${denominator}입니다. △=${target}일 때 ◆=${value}입니다.`);
+      }
+      if (variant === 3) {
+        const [rounds, up, down, wins] = choose([[[10, 2, 1, 6], [12, 3, 1, 7]], [[20, 3, 1, 8], [24, 4, 2, 15]], [[36, 5, 2, 22], [50, 7, 3, 31]]]);
+        const net = up * wins - down * (rounds - wins);
+        const otherWins = rounds - wins;
+        return result(`두 사람이 ${rounds}번 겨루어 비기는 경우는 없었습니다. 첫째 사람이 이기면 ${up}칸 올라가고 지면 ${down}칸 내려갑니다. 첫째 사람이 이긴 횟수를 □, 처음보다 올라간 칸 수를 △라 할 때 관계식을 쓰세요. △=${net}일 때 둘째 사람이 이긴 횟수도 구하세요.${difficultyInstruction}${tag("win-step-table", [rounds, up, down, net])}`, `△=${up + down}×□-${down * rounds}, ${otherWins}`, `첫째 사람은 이겨서 ${up}×□칸 올라가고, 진 ${rounds}-□번 동안 ${down}×(${rounds}-□)칸 내려갑니다. 따라서 △=${up + down}×□-${down * rounds}입니다. □=${wins}이므로 둘째 사람은 ${otherWins}번 이겼습니다.`);
+      }
+      if (variant === 6) {
+        const [multiplier, addend, input] = choose([[[3, 4, 12], [4, 5, 15]], [[9, 16, 24], [7, 18, 32]], [[12, 35, 48], [15, 42, 64]]]);
+        const triangle = multiplier * input;
+        const star = input + addend;
+        const sum = triangle + star;
+        return result(`대응표에서 ○가 x일 때 △는 ${multiplier}×x이고 ☆은 x+${addend}입니다. △와 ☆의 관계식을 쓰고, ○=${input}일 때 △+☆을 구하세요.${difficultyInstruction}${tag("linked-three-row-table", [multiplier, addend, input])}`, `☆=△÷${multiplier}+${addend}, ${sum}`, `○=△÷${multiplier}이므로 ☆=△÷${multiplier}+${addend}입니다. ○=${input}일 때 △=${triangle}, ☆=${star}이므로 합은 ${sum}입니다.`);
+      }
+      if (variant === 7) {
+        const [perimeter, height] = choose([[[24, 5], [30, 6]], [[38, 8], [46, 9]], [[74, 13], [98, 17]]]);
+        const half = perimeter / 2;
+        const width = half - height;
+        return result(`길이가 ${perimeter}cm인 철사를 겹치지 않게 모두 사용하여 직사각형 한 개를 만들었습니다. 가로를 □cm, 세로를 ○cm라 할 때 관계식을 쓰고, 세로가 ${height}cm일 때 가로를 구하세요.${difficultyInstruction}${tag("rectangle-wire-table", [perimeter, height])}`, `□+○=${half}, ${width}cm`, `직사각형 둘레가 ${perimeter}cm이므로 가로와 세로의 합은 ${half}cm입니다. 세로가 ${height}cm이므로 가로는 ${width}cm입니다.`);
+      }
+      const [total, reward, penalty, intact] = choose([[[40, 100, 100, 31], [50, 200, 100, 42]], [[100, 100, 200, 84], [120, 150, 250, 93]], [[250, 300, 500, 187], [400, 450, 700, 319]]]);
+      const money = reward * intact - penalty * (total - intact);
+      return result(`도자기 ${total}개를 나릅니다. 깨지지 않은 것은 한 개에 ${reward}원을 받고, 깨뜨린 것은 한 개에 ${penalty}원을 냅니다. 깨지지 않은 수를 □, 받은 돈을 △원이라 할 때 관계식을 쓰세요. △=${money}일 때 깨지지 않은 도자기 수를 구하세요.${difficultyInstruction}${tag("work-payment-table", [total, reward, penalty, money])}`, `△=${reward + penalty}×□-${penalty * total}, ${intact}개`, `받을 돈에서 벌금을 빼면 △=${reward}×□-${penalty}×(${total}-□)=${reward + penalty}×□-${penalty * total}입니다. △=${money}을 넣어 풀면 □=${intact}입니다.`);
+    },
     ruleCorrespondenceAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const multiplier = pick(rng, [2, 3, 4, 5].slice(0, 2 + level));
@@ -19475,6 +19617,8 @@
     [type => type.id?.startsWith("5-1-u2-e6-"), "factorMultipleE6"],
     [type => type.id?.startsWith("5-1-u2-e7-"), "factorMultipleE7"],
     [type => type.id?.startsWith("5-1-u2-e8-"), "factorMultipleE8"],
+    [type => type.id?.startsWith("5-1-u3-t1") && type.sourceItemId?.startsWith("5-1-u3-e1-"), "correspondenceE1"],
+    [type => type.id?.startsWith("5-1-u3-t2") && type.sourceItemId?.startsWith("5-1-u3-e2-"), "correspondenceE2"],
     [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],

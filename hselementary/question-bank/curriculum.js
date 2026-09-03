@@ -100,17 +100,50 @@
       sourceTier: "advanced"
     };
   };
+  const correspondenceReadyIds = new Set([
+    "5-1-u3-e1-exploration",
+    "5-1-u3-e1-example-1-1",
+    "5-1-u3-e1-example-1-2",
+    "5-1-u3-e1-mission-1",
+    "5-1-u3-e1-mission-2",
+    "5-1-u3-e1-mission-4",
+    "5-1-u3-e1-mission-5",
+    "5-1-u3-e2-example-2-1",
+    "5-1-u3-e2-example-2-2",
+    "5-1-u3-e2-example-2-3",
+    "5-1-u3-e2-mission-1",
+    "5-1-u3-e2-mission-2",
+    "5-1-u3-e2-mission-3",
+    "5-1-u3-e2-mission-4",
+    "5-1-u3-e2-mission-6"
+  ]);
+  const correspondenceE1LockReasons = {
+    "5-1-u3-e1-example-1-3": "도형 기호가 나타내는 숫자와 계산 기호의 위치를 원본 그림과 같은 점·선분 모델로 복원하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e1-example-1-4": "점과 선의 길이 차이와 날짜 부호를 PC·모바일·A4에서 판독할 수 있게 복원하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e1-mission-3": "도형 기호의 방향과 계산판의 연산 위치를 원본과 1:1로 복원하고 독립 계산하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e1-mission-6": "색칠한 모눈의 위치 규칙을 원본 격자 좌표로 모델링하고 답 유일성을 확인하기 전에는 출제하지 않습니다."
+  };
+  const correspondenceE2LockReasons = {
+    "5-1-u3-e2-exploration": "두 수직선의 눈금과 연결선을 원본 점·선분 모델로 복원하고 표·관계식·값을 한 답 계약으로 검증하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e2-mission-5": "날짜별 표 완성과 대응 관계식 작성을 함께 채점할 수 있는 여러 칸 답 계약을 마련하기 전에는 출제하지 않습니다."
+  };
   const sourceItem53 = (label, sourceItemId, exploration) => {
     const pdfPage = 31 + (exploration - 1) * 2;
     const isMission = sourceItemId.includes("-mission-");
+    const ready = correspondenceReadyIds.has(sourceItemId);
+    const reviewReason = correspondenceE1LockReasons[sourceItemId]
+      || correspondenceE2LockReasons[sourceItemId]
+      || (ready
+        ? "현행 원문 구조와 독립 계산 검산 완료"
+        : "원문 문제 구조는 확인했지만, 대응 규칙과 그림·부호 조건을 독립 계산하고 답 하나가 되는지 검산하기 전에는 공개하지 않습니다.");
     return sourceItem51(
       label,
       1,
       sourceItemId,
       pdfPage + (isMission ? 1 : 0),
       pdfPage + 1 + (isMission ? 1 : 0),
-      true,
-      "원문 문제 구조는 확인했지만, 대응 규칙과 그림·부호 조건을 독립 계산하고 답 하나가 되는지 검산하기 전에는 공개하지 않습니다."
+      !ready,
+      reviewReason
     );
   };
   const factorMultipleGroups = [
