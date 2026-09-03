@@ -99,7 +99,7 @@ const sourceComputed = {
 };
 
 if (types.length !== 96 || e5.length !== 14 || ready.length !== 12 || locked.length !== 2) failures.push("원문 96유형 중 E5 공개 12·잠금 2 구성이 다릅니다.");
-if (types.filter(type => !type.reviewLocked).length !== 81 || types.filter(type => type.reviewLocked).length !== 15) failures.push("단원 공개 81·잠금 15 구성이 다릅니다.");
+if (types.filter(type => !type.reviewLocked).length !== 91 || types.filter(type => type.reviewLocked).length !== 5) failures.push("단원 공개 91·잠금 5 구성이 다릅니다.");
 for (const type of ready) {
   if (!type.sourceVerified || api.generatorKey(type) !== "factorMultipleE5") failures.push(`${type.sourceItemId}: 원문·생성기 연결이 다릅니다.`);
   if (inventory.resultContracts[type.sourceItemId] === undefined) failures.push(`${type.sourceItemId}: 답 형식 계약이 없습니다.`);

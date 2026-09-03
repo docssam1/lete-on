@@ -94,8 +94,8 @@ const ambiguousExampleCandidates = divisors(gcdMany([60 - 4, 131 - 5, 100 - 2]))
 const impossibleMissionCandidates = divisors(gcdMany([28 + 2, 48 - 3, 69 - 6])).filter(value => value > 6);
 
 if (types.length !== 96 || e7.length !== 11 || ready.length !== 9 || locked.length !== 2) failures.push("원문 96유형 중 E7 공개 9·잠금 2 구성이 다릅니다.");
-if (types.filter(type => !type.reviewLocked).length !== 81 || types.filter(type => type.reviewLocked).length !== 15) failures.push("단원 공개 81·잠금 15 구성이 다릅니다.");
-if (inventory.items.filter(item => item.implementationStatus === "ready").length !== 81 || inventory.items.filter(item => item.implementationStatus === "review-locked").length !== 15) failures.push("원장 공개 81·잠금 15 구성이 다릅니다.");
+if (types.filter(type => !type.reviewLocked).length !== 91 || types.filter(type => type.reviewLocked).length !== 5) failures.push("단원 공개 91·잠금 5 구성이 다릅니다.");
+if (inventory.items.filter(item => item.implementationStatus === "ready").length !== 91 || inventory.items.filter(item => item.implementationStatus === "review-locked").length !== 5) failures.push("원장 공개 91·잠금 5 구성이 다릅니다.");
 if (ambiguousExampleCandidates.join(",") !== "7,14") failures.push("예제 7-1의 복수 답 근거가 다릅니다.");
 if (impossibleMissionCandidates.length !== 0) failures.push("Mission 3은 가능한 답이 없어야 합니다.");
 for (const type of ready) {

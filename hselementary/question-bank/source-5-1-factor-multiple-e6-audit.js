@@ -109,8 +109,8 @@ const sourceAnswers = [
 const expectedSourceAnswers = ["15", "오전11시54분", "123", "166", "3", "333", "98", "496", "목요일", "3", "20"];
 
 if (types.length !== 96 || e6.length !== 11 || e6.some(type => type.reviewLocked)) failures.push("원문 96유형 중 E6 11유형이 모두 공개 상태여야 합니다.");
-if (types.filter(type => !type.reviewLocked).length !== 81 || types.filter(type => type.reviewLocked).length !== 15) failures.push("단원 공개 81·잠금 15 구성이 다릅니다.");
-if (inventory.items.filter(item => item.implementationStatus === "ready").length !== 81 || inventory.items.filter(item => item.implementationStatus === "review-locked").length !== 15) failures.push("원장 공개 81·잠금 15 구성이 다릅니다.");
+if (types.filter(type => !type.reviewLocked).length !== 91 || types.filter(type => type.reviewLocked).length !== 5) failures.push("단원 공개 91·잠금 5 구성이 다릅니다.");
+if (inventory.items.filter(item => item.implementationStatus === "ready").length !== 91 || inventory.items.filter(item => item.implementationStatus === "review-locked").length !== 5) failures.push("원장 공개 91·잠금 5 구성이 다릅니다.");
 for (const type of e6) {
   if (!type.sourceVerified || api.generatorKey(type) !== "factorMultipleE6") failures.push(`${type.sourceItemId}: 원문·생성기 연결이 다릅니다.`);
   if (inventory.resultContracts[type.sourceItemId] !== "single-value") failures.push(`${type.sourceItemId}: 한 답 계약이 없습니다.`);

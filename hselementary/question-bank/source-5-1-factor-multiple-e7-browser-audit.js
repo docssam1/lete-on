@@ -108,7 +108,7 @@ async function review(browser, type, viewport, label, difficulty) {
 
 (async () => {
   fs.mkdirSync(outputDir, { recursive: true });
-  if (types.length !== 96 || ready.length !== 9 || locked.length !== 2 || types.filter(type => !type.reviewLocked).length !== 81 || types.filter(type => type.reviewLocked).length !== 15) fail("E7 공개 9·잠금 2와 단원 공개 81·잠금 15 구성이 다릅니다.");
+  if (types.length !== 96 || ready.length !== 9 || locked.length !== 2 || types.filter(type => !type.reviewLocked).length !== 91 || types.filter(type => type.reviewLocked).length !== 5) fail("E7 공개 9·잠금 2와 단원 공개 91·잠금 5 구성이 다릅니다.");
   for (const type of ready) if (api.generatorKey(type) !== "factorMultipleE7") fail(`${type.id}: 공개 유형 생성기가 다릅니다.`);
   for (const type of locked) if (api.generatorKey(type)) fail(`${type.id}: 잠금 유형이 생성기에 연결되었습니다.`);
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });

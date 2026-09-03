@@ -83,12 +83,13 @@
     "5-1-u2-e5-example-5-4": "세 쌍의 최대공약수만으로 세 수의 최소공배수는 하나로 정해지지 않습니다. 예를 들어 (90, 36, 60)과 (630, 36, 60)은 같은 조건을 만족하지만 최소공배수가 다릅니다.",
     "5-1-u2-e5-mission-6": "공통으로 나누는 수가 정해지지 않아 세 수가 하나로 정해지지 않습니다. 몫이 2, 3, 5인 세 수는 공통 수에 따라 여러 가지가 됩니다.",
     "5-1-u2-e7-example-7-1": "원문 조건에는 학생 수가 7명과 14명인 경우가 모두 들어맞아 답이 하나로 정해지지 않습니다.",
-    "5-1-u2-e7-mission-3": "원문 수를 계산하면 학생 수의 공약수는 3뿐이지만, 6개가 남으려면 학생 수가 6보다 커야 하므로 가능한 답이 없습니다."
+    "5-1-u2-e7-mission-3": "원문 수를 계산하면 학생 수의 공약수는 3뿐이지만, 6개가 남으려면 학생 수가 6보다 커야 하므로 가능한 답이 없습니다.",
+    "5-1-u2-e8-mission-6": "원문 조건에는 (가, 나, 다)=(7, 30, 50)과 (21, 10, 150)이 모두 들어맞아 세 수가 하나로 정해지지 않습니다."
   };
   const sourceItem52 = (label, sourceItemId, exploration, reviewLocked = exploration > 4) => {
     const pdfPage = 13 + (exploration - 1) * 2;
     const isMission = sourceItemId.includes("-mission-");
-    const reviewedExploration = exploration === 5 || exploration === 7;
+    const reviewedExploration = exploration === 5 || exploration === 7 || exploration === 8;
     const shouldLock = reviewedExploration ? Boolean(factorMultipleLockReasons[sourceItemId]) : exploration === 6 ? false : reviewLocked;
     const reviewReason = factorMultipleLockReasons[sourceItemId]
       ? factorMultipleLockReasons[sourceItemId]

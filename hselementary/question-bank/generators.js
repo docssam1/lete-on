@@ -18851,6 +18851,86 @@
       const answer = appleCount / sets * applePrice + orangeCount / sets * orangePrice + bananaCount / sets * bananaPrice;
       return result(`한 개에 ${applePrice.toLocaleString()}원인 사과 ${appleCount}개, 한 개에 ${orangePrice.toLocaleString()}원인 오렌지 ${orangeCount}개, 한 개에 ${bananaPrice.toLocaleString()}원인 바나나 ${bananaCount}개를 같은 구성의 세트로 남김없이 만듭니다. 세트를 가장 많이 만들 때 한 세트의 가격은 얼마입니까?${difficultyInstruction}${tag("maximum-equal-set-price", [appleCount, orangeCount, bananaCount, applePrice, orangePrice, bananaPrice])}`, answer, `세트 수는 ${appleCount}, ${orangeCount}, ${bananaCount}의 최대공약수 ${sets}개입니다. 한 세트에는 각각 ${appleCount / sets}, ${orangeCount / sets}, ${bananaCount / sets}개가 들어가므로 가격은 ${answer.toLocaleString()}원입니다.`);
     },
+    factorMultipleE8({ rng, level, variant = 0 }) {
+      if (variant < 0 || variant > 9) throw new Error("약수와 배수 개념탐구 8의 잠금 항목은 생성할 수 없습니다.");
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-factor-multiple-e8-kind="${kind}" data-factor-multiple-e8-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const choose = pools => pick(rng, pools[level]);
+      const factorPairs = value => allDivisors(value)
+        .filter(left => left <= value / left && value % left === 0 && gcd(left, value / left) === 1)
+        .map(left => [left, value / left]);
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 두 수를 최대공약수의 배수로 나타내어 보세요."
+        : level === 2
+          ? " 답을 구한 뒤 최대공약수, 최소공배수와 순서 조건에 모두 맞는지 다시 확인하세요."
+          : "";
+
+      if (variant === 0) {
+        const [greatest, reducedProduct] = choose([[[2, 30], [3, 30], [4, 42]], [[5, 48], [6, 30], [7, 42]], [[7, 210], [8, 210], [9, 330]]]);
+        const pairs = factorPairs(reducedProduct).sort((left, right) => (left[1] - left[0]) - (right[1] - right[0]));
+        const [left, right] = pairs[0];
+        const smaller = greatest * left;
+        const larger = greatest * right;
+        const product = greatest * greatest * reducedProduct;
+        const least = greatest * reducedProduct;
+        return result(`곱이 ${product.toLocaleString()}이고 최대공약수가 ${greatest}인 서로 다른 두 자연수가 있습니다. 두 수의 차가 가장 작을 때 두 수와 최소공배수를 차례로 구하세요.${difficultyInstruction}${tag("closest-pair-from-product-gcd", [product, greatest], "ordered")}`, `${smaller}, ${larger}, ${least}`, `두 수를 ${greatest}×가, ${greatest}×나로 나타내면 가×나는 ${reducedProduct}이고 가와 나는 서로소입니다. 차가 가장 작은 짝은 ${left}, ${right}이므로 두 수는 ${smaller}, ${larger}이고 최소공배수는 ${least}입니다.`);
+      }
+      if (variant === 1 || variant === 7) {
+        const [greatest, reducedLeast] = variant === 1
+          ? choose([[[4, 6], [5, 6], [6, 10]], [[6, 12], [8, 15], [10, 18]], [[9, 60], [12, 70], [15, 84]]])
+          : choose([[[8, 6], [10, 6], [12, 10]], [[32, 6], [24, 10], [28, 15]], [[36, 30], [42, 35], [48, 42]]]);
+        const least = greatest * reducedLeast;
+        const sums = factorPairs(reducedLeast).map(([left, right]) => greatest * (left + right)).sort((left, right) => left - right);
+        const subject = variant === 1 ? "두 자연수의 합으로 가능한 값을" : "가<나일 때 가+나가 될 수 있는 수를";
+        return result(`두 자연수의 최대공약수는 ${greatest}이고 최소공배수는 ${least}입니다. ${subject} 모두 구하세요.${difficultyInstruction}${tag("all-sums-from-gcd-lcm", [greatest, least], "set")}`, sums.join(", "), `두 수를 ${greatest}×가, ${greatest}×나로 나타내면 가×나는 ${reducedLeast}이고 가와 나는 서로소입니다. 가능한 짝을 모두 확인하면 합은 ${sums.join(", ")}입니다.`);
+      }
+      if (variant === 2) {
+        const [greatest, reducedLeast] = choose([[[6, 10], [8, 15], [10, 12]], [[15, 12], [12, 30], [18, 20]], [[24, 35], [30, 42], [36, 55]]]);
+        const least = greatest * reducedLeast;
+        const product = greatest * least;
+        const commonDivisors = allDivisors(greatest);
+        const answer = commonDivisors.reduce((sum, value) => sum + value, 0);
+        return result(`두 자연수 ■와 ▲의 곱은 ${product.toLocaleString()}이고, ■와 ▲의 최소공배수는 ${least}입니다. ■와 ▲의 모든 공약수의 합을 구하세요.${difficultyInstruction}${tag("common-divisor-sum-from-product-lcm", [product, least])}`, answer, `두 수의 곱은 최대공약수와 최소공배수의 곱과 같으므로 최대공약수는 ${product.toLocaleString()}÷${least}=${greatest}입니다. 공약수는 ${commonDivisors.join(", ")}이므로 합은 ${answer}입니다.`);
+      }
+      if (variant === 3) {
+        const [greatest, left, right] = choose([[[6, 2, 3], [5, 3, 4], [7, 4, 5]], [[15, 2, 3], [12, 3, 5], [14, 5, 7]], [[18, 7, 11], [20, 9, 14], [24, 11, 15]]]);
+        const least = greatest * left * right;
+        const difference = greatest * (right - left);
+        const larger = greatest * right;
+        return result(`어떤 두 자연수의 최대공약수는 ${greatest}이고 최소공배수는 ${least}입니다. 두 수의 차가 ${difference}일 때 큰 수를 구하세요.${difficultyInstruction}${tag("larger-from-gcd-lcm-difference", [greatest, least, difference])}`, larger, `두 수를 ${greatest}×가, ${greatest}×나로 나타냅니다. 가×나는 ${least / greatest}, 나-가는 ${difference / greatest}이고 두 수는 서로소이므로 가=${left}, 나=${right}입니다. 큰 수는 ${greatest}×${right}=${larger}입니다.`);
+      }
+      if (variant === 4) {
+        const scale = choose([[2, 3, 4], [10, 12, 15], [18, 24, 30]]);
+        const [first, second, third] = [15 * scale, 10 * scale, 7 * scale];
+        const tripleGreatest = gcdMany([first, second, third]);
+        const firstSecondGreatest = gcd(first, second);
+        const firstSecondLeast = lcm(first, second);
+        const secondThirdLeast = lcm(second, third);
+        return result(`가>나>다인 세 자연수가 있습니다. 세 수의 최대공약수는 ${tripleGreatest}, 가와 나의 최대공약수는 ${firstSecondGreatest}, 가와 나의 최소공배수는 ${firstSecondLeast}입니다. 나와 다의 최소공배수가 ${secondThirdLeast}일 때 다를 구하세요.${difficultyInstruction}${tag("third-from-linked-gcd-lcm", [tripleGreatest, firstSecondGreatest, firstSecondLeast, secondThirdLeast])}`, third, `가와 나의 곱은 ${firstSecondGreatest}×${firstSecondLeast}=${(first * second).toLocaleString()}입니다. 모든 조건과 가>나>다를 함께 확인하면 가=${first}, 나=${second}, 다=${third}인 한 가지뿐입니다.`);
+      }
+      if (variant === 5) {
+        const [known, other] = choose([[[30, 42], [36, 54], [40, 56]], [[70, 84], [84, 126], [90, 120]], [[126, 198], [168, 252], [198, 330]]]);
+        const greatest = gcd(known, other);
+        const least = lcm(known, other);
+        return result(`두 자연수 ${known}과 가의 최대공약수는 ${greatest}, 최소공배수는 ${least}입니다. 자연수 가를 구하세요.${difficultyInstruction}${tag("other-number-from-known-gcd-lcm", [known, greatest, least])}`, other, `두 수의 곱은 최대공약수와 최소공배수의 곱이므로 가는 ${greatest}×${least}÷${known}=${other}입니다.`);
+      }
+      if (variant === 6) {
+        const [width, height] = choose([[[18, 24], [20, 28], [24, 32]], [[30, 42], [36, 54], [40, 56]], [[84, 126], [108, 180], [132, 198]]]);
+        const largestTile = gcd(width, height);
+        const smallestSquare = lcm(width, height);
+        return result(`가로의 길이가 ${width}cm인 직사각형이 있습니다. 이 직사각형을 같은 크기의 가장 큰 정사각형으로 나누면 한 변은 ${largestTile}cm이고, 이 직사각형을 빈틈없이 이어 붙여 만들 수 있는 가장 작은 정사각형의 한 변은 ${smallestSquare}cm입니다. 직사각형의 세로 길이를 구하세요.${difficultyInstruction}${tag("rectangle-side-from-gcd-lcm", [width, largestTile, smallestSquare])}`, height, `가로와 세로의 곱은 최대공약수와 최소공배수의 곱과 같으므로 세로는 ${largestTile}×${smallestSquare}÷${width}=${height}cm입니다.`);
+      }
+      if (variant === 8) {
+        const [smaller, larger] = choose([[[12, 18], [15, 25], [20, 28]], [[15, 25], [28, 42], [36, 60]], [[70, 98], [90, 126], [132, 180]]]);
+        const greatest = gcd(smaller, larger);
+        const least = lcm(smaller, larger);
+        const difference = larger - smaller;
+        return result(`두 자연수 가와 나의 최대공약수는 ${greatest}, 최소공배수는 ${least}이고 가-나=${difference}입니다. 가와 나를 차례로 구하세요.${difficultyInstruction}${tag("ordered-pair-from-gcd-lcm-difference", [greatest, least, difference], "ordered")}`, `${larger}, ${smaller}`, `가와 나는 최대공약수 ${greatest}의 배수입니다. 곱이 ${greatest}×${least}이고 차가 ${difference}인 두 수를 찾으면 가=${larger}, 나=${smaller}입니다.`);
+      }
+      const scale = choose([[2, 3, 4], [5, 7, 8], [11, 13, 17]]);
+      const [first, second, third] = [4 * scale, 6 * scale, 9 * scale];
+      const answer = first + second + third;
+      return result(`세 자연수 가, 나, 다에서 가와 나의 최대공약수는 ${gcd(first, second)}, 최소공배수는 ${lcm(first, second)}입니다. 나와 다의 최대공약수는 ${gcd(second, third)}, 최소공배수는 ${lcm(second, third)}입니다. 가+나+다를 구하세요.${difficultyInstruction}${tag("three-number-sum-from-linked-pairs", [gcd(first, second), lcm(first, second), gcd(second, third), lcm(second, third)])}`, answer, `두 조건을 함께 만족하는 나를 먼저 찾으면 ${second}입니다. 그러면 가=${first}, 다=${third}이므로 합은 ${first}+${second}+${third}=${answer}입니다.`);
+    },
     threeNumberGcdLcmAdvanced({ rng, level }) {
       const common = pick(rng, [2, 3, 4, 5, 6].slice(0, 3 + level));
       const scales = level === 2 ? [6, 10, 15] : pick(rng, [[2, 3, 5], [3, 4, 5], [4, 5, 7], [6, 7, 10]]);
@@ -19394,6 +19474,7 @@
     [type => type.id?.startsWith("5-1-u2-e5-"), "factorMultipleE5"],
     [type => type.id?.startsWith("5-1-u2-e6-"), "factorMultipleE6"],
     [type => type.id?.startsWith("5-1-u2-e7-"), "factorMultipleE7"],
+    [type => type.id?.startsWith("5-1-u2-e8-"), "factorMultipleE8"],
     [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],

@@ -99,7 +99,17 @@
     "5-1-u2-e7-mission-2": "ordered",
     "5-1-u2-e7-mission-4": "single-value",
     "5-1-u2-e7-mission-5": "single-value",
-    "5-1-u2-e7-mission-6": "single-value"
+    "5-1-u2-e7-mission-6": "single-value",
+    "5-1-u2-e8-exploration": "ordered",
+    "5-1-u2-e8-example-8-1": "set",
+    "5-1-u2-e8-example-8-2": "single-value",
+    "5-1-u2-e8-example-8-3": "single-value",
+    "5-1-u2-e8-example-8-4": "single-value",
+    "5-1-u2-e8-mission-1": "single-value",
+    "5-1-u2-e8-mission-2": "single-value",
+    "5-1-u2-e8-mission-3": "set",
+    "5-1-u2-e8-mission-4": "ordered",
+    "5-1-u2-e8-mission-5": "single-value"
   },
   "items": [
     {
@@ -534,57 +544,58 @@
     {
       "sourceItemId": "5-1-u2-e8-exploration",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-example-8-1",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-example-8-2",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-example-8-3",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-example-8-4",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-mission-1",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-mission-2",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-mission-3",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-mission-4",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-mission-5",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "ready"
     },
     {
       "sourceItemId": "5-1-u2-e8-mission-6",
       "sourceVerified": true,
-      "implementationStatus": "review-locked"
+      "implementationStatus": "review-locked",
+      "reviewReason": "원문 조건에는 (가, 나, 다)=(7, 30, 50)과 (21, 10, 150)이 모두 들어맞아 세 수가 하나로 정해지지 않습니다."
     }
   ]
 }
