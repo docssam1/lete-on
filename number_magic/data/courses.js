@@ -32,6 +32,12 @@
      했다(새 id 없음 — 곱셈의 정점→ML19/20/23, 수의 비밀→DV7/8·MX2,
      제곱의 산→ML11/20·MX4).
 
+   ── 구구 B-01~B-23 (2026-09-03, 원장 "교과와 창의 연산이 자연스럽게 연결되도록") ──
+   ADVANCE 건물의 구구 A~H 묶음을 그대로 연산 로드맵 과정 5~9에 얹었다. 같은 구구단
+   드릴(ML1·ML2·ML3·ML4·ML5·ML6)이 있는 과정에 그 단의 마법 묶음을 세션 하나로 넣는다:
+   과정5 배와반·2/5단 · 과정6 3/6단·4/8단 · 과정7 7/9단 · 과정8 총정리·몇십몇백 ·
+   과정9 두자리×한자리. 세션 수가 5를 넘는 6·7은 maxSessions:6.
+
    ── buildCourses() 편성 규칙 ──
    1. **레벨**: 과정의 드릴 재료가 그 과정에서 처음 등장하면 레벨1. 같은
       스레드가 나중 과정에서 다시 "드릴 재료"(자기 과정 것)로 나오면
@@ -65,15 +71,15 @@ const COURSE_SPEC = [
  {id:4, tier:'level1', title:{ko:'두 자리 올림 덧뺄셈',en:'Two-digit ± with Carrying',zh:'两位数进位加减'},
    drills:['AD5','SB4','AD6'], magic:[['A-05'],['A-06'],['A-07'],['A-08'],['A-09']]},
  {id:5, tier:'level1', title:{ko:'뺄셈 마법과 구구단 첫걸음',en:'Subtraction Magic & Times Tables Begin',zh:'减法魔法与乘法口诀入门'},
-   drills:['SB5','ML1','ML2'], magic:[['A-10'],['A-11'],['A-12']]},
+   drills:['SB5','ML1','ML2'], magic:[['A-10'],['A-11'],['A-12'],['B-01','B-02','B-03'],['B-04','B-05','B-06']]},
  {id:6, tier:'level1', title:{ko:'세 자리 뺄셈과 구구단 완성',en:'3-digit Subtraction & Full Times Tables',zh:'三位数减法与完整口诀'},
-   drills:['SB6','SB7','ML3'], magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17']]},
+   drills:['SB6','SB7','ML3'], magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']], maxSessions:6},
  {id:7, tier:'level1', title:{ko:'구구단 종합과 네 자리 연산',en:'Times Tables Mix & 4-digit ±',zh:'乘法口诀综合与四位数运算'},
-   drills:['ML4','AD7'], magic:[['A-18'],['A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']]},
+   drills:['ML4','AD7'], magic:[['B-13','B-14','B-15'],['A-18','A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']], maxSessions:6},
  {id:8, tier:'level1', title:{ko:'몇십 곱과 나눗셈의 시작',en:'Multiplying Tens & Division Begins',zh:'整十乘法与除法开始'},
-   drills:['ML5','DV1','DV2'], magic:[['A-30','A-31','A-32'],['A-33','A-34'],['C-02']]},
+   drills:['ML5','DV1','DV2'], magic:[['B-16','B-17'],['B-18','B-19','B-20'],['A-30','A-31','A-32'],['A-33','A-34'],['C-02']]},
  {id:9, tier:'level1', title:{ko:'두 자리 곱셈 암산과 나머지',en:'2-digit Mental Multiplication & Remainders',zh:'两位数心算乘法与余数'},
-   drills:['ML6','ML22','DV3'], magic:[['A-26'],['A-27'],['A-29'],['C-07','C-08']]},
+   drills:['ML6','ML22','DV3'], magic:[['B-21','B-22','B-23'],['A-26'],['A-27'],['A-29'],['C-07','C-08']]},
  {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
    drills:['ML7','EL2'], magic:[['A-28'],['A-35'],['C-06'],['C-09']]},
 
@@ -219,7 +225,8 @@ function buildCourses(NM_THREADS){
     });
 
     let segments = spec.magic.slice();
-    const targetCount = (spec.boss || spec.comingSoon) ? 3 : Math.min(Math.max(segments.length, 3), 5);
+    /* maxSessions: 과정 6·7처럼 구구 B-유닛 묶음을 얹어 5를 넘는 과정만 6까지 허용(2026-09-03) */
+    const targetCount = (spec.boss || spec.comingSoon) ? 3 : Math.min(Math.max(segments.length, 3), spec.maxSessions || 5);
     if(segments.length === 0){
       segments = new Array(targetCount).fill(null);
     } else {
