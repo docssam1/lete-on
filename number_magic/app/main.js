@@ -447,7 +447,9 @@ window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
 function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
-function coinAdd(n){S.coins+=n;save();}
+function coinAdd(n){S.coins+=n;save();
+  /* 화면 전환 없이 코인이 바뀌는 경우(출석 카드 등) 상단 🪙 표시를 바로 맞춘다 */
+  document.querySelectorAll('.nm-coins b').forEach(b=>{b.textContent=S.coins;});}
 
 /* ============================================================
    포인트 §6 — 출석 + 주간 보너스 (마을세계관-설계.md §6, 연속 배수 없음)
