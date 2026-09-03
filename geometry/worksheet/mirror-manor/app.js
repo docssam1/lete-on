@@ -1,9 +1,11 @@
 import { levels } from "../../games/mirror-manor/levels.js?v=mirror-manor-11";
 import { messages } from "../../games/mirror-manor/i18n.js?v=mirror-manor-11";
+import { curriculumBandLabel } from "../../shared/curriculum-bands.js?v=curriculum-1";
 
 const $ = (selector) => document.querySelector(selector);
 const select = $("#levelSelect");
 const toggle = $("#answerToggle");
+const coverToggle = $("#coverToggle");
 const grid = $("#problemGrid");
 let offset = 0;
 const cellKey = (cell) => cell.join(",");
@@ -79,8 +81,14 @@ function render() {
   const level = levels[Number(select.value || 1) - 1];
   const showAnswers = toggle.checked;
   const problems = Array.from({ length: 6 }, (_, index) => level.problems[(offset + index) % level.problems.length]);
+  const band = curriculumBandLabel("mirror-manor", level.id, "ko");
   $("#sheetTitle").textContent = messages.ko[level.titleKey];
-  $("#sheetDescription").textContent = `${level.difficulty} · ${messages.ko[level.descKey]}`;
+  $("#sheetDescription").textContent = `${band} · ${level.difficulty} · ${messages.ko[level.descKey]}`;
+  $("#coverTitle").textContent = messages.ko[level.titleKey];
+  $("#coverSubtitle").textContent = messages.ko[level.descKey];
+  $("#coverLevel").textContent = band;
+  $("#coverCount").textContent = `${problems.length} QUESTIONS`;
+  $("#coverSheet").hidden = !coverToggle.checked;
   grid.replaceChildren();
   problems.forEach((problem, index) => {
     const article = document.createElement("article");
@@ -92,6 +100,7 @@ function render() {
 
 select.addEventListener("change", () => { offset = 0; render(); });
 toggle.addEventListener("change", render);
+coverToggle.addEventListener("change", render);
 $("#refreshButton").addEventListener("click", () => { offset = (offset + 6) % 10; render(); });
 $("#printButton").addEventListener("click", () => print());
 render();

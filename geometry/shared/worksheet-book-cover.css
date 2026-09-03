@@ -1,0 +1,167 @@
+[hidden] { display: none !important; }
+
+.worksheet-pages {
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 24px 0 48px;
+}
+
+.worksheet-pages > .sheet { margin: 0; }
+
+.book-cover {
+  --cover-accent: #1e6f9e;
+  --cover-grid: rgba(30, 111, 158, .075);
+  --cover-wash: rgba(30, 111, 158, .1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  padding: 17mm 16mm 14mm;
+  background: #f6fafd;
+  color: #142946;
+  box-shadow: 0 15px 42px rgba(23, 60, 48, .18);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.book-cover[data-theme="mirror"] {
+  --cover-accent: #267b86;
+  --cover-grid: rgba(38, 123, 134, .075);
+  --cover-wash: rgba(38, 123, 134, .1);
+  background: #f4faf9;
+}
+
+.book-cover[data-theme="geoboard"] {
+  --cover-accent: #9a6a25;
+  --cover-grid: rgba(154, 106, 37, .075);
+  --cover-wash: rgba(154, 106, 37, .1);
+  background: #fbfaf5;
+}
+
+.book-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(transparent 72%, var(--cover-wash)),
+    repeating-linear-gradient(0deg, transparent 0 19mm, var(--cover-grid) 19mm 20mm),
+    repeating-linear-gradient(90deg, transparent 0 19mm, var(--cover-grid) 19mm 20mm);
+  pointer-events: none;
+}
+
+.book-cover::after {
+  content: "";
+  position: absolute;
+  inset: 7mm;
+  border: 1.2mm solid #173457;
+  pointer-events: none;
+}
+
+.cover-brand,
+.cover-copy,
+.cover-mascots,
+.cover-meta,
+.cover-footer { position: relative; z-index: 1; }
+
+.cover-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2mm 5mm;
+  border-bottom: 1px solid #8a8f86;
+}
+
+.cover-brand span { color: #1f8a55; font-size: 12px; font-weight: 950; letter-spacing: 2px; }
+.cover-brand strong { font-size: 12px; letter-spacing: .4px; }
+.cover-copy { margin-top: 23mm; text-align: center; }
+.cover-copy > p:first-child { margin: 0 0 5mm; color: var(--cover-accent); font-size: 12px; font-weight: 950; letter-spacing: 2px; }
+.cover-copy h1 { margin: 0; color: #142946; font-size: 43px; line-height: 1.16; letter-spacing: 0; }
+.cover-rule { width: 24mm; height: 2px; margin: 7mm auto; background: var(--cover-accent); }
+.cover-subtitle { margin: 0; color: #54605c; font-size: 13px; line-height: 1.8; }
+
+.cover-mascots {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 6mm;
+  height: 63mm;
+  margin: 6mm 0 3mm;
+}
+
+.gw-char {
+  display: block;
+  width: 50mm;
+  height: 50mm;
+  background-image: url("../world-map/assets/geometry-characters.png");
+  background-repeat: no-repeat;
+  background-size: 303% 303%;
+  filter: drop-shadow(0 3mm 2mm rgba(27, 47, 39, .14));
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.gw-char-cubie { background-position: 0 0; }
+.gw-char-sphere { background-position: 50% 0; }
+.gw-char-box { background-position: 50% 50%; }
+.gw-char-protractor { background-position: 100% 50%; }
+.gw-char-compass { background-position: 100% 100%; }
+.cover-mascots .gw-char:nth-child(2) { width: 44mm; height: 44mm; }
+
+.cover-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5mm;
+  margin: 0 8mm;
+  padding: 6mm;
+  border-top: 1px solid #99a09b;
+  border-bottom: 1px solid #99a09b;
+  background: rgba(255, 255, 255, .68);
+}
+
+.cover-meta > div { display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 3mm; }
+.cover-meta span { color: #5c645f; font-size: 11px; font-weight: 850; }
+.cover-meta i { height: 7mm; border-bottom: 1px solid #243d51; }
+.cover-meta strong { color: var(--cover-accent); font-size: 12px; }
+.cover-footer { display: flex; justify-content: space-between; margin-top: auto; padding: 6mm 2mm 2mm; font-size: 10px; letter-spacing: .7px; }
+.cover-footer b { color: var(--cover-accent); }
+
+@media (max-width: 900px) {
+  .worksheet-pages { gap: 8px; padding: 8px; }
+  .worksheet-pages > .sheet { width: 100%; margin: 0; }
+  .book-cover { width: 100%; height: auto; min-height: 0; aspect-ratio: 210 / 297; padding: 7vw 6vw 5vw; }
+  .book-cover::after { inset: 3vw; border-width: 3px; }
+  .cover-copy { margin-top: 8vw; }
+  .cover-copy h1 { font-size: clamp(27px, 8vw, 43px); }
+  .cover-mascots { height: 28vw; min-height: 108px; margin-block: 4vw 2vw; }
+  .gw-char { width: min(27vw, 50mm); height: min(27vw, 50mm); }
+  .cover-mascots .gw-char:nth-child(2) { width: min(24vw, 44mm); height: min(24vw, 44mm); }
+  .cover-meta { gap: 2vw; margin-inline: 2vw; padding: 3vw; }
+}
+
+@media (max-width: 520px) {
+  .cover-brand span, .cover-brand strong, .cover-copy > p:first-child { font-size: 9px; }
+  .cover-copy h1 { font-size: clamp(25px, 7.7vw, 34px); }
+  .cover-subtitle { font-size: 10px; line-height: 1.5; }
+  .cover-rule { margin-block: 4vw; }
+  .cover-meta { grid-template-columns: 1fr 1fr; }
+  .cover-meta > div:last-child { grid-column: 1 / -1; }
+  .cover-meta span, .cover-meta strong { font-size: 9px; }
+  .cover-footer { font-size: 8px; }
+}
+
+@media print {
+  .worksheet-pages { display: block; padding: 0; }
+  .book-cover, .worksheet-pages > .sheet {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    box-shadow: none;
+    break-after: page;
+    page-break-after: always;
+  }
+  .worksheet-pages > .sheet:last-child { break-after: auto; page-break-after: auto; }
+}

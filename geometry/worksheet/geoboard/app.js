@@ -1,4 +1,5 @@
 import { levels } from "../../games/geoboard/levels.js?v=geoboard-8";
+import { curriculumBandLabel } from "../../shared/curriculum-bands.js?v=curriculum-1";
 import {
   enumerateEquilateralTriangles,
   enumerateSquares,
@@ -10,6 +11,7 @@ import {
 const $ = (selector) => document.querySelector(selector);
 const select = $("#levelSelect");
 const toggle = $("#answerToggle");
+const coverToggle = $("#coverToggle");
 const grid = $("#problemGrid");
 let offset = 0;
 
@@ -154,8 +156,14 @@ function render() {
   const level = levels[Number(select.value || 1) - 1];
   const showAnswer = toggle.checked;
   const selected = problemSet(level);
+  const band = curriculumBandLabel("geoboard", level.id, "ko");
   $("#sheetTitle").textContent = `${level.id}단계 · ${copy[level.id].title}`;
-  $("#sheetDescription").textContent = `${copy[level.id].description}  |  ${level.stage} ${level.difficulty}`;
+  $("#sheetDescription").textContent = `${band} · ${copy[level.id].description}  |  ${level.stage} ${level.difficulty}`;
+  $("#coverTitle").textContent = copy[level.id].title;
+  $("#coverSubtitle").textContent = copy[level.id].description;
+  $("#coverLevel").textContent = band;
+  $("#coverCount").textContent = `${selected.length} QUESTIONS`;
+  $("#coverSheet").hidden = !coverToggle.checked;
   grid.replaceChildren();
   selected.forEach((problem, index) => {
     const content = problemContent(problem, showAnswer);
@@ -170,6 +178,7 @@ function render() {
 
 select.addEventListener("change", () => { offset = 0; render(); });
 toggle.addEventListener("change", render);
+coverToggle.addEventListener("change", render);
 $("#refreshButton").addEventListener("click", () => {
   const level = levels[Number(select.value || 1) - 1];
   offset = (offset + 1) % level.problems.length;

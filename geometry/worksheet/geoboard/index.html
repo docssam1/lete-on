@@ -4,17 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GFIELD 점판 공작소 학습지</title>
-  <link rel="stylesheet" href="./styles.css?v=geoboard-sheet-1" />
+  <link rel="stylesheet" href="./styles.css?v=geoboard-sheet-2" />
+  <link rel="stylesheet" href="../../shared/worksheet-book-cover.css?v=worksheet-cover-1" />
 </head>
 <body>
   <header class="maker-bar">
-    <a href="../../games/geoboard/" aria-label="점판 공작소 게임으로 돌아가기">&larr;</a>
+    <a href="../../geoboard/" aria-label="점판 활동 유형으로 돌아가기">&larr;</a>
     <div class="maker-title">
       <strong>GFIELD 점판 공작소 학습지</strong>
       <small>GEOBOARD STUDIO WORKSHEET</small>
     </div>
     <label>레벨
       <select id="levelSelect" aria-label="학습지 레벨 선택"></select>
+    </label>
+    <label class="answer-toggle">
+      <input id="coverToggle" type="checkbox" checked />
+      <span>표지 포함</span>
     </label>
     <label class="answer-toggle">
       <input id="answerToggle" type="checkbox" />
@@ -24,6 +29,14 @@
     <button id="printButton" type="button">인쇄</button>
   </header>
 
+  <div id="worksheet" class="worksheet-pages">
+  <section id="coverSheet" class="book-cover" data-theme="geoboard">
+    <div class="cover-brand"><span>GFIELD</span><strong>GEOMETRY WORLD</strong></div>
+    <div class="cover-copy"><p>GEOBOARD STUDIO PRACTICE BOOK</p><h1 id="coverTitle">점판 도형 활동</h1><div class="cover-rule"></div><p id="coverSubtitle" class="cover-subtitle"></p></div>
+    <div class="cover-mascots" aria-hidden="true"><i class="gw-char gw-char-protractor"></i><i class="gw-char gw-char-compass"></i><i class="gw-char gw-char-cubie"></i></div>
+    <div class="cover-meta"><div><span>이름</span><i></i></div><div><span>시작한 날</span><i></i></div><div><span>나의 단계</span><strong id="coverLevel"></strong></div></div>
+    <div class="cover-footer"><span>DOCSSAM'S MATH LAB</span><b id="coverCount">6 QUESTIONS</b></div>
+  </section>
   <main id="sheet" class="sheet">
     <header class="sheet-head">
       <div>
@@ -39,7 +52,8 @@
     <section id="problemGrid" class="problem-grid" aria-live="polite"></section>
     <footer>점을 하나씩 세고, 고무줄이 지나는 꼭짓점과 선의 관계를 살펴보세요.</footer>
   </main>
+  </div>
 
-  <script type="module" src="./app.js?v=geoboard-sheet-1"></script>
+  <script type="module" src="./app.js?v=geoboard-sheet-2"></script>
 </body>
 </html>
