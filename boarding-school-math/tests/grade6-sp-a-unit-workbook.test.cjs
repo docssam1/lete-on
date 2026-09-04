@@ -49,3 +49,18 @@ test("recheck covers every 6.SP.A strand with new IDs", function () {
   const workbookIds = new Set(source.pack.workbookItems.map(function (item) { return item.id; }));
   source.pack.recheckItems.forEach(function (item) { assert.equal(workbookIds.has(item.id), false); });
 });
+
+test("each locale uses Grade 6 curriculum language rather than literal translation", function () {
+  assert.equal(source.pack.title.ko, "6.SP.A 통계 질문과 자료의 분포");
+  assert.equal(source.pack.strands["anticipated-variability"].ko, "어떤 값이 달라질지 찾기");
+  assert.doesNotMatch(source.pack.strands["anticipated-variability"].ko, /예상되는 변이/);
+  assert.match(source.pack.conceptPages[1].body.en, /mean absolute deviation \(MAD\).*variability/);
+  assert.match(source.pack.scopeNotice.en, /US Grade 6 standards 6\.SP\.A\.1-3/);
+  assert.match(source.pack.scopeNotice["zh-Hans"], /美国六年级数学标准6\.SP\.A\.1-3/);
+  assert.doesNotMatch(source.pack.strands["anticipated-variability"]["zh-Hans"], /预期变异/);
+  assert.match(source.pack.strands["center-vs-variation"]["zh-Hans"], /中心位置.*离散程度/);
+  const measurePrompts = source.pack.workbookItems.filter(function (item) { return item.kind === "measure-role"; }).map(function (item) { return item.prompt.ko; });
+  assert.ok(measurePrompts.includes("범위는 자료의 중심과 퍼짐 중 어느 것을 나타냅니까?"));
+  assert.ok(measurePrompts.includes("중앙값은 자료의 중심과 퍼짐 중 어느 것을 나타냅니까?"));
+  measurePrompts.forEach(function (prompt) { assert.doesNotMatch(prompt, /은\(는\)|범위은|편차은/); });
+});

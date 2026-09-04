@@ -23,7 +23,7 @@
     "6.EE.B": Object.freeze({ packId: "gfield-grade6-ee-b-clinic-v1", labelKo: "방정식과 부등식 12문항 클리닉" }),
     "6.EE.C": Object.freeze({ packId: "gfield-grade6-ee-c-clinic-v1", labelKo: "변수 관계 12문항 클리닉" }),
     "6.G.A": Object.freeze({ packId: "gfield-grade6-g-a-clinic-v1", labelKo: "기하 측정 12문항 클리닉" }),
-    "6.SP.A": Object.freeze({ packId: "gfield-grade6-sp-a-unit-workbook-v1", labelKo: "통계 질문과 변이 단원 워크북", delivery: "unit-workbook" })
+    "6.SP.A": Object.freeze({ packId: "gfield-grade6-sp-a-unit-workbook-v1", labelKo: "통계 질문과 자료의 분포 단원 워크북", delivery: "unit-workbook" })
   });
   const COMPLETION_PREFIX = "gfield-clinic-workbook:";
 
