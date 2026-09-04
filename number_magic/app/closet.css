@@ -1,23 +1,30 @@
 /* Numbers of Magic — 캐릭터 꾸미기 화면 스타일 */
 
-.nmc-wrap{display:flex;flex-direction:column;flex:1;min-height:0;height:100%;gap:0}
+/* 디자인 패스 1(§4) — "큰 프리뷰 먼저, 그 다음 탭+목록" 세로 1단 레이아웃.
+   옛 2단(왼쪽 목록 고정폭 + 오른쪽 사이드바 프리뷰)은 폐기 — 프리뷰가 화면
+   맨 위 무대로 승격됐다. .nmc-wrap 자체는 더 이상 height:100% 강제로 화면을
+   꽉 채우지 않는다(부모 .nm-closet-wrap이 자연스러운 세로 스크롤을 맡는다). */
+.nmc-wrap{display:flex;flex-direction:column;gap:0}
 .nmc-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 6px;background:rgba(255,255,255,.7);backdrop-filter:blur(4px)}
 .nmc-title{font-size:1.05rem;font-weight:800;color:#2c3e50}
 .nmc-coins{font-size:.95rem;font-weight:700;color:#e6ac00;background:#fef9e7;border:1.5px solid #f0d060;border-radius:99px;padding:4px 12px}
 .nmc-hint{padding:0 16px 8px;font-size:.78rem;color:#7a8394;font-weight:600;background:rgba(255,255,255,.7)}
 
-/* 본문 2단: 왼쪽 = 탭+목록, 오른쪽 = 미리보기(고정) —
-   미리보기가 위를 차지해 목록이 화면 밖으로 밀리던 문제 해결 */
-.nmc-main{display:flex;flex:1;min-height:0;align-items:stretch}
-.nmc-left{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0}
-
-/* 미리보기 (오른쪽 사이드) */
-.nmc-preview-area{flex:none;width:38%;max-width:210px;min-width:128px;
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  padding:18px 8px 12px;background:linear-gradient(135deg,#f0f4ff,#fdf6f0);
-  border-left:1.5px solid #e8e0d0;position:sticky;top:0;align-self:stretch}
+/* 큰 프리뷰 — 하늘 그라데이션 무대(§1 학습 무대와 같은 톤) 위에 140px 아바타 */
+.nmc-preview-area{flex:none;display:flex;flex-direction:column;align-items:center;
+  padding:14px 16px 6px}
+.nmc-stage{width:100%;max-width:340px;border-radius:22px;padding:18px 8px 10px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,var(--sky-top,#DCEFF9) 0%,var(--sky-bottom,#FBFAF7) 92%);
+  border:1px solid #e8e0d0;box-shadow:var(--shadow-card,0 10px 28px -18px rgba(22,65,124,.35))}
 #nmc-preview{filter:drop-shadow(0 4px 10px rgba(0,0,0,.15))}
 .nmc-preview-label{font-size:.75rem;color:#888;margin-top:8px;text-align:center;line-height:1.4;word-break:keep-all}
+
+/* 본문 — 탭 + 목록(이제 프리뷰 없이 전체 폭). 바깥(#nm-closet-cnt를 감싸는
+   .nm-step-body)이 이미 세로 스크롤 컨테이너라 여기서 또 flex:1로 높이를
+   강제할 필요가 없다 — 자연스러운 콘텐츠 높이로 흐른다(중첩 스크롤 방지). */
+.nmc-main{display:block}
+.nmc-left{min-width:0}
 
 /* 탭 바 */
 .nmc-tab-bar{display:flex;gap:2px;padding:6px 8px;background:#f7f3ee;border-bottom:1.5px solid #e8e0d0;overflow-x:auto;scrollbar-width:none}
@@ -60,6 +67,5 @@
 .nm-char-chip-name{font-size:.75rem;font-weight:800;color:#2c3e50;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 @media(max-width:360px){
-  .nmc-preview-area{min-width:110px}
   .nmc-grid{grid-template-columns:repeat(2,1fr)}
 }

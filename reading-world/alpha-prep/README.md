@@ -6,21 +6,24 @@ The coaching profile is calibrated for verbally advanced seven-year-olds reading
 
 ## Session model
 
-- Four-candidate entrance and seating scene
+- Four-candidate entrance and seating scene with an original, AI-generated Korean male director portrait
 - Ten full mock sets with 20 original one-page prediction passages
 - Two consecutive interview rounds in a full mock: nonfiction first, then fiction or fable
 - A separate 60-second silent read and automatic passage collection for each round
 - Questions for the first passage are completed before the second passage is handed out
 - Summary, evidence, inference, opinion, and vocabulary-in-context questions
 - Two-step answer-dependent follow-up ladders; economy mode continues the second step locally
-- One peer answer followed by an unannounced listen-link-add question
+- One peer answer followed by an unannounced question that repeats the peer's exact claim before asking the learner to evaluate and extend it
 - Browser speech recognition with typed fallback
 - Browser speech synthesis for the director and peers
 - Seven-skill report, answer corrections, vocabulary review, and seven-day route
+- Pre-session print preview with one passage per A4 page, plus a separate printable coaching report
 
 ## Cost boundary
 
 Economy mode makes at most one adaptive text request per passage and one final-report request. A two-passage mock therefore uses three text requests. The first answer receives an adaptive follow-up and the next answer receives a locally selected second follow-up, so the question ladder continues without another paid request. Answer-by-answer corrections are created during the interview, while the final request concentrates on the synthesis, three priorities, and seven-day route. The app does not request generated audio. Deep mode allows two adaptive requests per passage. Normalized turn feedback is cached locally, and deterministic coaching completes the session when the server is unavailable.
+
+The browser allows up to 28 seconds for a live coaching response, matching the server's 30-second boundary closely enough for normal mobile latency. The submit button stays disabled with a reviewing label during that wait, then falls back to deterministic local coaching if the request fails.
 
 The browser sends no learner name or audio file to the coach function. It sends the current original passage, question, short transcript, recent turns, and provisional scores. Full session transcripts remain in local storage on the current device.
 

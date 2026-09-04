@@ -1827,18 +1827,18 @@ const NM_EXAM = {
     function showSectionPick(){
       container.innerHTML = `
 <div class="nm-ex-sec-wrap">
-  <h2 class="nm-ex-sec-title">📝 학습지 / Exam</h2>
-  <p class="nm-ex-sec-sub">어떤 방식으로 공부할까요?</p>
+  <h2 class="nm-ex-sec-title">📝 ${esc(lk('학습지 / Exam','Worksheet / Exam','学习单 / Exam'))}</h2>
+  <p class="nm-ex-sec-sub">${esc(lk('어떤 방식으로 공부할까요?','How would you like to study?','想用哪种方式学习？'))}</p>
   <div class="nm-ex-sec-row">
     <button class="nm-ex-sec-card" data-sec="grade">
       <div class="nm-ex-sec-emo">📚</div>
-      <div class="nm-ex-sec-name">교과 연산 연습</div>
-      <div class="nm-ex-sec-desc">1A ~ 6B 학기별 주제 선택</div>
+      <div class="nm-ex-sec-name">${esc(lk('교과 연산 연습','Curriculum Practice','教材运算练习'))}</div>
+      <div class="nm-ex-sec-desc">${esc(lk('1A ~ 6B 학기별 주제 선택','Pick a topic from grades 1A–6B','按1A~6B学期选择主题'))}</div>
     </button>
     <button class="nm-ex-sec-card" data-sec="magic">
       <div class="nm-ex-sec-emo">✨</div>
-      <div class="nm-ex-sec-name">수의 마법 탐험</div>
-      <div class="nm-ex-sec-desc">스레드 직접 선택</div>
+      <div class="nm-ex-sec-name">${esc(lk('수의 마법 탐험','Number Magic Explorer','数字魔法探险'))}</div>
+      <div class="nm-ex-sec-desc">${esc(lk('스레드 직접 선택','Pick a skill thread directly','直接选择技能线'))}</div>
     </button>
     <button class="nm-ex-sec-card" data-sec="road">
       <div class="nm-ex-sec-emo">🛤️</div>
