@@ -27,11 +27,13 @@ async function auditViewport(viewport, label) {
       await page.locator(`.lesson-button[data-lesson="${lessonId}"]`).click();
       const learningOrder = await page.locator("#lessonContent").evaluate((root) => {
         const question = root.querySelector(".concept-opening-question");
+        const story = root.querySelector(".story-band");
         const experience = root.querySelector(".concept-experience");
         return {
           questionCount: root.querySelectorAll(".concept-opening-question").length,
           questionText: question?.querySelector("strong")?.textContent?.trim() || "",
           experienceCount: root.querySelectorAll(".concept-experience").length,
+          questionBeforeStory: Boolean(question && story && (question.compareDocumentPosition(story) & Node.DOCUMENT_POSITION_FOLLOWING)),
           questionBeforeExperience: Boolean(question && experience && (question.compareDocumentPosition(experience) & Node.DOCUMENT_POSITION_FOLLOWING)),
           questionFontSize: question ? Number.parseFloat(getComputedStyle(question.querySelector("strong")).fontSize) : 0
         };
@@ -39,6 +41,7 @@ async function auditViewport(viewport, label) {
       assert.equal(learningOrder.questionCount, 1, `${label}/${bookId}/${lessonId}: opening question missing`);
       assert.ok(learningOrder.questionText, `${label}/${bookId}/${lessonId}: opening question is empty`);
       assert.equal(learningOrder.experienceCount, 1, `${label}/${bookId}/${lessonId}: explanation experience missing`);
+      assert.equal(learningOrder.questionBeforeStory, true, `${label}/${bookId}/${lessonId}: situation context appears before the question`);
       assert.equal(learningOrder.questionBeforeExperience, true, `${label}/${bookId}/${lessonId}: explanation appears before the question`);
       assert.ok(learningOrder.questionFontSize >= 18, `${label}/${bookId}/${lessonId}: opening question is too small (${learningOrder.questionFontSize}px)`);
       assert.equal(await page.locator(".concept-tutorial").count(), 1, `${label}/${bookId}/${lessonId}: tutorial missing`);
@@ -93,7 +96,7 @@ async function auditGeometryAndPrint() {
 
   await page.evaluate(() => { window.print = () => {}; });
   await page.locator("#printBookButton").click();
-  assert.equal(await page.locator(".gold-print-page").count(), 8, "book print must contain eight pages");
+  assert.equal(await page.locator(".gold-print-page").count(), 12, "book print must contain twelve pages");
   await page.close();
   return labelSizes.length;
 }
@@ -123,8 +126,12 @@ async function auditExtensionControls() {
   assert.match(await answerPage.locator(".extension-solution").innerText(), /풀이[\s\S]*답/u, "extension solution needs explanation and answer");
   assert.equal(await answerPage.locator('[data-check="extension"]').isDisabled(), false, "extension completion stayed disabled after answer view");
   await answerPage.locator('[data-check="extension"]').click();
+  assert.match(await answerPage.locator(".daily-quiz-head aside strong").innerText(), /2문제 중 2번째/u, "second extension problem did not open");
+  assert.equal(await answerPage.locator(".extension-solution").count(), 0, "second extension solution leaked before solution view");
+  await answerPage.locator("[data-extension-answer]").click();
+  await answerPage.locator('[data-check="extension"]').click();
   assert.match(await answerPage.locator(".complete-panel>p").innerText(), /다시 연습/u, "answer-assisted completion was presented as mastery");
-  assert.match(await answerPage.locator(".learning-record").innerText(), new RegExp(`답 확인\\s*${answerSourceItems + 1}`, "u"), "extension answer view was not recorded");
+  assert.match(await answerPage.locator(".learning-record").innerText(), new RegExp(`답 확인\\s*${answerSourceItems + 2}`, "u"), "extension answer views were not recorded");
   await answerPage.close();
 
   const skipPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -135,12 +142,15 @@ async function auditExtensionControls() {
   assert.equal(await skipPage.locator('[data-check="extension"]').isDisabled(), false, "extension completion stayed disabled after skip");
   assert.equal(await skipPage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, "extension controls overflow mobile viewport");
   await skipPage.locator('[data-check="extension"]').click();
+  assert.match(await skipPage.locator(".daily-quiz-head aside strong").innerText(), /2문제 중 2번째/u, "second mobile extension problem did not open");
+  await skipPage.locator("[data-extension-skip]").click();
+  await skipPage.locator('[data-check="extension"]').click();
   assert.match(await skipPage.locator(".learning-record").innerText(), new RegExp(`답 확인\\s*${skipSourceItems}`, "u"), "source answer views were not preserved");
-  assert.match(await skipPage.locator(".learning-record").innerText(), /넘어감\s*1/u, "extension skip was not recorded");
+  assert.match(await skipPage.locator(".learning-record").innerText(), /넘어감\s*2/u, "both extension skips were not recorded");
   await skipPage.evaluate(() => { window.print = () => {}; });
   await skipPage.locator("#printLessonButton").click();
   await skipPage.waitForTimeout(100);
-  assert.equal(await skipPage.locator('.gold-print-page[data-print-part="story"] h2').innerText(), "추가 학습", "print extension title mismatch");
+  assert.equal(await skipPage.locator('.gold-print-page[data-print-part^="story-"] h2').count(), 2, "print must contain both extension problems");
   assert.equal(await skipPage.locator(".gold-print-page button, .gold-print-page input").count(), 0, "print extension contains interactive controls");
   await skipPage.close();
 }
@@ -480,13 +490,18 @@ async function auditInteractiveTriangularStair() {
   await extensionInput.fill("35");
   const extensionCheck = page.locator('[data-check="extension"]');
   await extensionCheck.click();
-  assert.equal(await extensionCheck.innerText(), "완료", "correct extension answer did not unlock completion");
+  assert.equal(await extensionCheck.innerText(), "다음 문제", "first extension answer did not unlock the similar problem");
   await extensionCheck.click();
+  const similarCheck = page.locator('[data-check="extension"]');
+  assert.match(await page.locator(".daily-quiz-head aside strong").innerText(), /2문제 중 2번째/u, "triangular similar problem did not open");
+  await page.locator("[data-extension-answer]").click();
+  assert.equal(await similarCheck.innerText(), "학습 완료", "similar worked solution did not unlock completion");
+  await similarCheck.click();
   const learningRecord = page.locator(".learning-record");
   assert.match(await learningRecord.innerText(), /혼자 해결\s*1/u, "independent completion count missing");
-  assert.match(await learningRecord.innerText(), /답 확인\s*1/u, "answer-view completion count missing");
+  assert.match(await learningRecord.innerText(), /답 확인\s*2/u, "answer-view completion count missing");
   assert.match(await learningRecord.innerText(), /넘어감\s*1/u, "skip completion count missing");
-  assert.match(await learningRecord.innerText(), /다시 볼 문항\s*2/u, "review count missing");
+  assert.match(await learningRecord.innerText(), /다시 볼 문항\s*3/u, "review count missing");
   const reviewLink = learningRecord.locator("a");
   assert.equal(new URL(await reviewLink.getAttribute("href"), page.url()).searchParams.get("types"), "cube-tetrahedral-growth", "review type link missing the source type id");
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
@@ -578,7 +593,7 @@ try {
   const bookThreeGuidedConcepts = await auditBookThreeGuidedConcepts();
   await auditInteractiveTriangularStair();
   const progressiveConcepts = await auditCourseOneProgressiveConcepts();
-  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} extensionControls=pass clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} bookThreeGuidedConcepts=${bookThreeGuidedConcepts} progressiveConcepts=${progressiveConcepts} triangularExperience=pass reducedMotion=pass printPages=8`);
+  console.log(`GOLDEN_BELL_BROWSER_OK desktop=${desktopLessons} mobile=${mobileLessons} geometryLabels=${geometryLabels} extensionControls=pass clockExperience=pass guidedConcepts=${guidedConcepts} bookTwoGuidedConcepts=${bookTwoGuidedConcepts} bookThreeGuidedConcepts=${bookThreeGuidedConcepts} progressiveConcepts=${progressiveConcepts} triangularExperience=pass reducedMotion=pass printPages=12`);
 } finally {
   await browser.close();
 }
