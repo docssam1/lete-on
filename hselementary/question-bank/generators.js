@@ -21033,6 +21033,130 @@
       }
       throw new Error("유일한 두 단위분수 방정식을 만들지 못했습니다.");
     },
+    sourceGrade6PrismsPyramidsE1({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 1 원문 분기는 0부터 3까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">조건 사이의 관계를 스스로 찾아 식으로 나타내어 계산해 보세요.</p>` : "";
+      const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e1-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const fractionText = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plainFractionText = value => mixedFraction(value.numerator, value.denominator);
+      const evidenceKinds = ["prism-name-from-counts", "prism-symbol-ratio-value", "rolling-pentagonal-prism-edge-total", "triangular-prism-net-ratio-area"];
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><span hidden data-source61-prism-e1-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}"></span>${answerBody}<div class="solution-answer-caption">문제의 조건으로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+      const prismPicture = (sides, height, kind, solved = false, generic = false) => {
+        if (kind === "rolling") {
+          const picture = angularPrismSvg({ sides, side: "□", height })
+            .replace('class="geometry-diagram angular-prism"', 'class="geometry-diagram angular-prism source61-prism-count source61-prism-solid"')
+            .replace(/<text x="120" y="151">[^<]*<\/text><text x="198" y="84">[^<]*<\/text>/, "")
+            .replace(/data-prism="[^"]*"/, `data-prism="${sides},structure"`)
+            .replace(/aria-label="[^"]*"/, `aria-label="${sides}각기둥의 구성 그림"`);
+          return `${picture}<div class="source61-prism-caption" data-prism-kind="${kind}" data-prism-solved="${solved}" data-side-count="${sides}">밑면이 ${sides}각형인 각기둥</div>`;
+        }
+        const polygon = cx => {
+          const points = regularPolygonPoints(sides, cx, 58, sides > 12 ? 38 : 42);
+          const pointsText = points.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+          const vertices = points.map(([x, y], index) => `<circle class="source61-prism-vertex" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" data-vertex="${index + 1}"/>`).join("");
+          return `<g class="source61-prism-base" data-base-sides="${sides}"><polygon points="${pointsText}"/>${vertices}<text x="${cx}" y="62">${sides}각형</text></g>`;
+        };
+        const symbolicBase = cx => `<g class="source61-prism-base is-symbolic" data-base-sides="n"><circle cx="${cx}" cy="58" r="39"/><text x="${cx}" y="62">n각형</text></g>`;
+        const stripLeft = 40, stripTop = 126, stripWidth = 280, stripHeight = 28;
+        const strip = generic
+          ? `<rect class="source61-prism-side-strip is-symbolic" x="${stripLeft}" y="${stripTop}" width="${stripWidth}" height="${stripHeight}"/><text x="180" y="145">직사각형 옆면 n개</text>`
+          : Array.from({ length: sides }, (_, index) => `<rect class="source61-prism-side-cell" x="${(stripLeft + stripWidth * index / sides).toFixed(1)}" y="${stripTop}" width="${(stripWidth / sides).toFixed(1)}" height="${stripHeight}" data-side-face="${index + 1}"/>`).join("");
+        const label = generic ? "n각기둥의 구성" : `${sides}각기둥의 구성`;
+        const bases = generic ? `${symbolicBase(95)}${symbolicBase(265)}` : `${polygon(95)}${polygon(265)}`;
+        const picture = `<svg class="geometry-diagram source61-prism-count source61-prism-structure" viewBox="0 0 360 188" role="img" aria-label="${label}: 서로 같은 밑면 2개와 직사각형 옆면 ${generic ? "n" : sides}개" data-prism="${generic ? "n" : sides},structure" data-base-count="2" data-side-face-count="${generic ? "n" : sides}">${bases}<text class="source61-prism-base-caption" x="180" y="112">서로 같은 밑면 2개</text>${strip}${generic ? "" : `<text class="source61-prism-strip-caption" x="180" y="178">직사각형 옆면 ${sides}개</text>`}</svg>`;
+        return `${picture}<div class="source61-prism-caption" data-prism-kind="${kind}" data-prism-solved="${solved}" data-side-count="${generic ? "n" : sides}">${label}</div>`;
+      };
+      const prismCountTable = ({ n, k, solved = false, guided = false }) => solved
+        ? `<div class="source61-structure-table" data-prism-kind="count-relation" data-n="${n}" data-k="${k}" data-solved="true"><div class="source61-math-row"><span>면</span><b>${n + 2}</b></div><div class="source61-math-row"><span>모서리</span><b>${3 * n}</b></div><div class="source61-math-row"><span>꼭짓점</span><b>${2 * n}</b></div><div class="source61-math-row"><span>(면)+(모서리)-(꼭짓점)</span><b>${n + 2}+${3 * n}-${2 * n}=${k}</b></div></div>`
+        : `<div class="source61-structure-table" data-prism-kind="count-relation" data-n="symbolic" data-k="${k}" data-solved="false" data-support="${guided ? "guided" : "source"}"><div class="source61-math-row"><span>면</span><b>${guided ? "n+2" : "□개"}</b></div><div class="source61-math-row"><span>모서리</span><b>${guided ? "3n" : "□개"}</b></div><div class="source61-math-row"><span>꼭짓점</span><b>${guided ? "2n" : "□개"}</b></div><div class="source61-math-row"><span>(면)+(모서리)-(꼭짓점)</span><b>${guided ? `(n+2)+3n-2n=${k}` : k}</b></div></div>`;
+      const prismRatioTable = ({ n, solved = false, guided = false }) => solved
+        ? `<div class="source61-structure-table" data-prism-kind="ratio-table" data-n="${n}" data-solved="true"><div class="source61-math-row"><span>ㄱ (꼭짓점)</span><b>2×${n}=${2 * n}</b></div><div class="source61-math-row"><span>ㄴ (모서리)</span><b>3×${n}=${3 * n}</b></div><div class="source61-math-row"><span>ㄷ (면)</span><b>${n}+2=${n + 2}</b></div><div class="source61-math-row"><span>(ㄴ÷ㄱ)×ㄷ</span><b>${fractionMarkup(3 * n, 2 * n)}×${n + 2}=${3 * (n + 2) / 2}</b></div></div>`
+        : `<div class="source61-structure-table" data-prism-kind="ratio-table" data-n="source-given" data-solved="false" data-support="${guided ? "guided" : "source"}"><div class="source61-math-row"><span>ㄱ (꼭짓점)</span><b>${guided ? `2×${n}=□` : "□개"}</b></div><div class="source61-math-row"><span>ㄴ (모서리)</span><b>${guided ? `3×${n}=□` : "□개"}</b></div><div class="source61-math-row"><span>ㄷ (면)</span><b>${guided ? `${n}+2=□` : "□개"}</b></div><div class="source61-math-row"><span>(ㄴ÷ㄱ)×ㄷ</span><b>${symbolicFractionMarkup("ㄴ", "ㄱ")}×ㄷ</b></div></div>`;
+      const rollingSvg = ({ h, t, A, P, edgeTotal, solved = false }) => {
+        const left = 28, top = 70, width = 304, stripHeight = 42, cellWidth = width / (5 * t);
+        const rounds = Array.from({ length: t }, (_, round) => {
+          const roundLeft = left + round * 5 * cellWidth;
+          const cells = Array.from({ length: 5 }, (_, faceIndex) => `<rect class="${solved ? "source61-roll-rectangle is-solved" : "source61-roll-rectangle"}" x="${(roundLeft + faceIndex * cellWidth).toFixed(1)}" y="${top}" width="${(cellWidth - 0.8).toFixed(1)}" height="${stripHeight}" data-round="${round + 1}" data-face="${faceIndex + 1}"/>`).join("");
+          return `<g class="source61-roll-round${solved ? " is-solved" : ""}" data-round="${round + 1}">${cells}<text x="${(roundLeft + 2.5 * cellWidth).toFixed(1)}" y="${top + stripHeight + 19}">${round + 1}바퀴</text></g>`;
+        }).join("");
+        const boundaries = Array.from({ length: t + 1 }, (_, index) => left + index * 5 * cellWidth);
+        const boundaryMarkup = boundaries.map((x, index) => `<line class="source61-round-boundary" x1="${x.toFixed(1)}" y1="${top - 6}" x2="${x.toFixed(1)}" y2="${top + stripHeight + 4}"${index === 0 || index === t ? "" : " stroke-dasharray=\"5 3\""}/>`).join("");
+        const markerId = `source61-roll-arrow-${sourceItemId.replace(/[^a-z0-9]/gi, "-")}-${poolIndex}-${solved ? "answer" : "problem"}`;
+        return `<svg class="geometry-diagram source61-prism-roll${solved ? " is-solved" : ""}" viewBox="0 0 360 166" role="img" aria-label="오각기둥을 밑면 위에서 굴리는 방향과 ${t}회 이어진 옆면 띠" data-roll-count="${t}" data-strip-rectangles="${5 * t}" data-round-boundaries="${boundaries.map(x => x.toFixed(1)).join(",")}" data-height="${h}" data-rolled-floor-area="${A}" data-base-perimeter="${solved ? P : ""}" data-target-edge-total="${solved ? edgeTotal : ""}"><defs><marker id="${markerId}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#d14b4b"/></marker></defs><path d="M34 42 H326" fill="none" stroke="#d14b4b" stroke-width="3" marker-end="url(#${markerId})"/><text x="180" y="23">밑면 위에서 굴리는 방향</text><rect x="${left}" y="${top}" width="${width}" height="${stripHeight}" fill="none" stroke="#183b56" stroke-width="3"/>${boundaryMarkup}${rounds}<text x="180" y="160">한 바퀴마다 옆면 5개 · 높이 ${h}cm${solved ? ` · 밑면 둘레 ${P}cm · 모든 모서리 ${edgeTotal}cm` : ""}</text></svg>`;
+      };
+      const triangleNetSvg = ({ ga, na, da, areaGa, areaNa, H, solved = false }) => {
+        const naValue = na.numerator / na.denominator;
+        const displayNa = solved ? naValue : (ga + da) / 2;
+        const total = ga + displayNa + da;
+        const scale = 300 / total;
+        const widths = [ga, displayNa, da].map(value => value * scale);
+        const x0 = 30, y = 70, rectHeight = 56;
+        const x1 = x0 + widths[0], x2 = x1 + widths[1], x3 = x2 + widths[2];
+        const apexX = (x1 + x2) / 2, apexY = 18, lowerApexY = 148;
+        const pointLabels = `<text x="${x0}" y="${y - 8}">ㄷ</text><text x="${x1}" y="${y - 8}">ㄴ</text><text x="${x2}" y="${y - 8}">ㅊ</text><text x="${x3}" y="${y - 8}">ㅈ</text><text x="${x0}" y="${y + rectHeight + 20}">ㄹ</text><text x="${x1}" y="${y + rectHeight + 20}">ㅁ</text><text x="${x2}" y="${y + rectHeight + 20}">ㅅ</text><text x="${x3}" y="${y + rectHeight + 20}">ㅇ</text><text x="${apexX}" y="${apexY - 5}">ㄱ</text><text x="${apexX}" y="${lowerApexY + 16}">ㅂ</text>`;
+        const targetClass = solved ? "source61-target-edge is-solved" : "source61-target-edge";
+        const triangleTop = `<polygon points="${apexX},${apexY} ${x1},${y} ${x2},${y}" fill="#dceffd" stroke="#183b56" stroke-width="3"/>`;
+        const triangleBottom = `<polygon points="${x1},${y + rectHeight} ${apexX},${lowerApexY} ${x2},${y + rectHeight}" fill="#fff0bd" stroke="#183b56" stroke-width="3"/>`;
+        const targetEdge = `<line class="${targetClass}" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#d14b4b" stroke-width="${solved ? 6 : 3}"/>`;
+        const rectangles = `<rect x="${x0}" y="${y}" width="${widths[0]}" height="${rectHeight}" fill="#edf6fb" stroke="#183b56" stroke-width="3"/><rect class="${solved ? "source61-target-area is-solved" : "source61-target-area"}" x="${x1}" y="${y}" width="${widths[1]}" height="${rectHeight}" fill="${solved ? "#f9dede" : "#fff"}" stroke="#183b56" stroke-width="3"/><rect x="${x2}" y="${y}" width="${widths[2]}" height="${rectHeight}" fill="#edf6fb" stroke="#183b56" stroke-width="3"/>`;
+        const dimensions = `<text x="${(x0 + x1) / 2}" y="${y + rectHeight / 2 - 7}">가</text><text class="source61-net-given-area" x="${(x0 + x1) / 2}" y="${y + rectHeight / 2 + 12}">${areaGa}cm²</text><text class="${solved ? "source61-net-answer-label" : ""}" x="${(x1 + x2) / 2}" y="${y + rectHeight / 2 + 5}">${solved ? `나=${mixedFraction(areaNa.numerator, areaNa.denominator)}cm²` : "나"}</text><text x="${(x2 + x3) / 2}" y="${y + rectHeight / 2 + 5}">다</text><text x="${(x1 + apexX) / 2 - 11}" y="${(y + apexY) / 2 - 2}">ㄱㄴ=${ga}cm</text><text x="${(apexX + x2) / 2 + 13}" y="${(y + apexY) / 2 - 2}">ㄱㅊ=${da}cm</text>${solved ? svgMeasurementLabel({ x: (x1 + x2) / 2, y: y - 18, value: mixedFraction(na.numerator, na.denominator), unit: "cm" }) : ""}`;
+        const derivedHeightAttribute = solved ? ` data-derived-height="${H.numerator}/${H.denominator}"` : "";
+        return `<svg class="geometry-diagram source61-triangular-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 360 190" role="img" aria-label="가, 나, 다 세 직사각형과 위아래의 같은 삼각형으로 만든 삼각기둥 전개도" data-point-order="ㄷ,ㄴ,ㅊ,ㅈ / ㄹ,ㅁ,ㅅ,ㅇ / apex ㄱ,ㅂ" data-edge-dimensions="ㄱㄴ=${ga};ㄴㅊ=${solved ? `${na.numerator}/${na.denominator}` : "unknown"};ㄱㅊ=${da}" data-area-ga="${areaGa}" data-target-edge="ㄴㅊ" data-target-edge-orientation="horizontal" data-target-area="나"${derivedHeightAttribute}>${triangleTop}${triangleBottom}${targetEdge}${rectangles}${pointLabels}${dimensions}</svg>`;
+      };
+
+      if (variant === 0) {
+        const data = [{ n: 19, k: 40 }, { n: 14, k: 30 }, { n: 23, k: 48 }][poolIndex];
+        const faces = data.n + 2, edges = 3 * data.n, vertices = 2 * data.n;
+        const promptVisual = `${prismPicture(data.n, "□", "count-relation", false, true)}${prismCountTable({ ...data, guided: level === 0 })}`;
+        const answerVisual = `${prismPicture(data.n, "□", "count-relation", true)}${prismCountTable({ ...data, solved: true })}${mathBoard("각기둥 이름", row("구한 밑면의 변 수", `${data.n}`) + row("답", `${data.n}각기둥`))}`;
+        return fixedResult(`면의 수와 모서리의 수에서 꼭짓점의 수를 뺀 값이 ${data.k}인 각기둥이 있습니다. 이 각기둥의 이름을 구하세요.${promptVisual}${support("각기둥의 면, 모서리, 꼭짓점 수를 각각 n으로 나타내어 식을 세워 보세요.")}${challenge}${evidence("prism-name-from-counts", [data.n, data.k, faces, edges, vertices])}`, `${data.n}각기둥`, `n각기둥의 면은 n+2개, 모서리는 3n개, 꼭짓점은 2n개입니다. 따라서 (n+2)+3n-2n=${data.k}이므로 2n+2=${data.k}, n=${data.n}입니다. 답은 ${data.n}각기둥입니다.`, answerVisual);
+      }
+
+      if (variant === 1) {
+        const n = [14, 12, 18][poolIndex];
+        const answer = 3 * (n + 2) / 2;
+        const promptVisual = `${prismPicture(n, "□", "ratio-table")}${prismRatioTable({ n, guided: level === 0 })}`;
+        const answerVisual = `${prismPicture(n, "□", "ratio-table", true)}${prismRatioTable({ n, solved: true })}${mathBoard("ㄱ, ㄴ, ㄷ을 대응시켜 계산", row("ㄴ÷ㄱ", fractionMarkup(3 * n, 2 * n)) + row("계산", `${fractionMarkup(3 * n, 2 * n)}×${n + 2}=${answer}`))}`;
+        return fixedResult(`${n}각기둥에서 꼭짓점의 수를 ㄱ, 모서리의 수를 ㄴ, 면의 수를 ㄷ이라고 할 때, (ㄴ÷ㄱ)×ㄷ의 값을 구하세요.${promptVisual}${support("ㄱ, ㄴ, ㄷ을 각각 수로 바꾼 뒤 세로로 쓴 분수의 값을 먼저 구해 보세요.")}${challenge}${evidence("prism-symbol-ratio-value", [n, answer])}`, String(answer), `ㄱ=${2 * n}, ㄴ=${3 * n}, ㄷ=${n + 2}입니다. 따라서 (ㄴ÷ㄱ)×ㄷ=${fractionMarkup(3 * n, 2 * n)}×${n + 2}=${answer}입니다.`, answerVisual);
+      }
+
+      if (variant === 2) {
+        const data = [{ h: 9, t: 3, p: 35 }, { h: 8, t: 4, p: 30 }, { h: 12, t: 2, p: 45 }][poolIndex];
+        const A = data.t * data.h * data.p, edgeTotal = 2 * data.p + 5 * data.h;
+        const promptVisual = `${prismPicture(5, data.h, "rolling")}${rollingSvg({ h: data.h, t: data.t, A, P: data.p, edgeTotal })}${mathBoard("굴린 횟수와 칠한 넓이", row("높이", `${data.h}cm`) + row("굴린 횟수", `${data.t}회`) + row("바닥에 칠한 넓이", `${A}cm²`), `data-source61-visual="rolling-pentagonal-prism"`)}`;
+        const answerVisual = `${prismPicture(5, data.h, "rolling", true)}${rollingSvg({ h: data.h, t: data.t, A, P: data.p, edgeTotal, solved: true })}${mathBoard("밑면 둘레와 모든 모서리", row("밑면 둘레 P", `${A}÷(${data.t}×${data.h})=${data.p}cm`) + row("모든 모서리 길이 합", `2×${data.p}+5×${data.h}=${edgeTotal}cm`))}`;
+        return fixedResult(`높이가 ${data.h}cm인 오각기둥을 밑면 위에서 ${data.t}바퀴 굴렸더니 각 옆면이 ${data.t}번씩 칠해졌습니다. 바닥에 칠해진 넓이가 ${A}cm²일 때, 이 오각기둥의 모든 모서리 길이의 합을 구하세요.${promptVisual}${support("칠한 넓이를 굴린 횟수와 높이로 나누어 밑면의 둘레를 먼저 구해 보세요.")}${challenge}${evidence("rolling-pentagonal-prism-edge-total", [data.h, data.t, data.p, A, edgeTotal])}`, `${edgeTotal}cm`, `바닥에 칠한 넓이는 t×h×P이므로 P=${A}÷(${data.t}×${data.h})=${data.p}cm입니다. 오각기둥의 모든 모서리는 밑면 모서리 두 바퀴와 옆모서리 5개이므로 2P+5h=2×${data.p}+5×${data.h}=${edgeTotal}cm입니다.`, answerVisual);
+      }
+
+      const data = [
+        { ga: 15, da: 10, ratio: [5, 3], areaGa: 225 },
+        { ga: 14, da: 10, ratio: [7, 4], areaGa: 168 },
+        { ga: 15, da: 10, ratio: [9, 5], areaGa: 270 }
+      ][poolIndex];
+      const H = rationalValue(data.areaGa, data.ga);
+      const daArea = rationalOperation(rationalValue(data.da), H, "×");
+      const areaNa = rationalOperation(daArea, rationalValue(data.ratio[0], data.ratio[1]), "×");
+      const na = rationalOperation(areaNa, H, "÷");
+      if (!(data.ga + data.da > na.numerator / na.denominator && data.ga + na.numerator / na.denominator > data.da && data.da + na.numerator / na.denominator > data.ga)) throw new Error(`${sourceItemId}: 삼각형 부등식이 성립하지 않습니다.`);
+      const promptVisual = `${triangleNetSvg({ ...data, na, areaGa: data.areaGa, areaNa })}${mathBoard("삼각기둥 전개도의 대응", row("가의 넓이", `${data.areaGa}cm²`) + row("가의 가로", `ㄱㄴ=${data.ga}cm`) + row("나의 가로", "ㄴㅊ=□cm") + row("다의 가로", `ㄱㅊ=${data.da}cm`) + row("나의 넓이", `${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×다의 넓이`), `data-source61-visual="triangular-prism-net"`)}`;
+      const answerVisual = `${triangleNetSvg({ ...data, na, areaGa: data.areaGa, areaNa, H, solved: true })}${mathBoard("ㄴㅊ와 나의 넓이", row("공통 높이 H", `${fractionText(H)}cm`) + row("다의 넓이", `${data.da}×${fractionText(H)}=${fractionText(daArea)}cm²`) + row("나", `${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×${fractionText(daArea)}=${fractionText(areaNa)}cm²`) + row("ㄴㅊ", `${fractionText(areaNa)}÷${fractionText(H)}=${fractionText(na)}cm`))}`;
+      return fixedResult(`삼각기둥 전개도에서 세 직사각형 가, 나, 다가 연결되어 있습니다. 가의 가로는 삼각형의 변 ㄱㄴ과 같고 ${data.ga}cm, 다의 가로는 변 ㄱㅊ과 같고 ${data.da}cm입니다. 가의 넓이는 ${data.areaGa}cm²이고, 나의 넓이는 다의 넓이의 ${mixedFractionMarkup(data.ratio[0], data.ratio[1])}배입니다. ㄴㅊ의 길이와 나의 넓이를 각각 구하세요.${promptVisual}${support("가의 넓이를 가의 가로로 나누어 같은 직사각형 높이를 구한 뒤, 나의 넓이와 ㄴㅊ의 길이를 찾아 보세요.")}${challenge}${evidence("triangular-prism-net-ratio-area", [data.ga, data.da, data.ratio[0], data.ratio[1], data.areaGa, H.numerator, H.denominator, na.numerator, na.denominator, areaNa.numerator, areaNa.denominator], "two-values")}`, `ㄴㅊ=${plainFractionText(na)}cm, 나=${plainFractionText(areaNa)}cm²`, `가의 넓이 ${data.areaGa}cm²를 가의 가로 ${data.ga}cm로 나누면 같은 직사각형의 높이 H=${fractionText(H)}cm입니다. 다의 넓이는 ${data.da}×${fractionText(H)}=${fractionText(daArea)}cm²이고, 나의 넓이는 ${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×${fractionText(daArea)}=${fractionText(areaNa)}cm²입니다. 따라서 ㄴㅊ=${fractionText(areaNa)}÷${fractionText(H)}=${fractionText(na)}cm입니다.`, answerVisual);
+    },
     sourceGrade6FractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u1-e1-example-1", "6-1-u1-e1-example-2", "6-1-u1-e1-example-3", "6-1-u1-e1-example-4",

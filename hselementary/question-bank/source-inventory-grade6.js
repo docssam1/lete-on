@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 21
+    "unlocked": 25
   },
   "items": [
     {
@@ -724,7 +724,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e1-mission-1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
-      "typeLabel": "오각기둥 옆면을 따라 올라간 거리로 높이 구하기",
+      "typeLabel": "각기둥의 꼭짓점, 모서리, 면의 수로 식의 값 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -824,7 +824,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e1-mission-5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
-      "typeLabel": "삼각기둥 전개도의 직사각형 둘레 구하기",
+      "typeLabel": "삼각기둥 전개도에서 변의 길이와 옆면 넓이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -849,7 +849,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e1-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "육각기둥 전개도에서 선분과 모서리 길이 구하기",
+      "typeLabel": "전개도를 접었을 때 만나는 점과 모든 모서리 길이 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -16320,7 +16320,11 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     ["6-1-u1-e2-mission-3", ["sourceGrade6FractionDivisionE2", 7]],
     ["6-1-u1-e2-mission-4", ["sourceGrade6FractionDivisionE2", 8]],
     ["6-1-u1-e2-mission-5", ["sourceGrade6FractionDivisionE2", 9]],
-    ["6-1-u1-e2-mission-6", ["sourceGrade6FractionDivisionE2", 10]]
+    ["6-1-u1-e2-mission-6", ["sourceGrade6FractionDivisionE2", 10]],
+    ["6-1-u2-e1-example-1-1", ["sourceGrade6PrismsPyramidsE1", 0]],
+    ["6-1-u2-e1-mission-1", ["sourceGrade6PrismsPyramidsE1", 1]],
+    ["6-1-u2-e1-mission-2", ["sourceGrade6PrismsPyramidsE1", 2]],
+    ["6-1-u2-e1-mission-5", ["sourceGrade6PrismsPyramidsE1", 3]]
   ]);
   window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     if (!verifiedPools.has(item.sourceItemId)) return;
