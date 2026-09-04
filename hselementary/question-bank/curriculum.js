@@ -342,6 +342,151 @@
     ]]
   ];
 
+  const fractionAddSubReadyIds = new Set([
+    "5-1-u5-e1-exploration-proper-addition",
+    "5-1-u5-e1-exploration-mixed-addition",
+    "5-1-u5-e1-example-1-1-1",
+    "5-1-u5-e1-example-1-1-2",
+    "5-1-u5-e1-example-1-1-3",
+    "5-1-u5-e1-example-1-2",
+    "5-1-u5-e1-example-1-3",
+    "5-1-u5-e1-example-1-4",
+    "5-1-u5-e1-mission-1-proper-two-term",
+    "5-1-u5-e1-mission-1-mixed-two-term",
+    "5-1-u5-e1-mission-1-proper-three-term",
+    "5-1-u5-e1-mission-2",
+    "5-1-u5-e1-mission-3",
+    "5-1-u5-e1-mission-4",
+    "5-1-u5-e1-mission-5",
+    "5-1-u5-e1-mission-6",
+    "5-1-u5-e2-exploration-1",
+    "5-1-u5-e2-exploration-2",
+    "5-1-u5-e2-exploration-3",
+    "5-1-u5-e2-exploration-4",
+    "5-1-u5-e2-example-2-1",
+    "5-1-u5-e2-example-2-2",
+    "5-1-u5-e2-example-2-3",
+    "5-1-u5-e2-example-2-4",
+    "5-1-u5-e2-mission-1-1",
+    "5-1-u5-e2-mission-1-2",
+    "5-1-u5-e2-mission-1-3-4",
+    "5-1-u5-e2-mission-1-5",
+    "5-1-u5-e2-mission-2",
+    "5-1-u5-e2-mission-3",
+    "5-1-u5-e2-mission-4",
+    "5-1-u5-e2-mission-5",
+    "5-1-u5-e2-mission-6",
+    "5-1-u5-e3-exploration",
+    "5-1-u5-e3-example-3-1",
+    "5-1-u5-e3-example-3-2",
+    "5-1-u5-e3-example-3-3",
+    "5-1-u5-e3-example-3-4",
+    "5-1-u5-e3-mission-1",
+    "5-1-u5-e3-mission-2",
+    "5-1-u5-e3-mission-3",
+    "5-1-u5-e3-mission-4",
+    "5-1-u5-e3-mission-5",
+    "5-1-u5-e3-mission-6",
+    "5-1-u5-e4-exploration-2",
+    "5-1-u5-e4-example-4-1",
+    "5-1-u5-e4-example-4-2",
+    "5-1-u5-e4-example-4-3",
+    "5-1-u5-e4-example-4-4",
+    "5-1-u5-e4-mission-1",
+    "5-1-u5-e4-mission-2",
+    "5-1-u5-e4-mission-3",
+    "5-1-u5-e4-mission-4",
+    "5-1-u5-e4-mission-6"
+  ]);
+  const fractionAddSubMultipleAnswerReasons = {
+    "5-1-u5-e4-exploration-1": "원문 조건을 만족하는 세 단위분수 표현이 여러 개이므로, 답을 하나로 정하는 추가 조건 없이 자동 출제하지 않습니다.",
+    "5-1-u5-e4-mission-5": "원문 조건을 만족하는 세 단위분수 표현이 두 개이므로, 답을 하나로 정하는 추가 조건 없이 자동 출제하지 않습니다."
+  };
+  const sourceItem55 = (label, sourceItemId, pdfPage, printedPage) => {
+    const ready = fractionAddSubReadyIds.has(sourceItemId);
+    const multipleAnswerReason = fractionAddSubMultipleAnswerReasons[sourceItemId];
+    return {
+      ...sourceItem51(
+        label,
+        1,
+        sourceItemId,
+        pdfPage,
+        printedPage,
+        !ready,
+        multipleAnswerReason || (ready
+          ? "현행 원문 구조와 독립 계산 검산 완료"
+          : "현행 원문 구조와 답은 확인했지만 전용 생성기와 독립 검산을 연결하기 전에는 공개하지 않습니다.")
+      ),
+      sourceTier: "advanced"
+    };
+  };
+  const fractionAddSubGroups = [
+    ["분수의 덧셈", "fractionAdditionE1", [
+      ["5-1-u5-e1-exploration-proper-addition", "분모가 다른 진분수 두 개 더하기", 51, 52],
+      ["5-1-u5-e1-exploration-mixed-addition", "분모가 다른 대분수 두 개 더하기", 51, 52],
+      ["5-1-u5-e1-example-1-1-1", "여러 분수와 대분수를 통분하여 더하기", 51, 52],
+      ["5-1-u5-e1-example-1-1-2", "분모가 같은 항끼리 묶어 더하기", 51, 52],
+      ["5-1-u5-e1-example-1-1-3", "분모별 분수 묶음의 규칙을 찾아 더하기", 51, 52],
+      ["5-1-u5-e1-example-1-2", "수 카드로 만든 두 대분수의 합을 가장 크게 하기", 51, 52],
+      ["5-1-u5-e1-example-1-3", "두 수도꼭지로 일정한 양의 물을 받는 시간 구하기", 51, 52],
+      ["5-1-u5-e1-example-1-4", "분모 조건에 맞는 두 기약분수의 덧셈식 세기", 51, 52],
+      ["5-1-u5-e1-mission-1-proper-two-term", "분모가 다른 진분수 두 항 더하기", 52, 53],
+      ["5-1-u5-e1-mission-1-mixed-two-term", "분모가 다른 대분수 두 항 더하기", 52, 53],
+      ["5-1-u5-e1-mission-1-proper-three-term", "분모가 다른 진분수 세 항 더하기", 52, 53],
+      ["5-1-u5-e1-mission-2", "두 분수 사이를 열 등분한 양 끝 분수의 합 구하기", 52, 53],
+      ["5-1-u5-e1-mission-3", "두 대분수의 합과 사이 자연수의 개수로 빈칸 구하기", 52, 53],
+      ["5-1-u5-e1-mission-4", "서로 다른 한 자리 소수로 만든 두 분수의 합을 가장 작게 하기", 52, 53],
+      ["5-1-u5-e1-mission-5", "네 기약분수의 합이 가장 작은 자연수가 되게 하기", 52, 53],
+      ["5-1-u5-e1-mission-6", "분모별 분수 묶음과 자연수 1을 함께 더하기", 52, 53]
+    ]],
+    ["분수의 뺄셈", "fractionSubtractionE2", [
+      ["5-1-u5-e2-exploration-1", "분모가 다른 진분수 빼기", 53, 54],
+      ["5-1-u5-e2-exploration-2", "분모가 다른 진분수 세 항을 차례로 계산하기", 53, 54],
+      ["5-1-u5-e2-exploration-3", "대분수에서 대분수 빼기", 53, 54],
+      ["5-1-u5-e2-exploration-4", "대분수에서 대분수 두 개를 차례로 빼기", 53, 54],
+      ["5-1-u5-e2-example-2-1", "분수를 골라 더하고 뺀 값이 가장 크게 하기", 53, 54],
+      ["5-1-u5-e2-example-2-2", "같은 차로 나열된 대분수의 빈칸 채우기", 53, 54],
+      ["5-1-u5-e2-example-2-3", "두 가지를 모두 좋아하지 않는 학생의 비율 구하기", 53, 54],
+      ["5-1-u5-e2-example-2-4", "구멍이 있는 물통을 두 수도꼭지로 채우기", 53, 54],
+      ["5-1-u5-e2-mission-1-1", "분모가 다른 진분수 세 항 계산하기", 54, 55],
+      ["5-1-u5-e2-mission-1-2", "자연수에서 대분수를 빼고 진분수 더하기", 54, 55],
+      ["5-1-u5-e2-mission-1-3-4", "대분수 세 항을 더하고 빼기", 54, 55],
+      ["5-1-u5-e2-mission-1-5", "괄호가 있는 대분수 덧셈과 뺄셈", 54, 55],
+      ["5-1-u5-e2-mission-2", "여러 분수 중 가장 큰 수와 가장 작은 수의 차 구하기", 54, 55],
+      ["5-1-u5-e2-mission-3", "물을 반 사용한 뒤 빈 물통의 무게 구하기", 54, 55],
+      ["5-1-u5-e2-mission-4", "분수 계산식의 빈칸 채우기", 54, 55],
+      ["5-1-u5-e2-mission-5", "가로·세로·대각선의 합이 같은 분수 표 풀기", 54, 55],
+      ["5-1-u5-e2-mission-6", "수 카드로 만든 두 대분수의 차를 가장 크게 하기", 54, 55]
+    ]],
+    ["분수의 덧셈과 뺄셈 활용", "fractionApplicationE3", [
+      ["5-1-u5-e3-exploration", "정육면체 각 면의 네 수의 합을 같게 만들기", 55, 56],
+      ["5-1-u5-e3-example-3-1", "여러 기간을 더해 전체 나이 구하기", 55, 56],
+      ["5-1-u5-e3-example-3-2", "차와 합을 이용해 세 수 구하기", 55, 56],
+      ["5-1-u5-e3-example-3-3", "팔고 남은 양으로 처음 개수 구하기", 55, 56],
+      ["5-1-u5-e3-example-3-4", "막대가 젖은 길이로 연못 깊이 구하기", 55, 56],
+      ["5-1-u5-e3-mission-1", "세 사람이 나눈 사탕의 처음 개수 구하기", 56, 57],
+      ["5-1-u5-e3-mission-2", "여러 빈칸에 같은 수를 넣어 식 완성하기", 56, 57],
+      ["5-1-u5-e3-mission-3", "사과와 배의 수로 전체 과일 구하기", 56, 57],
+      ["5-1-u5-e3-mission-4", "걸은 거리와 탄 거리로 전체 거리 구하기", 56, 57],
+      ["5-1-u5-e3-mission-5", "두 과목을 좋아하는 학생 수로 전체 구하기", 56, 57],
+      ["5-1-u5-e3-mission-6", "서로 다른 숫자로 분수식 완성하기", 56, 57]
+    ]],
+    ["단위분수와 부분분수", "unitFractionE4", [
+      ["5-1-u5-e4-exploration-1", "분수를 서로 다른 세 단위분수의 합으로 나타내기", 57, 58],
+      ["5-1-u5-e4-exploration-2", "규칙에 따라 나열한 분수의 합 계산하기", 57, 58],
+      ["5-1-u5-e4-example-4-1", "세 분모를 찾아 단위분수 식 완성하기", 57, 58],
+      ["5-1-u5-e4-example-4-2", "두 분모의 합이 정해진 단위분수의 합을 가장 작게 하기", 57, 58],
+      ["5-1-u5-e4-example-4-3", "짝지은 수의 차를 이용해 단위분수 더하기", 57, 58],
+      ["5-1-u5-e4-example-4-4", "분수열의 규칙을 찾아 많은 항 더하기", 57, 58],
+      ["5-1-u5-e4-mission-1", "규칙을 찾아 여러 분수 더하기", 58, 59],
+      ["5-1-u5-e4-mission-2", "두 분수 사이에 있는 단위분수 세기", 58, 59],
+      ["5-1-u5-e4-mission-3", "두 단위분수의 차로 두 분모 찾기", 58, 59],
+      ["5-1-u5-e4-mission-4", "범위 안의 두 분모를 찾아 식 완성하기", 58, 59],
+      ["5-1-u5-e4-mission-5", "분수를 서로 다른 세 단위분수의 합으로 나타내기", 58, 59],
+      ["5-1-u5-e4-mission-6", "여섯 단위분수 중 네 개를 골라 1 만들기", 58, 59]
+    ]]
+  ];
+
   const semester = (id, units) => ({
     id,
     grade: Number(id[0]),
@@ -941,7 +1086,7 @@
       ["약분과 통분",
         ...fractionReductionGroups.map(([name, exploration, items]) => detailed(name, `equalFractionE${exploration}`, items.map(([suffix, label], variant) => ({ ...sourceItem54(label, `5-1-u4-e${exploration}-${suffix}`, exploration), variant })))),
       ],
-      ["분수의 덧셈과 뺄셈", "분수의 덧셈", "분수의 뺄셈", "식 세워 풀기", "단위분수와 부분분수"],
+      ["분수의 덧셈과 뺄셈", ...fractionAddSubGroups.map(([name, generatorKey, items]) => detailed(name, generatorKey, items.map(([sourceItemId, label, pdfPage, printedPage], variant) => ({ ...sourceItem55(label, sourceItemId, pdfPage, printedPage), variant }))))],
       ["다각형의 둘레와 넓이", "다각형의 둘레", "직사각형과 직각삼각형의 넓이", "둘레와 넓이", "여러 가지 사각형의 넓이"]
     ]),
     semester("5-2", [

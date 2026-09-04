@@ -20042,6 +20042,842 @@
       const answer = `${numerator}/${candidates[0].denominator}`;
       return result(`분자가 ${numerator}이고 분모가 ${120 + level * 40} 이하인 기약분수 중 ${targetN}/${targetD}에 가장 가까운 분수를 구하세요.`, answer, `${targetN}/${targetD}와의 차는 |${numerator}×${targetD}-${targetN}×d|/(${targetD}×d)로 비교합니다. 조건에 맞는 분모 중 가장 가까운 것은 ${candidates[0].denominator}이므로 답은 ${answer}입니다.`);
     },
+    fractionAdditionE1({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 15) throw new Error("분수의 덧셈 개념탐구 1 원문 분기는 0부터 15까지여야 합니다.");
+      const sourceIds = [
+        "5-1-u5-e1-exploration-proper-addition", "5-1-u5-e1-exploration-mixed-addition",
+        "5-1-u5-e1-example-1-1-1", "5-1-u5-e1-example-1-1-2", "5-1-u5-e1-example-1-1-3",
+        "5-1-u5-e1-example-1-2", "5-1-u5-e1-example-1-3", "5-1-u5-e1-example-1-4",
+        "5-1-u5-e1-mission-1-proper-two-term", "5-1-u5-e1-mission-1-mixed-two-term",
+        "5-1-u5-e1-mission-1-proper-three-term", "5-1-u5-e1-mission-2", "5-1-u5-e1-mission-3",
+        "5-1-u5-e1-mission-4", "5-1-u5-e1-mission-5", "5-1-u5-e1-mission-6"
+      ];
+      const choose = pools => pick(rng, pools[level]);
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-fraction-addition-e1-kind="${kind}" data-source-item="${sourceIds[variant]}" data-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const addAll = values => values.reduce((sum, value) => rationalOperation(sum, value, "+"), rationalValue(0));
+      const display = value => mixedFraction(value.numerator, value.denominator);
+      const markup = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const expression = values => `<div class="equation">${values.map(markup).join(" + ")} = □</div>`;
+      const hint = level === 0 ? " 풀이 도움: 분모를 같게 바꾼 뒤 분자끼리 더하세요." : level === 2 ? " 답을 구한 뒤 기약분수나 대분수로 바르게 나타냈는지 확인하세요." : "";
+
+      if (variant === 0 || variant === 8) {
+        const [firstNumerator, firstDenominator, secondNumerator, secondDenominator] = choose([
+          [[3, 7, 5, 11], [5, 8, 7, 12], [4, 9, 5, 14]],
+          [[7, 15, 11, 18], [9, 14, 13, 21], [11, 20, 8, 15]],
+          [[17, 28, 23, 45], [19, 32, 29, 54], [31, 48, 37, 60]]
+        ]);
+        const values = [rationalValue(firstNumerator, firstDenominator), rationalValue(secondNumerator, secondDenominator)];
+        const total = addAll(values);
+        return result(`다음 두 진분수를 더하세요.${expression(values)}${hint}${tag(variant === 0 ? "proper-addition" : "proper-two-term-practice", [firstNumerator, firstDenominator, secondNumerator, secondDenominator])}`, display(total), `두 분모의 최소공배수로 통분하여 더하면 ${markup(total)}입니다.`);
+      }
+      if (variant === 1 || variant === 9) {
+        const [firstWhole, firstNumerator, firstDenominator, secondWhole, secondNumerator, secondDenominator] = choose([
+          [[3, 2, 7, 4, 3, 8], [4, 5, 9, 2, 7, 12], [5, 3, 8, 3, 5, 14]],
+          [[8, 7, 15, 6, 11, 18], [11, 9, 14, 7, 13, 21], [13, 11, 20, 9, 8, 15]],
+          [[21, 17, 28, 18, 23, 45], [32, 19, 32, 24, 29, 54], [45, 31, 48, 37, 37, 60]]
+        ]);
+        const values = [rationalValue(firstWhole * firstDenominator + firstNumerator, firstDenominator), rationalValue(secondWhole * secondDenominator + secondNumerator, secondDenominator)];
+        const total = addAll(values);
+        return result(`다음 두 대분수를 더하세요.${expression(values)}${hint}${tag(variant === 1 ? "mixed-addition" : "mixed-two-term-practice", [firstWhole, firstNumerator, firstDenominator, secondWhole, secondNumerator, secondDenominator])}`, display(total), `자연수 부분과 분수 부분을 더하고 받아올림하면 ${markup(total)}입니다.`);
+      }
+      if (variant === 2) {
+        const raw = choose([
+          [[[3, 5], [11, 4], [14, 3], [5, 6]], [[4, 7], [17, 6], [13, 4], [7, 10]]],
+          [[[7, 12], [31, 8], [29, 6], [11, 15]], [[9, 14], [43, 10], [37, 8], [13, 18]]],
+          [[[17, 24], [91, 16], [83, 15], [29, 36]], [[19, 28], [121, 18], [109, 20], [31, 42]]]
+        ]);
+        const values = raw.map(([numerator, denominator]) => rationalValue(numerator, denominator));
+        const total = addAll(values);
+        return result(`다음 여러 분수와 대분수를 모두 더하세요.${expression(values)}${hint}${tag("mixed-four-term-addition", raw.flat())}`, display(total), `각 분모의 최소공배수로 통분하여 네 수를 더하면 ${markup(total)}입니다.`);
+      }
+      if (variant === 3) {
+        const [firstDenominator, secondDenominator, firstA, firstB, secondA, secondB, firstWhole, secondWhole] = choose([
+          [[11, 13, 5, 7, 5, 8, 2, 3], [9, 14, 4, 5, 7, 9, 3, 4]],
+          [[17, 19, 7, 11, 9, 13, 5, 7], [21, 25, 8, 13, 11, 17, 6, 9]],
+          [[29, 31, 13, 19, 17, 23, 12, 15], [35, 41, 16, 27, 21, 32, 18, 24]]
+        ]);
+        const values = [
+          rationalValue(firstA, firstDenominator), rationalValue(firstWhole * secondDenominator + secondA, secondDenominator),
+          rationalValue(secondWhole * firstDenominator + firstB, firstDenominator), rationalValue(secondB, secondDenominator)
+        ];
+        const total = addAll(values);
+        return result(`분모가 같은 분수끼리 먼저 묶어 다음 계산을 하세요.${expression(values)}${hint}${tag("regroup-same-denominators", [firstDenominator, secondDenominator, firstA, firstB, secondA, secondB, firstWhole, secondWhole])}`, display(total), `분모가 ${firstDenominator}인 두 항과 분모가 ${secondDenominator}인 두 항을 각각 묶어 더하면 ${markup(total)}입니다.`);
+      }
+      if (variant === 4 || variant === 15) {
+        const lastDenominator = choose([[6, 7, 8], [8, 9, 10], [10, 11, 12]]);
+        const terms = [];
+        for (let denominator = 2; denominator <= lastDenominator; denominator += 1) {
+          for (let numerator = 1; numerator < denominator; numerator += 1) terms.push(rationalValue(numerator, denominator));
+        }
+        const extraOnes = variant === 15 ? lastDenominator : 0;
+        const total = rationalOperation(addAll(terms), rationalValue(extraOnes), "+");
+        const groups = Array.from({ length: lastDenominator - 1 }, (_, index) => {
+          const denominator = index + 2;
+          return Array.from({ length: denominator - 1 }, (__, numerator) => fractionMarkup(numerator + 1, denominator)).join(" + ");
+        });
+        const shown = variant === 15 ? `1 + ${groups.join(" + 1 + ")} + 1` : groups.join(" + ");
+        return result(`분모별로 묶어 규칙을 찾아 다음 합을 구하세요.<div class="equation">${shown} = □</div>${tag(variant === 4 ? "grouped-fraction-series" : "grouped-series-with-ones", [lastDenominator, extraOnes])}`, display(total), `분모가 n인 묶음은 ${symbolicFractionMarkup("1+2+…+(n-1)", "n")}=${symbolicFractionMarkup("n-1", "2")}입니다. 모든 묶음${extraOnes ? `과 자연수 1을 ${extraOnes}개` : ""} 더하면 ${markup(total)}입니다.`);
+      }
+      if (variant === 5) {
+        const cards = choose([
+          [[2, 3, 4, 5, 7, 9], [1, 3, 4, 6, 7, 8], [2, 4, 5, 6, 8, 9]],
+          [[1, 4, 5, 7, 8, 9], [2, 3, 5, 6, 8, 9], [1, 3, 5, 6, 7, 9]],
+          [[2, 5, 6, 7, 8, 9], [1, 4, 6, 7, 8, 9], [3, 4, 5, 7, 8, 9]]
+        ]);
+        const arrangements = [];
+        const visit = (picked, rest) => {
+          if (!rest.length) {
+            if (picked[1] >= picked[2] || picked[4] >= picked[5]) return;
+            arrangements.push({ cards: picked, value: rationalOperation(rationalValue(picked[0] * picked[2] + picked[1], picked[2]), rationalValue(picked[3] * picked[5] + picked[4], picked[5]), "+") });
+            return;
+          }
+          rest.forEach((card, index) => visit([...picked, card], [...rest.slice(0, index), ...rest.slice(index + 1)]));
+        };
+        visit([], cards);
+        arrangements.sort((left, right) => right.value.numerator * left.value.denominator - left.value.numerator * right.value.denominator);
+        const answer = arrangements[0].value;
+        const winners = arrangements.filter(item => item.value.numerator * answer.denominator === answer.numerator * item.value.denominator);
+        return result(`여섯 수 카드를 한 번씩 모두 사용하여 대분수 두 개를 만듭니다. 두 대분수의 합이 가장 클 때 그 합을 구하세요.<div class="number-cards">${cards.map(card => `<span class="number-card">${card}</span>`).join("")}</div>${tag("digit-card-max-mixed-sum", cards, "maximum")}`, display(answer), `가능한 카드 배치를 모두 확인하면 가장 큰 합은 ${markup(answer)}입니다. 이 값을 만드는 배치는 ${winners.length}개이지만 가장 큰 합은 하나입니다.`);
+      }
+      if (variant === 6) {
+        const [firstMinutes, secondMinutes, targetNumerator, targetDenominator] = choose([
+          [[15, 12, 3, 4], [18, 12, 2, 3], [20, 15, 4, 5]],
+          [[24, 18, 5, 6], [28, 21, 3, 4], [30, 20, 7, 8]],
+          [[36, 28, 7, 9], [42, 30, 5, 7], [45, 36, 11, 12]]
+        ]);
+        const rate = rationalOperation(rationalValue(1, firstMinutes), rationalValue(1, secondMinutes), "+");
+        const target = rationalValue(targetNumerator, targetDenominator);
+        const answer = rationalOperation(target, rate, "÷");
+        return result(`어떤 수조를 첫 수도꼭지만 틀면 ${firstMinutes}분, 둘째 수도꼭지만 틀면 ${secondMinutes}분 만에 가득 채웁니다. 두 수도꼭지를 함께 틀어 전체의 ${fractionMarkup(targetNumerator, targetDenominator)}만큼 채우는 데 걸리는 시간을 구하세요.${tag("two-tap-target-time", [firstMinutes, secondMinutes, targetNumerator, targetDenominator])}`, `${display(answer)}분`, `1분 동안 두 수도꼭지가 채우는 양은 ${fractionMarkup(rate.numerator, rate.denominator)}입니다. ${fractionMarkup(targetNumerator, targetDenominator)}을 이 양으로 나누면 ${markup(answer)}분입니다.`);
+      }
+      if (variant === 7) {
+        const [targetNumerator, targetDenominator, limit] = choose([
+          [[5, 12, 40], [7, 15, 45], [11, 20, 50]],
+          [[7, 18, 55], [13, 30, 60], [17, 36, 65]],
+          [[19, 42, 70], [23, 48, 75], [29, 60, 80]]
+        ]);
+        const candidates = [];
+        for (let firstDenominator = 10; firstDenominator <= 99; firstDenominator += 1) {
+          for (let secondDenominator = firstDenominator + 1; secondDenominator <= 99; secondDenominator += 1) {
+            if (lcm(firstDenominator, secondDenominator) >= limit) continue;
+            for (let firstNumerator = 1; firstNumerator < firstDenominator; firstNumerator += 1) {
+              if (gcd(firstNumerator, firstDenominator) !== 1) continue;
+              const needed = rationalOperation(rationalValue(targetNumerator, targetDenominator), rationalValue(firstNumerator, firstDenominator), "-");
+              if (!needed || needed.numerator <= 0 || needed.denominator !== secondDenominator || gcd(needed.numerator, needed.denominator) !== 1) continue;
+              candidates.push([firstNumerator, firstDenominator, needed.numerator, secondDenominator]);
+            }
+          }
+        }
+        return result(`분모가 서로 다른 두 기약 진분수의 분모는 두 자리 수이고, 두 분모의 최소공배수는 ${limit}보다 작습니다. 두 분수의 합이 ${fractionMarkup(targetNumerator, targetDenominator)}이 되는 덧셈식은 모두 몇 개인지 구하세요. 더하는 순서만 다른 식은 하나로 봅니다.${tag("irreducible-pair-sum-count", [targetNumerator, targetDenominator, limit, candidates.length])}`, `${candidates.length}개`, `분모의 최소공배수 조건을 만족하는 두 자리 분모의 짝을 모두 확인하면 조건에 맞는 덧셈식은 ${candidates.length}개입니다.`);
+      }
+      if (variant === 10) {
+        const raw = choose([
+          [[[3, 5], [2, 9], [5, 12]], [[5, 8], [3, 10], [7, 15]]],
+          [[[7, 12], [5, 18], [11, 20]], [[9, 14], [8, 21], [13, 24]]],
+          [[[17, 28], [13, 36], [19, 45]], [[23, 40], [29, 54], [31, 60]]]
+        ]);
+        const values = raw.map(([numerator, denominator]) => rationalValue(numerator, denominator));
+        const total = addAll(values);
+        return result(`다음 세 진분수를 더하세요.${expression(values)}${hint}${tag("proper-three-term-practice", raw.flat())}`, display(total), `세 분모의 최소공배수로 통분하여 더하면 ${markup(total)}입니다.`);
+      }
+      if (variant === 11) {
+        const [leftNumerator, leftDenominator, rightNumerator, rightDenominator] = choose([
+          [[5, 8, 2, 3], [3, 7, 4, 7], [7, 12, 3, 4]],
+          [[7, 15, 11, 15], [5, 12, 3, 4], [11, 20, 17, 20]],
+          [[13, 28, 23, 28], [17, 36, 31, 36], [19, 42, 37, 42]]
+        ]);
+        const left = rationalValue(leftNumerator, leftDenominator);
+        const right = rationalValue(rightNumerator, rightDenominator);
+        const step = rationalOperation(rationalOperation(right, left, "-"), rationalValue(10), "÷");
+        const smallest = rationalOperation(left, step, "+");
+        const largest = rationalOperation(right, step, "-");
+        const answer = rationalOperation(smallest, largest, "+");
+        return result(`${fractionMarkup(leftNumerator, leftDenominator)}과 ${fractionMarkup(rightNumerator, rightDenominator)} 사이를 10등분하는 분수 중 가장 작은 수와 가장 큰 수의 합을 구하세요.${tag("ten-part-inner-endpoint-sum", [leftNumerator, leftDenominator, rightNumerator, rightDenominator])}`, display(answer), `두 분수의 차를 10으로 나눈 만큼씩 움직입니다. 안쪽의 첫 수와 마지막 수를 더하면 ${markup(answer)}입니다.`);
+      }
+      if (variant === 12) {
+        const [firstWhole, firstNumerator, firstDenominator, secondNumerator, secondDenominator, upper, answerWhole] = choose([
+          [[4, 25, 27, 11, 15, 18, 7], [3, 7, 12, 5, 8, 17, 7], [5, 11, 18, 7, 10, 20, 8]],
+          [[8, 17, 24, 13, 18, 30, 14], [11, 19, 28, 17, 20, 36, 17], [13, 23, 30, 19, 24, 42, 20]],
+          [[21, 31, 40, 29, 36, 60, 29], [32, 37, 48, 35, 42, 78, 37], [45, 41, 54, 43, 50, 96, 45]]
+        ]);
+        const fixed = rationalOperation(rationalValue(firstWhole * firstDenominator + firstNumerator, firstDenominator), rationalValue(secondNumerator, secondDenominator), "+");
+        const lowerAtAnswer = rationalOperation(fixed, rationalValue(answerWhole), "+");
+        const firstNatural = Math.floor(lowerAtAnswer.numerator / lowerAtAnswer.denominator) + 1;
+        const count = upper - firstNatural;
+        if (count < 1) throw new Error("두 대분수 사이 자연수 조건을 만들지 못했습니다.");
+        const symbolicMixed = `<span class="math-mixed-number" role="img" aria-label="㉠와 ${secondDenominator}분의 ${secondNumerator}"><span>㉠</span>${fractionMarkup(secondNumerator, secondDenominator)}</span>`;
+        return result(`${mixedFractionMarkup(firstWhole * firstDenominator + firstNumerator, firstDenominator)} + ${symbolicMixed} &lt; □ &lt; ${upper}에서 □에 들어갈 수 있는 자연수가 ${count}개일 때, 둘째 대분수의 자연수 부분 ㉠을 구하세요.${tag("mixed-sum-natural-count", [firstWhole, firstNumerator, firstDenominator, secondNumerator, secondDenominator, upper, count, answerWhole])}`, answerWhole, `㉠=${answerWhole}일 때 왼쪽 두 대분수의 합은 ${markup(lowerAtAnswer)}입니다. 이 수보다 크고 ${upper}보다 작은 자연수는 ${firstNatural}부터 ${upper - 1}까지 ${count}개이며, ㉠은 ${answerWhole} 하나입니다.`);
+      }
+      if (variant === 13) {
+        const primes = [2, 3, 5, 7];
+        const candidates = [];
+        const visit = (picked, rest) => {
+          if (!rest.length) {
+            if (picked[0] >= picked[1] || picked[2] >= picked[3]) return;
+            candidates.push(rationalOperation(rationalValue(picked[0], picked[1]), rationalValue(picked[2], picked[3]), "+"));
+            return;
+          }
+          rest.forEach((value, index) => visit([...picked, value], [...rest.slice(0, index), ...rest.slice(index + 1)]));
+        };
+        visit([], primes);
+        candidates.sort((left, right) => left.numerator * right.denominator - right.numerator * left.denominator);
+        const answer = candidates[0];
+        return result(`㉠, ㉡, ㉢, ㉣은 서로 다른 한 자리 수이고, 각 수의 약수는 2개입니다. 두 진분수 ${symbolicFractionMarkup("㉠", "㉡")}과 ${symbolicFractionMarkup("㉢", "㉣")}의 합이 가장 작을 때 그 값을 구하세요.${tag("four-prime-digit-min-sum", primes, "minimum")}`, display(answer), `조건을 만족하는 네 수는 2, 3, 5, 7입니다. 가능한 배치를 모두 확인하면 가장 작은 합은 ${fractionMarkup(2, 5)}+${fractionMarkup(3, 7)}=${markup(answer)}입니다.`);
+      }
+      if (variant === 14) {
+        const [numerator, firstDenominator, secondDenominator, thirdDenominator] = choose([
+          [[5, 6, 12, 16], [7, 8, 16, 24], [11, 12, 24, 30]],
+          [[13, 15, 24, 40], [17, 18, 36, 48], [19, 20, 40, 60]],
+          [[23, 24, 48, 72], [29, 30, 60, 80], [31, 32, 64, 96]]
+        ]);
+        const fixed = addAll([rationalValue(numerator, firstDenominator), rationalValue(numerator, secondDenominator), rationalValue(numerator, thirdDenominator)]);
+        const nextNatural = Math.floor(fixed.numerator / fixed.denominator) + 1;
+        const missing = rationalOperation(rationalValue(nextNatural), fixed, "-");
+        if (!missing || missing.numerator <= 0 || missing.numerator >= missing.denominator) throw new Error("가장 작은 자연수 합을 만드는 기약분수를 만들지 못했습니다.");
+        const answer = missing.numerator + missing.denominator;
+        return result(`다음 네 기약분수의 합은 자연수입니다. 합이 가장 작을 때 ㄱ+ㄴ을 구하세요.<div class="equation">${fractionMarkup(numerator, firstDenominator)}, ${fractionMarkup(numerator, secondDenominator)}, ${fractionMarkup(numerator, thirdDenominator)}, ${symbolicFractionMarkup("ㄴ", "ㄱ")}</div>${tag("missing-fraction-for-smallest-natural-sum", [numerator, firstDenominator, secondDenominator, thirdDenominator, missing.numerator, missing.denominator])}`, answer, `앞의 세 분수의 합은 ${markup(fixed)}이므로 가장 가까운 큰 자연수 ${nextNatural}이 되려면 마지막 분수는 ${markup(missing)}입니다. 따라서 ㄱ+ㄴ=${missing.denominator}+${missing.numerator}=${answer}입니다.`);
+      }
+      throw new Error("분수의 덧셈 개념탐구 1 유형을 만들지 못했습니다.");
+    },
+    fractionSubtractionE2({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 16) throw new Error("분수의 뺄셈 개념탐구 2 원문 분기는 0부터 16까지여야 합니다.");
+      const sourceIds = [
+        "5-1-u5-e2-exploration-1", "5-1-u5-e2-exploration-2", "5-1-u5-e2-exploration-3", "5-1-u5-e2-exploration-4",
+        "5-1-u5-e2-example-2-1", "5-1-u5-e2-example-2-2", "5-1-u5-e2-example-2-3", "5-1-u5-e2-example-2-4",
+        "5-1-u5-e2-mission-1-1", "5-1-u5-e2-mission-1-2", "5-1-u5-e2-mission-1-3-4", "5-1-u5-e2-mission-1-5",
+        "5-1-u5-e2-mission-2", "5-1-u5-e2-mission-3", "5-1-u5-e2-mission-4", "5-1-u5-e2-mission-5", "5-1-u5-e2-mission-6"
+      ];
+      const choose = pools => {
+        const levelPools = pools[level];
+        if (Array.isArray(levelPools) && Array.isArray(levelPools[0])) return pick(rng, levelPools);
+        return pick(rng, pools.slice(level * 3, level * 3 + 3));
+      };
+      const chooseFlat = pools => pick(rng, pools.slice(level * 3, level * 3 + 3));
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-fraction-subtraction-e2-kind="${kind}" data-source-item="${sourceIds[variant]}" data-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const mixedValue = (whole, numerator, denominator) => rationalValue(whole * denominator + numerator, denominator);
+      const display = value => mixedFraction(value.numerator, value.denominator);
+      const markup = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const properMarkup = (numerator, denominator) => fractionMarkup(numerator, denominator);
+      const expression = (values, operators) => `<div class="equation">${values.map((value, index) => `${index ? ` ${operators[index - 1]} ` : ""}${markup(value)}`).join("")} = □</div>`;
+      const subtraction = (left, right) => rationalOperation(left, right, "-");
+      const add = (left, right) => rationalOperation(left, right, "+");
+      const compare = (left, right) => left.numerator * right.denominator - right.numerator * left.denominator;
+      const chooseMaximum = candidates => {
+        if (!candidates.length) throw new Error("최댓값을 비교할 수 있는 후보가 없습니다.");
+        const best = candidates.reduce((current, candidate) => compare(candidate.value, current.value) > 0 ? candidate : current, candidates[0]);
+        return { ...best, winners: candidates.filter(candidate => compare(candidate.value, best.value) === 0) };
+      };
+
+      if (variant === 0) {
+        const [firstNumerator, firstDenominator, secondNumerator, secondDenominator] = choose([
+          [[5, 6, 1, 4], [7, 8, 2, 5], [9, 10, 3, 7]],
+          [[11, 15, 4, 9], [13, 16, 5, 12], [17, 21, 8, 15]],
+          [[23, 32, 7, 18], [29, 36, 11, 24], [31, 40, 13, 28]]
+        ]);
+        const first = rationalValue(firstNumerator, firstDenominator);
+        const second = rationalValue(secondNumerator, secondDenominator);
+        const difference = subtraction(first, second);
+        if (!difference || difference.numerator <= 0) throw new Error("진분수 뺄셈의 차가 양수가 아닙니다.");
+        return result(`다음 두 진분수의 차를 구하세요.${expression([first, second], ["-"])}${tag("proper-subtraction", [firstNumerator, firstDenominator, secondNumerator, secondDenominator])}`, display(difference), `분모를 같게 바꾸어 분자를 뺍니다. ${markup(first)}-${markup(second)}=${markup(difference)}입니다.`);
+      }
+      if (variant === 1) {
+        const [a, b, c, d, e, f] = choose([
+          [11, 12, 3, 8, 1, 6], [13, 15, 2, 5, 1, 4], [17, 20, 5, 12, 1, 8],
+          [23, 28, 5, 14, 1, 7], [29, 35, 7, 15, 2, 9], [31, 36, 5, 18, 1, 9],
+          [41, 48, 7, 16, 3, 14], [47, 54, 5, 18, 2, 15], [53, 60, 7, 20, 3, 16]
+        ]);
+        const values = [rationalValue(a, b), rationalValue(c, d), rationalValue(e, f)];
+        const difference = subtraction(subtraction(values[0], values[1]), values[2]);
+        if (!difference || difference.numerator <= 0) throw new Error("진분수 세 항 뺄셈의 차가 양수가 아닙니다.");
+        return result(`다음 세 진분수를 차례로 빼세요.${expression(values, ["-", "-"])}${tag("proper-three-term-subtraction", [a, b, c, d, e, f])}`, display(difference), `앞의 두 분수를 먼저 뺀 뒤 마지막 분수를 뺍니다. 계산 결과는 ${markup(difference)}입니다.`);
+      }
+      if (variant === 2) {
+        const [aw, an, ad, bw, bn, bd] = choose([
+          [6, 2, 5, 2, 1, 3], [7, 3, 8, 3, 2, 5], [9, 4, 7, 6, 1, 4],
+          [13, 5, 12, 4, 7, 9], [15, 7, 14, 6, 5, 8], [18, 5, 16, 8, 11, 12],
+          [24, 11, 15, 9, 7, 14], [27, 13, 18, 11, 5, 16], [31, 17, 21, 13, 9, 20]
+        ]);
+        const first = mixedValue(aw, an, ad);
+        const second = mixedValue(bw, bn, bd);
+        const difference = subtraction(first, second);
+        if (!difference || difference.numerator <= 0) throw new Error("대분수 뺄셈의 차가 양수가 아닙니다.");
+        return result(`다음 두 대분수의 차를 구하세요.${expression([first, second], ["-"])}${tag("mixed-subtraction", [aw, an, ad, bw, bn, bd])}`, display(difference), `자연수 부분과 분수 부분을 나누어 계산한 뒤, 분모를 같게 바꾸어 ${markup(difference)}를 얻습니다.`);
+      }
+      if (variant === 3) {
+        const [aw, an, ad, bw, bn, bd, cw, cn, cd] = choose([
+          [9, 3, 10, 4, 2, 5, 1, 1, 6], [11, 5, 12, 3, 7, 8, 2, 1, 9], [14, 7, 15, 5, 4, 9, 2, 3, 10],
+          [21, 8, 14, 7, 5, 11, 3, 2, 9], [25, 11, 18, 9, 7, 13, 4, 3, 12], [28, 13, 20, 11, 8, 15, 5, 2, 14],
+          [38, 17, 24, 13, 7, 18, 6, 5, 16], [42, 19, 27, 15, 11, 20, 8, 3, 18], [47, 23, 31, 17, 9, 24, 7, 5, 21]
+        ]);
+        const values = [mixedValue(aw, an, ad), mixedValue(bw, bn, bd), mixedValue(cw, cn, cd)];
+        const difference = subtraction(subtraction(values[0], values[1]), values[2]);
+        if (!difference || difference.numerator <= 0) throw new Error("대분수 세 항 뺄셈의 차가 양수가 아닙니다.");
+        return result(`다음 세 대분수를 차례로 빼세요.${expression(values, ["-", "-"])}${tag("mixed-three-term-subtraction", [aw, an, ad, bw, bn, bd, cw, cn, cd])}`, display(difference), `앞의 수에서 둘째 수를 뺀 뒤 셋째 수를 다시 빼면 ${markup(difference)}입니다.`);
+      }
+      if (variant === 4) {
+        const cards = chooseFlat([
+          [[5, 8], [3, 7], [2, 5], [4, 9]], [[7, 10], [5, 12], [3, 8], [4, 11]], [[11, 15], [7, 16], [5, 14], [9, 20]],
+          [[13, 18], [7, 15], [5, 16], [11, 24]], [[17, 22], [9, 20], [7, 18], [13, 28]], [[19, 25], [11, 24], [7, 22], [13, 30]],
+          [[23, 30], [13, 28], [11, 26], [17, 36]], [[29, 35], [17, 32], [13, 30], [19, 40]], [[31, 42], [19, 36], [17, 38], [23, 48]]
+        ]);
+        const candidates = [];
+        for (let a = 0; a < cards.length; a += 1) for (let b = 0; b < cards.length; b += 1) for (let c = 0; c < cards.length; c += 1) {
+          if (a === b || a === c || b === c) continue;
+          const value = subtraction(add(rationalValue(...cards[a]), rationalValue(...cards[b])), rationalValue(...cards[c]));
+          if (value && value.numerator > 0) candidates.push({ value, order: [a, b, c] });
+        }
+        const best = chooseMaximum(candidates);
+        return result(`다음 네 분수 중 세 개를 골라 □+□-□가 가장 크게 되도록 하세요.<div class="number-cards">${cards.map(([n, d]) => `<span class="number-card">${properMarkup(n, d)}</span>`).join("")}</div>${answerEquation("card-max-a-plus-b-minus-c", display(best.value), "세 카드를 한 번씩 사용하여 □+□-□를 만드세요.")}${tag("card-max-a-plus-b-minus-c", cards.flat(), "maximum")}`, display(best.value), `가능한 세 카드의 선택과 순서를 모두 비교하면 최댓값은 ${markup(best.value)}입니다.`);
+      }
+      if (variant === 5) {
+        const [startNumerator, denominator, stepNumerator] = choose([
+          [47, 4, 5], [38, 3, 4], [59, 5, 6], [71, 6, 7], [83, 7, 8], [95, 8, 9], [107, 9, 10], [119, 10, 11], [131, 11, 12]
+        ]);
+        const start = rationalValue(startNumerator, denominator);
+        const step = rationalValue(stepNumerator, denominator);
+        const values = Array.from({ length: 6 }, (_, index) => subtraction(start, rationalValue(stepNumerator * index, denominator)));
+        if (values.some(value => !value || value.numerator <= 0) || compare(step, rationalValue(0)) <= 0) throw new Error("내림차순 분수 수열을 만들지 못했습니다.");
+        const sequence = values.map((value, index) => index === 3 ? "㉠" : index === 5 ? "㉡" : markup(value)).join(", ");
+        const answer = `${display(values[3])}, ${display(values[5])}`;
+        return result(`다음은 일정한 차이로 줄어드는 대분수 수열입니다.<div class="sequence">${sequence}</div>㉠과 ㉡에 알맞은 수를 차례로 구하세요.${tag("descending-mixed-sequence-blanks", [startNumerator, denominator, stepNumerator, 3, 5], "ordered-pair")}`, answer, `이웃한 두 수의 차이는 ${markup(step)}입니다. 같은 차이를 차례로 빼면 ㉠=${markup(values[3])}, ㉡=${markup(values[5])}입니다.`);
+      }
+      if (variant === 6) {
+        const [firstNumerator, firstDenominator, secondNumerator, secondDenominator, bothNumerator, bothDenominator] = choose([
+          [5, 6, 4, 9, 2, 5], [7, 8, 3, 10, 1, 4], [11, 15, 5, 12, 1, 6],
+          [13, 18, 7, 20, 2, 9], [17, 24, 11, 30, 1, 8], [19, 28, 13, 36, 1, 9],
+          [23, 35, 17, 42, 3, 14], [29, 40, 11, 48, 1, 12], [31, 45, 23, 54, 2, 15]
+        ]);
+        const first = rationalValue(firstNumerator, firstDenominator);
+        const second = rationalValue(secondNumerator, secondDenominator);
+        const both = rationalValue(bothNumerator, bothDenominator);
+        const union = add(subtraction(add(first, second), both), rationalValue(0));
+        const answer = subtraction(rationalValue(1), union);
+        if (!answer || answer.numerator <= 0) throw new Error("두 집단의 여집합 비율이 양수가 아닙니다.");
+        return result(`전체를 1이라고 할 때, 첫 번째 활동을 좋아하는 비율은 ${properMarkup(firstNumerator, firstDenominator)}, 두 번째 활동을 좋아하는 비율은 ${properMarkup(secondNumerator, secondDenominator)}, 두 활동을 모두 좋아하는 비율은 ${properMarkup(bothNumerator, bothDenominator)}입니다. 어느 것도 좋아하지 않는 비율을 구하세요.${tag("neither-group-inclusion-exclusion", [firstNumerator, firstDenominator, secondNumerator, secondDenominator, bothNumerator, bothDenominator])}`, display(answer), `두 활동 중 하나 이상을 좋아하는 비율은 ${markup(first)}+${markup(second)}-${markup(both)}입니다. 전체에서 이 비율을 빼면 답은 ${markup(answer)}입니다.`);
+      }
+      if (variant === 7) {
+        const [firstMinutes, secondMinutes, extraMinutes, togetherMinutes] = choose([
+          [8, 6, 4, 4], [10, 8, 3, 5], [12, 9, 3, 6],
+          [15, 10, 5, 6], [18, 12, 4, 8], [20, 15, 5, 8],
+          [24, 16, 8, 10], [28, 21, 7, 12], [30, 20, 10, 12]
+        ]);
+        const changedSecondMinutes = secondMinutes + extraMinutes;
+        const rate = add(rationalValue(1, firstMinutes), rationalValue(1, changedSecondMinutes));
+        const amount = rationalOperation(rationalValue(togetherMinutes), rate, "×");
+        if (!amount || amount.numerator <= 0 || compare(amount, rationalValue(1)) > 0) throw new Error("구멍 난 물통의 채운 양이 범위를 벗어났습니다.");
+        return result(`㉠ 수도꼭지는 물통을 ${firstMinutes}분에, ㉡ 수도꼭지는 ${secondMinutes}분에 가득 채웁니다. 물통에 구멍이 난 뒤 ㉡ 수도꼭지는 ${extraMinutes}분이 더 걸립니다. 두 수도꼭지를 함께 ${togetherMinutes}분 틀었을 때 채워지는 물의 양은 전체의 얼마인지 구하세요.${tag("leaky-tank-two-faucets", [firstMinutes, secondMinutes, extraMinutes, togetherMinutes])}`, display(amount), `구멍이 난 뒤 ㉡ 수도꼭지는 ${changedSecondMinutes}분에 채우므로 1분 동안 채우는 양은 ${properMarkup(1, firstMinutes)}+${properMarkup(1, changedSecondMinutes)}입니다. ${togetherMinutes}분 동안의 양은 ${markup(amount)}입니다.`);
+      }
+      if (variant === 8) {
+        const [a, b, c, d, e, f] = choose([
+          [7, 9, 5, 12, 1, 6], [11, 14, 3, 8, 1, 5], [13, 16, 7, 15, 2, 9],
+          [19, 24, 5, 14, 3, 16], [23, 30, 7, 18, 1, 12], [29, 36, 11, 20, 2, 15],
+          [37, 45, 13, 28, 3, 20], [41, 52, 17, 35, 5, 24], [47, 60, 19, 42, 7, 30]
+        ]);
+        const values = [rationalValue(a, b), rationalValue(c, d), rationalValue(e, f)];
+        const answer = subtraction(add(values[0], values[1]), values[2]);
+        if (!answer || answer.numerator <= 0) throw new Error("진분수 더하고 빼기의 결과가 양수가 아닙니다.");
+        return result(`다음 계산을 하세요.${expression(values, ["+", "-"])}${tag("proper-a-plus-b-minus-c", [a, b, c, d, e, f])}`, display(answer), `먼저 두 진분수를 더한 뒤 마지막 진분수를 빼면 ${markup(answer)}입니다.`);
+      }
+      if (variant === 9) {
+        const [whole, mixedNumerator, mixedDenominator, properNumerator, properDenominator] = choose([
+          [8, 3, 5, 2, 7], [11, 4, 7, 3, 8], [14, 5, 9, 4, 11],
+          [19, 7, 12, 5, 14], [23, 8, 15, 7, 16], [27, 11, 18, 5, 13],
+          [34, 13, 21, 8, 19], [41, 17, 26, 9, 22], [48, 19, 30, 11, 25]
+        ]);
+        const mixed = mixedValue(Math.floor(whole / 2), mixedNumerator, mixedDenominator);
+        const natural = rationalValue(whole);
+        const proper = rationalValue(properNumerator, properDenominator);
+        const answer = add(subtraction(natural, mixed), proper);
+        if (!answer || answer.numerator <= 0) throw new Error("자연수-대분수+진분수 결과가 양수가 아닙니다.");
+        return result(`다음 계산을 하세요.${expression([natural, mixed, proper], ["-", "+"])}${tag("natural-mixed-plus-proper", [whole, Math.floor(whole / 2), mixedNumerator, mixedDenominator, properNumerator, properDenominator])}`, display(answer), `자연수에서 대분수를 뺀 뒤 진분수를 더하면 ${markup(answer)}입니다.`);
+      }
+      if (variant === 10) {
+        const [aw, an, ad, bw, bn, bd, cw, cn, cd] = choose([
+          [8, 3, 5, 2, 1, 3, 1, 2, 7], [10, 5, 7, 3, 2, 5, 2, 1, 6], [13, 4, 9, 5, 3, 8, 1, 5, 11],
+          [18, 7, 12, 6, 5, 11, 2, 3, 10], [22, 9, 15, 8, 7, 13, 3, 5, 14], [27, 11, 18, 9, 4, 15, 2, 7, 16],
+          [36, 13, 21, 12, 7, 20, 4, 5, 18], [43, 17, 26, 14, 9, 22, 3, 7, 19], [51, 19, 30, 16, 11, 25, 5, 9, 23]
+        ]);
+        const values = [mixedValue(aw, an, ad), mixedValue(bw, bn, bd), mixedValue(cw, cn, cd)];
+        const answer = add(subtraction(values[0], values[1]), values[2]);
+        if (!answer || answer.numerator <= 0) throw new Error("대분수 a-b+c 결과가 양수가 아닙니다.");
+        return result(`다음 계산을 하세요.${expression(values, ["-", "+"])}${tag("mixed-a-minus-b-plus-c", [aw, an, ad, bw, bn, bd, cw, cn, cd])}`, display(answer), `첫째 대분수에서 둘째 대분수를 뺀 뒤 셋째 대분수를 더하면 ${markup(answer)}입니다.`);
+      }
+      if (variant === 11) {
+        const [ow, on, od, mw, mn, md, pn, pd, fw, fn, fd] = choose([
+          [12, 3, 4, 5, 1, 3, 1, 2, 2, 1, 4], [15, 5, 6, 6, 2, 5, 2, 3, 3, 1, 5], [18, 7, 8, 7, 3, 7, 1, 4, 2, 3, 6],
+          [25, 9, 10, 11, 5, 9, 3, 8, 4, 1, 7], [31, 11, 12, 14, 7, 11, 2, 9, 5, 3, 8], [38, 13, 15, 18, 9, 14, 3, 10, 4, 5, 11],
+          [49, 17, 18, 23, 11, 17, 5, 12, 7, 3, 13], [57, 19, 21, 29, 13, 20, 4, 15, 6, 7, 16], [68, 23, 24, 35, 17, 23, 7, 18, 8, 5, 19]
+        ]);
+        const outer = mixedValue(ow, on, od);
+        const mixed = mixedValue(mw, mn, md);
+        const proper = rationalValue(pn, pd);
+        const lastMixed = mixedValue(fw, fn, fd);
+        const inner = subtraction(add(mixed, proper), lastMixed);
+        const answer = subtraction(outer, inner);
+        if (!answer || answer.numerator <= 0 || !inner || inner.numerator <= 0) throw new Error("괄호가 있는 계산 결과가 양수가 아닙니다.");
+        return result(`다음 계산을 하세요.<div class="equation">${markup(outer)} - ( ${markup(mixed)} + ${markup(proper)} - ${markup(lastMixed)} ) = □</div>${tag("outer-minus-mixed-plus-proper-minus-mixed", [ow, on, od, mw, mn, md, pn, pd, fw, fn, fd])}`, display(answer), `괄호 안을 먼저 계산하면 ${markup(inner)}이고, ${markup(outer)}에서 이를 빼면 ${markup(answer)}입니다.`);
+      }
+      if (variant === 12) {
+        const raw = chooseFlat([
+          [[4, 15], [3, 4], [7, 10], [1, 2], [5, 6]], [[5, 18], [7, 9], [11, 15], [2, 3], [13, 14]], [[7, 24], [5, 8], [13, 20], [3, 5], [17, 18]],
+          [[11, 30], [9, 14], [17, 24], [5, 8], [19, 20]], [[13, 35], [11, 16], [23, 30], [7, 10], [29, 32]], [[17, 42], [13, 18], [29, 36], [9, 14], [31, 35]],
+          [[19, 48], [17, 22], [31, 40], [11, 15], [41, 42]], [[23, 54], [19, 26], [37, 45], [13, 17], [47, 50]], [[29, 60], [23, 30], [41, 52], [17, 21], [59, 63]]
+        ]);
+        const values = raw.map(([n, d]) => rationalValue(n, d));
+        const largest = values.reduce((best, value) => compare(value, best) > 0 ? value : best, values[0]);
+        const smallest = values.reduce((best, value) => compare(value, best) < 0 ? value : best, values[0]);
+        const answer = subtraction(largest, smallest);
+        return result(`다음 다섯 분수 중 가장 큰 수와 가장 작은 수의 차를 구하세요.<div class="sequence">${values.map(markup).join(", ")}</div>${tag("max-min-five-fractions", raw.flat())}`, display(answer), `다섯 분수를 통분하여 비교하면 가장 큰 수는 ${markup(largest)}, 가장 작은 수는 ${markup(smallest)}입니다. 두 수의 차는 ${markup(answer)}입니다.`);
+      }
+      if (variant === 13) {
+        const [emptyWhole, emptyNumerator, denominator, waterWhole, waterNumerator] = choose([
+          [1, 1, 3, 6, 2], [2, 1, 4, 7, 3], [3, 2, 5, 8, 4],
+          [4, 3, 7, 9, 5], [5, 4, 8, 11, 7], [6, 5, 9, 13, 8],
+          [8, 7, 11, 17, 9], [10, 9, 13, 19, 11], [12, 11, 15, 23, 13]
+        ]);
+        const empty = mixedValue(emptyWhole, emptyNumerator, denominator);
+        const water = mixedValue(waterWhole, waterNumerator, denominator);
+        const full = add(empty, water);
+        const after = add(empty, rationalValue(water.numerator, water.denominator * 2));
+        const answer = subtraction(rationalValue(after.numerator * 2, after.denominator), full);
+        if (!answer || answer.numerator <= 0 || compare(after, empty) <= 0) throw new Error("물통 무게 조건이 올바르지 않습니다.");
+        return result(`물이 가득 든 물통의 무게는 ${markup(full)}kg입니다. 물의 반을 사용한 뒤 물통의 무게는 ${markup(after)}kg입니다. 빈 물통의 무게를 구하세요.${tag("empty-container-half-water", [empty.numerator, empty.denominator, water.numerator, water.denominator, full.numerator, full.denominator, after.numerator, after.denominator])}`, display(answer), `가득 찬 물의 무게를 W, 빈 물통의 무게를 E라고 하면 전체는 E+W, 물의 반을 사용한 뒤는 E+${markup(rationalValue(water.numerator, water.denominator * 2))}입니다. 따라서 E=2×${markup(after)}-${markup(full)}=${markup(answer)}kg입니다.`);
+      }
+      if (variant === 14) {
+        const [aw, an, ad, bw, bn, bd, cw, cn, cd] = choose([
+          [3, 5, 9, 2, 11, 12, 5, 1, 6], [5, 2, 7, 3, 5, 8, 8, 3, 10], [7, 4, 11, 2, 7, 9, 10, 5, 12],
+          [11, 7, 15, 4, 9, 14, 16, 5, 18], [14, 5, 12, 6, 11, 16, 19, 7, 20], [18, 11, 21, 7, 13, 18, 24, 5, 22],
+          [27, 13, 28, 9, 17, 24, 35, 11, 30], [34, 19, 36, 11, 23, 30, 43, 13, 40], [41, 23, 45, 15, 29, 38, 52, 17, 48]
+        ]);
+        const a = mixedValue(aw, an, ad);
+        const b = mixedValue(bw, bn, bd);
+        const c = mixedValue(cw, cn, cd);
+        const answer = add(subtraction(c, a), b);
+        if (!answer || answer.numerator <= 0) throw new Error("빈칸 분수의 값이 양수가 아닙니다.");
+        return result(`빈칸에 알맞은 수를 구하세요.<div class="equation">□ + ${markup(a)} - ${markup(b)} = ${markup(c)}</div>${tag("blank-plus-a-minus-b", [aw, an, ad, bw, bn, bd, cw, cn, cd])}`, display(answer), `양변에서 ${markup(a)}를 빼고 ${markup(b)}를 더하면 □=${markup(c)}-${markup(a)}+${markup(b)}=${markup(answer)}입니다.`);
+      }
+      if (variant === 15) {
+        const [denominator, scale, offset] = choose([
+          [16, 1, 0], [18, 1, 1], [20, 1, 2], [24, 2, 1], [28, 2, 2], [30, 2, 3], [36, 3, 1], [40, 3, 2], [45, 3, 4]
+        ]);
+        const base = [8, 1, 6, 3, 5, 7, 4, 9, 2];
+        const values = base.map(value => rationalValue(value * scale + offset, denominator));
+        const blanks = [0, 4, 8];
+        const cells = values.map((value, index) => blanks.includes(index) ? symbolicFractionMarkup(`㉠㉡㉢`[blanks.indexOf(index)], denominator) : fractionMarkup(value.numerator, value.denominator));
+        const table = `<table class="problem-table fraction-magic"><tbody>${[0, 1, 2].map(row => `<tr>${cells.slice(row * 3, row * 3 + 3).map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+        const answer = add(add(values[0], values[4]), values[8]);
+        return result(`다음 표에서 가로, 세로, 대각선에 있는 세 수의 합이 모두 같을 때 ㉠+㉡+㉢을 구하세요.${table}${tag("fraction-magic-three-labels", [denominator, scale, offset, ...blanks])}`, display(answer), `가로·세로·대각선의 공통 합을 비교하면 ㉠=${markup(values[0])}, ㉡=${markup(values[4])}, ㉢=${markup(values[8])}입니다. 세 수의 합은 ${markup(answer)}입니다.`);
+      }
+      if (variant === 16) {
+        const cards = choose([
+          [1, 3, 4, 5, 7, 8], [2, 3, 5, 6, 8, 9], [1, 4, 6, 7, 8, 9],
+          [1, 5, 7, 8, 9, 11], [2, 5, 7, 8, 10, 11], [3, 5, 7, 9, 10, 13],
+          [1, 6, 8, 9, 11, 13], [2, 7, 9, 10, 12, 15], [3, 8, 10, 11, 13, 16]
+        ]);
+        const candidates = [];
+        const visit = (chosen, rest) => {
+          if (!rest.length) {
+            if (chosen[1] >= chosen[2] || chosen[4] >= chosen[5]) return;
+            const first = rationalValue(chosen[0] * chosen[2] + chosen[1], chosen[2]);
+            const second = rationalValue(chosen[3] * chosen[5] + chosen[4], chosen[5]);
+            const value = subtraction(first, second);
+            if (value && value.numerator > 0) candidates.push({ value, chosen });
+            return;
+          }
+          rest.forEach((card, index) => visit([...chosen, card], [...rest.slice(0, index), ...rest.slice(index + 1)]));
+        };
+        visit([], cards);
+        const best = chooseMaximum(candidates);
+        return result(`여섯 수 카드를 한 번씩 모두 사용하여 대분수 두 개를 만듭니다. 두 대분수의 차가 가장 클 때 그 차를 구하세요.<div class="number-cards">${cards.map(value => `<span class="digit-card">${value}</span>`).join("")}</div>${tag("digit-card-max-mixed-difference", cards, "maximum")}`, display(best.value), `가능한 카드 배치를 모두 비교하면 가장 큰 차는 ${markup(best.value)}입니다.`);
+      }
+      throw new Error("분수의 뺄셈 개념탐구 2 유형을 만들지 못했습니다.");
+    },
+    fractionApplicationE3({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("분수의 덧셈과 뺄셈 활용 개념탐구 3 원문 분기는 0부터 10까지여야 합니다.");
+      const sourceIds = [
+        "5-1-u5-e3-exploration", "5-1-u5-e3-example-3-1", "5-1-u5-e3-example-3-2", "5-1-u5-e3-example-3-3",
+        "5-1-u5-e3-example-3-4", "5-1-u5-e3-mission-1", "5-1-u5-e3-mission-2", "5-1-u5-e3-mission-3",
+        "5-1-u5-e3-mission-4", "5-1-u5-e3-mission-5", "5-1-u5-e3-mission-6"
+      ];
+      const sourceItemId = sourceIds[variant];
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-fraction-application-e3-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const choose = pools => pick(rng, pools[Math.min(level, pools.length - 1)]);
+      const value = (n, d = 1) => rationalValue(n, d);
+      const add = (left, right) => rationalOperation(left, right, "+");
+      const subtract = (left, right) => rationalOperation(left, right, "-");
+      const multiply = (left, right) => rationalOperation(left, right, "×");
+      const markup = current => mixedFractionMarkup(current.numerator, current.denominator);
+      const display = current => mixedFraction(current.numerator, current.denominator);
+      const equation = (content, answer) => `<div class="equation">${content} = ${answer}</div>`;
+
+      if (variant === 0) {
+        const base = [
+          value(3, 4), value(37, 12), null, value(1), value(13, 4), null, null, value(9, 4)
+        ];
+        const scale = choose([[1], [2, 3], [2, 3, 4]]);
+        const offset = choose([[0], [0, 1], [0, 1, 2]]);
+        const transformed = base.map(current => current && add(multiply(current, value(scale)), value(offset)));
+        const canonicalAnswers = [value(25, 12), value(5, 6), value(7, 12)];
+        const answers = canonicalAnswers.map(current => add(multiply(current, value(scale)), value(offset)));
+        transformed[2] = answers[0];
+        transformed[6] = answers[1];
+        transformed[5] = answers[2];
+        const names = ["가", "나", "다"];
+        const points = {
+          A: [92, 18], B: [218, 18], C: [46, 70], D: [172, 70], E: [46, 196], F: [172, 196], G: [92, 144], H: [218, 144]
+        };
+        const vertices = { A: transformed[0], B: transformed[1], C: transformed[2], D: transformed[3], E: transformed[4], F: transformed[5], G: transformed[6], H: transformed[7] };
+        const edges = [
+          ["A", "B"], ["B", "H"], ["H", "G"], ["G", "A"],
+          ["C", "D"], ["D", "F"], ["F", "E"], ["E", "C"],
+          ["A", "C"], ["B", "D"], ["E", "G"], ["F", "H"]
+        ];
+        const edgeKey = edge => edge.slice().sort().join("");
+        const uniqueEdges = [...new Map(edges.map(edge => [edgeKey(edge), edge])).values()];
+        const hidden = new Set(["AG", "GH"]);
+        const lines = uniqueEdges.map(([from, to]) => `<line x1="${points[from][0]}" y1="${points[from][1]}" x2="${points[to][0]}" y2="${points[to][1]}" stroke="#1f506b" stroke-width="2.5" ${hidden.has(edgeKey([from, to])) ? "stroke-dasharray=\"4 4\"" : ""}/>`).join("");
+        const labelNames = { A: "", B: "", C: "가", D: "", E: "", F: "다", G: "나", H: "" };
+        const labelStyles = { A: [76, 0], B: [202, 0], C: [8, 52], D: [180, 72], E: [8, 178], F: [178, 178], G: [76, 126], H: [202, 126] };
+        const labelMarkup = Object.entries(vertices).map(([name, current]) => {
+          const [left, top] = labelStyles[name];
+          const label = labelNames[name] || markup(current);
+          return `<span class="e3-cube-label" data-vertex="${name}" style="position:absolute;left:${left}px;top:${top}px">${label}</span>`;
+        }).join("");
+        const cube = `<div class="e3-cube-diagram" data-source-e3-cube="coordinate-model" data-vertices="${Object.entries(vertices).map(([name, current]) => `${name}:${current.numerator},${current.denominator}`).join("|")}" data-edges="${uniqueEdges.map(edgeKey).join(",")}" data-hidden-edges="${[...hidden].join(",")}" style="position:relative;width:min(270px,100%);height:225px;margin:12px auto;font-size:14px"><svg viewBox="0 0 264 214" style="position:absolute;inset:0;width:100%;height:100%" role="img" aria-label="정육면체의 여덟 꼭짓점과 점선으로 표시한 모서리">${lines}</svg>${labelMarkup}</div>`;
+        const faces = [["A", "B", "D", "C"], ["E", "F", "H", "G"], ["A", "C", "E", "G"], ["B", "D", "F", "H"], ["C", "D", "F", "E"], ["A", "B", "H", "G"]];
+        const sums = faces.map(face => face.reduce((total, name) => add(total, vertices[name]), value(0)));
+        if (new Set(sums.map(display)).size !== 1) throw new Error("정육면체 여섯 면의 합이 같지 않습니다.");
+        const answer = answers.map(display).join(", ");
+        return result(`아래 정육면체에서 각 면의 네 꼭짓점에 적힌 수의 합이 모두 같도록 할 때, (가), (나), (다)에 알맞은 수를 각각 구하세요.${cube}${tag("cube-equal-face-sums", Object.values(vertices).flatMap(current => [current.numerator, current.denominator]), "single-tuple")}`, answer, `여섯 면의 네 수를 각각 더해 공통 합을 비교합니다. (가)=${markup(answers[0])}, (나)=${markup(answers[1])}, (다)=${markup(answers[2])}입니다.`);
+      }
+
+      if (variant === 1) {
+        const [firstGap, secondGap] = choose([
+          [[2, 4], [3, 3], [4, 2]],
+          [[4, 5], [5, 4], [6, 3]],
+          [[5, 7], [7, 5], [8, 4]]
+        ]);
+        const whole = value(firstGap + secondGap, 1);
+        const coefficient = subtract(value(1), add(add(add(value(1, 6), value(1, 12)), value(1, 7)), value(1, 2)));
+        const answerValue = rationalOperation(value(firstGap + secondGap), coefficient, "÷");
+        if (!answerValue || answerValue.denominator !== 1) throw new Error("디오판토스 나이의 답이 자연수가 아닙니다.");
+        const periods = `${symbolicFractionMarkup("□", 6)} + ${symbolicFractionMarkup("□", 12)} + ${symbolicFractionMarkup("□", 7)} + ${firstGap} + ${symbolicFractionMarkup("□", 2)} + ${secondGap}`;
+        return result(`디오판토스의 일생에서 소년 시절은 전체의 ${fractionMarkup(1, 6)}이고, 그 뒤 전체의 ${fractionMarkup(1, 12)}이 지나 수염이 났습니다. 다시 전체의 ${fractionMarkup(1, 7)}이 지나 결혼했고, 결혼 ${firstGap}년 뒤 아들이 태어났습니다. 아들은 아버지의 ${fractionMarkup(1, 2)}만큼 살았고, 아들이 죽은 ${secondGap}년 뒤 디오판토스도 죽었습니다. 디오판토스는 몇 년 동안 살았습니까?${equation(periods, "□")}${tag("diophantus-age", [1, 6, 1, 12, 1, 7, firstGap, 1, 2, secondGap])}`, display(answerValue), `전체 나이를 □년이라 하면 ${equation(periods, "□")}입니다. 분수로 나타낸 기간을 한쪽으로 모으면 전체의 ${markup(coefficient)}이 ${firstGap + secondGap}년이므로, □=${markup(answerValue)}년입니다.`);
+      }
+
+      if (variant === 2) {
+        const firstNumerator = choose([[10, 11, 12], [12, 13, 14], [13, 14, 15]]);
+        const firstDenominator = 15;
+        const differenceOne = value(3, 15);
+        const differenceTwo = value(7, 15);
+        const a = value(firstNumerator, firstDenominator);
+        const b = subtract(a, differenceOne);
+        const c = subtract(a, differenceTwo);
+        const total = add(add(a, b), c);
+        return result(`(가)에서 (나)를 빼면 ${fractionMarkup(1, 5)}이고, (가)에서 (다)를 빼면 ${fractionMarkup(7, 15)}입니다. (가), (나), (다) 세 수의 합이 ${markup(total)}일 때 세 수를 각각 구하세요.${tag("three-values-from-differences-and-sum", [a.numerator, a.denominator, differenceOne.numerator, differenceOne.denominator, differenceTwo.numerator, differenceTwo.denominator, total.numerator, total.denominator], "single-tuple")}`, [display(a), display(b), display(c)].join(", "), `(가)를 a라 하면 (나)는 a-${fractionMarkup(1, 5)}, (다)는 a-${fractionMarkup(7, 15)}입니다. 세 수의 합을 이용하면 a=${markup(a)}이고, 따라서 (나)=${markup(b)}, (다)=${markup(c)}입니다.`);
+      }
+
+      if (variant === 3) {
+        const [firstDenominator, secondDenominator, thirdDenominator, fourthDenominator, remaining] = choose([
+          [[6, 4, 12, 8, 25], [6, 4, 12, 8, 50], [6, 4, 12, 8, 75]],
+          [[8, 4, 16, 8, 15], [8, 4, 16, 8, 30], [8, 4, 16, 8, 45]],
+          [[8, 6, 12, 24, 25], [8, 6, 12, 24, 35], [8, 6, 12, 24, 45]]
+        ]);
+        const sold = add(add(add(value(1, firstDenominator), value(1, secondDenominator)), value(5, thirdDenominator)), value(1, fourthDenominator));
+        const leftRate = subtract(value(1), sold);
+        const total = rationalOperation(value(remaining), leftRate, "÷");
+        if (!total || total.denominator !== 1 || total.numerator <= 0) throw new Error("귤 상자 수가 자연수가 아닙니다.");
+        return result(`과수원에 있던 귤의 첫째 날에는 전체의 ${fractionMarkup(1, firstDenominator)}, 둘째 날에는 전체의 ${fractionMarkup(1, secondDenominator)}, 셋째 날에는 전체의 ${fractionMarkup(5, thirdDenominator)}, 넷째 날에는 전체의 ${fractionMarkup(1, fourthDenominator)}을 팔았습니다. 팔고 남은 귤이 ${remaining}상자일 때 처음 귤은 모두 몇 상자였습니까?${tag("sold-fractions-to-initial-total", [firstDenominator, secondDenominator, thirdDenominator, fourthDenominator, remaining, total.numerator, total.denominator])}`, display(total), `판 양의 합은 ${markup(sold)}이므로 남은 양은 전체의 ${markup(leftRate)}입니다. ${total.numerator}의 ${markup(leftRate)}이 ${remaining}상자이므로 처음 귤은 ${markup(total)}상자입니다.`);
+      }
+
+      if (variant === 4) {
+        const difference = choose([[40, 60, 80], [60, 80, 100], [80, 100, 120]]);
+        const shortLength = difference * 5;
+        const longLength = shortLength + difference;
+        const depthCm = rationalOperation(value(shortLength), value(3, 4), "×");
+        const depthM = rationalOperation(depthCm, value(100), "÷");
+        return result(`길이의 차가 ${difference}cm인 긴 막대와 짧은 막대를 연못에 세웠습니다. 긴 막대의 ${fractionMarkup(5, 8)}과 짧은 막대의 ${fractionMarkup(3, 4)}가 물에 잠겼다면, 연못의 깊이는 몇 m입니까?${tag("wet-rods-and-pond-depth", [difference, longLength, shortLength, 5, 8, 3, 4, depthCm.numerator, depthCm.denominator, depthM.numerator, depthM.denominator])}`, display(depthM), `긴 막대와 짧은 막대의 길이를 각각 L, S라 하면 L-S=${difference}이고 ${fractionMarkup(5, 8)}L=${fractionMarkup(3, 4)}S입니다. S=${shortLength}cm이므로 물의 깊이는 ${fractionMarkup(3, 4)}×${shortLength}=${markup(depthCm)}cm=${markup(depthM)}m입니다.`);
+      }
+
+      if (variant === 5) {
+        const [extraFirst, extraSecond, lessThird, leftover] = choose([
+          [[2, 4, 3, 1], [3, 5, 4, 1], [4, 4, 5, 1]],
+          [[4, 6, 4, 2], [5, 7, 6, 3], [6, 8, 6, 2]],
+          [[5, 9, 7, 4], [7, 11, 8, 5], [8, 12, 9, 5]]
+        ]);
+        const total = 10 * (leftover + 2 * extraFirst + extraSecond - lessThird);
+        const first = rationalOperation(value(total), value(1, 4), "×").numerator + extraFirst;
+        const second = first + extraSecond;
+        const third = rationalOperation(value(total), value(2, 5), "×").numerator - lessThird;
+        if (total % 20 || first + second + third + leftover !== total) throw new Error("사탕 분배 조건이 자연수로 맞지 않습니다.");
+        return result(`은지, 규민, 희재가 사탕을 나누어 가졌습니다. 은지는 전체의 ${fractionMarkup(1, 4)}보다 ${extraFirst}개 더 많이, 규민이는 은지보다 ${extraSecond}개 더 많이, 희재는 전체의 ${fractionMarkup(2, 5)}보다 ${lessThird}개 적게 가져가고 ${leftover}개가 남았습니다. 처음에 있던 사탕은 모두 몇 개입니까?${tag("candy-share-initial-total", [total, 1, 4, extraFirst, extraSecond, 2, 5, lessThird, leftover, first, second, third])}`, total, `전체를 x개라 하면 은지는 ${fractionMarkup(1, 4)}x+${extraFirst}개, 규민이는 ${fractionMarkup(1, 4)}x+${extraFirst + extraSecond}개, 희재는 ${fractionMarkup(2, 5)}x-${lessThird}개입니다. 세 사람이 가져간 뒤 ${leftover}개가 남는 식을 세우면 x=${total}개입니다.`);
+      }
+
+      if (variant === 6) {
+        const x = choose([[4, 8, 12], [8, 12, 16], [12, 16, 20]]);
+        const fixed = add(value(3, 4), value(2, 3));
+        const coefficient = add(add(value(1, 5), value(1, 15)), value(1, 45));
+        const target = add(fixed, multiply(value(x), coefficient));
+        const blank = `${symbolicFractionMarkup("□", 5)} + ${symbolicFractionMarkup("□", 15)} + ${symbolicFractionMarkup("□", 45)}`;
+        return result(`다음 식의 세 빈칸에 공통으로 들어갈 수 있는 자연수를 구하세요.${equation(`${fractionMarkup(3, 4)} + ${blank} + ${fractionMarkup(2, 3)}`, markup(target))}${tag("same-natural-number-in-fractions", [x, 3, 4, 1, 5, 1, 15, 1, 45, 2, 3, target.numerator, target.denominator])}`, x, `세 빈칸에 들어갈 수를 x라 하면 빈칸의 계수는 ${markup(coefficient)}입니다. ${markup(target)}에서 ${markup(fixed)}를 빼면 ${markup(multiply(value(x), coefficient))}이므로 x=${x}입니다.`);
+      }
+
+      if (variant === 7) {
+        const [appleExtra, pearExtra] = choose([
+          [[2, 4], [2, 6], [4, 4]],
+          [[4, 8], [6, 8], [4, 10]],
+          [[6, 10], [8, 12], [10, 14]]
+        ]);
+        const total = 3 * (appleExtra + pearExtra);
+        const apples = total / 2 + appleExtra;
+        const pears = total / 6 + pearExtra;
+        if (apples + pears !== total) throw new Error("사과와 배의 합이 전체와 다릅니다.");
+        return result(`사과는 상자 안 과일 전체의 ${fractionMarkup(1, 2)}보다 ${appleExtra}개 많고, 배는 전체의 ${fractionMarkup(1, 6)}보다 ${pearExtra}개 많습니다. 상자 안 과일은 모두 몇 개입니까?${tag("apple-pear-total", [appleExtra, pearExtra, 1, 2, 1, 6, apples, pears, total])}`, total, `전체 과일을 x개라 하면 사과와 배의 합은 ${fractionMarkup(1, 2)}x+${appleExtra}+${fractionMarkup(1, 6)}x+${pearExtra}=x입니다. 따라서 ${markup(value(2, 3))}x=${appleExtra + pearExtra}이고 x=${total}개입니다.`);
+      }
+
+      if (variant === 8) {
+        const [firstWalk, lastWalk] = choose([
+          [[200, 400], [300, 300], [400, 200]],
+          [[300, 500], [400, 400], [500, 300]],
+          [[700, 900], [800, 800], [900, 700]]
+        ]);
+        const travelRate = add(value(2, 3), value(1, 5));
+        const walkRate = subtract(value(1), travelRate);
+        const total = rationalOperation(value(firstWalk + lastWalk), walkRate, "÷");
+        if (!total || total.denominator !== 1) throw new Error("여행 거리 조건이 자연수로 맞지 않습니다.");
+        return result(`집에서 할머니 댁까지 가는 길에서 처음 ${firstWalk}m와 마지막 ${lastWalk}m는 걸었습니다. 전체 거리의 ${fractionMarkup(2, 3)}은 지하철을 타고, 전체 거리의 ${fractionMarkup(1, 5)}은 버스를 탔다면 전체 거리는 몇 m입니까?${tag("travel-total-from-end-walks", [firstWalk, lastWalk, 2, 3, 1, 5, total.numerator, total.denominator])}`, display(total), `지하철과 버스가 차지한 비율은 ${markup(travelRate)}이고 걸은 비율은 ${markup(walkRate)}입니다. 전체의 ${markup(walkRate)}가 ${firstWalk + lastWalk}m이므로 전체 거리는 ${markup(total)}m입니다.`);
+      }
+
+      if (variant === 9) {
+        const both = choose([[24, 32, 40], [40, 48, 56], [56, 64, 72]]);
+        const neither = subtract(value(1), value(3, 4));
+        const bothRate = subtract(add(value(5, 8), value(3, 8)), subtract(value(1), neither));
+        const total = rationalOperation(value(both), bothRate, "÷");
+        if (!total || total.denominator !== 1) throw new Error("두 과목 교집합 조건이 자연수로 맞지 않습니다.");
+        return result(`5학년 학생 중 수학을 좋아하는 학생은 전체의 ${fractionMarkup(5, 8)}, 영어를 좋아하는 학생은 전체의 ${fractionMarkup(3, 8)}입니다. 어느 과목도 좋아하지 않는 학생은 전체의 ${markup(neither)}이고, 수학과 영어를 모두 좋아하는 학생이 ${both}명일 때 전체 학생은 몇 명입니까?${tag("inclusion-exclusion-total", [5, 8, 3, 8, 1, 4, both, bothRate.numerator, bothRate.denominator, total.numerator, total.denominator])}`, display(total), `적어도 한 과목을 좋아하는 비율은 ${markup(subtract(value(1), neither))}입니다. 두 비율의 합에서 이를 빼면 두 과목을 모두 좋아하는 비율은 ${markup(bothRate)}입니다. ${both}명이 전체의 ${markup(bothRate)}이므로 전체는 ${markup(total)}명입니다.`);
+      }
+
+      const candidates = [];
+      for (let a = 1; a <= 9; a += 1) for (let b = 1; b <= 9; b += 1) for (let c = 1; c <= 9; c += 1) for (let d = 1; d <= 9; d += 1) {
+        if (new Set([a, b, c, d]).size !== 4 || gcd(a, 18) !== 1 || gcd(b, 10 * c + d) !== 1) continue;
+        const target = add(value(a, 18), value(b, 10 * c + d));
+        candidates.push({ digits: [a, b, c, d], target });
+      }
+      const groups = new Map();
+      candidates.forEach(candidate => {
+        const key = `${candidate.target.numerator}/${candidate.target.denominator}`;
+        groups.set(key, [...(groups.get(key) || []), candidate]);
+      });
+      const unique = [...groups.values()].filter(group => group.length === 1).map(group => group[0]);
+      const selected = pick(rng, [unique.filter(candidate => candidate.digits[0] < 7), unique.filter(candidate => candidate.digits[0] >= 7)].filter(group => group.length)[Math.min(level, 1)] || unique);
+      if (!selected) throw new Error("서로 다른 숫자 분수식의 유일한 해를 만들지 못했습니다.");
+      const [a, b, c, d] = selected.digits;
+      const targetMarkup = markup(selected.target);
+      return result(`㉠, ㉡, ㉢, ㉣은 0이 아닌 서로 다른 한 자리 수입니다. ${symbolicFractionMarkup("㉠", 18)}과 ${symbolicFractionMarkup("㉡", "㉢㉣")}은 각각 기약분수이고, ${symbolicFractionMarkup("㉠", 18)}+${symbolicFractionMarkup("㉡", "㉢㉣")}=${targetMarkup}일 때 ㉠×㉡×㉢×㉣의 값을 구하세요. ㉢㉣은 ㉢과 ㉣을 차례로 이어 만든 두 자리 수입니다.${tag("four-distinct-digits-fraction-equation", [...selected.digits, selected.target.numerator, selected.target.denominator], "unique-permutation")}`, a * b * c * d, `0이 아닌 서로 다른 네 숫자의 순서를 하나씩 확인하고, 두 분수가 기약분수인지 살펴봅니다. 조건을 만족하는 순서는 ${a}, ${b}, ${c}, ${d} 하나이고, 네 숫자의 곱은 ${a}×${b}×${c}×${d}=${a * b * c * d}입니다.`);
+    },
+    unitFractionE4({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 11) throw new Error("단위분수와 부분분수 원문 분기는 0부터 11까지여야 합니다.");
+      const sourceIds = [
+        "5-1-u5-e4-exploration-1", "5-1-u5-e4-exploration-2", "5-1-u5-e4-example-4-1", "5-1-u5-e4-example-4-2",
+        "5-1-u5-e4-example-4-3", "5-1-u5-e4-example-4-4", "5-1-u5-e4-mission-1", "5-1-u5-e4-mission-2",
+        "5-1-u5-e4-mission-3", "5-1-u5-e4-mission-4", "5-1-u5-e4-mission-5", "5-1-u5-e4-mission-6"
+      ];
+      const sourceItemId = sourceIds[variant];
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-unit-fraction-e4-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const safeLevel = Math.max(0, Math.min(2, level));
+      const chooseCase = pools => pick(rng, pools[safeLevel]);
+      const value = (numerator, denominator = 1) => rationalValue(numerator, denominator);
+      const add = (left, right) => rationalOperation(left, right, "+");
+      const subtract = (left, right) => rationalOperation(left, right, "-");
+      const divide = (left, right) => rationalOperation(left, right, "÷");
+      const markup = current => mixedFractionMarkup(current.numerator, current.denominator);
+      const display = current => mixedFraction(current.numerator, current.denominator);
+      const equal = (left, right) => left.numerator * right.denominator === right.numerator * left.denominator;
+      const less = (left, right) => left.numerator * right.denominator < right.numerator * left.denominator;
+      const sum = values => values.reduce((total, current) => add(total, current), value(0));
+      const fractionList = values => values.map(current => markup(current)).join(" + ");
+      const equation = (content, answer) => `<div class="equation">${content} = ${answer}</div>`;
+      const enumerateUnitTriples = target => {
+        const candidates = [];
+        const firstMax = Math.floor((3 * target.denominator) / target.numerator);
+        for (let first = 2; first <= firstMax; first += 1) {
+          const afterFirst = subtract(target, value(1, first));
+          if (afterFirst.numerator <= 0) continue;
+          const secondMax = Math.floor((2 * afterFirst.denominator) / afterFirst.numerator);
+          for (let second = first + 1; second <= secondMax; second += 1) {
+            const afterSecond = subtract(afterFirst, value(1, second));
+            if (afterSecond.numerator !== 1 || afterSecond.denominator <= second) continue;
+            candidates.push([first, second, afterSecond.denominator]);
+          }
+        }
+        return candidates;
+      };
+      const enumerateDifferencePairs = target => {
+        const candidates = [];
+        const firstMax = Math.floor(target.denominator / target.numerator);
+        for (let first = 2; first <= firstMax; first += 1) {
+          const remainder = subtract(value(1, first), target);
+          if (remainder.numerator !== 1) continue;
+          const second = remainder.denominator;
+          if (second > first) candidates.push([first, second]);
+        }
+        return candidates;
+      };
+
+      if (variant === 0 || variant === 10) {
+        const target = variant === 0 ? value(3, 7) : value(7, 9);
+        const candidates = enumerateUnitTriples(target);
+        const expectedCount = variant === 0 ? 6 : 2;
+        if (candidates.length !== expectedCount) throw new Error("단위분수 세 항 만들기의 답 개수가 원문 검산과 다릅니다.");
+        const answer = candidates.map(([first, second, third]) => `${fractionMarkup(1, first)} + ${fractionMarkup(1, second)} + ${fractionMarkup(1, third)}`).join("; ");
+        return result(`${fractionMarkup(target.numerator, target.denominator)}를 서로 다른 세 단위분수의 합으로 나타내어라.${tag(variant === 0 ? "three-unit-fractions-multiple" : "three-unit-fractions-multiple-mission", [target.numerator, target.denominator, expectedCount], "multiple")}`, answer, `가능한 분모를 작은 수부터 차례로 살펴보면 조건에 맞는 방법이 ${expectedCount}개입니다. 따라서 답을 하나로 정할 수 없어 공개하지 않습니다.`);
+      }
+
+      if (variant === 1) {
+        const [gap, start, count] = chooseCase([
+          [[2, 3, 4], [2, 5, 4], [2, 7, 4]],
+          [[2, 5, 6], [2, 7, 6], [3, 4, 5]],
+          [[3, 4, 6], [4, 5, 6], [5, 6, 6]]
+        ]);
+        const terms = Array.from({ length: count }, (_, index) => value(gap, (start + index * gap) * (start + (index + 1) * gap)));
+        const answer = sum(terms);
+        const telescopingCheck = subtract(value(1, start), value(1, start + count * gap));
+        if (!equal(answer, telescopingCheck)) throw new Error("단위분수 규칙 합의 검산이 맞지 않습니다.");
+        return result(`다음 규칙으로 나열한 분수의 합을 구하세요.${equation(fractionList(terms), "□")}${tag("telescoping-unit-sum", [gap, start, count, answer.numerator, answer.denominator])}`, display(answer), `각 항을 두 단위분수의 차로 바꾸어 계산하면 가운데 수들이 지워집니다. 남는 계산은 ${fractionMarkup(1, start)}-${fractionMarkup(1, start + count * gap)}=${markup(answer)}이므로 답은 ${markup(answer)}입니다.`);
+      }
+
+      if (variant === 2) {
+        const [targetNumerator, targetDenominator, expectedFirst, expectedSecond, expectedThird] = chooseCase([
+          [[41, 42, 2, 3, 7], [23, 24, 2, 3, 8], [17, 18, 2, 3, 9]],
+          [[14, 15, 2, 3, 10], [9, 10, 2, 3, 15], [19, 20, 2, 4, 5]],
+          [[73, 84, 2, 3, 28], [181, 210, 2, 3, 35], [103, 120, 2, 3, 40]]
+        ]);
+        const target = value(targetNumerator, targetDenominator);
+        const candidates = enumerateUnitTriples(target);
+        if (candidates.length !== 1 || candidates[0].join(",") !== [expectedFirst, expectedSecond, expectedThird].join(",")) throw new Error("세 단위분수 분모의 유일성 검산이 맞지 않습니다.");
+        const [first, second, third] = candidates[0];
+        return result(`${fractionMarkup(target.numerator, target.denominator)}를 세 단위분수의 합으로 나타내려고 합니다. 세 분모를 작은 수부터 차례로 쓸 때 알맞은 세 수를 구하세요.${equation(`${symbolicFractionMarkup("1", "가")}+${symbolicFractionMarkup("1", "나")}+${symbolicFractionMarkup("1", "다")}`, markup(target))}${tag("three-unit-fractions-unique", [target.numerator, target.denominator, first, second, third], "single-tuple")}`, `${first}, ${second}, ${third}`, `세 분모를 작은 수부터 차례로 바꾸어 모두 살펴보면 ${first}, ${second}, ${third} 한 가지뿐입니다.`);
+      }
+
+      if (variant === 3) {
+        const totalDenominator = chooseCase([[9, 11, 13], [13, 15, 17], [17, 19, 21]]);
+        const pairs = [];
+        let best = null;
+        for (let first = 1; first <= Math.floor(totalDenominator / 2); first += 1) {
+          const second = totalDenominator - first;
+          const current = add(value(1, first), value(1, second));
+          pairs.push([first, second, current]);
+          if (!best || less(current, best.value)) best = { first, second, value: current };
+        }
+        const tied = pairs.filter(([, , current]) => equal(current, best.value));
+        if (tied.length !== 1) throw new Error("두 단위분수 최솟값의 유일성 검산이 맞지 않습니다.");
+        const answer = best.value.numerator + best.value.denominator;
+        return result(`두 자연수의 합이 ${totalDenominator}일 때, 두 수를 분모로 하는 단위분수의 합 중 가장 작은 값을 기약분수로 나타내세요. 그 분수의 분자와 분모의 합을 구하세요.${tag("minimum-two-unit-sum", [totalDenominator, best.first, best.second, best.value.numerator, best.value.denominator])}`, answer, `두 수의 짝을 작은 수부터 모두 비교하면 ${best.first}와 ${best.second}일 때 가장 작습니다. 가장 작은 분수는 ${markup(best.value)}이므로 분자와 분모의 합은 ${best.value.numerator}+${best.value.denominator}=${answer}입니다.`);
+      }
+
+      if (variant === 4) {
+        const [start, count] = chooseCase([
+          [[3, 3], [5, 3], [7, 3]],
+          [[3, 5], [5, 5], [7, 5]],
+          [[3, 7], [5, 7], [7, 7]]
+        ]);
+        const terms = Array.from({ length: count }, (_, index) => {
+          const first = start + index * 2;
+          return value(1, first * (first + 2));
+        });
+        const answer = sum(terms);
+        const telescopingCheck = divide(subtract(value(1, start), value(1, start + count * 2)), value(2));
+        if (!equal(answer, telescopingCheck)) throw new Error("짝지은 수 단위분수 합의 검산이 맞지 않습니다.");
+        return result(`다음 단위분수의 합을 계산하세요.${equation(fractionList(terms), "□")}${tag("paired-denominator-unit-sum", [start, count, answer.numerator, answer.denominator])}`, display(answer), `각 항을 두 단위분수의 차로 바꾸면 가운데 계산이 지워집니다. 남은 계산을 하면 답은 ${markup(answer)}입니다.`);
+      }
+
+      if (variant === 5) {
+        const count = chooseCase([[12, 16, 20], [60, 80, 100], [120, 160, 200]]);
+        const firstTerms = [1, 2, 3].map(index => subtract(value(1), value(1, index * (index + 1))));
+        const directTerms = Array.from({ length: count }, (_, index) => subtract(value(1), value(1, (index + 1) * (index + 2))));
+        const answer = sum(directTerms);
+        const telescopingCheck = subtract(value(count), subtract(value(1), value(1, count + 1)));
+        const lastTerm = directTerms[directTerms.length - 1];
+        if (!equal(answer, telescopingCheck)) throw new Error("분수열 합의 검산이 맞지 않습니다.");
+        return result(`다음과 같은 규칙으로 나열한 수가 있습니다. 첫째 수부터 ${count}번째 수까지의 합을 구하세요.${equation(`${markup(firstTerms[0])}, ${markup(firstTerms[1])}, ${markup(firstTerms[2])}, ... , ${markup(lastTerm)}`, "□")}${tag("fraction-sequence-first-count-sum", [count, answer.numerator, answer.denominator])}`, display(answer), `각 수를 1에서 알맞은 단위분수를 뺀 모양으로 바꿉니다. ${count}에서 1을 빼고 ${fractionMarkup(1, count + 1)}을 더하면 답은 ${markup(answer)}입니다.`);
+      }
+
+      if (variant === 6) {
+        const [gap, start, count] = chooseCase([
+          [[2, 3, 4], [2, 5, 4], [2, 7, 4]],
+          [[3, 4, 4], [3, 7, 4], [3, 10, 4]],
+          [[4, 5, 5], [4, 9, 5], [5, 6, 5]]
+        ]);
+        const terms = Array.from({ length: count }, (_, index) => value(gap, (start + index * gap) * (start + (index + 1) * gap)));
+        const answer = sum(terms);
+        const telescopingCheck = subtract(value(1, start), value(1, start + count * gap));
+        if (!equal(answer, telescopingCheck)) throw new Error("규칙을 이용한 네 단위분수 합의 검산이 맞지 않습니다.");
+        return result(`다음 규칙으로 나열한 분수의 합을 구하세요.${equation(fractionList(terms), "□")}${tag("four-unit-fractions-rule-sum", [gap, start, count, answer.numerator, answer.denominator])}`, display(answer), `각 항을 두 단위분수의 차로 바꾸어 가운데 수들을 지우면 ${fractionMarkup(1, start)}-${fractionMarkup(1, start + count * gap)}=${markup(answer)}입니다.`);
+      }
+
+      if (variant === 7) {
+        const [leftA, rightB] = chooseCase([
+          [[5, 4], [6, 4], [6, 5]],
+          [[7, 5], [8, 5], [8, 6]],
+          [[9, 6], [10, 6], [10, 7]]
+        ]);
+        const left = value(1, leftA * (leftA + 1));
+        const right = value(1, rightB * (rightB + 1));
+        const lower = rightB * (rightB + 1);
+        const upper = leftA * (leftA + 1);
+        const answer = upper - lower - 1;
+        if (!(lower < upper) || answer <= 0) throw new Error("단위분수 사이의 분모 범위가 맞지 않습니다.");
+        const leftDifference = `${fractionMarkup(1, leftA)}-${fractionMarkup(1, leftA + 1)}`;
+        const rightDifference = `${fractionMarkup(1, rightB)}-${fractionMarkup(1, rightB + 1)}`;
+        return result(`${leftDifference}보다 크고 ${rightDifference}보다 작은 단위분수 중 가능한 것은 모두 몇 개인가요? 단위분수의 분모를 □라고 합니다.${tag("unit-fractions-between-strict-boundaries", [leftA, rightB, lower, upper, answer])}`, answer, `${leftDifference}=${markup(left)}, ${rightDifference}=${markup(right)}입니다. 따라서 분모는 ${lower}보다 크고 ${upper}보다 작아야 하므로 ${lower + 1}부터 ${upper - 1}까지 ${answer}개입니다.`);
+      }
+
+      if (variant === 8) {
+        const [expectedA, expectedB] = chooseCase([
+          [[2, 6], [3, 21], [4, 20]],
+          [[3, 21], [4, 28], [5, 45]],
+          [[5, 45], [6, 42], [7, 63]]
+        ]);
+        const target = subtract(value(1, expectedA), value(1, expectedB));
+        const candidates = enumerateDifferencePairs(target);
+        if (candidates.length !== 1 || candidates[0][0] !== expectedA || candidates[0][1] !== expectedB) throw new Error("두 단위분수 차의 분모 유일성 검산이 맞지 않습니다.");
+        return result(`두 단위분수의 차가 ${markup(target)}입니다. 큰 단위분수의 분모를 가, 작은 단위분수의 분모를 나라고 할 때 가와 나를 각각 구하세요.${tag("difference-of-two-unit-fractions", [target.numerator, target.denominator, expectedA, expectedB], "single-tuple")}`, `${expectedA}, ${expectedB}`, `가를 2부터 가능한 범위까지 하나씩 대입해 보면 가=${expectedA}일 때 나=${expectedB}가 되고, 이 방법 하나만 조건에 맞습니다.`);
+      }
+
+      if (variant === 9) {
+        const [expectedA, expectedB, fixedDenominator, limit] = chooseCase([
+          [[10, 2, 12, 40], [11, 3, 12, 40], [12, 4, 12, 40]],
+          [[20, 3, 15, 50], [25, 4, 15, 50], [30, 7, 15, 50]],
+          [[45, 3, 18, 60], [55, 5, 18, 60], [59, 7, 18, 60]]
+        ]);
+        const target = sum([value(1, expectedA), value(1, expectedB), value(1, fixedDenominator)]);
+        const remainder = subtract(target, value(1, fixedDenominator));
+        const candidates = [];
+        for (let first = 2; first < limit; first += 1) for (let second = 1; second < first; second += 1) {
+          if (equal(add(value(1, first), value(1, second)), remainder)) candidates.push([first, second]);
+        }
+        if (candidates.length !== 1 || candidates[0][0] !== expectedA || candidates[0][1] !== expectedB) throw new Error("범위 안 두 분모의 유일성 검산이 맞지 않습니다.");
+        return result(`${markup(target)}를 ${fractionMarkup(1, fixedDenominator)}와 두 단위분수의 합으로 나타냅니다. 두 분모를 가, 나라고 할 때 가는 나보다 크고 ${limit}보다 작습니다. 가와 나를 각각 구하세요.${tag("bounded-two-unit-fractions", [target.numerator, target.denominator, expectedA, expectedB, fixedDenominator, limit], "single-tuple")}`, `${expectedA}, ${expectedB}`, `두 분모가 조건에 맞는지 하나씩 대입해 모두 확인하면 가=${expectedA}, 나=${expectedB} 한 가지뿐입니다.`);
+      }
+
+      if (variant === 11) {
+        const denominators = chooseCase([
+          [[2, 3, 7, 42, 5, 6], [2, 3, 8, 24, 11, 17], [2, 3, 9, 18, 13, 17]],
+          [[2, 3, 10, 15, 14, 17], [2, 4, 5, 20, 9, 13], [2, 4, 6, 12, 8, 10]],
+          [[2, 3, 7, 42, 20, 21], [2, 3, 7, 42, 30, 31], [2, 3, 7, 42, 41, 43]]
+        ]);
+        const candidates = [];
+        for (let first = 0; first < denominators.length; first += 1) for (let second = first + 1; second < denominators.length; second += 1) for (let third = second + 1; third < denominators.length; third += 1) for (let fourth = third + 1; fourth < denominators.length; fourth += 1) {
+          const selected = [denominators[first], denominators[second], denominators[third], denominators[fourth]];
+          if (equal(sum(selected.map(current => value(1, current))), value(1))) candidates.push(selected);
+        }
+        if (candidates.length !== 1) throw new Error("네 단위분수 선택의 유일성 검산이 맞지 않습니다.");
+        const answer = candidates[0].map(current => fractionMarkup(1, current)).join(", ");
+        return result(`다음 여섯 단위분수 중 네 개를 골라 합이 1이 되도록 하세요.${tag("choose-four-unit-fractions-sum-one", denominators, "single-set")}<div class="number-cards fraction-cards">${denominators.map(current => `<span class="digit-card">${fractionMarkup(1, current)}</span>`).join("")}</div>`, answer, `네 개를 고르는 방법을 하나씩 확인하면 ${answer}만 합이 1이 됩니다.`);
+      }
+
+      throw new Error("단위분수와 부분분수 유형을 만들지 못했습니다.");
+    },
     fifthFractionAdditionAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const pairs = level === 2 ? [[8, 15], [9, 14], [10, 21], [12, 25]] : [[6, 8], [8, 12], [9, 12], [10, 15]];
@@ -20395,9 +21231,12 @@
     [type => type.id === "5-1-u4-t2", "irreducibleFractionAdvanced"],
     [type => type.id === "5-1-u4-t3", "commonDenominatorCompareAdvanced"],
     [type => type.id === "5-1-u4-t4", "conditionalFractionAdvanced"],
+    [type => type.id?.startsWith("5-1-u5-t1") && type.sourceItemId?.startsWith("5-1-u5-e1-"), "fractionAdditionE1"],
+    [type => type.id?.startsWith("5-1-u5-t2") && type.sourceItemId?.startsWith("5-1-u5-e2-"), "fractionSubtractionE2"],
     [type => type.id === "5-1-u5-t1", "fifthFractionAdditionAdvanced"],
     [type => type.id === "5-1-u5-t2", "fifthFractionSubtractionAdvanced"],
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
+    [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
