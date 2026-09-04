@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import {
+  buildCoachProviderRequest,
   buildPrompt,
+  extractCoachProviderText,
   extractOutputText,
   parseModelResult,
   RUBRIC_KEYS,
@@ -27,6 +29,13 @@ assert.equal(turn.mode, 'turn');
 assert.equal(turn.priorTurns.length, 4);
 assert.equal(turn.passage.text.includes('<'), false);
 assert.match(buildPrompt(turn), /competitive four-student reading interview/);
+assert.match(buildPrompt(turn), /seven-year-old/);
+assert.match(buildPrompt(turn), /at most 18 words/);
+
+const turnProviderRequest = buildCoachProviderRequest('turn', turn);
+assert.equal(turnProviderRequest.prompt, JSON.stringify(turn));
+assert.equal(turnProviderRequest.maxOutputTokens, 4096);
+assert.deepEqual(turnProviderRequest.schema.properties.feedback.properties.scores.required, RUBRIC_KEYS);
 
 const turnSchema = schemaFor('turn');
 assert.deepEqual(turnSchema.properties.feedback.properties.scores.required, RUBRIC_KEYS);
@@ -44,6 +53,11 @@ const rawTurn = JSON.stringify({
 const parsedTurn = parseModelResult('turn', rawTurn);
 assert.equal(parsedTurn.followUp.startsWith('Which detail'), true);
 assert.equal(parsedTurn.feedback.scores.delivery, scores.delivery);
+assert.equal(extractCoachProviderText({ ok: true, text: rawTurn }), rawTurn);
+assert.throws(() => parseModelResult('turn', JSON.stringify({
+  ...JSON.parse(rawTurn),
+  followUp: 'Can you explain this answer with one exact passage detail and then tell me how your idea would change in a different situation?',
+})), /model_output_invalid/);
 
 const reportInput = validatePayload({
   mode: 'report',
@@ -56,6 +70,8 @@ const reportInput = validatePayload({
   localRubric: scores,
 });
 assert.equal(reportInput.turns.length, 2);
+assert.equal(buildCoachProviderRequest('report', reportInput).maxOutputTokens, 6144);
+assert.deepEqual(schemaFor('report').required, ['summary', 'priorities', 'roadmap']);
 
 const reportJson = JSON.stringify({
   summary: 'The learner communicates the main idea and now needs more exact evidence.',
@@ -68,19 +84,11 @@ const reportJson = JSON.stringify({
     title: `Day ${index + 1}`,
     task: 'Read, cover the page, and give a short complete answer.',
   })),
-  turnFeedback: Array.from({ length: 2 }, (_, index) => ({
-    turnIndex: index,
-    strength: 'The answer gives a clear idea that stays on the question.',
-    focus: 'Add one exact passage detail after the main claim.',
-    skill: 'Text evidence',
-    improvedAnswer: 'The passage explains the idea clearly and supports it with a useful detail.',
-    languageNote: 'Connect the claim and reason with because.',
-  })),
 });
 const parsedReport = parseModelResult('report', reportJson);
 assert.equal(parsedReport.priorities.length, 3);
 assert.equal(parsedReport.roadmap.length, 7);
-assert.equal(parsedReport.turnFeedback.length, 2);
+assert.equal('turnFeedback' in parsedReport, false);
 
 const responseText = extractOutputText({ output: [{ content: [{ type: 'output_text', text: rawTurn }] }] });
 assert.equal(responseText, rawTurn);

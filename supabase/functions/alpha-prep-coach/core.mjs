@@ -89,9 +89,10 @@ function normalizeScores(value) {
 
 export function buildInstructions(mode) {
   const shared = [
-    'You are a senior English interview coach for an elementary learner around US Grades 3-4.',
+    'You are a senior English interview coach for a verbally advanced seven-year-old reading in the SR 3.x range, especially the upper 3s, after CARS D and Bricks Reading 300 Part 1.',
     'The learner is preparing for a competitive four-student reading interview.',
-    'Be precise, encouraging, and age-appropriate. Do not praise vaguely.',
+    'Keep the reasoning appropriately challenging, but use concrete age-seven language and one task at a time.',
+    'Be precise, encouraging, and age-appropriate. Do not praise vaguely or sound babyish.',
     'Never invent a passage fact. Do not mention CEFR, Lexile, diagnoses, admission chances, or the model.',
     'Keep the learner\'s intended meaning when correcting language.',
     'Score each rubric dimension from 1 to 4 using the transcript only.',
@@ -99,14 +100,28 @@ export function buildInstructions(mode) {
   ].join(' ');
 
   if (mode === 'turn') {
-    return `${shared}\n\nAnalyze this single answer. Return one natural follow-up question that responds to the learner's exact idea and can be answered without seeing the passage. The follow-up must ask for evidence, reasoning, comparison, or transfer; it must not repeat the original question. Give a polished version of the learner's answer, a concrete language note, one specific strength, one priority, and seven scores. If this is a peer-response question, assess whether the learner represented the peer fairly before adding an idea.`;
+    return `${shared}\n\nAnalyze this single answer. Return one natural follow-up question of at most 18 words that responds to the learner's exact idea and can be answered without seeing the passage. Ask only one thing. The follow-up must ask for evidence, reasoning, comparison, or transfer; it must not repeat the original question. Give a polished version of the learner's answer that the child can say aloud, a concrete language note, one specific strength, one priority, and seven scores. If this is a peer-response question, assess whether the learner represented the peer fairly before adding an idea.`;
   }
 
-  return `${shared}\n\nWrite a concise but detailed final coaching synthesis from the full transcript. Return exactly one turnFeedback item for every input turn, in the same order, with the zero-based turnIndex. Correct each answer while preserving its intended meaning and passage facts. Return exactly three priorities and exactly seven daily roadmap steps. Each priority needs a title, a concrete action, and a short speaking drill. Each day needs a title and one feasible task taking 10-20 minutes. Prioritize listening to peers, text evidence, vocabulary in context, and chained follow-up answers when the transcript shows those needs. Do not repeat the local report mechanically.`;
+  return `${shared}\n\nWrite a concise but detailed final coaching synthesis from the full transcript. Return exactly three priorities and exactly seven daily roadmap steps. Each priority needs a title, a concrete action, and a short speaking drill. Each day needs a title and one feasible task taking 10-20 minutes. Prioritize listening to peers, text evidence, vocabulary in context, and chained follow-up answers when the transcript shows those needs. The app already holds answer-by-answer corrections, so do not repeat them. Do not repeat the local report mechanically.`;
 }
 
 export function buildPrompt(payload) {
   return `${buildInstructions(payload.mode)}\n\nINPUT JSON:\n${JSON.stringify(payload)}`;
+}
+
+export function buildCoachProviderRequest(mode, payload) {
+  return {
+    prompt: JSON.stringify(payload),
+    instructions: buildInstructions(mode),
+    schema: schemaFor(mode),
+    maxOutputTokens: mode === 'report' ? 6144 : 4096
+  };
+}
+
+export function extractCoachProviderText(response) {
+  if (typeof response?.text === 'string') return response.text;
+  return extractOutputText(response);
 }
 
 export function schemaFor(mode) {
@@ -136,7 +151,7 @@ export function schemaFor(mode) {
   return {
     type: 'object',
     additionalProperties: false,
-    required: ['summary', 'priorities', 'roadmap', 'turnFeedback'],
+    required: ['summary', 'priorities', 'roadmap'],
     properties: {
       summary: { type: 'string', minLength: 20, maxLength: 600 },
       priorities: {
@@ -159,21 +174,6 @@ export function schemaFor(mode) {
           properties: {
             title: { type: 'string', minLength: 3, maxLength: 80 },
             task: { type: 'string', minLength: 8, maxLength: 300 }
-          }
-        }
-      },
-      turnFeedback: {
-        type: 'array', minItems: 2, maxItems: 14,
-        items: {
-          type: 'object', additionalProperties: false,
-          required: ['turnIndex', 'strength', 'focus', 'skill', 'improvedAnswer', 'languageNote'],
-          properties: {
-            turnIndex: { type: 'integer', minimum: 0, maximum: 13 },
-            strength: { type: 'string', minLength: 8, maxLength: 260 },
-            focus: { type: 'string', minLength: 8, maxLength: 300 },
-            skill: { type: 'string', minLength: 3, maxLength: 80 },
-            improvedAnswer: { type: 'string', minLength: 3, maxLength: 900 },
-            languageNote: { type: 'string', minLength: 3, maxLength: 320 }
           }
         }
       }
@@ -213,7 +213,9 @@ export function parseModelResult(mode, raw) {
   if (mode === 'turn') {
     const feedback = parsed && typeof parsed.feedback === 'object' ? parsed.feedback : {};
     const followUp = text(parsed && parsed.followUp, 300);
-    if (!followUp) throw new Error('model_output_invalid');
+    const followUpWords = followUp.match(/[A-Za-z0-9']+/g) || [];
+    const questionMarks = followUp.match(/\?/g) || [];
+    if (!followUp || followUpWords.length > 18 || questionMarks.length !== 1) throw new Error('model_output_invalid');
     return {
       followUp,
       feedback: {
@@ -235,16 +237,8 @@ export function parseModelResult(mode, raw) {
     title: text(item && item.title, 80),
     task: text(item && item.task, 300)
   })) : [];
-  const turnFeedback = Array.isArray(parsed?.turnFeedback) ? parsed.turnFeedback.slice(0, 14).map((item) => ({
-    turnIndex: Math.max(0, Math.min(13, Math.round(Number(item && item.turnIndex) || 0))),
-    strength: text(item && item.strength, 260),
-    focus: text(item && item.focus, 300),
-    skill: text(item && item.skill, 80),
-    improvedAnswer: text(item && item.improvedAnswer, 900),
-    languageNote: text(item && item.languageNote, 320)
-  })) : [];
-  if (priorities.length !== 3 || roadmap.length !== 7 || turnFeedback.length < 2) throw new Error('model_output_invalid');
-  return { summary: text(parsed.summary, 600), priorities, roadmap, turnFeedback };
+  if (priorities.length !== 3 || roadmap.length !== 7) throw new Error('model_output_invalid');
+  return { summary: text(parsed.summary, 600), priorities, roadmap };
 }
 
 export { RUBRIC_KEYS };
