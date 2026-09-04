@@ -1010,6 +1010,7 @@ function screenTown(){
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
+      <button class="nm-iconbtn" id="townMe" title="내 위치">📍</button>
       <button class="nm-iconbtn" id="townZin">＋</button>
       <button class="nm-iconbtn" id="townZout">－</button>
     </div>
@@ -3186,10 +3187,24 @@ function initTownWorld(scr){
     cam.y=vp.clientHeight/2-bcy*cam.scale;
     bound();apply();
   }
+  /* 따라가는 카메라 — 지도를 통째로 보여주는 대신 플레이어 가까이(cover×FOLLOW_ZOOM)
+     당겨서 플레이어를 화면 가운데에 두고, 걸으면 지도가 함께 흐른다(Explorer식 시점).
+     손으로 지도를 끌면 따라가기를 잠시 끄고(자유 둘러보기), 지도를 탭해 걷게 하거나
+     📍 버튼을 누르면 다시 켠다. */
+  const FOLLOW_ZOOM=1.7;
+  let follow=true;
+  function playerWorld(){const p=(typeof player!=='undefined')?player:null;return p?{x:p.x/100*W,y:p.y/100*H}:{x:BBOX.x+BBOX.w/2,y:BBOX.y+BBOX.h/2};}
+  function focusPlayer(immediate){
+    const pw=playerWorld();
+    const tx=vp.clientWidth/2-pw.x*cam.scale, ty=vp.clientHeight/2-pw.y*cam.scale;
+    if(immediate){cam.x=tx;cam.y=ty;}
+    else{cam.x+=(tx-cam.x)*.08;cam.y+=(ty-cam.y)*.08;}
+    bound();apply();
+  }
 
   let drag=false,moved=false,sx,sy,cx,cy;
   function onDown(e){drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;}
-  function onMove(e){if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6)moved=true;cam.x=cx+dx;cam.y=cy+dy;bound();apply();}
+  function onMove(e){if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6){moved=true;follow=false;}cam.x=cx+dx;cam.y=cy+dy;bound();apply();}
   function onUp(){drag=false;vp.classList.remove('drag');}
   vp.addEventListener('pointerdown',onDown);
   vp.addEventListener('pointermove',onMove);
@@ -3223,10 +3238,12 @@ function initTownWorld(scr){
   const zin=scr.querySelector('#townZin'), zout=scr.querySelector('#townZout');
   zin.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale*1.25,r.left+r.width/2,r.top+r.height/2);};
   zout.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale/1.25,r.left+r.width/2,r.top+r.height/2);};
+  const meBtn=scr.querySelector('#townMe');
+  if(meBtn)meBtn.onclick=()=>{follow=true;cam.scale=Math.min(maxS,minS*FOLLOW_ZOOM);focusPlayer(true);};
   function onWheel(e){e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:.9),e.clientX,e.clientY);}
   vp.addEventListener('wheel',onWheel,{passive:false});
 
-  requestAnimationFrame(()=>{fit();center();});
+  requestAnimationFrame(()=>{fit();cam.scale=Math.min(maxS,minS*FOLLOW_ZOOM);focusPlayer(true);});
   function onResize(){fit();bound();apply();}
   addEventListener('resize',onResize);
 
@@ -3327,6 +3344,7 @@ function initTownWorld(scr){
       }
       n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
+      if(n.player&&follow)focusPlayer(false);              // 걷는 동안 카메라가 플레이어를 따라간다
       if(walker){
         const root=n.el.querySelector('.nm-walker');
         if(root){
@@ -3355,7 +3373,7 @@ function initTownWorld(scr){
     let px=wx/W*100, py=wy/H*100;                  // 월드 %
     if(px<2||px>98||py<4||py>96)return;            // 지도 밖 무시
     const me=nbs[0];
-    me.tx=px; me.ty=py;
+    me.tx=px; me.ty=py; follow=true;
     /* 목적지 표시(잠깐 반짝) */
     const ping=document.createElement('div');
     ping.className='nb-ping';
