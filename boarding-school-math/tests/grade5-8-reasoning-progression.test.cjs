@@ -10,7 +10,7 @@ const middleTypes = require("../../hsmiddle/question-bank/data/type-registry.js"
 const middleItems = require("../../hsmiddle/question-bank/data/item-index.js").items;
 
 test("Grade 5-8 reasoning progression covers every official cluster without inventing promotion cuts", function () {
-  assert.deepEqual(progression.validate(), { valid: true, gradeCount: 4, clusterCount: 41, publicClinicCount: 8 });
+  assert.deepEqual(progression.validate(), { valid: true, gradeCount: 4, clusterCount: 41, publicClinicCount: 9 });
   assert.deepEqual(progression.gradeProfiles.map(function (profile) { return profile.grade; }), [5, 6, 7, 8]);
   assert.deepEqual(progression.gradeProfiles.map(function (profile) { return profile.schoolClusterCount; }), [11, 10, 10, 10]);
   const official = registry.units.filter(function (unit) { return [5, 6, 7, 8].includes(Number(unit.grade)); }).map(function (unit) { return unit.clusterId; }).sort();

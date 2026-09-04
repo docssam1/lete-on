@@ -684,7 +684,7 @@ function setConceptPageOn(v){ try{ localStorage.setItem(CONCEPT_TOGGLE_KEY, v?'1
 function conceptToggleRowHtml(){
   return `<label class="nm-ex-concept-toggle">
     <input type="checkbox" id="nm-ex-concept-chk" ${getConceptPageOn()?'checked':''}>
-    <span>📖 첫 장에 개념 넣기</span>
+    <span>📖 ${lk('첫 장에 개념 넣기','Concept page first','首页加概念')}</span>
   </label>`;
 }
 function bindConceptToggle(container){
@@ -704,7 +704,7 @@ function setCoverOn(v){ try{ localStorage.setItem(COVER_TOGGLE_KEY, v?'1':'0'); 
 function coverToggleRowHtml(){
   return `<label class="nm-ex-concept-toggle">
     <input type="checkbox" id="nm-ex-cover-chk" ${getCoverOn()?'checked':''}>
-    <span>📘 표지 넣기</span>
+    <span>📘 ${lk('표지 넣기','Add cover','加封面')}</span>
   </label>`;
 }
 function bindCoverToggle(container){
