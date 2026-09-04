@@ -29,6 +29,8 @@ assert.equal(turn.mode, 'turn');
 assert.equal(turn.priorTurns.length, 4);
 assert.equal(turn.passage.text.includes('<'), false);
 assert.match(buildPrompt(turn), /competitive four-student reading interview/);
+assert.match(buildPrompt(turn), /seven-year-old/);
+assert.match(buildPrompt(turn), /at most 18 words/);
 
 const turnProviderRequest = buildCoachProviderRequest('turn', turn);
 assert.equal(turnProviderRequest.prompt, JSON.stringify(turn));
@@ -52,6 +54,10 @@ const parsedTurn = parseModelResult('turn', rawTurn);
 assert.equal(parsedTurn.followUp.startsWith('Which detail'), true);
 assert.equal(parsedTurn.feedback.scores.delivery, scores.delivery);
 assert.equal(extractCoachProviderText({ ok: true, text: rawTurn }), rawTurn);
+assert.throws(() => parseModelResult('turn', JSON.stringify({
+  ...JSON.parse(rawTurn),
+  followUp: 'Can you explain this answer with one exact passage detail and then tell me how your idea would change in a different situation?',
+})), /model_output_invalid/);
 
 const reportInput = validatePayload({
   mode: 'report',
