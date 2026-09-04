@@ -88,6 +88,11 @@ async function runPassageInterview(page, passageIndex) {
   await assertVisibleText(page, 'Keep the idea in mind.');
   await page.locator('[data-action="after-peer"]').click();
   await assertVisibleText(page, 'SURPRISE LISTENING QUESTION');
+  const ambushPrompt = await page.locator('.question-block h1').textContent();
+  assert.match(ambushPrompt, /said, “.+” What do you think about that specific idea\?/);
+  assert.doesNotMatch(ambushPrompt, /where you agree or disagree/i, 'surprise question must name the peer content, not ask only for agreement');
+  if (passageIndex === 0) assert.match(ambushPrompt, /Communities should support seed banks before a disaster happens/);
+  if (passageIndex === 1) assert.match(ambushPrompt, /Wren was wise to share because she saved part of the harvest first/);
   if (passageIndex === 0) await page.screenshot({ path: path.join(outDir, 'desktop-ambush.png'), fullPage: true });
   await submit(page, 'Mina gives a clear reason, and I agree with the main idea because the passage supports it. I would add another detail about responsibility.');
   await submit(page, 'The target word means taking in or understanding something. The surrounding sentence gives a clue, and I can use the word in a new example.');
@@ -164,11 +169,42 @@ async function main() {
     await page.goto(url, { waitUntil: 'networkidle' });
     await assertVisibleText(page, 'Walk in ready to listen.');
     assert.equal(await page.locator('#set-select option').count(), 10, 'practice set selector should contain 10 sets');
+    assert.ok(await page.locator('.director-photo').evaluate((image) => image.complete && image.naturalWidth >= 600), 'Korean male teacher image should load in the room');
     await page.screenshot({ path: path.join(outDir, 'desktop-lobby.png'), fullPage: true });
     await assertNoViewportOverflow(page, 'desktop lobby');
     await page.locator('#student-name').fill('Alex');
     await page.locator('#set-select').selectOption('9');
     assert.equal(await page.locator('#set-select').inputValue(), '9');
+    await page.evaluate(() => {
+      window.__printCalls = 0;
+      window.print = () => { window.__printCalls += 1; };
+    });
+    await page.locator('[data-action="preview-print"]').click();
+    await assertVisibleText(page, 'Print preview');
+    assert.equal(await page.locator('.print-page-preview').count(), 2, 'full session preview should contain two passage sheets');
+    assert.deepEqual(await page.locator('.print-passage-meta b').allTextContents(), ['Nonfiction', 'Fable']);
+    await assertVisibleText(page, 'A Library Made of Seeds');
+    await assertVisibleText(page, 'The Finch’s Favorite Seed');
+    assert.equal(await page.locator('.question-block').count(), 0, 'print preview must not expose interview questions');
+    await assertNoViewportOverflow(page, 'desktop print preview');
+    await page.screenshot({ path: path.join(outDir, 'desktop-print-preview.png'), fullPage: true });
+    await page.locator('[data-action="print-materials"]').click();
+    assert.equal(await page.evaluate(() => window.__printCalls), 1, 'passage print command should open the browser print dialog');
+    await page.emulateMedia({ media: 'print' });
+    assert.equal(await page.locator('.studio-header').evaluate((node) => getComputedStyle(node).display), 'none');
+    const printPageBoxes = await page.locator('.print-page-preview').evaluateAll((nodes) => nodes.map((node) => ({
+      width: node.getBoundingClientRect().width,
+      height: node.getBoundingClientRect().height,
+      breakAfter: getComputedStyle(node).breakAfter,
+    })));
+    printPageBoxes.forEach((box) => {
+      assert.ok(box.width >= 790 && box.width <= 796, `A4 width mismatch: ${JSON.stringify(box)}`);
+      assert.ok(box.height >= 1121 && box.height <= 1124, `A4 height mismatch: ${JSON.stringify(box)}`);
+    });
+    await page.pdf({ path: path.join(outDir, 'passage-print-a4.pdf'), printBackground: true, preferCSSPageSize: true });
+    await page.emulateMedia({ media: 'screen' });
+    await page.locator('[data-action="close-print-preview"]').click();
+    await assertVisibleText(page, 'Walk in ready to listen.');
     await page.locator('[data-action="seat"][data-seat="3"]').click();
     await page.locator('[data-action="enter-room"]').click();
     await assertVisibleText(page, 'Good afternoon, everyone.');
@@ -176,6 +212,7 @@ async function main() {
     await assertVisibleText(page, 'two passages, one at a time');
     await assertVisibleText(page, '60 seconds for each passage');
     await assertVisibleText(page, '1. Nonfiction · 2. Fable');
+    assert.ok(await page.locator('.director-photo').evaluate((image) => image.complete && image.naturalWidth >= 600));
     await assertNoViewportOverflow(page, 'desktop briefing');
     await page.screenshot({ path: path.join(outDir, 'desktop-briefing.png'), fullPage: true });
     await page.locator('[data-action="prepare-reading"]').click();
@@ -190,6 +227,7 @@ async function main() {
     await assertVisibleText(page, 'PASSAGE COLLECTED');
     assert.equal((await page.locator('body').innerText()).includes(firstParagraph.slice(0, 40)), false, 'passage text remained visible after collection');
     await page.locator('[data-action="begin-interview"]').click();
+    assert.ok(await page.locator('.teacher-portrait img').evaluate((image) => image.complete && image.naturalWidth >= 600));
     await runPassageInterview(page, 0);
     await assertVisibleText(page, 'PASSAGE 1 COMPLETE');
 
@@ -210,6 +248,15 @@ async function main() {
     await assertVisibleText(page, 'Seven-day interview route');
     await page.screenshot({ path: path.join(outDir, 'desktop-report.png'), fullPage: true });
     await assertNoViewportOverflow(page, 'desktop report');
+    await page.evaluate(() => { window.__printCalls = 0; });
+    await page.locator('[data-action="print-report"]').click();
+    assert.equal(await page.evaluate(() => window.__printCalls), 1, 'report print command should open the browser print dialog');
+    assert.equal(await page.locator('.correction-item:not([open])').count(), 0, 'report printing should expand every correction');
+    await page.emulateMedia({ media: 'print' });
+    assert.equal(await page.locator('.report-actions').evaluate((node) => getComputedStyle(node).display), 'none');
+    assert.equal(await page.locator('.correction-item summary b').first().evaluate((node) => getComputedStyle(node).whiteSpace), 'normal');
+    await page.pdf({ path: path.join(outDir, 'coach-report-a4.pdf'), printBackground: true, preferCSSPageSize: true });
+    await page.emulateMedia({ media: 'screen' });
     const apiCalls = await page.evaluate(() => window.__ALPHA_PREP_TEST__.state.apiCalls);
     assert.equal(apiCalls, 3, 'economy mode should use one adaptive call per passage plus one report call');
 
@@ -222,8 +269,21 @@ async function main() {
     await page.waitForFunction(() => window.scrollY < 2);
     await assertNoViewportOverflow(page, 'mobile lobby');
     await assertMobileActionVisible(page, '[data-action="enter-room"]', 'mobile lobby');
+    await assertMobileActionVisible(page, '[data-action="preview-print"]', 'mobile print preview shortcut');
     await assertMobileTouchTargets(page, 'mobile lobby');
+    assert.ok(await page.locator('.director-photo').evaluate((image) => image.complete && image.getBoundingClientRect().width >= 70), 'teacher should remain visible on mobile');
     await page.screenshot({ path: path.join(outDir, 'mobile-lobby.png') });
+    await page.locator('[data-action="preview-print"]').click();
+    await assertNoViewportOverflow(page, 'mobile print preview');
+    await assertMobileTouchTargets(page, 'mobile print preview');
+    const mobilePrintPages = await page.locator('.print-page-preview').evaluateAll((nodes) => nodes.map((node) => {
+      const rect = node.getBoundingClientRect();
+      return { top: rect.top, bottom: rect.bottom, clientHeight: node.clientHeight, scrollHeight: node.scrollHeight };
+    }));
+    assert.ok(mobilePrintPages[0].bottom + 20 <= mobilePrintPages[1].top, `mobile passage previews overlap: ${JSON.stringify(mobilePrintPages)}`);
+    mobilePrintPages.forEach((box) => assert.ok(box.scrollHeight <= box.clientHeight + 1, `mobile passage preview clips content: ${JSON.stringify(box)}`));
+    await page.screenshot({ path: path.join(outDir, 'mobile-print-preview.png'), fullPage: true });
+    await page.locator('[data-action="close-print-preview"]').click();
     await page.locator('[data-action="enter-room"]').click();
     await assertVisibleText(page, 'one minute for each passage');
     await page.waitForFunction(() => window.scrollY < 2);

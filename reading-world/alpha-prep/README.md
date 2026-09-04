@@ -6,17 +6,18 @@ The coaching profile is calibrated for verbally advanced seven-year-olds reading
 
 ## Session model
 
-- Four-candidate entrance and seating scene
+- Four-candidate entrance and seating scene with an original, AI-generated Korean male director portrait
 - Ten full mock sets with 20 original one-page prediction passages
 - Two consecutive interview rounds in a full mock: nonfiction first, then fiction or fable
 - A separate 60-second silent read and automatic passage collection for each round
 - Questions for the first passage are completed before the second passage is handed out
 - Summary, evidence, inference, opinion, and vocabulary-in-context questions
 - Two-step answer-dependent follow-up ladders; economy mode continues the second step locally
-- One peer answer followed by an unannounced listen-link-add question
+- One peer answer followed by an unannounced question that repeats the peer's exact claim before asking the learner to evaluate and extend it
 - Browser speech recognition with typed fallback
 - Browser speech synthesis for the director and peers
 - Seven-skill report, answer corrections, vocabulary review, and seven-day route
+- Pre-session print preview with one passage per A4 page, plus a separate printable coaching report
 
 ## Cost boundary
 

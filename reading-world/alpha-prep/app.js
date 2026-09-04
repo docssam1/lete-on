@@ -57,6 +57,7 @@
     busy: false,
     notice: '',
     report: null,
+    printMode: '',
     apiStatus: 'idle',
     apiCalls: 0,
     startedAt: 0
@@ -110,7 +111,7 @@
   }
 
   function progressStep() {
-    if (state.stage === 'lobby' || state.stage === 'briefing') return 1;
+    if (state.stage === 'lobby' || state.stage === 'briefing' || state.stage === 'print-preview') return 1;
     if (state.stage === 'reading' || state.stage === 'collected') return 2;
     if (state.stage === 'interview' || state.stage === 'between') return 3;
     return 4;
@@ -147,7 +148,7 @@
     return `<div class="interview-room ${state.entered || seated ? 'entered' : ''} ${seated ? 'settled' : ''}" role="img" aria-label="Four students entering an interview room and sitting across from the director">
       <div class="room-window"><span></span><span></span><span></span></div>
       <div class="room-board"><b>WELCOME</b><small>Listen · Think · Speak</small></div>
-      <div class="director"><span class="director-head"></span><span class="director-body"></span><small>Director Henry</small></div>
+      <div class="director"><img class="director-photo" src="assets/alpha-teacher.webp" alt=""><small>Director Henry</small></div>
       <div class="director-desk"><span></span></div>
       <div class="door"><span class="door-knob"></span></div>
       <div class="floor-line"></div>
@@ -185,9 +186,39 @@
           <button type="button" data-action="mode" data-mode="full" class="${state.sessionMode === 'full' ? 'active' : ''}">Full · 2 rounds</button>
           <button type="button" data-action="mode" data-mode="quick" class="${state.sessionMode === 'quick' ? 'active' : ''}">Quick · 1 text</button>
         </div>
-        <button class="primary-command mobile-dock-action" type="button" data-action="enter-room" ${state.entered ? 'disabled' : ''}>${state.entered ? 'Taking your seat…' : 'Open the door'} <span>→</span></button>
+        <div class="lobby-actions"><button class="quiet-command print-preview-command" type="button" data-action="preview-print">Print preview</button><button class="primary-command mobile-dock-action" type="button" data-action="enter-room" ${state.entered ? 'disabled' : ''}>${state.entered ? 'Taking your seat…' : 'Open the door'} <span>→</span></button></div>
         <p class="privacy-note">Alpha Prep does not save an audio file. Your browser converts speech to text, and you can type instead.</p>
       </section>
+    </main>`;
+  }
+
+  function printablePassages() {
+    return selectedSet().passages.slice(0, passageLimit());
+  }
+
+  function printPageMarkup(passage, index, total) {
+    const words = wordCount(passage.paragraphs.join(' '));
+    return `<article class="print-page-preview" aria-labelledby="print-passage-${index + 1}">
+      <header class="print-sheet-header">
+        <div><b>ALPHA PREP</b><small>INTERVIEW READING</small></div>
+        <span>${esc(selectedSet().label)} · ${esc(selectedSet().theme)}</span>
+      </header>
+      <div class="print-student-line"><span>Name</span><i></i><span>Date</span><i></i></div>
+      <div class="print-passage-meta"><b>${esc(passage.genre)}</b><span>PASSAGE ${index + 1} OF ${total}</span></div>
+      <h1 id="print-passage-${index + 1}">${esc(passage.title)}</h1>
+      <div class="print-passage-copy">${passage.paragraphs.map((paragraph) => `<p>${esc(paragraph)}</p>`).join('')}</div>
+      <footer><span>${words} words</span><span>Read silently for 1 minute</span></footer>
+    </article>`;
+  }
+
+  function printPreviewScreen() {
+    const passages = printablePassages();
+    return `${studioHeader()}<main class="print-preview-layout">
+      <header class="print-preview-toolbar">
+        <div><div class="eyebrow">BEFORE THE INTERVIEW</div><h1>Print preview</h1><p>${esc(selectedSet().label)} · ${passages.length} passage sheet${passages.length === 1 ? '' : 's'} · one passage per A4 page</p></div>
+        <div class="print-preview-actions"><button class="quiet-command" type="button" data-action="close-print-preview">Back</button><button class="primary-command" type="button" data-action="print-materials">Print ${passages.length} sheet${passages.length === 1 ? '' : 's'}</button></div>
+      </header>
+      <section class="print-page-stack" aria-label="Passage print preview">${passages.map((passage, index) => printPageMarkup(passage, index, passages.length)).join('')}</section>
     </main>`;
   }
 
@@ -283,8 +314,8 @@
   function interviewRoom(current) {
     const peerSeat = current && current.peerSeat ? current.peerSeat : 0;
     return `<div class="roundtable" aria-label="Four-person interview">
-      <div class="henry ${current && current.kind === 'teacher' ? 'speaking' : ''}"><span>H</span><small>Director Henry</small></div>
-      <div class="table-surface"><span>ALPHA</span></div>
+      <div class="henry ${current && current.kind === 'teacher' ? 'speaking' : ''}"><span class="teacher-portrait"><img src="assets/alpha-teacher.webp" alt="Korean male interviewer, Director Henry"></span><small>Director Henry</small></div>
+      <div class="table-surface" aria-hidden="true"></div>
       ${[0, 1, 2, 3].map((index) => avatarBadge(index, current && ((current.kind === 'peer' && peerSeat === index + 1) || (current.kind !== 'peer' && index + 1 === state.seat)))).join('')}
     </div>`;
   }
@@ -328,7 +359,7 @@
   function peerTurnControls(current, peer) {
     return `<div class="panel-number">LISTEN</div>
       <h2>${state.peerHeard ? 'Keep the idea in mind.' : `${esc(peer.name)} is answering.`}</h2>
-      <p>${state.peerHeard ? 'Director Henry may ask you to agree, disagree, or add a different detail.' : 'Listen for the claim and the reason. Do not plan your own answer yet.'}</p>
+      <p>${state.peerHeard ? 'Director Henry will ask about the exact idea you just heard. Remember the claim and its reason.' : 'Listen for the claim and the reason. Do not plan your own answer yet.'}</p>
       <div class="listen-target"><span>${initials(peer.name)}</span><div><b>${esc(peer.name)}’s idea</b><small>Claim + reason</small></div></div>
       ${state.peerHeard
         ? `<button class="primary-command mobile-dock-action" type="button" data-action="after-peer">I listened <span>→</span></button>`
@@ -353,7 +384,7 @@
   }
 
   function answerHint(current) {
-    if (current.kind === 'ambush') return `Name ${current.peerName}’s idea first. Then agree, disagree, or add a new point.`;
+    if (current.kind === 'ambush') return `Explain ${current.peerName}’s specific point first. Then evaluate it and add one new detail.`;
     if (current.type === 'summary') return 'Main idea → two important details → short ending.';
     if (current.type === 'vocabulary') return 'Use the surrounding sentence as evidence for the meaning.';
     if (current.type === 'opinion') return 'State your view, say why, and connect it to the passage.';
@@ -410,7 +441,7 @@
         <header><span>05</span><h2>Seven-day interview route</h2></header>
         <div class="roadmap">${report.roadmap.map((day, index) => `<article><span>DAY ${index + 1}</span><b>${esc(day.title)}</b><p>${esc(day.task)}</p></article>`).join('')}</div>
       </section>
-      <section class="report-actions"><button class="quiet-command" type="button" data-action="restart">Try another set</button><button class="primary-command" type="button" data-action="retry-set">Retry this set <span>↻</span></button></section>
+      <section class="report-actions"><button class="quiet-command" type="button" data-action="restart">Try another set</button><button class="quiet-command" type="button" data-action="print-report">Print report</button><button class="primary-command" type="button" data-action="retry-set">Retry this set <span>↻</span></button></section>
       <p class="report-footnote">${state.apiStatus === 'ready' ? `Adaptive text coaching used ${state.apiCalls} call${state.apiCalls === 1 ? '' : 's'}; no paid voice generation was requested.` : 'Local coaching completed the session; no paid voice generation was used.'}</p>
     </main>`;
   }
@@ -445,6 +476,7 @@
     const viewChanged = Boolean(renderedViewKey && renderedViewKey !== nextViewKey);
     const screens = {
       lobby: lobbyScreen,
+      'print-preview': printPreviewScreen,
       briefing: briefingScreen,
       reading: readingScreen,
       collected: collectedScreen,
@@ -454,6 +486,7 @@
     };
     app.innerHTML = (screens[state.stage] || lobbyScreen)();
     document.body.dataset.stage = state.stage;
+    document.body.dataset.printMode = state.printMode;
     renderedViewKey = nextViewKey;
     if (viewChanged) {
       requestAnimationFrame(() => {
@@ -526,11 +559,13 @@
     const others = [1, 2, 3, 4].filter((seat) => seat !== state.seat);
     const peerSeat = others[(state.passageIndex + state.setIndex) % others.length];
     const peer = peers[peerSeat - 1];
+    const peerAnswer = peerAnswers[passage.id] || 'I think the passage gives us a reason to look at the problem from another point of view.';
+    const peerClaim = peerAnswer.match(/^[^.!?]+[.!?]?/)?.[0] || peerAnswer;
     state.queue = [
       { kind: 'student', type: questions[0].type, prompt: questions[0].prompt, adaptiveSource: true, followDepth: 0 },
       { kind: 'student', type: questions[1].type, prompt: questions[1].prompt },
-      { kind: 'peer', type: questions[2].type, prompt: questions[2].prompt, peerSeat, peerAnswer: peerAnswers[passage.id] || 'I think the passage gives us a reason to look at the problem from another point of view.' },
-      { kind: 'ambush', type: 'interaction', prompt: `What do you think about ${peer.name}’s answer? Tell me where you agree or disagree, and add one idea of your own.`, peerName: peer.name, peerSeat },
+      { kind: 'peer', type: questions[2].type, prompt: questions[2].prompt, peerSeat, peerAnswer },
+      { kind: 'ambush', type: 'interaction', prompt: `${peer.name} said, “${peerClaim}” What do you think about that specific idea? Explain it and add one detail of your own.`, peerName: peer.name, peerSeat, peerClaim },
       { kind: 'student', type: questions[3].type, prompt: questions[3].prompt }
     ];
     state.questionIndex = 0;
@@ -1188,7 +1223,7 @@
       stage: 'lobby', entered: false, setIndex, passageIndex: 0, readingStarted: false,
       secondsLeft: READ_SECONDS, queue: [], questionIndex: 0, answerDraft: '', turns: [],
       passageNotes: {}, adaptiveUsed: {}, peerHeard: false, listening: false, busy: false,
-      notice: '', report: null, apiStatus: 'idle', apiCalls: 0, startedAt: 0
+      notice: '', report: null, printMode: '', apiStatus: 'idle', apiCalls: 0, startedAt: 0
     });
     render();
     window.scrollTo({ top: 0 });
@@ -1200,6 +1235,15 @@
     const action = button.dataset.action;
     if (action === 'seat') { state.seat = Number(button.dataset.seat) || 1; render(); }
     else if (action === 'mode') { state.sessionMode = button.dataset.mode === 'quick' ? 'quick' : 'full'; render(); }
+    else if (action === 'preview-print') { state.printMode = 'materials'; state.stage = 'print-preview'; render(); }
+    else if (action === 'close-print-preview') { state.printMode = ''; state.stage = 'lobby'; render(); }
+    else if (action === 'print-materials') { state.printMode = 'materials'; document.body.dataset.printMode = 'materials'; window.print(); }
+    else if (action === 'print-report') {
+      state.printMode = 'report';
+      document.body.dataset.printMode = 'report';
+      document.querySelectorAll('.correction-item').forEach((item) => { item.open = true; });
+      window.print();
+    }
     else if (action === 'enter-room') enterRoom();
     else if (action === 'prepare-reading') prepareReading();
     else if (action === 'start-reading') startReading();
@@ -1242,6 +1286,13 @@
     stopSpeech();
     if (recognition) {
       try { recognition.abort(); } catch (_) { /* no-op */ }
+    }
+  });
+
+  window.addEventListener('afterprint', () => {
+    if (state.stage !== 'print-preview') {
+      state.printMode = '';
+      document.body.dataset.printMode = '';
     }
   });
 
