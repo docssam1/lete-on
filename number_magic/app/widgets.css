@@ -538,7 +538,9 @@
 .nm-sc-stairq-bar.has{background:linear-gradient(145deg,#fff6e6,#fbeccd);border-color:var(--gold-deep);}
 .nm-sc-screen{min-height:22px!important;font-size:22px!important;margin:0!important;}
 .nm-sc-pad.nm-numpad{gap:5px!important;max-width:250px!important;}
-.nm-sc-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
+/* 디자인 패스 1로 .nm-key 기본이 56px 키로 커졌다 — 이 위젯은 위 장면(계단)과
+   한 화면에 같이 들어가야 해서 넘패드만 계속 컴팩트하게 고정한다(height 명시). */
+.nm-sc-pad .nm-key{height:36px!important;padding:0!important;font-size:17px!important;border-radius:10px!important;}
 
 /* ══════════════════════════════════════
    BALANCESCALE WIDGET  (유아 · 수의 나라)
@@ -592,7 +594,8 @@
 .nm-nm-row.ask .nm-nm-io.in{border-color:var(--blue);}
 .nm-nm-screen{min-height:22px!important;font-size:22px!important;margin:2px 0!important;}
 .nm-nm-pad.nm-numpad{gap:5px!important;max-width:250px!important;}
-.nm-nm-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
+/* 디자인 패스 1 — 위와 같은 이유(숫자 기계 장면과 한 화면), 넘패드 컴팩트 고정 */
+.nm-nm-pad .nm-key{height:36px!important;padding:0!important;font-size:17px!important;border-radius:10px!important;}
 
 /* ══════════════════════════════════════
    CROSSSUM WIDGET  (유아 · 수의 나라)
@@ -663,7 +666,8 @@
 .nm-tb-undo:active,.nm-tb-done:active{transform:translateY(2px);box-shadow:none;}
 .nm-tb-screen{min-height:22px!important;font-size:22px!important;margin:2px 0!important;}
 .nm-tb-pad.nm-numpad{gap:5px!important;max-width:250px!important;margin-top:8px;}
-.nm-tb-pad .nm-key{padding:4px 0!important;font-size:17px!important;border-radius:10px!important;}
+/* 디자인 패스 1 — 위와 같은 이유(테이블 장면과 한 화면), 넘패드 컴팩트 고정 */
+.nm-tb-pad .nm-key{height:36px!important;padding:0!important;font-size:17px!important;border-radius:10px!important;}
 
 /* ══════════════════════════════════════
    NUMLINE WIDGET  (§4 다함식 위젯 1/3, 2026-08-27 Phase 3)
@@ -728,7 +732,8 @@
 .nm-cmp-lock{font-size:13px;font-weight:700;color:var(--sub);padding:10px 4px;}
 .nm-cmp-col .nm-numpad-screen{min-height:24px;font-size:22px;}
 .nm-cmp-col .nm-numpad{gap:5px;max-width:210px;}
-.nm-cmp-col .nm-key{padding:5px 0;font-size:15px;border-radius:10px;}
+/* 디자인 패스 1 — 좌우 2열 비교 카드라 넘패드가 좁아야 한다, 컴팩트 고정 */
+.nm-cmp-col .nm-key{height:32px;padding:0;font-size:15px;border-radius:10px;}
 @media (max-width:420px){
   .nm-cmp-cols{flex-direction:column;}
   .nm-cmp-arrow:not(.ok){transform:rotate(90deg);}

@@ -452,7 +452,20 @@ function playSfx(kind){
 window.NM_SFX=playSfx;
 window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
-function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
+function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);feedbackFx(ok);}
+/* 디자인 패스 1(§1) — 정답이면 동행 옆 스파클, 오답이면 마법판이 흔들림. toast()는
+   practice/check/lab/arena 정오답 경로가 전부 거치는 지점이라 여기 한 곳에서만
+   클래스를 토글한다(로직 변경 없음, 순수 시각 효과). 대상이 화면에 없으면
+   querySelector가 null이라 조용히 아무 일도 없다(예: 아레나엔 .nm-numi가 없음). */
+function feedbackFx(ok){
+  if(ok){
+    const n=document.querySelector('.nm-numi');
+    if(n){n.classList.remove('sparkle');void n.offsetWidth;n.classList.add('sparkle');}
+  }else{
+    const board=document.querySelector('.nm-board,.nm-arena-expr');
+    if(board){board.classList.remove('nm-shake');void board.offsetWidth;board.classList.add('nm-shake');}
+  }
+}
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n){S.coins+=n;save();
   /* 화면 전환 없이 코인이 바뀌는 경우(출석 카드 등) 상단 🪙 표시를 바로 맞춘다 */
@@ -3350,31 +3363,58 @@ function initTownWorld(scr){
 /* ============================================================
    학습선택 — 선택한 등급의 단계/유닛 목록
    ============================================================ */
+/* 레벨 제목 " · "로 나눠 짧은 이름/긴 설명으로 분리(모바일=짧은 쪽만, 데스크탑=둘 다).
+   구분자가 없으면(드묾) 그냥 전체를 짧은 쪽으로 보여준다 — CSS만으로 숨기지 않는다. */
+function splitLevelTitle(str){
+  const i=str.indexOf(' · ');
+  if(i<0)return{main:str,sub:''};
+  return{main:str.slice(0,i),sub:str.slice(i+3)};
+}
 function screenTier(){
   const scr=$('#screen');
   const tier=tierById(S.tierId);
   if(!tier){exitTier();return;}
+  const accent=tier.color||'#16417C';
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  /* "다음" 유닛 — 이 등급 안에서 처음 만나는 미완료·비잠금 유닛 하나(findNextRoadUnit과
+     같은 발상, 전체 로드맵이 아니라 이 등급 범위로만 계산) */
+  let nextUid=null, doneN=0, totalN=0;
+  tier.levels.forEach(lvl=>{
+    (lvl.units||[]).filter(u=>UNITS[u]).forEach(uid=>{
+      totalN++;
+      const done=unitDone(uid);
+      if(done)doneN++;
+      if(!nextUid&&!done&&!unitLocked(uid))nextUid=uid;
+    });
+  });
+  const pct=totalN?Math.round(doneN/totalN*100):0;
   let html=`<div class="nm-map">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backTown">${t('back')}</button>
       <div class="nm-unit-title">${tier.title}<small>${L(tier.subtitle)} · ${tier.ageLabel}</small></div>
     </div>
-    <div class="nm-tier">
+    <div class="nm-tier-progress-wrap">
+      <div class="nm-tier-progress"><div class="nm-tier-progress-bar" style="width:${pct}%;background:${esc(accent)}"></div></div>
+      <span class="nm-tier-progress-n">${doneN}/${totalN}</span>
+    </div>
+    <div class="nm-tier" style="--tier-accent:${esc(accent)}">
       <p class="nm-tier-desc">${L(tier.desc)}</p>
       <div class="nm-levels">`;
   tier.levels.forEach(lvl=>{
     const units=(lvl.units||[]).filter(u=>UNITS[u]);
     const open=lvl.available&&units.length;
     if(open){
+      const lt=splitLevelTitle(L(lvl.title));
       html+=`<div class="nm-level open">
-        <div class="nm-level-t">${L(lvl.title)}</div>
+        <div class="nm-level-t">${esc(lt.main)}${lt.sub?`<span class="nm-level-t-sub"> · ${esc(lt.sub)}</span>`:''}</div>
         <div class="nm-unit-row">`;
       units.forEach(uid=>{
         const u=UNITS[uid];const done=unitDone(uid);const locked=unitLocked(uid);
-        html+=`<button class="nm-unit ${done?'done':''} ${locked?'trial-locked':''}" data-unit="${uid}">
-          <span class="nm-unit-ic">${u.icon||'✦'}</span>
+        const isNext=!locked&&!done&&uid===nextUid;
+        html+=`<button class="nm-unit ${done?'done':''} ${locked?'trial-locked':''} ${isNext?'next':''}" data-unit="${uid}">
+          <span class="nm-unit-ic" style="background:${esc(accent)}1f">${u.icon||'✦'}</span>
           <span class="nm-unit-name">${L(u.title)}${lineageBadgeSpan(uid)}</span>
-          ${locked?'<span class="nm-unit-lock">🔒</span>':done?'<span class="nm-unit-check">✓</span>':''}
+          ${locked?'<span class="nm-unit-lock">🔒</span>':done?'<span class="nm-unit-check">✓</span>':isNext?`<span class="nm-unit-next-pill">${esc(lk('다음','Next','下一个'))}</span>`:''}
         </button>`;
       });
       html+=`</div></div>`;
@@ -3436,15 +3476,15 @@ function screenUnit(){
      첫 화면으로 친다. 그 외(경로 우회로 S.step이 비어 있는 경우 대비) null도 포함.
      unitFlowOf(u)[0].key는 항상 'practice'(§curriculum.js unitFlow). */
   const isFirstUnitStep = !S.step || S.step==='range' || S.step==='intro' || S.step===unitFlowOf(u)[0].key;
-  scr.innerHTML=`<div class="nm-unit-view">
+  scr.innerHTML=`<div class="nm-unit-view"><div class="nm-unit-inner">
     <div class="nm-unit-bar">
-      <button class="nm-back" id="backMap">${t('back')}</button>
+      <button class="nm-back" id="backMap" aria-label="${t('back')}">←</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
     </div>
     ${isFirstUnitStep?docUnitStripHtml(u):''}
     ${(S.step==='range'||S.step==='intro')?'':flowBar()}
     <div id="stepBody" class="nm-step-body"></div>
-  </div>`;
+  </div></div>`;
   $('#backMap').onclick=exitUnit;
   scr.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{S.step=b.dataset.step;save();screenUnit();});
   const body=$('#stepBody');
@@ -3505,8 +3545,10 @@ function runPractice(body,u){
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
-    ${pracTex}
-    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    <div class="nm-board">
+      ${pracTex}
+      <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    </div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
   </div>`;
@@ -3523,7 +3565,7 @@ function runPracticeWidget(body,u,cur,first,need){
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
-    <div id="pracWidget" class="nm-lab-widget"></div>
+    <div id="pracWidget" class="nm-lab-widget nm-board"></div>
   </div>`;
   S.sub.started=true;
   say(first?L(cfg.intro):L(cur.prompt));
@@ -3789,8 +3831,10 @@ function allUnitSymbols(){
 }
 function symDexCardHtml(sym,real){
   const ko=S.lang==='ko',en=S.lang==='en';
+  /* 빈 자리(§3): 물음표 대신 그 기호 자체를 20% 흐리게(실루엣)로 미리 보여준다 —
+     실제 문구는 SYMBOL_DEX_CANON의 glyph(sym 인자) 그대로, 진짜 뜻은 만나야 열린다. */
   const notMet=`<div class="nm-dex-card unknown"><div class="nm-dex-flip"><div class="nm-dex-face front">
-    <div class="nm-dex-sym">?</div><div class="nm-dex-read">${ko?'아직 만나지 못한 기호':en?'Not met yet':'尚未遇到的符号'}</div>
+    <div class="nm-dex-sym">${esc(sym)}</div><div class="nm-dex-read">${ko?'아직 만나지 못한 기호':en?'Not met yet':'尚未遇到的符号'}</div>
   </div></div></div>`;
   if(!real)return notMet;
   const collected=!!S.symbolDex[real.sym];
@@ -3824,6 +3868,7 @@ function screenSymbolDex(){
     <div class="nm-gc-body">
       <p class="nm-dex-sub">${ko?'배운 기호를 모아보세요. 카드를 탭하면 뒤집혀요.':en?"Collect the symbols you've learned — tap a card to flip it.":'收集你学过的符号——点击卡片可以翻面。'}</p>
       <div class="nm-dex-grid">${canonCards}</div>
+      <p class="nm-dex-hint">${ko?'기호 친구는 과정이 올라가면 한 명씩 찾아와요':en?'Symbol friends arrive as you climb the course':'符号朋友会随课程提升一个个到来'}</p>
       ${extraCards?`<div class="nm-dex-sec-h">${ko?'더 만난 기호':en?'More symbols met':'更多遇到的符号'}</div><div class="nm-dex-grid">${extraCards}</div>`:''}
     </div>
   </div>`;
@@ -4025,6 +4070,16 @@ function screenReport(){
     return `<div class="nm-rp-row"><span>${esc(th?L(th.name):w.thread)}</span><span>${Math.round(w.avgRate*100)}%</span></div>`;
   }).join('');
 
+  /* 빈 상태(§3) — 0유닛일 땐 크게 찍힌 "0 유닛 완료" 대신 아바타 + 시작 권유 +
+     마을로 가는 기본 버튼. 1개 이상이면 기존 숫자 그대로(다만 40px→36px로 축소 —
+     아레나 점수 등 다른 화면의 .nm-score는 그대로 두기 위해 리포트 전용 클래스로 분리). */
+  const scoreHtml = totalUnitsDone===0
+    ? `<div class="nm-rp-empty">
+        <div class="nm-rp-empty-ava">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,72):''}</div>
+        <p class="nm-rp-empty-msg">${lk('첫 유닛을 시작해 볼까요?','Shall we start the first unit?','开始第一个单元吧？')}</p>
+        <button class="nm-btn full" id="rpToTown">${lk('마을로 가기','Go to town','前往小镇')}</button>
+      </div>`
+    : `<div class="nm-rp-score">${totalUnitsDone} ${lk('유닛 완료','units done','个单元完成')}</div>`;
   scr.innerHTML=`<div class="nm-unit-bar">
       <button class="nm-back" id="rpBack">${t('back')}</button>
       <div class="nm-unit-title">${titleHtml}</div>
@@ -4033,7 +4088,7 @@ function screenReport(){
       ${docStripHtml(44,docLine)}
       <div class="nm-card">
         <div class="nm-card-h">${lk('지금까지 걸어온 길','How far you have come','走过的路')}</div>
-        <div class="nm-score">${totalUnitsDone} ${lk('유닛 완료','units done','个单元完成')}</div>
+        ${scoreHtml}
         ${course?`<p class="nm-wsh-sentence">${esc(L(course.title))} · ${prog.done}/${prog.total}</p>`:''}
         ${weakRows?`<div class="nm-mb-section-h">${lk('요즘 조금 어려운 곳','A bit tricky lately','最近有点难的地方')}</div>${weakRows}`:`<p class="nm-wsh-sentence">${lk('아직 보강이 필요한 곳이 없어요.','No weak spots detected yet.','暂时没有需要加强的地方。')}</p>`}
         <button class="nm-btn full" id="rpToMail">📬 ${lk('편지함 열기','Open mailbox','打开信箱')}</button>
@@ -4041,6 +4096,8 @@ function screenReport(){
     </div>`;
   $('#rpBack').onclick=()=>{S.view='town';save();render();};
   $('#rpToMail').onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
+  const toTownBtn=$('#rpToTown');
+  if(toTownBtn)toTownBtn.onclick=()=>{S.view='town';save();render();};
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
@@ -4071,8 +4128,10 @@ function stepCheck(body,u){
   const shapeCls=isMulti&&fill.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-card">
     <div class="nm-card-h">✅ ${t('checkTitle')}</div>
-    <div class="nm-fill"><span data-tex="${esc(fillTex)}"></span></div>
-    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    <div class="nm-board">
+      <div class="nm-fill"><span data-tex="${esc(fillTex)}"></span></div>
+      <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    </div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint" id="fhint"></div>
   </div>`;
@@ -4141,7 +4200,7 @@ function stepLabWidget(body,u){
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     ${origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
-    <div id="labWidget" class="nm-lab-widget"></div>
+    <div id="labWidget" class="nm-lab-widget nm-board"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
   </div>`;
   S.sub.labStarted=true;
@@ -4168,7 +4227,7 @@ function stepLabPairs(body,u){
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
-    <div class="nm-expr" id="expr"></div>
+    <div class="nm-expr nm-board" id="expr"></div>
     <button class="nm-btn full" id="pick" disabled>${t('picked')}</button>
     <div class="nm-hint">${t('pairHint')}</div>
   </div>`;
@@ -4206,8 +4265,10 @@ function stepLabNumpad(body,u){
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
-    <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
-    <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    <div class="nm-board">
+      <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
+      <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+    </div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
     <div class="nm-hint">${t('numpadHint')}</div>
@@ -4424,14 +4485,25 @@ function numiHappyToast(){toast('✓',true);}
 function screenCloset(){
   const scr=$('#screen');
   const titleTxt=S.lang==='en'?'My Character':S.lang==='zh'?'我的角色':'내 캐릭터';
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  /* 디자인 패스 1(§4) — 큰 프리뷰(옷장 안, closet.js가 그림) → 탭+그리드 순서는
+     closet.js 자체가 담당. 여기(main.js)는 그 아래에 오는 카드들의 순서만 바꾼다:
+     "우리 집 마법사들"(프로필 전환)은 자주 쓰는 기능이라 그대로 남기고, 아이디 등록·
+     학부모 알림·승인번호 3장만 접이식 "설정"으로 내린다. id/핸들러는 그대로 유지
+     (renderIdCard 등은 querySelector로 같은 id를 찾아 채운다). */
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="backCloset">${t('back')}</button>
     <div class="nm-unit-title">🪄 ${titleTxt}</div>
   </div>
-  <div id="nm-idcard-slot"></div>
-  <div id="nm-slots-slot"></div>
-  <div id="nm-account-slot"></div>
-  <div id="nm-closet-cnt" class="nm-step-body" style="padding:0"></div>`;
+  <div class="nm-step-body nm-closet-wrap">
+    <div id="nm-closet-cnt"></div>
+    <div id="nm-slots-slot"></div>
+    <details class="nm-closet-settings">
+      <summary>${lk('계정 · 알림 설정','Account & notifications','账号·通知设置')}</summary>
+      <div id="nm-idcard-slot"></div>
+      <div id="nm-account-slot"></div>
+    </details>
+  </div>`;
   $('#backCloset').onclick=()=>{S.view='town';save();render();};
   renderIdCard();
   renderSlotCards();
@@ -4549,7 +4621,7 @@ function renderNotifyCard(){
     <div class="nm-notify-row">
       <input id="nmNotifyPhone" type="tel" inputmode="numeric" maxlength="13"
         placeholder="${lk('학부모 휴대폰 번호','Parent phone number','家长手机号')}">
-      <button class="nm-btn nm-btn-small" id="nmNotifyGo">${lk('등록','Register','登记')}</button>
+      <button class="nm-btn small" id="nmNotifyGo">${lk('등록','Register','登记')}</button>
     </div>
     <label class="nm-notify-consent">
       <input type="checkbox" id="nmNotifyConsent">
