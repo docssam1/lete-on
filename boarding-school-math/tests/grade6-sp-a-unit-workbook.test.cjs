@@ -50,6 +50,24 @@ test("recheck covers every 6.SP.A strand with new IDs", function () {
   source.pack.recheckItems.forEach(function (item) { assert.equal(workbookIds.has(item.id), false); });
 });
 
+test("every item is aligned to 6.SP.A while 6.SP.B remains an explicit bridge", function () {
+  assert.deepEqual(source.pack.standardsAlignment.assessed, ["6.SP.A.1","6.SP.A.2","6.SP.A.3"]);
+  assert.deepEqual(source.pack.standardsAlignment.bridgeOnly, ["6.SP.B.4","6.SP.B.5"]);
+  const expectedByKind = {
+    "question-classification": ["6.SP.A.1"],
+    "variability-source": ["6.SP.A.1"],
+    "distribution-comparison": ["6.SP.A.2"],
+    "measure-role": ["6.SP.A.3"],
+    "same-center-spread": ["6.SP.A.2","6.SP.A.3"]
+  };
+  source.pack.workbookItems.concat(source.pack.recheckItems).forEach(function (item) {
+    assert.deepEqual(item.standardIds, expectedByKind[item.kind], item.id);
+  });
+  assert.match(source.pack.scopeNotice.ko, /평가 범위.*6\.SP\.A\.1-3/);
+  assert.match(source.pack.scopeNotice.ko, /6\.SP\.B\.4-5로 이어지는 연결 연습/);
+  assert.match(source.pack.scopeNotice.ko, /그래프 작성과 맥락 설명을 마쳤다는 증거로 사용하지 않습니다/);
+});
+
 test("each locale uses Grade 6 curriculum language rather than literal translation", function () {
   assert.equal(source.pack.title.ko, "6.SP.A 통계적 질문과 자료의 분포");
   assert.equal(source.pack.strands["anticipated-variability"].ko, "질문에 필요한 자료 찾기");
