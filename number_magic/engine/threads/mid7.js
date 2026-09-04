@@ -32,6 +32,12 @@
    보여주고 "화살표 오른쪽 값"·"괄호 안의 수"·"적분 구간의 끝/시작"처럼
    계산 없이 표기 자체를 읽게 한다. threads.js에 등록하는 1~3레벨은
    전부 실제 계산 모드다.
+
+   solution 필드(2026-09-04, 학습지 v2 §2-4 ★예시 문항용) — 각
+   생성기가 실제로 답에 이르는 과정을 {tex,blank} 배열로 함께
+   반환한다. 마지막 줄의 blank는 항상 answer와 동일(검증:
+   scripts/check-solution-steps.js). tex·answer 등 기존 필드는
+   전혀 바뀌지 않는다.
    ============================================================ */
 (function(){
 'use strict';
@@ -62,7 +68,8 @@ NM_TGEN['md43_limit'] = function (params, rng) {
         en: `lim means "as x approaches..." — just read the number to the right of the arrow(→), no calculation`,
         zh: `lim的意思是"当x无限接近……时"——直接读出箭头(→)右边的数字(不用计算)` },
       tex: `\\lim_{x\\to ${a}} (${coefLead(p)}x^2+1)`,
-      answer: a, answerType: 'number', widget: 'numpad', negative: a < 0
+      answer: a, answerType: 'number', widget: 'numpad', negative: a < 0,
+      solution: [ { tex: `\\lim_{x\\to \\square} (${coefLead(p)}x^2+1)`, blank: a } ]
     };
   }
 
@@ -76,7 +83,11 @@ NM_TGEN['md43_limit'] = function (params, rng) {
         en: `For polynomial functions, just substitute x=a directly to get the limit (continuous, so the limit equals the function value)`,
         zh: `多项式函数直接代入x=a就是极限值(连续函数的极限值=函数值)` },
       tex: `\\lim_{x\\to ${a}} (${coefLead(p)}x ${wrapPlus(q)}) = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+      answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+      solution: [
+        { tex: `p\\times a = ${p}\\times ${a} = \\square`, blank: p * a },
+        { tex: `\\lim_{x\\to ${a}} (${coefLead(p)}x ${wrapPlus(q)}) = ${p * a} ${wrapPlus(q)} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -93,7 +104,11 @@ NM_TGEN['md43_limit'] = function (params, rng) {
       en: `For a 0/0 form, factor the numerator and cancel the factor (x-a) that matches the denominator`,
       zh: `遇到0/0型，先把分子因式分解，再约去和分母相同的因式(x-a)` },
     tex: `\\lim_{x\\to ${a}} \\dfrac{x^2 ${wrapPlusCoef(b1)}x ${wrapPlus(b0)}}{x ${wrapPlus(-a)}} = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+    answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+    solution: [
+      { tex: `x^2 ${wrapPlusCoef(b1)}x ${wrapPlus(b0)} = (x-${a})(x-${c})` },
+      { tex: `\\lim_{x\\to ${a}} (x-${c}) = ${a}-${c} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -113,7 +128,8 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
         en: `f'(a) means "find the instantaneous slope at x=a" — just read the number inside the parentheses, no calculation`,
         zh: `f'(a)的意思是"求x=a处的瞬时斜率"——直接读出括号里的数(不用计算)` },
       tex: `f'(${a})`,
-      answer: a, answerType: 'number', widget: 'numpad', negative: a < 0
+      answer: a, answerType: 'number', widget: 'numpad', negative: a < 0,
+      solution: [ { tex: `f'(\\square)`, blank: a } ]
     };
   }
 
@@ -126,7 +142,11 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
           en: `The derivative of ax^n is n·a·x^(n-1) — bring the exponent down as a multiplier and reduce it by 1, term by term`,
           zh: `ax^n的导数是n·a·x^(n-1)——把指数乘到前面再减1，逐项进行` },
         tex: `f(x)=${coefLead(a3)}x^3 ${wrapPlusCoef(a2)}x^2 ${wrapPlusCoef(a1)}x \\;\\Rightarrow\\; f'(x)=\\square x^2 + \\square x + \\square`,
-        answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+        answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+        solution: [
+          { tex: `(x^3)'=3x^2,\\;\\;(x^2)'=2x,\\;\\;(x)'=1` },
+          { tex: `f'(x)=\\square x^2+\\square x+\\square`, blank: [3 * a3, 2 * a2, a1] }
+        ]
       };
     }
     const a2 = nzInt(rng, 1, 9), a1 = nzInt(rng, 1, 12);
@@ -136,7 +156,11 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
         en: `The derivative of ax^n is n·a·x^(n-1) — bring the exponent down as a multiplier and reduce it by 1`,
         zh: `ax^n的导数是n·a·x^(n-1)——把指数乘到前面再减1` },
       tex: `f(x)=${coefLead(a2)}x^2 ${wrapPlusCoef(a1)}x \\;\\Rightarrow\\; f'(x)=\\square x + \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `(x^2)' = 2x,\\;\\;(x)'=1` },
+        { tex: `f'(x) = \\square x + \\square`, blank: [2 * a2, a1] }
+      ]
     };
   }
 
@@ -149,7 +173,11 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
       en: `First find f'(x)=2ax+b, then substitute x=x₀`,
       zh: `先求出f'(x)=2ax+b，再代入x=x₀` },
     tex: `f(x)=${coefLead(a2)}x^2 ${wrapPlusCoef(a1)}x \\;\\Rightarrow\\; f'(${x0}) = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+    answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+    solution: [
+      { tex: `f'(x) = ${2 * a2}x ${wrapPlus(a1)}` },
+      { tex: `f'(${x0}) = ${2 * a2}\\times ${x0} ${wrapPlus(a1)} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -170,7 +198,11 @@ NM_TGEN['md45_tangentLine'] = function (params, rng) {
         en: `The slope of the tangent line equals the derivative f'(x₀) at that point`,
         zh: `切线的斜率就等于该点的导数f'(x₀)` },
       tex: `f(x)=${coefLead(a2)}x^2 ${wrapPlusCoef(a1)}x ${wrapPlus(a0)} \\;\\Rightarrow\\; x=${x0}\\text{에서 접선의 기울기} = \\square`,
-      answer: slope, answerType: 'number', widget: 'numpad', negative: slope < 0
+      answer: slope, answerType: 'number', widget: 'numpad', negative: slope < 0,
+      solution: [
+        { tex: `f'(x) = ${2 * a2}x ${wrapPlus(a1)}` },
+        { tex: `f'(${x0}) = ${2 * a2}\\times ${x0} ${wrapPlus(a1)} = \\square`, blank: slope }
+      ]
     };
   }
 
@@ -182,7 +214,13 @@ NM_TGEN['md45_tangentLine'] = function (params, rng) {
       en: `The tangent line y=f'(x₀)(x-x₀)+f(x₀) rearranges to y=mx+n, where m=f'(x₀) and n=f(x₀)-m·x₀`,
       zh: `切线y=f'(x₀)(x-x₀)+f(x₀)整理成y=mx+n，其中m=f'(x₀)，n=f(x₀)-m·x₀` },
     tex: `f(x)=${coefLead(a2)}x^2 ${wrapPlusCoef(a1)}x ${wrapPlus(a0)} \\;\\Rightarrow\\; x=${x0}\\text{에서 접선}: y=\\square x + \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `m=f'(${x0}) = ${2 * a2}\\times ${x0} ${wrapPlus(a1)} = \\square`, blank: slope },
+      { tex: `f(${x0}) = \\square`, blank: y0 },
+      { tex: `n = f(x_0)-m x_0 = ${y0}-(${slope})\\times(${x0}) = \\square`, blank: intercept },
+      { tex: `y = \\square x + \\square`, blank: [slope, intercept] }
+    ]
   };
 };
 
@@ -211,10 +249,14 @@ NM_TGEN['md46_polyIntegral'] = function (params, rng) {
         en: `∫ means slice the interval finely and add it all up — find the interval's width (end minus start), just one subtraction!`,
         zh: `∫的意思是把区间切碎再全部相加——求出区间的宽度(终点减起点)，只需一次减法！` }
     };
+    const solution = which === 'start' ? [ { tex: `\\int_{\\square}^{${q}} f(x)\\,dx`, blank: p } ]
+      : which === 'end' ? [ { tex: `\\int_{${p}}^{\\square} f(x)\\,dx`, blank: q } ]
+      : [ { tex: `\\int_{${p}}^{${q}} f(x)\\,dx` }, { tex: `${q}-${p} = \\square`, blank: q - p } ];
     return {
       prompt: promptMap[which],
       tex: `\\int_{${p}}^{${q}} f(x)\\,dx`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution
     };
   }
 
@@ -229,7 +271,13 @@ NM_TGEN['md46_polyIntegral'] = function (params, rng) {
           en: `∫ax^n dx = (a÷(n+1))x^(n+1) — divide the coefficient by (n+1) and raise the exponent by one. Keep the constant of integration as +C`,
           zh: `∫ax^n dx = (a÷(n+1))x^(n+1)——系数除以(n+1)，指数加1。积分常数记为+C` },
         tex: `f(x)=${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} \\;\\Rightarrow\\; \\int f(x)\\,dx = \\square x^3 + \\square x^2 + \\square x + C`,
-        answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+        answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+        solution: [
+          { tex: `\\int ${coefLead(a)}x^2\\,dx = \\dfrac{${a}}{3}x^3 = \\square x^3`, blank: k },
+          { tex: `\\int ${coefLead(b)}x\\,dx = \\dfrac{${b}}{2}x^2 = \\square x^2`, blank: j },
+          { tex: `\\int ${c}\\,dx = \\square x`, blank: c },
+          { tex: `\\int f(x)\\,dx = \\square x^3+\\square x^2+\\square x + C`, blank: [k, j, c] }
+        ]
       };
     }
     const k = nzInt(rng, 1, wide ? 6 : 4);
@@ -241,7 +289,12 @@ NM_TGEN['md46_polyIntegral'] = function (params, rng) {
         en: `∫ax dx = (a÷2)x² — divide the coefficient by 2 and raise the exponent by one. Keep the constant of integration as +C`,
         zh: `∫ax dx = (a÷2)x²——系数除以2，指数加1。积分常数记为+C` },
       tex: `f(x)=${coefLead(a)}x ${wrapPlus(b)} \\;\\Rightarrow\\; \\int f(x)\\,dx = \\square x^2 + \\square x + C`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `\\int ${coefLead(a)}x\\,dx = \\dfrac{${a}}{2}x^2 = \\square x^2`, blank: k },
+        { tex: `\\int ${b}\\,dx = \\square x`, blank: b },
+        { tex: `\\int f(x)\\,dx = \\square x^2+\\square x + C`, blank: [k, b] }
+      ]
     };
   }
 
@@ -260,7 +313,13 @@ NM_TGEN['md46_polyIntegral'] = function (params, rng) {
       en: `A definite integral is F(end) − F(start), where F is the antiderivative`,
       zh: `定积分是先求出原函数F(x)，再算F(终点)-F(起点)` },
     tex: `f(x)=${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} \\;\\Rightarrow\\; \\int_{${p}}^{${q}} f(x)\\,dx = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+    answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+    solution: [
+      { tex: `F(x) = ${k}x^3+${j}x^2+${c}x` },
+      { tex: `F(${q}) = \\square`, blank: F(q) },
+      { tex: `F(${p}) = \\square`, blank: F(p) },
+      { tex: `\\int_{${p}}^{${q}} f(x)\\,dx = F(${q})-F(${p}) = ${F(q)}-(${F(p)}) = \\square`, blank: answer }
+    ]
   };
 };
 
