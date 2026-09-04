@@ -21204,6 +21204,220 @@
       const answerVisual = mathBoard("나 혼자 일하는 달력", row("나의 하루 일한 양", fractionText(secondRate)) + row("필요한 날 수", `${aloneDays}일`) + row("기간", `${data.month}월 ${data.day}일 → ${answer}`));
       return fixedResult(`어떤 일을 가와 나가 함께 ${data.togetherDays}일 동안 하여 전체의 ${fractionMarkup(...data.together)}를 끝냈습니다. 나머지는 가가 혼자 ${data.firstAloneDays}일 동안 하여 끝냈습니다. 같은 일을 나가 ${data.month}월 ${data.day}일부터 쉬지 않고 혼자 한다면 끝나는 날은 몇 월 며칠인가요? (일한 첫날을 1일로 셉니다.)${promptVisual}${support("두 사람이 하루에 한 양에서 가가 하루에 한 양을 빼세요.")}${challenge}${evidence("work-rate-date", [data.togetherDays, ...data.together, data.firstAloneDays, data.month, data.day, secondRate.numerator, secondRate.denominator, aloneDays, endDay], "date")}`, answer, `두 사람이 하루에 한 양은 ${fractionText(togetherRate)}, 가가 하루에 한 양은 ${fractionText(firstRate)}입니다. 따라서 나는 하루에 ${fractionText(secondRate)}만큼 하므로 혼자 ${aloneDays}일 걸립니다. ${data.month}월 ${data.day}일을 첫날로 세면 ${answer}에 끝납니다.`, answerVisual);
     },
+    sourceGrade6FractionDivisionE2({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u1-e2-exploration-2", "6-1-u1-e2-example-1", "6-1-u1-e2-example-2", "6-1-u1-e2-example-3",
+        "6-1-u1-e2-example-4", "6-1-u1-e2-mission-1", "6-1-u1-e2-mission-2", "6-1-u1-e2-mission-3",
+        "6-1-u1-e2-mission-4", "6-1-u1-e2-mission-5", "6-1-u1-e2-mission-6"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 분수의 나눗셈 개념탐구 2 원문 분기는 0부터 10까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = text => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${text}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">조건을 식으로 나타내고, 필요한 관계를 스스로 골라 계산해 보세요.</p>` : "";
+      const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-fraction-e2-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const fractionText = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const answerText = value => mixedFraction(value.numerator, value.denominator);
+      const numberValue = value => value.numerator / value.denominator;
+      const escape = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${answerBody}<div class="solution-answer-caption">문제의 조건으로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+      const svg = (body, aria, attributes = "") => `<svg class="geometry-diagram source61-e2-diagram" viewBox="0 0 360 220" role="img" aria-label="${escape(aria)}" ${attributes}>${body}</svg>`;
+      const line = (x1, y1, x2, y2, extra = "") => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#183b56" stroke-width="3" fill="none" ${extra}/>`;
+      const text = (x, y, value, extra = "") => `<text x="${x}" y="${y}" fill="#183b56" font-size="14" text-anchor="middle" ${extra}>${escape(value)}</text>`;
+
+      if (variant === 0) {
+        const data = [
+          { r: rationalValue(7, 4), a: 2, p: 4, b: 4, q: 3 },
+          { r: rationalValue(3, 2), a: 3, p: 2, b: 5, q: 1 },
+          { r: rationalValue(2), a: 2, p: 5, b: 5, q: 3 }
+        ][poolIndex];
+        const numerator = rationalOperation(rationalOperation(rationalOperation(data.r, rationalValue(data.a), "×"), rationalValue(data.p), "+"), rationalValue(data.q), "-");
+        const c = rationalOperation(numerator, rationalValue(data.b - data.a), "÷");
+        const m = rationalOperation(c, data.r, "+");
+        const w = rationalOperation(rationalOperation(rationalValue(data.a), m, "×"), rationalValue(data.p), "+");
+        const answerVisual = mathBoard("세 무게를 관계식에 넣어 확인", row("C", `C = ${fractionText(c)} kg`) + row("M", `M = ${fractionText(m)} kg`) + row("W", `W = ${fractionText(w)} kg`) + row("두 식", `W=${data.a}M+${data.p}=${data.b}C+${data.q}`));
+        const promptVisual = mathBoard("세 무게의 관계", row("M", `C + ${fractionText(data.r)} kg`) + row("W", `${data.a}M + ${data.p} kg`) + row("W", `${data.b}C + ${data.q} kg`), `data-source61-visual="three-weight-relations"`);
+        return fixedResult(`참외의 무게를 C kg, 멜론의 무게를 M kg, 수박의 무게를 W kg이라 하겠습니다. M은 C보다 ${fractionText(data.r)}kg 무겁습니다. W는 M의 ${data.a}배보다 ${data.p}kg 무겁고, C의 ${data.b}배보다 ${data.q}kg 무겁습니다. 수박의 무게 W를 구하세요.${promptVisual}${support("M을 C로 나타낸 뒤 W를 나타낸 두 식을 같게 놓으세요.")}${challenge}${evidence("three-weight-relations", [data.a, data.p, data.b, data.q, data.r.numerator, data.r.denominator, c.numerator, c.denominator, m.numerator, m.denominator, w.numerator, w.denominator])}`, `W=${answerText(w)}`, `M=C+${fractionText(data.r)}이고 W=${data.a}M+${data.p}이므로 W=${data.a}C+${fractionText(rationalOperation(data.r, rationalValue(data.a), "×"))}+${data.p}입니다. 이를 W=${data.b}C+${data.q}와 같게 놓아 C=${fractionText(c)}, M=${fractionText(m)}을 구합니다. 따라서 W=${fractionText(w)}kg입니다.`, answerVisual);
+      }
+
+      if (variant === 1) {
+        const smallPerimeters = [rationalValue(30, 7), rationalValue(36, 7), rationalValue(42, 7)];
+        const smallPerimeter = smallPerimeters[poolIndex];
+        const target = rationalOperation(smallPerimeter, rationalValue(5, 3), "×");
+        const squareSvg = solved => {
+          const left = 70, top = 20, side = 160, width = side / 5;
+          const parts = Array.from({ length: 5 }, (_, index) => `<rect x="${left + index * width}" y="${top}" width="${width}" height="${side}" fill="${solved ? "#edf6fb" : "#ffffff"}" stroke="#183b56" stroke-width="2"/>`).join("");
+          return svg(`${parts}<rect x="${left}" y="${top}" width="${side}" height="${side}" fill="none" stroke="${solved ? "#d14b4b" : "#183b56"}" stroke-width="${solved ? 6 : 3}"/>${text(180, 205, solved ? "정사각형의 둘레" : "같은 세로 직사각형 5개", "font-size=\"13\"")}`, "같은 세로 직사각형 5개로 만든 정사각형");
+        };
+        const promptVisual = `${squareSvg(false)}${mathBoard("주어진 작은 직사각형", row("작은 직사각형 1개의 둘레", `${fractionText(smallPerimeter)} cm`) + row("세로와 가로", "5 : 1"))}`;
+        const answerVisual = `${squareSvg(true)}${mathBoard("정사각형의 둘레", row("계산", `${fractionText(smallPerimeter)} × ${fractionMarkup(5, 3)}`) + row("정답", `${fractionText(target)} cm`))}`;
+        return fixedResult(`같은 세로 직사각형 5개를 이어 붙여 정사각형을 만들었습니다. 작은 직사각형 1개의 둘레가 ${fractionText(smallPerimeter)}cm일 때, 정사각형의 둘레를 구하세요.${promptVisual}${support("작은 직사각형의 가로를 1로 보아 세로가 5인 관계를 이용하세요.")}${challenge}${evidence("five-vertical-rectangles-square", [smallPerimeter.numerator, smallPerimeter.denominator, target.numerator, target.denominator, 5, 1])}`, answerText(target), `작은 직사각형의 가로를 x라 하면 세로는 5x입니다. 작은 직사각형 둘레는 12x, 정사각형 한 변은 5x이므로 정사각형 둘레는 작은 직사각형 둘레의 ${fractionMarkup(5, 3)}배입니다. 따라서 ${fractionText(smallPerimeter)}×${fractionMarkup(5, 3)}=${fractionText(target)}cm입니다.`, answerVisual);
+      }
+
+      if (variant === 2) {
+        const differences = [55, 66, 77];
+        const difference = differences[poolIndex], scale = difference / 11;
+        const a = rationalValue(3 * scale), b = rationalValue(14 * scale);
+        const promptVisual = mathBoard("두 수의 관계", row("관계", `4×가 = ${fractionMarkup(6, 7)}×나`) + row("두 수의 차", `${difference}`) + row("같은 식", `14×가 = 3×나`));
+        const answerVisual = mathBoard("차를 이용한 확인", row("가", `${fractionText(a)}`) + row("나", `${fractionText(b)}`) + row("확인", `${fractionText(b)} - ${fractionText(a)} = ${difference}`));
+        return fixedResult(`두 수 가, 나가 있습니다. 4×가=${fractionMarkup(6, 7)}×나이고, 두 수의 차는 ${difference}입니다. 가와 나를 각각 구하세요.${promptVisual}${support("분모를 없애 관계를 14×가=3×나로 바꾸세요.")}${challenge}${evidence("two-values-ratio-difference", [difference, a.numerator, a.denominator, b.numerator, b.denominator])}`, `가=${answerText(a)}, 나=${answerText(b)}`, `4×가=${fractionMarkup(6, 7)}×나에서 14×가=3×나이므로 가:나는 3:14입니다. 차 11칸이 ${difference}이므로 한 칸은 ${scale}입니다. 따라서 가=${fractionText(a)}, 나=${fractionText(b)}입니다.`, answerVisual);
+      }
+
+      if (variant === 3) {
+        const data = [
+          { g: rationalValue(7, 8), x: rationalValue(3, 8) },
+          { g: rationalValue(2, 3), x: rationalValue(1, 2) },
+          { g: rationalValue(5, 6), x: rationalValue(5, 8) }
+        ][poolIndex];
+        const nd = rationalOperation(data.x, rationalValue(4, 3), "×");
+        const dr = rationalOperation(data.x, rationalValue(4), "×");
+        const rm = rationalOperation(dr, rationalValue(3, 2), "×");
+        const r = rationalOperation(rationalOperation(rationalOperation(data.g, data.x, "+"), nd, "+"), dr, "+");
+        const m = rationalOperation(r, rm, "+");
+        const pointSvg = solved => {
+          const points = [{ label: "ㄱ", value: data.g }, { label: "ㄴ", value: rationalOperation(data.g, data.x, "+") }, { label: "ㄷ", value: rationalOperation(rationalOperation(data.g, data.x, "+"), nd, "+") }, { label: "ㄹ", value: r }, { label: "ㅁ", value: m }];
+          const min = data.g.numerator / data.g.denominator, max = m.numerator / m.denominator;
+          const px = value => 35 + ((value.numerator / value.denominator - min) / (max - min)) * 290;
+          const marks = points.map(point => {
+            const isTarget = point.label === "ㅁ";
+            const classes = isTarget ? " class=\"source61-e2-target-point" + (solved ? " is-solved" : "") + "\"" : "";
+            return "<circle" + classes + " cx=\"" + px(point.value).toFixed(2) + "\" cy=\"105\" r=\"" + (isTarget && solved ? 8 : 5) + "\" fill=\"" + (isTarget && solved ? "#d14b4b" : "#183b56") + "\"/>" + text(px(point.value), point.label === "ㄴ" || point.label === "ㄹ" ? 82 : 132, point.label, "font-size=\"16\" font-weight=\"700\"");
+          }).join("");
+          const coordinateLabels = `${svgMeasurementLabel({ x: px(data.g), y: 158, value: mixedFraction(data.g.numerator, data.g.denominator), unit: "" })}${svgMeasurementLabel({ x: px(r), y: 158, value: mixedFraction(r.numerator, r.denominator), unit: "" })}${solved ? svgMeasurementLabel({ x: px(m), y: 58, value: mixedFraction(m.numerator, m.denominator), unit: "" }) : ""}`;
+          return svg(`${line(30, 105, 330, 105)}${marks}${coordinateLabels}${text(180, 205, solved ? "ㅁ의 위치" : "ㄱ<ㄴ<ㄷ<ㄹ<ㅁ", "font-size=\"13\"")}`, "다섯 점이 놓인 수직선", `data-geometry-kind="number-line" data-point-order="ㄱ,ㄴ,ㄷ,ㄹ,ㅁ" data-target-point="ㅁ"`);
+        };
+        const promptVisual = `${pointSvg(false)}${mathBoard("점 사이의 관계", row("ㄹ-ㄷ", `4 × (ㄱ-ㄴ)`) + row("ㄹ-ㄷ", `3 × (ㄷ-ㄴ)`) + row("ㅁ-ㄹ", `${fractionMarkup(3, 2)} × (ㄹ-ㄷ)`), `data-source61-visual="number-line-relations"`)}`;
+        const answerVisual = `${pointSvg(true)}${mathBoard("계산한 점 ㅁ", row("ㄱ", fractionText(data.g)) + row("ㄹ", fractionText(r)) + row("ㅁ", fractionText(m)))}`;
+        return fixedResult(`수직선 위의 다섯 점을 왼쪽부터 ㄱ, ㄴ, ㄷ, ㄹ, ㅁ이라 하겠습니다. ㄹㄷ은 ㄱㄴ의 4배이고, ㄹㄷ은 ㄴㄷ의 3배입니다. 또 ㅁㄹ은 ㄹㄷ의 ${fractionMarkup(3, 2)}배입니다. ㄱ=${fractionText(data.g)}, ㄹ=${fractionText(r)}일 때 ㅁ의 좌표를 구하세요.${promptVisual}${support("ㄱㄴ을 x로 놓고 ㄹ까지의 거리를 x로 나타내세요.")}${challenge}${evidence("number-line-point-relations", [data.g.numerator, data.g.denominator, r.numerator, r.denominator, numberValue(data.x), numberValue(nd), numberValue(dr), numberValue(rm), m.numerator, m.denominator])}`, answerText(m), `ㄱㄴ을 x라 하면 ㄴㄷ은 ${fractionMarkup(4, 3)}x, ㄹㄷ은 4x입니다. 따라서 ㄱㄹ은 ${fractionMarkup(19, 3)}x이고, ㄱ과 ㄹ의 차를 이용하면 x=${fractionText(data.x)}입니다. ㅁㄹ은 ${fractionMarkup(3, 2)}×4x=6x이므로 ㅁ=${fractionText(m)}입니다.`, answerVisual);
+      }
+
+      if (variant === 4) {
+        const data = [
+          { total: rationalValue(26, 5), forward: rationalValue(3, 5), backward: rationalValue(1, 4) },
+          { total: rationalValue(31, 6), forward: rationalValue(2, 3), backward: rationalValue(1, 6) },
+          { total: rationalValue(23, 4), forward: rationalValue(7, 8), backward: rationalValue(3, 8) }
+        ][poolIndex];
+        const difference = rationalOperation(data.forward, data.backward, "-");
+        const spread = rationalOperation(difference, rationalValue(2), "×");
+        const a = rationalOperation(rationalOperation(data.total, spread, "+"), rationalValue(2), "÷");
+        const b = rationalOperation(data.total, a, "-");
+        const waterSvg = solved => {
+          const amount = value => 96 * numberValue(value) / numberValue(data.total);
+          const water = (x, value, color) => `<rect x="${x}" y="${146 - amount(value).toFixed(2)}" width="82" height="${amount(value).toFixed(2)}" fill="${color}" stroke="none"/>`;
+          const marker = `e2-water-arrow-${poolIndex}-${solved ? "answer" : "problem"}`;
+          return svg(`<defs><marker id="${marker}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#d14b4b"/></marker></defs><rect x="48" y="50" width="82" height="96" fill="#eef7fb" stroke="#183b56" stroke-width="3"/><rect x="230" y="50" width="82" height="96" fill="#eef7fb" stroke="#183b56" stroke-width="3"/>${solved ? water(48, a, "#c9e8f8") + water(230, b, "#c9e8f8") : ""}${text(89, 35, "A 물통", "font-size=\"13\" font-weight=\"700\"")}${text(271, 35, "B 물통", "font-size=\"13\" font-weight=\"700\"")}${line(130, 82, 230, 82, `stroke=\"#d14b4b\" marker-end=\"url(#${marker})\"`)}${line(230, 114, 130, 114, `stroke=\"#d14b4b\" marker-end=\"url(#${marker})\"`)}${text(180, 72, "A → B", "font-size=\"12\"")}${text(180, 136, "B → A", "font-size=\"12\"")}${solved ? svgMeasurementLabel({ x: 89, y: 166, value: mixedFraction(a.numerator, a.denominator), unit: "L" }) + svgMeasurementLabel({ x: 271, y: 166, value: mixedFraction(b.numerator, b.denominator), unit: "L" }) : ""}`, "두 물통 사이로 물을 옮기는 그림");
+        };
+        const promptVisual = `${waterSvg(false)}${mathBoard("옮긴 물의 양", row("A → B", `${fractionText(data.forward)} L`) + row("B → A", `${fractionText(data.backward)} L`) + row("마지막", "두 물통의 양이 같음"))}`;
+        const answerVisual = `${waterSvg(true)}${mathBoard("처음 물의 양", row("A", `${fractionText(a)} L`) + row("B", `${fractionText(b)} L`) + row("확인", `${fractionText(a)}-${fractionText(data.forward)}+${fractionText(data.backward)} = ${fractionText(b)}+${fractionText(data.forward)}-${fractionText(data.backward)}`))}`;
+        return fixedResult(`A 물통과 B 물통에 물이 모두 합하여 ${fractionText(data.total)}L 있습니다. A 물통에서 B 물통으로 ${fractionText(data.forward)}L를 옮기고, 이어서 B 물통에서 A 물통으로 ${fractionText(data.backward)}L를 옮겼더니 두 물통의 물의 양이 같아졌습니다. 처음 A와 B에 있던 물의 양을 각각 구하세요.${promptVisual}${support("옮긴 뒤 두 양이 같다는 식을 세우고, 처음 두 양의 합도 이용하세요.")}${challenge}${evidence("two-piles-transfer-equal", [data.total.numerator, data.total.denominator, data.forward.numerator, data.forward.denominator, data.backward.numerator, data.backward.denominator, a.numerator, a.denominator, b.numerator, b.denominator])}`, `A=${answerText(a)}L, B=${answerText(b)}L`, `처음 A가 B보다 ${fractionText(spread)}L 많아야 합니다. 합이 ${fractionText(data.total)}L이므로 A=${fractionText(a)}L, B=${fractionText(b)}L입니다. 옮긴 뒤에는 A=${fractionText(rationalOperation(rationalOperation(a, data.forward, "-"), data.backward, "+"))}L, B=${fractionText(rationalOperation(rationalOperation(b, data.forward, "+"), data.backward, "-"))}L로 같아집니다.`, answerVisual);
+      }
+
+      if (variant === 5) {
+        const data = [{ total: rationalValue(17, 4), gap: rationalValue(2, 3) }, { total: rationalValue(29, 5), gap: rationalValue(4, 5) }, { total: rationalValue(13, 3), gap: rationalValue(1, 3) }][poolIndex];
+        const smaller = rationalOperation(rationalOperation(data.total, data.gap, "-"), rationalValue(2), "÷");
+        const larger = rationalOperation(data.total, smaller, "-");
+        const answerVisual = mathBoard("합과 차로 확인", row("큰 쪽", fractionText(larger)) + row("작은 쪽", fractionText(smaller)) + row("확인", `${fractionText(larger)}-${fractionText(smaller)}=${fractionText(data.gap)}`));
+        return fixedResult(`두 사람이 나누어 가진 양의 합은 ${fractionText(data.total)}kg이고, 큰 쪽과 작은 쪽의 차는 ${fractionText(data.gap)}kg입니다. 작은 쪽의 양을 구하세요.${mathBoard("두 양의 조건", row("합", fractionText(data.total)) + row("차", fractionText(data.gap)))}${support("합에서 차를 빼고 2로 나누세요.")}${challenge}${evidence("two-people-sum-difference", [data.total.numerator, data.total.denominator, data.gap.numerator, data.gap.denominator, smaller.numerator, smaller.denominator])}`, answerText(smaller), `작은 쪽은 (합-차)÷2이므로 (${fractionText(data.total)}-${fractionText(data.gap)})÷2=${fractionText(smaller)}kg입니다.`, answerVisual);
+      }
+
+      if (variant === 6) {
+        const data = [
+          { m: 360, n: 200, p: rationalValue(7, 10), total: rationalValue(700, 3) },
+          { m: 240, n: 120, p: rationalValue(3, 4), total: rationalValue(165) },
+          { m: 300, n: 180, p: rationalValue(5, 6), total: rationalValue(230) }
+        ][poolIndex];
+        const a = rationalOperation(rationalOperation(data.total, rationalOperation(rationalValue(data.n), data.p, "×"), "-"), rationalValue(data.m - data.n), "÷");
+        const b = rationalOperation(data.p, a, "-");
+        const answerVisual = mathBoard("두 종류를 함께 만든 양", row("A 한 개", `${fractionText(a)} L`) + row("B 한 개", `${fractionText(b)} L`) + row("전체", `${fractionText(data.total)} L`) + row("확인", `${data.m}×${fractionText(a)}+${data.n}×${fractionText(b)}=${fractionText(data.total)} L`));
+        return fixedResult(`아이스크림 A와 B를 한 개씩 만드는 데 필요한 우유의 합은 ${fractionText(data.p)}L입니다. A를 ${data.m}개, B를 ${data.n}개 만드는 데 우유 ${fractionText(data.total)}L를 사용했습니다. 아이스크림 A 한 개와 B 한 개에 필요한 우유의 양을 각각 구하세요.${mathBoard("한 개씩 만드는 우유", row("A+B", `${fractionText(data.p)} L`) + row("만든 개수", `A ${data.m}개, B ${data.n}개`))}${support("B 한 개의 양을 P에서 A 한 개의 양을 뺀 것으로 나타내세요.")}${challenge}${evidence("two-products-total-milk", [data.m, data.n, data.p.numerator, data.p.denominator, data.total.numerator, data.total.denominator, a.numerator, a.denominator, b.numerator, b.denominator])}`, `A=${answerText(a)}L, B=${answerText(b)}L`, `A 한 개를 aL라 하면 B 한 개는 (${fractionText(data.p)}-a)L입니다. ${data.m}a+${data.n}(${fractionText(data.p)}-a)=${fractionText(data.total)}이므로 a=${fractionText(a)}L, B 한 개는 ${fractionText(b)}L입니다.`, answerVisual);
+      }
+
+      if (variant === 7) {
+        const data = [
+          { leftBase: rationalValue(11, 4), rightBase: rationalValue(4), height1: rationalValue(7) },
+          { leftBase: rationalValue(5, 2), rightBase: rationalValue(9, 2), height1: rationalValue(6) },
+          { leftBase: rationalValue(10, 3), rightBase: rationalValue(5), height1: rationalValue(6) }
+        ][poolIndex];
+        const totalBase = rationalOperation(data.leftBase, data.rightBase, "+");
+        const height2 = rationalOperation(rationalOperation(totalBase, data.height1, "×"), data.rightBase, "÷");
+        const leftLength = numberValue(data.leftBase), rightLength = numberValue(data.rightBase), firstHeight = numberValue(data.height1), secondHeight = numberValue(height2);
+        const triangleSvg = solved => {
+          const baseY = 170, leftX = 42, scaleX = 270 / (leftLength + rightLength), scaleY = 100 / Math.max(firstHeight, secondHeight);
+          const nX = leftX, mX = nX + leftLength * scaleX, dX = mX + rightLength * scaleX;
+          const gY = baseY - firstHeight * scaleY, rY = baseY - secondHeight * scaleY;
+          const points = { "ㄱ": [nX, gY], "ㄴ": [nX, baseY], "ㄷ": [dX, baseY], "ㄹ": [dX, rY], "ㅁ": [mX, baseY] };
+          const pointLabels = Object.entries(points).map(([label, [x, y]]) => text(x + (label === "ㄹ" ? 13 : 0), y + (label === "ㄱ" || label === "ㄹ" ? -12 : 15), label, "font-size=\"16\" font-weight=\"700\"")).join("");
+          const measures = `${svgMeasurementLabel({ x: (nX + mX) / 2, y: 202, value: mixedFraction(data.leftBase.numerator, data.leftBase.denominator), unit: "cm" })}${svgMeasurementLabel({ x: (mX + dX) / 2, y: 202, value: mixedFraction(data.rightBase.numerator, data.rightBase.denominator), unit: "cm" })}${svgMeasurementLabel({ x: nX - 22, y: (gY + baseY) / 2, value: mixedFraction(data.height1.numerator, data.height1.denominator), unit: "cm" })}`;
+          const targetMeasure = solved ? svgMeasurementLabel({ x: dX + 25, y: (rY + baseY) / 2, value: mixedFraction(height2.numerator, height2.denominator), unit: "cm" }) : text(dX + 25, (rY + baseY) / 2, "?", "font-size=\"16\" fill=\"#d14b4b\"");
+          const targetLine = "<line class=\"source61-e2-target" + (solved ? " is-solved" : "") + "\" x1=\"" + dX + "\" y1=\"" + rY + "\" x2=\"" + dX + "\" y2=\"" + baseY + "\"/>";
+          return svg(`${line(nX, baseY, mX, baseY)}${line(mX, baseY, dX, baseY)}<polygon points="${points["ㄱ"].join(",")} ${points["ㄴ"].join(",")} ${points["ㄷ"].join(",")}" fill="#dceffd" stroke="#183b56" stroke-width="3"/><polygon points="${points["ㄹ"].join(",")} ${points["ㅁ"].join(",")} ${points["ㄷ"].join(",")}" fill="#fff0bd" stroke="#183b56" stroke-width="3"/>${line(nX, gY, nX, baseY, "stroke-dasharray=\"5 4\"")}${targetLine}${line(nX, gY, dX, baseY, 'stroke="#183b56" stroke-width="3"')}${line(mX, baseY, dX, rY, 'stroke="#183b56" stroke-width="3"')}${pointLabels}${measures}${targetMeasure}`, "공통 바닥을 함께 쓰는 두 삼각형", `data-geometry-kind="overlap-triangles" data-point-order="ㄱ,ㄴ,ㄷ,ㄹ,ㅁ" data-base-segments="ㄴ-ㅁ;ㅁ-ㄷ" data-target-segment="ㄹ-ㄷ"`);
+        };
+        const promptVisual = `${triangleSvg(false)}${mathBoard("넓이가 같은 두 삼각형", row("왼쪽 밑변 ㄴㄷ", `${fractionText(totalBase)} cm`) + row("오른쪽 밑변 ㅁㄷ", `${fractionText(data.rightBase)} cm`) + row("왼쪽 높이 ㄱㄴ", `${fractionText(data.height1)} cm`) + row("조건", "두 삼각형의 넓이가 같음"))}`;
+        const answerVisual = `${triangleSvg(true)}${mathBoard("오른쪽 삼각형의 높이 ㄹㄷ", row("계산", `${fractionText(totalBase)}×${fractionText(data.height1)}÷${fractionText(data.rightBase)}`) + row("정답", `${fractionText(height2)} cm`))}`;
+        return fixedResult(`그림과 같이 왼쪽 큰 삼각형 ㄱㄴㄷ과 오른쪽 삼각형 ㄹㅁㄷ의 넓이가 같습니다. ㄴㄷ은 ㄴㅁ과 ㅁㄷ을 합한 길이이고, ㄴㄷ의 길이는 ${fractionText(totalBase)}cm, ㄴㄱ의 높이는 ${fractionText(data.height1)}cm, ㅁㄷ의 길이는 ${fractionText(data.rightBase)}cm입니다. ㄹㄷ의 길이를 구하세요.${promptVisual}${support("두 삼각형의 넓이를 각각 밑변×높이÷2로 나타내고 같게 놓으세요.")}${challenge}${evidence("equal-overlapping-triangle-area", [data.leftBase.numerator, data.leftBase.denominator, data.rightBase.numerator, data.rightBase.denominator, data.height1.numerator, data.height1.denominator, height2.numerator, height2.denominator])}`, answerText(height2) + "cm", `왼쪽 밑변 ㄴㄷ은 ㄴㅁ+ㅁㄷ=${fractionText(totalBase)}cm입니다. 넓이가 같으므로 ${fractionText(totalBase)}×${fractionText(data.height1)}÷2=${fractionText(data.rightBase)}×ㄹㄷ÷2입니다. 따라서 ㄹㄷ=${fractionText(totalBase)}×${fractionText(data.height1)}÷${fractionText(data.rightBase)}=${fractionText(height2)}cm입니다.`, answerVisual);
+      }
+
+      if (variant === 8) {
+        const b = [rationalValue(7, 96), rationalValue(5, 72), rationalValue(11, 120)][poolIndex];
+        const a = rationalOperation(b, rationalValue(3), "×"), c = rationalOperation(a, rationalValue(2), "×"), total = rationalOperation(rationalOperation(a, b, "+"), c, "+");
+        const answerVisual = mathBoard("세 분수의 관계", row("가", `3×나 = ${fractionText(a)}`) + row("다", `2×가 = ${fractionText(c)}`) + row("확인", `${fractionText(a)}+${fractionText(b)}+${fractionText(c)}=${fractionText(total)}`));
+        return fixedResult(`세 분수 가, 나, 다의 합은 ${fractionText(total)}입니다. 가는 나의 3배이고 다는 가의 2배입니다. 가, 나, 다를 각각 기약분수로 나타내세요.${mathBoard("배수 관계", row("가", "3×나") + row("다", "2×가") + row("합", fractionText(total)))}${support("나를 한 묶음으로 보아 세 분수의 합을 몇 묶음인지 세어 보세요.")}${challenge}${evidence("three-fractions-multiple-sum", [total.numerator, total.denominator, a.numerator, a.denominator, b.numerator, b.denominator, c.numerator, c.denominator])}`, `가=${answerText(a)}, 나=${answerText(b)}, 다=${answerText(c)}`, `나를 1묶음이라 하면 가는 3묶음, 다는 6묶음이므로 합은 10묶음입니다. 따라서 나=${fractionText(b)}, 가=${fractionText(a)}, 다=${fractionText(c)}입니다.`, answerVisual);
+      }
+
+      if (variant === 9) {
+        const data = [{ total: rationalValue(23, 4), gap: rationalValue(5, 8) }, { total: rationalValue(19, 3), gap: rationalValue(2, 3) }, { total: rationalValue(41, 8), gap: rationalValue(3, 8) }][poolIndex];
+        const j = rationalOperation(rationalOperation(data.total, data.gap, "+"), rationalValue(3), "÷");
+        const s = rationalOperation(data.total, j, "-");
+        const tapeSvg = solved => {
+          const left = 35, width = 290, totalValue = numberValue(data.total), sWidth = width * numberValue(s) / totalValue;
+          return svg(`<rect x="${left}" y="55" width="${width}" height="38" fill="#edf5fa" stroke="#183b56" stroke-width="3"/><rect x="${left}" y="55" width="${sWidth.toFixed(2)}" height="38" fill="${solved ? "#f9dede" : "#dceffd"}" stroke="none"/><line x1="${(left + sWidth).toFixed(2)}" y1="55" x2="${(left + sWidth).toFixed(2)}" y2="93" stroke="#183b56" stroke-width="2"/>${text(left + sWidth / 2, 78, "선우", "font-size=\"13\" font-weight=\"700\"")}${text(left + sWidth + (width - sWidth) / 2, 78, "지민", "font-size=\"13\" font-weight=\"700\"")}${solved ? svgMeasurementLabel({ x: left + sWidth / 2, y: 125, value: mixedFraction(s.numerator, s.denominator), unit: "m" }) + svgMeasurementLabel({ x: left + sWidth + (width - sWidth) / 2, y: 125, value: mixedFraction(j.numerator, j.denominator), unit: "m" }) : text(180, 130, "전체 길이", "font-size=\"12\"")}`, "선우와 지민의 테이프 길이를 나타낸 그림", `data-target="선우"`);
+        };
+        const answerVisual = `${tapeSvg(true)}${mathBoard("테이프 길이로 확인", row("선우 S", `${fractionText(s)} m`) + row("지민 J", `${fractionText(j)} m`) + row("관계", `${fractionText(s)}=2×${fractionText(j)}-${fractionText(data.gap)}`))}`;
+        const promptVisual = `${tapeSvg(false)}${mathBoard("두 테이프의 관계", row("합", `${fractionText(data.total)} m`) + row("선우 S", `2×지민 J-${fractionText(data.gap)} m`))}`;
+        return fixedResult(`선우와 지민이 가진 테이프의 길이의 합은 ${fractionText(data.total)}m입니다. 선우의 테이프 길이는 지민의 테이프 길이의 2배보다 ${fractionText(data.gap)}m 짧습니다. 선우가 가진 테이프의 길이를 구하세요.${promptVisual}${support("선우와 지민의 길이를 합한 식에 선우의 길이 관계를 넣으세요.")}${challenge}${evidence("two-tape-double-gap-sum", [data.total.numerator, data.total.denominator, data.gap.numerator, data.gap.denominator, s.numerator, s.denominator, j.numerator, j.denominator])}`, answerText(s) + "m", `S+J=${fractionText(data.total)}이고 S=2J-${fractionText(data.gap)}이므로 3J=${fractionText(data.total)}+${fractionText(data.gap)}입니다. J=${fractionText(j)}m, S=${fractionText(s)}m입니다.`, answerVisual);
+      }
+
+      if (variant === 10) {
+        const data = [
+          { slowRate: rationalValue(13, 4), slowOnlyMinutes: 100, actualTotalMinutes: 80, fastRate: rationalValue(21, 4) },
+          { slowRate: rationalValue(7, 3), slowOnlyMinutes: 90, actualTotalMinutes: 75, fastRate: rationalValue(11, 3) },
+          { slowRate: rationalValue(5, 2), slowOnlyMinutes: 96, actualTotalMinutes: 72, fastRate: rationalValue(9, 2) }
+        ][poolIndex];
+        const capacity = rationalOperation(data.slowRate, rationalValue(data.slowOnlyMinutes), "×");
+        const slowBaseline = rationalOperation(data.slowRate, rationalValue(data.actualTotalMinutes), "×");
+        const extraAmount = rationalOperation(capacity, slowBaseline, "-");
+        const fastDuration = rationalOperation(extraAmount, rationalOperation(data.fastRate, data.slowRate, "-"), "÷");
+        const slowDuration = rationalOperation(rationalValue(data.actualTotalMinutes), fastDuration, "-");
+        const fastSecondsValue = rationalOperation(fastDuration, rationalValue(60), "×");
+        const totalSeconds = fastSecondsValue.numerator / fastSecondsValue.denominator;
+        const minutes = Math.floor(totalSeconds / 60), seconds = totalSeconds % 60;
+        const answer = `${minutes}분 ${seconds}초`;
+        const timelineSvg = solved => {
+          const totalWidth = 260;
+          const slowWidth = totalWidth * numberValue(slowDuration) / data.actualTotalMinutes;
+          const fastWidth = totalWidth - slowWidth;
+          const phaseLabels = solved
+            ? `${svgMeasurementLabel({ x: 38 + slowWidth / 2, y: 130, value: mixedFraction(slowDuration.numerator, slowDuration.denominator), unit: "분" })}${svgMeasurementLabel({ x: 38 + slowWidth + fastWidth / 2, y: 130, value: mixedFraction(fastDuration.numerator, fastDuration.denominator), unit: "분" })}`
+            : `${text(38 + slowWidth / 2, 130, "처음", "font-size=\"12\"")}${text(38 + slowWidth + fastWidth / 2, 130, "?분", "font-size=\"12\" fill=\"#d14b4b\"")}`;
+          return svg(`${line(38, 100, 38 + slowWidth, 100, "stroke-width=\"8\"")}${line(38 + slowWidth, 100, 38 + totalWidth, 100, `stroke="${solved ? "#d14b4b" : "#183b56"}" stroke-width="8"`)}${text(38 + slowWidth / 2, 75, "느린 속도", "font-size=\"12\"")}${text(38 + slowWidth + fastWidth / 2, 75, "빠른 속도", `font-size=\"12\" fill=\"${solved ? "#d14b4b" : "#183b56"}\"`)}${phaseLabels}${text(168, 178, `전체 ${data.actualTotalMinutes}분`, "font-size=\"13\" font-weight=\"700\"")}`, "느린 속도에서 빠른 속도로 바꾸는 시간표", `data-fast-target="fast-segment" data-total-minutes="${data.actualTotalMinutes}" data-slow-duration="${slowDuration.numerator}/${slowDuration.denominator}" data-fast-duration="${fastDuration.numerator}/${fastDuration.denominator}"`);
+        };
+        const rateIncrease = rationalOperation(data.fastRate, data.slowRate, "-");
+        const answerVisual = `${timelineSvg(true)}${mathBoard("빠른 속도로 넣은 시간", row("물통 용량", `${fractionText(capacity)} L`) + row(`느린 속도로만 ${data.actualTotalMinutes}분 넣었다면`, `${fractionText(slowBaseline)} L`) + row("더 채워야 할 양", `${fractionText(extraAmount)} L`) + row("빠른 구간", `${fractionText(fastDuration)}분 = ${answer}`))}`;
+        const promptVisual = `${timelineSvg(false)}${mathBoard("물통에 물을 넣는 조건", row("느린 속도", `${fractionText(data.slowRate)} L/분`) + row("느린 속도로만 채우는 시간", `${data.slowOnlyMinutes}분`) + row("속도를 바꾼 뒤 걸린 전체 시간", `${data.actualTotalMinutes}분`) + row("빠른 속도", `${fractionText(data.fastRate)} L/분`))}`;
+        return fixedResult(`같은 물통에 1분에 ${fractionText(data.slowRate)}L씩 물을 넣으면 ${data.slowOnlyMinutes}분 만에 가득 찹니다. 처음에는 이 속도로 넣다가 도중에 1분에 ${fractionText(data.fastRate)}L씩 넣었더니 모두 ${data.actualTotalMinutes}분 만에 물통이 가득 찼습니다. 빠른 속도로 물을 넣은 시간을 분과 초로 나타내세요.${promptVisual}${support(`전체 ${data.actualTotalMinutes}분 동안 계속 느린 속도로 넣었다고 생각한 뒤, 빠른 속도 때문에 더 채워진 양을 구하세요.`)}${challenge}${evidence("sequential-taps-fill-time", [data.slowRate.numerator, data.slowRate.denominator, data.slowOnlyMinutes, data.actualTotalMinutes, data.fastRate.numerator, data.fastRate.denominator, capacity.numerator, capacity.denominator, slowDuration.numerator, slowDuration.denominator, fastDuration.numerator, fastDuration.denominator, totalSeconds])}`, answer, `물통 용량은 ${fractionText(data.slowRate)}×${data.slowOnlyMinutes}=${fractionText(capacity)}L입니다. 전체 ${data.actualTotalMinutes}분을 모두 느린 속도로 넣었다면 ${fractionText(slowBaseline)}L이므로 ${fractionText(extraAmount)}L가 더 필요합니다. 빠른 속도는 느린 속도보다 1분에 ${fractionText(rateIncrease)}L를 더 넣으므로, 빠른 속도로 넣은 시간은 ${fractionText(extraAmount)}÷${fractionText(rateIncrease)}=${fractionText(fastDuration)}분=${minutes}분 ${seconds}초입니다.`, answerVisual);
+      }
+
+      throw new Error(`${sourceItemId}: 구현되지 않은 원문 분기입니다.`);
+    },
     polygonPerimeterE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "5-1-u6-e1-exploration", "5-1-u6-e1-example-1-1", "5-1-u6-e1-example-1-2", "5-1-u6-e1-example-1-3",

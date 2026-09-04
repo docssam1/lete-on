@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 10
+    "unlocked": 21
   },
   "items": [
     {
@@ -16299,22 +16299,32 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
 };
 
 (() => {
-  const verifiedE1 = new Map([
-    ["6-1-u1-e1-example-1", 0],
-    ["6-1-u1-e1-example-2", 1],
-    ["6-1-u1-e1-example-3", 2],
-    ["6-1-u1-e1-example-4", 3],
-    ["6-1-u1-e1-mission-1", 4],
-    ["6-1-u1-e1-mission-2", 5],
-    ["6-1-u1-e1-mission-3", 6],
-    ["6-1-u1-e1-mission-4", 7],
-    ["6-1-u1-e1-mission-5", 8],
-    ["6-1-u1-e1-mission-6", 9]
+  const verifiedPools = new Map([
+    ["6-1-u1-e1-example-1", ["sourceGrade6FractionDivisionE1", 0]],
+    ["6-1-u1-e1-example-2", ["sourceGrade6FractionDivisionE1", 1]],
+    ["6-1-u1-e1-example-3", ["sourceGrade6FractionDivisionE1", 2]],
+    ["6-1-u1-e1-example-4", ["sourceGrade6FractionDivisionE1", 3]],
+    ["6-1-u1-e1-mission-1", ["sourceGrade6FractionDivisionE1", 4]],
+    ["6-1-u1-e1-mission-2", ["sourceGrade6FractionDivisionE1", 5]],
+    ["6-1-u1-e1-mission-3", ["sourceGrade6FractionDivisionE1", 6]],
+    ["6-1-u1-e1-mission-4", ["sourceGrade6FractionDivisionE1", 7]],
+    ["6-1-u1-e1-mission-5", ["sourceGrade6FractionDivisionE1", 8]],
+    ["6-1-u1-e1-mission-6", ["sourceGrade6FractionDivisionE1", 9]],
+    ["6-1-u1-e2-exploration-2", ["sourceGrade6FractionDivisionE2", 0]],
+    ["6-1-u1-e2-example-1", ["sourceGrade6FractionDivisionE2", 1]],
+    ["6-1-u1-e2-example-2", ["sourceGrade6FractionDivisionE2", 2]],
+    ["6-1-u1-e2-example-3", ["sourceGrade6FractionDivisionE2", 3]],
+    ["6-1-u1-e2-example-4", ["sourceGrade6FractionDivisionE2", 4]],
+    ["6-1-u1-e2-mission-1", ["sourceGrade6FractionDivisionE2", 5]],
+    ["6-1-u1-e2-mission-2", ["sourceGrade6FractionDivisionE2", 6]],
+    ["6-1-u1-e2-mission-3", ["sourceGrade6FractionDivisionE2", 7]],
+    ["6-1-u1-e2-mission-4", ["sourceGrade6FractionDivisionE2", 8]],
+    ["6-1-u1-e2-mission-5", ["sourceGrade6FractionDivisionE2", 9]],
+    ["6-1-u1-e2-mission-6", ["sourceGrade6FractionDivisionE2", 10]]
   ]);
   window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
-    if (!verifiedE1.has(item.sourceItemId)) return;
-    item.generatorKey = "sourceGrade6FractionDivisionE1";
-    item.variant = verifiedE1.get(item.sourceItemId);
+    if (!verifiedPools.has(item.sourceItemId)) return;
+    [item.generatorKey, item.variant] = verifiedPools.get(item.sourceItemId);
     item.reviewLocked = false;
     item.reviewReason = "";
     item.answerVisualStatus = "verified";
