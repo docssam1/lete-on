@@ -5,12 +5,15 @@
   const sets = Array.isArray(window.ALPHA_PREP_SETS) ? window.ALPHA_PREP_SETS : [];
   const peers = Array.isArray(window.ALPHA_PREP_PEERS) ? window.ALPHA_PREP_PEERS : [];
   const API_URL = 'https://fgahqumaldheqettmvqg.supabase.co/functions/v1/alpha-prep-coach';
+  const TRANSCRIBE_URL = 'https://fgahqumaldheqettmvqg.supabase.co/functions/v1/alpha-prep-transcribe';
   const API_KEY = 'sb_publishable_OsjJG92BLMaZrc2jTClt0g_ecdTtf_I';
   const CACHE_KEY = 'leteon:alpha-prep:coach-cache:v1';
   const SESSION_KEY = 'leteon:alpha-prep:sessions:v1';
   const READ_SECONDS = 60;
+  const MAX_RECORD_SECONDS = 90;
   const MAX_FOLLOW_DEPTH = 2;
   const COACH_TIMEOUT_MS = 28000;
+  const TRANSCRIBE_TIMEOUT_MS = 48000;
 
   const peerAnswers = {
     'city-trees': 'I think cities should spend the extra money because healthy trees cool buildings and help with rainwater. The benefit is not only for the tree; it reaches the whole neighborhood.',
@@ -54,6 +57,9 @@
     adaptiveUsed: {},
     peerHeard: false,
     listening: false,
+    transcribing: false,
+    recordingSeconds: 0,
+    transcriberStatus: 'checking',
     busy: false,
     notice: '',
     report: null,
@@ -65,8 +71,17 @@
 
   let timer = null;
   let recognition = null;
+  let mediaRecorder = null;
+  let mediaStream = null;
+  let recordingTimer = null;
+  let transcriberCheck = null;
+  let transcriptionRun = 0;
   let speechRun = 0;
   let renderedViewKey = '';
+  const audioChannel = (() => {
+    try { return 'BroadcastChannel' in window ? new BroadcastChannel('leteon-alpha-prep-audio') : null; } catch (_) { return null; }
+  })();
+  if (audioChannel) audioChannel.onmessage = () => stopSpeech();
 
   function currentReaderName() {
     try {
@@ -368,18 +383,33 @@
   }
 
   function answerControls(current, listeningAvailable) {
+    const recording = state.listening && mediaRecorder && mediaRecorder.state !== 'inactive';
+    const microphoneBusy = state.listening || state.transcribing;
+    const microphoneLabel = state.transcribing
+      ? 'Transcribing…'
+      : recording
+        ? `Stop recording ${formatTime(state.recordingSeconds)}`
+        : state.listening
+          ? 'Stop listening'
+          : 'Record answer';
+    const microphoneAction = state.listening ? 'stop-mic' : 'start-mic';
+    const microphoneDisabled = !listeningAvailable || state.transcribing;
+    const usesBrowserBackup = state.transcriberStatus === 'fallback' && browserSpeechSupported();
     return `<div class="panel-number">SPEAK</div>
       <h2>Answer in English.</h2>
       <p class="answer-hint">${answerHint(current)}</p>
       <div class="record-row">
-        <button class="mic-button ${state.listening ? 'listening' : ''}" type="button" data-action="${state.listening ? 'stop-mic' : 'start-mic'}" ${listeningAvailable ? '' : 'disabled'} aria-label="${state.listening ? 'Stop listening' : 'Start voice recognition'}"><span>${state.listening ? '■' : '●'}</span>${state.listening ? 'Listening…' : 'Use microphone'}</button>
+        <button class="mic-button ${state.listening ? 'listening' : ''} ${state.transcribing ? 'transcribing' : ''}" type="button" data-action="${microphoneAction}" ${microphoneDisabled ? 'disabled' : ''} aria-label="${esc(microphoneLabel)}"><span>${state.listening ? '■' : '●'}</span><b>${esc(microphoneLabel)}</b></button>
         <button class="sound-button" type="button" data-action="repeat-question" title="Hear the question again" aria-label="Hear the question again">↻</button>
       </div>
-      ${listeningAvailable ? '' : '<p class="support-note">Voice recognition is unavailable in this browser. Type your answer below.</p>'}
-      <label class="transcript-label" for="answer-draft">Live transcript / typed answer</label>
+      ${recording ? `<div class="recording-status" aria-live="polite"><span class="recording-pulse"></span><b>Recording</b><time id="recording-time">${formatTime(state.recordingSeconds)}</time><small>Tap stop when you finish.</small></div>` : ''}
+      ${state.transcribing ? '<div class="recording-status processing" aria-live="polite"><span class="recording-pulse"></span><b>Transcribing your answer</b><small>Please wait a moment.</small></div>' : ''}
+      ${!listeningAvailable ? '<p class="support-note">The microphone is unavailable in this browser. You can type your answer below.</p>' : ''}
+      ${usesBrowserBackup ? '<p class="support-note">High-accuracy transcription is not connected yet. The browser microphone is available as a temporary backup.</p>' : ''}
+      <label class="transcript-label" for="answer-draft">Your transcript <small>Check any recognition mistakes before submitting.</small></label>
       <textarea id="answer-draft" data-field="answerDraft" rows="7" maxlength="900" placeholder="I think… because…" autocapitalize="sentences" autocomplete="off" enterkeyhint="done" spellcheck="true">${esc(state.answerDraft)}</textarea>
       <div class="answer-stats"><span>${wordCount(state.answerDraft)} words</span><span>${state.notice ? esc(state.notice) : 'Aim for a complete idea and one reason.'}</span></div>
-      <div class="answer-submit-dock"><button class="primary-command" type="button" data-action="submit-answer" ${state.busy ? 'disabled' : ''}>${state.busy ? 'Coach is reviewing…' : 'Submit answer'} <span>→</span></button></div>
+      <div class="answer-submit-dock"><button class="primary-command" type="button" data-action="submit-answer" ${state.busy || microphoneBusy ? 'disabled' : ''}>${state.busy ? 'Coach is reviewing…' : state.transcribing ? 'Transcribing…' : state.listening ? 'Finish recording first' : 'Submit answer'} <span>→</span></button></div>
       <p class="cost-note">${state.coachMode === 'deep' ? 'Deep mode checks one follow-up answer too.' : 'Extra follow-ups continue on this device.'}</p>`;
   }
 
@@ -499,7 +529,7 @@
       });
     }
     const draft = document.getElementById('answer-draft');
-    if (draft && state.stage === 'interview' && !state.listening && !state.busy && !window.matchMedia('(max-width: 780px)').matches) {
+    if (draft && state.stage === 'interview' && !state.listening && !state.transcribing && !state.busy && !window.matchMedia('(max-width: 780px)').matches) {
       requestAnimationFrame(() => draft.focus({ preventScroll: true }));
     }
   }
@@ -612,7 +642,46 @@
   }
 
   function micSupported() {
+    if (state.transcriberStatus === 'fallback') return browserSpeechSupported();
+    return recordedMicSupported() || browserSpeechSupported();
+  }
+
+  function recordedMicSupported() {
+    return Boolean(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  }
+
+  function browserSpeechSupported() {
     return Boolean(window.SpeechRecognition || window.webkitSpeechRecognition);
+  }
+
+  async function checkTranscriber() {
+    if (transcriberCheck) return transcriberCheck;
+    if (!window.fetch || location.protocol === 'file:') {
+      state.transcriberStatus = 'fallback';
+      return false;
+    }
+    transcriberCheck = (async () => {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 5000);
+      try {
+        const response = await fetch(TRANSCRIBE_URL, {
+          method: 'GET',
+          headers: { apikey: API_KEY },
+          signal: controller.signal
+        });
+        const data = response.ok ? await response.json() : null;
+        state.transcriberStatus = data && data.available ? 'ready' : 'fallback';
+        return state.transcriberStatus === 'ready';
+      } catch (_) {
+        state.transcriberStatus = 'fallback';
+        return false;
+      } finally {
+        window.clearTimeout(timeout);
+        transcriberCheck = null;
+        if (state.stage === 'interview') render();
+      }
+    })();
+    return transcriberCheck;
   }
 
   function normalizeSpeechText(value) {
@@ -660,7 +729,192 @@
     return transcript;
   }
 
-  function startMic() {
+  function preferredRecordingType() {
+    if (!window.MediaRecorder || typeof window.MediaRecorder.isTypeSupported !== 'function') return '';
+    return [
+      'audio/webm;codecs=opus',
+      'audio/webm',
+      'audio/mp4'
+    ].find((type) => window.MediaRecorder.isTypeSupported(type)) || '';
+  }
+
+  function clearRecordingTimer() {
+    window.clearInterval(recordingTimer);
+    recordingTimer = null;
+  }
+
+  function stopMediaTracks(stream) {
+    if (!stream || typeof stream.getTracks !== 'function') return;
+    stream.getTracks().forEach((track) => {
+      try { track.stop(); } catch (_) { /* track is already stopped */ }
+    });
+    if (mediaStream === stream) mediaStream = null;
+  }
+
+  function cancelActiveRecording() {
+    transcriptionRun += 1;
+    clearRecordingTimer();
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.ondataavailable = null;
+      mediaRecorder.onstop = null;
+      mediaRecorder.onerror = null;
+      try { mediaRecorder.stop(); } catch (_) { /* recorder is already stopped */ }
+    }
+    mediaRecorder = null;
+    stopMediaTracks(mediaStream);
+    state.listening = false;
+    state.transcribing = false;
+    state.recordingSeconds = 0;
+  }
+
+  function transcriptionContext() {
+    const passage = currentPassage() || {};
+    const item = currentQueueItem() || {};
+    return {
+      passageTitle: passage.title || '',
+      passageGenre: passage.genre || '',
+      question: item.prompt || '',
+      keywords: Array.isArray(passage.vocabulary)
+        ? passage.vocabulary.map((entry) => Array.isArray(entry) ? entry[0] : '').filter(Boolean)
+        : []
+    };
+  }
+
+  function recordingExtension(type) {
+    if (/mp4/i.test(type)) return 'm4a';
+    if (/mpeg|mp3/i.test(type)) return 'mp3';
+    if (/wav/i.test(type)) return 'wav';
+    return 'webm';
+  }
+
+  async function requestTranscription(audio, durationMs) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), TRANSCRIBE_TIMEOUT_MS);
+    const form = new FormData();
+    form.append('audio', audio, `alpha-prep-answer.${recordingExtension(audio.type)}`);
+    form.append('durationMs', String(durationMs));
+    form.append('context', JSON.stringify(transcriptionContext()));
+    try {
+      const response = await fetch(TRANSCRIBE_URL, {
+        method: 'POST',
+        headers: { apikey: API_KEY },
+        body: form,
+        signal: controller.signal
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data || typeof data.text !== 'string' || !data.text.trim()) {
+        if (data && data.error === 'transcriber_not_configured') state.transcriberStatus = 'fallback';
+        throw new Error(data && data.error ? data.error : 'transcription_unavailable');
+      }
+      return normalizeSpeechText(data.text);
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
+
+  async function finishRecordedAnswer(recorder, stream, chunks, startedAt, recordedType) {
+    clearRecordingTimer();
+    stopMediaTracks(stream);
+    if (mediaRecorder === recorder) mediaRecorder = null;
+    state.listening = false;
+    state.recordingSeconds = 0;
+    const durationMs = Math.max(0, Date.now() - startedAt);
+    const audio = new Blob(chunks, { type: recordedType || chunks[0]?.type || 'audio/webm' });
+    if (durationMs < 500 || audio.size < 100) {
+      state.notice = 'Please speak a little longer, then stop the recording.';
+      render();
+      return;
+    }
+
+    state.transcribing = true;
+    state.notice = 'Turning your speech into text…';
+    const run = ++transcriptionRun;
+    render();
+    try {
+      const transcript = await requestTranscription(audio, durationMs);
+      if (run !== transcriptionRun) return;
+      state.answerDraft = [normalizeSpeechText(state.answerDraft), transcript].filter(Boolean).join(' ').slice(0, 900);
+      state.notice = 'Voice transcribed. Check the words, then submit.';
+      state.transcriberStatus = 'ready';
+    } catch (_) {
+      if (run !== transcriptionRun) return;
+      state.transcriberStatus = 'fallback';
+      state.notice = browserSpeechSupported()
+        ? 'High-accuracy transcription is unavailable. Record once more with the browser backup, or type your answer.'
+        : 'High-accuracy transcription is unavailable. You can type your answer and continue.';
+    } finally {
+      if (run !== transcriptionRun) return;
+      state.transcribing = false;
+      render();
+    }
+  }
+
+  async function startRecordedMic() {
+    stopSpeech();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
+      const preferredType = preferredRecordingType();
+      const recorder = preferredType ? new MediaRecorder(stream, { mimeType: preferredType }) : new MediaRecorder(stream);
+      const chunks = [];
+      const startedAt = Date.now();
+      const recordedType = recorder.mimeType || preferredType || 'audio/webm';
+      mediaStream = stream;
+      mediaRecorder = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size) chunks.push(event.data);
+      };
+      recorder.onerror = () => {
+        recorder.onstop = null;
+        cancelActiveRecording();
+        state.notice = 'The recording stopped unexpectedly. Please try again or type your answer.';
+        render();
+      };
+      recorder.onstop = () => { void finishRecordedAnswer(recorder, stream, chunks, startedAt, recordedType); };
+      recorder.start(250);
+      state.listening = true;
+      state.recordingSeconds = 0;
+      state.notice = 'Speak naturally. Your grammar will stay as you said it.';
+      render();
+      recordingTimer = window.setInterval(() => {
+        state.recordingSeconds = Math.min(MAX_RECORD_SECONDS, Math.floor((Date.now() - startedAt) / 1000));
+        const time = document.getElementById('recording-time');
+        const button = document.querySelector('.mic-button b');
+        if (time) time.textContent = formatTime(state.recordingSeconds);
+        if (button) button.textContent = `Stop recording ${formatTime(state.recordingSeconds)}`;
+        if (state.recordingSeconds >= MAX_RECORD_SECONDS) stopMic();
+      }, 250);
+    } catch (_) {
+      stopMediaTracks(mediaStream);
+      mediaRecorder = null;
+      state.listening = false;
+      state.notice = 'Microphone permission was not granted. Please allow it or type your answer.';
+      render();
+    }
+  }
+
+  async function startMic() {
+    if (state.listening || state.transcribing) return;
+    if (state.transcriberStatus === 'checking') await checkTranscriber();
+    if (state.transcriberStatus === 'ready' && recordedMicSupported()) {
+      await startRecordedMic();
+      return;
+    }
+    if (browserSpeechSupported()) {
+      startBrowserMic();
+      return;
+    }
+    state.notice = 'The microphone service is not available yet. You can type your answer and continue.';
+    render();
+  }
+
+  function startBrowserMic() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition || state.listening) return;
     stopSpeech();
@@ -675,7 +929,7 @@
       let recognitionFailed = false;
       recognition.onstart = () => {
         state.listening = true;
-        state.notice = 'Speak one complete idea. Tap the microphone again to add more.';
+        state.notice = 'Speak one complete idea. This browser microphone is the temporary backup.';
         render();
       };
       recognition.onresult = (event) => {
@@ -707,6 +961,11 @@
   }
 
   function stopMic() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      state.notice = 'Finishing the recording…';
+      try { mediaRecorder.stop(); } catch (_) { /* recorder is already stopping */ }
+      return;
+    }
     if (recognition) {
       try { recognition.stop(); } catch (_) { /* already stopped */ }
     }
@@ -715,8 +974,11 @@
   }
 
   function submitAnswer() {
-    if (state.busy) return;
-    if (state.listening) stopMic();
+    if (state.busy || state.transcribing) return;
+    if (state.listening) {
+      stopMic();
+      return;
+    }
     const answer = String(state.answerDraft || '').trim();
     if (wordCount(answer) < 3) {
       state.notice = 'Give at least one complete idea before submitting.';
@@ -1241,7 +1503,8 @@
 
   function speakSequence(lines, role) {
     stopSpeech();
-    if (!('speechSynthesis' in window) || !Array.isArray(lines) || !lines.length) return;
+    if (document.hidden || !('speechSynthesis' in window) || !Array.isArray(lines) || !lines.length) return;
+    if (audioChannel) audioChannel.postMessage('take-audio-focus');
     const run = ++speechRun;
     const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
     const english = voices.filter((voice) => /^en[-_]/i.test(voice.lang || ''));
@@ -1273,6 +1536,7 @@
   function resetSession(keepSet) {
     clearInterval(timer);
     timer = null;
+    cancelActiveRecording();
     if (recognition) {
       try { recognition.abort(); } catch (_) { /* no-op */ }
       recognition = null;
@@ -1282,7 +1546,8 @@
     Object.assign(state, {
       stage: 'lobby', entered: false, setIndex, passageIndex: 0, readingStarted: false,
       secondsLeft: READ_SECONDS, queue: [], questionIndex: 0, answerDraft: '', turns: [],
-      passageNotes: {}, adaptiveUsed: {}, peerHeard: false, listening: false, busy: false,
+      passageNotes: {}, adaptiveUsed: {}, peerHeard: false, listening: false, transcribing: false,
+      recordingSeconds: 0, busy: false,
       notice: '', report: null, printMode: '', apiStatus: 'idle', apiCalls: 0, startedAt: 0
     });
     render();
@@ -1343,10 +1608,16 @@
 
   window.addEventListener('beforeunload', () => {
     clearInterval(timer);
+    cancelActiveRecording();
     stopSpeech();
     if (recognition) {
       try { recognition.abort(); } catch (_) { /* no-op */ }
     }
+    if (audioChannel) audioChannel.close();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopSpeech();
   });
 
   window.addEventListener('afterprint', () => {
@@ -1362,9 +1633,11 @@
       expireReading: collectPassage,
       setStage(stage) { state.stage = stage; render(); },
       render,
-      buildLocalReport
+      buildLocalReport,
+      checkTranscriber
     };
   }
 
   render();
+  void checkTranscriber();
 })();

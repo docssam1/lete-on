@@ -256,6 +256,15 @@ button:disabled {
   font-weight: 850;
 }
 
+.transcript-label small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 .text-input,
 .select-input,
 textarea {
@@ -1396,6 +1405,11 @@ textarea {
   padding: 11px 12px;
 }
 
+.mic-button b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .mic-button > span {
   color: var(--red);
   font-size: 13px;
@@ -1405,6 +1419,61 @@ textarea {
   border-color: var(--red);
   background: #fff0ee;
   color: #873b35;
+}
+
+.mic-button.transcribing {
+  border-color: #789589;
+  background: #edf4f0;
+  color: var(--forest);
+}
+
+.recording-status {
+  display: grid;
+  grid-template-columns: 10px auto auto;
+  align-items: center;
+  justify-content: start;
+  gap: 7px;
+  min-height: 38px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-left: 2px solid var(--red);
+  background: #fff8f6;
+  color: #713a35;
+  font-size: 10px;
+}
+
+.recording-status.processing {
+  border-left-color: var(--green);
+  background: #f3f8f5;
+  color: var(--forest);
+}
+
+.recording-status time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.recording-status small {
+  grid-column: 2 / -1;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.recording-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: recording-pulse 1.1s ease-in-out infinite;
+}
+
+.recording-status.processing .recording-pulse {
+  background: var(--green);
+}
+
+@keyframes recording-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
 }
 
 .sound-button {
