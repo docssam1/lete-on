@@ -1,3 +1,5 @@
+import { book02Markup } from "./book02-renderers.js?v=20260904b";
+
 function foldVisual(phase) {
   const folded = ["folded", "cut"].includes(phase);
   const cut = ["cut", "unfolded"].includes(phase);
@@ -164,8 +166,14 @@ function equalizeTransferVisual(phase, model) {
   return `<div class="guided-equalize-transfer ${phase}" role="img" aria-label="많은 쪽에서 적은 쪽으로 옮겨 수를 같게 만드는 과정"><div>${dots(left, "A")}<b>${left}</b></div><strong>${phase === "difference" ? `${model.left}-${model.right}=${model.left-model.right}` : phase === "move" ? `${model.transfer}개 이동` : phase === "equal" ? `${left} = ${right}` : "차이는 몇 개?"}</strong><div>${dots(right, "B")}<b>${right}</b></div><p>${phase === "start" ? "두 양을 나란히 놓고 차이를 봅니다." : phase === "difference" ? "차이를 2로 나누면 옮길 수가 됩니다." : phase === "move" ? "많은 쪽에서 적은 쪽으로 차이의 절반을 옮깁니다." : "두 양이 같은지 마지막으로 확인합니다."}</p></div>`;
 }
 
+function bookTwoSourceVisual(experience, beat, step) {
+  const itemVisual = beat.visual || experience.model?.visuals?.[step] || experience.model?.visual;
+  return `<div class="guided-book2-source ${beat.phase || "step"}" data-book2-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book02Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
+}
+
 export function guidedConceptVisual(experience, step) {
   const beat = experience.beats[Math.max(0, Math.min(step, experience.beats.length - 1))];
+  if (experience.family?.startsWith("book2-")) return bookTwoSourceVisual(experience, beat, step);
   if (experience.family === "fold-symmetry") return foldVisual(beat.phase);
   if (experience.family === "double-fold-symmetry") return doubleFoldVisual(beat.phase);
   if (experience.family === "equal-line") return equalLineVisual(beat.phase, experience.model);

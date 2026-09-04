@@ -968,20 +968,20 @@ function screenTown(){
         <div id="townFountain"></div>
         ${zones}
         ${gates}
-        <div class="nb nb-player" id="nbNumi"><div class="speech"></div>
+        <div class="nb nb-player nb-walker" id="nbNumi"><div class="speech"></div>
           <div class="nb-name">${S.name?esc(S.name):'#'+S.character.number}</div>
-          <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar(avatarKind(),56):'<img src="assets/characters/kid-boy.png" alt="">'}</div>
+          <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker(avatarKind(),60):(window.renderHumanChar?window.renderHumanChar(avatarKind(),56):'<img src="assets/characters/kid-boy.png" alt="">')}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-buddy" id="nbBuddy"><div class="speech"></div>
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,44):''}</div>
           <div class="shadow"></div></div>
-        <div class="nb nb-elder" id="nbElder"><div class="speech"></div>
+        <div class="nb nb-elder nb-walker" id="nbElder"><div class="speech"></div>
           <div class="nb-name">${S.lang==='ko'?'할아버지':S.lang==='en'?'Grandpa':'爷爷'}</div>
-          <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar('elder',52):''}</div>
+          <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker('elder',56):(window.renderHumanChar?window.renderHumanChar('elder',52):'')}</div>
           <div class="shadow"></div></div>
-        <div class="nb nb-doc" id="nbDoc"><div class="speech"></div>
+        <div class="nb nb-doc nb-walker" id="nbDoc"><div class="speech"></div>
           <div class="nb-name">${S.lang==='ko'?'독쌤':S.lang==='en'?'Doc-ssaem':'独老师'}</div>
-          <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar('doc',52):''}</div>
+          <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker('doc',56):(window.renderHumanChar?window.renderHumanChar('doc',52):'')}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbPoco"><div class="speech"></div>
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar({number:3,color:'gold',bg:'plain'},52):'<img src="assets/characters/poco-3.png" alt="Poco">'}</div>
@@ -3311,13 +3311,31 @@ function initTownWorld(scr){
   const player=nbs[0];
   function walk(){
     nbs.forEach(n=>{
-      if(n.still)return;                                    // 할아버지·독쌤은 제자리 고정
+      n.el.style.zIndex=20+Math.round(n.y);                 // 지도 아래쪽(y 큼)일수록 앞에 그려짐(깊이감)
+      const walker=n.el.classList.contains('nb-walker');     // 사람 리그(walker.js) — 걷기 애니메이션 대상
+      if(n.still){                                            // 할아버지·독쌤은 제자리 고정, 남쪽(정면) 응시로 숨쉬기만
+        if(walker){const root=n.el.querySelector('.nm-walker');if(root){root.classList.remove('walking');if(!root.dataset.dir||root.dataset.dir==='s')root.dataset.dir='s';}}
+        return;
+      }
       if(n.buddy){n.tx=player.x-3;n.ty=player.y+1.2;}        // 동행은 플레이어를 살짝 뒤에서 따라간다
       const dx=n.tx-n.x,dy=n.ty-n.y,d=Math.hypot(dx,dy);
-      if(d<.3){if(!n.player&&!n.buddy&&Math.random()<.012)pick(n);return;}   // 플레이어·동행은 도착하면 그 자리에 머문다
+      const moving=d>=.3;
+      if(!moving){                                            // 플레이어·동행은 도착하면 그 자리에 머문다
+        if(!n.player&&!n.buddy&&Math.random()<.012)pick(n);
+        if(walker){const root=n.el.querySelector('.nm-walker');if(root)root.classList.remove('walking');}   // 멈추면 마지막 방향 유지, 걷기만 정지
+        return;
+      }
       n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
-      n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
+      if(walker){
+        const root=n.el.querySelector('.nm-walker');
+        if(root){
+          root.classList.add('walking');
+          root.dataset.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'w':'e'):(dy<0?'n':'s');
+        }
+      }else{
+        n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';   // 숫자친구는 기존 방식(좌우 반전) 그대로
+      }
     });
     walkRAF=requestAnimationFrame(walk);
   }

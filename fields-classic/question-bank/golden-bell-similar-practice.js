@@ -285,7 +285,10 @@ export function attachGoldenBellSimilarPractice(books) {
   for (const book of books) {
     for (const lesson of book.lessons || []) {
       const custom = CUSTOM_PRACTICE[lesson.id];
-      const practice = custom
+      const prepared = lesson.similarPractice?.[0];
+      const practice = prepared
+        ? prepared
+        : custom
         ? { ...custom, id: `${lesson.id}:extension:2`, title: "유사문제", structureKey: lesson.extension.structureKey, estimatedMinutes: 4 }
         : generatedPractice(lesson);
       lesson.similarPractice = Object.freeze([Object.freeze(practice)]);

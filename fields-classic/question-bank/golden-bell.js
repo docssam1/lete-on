@@ -1,7 +1,8 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260904g";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260904h";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260904c";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260904d";
 import { book01Markup } from "./book01-renderers.js?v=20260904c";
+import { book02Markup } from "./book02-renderers.js?v=20260904b";
 import { book03Markup } from "./book03-renderers.js?v=20260827b";
 import { book04Markup } from "./book04-renderers.js?v=20260826b";
 import { book05Markup } from "./book05-renderers.js?v=20260829b";
@@ -766,6 +767,7 @@ function simplePracticeMarkup(visual) {
 
 function visualMarkup(visual) {
   if (!visual) return "";
+  if (visual.kind === "book2") return `<div class="book02-visual">${book02Markup(visual)}</div>`;
   if (visual.kind === "book1") return `<div class="book01-visual">${book01Markup(visual)}</div>`;
   if (visual.kind === "book3") return `<div class="book03-visual">${book03Markup(visual)}</div>`;
   if (visual.kind === "book4") return `<div class="book04-visual">${book04Markup(visual)}</div>`;
@@ -1069,7 +1071,7 @@ function printLessonPage(lesson, lessonNumber, book) {
   const footer = `<footer class="gold-print-footer">${book.label} · ${lesson.unit}</footer>`;
   const concept = `<p class="gold-print-concept"><strong>생각할 개념</strong><br>${lesson.representativeConcept}</p>`;
   const sourcePageCount = lesson.original.mode === "paged" ? new Set(lesson.original.items.map((item) => item.printGroup)).size : 1;
-  const storyPages = extensionItems(lesson).map((item, index, items) => `<article class="gold-print-page" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(sourcePageCount + index + 1).padStart(2, "0"))}${concept}<section class="gold-print-block gold-print-story"><h2>추가 학습 ${index + 1} / ${items.length}</h2><p>${item.story}<br>${item.prompt}</p><div class="gold-print-visual">${visualMarkup(item.visual)}</div><ol class="gold-print-items"><li class="gold-print-item"><span>${item.prompt}</span>${printResponseMarkup(item)}</li></ol></section>${footer}</article>`).join("");
+  const storyPages = extensionItems(lesson).map((item, index, items) => `<article class="gold-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(sourcePageCount + index + 1).padStart(2, "0"))}${concept}<section class="gold-print-block gold-print-story"><h2>추가 학습 ${index + 1} / ${items.length}</h2><p>${item.story}<br>${item.prompt}</p><div class="gold-print-visual">${visualMarkup(item.visual)}</div><ol class="gold-print-items"><li class="gold-print-item"><span>${item.prompt}</span>${printResponseMarkup(item)}</li></ol></section>${footer}</article>`).join("");
   if (lesson.original.mode === "paged") {
     const groups = new Map();
     lesson.original.items.forEach((item) => {
@@ -1081,7 +1083,7 @@ function printLessonPage(lesson, lessonNumber, book) {
       const blocks = items.map((item) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo)}</span>${escapeAttribute(item.typeLabel)}</h2><p>${escapeAttribute(item.prompt)}</p><div class="gold-print-visual">${visualMarkup(item.visual || lesson.original.visual)}</div>${printResponseMarkup(item)}</section>`).join("");
       const sourceExperience = lesson.experience ? experienceSummaryMarkup(lesson.experience) : "";
       const printConcept = pageIndex === 0 ? concept + sourceExperience : "";
-      return `<article class="gold-print-page source-practice-print" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original-${group}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(pageIndex + 1).padStart(2, "0"))}${printConcept}<section class="gold-print-block"><h2>교재 연습 ${pageIndex + 1} / ${groups.size}</h2>${blocks}</section>${footer}</article>`;
+      return `<article class="gold-print-page source-practice-print" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original-${group}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(pageIndex + 1).padStart(2, "0"))}${printConcept}<section class="gold-print-block"><h2>교재 연습 ${pageIndex + 1} / ${groups.size}</h2>${blocks}</section>${footer}</article>`;
     }).join("");
     return sourcePages + storyPages;
   }
@@ -1090,7 +1092,7 @@ function printLessonPage(lesson, lessonNumber, book) {
   const sharedVisual = !hasItemVisuals || visualHasResponseBoxes ? `<div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>` : "";
   const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item, index) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo || index + 1)}</span>${escapeAttribute(item.typeLabel || "문제")}</h2><p>${escapeAttribute(item.prompt)}${item.conditions?.length ? `<br>${item.conditions.map(escapeAttribute).join(" · ")}` : ""}</p>${item.visual ? `<div class="gold-print-visual">${visualMarkup(item.visual)}</div>` : ""}${printResponseMarkup(item)}</section>`).join("");
   const sharedClass = !hasItemVisuals && !visualHasResponseBoxes ? " shared-source-visual" : "";
-  const originalPage = `<article class="gold-print-page source-practice-print${sharedClass}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p>${sharedVisual}${originalItems ? `<div class="gold-print-source-items">${originalItems}</div>` : ""}</section>${footer}</article>`;
+  const originalPage = `<article class="gold-print-page source-practice-print${sharedClass}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p>${sharedVisual}${originalItems ? `<div class="gold-print-source-items">${originalItems}</div>` : ""}</section>${footer}</article>`;
   return originalPage + storyPages;
 }
 

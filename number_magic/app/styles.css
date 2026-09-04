@@ -688,6 +688,64 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   animation:nbping .7s ease-out forwards}
 @keyframes nbping{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.5);opacity:0}}
 
+/* ══════════════════════════════════════════════════════════════════════
+   걷는 사람 캐릭터 리그(walker.js, .nm-walker) — 2D-but-3D 워크사이클
+   data-dir(s/n/e/w)로 정면/후면/측면 뷰 하나만 보이고, .walking 클래스가
+   있을 때만 다리·팔·몸통·그림자에 걷기 keyframes를 건다(없으면 숨쉬기만).
+   ══════════════════════════════════════════════════════════════════════ */
+.nm-walker{position:relative;display:inline-block}
+.nm-walker svg{width:100%;height:100%;overflow:visible;display:block}
+.nm-walker .wk-view{display:none}
+.nm-walker[data-dir="s"] .wk-front{display:inline}
+.nm-walker[data-dir="n"] .wk-back{display:inline}
+.nm-walker[data-dir="e"] .wk-side{display:inline}
+.nm-walker[data-dir="w"] .wk-side{display:inline;transform:scaleX(-1);transform-origin:60px 75px}
+
+/* ── 걷기(측면) — 다리는 서로 반대 위상으로 앞뒤 스윙, 팔은 다리와 반대 위상 ── */
+@keyframes wkLegSideL{0%,100%{transform:rotate(26deg)}50%{transform:rotate(-26deg)}}
+@keyframes wkLegSideR{0%,100%{transform:rotate(-26deg)}50%{transform:rotate(26deg)}}
+@keyframes wkArmSideL{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
+@keyframes wkArmSideR{0%,100%{transform:rotate(20deg)}50%{transform:rotate(-20deg)}}
+.nm-walker.walking[data-dir="e"] .wk-legL,.nm-walker.walking[data-dir="w"] .wk-legL{animation:wkLegSideL .55s ease-in-out infinite}
+.nm-walker.walking[data-dir="e"] .wk-legR,.nm-walker.walking[data-dir="w"] .wk-legR{animation:wkLegSideR .55s ease-in-out infinite}
+.nm-walker.walking[data-dir="e"] .wk-armL,.nm-walker.walking[data-dir="w"] .wk-armL{animation:wkArmSideL .55s ease-in-out infinite}
+.nm-walker.walking[data-dir="e"] .wk-armR,.nm-walker.walking[data-dir="w"] .wk-armR{animation:wkArmSideR .55s ease-in-out infinite}
+
+/* ── 걷기(정면/후면) — 다리는 살짝 들리는 제자리걸음, 팔은 반대 위상으로 흔들 ── */
+@keyframes wkLegFrontL{0%,100%{transform:translate(-1.5px,0) scaleY(1)}50%{transform:translate(1.5px,-4px) scaleY(.82)}}
+@keyframes wkLegFrontR{0%,100%{transform:translate(1.5px,-4px) scaleY(.82)}50%{transform:translate(-1.5px,0) scaleY(1)}}
+@keyframes wkArmFrontL{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(12deg)}}
+@keyframes wkArmFrontR{0%,100%{transform:rotate(12deg)}50%{transform:rotate(-10deg)}}
+.nm-walker.walking[data-dir="s"] .wk-legL,.nm-walker.walking[data-dir="n"] .wk-legL{animation:wkLegFrontL .55s ease-in-out infinite}
+.nm-walker.walking[data-dir="s"] .wk-legR,.nm-walker.walking[data-dir="n"] .wk-legR{animation:wkLegFrontR .55s ease-in-out infinite}
+.nm-walker.walking[data-dir="s"] .wk-armL,.nm-walker.walking[data-dir="n"] .wk-armL{animation:wkArmFrontL .55s ease-in-out infinite}
+.nm-walker.walking[data-dir="s"] .wk-armR,.nm-walker.walking[data-dir="n"] .wk-armR{animation:wkArmFrontR .55s ease-in-out infinite}
+
+/* ── 공통: 몸통 바운스(다리 스텝의 2배 빈도) · 머리 살짝 반대 바운스 · 그림자 눌림 ── */
+@keyframes wkBodyBob{0%,100%{transform:translateY(0)}25%{transform:translateY(-3px)}50%{transform:translateY(0)}75%{transform:translateY(-3px)}}
+@keyframes wkHeadBob{0%,100%{transform:translateY(0)}25%{transform:translateY(-1.4px)}50%{transform:translateY(0)}75%{transform:translateY(-1.4px)}}
+@keyframes wkShadowPulse{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.85)}}
+.nm-walker.walking .wk-body{animation:wkBodyBob .55s ease-in-out infinite}
+.nm-walker.walking .wk-head{animation:wkHeadBob .55s ease-in-out infinite}
+.nm-walker.walking .wk-shadow{animation:wkShadowPulse .55s ease-in-out infinite;transform-origin:60px 140px}
+
+/* ── 대기(idle) — 걷지 않을 때는 숨쉬기만, 호핑 없음 ── */
+@keyframes wkBreathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.02)}}
+@keyframes wkArmSway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(3deg)}}
+.nm-walker:not(.walking) .wk-body{animation:wkBreathe 2.4s ease-in-out infinite}
+.nm-walker:not(.walking) .wk-armL{animation:wkArmSway 2.4s ease-in-out infinite}
+.nm-walker:not(.walking) .wk-armR{animation:wkArmSway 2.4s ease-in-out infinite reverse}
+
+@media (prefers-reduced-motion: reduce){
+  .nm-walker .wk-legL,.nm-walker .wk-legR,.nm-walker .wk-armL,.nm-walker .wk-armR,
+  .nm-walker .wk-body,.nm-walker .wk-head,.nm-walker .wk-shadow{animation:none!important}
+}
+
+/* nb 컨테이너 안에 놓일 때: 걷기 캐릭터는 자체 그림자를 그리므로 기존 .nb .shadow와
+   호핑·드롭섀도우를 끈다(main.js에서 .nb-walker 클래스를 붙인다) */
+.nb-walker .nb-img{animation:none;filter:none}
+.nb-walker .shadow{display:none}
+
 /* ── 사람 아바타 + 동행(마을세계관-설계.md §1) ──
    .nm-human = 사람 원본 PNG 그대로(재염색 없음). .nm-party = 아바타 + 오른쪽 아래로
    살짝 겹쳐 서는 동행 숫자/기호 캐릭터(.nm-party-buddy). */
