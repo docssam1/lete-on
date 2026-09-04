@@ -1945,3 +1945,27 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
   .nm-title-blk b{font-size:13.5px}
   .nm-title-blk small{font-size:10px}
 }
+
+/* 온보딩 '나 고르기': 마을 그림이 뒤에 흐릿하게 — "이 마을에 들어간다"는 느낌 (2026-09-04) */
+.nm-ob{background:linear-gradient(180deg,rgba(191,224,242,.55),rgba(251,250,247,.92) 70%),url(../assets/map.jpg) center 30%/cover no-repeat}
+.nm-ob .nm-ob-card{backdrop-filter:blur(2px)}
+
+/* 모바일 학습 무대 압축 — 숫자판 ✓까지 한 화면(844px)에 들어오게 (2026-09-04) */
+@media(max-width:767px){
+  .nm-unit-view .nm-numi{width:72px}
+  .nm-unit-view .nm-bubble{font-size:15px;padding:9px 13px;margin-top:8px;line-height:1.45}
+  .nm-unit-view .nm-board{padding:10px 14px;margin:6px 0}
+  .nm-unit-view .nm-numpad .nm-key{height:50px;font-size:20px}
+  .nm-unit-view .nm-numpad{gap:6px}
+  .nm-unit-view .nm-host.doc{padding:8px 12px}
+  .nm-unit-view .nm-host.doc .nm-host-bubble span{font-size:13.5px}
+}
+
+@media(max-width:767px){
+  .nm-unit-view .nm-unit-bar{padding:4px 0}
+  .nm-unit-view .nm-host.doc{margin-bottom:6px}
+  .nm-unit-view .nm-numi{width:66px}
+  .nm-unit-view .nm-bubble{margin-top:6px}
+  .nm-unit-view .nm-board{padding:8px 12px;margin:4px 0}
+  .nm-unit-view .nm-board .nm-numpad-screen{margin:2px 0 0;min-height:26px;font-size:26px}
+}

@@ -439,7 +439,24 @@ function say(text){
 function _sayWeb(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
 /* 성공 효과음 — 지오메트리 큐비와 같은 자체 제작 클립(assets/audio/success/). 실패해도 조용히 무시 */
 const _sfxCache={};
+/* 파일 없는 짧은 효과음은 WebAudio로 합성 — tap(숫자판)·stamp(도장)·wrong(오답). 아주 작게. */
+let _actx=null;
+function beep(seq,gain){
+  try{
+    _actx=_actx||new (window.AudioContext||window.webkitAudioContext)();
+    const t0=_actx.currentTime;
+    seq.forEach(([f,at,dur])=>{
+      const o=_actx.createOscillator(),g=_actx.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0,t0+at);g.gain.linearRampToValueAtTime(gain,t0+at+.01);g.gain.exponentialRampToValueAtTime(.0001,t0+at+dur);
+      o.connect(g).connect(_actx.destination);o.start(t0+at);o.stop(t0+at+dur+.02);
+    });
+  }catch(e){}
+}
 function playSfx(kind){
+  if(kind==='tap'){beep([[880,0,.05]],.12);return;}
+  if(kind==='stamp'){beep([[523,0,.12],[784,.12,.18]],.25);return;}
+  if(kind==='wrong'){beep([[220,0,.16]],.15);return;}
   try{
     const lang=(S.lang==='en'||S.lang==='zh')?S.lang:'ko';
     const url='assets/audio/success/'+lang+'/'+kind+'.mp3';
@@ -462,6 +479,7 @@ function feedbackFx(ok){
     const n=document.querySelector('.nm-numi');
     if(n){n.classList.remove('sparkle');void n.offsetWidth;n.classList.add('sparkle');}
   }else{
+    playSfx('wrong');
     const board=document.querySelector('.nm-board,.nm-arena-expr');
     if(board){board.classList.remove('nm-shake');void board.offsetWidth;board.classList.add('nm-shake');}
   }
@@ -3273,15 +3291,15 @@ function initTownWorld(scr){
   const myName=S.name?S.name:('#'+S.character.number);
   const nbs=[
     {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
-      lines:[`안녕! 난 ${myName}(이)야 ✨`,'지도를 콕 찍으면 내가 걸어가!']},
+      lines:[L({ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`}),L({ko:'지도를 콕 찍으면 내가 걸어가!',en:'Tap the map and I will walk there!',zh:'点一下地图，我就走过去！'})]},
     {el:scr.querySelector('#nbBuddy'),x:37,y:63,tx:37,ty:63,spd:.22,buddy:true,
-      lines:['오늘은 어떤 마법을 배울까?','내가 옆에서 도와줄게!']},
+      lines:[L({ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'}),L({ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'})]},
     {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
-      lines:['허허, 마을에 온 걸 환영하네','정자에 앉아 숫자 이야기 들려줄까?','천천히 해도 괜찮단다','항구에 가면 수학 이야기 퀴즈가 있단다']},
+      lines:[L({ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'}),L({ko:'정자에 앉아 숫자 이야기 들려줄까?',en:'Shall I tell you a number story at the gazebo?',zh:'在凉亭坐下，听我讲讲数字的故事？'}),L({ko:'천천히 해도 괜찮단다',en:'It is fine to take your time',zh:'慢慢来也没关系'}),L({ko:'항구에 가면 수학 이야기 퀴즈가 있단다',en:'There is a math-story quiz down at the harbor',zh:'去港口有数学故事问答哦'})]},
     {el:scr.querySelector('#nbDoc'),x:47,y:60,tx:47,ty:60,spd:0,still:true,
-      lines:['안녕! 나는 독쌤이야 📚','오늘 배울 마법은 도서관에 있어','모르면 언제든 물어봐!']},
-    {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
-    {el:scr.querySelector('#nbMomo'),x:37,y:66,tx:37,ty:66,spd:.08,lines:['안녕! 난 8이야 💖','2랑 만나면 10! 🔟','실수는 괜찮아!']}
+      lines:[L({ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'}),L({ko:'오늘 배울 마법은 도서관에 있어',en:'Today\'s magic is in the library',zh:'今天要学的魔法在图书馆里'}),L({ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'})]},
+    {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:[L({ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'}),L({ko:'7이랑 만나면 10! 🔟',en:'With 7 we make 10! 🔟',zh:'和7在一起就是10！🔟'}),L({ko:'게임하러 가자!',en:'Let\'s go play!',zh:'去玩游戏吧！'})]},
+    {el:scr.querySelector('#nbMomo'),x:37,y:66,tx:37,ty:66,spd:.08,lines:[L({ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'}),L({ko:'2랑 만나면 10! 🔟',en:'With 2 we make 10! 🔟',zh:'和2在一起就是10！🔟'}),L({ko:'실수는 괜찮아!',en:'Mistakes are okay!',zh:'出错也没关系！'})]}
   ];
   nbs.forEach(n=>{n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';});
   function pick(n){const sp=[[38,58],[44,62],[36,66],[42,68],[48,57],[34,60]];const p=sp[Math.random()*sp.length|0];n.tx=p[0]+Math.random()*6;n.ty=p[1]+Math.random()*4;}
@@ -4417,7 +4435,7 @@ function stepStamp(body,u){
     ${evo}
     <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
   </div>`;
-  confetti();playSfx("great-job");say(L(u.voice.finish));
+  playSfx('stamp');confetti();playSfx("great-job");say(L(u.voice.finish));
   bindLineageEvoCard(body);
   $('#toMap').onclick=exitUnit;
   if(newLineageBadge)setTimeout(()=>showLineageBadgeOverlay(newLineageBadge),700);
@@ -4438,7 +4456,7 @@ function buildNumpad(pad,cb,opts){
   if(opts.decimal||opts.negative) pad.classList.add('dec'); else pad.classList.remove('dec');
   keys.forEach(k=>{
     const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':k==='-'?' neg':'');
-    b.textContent=k==='del'?'←':k==='ok'?'✓':k==='-'?'−':k;b.onclick=()=>cb(k);pad.appendChild(b);
+    b.textContent=k==='del'?'←':k==='ok'?'✓':k==='-'?'−':k;b.onclick=()=>{playSfx('tap');cb(k);};pad.appendChild(b);
   });
 }
 /* 선두 - 1회만 허용: 빈칸→'-', 이미 '-'뿐이면 취소. 숫자 입력은 그대로. */
