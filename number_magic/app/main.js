@@ -469,7 +469,7 @@ function playSfx(kind){
 window.NM_SFX=playSfx;
 window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
-function toast(msg,ok){const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);feedbackFx(ok);}
+function toast(msg,ok){if(!ok&&(msg===t('tryAgain')||msg==='✗'))logDaily(false);const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);feedbackFx(ok);}
 /* 디자인 패스 1(§1) — 정답이면 동행 옆 스파클, 오답이면 마법판이 흔들림. toast()는
    practice/check/lab/arena 정오답 경로가 전부 거치는 지점이라 여기 한 곳에서만
    클래스를 토글한다(로직 변경 없음, 순수 시각 효과). 대상이 화면에 없으면
@@ -2923,6 +2923,7 @@ function screenBoost(){
         ? Array.isArray(val) && val.length===cur.answer.length && val.every((v,i)=>+v===cur.answer[i])
         : +val===cur.answer;
       if(ok)playSfx("success");
+      logDaily(ok);
       advance(ok);
     });
   } else {
@@ -4098,6 +4099,16 @@ function screenReport(){
         <button class="nm-btn full" id="rpToTown">${lk('마을로 가기','Go to town','前往小镇')}</button>
       </div>`
     : `<div class="nm-rp-score">${totalUnitsDone} ${lk('유닛 완료','units done','个单元完成')}</div>`;
+  /* 주간 그래프 — 최근 7일, 막대 높이=푼 문제 수, 색=정답률(60% 미만 주황). 데이터 없으면 안내 한 줄. */
+  const DAYS={ko:['일','월','화','수','목','금','토'],en:['S','M','T','W','T','F','S'],zh:['日','一','二','三','四','五','六']}[S.lang]||['일','월','화','수','목','금','토'];
+  const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const v=(S.daily&&S.daily[k])||{n:0,ok:0};days.push({k,dow:DAYS[d.getDay()],n:v.n,ok:v.ok,today:i===0});}
+  const maxN=Math.max(1,...days.map(d=>d.n)); const wkN=days.reduce((a,d)=>a+d.n,0), wkOk=days.reduce((a,d)=>a+d.ok,0);
+  const weekHtml=`<div class="nm-mb-section-h">${lk('이번 주 7일','Last 7 days','最近7天')}</div>
+    <div class="nm-rp-week" role="img" aria-label="${lk('주간 활동','Weekly activity','每周活动')}">
+      ${days.map(d=>{const h=d.n?Math.max(8,Math.round(d.n/maxN*72)):3;const rate=d.n?d.ok/d.n:0;const cls=d.n?(rate<.6?' low':' good'):'';
+        return `<div class="nm-rp-day${d.today?' today':''}"><div class="nm-rp-bar-wrap"><div class="nm-rp-bar${cls}" style="height:${h}px" title="${d.n}"></div></div><span class="nm-rp-dow">${d.dow}</span></div>`;}).join('')}
+    </div>
+    <p class="nm-wsh-sentence">${wkN?lk(`이번 주 ${wkN}문제 · 정답률 ${Math.round(wkOk/wkN*100)}%`,`${wkN} problems this week · ${Math.round(wkOk/wkN*100)}% correct`,`本周${wkN}题 · 正确率${Math.round(wkOk/wkN*100)}%`):lk('문제를 풀면 여기에 하루하루가 쌓여요.','Solve problems and the days will fill in here.','做题后这里会一天天累积。')}</p>`;
   scr.innerHTML=`<div class="nm-unit-bar">
       <button class="nm-back" id="rpBack">${t('back')}</button>
       <div class="nm-unit-title">${titleHtml}</div>
@@ -4107,6 +4118,7 @@ function screenReport(){
       <div class="nm-card">
         <div class="nm-card-h">${lk('지금까지 걸어온 길','How far you have come','走过的路')}</div>
         ${scoreHtml}
+        ${weekHtml}
         ${course?`<p class="nm-wsh-sentence">${esc(L(course.title))} · ${prog.done}/${prog.total}</p>`:''}
         ${weakRows?`<div class="nm-mb-section-h">${lk('요즘 조금 어려운 곳','A bit tricky lately','最近有点难的地方')}</div>${weakRows}`:`<p class="nm-wsh-sentence">${lk('아직 보강이 필요한 곳이 없어요.','No weak spots detected yet.','暂时没有需要加强的地方。')}</p>`}
         <button class="nm-btn full" id="rpToMail">📬 ${lk('편지함 열기','Open mailbox','打开信箱')}</button>
@@ -4496,8 +4508,15 @@ function multiEquals(answerArr){ return S.sub.mvals.length===answerArr.length&&S
 function multiClear(answerArr){ S.sub.mvals=answerArr.map(()=>'');S.sub.mfocus=0; }
 function dots(n,cur){let h='';for(let i=0;i<n;i++)h+=`<span class="nm-dot ${i<cur?'on':i===cur?'now':''}"></span>`;return h;}
 function fmt(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
-function numiHappy(){const n=document.querySelector('.nm-numi');if(n){n.classList.remove('happy');void n.offsetWidth;n.classList.add('happy');}}
-function numiHappyToast(){toast('✓',true);}
+/* 일별 활동 기록 — 리포트 주간 그래프용. 정답/오답 한 번마다 {n,ok} 누적(마을세계관 §0 경계: 압박용 아님).
+   기록 지점: 정답=numiHappy()/numiHappyToast(), 오답=toast(t('tryAgain'))·toast('✗'), 몸풀기=advance(ok). */
+function todayKeyLocal(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function logDaily(ok){
+  try{ if(!S.daily)S.daily={}; const k=todayKeyLocal(); const d=S.daily[k]=S.daily[k]||{n:0,ok:0}; d.n++; if(ok)d.ok++;
+    const keys=Object.keys(S.daily).sort(); while(keys.length>60){delete S.daily[keys.shift()];} save(); }catch(e){}
+}
+function numiHappy(){logDaily(true);const n=document.querySelector('.nm-numi');if(n){n.classList.remove('happy');void n.offsetWidth;n.classList.add('happy');}}
+function numiHappyToast(){logDaily(true);toast('✓',true);}
 
 /* ---------- 캐릭터 꾸미기 화면 ---------- */
 function screenCloset(){
