@@ -142,6 +142,37 @@ async function assertHeaderAtTop(page, label) {
   assert.ok(Math.abs(top) <= 1, `${label} header is displaced: ${top}`);
 }
 
+async function installMockMediaRecorder(page) {
+  await page.addInitScript(() => {
+    const fakeStream = { getTracks: () => [{ stop() {} }] };
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia: async () => fakeStream },
+    });
+    window.MediaRecorder = class MockMediaRecorder {
+      static isTypeSupported(type) { return type.startsWith('audio/webm'); }
+
+      constructor(stream, options = {}) {
+        this.stream = stream;
+        this.mimeType = options.mimeType || 'audio/webm';
+        this.state = 'inactive';
+      }
+
+      start() { this.state = 'recording'; }
+
+      stop() {
+        if (this.state === 'inactive') return;
+        this.state = 'inactive';
+        const data = new Blob([new Uint8Array(256)], { type: this.mimeType });
+        setTimeout(() => {
+          if (this.ondataavailable) this.ondataavailable({ data });
+          if (this.onstop) this.onstop();
+        }, 0);
+      }
+    };
+  });
+}
+
 async function main() {
   const server = spawn(python, ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {
     cwd: root,
@@ -168,6 +199,10 @@ async function main() {
         await new Promise((resolve) => setTimeout(resolve, 7000));
       }
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockResponse(payload)) });
+    });
+    await page.route('**/functions/v1/alpha-prep-transcribe', async (route) => {
+      assert.equal(route.request().method(), 'GET');
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ available: true, model: 'gpt-transcribe' }) });
     });
 
     await page.goto(url, { waitUntil: 'networkidle' });
@@ -348,6 +383,11 @@ async function main() {
 
     const offlinePage = await browser.newPage({ viewport: { width: 1024, height: 768 } });
     await offlinePage.route('**/functions/v1/alpha-prep-coach', (route) => route.abort('failed'));
+    await offlinePage.route('**/functions/v1/alpha-prep-transcribe', (route) => route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ available: false, model: 'gpt-transcribe' }),
+    }));
     await offlinePage.goto(url, { waitUntil: 'domcontentloaded' });
     await offlinePage.locator('[data-action="mode"][data-mode="quick"]').click();
     await offlinePage.evaluate(() => {
@@ -367,7 +407,91 @@ async function main() {
     await offlinePage.close();
 
     const voicePage = await browser.newPage({ viewport: { width: 1024, height: 768 } });
-    await voicePage.addInitScript(() => {
+    await installMockMediaRecorder(voicePage);
+    let transcriptionPosts = 0;
+    await voicePage.route('**/functions/v1/alpha-prep-transcribe', async (route) => {
+      const request = route.request();
+      assert.match(request.headers().apikey || '', /^sb_publishable_/);
+      if (request.method() === 'GET') {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ available: true, model: 'gpt-transcribe' }) });
+        return;
+      }
+      transcriptionPosts += 1;
+      assert.match(request.headers()['content-type'] || '', /^multipart\/form-data; boundary=/);
+      const body = (request.postDataBuffer() || Buffer.alloc(0)).toString('utf8');
+      assert.match(body, /alpha-prep-answer\.webm/);
+      assert.match(body, /Why City Trees Need Room/);
+      assert.match(body, /Please summarize the passage/);
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ text: 'I think about the tree because its roots need water and air.', model: 'gpt-transcribe' }),
+      });
+    });
+    await voicePage.goto(url, { waitUntil: 'domcontentloaded' });
+    await voicePage.evaluate(() => {
+      const api = window.__ALPHA_PREP_TEST__;
+      api.state.stage = 'collected';
+      api.render();
+    });
+    await voicePage.locator('[data-action="begin-interview"]').click();
+    await voicePage.locator('[data-action="start-mic"]').click();
+    await assertVisibleText(voicePage, 'Recording');
+    await voicePage.screenshot({ path: path.join(outDir, 'desktop-recording.png'), fullPage: true });
+    await voicePage.waitForTimeout(650);
+    await voicePage.locator('[data-action="stop-mic"]').click();
+    await assertVisibleText(voicePage, 'Transcribing your answer');
+    await voicePage.screenshot({ path: path.join(outDir, 'desktop-transcribing.png'), fullPage: true });
+    await voicePage.waitForFunction(() => document.querySelector('#answer-draft')?.value.includes('roots need water and air'));
+    const voiceAnswer = await voicePage.locator('#answer-draft').inputValue();
+    assert.equal(voiceAnswer, 'I think about the tree because its roots need water and air.');
+    assert.equal(transcriptionPosts, 1);
+    await voicePage.setViewportSize({ width: 390, height: 844 });
+    await voicePage.locator('[data-action="start-mic"]').click();
+    await assertVisibleText(voicePage, 'Recording');
+    await assertNoViewportOverflow(voicePage, 'mobile GPT recording');
+    await assertMobileTouchTargets(voicePage, 'mobile GPT recording');
+    await voicePage.screenshot({ path: path.join(outDir, 'mobile-recording.png'), fullPage: true });
+    await voicePage.setViewportSize({ width: 320, height: 568 });
+    await assertNoViewportOverflow(voicePage, '320px GPT recording');
+    await assertMobileTouchTargets(voicePage, '320px GPT recording');
+    await voicePage.screenshot({ path: path.join(outDir, 'mobile-320-recording.png'), fullPage: true });
+    await voicePage.waitForTimeout(650);
+    await voicePage.locator('[data-action="stop-mic"]').click();
+    await voicePage.waitForFunction(() => (document.querySelector('#answer-draft')?.value.match(/roots need water and air/gi) || []).length === 2);
+    assert.equal(transcriptionPosts, 2);
+    await voicePage.close();
+
+    const failedVoicePage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await installMockMediaRecorder(failedVoicePage);
+    await failedVoicePage.route('**/functions/v1/alpha-prep-transcribe', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ available: true, model: 'gpt-transcribe' }) });
+        return;
+      }
+      await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'transcription_unavailable' }) });
+    });
+    await failedVoicePage.goto(url, { waitUntil: 'domcontentloaded' });
+    await failedVoicePage.evaluate(() => {
+      const api = window.__ALPHA_PREP_TEST__;
+      api.state.stage = 'collected';
+      api.render();
+    });
+    await failedVoicePage.locator('[data-action="begin-interview"]').click();
+    await failedVoicePage.locator('[data-action="start-mic"]').click();
+    await failedVoicePage.waitForTimeout(650);
+    await failedVoicePage.locator('[data-action="stop-mic"]').click();
+    await assertVisibleText(failedVoicePage, 'High-accuracy transcription is unavailable.');
+    await assertNoViewportOverflow(failedVoicePage, 'mobile transcription failure');
+    await failedVoicePage.screenshot({ path: path.join(outDir, 'mobile-transcription-failure.png'), fullPage: true });
+    await failedVoicePage.locator('#answer-draft').fill('I remember the main idea because the passage explains the problem clearly.');
+    await failedVoicePage.locator('[data-action="submit-answer"]').click();
+    await assertVisibleText(failedVoicePage, 'FOLLOW-UP 1 OF 2');
+    await failedVoicePage.close();
+
+    const fallbackVoicePage = await browser.newPage({ viewport: { width: 1024, height: 768 } });
+    await fallbackVoicePage.addInitScript(() => {
       window.__speechRecognitionInstances = [];
       window.SpeechRecognition = class MockSpeechRecognition {
         constructor() {
@@ -400,21 +524,26 @@ async function main() {
         abort() { if (this.onend) this.onend(); }
       };
     });
-    await voicePage.goto(url, { waitUntil: 'domcontentloaded' });
-    await voicePage.evaluate(() => {
+    await fallbackVoicePage.route('**/functions/v1/alpha-prep-transcribe', (route) => route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ available: false, model: 'gpt-transcribe' }),
+    }));
+    await fallbackVoicePage.goto(url, { waitUntil: 'domcontentloaded' });
+    await fallbackVoicePage.evaluate(() => {
       const api = window.__ALPHA_PREP_TEST__;
       api.state.stage = 'collected';
       api.render();
     });
-    await voicePage.locator('[data-action="begin-interview"]').click();
-    await voicePage.locator('[data-action="start-mic"]').click();
-    await voicePage.locator('#answer-draft').waitFor({ state: 'visible' });
-    await voicePage.waitForFunction(() => document.querySelector('#answer-draft')?.value.includes('roots need water and air'));
-    const voiceAnswer = await voicePage.locator('#answer-draft').inputValue();
-    assert.equal(voiceAnswer, 'I think about the tree because its roots need water and air.');
-    assert.equal((voiceAnswer.match(/I think/gi) || []).length, 1);
-    assert.equal(await voicePage.evaluate(() => window.__speechRecognitionInstances[0].continuous), false);
-    await voicePage.close();
+    await fallbackVoicePage.locator('[data-action="begin-interview"]').click();
+    await fallbackVoicePage.locator('[data-action="start-mic"]').click();
+    await fallbackVoicePage.locator('#answer-draft').waitFor({ state: 'visible' });
+    await fallbackVoicePage.waitForFunction(() => document.querySelector('#answer-draft')?.value.includes('roots need water and air'));
+    const fallbackAnswer = await fallbackVoicePage.locator('#answer-draft').inputValue();
+    assert.equal(fallbackAnswer, 'I think about the tree because its roots need water and air.');
+    assert.equal((fallbackAnswer.match(/I think/gi) || []).length, 1);
+    assert.equal(await fallbackVoicePage.evaluate(() => window.__speechRecognitionInstances[0].continuous), false);
+    await fallbackVoicePage.close();
 
     assert.deepEqual(consoleErrors, [], `browser console errors: ${consoleErrors.join('\n')}`);
     console.log(`alpha-prep browser: ok (${apiCalls} mock API calls)`);
