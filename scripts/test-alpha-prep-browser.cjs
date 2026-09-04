@@ -364,13 +364,31 @@ async function main() {
 
     const voicePage = await browser.newPage({ viewport: { width: 1024, height: 768 } });
     await voicePage.addInitScript(() => {
+      window.__speechRecognitionInstances = [];
       window.SpeechRecognition = class MockSpeechRecognition {
+        constructor() {
+          window.__speechRecognitionInstances.push(this);
+        }
+
         start() {
           setTimeout(() => {
             if (this.onstart) this.onstart();
-            const result = [{ transcript: 'I think the tree needs room because its roots need water and air.' }];
-            result.isFinal = true;
-            if (this.onresult) this.onresult({ resultIndex: 0, results: [result] });
+
+            const interim = [{ transcript: 'I think' }];
+            interim.isFinal = false;
+            if (this.onresult) this.onresult({ resultIndex: 0, results: [interim] });
+
+            const firstFinal = [{ transcript: 'I think' }];
+            firstFinal.isFinal = true;
+            if (this.onresult) this.onresult({ resultIndex: 0, results: [firstFinal] });
+
+            const repeatedFinal = [{ transcript: 'I think about' }];
+            repeatedFinal.isFinal = true;
+            if (this.onresult) this.onresult({ resultIndex: 1, results: [firstFinal, repeatedFinal] });
+
+            const fullFinal = [{ transcript: 'I think about the tree because its roots need water and air.' }];
+            fullFinal.isFinal = true;
+            if (this.onresult) this.onresult({ resultIndex: 2, results: [firstFinal, repeatedFinal, fullFinal] });
             if (this.onend) this.onend();
           }, 20);
         }
@@ -388,7 +406,10 @@ async function main() {
     await voicePage.locator('[data-action="start-mic"]').click();
     await voicePage.locator('#answer-draft').waitFor({ state: 'visible' });
     await voicePage.waitForFunction(() => document.querySelector('#answer-draft')?.value.includes('roots need water and air'));
-    assert.match(await voicePage.locator('#answer-draft').inputValue(), /roots need water and air/);
+    const voiceAnswer = await voicePage.locator('#answer-draft').inputValue();
+    assert.equal(voiceAnswer, 'I think about the tree because its roots need water and air.');
+    assert.equal((voiceAnswer.match(/I think/gi) || []).length, 1);
+    assert.equal(await voicePage.evaluate(() => window.__speechRecognitionInstances[0].continuous), false);
     await voicePage.close();
 
     assert.deepEqual(consoleErrors, [], `browser console errors: ${consoleErrors.join('\n')}`);
