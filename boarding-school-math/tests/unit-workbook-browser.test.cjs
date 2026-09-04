@@ -57,6 +57,28 @@ test("teacher Chinese edition keeps the same 36 items and adds guidance without 
   assert.deepEqual(errors,[]);await page.close();
 });
 
+test("curriculum-specific Grade 6 wording renders cleanly in every locale",async function(){
+  for(const locale of ["ko","en","zh-Hans"]){
+    const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);
+    await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=${locale}&paper=A4`,{waitUntil:"networkidle"});
+    const visible=await page.locator("main").innerText();
+    if(locale==="ko"){
+      assert.match(visible,/어떤 값이 달라질지 찾기/);
+      assert.doesNotMatch(visible,/예상되는 변이|중심 측도와 변이 측도/);
+    }else if(locale==="en"){
+      assert.match(visible,/US Grade 6 standards 6\.SP\.A\.1-3/);
+      assert.match(visible,/mean absolute deviation \(MAD\)/);
+    }else{
+      assert.match(visible,/美国六年级数学标准6\.SP\.A\.1-3/);
+      assert.doesNotMatch(visible,/预期变异/);
+    }
+    await page.emulateMedia({media:"print"});
+    const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});
+    assert.deepEqual(overflow,[]);
+    assert.deepEqual(errors,[]);await page.close();
+  }
+});
+
 test("mobile and A4 or Letter print layouts stay within their intended width",async function(){
   for(const width of [320,390]){const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});const dimensions=await page.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];});assert.deepEqual(dimensions,[width,width]);const targets=await page.locator("button,select,.brand").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).map(function(node){const box=node.getBoundingClientRect();return[box.width,box.height];});});targets.forEach(function(size){assert.ok(size[0]>=44);assert.ok(size[1]>=44);});assert.deepEqual(errors,[]);await page.close();}
   for(const paper of ["A4","Letter"]){const page=await browser.newPage({viewport:{width:1000,height:1200}});await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=${paper}`,{waitUntil:"networkidle"});await page.emulateMedia({media:"print"});const box=await page.locator(".book-page").first().evaluate(function(node){const style=getComputedStyle(node);return{width:parseFloat(style.width),height:parseFloat(style.height)};});if(paper==="A4"){assert.ok(box.width>790&&box.width<797);assert.ok(box.height>1115&&box.height<1122);}else{assert.ok(box.width>813&&box.width<820);assert.ok(box.height>1046&&box.height<1054);}assert.match(await page.locator("#dynamic-page-size").textContent(),new RegExp("size: "+paper));assert.equal(await page.locator(".teacher-key").count(),0);await page.close();}
