@@ -10,7 +10,7 @@ const { chromium } = await import(pathToFileURL(path.join(runtimeModules, "playw
 const require = createRequire(import.meta.url);
 const { PDFDocument } = require(path.join(runtimeModules, "pdf-lib"));
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
-const requestedBook = process.env.GOLDEN_BELL_BOOK || "book-02";
+const requestedBook = process.argv[2] || process.env.GOLDEN_BELL_BOOK || "book-02";
 const bookIds = requestedBook === "all"
   ? Array.from({ length: 10 }, (_, index) => `book-${String(index + 1).padStart(2, "0")}`)
   : [requestedBook];
@@ -30,16 +30,19 @@ try {
     await page.evaluate(() => { window.print = () => {}; });
     await page.locator("#printLessonButton").click();
     await page.waitForTimeout(100);
-    assert.equal(await page.locator(".gold-print-page").count(), 3, `${bookId}: current learning print must contain the Golden Bell and two additional-learning pages`);
-    assert.deepEqual(await page.locator(".gold-print-page").evaluateAll((nodes) => nodes.map((node) => node.dataset.printPart)), ["original", "story-1", "story-2"], `${bookId}: current learning print parts are incomplete`);
+    const expectedLessonPages = 3;
+    const expectedLessonParts = ["original", "story-1", "story-2"];
+    assert.equal(await page.locator(".gold-print-page").count(), expectedLessonPages, `${bookId}: current learning print page count mismatch`);
+    assert.deepEqual(await page.locator(".gold-print-page").evaluateAll((nodes) => nodes.map((node) => node.dataset.printPart)), expectedLessonParts, `${bookId}: current learning print parts are incomplete`);
     await page.emulateMedia({ media: "print" });
     const lessonPdf = await PDFDocument.load(await page.pdf({ format: "A4", printBackground: true }));
-    assert.equal(lessonPdf.getPageCount(), 3, `${bookId}: current learning PDF must contain exactly three pages`);
+    assert.equal(lessonPdf.getPageCount(), expectedLessonPages, `${bookId}: current learning PDF page count mismatch`);
 
     await page.emulateMedia({ media: "screen" });
     await page.locator("#printBookButton").click();
     await page.waitForTimeout(100);
-    assert.equal(await page.locator(".gold-print-page").count(), 12, `${bookId}: print DOM must contain twelve lesson pages`);
+    const expectedBookPages = bookId === "book-10" ? 20 : 12;
+    assert.equal(await page.locator(".gold-print-page").count(), expectedBookPages, `${bookId}: print DOM page count mismatch`);
 
     await page.emulateMedia({ media: "print" });
     if (bookId === "book-03") {
@@ -88,7 +91,7 @@ try {
     const pdfBytes = await page.pdf({ format: "A4", printBackground: true });
     if (process.env.GOLDEN_BELL_PDF_PATH && bookIds.length === 1) await writeFile(process.env.GOLDEN_BELL_PDF_PATH, pdfBytes);
     const pdf = await PDFDocument.load(pdfBytes);
-    assert.equal(pdf.getPageCount(), 12, `${bookId}: physical PDF must contain exactly twelve pages`);
+    assert.equal(pdf.getPageCount(), expectedBookPages, `${bookId}: physical PDF page count mismatch`);
     console.log(`GOLDEN_BELL_PRINT_OK book=${bookId} pages=${pdf.getPageCount()} footerClear=pass`);
   }
   assert.deepEqual(errors, [], `print browser errors: ${errors.join(" | ")}`);

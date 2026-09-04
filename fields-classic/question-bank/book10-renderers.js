@@ -63,6 +63,64 @@ function symbolEquations(visual) {
   return `<div class="b10-equations">${visual.equations.map(([first, second, total]) => `<p>${Array.from({ length: first }, () => symbols[0]).join(" ")} ${Array.from({ length: second }, () => symbols[1]).join(" ")} <b>= ${total}</b></p>`).join("")}</div>`;
 }
 
+function quantityEquations(visual) {
+  const sourceSymbols = visual.symbols || [];
+  const tokens = sourceSymbols.map((symbol, index) => {
+    const label = esc(symbol.label ?? `모양 ${index + 1}`);
+    const token = esc(symbol.token ?? "?");
+    const className = symbol.className ? ` ${esc(symbol.className)}` : "";
+    return `<span class="b10-quantity-symbol${className}" aria-label="${label}"><b>${token}</b><small>${label}</small></span>`;
+  });
+  const rows = (visual.equations || []).map((equation) => {
+    const terms = (equation.terms || []).map((count, index) => {
+      const symbol = sourceSymbols[index] || {};
+      const label = esc(symbol.label ?? `모양 ${index + 1}`);
+      const token = esc(symbol.token ?? "?");
+      const className = symbol.className ? ` ${esc(symbol.className)}` : "";
+      return `<span class="b10-quantity-term" aria-label="${label} ${esc(count)}개">${Array.from({ length: Number(count) || 0 }, () => `<b class="b10-quantity-piece${className}">${token}</b>`).join("")}</span>`;
+    }).join('<i aria-hidden="true">+</i>');
+    return `<div class="b10-quantity-equation" role="group" aria-label="저울 무게"><span class="b10-quantity-terms">${terms}</span><span class="b10-scale-reading"><i aria-hidden="true"></i><b>${esc(equation.total)}${visual.unit ? ` ${esc(visual.unit)}` : ""}</b></span></div>`;
+  }).join("");
+  return `<div class="b10-quantity-equations" role="img" aria-label="도형을 올린 저울과 무게"><div class="b10-quantity-legend">${tokens.join("")}</div>${rows}</div>`;
+}
+
+function targetScore(visual) {
+  const zones = (visual.zones || []).map((zone, index) => `<span class="b10-target-zone zone-${index + 1}" aria-label="${esc(zone.label)}"></span>`).join("");
+  const attempts = (visual.attempts || []).map((attempt) => {
+    const hits = (attempt.hits || []).map((count, index) => `<span><strong>${esc(count)}</strong> × ${esc((visual.zones || [])[index]?.label ?? `구역 ${index + 1}`)}</span>`).join(" + ");
+    const total = attempt.total;
+    return `<div class="b10-target-attempt"><b>${esc(attempt.label)}</b><span>${hits}</span>${total !== undefined ? `<strong>= ${esc(total)}</strong>` : ""}</div>`;
+  }).join("");
+  return `<div class="b10-target-score"><div class="b10-target-board" role="img" aria-label="동심원 과녁"><div>${zones}</div><p>${(visual.zones || []).map((zone) => `<span>${esc(zone.label)}</span>`).join("")}</p></div><div class="b10-target-attempts">${attempts}</div></div>`;
+}
+
+function pairSumList(visual) {
+  const labels = visual.labels || [];
+  const tokens = visual.tokens || labels;
+  const pairs = [[0, 1], [1, 2], [2, 0]];
+  const term = (index) => `<span class="b10-pair-token"><b>${esc(tokens[index] ?? labels[index] ?? `문자 ${index + 1}`)}</b><small>${esc(labels[index] ?? `문자 ${index + 1}`)}</small></span>`;
+  const rows = pairs.map(([left, right], index) => `<p>${term(left)} <i>+</i> ${term(right)} <i>=</i> <strong>${esc(visual.pairSums?.[index])}${esc(visual.unit || "")}</strong></p>`).join("");
+  return `<div class="b10-pair-sum-list" role="img" aria-label="세 쌍의 합">${rows}</div>`;
+}
+
+function commerceEquation(visual) {
+  if (visual.first && visual.second) {
+    return `<div class="b10-commerce-equation" role="img" aria-label="두 물건의 가격과 개수 비교"><div><strong>${esc(visual.first.label)}</strong><span>${esc(visual.first.price)}원 × □개</span></div><b>=</b><div><strong>${esc(visual.second.label)}</strong><span>${esc(visual.second.price)}원 × (□+${esc(visual.extra)})개</span></div></div>`;
+  }
+  const item = esc(visual.item ?? "물건");
+  const price = esc(visual.price);
+  const extra = esc(visual.extraQuantity ?? visual.extra ?? 1);
+  const comparison = esc(visual.comparison ?? "더 살 수 있습니다");
+  return `<div class="b10-commerce-equation" role="img" aria-label="${item} 가격 비교"><div><strong>${item}</strong><span>${price}${esc(visual.unit ?? "원")}</span></div><i aria-hidden="true">+</i><div><strong>${extra}개</strong><span>${comparison}</span></div>${visual.total !== undefined ? `<b>= ${esc(visual.total)}${esc(visual.unit ?? "원")}</b>` : ""}</div>`;
+}
+
+function shareChangeUnknown(visual) {
+  const original = esc(visual.originalShare ?? visual.oldShare);
+  const added = esc(visual.addedPeople ?? visual.added);
+  const updated = esc(visual.newShare ?? visual.updatedShare);
+  return `<div class="b10-share-change-unknown" role="img" aria-label="사람 수와 나눔 변화"><div><span>처음</span><b>${original}${esc(visual.unit ?? "개")}</b></div><i aria-hidden="true">+ ${added}명</i><div><span>변경 후</span><b>${updated}${esc(visual.unit ?? "개")}</b></div></div>`;
+}
+
 const sharedEquations = (visual) => `<div class="b10-equations"><p>${symbols[0]} + ${symbols[1]} = <b>${visual.pair}</b></p><p>${symbols[0]} + ${symbols[1]} + ${symbols[2]} = <b>${visual.all}</b></p></div>`;
 
 function containers(visual) {
@@ -75,7 +133,8 @@ function pairSums(visual) {
 }
 
 function spacingRing(visual) {
-  return `<svg class="b10-ring" viewBox="0 0 320 190" role="img" aria-label="닫힌 운동장 둘레"><ellipse cx="160" cy="92" rx="120" ry="62"/><text x="160" y="78">둘레 ${visual.perimeter}m</text><text x="160" y="108">${visual.firstGap}m마다 / ${visual.secondGap}m마다</text></svg>`;
+  const unit = esc(visual.unit || "m");
+  return `<svg class="b10-ring" viewBox="0 0 320 190" role="img" aria-label="닫힌 운동장 둘레"><ellipse cx="160" cy="92" rx="120" ry="62"/><text x="160" y="78">둘레 ${esc(visual.perimeter)}${unit}</text><text x="160" y="108">${esc(visual.firstGap)}${unit}마다 / ${esc(visual.secondGap)}${unit}마다</text></svg>`;
 }
 
 const budgetTable = (visual) => `<table class="b10-table"><thead><tr><th>가진 돈</th><th>첫 물건</th><th>둘째 물건</th></tr></thead><tbody><tr><td>${visual.budget}천 원</td><td>${visual.firstPrice}천 원</td><td>${visual.secondPrice}천 원</td></tr></tbody></table>`;
@@ -140,6 +199,11 @@ export function book10Markup(visual) {
     case "place-value-condition": return placeValueCondition(visual);
     case "vertical-addition": return verticalAddition(visual);
     case "symbol-equations": return symbolEquations(visual);
+    case "quantity-equations": return quantityEquations(visual);
+    case "target-score": return targetScore(visual);
+    case "pair-sum-list": return pairSumList(visual);
+    case "commerce-equation": return commerceEquation(visual);
+    case "share-change-unknown": return shareChangeUnknown(visual);
     case "shared-equations": return sharedEquations(visual);
     case "containers": return containers(visual);
     case "pair-sums": return pairSums(visual);

@@ -27,7 +27,9 @@ for (const { book, lesson } of progressive) {
   assert.ok(Object.values(experience.learnerFit).every((value) => String(value).trim()), `${prefix}: empty learner-fit evidence`);
   assert.ok(lesson.original?.visual, `${prefix}: source-backed visual missing`);
   assert.ok(lesson.original?.items?.length, `${prefix}: original questions missing`);
-  assert.ok(lesson.original.items.every((item) => item.answer !== undefined && String(item.answer).trim()), `${prefix}: original answer missing`);
+  assert.ok(lesson.original.items.every((item) => item.parts?.length
+    ? item.parts.every((part) => part.answer !== undefined && String(part.answer).trim())
+    : item.answer !== undefined && String(item.answer).trim()), `${prefix}: original answer missing`);
   assert.ok(lesson.extension?.answer !== undefined && String(lesson.extension.answer).trim(), `${prefix}: extension answer missing`);
   assert.equal(experience.check.options.length, 3, `${prefix}: concept check must have three choices`);
   assert.equal(new Set(experience.check.options).size, 3, `${prefix}: duplicate concept choices`);

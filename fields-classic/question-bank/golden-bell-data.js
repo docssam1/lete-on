@@ -2168,30 +2168,171 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       {
         id: "catch-up-acorns",
         unit: "따라잡기",
-        title: "처음 차이와 하루 차이로 만나는 날을 찾아요",
-        sourceLocator: "수업용 교재 61쪽, 확인 2번",
-        sourceTypeIds: ["catch-up-growing-amount-b10"],
-        representativeConcept: "처음 양의 차이가 하루마다 얼마나 줄어드는지 계산해 두 양이 같아지는 때를 구함",
+        title: "합과 차로 값을 찾고 따라잡아요",
+        sourceLocator: "교사용 지도서 52~75쪽, 따라잡기 활동·연습 1~17번",
+        sourceTypeIds: [
+          "sum-difference-combine-divide-b10",
+          "common-term-elimination-b10",
+          "target-score-difference-b10",
+          "pair-sum-three-values-b10",
+          "inverse-sharing-b10",
+          "catch-up-growing-amount-b10"
+        ],
+        representativeConcept: "두 조건의 합과 차를 이용해 모양값을 찾고, 처음 차이를 매번 줄어드는 차이로 나누어 같아지는 때를 구함",
+        typeOverview: [
+          { label: "합쳐서 등분", text: "두 식을 더해 같은 묶음의 값을 구한 뒤 똑같이 나눕니다." },
+          { label: "빼고 등분", text: "두 식의 같은 모양을 없애고 남은 차이를 모양 수로 나눕니다." },
+          { label: "세 관계 합치기", text: "두 개씩 짝지은 세 식을 더하면 각 값이 두 번씩 나타납니다." },
+          { label: "생활 속 역산", text: "간격, 가격, 나누어 가진 수의 전과 후를 식으로 비교합니다." },
+          { label: "따라잡기", text: "처음 차이를 한 번마다 줄어드는 차이로 나눕니다." }
+        ],
         story: {
-          title: "도토리 모으기",
-          text: "뒤에 있는 쪽이 하루마다 더 많이 모으면 처음 차이가 조금씩 줄어듭니다.",
-          mission: "처음 차이를 구한 뒤 하루에 줄어드는 차이로 나누세요."
+          title: "서로 다른 두 조건",
+          text: "저울, 과녁, 나누기, 따라잡기 문제는 두 조건에서 같은 부분과 달라진 부분을 찾아 식으로 비교합니다.",
+          mission: "무엇을 합칠지, 무엇을 뺄지 먼저 표시한 뒤 같은 묶음으로 나누세요."
         },
         explanation: {
-          headline: "처음 차이 ÷ 하루에 줄어드는 차이로 따라잡는 날을 구합니다.",
+          headline: "같은 부분은 모으거나 지우고, 남은 묶음은 똑같이 나눕니다.",
           steps: [
-            "새 예시에서 처음에는 24-12=12장 차이입니다.",
-            "하루에 6-2=4장씩 차이가 줄어듭니다.",
-            "12÷4=3이므로 3일 뒤에 두 양이 같아집니다."
+            "두 식을 나란히 보고 같은 모양이나 같은 양을 찾습니다.",
+            "두 식을 더하거나 빼서 한 종류의 모양 또는 하나의 차이만 남깁니다.",
+            "남은 값을 같은 묶음 수로 나누고 원래 조건에 다시 넣어 확인합니다."
           ]
         },
         original: {
-          title: "교재 확인",
-          structureKey: "catch-up-from-start-gap-and-daily-gap",
-          prompt: "두 다람쥐가 같은 수의 도토리를 가지게 되는 것은 며칠 뒤인지 쓰세요.",
-          visual: { kind: "book10", subtype: "catch-up-table", labels: ["엄마 다람쥐", "아빠 다람쥐"], starts: [30, 50], changes: [7, 3], unit: "개/일" },
+          title: "교재 연습",
+          mode: "paged",
+          sourceQuestionCount: 17,
+          structureKey: "book10-unit2-source-practice",
+          prompt: "따라잡기 단원의 활동과 연습문제를 한 문제씩 풀어 보세요.",
+          visual: { kind: "book10", subtype: "quantity-equations", symbols: [{ label: "네모", token: "■" }, { label: "동그라미", token: "●" }], equations: [{ terms: [1, 2], total: 15 }, { terms: [2, 1], total: 18 }], unit: "g" },
           items: [
-            { id: "catch-up-days", prompt: "같아지는 날", answerMode: "input", inputMode: "numeric", answer: "5" }
+            {
+              id: "unit2-q01-1", sourceNo: "1-(1)", printGroup: 1, typeLabel: "두 식을 합쳐 등분하기", structureKey: "sum-difference-combine-divide",
+              sourceLocator: "교사용 지도서 67쪽 1번 (1)",
+              prompt: "네모 1개와 동그라미 2개의 무게는 15g이고, 네모 2개와 동그라미 1개의 무게는 18g입니다. 오른쪽 저울의 무게를 각각 구하세요.",
+              visual: { kind: "book10", subtype: "quantity-equations", symbols: [{ label: "네모", token: "■" }, { label: "동그라미", token: "●" }], equations: [{ terms: [1, 2], total: 15 }, { terms: [2, 1], total: 18 }], unit: "g" },
+              parts: [{ id: "pair", label: "네모+동그라미", answer: "11" }, { id: "square", label: "네모", answer: "7" }, { id: "circle", label: "동그라미", answer: "4" }]
+            },
+            {
+              id: "unit2-q01-2", sourceNo: "1-(2)", printGroup: 1, typeLabel: "두 식을 합쳐 등분하기", structureKey: "sum-difference-combine-divide",
+              sourceLocator: "교사용 지도서 67쪽 1번 (2)",
+              prompt: "네모 1개와 동그라미 3개의 무게는 9g이고, 네모 3개와 동그라미 1개의 무게는 11g입니다. 오른쪽 저울의 무게를 각각 구하세요.",
+              visual: { kind: "book10", subtype: "quantity-equations", symbols: [{ label: "네모", token: "■" }, { label: "동그라미", token: "●" }], equations: [{ terms: [1, 3], total: 9 }, { terms: [3, 1], total: 11 }], unit: "g" },
+              parts: [{ id: "pair", label: "네모+동그라미", answer: "5" }, { id: "square", label: "네모", answer: "3" }, { id: "circle", label: "동그라미", answer: "2" }]
+            },
+            {
+              id: "unit2-q02", sourceNo: "2", printGroup: 2, typeLabel: "같은 모양을 빼고 등분하기", structureKey: "common-term-elimination",
+              sourceLocator: "교사용 지도서 68쪽 2번",
+              prompt: "동그라미 1개와 네모 1개의 무게는 9g이고, 동그라미 1개와 네모 2개의 무게는 15g입니다. 네모와 동그라미의 무게를 각각 구하세요.",
+              visual: { kind: "book10", subtype: "quantity-equations", symbols: [{ label: "네모", token: "■" }, { label: "동그라미", token: "●" }], equations: [{ terms: [1, 1], total: 9 }, { terms: [2, 1], total: 15 }], unit: "g" },
+              parts: [{ id: "square", label: "네모", answer: "6" }, { id: "circle", label: "동그라미", answer: "3" }]
+            },
+            {
+              id: "unit2-q03", sourceNo: "3", printGroup: 2, typeLabel: "과녁 점수의 합과 차", structureKey: "target-score-difference",
+              sourceLocator: "교사용 지도서 68쪽 3번",
+              prompt: "A는 가에 두 번, 나에 한 번 맞혀 12점이고, B는 가에 한 번, 나에 한 번 맞혀 7점입니다. 나에 한 번 맞혔을 때의 점수를 구하세요.",
+              visual: { kind: "book10", subtype: "target-score", zones: [{ label: "가" }, { label: "나" }], attempts: [{ label: "A", hits: [2, 1], total: 12 }, { label: "B", hits: [1, 1], total: 7 }] },
+              parts: [{ id: "score", label: "나의 점수", answer: "2", unit: "점" }]
+            },
+            {
+              id: "unit2-q04", sourceNo: "4", printGroup: 3, typeLabel: "같은 구슬을 빼고 등분하기", structureKey: "common-term-elimination",
+              sourceLocator: "교사용 지도서 69쪽 4번",
+              prompt: "주황 구슬 3개와 파란 구슬 2개의 무게는 120g이고, 주황 구슬 1개와 파란 구슬 2개의 무게는 80g입니다. 파란 구슬 한 개의 무게를 구하세요.",
+              visual: { kind: "book10", subtype: "quantity-equations", symbols: [{ label: "주황 구슬", token: "●", className: "orange" }, { label: "파란 구슬", token: "●", className: "blue" }], equations: [{ terms: [3, 2], total: 120 }, { terms: [1, 2], total: 80 }], unit: "g" },
+              parts: [{ id: "blue", label: "파란 구슬", answer: "30", unit: "g" }]
+            },
+            {
+              id: "unit2-q05", sourceNo: "5", printGroup: 3, typeLabel: "늘어난 양을 빼서 빈 그릇값 찾기", structureKey: "multiple-quantity-elimination",
+              sourceLocator: "교사용 지도서 69쪽 5번",
+              prompt: "유리컵과 구슬의 무게는 150g입니다. 구슬의 수를 두 배로 하면 260g일 때 유리컵만의 무게를 구하세요.",
+              visual: { kind: "book10", subtype: "quantity-equations", symbols: [{ label: "유리컵", token: "컵" }, { label: "구슬 묶음", token: "●" }], equations: [{ terms: [1, 1], total: 150 }, { terms: [1, 2], total: 260 }], unit: "g" },
+              parts: [{ id: "cup", label: "유리컵", answer: "40", unit: "g" }]
+            },
+            {
+              id: "unit2-q06", sourceNo: "6", printGroup: 4, typeLabel: "세 쌍의 합을 더해 등분하기", structureKey: "pair-sum-three-values",
+              sourceLocator: "교사용 지도서 70쪽 6번",
+              prompt: "네모와 동그라미는 7g, 동그라미와 마름모는 13g, 마름모와 네모는 10g입니다. 세 모양을 합한 무게와 각 모양의 무게를 구하세요.",
+              visual: { kind: "book10", subtype: "pair-sum-list", labels: ["네모", "동그라미", "마름모"], tokens: ["■", "●", "◆"], pairSums: [7, 13, 10], unit: "g" },
+              parts: [{ id: "all", label: "세 모양의 합", answer: "15" }, { id: "square", label: "네모", answer: "2" }, { id: "circle", label: "동그라미", answer: "5" }, { id: "diamond", label: "마름모", answer: "8" }]
+            },
+            {
+              id: "unit2-q07", sourceNo: "7", printGroup: 4, typeLabel: "세 쌍의 합에서 각 값 찾기", structureKey: "pair-sum-three-values",
+              sourceLocator: "교사용 지도서 70쪽 7번",
+              prompt: "동그라미와 네모의 합은 11, 네모와 마름모의 합은 16, 마름모와 동그라미의 합은 13입니다. 각 도형이 나타내는 수를 구하세요.",
+              visual: { kind: "book10", subtype: "pair-sum-list", labels: ["동그라미", "네모", "마름모"], tokens: ["●", "■", "◆"], pairSums: [11, 16, 13], unit: "" },
+              parts: [{ id: "circle", label: "동그라미", answer: "4" }, { id: "square", label: "네모", answer: "7" }, { id: "diamond", label: "마름모", answer: "9" }]
+            },
+            {
+              id: "unit2-q08", sourceNo: "8", printGroup: 5, typeLabel: "세 수의 두 수씩 합", structureKey: "pair-sum-three-values",
+              sourceLocator: "교사용 지도서 71쪽 8번",
+              prompt: "A와 B의 합은 23, B와 C의 합은 31, C와 A의 합은 34입니다. C를 구하세요.",
+              visual: { kind: "book10", subtype: "pair-sum-list", labels: ["A", "B", "C"], pairSums: [23, 31, 34], unit: "" },
+              parts: [{ id: "c", label: "C", answer: "21" }]
+            },
+            {
+              id: "unit2-q09", sourceNo: "9", printGroup: 5, typeLabel: "세 사람의 두 명씩 합", structureKey: "pair-sum-three-values",
+              sourceLocator: "교사용 지도서 71쪽 9번",
+              prompt: "이안과 시현의 몸무게 합은 32kg, 시현과 지민은 35kg, 지민과 이안은 37kg입니다. 시현의 몸무게를 구하세요.",
+              visual: { kind: "book10", subtype: "pair-sum-list", labels: ["이안", "시현", "지민"], pairSums: [32, 35, 37], unit: "kg" },
+              parts: [{ id: "weight", label: "시현", answer: "15", unit: "kg" }]
+            },
+            {
+              id: "unit2-q10", sourceNo: "10", printGroup: 6, typeLabel: "간격과 둘레 역산", structureKey: "closed-spacing-inverse",
+              sourceLocator: "교사용 지도서 72쪽 10번",
+              prompt: "연못 주위에 80cm 간격으로 나무를 심으려 합니다. 60cm 간격으로 하면 2그루가 더 필요합니다. 처음 필요한 나무 수와 연못의 둘레를 구하세요.",
+              visual: { kind: "book10", subtype: "spacing-ring", perimeter: "?", firstGap: 80, secondGap: 60, unit: "cm" },
+              parts: [{ id: "trees", label: "나무", answer: "6", unit: "그루" }, { id: "perimeter", label: "연못의 둘레", answer: "480", unit: "cm" }]
+            },
+            {
+              id: "unit2-q11", sourceNo: "11", printGroup: 6, typeLabel: "가격 차와 개수 역산", structureKey: "price-count-inverse",
+              sourceLocator: "교사용 지도서 72쪽 11번",
+              prompt: "한 개 2000원인 배를 사려다가 한 개 1200원인 사과를 샀더니 4개를 더 살 수 있었습니다. 처음 사려던 배의 개수와 가진 돈을 구하세요.",
+              visual: { kind: "book10", subtype: "commerce-equation", first: { label: "배", price: 2000 }, second: { label: "사과", price: 1200 }, extra: 4 },
+              parts: [{ id: "pears", label: "배", answer: "6", unit: "개" }, { id: "budget", label: "처음 가진 돈", answer: "12000", unit: "원" }]
+            },
+            {
+              id: "unit2-q12", sourceNo: "12", printGroup: 7, typeLabel: "나누어 가진 수 역산", structureKey: "share-change-inverse",
+              sourceLocator: "교사용 지도서 73쪽 12번",
+              prompt: "처음에는 한 명이 사탕을 6개씩 나누어 가지려 했습니다. 3명이 더 들어와 한 명이 4개씩 나누어 가졌을 때 처음 학생 수와 사탕 수를 구하세요.",
+              visual: { kind: "book10", subtype: "share-change-unknown", oldShare: 6, added: 3, newShare: 4, unit: "개" },
+              parts: [{ id: "students", label: "학생 수", answer: "6", unit: "명" }, { id: "candies", label: "사탕 수", answer: "36", unit: "개" }]
+            },
+            {
+              id: "unit2-q13", sourceNo: "13", printGroup: 7, typeLabel: "나누어 가진 카드 수 역산", structureKey: "share-change-inverse",
+              sourceLocator: "교사용 지도서 73쪽 13번",
+              prompt: "처음에는 카드를 12장씩 가질 수 있었습니다. 2명이 더 참가해 9장씩 가지게 되었을 때 처음 학생 수와 카드 수를 구하세요.",
+              visual: { kind: "book10", subtype: "share-change-unknown", oldShare: 12, added: 2, newShare: 9, unit: "장" },
+              parts: [{ id: "students", label: "학생 수", answer: "6", unit: "명" }, { id: "cards", label: "카드 수", answer: "72", unit: "장" }]
+            },
+            {
+              id: "unit2-q14", sourceNo: "14", printGroup: 8, typeLabel: "늘어나는 양의 따라잡기", structureKey: "catch-up-growing-amount",
+              sourceLocator: "교사용 지도서 74쪽 14번",
+              prompt: "재이는 큐브 22개, 준이는 40개를 쌓았습니다. 재이는 1초에 5개씩, 준이는 1초에 2개씩 더 쌓을 때 몇 초 후 개수가 같아지는지 구하세요.",
+              visual: { kind: "book10", subtype: "catch-up-table", labels: ["재이", "준이"], starts: [22, 40], changes: [5, 2], unit: "개/초" },
+              parts: [{ id: "seconds", label: "같아지는 때", answer: "6", unit: "초 후" }]
+            },
+            {
+              id: "unit2-q15", sourceNo: "15", printGroup: 8, typeLabel: "늘어나는 양의 따라잡기", structureKey: "catch-up-growing-amount",
+              sourceLocator: "교사용 지도서 74쪽 15번",
+              prompt: "A 물탱크에는 20L, B 물탱크에는 50L가 있습니다. A에는 매분 9L, B에는 매분 3L씩 넣을 때 몇 분 후 물의 양이 같아지는지 구하세요.",
+              visual: { kind: "book10", subtype: "catch-up-table", labels: ["A 물탱크", "B 물탱크"], starts: [20, 50], changes: [9, 3], unit: "L/분" },
+              parts: [{ id: "minutes", label: "같아지는 때", answer: "5", unit: "분 후" }]
+            },
+            {
+              id: "unit2-q16", sourceNo: "16", printGroup: 9, typeLabel: "줄어드는 양의 따라잡기", structureKey: "catch-up-shrinking-amount",
+              sourceLocator: "교사용 지도서 75쪽 16번",
+              prompt: "명수는 100L, 광수는 79L가 든 물통에서 물을 퍼냅니다. 명수는 1분에 4L, 광수는 1분에 1L씩 퍼낼 때 몇 분 후 남은 양이 같아지는지 구하세요.",
+              visual: { kind: "book10", subtype: "catch-up-table", labels: ["명수", "광수"], starts: [100, 79], changes: [-4, -1], unit: "L/분" },
+              parts: [{ id: "minutes", label: "같아지는 때", answer: "7", unit: "분 후" }]
+            },
+            {
+              id: "unit2-q17", sourceNo: "17", printGroup: 9, typeLabel: "거리 차의 따라잡기", structureKey: "catch-up-distance",
+              sourceLocator: "교사용 지도서 75쪽 17번",
+              prompt: "현수는 출발선에서 35m, 채원이는 49m 지점에 있습니다. 현수는 1초에 8m, 채원이는 1초에 6m를 달릴 때 몇 초 후 현수가 채원이를 따라잡는지 구하세요.",
+              visual: { kind: "book10", subtype: "catch-up-table", labels: ["현수", "채원이"], starts: [35, 49], changes: [8, 6], unit: "m/초" },
+              parts: [{ id: "seconds", label: "따라잡는 때", answer: "7", unit: "초 후" }]
+            }
           ]
         },
         extension: {
