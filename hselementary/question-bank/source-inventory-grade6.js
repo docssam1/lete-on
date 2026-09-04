@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 54
+    "unlocked": 65
   },
   "items": [
     {
@@ -16353,7 +16353,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     ["6-1-u3-e2-mission-2", ["sourceGrade6DecimalDivisionE2", 4]],
     ["6-1-u3-e2-mission-3", ["sourceGrade6DecimalDivisionE2", 5]],
     ["6-1-u3-e2-mission-4", ["sourceGrade6DecimalDivisionE2", 6]],
-    ["6-1-u3-e2-mission-5", ["sourceGrade6DecimalDivisionE2", 7]]
+    ["6-1-u3-e2-mission-5", ["sourceGrade6DecimalDivisionE2", 7]],
+    ["6-1-u3-e3-exploration-1", ["sourceGrade6DecimalDivisionE3", 0]],
+    ["6-1-u3-e3-example-1", ["sourceGrade6DecimalDivisionE3", 1]],
+    ["6-1-u3-e3-example-2", ["sourceGrade6DecimalDivisionE3", 2]],
+    ["6-1-u3-e3-example-3", ["sourceGrade6DecimalDivisionE3", 3]],
+    ["6-1-u3-e3-example-4", ["sourceGrade6DecimalDivisionE3", 4]],
+    ["6-1-u3-e3-mission-1", ["sourceGrade6DecimalDivisionE3", 5]],
+    ["6-1-u3-e3-mission-2", ["sourceGrade6DecimalDivisionE3", 6]],
+    ["6-1-u3-e3-mission-3", ["sourceGrade6DecimalDivisionE3", 7]],
+    ["6-1-u3-e3-mission-4", ["sourceGrade6DecimalDivisionE3", 8]],
+    ["6-1-u3-e3-mission-5", ["sourceGrade6DecimalDivisionE3", 9]],
+    ["6-1-u3-e3-mission-6", ["sourceGrade6DecimalDivisionE3", 10]]
   ]);
   window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     if (!verifiedPools.has(item.sourceItemId)) return;

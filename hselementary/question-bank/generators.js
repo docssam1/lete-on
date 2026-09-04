@@ -21863,6 +21863,210 @@
       const answerVisual = `${fuelSvg(true)}${mathBoard("연료 효율 → 필요한 기름 → 값", row("자동차", `1L에 ${fmt(carRate)}km, ${fixed2(carLiters)}L`) + row("오토바이", `1L에 ${fmt(bikeRate)}km, ${fixed2(bikeLiters)}L`) + row("기름값 차", `${fixedMoney(d.answer)}원`))}`;
       return fixedResult(`휘발유 ${d.carLiters}L로 ${d.carKm}km를 달릴 수 있는 자동차와 ${d.bikeLiters}L로 ${d.bikeKm}km를 달릴 수 있는 오토바이가 있습니다. 휘발유 1L의 가격이 ${d.price}원일 때, ${d.distance}km를 달리는 데 필요한 휘발유값의 차는 얼마인가요?${fuelSvg(false)}${mathBoard("주어진 자료", row("자동차", `${d.carLiters}L에 ${d.carKm}km`) + row("오토바이", `${d.bikeLiters}L에 ${d.bikeKm}km`) + row("갈 거리", `${d.distance}km`) + row("휘발유값", `1L ${d.price}원`))}${support("각 이동수단이 1L로 가는 거리, 필요한 기름의 양, 기름값을 차례로 구하세요.")}${challenge}${evidence([d.carLiters, d.carKm, d.bikeLiters, d.bikeKm, d.distance, d.price, d.answer])}`, `${fixedMoney(d.answer)}원`, `자동차는 1L에 ${fmt(carRate)}km, 오토바이는 1L에 ${fmt(bikeRate)}km를 갑니다. 필요한 기름은 각각 ${fixed2(carLiters)}L, ${fixed2(bikeLiters)}L이므로 기름값 차는 ${fixedMoney(d.answer)}원입니다.`, answerWrap(answerVisual, [d.carLiters, d.carKm, d.bikeLiters, d.bikeKm, d.distance, d.price, d.answer]));
     },
+    sourceGrade6DecimalDivisionE3({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u3-e3-exploration-1", "6-1-u3-e3-example-1", "6-1-u3-e3-example-2", "6-1-u3-e3-example-3",
+        "6-1-u3-e3-example-4", "6-1-u3-e3-mission-1", "6-1-u3-e3-mission-2", "6-1-u3-e3-mission-3",
+        "6-1-u3-e3-mission-4", "6-1-u3-e3-mission-5", "6-1-u3-e3-mission-6"
+      ];
+      const evidenceKinds = [
+        "round-fractions-thousandths", "decimal-digit-long-division", "terminating-tenth-addend", "rounded-and-truncated-quotient",
+        "reduced-fraction-two-places", "hundredth-decimal-digit", "rounded-quotient-pair-range", "ratio-chain-reversal",
+        "integer-quotient-range-gap", "terminating-thousandth-addend", "rounded-division-common-number"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 소수와 자연수의 나눗셈 개념탐구 3 원문 분기는 0부터 10까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">계산 결과만 쓰지 말고, 조건을 모두 만족하는 답이 하나로 정해지는 까닭을 설명해 보세요.</p>` : "";
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body) => `<div class="source61-math-board source61-e3-board"><strong>${title}</strong>${body}</div>`;
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-decimal-e3-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const line = (prompt, answer = prompt) => ({ prompt, answer });
+      const svg = (kind, lines, solved, values) => {
+        const height = Math.max(150, 70 + lines.length * 27);
+        const rows = lines.map((item, index) => `<rect class="source61-e3-row" x="28" y="${42 + index * 27}" width="304" height="22" rx="3"/><text x="180" y="${57 + index * 27}">${solved ? item.answer : item.prompt}</text>`).join("");
+        const result = solved ? `<text class="source61-e3-result" x="180" y="${height - 14}">조건을 만족하는 답 표시</text>` : `<text class="source61-e3-note" x="180" y="${height - 14}">자료를 읽고 답을 구하세요.</text>`;
+        return `<svg class="geometry-diagram source61-decimal-e2-diagram source61-decimal-e3-diagram ${solved ? "is-solved" : ""}" viewBox="0 0 360 ${height}" role="img" aria-label="${kind}" data-source61-e3-structure="decimal-division-e3-board" data-source61-e3-values="${values.join(",")}"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}><text class="source61-e3-title" x="180" y="20">${kind}</text>${rows}${result}</svg>`;
+      };
+      const answerWrap = (html, values) => ({ html, values });
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-decimal-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(answerBody.values || [])}${answerBody.html}<div class="solution-answer-caption">문제에 나온 자료를 다시 그려 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+      const round = (value, places) => Math.round((value + Number.EPSILON) * 10 ** places) / 10 ** places;
+      const fmt = value => Number(value).toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
+      const fmt2 = value => Number(value).toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+      const gcd = (a, b) => { while (b) [a, b] = [b, a % b]; return Math.abs(a); };
+      const terminatingFraction = (numerator, denominator) => {
+        let d = denominator / gcd(numerator, denominator);
+        while (d % 2 === 0) d /= 2;
+        while (d % 5 === 0) d /= 5;
+        return d === 1;
+      };
+      const decimalDigit = (numerator, denominator, place) => { let remainder = numerator % denominator; let digit = 0; for (let i = 0; i < place; i += 1) { remainder *= 10; digit = Math.floor(remainder / denominator); remainder %= denominator; } return digit; };
+      const exactTwoPlaces = (numerator, denominator) => {
+        const common = gcd(numerator, denominator); const n = numerator / common; const d = denominator / common;
+        return 100 % d === 0 && 10 % d !== 0 ? { n, d } : null;
+      };
+      const pools = [
+        [
+          { fractions: [[6, 7], [17, 21]], mixed: [5, 9, 13], answer: ["0.857", "0.810", "5.692"] },
+          { fractions: [[5, 6], [13, 16]], mixed: [3, 7, 11], answer: ["0.833", "0.813", "3.636"] },
+          { fractions: [[7, 9], [11, 15]], mixed: [4, 5, 12], answer: ["0.778", "0.733", "4.417"] }
+        ],
+        [
+          { quotient: 4, divisor: 37, remainder: 3, digit: 1 },
+          { quotient: 5, divisor: 31, remainder: 7, digit: decimalDigit(5 * 31 + 7, 31, 48) },
+          { quotient: 6, divisor: 29, remainder: 4, digit: decimalDigit(6 * 29 + 4, 29, 48) }
+        ],
+        [
+          { base: 143, divisor: 33, addTenths: 22 },
+          { base: 127, divisor: 24, addTenths: 2 },
+          { base: 178, divisor: 45, addTenths: 20 }
+        ],
+        [
+          { aDivisor: 7, aTarget: 12, bDivisor: 8, bTenths: 10.7 },
+          { aDivisor: 9, aTarget: 10, bDivisor: 6, bTenths: 14.3 },
+          { aDivisor: 6, aTarget: 15, bDivisor: 7, bTenths: 12.2 }
+        ],
+        [
+          { sum: 32, numerator: 7, denominator: 25 },
+          { sum: 34, numerator: 9, denominator: 25 },
+          { sum: 36, numerator: 11, denominator: 25 }
+        ],
+        [
+          { whole: 3, numerator: 8, denominator: 37, digit: 2 },
+          { whole: 4, numerator: 5, denominator: 27, digit: decimalDigit(5, 27, 100) },
+          { whole: 2, numerator: 11, denominator: 31, digit: decimalDigit(11, 31, 100) }
+        ],
+        [
+          { a: [13, 14], b: [6, 7] },
+          { a: [16, 17], b: [5, 6] },
+          { a: [21, 22], b: [8, 9] }
+        ],
+        [
+          { a: [7, 11], b: [12, 21] },
+          { a: [3, 5], b: [6, 9] },
+          { a: [5, 8], b: [12, 15] }
+        ],
+        [
+          { aLow: [19.6, 5], aHigh: [47.52, 9], bLow: [90.08, 8], bHigh: [102.2, 7] },
+          { aLow: [24.5, 5], aHigh: [59.4, 9], bLow: [90.08, 8], bHigh: [119, 7] },
+          { aLow: [24.5, 5], aHigh: [59.4, 9], bLow: [92, 8], bHigh: [108.5, 7] }
+        ],
+        [
+          { base: 149, divisor: 57, addMilli: 55 },
+          { base: 137, divisor: 45, addMilli: 25 },
+          { base: 181, divisor: 63, addMilli: 62 }
+        ],
+        [
+          { firstDivisor: 5, firstTarget: 7, secondDivisor: 3, secondTarget: 12 },
+          { firstDivisor: 4, firstTarget: 11, secondDivisor: 5, secondTarget: 9 },
+          { firstDivisor: 6, firstTarget: 6, secondDivisor: 4, secondTarget: 9 }
+        ]
+      ][variant][poolIndex];
+
+      if (variant === 0) {
+        const decimals = [...pools.fractions.map(([n, d]) => round(n / d, 3)), round(pools.mixed[0] + pools.mixed[1] / pools.mixed[2], 3)];
+        if (decimals.map(value => Number(value).toFixed(3)).join(",") !== pools.answer.join(",")) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 반올림 검산 오류`);
+        const values = [...pools.fractions.flat(), ...pools.mixed, ...decimals];
+        const lines = [line(`${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]}`, `${pools.fractions[0][0]} ÷ ${pools.fractions[0][1]} → ${pools.answer[0]}`), line(`${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]}`, `${pools.fractions[1][0]} ÷ ${pools.fractions[1][1]} → ${pools.answer[1]}`), line(`${pools.mixed[0]}와 ${pools.mixed[2]}분의 ${pools.mixed[1]}`, `${pools.mixed[0]}와 ${pools.mixed[2]}분의 ${pools.mixed[1]} → ${pools.answer[2]}`)];
+        const answerVisual = `${svg("분수와 대분수의 소수 셋째 자리 반올림", lines, true, values)}${mathBoard("반올림 결과", row("첫째", `${fractionMarkup(...pools.fractions[0])} = ${pools.answer[0]}`) + row("둘째", `${fractionMarkup(...pools.fractions[1])} = ${pools.answer[1]}`) + row("셋째", `${mixedFractionMarkup(pools.mixed[0] * pools.mixed[2] + pools.mixed[1], pools.mixed[2])} = ${pools.answer[2]}`))}`;
+        return fixedResult(`다음 분수와 대분수를 소수로 나타낸 뒤 소수 셋째 자리까지 반올림하여 쓰세요.${svg("분수와 대분수의 반올림", lines, false, values)}${mathBoard("계산할 수", row("첫째", fractionMarkup(...pools.fractions[0])) + row("둘째", fractionMarkup(...pools.fractions[1])) + row("셋째", mixedFractionMarkup(pools.mixed[0] * pools.mixed[2] + pools.mixed[1], pools.mixed[2]))) }${support("분자를 분모로 나누고, 소수 넷째 자리 숫자를 보고 반올림하세요.")}${challenge}${evidence(values, "three-values")}`, pools.answer.join(", "), `각 수를 소수로 나타내어 소수 셋째 자리까지 반올림하면 ${pools.answer.join(", ")}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 1) {
+        const numerator = pools.quotient * pools.divisor + pools.remainder; const answer = pools.digit;
+        if (numerator % pools.divisor !== pools.remainder || decimalDigit(numerator, pools.divisor, 48) !== answer) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 나눗셈 자리 검산 오류`);
+        const values = [pools.quotient, pools.divisor, pools.remainder, numerator, 48, answer];
+        const lines = [line(`${numerator} ÷ ${pools.divisor}`), line(`몫 ${pools.quotient} · 나머지 ${pools.remainder}`), line("소수점 아래 48번째 자리", `48번째 소수 자리 → ${answer}`)];
+        const answerVisual = `${svg("나눗셈의 소수 자리 찾기", lines, true, values)}${mathBoard("소수 자리 확인", row("가분수", fractionMarkup(numerator, pools.divisor)) + row("나머지", `${pools.remainder}`) + row("48번째 자리", `${answer}`))}`;
+        return fixedResult(`어떤 가분수에서 분자를 분모로 나누면 몫이 ${pools.quotient}이고 나머지가 ${pools.remainder}입니다. 이 가분수를 소수로 나타낼 때 소수점 아래 ${values[4]}번째 자리 숫자를 구하세요.${svg("몫과 나머지로 만든 나눗셈", lines, false, values)}${mathBoard("주어진 조건", row("분모", pools.divisor) + row("몫", pools.quotient) + row("나머지", pools.remainder))}${support("분자를 먼저 구하고, 나머지에 10을 곱하는 나눗셈을 자리마다 이어 가세요.")}${challenge}${evidence(values)}`, String(answer), `분자는 ${pools.divisor}×${pools.quotient}+${pools.remainder}=${numerator}입니다. ${fractionMarkup(numerator, pools.divisor)}를 계속 나누면 ${values[4]}번째 숫자는 ${answer}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 2) {
+        let addTenths = 0; for (let tenths = 1; tenths <= pools.divisor * 10; tenths += 1) if ((pools.base * 10 + tenths) % pools.divisor === 0) { addTenths = tenths; break; }
+        const answer = pools.addTenths / 10; if (addTenths !== pools.addTenths || !Number.isInteger((pools.base * 10 + addTenths) / pools.divisor)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 유한소수 검산 오류`);
+        const values = [pools.base, pools.divisor, pools.addTenths, answer, (pools.base * 10 + addTenths) / pools.divisor];
+        const lines = [line(`${pools.base} + □`), line(`□ ÷ ${pools.divisor} = 소수 첫째 자리에서 끝남`, `÷ ${pools.divisor} = ${(values[4]).toFixed(1)}`), line("더할 수 있는 가장 작은 수", `더한 수 → ${answer.toFixed(1)}`)];
+        const answerVisual = `${svg("몫을 소수 첫째 자리에서 끝내기", lines, true, values)}${mathBoard("유한소수가 되는 수", row("더한 수", `${answer.toFixed(1)}`) + row("확인", `${(pools.base + answer).toFixed(1)}÷${pools.divisor}=${values[4].toFixed(1)}`))}`;
+        return fixedResult(`${pools.base}에 어떤 수를 더한 뒤 ${pools.divisor}로 나누었더니 몫이 소수 첫째 자리에서 끝났습니다. 더하는 수가 소수 첫째 자리 수일 때, 더할 수 있는 가장 작은 수를 구하세요.${svg("소수 첫째 자리에서 끝나는 몫", lines, false, values)}${mathBoard("조건", row("처음 수", pools.base) + row("나누는 수", pools.divisor) + row("몫", "소수 첫째 자리에서 끝남"))}${support("0.1씩 더해 보며 나누어떨어지는 첫 번째 수를 찾으세요.")}${challenge}${evidence(values)}`, answer.toFixed(1), `0.1씩 더한 수를 차례로 확인하면 ${answer.toFixed(1)}일 때 ${(pools.base + answer).toFixed(1)}÷${pools.divisor}=${values[4].toFixed(1)}로 끝납니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 3) {
+        const aCandidates = []; for (let a = 1; a <= 200; a += 1) if (Math.round(a / pools.aDivisor) === pools.aTarget) aCandidates.push(a);
+        const bCandidates = []; for (let b = 1; b <= 200; b += 1) if (Math.floor((b / pools.bDivisor) * 10) / 10 === pools.bTenths) bCandidates.push(b);
+        const answerA = Math.min(...aCandidates); const answerB = Math.max(...bCandidates); const answer = round(answerA / answerB, 2); const answerText = answer.toFixed(2);
+        if (answerA !== (poolIndex === 0 ? 81 : poolIndex === 1 ? 86 : 87) || answerB !== 86) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 후보 검산 오류`);
+        const values = [pools.aDivisor, pools.aTarget, pools.bDivisor, pools.bTenths, answerA, answerB, answer];
+        const lines = [line(`A÷${pools.aDivisor} → ${pools.aTarget}`), line(`B÷${pools.bDivisor} → ${pools.bTenths} 버림`), line("A와 B 후보를 비교", `A=${answerA}, B=${answerB} → ${answerText}`)];
+        const answerVisual = `${svg("두 조건을 만족하는 A와 B", lines, true, values)}${mathBoard("후보를 줄여 계산", row("A", `${answerA}÷${pools.aDivisor} ≈ ${pools.aTarget}`) + row("B", `${answerB}÷${pools.bDivisor} → ${pools.bTenths}`) + row("A÷B", `${answerA}÷${answerB} ≈ ${answerText}`))}`;
+        return fixedResult(`자연수 A를 ${pools.aDivisor}로 나눈 몫을 반올림하여 일의 자리까지 나타내면 ${pools.aTarget}이고, 자연수 B를 ${pools.bDivisor}로 나눈 몫을 버림하여 소수 첫째 자리까지 나타내면 ${pools.bTenths}입니다. A÷B가 가장 작을 때, A÷B를 반올림하여 소수 둘째 자리까지 나타내세요.${svg("반올림과 버림 조건", lines, false, values)}${mathBoard("두 조건", row("A의 조건", `A÷${pools.aDivisor} → ${pools.aTarget}`) + row("B의 조건", `B÷${pools.bDivisor} → ${pools.bTenths}`))}${support("각 조건을 만족하는 자연수를 모두 적은 뒤 A가 가장 작고 B가 가장 큰 경우를 고르세요.")}${challenge}${evidence(values)}`, answerText, `A의 가장 작은 값은 ${answerA}, B의 가장 큰 값은 ${answerB}입니다. 따라서 A÷B=${answerA}÷${answerB}≈${answerText}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 4) {
+        const candidates = []; for (let n = 1; n < pools.sum / 2; n += 1) { const pair = exactTwoPlaces(n, pools.sum - n); if (pair) candidates.push(pair); }
+        const pair = candidates.find(item => item.n === pools.numerator && item.d === pools.denominator); if (!pair || candidates.length !== 1) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 분수 후보 검산 오류`);
+        const answer = (pair.n / pair.d).toFixed(2); const values = [pools.sum, pair.n, pair.d, Number(answer)];
+        const lines = [line(`분자+분모=${pools.sum}`), line(`${pair.n} ÷ ${pair.d} (서로소)`), line("소수 둘째 자리까지", `소수 둘째 자리 → ${answer}`)];
+        const answerVisual = `${svg("두 자리 소수로 끝나는 분수", lines, true, values)}${mathBoard("분수를 확인", row("분자+분모", `${pair.n}+${pair.d}=${pools.sum}`) + row("분수", fractionMarkup(pair.n, pair.d)) + row("소수", answer))}`;
+        return fixedResult(`분자와 분모의 합이 ${pools.sum}인 기약분수 중 소수로 나타내었을 때 소수 둘째 자리까지 나타나는 분수를 구하세요.${svg("기약분수와 소수", lines, false, values)}${mathBoard("조건", row("분자+분모", pools.sum) + row("분수", "진분수 · 기약분수") + row("소수", "소수 둘째 자리까지"))}${support("분모를 차례로 정하고, 약분되지 않으며 소수로 끝나는 경우만 남겨 보세요.")}${challenge}${evidence(values)}`, answer, `분자와 분모의 합 조건을 확인하면 ${fractionMarkup(pair.n, pair.d)}만 남습니다. ${fractionMarkup(pair.n, pair.d)}=${answer}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 5) {
+        const digit = decimalDigit(pools.numerator, pools.denominator, 100); if (digit !== pools.digit) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 소수 자리 검산 오류`);
+        const values = [pools.whole, pools.numerator, pools.denominator, 100, digit]; const mixed = pools.whole * pools.denominator + pools.numerator;
+        const lines = [line(`${pools.whole}와 ${pools.denominator}분의 ${pools.numerator}`), line("소수점 아래 100번째 자리"), line("자리 숫자를 구함", `답 숫자 → ${digit}`)];
+        const answerVisual = `${svg("대분수의 소수 자리", lines, true, values)}${mathBoard("나눗셈 자리 확인", row("가분수", fractionMarkup(mixed, pools.denominator)) + row("확인할 자리", "100번째") + row("숫자", digit))}`;
+        return fixedResult(`대분수 ${mixedFractionMarkup(mixed, pools.denominator)}를 소수로 나타낼 때, 소수점 아래 ${values[3]}번째 자리 숫자를 구하세요.${svg("대분수와 소수 자리", lines, false, values)}${mathBoard("주어진 수", row("대분수", mixedFractionMarkup(mixed, pools.denominator)) + row("확인할 자리", "소수점 아래 100번째 자리"))}${support("대분수를 가분수로 바꾸고 나머지를 이용한 나눗셈을 반복하세요.")}${challenge}${evidence(values)}`, String(digit), `대분수는 ${fractionMarkup(mixed, pools.denominator)}입니다. 나눗셈을 이어 가면 소수점 아래 100번째 숫자는 ${digit}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 6) {
+        const valuesList = []; for (const a of pools.a) for (const b of pools.b) valuesList.push(round(a / b, 2));
+        const answer = fmt2(Math.max(...valuesList) - Math.min(...valuesList));
+        const values = [...pools.a, ...pools.b, Number(answer)]; const lines = [line(`A: ${pools.a.join(", ")}`), line(`B: ${pools.b.join(", ")}`), line("모든 짝의 몫 비교", `가장 큰 값-가장 작은 값=${answer}`)];
+        const answerVisual = `${svg("두 수의 몫 비교", lines, true, values)}${mathBoard("모든 경우 비교", row("A의 후보", pools.a.join(", ")) + row("B의 후보", pools.b.join(", ")) + row("차", answer))}`;
+        return fixedResult(`A에는 ${pools.a.join(", ")} 중 하나, B에는 ${pools.b.join(", ")} 중 하나를 넣습니다. A÷B를 각각 계산하여 소수 둘째 자리까지 반올림했을 때 가장 큰 값과 가장 작은 값의 차를 구하세요.${svg("A와 B의 몫", lines, false, values)}${mathBoard("계산 조건", row("A", pools.a.join(", ")) + row("B", pools.b.join(", ")) + row("표시", "소수 둘째 자리까지 반올림"))}${support("A와 B의 모든 짝을 만들어 몫을 비교하세요.")}${challenge}${evidence(values)}`, answer, `모든 짝의 몫을 소수 둘째 자리까지 반올림하여 비교하면 가장 큰 값과 가장 작은 값의 차는 ${answer}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 7) {
+        const ab = pools.a[0] / pools.a[1], bc = pools.b[0] / pools.b[1]; const answer = 1 / (ab * bc); const answerText = fmt2(answer);
+        const answerNumerator = pools.a[1] * pools.b[1], answerDenominator = pools.a[0] * pools.b[0];
+        if (!terminatingFraction(answerNumerator, answerDenominator)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} C÷A가 유한소수가 아닙니다.`);
+        const values = [...pools.a, ...pools.b, answer]; const lines = [line(`A÷B=${pools.a[0]} ÷ ${pools.a[1]}`), line(`B÷C=${pools.b[0]} ÷ ${pools.b[1]}`), line("C÷A를 구함", `C÷A=${answerText}`)];
+        const answerVisual = `${svg("A, B, C의 나눗셈 관계", lines, true, values)}${mathBoard("연결하여 계산", row("A÷B", fractionMarkup(pools.a[0], pools.a[1])) + row("B÷C", fractionMarkup(pools.b[0], pools.b[1])) + row("C÷A", answerText))}`;
+        return fixedResult(`세 수 A, B, C에 대하여 A÷B=${fractionMarkup(pools.a[0], pools.a[1])}, B÷C=${fractionMarkup(pools.b[0], pools.b[1])}입니다. C÷A의 값을 구하세요.${svg("세 수의 비", lines, false, values)}${mathBoard("주어진 관계", row("A와 B", fractionMarkup(pools.a[0], pools.a[1])) + row("B와 C", fractionMarkup(pools.b[0], pools.b[1])))}${support("A에서 C로 가는 나눗셈 관계를 두 식을 이어서 생각하세요.")}${challenge}${evidence(values)}`, answerText, `A÷C는 ${fractionMarkup(pools.a[0] * pools.b[0], pools.a[1] * pools.b[1])}이므로 C÷A는 그 거꾸로인 ${answerText}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 8) {
+        const aLow = pools.aLow[0] / pools.aLow[1], aHigh = pools.aHigh[0] / pools.aHigh[1], bLow = pools.bLow[0] / pools.bLow[1], bHigh = pools.bHigh[0] / pools.bHigh[1];
+        const aCandidates = [], bCandidates = []; for (let a = Math.floor(aLow) + 1; a < aHigh; a += 1) aCandidates.push(a); for (let b = Math.floor(bLow) + 1; b < bHigh; b += 1) bCandidates.push(b);
+        const ratios = []; for (const a of aCandidates) for (const b of bCandidates) ratios.push(b / a); const answer = fmt2(Math.max(...ratios) - Math.min(...ratios));
+        const gapNumerator = Math.max(...bCandidates) * Math.max(...aCandidates) - Math.min(...bCandidates) * Math.min(...aCandidates);
+        const gapDenominator = Math.min(...aCandidates) * Math.max(...aCandidates);
+        if (!terminatingFraction(gapNumerator, gapDenominator)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 몫의 차가 유한소수가 아닙니다.`);
+        const values = [aLow, aHigh, bLow, bHigh, ...aCandidates, ...bCandidates, Number(answer)]; const lines = [line(`A: ${aCandidates.join(", ")}`), line(`B: ${bCandidates.join(", ")}`), line("B÷A의 최댓값과 최솟값 비교", `몫의 차=${answer}`)];
+        const answerVisual = `${svg("범위 안 자연수의 몫", lines, true, values)}${mathBoard("후보 수와 몫", row("A 후보", aCandidates.join(", ")) + row("B 후보", bCandidates.join(", ")) + row("차", answer))}`;
+        return fixedResult(`자연수 A는 ${pools.aLow[0]}÷${pools.aLow[1]}보다 크고 ${pools.aHigh[0]}÷${pools.aHigh[1]}보다 작습니다. 자연수 B는 ${pools.bLow[0]}÷${pools.bLow[1]}보다 크고 ${pools.bHigh[0]}÷${pools.bHigh[1]}보다 작습니다. B÷A의 가장 큰 값과 가장 작은 값의 차를 구하세요.${svg("자연수 후보 범위", lines, false, values)}${mathBoard("범위 계산", row("A의 범위", `${fmt(aLow)} < A < ${fmt(aHigh)}`) + row("B의 범위", `${fmt(bLow)} < B < ${fmt(bHigh)}`))}${support("각 범위에 들어가는 자연수를 먼저 적고, B÷A를 비교하세요.")}${challenge}${evidence(values)}`, answer, `A 후보는 ${aCandidates.join(", ")}, B 후보는 ${bCandidates.join(", ")}입니다. B÷A를 모두 비교하면 차는 ${answer}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      if (variant === 9) {
+        let addMilli = 0; for (let milli = 1; milli <= pools.divisor * 1000; milli += 1) if ((pools.base * 1000 + milli) % pools.divisor === 0) { addMilli = milli; break; }
+        if (addMilli !== pools.addMilli) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 천분의 일 검산 오류`);
+        const answer = pools.addMilli / 1000; const quotient = (pools.base * 1000 + addMilli) / pools.divisor / 1000; const values = [pools.base, pools.divisor, pools.addMilli, answer, quotient];
+        const lines = [line(`${pools.base} + □`), line(`□ ÷ ${pools.divisor} = 소수 셋째 자리에서 끝남`, `÷ ${pools.divisor} = ${quotient.toFixed(3)}`), line("더할 수 있는 가장 작은 수", `가장 작은 수 → ${answer.toFixed(3)}`)];
+        const answerVisual = `${svg("몫이 소수 셋째 자리에서 끝나는 수", lines, true, values)}${mathBoard("천분의 일 단위로 확인", row("더한 수", answer.toFixed(3)) + row("확인", `${(pools.base + answer).toFixed(3)}÷${pools.divisor}=${quotient.toFixed(3)}`))}`;
+        return fixedResult(`${pools.base}에 어떤 수를 더한 뒤 ${pools.divisor}로 나누었더니 몫이 소수 셋째 자리에서 끝났습니다. 더하는 수가 소수 셋째 자리 수일 때, 더할 수 있는 가장 작은 수를 구하세요.${svg("유한소수 몫 만들기", lines, false, values)}${mathBoard("조건", row("처음 수", pools.base) + row("나누는 수", pools.divisor) + row("몫", "소수 셋째 자리에서 끝남"))}${support("0.001씩 더해 보며 몫이 끝나는 첫 번째 수를 찾으세요.")}${challenge}${evidence(values)}`, answer.toFixed(3), `0.001씩 더한 수를 확인하면 ${answer.toFixed(3)}일 때 ${quotient.toFixed(3)}으로 끝납니다. 따라서 가장 작은 수는 ${answer.toFixed(3)}입니다.`, answerWrap(answerVisual, values));
+      }
+
+      const candidates = []; for (let n = 1; n <= 200; n += 1) if (Math.round(n / pools.firstDivisor) === pools.firstTarget && Math.round(n / pools.secondDivisor) === pools.secondTarget) candidates.push(n);
+      if (!candidates.length) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} 공통 후보가 없습니다.`);
+      const values = [pools.firstDivisor, pools.firstTarget, pools.secondDivisor, pools.secondTarget, ...candidates]; const lines = [line(`N÷${pools.firstDivisor} → ${pools.firstTarget}`), line(`N÷${pools.secondDivisor} → ${pools.secondTarget}`), line("두 조건의 공통 후보", `가능한 N → ${candidates.join(", ")}`)];
+      const answerVisual = `${svg("두 반올림 조건을 만족하는 자연수", lines, true, values)}${mathBoard("후보를 모두 확인", row("첫째 조건", `N÷${pools.firstDivisor} → ${pools.firstTarget}`) + row("둘째 조건", `N÷${pools.secondDivisor} → ${pools.secondTarget}`) + row("답", candidates.join(", ")))}`;
+      return fixedResult(`자연수 N을 ${pools.firstDivisor}로 나눈 몫을 반올림하여 일의 자리까지 나타내면 ${pools.firstTarget}이고, ${pools.secondDivisor}로 나눈 몫을 반올림하여 일의 자리까지 나타내면 ${pools.secondTarget}입니다. N이 될 수 있는 수를 모두 구하세요.${svg("반올림 조건 두 가지", lines, false, values)}${mathBoard("조건", row("첫째", `N÷${pools.firstDivisor} → ${pools.firstTarget}`) + row("둘째", `N÷${pools.secondDivisor} → ${pools.secondTarget}`))}${support("두 반올림 조건을 각각 만족하는 범위를 구한 뒤 겹치는 자연수를 찾으세요.")}${challenge}${evidence(values, "list")}`, candidates.join(", "), `두 조건을 각각 만족하는 자연수를 적어 보면 공통으로 남는 수는 ${candidates.join(", ")}입니다.`, answerWrap(answerVisual, values));
+    },
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5"
@@ -22883,6 +23087,7 @@
     [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e1-"), "sourceGrade6DecimalDivisionE1"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e2-") && !["6-1-u3-e2-example-2", "6-1-u3-e2-example-4", "6-1-u3-e2-mission-6"].includes(type.sourceItemId), "sourceGrade6DecimalDivisionE2"],
+    [type => type.sourceItemId?.startsWith("6-1-u3-e3-"), "sourceGrade6DecimalDivisionE3"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
