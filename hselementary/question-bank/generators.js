@@ -21157,6 +21157,145 @@
       const answerVisual = `${triangleNetSvg({ ...data, na, areaGa: data.areaGa, areaNa, H, solved: true })}${mathBoard("ㄴㅊ와 나의 넓이", row("공통 높이 H", `${fractionText(H)}cm`) + row("다의 넓이", `${data.da}×${fractionText(H)}=${fractionText(daArea)}cm²`) + row("나", `${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×${fractionText(daArea)}=${fractionText(areaNa)}cm²`) + row("ㄴㅊ", `${fractionText(areaNa)}÷${fractionText(H)}=${fractionText(na)}cm`))}`;
       return fixedResult(`삼각기둥 전개도에서 세 직사각형 가, 나, 다가 연결되어 있습니다. 가의 가로는 삼각형의 변 ㄱㄴ과 같고 ${data.ga}cm, 다의 가로는 변 ㄱㅊ과 같고 ${data.da}cm입니다. 가의 넓이는 ${data.areaGa}cm²이고, 나의 넓이는 다의 넓이의 ${mixedFractionMarkup(data.ratio[0], data.ratio[1])}배입니다. ㄴㅊ의 길이와 나의 넓이를 각각 구하세요.${promptVisual}${support("가의 넓이를 가의 가로로 나누어 같은 직사각형 높이를 구한 뒤, 나의 넓이와 ㄴㅊ의 길이를 찾아 보세요.")}${challenge}${evidence("triangular-prism-net-ratio-area", [data.ga, data.da, data.ratio[0], data.ratio[1], data.areaGa, H.numerator, H.denominator, na.numerator, na.denominator, areaNa.numerator, areaNa.denominator], "two-values")}`, `ㄴㅊ=${plainFractionText(na)}cm, 나=${plainFractionText(areaNa)}cm²`, `가의 넓이 ${data.areaGa}cm²를 가의 가로 ${data.ga}cm로 나누면 같은 직사각형의 높이 H=${fractionText(H)}cm입니다. 다의 넓이는 ${data.da}×${fractionText(H)}=${fractionText(daArea)}cm²이고, 나의 넓이는 ${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×${fractionText(daArea)}=${fractionText(areaNa)}cm²입니다. 따라서 ㄴㅊ=${fractionText(areaNa)}÷${fractionText(H)}=${fractionText(na)}cm입니다.`, answerVisual);
     },
+    sourceGrade6PrismsPyramidsE3({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u2-e3-example-3-1", "6-1-u2-e3-mission-1", "6-1-u2-e3-mission-5", "6-1-u2-e3-mission-6"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 3 원문 분기는 0부터 3까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">조건 사이의 관계를 스스로 찾아 식으로 나타내어 계산해 보세요.</p>` : "";
+      const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e3-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><span hidden data-source61-prism-e3-kind="${["pyramid-edge-from-counts", "prism-pyramid-edge-product", "pyramid-edge-marks", "paper-solids-edge-difference"][variant]}" data-source-item="${sourceItemId}" data-difficulty-design="${difficultyDesign}"></span>${answerBody}<div class="solution-answer-caption">문제의 그림을 다시 그려 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+      const edge = (a, b, className = "source61-e3-edge") => `<line class="${className}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`;
+      const pairSvg = ({ n, solved = false, highlight = "", resultHighlight = null }) => {
+        if (!solved) {
+          return `<svg class="geometry-diagram source61-e3-diagram source61-e3-prism-pyramid is-symbolic" viewBox="0 0 330 215" role="img" aria-label="밑면의 모양이 같은 각기둥과 각뿔의 관계 그림" data-source61-e3-structure="same-base-prism-pyramid-relation" data-base-sides="unknown" data-prism-edge-count="unknown" data-pyramid-edge-count="unknown" data-prism-vertex-count="unknown" data-pyramid-vertex-count="unknown"><rect class="source61-e3-relation-box" x="24" y="54" width="96" height="66"/><rect class="source61-e3-relation-box" x="210" y="54" width="96" height="66"/><path class="source61-e3-relation-link" d="M120 87 H210"/><text x="72" y="83" text-anchor="middle">각기둥</text><text x="258" y="83" text-anchor="middle">각뿔</text><text x="165" y="75" text-anchor="middle">밑면의 모양이 같음</text><text x="165" y="108" text-anchor="middle">구성 요소의 관계를 이용</text></svg>`;
+        }
+        const polygon = (cx, cy, radius) => regularPolygonPoints(n, cx, cy, radius);
+        const prismTop = polygon(76, 62, n >= 12 ? 39 : 43);
+        const prismBottom = prismTop.map(([x, y]) => [x + 16, y + 46]);
+        const prismLine = (a, b, className, index) => edge(a, b, className).replace("/>", ` data-solid-edge="prism" data-edge-index="${index}"/>`);
+        const prismEdges = prismTop.map((point, index) => prismLine(point, prismTop[(index + 1) % n], `source61-e3-edge${index >= Math.ceil(n / 2) ? " source61-e3-hidden-edge" : ""}`, `top-${index + 1}`)).join("")
+          + prismBottom.map((point, index) => prismLine(point, prismBottom[(index + 1) % n], "source61-e3-edge source61-e3-hidden-edge", `bottom-${index + 1}`)).join("")
+          + prismTop.map((point, index) => prismLine(point, prismBottom[index], index >= Math.ceil(n / 2) ? "source61-e3-edge source61-e3-hidden-edge" : "source61-e3-edge", `side-${index + 1}`)).join("");
+        const prismVertices = prismTop.concat(prismBottom).map(([x, y], index) => `<circle class="source61-e3-vertex" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="2" data-solid-vertex="prism" data-vertex-index="${index + 1}"/>`).join("");
+        const pyramidBase = polygon(246, 96, n >= 12 ? 39 : 43);
+        const apex = [246, 22];
+        const pyramidLine = (a, b, className, index) => edge(a, b, className).replace("/>", ` data-solid-edge="pyramid" data-edge-index="${index}"/>`);
+        const pyramidClass = solved && highlight === "pyramid" ? "source61-e3-edge source61-e3-highlight" : "source61-e3-edge";
+        const pyramidEdges = pyramidBase.map((point, index) => pyramidLine(point, pyramidBase[(index + 1) % n], pyramidClass, `base-${index + 1}`)).join("")
+          + pyramidBase.map((point, index) => pyramidLine(apex, point, pyramidClass, `lateral-${index + 1}`)).join("");
+        const pyramidVertices = pyramidBase.map(([x, y], index) => `<circle class="source61-e3-vertex" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="2" data-solid-vertex="pyramid" data-vertex-index="${index + 1}"/>`).join("") + `<circle class="source61-e3-vertex" cx="${apex[0]}" cy="${apex[1]}" r="2.8" data-solid-vertex="pyramid" data-vertex-index="apex"/>`;
+        const labels = `<text x="76" y="174" text-anchor="middle">${n}각기둥</text><text x="246" y="174" text-anchor="middle">${n}각뿔</text>${solved ? `<text class="source61-e3-result-label" x="246" y="196" text-anchor="middle">각뿔 모서리 ${2 * n}개</text>` : ""}`;
+        return `<svg class="geometry-diagram source61-e3-diagram source61-e3-prism-pyramid is-solved" viewBox="0 0 330 215" role="img" aria-label="밑면의 모양이 같은 ${n}각기둥과 ${n}각뿔의 구성 그림" data-source61-e3-structure="same-base-prism-pyramid-relation" data-base-sides="${n}" data-prism-edge-count="${3 * n}" data-pyramid-edge-count="${2 * n}" data-prism-vertex-count="${2 * n}" data-pyramid-vertex-count="${n + 1}" data-solved="true" data-result-highlight="${resultHighlight ?? 2 * n}">${prismEdges}${prismVertices}${pyramidEdges}${pyramidVertices}<text x="76" y="12" text-anchor="middle">각기둥의 ${n}각형 밑면</text><text x="246" y="12" text-anchor="middle">각뿔의 ${n}각형 밑면</text>${labels}</svg>`;
+      };
+      const countTable = ({ n, k, solved = false, guided = false, product = false }) => {
+        const prismFaces = n + 2, prismEdges = 3 * n, prismVertices = 2 * n;
+        const pyramidFaces = n + 1, pyramidEdges = 2 * n;
+        if (product) return `<div class="source61-structure-table" data-source61-e3-table="edge-product" data-n="${solved ? n : "unknown"}" data-solved="${solved}"><div class="source61-math-row"><span>각기둥의 모서리</span><b>${solved ? `${prismEdges}개` : guided ? `3×□=□개` : "□개"}</b></div><div class="source61-math-row"><span>각뿔의 모서리</span><b>${solved ? `${pyramidEdges}개` : guided ? `2×□=□개` : "□개"}</b></div><div class="source61-math-row"><span>두 도형의 면 수 합</span><b>${solved ? `${prismFaces}+${pyramidFaces}=${k}개` : `${k}개`}</b></div></div>`;
+        return `<div class="source61-structure-table" data-source61-e3-table="pyramid-edge-count" data-n="${solved ? n : "unknown"}" data-solved="${solved}"><div class="source61-math-row"><span>각기둥의 면</span><b>${solved ? `${prismFaces}개` : guided ? "□+2개" : "□개"}</b></div><div class="source61-math-row"><span>각기둥의 모서리</span><b>${solved ? `${prismEdges}개` : guided ? "□×3개" : "□개"}</b></div><div class="source61-math-row"><span>각기둥의 꼭짓점</span><b>${solved ? `${prismVertices}개` : guided ? "□×2개" : "□개"}</b></div><div class="source61-math-row"><span>면+모서리-꼭짓점</span><b>${solved ? `${prismFaces}+${prismEdges}-${prismVertices}=${k}` : `${k}`}</b></div><div class="source61-math-row"><span>같은 밑면의 각뿔 모서리</span><b>${solved ? `2×${n}=${pyramidEdges}개` : "□개"}</b></div></div>`;
+      };
+      const markedPyramidSvg = ({ edgeCm, interval, innerMarks, solved = false }) => {
+        const base = [[46, 142], [108, 142], [126, 119], [64, 119]], apex = [86, 42];
+        const edgeClass = `source61-e3-edge${solved ? " source61-e3-answer-edge" : ""}`;
+        const edgeData = (kind, index) => solved ? ` data-solid-edge="pyramid" data-edge-index="${kind}-${index + 1}"` : "";
+        const edges = base.map((point, index) => edge(point, base[(index + 1) % 4], edgeClass).replace("/>", `${edgeData("base", index)}/>`)).join("")
+          + base.map((point, index) => edge(apex, point, edgeClass).replace("/>", `${edgeData("lateral", index)}/>`)).join("");
+        const pyramidVertices = solved ? base.concat([apex]).map((point, index) => `<circle class="source61-e3-pyramid-vertex source61-e3-answer-vertex" cx="${point[0]}" cy="${point[1]}" r="2.5" data-vertex-mark="${index + 1}"/>`).join("") : "";
+        const markedEdgeStart = [184, 66], markedEdgeEnd = [310, 66];
+        const dots = solved ? Array.from({ length: innerMarks }, (_, index) => {
+          const ratio = (index + 1) / (innerMarks + 1);
+          const x = markedEdgeStart[0] + (markedEdgeEnd[0] - markedEdgeStart[0]) * ratio;
+          const y = markedEdgeStart[1] + (markedEdgeEnd[1] - markedEdgeStart[1]) * ratio;
+          return `<circle class="source61-e3-mark is-result" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="2.5" data-mark="inner-${index + 1}"/>`;
+        }).join("") : "";
+        const zoomVertices = `<circle class="source61-e3-vertex-mark${solved ? " is-result" : ""}" cx="${markedEdgeStart[0]}" cy="${markedEdgeStart[1]}" r="4" data-vertex-mark="zoom-start"/><circle class="source61-e3-vertex-mark${solved ? " is-result" : ""}" cx="${markedEdgeEnd[0]}" cy="${markedEdgeEnd[1]}" r="4" data-vertex-mark="zoom-end"/>`;
+        const zoomLine = `<line class="${edgeClass}" x1="${markedEdgeStart[0]}" y1="${markedEdgeStart[1]}" x2="${markedEdgeEnd[0]}" y2="${markedEdgeEnd[1]}" data-solid-edge="expanded-edge"/>`;
+        const intervalMark = `<line class="source61-e3-interval-mark" x1="225" y1="60" x2="225" y2="72" data-interval-mark="one"/><text class="source61-e3-interval-label" x="225" y="88" text-anchor="middle">${interval}cm</text>`;
+        const innerMarkCount = solved ? innerMarks : "unknown";
+        return `<svg class="geometry-diagram source61-e3-diagram source61-e3-marked-pyramid${solved ? " is-solved" : ""}" viewBox="0 0 330 220" role="img" aria-label="${solved ? `모든 모서리의 길이가 ${edgeCm}cm인 사각뿔과 한 모서리에 찍은 점` : `모든 모서리의 길이가 ${edgeCm}cm인 사각뿔과 한 모서리의 빈 확대선`}" data-source61-e3-structure="square-pyramid-edge-marks-${edgeCm}-${interval}" data-edge-length-cm="${edgeCm}" data-mark-interval-cm="${interval}" data-inner-mark-count="${innerMarkCount}" data-edge-count="${solved ? 8 : "unknown"}" data-vertex-mark-count="${solved ? 5 : "unknown"}"${solved ? ` data-result-highlight="${8 * innerMarks + 5}"` : ""}>${edges}${pyramidVertices}<text x="86" y="170" text-anchor="middle">사각뿔</text><text x="247" y="42" text-anchor="middle">한 모서리 확대</text>${zoomLine}${!solved ? intervalMark : ""}${dots}${zoomVertices}<text x="247" y="102" text-anchor="middle">${edgeCm}cm · ${interval}cm 간격</text>${solved ? `<text class="source61-e3-result-label" x="247" y="124" text-anchor="middle">안쪽 점 ${innerMarks}개</text><text class="source61-e3-result-label" x="247" y="148" text-anchor="middle">꼭짓점 5개를 따로 더함</text>` : ""}</svg>`;
+      };
+      const paperAndSolidsSvg = ({ triangle, rectangle, square, prismEdges, pyramidEdges, solved = false }) => {
+        const edgeClass = solved ? "source61-e3-edge source61-e3-highlight" : "source61-e3-edge";
+        const longSide = triangle[0];
+        const baseSide = triangle[2];
+        const paperScale = 8;
+        const paperCenterX = 52;
+        const paperBaseY = 76;
+        const paperHalfBase = baseSide * paperScale / 2;
+        const paperHeight = Math.sqrt(longSide * longSide - baseSide * baseSide / 4) * paperScale;
+        const paperTriangle = [
+          [paperCenterX, paperBaseY - paperHeight],
+          [paperCenterX - paperHalfBase, paperBaseY],
+          [paperCenterX + paperHalfBase, paperBaseY]
+        ];
+        const rectangleBox = { x: 104, y: 28, width: rectangle[0] * paperScale, height: rectangle[1] * paperScale };
+        const squareBox = { x: 210, y: 28, size: square[0] * paperScale };
+        const front = { a: [42, 235], b: [82, 179], c: [122, 235] };
+        const back = { a: [68, 217], b: [108, 161], c: [148, 217] };
+        const prismLines = [
+          [front.a, front.b], [front.b, front.c], [front.c, front.a],
+          [back.a, back.b], [back.b, back.c], [back.c, back.a],
+          [front.a, back.a], [front.b, back.b], [front.c, back.c]
+        ].map(([a, b], index) => edge(a, b, index >= 3 && index < 6 ? `${edgeClass} source61-e3-hidden-edge` : edgeClass).replace("/>", ` data-solid-edge="triangular-prism" data-edge-index="${index + 1}"/>`)).join("");
+        const prismVertices = Object.values(front).concat(Object.values(back)).map((point, index) => `<circle class="source61-e3-vertex" cx="${point[0]}" cy="${point[1]}" r="2" data-solid-vertex="triangular-prism" data-vertex-index="${index + 1}"/>`).join("");
+        const pyramid = { apex: [260, 157], a: [214, 235], b: [292, 235], c: [306, 211], d: [230, 211] };
+        const basePoints = [pyramid.a, pyramid.b, pyramid.c, pyramid.d];
+        const pyramidLines = basePoints.map((point, index) => edge(point, basePoints[(index + 1) % 4], edgeClass).replace("/>", ` data-solid-edge="square-pyramid" data-edge-index="base-${index + 1}"/>`)).join("") + basePoints.map((point, index) => edge(pyramid.apex, point, edgeClass).replace("/>", ` data-solid-edge="square-pyramid" data-edge-index="lateral-${index + 1}"/>`)).join("");
+        const pyramidVertices = basePoints.concat([pyramid.apex]).map((point, index) => `<circle class="source61-e3-vertex" cx="${point[0]}" cy="${point[1]}" r="2" data-solid-vertex="square-pyramid" data-vertex-index="${index + 1}"/>`).join("");
+        const paperTrianglePoints = paperTriangle.map(point => point.map(value => value.toFixed(2)).join(",")).join(" ");
+        const papers = `<g class="source61-e3-paper-piece" data-paper-piece="triangle"><polygon class="source61-e3-paper" points="${paperTrianglePoints}"/><text class="source61-e3-paper-name" x="${paperCenterX}" y="16" text-anchor="middle">가</text><text class="source61-e3-measure" x="${paperCenterX - paperHalfBase - 8}" y="${paperBaseY - paperHeight / 2}" text-anchor="middle">${longSide}cm</text><text class="source61-e3-measure" x="${paperCenterX + paperHalfBase + 8}" y="${paperBaseY - paperHeight / 2}" text-anchor="middle">${longSide}cm</text><text class="source61-e3-measure" x="${paperCenterX}" y="94" text-anchor="middle">${baseSide}cm</text></g><g class="source61-e3-paper-piece" data-paper-piece="rectangle"><rect class="source61-e3-paper" x="${rectangleBox.x}" y="${rectangleBox.y}" width="${rectangleBox.width}" height="${rectangleBox.height}"/><text class="source61-e3-paper-name" x="${rectangleBox.x + rectangleBox.width / 2}" y="${rectangleBox.y + rectangleBox.height / 2 + 4}" text-anchor="middle">나</text><text class="source61-e3-measure" x="${rectangleBox.x + rectangleBox.width / 2}" y="${rectangleBox.y + rectangleBox.height + 17}" text-anchor="middle">${rectangle[0]}cm</text><text class="source61-e3-measure" x="${rectangleBox.x + rectangleBox.width + 15}" y="${rectangleBox.y + rectangleBox.height / 2 + 4}" text-anchor="middle">${rectangle[1]}cm</text></g><g class="source61-e3-paper-piece" data-paper-piece="square"><rect class="source61-e3-paper" x="${squareBox.x}" y="${squareBox.y}" width="${squareBox.size}" height="${squareBox.size}"/><text class="source61-e3-paper-name" x="${squareBox.x + squareBox.size / 2}" y="${squareBox.y + squareBox.size / 2 + 4}" text-anchor="middle">다</text><text class="source61-e3-measure" x="${squareBox.x + squareBox.size / 2}" y="${squareBox.y + squareBox.size + 17}" text-anchor="middle">${square[0]}cm</text><text class="source61-e3-measure" x="${squareBox.x + squareBox.size + 15}" y="${squareBox.y + squareBox.size / 2 + 4}" text-anchor="middle">${square[1]}cm</text></g>`;
+        const solidMarkup = solved ? `<g class="source61-e3-solid" data-solid="triangular-prism">${prismLines}${prismVertices}<text x="95" y="260" text-anchor="middle">삼각기둥</text><text class="source61-e3-measure" x="55" y="202" text-anchor="middle">${longSide}cm</text><text class="source61-e3-measure" x="82" y="250" text-anchor="middle">${baseSide}cm</text></g><g class="source61-e3-solid" data-solid="square-pyramid">${pyramidLines}${pyramidVertices}<text x="260" y="260" text-anchor="middle">사각뿔</text><text class="source61-e3-measure" x="229" y="193" text-anchor="middle">${longSide}cm</text><text class="source61-e3-measure" x="253" y="250" text-anchor="middle">${baseSide}cm</text></g>` : "";
+        const resultLabels = solved ? `<text class="source61-e3-result-label" x="95" y="286" text-anchor="middle">모서리 ${prismEdges}cm</text><text class="source61-e3-result-label" x="260" y="286" text-anchor="middle">모서리 ${pyramidEdges}cm</text>` : "";
+        const totalAttributes = solved ? `data-triangular-prism-edge-total="${prismEdges}" data-square-pyramid-edge-total="${pyramidEdges}" data-triangular-prism-vertex-count="6" data-triangular-prism-edge-count="9" data-square-pyramid-vertex-count="5" data-square-pyramid-edge-count="8"` : `data-triangular-prism-edge-total="unknown" data-square-pyramid-edge-total="unknown" data-triangular-prism-vertex-count="unknown" data-triangular-prism-edge-count="unknown" data-square-pyramid-vertex-count="unknown" data-square-pyramid-edge-count="unknown"`;
+        return `<svg class="geometry-diagram source61-e3-diagram source61-e3-paper-solids${solved ? " is-solved" : ""}" viewBox="0 0 330 ${solved ? 305 : 112}" role="img" aria-label="${solved ? "세 종이로 만든 삼각기둥과 사각뿔의 모서리 합" : "삼각형, 직사각형, 정사각형 종이와 사용표"}" data-source61-e3-structure="paper-to-triangular-prism-and-square-pyramid-${triangle.join("-")}" ${totalAttributes} data-paper-triangle="${triangle.join(",")}" data-paper-rectangle="${rectangle.join(",")}" data-paper-square="${square.join(",")}"${solved ? ` data-result-highlight="${Math.abs(prismEdges - pyramidEdges)}"` : ""}>${papers}${solidMarkup}${resultLabels}</svg>`;
+      };
+
+      if (variant === 0) {
+        const data = [{ k: 22, n: 10 }, { k: 26, n: 12 }, { k: 30, n: 14 }][poolIndex];
+        const answer = 2 * data.n;
+        const promptVisual = `${pairSvg(data)}${countTable({ ...data, guided: level === 0 })}`;
+        const answerVisual = `${pairSvg({ ...data, solved: true, highlight: "pyramid" })}${countTable({ ...data, solved: true })}${mathBoard("각뿔의 모서리", row("밑면의 변 수", `${data.n}`) + row("모서리 수", `2×${data.n}=${answer}개`))}`;
+        return fixedResult(`다음을 만족하는 각기둥과 밑면의 모양이 같은 각뿔이 있습니다. 각기둥의 (면의 수)+(모서리의 수)-(꼭짓점의 수)가 ${data.k}일 때, 각뿔의 모서리 수를 구하세요.${promptVisual}${support("각기둥의 면·모서리·꼭짓점 수를 밑면의 변 수로 나타내 보세요.")}${challenge}${evidence("pyramid-edge-from-counts", [data.k, data.n, answer])}`, `${answer}개`, `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 모서리는 3×□개, 꼭짓점은 2×□개입니다. 따라서 (□+2)+3×□-2×□=${data.k}이므로 □=${data.n}입니다. 같은 밑면의 각뿔 모서리는 2×${data.n}=${answer}개입니다.`, answerVisual);
+      }
+
+      if (variant === 1) {
+        const data = [{ faceSum: 27, n: 12 }, { faceSum: 29, n: 13 }, { faceSum: 31, n: 14 }][poolIndex];
+        const prismEdges = 3 * data.n, pyramidEdges = 2 * data.n, answer = prismEdges * pyramidEdges;
+        const promptVisual = `${pairSvg({ n: data.n })}${countTable({ n: data.n, k: data.faceSum, guided: level === 0, product: true })}`;
+        const answerVisual = `${pairSvg({ n: data.n, solved: true, highlight: "pyramid", resultHighlight: answer })}${countTable({ n: data.n, k: data.faceSum, solved: true, product: true })}${mathBoard("두 도형의 모서리 수 곱", row("각기둥", `${prismEdges}개`) + row("각뿔", `${pyramidEdges}개`) + row("곱", `${prismEdges}×${pyramidEdges}=${answer}`))}`;
+        return fixedResult(`밑면의 모양이 같은 각기둥과 각뿔이 있습니다. 두 도형의 면의 수를 더하면 ${data.faceSum}개일 때, 각기둥과 각뿔의 모서리 수의 곱을 구하세요.${promptVisual}${support("두 도형의 면 수를 밑면의 변 수로 나타내어 밑면의 변 수를 먼저 구하세요.")}${challenge}${evidence("prism-pyramid-edge-product", [data.faceSum, data.n, prismEdges, pyramidEdges, answer])}`, String(answer), `밑면의 변 수를 □라고 하면 각기둥의 면은 □+2개, 각뿔의 면은 □+1개입니다. (□+2)+(□+1)=${data.faceSum}이므로 □=${data.n}입니다. 각기둥의 모서리는 3×${data.n}=${prismEdges}개, 각뿔의 모서리는 2×${data.n}=${pyramidEdges}개입니다. 따라서 ${prismEdges}×${pyramidEdges}=${answer}입니다.`, answerVisual);
+      }
+
+      if (variant === 2) {
+        const data = [{ edgeCm: 300, interval: 15, display: "3m", innerMarks: 19 }, { edgeCm: 330, interval: 15, display: "3m 30cm", innerMarks: 21 }, { edgeCm: 360, interval: 15, display: "3m 60cm", innerMarks: 23 }][poolIndex];
+        const answer = 8 * data.innerMarks + 5;
+        const promptVisual = `${markedPyramidSvg({ ...data })}${mathBoard("점 찍는 조건", row("사각뿔의 한 모서리", `${data.display} = ${data.edgeCm}cm`) + row("점 사이의 간격", `${data.interval}cm`) + row("꼭짓점", "점에 포함"))}`;
+        const answerVisual = `${markedPyramidSvg({ ...data, solved: true })}${mathBoard("안쪽 점과 꼭짓점", row("한 모서리의 안쪽 점", `${data.edgeCm}÷${data.interval}-1=${data.innerMarks}개`) + row("모든 모서리의 안쪽 점", `${data.innerMarks}×8=${data.innerMarks * 8}개`) + row("전체", `${data.innerMarks * 8}+5=${answer}개`))}`;
+        return fixedResult(`모든 모서리의 길이가 ${data.display}인 사각뿔이 있습니다. 각 모서리에 ${data.interval}cm 간격으로 점을 찍고 꼭짓점에도 반드시 점을 찍을 때, 점은 모두 몇 개인지 구하세요.${promptVisual}${support("한 모서리에서 양 끝 꼭짓점을 뺀 안쪽 점의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-edge-marks", [data.edgeCm, data.interval, data.innerMarks, answer])}`, `${answer}개`, `한 모서리의 길이는 ${data.edgeCm}cm이고 ${data.interval}cm씩 나누면 ${data.edgeCm}÷${data.interval}=${data.edgeCm / data.interval}구간입니다. 안쪽 점은 ${data.edgeCm / data.interval}-1=${data.innerMarks}개입니다. 사각뿔의 모서리 8개에 찍는 안쪽 점은 ${data.innerMarks}×8=${data.innerMarks * 8}개이고, 꼭짓점 5개를 더하면 ${answer}개입니다.`, answerVisual);
+      }
+
+      const data = [
+        { triangle: [5, 5, 3], rectangle: [5, 3], square: [3, 3], prismEdges: 35, pyramidEdges: 32 },
+        { triangle: [6, 6, 4], rectangle: [6, 4], square: [4, 4], prismEdges: 44, pyramidEdges: 40 },
+        { triangle: [7, 7, 5], rectangle: [7, 5], square: [5, 5], prismEdges: 53, pyramidEdges: 48 }
+      ][poolIndex];
+      const answer = Math.abs(data.prismEdges - data.pyramidEdges);
+      const promptVisual = `${paperAndSolidsSvg({ ...data })}${mathBoard("사용한 종이", row("삼각형 가", "재석 2장 · 현재 4장") + row("직사각형 나", "재석 2장 · 현재 0장") + row("정사각형 다", "재석 1장 · 현재 1장"))}`;
+      const answerVisual = `${paperAndSolidsSvg({ ...data, solved: true })}${mathBoard("두 입체의 모서리 합", row("삼각기둥", `${data.prismEdges}cm`) + row("사각뿔", `${data.pyramidEdges}cm`) + row("차", `${data.prismEdges}-${data.pyramidEdges}=${answer}cm`))}`;
+      return fixedResult(`가, 나, 다 세 가지 종이를 사용하여 두 입체도형을 만들었습니다. 재석은 삼각형 가 2장, 직사각형 나 2장, 정사각형 다 1장을 사용하여 삼각기둥을 만들었습니다. 현재는 가 4장, 나 0장, 다 1장을 사용하여 사각뿔을 만들었습니다. 두 입체도형의 모든 모서리 길이의 차는 몇 cm인지 구하세요.${promptVisual}${support("두 입체의 모서리를 종류별로 나누어 각각 한 번씩 세어 보세요.")}${challenge}${evidence("paper-solids-edge-difference", [data.triangle[0], data.triangle[1], data.triangle[2], data.rectangle[0], data.rectangle[1], data.square[0], data.square[1], data.prismEdges, data.pyramidEdges, answer])}`, `${answer}cm`, `삼각기둥은 삼각형 두 개의 둘레와 옆모서리 세 개를 더해 ${data.prismEdges}cm입니다. 사각뿔은 밑면의 네 변과 옆모서리 네 개를 더해 ${data.pyramidEdges}cm입니다. 따라서 두 합의 차는 ${data.prismEdges}-${data.pyramidEdges}=${answer}cm입니다.`, answerVisual);
+    },
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5"
@@ -22173,6 +22312,7 @@
     [type => type.id === "5-1-u5-t2", "fifthFractionSubtractionAdvanced"],
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
+    [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],

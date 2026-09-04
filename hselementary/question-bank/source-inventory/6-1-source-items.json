@@ -814,11 +814,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 1,
-      "sourceShape": "각뿔의 밑면, 옆면, 꼭짓점, 모서리 또는 전개도에서 주어진 조건을 읽고 구성 요소나 길이를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 11쪽 예제 3-1. 면·모서리·꼭짓점 수의 식을 만족하는 각기둥의 밑면 변 수를 찾고, 밑면 모양이 같은 각뿔의 모서리 수를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 구조와 공식 값 24를 대조하고, 문제와 답에 같은 구성 요소 자료를 쓰는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e3-example-2",
@@ -878,11 +878,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 1,
-      "sourceShape": "각뿔의 밑면, 옆면, 꼭짓점, 모서리 또는 전개도에서 주어진 조건을 읽고 구성 요소나 길이를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 12쪽 Mission 1. 밑면 모양이 같은 각기둥과 각뿔의 면 수 합으로 밑면 변 수를 찾고 두 입체의 모서리 수의 곱을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 구조와 공식 값 1014를 대조하고, 같은 밑면의 두 입체를 함께 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e3-mission-2",
@@ -942,11 +942,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 5,
-      "sourceShape": "각뿔의 밑면, 옆면, 꼭짓점, 모서리 또는 전개도에서 주어진 조건을 읽고 구성 요소나 길이를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 12쪽 Mission 5. 모든 모서리 길이가 3m 30cm인 사각뿔의 모서리에 15cm 간격으로 점을 찍고 꼭짓점까지 포함한 점의 수를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 구조와 공식 값 173을 대조하고, 한 모서리의 안쪽 점과 다섯 꼭짓점을 나누어 보여 주는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e3-mission-6",
@@ -958,11 +958,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 6,
-      "sourceShape": "각뿔의 밑면, 옆면, 꼭짓점, 모서리 또는 전개도에서 주어진 조건을 읽고 구성 요소나 길이를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 12쪽 Mission 6. 변 6cm·6cm·4cm인 삼각형, 6cm×4cm 직사각형, 4cm×4cm 정사각형 종이의 사용 개수로 삼각기둥과 사각뿔을 만들고 모서리 길이 합의 차를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 종이 모양·사용표·공식 값 4cm를 대조하고, 두 완성 입체를 답에 다시 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e4-exploration",

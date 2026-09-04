@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 28
+    "unlocked": 32
   },
   "items": [
     {
@@ -1174,7 +1174,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e3-example-3-1",
       "sourceSection": "example",
       "sourceItemLabel": "예제 3-1",
-      "typeLabel": "면, 모서리, 꼭짓점 수로 각뿔의 모서리 수 찾기",
+      "typeLabel": "각기둥의 면·모서리·꼭짓점 수로 각뿔의 모서리 수 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -1274,7 +1274,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e3-mission-1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
-      "typeLabel": "각뿔과 각기둥을 붙인 입체의 면·모서리·꼭짓점 세기",
+      "typeLabel": "각기둥과 각뿔의 면 수를 보고 모서리 수의 곱 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -1399,7 +1399,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e3-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "삼각뿔의 모든 면을 지나는 가장 짧은 선 그리기",
+      "typeLabel": "종이 조각으로 만든 두 입체의 모서리 길이 비교하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -16327,7 +16327,11 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     ["6-1-u2-e1-mission-5", ["sourceGrade6PrismsPyramidsE1", 3]],
     ["6-1-u2-e2-example-2-2", ["sourceGrade6PrismsPyramidsE2", 0]],
     ["6-1-u2-e2-mission-2", ["sourceGrade6PrismsPyramidsE2", 1]],
-    ["6-1-u2-e2-mission-5", ["sourceGrade6PrismsPyramidsE2", 2]]
+    ["6-1-u2-e2-mission-5", ["sourceGrade6PrismsPyramidsE2", 2]],
+    ["6-1-u2-e3-example-3-1", ["sourceGrade6PrismsPyramidsE3", 0]],
+    ["6-1-u2-e3-mission-1", ["sourceGrade6PrismsPyramidsE3", 1]],
+    ["6-1-u2-e3-mission-5", ["sourceGrade6PrismsPyramidsE3", 2]],
+    ["6-1-u2-e3-mission-6", ["sourceGrade6PrismsPyramidsE3", 3]]
   ]);
   window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     if (!verifiedPools.has(item.sourceItemId)) return;
