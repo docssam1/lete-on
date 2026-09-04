@@ -86,13 +86,40 @@ function digitalDigit(value) {
   return `<svg class="b1-digit" viewBox="0 0 45 74" role="img" aria-label="디지털 숫자 ${value}">${Object.entries(SEGMENT_PATHS).map(([name, path]) => `<path class="${segments.includes(name) ? "on" : ""}" d="${path}"/>`).join("")}</svg>`;
 }
 
+function digitalNumber(value) {
+  return String(value).split("").map((digit) => digitalDigit(Number(digit))).join("");
+}
+
 const operationShort = (operation) => ({
   "mirror-left-right": "좌우 뒤집기", "mirror-top-bottom": "위아래 뒤집기", "rotate-half": "반 바퀴"
 }[operation] || operation);
 
 function digitalTransformMarkup(visual) {
-  const options = visual.options.map((option) => `<span><b>${option.option}</b>${option.value}</span>`).join("");
-  return `<div class="b1-digital-transform"><div>${visual.digits.map(digitalDigit).join("")}<i>→</i><strong>${operationShort(visual.operation)}</strong></div><div class="b1-number-options">${options}</div></div>`;
+  const options = (visual.options || []).map((option) => `<span><b>${option.option}</b>${option.value}</span>`).join("");
+  return `<div class="b1-digital-transform"><div>${visual.digits.map(digitalDigit).join("")}<i>→</i><strong>${operationShort(visual.operation)}</strong></div>${options ? `<div class="b1-number-options">${options}</div>` : ""}</div>`;
+}
+
+function digitalRuleBoardMarkup(visual) {
+  const numbers = visual.digits.map((value) => `<span>${digitalNumber(value)}<b>${value}</b></span>`).join("");
+  return `<div class="b1-digital-rule-board" role="img" aria-label="디지털 숫자를 ${operationShort(visual.operation)} 전의 모습"><div class="b1-digital-rule-numbers ${visual.grouped ? "grouped" : ""}">${numbers}</div><strong>판 전체를 ${operationShort(visual.operation)}</strong><small>켜진 선과 자리 순서를 함께 움직이세요.</small></div>`;
+}
+
+function mirrorCompassMarkup(visual) {
+  const target = visual.target || "right";
+  const source = visual.source || "top-left";
+  const sourceArm = source === "bottom-right" ? "M0 0L-18 18" : "M0 0L-18 -18";
+  const choices = [
+    ["1", "M0 20V-20M0-12L-18 6"],
+    ["2", "M0 20V-20M0-12L18 6"],
+    ["3", "M0-20V20M0 12L-18 -6"],
+    ["4", "M0-20V20M0 12L18 -6"]
+  ];
+  const mirrorClass = (side) => side === target ? "target" : "";
+  return `<div class="b1-mirror-work" role="img" aria-label="가운데 모양과 위, 아래, 왼쪽, 오른쪽 거울"><svg viewBox="0 0 360 220"><g class="mirrors"><rect class="${mirrorClass("top")}" x="150" y="9" width="60" height="18"/><rect class="${mirrorClass("bottom")}" x="150" y="137" width="60" height="18"/><rect class="${mirrorClass("left")}" x="85" y="55" width="18" height="60"/><rect class="${mirrorClass("right")}" x="257" y="55" width="18" height="60"/></g><g class="source" transform="translate(180 82)"><path d="M0 35V-35${sourceArm}"/></g><text x="180" y="180">${target === "right" ? "오른쪽" : target === "left" ? "왼쪽" : target === "top" ? "위쪽" : "아래쪽"} 거울</text>${choices.map(([label, path], index) => `<g class="choice" transform="translate(${55 + index * 84} 205)"><path d="${path}"/><text x="27" y="0">${label}</text></g>`).join("")}</svg></div>`;
+}
+
+function arithmeticListMarkup(visual) {
+  return `<div class="b1-arithmetic-list" role="img" aria-label="기초 연산식"><strong>차례로 계산하세요</strong><div>${visual.expressions.map((expression, index) => `<span><b>${index + 1}</b>${esc(expression)}<i>=</i><em>?</em></span>`).join("")}</div></div>`;
 }
 
 function digitalOrientationBoardMarkup(visual) {
@@ -159,6 +186,31 @@ function conditionCardMarkup(visual) {
   return `<div class="b1-condition-card"><strong>${esc(visual.title)}</strong><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
 }
 
+function placeValueBlocksMarkup(visual) {
+  const places = [
+    ["천", visual.thousands, "thousand"],
+    ["백", visual.hundreds, "hundred"],
+    ["십", visual.tens, "ten"],
+    ["일", visual.ones, "one"]
+  ];
+  return `<div class="b1-place-value-blocks" role="img" aria-label="천, 백, 십, 일 수 모형"><div>${places.map(([label, count, kind]) => `<section><span class="blocks ${kind}">${Array.from({ length: count }, () => "<i></i>").join("")}</span><strong>${label}</strong><b>${count}개</b></section>`).join("")}</div><p>자릿값이 큰 모형부터 차례로 읽으세요.</p></div>`;
+}
+
+function equalSplitSetMarkup(visual) {
+  return `<div class="b1-equal-split-set" role="img" aria-label="수를 같은 수로 나누는 연산"><strong>같은 ${visual.divisor}수로 나누기</strong><div>${visual.values.map((value) => `<span><b>${value}</b><i>÷ ${visual.divisor}</i><em>?</em></span>`).join("")}</div></div>`;
+}
+
+function orderLineMarkup(visual) {
+  const hidden = new Set(visual.hidden || []);
+  return `<div class="b1-order-line" role="img" aria-label="앞에서 뒤로 선 사람의 순서"><b>앞</b><div>${visual.order.map((person, index) => `<span>${hidden.has(index) ? "?" : esc(person)}</span>`).join("")}</div><b>뒤</b></div>`;
+}
+
+function equalizeTransferMarkup(visual) {
+  const maxDots = 20;
+  const dots = (count) => Array.from({ length: Math.min(count, maxDots) }, () => "<i></i>").join("");
+  return `<div class="b1-equalize-transfer" role="img" aria-label="A와 B가 가진 수를 같게 만드는 이동"><section><strong>A</strong><div>${dots(visual.left)}</div><b>${visual.left}개</b></section><span>몇 개를<br>옮길까요?</span><section><strong>B</strong><div>${dots(visual.right)}</div><b>${visual.right}개</b></section>${visual.left > maxDots || visual.right > maxDots ? '<small>점은 양의 크기를 비교하는 모형이며 정확한 수는 숫자로 확인합니다.</small>' : ""}</div>`;
+}
+
 function numberSequenceMarkup(visual) {
   return `<div class="b1-number-sequence">${visual.shown.map((value, index) => `<span class="${value == null ? "blank" : ""}">${value == null ? "" : value}</span>${index < visual.shown.length - 1 ? "<i>→</i>" : ""}`).join("")}</div>`;
 }
@@ -173,14 +225,21 @@ export function book01Markup(visual) {
   if (visual.subtype === "shape-transform") return shapeTransformMarkup(visual);
   if (visual.subtype === "partition-draw") return partitionDrawMarkup(visual);
   if (visual.subtype === "digital-transform") return digitalTransformMarkup(visual);
+  if (visual.subtype === "digital-rule-board") return digitalRuleBoardMarkup(visual);
   if (visual.subtype === "digital-orientation-board") return digitalOrientationBoardMarkup(visual);
   if (visual.subtype === "digital-related-addition") return digitalRelatedAdditionMarkup(visual);
+  if (visual.subtype === "mirror-compass") return mirrorCompassMarkup(visual);
+  if (visual.subtype === "arithmetic-list") return arithmeticListMarkup(visual);
   if (visual.subtype === "circle-magic") return circleMagicMarkup(visual);
   if (visual.subtype === "five-card-magic") return fiveCardMagicMarkup(visual);
   if (visual.subtype === "sum-grid") return sumGridMarkup(visual);
   if (visual.subtype === "ring-lines") return ringLinesMarkup(visual);
   if (visual.subtype === "condition-card") return conditionCardMarkup(visual);
+  if (visual.subtype === "place-value-blocks") return placeValueBlocksMarkup(visual);
+  if (visual.subtype === "equal-split-set") return equalSplitSetMarkup(visual);
   if (visual.subtype === "number-sequence") return numberSequenceMarkup(visual);
   if (visual.subtype === "logic-clues") return logicCluesMarkup(visual);
+  if (visual.subtype === "order-line") return orderLineMarkup(visual);
+  if (visual.subtype === "equalize-transfer") return equalizeTransferMarkup(visual);
   return "";
 }

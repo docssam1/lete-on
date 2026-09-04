@@ -100,6 +100,47 @@ function magicLineTargetVisual(phase, model) {
   return `<div class="guided-magic-visual ${phase}" role="img" aria-label="3x3 마방진의 완성 줄을 찾아 빈칸을 역산하는 과정"><div class="guided-magic-grid">${grid.map((value, index) => `<span class="${index < 3 ? "is-target-line" : ""}">${value}</span>`).join("")}</div><div class="guided-magic-equation">${phase === "complete" ? "완성된 줄을 찾아요" : `${line} = ${model.lineSum}`}${["solve", "verify"].includes(phase) ? ` → 빈칸 = ${model.target}` : " → ?"}</div><p class="guided-magic-rule">3×3 마방진은 9칸이고, 가로·세로·대각선 한 줄의 합은 ${model.lineSum}예요.</p><p>${phase === "complete" ? "가로, 세로, 대각선을 살펴 한 줄을 정합니다." : phase === "target" ? `이 줄의 합은 ${model.lineSum}이므로 빈칸을 찾아요.` : phase === "solve" ? `${model.lineSum}에서 알고 있는 수를 빼서 빈칸 ${model.target}을 역산합니다.` : `빈칸 ${model.target}을 넣어 다른 줄의 합도 확인합니다.`}</p></div>`;
 }
 
+function mirrorDirectionVisual(phase) {
+  const sideVisible = ["side", "vertical", "compare"].includes(phase);
+  const verticalVisible = ["vertical", "compare"].includes(phase);
+  return `<div class="guided-mirror-direction ${phase}" role="img" aria-label="거울 방향에 따라 선이 좌우 또는 위아래로 바뀌는 과정"><svg viewBox="0 0 420 210"><path class="axis vertical" d="M210 16V194"/><path class="axis horizontal" d="M35 105H385"/><g class="source" transform="translate(105 66)"><path d="M0 32V-25M0-15L-30-15"/></g>${sideVisible ? '<g class="side" transform="translate(315 66)"><path d="M0 32V-25M0-15L30-15"/></g>' : ''}${verticalVisible ? '<g class="bottom" transform="translate(105 148)"><path d="M0-32V25M0 15L-30 15"/></g>' : ''}<text x="105" y="22">처음 모양</text><text x="315" y="22">좌우 거울</text><text x="105" y="203">위아래 거울</text></svg><p>${phase === "source" ? "비스듬한 선이 세로선의 위쪽 왼편에 있습니다." : phase === "side" ? "옆 거울에서는 높이는 그대로, 왼쪽과 오른쪽만 바뀝니다." : phase === "vertical" ? "위아래 거울에서는 좌우는 그대로, 높이만 바뀝니다." : "거울선에서 같은 거리인지 세 방향을 다시 비교합니다."}</p></div>`;
+}
+
+function digitalTransformVisual(phase, model) {
+  const steps = [
+    ["source", model.source, "처음 숫자의 켜진 선을 봅니다."],
+    ["flip", model.flipped, "좌우로 뒤집으면 2와 5가 서로 바뀝니다."],
+    ["half", model.halfTurned, "반 바퀴에서는 위아래와 자리 순서도 함께 바뀝니다."],
+    ["equation", `${model.source} + ${model.flipped}`, "바뀐 수를 먼저 적고 계산합니다."]
+  ];
+  const active = Math.max(0, steps.findIndex(([name]) => name === phase));
+  return `<div class="guided-digital-transform ${phase}" role="img" aria-label="디지털 숫자의 선분을 움직여 뒤집고 돌리는 과정"><div>${steps.map(([name, value], index) => `<span class="${index <= active ? "visible" : ""}"><small>${index + 1}</small><b>${value}</b><i>${name === "source" ? "처음" : name === "flip" ? "좌우" : name === "half" ? "반 바퀴" : "계산"}</i></span>`).join("")}</div><p>${steps[active][2]}</p></div>`;
+}
+
+function sumGridPlacementVisual(phase) {
+  const values = phase === "given" ? [3, "", "", ""] : phase === "row" ? [3, 5, "", ""] : phase === "column" ? [3, 5, 6, ""] : [3, 5, 6, 4];
+  return `<div class="guided-sum-grid-placement ${phase}" role="img" aria-label="숫자 카드를 한 번씩 놓아 가로와 세로 합을 맞추는 과정"><div class="cards"><span>4</span><span>5</span><span>6</span></div><div class="board">${values.map((value) => `<b>${value}</b>`).join("")}<i class="r1">8</i><i class="r2">10</i><i class="c1">9</i><i class="c2">9</i></div><p>${phase === "given" ? "3이 놓인 표와 사용할 카드 4, 5, 6을 확인합니다." : phase === "row" ? "윗줄은 8이므로 8-3=5를 놓습니다." : phase === "column" ? "왼쪽 세로줄은 9이므로 9-3=6을 놓습니다." : "남은 4를 놓고 네 줄의 합을 모두 확인합니다."}</p></div>`;
+}
+
+function numberConditionFilterVisual(phase, model) {
+  const firstDone = ["first", "second", "verify"].includes(phase);
+  const secondDone = ["second", "verify"].includes(phase);
+  return `<div class="guided-number-filter ${phase}" role="img" aria-label="후보 수에 조건을 하나씩 적용하는 과정"><div>${model.candidates.map((value) => `<span class="${secondDone && !model.answer.includes(value) ? "removed" : firstDone ? "kept" : ""}">${value}</span>`).join("")}</div><ol><li class="${firstDone ? "done" : ""}">각 자리의 합이 4</li><li class="${secondDone ? "done" : ""}">홀수</li></ol><p>${phase === "candidates" ? "먼저 빠짐없이 후보를 적습니다." : phase === "first" ? "13, 22, 31, 40은 첫 조건을 모두 만족합니다." : phase === "second" ? "짝수인 22와 40을 지우면 13과 31이 남습니다." : "13과 31의 자리 합과 홀짝을 다시 확인합니다."}</p></div>`;
+}
+
+function relativeOrderVisual(phase, model) {
+  const shown = phase === "empty" ? ["?", "?", "?", "?"] : phase === "last" ? ["?", "?", "?", "A"] : phase === "pair" ? ["?", "?", "C", "A"] : model.answer;
+  return `<div class="guided-relative-order ${phase}" role="img" aria-label="조건을 읽어 앞뒤 순서를 정하는 과정"><div><b>앞</b>${shown.map((person) => `<span>${person}</span>`).join("")}<b>뒤</b></div><p>${phase === "empty" ? "왼쪽을 앞, 오른쪽을 뒤로 정합니다." : phase === "last" ? "A를 가장 뒤에 고정합니다." : phase === "pair" ? "C를 A의 바로 앞에 붙입니다." : "D를 B와 C 사이에 놓으면 B-D-C-A입니다."}</p></div>`;
+}
+
+function equalizeTransferVisual(phase, model) {
+  const moved = ["move", "equal"].includes(phase) ? model.transfer : 0;
+  const left = model.left - moved;
+  const right = model.right + moved;
+  const dots = (count, name) => `<span aria-label="${name} ${count}개">${Array.from({ length: count }, () => "<i></i>").join("")}</span>`;
+  return `<div class="guided-equalize-transfer ${phase}" role="img" aria-label="많은 쪽에서 적은 쪽으로 옮겨 수를 같게 만드는 과정"><div>${dots(left, "A")}<b>${left}</b></div><strong>${phase === "difference" ? `${model.left}-${model.right}=${model.left-model.right}` : phase === "move" ? `${model.transfer}개 이동` : phase === "equal" ? `${left} = ${right}` : "차이는 몇 개?"}</strong><div>${dots(right, "B")}<b>${right}</b></div><p>${phase === "start" ? "두 양을 나란히 놓고 차이를 봅니다." : phase === "difference" ? "차이를 2로 나누면 옮길 수가 됩니다." : phase === "move" ? "많은 쪽에서 적은 쪽으로 차이의 절반을 옮깁니다." : "두 양이 같은지 마지막으로 확인합니다."}</p></div>`;
+}
+
 export function guidedConceptVisual(experience, step) {
   const beat = experience.beats[Math.max(0, Math.min(step, experience.beats.length - 1))];
   if (experience.family === "fold-symmetry") return foldVisual(beat.phase);
@@ -113,6 +154,12 @@ export function guidedConceptVisual(experience, step) {
   if (experience.family === "multiple-direction") return multipleDirectionVisual(beat.phase, experience.model);
   if (experience.family === "vertical-cryptarithm-carry") return verticalCryptarithmVisual(beat.phase, experience.model);
   if (experience.family === "magic-line-target") return magicLineTargetVisual(beat.phase, experience.model);
+  if (experience.family === "mirror-direction") return mirrorDirectionVisual(beat.phase, experience.model);
+  if (experience.family === "digital-transform") return digitalTransformVisual(beat.phase, experience.model);
+  if (experience.family === "sum-grid-placement") return sumGridPlacementVisual(beat.phase, experience.model);
+  if (experience.family === "number-condition-filter") return numberConditionFilterVisual(beat.phase, experience.model);
+  if (experience.family === "relative-order") return relativeOrderVisual(beat.phase, experience.model);
+  if (experience.family === "equalize-transfer") return equalizeTransferVisual(beat.phase, experience.model);
   return "";
 }
 

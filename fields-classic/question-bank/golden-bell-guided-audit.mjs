@@ -4,7 +4,17 @@ import {
   guidedConceptVisual
 } from "./golden-bell-guided-experiences.js";
 
-const expectedIds = ["fold-one-cut", "equal-line-sums", "preference-logic"];
+const expectedIds = [
+  "mirror-reflection",
+  "digital-turn-flip",
+  "fold-one-cut",
+  "equal-line-sums",
+  "gakuro-sum-grid",
+  "number-inference",
+  "preference-logic",
+  "relative-order-running",
+  "book1-equalize-transfer"
+];
 const failures = [];
 
 function fail(message) {
@@ -113,7 +123,7 @@ function audit() {
   if (failures.length) {
     throw new Error(`guided audit failed (${failures.length})\n- ${failures.join("\n- ")}`);
   }
-  console.log("golden-bell guided audit passed: book-01 3 guided-concepts, 3 unique families, visuals and print summaries verified");
+  console.log(`golden-bell guided audit passed: book-01 ${guidedLessons.length} guided concepts, unique families, visuals and print summaries verified`);
 }
 
 try {

@@ -36,7 +36,8 @@ async function auditViewport(browser, viewport, label) {
       const extensionStep = page.locator('.stage-step[data-phase="extension"]');
       assert.equal(await extensionStep.isDisabled(), false, `${label}/${book.id}/${lesson.id}: additional learning is locked`);
       await extensionStep.click();
-      assert.match(await page.locator(".daily-quiz-head aside").innerText(), /2문제 중 1번째[\s\S]*이 권 8문제[\s\S]*약 30분/u, `${label}/${book.id}/${lesson.id}: daily workload label missing`);
+      const workloadPattern = new RegExp(`2문제 중 1번째[\\s\\S]*이 권 ${book.dailyPractice.problemCount}문제[\\s\\S]*약 ${book.dailyPractice.estimatedMinutes}분`, "u");
+      assert.match(await page.locator(".daily-quiz-head aside").innerText(), workloadPattern, `${label}/${book.id}/${lesson.id}: daily workload label missing`);
       assert.equal(await page.locator(".extension-solution").count(), 0, `${label}/${book.id}/${lesson.id}: first solution leaked`);
       await page.locator("[data-extension-skip]").click();
       await page.locator('[data-check="extension"]').click();
@@ -75,7 +76,7 @@ const browser = await chromium.launch({ headless: true });
 try {
   const desktop = await auditViewport(browser, { width: 1440, height: 1050 }, "desktop");
   const mobile = await auditViewport(browser, { width: 390, height: 844 }, "mobile");
-  console.log(`GOLDEN_BELL_SIMILAR_BROWSER_OK desktop=${desktop} mobile=${mobile} solutions=80 workload=8/30min`);
+  console.log(`GOLDEN_BELL_SIMILAR_BROWSER_OK desktop=${desktop} mobile=${mobile} solutions=${desktop + mobile} workload=2-per-lesson/30min`);
 } finally {
   await browser.close();
 }

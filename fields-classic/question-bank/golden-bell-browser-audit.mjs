@@ -207,9 +207,15 @@ async function auditReducedMotionClock() {
 
 async function auditBookOneGuidedConcepts() {
   const cases = [
+    { id: "mirror-reflection", family: "mirror-direction", wrong: "아래쪽 왼편", answer: "위쪽 오른편" },
+    { id: "digital-turn-flip", family: "digital-transform", wrong: "숫자 5", answer: "숫자 2" },
     { id: "fold-one-cut", family: "fold-symmetry", wrong: "한쪽에만 남아요", answer: "접은 선에서 같은 거리에 마주 봐요" },
     { id: "equal-line-sums", family: "equal-line", wrong: "5", answer: "7" },
-    { id: "preference-logic", family: "one-to-one-logic", wrong: "빨강", answer: "노랑" }
+    { id: "gakuro-sum-grid", family: "sum-grid-placement", wrong: "4개", answer: "5개" },
+    { id: "number-inference", family: "number-condition-filter", wrong: "22와 40", answer: "13과 31" },
+    { id: "preference-logic", family: "one-to-one-logic", wrong: "빨강", answer: "노랑" },
+    { id: "relative-order-running", family: "relative-order", wrong: "가", answer: "라" },
+    { id: "book1-equalize-transfer", family: "equalize-transfer", wrong: "2개", answer: "3개" }
   ];
 
   for (const item of cases) {

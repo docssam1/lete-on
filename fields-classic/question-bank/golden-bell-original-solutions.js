@@ -273,6 +273,11 @@ export function attachOriginalSolutions(books) {
     for (const lesson of book.lessons) {
       const key = `${book.id}/${lesson.id}`;
       const solutions = ORIGINAL_SOLUTIONS[key];
+      const hasInlineSolutions = lesson.original.items.every((item) => typeof item.solution === "string" && item.solution.trim());
+      if (hasInlineSolutions) {
+        if (solutions) usedKeys.add(key);
+        continue;
+      }
       if (!solutions) throw new Error(`${key}: original solution set missing`);
       if (solutions.length !== lesson.original.items.length) {
         throw new Error(`${key}: expected ${lesson.original.items.length} solutions, received ${solutions.length}`);
