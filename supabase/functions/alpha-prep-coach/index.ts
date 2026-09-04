@@ -1,12 +1,13 @@
 import "jsr:@supabase/functions-js@2.5.0/edge-runtime.d.ts";
 import {
-  buildInstructions,
-  extractOutputText,
+  buildCoachProviderRequest,
+  extractCoachProviderText,
   parseModelResult,
-  schemaFor,
   validatePayload,
 } from "./core.mjs";
 
+const COACH_PROVIDER_URL = Deno.env.get("ALPHA_PREP_COACH_URL") ||
+  "https://algebra2-gemini-proxy-v2-243382036810.asia-northeast3.run.app/api/openai";
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
   "https://docssam1.github.io",
@@ -85,37 +86,18 @@ Deno.serve(async (req: Request) => {
   if (declaredLength > 30_000) return json(req, { error: "body_too_large" }, 413);
 
   try {
-    const apiKey = Deno.env.get("OPENAI_API_KEY") || "";
-    if (!apiKey) return json(req, { error: "coach_not_configured" }, 503);
     const payload = validatePayload(await req.json());
     const mode = payload.mode;
-    const schema = schemaFor(mode);
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 24_000);
+    const timeout = setTimeout(() => controller.abort(), 30_000);
     let response: Response;
     try {
-      response = await fetch("https://api.openai.com/v1/responses", {
+      response = await fetch(COACH_PROVIDER_URL, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: Deno.env.get("ALPHA_PREP_MODEL") || "gpt-5.6-luna",
-          instructions: buildInstructions(mode),
-          input: JSON.stringify(payload),
-          store: false,
-          max_output_tokens: mode === "report" ? 2600 : 750,
-          reasoning: { effort: mode === "report" ? "medium" : "low" },
-          text: {
-            format: {
-              type: "json_schema",
-              name: mode === "report" ? "alpha_prep_report" : "alpha_prep_turn",
-              strict: true,
-              schema,
-            },
-          },
-        }),
+        body: JSON.stringify(buildCoachProviderRequest(mode, payload)),
         signal: controller.signal,
       });
     } finally {
@@ -123,13 +105,21 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!response.ok) {
+      let category = "unknown";
+      try {
+        const providerError = await response.json();
+        if (typeof providerError?.category === "string") category = providerError.category.slice(0, 40);
+      } catch (_) { /* provider returned no structured error */ }
+      console.error("alpha-prep provider failure", JSON.stringify({ status: response.status, category }));
       const status = response.status >= 500 ? 503 : 502;
       return json(req, { error: "coach_unavailable" }, status);
     }
     const modelResponse = await response.json();
-    return json(req, parseModelResult(mode, extractOutputText(modelResponse)));
+    return json(req, parseModelResult(mode, extractCoachProviderText(modelResponse)));
   } catch (error) {
     const code = error instanceof Error ? error.message : "coach_unavailable";
+    const name = error instanceof Error ? error.name : "unknown";
+    console.error("alpha-prep request failure", JSON.stringify({ name, code: code.slice(0, 80) }));
     const clientErrors = new Set([
       "body_invalid", "mode_invalid", "passage_invalid", "turn_invalid", "turns_invalid",
     ]);
