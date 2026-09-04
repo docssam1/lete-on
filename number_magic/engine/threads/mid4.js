@@ -58,7 +58,13 @@ NM_TGEN['md21_polyMulDiv'] = function (params, rng) {
         zh: `把两个括号分别展开相乘，再合并同类项`
       },
       tex: `(${a}x ${wrapPlus(b)})(${c}x ${wrapPlus(d)}) = \\square x^2 + \\square x + \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `(${a}x)(${c}x) = \\square x^2`, blank: a * c },
+        { tex: `(${a}x)(${d}) + (${b})(${c}x) = \\square x`, blank: a * d + b * c },
+        { tex: `(${b})(${d}) = \\square`, blank: b * d },
+        { tex: `= \\square x^2 + \\square x + \\square`, blank: answer }
+      ]
     };
   }
 
@@ -75,7 +81,12 @@ NM_TGEN['md21_polyMulDiv'] = function (params, rng) {
         zh: `用综合除法——乘以k再加上下一个系数，重复进行`
       },
       tex: `(${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)}) \\div (x - ${k}) = ${a}x + \\square \\;\\; \\text{R} \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `${a} \\times ${k} + ${b} = \\square`, blank: m },
+        { tex: `${m} \\times ${k} + ${c} = \\square`, blank: r },
+        { tex: `${a}x + \\square \\;\\; \\text{R} \\square`, blank: answer }
+      ]
     };
   }
 
@@ -90,7 +101,13 @@ NM_TGEN['md21_polyMulDiv'] = function (params, rng) {
       zh: `把二项式的两项分别乘三项式的每一项`
     },
     tex: `(${a}x ${wrapPlus(b)})(${c}x^2 ${wrapPlus(d)}x ${wrapPlus(e)}) = \\square x^3 + \\square x^2 + \\square x + \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `(${a}x)(${c}x^2) = \\square x^3`, blank: a * c },
+      { tex: `(${a}x)(${d}x)+(${b})(${c}x^2) = \\square x^2`, blank: a * d + b * c },
+      { tex: `(${a}x)(${e})+(${b})(${d}x) = \\square x, \\;\\; (${b})(${e}) = \\square`, blank: [a * e + b * d, b * e] },
+      { tex: `= \\square x^3+\\square x^2+\\square x+\\square`, blank: answer }
+    ]
   };
 };
 
@@ -113,7 +130,11 @@ NM_TGEN['md22_cubeFormula'] = function (params, rng) {
         zh: `(x+a)³ = x³+3ax²+3a²x+a³——中间两项各乘3，最后一项是立方`
       },
       tex: `(x + ${a})^3 = x^3 + \\square x^2 + \\square x + \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `(x+${a})^3 = x^3+3(${a})x^2+3(${a})^2x+(${a})^3` },
+        { tex: `= x^3+\\square x^2+\\square x+\\square`, blank: answer }
+      ]
     };
   }
 
@@ -127,7 +148,11 @@ NM_TGEN['md22_cubeFormula'] = function (params, rng) {
         zh: `a是负数公式也一样——把符号原样代入`
       },
       tex: `(x ${wrapPlus(a)})^3 = x^3 + \\square x^2 + \\square x + \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `(x ${wrapPlus(a)})^3 = x^3+3(${a})x^2+3(${a})^2x+(${a})^3` },
+        { tex: `= x^3+\\square x^2+\\square x+\\square`, blank: answer }
+      ]
     };
   }
 
@@ -138,13 +163,16 @@ NM_TGEN['md22_cubeFormula'] = function (params, rng) {
   const tex = sign === '+'
     ? `(x + ${a})(x^2 - ${a}x + ${a * a}) = x^3 + \\square`
     : `(x - ${a})(x^2 + ${a}x + ${a * a}) = x^3 - \\square`;
+  const solution = sign === '+'
+    ? [{ tex: `(x+${a})(x^2-${a}x+${a * a}) = x^3 + ${a}^3` }, { tex: `= x^3 + \\square`, blank: cube }]
+    : [{ tex: `(x-${a})(x^2+${a}x+${a * a}) = x^3 - ${a}^3` }, { tex: `= x^3 - \\square`, blank: cube }];
   return {
     prompt: {
       ko: `x³±a³ = (x±a)(x²∓ax+a²) — 두 인수를 곱하면 가운데 항들이 사라져요`,
       en: `x³±a³ = (x±a)(x²∓ax+a²) — multiplying the two factors cancels the middle terms`,
       zh: `x³±a³ = (x±a)(x²∓ax+a²)——两因式相乘，中间项互相抵消`
     },
-    tex, answer: cube, answerType: 'number', widget: 'numpad'
+    tex, answer: cube, answerType: 'number', widget: 'numpad', solution
   };
 };
 
@@ -165,7 +193,11 @@ NM_TGEN['md23_identity'] = function (params, rng) {
         zh: `如果对任意x都成立(恒等式)，两边x的系数相等，常数项也相等`
       },
       tex: `\\square x + \\square \\equiv ${C}x ${wrapPlus(D)}`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `${C}x ${wrapPlus(D)}` },
+        { tex: `\\square x + \\square \\equiv ${C}x ${wrapPlus(D)}`, blank: answer }
+      ]
     };
   }
 
@@ -182,7 +214,12 @@ NM_TGEN['md23_identity'] = function (params, rng) {
       zh: `先展开左边，整理出x的系数和常数项，再和右边比较`
     },
     tex: `\\square(x - ${p}) + \\square(x - ${q}) \\equiv ${C}x ${wrapPlus(D)}`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `${a}(x-${p})+${b}(x-${q}) = (${a}+${b})x-(${a}\\times${p}+${b}\\times${q})` },
+      { tex: `= ${C}x ${wrapPlus(D)}` },
+      { tex: `\\square(x - ${p}) + \\square(x - ${q}) \\equiv ${C}x ${wrapPlus(D)}`, blank: answer }
+    ]
   };
 };
 
@@ -204,7 +241,11 @@ NM_TGEN['md24_remainderTheorem'] = function (params, rng) {
         zh: `P(x)除以(x-a)的余数，不用做除法，直接算P(a)就行`
       },
       tex: `P(x) = ${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)}, \\;\\; P(${k}) = \\square`,
-      answer: value, answerType: 'number', widget: 'numpad', negative: value < 0
+      answer: value, answerType: 'number', widget: 'numpad', negative: value < 0,
+      solution: [
+        { tex: `P(${k}) = ${a}(${k})^2 ${wrapPlus(b)}(${k}) ${wrapPlus(c)}` },
+        { tex: `= \\square`, blank: value }
+      ]
     };
   }
 
@@ -219,7 +260,11 @@ NM_TGEN['md24_remainderTheorem'] = function (params, rng) {
         zh: `三次式也是同样的道理——不管次数多高，直接把数代入x就行`
       },
       tex: `P(x) = ${a}x^3 ${wrapPlus(b)}x^2 ${wrapPlus(c)}x ${wrapPlus(d)}, \\;\\; P(${k}) = \\square`,
-      answer: value, answerType: 'number', widget: 'numpad', negative: value < 0
+      answer: value, answerType: 'number', widget: 'numpad', negative: value < 0,
+      solution: [
+        { tex: `P(${k}) = ${a}(${k})^3 ${wrapPlus(b)}(${k})^2 ${wrapPlus(c)}(${k}) ${wrapPlus(d)}` },
+        { tex: `= \\square`, blank: value }
+      ]
     };
   }
 
@@ -234,7 +279,11 @@ NM_TGEN['md24_remainderTheorem'] = function (params, rng) {
       zh: `反过来用P(n)=余数——找出使代入值等于余数的系数`
     },
     tex: `P(x) = x^3 + \\square x ${wrapPlus(c0)}, \\;\\; P(${n}) = ${remainder}`,
-    answer: k, answerType: 'number', widget: 'numpad', negative: k < 0
+    answer: k, answerType: 'number', widget: 'numpad', negative: k < 0,
+    solution: [
+      { tex: `(${n})^3 ${wrapPlus(c0)} = ${n * n * n + c0}` },
+      { tex: `${n * n * n + c0} + \\square\\times ${n} = ${remainder}`, blank: k }
+    ]
   };
 };
 
@@ -256,7 +305,11 @@ NM_TGEN['md25_factorAdvanced'] = function (params, rng) {
         zh: `x³+a³ = (x+a)(x²-ax+a²)——注意符号，填出三个空格`
       },
       tex: `x^3 + ${a * a * a} = (x + \\square)(x^2 + \\square x + \\square)`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `x^3+${a * a * a} = (x+${a})(x^2-${a}x+${a}^2)` },
+        { tex: `= (x+\\square)(x^2+\\square x+\\square)`, blank: answer }
+      ]
     };
   }
 
@@ -270,7 +323,11 @@ NM_TGEN['md25_factorAdvanced'] = function (params, rng) {
         zh: `x³-a³ = (x-a)(x²+ax+a²)——两个空格都直接填a`
       },
       tex: `x^3 - ${a * a * a} = (x - \\square)(x^2 + \\square x + \\square)`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `x^3-${a * a * a} = (x-${a})(x^2+${a}x+${a}^2)` },
+        { tex: `= (x-\\square)(x^2+\\square x+\\square)`, blank: answer }
+      ]
     };
   }
 
@@ -286,7 +343,12 @@ NM_TGEN['md25_factorAdvanced'] = function (params, rng) {
       zh: `把x²看成t，就变成t²+bt+c——找相加得b、相乘得c的两个数(先填较小的)`
     },
     tex: `x^4 ${wrapPlus(p)}x^2 ${wrapPlus(q)} = (x^2 + \\square)(x^2 + \\square)`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `t = x^2 \\;\\Rightarrow\\; t^2 ${wrapPlus(p)}t ${wrapPlus(q)}` },
+      { tex: `t^2 ${wrapPlus(p)}t ${wrapPlus(q)} = (t + \\square)(t + \\square)`, blank: answer },
+      { tex: `= (x^2 + \\square)(x^2 + \\square)`, blank: answer }
+    ]
   };
 };
 
@@ -307,7 +369,11 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
         zh: `求根之前先算判别式D=b²-4ac——它像侦察兵一样提前告诉你有几个根`
       },
       tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; D = \\square`,
-      answer: D, answerType: 'number', widget: 'numpad', negative: D < 0
+      answer: D, answerType: 'number', widget: 'numpad', negative: D < 0,
+      solution: [
+        { tex: `D = ${b}^2 - 4(${a})(${c})` },
+        { tex: `= \\square`, blank: D }
+      ]
     };
   }
 
@@ -333,7 +399,11 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
         zh: `D>0是两个不同实根，D=0是重根(1个)，D<0则没有实根`
       },
       tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\square`,
-      answer: count, answerType: 'number', widget: 'numpad'
+      answer: count, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `D = ${b}^2-4(${a})(${c}) = ${D}` },
+        { tex: `D ${D > 0 ? '>0' : D === 0 ? '=0' : '<0'} \\;\\Rightarrow\\; \\square`, blank: count }
+      ]
     };
   }
 
@@ -347,7 +417,11 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
       zh: `要有重根就要D=0——求出满足k²=4q的正数k，再加上±`
     },
     tex: `x^2 + kx + ${q} = 0 \\;\\Rightarrow\\; k = \\pm\\square`,
-    answer: 2 * m, answerType: 'number', widget: 'numpad'
+    answer: 2 * m, answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `k^2 = 4\\times ${q} = ${4 * q}` },
+      { tex: `k = \\pm\\square`, blank: 2 * m }
+    ]
   };
 };
 
@@ -371,7 +445,11 @@ NM_TGEN['md27_rootsSumProduct'] = function (params, rng) {
         zh: `不用求出根：α+β=-b，αβ=c——只看系数就知道`
       },
       tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\alpha+\\beta=\\square, \\;\\; \\alpha\\beta=\\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `\\alpha+\\beta=-b, \\;\\;\\alpha\\beta=c` },
+        { tex: `\\alpha+\\beta = -(${b}) = \\square, \\;\\; \\alpha\\beta = ${c} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -387,7 +465,11 @@ NM_TGEN['md27_rootsSumProduct'] = function (params, rng) {
         zh: `x²的系数不是1时，除以a：α+β=-b/a，αβ=c/a`
       },
       tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\alpha+\\beta=\\square, \\;\\; \\alpha\\beta=\\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `\\alpha+\\beta=-\\dfrac{b}{a}, \\;\\;\\alpha\\beta=\\dfrac{c}{a}` },
+        { tex: `\\alpha+\\beta = -\\dfrac{${b}}{${a}} = \\square, \\;\\; \\alpha\\beta = \\dfrac{${c}}{${a}} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -402,7 +484,12 @@ NM_TGEN['md27_rootsSumProduct'] = function (params, rng) {
       zh: `把α²+β²改写成(α+β)²-2αβ——只要知道和与积，这类式子也能马上求出`
     },
     tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\alpha^2+\\beta^2=\\square`,
-    answer: target, answerType: 'number', widget: 'numpad', negative: target < 0
+    answer: target, answerType: 'number', widget: 'numpad', negative: target < 0,
+    solution: [
+      { tex: `\\alpha^2+\\beta^2=(\\alpha+\\beta)^2-2\\alpha\\beta` },
+      { tex: `= (${S})^2-2(${P})` },
+      { tex: `= \\square`, blank: target }
+    ]
   };
 };
 
@@ -441,7 +528,12 @@ NM_TGEN['md28_quadraticFormula'] = function (params, rng) {
       zh: `直接代入求根公式x=(-b±√(b²-4ac))/(2a)——不用化简，代入后的形式就是答案`
     },
     tex: `${eqTex} \\;\\Rightarrow\\; x = \\dfrac{\\square \\pm \\sqrt{\\square}}{\\square}`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `D = (${b})^2-4(${a})(${c}) = \\square`, blank: D },
+      { tex: `x = \\dfrac{-b\\pm\\sqrt{D}}{2a}` },
+      { tex: `x = \\dfrac{\\square\\pm\\sqrt{\\square}}{\\square}`, blank: answer }
+    ]
   };
 };
 
@@ -471,7 +563,11 @@ NM_TGEN['md29_quadIneq'] = function (params, rng) {
         zh: `只有两因式符号相反时乘积才是负——解在两根之间`
       },
       tex: `${xFactor(p)}${xFactor(q)} ${sym} 0 \\;\\Rightarrow\\; \\square ${sym} x ${sym} \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `${xFactor(p)}=0 \\;\\Rightarrow\\; x=${p}, \\;\\;\\; ${xFactor(q)}=0 \\;\\Rightarrow\\; x=${q}` },
+        { tex: `${xFactor(p)}${xFactor(q)} ${sym} 0 \\;\\Rightarrow\\; \\square ${sym} x ${sym} \\square`, blank: answer }
+      ]
     };
   }
 
@@ -484,7 +580,11 @@ NM_TGEN['md29_quadIneq'] = function (params, rng) {
         zh: `先把左边因式分解求出两根，解就在两根之间`
       },
       tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} ${sym} 0 \\;\\Rightarrow\\; \\square ${sym} x ${sym} \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = ${xFactor(p)}${xFactor(q)}` },
+        { tex: `${xFactor(p)}${xFactor(q)} ${sym} 0 \\;\\Rightarrow\\; \\square ${sym} x ${sym} \\square`, blank: answer }
+      ]
     };
   }
 
@@ -498,7 +598,12 @@ NM_TGEN['md29_quadIneq'] = function (params, rng) {
       zh: `即使x²的系数不是1，先因式分解，方法完全一样`
     },
     tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} ${sym} 0 \\;\\Rightarrow\\; \\square ${sym} x ${sym} \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = ${a}${xFactor(p)}${xFactor(q)}` },
+      { tex: `${a}${xFactor(p)}${xFactor(q)} ${sym} 0 \\;\\Rightarrow\\; ${xFactor(p)}${xFactor(q)} ${sym} 0` },
+      { tex: `\\Rightarrow\\; \\square ${sym} x ${sym} \\square`, blank: answer }
+    ]
   };
 };
 
@@ -523,7 +628,11 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
         zh: `矩阵加减法只对相同位置(元素)分别运算`
       },
       tex: `${matTex(A)} ${op} ${matTex(B)} = ${BLANK_MAT}`,
-      answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer),
+      solution: [
+        { tex: `\\begin{pmatrix} (${A[0][0]})${op}(${B[0][0]}) & (${A[0][1]})${op}(${B[0][1]}) \\\\ (${A[1][0]})${op}(${B[1][0]}) & (${A[1][1]})${op}(${B[1][1]}) \\end{pmatrix}` },
+        { tex: `= ${BLANK_MAT}`, blank: answer }
+      ]
     };
   }
 
@@ -538,7 +647,11 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
         zh: `数乘就是把每个元素都乘以同一个数`
       },
       tex: `${k} ${matTex(A)} = ${BLANK_MAT}`,
-      answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer),
+      solution: [
+        { tex: `\\begin{pmatrix} ${k}\\times${A[0][0]} & ${k}\\times${A[0][1]} \\\\ ${k}\\times${A[1][0]} & ${k}\\times${A[1][1]} \\end{pmatrix}` },
+        { tex: `= ${BLANK_MAT}`, blank: answer }
+      ]
     };
   }
 
@@ -556,7 +669,12 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
       zh: `矩阵乘法把前者的行与后者的列逐个配对相乘再相加`
     },
     tex: `${matTex(A)} \\times ${matTex(B)} = ${BLANK_MAT}`,
-    answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', answerShape: 'matrix2', negative: hasNeg(answer),
+    solution: [
+      { tex: `r_{11}=(${A[0][0]})(${B[0][0]})+(${A[0][1]})(${B[1][0]}) = \\square, \\;\\; r_{12}=(${A[0][0]})(${B[0][1]})+(${A[0][1]})(${B[1][1]}) = \\square`, blank: [r11, r12] },
+      { tex: `r_{21}=(${A[1][0]})(${B[0][0]})+(${A[1][1]})(${B[1][0]}) = \\square, \\;\\; r_{22}=(${A[1][0]})(${B[0][1]})+(${A[1][1]})(${B[1][1]}) = \\square`, blank: [r21, r22] },
+      { tex: `= ${BLANK_MAT}`, blank: answer }
+    ]
   };
 };
 

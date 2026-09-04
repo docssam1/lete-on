@@ -68,7 +68,11 @@ NM_TGEN['md15_sqrtValue'] = function (params, rng) {
         zh: `找出平方等于${N}的数`
       },
       tex: `\\sqrt{${N}} = \\square`,
-      answer: k, answerType: 'number', widget: 'numpad'
+      answer: k, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${N} = ${k} \\times ${k}` },
+        { tex: `\\sqrt{${N}} = \\square`, blank: k }
+      ]
     };
   }
 
@@ -81,7 +85,11 @@ NM_TGEN['md15_sqrtValue'] = function (params, rng) {
         zh: `平方根再平方，根号消失，回到原来的数`
       },
       tex: `(\\sqrt{${a}})^2 = \\square`,
-      answer: a, answerType: 'number', widget: 'numpad'
+      answer: a, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `\\sqrt{${a}} \\times \\sqrt{${a}} = ${a}` },
+        { tex: `(\\sqrt{${a}})^2 = \\square`, blank: a }
+      ]
     };
   }
 
@@ -94,7 +102,11 @@ NM_TGEN['md15_sqrtValue'] = function (params, rng) {
       zh: `${a}的平方再开方，结果是绝对值|${a}|——结果永远不小于0`
     },
     tex: `\\sqrt{(${a})^2} = \\square`,
-    answer: Math.abs(a), answerType: 'number', widget: 'numpad'
+    answer: Math.abs(a), answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `\\sqrt{(${a})^2} = |${a}|` },
+      { tex: `|${a}| = \\square`, blank: Math.abs(a) }
+    ]
   };
 };
 
@@ -119,7 +131,11 @@ NM_TGEN['md16_simplifyRadical'] = function (params, rng) {
         zh: `在根号内找出完全平方因数，把它提到根号外`
       },
       tex: `\\sqrt{${N}} = \\square\\sqrt{\\square}`,
-      answer: [a, b], answerType: 'number', widget: 'numpad'
+      answer: [a, b], answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${N} = ${a}^2 \\times ${b}` },
+        { tex: `\\sqrt{${N}} = \\square\\sqrt{\\square}`, blank: [a, b] }
+      ]
     };
   }
 
@@ -134,7 +150,11 @@ NM_TGEN['md16_simplifyRadical'] = function (params, rng) {
         zh: `根号前已有系数也一样——把提出来的数和原来的系数相乘`
       },
       tex: `${c}\\sqrt{${N}} = \\square\\sqrt{\\square}`,
-      answer: [c * a, b], answerType: 'number', widget: 'numpad'
+      answer: [c * a, b], answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${N} = ${a}^2 \\times ${b}` },
+        { tex: `${c}\\sqrt{${N}} = ${c}\\times ${a}\\sqrt{${b}} = \\square\\sqrt{\\square}`, blank: [c * a, b] }
+      ]
     };
   }
 
@@ -148,7 +168,11 @@ NM_TGEN['md16_simplifyRadical'] = function (params, rng) {
       zh: `就像48=16×3，根号内同一个质因数出现两次(配对)就能提到根号外——和2与5相遇变成10是同一个道理`
     },
     tex: `\\sqrt{${N}} = \\square\\sqrt{\\square}`,
-    answer: [a, b], answerType: 'number', widget: 'numpad'
+    answer: [a, b], answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `${N} = ${a}^2 \\times ${b}` },
+      { tex: `\\sqrt{${N}} = \\square\\sqrt{\\square}`, blank: [a, b] }
+    ]
   };
 };
 
@@ -175,6 +199,10 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
       steps: [
         { tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\sqrt{\\square}`, blank: N },
         { tex: `\\sqrt{${N}} = \\square`, blank: k }
+      ],
+      solution: [
+        { tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\sqrt{\\square}`, blank: N },
+        { tex: `\\sqrt{${N}} = \\square`, blank: k }
       ]
     };
   }
@@ -192,6 +220,10 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
       tex: `\\sqrt{${a}} \\div \\sqrt{${b}} = \\sqrt{\\square} = \\square`,
       answer: k, answerType: 'steps', widget: 'steps',
       steps: [
+        { tex: `\\sqrt{${a}} \\div \\sqrt{${b}} = \\sqrt{\\square}`, blank: k * k },
+        { tex: `\\sqrt{${k * k}} = \\square`, blank: k }
+      ],
+      solution: [
         { tex: `\\sqrt{${a}} \\div \\sqrt{${b}} = \\sqrt{\\square}`, blank: k * k },
         { tex: `\\sqrt{${k * k}} = \\square`, blank: k }
       ]
@@ -214,7 +246,11 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
       zh: `相乘后若不是完全平方数，就先相乘再化简根号`
     },
     tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\square\\sqrt{\\square}`,
-    answer: [simp.coeff, simp.rad], answerType: 'number', widget: 'numpad'
+    answer: [simp.coeff, simp.rad], answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\sqrt{${N}}` },
+      { tex: `\\sqrt{${N}} = \\square\\sqrt{\\square}`, blank: [simp.coeff, simp.rad] }
+    ]
   };
 };
 
@@ -235,7 +271,11 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
         zh: `要去掉分母的根号，就把分子分母同乘一个相同的根号`
       },
       tex: `\\dfrac{1}{\\sqrt{${n}}} = \\dfrac{\\sqrt{\\square}}{\\square}`,
-      answer: [n, n], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad'
+      answer: [n, n], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `\\dfrac{1}{\\sqrt{${n}}} = \\dfrac{1\\times\\sqrt{${n}}}{\\sqrt{${n}}\\times\\sqrt{${n}}}` },
+        { tex: `= \\dfrac{\\sqrt{\\square}}{\\square}`, blank: [n, n] }
+      ]
     };
   }
 
@@ -249,7 +289,11 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
         zh: `分子有系数也一样——把分母的根号乘到分子分母上`
       },
       tex: `\\dfrac{${c}}{\\sqrt{${n}}} = \\dfrac{${c}\\sqrt{\\square}}{\\square}`,
-      answer: [n, n], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad'
+      answer: [n, n], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `\\dfrac{${c}}{\\sqrt{${n}}} = \\dfrac{${c}\\times\\sqrt{${n}}}{\\sqrt{${n}}\\times\\sqrt{${n}}}` },
+        { tex: `= \\dfrac{${c}\\sqrt{\\square}}{\\square}`, blank: [n, n] }
+      ]
     };
   }
 
@@ -263,7 +307,12 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
       zh: `先化简分母的根号(√${N}=${a}√${b})，再用√${b}乘分子分母进行有理化`
     },
     tex: `\\dfrac{1}{\\sqrt{${N}}} = \\dfrac{1}{${a}\\sqrt{${b}}} = \\dfrac{\\sqrt{\\square}}{\\square}`,
-    answer: [b, a * b], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad'
+    answer: [b, a * b], answerShape: 'radicalFraction', answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `\\sqrt{${N}} = ${a}\\sqrt{${b}}` },
+      { tex: `\\dfrac{1}{${a}\\sqrt{${b}}} = \\dfrac{1\\times\\sqrt{${b}}}{${a}\\sqrt{${b}}\\times\\sqrt{${b}}}` },
+      { tex: `= \\dfrac{\\sqrt{\\square}}{\\square}`, blank: [b, a * b] }
+    ]
   };
 };
 
@@ -285,7 +334,11 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
         zh: `(x+a)(x+b) = x² + (a+b)x + ab——先把两数相加，再相乘`
       },
       tex: `(x ${wrapPlus(a)})(x ${wrapPlus(b)}) = x^2 + \\square x + \\square`,
-      answer: [a + b, a * b], answerType: 'number', widget: 'numpad', negative: (a + b < 0) || (a * b < 0)
+      answer: [a + b, a * b], answerType: 'number', widget: 'numpad', negative: (a + b < 0) || (a * b < 0),
+      solution: [
+        { tex: `(x ${wrapPlus(a)})(x ${wrapPlus(b)}) = x^2 + (${a}+${b})x + (${a})(${b})` },
+        { tex: `= x^2 + \\square x + \\square`, blank: [a + b, a * b] }
+      ]
     };
   }
 
@@ -298,7 +351,11 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
         zh: `(x+a)² = x² + 2ax + a²——中间项翻倍，最后一项平方`
       },
       tex: `(x ${wrapPlus(a)})^2 = x^2 + \\square x + \\square`,
-      answer: [2 * a, a * a], answerType: 'number', widget: 'numpad', negative: (2 * a < 0)
+      answer: [2 * a, a * a], answerType: 'number', widget: 'numpad', negative: (2 * a < 0),
+      solution: [
+        { tex: `(x ${wrapPlus(a)})^2 = x^2 + 2(${a})x + (${a})^2` },
+        { tex: `= x^2 + \\square x + \\square`, blank: [2 * a, a * a] }
+      ]
     };
   }
 
@@ -311,7 +368,11 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
       zh: `(x+a)(x-a) = x² - a²——中间项互相抵消，只剩平方差`
     },
     tex: `(x + ${a})(x - ${a}) = x^2 - \\square`,
-    answer: a * a, answerType: 'number', widget: 'numpad'
+    answer: a * a, answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `(x + ${a})(x - ${a}) = x^2 - (${a})^2` },
+      { tex: `= x^2 - \\square`, blank: a * a }
+    ]
   };
 };
 
@@ -340,7 +401,11 @@ NM_TGEN['md20_factorBasic'] = function (params, rng) {
       zh: `x² + bx + c = (x+p)(x+q)时，找相加得b、相乘得c的两个数——先输入较小的那个`
     },
     tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = (x + \\square)(x + \\square)`,
-    answer: [p, q], answerType: 'number', widget: 'numpad', negative: (p < 0) || (q < 0)
+    answer: [p, q], answerType: 'number', widget: 'numpad', negative: (p < 0) || (q < 0),
+    solution: [
+      { tex: `${p} + ${q} = ${b}, \\;\\; ${p} \\times ${q} = ${c}` },
+      { tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = (x + \\square)(x + \\square)`, blank: [p, q] }
+    ]
   };
 };
 
