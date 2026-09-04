@@ -19,7 +19,7 @@ for (const entry of BOOK01_GOLDEN_BELL_SOURCE_PAGES) {
 const lessons = new Map(book.lessons.map((lesson) => [lesson.id, lesson]));
 const expectedOrder = [
   "clock-turning", "mirror-reflection", "digital-turn-flip", "fold-one-cut", "equal-line-sums",
-  "gakuro-sum-grid", "number-inference", "preference-logic", "relative-order-running", "book1-equalize-transfer"
+  "equal-line-placement", "gakuro-sum-grid", "number-inference", "preference-logic", "relative-order-running", "book1-equalize-transfer"
 ];
 assert.deepEqual([...lessons.keys()], expectedOrder, "Book 1 lesson order changed");
 
@@ -56,6 +56,58 @@ function permutations(values) {
   return values.flatMap((value, index) => permutations(values.filter((_, cursor) => cursor !== index)).map((rest) => [value, ...rest]));
 }
 
+function canPairWithSameSum(values) {
+  if (!values.length) return true;
+  const [first, ...rest] = values;
+  for (let index = 0; index < rest.length; index += 1) {
+    const target = first + rest[index];
+    const remaining = rest.filter((_, cursor) => cursor !== index);
+    const pairRest = (pool) => {
+      if (!pool.length) return true;
+      const [head, ...tail] = pool;
+      return tail.some((value, cursor) => head + value === target && pairRest(tail.filter((_, inner) => inner !== cursor)));
+    };
+    if (pairRest(remaining)) return true;
+  }
+  return false;
+}
+
+for (const entry of lessons.get("equal-line-placement").original.items.filter((candidate) => candidate.id.includes("center"))) {
+  const calculated = entry.visual.cards.filter((center) => canPairWithSameSum(entry.visual.cards.filter((value) => value !== center)));
+  const official = canonical(entry.answer).split(",").map(Number);
+  assert.deepEqual(official, calculated, `${entry.id}: possible intersection values differ from independent pairing`);
+  const markup = book01Markup(entry.visual);
+  const expectedNodes = entry.visual.cards.length;
+  assert.equal((markup.match(/<circle /gu) || []).length, expectedNodes, `${entry.id}: rendered node count differs from card count`);
+}
+
+const lineGroups = {
+  "t-shape": [[0,1,2],[2,3,4]],
+  corner: [[0,1,2],[2,3,4]],
+  triangle: [[0,1,3],[0,2,5],[3,4,5]]
+};
+for (const entry of lessons.get("equal-line-placement").original.items.filter((candidate) => candidate.id.startsWith("place-"))) {
+  const values = [...entry.visual.shown];
+  const answerValues = entry.parts.slice(0, -1).map((part) => Number(part.answer));
+  values.forEach((value, index) => {
+    if (value == null) values[index] = answerValues.shift();
+  });
+  assert.deepEqual([...values.filter((_, index) => entry.visual.shown[index] == null)].sort((a,b) => a-b), [...entry.visual.cards].sort((a,b) => a-b), `${entry.id}: cards are not used exactly once`);
+  const sums = lineGroups[entry.visual.layout].map((indexes) => indexes.reduce((sum, index) => sum + values[index], 0));
+  assert.ok(sums.every((sum) => sum === entry.visual.lineSum), `${entry.id}: completed lines do not all equal ${entry.visual.lineSum}`);
+  assert.equal(Number(entry.parts.at(-1).answer), entry.visual.lineSum, `${entry.id}: written line sum differs from visual`);
+}
+
+const digitSumItem = item("equal-line-placement", "digit-sum-table");
+for (const part of digitSumItem.parts) {
+  const target = Number(part.id.replace("sum", ""));
+  const calculated = Array.from({ length: 90 }, (_, index) => index + 10).filter((value) => Math.floor(value / 10) + value % 10 === target);
+  const official = canonical(part.answer).split(",").map(Number);
+  assert.deepEqual(official, calculated, `${part.id}: digit-sum enumeration mismatch`);
+}
+assert.equal(canonical(digitSumItem.parts.at(-1).answer).split(",").length, 9, "sum10 must contain nine two-digit numbers");
+assert.match(digitSumItem.sourceDiscrepancy, /10개.*9개/u, "sum10 source discrepancy note missing");
+
 for (const entry of lessons.get("gakuro-sum-grid").original.items.filter((candidate) => candidate.visual?.subtype === "sum-grid")) {
   const { shown, cards, rows, columns, rowSums, columnSums } = entry.visual;
   const blanks = shown.map((value, index) => value == null ? index : -1).filter((index) => index >= 0);
@@ -81,6 +133,7 @@ assert.deepEqual(placeDiscrepancy.parts.map((part) => Number(part.answer)), [236
 assert.match(placeDiscrepancy.sourceDiscrepancy, /독립 계산.*2/u, "2365 source discrepancy note missing");
 
 assert.deepEqual(lessons.get("relative-order-running").experience.model.answer, ["B","D","C","A"], "relative-order concept order changed");
+assert.equal(canonical(item("preference-logic", "logic-4").answer), "사자", "preference logic item 4 answer changed");
 assert.equal(canonical(item("relative-order-running", "standing-back-third").answer), "D");
 for (const entry of lessons.get("book1-equalize-transfer").original.items) {
   const numbers = entry.prompt.match(/\d+/gu).map(Number);
@@ -96,4 +149,5 @@ const statusCounts = BOOK01_GOLDEN_BELL_SOURCE_PAGES.reduce((counts, entry) => {
   counts[entry.status] = (counts[entry.status] || 0) + entry.pages.length;
   return counts;
 }, {});
+assert.deepEqual(statusCounts, { implemented: 21, partial: 4, pending: 4 }, "Book 1 source status totals changed");
 console.log(`BOOK01_GOLDEN_BELL_SOURCE_OK lessons=${book.lessons.length} sourceItems=${book.lessons.reduce((sum, lesson) => sum + lesson.original.items.length, 0)} pages=${coveredPages.length} implemented=${statusCounts.implemented} partial=${statusCounts.partial} pending=${statusCounts.pending}`);

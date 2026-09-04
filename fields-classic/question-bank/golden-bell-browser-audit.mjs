@@ -9,6 +9,7 @@ const { chromium } = await import(pathToFileURL(path.join(runtimeModules, "playw
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const browser = await chromium.launch({ headless: true });
 const expectedOfflineError = (message) => message.includes("ERR_NETWORK_ACCESS_DENIED");
+const escapeRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 
 async function auditViewport(viewport, label) {
   const page = await browser.newPage({ viewport });
@@ -211,6 +212,7 @@ async function auditBookOneGuidedConcepts() {
     { id: "digital-turn-flip", family: "digital-transform", wrong: "숫자 5", answer: "숫자 2" },
     { id: "fold-one-cut", family: "fold-symmetry", wrong: "한쪽에만 남아요", answer: "접은 선에서 같은 거리에 마주 봐요" },
     { id: "equal-line-sums", family: "equal-line", wrong: "5", answer: "7" },
+    { id: "equal-line-placement", family: "line-card-placement", wrong: "1+2와 4+5", answer: "1+5와 2+4" },
     { id: "gakuro-sum-grid", family: "sum-grid-placement", wrong: "4개", answer: "5개" },
     { id: "number-inference", family: "number-condition-filter", wrong: "22와 40", answer: "13과 31" },
     { id: "preference-logic", family: "one-to-one-logic", wrong: "빨강", answer: "노랑" },
@@ -234,7 +236,7 @@ async function auditBookOneGuidedConcepts() {
     assert.match(await experience.locator(".feedback").innerText(), /다시 살펴/u, `${item.id}: wrong-answer feedback missing`);
     assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: wrong answer unlocked the original problem`);
     await experience.locator("[data-experience-answer]").click();
-    assert.match(await experience.locator(".feedback").innerText(), new RegExp(`답:\\s*${item.answer}`, "u"), `${item.id}: approved answer view missing`);
+    assert.match(await experience.locator(".feedback").innerText(), new RegExp(`답:\\s*${escapeRegex(item.answer)}`, "u"), `${item.id}: approved answer view missing`);
     assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${item.id}: answer view did not unlock the original problem`);
 
     const typography = await experience.locator(".experience-caption, .guided-check>p, .guided-check .answer-choices button, .guided-answer, .concept-hint").evaluateAll((nodes) => nodes.map((node) => ({

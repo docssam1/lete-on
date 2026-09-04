@@ -101,13 +101,13 @@ const approvedBook1Answers = new Map([
   ["clock-turning", ["12", "6", "6", "3", "9"]],
   ["fold-one-cut", ["3번"]],
   ["equal-line-sums", ["2", "4", "10"]],
-  ["preference-logic", ["딸기", "수영", "키위"]]
+  ["preference-logic", ["딸기", "수영", "키위", "사자"]]
 ]);
 const approvedBook1AnswerModes = new Map([
   ["clock-turning", ["input", "input", "input", "input", "input"]],
   ["fold-one-cut", ["choice"]],
   ["equal-line-sums", ["input", "input", "input"]],
-  ["preference-logic", ["input", "input", "input"]]
+  ["preference-logic", ["input", "input", "input", "input"]]
 ]);
 for (const [lessonId, approvedAnswers] of approvedBook1Answers) {
   const lesson = book1.lessons.find((candidate) => candidate.id === lessonId);
@@ -124,7 +124,9 @@ for (const [lessonId, approvedAnswers] of approvedBook1Answers) {
 }
 const requiredUnits = ["도형 움직이기", "색종이 접기", "마방진과 가쿠로 퍼즐", "수추리와 논리추리"];
 for (const unit of requiredUnits) if (!book1.lessons.some((lesson) => lesson.unit === unit)) fail(`book-01: missing ${unit}`);
-if (!book1.lessons.some((lesson) => lesson.sourceHold)) fail("book-01: unresolved source wording must remain visible in data");
+if (!book1.sourceCoverage?.some((entry) => entry.status === "partial" || entry.status === "pending")) {
+  fail("book-01: unresolved source pages must remain visible in source coverage");
+}
 
 const book2 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-02");
 const approvedBook2Answers = new Map([

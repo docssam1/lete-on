@@ -11,6 +11,17 @@ function equalLineVisual(phase, model) {
   return `<div class="guided-line-visual ${phase}"><div class="guided-line-cross"><span class="top">${solved ? model.answer : "?"}</span><span class="left">${model.left}</span><span class="center">${model.center}</span><span class="right">${model.right}</span><span class="bottom">${model.bottom}</span></div><p>${phase === "center" ? `가운데 ${model.center}은 두 줄에 함께 있어요.` : compare ? `${model.left} + ${model.right} = ${model.left + model.right}　·　${solved ? `${model.answer} + ${model.bottom} = ${model.left + model.right}` : `? + ${model.bottom} = ${model.left + model.right}`}` : "가로줄과 세로줄을 찾아요."}</p></div>`;
 }
 
+function lineCardPlacementVisual(phase, model) {
+  const centerVisible = ["center", "pairs", "verify"].includes(phase);
+  const pairsVisible = ["pairs", "verify"].includes(phase);
+  const valueAt = (index) => {
+    if (!centerVisible && index === 2) return "?";
+    if (!pairsVisible && index !== 2) return "?";
+    return [model.pairs[0][0], model.pairs[1][0], model.center, model.pairs[0][1], model.pairs[1][1]][index];
+  };
+  return `<div class="guided-line-card-placement ${phase}" role="img" aria-label="교차점에 수를 놓고 남은 카드를 같은 합의 짝으로 묶는 과정"><div class="guided-line-card-deck">${model.cards.map((card) => `<span>${card}</span>`).join("")}</div><div class="guided-line-card-cross">${Array.from({ length: 5 }, (_, index) => `<b class="p${index + 1}">${valueAt(index)}</b>`).join("")}</div><p>${phase === "cards" ? "사용할 카드를 한 번씩 확인해요." : phase === "center" ? `교차점에 ${model.center}을 놓으면 두 줄에 공통으로 들어가요.` : phase === "pairs" ? `${model.pairs[0].join("+")}와 ${model.pairs[1].join("+")}의 합이 같아요.` : `${model.pairs[0][0]}+${model.center}+${model.pairs[0][1]} = ${model.pairs[1][0]}+${model.center}+${model.pairs[1][1]}인지 확인해요.`}</p></div>`;
+}
+
 function logicVisual(phase, model) {
   const states = {
     start: [["possible", "possible", "possible"], ["possible", "possible", "possible"], ["possible", "possible", "possible"]],
@@ -145,6 +156,7 @@ export function guidedConceptVisual(experience, step) {
   const beat = experience.beats[Math.max(0, Math.min(step, experience.beats.length - 1))];
   if (experience.family === "fold-symmetry") return foldVisual(beat.phase);
   if (experience.family === "equal-line") return equalLineVisual(beat.phase, experience.model);
+  if (experience.family === "line-card-placement") return lineCardPlacementVisual(beat.phase, experience.model);
   if (experience.family === "one-to-one-logic") return logicVisual(beat.phase, experience.model);
   if (experience.family === "shape-substitution") return shapeSubstitutionVisual(beat.phase, experience.model);
   if (experience.family === "balance-order-chain") return balanceOrderVisual(beat.phase, experience.model);

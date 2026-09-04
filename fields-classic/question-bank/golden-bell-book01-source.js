@@ -12,6 +12,7 @@ const inputItem = ({ id, sourceNo, printGroup, typeLabel, prompt, answer, soluti
 });
 
 const numericPart = (id, label, answer, unit = "") => ({ id, label, answer: String(answer), ...(unit ? { unit } : {}) });
+const textPart = (id, label, answer) => ({ id, label, answer, inputMode: "text" });
 const aliases = (...values) => values;
 
 const mirrorLesson = {
@@ -192,6 +193,122 @@ const digitalLesson = {
 };
 
 const splitParts = (values, divisor) => values.map((value) => numericPart(`n${value}`, `${value}÷${divisor}`, value / divisor));
+
+const lineBoard = (layout, cards, shown, lineSum = null) => ({ kind: "book1", subtype: "line-card-board", layout, cards, shown, lineSum });
+
+const lineCandidateItem = (id, sourceNo, layout, cards, answer) => inputItem({
+  id,
+  sourceNo,
+  printGroup: 1,
+  typeLabel: "교차점에 가능한 수 모두 찾기",
+  sourceLocator: `교사용 슬라이드 ${sourceNo}`,
+  prompt: "주어진 수를 한 번씩 사용하여 모든 줄의 합을 같게 만들 때, 교차점에 들어갈 수를 모두 쓰세요.",
+  visual: lineBoard(layout, cards, []),
+  answer,
+  inputMode: "text",
+  solution: `교차점의 후보를 하나씩 놓고, 남은 수를 같은 합의 짝으로 묶습니다. 가능한 교차점은 ${Array.isArray(answer) ? answer[0] : answer}입니다.`
+});
+
+const linePlacementItem = ({ id, sourceNo, layout, cards, shown, values, lineSum, blankIndexes }) => inputItem({
+  id,
+  sourceNo,
+  printGroup: 1,
+  typeLabel: "숫자 카드로 같은 합 만들기",
+  sourceLocator: `교사용 슬라이드 ${sourceNo}`,
+  prompt: "주어진 숫자 카드를 한 번씩 빈자리에 놓아 모든 줄의 합을 같게 만들고, 한 줄의 합을 구하세요.",
+  visual: lineBoard(layout, cards, shown, lineSum),
+  parts: [
+    ...blankIndexes.map((index) => numericPart(`p${index}`, `${index + 1}번 자리`, values[index])),
+    numericPart("sum", "한 줄의 합", lineSum)
+  ],
+  solution: `한 칸만 비어 있는 줄부터 카드 값을 정하고 사용한 카드를 지웁니다. 완성 배열은 ${values.join("-")}이고 모든 줄의 합은 ${lineSum}입니다.`
+});
+
+const equalLinePlacementLesson = {
+  id: "equal-line-placement",
+  unit: "마방진과 가쿠로 퍼즐",
+  title: "숫자 카드로 모든 줄의 합을 같게 해요",
+  sourceLocator: "교사용 슬라이드 21~23, 활동 02~03·연산",
+  sourceTypeIds: ["circular-magic-line-sum", "five-card-line-sum", "digit-sum-enumeration"],
+  representativeConcept: "교차점은 여러 줄에 함께 들어가므로 후보를 하나씩 놓고, 남은 수를 같은 합이 되는 짝이나 묶음으로 배치함",
+  experience: {
+    kind: "guided-concept",
+    family: "line-card-placement",
+    title: "교차점 하나를 정하고 남은 카드를 짝지어요",
+    hint: "교차점의 수는 모든 줄에 공통으로 들어갑니다. 그 수를 빼고 남은 카드끼리 같은 합이 되는지 확인하세요.",
+    model: { cards: [1,2,3,4,5], center: 3, pairs: [[1,5],[2,4]] },
+    beats: [
+      { phase: "cards", caption: "사용할 카드 1, 2, 3, 4, 5를 빠짐없이 확인합니다." },
+      { phase: "center", caption: "교차점에 3을 놓아 두 줄에 공통으로 사용합니다." },
+      { phase: "pairs", caption: "남은 카드를 1+5와 2+4처럼 같은 합의 두 짝으로 묶습니다." },
+      { phase: "verify", caption: "1+3+5와 2+3+4가 모두 9인지 확인합니다." }
+    ],
+    check: { prompt: "1, 2, 3, 4, 5에서 교차점에 3을 놓으면 남은 같은 합의 두 짝은 무엇인가요?", options: ["1+5와 2+4", "1+2와 4+5", "1+4와 2+3"], answer: "1+5와 2+4", explanation: "교차점 3을 뺀 남은 카드에서 1+5=6, 2+4=6으로 두 짝의 합이 같습니다." }
+  },
+  story: {
+    title: "같은 빛을 만드는 카드 길",
+    text: "여러 길이 한 교차점을 지나갑니다. 숫자 카드를 한 번씩 놓아 어느 길로 더해도 같은 밝기가 되게 합니다.",
+    mission: "교차점 후보를 정한 뒤 남은 카드를 같은 합의 짝으로 묶고 모든 줄을 다시 더하세요."
+  },
+  explanation: {
+    headline: "공통인 교차점을 고정하면 남은 수의 짝이 보입니다.",
+    steps: [
+      "교차점에 들어갈 후보를 하나 정합니다.",
+      "남은 카드들을 각 줄에 필요한 수만큼 나누어 같은 합이 되는지 봅니다.",
+      "카드를 한 번씩만 썼는지와 모든 줄의 전체 합이 같은지 확인합니다."
+    ]
+  },
+  original: {
+    title: "골든벨과 기초 연산",
+    mode: "paged",
+    sourceQuestionCount: 17,
+    structureKey: "equal-line-card-placement-source",
+    prompt: "숫자 카드를 한 번씩 사용해 모든 줄의 합을 같게 만들고, 조건에 맞는 수를 구하세요.",
+    items: [
+      lineCandidateItem("cross-center-1", "21-(1)-①", "cross", [1,2,3,4,5], aliases("1,3,5", "1 3 5", "1·3·5")),
+      lineCandidateItem("cross-center-2", "21-(1)-②", "cross", [2,3,4,5,6], aliases("2,4,6", "2 4 6", "2·4·6")),
+      lineCandidateItem("tee-center-1", "21-(2)-①", "t-shape", [2,5,8,11,14], aliases("2,8,14", "2 8 14", "2·8·14")),
+      lineCandidateItem("tee-center-2", "21-(2)-②", "t-shape", [3,4,5,6,7], aliases("3,5,7", "3 5 7", "3·5·7")),
+      lineCandidateItem("flower-center-1", "21-(3)-①", "flower", [1,2,3,4,5,6,7,8,9], aliases("1,5,9", "1 5 9", "1·5·9")),
+      lineCandidateItem("flower-center-2", "21-(3)-②", "flower", [2,4,6,8,10,12,14,16,18], aliases("2,10,18", "2 10 18", "2·10·18")),
+      linePlacementItem({ id: "place-t-12", sourceNo: "22-(1)", layout: "t-shape", cards: [4,5,6], shown: [1,null,null,null,2], values: [1,5,6,4,2], lineSum: 12, blankIndexes: [1,2,3] }),
+      linePlacementItem({ id: "place-corner-15", sourceNo: "22-(2)", layout: "corner", cards: [2,5,7], shown: [6,null,null,null,3], values: [6,2,7,5,3], lineSum: 15, blankIndexes: [1,2,3] }),
+      linePlacementItem({ id: "place-triangle-9", sourceNo: "22-(3)", layout: "triangle", cards: [3,4,5,6], shown: [1,null,null,2,null,null], values: [1,6,5,2,4,3], lineSum: 9, blankIndexes: [1,2,4,5] }),
+      linePlacementItem({ id: "place-triangle-11", sourceNo: "22-(4)", layout: "triangle", cards: [1,3,4,5], shown: [2,null,null,null,null,6], values: [2,5,3,4,1,6], lineSum: 11, blankIndexes: [1,2,3,4] }),
+      inputItem({
+        id: "digit-sum-table",
+        sourceNo: "23-연산",
+        printGroup: 1,
+        typeLabel: "각 자리 숫자의 합이 같은 두 자리 수",
+        sourceLocator: "교사용 슬라이드 23 연산",
+        prompt: "각 자리 숫자의 합이 4부터 10까지인 두 자리 수를 빠짐없이 쓰세요.",
+        visual: { kind: "book1", subtype: "digit-sum-table", from: 1, to: 10, revealedThrough: 3 },
+        parts: [
+          textPart("sum4", "합 4", aliases("13,22,31,40", "13 22 31 40")),
+          textPart("sum5", "합 5", aliases("14,23,32,41,50", "14 23 32 41 50")),
+          textPart("sum6", "합 6", aliases("15,24,33,42,51,60", "15 24 33 42 51 60")),
+          textPart("sum7", "합 7", aliases("16,25,34,43,52,61,70", "16 25 34 43 52 61 70")),
+          textPart("sum8", "합 8", aliases("17,26,35,44,53,62,71,80", "17 26 35 44 53 62 71 80")),
+          textPart("sum9", "합 9", aliases("18,27,36,45,54,63,72,81,90", "18 27 36 45 54 63 72 81 90")),
+          textPart("sum10", "합 10", aliases("19,28,37,46,55,64,73,82,91", "19 28 37 46 55 64 73 82 91"))
+        ],
+        sourceDiscrepancy: "교사용 표는 합 10의 개수를 10개로 적었지만 두 자리 수를 독립 열거하면 19부터 91까지 9개이므로 9개로 잠금",
+        solution: "십의 자리를 1부터 9까지 놓고 일의 자리를 목표 합에서 빼면 됩니다. 합 10에서는 19, 28, 37, 46, 55, 64, 73, 82, 91의 9개이며 100은 두 자리 수가 아닙니다."
+      })
+    ]
+  },
+  extension: {
+    title: "추가 학습",
+    structureKey: "equal-line-card-placement-source",
+    story: "새 교차로에 2, 4, 6, 8, 10 카드를 놓습니다.",
+    prompt: "십자 모양의 교차점에 들어갈 수 있는 카드를 모두 쓰세요.",
+    visual: lineBoard("cross", [2,4,6,8,10], []),
+    answerMode: "input",
+    inputMode: "text",
+    answer: aliases("2,6,10", "2 6 10", "2·6·10"),
+    explanation: "교차점이 2이면 4+10=6+8, 6이면 2+10=4+8, 10이면 2+8=4+6으로 남은 카드가 같은 합의 두 짝이 됩니다."
+  }
+};
 
 const gakuroLesson = {
   id: "gakuro-sum-grid",
@@ -473,6 +590,41 @@ const equalizeTransferLesson = {
   }
 };
 
+function completePreferenceLogic(lesson) {
+  if (!lesson) return lesson;
+  lesson.sourceLocator = "교사용 슬라이드 32, 논리 추리 (1)~(4)";
+  lesson.original.mode = "paged";
+  lesson.original.sourceQuestionCount = 4;
+  const sourceItems = [
+    {
+      ...lesson.original.items[0], sourceNo: "32-(1)", printGroup: 1, typeLabel: "두 사람의 과일 추리", sourceLocator: "교사용 슬라이드 32 (1)",
+      visual: { kind: "book1", subtype: "logic-clues", names: ["A","B"], items: ["사과","딸기"], clues: ["A의 친구인 B는 사과를 좋아합니다."], question: "A가 좋아하는 과일은 무엇입니까?" },
+      solution: "B가 사과를 좋아하므로 서로 다른 과일을 좋아하는 A에게는 딸기가 남습니다."
+    },
+    {
+      ...lesson.original.items[1], sourceNo: "32-(2)", printGroup: 2, typeLabel: "세 사람의 운동 추리", sourceLocator: "교사용 슬라이드 32 (2)",
+      visual: { kind: "book1", subtype: "logic-clues", names: ["A","B","C"], items: ["축구","수영","스키"], clues: ["A는 겨울에만 할 수 있는 운동을 좋아합니다.", "B는 물을 무서워합니다."], question: "C가 좋아하는 운동은 무엇입니까?" },
+      solution: "겨울에만 할 수 있는 운동은 스키이므로 A는 스키입니다. B는 물을 무서워해 수영이 아니므로 축구이고, C에게 수영이 남습니다."
+    },
+    {
+      ...lesson.original.items[2], sourceNo: "32-(3)", printGroup: 3, typeLabel: "세 사람의 과일 추리", sourceLocator: "교사용 슬라이드 32 (3)",
+      visual: { kind: "book1", subtype: "logic-clues", names: ["A","B","C"], items: ["키위","멜론","포도"], clues: ["A는 키위와 포도를 싫어합니다.", "C는 포도를 좋아합니다."], question: "B가 좋아하는 과일은 무엇입니까?" },
+      solution: "A는 키위와 포도를 싫어하므로 멜론을 좋아합니다. C가 포도를 좋아하므로 남은 키위는 B가 좋아합니다."
+    },
+    inputItem({
+      id: "logic-4", sourceNo: "32-(4)", printGroup: 4, typeLabel: "직업과 동물 추리", sourceLocator: "교사용 슬라이드 32 (4)",
+      prompt: "A, B, C는 사자, 고래, 문어 중에서 서로 다른 동물을 좋아합니다. B가 좋아하는 동물을 구하세요.",
+      visual: { kind: "book1", subtype: "logic-clues", names: ["A","B","C"], items: ["사자","고래","문어"], clues: ["선생님은 땅에 사는 동물을 좋아합니다.", "A의 직업은 의사이고 C의 직업은 경찰입니다."], question: "B가 좋아하는 동물은 무엇입니까?" },
+      conditions: ["선생님은 땅에 사는 동물을 좋아합니다.", "A의 직업은 의사이고 C의 직업은 경찰입니다."],
+      answer: "사자", inputMode: "text",
+      solution: "A는 의사이고 C는 경찰이므로 남은 B의 직업은 선생님입니다. 선생님은 땅에 사는 동물을 좋아하고, 보기 중 땅에 사는 동물은 사자이므로 B는 사자를 좋아합니다."
+    })
+  ];
+  lesson.original.items = sourceItems;
+  delete lesson.sourceHold;
+  return lesson;
+}
+
 export const BOOK01_GOLDEN_BELL_SOURCE_PAGES = Object.freeze([
   { pages: [2], lessonId: "clock-turning", status: "implemented" },
   { pages: [3], lessonId: "mirror-reflection", status: "implemented" },
@@ -480,10 +632,10 @@ export const BOOK01_GOLDEN_BELL_SOURCE_PAGES = Object.freeze([
   { pages: [10,11,12,13], lessonId: "fold-one-cut", status: "partial" },
   { pages: [14,15,16,17], lessonId: "fold-two-cut", status: "pending" },
   { pages: [20], lessonId: "equal-line-sums", status: "implemented" },
-  { pages: [21,22,23], lessonId: "equal-line-placement", status: "pending" },
+  { pages: [21,22,23], lessonId: "equal-line-placement", status: "implemented" },
   { pages: [24,25,26], lessonId: "gakuro-sum-grid", status: "implemented" },
   { pages: [28,29,30,31], lessonId: "number-inference", status: "implemented" },
-  { pages: [32], lessonId: "preference-logic", status: "partial" },
+  { pages: [32], lessonId: "preference-logic", status: "implemented" },
   { pages: [33], lessonId: "relative-order-running", status: "implemented" },
   { pages: [34], lessonId: "book1-equalize-transfer", status: "implemented" }
 ]);
@@ -491,24 +643,28 @@ export const BOOK01_GOLDEN_BELL_SOURCE_PAGES = Object.freeze([
 export function expandBookOneGoldenBell(book) {
   if (!book || book.id !== "book-01") return book;
   const current = new Map(book.lessons.map((lesson) => [lesson.id, lesson]));
+  const preferenceLogic = completePreferenceLogic(current.get("preference-logic"));
   book.lessons = [
     current.get("clock-turning"),
     mirrorLesson,
     digitalLesson,
     current.get("fold-one-cut"),
     current.get("equal-line-sums"),
+    equalLinePlacementLesson,
     gakuroLesson,
     numberInferenceLesson,
-    current.get("preference-logic"),
+    preferenceLogic,
     orderLogicLesson,
     equalizeTransferLesson
   ];
   const perSheet = new Map([
     ["mirror-reflection", 1],
     ["digital-turn-flip", 2],
+    ["equal-line-placement", 1],
     ["gakuro-sum-grid", 1],
     ["number-inference", 2],
     ["relative-order-running", 2],
+    ["preference-logic", 1],
     ["book1-equalize-transfer", 2]
   ]);
   for (const lesson of book.lessons) {

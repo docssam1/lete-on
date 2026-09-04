@@ -49,6 +49,13 @@ const CUSTOM_PRACTICE = Object.freeze({
     answerMode: "input", inputMode: "numeric", answer: "7",
     explanation: "가로줄의 합은 8+3+4=15입니다. 세로줄도 15이므로 빈칸+3+5=15, 빈칸은 7입니다."
   },
+  "equal-line-placement": {
+    story: "숫자 카드 3, 5, 7, 9, 11을 십자 모양에 한 번씩 놓습니다.",
+    prompt: "모든 줄의 합을 같게 만들 수 있는 교차점의 수를 모두 쓰세요.",
+    visual: { kind: "book1", subtype: "line-card-board", layout: "cross", cards: [3, 5, 7, 9, 11], shown: [] },
+    answerMode: "input", inputMode: "text", answer: ["3,7,11", "3 7 11", "3·7·11"],
+    explanation: "교차점이 3이면 5+11=7+9, 7이면 3+11=5+9, 11이면 3+9=5+7입니다. 따라서 3, 7, 11이 모두 가능합니다."
+  },
   "preference-logic": {
     story: "민지, 서윤, 도윤이 서로 다른 음식을 하나씩 골랐습니다.",
     prompt: "민지는 김밥을 골랐고 도윤은 떡볶이를 고르지 않았습니다. 서윤이 고른 음식은 무엇일까요?",

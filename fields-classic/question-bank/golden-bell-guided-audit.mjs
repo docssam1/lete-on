@@ -9,6 +9,7 @@ const expectedIds = [
   "digital-turn-flip",
   "fold-one-cut",
   "equal-line-sums",
+  "equal-line-placement",
   "gakuro-sum-grid",
   "number-inference",
   "preference-logic",

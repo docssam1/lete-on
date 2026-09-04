@@ -182,6 +182,37 @@ function ringLinesMarkup(visual) {
   return `<svg class="b1-svg b1-ring-lines" viewBox="0 0 320 255" role="img" aria-label="마주 보는 수의 합이 같은 원">${lines}<circle cx="160" cy="125" r="94"/>${nodes}<text class="sum" x="160" y="247">두 수의 합 ${visual.lineSum}</text></svg>`;
 }
 
+const LINE_BOARD_LAYOUTS = Object.freeze({
+  cross: { points: [[160,25],[55,105],[160,105],[265,105],[160,185]], lines: [[0,2],[2,4],[1,2],[2,3]] },
+  "t-shape": { points: [[55,55],[160,55],[265,55],[265,120],[265,185]], lines: [[0,1],[1,2],[2,3],[3,4]] },
+  corner: { points: [[265,25],[265,105],[265,185],[160,185],[55,185]], lines: [[0,1],[1,2],[2,3],[3,4]] },
+  triangle: { points: [[160,25],[95,103],[225,103],[30,185],[160,185],[290,185]], lines: [[0,1],[1,3],[0,2],[2,5],[3,4],[4,5]] },
+  flower: {
+    points: [[160,108],[160,20],[222,46],[248,108],[222,170],[160,196],[98,170],[72,108],[98,46]],
+    lines: [[1,0],[0,5],[2,0],[0,6],[3,0],[0,7],[4,0],[0,8]]
+  }
+});
+
+function lineCardBoardMarkup(visual) {
+  const layout = LINE_BOARD_LAYOUTS[visual.layout] || LINE_BOARD_LAYOUTS.cross;
+  const shown = layout.points.map((_, index) => visual.shown?.[index] ?? null);
+  const lines = layout.lines.map(([from, to]) => `<line x1="${layout.points[from][0]}" y1="${layout.points[from][1]}" x2="${layout.points[to][0]}" y2="${layout.points[to][1]}"/>`).join("");
+  const nodes = layout.points.map(([x,y], index) => `<g class="${shown[index] == null ? "blank" : "known"}"><circle cx="${x}" cy="${y}" r="23"/><text x="${x}" y="${y + 1}">${shown[index] == null ? index + 1 : shown[index]}</text></g>`).join("");
+  const cards = `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>`;
+  const footer = visual.lineSum == null ? "모든 줄의 합을 같게" : `한 줄의 합 ${visual.lineSum}`;
+  return `<div class="b1-line-card-board">${cards}<svg viewBox="0 0 320 225" role="img" aria-label="숫자 카드를 놓아 모든 줄의 합을 같게 하는 ${visual.layout} 모양">${lines}${nodes}<text class="sum" x="160" y="220">${footer}</text></svg></div>`;
+}
+
+function digitSumTableMarkup(visual) {
+  const numbers = (sum) => Array.from({ length: 9 }, (_, index) => index + 1).map((tens) => [tens, sum - tens]).filter(([, ones]) => ones >= 0 && ones <= 9).map(([tens, ones]) => tens * 10 + ones);
+  const rows = Array.from({ length: visual.to - visual.from + 1 }, (_, index) => visual.from + index).map((sum) => {
+    const values = numbers(sum);
+    const revealed = sum <= visual.revealedThrough;
+    return `<tr><th>${sum}</th><td>${revealed ? values.join(", ") : "직접 찾아 쓰기"}</td><td>${revealed ? `${values.length}개` : "?개"}</td></tr>`;
+  }).join("");
+  return `<table class="b1-digit-sum-table"><thead><tr><th>각 자리 숫자의 합</th><th>두 자리 수</th><th>개수</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
 function conditionCardMarkup(visual) {
   return `<div class="b1-condition-card"><strong>${esc(visual.title)}</strong><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
 }
@@ -234,6 +265,8 @@ export function book01Markup(visual) {
   if (visual.subtype === "five-card-magic") return fiveCardMagicMarkup(visual);
   if (visual.subtype === "sum-grid") return sumGridMarkup(visual);
   if (visual.subtype === "ring-lines") return ringLinesMarkup(visual);
+  if (visual.subtype === "line-card-board") return lineCardBoardMarkup(visual);
+  if (visual.subtype === "digit-sum-table") return digitSumTableMarkup(visual);
   if (visual.subtype === "condition-card") return conditionCardMarkup(visual);
   if (visual.subtype === "place-value-blocks") return placeValueBlocksMarkup(visual);
   if (visual.subtype === "equal-split-set") return equalSplitSetMarkup(visual);
