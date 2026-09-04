@@ -210,6 +210,41 @@
   .nm-print-age-mid .nm-print-item { min-height: 17mm; }
   .nm-print-age-mid .nm-print-item .nm-q-tex { font-size: 1.4em; }
   .nm-print-age-mid .nm-print-vp { font-size: 1.4em; }
+
+  /* ── 로드맵 세션 학습지 — 20문항/페이지(문장제만이면 10문항) 고정 그리드
+     (원장 지시 2026-09-04 "한 페이지에 20문제씩 정리, 잘 배치되도록"). 위 연령별
+     확대 규칙이 .nm-print-item에 그대로 걸리면(특히 young=22mm 최소높이·1.9em
+     글자) 20칸이 한 장을 넘친다 — 그래서 이 그리드 안에서는 나이와 무관하게
+     크기를 고정한다. 선택자를 3단으로 올려(.nm-print-age-* .nm-print-grid-NN
+     .nm-print-item) 위 2단 규칙(.nm-print-age-* .nm-print-item)보다 우선하게
+     한다. */
+  .nm-print-grid.nm-print-grid-20 { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .nm-print-grid.nm-print-grid-20 .nm-print-item { padding: 6px 7px; min-height: 30px; }
+  .nm-print-grid-20 .nm-print-item .nm-q-num { font-size: 0.72em; }
+  .nm-print-grid-20 .nm-print-item .nm-q-tex { font-size: 1em; margin-top: 2px; }
+  .nm-print-grid-20 .nm-print-vp { font-size: 0.95em; }
+  /* 섞기 모드(roadWordType='mix')의 문장제·식 틀 칸은 좁은 1/4칸에 안 들어가므로
+     두 칸을 쓴다 — 그만큼 그 줄의 실제 칸 수는 줄고 자연히 다음 줄로 밀린다
+     (높이는 grid가 auto-flow로 알아서 늘린다, JS는 20칸을 그대로 하나의
+     그리드에 다 붓기만 한다). */
+  .nm-print-grid-20 .nm-print-item-word,
+  .nm-print-grid-20 .nm-print-item-eq { grid-column: span 2; }
+  .nm-print-age-young .nm-print-grid-20 .nm-print-item,
+  .nm-print-age-mid   .nm-print-grid-20 .nm-print-item { padding: 6px 7px; min-height: 30px; }
+  .nm-print-age-young .nm-print-grid-20 .nm-print-item .nm-q-tex,
+  .nm-print-age-mid   .nm-print-grid-20 .nm-print-item .nm-q-tex { font-size: 1em; }
+  .nm-print-age-young .nm-print-grid-20 .nm-print-vp,
+  .nm-print-age-mid   .nm-print-grid-20 .nm-print-vp { font-size: 0.95em; }
+  .nm-print-age-young .nm-print-grid-20.nm-print-grid { grid-template-columns: repeat(4, 1fr); }
+  /* 문장제만(roadWordType='all') — 본문이 길어 한 칸을 넓게 준다, 2열×5행 */
+  .nm-print-grid.nm-print-grid-10 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .nm-print-grid.nm-print-grid-10 .nm-print-item { padding: 9px 10px; min-height: 40px; }
+  .nm-print-age-young .nm-print-grid-10 .nm-print-item,
+  .nm-print-age-mid   .nm-print-grid-10 .nm-print-item { padding: 9px 10px; min-height: 40px; }
+  /* 드릴별 학습지 코드 나열 — 헤더·정답지 양쪽에(?ws= 도우미가 이해하는 형식 그대로) */
+  .nm-print-mix-note { font-size: 0.72em; color: #555; margin-top: 6px; font-family: monospace;
+    word-break: break-all; }
+
   .nm-print-answer-key .nm-ak-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
   .nm-print-answer-key .nm-ak-item { font-size: 0.9em; }
   .nm-print-qr-wrap { margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -1105,22 +1140,36 @@ function wordChoices(p){
 }
 
 function fillPrintGrid(problems, problemGrid, answerGrid, opts){
+  opts = opts || {};
+  /* numStart — 여러 페이지에 걸쳐 이어 붙일 때(로드맵 세션 20문항/페이지) 번호가
+     페이지마다 1로 리셋되면 안 된다. 기본 0(기존 호출부는 그대로 1부터). */
+  const numStart = opts.numStart || 0;
   /* 열 수는 내용이 정한다. 통합 전에는 그리드 학습지가 4열, 드릴 인쇄가 2열로 서로
      달랐는데, 한쪽으로 고정하면 어느 한쪽이 반드시 망가진다 — 2열로 고정하면 50문항
      연산지가 두 배로 두꺼워지고, 4열로 고정하면 고등 긴 수식이 칸을 넘친다.
-     그래서 문장제가 하나라도 있거나 수식이 길면 2열, 짧은 연산뿐이면 4열로 간다. */
-  const longest = problems.reduce((m, p) =>
-    /* 십진블록·수직선·NL 그림(prompt-only, 늘 tex 없음)은 넓어서 좁은 칸에 못
-       들어간다 — 문장제와 같이 취급 */
-    Math.max(m, (p.word || p.base10 || p.numline || !p.tex) ? Infinity : String(p.tex||'').length), 0);
-  problemGrid.classList.add('nm-print-grid');
-  problemGrid.classList.toggle('nm-print-grid-dense', longest <= 26);
+     그래서 문장제가 하나라도 있거나 수식이 길면 2열, 짧은 연산뿐이면 4열로 간다.
+     로드맵 세션 인쇄(nm-print-grid-20/-10)는 열 수를 스스로 고정하므로 이 자동
+     판정을 건너뛴다(skipGridClass). */
+  if(!opts.skipGridClass){
+    const longest = problems.reduce((m, p) =>
+      /* 십진블록·수직선·NL 그림(prompt-only, 늘 tex 없음)은 넓어서 좁은 칸에 못
+         들어간다 — 문장제와 같이 취급 */
+      Math.max(m, (p.word || p.base10 || p.numline || !p.tex) ? Infinity : String(p.tex||'').length), 0);
+    problemGrid.classList.add('nm-print-grid');
+    problemGrid.classList.toggle('nm-print-grid-dense', longest <= 26);
+  } else {
+    problemGrid.classList.add('nm-print-grid');
+  }
 
-  const bond = !!(opts && opts.bond);
+  const bond = !!opts.bond;
 
   problems.forEach((p, i) => {
-    /* 수 묶음: 전체는 cubes.moveTo, 빈칸은 정답, 아는 부분은 그 나머지 */
-    const bw = bond && p.cubes && typeof p.cubes.moveTo === 'number'
+    /* 수 묶음: 전체는 cubes.moveTo, 빈칸은 정답, 아는 부분은 그 나머지.
+       opts.bond는 단일 스레드 호출(renderPrint 등)이 쓰는 호출 단위 플래그이고,
+       p.__bond는 여러 스레드가 한 페이지에 섞이는 혼합 인쇄(renderMixedSheet)가
+       문제 하나하나에 미리 표시해 둔 값이다 — 스레드별로 다를 수 있어 콜 단위
+       플래그 하나로는 표현이 안 된다. */
+    const bw = (bond || p.__bond) && p.cubes && typeof p.cubes.moveTo === 'number'
       && typeof p.answer === 'number' ? p.cubes.moveTo : null;
     /* nl.js(수의 나라)는 tex를 아예 안 주므로 tex가 없을 때만 계산한다 — 다른
        158개 스레드는 항상 tex가 있어 이 분기를 타지 않는다(위 nlVisualHtml 설명 참조). */
@@ -1136,7 +1185,7 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
       + ((p.base10 || p.numline || nlHtml) ? ' nm-print-item-vis' : '');
     const numEl = document.createElement('span');
     numEl.className = 'nm-q-num';
-    numEl.textContent = circled(i+1);
+    numEl.textContent = circled(numStart+i+1);
     card.appendChild(numEl);
 
     const ask = printAskText(p);
@@ -1223,7 +1272,7 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
 
     const ak = document.createElement('div');
     ak.className = 'nm-ak-item';
-    ak.appendChild(document.createTextNode(`${circled(i+1)} `));
+    ak.appendChild(document.createTextNode(`${circled(numStart+i+1)} `));
     if(steps){
       /* 단계별 답을 순서대로 — 인쇄물이 단계를 묻고 있으므로 정답지도 그래야 한다 */
       ak.appendChild(document.createTextNode(steps.map(s => fmtAns(s.blank)).join(' , ')));
@@ -1336,6 +1385,144 @@ function applyWordProblems(problems, wordType, numericSeed){
   return problems;
 }
 
+/* ── 로드맵 세션 학습지: 20문항/페이지 혼합 인쇄 (원장 지시 2026-09-04) ──
+   세션의 드릴(예: n:6/n:4)을 한 장짜리 학습지로 합친다. 각 드릴의 문항 수는
+   원래 n(가중치)에 비례해 목표 총량(roadCountMode: 10/20/40)에 맞춰 다시
+   나눈다 — "최대잉여법"(largest remainder method): 몫만큼 먼저 배정하고
+   남는 문항을 나머지가 큰 순서로 하나씩 더 준다. 그러면 합이 정확히
+   total이 되면서도 원래 가중치 비율에 가장 가깝다. */
+
+/* weights: 드릴별 가중치(보통 세션의 n) 배열. total: 목표 총 문항 수.
+   반환: weights와 같은 길이의 정수 배열(합계 = min(total, ...) 참조).
+   - total >= weights.length: 모든 드릴이 최소 1문항은 받는다(원장 지시
+     "every drill gets ≥ 1"). 최대잉여법으로 남는 만큼 배분.
+   - total < weights.length(드릴이 목표 총량보다 많은 극단): 앞에서부터
+     1문항씩만 준다 — 지어낼 수 없는 경우라 있는 그대로 자른다. */
+function proportionalSplit(weights, total){
+  const n = weights.length;
+  if(n === 0) return [];
+  total = Math.max(0, Math.round(total));
+  if(total <= n){
+    return weights.map((_, i) => i < total ? 1 : 0);
+  }
+  const sumW = weights.reduce((a, b) => a + (b > 0 ? b : 0), 0) || n;
+  const raw = weights.map(w => total * ((w > 0 ? w : 1) / sumW));
+  const base = raw.map(r => Math.floor(r));
+  let assigned = base.reduce((a, b) => a + b, 0);
+  let remainder = total - assigned;
+  if(remainder > 0){
+    const order = raw.map((r, i) => ({ i, frac: r - Math.floor(r) }))
+      .sort((a, b) => b.frac - a.frac || a.i - b.i);
+    for(let k = 0; k < remainder; k++) base[order[k % n].i]++;
+  }
+  /* 최소 1문항 보장 — 가중치가 아주 작은 드릴은 최대잉여법으로도 0을 받을 수
+     있다. 가장 많이 받은 드릴에서 1씩 옮겨 채운다(합계는 그대로 total). */
+  for(let i = 0; i < n; i++){
+    if(base[i] > 0) continue;
+    let maxIdx = 0;
+    for(let k = 1; k < n; k++) if(base[k] > base[maxIdx]) maxIdx = k;
+    if(base[maxIdx] > 1){ base[maxIdx]--; base[i] = 1; }
+    else base[i] = 1; /* 더 옮길 여유가 없으면(모두 1) 그대로 둔다 — total을 넘겨도
+                          drills.length가 total을 넘는 극단 케이스뿐이라 위 total<=n
+                          분기가 이미 처리한다. */
+  }
+  return base;
+}
+
+/* 세션(또는 편지함 봉투)의 드릴 목록을 목표 총 문항 수로 나눠 문제를 만든다.
+   items: [{thread, level, wordType?, seed, n?|count?|weight?}] — 순서 그대로
+   유지(드릴A 문항이 먼저, 그다음 드릴B …). 반환 built[i] = {item, count, problems, code}
+   와 이어붙인 flat(전체 문제 배열, 드릴 순서·문항 순서 그대로). */
+function buildMixedProblemSet(items, total){
+  const weights = items.map(it => {
+    const w = (it.n != null) ? it.n : (it.count != null) ? it.count : (it.weight != null) ? it.weight : 1;
+    return (typeof w === 'number' && w > 0) ? w : 1;
+  });
+  const counts = proportionalSplit(weights, total);
+  const built = items.map((it, idx) => {
+    const count = counts[idx];
+    if(count <= 0) return { item: it, count: 0, problems: [], code: null };
+    const numericSeed = NM_RNG.hashSeed(it.seed);
+    const problems = buildProblems(it.thread, it.level, count, numericSeed);
+    applyWordProblems(problems, it.wordType, numericSeed);
+    if(BOND_THREADS[it.thread]) problems.forEach(p => { p.__bond = true; });
+    const code = NM_EXAM.worksheetCode({ thread: it.thread, level: it.level, count, seed: it.seed });
+    return { item: it, count, problems, code };
+  });
+  const flat = [];
+  built.forEach(b => flat.push.apply(flat, b.problems));
+  return { built, flat };
+}
+
+/* 페이지당 문항 수 — 문장제만(roadWordType==='all')은 칸이 넓어야 하므로 10
+   (2열×5행), 그 외(연산만·섞기)는 20(4열×5행). 섞기 모드의 문장제 문항은
+   grid-column:span 2로 두 칸을 쓴다(CSS, .nm-print-grid-20 .nm-print-item-word). */
+function pageCapacityFor(items){
+  const allWords = !!(items && items.length) && items.every(it => it.wordType === 'all');
+  return allWords ? 10 : 20;
+}
+
+/* 혼합 학습지(로드맵 세션 20문항/페이지, 편지함 봉투 동일 경로) 렌더러.
+   items: buildMixedProblemSet과 같은 계약. envelopeCode: 표지·헤더 라벨.
+   opts.mixed: 목표 총 문항 수(10/20/40 — 40은 20문항짜리 두 장으로 나뉜다). */
+function renderMixedSheet(items, envelopeCode, opts){
+  const total = opts.mixed;
+  const capacity = pageCapacityFor(items);
+  const gridClass = capacity === 10 ? 'nm-print-grid-10' : 'nm-print-grid-20';
+  const { built, flat } = buildMixedProblemSet(items, total);
+
+  const sheet = document.createElement('div');
+  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], flat);
+  sheet.setAttribute('aria-hidden', 'true');
+  sheet.setAttribute('lang', examLang());
+
+  const coverHtml = getCoverOn() ? coverPageHtml(items, envelopeCode, flat.length) : '';
+  const conceptHtml = getConceptPageOn()
+    ? conceptPageHtml(items.map(it => ({ thread: it.thread, level: it.level })), envelopeCode)
+    : '';
+  /* 드릴별 학습지 코드 — ?ws= 도우미가 그대로 이해하는 형식 그대로 헤더에 나열한다
+     (작업 지시 "#C5-S1 · AD1-L1x8-…, ML2-L1x7-…"). */
+  const codesLine = built.filter(b => b.code).map(b => b.code).join(', ');
+
+  const pages = [];
+  for(let i = 0; i < flat.length; i += capacity) pages.push(flat.slice(i, i + capacity));
+  if(!pages.length) pages.push([]);
+
+  const pagesHtml = pages.map((pageItems, pi) => `
+<div class="nm-print-header"${pi > 0 ? ' style="page-break-before:always"' : ''}>
+  <h2 style="margin:0">Numbers of Magic — 📬 ${esc(envelopeCode || '')}${pages.length > 1 ? ` (${pi+1}/${pages.length})` : ''}</h2>
+  <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
+    ${printMetaFieldsHtml(pageItems.length)}
+  </div>
+  <div class="nm-print-mix-note">${esc(codesLine)}</div>
+</div>
+<div class="nm-print-grid ${gridClass}" id="nm-print-problems-${pi}"></div>`).join('');
+
+  sheet.innerHTML = `
+${printWatermarkHtml()}
+${coverHtml}
+${conceptHtml}
+${pagesHtml}
+<div class="nm-print-answer-key">
+  <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(envelopeCode || '')}</span></h3>
+  <div class="nm-print-mix-note">${esc(codesLine)}</div>
+  <div class="nm-ak-grid" id="nm-print-answers-mixed"></div>
+</div>`;
+
+  document.body.appendChild(sheet);
+  sheet.querySelectorAll('.nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex || '', el));
+
+  const answerGrid = sheet.querySelector('#nm-print-answers-mixed');
+  let numStart = 0;
+  pages.forEach((pageItems, pi) => {
+    const problemGrid = sheet.querySelector(`#nm-print-problems-${pi}`);
+    fillPrintGrid(pageItems, problemGrid, answerGrid, { numStart, skipGridClass: true });
+    numStart += pageItems.length;
+  });
+
+  setTimeout(() => { window.print(); }, 350);
+}
+
 /* 스레드 레벨 params 가져오기 */
 function getLevelParams(threadId, lv){
   const th = (window.NM_THREADS || {})[threadId];
@@ -1408,6 +1595,15 @@ const NM_EXAM = {
 
   /* 문장제 변환 노출 — drill.html 미리보기가 유형(숫자/문장제) 선택을 그대로 비추는 데 쓴다. */
   applyWordProblems,
+
+  /* 최대잉여법 비례 배분 — 검증 하네스 노출용(로드맵 세션 20문항/페이지, 2026-09-04).
+     순수 함수라 브라우저 없이도 Node에서 그대로 돌릴 수 있다. */
+  proportionalSplit,
+
+  /* items(드릴 목록, 가중치=n|count|weight)를 목표 총 문항 수로 나눠 문제를 만든다 —
+     renderMixedSheet가 쓰는 그 로직 그대로. 검증 하네스가 실제 화면을 열지 않고도
+     세션당 20문항 분배·결정성(같은 시드→같은 결과)을 확인하는 데 쓴다. */
+  buildMixedProblemSet,
 
   /* ── 1. 시험 설정 화면 ── */
   renderExamSetup(container, onStart, opts){
@@ -1670,9 +1866,12 @@ const NM_EXAM = {
       let openCourse = (opts.currentCourse && NM_COURSES[opts.currentCourse]) ? opts.currentCourse : null;
       let scrolledOnce = false;
       /* 인쇄 옵션 — 교과/마법 흐름과 같은 4종(문항수·문장제 유형·개념·표지).
-         countMode 'default'=세션 편성 그대로, 숫자=드릴마다 그 문항수로 통일. */
+         countMode = 세션 전체를 한 장에 담을 목표 문항 수(2026-09-04 원장 지시
+         "한 페이지에 20문제씩" — 드릴마다 따로 세지 않고 세션 전체 총량이다).
+         10|20|40만 허용(40=20문항짜리 두 장) — renderPrintMulti의 opts.mixed로 그대로
+         넘어간다. */
       let roadWordType = 'none';     // 'none'|'mix'|'all'
-      let roadCountMode = 'default'; // 'default'|10|20
+      let roadCountMode = 20;        // 10|20|40
       /* 주기(주 1회/주 2회) — 연산 로드맵 화면과 같은 S.roadCadence를 공유
          (opts.cadence로 받고, 바꾸면 opts.onCadence로 저장을 부탁한다). */
       let roadCadence = (opts.cadence==='w2') ? 'w2' : 'w1';
@@ -1795,6 +1994,14 @@ ${printWatermarkHtml()}
         return items.map(d => `<span class="nm-ex-road-chip">${esc(threadLabel(d.t))} × ${d.n}</span>`).join('');
       }
 
+      /* 인쇄 회수 — S.roadPrints(main.js가 opts.roadPrints로 그대로 넘긴 참조 객체)에
+         courseKey+'-'+sessionIdx 키로 누적된다. opts.onPrinted(key)가 그 저장을
+         맡는다(main.js screenExam()의 onCadence와 같은 콜백 패턴). */
+      function printKey(courseKey, i){ return courseKey + '-' + i; }
+      function printCountFor(courseKey, i){
+        return (opts.roadPrints && opts.roadPrints[printKey(courseKey, i)]) || 0;
+      }
+
       function sessionRowHtml(s, i, courseKey){
         const isMagic = !s.test && s.magic && s.magic.length;
         const startOff = courseStartOffset(courseKey);
@@ -1805,6 +2012,15 @@ ${printWatermarkHtml()}
           : `${esc(lk('세션','Session','课节'))} ${i+1}`) + calHtml;
         const magicHtml = isMagic
           ? `<span class="nm-ex-road-magic">✨ ${s.magic.map(magicLabel).map(esc).join(' · ')}</span>` : '';
+        const printed = printCountFor(courseKey, i);
+        /* 첫 인쇄 전에는 "🎲 새 문제로 한 장 더" 버튼을 보여줄 이유가 없다(같은
+           일을 하는 버튼이 둘이 되므로) — 인쇄한 적이 있을 때만 나타난다. */
+        const reprintHtml = printed > 0 ? `<div class="nm-ex-road-printed">
+            <span class="nm-ex-road-printed-count">🖨 ${esc(lk(`인쇄 ${printed}장`,`Printed ${printed}`,`已打印${printed}张`))}</span>
+            <button class="nm-ex-road-reprint-btn" data-course="${esc(courseKey)}" data-session="${i}">
+              🎲 ${esc(lk('새 문제로 한 장 더','One more (new problems)','再来一张(新题)'))}
+            </button>
+          </div>` : '';
         return `<div class="nm-ex-road-session">
           <div class="nm-ex-road-session-head">
             <span class="nm-ex-road-session-name">${nameHtml}</span>
@@ -1814,6 +2030,7 @@ ${printWatermarkHtml()}
           <button class="nm-ex-road-print-btn" data-course="${esc(courseKey)}" data-session="${i}">
             🖨 ${esc(lk('학습지','Worksheet','学习单'))}
           </button>
+          ${reprintHtml}
         </div>`;
       }
 
@@ -1874,6 +2091,10 @@ ${printWatermarkHtml()}
     <span class="nm-ex-form-title">🛤️ ${esc(lk('연산 로드맵','Course Road','运算路线图'))}</span>
   </div>
   <div class="nm-ex-road-opts">
+    ${(opts.currentCourse && NM_COURSES[opts.currentCourse] && (NM_COURSES[opts.currentCourse].sessions||[]).length) ? `
+    <div class="nm-ex-road-opt-row nm-ex-road-thisweek-row">
+      <button class="nm-ex-road-thisweek-btn" id="nm-road-thisweek">🖨️ ${esc(lk('이번 주 학습지 한 장 더','One more sheet for this week','再打印一张本周学习单'))}</button>
+    </div>` : ''}
     <div class="nm-ex-road-opt-row">
       <span class="nm-ex-road-opt-label">${esc(lk('유형','Style','题型'))}</span>
       <div class="nm-ex-road-seg" id="nm-road-word">
@@ -1885,9 +2106,9 @@ ${printWatermarkHtml()}
     <div class="nm-ex-road-opt-row">
       <span class="nm-ex-road-opt-label">${esc(lk('문항 수','Count','题量'))}</span>
       <div class="nm-ex-road-seg" id="nm-road-count">
-        <button data-c="default" class="${roadCountMode==='default'?'sel':''}">${esc(lk('세션 그대로','As planned','按课程'))}</button>
-        <button data-c="10" class="${roadCountMode===10?'sel':''}">${esc(lk('10문항씩','10 each','每题型10'))}</button>
-        <button data-c="20" class="${roadCountMode===20?'sel':''}">${esc(lk('20문항씩','20 each','每题型20'))}</button>
+        <button data-c="10" class="${roadCountMode===10?'sel':''}">${esc(lk('10문항 · 1장','10 · 1 page','10题·1页'))}</button>
+        <button data-c="20" class="${roadCountMode===20?'sel':''}">${esc(lk('20문항 · 1장(기본)','20 · 1 page (default)','20题·1页(默认)'))}</button>
+        <button data-c="40" class="${roadCountMode===40?'sel':''}">${esc(lk('40문항 · 2장','40 · 2 pages','40题·2页'))}</button>
       </div>
     </div>
     <div class="nm-ex-road-opt-row">
@@ -1932,7 +2153,7 @@ ${printWatermarkHtml()}
         });
         container.querySelectorAll('#nm-road-count button').forEach(b => {
           b.addEventListener('click', () => {
-            roadCountMode = b.dataset.c==='default' ? 'default' : parseInt(b.dataset.c,10);
+            roadCountMode = parseInt(b.dataset.c,10) || 20;
             rerenderKeepScroll();
           });
         });
@@ -1946,26 +2167,39 @@ ${printWatermarkHtml()}
         const planBtn = container.querySelector('#nm-road-plan');
         if(planBtn) planBtn.addEventListener('click', printPersonalPlan);
 
-        container.querySelectorAll('.nm-ex-road-print-btn').forEach(btn => {
+        /* 세션 하나를 20(또는 10/40)문항 한 장 학습지로 인쇄한다 — 드릴별 가중치(n)에
+           비례해 나눈다(buildMixedProblemSet, renderPrintMulti의 opts.mixed 경로).
+           매번 새 시드라 "🖨 학습지"·"🎲 새 문제로 한 장 더" 둘 다 이 함수 하나로
+           충분하다(2026-09-04 원장 지시 "웹페이지 들어가면 추가로 계속 인쇄"). */
+        function doPrintSession(courseKey, sessionIdx){
+          const course = NM_COURSES[courseKey];
+          const session = course && course.sessions && course.sessions[sessionIdx];
+          if(!session) return;
+          const raw = session.test ? (session.pool||[]) : (session.drills||[]);
+          const items = raw.map(d => ({
+            thread: d.t, level: d.lv, n: d.n,
+            wordType: roadWordType,
+            seed: NM_RNG.newCode(),
+          }));
+          if(!items.length) return;
+          const off = courseStartOffset(courseKey);
+          const cal = (off===null) ? '' : calLabelFor(off+sessionIdx)+' · ';
+          NM_EXAM.renderPrintMulti(items, `${cal}${courseKey}-S${sessionIdx+1}`, { mixed: roadCountMode });
+          if(opts.onPrinted) opts.onPrinted(printKey(courseKey, sessionIdx));
+          rerenderKeepScroll();
+        }
+
+        container.querySelectorAll('.nm-ex-road-print-btn, .nm-ex-road-reprint-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const courseKey = btn.dataset.course;
-            const sessionIdx = parseInt(btn.dataset.session, 10);
-            const course = NM_COURSES[courseKey];
-            const session = course && course.sessions && course.sessions[sessionIdx];
-            if(!session) return;
-            const raw = session.test ? (session.pool||[]) : (session.drills||[]);
-            const items = raw.map(d => ({
-              thread: d.t, level: d.lv,
-              count: roadCountMode==='default' ? d.n : roadCountMode,
-              wordType: roadWordType,
-              seed: NM_RNG.newCode(),
-            }));
-            if(!items.length) return;
-            const off = courseStartOffset(courseKey);
-            const cal = (off===null) ? '' : calLabelFor(off+sessionIdx)+' · ';
-            NM_EXAM.renderPrintMulti(items, `${cal}${courseKey}-S${sessionIdx+1}`);
+            doPrintSession(btn.dataset.course, parseInt(btn.dataset.session, 10));
           });
+        });
+
+        const thisWeekBtn = container.querySelector('#nm-road-thisweek');
+        if(thisWeekBtn) thisWeekBtn.addEventListener('click', () => {
+          if(!opts.currentCourse) return;
+          doPrintSession(opts.currentCourse, 0);
         });
 
         if(!scrolledOnce && opts.currentCourse){
@@ -2538,11 +2772,23 @@ ${conceptHtml}
      정답 렌더링은 renderPrint의 단일 항목 로직을 그대로 재사용하고, 항목별로
      자기 학습지 코드(#THREAD-Lx-COUNTxSEED)를 그대로 갖는다 — 기존 ?ws=
      도우미 화면이 그 코드를 이미 그대로 이해하므로 새 규약이 필요 없다.
-     envelopeCode는 표지에만 쓰는 표시용 라벨(예: W2026-W35-C4). */
-  renderPrintMulti(items, envelopeCode){
+     envelopeCode는 표지에만 쓰는 표시용 라벨(예: W2026-W35-C4).
+
+     opts.mixed(양수) — 로드맵 세션 인쇄(2026-09-04 원장 지시 "한 페이지에 20문제씩")가
+     쓰는 새 경로. 드릴별 문항 수(count)를 그대로 쓰지 않고 items의 가중치(n·count·
+     weight 중 있는 값)에 비례해 목표 총량(10/20/40)으로 다시 나눈 뒤, 한 세션을
+     페이지당 20문항(문장제만이면 10문항) 그리드 한 장으로 합쳐 찍는다 — 예전처럼
+     드릴마다 새 페이지가 시작되지 않는다. 편지함 봉투 인쇄도 같은 함수를 타므로
+     opts.mixed를 넘기면 그대로 이 경로를 쓴다(넘기지 않으면 아래의 예전 방식 그대로). */
+  renderPrintMulti(items, envelopeCode, opts){
     if(!items || !items.length) return;
     const old = document.querySelector('.nm-print-sheet');
     if(old) old.remove();
+
+    if(opts && opts.mixed){
+      renderMixedSheet(items, envelopeCode, opts);
+      return;
+    }
 
     const built = items.map(cfg => {
       const numericSeed = NM_RNG.hashSeed(cfg.seed);

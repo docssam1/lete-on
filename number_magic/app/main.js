@@ -108,6 +108,9 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      보여 주면 그 자체가 과약속 쪽으로 기운다(원장 지시로 넣은 "연산 트랙만
      센 주차" 단서와 같은 원칙). 더 빠른 기준을 원하면 직접 고르면 된다. */
   roadPace:'p2',
+  roadPrints:{}, /* 연산 로드맵 세션 인쇄 회수(2026-09-04) — {'C5-0':2, 'C7-3':1, ...}
+    key=courseKey+'-'+sessionIdx. exam.js showRoadPick의 "인쇄 N장" 표시·재인쇄 버튼용,
+    잠금과 무관한 순수 카운터라 지워져도 학습에 지장 없음. */
   lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
   symbolDex:{}, /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */
   seenUnlocks:{}, /* 과정 진도로 새로 연 캐릭터 토스트 재알림 방지(캐릭터-승급-설계.md §3) — {'number_42':true,'symbol_pi':true} */
@@ -127,6 +130,7 @@ if(!S.boost)S.boost={doneWeeks:{},log:[]};
 if(!S.boost.doneWeeks)S.boost.doneWeeks={};
 if(!S.boost.log)S.boost.log=[];
 if(S.roadCadence!=='w1'&&S.roadCadence!=='w2')S.roadCadence='w1';
+if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
 /* 목표 기준(속도) 검증 — 값은 ROAD_PACES의 key와 같아야 한다. ROAD_PACES는 이 줄보다
    아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
    이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
@@ -197,7 +201,10 @@ function switchToSlot(target){
    난이도 잠금(자유 선택 원칙)과는 무관한 별개의 축 — active면 이 체크는 전부 통과. */
 const TRIAL_UNITS=['N-01','N-09','A-01','C-06'];
 function isTrialUnit(uid){return TRIAL_UNITS.indexOf(uid)>=0;}
-function accountActive(){return !!(S.account&&S.account.status==='active');}
+/* 원장 지시 2026-09-03 "우선 승인번호 없이도 모두 열리도록": 계정 상태와 무관하게 항상 열림.
+   승인번호 입력·재검증 코드는 그대로 두었으니, 게이트를 되살릴 때는 아래 한 줄만
+   `return !!(S.account&&S.account.status==='active');` 로 되돌리면 된다. */
+function accountActive(){return true;}
 function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
 /* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
@@ -562,6 +569,9 @@ function startAmbience(){
 
 /* ---------- 최상단 렌더 ---------- */
 let townCleanup=null;
+let hqPuzzle=null; /* 수학사 퀴즈(§3 남쪽 항구) — 현재 화면의 퍼즐 상태. S.histQuiz(큐·done)와
+  달리 저장하지 않는다(재입장 시 같은 만화면 새로 섞임) — mgTimer·townCleanup과 같은 성격의
+  전환용 모듈 변수. */
 /* 사람 아바타 kind — S.avatar는 onboarded와 같은 이유로 defaults()에 없다(§ 위 주석
    "onboarded는 defaults()에 넣지 않음" 참고): 기존 저장본(온보딩 이전)과 병합돼도
    "아직 안 골랐음"을 구분해야 마을 이주 모달이 뜬다. 읽을 땐 항상 이 헬퍼로. */
@@ -629,6 +639,8 @@ function render(){
   else if(S.view==='exam')screenExam();
   else if(S.view==='closet')screenCloset();
   else if(S.view==='symboldex')screenSymbolDex();
+  else if(S.view==='histquiz')screenHistQuiz();
+  else if(S.view==='report')screenReport();
   else screenTown();
   renderMath();
 }
@@ -830,12 +842,15 @@ const TOWN_GATES=[
   { id:'south', pos:'left:75%;top:83%', icon:'⛵',
     name:{ko:'바깥 세상 항구',en:'Harbor to the World',zh:'通往世界的港口'},
     links:[
-      {name:{ko:'수학사 퀴즈',en:'Math History Quiz',zh:'数学史问答'}, soon:true},
+      /* 2026-09-03: 만화 95편(data/story-comics.js)에 문항(네 컷 순서 맞히기)을 얹어 열림.
+         url이 아니라 view — 새 탭이 아니라 이 앱 안의 화면(S.view='histquiz')으로 이동한다. */
+      {name:{ko:'수학사 퀴즈',en:'Math History Quiz',zh:'数学史问答'}, view:'histquiz'},
       {name:{ko:'NCP',en:'NCP',zh:'NCP'}, soon:true}
     ] }
 ];
-/* 링크가 열려 있는지 — open:true뿐이다(설정 파일 조회 없음, 원장 지시로 단순화). */
-function gateLinkOpen(link){ return !!(link&&link.open); }
+/* 링크가 열려 있는지 — open:true(새 탭 url) 또는 view(앱 내 화면 전환)면 열림.
+   (설정 파일 조회 없음, 원장 지시로 단순화). */
+function gateLinkOpen(link){ return !!(link&&(link.open||link.view)); }
 /* 관문 탭 → 링크 목록 모달. showTownModal(#tmodal, 단일 버튼)과 달리 링크가
    여러 개일 수 있어 body에 직접 붙였다 뗀다(gateModalHtml과 같은 패턴) —
    .nm-tmodal/.nm-tmcard CSS는 그대로 재사용해 같은 톤을 낸다. */
@@ -844,6 +859,9 @@ function showGateLinksModal(gate){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const rows=(gate.links||[]).map(link=>{
     if(gateLinkOpen(link)){
+      if(link.view){
+        return `<button class="nm-btn full" data-view="${esc(link.view)}">${esc(L(link.name))} →</button>`;
+      }
       return `<button class="nm-btn full" data-url="${esc(link.url)}">${esc(L(link.name))} →</button>`;
     }
     return `<button class="nm-btn full ghost" disabled>${esc(L(link.name))} · ${lk('준비 중','Coming soon','准备中')}</button>`;
@@ -861,6 +879,10 @@ function showGateLinksModal(gate){
   const close=()=>wrap.remove();
   wrap.querySelectorAll('[data-url]').forEach(b=>{
     b.onclick=()=>{ window.open(b.dataset.url,'_blank','noopener'); };
+  });
+  /* view 링크 — 새 탭이 아니라 이 앱 안의 화면으로 이동(마을 밖으로 안 나감) */
+  wrap.querySelectorAll('[data-view]').forEach(b=>{
+    b.onclick=()=>{ close(); S.view=b.dataset.view; save(); render(); };
   });
   $('#nmGateLinksClose').onclick=close;
   wrap.addEventListener('click',e=>{ if(e.target===wrap) close(); });
@@ -953,6 +975,7 @@ function screenTown(){
       <button class="nm-iconbtn nm-roadbtn" id="townCourseRoad" title="${S.lang==='ko'?'연산 로드맵':S.lang==='en'?'Course Road':'运算路线图'}">🛤️</button>
       <button class="nm-iconbtn nm-dexbtn" id="townDex" title="${S.lang==='ko'?'기호 도감':S.lang==='en'?'Symbol Dex':'符号图鉴'}">📖</button>
       <button class="nm-iconbtn nm-mailbtn" id="townMail" title="${S.lang==='ko'?'편지함':S.lang==='en'?'Mailbox':'信箱'}">📬${mailboxUnreadCount()>0?`<span class="nm-mb-dot">${mailboxUnreadCount()}</span>`:''}</button>
+      <button class="nm-iconbtn nm-rpbtn" id="townReport" title="${S.lang==='ko'?'리포트':S.lang==='en'?'Report':'学习报告'}">📊</button>
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
@@ -972,6 +995,7 @@ function screenTown(){
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
   const cr=$('#townCourseRoad');if(cr)cr.onclick=()=>{S._roadFocus=null;S.view='courseroad';save();render();};
   const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
+  const rp=$('#townReport');if(rp)rp.onclick=()=>{S.view='report';save();render();};
   maybeShowR0Banner(scr);
   if(S.onboarded && !S.avatar){
     showAvatarMigrateModal();
@@ -2587,6 +2611,7 @@ function screenTitle(){
         <div class="nm-title-sub-row">
           <button class="nm-title-pill" id="ttStory">🗺 ${lk('스토리 모드','Story Mode','故事模式')}</button>
           <button class="nm-title-pill" id="ttDex">📖 ${lk('기호 도감','Symbol Dex','符号图鉴')}</button>
+          <button class="nm-title-pill" id="ttHist">🏛️ ${lk('수학사 퀴즈','Math History Quiz','数学史问答')}</button>
         </div>
       </div>
     </div>
@@ -2598,6 +2623,7 @@ function screenTitle(){
   $('#ttRoad').onclick=()=>{ S.view='courseroad'; save(); render(); };
   $('#ttStory').onclick=()=>{ S.view='roadmap'; save(); render(); };
   $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
+  $('#ttHist').onclick=()=>{ S.view='histquiz'; save(); render(); };
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
 function lineageBadgeRowHtml(){
@@ -2668,23 +2694,59 @@ function syncProgressUnlocks(){
   });
   if(!newNumbers.length && !newSymbols.length) return;
   save();
+  /* 승급 순간(캐릭터-승급-설계.md §3, HANDOFF "캐릭터를 학습 흐름 더 넓게
+     쓰기" §2) — 예전엔 toast() 한 줄로만 알렸다. 아이가 새로 온 친구를
+     실제로 보게(내 아바타 옆에 나란히, renderPartyHtml) 마을 모달(§
+     lineageBadgeOverlayHtml과 같은 #nm-gate-overlay 패턴)로 승격.
+     seenUnlocks로 유닛당 1회만 — 로직은 그대로, 표시 방식만 바뀐다. */
+  const toShow=[];
   newNumbers.forEach(item => {
     const sk = 'number_' + item.id;
     if(S.seenUnlocks[sk]) return;
     S.seenUnlocks[sk] = true;
-    toast(S.lang==='en' ? `A new number friend arrived! ${item.id} ✨`
-      : S.lang==='zh' ? `新的数字朋友来了！${item.id} ✨`
-      : `새 숫자 친구가 왔어요! ${item.id} ✨`, true);
+    toShow.push({type:'number', id:item.id});
   });
   newSymbols.forEach(item => {
     const sk = 'symbol_' + item.id;
     if(S.seenUnlocks[sk]) return;
     S.seenUnlocks[sk] = true;
-    toast(S.lang==='en' ? `A new symbol friend arrived! ${item.glyph} ✨`
-      : S.lang==='zh' ? `新的符号朋友来了！${item.glyph} ✨`
-      : `새 기호 친구가 왔어요! ${item.glyph} ✨`, true);
+    toShow.push({type:'symbol', id:item.id});
   });
   save();
+  if(toShow.length) showUnlockOverlay(toShow);
+}
+/* 새 친구 도착 모달 — 큐를 하나씩(동시에 여럿 열려도 겹쳐 뜨지 않게) 보여준다.
+   #nmUnlockOverlay가 이미 떠 있으면 아무 것도 안 함(닫힐 때 스스로 다음 걸 연다). */
+function unlockPreviewChar(item){
+  const base=Object.assign({}, S.character);
+  if(item.type==='number'){ base.number=item.id; delete base.symbol; }
+  else { base.symbol=item.id; delete base.number; }
+  return base;
+}
+function unlockOverlayHtml(item){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const previewChar=unlockPreviewChar(item);
+  const partyHtml=window.renderPartyHtml?window.renderPartyHtml(avatarKind(),previewChar,96)
+    :(window.renderNumiChar?window.renderNumiChar(previewChar,96):'');
+  const line=esc(lk('새 친구가 왔어! 옷장에서 동행으로 데려갈 수 있어.','A new friend arrived! You can take them along from the closet.','新朋友来了！可以在衣橱里带上一起走。'));
+  return `<div class="nm-gate-overlay nm-unlock-overlay" id="nmUnlockOverlay">
+    <div class="nm-gate-card nm-unlock-card">
+      <h3>${lk('새 친구가 도착했어요! ✨','A new friend arrived! ✨','新朋友到啦！✨')}</h3>
+      <div class="nm-unlock-party">${partyHtml}</div>
+      ${docStripHtml(40,line)}
+      <button class="nm-btn full" id="nmUnlockOverlayClose">${lk('좋아요!','Nice!','太棒了！')}</button>
+    </div>
+  </div>`;
+}
+function showUnlockOverlay(queue){
+  if(!queue || !queue.length) return;
+  if($('#nmUnlockOverlay')) return; // 이미 하나 떠 있으면 닫힐 때 스스로 이어서 연다
+  const item=queue.shift();
+  document.body.insertAdjacentHTML('beforeend', unlockOverlayHtml(item));
+  confetti(); playSfx('great-job');
+  const close=()=>{ const m=$('#nmUnlockOverlay'); if(m)m.remove(); showUnlockOverlay(queue); };
+  $('#nmUnlockOverlayClose').onclick=close;
+  $('#nmUnlockOverlay').addEventListener('click', e=>{ if(e.target.id==='nmUnlockOverlay') close(); });
 }
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
 function primarySessionOf(course){
@@ -2957,8 +3019,11 @@ function screenMailbox(){
       };
     }
     $('#mbPrint').onclick=()=>{
-      const items = env.placements.map(p=>({thread:p.thread, level:p.level, count:p.count, seed:p.seed}));
-      if(window.NM_EXAM && NM_EXAM.renderPrintMulti) NM_EXAM.renderPrintMulti(items, env.wsId);
+      /* 로드맵 세션 인쇄와 같은 20문항/페이지 경로(2026-09-04) — 드릴별 count를
+         그대로 가중치(n)로 써서 한 세션을 한 장에 이어붙인다(exam.js
+         buildMixedProblemSet 참조). */
+      const items = env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
+      if(window.NM_EXAM && NM_EXAM.renderPrintMulti) NM_EXAM.renderPrintMulti(items, env.wsId, {mixed:20});
     };
     if(!S.mailbox.opened) S.mailbox.opened={};
     if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }
@@ -3199,7 +3264,7 @@ function initTownWorld(scr){
     {el:scr.querySelector('#nbBuddy'),x:37,y:63,tx:37,ty:63,spd:.22,buddy:true,
       lines:['오늘은 어떤 마법을 배울까?','내가 옆에서 도와줄게!']},
     {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
-      lines:['허허, 마을에 온 걸 환영하네','정자에 앉아 숫자 이야기 들려줄까?','천천히 해도 괜찮단다']},
+      lines:['허허, 마을에 온 걸 환영하네','정자에 앉아 숫자 이야기 들려줄까?','천천히 해도 괜찮단다','항구에 가면 수학 이야기 퀴즈가 있단다']},
     {el:scr.querySelector('#nbDoc'),x:47,y:60,tx:47,ty:60,spd:0,still:true,
       lines:['안녕! 나는 독쌤이야 📚','오늘 배울 마법은 도서관에 있어','모르면 언제든 물어봐!']},
     {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:['안녕! 난 3이야 ✨','7이랑 만나면 10! 🔟','게임하러 가자!']},
@@ -3764,6 +3829,218 @@ function screenSymbolDex(){
   </div>`;
   $('#dexBack').onclick=()=>{const back=S._dexFrom||'town';S._dexFrom=null;S.view=back;save();render();};
   bindDexCards(scr);
+}
+
+/* ============================================================
+   수학사 퀴즈 — 네 컷 순서 맞히기 (마을세계관-설계.md §3 남쪽 항구 · §5 step5)
+   data/story-comics.js의 window.NM_COMICS[유닛id]={panels:[{art,text},×4]}를 그대로 쓴다.
+   문항을 새로 안 쓰고 "이미 있는 만화 95편의 순서를 섞어 되맞히기"만 하는 게임형 퀴즈.
+   S.histQuiz={queue:[유닛id,…],done:{유닛id:true}}만 저장(정답 큐·완료 기록) — 화면에
+   떠 있는 현재 퍼즐의 섞인 순서·고른 순서는 hqPuzzle(모듈 변수, 저장 안 함)에 둔다.
+   ============================================================ */
+function shuffleArr(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+/* 큐가 비면 새로 짠다 — 이미 끝난 유닛(stepDone(uid,'stamp'))을 먼저, 그 다음 나머지.
+   done(이번 라운드에서 이미 맞힌 만화)에 없는 것만 대상으로 삼고, 전부 done이면
+   done을 비우고 전체로 다시 돈다(스펙: "skip ones in done until all are done, then reset"). */
+function histQuizEnsure(){
+  if(!S.histQuiz)S.histQuiz={queue:[],done:{}};
+  if(!S.histQuiz.done)S.histQuiz.done={};
+  if(S.histQuiz.queue&&S.histQuiz.queue.length)return;
+  const ids=Object.keys(window.NM_COMICS||{});
+  if(!ids.length){S.histQuiz.queue=[];return;}
+  let remain=ids.filter(id=>!S.histQuiz.done[id]);
+  if(!remain.length){S.histQuiz.done={};remain=ids.slice();}
+  const finished=shuffleArr(remain.filter(id=>stepDone(id,'stamp')));
+  const rest=shuffleArr(remain.filter(id=>!stepDone(id,'stamp')));
+  S.histQuiz.queue=finished.concat(rest);
+  save();
+}
+/* 새 퍼즐 — 패널 4장의 원래 인덱스(0~3=정답 순서)를 섞는다. 이미 섞은 게 우연히
+   정답 순서([0,1,2,3])와 같으면(1/24 확률) 재섞음 — 탭 한 번으로 끝나는 퍼즐 방지. */
+function histQuizNewPuzzle(uid){
+  let order=[0,1,2,3];
+  for(let tries=0;tries<6;tries++){
+    order=shuffleArr([0,1,2,3]);
+    if(order.some((v,i)=>v!==i))break;
+  }
+  return {uid,order,picked:[],checked:null};
+}
+function hqOrderRowHtml(comic){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const slots=[0,1,2,3].map(i=>{
+    const oi=hqPuzzle.picked[i];
+    if(oi===undefined)return `<div class="nm-hq-slot empty">${i+1}</div>`;
+    const p=comic.panels[oi];
+    return `<div class="nm-hq-slot filled"><span class="nm-hq-badge">${i+1}</span><div class="nm-hq-slot-art">${p.art}</div></div>`;
+  }).join('');
+  return `<div class="nm-hq-order-h">${lk('내 순서','My order','我的顺序')}</div>
+    <div class="nm-hq-order-row">${slots}</div>`;
+}
+function hqGridHtml(comic){
+  const pickedIdx={};hqPuzzle.picked.forEach((oi,i)=>{pickedIdx[oi]=i+1;});
+  return `<div class="nm-hq-grid">${hqPuzzle.order.map(oi=>{
+    const p=comic.panels[oi];
+    const badge=pickedIdx[oi];
+    return `<button class="nm-hq-panel${badge?' picked':''}" data-i="${oi}">
+      ${badge?`<span class="nm-hq-badge">${badge}</span>`:''}
+      <div class="nm-comic-art">${p.art}</div>
+      <div class="nm-comic-cap">${L(p.text)}</div>
+    </button>`;
+  }).join('')}</div>`;
+}
+function hqPuzzleBodyHtml(uid,comic){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const unitTitle=UNITS[uid]?L(UNITS[uid].title):uid;
+  const canCheck=hqPuzzle.picked.length===4;
+  return `<div class="nm-hq-unit-hint">${esc(unitTitle)}</div>
+    ${hqOrderRowHtml(comic)}
+    <div class="nm-hq-grid-h">${lk('네 컷을 순서대로 탭해 보세요','Tap the panels in order','按顺序点击四格')}</div>
+    ${hqGridHtml(comic)}
+    ${hqPuzzle.checked==='no'?`<div class="nm-hq-wrong">${lk('음, 순서가 조금 달라. 다시 볼까?','Hmm, the order is a bit off. Look again?','嗯，顺序有点不对，再看看？')}</div>`:''}
+    <div class="nm-hq-btns">
+      <button class="nm-btn ghost" id="hqReset">${lk('다시','Reset','重来')}</button>
+      <button class="nm-btn full" id="hqCheck"${canCheck?'':' disabled'}>${lk('확인','Check','确认')}</button>
+    </div>`;
+}
+function hqSuccessBodyHtml(comic){
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const panelsHtml=comic.panels.map((p,i)=>`<div class="nm-comic-panel">
+      <span class="nm-comic-no">${i+1}</span>
+      <div class="nm-comic-art">${p.art}</div>
+      <div class="nm-comic-cap">${L(p.text)}</div>
+    </div>`).join('');
+  return `<div class="nm-card-h">${lk('맞았어! 이야기가 이렇게 흘렀어요','Right! That is how the story went','答对了！故事就是这样发展的')}</div>
+    <div class="nm-comic">${panelsHtml}</div>
+    <div class="nm-hq-btns">
+      <button class="nm-btn full" id="hqNext">${lk('다음 이야기 →','Next story →','下一个故事 →')}</button>
+      <button class="nm-btn ghost" id="hqToTown">${lk('마을로','Back to town','回村庄')}</button>
+    </div>`;
+}
+function bindHistQuizPuzzle(scr,uid,comic){
+  scr.querySelectorAll('.nm-hq-panel[data-i]').forEach(b=>{
+    b.onclick=()=>{
+      const oi=+b.dataset.i;
+      const idx=hqPuzzle.picked.indexOf(oi);
+      if(idx>=0)hqPuzzle.picked.splice(idx,1);           // 이미 고른 패널 다시 탭 → 취소
+      else{ if(hqPuzzle.picked.length>=4)return; hqPuzzle.picked.push(oi); }
+      hqPuzzle.checked=null;
+      screenHistQuiz();
+    };
+  });
+  const rb=scr.querySelector('#hqReset');
+  if(rb)rb.onclick=()=>{ hqPuzzle.picked=[]; hqPuzzle.checked=null; screenHistQuiz(); };
+  const cb=scr.querySelector('#hqCheck');
+  if(cb)cb.onclick=()=>{
+    if(hqPuzzle.picked.length!==4)return;
+    const ok=hqPuzzle.picked.every((oi,i)=>oi===i);
+    if(ok){
+      if(!S.histQuiz.done)S.histQuiz.done={};
+      const already=!!S.histQuiz.done[uid];
+      S.histQuiz.done[uid]=true;
+      hqPuzzle.checked='ok';
+      save();
+      if(!already){ coinAdd(2); toast('🪙 +2',true); }
+      screenHistQuiz();
+    }else{
+      hqPuzzle.checked='no';                              // 고른 순서는 그대로 둔다 — 다시 보고 고치게
+      screenHistQuiz();
+    }
+  };
+}
+function bindHistQuizSuccess(scr,uid){
+  const nb=scr.querySelector('#hqNext');
+  if(nb)nb.onclick=()=>{
+    S.histQuiz.queue=(S.histQuiz.queue||[]).filter(x=>x!==uid);
+    save();
+    hqPuzzle=null;
+    screenHistQuiz();
+  };
+  const tb=scr.querySelector('#hqToTown');
+  if(tb)tb.onclick=()=>{S.view='town';save();render();};
+}
+function screenHistQuiz(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  const scr=$('#screen');
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const titleHtml=`🏛️ ${lk('수학사 퀴즈','Math History Quiz','数学史问答')}`;
+  histQuizEnsure();
+  const uid=S.histQuiz.queue[0];
+  if(!uid){
+    scr.innerHTML=`<div class="nm-unit-bar">
+        <button class="nm-back" id="hqBack">${t('back')}</button>
+        <div class="nm-unit-title">${titleHtml}</div>
+      </div>
+      <div class="nm-step-body nm-hq-wrap"><div class="nm-card center">
+        <div class="nm-card-h">${lk('아직 준비된 이야기가 없어요','No stories are ready yet','还没有准备好的故事')}</div>
+      </div></div>`;
+    $('#hqBack').onclick=()=>{S.view='town';save();render();};
+    return;
+  }
+  if(!hqPuzzle||hqPuzzle.uid!==uid)hqPuzzle=histQuizNewPuzzle(uid);
+  const comic=NM_COMICS[uid];
+  const success=hqPuzzle.checked==='ok';
+  scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="hqBack">${t('back')}</button>
+      <div class="nm-unit-title">${titleHtml}</div>
+    </div>
+    <div class="nm-step-body nm-hq-wrap">
+      ${docStripHtml(44,esc(lk('네 컷의 순서를 맞춰 봐. 이야기가 어떻게 흘렀을까?','Put the four panels in order. How did the story go?','把四格排好顺序，故事是怎么发展的？')))}
+      <div class="nm-card${success?' center':(hqPuzzle.checked==='no'?' nm-hq-shake':'')}">
+        ${success?hqSuccessBodyHtml(comic):hqPuzzleBodyHtml(uid,comic)}
+      </div>
+    </div>`;
+  $('#hqBack').onclick=()=>{S.view='town';save();render();};
+  if(success)bindHistQuizSuccess(scr,uid);
+  else bindHistQuizPuzzle(scr,uid,comic);
+}
+
+/* ============================================================
+   리포트 (S.view==='report') — HANDOFF.md "캐릭터를 학습 흐름 더 넓게
+   쓰기" §1. 부모·아이가 같이 보는 진도 요약. 맨 위 독쌤 띠는 실제 데이터를
+   반영한다: 정체 감지→보강 루프(§2-4, boosterPick())가 잡아낸 약한
+   스레드가 있으면 그 이름을 짚어 주고, 없으면 격려 한 줄만. 새 분석
+   로직을 만들지 않고 이미 있는 boosterPick()·NM_STATS·courseProgress를
+   그대로 읽기만 한다. */
+function screenReport(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  const scr=$('#screen');
+  const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
+  const titleHtml=`📊 ${lk('리포트','Report','学习报告')}`;
+
+  const boostThread=boosterPick();
+  const boostTh=boostThread&&(window.NM_THREADS||{})[boostThread];
+  const docLine=boostTh
+    ? esc(lk(`이번 주는 "${L(boostTh.name)}"에서 조금 막혔어요. 편지함의 몸풀기부터 해 보자.`,
+             `You've been a bit stuck on "${L(boostTh.name)}" lately — let's start with the warm-up in the mailbox.`,
+             `最近在"${L(boostTh.name)}"上有点卡住，先从信箱的热身开始吧。`))
+    : esc(lk('잘 가고 있어요. 이대로 한 걸음씩!','Going well. One step at a time!','很顺利，继续一步一步来！'));
+
+  const cid=currentCourseKey();
+  const course=(window.NM_COURSES||{})[cid];
+  const prog=course?courseProgress(course):null;
+  const totalUnitsDone=Object.keys(S.progress||{}).filter(id=>unitDone(id)).length;
+
+  const weakRows=(window.NM_STATS?NM_STATS.boostList():[]).slice(0,3).map(w=>{
+    const th=(window.NM_THREADS||{})[w.thread];
+    return `<div class="nm-rp-row"><span>${esc(th?L(th.name):w.thread)}</span><span>${Math.round(w.avgRate*100)}%</span></div>`;
+  }).join('');
+
+  scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="rpBack">${t('back')}</button>
+      <div class="nm-unit-title">${titleHtml}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap">
+      ${docStripHtml(44,docLine)}
+      <div class="nm-card">
+        <div class="nm-card-h">${lk('지금까지 걸어온 길','How far you have come','走过的路')}</div>
+        <div class="nm-score">${totalUnitsDone} ${lk('유닛 완료','units done','个单元完成')}</div>
+        ${course?`<p class="nm-wsh-sentence">${esc(L(course.title))} · ${prog.done}/${prog.total}</p>`:''}
+        ${weakRows?`<div class="nm-mb-section-h">${lk('요즘 조금 어려운 곳','A bit tricky lately','最近有点难的地方')}</div>${weakRows}`:`<p class="nm-wsh-sentence">${lk('아직 보강이 필요한 곳이 없어요.','No weak spots detected yet.','暂时没有需要加强的地方。')}</p>`}
+        <button class="nm-btn full" id="rpToMail">📬 ${lk('편지함 열기','Open mailbox','打开信箱')}</button>
+      </div>
+    </div>`;
+  $('#rpBack').onclick=()=>{S.view='town';save();render();};
+  $('#rpToMail').onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
 }
 
 /* 개념 렌더(계단식): 세로로 이어지는 수식 스텝(mathSteps: tex 문자열 배열), 화살표로 연결 */
@@ -4455,7 +4732,11 @@ function screenExam(){
     currentCourse: currentCourseKey(), tiers: ROAD_TIERS,
     /* 주차 라벨용 — 연산 로드맵 화면(courseroad)과 같은 설정을 공유한다 */
     cadence: S.roadCadence,
-    onCadence: c => { if(c==='w1'||c==='w2'){ S.roadCadence=c; save(); } }
+    onCadence: c => { if(c==='w1'||c==='w2'){ S.roadCadence=c; save(); } },
+    /* 세션 인쇄 회수(2026-09-04, "웹페이지 들어가면 추가로 계속 인쇄") — 참조를 그대로
+       넘긴다(같은 객체를 exam.js가 읽고, onPrinted로 쓰기만 요청). */
+    roadPrints: S.roadPrints,
+    onPrinted: key => { S.roadPrints[key]=(S.roadPrints[key]||0)+1; save(); }
   });
 }
 

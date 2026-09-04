@@ -29,7 +29,8 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 /* #app 자체는 항상 화면 전체 폭(모바일/데스크탑 공통) — 마을(지도)이 항상 꽉 차게.
    학습 화면(등급목록/유닛)만 아래 미디어쿼리에서 데스크탑 폭 기준으로 중앙 640px로 좁힘. */
 #app{width:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-#screen{flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
+/* 내용이 화면보다 길면(데스크탑 큰 글자·독쌤 안내줄 등) 잘리지 않고 스크롤 — 2026-09-03 원장 "아래가 안 보여" */
+#screen{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 /* ── 상단바 ── */
 .nm-top{flex:none;display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);background:rgba(251,250,247,.95);backdrop-filter:blur(8px);z-index:10}
@@ -66,7 +67,9 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-unit-check{position:absolute;top:6px;right:8px;color:var(--ok);font-weight:900}
 
 /* ── 유닛 뷰 (스크롤 없이 한 화면) ── */
-.nm-unit-view{flex:1;min-height:0;display:flex;flex-direction:column;padding:4px 14px 6px}
+/* 유닛 화면: 내용이 화면보다 길면 잘라 내지 않고 #screen이 통째로 스크롤(flex-shrink 0).
+   내용이 짧으면 예전처럼 한 화면에 꽉 찬다(flex-grow 1). 2026-09-03 원장 "아래가 안 보여" */
+.nm-unit-view{flex:1 0 auto;min-height:0;display:flex;flex-direction:column;padding:4px 14px 6px}
 .nm-unit-bar{flex:none;display:flex;align-items:center;gap:12px;padding:6px 0}
 .nm-back{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;flex:none}
 .nm-unit-title{font-size:15px;font-weight:900;color:var(--blue-deep);line-height:1.15}
@@ -101,7 +104,7 @@ html[data-nm-band="young"] .nm-flow-ic{font-size:18px}
 html[data-nm-band="young"] .nm-flow-step small{font-size:10.5px}
 
 /* STEP 본문: 남은 높이 채우고 내부에서 배치 */
-.nm-step-body{flex:1;min-height:0;display:flex;flex-direction:column}
+.nm-step-body{flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
 /* 시험/학습지 폼: 내용이 길어지면 수직 스크롤 허용 */
 #nm-exam-cnt{overflow-y:auto;-webkit-overflow-scrolling:touch}
 
@@ -218,6 +221,10 @@ html[data-nm-band="young"] .nm-flow-step small{font-size:10.5px}
 .nm-mb-section-h{font-size:12px;font-weight:900;color:var(--sub);letter-spacing:.03em;margin:16px 0 8px;text-transform:uppercase}
 .nm-mb-drill-list{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
 .nm-mb-drill-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;flex-wrap:wrap}
+/* ── 리포트(§ 캐릭터를 학습 흐름 더 넓게 쓰기 — 1) 약한 스레드 목록 줄 ── */
+.nm-rp-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:13px;margin-bottom:6px}
+.nm-rp-row span:first-child{font-weight:800;color:var(--blue-deep)}
+.nm-rp-row span:last-child{color:var(--sub);font-weight:700}
 .nm-mb-drill-name{font-weight:800;font-size:13px;color:var(--blue-deep)}
 .nm-mb-drill-meta{font-size:11.5px;color:var(--sub);display:flex;align-items:center;gap:6px}
 .nm-mb-drill-meta code{background:#eef2fa;border-radius:6px;padding:2px 6px;font-size:10.5px}
@@ -329,6 +336,34 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-comic-art{background:#fdfaf3;border-bottom:2px solid var(--ink)}
 .nm-comic-art svg{display:block;width:100%;height:auto}
 .nm-comic-cap{font-size:12.5px;line-height:1.5;padding:8px 11px;color:var(--ink);font-weight:600}
+
+/* 수학사 퀴즈(§3 남쪽 항구) — 네 컷 순서 맞히기. .nm-comic-*(위)의 카드 톤을 그대로
+   빌려 쓰고, 탭 가능한 버튼·"내 순서" 줄만 새로 얹는다. */
+.nm-hq-wrap{padding:4px 2px 24px}
+.nm-hq-unit-hint{font-size:12.5px;font-weight:800;color:var(--sub);margin:2px 0 12px;text-align:center}
+.nm-hq-order-h,.nm-hq-grid-h{font-size:12px;font-weight:800;color:#8a6d46;margin:0 0 6px;letter-spacing:.02em}
+.nm-hq-order-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 16px}
+.nm-hq-slot{position:relative;aspect-ratio:200/140;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:16px;color:var(--sub)}
+.nm-hq-slot.empty{border:2px dashed var(--line);background:#fbfaf7}
+.nm-hq-slot.filled{border:2px solid var(--gold-deep);background:#fdfaf3;overflow:hidden;box-shadow:2px 2px 0 rgba(26,34,51,.12)}
+.nm-hq-slot-art{width:100%;height:100%}
+.nm-hq-slot-art svg{display:block;width:100%;height:100%}
+.nm-hq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 6px}
+.nm-hq-panel{position:relative;margin:0;padding:0;background:#fff;border:2px solid var(--ink);border-radius:12px;
+  overflow:hidden;box-shadow:3px 3px 0 rgba(26,34,51,.14);cursor:pointer;font:inherit;text-align:left;
+  transition:transform .12s,opacity .12s}
+.nm-hq-panel:active{transform:scale(.97)}
+.nm-hq-panel.picked{opacity:.45}
+.nm-hq-badge{position:absolute;top:7px;left:7px;width:22px;height:22px;border-radius:50%;
+  background:var(--blue);color:#fff;font-size:12px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;z-index:2}
+.nm-hq-wrong{color:var(--no);font-weight:800;font-size:13.5px;text-align:center;margin:10px 0 2px}
+.nm-hq-btns{display:flex;gap:10px;margin-top:14px}
+.nm-hq-btns .nm-btn{flex:1;margin-top:0}
+@keyframes nm-hq-shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}
+  30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+.nm-hq-shake{animation:nm-hq-shake .4s ease}
 
 /* 개념(디스커버) — 계단식 수식 전개(mathSteps, A-02~04) */
 .nm-mstep-box{border:1.5px solid #e3ecf7;background:linear-gradient(180deg,#fbfdff,#f5f9ff);border-radius:14px;padding:16px 12px;text-align:center;overflow-x:auto}
@@ -908,6 +943,22 @@ html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
   padding:9px 10px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
 .nm-ex-road-print-btn:hover{background:#1a4d93}
 .nm-ex-road-print-btn:active{transform:scale(.97)}
+/* ── 인쇄 회수 표시 + 재인쇄(2026-09-04, "웹페이지 들어가면 추가로 계속 인쇄") ── */
+.nm-ex-road-printed{display:flex;align-items:center;justify-content:space-between;
+  gap:8px;margin-top:8px;flex-wrap:wrap}
+.nm-ex-road-printed-count{font-size:11px;font-weight:800;color:var(--sub)}
+.nm-ex-road-reprint-btn{flex:1;min-width:140px;border:1px solid var(--gold-deep);
+  background:#fff;color:var(--gold-deep);border-radius:10px;padding:8px 10px;
+  font-size:12px;font-weight:800;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-road-reprint-btn:hover{background:rgba(201,160,99,.1)}
+.nm-ex-road-reprint-btn:active{transform:scale(.97)}
+/* 이번 주 학습지 한 장 더 — 옵션 바 맨 위, 과정 목록을 펼치지 않고도 바로 인쇄 */
+.nm-ex-road-thisweek-row{justify-content:center}
+.nm-ex-road-thisweek-btn{width:100%;border:none;border-radius:10px;
+  background:var(--gold-deep);color:#fff;font-size:13px;font-weight:800;
+  padding:10px 12px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-road-thisweek-btn:hover{filter:brightness(1.06)}
+.nm-ex-road-thisweek-btn:active{transform:scale(.98)}
 
 /* ============================================================
    학년 그리드 (1A ~ 6B)
@@ -1411,6 +1462,11 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-evo-txt small{font-size:11.5px;font-weight:700;color:var(--sub)}
 
 .nm-lin-overlay .nm-lin-card{max-width:340px}
+
+/* ── 승급 순간(새 친구 도착) 모달 — HANDOFF "캐릭터를 학습 흐름 더 넓게 쓰기" §2 ── */
+.nm-unlock-overlay .nm-unlock-card{max-width:340px}
+.nm-unlock-party{display:flex;justify-content:center;margin:8px 0 14px;min-height:110px;align-items:flex-end}
+.nm-unlock-card .nm-host{text-align:left;margin-bottom:14px}
 .nm-lin-emblem-big{font-size:52px;margin-bottom:4px;animation:stampIn .6s cubic-bezier(.3,1.4,.5,1)}
 .nm-lin-name{font-size:16px;font-weight:900;color:var(--gold-deep);margin:2px 0 8px}
 

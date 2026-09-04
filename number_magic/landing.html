@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Numbers of Magic — 수를 다루는 아이로 · DOCSSAM</title>
+<meta name="description" content="만 5세부터 시작하는 DOCSSAM의 수학. 계산을 외우지 않고 수를 펼쳐 다루는 법을 배우는 앱과, 주 1회·주 2회 선택에 따라 매주 도착하는 학습지.">
+<meta property="og:title" content="Numbers of Magic — 수를 다루는 아이로">
+<meta property="og:description" content="계산을 외우는 아이가 아니라, 수를 다루는 아이로. 매주 도착하는 학습지와 함께.">
+<meta property="og:image" content="assets/landing/town-desktop.jpg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ── tokens: about.html과 같은 가족(종이·먹·남색·금) + 지도에서 가져온 하늘·풀 ── */
+:root{
+  --paper:#FBFAF7; --paper-warm:#F5F1E8; --mist:#EFEDE7; --line:#E4E2DC;
+  --ink:#1A2233; --sub:#4a5468; --faint:#8a92a3;
+  --blue:#16417C; --blue-deep:#0E2C57; --blue-ink:#0A1C38;
+  --gold:#C9A063; --gold-soft:#EAC996; --gold-bright:#F5D98B;
+  --sky:#BFE0F2; --grass:#6FA85B; --grass-soft:#E4F0DC;
+  --serif:'Gowun Batang','Noto Serif KR',ui-serif,Georgia,serif;
+  --sans:'Pretendard',-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  --shadow-1:0 8px 24px -12px rgba(26,34,51,.22);
+  --shadow-2:0 30px 60px -30px rgba(14,44,87,.45);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+b,strong{font-weight:800}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.kicker{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
+h1,h2,h3{font-family:var(--serif);font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h2{font-size:clamp(28px,4.2vw,40px);line-height:1.25}
+h3{font-size:clamp(18px,2.4vw,22px);line-height:1.35}
+.lead{font-size:clamp(16px,2vw,18px);color:var(--sub);max-width:62ch;margin:16px 0 0}
+.accent{color:var(--gold)}
+section{padding:88px 0}
+@media(max-width:640px){section{padding:64px 0}}
+
+/* 상단 바 */
+.top{position:sticky;top:0;z-index:50;background:rgba(251,250,247,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:700;font-size:17px;text-decoration:none}
+.brand img{width:30px;height:38px;object-fit:contain}
+.top nav{display:flex;align-items:center;gap:6px}
+.langsw{display:flex;gap:2px;background:var(--mist);border:1px solid var(--line);border-radius:999px;padding:3px}
+.langbtn{padding:5px 11px;border-radius:999px;border:none;background:transparent;color:var(--sub);font-weight:700;font-size:11.5px;cursor:pointer;font-family:var(--sans)}
+.langbtn.active{background:var(--ink);color:var(--paper)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:999px;font-weight:800;font-size:15px;text-decoration:none;border:1px solid transparent;cursor:pointer;font-family:var(--sans);transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--blue-deep);color:#fff;box-shadow:0 12px 28px -12px rgba(14,44,87,.6)}
+.btn.primary:hover{box-shadow:0 16px 32px -12px rgba(14,44,87,.7)}
+.btn.gold{background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:var(--blue-ink)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.small{padding:9px 16px;font-size:13.5px}
+.btn:focus-visible,.langbtn:focus-visible,.faq summary:focus-visible{outline:3px solid var(--gold-soft);outline-offset:2px}
+
+/* 히어로: 낮의 마을 — 지도 그림이 주인공 */
+.hero{position:relative;padding:56px 0 0;overflow:hidden;background:linear-gradient(180deg,var(--sky) 0%,#E7F2F9 55%,var(--paper) 100%)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:36px;align-items:center}
+.hero h1{font-size:clamp(34px,5.4vw,58px);line-height:1.18}
+.hero h1 .accent{color:var(--blue)}
+.hero .lead{margin-top:18px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.proof{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
+.proof span b{font-family:var(--serif);font-size:18px;color:var(--ink);margin-right:3px}
+.hero-art{position:relative;aspect-ratio:4/3}
+.hero-art .map{position:absolute;inset:0;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-2);border:6px solid #fff;transform:rotate(-1.5deg)}
+.hero-art .map img{width:100%;height:100%;object-fit:cover;object-position:50% 45%}
+.hero-art .kid{position:absolute;width:30%;bottom:-6%;left:2%;filter:drop-shadow(0 14px 14px rgba(0,0,0,.25))}
+.hero-art .doc{position:absolute;width:26%;bottom:-5%;right:4%;filter:drop-shadow(0 14px 14px rgba(0,0,0,.25))}
+.hero-art .buddy{position:absolute;width:15%;bottom:6%;left:31%;filter:drop-shadow(0 10px 10px rgba(0,0,0,.25))}
+@media(max-width:860px){
+  .hero{padding-top:32px}
+  .hero .wrap{grid-template-columns:1fr;gap:28px}
+  .hero-art{aspect-ratio:5/4;margin-top:6px}
+  .hero-art .map{transform:none}
+}
+
+/* 철학: 종이 위 두 장의 카드 */
+.philo .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-1)}
+.card.bad{border-color:#eadccb;background:#FBF7F1}
+.card.good{border-color:#cfe1d3;background:#F2F8F1}
+.card .tag{display:inline-block;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-bottom:12px}
+.card.bad .tag{background:#f0e2d2;color:#8a5a2a}
+.card.good .tag{background:#d8ecd6;color:#2a6a35}
+.card .big{font-family:var(--serif);font-size:clamp(20px,2.6vw,26px);line-height:1.35;margin:0 0 10px}
+.card p{margin:0;color:var(--sub);font-size:15px}
+.eq{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:34px;padding:22px 24px;border-radius:var(--radius);background:var(--blue-deep);color:#fff}
+.eq .step{font-family:var(--serif);font-size:clamp(20px,3vw,30px);font-variant-numeric:tabular-nums}
+.eq .arrow{color:var(--gold-bright);font-size:20px}
+.eq .note{flex-basis:100%;font-size:14px;color:rgba(255,255,255,.78);margin-top:4px}
+.philo-link{margin-top:22px}
+@media(max-width:640px){.philo .grid{grid-template-columns:1fr}}
+
+/* 프로그램 화면: 가로로 넘기는 폰 화면 */
+.screens{background:var(--paper-warm);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rail{display:flex;gap:18px;overflow-x:auto;padding:30px 24px 26px;scroll-snap-type:x mandatory;scroll-padding-left:24px;scrollbar-width:thin;margin:0 -24px}
+.phone{flex:0 0 232px;scroll-snap-align:start}
+.phone .frame{border-radius:28px;border:6px solid var(--ink);background:var(--ink);overflow:hidden;box-shadow:var(--shadow-2);aspect-ratio:390/844}
+.phone .frame img{width:100%;height:100%;object-fit:cover;object-position:top}
+.phone figcaption{margin-top:12px;font-size:14px;line-height:1.45;color:var(--sub)}
+.phone figcaption b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
+@media(min-width:1180px){.rail{margin:0;padding-left:0;padding-right:0}}
+
+/* 학습지: 주 1회 · 주 2회 */
+.sheet .split{display:grid;grid-template-columns:1.1fr 1fr;gap:34px;align-items:center;margin-top:30px}
+.cadence{display:grid;gap:14px}
+.cad{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:var(--shadow-1)}
+.cad h3{font-family:var(--sans);font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.cad h3 .dot{width:10px;height:10px;border-radius:50%;background:var(--grass)}
+.cad.two h3 .dot{background:var(--gold)}
+.weeks{display:flex;flex-wrap:wrap;gap:6px}
+.wk{font-size:12.5px;font-weight:700;padding:5px 10px;border-radius:8px;background:var(--grass-soft);color:#2f5a25;font-variant-numeric:tabular-nums}
+.cad.two .wk{background:#FBF1D6;color:#6b4c00}
+.wk.env{background:var(--blue-deep);color:#fff}
+.cad p{margin:10px 0 0;font-size:13.5px;color:var(--sub)}
+.sheet-shot{border-radius:26px;border:6px solid var(--ink);background:var(--ink);overflow:hidden;box-shadow:var(--shadow-2);max-width:300px;margin:0 auto;aspect-ratio:390/844}
+.sheet-shot img{width:100%;height:100%;object-fit:cover;object-position:top}
+.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:30px}
+.opt{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;font-size:13.5px;color:var(--sub)}
+.opt b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.opt .ic{font-size:22px;margin-bottom:8px}
+.soon{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--mist);color:var(--faint);margin-left:6px;vertical-align:middle}
+@media(max-width:860px){.sheet .split{grid-template-columns:1fr}.opts{grid-template-columns:1fr 1fr}}
+
+/* 왜 이 학습지인가: 같은 수를 세 방향에서 */
+.three .tri{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.pillar{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;gap:10px}
+.pillar .no{align-self:flex-start;font-size:12px;font-weight:800;letter-spacing:.08em;padding:4px 10px;border-radius:999px;background:var(--blue-deep);color:#fff}
+.pillar b{font-family:var(--serif);font-size:19px}
+.pillar .ex{font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:17px;line-height:1.5;padding:14px 16px;border-radius:14px;background:var(--paper-warm);color:var(--ink);white-space:pre;font-variant-numeric:tabular-nums}
+.pillar .ex.story{font-family:var(--serif);white-space:normal;font-size:16px}
+.pillar p{margin:0;font-size:14px;color:var(--sub)}
+.tri-note{margin:18px 0 0;font-size:14px;color:var(--sub);max-width:70ch}
+@media(max-width:760px){.three .tri{grid-template-columns:1fr}}
+
+/* 사다리: 유아부터 고등까지 */
+.ladder{background:var(--paper-warm);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rungs{list-style:none;padding:0;margin:34px 0 0;display:grid;gap:10px}
+.rung{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px}
+.rung .lv{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--blue-deep);background:var(--sky);border-radius:999px;padding:4px 0;text-align:center}
+.rung b{display:block;font-size:16px}
+.rung small{display:block;color:var(--sub);font-size:13px;margin-top:2px}
+.rung .fx{font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:14px;color:var(--ink);background:var(--paper-warm);padding:6px 10px;border-radius:8px;white-space:nowrap}
+.sym{margin-top:26px;padding:20px 22px;border-radius:var(--radius);background:var(--blue-deep);color:#fff;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.sym .glyph{font-family:var(--serif);font-size:44px;color:var(--gold-bright);line-height:1}
+.sym p{margin:0;font-size:15px;color:rgba(255,255,255,.85)}
+.sym p b{color:#fff}
+@media(max-width:640px){.rung{grid-template-columns:60px 1fr}.rung .fx{grid-column:2;justify-self:start;white-space:normal}}
+
+/* 수학 실험실 */
+.labs .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
+.lab{display:block;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow-1);transition:transform .15s}
+.lab:hover{transform:translateY(-2px)}
+.lab .ic{font-size:26px;margin-bottom:8px}
+.lab b{display:block;font-size:16px;margin-bottom:4px}
+.lab span{font-size:13.5px;color:var(--sub)}
+.lab em{display:block;margin-top:10px;font-style:normal;font-size:12.5px;font-weight:800;color:var(--blue)}
+@media(max-width:760px){.labs .grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.labs .grid{grid-template-columns:1fr}}
+
+/* 수준 파악 → 로드맵 */
+.level .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.level .phone{flex:none;width:100%;max-width:250px;margin:0 auto}
+.level .phone figcaption{text-align:center}
+.level .stepno{display:inline-block;width:26px;height:26px;border-radius:50%;background:var(--blue-deep);color:#fff;font-weight:900;font-size:13px;line-height:26px;text-align:center;margin-bottom:8px}
+@media(max-width:760px){.level .trio{grid-template-columns:1fr}}
+
+/* 실험실 자동 재생 */
+.lab-live{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0 22px}
+.lab-live figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-1);display:flex;flex-direction:column}
+.lab-live .shot{flex:1;display:flex;align-items:center;justify-content:center;background:#fff;padding:10px 10px 0}
+.lab-live img{width:100%;max-height:330px;object-fit:contain;display:block}
+.lab-live figcaption{padding:14px 18px;font-size:14px;color:var(--sub)}
+.lab-live figcaption b{display:block;color:var(--ink);font-size:16px;margin-bottom:3px}
+@media(max-width:640px){.lab-live{grid-template-columns:1fr}}
+
+/* 수학사 네 컷 */
+.comic{background:var(--paper-warm);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.comic .panels{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+.cpanel{margin:0;background:#fff;border:2px solid var(--ink);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.cpanel .cart svg{width:100%;height:auto;display:block;background:#fff}
+.cpanel figcaption{padding:12px 14px;font-size:13.5px;line-height:1.5;border-top:2px solid var(--ink);font-family:var(--serif);flex:1}
+.cpanel .cno{display:inline-block;width:20px;height:20px;border-radius:50%;background:var(--gold);color:#fff;font-size:11px;font-weight:900;text-align:center;line-height:20px;margin-right:6px;font-family:var(--sans)}
+.comic .more{margin-top:18px;font-size:14px;color:var(--sub)}
+@media(max-width:860px){.comic .panels{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.comic .panels{grid-template-columns:1fr}}
+
+/* 가격 */
+.price{text-align:center}
+.price .plans{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:900px;margin:30px auto 0}
+@media(max-width:760px){.price .plans{grid-template-columns:1fr}}
+.price .plan.two{border-color:var(--gold)}
+.price .plan.two .badge{background:var(--gold);color:var(--blue-ink)}
+.price .plan{max-width:560px;margin:0 auto;background:#fff;border:2px solid var(--blue-deep);border-radius:var(--radius);padding:30px 28px;box-shadow:var(--shadow-2)}
+.plan .amt{display:flex;align-items:baseline;justify-content:center;gap:6px;font-family:var(--sans);font-weight:900;letter-spacing:-.035em;font-size:clamp(52px,9vw,84px);color:var(--blue-deep);line-height:1;font-variant-numeric:tabular-nums}
+.plan .amt .cur{font-size:.42em;font-weight:800;letter-spacing:0;color:var(--gold);align-self:flex-start;margin-top:.18em}
+.plan .amt .unit{font-size:.36em;font-weight:800;letter-spacing:0;color:var(--sub)}
+.plan .per{font-size:15px;color:var(--sub);margin-top:10px;font-weight:600}
+.plan .badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;padding:5px 12px;border-radius:999px;background:var(--blue-deep);color:#fff;margin-bottom:18px}
+.price .lead{margin-left:auto;margin-right:auto}
+.plan ul{list-style:none;padding:0;margin:22px 0;text-align:left;display:grid;gap:9px;font-size:15px}
+.plan li{padding-left:26px;position:relative}
+.plan li::before{content:'✓';position:absolute;left:0;top:0;color:var(--grass);font-weight:900}
+.plan .fine{font-size:12.5px;color:var(--faint);margin-top:12px}
+
+/* 3단계 */
+.steps{background:var(--blue-deep);color:#fff}
+.steps .kicker{color:var(--gold-bright)}
+.steps .lead{color:rgba(255,255,255,.75)}
+.steps ol{list-style:none;padding:0;margin:34px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
+.steps li{position:relative;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius);padding:26px 22px 22px}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;top:-16px;left:20px;width:32px;height:32px;border-radius:50%;background:var(--gold-bright);color:var(--blue-ink);font-weight:900;display:grid;place-items:center;font-family:var(--serif)}
+.steps li img{width:64px;height:80px;object-fit:contain;margin-bottom:12px}
+.steps li b{display:block;font-size:17px;margin-bottom:6px}
+.steps li p{margin:0;color:rgba(255,255,255,.78);font-size:14.5px}
+@media(max-width:760px){.steps ol{grid-template-columns:1fr;gap:26px}}
+
+/* 마을 사람들 */
+.people .row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:30px}
+.person{text-align:center}
+.person img{width:100%;aspect-ratio:1;object-fit:contain}
+.person b{display:block;font-size:15px;margin-top:6px}
+.person span{font-size:12.5px;color:var(--sub)}
+@media(max-width:640px){.people .row{grid-template-columns:repeat(3,1fr)}}
+
+/* FAQ */
+.faq details{border-bottom:1px solid var(--line);padding:6px 0}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;font-weight:800;font-size:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';font-family:var(--serif);font-size:22px;color:var(--gold);flex:0 0 auto}
+.faq details[open] summary::after{content:'−'}
+.faq p{margin:0 0 14px;color:var(--sub);font-size:15px;max-width:70ch}
+
+/* 마무리 */
+.final{text-align:center;background:linear-gradient(180deg,var(--paper) 0%,var(--sky) 100%)}
+.final .hero-cta{justify-content:center}
+.final .fine{margin-top:14px;font-size:13px;color:var(--faint)}
+footer{padding:26px 0 40px;font-size:12.5px;color:var(--faint);text-align:center}
+footer a{color:var(--sub)}
+
+/* 살짝 떠오르기 — 움직임 줄이기 설정이면 없음 */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="landing.html"><img src="assets/characters/numi-0.png" alt=""><span>Numbers of Magic</span></a>
+    <nav>
+      <div class="langsw" role="group" aria-label="language"><button class="langbtn" data-lang="ko">한</button><button class="langbtn" data-lang="en">EN</button><button class="langbtn" data-lang="zh">中</button></div>
+      <a class="btn primary small" href="index.html?enter=1" data-i18n="navCta">시작하기</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="kicker" data-i18n="heroKicker">DOCSSAM · 만 5세부터</p>
+      <h1 data-i18n="heroH1">계산을 <span class="accent">외우는</span> 아이가 아니라,<br>수를 <span class="accent">다루는</span> 아이로.</h1>
+      <p class="lead" data-i18n="heroLead">속도가 아니라 수 감각입니다. Numbers of Magic은 어려운 수를 내가 다루기 쉬운 수로 <b>펼쳐서</b> 푸는 법을 가르칩니다. 아이는 숫자 마을에서 배우고, 부모는 주 1회·주 2회 중 고른 만큼 매주 학습지를 받습니다.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="index.html?enter=1" data-i18n="heroCta">마을에 들어가 보기 →</a>
+        <a class="btn ghost" href="about.html" data-i18n="heroCta2">철학 읽기</a>
+      </div>
+      <div class="proof">
+        <span><b>199</b><span data-i18n="pUnits">유닛</span></span>
+        <span><b>180</b><span data-i18n="pThreads">유형</span></span>
+        <span><b>3</b><span data-i18n="pLangs">개 언어 · 한·영·중</span></span>
+        <span><b>25</b><span data-i18n="pChars">캐릭터</span></span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="map"><img src="assets/landing/town-desktop.jpg" alt=""></div>
+      <img class="kid" src="assets/characters/kid-girl.png" alt="">
+      <img class="buddy" src="assets/characters/num-7.png" alt="">
+      <img class="doc" src="assets/characters/docssam.png" alt="">
+    </div>
+  </div>
+</section>
+
+<section class="philo">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="phKicker">Philosophy · 무엇이 다른가</p>
+    <h2 class="reveal" data-i18n="phH2">답을 빨리 구하는 계산 학습이 <span class="accent">아닙니다</span></h2>
+    <p class="lead reveal" data-i18n="phLead">학교 시험은 틀리기 쉬운 문제로 아이를 가릅니다. 대부분의 학원은 유형을 외워 답을 맞히는 법을 가르치죠. DOCSSAM은 수의 규칙을 이용해 문제를 <b>내 손에 맞게 다시 만드는</b> 힘을 키웁니다. 실수는 줄고, 수에 대한 창의성과 자신감이 자랍니다.</p>
+    <div class="grid">
+      <div class="card bad reveal">
+        <span class="tag" data-i18n="badTag">유형 암기식</span>
+        <p class="big" data-i18n="badBig">"이렇게 나오면<br>이렇게 푼다"</p>
+        <p data-i18n="badP">세로셈으로 받아내림하다 실수. 답은 구해도 원리는 모르고, 유형이 바뀌면 무너집니다.</p>
+      </div>
+      <div class="card good reveal">
+        <span class="tag" data-i18n="goodTag">Numbers of Magic식</span>
+        <p class="big" data-i18n="goodBig">"수를 펼쳐<br>쉽게 만든다"</p>
+        <p data-i18n="goodP">8+7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 오늘의 이 습관이 훗날 분배법칙이 되고, 미적분까지 같은 사다리로 이어집니다.</p>
+      </div>
+    </div>
+    <div class="eq reveal" aria-label="example">
+      <span class="step">8 + 7</span><span class="arrow">→</span>
+      <span class="step">8 + 2 + 5</span><span class="arrow">→</span>
+      <span class="step">10 + 5</span><span class="arrow">→</span>
+      <span class="step">15</span>
+      <span class="note" data-i18n="eqNote">받아올림을 외운 게 아니라, 10을 만들었을 뿐입니다. 아이가 스스로 고른 길이라 다음 문제에서도 씁니다.</span>
+    </div>
+    <p class="philo-link reveal"><a class="btn ghost small" href="about.html" data-i18n="phMore">철학 전문과 사다리(덧셈 → 미적분Ⅰ) 보기 →</a></p>
+  </div>
+</section>
+
+<section class="three">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="trKicker">Worksheet DNA · 왜 이 학습지인가</p>
+    <h2 class="reveal" data-i18n="trH2">연산 학습지는 많습니다. 하지만 <span class="accent">필산과 창의 연산, 문장제</span>는 같이 가야 합니다</h2>
+    <p class="lead reveal" data-i18n="trLead">목표는 빠른 연산이 아니라 <b>수와 친해지는 것</b>, 수 감각입니다. 그래서 교과 흐름을 따라가는 필산, 수를 펼쳐 내 손에 맞게 바꾸는 창의 연산, 그 수가 들어 있는 문장을 읽어 내는 문장제가 함께 갑니다. 연산만 빨라진 아이는 절차만 익혔기 때문에 문장 속의 수 앞에서 멈춥니다.</p>
+    <div class="tri">
+      <div class="pillar reveal"><span class="no" data-i18n="t1no">필산</span><b data-i18n="t1b">교과 연산</b><div class="ex">  47
++ 38
+────
+  85</div><p data-i18n="t1p">학교 진도 그대로, 세로셈으로 정확하게. 속도가 아니라 정확한 절차가 먼저입니다.</p></div>
+      <div class="pillar reveal"><span class="no" data-i18n="t2no">창의 연산</span><b data-i18n="t2b">펼쳐서 다루기</b><div class="ex">47 + 38
+= 47 + 3 + 35
+= 50 + 35
+= 85</div><p data-i18n="t2p">같은 문제를 내 손에 맞게 다시 만듭니다. 수 감각은 여기서 자랍니다.</p></div>
+      <div class="pillar reveal"><span class="no" data-i18n="t3no">문장제</span><b data-i18n="t3b">문장 속의 수</b><div class="ex story" data-i18n="t3ex">사과가 47개 있었어요. 38개를 더 땄어요. 이제 모두 몇 개일까요?</div><p data-i18n="t3p">같은 수를 문장에서 꺼내 읽습니다. 한국어·영어·중국어로.</p></div>
+    </div>
+    <p class="tri-note reveal" data-i18n="trNote">세 칸이 같은 수 47+38을 다룹니다. 학습지 모드에는 교과 연산 연습, 수의 마법 탐험, 계산·문장제 혼합 옵션이 있어 한 아이가 한 문제를 세 방향에서 만납니다.</p>
+  </div>
+</section>
+
+<section class="ladder">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="ldKicker">The Ladder · 유아부터 고등 연산까지</p>
+    <h2 class="reveal" data-i18n="ldH2">9까지의 수에서 <span class="accent">미적분Ⅰ</span>까지, 같은 사다리</h2>
+    <p class="lead reveal" data-i18n="ldLead">초급의 "수를 나누어 더하기"가 훗날 분배법칙 그 자체입니다. 오늘의 작은 원리가 사다리를 타고 올라가 결국 미적분의 언어가 됩니다. 과정을 바꿔도 방법은 바뀌지 않습니다.</p>
+    <ol class="rungs">
+      <li class="rung reveal"><span class="lv" data-i18n="r0lv">0급</span><div><b data-i18n="r0b">수의 나라 · 9까지의 수</b><small data-i18n="r0s">수를 알고, 세고, 나누고, 비교하기 — 만 5세</small></div><span class="fx">5 = 2 + 3</span></li>
+      <li class="rung reveal"><span class="lv" data-i18n="r1lv">초급</span><div><b data-i18n="r1b">보수로 펼치기</b><small data-i18n="r1s">10과 100을 만드는 습관</small></div><span class="fx">97 = 100 − 3</span></li>
+      <li class="rung reveal"><span class="lv" data-i18n="r2lv">중급</span><div><b data-i18n="r2b">분배법칙 · 곱셈 공식</b><small data-i18n="r2s">펼치기가 문자로 옮겨 가는 자리</small></div><span class="fx">(a+b)² = a² + 2ab + b²</span></li>
+      <li class="rung reveal"><span class="lv" data-i18n="r3lv">고급</span><div><b data-i18n="r3b">상관관계 · 등차수열 (경시)</b><small data-i18n="r3s">수 사이의 관계로 계산을 없애기</small></div><span class="fx">19 × 21 = 20² − 1 = 399</span></li>
+      <li class="rung reveal"><span class="lv" data-i18n="r4lv">심화</span><div><b data-i18n="r4b">미적분Ⅰ · 극한과 순간의 기울기</b><small data-i18n="r4s">변하는 것을 계산하는 언어</small></div><span class="fx">f′(x) = lim (f(x+h) − f(x)) / h</span></li>
+    </ol>
+    <div class="sym reveal"><span class="glyph">f · i · ∫</span><p data-i18n="symP">함수의 <b>f</b>에 놀라고 허수의 <b>i</b>에서 수학을 놓아 버린 기억, 부모님도 있으실 겁니다. 수학은 언어라서, 기호가 바뀌는 순간이 진짜 고비입니다. 여기서는 모든 기호가 번역문을 갖습니다 — ∫는 "잘게 쪼개 다 더해라".</p></div>
+  </div>
+</section>
+
+<section class="level">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="lvKicker">Placement · 아이의 수준부터</p>
+    <h2 class="reveal" data-i18n="lvH2">먼저 아이의 수준을 파악하고, <span class="accent">그 자리에서</span> 로드맵을 그립니다</h2>
+    <p class="lead reveal" data-i18n="lvLead">처음 들어오면 짧은 진단으로 지금 어디쯤인지 봅니다. 그 결과가 학습 여행 지도 위의 "지금 여기"가 되고, 주 1회·주 2회 선택에 따라 주차별 로드맵으로 펼쳐집니다. 레벨은 언제든 바꿀 수 있습니다.</p>
+    <div class="trio">
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-diag.jpg" alt=""></div><figcaption><span class="stepno">1</span><b data-i18n="lv1b">진단하기</b><span data-i18n="lv1">몇 문제로 어디서 시작할지 찾습니다. 틀려도 괜찮은 자리부터.</span></figcaption></figure>
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-roadmap.jpg" alt=""></div><figcaption><span class="stepno">2</span><b data-i18n="lv2b">지금 여기</b><span data-i18n="lv2">학습 여행 지도에 내 위치가 표시되고, 다음 한 걸음이 보입니다.</span></figcaption></figure>
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-road.jpg" alt=""></div><figcaption><span class="stepno">3</span><b data-i18n="lv3b">주차별 로드맵</b><span data-i18n="lv3">9월 1주차부터 과정 끝까지, 인쇄할 수 있는 개인 계획표가 됩니다.</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="screens">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="scKicker">The App · 아이가 보는 화면</p>
+    <h2 class="reveal" data-i18n="scH2">숫자 마을에서 배우고, <span class="accent">편지함</span>으로 학습지가 옵니다</h2>
+    <p class="lead reveal" data-i18n="scLead">아이는 사람 캐릭터가 되어 고른 숫자 친구와 마을을 걷습니다. 건물이 곧 배움터이고, 게임은 늘리지 않습니다. 마을은 배우러 들어가는 문입니다.</p>
+    <div class="rail" tabindex="0">
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-town.jpg" alt=""></div><figcaption><b data-i18n="s1b">숫자 마을</b><span data-i18n="s1">나와 동행 숫자 친구, 정자의 할아버지, 도서관 앞의 독쌤. 건물을 누르면 배움이 시작됩니다.</span></figcaption></figure>
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-unit.jpg" alt=""></div><figcaption><b data-i18n="s2b">한 유닛의 흐름</b><span data-i18n="s2">기본 연산 → 마법 노트 → 매직 랩 → 도장. 독쌤이 첫 화면에서 오늘 배울 것을 알려줍니다.</span></figcaption></figure>
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-mailbox.jpg" alt=""></div><figcaption><b data-i18n="s3b">편지함</b><span data-i18n="s3">매주 월요일, 지금 배우는 곳에 맞춘 학습지 봉투가 독쌤 이름으로 도착합니다.</span></figcaption></figure>
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-road.jpg" alt=""></div><figcaption><b data-i18n="s4b">학습지 로드맵</b><span data-i18n="s4">주 1회·주 2회를 고르면 과정 전체가 "9월 1주차, 1-2주차…"로 나뉘어 인쇄됩니다.</span></figcaption></figure>
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-roadmap.jpg" alt=""></div><figcaption><b data-i18n="s5b">마법 학습 여행</b><span data-i18n="s5">작은 수부터 분수까지 한 걸음씩. 지금 어디에 있는지 아이도 부모도 한눈에 봅니다.</span></figcaption></figure>
+      <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-title.jpg" alt=""></div><figcaption><b data-i18n="s6b">다시 만나서 반가워</b><span data-i18n="s6">이어서 모험, 게임 모드, 학습지 모드, 연산 로드맵. 출석 일수와 모은 코인이 여기 보입니다.</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="whKicker">Worksheets · 매주 도착하는 학습지</p>
+    <h2 class="reveal" data-i18n="whH2">주 1회, 주 2회 — <span class="accent">고른 만큼</span> 갑니다</h2>
+    <p class="lead reveal" data-i18n="whLead">학습지는 앱과 따로 노는 부록이 아닙니다. 아이가 마을에서 배우는 바로 그 자리에 맞춰 만들어지고, 한 주에 몇 번 공부할지에 따라 주차가 나뉩니다.</p>
+    <div class="split">
+      <div class="cadence">
+        <div class="cad one reveal">
+          <h3><span class="dot"></span><span data-i18n="c1h">주 1회</span></h3>
+          <div class="weeks"><span class="wk">9월 1주차</span><span class="wk">9월 2주차</span><span class="wk">9월 3주차</span><span class="wk">9월 4주차</span><span class="wk env">📬</span></div>
+          <p data-i18n="c1p">한 주에 학습지 한 장. 주말에 함께 앉아 풀기 좋은 속도입니다.</p>
+        </div>
+        <div class="cad two reveal">
+          <h3><span class="dot"></span><span data-i18n="c2h">주 2회</span></h3>
+          <div class="weeks"><span class="wk">9월 1-1주차</span><span class="wk">9월 1-2주차</span><span class="wk">9월 2-1주차</span><span class="wk">9월 2-2주차</span><span class="wk env">📬</span></div>
+          <p data-i18n="c2p">한 주에 두 장. 같은 과정을 절반씩 나눠 더 자주, 더 짧게 만납니다.</p>
+        </div>
+      </div>
+      <div class="sheet-shot reveal"><img src="assets/landing/m-road.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="opts">
+      <div class="opt reveal"><div class="ic">🖨️</div><b data-i18n="o1b">인쇄하면 끝</b><span data-i18n="o1">아이 이름이 워터마크로 들어간 학습지를 집에서 바로 인쇄합니다.</span></div>
+      <div class="opt reveal"><div class="ic">🧩</div><b data-i18n="o2b">개념 · 문항 수 · 혼합</b><span data-i18n="o2">개념 설명을 넣을지, 몇 문항을 낼지, 계산과 문장제를 섞을지 고릅니다.</span></div>
+      <div class="opt reveal"><div class="ic">🌏</div><b data-i18n="o3b">문장제 한·영·중</b><span data-i18n="o3">같은 문제를 세 언어로. 이중언어 가정도 그대로 씁니다.</span></div>
+      <div class="opt reveal"><div class="ic">📱</div><b><span data-i18n="o4b">도착 알림</span><span class="soon" data-i18n="soon">준비 중</span></b><span data-i18n="o4">"9월 1-1주차 학습지가 준비됐어요" 문자 안내를 준비하고 있습니다.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="labs">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="lbKicker">Math Lab · 수학 실험실</p>
+    <h2 class="reveal" data-i18n="lbH2">눈으로 봐야 이해되는 것은 <span class="accent">직접 만져</span> 봅니다</h2>
+    <p class="lead reveal" data-i18n="lbLead">실험실은 그 개념을 배우는 개념 노트 바로 아래에서 열립니다. 슬라이더를 밀고, 수를 바꿔 보고, 왜 그런지 눈으로 확인한 뒤 문제로 돌아옵니다. 과정과 상관없이 언제든 열어 볼 수 있습니다.</p>
+    <div class="lab-live">
+      <figure class="reveal"><div class="shot"><img src="assets/landing/rainbow.gif" alt=""></div><figcaption><b data-i18n="lv-rainbow-b">🌈 무지개 덧셈법 — 지금 그려지는 중</b><span data-i18n="lv-rainbow">1과 100, 2와 99… 짝마다 합이 101. 일곱 살 가우스가 한 그대로, 아이가 직접 무지개를 그립니다.</span></figcaption></figure>
+      <figure class="reveal"><div class="shot"><img src="assets/landing/calc.gif" alt=""></div><figcaption><b data-i18n="lv-calc-b">🍎 미적분은 왜 태어났나 — 접선이 만들어지는 중</b><span data-i18n="lv-calc">두 점을 가까이 끌어당기면 곡선의 순간 기울기가 나타납니다. 400년 전 그 순간을 손으로 다시 봅니다.</span></figcaption></figure>
+    </div>
+    <div class="grid">
+      <a class="lab reveal" href="labs/rainbow-sum.html" target="_blank" rel="noopener"><div class="ic">🌈</div><b data-i18n="l1b">무지개 덧셈법</b><span data-i18n="l1">1부터 100까지 더하기를 무지개처럼 짝지어 순식간에 끝내 봐요.</span><em data-i18n="lbOpen">열어 보기 →</em></a>
+      <a class="lab reveal" href="labs/square-friends.html" target="_blank" rel="noopener"><div class="ic">🟦</div><b data-i18n="l2b">사각수 친구들</b><span data-i18n="l2">홀수를 ㄱ자로 한 겹씩 두르면 정사각형이 자라는 걸 직접 만들어 봐요.</span><em data-i18n="lbOpen">열어 보기 →</em></a>
+      <a class="lab reveal" href="labs/secret-1001.html" target="_blank" rel="noopener"><div class="ic">🔢</div><b data-i18n="l3b">1001의 비밀</b><span data-i18n="l3">세 자리 수를 두 번 이어 쓰면 왜 7·11·13으로 나누어떨어지는지 확인해요.</span><em data-i18n="lbOpen">열어 보기 →</em></a>
+      <a class="lab reveal" href="labs/number-line-hole.html" target="_blank" rel="noopener"><div class="ic">🕳️</div><b data-i18n="l4b">수직선의 구멍</b><span data-i18n="l4">분수를 아무리 촘촘히 찍어도 남는 자리를 10배씩 확대해 찾아봐요.</span><em data-i18n="lbOpen">열어 보기 →</em></a>
+      <a class="lab reveal" href="labs/root-hunter.html" target="_blank" rel="noopener"><div class="ic">🌰</div><b data-i18n="l5b">루트 사냥꾼</b><span data-i18n="l5">√7은 몇일까? 넓이 슬라이더와 양쪽 조이기로 제곱근을 직접 사냥해요.</span><em data-i18n="lbOpen">열어 보기 →</em></a>
+      <a class="lab reveal" href="labs/why-calculus.html" target="_blank" rel="noopener"><div class="ic">🍎</div><b data-i18n="l6b">미적분은 왜 태어났나</b><span data-i18n="l6">변하는 것을 계산하려고 400년 전에 미적분이 생긴 이야기와 오늘의 쓰임을 봐요.</span><em data-i18n="lbOpen">열어 보기 →</em></a>
+    </div>
+  </div>
+</section>
+
+<section class="comic">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="cmKicker">Math History · 수학사 네 컷 만화 95편</p>
+    <h2 class="reveal" data-i18n="cmH2">개념마다 <span class="accent">그 수학이 태어난 이야기</span>가 붙어 있습니다</h2>
+    <p class="lead reveal" data-i18n="cmLead">개념 노트를 열면 산문 한 줄 대신 네 컷 만화가 나옵니다. 그중 하나 — 일곱 살 가우스의 이야기입니다. 오늘 배우는 "자리끼리 더하기"와 같은 마법이라는 데서 끝납니다.</p>
+    <div class="panels" id="comicPanels"></div>
+    <p class="more reveal" data-i18n="cmMore">기호가 태어난 날(−, =, √…), 0을 발견한 사람들, 미적분이 생긴 이유까지 — 95편이 각자의 개념 자리에서 기다립니다.</p>
+  </div>
+</section>
+
+<section class="steps">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="stKicker">How it works · 시작은 세 걸음</p>
+    <h2 class="reveal" data-i18n="stH2">오늘 시작하면 <span class="accent" style="color:var(--gold-bright)">다음 주 월요일</span>에 첫 봉투가 옵니다</h2>
+    <ol>
+      <li class="reveal"><img src="assets/characters/kid-boy.png" alt=""><b data-i18n="st1b">나를 만들고, 동행을 고릅니다</b><p data-i18n="st1">남자아이·여자아이 중 나를 고르고, 함께 다닐 숫자 친구를 정합니다. 설치 없이 브라우저에서 바로.</p></li>
+      <li class="reveal"><img src="assets/characters/docssam.png" alt=""><b data-i18n="st2b">주 1회 · 주 2회를 정합니다</b><p data-i18n="st2">학습지 모드에서 주기를 고르면 과정 전체가 주차로 나뉜 개인 로드맵이 됩니다.</p></li>
+      <li class="reveal"><img src="assets/characters/elder.png" alt=""><b data-i18n="st3b">매주 풀고, 도장 찍고, 꾸밉니다</b><p data-i18n="st3">봉투를 열어 풀고, 유닛마다 도장을 받고, 출석과 학습으로 모은 코인으로 내 숫자 친구를 꾸밉니다. 뽑기도 강화도 없습니다.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="people">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="ppKicker">Who lives here · 마을 사람들</p>
+    <h2 class="reveal" data-i18n="ppH2">아이 곁에 서 있는 <span class="accent">다섯</span></h2>
+    <div class="row">
+      <div class="person reveal"><img src="assets/characters/kid-boy.png" alt=""><b data-i18n="p1b">남자아이</b><span data-i18n="p1">나</span></div>
+      <div class="person reveal"><img src="assets/characters/kid-girl.png" alt=""><b data-i18n="p2b">여자아이</b><span data-i18n="p2">나</span></div>
+      <div class="person reveal"><img src="assets/characters/numi-0.png" alt=""><b data-i18n="p3b">누미와 친구들</b><span data-i18n="p3">동행 숫자·기호 21종</span></div>
+      <div class="person reveal"><img src="assets/characters/elder.png" alt=""><b data-i18n="p4b">할아버지</b><span data-i18n="p4">정자의 이야기꾼</span></div>
+      <div class="person reveal"><img src="assets/characters/docssam.png" alt=""><b data-i18n="p5b">독쌤</b><span data-i18n="p5">편지를 보내는 선생님</span></div>
+    </div>
+    <p class="philo-link reveal"><a class="btn ghost small" href="characters.html" data-i18n="ppMore">캐릭터 전부 만나기 →</a></p>
+  </div>
+</section>
+
+<section class="price">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="prKicker">Price · 월 구독</p>
+    <h2 class="reveal" data-i18n="prH2">주 1회 <span class="accent">만 원</span>, 주 2회 <span class="accent">2만 원</span></h2>
+    <p class="lead reveal" data-i18n="prLead">학습지 횟수만 다르고, 연산 게임 학습과 무제한 연산 학습은 둘 다 전부 들어 있습니다. 아이 한 명, 한 달 기준.</p>
+    <div class="plans">
+      <div class="plan reveal">
+        <span class="badge" data-i18n="prBadge">주 1회</span>
+        <div class="amt" data-i18n="prAmt"><span class="cur">₩</span>10,000<span class="unit">/월</span></div>
+        <div class="per" data-i18n="prPer">아이 한 명 · 한 달</div>
+        <ul>
+          <li data-i18n="pr1">학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄</li>
+          <li data-i18n="pr2"><b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장</li>
+          <li data-i18n="pr3"><b>무제한 연산 학습</b> — 교과 연산 연습 · 수의 마법 탐험 · 연산 로드맵, 횟수 제한 없음</li>
+          <li data-i18n="pr4">수학 실험실 6곳 · 수학사 만화 95편 · 한국어·영어·중국어</li>
+        </ul>
+        <a class="btn primary" href="index.html?enter=1" data-i18n="prCta">시작하기 →</a>
+      </div>
+      <div class="plan two reveal">
+        <span class="badge" data-i18n="prBadge2">주 2회</span>
+        <div class="amt" data-i18n="prAmt2"><span class="cur">₩</span>20,000<span class="unit">/월</span></div>
+        <div class="per" data-i18n="prPer2">아이 한 명 · 한 달</div>
+        <ul>
+          <li data-i18n="pr21">학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주</li>
+          <li data-i18n="pr22">주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵</li>
+          <li data-i18n="pr23">연산 게임 학습 · 무제한 연산 학습 · 실험실 · 만화 전부 포함</li>
+          <li data-i18n="pr24">한국어·영어·중국어</li>
+        </ul>
+        <a class="btn gold" href="index.html?enter=1" data-i18n="prCta2">주 2회로 시작하기 →</a>
+      </div>
+    </div>
+    <p class="fine reveal" style="text-align:center;margin-top:16px;font-size:12.5px;color:var(--faint)" data-i18n="prFine">지금은 승인번호 없이 모든 기능이 열려 있습니다.</p>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="fqKicker">FAQ · 자주 묻는 질문</p>
+    <h2 class="reveal" data-i18n="fqH2">부모님이 먼저 물어보신 것들</h2>
+    <div style="margin-top:22px">
+      <details class="reveal"><summary data-i18n="q1">몇 살부터 할 수 있나요?</summary><p data-i18n="a1">만 5세부터입니다. 0급 "수의 나라"는 9까지의 수를 알고, 세고, 나누고, 비교하는 데서 시작합니다. 글을 몰라도 톡톡 짚으며 할 수 있게 만들었습니다.</p></details>
+      <details class="reveal"><summary data-i18n="q2">학습지는 어떻게 받나요?</summary><p data-i18n="a2">앱 안의 편지함에 매주 월요일 봉투가 도착하고, 학습지 모드에서 주 1회·주 2회를 골라 개인 로드맵째로 인쇄할 수도 있습니다. 문자 알림은 준비 중입니다.</p></details>
+      <details class="reveal"><summary data-i18n="q3">게임 아닌가요?</summary><p data-i18n="a3">마을은 배우러 들어가는 문입니다. 마을에서 할 수 있는 일은 배우러 들어가기, 친구 보기, 다음에 갈 곳 알기 셋뿐이고 미니게임을 늘리지 않습니다. 코인은 내 숫자 친구를 꾸미는 데만 쓰고, 뽑기·강화·연속 출석 배수 같은 것은 없습니다.</p></details>
+      <details class="reveal"><summary data-i18n="q4">영어나 중국어로도 되나요?</summary><p data-i18n="a4">화면·말풍선·학습지·문장제까지 한국어·영어·중국어 세 언어로 바꿀 수 있습니다. 가정에서 쓰는 언어로 두세요.</p></details>
+      <details class="reveal"><summary data-i18n="q5">어떤 기기가 필요한가요?</summary><p data-i18n="a5">휴대폰·태블릿·PC 브라우저면 됩니다. 설치할 앱은 없고, 이름 하나로 진행 상황이 기기 사이에 이어집니다.</p></details>
+      <details class="reveal"><summary data-i18n="q6">학원 수업과는 어떻게 이어지나요?</summary><p data-i18n="a6">학원에서는 아이의 과정과 학습지 주기를 정하고, 인쇄한 학습지를 채점해 다음 주 봉투에 반영합니다. 아이가 어디서 막히는지 앱이 잡아내면 편지함에 짧은 몸풀기 문제가 먼저 옵니다.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="fnKicker">Welcome · 입장</p>
+    <h2 class="reveal" data-i18n="fnH2">수의 <span class="accent">마법</span>을 시작해볼까요?</h2>
+    <p class="lead reveal" style="margin-left:auto;margin-right:auto" data-i18n="fnLead">아이가 수와 친구가 되는 첫걸음. 설치도, 결제 정보도 필요 없습니다.</p>
+    <div class="hero-cta reveal">
+      <a class="btn gold" href="index.html?enter=1" data-i18n="fnCta">마을에 들어가 보기 →</a>
+      <a class="btn ghost" href="about.html" data-i18n="fnCta2">철학 읽기</a>
+    </div>
+    <p class="fine reveal" data-i18n="fnFine">지금은 승인번호 없이 모든 기능이 열려 있습니다.</p>
+  </div>
+</section>
+
+<footer><span data-i18n="foot">GFIELD · Numbers of Magic — DOCSSAM 영재 트랙</span> · <a href="about.html" data-i18n="footAbout">철학</a> · <a href="characters.html" data-i18n="footChars">캐릭터</a></footer>
+
+<script src="data/story-comics.js"></script>
+<script>
+(function(){
+  /* 수학사 네 컷 — 앱과 같은 데이터(NM_COMICS)에서 가우스 편(A-07)을 그대로 그린다 */
+  function renderComic(lang){
+    var c=window.NM_COMICS&&window.NM_COMICS['A-07'], host=document.getElementById('comicPanels');
+    if(!c||!host) return;
+    host.innerHTML=c.panels.map(function(p,i){
+      return '<figure class="cpanel reveal in"><div class="cart">'+p.art+'</div><figcaption><span class="cno">'+(i+1)+'</span>'+(p.text[lang]||p.text.ko)+'</figcaption></figure>';
+    }).join('');
+  }
+  var I18N={
+    ko:{
+      navCta:'시작하기', heroKicker:'DOCSSAM · 만 5세부터',
+      heroH1:'계산을 <span class="accent">외우는</span> 아이가 아니라,<br>수를 <span class="accent">다루는</span> 아이로.',
+      heroLead:'속도가 아니라 수 감각입니다. Numbers of Magic은 어려운 수를 내가 다루기 쉬운 수로 <b>펼쳐서</b> 푸는 법을 가르칩니다. 아이는 숫자 마을에서 배우고, 부모는 주 1회·주 2회 중 고른 만큼 매주 학습지를 받습니다.',
+      heroCta:'마을에 들어가 보기 →', heroCta2:'철학 읽기',
+      pUnits:'유닛', pThreads:'유형', pLangs:'개 언어 · 한·영·중', pChars:'캐릭터',
+      phKicker:'Philosophy · 무엇이 다른가', phH2:'답을 빨리 구하는 계산 학습이 <span class="accent">아닙니다</span>',
+      phLead:'학교 시험은 틀리기 쉬운 문제로 아이를 가릅니다. 대부분의 학원은 유형을 외워 답을 맞히는 법을 가르치죠. DOCSSAM은 수의 규칙을 이용해 문제를 <b>내 손에 맞게 다시 만드는</b> 힘을 키웁니다. 실수는 줄고, 수에 대한 창의성과 자신감이 자랍니다.',
+      badTag:'유형 암기식', badBig:'"이렇게 나오면<br>이렇게 푼다"', badP:'세로셈으로 받아내림하다 실수. 답은 구해도 원리는 모르고, 유형이 바뀌면 무너집니다.',
+      goodTag:'Numbers of Magic식', goodBig:'"수를 펼쳐<br>쉽게 만든다"', goodP:'8+7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 오늘의 이 습관이 훗날 분배법칙이 되고, 미적분까지 같은 사다리로 이어집니다.',
+      eqNote:'받아올림을 외운 게 아니라, 10을 만들었을 뿐입니다. 아이가 스스로 고른 길이라 다음 문제에서도 씁니다.',
+      phMore:'철학 전문과 사다리(덧셈 → 미적분Ⅰ) 보기 →',
+      scKicker:'The App · 아이가 보는 화면', scH2:'숫자 마을에서 배우고, <span class="accent">편지함</span>으로 학습지가 옵니다',
+      scLead:'아이는 사람 캐릭터가 되어 고른 숫자 친구와 마을을 걷습니다. 건물이 곧 배움터이고, 게임은 늘리지 않습니다. 마을은 배우러 들어가는 문입니다.',
+      s1b:'숫자 마을', s1:'나와 동행 숫자 친구, 정자의 할아버지, 도서관 앞의 독쌤. 건물을 누르면 배움이 시작됩니다.',
+      s2b:'한 유닛의 흐름', s2:'기본 연산 → 마법 노트 → 매직 랩 → 도장. 독쌤이 첫 화면에서 오늘 배울 것을 알려줍니다.',
+      s3b:'편지함', s3:'매주 월요일, 지금 배우는 곳에 맞춘 학습지 봉투가 독쌤 이름으로 도착합니다.',
+      s4b:'학습지 로드맵', s4:'주 1회·주 2회를 고르면 과정 전체가 "9월 1주차, 1-2주차…"로 나뉘어 인쇄됩니다.',
+      s5b:'마법 학습 여행', s5:'작은 수부터 분수까지 한 걸음씩. 지금 어디에 있는지 아이도 부모도 한눈에 봅니다.',
+      s6b:'다시 만나서 반가워', s6:'이어서 모험, 게임 모드, 학습지 모드, 연산 로드맵. 출석 일수와 모은 코인이 여기 보입니다.',
+      whKicker:'Worksheets · 매주 도착하는 학습지', whH2:'주 1회, 주 2회 — <span class="accent">고른 만큼</span> 갑니다',
+      whLead:'학습지는 앱과 따로 노는 부록이 아닙니다. 아이가 마을에서 배우는 바로 그 자리에 맞춰 만들어지고, 한 주에 몇 번 공부할지에 따라 주차가 나뉩니다.',
+      c1h:'주 1회', c1p:'한 주에 학습지 한 장. 주말에 함께 앉아 풀기 좋은 속도입니다.',
+      c2h:'주 2회', c2p:'한 주에 두 장. 같은 과정을 절반씩 나눠 더 자주, 더 짧게 만납니다.',
+      o1b:'인쇄하면 끝', o1:'아이 이름이 워터마크로 들어간 학습지를 집에서 바로 인쇄합니다.',
+      o2b:'개념 · 문항 수 · 혼합', o2:'개념 설명을 넣을지, 몇 문항을 낼지, 계산과 문장제를 섞을지 고릅니다.',
+      o3b:'문장제 한·영·중', o3:'같은 문제를 세 언어로. 이중언어 가정도 그대로 씁니다.',
+      o4b:'도착 알림', soon:'준비 중', o4:'"9월 1-1주차 학습지가 준비됐어요" 문자 안내를 준비하고 있습니다.',
+      stKicker:'How it works · 시작은 세 걸음', stH2:'오늘 시작하면 <span class="accent" style="color:var(--gold-bright)">다음 주 월요일</span>에 첫 봉투가 옵니다',
+      st1b:'나를 만들고, 동행을 고릅니다', st1:'남자아이·여자아이 중 나를 고르고, 함께 다닐 숫자 친구를 정합니다. 설치 없이 브라우저에서 바로.',
+      st2b:'주 1회 · 주 2회를 정합니다', st2:'학습지 모드에서 주기를 고르면 과정 전체가 주차로 나뉜 개인 로드맵이 됩니다.',
+      st3b:'매주 풀고, 도장 찍고, 꾸밉니다', st3:'봉투를 열어 풀고, 유닛마다 도장을 받고, 출석과 학습으로 모은 코인으로 내 숫자 친구를 꾸밉니다. 뽑기도 강화도 없습니다.',
+      ppKicker:'Who lives here · 마을 사람들', ppH2:'아이 곁에 서 있는 <span class="accent">다섯</span>',
+      p1b:'남자아이', p1:'나', p2b:'여자아이', p2:'나', p3b:'누미와 친구들', p3:'동행 숫자·기호 21종', p4b:'할아버지', p4:'정자의 이야기꾼', p5b:'독쌤', p5:'편지를 보내는 선생님',
+      ppMore:'캐릭터 전부 만나기 →',
+      fqKicker:'FAQ · 자주 묻는 질문', fqH2:'부모님이 먼저 물어보신 것들',
+      q1:'몇 살부터 할 수 있나요?', a1:'만 5세부터입니다. 0급 "수의 나라"는 9까지의 수를 알고, 세고, 나누고, 비교하는 데서 시작합니다. 글을 몰라도 톡톡 짚으며 할 수 있게 만들었습니다.',
+      q2:'학습지는 어떻게 받나요?', a2:'앱 안의 편지함에 매주 월요일 봉투가 도착하고, 학습지 모드에서 주 1회·주 2회를 골라 개인 로드맵째로 인쇄할 수도 있습니다. 문자 알림은 준비 중입니다.',
+      q3:'게임 아닌가요?', a3:'마을은 배우러 들어가는 문입니다. 마을에서 할 수 있는 일은 배우러 들어가기, 친구 보기, 다음에 갈 곳 알기 셋뿐이고 미니게임을 늘리지 않습니다. 코인은 내 숫자 친구를 꾸미는 데만 쓰고, 뽑기·강화·연속 출석 배수 같은 것은 없습니다.',
+      q4:'영어나 중국어로도 되나요?', a4:'화면·말풍선·학습지·문장제까지 한국어·영어·중국어 세 언어로 바꿀 수 있습니다. 가정에서 쓰는 언어로 두세요.',
+      q5:'어떤 기기가 필요한가요?', a5:'휴대폰·태블릿·PC 브라우저면 됩니다. 설치할 앱은 없고, 이름 하나로 진행 상황이 기기 사이에 이어집니다.',
+      q6:'학원 수업과는 어떻게 이어지나요?', a6:'학원에서는 아이의 과정과 학습지 주기를 정하고, 인쇄한 학습지를 채점해 다음 주 봉투에 반영합니다. 아이가 어디서 막히는지 앱이 잡아내면 편지함에 짧은 몸풀기 문제가 먼저 옵니다.',
+      fnKicker:'Welcome · 입장', fnH2:'수의 <span class="accent">마법</span>을 시작해볼까요?', fnLead:'아이가 수와 친구가 되는 첫걸음. 설치도, 결제 정보도 필요 없습니다.',
+      fnCta:'마을에 들어가 보기 →', fnCta2:'철학 읽기', fnFine:'지금은 승인번호 없이 모든 기능이 열려 있습니다.',
+      trKicker:'Worksheet DNA · 왜 이 학습지인가', trH2:'연산 학습지는 많습니다. 하지만 <span class="accent">필산과 창의 연산, 문장제</span>는 같이 가야 합니다',
+      trLead:'목표는 빠른 연산이 아니라 <b>수와 친해지는 것</b>, 수 감각입니다. 그래서 교과 흐름을 따라가는 필산, 수를 펼쳐 내 손에 맞게 바꾸는 창의 연산, 그 수가 들어 있는 문장을 읽어 내는 문장제가 함께 갑니다. 연산만 빨라진 아이는 절차만 익혔기 때문에 문장 속의 수 앞에서 멈춥니다.',
+      t1no:'필산', t1b:'교과 연산', t1p:'학교 진도 그대로, 세로셈으로 정확하게. 속도가 아니라 정확한 절차가 먼저입니다.',
+      t2no:'창의 연산', t2b:'펼쳐서 다루기', t2p:'같은 문제를 내 손에 맞게 다시 만듭니다. 수 감각은 여기서 자랍니다.',
+      t3no:'문장제', t3b:'문장 속의 수', t3ex:'사과가 47개 있었어요. 38개를 더 땄어요. 이제 모두 몇 개일까요?', t3p:'같은 수를 문장에서 꺼내 읽습니다. 한국어·영어·중국어로.',
+      trNote:'세 칸이 같은 수 47+38을 다룹니다. 학습지 모드에는 교과 연산 연습, 수의 마법 탐험, 계산·문장제 혼합 옵션이 있어 한 아이가 한 문제를 세 방향에서 만납니다.',
+      ldKicker:'The Ladder · 유아부터 고등 연산까지', ldH2:'9까지의 수에서 <span class="accent">미적분Ⅰ</span>까지, 같은 사다리',
+      ldLead:'초급의 "수를 나누어 더하기"가 훗날 분배법칙 그 자체입니다. 오늘의 작은 원리가 사다리를 타고 올라가 결국 미적분의 언어가 됩니다. 과정을 바꿔도 방법은 바뀌지 않습니다.',
+      r0lv:'0급', r0b:'수의 나라 · 9까지의 수', r0s:'수를 알고, 세고, 나누고, 비교하기 — 만 5세',
+      r1lv:'초급', r1b:'보수로 펼치기', r1s:'10과 100을 만드는 습관',
+      r2lv:'중급', r2b:'분배법칙 · 곱셈 공식', r2s:'펼치기가 문자로 옮겨 가는 자리',
+      r3lv:'고급', r3b:'상관관계 · 등차수열 (경시)', r3s:'수 사이의 관계로 계산을 없애기',
+      r4lv:'심화', r4b:'미적분Ⅰ · 극한과 순간의 기울기', r4s:'변하는 것을 계산하는 언어',
+      symP:'함수의 <b>f</b>에 놀라고 허수의 <b>i</b>에서 수학을 놓아 버린 기억, 부모님도 있으실 겁니다. 수학은 언어라서, 기호가 바뀌는 순간이 진짜 고비입니다. 여기서는 모든 기호가 번역문을 갖습니다 — ∫는 "잘게 쪼개 다 더해라".',
+      lbKicker:'Math Lab · 수학 실험실', lbH2:'눈으로 봐야 이해되는 것은 <span class="accent">직접 만져</span> 봅니다',
+      lbLead:'실험실은 그 개념을 배우는 개념 노트 바로 아래에서 열립니다. 슬라이더를 밀고, 수를 바꿔 보고, 왜 그런지 눈으로 확인한 뒤 문제로 돌아옵니다. 과정과 상관없이 언제든 열어 볼 수 있습니다.',
+      l1b:'무지개 덧셈법', l1:'1부터 100까지 더하기를 무지개처럼 짝지어 순식간에 끝내 봐요.',
+      l2b:'사각수 친구들', l2:'홀수를 ㄱ자로 한 겹씩 두르면 정사각형이 자라는 걸 직접 만들어 봐요.',
+      l3b:'1001의 비밀', l3:'세 자리 수를 두 번 이어 쓰면 왜 7·11·13으로 나누어떨어지는지 확인해요.',
+      l4b:'수직선의 구멍', l4:'분수를 아무리 촘촘히 찍어도 남는 자리를 10배씩 확대해 찾아봐요.',
+      l5b:'루트 사냥꾼', l5:'√7은 몇일까? 넓이 슬라이더와 양쪽 조이기로 제곱근을 직접 사냥해요.',
+      l6b:'미적분은 왜 태어났나', l6:'변하는 것을 계산하려고 400년 전에 미적분이 생긴 이야기와 오늘의 쓰임을 봐요.',
+      lbOpen:'열어 보기 →',
+      lvKicker:'Placement · 아이의 수준부터', lvH2:'먼저 아이의 수준을 파악하고, <span class="accent">그 자리에서</span> 로드맵을 그립니다',
+      lvLead:'처음 들어오면 짧은 진단으로 지금 어디쯤인지 봅니다. 그 결과가 학습 여행 지도 위의 "지금 여기"가 되고, 주 1회·주 2회 선택에 따라 주차별 로드맵으로 펼쳐집니다. 레벨은 언제든 바꿀 수 있습니다.',
+      lv1b:'진단하기', lv1:'몇 문제로 어디서 시작할지 찾습니다. 틀려도 괜찮은 자리부터.',
+      lv2b:'지금 여기', lv2:'학습 여행 지도에 내 위치가 표시되고, 다음 한 걸음이 보입니다.',
+      lv3b:'주차별 로드맵', lv3:'9월 1주차부터 과정 끝까지, 인쇄할 수 있는 개인 계획표가 됩니다.',
+      'lv-rainbow-b':'🌈 무지개 덧셈법 — 지금 그려지는 중', 'lv-rainbow':'1과 100, 2와 99… 짝마다 합이 101. 일곱 살 가우스가 한 그대로, 아이가 직접 무지개를 그립니다.',
+      'lv-calc-b':'🍎 미적분은 왜 태어났나 — 접선이 만들어지는 중', 'lv-calc':'두 점을 가까이 끌어당기면 곡선의 순간 기울기가 나타납니다. 400년 전 그 순간을 손으로 다시 봅니다.',
+      cmKicker:'Math History · 수학사 네 컷 만화 95편', cmH2:'개념마다 <span class="accent">그 수학이 태어난 이야기</span>가 붙어 있습니다',
+      cmLead:'개념 노트를 열면 산문 한 줄 대신 네 컷 만화가 나옵니다. 그중 하나 — 일곱 살 가우스의 이야기입니다. 오늘 배우는 "자리끼리 더하기"와 같은 마법이라는 데서 끝납니다.',
+      cmMore:'기호가 태어난 날(−, =, √…), 0을 발견한 사람들, 미적분이 생긴 이유까지 — 95편이 각자의 개념 자리에서 기다립니다.',
+      prKicker:'Price · 월 구독', prH2:'주 1회 <span class="accent">만 원</span>, 주 2회 <span class="accent">2만 원</span>', prLead:'학습지 횟수만 다르고, 연산 게임 학습과 무제한 연산 학습은 둘 다 전부 들어 있습니다. 아이 한 명, 한 달 기준.', prBadge:'주 1회', prBadge2:'주 2회', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/월</span>', prPer2:'아이 한 명 · 한 달', pr21:'학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주', pr22:'주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵', pr23:'연산 게임 학습 · 무제한 연산 학습 · 실험실 · 만화 전부 포함', pr24:'한국어·영어·중국어', prCta2:'주 2회로 시작하기 →',
+      prAmt:'<span class="cur">₩</span>10,000<span class="unit">/월</span>', prPer:'아이 한 명 · 한 달',
+      pr1:'학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄', pr2:'<b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장',
+      pr3:'<b>무제한 연산 학습</b> — 교과 연산 연습 · 수의 마법 탐험 · 연산 로드맵, 횟수 제한 없음', pr4:'수학 실험실 6곳 · 수학사 만화 95편 · 한국어·영어·중국어',
+      prCta:'시작하기 →', prFine:'지금은 승인번호 없이 모든 기능이 열려 있습니다.',
+      foot:'GFIELD · Numbers of Magic — DOCSSAM 영재 트랙', footAbout:'철학', footChars:'캐릭터'
+    },
+    en:{
+      navCta:'Start', heroKicker:'DOCSSAM · From age 5',
+      heroH1:'Not a child who <span class="accent">memorizes</span> arithmetic —<br>a child who <span class="accent">handles</span> numbers.',
+      heroLead:'Numbers of Magic teaches children to <b>unfold</b> a hard number into numbers they can handle. Kids learn in a number village; parents receive worksheets every week, once or twice — whichever you choose.',
+      heroCta:'Step into the village →', heroCta2:'Read the philosophy',
+      pUnits:'units', pThreads:'threads', pLangs:'languages · KO·EN·ZH', pChars:'characters',
+      phKicker:"Philosophy · What's different", phH2:'This is <span class="accent">not</span> speed arithmetic',
+      phLead:'School tests sort children with trick questions, and most academies teach pattern-matching to get the answer. DOCSSAM builds the power to <b>remake a problem to fit your own hands</b> using the rules of numbers. Fewer slips, more creativity and confidence.',
+      badTag:'Pattern memorizing', badBig:'"When it looks like this,<br>solve it like that"', badP:'A slip while borrowing in column subtraction. The answer comes without the why, and it collapses when the pattern changes.',
+      goodTag:'The Numbers of Magic way', goodBig:'"Unfold the number<br>to make it easy"', goodP:'If 8+7 is hard, borrow 2 from the 7 and make 10 first. This habit becomes the distributive law later, and climbs the same ladder up to calculus.',
+      eqNote:'Nothing was memorized — the child just made a 10. Because it was their own choice, they use it again next time.',
+      phMore:'Full philosophy and the ladder (addition → Calculus I) →',
+      scKicker:'The App · What the child sees', scH2:'Learn in the number village, and worksheets arrive in the <span class="accent">mailbox</span>',
+      scLead:'The child becomes a human character walking the village with a chosen number friend. Buildings are classrooms; we do not add games. The village is a door into learning.',
+      s1b:'Number Village', s1:'You and your number companion, the elder at the gazebo, Doc-ssaem by the library. Tap a building to begin.',
+      s2b:'One unit, one flow', s2:'Basics → Magic Note → Magic Lab → Stamp. Doc-ssaem tells you what today is about on the first screen.',
+      s3b:'Mailbox', s3:'Every Monday, a worksheet envelope matched to where the child is arrives from Doc-ssaem.',
+      s4b:'Worksheet roadmap', s4:'Choose once or twice a week and the whole course is split into "Sept week 1, week 1-2…" ready to print.',
+      s5b:'Learning journey', s5:'From small numbers to fractions, one step at a time. Child and parent both see where they are.',
+      s6b:'Welcome back', s6:'Continue, Game mode, Worksheet mode, Course road. Attendance days and coins live here.',
+      whKicker:'Worksheets · Delivered every week', whH2:'Once or twice a week — <span class="accent">as much as you choose</span>',
+      whLead:'Worksheets are not a separate appendix. They are built for exactly where the child is in the village, and split into weeks by how often you study.',
+      c1h:'Once a week', c1p:'One sheet per week — a good pace for sitting down together on the weekend.',
+      c2h:'Twice a week', c2p:'Two sheets per week — the same course in halves, more often and shorter.',
+      o1b:'Print and done', o1:'Print at home with the child\'s name as a watermark.',
+      o2b:'Concept · count · mix', o2:'Choose whether to include the concept, how many items, and whether to mix computation with word problems.',
+      o3b:'Word problems in KO·EN·ZH', o3:'The same problem in three languages — bilingual homes use it as is.',
+      o4b:'Arrival notice', soon:'Coming soon', o4:'A text message like "Your Sept 1-1 worksheet is ready" is in preparation.',
+      stKicker:'How it works · Three steps', stH2:'Start today and the first envelope arrives <span class="accent" style="color:var(--gold-bright)">next Monday</span>',
+      st1b:'Make yourself, pick a companion', st1:'Choose boy or girl, then the number friend who walks with you. No install — right in the browser.',
+      st2b:'Choose once or twice a week', st2:'Pick the cadence in Worksheet mode and the whole course becomes a personal roadmap by week.',
+      st3b:'Solve, stamp, decorate — every week', st3:'Open the envelope, earn a stamp per unit, and dress your number friend with coins from attendance and learning. No gacha, no upgrades.',
+      ppKicker:'Who lives here · Village people', ppH2:'The <span class="accent">five</span> standing beside your child',
+      p1b:'Boy', p1:'you', p2b:'Girl', p2:'you', p3b:'Numi & friends', p3:'21 number & symbol companions', p4b:'Elder', p4:'storyteller at the gazebo', p5b:'Doc-ssaem', p5:'the teacher who sends letters',
+      ppMore:'Meet every character →',
+      fqKicker:'FAQ', fqH2:'What parents asked first',
+      q1:'From what age?', a1:'From age 5. Level 0 "Number Land" starts with knowing, counting, splitting and comparing numbers up to 9. Built to be tapped through even before reading.',
+      q2:'How do worksheets arrive?', a2:'An envelope lands in the in-app mailbox every Monday, and in Worksheet mode you can print the whole personal roadmap at once or twice a week. Text notices are coming soon.',
+      q3:'Isn\'t this a game?', a3:'The village is a door into learning. You can do three things there: go learn, see your friends, know where to go next. We do not add mini-games. Coins only dress your number friend — no gacha, no upgrades, no streak multipliers.',
+      q4:'Does it work in English or Chinese?', a4:'Screens, speech bubbles, worksheets and word problems switch between Korean, English and Chinese. Keep it in the language of your home.',
+      q5:'What device do I need?', a5:'Any phone, tablet or PC browser. Nothing to install; one name carries progress across devices.',
+      q6:'How does it connect with the academy?', a6:'The academy sets the course and cadence, grades the printed sheets and feeds next week\'s envelope. When the app spots where a child is stuck, a short warm-up arrives in the mailbox first.',
+      fnKicker:'Welcome', fnH2:'Shall we start the <span class="accent">magic</span> of numbers?', fnLead:'The first step to a child becoming friends with numbers. No install, no payment details.',
+      fnCta:'Step into the village →', fnCta2:'Read the philosophy', fnFine:'Everything is open right now — no academy code needed.',
+      trKicker:'Worksheet DNA · Why this worksheet', trH2:'There are plenty of arithmetic worksheets. But <span class="accent">written calculation, creative calculation and word problems</span> must go together',
+      trLead:'The goal is not speed — it is <b>becoming friends with numbers</b>, number sense. So written calculation that follows the school curriculum, creative calculation that unfolds a number to fit your hands, and word problems that read the number inside a sentence all travel together. A child who only got faster learned a procedure, and stops in front of a number inside a sentence.',
+      t1no:'Written', t1b:'Curriculum arithmetic', t1p:'Exactly the school sequence, in columns, correctly. Accurate procedure before speed.',
+      t2no:'Creative', t2b:'Unfold and handle', t2p:'Remake the same problem to fit your own hands. This is where number sense grows.',
+      t3no:'Word problem', t3b:'The number in the sentence', t3ex:'There were 47 apples. We picked 38 more. How many are there now?', t3p:'Pull the same number out of a sentence — in Korean, English and Chinese.',
+      trNote:'All three handle the same 47+38. Worksheet mode offers curriculum practice, Number Magic exploration, and a computation + word-problem mix, so one child meets one problem from three directions.',
+      ldKicker:'The Ladder · From age 5 to high school', ldH2:'From numbers up to 9 to <span class="accent">Calculus I</span>, one ladder',
+      ldLead:'The beginner trick of "split the number to add" is, later on, the distributive law itself. Today\'s small idea climbs the ladder and becomes the language of calculus. The course changes; the method does not.',
+      r0lv:'Lv 0', r0b:'Number Land · up to 9', r0s:'Know, count, split, compare — from age 5',
+      r1lv:'Beginner', r1b:'Unfold with complements', r1s:'The habit of making 10 and 100',
+      r2lv:'Intermediate', r2b:'Distributive law · product formulas', r2s:'Where unfolding moves into letters',
+      r3lv:'Advanced', r3b:'Relations · arithmetic sequences (olympiad)', r3s:'Removing calculation with relations between numbers',
+      r4lv:'Beyond', r4b:'Calculus I · limits and instantaneous slope', r4s:'The language for calculating change',
+      symP:'Being startled by the <b>f</b> of a function and letting go of math at the <b>i</b> of imaginary numbers — many parents remember it. Math is a language, and the moment the symbols change is the real hurdle. Here every symbol comes with a translation — ∫ means "cut it fine and add it all up".',
+      lbKicker:'Math Lab', lbH2:'What must be seen to be understood, you <span class="accent">touch</span> yourself',
+      lbLead:'Each lab opens right under the concept note it belongs to. Drag a slider, change a number, see why, then return to the problem. Open any of them any time, whatever course you are on.',
+      l1b:'The Rainbow Sum', l1:'Pair the numbers like a rainbow and finish 1+2+…+100 in seconds.',
+      l2b:'Square Number Friends', l2:'Wrap odd numbers in L-shapes and watch a square grow, one layer at a time.',
+      l3b:'The Secret of 1001', l3:'Write a 3-digit number twice and see why 7, 11 and 13 always divide it.',
+      l4b:'The Hole in the Number Line', l4:'Zoom in 10× at a time to find the spot no fraction ever lands on.',
+      l5b:'Root Hunter', l5:'What is √7? Hunt square roots yourself with an area slider and a squeeze play.',
+      l6b:'Why Calculus Was Born', l6:'How calculus was invented 400 years ago to measure change — and where it lives today.',
+      lbOpen:'Open →',
+      lvKicker:'Placement · Start from the child\'s level', lvH2:'First find the child\'s level, then draw the roadmap <span class="accent">from right there</span>',
+      lvLead:'On the first visit a short placement shows where the child is now. That becomes "you are here" on the learning-journey map, and unfolds into a week-by-week roadmap for once or twice a week. The level can be changed any time.',
+      lv1b:'Placement', lv1:'A few problems find where to start — from a spot where mistakes are fine.',
+      lv2b:'You are here', lv2:'Your position shows on the journey map, and the next step is visible.',
+      lv3b:'Week-by-week roadmap', lv3:'From September week 1 to the end of the course — a printable personal plan.',
+      'lv-rainbow-b':'🌈 The Rainbow Sum — drawing right now', 'lv-rainbow':'1 with 100, 2 with 99… every pair makes 101. Exactly what seven-year-old Gauss did, drawn by the child.',
+      'lv-calc-b':'🍎 Why Calculus Was Born — making the tangent', 'lv-calc':'Pull two points together and the curve\'s instantaneous slope appears. The moment from 400 years ago, by hand.',
+      cmKicker:'Math History · 95 four-panel comics', cmH2:'Every concept carries <span class="accent">the story of how that math was born</span>',
+      cmLead:'Open a concept note and a four-panel comic appears instead of a line of prose. Here is one — seven-year-old Gauss. It ends by showing it is the same magic as today\'s "add the tens with the tens".',
+      cmMore:'The day a symbol was born (−, =, √…), the people who found zero, why calculus exists — 95 stories wait at their own concept.',
+      prKicker:'Price · Monthly', prH2:'Once a week <span class="accent">₩10,000</span>, twice a week <span class="accent">₩20,000</span>', prLead:'Only the worksheet count differs — arithmetic game learning and unlimited practice are included in both. One child, one month.', prBadge:'ONCE A WEEK', prBadge2:'TWICE A WEEK', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/mo</span>', prPer2:'one child · per month · about $14', pr21:'Worksheet <b>twice a week</b> — two sheets, the same course in halves, more often', pr22:'A personal roadmap split into <b>Sept week 1-1, 1-2…</b>', pr23:'Arithmetic game learning · unlimited practice · labs · comics all included', pr24:'Korean, English, Chinese', prCta2:'Start twice a week →',
+      prAmt:'<span class="cur">₩</span>10,000<span class="unit">/mo</span>', prPer:'one child · per month · about $7',
+      pr1:'Worksheet <b>once a week</b> — an envelope in the mailbox every Monday, print at home', pr2:'<b>Arithmetic game learning</b> — every classroom, arena and stamp in the number village',
+      pr3:'<b>Unlimited arithmetic practice</b> — curriculum practice · Number Magic exploration · course road, no limits', pr4:'6 math labs · 95 math-history comics · Korean, English, Chinese',
+      prCta:'Start →', prFine:'Everything is open right now — no academy code needed.',
+      foot:'GFIELD · Numbers of Magic — DOCSSAM gifted track', footAbout:'Philosophy', footChars:'Characters'
+    },
+    zh:{
+      navCta:'开始', heroKicker:'DOCSSAM · 5岁起',
+      heroH1:'不是<span class="accent">背</span>算法的孩子，<br>而是会<span class="accent">运用</span>数的孩子。',
+      heroLead:'Numbers of Magic 教孩子把难的数<b>拆开</b>成自己能驾驭的数来解。孩子在数字村里学习，家长按每周1次或2次的选择，每周收到学习单。',
+      heroCta:'走进村庄 →', heroCta2:'阅读理念',
+      pUnits:'单元', pThreads:'题型', pLangs:'种语言 · 韩·英·中', pChars:'角色',
+      phKicker:'理念 · 有何不同', phH2:'这<span class="accent">不是</span>追求速算的计算训练',
+      phLead:'学校考试用易错题来区分孩子，多数补习班教的是背题型得答案。DOCSSAM 培养的是用数的规律<b>把题目改造成自己顺手的样子</b>的能力。失误变少，对数的创造力与自信随之生长。',
+      badTag:'背题型', badBig:'"这样出<br>就这样解"', badP:'竖式借位时出错。得了答案却不懂原理，题型一变就崩。',
+      goodTag:'Numbers of Magic 之道', goodBig:'"把数拆开<br>让它变简单"', goodP:'8+7 难，就从7借2先凑10。今天的这个习惯，日后就是分配律，沿同一把梯子一直通到微积分。',
+      eqNote:'不是背了进位，只是凑了一个10。因为是孩子自己选的路，下一题还会用。',
+      phMore:'完整理念与阶梯（加法 → 微积分Ⅰ）→',
+      scKicker:'应用 · 孩子看到的画面', scH2:'在数字村学习，学习单送到<span class="accent">信箱</span>',
+      scLead:'孩子化身为人物角色，带着选定的数字朋友走在村里。建筑就是学习场所，我们不增加游戏。村庄是通向学习的门。',
+      s1b:'数字村', s1:'我和同行的数字朋友、凉亭的爷爷、图书馆前的独老师。点建筑即开始学习。',
+      s2b:'一个单元的流程', s2:'基本运算 → 魔法笔记 → 魔法实验室 → 印章。独老师在第一页告诉你今天学什么。',
+      s3b:'信箱', s3:'每周一，贴合孩子当前进度的学习单信封以独老师的名义送达。',
+      s4b:'学习单路线图', s4:'选择每周1次或2次，整套课程就被分成"9月第1周、1-2周…"，可直接打印。',
+      s5b:'魔法学习之旅', s5:'从小数目到分数，一步一步。孩子和家长都能一眼看到现在在哪。',
+      s6b:'欢迎回来', s6:'继续冒险、游戏模式、学习单模式、运算路线图。出勤天数和金币都在这里。',
+      whKicker:'学习单 · 每周送达', whH2:'每周1次、每周2次 —— <span class="accent">选多少送多少</span>',
+      whLead:'学习单不是与应用脱节的附录。它按孩子在村里学到的位置生成，并依每周学习次数分周。',
+      c1h:'每周1次', c1p:'每周一张，适合周末一起坐下来做。',
+      c2h:'每周2次', c2p:'每周两张，同一课程一分为二，更频繁、更短。',
+      o1b:'打印即可', o1:'在家直接打印带孩子姓名水印的学习单。',
+      o2b:'概念 · 题量 · 混合', o2:'可选是否附概念说明、出多少题、计算与应用题是否混合。',
+      o3b:'应用题 韩·英·中', o3:'同一道题三种语言，双语家庭直接使用。',
+      o4b:'送达通知', soon:'准备中', o4:'"9月1-1周学习单已准备好"的短信提醒正在准备。',
+      stKicker:'如何开始 · 三步', stH2:'今天开始，<span class="accent" style="color:var(--gold-bright)">下周一</span>收到第一个信封',
+      st1b:'创建自己，选择同伴', st1:'从男孩、女孩中选一个"我"，再选一起走的数字朋友。无需安装，浏览器直接用。',
+      st2b:'选择每周1次或2次', st2:'在学习单模式选择频率，整套课程就变成按周划分的个人路线图。',
+      st3b:'每周做题、盖章、装扮', st3:'打开信封做题，每单元领印章，用出勤和学习攒的金币装扮数字朋友。没有抽卡，没有强化。',
+      ppKicker:'村里的人', ppH2:'站在孩子身边的<span class="accent">五位</span>',
+      p1b:'男孩', p1:'我', p2b:'女孩', p2:'我', p3b:'努米和朋友们', p3:'同行的数字·符号21种', p4b:'爷爷', p4:'凉亭的讲故事人', p5b:'独老师', p5:'寄信的老师',
+      ppMore:'认识全部角色 →',
+      fqKicker:'常见问题', fqH2:'家长最先问的',
+      q1:'几岁可以开始？', a1:'5岁起。0级"数字王国"从认识、数、拆分、比较9以内的数开始。不识字也能点着做。',
+      q2:'学习单怎么收到？', a2:'每周一信封送到应用内的信箱；在学习单模式选择每周1次或2次，也可整套个人路线图打印。短信提醒准备中。',
+      q3:'这不是游戏吗？', a3:'村庄是通向学习的门。在村里只能做三件事：去学习、看朋友、知道下一步去哪，不增加小游戏。金币只用于装扮数字朋友，没有抽卡、强化或连续出勤倍数。',
+      q4:'支持英文或中文吗？', a4:'画面、对话、学习单到应用题都可在韩、英、中三种语言间切换。用家里的语言即可。',
+      q5:'需要什么设备？', a5:'手机、平板或电脑浏览器即可。无需安装，一个名字就能在设备间延续进度。',
+      q6:'和补习班怎么衔接？', a6:'补习班设定课程与频率，批改打印的学习单并反映到下周信封。应用发现孩子卡在哪里时，信箱会先送来简短的热身题。',
+      fnKicker:'欢迎', fnH2:'开始数的<span class="accent">魔法</span>吧？', fnLead:'孩子与数成为朋友的第一步。无需安装，无需支付信息。',
+      fnCta:'走进村庄 →', fnCta2:'阅读理念', fnFine:'目前无需授权码，全部功能开放。',
+      trKicker:'学习单 DNA · 为什么是这份学习单', trH2:'运算学习单很多。但<span class="accent">笔算、创意运算、应用题</span>必须一起走',
+      trLead:'目标不是快，而是<b>和数交朋友</b>，培养数感。所以跟着教材走的笔算、把数拆开变得顺手的创意运算、读出句子里的数的应用题，三者同行。只练快的孩子学的是步骤，遇到句子里的数就停下来。',
+      t1no:'笔算', t1b:'教材运算', t1p:'按学校进度，竖式算准。先求准确的步骤，再谈速度。',
+      t2no:'创意运算', t2b:'拆开来运用', t2p:'把同一道题改造成自己顺手的样子。数感在这里生长。',
+      t3no:'应用题', t3b:'句子里的数', t3ex:'原来有47个苹果，又摘了38个。现在一共有多少个？', t3p:'从句子里把同一个数读出来。韩语、英语、中文。',
+      trNote:'三格处理同一个 47+38。学习单模式提供教材运算练习、数字魔法探索、计算与应用题混合选项，让孩子从三个方向遇见同一道题。',
+      ldKicker:'阶梯 · 从幼儿到高中运算', ldH2:'从9以内的数到<span class="accent">微积分Ⅰ</span>，同一把梯子',
+      ldLead:'初级的"把数拆开来加"，日后就是分配律本身。今天的小原理沿梯子而上，最终成为微积分的语言。课程在变，方法不变。',
+      r0lv:'0级', r0b:'数字王国 · 9以内的数', r0s:'认识、数、拆分、比较 —— 5岁起',
+      r1lv:'初级', r1b:'用补数拆开', r1s:'凑10、凑100的习惯',
+      r2lv:'中级', r2b:'分配律 · 乘法公式', r2s:'拆开的方法走进字母',
+      r3lv:'高级', r3b:'相关关系 · 等差数列（竞赛）', r3s:'用数之间的关系省掉计算',
+      r4lv:'深化', r4b:'微积分Ⅰ · 极限与瞬时斜率', r4s:'计算变化的语言',
+      symP:'被函数的 <b>f</b> 吓到、在虚数的 <b>i</b> 放弃数学的记忆，很多家长都有。数学是语言，符号变化的那一刻才是真正的坎。在这里每个符号都有译文 —— ∫ 就是"切碎了全部加起来"。',
+      lbKicker:'数学实验室', lbH2:'要用眼睛看才懂的，就<span class="accent">亲手</span>试',
+      lbLead:'实验室就开在对应概念笔记的下方。拉动滑块、改变数字、亲眼确认为什么，然后回到题目。不论学到哪里，随时可以打开。',
+      l1b:'彩虹加法法', l1:'像彩虹一样把数配成对，几秒钟算完1加到100。',
+      l2b:'平方数朋友', l2:'把奇数一层层围成直角，亲手看正方形长大。',
+      l3b:'1001的秘密', l3:'把三位数连写两遍，看看为什么7、11、13都能整除它。',
+      l4b:'数轴上的缺口', l4:'每次放大10倍，找出分数永远填不满的那个位置。',
+      l5b:'求根猎人', l5:'√7是多少？用面积滑块和两边夹逼，亲手猎取平方根。',
+      l6b:'微积分为何诞生', l6:'400年前为了计算变化而诞生的微积分，以及它今天用在哪里。',
+      lbOpen:'打开 →',
+      lvKicker:'分级 · 从孩子的水平开始', lvH2:'先了解孩子的水平，<span class="accent">就从那里</span>画出路线图',
+      lvLead:'第一次进入时，用简短的诊断看看孩子现在在哪里。结果会成为学习之旅地图上的"现在位置"，并按每周1次或2次展开为逐周路线图。级别随时可以更改。',
+      lv1b:'诊断', lv1:'用几道题找到起点——从一个错了也没关系的位置开始。',
+      lv2b:'现在位置', lv2:'学习之旅地图上标出我的位置，下一步一目了然。',
+      lv3b:'逐周路线图', lv3:'从9月第1周到课程结束，可打印的个人计划表。',
+      'lv-rainbow-b':'🌈 彩虹加法法 —— 正在画', 'lv-rainbow':'1配100、2配99……每一对都是101。七岁的高斯就是这样做的，孩子亲手画出彩虹。',
+      'lv-calc-b':'🍎 微积分为何诞生 —— 正在做出切线', 'lv-calc':'把两个点拉近，曲线的瞬时斜率就出现了。400年前的那一刻，亲手再看一遍。',
+      cmKicker:'数学史 · 四格漫画95篇', cmH2:'每个概念都带着<span class="accent">那个数学诞生的故事</span>',
+      cmLead:'打开概念笔记，出现的不是一行文字，而是四格漫画。这是其中一篇——七岁的高斯。结尾告诉你，这和今天学的"同位相加"是同一种魔法。',
+      cmMore:'符号诞生的那一天（−、=、√……）、发现0的人们、微积分为何存在——95个故事各自在它的概念旁等着。',
+      prKicker:'价格 · 月订阅', prH2:'每周1次<span class="accent">₩10,000</span>，每周2次<span class="accent">₩20,000</span>', prLead:'只是学习单次数不同，运算游戏学习和无限运算练习两者都全部包含。一个孩子，一个月。', prBadge:'每周1次', prBadge2:'每周2次', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/月</span>', prPer2:'一个孩子 · 每月 · 约 $14', pr21:'学习单<b>每周2次</b> —— 每周两张，同一课程一分为二、更频繁', pr22:'按<b>9月1-1周、1-2周……</b>划分的个人路线图', pr23:'运算游戏学习 · 无限运算练习 · 实验室 · 漫画全部包含', pr24:'韩语、英语、中文', prCta2:'以每周2次开始 →',
+      prAmt:'<span class="cur">₩</span>10,000<span class="unit">/月</span>', prPer:'一个孩子 · 每月 · 约 $7',
+      pr1:'学习单<b>每周1次</b> —— 每周一信箱送达信封，在家打印', pr2:'<b>运算游戏学习</b> —— 数字村所有学习场所、竞技场与印章',
+      pr3:'<b>无限运算练习</b> —— 教材运算练习 · 数字魔法探索 · 运算路线图，不限次数', pr4:'6个数学实验室 · 95篇数学史漫画 · 韩语、英语、中文',
+      prCta:'开始 →', prFine:'目前无需授权码，全部功能开放。',
+      foot:'GFIELD · Numbers of Magic — DOCSSAM 资优课程', footAbout:'理念', footChars:'角色'
+    }
+  };
+  var KEY='nm_landing_lang';
+  function pick(){
+    try{ var s=localStorage.getItem(KEY); if(s&&I18N[s]) return s; }catch(e){}
+    try{ var st=JSON.parse(localStorage.getItem('nm_state_v1')||'null'); if(st&&I18N[st.lang]) return st.lang; }catch(e){}
+    var n=(navigator.language||'ko').slice(0,2); return I18N[n]?n:'ko';
+  }
+  function apply(lang){
+    var d=I18N[lang]||I18N.ko;
+    document.documentElement.lang=lang==='zh'?'zh-CN':lang;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); if(d[k]!=null) el.innerHTML=d[k]; });
+    document.querySelectorAll('.langbtn').forEach(function(b){ b.classList.toggle('active',b.dataset.lang===lang); });
+    renderComic(lang);
+    try{ localStorage.setItem(KEY,lang); }catch(e){}
+  }
+  document.querySelectorAll('.langbtn').forEach(function(b){ b.onclick=function(){ apply(b.dataset.lang); }; });
+  apply(pick());
+
+  /* 스크롤 등장 — 지원 안 되면 전부 보이게 */
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
+  var io=new IntersectionObserver(function(entries){ entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }); },{rootMargin:'0px 0px -8% 0px',threshold:.08});
+  els.forEach(function(e){ io.observe(e); });
+})();
+</script>
+</body>
+</html>

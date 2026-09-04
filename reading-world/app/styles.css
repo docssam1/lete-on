@@ -470,6 +470,8 @@ html,body,#app,.shell,.main,.work-grid,.reading-card,.story,.art-stack,.passage{
 .town-zoom .zbtn:active{background:#eef3f0}
 .town-hint{text-align:center;color:var(--muted);font-size:14px;margin:12px 0 0}
 .ava-btns{display:flex;gap:8px;flex-wrap:wrap}
+.alpha-prep-entry{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#173e35;border-color:#173e35;color:#fff}
+.alpha-prep-entry:hover{background:#235849;color:#fff}
 .town-menu{display:none}
 .town-menu.show{display:block}
 .tm-backdrop{position:fixed;inset:0;background:rgba(20,28,48,.42);z-index:60}
