@@ -1,7 +1,8 @@
 import { attachCourseOneProgressiveExperiences } from "./golden-bell-course1-progressive.js?v=20260903c";
 import { attachOriginalSolutions } from "./golden-bell-original-solutions.js?v=20260903a";
-import { attachGoldenBellSimilarPractice } from "./golden-bell-similar-practice.js?v=20260904b";
+import { attachGoldenBellSimilarPractice } from "./golden-bell-similar-practice.js?v=20260904c";
 import { expandBookOneGoldenBell } from "./golden-bell-book01-source.js?v=20260904c";
+import { expandBookTwoGoldenBell } from "./golden-bell-book02-source.js?v=20260904b";
 
 export const GOLDEN_BELL_BOOKS = Object.freeze([
   {
@@ -2811,6 +2812,7 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
 ]);
 
 expandBookOneGoldenBell(GOLDEN_BELL_BOOKS[0]);
+expandBookTwoGoldenBell(GOLDEN_BELL_BOOKS[1]);
 attachCourseOneProgressiveExperiences(GOLDEN_BELL_BOOKS);
 attachOriginalSolutions(GOLDEN_BELL_BOOKS);
 attachGoldenBellSimilarPractice(GOLDEN_BELL_BOOKS);
