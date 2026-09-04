@@ -183,7 +183,16 @@
     visit();
     return [...values].sort((a, b) => a - b);
   };
-  const result = (prompt, answer, solution) => ({ prompt, answer: String(answer), solution });
+  const result = (prompt, answer, solution, options = {}) => ({
+    prompt,
+    answer: String(answer),
+    solution,
+    ...(options.answerVisual ? { answerVisual: options.answerVisual } : {}),
+    ...(options.generationMode ? { generationMode: options.generationMode } : {}),
+    ...(Number.isInteger(options.verifiedPoolIndex) ? { verifiedPoolIndex: options.verifiedPoolIndex } : {}),
+    ...(Number.isInteger(options.verifiedVariantCount) ? { verifiedVariantCount: options.verifiedVariantCount } : {}),
+    ...(options.sourceItemId ? { sourceItemId: options.sourceItemId } : {})
+  });
   const source41DigitWords = ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
   const source41SmallUnits = ["", "십", "백", "천"];
   const source41LargeUnits = ["", "만", "억", "조", "경", "해"];
@@ -21023,6 +21032,283 @@
         return result(`${fraction(target.numerator, target.denominator)} = 1/A + 1/B + 1/15를 만족하는 자연수 A, B를 각각 구하세요. ${equation}`, answer, `A>B, A<50 조건에서 분모를 대입해 확인하면 A=${answer.split(", ")[0]}, B=${answer.split(", ")[1]}입니다.`);
       }
       throw new Error("유일한 두 단위분수 방정식을 만들지 못했습니다.");
+    },
+    polygonPerimeterE1({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "5-1-u6-e1-exploration", "5-1-u6-e1-example-1-1", "5-1-u6-e1-example-1-2", "5-1-u6-e1-example-1-3",
+        "5-1-u6-e1-example-1-4", "5-1-u6-e1-mission-1", "5-1-u6-e1-mission-2", "5-1-u6-e1-mission-3",
+        "5-1-u6-e1-mission-4", "5-1-u6-e1-mission-5", "5-1-u6-e1-mission-6"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("다각형의 둘레 개념탐구 1 원문 분기는 0부터 10까지여야 합니다.");
+      if (variant === 10) throw new Error("Mission 6은 원문 조건에서 답이 하나로 정해지지 않아 생성할 수 없습니다.");
+      const sourceItemId = sourceIds[variant];
+      const format = value => Number(value).toLocaleString("en-US");
+      const difficultyDesign = ["scaffold", "source", "indirect"][level];
+      const extraStep = ["guided-order", "none", "derive-given-value"][level];
+      const dataVariant = int(rng, 0, 2);
+      const wordingCue = ["사용한 길이 관계도 함께 적어 보세요.", "어떤 길이부터 구했는지 풀이에 나타내세요.", "그림의 길이 관계를 식으로 나타내어 보세요."][dataVariant];
+      const answerVisualFromPrompt = (prompt, answer) => {
+        const diagrams = prompt.match(/<svg\b[\s\S]*?<\/svg>/g) || [];
+        if (!diagrams.length) throw new Error(`${sourceItemId}: 정답 화면에 다시 그릴 도형이 없습니다.`);
+        return `<div class="verified-answer-diagram" data-answer-source="${sourceItemId}" data-verified-pool-index="${dataVariant}">${diagrams.join("")}<div class="solution-answer-caption">그림의 정답: ${answer}</div></div>`;
+      };
+      const fixedResult = (prompt, answer, solution, answerVisual = "") => result(prompt, answer, solution, {
+        answerVisual: answerVisual || answerVisualFromPrompt(prompt, answer),
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: dataVariant,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+      const support = text => level === 0 ? `<p class="question-step" data-step-evidence="guided-order">먼저 ${text}</p>` : "";
+      const measure = (value, unit) => `<span class="math-measure" data-math-value="${value}" data-math-unit="${unit}"><span class="math-value">${format(value)}</span><span class="math-unit">${unit}</span></span>`;
+      const indirectMeasure = (expression, value, unit) => `<span class="math-measure" data-step-evidence="derive-given-value" data-math-expression="${expression}" data-math-value="${value}" data-math-unit="${unit}"><span class="math-value">${expression}</span><span class="math-unit">${unit}</span></span>`;
+      const given = (value, unit, expression) => level === 2 ? indirectMeasure(expression, value, unit) : measure(value, unit);
+      const tag = (kind, values, contract = "single-value") => `<span class="question-variation">${wordingCue}</span><span hidden data-polygon-perimeter-e1-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}" data-extra-step="${extraStep}"></span>`;
+      const pointText = point => `${Number(point[0]).toFixed(3)},${Number(point[1]).toFixed(3)}`;
+      const distance = (left, right) => Math.hypot(right[0] - left[0], right[1] - left[1]);
+      const closedLength = points => points.reduce((total, point, index) => total + distance(point, points[(index + 1) % points.length]), 0);
+      const escapeAttribute = value => String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+      const renderModel = ({ kind, points, segments, fills = [], labels = [], expected, aria, attributes = {} }) => {
+        if (!points.length || !segments.length) throw new Error(`${kind}: 점·선분 모델이 비었습니다.`);
+        const xs = points.map(point => point[0]);
+        const ys = points.map(point => point[1]);
+        const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+        const scale = Math.min(270 / Math.max(1, maxX - minX), 154 / Math.max(1, maxY - minY));
+        const ox = 170 - (minX + maxX) * scale / 2;
+        const oy = 105 - (minY + maxY) * scale / 2;
+        const map = index => [points[index][0] * scale + ox, points[index][1] * scale + oy];
+        const fillMarkup = fills.map((fill, index) => `<polygon class="${fill.className || "shape-fill"}" style="stroke:none" data-region="${fill.name || index}" data-region-points="${fill.points.join(":")}" points="${fill.points.map(point => pointText(map(point))).join(" ")}"/>`).join("");
+        const segmentMarkup = segments.map((segment, index) => {
+          const start = map(segment.a), end = map(segment.b);
+          const role = segment.role || "outer";
+          const className = role === "division" ? "crease" : role === "original" || role === "dimension" ? "original" : "";
+          return `<line class="${className}" data-segment-index="${index}" data-segment-role="${role}" x1="${start[0].toFixed(1)}" y1="${start[1].toFixed(1)}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}"/>`;
+        }).join("");
+        const labelMarkup = labels.map(label => {
+          let position;
+          let target = "";
+          if (Number.isInteger(label.segment)) {
+            const segment = segments[label.segment];
+            if (!segment) throw new Error(`${kind}: ${label.segment}번 라벨 선분이 없습니다.`);
+            const start = map(segment.a), end = map(segment.b);
+            const dx = end[0] - start[0], dy = end[1] - start[1], size = Math.hypot(dx, dy) || 1;
+            const normal = [-dy / size, dx / size];
+            const offset = label.offset ?? 14;
+            position = [(start[0] + end[0]) / 2 + normal[0] * offset, (start[1] + end[1]) / 2 + normal[1] * offset];
+            target = ` data-label-segment="${label.segment}"`;
+          } else {
+            position = [label.x * scale + ox, label.y * scale + oy];
+            target = ` data-label-cell="${label.cell}"`;
+          }
+          const actual = label.actual === undefined ? "" : ` data-label-value="${label.actual}"`;
+          return `<text class="perimeter-e1-label${label.target ? " perimeter-e1-target" : ""}"${target}${actual} x="${position[0].toFixed(1)}" y="${position[1].toFixed(1)}">${label.text}</text>`;
+        }).join("");
+        const segmentData = segments.map((segment, index) => `${index}:${segment.a}:${segment.b}:${segment.role || "outer"}:${distance(points[segment.a], points[segment.b]).toFixed(4)}`).join(";");
+        const extraAttributes = Object.entries(attributes).map(([name, value]) => ` ${name}="${escapeAttribute(value)}"`).join("");
+        return `<svg class="geometry-diagram polygon-perimeter-e1" viewBox="0 0 340 210" data-geometry-kind="${kind}" data-geometry-points="${points.map(pointText).join(";")}" data-geometry-segments="${segmentData}" data-measure-expected="${expected}"${extraAttributes} aria-label="${aria}">${fillMarkup}${segmentMarkup}${labelMarkup}</svg>`;
+      };
+      const rectangleModel = (kind, width, height, smallRectangles, coloredRectangles, expected, aria) => {
+        const points = [];
+        const segments = [];
+        const fills = [];
+        const addRectangle = (rectangle, role, fillName = "") => {
+          const [x, y, w, h] = rectangle;
+          const start = points.length;
+          points.push([x, y], [x + w, y], [x + w, y + h], [x, y + h]);
+          if (role) for (let index = 0; index < 4; index += 1) segments.push({ a: start + index, b: start + (index + 1) % 4, role });
+          if (fillName) fills.push({ name: fillName, points: [start, start + 1, start + 2, start + 3] });
+        };
+        coloredRectangles.forEach((rectangle, index) => addRectangle(rectangle, "", `colored-${index + 1}`));
+        addRectangle([0, 0, width, height], "outer");
+        smallRectangles.forEach(rectangle => addRectangle(rectangle, "small-rectangle"));
+        return renderModel({ kind, points, segments, fills, expected, aria, attributes: {
+          "data-small-rects": smallRectangles.map(rectangle => rectangle.join(",")).join(";"),
+          "data-colored-rects": coloredRectangles.map(rectangle => rectangle.join(",")).join(";")
+        } });
+      };
+      const gridModel = ({ kind, width, height, cols, rows, marked = [], labels = [], dimensionLabels = [], expected, aria }) => {
+        const xValues = Array.from({ length: cols + 1 }, (_, index) => width * index / cols);
+        const yValues = Array.from({ length: rows + 1 }, (_, index) => height * index / rows);
+        const points = [];
+        const pointIndex = (col, row) => row * (cols + 1) + col;
+        yValues.forEach(y => xValues.forEach(x => points.push([x, y])));
+        const segments = [];
+        for (let col = 0; col <= cols; col += 1) segments.push({ a: pointIndex(col, 0), b: pointIndex(col, rows), role: col === 0 || col === cols ? "outer" : "division" });
+        for (let row = 0; row <= rows; row += 1) segments.push({ a: pointIndex(0, row), b: pointIndex(cols, row), role: row === 0 || row === rows ? "outer" : "division" });
+        const fills = marked.map(cell => {
+          const [col, row] = cell.split(":").map(Number);
+          return { name: `cell-${cell}`, points: [pointIndex(col, row), pointIndex(col + 1, row), pointIndex(col + 1, row + 1), pointIndex(col, row + 1)] };
+        });
+        const cellLabels = labels.map(label => ({ ...label, x: width * (label.col + .5) / cols, y: height * (label.row + .52) / rows, cell: `${label.col}:${label.row}` }));
+        return renderModel({ kind, points, segments, fills, labels: [...cellLabels, ...dimensionLabels], expected, aria, attributes: {
+          "data-grid": `${cols}x${rows}`,
+          "data-cell-size": `${width / cols},${height / rows}`,
+          "data-marked-cells": marked.join(";")
+        } });
+      };
+
+      if (variant === 0) {
+        const smallShort = 6;
+        const smallLong = [12, 15, 18][dataVariant];
+        const width = smallLong + 2 * smallShort;
+        const height = smallLong + smallShort;
+        const short = width - height, answer = 2 * short;
+        const smallOne = [[0, 0, smallShort, smallLong], [smallShort, 0, smallShort, smallLong], [2 * smallShort, 0, smallShort, smallLong], [3 * smallShort, 0, smallShort, smallLong]];
+        const colorOne = [[4 * smallShort, 0, width - 4 * smallShort, smallLong], [0, smallLong, width, smallShort]].filter(([, , w, h]) => w > 0 && h > 0);
+        const smallTwo = [[0, 0, smallLong, smallShort], [0, smallShort, smallLong, smallShort], [width - 2 * smallShort, smallShort, smallShort, smallLong], [width - smallShort, smallShort, smallShort, smallLong]];
+        const colorTwo = [[smallLong, 0, width - smallLong, smallShort], [0, 2 * smallShort, smallLong, height - 2 * smallShort]];
+        const differenceGiven = given(short, "cm", "3×2");
+        return fixedResult(`모양과 크기가 같은 작은 직사각형 4개를 같은 큰 직사각형 안에 ①, ②처럼 다르게 놓고 남은 부분을 색칠했습니다. 큰 직사각형의 가로는 세로보다 ${differenceGiven} 더 깁니다. 두 색칠한 부분의 둘레 차를 구하세요.${support("①의 둘레에서 ②의 둘레를 뺄 때 같은 짧은 변이 몇 번 빠지는지 확인하세요.")}<div class="diagram-pair"><figure><figcaption>①</figcaption>${rectangleModel("two-layout-first", width, height, smallOne, colorOne, answer, "작은 직사각형 네 개를 세로로 모아 놓은 첫 번째 배치")}</figure><figure><figcaption>②</figcaption>${rectangleModel("two-layout-second", width, height, smallTwo, colorTwo, answer, "작은 직사각형 네 개를 가로와 세로로 나누어 놓은 두 번째 배치")}</figure></div>${tag("two-layout-perimeter-difference", [short, width, height, answer])}`, answer, `두 배치의 경계를 같은 부분끼리 지우면 짧은 변 ${short}cm가 두 번 남습니다. 따라서 둘레 차는 ${short}×2=${answer}cm입니다.`);
+      }
+
+      if (variant === 1) {
+        const values = [
+          [42, 18, 8, 24, 10, 18, 6, 9, 6, 11, 12, 14],
+          [44, 19, 9, 25, 10, 17, 7, 8, 6, 11, 12, 14],
+          [40, 17, 7, 23, 9, 19, 6, 10, 6, 11, 12, 14]
+        ][dataVariant];
+        const [outer, downOne, leftOne, upOne, leftTwo, downTwo, leftThree, upTwo, leftFour, downThree, leftFive] = values;
+        const points = [[0, 0], [outer, 0], [outer, downOne], [outer - leftOne, downOne], [outer - leftOne, downOne - upOne], [outer - leftOne - leftTwo, downOne - upOne], [outer - leftOne - leftTwo, downOne - upOne + downTwo], [outer - leftOne - leftTwo - leftThree, downOne - upOne + downTwo], [outer - leftOne - leftTwo - leftThree, downOne - upOne + downTwo - upTwo], [outer - leftOne - leftTwo - leftThree - leftFour, downOne - upOne + downTwo - upTwo], [outer - leftOne - leftTwo - leftThree - leftFour, downOne - upOne + downTwo - upTwo + downThree], [outer - leftOne - leftTwo - leftThree - leftFour - leftFive, downOne - upOne + downTwo - upTwo + downThree]];
+        const segments = points.map((_, index) => ({ a: index, b: (index + 1) % points.length, role: "outer" }));
+        const known = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11];
+        const labels = known.map(index => ({ segment: index, actual: values[index], text: index === 0 && level === 2 ? "21m×2" : `${values[index]}m`, offset: index % 2 ? 14 : -14 }));
+        const perimeterM = closedLength(points), answer = perimeterM * 100;
+        return fixedResult(`그림의 모든 이웃한 변은 직각이고 가장 긴 가로는 ${given(outer, "m", `${outer / 2}×2`)}입니다. 표시되지 않은 두 길이를 찾아 도형의 둘레를 cm로 구하세요.${support("가로 방향과 세로 방향의 길이 합을 각각 맞춘 뒤 둘레를 더하세요.")}${renderModel({ kind: "right-angle-outline", points, segments, labels, expected: answer, aria: "알려진 열 개 길이만 표시된 직각으로 꺾인 도형", attributes: { "data-closed-perimeter": perimeterM.toFixed(4), "data-hidden-segments": "9;10" } })}${tag("right-angle-outline-to-centimeters", [...values, perimeterM, answer])}`, format(answer), `표시되지 않은 두 변은 각각 ${downThree}m와 ${leftFive}m입니다. 실제 폐곡선의 열두 변을 더하면 ${perimeterM}m이고, ${perimeterM}m=${format(answer)}cm입니다.`);
+      }
+
+      if (variant === 2) {
+        const side = 20;
+        const [xOne, xTwo, yOne, yTwo] = [[12, 18, 8, 14], [10, 20, 9, 13], [14, 16, 11, 11]][dataVariant];
+        const totalWidth = side + xOne + xTwo, totalHeight = side + yOne + yTwo;
+        const points = [];
+        const segments = [];
+        const fills = [];
+        const addRect = (x, y, width, height, role, fillName = "") => {
+          const start = points.length;
+          points.push([x, y], [x + width, y], [x + width, y + height], [x, y + height]);
+          if (role) for (let index = 0; index < 4; index += 1) segments.push({ a: start + index, b: start + (index + 1) % 4, role });
+          if (fillName) fills.push({ name: fillName, points: [start, start + 1, start + 2, start + 3] });
+        };
+        addRect(xOne, yOne, side - xOne, side - yOne, "", "overlap-1");
+        addRect(xOne + xTwo, yOne + yTwo, side - xTwo, side - yTwo, "", "overlap-2");
+        addRect(0, 0, side, side, "square");
+        addRect(xOne, yOne, side, side, "square");
+        addRect(xOne + xTwo, yOne + yTwo, side, side, "square");
+        const dimensionStart = points.length;
+        points.push([0, totalHeight], [totalWidth, totalHeight], [totalWidth, 0]);
+        segments.push({ a: dimensionStart, b: dimensionStart + 1, role: "dimension" }, { a: dimensionStart + 2, b: dimensionStart + 1, role: "dimension" });
+        const labels = [
+          { segment: segments.length - 2, actual: totalWidth, text: `${totalWidth}cm`, offset: 14 },
+          { segment: segments.length - 1, actual: totalHeight, text: `${totalHeight}cm`, offset: -14 }
+        ];
+        const answer = 2 * ((side - xOne) + (side - yOne) + (side - xTwo) + (side - yTwo));
+        const sideGiven = given(side, "cm", "10×2");
+        const firstOverlap = [side - xOne, side - yOne], secondOverlap = [side - xTwo, side - yTwo];
+        return fixedResult(`한 변이 ${sideGiven}인 정사각형 색종이 3장을 그림처럼 겹쳤습니다. 세 장의 전체 가로는 ${measure(totalWidth, "cm")}, 전체 세로는 ${measure(totalHeight, "cm")}입니다. 색칠한 두 겹침 부분의 둘레를 모두 더하세요.${support("두 겹침 직사각형의 가로 합과 세로 합을 전체 범위에서 먼저 찾으세요.")}${renderModel({ kind: "three-overlap-squares", points, segments, fills, labels, expected: answer, aria: "세 정사각형 전체와 색칠한 두 겹침 영역", attributes: { "data-square-count": 3, "data-overlap-count": 2, "data-total-range": `${totalWidth},${totalHeight}` } })}${tag("overlap-rectangles-perimeter-sum", [side, xOne, xTwo, yOne, yTwo, totalWidth, totalHeight, answer])}`, answer, `두 겹침 부분은 ${firstOverlap[0]}cm×${firstOverlap[1]}cm, ${secondOverlap[0]}cm×${secondOverlap[1]}cm인 직사각형입니다. 둘레 합은 2×(${firstOverlap[0]}+${firstOverlap[1]})+2×(${secondOverlap[0]}+${secondOverlap[1]})=${answer}cm입니다.`);
+      }
+
+      if (variant === 3) {
+        const [width, height] = [[30, 20], [36, 20], [33, 24]][dataVariant];
+        const cols = 3, rows = 4, oneWidth = width / cols, oneHeight = height / rows, answer = cols * rows * 2 * (oneWidth + oneHeight);
+        const widthGiven = given(width, "cm", `${width / 2}×2`);
+        const onePerimeter = 2 * (oneWidth + oneHeight);
+        return fixedResult(`가로 ${widthGiven}, 세로 ${measure(height, "cm")}인 직사각형을 점선을 따라 ${cols}열 ${rows}행으로 잘랐습니다. 작은 직사각형 12개의 둘레를 모두 더하세요.${support("작은 직사각형 한 개의 가로와 세로를 먼저 구하세요.")}${gridModel({ kind: "three-by-four-cut-rectangle", width, height, cols, rows, dimensionLabels: [{ segment: 4, actual: width, text: level === 2 ? `${width / 2}cm×2` : `${width}cm`, offset: -15 }, { segment: 3, actual: height, text: `${height}cm`, offset: 15 }], expected: answer, aria: "바깥은 실선이고 안쪽은 점선인 3열 4행 직사각형" })}${tag("grid-piece-perimeters", [width, height, cols, rows, oneWidth, oneHeight, answer])}`, answer, `한 조각은 ${oneWidth}cm×${oneHeight}cm이므로 둘레는 ${onePerimeter}cm입니다. 모두 더하면 12×${onePerimeter}=${answer}cm입니다.`);
+      }
+
+      if (variant === 4) {
+        const [side, cutTop, cutLeft, cutRight] = [[30, 4, 10, 14], [32, 5, 9, 13], [34, 6, 11, 12]][dataVariant];
+        const height = side * Math.sqrt(3) / 2;
+        const top = [side / 2, 0], left = [0, height], right = [side, height];
+        const along = (from, to, amount) => [from[0] + (to[0] - from[0]) * amount / side, from[1] + (to[1] - from[1]) * amount / side];
+        const hexagon = [along(top, left, cutTop), along(top, right, cutTop), along(top, right, side - cutRight), along(right, left, cutRight), along(left, right, cutLeft), along(left, top, cutLeft)];
+        const points = [...hexagon, top, left, right];
+        const segments = Array.from({ length: 6 }, (_, index) => ({ a: index, b: (index + 1) % 6, role: "outer" }));
+        segments.push({ a: 6, b: 7, role: "original" }, { a: 7, b: 8, role: "original" }, { a: 8, b: 6, role: "original" });
+        const longLeft = side - cutTop - cutLeft, longRight = side - cutTop - cutRight, longBottom = side - cutLeft - cutRight;
+        const labels = [
+          { segment: 5, actual: longLeft, text: `${longLeft}cm`, offset: 15 },
+          { segment: 1, actual: longRight, text: `${longRight}cm`, offset: -15 },
+          { segment: 3, actual: longBottom, text: `${longBottom}cm`, offset: 15 }
+        ];
+        const answer = closedLength(hexagon);
+        const sideGiven = given(side, "cm", `${side / 2}×2`);
+        return fixedResult(`한 변이 ${sideGiven}인 정삼각형에서 세 꼭짓점의 작은 정삼각형을 잘라 육각형을 만들었습니다. 실선 육각형의 둘레를 구하세요.${support("원래 정삼각형의 각 변에서 잘린 두 길이를 먼저 맞추세요.")}${renderModel({ kind: "cut-equilateral-triangle", points, segments, labels, expected: answer, aria: `점선 정삼각형 안에 실선 육각형과 ${longLeft}, ${longRight}, ${longBottom}센티미터가 표시된 그림`, attributes: { "data-original-triangle": "6:7;7:8;8:6", "data-hexagon": "0:1:2:3:4:5" } })}${tag("cut-triangle-hexagon-perimeter", [side, cutTop, cutLeft, cutRight, longLeft, longRight, longBottom, answer])}`, answer, `잘린 세 꼭짓점의 새 변은 각각 ${cutTop}cm, ${cutLeft}cm, ${cutRight}cm입니다. 육각형 둘레는 ${longLeft}+${longRight}+${longBottom}+${cutTop}+${cutLeft}+${cutRight}=${answer}cm입니다.`);
+      }
+
+      if (variant === 5) {
+        const [width, height, depth] = [[15, 12, 4], [16, 11, 3], [14, 13, 5]][dataVariant];
+        const perimeter = 2 * (width + height) + 2 * depth, answer = depth;
+        const points = [[0, height], [width, height], [width, 0], [width * .8, 0], [width * .8, depth], [width * .6, depth], [width * .6, 0], [width * .4, 0], [width * .4, height * .42], [width / 3, height * .42], [width / 3, height * .58], [width * .23, height * .58], [width * .23, height * .75], [width * .13, height * .75], [width * .13, height * .88], [0, height * .88]];
+        const segments = points.map((_, index) => ({ a: index, b: (index + 1) % points.length, role: "outer" }));
+        const labels = [
+          { segment: 0, actual: width, text: `${width}cm`, offset: 16 },
+          { segment: 1, actual: height, text: `${height}cm`, offset: 16 },
+          { segment: 3, actual: depth, text: "□cm", target: true, offset: 18 }
+        ];
+        const perimeterGiven = given(perimeter, "cm", `${perimeter / 2}×2`);
+        const rectanglePerimeter = 2 * (width + height);
+        return fixedResult(`왼쪽에 계단이 있고 위쪽에 홈이 있는 직각 도형의 둘레가 ${perimeterGiven}입니다. 화살표가 가리키는 홈 안쪽 세로 길이 □를 구하세요.${support("계단 경계는 가로와 세로 이동을 모으면 바깥 직사각형 경계와 같다는 점을 먼저 확인하세요.")}${renderModel({ kind: "stair-and-notch-depth", points, segments, labels, expected: answer, aria: "왼쪽 계단과 위쪽 홈이 있으며 홈의 세로 변을 묻는 도형", attributes: { "data-target-segment": 3, "data-target-orientation": "vertical", "data-closed-perimeter": closedLength(points).toFixed(4) } })}${tag("notched-rectangle-depth", [width, height, perimeter, depth, answer])}`, answer, `계단 부분을 곧게 모으면 ${width}cm×${height}cm 직사각형 둘레 ${rectanglePerimeter}cm와 같습니다. 홈 때문에 2×□만큼 늘었으므로 (${perimeter}-${rectanglePerimeter})÷2=${answer}cm입니다.`);
+      }
+
+      if (variant === 6) {
+        const [side, width] = [[6, 9], [7, 11], [8, 13]][dataVariant];
+        const answer = 2 * (side + width);
+        const points = [[0, 0], [width, 0], [width, side], [0, side], [width - side, 0], [width - side, side]];
+        const segments = [
+          { a: 0, b: 1, role: "outer" }, { a: 1, b: 2, role: "outer" }, { a: 2, b: 3, role: "outer" }, { a: 3, b: 0, role: "outer" }, { a: 4, b: 5, role: "division" }
+        ];
+        const fills = [{ name: "inside-square", points: [4, 1, 2, 5] }];
+        const addend = width - side;
+        const labels = [{ segment: 0, actual: width, text: level === 2 ? `${addend}cm+${side}cm` : `${width}cm`, offset: -15 }, { segment: 1, actual: side, text: `${side}cm`, offset: 15 }];
+        return fixedResult(`직사각형 안의 색칠한 부분은 한 변이 ${measure(side, "cm")}인 정사각형입니다. 바깥 직사각형의 가로가 ${given(width, "cm", `${addend}+${side}`)}일 때 둘레를 구하세요.${support("색칠한 정사각형의 한 변과 바깥 직사각형의 세로가 같은지 먼저 확인하세요.")}${renderModel({ kind: "square-inside-rectangle", points, segments, fills, labels, expected: answer, aria: `가로 ${width}센티미터 직사각형 오른쪽의 한 변 ${side}센티미터 색칠 정사각형`, attributes: { "data-square-cell": "4:1:2:5" } })}${tag("square-inside-rectangle-perimeter", [side, width, answer])}`, answer, `바깥 직사각형의 세로는 정사각형 한 변과 같은 ${side}cm입니다. 둘레는 2×(${width}+${side})=${answer}cm입니다.`);
+      }
+
+      if (variant === 7) {
+        const [first, second, third, sixth] = [[10, 12, 2, 6], [11, 13, 3, 5], [12, 11, 2, 7]][dataVariant];
+        const fourth = first - third + sixth, fifth = second + third - sixth;
+        const lengths = [first, second, third, fourth, fifth, sixth], directions = [0, 60, 120, 180, 240, 300];
+        const points = [[0, 0]];
+        for (let index = 0; index < lengths.length - 1; index += 1) {
+          const radians = directions[index] * Math.PI / 180;
+          const last = points[points.length - 1];
+          points.push([last[0] + lengths[index] * Math.cos(radians), last[1] + lengths[index] * Math.sin(radians)]);
+        }
+        const segments = points.map((_, index) => ({ a: index, b: (index + 1) % points.length, role: "outer" }));
+        const texts = [level === 2 ? `${first / 2}cm×2` : `${first}cm`, `${second}cm`, `${third}cm`, "㉡", "㉠", `${sixth}cm`];
+        const labels = texts.map((text, segment) => ({ segment, actual: lengths[segment], text, target: text === "㉠" || text === "㉡", offset: 16 }));
+        const answer = lengths.reduce((sum, value) => sum + value, 0);
+        return fixedResult(`여섯 내각이 모두 120°인 육각형이고 윗변은 ${given(first, "cm", `${first / 2}×2`)}입니다. ㉠과 ㉡을 구한 뒤 둘레를 구하세요.${support("서로 평행한 세 방향별로 반대쪽 길이의 합을 먼저 맞추세요.")}${renderModel({ kind: "equiangular-hexagon", points, segments, labels, expected: answer, aria: `${first}, ${second}, ${third}, ${sixth}센티미터와 숨은 두 변이 표시된 120도 육각형`, attributes: { "data-known-segments": "0;1;2;5", "data-hidden-segments": "3;4" } })}${tag("equiangular-hexagon-perimeter", [...lengths, answer])}`, answer, `닫힌 육각형의 세 방향 길이를 맞추면 ㉠=${fifth}cm, ㉡=${fourth}cm입니다. 여섯 변의 합은 ${answer}cm입니다.`);
+      }
+
+      if (variant === 8) {
+        const coloredPerimeter = [25, 30, 35][dataVariant];
+        const bigSide = coloredPerimeter * 3 / 5, cols = 3, rows = 4, smallWidth = bigSide / 3, smallHeight = bigSide / 4, answer = 4 * bigSide;
+        const coloredGiven = given(coloredPerimeter, "cm", `${coloredPerimeter * 2}÷2`);
+        return fixedResult(`정사각형 종이를 같은 직사각형 12개가 되도록 3열×4행으로 나누고 가운데 열의 가운데 두 칸을 색칠했습니다. 색칠한 부분의 둘레가 ${coloredGiven}일 때 처음 정사각형의 둘레를 구하세요.${support("큰 정사각형에서 작은 한 칸의 가로와 세로 사이 관계를 먼저 찾으세요.")}${gridModel({ kind: "three-by-four-center-two", width: bigSide, height: bigSide, cols, rows, marked: ["1:1", "1:2"], expected: answer, aria: "가로 세 칸 세로 네 칸인 정사각형에서 가운데 두 칸을 색칠한 그림" })}${tag("grid-colored-perimeter-to-square", [smallWidth, smallHeight, coloredPerimeter, bigSide, answer])}`, answer, `작은 칸은 ${smallWidth}cm×${smallHeight}cm이고, 색칠한 부분은 ${smallWidth}cm×${smallHeight * 2}cm입니다. 큰 정사각형 한 변은 ${bigSide}cm이므로 둘레는 ${answer}cm입니다.`);
+      }
+
+      const dimensions = [[7.5, 5.5, 2.5, 4.5], [6, 4, 3, 5], [8, 6, 4, 3]][dataVariant];
+      const [leftWidth, rightWidth, topHeight, bottomHeight] = dimensions;
+      const totalHeight = topHeight + bottomHeight;
+      const perimeters = { "가": 2 * (leftWidth + topHeight), "나": 2 * (leftWidth + bottomHeight), "다": 2 * (rightWidth + topHeight), "라": 2 * (rightWidth + bottomHeight) };
+      const x = [0, leftWidth, leftWidth + rightWidth], y = [0, topHeight, totalHeight];
+      const points = [];
+      y.forEach(yValue => x.forEach(xValue => points.push([xValue, yValue])));
+      const at = (col, row) => row * 3 + col;
+      const segments = [
+        { a: at(0, 0), b: at(2, 0), role: "outer" }, { a: at(2, 0), b: at(2, 2), role: "outer" },
+        { a: at(2, 2), b: at(0, 2), role: "outer" }, { a: at(0, 2), b: at(0, 0), role: "outer" },
+        { a: at(1, 0), b: at(1, 2), role: "division" }, { a: at(0, 1), b: at(2, 1), role: "division" }
+      ];
+      const labels = [
+        { col: 0, row: 0, x: leftWidth / 2, y: topHeight / 2, cell: "0:0", text: "가" },
+        { col: 1, row: 0, x: leftWidth + rightWidth / 2, y: topHeight / 2, cell: "1:0", text: "다" },
+        { col: 0, row: 1, x: leftWidth / 2, y: topHeight + bottomHeight / 2, cell: "0:1", text: "나" },
+        { col: 1, row: 1, x: leftWidth + rightWidth / 2, y: topHeight + bottomHeight / 2, cell: "1:1", text: "라", target: true },
+        { segment: 1, actual: totalHeight, text: level === 2 ? `${totalHeight * 2}cm÷2` : `${totalHeight}cm`, offset: -18 }
+      ];
+      const table = valueTable([`가 ${perimeters["가"]}cm`, `다 ${perimeters["다"]}cm`], [`나 ${perimeters["나"]}cm`, `라 ${perimeters["라"]}cm`]);
+      return fixedResult(`세로가 ${given(totalHeight, "cm", `${totalHeight * 2}÷2`)}인 큰 직사각형을 그림처럼 네 직사각형으로 나누었습니다. 가, 나, 다, 라의 둘레가 표와 같을 때 라의 가로와 세로를 차례로 구하세요.${support("가와 나의 둘레 차로 위·아래 세로 길이의 차를 먼저 찾으세요.")}${renderModel({ kind: "four-rectangle-perimeter-tuple", points, segments, labels, expected: `${rightWidth},${bottomHeight}`, aria: "위쪽 가와 다, 아래쪽 나와 라로 나눈 직사각형", attributes: { "data-cell-layout": "가,다;나,라", "data-cell-perimeters": `가:${perimeters["가"]};나:${perimeters["나"]};다:${perimeters["다"]};라:${perimeters["라"]}`, "data-target-cell": "1:1" } })}${table}${tag("four-rectangle-side-tuple", [leftWidth, rightWidth, topHeight, bottomHeight, totalHeight, perimeters["가"], perimeters["나"], perimeters["다"], perimeters["라"]], "ordered-pair")}`, `${rightWidth}cm, ${bottomHeight}cm`, `둘레를 2로 나누면 가로와 세로의 합은 가 ${perimeters["가"] / 2}, 나 ${perimeters["나"] / 2}, 다 ${perimeters["다"] / 2}, 라 ${perimeters["라"] / 2}입니다. 위·아래 세로의 합이 ${totalHeight}이고 차가 ${bottomHeight - topHeight}이므로 아래 세로는 ${bottomHeight}cm입니다. 라의 가로는 ${perimeters["라"] / 2}-${bottomHeight}=${rightWidth}cm입니다.`);
     },
     advancedPolygonPerimeter({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {

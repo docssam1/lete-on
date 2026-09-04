@@ -229,8 +229,11 @@
     previewAnchor = anchor;
     previewAnchor.classList.add("is-previewing");
     previewAnchor.setAttribute("aria-expanded", "true");
+    const sourcePage = type.sourcePrintedPage !== undefined && type.sourcePrintedPage !== null && type.sourcePrintedPage !== ""
+      ? ` · 교재 ${escapeHtml(type.sourcePrintedPage)}쪽`
+      : "";
     const source = type.sourceItemLabel
-      ? `원문 ${escapeHtml(type.sourceItemLabel)} · 교재 ${type.sourcePrintedPage}쪽`
+      ? `원문 ${escapeHtml(type.sourceItemLabel)}${sourcePage}`
       : `${type.grade}학년 ${type.term}학기 분류`;
     const sourceLine = `<div class="type-preview-source"><b>대표 문제</b><small>${source}</small></div>`;
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
@@ -257,15 +260,40 @@
     document.body.classList.remove("is-type-preview-open");
   }
 
+  function plannedQuestionTypes(selected, requestedCount = state.count) {
+    const ready = selected.filter(type => type?.generator && !type.reviewLocked);
+    const remaining = new Map(ready.map(type => [
+      type.id,
+      type.generationMode === "fixed-verified-pool"
+        ? Math.max(0, Number(type.verifiedVariantCount) || 0)
+        : Infinity
+    ]));
+    const planned = [];
+    while (planned.length < requestedCount) {
+      let added = false;
+      for (const type of ready) {
+        if (planned.length >= requestedCount) break;
+        const count = remaining.get(type.id);
+        if (count <= 0) continue;
+        planned.push(type);
+        if (Number.isFinite(count)) remaining.set(type.id, count - 1);
+        added = true;
+      }
+      if (!added) break;
+    }
+    return planned;
+  }
+
   function renderSummary() {
     const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
+    const plannedCount = plannedQuestionTypes(selected).length;
     $("selectedTypeCount").textContent = selected.length;
-    $("selectedQuestionCount").textContent = selected.length ? state.count : 0;
+    $("selectedQuestionCount").textContent = plannedCount;
     $("selectedTypeSummary").textContent = `${selected.length}개`;
-    $("selectedQuestionSummary").textContent = `${selected.length ? state.count : 0}문항`;
-    $("generateButton").disabled = selected.length === 0;
+    $("selectedQuestionSummary").textContent = `${plannedCount}문항`;
+    $("generateButton").disabled = plannedCount === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
-      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + '</small></span>' +
+      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + (type.generationMode === "fixed-verified-pool" ? ' · 검증 문항 ' + type.verifiedVariantCount + '개' : '') + '</small></span>' +
       '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 선택 해제">×</button></div>'
     ).join("") : '<p>왼쪽 교육과정 트리에서 유형을 선택하세요.</p>';
   }
@@ -298,20 +326,24 @@
   function buildQuestions() {
     const selected = [...state.selected].map(id => typeById.get(id)).filter(type => type?.generator && !type.reviewLocked);
     if (!selected.length) return;
+    const plannedTypes = plannedQuestionTypes(selected);
+    if (!plannedTypes.length) return;
     state.generation += 1;
     const level = currentLevel();
     const baseSeed = (Date.now() + state.generation * 1000003) >>> 0;
     const seenPrompts = new Set();
     const seenAnswersByType = new Map();
-    state.questions = Array.from({ length: state.count }, (_, index) => {
-      const type = selected[index % selected.length];
+    const seenPoolIndicesByType = new Map();
+    state.questions = plannedTypes.map((type, index) => {
       const typeAnswers = seenAnswersByType.get(type.id) || new Set();
+      const typePoolIndices = seenPoolIndicesByType.get(type.id) || new Set();
       let generated;
       let uniquePromptFallback;
       for (let attempt = 0; attempt < 32; attempt += 1) {
         const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
         const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
         if (!candidate || seenPrompts.has(candidate.prompt)) continue;
+        if (candidate.generationMode === "fixed-verified-pool" && typePoolIndices.has(candidate.verifiedPoolIndex)) continue;
         uniquePromptFallback ||= candidate;
         if (!typeAnswers.has(String(candidate.answer))) {
           generated = candidate;
@@ -319,6 +351,16 @@
         }
       }
       generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
+      if (generated.generationMode === "fixed-verified-pool") {
+        if (!Number.isInteger(generated.verifiedPoolIndex) || typePoolIndices.has(generated.verifiedPoolIndex)) {
+          throw new Error(`${typeDisplayName(type)}의 검증 문항 묶음이 중복되었습니다.`);
+        }
+        if (generated.verifiedVariantCount !== type.verifiedVariantCount) {
+          throw new Error(`${typeDisplayName(type)}의 검증 문항 수가 분류표와 다릅니다.`);
+        }
+        typePoolIndices.add(generated.verifiedPoolIndex);
+        seenPoolIndicesByType.set(type.id, typePoolIndices);
+      }
       seenPrompts.add(generated.prompt);
       typeAnswers.add(String(generated.answer));
       seenAnswersByType.set(type.id, typeAnswers);
@@ -374,10 +416,26 @@
   }
 
   function renderSolutions() {
-    $("solutionView").innerHTML = chunk(state.questions, 8).map((page, pageIndex) => `<section class="print-page answer-page">
+    const solutionPages = [];
+    let solutionPage = [];
+    let solutionWeight = 0;
+    state.questions.forEach(question => {
+      const hasVisual = Boolean(question.answerVisual) || /<svg\b|class="(?:graph-figure|diagram-pair|source41-)/.test(question.solution || "");
+      const weight = hasVisual ? 3 : 1;
+      if (solutionPage.length && (solutionPage.length >= 8 || solutionWeight + weight > 8)) {
+        solutionPages.push(solutionPage);
+        solutionPage = [];
+        solutionWeight = 0;
+      }
+      solutionPage.push(question);
+      solutionWeight += weight;
+    });
+    if (solutionPage.length) solutionPages.push(solutionPage);
+    $("solutionView").innerHTML = solutionPages.map((page, pageIndex) => `<section class="print-page answer-page">
       <div class="page-label">정답·풀이 ${pageIndex + 1}</div>
       <div class="solution-list">${page.map(question => `<article class="solution-item">
         <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${renderMathNotation(escapeHtml(question.answer))}</strong></header>
+        ${question.answerVisual ? `<div class="solution-answer-visual" aria-label="정답 그림">${renderMathNotation(question.answerVisual)}</div>` : ""}
         <p>${renderMathNotation(question.solution)}</p>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");

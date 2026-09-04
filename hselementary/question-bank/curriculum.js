@@ -13,6 +13,21 @@
     })
   });
 
+  const fixedVerifiedPool = (name, generatorKey, labels, verifiedVariantCount = 3) => detailed(
+    name,
+    generatorKey,
+    labels.map(definition => {
+      const type = typeof definition === "string" ? { label: definition } : definition;
+      return {
+        ...type,
+        generationMode: "fixed-verified-pool",
+        verifiedVariantCount: type.reviewLocked ? 0 : verifiedVariantCount,
+        answerVisualRequired: true,
+        answerVisualStatus: type.reviewLocked ? "locked" : "verified"
+      };
+    })
+  );
+
   const sourced = (label, difficultyBand, sourceTier, sourceEvidence = "4-1 실력 p.4-15 · 심화 p.8-19 · 경시 p.1-12 문제 구조 대조") => ({
     label,
     difficultyBand,
@@ -523,7 +538,11 @@
               sourcePdfPage: Number.isInteger(type.sourcePdfPage) ? type.sourcePdfPage : undefined,
               sourcePrintedPage: Number.isInteger(type.sourcePrintedPage) ? type.sourcePrintedPage : undefined,
               reviewLocked: Boolean(type.reviewLocked),
-              reviewReason: type.reviewReason || type.reviewLockReason || ""
+              reviewReason: type.reviewReason || type.reviewLockReason || "",
+              generationMode: type.generationMode || "",
+              verifiedVariantCount: Number.isInteger(type.verifiedVariantCount) ? type.verifiedVariantCount : undefined,
+              answerVisualRequired: Boolean(type.answerVisualRequired),
+              answerVisualStatus: type.answerVisualStatus || ""
             }))
           };
         })
@@ -1087,7 +1106,21 @@
         ...fractionReductionGroups.map(([name, exploration, items]) => detailed(name, `equalFractionE${exploration}`, items.map(([suffix, label], variant) => ({ ...sourceItem54(label, `5-1-u4-e${exploration}-${suffix}`, exploration), variant })))),
       ],
       ["분수의 덧셈과 뺄셈", ...fractionAddSubGroups.map(([name, generatorKey, items]) => detailed(name, generatorKey, items.map(([sourceItemId, label, pdfPage, printedPage], variant) => ({ ...sourceItem55(label, sourceItemId, pdfPage, printedPage), variant }))))],
-      ["다각형의 둘레와 넓이", "다각형의 둘레", "직사각형과 직각삼각형의 넓이", "둘레와 넓이", "여러 가지 사각형의 넓이"]
+      ["다각형의 둘레와 넓이",
+        fixedVerifiedPool("다각형의 둘레", "polygonPerimeterE1", [
+          { ...sourceItem51("두 배치에서 색칠한 부분의 둘레 비교", 1, "5-1-u6-e1-exploration", 61, 62), reviewReason: "원문 두 배치와 둘레 차를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("꺾인 도형의 빠진 길이 찾아 둘레 구하기", 1, "5-1-u6-e1-example-1-1", 61, 62), reviewReason: "원문 길이와 m·cm 바꾸기를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("겹친 종이 두 곳의 둘레 더하기", 1, "5-1-u6-e1-example-1-2", 61, 62), reviewReason: "원문 겹침 두 곳의 둘레 합을 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("작은 직사각형 12개의 둘레 모두 더하기", 1, "5-1-u6-e1-example-1-3", 61, 62), reviewReason: "원문 3열 4행 나누기와 둘레 합을 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("잘라 낸 정삼각형에서 육각형 둘레 구하기", 1, "5-1-u6-e1-example-1-4", 61, 62), reviewReason: "원문 정삼각형을 자른 여섯 변의 길이를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("꺾인 도형에서 빈 길이 찾기", 1, "5-1-u6-e1-mission-1", 62, 63), reviewReason: "원문 홈의 깊이와 전체 둘레를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("정사각형과 직사각형의 길이로 둘레 구하기", 1, "5-1-u6-e1-mission-2", 62, 63), reviewReason: "원문 정사각형과 바깥 직사각형의 세로 길이를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("육각형의 숨은 두 변 길이 찾아 둘레 구하기", 1, "5-1-u6-e1-mission-3", 62, 63), reviewReason: "원문 120도 육각형의 닫힌 선분 조건을 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("작은 칸 둘레로 큰 정사각형 둘레 구하기", 1, "5-1-u6-e1-mission-4", 62, 63), reviewReason: "원문 3열 4행과 색칠한 두 칸의 둘레를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("네 직사각형의 둘레로 라의 가로와 세로 구하기", 1, "5-1-u6-e1-mission-5", 62, 63), reviewReason: "원문 2열×2행 배치와 네 직사각형의 둘레를 함께 풀어 라의 가로와 세로를 독립 확인했습니다." },
+          sourceItem51("다섯 직사각형의 둘레 관계 살펴보기", 1, "5-1-u6-e1-mission-6", 62, 63, true, "원문 조건을 만족하는 양의 길이 배치가 둘 이상이고 둘레도 서로 달라 답이 하나로 정해지지 않습니다.")
+        ]),
+        "직사각형과 직각삼각형의 넓이", "둘레와 넓이", "여러 가지 사각형의 넓이"]
     ]),
     semester("5-2", [
       ["수의 범위와 어림하기",
@@ -1240,10 +1273,81 @@
     ]));
   };
 
+  const buildSourceSemesterGrade6 = legacySemester => {
+    const inventory = window.HSE_SOURCE_INVENTORY_GRADE6;
+    const sourceItems = inventory?.items?.filter(item => item.semester === legacySemester.id) || [];
+    if (!sourceItems.length) return legacySemester;
+
+    return {
+      ...legacySemester,
+      units: legacySemester.units.map(unit => {
+        const unitItems = sourceItems.filter(item => item.unit === unit.number);
+        if (!unitItems.length) return unit;
+        const byExploration = new Map();
+        unitItems.forEach(item => {
+          const group = byExploration.get(item.exploration) || [];
+          group.push(item);
+          byExploration.set(item.exploration, group);
+        });
+
+        let typeNumber = 0;
+        const sourceGroups = [...byExploration.entries()].sort((left, right) => left[0] - right[0]).map(([exploration, items], groupIndex) => ({
+          id: `${unit.id}-source-e${exploration}`,
+          number: groupIndex + 1,
+          name: `개념탐구 ${exploration} 원문 유형`,
+          types: items.map((item, index) => ({
+            id: item.sourceItemId,
+            number: index + 1,
+            typeNumber: ++typeNumber,
+            name: item.typeLabel,
+            label: item.typeLabel,
+            generatorKey: "",
+            variant: undefined,
+            difficultyBand: item.difficultyBand,
+            sourceTier: item.sourceTier,
+            sourceVerified: item.sourceVerified,
+            sourceEvidence: `황소 초등 심화 원문 직접 확인 · ${item.sourceItemId}`,
+            sourceItemId: item.sourceItemId,
+            sourceItemLabel: item.sourceItemLabel,
+            sourceSection: item.sourceSection,
+            reviewLocked: true,
+            reviewReason: item.reviewReason,
+            commonTypeId: item.commonTypeId,
+            normalizedTypeId: item.normalizedTypeId,
+            problemVisualRequired: item.problemVisualRequired,
+            answerVisualRequired: item.answerVisualRequired,
+            answerVisualStatus: item.answerVisualStatus,
+            generationMode: item.generationMode,
+            verifiedVariantTarget: item.verifiedVariantTarget,
+            verifiedVariantCount: item.verifiedVariantCount
+          }))
+        }));
+
+        let legacyNumber = 0;
+        const legacyTypes = unit.subunits.flatMap(subunit => subunit.types.map(type => ({
+          ...type,
+          number: ++legacyNumber,
+          typeNumber: ++typeNumber
+        })));
+        const legacyGroup = {
+          id: `${unit.id}-legacy-generated`,
+          number: sourceGroups.length + 1,
+          name: "기존 생성 문제",
+          types: legacyTypes
+        };
+        return { ...unit, subunits: [...sourceGroups, legacyGroup] };
+      })
+    };
+  };
+
   semesters[0] = buildSourceSemester41(semesters[0]);
+  for (const semesterId of ["6-1", "6-2"]) {
+    const index = semesters.findIndex(item => item.id === semesterId);
+    if (index >= 0) semesters[index] = buildSourceSemesterGrade6(semesters[index]);
+  }
 
   window.HSE_CURRICULUM = {
-    version: "2026-08-29",
+    version: "2026-09-05",
     levels: [
       { id: "simwha", label: "심화 기준", rank: 1 }
     ],
