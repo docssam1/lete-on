@@ -816,8 +816,8 @@ const TOWN_SPOTS=[
   { tier:'beginner',     pos:'left:42%;top:37%;width:14%;height:21%',    tag:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
   { tier:'advanced',     pos:'left:29.5%;top:4%;width:7%;height:16%',    tag:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
   { tier:'intermediate', pos:'left:46%;top:60%;width:19%;height:16%',    tag:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
-  { tier:'_theater',     pos:'left:56.5%;top:31.5%;width:13.5%;height:19%', tag:'🎬 극장',    sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
-  { tier:'_closet',      pos:'left:5%;top:35%;width:21%;height:15%',     tag:'🪄 꾸미기',      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
+  { tier:'_theater',     pos:'left:56.5%;top:31.5%;width:13.5%;height:19%', tag:{ko:'🎬 극장',en:'🎬 Theater',zh:'🎬 剧场'},    sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
+  { tier:'_closet',      pos:'left:5%;top:35%;width:21%;height:15%',     tag:{ko:'🪄 꾸미기',en:'🪄 Dress Up',zh:'🪄 装扮'},      sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} }
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
@@ -921,7 +921,7 @@ function screenTown(){
     const open=sp.tier==='_theater'?false:TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
     zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
       ${open?'<div class="nm-halo"></div>':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
-      <span class="nm-zlabel">${sp.tag}<small>${L(sp.sub)}</small></span>
+      <span class="nm-zlabel">${typeof sp.tag==='string'?sp.tag:L(sp.tag)}<small>${L(sp.sub)}</small></span>
     </button>`;
   });
   let gates='';
@@ -945,11 +945,11 @@ function screenTown(){
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,44):''}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-elder" id="nbElder"><div class="speech"></div>
-          <div class="nb-name">할아버지</div>
+          <div class="nb-name">${S.lang==='ko'?'할아버지':S.lang==='en'?'Grandpa':'爷爷'}</div>
           <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar('elder',52):''}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-doc" id="nbDoc"><div class="speech"></div>
-          <div class="nb-name">독쌤</div>
+          <div class="nb-name">${S.lang==='ko'?'독쌤':S.lang==='en'?'Doc-ssaem':'独老师'}</div>
           <div class="nb-img nb-svg">${window.renderHumanChar?window.renderHumanChar('doc',52):''}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbPoco"><div class="speech"></div>
@@ -1098,7 +1098,7 @@ function screenRoadmap(){
   const nextId=findNextRoadUnit();
   let html=`<div class="nm-road-wrap">
     <div class="nm-road-header">
-      <button class="nm-back" id="roadBack">← ${t('back')}</button>
+      <button class="nm-back" id="roadBack">${t('back')}</button>
       <div class="nm-unit-title">🗺️ ${L(road.title)}</div>
       <div class="nm-road-sub">${L(road.subtitle)}</div>
     </div>
@@ -1353,7 +1353,7 @@ function _renderMiniGame(){
 
     scr.innerHTML=`<div class="nm-mg-wrap">
       <div class="nm-mg-header">
-        <button class="nm-back" id="mgBack">← ${t('back')}</button>
+        <button class="nm-back" id="mgBack">${t('back')}</button>
         <div class="nm-mg-title">🎮 Make 10 — ${lk('짝 찾기','Pair Up','配对游戏')}</div>
         <div class="nm-mg-meta">
           ${mg.done?'':`<span class="nm-mg-timer${remaining<=10?' warn':''}">⏱ ${remaining}s</span>`}
@@ -1440,7 +1440,7 @@ function _renderMiniGame(){
 
     scr.innerHTML=`<div class="nm-mg-wrap">
       <div class="nm-mg-header">
-        <button class="nm-back" id="mgBack">← ${t('back')}</button>
+        <button class="nm-back" id="mgBack">${t('back')}</button>
         <div class="nm-mg-title">🎯 3수 Make 10 — ${lk('세 수로 10 만들기','3 Numbers → 10','三数凑10')}</div>
         <div class="nm-mg-meta">
           ${mg.done?'':`<span class="nm-mg-timer${remaining<=10?' warn':''}">⏱ ${remaining}s</span>`}
@@ -1601,7 +1601,7 @@ function screenGradeCourse(){
 
     scr.innerHTML=`<div class="nm-gc-wrap">
       <div class="nm-gc-header">
-        <button class="nm-back" id="gcBack">← ${t('back')}</button>
+        <button class="nm-back" id="gcBack">${t('back')}</button>
         <div class="nm-gc-title">🏫 ${lk('학년별 교실','Grade Classroom','按年级学习')}</div>
       </div>
       <div class="nm-gc-tabs">${tabsHtml}</div>
@@ -3818,7 +3818,7 @@ function screenSymbolDex(){
   const collectedCount=Object.keys(S.symbolDex||{}).length;
   scr.innerHTML=`<div class="nm-gc-wrap nm-dex-wrap">
     <div class="nm-gc-header">
-      <button class="nm-back" id="dexBack">← ${t('back')}</button>
+      <button class="nm-back" id="dexBack">${t('back')}</button>
       <div class="nm-gc-title">📖 ${ko?'기호 도감':en?'Symbol Dex':'符号图鉴'} <small>${collectedCount}</small></div>
     </div>
     <div class="nm-gc-body">
@@ -4425,7 +4425,7 @@ function screenCloset(){
   const scr=$('#screen');
   const titleTxt=S.lang==='en'?'My Character':S.lang==='zh'?'我的角色':'내 캐릭터';
   scr.innerHTML=`<div class="nm-unit-bar">
-    <button class="nm-back" id="backCloset">← ${t('back')}</button>
+    <button class="nm-back" id="backCloset">${t('back')}</button>
     <div class="nm-unit-title">🪄 ${titleTxt}</div>
   </div>
   <div id="nm-idcard-slot"></div>
