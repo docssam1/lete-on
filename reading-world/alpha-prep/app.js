@@ -10,6 +10,7 @@
   const SESSION_KEY = 'leteon:alpha-prep:sessions:v1';
   const READ_SECONDS = 60;
   const MAX_FOLLOW_DEPTH = 2;
+  const COACH_TIMEOUT_MS = 28000;
 
   const peerAnswers = {
     'city-trees': 'I think cities should spend the extra money because healthy trees cool buildings and help with rainwater. The benefit is not only for the tree; it reaches the whole neighborhood.',
@@ -1077,7 +1078,7 @@
   async function callCoach(payload) {
     if (!window.fetch || location.protocol === 'file:') return null;
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 6500);
+    const timeout = window.setTimeout(() => controller.abort(), COACH_TIMEOUT_MS);
     try {
       state.apiCalls += 1;
       const response = await fetch(API_URL, {

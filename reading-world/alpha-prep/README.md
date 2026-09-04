@@ -22,6 +22,8 @@ The coaching profile is calibrated for verbally advanced seven-year-olds reading
 
 Economy mode makes at most one adaptive text request per passage and one final-report request. A two-passage mock therefore uses three text requests. The first answer receives an adaptive follow-up and the next answer receives a locally selected second follow-up, so the question ladder continues without another paid request. Answer-by-answer corrections are created during the interview, while the final request concentrates on the synthesis, three priorities, and seven-day route. The app does not request generated audio. Deep mode allows two adaptive requests per passage. Normalized turn feedback is cached locally, and deterministic coaching completes the session when the server is unavailable.
 
+The browser allows up to 28 seconds for a live coaching response, matching the server's 30-second boundary closely enough for normal mobile latency. The submit button stays disabled with a reviewing label during that wait, then falls back to deterministic local coaching if the request fails.
+
 The browser sends no learner name or audio file to the coach function. It sends the current original passage, question, short transcript, recent turns, and provisional scores. Full session transcripts remain in local storage on the current device.
 
 The browser sends the opaque Supabase publishable key in the `apikey` header only. Deploy `alpha-prep-coach` with platform JWT verification disabled; the function validates that header against `SUPABASE_PUBLISHABLE_KEYS` before processing a request. Do not send an `sb_publishable_` key as a bearer JWT.

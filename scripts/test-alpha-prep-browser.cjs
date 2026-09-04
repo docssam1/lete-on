@@ -44,7 +44,7 @@ function mockResponse(payload) {
     };
   }
   return {
-    followUp: 'Which exact detail from the passage makes that reason convincing?',
+    followUp: 'Which result in the passage best proves the reason you gave?',
     feedback: {
       strength: 'You gave a direct answer and a relevant reason.',
       focus: 'Name one exact passage detail before your conclusion.',
@@ -79,6 +79,7 @@ async function submit(page, answer) {
 async function runPassageInterview(page, passageIndex) {
   await submit(page, 'The passage is mainly about solving a problem carefully. It explains the problem and shows a useful solution with important details.');
   await assertVisibleText(page, 'FOLLOW-UP 1 OF 2');
+  if (passageIndex === 0) await assertVisibleText(page, 'Which result in the passage best proves the reason you gave?');
   await submit(page, 'The exact detail makes the idea convincing because it shows what changed and why the result mattered.');
   await assertVisibleText(page, 'FOLLOW-UP 2 OF 2');
   await submit(page, 'That detail matters most because it connects the problem to the solution.');
@@ -145,6 +146,7 @@ async function main() {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
     const consoleErrors = [];
+    let delayedTurn = false;
     page.on('console', (message) => { if (message.type() === 'error') consoleErrors.push(message.text()); });
     page.on('pageerror', (error) => consoleErrors.push(error.message));
     await page.route('**/functions/v1/alpha-prep-coach', async (route) => {
@@ -152,6 +154,10 @@ async function main() {
       assert.match(headers.apikey || '', /^sb_publishable_/);
       assert.equal(headers.authorization, undefined, 'opaque publishable key must not be sent as a bearer JWT');
       const payload = JSON.parse(route.request().postData() || '{}');
+      if (payload.mode === 'turn' && !delayedTurn) {
+        delayedTurn = true;
+        await new Promise((resolve) => setTimeout(resolve, 7000));
+      }
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockResponse(payload)) });
     });
 
