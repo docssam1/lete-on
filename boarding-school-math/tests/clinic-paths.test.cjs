@@ -40,6 +40,14 @@ test("reviewed clusters open workbooks with completion-gated rechecks", function
   assert.equal(variables.workbook.packId, "gfield-grade6-ee-c-clinic-v1");
   assert.equal(variables.animated.state, "review-pending");
   assert.equal(variables.recheck.state, "available");
+
+  const statistics = paths.routeFor("6.SP.A", { workbookCompleted: true });
+  assert.equal(statistics.workbook.packId, "gfield-grade6-sp-a-unit-workbook-v1");
+  assert.equal(statistics.workbook.delivery, "unit-workbook");
+  assert.equal(statistics.workbook.url, "./unit-workbook.html?cluster=6.SP.A&mode=workbook&audience=student&locale=ko");
+  assert.equal(statistics.workbook.teacherUrl, "./unit-workbook.html?cluster=6.SP.A&mode=workbook&audience=teacher&locale=ko");
+  assert.equal(statistics.recheck.url, "./unit-workbook.html?cluster=6.SP.A&mode=recheck&audience=student&locale=ko");
+  assert.equal(statistics.recheck.labelKo, "5영역 재확인");
 });
 
 test("only exact cluster matches open reviewed animated clinic lessons", function () {

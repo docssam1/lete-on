@@ -1,0 +1,112 @@
+:root { --ink:#17231f; --green:#1d604f; --green-soft:#e4eee9; --paper:#fffdf8; --ground:#e9e5db; --line:#cfc9bb; --muted:#666c67; --burgundy:#8a2635; --orange:#d77a31; }
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); background:var(--ground); font-family:Inter,"Noto Sans KR",system-ui,sans-serif; }
+button, select { font:inherit; }
+.site-header .brand { min-height:44px; display:inline-flex; align-items:center; }
+.workbook-toolbar { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--line); background:rgba(247,244,235,.97); backdrop-filter:blur(10px); }
+.toolbar-inner { width:min(1180px,calc(100% - 32px)); min-height:72px; margin:auto; display:flex; align-items:center; gap:10px; }
+.segmented { display:flex; border:1px solid var(--line); background:#fff; }
+.segmented button { min-height:44px; padding:9px 13px; border:0; color:var(--ink); background:transparent; font-size:.75rem; font-weight:850; cursor:pointer; }
+.segmented button[aria-pressed="true"] { color:#fff; background:var(--ink); }
+.toolbar-inner label { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:.66rem; font-weight:900; }
+.toolbar-inner select, .print-button { min-height:44px; padding:8px 11px; border:1px solid var(--line); color:var(--ink); background:#fff; }
+.progress-chip { min-width:68px; color:var(--green); font-size:.72rem; font-weight:900; text-align:center; }
+.print-button { margin-left:auto; color:#fff; border-color:var(--green); background:var(--green); font-weight:900; cursor:pointer; }
+.book-shell { width:min(216mm,calc(100% - 24px)); margin:28px auto 70px; outline:none; }
+.book-page { position:relative; width:100%; min-height:279mm; margin:0 auto 22px; padding:15mm 14mm 13mm; overflow:hidden; border:1px solid #d8d2c5; background:var(--paper); box-shadow:0 18px 45px rgba(33,41,37,.12); }
+.book-page::after { content:attr(data-page-number); position:absolute; right:14mm; bottom:8mm; color:var(--muted); font:700 9pt Georgia,serif; }
+.page-kicker { margin:0 0 4mm; color:var(--green); font-size:8pt; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
+.book-page h1 { max-width:150mm; margin:0; font:650 29pt/1.05 Georgia,"Noto Serif KR",serif; letter-spacing:-.035em; }
+.book-page h2 { margin:0; font:650 18pt/1.15 Georgia,"Noto Serif KR",serif; }
+.book-page h3 { margin:0; font-size:11pt; }
+.book-subtitle { max-width:145mm; margin:6mm 0 0; color:var(--muted); font-size:11pt; line-height:1.65; }
+.cover-rule { width:42mm; height:3px; margin:13mm 0 10mm; background:var(--burgundy); }
+.cover-grid { display:grid; grid-template-columns:repeat(3,1fr); margin-top:22mm; border:1px solid var(--ink); }
+.cover-grid div { min-width:0; min-height:31mm; padding:6mm; }
+.cover-grid div + div { border-left:1px solid var(--ink); }
+.cover-grid span, .student-fields span { display:block; color:var(--muted); font-size:7.5pt; font-weight:850; letter-spacing:.08em; text-transform:uppercase; }
+.cover-grid strong { display:block; height:9mm; margin-top:4mm; overflow:hidden; border-bottom:1px solid var(--ink); font:650 20pt Georgia,serif; }
+.scope-notice { position:absolute; left:14mm; right:14mm; bottom:20mm; padding:4mm 5mm; border-left:3px solid var(--green); background:var(--green-soft); font-size:8.4pt; line-height:1.5; }
+.concept-grid { display:grid; grid-template-columns:1fr 1fr; gap:6mm; margin-top:9mm; }
+.concept-card { min-height:104mm; padding:7mm; border:1px solid var(--line); background:#fff; }
+.concept-card .concept-number { display:grid; width:11mm; height:11mm; margin-bottom:7mm; place-items:center; color:#fff; background:var(--green); font:700 14pt Georgia,serif; }
+.concept-card p { margin:5mm 0 0; color:var(--muted); font:10pt/1.65 Georgia,"Noto Serif KR",serif; }
+.concept-example { margin-top:8mm !important; padding:5mm; border-left:3px solid var(--orange); color:var(--ink) !important; background:#f7f0e7; }
+.teacher-observation { margin-top:7mm; padding:5mm; border:1px dashed var(--burgundy); color:var(--burgundy); font-size:9pt; line-height:1.55; }
+.practice-heading { display:flex; align-items:end; justify-content:space-between; gap:8mm; padding-bottom:4mm; border-bottom:1px solid var(--ink); }
+.practice-heading span { color:var(--muted); font-size:8pt; }
+.problem-list { display:grid; grid-template-columns:1fr 1fr; gap:5mm; margin-top:5mm; }
+.book-problem { min-height:113mm; padding:5mm; display:flex; flex-direction:column; border:1px solid var(--line); background:#fff; break-inside:avoid; }
+.problem-meta { display:flex; justify-content:space-between; gap:4mm; color:var(--green); font-size:7pt; font-weight:900; letter-spacing:.07em; }
+.problem-prompt { margin:4mm 0 2mm; font:700 10.5pt/1.45 Georgia,"Noto Serif KR",serif; }
+.problem-question { margin:0 0 4mm; color:var(--ink); font:9.5pt/1.5 Georgia,"Noto Serif KR",serif; }
+.problem-visual { min-height:35mm; margin:0 0 4mm; display:grid; place-items:center; overflow:hidden; border:1px solid #e2ded4; background:#fbfaf5; }
+.problem-visual svg { display:block; width:100%; max-height:39mm; }
+.question-card { margin:0; padding:4mm; color:var(--ink); border:0; font:700 9.2pt/1.45 Georgia,"Noto Serif KR",serif; }
+.measure-card { display:grid; gap:2mm; text-align:center; }
+.measure-card strong { font:700 15pt Georgia,"Noto Serif KR",serif; }
+.measure-card span { color:var(--muted); font-size:8pt; }
+.plot-axis line { stroke:#89958f; stroke-width:1; }
+.plot-dots circle { fill:var(--burgundy); stroke:#fff; stroke-width:1.2; }
+.plot-label text { fill:var(--ink); font:700 8px system-ui,sans-serif; text-anchor:middle; }
+.choice-list { margin-top:auto; display:grid; gap:2mm; }
+.choice-button { width:100%; min-height:44px; padding:2.3mm 3mm; display:flex; align-items:center; gap:3mm; border:1px solid #a8aaa3; color:var(--ink); background:#fff; text-align:left; font-size:8.3pt; line-height:1.35; cursor:pointer; }
+.choice-button::before { content:attr(data-choice); display:grid; flex:0 0 7mm; height:7mm; place-items:center; border:1px solid var(--ink); border-radius:50%; font-size:7pt; font-weight:900; }
+.choice-button.is-selected { border-color:var(--green); box-shadow:inset 3px 0 var(--green); }
+.choice-button.is-correct { color:var(--green); border-color:var(--green); background:var(--green-soft); }
+.choice-feedback { min-height:5mm; margin:2mm 0 0; font-size:7.4pt; line-height:1.35; }
+.choice-feedback.wrong { color:var(--burgundy); }
+.choice-feedback.correct { color:var(--green); font-weight:850; }
+.teacher-key { margin-top:auto; padding:3mm; border-left:3px solid var(--green); background:var(--green-soft); font-size:7.6pt; line-height:1.4; }
+.teacher-key strong { display:block; margin-bottom:1mm; }
+.teacher-move { margin-top:2mm; padding:2.5mm 3mm; border-left:3px solid var(--orange); background:#f7f0e7; font-size:7.2pt; line-height:1.35; }
+.record-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; margin-top:8mm; }
+.record-column { border-top:2px solid var(--ink); }
+.record-row { min-height:9mm; padding:2mm; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); font-size:8pt; }
+.record-row span:last-child { letter-spacing:.25em; }
+.reflection-box { min-height:47mm; margin-top:8mm; padding:5mm; border:1px solid var(--ink); }
+.reflection-box p { color:var(--muted); font-size:9pt; line-height:1.5; }
+.reflection-lines { height:23mm; margin-top:3mm; background:repeating-linear-gradient(to bottom,transparent 0,transparent 7mm,#bbb 7.2mm,#bbb 7.4mm); }
+.paper-letter .book-page { min-height:267mm; }
+@media (max-width:800px) {
+  .site-header nav { display:none; }
+  .toolbar-inner { padding-block:10px; display:grid; grid-template-columns:1fr 1fr; }
+  .segmented { display:grid; grid-template-columns:1fr 1fr; }
+  .print-button { margin:0; }
+  .book-shell { width:min(100% - 16px,216mm); margin-top:12px; }
+  .book-page { min-height:auto; padding:22px 16px 40px; }
+  .page-kicker { font-size:.7rem; }
+  .book-page h2 { font-size:1.45rem; }
+  .book-subtitle { font-size:.9rem; }
+  .concept-grid, .problem-list { grid-template-columns:1fr; }
+  .book-problem { min-height:auto; }
+  .problem-meta { font-size:.7rem; }
+  .problem-prompt { font-size:1rem; }
+  .problem-question, .question-card { font-size:.92rem; }
+  .choice-button { font-size:.86rem; }
+  .choice-feedback, .teacher-key, .teacher-move { font-size:.78rem; }
+  .scope-notice { position:static; margin-top:28px; }
+  .cover-grid { margin-top:28px; grid-template-columns:1fr; }
+  .cover-grid div + div { border-left:0; border-top:1px solid var(--ink); }
+}
+@media (max-width:440px) {
+  .toolbar-inner { width:calc(100% - 20px); grid-template-columns:1fr; }
+  .toolbar-inner label { justify-content:space-between; }
+  .toolbar-inner select, .print-button { min-width:50%; }
+  .progress-chip { min-height:44px; display:grid; place-items:center; border:1px solid var(--line); background:#fff; }
+  .book-page h1 { font-size:24pt; }
+}
+@page { size:A4; margin:0; }
+@media print {
+  html, body { margin:0; background:#fff; }
+  .screen-only { display:none !important; }
+  .book-shell { width:auto; margin:0; }
+  .skip-link { display:none !important; }
+  .book-page { width:210mm; min-height:296mm; height:296mm; margin:0; padding:15mm 14mm 13mm; border:0; box-shadow:none; break-after:page; page-break-after:always; }
+  .paper-letter .book-page { width:216mm; min-height:278mm; height:278mm; }
+  .book-page:last-child { break-after:auto; page-break-after:auto; }
+  .choice-button { cursor:default; }
+  [data-audience="student"] .choice-button { min-height:9mm; }
+  [data-audience="student"] .choice-feedback { display:none; }
+  [data-audience="teacher"] .book-problem { min-height:113mm; }
+}
