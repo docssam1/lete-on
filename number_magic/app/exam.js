@@ -299,10 +299,80 @@
     padding:0 2mm; font-size:10px; font-weight:800; letter-spacing:1px; color:#0E2C57; }
   .nm-cv-footer b { color:var(--cv-accent); }
   .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9px; color:#93a0a8; }
+
+  /* ── 학습지 v2 · 유형별 회차 (학습지-v2-설계.md §2, 2026-09-04) ───────
+     A4 고정 높이 페이지(flex column). 머리띠·개념·예시·지시문은 flex:0 0 auto로
+     제 높이만 쓰고, 문항 그리드가 flex:1로 남는 높이를 전부 채운다 —
+     grid-auto-rows:1fr라 문항 수가 적어도 줄 간격이 균등하게 늘어나고,
+     문항 수가 표(§2-5)대로여도 페이지 밖으로 넘치지 않는다(칸이 줄어들 뿐). */
+  .nm-w2-page { display:flex; flex-direction:column; height:277mm; box-sizing:border-box;
+    page-break-before:always; break-before:page; overflow:hidden; }
+  .nm-w2-head { --w2-accent:#0E2C57; flex:0 0 auto; border-bottom:1px solid #1A2233;
+    padding-bottom:5px; margin-bottom:7px; }
+  .nm-w2-head-top { display:flex; gap:16px; font-size:9px; color:#555; margin-bottom:4px; }
+  .nm-w2-head-row { display:flex; align-items:center; gap:8px; }
+  .nm-w2-head-brand { font-size:10px; font-weight:800; letter-spacing:1px; color:#333;
+    border:1px solid #ccc; border-radius:3px; padding:3px 7px; white-space:nowrap; }
+  .nm-w2-head-mid { flex:1; min-width:0; background:var(--w2-accent); color:#fff; border-radius:4px;
+    padding:5px 10px; display:flex; align-items:baseline; gap:8px; overflow:hidden;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-w2-head-mid b { font-size:13px; white-space:nowrap; }
+  .nm-w2-head-mid span { font-size:10px; opacity:.85; }
+  .nm-w2-head-code { font-size:10px; font-family:monospace; color:#555; white-space:nowrap; }
+
+  .nm-w2-instr { flex:0 0 auto; font-weight:700; font-size:12px; margin-bottom:6px; }
+
+  .nm-w2-grid { flex:1; display:grid; gap:3px 16px; grid-auto-rows:1fr; align-content:stretch;
+    min-height:0; }
+  .nm-w2-item.nm-print-item { border:0; background:none; padding:2px 4px; min-height:0;
+    border-radius:0; display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
+  .nm-w2-item .nm-w2-num { font-size:10px; color:#666; font-weight:700; margin-right:4px; }
+  .nm-w2-item .nm-w2-tex { font-size:15px; }
+  .nm-w2-grid-medium .nm-w2-item .nm-w2-tex { font-size:16px; }
+  .nm-w2-grid-long .nm-w2-item .nm-w2-tex { font-size:13.5px; }
+  .nm-w2-grid-vertical .nm-print-vp { font-size:14px; margin:0 auto; }
+  .nm-w2-item-vis.nm-print-item { align-items:center; text-align:center; }
+  .nm-w2-item-word.nm-print-item { align-items:flex-start; }
+  .nm-w2-abox { display:inline-block; width:14mm; height:8mm; border:1px solid #000;
+    margin-left:8px; vertical-align:middle; }
+  .nm-w2-page .nm-print-ask { margin:1px 0 3px; }
+  .nm-w2-page .nm-print-steps { margin-top:3px; }
+  .nm-w2-foot { flex:0 0 auto; margin-top:4px; font-size:8px; color:#999; font-family:monospace;
+    text-align:right; }
+
+  .nm-ak-section { margin-bottom:14px; }
+  .nm-ak-subhead { margin:0 0 6px; font-size:13px; border-bottom:1px solid #ccc; padding-bottom:3px; }
+  .nm-ak-subcode { font-family:monospace; font-size:10px; color:#777; margin-left:8px; font-weight:400; }
 }
 @media screen {
   .nm-print-sheet { display: none; }
-}`;
+}
+/* ── 개념 패널·★예시(빨강) — 인쇄와 화면(온라인 회차 탭)이 같은 마크업을
+   공유한다(학습지-v2-설계.md §3 "탭마다 개념 패널 + ★예시"). 미디어 쿼리로
+   가두지 않고 항상 켜 둔다. */
+.nm-w2-concept { background:#F5F3EE; border:1px solid #ece7da; border-radius:8px;
+  padding:8px 12px; margin-bottom:8px; max-height:55mm; overflow:hidden; }
+.nm-w2-concept-badge { display:inline-block; font-size:11px; background:#fff; border:1px solid #e2ddcf;
+  border-radius:8px; padding:1px 9px; margin-bottom:4px; font-weight:700; color:#6b6250; }
+.nm-w2-concept-sentence { margin:0 0 4px; font-size:12.5px; line-height:1.6; color:#2a2a2a; }
+.nm-w2-concept-rule { margin:0; font-size:12px; line-height:1.55; color:#2a2a2a; }
+.nm-w2-example { border:1.4px dashed #c33; border-radius:8px; padding:7px 12px; margin-bottom:8px; }
+.nm-w2-ex-badge { display:inline-block; font-size:10.5px; color:#c33; font-weight:800; margin-bottom:4px; }
+.nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; gap:5px; color:#c33; font-size:14px; }
+.nm-w2-ex-arrow { color:#c33; }
+.nm-w2-ex-line { display:flex; align-items:center; gap:8px; font-size:14px; flex-wrap:wrap; }
+.nm-w2-ex-ans, .nm-w2-ex-ans-tex { color:#c33; font-weight:700; }
+.nm-w2-ex-note { color:#c33; font-size:11.5px; margin-top:3px; }
+.nm-w2-ex-vp { display:inline-flex; flex-direction:column; font-family:monospace; font-size:14px; color:#000; }
+.nm-w2-ex-vp-line { border-top:1.5px solid #000; margin:2px 0; }
+.nm-w2-ex-vp-ans { text-align:right; color:#c33; font-weight:700; }
+/* 온라인 세션 탭(runSessionTabs) — 기존 화면 클래스(.nm-ws-*, .nm-grid-*)를
+   대부분 재사용하고, 세션 전용 몇 개만 여기서 보탠다. */
+.nm-grid-meta-row { display:flex; align-items:center; gap:10px; margin:2px 0 10px; }
+.nm-grid-attempt { font-size:12px; font-weight:800; color:#5a5a5a; }
+.nm-grid-best { font-size:12px; font-weight:800; color:#1a7f4b; }
+.nm-grid-lownote { font-size:12.5px; color:#b5462f; font-weight:700; margin-top:4px; }
+`;
   document.head.appendChild(s);
 })();
 
@@ -316,6 +386,10 @@ const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
    그대로 남는다(예: "\\foo" → "foo") — 여전히 읽을 수는 있고, 옛 동작과 같다. */
 function texToPlain(tex){
   let s = String(tex==null?'':tex);
+  /* 학습지 v2 예시(w2ExampleHtml)가 붙이는 \displaystyle·\color{#d33}{…} —
+     KaTeX 미로딩 폴백에서도 안쪽 값만 남기고 명령은 지운다(2026-09-04). */
+  s = s.replace(/\\displaystyle\s*/g, '');
+  s = s.replace(/\\color\{[^{}]*\}\{([^{}]*)\}/g, '$1');
   /* 행렬(\begin{pmatrix}...\end{pmatrix}, MD30) — 다른 치환보다 먼저 처리해야
      내부의 \square 등이 아래 규칙들로 이어서 정상 변환된다(행 구분자 "&"를
      공백으로, 줄바꿈 "\\\\"를 " / "로 바꿔 괄호 안에 담는다). 2026-08-25
@@ -457,6 +531,195 @@ function matchesAnswer(raw, answer){
     return parts.length===answer.length && parts.every((v,i)=>v===answer[i]);
   }
   return parseFloat(raw)===answer;
+}
+
+/* 온라인 문제 셀(그리드 학습지 채점 화면) — runGridExam(단일 유형)과
+   runSessionTabs(세션 유형별 탭, 학습지-v2-설계.md §3)가 함께 쓴다. graded·
+   userAnswers를 인자로 받아 채점 상태를 표시하므로 두 호출부가 각자의
+   상태(탭마다 따로)를 그대로 넘기면 된다 — 채점 로직을 두 번 베끼지 않는다. */
+function gridCellHtml(p, i, mode, graded, userAnswers){
+  // mode: 'online' | 'blank' | 'answer'
+  const v = p.word ? null : parseVert(p.tex);
+  const num = circled(i+1);
+  let inner;
+  let wide = false;
+  if(p.word){
+    wide = true;
+    let ansRow;
+    if(mode==='online'){
+      ansRow = Array.isArray(p.answer)
+        ? `<input class="nm-vp-inp nm-vp-inp-sm" type="text" inputmode="decimal" data-idx="${i}" autocomplete="off" placeholder="예: 3, 5">`
+        : `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="답">`;
+    } else if(mode==='answer'){
+      ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
+    } else {
+      ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+    }
+    const wc = pickChoices(p), wAsk = pickL(p.wordAsk);
+    inner = `<div class="nm-vp-wordwrap">
+  <div class="nm-vp-word">${esc(pickL(p.word))}</div>
+  ${wAsk ? `<div class="nm-vp-wordask">${esc(wAsk)}</div>` : ''}
+  ${p.wordEqn ? `<div class="nm-vp-word-eq">${esc(pickL(p.wordEqn))}</div>` : ''}
+  ${wc ? `<ol class="nm-vp-choices">${wc.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
+  <div class="nm-vp-word-ans">${ansRow}</div>
+</div>`;
+  } else if(v){
+    let ansRow;
+    if(mode==='online'){
+      ansRow = `<input class="nm-vp-inp" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off">`;
+    } else if(mode==='answer'){
+      ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
+    } else {
+      ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+    }
+    inner = `<div class="nm-vp">
+  <div class="nm-vp-row nm-vp-top">${esc(v.a)}</div>
+  <div class="nm-vp-row nm-vp-mid"><span class="nm-vp-op">${esc(v.op)}</span><span class="nm-vp-b">${esc(v.b)}</span></div>
+  <div class="nm-vp-line"></div>
+  <div class="nm-vp-row nm-vp-bot">${ansRow}</div>
+</div>`;
+  } else {
+    /* 세로셈 불가 → 인라인 KaTeX */
+    let ansRow;
+    const isMulti=Array.isArray(p.answer);
+    if(mode==='online'){
+      ansRow = isMulti
+        ? `<input class="nm-vp-inp nm-vp-inp-sm" type="text" inputmode="decimal" data-idx="${i}" autocomplete="off" placeholder="예: 3, 5">`
+        : `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="?">`;
+    } else if(mode==='answer'){
+      ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
+    } else {
+      ansRow = '';
+    }
+    inner = `<div class="nm-vp-inline">
+  <div class="nm-vp-tex" data-tex="${esc(p.tex||'')}"></div>
+  ${ansRow}
+</div>`;
+  }
+  const stateClass = graded && mode==='online'
+    ? (matchesAnswer(userAnswers[i],p.answer) ? ' nm-ws-ok' : (userAnswers[i]!=='' ? ' nm-ws-err' : ''))
+    : '';
+  return `<div class="nm-ws-cell${wide?' nm-ws-wide':''}${stateClass}" data-ci="${i}">
+  <span class="nm-ws-cnum">${num}</span>
+  ${inner}
+</div>`;
+}
+
+/* ── 온라인 "문제 단계" — 세션의 드릴을 유형별 탭으로 (학습지-v2-설계.md §3) ──
+   탭마다 개념 패널 + ★예시(빨강, w2ConceptPanelHtml/w2ExampleHtml을 화면에도
+   그대로 재사용) + 문항 N개 + 채점. 문제 셀·채점 로직은 gridCellHtml/
+   matchesAnswer를 그대로 쓴다(두 번째 사본을 만들지 않는다). 최상위 함수로
+   두는 이유: 이 화면을 여는 NM_EXAM.renderExamSetup(showRoadPick 안의
+   doSolveOnline)과, 예전 그리드 학습지를 굴리는 window.examScreen이 서로
+   다른 클로저라 컨테이너를 인자로 받아야 둘 다에서 부를 수 있다.
+   items: [{thread,level,wordType?,seed}]. meta:{title, count, onBack}. */
+function runSessionTabs(container, items, meta){
+  const perType = meta.count || 20;
+  function sessionsOf(thread){ return window.NM_STATS ? NM_STATS.sessionsOf(thread) : []; }
+  /* 회차 카운터는 §3 "🔁 새 문제로 다시 (n회째)"의 n — 탭을 처음 열 때는
+     그동안 채점해 온 세션 수+1에서 시작하고(NM_STATS.sessionsOf), 이번에
+     앉은 자리에서 "새 문제로 다시"를 누를 때마다 1씩 올라간다(채점 여부와
+     무관하게 항상 보이는 버튼이라, 채점 전에 여러 번 눌러도 자연히 는다). */
+  function buildTab(it){
+    const cfg = { thread: it.thread, level: it.level, count: perType, seed: it.seed, wordType: it.wordType };
+    const numericSeed = NM_RNG.hashSeed(cfg.seed);
+    const problems = buildProblems(cfg.thread, cfg.level, cfg.count, numericSeed);
+    applyWordProblems(problems, cfg.wordType, numericSeed);
+    return {
+      cfg, problems, userAnswers: new Array(cfg.count).fill(''), graded: false, gradeScore: 0,
+      attemptNo: sessionsOf(cfg.thread).length + 1
+    };
+  }
+  const tabs = items.map(buildTab);
+  let activeTab = 0;
+
+  function bestRateFor(thread){
+    const list = sessionsOf(thread);
+    return list.length ? Math.max.apply(null, list.map(s => s.rate)) : null;
+  }
+
+  function render(){
+    const t = tabs[activeTab];
+    const mode = 'online';
+    const attemptNo = t.attemptNo;
+    const best = bestRateFor(t.cfg.thread);
+    const scoreHtml = t.graded
+      ? `<div class="nm-grid-score ${t.gradeScore/t.cfg.count>=0.8?'nm-grid-pass':'nm-grid-fail'}">${t.gradeScore}/${t.cfg.count} (${Math.round(t.gradeScore/t.cfg.count*100)}%)</div>`
+      : '';
+    const lowNote = (t.graded && t.gradeScore/t.cfg.count < 0.6)
+      ? `<div class="nm-grid-lownote">${esc(lk('한 번 더 연습해 볼까요?','Try one more round.','再练一次吧。'))}</div>`
+      : '';
+    const bestHtml = best!=null
+      ? `<span class="nm-grid-best">${esc(lk('최고','Best','最高'))} ${Math.round(best*100)}%</span>` : '';
+    const round0Code = NM_EXAM.worksheetCode({thread:t.cfg.thread, level:t.cfg.level, count:t.cfg.count, seed:t.cfg.seed});
+    const conceptHtml = w2ConceptPanelHtml(t.cfg.thread, t.cfg.level);
+    const exampleHtml = w2ExampleHtml(t.cfg.thread, t.cfg.level, round0Code);
+
+    container.innerHTML = `
+<div class="nm-ws-wrap nm-ws-session">
+  <div class="nm-ws-hd">
+    <div class="nm-ws-hd-left"><span class="nm-grid-badge">${esc(meta.title||'')}</span></div>
+  </div>
+  <div class="nm-ws-tabs nm-ws-session-tabs">
+    ${tabs.map((x,idx) => `<button class="nm-ws-tab${idx===activeTab?' active':''}" data-tabidx="${idx}">
+      ${x.graded && x.gradeScore/x.cfg.count>=0.8 ? '✅ ' : ''}${esc(pickL(((window.NM_THREADS||{})[x.cfg.thread]||{}).name) || x.cfg.thread)}
+    </button>`).join('')}
+  </div>
+  <div class="nm-grid-meta-row">
+    <span class="nm-grid-attempt">${esc(lk(`${attemptNo}회째`,`Attempt ${attemptNo}`,`第${attemptNo}次`))}</span>
+    ${bestHtml}
+  </div>
+  ${conceptHtml}
+  ${exampleHtml}
+  <div class="nm-ws-grid">
+    ${t.problems.map((p,i)=>gridCellHtml(p,i,mode,t.graded,t.userAnswers)).join('')}
+  </div>
+  <div class="nm-ws-foot">
+    ${scoreHtml}${lowNote}
+    <button id="nm-ws-grade" class="nm-ex-btn-primary">${esc(lk('채점하기 ✓','Grade ✓','批改 ✓'))}</button>
+    <button id="nm-ws-reroll" class="nm-ex-btn-secondary">🔁 ${esc(lk(`새 문제로 다시 (${attemptNo}회째)`,`New problems (attempt ${attemptNo})`,`换新题(第${attemptNo}次)`))}</button>
+    <button id="nm-ws-back" class="nm-ex-btn-ghost">← ${esc(lk('세션 목록으로','Back to sessions','返回课节列表'))}</button>
+  </div>
+</div>`;
+
+    container.querySelectorAll('.nm-vp-tex, .nm-w2-tex, .nm-cp-tex, .nm-ans-tex').forEach(el =>
+      renderKaTeX(el.dataset.tex||'', el));
+
+    const inps = [...container.querySelectorAll('.nm-vp-inp')];
+    inps.forEach(inp => {
+      const idx = parseInt(inp.dataset.idx);
+      if(t.userAnswers[idx]!=='') inp.value = t.userAnswers[idx];
+      inp.addEventListener('input', () => { t.userAnswers[idx]=inp.value; });
+      inp.addEventListener('keydown', e => {
+        if(e.key==='Enter'){ const nx = inps[inps.indexOf(inp)+1]; if(nx) nx.focus(); }
+      });
+    });
+
+    container.querySelectorAll('[data-tabidx]').forEach(btn => {
+      btn.addEventListener('click', () => { activeTab = parseInt(btn.dataset.tabidx,10); render(); });
+    });
+    container.querySelector('#nm-ws-grade').addEventListener('click', () => {
+      t.graded = true; t.gradeScore = 0;
+      t.problems.forEach((p,i) => { if(matchesAnswer(t.userAnswers[i],p.answer)) t.gradeScore++; });
+      if(window.NM_STATS) NM_STATS.record(t.cfg.thread, t.cfg.level, t.gradeScore, t.cfg.count, null);
+      render();
+    });
+    container.querySelector('#nm-ws-reroll').addEventListener('click', () => {
+      const ns = NM_RNG.newCode();
+      const numericSeed = NM_RNG.hashSeed(ns);
+      t.cfg = Object.assign({}, t.cfg, { seed: ns });
+      t.problems = buildProblems(t.cfg.thread, t.cfg.level, t.cfg.count, numericSeed);
+      applyWordProblems(t.problems, t.cfg.wordType, numericSeed);
+      t.userAnswers = new Array(t.cfg.count).fill('');
+      t.graded = false; t.gradeScore = 0;
+      t.attemptNo++;
+      render();
+    });
+    container.querySelector('#nm-ws-back').addEventListener('click', () => {
+      if(meta.onBack) meta.onBack();
+    });
+  }
+  render();
 }
 
 /* ── 학습지 ID QR + 개념 연동 (2026-08-25) ──────────────────
@@ -677,14 +940,15 @@ function conceptPageHtml(items, code){
 </div>`;
 }
 
-/* "첫 장에 개념 넣기" 토글 — localStorage에 기억, 기본값 끔(기존 인쇄 결과 무변경). */
+/* "개념 패널 넣기" 토글 — 학습지 v2(§2-1)부터는 별도 장이 아니라 회차 첫
+   장의 개념 패널을 켜고 끈다. 기본값 켬(원장 지시). localStorage에 기억. */
 const CONCEPT_TOGGLE_KEY = 'nm_ws_concept_page';
-function getConceptPageOn(){ try{ return localStorage.getItem(CONCEPT_TOGGLE_KEY)==='1'; }catch(e){ return false; } }
+function getConceptPageOn(){ try{ const v = localStorage.getItem(CONCEPT_TOGGLE_KEY); return v===null ? true : v==='1'; }catch(e){ return true; } }
 function setConceptPageOn(v){ try{ localStorage.setItem(CONCEPT_TOGGLE_KEY, v?'1':'0'); }catch(e){} }
 function conceptToggleRowHtml(){
   return `<label class="nm-ex-concept-toggle">
     <input type="checkbox" id="nm-ex-concept-chk" ${getConceptPageOn()?'checked':''}>
-    <span>📖 ${lk('첫 장에 개념 넣기','Concept page first','首页加概念')}</span>
+    <span>📖 ${lk('개념 패널 넣기','Concept panel','加概念栏')}</span>
   </label>`;
 }
 function bindConceptToggle(container){
@@ -693,13 +957,12 @@ function bindConceptToggle(container){
 }
 
 /* ── 표지(Cover) ─────────────────────────────────────────────
-   지오메트리 랩 학습지(geometry/worksheet)의 A4 표지와 같은 역할 — 문항
-   학습지는 아이가 받는 책 한 권이니 표지 없이 나가면 안 된다는 원장 판단
-   (2026-08-28, "쌓기나무 학습지처럼 당연히 표지도 있어야"). 기본값 켬
-   (지오메트리는 기본 꺼짐이지만, 넘버스는 마스터 로드맵에서부터 "개념+
-   제너레이터 학습지"를 표준으로 정했으므로 완전한 학습지 쪽을 기본으로). */
+   지오메트리 랩 학습지(geometry/worksheet)의 A4 표지와 같은 역할.
+   학습지 v2(§2-1, 2026-09-04 원장 지시 "종이가 빈다")부터 기본값을 다시
+   끔으로 되돌린다 — 회차 첫 장 자체가 이제 머리띠+개념+예시로 이미 꽉 차
+   있어 별도 표지가 없어도 허전하지 않다. 켜면 기존 표지 그대로 나간다. */
 const COVER_TOGGLE_KEY = 'nm_ws_cover';
-function getCoverOn(){ try{ const v = localStorage.getItem(COVER_TOGGLE_KEY); return v===null ? true : v==='1'; }catch(e){ return true; } }
+function getCoverOn(){ try{ const v = localStorage.getItem(COVER_TOGGLE_KEY); return v===null ? false : v==='1'; }catch(e){ return false; } }
 function setCoverOn(v){ try{ localStorage.setItem(COVER_TOGGLE_KEY, v?'1':'0'); }catch(e){} }
 function coverToggleRowHtml(){
   return `<label class="nm-ex-concept-toggle">
@@ -1385,6 +1648,360 @@ function applyWordProblems(problems, wordType, numericSeed){
   return problems;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   ── 학습지 v2 · 유형별 회차 ──  (2026-09-04, 원장 지시)
+   학습지-v2-설계.md §2 구현. 세션(과정 N · S k)의 드릴 하나 = 회차 하나.
+   [첫 장] 머리띠 | 개념 패널 | ★예시(빨강, 과정) | ■ 지시문 | 문항 (1)~
+   [둘째 장~] 머리띠 | 문항 이어서(연속 번호)
+   박스 없음, A4 고정 높이 페이지(flex column) + grid-auto-rows:1fr로
+   문항이 적어도 줄 간격이 균등하게 늘어난다 — 페이지 넘침이 나지 않는다.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 회차 안 문항 전체를 보고 레이아웃을 한 번만 정한다(문항마다 바뀌지 않음).
+   §2-5 표 그대로: 세로셈→4×5(가로) · 짧은식→2×10(세로, column-major) ·
+   중간식→2×8(세로) · 긴식→1×8 · 문장제→1×6 · 그림형→2×4(가로).
+   flow:'col'은 CSS grid-auto-flow:column으로 열 우선 번호(1~10 왼쪽·11~20
+   오른쪽)를 만든다 — DOM 순서를 바꿀 필요가 없다(브라우저가 배치한다). */
+/* tex의 "눈에 보이는" 길이 — LaTeX 명령을 실제로 찍히는 기호로 바꿔서 잰다.
+   \frac{a}{b}처럼 명령 자체는 4글자가 아니라 "a/b" 3글자로 읽힌다. 이걸
+   문자 그대로(raw tex.length)로 재면 분수·거듭제곱 문항이 실제보다 훨씬
+   길어 보여 다 "긴 식"으로 밀려나 버린다(2026-09-04 재작업 지시). */
+function texVisibleLength(tex){
+  let s = String(tex||'');
+  for(let i=0;i<3;i++){
+    s = s.replace(/\\d?frac\{([^{}]*)\}\{([^{}]*)\}/g, '$1/$2');
+  }
+  s = s.replace(/\\sqrt\{([^{}]*)\}/g, '√$1');
+  s = s.replace(/\\times|\\div|\\cdot|\\pm/g, '×');
+  s = s.replace(/\\square/g, '□');
+  s = s.replace(/\\left|\\right/g, '');
+  s = s.replace(/\\[,;]/g, '');
+  s = s.replace(/\\text\{([^{}]*)\}/g, '$1');
+  s = s.replace(/[{}]/g, '');
+  return s.length;
+}
+
+/* 수식 안 한글은 KaTeX 수식 모드에서 낱글자로 흩어져 사이 공백이 사라진다
+   ("105에서 십의 자리"가 "105에서십의자리"로 붙어 버림, 2026-09-04 발견).
+   이미 \text{}로 감싼 부분은 건드리지 않고, 감싸지 않은 한글 덩어리(중간
+   공백 포함)만 \text{}로 새로 감싼다. */
+function wrapHangul(tex){
+  const t = String(tex||'');
+  return t.replace(/\\text\{[^}]*\}|([가-힣][가-힣\s]*[가-힣]|[가-힣])/g,
+    (m, g) => g ? '\\text{' + g + '}' : m);
+}
+
+/* 분수·근호·거듭제곱은 인라인이면 콩알만 해진다 — KaTeX \displaystyle로
+   키운다(2026-09-04 재작업 지시). 한글 보정도 여기서 항상 같이 한다(호출부
+   전부—문항 tex·단계·예시—가 이 함수 하나만 거치면 되게). */
+function texDisplay(tex){
+  const t = wrapHangul(tex);
+  return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
+}
+
+function classifyRoundLayout(problems, threadId){
+  if(!problems || !problems.length) return {type:'short', cols:2, rows:10, perPage:20, flow:'col'};
+  const nonWord = problems.filter(p => !p.word);
+  if(!nonWord.length) return {type:'word', cols:1, rows:6, perPage:6, flow:'row'};
+  const withTex = nonWord.filter(p => p.tex);
+  if(nonWord.length === problems.length && !withTex.length){
+    return {type:'visual', cols:2, rows:4, perPage:8, flow:'row'};
+  }
+  /* 세로셈 판정은 회차 전체를 보고 "한 번만" — 칸마다 다시 parseVert를 걸면
+     우연히 둘 다 양수인 문항(예: MD4가 부호 없는 5×2를 낼 때)만 세로 박스로
+     튀어 다른 칸과 형식이 갈린다(2026-09-04 버그). 조건: 전부 세로셈
+     가능 + 피연산자에 음수가 하나도 없음(부호/혼합/검산 계열 스레드는
+     음수·괄호가 그림 자체라 세로 박스가 안 맞는다) + 스레드가
+     MD/CH/EL/MX(부호·경시·검산·혼합)로 시작하지 않음. */
+  const hasNegativeOperand = p => /-\s*[\d(]/.test(String(p.tex||''));
+  const excludedPrefix = /^(MD|CH|EL|MX)/.test(threadId||'');
+  if(withTex.length && !excludedPrefix
+     && withTex.every(p => parseVert(p.tex) && !hasNegativeOperand(p))){
+    return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row'};
+  }
+  if(nonWord.length < problems.length){
+    /* 섞인 경우(문장제 일부 + 숫자식 일부, wordType='mix') — 문장제가 있으면
+       칸을 넓게 줘야 하므로 "긴 식"과 같은 1열로 간다. */
+    return {type:'long', cols:1, rows:8, perPage:8, flow:'row'};
+  }
+  /* §2-5 판정은 "보이는" 길이로만 한다 — steps 단계 수로 강제로 "긴 식"으로
+     미는 규칙은 폐기(2026-09-04, MD4·MD21·FR1이 전부 잘못 판정되던 원인). */
+  let maxLen = 0;
+  withTex.forEach(p => { maxLen = Math.max(maxLen, texVisibleLength(p.tex)); });
+  if(maxLen <= 16) return {type:'short', cols:2, rows:10, perPage:20, flow:'col'};
+  if(maxLen <= 44) return {type:'medium', cols:2, rows:8, perPage:16, flow:'col'};
+  return {type:'long', cols:1, rows:8, perPage:8, flow:'row'};
+}
+
+/* 난이도 정렬 §2-6: 피연산자 자릿수 합 → |answer| → tex 길이. 문장제·그림형은
+   원래 순서 그대로(정렬하지 않는다). */
+function sortRoundProblems(problems, type){
+  if(type === 'word' || type === 'visual') return problems;
+  function score(p){
+    const nums = String(p.tex||'').match(/\d+(\.\d+)?/g) || [];
+    const digitSum = nums.reduce((s,n) => s + n.replace('.','').length, 0);
+    const absAns = Array.isArray(p.answer)
+      ? p.answer.reduce((s,v) => s + Math.abs(+v||0), 0)
+      : Math.abs(+p.answer || 0);
+    return [digitSum, absAns, String(p.tex||'').length];
+  }
+  return problems
+    .map((p,i) => ({p, i, s: score(p)}))
+    .sort((a,b) => a.s[0]-b.s[0] || a.s[1]-b.s[1] || a.s[2]-b.s[2] || a.i-b.i)
+    .map(x => x.p);
+}
+
+/* 문항 한 칸 — 박스 없음. 기존 렌더러(bondSvg·base10Html·numlineSvg·
+   nlVisualHtml·wordChoices·printAskText·printSteps)를 그대로 재사용한다.
+   check-print.js가 찾는 클래스(.nm-print-item·.nm-print-ask·.nm-print-steps·
+   .nm-bond·.nm-b10·.nm-nl·.nm-print-word-blank·.nm-print-word-eq·.nm-print-vp)를
+   그대로 달아 두고, 박스 자체는 CSS에서 `.nm-w2-item.nm-print-item`으로
+   덮어써 없앤다(선택자 검사기를 새로 손대지 않기 위함). */
+function w2CellHtml(p, num, threadId, isVerticalRound){
+  let cls = 'nm-w2-item nm-print-item';
+  let inner;
+  const ask = printAskText(p);
+  const askHtml = ask ? `<div class="nm-print-ask">${esc(ask)}</div>` : '';
+  if(p.__bond && p.cubes && typeof p.cubes.moveTo === 'number' && typeof p.answer === 'number'){
+    cls += ' nm-w2-item-vis';
+    inner = bondSvg(p.cubes.moveTo, p.cubes.moveTo - p.answer);
+  } else if(p.base10 || p.numline){
+    cls += ' nm-w2-item-vis';
+    inner = p.base10 ? base10Html(p.base10) : numlineSvg(p.numline);
+  } else if(!p.tex && !p.word){
+    cls += ' nm-w2-item-vis';
+    inner = nlVisualHtml(p) || '';
+  } else if(p.word){
+    cls += ' nm-w2-item-word';
+    const wc = wordChoices(p);
+    inner = `<div class="nm-print-word">${esc(pickL(p.word))}</div>`
+      + (p.wordAsk ? `<div class="nm-print-wordask">${esc(pickL(p.wordAsk))}</div>` : '')
+      + (wc ? wc.outerHTML : '')
+      + (p.wordEqn
+          ? `<div class="nm-print-word-eq">${esc(pickL(p.wordEqn))}</div>`
+          : `<div class="nm-print-word-blank">${esc(lk('답','Answer','答'))}: __________</div>`);
+  } else {
+    /* 세로셈 마크업은 회차 전체가 vertical로 판정됐을 때만 — 칸마다
+       parseVert를 다시 걸면 우연히 부호 없는 문항 하나만 다른 칸과 형식이
+       갈린다(2026-09-04 버그, classifyRoundLayout 주석 참조). 그 외
+       레이아웃에서는 tex를 있는 그대로 인라인으로 찍는다. */
+    const v = isVerticalRound ? parseVert(p.tex) : null;
+    if(v){
+      cls += ' nm-w2-item-vp';
+      inner = `<div class="nm-print-vp">
+  <div class="nm-print-vp-top">${esc(v.a)}</div>
+  <div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span><span>${esc(v.b)}</span></div>
+  <div class="nm-print-vp-line"></div>
+  <div class="nm-print-vp-bot">&nbsp;</div>
+</div>`;
+    } else {
+      const raw = String(p.tex||'');
+      /* 끝이 "= \square"면 \square만 지우고 "=" 뒤 여백으로 둔다. \square가
+         식 안(계수 빈칸·분자 빈칸)에 있으면 그게 곧 채울 자리라 그대로 둔다
+         (2026-09-04 재작업 지시 §2). */
+      const texStr = raw.replace(/=\s*\\square\s*$/,'=');
+      /* 답 쓰는 작은 네모 칸은 NL(수의 나라, 유아) 스레드에만 — 나이 추정
+         (printAgeBand)으로 켜면 MD 같은 중고등 스레드도 숫자가 작다는 이유로
+         "young"으로 잘못 판정돼 박스가 붙는다(2026-09-04 버그, MD4/C30). */
+      const abox = /^NL/i.test(threadId||'') ? '<span class="nm-w2-abox"></span>' : '';
+      inner = `<span class="nm-w2-tex" data-tex="${esc(texDisplay(texStr))}"></span>${abox}`;
+    }
+  }
+  const steps = printSteps(p);
+  const stepsHtml = steps
+    ? `<div class="nm-print-steps">${steps.map(s =>
+        `<div class="nm-print-step"><span class="nm-w2-tex" data-tex="${esc(texDisplay(s.tex||''))}"></span></div>`).join('')}</div>`
+    : '';
+  return `<div class="${cls}"><span class="nm-w2-num">(${num})</span>${askHtml}${inner}${stepsHtml}</div>`;
+}
+
+/* 정답지 항목 — 문항 번호와 같은 "(n)" 표기(§6 "정답지 번호가 문항 번호와 일치"). */
+function w2AnswerKeyItemsHtml(problems){
+  return problems.map((p,i) => {
+    const steps = printSteps(p);
+    if(steps){
+      return `<div class="nm-ak-item">(${i+1}) ${esc(steps.map(s => fmtAns(s.blank)).join(' , '))}</div>`;
+    }
+    const akTex = ansTex(p);
+    if(akTex){
+      return `<div class="nm-ak-item">(${i+1}) <span class="nm-w2-tex" data-tex="${esc(akTex)}"></span></div>`;
+    }
+    const note = pickL(p.answerNote);
+    return `<div class="nm-ak-item">(${i+1}) ${esc(String(fmtAns(p.answer)) + (note ? ` (${note})` : ''))}</div>`;
+  }).join('');
+}
+
+/* 개념 패널(§2-3) — 첫 장에만. 별도 장(conceptPageHtml)을 대신한다. 관련
+   유닛의 stages 전체를 붓지 않고 concept 문장 + "마법의 규칙" 한 줄만. */
+function w2ConceptPanelHtml(threadId, level){
+  const info = resolveConceptUnit(threadId, level);
+  if(!info) return '';
+  const nm = pickL(info.thread.name) || threadId;
+  const sentence = info.thread.concept ? pickL(info.thread.concept) : '';
+  const rule = (info.unit && info.unit.discover && info.unit.discover.rule)
+    ? pickL(info.unit.discover.rule) : '';
+  if(!sentence && !rule) return '';
+  return `<div class="nm-w2-concept">
+  <div class="nm-w2-concept-badge">${esc(lk('개념','Concept','概念'))} · ${esc(nm)}</div>
+  ${sentence ? `<p class="nm-w2-concept-sentence">${esc(sentence)}</p>` : ''}
+  ${rule ? `<p class="nm-w2-concept-rule"><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}:</b> ${esc(rule)}</p>` : ''}
+</div>`;
+}
+
+/* 문항 tex의 \square를 답으로 채워 넣어 "완성된 식"을 만든다 — 채운 자리만
+   \color{#d33}{…}로 빨갛게 감싼다(2026-09-04 재작업 지시 §3).
+     · \square가 없으면 " = 색값"을 그대로 덧붙인다(예: 세로셈 아닌 맨 답 문항).
+     · 배열 답이고 \square 개수가 답 개수와 같으면(계수 빈칸 등) 순서대로 대입.
+     · 단일 답이고 \square가 하나면 그 자리에 대입.
+     · 그 외(개수가 안 맞는 예외)엔 마지막 \square만 채우고 나머지는 그대로 둔다
+       — 깨진 표시보다는 절반만 맞는 표시가 낫다. */
+function texSubstituteAnswer(tex, answer){
+  /* 반환값은 아직 "tex 문자열"이다 — HTML 이스케이프는 호출부가 data-tex
+     속성에 넣을 때 한 번만 한다(여기서 하면 이중 이스케이프가 된다). */
+  const raw = String(tex||'');
+  const squareCount = (raw.match(/\\square/g) || []).length;
+  if(!squareCount) return raw + ' = \\color{#d33}{' + String(fmtAns(answer)) + '}';
+  if(Array.isArray(answer) && answer.length === squareCount){
+    let i = 0;
+    return raw.replace(/\\square/g, () => '\\color{#d33}{' + String(answer[i++]) + '}');
+  }
+  if(!Array.isArray(answer) && squareCount === 1){
+    return raw.replace(/\\square/g, '\\color{#d33}{' + String(answer) + '}');
+  }
+  let seen = 0;
+  return raw.replace(/\\square/g, () =>
+    (++seen === squareCount) ? ('\\color{#d33}{' + String(fmtAns(answer)) + '}') : '\\square');
+}
+
+/* "+ \color{#d33}{-11}" 같은 이중 부호 정리 — 대입한 값이 음수면 앞의 +/-를
+   뒤집어 "− \color{#d33}{11}"로 만든다(2026-09-04, C36 "+ −63" 버그).
+   \color{}{} 안쪽 값만 보고 부호를 판정하므로 다른 곳의 +/-는 안 건드린다. */
+function fixNegSigns(tex){
+  let s = String(tex||'');
+  s = s.replace(/\+\s*\\color\{#d33\}\{(-\d+(?:\.\d+)?)\}/g,
+    (_, n) => '-\\color{#d33}{' + n.slice(1) + '}');
+  s = s.replace(/-\s*\\color\{#d33\}\{(-\d+(?:\.\d+)?)\}/g,
+    (_, n) => '+\\color{#d33}{' + n.slice(1) + '}');
+  return s;
+}
+
+/* ★예시 문항(§2-4) — 시드 고정(hashSeed('ex'+code))으로 생성기를 한 번 돌려
+   검은 식 + 빨간 풀이를 보여준다. 우선순위: ①모으기·가르기(BOND_THREADS)는
+   격자 칸과 같은 그림 ②steps 있으면 "완성된 식"(전체 대입, 빨강) 아래에
+   단계별 대입을 이어서 ③세로셈이면 세로 배치+빨간 답 ④그 외엔 "완성된 식"
+   한 줄 — steps가 없을 때만 개념 문장 중 숫자가 든 첫 문장을 덧붙인다. */
+function w2ExampleHtml(threadId, level, code){
+  const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
+  const p = generateProblem(threadId, level, rng);
+  const hasSteps = Array.isArray(p.steps) && p.steps.length;
+  let bodyHtml;
+  /* 그림 문항(모으기·가르기 등 BOND_THREADS)은 격자 칸과 같은 그림으로 보여준다 —
+     여기서 parseVert로 먼저 걸러지면 격자와 다른(세로셈) 모양이 나가 버린다. */
+  if(BOND_THREADS[threadId] && p.cubes && typeof p.cubes.moveTo === 'number' && typeof p.answer === 'number'){
+    bodyHtml = bondSvg(p.cubes.moveTo, p.cubes.moveTo - p.answer)
+      + `<div class="nm-w2-ex-ans">= ${esc(String(p.answer))}</div>`;
+  } else if(hasSteps){
+    const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer));
+    const completedHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
+    const stepParts = p.steps.map(s => {
+      const t = fixNegSigns(String(s.tex||'').replace(/\\square/g, '\\color{#d33}{' + String(fmtAns(s.blank)) + '}'));
+      return `<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span>`;
+    });
+    bodyHtml = completedHtml
+      + `<div class="nm-w2-ex-steps">${stepParts.join('<span class="nm-w2-ex-arrow">→</span>')}</div>`;
+  } else {
+    const v = !p.word && parseVert(p.tex);
+    if(v){
+      bodyHtml = `<div class="nm-w2-ex-vp">
+  <div>${esc(v.a)}</div>
+  <div><span>${esc(v.op)}</span><span>${esc(v.b)}</span></div>
+  <div class="nm-w2-ex-vp-line"></div>
+  <div class="nm-w2-ex-vp-ans">${esc(String(fmtAns(p.answer)))}</div>
+</div>`;
+    } else {
+      const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer));
+      bodyHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
+    }
+    /* steps가 없을 때만 — concept "예)" 문장은 이미 있는 단계별 대입을
+       대신할 필요가 없으니 그때만 덧붙인다(2026-09-04 재작업 지시). */
+    const th = (window.NM_THREADS||{})[threadId] || {};
+    const sentence = th.concept ? pickL(th.concept) : '';
+    const digitSentence = sentence.split(/(?:[.!?](?=\s|$))|\n/).map(s=>s.trim()).find(s => /\d/.test(s));
+    if(digitSentence) bodyHtml += `<div class="nm-w2-ex-note">${esc(digitSentence)}</div>`;
+  }
+  return `<div class="nm-w2-example">
+  <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
+  ${bodyHtml}
+</div>`;
+}
+
+/* 머리띠(§2-2) — 좌:학원명 · 중:색띠(유형 이름+부제) · 우:코드+페이지 번호.
+   맨 위 작은 줄에 이름/날짜/점수. */
+function w2HeadHtml(item, code, pageLabel, count){
+  const th = (window.NM_THREADS||{})[item.thread] || {};
+  const thName = pickL(item.topicName) || pickL(th.name) || item.thread;
+  let brand = 'GFIELD';
+  try{ brand = localStorage.getItem('nm_brand_name') || 'GFIELD'; }catch(e){}
+  const theme = coverTheme(item);
+  return `<div class="nm-w2-head" style="--w2-accent:${esc(theme.color)}">
+  <div class="nm-w2-head-top">${printMetaFieldsHtml(count)}</div>
+  <div class="nm-w2-head-row">
+    <span class="nm-w2-head-brand">${esc(brand)}</span>
+    <span class="nm-w2-head-mid"><b>${esc(theme.icon)} ${esc(thName)}</b>${item.subLabel ? `<span>${esc(item.subLabel)}</span>` : ''}</span>
+    <span class="nm-w2-head-code">${esc(code)} · ${esc(pageLabel)}</span>
+  </div>
+</div>`;
+}
+
+/* 회차 한 벌(§2-1) — item:{thread,level,wordType?,seed,topicName?}, opts:{count,conceptOn}.
+   반환: {html(페이지들 이어붙인 문자열), problems(정렬된 순서, 정답지가 이 순서를
+   그대로 쓴다), code, thName}. */
+function renderRoundPages(item, opts){
+  opts = opts || {};
+  const count = opts.count || 20;
+  const conceptOn = opts.conceptOn !== false;
+  const numericSeed = NM_RNG.hashSeed(item.seed);
+  let problems = buildProblems(item.thread, item.level, count, numericSeed);
+  applyWordProblems(problems, item.wordType, numericSeed);
+  if(BOND_THREADS[item.thread]) problems.forEach(p => { p.__bond = true; });
+  const code = NM_EXAM.worksheetCode({thread:item.thread, level:item.level, count, seed:item.seed});
+  const layout = classifyRoundLayout(problems, item.thread);
+  problems = sortRoundProblems(problems, layout.type);
+
+  const pages = [];
+  for(let i=0;i<problems.length;i+=layout.perPage) pages.push(problems.slice(i, i+layout.perPage));
+  if(!pages.length) pages.push([]);
+  const totalPages = pages.length;
+
+  const gridStyle = layout.flow === 'col'
+    ? `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:repeat(${layout.rows},1fr);grid-auto-flow:column;`
+    : `grid-template-columns:repeat(${layout.cols},1fr);`;
+
+  let num = 1;
+  const html = pages.map((pageItems, pi) => {
+    const first = pi === 0;
+    const conceptHtml = (first && conceptOn) ? w2ConceptPanelHtml(item.thread, item.level) : '';
+    const exampleHtml = (first && conceptOn) ? w2ExampleHtml(item.thread, item.level, code) : '';
+    const instrHtml = first
+      ? `<div class="nm-w2-instr">■ ${esc(layout.type === 'word'
+          ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
+          : lk('계산을 하시오.','Solve each problem.','请计算下列各题。'))}</div>`
+      : '';
+    const cellsHtml = pageItems.map(p => {
+      const h = w2CellHtml(p, num, item.thread, layout.type === 'vertical'); num++; return h;
+    }).join('');
+    return `<div class="nm-w2-page">
+  ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count)}
+  ${conceptHtml}${exampleHtml}${instrHtml}
+  <div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyle}">${cellsHtml}</div>
+  <div class="nm-w2-foot">${esc(code)}</div>
+</div>`;
+  }).join('');
+
+  const thName = pickL(item.topicName) || pickL(((window.NM_THREADS||{})[item.thread]||{}).name) || item.thread;
+  return { html, problems, code, thName };
+}
+
 /* ── 로드맵 세션 학습지: 20문항/페이지 혼합 인쇄 (원장 지시 2026-09-04) ──
    세션의 드릴(예: n:6/n:4)을 한 장짜리 학습지로 합친다. 각 드릴의 문항 수는
    원래 n(가중치)에 비례해 목표 총량(roadCountMode: 10/20/40)에 맞춰 다시
@@ -1462,63 +2079,49 @@ function pageCapacityFor(items){
   return allWords ? 10 : 20;
 }
 
-/* 혼합 학습지(로드맵 세션 20문항/페이지, 편지함 봉투 동일 경로) 렌더러.
-   items: buildMixedProblemSet과 같은 계약. envelopeCode: 표지·헤더 라벨.
-   opts.mixed: 목표 총 문항 수(10/20/40 — 40은 20문항짜리 두 장으로 나뉜다). */
+/* 혼합 학습지(로드맵 세션 · 편지함 봉투 동일 경로) 렌더러 — 학습지 v2.
+   items: [{thread,level,wordType?,seed,topicName?}, ...] 드릴 목록, 순서 그대로
+   드릴별 회차를 이어 붙인다(§2 "세션 인쇄 = 드릴 순서대로 회차를 이어 붙인 것").
+   opts.mixed: 유형당 문항 수(10/20/40 — 이제 세션 총량이 아니라 드릴 하나하나의
+   문항 수다, §2-1). 예전의 최대잉여법 비례 배분(proportionalSplit/
+   buildMixedProblemSet)은 이 경로에서 더는 쓰지 않는다 — 함수 자체는 다른
+   호출부(있다면)를 위해 그대로 둔다. */
 function renderMixedSheet(items, envelopeCode, opts){
-  const total = opts.mixed;
-  const capacity = pageCapacityFor(items);
-  const gridClass = capacity === 10 ? 'nm-print-grid-10' : 'nm-print-grid-20';
-  const { built, flat } = buildMixedProblemSet(items, total);
+  const perTypeCount = opts.mixed || 20;
+  const conceptOn = getConceptPageOn();
+
+  const rounds = items.map(it => renderRoundPages(it, { count: perTypeCount, conceptOn }));
+  const allProblems = [];
+  rounds.forEach(r => allProblems.push.apply(allProblems, r.problems));
 
   const sheet = document.createElement('div');
-  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], flat);
+  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems);
   sheet.setAttribute('aria-hidden', 'true');
   sheet.setAttribute('lang', examLang());
 
-  const coverHtml = getCoverOn() ? coverPageHtml(items, envelopeCode, flat.length) : '';
-  const conceptHtml = getConceptPageOn()
-    ? conceptPageHtml(items.map(it => ({ thread: it.thread, level: it.level })), envelopeCode)
-    : '';
-  /* 드릴별 학습지 코드 — ?ws= 도우미가 그대로 이해하는 형식 그대로 헤더에 나열한다
-     (작업 지시 "#C5-S1 · AD1-L1x8-…, ML2-L1x7-…"). */
-  const codesLine = built.filter(b => b.code).map(b => b.code).join(', ');
+  const coverHtml = getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '';
+  /* 드릴별 학습지 코드 — ?ws= 도우미가 그대로 이해하는 형식 그대로 나열한다. */
+  const codesLine = rounds.map(r => r.code).join(', ');
+  const roundsHtml = rounds.map(r => r.html).join('');
 
-  const pages = [];
-  for(let i = 0; i < flat.length; i += capacity) pages.push(flat.slice(i, i + capacity));
-  if(!pages.length) pages.push([]);
-
-  const pagesHtml = pages.map((pageItems, pi) => `
-<div class="nm-print-header"${pi > 0 ? ' style="page-break-before:always"' : ''}>
-  <h2 style="margin:0">Numbers of Magic — 📬 ${esc(envelopeCode || '')}${pages.length > 1 ? ` (${pi+1}/${pages.length})` : ''}</h2>
-  <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
-    ${printMetaFieldsHtml(pageItems.length)}
-  </div>
-  <div class="nm-print-mix-note">${esc(codesLine)}</div>
-</div>
-<div class="nm-print-grid ${gridClass}" id="nm-print-problems-${pi}"></div>`).join('');
+  const akSections = rounds.map(r => `
+<div class="nm-ak-section">
+  <h4 class="nm-ak-subhead">${esc(r.thName)} <span class="nm-ak-subcode">${esc(r.code)}</span></h4>
+  <div class="nm-ak-grid">${w2AnswerKeyItemsHtml(r.problems)}</div>
+</div>`).join('');
 
   sheet.innerHTML = `
 ${printWatermarkHtml()}
 ${coverHtml}
-${conceptHtml}
-${pagesHtml}
+${roundsHtml}
 <div class="nm-print-answer-key">
   <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(envelopeCode || '')}</span></h3>
   <div class="nm-print-mix-note">${esc(codesLine)}</div>
-  <div class="nm-ak-grid" id="nm-print-answers-mixed"></div>
+  ${akSections}
 </div>`;
 
   document.body.appendChild(sheet);
-  sheet.querySelectorAll('.nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex || '', el));
-
-  const answerGrid = sheet.querySelector('#nm-print-answers-mixed');
-  let numStart = 0;
-  pages.forEach((pageItems, pi) => {
-    const problemGrid = sheet.querySelector(`#nm-print-problems-${pi}`);
-    fillPrintGrid(pageItems, problemGrid, answerGrid, { numStart, skipGridClass: true });
-    numStart += pageItems.length;
-  });
+  sheet.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex || '', el));
 
   setTimeout(() => { window.print(); }, 350);
 }
@@ -2027,9 +2630,14 @@ ${printWatermarkHtml()}
           </div>
           ${magicHtml}
           <div class="nm-ex-road-chips">${sessionChipsHtml(s)}</div>
-          <button class="nm-ex-road-print-btn" data-course="${esc(courseKey)}" data-session="${i}">
-            🖨 ${esc(lk('학습지','Worksheet','学习单'))}
-          </button>
+          <div class="nm-ex-road-btn-row">
+            <button class="nm-ex-road-print-btn" data-course="${esc(courseKey)}" data-session="${i}">
+              🖨 ${esc(lk('학습지','Worksheet','学习单'))}
+            </button>
+            <button class="nm-ex-road-online-btn" data-course="${esc(courseKey)}" data-session="${i}">
+              💻 ${esc(lk('화면으로 풀기','Solve on screen','在线做题'))}
+            </button>
+          </div>
           ${reprintHtml}
         </div>`;
       }
@@ -2106,9 +2714,9 @@ ${printWatermarkHtml()}
     <div class="nm-ex-road-opt-row">
       <span class="nm-ex-road-opt-label">${esc(lk('문항 수','Count','题量'))}</span>
       <div class="nm-ex-road-seg" id="nm-road-count">
-        <button data-c="10" class="${roadCountMode===10?'sel':''}">${esc(lk('10문항 · 1장','10 · 1 page','10题·1页'))}</button>
-        <button data-c="20" class="${roadCountMode===20?'sel':''}">${esc(lk('20문항 · 1장(기본)','20 · 1 page (default)','20题·1页(默认)'))}</button>
-        <button data-c="40" class="${roadCountMode===40?'sel':''}">${esc(lk('40문항 · 2장','40 · 2 pages','40题·2页'))}</button>
+        <button data-c="10" class="${roadCountMode===10?'sel':''}">${esc(lk('유형당 10문항','10 per type','每类10题'))}</button>
+        <button data-c="20" class="${roadCountMode===20?'sel':''}">${esc(lk('유형당 20문항(기본)','20 per type (default)','每类20题(默认)'))}</button>
+        <button data-c="40" class="${roadCountMode===40?'sel':''}">${esc(lk('유형당 40문항','40 per type','每类40题'))}</button>
       </div>
     </div>
     <div class="nm-ex-road-opt-row">
@@ -2193,6 +2801,33 @@ ${printWatermarkHtml()}
           btn.addEventListener('click', (e) => {
             e.stopPropagation();
             doPrintSession(btn.dataset.course, parseInt(btn.dataset.session, 10));
+          });
+        });
+
+        /* 화면으로 풀기(학습지-v2-설계.md §3) — 세션의 드릴을 유형별 탭으로 열고,
+           탭마다 채점 뒤에도 "새 문제로 다시"가 항상 보인다. 뒤로 가면 이 화면
+           (세션 목록)으로 돌아온다. */
+        function doSolveOnline(courseKey, sessionIdx){
+          const course = NM_COURSES[courseKey];
+          const session = course && course.sessions && course.sessions[sessionIdx];
+          if(!session) return;
+          const raw = session.test ? (session.pool||[]) : (session.drills||[]);
+          const items = raw.map(d => ({
+            thread: d.t, level: d.lv,
+            wordType: roadWordType,
+            seed: NM_RNG.newCode(),
+          }));
+          if(!items.length) return;
+          runSessionTabs(container, items, {
+            title: `${courseKey} · S${sessionIdx+1}`,
+            count: roadCountMode,
+            onBack: () => { render(); }
+          });
+        }
+        container.querySelectorAll('.nm-ex-road-online-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            doSolveOnline(btn.dataset.course, parseInt(btn.dataset.session, 10));
           });
         });
 
@@ -2716,52 +3351,37 @@ ${printWatermarkHtml()}
   },
 
   /* ── 4. 인쇄 학습지 ── */
+  /* 학습지 v2 — 단일 유형(교과/마법 흐름)도 회차 렌더러 하나로 나간다(§5
+     "renderPrint는 같은 회차 렌더러를 쓰되 옵션이 바뀌지 않는다"). */
   renderPrint(config){
     const { thread, level, count, seed, wordType } = config;
-    const numericSeed = NM_RNG.hashSeed(seed);
-    const problems = buildProblems(thread, level, count, numericSeed);
-    applyWordProblems(problems, wordType, numericSeed);
-    const code = NM_EXAM.worksheetCode(config);
+    const item = { thread, level, wordType, seed, topicName: config.topicName, grade: config.grade };
+    const conceptOn = getConceptPageOn();
+    const round = renderRoundPages(item, { count, conceptOn });
 
     const old = document.querySelector('.nm-print-sheet');
     if(old) old.remove();
 
     const sheet = document.createElement('div');
-    sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(config, problems);
+    sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(config, round.problems);
     sheet.setAttribute('aria-hidden', 'true');
     /* 줄바꿈 규칙이 언어마다 다르다(인쇄 CSS의 [lang=] 절 참조) — 시트에 박아 둔다 */
     sheet.setAttribute('lang', examLang());
 
-    const th = (window.NM_THREADS || {})[thread] || {};
-    const thName = pickL(config.topicName) || pickL(th.name) || thread;
-
-    const coverHtml = getCoverOn() ? coverPageHtml([config], code, count) : '';
-    const conceptHtml = getConceptPageOn() ? conceptPageHtml([{thread, level}], code) : '';
+    const coverHtml = getCoverOn() ? coverPageHtml([config], round.code, count) : '';
 
     sheet.innerHTML = `
 ${printWatermarkHtml()}
 ${coverHtml}
-${conceptHtml}
-<div class="nm-print-header">
-  <h2 style="margin:0">Numbers of Magic — ${esc(worksheetTitle(thName))}</h2>
-  <div style="display:flex;gap:24px;margin-top:8px;font-size:0.9em">
-    ${printMetaFieldsHtml(count)}
-    ${qrHeaderBlockHtml(code, hasConceptFor(thread, level))}
-  </div>
-</div>
-<div class="nm-print-grid" id="nm-print-problems"></div>
+${round.html}
 <div class="nm-print-answer-key">
-  <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(code)}</span></h3>
-  <div class="nm-ak-grid" id="nm-print-answers"></div>
+  <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(round.code)}</span></h3>
+  <div class="nm-ak-grid">${w2AnswerKeyItemsHtml(round.problems)}</div>
 </div>`;
 
     document.body.appendChild(sheet);
 
-    sheet.querySelectorAll('.nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
-
-    const problemGrid  = sheet.querySelector('#nm-print-problems');
-    const answerGrid   = sheet.querySelector('#nm-print-answers');
-    fillPrintGrid(problems, problemGrid, answerGrid, { bond: !!BOND_THREADS[thread] });
+    sheet.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
 
     setTimeout(() => { window.print(); }, 350);
   },
@@ -2878,78 +3498,6 @@ window.examScreen = function(container, opts){
     let graded = false;
     let gradeScore = 0;
 
-    /* 문제 셀 HTML 생성 */
-    function cellHtml(p, i, mode){
-      // mode: 'online' | 'blank' | 'answer'
-      const v = p.word ? null : parseVert(p.tex);
-      const num = circled(i+1);
-      let inner;
-      let wide = false;
-      if(p.word){
-        wide = true;
-        let ansRow;
-        if(mode==='online'){
-          /* 여러 칸 답(WP4 식 완성 등)은 "20, 8, 12"처럼 쉼표로 받는다 — type=number
-             칸은 쉼표를 아예 담지 못해 화면으로는 영영 못 맞힌다(2026-08-28에 다른
-             99개 레벨에서 겪은 것과 같은 자리다. 문장제 칸만 그때 빠져 있었다). */
-          ansRow = Array.isArray(p.answer)
-            ? `<input class="nm-vp-inp nm-vp-inp-sm" type="text" inputmode="decimal" data-idx="${i}" autocomplete="off" placeholder="예: 3, 5">`
-            : `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="답">`;
-        } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
-        } else {
-          ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
-        }
-        const wc = pickChoices(p), wAsk = pickL(p.wordAsk);
-        inner = `<div class="nm-vp-wordwrap">
-  <div class="nm-vp-word">${esc(pickL(p.word))}</div>
-  ${wAsk ? `<div class="nm-vp-wordask">${esc(wAsk)}</div>` : ''}
-  ${p.wordEqn ? `<div class="nm-vp-word-eq">${esc(pickL(p.wordEqn))}</div>` : ''}
-  ${wc ? `<ol class="nm-vp-choices">${wc.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
-  <div class="nm-vp-word-ans">${ansRow}</div>
-</div>`;
-      } else if(v){
-        let ansRow;
-        if(mode==='online'){
-          ansRow = `<input class="nm-vp-inp" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off">`;
-        } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
-        } else {
-          ansRow = `<span class="nm-vp-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
-        }
-        inner = `<div class="nm-vp">
-  <div class="nm-vp-row nm-vp-top">${esc(v.a)}</div>
-  <div class="nm-vp-row nm-vp-mid"><span class="nm-vp-op">${esc(v.op)}</span><span class="nm-vp-b">${esc(v.b)}</span></div>
-  <div class="nm-vp-line"></div>
-  <div class="nm-vp-row nm-vp-bot">${ansRow}</div>
-</div>`;
-      } else {
-        /* 세로셈 불가 → 인라인 KaTeX */
-        let ansRow;
-        const isMulti=Array.isArray(p.answer);
-        if(mode==='online'){
-          ansRow = isMulti
-            ? `<input class="nm-vp-inp nm-vp-inp-sm" type="text" inputmode="decimal" data-idx="${i}" autocomplete="off" placeholder="예: 3, 5">`
-            : `<input class="nm-vp-inp nm-vp-inp-sm" type="number" inputmode="numeric" data-idx="${i}" autocomplete="off" placeholder="?">`;
-        } else if(mode==='answer'){
-          ansRow = `<span class="nm-vp-ans-val">${ansHtml(p)}</span>`;
-        } else {
-          ansRow = '';
-        }
-        inner = `<div class="nm-vp-inline">
-  <div class="nm-vp-tex" data-tex="${esc(p.tex||'')}"></div>
-  ${ansRow}
-</div>`;
-      }
-      const stateClass = graded && mode==='online'
-        ? (matchesAnswer(userAnswers[i],p.answer) ? ' nm-ws-ok' : (userAnswers[i]!=='' ? ' nm-ws-err' : ''))
-        : '';
-      return `<div class="nm-ws-cell${wide?' nm-ws-wide':''}${stateClass}" data-ci="${i}">
-  <span class="nm-ws-cnum">${num}</span>
-  ${inner}
-</div>`;
-    }
-
     function render(){
       const mode = activeTab==='answers' ? 'answer' : 'online';
       const conceptHtml = (concept && activeTab==='problems')
@@ -2976,7 +3524,7 @@ window.examScreen = function(container, opts){
   </div>
   ${conceptHtml}
   <div class="nm-ws-grid">
-    ${problems.map((p,i)=>cellHtml(p,i,mode)).join('')}
+    ${problems.map((p,i)=>gridCellHtml(p,i,mode,graded,userAnswers)).join('')}
   </div>
   <div class="nm-ws-foot">
     ${scoreHtml}

@@ -1147,11 +1147,18 @@ html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
 .nm-ex-road-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .nm-ex-road-chip{font-size:10.5px;font-weight:700;color:var(--sub);
   background:#eef2fa;border-radius:8px;padding:3px 8px;white-space:nowrap}
-.nm-ex-road-print-btn{margin-top:10px;width:100%;border:none;border-radius:10px;
+.nm-ex-road-btn-row{display:flex;gap:8px;margin-top:10px}
+.nm-ex-road-print-btn{flex:1;width:100%;border:none;border-radius:10px;
   background:var(--blue-deep);color:#fff;font-size:12.5px;font-weight:800;
   padding:9px 10px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
 .nm-ex-road-print-btn:hover{background:#1a4d93}
 .nm-ex-road-print-btn:active{transform:scale(.97)}
+/* 화면으로 풀기(학습지-v2-설계.md §3) — 인쇄 버튼과 짝, 보조 색으로 구분 */
+.nm-ex-road-online-btn{flex:1;width:100%;border:1px solid var(--blue-deep);border-radius:10px;
+  background:#fff;color:var(--blue-deep);font-size:12.5px;font-weight:800;
+  padding:9px 10px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-road-online-btn:hover{background:rgba(28,77,147,.08)}
+.nm-ex-road-online-btn:active{transform:scale(.97)}
 /* ── 인쇄 회수 표시 + 재인쇄(2026-09-04, "웹페이지 들어가면 추가로 계속 인쇄") ── */
 .nm-ex-road-printed{display:flex;align-items:center;justify-content:space-between;
   gap:8px;margin-top:8px;flex-wrap:wrap}
