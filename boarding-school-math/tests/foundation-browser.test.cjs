@@ -149,7 +149,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /학교 핵심[\s\S]*사고력 클리닉[\s\S]*경시 가교[\s\S]*AMC 8 → AMC 10 가교/);
   assert.equal(await page.locator("#skill-rows .unit-reasoning").count(), 10);
   await page.locator('[data-grade-tab="6"]').click();
-  assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /8개 클리닉 공개/);
+  assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /9개 클리닉 공개/);
   await page.locator('[data-grade-tab="4"]').click();
   assert.equal(await page.locator("#grade-reasoning-lanes").isHidden(), true);
   assert.equal(await page.locator("#skill-rows .unit-reasoning").count(), 0);

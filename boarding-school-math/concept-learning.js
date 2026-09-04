@@ -227,7 +227,7 @@
       animation.append(element("small", "", "이 영역은 정확한 대응 강의 검수 대기"));
     }
     const workbook = element("li", "clinic-route-step " + (route.workbook.state === "available" ? "is-ready" : "is-locked"));
-    workbook.append(element("span", "clinic-step-number", "04"), element("strong", "", "맞춤 워크북"));
+    workbook.append(element("span", "clinic-step-number", "04"), element("strong", "", route.workbook.delivery === "unit-workbook" ? "단원 워크북" : "클리닉 연습"));
     if (route.workbook.state === "available") {
       const workbookLink = element("a", "clinic-action-link", route.workbook.labelKo + " 시작 →");
       workbookLink.href = route.workbook.url;
