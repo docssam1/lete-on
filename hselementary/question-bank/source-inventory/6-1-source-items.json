@@ -6,7 +6,7 @@
     "publicPageUse": "prohibited",
     "sourcePolicy": "원문 문구, 공식 정답, 원본 이미지, 로컬 원본 경로는 이 장부와 공개 페이지에 기록하지 않습니다.",
     "sourceReference": "생각하는 황소 초등 6-1 심화 원본",
-    "sourceEvidenceState": "탐구 단위 쪽수와 개수는 렌더 확인 기록을 바탕으로 색인했으나, 각 개별 문항의 조건·정답·그림은 아직 직접 대조하지 않았습니다.",
+    "sourceEvidenceState": "탐구 단위 쪽수와 개수는 렌더 확인 기록을 바탕으로 색인했습니다. 개별 문항은 sourceVerified가 true인 항목만 조건·정답·그림을 직접 대조했으며, 나머지는 검수 대기입니다.",
     "countingRule": {
       "oneExplorationBodyIsOneSourceItem": true,
       "oneNumberedExampleIsOneSourceItem": true,
@@ -654,11 +654,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 2,
-      "sourceShape": "각기둥의 전개도, 자르기, 펼치기 또는 겉면 경로에서 필요한 길이·면·구성 요소를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 9쪽 예제 2-2. 직육면체의 모든 꼭짓점에서 세 모서리를 따라 같은 거리의 점을 잡아 꼭짓점을 모두 잘라 낸 뒤 면·꼭짓점·모서리 수의 합을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 구조와 공식 값 74를 대조하고, 문제와 답 그림을 같은 절단 자료에서 만드는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e2-example-3",
@@ -718,11 +718,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 2,
-      "sourceShape": "각기둥의 전개도, 자르기, 펼치기 또는 겉면 경로에서 필요한 길이·면·구성 요소를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 10쪽 Mission 2. 정칠각기둥을 밑면의 중심과 각 꼭짓점을 잇는 선을 따라 수직으로 잘라 같은 삼각기둥 7개를 만들고, 각 조각의 모서리 수의 합을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 구조와 공식 값 63을 대조하고, 수직 절단이 보이는 입체 그림과 답 그림을 포함한 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e2-mission-3",
@@ -766,11 +766,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 5,
-      "sourceShape": "각기둥의 전개도, 자르기, 펼치기 또는 겉면 경로에서 필요한 길이·면·구성 요소를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 10쪽 Mission 5. 오각기둥의 모든 모서리를 삼등분하고 각 꼭짓점에서 만나는 세 삼등분점을 지나는 평면으로 모든 꼭짓점을 잘라 낸 뒤 면·모서리·꼭짓점 수의 합을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 구조와 공식 값 92를 대조하고, 보이는 절단면과 숨은 절단면을 구분한 문제·답 그림을 포함한 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e2-mission-6",

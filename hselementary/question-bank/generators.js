@@ -21157,6 +21157,147 @@
       const answerVisual = `${triangleNetSvg({ ...data, na, areaGa: data.areaGa, areaNa, H, solved: true })}${mathBoard("ㄴㅊ와 나의 넓이", row("공통 높이 H", `${fractionText(H)}cm`) + row("다의 넓이", `${data.da}×${fractionText(H)}=${fractionText(daArea)}cm²`) + row("나", `${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×${fractionText(daArea)}=${fractionText(areaNa)}cm²`) + row("ㄴㅊ", `${fractionText(areaNa)}÷${fractionText(H)}=${fractionText(na)}cm`))}`;
       return fixedResult(`삼각기둥 전개도에서 세 직사각형 가, 나, 다가 연결되어 있습니다. 가의 가로는 삼각형의 변 ㄱㄴ과 같고 ${data.ga}cm, 다의 가로는 변 ㄱㅊ과 같고 ${data.da}cm입니다. 가의 넓이는 ${data.areaGa}cm²이고, 나의 넓이는 다의 넓이의 ${mixedFractionMarkup(data.ratio[0], data.ratio[1])}배입니다. ㄴㅊ의 길이와 나의 넓이를 각각 구하세요.${promptVisual}${support("가의 넓이를 가의 가로로 나누어 같은 직사각형 높이를 구한 뒤, 나의 넓이와 ㄴㅊ의 길이를 찾아 보세요.")}${challenge}${evidence("triangular-prism-net-ratio-area", [data.ga, data.da, data.ratio[0], data.ratio[1], data.areaGa, H.numerator, H.denominator, na.numerator, na.denominator, areaNa.numerator, areaNa.denominator], "two-values")}`, `ㄴㅊ=${plainFractionText(na)}cm, 나=${plainFractionText(areaNa)}cm²`, `가의 넓이 ${data.areaGa}cm²를 가의 가로 ${data.ga}cm로 나누면 같은 직사각형의 높이 H=${fractionText(H)}cm입니다. 다의 넓이는 ${data.da}×${fractionText(H)}=${fractionText(daArea)}cm²이고, 나의 넓이는 ${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×${fractionText(daArea)}=${fractionText(areaNa)}cm²입니다. 따라서 ㄴㅊ=${fractionText(areaNa)}÷${fractionText(H)}=${fractionText(na)}cm입니다.`, answerVisual);
     },
+    sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 2까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림에 적힌 수를 바로 계산하지 말고, 잘라 낸 뒤 생기는 면·모서리·꼭짓점의 관계를 스스로 설명해 보세요.</p>` : "";
+      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated"];
+      const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e2-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body) => `<div class="source61-math-board"><strong>${title}</strong>${body}</div>`;
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-e2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><span hidden data-source61-prism-e2-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}" data-difficulty-design="${difficultyDesign}"></span>${answerBody}<div class="solution-answer-caption">문제의 도형을 다시 그려 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+      const pointText = ([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`;
+      const lineMarkup = (a, b, className, extra = "") => `<line class="${className}" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" ${extra}/>`;
+      const interpolate = (a, b, ratio) => [a[0] + (b[0] - a[0]) * ratio, a[1] + (b[1] - a[1]) * ratio];
+
+      const cornerCutCuboidSvg = ({ distance, solved = false }) => {
+        const front = [[64, 74], [244, 74], [244, 188], [64, 188]];
+        const back = front.map(([x, y]) => [x + 48, y - 38]);
+        const trimRatio = 0.13;
+        const edges = [
+          ...front.map((point, index) => [point, front[(index + 1) % 4], "front"]),
+          ...back.map((point, index) => [point, back[(index + 1) % 4], "back"]),
+          ...front.map((point, index) => [point, back[index], "depth"])
+        ];
+        const hidden = new Set(["back-0", "back-3", "depth-0"]);
+        const edgeLines = edges.map(([a, b, group], index) => lineMarkup(
+          interpolate(a, b, trimRatio),
+          interpolate(a, b, 1 - trimRatio),
+          "source61-e2-solid-edge",
+          hidden.has(`${group}-${index % 4}`) ? 'stroke-dasharray="6 5"' : ""
+        )).join("");
+        const allVertices = [...front, ...back];
+        const cutPointGroups = [];
+        const cutPlanes = allVertices.map((vertex, index) => {
+          const onFront = index < 4;
+          const local = index % 4;
+          const ring = onFront ? front : back;
+          const otherRing = onFront ? back : front;
+          const previous = ring[(local + 3) % 4];
+          const next = ring[(local + 1) % 4];
+          const depth = otherRing[local];
+          const points = [interpolate(vertex, previous, trimRatio), interpolate(vertex, next, trimRatio), interpolate(vertex, depth, trimRatio)];
+          cutPointGroups.push(points);
+          return `<polygon class="source61-e2-corner-cut source61-e2-cut-plane${solved ? " is-solved" : ""}" data-cut-corner="${index + 1}" points="${points.map(pointText).join(" ")}"/>`;
+        }).join("");
+        const cutVertices = cutPointGroups.flat().map((point, index) => `<circle class="source61-e2-prism-vertex" data-result-vertex="${index + 1}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.3"/>`).join("");
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-corner-cuboid${solved ? " is-solved" : ""}" viewBox="0 0 360 235" role="img" aria-label="직육면체의 여덟 꼭짓점에서 세 모서리를 같은 길이만큼 재어 잘라 낸 그림" data-source61-e2-structure="cuboid-8-corner-truncation-${distance}" data-corner-count="8" data-cut-distance="${distance}" data-topology="cuboid-vertex-truncation" data-vertex-count="24" data-result-vertex-count="24" data-edge-count="36" data-face-count="14" data-total-count="74"${solved ? ' data-result-highlight="74"' : ""}>${cutPlanes}${edgeLines}${cutVertices}<text x="180" y="220" text-anchor="middle">각 꼭짓점에서 ${distance}cm씩 재어 자릅니다.</text></svg>`;
+      };
+
+      const radialCutPrismSvg = ({ n, solved = false }) => {
+        const centerTop = [128, 58];
+        const centerBottom = [128, 166];
+        const top = regularPolygonPoints(n, centerTop[0], centerTop[1], n >= 8 ? 69 : 74)
+          .map(([x, y]) => [x, centerTop[1] + (y - centerTop[1]) * 0.46]);
+        const bottom = top.map(([x, y]) => [x, y + 108]);
+        const frontFacing = index => top[index][1] >= centerTop[1];
+        const sectors = top.map((point, index) => `<polygon class="source61-e2-fan source61-e2-sector${index % 2 ? " is-alt" : ""}${solved && index === 0 ? " is-focus" : ""}" data-sector="${index + 1}" points="${pointText(centerTop)} ${pointText(point)} ${pointText(top[(index + 1) % n])}"/>`).join("");
+        const sideFaces = top.map((point, index) => {
+          const next = (index + 1) % n;
+          return `<polygon class="source61-e2-prism-side${frontFacing(index) || frontFacing(next) ? "" : " is-hidden"}" points="${pointText(point)} ${pointText(top[next])} ${pointText(bottom[next])} ${pointText(bottom[index])}"/>`;
+        }).join("");
+        const topRays = top.map((point, index) => lineMarkup(centerTop, point, "source61-e2-radial-cut", `data-cut-line="top-${index + 1}"`)).join("");
+        const bottomRays = bottom.map((point, index) => lineMarkup(centerBottom, point, `source61-e2-radial-cut${frontFacing(index) ? "" : " is-hidden"}`, `data-cut-line="bottom-${index + 1}"`)).join("");
+        const outerEdges = top.map((point, index) => {
+          const next = (index + 1) % n;
+          const hidden = !frontFacing(index) && !frontFacing(next);
+          return lineMarkup(point, top[next], "source61-e2-solid-edge")
+            + lineMarkup(bottom[index], bottom[next], `source61-e2-solid-edge${hidden ? " is-hidden" : ""}`)
+            + lineMarkup(point, bottom[index], `source61-e2-solid-edge${frontFacing(index) ? "" : " is-hidden"}`);
+        }).join("");
+        const centerLine = lineMarkup(centerTop, centerBottom, "source61-e2-radial-cut source61-e2-center-line", 'data-cut-line="center-vertical"');
+        const vertexDots = top.concat(bottom).map((point, index) => `<circle class="source61-e2-original-vertex" data-prism-vertex="${index + 1}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.8"/>`).join("");
+        const piece = solved ? `<g class="source61-e2-triangular-piece" transform="translate(238 48)" data-piece-edges="9"><polygon points="16,34 66,12 95,43"/><polygon points="16,92 66,70 95,101"/><line x1="16" y1="34" x2="16" y2="92"/><line x1="66" y1="12" x2="66" y2="70"/><line x1="95" y1="43" x2="95" y2="101"/><text x="55" y="126" text-anchor="middle">삼각기둥 1개</text><text x="55" y="145" text-anchor="middle">모서리 9개</text></g>` : `<text x="287" y="96" text-anchor="middle">밑면의 중심에서</text><text x="287" y="116" text-anchor="middle">수직으로 자르기</text>`;
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-radial-prism${solved ? " is-solved" : ""}" viewBox="0 0 370 225" role="img" aria-label="정${n}각기둥을 밑면의 중심에서 ${n}개의 같은 삼각기둥으로 수직으로 나눈 입체 그림" data-source61-e2-structure="regular-${n}-prism-radial-${n}" data-base-sides="${n}" data-n="${n}" data-piece-count="${n}" data-fan-count="${n}" data-vertical-cut-plane-count="${n}" data-edge-per-fan="9" data-total-edge-count="${9 * n}" data-cut-model="center-to-every-base-vertex-vertical-plane"${solved ? ` data-result-highlight="${9 * n}"` : ""}>${sideFaces}${bottomRays}${outerEdges}${sectors}${topRays}${centerLine}${vertexDots}<circle class="source61-e2-center" cx="${centerTop[0]}" cy="${centerTop[1]}" r="4"/><circle class="source61-e2-center is-hidden" cx="${centerBottom[0]}" cy="${centerBottom[1]}" r="3"/>${piece}<text x="128" y="218" text-anchor="middle">같은 삼각기둥 ${n}개</text></svg>`;
+      };
+
+      const truncatedPrismSvg = ({ n, solved = false }) => {
+        const centerTop = [150, 57];
+        const top = regularPolygonPoints(n, centerTop[0], centerTop[1], n >= 7 ? 70 : 74)
+          .map(([x, y]) => [x, centerTop[1] + (y - centerTop[1]) * 0.5]);
+        const bottom = top.map(([x, y]) => [x + 8, y + 145]);
+        const frontFacing = index => top[index][1] >= centerTop[1];
+        const solidEdges = [];
+        for (let index = 0; index < n; index += 1) {
+          const next = (index + 1) % n;
+          const bottomHidden = !frontFacing(index) && !frontFacing(next);
+          solidEdges.push(lineMarkup(interpolate(top[index], top[next], 1 / 3), interpolate(top[index], top[next], 2 / 3), "source61-e2-solid-edge"));
+          solidEdges.push(lineMarkup(interpolate(bottom[index], bottom[next], 1 / 3), interpolate(bottom[index], bottom[next], 2 / 3), `source61-e2-solid-edge${bottomHidden ? " is-hidden" : ""}`));
+          solidEdges.push(lineMarkup(interpolate(top[index], bottom[index], 1 / 3), interpolate(top[index], bottom[index], 2 / 3), `source61-e2-solid-edge${frontFacing(index) ? "" : " is-hidden"}`));
+        }
+        const cutPlanes = [];
+        const cutPoints = [];
+        for (let index = 0; index < n; index += 1) {
+          const prev = (index + n - 1) % n, next = (index + 1) % n;
+          const topCuts = [interpolate(top[index], top[prev], 1 / 3), interpolate(top[index], top[next], 1 / 3), interpolate(top[index], bottom[index], 1 / 3)];
+          const bottomCuts = [interpolate(bottom[index], bottom[prev], 1 / 3), interpolate(bottom[index], bottom[next], 1 / 3), interpolate(bottom[index], top[index], 1 / 3)];
+          const bottomHidden = !frontFacing(index);
+          cutPlanes.push(`<polygon class="source61-e2-corner-cut source61-e2-cut-plane${solved ? " is-solved" : ""}" data-cut-corner="top-${index + 1}" data-visibility="visible" points="${topCuts.map(pointText).join(" ")}"/>`);
+          cutPlanes.push(`<polygon class="source61-e2-corner-cut source61-e2-cut-plane${solved ? " is-solved" : ""}${bottomHidden ? " is-hidden" : ""}" data-cut-corner="bottom-${index + 1}" data-visibility="${bottomHidden ? "hidden" : "visible"}" points="${bottomCuts.map(pointText).join(" ")}"/>`);
+          topCuts.forEach(point => cutPoints.push({ point, hidden: false }));
+          bottomCuts.forEach(point => cutPoints.push({ point, hidden: bottomHidden }));
+        }
+        const resultVertices = cutPoints.map(({ point, hidden }, index) => `<circle class="source61-e2-prism-vertex${hidden ? " is-hidden" : ""}" data-result-vertex="${index + 1}" data-visibility="${hidden ? "hidden" : "visible"}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.1"/>`).join("");
+        const hiddenFaceKey = solved ? `<g class="source61-e2-hidden-face-key" data-hidden-cut-face-count="${n}" transform="translate(238 116)"><polygon points="0,8 28,0 16,31"/><text x="36" y="12">뒤쪽 절단면</text><text x="36" y="31">같은 모양 ${n}개</text></g>` : "";
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-truncated-prism${solved ? " is-solved" : ""}" viewBox="0 0 330 285" role="img" aria-label="${n}각기둥의 모든 모서리를 삼등분한 점을 이어 모든 꼭짓점을 잘라 낸 그림. 뒤쪽 절단면은 연한 선으로 나타냄" data-source61-e2-structure="regular-${n}-prism-all-${2 * n}-vertices-truncated" data-base-sides="${n}" data-n="${n}" data-original-vertices="${2 * n}" data-original-edges="${3 * n}" data-cut-corners="${2 * n}" data-edge-division="thirds" data-result-vertex-count="${6 * n}" data-result-edge-count="${9 * n}" data-result-face-count="${3 * n + 2}" data-total-count="${18 * n + 2}"${solved ? ` data-result-highlight="${18 * n + 2}"` : ""}>${cutPlanes.join("")}${solidEdges.join("")}${resultVertices}${hiddenFaceKey}<text x="165" y="274" text-anchor="middle">연한 선은 뒤쪽에 가려진 절단면입니다.</text></svg>`;
+      };
+
+      if (variant === 0) {
+        const distance = [1, 2, 3][poolIndex];
+        const minimumEdge = 3 * distance + 1;
+        const faces = 14, vertices = 24, edges = 36, total = faces + vertices + edges;
+        const promptVisual = `${cornerCutCuboidSvg({ distance })}${mathBoard("자르는 조건", row("자를 꼭짓점", "직육면체의 모든 꼭짓점") + row("각 모서리에서 잰 길이", `${distance}cm`) + row("직육면체의 모든 모서리", `${minimumEdge}cm보다 길다`))}`;
+        const answerVisual = `${cornerCutCuboidSvg({ distance, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("면", `6+8=${faces}개`) + row("꼭짓점", `12×2=${vertices}개`) + row("모서리", `12+3×8=${edges}개`) + row("합", `${faces}+${vertices}+${edges}=${total}`))}`;
+        return fixedResult(`직육면체의 모든 꼭짓점에서 만나는 세 모서리를 따라 각각 ${distance}cm인 점을 표시하고, 세 점을 지나는 평면으로 꼭짓점을 모두 잘라 냅니다. 직육면체의 모든 모서리는 ${minimumEdge}cm보다 깁니다. 잘라 낸 입체도형의 면, 꼭짓점, 모서리 수의 합을 구하세요.${promptVisual}${support("먼저 새로 생긴 삼각형 면은 몇 개인지, 원래 모서리 하나마다 새 꼭짓점이 몇 개 생기는지 세어 보세요.")}${challenge}${evidence("cuboid-all-corners-cut", [distance, minimumEdge, faces, vertices, edges, total])}`, String(total), `꼭짓점 8개를 자르므로 삼각형 면 8개가 새로 생겨 면은 6+8=${faces}개입니다. 원래 모서리 12개마다 양 끝의 자른 점이 남으므로 꼭짓점은 12×2=${vertices}개입니다. 원래 모서리에서 남은 12개와 삼각형 면 8개의 변 3개씩을 더하면 모서리는 12+3×8=${edges}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
+      }
+
+      if (variant === 1) {
+        const n = [5, 7, 8][poolIndex];
+        const edgesPerPiece = 9, total = n * edgesPerPiece;
+        const promptVisual = `${radialCutPrismSvg({ n })}${mathBoard("나눈 입체도형", row("밑면", `정${n}각형`) + row("나누어진 조각", `서로 같은 삼각기둥 ${n}개`) + row("구할 것", "각 조각의 모서리 수의 합"))}`;
+        const answerVisual = `${radialCutPrismSvg({ n, solved: true })}${mathBoard("모서리 수", row("삼각기둥 1개", `${edgesPerPiece}개`) + row(`삼각기둥 ${n}개`, `${edgesPerPiece}×${n}=${total}개`))}`;
+        return fixedResult(`정${n}각기둥을 밑면의 중심과 각 꼭짓점을 잇는 선을 따라 밑면에 수직으로 잘라, 서로 같은 삼각기둥 ${n}개로 나누었습니다. 나누어진 삼각기둥 ${n}개의 모서리 수를 모두 합하면 몇 개인지 구하세요.${promptVisual}${support("삼각기둥 한 개의 모서리 수를 먼저 세고 조각 수를 곱하세요.")}${challenge}${evidence("regular-prism-radial-cut", [n, edgesPerPiece, total])}`, `${total}개`, `삼각기둥 한 개의 모서리는 밑면 두 개에서 3개씩, 옆모서리 3개로 모두 ${edgesPerPiece}개입니다. 같은 삼각기둥이 ${n}개이므로 모서리 수의 합은 ${edgesPerPiece}×${n}=${total}개입니다.`, answerVisual);
+      }
+
+      const n = [5, 6, 7][poolIndex];
+      const originalVertices = 2 * n, originalEdges = 3 * n;
+      const vertices = 2 * originalEdges, edges = 3 * vertices / 2, faces = n + 2 + originalVertices, total = vertices + edges + faces;
+      const promptVisual = `${truncatedPrismSvg({ n })}${mathBoard("자르는 조건", row("처음 입체도형", `${n}각기둥`) + row("모서리마다", "삼등분점 2개 표시") + row("자를 곳", "모든 꼭짓점"))}`;
+      const answerVisual = `${truncatedPrismSvg({ n, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("꼭짓점", `${originalEdges}×2=${vertices}개`) + row("모서리", `${originalEdges}+3×${originalVertices}=${edges}개`) + row("면", `${n + 2}+${originalVertices}=${faces}개`) + row("합", `${vertices}+${edges}+${faces}=${total}`))}`;
+      return fixedResult(`${n}각기둥의 모든 모서리를 삼등분하고, 한 꼭짓점에서 만나는 세 모서리의 삼등분점을 지나는 평면으로 모든 꼭짓점을 잘라 냅니다. 남은 입체도형의 면, 꼭짓점, 모서리 수의 합을 구하세요.${promptVisual}${support("원래 모서리 하나에서 남는 새 꼭짓점 2개와, 잘라서 새로 생기는 삼각형 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("prism-all-vertices-truncated", [n, originalVertices, originalEdges, faces, vertices, edges, total])}`, String(total), `처음 ${n}각기둥의 모서리는 ${originalEdges}개이고, 모서리마다 삼등분점 2개가 새 꼭짓점이 되므로 꼭짓점은 ${vertices}개입니다. 원래 모서리에서 남은 ${originalEdges}개와 잘라서 생긴 삼각형 면 ${originalVertices}개의 변 3개씩을 더하면 모서리는 ${originalEdges}+3×${originalVertices}=${edges}개입니다. 처음 면 ${n + 2}개에 새 삼각형 면 ${originalVertices}개를 더하면 면은 ${faces}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
+    },
     sourceGrade6FractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u1-e1-example-1", "6-1-u1-e1-example-2", "6-1-u1-e1-example-3", "6-1-u1-e1-example-4",

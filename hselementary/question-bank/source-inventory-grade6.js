@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 25
+    "unlocked": 28
   },
   "items": [
     {
@@ -999,7 +999,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-mission-1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
-      "typeLabel": "각뿔과 각기둥을 붙인 입체의 면·모서리·꼭짓점 세기",
+      "typeLabel": "오각기둥 옆면을 45°로 올라간 거리로 높이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -1024,7 +1024,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-mission-2",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 2",
-      "typeLabel": "정팔각기둥을 굴려 모서리 길이 합 구하기",
+      "typeLabel": "정다각기둥을 수직으로 잘라 만든 삼각기둥들의 모서리 수 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -1049,7 +1049,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-mission-3",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
-      "typeLabel": "각뿔의 모서리 합으로 같은 밑면 각기둥의 높이 구하기",
+      "typeLabel": "사각기둥 겉면의 선을 전개도에 옮겨 그리기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -1074,7 +1074,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "typeLabel": "두 전개도로 만든 입체의 면·모서리·꼭짓점 수 비교",
+      "typeLabel": "사각기둥 겉면을 지나는 가장 짧은 선에서 한 부분의 길이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -1099,7 +1099,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-mission-5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
-      "typeLabel": "각뿔의 모서리에 일정한 간격으로 찍는 점의 수",
+      "typeLabel": "각기둥의 모든 모서리를 삼등분해 꼭짓점을 잘라 낸 뒤 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -1124,7 +1124,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "종이 모양과 개수로 만든 입체의 모서리 길이 비교",
+      "typeLabel": "정오각기둥의 가장 짧은 선을 전개도에 나타내고 삼각형 넓이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -16324,7 +16324,10 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     ["6-1-u2-e1-example-1-1", ["sourceGrade6PrismsPyramidsE1", 0]],
     ["6-1-u2-e1-mission-1", ["sourceGrade6PrismsPyramidsE1", 1]],
     ["6-1-u2-e1-mission-2", ["sourceGrade6PrismsPyramidsE1", 2]],
-    ["6-1-u2-e1-mission-5", ["sourceGrade6PrismsPyramidsE1", 3]]
+    ["6-1-u2-e1-mission-5", ["sourceGrade6PrismsPyramidsE1", 3]],
+    ["6-1-u2-e2-example-2-2", ["sourceGrade6PrismsPyramidsE2", 0]],
+    ["6-1-u2-e2-mission-2", ["sourceGrade6PrismsPyramidsE2", 1]],
+    ["6-1-u2-e2-mission-5", ["sourceGrade6PrismsPyramidsE2", 2]]
   ]);
   window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     if (!verifiedPools.has(item.sourceItemId)) return;
