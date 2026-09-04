@@ -9,6 +9,7 @@
   const CACHE_KEY = 'leteon:alpha-prep:coach-cache:v1';
   const SESSION_KEY = 'leteon:alpha-prep:sessions:v1';
   const READ_SECONDS = 60;
+  const MAX_FOLLOW_DEPTH = 2;
 
   const peerAnswers = {
     'city-trees': 'I think cities should spend the extra money because healthy trees cool buildings and help with rainwater. The benefit is not only for the tree; it reaches the whole neighborhood.',
@@ -63,6 +64,7 @@
   let timer = null;
   let recognition = null;
   let speechRun = 0;
+  let renderedViewKey = '';
 
   function currentReaderName() {
     try {
@@ -115,14 +117,16 @@
 
   function studioHeader() {
     const step = progressStep();
+    const labels = ['Room', 'Read', 'Interview', 'Coach'];
     return `<header class="studio-header">
       <a class="brand" href="../" aria-label="Back to Reading Town">
         <span class="brand-mark">A</span>
         <span><b>ALPHA PREP</b><small>INTERVIEW STUDIO</small></span>
       </a>
       <ol class="stage-track" aria-label="Interview progress">
-        ${['Room', 'Read', 'Interview', 'Coach'].map((label, index) => `<li class="${step === index + 1 ? 'active' : step > index + 1 ? 'done' : ''}"><span>${step > index + 1 ? '✓' : index + 1}</span>${label}</li>`).join('')}
+        ${labels.map((label, index) => `<li class="${step === index + 1 ? 'active' : step > index + 1 ? 'done' : ''}"><span>${step > index + 1 ? '✓' : index + 1}</span>${label}</li>`).join('')}
       </ol>
+      <span class="mobile-stage" aria-label="Step ${step} of 4: ${labels[step - 1]}"><b>${step}/4</b>${labels[step - 1]}</span>
       <a class="town-link" href="../">Reading Town</a>
     </header>`;
   }
@@ -180,7 +184,7 @@
           <button type="button" data-action="mode" data-mode="full" class="${state.sessionMode === 'full' ? 'active' : ''}">Full · 2 rounds</button>
           <button type="button" data-action="mode" data-mode="quick" class="${state.sessionMode === 'quick' ? 'active' : ''}">Quick · 1 text</button>
         </div>
-        <button class="primary-command" type="button" data-action="enter-room">Open the door <span>→</span></button>
+        <button class="primary-command mobile-dock-action" type="button" data-action="enter-room" ${state.entered ? 'disabled' : ''}>${state.entered ? 'Taking your seat…' : 'Open the door'} <span>→</span></button>
         <p class="privacy-note">Alpha Prep does not save an audio file. Your browser converts speech to text, and you can type instead.</p>
       </section>
     </main>`;
@@ -198,13 +202,16 @@
         <h1>Good afternoon, everyone.</h1>
         <p>${timingCopy} Keep listening while the other students speak because I may ask for your response at any time.</p>
         <dl class="brief-facts">
-          <div><dt>Set</dt><dd>${esc(set.label)} · ${esc(set.theme)}</dd></div>
+          <div class="brief-detail"><dt>Set</dt><dd>${esc(set.label)} · ${esc(set.theme)}</dd></div>
           <div><dt>Rounds</dt><dd>${state.sessionMode === 'full' ? `1. ${esc(set.passages[0].genre)} · 2. ${esc(set.passages[1].genre)}` : `1. ${esc(set.passages[0].genre)}`}</dd></div>
           <div><dt>Timing</dt><dd>${state.sessionMode === 'full' ? '60 seconds for each passage' : '60 seconds'}</dd></div>
-          <div><dt>Focus</dt><dd>Summary · evidence · opinion · vocabulary · listening</dd></div>
+          <div class="brief-detail"><dt>Focus</dt><dd>Summary · evidence · opinion · vocabulary · listening</dd></div>
         </dl>
-        <label class="switch-row"><input type="checkbox" data-field="coachMode" ${state.coachMode === 'deep' ? 'checked' : ''}><span><b>Deep coaching</b><small>More adaptive text calls. Economy mode is used when off.</small></span></label>
-        <button class="primary-command" type="button" data-action="prepare-reading">Receive passage <span>→</span></button>
+        <details class="coach-options" ${state.coachMode === 'deep' ? 'open' : ''}>
+          <summary>Coaching options</summary>
+          <label class="switch-row"><input type="checkbox" data-field="coachMode" ${state.coachMode === 'deep' ? 'checked' : ''}><span><b>Deep coaching</b><small>Use one extra adaptive check for a follow-up answer.</small></span></label>
+        </details>
+        <button class="primary-command mobile-dock-action" type="button" data-action="prepare-reading">Receive passage <span>→</span></button>
       </section>
     </main>`;
   }
@@ -222,7 +229,7 @@
           <p>PASSAGE ${number} OF ${passageLimit()}</p>
           <h1>${esc(passage.title)}</h1>
           <dl><div><dt>Time</dt><dd>1 minute for this passage</dd></div><div><dt>Length</dt><dd>${words} words</dd></div><div><dt>Rule</dt><dd>Silent reading</dd></div></dl>
-          <button class="primary-command" type="button" data-action="start-reading">Start 1-minute reading <span>▶</span></button>
+          <button class="primary-command mobile-dock-action" type="button" data-action="start-reading">Start 1-minute reading <span>▶</span></button>
         </section>
         <aside class="reading-instructions"><b>Before you start</b><ol><li>Find the main idea.</li><li>Hold two important details in your memory.</li><li>Notice unfamiliar words from context.</li></ol></aside>
       </main>`;
@@ -230,11 +237,13 @@
     const elapsed = READ_SECONDS - state.secondsLeft;
     const progress = Math.round((elapsed / READ_SECONDS) * 100);
     return `${studioHeader()}<main class="reading-session">
-      <div class="reading-toolbar">
-        <div><span class="live-dot"></span><b>SILENT READING</b><small>Passage ${number} of ${passageLimit()}</small></div>
-        <div class="timer" aria-label="${state.secondsLeft} seconds remaining"><strong>${formatTime(state.secondsLeft)}</strong><span>remaining</span></div>
+      <div class="reading-status">
+        <div class="reading-toolbar">
+          <div><span class="live-dot"></span><b>SILENT READING</b><small>Passage ${number} of ${passageLimit()}</small></div>
+          <div class="timer" aria-label="${state.secondsLeft} seconds remaining"><strong>${formatTime(state.secondsLeft)}</strong><span>remaining</span></div>
+        </div>
+        <div class="time-track"><span style="width:${progress}%"></span></div>
       </div>
-      <div class="time-track"><span style="width:${progress}%"></span></div>
       <article class="reading-paper" aria-labelledby="passage-title">
         <header><span>${esc(passage.genre)}</span><span>${words} words</span></header>
         <h1 id="passage-title">${esc(passage.title)}</h1>
@@ -254,7 +263,7 @@
         <h1>Look up. Breathe once.</h1>
         <p>The text will stay hidden during the interview. Answer with what you understood, not with memorized sentences.</p>
         <div class="memory-cues"><span>Main idea</span><span>2 details</span><span>Your view</span></div>
-        <button class="primary-command" type="button" data-action="begin-interview">Begin the interview <span>→</span></button>
+        <button class="primary-command mobile-dock-action" type="button" data-action="begin-interview">Begin the interview <span>→</span></button>
       </section>
     </main>`;
   }
@@ -291,7 +300,13 @@
     const isPeer = current.kind === 'peer';
     const peer = isPeer ? peers[current.peerSeat - 1] : null;
     const listeningAvailable = micSupported();
-    const questionLabel = current.kind === 'ambush' ? 'SURPRISE LISTENING QUESTION' : isPeer ? `${peer.name.toUpperCase()}’S TURN` : current.adaptive ? 'FOLLOW-UP QUESTION' : 'YOUR TURN';
+    const questionLabel = current.kind === 'ambush'
+      ? 'SURPRISE LISTENING QUESTION'
+      : isPeer
+        ? `${peer.name.toUpperCase()}’S TURN`
+        : current.adaptive
+          ? `FOLLOW-UP ${current.followDepth || 1} OF ${MAX_FOLLOW_DEPTH}`
+          : 'YOUR TURN';
     return `${studioHeader()}<main class="interview-layout">
       <section class="room-column">
         <div class="interview-meta"><span>${esc(passage.genre)} · ${esc(passage.title)}</span><b>${state.questionIndex + 1} / ${state.queue.length}</b></div>
@@ -315,8 +330,8 @@
       <p>${state.peerHeard ? 'Director Henry may ask you to agree, disagree, or add a different detail.' : 'Listen for the claim and the reason. Do not plan your own answer yet.'}</p>
       <div class="listen-target"><span>${initials(peer.name)}</span><div><b>${esc(peer.name)}’s idea</b><small>Claim + reason</small></div></div>
       ${state.peerHeard
-        ? `<button class="primary-command" type="button" data-action="after-peer">I listened <span>→</span></button>`
-        : `<button class="primary-command" type="button" data-action="hear-peer">Hear the answer <span>▶</span></button>`}
+        ? `<button class="primary-command mobile-dock-action" type="button" data-action="after-peer">I listened <span>→</span></button>`
+        : `<button class="primary-command mobile-dock-action" type="button" data-action="hear-peer">Hear the answer <span>▶</span></button>`}
       <button class="text-command" type="button" data-action="repeat-peer">Repeat question and answer</button>`;
   }
 
@@ -330,10 +345,10 @@
       </div>
       ${listeningAvailable ? '' : '<p class="support-note">Voice recognition is unavailable in this browser. Type your answer below.</p>'}
       <label class="transcript-label" for="answer-draft">Live transcript / typed answer</label>
-      <textarea id="answer-draft" data-field="answerDraft" rows="7" maxlength="900" placeholder="I think… because…">${esc(state.answerDraft)}</textarea>
+      <textarea id="answer-draft" data-field="answerDraft" rows="7" maxlength="900" placeholder="I think… because…" autocapitalize="sentences" autocomplete="off" enterkeyhint="done" spellcheck="true">${esc(state.answerDraft)}</textarea>
       <div class="answer-stats"><span>${wordCount(state.answerDraft)} words</span><span>${state.notice ? esc(state.notice) : 'Aim for a complete idea and one reason.'}</span></div>
-      <button class="primary-command" type="button" data-action="submit-answer" ${state.busy ? 'disabled' : ''}>${state.busy ? 'Coach is reviewing…' : 'Submit answer'} <span>→</span></button>
-      <p class="cost-note">${state.coachMode === 'deep' ? 'Deep mode: up to two adaptive text calls per passage.' : 'Economy mode: one adaptive text call per passage.'}</p>`;
+      <div class="answer-submit-dock"><button class="primary-command" type="button" data-action="submit-answer" ${state.busy ? 'disabled' : ''}>${state.busy ? 'Coach is reviewing…' : 'Submit answer'} <span>→</span></button></div>
+      <p class="cost-note">${state.coachMode === 'deep' ? 'Deep mode checks one follow-up answer too.' : 'Extra follow-ups continue on this device.'}</p>`;
   }
 
   function answerHint(current) {
@@ -356,7 +371,7 @@
         <p>${notes.length} answers are saved for the coaching report. The second text changes genre, just as it may in the real interview.</p>
         <div class="between-score"><span>${notes.filter((turn) => turn.feedback && turn.feedback.scores.evidence >= 3).length}</span><b>answers with clear evidence</b></div>
       </section>
-      <section class="next-passage"><span>${esc(next.genre)}</span><h2>${esc(next.title)}</h2><p>Round ${state.passageIndex + 2} of ${passageLimit()} · One minute · ${wordCount(next.paragraphs.join(' '))} words</p><button class="primary-command" type="button" data-action="next-passage">Receive next passage <span>→</span></button></section>
+      <section class="next-passage"><span>${esc(next.genre)}</span><h2>${esc(next.title)}</h2><p>Round ${state.passageIndex + 2} of ${passageLimit()} · One minute · ${wordCount(next.paragraphs.join(' '))} words</p><button class="primary-command mobile-dock-action" type="button" data-action="next-passage">Receive next passage <span>→</span></button></section>
     </main>`;
   }
 
@@ -366,7 +381,7 @@
     const score = report.overall;
     return `${studioHeader()}<main class="report-layout">
       <section class="report-hero">
-        <div class="report-title"><div class="eyebrow">INTERVIEW COACH REPORT</div><h1>${esc(state.studentName)}’s readiness profile</h1><p>${esc(report.summary)}</p></div>
+        <div class="report-title"><div class="eyebrow">INTERVIEW COACH REPORT</div><h1>${esc(state.studentName)}’s readiness profile</h1><p>${esc(report.summary)}</p><a class="jump-command" href="#answer-coaching">See my corrections <span>↓</span></a></div>
         <div class="overall-score"><strong>${score.toFixed(1)}</strong><span>/ 4.0</span><small>${score >= 3.4 ? 'Ready to stretch' : score >= 2.7 ? 'Developing well' : 'Build the response frame'}</small></div>
       </section>
       <section class="rubric-band">
@@ -386,7 +401,7 @@
           <p class="vocab-next"><b>Next move:</b> ${esc(report.vocabulary.next)}</p>
         </div>
       </section>
-      <section class="corrections-section">
+      <section class="corrections-section" id="answer-coaching">
         <header><div><span>04</span><h2>Answer-by-answer coaching</h2></div><p>Keep the idea. Upgrade the delivery.</p></header>
         <div class="correction-list">${state.turns.map((turn, index) => correctionItem(turn, index)).join('')}</div>
       </section>
@@ -421,6 +436,12 @@
       app.innerHTML = errorScreen('Practice data did not load.');
       return;
     }
+    const nextViewKey = state.stage === 'reading'
+      ? `${state.stage}:${state.passageIndex}:${state.readingStarted ? 'active' : 'ready'}`
+      : state.stage === 'interview'
+        ? `${state.stage}:${state.passageIndex}:${state.questionIndex}`
+        : `${state.stage}:${state.passageIndex}`;
+    const viewChanged = Boolean(renderedViewKey && renderedViewKey !== nextViewKey);
     const screens = {
       lobby: lobbyScreen,
       briefing: briefingScreen,
@@ -432,8 +453,19 @@
     };
     app.innerHTML = (screens[state.stage] || lobbyScreen)();
     document.body.dataset.stage = state.stage;
+    renderedViewKey = nextViewKey;
+    if (viewChanged) {
+      requestAnimationFrame(() => {
+        if (state.stage === 'interview' && window.matchMedia('(max-width: 780px)').matches) {
+          const question = document.querySelector('.question-block');
+          if (question) question.scrollIntoView({ block: 'start' });
+        } else {
+          window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        }
+      });
+    }
     const draft = document.getElementById('answer-draft');
-    if (draft && state.stage === 'interview' && !state.listening && !state.busy) {
+    if (draft && state.stage === 'interview' && !state.listening && !state.busy && !window.matchMedia('(max-width: 780px)').matches) {
       requestAnimationFrame(() => draft.focus({ preventScroll: true }));
     }
   }
@@ -494,7 +526,7 @@
     const peerSeat = others[(state.passageIndex + state.setIndex) % others.length];
     const peer = peers[peerSeat - 1];
     state.queue = [
-      { kind: 'student', type: questions[0].type, prompt: questions[0].prompt, adaptiveSource: true },
+      { kind: 'student', type: questions[0].type, prompt: questions[0].prompt, adaptiveSource: true, followDepth: 0 },
       { kind: 'student', type: questions[1].type, prompt: questions[1].prompt },
       { kind: 'peer', type: questions[2].type, prompt: questions[2].prompt, peerSeat, peerAnswer: peerAnswers[passage.id] || 'I think the passage gives us a reason to look at the problem from another point of view.' },
       { kind: 'ambush', type: 'interaction', prompt: `What do you think about ${peer.name}’s answer? Tell me where you agree or disagree, and add one idea of your own.`, peerName: peer.name, peerSeat },
@@ -611,6 +643,7 @@
     }
     const item = currentQueueItem();
     const passage = currentPassage();
+    const followDepth = Number(item.followDepth) || 0;
     state.busy = true;
     state.notice = '';
     render();
@@ -629,6 +662,8 @@
         followUp = localFollowUp(item, answer, passage, localFeedback);
         state.adaptiveUsed[passage.id] = (state.adaptiveUsed[passage.id] || 0) + 1;
       }
+    } else if (item.adaptive && followDepth < MAX_FOLLOW_DEPTH) {
+      followUp = localFollowUp(item, answer, passage, localFeedback);
     }
     state.turns.push({
       passageId: passage.id,
@@ -641,12 +676,14 @@
       peerName: item.peerName || '',
       feedback
     });
-    if (followUp && !item.adaptive) {
+    if (followUp && item.kind !== 'peer' && followDepth < MAX_FOLLOW_DEPTH) {
       state.queue.splice(state.questionIndex + 1, 0, {
         kind: 'student',
         type: 'followup',
         prompt: followUp,
-        adaptive: true
+        adaptive: true,
+        followDepth: followDepth + 1,
+        parentType: item.parentType || item.type
       });
     }
     state.busy = false;
@@ -655,10 +692,10 @@
   }
 
   function shouldUseAdaptive(item, passage) {
-    if (!item || item.kind === 'peer' || item.adaptive) return false;
+    if (!item || item.kind === 'peer') return false;
     const used = state.adaptiveUsed[passage.id] || 0;
     const limit = state.coachMode === 'deep' ? 2 : 1;
-    return used < limit && (item.adaptiveSource || item.type === 'opinion' || item.kind === 'ambush');
+    return used < limit && (item.adaptive || item.adaptiveSource || item.type === 'opinion' || item.kind === 'ambush');
   }
 
   function advanceQuestion() {
@@ -826,6 +863,12 @@
 
   function localFollowUp(item, answer, passage, feedback) {
     const scores = feedback.scores;
+    if ((Number(item.followDepth) || 0) >= 1) {
+      if (scores.evidence <= 2) return 'Which one fact or event from the passage proves your answer?';
+      if (scores.comprehension <= 2) return 'How does that detail connect to the main idea?';
+      if (scores.organization <= 2) return 'Can you say your point first, then explain why it matters?';
+      return 'Why does the detail you chose matter most?';
+    }
     if (scores.evidence <= 2) return 'Which exact detail from the passage best supports what you just said?';
     if (scores.organization <= 2) return 'Can you state your main point first and then give one supporting detail?';
     if (item.type === 'summary') return passage.genre !== 'Nonfiction'

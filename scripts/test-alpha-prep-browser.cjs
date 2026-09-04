@@ -78,7 +78,10 @@ async function submit(page, answer) {
 
 async function runPassageInterview(page, passageIndex) {
   await submit(page, 'The passage is mainly about solving a problem carefully. It explains the problem and shows a useful solution with important details.');
+  await assertVisibleText(page, 'FOLLOW-UP 1 OF 2');
   await submit(page, 'The exact detail makes the idea convincing because it shows what changed and why the result mattered.');
+  await assertVisibleText(page, 'FOLLOW-UP 2 OF 2');
+  await submit(page, 'That detail matters most because it connects the problem to the solution.');
   await submit(page, 'One important detail is that the characters or people tested a solution before deciding what to do.');
   await page.locator('[data-action="hear-peer"]').click();
   await assertVisibleText(page, 'Keep the idea in mind.');
@@ -104,6 +107,29 @@ async function assertNoViewportOverflow(page, label) {
   }));
   assert.ok(result.document <= result.viewport + 1, `${label} horizontal overflow: ${JSON.stringify(result)}`);
   assert.deepEqual(result.clippedButtons, [], `${label} clipped buttons`);
+}
+
+async function assertMobileActionVisible(page, selector, label) {
+  const result = await page.locator(selector).evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    return { top: rect.top, bottom: rect.bottom, height: rect.height, viewport: window.innerHeight };
+  });
+  assert.ok(result.top >= 0 && result.bottom <= result.viewport + 1, `${label} action outside viewport: ${JSON.stringify(result)}`);
+  assert.ok(result.height >= 44, `${label} action is too small: ${JSON.stringify(result)}`);
+}
+
+async function assertMobileTouchTargets(page, label) {
+  const shortTargets = await page.evaluate(() => Array.from(document.querySelectorAll('button')).filter((button) => {
+    const rect = button.getBoundingClientRect();
+    const style = getComputedStyle(button);
+    return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0 && rect.height < 44;
+  }).map((button) => ({ text: button.textContent.trim().slice(0, 50), height: button.getBoundingClientRect().height })));
+  assert.deepEqual(shortTargets, [], `${label} short touch targets`);
+}
+
+async function assertHeaderAtTop(page, label) {
+  const top = await page.locator('.studio-header').evaluate((node) => node.getBoundingClientRect().top);
+  assert.ok(Math.abs(top) <= 1, `${label} header is displaced: ${top}`);
 }
 
 async function main() {
@@ -187,16 +213,48 @@ async function main() {
     await page.screenshot({ path: path.join(outDir, 'mobile-report.png'), fullPage: true });
     await page.locator('[data-action="retry-set"]').click();
     await assertVisibleText(page, 'Walk in ready to listen.');
+    await page.waitForFunction(() => window.scrollY < 2);
     await assertNoViewportOverflow(page, 'mobile lobby');
-    await page.screenshot({ path: path.join(outDir, 'mobile-lobby.png'), fullPage: true });
+    await assertMobileActionVisible(page, '[data-action="enter-room"]', 'mobile lobby');
+    await assertMobileTouchTargets(page, 'mobile lobby');
+    await page.screenshot({ path: path.join(outDir, 'mobile-lobby.png') });
     await page.locator('[data-action="enter-room"]').click();
     await assertVisibleText(page, 'one minute for each passage');
+    await page.waitForFunction(() => window.scrollY < 2);
     await assertNoViewportOverflow(page, 'mobile briefing');
-    await page.screenshot({ path: path.join(outDir, 'mobile-briefing.png'), fullPage: true });
+    await assertMobileActionVisible(page, '[data-action="prepare-reading"]', 'mobile briefing');
+    await assertMobileTouchTargets(page, 'mobile briefing');
+    await page.screenshot({ path: path.join(outDir, 'mobile-briefing.png') });
     await page.locator('[data-action="prepare-reading"]').click();
+    await assertMobileActionVisible(page, '[data-action="start-reading"]', 'mobile reading ready');
     await page.locator('[data-action="start-reading"]').click();
     await assertNoViewportOverflow(page, 'mobile nonfiction reading');
-    await page.screenshot({ path: path.join(outDir, 'mobile-reading.png'), fullPage: true });
+    assert.equal(await page.locator('[data-action="finish-reading"]').evaluate((node) => getComputedStyle(node).position), 'static');
+    await page.screenshot({ path: path.join(outDir, 'mobile-reading.png') });
+    await page.evaluate(() => window.__ALPHA_PREP_TEST__.expireReading());
+    await assertMobileActionVisible(page, '[data-action="begin-interview"]', 'mobile collected passage');
+    await page.locator('[data-action="begin-interview"]').click();
+    await page.locator('#answer-draft').waitFor({ state: 'visible' });
+    await page.waitForTimeout(120);
+    await page.waitForFunction(() => {
+      const question = document.querySelector('.question-block');
+      const room = document.querySelector('.roundtable');
+      return question && room && question.getBoundingClientRect().top < room.getBoundingClientRect().top;
+    });
+    await assertNoViewportOverflow(page, 'mobile interview');
+    await assertMobileTouchTargets(page, 'mobile interview');
+    await assertHeaderAtTop(page, 'mobile interview');
+    await page.screenshot({ path: path.join(outDir, 'mobile-interview.png') });
+    await page.locator('#answer-draft').scrollIntoViewIfNeeded();
+    await page.locator('#answer-draft').fill('I think the tree needs room because its roots need water and air.');
+    await page.locator('[data-action="submit-answer"]').scrollIntoViewIfNeeded();
+    await assertMobileActionVisible(page, '[data-action="submit-answer"]', 'mobile answer');
+    await page.screenshot({ path: path.join(outDir, 'mobile-answer.png') });
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.locator('#answer-draft').scrollIntoViewIfNeeded();
+    await assertNoViewportOverflow(page, '320px mobile answer');
+    await assertMobileTouchTargets(page, '320px mobile answer');
+    await page.screenshot({ path: path.join(outDir, 'mobile-320-answer.png') });
 
     const townPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     const townPageErrors = [];

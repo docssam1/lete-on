@@ -2,6 +2,8 @@
 
 Source-faithful interview practice is not the goal of this module. The passages are original prediction material written for learners moving from CARS D toward Bricks Reading 300 Part 1. No licensed textbook page or scan is shipped here.
 
+The coaching profile is calibrated for verbally advanced seven-year-olds reading in the SR 3.x range, especially the upper 3s. Questions keep grade-3-level reasoning while using short, concrete spoken directions.
+
 ## Session model
 
 - Four-candidate entrance and seating scene
@@ -10,6 +12,7 @@ Source-faithful interview practice is not the goal of this module. The passages 
 - A separate 60-second silent read and automatic passage collection for each round
 - Questions for the first passage are completed before the second passage is handed out
 - Summary, evidence, inference, opinion, and vocabulary-in-context questions
+- Two-step answer-dependent follow-up ladders; economy mode continues the second step locally
 - One peer answer followed by an unannounced listen-link-add question
 - Browser speech recognition with typed fallback
 - Browser speech synthesis for the director and peers
@@ -17,7 +20,7 @@ Source-faithful interview practice is not the goal of this module. The passages 
 
 ## Cost boundary
 
-Economy mode makes at most one adaptive text request per passage and one final-report request. A two-passage mock therefore uses three text requests. Answer-by-answer corrections are created during the interview, while the final request concentrates on the synthesis, three priorities, and seven-day route. The app does not request generated audio. Deep mode allows two adaptive requests per passage. Normalized turn feedback is cached locally, and deterministic coaching completes the session when the server is unavailable.
+Economy mode makes at most one adaptive text request per passage and one final-report request. A two-passage mock therefore uses three text requests. The first answer receives an adaptive follow-up and the next answer receives a locally selected second follow-up, so the question ladder continues without another paid request. Answer-by-answer corrections are created during the interview, while the final request concentrates on the synthesis, three priorities, and seven-day route. The app does not request generated audio. Deep mode allows two adaptive requests per passage. Normalized turn feedback is cached locally, and deterministic coaching completes the session when the server is unavailable.
 
 The browser sends no learner name or audio file to the coach function. It sends the current original passage, question, short transcript, recent turns, and provisional scores. Full session transcripts remain in local storage on the current device.
 
