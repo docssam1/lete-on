@@ -26,7 +26,7 @@ let generatedCount = 0;
 let fractionSampleCount = 0;
 let mixedFractionSampleCount = 0;
 let symbolicFractionSampleCount = 0;
-if (types.length !== 1169) failures.push(`공개 검수 대상은 1169개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 1179) failures.push(`공개 검수 대상은 1179개여야 하나 ${types.length}개입니다.`);
 
 const countTokens = (tokens, type) => tokens.reduce((count, token) => count + (token.type === type ? 1 : 0) + (token.type === "fraction" ? countTokens(token.numerator, type) + countTokens(token.denominator, type) : 0), 0);
 const notationCases = [
@@ -70,7 +70,7 @@ for (const type of types) {
         continue;
       }
 
-      const all = [generated.prompt, String(generated.answer), generated.solution].join("\n");
+      const all = [generated.prompt, String(generated.answer), generated.solution, generated.answerVisual || ""].join("\n");
       const visible = all.replace(/<span hidden\b[^>]*><\/span>/g, "");
       const plainVisible = visible.replace(/<svg\b[\s\S]*?<\/svg>/g, " ").replace(/<[^>]+>/g, " ");
       fractionSampleCount += (plainVisible.match(/(?:\d+|□|[A-Za-z가-힣])\s*\/\s*(?:\d+|□|[A-Za-z가-힣])/g) || []).length;

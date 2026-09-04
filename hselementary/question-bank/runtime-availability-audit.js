@@ -24,10 +24,11 @@ const locked = types.filter(type => !generatorApi.generatorKey(type) || type.rev
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
 
 if (types.length !== 1893) failures.push(`런타임 유형은 1893개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1169) failures.push(`생성 가능 유형은 1169개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 724) failures.push(`검수 대기 유형은 724개여야 하나 ${locked.length}개입니다.`);
+if (ready.length !== 1179) failures.push(`생성 가능 유형은 1179개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 714) failures.push(`검수 대기 유형은 714개여야 하나 ${locked.length}개입니다.`);
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
-if (!sourceGrade6.every(type => type.reviewLocked && !generatorApi.generatorKey(type) && type.answerVisualRequired && type.generationMode === "fixed-verified-pool" && type.verifiedVariantTarget === 3)) failures.push("6학년 원문 세부 유형의 잠금·정답 그림·고정 3문항 계약이 다릅니다.");
+if (sourceGrade6.filter(type => !type.reviewLocked).length !== 10 || sourceGrade6.filter(type => type.reviewLocked).length !== 623) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
+if (!sourceGrade6.every(type => type.answerVisualRequired && type.generationMode === "fixed-verified-pool" && type.verifiedVariantTarget === 3)) failures.push("6학년 원문 세부 유형의 정답 그림·고정 3문항 계약이 다릅니다.");
 
 for (const type of ready) {
   for (const difficulty of [-1, 0, 1]) {
@@ -59,4 +60,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`런타임 생성 가능성 감사 통과: 전체 1893 · 생성 가능 1169 · 검수 대기 724(6학년 원문 633 포함) · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`런타임 생성 가능성 감사 통과: 전체 1893 · 생성 가능 1179 · 검수 대기 714(6학년 원문 623 포함) · ${generatedCount.toLocaleString()}회 생성`);

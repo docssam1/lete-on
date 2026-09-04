@@ -116,6 +116,7 @@ async function collectUnitState(page, semester, unitId) {
     const inventory = window.HSE_SOURCE_INVENTORY_GRADE6;
     const expected = (inventory?.items || []).filter(item => item.semester === targetSemester && `${targetSemester}-u${item.unit}` === targetUnit);
     const expectedIds = new Set(expected.map(item => item.sourceItemId));
+    const expectedById = new Map(expected.map(item => [item.sourceItemId, item]));
     const rows = [...document.querySelectorAll("#typeList [data-preview-type-id]")];
     const sourceRows = rows.filter(row => expectedIds.has(row.dataset.previewTypeId));
     const sourceGroups = [...document.querySelectorAll("#typeList .tree-subunit")]
@@ -127,6 +128,7 @@ async function collectUnitState(page, semester, unitId) {
       const input = row.querySelector("input[data-type-id]");
       return {
         id: row.dataset.previewTypeId,
+        expectedLocked: expectedById.get(row.dataset.previewTypeId)?.reviewLocked !== false,
         disabled: input?.disabled === true,
         checked: input?.checked === true,
         pending: row.classList.contains("is-pending"),
@@ -154,11 +156,11 @@ function assertUnitState(state, semester, unitId, viewport) {
   if (!state.expectedCount) fail(`${label}: 원문 분류표에 유형이 없습니다.`);
   if (state.sourceRows.length !== state.expectedCount) fail(`${label}: 화면 원문 유형 ${state.sourceRows.length}개, 분류표 ${state.expectedCount}개입니다.`);
   if (new Set(state.sourceRows.map(row => row.id)).size !== state.sourceRows.length) fail(`${label}: 화면 원문 유형 ID가 중복됩니다.`);
-  if (state.sourceRows.some(row => !row.disabled || row.checked || !row.pending || row.state !== "검수 대기")) fail(`${label}: 원문 유형 중 잠금 또는 선택 불가 상태가 깨졌습니다.`);
+  if (state.sourceRows.some(row => row.checked || (row.expectedLocked ? (!row.disabled || !row.pending || row.state !== "검수 대기") : (row.disabled || row.pending || row.state !== "생성 가능")))) fail(`${label}: 원문 유형의 검증 상태와 선택 가능 상태가 다릅니다.`);
   if (state.sourceGroupCount === 0 || state.groupLabels.some(labelText => !/^개념탐구 \d+ 원문 유형$/.test(labelText))) fail(`${label}: 개념탐구별 원문 유형 묶음이 보이지 않습니다.`);
   if (!state.legacyExists || !state.legacyCount) fail(`${label}: 기존 생성 문제 묶음이 없습니다.`);
   if (!state.legacyReadyIds.length) fail(`${label}: 기존 생성 문제 묶음에 선택·생성 가능한 문제가 없습니다.`);
-  if (state.selectedCount !== "0" || !state.generateDisabled) fail(`${label}: 잠금 유형만 열린 상태에서 선택 또는 생성이 가능합니다.`);
+  if (state.selectedCount !== "0" || !state.generateDisabled) fail(`${label}: 유형을 고르기 전 선택 수 또는 생성 버튼 상태가 다릅니다.`);
   if (state.pageOverflow) fail(`${label}: 원문 유형 화면에 가로 넘침이 있습니다.`);
 }
 
@@ -315,7 +317,7 @@ async function inspectGeneratedWorksheet(browser, baseUrl, typeId, viewport, lab
   const summary = `${failures.length ? "실패" : "통과"}: 6학년 원문 ${sourceTotal}/633유형, 화면 ${screenshots}장, A4 PDF ${pdfs}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(summaryPath, summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6학년 원문 세부 유형 브라우저 감사 통과: 633유형 전부 잠금, 12단원 기존 생성 문제 선택·생성 확인, 화면 ${screenshots}장, A4 PDF ${pdfs}개`);
+  console.log(`6학년 원문 세부 유형 브라우저 감사 통과: 633유형 중 생성 가능 10·잠금 623, 12단원 기존 생성 문제 선택·생성 확인, 화면 ${screenshots}장, A4 PDF ${pdfs}개`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

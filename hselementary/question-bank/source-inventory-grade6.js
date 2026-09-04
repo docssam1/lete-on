@@ -1,5 +1,5 @@
 window.HSE_SOURCE_INVENTORY_GRADE6 = {
-  "version": "2026-09-04",
+  "version": "2026-09-05",
   "policy": "public-taxonomy-only-no-source-answer-or-private-path",
   "oneSourceItemOneType": true,
   "totals": {
@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 0
+    "unlocked": 10
   },
   "items": [
     {
@@ -16297,3 +16297,27 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     }
   ]
 };
+
+(() => {
+  const verifiedE1 = new Map([
+    ["6-1-u1-e1-example-1", 0],
+    ["6-1-u1-e1-example-2", 1],
+    ["6-1-u1-e1-example-3", 2],
+    ["6-1-u1-e1-example-4", 3],
+    ["6-1-u1-e1-mission-1", 4],
+    ["6-1-u1-e1-mission-2", 5],
+    ["6-1-u1-e1-mission-3", 6],
+    ["6-1-u1-e1-mission-4", 7],
+    ["6-1-u1-e1-mission-5", 8],
+    ["6-1-u1-e1-mission-6", 9]
+  ]);
+  window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
+    if (!verifiedE1.has(item.sourceItemId)) return;
+    item.generatorKey = "sourceGrade6FractionDivisionE1";
+    item.variant = verifiedE1.get(item.sourceItemId);
+    item.reviewLocked = false;
+    item.reviewReason = "";
+    item.answerVisualStatus = "verified";
+    item.verifiedVariantCount = 3;
+  });
+})();
