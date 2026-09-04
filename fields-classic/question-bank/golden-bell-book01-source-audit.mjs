@@ -18,7 +18,7 @@ for (const entry of BOOK01_GOLDEN_BELL_SOURCE_PAGES) {
 
 const lessons = new Map(book.lessons.map((lesson) => [lesson.id, lesson]));
 const expectedOrder = [
-  "clock-turning", "mirror-reflection", "digital-turn-flip", "fold-one-cut", "equal-line-sums",
+  "clock-turning", "mirror-reflection", "digital-turn-flip", "fold-one-cut", "fold-two-cut", "equal-line-sums",
   "equal-line-placement", "gakuro-sum-grid", "number-inference", "preference-logic", "relative-order-running", "book1-equalize-transfer"
 ];
 assert.deepEqual([...lessons.keys()], expectedOrder, "Book 1 lesson order changed");
@@ -50,6 +50,48 @@ for (const entry of lessons.get("digital-turn-flip").original.items.filter((cand
 assert.deepEqual(item("digital-turn-flip", "flip-two-digit").parts.map((part) => Number(part.answer)), [81,51,12,25]);
 assert.deepEqual(item("digital-turn-flip", "half-two-digit").parts.map((part) => Number(part.answer)), [81,21,52,19]);
 assert.deepEqual(item("digital-turn-flip", "arithmetic-8-subtract").parts.map((part) => Number(part.answer)), [30,21,32,41,28]);
+
+const foldOne = lessons.get("fold-one-cut");
+const foldTwo = lessons.get("fold-two-cut");
+assert.equal(foldOne.original.items.length, 26, "fold-one source question count changed");
+assert.equal(foldTwo.original.items.length, 18, "fold-two source question count changed");
+assert.equal(foldOne.original.sourceQuestionCount, foldOne.original.items.length, "fold-one declared source count mismatch");
+assert.equal(foldTwo.original.sourceQuestionCount, foldTwo.original.items.length, "fold-two declared source count mismatch");
+assert.deepEqual(foldOne.original.items.slice(0, 8).map((entry) => canonical(entry.answer)), ["3번","2번","4번","3번","2번","1번","3번","4번"], "one-fold choice answers changed");
+assert.deepEqual(foldTwo.original.items.slice(0, 7).map((entry) => canonical(entry.answer)), ["4번","1번","2번","1번","4번","2번","1번"], "two-fold choice answers changed");
+
+for (const lesson of [foldOne, foldTwo]) {
+  for (const entry of lesson.original.items) {
+    item(lesson.id, entry.id);
+    if (entry.visual?.subtype === "fold-number-sum") {
+      const values = entry.visual.numbers.flat();
+      const calculated = entry.visual.selected.reduce((sum, index) => sum + values[index], 0);
+      assert.equal(Number(canonical(entry.answer)), calculated, `${lesson.id}/${entry.id}: highlighted number sum differs from official answer`);
+      assert.equal(new Set(entry.visual.selected).size, entry.visual.selected.length, `${lesson.id}/${entry.id}: cut cell is counted twice`);
+    }
+  }
+}
+
+assert.deepEqual(["one-fold-arithmetic-1","one-fold-arithmetic-2","one-fold-arithmetic-3","one-fold-arithmetic-4"].map((id) => canonical(item("fold-one-cut", id).answer)), ["4","6","5","7"], "one-fold arithmetic locks changed");
+assert.deepEqual(["one-fold-card-1","one-fold-card-2","one-fold-card-3","one-fold-card-4"].map((id) => item("fold-one-cut", id).parts.map((part) => Number(part.answer))), [[1,3],[3,5],[4,5],[2,6]], "one-fold card placements changed");
+
+function combinations(values, count, start = 0, chosen = []) {
+  if (chosen.length === count) return [chosen];
+  const result = [];
+  for (let index = start; index < values.length; index += 1) result.push(...combinations(values, count, index + 1, [...chosen, values[index]]));
+  return result;
+}
+
+for (const lesson of [foldOne, foldTwo]) {
+  for (const entry of lesson.original.items.filter((candidate) => candidate.visual?.subtype === "card-equation" && candidate.visual.all)) {
+    const blankCount = entry.visual.expression.filter((token) => token == null).length;
+    const equalsIndex = entry.visual.expression.indexOf("=");
+    const target = Number(entry.visual.expression[equalsIndex + 1]);
+    const expected = combinations(entry.visual.cards, blankCount).filter((values) => values.reduce((sum, value) => sum + value, 0) === target).map((values) => values.join("+")).sort();
+    const actual = canonical(entry.answer).split(",").sort();
+    assert.deepEqual(actual, expected, `${lesson.id}/${entry.id}: complete card combination set changed`);
+  }
+}
 
 function permutations(values) {
   if (values.length < 2) return [values];
@@ -149,5 +191,5 @@ const statusCounts = BOOK01_GOLDEN_BELL_SOURCE_PAGES.reduce((counts, entry) => {
   counts[entry.status] = (counts[entry.status] || 0) + entry.pages.length;
   return counts;
 }, {});
-assert.deepEqual(statusCounts, { implemented: 21, partial: 4, pending: 4 }, "Book 1 source status totals changed");
-console.log(`BOOK01_GOLDEN_BELL_SOURCE_OK lessons=${book.lessons.length} sourceItems=${book.lessons.reduce((sum, lesson) => sum + lesson.original.items.length, 0)} pages=${coveredPages.length} implemented=${statusCounts.implemented} partial=${statusCounts.partial} pending=${statusCounts.pending}`);
+assert.deepEqual(statusCounts, { implemented: 29 }, "Book 1 source status totals changed");
+console.log(`BOOK01_GOLDEN_BELL_SOURCE_OK lessons=${book.lessons.length} sourceItems=${book.lessons.reduce((sum, lesson) => sum + lesson.original.items.length, 0)} pages=${coveredPages.length} implemented=${statusCounts.implemented || 0} partial=${statusCounts.partial || 0} pending=${statusCounts.pending || 0}`);

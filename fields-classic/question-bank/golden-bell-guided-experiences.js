@@ -5,6 +5,18 @@ function foldVisual(phase) {
   return `<svg class="guided-fold-svg" viewBox="0 0 260 170" role="img" aria-label="색종이를 접고 자른 뒤 펼치는 과정"><rect class="guided-paper" x="40" y="30" width="180" height="110" /><path class="guided-crease" d="M130 30V140" /><g class="guided-fold-half ${folded ? "is-folded" : ""}"><rect x="40" y="30" width="90" height="110" /><path d="M52 85H112M104 77L114 85L104 93" /></g>${cut ? '<path class="guided-cut right" d="M151 70L168 85L151 100" />' : ""}${unfolded ? '<path class="guided-cut left" d="M109 70L92 85L109 100" />' : ""}<text x="130" y="160">${phase === "flat" ? "접기 전" : phase === "folded" ? "반으로 접기" : phase === "cut" ? "접은 채 자르기" : "거울처럼 펼치기"}</text></svg>`;
 }
 
+function doubleFoldVisual(phase) {
+  const marks = phase === "open-two" ? 4 : phase === "open-one" ? 2 : phase === "second" ? 1 : 0;
+  const captions = {
+    flat: "접기 전 정사각형에서 두 접은 선을 확인해요.",
+    first: "세로선을 따라 한 번 포개요.",
+    second: "가로선을 따라 다시 포갠 뒤 한 곳을 잘라요.",
+    "open-one": "마지막 가로 접기를 먼저 펼치면 자국이 2개가 돼요.",
+    "open-two": "첫 세로 접기까지 펼치면 자국이 4개가 돼요."
+  };
+  return `<div class="guided-double-fold ${phase}" role="img" aria-label="색종이를 두 번 접고 마지막 접기부터 거꾸로 펼치는 과정"><div class="guided-double-fold-paper"><i class="vertical"></i><i class="horizontal"></i>${Array.from({ length: marks }, (_, index) => `<b class="m${index + 1}">★</b>`).join("")}</div><div class="guided-double-fold-order"><span>접기 1</span><span>접기 2</span><strong>펼치기 2</strong><strong>펼치기 1</strong></div><p>${captions[phase]}</p></div>`;
+}
+
 function equalLineVisual(phase, model) {
   const compare = ["compare", "solve"].includes(phase);
   const solved = phase === "solve";
@@ -155,6 +167,7 @@ function equalizeTransferVisual(phase, model) {
 export function guidedConceptVisual(experience, step) {
   const beat = experience.beats[Math.max(0, Math.min(step, experience.beats.length - 1))];
   if (experience.family === "fold-symmetry") return foldVisual(beat.phase);
+  if (experience.family === "double-fold-symmetry") return doubleFoldVisual(beat.phase);
   if (experience.family === "equal-line") return equalLineVisual(beat.phase, experience.model);
   if (experience.family === "line-card-placement") return lineCardPlacementVisual(beat.phase, experience.model);
   if (experience.family === "one-to-one-logic") return logicVisual(beat.phase, experience.model);

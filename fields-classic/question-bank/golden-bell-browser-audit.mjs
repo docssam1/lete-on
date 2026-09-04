@@ -211,6 +211,7 @@ async function auditBookOneGuidedConcepts() {
     { id: "mirror-reflection", family: "mirror-direction", wrong: "아래쪽 왼편", answer: "위쪽 오른편" },
     { id: "digital-turn-flip", family: "digital-transform", wrong: "숫자 5", answer: "숫자 2" },
     { id: "fold-one-cut", family: "fold-symmetry", wrong: "한쪽에만 남아요", answer: "접은 선에서 같은 거리에 마주 봐요" },
+    { id: "fold-two-cut", family: "double-fold-symmetry", wrong: "3개", answer: "4개" },
     { id: "equal-line-sums", family: "equal-line", wrong: "5", answer: "7" },
     { id: "equal-line-placement", family: "line-card-placement", wrong: "1+2와 4+5", answer: "1+5와 2+4" },
     { id: "gakuro-sum-grid", family: "sum-grid-placement", wrong: "4개", answer: "5개" },
@@ -229,7 +230,11 @@ async function auditBookOneGuidedConcepts() {
     assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: original problem must start locked`);
     assert.equal(await experience.locator(".experience-check").count(), 0, `${item.id}: check appeared before the final scene`);
     const next = experience.locator('[data-experience-action="next"]');
-    for (let step = 0; step < 3; step += 1) await next.click();
+    let guidedSteps = 0;
+    while (await experience.locator(".experience-check").count() === 0 && guidedSteps < 8) {
+      await next.click();
+      guidedSteps += 1;
+    }
     assert.equal(await experience.locator(".experience-check").count(), 1, `${item.id}: final check missing`);
     assert.equal(await experience.locator(`[data-experience-choice="${item.answer}"]`).count(), 1, `${item.id}: approved answer is not unique`);
     await experience.locator(`[data-experience-choice="${item.wrong}"]`).click();

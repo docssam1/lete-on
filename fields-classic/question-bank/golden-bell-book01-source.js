@@ -590,6 +590,196 @@ const equalizeTransferLesson = {
   }
 };
 
+const choiceLabels = ["1번", "2번", "3번", "4번"];
+const pattern = (...rows) => rows;
+
+const foldChoiceItem = ({ id, sourceNo, printGroup, typeLabel, prompt, answer, folds, variant, sourcePattern, optionPatterns, diagonal = false, solution }) => inputItem({
+  id,
+  sourceNo,
+  printGroup,
+  typeLabel,
+  sourceLocator: `교사용 슬라이드 ${sourceNo}`,
+  prompt,
+  visual: { kind: "book1", subtype: "fold-choice-board", folds, ...(variant ? { variant } : { sourcePattern, optionPatterns, diagonal }) },
+  options: choiceLabels,
+  answer: `${answer}번`,
+  solution
+});
+
+const foldSumItem = ({ id, sourceNo, printGroup, folds, numbers, selected, answer }) => {
+  const values = selected.map((index) => numbers.flat()[index]);
+  return inputItem({
+    id,
+    sourceNo,
+    printGroup,
+    typeLabel: "잘려 나간 부분의 수 합",
+    sourceLocator: `교사용 슬라이드 ${sourceNo}`,
+    prompt: "색종이를 그림처럼 접어 잘라냈습니다. 펼쳤을 때 잘려 나간 부분에 있는 수의 합을 구하세요.",
+    visual: { kind: "book1", subtype: "fold-number-sum", folds, numbers, selected },
+    answer: String(answer),
+    solution: `접은 선을 차례로 되돌려 잘린 칸을 표시하면 ${values.join(", ")}입니다. 따라서 ${values.join("+")}=${answer}입니다.`
+  });
+};
+
+const cardEquationItem = ({ id, sourceNo, printGroup, typeLabel, prompt, cards, expression, answer, parts, all = false, inputMode = "text", solution }) => inputItem({
+  id,
+  sourceNo,
+  printGroup,
+  typeLabel,
+  sourceLocator: `교사용 슬라이드 ${sourceNo}`,
+  prompt,
+  visual: { kind: "book1", subtype: "card-equation", cards, expression, all },
+  ...(parts ? { parts } : { answer, inputMode }),
+  solution
+});
+
+const foldOneChoiceItems = [
+  foldChoiceItem({ id: "one-fold-shape-1", sourceNo: "10-(1)", printGroup: 1, typeLabel: "한 번 접어 자른 모양 펼치기", prompt: "세로로 한 번 접고 삼각형 부분을 잘랐습니다. 펼친 모양을 고르세요.", answer: 3, folds: ["세로선을 따라 한 번 접기"], variant: "notch", solution: "접은 선에 닿은 삼각형 자국을 반대쪽 같은 거리에 뒤집어 그리면 가운데에서 서로 마주 보는 두 삼각형이 됩니다. 3번입니다." }),
+  foldChoiceItem({ id: "one-fold-shape-2", sourceNo: "10-(2)", printGroup: 2, typeLabel: "서로 다른 모양 펼치기", prompt: "가로로 한 번 접고 반원과 네모 부분을 잘랐습니다. 펼친 모양을 고르세요.", answer: 2, folds: ["가로선을 따라 한 번 접기"], variant: "circle-square", solution: "접은 선에 걸친 반원은 펼치면 원이 되고, 접은 선에서 떨어진 네모는 위아래 같은 거리에 두 개가 됩니다. 2번입니다." }),
+  foldChoiceItem({ id: "one-fold-shape-3", sourceNo: "10-(3)", printGroup: 3, typeLabel: "대각선 접기 펼치기", prompt: "대각선으로 한 번 접고 원과 네모 부분을 잘랐습니다. 펼친 모양을 고르세요.", answer: 4, folds: ["대각선을 따라 한 번 접기"], variant: "circle-square-diagonal", solution: "대각선 접은 선을 거울선으로 삼아 원과 네모를 각각 반대쪽 같은 거리에 옮깁니다. 두 원과 두 네모가 나타나는 4번입니다." })
+];
+
+const slide11Options = [
+  [pattern("WBBB","BBBW","BBBW","WBBB"), pattern("WBWB","BBBB","BBBB","WBWB"), pattern("WBBW","BBBB","BBBB","WBBW"), pattern("WBBB","BBBB","BBBB","WBBB")],
+  [pattern("WBBW","BBBB","BBBB","WBBW"), pattern("BWWB","BBBB","BBBB","BWWB"), pattern("BWWB","BBBB","BWWB","BBBB"), pattern("BWWB","BBBW","BBBW","BBBB")],
+  [pattern("BBWW","BBBW","BBBB","BBBB"), pattern("BBBB","BBBB","WBBB","WWBB"), pattern("BBWB","BBBW","BBBB","BBBB"), pattern("BBWW","BBBB","BBBB","BWBB")],
+  [pattern("WBBB","BBBB","BBBB","BBBW"), pattern("WBBB","BBWB","BWBB","BBBW"), pattern("WBBW","BBBB","BBBB","WBBW"), pattern("WBBW","BBBB","BBBB","BBBW")],
+  [pattern("BWBB","WWWB","BWBB","BBBB"), pattern("BBBB","BBWB","BWBW","BBWB"), pattern("BBBB","BBBB","BWWB","BBWB"), pattern("BBBB","BBWB","BWWW","BBWB")]
+];
+const slide11Sources = [
+  pattern("XBBB","BBBB","BBBB","XBBB"),
+  pattern("BXXB","BBBB","BBBB","BBBB"),
+  pattern("BBBX","BBBB","BBBB","BBBB"),
+  pattern("XBBB","BBBB","BBBB","BBBX"),
+  pattern("BBBB","BXXB","BBXX","BBBB")
+];
+const slide11Answers = [3,2,1,3,4];
+const foldOneGridItems = slide11Answers.map((answer, index) => foldChoiceItem({
+  id: `one-fold-grid-${index + 1}`,
+  sourceNo: `11-(${index + 1})`,
+  printGroup: index + 4,
+  typeLabel: index < 2 ? "격자 색종이 좌우·상하 펼치기" : "격자 색종이 대각선 펼치기",
+  prompt: "격자 색종이를 화살표 방향으로 한 번 접어 진한 부분을 잘랐습니다. 펼친 모양을 고르세요.",
+  answer,
+  folds: [index === 0 ? "왼쪽 반을 오른쪽으로" : index === 1 ? "위쪽 반을 아래쪽으로" : "대각선을 따라 접기"],
+  sourcePattern: slide11Sources[index],
+  optionPatterns: slide11Options[index],
+  diagonal: index >= 2,
+  solution: `접은 선을 기준으로 진한 부분을 반대쪽 같은 거리에 뒤집어 표시합니다. 위치와 방향이 모두 맞는 보기는 ${answer}번입니다.`
+}));
+
+const foldOneSumItems = [
+  { id: "one-fold-sum-1", sourceNo: "12-(1)", folds: ["아래쪽을 위쪽으로"], numbers: [[1,2],[3,4]], selected: [0,1], answer: 3 },
+  { id: "one-fold-sum-2", sourceNo: "12-(2)", folds: ["대각선을 따라 접기"], numbers: [[5,6],[7,8]], selected: [1,2], answer: 13 },
+  { id: "one-fold-sum-3", sourceNo: "12-(3)", folds: ["위쪽을 아래쪽으로"], numbers: [[1,2,3,4],[5,6,7,8],[8,7,6,5],[4,3,2,1]], selected: [0,1,12,13], answer: 10 },
+  { id: "one-fold-sum-4", sourceNo: "12-(4)", folds: ["왼쪽을 오른쪽으로"], numbers: [[8,1,4,7],[5,9,1,6],[4,3,2,8],[2,4,5,1]], selected: [0,3,12,15], answer: 18 },
+  { id: "one-fold-sum-5", sourceNo: "12-(5)", folds: ["대각선을 따라 접기"], numbers: [[1,3,4,2],[8,6,7,5],[4,1,3,3],[6,5,7,8]], selected: [5,6,9,10], answer: 17 },
+  { id: "one-fold-sum-6", sourceNo: "12-(6)", folds: ["대각선을 따라 접기"], numbers: [[1,6,4,2],[4,1,3,5],[4,5,2,3],[6,5,7,8]], selected: [1,4,5,6,9], answer: 19 }
+].map((spec, index) => foldSumItem({ ...spec, printGroup: index + 9 }));
+
+const foldOneArithmeticItems = [
+  cardEquationItem({ id: "one-fold-arithmetic-1", sourceNo: "13-1-(1)", printGroup: 15, typeLabel: "덧셈식 빈칸", prompt: "빈칸에 알맞은 수를 쓰세요.", cards: [4], expression: [6,"+",null,"+",7,"=",17], answer: "4", inputMode: "numeric", solution: "17에서 6과 7을 빼면 17-6-7=4이므로 빈칸은 4입니다." }),
+  cardEquationItem({ id: "one-fold-arithmetic-2", sourceNo: "13-1-(2)", printGroup: 15, typeLabel: "덧셈식 빈칸", prompt: "빈칸에 알맞은 수를 쓰세요.", cards: [6], expression: [9,"+",null,"+",5,"=",20], answer: "6", inputMode: "numeric", solution: "20에서 9와 5를 빼면 20-9-5=6이므로 빈칸은 6입니다." }),
+  cardEquationItem({ id: "one-fold-arithmetic-3", sourceNo: "13-1-(3)", printGroup: 16, typeLabel: "덧셈식 빈칸", prompt: "빈칸에 알맞은 수를 쓰세요.", cards: [5], expression: [null,"+",7,"+",9,"=",21], answer: "5", inputMode: "numeric", solution: "21에서 7과 9를 빼면 21-7-9=5이므로 빈칸은 5입니다." }),
+  cardEquationItem({ id: "one-fold-arithmetic-4", sourceNo: "13-1-(4)", printGroup: 16, typeLabel: "덧셈식 빈칸", prompt: "빈칸에 알맞은 수를 쓰세요.", cards: [7], expression: [4,"+",7,"+",null,"+",8,"=",26], answer: "7", inputMode: "numeric", solution: "26에서 4, 7, 8을 빼면 26-4-7-8=7이므로 빈칸은 7입니다." }),
+  cardEquationItem({ id: "one-fold-card-1", sourceNo: "13-2-(1)", printGroup: 17, typeLabel: "숫자 카드 두 장 고르기", prompt: "1~5 카드 중 서로 다른 두 장을 골라 식을 완성하세요.", cards: [1,2,3,4,5], expression: [5,"+",null,"+",null,"=",9], parts: [numericPart("a","첫째 빈칸",1),numericPart("b","둘째 빈칸",3)], solution: "두 빈칸의 합은 9-5=4입니다. 서로 다른 카드 중 1+3=4이므로 1과 3을 놓습니다." }),
+  cardEquationItem({ id: "one-fold-card-2", sourceNo: "13-2-(2)", printGroup: 18, typeLabel: "숫자 카드 두 장 고르기", prompt: "1~5 카드 중 서로 다른 두 장을 골라 식을 완성하세요.", cards: [1,2,3,4,5], expression: [null,"+",1,"+",null,"=",9], parts: [numericPart("a","첫째 빈칸",3),numericPart("b","둘째 빈칸",5)], solution: "두 빈칸의 합은 9-1=8입니다. 서로 다른 카드 중 3+5=8이므로 3과 5를 놓습니다." }),
+  cardEquationItem({ id: "one-fold-card-3", sourceNo: "13-2-(3)", printGroup: 19, typeLabel: "숫자 카드 두 장 고르기", prompt: "1, 2, 4, 5, 6 카드 중 서로 다른 두 장을 골라 식을 완성하세요.", cards: [1,2,4,5,6], expression: [null,"+",null,"+",9,"=",18], parts: [numericPart("a","첫째 빈칸",4),numericPart("b","둘째 빈칸",5)], solution: "두 빈칸의 합은 18-9=9입니다. 카드 중 4+5=9이므로 4와 5를 놓습니다." }),
+  cardEquationItem({ id: "one-fold-card-4", sourceNo: "13-2-(4)", printGroup: 20, typeLabel: "숫자 카드 두 장 고르기", prompt: "1, 2, 4, 5, 6 카드 중 서로 다른 두 장을 골라 식을 완성하세요.", cards: [1,2,4,5,6], expression: [null,"+",13,"+",null,"=",21], parts: [numericPart("a","첫째 빈칸",2),numericPart("b","둘째 빈칸",6)], solution: "두 빈칸의 합은 21-13=8입니다. 카드 중 2+6=8이므로 2와 6을 놓습니다." }),
+  cardEquationItem({ id: "one-fold-all-pairs-4", sourceNo: "13-3-(1)", printGroup: 21, typeLabel: "합이 되는 카드 모두 고르기", prompt: "1~5 카드 중 합이 4가 되는 서로 다른 두 장을 모두 쓰세요.", cards: [1,2,3,4,5], expression: [null,"+",null,"=",4], answer: aliases("1+3","3+1"), all: true, solution: "1부터 차례로 짝을 찾으면 1+3=4입니다. 2+2는 같은 카드를 두 번 쓰므로 제외합니다." }),
+  cardEquationItem({ id: "one-fold-all-pairs-5", sourceNo: "13-3-(2)", printGroup: 22, typeLabel: "합이 되는 카드 모두 고르기", prompt: "1~5 카드 중 합이 5가 되는 서로 다른 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5], expression: [null,"+",null,"=",5], answer: aliases("1+4,2+3","1+4 2+3","4+1,3+2"), all: true, solution: "작은 수부터 짝지으면 1+4=5, 2+3=5입니다. 순서만 바꾼 식은 같은 짝입니다." }),
+  cardEquationItem({ id: "one-fold-all-pairs-6", sourceNo: "13-3-(3)", printGroup: 23, typeLabel: "합이 되는 카드 모두 고르기", prompt: "1~5 카드 중 합이 6이 되는 서로 다른 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5], expression: [null,"+",null,"=",6], answer: aliases("1+5,2+4","1+5 2+4","5+1,4+2"), all: true, solution: "1+5=6, 2+4=6입니다. 3+3은 같은 카드를 두 번 써야 하므로 제외합니다." }),
+  cardEquationItem({ id: "one-fold-all-pairs-7", sourceNo: "13-3-(4)", printGroup: 24, typeLabel: "합이 되는 카드 모두 고르기", prompt: "1~5 카드 중 합이 7이 되는 서로 다른 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5], expression: [null,"+",null,"=",7], answer: aliases("2+5,3+4","2+5 3+4","5+2,4+3"), all: true, solution: "2+5=7, 3+4=7입니다. 1과 짝이 될 6은 카드에 없으므로 두 짝만 가능합니다." })
+];
+
+function completeFoldOne(lesson) {
+  lesson.title = "한 번 접어 자르고 수를 더해요";
+  lesson.sourceLocator = "교사용 슬라이드 10~13, 활동 01~03·연산";
+  lesson.sourceTypeIds = ["single-fold-unfold-choice", "single-fold-cut-number-sum", "addition-card-completion"];
+  lesson.representativeConcept = "한 번 접은 선을 거울선으로 되돌려 잘린 위치를 찾고, 표시된 수의 합이나 카드 조건을 계산함";
+  lesson.original = {
+    title: "골든벨과 기초 연산",
+    mode: "paged",
+    sourceQuestionCount: 26,
+    structureKey: "single-fold-source-mixed",
+    prompt: "한 번 접은 색종이를 펼친 결과와 이어지는 수·카드 문제를 차례로 해결하세요.",
+    items: [...foldOneChoiceItems, ...foldOneGridItems, ...foldOneSumItems, ...foldOneArithmeticItems]
+  };
+  return lesson;
+}
+
+const slide15TopOptions = [pattern("WBBW","BBBB","BBBB","WBBW"),pattern("BBBB","BWWB","BWWB","BBBB"),pattern("BBBB","WBBW","WBBW","BBBB"),pattern("BWWB","BBBB","BBBB","BWWB")];
+const slide15DiagonalOptions = [pattern("BBBB","WBBW","WWWW","WWWW"),pattern("WBBB","WWBB","WWWW","WWWW"),pattern("BBWW","WWBB","BWBB","WWWW"),pattern("WBBW","WBBW","BWWB","WWWW")];
+
+const foldLandingItems = [
+  { id: "two-fold-landing-1", sourceNo: "14-(1)", folds: ["왼쪽 반을 오른쪽으로", "위쪽 반을 아래쪽으로"], answer: 4 },
+  { id: "two-fold-landing-2", sourceNo: "14-(2)", folds: ["오른쪽 반을 왼쪽으로", "아래쪽 반을 위쪽으로"], answer: 1 },
+  { id: "two-fold-landing-3", sourceNo: "14-(3)", folds: ["대각선을 따라 접기", "삼각형을 다시 반으로 접기"], answer: 2 }
+].map((spec, index) => inputItem({
+  id: spec.id,
+  sourceNo: spec.sourceNo,
+  printGroup: index + 1,
+  typeLabel: "두 번 접은 뒤 맨 위의 수",
+  sourceLocator: `교사용 슬라이드 ${spec.sourceNo}`,
+  prompt: "1, 2, 3, 4가 적힌 색종이를 화살표 방향으로 두 번 접을 때 가장 위에 놓이는 수를 고르세요.",
+  visual: { kind: "book1", subtype: "fold-landing", labels: [[1,2],[3,4]], folds: spec.folds },
+  options: choiceLabels,
+  answer: `${spec.answer}번`,
+  solution: `첫 번째 화살표대로 포갠 뒤 두 번째 화살표대로 다시 접습니다. 마지막에 가장 위에 놓이는 칸은 ${spec.answer}번입니다.`
+}));
+
+const foldTwoChoiceItems = [
+  foldChoiceItem({ id: "two-fold-grid-1", sourceNo: "15-(1)", printGroup: 4, typeLabel: "두 번 접어 자른 격자 펼치기", prompt: "격자 색종이를 두 번 접어 진한 부분을 잘랐습니다. 펼친 모양을 고르세요.", answer: 1, folds: ["왼쪽을 오른쪽으로", "아래쪽을 위쪽으로"], sourcePattern: pattern("BBBB","BBBB","XBBB","XBBB"), optionPatterns: slide15TopOptions, solution: "접은 선을 한 번씩 거꾸로 펼칠 때마다 잘린 칸을 대칭 복사합니다. 네 모서리에 자국이 생기는 1번입니다." }),
+  foldChoiceItem({ id: "two-fold-grid-2", sourceNo: "15-(2)", printGroup: 5, typeLabel: "두 번 접어 자른 격자 펼치기", prompt: "접는 방향이 바뀐 색종이를 두 번 펼쳤을 때의 모양을 고르세요.", answer: 4, folds: ["오른쪽을 왼쪽으로", "위쪽을 아래쪽으로"], sourcePattern: pattern("BBBB","BBBB","BBBX","BBBX"), optionPatterns: slide15TopOptions, solution: "진한 칸을 둘째 접은 선에 대칭으로 펼치고, 그 결과를 첫째 접은 선에 다시 대칭으로 옮깁니다. 4번입니다." }),
+  foldChoiceItem({ id: "two-fold-diagonal-1", sourceNo: "15-(3)", printGroup: 6, typeLabel: "대각선으로 두 번 접어 펼치기", prompt: "대각선으로 두 번 접어 자른 색종이를 완전히 펼친 모양을 고르세요.", answer: 2, folds: ["왼쪽 삼각형을 오른쪽으로", "아래 삼각형을 위로"], sourcePattern: pattern("BBBB","BBBB","XBBB","XXBB"), optionPatterns: slide15DiagonalOptions, diagonal: true, solution: "작은 삼각형의 잘린 부분을 마지막 접은 선에서 먼저 펼치고, 큰 대각선에서 한 번 더 반사합니다. 2번입니다." }),
+  foldChoiceItem({ id: "two-fold-diagonal-2", sourceNo: "15-(4)", printGroup: 7, typeLabel: "대각선으로 두 번 접어 펼치기", prompt: "접는 대각선의 방향을 따라 두 번 펼친 모양을 고르세요.", answer: 1, folds: ["위쪽 삼각형을 아래로", "오른쪽 삼각형을 왼쪽으로"], sourcePattern: pattern("XXBB","BXBB","BBBB","BBBB"), optionPatterns: slide15DiagonalOptions, diagonal: true, solution: "두 번째 접기를 먼저 되돌리고 첫 번째 대각선 접기를 나중에 되돌립니다. 자국의 위치가 맞는 1번입니다." })
+];
+
+const foldTwoSumItems = [
+  { id: "two-fold-sum-1", sourceNo: "16-(1)", folds: ["왼쪽을 오른쪽으로", "아래쪽을 위쪽으로"], numbers: [[2,3,4,5],[6,7,5,9],[2,3,4,5],[6,7,5,9]], selected: [1,2,13,14], answer: 19 },
+  { id: "two-fold-sum-2", sourceNo: "16-(2)", folds: ["오른쪽을 왼쪽으로", "위쪽을 아래쪽으로"], numbers: [[1,3,5,4],[9,7,4,8],[7,6,5,4],[3,2,1,5]], selected: [5,6,9,10], answer: 22 },
+  { id: "two-fold-sum-3", sourceNo: "16-(3)", folds: ["오른쪽을 왼쪽으로", "아래쪽을 위쪽으로"], numbers: [[7,2,5,3],[2,5,4,4],[6,2,8,5],[1,3,6,9]], selected: [0,3,5,6,9,10,12,15], answer: 39 },
+  { id: "two-fold-sum-4", sourceNo: "16-(4)", folds: ["대각선을 따라 접기", "삼각형을 다시 반으로 접기"], numbers: [[1,3,6,2],[8,9,5,4],[7,2,4,1],[2,3,7,8]], selected: [2,6,7,8,9,13], answer: 27 }
+].map((spec, index) => foldSumItem({ ...spec, printGroup: index + 8 }));
+
+const foldTwoArithmeticItems = [
+  cardEquationItem({ id: "two-fold-pairs-7", sourceNo: "17-1-(1)", printGroup: 12, typeLabel: "합이 되는 카드 모두 고르기", prompt: "1~6 카드 중 합이 7인 서로 다른 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5,6], expression: [null,"+",null,"=",7], answer: aliases("1+6,2+5,3+4","1+6 2+5 3+4"), all: true, solution: "작은 수부터 짝지으면 1+6, 2+5, 3+4가 모두 7입니다. 세 짝입니다." }),
+  cardEquationItem({ id: "two-fold-pairs-8", sourceNo: "17-1-(2)", printGroup: 13, typeLabel: "합이 되는 카드 모두 고르기", prompt: "1~6 카드 중 합이 8인 서로 다른 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5,6], expression: [null,"+",null,"=",8], answer: aliases("2+6,3+5","2+6 3+5"), all: true, solution: "2+6=8, 3+5=8입니다. 4+4는 같은 카드를 두 번 써야 하므로 제외합니다." }),
+  cardEquationItem({ id: "two-fold-pairs-9", sourceNo: "17-1-(3)", printGroup: 14, typeLabel: "합이 되는 카드 모두 고르기", prompt: "1~6 카드 중 합이 9인 서로 다른 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5,6], expression: [null,"+",null,"=",9], answer: aliases("3+6,4+5","3+6 4+5"), all: true, solution: "3+6=9, 4+5=9입니다. 1과 2에는 카드 범위 안의 짝이 없습니다." }),
+  cardEquationItem({ id: "two-fold-triples-8", sourceNo: "17-1-(4)", printGroup: 15, typeLabel: "세 카드의 합 모두 고르기", prompt: "1~6 카드 중 합이 8인 서로 다른 세 장의 묶음을 모두 쓰세요.", cards: [1,2,3,4,5,6], expression: [null,"+",null,"+",null,"=",8], answer: aliases("1+2+5,1+3+4","1+2+5 1+3+4"), all: true, solution: "1을 고정하면 남은 두 수의 합은 7입니다. 2+5와 3+4가 가능하므로 1+2+5, 1+3+4입니다." }),
+  cardEquationItem({ id: "two-fold-pairs-9-wide", sourceNo: "17-2-(1)", printGroup: 16, typeLabel: "1~9 카드 짝 모두 찾기", prompt: "1~9 카드 중 합이 9인 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5,6,7,8,9], expression: [null,"+",null,"=",9], answer: aliases("1+8,2+7,3+6,4+5","1+8 2+7 3+6 4+5"), all: true, solution: "1+8, 2+7, 3+6, 4+5가 9입니다. 작은 수부터 짝을 찾으면 빠뜨리지 않습니다." }),
+  cardEquationItem({ id: "two-fold-pairs-10-wide", sourceNo: "17-2-(2)", printGroup: 17, typeLabel: "1~9 카드 짝 모두 찾기", prompt: "1~9 카드 중 합이 10인 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5,6,7,8,9], expression: [null,"+",null,"=",10], answer: aliases("1+9,2+8,3+7,4+6","1+9 2+8 3+7 4+6"), all: true, solution: "1+9, 2+8, 3+7, 4+6이 10입니다. 5+5는 같은 카드가 한 장뿐이므로 제외합니다." }),
+  cardEquationItem({ id: "two-fold-pairs-11-wide", sourceNo: "17-2-(3)", printGroup: 18, typeLabel: "1~9 카드 짝 모두 찾기", prompt: "1~9 카드 중 합이 11인 두 장의 짝을 모두 쓰세요.", cards: [1,2,3,4,5,6,7,8,9], expression: [null,"+",null,"=",11], answer: aliases("2+9,3+8,4+7,5+6","2+9 3+8 4+7 5+6"), all: true, solution: "2+9, 3+8, 4+7, 5+6이 11입니다. 1과 짝이 될 10은 카드에 없습니다." })
+];
+
+const foldTwoLesson = {
+  id: "fold-two-cut",
+  unit: "색종이 접기",
+  title: "두 번 접고 차례로 펼쳐요",
+  sourceLocator: "교사용 슬라이드 14~17, 활동 01~03·연산",
+  sourceTypeIds: ["double-fold-top-layer", "double-fold-unfold-choice", "double-fold-cut-number-sum", "number-card-sum-enumeration"],
+  representativeConcept: "마지막 접기를 먼저 되돌리고 첫 접기를 나중에 되돌려 자국을 두 번 대칭 이동하며, 나타난 칸의 수를 계산함",
+  experience: {
+    kind: "guided-concept",
+    family: "double-fold-symmetry",
+    title: "마지막 접기부터 거꾸로 두 번 펼쳐요",
+    hint: "접은 순서와 펼치는 순서는 반대입니다. 한 번 펼칠 때마다 자국이 접은 선의 반대쪽 같은 거리에 생깁니다.",
+    model: { first: "세로", second: "가로", marks: [1,2,4] },
+    beats: [
+      { phase: "flat", caption: "정사각형의 세로선과 가로선을 확인합니다." },
+      { phase: "first", caption: "세로선을 따라 한 번 접습니다." },
+      { phase: "second", caption: "가로선을 따라 다시 접고 한 곳을 자릅니다." },
+      { phase: "open-one", caption: "마지막 가로 접기를 먼저 펼쳐 자국을 두 개로 만듭니다." },
+      { phase: "open-two", caption: "첫 세로 접기까지 펼쳐 네 자국의 위치를 확인합니다." }
+    ],
+    check: { prompt: "접은 선이 아닌 곳을 두 번 접어 한 번 뚫었다면 완전히 펼쳤을 때 자국은 몇 개일까요?", options: ["2개","3개","4개"], answer: "4개", explanation: "한 번 펼치면 2개, 다시 펼치면 각각 대칭으로 하나씩 더 생겨 4개입니다." }
+  },
+  story: { title: "두 겹 비밀 지도", text: "색종이를 두 번 접어 작은 지도 한 칸을 만들었습니다. 마지막 접기부터 거꾸로 열면 같은 자국이 차례로 나타납니다.", mission: "접은 순서를 기억하고 거꾸로 펼치며 위치와 수를 확인하세요." },
+  explanation: { headline: "접기와 펼치기는 반대 순서로 진행합니다.", steps: ["마지막에 접은 선부터 먼저 펼칩니다.", "새 자국을 접은 선에서 같은 거리의 반대쪽에 표시합니다.", "첫 접기까지 되돌린 뒤 모든 자국과 수를 한 번씩 셉니다."] },
+  original: { title: "골든벨과 기초 연산", mode: "paged", sourceQuestionCount: 18, structureKey: "double-fold-source-mixed", prompt: "두 번 접은 색종이의 겹침과 잘린 위치를 되돌리고 수·카드 문제를 해결하세요.", items: [...foldLandingItems, ...foldTwoChoiceItems, ...foldTwoSumItems, ...foldTwoArithmeticItems] },
+  extension: { title: "추가 학습", structureKey: "double-fold-cut-number-sum", story: "숫자 2, 5, 7, 4가 적힌 색종이를 세로와 가로로 한 번씩 접어 한 곳을 잘랐습니다.", prompt: "네 칸이 모두 잘려 나갔다면 그 칸의 수의 합을 구하세요.", visual: { kind: "book1", subtype: "fold-number-sum", folds: ["세로로 접기","가로로 접기"], numbers: [[2,5],[7,4]], selected: [0,1,2,3] }, answerMode: "input", inputMode: "numeric", answer: "18", explanation: "두 번 접은 것을 모두 펼치면 네 칸이 나타납니다. 2+5+7+4=18입니다." }
+};
+
 function completePreferenceLogic(lesson) {
   if (!lesson) return lesson;
   lesson.sourceLocator = "교사용 슬라이드 32, 논리 추리 (1)~(4)";
@@ -629,8 +819,8 @@ export const BOOK01_GOLDEN_BELL_SOURCE_PAGES = Object.freeze([
   { pages: [2], lessonId: "clock-turning", status: "implemented" },
   { pages: [3], lessonId: "mirror-reflection", status: "implemented" },
   { pages: [4,5,6,7,8], lessonId: "digital-turn-flip", status: "implemented" },
-  { pages: [10,11,12,13], lessonId: "fold-one-cut", status: "partial" },
-  { pages: [14,15,16,17], lessonId: "fold-two-cut", status: "pending" },
+  { pages: [10,11,12,13], lessonId: "fold-one-cut", status: "implemented" },
+  { pages: [14,15,16,17], lessonId: "fold-two-cut", status: "implemented" },
   { pages: [20], lessonId: "equal-line-sums", status: "implemented" },
   { pages: [21,22,23], lessonId: "equal-line-placement", status: "implemented" },
   { pages: [24,25,26], lessonId: "gakuro-sum-grid", status: "implemented" },
@@ -643,12 +833,14 @@ export const BOOK01_GOLDEN_BELL_SOURCE_PAGES = Object.freeze([
 export function expandBookOneGoldenBell(book) {
   if (!book || book.id !== "book-01") return book;
   const current = new Map(book.lessons.map((lesson) => [lesson.id, lesson]));
+  const foldOne = completeFoldOne(current.get("fold-one-cut"));
   const preferenceLogic = completePreferenceLogic(current.get("preference-logic"));
   book.lessons = [
     current.get("clock-turning"),
     mirrorLesson,
     digitalLesson,
-    current.get("fold-one-cut"),
+    foldOne,
+    foldTwoLesson,
     current.get("equal-line-sums"),
     equalLinePlacementLesson,
     gakuroLesson,
@@ -673,6 +865,6 @@ export function expandBookOneGoldenBell(book) {
     lesson.original.items.forEach((item, index) => { item.printGroup = Math.floor(index / size) + 1; });
   }
   book.sourceCoverage = BOOK01_GOLDEN_BELL_SOURCE_PAGES;
-  book.source.note = "교사용 정답본 34장을 문항 단위로 대조 중. 구현 문항은 출처·공식 답·풀이를 잠그고, 접기·원형진의 미완료 페이지는 공개 완료로 세지 않음";
+  book.source.note = "교사용 정답본의 학습·연산 29쪽을 문항 단위로 대조 완료. 1권 골든벨 132문항은 출처·공식 답·독립 계산·문항별 풀이를 함께 잠금";
   return book;
 }

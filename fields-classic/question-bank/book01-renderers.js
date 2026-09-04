@@ -213,6 +213,73 @@ function digitSumTableMarkup(visual) {
   return `<table class="b1-digit-sum-table"><thead><tr><th>각 자리 숫자의 합</th><th>두 자리 수</th><th>개수</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
+function foldPatternGrid(pattern, label = "", diagonal = false) {
+  const rows = pattern.length;
+  const columns = pattern[0]?.length || 1;
+  const cells = pattern.flatMap((row) => [...row]).map((state) => `<i class="${state === "W" ? "removed" : state === "X" ? "cut" : "paper"}"></i>`).join("");
+  return `<figure class="b1-fold-pattern${diagonal ? " diagonal" : ""}"><div style="--rows:${rows};--columns:${columns}">${cells}</div>${label ? `<figcaption>${esc(label)}</figcaption>` : ""}</figure>`;
+}
+
+function foldMotifSvg(variant, option = 0) {
+  if (variant === "notch") {
+    const cuts = [
+      '<path class="cut" d="M24 58H58L72 72L58 86H24Z"/>',
+      '<path class="cut" d="M58 20V58L72 72L86 58V20Z"/>',
+      '<path class="cut" d="M20 58H58L72 72L58 86H20M124 58H86L72 72L86 86H124Z"/>',
+      '<path class="cut" d="M20 58H52L64 72L52 86H20M124 58H92L80 72L92 86H124Z"/>'
+    ];
+    if (!option) return `<svg viewBox="0 0 144 144"><rect class="paper" x="20" y="20" width="104" height="104"/><path class="crease" d="M72 20V124"/><path class="source-cut" d="M72 58L92 72L72 86Z"/><path class="fold-arrow" d="M48 103Q61 114 71 96"/></svg>`;
+    return `<svg viewBox="0 0 144 144"><rect class="paper" x="20" y="20" width="104" height="104"/><path class="crease" d="M72 20V124"/>${cuts[option - 1]}</svg>`;
+  }
+  if (variant === "circle-square") {
+    const optionMarks = [
+      '<path class="cut" d="M20 66A14 14 0 0 1 34 80A14 14 0 0 1 20 94Z"/><path class="cut" d="M94 30H114V50H94ZM94 94H114V114H94Z"/>',
+      '<circle class="cut" cx="32" cy="72" r="13"/><path class="cut" d="M94 30H114V50H94ZM94 94H114V114H94Z"/>',
+      '<path class="cut" d="M20 58A14 14 0 0 1 34 72A14 14 0 0 1 20 86Z"/><circle class="cut" cx="100" cy="101" r="12"/><path class="cut" d="M94 30H114V50H94Z"/>',
+      '<path class="cut" d="M72 62C57 47 43 68 72 91C101 68 87 47 72 62Z"/>'
+    ];
+    if (!option) return `<svg viewBox="0 0 144 144"><rect class="paper" x="20" y="20" width="104" height="104"/><path class="crease" d="M20 72H124"/><path class="source-cut" d="M20 58A14 14 0 0 1 34 72H20ZM94 31H114V51H94Z"/><path class="fold-arrow" d="M44 92Q59 80 42 68"/></svg>`;
+    return `<svg viewBox="0 0 144 144"><rect class="paper" x="20" y="20" width="104" height="104"/><path class="crease" d="M20 72H124"/>${optionMarks[option - 1]}</svg>`;
+  }
+  const optionMarks = [
+    '<circle class="cut" cx="48" cy="48" r="12"/><path class="cut" d="M84 84H108V108H84Z"/>',
+    '<circle class="cut" cx="48" cy="48" r="12"/><circle class="cut" cx="96" cy="96" r="12"/>',
+    '<path class="cut" d="M72 56C58 42 44 63 72 86C100 63 86 42 72 56Z"/>',
+    '<circle class="cut" cx="45" cy="45" r="11"/><circle class="cut" cx="99" cy="99" r="11"/><path class="cut" d="M85 31H105V51H85ZM31 85H51V105H31Z"/>'
+  ];
+  if (!option) return `<svg viewBox="0 0 144 144"><rect class="paper" x="20" y="20" width="104" height="104"/><path class="crease" d="M20 124L124 20"/><circle class="source-cut" cx="93" cy="43" r="12"/><path class="source-cut" d="M35 89H58V112H35Z"/><path class="fold-arrow" d="M48 92Q70 93 72 70"/></svg>`;
+  return `<svg viewBox="0 0 144 144"><rect class="paper" x="20" y="20" width="104" height="104"/><path class="crease" d="M20 124L124 20"/>${optionMarks[option - 1]}</svg>`;
+}
+
+function foldChoiceBoardMarkup(visual) {
+  const folds = `<div class="b1-fold-steps">${visual.folds.map((fold, index) => `<span><b>${index + 1}</b>${esc(fold)}</span>`).join("")}</div>`;
+  if (visual.variant) {
+    const options = Array.from({ length: 4 }, (_, index) => `<figure>${foldMotifSvg(visual.variant, index + 1)}<figcaption>${index + 1}번</figcaption></figure>`).join("");
+    return `<div class="b1-fold-choice-board motif"><section>${foldMotifSvg(visual.variant)}${folds}</section><div class="b1-fold-option-grid">${options}</div></div>`;
+  }
+  const source = foldPatternGrid(visual.sourcePattern, "접은 뒤 자른 곳", visual.diagonal);
+  const options = visual.optionPatterns.map((pattern, index) => foldPatternGrid(pattern, `${index + 1}번`, visual.diagonal)).join("");
+  return `<div class="b1-fold-choice-board"><section>${source}${folds}</section><div class="b1-fold-option-grid">${options}</div></div>`;
+}
+
+function foldNumberSumMarkup(visual) {
+  const selected = new Set(visual.selected);
+  const rows = visual.numbers.length;
+  const columns = visual.numbers[0].length;
+  return `<div class="b1-fold-number-sum"><div class="b1-fold-steps">${visual.folds.map((fold, index) => `<span><b>${index + 1}</b>${esc(fold)}</span>`).join("")}</div><div class="b1-fold-number-grid" style="--rows:${rows};--columns:${columns}">${visual.numbers.flat().map((value, index) => `<i class="${selected.has(index) ? "cut-area" : ""}">${value}</i>`).join("")}</div><strong>잘려 나간 칸의 수를 모두 더하세요.</strong></div>`;
+}
+
+function foldLandingMarkup(visual) {
+  const labels = visual.labels.flat();
+  return `<div class="b1-fold-landing"><div class="b1-fold-landing-grid">${labels.map((label) => `<span>${label}</span>`).join("")}</div><div class="b1-fold-steps">${visual.folds.map((fold, index) => `<span><b>${index + 1}</b>${esc(fold)}</span>`).join("")}</div><div class="b1-fold-stack"><i></i><i></i><i></i><strong>?</strong></div><p>두 번 접은 뒤 가장 위에 놓이는 번호</p></div>`;
+}
+
+function cardEquationMarkup(visual) {
+  const cards = `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>`;
+  const expression = visual.expression.map((token) => token == null ? '<span class="b1-equation-blank"></span>' : `<b>${esc(token)}</b>`).join("");
+  return `<div class="b1-card-equation">${cards}<div>${expression}</div>${visual.all ? "<strong>가능한 카드 묶음을 모두 찾으세요.</strong>" : "<strong>카드는 한 번씩만 사용할 수 있어요.</strong>"}</div>`;
+}
+
 function conditionCardMarkup(visual) {
   return `<div class="b1-condition-card"><strong>${esc(visual.title)}</strong><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
 }
@@ -267,6 +334,10 @@ export function book01Markup(visual) {
   if (visual.subtype === "ring-lines") return ringLinesMarkup(visual);
   if (visual.subtype === "line-card-board") return lineCardBoardMarkup(visual);
   if (visual.subtype === "digit-sum-table") return digitSumTableMarkup(visual);
+  if (visual.subtype === "fold-choice-board") return foldChoiceBoardMarkup(visual);
+  if (visual.subtype === "fold-number-sum") return foldNumberSumMarkup(visual);
+  if (visual.subtype === "fold-landing") return foldLandingMarkup(visual);
+  if (visual.subtype === "card-equation") return cardEquationMarkup(visual);
   if (visual.subtype === "condition-card") return conditionCardMarkup(visual);
   if (visual.subtype === "place-value-blocks") return placeValueBlocksMarkup(visual);
   if (visual.subtype === "equal-split-set") return equalSplitSetMarkup(visual);

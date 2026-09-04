@@ -42,6 +42,13 @@ const CUSTOM_PRACTICE = Object.freeze({
     answerMode: "input", inputMode: "numeric", answer: "4",
     explanation: "한 번 접은 종이는 두 겹입니다. 구멍 두 개가 각각 두 겹에 생기므로 펼치면 2×2=4개입니다."
   },
+  "fold-two-cut": {
+    story: "숫자 3, 4, 6, 8이 적힌 색종이를 세로와 가로로 한 번씩 접어 한 곳을 잘랐습니다.",
+    prompt: "완전히 펼쳤을 때 네 칸이 모두 잘려 나갔다면 그 칸의 수의 합은 얼마일까요?",
+    visual: { kind: "book1", subtype: "fold-number-sum", folds: ["세로로 접기", "가로로 접기"], numbers: [[3,4],[6,8]], selected: [0,1,2,3] },
+    answerMode: "input", inputMode: "numeric", answer: "21",
+    explanation: "두 번 접은 것을 차례로 펼치면 네 칸이 나타납니다. 3+4+6+8=21입니다."
+  },
   "equal-line-sums": {
     story: "가로줄과 세로줄의 세 수 합을 같게 만듭니다.",
     prompt: "위쪽 빈칸에 들어갈 수를 쓰세요.",

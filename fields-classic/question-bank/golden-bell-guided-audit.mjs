@@ -8,6 +8,7 @@ const expectedIds = [
   "mirror-reflection",
   "digital-turn-flip",
   "fold-one-cut",
+  "fold-two-cut",
   "equal-line-sums",
   "equal-line-placement",
   "gakuro-sum-grid",
