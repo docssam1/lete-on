@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
 
 const runtimeModules = process.env.CODEX_NODE_MODULES
   || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules";
@@ -22,7 +23,8 @@ async function auditViewport(viewport, label) {
     const bookId = `book-${String(bookNumber).padStart(2, "0")}`;
     await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BROWSER-AUDIT&book=${bookId}`, { waitUntil: "networkidle" });
     const lessons = await page.locator(".lesson-button").evaluateAll((nodes) => nodes.map((node) => node.dataset.lesson));
-    assert.equal(lessons.length, 4, `${label}/${bookId}: expected four lessons`);
+    const expectedLessons = GOLDEN_BELL_BOOKS.find((book) => book.id === bookId).lessons.length;
+    assert.equal(lessons.length, expectedLessons, `${label}/${bookId}: lesson list differs from verified data`);
     for (const lessonId of lessons) {
       await page.locator(`.lesson-button[data-lesson="${lessonId}"]`).click();
       const learningOrder = await page.locator("#lessonContent").evaluate((root) => {
@@ -56,6 +58,8 @@ async function auditViewport(viewport, label) {
         assert.equal(await page.locator("[data-original-answer]").count(), itemCount, `${label}/${bookId}/${lessonId}: per-question answer view missing`);
         assert.equal(await page.locator("[data-original-answer]").evaluateAll((nodes) => nodes.every((node) => node.textContent.trim() === "풀이 보기")), true, `${label}/${bookId}/${lessonId}: source control must be labeled as a worked solution`);
         assert.equal(await page.locator("[data-original-skip]").count(), itemCount, `${label}/${bookId}/${lessonId}: per-question skip missing`);
+        const paged = await page.locator(".source-question-card").count() === 1;
+        assert.equal(await page.locator("[data-original-check]").count(), paged ? 0 : itemCount, `${label}/${bookId}/${lessonId}: each grouped source item needs its own check`);
         assert.equal(await page.locator(".quiz-item-solution").count(), 0, `${label}/${bookId}/${lessonId}: source solution leaked before solution view`);
         assert.equal(await page.locator('[data-input-group][data-answer-scope="original"]').evaluateAll((nodes) => nodes.filter((node) => node.value.trim()).length), 0, `${label}/${bookId}/${lessonId}: source input was prefilled`);
         await page.locator("[data-original-answer]").first().click();
@@ -77,7 +81,8 @@ async function auditViewport(viewport, label) {
 async function unlockProgressiveConcept(page) {
   const experience = page.locator(".progressive-concept");
   if (!(await experience.count())) return;
-  for (let step = 0; step < 2; step += 1) await experience.locator('[data-experience-action="next"]').click();
+  const stepCount = await experience.locator(".experience-step-track i").count();
+  for (let step = 1; step < stepCount; step += 1) await experience.locator('[data-experience-action="next"]').click();
   await experience.locator("[data-experience-answer]").click();
 }
 
@@ -110,8 +115,9 @@ async function openExtension(page, student) {
   const itemCount = await answerButtons.count();
   assert.ok(itemCount >= 1, "extension audit source questions missing");
   for (let index = 0; index < itemCount; index += 1) await page.locator("[data-original-answer]").nth(index).click();
-  await page.locator('[data-check="original"]').click();
-  await page.locator('[data-check="original"]').click();
+  const completeButton = page.locator("[data-complete-original]");
+  assert.equal(await completeButton.isDisabled(), false, "grouped source completion stayed disabled after each worked solution");
+  await completeButton.click();
   assert.equal(await page.locator("[data-extension-answer]").count(), 1, "extension answer view missing");
   assert.equal(await page.locator("[data-extension-skip]").count(), 1, "extension skip control missing");
   assert.match(await page.locator(".quiz-head span").innerText(), /추가 학습/u, "extension stage label missing");
@@ -457,20 +463,18 @@ async function auditInteractiveTriangularStair() {
   assert.equal(await originalItems.locator("[data-original-skip]").count(), 2, "each source question needs its own skip action");
   await originalItems.nth(0).locator("[data-input-group]").fill("19");
   await originalItems.nth(1).locator("[data-original-skip]").click();
-  const originalCheck = page.locator('[data-check="original"]');
-  assert.equal(await originalCheck.isDisabled(), false, "manual answer and skip did not resolve the source questions");
-  await originalCheck.click();
-  assert.match(await page.locator(".feedback:not(.success)").innerText(), /1문제를 다시/u, "wrong manual answer incorrectly passed");
-  assert.equal(await originalCheck.innerText(), "확인", "wrong manual answer unlocked the next step");
+  const firstItemCheck = originalItems.nth(0).locator("[data-original-check]");
+  assert.equal(await firstItemCheck.isDisabled(), false, "first source item check stayed disabled after answer input");
+  await firstItemCheck.click();
+  assert.match(await originalItems.nth(0).locator(".quiz-item-feedback").innerText(), /아직 맞지 않아요/u, "wrong manual answer incorrectly passed");
+  assert.equal(await firstItemCheck.innerText(), "확인", "wrong manual answer marked the item complete");
   await originalItems.nth(0).locator("[data-original-answer]").click();
   assert.equal(await originalItems.nth(0).locator("[data-input-group]").inputValue(), "20", "approved fourth-stage answer was not filled");
   assert.match(await originalItems.nth(0).locator(".quiz-item-solution").innerText(), /풀이[\s\S]*1\+3\+6\+10=20[\s\S]*답\s*20/u, "approved worked solution missing");
   assert.match(await originalItems.nth(1).locator(".quiz-item-assist").innerText(), /넘어간 문제/u, "skipped source question note missing");
   assert.equal((await originalItems.nth(1).innerText()).includes("84"), false, "skipping must not reveal the approved seventh-stage answer");
-  assert.equal(await originalCheck.isDisabled(), false, "answer-view and skip did not resolve the source questions");
-  await originalCheck.click();
-  assert.match(await page.locator(".feedback.success").innerText(), /답을 본 1문제, 넘어간 1문제/u, "assisted completion summary missing");
-  assert.equal(await originalCheck.innerText(), "다음", "resolved source questions did not unlock the next step");
+  const originalNext = page.locator("[data-complete-original]");
+  assert.equal(await originalNext.isDisabled(), false, "answer-view and skip did not resolve the source questions");
   const originalProgress = await page.evaluate(() => JSON.parse(localStorage.getItem("fields-classic-golden-bell:TRIANGULAR-AUDIT")));
   const savedLesson = originalProgress["book-05"]["cube-tetrahedral-growth"];
   assert.equal(savedLesson.outcomes.original["stair-four"].status, "revealed", "answer-view outcome was not saved");
@@ -485,7 +489,7 @@ async function auditInteractiveTriangularStair() {
   assert.equal(await printedConcept.count(), 1, "triangular instructional print still missing");
   assert.equal(await printedConcept.locator("button, select, input").count(), 0, "triangular print must not contain interactive controls");
   assert.equal((await printedConcept.innerText()).includes("20개"), false, "triangular print leaked the original fourth-stage answer");
-  await originalCheck.click();
+  await originalNext.click();
   const extensionInput = page.locator('[data-input-group="cube-tetrahedral-growth:extension"]');
   await extensionInput.fill("35");
   const extensionCheck = page.locator('[data-check="extension"]');
@@ -521,21 +525,22 @@ async function auditCourseOneProgressiveConcepts() {
       const experience = mobile.locator(".progressive-concept");
       if (!(await experience.count())) continue;
       assert.equal(await mobile.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${bookId}/${lessonId}: original must start locked`);
-      assert.equal(await experience.locator(".experience-step-track i").count(), 3, `${bookId}/${lessonId}: three concept steps missing`);
+      const stepCount = await experience.locator(".experience-step-track i").count();
+      assert.ok(stepCount >= 3, `${bookId}/${lessonId}: concept scenes are incomplete`);
       assert.equal(await experience.locator(".progressive-check").count(), 0, `${bookId}/${lessonId}: concept check appeared before the explanation ended`);
       assert.equal(await experience.locator(".progressive-visual").count(), 1, `${bookId}/${lessonId}: verified source visual missing`);
       if (lessonId === "addition-sum-matrix") {
         assert.equal(await experience.locator('.progressive-sum-matrix[data-matrix-step="1"] [data-matrix-value="8"]').count(), 3, "matrix first step must put 8 on the three repeated squares");
         assert.equal(await experience.locator('.progressive-sum-matrix .target').innerText(), "?", "matrix target leaked before the final step");
       }
-      for (let step = 0; step < 2; step += 1) {
+      for (let step = 0; step < stepCount - 1; step += 1) {
         await experience.locator('[data-experience-action="next"]').click();
         if (lessonId === "addition-sum-matrix" && step === 0) {
           assert.ok(await experience.locator('[data-symbol="△"] [data-matrix-value="4"]').count() >= 1, "matrix second step must reveal the triangle value");
           assert.equal(await experience.locator('.progressive-sum-matrix .target').innerText(), "?", "matrix target leaked during substitution");
         }
       }
-      assert.equal(await experience.getAttribute("data-progressive-step"), "3", `${bookId}/${lessonId}: final explanation step missing`);
+      assert.equal(await experience.getAttribute("data-progressive-step"), String(stepCount), `${bookId}/${lessonId}: final explanation step missing`);
       if (lessonId === "addition-sum-matrix") {
         assert.equal(await experience.locator('[data-symbol="◎"] [data-matrix-value="3"]').count(), 2, "matrix final step must reveal both circle values");
         assert.equal(await experience.locator('[data-symbol="☆"] [data-matrix-value="5"]').count(), 1, "matrix final step must reveal the star value");

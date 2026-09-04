@@ -126,6 +126,20 @@ const CUSTOM_PRACTICE = Object.freeze({
     answerMode: "input", inputMode: "numeric", answer: "300",
     explanation: "1+24=25인 짝이 12개입니다. 25×12=300입니다."
   },
+  "napier-multiplication": {
+    story: "곱셈판에서 32를 14번 더하는 계산을 짧게 나타냅니다.",
+    prompt: "32×14의 값을 쓰세요.",
+    visual: { kind: "book10", subtype: "napier-grid", first: 32, second: 14 },
+    answerMode: "input", inputMode: "numeric", answer: "448",
+    explanation: "32×10=320, 32×4=128이므로 320+128=448입니다."
+  },
+  "even-consecutive-sum": {
+    story: "9부터 16까지의 연속수 카드를 양끝에서 짝지어 놓았습니다.",
+    prompt: "9부터 16까지의 합을 쓰세요.",
+    visual: { kind: "book10", subtype: "consecutive-pairing", from: 9, to: 16 },
+    answerMode: "input", inputMode: "numeric", answer: "100",
+    explanation: "9+16=25인 짝이 4개이므로 25×4=100입니다."
+  },
   "consecutive-page-range": {
     story: "연속된 7개의 보관함 번호를 더했더니 140이었습니다.",
     prompt: "가장 처음 보관함 번호를 쓰세요.",
@@ -139,6 +153,13 @@ const CUSTOM_PRACTICE = Object.freeze({
     visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 6, 8], length: 4 },
     answerMode: "input", inputMode: "numeric", answer: "24",
     explanation: "첫 자리부터 놓을 카드는 4장, 3장, 2장, 1장입니다. 4×3×2×1=24개입니다."
+  },
+  "number-digit-range-count": {
+    story: "1번부터 58번까지 번호표를 차례로 씁니다.",
+    prompt: "번호를 쓰는 데 숫자는 모두 몇 개 필요한지 쓰세요.",
+    visual: { kind: "book10", subtype: "digit-count-breakdown", segments: [{ label: "1~9", count: 9, digits: 1 }, { label: "10~58", count: 49, digits: 2 }] },
+    answerMode: "input", inputMode: "numeric", answer: "107",
+    explanation: "한 자리 수에서 9개, 두 자리 수에서 49×2=98개를 씁니다. 9+98=107개입니다."
   }
 });
 

@@ -309,14 +309,17 @@ for (const unit of requiredBook9Units) if (!book9.lessons.some((lesson) => lesso
 
 const book10 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-10");
 const approvedBook10Answers = new Map([
+  ["napier-multiplication", ["1610", "53382", "900", "4200", "1938"]],
+  ["even-consecutive-sum", ["60", "105", "90", "126"]],
   ["consecutive-page-range", ["10", "15"]],
   ["catch-up-acorns", [
     ["11", "7", "4"], ["5", "3", "2"], ["6", "3"], ["2"], ["30"], ["40"],
     ["15", "2", "5", "8"], ["4", "7", "9"], ["21"], ["15"], ["6", "480"],
     ["6", "12000"], ["6", "36"], ["6", "72"], ["6"], ["5"], ["7"], ["7"]
   ]],
-  ["digit-card-four-place", ["6", "24"]],
-  ["number-baseball-secret", ["634"]]
+  ["digit-card-four-place", ["6", "24", "10"]],
+  ["number-baseball-secret", ["634"]],
+  ["number-digit-range-count", [["19", "38"], "1389", "855"]]
 ]);
 const snapshotOriginal = (original) => original.mode === "paged" ? ({
   title: original.title,
@@ -365,12 +368,9 @@ const approvedOriginalSnapshots = new Map([
   ["book-10/digit-card-four-place", {
     title: "교재 확인",
     structureKey: "four-distinct-digit-cards-used-once",
-    prompt: "1, 3, 5, 7을 한 번씩 사용해 네 자리 수를 만듭니다.",
-    visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4 },
-    items: [
-      { id: "fixed-first-digit-count", prompt: "천의 자리 숫자가 1인 수의 개수", answerMode: "input", inputMode: "numeric", answer: "6" },
-      { id: "all-four-digit-count", prompt: "만들 수 있는 네 자리 수의 개수", answerMode: "input", inputMode: "numeric", answer: "24" }
-    ]
+    mode: "paged",
+    itemIds: ["fixed-first-digit-count", "all-four-digit-count", "increasing-three-digit-count"],
+    printGroups: [1, 1, 2]
   }],
   ["book-10/number-baseball-secret", {
     title: "교재 확인",
@@ -429,7 +429,7 @@ const conceptLeakChecks = new Map([
   ["book-10/consecutive-page-range", {
     answers: ["10", "15"],
     coreValues: ["75", "10", "15"],
-    required: ["110", "20, 21, 22, 23, 24"]
+    required: ["6부터 10까지", "8×5=40"]
   }],
   ["book-10/catch-up-acorns", {
     answers: ["11", "7", "4"],
@@ -437,14 +437,14 @@ const conceptLeakChecks = new Map([
     required: ["두 식", "같은 부분", "더하거나 빼서", "나눕니다"]
   }],
   ["book-10/digit-card-four-place", {
-    answers: ["6", "24"],
+    answers: ["6", "24", "10"],
     coreValues: ["1", "3", "5", "7"],
-    required: ["5×4×3×2×1=120", "6×5×4×3×2×1=720"]
+    required: ["5×4×3=60", "카드 6장 중 3장"]
   }],
   ["book-10/number-baseball-secret", {
     answers: ["634"],
     coreValues: ["236", "832", "834"],
-    required: ["A", "B", "C"]
+    required: ["0B", "스트라이크", "볼"]
   }]
 ]);
 for (const [lessonKey, check] of conceptLeakChecks) {
@@ -460,7 +460,7 @@ for (const [lessonKey, check] of conceptLeakChecks) {
   }
 }
 if (book10.source.origin !== "textbook-derived") fail("book-10: textbook-derived source label is required");
-const requiredBook10Units = ["연속수의 합", "따라잡기", "조건에 맞는 수", "숫자 야구게임"];
+const requiredBook10Units = ["곱셈 방법", "연속수의 합", "따라잡기", "조건에 맞는 수", "숫자 야구게임", "수와 숫자의 개수"];
 for (const unit of requiredBook10Units) if (!book10.lessons.some((lesson) => lesson.unit === unit)) fail(`book-10: missing ${unit}`);
 
 const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");

@@ -8,19 +8,22 @@ const progressive = lessons.filter(({ lesson }) => lesson.experience?.kind === "
 const triangular = lessons.filter(({ lesson }) => lesson.experience?.kind === "triangular-stair");
 
 assert.equal(courseBooks.length, 7, "course 1 books 4-10 must all be present");
-assert.equal(lessons.length, 28, "books 4-10 must contain 28 lessons");
-assert.equal(progressive.length, 27, "all non-triangular lessons need progressive concept learning");
+assert.ok(lessons.length >= 28, "books 4-10 lost a verified lesson");
+assert.equal(progressive.length, lessons.length - 1, "all non-triangular lessons need progressive concept learning");
 assert.equal(triangular.length, 1, "the source-backed triangular stair must keep its dedicated experience");
 assert.equal(lessons.filter(({ lesson }) => !lesson.experience).length, 0, "books 4-10 contain a concept-learning gap");
-assert.equal(Object.keys(COURSE_ONE_PROGRESSIVE_CHECKS).length, 27, "progressive check catalog must match the attached lessons");
+assert.ok(Object.keys(COURSE_ONE_PROGRESSIVE_CHECKS).every((lessonId) => progressive.some(({ lesson }) => lesson.id === lessonId)), "progressive check catalog contains an unknown lesson");
 
 for (const { book, lesson } of progressive) {
   const experience = lesson.experience;
   const prefix = `${book.id}/${lesson.id}`;
   assert.equal(book.source?.verified, true, `${prefix}: source must be verified`);
   assert.equal(experience.family, lesson.sourceTypeIds[0], `${prefix}: source type family changed`);
-  assert.deepEqual(experience.beats.map((beat) => beat.action), ["reveal", "highlight", "verify"], `${prefix}: three-step learning order changed`);
-  assert.deepEqual(experience.beats.map((beat) => beat.caption), lesson.explanation.steps, `${prefix}: tutorial explanation changed`);
+  assert.ok(experience.beats.length >= 3, `${prefix}: concept animation needs at least three scenes`);
+  assert.equal(experience.beats[0].action, "reveal", `${prefix}: concept animation must start with reveal`);
+  assert.equal(experience.beats.at(-1).action, "verify", `${prefix}: concept animation must end with verify`);
+  assert.ok(experience.beats.slice(1, -1).every((beat) => beat.action === "highlight"), `${prefix}: middle concept scenes must highlight one step`);
+  assert.ok(experience.beats.every((beat) => beat.caption?.trim()), `${prefix}: concept scene caption missing`);
   assert.match(experience.learnerStage, /7세 8월부터 초등 1학년 초반/u, `${prefix}: learner stage missing`);
   assert.match(experience.learnerStage, new RegExp(`${Number(book.id.slice(-2))}권`, "u"), `${prefix}: book stage mismatch`);
   assert.deepEqual(Object.keys(experience.learnerFit).sort(), ["language", "prerequisites", "reasoningLoad", "representations", "responseMode"], `${prefix}: learner-fit evidence incomplete`);

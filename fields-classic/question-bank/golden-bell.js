@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260904b";
+import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260904d";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260901e";
 import { book01Markup } from "./book01-renderers.js?v=20260829f";
@@ -9,7 +9,7 @@ import { book06Markup } from "./book06-renderers.js?v=20260829b";
 import { book07Markup } from "./book07-renderers.js?v=20260828q";
 import { book08Markup } from "./book08-renderers.js?v=20260828r";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
-import { book10Markup } from "./book10-renderers.js?v=20260904b";
+import { book10Markup } from "./book10-renderers.js?v=20260904c";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -28,6 +28,7 @@ const state = {
   phase: "concept",
   selections: {},
   originalAssists: {},
+  originalChecks: {},
   originalIndex: 0,
   extensionAssist: null,
   extensionIndex: 0,
@@ -123,6 +124,7 @@ function setPhase(phase) {
   state.phase = phase;
   state.selections = {};
   state.originalAssists = {};
+  state.originalChecks = {};
   state.originalIndex = phase === "original" ? 0 : state.originalIndex;
   state.extensionAssist = null;
   state.extensionIndex = phase === "extension" ? 0 : state.extensionIndex;
@@ -360,6 +362,8 @@ function progressiveSumMatrixMarkup(lesson, visualStep, currentStep) {
 }
 
 function progressiveVisualMarkup(lesson, experience, currentStep) {
+  const beatVisual = experience.beats[currentStep]?.visual;
+  if (beatVisual) return visualMarkup(beatVisual);
   const visualStep = experience.visualProgression?.[currentStep];
   if (lesson.id === "addition-sum-matrix" && visualStep) return progressiveSumMatrixMarkup(lesson, visualStep, currentStep);
   return visualMarkup(lesson.original.visual);
@@ -622,24 +626,65 @@ function book04PolyominoMarkup(story = false) {
   return `<div class="polyomino-board ${story ? "story" : ""}">${visible.map(([count, shapes]) => polyominoFamilyMarkup(count, shapes)).join("")}</div>`;
 }
 
-function book04HiddenCubesMarkup(visual) {
+function normalizedHeightMap(map) {
+  const depth = map.length;
+  const width = Math.max(...map.map((row) => row.length));
+  return map.map((row) => Array.from({ length: width }, (_, index) => Number(row[index] || 0)));
+}
+
+function hiddenCubeSceneMetrics(scene) {
   const geometry = globalThis.GW_GEN;
-  const renderer = globalThis.GW_RENDER;
-  if (!geometry?.mapTotal || !geometry?.countHiddenWalled || !renderer?.renderIso) {
+  if (!geometry?.mapTotal || !geometry?.countHiddenWalled) {
     throw new Error("Geometry worksheet cube data is required for hidden-cube visuals.");
   }
+  const map = normalizedHeightMap(scene.map);
+  const total = geometry.mapTotal(map);
+  const hidden = geometry.countHiddenWalled(map);
+  const visible = total - hidden;
+  if (scene.expected) {
+    for (const [key, actual] of Object.entries({ total, visible, hidden })) {
+      if (Number(scene.expected[key]) !== actual) throw new Error(`Hidden-cube ${key} mismatch: expected ${scene.expected[key]}, received ${actual}.`);
+    }
+  }
+  return { map, width: map[0].length, depth: map.length, total, visible, hidden };
+}
+
+function hiddenCubeIsoMarkup(scene, options = {}) {
+  const renderer = globalThis.GW_RENDER;
+  if (!renderer?.renderIso) throw new Error("Geometry worksheet cube renderer is required for hidden-cube visuals.");
+  const metrics = hiddenCubeSceneMetrics(scene);
+  const label = `전체 ${metrics.total}개 · 보이는 것 ${metrics.visible}개`;
+  const svg = renderer.renderIso(metrics.map, metrics.width, metrics.depth, {
+    u: options.u || 24,
+    topLabels: options.topLabels !== false,
+    topLabelColor: "#d9473f",
+    topLabelSize: options.topLabelSize || 15
+  }).replace('class="ws-iso"', `class="ws-iso book04-geometry-cubes" role="img" aria-label="${label}" data-geometry-kind="hidden-height-map" data-total="${metrics.total}" data-visible="${metrics.visible}" data-hidden="${metrics.hidden}"`);
+  return { ...metrics, label, svg };
+}
+
+function cubeHeightMapMarkup(map) {
+  const width = map[0].length;
+  const cells = map.flatMap((row, z) => row.map((height, x) => `<span class="${height ? "filled" : "empty"}" data-column-x="${x}" data-column-z="${z}">${height || ""}</span>`)).join("");
+  return `<figure class="cube-height-map"><div style="--height-map-columns:${width}">${cells}</div><figcaption>위에서 본 바탕 그림</figcaption></figure>`;
+}
+
+function book04HiddenCubeConceptMarkup(visual) {
+  const scene = hiddenCubeIsoMarkup(visual, { u: 28, topLabels: true, topLabelSize: 17 });
+  const phase = visual.phase || "height";
+  const equation = phase === "height"
+    ? `<strong>윗면의 수 = 그 기둥의 층수</strong><span>${scene.map.flat().filter(Boolean).join(" · ")}</span>`
+    : phase === "total"
+      ? `<strong>${scene.map.flat().filter(Boolean).join(" + ")} = ${scene.total}</strong><span>층수를 모두 더하면 전체 수</span>`
+      : `<strong>${scene.total} - ${scene.visible} = ${scene.hidden}</strong><span>전체 수 - 보이는 수 = 숨은 수</span>`;
+  return `<div class="hidden-cube-concept-visual" data-hidden-cube-phase="${phase}" data-total="${scene.total}" data-visible="${scene.visible}" data-hidden="${scene.hidden}"><figure class="hidden-cube-iso">${scene.svg}<figcaption>각 윗면의 숫자를 먼저 읽어요</figcaption></figure>${phase === "height" ? "" : cubeHeightMapMarkup(scene.map)}<p class="hidden-cube-equation">${equation}</p></div>`;
+}
+
+function book04HiddenCubesMarkup(visual) {
   const scenes = visual.scenes || [];
-  const markup = scenes.map(({ map }) => {
-    const depth = map.length;
-    const width = Math.max(...map.map((row) => row.length));
-    const normalized = map.map((row) => Array.from({ length: width }, (_, index) => Number(row[index] || 0)));
-    const total = geometry.mapTotal(normalized);
-    const hidden = geometry.countHiddenWalled(normalized);
-    const visible = total - hidden;
-    const label = `전체 ${total}개 · 보이는 것 ${visible}개`;
-    const svg = renderer.renderIso(normalized, width, depth, { u: 18 })
-      .replace('class="ws-iso"', `class="ws-iso book04-geometry-cubes" role="img" aria-label="${label}" data-geometry-kind="hidden-height-map" data-total="${total}" data-visible="${visible}" data-hidden="${hidden}"`);
-    return `<figure class="cube-scene">${svg}<figcaption>${label}</figcaption></figure>`;
+  const markup = scenes.map((scene) => {
+    const rendered = hiddenCubeIsoMarkup(scene, { u: scenes.length === 1 ? 25 : 18, topLabels: visual.topLabels !== false, topLabelSize: scenes.length === 1 ? 16 : 13 });
+    return `<figure class="cube-scene" data-hidden="${rendered.hidden}">${rendered.svg}<figcaption>${rendered.label}</figcaption></figure>`;
   }).join("");
   return `<div class="cube-scene-set ${scenes.length === 1 ? "single" : ""}">${markup}</div>`;
 }
@@ -756,6 +801,7 @@ function visualMarkup(visual) {
   if (visual.kind === "book03-magic-story") return book03MagicMarkup(true);
   if (visual.kind === "book04-polyomino-original") return book04PolyominoMarkup(false);
   if (visual.kind === "book04-polyomino-story") return book04PolyominoMarkup(true);
+  if (visual.kind === "book04-hidden-cube-concept") return book04HiddenCubeConceptMarkup(visual);
   if (visual.kind === "book04-hidden-cubes-original") return book04HiddenCubesMarkup(visual);
   if (visual.kind === "book04-hidden-cubes-story") return book04HiddenCubesMarkup(visual);
   if (visual.kind === "book04-balance-original") return book04BalanceMarkup(false);
@@ -784,6 +830,7 @@ function renderBookTabs() {
     state.phase = "concept";
     state.selections = {};
     state.originalAssists = {};
+    state.originalChecks = {};
     state.originalIndex = 0;
     state.extensionAssist = null;
     state.extensionIndex = 0;
@@ -816,6 +863,7 @@ function renderLessonList() {
     state.phase = "concept";
     state.selections = {};
     state.originalAssists = {};
+    state.originalChecks = {};
     state.originalIndex = 0;
     state.extensionAssist = null;
     state.extensionIndex = 0;
@@ -883,6 +931,7 @@ function approvedAnswer(item) {
 }
 
 function originalItemResolved(item) {
+  if (!item) return false;
   if (["revealed", "skipped"].includes(state.originalAssists[item.id])) return true;
   if (item.parts?.length) return item.parts.every((part) => hasAnswer(state.selections[`${item.id}:${part.id}`]));
   return hasAnswer(state.selections[item.id]);
@@ -892,6 +941,10 @@ function originalItemCorrect(item) {
   if (state.originalAssists[item.id]) return true;
   if (item.parts?.length) return item.parts.every((part) => answersMatch(state.selections[`${item.id}:${part.id}`], part.answer));
   return answersMatch(state.selections[item.id], item.answer);
+}
+
+function originalItemComplete(item) {
+  return ["revealed", "skipped"].includes(state.originalAssists[item.id]) || state.originalChecks[item.id]?.passed === true;
 }
 
 function approvedOriginalAnswer(item) {
@@ -930,7 +983,7 @@ function renderOriginal(lesson) {
     const item = items[Math.min(state.originalIndex, items.length - 1)];
     const assist = state.originalAssists[item.id];
     const resolved = originalItemResolved(item);
-    const correct = Boolean(result?.passed && result.itemId === item.id);
+    const correct = Boolean(state.originalChecks[item.id]?.passed || result?.passed && result.itemId === item.id);
     const status = assist === "skipped" ? "skipped" : assist === "revealed" ? "assisted" : correct ? "correct" : result && result.itemId === item.id ? "incorrect" : "";
     const solution = assist === "revealed"
       ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
@@ -939,7 +992,7 @@ function renderOriginal(lesson) {
         : correct
           ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
           : "";
-    const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemResolved(candidate) ? "complete" : ""}">${candidate.sourceNo || index + 1}</span>`).join("");
+    const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemComplete(candidate) ? "complete" : ""}">${candidate.sourceNo || index + 1}</span>`).join("");
     const nextLabel = state.originalIndex === items.length - 1 ? "추가 학습으로" : "다음 문제";
     const sourceCount = lesson.original.sourceQuestionCount || items.length;
     const progressLabel = sourceCount === items.length
@@ -947,18 +1000,26 @@ function renderOriginal(lesson) {
       : `${sourceCount}문항 · ${items.length}개 풀이 중 ${state.originalIndex + 1}번째`;
     return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>교재 ${item.sourceNo || state.originalIndex + 1}번</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${item.sourceNo || state.originalIndex + 1}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${item.prompt}</p><div class="quiz-visual item-quiz-visual">${visualMarkup(item.visual || lesson.original.visual)}</div><section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
   }
-  const allResolved = lesson.original.items.every(originalItemResolved);
-  return `<div class="quiz-head"><div><span>${lesson.original.title}</span><h2>${lesson.title}</h2></div></div><p class="lesson-lead">${lesson.original.prompt}</p><div class="quiz-visual">${visualMarkup(lesson.original.visual)}</div><div class="quiz-items">${lesson.original.items.map((item) => {
+  const allComplete = lesson.original.items.every(originalItemComplete);
+  const itemVisuals = lesson.original.items.some((item) => item.visual);
+  const sharedVisual = itemVisuals ? "" : `<div class="quiz-visual">${visualMarkup(lesson.original.visual)}</div>`;
+  return `<div class="quiz-head"><div><span>${lesson.original.title}</span><h2>${lesson.title}</h2></div></div><p class="lesson-lead">${lesson.original.prompt}</p>${sharedVisual}<div class="quiz-items">${lesson.original.items.map((item) => {
     const assist = state.originalAssists[item.id];
-    const status = assist === "skipped" ? "skipped" : result ? answersMatch(state.selections[item.id], item.answer) ? "correct" : "incorrect" : assist === "revealed" ? "assisted" : "";
+    const check = state.originalChecks[item.id];
+    const status = assist === "skipped" ? "skipped" : assist === "revealed" ? "assisted" : check?.passed ? "correct" : check ? "incorrect" : "";
     const conditions = item.conditions?.length ? `<ul class="original-conditions">${item.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>` : "";
     const assistNote = assist === "revealed"
-      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedAnswer(item))}</strong></section>`
+      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
       : assist === "skipped"
         ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 다음에 다시 풀어 보세요.</p>'
-        : "";
-    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${item.prompt}</strong>${conditions}${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
-  }).join("")}</div>${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${allResolved ? "" : "disabled"}>${result?.passed ? "다음" : "확인"}</button>`;
+        : check?.passed
+          ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
+          : check
+            ? `<p class="quiz-item-feedback" aria-live="polite">${escapeAttribute(check.message)}</p>`
+            : "";
+    const itemVisual = item.visual ? `<div class="quiz-visual item-quiz-visual">${visualMarkup(item.visual)}</div>` : "";
+    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${item.prompt}</strong>${conditions}${itemVisual}${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="primary-action item-check-action" data-original-check="${escapeAttribute(item.id)}" ${originalItemResolved(item) ? "" : "disabled"}>${originalItemComplete(item) ? "확인 완료" : "확인"}</button><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
+  }).join("")}</div><button type="button" class="primary-action grouped-next-action" data-complete-original ${allComplete ? "" : "disabled"}>추가 학습으로</button>`;
 }
 
 function renderExtension(lesson) {
@@ -999,7 +1060,7 @@ function renderPending(book) {
 
 function printResponseMarkup(item) {
   if (item.parts?.length) return `<span class="gold-print-part-answers">${item.parts.map((part) => `<span><b>${escapeAttribute(part.label)}</b><i></i>${part.unit ? `<small>${escapeAttribute(part.unit)}</small>` : ""}</span>`).join("")}</span>`;
-  if (item.answerMode === "input") return '<span class="gold-print-answer" aria-label="답 쓰는 칸"></span>';
+  if (item.answerMode === "input") return '<span class="gold-print-answer" aria-label="답 쓰는 칸"><b>답</b><i></i></span>';
   return `<span class="gold-print-options">${item.options.map((option, index) => `${index + 1}. ${option}`).join("　")}</span>`;
 }
 
@@ -1018,13 +1079,18 @@ function printLessonPage(lesson, lessonNumber, book) {
     });
     const sourcePages = [...groups.entries()].map(([group, items], pageIndex) => {
       const blocks = items.map((item) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo)}</span>${escapeAttribute(item.typeLabel)}</h2><p>${escapeAttribute(item.prompt)}</p><div class="gold-print-visual">${visualMarkup(item.visual || lesson.original.visual)}</div>${printResponseMarkup(item)}</section>`).join("");
-      return `<article class="gold-print-page source-practice-print" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original-${group}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(pageIndex + 1).padStart(2, "0"))}${pageIndex === 0 ? concept : ""}<section class="gold-print-block"><h2>교재 연습 ${pageIndex + 1} / ${groups.size}</h2>${blocks}</section>${footer}</article>`;
+      const sourceExperience = lesson.experience ? experienceSummaryMarkup(lesson.experience) : "";
+      const printConcept = pageIndex === 0 ? concept + sourceExperience : "";
+      return `<article class="gold-print-page source-practice-print" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original-${group}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(pageIndex + 1).padStart(2, "0"))}${printConcept}<section class="gold-print-block"><h2>교재 연습 ${pageIndex + 1} / ${groups.size}</h2>${blocks}</section>${footer}</article>`;
     }).join("");
     return sourcePages + storyPages;
   }
   const visualHasResponseBoxes = lesson.original.visual.kind === "book03-six-original";
-  const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item) => `<li class="gold-print-item"><span>${item.prompt}${item.conditions?.length ? `<br>${item.conditions.join(" · ")}` : ""}</span>${printResponseMarkup(item)}</li>`).join("");
-  const originalPage = `<article class="gold-print-page" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p><div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>${originalItems ? `<ol class="gold-print-items">${originalItems}</ol>` : ""}</section>${footer}</article>`;
+  const hasItemVisuals = lesson.original.items.some((item) => item.visual);
+  const sharedVisual = !hasItemVisuals || visualHasResponseBoxes ? `<div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>` : "";
+  const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item, index) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo || index + 1)}</span>${escapeAttribute(item.typeLabel || "문제")}</h2><p>${escapeAttribute(item.prompt)}${item.conditions?.length ? `<br>${item.conditions.map(escapeAttribute).join(" · ")}` : ""}</p>${item.visual ? `<div class="gold-print-visual">${visualMarkup(item.visual)}</div>` : ""}${printResponseMarkup(item)}</section>`).join("");
+  const sharedClass = !hasItemVisuals && !visualHasResponseBoxes ? " shared-source-visual" : "";
+  const originalPage = `<article class="gold-print-page source-practice-print${sharedClass}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p>${sharedVisual}${originalItems ? `<div class="gold-print-source-items">${originalItems}</div>` : ""}</section>${footer}</article>`;
   return originalPage + storyPages;
 }
 
@@ -1150,7 +1216,11 @@ function bindLessonActions() {
   $("lessonContent").querySelectorAll("[data-choice-group]").forEach((button) => button.addEventListener("click", () => {
     state.selections[button.dataset.choiceGroup] = button.dataset.choice;
     if (button.dataset.choiceGroup.includes(":extension")) state.extensionAssist = null;
-    else delete state.originalAssists[button.dataset.choiceGroup];
+    else {
+      const itemId = button.closest("[data-original-item]")?.dataset.originalItem || button.dataset.choiceGroup;
+      delete state.originalAssists[itemId];
+      delete state.originalChecks[itemId];
+    }
     state.feedback = null;
     renderContent();
   }));
@@ -1160,6 +1230,7 @@ function bindLessonActions() {
     if (item.parts?.length) item.parts.forEach((part) => { state.selections[`${item.id}:${part.id}`] = approvedAnswer(part); });
     else state.selections[item.id] = approvedAnswer(item);
     state.originalAssists[item.id] = "revealed";
+    delete state.originalChecks[item.id];
     recordOutcome("original", item.id, "revealed");
     state.feedback = null;
     renderContent();
@@ -1170,6 +1241,7 @@ function bindLessonActions() {
     if (item.parts?.length) item.parts.forEach((part) => { delete state.selections[`${item.id}:${part.id}`]; });
     else delete state.selections[item.id];
     state.originalAssists[item.id] = "skipped";
+    delete state.originalChecks[item.id];
     recordOutcome("original", item.id, "skipped");
     state.feedback = null;
     renderContent();
@@ -1180,20 +1252,35 @@ function bindLessonActions() {
     else {
       const itemId = input.closest("[data-original-item]")?.dataset.originalItem || input.dataset.inputGroup;
       delete state.originalAssists[itemId];
+      delete state.originalChecks[itemId];
     }
     state.feedback = null;
     input.closest(".quiz-item")?.classList.remove("correct", "incorrect", "assisted", "skipped");
     $("lessonContent").querySelector(".feedback")?.remove();
     const lesson = activeLesson();
     const scope = input.dataset.answerScope;
-    const checkButton = $("lessonContent").querySelector(`[data-check="${scope}"]`);
+    const itemId = input.closest("[data-original-item]")?.dataset.originalItem;
+    const checkButton = scope === "original" && lesson.original.mode !== "paged"
+      ? $("lessonContent").querySelector(`[data-original-check="${CSS.escape(itemId || "")}"]`)
+      : $("lessonContent").querySelector(`[data-check="${scope}"]`);
     if (!checkButton) return;
     checkButton.disabled = scope === "original"
       ? lesson.original.mode === "paged"
         ? !originalItemResolved(lesson.original.items[state.originalIndex])
-        : !lesson.original.items.every(originalItemResolved)
+        : !originalItemResolved(lesson.original.items.find((candidate) => candidate.id === itemId))
       : !hasAnswer(state.selections[activeExtensionItem(lesson).id]);
     checkButton.textContent = "확인";
+  }));
+  $("lessonContent").querySelectorAll("[data-original-check]").forEach((button) => button.addEventListener("click", () => {
+    const item = activeLesson().original.items.find((candidate) => candidate.id === button.dataset.originalCheck);
+    if (!item || !originalItemResolved(item) || state.originalAssists[item.id]) return;
+    const passed = originalItemCorrect(item);
+    state.originalChecks[item.id] = {
+      passed,
+      message: passed ? "맞았어요. 풀이 순서까지 확인해 보세요." : "아직 맞지 않아요. 조건과 계산을 다시 확인해 보세요."
+    };
+    recordOutcome("original", item.id, passed ? "correct" : "wrong");
+    renderContent();
   }));
   $("lessonContent").querySelector('[data-check="original"]')?.addEventListener("click", () => {
     const lesson = activeLesson();
@@ -1201,7 +1288,7 @@ function bindLessonActions() {
       const items = lesson.original.items;
       const item = items[state.originalIndex];
       const assisted = state.originalAssists[item.id];
-      const passedAlready = state.feedback?.kind === "original" && state.feedback.itemId === item.id && state.feedback.passed;
+      const passedAlready = state.originalChecks[item.id]?.passed || state.feedback?.kind === "original" && state.feedback.itemId === item.id && state.feedback.passed;
       if (passedAlready || assisted) {
         if (state.originalIndex < items.length - 1) {
           state.originalIndex += 1;
@@ -1212,6 +1299,7 @@ function bindLessonActions() {
         return setPhase("extension");
       }
       const passed = originalItemCorrect(item);
+      state.originalChecks[item.id] = { passed };
       recordOutcome("original", item.id, passed ? "correct" : "wrong");
       state.feedback = {
         kind: "original",
@@ -1221,27 +1309,12 @@ function bindLessonActions() {
       };
       return render();
     }
-    if (state.feedback?.kind === "original" && state.feedback.passed) return setPhase("extension");
-    const wrongItems = lesson.original.items.filter((item) => !originalItemCorrect(item));
-    const passed = wrongItems.length === 0;
-    if (passed) {
-      lesson.original.items.filter((item) => !state.originalAssists[item.id]).forEach((item) => recordOutcome("original", item.id, "correct"));
-      completeOriginal();
-    } else {
-      wrongItems.forEach((item) => recordOutcome("original", item.id, "wrong"));
-    }
-    const retryVerb = lesson.original.items.every((item) => item.answerMode === "input") ? "써" : "골라";
-    const revealedCount = lesson.original.items.filter((item) => state.originalAssists[item.id] === "revealed").length;
-    const skippedCount = lesson.original.items.filter((item) => state.originalAssists[item.id] === "skipped").length;
-    const assistance = [revealedCount ? `답을 본 ${revealedCount}문제` : "", skippedCount ? `넘어간 ${skippedCount}문제` : ""].filter(Boolean).join(", ");
-    state.feedback = {
-      kind: "original",
-      passed,
-      message: passed
-        ? assistance ? `${assistance}를 표시해 두었어요. 다음으로 가요.` : "잘했어요. 다음으로 가요."
-        : `${wrongItems.length}문제를 다시 ${retryVerb} 보세요. 어려우면 그 문제의 답 보기 또는 넘어가기를 눌러도 됩니다.`
-    };
-    render();
+  });
+  $("lessonContent").querySelector("[data-complete-original]")?.addEventListener("click", () => {
+    const lesson = activeLesson();
+    if (!lesson.original.items.every(originalItemComplete)) return;
+    completeOriginal();
+    setPhase("extension");
   });
   $("lessonContent").querySelector('[data-check="extension"]')?.addEventListener("click", () => {
     const lesson = activeLesson();
@@ -1290,6 +1363,7 @@ function bindLessonActions() {
     state.phase = "concept";
     state.selections = {};
     state.originalAssists = {};
+    state.originalChecks = {};
     state.originalIndex = 0;
     state.extensionAssist = null;
     state.extensionIndex = 0;

@@ -818,38 +818,112 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         id: "hidden-cube-count",
         unit: "색종이 접기와 쌓기나무",
         title: "보이지 않는 쌓기나무를 찾아요",
-        sourceLocator: "교사용 PPTX·PDF 18쪽, 쌓기나무의 개수 활동 02",
+        sourceLocator: "교사용 PPTX·PDF 16~19쪽, 쌓기나무의 개수와 활동 02·03",
         sourceTypeIds: ["cube-hidden-count"],
-        representativeConcept: "각 기둥의 전체 높이에서 그림에 보이는 쌓기나무를 빼 가려진 개수를 찾음",
+        representativeConcept: "윗면에 적힌 층수를 더해 전체 쌓기나무 수를 구하고, 전체 수에서 보이는 수를 빼 숨은 수를 찾음",
         story: {
-          title: "블록 도시의 숨은 방",
-          text: "앞의 블록에 가려지거나 위 블록을 받치고 있어 보이지 않는 블록이 있습니다. 보이는 블록만 세면 전체보다 작습니다.",
-          mission: "기둥마다 필요한 전체 개수를 센 뒤 보이는 개수를 빼 보세요."
+          title: "쌓기나무의 전체와 보이는 수",
+          text: "윗면의 수는 그 자리에 쌓인 기둥의 높이입니다. 기둥 높이를 모두 더하면 전체 수가 되고, 겉에서 보이는 수와의 차가 숨은 수가 됩니다.",
+          mission: "윗면의 층수를 먼저 읽고 전체 수, 보이는 수, 숨은 수를 차례로 확인해 보세요."
         },
         explanation: {
-          headline: "전체 개수에서 보이는 개수를 뺍니다.",
+          headline: "윗면의 수를 더한 뒤 보이는 수를 뺍니다.",
           steps: [
-            "가장 위 블록을 보고 그 아래에 몇 개가 받치고 있어야 하는지 셉니다.",
-            "모든 기둥의 높이를 더해 전체 개수를 구합니다.",
-            "전체 개수에서 그림에 보이는 개수를 빼 숨은 블록 수를 확인합니다."
+            "가장 위 쌓기나무의 윗면에 적힌 수를 보고 그 기둥의 층수를 읽습니다.",
+            "위에서 본 바탕 그림에 층수를 옮기고 모든 수를 더해 전체 개수를 구합니다.",
+            "전체 개수에서 그림에 보이는 개수를 빼 보이지 않는 쌓기나무 수를 확인합니다."
           ]
+        },
+        experience: {
+          kind: "progressive-concept",
+          family: "cube-hidden-count",
+          title: "윗면의 층수로 숨은 쌓기나무를 찾아요",
+          learnerStage: "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정 4권",
+          learnerFit: {
+            language: "한 문장에 한 행동을 담은 짧은 한국어",
+            representations: "교사용 자료의 입체 쌓기와 위에서 본 층수 지도를 함께 표시",
+            prerequisites: "10까지 수 세기와 한 자리 덧셈·뺄셈",
+            reasoningLoad: "층수 읽기, 전체 더하기, 보이는 수 빼기의 세 단계",
+            responseMode: "애니메이션 설명 뒤 터치 가능한 3지선다와 답 보기"
+          },
+          beats: [
+            {
+              id: "hidden-cube-height",
+              action: "reveal",
+              caption: "가장 위 쌓기나무의 윗면에 적힌 수를 보고 그 기둥의 층수를 읽습니다.",
+              visual: { kind: "book04-hidden-cube-concept", phase: "height", map: [[2, 1], [1, 0]], expected: { total: 4, visible: 3, hidden: 1 } }
+            },
+            {
+              id: "hidden-cube-total",
+              action: "highlight",
+              caption: "위에서 본 바탕 그림에 층수를 옮기고 모든 수를 더해 전체 개수를 구합니다.",
+              visual: { kind: "book04-hidden-cube-concept", phase: "total", map: [[3, 2], [2, 2]], expected: { total: 9, visible: 7, hidden: 2 } }
+            },
+            {
+              id: "hidden-cube-subtract",
+              action: "verify",
+              caption: "전체 개수에서 그림에 보이는 개수를 빼 보이지 않는 쌓기나무 수를 확인합니다.",
+              visual: { kind: "book04-hidden-cube-concept", phase: "hidden", map: [[3, 2, 1], [2, 1, 0], [1, 0, 0]], expected: { total: 10, visible: 6, hidden: 4 } }
+            }
+          ],
+          hint: "윗면의 숫자는 그 기둥의 층수입니다. 층수를 모두 더한 뒤 보이는 수를 빼세요.",
+          check: {
+            prompt: "전체 10개 중 그림에 보이는 것이 6개라면 보이지 않는 것은 몇 개일까요?",
+            options: ["3개", "4개", "6개"],
+            answer: "4개",
+            explanation: "전체 10개에서 보이는 6개를 빼면 10-6=4개입니다."
+          },
+          visualProgression: null,
+          finalStill: { standsAlone: true, visualSource: "original" }
         },
         original: {
           title: "골든벨",
+          mode: "paged",
+          sourceQuestionCount: 3,
           structureKey: "visible-cubes-subtract-from-total",
           prompt: "다음 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.",
           visual: {
             kind: "book04-hidden-cubes-original",
             scenes: [
-              { map: [[2, 1], [1, 0]] },
-              { map: [[3, 2], [2, 2]] },
-              { map: [[3, 2, 1], [2, 1, 0], [1, 0, 0]] }
+              { map: [[2, 1], [1, 0]], expected: { total: 4, visible: 3, hidden: 1 } },
+              { map: [[3, 2], [2, 2]], expected: { total: 9, visible: 7, hidden: 2 } },
+              { map: [[3, 2, 1], [2, 1, 0], [1, 0, 0]], expected: { total: 10, visible: 6, hidden: 4 } }
             ]
           },
           items: [
-            { id: "hidden-1", prompt: "(1) 전체 4개 중 그림에 보이는 것은 3개입니다.", answerMode: "input", inputMode: "numeric", answer: "1" },
-            { id: "hidden-2", prompt: "(2) 전체 9개 중 그림에 보이는 것은 7개입니다.", answerMode: "input", inputMode: "numeric", answer: "2" },
-            { id: "hidden-3", prompt: "(3) 전체 10개 중 그림에 보이는 것은 6개입니다.", answerMode: "input", inputMode: "numeric", answer: "4" }
+            {
+              id: "hidden-1",
+              sourceNo: 1,
+              typeLabel: "윗면 층수로 숨은 수 찾기",
+              printGroup: 1,
+              prompt: "다음 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.",
+              visual: { kind: "book04-hidden-cubes-original", topLabels: true, scenes: [{ map: [[2, 1], [1, 0]], expected: { total: 4, visible: 3, hidden: 1 } }] },
+              answerMode: "input",
+              inputMode: "numeric",
+              answer: "1"
+            },
+            {
+              id: "hidden-2",
+              sourceNo: 2,
+              typeLabel: "윗면 층수로 숨은 수 찾기",
+              printGroup: 1,
+              prompt: "다음 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.",
+              visual: { kind: "book04-hidden-cubes-original", topLabels: true, scenes: [{ map: [[3, 2], [2, 2]], expected: { total: 9, visible: 7, hidden: 2 } }] },
+              answerMode: "input",
+              inputMode: "numeric",
+              answer: "2"
+            },
+            {
+              id: "hidden-3",
+              sourceNo: 3,
+              typeLabel: "윗면 층수로 숨은 수 찾기",
+              printGroup: 1,
+              prompt: "다음 그림에서 보이지 않는 쌓기나무의 개수를 구하시오.",
+              visual: { kind: "book04-hidden-cubes-original", topLabels: true, scenes: [{ map: [[3, 2, 1], [2, 1, 0], [1, 0, 0]], expected: { total: 10, visible: 6, hidden: 4 } }] },
+              answerMode: "input",
+              inputMode: "numeric",
+              answer: "4"
+            }
           ]
         },
         extension: {
@@ -2114,7 +2188,7 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
   {
     id: "book-10",
     label: "10권",
-    title: "연속수와 따라잡기",
+    title: "곱셈·연속수와 문제 해결",
     status: "ready",
     source: {
       file: "수업용_더클래식_1과정_10N30권_연속수와_따라잡기(240216)-잠금 해제됨.pdf",
@@ -2124,24 +2198,193 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
     },
     lessons: [
       {
+        id: "napier-multiplication",
+        unit: "곱셈 방법",
+        title: "곱셈을 여러 방법으로 계산해요",
+        sourceLocator: "교사용 지도서 6~11쪽, 활동 01·더클 확인 01~04",
+        sourceTypeIds: ["napier-multiplication-b10", "area-model-multiplication-b10", "vertical-multiplication-b10"],
+        representativeConcept: "두 자리 수의 곱을 넓이, 네이피어 곱셈판, 세로셈으로 나타내고 각 방법의 같은 부분을 연결함",
+        typeOverview: [
+          { label: "넓이로 나누기", text: "두 수를 십의 자리와 일의 자리로 나누어 네 부분의 넓이를 더합니다." },
+          { label: "네이피어 곱셈판", text: "각 칸의 곱을 십의 자리와 일의 자리로 나누고 대각선 방향으로 더합니다." },
+          { label: "세로셈", text: "부분곱의 자리를 맞추어 더하고 다른 방법의 결과와 비교합니다." }
+        ],
+        story: {
+          title: "한 곱셈, 세 가지 계산판",
+          text: "같은 곱셈도 넓이 조각, 네이피어 곱셈판, 세로셈으로 다르게 나타낼 수 있습니다.",
+          mission: "각 방법에서 부분곱이 어디에 놓이는지 살피고 마지막 결과가 같은지 확인하세요."
+        },
+        explanation: {
+          headline: "수를 나누어 곱한 부분곱을 자리값에 맞게 다시 모읍니다.",
+          steps: [
+            "14×13을 (10+4)×(10+3)으로 나누면 네 부분의 넓이는 100, 30, 40, 12입니다.",
+            "네이피어 곱셈판에서는 각 칸의 곱을 십의 자리와 일의 자리로 나누어 씁니다.",
+            "세로셈에서도 일의 자리 부분곱과 십의 자리 부분곱을 자리에 맞추어 더합니다.",
+            "서로 다른 세 방법의 답이 같으면 계산을 한 번 더 검산한 것입니다."
+          ]
+        },
+        experience: {
+          kind: "progressive-concept",
+          family: "napier-multiplication-b10",
+          title: "같은 곱셈이 세 가지 모습으로 바뀌어요",
+          learnerStage: "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정 10권",
+          learnerFit: {
+            language: "한 장면에서 한 계산 행동만 짧게 설명",
+            representations: "교사용 지도서의 넓이·네이피어·세로셈 구조",
+            prerequisites: "구구단과 두 자리 수 덧셈",
+            reasoningLoad: "나누기, 부분곱 찾기, 자리 맞추기, 검산하기",
+            responseMode: "자동 재생 뒤 터치 가능한 3지선다와 답 보기"
+          },
+          beats: [
+            { id: "napier-area", action: "reveal", caption: "14×13을 십의 자리와 일의 자리로 나누어 네 넓이를 모두 더합니다.", visual: { kind: "book10", subtype: "area-model", first: 14, second: 13, revealResult: true } },
+            { id: "napier-grid", action: "highlight", caption: "46×35의 각 자리 곱을 칸에 나누어 쓰고 대각선 방향으로 더합니다.", visual: { kind: "book10", subtype: "napier-grid", first: 46, second: 35, revealResult: true } },
+            { id: "napier-vertical", action: "highlight", caption: "57×34의 두 부분곱을 자리에 맞추어 세로로 더합니다.", visual: { kind: "book10", subtype: "vertical-multiplication", first: 57, second: 34, revealResult: true } },
+            { id: "napier-verify", action: "verify", caption: "세 방법에서 같은 답이 나오는지 확인하면 계산 실수를 찾을 수 있습니다.", visual: { kind: "book10", subtype: "multiplication-methods", first: 57, second: 34 } }
+          ],
+          hint: "큰 수를 십의 자리와 일의 자리로 나누어 곱한 뒤 다시 더하세요.",
+          check: {
+            prompt: "24×13의 값을 구하면 얼마일까요?",
+            options: ["292", "312", "322"],
+            answer: "312",
+            explanation: "24×10=240, 24×3=72이므로 240+72=312입니다."
+          },
+          visualProgression: null,
+          finalStill: { standsAlone: true, visualSource: "original" }
+        },
+        original: {
+          title: "교재 활동 확인",
+          mode: "paged",
+          sourceQuestionCount: 5,
+          structureKey: "book10-multiplication-methods-source",
+          prompt: "교사용 지도서의 계산판 구조를 보며 곱셈을 계산하세요.",
+          visual: { kind: "book10", subtype: "napier-grid", first: 46, second: 35 },
+          items: [
+            { id: "napier-46x35", sourceNo: "1", printGroup: 1, typeLabel: "네이피어 곱셈판", sourceLocator: "교사용 지도서 7쪽 (1)", prompt: "네이피어 곱셈판으로 46×35를 계산하세요.", visual: { kind: "book10", subtype: "napier-grid", first: 46, second: 35 }, answerMode: "input", inputMode: "numeric", answer: "1610", solution: "각 칸에 4×3, 6×3, 4×5, 6×5를 나누어 쓰고 대각선으로 더하면 1610입니다." },
+            { id: "napier-574x93", sourceNo: "2", printGroup: 1, typeLabel: "세 자리 수 네이피어 곱셈", sourceLocator: "교사용 지도서 7쪽 (2)", prompt: "네이피어 곱셈판으로 574×93을 계산하세요.", visual: { kind: "book10", subtype: "napier-grid", first: 574, second: 93 }, answerMode: "input", inputMode: "numeric", answer: "53382", solution: "574×90=51660이고 574×3=1722입니다. 두 값을 더하면 53382입니다." },
+            { id: "area-36x25", sourceNo: "3", printGroup: 2, typeLabel: "넓이로 나누어 곱하기", sourceLocator: "교사용 지도서 8쪽 (1)", prompt: "넓이 모델로 36×25를 계산하세요.", visual: { kind: "book10", subtype: "area-model", first: 36, second: 25 }, answerMode: "input", inputMode: "numeric", answer: "900", solution: "36×20=720, 36×5=180이므로 720+180=900입니다." },
+            { id: "area-75x56", sourceNo: "4", printGroup: 2, typeLabel: "넓이로 나누어 곱하기", sourceLocator: "교사용 지도서 8쪽 (2)", prompt: "넓이 모델로 75×56을 계산하세요.", visual: { kind: "book10", subtype: "area-model", first: 75, second: 56 }, answerMode: "input", inputMode: "numeric", answer: "4200", solution: "75×50=3750, 75×6=450이므로 3750+450=4200입니다." },
+            { id: "methods-57x34", sourceNo: "5", printGroup: 3, typeLabel: "세 방법으로 검산하기", sourceLocator: "교사용 지도서 9쪽", prompt: "57×34를 계산하고 세 방법의 결과가 같은지 확인하세요.", visual: { kind: "book10", subtype: "vertical-multiplication", first: 57, second: 34, revealPartials: false }, answerMode: "input", inputMode: "numeric", answer: "1938", solution: "57×30=1710, 57×4=228입니다. 1710+228=1938입니다." }
+          ]
+        },
+        extension: {
+          title: "기초 연산",
+          structureKey: "two-digit-multiplication-by-distribution",
+          story: "낮은 단계에서는 부분곱을 두 번 계산하며 곱셈 방법을 익힙니다.",
+          prompt: "24×13의 값을 쓰세요.",
+          visual: { kind: "book10", subtype: "area-model", first: 24, second: 13 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "312",
+          explanation: "24×10=240, 24×3=72이고 240+72=312입니다."
+        }
+      },
+      {
+        id: "even-consecutive-sum",
+        unit: "연속수의 합",
+        title: "양끝 수를 짝지어 합을 구해요",
+        sourceLocator: "교사용 지도서 12~20쪽, 활동 02·더클 확인 05~08",
+        sourceTypeIds: ["even-consecutive-sum-b10", "factor-pairs-b10"],
+        representativeConcept: "연속된 수가 짝수 개이면 처음 수와 끝 수를 짝지어 같은 합을 만들고 짝의 수만큼 곱함",
+        typeOverview: [
+          { label: "약수 짝 찾기", text: "곱해서 목표 수가 되는 두 수를 짝으로 찾습니다." },
+          { label: "양끝 짝짓기", text: "처음 수와 끝 수, 둘째 수와 끝에서 둘째 수를 짝지어 같은 합을 만듭니다." },
+          { label: "짝의 합 곱하기", text: "한 짝의 합에 짝의 수를 곱해 전체 합을 구합니다." }
+        ],
+        story: {
+          title: "양끝 친구 만들기",
+          text: "연속된 수를 양끝에서 하나씩 짝지으면 모든 짝의 합이 같습니다.",
+          mission: "한 짝의 합과 만들어지는 짝의 수를 각각 표시하세요."
+        },
+        explanation: {
+          headline: "처음 수와 끝 수의 합에 전체 개수의 절반을 곱합니다.",
+          steps: [
+            "연속된 수가 모두 몇 개인지 세고 짝수 개인지 확인합니다.",
+            "처음 수와 끝 수를 짝지으면 다음 양끝 짝도 같은 합이 됩니다.",
+            "한 짝의 합×짝의 수로 전체 합을 구하고 직접 더한 값과 확인합니다."
+          ]
+        },
+        experience: {
+          kind: "progressive-concept",
+          family: "even-consecutive-sum-b10",
+          title: "양끝 수가 같은 합의 짝이 돼요",
+          learnerStage: "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정 10권",
+          learnerFit: { language: "양끝, 한 짝, 몇 짝의 짧은 말", representations: "약수 짝과 연속수 카드", prerequisites: "구구단과 연속수 세기", reasoningLoad: "개수 세기, 짝짓기, 곱하기", responseMode: "자동 재생 뒤 터치 가능한 3지선다와 답 보기" },
+          beats: [
+            { id: "even-factor", action: "reveal", caption: "28을 만드는 곱셈 짝을 모두 찾으며 짝의 뜻을 익힙니다.", visual: { kind: "book10", subtype: "factor-pairs", target: 28, pairs: [[1, 28], [2, 14], [4, 7]], revealPartners: true } },
+            { id: "even-pair", action: "highlight", caption: "4부터 11까지 양끝 수를 짝지으면 모든 짝의 합이 15입니다.", visual: { kind: "book10", subtype: "consecutive-pairing", from: 4, to: 11 } },
+            { id: "even-total", action: "verify", caption: "합이 15인 짝이 4개이므로 15×4=60입니다.", visual: { kind: "book10", subtype: "consecutive-pairing", from: 4, to: 11, revealResult: true } }
+          ],
+          hint: "처음 수+끝 수를 먼저 구하고 전체 수의 절반만큼 곱하세요.",
+          check: { prompt: "5부터 12까지의 합은 얼마일까요?", options: ["68", "72", "76"], answer: "68", explanation: "5+12=17인 짝이 4개이므로 17×4=68입니다." },
+          visualProgression: null,
+          finalStill: { standsAlone: true, visualSource: "original" }
+        },
+        original: {
+          title: "교재 연습",
+          mode: "paged",
+          sourceQuestionCount: 4,
+          structureKey: "even-consecutive-sum-source",
+          prompt: "양끝 수를 짝지어 연속된 수의 합을 구하세요.",
+          visual: { kind: "book10", subtype: "consecutive-pairing", from: 4, to: 11 },
+          items: [
+            { id: "even-sum-4-11", sourceNo: "1", printGroup: 1, typeLabel: "짝수 개 연속수의 합", sourceLocator: "교사용 지도서 17쪽 (1)", prompt: "4부터 11까지의 합을 구하세요.", visual: { kind: "book10", subtype: "consecutive-pairing", from: 4, to: 11 }, answerMode: "input", inputMode: "numeric", answer: "60", solution: "4+11=15인 짝이 4개이므로 15×4=60입니다." },
+            { id: "even-sum-6-15", sourceNo: "2", printGroup: 1, typeLabel: "짝수 개 연속수의 합", sourceLocator: "교사용 지도서 17쪽 (2)", prompt: "6부터 15까지의 합을 구하세요.", visual: { kind: "book10", subtype: "consecutive-pairing", from: 6, to: 15 }, answerMode: "input", inputMode: "numeric", answer: "105", solution: "6+15=21인 짝이 5개이므로 21×5=105입니다." },
+            { id: "even-sum-2-13", sourceNo: "3", printGroup: 2, typeLabel: "짝수 개 연속수의 합", sourceLocator: "교사용 지도서 17쪽 (3)", prompt: "2부터 13까지의 합을 구하세요.", visual: { kind: "book10", subtype: "consecutive-pairing", from: 2, to: 13 }, answerMode: "input", inputMode: "numeric", answer: "90", solution: "2+13=15인 짝이 6개이므로 15×6=90입니다." },
+            { id: "even-sum-5-16", sourceNo: "4", printGroup: 2, typeLabel: "짝수 개 연속수의 합", sourceLocator: "교사용 지도서 17쪽 (4)", prompt: "5부터 16까지의 합을 구하세요.", visual: { kind: "book10", subtype: "consecutive-pairing", from: 5, to: 16 }, answerMode: "input", inputMode: "numeric", answer: "126", solution: "5+16=21인 짝이 6개이므로 21×6=126입니다." }
+          ]
+        },
+        extension: {
+          title: "기초 연산",
+          structureKey: "even-consecutive-sum-by-pairing",
+          story: "연속수 카드를 양끝에서 두 장씩 짝지어 봅니다.",
+          prompt: "7부터 14까지의 합을 쓰세요.",
+          visual: { kind: "book10", subtype: "consecutive-pairing", from: 7, to: 14 },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "84",
+          explanation: "7+14=21인 짝이 4개이므로 21×4=84입니다."
+        }
+      },
+      {
         id: "consecutive-page-range",
         unit: "연속수의 합",
-        title: "연속된 쪽수의 가운데를 찾아요",
-        sourceLocator: "수업용 교재 42쪽, 연습 14번",
-        sourceTypeIds: ["consecutive-page-range-b10"],
-        representativeConcept: "연속된 수의 개수와 합을 이용해 가운데 수를 찾고 처음 수와 끝 수를 구함",
+        title: "가운데 수로 홀수 개 연속수의 합을 구해요",
+        sourceLocator: "교사용 지도서 21~49쪽, 활동 03·연습 14번",
+        sourceTypeIds: ["odd-consecutive-sum-b10", "consecutive-page-range-b10"],
+        representativeConcept: "연속된 수가 홀수 개이면 가운데 수에 전체 개수를 곱해 합을 구하고, 합에서 가운데 수를 거꾸로 찾아 범위를 복원함",
+        typeOverview: [
+          { label: "가운데 수 찾기", text: "홀수 개 연속수의 가운데에는 양쪽 수가 같은 간격으로 놓입니다." },
+          { label: "가운데 수×개수", text: "연속수가 홀수 개이면 전체 합은 가운데 수에 개수를 곱한 값입니다." },
+          { label: "범위 거꾸로 찾기", text: "전체 합을 개수로 나눈 뒤 가운데에서 양쪽으로 수를 펼칩니다." }
+        ],
         story: {
           title: "책갈피 탐정",
           text: "연속된 쪽수는 가운데를 기준으로 같은 간격만큼 작아지고 커집니다.",
           mission: "쪽수의 합을 개수로 나눈 가운데 값에서 양쪽으로 차례로 펼쳐 보세요."
         },
         explanation: {
-          headline: "합을 개수로 나누면 연속된 쪽수의 가운데를 찾을 수 있습니다.",
+          headline: "홀수 개 연속수의 합은 가운데 수와 개수를 이용합니다.",
           steps: [
-            "연속된 다섯 수의 합이 110이면 110÷5=22가 가운데 수입니다.",
-            "가운데 수에서 양쪽으로 한 칸씩 벌리면 20, 21, 22, 23, 24가 됩니다.",
-            "마지막에는 만든 수들을 다시 더해 처음 주어진 합과 맞는지 확인합니다."
+            "6부터 10까지는 6, 7, 8, 9, 10의 다섯 수이고 가운데 수는 8입니다.",
+            "가운데 8을 다섯 번 모은 값과 연속수의 합이 같으므로 8×5=40입니다.",
+            "합과 개수를 알 때는 합÷개수로 가운데 수를 찾고 양쪽으로 범위를 펼칩니다."
           ]
+        },
+        experience: {
+          kind: "progressive-concept",
+          family: "odd-consecutive-sum-b10",
+          title: "가운데 수가 전체 합을 알려 줘요",
+          learnerStage: "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정 10권",
+          learnerFit: { language: "가운데와 양쪽이라는 짧은 위치 말", representations: "연속수 카드와 가운데 표시", prerequisites: "연속수 세기와 한 자리 곱셈", reasoningLoad: "가운데 찾기, 개수 세기, 곱하거나 거꾸로 나누기", responseMode: "자동 재생 뒤 터치 가능한 3지선다와 답 보기" },
+          beats: [
+            { id: "odd-center", action: "reveal", caption: "6부터 10까지에서 양쪽 짝의 한가운데 수는 8입니다.", visual: { kind: "book10", subtype: "consecutive-pairing", from: 6, to: 10 } },
+            { id: "odd-multiply", action: "highlight", caption: "가운데 수 8이 다섯 개 있다고 생각하면 8×5=40입니다.", visual: { kind: "book10", subtype: "consecutive-pairing", from: 6, to: 10, revealResult: true } },
+            { id: "odd-reverse", action: "verify", caption: "합이 75이고 여섯 쪽이면 75÷6을 기준으로 10부터 15까지를 찾습니다.", visual: { kind: "book10", subtype: "page-strip", count: 6, total: 75 } }
+          ],
+          hint: "홀수 개이면 가운데 수×개수, 합에서 범위를 찾을 때는 합÷개수부터 생각하세요.",
+          check: { prompt: "3부터 9까지 일곱 수의 합은 얼마일까요?", options: ["36", "42", "49"], answer: "42", explanation: "가운데 수는 6이고 수는 7개이므로 6×7=42입니다." },
+          visualProgression: null,
+          finalStill: { standsAlone: true, visualSource: "original" }
         },
         original: {
           title: "교재 확인",
@@ -2149,8 +2392,8 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           prompt: "연속된 6쪽의 쪽수 합이 75일 때 처음 쪽수와 마지막 쪽수를 쓰세요.",
           visual: { kind: "book10", subtype: "page-strip", count: 6, total: 75 },
           items: [
-            { id: "page-range-first", prompt: "처음 쪽수", answerMode: "input", inputMode: "numeric", answer: "10" },
-            { id: "page-range-last", prompt: "마지막 쪽수", answerMode: "input", inputMode: "numeric", answer: "15" }
+            { id: "page-range-first", sourceNo: "14-(1)", typeLabel: "처음 쪽수 찾기", sourceLocator: "교사용 지도서 42쪽 14번", prompt: "처음 쪽수", answerMode: "input", inputMode: "numeric", answer: "10" },
+            { id: "page-range-last", sourceNo: "14-(2)", typeLabel: "마지막 쪽수 찾기", sourceLocator: "교사용 지도서 42쪽 14번", prompt: "마지막 쪽수", answerMode: "input", inputMode: "numeric", answer: "15" }
           ]
         },
         extension: {
@@ -2198,6 +2441,24 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
             "두 식을 더하거나 빼서 한 종류의 모양 또는 하나의 차이만 남깁니다.",
             "남은 값을 같은 묶음 수로 나누고 원래 조건에 다시 넣어 확인합니다."
           ]
+        },
+        experience: {
+          kind: "progressive-concept",
+          family: "sum-difference-combine-divide-b10",
+          title: "그림 조건을 합치고 빼며 값을 찾아요",
+          learnerStage: "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정 10권",
+          learnerFit: { language: "합치기, 같은 것 지우기, 나누기의 짧은 행동 말", representations: "저울, 과녁, 세 쌍의 합, 따라잡기 표", prerequisites: "두 자리 덧셈·뺄셈과 나눗셈", reasoningLoad: "관계 고르기, 식 바꾸기, 결과 검산하기", responseMode: "장면별 자동 재생 뒤 터치 가능한 3지선다와 답 보기" },
+          beats: [
+            { id: "unit2-combine", action: "reveal", caption: "두 저울 식을 더하면 네모와 동그라미가 각각 세 개씩 되어 같은 묶음으로 나눌 수 있습니다.", visual: { kind: "book10", subtype: "quantity-equations", symbols: [{ label: "네모", token: "■" }, { label: "동그라미", token: "●" }], equations: [{ terms: [1, 2], total: 15 }, { terms: [2, 1], total: 18 }], unit: "g" } },
+            { id: "unit2-eliminate", action: "highlight", caption: "같은 동그라미를 양쪽 식에서 지우면 네모 한 개의 차이와 무게 차이만 남습니다.", visual: { kind: "book10", subtype: "quantity-equations", symbols: [{ label: "네모", token: "■" }, { label: "동그라미", token: "●" }], equations: [{ terms: [1, 1], total: 9 }, { terms: [2, 1], total: 15 }], unit: "g" } },
+            { id: "unit2-target", action: "highlight", caption: "과녁의 두 기록에서 같은 구역 점수를 빼면 남은 구역의 점수를 찾을 수 있습니다.", visual: { kind: "book10", subtype: "target-score", zones: [{ label: "가" }, { label: "나" }], attempts: [{ label: "A", hits: [2, 1], total: 12 }, { label: "B", hits: [1, 1], total: 7 }] } },
+            { id: "unit2-three-pairs", action: "highlight", caption: "세 쌍의 합을 모두 더하면 각 모양이 두 번씩 나오므로 2로 나눕니다.", visual: { kind: "book10", subtype: "pair-sum-list", labels: ["네모", "동그라미", "마름모"], tokens: ["■", "●", "◆"], pairSums: [7, 13, 10], unit: "g" } },
+            { id: "unit2-catch-up", action: "verify", caption: "처음 차이를 한 번마다 줄어드는 차이로 나누면 두 양이 같아지는 때를 찾습니다.", visual: { kind: "book10", subtype: "catch-up-table", labels: ["재이", "준이"], starts: [22, 40], changes: [5, 2], unit: "개/초" } }
+          ],
+          hint: "같은 부분을 표시하세요. 합치면 같은 묶음이 되는지, 빼면 한 종류만 남는지 확인하세요.",
+          check: { prompt: "처음 차이가 12개이고 한 번마다 3개씩 따라잡으면 몇 번 뒤 같아질까요?", options: ["3번", "4번", "9번"], answer: "4번", explanation: "처음 차이 12를 한 번마다 줄어드는 차이 3으로 나누면 4번입니다." },
+          visualProgression: null,
+          finalStill: { standsAlone: true, visualSource: "original" }
         },
         original: {
           title: "교재 연습",
@@ -2350,31 +2611,55 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
       {
         id: "digit-card-four-place",
         unit: "조건에 맞는 수",
-        title: "자리마다 남은 숫자 카드 수를 세어요",
-        sourceLocator: "수업용 교재 79쪽, 활동 1번",
-        sourceTypeIds: ["digit-card-number-enumeration"],
-        representativeConcept: "서로 다른 숫자 카드를 한 번씩 놓을 때 각 자리에 놓을 수 있는 카드 수를 차례로 곱해 경우의 수를 구함",
+        title: "숫자 카드로 조건에 맞는 수를 세어요",
+        sourceLocator: "교사용 지도서 79쪽·87쪽, 활동 01·02",
+        sourceTypeIds: ["digit-card-number-enumeration", "increasing-digit-number-count-b10"],
+        representativeConcept: "서로 다른 숫자 카드를 한 번씩 놓을 때 자리마다 남은 선택 수를 곱하거나, 커지는 순서에 맞는 카드 묶음을 세어 경우의 수를 구함",
+        typeOverview: [
+          { label: "첫 자리 고정", text: "첫 자리 카드를 정한 뒤 남은 자리의 선택 수를 곱합니다." },
+          { label: "모든 배열", text: "첫 자리부터 마지막 자리까지 가능한 카드 수를 차례로 곱합니다." },
+          { label: "커지는 수", text: "고른 카드의 순서는 하나로 정해지므로 어떤 카드를 고를지만 셉니다." }
+        ],
         story: {
           title: "네 자리 암호 카드",
           text: "서로 다른 카드 여섯 장을 한 줄에 배열하면 한 자리에 카드를 놓을 때마다 남은 카드가 한 장씩 줄어듭니다.",
           mission: "첫 자리를 정한 경우와 정하지 않은 경우의 선택 수를 따로 세어 보세요."
         },
         explanation: {
-          headline: "첫 자리를 정한 뒤 남은 카드 수를 차례로 곱합니다.",
+          headline: "자리 조건이 순서를 정하는지 먼저 보고, 남은 선택 수를 셉니다.",
           steps: [
-            "첫 자리를 고정하면 남은 자리에는 5장, 4장, 3장, 2장, 1장을 차례로 고릅니다.",
-            "5×4×3×2×1=120이므로 첫 자리를 고정한 배열은 120가지입니다.",
-            "첫 자리까지 고르면 전체는 6×5×4×3×2×1=720가지입니다."
+            "서로 다른 카드 5장으로 세 자리 수를 만들 때 첫 자리를 고정하면 남은 자리는 4×3=12가지입니다.",
+            "첫 자리도 고르면 가능한 선택 수는 5×4×3=60가지입니다.",
+            "카드 6장 중 3장을 골라 점점 커지는 수를 만들 때는 작은 순서로 놓는 방법이 하나뿐입니다."
           ]
+        },
+        experience: {
+          kind: "progressive-concept",
+          family: "digit-card-number-enumeration",
+          title: "자리를 채울 때마다 선택 수가 줄어요",
+          learnerStage: "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정 10권",
+          learnerFit: { language: "고정하기, 남은 카드, 커지는 순서의 짧은 말", representations: "숫자 카드와 자리 상자", prerequisites: "네 자리 수와 크기 비교", reasoningLoad: "조건 구분, 자리별 선택 수 세기, 곱하기", responseMode: "자동 재생 뒤 터치 가능한 3지선다와 답 보기" },
+          beats: [
+            { id: "digit-fixed", action: "reveal", caption: "천의 자리를 1로 고정하면 남은 세 자리는 3가지, 2가지, 1가지로 줄어듭니다.", visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4, fixed: [1], choiceCounts: [null, 3, 2, 1] } },
+            { id: "digit-all", action: "highlight", caption: "첫 자리도 고르면 자리마다 4, 3, 2, 1가지이므로 모두 24가지입니다.", visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4, choiceCounts: [4, 3, 2, 1] } },
+            { id: "digit-increasing", action: "verify", caption: "점점 커지는 수는 고른 세 카드를 작은 순서로 한 번만 놓습니다.", visual: { kind: "book10", subtype: "digit-slots", digits: [1, 2, 4, 7, 9], length: 3, direction: "increasing" } }
+          ],
+          hint: "자리를 바꾸어도 되는지, 작은 순서로 고정되는지 먼저 확인하세요.",
+          check: { prompt: "서로 다른 카드 4장으로 네 자리 수를 만들면 모두 몇 가지일까요?", options: ["12가지", "16가지", "24가지"], answer: "24가지", explanation: "4×3×2×1=24가지입니다." },
+          visualProgression: null,
+          finalStill: { standsAlone: true, visualSource: "original" }
         },
         original: {
           title: "교재 확인",
+          mode: "paged",
+          sourceQuestionCount: 3,
           structureKey: "four-distinct-digit-cards-used-once",
-          prompt: "1, 3, 5, 7을 한 번씩 사용해 네 자리 수를 만듭니다.",
+          prompt: "숫자 카드를 한 번씩 사용해 조건에 맞는 수의 개수를 구하세요.",
           visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4 },
           items: [
-            { id: "fixed-first-digit-count", prompt: "천의 자리 숫자가 1인 수의 개수", answerMode: "input", inputMode: "numeric", answer: "6" },
-            { id: "all-four-digit-count", prompt: "만들 수 있는 네 자리 수의 개수", answerMode: "input", inputMode: "numeric", answer: "24" }
+            { id: "fixed-first-digit-count", sourceNo: "1-(1)", printGroup: 1, typeLabel: "첫 자리 고정 배열", sourceLocator: "교사용 지도서 79쪽 (1)", prompt: "1, 3, 5, 7을 한 번씩 사용합니다. 천의 자리 숫자가 1인 네 자리 수의 개수를 구하세요.", visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4, fixed: [1] }, answerMode: "input", inputMode: "numeric", answer: "6", solution: "천의 자리에 1을 놓으면 남은 세 자리는 3×2×1=6가지입니다." },
+            { id: "all-four-digit-count", sourceNo: "1-(2)", printGroup: 1, typeLabel: "모든 네 자리 수 배열", sourceLocator: "교사용 지도서 79쪽 (2)", prompt: "1, 3, 5, 7을 한 번씩 사용하여 만들 수 있는 네 자리 수의 개수를 구하세요.", visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4 }, answerMode: "input", inputMode: "numeric", answer: "24", solution: "각 자리에 놓을 수 있는 카드 수는 4, 3, 2, 1개이므로 4×3×2×1=24가지입니다." },
+            { id: "increasing-three-digit-count", sourceNo: "2", printGroup: 2, typeLabel: "점점 커지는 세 자리 수", sourceLocator: "교사용 지도서 87쪽 활동", prompt: "1, 2, 4, 7, 9 중 서로 다른 세 장을 사용해 백의 자리부터 점점 커지는 세 자리 수를 만들면 모두 몇 개인지 구하세요.", visual: { kind: "book10", subtype: "digit-slots", digits: [1, 2, 4, 7, 9], length: 3, direction: "increasing" }, answerMode: "input", inputMode: "numeric", answer: "10", solution: "다섯 장 중 세 장을 고르면 놓는 순서는 작은 순서로 하나뿐입니다. 가능한 카드 묶음은 10개입니다." }
           ]
         },
         extension: {
@@ -2404,10 +2689,26 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
         explanation: {
           headline: "기호 단서를 표로 옮겨 숫자와 자리의 조건을 차례로 좁힙니다.",
           steps: [
-            "기호 A, B, C를 세 자리 후보라고 정하고, 숫자가 없는 줄의 기호를 먼저 제외합니다.",
-            "같은 숫자가 들어 있는지와 자리가 같은지를 표에 따로 표시합니다.",
-            "남은 후보를 각 단서와 대조해 모든 조건을 만족하는지만 확인합니다."
+            "0B인 줄부터 보고 비밀 수에 없는 숫자를 먼저 지웁니다.",
+            "스트라이크는 숫자와 자리가 모두 같고, 볼은 숫자만 같고 자리는 다릅니다.",
+            "남은 후보를 모든 단서와 다시 대조해 스트라이크와 볼의 수가 정확한지 확인합니다."
           ]
+        },
+        experience: {
+          kind: "progressive-concept",
+          family: "number-baseball-b10",
+          title: "단서를 한 줄씩 겹쳐 비밀 수를 찾아요",
+          learnerStage: "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정 10권",
+          learnerFit: { language: "있다, 없다, 제자리라는 짧은 단서 말", representations: "교재의 숫자 야구 표", prerequisites: "서로 다른 세 자리 수와 자리값", reasoningLoad: "숫자 제외, 자리 고정, 모든 단서 검산", responseMode: "단서가 한 줄씩 나타난 뒤 터치 가능한 3지선다와 답 보기" },
+          beats: [
+            { id: "baseball-first", action: "reveal", caption: "첫 단서에서 비밀 수에 들어 있는 숫자와 제자리에 있는 숫자의 수를 확인합니다.", visual: { kind: "book10", subtype: "number-baseball", clues: [{ guess: [2, 3, 6], strikes: 1, balls: 1 }, { guess: [8, 3, 2], strikes: 1, balls: 0 }, { guess: [8, 3, 4], strikes: 2, balls: 0 }], visibleRows: 1, note: "1S 1B: 두 숫자는 들어 있고 그중 하나만 제자리입니다." } },
+            { id: "baseball-second", action: "highlight", caption: "둘째 단서의 0B를 이용하면 제자리가 아닌 후보를 지울 수 있습니다.", visual: { kind: "book10", subtype: "number-baseball", clues: [{ guess: [2, 3, 6], strikes: 1, balls: 1 }, { guess: [8, 3, 2], strikes: 1, balls: 0 }, { guess: [8, 3, 4], strikes: 2, balls: 0 }], visibleRows: 2, note: "1S 0B: 한 숫자만 제자리에 있고 나머지 두 숫자는 없습니다." } },
+            { id: "baseball-third", action: "verify", caption: "마지막 단서까지 겹쳐 634가 모든 스트라이크와 볼 조건에 맞는지 확인합니다.", visual: { kind: "book10", subtype: "number-baseball", clues: [{ guess: [2, 3, 6], strikes: 1, balls: 1 }, { guess: [8, 3, 2], strikes: 1, balls: 0 }, { guess: [8, 3, 4], strikes: 2, balls: 0 }], visibleRows: 3, note: "세 줄을 모두 만족하는 서로 다른 세 자리 수를 확인합니다." } }
+          ],
+          hint: "0B가 있는 줄에서 비밀 수에 없는 숫자를 먼저 지우세요.",
+          check: { prompt: "숫자 야구에서 0B는 어떤 뜻일까요?", options: ["숫자는 있지만 자리가 다름", "제자리가 아닌 같은 숫자는 없음", "모든 숫자가 맞음"], answer: "제자리가 아닌 같은 숫자는 없음", explanation: "볼이 0개이므로 자리가 다른 같은 숫자는 하나도 없습니다." },
+          visualProgression: null,
+          finalStill: { standsAlone: true, visualSource: "original" }
         },
         original: {
           title: "교재 확인",
@@ -2419,7 +2720,7 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
             { guess: [8, 3, 4], strikes: 2, balls: 0 }
           ] },
           items: [
-            { id: "baseball-secret", prompt: "비밀 수", answerMode: "input", inputMode: "numeric", answer: "634" }
+            { id: "baseball-secret", sourceNo: "1", typeLabel: "숫자 야구 단서 적용", sourceLocator: "교사용 지도서 109쪽 활동", prompt: "비밀 수", answerMode: "input", inputMode: "numeric", answer: "634" }
           ]
         },
         extension: {
@@ -2436,6 +2737,72 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
           inputMode: "numeric",
           answer: "572",
           explanation: "582에서 5와 2가 제자리이고 8은 없습니다. 172에서는 7과 2가 제자리이고 1은 없으므로 비밀번호는 572입니다."
+        }
+      },
+      {
+        id: "number-digit-range-count",
+        unit: "수와 숫자의 개수",
+        title: "수의 개수와 쓴 숫자의 개수를 구별해요",
+        sourceLocator: "교사용 지도서 114~119쪽, 활동 02·연습",
+        sourceTypeIds: ["written-digit-count-b10", "inclusive-number-count-b10"],
+        representativeConcept: "처음 수와 끝 수를 모두 포함한 수의 개수와, 각 수를 적을 때 사용한 숫자의 총개수를 자릿수 구간별로 구별함",
+        typeOverview: [
+          { label: "수의 개수", text: "끝 수-처음 수+1로 양끝을 모두 포함한 수가 몇 개인지 셉니다." },
+          { label: "한 자릿수 구간", text: "1부터 9까지는 수 하나를 쓸 때 숫자 한 개를 사용합니다." },
+          { label: "두·세 자릿수 구간", text: "각 구간의 수 개수에 자릿수를 곱한 뒤 모두 더합니다." }
+        ],
+        story: {
+          title: "번호표를 쓰는 두 가지 질문",
+          text: "번호표가 몇 장인지 묻는 것과 번호를 쓰며 숫자를 몇 번 썼는지는 서로 다른 질문입니다.",
+          mission: "먼저 수의 개수를 구하고, 자릿수가 바뀌는 곳에서 구간을 나누어 숫자의 개수를 구하세요."
+        },
+        explanation: {
+          headline: "양끝을 포함해 수를 센 뒤 자릿수별로 다시 나눕니다.",
+          steps: [
+            "17부터 35까지의 수는 35-17+1=19개입니다.",
+            "17부터 35까지는 모두 두 자리 수이므로 숫자는 19×2=38개입니다.",
+            "1부터 499까지는 1~9, 10~99, 100~499로 나누어 9+180+1200=1389개를 씁니다."
+          ]
+        },
+        experience: {
+          kind: "progressive-concept",
+          family: "written-digit-count-b10",
+          title: "수의 개수와 숫자의 개수를 따로 세어요",
+          learnerStage: "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정 10권",
+          learnerFit: { language: "번호표 수와 쓴 숫자를 구별하는 짧은 말", representations: "수 범위와 자릿수 구간표", prerequisites: "세 자리 수와 포함해 세기", reasoningLoad: "양끝 포함, 구간 나누기, 자릿수 곱하기", responseMode: "자동 재생 뒤 터치 가능한 3지선다와 답 보기" },
+          beats: [
+            { id: "digit-range-numbers", action: "reveal", caption: "17부터 35까지는 양끝을 모두 포함하므로 수가 35-17+1=19개입니다.", visual: { kind: "book10", subtype: "digit-range", from: 17, to: 35, digit: null } },
+            { id: "digit-range-two", action: "highlight", caption: "모두 두 자리 수이므로 번호를 쓰는 데 숫자가 19×2=38개 필요합니다.", visual: { kind: "book10", subtype: "digit-count-breakdown", segments: [{ label: "17~35", count: 19, digits: 2 }], revealResult: true } },
+            { id: "digit-range-three", action: "verify", caption: "1부터 499까지는 자릿수가 바뀌는 곳에서 세 구간으로 나누어 더합니다.", visual: { kind: "book10", subtype: "digit-count-breakdown", segments: [{ label: "1~9", count: 9, digits: 1 }, { label: "10~99", count: 90, digits: 2 }, { label: "100~499", count: 400, digits: 3 }], revealResult: true } }
+          ],
+          hint: "수 몇 개와 숫자 몇 개를 먼저 구별하세요. 숫자는 수 하나의 자릿수만큼 씁니다.",
+          check: { prompt: "1부터 42까지 번호를 쓸 때 숫자는 모두 몇 개 필요할까요?", options: ["42개", "75개", "84개"], answer: "75개", explanation: "1~9는 9개, 10~42는 33×2=66개이므로 9+66=75개입니다." },
+          visualProgression: null,
+          finalStill: { standsAlone: true, visualSource: "original" }
+        },
+        original: {
+          title: "교재 활동 확인",
+          mode: "paged",
+          sourceQuestionCount: 3,
+          structureKey: "book10-number-and-written-digit-count-source",
+          prompt: "수의 개수와 번호를 적을 때 사용한 숫자의 개수를 구하세요.",
+          visual: { kind: "book10", subtype: "digit-range", from: 17, to: 35, digit: null },
+          items: [
+            { id: "range-17-35", sourceNo: "1", printGroup: 1, typeLabel: "수의 개수와 숫자의 개수", sourceLocator: "교사용 지도서 114쪽", prompt: "17부터 35까지의 수는 몇 개이며, 이 수들을 모두 쓸 때 숫자는 몇 개 필요한지 구하세요.", visual: { kind: "book10", subtype: "digit-count-breakdown", segments: [{ label: "17~35", count: 19, digits: 2 }] }, parts: [{ id: "numbers", label: "수의 개수", answer: "19", unit: "개" }, { id: "digits", label: "숫자의 개수", answer: "38", unit: "개" }], solution: "35-17+1=19개이고 모두 두 자리 수이므로 19×2=38개입니다." },
+            { id: "digits-1-499", sourceNo: "2", printGroup: 2, typeLabel: "세 자릿수까지 쓴 숫자 세기", sourceLocator: "교사용 지도서 119쪽", prompt: "1부터 499까지의 수를 모두 쓸 때 숫자는 모두 몇 개 필요한지 구하세요.", visual: { kind: "book10", subtype: "digit-count-breakdown", segments: [{ label: "1~9", count: 9, digits: 1 }, { label: "10~99", count: 90, digits: 2 }, { label: "100~499", count: 400, digits: 3 }] }, answerMode: "input", inputMode: "numeric", answer: "1389", solution: "9×1+90×2+400×3=9+180+1200=1389개입니다." },
+            { id: "digits-1-321", sourceNo: "3", printGroup: 2, typeLabel: "끝 수가 세 자리인 숫자 세기", sourceLocator: "교사용 지도서 119쪽", prompt: "1부터 321까지의 수를 모두 쓸 때 숫자는 모두 몇 개 필요한지 구하세요.", visual: { kind: "book10", subtype: "digit-count-breakdown", segments: [{ label: "1~9", count: 9, digits: 1 }, { label: "10~99", count: 90, digits: 2 }, { label: "100~321", count: 222, digits: 3 }] }, answerMode: "input", inputMode: "numeric", answer: "855", solution: "9×1+90×2+222×3=9+180+666=855개입니다." }
+          ]
+        },
+        extension: {
+          title: "기초 연산",
+          structureKey: "two-digit-range-written-digit-count",
+          story: "14번부터 38번까지 번호표를 차례로 씁니다.",
+          prompt: "번호를 쓰는 데 숫자는 모두 몇 개 필요한지 쓰세요.",
+          visual: { kind: "book10", subtype: "digit-count-breakdown", segments: [{ label: "14~38", count: 25, digits: 2 }] },
+          answerMode: "input",
+          inputMode: "numeric",
+          answer: "50",
+          explanation: "38-14+1=25개의 수가 있고 모두 두 자리 수이므로 25×2=50개입니다."
         }
       }
     ]

@@ -12,10 +12,52 @@ function multiplicationMethods(visual) {
   return `<div class="b10-methods"><strong>${visual.first} × ${visual.second}</strong><div><span>넓이</span><span>${tens}×${visual.second}<br>+ ${ones}×${visual.second}</span><span>격자</span><span>세로셈</span></div></div>`;
 }
 
+function napierGrid(visual) {
+  const topDigits = String(visual.first).split("").map(Number);
+  const sideDigits = String(visual.second).split("").map(Number);
+  const cells = sideDigits.flatMap((sideDigit) => topDigits.map((topDigit) => {
+    const product = sideDigit * topDigit;
+    return `<span class="b10-napier-cell"><i>${Math.floor(product / 10)}</i><b>${product % 10}</b></span>`;
+  })).join("");
+  const result = Number(visual.first) * Number(visual.second);
+  return `<div class="b10-napier" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)} 네이피어 곱셈판"><div class="b10-napier-top" style="--cols:${topDigits.length}">${topDigits.map((digit) => `<b>${digit}</b>`).join("")}</div><div class="b10-napier-main"><div class="b10-napier-side" style="--rows:${sideDigits.length}">${sideDigits.map((digit) => `<b>${digit}</b>`).join("")}</div><div class="b10-napier-grid" style="--cols:${topDigits.length}">${cells}</div></div><p>${visual.revealResult ? `${esc(visual.first)} × ${esc(visual.second)} = <strong>${result}</strong>` : "대각선 방향으로 수를 더해 보세요."}</p></div>`;
+}
+
+function areaModel(visual) {
+  const split = (value) => {
+    const tens = Math.floor(Number(value) / 10) * 10;
+    return [tens, Number(value) - tens].filter((part) => part > 0);
+  };
+  const horizontal = split(visual.first);
+  const vertical = split(visual.second);
+  const products = vertical.flatMap((height) => horizontal.map((width) => width * height));
+  const result = Number(visual.first) * Number(visual.second);
+  return `<div class="b10-area-model" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)} 넓이 모델"><div class="b10-area-top" style="--cols:${horizontal.length}">${horizontal.map((value) => `<b>${value}</b>`).join("")}</div><div class="b10-area-body"><div class="b10-area-side" style="--rows:${vertical.length}">${vertical.map((value) => `<b>${value}</b>`).join("")}</div><div class="b10-area-grid" style="--cols:${horizontal.length}">${products.map((value) => `<span>${visual.revealProducts === false ? "?" : value}</span>`).join("")}</div></div><p>${visual.revealResult ? `${products.join(" + ")} = <strong>${result}</strong>` : "나눈 넓이를 모두 더해 보세요."}</p></div>`;
+}
+
+function verticalMultiplication(visual) {
+  const first = Number(visual.first);
+  const second = Number(visual.second);
+  const digits = String(second).split("").reverse().map(Number);
+  const partials = digits.map((digit, index) => first * digit * 10 ** index);
+  const result = first * second;
+  return `<div class="b10-vertical-multiplication" role="img" aria-label="${first} 곱하기 ${second} 세로셈"><span>${first}</span><span>× ${second}</span><i></i>${partials.map((value) => `<span>${visual.revealPartials === false ? "□" : value}</span>`).join("")}<i></i><strong>${visual.revealResult ? result : "?"}</strong></div>`;
+}
+
 const operation = (visual) => `<div class="b10-operation">${esc(visual.expression)}</div>`;
 
 function factorPairs(visual) {
-  return `<div class="b10-factor"><strong>${visual.target}</strong><div>${visual.pairs.map(([left]) => `<span>${left}</span><i>×</i><span class="blank"></span>`).join("")}</div></div>`;
+  return `<div class="b10-factor"><strong>${visual.target}</strong><div>${visual.pairs.map(([left, right]) => `<span>${left}</span><i>×</i><span class="${visual.revealPartners ? "" : "blank"}">${visual.revealPartners ? right : ""}</span>`).join("")}</div></div>`;
+}
+
+function consecutivePairing(visual) {
+  const values = Array.from({ length: Number(visual.to) - Number(visual.from) + 1 }, (_, index) => Number(visual.from) + index);
+  const pairs = [];
+  while (values.length > 1) pairs.push([values.shift(), values.pop()]);
+  const middle = values[0];
+  const pairSum = Number(visual.from) + Number(visual.to);
+  const total = pairs.reduce((sum, pair) => sum + pair[0] + pair[1], middle || 0);
+  return `<div class="b10-consecutive-pairing" role="img" aria-label="${esc(visual.from)}부터 ${esc(visual.to)}까지 연속수 짝짓기"><div>${pairs.map(([left, right]) => `<span><b>${left}</b><i>+</i><b>${right}</b><em>= ${pairSum}</em></span>`).join("")}${middle !== undefined ? `<span class="middle"><b>${middle}</b><em>가운데 수</em></span>` : ""}</div><p>${visual.revealResult ? `${middle !== undefined ? `${middle} × ${pairs.length * 2 + 1}` : `${pairSum} × ${pairs.length}`} = <strong>${total}</strong>` : "처음 수와 끝 수를 짝지어 보세요."}</p></div>`;
 }
 
 function consecutiveTarget(visual) {
@@ -156,7 +198,9 @@ const delayedCatchUp = (visual) => `<div class="b10-timeline"><span>민수 시�
 
 function digitSlots(visual) {
   const arrow = visual.direction ? `<b>${visual.direction === "increasing" ? "작은 숫자 → 큰 숫자" : "큰 숫자 → 작은 숫자"}</b>` : "";
-  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, () => "<i></i>").join("")}</div>${arrow}</div>`;
+  const fixed = visual.fixed || [];
+  const counts = visual.choiceCounts || [];
+  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}${counts[index] ? `<small>${counts[index]}가지</small>` : ""}</i>`).join("")}</div>${arrow}</div>`;
 }
 
 function switches(visual) {
@@ -179,17 +223,28 @@ function lineupSlots(visual) {
 }
 
 function numberBaseball(visual) {
-  return `<table class="b10-baseball"><thead><tr><th>말한 수</th><th>S</th><th>B</th></tr></thead><tbody>${visual.clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td>${clue.strikes}</td><td>${clue.balls}</td></tr>`).join("")}</tbody></table>`;
+  const clues = visual.clues.slice(0, visual.visibleRows || visual.clues.length);
+  return `<div class="b10-baseball-wrap"><table class="b10-baseball"><thead><tr><th>말한 수</th><th>S</th><th>B</th></tr></thead><tbody>${clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td>${clue.strikes}</td><td>${clue.balls}</td></tr>`).join("")}</tbody></table>${visual.note ? `<p>${esc(visual.note)}</p>` : ""}</div>`;
 }
 
 const digitRange = (visual) => `<div class="b10-digit-range"><strong>${visual.from}</strong><i>부터</i><strong>${visual.to}</strong><i>까지</i>${visual.digit !== null ? `<b>${esc(visual.digit)} 세기</b>` : ""}</div>`;
+
+function digitCountBreakdown(visual) {
+  const segments = visual.segments || [];
+  const total = segments.reduce((sum, segment) => sum + Number(segment.count) * Number(segment.digits), 0);
+  return `<div class="b10-digit-count" role="img" aria-label="수의 범위에서 사용한 숫자 개수"><div>${segments.map((segment) => `<span><b>${esc(segment.label)}</b><i>${esc(segment.count)}개 × ${esc(segment.digits)}자리</i><strong>${Number(segment.count) * Number(segment.digits)}</strong></span>`).join("")}</div><p>${visual.revealResult ? `모두 <strong>${total}</strong>개` : "각 구간의 수 개수와 자릿수를 곱해 보세요."}</p></div>`;
+}
 
 export function book10Markup(visual) {
   if (!visual || visual.kind !== "book10") return "";
   switch (visual.subtype) {
     case "multiplication-methods": return multiplicationMethods(visual);
+    case "napier-grid": return napierGrid(visual);
+    case "area-model": return areaModel(visual);
+    case "vertical-multiplication": return verticalMultiplication(visual);
     case "operation": return operation(visual);
     case "factor-pairs": return factorPairs(visual);
+    case "consecutive-pairing": return consecutivePairing(visual);
     case "consecutive-target": return consecutiveTarget(visual);
     case "calendar": return calendar(visual);
     case "page-strip": return pageStrip(visual);
@@ -223,6 +278,7 @@ export function book10Markup(visual) {
     case "lineup-slots": return lineupSlots(visual);
     case "number-baseball": return numberBaseball(visual);
     case "digit-range": return digitRange(visual);
+    case "digit-count-breakdown": return digitCountBreakdown(visual);
     default: return "";
   }
 }

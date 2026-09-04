@@ -3,6 +3,7 @@ import { writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
 
 const runtimeModules = process.env.CODEX_NODE_MODULES
   || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules";
@@ -15,6 +16,15 @@ const bookIds = requestedBook === "all"
   ? Array.from({ length: 10 }, (_, index) => `book-${String(index + 1).padStart(2, "0")}`)
   : [requestedBook];
 
+function sourceParts(lesson) {
+  if (lesson.original.mode !== "paged") return ["original"];
+  return [...new Set(lesson.original.items.map((item) => item.printGroup))].map((group) => `original-${group}`);
+}
+
+function lessonParts(lesson) {
+  return [...sourceParts(lesson), "story-1", "story-2"];
+}
+
 const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
@@ -25,13 +35,15 @@ try {
   });
 
   for (const bookId of bookIds) {
+    const book = GOLDEN_BELL_BOOKS.find((candidate) => candidate.id === bookId);
+    const currentLesson = book.lessons[0];
     await page.emulateMedia({ media: "screen" });
     await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=PRINT-AUDIT&book=${bookId}`, { waitUntil: "networkidle" });
     await page.evaluate(() => { window.print = () => {}; });
     await page.locator("#printLessonButton").click();
     await page.waitForTimeout(100);
-    const expectedLessonPages = 3;
-    const expectedLessonParts = ["original", "story-1", "story-2"];
+    const expectedLessonParts = lessonParts(currentLesson);
+    const expectedLessonPages = expectedLessonParts.length;
     assert.equal(await page.locator(".gold-print-page").count(), expectedLessonPages, `${bookId}: current learning print page count mismatch`);
     assert.deepEqual(await page.locator(".gold-print-page").evaluateAll((nodes) => nodes.map((node) => node.dataset.printPart)), expectedLessonParts, `${bookId}: current learning print parts are incomplete`);
     await page.emulateMedia({ media: "print" });
@@ -41,7 +53,7 @@ try {
     await page.emulateMedia({ media: "screen" });
     await page.locator("#printBookButton").click();
     await page.waitForTimeout(100);
-    const expectedBookPages = bookId === "book-10" ? 20 : 12;
+    const expectedBookPages = book.lessons.reduce((sum, lesson) => sum + lessonParts(lesson).length, 0);
     assert.equal(await page.locator(".gold-print-page").count(), expectedBookPages, `${bookId}: print DOM page count mismatch`);
 
     await page.emulateMedia({ media: "print" });
