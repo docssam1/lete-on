@@ -13,8 +13,8 @@ let generatedCount = 0;
 
 assert.equal(GOLDEN_BELL_BOOKS.length, 10, "Golden Bell must cover ten books");
 for (const book of GOLDEN_BELL_BOOKS) {
-  assert.equal(book.lessons.length, 4, `${book.id}: expected four concepts`);
-  assert.deepEqual(book.dailyPractice, { problemCount: 8, estimatedMinutes: 30 }, `${book.id}: daily practice summary mismatch`);
+  assert.ok(book.lessons.length >= 4, `${book.id}: verified concepts were removed`);
+  assert.deepEqual(book.dailyPractice, { problemCount: book.lessons.length * 2, estimatedMinutes: 30 }, `${book.id}: daily practice summary mismatch`);
   for (const lesson of book.lessons) {
     const items = [lesson.extension, ...(lesson.similarPractice || [])];
     assert.equal(items.length, 2, `${book.id}/${lesson.id}: expected two additional-learning problems`);
@@ -36,7 +36,9 @@ for (const book of GOLDEN_BELL_BOOKS) {
   }
 }
 
-assert.equal(lessonCount, 40, "expected forty Golden Bell concepts");
-assert.equal(addedCount, 40, "expected forty new similar-practice problems");
-assert.equal(generatedCount, 24, "expected twenty-four bank-generated problems");
-console.log(`GOLDEN_BELL_SIMILAR_OK books=10 lessons=${lessonCount} added=${addedCount} generated=${generatedCount} daily=8/30min`);
+const expectedLessonCount = GOLDEN_BELL_BOOKS.reduce((sum, book) => sum + book.lessons.length, 0);
+const expectedGeneratedCount = GOLDEN_BELL_BOOKS.flatMap((book) => book.lessons).filter((lesson) => GOLDEN_BELL_SIMILAR_GENERATOR_MAP[lesson.id]).length;
+assert.equal(lessonCount, expectedLessonCount, "Golden Bell lesson count mismatch");
+assert.equal(addedCount, expectedLessonCount, "similar-practice coverage mismatch");
+assert.equal(generatedCount, expectedGeneratedCount, "bank-generated problem count mismatch");
+console.log(`GOLDEN_BELL_SIMILAR_OK books=10 lessons=${lessonCount} added=${addedCount} generated=${generatedCount} daily=2-per-lesson/30min`);

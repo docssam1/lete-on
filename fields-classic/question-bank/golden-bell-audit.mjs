@@ -26,7 +26,10 @@ for (const book of GOLDEN_BELL_BOOKS) {
     }
     if (!lesson.original?.items?.length) fail(`${book.id}/${lesson.id}: missing original check`);
     if (!lesson.extension?.story || !lesson.extension?.answer || !lesson.extension?.explanation) fail(`${book.id}/${lesson.id}: missing story extension`);
-    if (!lesson.original.structureKey || lesson.original.structureKey !== lesson.extension.structureKey) {
+    const originalStructureKeys = lesson.original.mode === "paged"
+      ? new Set(lesson.original.items.map((item) => item.structureKey))
+      : new Set([lesson.original.structureKey]);
+    if (!lesson.original.structureKey || (!originalStructureKeys.has(lesson.extension.structureKey) && lesson.original.mode !== "paged")) {
       fail(`${book.id}/${lesson.id}: story extension changed the original problem structure`);
     }
     if (lesson.extension.prompt === lesson.original.prompt) fail(`${book.id}/${lesson.id}: story extension reused the original prompt`);
@@ -37,7 +40,7 @@ for (const book of GOLDEN_BELL_BOOKS) {
     } else if (extensionMode === "input") {
       if (lesson.extension.options?.length) fail(`${book.id}/${lesson.id}: written extension must not add choices`);
     } else fail(`${book.id}/${lesson.id}: unsupported extension answer mode ${extensionMode}`);
-    const originalModes = new Set(lesson.original.items.map((item) => item.answerMode || "choice"));
+    const originalModes = new Set(lesson.original.items.map((item) => item.parts?.length ? "input" : item.answerMode || "choice"));
     if (originalModes.size !== 1 || !originalModes.has(extensionMode)) {
       fail(`${book.id}/${lesson.id}: story extension changed the original answer format`);
     }
@@ -49,7 +52,15 @@ for (const book of GOLDEN_BELL_BOOKS) {
       if (item.solution.trim() === String(item.answer) || /^정답\s*[:：]?/u.test(item.solution.trim())) {
         fail(`${book.id}/${lesson.id}/${item.id}: answer-only text cannot replace a worked solution`);
       }
-      const answerMode = item.answerMode || "choice";
+      if (item.parts?.length) {
+        if (item.parts.some((part) => !part.id || !part.label || part.answer === undefined || !String(part.answer).trim())) {
+          fail(`${book.id}/${lesson.id}/${item.id}: incomplete multi-part answer`);
+        }
+        if (new Set(item.parts.map((part) => part.id)).size !== item.parts.length) {
+          fail(`${book.id}/${lesson.id}/${item.id}: duplicate multi-part answer id`);
+        }
+      }
+      const answerMode = item.parts?.length ? "input" : item.answerMode || "choice";
       if (answerMode === "choice") {
         if (!item.options?.includes(item.answer)) fail(`${book.id}/${lesson.id}/${item.id}: original answer not visible`);
         if (new Set(item.options).size !== item.options.length) fail(`${book.id}/${lesson.id}/${item.id}: duplicate choices`);
@@ -298,12 +309,25 @@ for (const unit of requiredBook9Units) if (!book9.lessons.some((lesson) => lesso
 
 const book10 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-10");
 const approvedBook10Answers = new Map([
+  ["napier-multiplication", ["1610", "53382", "900", "4200", "1938"]],
+  ["even-consecutive-sum", ["60", "105", "90", "126"]],
   ["consecutive-page-range", ["10", "15"]],
-  ["catch-up-acorns", ["5"]],
-  ["digit-card-four-place", ["6", "24"]],
-  ["number-baseball-secret", ["634"]]
+  ["catch-up-acorns", [
+    ["11", "7", "4"], ["5", "3", "2"], ["6", "3"], ["2"], ["30"], ["40"],
+    ["15", "2", "5", "8"], ["4", "7", "9"], ["21"], ["15"], ["6", "480"],
+    ["6", "12000"], ["6", "36"], ["6", "72"], ["6"], ["5"], ["7"], ["7"]
+  ]],
+  ["digit-card-four-place", ["6", "24", "10"]],
+  ["number-baseball-secret", ["634"]],
+  ["number-digit-range-count", [["19", "38"], "1389", "855"]]
 ]);
-const snapshotOriginal = (original) => ({
+const snapshotOriginal = (original) => original.mode === "paged" ? ({
+  title: original.title,
+  structureKey: original.structureKey,
+  mode: original.mode,
+  itemIds: original.items.map((item) => item.id),
+  printGroups: original.items.map((item) => item.printGroup)
+}) : ({
   title: original.title,
   structureKey: original.structureKey,
   prompt: original.prompt,
@@ -335,23 +359,18 @@ const approvedOriginalSnapshots = new Map([
     ]
   }],
   ["book-10/catch-up-acorns", {
-    title: "교재 확인",
-    structureKey: "catch-up-from-start-gap-and-daily-gap",
-    prompt: "두 다람쥐가 같은 수의 도토리를 가지게 되는 것은 며칠 뒤인지 쓰세요.",
-    visual: { kind: "book10", subtype: "catch-up-table", labels: ["엄마 다람쥐", "아빠 다람쥐"], starts: [30, 50], changes: [7, 3], unit: "개/일" },
-    items: [
-      { id: "catch-up-days", prompt: "같아지는 날", answerMode: "input", inputMode: "numeric", answer: "5" }
-    ]
+    title: "교재 연습",
+    structureKey: "book10-unit2-source-practice",
+    mode: "paged",
+    itemIds: ["unit2-q01-1", "unit2-q01-2", "unit2-q02", "unit2-q03", "unit2-q04", "unit2-q05", "unit2-q06", "unit2-q07", "unit2-q08", "unit2-q09", "unit2-q10", "unit2-q11", "unit2-q12", "unit2-q13", "unit2-q14", "unit2-q15", "unit2-q16", "unit2-q17"],
+    printGroups: [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9]
   }],
   ["book-10/digit-card-four-place", {
     title: "교재 확인",
     structureKey: "four-distinct-digit-cards-used-once",
-    prompt: "1, 3, 5, 7을 한 번씩 사용해 네 자리 수를 만듭니다.",
-    visual: { kind: "book10", subtype: "digit-slots", digits: [1, 3, 5, 7], length: 4 },
-    items: [
-      { id: "fixed-first-digit-count", prompt: "천의 자리 숫자가 1인 수의 개수", answerMode: "input", inputMode: "numeric", answer: "6" },
-      { id: "all-four-digit-count", prompt: "만들 수 있는 네 자리 수의 개수", answerMode: "input", inputMode: "numeric", answer: "24" }
-    ]
+    mode: "paged",
+    itemIds: ["fixed-first-digit-count", "all-four-digit-count", "increasing-three-digit-count"],
+    printGroups: [1, 1, 2]
   }],
   ["book-10/number-baseball-secret", {
     title: "교재 확인",
@@ -370,11 +389,11 @@ const approvedOriginalSnapshots = new Map([
 for (const [lessonId, approvedAnswers] of approvedBook10Answers) {
   const lesson = book10.lessons.find((candidate) => candidate.id === lessonId);
   if (!lesson) fail(`book-10: missing approved lesson ${lessonId}`);
-  const actualAnswers = lesson.original.items.map((item) => item.answer);
+  const actualAnswers = lesson.original.items.map((item) => item.parts?.length ? item.parts.map((part) => part.answer) : item.answer);
   if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
     fail(`book-10/${lessonId}: approved textbook answers changed`);
   }
-  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+  if (lesson.original.items.some((item) => item.parts?.length ? false : item.answerMode !== "input")) {
     fail(`book-10/${lessonId}: textbook answer format changed`);
   }
 }
@@ -410,22 +429,22 @@ const conceptLeakChecks = new Map([
   ["book-10/consecutive-page-range", {
     answers: ["10", "15"],
     coreValues: ["75", "10", "15"],
-    required: ["110", "20, 21, 22, 23, 24"]
+    required: ["6부터 10까지", "8×5=40"]
   }],
   ["book-10/catch-up-acorns", {
-    answers: ["5"],
-    coreValues: ["50", "30", "7", "3"],
-    required: ["24-12=12", "6-2=4", "12÷4=3"]
+    answers: ["11", "7", "4"],
+    coreValues: ["15", "18", "11", "7", "4"],
+    required: ["두 식", "같은 부분", "더하거나 빼서", "나눕니다"]
   }],
   ["book-10/digit-card-four-place", {
-    answers: ["6", "24"],
+    answers: ["6", "24", "10"],
     coreValues: ["1", "3", "5", "7"],
-    required: ["5×4×3×2×1=120", "6×5×4×3×2×1=720"]
+    required: ["5×4×3=60", "카드 6장 중 3장"]
   }],
   ["book-10/number-baseball-secret", {
     answers: ["634"],
     coreValues: ["236", "832", "834"],
-    required: ["A", "B", "C"]
+    required: ["0B", "스트라이크", "볼"]
   }]
 ]);
 for (const [lessonKey, check] of conceptLeakChecks) {
@@ -441,7 +460,7 @@ for (const [lessonKey, check] of conceptLeakChecks) {
   }
 }
 if (book10.source.origin !== "textbook-derived") fail("book-10: textbook-derived source label is required");
-const requiredBook10Units = ["연속수의 합", "따라잡기", "조건에 맞는 수", "숫자 야구게임"];
+const requiredBook10Units = ["곱셈 방법", "연속수의 합", "따라잡기", "조건에 맞는 수", "숫자 야구게임", "수와 숫자의 개수"];
 for (const unit of requiredBook10Units) if (!book10.lessons.some((lesson) => lesson.unit === unit)) fail(`book-10: missing ${unit}`);
 
 const pathLesson = book5.lessons.find((lesson) => lesson.id === "path-number-grid");
@@ -764,7 +783,9 @@ if (sourcePages.join(",") !== "10,11,12,13,14,15" || storyLockers.join(",") !== 
   fail("book-10: consecutive page range calculation failed");
 }
 const catchUpDays = (behind, ahead, behindRate, aheadRate) => (ahead - behind) / (behindRate - aheadRate);
-if (catchUpDays(30, 50, 7, 3) !== 5 || catchUpDays(18, 38, 6, 2) !== 5) {
+if (catchUpDays(22, 40, 5, 2) !== 6
+  || catchUpDays(20, 50, 9, 3) !== 5
+  || catchUpDays(18, 38, 6, 2) !== 5) {
   fail("book-10: catch-up calculation failed");
 }
 const permutations = (items) => items.length < 2

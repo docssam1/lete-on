@@ -8,6 +8,11 @@
   --blue:#16417C;--blue-deep:#0E2C57;--gold:#EAC996;--gold-deep:#C9A063;--gold-bright:#F5D98B;
   --ink:#1A2233;--sub:#4a5468;--paper:#FBFAF7;--mist:#F1F0EC;--line:#E4E2DC;
   --ok:#2E9E6B;--no:#D9534F;--purple:#3d1a5c;
+  /* 디자인 패스 1(2026-09-04) — 학습 무대 배경·마법판·공용 그림자. 기존 토큰만 참조하고
+     새 토큰은 여기 :root에만 추가한다(지시사항). */
+  --sky-top:#DCEFF9;--sky-bottom:var(--paper);--ground-tint:#E4F0DC;
+  --board-bg:#FFFDF6;--board-line:#EADFC6;--board-edge:#D8C79B;
+  --shadow-card:0 10px 28px -18px rgba(22,65,124,.35);
   /* 적응형 밴드 기본값(=mid). render()가 html[data-nm-band]를 세팅하면 아래에서 재정의.
      적응형-타이포-말투-설계.md §2 — 컴포넌트에 직접 크기를 박지 말고 토큰만 쓸 것. */
   --nm-fs-body:15.5px; --nm-fs-num:1.15em; --nm-btn-h:46px; --nm-lh:1.7; --nm-ls:0;
@@ -45,46 +50,92 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
 .nm-map-hero{text-align:center;padding:22px 16px 16px}
 .nm-map-title{font-size:clamp(24px,7vw,34px);font-weight:900;letter-spacing:-.03em;color:var(--blue-deep)}
 .nm-map-sub{font-size:14px;color:var(--sub);margin-top:6px}
-.nm-tier{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 12px 30px -22px rgba(22,65,124,.3)}
+.nm-tier{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow-card)}
 .nm-tier-head{display:flex;align-items:center;gap:12px}
 .nm-tier-badge{color:#fff;font-weight:900;font-size:13px;padding:7px 11px;border-radius:11px;flex:none}
 .nm-tier-head b{font-size:17px;color:var(--blue-deep);display:block}
 .nm-tier-head small{font-size:12px;color:var(--sub)}
 .nm-tier-desc{font-size:13px;color:var(--sub);margin:10px 0 14px}
+/* 등급(tier) 진행 막대 — 헤더 아래, 완료/전체 유닛 수(§2) */
+.nm-tier-progress-wrap{display:flex;align-items:center;gap:8px;padding:2px 14px 10px;max-width:900px;margin:0 auto;width:100%}
+.nm-tier-progress{flex:1;height:6px;border-radius:999px;background:var(--mist);overflow:hidden}
+.nm-tier-progress-bar{height:100%;border-radius:999px;transition:width .3s ease}
+.nm-tier-progress-n{flex:none;font-size:11.5px;font-weight:800;color:var(--sub);font-variant-numeric:tabular-nums}
 .nm-levels{display:flex;flex-direction:column;gap:9px}
-.nm-level{border:1px solid var(--line);border-radius:15px;padding:13px 15px}
-.nm-level.locked{background:var(--mist);display:flex;align-items:center;justify-content:space-between;opacity:.7}
-.nm-level.open{background:linear-gradient(160deg,#fff,#f6faff);border-color:#cdddf3}
+/* 등급 화면 — 디자인 패스 1: 레벨 카드에 왼쪽 색 레일(등급 accent), 유닛은
+   2열(모바일)/3열(데스크탑) 타일. 카드 톤은 흰 배경 유지, 레일이 등급을 알려준다 */
+.nm-level{border:1px solid var(--line);border-left:5px solid var(--tier-accent,var(--blue));
+  border-radius:4px 15px 15px 4px;padding:13px 15px;background:#fff}
+.nm-level.locked{background:var(--mist);border-left-color:var(--line);display:flex;align-items:center;justify-content:space-between;opacity:.7}
+.nm-level.open{box-shadow:var(--shadow-card)}
 .nm-level-t{font-size:14px;font-weight:800;color:var(--blue-deep);margin-bottom:9px}
 .nm-level.locked .nm-level-t{margin-bottom:0}
+.nm-level-t-sub{display:none;font-weight:600;color:var(--sub)}
 .nm-lock{font-size:12px;font-weight:700;color:#9aa2b1}
-.nm-unit-row{display:flex;flex-wrap:wrap;gap:9px}
-.nm-unit{display:flex;flex-direction:column;align-items:center;gap:5px;width:90px;padding:14px 8px;border:2px solid var(--line);border-radius:15px;background:#fff;cursor:pointer;transition:.18s;position:relative}
-.nm-unit:active{transform:scale(.96)}
-.nm-unit.done{border-color:var(--ok);background:#eafaf1}
-.nm-unit-ic{font-size:26px}
-.nm-unit-name{font-size:12px;font-weight:800;color:var(--blue-deep);text-align:center;line-height:1.2}
-.nm-unit-check{position:absolute;top:6px;right:8px;color:var(--ok);font-weight:900}
+.nm-unit-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.nm-unit{display:flex;align-items:center;gap:10px;width:auto;padding:8px 12px;
+  border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;
+  transition:.18s;position:relative;text-align:left}
+.nm-unit:active{transform:scale(.97)}
+.nm-unit.done{border-color:#bfe6cf;background:#f4fcf7}
+.nm-unit.next{border-color:var(--gold-deep);border-width:2px;background:#fffdf5}
+.nm-unit-ic{flex:none;width:44px;height:44px;border-radius:12px;font-size:21px;
+  display:grid;place-items:center;background:rgba(22,65,124,.12)}
+.nm-unit-name{flex:1;min-width:0;font-size:15px;font-weight:700;color:var(--blue-deep);line-height:1.25}
+.nm-unit-check{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;
+  background:var(--ok);color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center;
+  box-shadow:0 2px 5px rgba(0,0,0,.25)}
+.nm-unit-next-pill{position:absolute;top:-9px;right:-4px;background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
+  color:#4a370f;font-size:10px;font-weight:900;padding:3px 9px;border-radius:999px;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);white-space:nowrap}
 
 /* ── 유닛 뷰 (스크롤 없이 한 화면) ── */
 /* 유닛 화면: 내용이 화면보다 길면 잘라 내지 않고 #screen이 통째로 스크롤(flex-shrink 0).
    내용이 짧으면 예전처럼 한 화면에 꽉 찬다(flex-grow 1). 2026-09-03 원장 "아래가 안 보여" */
-.nm-unit-view{flex:1 0 auto;min-height:0;display:flex;flex-direction:column;padding:4px 14px 6px}
+/* 학습 무대(§1) — 세계관을 학습 화면까지: 하늘→종이 그라데이션이 화면 폭 전체를
+   채우고(콘텐츠 폭 제한은 안쪽 .nm-unit-inner에서만), 바닥엔 옅은 잔디 띠.
+   ::after는 position:fixed라 뷰포트 기준으로 항상 화면 맨 아래에 붙는다
+   (내용이 길어 #screen이 스크롤돼도 배경 띠는 그대로 바닥에). */
+.nm-unit-view{flex:1 0 auto;min-height:0;display:flex;flex-direction:column;padding:0;
+  position:relative;isolation:isolate;
+  background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+.nm-unit-view::after{content:'';position:fixed;left:0;right:0;bottom:0;height:90px;z-index:-1;
+  pointer-events:none;background:linear-gradient(0deg,var(--ground-tint),transparent)}
+@media(prefers-reduced-motion:no-preference){.nm-unit-view{transition:background .2s}}
+.nm-unit-inner{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;padding:4px 14px 6px}
 .nm-unit-bar{flex:none;display:flex;align-items:center;gap:12px;padding:6px 0}
 .nm-back{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;flex:none}
 .nm-unit-title{font-size:15px;font-weight:900;color:var(--blue-deep);line-height:1.15}
 .nm-unit-title small{display:block;font-size:11px;font-weight:600;color:var(--sub)}
+/* 학습 무대(유닛 화면)의 상단바만: 제목을 키우고, 뒤로가기를 화살표만 남긴 둥근
+   40px 고스트 버튼으로(다른 화면의 .nm-unit-bar/.nm-back은 그대로 — 리포트·기호
+   도감·옷장·등급 화면은 이 선택자 밖이라 안전). young 밴드 확대 규칙(§93 부근)과는
+   특이도가 같아 소스 순서상 그대로 더 나중 값이 이긴다(문제 없음 — young은 min-height
+   만 키우면 되고 폭까지 원형으로 고정할 필요는 없다). */
+.nm-unit-view .nm-unit-bar .nm-unit-title{font-size:20px;font-weight:800;line-height:1.2}
+.nm-unit-view .nm-unit-bar .nm-unit-title small{font-size:13px;margin-top:2px}
+.nm-unit-view .nm-unit-bar .nm-back{width:40px;height:40px;padding:0;border-radius:50%;
+  display:grid;place-items:center;font-size:16px;font-weight:900;flex:none}
 
 /* flow bar (컴팩트) */
 .nm-flow{flex:none;display:flex;align-items:center;gap:2px;overflow-x:auto;padding:4px 0 8px;-webkit-overflow-scrolling:touch}
-.nm-flow-step{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:5px 8px;cursor:pointer;min-width:56px}
-.nm-flow-step.active{border-color:var(--blue);background:#eef4fc}
-.nm-flow-step.done{border-color:var(--gold-deep);background:#fdf6e8}
+/* 플로우바 — 디자인 패스 1: 지금 단계=채운 네이비 칩(흰 글자), 완료=흰 카드+초록
+   체크, 남은 단계=차분한 회색(muted). 크기는 그대로(padding/min-width 불변) */
+.nm-flow-step{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:var(--mist);border:1.5px solid var(--line);border-radius:11px;padding:5px 8px;
+  cursor:pointer;min-width:56px;opacity:.8}
+.nm-flow-step.done{background:#fff;border-color:var(--line);opacity:1}
+.nm-flow-step.done small{color:var(--ok);font-weight:900}
+.nm-flow-step.active{border-color:var(--blue-deep);background:var(--blue-deep);opacity:1}
+.nm-flow-step.active .nm-flow-ic,.nm-flow-step.active small{color:#fff}
 .nm-flow-ic{font-size:15px}
 .nm-flow-step small{font-size:9.5px;font-weight:800;color:var(--sub);white-space:nowrap}
 /* 2차 디자인 패스(대비 검토) — 기존 #c3cad6(border 톤)는 크림 배경에서 1.58:1로
-   거의 안 보였다. var(--sub)로 바꿔 7:1대 확보(다른 회색 텍스트와 같은 톤이라 위화감 없음) */
-.nm-flow-arrow{color:var(--sub);font-weight:900;flex:none;font-size:11px}
+   거의 안 보였다. var(--sub)로 바꿔 7:1대 확보(다른 회색 텍스트와 같은 톤이라 위화감 없음).
+   3차 패스: 화살표는 지금/완료 칩보다 한 단계 더 옅게(lighter) — 다만 원래 대비
+   보정 취지(1.58:1 실패 사례)는 지켜야 하므로 순수 장식 아이콘 기준(비문자 UI
+   3:1)은 넘기는 선에서만 밝혔다(#8791a3 ≈ 3.3:1, var(--line) 단독은 다시 실패) */
+.nm-flow-arrow{color:#8791a3;font-weight:900;flex:none;font-size:11px}
 
 /* 2차 디자인 패스 — 유닛 밖 공통 UI(상단바·뒤로가기·플로우바)도 유아(young) 밴드에서는
    살짝 키운다. --nm-btn-h 토큰(young=52px, 적응형-타이포-말투-설계.md §2)을 그대로 쓰고,
@@ -126,14 +177,39 @@ html[data-nm-band="young"] .nm-flow-step small{font-size:10.5px}
 .nm-btn:disabled{opacity:.35;cursor:not-allowed}
 .nm-btn.full{display:block;width:100%;margin-top:12px;flex:none}
 .nm-btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--line);box-shadow:none}
+/* 세 번째 표준 버튼 — 좁은 자리(카드 안 보조 액션)용 축소판. 색은 primary와 동일 */
+.nm-btn.small{padding:9px 16px;font-size:13.5px;border-radius:12px;box-shadow:none}
 
-/* 누미 캐릭터 (마법사 이미지) */
-.nm-numi{width:52px;position:relative;margin:0 auto;animation:bob 2.6s ease-in-out infinite;flex:none}
-.nm-numi.big{width:74px}
+/* 누미 캐릭터 (마법사 이미지) — 디자인 패스 1: 세계관을 학습 화면까지, 더 크게 +
+   발밑 그림자로 "무대 위에 서 있는" 느낌 */
+.nm-numi{width:84px;position:relative;margin:0 auto;animation:bob 2.6s ease-in-out infinite;flex:none}
+.nm-numi.big{width:118px}
+.nm-numi::after{content:'';position:absolute;left:50%;bottom:-4px;width:60px;height:14px;
+  transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.14),transparent 78%);
+  pointer-events:none}
+.nm-numi.big::after{width:78px;height:17px}
 .nm-numi img{width:100%;height:auto;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
 @keyframes bob{50%{transform:translateY(-6px)}}
 .nm-numi.happy{animation:jump .5s ease}
 @keyframes jump{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px) rotate(-6deg)}}
+@media(prefers-reduced-motion:reduce){.nm-numi{animation:none}.nm-numi.happy{animation:none}}
+/* 정답 스파클 — 동행 주변에서 6개 골드 점이 500ms 방사(§1 피드백). numiHappy()가
+   .nm-numi에 .sparkle 클래스를 잠깐 얹는다(순수 CSS, 라이브러리 없음). */
+.nm-numi.sparkle::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(3px 3px at 50% 8%,var(--gold-bright),transparent 60%),
+    radial-gradient(3px 3px at 85% 25%,var(--gold-bright),transparent 60%),
+    radial-gradient(3px 3px at 92% 62%,var(--gold-bright),transparent 60%),
+    radial-gradient(3px 3px at 65% 92%,var(--gold-bright),transparent 60%),
+    radial-gradient(3px 3px at 15% 78%,var(--gold-bright),transparent 60%),
+    radial-gradient(3px 3px at 6% 38%,var(--gold-bright),transparent 60%);
+  animation:nmSparkle .5s ease-out forwards}
+@keyframes nmSparkle{
+  0%{opacity:0;transform:scale(.4)}
+  35%{opacity:1}
+  100%{opacity:0;transform:scale(1.7)}
+}
+@media(prefers-reduced-motion:reduce){.nm-numi.sparkle::before{animation:none;display:none}}
 
 /* 진단 스킵 */
 .nm-skip{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 10px}
@@ -145,7 +221,40 @@ html[data-nm-band="young"] .nm-flow-step small{font-size:10.5px}
 .nm-prog{flex:none;display:flex;gap:6px;justify-content:center;margin:0 0 6px}
 .nm-dot{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .nm-dot.on{background:var(--gold-deep)}.nm-dot.now{background:var(--blue);transform:scale(1.3)}
-.nm-bubble{flex:none;background:#fff;border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:11px 15px;font-size:15px;line-height:1.4;font-weight:700;max-width:440px;margin:8px auto 0;box-shadow:0 12px 30px -20px rgba(22,65,124,.3);display:flex;align-items:center;justify-content:center}
+/* 말풍선 — 위(동행)를 가리키는 진짜 꼬리 달린 카드. max-width는 대략 34자 기준(15px 본문) */
+.nm-bubble{position:relative;flex:none;background:#fff;border:1.5px solid var(--line);border-radius:18px;
+  padding:12px 16px;font-size:16px;line-height:1.55;font-weight:700;max-width:34ch;text-align:center;
+  margin:12px auto 0;box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center}
+.nm-bubble::before,.nm-bubble::after{content:'';position:absolute;left:50%;top:-9px;transform:translateX(-50%);
+  border-left:9px solid transparent;border-right:9px solid transparent}
+.nm-bubble::before{border-bottom:9px solid var(--line)}
+.nm-bubble::after{top:-7px;border-bottom:8px solid #fff}
+
+/* 마법판(magic board) — 문제식·답 표시·위젯을 한 장의 판으로 묶는다(§1).
+   내부에 들어오는 기존 요소(.nm-lab-expr/.nm-fill/.nm-numpad-screen/위젯 컨테이너)는
+   자기 마진을 유지해도 되도록 넉넉히 두되, 위아래 군더더기만 살짝 줄인다. */
+.nm-board{width:100%;background:var(--board-bg);border:1px solid var(--board-line);
+  border-bottom:3px solid var(--board-edge);border-radius:18px;padding:16px 18px;
+  margin:10px 0;box-shadow:var(--shadow-card);flex:none}
+.nm-board:empty{display:none}
+/* 오답 피드백 — 마법판이 300ms 흔들림(§1). main.js의 feedbackFx()가 toast(msg,false)마다
+   .nm-shake를 다시 얹는다(reflow로 재시작). transform만 쓰므로 레이아웃 흔들림 없음. */
+.nm-board.nm-shake,.nm-arena-expr.nm-shake{animation:nmBoardShake .3s ease}
+@keyframes nmBoardShake{
+  10%,90%{transform:translateX(-2px)}
+  20%,80%{transform:translateX(4px)}
+  30%,50%,70%{transform:translateX(-7px)}
+  40%,60%{transform:translateX(7px)}
+}
+@media(prefers-reduced-motion:reduce){.nm-board.nm-shake,.nm-arena-expr.nm-shake{animation:none}}
+.nm-board .nm-lab-expr,.nm-board .nm-fill{margin:2px 0}
+.nm-board .nm-numpad-screen{margin:6px 0 0}
+.nm-board .nm-expr{margin:2px 0}
+/* 표현식 폰트는 판 안에서 더 또렷하게 — 모바일 28px, 데스크탑은 아래 미디어쿼리 */
+.nm-board .nm-lab-expr .katex,.nm-board .nm-fill .katex{font-size:clamp(22px,7vw,28px)!important}
+@media(min-width:768px){
+  .nm-board .nm-lab-expr .katex,.nm-board .nm-fill .katex{font-size:36px!important}
+}
 
 /* 문제식 tile (선택 모드) — 남은 공간 가운데 */
 .nm-expr{flex:1;min-height:0;display:flex;gap:9px;flex-wrap:wrap;justify-content:center;align-items:center;margin:8px 0;overflow-y:auto}
@@ -156,15 +265,22 @@ html[data-nm-band="young"] .nm-flow-step small{font-size:10.5px}
 .nm-plus{font-size:20px;color:#9aa2b1;font-weight:900}
 
 /* 숫자패드 (아래 고정, 컴팩트 — ✓ 줄까지 반드시 보이게) */
-.nm-numpad-screen{flex:none;text-align:center;font-size:29px;font-weight:900;color:var(--blue);min-height:32px;margin:3px 0 3px}
-.nm-numpad{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:290px;width:100%;margin:0 auto}
-.nm-key{padding:8px 0;font-size:21px;font-weight:900;border-radius:13px;border:2px solid var(--line);background:#fff;color:var(--blue-deep);cursor:pointer;box-shadow:0 4px 0 #eceae4;transition:.1s}
-.nm-key:active{transform:translateY(2px);box-shadow:0 2px 0 #eceae4}
-.nm-key.ok{background:var(--gold);color:#4a370f;border-color:var(--gold-deep);box-shadow:0 4px 0 var(--gold-deep)}
+.nm-numpad-screen{flex:none;text-align:center;font-size:29px;font-weight:900;color:var(--blue);min-height:32px;margin:3px 0 3px;font-variant-numeric:tabular-nums}
+/* 숫자판 — 디자인 패스 1: 56px(모바일)/60px(데스크탑) 두툼한 키, 눌림 피드백은
+   아래쪽 3px 테두리가 눌렸을 때 사라지는 방식(그림자 대신 border로 표현해 위치가
+   덜컹이지 않는다). ✓는 채운 네이비, ←는 고스트(흰 배경 그대로, 글자색만 경고톤) */
+.nm-numpad{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;width:100%;margin:0 auto}
+.nm-key{height:56px;padding:0;font-size:22px;font-weight:800;border-radius:14px;
+  border:1.5px solid var(--line);border-bottom:3px solid #CFD6E2;background:#fff;
+  color:var(--blue-deep);cursor:pointer;transition:transform .1s,border-color .1s;
+  display:flex;align-items:center;justify-content:center}
+.nm-key:active{transform:translateY(2px);border-bottom-color:var(--line)}
+.nm-key.ok{background:var(--blue-deep);color:#fff;border-color:var(--blue-deep);border-bottom-color:#081d3c}
+.nm-key.ok:active{border-bottom-color:var(--blue-deep)}
 /* 지우기 키(← ) — var(--no) #D9534F는 흰 배경에서 모바일 크기(17px)일 때 3.96:1로
    4.5:1에 못 미쳤다. 이미 -/부호 키에 쓰던 더 짙은 빨강(.neg)으로 통일해 5.4:1 확보 —
    var(--no) 토큰 자체는 다른 곳(오답 표시 등)에서 그대로 쓰므로 건드리지 않는다 */
-.nm-key.del{color:#c0392b}
+.nm-key.del{color:#c0392b;background:#fff}
 .nm-key.dot{color:#5a7ab8;font-size:24px;font-weight:900}
 .nm-key.neg{color:#c0392b;font-size:24px;font-weight:900}
 .nm-numpad.dec{grid-template-columns:repeat(4,1fr);max-width:320px}
@@ -222,6 +338,12 @@ html[data-nm-band="young"] .nm-flow-step small{font-size:10.5px}
 .nm-mb-drill-list{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
 .nm-mb-drill-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;flex-wrap:wrap}
 /* ── 리포트(§ 캐릭터를 학습 흐름 더 넓게 쓰기 — 1) 약한 스레드 목록 줄 ── */
+/* 리포트 전용 진도 숫자(§3) — 아레나 점수 등 다른 화면 .nm-score와 분리 */
+.nm-rp-score{font-size:36px;font-weight:900;color:var(--blue);margin:10px 0 6px}
+/* 0유닛 빈 상태 — 아바타 + 시작 권유 + 마을 버튼 */
+.nm-rp-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin:10px 0 8px}
+.nm-rp-empty-ava{margin-bottom:2px}
+.nm-rp-empty-msg{font-size:15px;font-weight:800;color:var(--ink);margin:0 0 10px}
 .nm-rp-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:13px;margin-bottom:6px}
 .nm-rp-row span:first-child{font-weight:800;color:var(--blue-deep)}
 .nm-rp-row span:last-child{color:var(--sub);font-weight:700}
@@ -255,7 +377,12 @@ html[data-nm-band="young"] .nm-flow-step small{font-size:10.5px}
 .nm-arena-top{flex:none;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .nm-arena-q{font-size:14px;font-weight:800;color:var(--sub)}
 .nm-arena-time{font-size:20px;font-weight:900;color:var(--no);font-variant-numeric:tabular-nums}
-.nm-arena-expr{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;color:var(--blue-deep);overflow-x:auto}
+/* 아레나는 화면 하나·타이머라 위처럼 새 wrapper div를 끼우지 않고, 식 표시 자체를
+   마법판 톤으로만 맞춘다(구조는 그대로, 배경·테두리만 §1과 통일) */
+.nm-arena-expr{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;color:var(--blue-deep);overflow-x:auto;
+  background:var(--board-bg);border:1px solid var(--board-line);border-bottom:3px solid var(--board-edge);
+  border-radius:18px;padding:14px;margin:4px 0}
+.nm-arena .nm-numpad-screen{background:var(--board-bg);border:1px solid var(--board-line);border-radius:12px;padding:4px 0}
 .nm-arena-expr .katex{font-size:clamp(22px,6.5vw,30px);white-space:nowrap}
 .nm-score{font-size:40px;font-weight:900;color:var(--blue);margin:10px 0 6px}
 
@@ -468,12 +595,15 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
       살짝 키워 "꽉 찬" 느낌으로) ──
    ============================================================ */
 @media (min-width:768px){
-  .nm-map,.nm-unit-view{max-width:900px;margin-left:auto;margin-right:auto;width:100%}
-  .nm-numi{width:64px}
-  .nm-numi.big{width:92px}
-  .nm-bubble{font-size:17px;padding:14px 20px;max-width:560px}
-  .nm-numpad{max-width:340px;gap:10px}
-  .nm-key{font-size:24px;padding:14px 0}
+  .nm-map{max-width:900px;margin-left:auto;margin-right:auto;width:100%}
+  /* 학습 무대 배경은 화면 폭 전체를 채우고(위 .nm-unit-view), 안쪽 콘텐츠 열만
+     읽기 좋은 폭으로 가운데 정렬 — "그라데이션은 폭 전체, 내용은 760px" */
+  .nm-unit-inner{max-width:760px;margin-left:auto;margin-right:auto}
+  .nm-numi{width:108px}
+  .nm-numi.big{width:150px}
+  .nm-bubble{font-size:17px;padding:14px 22px;max-width:40ch}
+  .nm-numpad{max-width:300px;gap:10px}
+  .nm-key{height:60px;font-size:24px}
   .nm-numpad-screen{font-size:34px}
   .nm-card{padding:26px 30px}
   .nm-card-h{font-size:17px}
@@ -481,6 +611,9 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   /* 학습 대화(연습/랩)를 세로로도 채움: 내용이 짧으면 화면 가운데로,
      길면 safe 폴백으로 위에서부터(잘림 없음) */
   .nm-dialog{justify-content:safe center;gap:4px}
+  /* 등급 화면 — 유닛 타일 3열, 레벨 부제(설명)도 표시 */
+  .nm-unit-row{grid-template-columns:repeat(3,1fr)}
+  .nm-level-t-sub{display:inline}
 }
 /* 데스크탑에서 위젯이 모바일 크기 그대로면 아래가 텅 빔 → 화면이 충분히
    크면 위젯 전체(터치 영역 포함)를 확대해 "꽉 찬" 느낌으로 */
@@ -496,7 +629,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
   .nm-lab-widget{zoom:1.75}
 }
 @media (min-width:1100px){
-  .nm-map,.nm-unit-view{max-width:1040px}
+  .nm-map{max-width:1040px}
 }
 
 /* ============================================================
@@ -565,6 +698,21 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 /* ── 온보딩: 이름 중복 안내 ── */
 .nm-ob-dupico{font-size:46px;margin-bottom:8px}
 .nm-ob-card .nm-btn.ghost{margin-top:10px}
+
+/* ── 옷장 화면 뼈대(§4) — nm-closet-cnt(closet.js 렌더) 아래로 슬롯 카드, 그
+   아래로 계정·알림 설정 접이식. 카드 순서만 담당, 각 카드 자체 스타일은 기존 것 그대로 */
+.nm-closet-wrap{padding:2px 0 24px}
+.nm-closet-settings{margin:16px 14px 0;border:1px solid var(--line);border-radius:16px;
+  background:#fff;overflow:hidden}
+.nm-closet-settings summary{list-style:none;cursor:pointer;padding:13px 15px;
+  font-size:13.5px;font-weight:800;color:var(--sub);display:flex;align-items:center;
+  gap:6px;user-select:none}
+.nm-closet-settings summary::-webkit-details-marker{display:none}
+.nm-closet-settings summary::before{content:'▸';font-size:11px;color:var(--sub);transition:transform .15s}
+.nm-closet-settings[open] summary::before{transform:rotate(90deg)}
+.nm-closet-settings[open] summary{border-bottom:1px solid var(--line)}
+.nm-closet-settings #nm-idcard-slot,.nm-closet-settings #nm-account-slot{padding:2px 0}
+.nm-closet-settings .nm-idcard{margin:10px 12px}
 
 /* ── 아이디 등록 카드 (옷장 상단) ── */
 .nm-idcard{margin:8px 14px 4px;background:#fff;border:1.5px solid var(--line);border-radius:16px;
@@ -853,7 +1001,10 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-arena .nm-host-img{width:44px;height:44px}
 html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
 /* .nm-host.doc — 독쌤(사람 캐릭터) 버전. renderHumanChar()가 이미 크기 고정 div를
-   내놓으므로 이미지 슬롯 자체를 그 div로 대체하고 줄어들지 않게 flex:none만 준다. */
+   내놓으므로 이미지 슬롯 자체를 그 div로 대체하고 줄어들지 않게 flex:none만 준다.
+   디자인 패스 1: 기본 .nm-host는 세로 가운데 정렬인데, 독쌤 그림은 발이 잘려
+   있으면 붕 떠 보여서 이 변형만 아래 기준선(baseline)에 맞춘다. */
+.nm-host.doc{align-items:flex-end}
 .nm-host.doc .nm-human{flex:none}
 
 /* ── 편지함 상단 독쌤 안내 띠(§1) — 봉투 목록 위, .nm-host보다 살짝 크게 ── */
@@ -1171,15 +1322,14 @@ html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
   .nm-prog{margin-bottom:2px}
   .nm-numpad-screen{font-size:24px;min-height:24px;margin:2px 0}
   .nm-numpad{gap:5px}
-  .nm-key{padding:5px 0;font-size:17px;border-radius:10px;box-shadow:0 3px 0 #eceae4}
-  .nm-key:active{transform:translateY(2px);box-shadow:0 1px 0 #eceae4}
+  .nm-key{height:40px;font-size:17px;border-radius:10px}
   .nm-hint{font-size:10px;margin-top:2px}
 }
 @media(max-height:580px){
   .nm-flow-ic{display:none}
   .nm-numi{width:32px}
   .nm-bubble{font-size:12px;padding:6px 10px}
-  .nm-key{padding:4px 0;font-size:15px}
+  .nm-key{height:34px;font-size:15px}
   .nm-numpad{gap:4px}
 }
 
@@ -1195,7 +1345,7 @@ html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
   .nm-dialog.steps-mode .nm-w-step-ktx .katex{font-size:clamp(15px,4.2vw,19px)}
   .nm-dialog.steps-mode .nm-w-steps-scroll{gap:6px}
   .nm-dialog.steps-mode .nm-numpad{max-width:240px}
-  .nm-dialog.steps-mode .nm-key{padding:4px 0;font-size:16px}
+  .nm-dialog.steps-mode .nm-key{height:38px;font-size:16px}
 }
 
 /* 인쇄 학습지 CSS는 이 파일에 두지 않는다 — exam.js가 주입하는 한 벌(injectPrintCSS)이
@@ -1476,6 +1626,7 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-dex-sub{font-size:12.5px;color:var(--sub);margin-bottom:14px}
 .nm-dex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
 .nm-dex-sec-h{font-size:12.5px;font-weight:800;color:var(--sub);margin:18px 0 8px}
+.nm-dex-hint{font-size:12px;color:var(--sub);text-align:center;margin:12px 0 0;line-height:1.5}
 
 .nm-dex-card{perspective:900px;height:118px;cursor:default}
 .nm-dex-card.collected{cursor:pointer}
@@ -1491,7 +1642,9 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-dex-card.silhouette .nm-dex-face.front{
   background:repeating-linear-gradient(135deg,#e8e6e0,#e8e6e0 8px,#ddd9d0 8px,#ddd9d0 16px);
   border:1.5px dashed #c9c4b8;color:#9a9488}
-.nm-dex-card.silhouette .nm-dex-face.front .nm-dex-sym{opacity:.45}
+/* 디자인 패스 1: 빈 카드 기호를 20% 실루엣으로(이전 45%보다 더 은은하게) */
+.nm-dex-card.unknown .nm-dex-face.front .nm-dex-sym,
+.nm-dex-card.silhouette .nm-dex-face.front .nm-dex-sym{opacity:.2}
 .nm-dex-card.collected .nm-dex-face.front,.nm-dex-card.big .nm-dex-face.front{background:linear-gradient(150deg,#fff,#fdf7ea);
   border:1.5px solid var(--gold-deep);box-shadow:0 8px 18px -12px rgba(201,160,99,.6)}
 /* 뒷면은 항상(수집완료 카드·모달 공용) 어두운 배경 — 앞면만 있는 실루엣/미확인 카드는
@@ -1792,3 +1945,37 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
   .nm-title-blk b{font-size:13.5px}
   .nm-title-blk small{font-size:10px}
 }
+
+/* 온보딩 '나 고르기': 마을 그림이 뒤에 흐릿하게 — "이 마을에 들어간다"는 느낌 (2026-09-04) */
+.nm-ob{background:linear-gradient(180deg,rgba(191,224,242,.55),rgba(251,250,247,.92) 70%),url(../assets/map.jpg) center 30%/cover no-repeat}
+.nm-ob .nm-ob-card{backdrop-filter:blur(2px)}
+
+/* 모바일 학습 무대 압축 — 숫자판 ✓까지 한 화면(844px)에 들어오게 (2026-09-04) */
+@media(max-width:767px){
+  .nm-unit-view .nm-numi{width:72px}
+  .nm-unit-view .nm-bubble{font-size:15px;padding:9px 13px;margin-top:8px;line-height:1.45}
+  .nm-unit-view .nm-board{padding:10px 14px;margin:6px 0}
+  .nm-unit-view .nm-numpad .nm-key{height:50px;font-size:20px}
+  .nm-unit-view .nm-numpad{gap:6px}
+  .nm-unit-view .nm-host.doc{padding:8px 12px}
+  .nm-unit-view .nm-host.doc .nm-host-bubble span{font-size:13.5px}
+}
+
+@media(max-width:767px){
+  .nm-unit-view .nm-unit-bar{padding:4px 0}
+  .nm-unit-view .nm-host.doc{margin-bottom:6px}
+  .nm-unit-view .nm-numi{width:66px}
+  .nm-unit-view .nm-bubble{margin-top:6px}
+  .nm-unit-view .nm-board{padding:8px 12px;margin:4px 0}
+  .nm-unit-view .nm-board .nm-numpad-screen{margin:2px 0 0;min-height:26px;font-size:26px}
+}
+
+/* 리포트 주간 그래프 (2026-09-04) */
+.nm-rp-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;margin:6px 0 4px;padding:8px 6px 4px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px}
+.nm-rp-day{display:flex;flex-direction:column;align-items:center;gap:4px}
+.nm-rp-bar-wrap{height:76px;display:flex;align-items:flex-end;width:100%;justify-content:center}
+.nm-rp-bar{width:60%;max-width:26px;border-radius:6px 6px 3px 3px;background:#d9e1ee;transition:height .3s}
+.nm-rp-bar.good{background:var(--blue)}
+.nm-rp-bar.low{background:#e8a44a}
+.nm-rp-dow{font-size:11px;font-weight:700;color:var(--sub)}
+.nm-rp-day.today .nm-rp-dow{color:var(--blue);text-decoration:underline}
