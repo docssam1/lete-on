@@ -19117,6 +19117,182 @@
       const money = reward * intact - penalty * (total - intact);
       return result(`도자기 ${total}개를 나릅니다. 깨지지 않은 것은 한 개에 ${reward}원을 받고, 깨뜨린 것은 한 개에 ${penalty}원을 냅니다. 깨지지 않은 수를 □, 받은 돈을 △원이라 할 때 관계식을 쓰세요. △=${money}일 때 깨지지 않은 도자기 수를 구하세요.${difficultyInstruction}${tag("work-payment-table", [total, reward, penalty, money])}`, `△=${reward + penalty}×□-${penalty * total}, ${intact}개`, `받을 돈에서 벌금을 빼면 △=${reward}×□-${penalty}×(${total}-□)=${reward + penalty}×□-${penalty * total}입니다. △=${money}을 넣어 풀면 □=${intact}입니다.`);
     },
+    correspondenceE3({ rng, level, variant = 0 }) {
+      const readyVariants = new Set([0, 4, 5, 6, 7]);
+      if (!readyVariants.has(variant)) throw new Error("규칙과 대응 개념탐구 3의 그림 검수 대기 항목은 생성할 수 없습니다.");
+      const tag = (kind, values) => `<span hidden data-correspondence-e3-kind="${kind}" data-correspondence-e3-values="${values.join(",")}" data-result-contract="single-value"></span>`;
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 처음 네 값을 써서 한 단계씩 얼마나 늘어나는지 살펴보세요."
+        : level === 2
+          ? " 답을 구한 뒤 앞 단계에서 늘어난 수와 맞는지 다시 확인하세요."
+          : "";
+
+      if (variant === 0) {
+        const lineCount = pick(rng, [
+          [8, 9, 10, 12, 14],
+          [20, 24, 30, 36, 40],
+          [55, 64, 75, 90, 100]
+        ][level]);
+        const answer = lineCount * (lineCount + 1) / 2 + 1;
+        return result(`정사각형 안에 선분을 그어 영역을 가장 많이 만들려고 합니다. 선분의 수를 □, 영역 수의 최댓값을 △라 할 때 처음 네 짝은 (1, 2), (2, 4), (3, 7), (4, 11)입니다. □=${lineCount}일 때 △를 구하세요.${difficultyInstruction}${tag("maximum-regions", [lineCount])}`, answer, `새 선분은 앞의 모든 선분과 서로 다른 점에서 만나므로 영역을 □개 더 만듭니다. 따라서 △=1+1+2+…+□입니다. □=${lineCount}이면 △=1+${lineCount}×${lineCount + 1}÷2=${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const lineCount = pick(rng, [
+          [8, 9, 10, 11, 12],
+          [13, 15, 17, 18, 20],
+          [21, 24, 28, 32, 36]
+        ][level]);
+        const intersections = lineCount * (lineCount - 1) / 2;
+        return result(`어느 두 직선도 평행하지 않고 어느 세 직선도 한 점에서 만나지 않게 그었습니다. 만나는 점이 모두 ${intersections}개일 때 그은 직선은 몇 개인지 구하세요.${difficultyInstruction}${tag("maximum-intersections-reverse", [lineCount, intersections])}`, lineCount, `직선이 □개이면 만나는 점은 □×(□-1)÷2개입니다. ${lineCount}×${lineCount - 1}÷2=${intersections}이므로 직선은 ${lineCount}개입니다.`);
+      }
+      if (variant === 5) {
+        const stage = pick(rng, [
+          [7, 8, 9, 10, 12],
+          [13, 16, 20, 24, 28],
+          [32, 40, 48, 56, 64]
+        ][level]);
+        const answer = stage * 3;
+        return result(`사각형 조각을 계단 모양으로 늘어놓았더니 첫째부터 넷째 배열의 조각 수가 차례로 3개, 6개, 9개, 12개였습니다. 같은 규칙으로 만든 ${stage}번째 배열의 조각 수를 구하세요.${difficultyInstruction}${tag("stair-square-count", [stage])}`, answer, `배열 순서가 1 늘 때마다 사각형 조각이 3개씩 늘어납니다. 따라서 ${stage}번째 조각 수는 ${stage}×3=${answer}개입니다.`);
+      }
+      if (variant === 6) {
+        const stage = pick(rng, [
+          [5, 6, 7, 8, 9],
+          [10, 12, 14, 16, 18],
+          [20, 24, 28, 32, 36]
+        ][level]);
+        const answer = stage * stage;
+        return result(`성냥개비로 큰 정삼각형을 만들었습니다. 첫째부터 넷째 도형에서 찾을 수 있는 가장 작은 정삼각형은 차례로 1개, 4개, 9개, 16개입니다. 같은 규칙에서 ${stage}번째 도형의 가장 작은 정삼각형 수를 구하세요.${difficultyInstruction}${tag("smallest-triangle-count", [stage])}`, answer, `${stage}번째 도형의 각 줄에는 1개, 3개, 5개, …, ${stage * 2 - 1}개의 가장 작은 정삼각형이 있습니다. 이 수를 모두 더하면 ${stage}×${stage}=${answer}개입니다.`);
+      }
+      const [side, overlap] = pick(rng, [
+        [[5, 2], [6, 2], [7, 3]],
+        [[8, 3], [9, 4], [10, 3]],
+        [[12, 5], [15, 6], [18, 7]]
+      ][level]);
+      const count = pick(rng, [
+        [8, 10, 12, 15],
+        [24, 30, 36, 42],
+        [55, 64, 72, 90]
+      ][level]);
+      const answer = 4 * side + (count - 1) * 4 * (side - overlap);
+      return result(`한 변이 ${side}cm인 정사각형 종이 ${count}장을 이어 붙입니다. 첫 장 뒤에는 새 종이가 바로 앞 종이와 가로 ${overlap}cm, 세로 ${overlap}cm인 정사각형 부분만 겹치게 하고, 아래쪽과 위쪽을 번갈아 놓습니다. 서로 이웃하지 않은 종이는 겹치지 않습니다. 만든 모양의 둘레를 구하세요.${difficultyInstruction}${tag("overlapped-square-perimeter", [side, overlap, count])}`, `${answer}cm`, `첫 장의 둘레는 ${4 * side}cm입니다. 종이 한 장을 더 붙일 때마다 둘레는 4×(${side}-${overlap})=${4 * (side - overlap)}cm씩 늘어납니다. 따라서 ${4 * side}+${count - 1}×${4 * (side - overlap)}=${answer}cm입니다.`);
+    },
+    correspondenceE4({ rng, level, variant = 0 }) {
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-correspondence-e4-kind="${kind}" data-correspondence-e4-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 두 양이 함께 바뀌는 식을 먼저 세우세요."
+        : level === 2
+          ? " 구한 값을 처음 조건에 다시 넣어 맞는지 확인하세요."
+          : "";
+      const clockText = totalMinutes => {
+        const minutesInDay = ((totalMinutes % 1440) + 1440) % 1440;
+        const hour24 = Math.floor(minutesInDay / 60);
+        const minute = minutesInDay % 60;
+        const period = hour24 < 12 ? "오전" : "오후";
+        const hour = hour24 % 12 || 12;
+        return `${period} ${hour}시${minute ? ` ${minute}분` : ""}`;
+      };
+
+      if (variant === 0) {
+        const [startLength, lostLength, sampleMinutes, elapsed] = pick(rng, [
+          [[24, 2, 20, 100], [30, 3, 20, 160], [36, 3, 30, 180]],
+          [[42, 4, 20, 150], [45, 3, 15, 175], [54, 6, 30, 190]],
+          [[60, 5, 20, 160], [72, 6, 30, 200], [84, 8, 20, 180]]
+        ][level]);
+        const startTime = pick(rng, [1110, 1140, 1170]);
+        const targetLength = startLength - lostLength * elapsed / sampleMinutes;
+        const answer = clockText(startTime + elapsed);
+        return result(`길이가 ${startLength}cm인 초에 ${clockText(startTime)}에 불을 붙였습니다. ${sampleMinutes}분 동안 ${lostLength}cm씩 일정하게 짧아질 때, 초의 길이가 ${targetLength}cm가 되는 시각을 구하세요.${difficultyInstruction}${tag("candle-time", [startLength, lostLength, sampleMinutes, startTime, targetLength, elapsed])}`, answer, `${sampleMinutes}분에 ${lostLength}cm씩 짧아지므로 ${startLength}-${targetLength}=${startLength - targetLength}cm가 짧아지는 데 ${elapsed}분이 걸립니다. ${clockText(startTime)}에서 ${elapsed}분 뒤는 ${answer}입니다.`);
+      }
+      if (variant === 1) {
+        const [older, younger, yearsAgo] = pick(rng, [
+          [[19, 12, 7], [23, 15, 6], [27, 18, 8]],
+          [[31, 20, 9], [35, 22, 10], [38, 24, 11]],
+          [[44, 27, 12], [48, 29, 13], [52, 31, 15]]
+        ][level]);
+        const pastSum = older + younger - yearsAgo * 2;
+        const ageGap = older - younger;
+        const olderYearsAgo = Math.max(2, Math.floor(ageGap / 2));
+        const youngerYearsLater = ageGap - olderYearsAgo;
+        return result(`형의 ${olderYearsAgo}년 전 나이는 민수의 ${youngerYearsLater}년 후 나이와 같습니다. ${yearsAgo}년 전 두 사람의 나이의 합은 ${pastSum}살입니다. 두 사람의 현재 나이를 각각 구하세요.${difficultyInstruction}${tag("paired-ages", [older, younger, yearsAgo, olderYearsAgo, youngerYearsLater], "ordered")}`, `${older}살, ${younger}살`, `형은 민수보다 ${olderYearsAgo}+${youngerYearsLater}=${ageGap}살 많습니다. 현재 나이의 합은 ${pastSum}+${yearsAgo * 2}=${older + younger}살이므로 형은 ${older}살, 민수는 ${younger}살입니다.`);
+      }
+      if (variant === 2) {
+        const [slowRate, fastRate, switchTime] = pick(rng, [
+          [[4, 5, 25], [4, 6, 30], [5, 6, 30]],
+          [[6, 8, 36], [7, 9, 42], [8, 10, 50]],
+          [[9, 12, 48], [10, 14, 53], [12, 15, 55]]
+        ][level]);
+        const capacity = slowRate * 60;
+        const totalTime = (capacity + (fastRate - slowRate) * switchTime) / fastRate;
+        return result(`1분에 ${slowRate}L씩 물을 넣으면 60분 만에 가득 차는 물통이 있습니다. 처음에는 1분에 ${slowRate}L씩 넣다가 ${switchTime}분 뒤부터 1분에 ${fastRate}L씩 넣었습니다. 처음 속도로 넣은 시간을 □분, 가득 차는 데 걸린 전체 시간을 △분이라 할 때 관계식을 쓰고, △의 값을 구하세요.${difficultyInstruction}${tag("two-rate-fill", [slowRate, fastRate, capacity, switchTime, totalTime], "ordered")}`, `${fastRate}×△=${capacity}+${fastRate - slowRate}×□, ${totalTime}분`, `물통에는 ${capacity}L가 들어갑니다. 느린 속도로 □분 넣으면 빠른 속도로 계속 넣을 때보다 1분마다 ${fastRate - slowRate}L씩 덜 들어가므로 ${fastRate}×△=${capacity}+${fastRate - slowRate}×□입니다. □=${switchTime}이면 △=${totalTime}분입니다.`);
+      }
+      if (variant === 3) {
+        const newYorkMinutes = pick(rng, [540, 600, 780, 900, 1080]);
+        const seoulMinutes = newYorkMinutes + 13 * 60;
+        const dayText = seoulMinutes >= 1440 ? "다음 날 " : "같은 날 ";
+        return result(`로마가 오전 11시일 때 서울은 오후 6시이고, 로마가 오후 3시일 때 뉴욕은 오전 9시입니다. 뉴욕 시간을 △시, 서울 시간을 □시라 할 때 두 시각의 관계를 쓰고, 뉴욕이 ${clockText(newYorkMinutes)}일 때 서울 시각을 구하세요.${difficultyInstruction}${tag("city-time", [newYorkMinutes, seoulMinutes], "ordered")}`, `□=△+13, ${dayText}${clockText(seoulMinutes)}`, `서울은 로마보다 7시간 빠르고 뉴욕은 로마보다 6시간 느리므로 서울은 뉴욕보다 13시간 빠릅니다. 따라서 ${dayText}${clockText(seoulMinutes)}입니다.`);
+      }
+      if (variant === 4) {
+        const multiplier = pick(rng, level === 0 ? [2, 3] : level === 1 ? [3, 4] : [4, 5]);
+        const son = pick(rng, level === 0 ? [5, 6, 7] : level === 1 ? [8, 9, 10] : [11, 12, 13]);
+        const years = pick(rng, level === 0 ? [6, 8, 10] : level === 1 ? [12, 15, 18] : [20, 24, 28]);
+        const mother = multiplier * (son + years) - years;
+        return result(`어머니는 ${mother}살이고 아들은 ${son}살입니다. 두 사람은 해마다 한 살씩 나이를 먹습니다. 어머니의 나이가 아들의 나이의 ${multiplier}배가 되는 때는 몇 년 뒤인지 구하세요.${difficultyInstruction}${tag("future-age-multiple", [mother, son, multiplier, years])}`, `${years}년 뒤`, `${years}년 뒤에는 어머니가 ${mother + years}살, 아들이 ${son + years}살이고 ${mother + years}=${son + years}×${multiplier}입니다.`);
+      }
+      if (variant === 5) {
+        const tableCount = pick(rng, [
+          [8, 10, 12, 15],
+          [40, 60, 90, 120],
+          [180, 240, 360, 480]
+        ][level]);
+        const answer = tableCount * 4 + 2;
+        return result(`한 탁자에는 6명이 앉을 수 있습니다. 같은 탁자를 한 줄로 이어 붙이면 탁자 한 개를 더 붙일 때마다 4명씩 더 앉을 수 있습니다. 탁자 ${tableCount}개를 이어 붙였을 때 앉을 수 있는 사람은 몇 명인지 구하세요.${difficultyInstruction}${tag("joined-table-seats", [tableCount])}`, `${answer}명`, `첫 탁자에는 6명, 그 뒤의 ${tableCount - 1}개에는 4명씩 더 앉습니다. 6+${tableCount - 1}×4=${answer}명입니다.`);
+      }
+      if (variant === 6) {
+        const [firstTree, oppositeTree, spacing] = pick(rng, [
+          [[2, 8, 3], [3, 10, 4], [4, 12, 5]],
+          [[2, 11, 3], [5, 17, 4], [7, 22, 6]],
+          [[9, 29, 7], [12, 37, 8], [15, 45, 9]]
+        ][level]);
+        const answer = (oppositeTree - firstTree) * spacing * 2;
+        return result(`원 모양의 호숫가에 같은 간격으로 나무를 심었습니다. ${firstTree}째 나무와 ${oppositeTree}째 나무가 서로 마주 보고 있고 이웃한 나무 사이가 ${spacing}m일 때, 호수의 둘레를 구하세요.${difficultyInstruction}${tag("opposite-tree-circle", [firstTree, oppositeTree, spacing])}`, `${answer}m`, `${firstTree}째부터 ${oppositeTree}째까지는 ${oppositeTree - firstTree}간격이고 호수 둘레의 절반입니다. 따라서 둘레는 ${oppositeTree - firstTree}×${spacing}×2=${answer}m입니다.`);
+      }
+      if (variant === 7) {
+        const actualMinutes = pick(rng, [
+          [32, 37, 43, 48],
+          [64, 76, 83, 97],
+          [128, 143, 167, 194]
+        ][level]);
+        const chargedMinutes = Math.ceil(actualMinutes / 10) * 10;
+        const answer = 3000 + (chargedMinutes - 30) / 10 * 500;
+        return result(`주차 시간은 10분 단위로 올려서 계산합니다. 30분까지는 3000원이고 그 뒤에는 10분마다 500원씩 더 냅니다. ${actualMinutes}분 주차했을 때 요금을 구하세요.${difficultyInstruction}${tag("rounded-parking-fee", [actualMinutes, chargedMinutes])}`, `${answer}원`, `${actualMinutes}분은 ${chargedMinutes}분으로 올려 계산합니다. 30분 뒤의 ${chargedMinutes - 30}분은 10분짜리 ${(chargedMinutes - 30) / 10}묶음이므로 요금은 3000+${(chargedMinutes - 30) / 10}×500=${answer}원입니다.`);
+      }
+      if (variant === 8) {
+        const temperature = pick(rng, [
+          [5, 8, 12, 15],
+          [18, 20, 24, 28],
+          [30, 32, 35, 38]
+        ][level]);
+        const seconds = pick(rng, level === 0 ? [3, 4, 5] : level === 1 ? [6, 7, 8] : [9, 11, 12]);
+        const speed = 331 + 0.6 * temperature;
+        const answer = Number((speed * seconds).toFixed(1));
+        return result(`소리는 기온이 0℃일 때 1초에 331m를 가고, 기온이 1℃ 오를 때마다 1초에 0.6m씩 더 갑니다. 기온이 ${temperature}℃인 날 번개가 보이고 ${seconds}초 뒤에 천둥소리가 들렸습니다. 번개 친 곳까지의 거리를 구하세요.${difficultyInstruction}${tag("sound-distance", [temperature, seconds])}`, `${answer}m`, `소리의 빠르기는 331+0.6×${temperature}=${speed}m입니다. ${seconds}초 동안 간 거리는 ${speed}×${seconds}=${answer}m입니다.`);
+      }
+      const coinCount = pick(rng, [
+        [39, 49, 59],
+        [79, 89, 99],
+        [129, 149, 179]
+      ][level]);
+      const startSeconds = pick(rng, [16 * 3600 + 7 * 60, 16 * 3600 + 27 * 60, 17 * 3600 + 12 * 60]);
+      let elapsedSeconds = 0;
+      for (let coin = 2; coin <= coinCount; coin += 1) elapsedSeconds += String(coin).length;
+      const lisbonSeconds = startSeconds - 3600 + elapsedSeconds;
+      const second = lisbonSeconds % 60;
+      const minute = Math.floor(lisbonSeconds / 60) % 60;
+      const hour24 = Math.floor(lisbonSeconds / 3600) % 24;
+      const hour = hour24 % 12 || 12;
+      const answer = `${hour24 < 12 ? "오전" : "오후"} ${hour}시 ${minute}분 ${second}초`;
+      return result(`서울이 낮 12시일 때 카이로는 오전 5시이고, 리스본이 낮 12시일 때 서울은 오후 8시입니다. 카이로에서 ${clockText(Math.floor(startSeconds / 60))}부터 동전을 ${coinCount}개까지 쌓았습니다. 맨 아래 동전은 세지 않고, 2~9번째는 1초씩, 10~99번째는 2초씩, 100번째부터는 3초씩 걸립니다. 모두 쌓았을 때 리스본 시각을 구하세요.${difficultyInstruction}${tag("coin-stack-city-time", [coinCount, startSeconds, elapsedSeconds, lisbonSeconds])}`, answer, `카이로는 리스본보다 1시간 빠릅니다. 동전을 쌓는 데 ${elapsedSeconds}초가 걸리므로, 카이로 시작 시각보다 1시간 이른 리스본 시각에 ${elapsedSeconds}초를 더하면 ${answer}입니다.`);
+    },
     ruleCorrespondenceAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const multiplier = pick(rng, [2, 3, 4, 5].slice(0, 2 + level));
@@ -19619,6 +19795,8 @@
     [type => type.id?.startsWith("5-1-u2-e8-"), "factorMultipleE8"],
     [type => type.id?.startsWith("5-1-u3-t1") && type.sourceItemId?.startsWith("5-1-u3-e1-"), "correspondenceE1"],
     [type => type.id?.startsWith("5-1-u3-t2") && type.sourceItemId?.startsWith("5-1-u3-e2-"), "correspondenceE2"],
+    [type => type.id?.startsWith("5-1-u3-t3") && type.sourceItemId?.startsWith("5-1-u3-e3-"), "correspondenceE3"],
+    [type => type.id?.startsWith("5-1-u3-t4") && type.sourceItemId?.startsWith("5-1-u3-e4-"), "correspondenceE4"],
     [type => type.id === "5-1-u3-t1", "ruleCorrespondenceAdvanced"],
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],

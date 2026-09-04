@@ -115,7 +115,22 @@
     "5-1-u3-e2-mission-2",
     "5-1-u3-e2-mission-3",
     "5-1-u3-e2-mission-4",
-    "5-1-u3-e2-mission-6"
+    "5-1-u3-e2-mission-6",
+    "5-1-u3-e3-exploration",
+    "5-1-u3-e3-mission-1",
+    "5-1-u3-e3-mission-2",
+    "5-1-u3-e3-mission-3",
+    "5-1-u3-e3-mission-4",
+    "5-1-u3-e4-exploration",
+    "5-1-u3-e4-example-4-1",
+    "5-1-u3-e4-example-4-2",
+    "5-1-u3-e4-example-4-3",
+    "5-1-u3-e4-mission-1",
+    "5-1-u3-e4-mission-2",
+    "5-1-u3-e4-mission-3",
+    "5-1-u3-e4-mission-4",
+    "5-1-u3-e4-mission-5",
+    "5-1-u3-e4-mission-6"
   ]);
   const correspondenceE1LockReasons = {
     "5-1-u3-e1-example-1-3": "도형 기호가 나타내는 숫자와 계산 기호의 위치를 원본 그림과 같은 점·선분 모델로 복원하기 전에는 출제하지 않습니다.",
@@ -127,12 +142,20 @@
     "5-1-u3-e2-exploration": "두 수직선의 눈금과 연결선을 원본 점·선분 모델로 복원하고 표·관계식·값을 한 답 계약으로 검증하기 전에는 출제하지 않습니다.",
     "5-1-u3-e2-mission-5": "날짜별 표 완성과 대응 관계식 작성을 함께 채점할 수 있는 여러 칸 답 계약을 마련하기 전에는 출제하지 않습니다."
   };
+  const correspondenceE3LockReasons = {
+    "5-1-u3-e3-example-3-1": "겹쳐 그린 정사각형의 선분을 점·선분 모델로 복원하고, 크기가 다른 삼각형까지 빠짐없이 세는 검산을 마치기 전에는 출제하지 않습니다.",
+    "5-1-u3-e3-example-3-2": "수정판 문제의 바둑돌 배열과 현재 답지의 그림이 서로 달라, 흰 돌과 검은 돌을 원문 배열에서 독립 계산하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e3-example-3-3": "붙인 정사각형의 행과 열이 늘어나는 규칙과 각 누름못의 위치를 격자 좌표로 복원하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e3-mission-5": "나열된 도형에서 크고 작은 삼각형을 점·선분 연결로 전수 열거하고 독립 계산하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e3-mission-6": "검은색과 흰색 타일의 위치 규칙을 칸 좌표로 복원하고 두 색의 개수를 독립 계산하기 전에는 출제하지 않습니다."
+  };
   const sourceItem53 = (label, sourceItemId, exploration) => {
     const pdfPage = 31 + (exploration - 1) * 2;
     const isMission = sourceItemId.includes("-mission-");
     const ready = correspondenceReadyIds.has(sourceItemId);
     const reviewReason = correspondenceE1LockReasons[sourceItemId]
       || correspondenceE2LockReasons[sourceItemId]
+      || correspondenceE3LockReasons[sourceItemId]
       || (ready
         ? "현행 원문 구조와 독립 계산 검산 완료"
         : "원문 문제 구조는 확인했지만, 대응 규칙과 그림·부호 조건을 독립 계산하고 답 하나가 되는지 검산하기 전에는 공개하지 않습니다.");
