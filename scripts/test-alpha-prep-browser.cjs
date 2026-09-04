@@ -77,9 +77,13 @@ async function submit(page, answer) {
 }
 
 async function runPassageInterview(page, passageIndex) {
+  const submitStartedAt = Date.now();
   await submit(page, 'The passage is mainly about solving a problem carefully. It explains the problem and shows a useful solution with important details.');
+  if (passageIndex === 0) {
+    assert.ok(Date.now() - submitStartedAt < 1500, 'typed submission must advance without waiting for the delayed coaching server');
+  }
   await assertVisibleText(page, 'FOLLOW-UP 1 OF 2');
-  if (passageIndex === 0) await assertVisibleText(page, 'Which result in the passage best proves the reason you gave?');
+  if (passageIndex === 0) await assertVisibleText(page, 'Which exact detail from the passage best supports what you just said?');
   await submit(page, 'The exact detail makes the idea convincing because it shows what changed and why the result mattered.');
   await assertVisibleText(page, 'FOLLOW-UP 2 OF 2');
   await submit(page, 'That detail matters most because it connects the problem to the solution.');

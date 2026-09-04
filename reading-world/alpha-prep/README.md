@@ -13,6 +13,7 @@ The coaching profile is calibrated for verbally advanced seven-year-olds reading
 - Questions for the first passage are completed before the second passage is handed out
 - Summary, evidence, inference, opinion, and vocabulary-in-context questions
 - Two-step answer-dependent follow-up ladders; economy mode continues the second step locally
+- Typed and spoken answers advance immediately with local coaching; remote coaching enriches feedback in the background and never blocks the interview
 - One peer answer followed by an unannounced question that repeats the peer's exact claim before asking the learner to evaluate and extend it
 - Browser speech recognition with typed fallback, one utterance per tap, and overlap-safe mobile transcript updates
 - Browser speech synthesis for the director and peers

@@ -714,7 +714,7 @@
     render();
   }
 
-  async function submitAnswer() {
+  function submitAnswer() {
     if (state.busy) return;
     if (state.listening) stopMic();
     const answer = String(state.answerDraft || '').trim();
@@ -728,26 +728,20 @@
     const followDepth = Number(item.followDepth) || 0;
     state.busy = true;
     state.notice = '';
-    render();
     const localFeedback = analyzeAnswer(answer, item, passage);
-    let feedback = localFeedback;
     let followUp = '';
-    if (shouldUseAdaptive(item, passage)) {
-      const remote = await requestTurnCoach(passage, item, answer, localFeedback);
-      if (remote) {
-        feedback = mergeFeedback(localFeedback, remote.feedback || {});
-        followUp = String(remote.followUp || '').trim();
-        state.apiStatus = 'ready';
-        state.adaptiveUsed[passage.id] = (state.adaptiveUsed[passage.id] || 0) + 1;
-      } else {
-        state.apiStatus = state.apiStatus === 'ready' ? 'ready' : 'local';
-        followUp = localFollowUp(item, answer, passage, localFeedback);
-        state.adaptiveUsed[passage.id] = (state.adaptiveUsed[passage.id] || 0) + 1;
-      }
+    const useAdaptiveCoach = shouldUseAdaptive(item, passage);
+    const remoteRequest = useAdaptiveCoach
+      ? requestTurnCoach(passage, item, answer, localFeedback)
+      : null;
+    if (useAdaptiveCoach) {
+      followUp = localFollowUp(item, answer, passage, localFeedback);
+      state.adaptiveUsed[passage.id] = (state.adaptiveUsed[passage.id] || 0) + 1;
+      if (state.apiStatus === 'idle') state.apiStatus = 'pending';
     } else if (item.adaptive && followDepth < MAX_FOLLOW_DEPTH) {
       followUp = localFollowUp(item, answer, passage, localFeedback);
     }
-    state.turns.push({
+    const turn = {
       passageId: passage.id,
       passageTitle: passage.title,
       genre: passage.genre,
@@ -756,21 +750,41 @@
       question: item.prompt,
       answer,
       peerName: item.peerName || '',
-      feedback
-    });
+      feedback: localFeedback
+    };
+    state.turns.push(turn);
+    let followUpItem = null;
     if (followUp && item.kind !== 'peer' && followDepth < MAX_FOLLOW_DEPTH) {
-      state.queue.splice(state.questionIndex + 1, 0, {
+      followUpItem = {
         kind: 'student',
         type: 'followup',
         prompt: followUp,
         adaptive: true,
         followDepth: followDepth + 1,
         parentType: item.parentType || item.type
-      });
+      };
+      state.queue.splice(state.questionIndex + 1, 0, followUpItem);
     }
     state.busy = false;
     state.answerDraft = '';
     advanceQuestion();
+    if (remoteRequest) void applyTurnCoach(remoteRequest, turn, followUpItem);
+  }
+
+  async function applyTurnCoach(request, turn, followUpItem) {
+    const remote = await request;
+    if (!state.turns.includes(turn)) return;
+    if (!remote) {
+      if (state.apiStatus !== 'ready') state.apiStatus = 'local';
+      return;
+    }
+    turn.feedback = mergeFeedback(turn.feedback, remote.feedback || {});
+    state.apiStatus = 'ready';
+    const remoteFollowUp = String(remote.followUp || '').trim();
+    const queuedIndex = followUpItem ? state.queue.indexOf(followUpItem) : -1;
+    if (remoteFollowUp && queuedIndex > state.questionIndex) {
+      followUpItem.prompt = remoteFollowUp;
+    }
   }
 
   function shouldUseAdaptive(item, passage) {
