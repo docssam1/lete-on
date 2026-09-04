@@ -223,6 +223,125 @@
     ]]
   ];
 
+  const fractionReductionReadyIds = new Set([
+    "5-1-u4-e1-exploration",
+    "5-1-u4-e1-example-1-1",
+    "5-1-u4-e1-example-1-2",
+    "5-1-u4-e1-example-1-3",
+    "5-1-u4-e1-example-1-4",
+    "5-1-u4-e1-mission-1",
+    "5-1-u4-e1-mission-2",
+    "5-1-u4-e1-mission-3",
+    "5-1-u4-e1-mission-4",
+    "5-1-u4-e1-mission-5",
+    "5-1-u4-e2-exploration",
+    "5-1-u4-e2-example-2-1",
+    "5-1-u4-e2-example-2-2",
+    "5-1-u4-e2-example-2-3",
+    "5-1-u4-e2-example-2-4",
+    "5-1-u4-e2-mission-1",
+    "5-1-u4-e2-mission-2",
+    "5-1-u4-e2-mission-3",
+    "5-1-u4-e2-mission-4",
+    "5-1-u4-e2-mission-5",
+    "5-1-u4-e2-mission-6",
+    "5-1-u4-e3-exploration",
+    "5-1-u4-e3-example-3-1",
+    "5-1-u4-e3-example-3-2",
+    "5-1-u4-e3-example-3-3",
+    "5-1-u4-e3-example-3-4",
+    "5-1-u4-e3-mission-1",
+    "5-1-u4-e3-mission-2",
+    "5-1-u4-e3-mission-3",
+    "5-1-u4-e3-mission-4",
+    "5-1-u4-e3-mission-5",
+    "5-1-u4-e3-mission-6",
+    "5-1-u4-e4-exploration",
+    "5-1-u4-e4-example-4-1",
+    "5-1-u4-e4-example-4-2",
+    "5-1-u4-e4-example-4-3",
+    "5-1-u4-e4-example-4-4",
+    "5-1-u4-e4-mission-1",
+    "5-1-u4-e4-mission-2",
+    "5-1-u4-e4-mission-3",
+    "5-1-u4-e4-mission-4",
+    "5-1-u4-e4-mission-5",
+    "5-1-u4-e4-mission-6"
+  ]);
+  const equalFractionE1LockReasons = {
+    "5-1-u4-e1-mission-6": "원문 조건대로 같은 두 자리 자연수를 분자와 분모에서 빼면 그 수는 3이어야 하므로 조건을 만족하는 두 자리 자연수가 없습니다. 원문 또는 공식 답 근거가 바로잡히기 전에는 출제하지 않습니다."
+  };
+  const sourceItem54 = (label, sourceItemId, exploration) => {
+    const pdfPage = 41 + (exploration - 1) * 2;
+    const isMission = sourceItemId.includes("-mission-");
+    const ready = fractionReductionReadyIds.has(sourceItemId);
+    const reviewReason = equalFractionE1LockReasons[sourceItemId]
+      || (ready ? "현행 원문 구조와 독립 계산 검산 완료" : "현행 원문을 문제 단위로 대조하고 답이 하나인지 검산하기 전에는 공개하지 않습니다.");
+    return sourceItem51(
+      label,
+      1,
+      sourceItemId,
+      pdfPage + (isMission ? 1 : 0),
+      pdfPage + 1 + (isMission ? 1 : 0),
+      !ready,
+      reviewReason
+    );
+  };
+  const fractionReductionGroups = [
+    ["크기가 같은 분수", 1, [
+      ["exploration", "분모와 분자에 두 자리 수를 더해 같은 분수 만들기"],
+      ["example-1-1", "두 분수식에서 기호가 나타내는 분수 구하기"],
+      ["example-1-2", "같은 크기의 분수가 처음 나오는 자리 찾기"],
+      ["example-1-3", "분모를 더하고 뺀 조건으로 처음 분수 구하기"],
+      ["example-1-4", "분자와 분모에서 수를 뺀 뒤 크기가 같은 분수 구하기"],
+      ["mission-1", "분자와 분모에 같은 수를 더해 목표 분수 만들기"],
+      ["mission-2", "분자와 분모의 합과 바꾼 분수로 처음 분수 찾기"],
+      ["mission-3", "분모를 더하고 뺀 두 분수 조건으로 처음 분수 찾기"],
+      ["mission-4", "두 기호의 곱으로 같은 크기의 분수 만드는 짝 세기"],
+      ["mission-5", "분자와 분모가 함께 바뀌는 수열에서 자리 찾기"],
+      ["mission-6", "같은 두 자리 수를 분자와 분모에서 빼는 조건 살펴보기"]
+    ]],
+    ["약분과 기약분수", 2, [
+      ["exploration", "약분할 수 있는 수의 개수와 기약분수 만드는 수 구하기"],
+      ["example-2-1", "약분한 분자가 1이 되는 원래 분자 세기"],
+      ["example-2-2", "분모가 정해진 진분수 중 약분되는 분수 세기"],
+      ["example-2-3", "규칙적인 기약분수 수열에서 두 항의 자리 찾기"],
+      ["example-2-4", "분모가 정해진 기약분수를 나열해 큰 자리의 수 찾기"],
+      ["mission-1", "최대공약수와 최소공배수로 차가 가장 작은 분수 찾기"],
+      ["mission-2", "분자와 분모를 바꾸고 약분한 조건으로 처음 분수 찾기"],
+      ["mission-3", "분모가 정해진 기약 진분수 세기"],
+      ["mission-4", "분모에 같은 수를 곱해 분자를 1로 만드는 수 찾기"],
+      ["mission-5", "약분한 분모가 정해진 세 자리 분자 세기"],
+      ["mission-6", "합과 약분 뒤 조건으로 처음 가분수 찾기"]
+    ]],
+    ["통분과 분수의 크기 비교", 3, [
+      ["exploration", "분자와 분모의 규칙을 보고 여러 분수의 크기 비교하기"],
+      ["example-3-1", "두 분수 사이를 똑같이 나눈 네 분수 찾기"],
+      ["example-3-2", "기준 분수에 가까운 순서로 여러 분수 놓기"],
+      ["example-3-3", "두 분수의 분자에 곱할 수의 합이 가장 작게 하기"],
+      ["example-3-4", "분자와 분모가 규칙적으로 바뀌는 분수 수열 비교하기"],
+      ["mission-1", "세 분수를 큰 수부터 차례로 놓기"],
+      ["mission-2", "통분하기 전 세 분수의 분모 합 구하기"],
+      ["mission-3", "여러 가분수 중 자연수에 가장 가까운 분수 찾기"],
+      ["mission-4", "두 분수 사이에 있는 분수의 개수로 분모 찾기"],
+      ["mission-5", "분자가 연속하도록 두 분수 사이에 다섯 분수 넣기"],
+      ["mission-6", "같은 수가 들어간 분수가 기준보다 커지는 가장 작은 수 찾기"]
+    ]],
+    ["조건에 맞는 분수 찾기", 4, [
+      ["exploration", "두 분수 사이에서 분자가 정해진 분수 모두 찾기"],
+      ["example-4-1", "두 분수 사이에서 짝수 분모인 기약분수 모두 찾기"],
+      ["example-4-2", "두 분수 사이에서 분자가 정해진 기약분수 세기"],
+      ["example-4-3", "분자가 정해진 분수 중 기준에 가장 가까운 분수 찾기"],
+      ["example-4-4", "두 소수 사이에서 분모가 정해진 기약분수 세기"],
+      ["mission-1", "두 분수 사이에 들어가는 분모의 합 구하기"],
+      ["mission-2", "두 분수 사이에서 분모가 정해진 분수 세기"],
+      ["mission-3", "차가 가장 크게 되는 두 빈 분모 찾기"],
+      ["mission-4", "두 조건 분수 사이에서 분자와 분모 차가 1인 분수 찾기"],
+      ["mission-5", "같은 분모인 두 분수 사이에서 분자가 정해진 분수 세기"],
+      ["mission-6", "분자가 정해진 분수 중 기준에 가장 가까운 분수 찾기"]
+    ]]
+  ];
+
   const semester = (id, units) => ({
     id,
     grade: Number(id[0]),
@@ -819,7 +938,9 @@
       ],
       ["약수와 배수", ...factorMultipleGroups.map(([name, exploration, items]) => detailed(name, `factorMultipleE${exploration}`, items.map(([suffix, label], variant) => sourceItem52(label, `5-1-u2-e${exploration}-${suffix}`, exploration))))],
       ["규칙과 대응", ...correspondenceGroups.map(([name, exploration, items]) => detailed(name, `correspondenceE${exploration}`, items.map(([suffix, label]) => sourceItem53(label, `5-1-u3-e${exploration}-${suffix}`, exploration))))],
-      ["약분과 통분", "크기가 같은 분수", "약분과 기약분수", "통분과 분수의 크기 비교", "조건에 맞는 분수 찾기"],
+      ["약분과 통분",
+        ...fractionReductionGroups.map(([name, exploration, items]) => detailed(name, `equalFractionE${exploration}`, items.map(([suffix, label], variant) => ({ ...sourceItem54(label, `5-1-u4-e${exploration}-${suffix}`, exploration), variant })))),
+      ],
       ["분수의 덧셈과 뺄셈", "분수의 덧셈", "분수의 뺄셈", "식 세워 풀기", "단위분수와 부분분수"],
       ["다각형의 둘레와 넓이", "다각형의 둘레", "직사각형과 직각삼각형의 넓이", "둘레와 넓이", "여러 가지 사각형의 넓이"]
     ]),

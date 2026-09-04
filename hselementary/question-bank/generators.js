@@ -19374,6 +19374,592 @@
       const answer = fastSpeed * hours;
       return result(`형은 한 시간에 ${fastSpeed}km, 동생은 한 시간에 ${slowSpeed}km를 같은 길로 걷습니다. 두 사람이 동시에 출발하여 형이 목적지에 도착했을 때 동생은 ${remaining}km를 더 가야 했습니다. 집에서 목적지까지의 거리를 구하세요.`, answer, `형과 동생의 한 시간 거리 차는 ${fastSpeed}-${slowSpeed}=${fastSpeed - slowSpeed}km입니다. ${remaining}km 차이가 났으므로 걸은 시간은 ${remaining}÷${fastSpeed - slowSpeed}=${hours}시간입니다. 목적지까지 거리는 ${fastSpeed}×${hours}=${answer}km입니다.`);
     },
+    equalFractionE1({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 9) throw new Error("크기가 같은 분수 개념탐구 1의 검수 대기 항목은 생성할 수 없습니다.");
+      const choose = pools => pick(rng, pools[level]);
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-equal-fraction-e1-kind="${kind}" data-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 두 분수의 분자끼리와 분모끼리가 몇 배인지 먼저 살펴보세요."
+        : level === 2
+          ? " 답을 구한 뒤 두 분수를 교차해 곱한 값이 같은지 확인하세요."
+          : "";
+
+      if (variant === 0) {
+        const [reducedNumerator, reducedDenominator, scale] = choose([
+          [[3, 5, 9], [4, 7, 6], [5, 8, 7]],
+          [[9, 16, 3], [7, 12, 4], [11, 15, 3]],
+          [[11, 18, 5], [13, 21, 4], [17, 28, 3]]
+        ]);
+        const numerator = reducedNumerator * scale;
+        const denominator = reducedDenominator * scale;
+        const firstK = Math.max(Math.ceil(10 / reducedNumerator), Math.ceil(10 / reducedDenominator));
+        const lastK = Math.min(Math.floor(99 / reducedNumerator), Math.floor(99 / reducedDenominator));
+        const answer = Math.max(0, lastK - firstK + 1);
+        return result(`${symbolicFractionMarkup(numerator, denominator)}의 분모에는 □를 더하고 분자에는 △를 더했더니 처음과 크기가 같은 분수가 되었습니다. □와 △가 모두 두 자리 자연수일 때 (□, △)의 짝은 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("two-digit-add-pairs", [numerator, denominator, reducedNumerator, reducedDenominator])}`, `${answer}개`, `분모에 더할 수는 ${reducedDenominator}×어떤 수, 분자에 더할 수는 ${reducedNumerator}×같은 수입니다. 두 수가 모두 두 자리인 경우를 세면 ${answer}개입니다.`);
+      }
+      if (variant === 1) {
+        const [symbolDenominator, sharedNumerator, firstAdd, secondAdd] = choose([
+          [[27, 20, 3, 13], [31, 24, 5, 17], [34, 30, 11, 16]],
+          [[53, 40, 11, 17], [47, 36, 13, 25], [59, 42, 11, 25]],
+          [[95, 84, 13, 31], [107, 90, 13, 43], [131, 108, 13, 49]]
+        ]);
+        return result(`두 식을 모두 만족하는 ㄱ, ㄴ에 대하여 ${symbolicFractionMarkup("ㄴ", "ㄱ")}을 구하세요.<div class="equation">${symbolicFractionMarkup("ㄴ", `ㄱ+${firstAdd}`)} = ${fractionMarkup(sharedNumerator, symbolDenominator + firstAdd)}　　${symbolicFractionMarkup("ㄴ", `ㄱ+${secondAdd}`)} = ${fractionMarkup(sharedNumerator, symbolDenominator + secondAdd)}</div>${difficultyInstruction}${tag("shared-symbol-fraction", [symbolDenominator, sharedNumerator, firstAdd, secondAdd])}`, fraction(sharedNumerator, symbolDenominator), `첫째 식과 둘째 식을 각각 같은 크기의 분수로 바꾸어 비교하면 ㄱ=${symbolDenominator}, ㄴ=${sharedNumerator}입니다. 따라서 ${symbolicFractionMarkup("ㄴ", "ㄱ")}=${fractionMarkup(sharedNumerator, symbolDenominator)}입니다.`);
+      }
+      if (variant === 2) {
+        const [targetNumerator, targetDenominator] = choose([
+          [[5, 12], [7, 15], [8, 21]],
+          [[17, 33], [19, 37], [23, 42]],
+          [[29, 57], [31, 68], [37, 75]]
+        ]);
+        const position = targetDenominator * (targetDenominator - 1) / 2 + targetNumerator;
+        return result(`분모가 1인 묶음부터 시작하여, 분모가 n인 묶음에는 ${symbolicFractionMarkup("1", "n")}부터 ${symbolicFractionMarkup("n", "n")}까지 분자를 1씩 늘려 분수를 나열합니다.<div class="sequence">1, ${symbolicFractionMarkup(1, 2)}, ${symbolicFractionMarkup(2, 2)}, ${symbolicFractionMarkup(1, 3)}, ${symbolicFractionMarkup(2, 3)}, ${symbolicFractionMarkup(3, 3)}, …</div>${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 분수가 처음 나오는 자리는 몇 번째인지 구하세요.${difficultyInstruction}${tag("grouped-fraction-position", [targetNumerator, targetDenominator])}`, `${position}번째`, `분모가 ${targetDenominator - 1}인 묶음까지는 1+2+…+${targetDenominator - 1}=${targetDenominator * (targetDenominator - 1) / 2}개입니다. 다음 묶음의 ${targetNumerator}번째 수이므로 ${position}번째입니다.`);
+      }
+      if (variant === 3 || variant === 7) {
+        const [numerator, denominator, addToDenominator, subtractFromDenominator] = variant === 3
+          ? choose([
+            [[12, 43, 5, 3], [15, 52, 8, 2], [18, 67, 5, 4]],
+            [[20, 71, 9, 1], [24, 89, 7, 5], [30, 107, 13, 2]],
+            [[42, 151, 17, 4], [48, 173, 19, 5], [60, 211, 29, 1]]
+          ])
+          : choose([
+            [[2, 12, 2, 2], [3, 17, 4, 2], [4, 26, 2, 6]],
+            [[5, 31, 4, 6], [6, 41, 7, 5], [8, 55, 9, 7]],
+            [[12, 83, 13, 11], [15, 104, 16, 14], [18, 125, 19, 17]]
+          ]);
+        const first = fractionMarkup(numerator, denominator + addToDenominator);
+        const second = fractionMarkup(numerator, denominator - subtractFromDenominator);
+        return result(`어떤 분수의 분모에 ${addToDenominator}를 더하면 ${first}과 크기가 같고, 분모에서 ${subtractFromDenominator}를 빼면 ${second}과 크기가 같습니다. 처음 분수를 구하세요.${difficultyInstruction}${tag("denominator-plus-minus", [numerator, denominator, addToDenominator, subtractFromDenominator])}`, fraction(numerator, denominator), `두 조건에 맞는 같은 분자를 찾아 분모를 되돌리면 처음 분수는 ${fractionMarkup(numerator, denominator)}입니다. 두 조건에 다시 넣어도 각각 ${first}, ${second}이 됩니다.`);
+      }
+      if (variant === 4) {
+        const [reducedNumerator, reducedDenominator, common, removedScale] = choose([
+          [[7, 3, 60, 2], [9, 4, 84, 3], [11, 5, 96, 4]],
+          [[13, 4, 572, 4], [17, 6, 420, 5], [19, 7, 360, 6]],
+          [[23, 8, 840, 7], [29, 11, 990, 8], [31, 12, 1260, 9]]
+        ]);
+        const numerator = reducedNumerator * common;
+        const denominator = reducedDenominator * common;
+        const removeNumerator = reducedNumerator * removedScale;
+        const removeDenominator = reducedDenominator * removedScale;
+        return result(`분수 ${symbolicFractionMarkup("가", "나")}는 분모에서 ${removeDenominator}, 분자에서 ${removeNumerator}를 빼도 크기가 변하지 않습니다. 가와 나의 최대공약수가 ${common}일 때 가와 나를 각각 구하세요.${difficultyInstruction}${tag("unchanged-after-subtraction", [reducedNumerator, reducedDenominator, common, removedScale], "ordered")}`, `${numerator}, ${denominator}`, `빼는 두 수의 비가 ${reducedNumerator}:${reducedDenominator}이므로 가:나는 ${reducedNumerator}:${reducedDenominator}입니다. 두 수의 최대공약수가 ${common}이므로 가=${reducedNumerator}×${common}=${numerator}, 나는 ${reducedDenominator}×${common}=${denominator}입니다.`);
+      }
+      if (variant === 5) {
+        const [numerator, denominator, added] = choose([
+          [[3, 11, 29], [4, 13, 50], [5, 17, 31]],
+          [[7, 22, 38], [9, 31, 57], [11, 38, 43]],
+          [[13, 47, 89], [17, 61, 103], [19, 73, 127]]
+        ]);
+        const targetNumerator = numerator + added;
+        const targetDenominator = denominator + added;
+        return result(`${fractionMarkup(numerator, denominator)}의 분모와 분자에 각각 같은 수를 더하여 ${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 분수를 만들었습니다. 더한 수를 구하세요.${difficultyInstruction}${tag("same-add-target", [numerator, denominator, added])}`, added, `더한 수를 □라 하면 ${symbolicFractionMarkup(`${numerator}+□`, `${denominator}+□`)}=${fractionMarkup(targetNumerator, targetDenominator)}입니다. 두 분수의 크기가 같게 되는 □를 구하면 ${added}입니다.`);
+      }
+      if (variant === 6) {
+        const [numerator, denominator, addToNumerator, subtractFromDenominator] = choose([
+          [[18, 42, 2, 2], [24, 55, 6, 5], [30, 68, 4, 8]],
+          [[48, 94, 6, 10], [54, 107, 9, 8], [66, 128, 10, 12]],
+          [[84, 163, 12, 13], [96, 187, 15, 17], [108, 211, 18, 19]]
+        ]);
+        const sum = numerator + denominator;
+        const changedNumerator = numerator + addToNumerator;
+        const changedDenominator = denominator - subtractFromDenominator;
+        return result(`분모와 분자의 합이 ${sum}인 분수가 있습니다. 분모에서 ${subtractFromDenominator}을 빼고 분자에 ${addToNumerator}을 더했더니 ${fractionMarkup(changedNumerator, changedDenominator)}와 크기가 같은 분수가 되었습니다. 처음 분수를 구하세요.${difficultyInstruction}${tag("sum-and-changed-fraction", [numerator, denominator, addToNumerator, subtractFromDenominator])}`, `${numerator}/${denominator}`, `분자를 □라 하면 분모는 ${sum}-□입니다. 바뀐 분수의 조건을 함께 풀면 분자는 ${numerator}, 분모는 ${denominator}이므로 처음 분수는 ${symbolicFractionMarkup(numerator, denominator)}입니다.`);
+      }
+      if (variant === 8) {
+        const [fractionNumerator, fractionDenominator, otherDenominator] = choose([
+          [[12, 60, 30], [24, 60, 30], [45, 90, 60]],
+          [[18, 72, 48], [60, 72, 48], [90, 108, 72]],
+          [[52, 156, 144], [90, 240, 192], [140, 280, 240]]
+        ]);
+        const product = fractionNumerator * otherDenominator / fractionDenominator;
+        const pairs = allDivisors(product).filter(smaller => smaller < product / smaller);
+        return result(`${symbolicFractionMarkup(fractionNumerator, fractionDenominator)}와 ${symbolicFractionMarkup("ㄱ×ㄴ", otherDenominator)}은 크기가 같습니다. ㄱ>ㄴ일 때 자연수 (ㄱ, ㄴ)의 짝은 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("ordered-factor-pair-count", [fractionNumerator, fractionDenominator, otherDenominator, product], "pair-count")}`, `${pairs.length}개`, `두 분수의 크기가 같으므로 ㄱ×ㄴ=${product}입니다. ${product}의 약수 짝 중 큰 수를 ㄱ, 작은 수를 ㄴ으로 놓을 수 있는 짝은 ${pairs.map(smaller => `(${product / smaller}, ${smaller})`).join(", ")}의 ${pairs.length}개입니다.`);
+      }
+      const [sum, targetIndex] = choose([
+        [[36, 15], [48, 20], [60, 21]],
+        [[88, 32], [96, 36], [120, 45]],
+        [[168, 64], [216, 81], [288, 108]]
+      ]);
+      const targetNumerator = targetIndex;
+      const targetDenominator = sum - targetIndex;
+      return result(`다음과 같이 분자는 1씩 커지고 분모는 1씩 작아지는 분수를 나열합니다.<div class="sequence">${fractionMarkup(1, sum - 1)}, ${fractionMarkup(2, sum - 2)}, ${fractionMarkup(3, sum - 3)}, ${fractionMarkup(4, sum - 4)}, …</div>${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 분수는 몇 번째인지 구하세요.${difficultyInstruction}${tag("constant-sum-sequence", [sum, targetIndex])}`, `${targetIndex}번째`, `n번째 분수는 ${symbolicFractionMarkup("n", `${sum}-n`)}입니다. ${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 n을 구하면 ${targetIndex}이므로 ${targetIndex}번째입니다.`);
+    },
+    irreducibleFractionE2({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("약분과 기약분수 개념탐구 2의 원문 분기는 0부터 10까지여야 합니다.");
+      const choose = pools => pick(rng, pools[level]);
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-irreducible-e2-kind="${kind}" data-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 분자와 분모를 함께 나눌 수 있는 수를 먼저 찾아보세요."
+        : level === 2
+          ? " 답을 구한 뒤 가능한 수를 빠뜨리지 않았는지 다시 확인하세요."
+          : "";
+
+      if (variant === 0) {
+        const [numerator, denominator] = choose([
+          [[48, 72], [60, 90], [84, 126]],
+          [[216, 288], [270, 360], [336, 504]],
+          [[720, 1080], [840, 1260], [1188, 1584]]
+        ]);
+        const greatest = gcd(numerator, denominator);
+        const reducibleDivisorCount = allDivisors(greatest).length - 1;
+        const answer = reducibleDivisorCount + greatest;
+        return result(`${symbolicFractionMarkup(numerator, denominator)}을 약분할 수 있는 1보다 큰 자연수는 모두 몇 개인지 구하고, 그 수와 이 분수를 기약분수로 만드는 수를 더하세요.${difficultyInstruction}${tag("reduction-count-plus-gcd", [numerator, denominator])}`, answer, `분자와 분모의 최대공약수는 ${greatest}입니다. ${greatest}의 약수 중 1을 뺀 ${reducibleDivisorCount}개로 약분할 수 있고, ${greatest}로 나누면 기약분수가 됩니다. 따라서 ${reducibleDivisorCount}+${greatest}=${answer}입니다.`);
+      }
+      if (variant === 1) {
+        const denominator = choose([
+          [48, 60, 72],
+          [96, 120, 144],
+          [180, 240, 360]
+        ]);
+        const answer = allDivisors(denominator).length - 1;
+        return result(`분모가 ${denominator}인 진분수를 약분하여 분자가 1인 기약분수로 만들려고 합니다. 처음 분자가 될 수 있는 자연수는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("unit-numerator-count", [denominator])}`, `${answer}개`, `약분한 분자가 1이 되려면 처음 분자가 ${denominator}의 약수여야 합니다. 진분수이므로 ${denominator} 자체를 뺀 약수의 개수는 ${answer}개입니다.`);
+      }
+      if (variant === 2 || variant === 7) {
+        const denominator = variant === 2
+          ? choose([[45, 63, 75], [105, 135, 153], [225, 315, 405]])
+          : choose([[60, 72, 90], [144, 180, 225], [360, 420, 540]]);
+        const irreducibleCount = eulerPhi(denominator);
+        if (variant === 2) {
+          const answer = denominator - 1 - irreducibleCount;
+          return result(`분모가 ${denominator}인 진분수 중 약분할 수 있는 분수는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("reducible-proper-count", [denominator])}`, `${answer}개`, `분자는 1부터 ${denominator - 1}까지입니다. 이 중 ${denominator}와 공약수가 1뿐인 ${irreducibleCount}개를 빼면 ${answer}개가 약분됩니다.`);
+        }
+        return result(`분모가 ${denominator}인 진분수 중 기약분수는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("irreducible-proper-count", [denominator])}`, `${irreducibleCount}개`, `1부터 ${denominator - 1}까지의 분자 중 ${denominator}와 공약수가 1뿐인 수를 모두 세면 ${irreducibleCount}개입니다.`);
+      }
+      if (variant === 3) {
+        const [firstPosition, secondPosition] = choose([
+          [[8, 14], [11, 20], [15, 24]],
+          [[35, 71], [42, 83], [48, 95]],
+          [[120, 239], [175, 348], [240, 479]]
+        ]);
+        const term = position => [2 * position - 1, 2 * position + 2];
+        const [firstNumerator, firstDenominator] = term(firstPosition);
+        const [secondNumerator, secondDenominator] = term(secondPosition);
+        const answer = firstPosition + secondPosition;
+        return result(`분수를 ${fractionMarkup(1, 4)}, ${fractionMarkup(1, 2)}, ${fractionMarkup(5, 8)}, ${fractionMarkup(7, 10)}, ${fractionMarkup(3, 4)}, ${fractionMarkup(11, 14)}, …와 같은 규칙으로 나열했습니다. ${fractionMarkup(firstNumerator, firstDenominator)}과 ${fractionMarkup(secondNumerator, secondDenominator)}은 각각 몇 번째인지 구해 두 자리 수를 더하세요.${difficultyInstruction}${tag("irreducible-sequence-two-positions", [firstPosition, secondPosition])}`, answer, `n번째 분수는 약분하기 전에 ${symbolicFractionMarkup("2×n-1", "2×n+2")}입니다. 두 분수의 자리를 각각 찾으면 ${firstPosition}번째와 ${secondPosition}번째이므로 합은 ${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const [denominator, position] = choose([
+          [[10, 80], [12, 96], [14, 120]],
+          [[15, 1000], [18, 720], [20, 800]],
+          [[24, 2400], [30, 3000], [36, 3600]]
+        ]);
+        const residues = Array.from({ length: denominator }, (_, index) => index + 1).filter(value => gcd(value, denominator) === 1);
+        const zeroBased = position - 1;
+        const numerator = Math.floor(zeroBased / residues.length) * denominator + residues[zeroBased % residues.length];
+        return result(`분모가 ${denominator}인 양의 분수 중 기약분수인 것을 크기가 작은 것부터 차례로 나열합니다. ${position}번째 분수를 구하세요. 진분수만이 아니라 1보다 큰 분수도 계속 나열합니다.${difficultyInstruction}${tag("fixed-denominator-irreducible-position", [denominator, position, numerator])}`, `${numerator}/${denominator}`, `${denominator}개의 연속한 분자마다 ${residues.length}개가 ${denominator}와 공약수가 1뿐입니다. 이 규칙으로 ${position}번째 분자를 찾으면 ${numerator}이므로 답은 ${symbolicFractionMarkup(numerator, denominator)}입니다.`);
+      }
+      if (variant === 5) {
+        const [greatest, reducedProduct] = choose([
+          [[4, 20], [5, 30], [6, 42]],
+          [[19, 20], [24, 30], [35, 42]],
+          [[42, 70], [56, 110], [72, 154]]
+        ]);
+        const least = greatest * reducedProduct;
+        const pairs = allDivisors(reducedProduct)
+          .filter(left => left < reducedProduct / left && gcd(left, reducedProduct / left) === 1)
+          .map(left => [left, reducedProduct / left]);
+        const [left, right] = pairs.sort((a, b) => (a[1] - a[0]) - (b[1] - b[0]))[0];
+        return result(`분자와 분모의 최대공약수가 ${greatest}, 최소공배수가 ${least}인 진분수가 있습니다. 분모와 분자의 차가 가장 작을 때 이 분수를 기약분수로 나타내세요.${difficultyInstruction}${tag("closest-fraction-from-gcd-lcm", [greatest, least, left, right])}`, fraction(left, right), `분자와 분모를 ${greatest}×가, ${greatest}×나로 나타내면 가×나는 ${reducedProduct}이고 두 수의 공약수는 1뿐입니다. 차가 가장 작은 가, 나는 ${left}, ${right}이므로 기약분수는 ${fractionMarkup(left, right)}입니다.`);
+      }
+      if (variant === 6) {
+        const [targetNumerator, targetDenominator, commonDivisor, multiplyNumerator, subtractDenominator] = choose([
+          [[3, 5, 4, 3, 3], [4, 7, 6, 4, 5], [5, 7, 6, 5, 7]],
+          [[7, 9, 8, 7, 4], [8, 11, 10, 8, 7], [9, 13, 12, 9, 11]],
+          [[11, 16, 14, 11, 13], [13, 18, 16, 13, 17], [17, 23, 20, 17, 19]]
+        ]);
+        const numerator = targetNumerator * commonDivisor / multiplyNumerator;
+        const denominator = targetDenominator * commonDivisor + subtractDenominator;
+        return result(`어떤 분수의 분모에서 ${subtractDenominator}을 빼고 분자에 ${multiplyNumerator}를 곱한 뒤, 분자와 분모를 각각 ${commonDivisor}으로 나누었더니 ${fractionMarkup(targetNumerator, targetDenominator)}이 되었습니다. 처음 분수를 구하세요.${difficultyInstruction}${tag("reverse-changed-reduction", [targetNumerator, targetDenominator, commonDivisor, multiplyNumerator, subtractDenominator, numerator, denominator])}`, `${numerator}/${denominator}`, `나누기 전 분자는 ${targetNumerator}×${commonDivisor}, 분모는 ${targetDenominator}×${commonDivisor}입니다. 분자와 분모에 한 일을 거꾸로 하면 처음 분수는 ${symbolicFractionMarkup(numerator, denominator)}입니다.`);
+      }
+      if (variant === 8) {
+        const fractions = choose([
+          [
+            [[2, 9], [3, 10], [5, 12]],
+            [[8, 15], [6, 25], [3, 14]],
+            [[4, 15], [3, 14], [5, 18]],
+            [[6, 25], [4, 21], [5, 22]],
+            [[6, 27], [9, 30], [10, 24]],
+            [[8, 36], [12, 35], [15, 42]]
+          ],
+          [
+            [[4, 15], [3, 8], [9, 20]],
+            [[6, 25], [7, 20], [3, 16]],
+            [[8, 21], [10, 25], [9, 27]],
+            [[12, 35], [14, 49], [15, 45]],
+            [[16, 45], [18, 63], [21, 70]],
+            [[20, 63], [22, 77], [25, 75]]
+          ],
+          [
+            [[10, 27], [12, 35], [15, 44]],
+            [[12, 35], [18, 55], [8, 27]],
+            [[16, 45], [21, 63], [25, 75]],
+            [[20, 63], [24, 72], [35, 70]],
+            [[28, 77], [30, 95], [42, 91]],
+            [[32, 88], [40, 126], [45, 135]]
+          ]
+        ]);
+        const required = fractions.map(([numerator, denominator]) => numerator / gcd(numerator, denominator));
+        const interval = lcmMany(required);
+        const candidates = [];
+        for (let value = interval; value <= 99; value += interval) if (value >= 10) candidates.push(value);
+        return result(`${fractions.map(([numerator, denominator]) => symbolicFractionMarkup(numerator, denominator)).join(", ")}의 각 분모에 같은 두 자리 자연수 □를 곱합니다. 세 분수를 각각 약분했을 때 분자가 모두 1이 되게 하는 □를 모두 구하세요.${difficultyInstruction}${tag("shared-denominator-multiplier-set", [...fractions.flat(), interval], "set")}`, candidates.join(", "), `각 분자가 약분되어 1이 되려면 □는 ${required.join(", ")}의 공배수여야 합니다. 이 수들의 최소공배수는 ${interval}이고 두 자리인 배수를 모두 찾으면 ${candidates.join(", ")}입니다.`);
+      }
+      if (variant === 9) {
+        const [denominator, firstReducedDenominator, secondReducedDenominator] = choose([
+          [[240, 5, 8], [252, 7, 9], [300, 5, 6]],
+          [[360, 5, 6], [420, 7, 10], [480, 8, 12]],
+          [[600, 8, 15], [720, 9, 16], [840, 12, 14]]
+        ]);
+        const candidates = [];
+        for (let numerator = 100; numerator < denominator && numerator <= 999; numerator += 1) {
+          const reducedDenominator = denominator / gcd(numerator, denominator);
+          if (reducedDenominator === firstReducedDenominator || reducedDenominator === secondReducedDenominator) candidates.push(numerator);
+        }
+        return result(`분자가 세 자리 자연수인 진분수 ${symbolicFractionMarkup("□", denominator)}을 기약분수로 나타냅니다. 분모가 ${firstReducedDenominator} 또는 ${secondReducedDenominator}가 되는 분자는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("three-digit-numerator-reduced-denominator-count", [denominator, firstReducedDenominator, secondReducedDenominator])}`, `${candidates.length}개`, `분자를 100부터 ${Math.min(999, denominator - 1)}까지 확인하여 약분한 분모가 ${firstReducedDenominator} 또는 ${secondReducedDenominator}인 경우를 세면 ${candidates.length}개입니다.`);
+      }
+      const [sum, subtractNumerator, addDenominator, reducedSum, numerator, denominator] = choose([
+        [[20, 3, 3, 5, 11, 9], [20, 3, 4, 7, 12, 8], [20, 3, 7, 8, 12, 8]],
+        [[29, 8, 4, 5, 18, 11], [41, 3, 4, 7, 21, 20], [41, 3, 6, 11, 23, 18]],
+        [[81, 3, 10, 11, 43, 38], [81, 3, 12, 9, 43, 38], [81, 4, 11, 11, 44, 37]]
+      ]);
+      return result(`분모와 분자의 합이 ${sum}인 가분수가 있습니다. 분모에 ${addDenominator}를 더하고 분자에서 ${subtractNumerator}을 뺀 뒤 기약분수로 나타냈더니 분자와 분모의 합이 ${reducedSum}인 진분수가 되었습니다. 처음 분수를 구하세요.${difficultyInstruction}${tag("improper-from-sum-and-reduced-sum", [sum, subtractNumerator, addDenominator, reducedSum, numerator, denominator])}`, `${numerator}/${denominator}`, `합이 ${sum}인 가분수를 하나씩 확인하면 ${symbolicFractionMarkup(numerator, denominator)}일 때 바뀐 분수는 ${fractionMarkup(numerator - subtractNumerator, denominator + addDenominator)}이고, 기약분수의 분자와 분모의 합이 ${reducedSum}입니다. 조건을 모두 만족하는 처음 분수는 이것 하나입니다.`);
+    },
+    commonDenominatorE3({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("통분과 분수의 크기 비교 개념탐구 3의 원문 분기는 0부터 10까지여야 합니다.");
+      const choose = pools => pick(rng, pools[level]);
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-common-denominator-e3-kind="${kind}" data-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 같은 분모로 바꾸거나 두 분수의 분자와 분모를 교차해 곱해 보세요."
+        : level === 2
+          ? " 답을 구한 뒤 이웃한 두 분수의 크기를 다시 비교하세요."
+          : "";
+      const intervalNumberLine = fractions => {
+        const left = 30;
+        const right = 270;
+        const y = 58;
+        const step = (right - left) / (fractions.length - 1);
+        const ticks = fractions.map((item, index) => {
+          const x = left + step * index;
+          const label = index === 0 || index === fractions.length - 1 ? svgMeasurementLabel({ x, y: 91, value: fraction(item.numerator, item.denominator), unit: "" }) : `<text x="${x.toFixed(1)}" y="91">□</text>`;
+          return `<line x1="${x.toFixed(1)}" y1="48" x2="${x.toFixed(1)}" y2="68"/>${label}`;
+        }).join("");
+        return `<svg class="geometry-diagram fraction-interval-number-line" viewBox="0 0 300 112" data-fraction-intervals="${fractions.map(item => `${item.numerator}/${item.denominator}`).join(",")}" role="img" aria-label="두 분수 사이를 다섯 구간으로 똑같이 나눈 수직선"><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}<text x="150" y="22">각 눈금의 간격은 같습니다.</text></svg>`;
+      };
+
+      if (variant === 0) {
+        const [startNumerator, multiplier, nearOneNumerator, gap, delta] = choose([
+          [[2, 18, 120, 7, 3], [3, 24, 240, 11, 4], [4, 30, 360, 13, 5]],
+          [[3, 42, 1995, 19, 3], [5, 56, 2480, 23, 5], [7, 72, 3570, 29, 7]],
+          [[11, 96, 7990, 31, 11], [13, 120, 9980, 37, 13], [17, 144, 11970, 41, 17]]
+        ]);
+        const first = [startNumerator, startNumerator + 1, startNumerator + 2].map(numerator => [numerator, multiplier * numerator + 1]);
+        const nearOne = [[nearOneNumerator, nearOneNumerator + gap], [nearOneNumerator + delta, nearOneNumerator + delta + gap]];
+        return result(`(1) ${first.map(([numerator, denominator]) => fractionMarkup(numerator, denominator)).join(", ")}의 크기를 비교하여 큰 수부터 쓰세요.<br>(2) ${fractionMarkup(...nearOne[0])} □ ${fractionMarkup(...nearOne[1])}의 □에 >, =, < 중 알맞은 것을 쓰세요.${difficultyInstruction}${tag("two-comparison-rules", [startNumerator, multiplier, nearOneNumerator, gap, delta], "ordered")}`, `${first.slice().reverse().map(([numerator, denominator]) => fraction(numerator, denominator)).join(" > ")}; <`, `(1) 분자가 1 커질 때 분모는 ${multiplier} 커지는 세 분수는 뒤의 분수일수록 큽니다. (2) 두 분수는 각각 1에서 ${symbolicFractionMarkup(gap, nearOne[0][1])}, ${symbolicFractionMarkup(gap, nearOne[1][1])}을 뺀 수이므로 둘째 분수가 더 큽니다.`);
+      }
+      if (variant === 1) {
+        const [leftNumerator, leftDenominator, rightNumerator, rightDenominator] = choose([
+          [[1, 5, 1, 4], [1, 6, 1, 5], [2, 9, 1, 4]],
+          [[1, 7, 1, 6], [2, 11, 1, 5], [3, 14, 1, 4]],
+          [[3, 17, 2, 9], [4, 23, 3, 16], [5, 29, 4, 21]]
+        ]);
+        const leftValue = rationalValue(leftNumerator, leftDenominator);
+        const rightValue = rationalValue(rightNumerator, rightDenominator);
+        const step = rationalOperation(rationalOperation(rightValue, leftValue, "-"), rationalValue(1, 5), "×");
+        const fractions = Array.from({ length: 6 }, (_, index) => rationalOperation(leftValue, rationalValue(step.numerator * index, step.denominator), "+"));
+        const inserted = fractions.slice(1, 5);
+        return result(`수직선에서 ${fractionMarkup(leftNumerator, leftDenominator)}과 ${fractionMarkup(rightNumerator, rightDenominator)} 사이를 5등분하는 네 분수를 작은 수부터 기약분수로 나타내세요.${intervalNumberLine(fractions)}${difficultyInstruction}${tag("five-part-fraction-interval", [leftNumerator, leftDenominator, rightNumerator, rightDenominator], "ordered")}`, inserted.map(item => fraction(item.numerator, item.denominator)).join(", "), `두 분수의 차를 5로 나눈 만큼씩 더합니다. 네 눈금은 ${inserted.map(item => fractionMarkup(item.numerator, item.denominator)).join(", ")}입니다.`);
+      }
+      if (variant === 2) {
+        const [targetNumerator, targetDenominator, candidates] = choose([
+          [
+            [1, 2, [[2, 5], [3, 7], [5, 9], [7, 13]]],
+            [2, 3, [[3, 5], [5, 8], [7, 10], [9, 13]]],
+            [3, 4, [[2, 3], [5, 7], [7, 9], [10, 13]]]
+          ],
+          [
+            [5, 7, [[2, 3], [3, 4], [5, 6], [13, 21]]],
+            [7, 9, [[3, 4], [4, 5], [7, 10], [11, 15]]],
+            [8, 11, [[5, 7], [3, 4], [7, 10], [11, 16]]]
+          ],
+          [
+            [7, 11, [[5, 8], [9, 14], [13, 20], [19, 30]]],
+            [11, 17, [[9, 14], [13, 20], [17, 26], [19, 30]]],
+            [13, 19, [[15, 22], [24, 35], [28, 41], [37, 54]]]
+          ]
+        ]);
+        const ordered = candidates.slice().sort((left, right) => {
+          const leftDifference = Math.abs(left[0] * targetDenominator - targetNumerator * left[1]) / (left[1] * targetDenominator);
+          const rightDifference = Math.abs(right[0] * targetDenominator - targetNumerator * right[1]) / (right[1] * targetDenominator);
+          return leftDifference - rightDifference;
+        });
+        return result(`${candidates.map(item => fractionMarkup(...item)).join(", ")}을 ${fractionMarkup(targetNumerator, targetDenominator)}에 가까운 순서대로 나열하세요.${difficultyInstruction}${tag("fractions-by-distance", [targetNumerator, targetDenominator, ...candidates.flat()], "ordered")}`, ordered.map(item => fraction(...item)).join(", "), `각 분수와 ${fractionMarkup(targetNumerator, targetDenominator)}의 차를 같은 분모로 바꾸어 비교하면 ${ordered.map(item => fractionMarkup(...item)).join(", ")} 순서입니다.`);
+      }
+      if (variant === 3) {
+        const [firstNumerator, firstDenominator, secondNumerator, secondDenominator] = choose([
+          [[3, 8, 4, 9], [5, 12, 7, 15], [7, 16, 9, 20]],
+          [[9, 14, 12, 13], [11, 18, 15, 16], [13, 22, 18, 19]],
+          [[17, 28, 24, 25], [19, 32, 27, 29], [23, 38, 35, 36]]
+        ]);
+        const left = firstNumerator * secondDenominator;
+        const right = secondNumerator * firstDenominator;
+        const divisor = gcd(left, right);
+        const firstMultiplier = right / divisor;
+        const secondMultiplier = left / divisor;
+        const answer = firstMultiplier + secondMultiplier;
+        return result(`${fractionMarkup(firstNumerator, firstDenominator)}의 분자에 자연수 ㄱ을 곱하고 ${fractionMarkup(secondNumerator, secondDenominator)}의 분자에 자연수 ㄴ을 곱했더니 두 분수의 크기가 같아졌습니다. ㄱ+ㄴ이 가장 작을 때 그 값을 구하세요.${difficultyInstruction}${tag("minimum-numerator-multiplier-sum", [firstNumerator, firstDenominator, secondNumerator, secondDenominator])}`, answer, `두 분수의 분모를 고려해 가장 작은 곱을 찾으면 ㄱ=${firstMultiplier}, ㄴ=${secondMultiplier}입니다. 따라서 ㄱ+ㄴ=${answer}입니다.`);
+      }
+      if (variant === 4) {
+        const threshold = choose([
+          [20, 50, 60],
+          [70, 400, 500],
+          [600, 3000, 4000]
+        ]);
+        const numeratorCycle = [1, 3, 5];
+        const values = [];
+        for (let index = 0; index < 40; index += 1) values.push([numeratorCycle[index % 3], 2 ** index]);
+        const answer = values.filter(([numerator, denominator]) => numerator * threshold > denominator).length;
+        return result(`분수를 ${fractionMarkup(1, 1)}, ${fractionMarkup(3, 2)}, ${fractionMarkup(5, 4)}, ${fractionMarkup(1, 8)}, ${fractionMarkup(3, 16)}, ${fractionMarkup(5, 32)}, …와 같이 나열합니다. ${fractionMarkup(1, threshold)}보다 큰 분수는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("cycled-numerator-power-two-count", [threshold])}`, `${answer}개`, `분자는 1, 3, 5가 되풀이되고 분모는 앞 분모의 2배입니다. ${fractionMarkup(1, threshold)}보다 큰 항을 처음부터 비교하면 ${answer}개입니다.`);
+      }
+      if (variant === 5) {
+        const candidates = choose([
+          [[[3, 7], [5, 12], [7, 16]], [[4, 9], [10, 21], [13, 28]], [[5, 11], [12, 25], [17, 36]]],
+          [[[7, 15], [11, 24], [13, 27]], [[8, 17], [15, 31], [19, 40]], [[9, 20], [23, 48], [17, 36]]],
+          [[[17, 37], [29, 61], [31, 66]], [[19, 41], [37, 78], [43, 90]], [[23, 52], [41, 89], [47, 101]]]
+        ]);
+        const ordered = candidates.slice().sort((left, right) => right[0] * left[1] - left[0] * right[1]);
+        return result(`세 분수 ${candidates.map(item => fractionMarkup(...item)).join(", ")}을 큰 수부터 차례로 쓰세요.${difficultyInstruction}${tag("three-fractions-descending", candidates.flat(), "ordered")}`, ordered.map(item => fraction(...item)).join(", "), `세 분수를 같은 분모로 바꾸어 비교하면 ${ordered.map(item => fractionMarkup(...item)).join(" > ")}입니다.`);
+      }
+      if (variant === 6) {
+        const [commonDenominator, triples] = choose([
+          [[60, [[4, 10], [6, 15], [9, 18]]], [84, [[5, 14], [8, 21], [15, 30]]], [120, [[7, 20], [12, 30], [21, 35]]]],
+          [[210, [[8, 60], [36, 135], [95, 114]]], [240, [[14, 56], [27, 90], [44, 132]]], [300, [[18, 75], [35, 140], [64, 160]]]],
+          [[420, [[10, 70], [21, 126], [44, 165]]], [630, [[16, 144], [45, 315], [77, 231]]], [840, [[27, 180], [50, 336], [91, 455]]]]
+        ]);
+        const denominators = triples.map(([originalNumerator, changedNumerator]) => originalNumerator * commonDenominator / changedNumerator);
+        const answer = denominators.reduce((sum, value) => sum + value, 0);
+        const before = triples.map(([originalNumerator], index) => symbolicFractionMarkup(originalNumerator, ["ㄱ", "ㄴ", "ㄷ"][index])).join(", ");
+        const after = triples.map(([, changedNumerator]) => symbolicFractionMarkup(changedNumerator, commonDenominator)).join(", ");
+        return result(`세 분수 ${before}를 통분했더니 차례로 ${after}가 되었습니다. ㄱ+ㄴ+ㄷ을 구하세요.${difficultyInstruction}${tag("restore-three-denominators", [commonDenominator, ...triples.flat()], "ordered")}`, answer, `크기가 같은 분수의 교차곱을 이용하면 세 분모는 ${denominators.join(", ")}입니다. 따라서 합은 ${answer}입니다.`);
+      }
+      if (variant === 7) {
+        const whole = choose([[2, 3, 4], [5, 7, 9], [12, 15, 20]]);
+        const offsets = [[2, 5], [-5, 13], [3, 7], [1, 2], [-4, 11]];
+        const candidates = offsets.map(([offset, denominator]) => [whole * denominator + offset, denominator]);
+        const ordered = candidates.slice().sort((left, right) => Math.abs(left[0] / left[1] - whole) - Math.abs(right[0] / right[1] - whole));
+        return result(`다음 분수 중 ${whole}에 가장 가까운 분수를 고르세요.<div class="sequence">${candidates.map(item => fractionMarkup(...item)).join(", ")}</div>${difficultyInstruction}${tag("closest-fraction-to-natural", [whole, ...candidates.flat()])}`, fraction(...ordered[0]), `${whole}과 각 분수의 차를 비교하면 가장 작은 차는 ${fractionMarkup(...ordered[0])}에서 나옵니다.`);
+      }
+      if (variant === 8) {
+        const [denominatorUnit, lowerNumerator, width, scale] = choose([
+          [[7, 2, 2, 24], [8, 3, 2, 30], [9, 4, 2, 36]],
+          [[9, 5, 2, 108], [11, 6, 2, 120], [12, 7, 2, 144]],
+          [[17, 9, 2, 240], [19, 10, 2, 300], [23, 12, 2, 360]]
+        ]);
+        const denominator = denominatorUnit * scale;
+        const answerCount = width * scale - 1;
+        return result(`${fractionMarkup(lowerNumerator, denominatorUnit)}보다 크고 ${fractionMarkup(lowerNumerator + width, denominatorUnit)}보다 작은 분수 중 분모가 □인 분수는 모두 ${answerCount}개입니다. □는 ${denominatorUnit}의 배수일 때 □를 구하세요.${difficultyInstruction}${tag("denominator-from-between-count", [denominatorUnit, lowerNumerator, width, answerCount])}`, denominator, `□=${denominatorUnit}×어떤 수로 놓으면 두 끝 분수의 분자는 ${lowerNumerator}×어떤 수와 ${lowerNumerator + width}×어떤 수가 됩니다. 그 사이의 수가 ${answerCount}개이므로 어떤 수는 ${scale}, □=${denominator}입니다.`);
+      }
+      if (variant === 9) {
+        const [leftNumerator, leftDenominator, rightNumerator, rightDenominator, commonDenominator] = choose([
+          [[1, 2, 3, 5, 60], [2, 3, 3, 4, 72], [3, 5, 7, 10, 60]],
+          [[3, 4, 4, 5, 120], [5, 8, 7, 10, 80], [7, 12, 2, 3, 72]],
+          [[11, 15, 23, 30, 180], [13, 18, 3, 4, 216], [29, 40, 3, 4, 240]]
+        ]);
+        const leftScaled = leftNumerator * commonDenominator / leftDenominator;
+        const rightScaled = rightNumerator * commonDenominator / rightDenominator;
+        if (rightScaled - leftScaled !== 6) throw new Error("연속한 다섯 분수 사이 조건을 만들지 못했습니다.");
+        const inserted = Array.from({ length: 5 }, (_, index) => [leftScaled + index + 1, commonDenominator]);
+        return result(`${fractionMarkup(leftNumerator, leftDenominator)}과 ${fractionMarkup(rightNumerator, rightDenominator)} 사이에 분수 5개를 넣어, 7개 분수의 분자가 연속한 자연수가 되게 합니다. 새로 넣은 다섯 분수를 작은 수부터 기약분수로 나타내세요.${difficultyInstruction}${tag("five-consecutive-numerators", [leftNumerator, leftDenominator, rightNumerator, rightDenominator, commonDenominator], "ordered")}`, inserted.map(item => fraction(...item)).join(", "), `두 끝 분수를 분모가 ${commonDenominator}인 분수로 바꾸면 분자는 ${leftScaled}, ${rightScaled}입니다. 사이의 ${leftScaled + 1}부터 ${rightScaled - 1}까지를 각각 약분하면 ${inserted.map(item => fractionMarkup(...item)).join(", ")}입니다.`);
+      }
+      const [offset, targetNumerator, targetDenominator] = choose([
+        [[5, 3, 5], [6, 5, 7], [8, 7, 9]],
+        [[14, 11, 13], [18, 13, 15], [20, 17, 19]],
+        [[35, 29, 31], [42, 35, 37], [55, 43, 45]]
+      ]);
+      const answer = Math.floor(offset * (targetDenominator + targetNumerator) / (targetDenominator - targetNumerator)) + 1;
+      return result(`분수 ${symbolicFractionMarkup("□-" + offset, "□+" + offset)}의 □ 안에 같은 자연수를 넣어 ${fractionMarkup(targetNumerator, targetDenominator)}보다 크게 만들려고 합니다. □에 들어갈 수 있는 가장 작은 자연수를 구하세요.${difficultyInstruction}${tag("smallest-value-in-fraction-inequality", [offset, targetNumerator, targetDenominator])}`, answer, `두 분수의 분자와 분모를 교차해 곱하면 □×${targetDenominator - targetNumerator}>${offset * (targetDenominator + targetNumerator)}입니다. 이를 만족하는 가장 작은 자연수는 ${answer}입니다.`);
+    },
+    conditionalFractionE4({ rng, level, variant = 0 }) {
+      if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("조건에 맞는 분수 개념탐구 4의 원문 분기는 0부터 10까지여야 합니다.");
+      const choose = pools => pick(rng, pools[level]);
+      const tag = (kind, values, contract = "single-value") => `<span hidden data-conditional-fraction-e4-kind="${kind}" data-values="${values.join(",")}" data-result-contract="${contract}"></span>`;
+      const difficultyInstruction = level === 0
+        ? " 풀이 도움: 두 분수의 분자와 분모를 교차해 곱하여 가능한 자연수를 차례로 적어 보세요."
+        : level === 2
+          ? " 답을 구한 뒤 양 끝값이 포함되지 않는지와 빠진 자연수가 없는지 확인하세요."
+          : "";
+      const strictDenominators = (numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator, maximum = 5000) => {
+        const answers = [];
+        for (let denominator = 1; denominator <= maximum; denominator += 1) {
+          if (leftNumerator * denominator < numerator * leftDenominator
+            && numerator * rightDenominator < rightNumerator * denominator) answers.push(denominator);
+        }
+        return answers;
+      };
+      const strictNumerators = (denominator, leftNumerator, leftDenominator, rightNumerator, rightDenominator) => {
+        const answers = [];
+        const maximum = Math.ceil(rightNumerator * denominator / rightDenominator);
+        for (let numerator = 1; numerator <= maximum; numerator += 1) {
+          if (leftNumerator * denominator < numerator * leftDenominator
+            && numerator * rightDenominator < rightNumerator * denominator) answers.push(numerator);
+        }
+        return answers;
+      };
+      const nearestFixedNumerator = (numerator, targetNumerator, targetDenominator) => {
+        let bestDifference = null;
+        const answers = [];
+        for (let denominator = 1; denominator <= 1000; denominator += 1) {
+          const difference = {
+            numerator: Math.abs(numerator * targetDenominator - targetNumerator * denominator),
+            denominator: denominator * targetDenominator
+          };
+          const comparison = bestDifference
+            ? difference.numerator * bestDifference.denominator - bestDifference.numerator * difference.denominator
+            : -1;
+          if (comparison < 0) {
+            bestDifference = difference;
+            answers.length = 0;
+            answers.push(denominator);
+          } else if (comparison === 0) {
+            answers.push(denominator);
+          }
+        }
+        if (answers.length !== 1) throw new Error("기준에 가장 가까운 분수의 답이 하나가 아닙니다.");
+        return answers[0];
+      };
+      const fractionList = (numerator, denominators, reduce = false) => denominators
+        .map(denominator => reduce ? fraction(numerator, denominator) : `${numerator}/${denominator}`);
+
+      if (variant === 0) {
+        const [numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator] = choose([
+          [[5, 2, 5, 1, 2], [7, 3, 8, 7, 16], [11, 4, 9, 1, 2]],
+          [[29, 7, 12, 5, 8], [17, 7, 13, 3, 5], [23, 5, 12, 1, 2]],
+          [[37, 11, 20, 4, 7], [43, 13, 22, 5, 8], [53, 17, 28, 8, 13]]
+        ]);
+        const denominators = strictDenominators(numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator);
+        if (!denominators.length) throw new Error("두 분수 사이의 고정 분자 분수를 만들지 못했습니다.");
+        const answers = fractionList(numerator, denominators);
+        return result(`${fractionMarkup(leftNumerator, leftDenominator)}보다 크고 ${fractionMarkup(rightNumerator, rightDenominator)}보다 작은 분수 중 분자가 ${numerator}인 분수를 모두 구하세요.${difficultyInstruction}${tag("fixed-numerator-set", [numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator], "set")}`, answers.join(", "), `분모를 자연수로 놓고 두 부등식을 모두 만족하는지 확인하면 가능한 분모는 ${denominators.join(", ")}입니다. 따라서 답은 ${denominators.map(denominator => symbolicFractionMarkup(numerator, denominator)).join(", ")}입니다.`);
+      }
+      if (variant === 1) {
+        const [numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator] = choose([
+          [[5, 1, 3, 1, 2], [7, 2, 5, 1, 2], [11, 3, 8, 1, 2]],
+          [[17, 7, 11, 7, 9], [19, 5, 8, 3, 4], [23, 8, 15, 2, 3]],
+          [[29, 11, 18, 7, 10], [31, 13, 20, 3, 4], [37, 17, 26, 5, 7]]
+        ]);
+        const denominators = strictDenominators(numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator)
+          .filter(denominator => denominator % 2 === 0 && gcd(numerator, denominator) === 1);
+        if (!denominators.length) throw new Error("짝수 분모인 기약분수를 만들지 못했습니다.");
+        const answers = fractionList(numerator, denominators, true);
+        return result(`${fractionMarkup(leftNumerator, leftDenominator)}보다 크고 ${fractionMarkup(rightNumerator, rightDenominator)}보다 작은 기약분수 중 분자가 ${numerator}이고 분모가 짝수인 분수를 모두 구하세요.${difficultyInstruction}${tag("even-denominator-irreducible-set", [numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator], "set")}`, answers.join(", "), `범위 안의 짝수 분모를 빠짐없이 확인한 뒤 ${numerator}와 공약수가 1뿐인 것을 남기면 ${denominators.join(", ")}입니다. 답은 ${denominators.map(denominator => fractionMarkup(numerator, denominator)).join(", ")}입니다.`);
+      }
+      if (variant === 2) {
+        const [numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator] = choose([
+          [[5, 1, 4, 3, 4], [7, 1, 5, 2, 3], [11, 2, 9, 3, 5]],
+          [[6, 5, 72, 7, 9], [10, 3, 40, 5, 6], [14, 5, 81, 8, 9]],
+          [[18, 7, 160, 11, 12], [22, 9, 224, 13, 14], [26, 11, 288, 17, 18]]
+        ]);
+        const denominators = strictDenominators(numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator)
+          .filter(denominator => gcd(numerator, denominator) === 1);
+        return result(`${fractionMarkup(leftNumerator, leftDenominator)}보다 크고 ${fractionMarkup(rightNumerator, rightDenominator)}보다 작은 분수 중 분자가 ${numerator}인 기약분수는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("fixed-numerator-irreducible-count", [numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator])}`, `${denominators.length}개`, `조건을 만족하는 분모를 차례로 확인하고 ${numerator}와 공약수가 1뿐인 분모만 세면 ${denominators.length}개입니다.`);
+      }
+      if (variant === 3 || variant === 10) {
+        const [numerator, targetNumerator, targetDenominator] = variant === 3
+          ? choose([
+            [[5, 2, 3], [7, 3, 5], [11, 4, 7]],
+            [[13, 3, 7], [17, 5, 8], [19, 7, 11]],
+            [[29, 11, 17], [31, 13, 19], [37, 17, 23]]
+          ])
+          : choose([
+            [[7, 3, 4], [11, 4, 5], [13, 5, 8]],
+            [[13, 5, 6], [17, 7, 9], [19, 9, 13]],
+            [[29, 13, 17], [31, 17, 23], [37, 19, 27]]
+          ]);
+        const denominator = nearestFixedNumerator(numerator, targetNumerator, targetDenominator);
+        return result(`분자가 ${numerator}인 분수 중 ${fractionMarkup(targetNumerator, targetDenominator)}에 가장 가까운 분수를 구하세요.${difficultyInstruction}${tag("nearest-fixed-numerator", [numerator, targetNumerator, targetDenominator])}`, `${numerator}/${denominator}`, `${numerator}÷${targetNumerator}×${targetDenominator}의 값과 가까운 두 자연수를 분모로 넣어 정확한 차를 비교하면 ${symbolicFractionMarkup(numerator, denominator)}에서 차가 가장 작습니다.`);
+      }
+      if (variant === 4) {
+        const [denominator, lowerScaled, upperScaled, scale] = choose([
+          [[10, 2, 9, 10], [12, 3, 11, 10], [15, 2, 13, 10]],
+          [[25, 28, 120, 100], [28, 35, 125, 100], [30, 25, 115, 100]],
+          [[36, 17, 145, 100], [40, 23, 157, 100], [48, 31, 171, 100]]
+        ]);
+        const numerators = [];
+        const maximum = Math.ceil(upperScaled * denominator / scale);
+        for (let numerator = 1; numerator <= maximum; numerator += 1) {
+          if (lowerScaled * denominator < numerator * scale
+            && numerator * scale < upperScaled * denominator
+            && gcd(numerator, denominator) === 1) numerators.push(numerator);
+        }
+        const lowerText = plainDecimal(lowerScaled, Math.log10(scale));
+        const upperText = plainDecimal(upperScaled, Math.log10(scale));
+        return result(`${lowerText}보다 크고 ${upperText}보다 작은 분수 중 분모가 ${denominator}인 기약분수는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("decimal-bounds-fixed-denominator-count", [denominator, lowerScaled, upperScaled, scale])}`, `${numerators.length}개`, `분자를 자연수로 놓고 ${lowerText}<분수<${upperText}를 만족하는 범위를 찾은 뒤 ${denominator}와 공약수가 1뿐인 분자만 세면 ${numerators.length}개입니다.`);
+      }
+      if (variant === 5) {
+        const [numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator] = choose([
+          [[3, 1, 3, 3, 4], [5, 2, 5, 5, 6], [7, 1, 2, 7, 8]],
+          [[3, 2, 5, 6, 7], [7, 4, 9, 7, 10], [11, 5, 12, 11, 15]],
+          [[13, 7, 16, 13, 20], [17, 9, 22, 17, 25], [19, 11, 27, 19, 30]]
+        ]);
+        const denominators = strictDenominators(numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator);
+        const answer = denominators.reduce((sum, value) => sum + value, 0);
+        return result(`${fractionMarkup(leftNumerator, leftDenominator)}보다 크고 ${fractionMarkup(rightNumerator, rightDenominator)}보다 작은 분수 중 분자가 ${numerator}인 분수의 분모를 모두 더하세요.${difficultyInstruction}${tag("fixed-numerator-denominator-sum", [numerator, leftNumerator, leftDenominator, rightNumerator, rightDenominator])}`, answer, `두 부등식을 모두 만족하는 자연수 분모는 ${denominators.join(", ")}입니다. 모두 더하면 ${answer}입니다.`);
+      }
+      if (variant === 6) {
+        const [denominator, leftNumerator, leftDenominator, rightNumerator, rightDenominator] = choose([
+          [[30, 1, 3, 4, 5], [36, 2, 5, 5, 6], [42, 3, 7, 6, 7]],
+          [[180, 2, 5, 7, 9], [210, 3, 7, 5, 6], [240, 5, 12, 11, 14]],
+          [[360, 7, 15, 13, 16], [420, 9, 20, 17, 21], [540, 11, 24, 19, 22]]
+        ]);
+        const numerators = strictNumerators(denominator, leftNumerator, leftDenominator, rightNumerator, rightDenominator);
+        return result(`${fractionMarkup(leftNumerator, leftDenominator)}보다 크고 ${fractionMarkup(rightNumerator, rightDenominator)}보다 작은 분수 중 분모가 ${denominator}인 분수는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("fixed-denominator-numerator-count", [denominator, leftNumerator, leftDenominator, rightNumerator, rightDenominator])}`, `${numerators.length}개`, `두 끝 분수를 분모가 ${denominator}인 분수로 바꾸어 양 끝을 제외한 분자를 세면 ${numerators.length}개입니다.`);
+      }
+      if (variant === 7) {
+        const [firstNumerator, firstDenominator, sharedNumerator, middleNumerator, middleDenominator, lastNumerator, lastDenominator] = choose([
+          [[2, 5, 5, 2, 3, 4, 5], [1, 3, 7, 1, 2, 2, 3], [3, 8, 9, 3, 5, 5, 7]],
+          [[3, 8, 6, 8, 11, 4, 5], [4, 11, 8, 7, 10, 5, 6], [5, 13, 10, 9, 13, 7, 9]],
+          [[3, 8, 11, 5, 9, 3, 5], [7, 18, 13, 8, 13, 7, 10], [9, 23, 17, 11, 17, 13, 19]]
+        ]);
+        const firstDenominators = strictDenominators(sharedNumerator, firstNumerator, firstDenominator, middleNumerator, middleDenominator);
+        const secondDenominators = strictDenominators(sharedNumerator, middleNumerator, middleDenominator, lastNumerator, lastDenominator);
+        const candidates = firstDenominators.flatMap(first => secondDenominators.map(second => ({ first, second, difference: first - second })));
+        const maximum = Math.max(...candidates.map(candidate => candidate.difference));
+        const winners = candidates.filter(candidate => candidate.difference === maximum);
+        if (winners.length !== 1) throw new Error("두 빈 분모의 차를 가장 크게 하는 답이 하나가 아닙니다.");
+        const answer = winners[0];
+        return result(`${fractionMarkup(firstNumerator, firstDenominator)}, ${symbolicFractionMarkup(sharedNumerator, "ㄱ")}, ${fractionMarkup(middleNumerator, middleDenominator)}, ${symbolicFractionMarkup(sharedNumerator, "ㄴ")}, ${fractionMarkup(lastNumerator, lastDenominator)}이 작은 수부터 놓여 있습니다. ㄱ-ㄴ이 가장 클 때 ㄱ과 ㄴ을 각각 구하세요.${difficultyInstruction}${tag("ordered-blank-denominators-maximum", [firstNumerator, firstDenominator, sharedNumerator, middleNumerator, middleDenominator, lastNumerator, lastDenominator], "ordered")}`, `${answer.first}, ${answer.second}`, `첫째 구간에서 가능한 ㄱ과 둘째 구간에서 가능한 ㄴ을 각각 빠짐없이 찾습니다. 그 차를 비교하면 ㄱ=${answer.first}, ㄴ=${answer.second}일 때 가장 큽니다.`);
+      }
+      if (variant === 8) {
+        const [denominator, lowerScaled, upperScaled, scale, upperDenominator] = choose([
+          [[8, 20, 40, 100, 5], [14, 10, 30, 100, 6], [16, 10, 20, 100, 6]],
+          [[20, 60, 75, 100, 8], [24, 30, 50, 100, 8], [28, 40, 50, 100, 9]],
+          [[30, 70, 80, 100, 12], [36, 40, 50, 100, 10], [40, 10, 20, 100, 10]]
+        ]);
+        const firstCandidates = [];
+        for (let numerator = 1; numerator < denominator; numerator += 1) {
+          if (lowerScaled * denominator < numerator * scale
+            && numerator * scale < upperScaled * denominator
+            && gcd(numerator, denominator) === 1) firstCandidates.push(numerator);
+        }
+        if (firstCandidates.length !== 1) throw new Error("첫째 조건 분수가 하나가 아닙니다.");
+        const firstNumerator = firstCandidates[0];
+        const upperNumerator = upperDenominator - 1;
+        const adjacentNumerators = [];
+        for (let numerator = 1; numerator < upperDenominator - 1; numerator += 1) {
+          if (firstNumerator * (numerator + 1) < numerator * denominator
+            && numerator * upperDenominator < upperNumerator * (numerator + 1)) adjacentNumerators.push(numerator);
+        }
+        if (!adjacentNumerators.length) throw new Error("두 조건 분수 사이의 답 분수를 만들지 못했습니다.");
+        const answers = adjacentNumerators.map(numerator => `${numerator}/${numerator + 1}`);
+        const lowerText = plainDecimal(lowerScaled, Math.log10(scale));
+        const upperText = plainDecimal(upperScaled, Math.log10(scale));
+        return result(`㉠은 ${lowerText}보다 크고 ${upperText}보다 작은 분모가 ${denominator}인 기약 진분수이고, ㉡은 분모가 ${upperDenominator}인 가장 큰 진분수입니다. ㉠과 ㉡ 사이에 있는 기약분수 중 분모와 분자의 차가 1인 것을 모두 구하세요.${difficultyInstruction}${tag("chained-adjacent-fraction-set", [denominator, lowerScaled, upperScaled, scale, upperDenominator], "set")}`, answers.join(", "), `㉠은 ${fractionMarkup(firstNumerator, denominator)}, ㉡은 ${fractionMarkup(upperNumerator, upperDenominator)}입니다. 분모와 분자의 차가 1인 분수를 차례로 대입하면 답은 ${adjacentNumerators.map(numerator => fractionMarkup(numerator, numerator + 1)).join(", ")}입니다.`);
+      }
+      const [baseDenominator, lowerNumerator, upperNumerator, numerator] = choose([
+        [[9, 2, 4, 7], [11, 3, 5, 11], [13, 4, 6, 17]],
+        [[17, 4, 5, 37], [19, 5, 7, 41], [23, 7, 9, 53]],
+        [[29, 8, 11, 71], [31, 9, 13, 83], [37, 11, 16, 97]]
+      ]);
+      const denominators = strictDenominators(numerator, lowerNumerator, baseDenominator, upperNumerator, baseDenominator);
+      return result(`${fractionMarkup(lowerNumerator, baseDenominator)}보다 크고 ${fractionMarkup(upperNumerator, baseDenominator)}보다 작은 분수 중 분자가 ${numerator}인 분수는 모두 몇 개인지 구하세요.${difficultyInstruction}${tag("same-base-fixed-numerator-count", [baseDenominator, lowerNumerator, upperNumerator, numerator])}`, `${denominators.length}개`, `두 끝 분수의 분모가 같으므로 교차해 곱해 가능한 자연수 분모의 범위를 구합니다. 그 안의 분모는 ${denominators.join(", ")}이고 모두 ${denominators.length}개입니다.`);
+    },
     equalFractionAdvanced({ rng, level, variant = 0 }) {
       if (variant % 2 === 0) {
         for (let attempt = 0; attempt < 120; attempt += 1) {
@@ -19801,6 +20387,10 @@
     [type => type.id === "5-1-u3-t2", "correspondenceTableAdvanced"],
     [type => type.id === "5-1-u3-t3", "patternCorrespondenceApplicationOne"],
     [type => type.id === "5-1-u3-t4", "patternCorrespondenceApplicationTwo"],
+    [type => type.id?.startsWith("5-1-u4-t1") && type.sourceItemId?.startsWith("5-1-u4-e1-"), "equalFractionE1"],
+    [type => type.id?.startsWith("5-1-u4-t2") && type.sourceItemId?.startsWith("5-1-u4-e2-"), "irreducibleFractionE2"],
+    [type => type.id?.startsWith("5-1-u4-t3") && type.sourceItemId?.startsWith("5-1-u4-e3-"), "commonDenominatorE3"],
+    [type => type.id?.startsWith("5-1-u4-t4") && type.sourceItemId?.startsWith("5-1-u4-e4-"), "conditionalFractionE4"],
     [type => type.id === "5-1-u4-t1", "equalFractionAdvanced"],
     [type => type.id === "5-1-u4-t2", "irreducibleFractionAdvanced"],
     [type => type.id === "5-1-u4-t3", "commonDenominatorCompareAdvanced"],
