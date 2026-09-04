@@ -14,7 +14,7 @@ The coaching profile is calibrated for verbally advanced seven-year-olds reading
 - Summary, evidence, inference, opinion, and vocabulary-in-context questions
 - Two-step answer-dependent follow-up ladders; economy mode continues the second step locally
 - One peer answer followed by an unannounced question that repeats the peer's exact claim before asking the learner to evaluate and extend it
-- Browser speech recognition with typed fallback
+- Browser speech recognition with typed fallback, one utterance per tap, and overlap-safe mobile transcript updates
 - Browser speech synthesis for the director and peers
 - Seven-skill report, answer corrections, vocabulary review, and seven-day route
 - Pre-session print preview with one passage per A4 page, plus a separate printable coaching report
