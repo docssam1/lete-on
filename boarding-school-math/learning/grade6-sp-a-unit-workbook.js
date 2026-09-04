@@ -43,7 +43,7 @@
     return item({ id: id, section: section, strand: "statistical-question", level: level, kind: "question-classification", responseFormat: "choice-id", prompt: tr("다음 질문이 통계적 질문인지 판단하세요.", "Decide whether the question is statistical.", "判断下面的问题是不是统计问题。"), question: question, choices: QUESTION_CHOICES, data: { expectedMultipleValues: expectedMultipleValues }, errorCode: "single-answer-confusion" });
   }
   function variation(id, section, level, question, options) {
-    return item({ id: id, section: section, strand: "anticipated-variability", level: level, kind: "variability-source", responseFormat: "choice-id", prompt: tr("이 질문의 답에서 사람마다 또는 관찰할 때마다 달라지는 값을 고르세요.", "Choose the value that may differ from one person or observation to another.", "选择会因人或每次观测而不同的数据。"), question: question, choices: freeze(options), data: {}, errorCode: "wrong-varying-quantity" });
+    return item({ id: id, section: section, strand: "anticipated-variability", level: level, kind: "variability-source", responseFormat: "choice-id", prompt: tr("이 질문에 답하려면 어떤 자료를 모아야 하나요?", "What data should you collect to answer this question?", "要回答这个问题，应该收集什么数据？"), question: question, choices: freeze(options), data: {}, errorCode: "wrong-varying-quantity" });
   }
   function variabilityChoice(id, label, varies) { return freeze({ id: id, label: label, variesAcrossGroup: varies === true }); }
   function compare(id, section, level, ask, valuesA, valuesB) {
@@ -86,7 +86,7 @@
 
     variation("spa-w09", "variability", "foundation", q.commute, [
       variabilityChoice("A", tr("학생마다 걸린 시간", "Travel time for each student", "每名学生的通学时间"), true),
-      variabilityChoice("B", tr("질문한 학년", "The grade being surveyed", "被调查的年级"), false),
+      variabilityChoice("B", tr("조사 대상인 우리 반", "Our class, the group being surveyed", "作为调查对象的本班"), false),
       variabilityChoice("C", tr("시간의 단위인 분", "The unit, minutes", "时间单位：分钟"), false)
     ]),
     variation("spa-w10", "variability", "foundation", q.books, [
@@ -95,7 +95,7 @@
       variabilityChoice("C", tr("반 이름", "The class name", "班级名称"), false)
     ]),
     variation("spa-w11", "variability", "foundation", q.plants, [
-      variabilityChoice("A", tr("관찰한 4주", "The four-week observation time", "四周的观察时间"), false),
+      variabilityChoice("A", tr("4주라는 기간", "The four-week period", "四周这一时间段"), false),
       variabilityChoice("B", tr("길이 단위 cm", "The unit, centimeters", "长度单位：厘米"), false),
       variabilityChoice("C", tr("각 식물의 높이", "Height of each plant", "每株植物的高度"), true)
     ]),
@@ -170,14 +170,14 @@
 
   const STRANDS = freeze({
     "statistical-question": tr("통계적 질문인지 판단하기", "Decide whether a question is statistical", "判断是否为统计问题"),
-    "anticipated-variability": tr("어떤 값이 달라질지 찾기", "Predict how the answers may vary", "判断答案会怎样不同"),
+    "anticipated-variability": tr("질문에 필요한 자료 찾기", "Identify the data to collect", "确定需要收集的数据"),
     "distribution-features": tr("자료의 중심과 퍼짐 비교하기", "Compare center and spread", "比较数据的中心位置和离散程度"),
     "center-vs-variation": tr("중심과 퍼짐을 나타내는 값 구분하기", "Distinguish measures of center and variability", "区分表示中心位置和离散程度的量"),
     "distribution-synthesis": tr("자료의 중심과 퍼짐 함께 설명하기", "Describe center and variability together", "综合说明中心位置和离散程度")
   });
   const ERROR_GUIDES = freeze({
     "single-answer-confusion": { label:tr("답이 하나로 정해지는 질문을 통계적 질문으로 생각함", "Treated a fixed-answer question as statistical", "把答案固定的问题误判为统计问题"), prompt:tr("사람마다 또는 관찰할 때마다 답이 달라질 수 있는지 먼저 확인하게 하세요.", "Ask whether the answer could differ across people or repeated observations.", "先判断答案是否会因人或每次观测而不同。") },
-    "wrong-varying-quantity": { label:tr("고정된 조건과 달라지는 값을 혼동함", "Confused a fixed condition with the varying value", "混淆固定条件与变化的数据"), prompt:tr("사람마다 또는 관찰할 때마다 달라지는 값을 문장에 표시하게 하세요.", "Have the learner underline the value that may differ for each person or observation.", "让学生标出因人或每次观测而不同的数据。") },
+    "wrong-varying-quantity": { label:tr("질문의 조건과 모아야 할 자료를 혼동함", "Confused a condition in the question with the data to collect", "混淆题目条件和需要收集的数据"), prompt:tr("질문에서 사람마다 또는 날짜마다 기록해야 하는 값을 찾아 표시하게 하세요.", "Have the learner underline the value that must be recorded for each person or observation.", "让学生在题目中标出需要为每个人或每次观测记录的数据。") },
     "center-only": { label:tr("자료의 중심만 보고 퍼짐을 판단함", "Judged spread from center alone", "只看中心位置就判断离散程度"), prompt:tr("각 자료의 가장 큰 값에서 가장 작은 값을 빼서 범위를 비교하게 하세요.", "Subtract the least value from the greatest value in each set, then compare the ranges.", "用每组的最大值减去最小值，再比较极差。") },
     "spread-only": { label:tr("퍼진 정도만 보고 평균을 판단함", "Judged center from spread alone", "只看离散程度就判断中心位置"), prompt:tr("각 자료의 합을 자료 수로 나누어 평균을 따로 구하게 하세요.", "Find each mean separately by dividing the sum by the number of values.", "分别用总和除以数据个数求平均数。") },
     "measure-role-confusion": { label:tr("중심을 나타내는 값과 퍼짐을 나타내는 값을 혼동함", "Confused measures of center and variability", "混淆表示中心位置和离散程度的量"), prompt:tr("이 수가 자료의 대표적인 위치를 말하는지, 값들이 퍼진 정도를 말하는지 구분하게 하세요.", "Ask whether the measure describes a typical location or how spread out the data are.", "判断这个量表示数据的典型位置，还是数据的离散程度。") },
@@ -199,11 +199,11 @@
       { title:tr("개념 1 · 통계적 질문", "Concept 1 · Statistical questions", "概念1 · 统计问题"), body:tr("통계적 질문은 사람마다 또는 관찰할 때마다 답이 달라질 수 있는 질문입니다. 질문을 읽고 누구의 어떤 값이 달라질지 찾아보세요.", "A statistical question expects the answers to vary. Identify who or what is observed and which value may differ.", "统计问题的答案会因人或每次观测而不同。读题时，要找出观测对象和可能不同的数据。"), example:tr("‘우리 반 학생들은 학교까지 오는 데 몇 분이 걸리는가?’는 학생마다 답이 다를 수 있으므로 통계적 질문입니다.", "‘How many minutes does it take students in our class to travel to school?’ is statistical because the answers may differ from student to student.", "“我们班学生上学需要多少分钟？”是统计问题，因为每名学生的答案可能不同。") },
       { title:tr("개념 2 · 자료의 중심과 퍼짐", "Concept 2 · Center and spread of a distribution", "概念2 · 数据的中心位置与离散程度"), body:tr("자료의 분포는 값들의 대표적인 위치인 ‘중심’, 값들이 흩어진 정도인 ‘퍼짐’, 그리고 전체 모양으로 설명합니다. 평균과 중앙값은 중심을, 범위와 평균 절대 편차는 퍼짐을 나타냅니다.", "Describe a numerical data distribution by its center, spread, and overall shape. The mean and median are measures of center. The range and mean absolute deviation (MAD) are measures of variability, or spread.", "描述一组数值数据的分布时，要看中心位置、离散程度和整体形状。平均数和中位数反映中心位置；极差和平均绝对偏差反映离散程度。"), example:tr("평균이 같아도 범위가 다르면 자료가 퍼진 정도는 다릅니다. 평균과 범위를 함께 살펴보세요.", "Two data sets can have the same mean but different spreads. Compare both the mean and the range.", "两组数据的平均数可以相同，但离散程度不同。因此要同时比较平均数和极差。") }
     ]),
-    teacherObservation: tr("학생이 직접 통계적 질문을 만들고 사람마다 또는 관찰할 때마다 어떤 답이 달라질지 설명하게 하세요. ‘누구 또는 무엇을 관찰하는지’와 ‘어떤 값이 달라지는지’를 분명히 말하는지 기록합니다.", "Ask the learner to write a statistical question and explain how the answers may vary. Record whether the learner identifies who or what is observed and which value may differ.", "请学生自己提出一个统计问题，并说明答案会因人或每次观测而有何不同。记录学生能否明确指出观测对象和可能不同的数据。"),
+    teacherObservation: tr("학생이 직접 통계적 질문을 만들고 조사할 대상과 모아야 할 자료를 말하게 하세요. 사람마다 또는 관찰할 때마다 답이 달라질 수 있다는 점까지 설명하는지 기록합니다.", "Ask the learner to write a statistical question, identify who or what will be observed, and name the data to collect. Record whether the learner also explains why the answers may vary.", "请学生自己提出一个统计问题，说明调查对象和需要收集的数据，并解释为什么答案可能各不相同。"),
     printPlan: freeze({ paperSizes:["A4","Letter"], itemsPerPracticePage:4, studentPages:12, teacherEdition:true, answerSheetSeparate:true }),
     ui: freeze({ sectionOrder:["questions","variability","distributions","measures","synthesis","recheck"], sectionLabels:{
       questions:tr("1 · 통계적 질문인가", "1 · Is it a statistical question?", "1 · 是否为统计问题"),
-      variability:tr("2 · 어떤 답이 달라지는가", "2 · How may the answers vary?", "2 · 答案会怎样不同"),
+      variability:tr("2 · 어떤 자료를 모을까", "2 · What data should we collect?", "2 · 要收集什么数据"),
       distributions:tr("3 · 자료의 중심과 퍼짐 비교", "3 · Compare center and spread", "3 · 比较中心位置和离散程度"),
       measures:tr("4 · 중심과 퍼짐을 나타내는 값", "4 · Measures of center and variability", "4 · 表示中心位置和离散程度的量"),
       synthesis:tr("5 · 중심과 퍼짐 함께 설명", "5 · Explain center and variability together", "5 · 综合说明中心位置和离散程度"),
@@ -246,7 +246,7 @@
     if (candidate.kind === "question-classification") return candidate.data.expectedMultipleValues
       ? text(tr("사람마다 또는 관찰할 때마다 답이 달라질 수 있으므로 통계적 질문입니다.", "The answer may differ across people or repeated observations, so the question is statistical.", "答案可能因人或每次观测而不同，因此这是统计问题。"), locale)
       : text(tr("조건이 정해지면 답이 하나이므로 통계적 질문이 아닙니다.", "The conditions determine one answer, so the question is not statistical.", "条件确定后只有一个答案，因此不是统计问题。"), locale);
-    if (candidate.kind === "variability-source") return text(tr("사람이나 관찰 대상을 바꿀 때 달라지는 값은 ‘", "The value that may differ across people or observations is ‘", "因人或观测对象而不同的数据是“"), locale) + choiceLabel(candidate, answer, locale) + text(tr("’입니다.", "’.", "”。"), locale);
+    if (candidate.kind === "variability-source") return text(tr("이 질문에 답하려면 모아야 할 자료는 ‘", "To answer this question, collect ‘", "要回答这个问题，应收集“"), locale) + choiceLabel(candidate, answer, locale) + text(tr("’입니다.", "’.", "”。"), locale);
     if (candidate.kind === "distribution-comparison") {
       const a = candidate.data.ask === "spread" ? range(candidate.data.valuesA) : average(candidate.data.valuesA);
       const b = candidate.data.ask === "spread" ? range(candidate.data.valuesB) : average(candidate.data.valuesB);

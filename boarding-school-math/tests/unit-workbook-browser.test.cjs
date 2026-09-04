@@ -63,8 +63,9 @@ test("curriculum-specific Grade 6 wording renders cleanly in every locale",async
     await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=${locale}&paper=A4`,{waitUntil:"networkidle"});
     const visible=await page.locator("main").innerText();
     if(locale==="ko"){
-      assert.match(visible,/어떤 값이 달라질지 찾기/);
-      assert.doesNotMatch(visible,/예상되는 변이|중심 측도와 변이 측도/);
+      assert.match(visible,/질문에 필요한 자료 찾기/);
+      assert.match(visible,/이 질문에 답하려면 어떤 자료를 모아야 하나요\?/);
+      assert.doesNotMatch(visible,/예상되는 변이|학생이나 관측마다 달라질 양|중심 측도와 변이 측도/);
     }else if(locale==="en"){
       assert.match(visible,/US Grade 6 standards 6\.SP\.A\.1-3/);
       assert.match(visible,/mean absolute deviation \(MAD\)/);

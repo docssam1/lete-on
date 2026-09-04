@@ -52,7 +52,7 @@ test("recheck covers every 6.SP.A strand with new IDs", function () {
 
 test("each locale uses Grade 6 curriculum language rather than literal translation", function () {
   assert.equal(source.pack.title.ko, "6.SP.A 통계 질문과 자료의 분포");
-  assert.equal(source.pack.strands["anticipated-variability"].ko, "어떤 값이 달라질지 찾기");
+  assert.equal(source.pack.strands["anticipated-variability"].ko, "질문에 필요한 자료 찾기");
   assert.doesNotMatch(source.pack.strands["anticipated-variability"].ko, /예상되는 변이/);
   assert.match(source.pack.conceptPages[1].body.en, /mean absolute deviation \(MAD\).*variability/);
   assert.match(source.pack.scopeNotice.en, /US Grade 6 standards 6\.SP\.A\.1-3/);
@@ -63,4 +63,10 @@ test("each locale uses Grade 6 curriculum language rather than literal translati
   assert.ok(measurePrompts.includes("범위는 자료의 중심과 퍼짐 중 어느 것을 나타냅니까?"));
   assert.ok(measurePrompts.includes("중앙값은 자료의 중심과 퍼짐 중 어느 것을 나타냅니까?"));
   measurePrompts.forEach(function (prompt) { assert.doesNotMatch(prompt, /은\(는\)|범위은|편차은/); });
+  const dataPrompts = source.pack.workbookItems.filter(function (item) { return item.kind === "variability-source"; }).map(function (item) { return item.prompt; });
+  dataPrompts.forEach(function (prompt) {
+    assert.equal(prompt.ko, "이 질문에 답하려면 어떤 자료를 모아야 하나요?");
+    assert.equal(prompt.en, "What data should you collect to answer this question?");
+    assert.equal(prompt["zh-Hans"], "要回答这个问题，应该收集什么数据？");
+  });
 });
