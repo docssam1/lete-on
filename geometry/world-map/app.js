@@ -74,8 +74,8 @@ const characters = [
 const places = [
   { id: "cubeCastle", element: elements.castle, entrance: { x: 24, y: 46 }, href: "../cube-town/", nameKey: "cubeTown", descriptionKey: "cubeTownHint" },
   { id: "origamiStudio", element: elements.origami, entrance: { x: 47, y: 49 }, href: "../origami-studio/", nameKey: "origamiStudio", descriptionKey: "origamiStudioHint" },
-  { id: "mirrorManor", element: elements.mirrorManor, entrance: { x: 63, y: 48 }, href: "../games/mirror-manor/", nameKey: "mirrorManor", descriptionKey: "mirrorManorHint" },
-  { id: "geoboardYard", element: elements.geoboardYard, entrance: { x: 84, y: 51 }, href: "../games/geoboard/", nameKey: "geoboardYard", descriptionKey: "geoboardYardHint" },
+  { id: "mirrorManor", element: elements.mirrorManor, entrance: { x: 63, y: 48 }, href: "../mirror-manor/", nameKey: "mirrorManor", descriptionKey: "mirrorManorHint" },
+  { id: "geoboardYard", element: elements.geoboardYard, entrance: { x: 84, y: 51 }, href: "../geoboard/", nameKey: "geoboardYard", descriptionKey: "geoboardYardHint" },
   { id: "crystalPlaza", element: elements.crystalPlaza, entrance: { x: 32, y: 64 }, href: "../lab/index.html", nameKey: "geometryLab", descriptionKey: "geometryLabHint" },
   { id: "shapeGarden", element: elements.shapeGarden, entrance: { x: 53, y: 76 }, href: "../shape-garden/", nameKey: "shapeGarden", descriptionKey: "shapeGardenHint" },
   { id: "pathWalk", element: elements.pathWalk, entrance: { x: 40, y: 76 }, href: "../games/path-walk/", nameKey: "pathWalk", descriptionKey: "pathWalkHint" }
@@ -87,18 +87,18 @@ const districtPlaces = [
 ];
 
 const curriculumLevels = {
-  ko: ["킨더", "키즈", "PRE", "입문", "초급", "중급"],
-  zh: ["幼儿", "儿童", "PRE", "入门", "初级", "中级"],
-  ja: ["キンダー", "キッズ", "PRE", "入門", "初級", "中級"],
-  en: ["Kinder", "Kids", "PRE", "Starter", "Elementary", "Intermediate"]
+  ko: ["킨더", "키즈", "초등팩토 1", "1031 입문 · 입문", "1031 초급", "확장"],
+  zh: ["幼儿", "儿童", "小学 Facto 1", "1031 入门 · 起步", "1031 初级", "拓展"],
+  ja: ["キンダー", "キッズ", "小学校 Facto 1", "1031 入門 · はじめ", "1031 初級", "発展"],
+  en: ["Kinder", "Kids", "Elementary Facto 1", "1031 Intro · Entry", "1031 Beginner", "Extension"]
 };
 
 const roadmapActivities = {
   shapeDistrict: {
-    ko: ["모양 짝 찾기", "대칭 완성하기", "합동·뒤집기", "각과 다각형 탐구", "도형 이동·작도", "합동 조건·닮음"],
-    zh: ["寻找相同图形", "完成对称图形", "全等与翻转", "探索角与多边形", "图形变换与作图", "全等条件与相似"],
-    ja: ["形のペア探し", "対称を完成", "合同と裏返し", "角と多角形の探究", "図形の移動と作図", "合同条件と相似"],
-    en: ["Match shape pairs", "Complete symmetry", "Congruence and flips", "Angles and polygons", "Transformations and construction", "Congruence rules and similarity"]
+    ko: ["모양 짝 찾기", "대칭 완성하기", "합동·뒤집기", "각과 다각형 탐구", "도형 이동·작도", "합동 조건·분할"],
+    zh: ["寻找相同图形", "完成对称图形", "全等与翻转", "探索角与多边形", "图形变换与作图", "全等条件与分割"],
+    ja: ["形のペア探し", "対称を完成", "合同と裏返し", "角と多角形の探究", "図形の移動と作図", "合同条件と分割"],
+    en: ["Match shape pairs", "Complete symmetry", "Congruence and flips", "Angles and polygons", "Transformations and construction", "Congruence rules and partitioning"]
   },
   spatialDistrict: {
     ko: ["입체 모양 만나기", "쌓기와 방향", "전개도 맞추기", "여러 방향·단면", "회전체·겨냥도", "공간좌표·입체 추론"],
@@ -107,10 +107,10 @@ const roadmapActivities = {
     en: ["Meet solid shapes", "Stacking and direction", "Match nets", "Views and cross-sections", "Solids of revolution", "3D coordinates and reasoning"]
   },
   coordinateDistrict: {
-    ko: ["위치 말하기", "모눈길 찾기", "좌표 읽기", "좌표로 도형 그리기", "평행·대칭 이동", "닮음·피타고라스"],
-    zh: ["描述位置", "寻找方格路线", "读取坐标", "用坐标画图形", "平移与对称变换", "相似与勾股定理"],
-    ja: ["位置を伝える", "方眼の道探し", "座標を読む", "座標で図形を描く", "平行移動と対称移動", "相似とピタゴラス"],
-    en: ["Describe position", "Find grid paths", "Read coordinates", "Draw with coordinates", "Translations and reflections", "Similarity and Pythagoras"]
+    ko: ["위치 말하기", "모눈길 찾기", "좌표 읽기", "좌표로 도형 그리기", "평행·대칭 이동", "좌표 추론·피타고라스"],
+    zh: ["描述位置", "寻找方格路线", "读取坐标", "用坐标画图形", "平移与对称变换", "坐标推理与勾股定理"],
+    ja: ["位置を伝える", "方眼の道探し", "座標を読む", "座標で図形を描く", "平行移動と対称移動", "座標推理とピタゴラス"],
+    en: ["Describe position", "Find grid paths", "Read coordinates", "Draw with coordinates", "Translations and reflections", "Coordinate reasoning and Pythagoras"]
   }
 };
 
@@ -118,25 +118,25 @@ const npcDialogue = {
   ko: {
     builder: ["쌓기나무 성에는 눈에 보이지 않는 블록도 숨어 있어.", "높이와 방향을 바꾸면 같은 블록도 전혀 다르게 보여."],
     folder: ["색종이는 접은 선을 따라 거꾸로 펼치면 답이 보여.", "한 번 접기부터 시작하면 대칭이 금방 눈에 들어와."],
-    observer: ["거울 저택에서는 왼쪽과 오른쪽을 천천히 비교해 봐.", "중등 지구에는 합동과 닮음의 길도 이어질 거야."],
+    observer: ["거울 저택에서는 왼쪽과 오른쪽을 천천히 비교해 봐.", "중등 지구에는 합동과 도형 분할의 길도 이어질 거야."],
     explorer: ["지오메트리 월드는 계속 넓어져. 길 끝의 표지판을 찾아봐.", "좌표와 도형의 이동까지 배우면 새로운 지구가 열릴 거야."]
   },
   zh: {
     builder: ["积木城堡里还藏着看不见的积木。", "改变高度和方向，同样的积木也会看起来完全不同。"],
     folder: ["沿着折痕倒着展开，就能找到答案。", "从一次折叠开始，对称会很快变清楚。"],
-    observer: ["在镜子庄园里慢慢比较左右两边。", "中学区域还会通往全等与相似的道路。"],
+    observer: ["在镜子庄园里慢慢比较左右两边。", "中学区域还会通往全等与图形分割的道路。"],
     explorer: ["几何世界会继续扩展，去找路尽头的路牌吧。", "学会坐标和图形变换后，新的区域会开启。"]
   },
   ja: {
     builder: ["つみき城には見えないブロックもかくれているよ。", "高さと向きを変えると、同じブロックもまったく違って見えるよ。"],
     folder: ["折り目をたどって逆に開くと答えが見えるよ。", "一回折りから始めると、対称がすぐ見えてくるよ。"],
-    observer: ["鏡の館では左と右をゆっくり比べてみて。", "中学エリアには合同と相似の道も続くよ。"],
+    observer: ["鏡の館では左と右をゆっくり比べてみて。", "中学エリアには合同と図形分割の道も続くよ。"],
     explorer: ["ジオメトリーワールドはもっと広がるよ。道の先の看板を探してね。", "座標と図形の移動を学ぶと、新しいエリアが開くよ。"]
   },
   en: {
     builder: ["Some blocks in Cube Castle are hidden from view.", "Change the height or direction and the same blocks can look completely different."],
     folder: ["Unfold backward along the crease to reveal the answer.", "Start with one fold and symmetry soon becomes easy to see."],
-    observer: ["At Mirror Manor, compare the left and right sides slowly.", "The middle-school district will lead to congruence and similarity too."],
+    observer: ["At Mirror Manor, compare the left and right sides slowly.", "The middle-school district will lead to congruence and shape partitioning too."],
     explorer: ["Geometry World will keep growing. Look for the signs at the ends of the paths.", "Learn coordinates and transformations to open new districts."]
   }
 };
@@ -217,7 +217,7 @@ Object.assign(messages.ko, {
   viewRoadmap: "학습 로드맵", roadmapEyebrow: "앞으로 열릴 도형 세계", roadmapNote: "기초부터 중등까지 차례로 확장됩니다.", roadmapStatus: "확장 예정", roadmapClose: "로드맵 닫기",
   shapeDistrict: "평면도형 거리", shapeDistrictHint: "합동·대칭·도형 이동을 배우는 길",
   spatialDistrict: "공간·입체 지구", spatialDistrictHint: "전개도·단면·공간 추론을 탐험하는 곳",
-  coordinateDistrict: "좌표·변환 지구", coordinateDistrictHint: "좌표·닮음·중등 기하로 이어지는 길",
+  coordinateDistrict: "좌표·변환 지구", coordinateDistrictHint: "좌표·작도·중등 기하로 이어지는 길",
   shapeGarden: "도형 조각 정원", shapeGardenHint: "조각을 맞추고 조건에 따라 똑같이 나누는 곳",
   pathWalk: "길 잇기 산책로", pathWalkHint: "길 타일을 돌리고 가장 가까운 길을 찾는 곳"
 });
@@ -225,7 +225,7 @@ Object.assign(messages.zh, {
   viewRoadmap: "学习路线", roadmapEyebrow: "即将开放的几何世界", roadmapNote: "从基础到中学内容将依次开放。", roadmapStatus: "计划扩展", roadmapClose: "关闭路线图",
   shapeDistrict: "平面图形街", shapeDistrictHint: "学习全等、对称与图形变换",
   spatialDistrict: "空间立体区", spatialDistrictHint: "探索展开图、截面与空间推理",
-  coordinateDistrict: "坐标变换区", coordinateDistrictHint: "通往坐标、相似与中学几何",
+  coordinateDistrict: "坐标变换区", coordinateDistrictHint: "通往坐标、作图与中学几何",
   shapeGarden: "图形拼片花园", shapeGardenHint: "拼合图形并按条件等分",
   pathWalk: "道路散步园", pathWalkHint: "旋转道路拼片并寻找最短路线"
 });
@@ -233,7 +233,7 @@ Object.assign(messages.ja, {
   viewRoadmap: "学習ロードマップ", roadmapEyebrow: "これから開く図形の世界", roadmapNote: "基礎から中学内容まで順番に広がります。", roadmapStatus: "拡張予定", roadmapClose: "ロードマップを閉じる",
   shapeDistrict: "平面図形ストリート", shapeDistrictHint: "合同・対称・図形の移動を学ぶ道",
   spatialDistrict: "空間・立体エリア", spatialDistrictHint: "展開図・断面・空間推理を探究する場所",
-  coordinateDistrict: "座標・変換エリア", coordinateDistrictHint: "座標・相似・中学幾何へ続く道",
+  coordinateDistrict: "座標・変換エリア", coordinateDistrictHint: "座標・作図・中学幾何へ続く道",
   shapeGarden: "図形ピースの庭", shapeGardenHint: "ピースを合わせ、条件にそって分ける場所",
   pathWalk: "道つなぎ散歩道", pathWalkHint: "道タイルを回して最短の道を探す場所"
 });
@@ -241,7 +241,7 @@ Object.assign(messages.en, {
   viewRoadmap: "Learning roadmap", roadmapEyebrow: "Geometry worlds opening next", roadmapNote: "The path will grow from foundations through middle-school geometry.", roadmapStatus: "Planned expansion", roadmapClose: "Close roadmap",
   shapeDistrict: "Plane Shapes Street", shapeDistrictHint: "A path through congruence, symmetry, and transformations",
   spatialDistrict: "Spatial Solids District", spatialDistrictHint: "Explore nets, sections, and spatial reasoning",
-  coordinateDistrict: "Coordinates District", coordinateDistrictHint: "Continue into coordinates, similarity, and middle-school geometry",
+  coordinateDistrict: "Coordinates District", coordinateDistrictHint: "Continue into coordinates, construction, and middle-school geometry",
   shapeGarden: "Shape Garden", shapeGardenHint: "Match pieces and partition shapes by rules",
   pathWalk: "Path Walk", pathWalkHint: "Turn route tiles and find shortest walks"
 });

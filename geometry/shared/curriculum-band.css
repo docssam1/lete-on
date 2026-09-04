@@ -1,0 +1,24 @@
+.type-band {
+  max-width: 138px;
+  padding: 4px 6px;
+  border: 1px solid color-mix(in srgb, var(--type-accent) 38%, white);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--type-pale) 68%, white);
+  color: #425b55;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.type-difficulty {
+  margin-top: 9px;
+  color: #70817c;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+@media (max-width: 520px) {
+  .type-band {
+    max-width: 104px;
+    font-size: 10px;
+  }
+}

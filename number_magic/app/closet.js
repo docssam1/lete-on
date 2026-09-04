@@ -180,10 +180,12 @@ window.screenCloset = function(container, opts){
     }).join('');
   }
 
-  /* 큰 미리보기(사람 아바타 + 동행 합성) — renderPartyHtml 없으면 동행만이라도 보여준다 */
+  /* 큰 미리보기(사람 아바타 + 동행 합성) — renderPartyHtml 없으면 동행만이라도 보여준다.
+     디자인 패스 1(§1): 140px로 키우고 하늘 그라데이션 무대 위에 세운다(세계관을
+     여기까지 끌고 오기 — 위쪽 sidebar가 아니라 화면 맨 위 정면 프리뷰). */
   function bigPreview(){
-    if(window.renderPartyHtml) return window.renderPartyHtml(avatarKind, cur, 110);
-    return rndr ? rndr(cur, 110) : '';
+    if(window.renderPartyHtml) return window.renderPartyHtml(avatarKind, cur, 140);
+    return rndr ? rndr(cur, 140) : '';
   }
 
   /* ── 전체 재렌더 ── */
@@ -210,7 +212,11 @@ window.screenCloset = function(container, opts){
   const tabsHTML = TABS.map(t=>`<button class="nmc-tab${t.key===activeTab?' active':''}" data-tab="${t.key}">${L(t)}</button>`).join('');
   const titleTxt = lang==='en'?'My Character':lang==='zh'?'我的角色':'내 캐릭터';
 
-  /* 목록(왼쪽)이 바로 보이도록 미리보기는 오른쪽 사이드에 고정 */
+  /* 디자인 패스 1(§4) — 순서를 "큰 프리뷰 먼저, 그 다음 탭+목록"으로 재배치.
+     기존엔 미리보기가 오른쪽 사이드에 고정된 2단 레이아웃이라 목록이 화면 밖으로
+     밀리는 문제가 있었는데(주석 참고), 세로 1단으로 바꾸고 프리뷰를 무대 위 정면에
+     세워 세계관을 옷장까지 끌고 온다. 요소 id/class는 그대로 — main.js·redraw()가
+     그대로 찾아 갱신한다. */
   const hintTxt = lang==='en'?'Decorate your friend with 🪙 from attendance & learning'
     :lang==='zh'?'用出勤和学习得到的🪙装饰朋友'
     :'출석·학습으로 모은 🪙로 내 친구를 꾸며요';
@@ -221,14 +227,14 @@ window.screenCloset = function(container, opts){
     <div id="nmc-coins" class="nmc-coins">🪙 ${coins}</div>
   </div>
   <div class="nmc-hint">${hintTxt}</div>
+  <div class="nmc-preview-area">
+    <div class="nmc-stage"><div id="nmc-preview">${bigPreview()}</div></div>
+    <div class="nmc-preview-label">${lang==='en'?'Tap items to customize!':lang==='zh'?'点击项目来定制！':'골라서 꾸며보세요!'}</div>
+  </div>
   <div class="nmc-main">
     <div class="nmc-left">
       <div class="nmc-tab-bar">${tabsHTML}</div>
       <div id="nmc-grid" class="nmc-grid">${tabItemsHTML()}</div>
-    </div>
-    <div class="nmc-preview-area">
-      <div id="nmc-preview">${bigPreview()}</div>
-      <div class="nmc-preview-label">${lang==='en'?'Tap items to customize!':lang==='zh'?'点击项目来定制！':'골라서 꾸며보세요!'}</div>
     </div>
   </div>
 </div>`;

@@ -1,19 +1,69 @@
 import { levels } from "../../games/mirror-manor/levels.js?v=mirror-manor-11";
 import { messages } from "../../games/mirror-manor/i18n.js?v=mirror-manor-11";
+import { curriculumBandLabel } from "../../shared/curriculum-bands.js?v=curriculum-1";
 
 const $ = (selector) => document.querySelector(selector);
 const select = $("#levelSelect");
+const countInput = $("#countInput");
 const toggle = $("#answerToggle");
-const grid = $("#problemGrid");
+const coverToggle = $("#coverToggle");
+const worksheet = $("#worksheet");
+const sheetTemplate = $("#sheetTemplate");
 let offset = 0;
 const cellKey = (cell) => cell.join(",");
 
+const allOption = document.createElement("option");
+allOption.value = "all";
+allOption.textContent = `전체 유형 · ${levels.reduce((sum, level) => sum + level.problems.length, 0)}문항`;
+select.append(allOption);
 levels.forEach((level) => {
   const option = document.createElement("option");
   option.value = level.id;
   option.textContent = `${level.id}. ${messages.ko[level.titleKey]} · ${level.difficulty}`;
   select.append(option);
 });
+
+function requestedCount() {
+  const count = Math.max(1, Math.min(20, Math.round(Number(countInput.value) || 6)));
+  countInput.value = String(count);
+  return count;
+}
+
+function balancedEntries(count) {
+  return Array.from({ length: count }, (_, index) => {
+    const position = index + offset;
+    const level = levels[position % levels.length];
+    const problemIndex = Math.floor(position / levels.length) % level.problems.length;
+    return { level, problem: level.problems[problemIndex] };
+  });
+}
+
+function selectedEntries() {
+  const count = requestedCount();
+  const level = levels.find((item) => String(item.id) === select.value);
+  if (!level || count > level.problems.length) {
+    select.value = "all";
+    return balancedEntries(count);
+  }
+  return Array.from({ length: count }, (_, index) => ({
+    level,
+    problem: level.problems[(offset + index) % level.problems.length]
+  }));
+}
+
+function splitEvenly(entries) {
+  const pageCount = Math.ceil(entries.length / 6);
+  const baseSize = Math.floor(entries.length / pageCount);
+  const extra = entries.length % pageCount;
+  const pages = [];
+  let cursor = 0;
+  for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
+    const size = baseSize + (pageIndex < extra ? 1 : 0);
+    pages.push(entries.slice(cursor, cursor + size));
+    cursor += size;
+  }
+  return pages;
+}
 
 function boardCells(problem, answer) {
   const given = new Set((problem.sourceCells || problem.givens?.flatMap((item) => item.cells) || []).map(cellKey));
@@ -76,22 +126,46 @@ function problemVisual(problem, answer) {
 }
 
 function render() {
-  const level = levels[Number(select.value || 1) - 1];
   const showAnswers = toggle.checked;
-  const problems = Array.from({ length: 6 }, (_, index) => level.problems[(offset + index) % level.problems.length]);
-  $("#sheetTitle").textContent = messages.ko[level.titleKey];
-  $("#sheetDescription").textContent = `${level.difficulty} · ${messages.ko[level.descKey]}`;
-  grid.replaceChildren();
-  problems.forEach((problem, index) => {
-    const article = document.createElement("article");
-    article.className = `problem interaction-${problem.interaction}`;
-    article.innerHTML = `<header><b>${index + 1}</b><span>${promptFor(problem)}</span></header>${problemVisual(problem, showAnswers)}<div class="answer-line">${showAnswers ? "정답 표시" : ""}</div>`;
-    grid.append(article);
+  const entries = selectedEntries();
+  const selectedLevel = levels.find((item) => String(item.id) === select.value);
+  const title = selectedLevel ? messages.ko[selectedLevel.titleKey] : "거울대칭 종합 활동";
+  const description = selectedLevel
+    ? `${curriculumBandLabel("mirror-manor", selectedLevel.id, "ko")} · ${selectedLevel.difficulty} · ${messages.ko[selectedLevel.descKey]}`
+    : "초등팩토 1 · 1031 입문 · 입문 · 다섯 유형을 고르게 연습해 보세요.";
+  $("#coverTitle").textContent = title;
+  $("#coverSubtitle").textContent = selectedLevel ? messages.ko[selectedLevel.descKey] : "반쪽 칠하기부터 두 거울까지 차례로 연습합니다.";
+  $("#coverLevel").textContent = selectedLevel ? curriculumBandLabel("mirror-manor", selectedLevel.id, "ko") : "초등팩토 1 · 1031 입문";
+  $("#coverCount").textContent = `${entries.length} QUESTIONS`;
+  $("#coverSheet").hidden = !coverToggle.checked;
+  worksheet.querySelectorAll(".sheet").forEach((sheet) => sheet.remove());
+  let problemNumber = 1;
+  const pages = splitEvenly(entries);
+  pages.forEach((pageEntries, pageIndex) => {
+    const sheet = sheetTemplate.content.firstElementChild.cloneNode(true);
+    sheet.dataset.page = String(pageIndex + 1);
+    sheet.querySelector(".sheet-title").textContent = title;
+    sheet.querySelector(".sheet-description").textContent = description;
+    sheet.querySelector(".page-number").textContent = `${pageIndex + 1} / ${pages.length}`;
+    const grid = sheet.querySelector(".problem-grid");
+    grid.style.setProperty("--row-count", String(Math.ceil(pageEntries.length / 2)));
+    pageEntries.forEach(({ level, problem }) => {
+      const article = document.createElement("article");
+      article.className = `problem interaction-${problem.interaction}`;
+      article.dataset.problemId = problem.id;
+      article.dataset.level = String(level.id);
+      article.innerHTML = `<header><b>${problemNumber}</b><span><small>${level.id}. ${messages.ko[level.titleKey]}</small>${promptFor(problem)}</span></header>${problemVisual(problem, showAnswers)}<div class="answer-line">${showAnswers ? "정답 표시" : ""}</div>`;
+      grid.append(article);
+      problemNumber += 1;
+    });
+    worksheet.append(sheet);
   });
 }
 
 select.addEventListener("change", () => { offset = 0; render(); });
+countInput.addEventListener("change", () => { offset = 0; render(); });
 toggle.addEventListener("change", render);
-$("#refreshButton").addEventListener("click", () => { offset = (offset + 6) % 10; render(); });
+coverToggle.addEventListener("change", render);
+$("#refreshButton").addEventListener("click", () => { offset = (offset + requestedCount()) % 50; render(); });
 $("#printButton").addEventListener("click", () => print());
 render();

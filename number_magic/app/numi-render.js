@@ -138,7 +138,9 @@ function snowflakeShape(cx,cy,r,fill){
 }
 /* ── 번개(지그재그 폴리곤) ── */
 function boltShape(cx,cy,s,fill){
-  return `<polygon points="${cx-1*s},${cy-6*s} ${cx+3*s},${cy-6*s} ${cx-0.5*s},${cy-0.5*s} ${cx+2.5*s},${cy-0.5*s} ${cx-2*s},${cy+6*s} ${cx},${cy+0.5*s} ${cx-3*s},${cy+0.5*s}Z" fill="${fill}"/>`;
+  // <polygon points="..."> auto-closes the shape — a trailing "Z" (path-only syntax)
+  // here made the whole points list invalid, so the bolt silently failed to render.
+  return `<polygon points="${cx-1*s},${cy-6*s} ${cx+3*s},${cy-6*s} ${cx-0.5*s},${cy-0.5*s} ${cx+2.5*s},${cy-0.5*s} ${cx-2*s},${cy+6*s} ${cx},${cy+0.5*s} ${cx-3*s},${cy+0.5*s}" fill="${fill}"/>`;
 }
 /* ── 음표(타원 머리 + 세로줄기) ── */
 function noteShape(cx,cy,fill){
@@ -150,7 +152,8 @@ function noteShape(cx,cy,fill){
 }
 /* ── 왕관무늬(작은 왕관 실루엣) ── */
 function crownMotif(cx,cy,r,fill){
-  return `<polygon points="${cx-r},${cy+r*0.5} ${cx-r},${cy-r*0.2} ${cx-r*0.5},${cy+r*0.2} ${cx},${cy-r*0.6} ${cx+r*0.5},${cy+r*0.2} ${cx+r},${cy-r*0.2} ${cx+r},${cy+r*0.5}Z" fill="${fill}"/>`;
+  // Same fix as boltShape() above — a stray trailing "Z" broke the points list.
+  return `<polygon points="${cx-r},${cy+r*0.5} ${cx-r},${cy-r*0.2} ${cx-r*0.5},${cy+r*0.2} ${cx},${cy-r*0.6} ${cx+r*0.5},${cy+r*0.2} ${cx+r},${cy-r*0.2} ${cx+r},${cy+r*0.5}" fill="${fill}"/>`;
 }
 
 function star5(cx,cy,ro,ri,fill){

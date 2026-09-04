@@ -12,10 +12,52 @@ function multiplicationMethods(visual) {
   return `<div class="b10-methods"><strong>${visual.first} × ${visual.second}</strong><div><span>넓이</span><span>${tens}×${visual.second}<br>+ ${ones}×${visual.second}</span><span>격자</span><span>세로셈</span></div></div>`;
 }
 
+function napierGrid(visual) {
+  const topDigits = String(visual.first).split("").map(Number);
+  const sideDigits = String(visual.second).split("").map(Number);
+  const cells = sideDigits.flatMap((sideDigit) => topDigits.map((topDigit) => {
+    const product = sideDigit * topDigit;
+    return `<span class="b10-napier-cell"><i>${Math.floor(product / 10)}</i><b>${product % 10}</b></span>`;
+  })).join("");
+  const result = Number(visual.first) * Number(visual.second);
+  return `<div class="b10-napier" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)} 네이피어 곱셈판"><div class="b10-napier-top" style="--cols:${topDigits.length}">${topDigits.map((digit) => `<b>${digit}</b>`).join("")}</div><div class="b10-napier-main"><div class="b10-napier-side" style="--rows:${sideDigits.length}">${sideDigits.map((digit) => `<b>${digit}</b>`).join("")}</div><div class="b10-napier-grid" style="--cols:${topDigits.length}">${cells}</div></div><p>${visual.revealResult ? `${esc(visual.first)} × ${esc(visual.second)} = <strong>${result}</strong>` : "대각선 방향으로 수를 더해 보세요."}</p></div>`;
+}
+
+function areaModel(visual) {
+  const split = (value) => {
+    const tens = Math.floor(Number(value) / 10) * 10;
+    return [tens, Number(value) - tens].filter((part) => part > 0);
+  };
+  const horizontal = split(visual.first);
+  const vertical = split(visual.second);
+  const products = vertical.flatMap((height) => horizontal.map((width) => width * height));
+  const result = Number(visual.first) * Number(visual.second);
+  return `<div class="b10-area-model" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)} 넓이 모델"><div class="b10-area-top" style="--cols:${horizontal.length}">${horizontal.map((value) => `<b>${value}</b>`).join("")}</div><div class="b10-area-body"><div class="b10-area-side" style="--rows:${vertical.length}">${vertical.map((value) => `<b>${value}</b>`).join("")}</div><div class="b10-area-grid" style="--cols:${horizontal.length}">${products.map((value) => `<span>${visual.revealProducts === false ? "?" : value}</span>`).join("")}</div></div><p>${visual.revealResult ? `${products.join(" + ")} = <strong>${result}</strong>` : "나눈 넓이를 모두 더해 보세요."}</p></div>`;
+}
+
+function verticalMultiplication(visual) {
+  const first = Number(visual.first);
+  const second = Number(visual.second);
+  const digits = String(second).split("").reverse().map(Number);
+  const partials = digits.map((digit, index) => first * digit * 10 ** index);
+  const result = first * second;
+  return `<div class="b10-vertical-multiplication" role="img" aria-label="${first} 곱하기 ${second} 세로셈"><span>${first}</span><span>× ${second}</span><i></i>${partials.map((value) => `<span>${visual.revealPartials === false ? "□" : value}</span>`).join("")}<i></i><strong>${visual.revealResult ? result : "?"}</strong></div>`;
+}
+
 const operation = (visual) => `<div class="b10-operation">${esc(visual.expression)}</div>`;
 
 function factorPairs(visual) {
-  return `<div class="b10-factor"><strong>${visual.target}</strong><div>${visual.pairs.map(([left]) => `<span>${left}</span><i>×</i><span class="blank"></span>`).join("")}</div></div>`;
+  return `<div class="b10-factor"><strong>${visual.target}</strong><div>${visual.pairs.map(([left, right]) => `<span>${left}</span><i>×</i><span class="${visual.revealPartners ? "" : "blank"}">${visual.revealPartners ? right : ""}</span>`).join("")}</div></div>`;
+}
+
+function consecutivePairing(visual) {
+  const values = Array.from({ length: Number(visual.to) - Number(visual.from) + 1 }, (_, index) => Number(visual.from) + index);
+  const pairs = [];
+  while (values.length > 1) pairs.push([values.shift(), values.pop()]);
+  const middle = values[0];
+  const pairSum = Number(visual.from) + Number(visual.to);
+  const total = pairs.reduce((sum, pair) => sum + pair[0] + pair[1], middle || 0);
+  return `<div class="b10-consecutive-pairing" role="img" aria-label="${esc(visual.from)}부터 ${esc(visual.to)}까지 연속수 짝짓기"><div>${pairs.map(([left, right]) => `<span><b>${left}</b><i>+</i><b>${right}</b><em>= ${pairSum}</em></span>`).join("")}${middle !== undefined ? `<span class="middle"><b>${middle}</b><em>가운데 수</em></span>` : ""}</div><p>${visual.revealResult ? `${middle !== undefined ? `${middle} × ${pairs.length * 2 + 1}` : `${pairSum} × ${pairs.length}`} = <strong>${total}</strong>` : "처음 수와 끝 수를 짝지어 보세요."}</p></div>`;
 }
 
 function consecutiveTarget(visual) {
@@ -63,6 +105,64 @@ function symbolEquations(visual) {
   return `<div class="b10-equations">${visual.equations.map(([first, second, total]) => `<p>${Array.from({ length: first }, () => symbols[0]).join(" ")} ${Array.from({ length: second }, () => symbols[1]).join(" ")} <b>= ${total}</b></p>`).join("")}</div>`;
 }
 
+function quantityEquations(visual) {
+  const sourceSymbols = visual.symbols || [];
+  const tokens = sourceSymbols.map((symbol, index) => {
+    const label = esc(symbol.label ?? `모양 ${index + 1}`);
+    const token = esc(symbol.token ?? "?");
+    const className = symbol.className ? ` ${esc(symbol.className)}` : "";
+    return `<span class="b10-quantity-symbol${className}" aria-label="${label}"><b>${token}</b><small>${label}</small></span>`;
+  });
+  const rows = (visual.equations || []).map((equation) => {
+    const terms = (equation.terms || []).map((count, index) => {
+      const symbol = sourceSymbols[index] || {};
+      const label = esc(symbol.label ?? `모양 ${index + 1}`);
+      const token = esc(symbol.token ?? "?");
+      const className = symbol.className ? ` ${esc(symbol.className)}` : "";
+      return `<span class="b10-quantity-term" aria-label="${label} ${esc(count)}개">${Array.from({ length: Number(count) || 0 }, () => `<b class="b10-quantity-piece${className}">${token}</b>`).join("")}</span>`;
+    }).join('<i aria-hidden="true">+</i>');
+    return `<div class="b10-quantity-equation" role="group" aria-label="저울 무게"><span class="b10-quantity-terms">${terms}</span><span class="b10-scale-reading"><i aria-hidden="true"></i><b>${esc(equation.total)}${visual.unit ? ` ${esc(visual.unit)}` : ""}</b></span></div>`;
+  }).join("");
+  return `<div class="b10-quantity-equations" role="img" aria-label="도형을 올린 저울과 무게"><div class="b10-quantity-legend">${tokens.join("")}</div>${rows}</div>`;
+}
+
+function targetScore(visual) {
+  const zones = (visual.zones || []).map((zone, index) => `<span class="b10-target-zone zone-${index + 1}" aria-label="${esc(zone.label)}"></span>`).join("");
+  const attempts = (visual.attempts || []).map((attempt) => {
+    const hits = (attempt.hits || []).map((count, index) => `<span><strong>${esc(count)}</strong> × ${esc((visual.zones || [])[index]?.label ?? `구역 ${index + 1}`)}</span>`).join(" + ");
+    const total = attempt.total;
+    return `<div class="b10-target-attempt"><b>${esc(attempt.label)}</b><span>${hits}</span>${total !== undefined ? `<strong>= ${esc(total)}</strong>` : ""}</div>`;
+  }).join("");
+  return `<div class="b10-target-score"><div class="b10-target-board" role="img" aria-label="동심원 과녁"><div>${zones}</div><p>${(visual.zones || []).map((zone) => `<span>${esc(zone.label)}</span>`).join("")}</p></div><div class="b10-target-attempts">${attempts}</div></div>`;
+}
+
+function pairSumList(visual) {
+  const labels = visual.labels || [];
+  const tokens = visual.tokens || labels;
+  const pairs = [[0, 1], [1, 2], [2, 0]];
+  const term = (index) => `<span class="b10-pair-token"><b>${esc(tokens[index] ?? labels[index] ?? `문자 ${index + 1}`)}</b><small>${esc(labels[index] ?? `문자 ${index + 1}`)}</small></span>`;
+  const rows = pairs.map(([left, right], index) => `<p>${term(left)} <i>+</i> ${term(right)} <i>=</i> <strong>${esc(visual.pairSums?.[index])}${esc(visual.unit || "")}</strong></p>`).join("");
+  return `<div class="b10-pair-sum-list" role="img" aria-label="세 쌍의 합">${rows}</div>`;
+}
+
+function commerceEquation(visual) {
+  if (visual.first && visual.second) {
+    return `<div class="b10-commerce-equation" role="img" aria-label="두 물건의 가격과 개수 비교"><div><strong>${esc(visual.first.label)}</strong><span>${esc(visual.first.price)}원 × □개</span></div><b>=</b><div><strong>${esc(visual.second.label)}</strong><span>${esc(visual.second.price)}원 × (□+${esc(visual.extra)})개</span></div></div>`;
+  }
+  const item = esc(visual.item ?? "물건");
+  const price = esc(visual.price);
+  const extra = esc(visual.extraQuantity ?? visual.extra ?? 1);
+  const comparison = esc(visual.comparison ?? "더 살 수 있습니다");
+  return `<div class="b10-commerce-equation" role="img" aria-label="${item} 가격 비교"><div><strong>${item}</strong><span>${price}${esc(visual.unit ?? "원")}</span></div><i aria-hidden="true">+</i><div><strong>${extra}개</strong><span>${comparison}</span></div>${visual.total !== undefined ? `<b>= ${esc(visual.total)}${esc(visual.unit ?? "원")}</b>` : ""}</div>`;
+}
+
+function shareChangeUnknown(visual) {
+  const original = esc(visual.originalShare ?? visual.oldShare);
+  const added = esc(visual.addedPeople ?? visual.added);
+  const updated = esc(visual.newShare ?? visual.updatedShare);
+  return `<div class="b10-share-change-unknown" role="img" aria-label="사람 수와 나눔 변화"><div><span>처음</span><b>${original}${esc(visual.unit ?? "개")}</b></div><i aria-hidden="true">+ ${added}명</i><div><span>변경 후</span><b>${updated}${esc(visual.unit ?? "개")}</b></div></div>`;
+}
+
 const sharedEquations = (visual) => `<div class="b10-equations"><p>${symbols[0]} + ${symbols[1]} = <b>${visual.pair}</b></p><p>${symbols[0]} + ${symbols[1]} + ${symbols[2]} = <b>${visual.all}</b></p></div>`;
 
 function containers(visual) {
@@ -75,7 +175,8 @@ function pairSums(visual) {
 }
 
 function spacingRing(visual) {
-  return `<svg class="b10-ring" viewBox="0 0 320 190" role="img" aria-label="닫힌 운동장 둘레"><ellipse cx="160" cy="92" rx="120" ry="62"/><text x="160" y="78">둘레 ${visual.perimeter}m</text><text x="160" y="108">${visual.firstGap}m마다 / ${visual.secondGap}m마다</text></svg>`;
+  const unit = esc(visual.unit || "m");
+  return `<svg class="b10-ring" viewBox="0 0 320 190" role="img" aria-label="닫힌 운동장 둘레"><ellipse cx="160" cy="92" rx="120" ry="62"/><text x="160" y="78">둘레 ${esc(visual.perimeter)}${unit}</text><text x="160" y="108">${esc(visual.firstGap)}${unit}마다 / ${esc(visual.secondGap)}${unit}마다</text></svg>`;
 }
 
 const budgetTable = (visual) => `<table class="b10-table"><thead><tr><th>가진 돈</th><th>첫 물건</th><th>둘째 물건</th></tr></thead><tbody><tr><td>${visual.budget}천 원</td><td>${visual.firstPrice}천 원</td><td>${visual.secondPrice}천 원</td></tr></tbody></table>`;
@@ -97,7 +198,9 @@ const delayedCatchUp = (visual) => `<div class="b10-timeline"><span>민수 시�
 
 function digitSlots(visual) {
   const arrow = visual.direction ? `<b>${visual.direction === "increasing" ? "작은 숫자 → 큰 숫자" : "큰 숫자 → 작은 숫자"}</b>` : "";
-  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, () => "<i></i>").join("")}</div>${arrow}</div>`;
+  const fixed = visual.fixed || [];
+  const counts = visual.choiceCounts || [];
+  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}${counts[index] ? `<small>${counts[index]}가지</small>` : ""}</i>`).join("")}</div>${arrow}</div>`;
 }
 
 function switches(visual) {
@@ -120,17 +223,28 @@ function lineupSlots(visual) {
 }
 
 function numberBaseball(visual) {
-  return `<table class="b10-baseball"><thead><tr><th>말한 수</th><th>S</th><th>B</th></tr></thead><tbody>${visual.clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td>${clue.strikes}</td><td>${clue.balls}</td></tr>`).join("")}</tbody></table>`;
+  const clues = visual.clues.slice(0, visual.visibleRows || visual.clues.length);
+  return `<div class="b10-baseball-wrap"><table class="b10-baseball"><thead><tr><th>말한 수</th><th>S</th><th>B</th></tr></thead><tbody>${clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td>${clue.strikes}</td><td>${clue.balls}</td></tr>`).join("")}</tbody></table>${visual.note ? `<p>${esc(visual.note)}</p>` : ""}</div>`;
 }
 
 const digitRange = (visual) => `<div class="b10-digit-range"><strong>${visual.from}</strong><i>부터</i><strong>${visual.to}</strong><i>까지</i>${visual.digit !== null ? `<b>${esc(visual.digit)} 세기</b>` : ""}</div>`;
+
+function digitCountBreakdown(visual) {
+  const segments = visual.segments || [];
+  const total = segments.reduce((sum, segment) => sum + Number(segment.count) * Number(segment.digits), 0);
+  return `<div class="b10-digit-count" role="img" aria-label="수의 범위에서 사용한 숫자 개수"><div>${segments.map((segment) => `<span><b>${esc(segment.label)}</b><i>${esc(segment.count)}개 × ${esc(segment.digits)}자리</i><strong>${Number(segment.count) * Number(segment.digits)}</strong></span>`).join("")}</div><p>${visual.revealResult ? `모두 <strong>${total}</strong>개` : "각 구간의 수 개수와 자릿수를 곱해 보세요."}</p></div>`;
+}
 
 export function book10Markup(visual) {
   if (!visual || visual.kind !== "book10") return "";
   switch (visual.subtype) {
     case "multiplication-methods": return multiplicationMethods(visual);
+    case "napier-grid": return napierGrid(visual);
+    case "area-model": return areaModel(visual);
+    case "vertical-multiplication": return verticalMultiplication(visual);
     case "operation": return operation(visual);
     case "factor-pairs": return factorPairs(visual);
+    case "consecutive-pairing": return consecutivePairing(visual);
     case "consecutive-target": return consecutiveTarget(visual);
     case "calendar": return calendar(visual);
     case "page-strip": return pageStrip(visual);
@@ -140,6 +254,11 @@ export function book10Markup(visual) {
     case "place-value-condition": return placeValueCondition(visual);
     case "vertical-addition": return verticalAddition(visual);
     case "symbol-equations": return symbolEquations(visual);
+    case "quantity-equations": return quantityEquations(visual);
+    case "target-score": return targetScore(visual);
+    case "pair-sum-list": return pairSumList(visual);
+    case "commerce-equation": return commerceEquation(visual);
+    case "share-change-unknown": return shareChangeUnknown(visual);
     case "shared-equations": return sharedEquations(visual);
     case "containers": return containers(visual);
     case "pair-sums": return pairSums(visual);
@@ -159,6 +278,7 @@ export function book10Markup(visual) {
     case "lineup-slots": return lineupSlots(visual);
     case "number-baseball": return numberBaseball(visual);
     case "digit-range": return digitRange(visual);
+    case "digit-count-breakdown": return digitCountBreakdown(visual);
     default: return "";
   }
 }

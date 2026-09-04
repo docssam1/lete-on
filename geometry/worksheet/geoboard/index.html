@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GFIELD 점판 공작소 학습지</title>
-  <link rel="stylesheet" href="./styles.css?v=geoboard-sheet-1" />
+  <link rel="stylesheet" href="./styles.css?v=geoboard-sheet-3" />
+  <link rel="stylesheet" href="../../shared/worksheet-book-cover.css?v=worksheet-cover-1" />
 </head>
 <body>
   <header class="maker-bar">
-    <a href="../../games/geoboard/" aria-label="점판 공작소 게임으로 돌아가기">&larr;</a>
+    <a href="../../geoboard/" aria-label="점판 활동 유형으로 돌아가기">&larr;</a>
     <div class="maker-title">
       <strong>GFIELD 점판 공작소 학습지</strong>
       <small>GEOBOARD STUDIO WORKSHEET</small>
@@ -16,30 +17,46 @@
     <label>레벨
       <select id="levelSelect" aria-label="학습지 레벨 선택"></select>
     </label>
+    <label>문항 수
+      <input id="countInput" type="number" min="1" max="20" value="6" inputmode="numeric" aria-label="문항 수, 최대 20문항" />
+    </label>
+    <label class="answer-toggle">
+      <input id="coverToggle" type="checkbox" checked />
+      <span>표지 포함</span>
+    </label>
     <label class="answer-toggle">
       <input id="answerToggle" type="checkbox" />
       <span>정답 보기</span>
     </label>
-    <button id="refreshButton" type="button">다른 6문항</button>
+    <button id="refreshButton" type="button">새 문제</button>
     <button id="printButton" type="button">인쇄</button>
   </header>
 
-  <main id="sheet" class="sheet">
+  <div id="worksheet" class="worksheet-pages">
+  <section id="coverSheet" class="book-cover" data-theme="geoboard">
+    <div class="cover-brand"><span>GFIELD</span><strong>GEOMETRY WORLD</strong></div>
+    <div class="cover-copy"><p>GEOBOARD STUDIO PRACTICE BOOK</p><h1 id="coverTitle">점판 도형 활동</h1><div class="cover-rule"></div><p id="coverSubtitle" class="cover-subtitle"></p></div>
+    <div class="cover-mascots" aria-hidden="true"><i class="gw-char gw-char-protractor"></i><i class="gw-char gw-char-compass"></i><i class="gw-char gw-char-cubie"></i></div>
+    <div class="cover-meta"><div><span>이름</span><i></i></div><div><span>시작한 날</span><i></i></div><div><span>나의 단계</span><strong id="coverLevel"></strong></div></div>
+    <div class="cover-footer"><span>DOCSSAM'S MATH LAB</span><b id="coverCount">6 QUESTIONS</b></div>
+  </section>
+  </div>
+  <template id="sheetTemplate"><main class="sheet">
     <header class="sheet-head">
       <div>
         <small>GFIELD DOT BOARD LAB</small>
-        <h1 id="sheetTitle"></h1>
-        <p id="sheetDescription"></p>
+        <h1 class="sheet-title"></h1>
+        <p class="sheet-description"></p>
       </div>
       <dl>
         <div><dt>이름</dt><dd></dd></div>
         <div><dt>날짜</dt><dd></dd></div>
       </dl>
     </header>
-    <section id="problemGrid" class="problem-grid" aria-live="polite"></section>
-    <footer>점을 하나씩 세고, 고무줄이 지나는 꼭짓점과 선의 관계를 살펴보세요.</footer>
-  </main>
+    <section class="problem-grid"></section>
+    <footer><span>점을 하나씩 세고, 고무줄이 지나는 꼭짓점과 선의 관계를 살펴보세요.</span><b class="page-number"></b></footer>
+  </main></template>
 
-  <script type="module" src="./app.js?v=geoboard-sheet-1"></script>
+  <script type="module" src="./app.js?v=geoboard-sheet-3"></script>
 </body>
 </html>

@@ -61,6 +61,14 @@
     return polygon(top, palette.top, palette.stroke) + polygon(left, palette.left, palette.stroke) + polygon(right, palette.right, palette.stroke);
   }
 
+  function topFaceLabelSvg(x, height, z, u, value, options) {
+    const face = quadY(x, height, z, u);
+    const center = face.reduce((point, vertex) => ({ px: point.px + vertex.px / face.length, py: point.py + vertex.py / face.length }), { px: 0, py: 0 });
+    const color = options.topLabelColor || "#d9473f";
+    const fontSize = options.topLabelSize || Math.max(10, u * 0.68);
+    return '<text class="ws-iso-top-label" data-column-x="' + x + '" data-column-z="' + z + '" x="' + fmt(center.px) + '" y="' + fmt(center.py + fontSize * 0.08) + '" text-anchor="middle" dominant-baseline="central" font-size="' + fmt(fontSize) + '" font-weight="900" fill="' + color + '" stroke="#fff" stroke-width="' + fmt(Math.max(1.5, u * 0.1)) + '" paint-order="stroke">' + value + "</text>";
+  }
+
   // Analytic bounding box for a width x depth footprint drawn up to height H
   // at unit size u — avoids tracking every polygon point.
   function isoBBox(width, depth, height, u, pad) {
@@ -112,6 +120,17 @@
         for (let y = 0; y < h; y += 1) {
           const pal = PALETTES[colorFn(x, y, z)] || PALETTES.grey;
           svg += cubeSvg(x, y, z, u, pal);
+        }
+      }
+    }
+    if (options.topLabels) {
+      for (let z = 0; z < depth; z += 1) {
+        for (let x = 0; x < width; x += 1) {
+          const height = Number(map[z][x] || 0);
+          if (!height) continue;
+          const value = typeof options.topLabelFn === "function" ? options.topLabelFn(height, x, z) : height;
+          if (value === null || value === undefined || value === "") continue;
+          svg += topFaceLabelSvg(x, height, z, u, value, options);
         }
       }
     }
