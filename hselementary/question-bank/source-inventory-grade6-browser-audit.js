@@ -317,7 +317,7 @@ async function inspectGeneratedWorksheet(browser, baseUrl, typeId, viewport, lab
   const summary = `${failures.length ? "실패" : "통과"}: 6학년 원문 ${sourceTotal}/633유형, 화면 ${screenshots}장, A4 PDF ${pdfs}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(summaryPath, summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6학년 원문 세부 유형 브라우저 감사 통과: 633유형 중 생성 가능 46·잠금 587, 12단원 기존 생성 문제 선택·생성 확인, 화면 ${screenshots}장, A4 PDF ${pdfs}개`);
+  console.log(`6학년 원문 세부 유형 브라우저 감사 통과: 633유형 중 생성 가능 54·잠금 579, 12단원 기존 생성 문제 선택·생성 확인, 화면 ${screenshots}장, A4 PDF ${pdfs}개`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

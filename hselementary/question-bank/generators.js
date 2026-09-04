@@ -21705,6 +21705,164 @@
       const answerHtml = `${cardStrip(pools.cards, true)}${mathBoard("최소와 최대 식", row("가장 작은 몫", `${pools.min[0]}÷${pools.min[1]}=${fmt(pools.min[2])}`) + row("가장 큰 몫", `${pools.max[0]}÷${pools.max[1]}=${fmt(pools.max[2])}`) + row("차", `${fmt(pools.max[2])}-${fmt(pools.min[2])}=${fmt(pools.answer)}`))}`;
       return fixedResult(`수 카드 ${pools.cards.join(", ")} 중 3장을 골라 소수 두 자리 수를 만들고, 남은 수 카드로 나누는 계산식을 만들었습니다. 몫이 가장 작은 경우와 가장 큰 경우의 차를 구하세요.${cardStrip(pools.cards)}${support("소수 두 자리 수와 나누는 수를 바꾸어 가며 가장 작은 몫과 가장 큰 몫을 찾아 보세요.")}${challenge}${evidence([...pools.cards, pools.min[0], pools.min[1], pools.max[0], pools.max[1], pools.answer])}`, fmt(pools.answer), `모든 카드 배치를 비교하면 가장 작은 몫은 ${pools.min[0]}÷${pools.min[1]}=${fmt(pools.min[2])}, 가장 큰 몫은 ${pools.max[0]}÷${pools.max[1]}=${fmt(pools.max[2])}입니다. 차는 ${fmt(pools.answer)}입니다.`, answerWrap(answerHtml, [...pools.cards, pools.answer]));
     },
+    sourceGrade6DecimalDivisionE2({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u3-e2-exploration-1", "6-1-u3-e2-example-1", "6-1-u3-e2-example-3", "6-1-u3-e2-mission-1",
+        "6-1-u3-e2-mission-2", "6-1-u3-e2-mission-3", "6-1-u3-e2-mission-4", "6-1-u3-e2-mission-5"
+      ];
+      const evidenceKinds = [
+        "catch-up-distance", "rounded-quotient-range", "fuel-efficiency-transfer", "equal-interval-number-line",
+        "lap-time", "pencil-case-weight", "same-direction-distance-gap", "fuel-cost-gap"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 소수의 나눗셈 개념탐구 2 원문 분기는 0부터 7까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">계산 결과만 쓰지 말고, 그림의 수와 문제의 조건으로 답이 정해지는 까닭을 스스로 설명해 보세요.</p>` : "";
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board source61-e2-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const fmt = value => Number(value).toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
+      const fixed2 = value => Number(value).toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+      const fixedMoney = value => String(Math.round(Number(value)));
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-decimal-e2-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const svg = (kind, body, solved = false, values = [], viewBox = "0 0 360 230") => `<svg class="geometry-diagram source61-decimal-e2-diagram ${solved ? "is-solved" : ""}" viewBox="${viewBox}" role="img" aria-label="${kind}" data-source61-e2-structure="${kind}" data-source61-e2-values="${values.join(",")}"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}>${body}</svg>`;
+      const answerWrap = (html, values) => ({ html, values });
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-decimal-e2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(answerBody.values || [])}${answerBody.html}<div class="solution-answer-caption">문제에 나온 자료를 다시 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+      const close = (left, right) => Math.abs(Number(left) - Number(right)) < 1e-8;
+      const ensure = (calculated, expected, label) => { if (!close(calculated, expected)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1} ${label} 검산 오류`); };
+      const pools = [
+        [
+          { slowDist: 8.4, slowMin: 12, fastDist: 33.6, fastMin: 30, delay: 23, elapsed: 70, answer: 13.3 },
+          { slowDist: 9.6, slowMin: 12, fastDist: 37.8, fastMin: 30, delay: 18, elapsed: 60, answer: 13.2 },
+          { slowDist: 10.8, slowMin: 15, fastDist: 42, fastMin: 28, delay: 25, elapsed: 65, answer: 32.7 }
+        ],
+        [
+          { divisor: 12, target: 4.39, lower: 52.62, upperExclusive: 52.74, count: 12 },
+          { divisor: 8, target: 3.27, lower: 26.12, upperExclusive: 26.20, count: 8 },
+          { divisor: 16, target: 5.84, lower: 93.36, upperExclusive: 93.52, count: 16 }
+        ],
+        [
+          { aKmPerL: 12.4, aLiters: 15.3, bKmPerL: 18, price: 1600, answer: 16864 },
+          { aKmPerL: 13.5, aLiters: 14.4, bKmPerL: 18, price: 1700, answer: 18360 },
+          { aKmPerL: 14.4, aLiters: 12.5, bKmPerL: 20, price: 1800, answer: 16200 }
+        ],
+        [
+          { start: 14, end: 51.45, intervals: 7, targetIndex: 5, answer: 40.75 },
+          { start: 12.6, end: 44.1, intervals: 7, targetIndex: 5, answer: 35.1 },
+          { start: 7.25, end: 29.65, intervals: 7, targetIndex: 5, answer: 23.25 }
+        ],
+        [
+          { givenLaps: 4, totalSeconds: 276, targetLaps: 3, answerSeconds: 207 },
+          { givenLaps: 5, totalSeconds: 375, targetLaps: 4, answerSeconds: 300 },
+          { givenLaps: 8, totalSeconds: 624, targetLaps: 5, answerSeconds: 390 }
+        ],
+        [
+          { totalCount: 12, totalWeight: 142.48, removedCount: 5, remainingWeight: 112.28, targetCount: 9, answer: 124.36 },
+          { totalCount: 10, totalWeight: 132.5, removedCount: 4, remainingWeight: 108.5, targetCount: 8, answer: 120.5 },
+          { totalCount: 15, totalWeight: 188.75, removedCount: 6, remainingWeight: 147.35, targetCount: 12, answer: 168.05 }
+        ],
+        [
+          { aDist: 18.85, aMin: 13, bDist: 7.48, bMin: 4, elapsed: 25, answer: 10.5 },
+          { aDist: 17.28, aMin: 12, bDist: 12.48, bMin: 8, elapsed: 35, answer: 4.2 },
+          { aDist: 21.42, aMin: 14, bDist: 13.86, bMin: 9, elapsed: 60, answer: 0.6 }
+        ],
+        [
+          { carLiters: 4, carKm: 64, bikeLiters: 3, bikeKm: 72, distance: 272.64, price: 1500, answer: 8520 },
+          { carLiters: 5, carKm: 75, bikeLiters: 4, bikeKm: 96, distance: 360, price: 1600, answer: 14400 },
+          { carLiters: 6, carKm: 84, bikeLiters: 5, bikeKm: 100, distance: 420, price: 1700, answer: 15300 }
+        ]
+      ][variant][poolIndex];
+      if (variant === 0) {
+        const d = pools;
+        const answer = d.fastDist / d.fastMin * d.elapsed - d.slowDist / d.slowMin * (d.elapsed + d.delay);
+        ensure(answer, d.answer, "따라잡기 거리");
+        const movementSvg = solved => svg("출발 시차가 있는 두 이동선", `<text class="source61-e2-label" x="72" y="22">느린 이동선</text><text x="248" y="22">${d.slowDist}km를 ${d.slowMin}분</text><line class="source61-e2-track" x1="42" y1="67" x2="316" y2="67"/><circle class="source61-e2-start" cx="48" cy="67" r="5"/><path class="source61-e2-arrow" d="M292 61l18 6-18 6"/><text x="50" y="88">출발</text><text x="308" y="88">느린 쪽 거리</text><text class="source61-e2-label" x="72" y="119">빠른 이동선</text><text x="248" y="119">${d.fastDist}km를 ${d.fastMin}분</text><line class="source61-e2-track" x1="104" y1="164" x2="316" y2="164"/><circle class="source61-e2-start" cx="110" cy="164" r="5"/><path class="source61-e2-arrow" d="M292 158l18 6-18 6"/><text x="112" y="185">${d.delay}분 뒤 출발</text><text x="308" y="185">빠른 쪽 거리</text><line class="source61-e2-delay" x1="48" y1="203" x2="110" y2="203"/><text x="180" y="204">같은 곳에서 출발 · ${d.elapsed}분 뒤 비교</text>${solved ? `<text class="source61-e2-result" x="180" y="224">앞선 거리 ${fixed2(d.answer)}km</text>` : ""}`, solved, [d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer], "0 0 360 232");
+        const promptVisual = movementSvg(false);
+        const answerVisual = `${movementSvg(true)}${mathBoard("거리 차 확인", row("빠른 쪽", `${fmt(d.fastDist / d.fastMin)}×${d.elapsed}=${fixed2(d.fastDist / d.fastMin * d.elapsed)}km`) + row("느린 쪽", `${fmt(d.slowDist / d.slowMin)}×${d.elapsed + d.delay}=${fixed2(d.slowDist / d.slowMin * (d.elapsed + d.delay))}km`) + row("앞선 거리", `${fixed2(d.answer)}km`))}`;
+        return fixedResult(`자전거는 일정한 빠르기로 ${d.slowMin}분 동안 ${d.slowDist}km를 가고, 오토바이는 일정한 빠르기로 ${d.fastMin}분 동안 ${d.fastDist}km를 갑니다. 자전거가 먼저 출발하고 ${d.delay}분 뒤에 오토바이가 같은 곳에서 출발했습니다. 오토바이가 출발한 뒤 ${d.elapsed}분이 지났을 때 오토바이가 몇 km 더 앞서 있나요?${promptVisual}${mathBoard("주어진 자료", row("느린 이동", `${d.slowDist}km를 ${d.slowMin}분`) + row("빠른 이동", `${d.fastDist}km를 ${d.fastMin}분`) + row("출발 시차", `${d.delay}분`) + row("비교 시각", `빠른 이동 ${d.elapsed}분 뒤`))}${support("1분 동안 간 거리부터 구하고, 두 이동선의 같은 시각 거리를 비교하세요.")}${challenge}${evidence([d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer])}`, `${fmt(d.answer)}km`, `빠른 쪽은 ${fixed2(d.fastDist / d.fastMin)}×${d.elapsed}=${fixed2(d.fastDist / d.fastMin * d.elapsed)}km, 느린 쪽은 ${fixed2(d.slowDist / d.slowMin)}×${d.elapsed + d.delay}=${fixed2(d.slowDist / d.slowMin * (d.elapsed + d.delay))}km입니다. 따라서 ${fmt(d.answer)}km 더 앞섭니다.`, answerWrap(answerVisual, [d.slowDist, d.slowMin, d.fastDist, d.fastMin, d.delay, d.elapsed, d.answer]));
+      }
+
+      if (variant === 1) {
+        const d = pools;
+        const lowerCents = Math.round(d.lower * 100), upperCents = Math.round(d.upperExclusive * 100);
+        const candidates = Array.from({ length: upperCents - lowerCents }, (_, index) => (lowerCents + index) / 100);
+        ensure(candidates.length, d.count, "가능한 수 개수");
+        const rangeSvg = solved => svg("반올림 범위 수직선", `<line class="source61-e2-number-line" x1="42" y1="89" x2="318" y2="89"/><path class="source61-e2-arrow" d="M306 83l12 6-12 6"/><line class="source61-e2-range" x1="64" y1="89" x2="296" y2="89"/><circle class="source61-e2-endpoint is-closed" cx="64" cy="89" r="7"/><circle class="source61-e2-endpoint is-open" cx="296" cy="89" r="7"/><text x="64" y="57">${fixed2(d.lower)}</text><text x="296" y="57">${fixed2(d.upperExclusive)}</text><text x="64" y="116">포함</text><text x="296" y="116">제외</text><text x="180" y="146">소수 둘째 자리 수만 확인</text>${solved ? `<text class="source61-e2-result" x="180" y="177">가능한 수 ${d.count}개</text>` : ""}`, solved, [d.divisor, d.target, d.lower, d.upperExclusive, d.count], "0 0 360 195");
+        const answerVisual = `${rangeSvg(true)}${mathBoard("가능한 수 표", row("포함 범위", `${fixed2(d.lower)} ≤ 수 &lt; ${fixed2(d.upperExclusive)}`) + row("확인한 수", candidates.map(fixed2).join(", ")) + row("개수", `${d.count}개`))}`;
+        return fixedResult(`어떤 소수 둘째 자리 수를 ${d.divisor}로 나눈 몫을 반올림하여 소수 둘째 자리까지 나타내면 ${fixed2(d.target)}입니다. 가능한 수는 모두 몇 개인가요?${rangeSvg(false)}${mathBoard("반올림 조건", row("나누는 수", d.divisor) + row("반올림한 몫", fixed2(d.target)) + row("수의 범위", `${fixed2(d.lower)} ≤ 수 &lt; ${fixed2(d.upperExclusive)}`))}${support("포함되는 끝과 포함되지 않는 끝을 구분하고, 소수 둘째 자리 수를 차례로 세어 보세요.")}${challenge}${evidence([d.divisor, d.target, d.lower, d.upperExclusive, d.count])}`, `${d.count}개`, `반올림 조건으로 가능한 수는 ${fixed2(d.lower)}부터 ${fixed2(d.upperExclusive)}보다 작은 수입니다. 소수 둘째 자리 수를 모두 세면 ${d.count}개입니다.`, answerWrap(answerVisual, [d.divisor, d.target, d.lower, d.upperExclusive, d.count]));
+      }
+
+      if (variant === 2) {
+        const d = pools;
+        const distance = d.aKmPerL * d.aLiters;
+        const liters = distance / d.bKmPerL;
+        const answer = liters * d.price;
+        ensure(answer, d.answer, "연료비");
+        const flowSvg = solved => svg("두 자동차의 거리와 기름값 흐름", `<rect class="source61-e2-flow-box" x="12" y="48" width="90" height="54" rx="5"/><text x="57" y="70">자동차 가</text><text x="57" y="88">1L에 ${d.aKmPerL}km</text><path class="source61-e2-flow-arrow" d="M104 75h24l-6-6m6 6-6 6"/><rect class="source61-e2-flow-box" x="130" y="48" width="94" height="54" rx="5"/><text x="177" y="70">간 거리</text><text x="177" y="88">${fixed2(distance)}km</text><path class="source61-e2-flow-arrow" d="M226 75h24l-6-6m6 6-6 6"/><rect class="source61-e2-flow-box" x="252" y="48" width="96" height="54" rx="5"/><text x="300" y="70">자동차 나</text><text x="300" y="88">1L에 ${d.bKmPerL}km</text><path class="source61-e2-flow-arrow" d="M300 106v26l-6-6m6 6 6-6"/><text x="180" y="127">필요한 기름 ${fixed2(liters)}L</text><line class="source61-e2-flow-line" x1="58" y1="154" x2="302" y2="154"/>${solved ? `<text class="source61-e2-result" x="180" y="181">기름값 ${fixedMoney(d.answer)}원</text>` : `<text x="180" y="181">1L ${d.price}원</text>`}`, solved, [d.aKmPerL, d.aLiters, d.bKmPerL, d.price, d.answer], "0 0 360 198");
+        const answerVisual = `${flowSvg(true)}${mathBoard("거리 → 기름 → 값", row("자동차 가의 거리", `${d.aKmPerL}×${d.aLiters}=${fixed2(distance)}km`) + row("자동차 나 기름", `${fixed2(distance)}÷${d.bKmPerL}=${fixed2(liters)}L`) + row("필요한 기름값", `${fixed2(liters)}×${d.price}=${fixedMoney(d.answer)}원`))}`;
+        return fixedResult(`자동차 가는 1L로 ${d.aKmPerL}km를 갈 수 있고, 자동차 나는 1L로 ${d.bKmPerL}km를 갈 수 있습니다. ${d.aLiters}L 들어 있는 자동차 가로 갈 수 있는 거리를 자동차 나로 갈 때 필요한 기름값을 구하세요. 기름 1L의 가격은 ${d.price}원입니다.${flowSvg(false)}${mathBoard("주어진 자료", row("자동차 가", `1L에 ${d.aKmPerL}km`) + row("자동차 가의 기름", `${d.aLiters}L`) + row("자동차 나", `1L에 ${d.bKmPerL}km`) + row("기름값", `1L ${d.price}원`))}${support("자동차 가의 거리, 자동차 나의 필요한 기름, 기름값을 차례로 구하세요.")}${challenge}${evidence([d.aKmPerL, d.aLiters, d.bKmPerL, d.price, d.answer])}`, `${fixedMoney(d.answer)}원`, `자동차 가는 ${fixed2(distance)}km를 갑니다. 자동차 나는 ${fixed2(distance)}÷${d.bKmPerL}=${fixed2(liters)}L가 필요하므로 기름값은 ${fixed2(liters)}×${d.price}=${fixedMoney(d.answer)}원입니다.`, answerWrap(answerVisual, [d.aKmPerL, d.aLiters, d.bKmPerL, d.price, d.answer]));
+      }
+
+      if (variant === 3) {
+        const d = pools;
+        const step = (d.end - d.start) / d.intervals;
+        const answer = d.start + step * d.targetIndex;
+        ensure(answer, d.answer, "수직선 눈금");
+        const targetX = 42 + 276 * d.targetIndex / d.intervals;
+        const ticks = Array.from({ length: d.intervals + 1 }, (_, index) => { const x = 42 + 276 * index / d.intervals; return `<line class="source61-e2-tick" x1="${x.toFixed(2)}" y1="83" x2="${x.toFixed(2)}" y2="108"/>`; }).join("");
+        const numberLineSvg = solved => svg("같은 간격으로 나눈 수직선", `${ticks}<line class="source61-e2-number-line" x1="42" y1="95" x2="318" y2="95"/><path class="source61-e2-arrow" d="M306 89l12 6-12 6"/><circle class="source61-e2-target ${solved ? "is-solved" : ""}" cx="${targetX.toFixed(2)}" cy="95" r="6"/><text x="42" y="62">${fmt(d.start)}</text><text x="318" y="62">${fmt(d.end)}</text><text class="source61-e2-target-label" x="${targetX.toFixed(2)}" y="132">ㄱ</text>${solved ? `<text class="source61-e2-result" x="180" y="169">한 칸 ${fixed2(step)} · ㄱ=${fmt(d.answer)}</text>` : `<text x="180" y="169">왼쪽 끝에서 ${d.targetIndex}칸 간 눈금</text>`}`, solved, [d.start, d.end, d.intervals, d.targetIndex, d.answer], "0 0 360 186");
+        const answerVisual = `${numberLineSvg(true)}${mathBoard("눈금 한 칸과 ㄱ", row("한 칸", `${fixed2(step)}`) + row("ㄱ", fmt(d.answer)) + row("확인", `${fmt(d.start)}+${d.targetIndex}×${fixed2(step)}=${fmt(d.answer)}`))}`;
+        return fixedResult(`수직선을 ${d.intervals}칸으로 똑같이 나누었습니다. 왼쪽 끝의 수는 ${fmt(d.start)}, 오른쪽 끝의 수는 ${fmt(d.end)}입니다. 왼쪽 끝에서 ${d.targetIndex}칸 간 눈금 ㄱ에 알맞은 수를 구하세요.${numberLineSvg(false)}${mathBoard("수직선 자료", row("왼쪽 끝", fmt(d.start)) + row("오른쪽 끝", fmt(d.end)) + row("나눈 칸", `${d.intervals}칸`) + row("ㄱ의 위치", `왼쪽에서 ${d.targetIndex}칸`))}${support("전체 길이를 같은 칸 수로 나누어 한 칸의 크기를 먼저 구하세요.")}${challenge}${evidence([d.start, d.end, d.intervals, d.targetIndex, d.answer])}`, fmt(d.answer), `전체 길이는 ${fmt(d.end - d.start)}입니다. 한 칸은 ${fmt(d.end - d.start)}÷${d.intervals}=${fixed2(step)}이고, ㄱ은 ${fmt(d.start)}+${d.targetIndex}×${fixed2(step)}=${fmt(d.answer)}입니다.`, answerWrap(answerVisual, [d.start, d.end, d.intervals, d.targetIndex, d.answer]));
+      }
+
+      if (variant === 4) {
+        const d = pools;
+        const perLap = d.totalSeconds / d.givenLaps;
+        const answer = perLap * d.targetLaps;
+        ensure(answer, d.answerSeconds, "바퀴 시간");
+        const timeText = seconds => { const minutes = Math.floor(seconds / 60), rest = seconds % 60; return rest ? `${minutes}분 ${rest}초` : `${minutes}분`; };
+        const lapSvg = solved => svg("운동장 바퀴와 시간 표", `<rect class="source61-e2-track-shape" x="34" y="34" width="292" height="86" rx="43"/><path class="source61-e2-track-arrow" d="M284 45l18 8-18 8"/><circle class="source61-e2-track-dot" cx="56" cy="77" r="5"/><text x="180" y="77">운동장 한 바퀴씩 같은 빠르기</text><line class="source61-e2-table-line" x1="55" y1="151" x2="305" y2="151"/><text x="118" y="171">${d.givenLaps}바퀴</text><text x="242" y="171">${d.totalSeconds}초</text><line class="source61-e2-table-line" x1="55" y1="183" x2="305" y2="183"/><text x="118" y="203">${d.targetLaps}바퀴</text>${solved ? `<text class="source61-e2-result" x="242" y="203">${timeText(d.answerSeconds)}</text>` : `<text x="242" y="203">?</text>`}`, solved, [d.givenLaps, d.totalSeconds, d.targetLaps, d.answerSeconds], "0 0 360 216");
+        const answerVisual = `${lapSvg(true)}${mathBoard("바퀴 수와 시간", row("한 바퀴", `${d.totalSeconds}÷${d.givenLaps}=${fixed2(perLap)}초`) + row(`${d.targetLaps}바퀴`, `${fixed2(perLap)}×${d.targetLaps}=${d.answerSeconds}초`) + row("답", timeText(d.answerSeconds)))}`;
+        return fixedResult(`일정한 빠르기로 운동장을 ${d.givenLaps}바퀴 도는 데 ${timeText(d.totalSeconds)}가 걸렸습니다. 운동장 ${d.targetLaps}바퀴를 도는 데 몇 분 몇 초가 걸리겠습니까?${lapSvg(false)}${mathBoard("운동장 자료", row("주어진 바퀴", `${d.givenLaps}바퀴`) + row("걸린 시간", timeText(d.totalSeconds)) + row("구할 바퀴", `${d.targetLaps}바퀴`))}${support("전체 시간을 주어진 바퀴 수로 나누어 한 바퀴의 시간을 구하세요.")}${challenge}${evidence([d.givenLaps, d.totalSeconds, d.targetLaps, d.answerSeconds])}`, timeText(d.answerSeconds), `한 바퀴는 ${d.totalSeconds}÷${d.givenLaps}=${fixed2(perLap)}초입니다. ${d.targetLaps}바퀴는 ${d.answerSeconds}초이므로 ${timeText(d.answerSeconds)}입니다.`, answerWrap(answerVisual, [d.givenLaps, d.totalSeconds, d.targetLaps, d.answerSeconds]));
+      }
+
+      if (variant === 5) {
+        const d = pools;
+        const remainingCount = d.totalCount - d.removedCount;
+        const pencilWeight = (d.totalWeight - d.remainingWeight) / d.removedCount;
+        const answer = d.remainingWeight + (d.targetCount - remainingCount) * pencilWeight;
+        ensure(answer, d.answer, "연필과 필통 무게");
+        const weightSvg = solved => svg("연필과 필통의 두 측정과 목표 상태", `<rect class="source61-e2-weight-box" x="10" y="34" width="106" height="82" rx="5"/><text x="63" y="53">처음</text><text x="63" y="75">필통 + 연필 ${d.totalCount}자루</text><text x="63" y="99">${fixed2(d.totalWeight)}g</text><path class="source61-e2-flow-arrow" d="M120 75h16l-5-6m5 6-5 6"/><rect class="source61-e2-weight-box" x="142" y="34" width="106" height="82" rx="5"/><text x="195" y="53">다시 잼</text><text x="195" y="75">필통 + 연필 ${remainingCount}자루</text><text x="195" y="99">${fixed2(d.remainingWeight)}g</text><path class="source61-e2-flow-arrow" d="M252 75h16l-5-6m5 6-5 6"/><rect class="source61-e2-weight-box" x="274" y="34" width="76" height="82" rx="5"/><text x="312" y="53">목표</text><text x="312" y="75">연필 ${d.targetCount}자루</text><text x="312" y="99">${solved ? `${fixed2(d.answer)}g` : "?"}</text><text x="180" y="143">한 자루 무게 = 두 측정의 차 ÷ 준 연필 수</text><line class="source61-e2-table-line" x1="40" y1="168" x2="320" y2="168"/>${solved ? `<text class="source61-e2-result" x="180" y="195">목표 상태 ${fixed2(d.answer)}g</text>` : `<text x="180" y="195">빈 필통과 한 자루의 무게를 찾아요.</text>`}`, solved, [d.totalCount, d.totalWeight, d.removedCount, d.remainingWeight, d.targetCount, d.answer], "0 0 360 210");
+        const answerVisual = `${weightSvg(true)}${mathBoard("두 측정으로 확인", row("한 자루", `(${fixed2(d.totalWeight)}-${fixed2(d.remainingWeight)})÷${d.removedCount}=${fixed2(pencilWeight)}g`) + row("남은 연필", `${remainingCount}자루`) + row("목표 무게", `${fixed2(d.remainingWeight)}+${d.targetCount - remainingCount}×${fixed2(pencilWeight)}=${fmt(d.answer)}g`))}`;
+        return fixedResult(`무게가 같은 연필 ${d.totalCount}자루가 들어 있는 필통의 무게는 ${fixed2(d.totalWeight)}g입니다. 연필 ${d.removedCount}자루를 덜어 내고 필통의 무게를 다시 재니 ${fixed2(d.remainingWeight)}g이었습니다. 빈 필통에 똑같은 연필 ${d.targetCount}자루를 넣고 무게를 재면 몇 g인지 구하세요.${weightSvg(false)}${mathBoard("두 번 잰 자료", row("처음", `필통 + 연필 ${d.totalCount}자루 = ${fixed2(d.totalWeight)}g`) + row("다시 잼", `필통 + 연필 ${remainingCount}자루 = ${fixed2(d.remainingWeight)}g`) + row("목표", `필통 + 연필 ${d.targetCount}자루`))}${support("두 무게의 차를 덜어 낸 연필 수로 나누어 한 자루 무게를 구하세요.")}${challenge}${evidence([d.totalCount, d.totalWeight, d.removedCount, d.remainingWeight, d.targetCount, d.answer])}`, `${fmt(d.answer)}g`, `두 무게의 차는 ${fixed2(d.totalWeight - d.remainingWeight)}g입니다. 한 자루는 ${fixed2(pencilWeight)}g이고, 남은 연필 ${remainingCount}자루에서 ${d.targetCount}자루가 되려면 ${d.targetCount - remainingCount}자루를 더하므로 ${fmt(d.answer)}g입니다.`, answerWrap(answerVisual, [d.totalCount, d.totalWeight, d.removedCount, d.remainingWeight, d.targetCount, d.answer]));
+      }
+
+      if (variant === 6) {
+        const d = pools;
+        const answer = Math.abs(d.aDist / d.aMin - d.bDist / d.bMin) * d.elapsed;
+        ensure(answer, d.answer, "같은 방향 거리 차");
+        const faster = d.aDist / d.aMin > d.bDist / d.bMin ? "자동차" : "기차";
+        const sameDirectionSvg = solved => svg("같은 곳에서 같은 방향으로 출발한 두 이동선", `<text class="source61-e2-label" x="86" y="25">자동차</text><text x="260" y="25">${d.aDist}km를 ${d.aMin}분</text><line class="source61-e2-track" x1="42" y1="69" x2="316" y2="69"/><circle class="source61-e2-start" cx="48" cy="69" r="5"/><path class="source61-e2-arrow" d="M292 63l18 6-18 6"/><text x="50" y="90">같은 곳</text><text x="300" y="90">자동차 위치</text><text class="source61-e2-label" x="86" y="122">기차</text><text x="260" y="122">${d.bDist}km를 ${d.bMin}분</text><line class="source61-e2-track" x1="42" y1="166" x2="316" y2="166"/><circle class="source61-e2-start" cx="48" cy="166" r="5"/><path class="source61-e2-arrow" d="M292 160l18 6-18 6"/><text x="50" y="187">같은 방향</text><text x="300" y="187">기차 위치</text>${solved ? `<text class="source61-e2-result" x="180" y="216">${d.elapsed}분 뒤 끝 위치 차 ${fixed2(d.answer)}km</text>` : `<text x="180" y="216">두 이동선의 속력을 비교하세요.</text>`}`, solved, [d.aDist, d.aMin, d.bDist, d.bMin, d.elapsed, d.answer], "0 0 360 224");
+        const answerVisual = `${sameDirectionSvg(true)}${mathBoard("두 속력과 끝 위치 차", row("자동차", `${fmt(d.aDist / d.aMin)}km/분`) + row("기차", `${fmt(d.bDist / d.bMin)}km/분`) + row(`${d.elapsed}분 뒤 더 먼 것`, `${faster}, ${fmt(d.answer)}km`))}`;
+        return fixedResult(`자동차는 일정한 빠르기로 ${d.aMin}분 동안 ${d.aDist}km를 가고, 기차는 일정한 빠르기로 ${d.bMin}분 동안 ${d.bDist}km를 갑니다. 자동차와 기차가 같은 곳에서 같은 방향으로 동시에 출발한다면 ${d.elapsed}분 후에는 어느 것이 몇 km 더 멀리 가 있나요?${sameDirectionSvg(false)}${mathBoard("이동 자료", row("자동차", `${d.aDist}km를 ${d.aMin}분`) + row("기차", `${d.bDist}km를 ${d.bMin}분`) + row("이동 시간", `${d.elapsed}분`))}${support(`각 이동수단이 1분 동안 가는 거리를 구한 뒤 ${d.elapsed}분 동안 간 거리 차를 구하세요.`)}${challenge}${evidence([d.aDist, d.aMin, d.bDist, d.bMin, d.elapsed, d.answer])}`, `${faster}, ${fmt(d.answer)}km`, `자동차는 1분에 ${fmt(d.aDist / d.aMin)}km, 기차는 1분에 ${fmt(d.bDist / d.bMin)}km를 갑니다. 더 빠른 ${faster}가 ${d.elapsed}분 동안 ${fmt(d.answer)}km 더 멀리 갑니다.`, answerWrap(answerVisual, [d.aDist, d.aMin, d.bDist, d.bMin, d.elapsed, d.answer]));
+      }
+
+      const d = pools;
+      const carRate = d.carKm / d.carLiters, bikeRate = d.bikeKm / d.bikeLiters;
+      const carLiters = d.distance / carRate, bikeLiters = d.distance / bikeRate;
+      const answer = Math.abs(carLiters - bikeLiters) * d.price;
+      ensure(answer, d.answer, "자동차와 오토바이 기름값 차");
+      const fuelSvg = solved => svg("자동차와 오토바이의 연료와 기름값 흐름", `<text class="source61-e2-label" x="68" y="23">자동차</text><text x="178" y="23">${d.carLiters}L → ${d.carKm}km</text><text x="68" y="57">1L에 ${fmt(carRate)}km</text><path class="source61-e2-flow-arrow" d="M104 52h20l-5-6m5 6-5 6"/><text x="190" y="57">${fixed2(carLiters)}L 필요</text><line class="source61-e2-flow-line" x1="36" y1="77" x2="324" y2="77"/><text class="source61-e2-label" x="68" y="111">오토바이</text><text x="178" y="111">${d.bikeLiters}L → ${d.bikeKm}km</text><text x="68" y="145">1L에 ${fmt(bikeRate)}km</text><path class="source61-e2-flow-arrow" d="M104 140h20l-5-6m5 6-5 6"/><text x="190" y="145">${fixed2(bikeLiters)}L 필요</text><text x="180" y="177">${d.distance}km를 갈 때 · 1L ${d.price}원</text>${solved ? `<text class="source61-e2-result" x="180" y="205">기름값 차 ${fixedMoney(d.answer)}원</text>` : ""}`, solved, [d.carLiters, d.carKm, d.bikeLiters, d.bikeKm, d.distance, d.price, d.answer], "0 0 360 218");
+      const answerVisual = `${fuelSvg(true)}${mathBoard("연료 효율 → 필요한 기름 → 값", row("자동차", `1L에 ${fmt(carRate)}km, ${fixed2(carLiters)}L`) + row("오토바이", `1L에 ${fmt(bikeRate)}km, ${fixed2(bikeLiters)}L`) + row("기름값 차", `${fixedMoney(d.answer)}원`))}`;
+      return fixedResult(`휘발유 ${d.carLiters}L로 ${d.carKm}km를 달릴 수 있는 자동차와 ${d.bikeLiters}L로 ${d.bikeKm}km를 달릴 수 있는 오토바이가 있습니다. 휘발유 1L의 가격이 ${d.price}원일 때, ${d.distance}km를 달리는 데 필요한 휘발유값의 차는 얼마인가요?${fuelSvg(false)}${mathBoard("주어진 자료", row("자동차", `${d.carLiters}L에 ${d.carKm}km`) + row("오토바이", `${d.bikeLiters}L에 ${d.bikeKm}km`) + row("갈 거리", `${d.distance}km`) + row("휘발유값", `1L ${d.price}원`))}${support("각 이동수단이 1L로 가는 거리, 필요한 기름의 양, 기름값을 차례로 구하세요.")}${challenge}${evidence([d.carLiters, d.carKm, d.bikeLiters, d.bikeKm, d.distance, d.price, d.answer])}`, `${fixedMoney(d.answer)}원`, `자동차는 1L에 ${fmt(carRate)}km, 오토바이는 1L에 ${fmt(bikeRate)}km를 갑니다. 필요한 기름은 각각 ${fixed2(carLiters)}L, ${fixed2(bikeLiters)}L이므로 기름값 차는 ${fixedMoney(d.answer)}원입니다.`, answerWrap(answerVisual, [d.carLiters, d.carKm, d.bikeLiters, d.bikeKm, d.distance, d.price, d.answer]));
+    },
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5"
@@ -22724,6 +22882,7 @@
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
     [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e1-"), "sourceGrade6DecimalDivisionE1"],
+    [type => type.sourceItemId?.startsWith("6-1-u3-e2-") && !["6-1-u3-e2-example-2", "6-1-u3-e2-example-4", "6-1-u3-e2-mission-6"].includes(type.sourceItemId), "sourceGrade6DecimalDivisionE2"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
