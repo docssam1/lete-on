@@ -195,7 +195,11 @@ section{padding:88px 0}
 
 /* 가격 */
 .price{text-align:center}
-.price .plan{max-width:560px;margin:30px auto 0;background:#fff;border:2px solid var(--blue-deep);border-radius:var(--radius);padding:30px 28px;box-shadow:var(--shadow-2)}
+.price .plans{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:900px;margin:30px auto 0}
+@media(max-width:760px){.price .plans{grid-template-columns:1fr}}
+.price .plan.two{border-color:var(--gold)}
+.price .plan.two .badge{background:var(--gold);color:var(--blue-ink)}
+.price .plan{max-width:560px;margin:0 auto;background:#fff;border:2px solid var(--blue-deep);border-radius:var(--radius);padding:30px 28px;box-shadow:var(--shadow-2)}
 .plan .amt{display:flex;align-items:baseline;justify-content:center;gap:6px;font-family:var(--sans);font-weight:900;letter-spacing:-.035em;font-size:clamp(52px,9vw,84px);color:var(--blue-deep);line-height:1;font-variant-numeric:tabular-nums}
 .plan .amt .cur{font-size:.42em;font-weight:800;letter-spacing:0;color:var(--gold);align-self:flex-start;margin-top:.18em}
 .plan .amt .unit{font-size:.36em;font-weight:800;letter-spacing:0;color:var(--sub)}
@@ -468,21 +472,35 @@ footer a{color:var(--sub)}
 <section class="price">
   <div class="wrap">
     <p class="kicker reveal" data-i18n="prKicker">Price · 월 구독</p>
-    <h2 class="reveal" data-i18n="prH2">한 달 <span class="accent">만 원</span>이면 됩니다</h2>
-    <p class="lead reveal" data-i18n="prLead">학습지 주 1회 + 연산 게임 학습 + 무제한 연산 학습. 아이 한 명, 한 달 기준입니다.</p>
-    <div class="plan reveal">
-      <span class="badge" data-i18n="prBadge">월 구독</span>
-      <div class="amt" data-i18n="prAmt"><span class="cur">₩</span>10,000<span class="unit">/월</span></div>
-      <div class="per" data-i18n="prPer">아이 한 명 · 한 달</div>
-      <ul>
-        <li data-i18n="pr1">학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄</li>
-        <li data-i18n="pr2"><b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장</li>
-        <li data-i18n="pr3"><b>무제한 연산 학습</b> — 교과 연산 연습 · 수의 마법 탐험 · 연산 로드맵, 횟수 제한 없음</li>
-        <li data-i18n="pr4">수학 실험실 6곳 · 수학사 만화 95편 · 한국어·영어·중국어</li>
-      </ul>
-      <a class="btn primary" href="index.html?enter=1" data-i18n="prCta">시작하기 →</a>
-      <p class="fine" data-i18n="prFine">주 2회 학습지는 상담으로 정합니다. 지금은 승인번호 없이 모든 기능이 열려 있습니다.</p>
+    <h2 class="reveal" data-i18n="prH2">주 1회 <span class="accent">만 원</span>, 주 2회 <span class="accent">2만 원</span></h2>
+    <p class="lead reveal" data-i18n="prLead">학습지 횟수만 다르고, 연산 게임 학습과 무제한 연산 학습은 둘 다 전부 들어 있습니다. 아이 한 명, 한 달 기준.</p>
+    <div class="plans">
+      <div class="plan reveal">
+        <span class="badge" data-i18n="prBadge">주 1회</span>
+        <div class="amt" data-i18n="prAmt"><span class="cur">₩</span>10,000<span class="unit">/월</span></div>
+        <div class="per" data-i18n="prPer">아이 한 명 · 한 달</div>
+        <ul>
+          <li data-i18n="pr1">학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄</li>
+          <li data-i18n="pr2"><b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장</li>
+          <li data-i18n="pr3"><b>무제한 연산 학습</b> — 교과 연산 연습 · 수의 마법 탐험 · 연산 로드맵, 횟수 제한 없음</li>
+          <li data-i18n="pr4">수학 실험실 6곳 · 수학사 만화 95편 · 한국어·영어·중국어</li>
+        </ul>
+        <a class="btn primary" href="index.html?enter=1" data-i18n="prCta">시작하기 →</a>
+      </div>
+      <div class="plan two reveal">
+        <span class="badge" data-i18n="prBadge2">주 2회</span>
+        <div class="amt" data-i18n="prAmt2"><span class="cur">₩</span>20,000<span class="unit">/월</span></div>
+        <div class="per" data-i18n="prPer2">아이 한 명 · 한 달</div>
+        <ul>
+          <li data-i18n="pr21">학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주</li>
+          <li data-i18n="pr22">주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵</li>
+          <li data-i18n="pr23">연산 게임 학습 · 무제한 연산 학습 · 실험실 · 만화 전부 포함</li>
+          <li data-i18n="pr24">한국어·영어·중국어</li>
+        </ul>
+        <a class="btn gold" href="index.html?enter=1" data-i18n="prCta2">주 2회로 시작하기 →</a>
+      </div>
     </div>
+    <p class="fine reveal" style="text-align:center;margin-top:16px;font-size:12.5px;color:var(--faint)" data-i18n="prFine">지금은 승인번호 없이 모든 기능이 열려 있습니다.</p>
   </div>
 </section>
 
@@ -605,11 +623,11 @@ footer a{color:var(--sub)}
       cmKicker:'Math History · 수학사 네 컷 만화 95편', cmH2:'개념마다 <span class="accent">그 수학이 태어난 이야기</span>가 붙어 있습니다',
       cmLead:'개념 노트를 열면 산문 한 줄 대신 네 컷 만화가 나옵니다. 그중 하나 — 일곱 살 가우스의 이야기입니다. 오늘 배우는 "자리끼리 더하기"와 같은 마법이라는 데서 끝납니다.',
       cmMore:'기호가 태어난 날(−, =, √…), 0을 발견한 사람들, 미적분이 생긴 이유까지 — 95편이 각자의 개념 자리에서 기다립니다.',
-      prKicker:'Price · 월 구독', prH2:'한 달 <span class="accent">만 원</span>이면 됩니다', prLead:'학습지 주 1회 + 연산 게임 학습 + 무제한 연산 학습. 아이 한 명, 한 달 기준입니다.', prBadge:'월 구독',
+      prKicker:'Price · 월 구독', prH2:'주 1회 <span class="accent">만 원</span>, 주 2회 <span class="accent">2만 원</span>', prLead:'학습지 횟수만 다르고, 연산 게임 학습과 무제한 연산 학습은 둘 다 전부 들어 있습니다. 아이 한 명, 한 달 기준.', prBadge:'주 1회', prBadge2:'주 2회', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/월</span>', prPer2:'아이 한 명 · 한 달', pr21:'학습지 <b>주 2회</b> — 한 주에 두 장, 같은 과정을 절반씩 더 자주', pr22:'주차가 <b>9월 1-1주차, 1-2주차</b>로 나뉜 개인 로드맵', pr23:'연산 게임 학습 · 무제한 연산 학습 · 실험실 · 만화 전부 포함', pr24:'한국어·영어·중국어', prCta2:'주 2회로 시작하기 →',
       prAmt:'<span class="cur">₩</span>10,000<span class="unit">/월</span>', prPer:'아이 한 명 · 한 달',
       pr1:'학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄', pr2:'<b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장',
       pr3:'<b>무제한 연산 학습</b> — 교과 연산 연습 · 수의 마법 탐험 · 연산 로드맵, 횟수 제한 없음', pr4:'수학 실험실 6곳 · 수학사 만화 95편 · 한국어·영어·중국어',
-      prCta:'시작하기 →', prFine:'주 2회 학습지는 상담으로 정합니다. 지금은 승인번호 없이 모든 기능이 열려 있습니다.',
+      prCta:'시작하기 →', prFine:'지금은 승인번호 없이 모든 기능이 열려 있습니다.',
       foot:'GFIELD · Numbers of Magic — DOCSSAM 영재 트랙', footAbout:'철학', footChars:'캐릭터'
     },
     en:{
@@ -689,11 +707,11 @@ footer a{color:var(--sub)}
       cmKicker:'Math History · 95 four-panel comics', cmH2:'Every concept carries <span class="accent">the story of how that math was born</span>',
       cmLead:'Open a concept note and a four-panel comic appears instead of a line of prose. Here is one — seven-year-old Gauss. It ends by showing it is the same magic as today\'s "add the tens with the tens".',
       cmMore:'The day a symbol was born (−, =, √…), the people who found zero, why calculus exists — 95 stories wait at their own concept.',
-      prKicker:'Price · Monthly', prH2:'<span class="accent">₩10,000</span> a month, that\'s all', prLead:'Weekly worksheet + arithmetic game learning + unlimited arithmetic practice. One child, one month.', prBadge:'MONTHLY',
+      prKicker:'Price · Monthly', prH2:'Once a week <span class="accent">₩10,000</span>, twice a week <span class="accent">₩20,000</span>', prLead:'Only the worksheet count differs — arithmetic game learning and unlimited practice are included in both. One child, one month.', prBadge:'ONCE A WEEK', prBadge2:'TWICE A WEEK', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/mo</span>', prPer2:'one child · per month · about $14', pr21:'Worksheet <b>twice a week</b> — two sheets, the same course in halves, more often', pr22:'A personal roadmap split into <b>Sept week 1-1, 1-2…</b>', pr23:'Arithmetic game learning · unlimited practice · labs · comics all included', pr24:'Korean, English, Chinese', prCta2:'Start twice a week →',
       prAmt:'<span class="cur">₩</span>10,000<span class="unit">/mo</span>', prPer:'one child · per month · about $7',
       pr1:'Worksheet <b>once a week</b> — an envelope in the mailbox every Monday, print at home', pr2:'<b>Arithmetic game learning</b> — every classroom, arena and stamp in the number village',
       pr3:'<b>Unlimited arithmetic practice</b> — curriculum practice · Number Magic exploration · course road, no limits', pr4:'6 math labs · 95 math-history comics · Korean, English, Chinese',
-      prCta:'Start →', prFine:'Twice-a-week worksheets are arranged by consultation. Everything is open right now — no academy code needed.',
+      prCta:'Start →', prFine:'Everything is open right now — no academy code needed.',
       foot:'GFIELD · Numbers of Magic — DOCSSAM gifted track', footAbout:'Philosophy', footChars:'Characters'
     },
     zh:{
@@ -773,11 +791,11 @@ footer a{color:var(--sub)}
       cmKicker:'数学史 · 四格漫画95篇', cmH2:'每个概念都带着<span class="accent">那个数学诞生的故事</span>',
       cmLead:'打开概念笔记，出现的不是一行文字，而是四格漫画。这是其中一篇——七岁的高斯。结尾告诉你，这和今天学的"同位相加"是同一种魔法。',
       cmMore:'符号诞生的那一天（−、=、√……）、发现0的人们、微积分为何存在——95个故事各自在它的概念旁等着。',
-      prKicker:'价格 · 月订阅', prH2:'每月<span class="accent">一万韩元</span>就够了', prLead:'每周一次学习单 + 运算游戏学习 + 无限运算练习。一个孩子，一个月。', prBadge:'月订阅',
+      prKicker:'价格 · 月订阅', prH2:'每周1次<span class="accent">₩10,000</span>，每周2次<span class="accent">₩20,000</span>', prLead:'只是学习单次数不同，运算游戏学习和无限运算练习两者都全部包含。一个孩子，一个月。', prBadge:'每周1次', prBadge2:'每周2次', prAmt2:'<span class="cur">₩</span>20,000<span class="unit">/月</span>', prPer2:'一个孩子 · 每月 · 约 $14', pr21:'学习单<b>每周2次</b> —— 每周两张，同一课程一分为二、更频繁', pr22:'按<b>9月1-1周、1-2周……</b>划分的个人路线图', pr23:'运算游戏学习 · 无限运算练习 · 实验室 · 漫画全部包含', pr24:'韩语、英语、中文', prCta2:'以每周2次开始 →',
       prAmt:'<span class="cur">₩</span>10,000<span class="unit">/月</span>', prPer:'一个孩子 · 每月 · 约 $7',
       pr1:'学习单<b>每周1次</b> —— 每周一信箱送达信封，在家打印', pr2:'<b>运算游戏学习</b> —— 数字村所有学习场所、竞技场与印章',
       pr3:'<b>无限运算练习</b> —— 教材运算练习 · 数字魔法探索 · 运算路线图，不限次数', pr4:'6个数学实验室 · 95篇数学史漫画 · 韩语、英语、中文',
-      prCta:'开始 →', prFine:'每周2次学习单经咨询确定。目前无需授权码，全部功能开放。',
+      prCta:'开始 →', prFine:'目前无需授权码，全部功能开放。',
       foot:'GFIELD · Numbers of Magic — DOCSSAM 资优课程', footAbout:'理念', footChars:'角色'
     }
   };
