@@ -1150,11 +1150,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "exploration",
       "ordinal": 1,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 16쪽 개념탐구 1. 소수를 자연수로 나누는 계산 다섯 개를 제시된 순서대로 계산하여 소수로 나타냄",
+    "answerContract": "ordered-list-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "원본 다섯 계산과 답 1.2, 1.24, 0.71, 1.65, 7.08을 독립 대조하고, 계산식과 답표가 같은 자료를 쓰는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-example-1",
@@ -1166,11 +1166,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "example",
       "ordinal": 1,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 16쪽 예제 1-1. 숫자 카드 네 장으로 □.□□÷□를 만들고 몫이 1보다 작은 경우 중 가장 큰 몫을 구함",
+    "answerContract": "single-answer-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "원본 카드 2,3,5,8의 모든 배치를 확인해 2.85÷3=0.95가 유일한 최댓값임을 대조하고, 전수 열거가 가능한 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-example-2",
@@ -1182,11 +1182,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "example",
       "ordinal": 2,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 16쪽 예제 1-2. 22.■4 > 4▲.78÷2를 만족하는 0부터 9까지의 숫자 ■, ▲의 순서 있는 짝을 모두 셈",
+    "answerContract": "single-answer-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "■와 ▲의 100쌍을 독립 전수 대입하여 원본 답이 47쌍임을 확인하고, 같은 전수표로 검산하는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-example-3",
@@ -1198,11 +1198,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "example",
       "ordinal": 3,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 16쪽 예제 1-3. 두 경계 사이의 소수 두 자리 수 중 자연수로 나눈 몫이 소수 두 자리 수가 되는 가장 큰 수와 작은 수를 구함",
+    "answerContract": "ordered-pair-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "원본 범위 66.7~72.4와 나누는 수 16에서 양끝 값 66.72, 72.32를 전수 대조하고, 범위 수직선을 함께 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-example-4",
@@ -1214,11 +1214,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "example",
       "ordinal": 4,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 16쪽 예제 1-4. 곱의 소수점을 왼쪽으로 한 자리 잘못 찍은 값과 올바른 값의 차로 올바른 곱을 구함",
+    "answerContract": "single-answer-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "올바른 값 40.13과 잘못된 값 4.013의 차가 36.117임을 독립 대조하고, 소수점 이동 관계를 다시 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-1",
@@ -1230,11 +1230,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 1,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 17쪽 Mission 1. 네 나눗셈의 몫을 계산하고 5와의 차가 작은 순서대로 식의 기호를 나열함",
+    "answerContract": "ordered-list-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "원본 네 몫 4.83, 4.09, 5.15, 5.2와 순서 다-가-라-나를 독립 대조하고, 차가 모두 다른 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-2",
@@ -1246,11 +1246,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 2,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 17쪽 Mission 2. 가★나=(가-나)÷나로 약속하고 두 식의 계산 결과 차를 구함",
+    "answerContract": "single-answer-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "원본 두 식의 값 7.06, 6.21과 차 0.85를 독립 대조하고, 약속한 계산을 두 번 적용하는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-3",
@@ -1262,11 +1262,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 3,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 17쪽 Mission 3. 겹치지 않게 이어 붙인 평행사변형과 정사각형의 전체 넓이, 밑변, 정사각형 한 변으로 평행사변형의 높이를 구함",
+    "answerContract": "drawing-dependent-candidate",
+    "sourceVerified": true,
+    "implementationStatus": "review-locked",
+    "reviewReason": "독립 계산 값 4.8cm는 확인했지만 원문과 같은 평행사변형·정사각형 연결 위치를 점·선분 자료로 다시 그리고 PC·모바일·A4에서 확인하기 전까지 잠급니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-4",
@@ -1278,11 +1278,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 4,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 17쪽 Mission 4. 8로 나누는 소수 세로셈에서 기호로 가려진 숫자를 계산 순서대로 찾아 몫을 구함",
+    "answerContract": "drawing-dependent-candidate",
+    "sourceVerified": true,
+    "implementationStatus": "review-locked",
+    "reviewReason": "독립 계산 몫 7.35는 확인했지만 문제와 답에서 같은 세로셈 자릿값 자료로 56→28→24→40→40을 정확히 그리는 전용 화면 검수 전까지 잠급니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-5",
@@ -1294,11 +1294,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 5,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 17쪽 Mission 5. 어떤 수를 한 자연수로 나눈 몫과 덧셈 결과로 원래 수를 찾고, 그 수를 다른 두 수로 나눈 몫의 합을 구함",
+    "answerContract": "single-answer-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "원본에서 어떤 수 16.2와 두 몫의 합 5.04를 독립 대조하고, 한 수에서 두 나눗셈으로 갈라지는 답 그림을 쓰는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-6",
@@ -1310,11 +1310,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 6,
-      "sourceShape": "소수와 자연수의 나눗셈에서 자릿값과 몫의 소수점 위치를 이용하여 값 또는 빈칸을 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+    "sourceShape": "원본 17쪽 Mission 6. 숫자 카드 네 장 중 세 장으로 소수 두 자리 수를 만들고 남은 카드로 나누어 가장 큰 몫과 가장 작은 몫의 차를 구함",
+    "answerContract": "single-answer-fixed-pool",
+    "sourceVerified": true,
+    "implementationStatus": "fixed-verified-pool",
+    "reviewReason": "원본 카드 2,3,4,9의 모든 배치를 전수 대조해 최소 0.26, 최대 4.715, 차 4.455를 확인하고, 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e2-exploration",

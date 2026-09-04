@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 32
+    "unlocked": 46
   },
   "items": [
     {
@@ -1899,7 +1899,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u3-e1-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "typeLabel": "두 교통수단이 25분 동안 간 거리의 차 구하기",
+      "typeLabel": "빈칸이 있는 세로셈을 완성해 몫 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -1924,7 +1924,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u3-e1-mission-5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
-      "typeLabel": "자동차와 오토바이의 기름값 차 구하기",
+      "typeLabel": "어떤 수를 찾아 두 나눗셈의 몫 더하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -16336,7 +16336,16 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     ["6-1-u2-e4-example-4-2", ["sourceGrade6PrismsPyramidsE4", 1]],
     ["6-1-u2-e4-example-4-4", ["sourceGrade6PrismsPyramidsE4", 2]],
     ["6-1-u2-e4-mission-1", ["sourceGrade6PrismsPyramidsE4", 3]],
-    ["6-1-u2-e4-mission-4", ["sourceGrade6PrismsPyramidsE4", 4]]
+    ["6-1-u2-e4-mission-4", ["sourceGrade6PrismsPyramidsE4", 4]],
+    ["6-1-u3-e1-exploration-1", ["sourceGrade6DecimalDivisionE1", 0]],
+    ["6-1-u3-e1-example-1", ["sourceGrade6DecimalDivisionE1", 1]],
+    ["6-1-u3-e1-example-2", ["sourceGrade6DecimalDivisionE1", 2]],
+    ["6-1-u3-e1-example-3", ["sourceGrade6DecimalDivisionE1", 3]],
+    ["6-1-u3-e1-example-4", ["sourceGrade6DecimalDivisionE1", 4]],
+    ["6-1-u3-e1-mission-1", ["sourceGrade6DecimalDivisionE1", 5]],
+    ["6-1-u3-e1-mission-2", ["sourceGrade6DecimalDivisionE1", 6]],
+    ["6-1-u3-e1-mission-5", ["sourceGrade6DecimalDivisionE1", 7]],
+    ["6-1-u3-e1-mission-6", ["sourceGrade6DecimalDivisionE1", 8]]
   ]);
   window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     if (!verifiedPools.has(item.sourceItemId)) return;

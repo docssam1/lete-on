@@ -21559,6 +21559,152 @@
       const answerVisual = `${bipyramidSvg({ n, solved: true })}${mathBoard("완성된 입체도형", row("면", `2×${n}개`) + row("모서리", `3×${n}개`) + row("꼭짓점", `${n}+2개`) + row("합", `2×${n}+3×${n}+${n}+2=${total}`))}`;
       return fixedResult(`서로 같은 ${pyramidName} 2개의 밑면을 꼭 맞게 붙여 입체도형을 만들었습니다. 완성된 입체도형의 면, 모서리, 꼭짓점 수의 합을 구하세요.${promptVisual}${support("두 각뿔의 밑면은 안쪽에 들어가고, 두 꼭짓점은 위와 아래에 남는다는 점을 생각해 보세요.")}${challenge}${evidence("pyramid-base-to-base", [n])}`, `${total}`, `각뿔 두 개의 옆면은 각각 ${n}개씩이므로 면은 2×${n}=${2*n}개입니다. 밑면의 모서리 ${n}개와 두 꼭짓점으로 뻗는 모서리 2×${n}개를 합하면 모서리는 3×${n}=${3*n}개이고, 꼭짓점은 밑면 ${n}개와 위·아래 꼭짓점 2개를 합해 ${n}+2=${n+2}개입니다. 따라서 합은 ${2*n}+${3*n}+${n+2}=${total}입니다.`, answerVisual);
     },
+    sourceGrade6DecimalDivisionE1({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u3-e1-exploration-1", "6-1-u3-e1-example-1", "6-1-u3-e1-example-2", "6-1-u3-e1-example-3",
+        "6-1-u3-e1-example-4", "6-1-u3-e1-mission-1", "6-1-u3-e1-mission-2", "6-1-u3-e1-mission-5", "6-1-u3-e1-mission-6"
+      ];
+      const evidenceKinds = [
+        "decimal-division-calculation", "card-quotient-near-one", "digit-pair-inequality", "decimal-range-quotient",
+        "decimal-point-shift", "quotient-distance-order", "custom-division-operator", "number-recovery-two-divisors", "card-quotient-range"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 소수와 자연수의 나눗셈 개념탐구 1 원문 분기는 0부터 8까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">계산 결과만 쓰지 말고, 문제의 조건에서 답이 정해지는 까닭을 스스로 설명해 보세요.</p>` : "";
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const fractionText = (n, d) => fractionMarkup(n, d);
+      const fmt = value => {
+        if (typeof value === "string") return value;
+        return Number(value).toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
+      };
+      const fixed2 = value => Number(value).toFixed(2);
+      const fixed3 = value => Number(value).toFixed(3);
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-decimal-e1-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-e1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(answerBody.values || [])}${answerBody.html}<div class="solution-answer-caption">문제에 나온 자료를 다시 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+      const svg = (kind, body, solved = false, values = []) => `<svg class="geometry-diagram source61-e1-diagram ${solved ? "is-solved" : ""}" viewBox="0 0 360 190" role="img" aria-label="${kind}" data-source61-e1-structure="${kind}" data-source61-e1-values="${values.join(",")}"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}>${body}</svg>`;
+      const cardStrip = (cards, solved = false) => svg("수 카드 네 장으로 만드는 소수 나눗셈", cards.map((card, index) => `<rect class="source61-e1-card${solved ? " is-solved" : ""}" x="${30 + index * 72}" y="38" width="52" height="64" rx="4"/><text x="${56 + index * 72}" y="79">${card}</text>`).join("") + `<text x="180" y="137" text-anchor="middle">카드를 한 번씩만 사용하여 소수 두 자리 수를 만듭니다.</text>`, solved, cards);
+      const safeRows = (rows, startY = 42, step = 22) => rows.map((item, index) => `<text class="source61-e1-table-row" x="30" y="${startY + index * step}">${item}</text>`).join("");
+      const answerWrap = (html, values) => ({ html, values });
+
+      if (variant === 0) {
+        const pools = [
+          { expressions: ["14.4÷12", "7.44÷6", "19.88÷28", "13.2÷8", "35.4÷5"], answers: ["1.2", "1.24", "0.71", "1.65", "7.08"] },
+          { expressions: ["15.6÷12", "9.45÷7", "18.72÷24", "14.56÷8", "42.6÷5"], answers: ["1.3", "1.35", "0.78", "1.82", "8.52"] },
+          { expressions: ["17.28÷16", "8.64÷6", "21.84÷28", "12.6÷8", "46.5÷5"], answers: ["1.08", "1.44", "0.78", "1.575", "9.3"] }
+        ][poolIndex];
+        const rows = pools.expressions.map((expression, index) => `${index + 1}) ${expression} = ${pools.answers[index]}`);
+        const calculationSvg = (solved = false) => svg("다섯 소수 나눗셈 계산", safeRows(pools.expressions.map((expression, index) => `${index + 1}) ${expression}${solved ? ` = ${pools.answers[index]}` : ""}`), 38, 25), solved, pools.answers);
+        const visual = calculationSvg(true);
+        const answerHtml = `${visual}${mathBoard("계산 결과", pools.answers.map((answer, index) => row(`${index + 1}번`, `${pools.expressions[index]} = ${answer}`)).join(""))}`;
+        return fixedResult(`다음을 계산하여 소수로 나타내세요.${mathBoard("계산할 식", pools.expressions.map((expression, index) => row(`${index + 1}번`, expression)).join(""))}${calculationSvg(false)}${support("나누어지는 수와 나누는 수의 자릿값을 맞추어 계산하세요.")}${challenge}${evidence(pools.answers.map(Number))}`, pools.answers.join(", "), `각 식을 계산하면 ${pools.answers.join(", ")}입니다.`, answerWrap(answerHtml, pools.answers.map(Number)));
+      }
+
+      if (variant === 1) {
+        const pools = [
+          { cards: [2, 3, 5, 8], best: "2.85÷3", answer: "0.95" },
+          { cards: [1, 2, 4, 8], best: "1.84÷2", answer: "0.92" },
+          { cards: [2, 4, 5, 9], best: "4.92÷5", answer: "0.984" }
+        ][poolIndex];
+        const candidateRows = poolIndex === 0 ? ["2.35÷8=.29375", "2.38÷5=.476", "2.53÷8=.31625", "2.58÷3=.86", "2.85÷3=.95"] : poolIndex === 1 ? ["1.24÷8=.155", "1.28÷4=.32", "1.48÷2=.74", "1.82÷4=.455", "1.84÷2=.92"] : ["2.45÷9=.272", "2.49÷5=.498", "4.25÷9=.472", "4.29÷5=.858", "4.92÷5=.984"];
+        const answerHtml = `${cardStrip(pools.cards, true)}${mathBoard("1보다 작은 몫을 비교", candidateRows.map((item, index) => row(`${index + 1}번 확인`, item)).join("") + row("가장 큰 몫", `${pools.best}=${pools.answer}`))}`;
+        return fixedResult(`수 카드 ${pools.cards.join(", ")}를 한 번씩만 사용하여 몫이 1보다 작은 소수 두 자리 수÷한 자리 수를 만들었습니다. 그중 가장 큰 몫을 구하세요.${cardStrip(pools.cards)}${support("카드로 만들 수 있는 수를 확인하고, 몫이 1보다 작은 경우를 비교하세요.")}${challenge}${evidence([...pools.cards, Number(pools.answer)])}`, pools.answer, `카드를 한 번씩 사용한 경우를 비교하면 1보다 작은 몫 중 가장 큰 것은 ${pools.best}=${pools.answer}입니다.`, answerWrap(answerHtml, [...pools.cards, Number(pools.answer)]));
+      }
+
+      if (variant === 2) {
+        const pools = [
+          { left: "22.■4", right: "4▲.78÷2", answer: 47 },
+          { left: "18.■6", right: "3▲.52÷2", answer: 69 },
+          { left: "31.■5", right: "6▲.30÷2", answer: 31 }
+        ][poolIndex];
+        const leftBase = Number(pools.left.replace("■", "0"));
+        const rightBase = Number(pools.right.replace("▲", "0").replace("÷2", ""));
+        const leftBaseHundredths = Math.round(leftBase * 100);
+        const rightBaseHundredths = Math.round(rightBase * 100);
+        const counts = Array.from({ length: 10 }, (_, triangle) => {
+          let count = 0;
+          for (let square = 0; square < 10; square += 1) if (2 * (leftBaseHundredths + square * 10) > rightBaseHundredths + triangle * 100) count += 1;
+          return count;
+        });
+        const answer = counts.reduce((sum, count) => sum + count, 0);
+        if (answer !== pools.answer) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 숫자쌍 검산값이 다릅니다.`);
+        const answerHtml = `${svg("0부터 9까지 숫자 카드 전수 확인", `<line class="source61-e1-grid-line" x1="34" y1="26" x2="34" y2="164"/><line class="source61-e1-grid-line" x1="34" y1="164" x2="326" y2="164"/>${safeRows(counts.map((count, index) => `▲=${index}: ■에 넣을 수 있는 수 ${count}개`), 43, 13)}<text class="source61-e1-result" x="180" y="181">모두 더한 수: ${answer}쌍</text>`, true, [answer])}${mathBoard("전수 확인 결과", row("확인한 조건", `${pools.left} &gt; ${pools.right}`) + row("모든 경우", `10×10=${100}쌍`) + row("조건에 맞는 경우", `${answer}쌍`))}`;
+        return fixedResult(`다음에서 숫자 ■와 ▲에 알맞은 수의 쌍은 모두 몇 개인가요?${mathBoard("두 수의 크기 비교", row("조건", `${pools.left} &gt; ${pools.right}`))}${support("▲를 하나 정한 뒤 ■에 0부터 9까지 차례로 넣어 보세요.")}${challenge}${evidence([leftBase, rightBase, answer])}`, String(answer), `■와 ▲에 0부터 9까지 차례로 넣어 확인하면 조건에 맞는 쌍이 모두 ${answer}개입니다.`, answerWrap(answerHtml, [answer]));
+      }
+
+      if (variant === 3) {
+        const pools = [
+          { low: 66.7, high: 72.4, divisor: 16, min: 66.72, max: 72.32 },
+          { low: 54.3, high: 61.8, divisor: 24, min: 54.48, max: 61.68 },
+          { low: 82.1, high: 90.6, divisor: 25, min: 82.25, max: 90.50 }
+        ][poolIndex];
+        const cents = [];
+        for (let scaled = Math.floor(pools.low * 100) + 1; scaled < Math.ceil(pools.high * 100); scaled += 1) if (scaled % pools.divisor === 0) cents.push(scaled / 100);
+        const answer = `${fixed2(pools.min)}, ${fixed2(pools.max)}`;
+        const answerHtml = `${svg("범위 안에서 나눌 수 있는 수직선", `<line class="source61-e1-number-line" x1="34" y1="94" x2="326" y2="94"/><line class="source61-e1-range" x1="88" y1="94" x2="272" y2="94"/><circle class="source61-e1-point" cx="${88 + (pools.min - pools.low) / (pools.high - pools.low) * 184}" cy="94" r="7"/><circle class="source61-e1-point" cx="${88 + (pools.max - pools.low) / (pools.high - pools.low) * 184}" cy="94" r="7"/><text x="88" y="70">${pools.low}</text><text x="272" y="70">${pools.high}</text><text class="source61-e1-result" x="180" y="137">가장 작은 수 ${fixed2(pools.min)} · 가장 큰 수 ${fixed2(pools.max)}</text>`, true, [pools.min, pools.max])}${mathBoard("나눌 수 있는 수", row("범위", `${pools.low} &lt; □ &lt; ${pools.high}`) + row("나누는 수", `${pools.divisor}`) + row("확인한 수", cents.map(fixed2).join(", ")) )}`;
+        return fixedResult(`${pools.low}보다 크고 ${pools.high}보다 작은 소수 둘째 자리 수 중 ${pools.divisor}로 나누어 소수 둘째 자리까지 나타낼 수 있는 수의 가장 큰 수와 가장 작은 수를 각각 구하세요.${mathBoard("조건", row("범위", `${pools.low} &lt; □ &lt; ${pools.high}`) + row("나누는 수", pools.divisor))}${support("범위 안의 소수 둘째 자리 수를 만들고 ${pools.divisor}로 나누어지는 수를 골라 보세요.")}${challenge}${evidence([pools.low, pools.high, pools.divisor, pools.min, pools.max], "two-values")}`, answer, `범위 안의 소수 둘째 자리 수 중 ${pools.divisor}로 나누어지는 수를 모두 확인하면 가장 작은 수는 ${fixed2(pools.min)}, 가장 큰 수는 ${fixed2(pools.max)}입니다.`, answerWrap(answerHtml, [pools.min, pools.max]));
+      }
+
+      if (variant === 4) {
+        const pools = [
+          { difference: 36.117, correct: 40.13, wrong: 4.013 },
+          { difference: 25.614, correct: 28.46, wrong: 2.846 },
+          { difference: 57.348, correct: 63.72, wrong: 6.372 }
+        ][poolIndex];
+        const answerHtml = `${svg("소수점 위치를 바로잡는 계산", `<text x="180" y="48">${fixed2(pools.correct)} - ${fixed3(pools.wrong)} = ${fixed3(pools.difference)}</text><line class="source61-e1-decimal-shift" x1="82" y1="78" x2="278" y2="78"/><path class="source61-e1-arrow" d="M105 68 V88 M180 68 V88 M255 68 V88"/><text class="source61-e1-result" x="180" y="126">잘못 찍은 소수점을 오른쪽으로 한 자리</text><text class="source61-e1-result" x="180" y="148">정답: ${fixed2(pools.correct)}</text>`, true, [pools.correct, pools.wrong, pools.difference])}${mathBoard("소수점 이동 확인", row("잘못 적은 답", fixed3(pools.wrong)) + row("정답", fixed2(pools.correct)) + row("차", fixed3(pools.difference)))}`;
+        return fixedResult(`소수의 곱셈을 계산할 때 소수점을 왼쪽으로 한 자리 옮겨 찍었더니 정답과의 차가 ${fixed3(pools.difference)}가 되었습니다. 올바른 답을 구하세요.${mathBoard("잘못 찍은 답과 차", row("잘못 찍은 답", fixed3(pools.wrong)) + row("정답과의 차", fixed3(pools.difference)))}${support("잘못 찍은 답은 올바른 답의 10분의 1이므로, 두 수의 차가 얼마인지 식으로 나타내 보세요.")}${challenge}${evidence([pools.difference, pools.correct, pools.wrong])}`, fixed2(pools.correct), `잘못 찍은 답은 올바른 답의 10분의 1입니다. 따라서 정답은 ${fixed3(pools.difference)}÷0.9=${fixed2(pools.correct)}입니다.`, answerWrap(answerHtml, [pools.correct, pools.wrong, pools.difference]));
+      }
+
+      if (variant === 5) {
+        const pools = [
+          [{ name: "가", expression: "28.98÷6", value: 4.83 }, { name: "나", expression: "57.26÷14", value: 4.09 }, { name: "다", expression: "41.2÷8", value: 5.15 }, { name: "라", expression: "83.2÷16", value: 5.2 }],
+          [{ name: "가", expression: "23.6÷5", value: 4.72 }, { name: "나", expression: "40.64÷8", value: 5.08 }, { name: "다", expression: "63.72÷12", value: 5.31 }, { name: "라", expression: "72.96÷16", value: 4.56 }],
+          [{ name: "가", expression: "32.52÷6", value: 5.42 }, { name: "나", expression: "59.52÷12", value: 4.96 }, { name: "다", expression: "23.05÷5", value: 4.61 }, { name: "라", expression: "41.44÷8", value: 5.18 }]
+        ][poolIndex];
+        const ordered = [...pools].sort((left, right) => Math.abs(left.value - 5) - Math.abs(right.value - 5));
+        const answer = ordered.map(item => item.name).join(", ");
+        const answerHtml = `${svg("5와의 거리를 비교하는 네 나눗셈", pools.map((item, index) => `<text x="180" y="${32 + index * 25}">${item.name}: ${item.expression} = ${fmt(item.value)} · 5와의 거리 ${fmt(Math.abs(item.value - 5))}</text>`).join("") + `<text class="source61-e1-result" x="180" y="150">가까운 순서: ${answer}</text>`, true, pools.map(item => item.value))}${mathBoard("5에 가까운 순서", ordered.map((item, index) => row(`${index + 1}번째`, `${item.name}: ${item.expression}=${fmt(item.value)} (거리 ${fmt(Math.abs(item.value - 5))})`)).join(""))}`;
+        return fixedResult(`다음 네 나눗셈 식의 계산 결과가 5에 가까운 순서대로 기호를 쓰세요.${mathBoard("네 나눗셈 식", pools.map(item => row(item.name, item.expression)).join(""))}${support("네 식을 먼저 계산한 뒤 각 결과와 5의 거리를 구하여 작은 거리부터 놓아 보세요.")}${challenge}${evidence(pools.map(item => item.value), "ordered-list")}`, answer, `네 식을 계산하면 ${pools.map(item => `${item.name}=${item.expression}=${fmt(item.value)}`).join(", ")}입니다. 5와의 거리를 비교하면 가까운 순서는 ${answer}입니다.`, answerWrap(answerHtml, pools.map(item => item.value)));
+      }
+
+      if (variant === 6) {
+        const pools = [
+          { first: ["64.48", "8", "7.06"], second: ["43.26", "6", "6.21"], answer: "0.85" },
+          { first: ["51.8", "7", "6.4"], second: ["54", "8", "5.75"], answer: "0.65" },
+          { first: ["37", "4", "8.25"], second: ["48.6", "6", "7.1"], answer: "1.15" }
+        ][poolIndex];
+        const calculate = item => `(${item[0]}-${item[1]})÷${item[1]}=${item[2]}`;
+        const answerHtml = `${svg("별표 연산의 계산 관계", `<text x="180" y="45">가★나 = (가-나)÷나</text><text x="180" y="82">${pools.first[0]}★${pools.first[1]} = ${pools.first[2]}</text><text x="180" y="112">${pools.second[0]}★${pools.second[1]} = ${pools.second[2]}</text><text class="source61-e1-result" x="180" y="153">두 결과의 차: ${pools.answer}</text>`, true, [Number(pools.answer)])}${mathBoard("연산을 계산하여 비교", row("첫 번째", calculate(pools.first)) + row("두 번째", calculate(pools.second)) + row("차", `${pools.first[2]}-${pools.second[2]}=${pools.answer}`))}`;
+        return fixedResult(`기호 ★에 대하여 가★나=(가-나)÷나와 같이 약속할 때, 다음 두 계산 결과의 차를 구하세요.${mathBoard("약속한 계산", row("연산", "가★나=(가-나)÷나") + row("첫 번째", `${pools.first[0]}★${pools.first[1]}`) + row("두 번째", `${pools.second[0]}★${pools.second[1]}`))}${support("★의 약속에 따라 두 계산을 각각 먼저 계산하세요.")}${challenge}${evidence([Number(pools.answer)])}`, pools.answer, `첫 번째 결과는 ${pools.first[2]}, 두 번째 결과는 ${pools.second[2]}이므로 차는 ${pools.answer}입니다.`, answerWrap(answerHtml, [Number(pools.answer)]));
+      }
+
+      if (variant === 7) {
+        const pools = [
+          { divisor: 4, add: 3.78, result: 7.83, number: 16.2, left: 5, right: 9, answer: 5.04 },
+          { divisor: 6, add: 2.35, result: 7.15, number: 28.8, left: 4, right: 8, answer: 10.8 },
+          { divisor: 5, add: 4.26, result: 9.06, number: 24, left: 6, right: 8, answer: 7 }
+        ][poolIndex];
+        const answerHtml = `${svg("한 수에서 두 나눗셈으로 나누어 보기", `<rect class="source61-e1-number-box" x="128" y="22" width="104" height="40"/><text x="180" y="49">${pools.number}</text><path class="source61-e1-arrow" d="M180 62 V84 M180 84 L105 126 M180 84 L255 126"/><text x="105" y="146">÷${pools.left}=${fmt(pools.number / pools.left)}</text><text x="255" y="146">÷${pools.right}=${fmt(pools.number / pools.right)}</text>`, true, [pools.number, pools.left, pools.right, pools.answer])}${mathBoard("두 몫의 합", row(`① = ${pools.number}÷${pools.left}`, fmt(pools.number / pools.left)) + row(`② = ${pools.number}÷${pools.right}`, fmt(pools.number / pools.right)) + row("①+②", fmt(pools.answer)))}`;
+        return fixedResult(`어떤 수를 ${pools.divisor}로 나눈 몫에 ${pools.add}을 더했더니 ${pools.result}이 되었습니다. 어떤 수를 ${pools.left}로 나눈 몫을 ①, ${pools.right}로 나눈 몫을 ②라고 할 때 ①과 ②의 합을 구하세요.${mathBoard("처음 조건", row(`어떤 수÷${pools.divisor}+${pools.add}`, pools.result) + row("구할 것", `①+②`))}${support(`먼저 어떤 수를 ${pools.divisor}로 나눈 몫을 구한 뒤, 어떤 수를 찾아 보세요.`)}${challenge}${evidence([pools.divisor, pools.add, pools.result, pools.number, pools.left, pools.right, pools.answer])}`, fmt(pools.answer), `어떤 수를 ${pools.divisor}로 나눈 몫은 ${pools.result}-${pools.add}=${fmt(pools.number / pools.divisor)}이므로 어떤 수는 ${pools.number}입니다. 따라서 ①+②=${pools.number}÷${pools.left}+${pools.number}÷${pools.right}=${fmt(pools.answer)}입니다.`, answerWrap(answerHtml, [pools.number, pools.left, pools.right, pools.answer]));
+      }
+
+      const pools = [
+        { cards: [2, 3, 4, 9], min: [2.34, 9, 0.26], max: [9.43, 2, 4.715], answer: 4.455 },
+        { cards: [2, 5, 6, 8], min: [2.56, 8, 0.32], max: [8.65, 2, 4.325], answer: 4.005 },
+        { cards: [2, 4, 6, 8], min: [2.46, 8, 0.3075], max: [8.64, 2, 4.32], answer: 4.0125 }
+      ][poolIndex];
+      const answerHtml = `${cardStrip(pools.cards, true)}${mathBoard("최소와 최대 식", row("가장 작은 몫", `${pools.min[0]}÷${pools.min[1]}=${fmt(pools.min[2])}`) + row("가장 큰 몫", `${pools.max[0]}÷${pools.max[1]}=${fmt(pools.max[2])}`) + row("차", `${fmt(pools.max[2])}-${fmt(pools.min[2])}=${fmt(pools.answer)}`))}`;
+      return fixedResult(`수 카드 ${pools.cards.join(", ")} 중 3장을 골라 소수 두 자리 수를 만들고, 남은 수 카드로 나누는 계산식을 만들었습니다. 몫이 가장 작은 경우와 가장 큰 경우의 차를 구하세요.${cardStrip(pools.cards)}${support("소수 두 자리 수와 나누는 수를 바꾸어 가며 가장 작은 몫과 가장 큰 몫을 찾아 보세요.")}${challenge}${evidence([...pools.cards, pools.min[0], pools.min[1], pools.max[0], pools.max[1], pools.answer])}`, fmt(pools.answer), `모든 카드 배치를 비교하면 가장 작은 몫은 ${pools.min[0]}÷${pools.min[1]}=${fmt(pools.min[2])}, 가장 큰 몫은 ${pools.max[0]}÷${pools.max[1]}=${fmt(pools.max[2])}입니다. 차는 ${fmt(pools.answer)}입니다.`, answerWrap(answerHtml, [...pools.cards, pools.answer]));
+    },
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5"
@@ -22577,6 +22723,7 @@
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
     [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
+    [type => type.sourceItemId?.startsWith("6-1-u3-e1-"), "sourceGrade6DecimalDivisionE1"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
