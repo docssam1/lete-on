@@ -17,7 +17,7 @@ Source-faithful interview practice is not the goal of this module. The passages 
 
 ## Cost boundary
 
-Economy mode makes at most one adaptive text request per passage and one final-report request. A two-passage mock therefore uses three text requests. The final request also improves every saved answer, so detailed corrections do not add more calls. The app does not request generated audio. Deep mode allows two adaptive requests per passage. Normalized turn feedback is cached locally, and deterministic coaching completes the session when the server is unavailable.
+Economy mode makes at most one adaptive text request per passage and one final-report request. A two-passage mock therefore uses three text requests. Answer-by-answer corrections are created during the interview, while the final request concentrates on the synthesis, three priorities, and seven-day route. The app does not request generated audio. Deep mode allows two adaptive requests per passage. Normalized turn feedback is cached locally, and deterministic coaching completes the session when the server is unavailable.
 
 The browser sends no learner name or audio file to the coach function. It sends the current original passage, question, short transcript, recent turns, and provisional scores. Full session transcripts remain in local storage on the current device.
 
@@ -25,7 +25,7 @@ The browser sends the opaque Supabase publishable key in the `apikey` header onl
 
 ## Server setup
 
-The Edge Function is in `supabase/functions/alpha-prep-coach`. Configure `OPENAI_API_KEY` as a Supabase secret, then deploy the function through the normal project release process. `ALPHA_PREP_MODEL` is optional and defaults to `gpt-5.6-luna`. The function enforces origin, payload-size, field-length, output-schema, and best-effort per-instance rate limits. A centralized production rate limit should be added if anonymous public traffic becomes substantial.
+The Edge Function is in `supabase/functions/alpha-prep-coach`. It forwards validated, text-only coaching requests to the existing Algebra 2 Vertex Gemini proxy and validates the structured response before returning it to the browser. No model credential is shipped to the browser or stored in this repository. `ALPHA_PREP_COACH_URL` can override the default proxy endpoint for an intentional server migration. The function enforces origin, publishable-key, payload-size, field-length, output-schema, and best-effort per-instance rate limits. A centralized production rate limit should be added if anonymous public traffic becomes substantial.
 
 ## Verification
 
