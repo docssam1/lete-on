@@ -126,24 +126,29 @@ if (!book1.sourceCoverage?.length || book1.sourceCoverage.some((entry) => entry.
 
 const book2 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-02");
 const approvedBook2Answers = new Map([
-  ["addition-matrix", ["3", "4", "6", "10", "16", "8"]],
-  ["balance-order", ["B,C", "B", "A>C>B"]],
-  ["dual-shape-color-pattern", ["◆"]],
-  ["diamond-number-promise", ["18", "9"]]
+  ["addition-matrix", [["matrix-1", "3"], ["matrix-2", "4"], ["matrix-3", "6"], ["matrix-4", "10"], ["matrix-5", "16"], ["matrix-6", "8"]]],
+  ["balance-order", [["b14-lighter", "B,C"], ["b14-lightest", "B"], ["b14-order", "A>C>B"]]],
+  ["dual-shape-color-pattern", [["pattern-8", "◆"]]],
+  ["diamond-number-promise", [["promise-1", "18"], ["promise-2", "9"]]]
 ]);
-for (const [lessonId, approvedAnswers] of approvedBook2Answers) {
+for (const [lessonId, approvedItems] of approvedBook2Answers) {
   const lesson = book2.lessons.find((candidate) => candidate.id === lessonId);
   if (!lesson) fail(`book-02: missing approved lesson ${lessonId}`);
-  const actualAnswers = lesson.original.items.map((item) => item.answer);
-  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
-    fail(`book-02/${lessonId}: approved original answers changed`);
+  for (const [itemId, approvedAnswer] of approvedItems) {
+    const item = lesson.original.items.find((candidate) => candidate.id === itemId);
+    if (!item) fail(`book-02/${lessonId}: missing approved item ${itemId}`);
+    const actualAnswer = Array.isArray(item.answer) ? item.answer[0] : item.answer;
+    if (actualAnswer !== approvedAnswer) fail(`book-02/${lessonId}/${itemId}: approved original answer changed`);
   }
-  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
+  if (lesson.original.items.some((item) => !item.parts?.length && item.answerMode !== "input")) {
     fail(`book-02/${lessonId}: source answer format changed`);
   }
 }
 const requiredBook2Units = ["매트릭스와 주고받기", "양팔저울", "규칙찾기와 수열", "약속과 스도쿠"];
 for (const unit of requiredBook2Units) if (!book2.lessons.some((lesson) => lesson.unit === unit)) fail(`book-02: missing ${unit}`);
+if (!book2.sourceCoverage?.length || book2.sourceCoverage.some((entry) => !String(entry.status).startsWith("implemented"))) fail("book-02: source-page audit is not complete");
+if (book2.lessons.length !== 18) fail(`book-02: expected 18 source lessons, got ${book2.lessons.length}`);
+if (book2.lessons.reduce((sum, lesson) => sum + lesson.original.items.length, 0) < 210) fail("book-02: source item expansion is incomplete");
 
 const book3 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-03");
 const approvedBook3Answers = new Map([
