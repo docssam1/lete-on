@@ -10,6 +10,7 @@ function canonical(answer) {
 let lessonCount = 0;
 let addedCount = 0;
 let generatedCount = 0;
+let sourceStructuredCount = 0;
 
 assert.equal(GOLDEN_BELL_BOOKS.length, 10, "Golden Bell must cover ten books");
 for (const book of GOLDEN_BELL_BOOKS) {
@@ -30,6 +31,9 @@ for (const book of GOLDEN_BELL_BOOKS) {
     if (similar.generatorId) {
       generatedCount += 1;
       assert.equal(similar.generatorId, GOLDEN_BELL_SIMILAR_GENERATOR_MAP[lesson.id], `${book.id}/${lesson.id}: generator provenance mismatch`);
+    } else if (similar.practiceKind === "source-structured-authored") {
+      sourceStructuredCount += 1;
+      assert.equal(book.id, "book-03", `${book.id}/${lesson.id}: unexpected source-structured practice provenance`);
     }
     lessonCount += 1;
     addedCount += lesson.similarPractice.length;
@@ -37,8 +41,11 @@ for (const book of GOLDEN_BELL_BOOKS) {
 }
 
 const expectedLessonCount = GOLDEN_BELL_BOOKS.reduce((sum, book) => sum + book.lessons.length, 0);
-const expectedGeneratedCount = GOLDEN_BELL_BOOKS.flatMap((book) => book.lessons).filter((lesson) => GOLDEN_BELL_SIMILAR_GENERATOR_MAP[lesson.id]).length;
+const expectedGeneratedCount = GOLDEN_BELL_BOOKS
+  .flatMap((book) => book.lessons)
+  .filter((lesson) => GOLDEN_BELL_SIMILAR_GENERATOR_MAP[lesson.id] && lesson.similarPractice[0].practiceKind !== "source-structured-authored")
+  .length;
 assert.equal(lessonCount, expectedLessonCount, "Golden Bell lesson count mismatch");
 assert.equal(addedCount, expectedLessonCount, "similar-practice coverage mismatch");
 assert.equal(generatedCount, expectedGeneratedCount, "bank-generated problem count mismatch");
-console.log(`GOLDEN_BELL_SIMILAR_OK books=10 lessons=${lessonCount} added=${addedCount} generated=${generatedCount} daily=2-per-lesson/30min`);
+console.log(`GOLDEN_BELL_SIMILAR_OK books=10 lessons=${lessonCount} added=${addedCount} generated=${generatedCount} sourceStructured=${sourceStructuredCount} daily=2-per-lesson/30min`);

@@ -14,7 +14,12 @@ const screenshotPrefix = process.env.GOLDEN_BELL_BOOK10_SCREENSHOT_PREFIX || pro
 async function unlockConcept(page) {
   await page.locator('.lesson-button[data-lesson="catch-up-acorns"]').click();
   const experience = page.locator(".progressive-concept");
-  for (let step = 0; step < 2; step += 1) await experience.locator('[data-experience-action="next"]').click();
+  for (let step = 0; step < 12 && await experience.locator("[data-experience-answer]").count() === 0; step += 1) {
+    const next = experience.locator('[data-experience-action="next"]');
+    assert.equal(await next.count(), 1, "concept ended before its final explanation");
+    await next.click();
+  }
+  assert.equal(await experience.locator("[data-experience-answer]").count(), 1, "concept answer control did not open after the final explanation");
   await experience.locator("[data-experience-answer]").click();
   await page.locator('.stage-step[data-phase="original"]').click();
 }

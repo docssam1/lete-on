@@ -185,7 +185,10 @@ function unitGridAreaMarkup(visual) {
 }
 
 function equalFractionSourceMarkup(visual) {
-  const selected = (index) => (index - visual.rotation + visual.parts) % visual.parts < visual.shaded;
+  const explicit = Array.isArray(visual.shadedIndices) ? new Set(visual.shadedIndices) : null;
+  const selected = (index) => explicit
+    ? explicit.has(index)
+    : (index - visual.rotation + visual.parts) % visual.parts < visual.shaded;
   if (visual.template === "circle-radial") {
     const cx = 110;
     const cy = 100;
@@ -259,6 +262,15 @@ function shapeAreaGrowthMarkup(visual) {
 }
 
 function nestedSquareMarkup(visual) {
+  if (visual.sourceVariant === "diamond-outer") {
+    const outer = [[100,18],[166,84],[100,150],[34,84]];
+    const inner = [[100,51],[133,84],[100,117],[67,84]];
+    return `<svg class="b3-svg b3-nested-square b3-source-nested" viewBox="0 0 300 175" role="img" aria-label="안쪽 파란 마름모의 넓이로 바깥 주황 마름모의 넓이 구하기"><polygon class="source-target" points="${pointsText(outer)}"/><polygon class="source-given" points="${pointsText(inner)}"/><text x="215" y="67">파랑 ${visual.givenArea}</text><text x="215" y="94">주황 ?</text></svg>`;
+  }
+  if (visual.sourceVariant === "square-diamond") {
+    const diamond = [[100,48],[136,84],[100,120],[64,84]];
+    return `<svg class="b3-svg b3-nested-square b3-source-nested" viewBox="0 0 300 175" role="img" aria-label="바깥 파란 정사각형의 넓이로 안쪽 주황 마름모의 넓이 구하기"><rect class="source-given" x="28" y="12" width="144" height="144"/><polygon class="source-target" points="${pointsText(diamond)}"/><text x="215" y="67">파랑 ${visual.givenArea}</text><text x="215" y="94">주황 ?</text></svg>`;
+  }
   const max = Math.max(...visual.sides);
   const rects = visual.sides.map((side) => {
     const dimension = 145 * side / max;
@@ -390,7 +402,10 @@ export function partitionGeometryForAudit(template) {
 
 function sourcePartitionMarkup(visual) {
   const geometry = sourcePartitionGeometry(visual.template);
-  const selected = (index) => (index - visual.rotation + visual.parts) % visual.parts < visual.shaded;
+  const explicit = Array.isArray(visual.shadedIndices) ? new Set(visual.shadedIndices) : null;
+  const selected = (index) => explicit
+    ? explicit.has(index)
+    : (index - visual.rotation + visual.parts) % visual.parts < visual.shaded;
   const cells = geometry.cells.map((cell, index) => `<polygon class="partition-cell${selected(index) ? " shade" : ""}" points="${pointsText(cell)}"/>`).join("");
   const orderedSegments = geometry.segments.map((segment, index) => geometry.segments[(index + (visual.lineShift || 0)) % geometry.segments.length]);
   const visibleSegments = visual.complete ? geometry.segments : orderedSegments.slice(0, visual.visibleLines || 0);
@@ -555,8 +570,65 @@ function numberLineMarkup(visual) {
 function segmentChainMarkup(visual) {
   const xs = [45, 145, 245, 345];
   const labels = visual.labels.map((label, index) => `<circle cx="${xs[index]}" cy="90" r="5"/><text x="${xs[index]}" y="119">${label}</text>`).join("");
-  const arc = (from, to, y, text) => `<path d="M${xs[from]} 82Q${(xs[from] + xs[to]) / 2} ${y} ${xs[to]} 82"/><text x="${(xs[from] + xs[to]) / 2}" y="${y + 5}">${text}cm</text>`;
-  return `<svg class="b3-svg b3-segment-chain" viewBox="0 0 390 145" role="img" aria-label="A B C D 사이의 겹친 거리"><line x1="45" y1="90" x2="345" y2="90"/>${labels}${arc(0,2,28,visual.givens.AC)}${arc(1,3,48,visual.givens.BD)}${arc(0,3,8,visual.givens.AD)}<text x="195" y="138">${visual.target} = ?</text></svg>`;
+  const arc = (from, to, y, text) => text == null || text === "" || text === "?" ? "" : `<path d="M${xs[from]} 82Q${(xs[from] + xs[to]) / 2} ${y} ${xs[to]} 82"/><text x="${(xs[from] + xs[to]) / 2}" y="${y + 5}">${text}cm</text>`;
+  const givens = visual.givens || {};
+  return `<svg class="b3-svg b3-segment-chain" viewBox="0 0 390 150" role="img" aria-label="A B C D 사이의 겹친 거리"><line x1="45" y1="90" x2="345" y2="90"/>${labels}${arc(0,3,6,givens.AD)}${arc(0,2,27,givens.AC)}${arc(1,3,47,givens.BD)}${arc(1,2,67,givens.BC)}<text x="195" y="142">${visual.target} = ?</text></svg>`;
+}
+
+function slideEightFractionMarkup(visual) {
+  const cellMarkup = (cells, shadedIndices) => {
+    const shaded = new Set(shadedIndices);
+    return cells.map((cell, index) => `<polygon class="partition-cell${shaded.has(index) ? " shade" : ""}" points="${pointsText(cell)}"/>`).join("");
+  };
+  const segmentMarkup = (segments) => segments.map(([from, to]) => `<line x1="${from[0]}" y1="${from[1]}" x2="${to[0]}" y2="${to[1]}"/>`).join("");
+
+  const left = 20;
+  const top = 10;
+  const right = 200;
+  const bottom = 190;
+  const middleX = (left + right) / 2;
+  const middleY = (top + bottom) / 2;
+  const outline = [[left, top], [right, top], [right, bottom], [left, bottom]];
+
+  if (visual.template === "square-eight") {
+    const center = [middleX, middleY];
+    const topMiddle = [middleX, top];
+    const rightMiddle = [right, middleY];
+    const bottomMiddle = [middleX, bottom];
+    const leftMiddle = [left, middleY];
+    const cells = [
+      [[left, top], topMiddle, center], [[left, top], center, leftMiddle],
+      [topMiddle, [right, top], center], [[right, top], rightMiddle, center],
+      [rightMiddle, [right, bottom], center], [[right, bottom], bottomMiddle, center],
+      [bottomMiddle, [left, bottom], center], [[left, bottom], leftMiddle, center]
+    ];
+    const segments = [
+      [topMiddle, bottomMiddle], [leftMiddle, rightMiddle],
+      [[left, top], center], [[right, top], center], [[right, bottom], center], [[left, bottom], center]
+    ];
+    return `<svg class="b3-svg b3-source-partition b3-slide8-fraction" viewBox="0 0 220 200" role="img" aria-label="정사각형을 같은 크기의 여덟 삼각형으로 나눈 원본 구조">${cellMarkup(cells, [1, 2, 5])}<polygon class="partition-outline" points="${pointsText(outline)}"/><g class="partition-lines">${segmentMarkup(segments)}</g></svg>`;
+  }
+
+  if (visual.template !== "square-sixteen") return "";
+  const quadrants = [
+    [left, top, middleX, middleY], [middleX, top, right, middleY],
+    [left, middleY, middleX, bottom], [middleX, middleY, right, bottom]
+  ];
+  const cells = quadrants.flatMap(([x1, y1, x2, y2]) => {
+    const center = [(x1 + x2) / 2, (y1 + y2) / 2];
+    return [
+      [[x1, y1], [x2, y1], center], [[x2, y1], [x2, y2], center],
+      [[x2, y2], [x1, y2], center], [[x1, y2], [x1, y1], center]
+    ];
+  });
+  const segments = [
+    [[middleX, top], [middleX, bottom]], [[left, middleY], [right, middleY]],
+    ...quadrants.flatMap(([x1, y1, x2, y2]) => {
+      const center = [(x1 + x2) / 2, (y1 + y2) / 2];
+      return [[[x1, y1], center], [[x2, y1], center], [[x2, y2], center], [[x1, y2], center]];
+    })
+  ];
+  return `<svg class="b3-svg b3-source-partition b3-slide8-fraction" viewBox="0 0 220 200" role="img" aria-label="정사각형을 같은 크기의 열여섯 삼각형으로 나눈 원본 구조">${cellMarkup(cells, [1, 3, 5, 11, 13, 15])}<polygon class="partition-outline" points="${pointsText(outline)}"/><g class="partition-lines">${segmentMarkup(segments)}</g></svg>`;
 }
 
 function overlappingRodsMarkup(visual) {
@@ -673,8 +745,211 @@ function equalLineEightCompleteMarkup(visual) {
   return `${cardStrip(visual.cards)}<div class="equal-line-eight-work"><svg viewBox="0 0 260 260" role="img" aria-label="1부터 8까지를 한 번씩 놓아 네 줄의 합 맞추기"><g class="equal-eight-lines"><path d="M45 45H215V215H45Z"/></g><g class="equal-eight-nodes">${nodes}</g><text class="equal-eight-sum" x="130" y="136">합: ${visual.lineSum}</text></svg></div>`;
 }
 
+function sourceFractionStageMarkup(visual) {
+  const lineMarkup = (segments) => segments.map(([from,to]) => `<line x1="${from[0]}" y1="${from[1]}" x2="${to[0]}" y2="${to[1]}"/>`).join("");
+  const fillMarkup = (polygons) => polygons.map((polygon) => `<polygon class="partition-cell shade" points="${pointsText(polygon)}"/>`).join("");
+  const triangleTop = [110,12];
+  const triangleLeft = [18,176];
+  const triangleRight = [202,176];
+  const leftMiddle = midpoint(triangleTop,triangleLeft);
+  const rightMiddle = midpoint(triangleTop,triangleRight);
+  const baseMiddle = midpoint(triangleLeft,triangleRight);
+  const topBaseMiddle = midpoint(leftMiddle,rightMiddle);
+  const quarterSegments = [[leftMiddle,rightMiddle],[leftMiddle,baseMiddle],[rightMiddle,baseMiddle]];
+
+  let outline;
+  let segments;
+  let fills;
+  if (visual.template.startsWith("source-triangle")) {
+    outline = [triangleTop,triangleLeft,triangleRight];
+    segments = [...quarterSegments];
+    fills = [[triangleTop,leftMiddle,rightMiddle]];
+    if (visual.template === "source-triangle-eighth") {
+      segments.push([triangleTop,topBaseMiddle]);
+      fills = [[triangleTop,topBaseMiddle,rightMiddle]];
+    }
+    if (visual.template === "source-triangle-twelfth") {
+      const quarterCenter = centroid([triangleTop,leftMiddle,rightMiddle]);
+      segments.push([triangleTop,quarterCenter],[leftMiddle,quarterCenter],[rightMiddle,quarterCenter]);
+      fills = [[triangleTop,quarterCenter,rightMiddle]];
+    }
+    if (visual.template === "source-triangle-sixteenth") {
+      const upperLeft = midpoint(triangleTop,leftMiddle);
+      const upperRight = midpoint(triangleTop,rightMiddle);
+      segments.push([upperLeft,upperRight],[upperLeft,topBaseMiddle],[upperRight,topBaseMiddle]);
+      fills = [[triangleTop,upperLeft,upperRight]];
+    }
+  } else {
+    const topLeft = [60,18];
+    const topRight = [160,18];
+    const right = [210,98];
+    const bottomRight = [160,178];
+    const bottomLeft = [60,178];
+    const left = [10,98];
+    const center = [110,98];
+    const lowerCenter = midpoint(left,bottomRight);
+    outline = [topLeft,topRight,right,bottomRight,bottomLeft,left];
+    const solidFaces = [[left,center],[topRight,center],[bottomRight,center]];
+    segments = [...solidFaces];
+    fills = [[left,center,bottomRight,bottomLeft]];
+    if (visual.template === "source-solid-sixth") {
+      segments.push([left,bottomRight]);
+      fills = [[left,bottomLeft,bottomRight]];
+    }
+    if (visual.template === "source-solid-twelfth" || visual.template === "source-solid-five-twelfths") {
+      segments.push([left,bottomRight],[bottomLeft,center]);
+      fills = [[left,bottomLeft,lowerCenter]];
+      if (visual.template === "source-solid-five-twelfths") fills = [[topLeft,topRight,center,left],[bottomLeft,bottomRight,lowerCenter]];
+    }
+    if (visual.template === "source-solid-eighteenth" || visual.template === "source-solid-twenty-fourth") {
+      segments = outline.map((point) => [point,center]);
+      if (visual.template === "source-solid-eighteenth") {
+        const sectorCenter = centroid([center,bottomLeft,bottomRight]);
+        segments.push([center,sectorCenter],[bottomLeft,sectorCenter],[bottomRight,sectorCenter]);
+        fills = [[bottomLeft,bottomRight,sectorCenter]];
+      } else {
+        const leftHalf = midpoint(center,bottomLeft);
+        const rightHalf = midpoint(center,bottomRight);
+        const baseHalf = midpoint(bottomLeft,bottomRight);
+        segments.push([leftHalf,rightHalf],[leftHalf,baseHalf],[rightHalf,baseHalf]);
+        fills = [[leftHalf,rightHalf,baseHalf]];
+      }
+    }
+  }
+  const shapeName = visual.template.startsWith("source-triangle") ? "삼각형" : "육각 입체 모양";
+  return `<svg class="b3-svg b3-source-partition b3-source-fraction-stage" viewBox="0 0 220 188" role="img" aria-label="${shapeName}에서 색칠한 부분을 분수로 나타내는 그림">${fillMarkup(fills)}<polygon class="partition-outline" points="${pointsText(outline)}"/><g class="partition-lines">${lineMarkup(segments)}</g></svg>`;
+}
+
+function foldedTapeSourceMarkup(visual) {
+  const points = visual.points || [];
+  const xs = points.map(([x]) => x);
+  const ys = points.map(([,y]) => y);
+  const maxX = Math.max(1,...xs);
+  const maxY = Math.max(1,...ys);
+  const cell = Math.min(45, 170 / maxX, 130 / maxY);
+  const offsetX = (220 - maxX * cell) / 2;
+  const offsetY = 28;
+  const mapped = points.map(([x,y]) => [offsetX + x * cell,offsetY + y * cell]);
+  const grid = [
+    ...Array.from({ length:maxX + 1 },(_,index) => `<line x1="${offsetX + index * cell}" y1="${offsetY}" x2="${offsetX + index * cell}" y2="${offsetY + maxY * cell}"/>`),
+    ...Array.from({ length:maxY + 1 },(_,index) => `<line x1="${offsetX}" y1="${offsetY + index * cell}" x2="${offsetX + maxX * cell}" y2="${offsetY + index * cell}"/>`)
+  ].join("");
+  const folds = mapped.slice(1,-1).map(([x,y]) => `<circle cx="${x}" cy="${y}" r="4"/>`).join("");
+  return `<svg class="b3-svg b3-folded-tape-source" viewBox="0 0 220 190" role="img" aria-label="1센티미터 모눈 위에 접혀 있는 색테이프"><g class="tape-grid">${grid}</g><polyline class="tape-path" points="${pointsText(mapped)}"/><g class="tape-folds">${folds}</g><text x="110" y="174">한 칸 ${esc(visual.unitLabel || "1cm")}</text></svg>`;
+}
+
+function areaGridCompositeMarkup(visual) {
+  const polygons = visual.polygons || [];
+  const points = polygons.flat();
+  const maxX = Math.max(1, ...points.map(([x]) => x));
+  const maxY = Math.max(1, ...points.map(([, y]) => y));
+  const unit = 32;
+  const pad = 18;
+  const width = maxX * unit;
+  const height = maxY * unit;
+  const grid = [
+    ...Array.from({ length: maxX + 1 }, (_, index) => `<path d="M${pad + index * unit} ${pad}V${pad + height}"/>`),
+    ...Array.from({ length: maxY + 1 }, (_, index) => `<path d="M${pad} ${pad + index * unit}H${pad + width}"/>`)
+  ].join("");
+  const shapes = polygons.map((polygon) => `<polygon points="${pointsText(polygon.map(([x, y]) => [pad + x * unit, pad + y * unit]))}"/>`).join("");
+  return `<svg class="b3-svg b3-area-composite" viewBox="0 0 ${width + pad * 2} ${height + pad * 2}" role="img" aria-label="단위넓이 모눈 위의 도형"><g class="grid">${grid}</g><g class="shape">${shapes}</g></svg>`;
+}
+
+function alternatingAreaMarkup(visual) {
+  const shown = visual.stages || [1, 2, 4, 8, 16];
+  const figures = shown.map((area, index) => {
+    const side = Math.sqrt(area) * 17;
+    const x = 48 + index * 82;
+    const y = 68;
+    const rotation = index % 2 ? 45 : 0;
+    return `<g transform="translate(${x} ${y}) rotate(${rotation})"><rect x="${-side / 2}" y="${-side / 2}" width="${side}" height="${side}"/></g><text x="${x}" y="128">${index + 1}번째</text><text x="${x}" y="146">넓이 ${area}</text>`;
+  }).join("");
+  return `<svg class="b3-svg b3-alternating-area" viewBox="0 0 420 165" role="img" aria-label="정사각형과 마름모가 번갈아 커지는 넓이 규칙">${figures}<text x="210" y="158">${visual.target || 7}번째 넓이 = ?</text></svg>`;
+}
+
+function fractionGridMarkup(visual) {
+  const rows = visual.rows;
+  const columns = visual.columns;
+  const selected = new Set(visual.shadedIndices || Array.from({ length: visual.shaded || 0 }, (_, index) => index));
+  return `<div class="b3-fraction-grid" style="--rows:${rows};--columns:${columns}" role="img" aria-label="같은 크기 ${rows * columns}칸 중 ${selected.size}칸을 색칠한 그림">${Array.from({ length: rows * columns }, (_, index) => `<i class="${selected.has(index) ? "shade" : ""}"></i>`).join("")}</div>`;
+}
+
+function distanceChainSourceMarkup(visual) {
+  const positions = visual.positions || [0, 1, 2, 3];
+  const min = Math.min(...positions);
+  const max = Math.max(...positions);
+  const range = Math.max(1, max - min);
+  const xs = positions.map((value) => 38 + (value - min) / range * 344);
+  const labels = (visual.labels || positions.map(String)).map((label, index) => `<line x1="${xs[index]}" y1="92" x2="${xs[index]}" y2="108"/><text x="${xs[index]}" y="125">${esc(label)}</text>`).join("");
+  const spans = (visual.spans || []).map((span, index) => {
+    const from = xs[span.from];
+    const to = xs[span.to];
+    const above = span.side !== "below";
+    const apex = above ? 22 + index * 11 : 151 + index * 11;
+    const baseline = above ? 92 : 108;
+    const labelY = above ? apex - 5 : apex + 13;
+    return `<path d="M${from} ${baseline}Q${(from + to) / 2} ${apex} ${to} ${baseline}"/><text x="${(from + to) / 2}" y="${labelY}">${esc(span.label)}</text>`;
+  }).join("");
+  return `<svg class="b3-svg b3-distance-source" viewBox="0 0 420 180" role="img" aria-label="겹친 거리 관계"><line class="base" x1="38" y1="100" x2="382" y2="100"/>${labels}${spans}</svg>`;
+}
+
+function multipleModelMarkup(visual) {
+  const cells = (count, className) => Array.from({ length: count }, () => `<i class="${className}"></i>`).join("");
+  return `<div class="b3-multiple-model" role="img" aria-label="기준량과 비교량의 배수 관계"><div><b>${esc(visual.baseLabel || "기준")}</b><span>${cells(visual.baseUnits || 1, "base")}</span></div><div><b>${esc(visual.compareLabel || "비교")}</b><span>${cells(visual.compareUnits, "compare")}</span></div>${visual.values ? `<strong>${esc(visual.values)}</strong>` : ""}</div>`;
+}
+
+function ratioBarsMarkup(visual) {
+  const bars = (count, className) => Array.from({ length: count }, () => `<i class="${className}"></i>`).join("");
+  return `<div class="b3-ratio-bars" role="img" aria-label="두 막대의 같은 길이 묶음 비교"><div><b>ㄱ</b><span>${bars(visual.topUnits, "top")}</span></div><div><b>ㄴ</b><span>${bars(visual.bottomUnits, "bottom")}</span></div>${visual.given ? `<strong>${esc(visual.given)}</strong>` : ""}</div>`;
+}
+
+function cryptarithmBoardMarkup(visual) {
+  const addends = visual.addends || [];
+  const sum = visual.sum || [];
+  const width = Math.max(1, sum.length, ...addends.map((row) => row.length));
+  const row = (cells, sign = "") => `<div style="--columns:${width}"><b>${sign}</b>${Array.from({ length: width - cells.length }, () => "<i></i>").join("")}${cells.map((cell) => `<i>${esc(cell)}</i>`).join("")}</div>`;
+  return `<div class="b3-cryptarithm-board" role="img" aria-label="자리 맞춘 세로 덧셈 복면산">${addends.map((cells, index) => row(cells, index === addends.length - 1 ? "+" : "")).join("")}<hr>${row(sum)}</div>`;
+}
+
+function binaryStripMarkup(visual) {
+  const selected = new Set(visual.selected || []);
+  return `<div class="b3-binary-strip" role="img" aria-label="각 칸의 값을 더해 수를 나타내는 마법카드"><div>${visual.weights.map((weight, index) => `<span class="${selected.has(index) ? "selected" : ""}"><b>${weight ?? "?"}</b></span>`).join("")}</div>${visual.target != null ? `<strong>나타낼 수 ${visual.target}</strong>` : ""}</div>`;
+}
+
+function starCodeMarkup(visual) {
+  const outer = regularPoints(5, 110, 100, 76);
+  const inner = regularPoints(5, 110, 100, 31, -Math.PI / 2 + Math.PI / 5);
+  const star = outer.flatMap((point, index) => [point, inner[index]]);
+  const center = [110, 100];
+  const selected = new Set(visual.selected || []);
+  const wedges = Array.from({ length: 5 }, (_, index) => {
+    const a = star[(index * 2 + 9) % 10];
+    const b = star[(index * 2) % 10];
+    const c = star[(index * 2 + 1) % 10];
+    return `<polygon class="${selected.has(index) ? "selected" : ""}" points="${pointsText([center, a, b, c])}"/>`;
+  }).join("");
+  return `<svg class="b3-svg b3-star-code" viewBox="0 0 220 205" role="img" aria-label="색칠한 별 조각의 값을 더하는 마법카드">${wedges}<polygon class="outline" points="${pointsText(star)}"/><text x="110" y="101">${visual.center ?? "?"}</text></svg>`;
+}
+
+function mathExpressionMarkup(visual) {
+  return `<div class="b3-math-expression" role="img" aria-label="${esc(visual.ariaLabel || "수식")}">${esc(visual.expression)}</div>`;
+}
+
 export function book03Markup(visual) {
   if (!visual || visual.kind !== "book3") return "";
+  if (visual.subtype === "area-grid-composite") return areaGridCompositeMarkup(visual);
+  if (visual.subtype === "alternating-area") return alternatingAreaMarkup(visual);
+  if (visual.subtype === "fraction-grid") return fractionGridMarkup(visual);
+  if (visual.subtype === "distance-chain-source") return distanceChainSourceMarkup(visual);
+  if (visual.subtype === "multiple-model") return multipleModelMarkup(visual);
+  if (visual.subtype === "ratio-bars") return ratioBarsMarkup(visual);
+  if (visual.subtype === "cryptarithm-board") return cryptarithmBoardMarkup(visual);
+  if (visual.subtype === "binary-strip") return binaryStripMarkup(visual);
+  if (visual.subtype === "star-code") return starCodeMarkup(visual);
+  if (visual.subtype === "math-expression") return mathExpressionMarkup(visual);
+  if (visual.subtype === "source-fraction-stage") return sourceFractionStageMarkup(visual);
+  if (visual.subtype === "slide8-fraction-source") return slideEightFractionMarkup(visual);
+  if (visual.subtype === "folded-tape-source") return foldedTapeSourceMarkup(visual);
   if (visual.subtype === "tangram-composition-source") return tangramCompositionMarkup(visual);
   if (visual.subtype === "tangram-area-source") return tangramAreaMarkup(visual);
   if (visual.subtype === "unit-grid-area") return unitGridAreaMarkup(visual);

@@ -1,4 +1,5 @@
 import { book02Markup } from "./book02-renderers.js?v=20260904b";
+import { book03Markup } from "./book03-renderers.js?v=20260905a";
 
 function foldVisual(phase) {
   const folded = ["folded", "cut"].includes(phase);
@@ -171,9 +172,15 @@ function bookTwoSourceVisual(experience, beat, step) {
   return `<div class="guided-book2-source ${beat.phase || "step"}" data-book2-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book02Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
 }
 
+function bookThreeSourceVisual(experience, beat, step) {
+  const itemVisual = beat.visual || experience.model?.visuals?.[step] || experience.model?.visual;
+  return `<div class="book03-visual guided-book3-source ${beat.phase || "step"}" data-book3-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book03Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
+}
+
 export function guidedConceptVisual(experience, step) {
   const beat = experience.beats[Math.max(0, Math.min(step, experience.beats.length - 1))];
   if (experience.family?.startsWith("book2-")) return bookTwoSourceVisual(experience, beat, step);
+  if (experience.family?.startsWith("book3-")) return bookThreeSourceVisual(experience, beat, step);
   if (experience.family === "fold-symmetry") return foldVisual(beat.phase);
   if (experience.family === "double-fold-symmetry") return doubleFoldVisual(beat.phase);
   if (experience.family === "equal-line") return equalLineVisual(beat.phase, experience.model);

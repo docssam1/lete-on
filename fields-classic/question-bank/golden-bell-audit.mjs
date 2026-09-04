@@ -151,21 +151,39 @@ if (book2.lessons.length !== 18) fail(`book-02: expected 18 source lessons, got 
 if (book2.lessons.reduce((sum, lesson) => sum + lesson.original.items.length, 0) < 210) fail("book-02: source item expansion is incomplete");
 
 const book3 = GOLDEN_BELL_BOOKS.find((book) => book.id === "book-03");
-const approvedBook3Answers = new Map([
-  ["six-multiple-equations", ["14", "21", "30", "4", "2", "1", "14", "28", "42", "123", "77", "272"]],
-  ["multiple-comparison", ["4", "6", "7", "2", "8", "5", "7"]],
-  ["basic-vertical-cryptarithm", ["3", "8", "1", "2", "7", "2"]],
-  ["magic-square-targets", ["30", ["12", "16"], "18", "45", "27", "27", "5", "21", "9"]]
-]);
-for (const [lessonId, approvedAnswers] of approvedBook3Answers) {
-  const lesson = book3.lessons.find((candidate) => candidate.id === lessonId);
-  if (!lesson) fail(`book-03: missing approved lesson ${lessonId}`);
-  const actualAnswers = lesson.original.items.map((item) => item.answer);
-  if (JSON.stringify(actualAnswers) !== JSON.stringify(approvedAnswers)) {
-    fail(`book-03/${lessonId}: approved original answers changed`);
-  }
-  if (lesson.original.items.some((item) => item.answerMode !== "input")) {
-    fail(`book-03/${lessonId}: source answer format changed`);
+const expectedBook3LessonIds = [
+  "unit-area-shapes", "six-multiple-equations", "fraction-shading", "equal-partition-fractions",
+  "tape-length-midpoints", "overlapping-distance", "multiple-comparison", "basic-vertical-cryptarithm",
+  "cryptarithm-repeated", "cryptarithm-mixed", "cryptarithm-linked", "magic-card-binary", "magic-square-targets"
+];
+const expectedBook3ItemCounts = [13, 12, 15, 10, 13, 9, 18, 4, 11, 8, 7, 14, 10];
+if (JSON.stringify(book3.lessons.map((lesson) => lesson.id)) !== JSON.stringify(expectedBook3LessonIds)) {
+  fail("book-03: source lesson order changed");
+}
+if (JSON.stringify(book3.lessons.map((lesson) => lesson.original.items.length)) !== JSON.stringify(expectedBook3ItemCounts)) {
+  fail("book-03: source lesson item counts changed");
+}
+const book3Items = book3.lessons.flatMap((lesson) => lesson.original.items.map((item) => ({ lesson, item })));
+if (book3Items.length !== 144) fail(`book-03: expected 144 public source items, got ${book3Items.length}`);
+if (book3.sourceCoverage?.length !== 13 || book3.sourceCoverage.some((entry) => !String(entry.status).startsWith("implemented"))) {
+  fail("book-03: expected 13 implemented source coverage entries");
+}
+const book3HeldItems = book3.lessons.reduce((sum, lesson) => sum + Number(lesson.sourceHold?.itemCount || 0), 0);
+if (book3HeldItems !== 6
+  || book3.lessons.find((lesson) => lesson.id === "fraction-shading")?.sourceHold?.itemCount !== 3
+  || book3.lessons.find((lesson) => lesson.id === "basic-vertical-cryptarithm")?.sourceHold?.itemCount !== 2
+  || book3.lessons.find((lesson) => lesson.id === "magic-square-targets")?.sourceHold?.itemCount !== 1) {
+  fail("book-03: expected three fraction holds, two basic cryptarithm holds, and one magic-square hold");
+}
+for (const { lesson, item } of book3Items) {
+  if (!item.solution?.trim() || item.solution.trim().length < 24) fail(`book-03/${lesson.id}/${item.id}: worked solution missing`);
+  if (item.parts?.length) {
+    if (new Set(item.parts.map((part) => part.id)).size !== item.parts.length
+      || item.parts.some((part) => !part.id || part.answer === undefined || !String(part.answer).trim())) {
+      fail(`book-03/${lesson.id}/${item.id}: incomplete multi-part answer`);
+    }
+  } else if (item.answer === undefined || !String(item.answer).trim() || item.answerMode !== "input") {
+    fail(`book-03/${lesson.id}/${item.id}: invalid public answer format`);
   }
 }
 const requiredBook3Units = ["단위넓이와 분수", "단위길이와 배수", "복면산", "마법카드와 마방진"];

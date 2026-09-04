@@ -3,6 +3,7 @@ import { attachOriginalSolutions } from "./golden-bell-original-solutions.js?v=2
 import { attachGoldenBellSimilarPractice } from "./golden-bell-similar-practice.js?v=20260904c";
 import { expandBookOneGoldenBell } from "./golden-bell-book01-source.js?v=20260904c";
 import { expandBookTwoGoldenBell } from "./golden-bell-book02-source.js?v=20260904b";
+import { expandBookThreeGoldenBell } from "./golden-bell-book03-source.js?v=20260905a";
 
 export const GOLDEN_BELL_BOOKS = Object.freeze([
   {
@@ -503,10 +504,9 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
     title: "단위넓이와 복면산",
     status: "ready",
     source: {
-      file: "더클래식_1과정_3N30권_골든벨_220609.ppt",
-      studentFile: "더클래식_1과정_3N30권_학생용(무답)_.골든벨_.pptx",
+      file: "교사용 골든벨 3권",
       verified: true,
-      note: "교사용·학생용 각 30슬라이드를 같은 위치의 그림과 빈칸으로 대조"
+      note: "교사용 30슬라이드를 문제·풀이·답 표시까지 대조"
     },
     lessons: [
       {
@@ -2813,6 +2813,7 @@ export const GOLDEN_BELL_BOOKS = Object.freeze([
 
 expandBookOneGoldenBell(GOLDEN_BELL_BOOKS[0]);
 expandBookTwoGoldenBell(GOLDEN_BELL_BOOKS[1]);
+expandBookThreeGoldenBell(GOLDEN_BELL_BOOKS[2]);
 attachCourseOneProgressiveExperiences(GOLDEN_BELL_BOOKS);
 attachOriginalSolutions(GOLDEN_BELL_BOOKS);
 attachGoldenBellSimilarPractice(GOLDEN_BELL_BOOKS);
