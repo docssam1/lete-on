@@ -1893,7 +1893,10 @@ function fixNegSigns(tex){
 function w2ExampleHtml(threadId, level, code){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
   const p = generateProblem(threadId, level, rng);
-  const hasSteps = Array.isArray(p.steps) && p.steps.length;
+  /* steps(드릴 위젯용) 또는 solution(예시 전용 풀이 — 중·고등 생성기가 2026-09-04부터 제공,
+     위젯·인쇄 채점에는 쓰이지 않는다) 둘 중 있는 것을 풀이 줄로 쓴다. */
+  const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
+  const hasSteps = !!(stepSrc && stepSrc.length);
   let bodyHtml;
   /* 그림 문항(모으기·가르기 등 BOND_THREADS)은 격자 칸과 같은 그림으로 보여준다 —
      여기서 parseVert로 먼저 걸러지면 격자와 다른(세로셈) 모양이 나가 버린다. */
@@ -1903,8 +1906,9 @@ function w2ExampleHtml(threadId, level, code){
   } else if(hasSteps){
     const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer));
     const completedHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
-    const stepParts = p.steps.map(s => {
-      const t = fixNegSigns(String(s.tex||'').replace(/\\square/g, '\\color{#d33}{' + String(fmtAns(s.blank)) + '}'));
+    const stepParts = stepSrc.map(s => {
+      /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */
+      const t = ('blank' in s) ? fixNegSigns(texSubstituteAnswer(String(s.tex||''), s.blank)) : String(s.tex||'');
       return `<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span>`;
     });
     bodyHtml = completedHtml
