@@ -40,23 +40,23 @@
   ]);
 
   function classify(id, section, level, question, expectedMultipleValues) {
-    return item({ id: id, section: section, strand: "statistical-question", level: level, kind: "question-classification", responseFormat: "choice-id", prompt: tr("답이 여러 가지로 나올 수 있는지 생각해 보고, 통계적 질문인지 고르세요.", "Decide whether the question is statistical.", "判断下面的问题是不是统计问题。"), question: question, choices: QUESTION_CHOICES, data: { expectedMultipleValues: expectedMultipleValues }, errorCode: "single-answer-confusion" });
+    return item({ id: id, section: section, strand: "statistical-question", standardIds:freeze(["6.SP.A.1"]), level: level, kind: "question-classification", responseFormat: "choice-id", prompt: tr("답이 여러 가지로 나올 수 있는지 생각해 보고, 통계적 질문인지 고르세요.", "Decide whether the question is statistical.", "判断下面的问题是不是统计问题。"), question: question, choices: QUESTION_CHOICES, data: { expectedMultipleValues: expectedMultipleValues }, errorCode: "single-answer-confusion" });
   }
   function variation(id, section, level, question, options) {
-    return item({ id: id, section: section, strand: "anticipated-variability", level: level, kind: "variability-source", responseFormat: "choice-id", prompt: tr("이 질문에 답하려면 어떤 자료를 모아야 하나요?", "What data should you collect to answer this question?", "要回答这个问题，应该收集什么数据？"), question: question, choices: freeze(options), data: {}, errorCode: "wrong-varying-quantity" });
+    return item({ id: id, section: section, strand: "anticipated-variability", standardIds:freeze(["6.SP.A.1"]), level: level, kind: "variability-source", responseFormat: "choice-id", prompt: tr("이 질문에 답하려면 어떤 자료를 모아야 하나요?", "What data should you collect to answer this question?", "要回答这个问题，应该收集什么数据？"), question: question, choices: freeze(options), data: {}, errorCode: "wrong-varying-quantity" });
   }
   function variabilityChoice(id, label, varies) { return freeze({ id: id, label: label, variesAcrossGroup: varies === true }); }
   function compare(id, section, level, ask, valuesA, valuesB) {
     const prompt = ask === "spread"
       ? tr("범위를 구해 보세요. 어느 자료가 더 넓게 퍼져 있습니까?", "Compare the ranges. Which data set has the greater spread?", "比较两组数据的极差。哪组数据更分散？")
       : tr("평균을 구해 보세요. 어느 자료의 평균이 더 큽니까?", "Compare the means. Which data set has the greater mean?", "比较两组数据的平均数。哪组数据的平均数更大？");
-    return item({ id: id, section: section, strand: "distribution-features", level: level, kind: "distribution-comparison", responseFormat: "choice-id", prompt: prompt, question: tr("같은 눈금에 나타낸 자료 A와 B를 비교하세요.", "Compare data sets A and B shown on the same scale.", "比较画在同一刻度上的A组和B组数据。"), choices: COMPARE_CHOICES, data: { ask: ask, valuesA: freeze(valuesA), valuesB: freeze(valuesB) }, errorCode: ask === "spread" ? "center-only" : "spread-only" });
+    return item({ id: id, section: section, strand: "distribution-features", standardIds:freeze(["6.SP.A.2"]), level: level, kind: "distribution-comparison", responseFormat: "choice-id", prompt: prompt, question: tr("같은 눈금에 나타낸 자료 A와 B를 비교하세요.", "Compare data sets A and B shown on the same scale.", "比较画在同一刻度上的A组和B组数据。"), choices: COMPARE_CHOICES, data: { ask: ask, valuesA: freeze(valuesA), valuesB: freeze(valuesB) }, errorCode: ask === "spread" ? "center-only" : "spread-only" });
   }
   function measure(id, section, level, measureName) {
-    return item({ id: id, section: section, strand: "center-vs-variation", level: level, kind: "measure-role", responseFormat: "choice-id", prompt: tr(measureName.ko + topicParticle(measureName.ko) + " 자료의 중심과 퍼짐 중 어느 것을 나타냅니까?", "Does " + measureName.en + " describe the center of the data or their variability (spread)?", measureName["zh-Hans"] + "表示数据的中心位置，还是离散程度？"), question: measureName, choices: ROLE_CHOICES, data: { measure: measureName.key }, errorCode: "measure-role-confusion" });
+    return item({ id: id, section: section, strand: "center-vs-variation", standardIds:freeze(["6.SP.A.3"]), level: level, kind: "measure-role", responseFormat: "choice-id", prompt: tr(measureName.ko + topicParticle(measureName.ko) + " 자료의 중심과 퍼짐 중 어느 것을 나타냅니까?", "Does " + measureName.en + " describe the center of the data or their variability (spread)?", measureName["zh-Hans"] + "表示数据的中心位置，还是离散程度？"), question: measureName, choices: ROLE_CHOICES, data: { measure: measureName.key }, errorCode: "measure-role-confusion" });
   }
   function synthesis(id, section, level, valuesA, valuesB) {
-    return item({ id: id, section: section, strand: "distribution-synthesis", level: level, kind: "same-center-spread", responseFormat: "choice-id", prompt: tr("두 자료의 평균과 범위를 구한 뒤 옳은 설명을 고르세요.", "Find the mean and range of each data set, then choose the correct statement.", "求出两组数据的平均数和极差，再选择正确的描述。"), question: tr("두 자료의 중심과 퍼진 정도를 함께 비교하세요.", "Compare the center and spread of the two data sets.", "比较两组数据的中心位置和离散程度。"), choices: SYNTHESIS_CHOICES, data: { valuesA: freeze(valuesA), valuesB: freeze(valuesB) }, errorCode: "one-measure-only" });
+    return item({ id: id, section: section, strand: "distribution-synthesis", standardIds:freeze(["6.SP.A.2","6.SP.A.3"]), level: level, kind: "same-center-spread", responseFormat: "choice-id", prompt: tr("두 자료의 평균과 범위를 구한 뒤 옳은 설명을 고르세요.", "Find the mean and range of each data set, then choose the correct statement.", "求出两组数据的平均数和极差，再选择正确的描述。"), question: tr("두 자료의 중심과 퍼진 정도를 함께 비교하세요.", "Compare the center and spread of the two data sets.", "比较两组数据的中心位置和离散程度。"), choices: SYNTHESIS_CHOICES, data: { valuesA: freeze(valuesA), valuesB: freeze(valuesB) }, errorCode: "one-measure-only" });
   }
 
   const q = {
@@ -189,12 +189,17 @@
     id: "gfield-grade6-sp-a-unit-workbook-v1",
     clusterId: "6.SP.A",
     standardRange: "6.SP.A.1-3",
+    standardsAlignment: freeze({
+      assessed: ["6.SP.A.1","6.SP.A.2","6.SP.A.3"],
+      bridgeOnly: ["6.SP.B.4","6.SP.B.5"],
+      bridgeLimit: "Provided dot plots and mean-range comparisons do not establish independent graph construction or contextual distribution summaries."
+    }),
     learnerStage: "US Grade 6 ages 11-12",
     contentOrigin: "gfield-original-authored-public-unit-workbook",
     rights: { publication:"public", assetRights:"original", containsThirdPartyAssets:false },
     title: tr("6.SP.A 통계적 질문과 자료의 분포", "6.SP.A Statistical Questions and Data Distributions", "6.SP.A 统计问题与数据分布"),
     subtitle: tr("여러 답이 나올 수 있는 질문을 찾고, 자료가 어디에 모이며 얼마나 퍼져 있는지 살펴봅니다.", "Explore how answers vary and describe the center and spread of numerical data.", "找出因人而异的答案，并描述数据的中心位置和离散程度。"),
-    scopeNotice: tr("이 책은 미국 6학년 통계 기준 6.SP.A.1-3을 배웁니다. 통계적 질문과 자료의 중심·퍼짐을 연습합니다. 조사 계획이나 분포를 말로 설명하는 활동은 선생님이 따로 확인하며, 이 책의 점수만으로 승급을 결정하지 않습니다.", "This book teaches US Grade 6 standards 6.SP.A.1-3. Students work with statistical questions and the center and variability of data. A teacher separately reviews data-collection plans and spoken explanations. This book alone does not determine promotion.", "本练习册学习美国六年级数学标准6.SP.A.1-3，练习统计问题以及数据的中心位置和离散程度。调查方案和口头解释由教师另行评估，不能只凭本练习册的成绩决定晋级。"),
+    scopeNotice: tr("이 책의 평가 범위는 미국 6학년 통계 기준 6.SP.A.1-3입니다. 통계적 질문, 자료의 분포, 중심과 퍼짐을 나타내는 값을 연습합니다. 제시된 점그래프와 평균·범위 비교는 6.SP.B.4-5로 이어지는 연결 연습이며, 그래프 작성과 맥락 설명을 마쳤다는 증거로 사용하지 않습니다. 조사 계획과 설명은 선생님이 따로 확인하고, 이 책만으로 승급을 결정하지 않습니다.", "This book assesses US Grade 6 standards 6.SP.A.1-3: statistical questions, distributions, and measures of center and variability. Provided dot plots and mean-range comparisons bridge to 6.SP.B.4-5; they do not demonstrate independent graph construction or contextual summaries. A teacher separately reviews those performances, and this book alone does not determine promotion.", "本练习册评估美国六年级数学标准6.SP.A.1-3：统计问题、数据分布以及表示中心位置和离散程度的量。所提供的点图和平均数、极差比较只是衔接6.SP.B.4-5的练习，不能证明学生已经能够独立作图或结合情境概括数据。相关表现由教师另行评估，不能只凭本练习册决定晋级。"),
     conceptPages: freeze([
       { title:tr("개념 1 · 통계적 질문", "Concept 1 · Statistical questions", "概念1 · 统计问题"), body:tr("통계적 질문은 여러 사람에게 묻거나 여러 번 관찰했을 때 서로 다른 답이 나올 수 있는 질문입니다. 질문을 읽고 누구에게서 어떤 자료를 모아야 하는지 찾아보세요.", "A statistical question expects the answers to vary. Identify who or what is observed and which value may differ.", "统计问题的答案会因人或每次观测而不同。读题时，要找出观测对象和可能不同的数据。"), example:tr("‘우리 반 학생들은 학교까지 오는 데 몇 분이 걸리는가?’는 학생마다 답이 다를 수 있으므로 통계적 질문입니다.", "‘How many minutes does it take students in our class to travel to school?’ is statistical because the answers may differ from student to student.", "“我们班学生上学需要多少分钟？”是统计问题，因为每名学生的答案可能不同。") },
       { title:tr("개념 2 · 자료의 중심과 퍼짐", "Concept 2 · Center and spread of a distribution", "概念2 · 数据的中心位置与离散程度"), body:tr("자료를 점그래프 등에 나타내면 값들이 어디쯤 모이는지(중심), 얼마나 흩어져 있는지(퍼짐), 어떤 모양인지 살펴볼 수 있습니다. 평균과 중앙값은 중심을 나타냅니다. 범위와 평균 절대 편차는 퍼짐을 나타냅니다. 평균 절대 편차는 각 값이 평균에서 떨어진 거리의 평균입니다.", "Describe a numerical data distribution by its center, spread, and overall shape. The mean and median are measures of center. The range and mean absolute deviation (MAD) are measures of variability, or spread.", "描述一组数值数据的分布时，要看中心位置、离散程度和整体形状。平均数和中位数反映中心位置；极差和平均绝对偏差反映离散程度。"), example:tr("평균이 같아도 범위가 다르면 자료가 퍼진 정도는 다릅니다. 평균과 범위를 함께 살펴보세요.", "Two data sets can have the same mean but different spreads. Compare both the mean and the range.", "两组数据的平均数可以相同，但离散程度不同。因此要同时比较平均数和极差。") }
@@ -282,6 +287,7 @@
   function validateItem(candidate) {
     if (!candidate || !/^spa-[wr]\d{2}$/.test(candidate.id)) throw new Error("SPA_ITEM_INVALID");
     if (!STRANDS[candidate.strand] || !ERROR_GUIDES[candidate.errorCode]) throw new Error("SPA_ALIGNMENT_INVALID");
+    if (!Array.isArray(candidate.standardIds) || candidate.standardIds.length === 0 || candidate.standardIds.some(function (standardId) { return !PACK.standardsAlignment.assessed.includes(standardId); })) throw new Error("SPA_STANDARD_ALIGNMENT_INVALID");
     ["ko","en","zh-Hans"].forEach(function (locale) {
       if (!text(candidate.prompt, locale) || !text(candidate.question, locale)) throw new Error("SPA_LOCALE_INVALID");
       candidate.choices.forEach(function (choice) { if (!text(choice.label, locale)) throw new Error("SPA_CHOICE_LOCALE_INVALID"); });
@@ -298,6 +304,7 @@
     const sectionCounts = Object.fromEntries(PACK.ui.sectionOrder.map(function (section) { return [section, PACK.workbookItems.filter(function (entry) { return entry.section === section; }).length]; }));
     if (sectionCounts.questions !== 8 || sectionCounts.variability !== 8 || sectionCounts.distributions !== 8 || sectionCounts.measures !== 8 || sectionCounts.synthesis !== 4) throw new Error("SPA_SECTION_COUNT_INVALID");
     if (new Set(PACK.recheckItems.map(function (entry) { return entry.strand; })).size !== 5) throw new Error("SPA_RECHECK_COVERAGE_INVALID");
+    if (new Set(all.flatMap(function (entry) { return entry.standardIds; })).size !== 3 || PACK.standardsAlignment.bridgeOnly.join(",") !== "6.SP.B.4,6.SP.B.5") throw new Error("SPA_STANDARD_COVERAGE_INVALID");
     return true;
   }
   validatePack();
