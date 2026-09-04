@@ -615,6 +615,51 @@
     return Boolean(window.SpeechRecognition || window.webkitSpeechRecognition);
   }
 
+  function normalizeSpeechText(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function speechTokenKey(value) {
+    return String(value || '').toLowerCase().replace(/^[^a-z0-9']+|[^a-z0-9']+$/g, '');
+  }
+
+  function mergeSpeechText(existing, incoming) {
+    const left = normalizeSpeechText(existing);
+    const right = normalizeSpeechText(incoming);
+    if (!left) return right;
+    if (!right) return left;
+
+    const leftWords = left.split(' ');
+    const rightWords = right.split(' ');
+    const leftKeys = leftWords.map(speechTokenKey);
+    const rightKeys = rightWords.map(speechTokenKey);
+    const sameWords = (first, second) => first.length === second.length
+      && first.every((word, index) => word === second[index]);
+
+    if (leftKeys.length <= rightKeys.length && sameWords(leftKeys, rightKeys.slice(0, leftKeys.length))) {
+      return right;
+    }
+    if (rightKeys.length <= leftKeys.length && sameWords(rightKeys, leftKeys.slice(0, rightKeys.length))) {
+      return left;
+    }
+
+    for (let overlap = Math.min(leftKeys.length, rightKeys.length); overlap > 0; overlap -= 1) {
+      if (sameWords(leftKeys.slice(-overlap), rightKeys.slice(0, overlap))) {
+        return [...leftWords, ...rightWords.slice(overlap)].join(' ');
+      }
+    }
+    return `${left} ${right}`;
+  }
+
+  function speechTranscript(results) {
+    let transcript = '';
+    for (let index = 0; index < results.length; index += 1) {
+      const alternative = results[index] && results[index][0];
+      if (alternative) transcript = mergeSpeechText(transcript, alternative.transcript);
+    }
+    return transcript;
+  }
+
   function startMic() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition || state.listening) return;
@@ -623,33 +668,34 @@
       recognition = new SpeechRecognition();
       recognition.lang = 'en-US';
       recognition.interimResults = true;
-      recognition.continuous = true;
+      recognition.continuous = false;
       recognition.maxAlternatives = 1;
-      let finalText = state.answerDraft.trim();
+      const draftBeforeMic = normalizeSpeechText(state.answerDraft);
+      let heardThisTurn = '';
+      let recognitionFailed = false;
       recognition.onstart = () => {
         state.listening = true;
-        state.notice = 'Speak naturally. Pause when your idea is complete.';
+        state.notice = 'Speak one complete idea. Tap the microphone again to add more.';
         render();
       };
       recognition.onresult = (event) => {
-        let interim = '';
-        for (let index = event.resultIndex; index < event.results.length; index += 1) {
-          const text = event.results[index][0].transcript.trim();
-          if (event.results[index].isFinal) finalText = `${finalText} ${text}`.trim();
-          else interim += ` ${text}`;
-        }
-        state.answerDraft = `${finalText}${interim}`.trim();
+        heardThisTurn = speechTranscript(event.results);
+        state.answerDraft = mergeSpeechText(draftBeforeMic, heardThisTurn).slice(0, 900).trim();
         const textarea = document.getElementById('answer-draft');
         if (textarea) textarea.value = state.answerDraft;
         const stats = document.querySelector('.answer-stats span');
         if (stats) stats.textContent = `${wordCount(state.answerDraft)} words`;
       };
       recognition.onerror = (event) => {
+        recognitionFailed = true;
         state.notice = event.error === 'not-allowed' ? 'Microphone permission was not granted. You can type instead.' : 'I could not hear clearly. Try once more or type your answer.';
       };
       recognition.onend = () => {
         state.listening = false;
         recognition = null;
+        if (!recognitionFailed && heardThisTurn) {
+          state.notice = 'Voice captured. Tap the microphone again to add another idea.';
+        }
         render();
       };
       recognition.start();
