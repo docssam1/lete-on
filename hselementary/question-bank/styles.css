@@ -1340,3 +1340,56 @@ button{
   .answer-page:has(.source61-e3-diagram) .solution-list{display:block}
   .answer-page:has(.source61-e3-diagram) .solution-item+.solution-item{margin-top:9px}
 }
+
+/* E4 solids keep the source geometry legible in both the question and answer views. */
+.geometry-diagram.source61-e4-diagram{display:block;width:min(430px,100%);height:auto;margin:12px auto 0;overflow:visible;aspect-ratio:330/220}
+.source61-e4-diagram text{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:0;paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round}
+.source61-e4-edge{fill:none;stroke:#244b68;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.source61-e4-hidden-edge{stroke:#7b91a2;stroke-width:1.45;stroke-dasharray:5 4;opacity:.78}
+.source61-e4-face{fill:#dfeef5;fill-opacity:.42;stroke:#244b68;stroke-width:1.7;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.source61-e4-face:nth-of-type(4n+2){fill:#fff0bd;fill-opacity:.42}
+.source61-e4-side-face{fill:#e8f3f7;fill-opacity:.52}
+.source61-e4-vertex{fill:#244b68;stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke}
+.source61-e4-cut-mark,.source61-e4-midpoint{fill:#b77909;stroke:#fff;stroke-width:1.1;vector-effect:non-scaling-stroke}
+.source61-e4-midpoint.is-highlight{fill:#c84b3f}
+.source61-e4-cut-plane{fill:#f5d991;fill-opacity:.24;stroke:#b77909;stroke-width:1.25;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
+.source61-e4-section-highlight{fill:#f1c75b;fill-opacity:.27;stroke:#bd7808;stroke-width:2.2;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.source61-e4-join-arrow{fill:none;stroke:#bd7808;stroke-width:2;stroke-dasharray:5 4}
+.source61-e4-answer .source61-e4-diagram{margin-top:0}
+.source61-e4-diagram text{dominant-baseline:middle;text-anchor:middle}
+.source61-e4-diagram .source61-e4-face~text,.source61-e4-diagram .source61-e4-result-label{fill:#9a6500;font-weight:950}
+.source61-e4-cube-pyramids{aspect-ratio:330/300!important}
+.source61-e4-truncated-pyramid{aspect-ratio:330/230!important}
+.source61-e4-tetrahedron{aspect-ratio:330/220!important}
+.source61-e4-joined-solid{aspect-ratio:330/180!important}
+.source61-e4-bipyramid{aspect-ratio:330/190!important}
+.source61-e4-cube-pyramids.is-solved,.source61-e4-joined-solid.is-solved,.source61-e4-bipyramid.is-solved{aspect-ratio:330/300!important}
+.source61-e4-answer .source61-math-board{width:min(430px,100%);margin-top:0}
+.source61-e4-answer .source61-math-row>b{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:0}
+.source61-e4-diagram .source61-e4-paper-name{fill:#244b68;font-size:13px;font-weight:950}
+.source61-e4-diagram .source61-e4-result-label{fill:#9a251f;font-size:12px;font-weight:950}
+@media(max-width:720px){
+  .geometry-diagram.source61-e4-diagram{width:min(330px,100%);margin-top:8px}
+  .source61-e4-diagram text{font-size:10px}
+  .source61-e4-answer .source61-math-row{grid-template-columns:minmax(78px,.7fr) minmax(0,1.3fr);gap:7px;padding:7px 8px}
+  .source61-e4-answer .source61-math-row>b{font-size:13px}
+}
+@media print{
+  .geometry-diagram.source61-e4-diagram{width:min(310px,100%);max-height:210px;margin:6px auto 0}
+  .source61-e4-answer .source61-math-board{margin-top:5px}
+  .print-page:has(.source61-e4-diagram) .question-item,.print-page:has(.source61-e4-diagram) .solution-item{break-inside:avoid;page-break-inside:avoid}
+  .answer-page:has(.source61-e4-diagram) .solution-list{display:block}
+  .answer-page:has(.source61-e4-diagram) .solution-item+.solution-item{margin-top:9px}
+}
+
+/* The shared answer rule caps every SVG at 220px; E4 must preserve each viewBox ratio. */
+.solution-answer-visual .geometry-diagram.source61-e4-diagram{
+  height:auto!important;
+  max-height:none!important;
+}
+@media print{
+  .solution-answer-visual .geometry-diagram.source61-e4-diagram{
+    height:auto!important;
+    max-height:none!important;
+  }
+}

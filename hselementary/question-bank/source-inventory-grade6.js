@@ -1624,7 +1624,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e4-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "typeLabel": "삼각뿔 두 개를 붙인 입체의 면·모서리·꼭짓점 세기",
+      "typeLabel": "같은 육각뿔 두 개를 붙인 입체의 면·모서리·꼭짓점 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -16331,14 +16331,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     ["6-1-u2-e3-example-3-1", ["sourceGrade6PrismsPyramidsE3", 0]],
     ["6-1-u2-e3-mission-1", ["sourceGrade6PrismsPyramidsE3", 1]],
     ["6-1-u2-e3-mission-5", ["sourceGrade6PrismsPyramidsE3", 2]],
-    ["6-1-u2-e3-mission-6", ["sourceGrade6PrismsPyramidsE3", 3]]
+    ["6-1-u2-e3-mission-6", ["sourceGrade6PrismsPyramidsE3", 3]],
+    ["6-1-u2-e4-example-4-1", ["sourceGrade6PrismsPyramidsE4", 0, 1]],
+    ["6-1-u2-e4-example-4-2", ["sourceGrade6PrismsPyramidsE4", 1]],
+    ["6-1-u2-e4-example-4-4", ["sourceGrade6PrismsPyramidsE4", 2]],
+    ["6-1-u2-e4-mission-1", ["sourceGrade6PrismsPyramidsE4", 3]],
+    ["6-1-u2-e4-mission-4", ["sourceGrade6PrismsPyramidsE4", 4]]
   ]);
   window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     if (!verifiedPools.has(item.sourceItemId)) return;
-    [item.generatorKey, item.variant] = verifiedPools.get(item.sourceItemId);
+    const [generatorKey, variant, verifiedVariantCount = 3] = verifiedPools.get(item.sourceItemId);
+    [item.generatorKey, item.variant] = [generatorKey, variant];
     item.reviewLocked = false;
     item.reviewReason = "";
     item.answerVisualStatus = "verified";
-    item.verifiedVariantCount = 3;
+    item.verifiedVariantTarget = verifiedVariantCount;
+    item.verifiedVariantCount = verifiedVariantCount;
   });
 })();

@@ -990,11 +990,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 1,
-      "sourceShape": "각뿔과 각기둥을 함께 보거나 전개도·겉면 경로를 이용해 필요한 길이·면·구성 요소를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 13쪽 예제 4-1. 정육면체의 여섯 면에 같은 사각뿔을 하나씩 붙인 입체의 면·모서리·꼭짓점 수를 모두 더함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 구조와 독립 계산 값 74를 대조했습니다. 모양을 바꾸면 유형이 달라지므로 문제·답 그림이 같은 고정 검증 문항 1개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e4-example-2",
@@ -1006,11 +1006,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 2,
-      "sourceShape": "각뿔과 각기둥을 함께 보거나 전개도·겉면 경로를 이용해 필요한 길이·면·구성 요소를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 13쪽 예제 4-2. 각뿔의 모든 모서리를 세 부분으로 나누고 각 꼭짓점을 잘라 남은 입체의 면·모서리·꼭짓점 수를 모두 더함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 사각뿔의 값 50과 일반 n각뿔 절단 계산을 독립 대조하고, 절단 전후 도형을 함께 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e4-example-3",
@@ -1038,11 +1038,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 4,
-      "sourceShape": "각뿔과 각기둥을 함께 보거나 전개도·겉면 경로를 이용해 필요한 길이·면·구성 요소를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 13쪽 예제 4-4. 모든 모서리가 같은 삼각뿔의 네 모서리 가운데 점을 이은 사각형 둘레로 삼각뿔의 모든 모서리 길이 합을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 둘레 20cm와 독립 계산 값 60cm를 대조하고, 같은 점·선분 자료로 가운데 점 사각형을 다시 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e4-mission-1",
@@ -1054,11 +1054,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 1,
-      "sourceShape": "각뿔과 각기둥을 함께 보거나 전개도·겉면 경로를 이용해 필요한 길이·면·구성 요소를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 14쪽 Mission 1. 밑면의 크기와 모양이 같은 사각뿔과 사각기둥을 밑면끼리 붙인 입체의 면·모서리·꼭짓점 수를 각각 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 사각형 밑면의 값 면 9개·모서리 16개·꼭짓점 9개를 독립 계산하고, 공유 밑면을 표시한 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e4-mission-2",
@@ -1102,11 +1102,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 4,
-      "sourceShape": "각뿔과 각기둥을 함께 보거나 전개도·겉면 경로를 이용해 필요한 길이·면·구성 요소를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 14쪽 Mission 4. 같은 육각뿔 두 개를 밑면끼리 붙인 입체의 면·모서리·꼭짓점 수의 합을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 육각형 밑면의 독립 계산 값 38을 대조하고, 문제에는 붙이기 전 두 입체를, 답에는 완성된 입체를 다시 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e4-mission-5",

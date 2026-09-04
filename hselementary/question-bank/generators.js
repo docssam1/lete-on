@@ -21296,6 +21296,269 @@
       const answerVisual = `${paperAndSolidsSvg({ ...data, solved: true })}${mathBoard("두 입체의 모서리 합", row("삼각기둥", `${data.prismEdges}cm`) + row("사각뿔", `${data.pyramidEdges}cm`) + row("차", `${data.prismEdges}-${data.pyramidEdges}=${answer}cm`))}`;
       return fixedResult(`가, 나, 다 세 가지 종이를 사용하여 두 입체도형을 만들었습니다. 재석은 삼각형 가 2장, 직사각형 나 2장, 정사각형 다 1장을 사용하여 삼각기둥을 만들었습니다. 현재는 가 4장, 나 0장, 다 1장을 사용하여 사각뿔을 만들었습니다. 두 입체도형의 모든 모서리 길이의 차는 몇 cm인지 구하세요.${promptVisual}${support("두 입체의 모서리를 종류별로 나누어 각각 한 번씩 세어 보세요.")}${challenge}${evidence("paper-solids-edge-difference", [data.triangle[0], data.triangle[1], data.triangle[2], data.rectangle[0], data.rectangle[1], data.square[0], data.square[1], data.prismEdges, data.pyramidEdges, answer])}`, `${answer}cm`, `삼각기둥은 삼각형 두 개의 둘레와 옆모서리 세 개를 더해 ${data.prismEdges}cm입니다. 사각뿔은 밑면의 네 변과 옆모서리 네 개를 더해 ${data.pyramidEdges}cm입니다. 따라서 두 합의 차는 ${data.prismEdges}-${data.pyramidEdges}=${answer}cm입니다.`, answerVisual);
     },
+    sourceGrade6PrismsPyramidsE4({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u2-e4-example-4-1",
+        "6-1-u2-e4-example-4-2",
+        "6-1-u2-e4-example-4-4",
+        "6-1-u2-e4-mission-1",
+        "6-1-u2-e4-mission-4"
+      ];
+      const poolCounts = [1, 3, 3, 3, 3];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 4 원문 분기는 0부터 4까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, poolCounts[variant] - 1);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림의 면과 모서리의 관계를 스스로 찾아 식으로 나타내어 계산해 보세요.</p>` : "";
+      const evidenceKinds = ["cube-six-pyramid-assembly", "pyramid-vertex-truncation", "tetrahedron-midpoint-quadrilateral", "prism-pyramid-base-join", "pyramid-base-to-base"];
+      const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e4-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body) => `<div class="source61-math-board"><strong>${title}</strong>${body}</div>`;
+      const line = (a, b, className = "source61-e4-edge", extra = "") => `<line class="${className}" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}" ${extra}/>`;
+      const polygon = (points, className = "source61-e4-face", extra = "") => `<polygon class="${className}" points="${points.map(point => `${point[0].toFixed(2)},${point[1].toFixed(2)}`).join(" ")}" ${extra}/>`;
+      const circle = (point, className = "source61-e4-vertex", extra = "") => `<circle class="${className}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.7" ${extra}/>`;
+      const ring = (n, cx, cy, rx, ry, phase = -Math.PI / 2) => Array.from({ length: n }, (_, index) => {
+        const angle = phase + index * Math.PI * 2 / n;
+        return [cx + rx * Math.cos(angle), cy + ry * Math.sin(angle)];
+      });
+      const midpoint = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      const interpolate = (a, b, ratio) => [a[0] + (b[0] - a[0]) * ratio, a[1] + (b[1] - a[1]) * ratio];
+      const edgeKey = (a, b) => [a, b].sort().join("|");
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-e4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><span hidden data-source61-prism-e4-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}" data-difficulty-design="${difficultyDesign}"></span>${answerBody}<div class="solution-answer-caption">문제의 도형을 다시 그려 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: poolCounts[variant],
+        sourceItemId
+      });
+
+      const cubePyramidSvg = ({ solved = false }) => {
+        const cube = [[58, 92], [158, 92], [158, 184], [58, 184], [106, 56], [206, 56], [206, 148], [106, 148]];
+        const faceDefs = [
+          { name: "front", corners: [0, 1, 2, 3], apex: [68, 250] },
+          { name: "right", corners: [1, 5, 6, 2], apex: [258, 132] },
+          { name: "back", corners: [5, 4, 7, 6], apex: [224, 8] },
+          { name: "left", corners: [4, 0, 3, 7], apex: [8, 132] },
+          { name: "top", corners: [4, 5, 1, 0], apex: [74, 8] },
+          { name: "bottom", corners: [3, 2, 6, 7], apex: [214, 278] }
+        ];
+        const cubeEdges = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
+        if (!solved) {
+          const wire = cubeEdges.map(([a, b], index) => line(cube[a], cube[b], `source61-e4-edge${index > 4 && index < 9 ? " source61-e4-hidden-edge" : ""}`)).join("");
+          const glyph = (cx, cy, scale, index) => {
+            const base = [[cx - 16 * scale, cy + 10 * scale], [cx + 16 * scale, cy + 10 * scale], [cx + 9 * scale, cy - 9 * scale], [cx - 9 * scale, cy - 9 * scale]];
+            const apex = [cx, cy - 27 * scale];
+            return `<g class="source61-e4-separate-pyramid">${base.map((point, i) => line(apex, point, "source61-e4-edge")).join("")}${base.map((point, i) => line(point, base[(i + 1) % 4], "source61-e4-edge")).join("")}</g>`;
+          };
+          return `<svg class="geometry-diagram source61-e4-diagram source61-e4-cube-pyramids" viewBox="0 0 330 300" role="img" aria-label="정육면체의 각 면에 합동인 사각뿔을 붙이는 관계 그림" data-source61-e4-structure="cube-six-pyramid-assembly" data-source61-e4-geometry="shared-cube-six-pyramid-model" data-final-topology="unknown">${wire}${cube.map((point, index) => circle(point, "source61-e4-vertex", `data-source-vertex="cube-${index + 1}"`)).join("")}<text x="108" y="204" text-anchor="middle">정육면체</text>${glyph(267, 54, 0.72, 0)}${glyph(287, 138, 0.72, 1)}${glyph(269, 230, 0.72, 2)}${glyph(26, 54, 0.72, 3)}${glyph(25, 138, 0.72, 4)}${glyph(27, 230, 0.72, 5)}<text x="164" y="292" text-anchor="middle">정육면체의 여섯 면에 사각뿔을 하나씩 붙입니다.</text></svg>`;
+        }
+        const netFaces = [
+          { name: "윗면", col: 1, row: 0, corners: ["E", "F", "B", "A"] },
+          { name: "왼쪽", col: 0, row: 1, corners: ["E", "A", "D", "H"] },
+          { name: "앞면", col: 1, row: 1, corners: ["A", "B", "C", "D"] },
+          { name: "오른쪽", col: 2, row: 1, corners: ["B", "F", "G", "C"] },
+          { name: "뒷면", col: 3, row: 1, corners: ["F", "E", "H", "G"] },
+          { name: "아랫면", col: 1, row: 2, corners: ["D", "C", "G", "H"] }
+        ];
+        const cellSize = 40, startX = 65, startY = 30;
+        const seenCubeEdges = new Set(), seenCubeVertices = new Set();
+        let edgeIndex = 0, faceIndex = 0, apexIndex = 0;
+        const faces = [], edges = [], vertices = [];
+        netFaces.forEach(face => {
+          const x = startX + face.col * cellSize, y = startY + face.row * cellSize;
+          const corners = [[x, y], [x + cellSize, y], [x + cellSize, y + cellSize], [x, y + cellSize]];
+          const center = [x + cellSize / 2, y + cellSize / 2];
+          face.corners.forEach((vertexId, index) => {
+            const next = (index + 1) % 4;
+            faceIndex += 1;
+            faces.push(polygon([center, corners[index], corners[next]], `source61-e4-face source61-e4-face-${faceIndex % 4}`, `data-solid-face="stellated-cube" data-face-index="${faceIndex}"`));
+            const cubeEdgeId = edgeKey(vertexId, face.corners[next]);
+            const cubeEdgeData = seenCubeEdges.has(cubeEdgeId) ? "" : `data-solid-edge="stellated-cube" data-edge-index="${++edgeIndex}" data-edge-role="cube-${cubeEdgeId}"`;
+            seenCubeEdges.add(cubeEdgeId);
+            edges.push(line(corners[index], corners[next], "source61-e4-edge source61-e4-net-boundary", cubeEdgeData));
+            edges.push(line(center, corners[index], "source61-e4-edge source61-e4-net-ray", `data-solid-edge="stellated-cube" data-edge-index="${++edgeIndex}" data-edge-role="pyramid-${face.name}-${index + 1}"`));
+            if (!seenCubeVertices.has(vertexId)) {
+              seenCubeVertices.add(vertexId);
+              vertices.push(circle(corners[index], "source61-e4-vertex", `data-solid-vertex="stellated-cube" data-vertex-index="cube-${vertexId}"`));
+            }
+          });
+          apexIndex += 1;
+          vertices.push(circle(center, "source61-e4-vertex source61-e4-net-apex", `data-solid-vertex="stellated-cube" data-vertex-index="apex-${apexIndex}"`));
+        });
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-cube-pyramids source61-e4-counting-net is-solved" viewBox="0 0 330 300" role="img" aria-label="정육면체의 여섯 면에 붙인 사각뿔의 겉면을 펼쳐 세는 그림" data-source61-e4-structure="cube-six-pyramid-assembly" data-source61-e4-geometry="shared-cube-six-pyramid-model" data-solid-face-count="24" data-solid-edge-count="36" data-solid-vertex-count="14" data-result-highlight="74"><text x="165" y="17" text-anchor="middle">겉면을 펼쳐 세는 그림</text>${faces.join("")}${edges.join("")}${vertices.join("")}<text x="165" y="179" text-anchor="middle">면: 삼각형 4개 × 사각뿔 6개 = 24개</text><text x="165" y="207" text-anchor="middle">모서리: 정육면체 12개 + 옆모서리 24개 = 36개</text><text x="165" y="235" text-anchor="middle">꼭짓점: 정육면체 8개 + 각뿔 꼭짓점 6개 = 14개</text><text x="165" y="271" text-anchor="middle">사각뿔의 밑면 6개는 붙인 뒤 겉에서 보이지 않습니다.</text></svg>`;
+      };
+
+      const truncatedPyramidModel = n => {
+        const base = ring(n, 154, 164, 84, 42);
+        const apex = [154, 28];
+        const originals = { apex };
+        base.forEach((point, index) => { originals[`b${index}`] = point; });
+        const originalEdges = [];
+        for (let index = 0; index < n; index += 1) originalEdges.push({ a: `b${index}`, b: `b${(index + 1) % n}` });
+        for (let index = 0; index < n; index += 1) originalEdges.push({ a: "apex", b: `b${index}` });
+        const cutNodes = new Map();
+        const cutPoints = edge => {
+          const key = edgeKey(edge.a, edge.b);
+          if (!cutNodes.has(key)) {
+            const a = originals[edge.a], b = originals[edge.b];
+            cutNodes.set(key, { first: { id: `${key}:1`, point: interpolate(a, b, 1 / 3) }, second: { id: `${key}:2`, point: interpolate(a, b, 2 / 3) } });
+          }
+          const nodes = cutNodes.get(key);
+          return edge.a < edge.b ? [nodes.first, nodes.second] : [nodes.second, nodes.first];
+        };
+        const baseEdge = index => ({ a: `b${index}`, b: `b${(index + 1) % n}` });
+        const lateralEdge = index => ({ a: "apex", b: `b${index}` });
+        const faces = [];
+        faces.push({ id: "base", nodes: Array.from({ length: n }, (_, index) => cutPoints(baseEdge(index))).flat() });
+        for (let index = 0; index < n; index += 1) {
+          const next = (index + 1) % n;
+          const left = cutPoints(lateralEdge(index));
+          const baseSide = cutPoints(baseEdge(index));
+          const right = cutPoints(lateralEdge(next));
+          faces.push({ id: `side-${index + 1}`, nodes: [left[0], left[1], baseSide[0], baseSide[1], right[1], right[0]] });
+        }
+        for (let index = 0; index < n; index += 1) {
+          const previous = cutPoints(baseEdge((index + n - 1) % n))[1];
+          const next = cutPoints(baseEdge(index))[0];
+          const up = cutPoints(lateralEdge(index))[1];
+          faces.push({ id: `base-corner-${index + 1}`, nodes: [previous, next, up] });
+        }
+        faces.push({ id: "apex-cut", nodes: Array.from({ length: n }, (_, index) => cutPoints(lateralEdge(index))[0]) });
+        const nodeMap = new Map();
+        cutNodes.forEach(nodes => [nodes.first, nodes.second].forEach(node => nodeMap.set(node.id, node.point)));
+        const edges = new Map();
+        faces.forEach(face => face.nodes.forEach((node, index) => {
+          const other = face.nodes[(index + 1) % face.nodes.length];
+          const key = edgeKey(node.id, other.id);
+          if (!edges.has(key)) edges.set(key, { a: node.point, b: other.point, index: edges.size + 1 });
+        }));
+        return { base, apex, originals, originalEdges, cutNodes, faces, nodeMap, edges };
+      };
+      const truncatedPyramidSvg = ({ n, solved = false }) => {
+        const model = truncatedPyramidModel(n);
+        if (!solved) {
+          const originalMarkup = model.originalEdges.map((edgeDef, index) => line(model.originals[edgeDef.a], model.originals[edgeDef.b], `source61-e4-edge${index >= n ? " source61-e4-hidden-edge" : ""}`)).join("");
+          const cutMarkup = Array.from(model.cutNodes.values()).flatMap(nodes => [circle(nodes.first.point, "source61-e4-cut-mark", 'data-cut-mark="one"'), circle(nodes.second.point, "source61-e4-cut-mark", 'data-cut-mark="two"')]).join("");
+          const planeMarkup = model.faces.filter(face => face.id.startsWith("base-corner") || face.id === "apex-cut").map(face => polygon(face.nodes.map(node => node.point), "source61-e4-cut-plane", `data-cut-plane="${face.id}"`)).join("");
+          return `<svg class="geometry-diagram source61-e4-diagram source61-e4-truncated-pyramid" viewBox="0 0 330 230" role="img" aria-label="각뿔의 모든 모서리를 삼등분하고 꼭짓점 부분을 잘라 내는 그림" data-source61-e4-structure="pyramid-vertex-truncation" data-source61-e4-geometry="shared-truncated-pyramid-model" data-base-sides="${n}" data-final-topology="unknown">${planeMarkup}${originalMarkup}${cutMarkup}${Object.entries(model.originals).map(([key, point]) => circle(point, "source61-e4-vertex", `data-source-vertex="${key}"`)).join("")}<text x="164" y="220" text-anchor="middle">모든 모서리를 삼등분한 점을 이어 잘라 냅니다.</text></svg>`;
+        }
+        const faceMarkup = model.faces.map((face, index) => polygon(face.nodes.map(node => node.point), `source61-e4-face${index >= n + 1 && index < 2 * n + 1 ? " source61-e4-side-face" : ""}`, `data-solid-face="truncated-pyramid" data-face-index="${index + 1}"`)).join("");
+        const edgeMarkup = Array.from(model.edges.values()).map(item => line(item.a, item.b, `source61-e4-edge${(item.a[1] + item.b[1]) / 2 < 88 ? " source61-e4-hidden-edge" : ""}`, `data-solid-edge="truncated-pyramid" data-edge-index="${item.index}"`)).join("");
+        const vertexMarkup = Array.from(model.nodeMap.entries()).map(([id, point], index) => circle(point, "source61-e4-vertex", `data-solid-vertex="truncated-pyramid" data-vertex-index="${index + 1}" data-node-id="${id}"`)).join("");
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-truncated-pyramid is-solved" viewBox="0 0 330 230" role="img" aria-label="모서리를 삼등분하여 꼭짓점 부분을 잘라 낸 각뿔" data-source61-e4-structure="pyramid-vertex-truncation" data-source61-e4-geometry="shared-truncated-pyramid-model" data-base-sides="${n}" data-solid-face-count="${2 * n + 2}" data-solid-edge-count="${6 * n}" data-solid-vertex-count="${4 * n}" data-result-highlight="${12 * n + 2}">${faceMarkup}${edgeMarkup}${vertexMarkup}<text x="164" y="220" text-anchor="middle">잘라 낸 뒤의 면·모서리·꼭짓점</text></svg>`;
+      };
+
+      const tetrahedronSvg = ({ perimeter, edgeCm, solved = false }) => {
+        const regularPoints = { a: [1, 1, 1], b: [1, -1, -1], c: [-1, 1, -1], d: [-1, -1, 1] };
+        const project = ([x, y, z]) => [154 + 34 * x - 34 * y + 14 * z, 125 - 12 * x - 12 * y - 34 * z];
+        const points = Object.fromEntries(Object.entries(regularPoints).map(([key, point]) => [key, project(point)]));
+        const edgeDefs = [["a", "b"], ["a", "c"], ["a", "d"], ["b", "c"], ["b", "d"], ["c", "d"]];
+        const selected = [["a", "b"], ["a", "c"], ["c", "d"], ["d", "b"]];
+        const midpoints = selected.map(([a, b]) => midpoint(points[a], points[b]));
+        const originalEdges = edgeDefs.map(([a, b], index) => line(points[a], points[b], `source61-e4-edge${index > 2 ? " source61-e4-hidden-edge" : ""}`, solved ? `data-solid-edge="tetrahedron" data-edge-index="${index + 1}"` : "")).join("");
+        const marks = midpoints.map((point, index) => circle(point, `source61-e4-midpoint${solved ? " is-highlight" : ""}`, `data-midpoint-index="${index + 1}"`)).join("");
+        const quad = solved ? polygon(midpoints, "source61-e4-section-highlight", 'data-section="midpoint-quadrilateral"') : "";
+        const vertices = Object.entries(points).map(([key, point]) => circle(point, "source61-e4-vertex", solved ? `data-solid-vertex="tetrahedron" data-vertex-index="${key}"` : `data-source-vertex="${key}"`)).join("");
+        const answerFaces = solved ? [["a", "b", "c"], ["a", "c", "d"], ["a", "d", "b"], ["b", "d", "c"]].map((face, index) => polygon(face.map(key => points[key]), "source61-e4-face", `data-solid-face="tetrahedron" data-face-index="${index + 1}"`)).join("") : "";
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-tetrahedron${solved ? " is-solved" : ""}" viewBox="0 0 330 220" role="img" aria-label="모든 모서리가 같은 삼각뿔의 네 모서리 가운데점을 이은 사각형" data-source61-e4-structure="tetrahedron-midpoint-quadrilateral" data-source61-e4-geometry="shared-tetrahedron-midpoint-model"${solved ? ` data-solid-face-count="4" data-solid-edge-count="6" data-solid-vertex-count="4" data-result-highlight="${edgeCm * 6}"` : ""}>${answerFaces}${quad}${originalEdges}${vertices}${marks}<text x="165" y="207" text-anchor="middle">네 모서리의 가운데점을 이은 사각형${solved ? ` · 둘레 ${perimeter}cm` : ""}</text></svg>`;
+      };
+
+      const joinedSolidSvg = ({ n, mode, solved = false }) => {
+        const bottom = ring(n, 105, 168, 70, 32);
+        const join = bottom.map(point => [point[0] + 8, point[1] - 70]);
+        const topApex = mode === "prism-pyramid" ? [154, 18] : [154, 18];
+        const bottomApex = mode === "bipyramid" ? [154, 270] : null;
+        if (!solved) {
+          const mini = (cx, cy, pyramid = false) => {
+            const base = ring(n, cx, cy + 34, 30, 14);
+            const apex = [cx, cy - 18];
+            if (pyramid) return `<g class="source61-e4-separate-solid">${base.map((point, index) => line(apex, point, `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`)).join("")}${base.map((point, index) => line(point, base[(index + 1) % n], `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`)).join("")}</g>`;
+            const otherBase = base.map(([x, y]) => [x + 17, y - 31]);
+            const body = base.map((point, index) => line(point, base[(index + 1) % n], "source61-e4-edge")).join("")
+              + otherBase.map((point, index) => line(point, otherBase[(index + 1) % n], `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`)).join("")
+              + base.map((point, index) => line(point, otherBase[index], `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`)).join("");
+            return `<g class="source61-e4-separate-solid">${body}</g>`;
+          };
+          return `<svg class="geometry-diagram source61-e4-diagram source61-e4-joined-solid" viewBox="0 0 330 180" role="img" aria-label="밑면을 맞대어 붙이는 각기둥과 각뿔" data-source61-e4-structure="${mode}-base-join" data-source61-e4-geometry="shared-${mode}-model" data-final-topology="unknown">${mini(82, 62, false)}${mini(242, 62, true)}<path class="source61-e4-join-arrow" d="M130 68 H196"/><text x="82" y="146" text-anchor="middle">각기둥</text><text x="242" y="146" text-anchor="middle">각뿔</text><text x="165" y="174" text-anchor="middle">같은 밑면을 서로 맞대어 붙입니다.</text></svg>`;
+        }
+        const points = bottom.concat(join, [topApex]);
+        const apexIndex = 2 * n;
+        const faceList = [bottom], edgeList = new Map();
+        for (let index = 0; index < n; index += 1) {
+          const next = (index + 1) % n;
+          faceList.push([bottom[index], bottom[next], join[next], join[index]]);
+          faceList.push([topApex, join[index], join[next]]);
+          const addEdge = (a, b) => edgeList.set(edgeKey(`${a[0].toFixed(2)},${a[1].toFixed(2)}`, `${b[0].toFixed(2)},${b[1].toFixed(2)}`), { a, b });
+          addEdge(bottom[index], bottom[next]); addEdge(bottom[index], join[index]); addEdge(join[index], join[next]); addEdge(topApex, join[index]);
+        }
+        const faces = faceList.map((face, index) => polygon(face, "source61-e4-face", `data-solid-face="prism-pyramid" data-face-index="${index + 1}"`)).join("");
+        const edges = Array.from(edgeList.values()).map((item, index) => line(item.a, item.b, `source61-e4-edge${index % 4 === 1 ? " source61-e4-hidden-edge" : ""}`, `data-solid-edge="prism-pyramid" data-edge-index="${index + 1}"`)).join("");
+        const vertices = points.map((point, index) => circle(point, "source61-e4-vertex", `data-solid-vertex="prism-pyramid" data-vertex-index="${index + 1}"`)).join("");
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-joined-solid is-solved" viewBox="0 0 330 300" role="img" aria-label="각기둥과 각뿔을 밑면끼리 붙인 입체도형" data-source61-e4-structure="${mode}-base-join" data-source61-e4-geometry="shared-${mode}-model" data-solid-face-count="${2 * n + 1}" data-solid-edge-count="${4 * n}" data-solid-vertex-count="${2 * n + 1}" data-result-highlight="${mode === "prism-pyramid" ? 2 * n + 1 : 6 * n + 2}">${faces}${edges}${vertices}<text x="154" y="294" text-anchor="middle">밑면을 맞대어 붙인 입체</text></svg>`;
+      };
+
+      const bipyramidSvg = ({ n, solved = false }) => {
+        const base = ring(n, 154, 142, 86, 42);
+        const top = [154, 20], bottom = [154, 272];
+        if (!solved) {
+          const separatePyramid = (cx, inverted, offset) => {
+            const localBase = ring(n, cx, inverted ? 58 : 116, 42, 18);
+            const apex = [cx, inverted ? 138 : 36];
+            return localBase.map((point, index) => line(apex, point, `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`, `data-source-edge="pyramid-${offset + index + 1}"`)).join("")
+              + localBase.map((point, index) => line(point, localBase[(index + 1) % n], `source61-e4-edge${index > Math.floor(n / 2) ? " source61-e4-hidden-edge" : ""}`)).join("");
+          };
+          return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid" viewBox="0 0 330 190" role="img" aria-label="같은 각뿔 두 개의 밑면을 맞대어 붙이는 그림" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-final-topology="unknown">${separatePyramid(76, false, 0)}${separatePyramid(254, true, n)}<path class="source61-e4-join-arrow" d="M126 88 H204"/><text x="76" y="174" text-anchor="middle">위쪽 각뿔</text><text x="254" y="174" text-anchor="middle">아래쪽 각뿔</text><text x="165" y="187" text-anchor="middle">같은 밑면을 맞대어 붙입니다.</text></svg>`;
+        }
+        const faces = [], edges = new Map();
+        for (let index = 0; index < n; index += 1) {
+          const next = (index + 1) % n;
+          faces.push([top, base[index], base[next]], [bottom, base[next], base[index]]);
+          const add = (a, b) => edges.set(edgeKey(`${a[0].toFixed(2)},${a[1].toFixed(2)}`, `${b[0].toFixed(2)},${b[1].toFixed(2)}`), { a, b });
+          add(base[index], base[next]); add(top, base[index]); add(bottom, base[index]);
+        }
+        const faceMarkup = faces.map((face, index) => polygon(face, "source61-e4-face", `data-solid-face="bipyramid" data-face-index="${index + 1}"`)).join("");
+        const edgeMarkup = Array.from(edges.values()).map((item, index) => line(item.a, item.b, `source61-e4-edge${index % 3 === 1 ? " source61-e4-hidden-edge" : ""}`, `data-solid-edge="bipyramid" data-edge-index="${index + 1}"`)).join("");
+        const vertexMarkup = [top, ...base, bottom].map((point, index) => circle(point, "source61-e4-vertex", `data-solid-vertex="bipyramid" data-vertex-index="${index + 1}"`)).join("");
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid is-solved" viewBox="0 0 330 300" role="img" aria-label="두 각뿔을 밑면끼리 붙인 쌍각뿔" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-solid-face-count="${2 * n}" data-solid-edge-count="${3 * n}" data-solid-vertex-count="${n + 2}" data-result-highlight="${6 * n + 2}">${faceMarkup}${edgeMarkup}${vertexMarkup}<text x="154" y="294" text-anchor="middle">두 각뿔을 밑면끼리 붙인 입체</text></svg>`;
+      };
+
+      if (variant === 0) {
+        const total = 74;
+        const promptVisual = `${cubePyramidSvg({})}${mathBoard("붙이는 방법", row("가운데 도형", "정육면체") + row("붙이는 도형", "합동인 사각뿔") + row("붙이는 자리", "정육면체의 각 면에 하나씩"))}`;
+        const answerVisual = `${cubePyramidSvg({ solved: true })}${mathBoard("완성된 입체도형", row("면", "삼각형 24개") + row("모서리", "36개") + row("꼭짓점", "14개") + row("합", "24+36+14=74"))}`;
+        return fixedResult(`모든 모서리의 길이가 같은 정육면체 1개와, 밑면의 모양과 크기가 정육면체의 한 면과 같은 사각뿔 6개가 있습니다. 사각뿔을 정육면체의 각 면에 꼭 맞게 하나씩 붙여 입체도형을 만들 때, 완성된 입체도형의 꼭짓점 수, 모서리 수, 면의 수의 합을 구하세요.${promptVisual}${support("붙인 뒤 겉으로 보이는 삼각형 면과 새로 생긴 꼭짓점을 나누어 세어 보세요.")}${challenge}${evidence("cube-six-pyramid-assembly", [6])}`, `${total}`, `정육면체의 여섯 면마다 사각뿔의 삼각형 면 4개가 겉으로 보이므로 면은 6×4=24개입니다. 정육면체의 모서리 12개와 사각뿔의 옆모서리 24개를 합하면 모서리는 36개입니다. 정육면체의 꼭짓점 8개와 사각뿔의 꼭짓점 6개를 합하면 꼭짓점은 14개입니다. 따라서 합은 24+36+14=74입니다.`, answerVisual);
+      }
+      if (variant === 1) {
+        const n = [3, 4, 5][poolIndex];
+        const faces = 2 * n + 2, edges = 6 * n, vertices = 4 * n, total = 12 * n + 2;
+        const polygonName = ["", "", "", "삼각", "사각", "오각"][n];
+        const promptVisual = `${truncatedPyramidSvg({ n })}${mathBoard("자르는 조건", row("처음 도형", `${polygonName}뿔`) + row("모든 모서리", "세 부분으로 똑같이 나눔") + row("자르는 곳", "각 꼭짓점 가까이의 나눈 점을 모두 잇는 면"))}`;
+        const answerVisual = `${truncatedPyramidSvg({ n, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("면", `2×${n}+2=${faces}개`) + row("모서리", `6×${n}=${edges}개`) + row("꼭짓점", `4×${n}=${vertices}개`) + row("합", `${faces}+${edges}+${vertices}=${total}`))}`;
+        return fixedResult(`${polygonName}뿔의 모든 모서리를 세 부분으로 똑같이 나눕니다. 각 꼭짓점에서 이어진 모서리 위의 가까운 나눈 점을 모두 지나도록 잘라 냈을 때, 남은 입체도형의 면, 모서리, 꼭짓점 수의 합을 구하세요.${promptVisual}${support("원래 각 모서리에서 새로 생기는 점과 잘라 낸 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("pyramid-vertex-truncation", [n])}`, `${total}`, `원래 각 모서리에 나눈 점이 2개씩 생기므로 새 꼭짓점은 2×(2×${n})=4×${n}=${vertices}개입니다. 원래 면 ${n+1}개는 잘라 낸 면과 함께 남아 면의 수는 2×${n}+2=${faces}개이고, 원래 모서리 ${2*n}개가 세 부분으로 나뉘어 모서리는 6×${n}=${edges}개입니다. 따라서 합은 ${faces}+${edges}+${vertices}=${total}입니다.`, answerVisual);
+      }
+      if (variant === 2) {
+        const perimeter = [16, 20, 24][poolIndex];
+        const edgeCm = perimeter / 2, total = edgeCm * 6;
+        const promptVisual = `${tetrahedronSvg({ perimeter, edgeCm })}${mathBoard("가운데점을 이은 사각형", row("사각형의 둘레", `${perimeter}cm`) + row("구할 것", "삼각뿔의 모든 모서리 길이의 합"))}`;
+        const answerVisual = `${tetrahedronSvg({ perimeter, edgeCm, solved: true })}${mathBoard("정사면체의 모서리", row("한 모서리", `${perimeter}÷2=${edgeCm}cm`) + row("모든 모서리", `6×${edgeCm}=${total}cm`))}`;
+        return fixedResult(`모든 모서리의 길이가 같은 삼각뿔에서 네 모서리의 가운데점을 차례로 이어 사각형을 만들었습니다. 이 사각형의 둘레가 ${perimeter}cm일 때, 삼각뿔의 모든 모서리 길이의 합을 구하세요.${promptVisual}${support("사각형의 한 변이 삼각뿔 모서리의 얼마인지 그림에서 찾아 보세요.")}${challenge}${evidence("tetrahedron-midpoint-quadrilateral", [perimeter])}`, `${total}cm`, `사각형의 한 변은 삼각뿔 모서리의 절반입니다. 삼각뿔의 한 모서리는 ${perimeter}÷2=${edgeCm}cm이고, 모서리는 6개이므로 모든 모서리 길이의 합은 6×${edgeCm}=${total}cm입니다.`, answerVisual);
+      }
+      if (variant === 3) {
+        const n = [3, 4, 5][poolIndex];
+        const faces = 2 * n + 1, edges = 4 * n, vertices = 2 * n + 1;
+        const name = ["", "", "", "삼각", "사각", "오각"][n];
+        const promptVisual = `${joinedSolidSvg({ n, mode: "prism-pyramid" })}${mathBoard("붙이는 조건", row("도형", `밑면의 모양과 크기가 같은 ${name}기둥과 ${name}뿔`) + row("붙이는 방법", "밑면끼리 꼭 맞게 붙임"))}`;
+        const answerVisual = `${joinedSolidSvg({ n, mode: "prism-pyramid", solved: true })}${mathBoard("완성된 입체도형", row("면", `${faces}개`) + row("모서리", `${edges}개`) + row("꼭짓점", `${vertices}개`))}`;
+        return fixedResult(`밑면의 모양과 크기가 같은 ${name}기둥과 ${name}뿔을 밑면끼리 꼭 맞게 이어 붙여 새로운 입체도형을 만들었습니다. 이 입체도형의 면, 모서리, 꼭짓점의 수를 각각 구하세요.${promptVisual}${support("붙인 면은 겉에서 보이지 않으므로 두 도형의 수에서 붙인 부분을 한 번 빼 보세요.")}${challenge}${evidence("prism-pyramid-base-join", [n], "three-values")}`, `면 ${faces}개, 모서리 ${edges}개, 꼭짓점 ${vertices}개`, `각기둥의 면·모서리·꼭짓점은 각각 ${n+2}, ${3*n}, ${2*n}개이고, 각뿔은 ${n+1}, ${2*n}, ${n+1}개입니다. 밑면을 붙이면 면 ${2*n+1}개, 모서리 ${4*n}개, 꼭짓점 ${2*n+1}개가 남습니다.`, answerVisual);
+      }
+      const n = [4, 5, 6][poolIndex];
+      const total = 6 * n + 2;
+      const pyramidName = ["", "", "", "삼각뿔", "사각뿔", "오각뿔", "육각뿔"][n];
+      const promptVisual = `${bipyramidSvg({ n })}${mathBoard("붙이는 조건", row("도형", `서로 같은 ${pyramidName} 2개`) + row("붙이는 방법", "밑면끼리 꼭 맞게 붙임"))}`;
+      const answerVisual = `${bipyramidSvg({ n, solved: true })}${mathBoard("완성된 입체도형", row("면", `2×${n}개`) + row("모서리", `3×${n}개`) + row("꼭짓점", `${n}+2개`) + row("합", `2×${n}+3×${n}+${n}+2=${total}`))}`;
+      return fixedResult(`서로 같은 ${pyramidName} 2개의 밑면을 꼭 맞게 붙여 입체도형을 만들었습니다. 완성된 입체도형의 면, 모서리, 꼭짓점 수의 합을 구하세요.${promptVisual}${support("두 각뿔의 밑면은 안쪽에 들어가고, 두 꼭짓점은 위와 아래에 남는다는 점을 생각해 보세요.")}${challenge}${evidence("pyramid-base-to-base", [n])}`, `${total}`, `각뿔 두 개의 옆면은 각각 ${n}개씩이므로 면은 2×${n}=${2*n}개입니다. 밑면의 모서리 ${n}개와 두 꼭짓점으로 뻗는 모서리 2×${n}개를 합하면 모서리는 3×${n}=${3*n}개이고, 꼭짓점은 밑면 ${n}개와 위·아래 꼭짓점 2개를 합해 ${n}+2=${n+2}개입니다. 따라서 합은 ${2*n}+${3*n}+${n+2}=${total}입니다.`, answerVisual);
+    },
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5"
@@ -22313,6 +22576,7 @@
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
+    [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
