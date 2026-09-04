@@ -2599,7 +2599,7 @@ function screenTitle(){
     <div class="nm-title-card">
       <div class="nm-title-logo">
         <div class="nm-title-logo-kr">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
-        <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','수의 마법','数字魔法')}</div>
+        <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','NUMBER VILLAGE · DOCSSAM','NUMBERS OF MAGIC')}</div>
       </div>
       <div class="nm-title-char">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,88):''}</div>
       <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>

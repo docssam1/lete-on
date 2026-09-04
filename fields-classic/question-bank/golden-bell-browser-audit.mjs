@@ -9,6 +9,7 @@ const { chromium } = await import(pathToFileURL(path.join(runtimeModules, "playw
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const browser = await chromium.launch({ headless: true });
 const expectedOfflineError = (message) => message.includes("ERR_NETWORK_ACCESS_DENIED");
+const escapeRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 
 async function auditViewport(viewport, label) {
   const page = await browser.newPage({ viewport });
@@ -207,9 +208,17 @@ async function auditReducedMotionClock() {
 
 async function auditBookOneGuidedConcepts() {
   const cases = [
+    { id: "mirror-reflection", family: "mirror-direction", wrong: "아래쪽 왼편", answer: "위쪽 오른편" },
+    { id: "digital-turn-flip", family: "digital-transform", wrong: "숫자 5", answer: "숫자 2" },
     { id: "fold-one-cut", family: "fold-symmetry", wrong: "한쪽에만 남아요", answer: "접은 선에서 같은 거리에 마주 봐요" },
+    { id: "fold-two-cut", family: "double-fold-symmetry", wrong: "3개", answer: "4개" },
     { id: "equal-line-sums", family: "equal-line", wrong: "5", answer: "7" },
-    { id: "preference-logic", family: "one-to-one-logic", wrong: "빨강", answer: "노랑" }
+    { id: "equal-line-placement", family: "line-card-placement", wrong: "1+2와 4+5", answer: "1+5와 2+4" },
+    { id: "gakuro-sum-grid", family: "sum-grid-placement", wrong: "4개", answer: "5개" },
+    { id: "number-inference", family: "number-condition-filter", wrong: "22와 40", answer: "13과 31" },
+    { id: "preference-logic", family: "one-to-one-logic", wrong: "빨강", answer: "노랑" },
+    { id: "relative-order-running", family: "relative-order", wrong: "가", answer: "라" },
+    { id: "book1-equalize-transfer", family: "equalize-transfer", wrong: "2개", answer: "3개" }
   ];
 
   for (const item of cases) {
@@ -221,14 +230,18 @@ async function auditBookOneGuidedConcepts() {
     assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: original problem must start locked`);
     assert.equal(await experience.locator(".experience-check").count(), 0, `${item.id}: check appeared before the final scene`);
     const next = experience.locator('[data-experience-action="next"]');
-    for (let step = 0; step < 3; step += 1) await next.click();
+    let guidedSteps = 0;
+    while (await experience.locator(".experience-check").count() === 0 && guidedSteps < 8) {
+      await next.click();
+      guidedSteps += 1;
+    }
     assert.equal(await experience.locator(".experience-check").count(), 1, `${item.id}: final check missing`);
     assert.equal(await experience.locator(`[data-experience-choice="${item.answer}"]`).count(), 1, `${item.id}: approved answer is not unique`);
     await experience.locator(`[data-experience-choice="${item.wrong}"]`).click();
     assert.match(await experience.locator(".feedback").innerText(), /다시 살펴/u, `${item.id}: wrong-answer feedback missing`);
     assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${item.id}: wrong answer unlocked the original problem`);
     await experience.locator("[data-experience-answer]").click();
-    assert.match(await experience.locator(".feedback").innerText(), new RegExp(`답:\\s*${item.answer}`, "u"), `${item.id}: approved answer view missing`);
+    assert.match(await experience.locator(".feedback").innerText(), new RegExp(`답:\\s*${escapeRegex(item.answer)}`, "u"), `${item.id}: approved answer view missing`);
     assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${item.id}: answer view did not unlock the original problem`);
 
     const typography = await experience.locator(".experience-caption, .guided-check>p, .guided-check .answer-choices button, .guided-answer, .concept-hint").evaluateAll((nodes) => nodes.map((node) => ({

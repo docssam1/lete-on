@@ -42,6 +42,13 @@ const CUSTOM_PRACTICE = Object.freeze({
     answerMode: "input", inputMode: "numeric", answer: "4",
     explanation: "한 번 접은 종이는 두 겹입니다. 구멍 두 개가 각각 두 겹에 생기므로 펼치면 2×2=4개입니다."
   },
+  "fold-two-cut": {
+    story: "숫자 3, 4, 6, 8이 적힌 색종이를 세로와 가로로 한 번씩 접어 한 곳을 잘랐습니다.",
+    prompt: "완전히 펼쳤을 때 네 칸이 모두 잘려 나갔다면 그 칸의 수의 합은 얼마일까요?",
+    visual: { kind: "book1", subtype: "fold-number-sum", folds: ["세로로 접기", "가로로 접기"], numbers: [[3,4],[6,8]], selected: [0,1,2,3] },
+    answerMode: "input", inputMode: "numeric", answer: "21",
+    explanation: "두 번 접은 것을 차례로 펼치면 네 칸이 나타납니다. 3+4+6+8=21입니다."
+  },
   "equal-line-sums": {
     story: "가로줄과 세로줄의 세 수 합을 같게 만듭니다.",
     prompt: "위쪽 빈칸에 들어갈 수를 쓰세요.",
@@ -49,12 +56,61 @@ const CUSTOM_PRACTICE = Object.freeze({
     answerMode: "input", inputMode: "numeric", answer: "7",
     explanation: "가로줄의 합은 8+3+4=15입니다. 세로줄도 15이므로 빈칸+3+5=15, 빈칸은 7입니다."
   },
+  "equal-line-placement": {
+    story: "숫자 카드 3, 5, 7, 9, 11을 십자 모양에 한 번씩 놓습니다.",
+    prompt: "모든 줄의 합을 같게 만들 수 있는 교차점의 수를 모두 쓰세요.",
+    visual: { kind: "book1", subtype: "line-card-board", layout: "cross", cards: [3, 5, 7, 9, 11], shown: [] },
+    answerMode: "input", inputMode: "text", answer: ["3,7,11", "3 7 11", "3·7·11"],
+    explanation: "교차점이 3이면 5+11=7+9, 7이면 3+11=5+9, 11이면 3+9=5+7입니다. 따라서 3, 7, 11이 모두 가능합니다."
+  },
   "preference-logic": {
     story: "민지, 서윤, 도윤이 서로 다른 음식을 하나씩 골랐습니다.",
     prompt: "민지는 김밥을 골랐고 도윤은 떡볶이를 고르지 않았습니다. 서윤이 고른 음식은 무엇일까요?",
     visual: { kind: "logic-food" },
     answerMode: "input", answer: "떡볶이",
     explanation: "민지가 김밥을 골랐습니다. 도윤은 떡볶이가 아니므로 샌드위치이고, 서윤에게는 떡볶이가 남습니다."
+  },
+  "mirror-reflection": {
+    story: "세로선 아래쪽이 오른편으로 뻗은 모양을 위쪽 거울에 비춥니다.",
+    prompt: "위쪽 거울에 비친 모양에서 비스듬한 선은 어느 쪽으로 뻗을까요?",
+    visual: { kind: "book1", subtype: "mirror-compass", target: "top", source: "bottom-right" },
+    answerMode: "input", inputMode: "text", answer: ["위쪽 오른편", "위 오른편", "오른쪽 위"],
+    explanation: "위쪽 거울은 좌우는 그대로 두고 위아래만 바꿉니다. 아래쪽 오른편 선은 위쪽 오른편으로 옮겨집니다."
+  },
+  "digital-turn-flip": {
+    story: "전광판에 두 자리 수 56이 켜졌습니다.",
+    prompt: "전광판 전체를 반 바퀴 돌려 똑바로 읽은 수를 쓰세요.",
+    visual: { kind: "book1", subtype: "digital-transform", digits: [5, 6], operation: "rotate-half" },
+    answerMode: "input", inputMode: "numeric", answer: "95",
+    explanation: "판 전체를 돌리면 자리 순서가 바뀌고 6은 9, 5는 5가 됩니다. 따라서 95입니다."
+  },
+  "gakuro-sum-grid": {
+    story: "숫자 카드 2, 4, 6을 한 번씩 넣어 합 표를 완성합니다.",
+    prompt: "왼쪽 위가 3이고 윗줄 합이 9일 때 오른쪽 위 칸은 얼마일까요?",
+    visual: { kind: "book1", subtype: "sum-grid", rows: 2, columns: 2, shown: [3, null, null, null], rowSums: [9, 6], columnSums: [5, 10], cards: [2, 4, 6] },
+    answerMode: "input", inputMode: "numeric", answer: "6",
+    explanation: "윗줄은 3+□=9이므로 9-3=6입니다."
+  },
+  "number-inference": {
+    story: "두 자리 수가 자리 합과 홀수 조건을 차례로 통과합니다.",
+    prompt: "십의 자리와 일의 자리 합이 5인 홀수를 모두 쓰세요.",
+    visual: { kind: "book1", subtype: "condition-card", title: "두 조건의 두 자리 수", clues: ["십의 자리 + 일의 자리 = 5", "홀수"] },
+    answerMode: "input", inputMode: "text", answer: ["23,41", "41,23", "23 41", "23과41"],
+    explanation: "합이 5인 두 자리 수는 14, 23, 32, 41, 50입니다. 그중 홀수는 23과 41입니다."
+  },
+  "relative-order-running": {
+    story: "가, 나, 다, 라가 앞에서 뒤로 한 줄로 섰습니다.",
+    prompt: "라는 맨 뒤, 다는 라의 바로 앞, 가는 나보다 앞일 때 앞에서 두 번째는 누구일까요?",
+    visual: { kind: "book1", subtype: "order-line", order: ["가", "나", "다", "라"], hidden: [1] },
+    answerMode: "input", inputMode: "text", answer: "나",
+    explanation: "다-라는 뒤의 두 자리입니다. 가가 나보다 앞이므로 가-나-다-라이고 두 번째는 나입니다."
+  },
+  "book1-equalize-transfer": {
+    story: "지우는 구슬 27개, 민호는 15개를 가지고 있습니다.",
+    prompt: "지우가 민호에게 몇 개를 주면 두 사람이 같아질까요?",
+    visual: { kind: "book1", subtype: "equalize-transfer", left: 27, right: 15 },
+    answerMode: "input", inputMode: "numeric", answer: "6",
+    explanation: "두 사람의 차이는 27-15=12개입니다. 차이의 절반인 6개를 옮기면 둘 다 21개입니다."
   },
   "six-multiple-equations": {
     story: "같은 수의 묶음으로 식을 바꿉니다.",
