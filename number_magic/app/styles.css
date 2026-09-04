@@ -943,6 +943,22 @@ html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
   padding:9px 10px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
 .nm-ex-road-print-btn:hover{background:#1a4d93}
 .nm-ex-road-print-btn:active{transform:scale(.97)}
+/* ── 인쇄 회수 표시 + 재인쇄(2026-09-04, "웹페이지 들어가면 추가로 계속 인쇄") ── */
+.nm-ex-road-printed{display:flex;align-items:center;justify-content:space-between;
+  gap:8px;margin-top:8px;flex-wrap:wrap}
+.nm-ex-road-printed-count{font-size:11px;font-weight:800;color:var(--sub)}
+.nm-ex-road-reprint-btn{flex:1;min-width:140px;border:1px solid var(--gold-deep);
+  background:#fff;color:var(--gold-deep);border-radius:10px;padding:8px 10px;
+  font-size:12px;font-weight:800;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-road-reprint-btn:hover{background:rgba(201,160,99,.1)}
+.nm-ex-road-reprint-btn:active{transform:scale(.97)}
+/* 이번 주 학습지 한 장 더 — 옵션 바 맨 위, 과정 목록을 펼치지 않고도 바로 인쇄 */
+.nm-ex-road-thisweek-row{justify-content:center}
+.nm-ex-road-thisweek-btn{width:100%;border:none;border-radius:10px;
+  background:var(--gold-deep);color:#fff;font-size:13px;font-weight:800;
+  padding:10px 12px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-road-thisweek-btn:hover{filter:brightness(1.06)}
+.nm-ex-road-thisweek-btn:active{transform:scale(.98)}
 
 /* ============================================================
    학년 그리드 (1A ~ 6B)

@@ -108,6 +108,9 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      보여 주면 그 자체가 과약속 쪽으로 기운다(원장 지시로 넣은 "연산 트랙만
      센 주차" 단서와 같은 원칙). 더 빠른 기준을 원하면 직접 고르면 된다. */
   roadPace:'p2',
+  roadPrints:{}, /* 연산 로드맵 세션 인쇄 회수(2026-09-04) — {'C5-0':2, 'C7-3':1, ...}
+    key=courseKey+'-'+sessionIdx. exam.js showRoadPick의 "인쇄 N장" 표시·재인쇄 버튼용,
+    잠금과 무관한 순수 카운터라 지워져도 학습에 지장 없음. */
   lineageBadges:{}, /* 계보 완주 배지(§6 규칙4) — {lineageKey:{earnedAt}} */
   symbolDex:{}, /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */
   seenUnlocks:{}, /* 과정 진도로 새로 연 캐릭터 토스트 재알림 방지(캐릭터-승급-설계.md §3) — {'number_42':true,'symbol_pi':true} */
@@ -127,6 +130,7 @@ if(!S.boost)S.boost={doneWeeks:{},log:[]};
 if(!S.boost.doneWeeks)S.boost.doneWeeks={};
 if(!S.boost.log)S.boost.log=[];
 if(S.roadCadence!=='w1'&&S.roadCadence!=='w2')S.roadCadence='w1';
+if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
 /* 목표 기준(속도) 검증 — 값은 ROAD_PACES의 key와 같아야 한다. ROAD_PACES는 이 줄보다
    아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
    이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
@@ -3015,8 +3019,11 @@ function screenMailbox(){
       };
     }
     $('#mbPrint').onclick=()=>{
-      const items = env.placements.map(p=>({thread:p.thread, level:p.level, count:p.count, seed:p.seed}));
-      if(window.NM_EXAM && NM_EXAM.renderPrintMulti) NM_EXAM.renderPrintMulti(items, env.wsId);
+      /* 로드맵 세션 인쇄와 같은 20문항/페이지 경로(2026-09-04) — 드릴별 count를
+         그대로 가중치(n)로 써서 한 세션을 한 장에 이어붙인다(exam.js
+         buildMixedProblemSet 참조). */
+      const items = env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
+      if(window.NM_EXAM && NM_EXAM.renderPrintMulti) NM_EXAM.renderPrintMulti(items, env.wsId, {mixed:20});
     };
     if(!S.mailbox.opened) S.mailbox.opened={};
     if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }
@@ -4725,7 +4732,11 @@ function screenExam(){
     currentCourse: currentCourseKey(), tiers: ROAD_TIERS,
     /* 주차 라벨용 — 연산 로드맵 화면(courseroad)과 같은 설정을 공유한다 */
     cadence: S.roadCadence,
-    onCadence: c => { if(c==='w1'||c==='w2'){ S.roadCadence=c; save(); } }
+    onCadence: c => { if(c==='w1'||c==='w2'){ S.roadCadence=c; save(); } },
+    /* 세션 인쇄 회수(2026-09-04, "웹페이지 들어가면 추가로 계속 인쇄") — 참조를 그대로
+       넘긴다(같은 객체를 exam.js가 읽고, onPrinted로 쓰기만 요청). */
+    roadPrints: S.roadPrints,
+    onPrinted: key => { S.roadPrints[key]=(S.roadPrints[key]||0)+1; save(); }
   });
 }
 
