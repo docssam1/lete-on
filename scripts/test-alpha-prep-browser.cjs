@@ -250,6 +250,7 @@ async function main() {
     await assertNoViewportOverflow(page, 'mobile interview');
     await assertMobileTouchTargets(page, 'mobile interview');
     await assertHeaderAtTop(page, 'mobile interview');
+    assert.ok(await page.locator('#answer-draft').evaluate((node) => node.getBoundingClientRect().height <= 142), 'mobile answer field should stay compact');
     await page.screenshot({ path: path.join(outDir, 'mobile-interview.png') });
     await page.locator('#answer-draft').scrollIntoViewIfNeeded();
     await page.locator('#answer-draft').fill('I think the tree needs room because its roots need water and air.');
