@@ -39,6 +39,7 @@ button, select { font:inherit; }
 .book-problem { min-height:113mm; padding:5mm; display:flex; flex-direction:column; border:1px solid var(--line); background:#fff; break-inside:avoid; }
 .problem-meta { display:flex; justify-content:space-between; gap:4mm; color:var(--green); font-size:7pt; font-weight:900; letter-spacing:.07em; }
 .problem-prompt { margin:4mm 0 2mm; font:700 10.5pt/1.45 Georgia,"Noto Serif KR",serif; }
+.problem-prompt, .problem-question, .question-card, .choice-button { word-break:keep-all; overflow-wrap:break-word; }
 .problem-question { margin:0 0 4mm; color:var(--ink); font:9.5pt/1.5 Georgia,"Noto Serif KR",serif; }
 .problem-visual { min-height:35mm; margin:0 0 4mm; display:grid; place-items:center; overflow:hidden; border:1px solid #e2ded4; background:#fbfaf5; }
 .problem-visual svg { display:block; width:100%; max-height:39mm; }

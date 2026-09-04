@@ -98,7 +98,7 @@ test("6.SP.A concept opens the full 36-item unit workbook rather than a 12-item 
   assert.equal(await page.locator('[data-clinic-action="animated"]').count(), 0);
   const workbook = page.locator('[data-clinic-action="workbook"]');
   assert.equal(await workbook.getAttribute("href"), "./unit-workbook.html?cluster=6.SP.A&mode=workbook&audience=student&locale=ko");
-  assert.match(await workbook.innerText(), /통계 질문과 자료의 분포 단원 워크북/);
+  assert.match(await workbook.innerText(), /통계적 질문과 자료의 분포 단원 워크북/);
   await workbook.click(); await page.waitForLoadState("networkidle");
   assert.equal(await page.locator(".book-problem").count(), 36);
   assert.equal(await page.locator(".book-page").count(), 12);
