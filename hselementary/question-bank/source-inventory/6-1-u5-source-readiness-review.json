@@ -106,19 +106,20 @@
     "duplicateSourceItemIds": 0,
     "duplicateNormalizedTypeIds": 2,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 9,
-    "publicDecisionLockedCount": 34,
-    "releaseLockedCount": 34,
+    "publicCandidateCount": 19,
+    "publicDecisionLockedCount": 24,
+    "releaseLockedCount": 24,
     "notes": [
       "원본 6-1심화.pdf PDF 38~45쪽을 600dpi로 직접 확인했습니다. PDF 38~45쪽은 인쇄 쪽 44~51쪽입니다.",
       "기존 6-1-source-items.json은 시작 위치만 참고했습니다. 실제 분류는 개념탐구 소문항 7개, 예제 12개, Mission 번호 24개로 다시 세었습니다.",
       "Mission 4의 (1),(2)는 원문에서 하나의 Mission 번호이므로 하나의 유형 항목으로 기록했습니다.",
-      "개념탐구 1의 단일 답 9유형은 원본 구조·독립 계산·문제와 답의 같은 그림 검수를 마쳐 공개 후보로 전환했고, 열린 설명형 3유형과 나머지 항목은 잠금을 유지합니다.",
-      "수치·그래프 문항은 범례, 눈금, 각 구간의 비율·각도, 표의 값을 다시 읽어 계산했습니다. 판독이 불충분한 항목은 답을 비워 잠갔습니다."
+      "수치·그래프 문항은 범례, 눈금, 각 구간의 비율·각도, 표의 값을 다시 읽어 계산했습니다. 판독이 불충분한 항목은 답을 비워 잠갔습니다.",
+      "개념탐구 2의 그래프 10유형은 원본 수치·구조와 고정 3문항, 독립 계산, 문제·답 같은 자료, PC·모바일·A4 검수를 마쳐 공개 후보로 전환했습니다.",
+      "Mission 5의 자료와 가능성은 4문제가 비율이 아닌 실제 개수입니다. 서술형50문제에서 알려진 수를 빼 도형11문제, 틀린 수2문제로 계산했습니다."
     ],
     "calculationCheckedCount": 37,
     "calculationNeedsClarificationCount": 6,
-    "lockedCount": 34,
+    "lockedCount": 24,
     "allImplementationLocked": false,
     "allReleaseLocked": false
   },
@@ -240,12 +241,14 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 확인은 끝났지만 그림그래프와 띠그래프 대응 화면 검수 전입니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "ordered-list"
+      "releaseStatus": "verified",
+      "resultContract": "ordered-table-strip",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-exploration"
     },
     {
       "sourceItemId": "6-1-u5-e3-exploration",
@@ -464,12 +467,14 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "띠그래프의 구간 경계를 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "ordered-tuple"
+      "releaseStatus": "verified",
+      "resultContract": "ordered-tuple",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-example-1"
     },
     {
       "sourceItemId": "6-1-u5-e2-example-2",
@@ -481,24 +486,26 @@
       "childFriendlyTypeLabel": "여러 해 띠그래프에서 사람 수의 합 구하기",
       "originalStructure": "2015~2017년 TV 시청 시간 띠그래프와 해마다 다른 전체 학생 수로 2시간 미만 학생 수의 합을 구합니다.",
       "conditions": [
-        "2015년3000명·22%, 2016년2500명·26%, 2017년2000명·33%"
+        "2015년3000명·22%,38%,40%; 2016년2500명·26%,38%,36%; 2017년2000명·33%,40%,27%"
       ],
       "visualRequirement": "연도별 구간 이름과 전체 수를 대응해야 합니다.",
       "graphScale": {
         "type": "strip",
         "segments": "2015:22%,38%,40%; 2016:26%,38%,36%; 2017:33%,40%,27%"
       },
-      "independentCalculation": "3000×22%+2500×26%+2000×33%=660+650+660=1970명입니다.",
-      "independentAnswer": "1970명",
+      "independentCalculation": "2시간 미만은 첫째와 둘째 구간입니다. 3000×(22%+38%)+2500×(26%+38%)+2000×(33%+40%)=1800+1600+1460=4860명입니다.",
+      "independentAnswer": "4860명",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "연도별 전체 수와 구간 대응을 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-example-2"
     },
     {
       "sourceItemId": "6-1-u5-e2-example-3",
@@ -520,17 +527,19 @@
         "length": "전체20cm",
         "segments": "장미40%, 기타5%, 나머지55%"
       },
-      "independentCalculation": "장미40%, 봉선화20%, 무궁화와 국화35%. 무궁화25%가10송이이므로 전체는10÷0.25=40송이입니다.",
+      "independentCalculation": "장미40%, 봉선화20%, 기타5%이므로 무궁화와 국화는35%입니다. 비 5:2에서 무궁화는25%이고, 10송이가25%이므로 전체는10÷0.25=40송이입니다.",
       "independentAnswer": "40송이",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "구간 길이·백분율·꽃 이름의 위치를 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-example-3"
     },
     {
       "sourceItemId": "6-1-u5-e3-example-1",
@@ -925,25 +934,27 @@
       "childFriendlyTypeLabel": "띠그래프에서 한 종류를 다른 종류로 바꾸기",
       "originalStructure": "1학기 원그래프에서 소설책 절반을 위인전으로 바꾼 뒤 2학기 띠그래프를 완성합니다.",
       "conditions": [
-        "소설30%, 참고서25%, 위인전20%, 시집15%, 기타10%",
-        "소설 절반을 위인전으로 교체"
+        "전체200명, 반별30%,25%,25%,20%",
+        "2반의 과일 선호: 바나나36%, 사과24%, 귤20%, 포도14%, 배6%"
       ],
       "visualRequirement": "0~100% 눈금과 다섯 구간을 정확히 표시해야 합니다.",
       "graphScale": {
         "type": "circle-to-strip",
         "segments": "15%,25%,35%,15%,10%"
       },
-      "independentCalculation": "소설15%, 위인전35%, 참고서25%, 시집15%, 기타10%입니다.",
-      "independentAnswer": "소설15%, 참고서25%, 위인전35%, 시집15%, 기타10%",
+      "independentCalculation": "2반은200×25%=50명입니다. 포도는2반의14%이므로50×14%=7명입니다.",
+      "independentAnswer": "2반50명, 포도7명",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "ordered-list"
+      "releaseStatus": "verified",
+      "resultContract": "ordered-tuple",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-mission-1"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-2",
@@ -955,25 +966,27 @@
       "childFriendlyTypeLabel": "전체 비율 구하기",
       "originalStructure": "남녀 비율 원그래프와 여학생 학원 희망 띠그래프로 피아노 희망 여학생의 전체 비율을 구합니다.",
       "conditions": [
-        "남62%, 여38%",
-        "여학생 중 피아노30%"
+        "민정이네600명·1~6학년21%,20%,16%,15%,15%,13%",
+        "소희네400명·1~6학년14%,15%,15%,17%,20%,19%"
       ],
       "visualRequirement": "전체와 여학생 안의 두 기준을 따로 표시해야 합니다.",
       "graphScale": {
         "type": "circle-and-strip",
         "segments": "여학생38%, 그중 피아노30%"
       },
-      "independentCalculation": "38%×30%=11.4%입니다.",
-      "independentAnswer": "11.4%",
+      "independentCalculation": "민정이네 6학년은600×13%=78명, 소희네는400×19%=76명입니다. 따라서 민정이네가2명 더 많습니다.",
+      "independentAnswer": "민정이네 학교, 2명 더 많음",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-mission-2"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-3",
@@ -986,24 +999,26 @@
       "originalStructure": "두 해의 키별 학생 수 띠그래프에서 160cm 이상 학생 수 차를 구합니다.",
       "conditions": [
         "2007년1000명·160cm 이상5.6%, 2012년800명·160cm 이상8.5%",
-        "키 구간 네 개"
+        "2017년 자료도 함께 제시:23.1%,40%,26.5%,10.4%"
       ],
       "visualRequirement": "마지막 구간 경계와 수치를 분명히 해야 합니다.",
       "graphScale": {
         "type": "strip",
         "segments": "2007:35.6%,37.8%,21%,5.6%; 2012:27.6%,38.4%,25.5%,8.5%"
       },
-      "independentCalculation": "2007년56명, 2012년68명, 차12명입니다.",
+      "independentCalculation": "2007년은1000×5.6%=56명, 2012년은800×8.5%=68명입니다. 차는68-56=12명입니다. 2017년 행은 원문 자료를 함께 보이는 행으로 유지합니다.",
       "independentAnswer": "12명",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-mission-3"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-4",
@@ -1022,17 +1037,19 @@
         "type": "strip",
         "segments": "봄15%, 여름35%, 가을20%, 겨울30%"
       },
-      "independentCalculation": "봄15%, 겨울30%, 가을20%. 80×20%=16명입니다.",
+      "independentCalculation": "봄은35%×3/7=15%, 겨울은15%×2=30%, 가을은100%-15%-35%-30%=20%입니다. 80×20%=16명입니다.",
       "independentAnswer": "16명",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-mission-4"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-5",
@@ -1044,24 +1061,28 @@
       "childFriendlyTypeLabel": "띠그래프에서 틀린 문제 수 구하기",
       "originalStructure": "전체 문제 수와 서술형 비율, 영역별 띠그래프로 도형 영역 틀린 수를 구합니다.",
       "conditions": [
-        "전체250문제, 서술형20%, 도형26%, 도형에서9개 맞힘"
+        "전체250문제, 서술형20%=50문제",
+        "수와 연산36%=18문제, 측정18%=9문제, 규칙성16%=8문제",
+        "자료와 가능성은 4문제(비율이 아니라 실제 개수), 도형에서9문제 맞힘"
       ],
       "visualRequirement": "도형 구간의 기준이 서술형 전체임을 표시해야 합니다.",
       "graphScale": {
         "type": "strip",
-        "segments": "수와 연산36%, 도형26%, 측정18%, 규칙성16%, 자료와 가능성4%"
+        "segments": "수와 연산36%, 도형22%, 측정18%, 규칙성16%, 자료와 가능성8%(4문제)"
       },
-      "independentCalculation": "서술형50문제, 도형13문제, 틀린 수13-9=4문제입니다.",
-      "independentAnswer": "4문제",
+      "independentCalculation": "서술형은250×20%=50문제입니다. 수와 연산18문제, 측정9문제, 규칙성8문제, 자료와 가능성4문제를 빼면 도형은50-18-9-8-4=11문제입니다. 9문제를 맞혔으므로 틀린 수는11-9=2문제입니다.",
+      "independentAnswer": "2문제",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-mission-5"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-6",
@@ -1073,25 +1094,28 @@
       "childFriendlyTypeLabel": "표와 띠그래프에서 직사각형 넓이 차 구하기",
       "originalStructure": "학년별 학생 수 표와 두 직사각형 띠그래프의 가로·세로로 넓이 차를 구합니다.",
       "conditions": [
-        "표: 42명,126명,105명,147명, 합계420명",
-        "직사각형18cm×5cm, 10cm×7cm"
+        "표:42명,126명,105명,147명, 합계420명",
+        "직사각형18cm×5cm, 10cm×7cm",
+        "6학년 비율35%"
       ],
       "visualRequirement": "표와 두 직사각형의 수치를 분리해야 합니다.",
       "graphScale": {
         "type": "table-and-strip",
         "rectangles": "18×5,10×7"
       },
-      "independentCalculation": "90cm²와70cm², 차20cm²입니다.",
-      "independentAnswer": "20cm²",
+      "independentCalculation": "두 직사각형 넓이는90cm²와70cm²이고 차는20cm²입니다. 6학년 구간은35%이므로20×35%=7cm²입니다.",
+      "independentAnswer": "7cm²",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e2-mission-6"
     },
     {
       "sourceItemId": "6-1-u5-e3-mission-1",

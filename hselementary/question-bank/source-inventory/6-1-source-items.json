@@ -21,16 +21,16 @@
     "answerContractMeaning": "candidate는 정답 형식 후보일 뿐, 원문 정답이나 출제 가능 판정이 아닙니다."
   },
   "integrity": {
-    "expectedTotalItems": 266,
-    "actualTotalItems": 266,
+    "expectedTotalItems": 264,
+    "actualTotalItems": 264,
     "expectedBySection": {
       "exploration": 27,
-      "example": 95,
+      "example": 93,
       "mission": 144
     },
     "actualBySection": {
       "exploration": 27,
-      "example": 95,
+      "example": 93,
       "mission": 144
     },
     "expectedByUnit": {
@@ -38,7 +38,7 @@
       "6-1-u2": 44,
       "6-1-u3": 44,
       "6-1-u4": 67,
-      "6-1-u5": 45,
+      "6-1-u5": 43,
       "6-1-u6": 44
     },
     "actualByUnit": {
@@ -64,8 +64,8 @@
       },
       "6-1-u5": {
         "unitName": "여러 가지 그래프",
-        "expectedItems": 45,
-        "actualItems": 45
+        "expectedItems": 43,
+        "actualItems": 43
       },
       "6-1-u6": {
         "unitName": "직육면체의 부피와 겉넓이",
@@ -81,7 +81,108 @@
       "everyItemLocked": false,
       "noItemClaimsDirectVerification": false,
       "identifiersUnique": true,
-      "verifiedItemsHavePublicMapping": false
+      "verifiedItemsHavePublicMapping": false,
+      "falseExampleIdsAbsent": true
+    },
+    "expectedByPdfPage": {
+      "2": 5,
+      "3": 6,
+      "4": 5,
+      "5": 6,
+      "7": 5,
+      "8": 6,
+      "9": 5,
+      "10": 6,
+      "11": 5,
+      "12": 6,
+      "13": 5,
+      "14": 6,
+      "16": 5,
+      "17": 6,
+      "18": 5,
+      "19": 6,
+      "20": 5,
+      "21": 6,
+      "22": 5,
+      "23": 6,
+      "25": 5,
+      "26": 6,
+      "27": 5,
+      "28": 6,
+      "29": 5,
+      "30": 6,
+      "31": 6,
+      "32": 6,
+      "33": 5,
+      "34": 6,
+      "35": 5,
+      "36": 6,
+      "38": 6,
+      "39": 6,
+      "40": 4,
+      "41": 6,
+      "42": 4,
+      "43": 6,
+      "44": 5,
+      "45": 6,
+      "47": 5,
+      "48": 6,
+      "49": 5,
+      "50": 6,
+      "51": 5,
+      "52": 6,
+      "53": 5,
+      "54": 6
+    },
+    "actualByPdfPage": {
+      "2": 5,
+      "3": 6,
+      "4": 5,
+      "5": 6,
+      "7": 5,
+      "8": 6,
+      "9": 5,
+      "10": 6,
+      "11": 5,
+      "12": 6,
+      "13": 5,
+      "14": 6,
+      "16": 5,
+      "17": 6,
+      "18": 5,
+      "19": 6,
+      "20": 5,
+      "21": 6,
+      "22": 5,
+      "23": 6,
+      "25": 5,
+      "26": 6,
+      "27": 5,
+      "28": 6,
+      "29": 5,
+      "30": 6,
+      "31": 6,
+      "32": 6,
+      "33": 5,
+      "34": 6,
+      "35": 5,
+      "36": 6,
+      "38": 6,
+      "39": 6,
+      "40": 4,
+      "41": 6,
+      "42": 4,
+      "43": 6,
+      "44": 5,
+      "45": 6,
+      "47": 5,
+      "48": 6,
+      "49": 5,
+      "50": 6,
+      "51": 5,
+      "52": 6,
+      "53": 5,
+      "54": 6
     }
   },
   "items": [
@@ -3174,10 +3275,11 @@
       "section": "exploration",
       "ordinal": 1,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "ordered-table-strip",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-exploration"
     },
     {
       "sourceItemId": "6-1-u5-e2-example-1",
@@ -3190,10 +3292,11 @@
       "section": "example",
       "ordinal": 1,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "ordered-tuple",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-example-1"
     },
     {
       "sourceItemId": "6-1-u5-e2-example-2",
@@ -3206,10 +3309,11 @@
       "section": "example",
       "ordinal": 2,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-example-2"
     },
     {
       "sourceItemId": "6-1-u5-e2-example-3",
@@ -3222,26 +3326,11 @@
       "section": "example",
       "ordinal": 3,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
-    },
-    {
-      "sourceItemId": "6-1-u5-e2-example-4",
-      "unitId": "6-1-u5",
-      "unitName": "여러 가지 그래프",
-      "exploration": 2,
-      "pdfPage": 40,
-      "printedPage": null,
-      "visualRisk": "눈금값 글자, 격자선, 범례, 그림 한 개의 단위, 띠·원그래프의 구간 경계를 모두 표시해야 함. 굵은 자료선과 얇은 보조선이 섞이면 선의 뜻을 분리하고 PC·모바일·A4에서 판독성을 검수해야 함",
-      "section": "example",
-      "ordinal": 4,
-      "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-example-3"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-1",
@@ -3254,10 +3343,11 @@
       "section": "mission",
       "ordinal": 1,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "ordered-tuple",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-mission-1"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-2",
@@ -3270,10 +3360,11 @@
       "section": "mission",
       "ordinal": 2,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-mission-2"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-3",
@@ -3286,10 +3377,11 @@
       "section": "mission",
       "ordinal": 3,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-mission-3"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-4",
@@ -3302,10 +3394,11 @@
       "section": "mission",
       "ordinal": 4,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-mission-4"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-5",
@@ -3318,10 +3411,11 @@
       "section": "mission",
       "ordinal": 5,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-mission-5"
     },
     {
       "sourceItemId": "6-1-u5-e2-mission-6",
@@ -3334,10 +3428,11 @@
       "section": "mission",
       "ordinal": 6,
       "sourceShape": "띠그래프의 구간별 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 차이를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e2-mission-6"
     },
     {
       "sourceItemId": "6-1-u5-e3-exploration",
@@ -3398,22 +3493,6 @@
       "section": "example",
       "ordinal": 3,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
-    },
-    {
-      "sourceItemId": "6-1-u5-e3-example-4",
-      "unitId": "6-1-u5",
-      "unitName": "여러 가지 그래프",
-      "exploration": 3,
-      "pdfPage": 42,
-      "printedPage": null,
-      "visualRisk": "눈금값 글자, 격자선, 범례, 그림 한 개의 단위, 띠·원그래프의 구간 경계를 모두 표시해야 함. 굵은 자료선과 얇은 보조선이 섞이면 선의 뜻을 분리하고 PC·모바일·A4에서 판독성을 검수해야 함",
-      "section": "example",
-      "ordinal": 4,
-      "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
       "answerContract": "candidate",
       "sourceVerified": false,
       "implementationStatus": "review-locked",

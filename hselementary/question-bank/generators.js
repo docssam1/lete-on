@@ -24149,6 +24149,278 @@
 
       throw new Error(`${sourceItemId}: 구현되지 않은 원문 분기입니다.`);
     },
+    sourceGrade6GraphsE2({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u5-e2-exploration", "6-1-u5-e2-example-1", "6-1-u5-e2-example-2", "6-1-u5-e2-example-3",
+        "6-1-u5-e2-mission-1", "6-1-u5-e2-mission-2", "6-1-u5-e2-mission-3", "6-1-u5-e2-mission-4",
+        "6-1-u5-e2-mission-5", "6-1-u5-e2-mission-6"
+      ];
+      const layouts = [
+        "pictograph-table-strip", "paired-food-strips", "three-year-time-strips", "measured-flower-strip",
+        "class-fruit-strips", "paired-school-strips", "three-year-height-strips", "season-strip",
+        "essay-domain-strip", "table-dual-rectangles"
+      ];
+      const visibilityContracts = [
+        "problem:2x2-pictograph-visible;table-values-hidden;strip-values-hidden|answer:table-and-strip-values",
+        "problem:restaurant-totals-visible;food-rates-visible|answer:target-rate-and-money-visible",
+        "problem:year-totals-visible;time-rates-visible|answer:first-two-bands-highlighted",
+        "problem:length-rose-other-visible;inferred-flower-values-hidden|answer:flower-total-visible",
+        "problem:class2-rate-hidden;fruit-rates-visible|answer:class2-rate-and-grape-count-visible",
+        "problem:school-totals-visible;grade-rates-visible|answer:sixth-grade-rates-highlighted",
+        "problem:all-three-years-visible;height-rates-visible|answer:2007-2012-target-highlighted",
+        "problem:summer-rate-visible;other-season-rates-hidden|answer:all-season-rates-visible",
+        "problem:data-count-visible;geometry-rate-hidden|answer:geometry-rate-and-wrong-count-visible",
+        "problem:student-table-visible;grade-rates-visible|answer:sixth-grade-areas-highlighted"
+      ];
+      const answerContracts = [
+        "ordered-table-strip", "restaurant-money-difference", "time-band-total", "flower-total",
+        "grape-student-count", "school-sixth-grade-difference", "height-sixth-grade-difference",
+        "autumn-student-count", "geometry-wrong-count", "sixth-grade-area-difference"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 여러 가지 그래프 개념탐구 2 유형은 0부터 9까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const layoutKind = layouts[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const esc = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const num = value => Number(value).toLocaleString("ko-KR");
+      const evidence = (values, phase = "problem", resultContract = "single-value") => `<span hidden data-source61-graphs-e2-kind="${layoutKind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-layout="${layoutKind}" data-phase="${phase}" data-result-contract="${resultContract}" data-visibility-contract="${esc(visibilityContracts[variant])}" data-answer-contract="${esc(answerContracts[variant])}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">자료의 기준을 확인하고, 백분율을 실제 수 또는 길이로 바꾸어 식을 세워 보세요.</p>` : "";
+      const svgText = (x, y, value, extra = "") => `<text x="${x}" y="${y}" fill="#183b56" font-size="11" text-anchor="middle" ${extra}>${esc(value)}</text>`;
+      const colors = ["#dcecf5", "#ffe3a3", "#cce8dc", "#e5dcf5", "#f5d4dc", "#d8e0e7"];
+      const pctTotal = segments => {
+        const total = segments.reduce((sum, segment) => sum + segment.percent, 0);
+        if (Math.abs(total - 100) > 1e-8) throw new Error(`${sourceItemId}: 백분율 합이 100이 아닙니다: ${total}`);
+        return total;
+      };
+      const stripRow = ({ y, label, segments, solved = false, highlight = [], meta = "", annotations = [], dimensions = [] }) => {
+        pctTotal(segments);
+        const left = 166, width = 330, height = 34;
+        let cumulative = 0;
+        const bounds = [];
+        const blocks = segments.map((segment, index) => {
+          const x = left + width * cumulative / 100;
+          const w = width * segment.percent / 100;
+          bounds.push({ x, w, startPercent: cumulative, endPercent: cumulative + segment.percent });
+          cumulative += segment.percent;
+          const isHighlight = solved && highlight.includes(index);
+          const labelInside = segment.displayValue && w >= 70 ? segment.displayValue : (segment.showPercent === false || w < 38 ? "" : `${segment.percent}%`);
+          return `<rect class="source61-e2-segment${isHighlight ? " is-solved" : ""}" data-segment-index="${index}" data-segment-label="${esc(segment.label)}" data-segment-percent="${segment.percent}" x="${x.toFixed(2)}" y="${y}" width="${w.toFixed(2)}" height="${height}" fill="${isHighlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width="1"/>${labelInside ? svgText(x + w / 2, y + 21, labelInside, `font-size="${w >= 34 ? 8 : 8}"`) : ""}`;
+        }).join("");
+        const metaMarkup = meta ? `<text class="source61-e2-row-meta" data-row-meta="${esc(meta)}" x="496" y="${y + 51}" text-anchor="end" fill="#526b7d" font-size="8">${esc(meta)}</text>` : "";
+        const annotationMarkup = annotations.map(annotation => svgText(annotation.x ?? 496, y + (annotation.yOffset ?? 51), annotation.text, `font-size="${annotation.fontSize ?? 8}" style="text-anchor:${annotation.anchor || "end"}"`)).join("");
+        const dimensionMarkup = dimensions.map(dimension => {
+          const start = left + width * dimension.startPercent / 100;
+          const end = left + width * dimension.endPercent / 100;
+          const lineY = y + (dimension.yOffset ?? 51);
+          return `<line class="source61-e2-measure-line" x1="${start.toFixed(2)}" y1="${lineY}" x2="${end.toFixed(2)}" y2="${lineY}"/><line class="source61-e2-measure-tick" x1="${start.toFixed(2)}" y1="${lineY - 4}" x2="${start.toFixed(2)}" y2="${lineY + 4}"/><line class="source61-e2-measure-tick" x1="${end.toFixed(2)}" y1="${lineY - 4}" x2="${end.toFixed(2)}" y2="${lineY + 4}"/>${svgText((start + end) / 2, lineY + (dimension.labelOffset ?? 12), dimension.label, `font-size="${dimension.fontSize ?? 8}"`)}`;
+        }).join("");
+        return `<g class="source61-e2-strip-row" data-row-label="${esc(label)}" data-row-segments="${segments.map(segment => segment.percent).join(",")}">${svgText(80, y + 22, label, "font-size=\"11\" font-weight=\"900\"")}${blocks}${metaMarkup}${annotationMarkup}${dimensionMarkup}</g>`;
+      };
+      const stripSvg = ({ title, rows, values, solved = false, highlights = [], resultText = "", rowHeight = 72, showLegend = true, emptyStrip = false }) => {
+        const top = 82;
+        const legendSegments = rows[0]?.segments || [];
+        const legendRows = Math.max(1, Math.ceil(legendSegments.length / 3));
+        const legendTop = top + rows.length * rowHeight + 4;
+        const resultTop = legendTop + legendRows * 18 + 5;
+        const height = resultTop + (solved && resultText ? 34 : 10);
+        const ticks = Array.from({ length: 6 }, (_, index) => {
+          const x = 166 + 330 * index / 5;
+          return `<line class="source61-e2-grid" x1="${x}" y1="61" x2="${x}" y2="${top + rows.length * rowHeight - 18}"/><text class="source61-e2-tick" x="${x}" y="51">${index * 20}</text>`;
+        }).join("");
+        const rowsMarkup = rows.map((row, index) => stripRow({ y: top + index * rowHeight, label: row.label, segments: row.segments, solved, highlight: highlights[index] || [], meta: row.meta, annotations: row.annotations, dimensions: row.dimensions })).join("");
+        const legend = showLegend ? legendSegments.map((segment, index) => `<g><rect x="${34 + (index % 3) * 168}" y="${legendTop + Math.floor(index / 3) * 18}" width="9" height="9" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width=".6"/>${svgText(48 + (index % 3) * 168, legendTop + 8 + Math.floor(index / 3) * 18, segment.legendValue || `${segment.label}${segment.showPercent === false ? "" : ` ${segment.percent}%`}`, "font-size=\"8\" style=\"text-anchor:start\"")}</g>`).join("") : "";
+        const resultMarkup = solved && resultText ? `<rect class="source61-e2-result-box" data-final-answer="${esc(resultText)}" x="32" y="${resultTop}" width="476" height="28" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgText(270, resultTop + 18, `답: ${resultText}`, "font-size=\"9\" font-weight=\"900\"")}` : "";
+        return `<svg class="geometry-diagram source61-graphs-e2-diagram" style="width:min(560px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e2-structure="${esc(title)}" data-source61-graphs-e2-layout="${layoutKind}" data-source61-graphs-e2-values="${values.join(",")}" data-source61-graphs-e2-segment-order="${rows.map(row => row.segments.map(segment => segment.label).join("|")).join(";")}"${emptyStrip ? ` data-source61-e2-empty-strip="true"` : ""}${solved ? ` data-result-highlight="${esc(rows.flatMap((row, rowIndex) => row.segments.filter((_, index) => (highlights[rowIndex] || []).includes(index)).map(segment => segment.label).join(",")))}" data-final-answer="${esc(resultText)}"` : ""}><rect class="source61-e2-frame" x="18" y="15" width="504" height="${height - 20}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(270, 31, title, "font-size=\"13\" font-weight=\"900\"")}${ticks}${svgText(166, 70, "백분율(%)", "font-size=\"9\" style=\"text-anchor:start\"")}${rowsMarkup}${legend}${resultMarkup}</svg>`;
+      };
+      const facePictograph = ({ title, labels, values, solved = false }) => {
+        const cellWidth = 226, cellHeight = 92, startX = 28, startY = 56, gapX = 14, gapY = 12;
+        const faces = (value, x, y) => {
+          const count = Math.floor(value / 10) + value % 10;
+          return Array.from({ length: count }, (_, index) => {
+            const big = index < Math.floor(value / 10), col = index % 10, row = Math.floor(index / 10);
+            const cx = x + 16 + col * 20, cy = y + 36 + row * 17, radius = big ? 7 : 4;
+            return `<g class="source61-e2-face" data-face-kind="${big ? "large" : "small"}"><circle cx="${cx}" cy="${cy}" r="${radius}" fill="${solved ? "#ffd86b" : big ? "#dcecf5" : "#ffe3a3"}" stroke="#183b56"/><circle cx="${cx - radius * .32}" cy="${cy - radius * .18}" r="${big ? 1 : .6}" fill="#183b56"/><circle cx="${cx + radius * .32}" cy="${cy - radius * .18}" r="${big ? 1 : .6}" fill="#183b56"/></g>`;
+          }).join("");
+        };
+        const cells = labels.map((label, index) => {
+          const col = index % 2, row = Math.floor(index / 2), x = startX + col * (cellWidth + gapX), y = startY + row * (cellHeight + gapY);
+          return `<g class="source61-e2-pictograph-quadrant" data-quadrant="${index}" data-row-label="${esc(label)}" data-row-value="${values[index]}"><rect x="${x}" y="${y}" width="${cellWidth}" height="${cellHeight}" fill="${index % 2 ? "#f8fbfd" : "#fff"}" stroke="#b5c5d1"/><text x="${x + cellWidth / 2}" y="${y + 17}" fill="#183b56" font-size="11" font-weight="900" text-anchor="middle">${esc(label)}</text>${faces(values[index], x, y)}${solved ? svgText(x + cellWidth - 10, y + cellHeight - 10, `${values[index]}명`, "font-size=\"9\" style=\"text-anchor:end\"") : ""}</g>`;
+        }).join("");
+        const height = startY + 2 * cellHeight + gapY + 54;
+        return `<svg class="geometry-diagram source61-graphs-e2-pictograph" style="width:min(560px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e2-layout="pictograph-table-strip" data-source61-graphs-e2-pictograph-quadrants="2x2" data-source61-graphs-e2-values="${values.join(",")}" data-source61-graphs-e2-symbols="10,1"${solved ? ` data-result-highlight="꽃별 학생 수"` : ""}><rect class="source61-e2-frame" x="18" y="15" width="504" height="${height - 30}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(270, 37, title, "font-size=\"13\" font-weight=\"900\"")}${cells}${svgText(160, height - 25, "큰 얼굴 그림 10명", "font-size=\"9\"")}${svgText(380, height - 25, "작은 얼굴 그림 1명", "font-size=\"9\"")}</svg>`;
+      };
+      const table = (headers, rows, className = "") => {
+        const normalizedRows = Array.isArray(rows[0]) ? rows : [rows];
+        return `<table class="problem-table source61-e2-table ${className}" data-source61-e2-summary-table="student-and-percent"><thead><tr>${headers.map(value => `<th>${esc(value)}</th>`).join("")}</tr></thead><tbody>${normalizedRows.map(row => `<tr>${row.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+      };
+      const frame = (visual, solved, resultText) => solved ? `${visual}<div class="solution-answer-caption">문제에 나온 자료를 같은 구조로 다시 확인한 답: ${esc(resultText)}</div>` : visual;
+      const fixed = (prompt, answer, solution, promptVisual, answerVisual, values, resultContract = "single-value") => result(`${prompt}${promptVisual}${support("그래프의 기준과 구간을 먼저 확인하세요.")}${challenge}${evidence(values, "problem", resultContract)}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e2-visibility-contract="${esc(visibilityContracts[variant])}" data-source61-e2-answer-contract="${esc(answerContracts[variant])}" data-final-answer="${esc(answer)}">${evidence(values, "answer", resultContract)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId, resultContract });
+
+      if (variant === 0) {
+        const pools = [[72, 48, 32, 48], [64, 52, 36, 48], [88, 46, 34, 32]];
+        const values = pools[poolIndex], percents = values.map(value => value / 2);
+        const labels = ["무궁화", "진달래", "개나리", "장미"];
+        const promptPictograph = facePictograph({ title: "좋아하는 꽃별 학생 수", labels, values });
+        const answerPictograph = facePictograph({ title: "좋아하는 꽃별 학생 수", labels, values, solved: true });
+        const answerText = `학생 수 ${values.join(", ")}명, 백분율 ${percents.join(", ")}%`;
+        const strip = stripSvg({ title: "좋아하는 꽃별 학생 백분율", rows: [{ label: "전체", segments: labels.map((label, index) => ({ label, percent: percents[index] })) }], values: percents, solved: true, highlights: [[0, 1, 2, 3]], resultText: answerText });
+        const answerVisual = `${answerPictograph}${table(["꽃", ...labels, "합계"], [["학생 수(명)", ...values, values.reduce((sum, value) => sum + value, 0)], ["백분율(%)", ...percents, 100]])}${strip}`;
+        const blankSegments = [{ label: "", percent: 100, showPercent: false }];
+        return fixed(`그림그래프를 보고 꽃별 학생 수 표를 완성하고, 띠그래프로 나타내세요.`, answerText, `얼굴 그림은 큰 그림 10명, 작은 그림 1명입니다. 따라서 ${values.join(", ")}명이고 전체는 200명입니다. 각 수를 200으로 나누어 백분율을 구하면 ${percents.join(", ")}%입니다.`, `${promptPictograph}${table(["꽃", ...labels, "합계"], [["학생 수(명)", ...labels.map(() => "□"), "□"], ["백분율(%)", ...labels.map(() => "□"), "□"]])}${stripSvg({ title: "완성할 띠그래프", rows: [{ label: "전체", segments: blankSegments }], values, showLegend: false, emptyStrip: true })}`, answerVisual, [...values, ...percents], "ordered-table-strip");
+      }
+
+      if (variant === 1) {
+        const pools = [
+          { a: [23, 31, 18, 28], b: [14, 35, 26, 25], totalA: 3000, totalB: 5000, priceA: 8000, priceB: 5000 },
+          { a: [20, 30, 25, 25], b: [15, 20, 40, 25], totalA: 4000, totalB: 3000, priceA: 6000, priceB: 7000 },
+          { a: [28, 22, 25, 25], b: [20, 25, 30, 25], totalA: 5200, totalB: 4000, priceA: 7000, priceB: 6500 }
+        ][poolIndex];
+        const labels = ["물냉면", "비빔냉면", "회냉면", "만두"];
+        const rows = [{ label: "가 식당", meta: `전체 ${num(pools.totalA)}그릇`, segments: labels.map((label, index) => ({ label, percent: pools.a[index] })) }, { label: "나 식당", meta: `전체 ${num(pools.totalB)}그릇`, segments: labels.map((label, index) => ({ label, percent: pools.b[index] })) }];
+        const countA = pools.totalA * pools.a[2] / 100, countB = pools.totalB * pools.b[2] / 100;
+        const moneyA = countA * pools.priceA, moneyB = countB * pools.priceB, answer = Math.abs(moneyA - moneyB);
+        const resultText = `${moneyB > moneyA ? "나" : "가"} 식당, ${num(answer)}원 더 많음`;
+        const visual = solved => stripSvg({ title: "식당의 음식별 그릇 수", rows, values: [...pools.a, ...pools.b], solved, highlights: solved ? [[], [2]] : [[], []], resultText: solved ? resultText : "" });
+        return fixed(`가 식당과 나 식당에서 일주일 동안 판매한 음식별 그릇 수를 띠그래프로 나타냈습니다. 회냉면 한 그릇은 가 식당 ${num(pools.priceA)}원, 나 식당 ${num(pools.priceB)}원일 때 회냉면 판매 금액은 어느 식당이 얼마 더 많은지 구하세요.`, resultText, `가 식당 회냉면은 ${pools.totalA}×${pools.a[2]}%=${countA}그릇이므로 ${num(moneyA)}원입니다. 나 식당은 ${pools.totalB}×${pools.b[2]}%=${countB}그릇이므로 ${num(moneyB)}원입니다. 차는 ${num(answer)}원입니다.`, visual(false), visual(true), [pools.totalA, pools.totalB, pools.priceA, pools.priceB, ...pools.a, ...pools.b], "ordered-tuple");
+      }
+
+      if (variant === 2) {
+        const pools = [
+          { totals: [3000, 2500, 2000], rows: [[22, 38, 40], [26, 38, 36], [33, 40, 27]] },
+          { totals: [2400, 2000, 1600], rows: [[25, 35, 40], [30, 35, 35], [32, 43, 25]] },
+          { totals: [3600, 2800, 2400], rows: [[18, 42, 40], [25, 40, 35], [35, 40, 25]] }
+        ][poolIndex];
+        const labels = ["1시간 미만", "1시간 이상 2시간 미만", "2시간 이상"], years = ["2015년", "2016년", "2017년"];
+        const rows = years.map((label, index) => ({ label, meta: `전체 ${num(pools.totals[index])}명`, segments: labels.map((segment, segmentIndex) => ({ label: segment, percent: pools.rows[index][segmentIndex] })) }));
+        const answer = pools.totals.reduce((sum, total, index) => sum + total * (pools.rows[index][0] + pools.rows[index][1]) / 100, 0);
+        const resultText = `${answer}명`;
+        const visual = solved => stripSvg({ title: "TV를 시청하는 시간별 학생 수", rows, values: [...pools.totals, ...pools.rows.flat()], solved, highlights: solved ? [[0, 1], [0, 1], [0, 1]] : [[], [], []], resultText: solved ? resultText : "" });
+        return fixed(`2015년부터 2017년까지 초등학교 6학년 학생들의 하루 TV 시청 시간을 조사했습니다. 조사한 전체 학생 수가 각각 ${pools.totals.join(", ")}명일 때, 2시간 미만인 학생은 모두 몇 명인지 구하세요.`, resultText, `2시간 미만은 첫째 구간과 둘째 구간입니다. ${pools.totals.map((total, index) => `${total}×(${pools.rows[index][0]}%+${pools.rows[index][1]}%)`).join("+")}=${answer}명입니다.`, visual(false), visual(true), [...pools.totals, ...pools.rows.flat()]);
+      }
+
+      if (variant === 3) {
+        const pools = [
+          { length: 20, rose: 8, other: 5, balmHalf: true, ratio: [5, 2], roseCount: 8, segments: [40, 25, 20, 10, 5], total: 40 },
+          { length: 25, rose: 10, other: 8, balmHalf: true, ratio: [3, 1], roseCount: 12, segments: [40, 24, 20, 8, 8], total: 50 },
+          { length: 30, rose: 9, other: 10, balmHalf: true, ratio: [2, 1], roseCount: 24, segments: [30, 30, 15, 15, 10], total: 80 }
+        ][poolIndex];
+        const labels = ["장미", "무궁화", "봉선화", "국화", "기타"];
+        const rows = [{ label: "꽃 종류", segments: labels.map((label, index) => ({ label, percent: pools.segments[index] })) }];
+        const resultText = `${pools.total}송이`;
+        const rowsWithMeasures = [{ label: "꽃 종류", dimensions: [{ startPercent: 0, endPercent: 100, label: `전체 ${pools.length}cm`, yOffset: 48 }, { startPercent: 0, endPercent: pools.segments[0], label: `장미 ${pools.rose}cm`, yOffset: 66 }], annotations: [{ x: 496, yOffset: 66, text: `기타 ${pools.other}%`, anchor: "end" }], segments: labels.map((label, index) => ({ label, percent: pools.segments[index] })) }];
+        const visual = solved => stripSvg({ title: "화단에 심은 꽃의 종류별 비율", rows: rowsWithMeasures, values: [pools.length, pools.rose, pools.other, ...pools.segments], solved, highlights: solved ? [[1, 2, 3]] : [[]], resultText: solved ? resultText : "", rowHeight: 104 });
+        return fixed(`길이가 ${pools.length}cm인 띠그래프에서 장미는 ${pools.rose}cm이고 기타는 전체의 ${pools.other}%입니다. 봉선화 수는 장미 수의 ${fractionMarkup(1, 2)}이고, 무궁화와 국화의 수의 비는 ${pools.ratio[0]}:${pools.ratio[1]}입니다. 무궁화가 ${pools.roseCount}송이일 때 꽃은 모두 몇 송이인지 구하세요.`, resultText, `장미는 전체의 ${pools.segments[0]}%이고 봉선화는 ${pools.segments[2]}%입니다. 무궁화와 국화는 남은 ${pools.segments[1] + pools.segments[3]}%를 ${pools.ratio[0]}:${pools.ratio[1]}로 나누므로 무궁화는 ${pools.segments[1]}%입니다. ${pools.roseCount}송이가 ${pools.segments[1]}%이므로 전체는 ${pools.total}송이입니다.`, visual(false), visual(true), [pools.length, pools.rose, pools.other, ...pools.segments, ...pools.ratio, pools.roseCount]);
+      }
+
+      if (variant === 4) {
+        const pools = [
+          { total: 200, classes: [30, 25, 25, 20], fruits: [36, 24, 20, 14, 6] },
+          { total: 200, classes: [25, 30, 20, 25], fruits: [30, 25, 20, 15, 10] },
+          { total: 300, classes: [20, 40, 25, 15], fruits: [28, 24, 22, 15, 11] }
+        ][poolIndex];
+        const classLabels = ["1반", "2반", "3반", "4반"], fruitLabels = ["바나나", "사과", "귤", "포도", "배"];
+        const makeRows = solved => [{ label: "6학년 반별", segments: classLabels.map((label, index) => ({ label, percent: pools.classes[index], showPercent: solved || index !== 1 })) }, { label: "2반이 좋아하는 과일", segments: fruitLabels.map((label, index) => ({ label, percent: pools.fruits[index] })) }];
+        const classCount = pools.total * pools.classes[1] / 100, grapeCount = classCount * pools.fruits[3] / 100;
+        const resultText = `포도 ${grapeCount}명`;
+        const visual = solved => stripSvg({ title: "반별 학생 수와 2반이 좋아하는 과일", rows: makeRows(solved), values: [pools.total, ...pools.classes, ...pools.fruits], solved, highlights: solved ? [[1], [3]] : [[], []], resultText: solved ? resultText : "" });
+        return fixed(`6학년 전체 학생이 ${pools.total}명일 때 두 띠그래프를 보고, 2반에서 포도를 좋아하는 학생 수를 구하세요.`, resultText, `2반은 ${pools.total}×${pools.classes[1]}%=${classCount}명입니다. 그중 포도는 ${classCount}×${pools.fruits[3]}%=${grapeCount}명입니다.`, visual(false), visual(true), [pools.total, ...pools.classes, ...pools.fruits]);
+      }
+
+      if (variant === 5) {
+        const pools = [
+          { a: [21, 20, 16, 15, 15, 13], b: [14, 15, 15, 17, 20, 19], totals: [600, 400] },
+          { a: [15, 16, 17, 18, 14, 20], b: [12, 15, 16, 17, 18, 22], totals: [500, 450] },
+          { a: [14, 15, 16, 18, 19, 18], b: [10, 12, 16, 18, 19, 25], totals: [800, 600] }
+        ][poolIndex];
+        const labels = ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"];
+        const rows = [{ label: "민정이네 학교", segments: labels.map((label, index) => ({ label, percent: pools.a[index] })) }, { label: "소희네 학교", segments: labels.map((label, index) => ({ label, percent: pools.b[index] })) }];
+        const counts = [pools.totals[0] * pools.a[5] / 100, pools.totals[1] * pools.b[5] / 100], answer = Math.abs(counts[0] - counts[1]);
+        const resultText = `${counts[0] >= counts[1] ? "민정이네" : "소희네"} 학교, ${answer}명 더 많음`;
+        const visual = solved => stripSvg({ title: "학교별 학년 학생 비율", rows, values: [...pools.totals, ...pools.a, ...pools.b], solved, highlights: solved ? [[5], [5]] : [[], []], resultText: solved ? resultText : "" });
+        return fixed(`민정이네 학교와 소희네 학교의 학년별 학생 비율을 나타낸 띠그래프입니다. 두 학교의 학생 수가 각각 ${pools.totals[0]}명, ${pools.totals[1]}명일 때 6학년 학생 수가 어느 학교가 몇 명 더 많은지 구하세요.`, resultText, `6학년은 민정이네 ${pools.totals[0]}×${pools.a[5]}%=${counts[0]}명, 소희네 ${pools.totals[1]}×${pools.b[5]}%=${counts[1]}명입니다. 차는 ${answer}명입니다.`, visual(false), visual(true), [...pools.totals, ...pools.a, ...pools.b], "ordered-tuple");
+      }
+
+      if (variant === 6) {
+        const pools = [
+          { totals: [1000, 800, 1000], rows: [[35.6, 37.8, 21, 5.6], [27.6, 38.4, 25.5, 8.5], [23.1, 40, 26.5, 10.4]] },
+          { totals: [1200, 900, 1000], rows: [[32.5, 35, 25, 7.5], [25, 37, 26, 12], [21, 38, 27, 14]] },
+          { totals: [1500, 1000, 1000], rows: [[30, 40, 24, 6], [22, 36, 31, 11], [18, 38, 30.5, 13.5]] }
+        ][poolIndex];
+        const labels = ["140cm 미만", "140cm 이상 150cm 미만", "150cm 이상 160cm 미만", "160cm 이상"], years = ["2007년", "2012년", "2017년"];
+        const rows = years.map((label, index) => ({ label, meta: `전체 ${num(pools.totals[index])}명`, segments: labels.map((segment, segmentIndex) => ({ label: segment, percent: pools.rows[index][segmentIndex] })) }));
+        const answer = Math.abs(pools.totals[0] * pools.rows[0][3] / 100 - pools.totals[1] * pools.rows[1][3] / 100);
+        const resultText = `${answer}명`;
+        const visual = solved => stripSvg({ title: "키별 학생 수", rows, values: [...pools.totals, ...pools.rows.flat()], solved, highlights: solved ? [[3], [3], []] : [[], [], []], resultText: solved ? resultText : "" });
+        return fixed(`2007년부터 2017년까지 초등학교 6학년 학생들의 키를 조사한 띠그래프입니다. 조사한 전체 학생 수가 2007년 ${pools.totals[0]}명, 2012년 ${pools.totals[1]}명일 때, 두 해의 160cm 이상 학생 수의 차를 구하세요.`, resultText, `2007년 160cm 이상은 ${pools.totals[0]}×${pools.rows[0][3]}%=${pools.totals[0] * pools.rows[0][3] / 100}명이고, 2012년은 ${pools.totals[1]}×${pools.rows[1][3]}%=${pools.totals[1] * pools.rows[1][3] / 100}명입니다. 차는 ${answer}명입니다.`, visual(false), visual(true), [...pools.totals, ...pools.rows.flat()]);
+      }
+
+      if (variant === 7) {
+        const pools = [
+          { total: 80, percent: [15, 35, 20, 30], relation: `${fractionMarkup(3, 7)}` },
+          { total: 120, percent: [20, 35, 15, 30], relation: `${fractionMarkup(4, 7)}` },
+          { total: 200, percent: [20, 30, 20, 30], relation: `${fractionMarkup(2, 3)}` }
+        ][poolIndex];
+        const labels = ["봄", "여름", "가을", "겨울"], makeRows = solved => [{ label: "태어난 계절", segments: labels.map((label, index) => ({ label, percent: pools.percent[index], showPercent: solved || index === 1 })) }];
+        const answer = pools.total * pools.percent[2] / 100;
+        const resultText = `${answer}명`;
+        const visual = solved => stripSvg({ title: "태어난 계절별 학생 수", rows: makeRows(solved), values: [pools.total, ...pools.percent], solved, highlights: solved ? [[2]] : [[]], resultText: solved ? resultText : "" });
+        return fixed(`6학년 학생 ${pools.total}명이 태어난 계절을 나타낸 띠그래프입니다. 봄에 태어난 학생 수는 여름에 태어난 학생 수의 ${pools.relation}이고, 겨울에 태어난 학생 수는 봄에 태어난 학생 수의 2배일 때 가을에 태어난 학생 수를 구하세요.`, resultText, `띠그래프에서 봄은 ${pools.percent[0]}%, 여름은 ${pools.percent[1]}%, 겨울은 ${pools.percent[3]}%입니다. 따라서 가을은 ${pools.percent[2]}%이고 ${pools.total}×${pools.percent[2]}%=${answer}명입니다.`, visual(false), visual(true), [pools.total, ...pools.percent]);
+      }
+
+      if (variant === 8) {
+        const pools = [
+          { total: 250, essay: 20, number: 36, measurement: 18, patterns: 16, dataCount: 4, correct: 9 },
+          { total: 400, essay: 25, number: 32, measurement: 18, patterns: 16, dataCount: 6, correct: 20 },
+          { total: 500, essay: 20, number: 25, measurement: 20, patterns: 15, dataCount: 5, correct: 23 }
+        ][poolIndex];
+        const essayCount = pools.total * pools.essay / 100;
+        const dataPercent = pools.dataCount * 100 / essayCount;
+        const geometryPercent = 100 - pools.number - pools.measurement - pools.patterns - dataPercent;
+        const geometryCount = essayCount * geometryPercent / 100;
+        const answer = geometryCount - pools.correct;
+        const makeSegments = solved => [
+          { label: "수와 연산", percent: pools.number },
+          { label: "도형", percent: geometryPercent, showPercent: solved },
+          { label: "측정", percent: pools.measurement },
+          { label: "규칙성", percent: pools.patterns },
+          { label: "자료와 가능성", percent: dataPercent, showPercent: false, legendValue: `자료와 가능성 (${pools.dataCount}문제)` }
+        ];
+        const resultText = `${answer}문제`;
+        const rows = solved => [{ label: "서술형 문제 영역", annotations: [{ x: 496, yOffset: 51, text: `자료와 가능성 (${pools.dataCount}문제)`, anchor: "end" }], segments: makeSegments(solved) }];
+        const visual = solved => stripSvg({ title: "영역별 서술형 문제 수", rows: rows(solved), values: [pools.total, pools.essay, pools.number, geometryPercent, pools.measurement, pools.patterns, pools.dataCount, pools.correct], solved, highlights: solved ? [[1]] : [[]], resultText: solved ? resultText : "" });
+        return fixed(`문제집에는 ${pools.total}문제가 있고 서술형 문제는 전체의 ${pools.essay}%입니다. 서술형 문제의 영역별 비율은 띠그래프로 나타내었고, 자료와 가능성 영역은 ${pools.dataCount}문제입니다. 도형 영역에서 ${pools.correct}문제를 맞혔다면 틀린 도형 영역 서술형 문제는 몇 문제인지 구하세요.`, resultText, `서술형은 ${pools.total}×${pools.essay}%=${essayCount}문제입니다. 수와 연산은 ${essayCount}×${pools.number}%=${essayCount * pools.number / 100}문제, 측정은 ${essayCount}×${pools.measurement}%=${essayCount * pools.measurement / 100}문제, 규칙성은 ${essayCount}×${pools.patterns}%=${essayCount * pools.patterns / 100}문제입니다. 자료와 가능성은 ${pools.dataCount}문제이므로 도형은 서술형의 나머지 ${geometryPercent}%이고, ${essayCount}-${essayCount * pools.number / 100}-${essayCount * pools.measurement / 100}-${essayCount * pools.patterns / 100}-${pools.dataCount}=${geometryCount}문제입니다. ${pools.correct}개를 맞혔으므로 ${answer}문제를 틀렸습니다.`, visual(false), visual(true), [pools.total, pools.essay, pools.number, geometryPercent, pools.measurement, pools.patterns, pools.dataCount, pools.correct]);
+      }
+
+      const pools = [
+        { counts: [42, 126, 105, 147], dimensions: [18, 5, 10, 7], percents: [10, 30, 25, 35] },
+        { counts: [80, 100, 120, 100], dimensions: [16, 6, 12, 6], percents: [20, 25, 30, 25] },
+        { counts: [80, 100, 120, 200], dimensions: [20, 8, 15, 8], percents: [16, 20, 24, 40] }
+      ][poolIndex];
+      const gradeLabels = ["3학년", "4학년", "5학년", "6학년"], total = pools.counts.reduce((sum, value) => sum + value, 0), answer = (pools.dimensions[0] * pools.dimensions[1] - pools.dimensions[2] * pools.dimensions[3]) * pools.percents[3] / 100;
+      const dualRectangles = solved => {
+        const rect = (x, y, width, height, title) => {
+          let cumulative = 0;
+          const blocks = pools.percents.map((percent, index) => {
+            const segmentWidth = width * percent / 100, start = x + width * cumulative / 100;
+            cumulative += percent;
+            const fill = solved && index === 3 ? "#ffd86b" : colors[index]; return "<rect class=\"source61-e2-rect-segment" + (solved && index === 3 ? " is-solved" : "") + "\" data-segment-index=\"" + index + "\" data-segment-percent=\"" + percent + "\" x=\"" + start.toFixed(2) + "\" y=\"" + y + "\" width=\"" + segmentWidth.toFixed(2) + "\" height=\"" + height + "\" fill=\"" + fill + "\" stroke=\"#183b56\"/><text x=\"" + (start + segmentWidth / 2).toFixed(2) + "\" y=\"" + (y + height / 2 + 4) + "\" font-size=\"9\" text-anchor=\"middle\" fill=\"#183b56\">" + percent + "%</text>";
+          }).join("");
+          return svgText(x + width / 2, y - 9, title, "font-size=\"10\" font-weight=\"900\"") + blocks;
+        };
+        const headers = gradeLabels.map(label => "<th>" + label + "</th>").join("") + "<th>합계</th>";
+        const cells = pools.counts.map(value => "<td>" + value + "</td>").join("") + "<td>" + total + "</td>";
+        const tableMarkup = "<foreignObject x=\"32\" y=\"52\" width=\"476\" height=\"84\"><table class=\"problem-table source61-e2-table\"><thead><tr>" + headers + "</tr></thead><tbody><tr>" + cells + "</tr></tbody></table></foreignObject>";
+        const firstRectMarkup = rect(64, 160, 412, 46, String(pools.dimensions[0]) + "cm × " + pools.dimensions[1] + "cm");
+        const secondRectMarkup = rect(64, 235, 412, 46, String(pools.dimensions[2]) + "cm × " + pools.dimensions[3] + "cm");
+        const resultLabel = svgText(270, 307, "6학년 구간 넓이 차: " + answer + "cm²", "font-size=\"10\" font-weight=\"900\"");
+        const resultMarkup = solved ? "<rect class=\"source61-e2-result-box\" x=\"126\" y=\"291\" width=\"288\" height=\"24\" rx=\"4\" fill=\"#ffe9a8\" stroke=\"#c78b00\" stroke-width=\"2\"/>" + resultLabel : "";
+        const solvedAttrs = solved ? " data-result-highlight=\"6학년 구간\" data-final-answer=\"" + answer + "cm²\"" : "";
+        return "<svg class=\"geometry-diagram source61-graphs-e2-diagram\" style=\"width:min(560px,100%);height:auto\" viewBox=\"0 0 540 330\" role=\"img\" aria-label=\"학년별 학생 비율과 두 띠그래프의 넓이\" data-source61-graphs-e2-structure=\"학년별 학생 수와 두 직사각형 띠그래프\" data-source61-graphs-e2-layout=\"" + layoutKind + "\" data-source61-graphs-e2-values=\"" + [...pools.counts, ...pools.dimensions, ...pools.percents].join(",") + "\" data-source61-graphs-e2-segment-order=\"" + gradeLabels.join("|") + "\" data-source61-e2-student-table=\"visible\"" + solvedAttrs + ">" + "<rect class=\"source61-e2-frame\" x=\"18\" y=\"15\" width=\"504\" height=\"300\" rx=\"6\" fill=\"#f7fafc\" stroke=\"#183b56\" stroke-width=\"2\"/>" + svgText(270, 37, "학년별 학생 수와 두 띠그래프", "font-size=\"13\" font-weight=\"900\"") + tableMarkup + firstRectMarkup + secondRectMarkup + resultMarkup + "</svg>";
+      };
+      return fixed("표의 자료를 두 직사각형 모양의 띠그래프로 나타냈습니다. 두 띠그래프의 가로와 세로가 각각 " + pools.dimensions[0] + "cm, " + pools.dimensions[1] + "cm와 " + pools.dimensions[2] + "cm, " + pools.dimensions[3] + "cm일 때 6학년이 차지하는 넓이의 차를 구하세요." + dualRectangles(false), String(answer) + "cm²", "두 직사각형 넓이의 차를 계산하고 6학년 비율을 곱하면 " + answer + "cm²입니다.", "", dualRectangles(true), [...pools.counts, ...pools.dimensions, ...pools.percents]);
+    },
     polygonPerimeterE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "5-1-u6-e1-exploration", "5-1-u6-e1-example-1-1", "5-1-u6-e1-example-1-2", "5-1-u6-e1-example-1-3",
@@ -24656,6 +24928,7 @@
       "6-1-u5-e1-mission-1", "6-1-u5-e1-mission-2", "6-1-u5-e1-mission-3",
       "6-1-u5-e1-mission-4", "6-1-u5-e1-mission-5", "6-1-u5-e1-mission-6"
     ].includes(type.sourceItemId), "sourceGrade6GraphsE1"],
+    [type => type.sourceItemId?.startsWith("6-1-u5-e2-"), "sourceGrade6GraphsE2"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
