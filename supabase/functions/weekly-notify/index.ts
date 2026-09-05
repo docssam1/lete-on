@@ -1,8 +1,9 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v5
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v6
 // 트리거: POST { trigger_key, dry?, test_phone?, probe? }  — pg_cron 또는 수동 curl.
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
 //   probe:true    → 릴레이에 {action:'ping'}만 보내 응답 원문을 돌려준다(문자 발송 없음, 연결·계약 확인용).
+//   probe:'aligo' → 알리고 /remain/(잔여 건수 조회)로 키·IP 인증만 확인 + 이 함수의 외부 IP. 문자 발송 없음.
 // 시크릿 읽기: 환경변수(Edge Secrets) 우선, 없으면 Vault(public.nm_notify_secret RPC, service_role 전용).
 // 발송 경로(우선순위):
 //   1) NOTIFY_RELAY_URL 이 Apps Script 웹앱(script.google.com)이면
@@ -125,6 +126,20 @@ Deno.serve(async (req: Request) => {
   const wk = weekKey(new Date());
 
   // 연결·계약 확인: 릴레이에 ping 만 보낸다. 문자 발송 없음. Apps Script면 "Unknown action: ping" 류가 오면 정상.
+  if (body.probe === "aligo") {
+    // 알리고 직접 경로 점검: 인증(키·아이디·IP 화이트리스트)만 /remain/ 으로 확인한다. 발송 없음.
+    let ip = "";
+    try { ip = (await (await fetch("https://api.ipify.org")).text()).trim(); } catch (_) { ip = "?"; }
+    const form = new FormData();
+    form.set("key", await secret(sb, "ALIGO_API_KEY"));
+    form.set("user_id", await secret(sb, "ALIGO_USER_ID"));
+    let status = 0, text = "";
+    try {
+      const r = await fetch("https://apis.aligo.in/remain/", { method: "POST", body: form });
+      status = r.status; text = (await r.text()).slice(0, 400);
+    } catch (e) { text = String(e).slice(0, 400); }
+    return new Response(JSON.stringify({ probe: "aligo", egress_ip: ip, status, text }), { headers: { "Content-Type": "application/json" } });
+  }
   if (body.probe) {
     const relay = await secret(sb, "NOTIFY_RELAY_URL");
     if (!relay) return new Response(JSON.stringify({ probe: true, relay: false, note: "NOTIFY_RELAY_URL 없음 — 알리고 직접 경로" }), { headers: { "Content-Type": "application/json" } });
