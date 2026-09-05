@@ -1,4 +1,4 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v9
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v10
 // 트리거: POST { trigger_key, dry?, test_phone?, probe? }  — pg_cron 또는 수동 curl.
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
@@ -159,8 +159,8 @@ Deno.serve(async (req: Request) => {
     const { title, msg } = composeMsg("테스트", null, "w1");
     if (dry) return new Response(JSON.stringify({ week: wk, test: true, dry: true, phone, title, msg }), { headers: { "Content-Type": "application/json" } });
     const res = await sendOne(sb, phone, title, msg);
-    await sb.from("nm_notify_log").insert({ phone, week_key: wk + "-t" + Date.now().toString(36), kind: "test", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
-    return new Response(JSON.stringify({ week: wk, test: true, phone, ...res }), { headers: { "Content-Type": "application/json" } });
+    const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk + "-t" + Date.now().toString(36), kind: "test", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
+    return new Response(JSON.stringify({ week: wk, test: true, phone, ...res, log_error: lErr ? lErr.message : undefined }), { headers: { "Content-Type": "application/json" } });
   }
 
   const { data: contacts, error: cErr } = await sb
@@ -187,8 +187,10 @@ Deno.serve(async (req: Request) => {
     if (dry) { results.push({ phone, dry: true, title, msg }); continue; }
 
     const res = await sendOne(sb, phone, title, msg);
-    await sb.from("nm_notify_log").insert({ phone, week_key: wk, kind: "weekly", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
-    results.push({ phone, ok: res.ok, via: res.via, request_id: res.request_id, detail: res.ok ? undefined : res.detail });
+    // 로그 insert 실패는 조용히 넘기지 않는다(주 1회 상한이 이 로그에 기대므로). 2026-09-05: 열 추가 뒤 PostgREST
+    // 스키마 캐시가 안 갱신돼 insert가 통째로 실패했던 적이 있다(notify pgrst, 'reload schema' 로 해결).
+    const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk, kind: "weekly", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
+    results.push({ phone, ok: res.ok, via: res.via, request_id: res.request_id, detail: res.ok ? undefined : res.detail, log_error: lErr ? lErr.message : undefined });
   }
   return new Response(JSON.stringify({ week: wk, count: results.length, results }), {
     headers: { "Content-Type": "application/json" },
