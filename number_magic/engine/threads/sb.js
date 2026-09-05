@@ -8,6 +8,34 @@
 
 const { R, pick, shuffle } = NM_RNG;
 
+/* ── §red 예시 문항 solution 체인 헬퍼 (2026-09-05) ──
+   자리별로 오른쪽부터 빼되, 모자라면 윗자리에서 10을 빌리는 과정을
+   한 줄씩 보여주고, 마지막 줄은 남은 윗자리를 그대로 되접어(trivial
+   floor/mod) answer와 정확히 같은 값으로 마무리한다. numDigits는 a의
+   자릿수(2~4)만 넣으면 된다 — SB6(3·4자리)·AD7(4자리 뺄셈)에서 공용. */
+function _subPlaceLines(a, b, diff, numDigits){
+  const KO = ['일','십','백','천'];
+  let borrowIn = 0;
+  const lines = [];
+  for(let p = 0; p <= numDigits - 2; p++){
+    const pv    = Math.pow(10, p);
+    const rawDa = Math.floor(a / pv) % 10;
+    const db    = Math.floor(b / pv) % 10;
+    let value = rawDa - borrowIn;
+    let borrowOut = 0;
+    if(value < db){ value += 10; borrowOut = 1; }
+    const base = `${rawDa}${borrowIn ? ' - 1' : ''}`;
+    const tex  = borrowOut
+      ? `\\text{${KO[p]}: } (10 + ${base}) - ${db} = \\square`
+      : `\\text{${KO[p]}: } ${base} - ${db} = \\square`;
+    lines.push({ tex, blank: value - db });
+    borrowIn = borrowOut;
+  }
+  const lowerPow = Math.pow(10, numDigits - 1);
+  lines.push({ tex: `${Math.floor(diff / lowerPow)} \\times ${lowerPow} + ${diff % lowerPow} = \\square`, blank: diff });
+  return lines;
+}
+
 /* ── SB1 — 한 자리 뺄셈 ─────────────────────────────────────── */
 NM_TGEN['sb1_sub1d'] = function(params, rng) {
   const max = (params && params.max != null) ? params.max : 9;
@@ -25,7 +53,10 @@ NM_TGEN['sb1_sub1d'] = function(params, rng) {
     answer: ans,
     answerType: 'number',
     widget: 'cubes',
-    cubes: { piles: [a, b], moveTo: ans }
+    cubes: { piles: [a, b], moveTo: ans },
+    solution: [
+      { tex: `${a} - ${b} = \\square`, blank: ans }
+    ]
   };
 };
 
@@ -115,7 +146,10 @@ NM_TGEN['sb3_sub2d1d'] = function(params, rng) {
       answer: ans,
       answerType: 'number',
       widget: 'cubes',
-      cubes: { piles: [a, b], moveTo: ans }
+      cubes: { piles: [a, b], moveTo: ans },
+      solution: [
+        { tex: `${a} - ${b} = \\square`, blank: ans }
+      ]
     };
   }
 
@@ -286,7 +320,8 @@ NM_TGEN['sb6_subBig'] = function(params, rng) {
     tex: `${a} - ${b} = \\square`,
     answer: ans,
     answerType: 'number',
-    widget: 'vertical'
+    widget: 'vertical',
+    solution: _subPlaceLines(a, b, ans, d)
   };
 };
 

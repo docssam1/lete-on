@@ -30,6 +30,48 @@ const PLACE_KO  = ['일','십','백','천','만'];
 const PLACE_EN  = ['ones','tens','hundreds','thousands','ten-thousands'];
 const PLACE_ZH  = ['个位','十位','百位','千位','万位'];
 
+/* ── §red 예시 문항 solution 체인 헬퍼 (2026-09-05) ──
+   두 수를 자리별로 더하거나 뺄 때 "일의 자리부터 자리 맞춰" 계산하는 과정을
+   자리 수만큼 한 줄씩 보여주고, 마지막 한 줄에서 남은 윗자리를 그대로
+   되접어(trivial floor/mod) answer와 정확히 같은 값으로 마무리한다.
+   numDigits는 두 수 중 큰 쪽의 자릿수(2~4)만 넣으면 된다. */
+function _addPlaceLines(a, b, sum, numDigits){
+  let carry = 0;
+  const lines = [];
+  for(let p = 0; p <= numDigits - 2; p++){
+    const pv = Math.pow(10, p);
+    const da = Math.floor(a / pv) % 10;
+    const db = Math.floor(b / pv) % 10;
+    const s  = da + db + carry;
+    lines.push({ tex: `\\text{${PLACE_KO[p]}: } ${da} + ${db}${carry ? ' + 1' : ''} = \\square`, blank: s % 10 });
+    carry = Math.floor(s / 10);
+  }
+  const lowerPow = Math.pow(10, numDigits - 1);
+  lines.push({ tex: `${Math.floor(sum / lowerPow)} \\times ${lowerPow} + ${sum % lowerPow} = \\square`, blank: sum });
+  return lines;
+}
+function _subPlaceLines(a, b, diff, numDigits){
+  let borrowIn = 0;
+  const lines = [];
+  for(let p = 0; p <= numDigits - 2; p++){
+    const pv    = Math.pow(10, p);
+    const rawDa = Math.floor(a / pv) % 10;
+    const db    = Math.floor(b / pv) % 10;
+    let value = rawDa - borrowIn;
+    let borrowOut = 0;
+    if(value < db){ value += 10; borrowOut = 1; }
+    const base = `${rawDa}${borrowIn ? ' - 1' : ''}`;
+    const tex  = borrowOut
+      ? `\\text{${PLACE_KO[p]}: } (10 + ${base}) - ${db} = \\square`
+      : `\\text{${PLACE_KO[p]}: } ${base} - ${db} = \\square`;
+    lines.push({ tex, blank: value - db });
+    borrowIn = borrowOut;
+  }
+  const lowerPow = Math.pow(10, numDigits - 1);
+  lines.push({ tex: `${Math.floor(diff / lowerPow)} \\times ${lowerPow} + ${diff % lowerPow} = \\square`, blank: diff });
+  return lines;
+}
+
 /* ── NS1 자릿값 읽기 ── */
 NM_TGEN['ns1_placeValue'] = function(params, rng){
   params = params || {};
@@ -55,7 +97,10 @@ NM_TGEN['ns1_placeValue'] = function(params, rng){
       answer: n,
       answerType: 'number',
       widget: 'base10',
-      base10: { h, tens, ones, mode: 'read' }
+      base10: { h, tens, ones, mode: 'read' },
+      solution: [
+        { tex: `${h}\\times100 + ${tens}\\times10 + ${ones}\\times1 = \\square`, blank: n }
+      ]
     };
   }
 
@@ -79,6 +124,20 @@ NM_TGEN['ns1_placeValue'] = function(params, rng){
 
   /* 절반 확률로 역문제: "○의 자리 숫자가 d인 수는?" — 하지만 단순 재귀 대신
      이 호출은 정방향(어떤 자리 숫자는?)만 구현, 역문제는 별도 variation */
+
+  /* solution: n을 자릿값별로 풀어 쓰되, 물어본 자리만 "숫자 × 자릿값"으로
+     빈칸 처리 — concept 그대로("4는 백의 자리라 400을 뜻해요") */
+  const placeParts = [];
+  for(let p = digits - 1; p >= 0; p--){
+    if(p === placeIdx){
+      placeParts.push(`\\square \\times ${placeValue}`);
+    } else {
+      const pv = Math.pow(10, p);
+      const dg = Math.floor(n / pv) % 10;
+      if(dg !== 0) placeParts.push(`${dg * pv}`);
+    }
+  }
+
   return {
     prompt: {
       ko: `${n}에서 ${ko}의 자리 숫자는 얼마일까요?`,
@@ -88,7 +147,10 @@ NM_TGEN['ns1_placeValue'] = function(params, rng){
     tex: `${n}에서 ${ko}의 자리 = \\square`,
     answer: digitAt,
     answerType: 'number',
-    widget: 'missing'
+    widget: 'missing',
+    solution: [
+      { tex: `${n} = ${placeParts.join(' + ')}`, blank: digitAt }
+    ]
   };
 };
 
@@ -116,7 +178,11 @@ NM_TGEN['ns2_split'] = function(params, rng){
     answer: need,
     answerType: 'number',
     widget: 'cubes',
-    cubes: { piles: [a, b], moveTo: n }
+    cubes: { piles: [a, b], moveTo: n },
+    solution: [
+      { tex: `${n} \\to ${a} + ${b}` },
+      { tex: `${k} + \\square = ${n}`, blank: need }
+    ]
   };
 };
 
@@ -188,22 +254,30 @@ NM_TGEN['ns5_twin'] = function(params, rng){
   const n = R(rng, min, max);
   /* near-double 변형 (~30% 확률) */
   const variant = rng();
-  let m, answer, promptKo, promptEn, promptZh;
+  let m, answer, promptKo, promptEn, promptZh, solution;
 
   if(variant < 0.33 && n > min){
-    /* near-double: n + (n-1) */
+    /* near-double: n + (n-1) — n의 두 배를 알면 1을 빼면 된다 */
     m = n - 1;
     answer = n + m;
     promptKo = `${n} 더하기 ${m}은 얼마일까요?`;
     promptEn = `What is ${n} + ${m}?`;
     promptZh = `${n}加${m}等于多少？`;
+    solution = [
+      { tex: `${n} + ${m} = ${n} + ${n} - 1` },
+      { tex: `${n}\\times2 - 1 = \\square`, blank: answer }
+    ];
   } else if(variant < 0.66 && n < max){
-    /* near-double: n + (n+1) */
+    /* near-double: n + (n+1) — n의 두 배를 알면 1을 더하면 된다 */
     m = n + 1;
     answer = n + m;
     promptKo = `${n} 더하기 ${m}은 얼마일까요?`;
     promptEn = `What is ${n} + ${m}?`;
     promptZh = `${n}加${m}等于多少？`;
+    solution = [
+      { tex: `${n} + ${m} = ${n} + ${n} + 1` },
+      { tex: `${n}\\times2 + 1 = \\square`, blank: answer }
+    ];
   } else {
     /* pure double */
     m = n;
@@ -211,6 +285,10 @@ NM_TGEN['ns5_twin'] = function(params, rng){
     promptKo = `${n}의 두 배는 얼마일까요?`;
     promptEn = `What is double ${n}?`;
     promptZh = `${n}的两倍是多少？`;
+    solution = [
+      { tex: `${n} + ${n} = ${n}\\times2` },
+      { tex: `${n}\\times2 = \\square`, blank: answer }
+    ];
   }
 
   /* 같은 (n,m) 조합이라도 더하는 순서·등식 방향을 섞어 문항 다양성을 늘린다.
@@ -238,7 +316,8 @@ NM_TGEN['ns5_twin'] = function(params, rng){
     answer,
     answerType: 'number',
     widget: 'cubes',
-    cubes: { piles: [n, m], moveTo: answer }
+    cubes: { piles: [n, m], moveTo: answer },
+    solution
   };
 };
 
@@ -261,7 +340,10 @@ NM_TGEN['ad1_add1d'] = function(params, rng){
     answer: sum,
     answerType: 'number',
     widget: 'cubes',
-    cubes: { piles: [a, b], moveTo: sum }
+    cubes: { piles: [a, b], moveTo: sum },
+    solution: [
+      { tex: `${a} + ${b} = \\square`, blank: sum }
+    ]
   };
 };
 
@@ -359,7 +441,8 @@ NM_TGEN['ad3_add2d1d'] = function(params, rng){
       answer: sum,
       answerType: 'number',
       widget: 'base10',
-      base10: { a:{tens, ones:ones_a}, b:{tens:0, ones:b}, mode:'add' }
+      base10: { a:{tens, ones:ones_a}, b:{tens:0, ones:b}, mode:'add' },
+      solution: _addPlaceLines(A, b, sum, 2)
     };
   }
 
@@ -393,7 +476,8 @@ NM_TGEN['ad3_add2d1d'] = function(params, rng){
         { tex: `${h * 100} + ${tens * 10} + ${ones_a} + ${b}`, blank: onesSum > 9 ? newOnes : onesSum },
         { tex: `${h * 100} + ${newTens * 10} + ${newOnes}`,     blank: sum }
       ],
-      widget: 'steps'
+      widget: 'steps',
+      solution: _addPlaceLines(A, b, sum, 3)
     };
   }
 
@@ -423,7 +507,8 @@ NM_TGEN['ad3_add2d1d'] = function(params, rng){
         { tex: `${tens * 10} + ${ones_a} + ${b}`, blank: onesSum },
         { tex: `${tens * 10} + ${onesSum}`,        blank: sum     }
       ],
-      widget: 'steps'
+      widget: 'steps',
+      solution: _addPlaceLines(A, b, sum, 2)
     };
   }
 
@@ -446,7 +531,8 @@ NM_TGEN['ad3_add2d1d'] = function(params, rng){
       { tex: `${tens * 10} + ${ones_a} + ${b}`, blank: newOnes },
       { tex: `${newTens} + ${newOnes}`,          blank: sum     }
     ],
-    widget: 'steps'
+    widget: 'steps',
+    solution: _addPlaceLines(A, b, sum, 2)
   };
 };
 
@@ -475,7 +561,10 @@ NM_TGEN['ad4_addTens'] = function(params, rng){
       answer: seq[blank],
       answerType: 'number',
       widget: 'numline',
-      numline: { start, step, seq, blank }
+      numline: { start, step, seq, blank },
+      solution: [
+        { tex: `${seq[blank - 1]} + ${step} = \\square`, blank: seq[blank] }
+      ]
     };
   }
 
@@ -506,9 +595,16 @@ NM_TGEN['ad4_addTens'] = function(params, rng){
       tex: `${bigA} + \\square = ${bigA + bigB}`,
       answer: bigB,
       answerType: 'number',
-      widget: 'missing'
+      widget: 'missing',
+      solution: [
+        { tex: `${(bigA + bigB) / unit} - ${bigA / unit} = \\square`, blank: bigB / unit },
+        { tex: `${bigB / unit} \\times ${unit} = \\square`, blank: bigB }
+      ]
     };
   }
+
+  const unitA = bigA / unit, unitB = bigB / unit;
+  const unitResult = op === '+' ? unitA + unitB : unitA - unitB;
 
   return {
     prompt: {
@@ -519,7 +615,11 @@ NM_TGEN['ad4_addTens'] = function(params, rng){
     tex: `${bigA} ${op === '+' ? '+' : '-'} ${bigB} = \\square`,
     answer: result,
     answerType: 'number',
-    widget: 'missing'
+    widget: 'missing',
+    solution: [
+      { tex: `${unitA} ${op} ${unitB} = \\square`, blank: unitResult },
+      { tex: `${unitResult} \\times ${unit} = \\square`, blank: result }
+    ]
   };
 };
 
@@ -650,7 +750,8 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
     tex: `${a} ${opChar === '+' ? '+' : '-'} ${b} = \\square`,
     answer: result,
     answerType: 'number',
-    widget: 'vertical'
+    widget: 'vertical',
+    solution: opChar === '+' ? _addPlaceLines(a, b, result, 4) : _subPlaceLines(a, b, result, 4)
   };
 };
 
@@ -663,14 +764,17 @@ NM_TGEN['ad8_multiAdd10'] = function(params, rng){
   /* 짝 1~2쌍 생성 후 나머지 orphan 채우기 */
   const pairCount = termCount <= 4 ? 1 : R(rng, 1, 2);
   let nums = [];
+  const pairsList = [];
 
   for(let i = 0; i < pairCount; i++){
     const x = R(rng, 1, 9);
     nums.push(x, 10 - x);
+    pairsList.push([x, 10 - x]);
   }
 
   /* orphan 추가 */
   let tries = 0;
+  const orphans = [];
   while(nums.length < termCount && tries < 100){
     tries++;
     const o = twoDigit && rng() < 0.4
@@ -678,11 +782,16 @@ NM_TGEN['ad8_multiAdd10'] = function(params, rng){
       : R(rng, 1, 9);
     /* 이미 있는 수와 10 짝이 안 되도록 */
     const conflicts = nums.some(n => n + o === 10);
-    if(!conflicts){ nums.push(o); }
+    if(!conflicts){ nums.push(o); orphans.push(o); }
   }
 
   nums = shuffle(rng, nums);
   const sum = nums.reduce((s, n) => s + n, 0);
+
+  /* solution: 10이 되는 짝부터 묶고, 남은 수(orphan)를 더한 뒤 전체를 합친다 */
+  const solution = pairsList.map(p => ({ tex: `${p[0]} + ${p[1]} = \\square`, blank: 10 }));
+  const orphanStr = orphans.length ? ` + ${orphans.join(' + ')}` : '';
+  solution.push({ tex: `${pairCount * 10}${orphanStr} = \\square`, blank: sum });
 
   return {
     prompt: {
@@ -696,7 +805,8 @@ NM_TGEN['ad8_multiAdd10'] = function(params, rng){
     widget: 'selectPairs',
     nums,
     target: 10,
-    pairCount
+    pairCount,
+    solution
   };
 };
 
@@ -736,7 +846,11 @@ NM_TGEN['ad9_compAdd'] = function(params, rng){
         { tex: `${a} + 10 ${delta<0?'-':'+'} ${Math.abs(delta)}`, blank: sumLeft },
         { tex: `\\square`,                                        blank: sumRight }
       ],
-      widget: 'steps'
+      widget: 'steps',
+      solution: [
+        { tex: `${a} + 10 = \\square`, blank: sumLeft },
+        { tex: `${sumLeft} ${delta<0?'-':'+'} ${Math.abs(delta)} = \\square`, blank: sumRight }
+      ]
     };
   }
 
@@ -757,7 +871,12 @@ NM_TGEN['ad9_compAdd'] = function(params, rng){
         { tex: `${a} + 10`,               blank: sumLeft  },
         { tex: `${sumLeft} ${delta<0?'-':'+'} ${Math.abs(delta)}`, blank: sumRight }
       ] }
-    }
+    },
+    solution: [
+      { tex: `${a} + 10 = \\square`, blank: sumLeft },
+      { tex: `${sumLeft} ${delta<0?'-':'+'} ${Math.abs(delta)} = \\square`, blank: sumRight },
+      { tex: `${a}+10=\\square,\\ ${a}+${b2}=\\square`, blank: [sumLeft, sumRight] }
+    ]
   };
 };
 
