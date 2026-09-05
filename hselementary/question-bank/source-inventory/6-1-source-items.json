@@ -1150,11 +1150,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "exploration",
       "ordinal": 1,
-    "sourceShape": "원본 16쪽 개념탐구 1. 소수를 자연수로 나누는 계산 다섯 개를 제시된 순서대로 계산하여 소수로 나타냄",
-    "answerContract": "ordered-list-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "원본 다섯 계산과 답 1.2, 1.24, 0.71, 1.65, 7.08을 독립 대조하고, 계산식과 답표가 같은 자료를 쓰는 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 16쪽 개념탐구 1. 소수를 자연수로 나누는 계산 다섯 개를 제시된 순서대로 계산하여 소수로 나타냄",
+      "answerContract": "ordered-list-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 다섯 계산과 답 1.2, 1.24, 0.71, 1.65, 7.08을 독립 대조하고, 계산식과 답표가 같은 자료를 쓰는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-example-1",
@@ -1166,11 +1166,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "example",
       "ordinal": 1,
-    "sourceShape": "원본 16쪽 예제 1-1. 숫자 카드 네 장으로 □.□□÷□를 만들고 몫이 1보다 작은 경우 중 가장 큰 몫을 구함",
-    "answerContract": "single-answer-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "원본 카드 2,3,5,8의 모든 배치를 확인해 2.85÷3=0.95가 유일한 최댓값임을 대조하고, 전수 열거가 가능한 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 16쪽 예제 1-1. 숫자 카드 네 장으로 □.□□÷□를 만들고 몫이 1보다 작은 경우 중 가장 큰 몫을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 카드 2,3,5,8의 모든 배치를 확인해 2.85÷3=0.95가 유일한 최댓값임을 대조하고, 전수 열거가 가능한 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-example-2",
@@ -1182,11 +1182,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "example",
       "ordinal": 2,
-    "sourceShape": "원본 16쪽 예제 1-2. 22.■4 > 4▲.78÷2를 만족하는 0부터 9까지의 숫자 ■, ▲의 순서 있는 짝을 모두 셈",
-    "answerContract": "single-answer-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "■와 ▲의 100쌍을 독립 전수 대입하여 원본 답이 47쌍임을 확인하고, 같은 전수표로 검산하는 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 16쪽 예제 1-2. 22.■4 > 4▲.78÷2를 만족하는 0부터 9까지의 숫자 ■, ▲의 순서 있는 짝을 모두 셈",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "■와 ▲의 100쌍을 독립 전수 대입하여 원본 답이 47쌍임을 확인하고, 같은 전수표로 검산하는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-example-3",
@@ -1198,11 +1198,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "example",
       "ordinal": 3,
-    "sourceShape": "원본 16쪽 예제 1-3. 두 경계 사이의 소수 두 자리 수 중 자연수로 나눈 몫이 소수 두 자리 수가 되는 가장 큰 수와 작은 수를 구함",
-    "answerContract": "ordered-pair-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "원본 범위 66.7~72.4와 나누는 수 16에서 양끝 값 66.72, 72.32를 전수 대조하고, 범위 수직선을 함께 그리는 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 16쪽 예제 1-3. 두 경계 사이의 소수 두 자리 수 중 자연수로 나눈 몫이 소수 두 자리 수가 되는 가장 큰 수와 작은 수를 구함",
+      "answerContract": "ordered-pair-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 범위 66.7~72.4와 나누는 수 16에서 양끝 값 66.72, 72.32를 전수 대조하고, 범위 수직선을 함께 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-example-4",
@@ -1214,11 +1214,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "example",
       "ordinal": 4,
-    "sourceShape": "원본 16쪽 예제 1-4. 곱의 소수점을 왼쪽으로 한 자리 잘못 찍은 값과 올바른 값의 차로 올바른 곱을 구함",
-    "answerContract": "single-answer-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "올바른 값 40.13과 잘못된 값 4.013의 차가 36.117임을 독립 대조하고, 소수점 이동 관계를 다시 그리는 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 16쪽 예제 1-4. 곱의 소수점을 왼쪽으로 한 자리 잘못 찍은 값과 올바른 값의 차로 올바른 곱을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "올바른 값 40.13과 잘못된 값 4.013의 차가 36.117임을 독립 대조하고, 소수점 이동 관계를 다시 그리는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-1",
@@ -1230,11 +1230,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 1,
-    "sourceShape": "원본 17쪽 Mission 1. 네 나눗셈의 몫을 계산하고 5와의 차가 작은 순서대로 식의 기호를 나열함",
-    "answerContract": "ordered-list-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "원본 네 몫 4.83, 4.09, 5.15, 5.2와 순서 다-가-라-나를 독립 대조하고, 차가 모두 다른 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 17쪽 Mission 1. 네 나눗셈의 몫을 계산하고 5와의 차가 작은 순서대로 식의 기호를 나열함",
+      "answerContract": "ordered-list-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 네 몫 4.83, 4.09, 5.15, 5.2와 순서 다-가-라-나를 독립 대조하고, 차가 모두 다른 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-2",
@@ -1246,11 +1246,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 2,
-    "sourceShape": "원본 17쪽 Mission 2. 가★나=(가-나)÷나로 약속하고 두 식의 계산 결과 차를 구함",
-    "answerContract": "single-answer-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "원본 두 식의 값 7.06, 6.21과 차 0.85를 독립 대조하고, 약속한 계산을 두 번 적용하는 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 17쪽 Mission 2. 가★나=(가-나)÷나로 약속하고 두 식의 계산 결과 차를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 두 식의 값 7.06, 6.21과 차 0.85를 독립 대조하고, 약속한 계산을 두 번 적용하는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-3",
@@ -1262,11 +1262,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 3,
-    "sourceShape": "원본 17쪽 Mission 3. 겹치지 않게 이어 붙인 평행사변형과 정사각형의 전체 넓이, 밑변, 정사각형 한 변으로 평행사변형의 높이를 구함",
-    "answerContract": "drawing-dependent-candidate",
-    "sourceVerified": true,
-    "implementationStatus": "review-locked",
-    "reviewReason": "독립 계산 값 4.8cm는 확인했지만 원문과 같은 평행사변형·정사각형 연결 위치를 점·선분 자료로 다시 그리고 PC·모바일·A4에서 확인하기 전까지 잠급니다."
+      "sourceShape": "원본 17쪽 Mission 3. 겹치지 않게 이어 붙인 평행사변형과 정사각형의 전체 넓이, 밑변, 정사각형 한 변으로 평행사변형의 높이를 구함",
+      "answerContract": "drawing-dependent-candidate",
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "독립 계산 값 4.8cm는 확인했지만 원문과 같은 평행사변형·정사각형 연결 위치를 점·선분 자료로 다시 그리고 PC·모바일·A4에서 확인하기 전까지 잠급니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-4",
@@ -1278,11 +1278,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 4,
-    "sourceShape": "원본 17쪽 Mission 4. 8로 나누는 소수 세로셈에서 기호로 가려진 숫자를 계산 순서대로 찾아 몫을 구함",
-    "answerContract": "drawing-dependent-candidate",
-    "sourceVerified": true,
-    "implementationStatus": "review-locked",
-    "reviewReason": "독립 계산 몫 7.35는 확인했지만 문제와 답에서 같은 세로셈 자릿값 자료로 56→28→24→40→40을 정확히 그리는 전용 화면 검수 전까지 잠급니다."
+      "sourceShape": "원본 17쪽 Mission 4. 8로 나누는 소수 세로셈에서 기호로 가려진 숫자를 계산 순서대로 찾아 몫을 구함",
+      "answerContract": "drawing-dependent-candidate",
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "독립 계산 몫 7.35는 확인했지만 문제와 답에서 같은 세로셈 자릿값 자료로 56→28→24→40→40을 정확히 그리는 전용 화면 검수 전까지 잠급니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-5",
@@ -1294,11 +1294,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 5,
-    "sourceShape": "원본 17쪽 Mission 5. 어떤 수를 한 자연수로 나눈 몫과 덧셈 결과로 원래 수를 찾고, 그 수를 다른 두 수로 나눈 몫의 합을 구함",
-    "answerContract": "single-answer-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "원본에서 어떤 수 16.2와 두 몫의 합 5.04를 독립 대조하고, 한 수에서 두 나눗셈으로 갈라지는 답 그림을 쓰는 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 17쪽 Mission 5. 어떤 수를 한 자연수로 나눈 몫과 덧셈 결과로 원래 수를 찾고, 그 수를 다른 두 수로 나눈 몫의 합을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본에서 어떤 수 16.2와 두 몫의 합 5.04를 독립 대조하고, 한 수에서 두 나눗셈으로 갈라지는 답 그림을 쓰는 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-6",
@@ -1310,11 +1310,11 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 6,
-    "sourceShape": "원본 17쪽 Mission 6. 숫자 카드 네 장 중 세 장으로 소수 두 자리 수를 만들고 남은 카드로 나누어 가장 큰 몫과 가장 작은 몫의 차를 구함",
-    "answerContract": "single-answer-fixed-pool",
-    "sourceVerified": true,
-    "implementationStatus": "fixed-verified-pool",
-    "reviewReason": "원본 카드 2,3,4,9의 모든 배치를 전수 대조해 최소 0.26, 최대 4.715, 차 4.455를 확인하고, 고정 검증 문항 3개로 제한합니다."
+      "sourceShape": "원본 17쪽 Mission 6. 숫자 카드 네 장 중 세 장으로 소수 두 자리 수를 만들고 남은 카드로 나누어 가장 큰 몫과 가장 작은 몫의 차를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 카드 2,3,4,9의 모든 배치를 전수 대조해 최소 0.26, 최대 4.715, 차 4.455를 확인하고, 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u3-e2-exploration",
@@ -1850,15 +1850,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 25,
-      "printedPage": null,
+      "printedPage": 30,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "exploration",
       "ordinal": 1,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
+      "sourceShape": "형규와 동빈의 제기차기 횟수를 여러 방법으로 비교하고, 두 소금물의 진하기를 비교하는 방법을 찾는 열린 활동 2개",
+      "answerContract": "rubric-open-response",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문을 확인했으나 두 소문항 모두 여러 비교 방법을 찾는 활동이라 단일 정답형 유사문제로 바꾸지 않고 잠급니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-example-1",
@@ -1866,15 +1866,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 25,
-      "printedPage": null,
+      "printedPage": 30,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "example",
       "ordinal": 1,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
+      "sourceShape": "가, 나, 다의 두 비율을 이어 세 번째 비율을 기약분수로 나타내는 문제이나 원본의 한 비율 값이 인쇄 그림에 가려짐",
+      "answerContract": "provisional",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원본 구조는 확인했지만 필요한 값 일부가 가려져 있어 추측으로 복원하지 않고 잠급니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-example-2",
@@ -1882,15 +1882,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 25,
-      "printedPage": null,
+      "printedPage": 30,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "example",
       "ordinal": 2,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 양의 차 21과 비교하는 양의 비율 1.75를 이용해 두 양을 구하고 기준량과 비교하는 양의 비를 나타냄",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "독립 계산과 역산, 고정 3문항, 문제·답 막대 그림, PC·모바일·A4 검수를 통과했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-example-3",
@@ -1898,15 +1898,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 25,
-      "printedPage": null,
+      "printedPage": 30,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "example",
       "ordinal": 3,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "윗변과 아랫변에 분할점이 있는 사다리꼴에서 점을 옮겨 두 부분의 넓이 비를 2:3으로 맞추고 옮긴 길이를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "점·선분 모델과 넓이비 역산, 고정 3문항, 문제·답 도형, PC·모바일·A4 검수를 통과했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-example-4",
@@ -1914,15 +1914,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 25,
-      "printedPage": null,
+      "printedPage": 30,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "example",
       "ordinal": 4,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "같은 시간에 걷는 걸음 수와 같은 거리를 가는 걸음 수를 함께 이용해 형이 간 거리에 대한 동생이 간 거리의 비율을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "같은 시간과 같은 거리 조건을 분리해 35/72를 독립 계산하고, 고정 3문항과 문제·답 막대 화면을 검수했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-mission-1",
@@ -1930,15 +1930,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 26,
-      "printedPage": null,
+      "printedPage": 31,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "mission",
       "ordinal": 1,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "세로에 대한 가로의 비율과 세로 길이를 이용해 가로를 구한 뒤 직사각형 넓이를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "넓이와 단위를 독립 계산하고 고정 3문항, 문제·답 직사각형, 수식·화면 검수를 통과했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-mission-2",
@@ -1946,15 +1946,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 26,
-      "printedPage": null,
+      "printedPage": 31,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "mission",
       "ordinal": 2,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "야구공과 테니스공 수의 차와 테니스공 수에 대한 야구공 수의 비율을 이용해 테니스공 수를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "비율 방향과 공의 수를 독립 계산하고 고정 3문항, 문제·답 막대와 화면 검수를 통과했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-mission-3",
@@ -1962,15 +1962,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 26,
-      "printedPage": null,
+      "printedPage": 31,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "mission",
       "ordinal": 3,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "한 옆변의 중점과 아래 꼭짓점을 이은 사다리꼴에서 두 부분의 넓이 비로 윗변과 아랫변의 비율을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "중점·분할 선분과 넓이식을 대조해 3/14를 독립 계산하고 고정 3문항과 문제·답 도형을 검수했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-mission-4",
@@ -1978,15 +1978,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 26,
-      "printedPage": null,
+      "printedPage": 31,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "mission",
       "ordinal": 4,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "한 사람이 다른 사람에게 사탕을 주어 두 사람이 가진 사탕 수의 비가 목표 비가 되게 하는 수를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "주는 방향과 옮긴 뒤의 비를 역산하고 고정 3문항, 문제·답 막대와 화면 검수를 통과했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-mission-5",
@@ -1994,15 +1994,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 26,
-      "printedPage": null,
+      "printedPage": 31,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "mission",
       "ordinal": 5,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "가에 대한 나의 비율과 다에 대한 나의 비율을 이어 가에 대한 다의 비율을 소수로 나타냄",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "비율 방향을 문장과 분수식으로 고정해 1.28을 독립 계산하고 고정 3문항과 문제·답 그림을 검수했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e1-mission-6",
@@ -2010,15 +2010,15 @@
       "unitName": "비와 비율",
       "exploration": 1,
       "pdfPage": 26,
-      "printedPage": null,
+      "printedPage": 31,
       "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
       "section": "mission",
       "ordinal": 6,
-      "sourceShape": "두 양의 비와 비율을 비교하거나, 비와 차·합·둘레·넓이 조건으로 필요한 양을 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 음악을 모두 좋아하는 비율과 한 가지만 좋아하는 학생 수의 비를 이용해 두 음악을 좋아하는 전체 학생 수의 비율을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "겹치는 학생 수와 두 전체를 독립 계산해 17/10을 확인하고 고정 3문항, 문제·답 벤다이어그램을 검수했습니다."
     },
     {
       "sourceItemId": "6-1-u4-e2-exploration",
