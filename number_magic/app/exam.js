@@ -356,6 +356,7 @@
   border-radius:8px; padding:1px 9px; margin-bottom:4px; font-weight:700; color:#6b6250; }
 .nm-w2-concept-sentence { margin:0 0 4px; font-size:12.5px; line-height:1.6; color:#2a2a2a; }
 .nm-w2-concept-rule { margin:0; font-size:12px; line-height:1.55; color:#2a2a2a; }
+.nm-w2-concept-ramp { margin:4px 0 0; font-size:12px; font-weight:800; color:#b8321f; }
 .nm-w2-example { border:1.4px dashed #c33; border-radius:8px; padding:7px 12px; margin-bottom:8px; }
 .nm-w2-ex-badge { display:inline-block; font-size:10.5px; color:#c33; font-weight:800; margin-bottom:4px; }
 .nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; gap:5px; color:#c33; font-size:14px; }
@@ -1745,9 +1746,10 @@ function sortRoundProblems(problems, type){
       : Math.abs(+p.answer || 0);
     return [digitSum, absAns, String(p.tex||'').length];
   }
+  /* 램프 문항(__ramp)은 뒤에 모아 둔다 — 쉬운→어려운 정렬은 그룹 안에서만 */
   return problems
-    .map((p,i) => ({p, i, s: score(p)}))
-    .sort((a,b) => a.s[0]-b.s[0] || a.s[1]-b.s[1] || a.s[2]-b.s[2] || a.i-b.i)
+    .map((p,i) => ({p, i, r: p.__ramp ? 1 : 0, s: score(p)}))
+    .sort((a,b) => a.r-b.r || a.s[0]-b.s[0] || a.s[1]-b.s[1] || a.s[2]-b.s[2] || a.i-b.i)
     .map(x => x.p);
 }
 
@@ -1833,7 +1835,8 @@ function w2AnswerKeyItemsHtml(problems){
 
 /* 개념 패널(§2-3) — 첫 장에만. 별도 장(conceptPageHtml)을 대신한다. 관련
    유닛의 stages 전체를 붓지 않고 concept 문장 + "마법의 규칙" 한 줄만. */
-function w2ConceptPanelHtml(threadId, level){
+function w2ConceptPanelHtml(threadId, level, extra){
+  extra = extra || {};
   const info = resolveConceptUnit(threadId, level);
   if(!info) return '';
   const nm = pickL(info.thread.name) || threadId;
@@ -1845,6 +1848,7 @@ function w2ConceptPanelHtml(threadId, level){
   <div class="nm-w2-concept-badge">${esc(lk('개념','Concept','概念'))} · ${esc(nm)}</div>
   ${sentence ? `<p class="nm-w2-concept-sentence">${esc(sentence)}</p>` : ''}
   ${rule ? `<p class="nm-w2-concept-rule"><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}:</b> ${esc(rule)}</p>` : ''}
+  ${extra.rampN ? `<p class="nm-w2-concept-ramp">${esc(lk(`뒤 ${extra.rampN}문항은 한 단계 어려운 문제예요 — 예시처럼 풀어 보세요.`,`The last ${extra.rampN} are one step harder — solve them like the example.`,`最后${extra.rampN}题难度高一级——照例题的方法做。`))}</p>` : ''}
 </div>`;
 }
 
@@ -1984,8 +1988,12 @@ function renderRoundPages(item, opts){
   let num = 1;
   const html = pages.map((pageItems, pi) => {
     const first = pi === 0;
-    const conceptHtml = (first && conceptOn) ? w2ConceptPanelHtml(item.thread, item.level) : '';
-    const exampleHtml = (first && conceptOn) ? w2ExampleHtml(item.thread, item.level, code) : '';
+    /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
+       예시가 실제로 보여 주도록. */
+    const rampN = problems.filter(p => p.__ramp).length;
+    const exLevel = rampN ? (rampLevelFor(item.thread, item.level) || item.level) : item.level;
+    const conceptHtml = (first && conceptOn) ? w2ConceptPanelHtml(item.thread, item.level, {rampN}) : '';
+    const exampleHtml = (first && conceptOn) ? w2ExampleHtml(item.thread, exLevel, code) : '';
     const instrHtml = first
       ? `<div class="nm-w2-instr">■ ${esc(layout.type === 'word'
           ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
@@ -2151,11 +2159,35 @@ function generateProblem(threadId, lv, rng){
 }
 
 /* 문제 배열 생성 (시드 재현 가능) */
+/* ── 회차 안 난이도 램프(2026-09-05, 원장 "개념은 받아내림인데 연습문제엔 하나도 없다") ──
+   스레드의 다음 레벨이 '같은 연산의 한 단계 위'(params 키가 같고 mode/level 키가
+   없음 — SB4 borrow:false→true, AD5 carries:1→2, ML8 easy:true→false)이면 회차의
+   뒤 30%를 그 레벨에서 뽑는다. 다음 레벨이 다른 연산(MD4 mul2→div2)이면 안 한다.
+   8문항 미만(드릴 미니세트·편지함 4문항)은 램프 없음. 같은 rng 흐름에서 이어 뽑으므로
+   코드(시드)만으로 인쇄물·정답지·?ws= 도우미가 같은 문항을 다시 만든다. */
+function rampLevelFor(threadId, lv){
+  const th = window.NM_THREADS && NM_THREADS[threadId];
+  if(!th || !Array.isArray(th.levels)) return null;
+  const base = th.levels.find(l => l.id === lv), next = th.levels.find(l => l.id === lv + 1);
+  if(!base || !next) return null;
+  const bk = Object.keys(base.params || {}).sort(), nk = Object.keys(next.params || {}).sort();
+  if(!bk.length || bk.join() !== nk.join()) return null;
+  if(bk.some(k => k === 'mode' || k === 'level' || k === 'digits')) return null;
+  return next.id;
+}
+function rampCount(threadId, lv, count){
+  return (count >= 8 && rampLevelFor(threadId, lv)) ? Math.round(count * 0.3) : 0;
+}
 function buildProblems(threadId, lv, count, seed){
   const rng = NM_RNG.mulberry32(seed);
   const problems = [];
+  const nRamp = rampCount(threadId, lv, count);
+  const rampLv = nRamp ? rampLevelFor(threadId, lv) : null;
   for(let i=0;i<count;i++){
-    problems.push(generateProblem(threadId, lv, rng));
+    const useRamp = nRamp && i >= count - nRamp;
+    const p = generateProblem(threadId, useRamp ? rampLv : lv, rng);
+    if(useRamp) p.__ramp = true;
+    problems.push(p);
   }
   return problems;
 }

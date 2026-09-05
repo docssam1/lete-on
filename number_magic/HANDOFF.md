@@ -1789,3 +1789,14 @@ story.history 보유 유닛 **95개 전부** 만화 완성(이전 6편 → 95편
   병렬). 검사기 `scripts/check-solution-steps.js` — 같은 시드로 HEAD와 비교해 `solution` 외 출력이
   한 글자도 안 바뀌었는지 + 마지막 blank = answer. **4,580문항 · 실패 0**, check-answerable 통과.
 - 캡처 검증: C1·C4·C13·C27·C30·C36·C41 전 페이지 ≤ A4, 박스 0, pageerror 0.
+
+### 회차 안 난이도 램프 (2026-09-05, 원장 "개념은 받아내림인데 연습문제엔 하나도 없어")
+`buildProblems()`가 스레드의 **다음 레벨이 같은 연산의 한 단계 위**(params 키가 같고
+`mode`/`level`/`digits` 키가 없음 — SB4 borrow:false→true, AD5 carries:1→2, ML8 easy→하드)이면
+회차의 **뒤 30%를 그 레벨에서** 뽑는다(`rampLevelFor`/`rampCount`, 8문항 미만은 제외). 같은 rng
+흐름에서 이어 뽑으므로 학습지 코드(시드)만으로 인쇄물·정답지·`?ws=` 도우미가 같은 문항을 다시
+만든다. 램프 문항은 `__ramp`로 표시돼 `sortRoundProblems`가 뒤에 모으고, 개념 패널에 "뒤 N문항은
+한 단계 어려운 문제예요" 한 줄이 붙으며, **★예시는 램프 레벨로** 만든다(개념 문장이 설명하는
+기술을 예시가 실제로 보여 주도록). 다음 레벨이 다른 연산(MD4 mul2→div2)이면 램프 없음.
+58개 레벨 쌍이 해당. 검증: C4-S1 SB4 회차 (15)~(20)이 받아내림 문항, 예시 80−72,
+check-print·check-answerable 통과.
