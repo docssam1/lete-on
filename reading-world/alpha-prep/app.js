@@ -35,6 +35,7 @@
     queue: [],
     questionIndex: 0,
     answerDraft: '',
+    liveCoach: null,
     turns: [],
     passageNotes: {},
     adaptiveUsed: {},
@@ -352,9 +353,41 @@
         </div>
       </section>
       <aside class="answer-panel">
+        ${liveCoachMarkup()}
         ${isPeer ? peerTurnControls(current, peer) : answerControls(current, listeningAvailable)}
       </aside>
     </main>`;
+  }
+
+  function liveCoachMarkup() {
+    const coach = state.liveCoach;
+    if (!coach) return '';
+    return `<section class="live-language-coach" data-coach-turn="${coach.turnIndex}" aria-live="polite">
+      <div class="live-coach-kicker">HENRY'S LANGUAGE NOTE</div>
+      <h2>I understand what you mean.</h2>
+      <p>Same idea, clearer English:</p>
+      <blockquote>${esc(coach.improved)}</blockquote>
+      <small><b>Language tip</b> ${esc(coach.note)}</small>
+    </section>`;
+  }
+
+  function liveCoachForTurn(turn) {
+    const turnIndex = state.turns.indexOf(turn);
+    if (turnIndex < 0) return null;
+    const correction = turn.feedback && turn.feedback.correction ? turn.feedback.correction : {};
+    return {
+      turnIndex,
+      improved: correction.improved || turn.answer,
+      note: correction.note || 'Keep your idea in one complete sentence.'
+    };
+  }
+
+  function refreshLiveCoach(turn) {
+    const next = liveCoachForTurn(turn);
+    if (!next || !state.liveCoach || state.liveCoach.turnIndex !== next.turnIndex) return;
+    state.liveCoach = next;
+    const current = document.querySelector(`.live-language-coach[data-coach-turn="${next.turnIndex}"]`);
+    if (current) current.outerHTML = liveCoachMarkup();
   }
 
   function peerTurnControls(current, peer) {
@@ -1006,6 +1039,7 @@
       feedback: localFeedback
     };
     state.turns.push(turn);
+    state.liveCoach = liveCoachForTurn(turn);
     let followUpItem = null;
     if (followUp && item.kind !== 'peer' && followDepth < MAX_FOLLOW_DEPTH) {
       followUpItem = {
@@ -1032,6 +1066,7 @@
       return;
     }
     turn.feedback = mergeFeedback(turn.feedback, remote.feedback || {});
+    refreshLiveCoach(turn);
     state.apiStatus = 'ready';
     const remoteFollowUp = String(remote.followUp || '').trim();
     const queuedIndex = followUpItem ? state.queue.indexOf(followUpItem) : -1;
@@ -1073,6 +1108,7 @@
     state.queue = [];
     state.questionIndex = 0;
     state.answerDraft = '';
+    state.liveCoach = null;
     render();
     window.scrollTo({ top: 0 });
   }
@@ -1591,7 +1627,7 @@
     const setIndex = keepSet ? state.setIndex : (state.setIndex + 1) % sets.length;
     Object.assign(state, {
       stage: 'lobby', entered: false, setIndex, passageIndex: 0, readingStarted: false,
-      secondsLeft: READ_SECONDS, queue: [], questionIndex: 0, answerDraft: '', turns: [],
+      secondsLeft: READ_SECONDS, queue: [], questionIndex: 0, answerDraft: '', liveCoach: null, turns: [],
       passageNotes: {}, adaptiveUsed: {}, peerHeard: false, listening: false, transcribing: false,
       recordingSeconds: 0, busy: false,
       notice: '', report: null, printMode: '', apiStatus: 'idle', apiCalls: 0, startedAt: 0

@@ -1372,6 +1372,58 @@ textarea {
   background: #f3f1e9;
 }
 
+.live-language-coach {
+  margin: 0 0 28px;
+  padding: 17px 18px;
+  border-left: 4px solid var(--green);
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(25, 62, 53, 0.08);
+}
+
+.live-coach-kicker {
+  margin-bottom: 7px;
+  color: var(--green);
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.live-language-coach h2 {
+  margin: 0 0 7px;
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.live-language-coach p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.live-language-coach blockquote {
+  margin: 0;
+  color: var(--forest);
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.live-language-coach small {
+  display: block;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+  color: #58645f;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.live-language-coach small b {
+  margin-right: 4px;
+  color: var(--ink);
+}
+
 .answer-submit-dock .primary-command {
   margin-top: 25px;
 }
@@ -2617,6 +2669,20 @@ textarea {
   .answer-panel h2 {
     margin-bottom: 14px;
     font-size: 23px;
+  }
+
+  .live-language-coach {
+    margin-bottom: 18px;
+    padding: 14px 15px;
+  }
+
+  .live-language-coach h2 {
+    margin-bottom: 6px;
+    font-size: 19px;
+  }
+
+  .live-language-coach blockquote {
+    font-size: 14px;
   }
 
   .field-label,
