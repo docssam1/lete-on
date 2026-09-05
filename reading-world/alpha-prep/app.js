@@ -1501,16 +1501,33 @@
     } catch (_) { /* report remains visible */ }
   }
 
+  const MALE_ENGLISH_VOICE = /\b(male|guy|davis|david|daniel|aaron|alex|arthur|brian|eddy|fred|jorge|joey|justin|matthew|reed|rishi|ryan|tony)\b/i;
+  const FEMALE_ENGLISH_VOICE = /\b(female|aria|ava|allison|emma|jenny|karen|moira|samantha|serena|susan|tessa|victoria|zira)\b/i;
+
+  function voiceLabel(voice) {
+    return `${voice && voice.name || ''} ${voice && voice.voiceURI || ''}`;
+  }
+
+  function chooseEnglishVoice(voices, preferredPattern, excludedPattern, excludedVoice) {
+    const english = voices.filter((voice) => /^en[-_]/i.test(voice.lang || ''));
+    const available = english.filter((voice) => voice !== excludedVoice);
+    return available.find((voice) => preferredPattern.test(voiceLabel(voice)))
+      || available.find((voice) => !excludedPattern.test(voiceLabel(voice)))
+      || available[0]
+      || excludedVoice
+      || null;
+  }
+
   function speakSequence(lines, role) {
     stopSpeech();
     if (document.hidden || !('speechSynthesis' in window) || !Array.isArray(lines) || !lines.length) return;
     if (audioChannel) audioChannel.postMessage('take-audio-focus');
     const run = ++speechRun;
     const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
-    const english = voices.filter((voice) => /^en[-_]/i.test(voice.lang || ''));
-    const teacherVoice = english.find((voice) => /natural|neural|aria|guy|david|daniel/i.test(voice.name)) || english[0] || null;
-    const peerVoice = english.find((voice) => voice !== teacherVoice && /natural|neural|jenny|samantha|zira|female/i.test(voice.name)) || english[1] || teacherVoice;
+    const teacherVoice = chooseEnglishVoice(voices, MALE_ENGLISH_VOICE, FEMALE_ENGLISH_VOICE, null);
+    const peerVoice = chooseEnglishVoice(voices, FEMALE_ENGLISH_VOICE, MALE_ENGLISH_VOICE, teacherVoice);
     const queue = lines.slice();
+    if (typeof window.speechSynthesis.resume === 'function') window.speechSynthesis.resume();
     const next = () => {
       if (run !== speechRun || !queue.length) return;
       const entry = queue.shift();
@@ -1520,6 +1537,7 @@
       utterance.lang = 'en-US';
       utterance.rate = activeRole === 'peer' ? 0.94 : 0.9;
       utterance.pitch = activeRole === 'peer' ? 1.08 : 0.95;
+      utterance.volume = 1;
       utterance.voice = activeRole === 'peer' ? peerVoice : teacherVoice;
       utterance.onend = next;
       utterance.onerror = next;

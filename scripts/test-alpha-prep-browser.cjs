@@ -88,7 +88,14 @@ async function runPassageInterview(page, passageIndex) {
   await assertVisibleText(page, 'FOLLOW-UP 2 OF 2');
   await submit(page, 'That detail matters most because it connects the problem to the solution.');
   await submit(page, 'One important detail is that the characters or people tested a solution before deciding what to do.');
+  if (passageIndex === 0) await page.evaluate(() => { window.__spokenUtterances.length = 0; });
   await page.locator('[data-action="hear-peer"]').click();
+  if (passageIndex === 0) {
+    await page.waitForFunction(() => window.__spokenUtterances.length >= 2);
+    const peerSequence = await page.evaluate(() => window.__spokenUtterances.slice(0, 2));
+    assert.equal(peerSequence[0].voice, 'Microsoft Guy Online (Natural)', 'Henry must introduce the peer answer with the male voice');
+    assert.equal(peerSequence[1].voice, 'Microsoft Aria Online (Natural)', 'the peer answer must use a separate voice');
+  }
   await assertVisibleText(page, 'Keep the idea in mind.');
   await page.locator('[data-action="after-peer"]').click();
   await assertVisibleText(page, 'SURPRISE LISTENING QUESTION');
@@ -173,6 +180,37 @@ async function installMockMediaRecorder(page) {
   });
 }
 
+async function installMockSpeechSynthesis(page) {
+  await page.addInitScript(() => {
+    window.__spokenUtterances = [];
+    const voices = [
+      { name: 'Microsoft Aria Online (Natural)', voiceURI: 'Microsoft Aria Online (Natural)', lang: 'en-US' },
+      { name: 'Microsoft Guy Online (Natural)', voiceURI: 'Microsoft Guy Online (Natural)', lang: 'en-US' },
+      { name: 'Microsoft Jenny Online (Natural)', voiceURI: 'Microsoft Jenny Online (Natural)', lang: 'en-US' },
+    ];
+    window.SpeechSynthesisUtterance = class MockSpeechSynthesisUtterance {
+      constructor(text) { this.text = text; }
+    };
+    Object.defineProperty(window, 'speechSynthesis', {
+      configurable: true,
+      value: {
+        cancel() {},
+        resume() {},
+        getVoices() { return voices; },
+        speak(utterance) {
+          window.__spokenUtterances.push({
+            text: utterance.text,
+            voice: utterance.voice ? utterance.voice.name : '',
+            rate: utterance.rate,
+            pitch: utterance.pitch,
+          });
+          setTimeout(() => { if (utterance.onend) utterance.onend(); }, 0);
+        },
+      },
+    });
+  });
+}
+
 async function main() {
   const server = spawn(python, ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {
     cwd: root,
@@ -185,6 +223,7 @@ async function main() {
     await waitForServer(url);
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+    await installMockSpeechSynthesis(page);
     const consoleErrors = [];
     let delayedTurn = false;
     page.on('console', (message) => { if (message.type() === 'error') consoleErrors.push(message.text()); });
@@ -265,8 +304,16 @@ async function main() {
     await page.evaluate(() => window.__ALPHA_PREP_TEST__.expireReading());
     await assertVisibleText(page, 'PASSAGE COLLECTED');
     assert.equal((await page.locator('body').innerText()).includes(firstParagraph.slice(0, 40)), false, 'passage text remained visible after collection');
+    await page.evaluate(() => { window.__spokenUtterances.length = 0; });
     await page.locator('[data-action="begin-interview"]').click();
     assert.ok(await page.locator('.teacher-portrait img').evaluate((image) => image.complete && image.naturalWidth >= 600));
+    await page.waitForFunction(() => window.__spokenUtterances.length >= 1);
+    const firstTeacherQuestion = await page.evaluate(() => window.__spokenUtterances[0]);
+    assert.equal(firstTeacherQuestion.voice, 'Microsoft Guy Online (Natural)', 'Henry must use the available male English voice');
+    assert.equal(firstTeacherQuestion.text, await page.locator('.question-block h1').textContent(), 'Henry must speak the displayed question');
+    await page.locator('[data-action="repeat-question"]').click();
+    await page.waitForFunction(() => window.__spokenUtterances.length >= 2);
+    assert.equal(await page.evaluate(() => window.__spokenUtterances.at(-1).voice), 'Microsoft Guy Online (Natural)', 'repeated Henry question must keep the male voice');
     await runPassageInterview(page, 0);
     await assertVisibleText(page, 'PASSAGE 1 COMPLETE');
 
