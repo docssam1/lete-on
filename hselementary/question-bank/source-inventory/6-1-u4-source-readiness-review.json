@@ -2643,9 +2643,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "할인 판매 수량이 자연수 하나로 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "가격·수량 식의 수식 화면 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "정가 판매와 할인 판매의 가격·수량·이익을 같은 표에서 대응해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-exploration-6-1"
     },
     {
       "sourceItemId": "6-1-u4-e6-example-6-1",
@@ -2670,9 +2688,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "혼합 농도 조건에서 x가 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "분수·소수 수식 표시 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "두 소금물의 진하기와 양, 섞은 뒤의 진하기를 같은 용기 그림에 표시해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-example-6-1"
     },
     {
       "sourceItemId": "6-1-u4-e6-example-6-2",
@@ -2697,9 +2733,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "진하기 비와 혼합 진하기에서 두 농도가 하나로 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "비율과 농도 수식의 기준을 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "two-values",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "두 소금물 양과 진하기의 비를 표에서 분리해 두 답의 순서를 고정해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "이름이 붙은 두 값을 순서대로 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-example-6-2"
     },
     {
       "sourceItemId": "6-1-u4-e6-example-6-3",
@@ -2724,9 +2778,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "원가 x가 하나로 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원가 기준의 이익 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "원가·처음 이익·정가·할인액·남은 이익의 흐름을 같은 표로 보여야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-example-6-3"
     },
     {
       "sourceItemId": "6-1-u4-e6-example-6-4",
@@ -2752,9 +2824,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 거리의 합과 시간 식에서 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "속력 단위와 거리 선분 표시를 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "two-values",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "학교에서 공원까지 길을 평지·내리막·오르막 세 선분으로 나누고 각 구간의 방향과 단위를 표시해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "이름이 붙은 두 값을 순서대로 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-example-6-4"
     },
     {
       "sourceItemId": "6-1-u4-e6-mission-1",
@@ -2779,9 +2869,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "혼합량과 목표 진하기에서 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "농도 수식과 단위 표시 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "두 소금물의 양과 섞은 뒤 전체 양을 같은 용기 그림에서 대응해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-mission-1"
     },
     {
       "sourceItemId": "6-1-u4-e6-mission-2",
@@ -2805,9 +2913,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "증발하는 성분과 목표 진하기가 고정되어 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "물의 증발과 소금 보존 표시 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "소금의 양은 그대로이고 물만 증발해 전체 양이 줄어드는 과정을 같은 용기 그림으로 보여야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-mission-2"
     },
     {
       "sourceItemId": "6-1-u4-e6-mission-3",
@@ -2833,9 +2959,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "추가하는 물 x가 하나로 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "물 추가 단계와 분수 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "처음 두 소금물과 추가한 물, 완성한 소금물을 같은 용기 그림에서 대응해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-mission-3"
     },
     {
       "sourceItemId": "6-1-u4-e6-mission-4",
@@ -2860,9 +3004,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "남은 이익을 원가 기준으로 해석하면 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원가 기준과 할인 전후 가격 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "원가·처음 이익률·정가·할인액·남은 이익을 같은 표로 보여야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-mission-4"
     },
     {
       "sourceItemId": "6-1-u4-e6-mission-5",
@@ -2888,9 +3050,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 식의 해가 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "할인율의 기준 가격 표시를 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "신발과 옷의 정가·할인율·할인가를 같은 표의 각 행에 대응해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-mission-5"
     },
     {
       "sourceItemId": "6-1-u4-e6-mission-6",
@@ -2916,9 +3096,27 @@
       "singleAnswer": true,
       "singleAnswerCheck": "판매 비율과 이익이 고정되어 자연수 수량이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "정가·할인가·수량 비율 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "정가 판매 수량과 할인 판매 수량·가격·이익을 같은 표에서 대응해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e6-mission-6"
     }
   ]
 }

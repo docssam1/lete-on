@@ -23503,6 +23503,195 @@
       const answerVisual = mathBoard("나 혼자 일하는 달력", row("나의 하루 일한 양", fractionText(secondRate)) + row("필요한 날 수", `${aloneDays}일`) + row("기간", `${data.month}월 ${data.day}일 → ${answer}`));
       return fixedResult(`어떤 일을 가와 나가 함께 ${data.togetherDays}일 동안 하여 전체의 ${fractionMarkup(...data.together)}를 끝냈습니다. 나머지는 가가 혼자 ${data.firstAloneDays}일 동안 하여 끝냈습니다. 같은 일을 나가 ${data.month}월 ${data.day}일부터 쉬지 않고 혼자 한다면 끝나는 날은 몇 월 며칠인가요? (일한 첫날을 1일로 셉니다.)${promptVisual}${support("두 사람이 하루에 한 양에서 가가 하루에 한 양을 빼세요.")}${challenge}${evidence("work-rate-date", [data.togetherDays, ...data.together, data.firstAloneDays, data.month, data.day, secondRate.numerator, secondRate.denominator, aloneDays, endDay], "date")}`, answer, `두 사람이 하루에 한 양은 ${fractionText(togetherRate)}, 가가 하루에 한 양은 ${fractionText(firstRate)}입니다. 따라서 나는 하루에 ${fractionText(secondRate)}만큼 하므로 혼자 ${aloneDays}일 걸립니다. ${data.month}월 ${data.day}일을 첫날로 세면 ${answer}에 끝납니다.`, answerVisual);
     },
+    sourceGrade6RatioE6({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
+        "6-1-u4-e6-example-6-4", "6-1-u4-e6-mission-1", "6-1-u4-e6-mission-2", "6-1-u4-e6-mission-3",
+        "6-1-u4-e6-mission-4", "6-1-u4-e6-mission-5", "6-1-u4-e6-mission-6"
+      ];
+      const kinds = [
+        "discounted-quantity-from-total-profit", "mixture-needed-mass", "two-concentrations-from-ratio", "cost-from-markup-and-discount",
+        "downhill-uphill-distances", "mixture-part-mass", "evaporated-water-mass", "added-water-mass",
+        "original-markup-rate", "clothes-list-price", "shoe-count-from-split-sales"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 비와 비율 개념탐구 6 원문 분기는 0부터 10까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">기준이 되는 양을 스스로 정하고, 두 조건을 한 식으로 이어 보세요.</p>` : "";
+      const escape = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const won = value => `${Number(value).toLocaleString("ko-KR")}원`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-ratio-e6-kind="${kinds[variant]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const svgText = (x, y, value, extra = "") => `<text x="${x}" y="${y}" fill="#183b56" font-size="12" text-anchor="middle" ${extra}>${escape(value)}</text>`;
+      const tableSvg = (title, rows, values, solved, resultText) => {
+        const body = rows.map((item, index) => {
+          const y = 65 + index * 25;
+          return `<line x1="28" y1="${y - 14}" x2="392" y2="${y - 14}" stroke="#183b56" stroke-width="1"/>${svgText(104, y, item[0], "font-size=\"11\"")}${svgText(270, y, solved ? item[2] : item[1], "font-size=\"11\"")}`;
+        }).join("");
+        const resultY = 65 + rows.length * 25;
+        const viewHeight = Math.max(240, resultY + 70);
+        return `<svg class="geometry-diagram source61-ratio-e6-diagram" style="width:min(470px,100%);height:auto" viewBox="0 0 420 ${viewHeight}" role="img" aria-label="${escape(title)}" data-source61-ratio-e6-structure="${escape(title)}" data-source61-ratio-e6-values="${values.join(",")}"${solved ? ` data-result-highlight="${escape(resultText)}"` : ""}><rect x="24" y="27" width="372" height="${resultY + 18}" rx="4" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(210, 45, title, "font-size=\"13\" font-weight=\"700\"")}${body}<line x1="28" y1="${resultY + 10}" x2="392" y2="${resultY + 10}" stroke="#183b56" stroke-width="1.5"/>${solved ? `<rect class="source61-e6-result-label" x="62" y="${resultY + 19}" width="296" height="27" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgText(210, resultY + 37, resultText, "font-size=\"12\" font-weight=\"700\"")}` : svgText(210, resultY + 37, "구할 값은 ?", "font-size=\"13\"")}</svg>`;
+      };
+      const flowSvg = (title, stages, values, solved, resultText) => {
+        const count = stages.length;
+        const width = count === 2 ? 142 : 110;
+        const gap = count === 2 ? 38 : 20;
+        const total = count * width + (count - 1) * gap;
+        const start = (420 - total) / 2;
+        const body = stages.map((stage, index) => {
+          const x = start + index * (width + gap);
+          const cupX = x + (width - 62) / 2;
+          const detail = solved && stage.answerDetail ? stage.answerDetail : stage.problemDetail;
+          const connector = index < count - 1 ? svgText(x + width + gap / 2, 111, stage.connector || "→", "font-size=\"18\" font-weight=\"700\"") : "";
+          return `${svgText(x + width / 2, 58, stage.label, "font-size=\"11\" font-weight=\"700\"")}<path d="M ${cupX} 76 L ${cupX + 7} 137 Q ${cupX + 31} 149 ${cupX + 55} 137 L ${cupX + 62} 76" fill="#ffffff" stroke="#183b56" stroke-width="2"/><path d="M ${cupX + 6} 111 L ${cupX + 10} 135 Q ${cupX + 31} 143 ${cupX + 52} 135 L ${cupX + 56} 111 Z" fill="#dff3fb" stroke="none"/>${svgText(x + width / 2, 166, stage.rate || "", "font-size=\"11\"")}${svgText(x + width / 2, 184, detail || "", "font-size=\"11\"")}${connector}`;
+        }).join("");
+        return `<svg class="geometry-diagram source61-ratio-e6-diagram source61-e6-flow" style="width:min(470px,100%);height:auto" viewBox="0 0 420 245" role="img" aria-label="${escape(title)}" data-source61-ratio-e6-structure="${escape(title)}" data-source61-ratio-e6-values="${values.join(",")}" data-not-to-scale="true"${solved ? ` data-result-highlight="${escape(resultText)}"` : ""}><rect x="18" y="24" width="384" height="199" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(210, 43, title, "font-size=\"13\" font-weight=\"700\"")}${body}${solved ? `<rect class="source61-e6-result-label" x="88" y="198" width="244" height="28" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgText(210, 217, resultText, "font-size=\"12\" font-weight=\"700\"")}` : ""}</svg>`;
+      };
+      const compactNumber = value => String(Math.round((value + Number.EPSILON) * 1000) / 1000);
+      const routeSvg = (data, solved) => {
+        const [totalDistance, flatSpeed, downhillRise, uphillDrop, hillMinutes, flatMinutes, downhillMetres, uphillMetres] = data;
+        const resultText = `내리막 ${downhillMetres}m · 오르막 ${uphillMetres}m`;
+        return `<svg class="geometry-diagram source61-ratio-e6-diagram source61-e6-route" style="width:min(500px,100%);height:auto" viewBox="0 0 460 235" role="img" aria-label="학교에서 공원까지 평지, 내리막길, 오르막길" data-source61-ratio-e6-structure="세 구간 길" data-source61-ratio-e6-values="${data.join(",")}"${solved ? ` data-result-highlight="${escape(resultText)}"` : ""}><rect x="18" y="20" width="424" height="196" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><path d="M 42 97 L 158 97 L 278 156 L 416 91" fill="none" stroke="#183b56" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="97" r="5" fill="#183b56"/><circle cx="416" cy="91" r="5" fill="#183b56"/>${svgText(42, 78, "학교", "font-size=\"12\" font-weight=\"700\"")}${svgText(416, 72, "공원", "font-size=\"12\" font-weight=\"700\"")}${svgText(100, 120, solved ? `평지 ${compactNumber(flatSpeed * flatMinutes / 60)}km` : `평지 ${flatMinutes}분`, "font-size=\"11\"")}${svgText(215, 115, solved ? `내리막 ${downhillMetres}m` : `내리막 +${downhillRise}%`, "font-size=\"11\"")}${svgText(350, 137, solved ? `오르막 ${uphillMetres}m` : `오르막 -${uphillDrop}%`, "font-size=\"11\"")}${svgText(230, 188, `전체 ${totalDistance}km · 평지는 한 시간에 ${flatSpeed}km · 언덕 ${hillMinutes}분`, "font-size=\"11\"")}${solved ? `<rect x="96" y="194" width="268" height="27" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgText(230, 212, resultText, "font-size=\"12\" font-weight=\"700\"")}` : ""}</svg>`;
+      };
+      const fixedResult = (prompt, answer, solution, promptVisual, answerVisual, values, contract = "single-value") => result(`${prompt}${promptVisual}${support("그림이나 표에서 같은 기준으로 비교하는 양을 먼저 찾으세요.")}${challenge}${evidence(values, contract)}`, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-ratio-e6-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(values, contract)}${answerVisual}<div class="solution-answer-caption">문제에 나온 자료를 같은 그림으로 다시 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+
+      if (variant === 0) {
+        const values = [[200, 6000, 50, 30, 465000], [150, 8000, 25, 20, 220000], [240, 5000, 40, 25, 340000]][poolIndex];
+        const [count, cost, markupRate, discountRate, totalProfit] = values;
+        const listPrice = cost * (100 + markupRate) / 100;
+        const salePrice = listPrice * (100 - discountRate) / 100;
+        const regularProfit = listPrice - cost;
+        const saleProfit = salePrice - cost;
+        const actual = (count * regularProfit - totalProfit) / (regularProfit - saleProfit);
+        if (!Number.isInteger(actual) || actual < 0 || actual > count) throw new Error(`${sourceItemId}: 할인 판매 수량이 범위를 벗어납니다.`);
+        const visual = solved => tableSvg("정가 판매와 할인 판매", [["전체 수량", `${count}장`, `${count}장`], ["한 장 원가", won(cost), won(cost)], ["정가", `원가에 ${markupRate}% 이익`, won(listPrice)], ["할인 판매", `정가의 ${discountRate}% 할인 · ?장`, `${won(salePrice)} · ${actual}장`], ["전체 이익", won(totalProfit), won(totalProfit)]], values, solved, `${actual}장`);
+        const promptVisual = `${visual(false)}${mathBoard("판매 수량을 나누기", row("정가 판매", `${count}-□ 장`) + row("할인 판매", "□ 장") + row("전체 이익", won(totalProfit)), `data-source61-visual="discounted-quantity"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("두 판매 이익의 합", row("정가 이익", `${won(listPrice)}-${won(cost)}=${won(regularProfit)}`) + row("할인 판매 이익", `${won(salePrice)}-${won(cost)}=${won(saleProfit)}`) + row("답", `${actual}장`))}`;
+        return fixedResult(`티셔츠 ${count}장을 한 장에 ${cost}원씩 구입하여 ${markupRate}%의 이익을 붙여 정가를 정했습니다. 팔리지 않은 티셔츠는 정가의 ${discountRate}%를 할인하여 모두 팔았습니다. 전체 이익이 ${totalProfit}원일 때, 할인하여 판매한 티셔츠는 몇 장인가요?`, `${actual}장`, `정가 판매 이익은 한 장에 ${regularProfit}원, 할인 판매 이익은 한 장에 ${saleProfit}원입니다. 할인 판매 수를 □라 하면 ${regularProfit}×(${count}-□)+${saleProfit}×□=${totalProfit}이므로 □=${actual}입니다.`, promptVisual, answerVisual, values);
+      }
+
+      if (variant === 1) {
+        const values = [[10, 100, 20, 12], [8, 150, 20, 14], [12, 240, 30, 18]][poolIndex];
+        const [lowRate, lowMass, highRate, targetRate] = values;
+        const actual = lowMass * (targetRate - lowRate) / (highRate - targetRate);
+        if (!Number.isInteger(actual) || actual <= 0) throw new Error(`${sourceItemId}: 필요한 소금물의 양이 자연수가 아닙니다.`);
+        const stages = [{ label: "낮은 진하기", rate: `${lowRate}%`, problemDetail: `${lowMass}g`, connector: "+" }, { label: "높은 진하기", rate: `${highRate}%`, problemDetail: "?g", answerDetail: `${actual}g`, connector: "→" }, { label: "섞은 뒤", rate: `${targetRate}%`, problemDetail: "전체", answerDetail: `${lowMass + actual}g` }];
+        const visual = solved => flowSvg("두 소금물을 섞기", stages, values, solved, `${highRate}% 소금물 ${actual}g`);
+        return fixedResult(`진하기가 ${lowRate}%인 소금물 ${lowMass}g과 진하기가 ${highRate}%인 소금물을 섞어 진하기가 ${targetRate}%인 소금물을 만들려고 합니다. ${highRate}%인 소금물을 몇 g 섞어야 하나요?`, `${actual}g`, `${targetRate}-${lowRate}=${targetRate - lowRate}, ${highRate}-${targetRate}=${highRate - targetRate}이므로 두 소금물의 양의 비는 ${highRate - targetRate}:${targetRate - lowRate}입니다. 따라서 필요한 ${highRate}% 소금물은 ${lowMass}×${targetRate - lowRate}÷${highRate - targetRate}=${actual}g입니다.`, visual(false), `${visual(true)}${mathBoard("진하기의 차로 양의 비 찾기", row("양의 비", `${highRate - targetRate}:${targetRate - lowRate}`) + row("답", `${actual}g`))}`, values);
+      }
+
+      if (variant === 2) {
+        const values = [[2, 3, 400, 600, 13], [3, 5, 300, 500, 17], [4, 7, 600, 600, 11]][poolIndex];
+        const [ratioA, ratioB, massA, massB, mixedRate] = values;
+        const unitRate = mixedRate * (massA + massB) / (ratioA * massA + ratioB * massB);
+        const rateA = ratioA * unitRate;
+        const rateB = ratioB * unitRate;
+        if (![unitRate, rateA, rateB].every(Number.isInteger) || rateA <= 0 || rateB >= 100) throw new Error(`${sourceItemId}: 두 진하기가 자연수 범위에 들지 않습니다.`);
+        const visual = solved => tableSvg("가와 나 소금물의 진하기", [["진하기의 비", `${ratioA}:${ratioB}`, `${ratioA}:${ratioB}`], ["가 소금물", `${massA}g · ?%`, `${massA}g · ${rateA}%`], ["나 소금물", `${massB}g · ?%`, `${massB}g · ${rateB}%`], ["섞은 뒤", `${mixedRate}%`, `${mixedRate}%`]], values, solved, `가 ${rateA}% · 나 ${rateB}%`);
+        return fixedResult(`소금물 가와 나의 진하기의 비는 ${ratioA}:${ratioB}입니다. 소금물 가 ${massA}g과 소금물 나 ${massB}g을 섞었더니 진하기가 ${mixedRate}%인 소금물이 되었습니다. 소금물 가와 나의 진하기는 각각 몇 %인가요?`, `가 ${rateA}%, 나 ${rateB}%`, `가와 나의 진하기를 각각 ${ratioA}×□%, ${ratioB}×□%라 하면 (${massA}×${ratioA}×□+${massB}×${ratioB}×□)÷${massA + massB}=${mixedRate}입니다. □=${unitRate}이므로 가는 ${rateA}%, 나는 ${rateB}%입니다.`, visual(false), `${visual(true)}${mathBoard("진하기의 비를 같은 수로 나타내기", row("가", `${ratioA}×${unitRate}=${rateA}%`) + row("나", `${ratioB}×${unitRate}=${rateB}%`))}`, values, "two-values");
+      }
+
+      if (variant === 3) {
+        const values = [[25, 2000, 1500], [30, 1800, 2400], [30, 2400, 3000]][poolIndex];
+        const [markupRate, discountWon, remainingProfit] = values;
+        const actual = (discountWon + remainingProfit) * 100 / markupRate;
+        if (!Number.isInteger(actual) || actual <= 0) throw new Error(`${sourceItemId}: 원가가 자연수가 아닙니다.`);
+        const listPrice = actual * (100 + markupRate) / 100;
+        const salePrice = listPrice - discountWon;
+        const visual = solved => tableSvg("정가에서 할인하여 판매", [["원가", "?원", won(actual)], ["처음 이익", `원가의 ${markupRate}%`, won(listPrice - actual)], ["정가", `원가+이익`, won(listPrice)], ["할인", `${discountWon}원`, won(salePrice)], ["남은 이익", `${remainingProfit}원`, `${remainingProfit}원`]], values, solved, `원가 ${won(actual)}`);
+        return fixedResult(`어떤 물건의 원가에 ${markupRate}%만큼의 이익을 붙여 정가를 정했습니다. 물건이 팔리지 않아 ${discountWon}원을 할인하여 팔았더니 ${remainingProfit}원의 이익이 생겼습니다. 이 물건의 원가는 얼마인가요?`, won(actual), `처음 붙인 이익은 할인한 ${discountWon}원과 남은 이익 ${remainingProfit}원의 합인 ${discountWon + remainingProfit}원입니다. 이것이 원가의 ${markupRate}%이므로 원가는 ${discountWon + remainingProfit}×100÷${markupRate}=${actual}원입니다.`, visual(false), `${visual(true)}${mathBoard("처음 이익을 되찾기", row("처음 이익", `${discountWon}+${remainingProfit}=${discountWon + remainingProfit}원`) + row("원가", `${discountWon + remainingProfit}×100÷${markupRate}=${actual}원`))}`, values);
+      }
+
+      if (variant === 4) {
+        const values = [[5.2, 4.8, 15, 10, 15, 50, 552, 648], [5.2, 6, 20, 20, 12, 40, 720, 480], [4.5, 5.4, 10, 10, 10, 40, 495, 405]][poolIndex];
+        const [totalDistance, flatSpeed, downhillRise, uphillDrop, hillMinutes, flatMinutes, expectedDownhill, expectedUphill] = values;
+        const flatDistance = flatSpeed * flatMinutes / 60;
+        const hillDistance = totalDistance - flatDistance;
+        const downhillSpeed = flatSpeed * (100 + downhillRise) / 100;
+        const uphillSpeed = flatSpeed * (100 - uphillDrop) / 100;
+        const downhillKm = (hillMinutes / 60 - hillDistance / uphillSpeed) / (1 / downhillSpeed - 1 / uphillSpeed);
+        const downhillMetres = Math.round(downhillKm * 1000);
+        const uphillMetres = Math.round((hillDistance - downhillKm) * 1000);
+        if (downhillMetres !== expectedDownhill || uphillMetres !== expectedUphill) throw new Error(`${sourceItemId}: 언덕 거리의 독립 계산값이 고정 답과 다릅니다.`);
+        const visual = solved => routeSvg(values, solved);
+        return fixedResult(`선재는 학교에서 공원까지 ${totalDistance}km를 걸었습니다. 평지에서는 한 시간에 ${flatSpeed}km를 가고, 내리막길에서는 평지보다 ${downhillRise}% 빠르게, 오르막길에서는 평지보다 ${uphillDrop}% 느리게 걸었습니다. 내리막길과 오르막길은 합하여 ${hillMinutes}분, 평지는 ${flatMinutes}분 걸렸습니다. 내리막길과 오르막길은 각각 몇 m인가요?`, `내리막 ${downhillMetres}m, 오르막 ${uphillMetres}m`, `평지 거리는 ${flatSpeed}×${flatMinutes}÷60=${compactNumber(flatDistance)}km이고 언덕길의 합은 ${compactNumber(hillDistance)}km입니다. 내리막 속력은 한 시간에 ${compactNumber(downhillSpeed)}km, 오르막 속력은 한 시간에 ${compactNumber(uphillSpeed)}km입니다. 두 거리의 합과 두 시간의 합을 함께 만족하는 거리는 내리막 ${downhillMetres}m, 오르막 ${uphillMetres}m입니다.`, visual(false), `${visual(true)}${mathBoard("거리와 시간을 함께 확인", row("평지", `${compactNumber(flatDistance)}km`) + row("언덕길의 합", `${compactNumber(hillDistance)}km`) + row("답", `내리막 ${downhillMetres}m · 오르막 ${uphillMetres}m`))}`, values, "two-values");
+      }
+
+      if (variant === 5) {
+        const values = [[5, 13, 11, 400], [8, 20, 14, 500], [4, 16, 10, 360]][poolIndex];
+        const [lowRate, highRate, targetRate, totalMass] = values;
+        const actual = totalMass * (targetRate - lowRate) / (highRate - lowRate);
+        if (!Number.isInteger(actual) || actual <= 0 || actual >= totalMass) throw new Error(`${sourceItemId}: 높은 진하기 소금물의 양이 범위를 벗어납니다.`);
+        const stages = [{ label: `${lowRate}% 소금물`, rate: "낮은 진하기", problemDetail: "?g", answerDetail: `${totalMass - actual}g`, connector: "+" }, { label: `${highRate}% 소금물`, rate: "높은 진하기", problemDetail: "?g", answerDetail: `${actual}g`, connector: "→" }, { label: "섞은 뒤", rate: `${targetRate}%`, problemDetail: `${totalMass}g` }];
+        const visual = solved => flowSvg("전체 양이 정해진 혼합", stages, values, solved, `${highRate}% 소금물 ${actual}g`);
+        return fixedResult(`진하기가 ${lowRate}%인 소금물과 ${highRate}%인 소금물을 섞어 진하기가 ${targetRate}%인 소금물 ${totalMass}g을 만들려고 합니다. ${highRate}%인 소금물을 몇 g 넣어야 하나요?`, `${actual}g`, `두 소금물의 양의 비는 (${highRate}-${targetRate}):(${targetRate}-${lowRate})=${highRate - targetRate}:${targetRate - lowRate}입니다. 전체 ${totalMass}g 중 ${highRate}% 소금물은 ${totalMass}×${targetRate - lowRate}÷${highRate - lowRate}=${actual}g입니다.`, visual(false), `${visual(true)}${mathBoard("전체를 비로 나누기", row("양의 비", `${highRate - targetRate}:${targetRate - lowRate}`) + row("답", `${actual}g`))}`, values);
+      }
+
+      if (variant === 6) {
+        const values = [[8, 600, 12], [10, 500, 20], [6, 900, 9]][poolIndex];
+        const [initialRate, initialMass, finalRate] = values;
+        const finalMass = initialMass * initialRate / finalRate;
+        const actual = initialMass - finalMass;
+        if (!Number.isInteger(finalMass) || !Number.isInteger(actual) || actual <= 0) throw new Error(`${sourceItemId}: 증발한 물의 양이 자연수가 아닙니다.`);
+        const stages = [{ label: "처음 소금물", rate: `${initialRate}%`, problemDetail: `${initialMass}g` }, { label: "물이 증발한 뒤", rate: `${finalRate}%`, problemDetail: "?g 남음", answerDetail: `${finalMass}g 남음`, connector: "→" }];
+        const visual = solved => flowSvg("소금은 그대로, 물만 증발", stages, values, solved, `증발한 물 ${actual}g`);
+        return fixedResult(`진하기가 ${initialRate}%인 소금물 ${initialMass}g이 담긴 컵이 있습니다. 물이 증발하여 소금물의 진하기가 ${finalRate}%가 되었습니다. 증발한 물의 양은 몇 g인가요?`, `${actual}g`, `소금의 양은 ${initialMass}×${initialRate}÷100=${initialMass * initialRate / 100}g으로 그대로입니다. 나중 소금물은 ${initialMass * initialRate / 100}×100÷${finalRate}=${finalMass}g이므로 증발한 물은 ${initialMass}-${finalMass}=${actual}g입니다.`, visual(false), `${visual(true)}${mathBoard("소금의 양은 변하지 않음", row("소금", `${initialMass * initialRate / 100}g`) + row("나중 전체", `${finalMass}g`) + row("답", `${actual}g`))}`, values);
+      }
+
+      if (variant === 7) {
+        const values = [[4, 200, 12, 100, 5], [6, 300, 18, 100, 8], [5, 400, 15, 200, 8]][poolIndex];
+        const [rateA, massA, rateB, massB, targetRate] = values;
+        const saltMass = (rateA * massA + rateB * massB) / 100;
+        const finalMass = saltMass * 100 / targetRate;
+        const actual = finalMass - massA - massB;
+        if (!Number.isInteger(actual) || actual <= 0) throw new Error(`${sourceItemId}: 더 넣은 물의 양이 자연수가 아닙니다.`);
+        const stages = [{ label: "가 소금물", rate: `${rateA}%`, problemDetail: `${massA}g`, connector: "+" }, { label: "나 소금물", rate: `${rateB}%`, problemDetail: `${massB}g`, connector: "→" }, { label: "물까지 넣은 뒤", rate: `${targetRate}%`, problemDetail: "물 ?g", answerDetail: `물 ${actual}g` }];
+        const visual = solved => flowSvg("두 소금물에 물 더하기", stages, values, solved, `더 넣은 물 ${actual}g`);
+        return fixedResult(`진하기가 ${rateA}%인 소금물 ${massA}g에 진하기가 ${rateB}%인 소금물 ${massB}g과 물을 더 넣어 진하기가 ${targetRate}%인 소금물을 만들었습니다. 더 넣은 물의 양은 몇 g인가요?`, `${actual}g`, `처음 두 소금물에 든 소금은 ${saltMass}g입니다. 진하기 ${targetRate}%가 되려면 전체 소금물은 ${saltMass}×100÷${targetRate}=${finalMass}g이어야 합니다. 따라서 더 넣은 물은 ${finalMass}-${massA}-${massB}=${actual}g입니다.`, visual(false), `${visual(true)}${mathBoard("소금의 양으로 전체 양 찾기", row("소금", `${saltMass}g`) + row("나중 전체", `${finalMass}g`) + row("답", `${actual}g`))}`, values);
+      }
+
+      if (variant === 8) {
+        const values = [[18000, 1800, 40], [24000, 2400, 30], [16000, 2400, 35]][poolIndex];
+        const [cost, discountWon, remainingRate] = values;
+        const actual = remainingRate + discountWon * 100 / cost;
+        const listPrice = cost * (100 + actual) / 100;
+        const salePrice = listPrice - discountWon;
+        if (!Number.isInteger(actual) || salePrice - cost !== cost * remainingRate / 100) throw new Error(`${sourceItemId}: 처음 이익률의 역산이 맞지 않습니다.`);
+        const visual = solved => tableSvg("원가와 할인 전후 가격", [["원가", won(cost), won(cost)], ["처음 이익률", "?%", `${actual}%`], ["정가", "원가+처음 이익", won(listPrice)], ["할인액", won(discountWon), won(discountWon)], ["남은 이익", `원가의 ${remainingRate}%`, won(salePrice - cost)]], values, solved, `처음 이익률 ${actual}%`);
+        return fixedResult(`원가가 ${cost}원인 물건에 이익을 붙여 정가를 정한 후 ${discountWon}원을 할인하여 팔았더니 원가의 ${remainingRate}%에 해당하는 이익이 남았습니다. 처음에 붙인 이익은 원가의 몇 %인가요?`, `${actual}%`, `처음 이익은 할인한 ${discountWon}원과 남은 이익 ${cost * remainingRate / 100}원의 합입니다. 따라서 처음 이익률은 (${discountWon}+${cost * remainingRate / 100})÷${cost}×100=${actual}%입니다.`, visual(false), `${visual(true)}${mathBoard("할인한 금액을 다시 더하기", row("남은 이익", `${cost}×${remainingRate}÷100=${cost * remainingRate / 100}원`) + row("처음 이익", `${discountWon + cost * remainingRate / 100}원`) + row("답", `${actual}%`))}`, values);
+      }
+
+      if (variant === 9) {
+        const values = [[30, 20, 56000, 77000], [25, 10, 64500, 80000], [40, 20, 62000, 90000]][poolIndex];
+        const [shoeDiscount, clothesDiscount, paid, listTotal] = values;
+        const shoeList = (paid - listTotal * (100 - clothesDiscount) / 100) * 100 / (clothesDiscount - shoeDiscount);
+        const actual = listTotal - shoeList;
+        if (!Number.isInteger(shoeList) || !Number.isInteger(actual) || shoeList <= 0 || actual <= 0) throw new Error(`${sourceItemId}: 두 물건의 정가가 자연수가 아닙니다.`);
+        const visual = solved => tableSvg("신발과 옷의 정가·할인가", [["신발", `${shoeDiscount}% 할인 · 정가 ?`, `${won(shoeList)} → ${won(shoeList * (100 - shoeDiscount) / 100)}`], ["옷", `${clothesDiscount}% 할인 · 정가 ?`, `${won(actual)} → ${won(actual * (100 - clothesDiscount) / 100)}`], ["정가의 합", won(listTotal), won(listTotal)], ["실제로 낸 돈", won(paid), won(paid)]], values, solved, `옷의 정가 ${won(actual)}`);
+        return fixedResult(`신발은 정가보다 ${shoeDiscount}% 싸게 사고, 옷은 정가보다 ${clothesDiscount}% 싸게 사서 모두 ${paid}원을 냈습니다. 신발과 옷의 정가의 합이 ${listTotal}원일 때, 옷의 정가는 얼마인가요?`, won(actual), `신발 정가를 □원이라 하면 옷 정가는 ${listTotal}-□원입니다. □×${100 - shoeDiscount}÷100+(${listTotal}-□)×${100 - clothesDiscount}÷100=${paid}을 풀면 신발 정가는 ${shoeList}원, 옷 정가는 ${actual}원입니다.`, visual(false), `${visual(true)}${mathBoard("두 할인 가격의 합", row("신발 할인가", won(shoeList * (100 - shoeDiscount) / 100)) + row("옷 할인가", won(actual * (100 - clothesDiscount) / 100)) + row("답", won(actual)))}`, values);
+      }
+
+      const values = [[20000, 40, 20, 40, 345600], [15000, 50, 25, 20, 255000], [24000, 25, 25, 40, 216000]][poolIndex];
+      const [cost, markupRate, discountShare, discountRate, totalProfit] = values;
+      const listPrice = cost * (100 + markupRate) / 100;
+      const regularProfit = listPrice - cost;
+      const discountedPrice = listPrice * (100 - discountRate) / 100;
+      const discountedProfit = discountedPrice - cost;
+      const averageProfit = (100 - discountShare) / 100 * regularProfit + discountShare / 100 * discountedProfit;
+      const actual = totalProfit / averageProfit;
+      if (!Number.isInteger(actual) || actual <= 0) throw new Error(`${sourceItemId}: 처음 신발 수가 자연수가 아닙니다.`);
+      const regularCount = actual * (100 - discountShare) / 100;
+      const discountedCount = actual - regularCount;
+      if (!Number.isInteger(regularCount) || !Number.isInteger(discountedCount)) throw new Error(`${sourceItemId}: 판매 수량이 자연수가 아닙니다.`);
+      const visual = solved => tableSvg("정가 판매와 할인 판매한 신발", [["한 켤레 원가", won(cost), won(cost)], ["정가", `원가에 ${markupRate}% 이익`, won(listPrice)], ["정가 판매", `전체의 ${100 - discountShare}%`, `${regularCount}켤레`], ["할인 판매", `전체의 ${discountShare}% · ${discountRate}% 할인`, `${discountedCount}켤레 · ${won(discountedPrice)}`], ["전체 이익", won(totalProfit), won(totalProfit)]], values, solved, `처음 ${actual}켤레`);
+      return fixedResult(`원가가 ${cost}원인 신발에 ${markupRate}%만큼의 이익을 붙여 정가를 정했습니다. 가지고 있던 신발의 ${discountShare / 100}만큼이 팔리지 않아 정가의 ${discountRate}%를 할인하여 남은 신발을 모두 팔았습니다. 모두 ${totalProfit}원의 이익을 얻었다면 처음에 가지고 있던 신발은 몇 켤레인가요?`, `${actual}켤레`, `정가 판매 한 켤레의 이익은 ${regularProfit}원, 할인 판매 한 켤레의 이익은 ${discountedProfit}원입니다. 전체의 ${100 - discountShare}%와 ${discountShare}%를 각각 이 방법으로 팔았으므로 처음 수 한 켤레 몫의 평균 이익은 ${averageProfit}원입니다. 따라서 ${totalProfit}÷${averageProfit}=${actual}켤레입니다.`, visual(false), `${visual(true)}${mathBoard("두 판매 방법의 이익", row("정가 판매", `${regularCount}켤레 × ${regularProfit}원`) + row("할인 판매", `${discountedCount}켤레 × ${discountedProfit}원`) + row("답", `${actual}켤레`))}`, values);
+    },
     sourceGrade6FractionDivisionE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u1-e2-exploration-2", "6-1-u1-e2-example-1", "6-1-u1-e2-example-2", "6-1-u1-e2-example-3",
@@ -24218,6 +24407,7 @@
     ].includes(type.sourceItemId), "sourceGrade6DecimalDivisionE4"],
     [type => type.sourceItemId?.startsWith("6-1-u4-e4-"), "sourceGrade6RatioE4"],
     [type => type.sourceItemId?.startsWith("6-1-u4-e5-"), "sourceGrade6RatioE5"],
+    [type => type.sourceItemId?.startsWith("6-1-u4-e6-"), "sourceGrade6RatioE6"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
