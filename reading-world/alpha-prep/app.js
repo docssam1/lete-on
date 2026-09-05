@@ -4,45 +4,28 @@
   const app = document.getElementById('app');
   const sets = Array.isArray(window.ALPHA_PREP_SETS) ? window.ALPHA_PREP_SETS : [];
   const peers = Array.isArray(window.ALPHA_PREP_PEERS) ? window.ALPHA_PREP_PEERS : [];
+  const peerAnswers = window.ALPHA_PREP_PEER_ANSWERS && typeof window.ALPHA_PREP_PEER_ANSWERS === 'object'
+    ? window.ALPHA_PREP_PEER_ANSWERS
+    : {};
   const API_URL = 'https://fgahqumaldheqettmvqg.supabase.co/functions/v1/alpha-prep-coach';
   const TRANSCRIBE_URL = 'https://fgahqumaldheqettmvqg.supabase.co/functions/v1/alpha-prep-transcribe';
   const API_KEY = 'sb_publishable_OsjJG92BLMaZrc2jTClt0g_ecdTtf_I';
+  const PEER_AUDIO_BASE = 'https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio/alpha-prep/peers';
+  const PEER_AUDIO_VERSION = '1';
   const CACHE_KEY = 'leteon:alpha-prep:coach-cache:v1';
   const SESSION_KEY = 'leteon:alpha-prep:sessions:v1';
+  const READER_SEAT = 2;
   const READ_SECONDS = 60;
   const MAX_RECORD_SECONDS = 90;
   const MAX_FOLLOW_DEPTH = 2;
   const COACH_TIMEOUT_MS = 28000;
   const TRANSCRIBE_TIMEOUT_MS = 48000;
 
-  const peerAnswers = {
-    'city-trees': 'I think cities should spend the extra money because healthy trees cool buildings and help with rainwater. The benefit is not only for the tree; it reaches the whole neighborhood.',
-    'borrowed-shade': 'Rabbit learned that a useful gift should be shared. Fox changed Rabbit more effectively by being generous than by arguing with him.',
-    'bee-dance': 'The scent is important because several kinds of flowers may grow in the same direction. It helps the bees know which plants the dancer actually found.',
-    'bell-on-hill': 'An apology is a good beginning, but Jun should also use the bell responsibly many times. Trust returns when his actions match his promise.',
-    'tide-pools': 'Visitors may observe the animals, but I would not let them pick the animals up. Even a small action can expose them to heat or damage their home.',
-    'small-shell': 'The judge made the right choice because the shell saved the crab. Its usefulness and Sol’s kindness mattered more than its appearance.',
-    'sleep-memory': 'I would study earlier and sleep on time. The experiment suggests that sleep helps the brain organize practice, although sleep cannot replace studying.',
-    'missing-line': 'Ava helped Eli think instead of simply rescuing him. Her clue let him recover the meaning, so he could speak naturally in his own words.',
-    'bike-library': 'The read-aloud service seems most useful because it creates a learning experience, not just a delivery. It can also help children who cannot yet read alone.',
-    'paper-bridge': 'Changing your mind can show strength when new evidence appears. Joon listened to the test result and improved the team’s bridge.',
-    'community-fridge': 'I would begin with clear rules and volunteers instead of locks. Locks could make people feel unwelcome, while shared responsibility supports the purpose of the fridge.',
-    'two-brooms': 'Choosing first was not enough to make the job fair. Fairness meant matching each tool to the work and giving both children a useful role.',
-    'forest-partners': 'Something can be important even when we cannot see it. The fungal threads are hidden, but they help a plant reach water and nutrients while receiving sugars in return.',
-    'quiet-channel': 'Quiet work can be just as valuable as loud work. The ants solved the real problem by joining many tiny paths into one channel, even though Woodpecker barely noticed them.',
-    'night-migration': 'Tall buildings should dim unnecessary lights during migration weeks. The passage explains that bright lights can confuse birds and cause them to circle or strike glass.',
-    'moth-lantern': 'Pip learned that the brightest sign is not always the most reliable guide. He needed to compare the lantern with the hill and moon before changing direction.',
-    'moving-bridges': 'A bridge would not be safer with every gap removed. Small, controlled spaces let its materials expand and contract without building harmful pressure.',
-    'jar-basket': 'The basket showed greater strength because it adjusted without losing its purpose. Its flexibility protected the apples and also made room for the damaged jar.',
-    'seed-banks': 'Communities should support seed banks before a disaster happens. A backup is useful because no one can predict which variety may be needed after disease or environmental change.',
-    'finch-seeds': 'Wren was wise to share because she saved part of the harvest first. Helping Finch did not remove her backup, and it gave both birds more choices for the next season.'
-  };
-
   const state = {
     stage: 'lobby',
     entered: false,
     studentName: currentReaderName() || 'Reader',
-    seat: 2,
+    seat: READER_SEAT,
     setIndex: 0,
     sessionMode: 'full',
     coachMode: 'economy',
@@ -77,6 +60,7 @@
   let transcriberCheck = null;
   let transcriptionRun = 0;
   let speechRun = 0;
+  let activeSpeechAudio = null;
   let renderedViewKey = '';
   const audioChannel = (() => {
     try { return 'BroadcastChannel' in window ? new BroadcastChannel('leteon-alpha-prep-audio') : null; } catch (_) { return null; }
@@ -148,13 +132,18 @@
     </header>`;
   }
 
-  function personMarkup(person, index, seated) {
+  function peerAtSeat(seat) {
+    return peers.find((peer) => peer.seat === seat) || null;
+  }
+
+  function personMarkup(index, seated) {
     const colors = ['#d96b5f', '#347a68', '#d39b32', '#4777a8'];
-    const labels = peers[index] || { name: `Student ${index + 1}` };
-    const mine = index + 1 === state.seat;
-    return `<div class="candidate candidate-${index + 1} ${seated ? 'seated' : ''} ${mine ? 'mine' : ''}" style="--shirt:${colors[index]}" aria-label="${mine ? esc(state.studentName) : esc(labels.name)}">
+    const seat = index + 1;
+    const peer = peerAtSeat(seat);
+    const mine = seat === READER_SEAT;
+    return `<div class="candidate candidate-${seat} ${seated ? 'seated' : ''} ${mine ? 'mine' : ''}" style="--shirt:${peer ? peer.color : colors[index]}" aria-label="${mine ? esc(state.studentName) : esc(peer ? peer.name : `Student ${seat}`)}">
       <span class="hair"></span><span class="face"></span><span class="body"></span><span class="legs"></span>
-      <small>${mine ? esc(state.studentName) : esc(labels.name)}</small>
+      <small>${mine ? esc(state.studentName) : esc(peer ? peer.name : `Student ${seat}`)}</small>
     </div>`;
   }
 
@@ -168,7 +157,7 @@
       <div class="door"><span class="door-knob"></span></div>
       <div class="floor-line"></div>
       <div class="chairs">${[1, 2, 3, 4].map((number) => `<span class="chair chair-${number}"></span>`).join('')}</div>
-      <div class="candidates">${[0, 1, 2, 3].map((index) => personMarkup(peers[index], index, seated)).join('')}</div>
+      <div class="candidates">${[0, 1, 2, 3].map((index) => personMarkup(index, seated)).join('')}</div>
       <div class="room-caption">${seated ? 'Four-candidate interview room' : 'The door opens. Walk in calmly and take your seat.'}</div>
     </div>`;
   }
@@ -184,13 +173,9 @@
       </section>
       <section class="setup-panel" aria-labelledby="setup-title">
         <div class="panel-number">01</div>
-        <h2 id="setup-title">Choose your seat</h2>
+        <h2 id="setup-title">Get ready</h2>
         <label class="field-label" for="student-name">Student name</label>
         <input id="student-name" class="text-input" data-field="studentName" maxlength="20" value="${esc(state.studentName)}" autocomplete="off">
-        <span class="field-label">Seat</span>
-        <div class="seat-picker" role="group" aria-label="Choose a seat">
-          ${[1, 2, 3, 4].map((seat) => `<button type="button" data-action="seat" data-seat="${seat}" class="${state.seat === seat ? 'active' : ''}" aria-pressed="${state.seat === seat}">${seat}</button>`).join('')}
-        </div>
         <label class="field-label" for="set-select">Practice set</label>
         <select id="set-select" class="select-input" data-field="setIndex">
           ${sets.map((item, index) => `<option value="${index}" ${index === state.setIndex ? 'selected' : ''}>${esc(item.label)} · ${esc(item.theme)}</option>`).join('')}
@@ -316,9 +301,10 @@
   }
 
   function avatarBadge(index, active) {
-    const peer = peers[index];
-    const mine = index + 1 === state.seat;
-    return `<div class="table-person ${active ? 'speaking' : ''} ${mine ? 'mine' : ''}" style="--person:${peer.color}"><span>${mine ? initials(state.studentName) : initials(peer.name)}</span><small>${mine ? esc(state.studentName) : esc(peer.name)}</small></div>`;
+    const seat = index + 1;
+    const peer = peerAtSeat(seat);
+    const mine = seat === READER_SEAT;
+    return `<div class="table-person ${active ? 'speaking' : ''} ${mine ? 'mine' : ''}" style="--person:${peer ? peer.color : '#347a68'}"><span>${mine ? initials(state.studentName) : initials(peer && peer.name)}</span><small>${mine ? esc(state.studentName) : esc(peer ? peer.name : `Student ${seat}`)}</small></div>`;
   }
 
   function initials(name) {
@@ -345,7 +331,7 @@
     if (!current) return errorScreen('The question queue is empty.');
     const progress = Math.round(((state.questionIndex + (current.kind === 'peer' ? 0 : 1)) / state.queue.length) * 100);
     const isPeer = current.kind === 'peer';
-    const peer = isPeer ? peers[current.peerSeat - 1] : null;
+    const peer = isPeer ? peerAtSeat(current.peerSeat) : null;
     const listeningAvailable = micSupported();
     const questionLabel = current.kind === 'ambush'
       ? 'SURPRISE LISTENING QUESTION'
@@ -379,7 +365,7 @@
       ${state.peerHeard
         ? `<button class="primary-command mobile-dock-action" type="button" data-action="after-peer">I listened <span>→</span></button>`
         : `<button class="primary-command mobile-dock-action" type="button" data-action="hear-peer">Hear the answer <span>▶</span></button>`}
-      <button class="text-command" type="button" data-action="repeat-peer">Repeat question and answer</button>`;
+      <button class="text-command" type="button" data-action="repeat-peer">Repeat the answer</button>`;
   }
 
   function answerControls(current, listeningAvailable) {
@@ -586,15 +572,14 @@
   function buildQuestionQueue() {
     const passage = currentPassage();
     const questions = passage.questions || [];
-    const others = [1, 2, 3, 4].filter((seat) => seat !== state.seat);
-    const peerSeat = others[(state.passageIndex + state.setIndex) % others.length];
-    const peer = peers[peerSeat - 1];
+    const peer = peers[(state.passageIndex + state.setIndex) % peers.length];
+    const peerSeat = peer.seat;
     const peerAnswer = peerAnswers[passage.id] || 'I think the passage gives us a reason to look at the problem from another point of view.';
     const peerClaim = peerAnswer.match(/^[^.!?]+[.!?]?/)?.[0] || peerAnswer;
     state.queue = [
       { kind: 'student', type: questions[0].type, prompt: questions[0].prompt, adaptiveSource: true, followDepth: 0 },
       { kind: 'student', type: questions[1].type, prompt: questions[1].prompt },
-      { kind: 'peer', type: questions[2].type, prompt: questions[2].prompt, peerSeat, peerAnswer },
+      { kind: 'peer', type: questions[2].type, prompt: questions[2].prompt, peerId: peer.id, peerSeat, peerAnswer },
       { kind: 'ambush', type: 'interaction', prompt: `${peer.name} said, “${peerClaim}” What do you think about that specific idea? Explain it and add one detail of your own.`, peerName: peer.name, peerSeat, peerClaim },
       { kind: 'student', type: questions[3].type, prompt: questions[3].prompt }
     ];
@@ -612,8 +597,14 @@
 
   function speakQuestion(item) {
     if (!item) return;
-    if (item.kind === 'peer') return;
     speakSequence([item.prompt], 'teacher');
+  }
+
+  function peerAnswerAudioUrl(item) {
+    const passage = currentPassage();
+    const peer = item && item.peerSeat ? peerAtSeat(item.peerSeat) : null;
+    if (!passage || !passage.id || !peer) return '';
+    return `${PEER_AUDIO_BASE}/${encodeURIComponent(passage.id)}-${encodeURIComponent(peer.id)}.mp3?v=${PEER_AUDIO_VERSION}`;
   }
 
   function hearPeer() {
@@ -621,7 +612,7 @@
     if (!item || item.kind !== 'peer') return;
     state.peerHeard = true;
     render();
-    speakSequence([{ text: item.prompt, role: 'teacher' }, { text: item.peerAnswer, role: 'peer' }], 'teacher');
+    speakSequence([{ text: item.peerAnswer, role: 'peer', audioUrl: peerAnswerAudioUrl(item) }], 'peer');
   }
 
   function repeatPeer() {
@@ -629,7 +620,7 @@
     if (!item || item.kind !== 'peer') return;
     state.peerHeard = true;
     render();
-    speakSequence([{ text: item.prompt, role: 'teacher' }, { text: item.peerAnswer, role: 'peer' }], 'teacher');
+    speakSequence([{ text: item.peerAnswer, role: 'peer', audioUrl: peerAnswerAudioUrl(item) }], 'peer');
   }
 
   function afterPeer() {
@@ -1062,7 +1053,7 @@
       render();
       window.setTimeout(() => {
         const item = currentQueueItem();
-        if (item && item.kind !== 'peer') speakQuestion(item);
+        if (item) speakQuestion(item);
       }, 160);
       return;
     }
@@ -1528,26 +1519,63 @@
     const peerVoice = chooseEnglishVoice(voices, FEMALE_ENGLISH_VOICE, MALE_ENGLISH_VOICE, teacherVoice);
     const queue = lines.slice();
     if (typeof window.speechSynthesis.resume === 'function') window.speechSynthesis.resume();
-    const next = () => {
-      if (run !== speechRun || !queue.length) return;
-      const entry = queue.shift();
-      const activeRole = entry && typeof entry === 'object' ? entry.role || role : role;
-      const spokenText = entry && typeof entry === 'object' ? entry.text : entry;
+    const speakText = (spokenText, activeRole, onDone) => {
       const utterance = new SpeechSynthesisUtterance(String(spokenText || ''));
       utterance.lang = 'en-US';
       utterance.rate = activeRole === 'peer' ? 0.94 : 0.9;
       utterance.pitch = activeRole === 'peer' ? 1.08 : 0.95;
       utterance.volume = 1;
       utterance.voice = activeRole === 'peer' ? peerVoice : teacherVoice;
-      utterance.onend = next;
-      utterance.onerror = next;
+      utterance.onend = onDone;
+      utterance.onerror = onDone;
       window.speechSynthesis.speak(utterance);
+    };
+    const next = () => {
+      if (run !== speechRun || !queue.length) return;
+      const entry = queue.shift();
+      const activeRole = entry && typeof entry === 'object' ? entry.role || role : role;
+      const spokenText = entry && typeof entry === 'object' ? entry.text : entry;
+      const audioUrl = entry && typeof entry === 'object' ? entry.audioUrl : '';
+      if (!audioUrl) {
+        speakText(spokenText, activeRole, next);
+        return;
+      }
+      let handled = false;
+      const audio = new Audio(audioUrl);
+      activeSpeechAudio = audio;
+      const finishAudio = () => {
+        if (handled || run !== speechRun) return;
+        handled = true;
+        activeSpeechAudio = null;
+        next();
+      };
+      const fallbackToDeviceVoice = () => {
+        if (handled || run !== speechRun) return;
+        handled = true;
+        activeSpeechAudio = null;
+        speakText(spokenText, activeRole, next);
+      };
+      audio.preload = 'auto';
+      audio.onended = finishAudio;
+      audio.onerror = fallbackToDeviceVoice;
+      try {
+        const playback = audio.play();
+        if (playback && typeof playback.catch === 'function') playback.catch(fallbackToDeviceVoice);
+      } catch (_) {
+        fallbackToDeviceVoice();
+      }
     };
     next();
   }
 
   function stopSpeech() {
     speechRun += 1;
+    if (activeSpeechAudio) {
+      activeSpeechAudio.onended = null;
+      activeSpeechAudio.onerror = null;
+      activeSpeechAudio.pause();
+      activeSpeechAudio = null;
+    }
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   }
 
@@ -1576,8 +1604,7 @@
     const button = event.target.closest('[data-action]');
     if (!button || button.disabled) return;
     const action = button.dataset.action;
-    if (action === 'seat') { state.seat = Number(button.dataset.seat) || 1; render(); }
-    else if (action === 'mode') { state.sessionMode = button.dataset.mode === 'quick' ? 'quick' : 'full'; render(); }
+    if (action === 'mode') { state.sessionMode = button.dataset.mode === 'quick' ? 'quick' : 'full'; render(); }
     else if (action === 'preview-print') { state.printMode = 'materials'; state.stage = 'print-preview'; render(); }
     else if (action === 'close-print-preview') { state.printMode = ''; state.stage = 'lobby'; render(); }
     else if (action === 'print-materials') { state.printMode = 'materials'; document.body.dataset.printMode = 'materials'; window.print(); }

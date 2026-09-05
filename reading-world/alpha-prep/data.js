@@ -558,10 +558,32 @@
     }
   ];
 
+  window.ALPHA_PREP_PEER_ANSWERS = {
+    'city-trees': 'I think cities should spend the extra money because healthy trees cool buildings and help with rainwater. The benefit is not only for the tree; it reaches the whole neighborhood.',
+    'borrowed-shade': 'Rabbit learned that a useful gift should be shared. Fox changed Rabbit more effectively by being generous than by arguing with him.',
+    'bee-dance': 'The scent is important because several kinds of flowers may grow in the same direction. It helps the bees know which plants the dancer actually found.',
+    'bell-on-hill': 'An apology is a good beginning, but Jun should also use the bell responsibly many times. Trust returns when his actions match his promise.',
+    'tide-pools': 'Visitors may observe the animals, but I would not let them pick the animals up. Even a small action can expose them to heat or damage their home.',
+    'small-shell': 'The judge made the right choice because the shell saved the crab. Its usefulness and Sol’s kindness mattered more than its appearance.',
+    'sleep-memory': 'I would study earlier and sleep on time. The experiment suggests that sleep helps the brain organize practice, although sleep cannot replace studying.',
+    'missing-line': 'Ava helped Eli think instead of simply rescuing him. Her clue let him recover the meaning, so he could speak naturally in his own words.',
+    'bike-library': 'The read-aloud service seems most useful because it creates a learning experience, not just a delivery. It can also help children who cannot yet read alone.',
+    'paper-bridge': 'Changing your mind can show strength when new evidence appears. Joon listened to the test result and improved the team’s bridge.',
+    'community-fridge': 'I would begin with clear rules and volunteers instead of locks. Locks could make people feel unwelcome, while shared responsibility supports the purpose of the fridge.',
+    'two-brooms': 'Choosing first was not enough to make the job fair. Fairness meant matching each tool to the work and giving both children a useful role.',
+    'forest-partners': 'Something can be important even when we cannot see it. The fungal threads are hidden, but they help a plant reach water and nutrients while receiving sugars in return.',
+    'quiet-channel': 'Quiet work can be just as valuable as loud work. The ants solved the real problem by joining many tiny paths into one channel, even though Woodpecker barely noticed them.',
+    'night-migration': 'Tall buildings should dim unnecessary lights during migration weeks. The passage explains that bright lights can confuse birds and cause them to circle or strike glass.',
+    'moth-lantern': 'Pip learned that the brightest sign is not always the most reliable guide. He needed to compare the lantern with the hill and moon before changing direction.',
+    'moving-bridges': 'A bridge would not be safer with every gap removed. Small, controlled spaces let its materials expand and contract without building harmful pressure.',
+    'jar-basket': 'The basket showed greater strength because it adjusted without losing its purpose. Its flexibility protected the apples and also made room for the damaged jar.',
+    'seed-banks': 'Communities should support seed banks before a disaster happens. A backup is useful because no one can predict which variety may be needed after disease or environmental change.',
+    'finch-seeds': 'Wren was wise to share because she saved part of the harvest first. Helping Finch did not remove her backup, and it gave both birds more choices for the next season.'
+  };
+
   window.ALPHA_PREP_PEERS = [
-    { id: 'mina', name: 'Mina', color: '#d96b5f' },
-    { id: 'leo', name: 'Leo', color: '#347a68' },
-    { id: 'emma', name: 'Emma', color: '#d39b32' },
-    { id: 'noah', name: 'Noah', color: '#4777a8' }
+    { id: 'mina', name: 'Mina', gender: 'female', seat: 1, voice: 'en-US-Wavenet-C', color: '#d96b5f' },
+    { id: 'emma', name: 'Emma', gender: 'female', seat: 3, voice: 'en-US-Wavenet-F', color: '#d39b32' },
+    { id: 'noah', name: 'Noah', gender: 'male', seat: 4, voice: 'en-US-Wavenet-I', color: '#4777a8' }
   ];
 })();

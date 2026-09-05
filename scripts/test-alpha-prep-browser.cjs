@@ -87,14 +87,17 @@ async function runPassageInterview(page, passageIndex) {
   await submit(page, 'The exact detail makes the idea convincing because it shows what changed and why the result mattered.');
   await assertVisibleText(page, 'FOLLOW-UP 2 OF 2');
   await submit(page, 'That detail matters most because it connects the problem to the solution.');
-  await submit(page, 'One important detail is that the characters or people tested a solution before deciding what to do.');
   if (passageIndex === 0) await page.evaluate(() => { window.__spokenUtterances.length = 0; });
+  await submit(page, 'One important detail is that the characters or people tested a solution before deciding what to do.');
+  if (passageIndex === 0) {
+    await page.waitForFunction(() => window.__spokenUtterances.length >= 1);
+    assert.equal(await page.evaluate(() => window.__spokenUtterances.at(-1).voice), 'Microsoft Guy Online (Natural)', 'Henry must ask the peer question with the male voice');
+    await page.evaluate(() => { window.__playedAudioUrls.length = 0; });
+  }
   await page.locator('[data-action="hear-peer"]').click();
   if (passageIndex === 0) {
-    await page.waitForFunction(() => window.__spokenUtterances.length >= 2);
-    const peerSequence = await page.evaluate(() => window.__spokenUtterances.slice(0, 2));
-    assert.equal(peerSequence[0].voice, 'Microsoft Guy Online (Natural)', 'Henry must introduce the peer answer with the male voice');
-    assert.equal(peerSequence[1].voice, 'Microsoft Aria Online (Natural)', 'the peer answer must use a separate voice');
+    await page.waitForFunction(() => window.__playedAudioUrls.length >= 1);
+    assert.match(await page.evaluate(() => window.__playedAudioUrls[0]), /seed-banks-mina\.mp3\?v=1$/);
   }
   await assertVisibleText(page, 'Keep the idea in mind.');
   await page.locator('[data-action="after-peer"]').click();
@@ -183,6 +186,7 @@ async function installMockMediaRecorder(page) {
 async function installMockSpeechSynthesis(page) {
   await page.addInitScript(() => {
     window.__spokenUtterances = [];
+    window.__playedAudioUrls = [];
     const voices = [
       { name: 'Microsoft Aria Online (Natural)', voiceURI: 'Microsoft Aria Online (Natural)', lang: 'en-US' },
       { name: 'Microsoft Guy Online (Natural)', voiceURI: 'Microsoft Guy Online (Natural)', lang: 'en-US' },
@@ -208,6 +212,21 @@ async function installMockSpeechSynthesis(page) {
         },
       },
     });
+    window.Audio = class MockAudio {
+      constructor(src) {
+        this.src = src;
+        this.onended = null;
+        this.onerror = null;
+      }
+
+      play() {
+        window.__playedAudioUrls.push(this.src);
+        setTimeout(() => { if (this.onended) this.onended(); }, 0);
+        return Promise.resolve();
+      }
+
+      pause() {}
+    };
   });
 }
 
@@ -283,7 +302,7 @@ async function main() {
     await page.emulateMedia({ media: 'screen' });
     await page.locator('[data-action="close-print-preview"]').click();
     await assertVisibleText(page, 'Walk in ready to listen.');
-    await page.locator('[data-action="seat"][data-seat="3"]').click();
+    assert.equal(await page.locator('[data-action="seat"]').count(), 0, 'the reader seat must be assigned automatically');
     await page.locator('[data-action="enter-room"]').click();
     await assertVisibleText(page, 'Good afternoon, everyone.');
     await assertVisibleText(page, 'Protecting Tomorrow');

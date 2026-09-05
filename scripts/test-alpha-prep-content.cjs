@@ -7,10 +7,11 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const source = fs.readFileSync(path.join(__dirname, '..', 'reading-world', 'alpha-prep', 'data.js'), 'utf8');
-const appSource = fs.readFileSync(path.join(__dirname, '..', 'reading-world', 'alpha-prep', 'app.js'), 'utf8');
 const sandbox = { window: {} };
 vm.runInNewContext(source, sandbox, { filename: 'data.js' });
 const sets = sandbox.window.ALPHA_PREP_SETS;
+const peerAnswers = sandbox.window.ALPHA_PREP_PEER_ANSWERS;
+const peers = sandbox.window.ALPHA_PREP_PEERS;
 assert.ok(Array.isArray(sets));
 assert.equal(sets.length, 10);
 
@@ -62,7 +63,11 @@ for (const [setIndex, set] of sets.entries()) {
 assert.equal(fableCount, 4);
 assert.equal(ids.size, 20);
 assert.equal(titles.size, 20);
+assert.equal(Object.keys(peerAnswers).length, 20);
 for (const id of ids) {
-  assert.ok(appSource.includes(`'${id}':`), `missing peer answer for passage: ${id}`);
+  assert.ok(peerAnswers[id], `missing peer answer for passage: ${id}`);
 }
+assert.deepEqual(Array.from(peers, (peer) => peer.name), ['Mina', 'Emma', 'Noah']);
+assert.deepEqual(Array.from(peers, (peer) => peer.seat), [1, 3, 4]);
+assert.deepEqual(Array.from(peers, (peer) => peer.gender), ['female', 'female', 'male']);
 console.log('alpha-prep content: 10 sets, 20 passages, all checks passed');
