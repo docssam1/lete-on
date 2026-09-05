@@ -12,13 +12,17 @@ const require = createRequire(import.meta.url);
 const { PDFDocument } = require(path.join(runtimeModules, "pdf-lib"));
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const requestedBook = process.argv[2] || process.env.GOLDEN_BELL_BOOK || "book-02";
+const testCode = process.env.FIELDS_TEST_ACCESS_CODE || "";
+const testName = process.env.FIELDS_TEST_STUDENT || "DEMO";
+if (!testCode) throw new Error("FIELDS_TEST_ACCESS_CODE is required for protected print auditing");
 const bookIds = requestedBook === "all"
   ? Array.from({ length: 10 }, (_, index) => `book-${String(index + 1).padStart(2, "0")}`)
   : [requestedBook];
 
 function sourceParts(lesson) {
-  if (lesson.original.mode !== "paged") return ["original"];
-  return [...new Set(lesson.original.items.map((item) => item.printGroup))].map((group) => `original-${group}`);
+  const concept = lesson.original.separateConceptPrint ? ["concept"] : [];
+  if (lesson.original.mode !== "paged" && lesson.original.printMode !== "paged") return [...concept, "original"];
+  return [...concept, ...[...new Set(lesson.original.items.map((item) => item.printGroup))].map((group) => `original-${group}`)];
 }
 
 function lessonParts(lesson) {
@@ -28,6 +32,17 @@ function lessonParts(lesson) {
 const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const authResponse = await fetch("https://fgahqumaldheqettmvqg.supabase.co/functions/v1/fields-auth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: new URL(baseUrl).origin },
+    body: JSON.stringify({ action: "login", code: testCode, name: testName })
+  });
+  const auth = await authResponse.json();
+  assert.equal(authResponse.status, 200, `protected print audit login failed: ${auth.error || authResponse.status}`);
+  await page.addInitScript(({ token, name }) => {
+    sessionStorage.setItem("gfield_fields_session", token);
+    sessionStorage.setItem("gf_n", name);
+  }, { token: auth.token, name: testName });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => {
@@ -38,7 +53,8 @@ try {
     const book = GOLDEN_BELL_BOOKS.find((candidate) => candidate.id === bookId);
     const currentLesson = book.lessons[0];
     await page.emulateMedia({ media: "screen" });
-    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=PRINT-AUDIT&book=${bookId}`, { waitUntil: "networkidle" });
+    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${encodeURIComponent(testName)}&book=${bookId}`, { waitUntil: "networkidle" });
+    await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     await page.evaluate(() => { window.print = () => {}; });
     await page.locator("#printLessonButton").click();
     await page.waitForTimeout(100);

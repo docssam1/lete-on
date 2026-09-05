@@ -15,6 +15,13 @@ reading-world/private/
 /.source-memory/premier-private-local.json
 /tmp/
 /supabase/.temp/
+fields-classic/question-bank/golden-bell-private-*.js
+fields-classic/question-bank/golden-bell-answer-bank*.json
+fields-classic/question-bank/golden-bell-book*-source.js
+fields-classic/question-bank/golden-bell-book*-source-audit.mjs
+fields-classic/question-bank/golden-bell-original-solutions.js
+fields-classic/question-bank/golden-bell-course1-progressive.js
+fields-classic/question-bank/golden-bell-similar-practice.js
 __pycache__/
 *.pyc
 

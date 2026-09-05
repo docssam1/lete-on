@@ -46,6 +46,10 @@ function vertical(visual) {
   return verticalBlock(visual);
 }
 
+function verticalStack(visual) {
+  return `<div class="b8-vertical">${visual.addends.map((addend, index) => `<div><i>${index === visual.addends.length - 1 ? "+" : ""}</i><b>${escapeHtml(addend)}</b></div>`).join("")}<hr><strong>${escapeHtml(visual.result)}</strong></div>`;
+}
+
 function linkedVertical(visual) {
   return `<div class="b8-linked-vertical">${visual.equations.map(verticalBlock).join("<i>→</i>")}</div>`;
 }
@@ -100,6 +104,7 @@ export function book08Markup(visual) {
     case "operation-grid": return operationGrid(visual);
     case "conditions": return conditions(visual);
     case "vertical": return vertical(visual);
+    case "vertical-stack": return verticalStack(visual);
     case "linked-vertical": return linkedVertical(visual);
     case "cards": return cards(visual);
     case "bars": return bars(visual);

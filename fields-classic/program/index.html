@@ -538,6 +538,7 @@ const CODES={
 };
 // 신규 승인번호(GF-XXXXXX) — admin에서 자동 발급, data.js에서 로드
 const FC = window.GFIELD_FC_DATA || { students:[], studentCode:{}, attendance:{}, studentType:{} };
+const FIELDS_AUTH_URL="https://fgahqumaldheqettmvqg.supabase.co/functions/v1/fields-auth";
 FC.archiveFolders = Array.isArray(FC.archiveFolders) ? FC.archiveFolders : [];
 FC.archiveAccess = FC.archiveAccess && typeof FC.archiveAccess === "object" ? FC.archiveAccess : {};
 FC.books = Array.isArray(FC.books) ? FC.books : [];
@@ -565,10 +566,13 @@ function findByCode(code){
 }
 async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
 function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,32);let r="",w=[],al=s.length*8;let h=fb.h=fb.h||[],k=fb.k=fb.k||[],pc=k.length;const ic={};for(let c=2;pc<64;c++){if(!ic[c]){for(let i=0;i<313;i+=c)ic[i]=c;h[pc]=mp(c,.5)*mw|0;k[pc++]=mp(c,1/3)*mw|0}}s+="\x80";while(s.length%64-56)s+="\x00";for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return"";w[i>>2]|=j<<(3-i%4)*8}w[w.length]=al/mw|0;w[w.length]=al;for(let j=0;j<w.length;){const wd=w.slice(j,j+=16),oh=h.slice(0);for(let i=0;i<64;i++){const w15=wd[i-15],w2=wd[i-2],a=h[0],e=h[4];const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(wd[i]=i<16?wd[i]:wd[i-16]+(rr(w15,7)^rr(w15,18)^w15>>>3)+wd[i-7]+(rr(w2,17)^rr(w2,19)^w2>>>10)|0);const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[t1+t2|0].concat(h);h[4]=h[4]+t1|0;h.pop()}for(let i=0;i<8;i++)h[i]=h[i]+oh[i]|0}for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=h[i]>>j*8&255;r+=(b<16?0:"")+b.toString(16)}return r}
-async function verify(code){
-  // 1순위: 신규 승인번호(GF-XXXXXX) 확인
-  const found = findByCode(code);
-  if(found) return { perms: found.perms, name: found.name, type: found.type };
+async function verify(code,name){
+  // 1순위: 서버에서 신규 승인번호와 등록 이름을 함께 확인합니다.
+  try{
+    const response=await fetch(FIELDS_AUTH_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"login",code,name}),cache:"no-store"});
+    const payload=await response.json();
+    if(response.ok&&payload.token){sessionStorage.setItem("gfield_fields_session",payload.token);return {perms:payload.permissions||[],name:payload.name,type:payload.type||"online"};}
+  }catch{}
   // 2순위: 레거시 해시 승인번호 확인
   const h=await sha256(SALT+":"+code.trim().toUpperCase());
   const legacyPerms = CODES[h];
@@ -697,11 +701,9 @@ const GF={
     const c=document.getElementById("gCode").value.trim(),n=document.getElementById("gName").value.replace(/\s+/g,"").trim(),e=document.getElementById("gErr");
     if(!c){e.textContent="승인번호를 입력해 주세요.";return}
     if(!n){e.textContent="학생 이름을 입력해 주세요.";return}
-    // 관리자 전용 진입
-    if(c==="01020837265" && n.toLowerCase()==="docssam"){ location.href="../admin.html"; return; }
     requestStudyFullscreen();
     e.textContent="확인 중...";
-    const result=await verify(c);
+    const result=await verify(c,n);
     if(!result){e.textContent="올바르지 않은 승인번호입니다.";exitStudyFullscreen();return}
     // 신규 승인번호는 admin에 등록된 이름을 우선 사용, 레거시는 입력한 이름 사용
     S.name=result.name||n;

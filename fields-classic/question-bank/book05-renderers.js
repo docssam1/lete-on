@@ -270,6 +270,10 @@ function oddSquare(visual) {
   }).join("")}</div><p>${visual.odds.slice(0, shown).join(" + ")}${visual.target > shown ? " + …" : ""}</p></div>`;
 }
 
+function oddTriangleLayers(visual) {
+  return `<div class="b5-number-rows triangle">${visual.odds.map((count) => `<div>${Array.from({ length: count }, () => "<span></span>").join("")}</div>`).join("")}<strong>${visual.target}번째 모양</strong></div>`;
+}
+
 function pascal(visual) {
   return `<div class="b5-pascal">${visual.rows.map((row) => `<div>${row.map((value) => `<span>${value}</span>`).join("")}</div>`).join("")}${visual.targetRow > visual.rows.length ? `<strong>… ${visual.targetRow}번째 줄</strong>` : ""}</div>`;
 }
@@ -345,6 +349,7 @@ export function book05Markup(visual) {
     case "selection-items": return selectionItems(visual);
     case "pair-ladder": return pairLadder(visual);
     case "odd-square": return oddSquare(visual);
+    case "odd-triangle-layers": return oddTriangleLayers(visual);
     case "pascal": return pascal(visual);
     case "triangle-count": return triangleCount(visual);
     case "square-count": return squareCount(visual);

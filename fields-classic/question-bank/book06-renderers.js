@@ -254,6 +254,21 @@ function operatorRow(visual) {
   return `<div class="b6-operator-row"><p>${visual.digits.map((digit, index) => `${index ? "<b>□</b>" : ""}<span>${digit}</span>`).join("")}</p><strong>= ${visual.target}</strong><em>${visual.choices.join(" · ")}</em></div>`;
 }
 
+function multipartConditions(visual) {
+  const context = book06Markup(visual.context);
+  const rows = visual.rows.map((row) => `<article class="b6-condition-row" data-book06-condition="${escapeHtml(row.id)}"><strong>${escapeHtml(row.label)}</strong><span>${escapeHtml(row.equation)}</span></article>`).join("");
+  const printCompact = visual.printCompact ? '<style media="print">.gold-print-page .b6-condition-list[data-print-compact="true"]{display:none}</style>' : "";
+  return `<section class="b6-multipart-conditions">${printCompact}<div class="b6-multipart-context">${context}</div><div class="b6-condition-list"${visual.printCompact ? ' data-print-compact="true"' : ""}>${rows}</div></section>`;
+}
+
+function operatorConditions(visual) {
+  const rows = visual.rows.map((row) => {
+    const expression = row.tokens.map((token, index) => `${index ? "<b>□</b>" : ""}<span>${escapeHtml(token)}</span>`).join("");
+    return `<article class="b6-condition-row" data-book06-condition="${escapeHtml(row.id)}"><strong>${escapeHtml(row.label)}</strong><p>${expression}<em>= ${escapeHtml(row.target)}</em></p></article>`;
+  }).join("");
+  return `<section class="b6-operator-conditions">${rows}</section>`;
+}
+
 function removablePlus(visual) {
   return `<div class="b6-removable-plus"><p>${visual.digits.map((digit, index) => `${index ? `<b data-index="${index}">+</b>` : ""}<span>${digit}</span>`).join("")}</p><strong>= ${visual.target}</strong></div>`;
 }
@@ -367,6 +382,8 @@ export function book06Markup(visual) {
     case "digit-range": return digitRange(visual);
     case "range-count": return rangeCount(visual);
     case "digit-focus": return digitFocus(visual);
+    case "multipart-conditions": return multipartConditions(visual);
+    case "operator-conditions": return operatorConditions(visual);
     case "operator-row": return operatorRow(visual);
     case "removable-plus": return removablePlus(visual);
     case "unit-test": return unitTestVisual(visual);

@@ -186,6 +186,75 @@ function frontBackTwoOrders(visual) {
   return `<div class="b4-two-order-cases">${visual.clues.map((clue) => `<p>${escapeHtml(clue)} <b>전체 ?명</b></p>`).join("")}</div>`;
 }
 
+// Source-backed Book 4 additions deliberately use newly authored, calculable
+// diagrams instead of reproducing a protected classroom slide.
+function sourceNumberModel(visual) {
+  return `<div class="b4-clue-panel"><p><b>칸 수</b>같은 정사각형 조각 ${Number(visual.count)}개</p><p><b>규칙</b>돌리거나 뒤집어 같은 모양은 하나로 셉니다.</p></div>`;
+}
+
+function sourceFoldHoles(visual) {
+  const size = 84;
+  const point = ([x, y], offsetX) => [offsetX + x * size, 14 + y * size];
+  const points = (vertices, offsetX) => vertices.map((vertex) => point(vertex, offsetX).join(",")).join(" ");
+  const foldPanel = (paper, fold, offsetX, label) => {
+    const [lineStart, lineEnd] = fold.line.map((vertex) => point(vertex, offsetX));
+    const midX = (lineStart[0] + lineEnd[0]) / 2;
+    const midY = (lineStart[1] + lineEnd[1]) / 2;
+    const length = Math.hypot(fold.direction[0], fold.direction[1]) || 1;
+    const dx = fold.direction[0] / length * 18;
+    const dy = fold.direction[1] / length * 18;
+    return `<g><text x="${offsetX + size / 2}" y="10" text-anchor="middle" font-size="8">${label}</text><polygon points="${points(paper, offsetX)}" fill="#dff1f6" stroke="#4389a8" stroke-width="1.4"/><line class="fold-line" x1="${lineStart[0]}" y1="${lineStart[1]}" x2="${lineEnd[0]}" y2="${lineEnd[1]}" stroke="#4389a8" stroke-width="1.2" stroke-dasharray="4 3"/><path class="fold-arrow" d="M${midX - dx} ${midY - dy}L${midX + dx} ${midY + dy}" fill="none" stroke="#d15a4a" stroke-width="2"/><path class="fold-arrow-head" d="M${midX + dx} ${midY + dy}l${-6 - dy / 4} ${-dx / 4}l${dy / 2} ${dx / 2}Z" fill="#d15a4a"/></g>`;
+  };
+  const first = foldPanel(visual.paper.vertices, visual.folds[0], 8, "첫째 접기");
+  const second = visual.folds[1]
+    ? foldPanel(visual.folds[0].after, visual.folds[1], 126, "둘째 접기")
+    : `<g><text x="168" y="10" text-anchor="middle" font-size="8">접은 모양</text><polygon points="${points(visual.folds[0].after, 126)}" fill="#dff1f6" stroke="#4389a8" stroke-width="1.4"/></g>`;
+  const finalOffset = 244;
+  const clipId = `b4-${escapeHtml(visual.diagramId)}-paper`;
+  const holes = visual.holes.map((currentHole) => {
+    const [cx, cy] = point(currentHole.center, finalOffset);
+    return `<circle class="hole ${escapeHtml(currentHole.boundary)}" cx="${cx}" cy="${cy}" r="${currentHole.radius * size}" clip-path="url(#${clipId})"/>`;
+  }).join("");
+  const final = `<g><text x="${finalOffset + size / 2}" y="10" text-anchor="middle" font-size="8">구멍 낸 모양</text><defs><clipPath id="${clipId}"><polygon points="${points(visual.finalPaper, finalOffset)}"/></clipPath></defs><polygon points="${points(visual.finalPaper, finalOffset)}" fill="#dff1f6" stroke="#4389a8" stroke-width="1.4"/>${holes}</g>`;
+  return `<svg class="b4-source-fold-holes" viewBox="0 0 340 108" role="img" aria-label="접는 선과 방향, 구멍 위치가 표시된 색종이 접기">${first}<path class="step-arrow" d="M100 56H118m-7-6 7 6-7 6"/>${second}<path class="step-arrow" d="M218 56H236m-7-6 7 6-7 6"/>${final}</svg>`;
+}
+
+function sourceCubeBox(visual) {
+  const cells = Array.from({ length: visual.total }, (_, index) => `<span style="background:${index < visual.shown ? "#79b7cc" : "#eef4f6"}">${index < visual.shown ? "■" : ""}</span>`).join("");
+  return `<div class="b4-clue-panel"><p><b>상자</b>${visual.dimensions.join(" x ")}칸</p><div style="display:grid;grid-template-columns:repeat(${visual.columns},22px);gap:3px;justify-content:center">${cells}</div></div>`;
+}
+
+function sourceHiddenCube(visual) {
+  const rows = visual.map.map((row) => `<div style="display:flex;gap:3px">${row.map((height) => `<span style="display:grid;place-items:center;width:28px;height:28px;border:1px solid #7898a8;background:${height ? "#dff1f6" : "#fff"}">${height || ""}</span>`).join("")}</div>`).join("");
+  return `<div class="b4-clue-panel"><p><b>위에서 본 층수</b>각 칸의 수만큼 쌓기나무가 있습니다.</p><div style="display:grid;gap:3px;justify-content:center">${rows}</div><p><b>물음</b>보이지 않는 쌓기나무 수를 쓰세요.</p></div>`;
+}
+
+function sourceMatrix(visual) {
+  const values = visual.cells.map((value) => `<span>${value == null ? "?" : value}</span>`).join("");
+  return `<div class="b4-clue-panel"><div style="display:grid;grid-template-columns:repeat(2,42px);gap:3px;justify-content:center">${values}</div><p><b>가로 곱</b>${visual.rowProducts.join(", ")} / <b>세로 곱</b>${visual.columnProducts.join(", ")}</p></div>`;
+}
+
+function sourceTableLogic(visual) {
+  return `<div class="b4-clue-panel">${visual.clues.map((clue, index) => `<p><b>${index + 1}</b>${escapeHtml(clue)}</p>`).join("")}<p><b>대상</b>${escapeHtml(visual.target)} = ?</p></div>`;
+}
+
+function sourceCircleLogic(visual) {
+  const seats = visual.seats.map((seat, index) => `<span class="${seat.target ? "is-target" : ""}" style="position:absolute;left:${50 + Math.cos(-Math.PI / 2 + index * Math.PI * 2 / visual.seats.length) * 38}%;top:${50 + Math.sin(-Math.PI / 2 + index * Math.PI * 2 / visual.seats.length) * 38}%;transform:translate(-50%,-50%);border:1px solid #7898a8;border-radius:50%;padding:4px 7px;background:${seat.target ? "#fff3c4" : "#fff"}">${escapeHtml(seat.fixed || seat.label || "?")}</span>`).join("");
+  return `<div class="b4-clue-panel">${visual.clues.map((clue, index) => `<p><b>${index + 1}</b>${escapeHtml(clue)}</p>`).join("")}<div style="position:relative;width:170px;height:170px;margin:auto;border:2px solid #7898a8;border-radius:50%">${seats}<i style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)">원탁</i></div></div>`;
+}
+
+function sourceRowLogic(visual) {
+  const peopleByPosition = new Map(visual.placements.map((placement) => [placement.from === "front" ? placement.position : visual.total - placement.position + 1, placement.person]));
+  const seats = Array.from({ length: visual.total }, (_, index) => `<span style="display:grid;place-items:center;min-height:34px;border:1px solid #7898a8;border-radius:50%;background:${peopleByPosition.has(index + 1) ? "#fff3c4" : "#fff"};font-size:9px">${escapeHtml(peopleByPosition.get(index + 1) || "")}</span>`).join("");
+  const facts = visual.placements.map((placement) => `${placement.person}: ${placement.from === "front" ? "앞" : "뒤"}에서 ${placement.position}번째`).join(" / ");
+  return `<div class="b4-clue-panel"><div style="display:grid;grid-template-columns:repeat(${visual.total},minmax(18px,1fr));gap:3px">${seats}</div><p><b>조건</b>${escapeHtml(facts)}</p></div>`;
+}
+
+function sourceBalanceEquations(visual) {
+  const side = (objects) => Object.entries(objects).map(([symbol, count]) => `${symbol} ${count}개`).join(" + ");
+  return `<div class="b4-clue-panel">${visual.equations.map((equation, index) => `<p><b>${index + 1}</b>${escapeHtml(side(equation.left))} = ${escapeHtml(side(equation.right))}</p>`).join("")}<p><b>물음</b>${escapeHtml(side(visual.target.left))} = ${escapeHtml(Object.keys(visual.target.right)[0])} ?개</p></div>`;
+}
+
 export function book04Markup(visual) {
   if (!visual || visual.kind !== "book4") return "";
   switch (visual.subtype) {
@@ -211,6 +280,15 @@ export function book04Markup(visual) {
     case "circular-seat-blank": return circularSeatBlank(visual);
     case "three-fold-cut-line": return foldedCutLine(visual);
     case "front-back-two-orders": return frontBackTwoOrders(visual);
+    case "source-number-model": return sourceNumberModel(visual);
+    case "source-fold-holes": return sourceFoldHoles(visual);
+    case "source-cube-box": return sourceCubeBox(visual);
+    case "source-hidden-cube": return sourceHiddenCube(visual);
+    case "source-matrix": return sourceMatrix(visual);
+    case "source-table-logic": return sourceTableLogic(visual);
+    case "source-circle-logic": return sourceCircleLogic(visual);
+    case "source-row-logic": return sourceRowLogic(visual);
+    case "source-balance-equations": return sourceBalanceEquations(visual);
     default: return "";
   }
 }

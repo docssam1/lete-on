@@ -1,5 +1,7 @@
 import { book02Markup } from "./book02-renderers.js?v=20260904b";
 import { book03Markup } from "./book03-renderers.js?v=20260905a";
+import { book06Markup } from "./book06-renderers.js?v=20260905d";
+import { book09Markup } from "./book09-renderers.js?v=20260829b";
 
 function foldVisual(phase) {
   const folded = ["folded", "cut"].includes(phase);
@@ -177,10 +179,22 @@ function bookThreeSourceVisual(experience, beat, step) {
   return `<div class="book03-visual guided-book3-source ${beat.phase || "step"}" data-book3-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book03Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
 }
 
+function bookSixSourceVisual(experience, beat, step) {
+  const itemVisual = beat.visual || experience.model?.visual;
+  return `<div class="book06-visual guided-book6-source" data-book6-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book06Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
+}
+
+function bookNineSourceVisual(experience) {
+  const visual = experience.model?.visual;
+  return visual ? `<div class="book09-visual guided-book09-source">${book09Markup(visual)}</div>` : "";
+}
+
 export function guidedConceptVisual(experience, step) {
   const beat = experience.beats[Math.max(0, Math.min(step, experience.beats.length - 1))];
   if (experience.family?.startsWith("book2-")) return bookTwoSourceVisual(experience, beat, step);
   if (experience.family?.startsWith("book3-")) return bookThreeSourceVisual(experience, beat, step);
+  if (experience.family === "book06-source") return bookSixSourceVisual(experience, beat, step);
+  if (experience.family?.startsWith("book09-")) return bookNineSourceVisual(experience);
   if (experience.family === "fold-symmetry") return foldVisual(beat.phase);
   if (experience.family === "double-fold-symmetry") return doubleFoldVisual(beat.phase);
   if (experience.family === "equal-line") return equalLineVisual(beat.phase, experience.model);
