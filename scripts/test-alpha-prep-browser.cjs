@@ -78,9 +78,16 @@ async function submit(page, answer) {
 
 async function runPassageInterview(page, passageIndex) {
   const submitStartedAt = Date.now();
-  await submit(page, 'The passage is mainly about solving a problem carefully. It explains the problem and shows a useful solution with important details.');
+  const firstAnswer = passageIndex === 0
+    ? 'I think people is solving a problem carefully because the passage shows a useful solution.'
+    : 'The passage is mainly about solving a problem carefully. It explains the problem and shows a useful solution with important details.';
+  await submit(page, firstAnswer);
   if (passageIndex === 0) {
     assert.ok(Date.now() - submitStartedAt < 1500, 'typed submission must advance without waiting for the delayed coaching server');
+    await assertVisibleText(page, 'I understand what you mean.');
+    await assertVisibleText(page, 'Same idea, clearer English:');
+    await assertVisibleText(page, 'I think people are solving a problem carefully');
+    assert.equal(await page.locator('.live-language-coach').getAttribute('aria-live'), 'polite');
   }
   await assertVisibleText(page, 'FOLLOW-UP 1 OF 2');
   if (passageIndex === 0) await assertVisibleText(page, 'Which exact detail from the passage best supports what you just said?');
@@ -422,6 +429,10 @@ async function main() {
     await page.locator('[data-action="submit-answer"]').scrollIntoViewIfNeeded();
     await assertMobileActionVisible(page, '[data-action="submit-answer"]', 'mobile answer');
     await page.screenshot({ path: path.join(outDir, 'mobile-answer.png') });
+    await page.locator('[data-action="submit-answer"]').click();
+    await assertVisibleText(page, 'I understand what you mean.');
+    await assertNoViewportOverflow(page, 'mobile language coaching');
+    await page.screenshot({ path: path.join(outDir, 'mobile-language-coaching.png'), fullPage: true });
     await page.setViewportSize({ width: 320, height: 568 });
     await page.locator('#answer-draft').scrollIntoViewIfNeeded();
     await assertNoViewportOverflow(page, '320px mobile answer');

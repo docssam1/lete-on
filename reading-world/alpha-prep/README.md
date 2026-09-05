@@ -13,7 +13,7 @@ The coaching profile is calibrated for verbally advanced seven-year-olds reading
 - Questions for the first passage are completed before the second passage is handed out
 - Summary, evidence, inference, opinion, and vocabulary-in-context questions
 - Two-step answer-dependent follow-up ladders; economy mode continues the second step locally
-- Typed and spoken answers advance immediately with local coaching; remote coaching enriches feedback in the background and never blocks the interview
+- Typed and spoken answers advance immediately with a text-only language note that preserves the learner's meaning; remote coaching enriches that same note in the background and never blocks the interview
 - One peer answer followed by an unannounced question that repeats the peer's exact claim before asking the learner to evaluate and extend it
 - Tap-to-record answers transcribed by `gpt-transcribe`, with passage vocabulary and question context supplied as recognition hints
 - Browser speech recognition as a temporary backup when the protected GPT transcription service is not configured, plus typed fallback
@@ -23,7 +23,7 @@ The coaching profile is calibrated for verbally advanced seven-year-olds reading
 
 ## Cost boundary
 
-Economy mode makes at most one adaptive text request per passage and one final-report request. A two-passage mock therefore uses three text requests. The first answer receives an adaptive follow-up and the next answer receives a locally selected second follow-up, so the question ladder continues without another paid request. Answer-by-answer corrections are created during the interview, while the final request concentrates on the synthesis, three priorities, and seven-day route. The app does not request generated audio. Deep mode allows two adaptive requests per passage. Normalized turn feedback is cached locally, and deterministic coaching completes the session when the server is unavailable.
+Economy mode makes at most one adaptive text request per passage and one final-report request. A two-passage mock therefore uses three text requests. The first answer receives an adaptive follow-up and the next answer receives a locally selected second follow-up, so the question ladder continues without another paid request. Answer-by-answer corrections are created and shown as text during the interview, while the final request concentrates on the synthesis, three priorities, and seven-day route. Language corrections are never synthesized as audio, and they do not add API calls. The app does not request generated audio. Deep mode allows two adaptive requests per passage. Normalized turn feedback is cached locally, and deterministic coaching completes the session when the server is unavailable.
 
 The browser allows up to 28 seconds for a live coaching response, matching the server's 30-second boundary closely enough for normal mobile latency. Submitting advances immediately with deterministic local coaching; a successful remote response enriches the saved turn in the background.
 
