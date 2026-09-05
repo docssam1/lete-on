@@ -39,6 +39,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Verify public question bank metadata
+        run: node hselementary/question-bank/public-inventory-review-reason-audit.js
       - name: Stage sites and landing menu
         run: |
           mkdir -p _site/boarding-school-math

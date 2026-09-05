@@ -2146,7 +2146,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 2,
@@ -2278,7 +2279,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 2,
@@ -2410,7 +2412,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 2,
@@ -3416,7 +3419,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 3,
@@ -3881,7 +3885,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 4,
@@ -4364,7 +4369,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "좌우 뒤집기 띠무늬의 도형 수",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "마름모가 28개일 때 58개와 60개 타일이 모두 가능해 답이 하나가 아닙니다.",
+      "reviewReason": "원문 답과 독립 검산이 일치하지 않아 검수 중입니다.",
       "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
@@ -4426,7 +4431,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceTier": "advanced",
       "reviewLocked": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 본문의 제공 답 5개와 독립 계산 7개가 달라 공개할 수 없습니다.",
+      "reviewReason": "원문 답과 독립 검산이 일치하지 않아 검수 중입니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4466,7 +4471,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceTier": "advanced",
       "reviewLocked": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "제공 답안 1시 23분과 독립 계산 10시 20분이 달라 공개할 수 없습니다.",
+      "reviewReason": "원문 답과 독립 검산이 일치하지 않아 검수 중입니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4506,7 +4511,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceTier": "advanced",
       "reviewLocked": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "예제 4-4의 제공 답 289와 독립 계산 279가 달라 공개할 수 없습니다.",
+      "reviewReason": "원문 답과 독립 검산이 일치하지 않아 검수 중입니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4874,7 +4879,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 5,
@@ -4893,7 +4899,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 5,
@@ -4931,7 +4938,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 5,
@@ -5045,7 +5053,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 6,
@@ -5937,7 +5946,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 6,
@@ -5974,7 +5984,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 6,
@@ -6030,7 +6041,8 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true
+      "reviewLocked": true,
+      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
     },
     {
       "unit": 6,
