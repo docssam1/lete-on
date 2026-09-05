@@ -64,24 +64,26 @@
     "normalizedTypeCount": 68,
     "directlyReviewedCount": 68,
     "sourceVerifiedCount": 68,
-    "independentCalculationPassCount": 63,
-    "singleAnswerPassCount": 62,
-    "openOrAmbiguousCount": 6,
+    "independentCalculationPassCount": 64,
+    "singleAnswerPassCount": 63,
+    "openOrAmbiguousCount": 5,
     "visualAssetRequiredCount": 6,
     "duplicateSourceItemIds": 0,
     "duplicateNormalizedTypeIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 9,
-    "publicDecisionLockedCount": 59,
-    "releaseLockedCount": 59,
+    "publicCandidateCount": 20,
+    "publicDecisionLockedCount": 48,
+    "releaseLockedCount": 48,
     "notes": [
       "개념탐구 6개는 각 실제 소문항 2개씩 나누어 12개로 기록했습니다.",
       "예제 1-1은 인쇄물에서 필요한 비의 값 일부가 그림에 가려져 확정하지 않았습니다.",
-      "예제 2-3은 인쇄 문장의 '분수로'와 계산 결과 6원의 답 형식이 맞지 않아 잠갔습니다.",
       "예제 5-4는 원문 조건을 그대로 풀면 55cm와 120cm 두 값이 나와 단일 정답 통과를 거부했습니다.",
       "개념탐구 1의 예제 1-2~1-4와 Mission 1~6은 원본 구조·독립 계산·고정 3문항·답 그림·PC·모바일·A4 검수를 통과해 공개 후보로 전환했습니다.",
       "개념탐구 1-(1), 1-(2)는 여러 비교 방법을 찾는 열린 활동이고 예제 1-1은 값 일부가 가려져 있어 계속 잠급니다.",
       "예제 1-4, Mission 3, Mission 5, Mission 6의 원본 기준 답은 각각 35/72, 3/14, 1.28, 17/10으로 독립 계산했습니다.",
+      "예제 2-3은 가게 가의 10% 덤을 포함한 22개와 가게 나의 12% 할인 금액을 비교해 8과 8/11원으로 바로잡고 단일 답을 확인했습니다.",
+      "Mission 2는 각 물건의 오른 비율 20%, 25%를 비교해 음료수가 5% 더 많이 올랐다는 물음과 답을 확인했습니다.",
+      "개념탐구 2의 11유형은 원본 구조·독립 계산·고정 3문항·문제와 답의 같은 그림·PC·모바일·A4 검수를 통과한 뒤 공개 후보로 전환합니다.",
       "나머지 항목은 중앙 생성기 연결·수식 화면·PC·모바일·A4 검수 전이므로 fail-closed locked입니다."
     ]
   },
@@ -590,16 +592,33 @@
         "높이15% 증가"
       ],
       "visualRequirement": "평행사변형의 밑변·높이와 변한 방향을 정확히 표시해야 합니다.",
-      "independentCalculation": "넓이 변화율은 1.2×1.15=1.38이므로 38% 증가입니다. 처음 넓이150, 새 넓이207로 계산해 차57÷150=38%를 확인했습니다.",
+      "independentCalculation": "처음 넓이는 15×10=150, 바뀐 넓이는 18×11.5=207입니다. 57÷150×100=38%이며 (1.2×1.15-1)×100으로 다시 계산해도 38%입니다.",
       "independentAnswer": "38%",
       "answerFormula": "(1+20/100)(1+15/100)-1=0.38",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 증가율의 곱으로 넓이 변화가 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "백분율 수식 표시 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "평행사변형, 밑변, 높이, 백분율",
+          "representations": "처음 도형과 바뀐 도형",
+          "prerequisites": "평행사변형의 넓이와 백분율",
+          "reasoning-load": "두 길이가 각각 변할 때 넓이 변화를 두 단계로 계산",
+          "response-mode": "%"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-example-2-1",
@@ -617,16 +636,33 @@
         "그중 수학도 60점 이상 75%"
       ],
       "visualRequirement": "none",
-      "independentCalculation": "국어 기준 학생은300×0.64=192명, 둘 다인 학생은192×0.75=144명입니다. 144÷300×100=48%로 역산 확인했습니다.",
+      "independentCalculation": "첫 기준을 넘은 학생은 300×64/100=192명이고, 두 기준을 모두 넘은 학생은 192×75/100=144명입니다. 144÷300×100=48%입니다.",
       "independentAnswer": "48%",
-      "answerFormula": "300×64/100×75/100÷300×100=48%",
+      "answerFormula": "64/100×75/100×100=48%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 번째 백분율의 기준이 첫 번째 집단으로 고정됩니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "기준 집단 표시와 백분율 수식 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "low",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "전체, 그중, 백분율",
+          "representations": "전체에서 첫 집단, 첫 집단에서 둘째 집단으로 이어지는 그림",
+          "prerequisites": "백분율",
+          "reasoning-load": "기준이 달라지는 두 백분율을 차례로 적용",
+          "response-mode": "%"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-example-2-2",
@@ -644,16 +680,33 @@
         "각각10개, 일의 자리까지 반올림"
       ],
       "visualRequirement": "표의 행·열과 묶음 수량이 서로 바뀌지 않게 보여야 합니다.",
-      "independentCalculation": "정상 합계는 20000+35000=55000원, 할인 합계는16500+29120=45620원이므로 할인액9380원입니다. 9380/55000×100=17.054...%로 일의 자리 반올림17%입니다.",
+      "independentCalculation": "정상가격은 4000÷2×10+10500÷3×10=55000원, 할인 가격은 8250÷5×10+14560÷5×10=45620원입니다. 할인율은 9380÷55000×100=17.054...%이므로 17%입니다.",
       "independentAnswer": "17%",
       "answerFormula": "(55000-45620)÷55000×100=17.054...% -> 17%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "표의 수량을 곱해 전체 정가와 할인가가 하나로 정해집니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "표와 반올림 수식 화면 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "정상가격, 할인 가격, 백분율, 반올림",
+          "representations": "수량과 가격이 맞닿은 표",
+          "prerequisites": "묶음 가격과 백분율",
+          "reasoning-load": "두 품목을 같은 수량으로 바꾼 뒤 전체 할인율 계산",
+          "response-mode": "%"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-example-2-3",
@@ -667,21 +720,38 @@
       "originalStructure": "두 가게에서 같은 과일을 일정 금액 또는 일정 개수로 사고 할인한 뒤 한 개 가격을 비교합니다.",
       "conditions": [
         "한 개 300원",
-        "가게 가: 20개 이상 구매 금액의10% 할인",
-        "가게 나: 5000원 이상12% 할인",
-        "가게 가6000원, 가게 나25개"
+        "가게 가: 20개 이상 사면 산 개수의 10%를 덤으로 줌",
+        "가게 나: 5000원 이상 사면 가격을 12% 할인",
+        "가게 가에서 6000원어치, 가게 나에서 25개를 삼"
       ],
-      "visualRequirement": "두 할인 조건의 기준이 금액인지 개수인지 구분해 보여야 합니다.",
-      "independentCalculation": "가게 가는 6000×0.9=5400원, 한 개270원입니다. 나가는 25×300×0.88=6600원, 한 개264원으로 차는6원입니다. 다만 원문 물음은 이 차를 '분수로' 쓰라고 하여 답 형식이 맞지 않습니다.",
-      "independentAnswer": "6원까지는 계산되지만 분수 답 형식은 확인 필요",
-      "answerFormula": "5400÷20=270, 6600÷25=264, 270-264=6",
-      "candidateAnswerCount": null,
-      "singleAnswer": false,
-      "singleAnswerCheck": "수치 차는 하나지만 원문이 요구한 답 형식과 수치 결과가 맞지 않습니다.",
+      "visualRequirement": "가게 가의 산 개수와 덤 개수, 가게 나의 산 개수와 할인 금액을 구분하고 실제 받은 개수와 낸 금액을 같은 표에 보여야 합니다.",
+      "independentCalculation": "가게 가는 20개를 사고 2개를 덤으로 받아 6000÷22=3000/11원입니다. 가게 나는 25개 값 7500원을 12% 할인해 6600원을 내므로 한 개 264원입니다. 차는 3000/11-264=96/11=8과 8/11원입니다.",
+      "independentAnswer": "8과 8/11원",
+      "answerFormula": "6000÷22-(25×300×0.88)÷25=3000/11-264=96/11",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 문장의 답 형식이 계산 결과와 맞지 않아 수정 근거 없이는 공개하지 않습니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "덤, 할인, 한 개 가격, 대분수",
+          "representations": "산 개수·덤 개수·낸 금액 표",
+          "prerequisites": "백분율과 나눗셈",
+          "reasoning-load": "두 가게의 실제 받은 개수와 낸 금액을 따로 구해 한 개 가격 비교",
+          "response-mode": "대분수 원"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-example-2-4",
@@ -700,16 +770,33 @@
         "일의 자리까지 반올림"
       ],
       "visualRequirement": "남학생과 여학생 수의 기준 연도를 표로 명확히 해야 합니다.",
-      "independentCalculation": "지난해 남280, 여220입니다. 올해 남224, 여242, 전체466이므로 224/466×100=48.068...%, 일의 자리 반올림48%입니다.",
+      "independentCalculation": "지난해 남학생 280명, 여학생 220명입니다. 올해는 남학생 224명, 여학생 242명, 모두 466명이므로 224÷466×100=48.068...%, 반올림하면 48%입니다.",
       "independentAnswer": "48%",
-      "answerFormula": "500×14/25×0.8 ÷ (500×14/25×0.8+500×11/25×1.1)×100=48.068...%",
+      "answerFormula": "224÷(224+242)×100=48.068...% -> 48%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "정수 인원과 반올림 자리까지 하나로 정해집니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "기준 연도와 반올림 수식 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 늘다, 줄다, 백분율, 반올림",
+          "representations": "지난해와 올해 남녀 수 표",
+          "prerequisites": "비와 백분율",
+          "reasoning-load": "지난해 수를 나누고 올해 변화를 각각 적용한 뒤 새 전체와 비교",
+          "response-mode": "%"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-mission-1",
@@ -727,16 +814,33 @@
         "백분율로 나타냄"
       ],
       "visualRequirement": "none",
-      "independentCalculation": "4가=3나/8이므로 가/나=3/32입니다. 3/32×100=9.375%이고, 나=32이면 가=3으로 역산됩니다.",
+      "independentCalculation": "4×가=(3/8)×나이므로 가/나=3/32입니다. 3/32×100=9.375%이고 나=32, 가=3을 넣어 원래 식도 확인했습니다.",
       "independentAnswer": "9.375%",
-      "answerFormula": "4가=3나/8 -> 가/나=3/32 -> 9.375%",
+      "answerFormula": "4×가=3/8×나 -> 가/나=3/32 -> 9.375%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "비율의 방향이 나에 대한 가로 고정되어 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "분수·백분율 표시 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "배, 분수, 비율, 백분율",
+          "representations": "두 양의 관계를 나타낸 막대",
+          "prerequisites": "분수와 비율",
+          "reasoning-load": "같은 값을 나타내는 두 식에서 비를 찾아 백분율로 바꿈",
+          "response-mode": "%"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-mission-2",
@@ -754,16 +858,33 @@
         "더 많이 오른 것"
       ],
       "visualRequirement": "두 물건의 처음 가격과 바뀐 가격을 표로 나누어야 합니다.",
-      "independentCalculation": "과자는140/700=20%, 음료는300/1200=25%입니다. 25%>20%이므로 음료가 더 많이 올랐습니다.",
-      "independentAnswer": "음료수, 25% 상승",
-      "answerFormula": "(840-700)/700=20%; (1500-1200)/1200=25%",
+      "independentCalculation": "과자는 (840-700)÷700×100=20%, 음료수는 (1500-1200)÷1200×100=25%입니다. 음료수가 25-20=5% 더 많이 올랐습니다.",
+      "independentAnswer": "음료수, 5%",
+      "answerFormula": "20%, 25% -> 음료수가 5% 더 많이 오름",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "각각의 처음 가격을 기준으로 비교하면 결론이 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "기준 가격과 백분율 표시 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "ordered-tuple",
+      "riskLevel": "low",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "처음 가격, 오른 가격, 오른 비율",
+          "representations": "두 물건의 전후 가격 표",
+          "prerequisites": "백분율",
+          "reasoning-load": "각 물건의 오른 비율을 구하고 그 차이를 비교",
+          "response-mode": "물건 이름과 %"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-mission-3",
@@ -781,16 +902,33 @@
         "전체100일"
       ],
       "visualRequirement": "예보 종류와 실제 결과를 2×2 표로 명확히 보여야 합니다.",
-      "independentCalculation": "비가 온다고 예보한 날의 실제 비는34일, 오지 않는다고 예보한 날의 실제 비는60×5%=3일입니다. 실제 비는37일이므로 37%입니다.",
+      "independentCalculation": "비가 온다고 예보한 날의 실제 비는 40×85%=34일, 오지 않는다고 예보한 날의 실제 비는 60×5%=3일입니다. 모두 37일이므로 37%입니다.",
       "independentAnswer": "37%",
-      "answerFormula": "40×85/100+60×(1-95/100)=37",
+      "answerFormula": "40×85/100+60×5/100=37",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 예보 집단이 전체 100일로 나뉘어 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "예보와 실제 결과의 대응 표 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "예보, 실제, 백분율",
+          "representations": "예보와 실제 결과를 나눈 표",
+          "prerequisites": "백분율",
+          "reasoning-load": "서로 다른 두 예보 집단에서 실제 비가 온 날을 각각 계산",
+          "response-mode": "%"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-mission-4",
@@ -809,16 +947,33 @@
         "여학생은 전체의47.5%"
       ],
       "visualRequirement": "남학생·여학생 수와 당첨 수의 대응을 표로 보여야 합니다.",
-      "independentCalculation": "여학생=800×47.5%=380명, 남학생=420명입니다. 당첨자는42+19=61명입니다.",
+      "independentCalculation": "여학생은 800×47.5%=380명, 남학생은 420명입니다. 당첨자는 남학생 42명과 여학생 19명으로 모두 61명입니다.",
       "independentAnswer": "61명",
-      "answerFormula": "800×47.5/100×5/100+800×52.5/100×10/100=61",
+      "answerFormula": "420×10/100+380×5/100=61",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "전체가 남녀로 나뉘므로 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "두 집단의 기준 전체 표시를 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "전체, 남학생, 여학생, 당첨 백분율",
+          "representations": "남녀 학생 수와 당첨 수 표",
+          "prerequisites": "백분율",
+          "reasoning-load": "전체를 남녀로 나눈 뒤 서로 다른 당첨률을 적용",
+          "response-mode": "명"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-mission-5",
@@ -837,16 +992,33 @@
         "한 타=12자루"
       ],
       "visualRequirement": "받는 자루 수와 실제 지불 금액을 구분해 보여야 합니다.",
-      "independentCalculation": "가게 가는 3000원으로15자루이므로 한 자루200원, 나가는 3000×0.9=2700원으로12자루이므로225원입니다. 차는25원입니다.",
+      "independentCalculation": "가게 가는 3000원으로 15자루를 받아 한 자루 200원입니다. 가게 나는 3000원의 10%를 할인해 2700원을 내므로 한 자루 225원입니다. 차는 25원입니다.",
       "independentAnswer": "25원",
-      "answerFormula": "3000÷(12+3)=200; 3000×90/100÷12=225; 225-200=25",
+      "answerFormula": "3000÷15=200; 2700÷12=225; 225-200=25",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 가게의 실제 자루 수가 고정되어 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "할인과 추가 수량의 답 표현을 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "한 타, 더 주다, 할인, 한 자루 가격",
+          "representations": "받은 자루 수와 낸 금액 표",
+          "prerequisites": "백분율과 나눗셈",
+          "reasoning-load": "덤과 할인을 실제 개수와 실제 금액으로 바꾸어 비교",
+          "response-mode": "원"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e2-mission-6",
@@ -865,16 +1037,33 @@
         "남자 어린이 중 안경 착용40%"
       ],
       "visualRequirement": "전체·어린이·남녀·안경 여부의 기준을 단계 표로 보여야 합니다.",
-      "independentCalculation": "어린이=7000명, 여자=3290명, 남자=3710명입니다. 안경 쓴 남자=1484명이므로 안경을 쓰지 않은 남자는3710-1484=2226명입니다.",
+      "independentCalculation": "6학년 어린이는 500000×1.4%=7000명, 남자 어린이는 7000×53%=3710명입니다. 그중 안경을 쓰지 않은 어린이는 3710×60%=2226명입니다.",
       "independentAnswer": "2226명",
       "answerFormula": "500000×1.4/100×53/100×60/100=2226",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "각 비율의 기준 집단이 순서대로 정해져 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "단계별 기준 집단과 수식 표시 검수 전입니다."
+      "calculationStatus": "checked",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "releaseStatus": "verified",
+      "lockReason": "",
+      "resultContract": "single-value",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "전체 인구, 어린이, 남자, 안경을 쓰지 않은 비율",
+          "representations": "전체에서 대상이 좁아지는 단계 그림",
+          "prerequisites": "백분율",
+          "reasoning-load": "기준 집단이 세 번 달라지는 백분율을 차례로 적용",
+          "response-mode": "명"
+        }
+      }
     },
     {
       "sourceItemId": "6-1-u4-e3-exploration-3-1",

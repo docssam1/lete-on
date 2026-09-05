@@ -22519,6 +22519,220 @@
       const answerVisual = `${visual(true)}${mathBoard("벤다이어그램으로 확인", row("K만", `${kOnly}명`) + row("둘 다", `${common}명`) + row("힙합만", `${hOnly}명`) + row("K:H", fractionText(answerNumerator, answerDenominator)))}`;
       return fixedResult(`세빈이네 반 ${total}명의 학생은 모두 K팝 또는 힙합을 좋아합니다. 전체 학생 수에 대한 K팝과 힙합을 모두 좋아하는 학생 수의 비율은 ${commonRatioDecimal}이고, K팝만 좋아하는 학생과 힙합만 좋아하는 학생 수의 비가 ${onlyKNumerator}:${onlyKNumeratorDenominator}일 때 K팝을 좋아하는 학생 수와 힙합을 좋아하는 학생 수의 비를 기약분수로 나타내세요.${promptVisual}`, fraction(answerNumerator, answerDenominator), `${commonRatioDecimal}=${fractionText(commonNumerator, commonDenominator)}이므로 둘 다 좋아하는 학생은 ${common}명입니다. 남은 ${total - common}명을 ${onlyKNumerator + onlyKNumeratorDenominator}칸으로 나누면 한 칸은 ${unit}명입니다. K팝은 ${kTotal}명, 힙합은 ${hTotal}명이므로 비는 ${fractionText(answerNumerator, answerDenominator)}입니다.`, promptVisual, answerVisual, pools);
     },
+    sourceGrade6RatioE2({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u4-e2-exploration-2-1", "6-1-u4-e2-example-2-1", "6-1-u4-e2-example-2-2", "6-1-u4-e2-example-2-3",
+        "6-1-u4-e2-example-2-4", "6-1-u4-e2-mission-1", "6-1-u4-e2-mission-2", "6-1-u4-e2-mission-3",
+        "6-1-u4-e2-mission-4", "6-1-u4-e2-mission-5", "6-1-u4-e2-mission-6"
+      ];
+      const kinds = [
+        "parallelogram-area-increase", "nested-percentage", "bundle-discount-rounding", "bonus-discount-unit-price",
+        "gender-change-percentage", "chained-ratio-percent", "price-increase-difference", "forecast-hit-rate",
+        "winner-count-from-composition", "pencil-bundle-unit-price", "nested-population-percentage"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 백분율 개념탐구 2 원문 분기는 0부터 10까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">조건을 식으로 나타내고, 필요한 관계를 스스로 골라 계산해 보세요.</p>` : "";
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-ratio-e2-kind="${kinds[variant]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const fractionText = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const fractionValue = (n, d) => rationalValue(n, d);
+      const escape = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const svg = (kind, body, values, solved = false) => `<svg class="geometry-diagram source61-ratio-e2-diagram" style="width:min(430px,100%);height:auto" viewBox="0 0 360 220" role="img" aria-label="${escape(kind)}" data-source61-ratio-e2-structure="${escape(kind)}" data-source61-ratio-e2-values="${values.join(",")}"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}>${body}</svg>`;
+      const text = (x, y, value, extra = "") => `<text x="${x}" y="${y}" fill="#183b56" font-size="14" text-anchor="middle" ${extra}>${escape(value)}</text>`;
+      const line = (x1, y1, x2, y2, extra = "") => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#183b56" stroke-width="2" fill="none" ${extra}/>`;
+      const fixedResult = (prompt, answer, solution, promptVisual, answerVisual, values, contract = "single-value") => {
+        const fullPrompt = `${promptVisual && prompt.includes(promptVisual) ? prompt : `${prompt}${promptVisual}`}${support("주어진 수와 그림 또는 표의 관계를 찾아보세요.")}${challenge}${evidence(values, contract)}`;
+        return result(fullPrompt, answer, solution, {
+          answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-ratio-e2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(values, contract)}${answerVisual}<div class="solution-answer-caption">문제에 나온 자료를 다시 그려 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: poolIndex,
+          verifiedVariantCount: 3,
+          sourceItemId
+        });
+      };
+
+      if (variant === 0) {
+        const pools = [[15, 10, 20, 15, 38], [20, 12, 25, 20, 50], [25, 20, 12, 25, 40]][poolIndex];
+        const [base, height, baseIncrease, heightIncrease, expected] = pools;
+        const newBase = base * (100 + baseIncrease) / 100;
+        const newHeight = height * (100 + heightIncrease) / 100;
+        const originalArea = base * height;
+        const newArea = newBase * newHeight;
+        const actual = Math.round((newArea - originalArea) / originalArea * 100);
+        const visual = solved => svg("두 평행사변형의 넓이 비교", `<polygon points="35,105 170,105 205,165 70,165" fill="#edf6fb" stroke="#183b56" stroke-width="2"/><polygon points="205,55 320,55 350,115 235,115" fill="#fff0bd" stroke="#183b56" stroke-width="2"/><text x="102" y="96" fill="#183b56" font-size="13" text-anchor="middle">${base}cm</text><text x="22" y="138" fill="#183b56" font-size="13" text-anchor="middle">${height}cm</text>${text(102,190,`밑변 ${baseIncrease}% 늘림`) }${text(278,38,solved ? `${newBase}cm` : "새 밑변", "font-size=\"13\"")}${text(278,145,solved ? `${newHeight}cm` : "새 높이", "font-size=\"13\"")}${text(278,190,solved ? `넓이 ${newArea}cm², ${actual}% 증가` : `높이 ${heightIncrease}% 늘림`, "font-size=\"13\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("평행사변형의 조건", row("처음 밑변", `${base}cm`) + row("처음 높이", `${height}cm`) + row("밑변의 변화", `${baseIncrease}% 증가`) + row("높이의 변화", `${heightIncrease}% 증가`) + row("구할 것", "넓이가 늘어난 백분율"), `data-source61-visual="parallelogram-area-increase"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("넓이로 확인", row("처음 넓이", `${originalArea}cm²`) + row("새 넓이", `${newArea}cm²`) + row("늘어난 넓이", `${newArea - originalArea}cm²`) + row("답", `${actual}%`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}%가 아닙니다.`);
+        return fixedResult(`밑변의 길이가 ${base}cm이고 높이가 ${height}cm인 평행사변형이 있습니다. 밑변을 ${baseIncrease}% 늘이고 높이를 ${heightIncrease}% 늘였습니다. 새 평행사변형의 넓이는 처음보다 몇 % 늘어났는지 구하세요.`, `${actual}%`, `처음 넓이는 ${base}×${height}=${originalArea}cm²입니다. 새 밑변은 ${newBase}cm, 새 높이는 ${newHeight}cm이므로 새 넓이는 ${newArea}cm²입니다. 늘어난 넓이는 ${newArea - originalArea}cm²이고, 처음 넓이에 대한 백분율은 ${newArea - originalArea}÷${originalArea}×100=${actual}%입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 1) {
+        const pools = [[300, 64, 75, 48], [400, 70, 60, 42], [250, 72, 50, 36]][poolIndex];
+        const [total, firstRate, secondRate, expected] = pools;
+        const firstCount = total * firstRate / 100;
+        const secondCount = firstCount * secondRate / 100;
+        const actual = secondCount / total * 100;
+        const visual = solved => svg("국어 기준 안의 수학 기준", `<rect x="36" y="50" width="288" height="112" fill="#edf6fb" stroke="#183b56" stroke-width="2"/><rect x="78" y="78" width="204" height="58" fill="#fff0bd" stroke="#183b56" stroke-width="2"/><text x="180" y="70" fill="#183b56" font-size="13" text-anchor="middle">전체 ${total}명</text><text x="180" y="108" fill="#183b56" font-size="13" text-anchor="middle">국어 60점 이상 ${firstRate}%${solved ? ` = ${firstCount}명` : ""}</text><text x="180" y="128" fill="#183b56" font-size="13" text-anchor="middle">그중 수학도 60점 이상 ${secondRate}%${solved ? ` = ${secondCount}명` : ""}</text>${text(180,195,solved ? `전체의 ${actual}%` : "두 시험 모두 60점 이상인 비율은 ?", "font-size=\"15\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("두 시험의 기준이 이어지는 비율", row("전체 학생", `${total}명`) + row("국어 60점 이상", `전체의 ${firstRate}%`) + row("그중 수학도 60점 이상", `국어 기준 학생의 ${secondRate}%`) + row("구할 것", "전체 학생 중 두 시험 모두 60점 이상인 백분율"), `data-source61-visual="nested-percentage"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("전체를 기준으로 확인", row("국어 60점 이상", `${firstCount}명`) + row("수학도 60점 이상", `${secondCount}명`) + row("전체에 대한 비율", `${secondCount}÷${total}×100=${actual}%`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}%가 아닙니다.`);
+        return fixedResult(`6학년 학생 ${total}명이 국어와 수학 시험을 보았습니다. 국어 점수가 60점 이상인 학생은 전체의 ${firstRate}%이고, 그중 ${secondRate}%는 수학 점수도 60점 이상입니다. 두 시험 점수 모두 60점 이상인 학생은 6학년 전체의 몇 %인지 구하세요.`, `${actual}%`, `국어 점수가 60점 이상인 학생은 ${total}×${firstRate}÷100=${firstCount}명입니다. 그중 수학 점수도 60점 이상인 학생은 ${firstCount}×${secondRate}÷100=${secondCount}명입니다. 따라서 전체에 대한 백분율은 ${secondCount}÷${total}×100=${actual}%입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 2) {
+        const pools = [[2, 4000, 5, 8250, 3, 10500, 5, 14560, 10, 17], [3, 6000, 4, 6800, 2, 5000, 6, 12750, 12, 15], [4, 7200, 5, 7650, 5, 12500, 10, 21000, 20, 16]][poolIndex];
+        const [normalAQuantity, normalAPrice, saleAQuantity, saleAPrice, normalBQuantity, normalBPrice, saleBQuantity, saleBPrice, target, expected] = pools;
+        const normalTotal = target / normalAQuantity * normalAPrice + target / normalBQuantity * normalBPrice;
+        const saleTotal = target / saleAQuantity * saleAPrice + target / saleBQuantity * saleBPrice;
+        const actual = Math.round((normalTotal - saleTotal) / normalTotal * 100);
+        const table = solved => `<rect x="26" y="25" width="308" height="120" fill="#fff" stroke="#183b56" stroke-width="2"/><line x1="26" y1="53" x2="334" y2="53" stroke="#183b56"/><line x1="26" y1="89" x2="334" y2="89" stroke="#183b56"/><line x1="26" y1="117" x2="334" y2="117" stroke="#183b56"/><line x1="105" y1="25" x2="105" y2="145" stroke="#183b56"/><line x1="220" y1="25" x2="220" y2="145" stroke="#183b56"/>${text(65,44,"품목")}${text(162,44,"정상 가격")}${text(277,44,"할인 가격")}${text(65,77,"가")}${text(162,77,`${normalAQuantity}개 ${normalAPrice}원`)}${text(277,77,`${saleAQuantity}개 ${saleAPrice}원`)}${text(65,108,"나")}${text(162,108,`${normalBQuantity}개 ${normalBPrice}원`)}${text(277,108,`${saleBQuantity}개 ${saleBPrice}원`)}${text(180,137,solved ? `${target}개씩, 할인율 ${actual}%` : `${target}개씩 사면 할인율 ?`, "font-size=\"12\"")}`;
+        const visual = solved => svg("두 품목의 정상 가격과 할인 가격 표", table(solved), pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("할인 가격 표", row("살 품목", "가와 나를 각각 사기") + row("사는 수", `${target}개씩`) + row("주의", "할인율은 일의 자리까지 반올림") + row("구할 것", "전체 할인율"), `data-source61-visual="bundle-discount-rounding"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("전체 금액으로 확인", row("정상 가격 합", `${normalTotal}원`) + row("할인 가격 합", `${saleTotal}원`) + row("할인된 금액", `${normalTotal - saleTotal}원`) + row("답", `${actual}%`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 할인율이 ${expected}%가 아닙니다.`);
+        return fixedResult(`어느 마트에서 품목 가와 나를 각각 ${target}개씩 삽니다. 표의 정상 가격과 할인 가격을 보고, 정상 가격보다 몇 % 싼지 일의 자리까지 반올림하여 나타내세요.${promptVisual}`, `${actual}%`, `정상 가격의 합은 ${normalTotal}원이고 할인 가격의 합은 ${saleTotal}원입니다. ${normalTotal - saleTotal}원이 할인되었으므로 할인율은 ${normalTotal - saleTotal}÷${normalTotal}×100을 계산하여 일의 자리까지 반올림한 ${actual}%입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 3) {
+        const pools = [[300, 20, 10, 5000, 12, 6000, 25], [400, 25, 20, 5000, 15, 10000, 20], [250, 40, 25, 5000, 15, 10000, 20]][poolIndex];
+        const [price, bonusBase, bonusRate, discountBase, discountRate, firstPaid, secondCount] = pools;
+        const firstPaidCount = firstPaid / price;
+        const firstFreeCount = firstPaidCount * bonusRate / 100;
+        const firstTotalCount = firstPaidCount + firstFreeCount;
+        const secondPaidTotal = price * secondCount * (100 - discountRate) / 100;
+        const firstUnit = rationalValue(firstPaid, firstTotalCount);
+        const secondUnit = rationalValue(secondPaidTotal, secondCount);
+        const difference = rationalOperation(firstUnit, secondUnit, "-");
+        const absoluteDifference = difference.numerator < 0 ? rationalValue(-difference.numerator, difference.denominator) : difference;
+        const visual = solved => {
+          const differenceLabel = solved
+            ? `${text(132,175,"한 개 가격의 차", "font-size=\"14\"")}${svgMeasurementLabel({ x: 245, y: 171, value: mixedFraction(absoluteDifference.numerator, absoluteDifference.denominator), unit: "원" })}`
+            : text(180,175,"한 개 가격의 차는 ?", "font-size=\"14\"");
+          return svg("덤과 할인을 적용한 한 개 가격", `<rect x="25" y="35" width="145" height="95" fill="#edf6fb" stroke="#183b56" stroke-width="2"/><rect x="190" y="35" width="145" height="95" fill="#fff0bd" stroke="#183b56" stroke-width="2"/>${text(98,55,"가게 가")}${text(262,55,"가게 나")}${text(98,82,`한 개 ${price}원`)}${text(98,104,`${bonusBase}개 이상, ${bonusRate}% 덤`)}${text(262,82,`${discountBase}원 이상, ${discountRate}% 할인`)}${text(262,104,`${secondCount}개 구매`)}${differenceLabel}`, pools, solved);
+        };
+        const promptVisual = `${visual(false)}${mathBoard("두 가게의 조건", row("가게 가", `${firstPaid}원어치 구매, ${bonusRate}% 덤`) + row("가게 나", `${secondCount}개 구매, ${discountRate}% 할인`) + row("정상 한 개 가격", `${price}원`) + row("구할 것", "한 개 가격의 차를 분수로 나타내기"), `data-source61-visual="bonus-discount-unit-price"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("한 개 가격으로 확인", row("가게 가", `${firstPaid}÷${firstTotalCount}=${fractionText(firstUnit)}원`) + row("가게 나", `${secondPaidTotal}÷${secondCount}=${fractionText(secondUnit)}원`) + row("차", fractionText(absoluteDifference) + "원"))}`;
+        const answer = `${mixedFraction(absoluteDifference.numerator, absoluteDifference.denominator)}원`;
+        return fixedResult(`한 개에 ${price}원인 과일을 삽니다. 가게 가에서는 ${bonusBase}개 이상 사면 산 개수의 ${bonusRate}%만큼 더 주고, 가게 나에서는 ${discountBase}원 이상 사면 ${discountRate}%를 할인해 줍니다. 가게 가에서 ${firstPaid}원어치를 사고, 가게 나에서 ${secondCount}개를 샀을 때 두 사람이 산 과일 한 개 가격의 차를 분수로 나타내세요.${promptVisual}`, answer, `가게 가에서는 ${firstPaid}÷${price}=${firstPaidCount}개를 사고 ${firstFreeCount}개를 더 받아 모두 ${firstTotalCount}개입니다. 한 개 가격은 ${fractionText(firstUnit)}원입니다. 가게 나에서는 ${price}×${secondCount}×${100 - discountRate}÷100=${secondPaidTotal}원을 내므로 한 개 가격은 ${fractionText(secondUnit)}원입니다. 두 가격의 차는 ${fractionText(absoluteDifference)}원입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 4) {
+        const pools = [[500, 14, 11, 20, 10, 48], [600, 3, 2, 25, 20, 48], [700, 4, 3, 10, 20, 50]][poolIndex];
+        const [lastTotal, maleRatio, femaleRatio, maleDecrease, femaleIncrease, expected] = pools;
+        const lastMale = lastTotal * maleRatio / (maleRatio + femaleRatio);
+        const lastFemale = lastTotal - lastMale;
+        const currentMale = lastMale * (100 - maleDecrease) / 100;
+        const currentFemale = lastFemale * (100 + femaleIncrease) / 100;
+        const currentTotal = currentMale + currentFemale;
+        const actual = Math.round(currentMale / currentTotal * 100);
+        const visual = solved => svg("남녀 수의 변화", `<line x1="42" y1="150" x2="318" y2="150" stroke="#183b56" stroke-width="2"/><rect x="75" y="${150 - Math.min(90, lastMale / lastTotal * 100)}" width="55" height="${Math.min(90, lastMale / lastTotal * 100)}" fill="#edf6fb" stroke="#183b56"/><rect x="145" y="${150 - Math.min(90, lastFemale / lastTotal * 100)}" width="55" height="${Math.min(90, lastFemale / lastTotal * 100)}" fill="#fff0bd" stroke="#183b56"/><rect x="220" y="${150 - Math.min(90, currentMale / currentTotal * 100)}" width="38" height="${Math.min(90, currentMale / currentTotal * 100)}" fill="#edf6fb" stroke="#183b56"/><rect x="268" y="${150 - Math.min(90, currentFemale / currentTotal * 100)}" width="38" height="${Math.min(90, currentFemale / currentTotal * 100)}" fill="#fff0bd" stroke="#183b56"/>${text(102,175,"작년 남")}${text(172,175,"작년 여")}${text(239,175,"올해 남")}${text(287,175,"올해 여")}${text(102,28,`${lastMale}명`)}${text(172,28,`${lastFemale}명`)}${text(248,28,solved ? `${currentMale}명` : `남 ${maleDecrease}% 감소`)}${text(292,48,solved ? `${currentFemale}명` : `여 ${femaleIncrease}% 증가`)}${text(180,205,solved ? `올해 남학생 ${actual}%` : "올해 남학생의 백분율은 ?", "font-size=\"14\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("학생 수의 변화", row("작년 전체", `${lastTotal}명`) + row("작년 남:여", `${maleRatio}:${femaleRatio}`) + row("올해 남학생", `${maleDecrease}% 감소`) + row("올해 여학생", `${femaleIncrease}% 증가`) + row("구할 것", "올해 전체 학생 중 남학생의 백분율"), `data-source61-visual="gender-change-percentage"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("올해 학생 수로 확인", row("올해 남학생", `${currentMale}명`) + row("올해 여학생", `${currentFemale}명`) + row("올해 전체", `${currentTotal}명`) + row("답", `${actual}%`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}%가 아닙니다.`);
+        return fixedResult(`작년 전체 학생 수는 ${lastTotal}명이었고 남학생 수에 대한 여학생 수의 비는 ${fractionText(fractionValue(femaleRatio, maleRatio))}입니다. 올해 남학생은 작년보다 ${maleDecrease}% 줄고 여학생은 ${femaleIncrease}% 늘었습니다. 올해 전체 학생 수에 대한 남학생 수의 백분율을 일의 자리까지 반올림하여 나타내세요.${promptVisual}`, `${actual}%`, `작년 남학생은 ${lastTotal}×${maleRatio}÷${maleRatio + femaleRatio}=${lastMale}명, 여학생은 ${lastFemale}명입니다. 올해 남학생은 ${currentMale}명, 여학생은 ${currentFemale}명입니다. 올해 전체는 ${currentTotal}명이므로 남학생의 백분율은 ${currentMale}÷${currentTotal}×100을 반올림한 ${actual}%입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 5) {
+        const pools = [[4, 3, 8, 9.375], [5, 2, 5, 8], [2, 3, 5, 30]][poolIndex];
+        const [aMultiple, numerator, denominator, expected] = pools;
+        const ratio = rationalValue(numerator, aMultiple * denominator);
+        const actual = ratio.numerator / ratio.denominator * 100;
+        const visual = solved => svg("두 비가 이어지는 관계", `${text(65,72,`가 ${aMultiple}배`)}${line(110,68,220,68,'stroke="#2b8a3e" stroke-width="4" marker-end="url(#ratio-arrow)"')}${text(275,72,`나의 ${numerator} / ${denominator}`)}${text(180,140,solved ? `가:나 = ${ratio.numerator}:${ratio.denominator}` : "가에 대한 나의 비율은 ?")}${solved ? text(180,180,`${actual}%`, "font-size=\"16\"") : ""}`, pools, solved);
+        const fractionSvg = svgMeasurementLabel({ x: 280, y: 92, value: fraction(numerator, denominator), unit: "" });
+        const visualWithFraction = solved => svg("두 비가 이어지는 관계", `${text(65,72,`가 ${aMultiple}배`)}${line(110,68,220,68,'stroke="#2b8a3e" stroke-width="4"')}${text(275,72,"나의 비율")}${fractionSvg}${text(180,140,solved ? `가:나 = ${ratio.numerator}:${ratio.denominator}` : "가에 대한 나의 비율은 ?")}${solved ? text(180,180,`${actual}%`, "font-size=\"16\"") : ""}`, pools, solved);
+        const promptVisual = `${visualWithFraction(false)}${mathBoard("이어지는 두 관계", row("첫째 관계", `가의 ${aMultiple}배 = 나의 ${fractionText(fractionValue(numerator, denominator))}`) + row("구할 것", "가에 대한 나의 비율을 백분율로"), `data-source61-visual="chained-ratio-percent"`)}`;
+        const answerVisual = `${visualWithFraction(true)}${mathBoard("비율로 확인", row("가:나", `${ratio.numerator}:${ratio.denominator}`) + row("백분율", `${fractionText(ratio)}×100=${actual}%`) + row("답", `${actual}%`))}`;
+        if (Math.abs(actual - expected) > 1e-9) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}%가 아닙니다.`);
+        return fixedResult(`가의 ${aMultiple}배와 나의 ${fractionText(fractionValue(numerator, denominator))}이 같습니다. 나에 대한 가의 비율을 백분율로 나타내세요.${promptVisual}`, `${actual}%`, `양쪽에 ${denominator}를 곱하면 가의 ${aMultiple * denominator}배와 나의 ${numerator}배가 같습니다. 따라서 가:나는 ${ratio.numerator}:${ratio.denominator}이고, 나에 대한 가의 비율은 ${fractionText(ratio)}입니다. ${fractionText(ratio)}×100=${actual}%입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 6) {
+        const pools = [
+          { values: [700, 840, 1200, 1500, 20, 25, 5, 1], names: ["과자", "음료수"] },
+          { values: [800, 1000, 1500, 1770, 25, 18, 7, 0], names: ["과자", "음료수"] },
+          { values: [1200, 1380, 900, 1080, 15, 20, 5, 1], names: ["과자", "음료수"] }
+        ][poolIndex];
+        const [firstOld, firstNew, secondOld, secondNew, firstRateExpected, secondRateExpected, expectedDifference, expectedIndex] = pools.values;
+        const firstRate = (firstNew - firstOld) / firstOld * 100;
+        const secondRate = (secondNew - secondOld) / secondOld * 100;
+        const difference = Math.abs(firstRate - secondRate);
+        const visual = solved => svg("두 물건의 가격 상승률", `<rect x="28" y="35" width="138" height="102" fill="#edf6fb" stroke="#183b56" stroke-width="2"/><rect x="194" y="35" width="138" height="102" fill="#fff0bd" stroke="#183b56" stroke-width="2"/>${text(97,56,pools.names[0])}${text(263,56,pools.names[1])}${text(97,82,`${firstOld}원 → ${firstNew}원`)}${text(263,82,`${secondOld}원 → ${secondNew}원`)}${text(97,111,solved ? `${firstRate}% 상승` : "상승률 ?")}${text(263,111,solved ? `${secondRate}% 상승` : "상승률 ?")}${text(180,180,solved ? `${pools.names[expectedIndex]}가 ${difference}% 더 큼` : "더 많이 오른 물건과 차는 ?", "font-size=\"14\"")}`, pools.values, solved);
+        const promptVisual = `${visual(false)}${mathBoard("두 물건의 가격", row(pools.names[0], `${firstOld}원에서 ${firstNew}원`) + row(pools.names[1], `${secondOld}원에서 ${secondNew}원`) + row("구할 것", "상승률의 차와 더 많이 오른 물건"), `data-source61-visual="price-increase-difference"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("상승률로 비교", row(pools.names[0], `${firstRate}% 상승`) + row(pools.names[1], `${secondRate}% 상승`) + row("차", `${difference}%`) + row("답", `${pools.names[expectedIndex]}, ${difference}%`))}`;
+        if (firstRate !== firstRateExpected || secondRate !== secondRateExpected || difference !== expectedDifference) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 상승률 계산이 맞지 않습니다.`);
+        return fixedResult(`한 봉지에 ${firstOld}원이던 ${pools.names[0]}가 ${firstNew}원으로 올랐고, 한 개에 ${secondOld}원이던 ${pools.names[1]}가 ${secondNew}원으로 올랐습니다. 두 물건 중 어느 것의 가격이 몇 % 더 많이 올랐는지 구하세요.${promptVisual}`, `${pools.names[expectedIndex]}, ${difference}%`, `${pools.names[0]}의 상승률은 (${firstNew}-${firstOld})÷${firstOld}×100=${firstRate}%입니다. ${pools.names[1]}의 상승률은 (${secondNew}-${secondOld})÷${secondOld}×100=${secondRate}%입니다. 따라서 ${pools.names[expectedIndex]}가 ${difference}% 더 많이 올랐습니다.`, promptVisual, answerVisual, pools.values);
+      }
+
+      if (variant === 7) {
+        const pools = [[40, 85, 60, 95, 37], [50, 80, 50, 90, 45], [30, 70, 70, 80, 35]][poolIndex];
+        const [rainForecast, rainHit, dryForecast, dryHit, expected] = pools;
+        const actualRain = rainForecast * rainHit / 100 + dryForecast * (100 - dryHit) / 100;
+        const actual = actualRain / (rainForecast + dryForecast) * 100;
+        const visual = solved => svg("비 예보와 실제 날씨", `<rect x="30" y="35" width="300" height="108" fill="#edf6fb" stroke="#183b56" stroke-width="2"/>${text(105,58,"비 온다고 예보")}${text(255,58,"비 안 온다고 예보")}${text(105,88,`${rainForecast}일, 적중 ${rainHit}%`)}${text(255,88,`${dryForecast}일, 적중 ${dryHit}%`)}${text(105,118,solved ? `실제로 비 ${rainForecast * rainHit / 100}일` : "실제 비 ?")}${text(255,118,solved ? `실제 비 ${dryForecast * (100 - dryHit) / 100}일` : "실제 비 ?")}${text(180,180,solved ? `실제로 비 온 날 ${actual}%` : "전체 중 실제 비 온 날은 ?", "font-size=\"14\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("예보와 적중률", row("비 온다고 예보", `${rainForecast}일 중 ${rainHit}% 적중`) + row("비 안 온다고 예보", `${dryForecast}일 중 ${dryHit}% 적중`) + row("구할 것", "실제로 비가 온 날의 백분율"), `data-source61-visual="forecast-hit-rate"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("실제 비가 온 날로 확인", row("첫째 경우", `${rainForecast * rainHit / 100}일`) + row("둘째 경우", `${dryForecast * (100 - dryHit) / 100}일`) + row("실제로 비 온 날", `${actualRain}일`) + row("답", `${actual}%`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}%가 아닙니다.`);
+        return fixedResult(`어느 인터넷 사이트에서 날씨를 예보합니다. 비가 온다고 예보한 날의 비가 온 비율은 ${rainHit}%이고, 비가 오지 않는다고 예보한 날의 비가 오지 않은 비율은 ${dryHit}%입니다. 비가 온다고 예보한 날 ${rainForecast}일과 비가 오지 않는다고 예보한 날 ${dryForecast}일 중 실제로 비가 온 날은 전체의 몇 %인지 구하세요.${promptVisual}`, `${actual}%`, `비가 온다고 예보한 날 중 실제 비가 온 날은 ${rainForecast}×${rainHit}÷100=${rainForecast * rainHit / 100}일입니다. 비가 오지 않는다고 예보한 날 중 실제 비가 온 날은 ${dryForecast}×(100-${dryHit})÷100=${dryForecast * (100 - dryHit) / 100}일입니다. 전체 ${rainForecast + dryForecast}일 중 ${actualRain}일이므로 ${actual}%입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 8) {
+        const pools = [[800, 47.5, 10, 5, 61], [600, 40, 15, 10, 78], [1000, 55, 8, 12, 102]][poolIndex];
+        const [total, femaleRate, maleWinRate, femaleWinRate, expected] = pools;
+        const female = total * femaleRate / 100;
+        const male = total - female;
+        const maleWinners = male * maleWinRate / 100;
+        const femaleWinners = female * femaleWinRate / 100;
+        const actual = maleWinners + femaleWinners;
+        const visual = solved => svg("남녀 구성과 당첨률", `<rect x="30" y="35" width="300" height="96" fill="#edf6fb" stroke="#183b56" stroke-width="2"/><rect x="30" y="35" width="${300 * (100 - femaleRate) / 100}" height="22" fill="#183b56"/><rect x="${30 + 300 * (100 - femaleRate) / 100}" y="35" width="${300 * femaleRate / 100}" height="22" fill="#e0a72e"/>${text(105,84,`남 ${solved ? male : `${100 - femaleRate}%`}`)}${text(255,84,`여 ${solved ? female : `${femaleRate}%`}`)}${text(105,112,`당첨률 ${maleWinRate}%`)}${text(255,112,`당첨률 ${femaleWinRate}%`)}${text(180,174,solved ? `당첨자 합계 ${actual}명` : "당첨자는 모두 몇 명인가?", "font-size=\"14\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("전체 학생과 당첨률", row("전체 학생", `${total}명`) + row("여학생", `전체의 ${femaleRate}%`) + row("남학생 당첨률", `${maleWinRate}%`) + row("여학생 당첨률", `${femaleWinRate}%`) + row("구할 것", "당첨자 수"), `data-source61-visual="winner-count-from-composition"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("남녀별로 계산", row("남학생", `${male}명 중 ${maleWinRate}% = ${maleWinners}명`) + row("여학생", `${female}명 중 ${femaleWinRate}% = ${femaleWinners}명`) + row("당첨자 합", `${actual}명`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}명이 아닙니다.`);
+        return fixedResult(`학교 학생 ${total}명을 대상으로 행운권 추첨을 했습니다. 남학생의 ${maleWinRate}%, 여학생의 ${femaleWinRate}%가 당첨되었고, 여학생 수는 전체의 ${femaleRate}%입니다. 행운권에 당첨된 학생은 모두 몇 명인지 구하세요.${promptVisual}`, `${actual}명`, `여학생은 ${total}×${femaleRate}÷100=${female}명이고 남학생은 ${male}명입니다. 남학생 당첨자는 ${male}×${maleWinRate}÷100=${maleWinners}명, 여학생 당첨자는 ${female}×${femaleWinRate}÷100=${femaleWinners}명이므로 모두 ${actual}명입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 9) {
+        const pools = [[250, 12, 3, 10, 25, 1], [300, 10, 2, 20, 10, 1], [400, 10, 2, 15, 20, 3]][poolIndex];
+        const [price, bundle, bonus, discount, answerNumerator, answerDenominator] = pools;
+        const firstUnit = rationalValue(price * bundle, bundle + bonus);
+        const secondUnit = rationalValue(price * (100 - discount), 100);
+        const difference = rationalOperation(firstUnit, secondUnit, "-");
+        const absoluteDifference = difference.numerator < 0 ? rationalValue(-difference.numerator, difference.denominator) : difference;
+        const visual = solved => {
+          const firstPriceLabel = solved
+            ? `${text(98,103,"한 자루", "font-size=\"12\"")}${svgMeasurementLabel({ x: 98, y: 123, value: mixedFraction(firstUnit.numerator, firstUnit.denominator), unit: "원" })}`
+            : text(98,111,`한 자루 ${price}원`);
+          const secondPriceLabel = solved
+            ? `${text(262,103,"한 자루", "font-size=\"12\"")}${svgMeasurementLabel({ x: 262, y: 123, value: mixedFraction(secondUnit.numerator, secondUnit.denominator), unit: "원" })}`
+            : text(262,111,`한 자루 ${price}원`);
+          const differenceLabel = solved
+            ? `${text(135,178,"가격 차", "font-size=\"14\"")}${svgMeasurementLabel({ x: 220, y: 174, value: mixedFraction(absoluteDifference.numerator, absoluteDifference.denominator), unit: "원" })}`
+            : text(180,174,"한 자루 가격의 차는 ?", "font-size=\"14\"");
+          return svg("연필 한 타의 두 가격", `<rect x="25" y="35" width="145" height="102" fill="#edf6fb" stroke="#183b56" stroke-width="2"/><rect x="190" y="35" width="145" height="102" fill="#fff0bd" stroke="#183b56" stroke-width="2"/>${text(98,57,"문구점 가")}${text(262,57,"문구점 나")}${text(98,82,`${bundle}개를 사면 ${bonus}개 더 줌`)}${text(262,82,`${discount}% 할인`)}${firstPriceLabel}${secondPriceLabel}${differenceLabel}`, pools, solved);
+        };
+        const promptVisual = `${visual(false)}${mathBoard("연필의 두 판매 방법", row("문구점 가", `${bundle}개를 사면 ${bonus}개 더 받음`) + row("문구점 나", `${discount}% 할인`) + row("정상 가격", `한 자루 ${price}원`) + row("구할 것", "한 자루 가격의 차"), `data-source61-visual="pencil-bundle-unit-price"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("한 자루 가격으로 확인", row("문구점 가", `${price}×${bundle}÷${bundle + bonus}=${fractionText(firstUnit)}원`) + row("문구점 나", `${price}×${100 - discount}÷100=${fractionText(secondUnit)}원`) + row("답", fractionText(absoluteDifference) + "원"))}`;
+        if (absoluteDifference.numerator !== answerNumerator || absoluteDifference.denominator !== answerDenominator) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 맞지 않습니다.`);
+        return fixedResult(`한 자루에 ${price}원인 연필을 한 타 살 때, 문구점 가에서는 ${bundle}자루를 사면 ${bonus}자루를 더 주고 문구점 나에서는 ${discount}%를 할인해 줍니다. 연필 한 타를 살 때 두 문구점의 연필 한 자루당 가격의 차이를 구하세요.${promptVisual}`, `${mixedFraction(absoluteDifference.numerator, absoluteDifference.denominator)}원`, `문구점 가에서는 ${price}×${bundle}원을 내고 ${bundle + bonus}자루를 받으므로 한 자루 가격은 ${fractionText(firstUnit)}원입니다. 문구점 나의 한 자루 가격은 ${price}×${100 - discount}÷100=${fractionText(secondUnit)}원입니다. 두 가격의 차는 ${fractionText(absoluteDifference)}원입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      const pools = [[500000, 1.4, 47, 40, 2226], [200000, 2.5, 52, 25, 1800], [750000, 1.6, 45, 20, 5280]][poolIndex];
+      const [cityTotal, gradeRate, femaleRate, glassesRate, expected] = pools;
+      const gradeTotal = cityTotal * gradeRate / 100;
+      const maleRate = 100 - femaleRate;
+      const maleTotal = gradeTotal * maleRate / 100;
+      const noGlassesRate = 100 - glassesRate;
+      const actual = maleTotal * noGlassesRate / 100;
+      const visual = solved => svg("전체에서 단계별로 줄어드는 인구", `<rect x="28" y="35" width="304" height="30" fill="#edf6fb" stroke="#183b56" stroke-width="2"/>${text(180,55,`전체 ${cityTotal.toLocaleString()}명`)}${line(180,65,180,87)}<rect x="68" y="87" width="224" height="30" fill="#fff0bd" stroke="#183b56" stroke-width="2"/>${text(180,107,solved ? `6학년 ${gradeTotal.toLocaleString()}명` : `6학년 ${gradeRate}%`)}${line(180,117,180,139)}<rect x="108" y="139" width="144" height="30" fill="#edf6fb" stroke="#183b56" stroke-width="2"/>${text(180,159,solved ? `남학생 ${maleTotal.toLocaleString()}명` : `남학생 ${maleRate}%`)}${text(180,205,solved ? `안경을 쓰지 않은 남학생 ${actual.toLocaleString()}명` : "안경을 쓰지 않은 남학생은 ?", "font-size=\"13\"")}`, pools, solved);
+      const promptVisual = `${visual(false)}${mathBoard("단계별 비율", row("전체 인구", `${cityTotal.toLocaleString()}명`) + row("6학년 어린이", `전체의 ${gradeRate}%`) + row("6학년 남자 어린이", `6학년의 ${maleRate}%`) + row("안경을 쓰지 않음", `남자 어린이의 ${noGlassesRate}%`) + row("구할 것", "안경을 쓰지 않은 6학년 남자 어린이"), `data-source61-visual="nested-population-percentage"`)}`;
+      const answerVisual = `${visual(true)}${mathBoard("단계별로 곱하여 확인", row("6학년", `${gradeTotal.toLocaleString()}명`) + row("남자 어린이", `${maleTotal.toLocaleString()}명`) + row("안경을 쓰지 않음", `${maleTotal}×${noGlassesRate}÷100=${actual.toLocaleString()}명`) + row("답", `${actual.toLocaleString()}명`))}`;
+      if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}명이 아닙니다.`);
+      return fixedResult(`인구가 ${cityTotal.toLocaleString()}명인 도시에 사는 초등학교 6학년 어린이는 전체 인구의 ${gradeRate}%입니다. 이들 중 ${femaleRate}%가 여자 어린이이고, 6학년 남자 어린이 중 ${glassesRate}%가 안경을 낀 어린이일 때, 이 도시에 사는 안경을 쓰지 않은 초등학교 6학년 남자 어린이는 몇 명인지 구하세요.${promptVisual}`, `${actual.toLocaleString()}명`, `6학년 어린이는 ${cityTotal.toLocaleString()}×${gradeRate}÷100=${gradeTotal.toLocaleString()}명입니다. 남자 어린이는 그중 ${maleRate}%이므로 ${maleTotal.toLocaleString()}명입니다. 안경을 쓰지 않은 비율은 ${noGlassesRate}%이므로 ${maleTotal.toLocaleString()}×${noGlassesRate}÷100=${actual.toLocaleString()}명입니다.`, promptVisual, answerVisual, pools);
+    },
     sourceGrade6FractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u1-e1-example-1", "6-1-u1-e1-example-2", "6-1-u1-e1-example-3", "6-1-u1-e1-example-4",
