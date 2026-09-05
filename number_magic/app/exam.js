@@ -205,7 +205,8 @@
   .nm-print-age-young .nm-bond { width: 40mm; }
   .nm-print-age-young .nm-b10 { --u: 1.9mm; --g: 1.3mm; }
   .nm-print-age-young .nm-nl { width: 70mm; }
-  .nm-print-age-young .nm-print-answer-key .nm-ak-item { font-size: 1em; }
+  .nm-print-age-young .nm-print-answer-key .nm-ak-item,
+  .nm-print-age-young .nm-print-answer-key .nm-ak-guide-item { font-size: 1em; }
 
   .nm-print-age-mid .nm-print-item { min-height: 17mm; }
   .nm-print-age-mid .nm-print-item .nm-q-tex { font-size: 1.4em; }
@@ -246,7 +247,8 @@
     word-break: break-all; }
 
   .nm-print-answer-key .nm-ak-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
-  .nm-print-answer-key .nm-ak-item { font-size: 0.9em; }
+  .nm-print-answer-key .nm-ak-item,
+  .nm-print-answer-key .nm-ak-guide-item { font-size: 0.9em; }
   .nm-print-qr-wrap { margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .nm-print-qr-code { font-family: monospace; font-size: 10px; }
   .nm-print-qr-wrap svg { width: 21mm; height: 21mm; shape-rendering: crispEdges; }
@@ -327,6 +329,12 @@
   .nm-w2-item.nm-print-item { border:0; background:none; padding:2px 4px; min-height:0;
     border-radius:0; display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
   .nm-w2-item .nm-w2-num { font-size:10px; color:#666; font-weight:700; margin-right:4px; }
+  /* 도전 알약(§2-6 items 6) — 회차 전체에서 램프(__ramp)가 시작되는 첫 문항
+     번호 옆에만 한 번 붙는다(classifyRoundLayout/renderRoundPages의
+     rampTagged 플래그). */
+  .nm-w2-ramp-pill { display:inline-block; font-size:7.5px; font-weight:800; color:#fff;
+    background:#c0392b; border-radius:7px; padding:1px 5px; margin-right:4px; vertical-align:middle;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-w2-item .nm-w2-tex { font-size:15px; }
   .nm-w2-grid-medium .nm-w2-item .nm-w2-tex { font-size:16px; }
   .nm-w2-grid-long .nm-w2-item .nm-w2-tex { font-size:13.5px; }
@@ -351,10 +359,11 @@
    공유한다(학습지-v2-설계.md §3 "탭마다 개념 패널 + ★예시"). 미디어 쿼리로
    가두지 않고 항상 켜 둔다. */
 .nm-w2-concept { background:#F5F3EE; border:1px solid #ece7da; border-radius:8px;
-  padding:8px 12px; margin-bottom:8px; max-height:55mm; overflow:hidden; }
+  padding:8px 12px; margin-bottom:8px; max-height:70mm; overflow:hidden; }
 .nm-w2-concept-badge { display:inline-block; font-size:11px; background:#fff; border:1px solid #e2ddcf;
   border-radius:8px; padding:1px 9px; margin-bottom:4px; font-weight:700; color:#6b6250; }
 .nm-w2-concept-sentence { margin:0 0 4px; font-size:12.5px; line-height:1.6; color:#2a2a2a; }
+.nm-w2-concept-stage { margin:0 0 3px; font-size:11.5px; line-height:1.5; color:#3a3a3a; }
 .nm-w2-concept-rule { margin:0; font-size:12px; line-height:1.55; color:#2a2a2a; }
 .nm-w2-concept-ramp { margin:4px 0 0; font-size:12px; font-weight:800; color:#b8321f; }
 .nm-w2-example { border:1.4px dashed #c33; border-radius:8px; padding:7px 12px; margin-bottom:8px; }
@@ -367,6 +376,18 @@
 .nm-w2-ex-vp { display:inline-flex; flex-direction:column; font-family:monospace; font-size:14px; color:#000; }
 .nm-w2-ex-vp-line { border-top:1.5px solid #000; margin:2px 0; }
 .nm-w2-ex-vp-ans { text-align:right; color:#c33; font-weight:700; }
+/* 따라 풀기(§4 guided items) — 예시 바로 다음, 문항 (1) 앞. 과정은 검정,
+   \square는 채우지 않고 그대로 둬(빈칸 글리프) 학생이 직접 쓴다. */
+.nm-w2-guide { border:1px solid #d8d3c5; border-radius:8px; padding:7px 12px; margin-bottom:8px; background:#fff; }
+.nm-w2-guide-title { font-weight:700; font-size:12px; margin-bottom:5px; }
+.nm-w2-guide-item { padding:4px 0; border-top:1px dashed #e3ded0; }
+.nm-w2-guide-item:first-of-type { border-top:0; padding-top:0; }
+.nm-w2-guide-q { display:flex; align-items:baseline; gap:8px; font-size:13px; }
+.nm-w2-guide-label { font-weight:800; color:#555; flex:0 0 auto; }
+.nm-w2-guide-chain { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12.5px;
+  color:#000; margin-top:3px; padding-left:18px; }
+.nm-w2-guide-arrow { color:#000; }
+.nm-w2-guide-blank { font-weight:700; }
 /* 온라인 세션 탭(runSessionTabs) — 기존 화면 클래스(.nm-ws-*, .nm-grid-*)를
    대부분 재사용하고, 세션 전용 몇 개만 여기서 보탠다. */
 .nm-grid-meta-row { display:flex; align-items:center; gap:10px; margin:2px 0 10px; }
@@ -655,6 +676,9 @@ function runSessionTabs(container, items, meta){
     const round0Code = NM_EXAM.worksheetCode({thread:t.cfg.thread, level:t.cfg.level, count:t.cfg.count, seed:t.cfg.seed});
     const conceptHtml = w2ConceptPanelHtml(t.cfg.thread, t.cfg.level);
     const exampleHtml = w2ExampleHtml(t.cfg.thread, t.cfg.level, round0Code);
+    /* 따라 풀기(§4/§build 7) — 인쇄와 같은 마크업을 화면에도 그대로(읽기 전용,
+       탭을 오갈 때마다 같은 시드로 다시 만들므로 매번 같은 3문제). */
+    const guidedHtml = w2GuidedHtml(t.cfg.thread, t.cfg.level, round0Code).html;
 
     container.innerHTML = `
 <div class="nm-ws-wrap nm-ws-session">
@@ -672,6 +696,7 @@ function runSessionTabs(container, items, meta){
   </div>
   ${conceptHtml}
   ${exampleHtml}
+  ${guidedHtml}
   <div class="nm-ws-grid">
     ${t.problems.map((p,i)=>gridCellHtml(p,i,mode,t.graded,t.userAnswers)).join('')}
   </div>
@@ -941,21 +966,14 @@ function conceptPageHtml(items, code){
 </div>`;
 }
 
-/* "개념 패널 넣기" 토글 — 학습지 v2(§2-1)부터는 별도 장이 아니라 회차 첫
-   장의 개념 패널을 켜고 끈다. 기본값 켬(원장 지시). localStorage에 기억. */
+/* "개념 패널 넣기" 토글은 v2.1(원장 "개념이 있어야 한다고 했잖아")부터 폐지 —
+   개념 패널은 이제 회차 첫 장에 항상 필수(토글 UI 없음, renderRoundPages가
+   무조건 렌더). getConceptPageOn은 옛 편지함 비-혼합 인쇄 경로(현재 실제
+   호출부가 전부 opts.mixed를 넘겨 도달하지 않는 죽은 가지, renderPrintMulti의
+   conceptPageHtml 분기)만 아직 참조해 남겨 둔다 — 기본값 켬이라 동작은
+   그대로다. */
 const CONCEPT_TOGGLE_KEY = 'nm_ws_concept_page';
 function getConceptPageOn(){ try{ const v = localStorage.getItem(CONCEPT_TOGGLE_KEY); return v===null ? true : v==='1'; }catch(e){ return true; } }
-function setConceptPageOn(v){ try{ localStorage.setItem(CONCEPT_TOGGLE_KEY, v?'1':'0'); }catch(e){} }
-function conceptToggleRowHtml(){
-  return `<label class="nm-ex-concept-toggle">
-    <input type="checkbox" id="nm-ex-concept-chk" ${getConceptPageOn()?'checked':''}>
-    <span>📖 ${lk('개념 패널 넣기','Concept panel','加概念栏')}</span>
-  </label>`;
-}
-function bindConceptToggle(container){
-  const chk = container.querySelector('#nm-ex-concept-chk');
-  if(chk) chk.addEventListener('change', () => setConceptPageOn(chk.checked));
-}
 
 /* ── 표지(Cover) ─────────────────────────────────────────────
    지오메트리 랩 학습지(geometry/worksheet)의 A4 표지와 같은 역할.
@@ -1759,7 +1777,7 @@ function sortRoundProblems(problems, type){
    .nm-bond·.nm-b10·.nm-nl·.nm-print-word-blank·.nm-print-word-eq·.nm-print-vp)를
    그대로 달아 두고, 박스 자체는 CSS에서 `.nm-w2-item.nm-print-item`으로
    덮어써 없앤다(선택자 검사기를 새로 손대지 않기 위함). */
-function w2CellHtml(p, num, threadId, isVerticalRound){
+function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
   let cls = 'nm-w2-item nm-print-item';
   let inner;
   const ask = printAskText(p);
@@ -1814,7 +1832,8 @@ function w2CellHtml(p, num, threadId, isVerticalRound){
     ? `<div class="nm-print-steps">${steps.map(s =>
         `<div class="nm-print-step"><span class="nm-w2-tex" data-tex="${esc(texDisplay(s.tex||''))}"></span></div>`).join('')}</div>`
     : '';
-  return `<div class="${cls}"><span class="nm-w2-num">(${num})</span>${askHtml}${inner}${stepsHtml}</div>`;
+  const rampPill = isFirstRamp ? `<span class="nm-w2-ramp-pill">${esc(lk('도전','Challenge','挑战'))}</span>` : '';
+  return `<div class="${cls}"><span class="nm-w2-num">(${num})</span>${rampPill}${askHtml}${inner}${stepsHtml}</div>`;
 }
 
 /* 정답지 항목 — 문항 번호와 같은 "(n)" 표기(§6 "정답지 번호가 문항 번호와 일치"). */
@@ -1833,20 +1852,48 @@ function w2AnswerKeyItemsHtml(problems){
   }).join('');
 }
 
-/* 개념 패널(§2-3) — 첫 장에만. 별도 장(conceptPageHtml)을 대신한다. 관련
-   유닛의 stages 전체를 붓지 않고 concept 문장 + "마법의 규칙" 한 줄만. */
+/* 개념 패널의 단계 요약 줄용 — desc는 자체 저작 HTML(<b> 등)을 담고 있어서
+   (conceptBlockHtml과 같은 데이터), 한 줄 요약에는 태그를 벗겨 순수 텍스트로
+   합친다. 90자 넘으면 잘라 "…"만 붙인다(§2-3 "~90자로 줄여"). */
+function stripConceptTags(s){ return String(s||'').replace(/<[^>]+>/g,''); }
+function truncateConceptLine(s, max){
+  const t = String(s||'').trim();
+  return t.length > max ? t.slice(0, max - 1).trimEnd() + '…' : t;
+}
+const CONCEPT_STAGE_MARKS = ['①','②'];
+/* 개념 패널(§2-3, v2.1 세분화) — 첫 장 필수(토글 없음). concept 문장 다음에
+   관련 유닛이 있으면 그 discover.stages 앞 1~2단계를 한 줄씩(제목+본문 요약,
+   90자 트림, ①②) 얹고, 그 다음 "마법의 규칙" 한 줄, 마지막에 램프 안내.
+   stages 전체를 붓지 않는다(conceptBlockHtml처럼 단 단위 노트로 되돌아가지
+   않기 위함) — 옛 conceptBlockHtml의 "앞 1~2단계만" 추출을 그대로 따르되
+   한 단계 = 한 줄로 더 압축한다. */
 function w2ConceptPanelHtml(threadId, level, extra){
   extra = extra || {};
   const info = resolveConceptUnit(threadId, level);
   if(!info) return '';
   const nm = pickL(info.thread.name) || threadId;
   const sentence = info.thread.concept ? pickL(info.thread.concept) : '';
+  const stages = (info.unit && info.unit.discover && Array.isArray(info.unit.discover.stages))
+    ? info.unit.discover.stages.slice(0, 2) : [];
+  const stageLines = stages.map((s, i) => {
+    const headRaw = pickL(s.head) || '';
+    /* head가 수식(백슬래시 포함, 예: M-21 나눗셈 조립제법)이면 main.js
+       stepDiscover와 같은 규칙으로 KaTeX로 — 그냥 esc()하면 "\div"가 날것
+       그대로 찍힌다(2026-09-05 발견, C36 개념 패널). */
+    const headHtml = !headRaw ? ''
+      : /\\/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>`
+      : `<b>${esc(headRaw)}</b>`;
+    const descTrunc = truncateConceptLine(stripConceptTags(pickL(s.desc) || ''), 90);
+    if(!headRaw && !descTrunc) return '';
+    return `<p class="nm-w2-concept-stage">${esc(CONCEPT_STAGE_MARKS[i])} ${headHtml}${headRaw && descTrunc ? ' — ' : ''}${esc(descTrunc)}</p>`;
+  }).join('');
   const rule = (info.unit && info.unit.discover && info.unit.discover.rule)
     ? pickL(info.unit.discover.rule) : '';
-  if(!sentence && !rule) return '';
+  if(!sentence && !stageLines && !rule) return '';
   return `<div class="nm-w2-concept">
   <div class="nm-w2-concept-badge">${esc(lk('개념','Concept','概念'))} · ${esc(nm)}</div>
   ${sentence ? `<p class="nm-w2-concept-sentence">${esc(sentence)}</p>` : ''}
+  ${stageLines}
   ${rule ? `<p class="nm-w2-concept-rule"><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}:</b> ${esc(rule)}</p>` : ''}
   ${extra.rampN ? `<p class="nm-w2-concept-ramp">${esc(lk(`뒤 ${extra.rampN}문항은 한 단계 어려운 문제예요 — 예시처럼 풀어 보세요.`,`The last ${extra.rampN} are one step harder — solve them like the example.`,`最后${extra.rampN}题难度高一级——照例题的方法做。`))}</p>` : ''}
 </div>`;
@@ -1943,6 +1990,61 @@ function w2ExampleHtml(threadId, level, code){
 </div>`;
 }
 
+/* 따라 풀기(§4 guided items, v2.1) — ★예시 바로 다음, 문항 (1) 앞. 회차의
+   N문항과 무관한 3문제를 시드 고정(hashSeed('guide'+code+i), 문항마다 새
+   rng — 회차 rng는 안 건드린다)으로 만든다. 과정(steps/solution)이 있으면
+   \square를 채우지 않고 그대로 남겨(검정) "빈칸 글리프"로 두고, 없으면
+   식만 "= ____"로 보여준다. 정답은 과정 없이 최종 답만 정답지 맨 앞에
+   (가)(나)(다)로 싣는다(w2GuidedAnswerKeyHtml). */
+const GUIDE_LABELS = { ko:['가','나','다'], en:['a','b','c'], zh:['甲','乙','丙'] };
+function guideLabels(){ return GUIDE_LABELS[examLang()] || GUIDE_LABELS.ko; }
+function w2GuidedHtml(threadId, level, code){
+  const labs = guideLabels();
+  const problems = [];
+  const itemsHtml = [0, 1, 2].map(i => {
+    const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('guide' + code + i));
+    const p = generateProblem(threadId, level, rng);
+    problems.push(p);
+    const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
+    const raw = String(p.tex || '');
+    const qTex = raw.replace(/=\s*\\square\s*$/, '=');
+    const qHtml = `<span class="nm-w2-tex" data-tex="${esc(texDisplay(qTex))}"></span>`;
+    const chainHtml = (stepSrc && stepSrc.length)
+      ? stepSrc.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
+          .join('<span class="nm-w2-guide-arrow">→</span>')
+      : `<span class="nm-w2-guide-blank">= ____</span>`;
+    return `<div class="nm-w2-guide-item">
+  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span>${qHtml}</div>
+  <div class="nm-w2-guide-chain">${chainHtml}</div>
+</div>`;
+  }).join('');
+  return {
+    html: `<div class="nm-w2-guide">
+  <div class="nm-w2-guide-title">■ ${esc(lk('따라 풀어 보세요.','Try it the same way.','照着做一做。'))}</div>
+  ${itemsHtml}
+</div>`,
+    problems
+  };
+}
+/* 따라 풀기 정답지 항목 — 과정 없이 최종 답만, (가)(나)(다) 라벨(w2AnswerKeyItemsHtml의
+   숫자 (n) 대신). 문항 번호((1)…)보다 먼저 나온다(§4 "add them to the answer key"). */
+function w2GuidedAnswerKeyHtml(problems){
+  if(!problems || !problems.length) return '';
+  const labs = guideLabels();
+  /* 클래스는 일부러 .nm-ak-item이 아니라 .nm-ak-guide-item — scripts/check-print.js가
+     `.nm-ak-item` 개수를 문항 수(COUNT)와 정확히 맞춰 비교한다(회귀 검사). 따라풀기
+     3개는 회차 N문항과 별개(§4)라 그 카운트에 안 들어가야 같은 검사가 계속 통과한다.
+     스타일은 아래 CSS에서 .nm-ak-item과 동일하게 맞춘다. */
+  return problems.map((p, i) => {
+    const akTex = ansTex(p);
+    if(akTex){
+      return `<div class="nm-ak-guide-item">(${esc(labs[i])}) <span class="nm-w2-tex" data-tex="${esc(akTex)}"></span></div>`;
+    }
+    const note = pickL(p.answerNote);
+    return `<div class="nm-ak-guide-item">(${esc(labs[i])}) ${esc(String(fmtAns(p.answer)) + (note ? ` (${note})` : ''))}</div>`;
+  }).join('');
+}
+
 /* 머리띠(§2-2) — 좌:학원명 · 중:색띠(유형 이름+부제) · 우:코드+페이지 번호.
    맨 위 작은 줄에 이름/날짜/점수. */
 function w2HeadHtml(item, code, pageLabel, count){
@@ -1967,7 +2069,6 @@ function w2HeadHtml(item, code, pageLabel, count){
 function renderRoundPages(item, opts){
   opts = opts || {};
   const count = opts.count || 20;
-  const conceptOn = opts.conceptOn !== false;
   const numericSeed = NM_RNG.hashSeed(item.seed);
   let problems = buildProblems(item.thread, item.level, count, numericSeed);
   applyWordProblems(problems, item.wordType, numericSeed);
@@ -1976,42 +2077,63 @@ function renderRoundPages(item, opts){
   const layout = classifyRoundLayout(problems, item.thread);
   problems = sortRoundProblems(problems, layout.type);
 
+  /* 첫 장 축소 용량(v2.1 §build 5) — 첫 장은 이제 개념·예시·따라풀기까지
+     지고 있어 전체 perPage를 다 못 받는다. "행"을 절반(올림)으로 줄인
+     만큼만 받는다 — 열 수는 그대로라 판정별 예시(세로셈 4×5→4×3(12),
+     짧은식 2×10→2×5(10), 중간식 2×8→2×4(8), 긴식 1×8→1×4(4),
+     문장제 1×6→1×3(3), 그림형 2×4→2×2(4))가 전부 이 식으로 나온다.
+     둘째 장부터는 layout.perPage 그대로(원래 용량). */
+  const firstRows = Math.max(1, Math.ceil(layout.rows / 2));
+  const firstCap = firstRows * layout.cols;
   const pages = [];
-  for(let i=0;i<problems.length;i+=layout.perPage) pages.push(problems.slice(i, i+layout.perPage));
-  if(!pages.length) pages.push([]);
+  if(problems.length){
+    pages.push(problems.slice(0, firstCap));
+    for(let i = firstCap; i < problems.length; i += layout.perPage) pages.push(problems.slice(i, i + layout.perPage));
+  } else {
+    pages.push([]);
+  }
   const totalPages = pages.length;
 
-  const gridStyle = layout.flow === 'col'
-    ? `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:repeat(${layout.rows},1fr);grid-auto-flow:column;`
-    : `grid-template-columns:repeat(${layout.cols},1fr);`;
+  function gridStyleFor(rowsCount){
+    return layout.flow === 'col'
+      ? `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:repeat(${rowsCount},1fr);grid-auto-flow:column;`
+      : `grid-template-columns:repeat(${layout.cols},1fr);`;
+  }
+
+  /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
+     예시가 실제로 보여 주도록. */
+  const rampN = problems.filter(p => p.__ramp).length;
+  const exLevel = rampN ? (rampLevelFor(item.thread, item.level) || item.level) : item.level;
+  /* 개념·예시·따라풀기는 첫 장 필수(토글 없음, v2.1 build 1). */
+  const conceptHtml = w2ConceptPanelHtml(item.thread, item.level, {rampN});
+  const exampleHtml = w2ExampleHtml(item.thread, exLevel, code);
+  const guided = w2GuidedHtml(item.thread, item.level, code);
 
   let num = 1;
+  let rampTagged = false; // 도전 알약은 회차 전체에서 첫 램프 문항 하나에만(§build 6)
   const html = pages.map((pageItems, pi) => {
     const first = pi === 0;
-    /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
-       예시가 실제로 보여 주도록. */
-    const rampN = problems.filter(p => p.__ramp).length;
-    const exLevel = rampN ? (rampLevelFor(item.thread, item.level) || item.level) : item.level;
-    const conceptHtml = (first && conceptOn) ? w2ConceptPanelHtml(item.thread, item.level, {rampN}) : '';
-    const exampleHtml = (first && conceptOn) ? w2ExampleHtml(item.thread, exLevel, code) : '';
+    const rowsCount = first ? firstRows : layout.rows;
     const instrHtml = first
       ? `<div class="nm-w2-instr">■ ${esc(layout.type === 'word'
           ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
           : lk('계산을 하시오.','Solve each problem.','请计算下列各题。'))}</div>`
       : '';
     const cellsHtml = pageItems.map(p => {
-      const h = w2CellHtml(p, num, item.thread, layout.type === 'vertical'); num++; return h;
+      const isFirstRamp = !!p.__ramp && !rampTagged;
+      if(isFirstRamp) rampTagged = true;
+      const h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp); num++; return h;
     }).join('');
     return `<div class="nm-w2-page">
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count)}
-  ${conceptHtml}${exampleHtml}${instrHtml}
-  <div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyle}">${cellsHtml}</div>
+  ${first ? conceptHtml : ''}${first ? exampleHtml : ''}${first ? guided.html : ''}${instrHtml}
+  <div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount)}">${cellsHtml}</div>
   <div class="nm-w2-foot">${esc(code)}</div>
 </div>`;
   }).join('');
 
   const thName = pickL(item.topicName) || pickL(((window.NM_THREADS||{})[item.thread]||{}).name) || item.thread;
-  return { html, problems, code, thName };
+  return { html, problems, code, thName, guidedProblems: guided.problems };
 }
 
 /* ── 로드맵 세션 학습지: 20문항/페이지 혼합 인쇄 (원장 지시 2026-09-04) ──
@@ -2100,9 +2222,8 @@ function pageCapacityFor(items){
    호출부(있다면)를 위해 그대로 둔다. */
 function renderMixedSheet(items, envelopeCode, opts){
   const perTypeCount = opts.mixed || 20;
-  const conceptOn = getConceptPageOn();
 
-  const rounds = items.map(it => renderRoundPages(it, { count: perTypeCount, conceptOn }));
+  const rounds = items.map(it => renderRoundPages(it, { count: perTypeCount }));
   const allProblems = [];
   rounds.forEach(r => allProblems.push.apply(allProblems, r.problems));
 
@@ -2119,7 +2240,7 @@ function renderMixedSheet(items, envelopeCode, opts){
   const akSections = rounds.map(r => `
 <div class="nm-ak-section">
   <h4 class="nm-ak-subhead">${esc(r.thName)} <span class="nm-ak-subcode">${esc(r.code)}</span></h4>
-  <div class="nm-ak-grid">${w2AnswerKeyItemsHtml(r.problems)}</div>
+  <div class="nm-ak-grid">${w2GuidedAnswerKeyHtml(r.guidedProblems)}${w2AnswerKeyItemsHtml(r.problems)}</div>
 </div>`).join('');
 
   sheet.innerHTML = `
@@ -2765,7 +2886,6 @@ ${printWatermarkHtml()}
     </div>
     <div class="nm-ex-road-opt-row">
       ${coverToggleRowHtml()}
-      ${conceptToggleRowHtml()}
     </div>
   </div>
   <div class="nm-ex-form-body nm-ex-road-body">
@@ -2784,7 +2904,6 @@ ${printWatermarkHtml()}
         });
 
         bindCoverToggle(container);
-        bindConceptToggle(container);
         /* 옵션 클릭 재렌더 — 스크롤 위치 보존(펼쳐 둔 과정이 도로 위로 튀지 않게) */
         function rerenderKeepScroll(){
           const sc = container.closest('.nm-step-body') || container;
@@ -3042,7 +3161,6 @@ ${printWatermarkHtml()}
     <div class="nm-ex-count-btns">
       ${WORD_OPTS.map(w => `<button class="nm-ex-cnt-btn${w.key===wordType?' sel':''}" data-w="${w.key}">${w.label}</button>`).join('')}
     </div>
-    ${conceptToggleRowHtml()}
     ${coverToggleRowHtml()}
     <div class="nm-ex-actions" style="margin-top:10px">
       <button id="nm-ex-grid-start" class="nm-ex-btn-primary">▶ 온라인으로 풀기</button>
@@ -3102,7 +3220,6 @@ ${printWatermarkHtml()}
         container.querySelector('#nm-ex-preview-dice').addEventListener('click', () => {
           previewSeed = NM_RNG.newCode(); render();
         });
-        bindConceptToggle(container);
         bindCoverToggle(container);
 
         container.querySelector('#nm-ex-grid-start').addEventListener('click', () => {
@@ -3173,7 +3290,6 @@ ${printWatermarkHtml()}
       코드: <code id="nm-ex-code-preview"></code>
       <button id="nm-ex-new-seed" class="nm-ex-btn-ghost">🎲 새 코드</button>
     </div>
-    ${conceptToggleRowHtml()}
     ${coverToggleRowHtml()}
     <div class="nm-ex-actions">
       <button id="nm-ex-start" class="nm-ex-btn-primary">▶ 학습지 시작</button>
@@ -3193,7 +3309,6 @@ ${printWatermarkHtml()}
       container.querySelector('#nm-ex-new-seed').addEventListener('click', () => {
         currentSeed = NM_RNG.newCode(); refreshCode();
       });
-      bindConceptToggle(container);
       bindCoverToggle(container);
       container.querySelector('#nm-ex-start').addEventListener('click', () => {
         onStart && onStart(getConfig());
@@ -3392,8 +3507,7 @@ ${printWatermarkHtml()}
   renderPrint(config){
     const { thread, level, count, seed, wordType } = config;
     const item = { thread, level, wordType, seed, topicName: config.topicName, grade: config.grade };
-    const conceptOn = getConceptPageOn();
-    const round = renderRoundPages(item, { count, conceptOn });
+    const round = renderRoundPages(item, { count });
 
     const old = document.querySelector('.nm-print-sheet');
     if(old) old.remove();
@@ -3412,7 +3526,7 @@ ${coverHtml}
 ${round.html}
 <div class="nm-print-answer-key">
   <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(round.code)}</span></h3>
-  <div class="nm-ak-grid">${w2AnswerKeyItemsHtml(round.problems)}</div>
+  <div class="nm-ak-grid">${w2GuidedAnswerKeyHtml(round.guidedProblems)}${w2AnswerKeyItemsHtml(round.problems)}</div>
 </div>`;
 
     document.body.appendChild(sheet);
