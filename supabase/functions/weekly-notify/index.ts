@@ -1,7 +1,9 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v4
-// 트리거: POST { trigger_key, dry?, test_phone? }  — pg_cron 또는 수동 curl.
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v5
+// 트리거: POST { trigger_key, dry?, test_phone?, probe? }  — pg_cron 또는 수동 curl.
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
+//   probe:true    → 릴레이에 {action:'ping'}만 보내 응답 원문을 돌려준다(문자 발송 없음, 연결·계약 확인용).
+// 시크릿 읽기: 환경변수(Edge Secrets) 우선, 없으면 Vault(public.nm_notify_secret RPC, service_role 전용).
 // 발송 경로(우선순위):
 //   1) NOTIFY_RELAY_URL 이 Apps Script 웹앱(script.google.com)이면
 //      gfield-report 가 쓰는 계약 그대로 POST {action:'aligo_sms', receiver, msg, targetDate:''}
@@ -9,7 +11,7 @@
 //   2) NOTIFY_RELAY_URL 이 그 밖의 주소면 사설서버 릴레이(설계 §8):
 //      POST {receiver, msg, title, msg_type:'LMS'} + X-Relay-Key → {ok:true|false}
 //   3) NOTIFY_RELAY_URL 이 없으면 알리고 직접(ALIGO_API_KEY/USER_ID/SENDER) — IP 화이트리스트에 막힐 수 있음.
-// 시크릿: NOTIFY_TRIGGER_KEY, NOTIFY_RELAY_URL?, NOTIFY_RELAY_KEY?, ALIGO_API_KEY?, ALIGO_USER_ID?, ALIGO_SENDER?
+// 시크릿 이름: NOTIFY_TRIGGER_KEY, NOTIFY_RELAY_URL?, NOTIFY_RELAY_KEY?, ALIGO_API_KEY?, ALIGO_USER_ID?, ALIGO_SENDER?
 // 설계: number_magic/알림서비스-설계.md — 번호는 nm_contacts(anon insert만)에만,
 // 발송 이력은 nm_notify_log(주 1회 상한, (phone,week_key,kind) unique)로 중복 방지.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
@@ -56,10 +58,24 @@ function composeMsg(profileName: string, digest: any, cadence: string): { title:
 
 type SendResult = { ok: boolean; detail: string; via: string };
 
-async function sendOne(phone: string, title: string, msg: string): Promise<SendResult> {
-  const relay = (Deno.env.get("NOTIFY_RELAY_URL") ?? "").trim();
+// 환경변수 → Vault 순서로 시크릿을 읽는다. Vault 값은 원장이 대시보드/SQL로 넣고 git·클라이언트엔 없다.
+async function secret(sb: any, name: string): Promise<string> {
+  const env = (Deno.env.get(name) ?? "").trim();
+  if (env) return env;
   try {
-    if (relay && /script\.google(?:usercontent)?\.com/.test(relay)) {
+    const { data } = await sb.rpc("nm_notify_secret", { p_name: name });
+    return String(data ?? "").trim();
+  } catch (_) { return ""; }
+}
+
+function isAppsScript(url: string): boolean {
+  return /script\.google(?:usercontent)?\.com/.test(url);
+}
+
+async function sendOne(sb: any, phone: string, title: string, msg: string): Promise<SendResult> {
+  const relay = await secret(sb, "NOTIFY_RELAY_URL");
+  try {
+    if (relay && isAppsScript(relay)) {
       // 1) gfield-report Apps Script 웹앱 — 같은 계약(aligo_sms). 302 리다이렉트는 fetch가 따라간다.
       const r = await fetch(relay, {
         method: "POST",
@@ -74,7 +90,7 @@ async function sendOne(phone: string, title: string, msg: string): Promise<SendR
       // 2) 사설서버 릴레이(설계 §8)
       const r = await fetch(relay, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-Relay-Key": Deno.env.get("NOTIFY_RELAY_KEY") ?? "" },
+        headers: { "Content-Type": "application/json", "X-Relay-Key": await secret(sb, "NOTIFY_RELAY_KEY") },
         body: JSON.stringify({ receiver: phone, msg, title, msg_type: "LMS" }),
       });
       const j: any = await r.json().catch(() => ({}));
@@ -82,9 +98,9 @@ async function sendOne(phone: string, title: string, msg: string): Promise<SendR
     }
     // 3) 알리고 직접 (LMS — 본문이 90바이트를 넘으므로)
     const form = new FormData();
-    form.set("key", Deno.env.get("ALIGO_API_KEY") ?? "");
-    form.set("user_id", Deno.env.get("ALIGO_USER_ID") ?? "");
-    form.set("sender", Deno.env.get("ALIGO_SENDER") ?? "");
+    form.set("key", await secret(sb, "ALIGO_API_KEY"));
+    form.set("user_id", await secret(sb, "ALIGO_USER_ID"));
+    form.set("sender", await secret(sb, "ALIGO_SENDER"));
     form.set("receiver", phone);
     form.set("msg", msg);
     form.set("msg_type", "LMS");
@@ -100,13 +116,25 @@ async function sendOne(phone: string, title: string, msg: string): Promise<SendR
 Deno.serve(async (req: Request) => {
   let body: any = {};
   try { body = await req.json(); } catch (_) { /* 빈 본문 허용 */ }
-  const need = Deno.env.get("NOTIFY_TRIGGER_KEY");
+  const sb = createClient(SB_URL, SB_SERVICE);
+  const need = await secret(sb, "NOTIFY_TRIGGER_KEY");
   if (!need || body.trigger_key !== need) {
     return new Response(JSON.stringify({ error: "bad trigger_key" }), { status: 403 });
   }
   const dry = !!body.dry;
-  const sb = createClient(SB_URL, SB_SERVICE);
   const wk = weekKey(new Date());
+
+  // 연결·계약 확인: 릴레이에 ping 만 보낸다. 문자 발송 없음. Apps Script면 "Unknown action: ping" 류가 오면 정상.
+  if (body.probe) {
+    const relay = await secret(sb, "NOTIFY_RELAY_URL");
+    if (!relay) return new Response(JSON.stringify({ probe: true, relay: false, note: "NOTIFY_RELAY_URL 없음 — 알리고 직접 경로" }), { headers: { "Content-Type": "application/json" } });
+    let status = 0, text = "";
+    try {
+      const r = await fetch(relay, { method: "POST", body: JSON.stringify({ action: "ping" }) });
+      status = r.status; text = (await r.text()).slice(0, 400);
+    } catch (e) { text = String(e).slice(0, 400); }
+    return new Response(JSON.stringify({ probe: true, via: isAppsScript(relay) ? "apps_script" : "relay", status, text }), { headers: { "Content-Type": "application/json" } });
+  }
 
   // 연결 점검: 한 번호에 한 건만 (연락처·주1회 상한과 무관, kind='test')
   if (body.test_phone) {
@@ -114,7 +142,7 @@ Deno.serve(async (req: Request) => {
     if (!/^01\d{8,9}$/.test(phone)) return new Response(JSON.stringify({ error: "bad test_phone" }), { status: 400 });
     const { title, msg } = composeMsg("테스트", null, "w1");
     if (dry) return new Response(JSON.stringify({ week: wk, test: true, dry: true, phone, title, msg }), { headers: { "Content-Type": "application/json" } });
-    const res = await sendOne(phone, title, msg);
+    const res = await sendOne(sb, phone, title, msg);
     await sb.from("nm_notify_log").insert({ phone, week_key: wk + "-t" + Date.now().toString(36), kind: "test", ok: res.ok, detail: res.detail });
     return new Response(JSON.stringify({ week: wk, test: true, phone, ...res }), { headers: { "Content-Type": "application/json" } });
   }
@@ -142,7 +170,7 @@ Deno.serve(async (req: Request) => {
 
     if (dry) { results.push({ phone, dry: true, title, msg }); continue; }
 
-    const res = await sendOne(phone, title, msg);
+    const res = await sendOne(sb, phone, title, msg);
     await sb.from("nm_notify_log").insert({ phone, week_key: wk, kind: "weekly", ok: res.ok, detail: res.detail });
     results.push({ phone, ok: res.ok, via: res.via, detail: res.ok ? undefined : res.detail });
   }
