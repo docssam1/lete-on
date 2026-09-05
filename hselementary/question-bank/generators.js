@@ -22067,6 +22067,168 @@
       const answerVisual = `${svg("두 반올림 조건을 만족하는 자연수", lines, true, values)}${mathBoard("후보를 모두 확인", row("첫째 조건", `N÷${pools.firstDivisor} → ${pools.firstTarget}`) + row("둘째 조건", `N÷${pools.secondDivisor} → ${pools.secondTarget}`) + row("답", candidates.join(", ")))}`;
       return fixedResult(`자연수 N을 ${pools.firstDivisor}로 나눈 몫을 반올림하여 일의 자리까지 나타내면 ${pools.firstTarget}이고, ${pools.secondDivisor}로 나눈 몫을 반올림하여 일의 자리까지 나타내면 ${pools.secondTarget}입니다. N이 될 수 있는 수를 모두 구하세요.${svg("반올림 조건 두 가지", lines, false, values)}${mathBoard("조건", row("첫째", `N÷${pools.firstDivisor} → ${pools.firstTarget}`) + row("둘째", `N÷${pools.secondDivisor} → ${pools.secondTarget}`))}${support("두 반올림 조건을 각각 만족하는 범위를 구한 뒤 겹치는 자연수를 찾으세요.")}${challenge}${evidence(values, "list")}`, candidates.join(", "), `두 조건을 각각 만족하는 자연수를 적어 보면 공통으로 남는 수는 ${candidates.join(", ")}입니다.`, answerWrap(answerVisual, values));
     },
+    sourceGrade6DecimalDivisionE4({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u3-e4-exploration-1", "6-1-u3-e4-example-2", "6-1-u3-e4-example-3",
+        "6-1-u3-e4-example-4", "6-1-u3-e4-mission-1", "6-1-u3-e4-mission-2",
+        "6-1-u3-e4-mission-3", "6-1-u3-e4-mission-5", "6-1-u3-e4-mission-6"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 식을 세워 풀기 개념탐구 4 안전 분기는 0부터 8까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">조건을 식으로 나타내고, 답이 하나로 정해지는 까닭까지 설명해 보세요.</p>` : "";
+      const evidenceKinds = ["family-weight-equations", "rectangle-area-scale", "two-tap-rate", "round-trip-second-meeting", "collinear-segments", "rectangle-area-increase", "park-border-area", "round-trip-houses", "circular-path-delay"];
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-decimal-e4-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body) => `<div class="source61-math-board source61-e4-board"><strong>${title}</strong>${body}</div>`;
+      const sourceValue = value => Number(value).toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+      const svg = (kind, draw, solved, values, viewBox = "0 0 360 220", className = "") => `<svg class="geometry-diagram source61-e4-diagram source61-decimal-e4-diagram ${className} ${solved ? "is-solved" : ""}" viewBox="${viewBox}" role="img" aria-label="${kind}" data-source61-e4-structure="decimal-division-e4-board" data-source61-e4-values="${values.join(",")}">${draw(solved)}</svg>`;
+      const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-e4-answer source61-decimal-e4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(answerBody.values || [])}${answerBody.html}<div class="solution-answer-caption">문제의 자료를 다시 그려 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+      const card = (x, y, width, title, value, solved = false) => `<rect class="source61-e4-card${solved ? " is-solved" : ""}" x="${x}" y="${y}" width="${width}" height="52" rx="5"/><text x="${x + width / 2}" y="${y + 17}">${title}</text><text x="${x + width / 2}" y="${y + 37}">${value}</text>`;
+      const line = (x1, y1, x2, y2, className = "source61-e4-edge") => `<line class="${className}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+      const dot = (x, y, label = "") => `<circle class="source61-e4-vertex" cx="${x}" cy="${y}" r="3"/>${label ? `<text x="${x}" y="${y - 10}">${label}</text>` : ""}`;
+      const pool = [
+        [
+          { e: 35.8, f: 71.9, m: 53.1, total: 160.8, gap: 36.1, relation: 51.6 },
+          { e: 42.6, f: 78.4, m: 55.2, total: 176.2, gap: 35.8, relation: 44.6 },
+          { e: 40.7, f: 75.2, m: 58.6, total: 174.5, gap: 34.5, relation: 59.9 }
+        ],
+        [
+          { widthScale: 1.25, heightScale: 8, increase: 27.45, answer: 3.05 },
+          { widthScale: 1.5, heightScale: 4, increase: 22.5, answer: 4.5 },
+          { widthScale: 2.5, heightScale: 3, increase: 32.5, answer: 5 }
+        ],
+        [
+          { hours1: 3, hours2: 5, sum: 10.05, difference: 2.75, a: 1.95, b: 1.4 },
+          { hours1: 4, hours2: 6, sum: 16.8, difference: 4.8, a: 2.5, b: 1.7 },
+          { hours1: 5, hours2: 4, sum: 19, difference: 2.4, a: 2.2, b: 1.6 }
+        ],
+        [
+          { v1: 5.62, v2: 4.148, hours: 5, answer: 16.28 },
+          { v1: 6.4, v2: 4.1, hours: 4.8, answer: 16.8 },
+          { v1: 5.75, v2: 4.45, hours: 6, answer: 20.4 }
+        ],
+        [
+          { middle: 85.1, total: 170.6, extra: 21.1, answer: 117.3 },
+          { middle: 72.8, total: 151.4, extra: 18.2, answer: 103 },
+          { middle: 96.5, total: 194.7, extra: 25.6, answer: 132.8 }
+        ],
+        [
+          { widthScale: 5, heightScale: 1.2, increase: 40.35, answer: 8.07 },
+          { widthScale: 2.5, heightScale: 2, increase: 28.8, answer: 7.2 },
+          { widthScale: 4, heightScale: 1.5, increase: 53.75, answer: 10.75 }
+        ],
+        [
+          { width: 4, area: 660.8, perimeter: 149.2 },
+          { width: 3, area: 433.2, perimeter: 132.4 },
+          { width: 5, area: 924, perimeter: 164.8 }
+        ],
+        [
+          { v1: 4.2, v2: 3.48, hours: 1.8, answer: 4.608 },
+          { v1: 5.4, v2: 4.1, hours: 2.4, answer: 7.6 },
+          { v1: 3.75, v2: 2.85, hours: 2, answer: 4.4 }
+        ],
+        [
+          { circumference: 38, firstDistance: 25.76, firstMinutes: 14, secondDistance: 38.88, secondMinutes: 18, delay: 5, answer: 7.2 },
+          { circumference: 42, firstDistance: 16.8, firstMinutes: 12, secondDistance: 27, secondMinutes: 15, delay: 6, answer: 10.5 },
+          { circumference: 34, firstDistance: 18, firstMinutes: 12, secondDistance: 24, secondMinutes: 12, delay: 4, answer: 8 }
+        ]
+      ][variant][poolIndex];
+      const toOne = value => Number(value).toFixed(1).replace(/\.0$/, "");
+      const hoursText = hours => { const whole = Math.floor(hours); const minutes = Math.round((hours - whole) * 60); return minutes ? `${whole}시간 ${minutes}분` : `${whole}시간`; };
+
+      if (variant === 0) {
+        const d = pool; const answer = d.f - d.m;
+        if (Math.abs(d.e + d.f + d.m - d.total) > 1e-9 || Math.abs(d.f - d.e - d.gap) > 1e-9 || Math.abs(3 * d.m - d.f - d.e - d.relation) > 1e-9 || Math.abs(answer - 18.8) > 1e-9 && poolIndex === 0) throw new Error(`${sourceItemId} 몸무게 식 검산 오류`);
+        const values = [d.e, d.f, d.m, d.total, d.gap, d.relation, answer];
+        const draw = solved => `${card(18, 42, 100, "예훈", `${toOne(d.e)}kg`)}${card(130, 42, 100, "아버지", `${toOne(d.f)}kg`)}${card(242, 42, 100, "어머니", `${toOne(d.m)}kg`)}${line(68, 106, 292, 106, "source61-e4-relation-line")}${card(68, 132, 224, "세 식구의 합", `${toOne(d.total)}kg`)}${solved ? `<text class="source61-e4-result-label" x="180" y="205">아버지 - 어머니 = ${toOne(answer)}kg</text>` : `<text x="180" y="205">주어진 관계를 식으로 나타내세요.</text>`}`;
+        const promptVisual = svg("세 식구의 몸무게 관계", draw, false, values);
+        const answerVisual = `${svg("세 식구의 몸무게 관계", draw, true, values)}${mathBoard("세 식구의 식", row("아버지", `${sourceValue(d.e)}+${sourceValue(d.gap)}=${sourceValue(d.f)}kg`) + row("어머니", `3×${sourceValue(d.m)}-${sourceValue(d.f)}-${sourceValue(d.e)}=${sourceValue(d.relation)}`) + row("차", `${sourceValue(d.f)}-${sourceValue(d.m)}=${sourceValue(answer)}kg`))}`;
+        return fixedResult(`예훈이네 세 식구의 몸무게 합은 ${sourceValue(d.total)}kg입니다. 아버지의 몸무게는 예훈이보다 ${sourceValue(d.gap)}kg 더 무겁고, 아버지와 예훈이의 합은 어머니 몸무게의 3배보다 ${sourceValue(d.relation)}kg 작습니다. 아버지와 어머니의 몸무게 차를 구하세요.${promptVisual}${mathBoard("주어진 관계", row("전체", `${sourceValue(d.total)}kg`) + row("아버지-예훈", `${sourceValue(d.gap)}kg`) + row("3×어머니-(아버지+예훈)", `${sourceValue(d.relation)}kg`))}${support("예훈이의 몸무게를 하나의 수로 놓고 세 식을 세워 보세요.")}${challenge}${evidence(values)}`, `${sourceValue(answer)}kg`, `예훈이를 ${sourceValue(d.e)}kg로 놓으면 아버지는 ${sourceValue(d.f)}kg, 어머니는 ${sourceValue(d.m)}kg입니다. 따라서 차는 ${sourceValue(d.f)}-${sourceValue(d.m)}=${sourceValue(answer)}kg입니다.`, { html: answerVisual, values });
+      }
+
+      if (variant === 1) {
+        const d = pool; const factor = d.widthScale * d.heightScale; const answer = d.increase / (factor - 1);
+        if (Math.abs(answer - d.answer) > 1e-9) throw new Error(`${sourceItemId} 직사각형 넓이 배율 검산 오류`);
+        const values = [d.widthScale, d.heightScale, d.increase, d.answer];
+        const draw = solved => `${card(35, 46, 112, "처음", solved ? `넓이 ${sourceValue(d.answer)}m²` : "넓이 ?m²", solved)}${line(153, 72, 205, 72, "source61-e4-join-arrow")}${card(213, 46, 112, "새 직사각형", `가로 ${d.widthScale}배 · 세로 ${d.heightScale}배`)}${solved ? `<text class="source61-e4-result-label" x="180" y="155">넓이 증가 = ${sourceValue(d.increase)}m²</text>` : `<text x="180" y="155">처음 넓이를 구하세요.</text>`}`;
+        const promptVisual = svg("직사각형의 가로와 세로를 늘린 그림", draw, false, values);
+        const answerVisual = `${svg("직사각형의 가로와 세로를 늘린 그림", draw, true, values)}${mathBoard("넓이 배율", row("새 넓이", `${d.widthScale}×${d.heightScale}=${factor}배`) + row("증가한 부분", `${factor}-1=${factor - 1}배`) + row("처음 넓이", `${sourceValue(d.increase)}÷${factor - 1}=${sourceValue(answer)}m²`))}`;
+        return fixedResult(`어떤 정사각형 모양 발의 가로를 ${d.widthScale}배, 세로를 ${d.heightScale}배 하여 새 직사각형 모양 발을 만들었습니다. 새 발의 넓이는 처음보다 ${sourceValue(d.increase)}m² 넓어졌습니다. 처음 발의 넓이는 몇 m²인가요?${promptVisual}${mathBoard("주어진 수", row("가로", `${d.widthScale}배`) + row("세로", `${d.heightScale}배`) + row("늘어난 넓이", `${sourceValue(d.increase)}m²`))}${support("가로 배와 세로 배를 곱해 새 넓이가 몇 배인지 구한 뒤, 늘어난 배수로 나누세요.")}${challenge}${evidence(values)}`, `${sourceValue(answer)}m²`, `새 넓이는 ${factor}배이고 늘어난 부분은 ${factor - 1}배입니다. 따라서 처음 넓이는 ${sourceValue(d.increase)}÷${factor - 1}=${sourceValue(answer)}m²입니다.`, { html: answerVisual, values });
+      }
+
+      if (variant === 2) {
+        const d = pool; const hourlySum = d.sum / d.hours1; const hourlyDifference = d.difference / d.hours2; const a = (hourlySum + hourlyDifference) / 2; const b = (hourlySum - hourlyDifference) / 2;
+        if (Math.abs(a - d.a) > 1e-9 || Math.abs(b - d.b) > 1e-9) throw new Error(`${sourceItemId} 두 수도의 양 검산 오류`);
+        const values = [d.hours1, d.hours2, d.sum, d.difference, d.a, d.b];
+        const draw = solved => `${card(28, 42, 140, "가 수도", `1시간 → ${solved ? `${sourceValue(a)}L` : "?L"}`, solved)}${card(192, 42, 140, "나 수도", `1시간 → ${solved ? `${sourceValue(b)}L` : "?L"}`, solved)}${line(180, 42, 180, 112, "source61-e4-relation-line")}${solved ? `<text class="source61-e4-result-label" x="180" y="160">${sourceValue(a)}L, ${sourceValue(b)}L</text>` : `<text x="180" y="160">두 수도의 1시간 양</text>`}`;
+        const promptVisual = svg("두 수도에서 나오는 물의 양", draw, false, values);
+        const answerVisual = `${svg("두 수도에서 나오는 물의 양", draw, true, values)}${mathBoard("두 식을 세워 계산", row("시간당 합", `${sourceValue(d.sum)}÷${d.hours1}=${sourceValue(hourlySum)}L`) + row("시간당 차", `${sourceValue(d.difference)}÷${d.hours2}=${sourceValue(hourlyDifference)}L`) + row("답", `가 ${sourceValue(a)}L, 나 ${sourceValue(b)}L`))}`;
+        return fixedResult(`일정한 양의 물이 나오는 수도 가와 나가 있습니다. 가, 나 수도에서 나오는 물을 ${d.hours1}시간 동안 받으면 모두 ${sourceValue(d.sum)}L이고, ${d.hours2}시간 동안 받으면 가 수도의 물이 나 수도보다 ${sourceValue(d.difference)}L 더 많습니다. 가, 나 수도에서 한 시간 동안 나오는 물의 양을 각각 구하세요.${promptVisual}${mathBoard("주어진 자료", row("합", `${d.hours1}시간 동안 ${sourceValue(d.sum)}L`) + row("차", `${d.hours2}시간 동안 ${sourceValue(d.difference)}L`))}${support("합은 첫 번째 시간으로 나누고, 차는 두 번째 시간으로 나누어 한 시간의 합과 차를 구하세요.")}${challenge}${evidence(values, "two-values")}`, `가 ${sourceValue(a)}L, 나 ${sourceValue(b)}L`, `시간당 합은 ${sourceValue(d.sum)}÷${d.hours1}=${sourceValue(hourlySum)}L이고, 시간당 차는 ${sourceValue(d.difference)}÷${d.hours2}=${sourceValue(hourlyDifference)}L입니다. 두 식을 풀면 가는 ${sourceValue(a)}L, 나는 ${sourceValue(b)}L입니다.`, { html: answerVisual, values });
+      }
+
+      if (variant === 3 || variant === 7) {
+        const d = pool; const answer = (d.v1 + d.v2) * d.hours / 3;
+        if (Math.abs(answer - d.answer) > 1e-9) throw new Error(`${sourceItemId} 왕복 두 번째 만남 검산 오류`);
+        const values = [d.v1, d.v2, d.hours, d.answer];
+        const draw = solved => `${line(32, 92, 328, 92, "source61-e4-route")}${[32, 131, 229, 328].map((x, index) => `${line(x, 82, x, 102, "source61-e4-measure")}${index < 3 ? `<text x="${(x + [131, 229, 328][index]) / 2}" y="70">${index + 1}번째 이동</text>` : ""}`).join("")}${dot(32, 92, "출발")}${dot(328, 92, "도착")}${solved ? `<text class="source61-e4-result-label" x="180" y="155">세 구간의 합 = 3×거리 · ${hoursText(d.hours)}</text>` : `<text x="180" y="155">왕복 이동을 세 구간으로 나누어 보세요.</text>`}`;
+        const promptVisual = svg("두 사람이 왕복하는 길", draw, false, values);
+        const answerVisual = `${svg("두 사람이 왕복하는 길", draw, true, values)}${mathBoard("두 번째 만남", row("두 사람의 합한 빠르기", `${sourceValue(d.v1)}+${sourceValue(d.v2)}=${sourceValue(d.v1 + d.v2)}km/시간`) + row("전체 거리", `(${sourceValue(d.v1)}+${sourceValue(d.v2)})×${sourceValue(d.hours)}÷3`) + row("답", `${sourceValue(answer)}km`))}`;
+        const context = variant === 3 ? `민수는 한 시간에 ${sourceValue(d.v1)}km, 준우는 ${sourceValue(d.v2)}km를 갑니다. 두 사람이 동시에 각 지점을 출발하여 서로 왕복하고, 두 번째로 만날 때까지 ${hoursText(d.hours)}이 걸렸다면 두 지점 사이의 거리를 구하세요.` : `유현이는 한 시간에 ${sourceValue(d.v1)}km, 대현이는 ${sourceValue(d.v2)}km를 갑니다. 두 사람이 각자 집에서 출발하여 상대방의 집까지 왕복하고, 두 번째 만날 때까지 ${hoursText(d.hours)}이 걸렸다면 두 집 사이의 거리를 구하세요.`;
+        return fixedResult(`${context}${promptVisual}${mathBoard("왕복 자료", row("첫 번째 사람", `${sourceValue(d.v1)}km/시간`) + row("두 번째 사람", `${sourceValue(d.v2)}km/시간`) + row("두 번째 만남", hoursText(d.hours)))}${support("두 번째 만남까지 두 사람이 이동한 거리의 합은 두 지점 사이 거리의 3배라는 점을 이용하세요.")}${challenge}${evidence(values)}`, `${sourceValue(answer)}km`, `두 번째 만남까지 두 사람이 간 거리의 합은 두 지점 사이 거리의 3배입니다. 따라서 거리는 (${sourceValue(d.v1)}+${sourceValue(d.v2)})×${sourceValue(d.hours)}÷3=${sourceValue(answer)}km입니다.`, { html: answerVisual, values });
+      }
+
+      if (variant === 4) {
+        const d = pool; const first = (d.total - d.middle - d.extra) / 2; const answer = first + d.middle;
+        if (Math.abs(answer - d.answer) > 1e-9) throw new Error(`${sourceItemId} 일직선 선분 검산 오류`);
+        const displayAnswer = answer.toFixed(1);
+        const values = [d.middle, d.total, d.extra, d.answer];
+        const draw = solved => `${line(28, 105, 332, 105, "source61-e4-segment")}${[28, 104, 180, 256, 332].map((x, index) => dot(x, 105, ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"][index])).join("")}${line(104, 121, 256, 121, "source61-e4-measure")}${line(28, 143, 332, 143, "source61-e4-measure")}${solved ? `<text class="source61-e4-result-label" x="180" y="190">ㄱㄹ = ${displayAnswer}cm</text>` : `<text x="180" y="190">점 사이의 관계를 읽으세요.</text>`}`;
+        const promptVisual = svg("일직선 위 다섯 점의 선분", draw, false, values);
+        const answerVisual = `${svg("일직선 위 다섯 점의 선분", draw, true, values)}${mathBoard("선분을 나누어 계산", row("ㄴㄹ", `${sourceValue(d.middle)}cm`) + row("ㄱㅁ", `${sourceValue(d.total)}cm`) + row("ㄹㅁ-ㄱㄴ", `${sourceValue(d.extra)}cm`) + row("ㄱㄹ", `${sourceValue(first)}+${sourceValue(d.middle)}=${displayAnswer}cm`))}`;
+        return fixedResult(`일직선 위에 다섯 개의 점 ㄱ, ㄴ, ㄷ, ㄹ, ㅁ이 순서대로 있습니다. 선분 ㄴㄹ의 길이는 ${sourceValue(d.middle)}cm, 선분 ㄱㅁ의 길이는 ${sourceValue(d.total)}cm이고, 선분 ㄹㅁ의 길이는 선분 ㄱㄴ보다 ${sourceValue(d.extra)}cm 더 깁니다. 선분 ㄱㄹ의 길이는 몇 cm인지 구하세요.${promptVisual}${mathBoard("주어진 선분", row("ㄴㄹ", `${sourceValue(d.middle)}cm`) + row("ㄱㅁ", `${sourceValue(d.total)}cm`) + row("ㄹㅁ", "ㄱㄴ보다 더 김"))}${support("ㄱㄴ을 □cm로 놓고 ㄱㅁ을 두 부분으로 나누어 식을 세우세요.")}${challenge}${evidence(values)}`, `${displayAnswer}cm`, `ㄱㄴ을 x cm라 하면 ㄹㅁ은 x+${sourceValue(d.extra)}cm입니다. x+${sourceValue(d.middle)}+x+${sourceValue(d.extra)}=${sourceValue(d.total)}이므로 x=${sourceValue(first)}cm입니다. 따라서 ㄱㄹ=${sourceValue(first)}+${sourceValue(d.middle)}=${displayAnswer}cm입니다.`, { html: answerVisual, values });
+      }
+
+      if (variant === 5) {
+        const d = pool; const factor = d.widthScale * d.heightScale; const answer = d.increase / (factor - 1);
+        if (Math.abs(answer - d.answer) > 1e-9) throw new Error(`${sourceItemId} 정사각형 확대 넓이 검산 오류`);
+        const values = [d.widthScale, d.heightScale, d.increase, d.answer];
+        const draw = solved => `${card(42, 48, 92, "처음", "정사각형")}${line(148, 74, 210, 74, "source61-e4-join-arrow")}${card(216, 48, 102, "확대한 뒤", `${d.widthScale}배 × ${d.heightScale}배`)}${solved ? `<text class="source61-e4-result-label" x="180" y="155">처음 넓이 ${sourceValue(answer)}cm²</text>` : `<text x="180" y="155">넓이의 증가를 이용하세요.</text>`}`;
+        const promptVisual = svg("직사각형으로 확대한 정사각형", draw, false, values);
+        const answerVisual = `${svg("직사각형으로 확대한 정사각형", draw, true, values)}${mathBoard("넓이의 증가", row("넓이 배율", `${d.widthScale}×${d.heightScale}=${factor}배`) + row("증가 배율", `${factor}-1=${factor - 1}배`) + row("처음 넓이", `${sourceValue(d.increase)}÷${factor - 1}=${sourceValue(answer)}cm²`))}`;
+        return fixedResult(`어떤 정사각형의 가로를 ${d.widthScale}배, 세로를 ${d.heightScale}배 하여 새로운 직사각형을 만들었습니다. 새 직사각형의 넓이는 처음보다 ${sourceValue(d.increase)}cm² 넓어졌습니다. 처음 정사각형의 넓이는 몇 cm²인지 구하세요.${promptVisual}${mathBoard("확대 조건", row("가로", `${d.widthScale}배`) + row("세로", `${d.heightScale}배`) + row("늘어난 넓이", `${sourceValue(d.increase)}cm²`))}${support("가로 배와 세로 배를 곱해 넓이 배율을 구한 뒤 늘어난 넓이로 나누세요.")}${challenge}${evidence(values)}`, `${sourceValue(answer)}cm²`, `넓이는 ${factor}배가 되었으므로 늘어난 부분은 ${factor - 1}배입니다. 처음 넓이는 ${sourceValue(d.increase)}÷${factor - 1}=${sourceValue(answer)}cm²입니다.`, { html: answerVisual, values });
+      }
+
+      if (variant === 6) {
+        const d = pool; const answer = (d.area - 4 * d.width * d.width) / d.width;
+        if (Math.abs(answer - d.perimeter) > 1e-9) throw new Error(`${sourceItemId} 공원 둘레 검산 오류`);
+        const values = [d.width, d.area, d.perimeter];
+        const innerLeft = 40 + d.width * 5; const innerTop = 42 + d.width * 5;
+        const draw = solved => `<rect class="source61-e4-outer" x="40" y="42" width="280" height="125"/><rect class="source61-e4-inner" x="${innerLeft}" y="${innerTop}" width="${280 - d.width * 10}" height="${125 - d.width * 10}"/>${line(40, 27, innerLeft, 27, "source61-e4-measure")}${line(40, 22, 40, 32, "source61-e4-measure")}${line(innerLeft, 22, innerLeft, 32, "source61-e4-measure")}${line(40, 27, 48, 23, "source61-e4-measure")}${line(40, 27, 48, 31, "source61-e4-measure")}${line(innerLeft, 27, innerLeft - 8, 23, "source61-e4-measure")}${line(innerLeft, 27, innerLeft - 8, 31, "source61-e4-measure")}${`<text x="${(40 + innerLeft) / 2}" y="18">폭 ${sourceValue(d.width)}m</text>`}${solved ? `<text class="source61-e4-result-label" x="180" y="208">공원 둘레 = ${sourceValue(answer)}m</text>` : `<text x="180" y="208">안쪽 길의 넓이와 폭으로 둘레를 구하세요.</text>`}`;
+        const promptVisual = svg("직사각형 모양 공원과 안쪽 길", draw, false, values);
+        const answerVisual = `${svg("직사각형 모양 공원과 안쪽 길", draw, true, values)}${mathBoard("길의 넓이와 공원 둘레", row("모서리 네 곳", `4×${sourceValue(d.width)}×${sourceValue(d.width)}=${sourceValue(4 * d.width * d.width)}m²`) + row("둘레", `(${sourceValue(d.area)}-${sourceValue(4 * d.width * d.width)})÷${sourceValue(d.width)}=${sourceValue(answer)}m`))}`;
+        return fixedResult(`직사각형 모양의 공원 둘레에 그림과 같이 폭이 ${sourceValue(d.width)}m인 길을 만들었습니다. 길의 넓이가 ${sourceValue(d.area)}m²일 때, 공원의 둘레는 몇 m인지 구하세요.${promptVisual}${mathBoard("공원 자료", row("길의 폭", `${sourceValue(d.width)}m`) + row("길의 넓이", `${sourceValue(d.area)}m²`) + row("구할 것", "공원 둘레"))}${support("길의 넓이에서 네 모서리의 작은 정사각형 넓이를 빼고, 폭으로 나누세요.")}${challenge}${evidence(values)}`, `${sourceValue(answer)}m`, `길의 넓이는 공원 둘레×폭+네 모서리 넓이입니다. 따라서 공원 둘레=(${sourceValue(d.area)}-4×${sourceValue(d.width)}²)÷${sourceValue(d.width)}=${sourceValue(answer)}m입니다.`, { html: answerVisual, values });
+      }
+
+      if (variant === 8) {
+        const d = pool;
+        const v1 = d.firstDistance / d.firstMinutes, v2 = d.secondDistance / d.secondMinutes; const answer = (d.circumference - v1 * d.delay) / (v1 + v2);
+        if (Math.abs(answer - d.answer) > 1e-9) throw new Error(`${sourceItemId} 원형 길 만남 검산 오류`);
+        const values = [d.circumference, d.firstDistance, d.firstMinutes, d.secondDistance, d.secondMinutes, d.delay, d.answer];
+        const firstDistance = v1 * d.delay; const remainingDistance = d.circumference - firstDistance; const scale = 290 / d.circumference; const startX = 35; const splitX = startX + firstDistance * scale; const endX = 325;
+        const draw = solved => `${line(startX, 96, endX, 96, "source61-e4-route")}${line(startX, 84, startX, 108, "source61-e4-measure")}${line(splitX, 84, splitX, 108, "source61-e4-measure")}${line(endX, 84, endX, 108, "source61-e4-measure")}${line(startX + 10, 78, splitX - 10, 78, "source61-e4-arrow")}${line(splitX + 10, 114, endX - 10, 114, "source61-e4-arrow")}${dot(startX, 96, "출발")}${dot(endX, 96, "한 바퀴")}${`<text x="${(startX + splitX) / 2}" y="66">먼저 간 구간</text>`}${`<text x="${(splitX + endX) / 2}" y="132">남은 구간</text>`}${solved ? `<line class="source61-e4-section-highlight" x1="${splitX}" y1="96" x2="${endX}" y2="96"/><text class="source61-e4-result-label" x="180" y="190">${sourceValue(remainingDistance)}km ÷ (${sourceValue(v1)}+${sourceValue(v2)}) = ${sourceValue(answer)}분</text>` : `<text x="180" y="190">원형 길을 펼쳐 두 구간으로 생각하세요.</text>`}`;
+        const promptVisual = svg("원형 자전거 길과 반대 방향 이동", draw, false, values);
+        const answerVisual = `${svg("원형 자전거 길과 반대 방향 이동", draw, true, values)}${mathBoard("속력과 출발 시각", row("첫째 속력", `${sourceValue(v1)}km/분`) + row("둘째 속력", `${sourceValue(v2)}km/분`) + row("남은 길이", `${sourceValue(d.circumference)}-${sourceValue(v1)}×${d.delay}=${sourceValue(d.circumference - v1 * d.delay)}km`) + row("답", `${sourceValue(answer)}분`))}`;
+        return fixedResult(`윤정이는 ${d.firstMinutes}분 동안 ${sourceValue(d.firstDistance)}km를 가는 빠르기로, 보라는 ${d.secondMinutes}분 동안 ${sourceValue(d.secondDistance)}km를 가는 빠르기로 원형 길을 돕니다. 둘레가 ${sourceValue(d.circumference)}km인 길에서 윤정이가 먼저 출발하고 ${d.delay}분 뒤 보라가 반대 방향으로 출발할 때, 보라는 출발 몇 분 후 윤정이를 처음 만나게 되는지 구하세요.${promptVisual}${mathBoard("원형 길 자료", row("둘레", `${sourceValue(d.circumference)}km`) + row("윤정이", `${d.delay}분 먼저 출발`) + row("보라", "반대 방향"))}${support("먼저 두 사람의 1분 동안 가는 거리를 구하고, 보라가 출발할 때 남은 거리를 두 사람의 합한 빠르기로 나누세요.")}${challenge}${evidence(values)}`, `${sourceValue(answer)}분`, `윤정이가 먼저 ${d.delay}분 동안 간 거리를 빼면 남은 거리는 ${sourceValue(d.circumference - v1 * d.delay)}km입니다. 두 사람은 서로 가까워지므로 ${sourceValue(v1)}+${sourceValue(v2)}로 나누어 ${sourceValue(answer)}분입니다.`, { html: answerVisual, values });
+      }
+
+      throw new Error(`${sourceItemId} 생성 분기가 없습니다.`);
+    },
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5"
@@ -23088,6 +23250,10 @@
     [type => type.sourceItemId?.startsWith("6-1-u3-e1-"), "sourceGrade6DecimalDivisionE1"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e2-") && !["6-1-u3-e2-example-2", "6-1-u3-e2-example-4", "6-1-u3-e2-mission-6"].includes(type.sourceItemId), "sourceGrade6DecimalDivisionE2"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e3-"), "sourceGrade6DecimalDivisionE3"],
+    [type => [
+      "6-1-u3-e4-exploration-1", "6-1-u3-e4-example-2", "6-1-u3-e4-example-3", "6-1-u3-e4-example-4",
+      "6-1-u3-e4-mission-1", "6-1-u3-e4-mission-2", "6-1-u3-e4-mission-3", "6-1-u3-e4-mission-5", "6-1-u3-e4-mission-6"
+    ].includes(type.sourceItemId), "sourceGrade6DecimalDivisionE4"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
