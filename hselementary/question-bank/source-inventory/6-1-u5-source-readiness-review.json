@@ -1,0 +1,1457 @@
+{
+  "schemaVersion": 2,
+  "status": "private-review-locked-source-inventory",
+  "semester": "6-1",
+  "unit": 5,
+  "unitName": "여러 가지 그래프",
+  "source": "생각하는 황소 초등 6-1 심화 원본 PDF",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "fileName": "6-1심화.pdf",
+    "sha256": "518AAF8027656E00A447E2E9EFF6F233ED68349604539D8D005AF8E4DB750B06",
+    "sizeBytes": 144705434,
+    "sourcePdfPagesDirectlyReviewed": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45
+    ],
+    "sourcePrintedPagesDirectlyReviewed": [
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51
+    ],
+    "renderDpi": 600,
+    "pageRangeMeaning": "PDF 38~45쪽을 600dpi로 직접 눈으로 확인했으며 인쇄 44~51쪽에 해당합니다."
+  },
+  "reviewScope": "원본 문제 하나 단위 직접 분류·검산. 실제 구현과 공개 전 단계.",
+  "sourceCatalogLookup": {
+    "status": "old-start-index-used-only-for-navigation",
+    "catalog": ".source-memory/source-memory.json",
+    "note": "기존 6-1-source-items.json은 시작 위치 확인에만 사용하고 조건·그래프·답은 원본을 새로 판독했습니다."
+  },
+  "personalMarkPolicy": "연필 계산, 회색 동그라미, 빨간 표시와 손글씨 답은 조건·정답 근거로 사용하지 않았습니다.",
+  "learnerFitDefaults": {
+    "learnerStage": "초등 6학년 1학기",
+    "language": "그림그래프, 띠그래프, 원그래프, 전체, 백분율, 반올림, 평균, 합계, 차를 사용합니다.",
+    "prerequisites": "분수·소수의 계산, 백분율, 평균, 반올림, 표와 그래프 읽기",
+    "representation": "범례, 띠의 경계와 눈금, 원그래프의 각도와 비율을 함께 확인합니다."
+  },
+  "integrity": {
+    "expectedTotalItems": 43,
+    "actualTotalItems": 43,
+    "expectedBySection": {
+      "exploration": 7,
+      "example": 12,
+      "mission": 24
+    },
+    "actualBySection": {
+      "exploration": 7,
+      "example": 12,
+      "mission": 24
+    },
+    "expectedBySourcePdfPage": {
+      "38": 6,
+      "39": 6,
+      "40": 4,
+      "41": 6,
+      "42": 4,
+      "43": 6,
+      "44": 5,
+      "45": 6
+    },
+    "actualBySourcePdfPage": {
+      "38": 6,
+      "39": 6,
+      "40": 4,
+      "41": 6,
+      "42": 4,
+      "43": 6,
+      "44": 5,
+      "45": 6
+    },
+    "requiredStatus": "review-locked",
+    "requiredSourceVerified": true,
+    "checks": {
+      "directVisualReviewDpi": 600,
+      "sourcePdfPagesInclusive": [
+        38,
+        45
+      ],
+      "sourcePrintedPagesInclusive": [
+        44,
+        51
+      ],
+      "sourceItemIdUnique": true,
+      "requiredFieldsPresent": true,
+      "allReleaseLocked": false,
+      "noHandwritingUsed": true,
+      "sourcePdfAndPageRangeReviewed": true
+    },
+    "independentCalculationPassCount": 37,
+    "singleAnswerTrueCount": 37,
+    "singleAnswerFalseCount": 3,
+    "singleAnswerNullCount": 3,
+    "openOrAmbiguousCount": 6,
+    "visualAssetRequiredCount": 43,
+    "duplicateSourceItemIds": 0,
+    "duplicateNormalizedTypeIds": 2,
+    "unclassifiedItems": 0,
+    "publicCandidateCount": 9,
+    "publicDecisionLockedCount": 34,
+    "releaseLockedCount": 34,
+    "notes": [
+      "원본 6-1심화.pdf PDF 38~45쪽을 600dpi로 직접 확인했습니다. PDF 38~45쪽은 인쇄 쪽 44~51쪽입니다.",
+      "기존 6-1-source-items.json은 시작 위치만 참고했습니다. 실제 분류는 개념탐구 소문항 7개, 예제 12개, Mission 번호 24개로 다시 세었습니다.",
+      "Mission 4의 (1),(2)는 원문에서 하나의 Mission 번호이므로 하나의 유형 항목으로 기록했습니다.",
+      "개념탐구 1의 단일 답 9유형은 원본 구조·독립 계산·문제와 답의 같은 그림 검수를 마쳐 공개 후보로 전환했고, 열린 설명형 3유형과 나머지 항목은 잠금을 유지합니다.",
+      "수치·그래프 문항은 범례, 눈금, 각 구간의 비율·각도, 표의 값을 다시 읽어 계산했습니다. 판독이 불충분한 항목은 답을 비워 잠갔습니다."
+    ],
+    "calculationCheckedCount": 37,
+    "calculationNeedsClarificationCount": 6,
+    "lockedCount": 34,
+    "allImplementationLocked": false,
+    "allReleaseLocked": false
+  },
+  "items": [
+    {
+      "sourceItemId": "6-1-u5-e1-exploration-1-1",
+      "sourceSection": "exploration",
+      "sourceItemLabel": "개념탐구 1-(1)-①",
+      "sourcePdfPage": 38,
+      "sourcePrintedPage": 44,
+      "commonTypeId": "pictograph-rounding-and-key",
+      "childFriendlyTypeLabel": "그림그래프의 범례와 반올림 방법 설명하기",
+      "originalStructure": "표의 야구 동호회 수를 그림그래프로 나타낸 자료를 보고 백의 자리까지 나타낸 방법을 설명합니다.",
+      "conditions": [
+        "3130개, 481개, 594개, 289개, 776개, 75개",
+        "큰 그림1000개, 작은 그림100개"
+      ],
+      "visualRequirement": "큰 그림과 작은 그림의 범례 위치가 분명하고 백의 자리 반올림을 읽을 수 있어야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "큰 그림=1000개, 작은 그림=100개",
+        "rounding": "백의 자리까지"
+      },
+      "independentCalculation": null,
+      "independentAnswer": null,
+      "candidateAnswerCount": null,
+      "singleAnswer": false,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "설명형 활동으로 답을 하나로 정하지 않습니다. 공개 전 잠금.",
+      "calculationStatus": "needs-clarification",
+      "releaseStatus": "locked",
+      "resultContract": "rubric"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-exploration-1-2",
+      "sourceSection": "exploration",
+      "sourceItemLabel": "개념탐구 1-(1)-②",
+      "sourcePdfPage": 38,
+      "sourcePrintedPage": 44,
+      "commonTypeId": "pictograph-table-comparison",
+      "childFriendlyTypeLabel": "표와 그림그래프의 다른 점 설명하기",
+      "originalStructure": "같은 야구 동호회 자료를 표와 그림그래프로 나타낸 두 자료를 비교합니다.",
+      "conditions": [
+        "표에는 수를 직접 씀",
+        "그림그래프에는 범례와 그림 수로 나타냄",
+        "일부 수는 백의 자리까지 반올림"
+      ],
+      "visualRequirement": "표와 그림그래프의 지역 이름과 범례가 모두 보여야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "큰 그림=1000개, 작은 그림=100개"
+      },
+      "independentCalculation": null,
+      "independentAnswer": null,
+      "candidateAnswerCount": null,
+      "singleAnswer": false,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "표와 그림그래프의 차이를 설명하는 활동으로 답을 하나로 정하지 않습니다. 공개 전 잠금.",
+      "calculationStatus": "needs-clarification",
+      "releaseStatus": "locked",
+      "resultContract": "rubric"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-exploration-2",
+      "sourceSection": "exploration",
+      "sourceItemLabel": "개념탐구 1-(2)",
+      "sourcePdfPage": 38,
+      "sourcePrintedPage": 44,
+      "commonTypeId": "pictograph-rounding-construction",
+      "childFriendlyTypeLabel": "수를 반올림하여 그림그래프로 나타내기",
+      "originalStructure": "연령대별 관객 수를 적당한 자리에서 반올림한 뒤 그림그래프로 직접 나타냅니다.",
+      "conditions": [
+        "178540명, 429158명, 582175명, 216530명, 15068명",
+        "반올림할 자리는 풀이자가 정함"
+      ],
+      "visualRequirement": "반올림할 자리와 그림의 범례를 함께 표시해야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "풀이자가 반올림 자리와 범례를 정함"
+      },
+      "independentCalculation": null,
+      "independentAnswer": null,
+      "candidateAnswerCount": null,
+      "singleAnswer": false,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원하는 자리에서 반올림해 그림그래프를 완성하는 활동으로 여러 답이 가능합니다. 공개 전 잠금.",
+      "calculationStatus": "needs-clarification",
+      "releaseStatus": "locked",
+      "resultContract": "rubric"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-exploration",
+      "sourceSection": "exploration",
+      "sourceItemLabel": "개념탐구 2",
+      "sourcePdfPage": 40,
+      "sourcePrintedPage": 46,
+      "commonTypeId": "pictograph-to-strip-graph",
+      "childFriendlyTypeLabel": "그림그래프를 표와 띠그래프로 바꾸기",
+      "originalStructure": "꽃별 그림그래프의 그림 수를 세어 표를 완성하고 전체를 띠그래프로 나타냅니다.",
+      "conditions": [
+        "큰 얼굴 그림10명, 작은 얼굴 그림1명",
+        "무궁화72명, 진달래48명, 개나리32명, 장미48명, 합계200명",
+        "백분율36%,24%,16%,24%"
+      ],
+      "visualRequirement": "큰 그림·작은 그림의 범례와 꽃별 칸의 경계를 분명히 보여야 합니다.",
+      "graphScale": {
+        "type": "pictograph-and-strip",
+        "key": "큰 그림=10명, 작은 그림=1명",
+        "total": "200명=100%"
+      },
+      "independentCalculation": "무궁화4×10+3×10+2=72, 진달래4×10+8=48, 개나리3×10+2=32, 장미4×10+8=48. 백분율은36%,24%,16%,24%입니다.",
+      "independentAnswer": "표와 띠그래프: 무궁화72명·진달래48명·개나리32명·장미48명; 36%·24%·16%·24%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 확인은 끝났지만 그림그래프와 띠그래프 대응 화면 검수 전입니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "ordered-list"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-exploration",
+      "sourceSection": "exploration",
+      "sourceItemLabel": "개념탐구 3",
+      "sourcePdfPage": 42,
+      "sourcePrintedPage": 48,
+      "commonTypeId": "picture-counts-to-circle-graph",
+      "childFriendlyTypeLabel": "그림 옆 수를 표와 원그래프로 바꾸기",
+      "originalStructure": "반려동물 그림 옆에 직접 적힌 학생 수를 보고 표와 백분율, 원그래프를 완성합니다.",
+      "conditions": [
+        "강아지120명, 고양이75명, 햄스터60명, 토끼45명, 합계300명"
+      ],
+      "visualRequirement": "반려동물 그림과 그 아래 학생 수, 원그래프의 중심 위치·각도를 분명히 보여야 합니다.",
+      "graphScale": {
+        "type": "picture-counts-and-circle",
+        "total": "300명",
+        "angleScale": "전체360도"
+      },
+      "independentCalculation": "백분율은40%,25%,20%,15%, 중심각은144도,90도,72도,54도입니다.",
+      "independentAnswer": "강아지40%·144도, 고양이25%·90도, 햄스터20%·72도, 토끼15%·54도",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원그래프 각도와 표의 대응 위치를 화면에서 다시 확인해야 합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "ordered-list"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-exploration-1",
+      "sourceSection": "exploration",
+      "sourceItemLabel": "개념탐구 4-(1)",
+      "sourcePdfPage": 44,
+      "sourcePrintedPage": 50,
+      "commonTypeId": "circle-and-strip-graph-comparison",
+      "childFriendlyTypeLabel": "원그래프와 띠그래프를 비교하여 사람 수 구하기",
+      "originalStructure": "찬성·반대 비율 원그래프와 찬성·반대 이유 띠그래프를 비교합니다.",
+      "conditions": [
+        "조사 대상5000명, 찬성70%, 반대30%",
+        "찬성 이유35%,34%,22%,9%",
+        "반대 이유33%,32%,28%,7%"
+      ],
+      "visualRequirement": "원그래프 경계와 두 띠그래프의 0~100% 눈금이 함께 보여야 합니다.",
+      "graphScale": {
+        "type": "circle-and-strip",
+        "total": "5000명",
+        "percentageScale": "0~100%"
+      },
+      "independentCalculation": "찬성 중 가장 많은 이유는5000×70%×34%=1190명, 반대 중 가장 많은 이유는5000×30%×33%=495명입니다. 차는695명입니다.",
+      "independentAnswer": "695명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원그래프와 두 띠그래프의 경계를 구현하기 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-exploration-2",
+      "sourceSection": "exploration",
+      "sourceItemLabel": "개념탐구 4-(2)",
+      "sourcePdfPage": 44,
+      "sourcePrintedPage": 50,
+      "commonTypeId": "circle-and-strip-graph-reasoning",
+      "childFriendlyTypeLabel": "찬성 이유의 비율을 다시 구하기",
+      "originalStructure": "교통 체증 때문에 반대했던 사람들이 찬성 중 기타 이유로 돌아왔을 때 기타 이유의 비율을 구합니다.",
+      "conditions": [
+        "조사 대상5000명, 찬성70%, 반대30%",
+        "반대 교통 체증28%가 이동",
+        "기존 찬성 기타9%"
+      ],
+      "visualRequirement": "이동 전후 사람 수와 기타 이유 구간을 분리해 보여야 합니다.",
+      "graphScale": {
+        "type": "circle-and-strip",
+        "percentageScale": "0~100%",
+        "transition": "반대 교통 체증에서 찬성 기타로 이동"
+      },
+      "independentCalculation": "교통 체증 이동420명, 기존 찬성 기타315명. 새 기타735명, 새 찬성3920명, 735÷3920×100=18.75%입니다.",
+      "independentAnswer": "18.75%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "전후 이동을 나타내는 구간 표시를 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-example-1",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 1-1",
+      "sourcePdfPage": 38,
+      "sourcePrintedPage": 44,
+      "commonTypeId": "pictograph-average-plus",
+      "childFriendlyTypeLabel": "그림그래프에서 평균보다 많은 수 찾기",
+      "originalStructure": "가·나·다 지역의 쌀 소비량 평균보다 라 지역이400가마 많도록 그림그래프를 완성합니다.",
+      "conditions": [
+        "가2300가마, 나3000가마, 다3100가마",
+        "라=가·나·다 평균+400가마",
+        "큰 그림1000가마, 작은 그림100가마"
+      ],
+      "visualRequirement": "라의 빈칸과 큰·작은 그림 범례가 분명해야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "큰 그림=1000가마, 작은 그림=100가마"
+      },
+      "independentCalculation": "(2300+3000+3100)÷3=2800가마, 라=3200가마=큰 그림3개+작은 그림2개입니다.",
+      "independentAnswer": "3200가마; 라는 큰 그림3개와 작은 그림2개",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "ordered-tuple",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-example-1"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-example-2",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 1-2",
+      "sourcePdfPage": 38,
+      "sourcePrintedPage": 44,
+      "commonTypeId": "pictograph-least-plus-average",
+      "childFriendlyTypeLabel": "그림그래프에서 가장 적은 양에 더한 양 구하기",
+      "originalStructure": "네 동네 고구마 수확량에서 가장 적은 동네가 이튿날 더 수확하여 네 동네 평균이2kg 늘었을 때 이튿날 수확량을 구합니다.",
+      "conditions": [
+        "큰 그림100kg, 중간 그림10kg, 작은 그림1kg",
+        "가241kg, 나215kg, 다323kg, 라246kg",
+        "가장 적은 나에 추가"
+      ],
+      "visualRequirement": "세 크기의 그림과 동네 경계가 겹치지 않아야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "큰 그림=100kg, 중간 그림=10kg, 작은 그림=1kg"
+      },
+      "independentCalculation": "가장 적은 나에 더한 양은4×2=8kg, 나의 이튿날 수확량은215+8=223kg입니다.",
+      "independentAnswer": "나 동네, 223kg",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "ordered-tuple",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-example-2"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-example-3",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 1-3",
+      "sourcePdfPage": 38,
+      "sourcePrintedPage": 44,
+      "commonTypeId": "pictograph-rounded-sum-maximum",
+      "childFriendlyTypeLabel": "반올림한 그림그래프에서 합의 최댓값 구하기",
+      "originalStructure": "세 마을 학생 수를 백의 자리까지 반올림한 그림그래프에서 실제 합의 최댓값을 구합니다.",
+      "conditions": [
+        "큰 그림1000명, 작은 그림100명",
+        "가6600명, 나6200명, 다5800명으로 표시",
+        "각 수는 백의 자리까지 반올림"
+      ],
+      "visualRequirement": "그림 크기와 세 마을 이름 위치를 고정해야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "큰 그림=1000명, 작은 그림=100명",
+        "rounding": "백의 자리까지"
+      },
+      "independentCalculation": "6600+6200+5800=18600명, 실제 최댓값은18600+49×3=18747명입니다.",
+      "independentAnswer": "18747명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-example-3"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-example-1",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 2-1",
+      "sourcePdfPage": 40,
+      "sourcePrintedPage": 46,
+      "commonTypeId": "strip-graph-revenue",
+      "childFriendlyTypeLabel": "띠그래프에서 음식 판매 금액 비교하기",
+      "originalStructure": "두 식당의 음식별 판매 비율과 전체 그릇 수, 회냉면 가격으로 판매 금액 차를 구합니다.",
+      "conditions": [
+        "가 전체3000그릇, 회냉면18%, 8000원",
+        "나 전체5000그릇, 회냉면26%, 5000원"
+      ],
+      "visualRequirement": "두 띠그래프의 식당·음식·백분율 대응이 정확해야 합니다.",
+      "graphScale": {
+        "type": "strip",
+        "percentageScale": "전체100%"
+      },
+      "independentCalculation": "가=3000×18%×8000=4320000원, 나=5000×26%×5000=6500000원, 차=2180000원입니다.",
+      "independentAnswer": "나 식당, 2180000원 더 많음",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "띠그래프의 구간 경계를 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "ordered-tuple"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-example-2",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 2-2",
+      "sourcePdfPage": 40,
+      "sourcePrintedPage": 46,
+      "commonTypeId": "strip-graph-multi-year-sum",
+      "childFriendlyTypeLabel": "여러 해 띠그래프에서 사람 수의 합 구하기",
+      "originalStructure": "2015~2017년 TV 시청 시간 띠그래프와 해마다 다른 전체 학생 수로 2시간 미만 학생 수의 합을 구합니다.",
+      "conditions": [
+        "2015년3000명·22%, 2016년2500명·26%, 2017년2000명·33%"
+      ],
+      "visualRequirement": "연도별 구간 이름과 전체 수를 대응해야 합니다.",
+      "graphScale": {
+        "type": "strip",
+        "segments": "2015:22%,38%,40%; 2016:26%,38%,36%; 2017:33%,40%,27%"
+      },
+      "independentCalculation": "3000×22%+2500×26%+2000×33%=660+650+660=1970명입니다.",
+      "independentAnswer": "1970명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "연도별 전체 수와 구간 대응을 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-example-3",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 2-3",
+      "sourcePdfPage": 40,
+      "sourcePrintedPage": 46,
+      "commonTypeId": "strip-graph-ratio-count",
+      "childFriendlyTypeLabel": "띠그래프의 길이와 비로 꽃 수 구하기",
+      "originalStructure": "띠그래프의 길이, 기타 비율, 꽃 종류 사이의 비로 전체 꽃 수를 구합니다.",
+      "conditions": [
+        "전체20cm, 장미8cm, 기타5%",
+        "무궁화:국화=5:2",
+        "봉선화는 장미의1/2, 무궁화10송이"
+      ],
+      "visualRequirement": "장미8cm 표시와 기타5% 구간 경계가 분명해야 합니다.",
+      "graphScale": {
+        "type": "strip",
+        "length": "전체20cm",
+        "segments": "장미40%, 기타5%, 나머지55%"
+      },
+      "independentCalculation": "장미40%, 봉선화20%, 무궁화와 국화35%. 무궁화25%가10송이이므로 전체는10÷0.25=40송이입니다.",
+      "independentAnswer": "40송이",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "구간 길이·백분율·꽃 이름의 위치를 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-example-1",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 3-1",
+      "sourcePdfPage": 42,
+      "sourcePrintedPage": 48,
+      "commonTypeId": "circle-graph-remainder-percent",
+      "childFriendlyTypeLabel": "원그래프의 남은 비율에서 나무 수 구하기",
+      "originalStructure": "500그루 나무 원그래프에서 기타의20%가 밤나무일 때 밤나무 수를 구합니다.",
+      "conditions": [
+        "소나무32%, 은행나무23%, 벚나무54도, 기타 나머지",
+        "전체500그루"
+      ],
+      "visualRequirement": "54도 표시가 벚나무 구간에 붙고 기타 경계가 보여야 합니다.",
+      "graphScale": {
+        "type": "circle",
+        "total": "500그루",
+        "angleScale": "360도"
+      },
+      "independentCalculation": "벚나무15%, 기타=100-32-23-15=30%, 기타150그루의20%=30그루입니다.",
+      "independentAnswer": "30그루",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원그래프 각도 표시 위치를 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-example-2",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 3-2",
+      "sourcePdfPage": 42,
+      "sourcePrintedPage": 48,
+      "commonTypeId": "circle-graph-two-populations",
+      "childFriendlyTypeLabel": "두 원그래프에서 전체 사람 수 구하기",
+      "originalStructure": "남자와 여자 일의 비율 원그래프, 남자 수, 두 집단의 직업 비율 차로 전체 수를 구합니다.",
+      "conditions": [
+        "남자50만명, 남자 전문직12%, 여자 자영업18%",
+        "전문직 남자가 자영업 여자보다6000명 많음"
+      ],
+      "visualRequirement": "남자·여자 그래프와 직업 구간을 섞지 않아야 합니다.",
+      "graphScale": {
+        "type": "two-circle",
+        "segments": "남자 전문직12%, 여자 자영업18%"
+      },
+      "independentCalculation": "남자 전문직=500000×12%=60000명, 여자 자영업=54000명, 여자 전체=54000÷18%=300000명, 전체800000명입니다.",
+      "independentAnswer": "800000명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "두 원그래프의 백분율 대응을 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-example-3",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 3-3",
+      "sourcePdfPage": 42,
+      "sourcePrintedPage": 48,
+      "commonTypeId": "circle-graph-overlap",
+      "childFriendlyTypeLabel": "두 원그래프에서 둘 다 좋아하지 않는 학생 수 구하기",
+      "originalStructure": "미술과 체육을 좋아하는 학생의 원그래프와 둘 다 좋아하는 학생의 원그래프로 어느 것도 좋아하지 않는 학생 수를 구합니다.",
+      "conditions": [
+        "전체1860명, 미술을 좋아하지 않는 학생270도",
+        "체육을 좋아하지 않는 학생240도, 둘 다 좋아하는 학생150도"
+      ],
+      "visualRequirement": "각도와 좋아함·좋아하지 않음의 말뜻을 구분해야 합니다.",
+      "graphScale": {
+        "type": "three-circle",
+        "total": "1860명",
+        "angleScale": "360도"
+      },
+      "independentCalculation": "미술 좋아함1/4, 체육 좋아함1/3, 둘 다 좋아함5/12. 적어도 하나는1/6이므로 둘 다 좋아하지 않음은1860×5/6=1550명입니다.",
+      "independentAnswer": "1550명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "겹치는 원그래프의 각도와 말뜻을 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-example-1",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 4-1",
+      "sourcePdfPage": 44,
+      "sourcePrintedPage": 50,
+      "commonTypeId": "circle-and-strip-population",
+      "childFriendlyTypeLabel": "원그래프와 띠그래프에서 성씨별 사람 수 차 구하기",
+      "originalStructure": "우리나라 성씨별 원그래프와 김씨 본관별 띠그래프로 김해 김씨와 광산 김씨의 사람 수 차를 구합니다.",
+      "conditions": [
+        "성씨 인구 약5000만명, 김씨22%",
+        "김해42%, 경주17%, 광산9%, 기타32%"
+      ],
+      "visualRequirement": "김씨22%와 본관별42%·9% 구간을 정확히 연결해야 합니다.",
+      "graphScale": {
+        "type": "circle-and-strip",
+        "total": "5000만명"
+      },
+      "independentCalculation": "5000만×22%×(42%-9%)=363만명입니다.",
+      "independentAnswer": "363만명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "두 그래프의 연결을 구현 전 검수합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-example-2",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 4-2",
+      "sourcePdfPage": 44,
+      "sourcePrintedPage": 50,
+      "commonTypeId": "circle-and-strip-double-group",
+      "childFriendlyTypeLabel": "원그래프와 띠그래프로 가장 많은 학원 찾기",
+      "originalStructure": "남녀 학생 수 원그래프와 남녀별 학원 비율 띠그래프로 가장 많은 학원을 찾습니다.",
+      "conditions": [
+        "전체600명, 남60%, 여40%",
+        "남 피아노25·미술35·태권도40%, 여 피아노45·미술25·태권도30%"
+      ],
+      "visualRequirement": "남녀 그래프와 두 띠그래프의 학원 이름 순서를 맞춰야 합니다.",
+      "graphScale": {
+        "type": "circle-and-two-strip",
+        "total": "600명"
+      },
+      "independentCalculation": "남360명·여240명. 피아노198명, 미술186명, 태권도216명입니다.",
+      "independentAnswer": "태권도, 216명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원그래프와 띠그래프 순서를 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "ordered-tuple"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-example-3",
+      "sourceSection": "example",
+      "sourceItemLabel": "예제 4-3",
+      "sourcePdfPage": 44,
+      "sourcePrintedPage": 50,
+      "commonTypeId": "circle-and-strip-election",
+      "childFriendlyTypeLabel": "원그래프와 띠그래프로 회장 선거 결과 구하기",
+      "originalStructure": "여학생 표 원그래프와 후보자별 남녀 표 비율 띠그래프, 일부 남학생 표로 당선자와 표 수를 구합니다.",
+      "conditions": [
+        "후보자 정호·은경·경민",
+        "여학생 표 원그래프와 후보자별 남녀 비율은 눈금으로 표시",
+        "남학생 표: 은경600표, 경민216표"
+      ],
+      "visualRequirement": "띠의 남녀 경계와 여학생 원그래프의 후보자 비율을 선명하게 해야 합니다.",
+      "graphScale": {
+        "type": "circle-and-strip",
+        "percentageScale": "0~100% 눈금"
+      },
+      "independentCalculation": null,
+      "independentAnswer": null,
+      "candidateAnswerCount": null,
+      "singleAnswer": null,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프의 눈금과 막대 값을 정수 투표 수로 안전하게 맞출 수 없어 독립 답을 확정하지 못했습니다.",
+      "calculationStatus": "needs-clarification",
+      "releaseStatus": "locked",
+      "resultContract": "provisional"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-mission-1",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 1",
+      "sourcePdfPage": 39,
+      "sourcePrintedPage": 45,
+      "commonTypeId": "pictograph-average-grade",
+      "childFriendlyTypeLabel": "그림그래프에서 학년별 평균으로 빈칸 채우기",
+      "originalStructure": "학년별 학생 수 그림그래프에서 2학년과 5학년을 다른 학년 평균으로 정합니다.",
+      "conditions": [
+        "범례100명·50명·10명·1명",
+        "1학년324명, 3학년272명, 4학년403명, 6학년364명",
+        "2학년은1·3·4학년 평균, 5학년은2·3·6학년 평균"
+      ],
+      "visualRequirement": "네 종류 마름모 범례와 학년별 칸을 구분해야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "100명·50명·10명·1명"
+      },
+      "independentCalculation": "2학년=(324+272+403)÷3=333명. 5학년=(333+272+364)÷3=323명입니다.",
+      "independentAnswer": "2학년333명, 5학년323명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "ordered-tuple",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-mission-1"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-mission-2",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 2",
+      "sourcePdfPage": 39,
+      "sourcePrintedPage": 45,
+      "commonTypeId": "pictograph-average-difference",
+      "childFriendlyTypeLabel": "평균과 차를 이용하여 그림그래프 완성하기",
+      "originalStructure": "네 마을 학생 수 그림그래프에서 평균과 두 마을의 차로 빈 그림을 채웁니다.",
+      "conditions": [
+        "평균300명, 나 마을은 다보다110명 적음",
+        "가280명, 라370명",
+        "큰 얼굴100명, 작은 얼굴10명"
+      ],
+      "visualRequirement": "나·다 빈 그림과 범례를 분명히 보여야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "큰 얼굴=100명, 작은 얼굴=10명"
+      },
+      "independentCalculation": "전체1200명, 나+다=550명, 다-나=110명이므로 나220명, 다330명입니다.",
+      "independentAnswer": "나220명, 다330명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "ordered-tuple",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-mission-2"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-mission-3",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 3",
+      "sourcePdfPage": 39,
+      "sourcePrintedPage": 45,
+      "commonTypeId": "pictograph-per-machine-average",
+      "childFriendlyTypeLabel": "기계 한 대의 평균 생산량 비교하기",
+      "originalStructure": "공장별 연필 생산량 그림그래프와 기계 대수로 평균 생산량 차를 구합니다.",
+      "conditions": [
+        "기계 수 가5·나8·다4·라10·마6대",
+        "연필 범례10000·1000·100자루",
+        "생산량 가21500, 나34000, 다16000, 라32000, 마25200"
+      ],
+      "visualRequirement": "연필 세 크기와 공장 칸 경계를 선명하게 해야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "10000·1000·100자루"
+      },
+      "independentCalculation": "한 대 평균은4300,4250,4000,3200,4200자루. 차는4300-3200=1100자루입니다.",
+      "independentAnswer": "1100자루",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-mission-3"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-mission-4",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 4",
+      "sourcePdfPage": 39,
+      "sourcePrintedPage": 45,
+      "commonTypeId": "6-1-u5-mission-pictograph-mean-and-extreme",
+      "childFriendlyTypeLabel": "그림그래프에서 가장 큰 값과 평균 구하기",
+      "originalStructure": "서울 지역별 등록 외국인 수를 그림그래프로 나타내고, (1) 가장 많은 구와 가장 적은 구의 인원 차를 구한 뒤 (2) 네 구의 평균을 구합니다.",
+      "conditions": [
+        "그림 하나는 10000명",
+        "작은 그림 하나는 1000명",
+        "영등포구 39000명, 구로구 33000명, 금천구 20000명, 관악구 19000명"
+      ],
+      "visualRequirement": "그림그래프의 범례 위치와 큰 그림·작은 그림을 구분할 수 있어야 하며 네 지역의 값이 모두 보여야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "큰 그림=10000명, 작은 그림=1000명"
+      },
+      "independentCalculation": "읽은 값은 39000, 33000, 20000, 19000명입니다. (1) 39000-19000=20000명입니다. (2) (39000+33000+20000+19000)÷4=27750명입니다.",
+      "independentAnswer": "(1) 20000명 (2) 27750명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "composite",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-mission-4"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-mission-5",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 5",
+      "sourcePdfPage": 39,
+      "sourcePrintedPage": 45,
+      "commonTypeId": "pictograph-rounded-difference",
+      "childFriendlyTypeLabel": "반올림한 그림그래프에서 차의 최댓값 구하기",
+      "originalStructure": "만 명과 천 명 그림그래프를 천의 자리까지 반올림하여 두 사람 수의 차 최댓값을 구합니다.",
+      "conditions": [
+        "네모=10000명, 동그라미=1000명",
+        "첫 사람 네모3개·동그라미5개, 둘째 네모2개·동그라미4개",
+        "천의 자리까지 반올림"
+      ],
+      "visualRequirement": "네모·동그라미 범례와 표현 순서를 분명히 해야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "네모=10000명, 동그라미=1000명",
+        "rounding": "천의 자리까지"
+      },
+      "independentCalculation": "첫 표시35000명의 최댓값35499명, 둘째 표시24000명의 최솟값23500명. 차11999명입니다.",
+      "independentAnswer": "11999명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-mission-5"
+    },
+    {
+      "sourceItemId": "6-1-u5-e1-mission-6",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 6",
+      "sourcePdfPage": 39,
+      "sourcePrintedPage": 45,
+      "commonTypeId": "pictograph-population-average-transfer",
+      "childFriendlyTypeLabel": "이사한 뒤에도 동별 평균 인구 구하기",
+      "originalStructure": "동별 인구 그림그래프와 두 번의 이사 조건으로 네 동의 평균을 구합니다.",
+      "conditions": [
+        "A2800명, B5200명, C2400명, D3800명",
+        "B 인구30%가 A·C·D로 이동, 다음 해 각 동에서10%씩 다른 마을로 이동",
+        "큰 얼굴1000명, 작은 얼굴100명"
+      ],
+      "visualRequirement": "행과 범례를 선명하게 해야 합니다.",
+      "graphScale": {
+        "type": "pictograph",
+        "key": "1000명·100명",
+        "transfer": "동 사이 이동"
+      },
+      "independentCalculation": "2009년 이동 뒤에도 합은14200명입니다. 2010년에10%가 빠져12780명, 평균은12780÷4=3195명입니다.",
+      "independentAnswer": "3195명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e1-mission-6"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-mission-1",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 1",
+      "sourcePdfPage": 41,
+      "sourcePrintedPage": 47,
+      "commonTypeId": "strip-graph-replace-category",
+      "childFriendlyTypeLabel": "띠그래프에서 한 종류를 다른 종류로 바꾸기",
+      "originalStructure": "1학기 원그래프에서 소설책 절반을 위인전으로 바꾼 뒤 2학기 띠그래프를 완성합니다.",
+      "conditions": [
+        "소설30%, 참고서25%, 위인전20%, 시집15%, 기타10%",
+        "소설 절반을 위인전으로 교체"
+      ],
+      "visualRequirement": "0~100% 눈금과 다섯 구간을 정확히 표시해야 합니다.",
+      "graphScale": {
+        "type": "circle-to-strip",
+        "segments": "15%,25%,35%,15%,10%"
+      },
+      "independentCalculation": "소설15%, 위인전35%, 참고서25%, 시집15%, 기타10%입니다.",
+      "independentAnswer": "소설15%, 참고서25%, 위인전35%, 시집15%, 기타10%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "ordered-list"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-mission-2",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 2",
+      "sourcePdfPage": 41,
+      "sourcePrintedPage": 47,
+      "commonTypeId": "circle-and-strip-subgroup-percent",
+      "childFriendlyTypeLabel": "전체 비율 구하기",
+      "originalStructure": "남녀 비율 원그래프와 여학생 학원 희망 띠그래프로 피아노 희망 여학생의 전체 비율을 구합니다.",
+      "conditions": [
+        "남62%, 여38%",
+        "여학생 중 피아노30%"
+      ],
+      "visualRequirement": "전체와 여학생 안의 두 기준을 따로 표시해야 합니다.",
+      "graphScale": {
+        "type": "circle-and-strip",
+        "segments": "여학생38%, 그중 피아노30%"
+      },
+      "independentCalculation": "38%×30%=11.4%입니다.",
+      "independentAnswer": "11.4%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-mission-3",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 3",
+      "sourcePdfPage": 41,
+      "sourcePrintedPage": 47,
+      "commonTypeId": "strip-graph-height-difference",
+      "childFriendlyTypeLabel": "띠그래프에서 키 구간 학생 수 차 구하기",
+      "originalStructure": "두 해의 키별 학생 수 띠그래프에서 160cm 이상 학생 수 차를 구합니다.",
+      "conditions": [
+        "2007년1000명·160cm 이상5.6%, 2012년800명·160cm 이상8.5%",
+        "키 구간 네 개"
+      ],
+      "visualRequirement": "마지막 구간 경계와 수치를 분명히 해야 합니다.",
+      "graphScale": {
+        "type": "strip",
+        "segments": "2007:35.6%,37.8%,21%,5.6%; 2012:27.6%,38.4%,25.5%,8.5%"
+      },
+      "independentCalculation": "2007년56명, 2012년68명, 차12명입니다.",
+      "independentAnswer": "12명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-mission-4",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 4",
+      "sourcePdfPage": 41,
+      "sourcePrintedPage": 47,
+      "commonTypeId": "strip-graph-season-ratio",
+      "childFriendlyTypeLabel": "띠그래프에서 계절별 학생 수 구하기",
+      "originalStructure": "계절별 출생 띠그래프에서 계절 관계로 가을 학생 수를 구합니다.",
+      "conditions": [
+        "전체80명, 여름35%, 봄은 여름의3/7, 겨울은 봄의2배"
+      ],
+      "visualRequirement": "봄·여름·가을·겨울 구간과 35%를 대응해야 합니다.",
+      "graphScale": {
+        "type": "strip",
+        "segments": "봄15%, 여름35%, 가을20%, 겨울30%"
+      },
+      "independentCalculation": "봄15%, 겨울30%, 가을20%. 80×20%=16명입니다.",
+      "independentAnswer": "16명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-mission-5",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 5",
+      "sourcePdfPage": 41,
+      "sourcePrintedPage": 47,
+      "commonTypeId": "strip-graph-category-error",
+      "childFriendlyTypeLabel": "띠그래프에서 틀린 문제 수 구하기",
+      "originalStructure": "전체 문제 수와 서술형 비율, 영역별 띠그래프로 도형 영역 틀린 수를 구합니다.",
+      "conditions": [
+        "전체250문제, 서술형20%, 도형26%, 도형에서9개 맞힘"
+      ],
+      "visualRequirement": "도형 구간의 기준이 서술형 전체임을 표시해야 합니다.",
+      "graphScale": {
+        "type": "strip",
+        "segments": "수와 연산36%, 도형26%, 측정18%, 규칙성16%, 자료와 가능성4%"
+      },
+      "independentCalculation": "서술형50문제, 도형13문제, 틀린 수13-9=4문제입니다.",
+      "independentAnswer": "4문제",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e2-mission-6",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 6",
+      "sourcePdfPage": 41,
+      "sourcePrintedPage": 47,
+      "commonTypeId": "strip-graph-rectangle-area-difference",
+      "childFriendlyTypeLabel": "표와 띠그래프에서 직사각형 넓이 차 구하기",
+      "originalStructure": "학년별 학생 수 표와 두 직사각형 띠그래프의 가로·세로로 넓이 차를 구합니다.",
+      "conditions": [
+        "표: 42명,126명,105명,147명, 합계420명",
+        "직사각형18cm×5cm, 10cm×7cm"
+      ],
+      "visualRequirement": "표와 두 직사각형의 수치를 분리해야 합니다.",
+      "graphScale": {
+        "type": "table-and-strip",
+        "rectangles": "18×5,10×7"
+      },
+      "independentCalculation": "90cm²와70cm², 차20cm²입니다.",
+      "independentAnswer": "20cm²",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-mission-1",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 1",
+      "sourcePdfPage": 43,
+      "sourcePrintedPage": 49,
+      "commonTypeId": "circle-graph-book-replacement",
+      "childFriendlyTypeLabel": "원그래프 자료에서 책 수 차 구하기",
+      "originalStructure": "책 종류별 원그래프에서 동화책과 위인전의 합과 차로 위인전·소설책의 수 차를 구합니다.",
+      "conditions": [
+        "전체1200권, 동화책+위인전69%, 동화책은 위인전보다60권 많음, 기타7%"
+      ],
+      "visualRequirement": "네 책 종류 구간과 기타 경계를 읽을 수 있어야 합니다.",
+      "graphScale": {
+        "type": "circle",
+        "total": "1200권"
+      },
+      "independentCalculation": "합828권, 위인전384권, 동화책444권, 기타84권, 소설288권. 차는96권입니다.",
+      "independentAnswer": "96권",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-mission-2",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 2",
+      "sourcePdfPage": 43,
+      "sourcePrintedPage": 49,
+      "commonTypeId": "circle-and-strip-animal-count",
+      "childFriendlyTypeLabel": "두 원그래프에서 가축 수 차 구하기",
+      "originalStructure": "두 마을 가축별 원그래프와 전체 수로 말의 수 차를 구합니다.",
+      "conditions": [
+        "수정이네800마리·말15%, 진영이네700마리·말17%"
+      ],
+      "visualRequirement": "두 원그래프의 말 구간과 백분율을 대응해야 합니다.",
+      "graphScale": {
+        "type": "two-circle",
+        "segments": "말15%, 말17%"
+      },
+      "independentCalculation": "800×15%=120마리, 700×17%=119마리이므로 수정이네가1마리 더 많습니다.",
+      "independentAnswer": "수정이네가1마리 더 많음",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-mission-3",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 3",
+      "sourcePdfPage": 43,
+      "sourcePrintedPage": 49,
+      "commonTypeId": "circle-graph-grain-share",
+      "childFriendlyTypeLabel": "두 원그래프에서 곡물 생산량 비율 구하기",
+      "originalStructure": "두 마을의 곡물별 원그래프와 전체 생산량으로 콩의 비율을 구합니다.",
+      "conditions": [
+        "선영이네200t·콩19%, 기문이네300t·콩24%"
+      ],
+      "visualRequirement": "콩 구간과 t 단위를 정확히 표시해야 합니다.",
+      "graphScale": {
+        "type": "two-circle",
+        "total": "200t와300t"
+      },
+      "independentCalculation": "콩38t+72t=110t, 전체500t, 110÷500×100=22%입니다.",
+      "independentAnswer": "22%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-mission-4",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 4",
+      "sourcePdfPage": 43,
+      "sourcePrintedPage": 49,
+      "commonTypeId": "circle-graph-nutrition-count",
+      "childFriendlyTypeLabel": "원그래프에서 하루 영양 성분을 맞추는 개수 구하기",
+      "originalStructure": "참외 영양 성분 원그래프와 칼륨 하루 섭취량으로 필요한 참외 개수를 구합니다.",
+      "conditions": [
+        "참외1개400g, 기타25%가 칼륨, 하루5g",
+        "원그래프: 수분89%, 탄수화물7%, 단백질2%, 기타2%"
+      ],
+      "visualRequirement": "기타2%와 그 안의 칼륨25%의 기준을 구분해야 합니다.",
+      "graphScale": {
+        "type": "circle",
+        "segments": "기타2% 안 칼륨25%",
+        "unit": "참외400g"
+      },
+      "independentCalculation": "한 개 칼륨은400×2%×25%=2g, 5g 이상에는3개가 필요합니다.",
+      "independentAnswer": "3개",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-mission-5",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 5",
+      "sourcePdfPage": 43,
+      "sourcePrintedPage": 49,
+      "commonTypeId": "circle-graph-restaurant-revenue",
+      "childFriendlyTypeLabel": "원그래프에서 순대 매출 차 구하기",
+      "originalStructure": "두 분식점 매출 원그래프와 전체 매출로 순대 매출의 차를 구합니다.",
+      "conditions": [
+        "A200만원: 김밥44만원, 어묵18%, 떡볶이126도, 튀김20만원",
+        "B250만원: 김밥18%, 어묵40만원, 떡볶이70만원, 튀김86.4도"
+      ],
+      "visualRequirement": "금액·백분율·각도가 다른 표시임을 분명히 해야 합니다.",
+      "graphScale": {
+        "type": "two-circle",
+        "total": "A200만원, B250만원",
+        "angleScale": "360도"
+      },
+      "independentCalculation": "A 순대30만원, B 순대35만원, B가5만원 더 많습니다.",
+      "independentAnswer": "B 분식점이5만원 더 많음",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e3-mission-6",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 6",
+      "sourcePdfPage": 43,
+      "sourcePrintedPage": 49,
+      "commonTypeId": "circle-graph-two-preferences",
+      "childFriendlyTypeLabel": "두 원그래프에서 모두 싫어하는 학생 수 구하기",
+      "originalStructure": "산과 바다를 좋아하거나 싫어하는 원그래프들로 둘 다 싫어하는 학생 수를 구합니다.",
+      "conditions": [
+        "전체4320명, 산을 좋아하는 학생220도, 바다를 싫어하는 학생100도, 둘 다 좋아하는 학생160도"
+      ],
+      "visualRequirement": "220도·100도·160도가 어느 구간인지 선과 글자를 붙여야 합니다.",
+      "graphScale": {
+        "type": "three-circle",
+        "total": "4320명",
+        "angleScale": "360도"
+      },
+      "independentCalculation": "산을 좋아함220도, 바다를 좋아함260도, 둘 다 좋아함160도. 둘 다 싫어함=360-(220+260-160)=40도, 4320×40÷360=480명입니다.",
+      "independentAnswer": "480명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-mission-1",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 1",
+      "sourcePdfPage": 45,
+      "sourcePrintedPage": 51,
+      "commonTypeId": "circle-to-strip-category-replace",
+      "childFriendlyTypeLabel": "원그래프 자료를 띠그래프로 바꾸기",
+      "originalStructure": "학급 문고 원그래프에서 소설책 절반을 위인전으로 바꾸고 띠그래프를 완성합니다.",
+      "conditions": [
+        "소설30%, 참고서25%, 위인전20%, 시집15%, 기타10%",
+        "소설 절반을 위인전으로 교체"
+      ],
+      "visualRequirement": "다섯 구간과 누적 눈금을 정확히 표시해야 합니다.",
+      "graphScale": {
+        "type": "circle-to-strip",
+        "segments": "15%,25%,35%,15%,10%"
+      },
+      "independentCalculation": "새 비율은 소설15%, 참고서25%, 위인전35%, 시집15%, 기타10%입니다.",
+      "independentAnswer": "소설15%, 참고서25%, 위인전35%, 시집15%, 기타10%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "ordered-list"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-mission-2",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 2",
+      "sourcePdfPage": 45,
+      "sourcePrintedPage": 51,
+      "commonTypeId": "circle-and-strip-subgroup-percent",
+      "childFriendlyTypeLabel": "원그래프와 띠그래프에서 전체 비율 구하기",
+      "originalStructure": "남녀 비율과 여학생 학원 희망 띠그래프로 피아노 희망 여학생의 전체 비율을 구합니다.",
+      "conditions": [
+        "남62%, 여38%, 여학생 중 피아노30%"
+      ],
+      "visualRequirement": "두 기준의 백분율을 따로 표시해야 합니다.",
+      "graphScale": {
+        "type": "circle-and-strip",
+        "percentageScale": "각 그래프 전체=100%"
+      },
+      "independentCalculation": "38%×30%=11.4%입니다.",
+      "independentAnswer": "11.4%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-mission-3",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 3",
+      "sourcePdfPage": 45,
+      "sourcePrintedPage": 51,
+      "commonTypeId": "circle-and-strip-election",
+      "childFriendlyTypeLabel": "모둠별 득표율 그래프로 회장 뽑기",
+      "originalStructure": "세 후보자의 모둠별 득표율 띠그래프와 전체 득표 원그래프로 당선자를 구합니다.",
+      "conditions": [
+        "후보자 영수·지혜·동민, 지혜 전체25%",
+        "나 모둠 지혜200표·동민96표",
+        "후보자별 가·나 모둠 비율은 눈금"
+      ],
+      "visualRequirement": "띠그래프 눈금과 원그래프 이름을 정확히 연결해야 합니다.",
+      "graphScale": {
+        "type": "circle-and-strip",
+        "percentageScale": "0~100% 눈금"
+      },
+      "independentCalculation": null,
+      "independentAnswer": null,
+      "candidateAnswerCount": null,
+      "singleAnswer": null,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 선거 그래프의 눈금과 후보별 값 판독이 충분히 선명하지 않아 독립 답을 확정하지 못했습니다.",
+      "calculationStatus": "needs-clarification",
+      "releaseStatus": "locked",
+      "resultContract": "provisional"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-mission-4",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 4",
+      "sourcePdfPage": 45,
+      "sourcePrintedPage": 51,
+      "commonTypeId": "circle-and-pictograph-to-count",
+      "childFriendlyTypeLabel": "원그래프와 띠그래프에서 선물 종류별 학생 수 구하기",
+      "originalStructure": "선물 띠그래프와 장난감 원그래프로 전체 학생 수를 구합니다.",
+      "conditions": [
+        "장난감은 전체20%, 장난감 중 팽이20%, 팽이를 받고 싶은 학생24명"
+      ],
+      "visualRequirement": "전체에서 장난감으로 좁혀 가는 두 기준을 분리해야 합니다.",
+      "graphScale": {
+        "type": "strip-and-circle",
+        "segments": "장난감20%, 그중 팽이20%"
+      },
+      "independentCalculation": "팽이는 전체의4%, 전체 학생은24÷4%=600명입니다.",
+      "independentAnswer": "600명",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-mission-5",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 5",
+      "sourcePdfPage": 45,
+      "sourcePrintedPage": 51,
+      "commonTypeId": "circle-and-table-weighted-average",
+      "childFriendlyTypeLabel": "원그래프와 표로 평균 점수 구하기",
+      "originalStructure": "세 문제의 맞힌 학생 수 원그래프와 점수별 표로 평균 점수를 구합니다.",
+      "conditions": [
+        "학생80명, 점수0·6·8·12점",
+        "1번 맞힌 학생81도, 2번 맞힌 학생162도, 3번 맞힌 학생은 나머지"
+      ],
+      "visualRequirement": "원그래프 각도와 표의 점수별 칸을 대응해야 합니다.",
+      "graphScale": {
+        "type": "circle-and-table",
+        "total": "80명",
+        "angleScale": "360도",
+        "scores": "0,6,8,12점"
+      },
+      "independentCalculation": null,
+      "independentAnswer": null,
+      "candidateAnswerCount": null,
+      "singleAnswer": null,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 원그래프와 표의 빈칸 위치·수치를 충분히 판독할 수 없어 독립 답을 확정하지 못했습니다.",
+      "calculationStatus": "needs-clarification",
+      "releaseStatus": "locked",
+      "resultContract": "provisional"
+    },
+    {
+      "sourceItemId": "6-1-u5-e4-mission-6",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 6",
+      "sourcePdfPage": 45,
+      "sourcePrintedPage": 51,
+      "commonTypeId": "circle-and-strip-product-preference",
+      "childFriendlyTypeLabel": "원그래프와 띠그래프로 전체 비율 구하기",
+      "originalStructure": "남녀 학생 비율 원그래프와 여학생 상품 띠그래프로 나 상품을 좋아하는 남학생의 전체 비율을 구합니다.",
+      "conditions": [
+        "남52%, 여48%, 나 상품 남학생104명·여학생72명",
+        "여학생 상품: 가34%, 나24%, 다20%, 라12%, 기타10%"
+      ],
+      "visualRequirement": "남녀 비율과 여학생 상품 비율의 기준을 분리해야 합니다.",
+      "graphScale": {
+        "type": "circle-and-strip",
+        "segments": "전체 남52%·여48%; 여학생 나24%"
+      },
+      "independentCalculation": "여학생 전체72÷24%=300명, 전체625명, 나 상품 합176명, 176÷625×100=28.16%입니다.",
+      "independentAnswer": "28.16%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "publicDecision": "locked",
+      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "calculationStatus": "checked",
+      "releaseStatus": "locked",
+      "resultContract": "single-value"
+    }
+  ]
+}

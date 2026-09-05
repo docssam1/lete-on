@@ -23692,6 +23692,249 @@
       const visual = solved => tableSvg("정가 판매와 할인 판매한 신발", [["한 켤레 원가", won(cost), won(cost)], ["정가", `원가에 ${markupRate}% 이익`, won(listPrice)], ["정가 판매", `전체의 ${100 - discountShare}%`, `${regularCount}켤레`], ["할인 판매", `전체의 ${discountShare}% · ${discountRate}% 할인`, `${discountedCount}켤레 · ${won(discountedPrice)}`], ["전체 이익", won(totalProfit), won(totalProfit)]], values, solved, `처음 ${actual}켤레`);
       return fixedResult(`원가가 ${cost}원인 신발에 ${markupRate}%만큼의 이익을 붙여 정가를 정했습니다. 가지고 있던 신발의 ${discountShare / 100}만큼이 팔리지 않아 정가의 ${discountRate}%를 할인하여 남은 신발을 모두 팔았습니다. 모두 ${totalProfit}원의 이익을 얻었다면 처음에 가지고 있던 신발은 몇 켤레인가요?`, `${actual}켤레`, `정가 판매 한 켤레의 이익은 ${regularProfit}원, 할인 판매 한 켤레의 이익은 ${discountedProfit}원입니다. 전체의 ${100 - discountShare}%와 ${discountShare}%를 각각 이 방법으로 팔았으므로 처음 수 한 켤레 몫의 평균 이익은 ${averageProfit}원입니다. 따라서 ${totalProfit}÷${averageProfit}=${actual}켤레입니다.`, visual(false), `${visual(true)}${mathBoard("두 판매 방법의 이익", row("정가 판매", `${regularCount}켤레 × ${regularProfit}원`) + row("할인 판매", `${discountedCount}켤레 × ${discountedProfit}원`) + row("답", `${actual}켤레`))}`, values);
     },
+    sourceGrade6GraphsE1({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u5-e1-exploration-1-1", "6-1-u5-e1-exploration-1-2", "6-1-u5-e1-exploration-2",
+        "6-1-u5-e1-example-1", "6-1-u5-e1-example-2", "6-1-u5-e1-example-3",
+        "6-1-u5-e1-mission-1", "6-1-u5-e1-mission-2", "6-1-u5-e1-mission-3",
+        "6-1-u5-e1-mission-4", "6-1-u5-e1-mission-5", "6-1-u5-e1-mission-6"
+      ];
+      const kinds = [
+        "average-plus", "least-plus-average", "rounded-sum-maximum", "average-grade",
+        "average-difference", "per-machine-average", "mean-and-extreme", "rounded-difference", "population-average-transfer"
+      ];
+      if (!Number.isInteger(variant) || variant < 3 || variant > 11) throw new Error("6-1 여러 가지 그래프 개념탐구 1의 열린 활동은 검수 잠금입니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const escape = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const number = value => Number(value).toLocaleString("ko-KR");
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-graphs-e1-kind="${kinds[variant - 3]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const text = (x, y, value, extra = "") => `<text x="${x}" y="${y}" fill="#183b56" font-size="11" text-anchor="middle" ${extra}>${escape(value)}</text>`;
+      const icon = (x, y, kind, symbolValue, solved = false, shape = "person") => {
+        const fills = { xlarge: "#2f78ad", large: "#4e95c7", medium: "#e4b947", small: "#7eaa80" };
+        const sizes = { xlarge: 1.3, large: 1.15, medium: 0.88, small: 0.62 };
+        const fill = solved ? "#d18b08" : fills[kind] || fills.small;
+        const size = sizes[kind] || sizes.small;
+        const shapes = {
+          bag: `<path d="M-5-5Q0-9 5-5L4-2Q8 2 6 8H-6Q-8 2-4-2Z" fill="${fill}" stroke="#183b56" stroke-width="1"/>`,
+          leaf: `<ellipse cx="0" cy="1" rx="4.6" ry="8" transform="rotate(-28)" fill="${fill}" stroke="#183b56" stroke-width="1"/><path d="M-4 7L4-6" stroke="#183b56" stroke-width="1"/>`,
+          diamond: `<rect x="-5" y="-5" width="10" height="10" transform="rotate(45)" fill="${fill}" stroke="#183b56" stroke-width="1"/>`,
+          pencil: `<g transform="rotate(-16)"><rect x="-7" y="-2.7" width="11" height="5.4" rx="1" fill="${fill}" stroke="#183b56" stroke-width="1"/><path d="M4-2.7L8 0L4 2.7Z" fill="#fff0bd" stroke="#183b56" stroke-width="1"/></g>`,
+          square: `<rect x="-5.5" y="-5.5" width="11" height="11" fill="${fill}" stroke="#183b56" stroke-width="1"/>`,
+          circle: `<circle cx="0" cy="0" r="5.5" fill="${fill}" stroke="#183b56" stroke-width="1"/>`,
+          face: `<circle cx="0" cy="0" r="6" fill="${fill}" stroke="#183b56" stroke-width="1"/><circle cx="-2" cy="-1" r=".7" fill="#183b56"/><circle cx="2" cy="-1" r=".7" fill="#183b56"/><path d="M-2 2Q0 4 2 2" fill="none" stroke="#183b56" stroke-width=".8"/>`,
+          person: `<circle cx="0" cy="-4" r="3.5" fill="${fill}" stroke="#183b56" stroke-width="1"/><path d="M-6 8Q-6 0 0 0Q6 0 6 8Z" fill="${fill}" stroke="#183b56" stroke-width="1"/>`
+        };
+        return `<g class="source61-e1-symbol ${solved ? "is-solved" : ""}" data-symbol-kind="${kind}" data-symbol-shape="${shape}" data-symbol-value="${symbolValue}" transform="translate(${x} ${y}) scale(${size})">${shapes[shape] || shapes.person}</g>`;
+      };
+      const denominationSpecs = (values, symbolShapes = []) => {
+        const denominations = values.filter(unit => Number.isInteger(unit) && unit >= 1);
+        if (!denominations.length || denominations.some((unit, index) => index > 0 && unit >= denominations[index - 1])) throw new Error("그림그래프 범례는 큰 단위부터 서로 다른 자연수로 정해야 합니다.");
+        const kindSets = { 1: ["large"], 2: ["large", "small"], 3: ["large", "medium", "small"], 4: ["xlarge", "large", "medium", "small"] };
+        const kindsForCount = kindSets[denominations.length];
+        if (!kindsForCount) throw new Error("그림그래프 범례는 1개부터 4개까지만 사용할 수 있습니다.");
+        return denominations.map((unit, index) => [unit, kindsForCount[index], symbolShapes[index] || symbolShapes[0] || "person"]);
+      };
+      const symbols = (value, denominations, x, y, solved, layout = {}) => {
+        if (value === null) return text(x + 25, y + 3, "?", "font-size=\"18\" font-weight=\"900\" fill=\"#b77900\"");
+        let rest = value;
+        const pieces = [];
+        denominations.forEach(([unit, kind, shape]) => {
+          const count = Math.floor(rest / unit);
+          if (count > 12) throw new Error(`그림그래프의 ${unit} 단위 기호가 한 줄에 12개를 넘습니다.`);
+          for (let index = 0; index < count; index += 1) {
+            const pieceIndex = pieces.length;
+            const maxPerRow = layout.maxPerRow || 99;
+            pieces.push(icon(x + (pieceIndex % maxPerRow) * (layout.spacing || 16), y + Math.floor(pieceIndex / maxPerRow) * (layout.rowGap || 15), kind, unit, solved, shape));
+          }
+          rest %= unit;
+        });
+        if (rest !== 0) throw new Error(`그림그래프 값 ${value}을 범례 ${denominations.map(([unit]) => unit).join(", ")}으로 정확히 나타낼 수 없습니다.`);
+        return pieces.join("") || text(x + 8, y + 3, "0");
+      };
+      const pictograph = (title, rows, key, keyLabel, values, solved, resultText, options = {}) => {
+        const legendUnits = denominationSpecs(options.denominations || [key, key / 10, key / 100], options.symbolShapes || []);
+        const rowHeight = 34;
+        const height = 66 + rows.length * rowHeight + (solved ? 65 : 18);
+        const body = rows.map((row, index) => {
+          const y = 61 + index * rowHeight;
+          const rowSolved = solved && row.solved;
+          return `<g class="source61-e1-row" data-row-label="${escape(row.label)}" data-row-value="${row.value === null ? "" : row.value}"><rect x="24" y="${y - 18}" width="472" height="${rowHeight}" rx="3" fill="${rowSolved ? "#fff0bd" : index % 2 ? "#f7fafc" : "#ffffff"}" stroke="#b5c5d1"/><text x="66" y="${y + 4}" fill="#183b56" font-size="12" font-weight="700">${escape(row.label)}</text>${row.note ? text(120, y + 4, row.note, "font-size=\"9\" style=\"text-anchor:start\"") : ""}${symbols(row.value, legendUnits, row.note ? 220 : 150, y, rowSolved)}${row.displayValue ? text(465, y + 4, row.displayValue, "font-size=\"10\" style=\"text-anchor:end\"") : ""}</g>`;
+        }).join("");
+        const legendY = 61 + rows.length * rowHeight + 8;
+        const legend = legendUnits.map(([unit, kind, shape], index) => {
+          const xPositions = legendUnits.length === 4 ? [58, 176, 294, 412] : legendUnits.length === 3 ? [74, 235, 396] : legendUnits.length === 2 ? [150, 350] : [250];
+          const x = xPositions[index];
+          return `<g class="source61-e1-legend-item" data-legend-unit="${unit}">${icon(x, legendY - 2, kind, unit, false, shape)}${text(x + 15, legendY + 2, `${number(unit)}${keyLabel}`, "class=\"source61-e1-legend-label\" font-size=\"9\" style=\"text-anchor:start\"")}</g>`;
+        }).join("");
+        const result = solved ? `<rect class="source61-e1-result-box" x="92" y="${legendY + 19}" width="336" height="28" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${text(260, legendY + 38, resultText, "font-size=\"12\" font-weight=\"900\"")}` : "";
+        return `<svg class="geometry-diagram source61-graphs-e1-diagram" style="width:min(520px,100%);height:auto" viewBox="0 0 520 ${height}" role="img" aria-label="${escape(title)}" data-source61-graphs-e1-structure="${escape(title)}" data-source61-graphs-e1-layout="${options.layoutKind || "row-table"}" data-source61-graphs-e1-values="${values.join(",")}" data-source61-graphs-e1-key="${key}" data-symbol-denominations="${legendUnits.map(([unit]) => unit).join(",")}" data-symbol-shapes="${legendUnits.map(([, , shape]) => shape).join(",")}"${solved ? ` data-result-highlight="${escape(resultText)}"` : ""}><rect class="source61-e1-frame" x="18" y="18" width="484" height="${height - 24}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${text(260, 39, title, "font-size=\"13\" font-weight=\"900\"")}${body}${legend}${result}</svg>`;
+      };
+      const customPictograph = (title, rows, denominationValues, keyLabel, values, solved, resultText, layoutKind, legendY, drawBody, options = {}) => {
+        const legendUnits = denominationSpecs(denominationValues, options.symbolShapes || []);
+        const height = legendY + (solved ? 75 : 35);
+        const xPositions = legendUnits.length === 4 ? [58, 176, 294, 412] : legendUnits.length === 3 ? [74, 235, 396] : legendUnits.length === 2 ? [150, 350] : [250];
+        const legend = legendUnits.map(([unit, kind, shape], index) => {
+          const x = xPositions[index];
+          return `<g class="source61-e1-legend-item" data-legend-unit="${unit}">${icon(x, legendY, kind, unit, false, shape)}${text(x + 15, legendY + 4, `${number(unit)}${keyLabel}`, "class=\"source61-e1-legend-label\" font-size=\"9\" style=\"text-anchor:start\"")}</g>`;
+        }).join("");
+        const result = solved ? `<rect class="source61-e1-result-box" x="92" y="${legendY + 22}" width="336" height="28" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${text(260, legendY + 41, resultText, "font-size=\"12\" font-weight=\"900\"")}` : "";
+        return `<svg class="geometry-diagram source61-graphs-e1-diagram" style="width:min(520px,100%);height:auto" viewBox="0 0 520 ${height}" role="img" aria-label="${escape(title)}" data-source61-graphs-e1-structure="${escape(title)}" data-source61-graphs-e1-layout="${layoutKind}" data-source61-graphs-e1-values="${values.join(",")}" data-symbol-denominations="${legendUnits.map(([unit]) => unit).join(",")}" data-symbol-shapes="${legendUnits.map(([, , shape]) => shape).join(",")}"${solved ? ` data-result-highlight="${escape(resultText)}"` : ""}><rect class="source61-e1-frame" x="18" y="18" width="484" height="${height - 24}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${text(260, 39, title, "font-size=\"13\" font-weight=\"900\"")}${drawBody(legendUnits, rows)}${legend}${result}</svg>`;
+      };
+      const areaPictograph = (title, rows, denominationValues, keyLabel, values, solved, resultText, options = {}) => customPictograph(title, rows, denominationValues, keyLabel, values, solved, resultText, "four-area", 236, (legendUnits, areaRows) => {
+        const placements = [[65, 114, 72, 82], [280, 114, 448, 82], [280, 184, 448, 204], [65, 184, 72, 204]];
+        const content = areaRows.map((row, index) => {
+          const [symbolX, symbolY, labelX, labelY] = placements[index];
+          return `<g class="source61-e1-row" data-row-label="${escape(row.label)}" data-row-value="${row.value}">${text(labelX, labelY, row.label, "font-size=\"12\" font-weight=\"900\"")}${symbols(row.value, legendUnits, symbolX, symbolY, solved && row.solved)}</g>`;
+        }).join("");
+        return `<ellipse cx="260" cy="145" rx="218" ry="82" fill="#edf6fb" stroke="#183b56" stroke-width="2"/><path d="M260 63V227M42 145H478" fill="none" stroke="#7891a5" stroke-width="1.7"/>${content}`;
+      }, options);
+      const villagePictograph = (title, rows, denominationValues, keyLabel, values, solved, resultText, options = {}) => customPictograph(title, rows, denominationValues, keyLabel, values, solved, resultText, "three-region", 247, (legendUnits, villageRows) => {
+        const placements = [[74, 126, 78, 83], [308, 126, 442, 83], [188, 202, 260, 174]];
+        const content = villageRows.map((row, index) => {
+          const [symbolX, symbolY, labelX, labelY] = placements[index];
+          return `<g class="source61-e1-row" data-row-label="${escape(row.label)}" data-row-value="${row.value}">${text(labelX, labelY, row.label, "font-size=\"12\" font-weight=\"900\"")}${symbols(row.value, legendUnits, symbolX, symbolY, solved && row.solved)}</g>`;
+        }).join("");
+        return `<rect x="38" y="62" width="444" height="168" rx="38" fill="#edf6fb" stroke="#183b56" stroke-width="2"/><path d="M260 62V152M260 152L70 230M260 152L450 230" fill="none" stroke="#7891a5" stroke-width="1.7"/>${content}`;
+      }, options);
+      const pairedGradePictograph = (title, rows, denominationValues, keyLabel, values, solved, resultText, options = {}) => customPictograph(title, rows, denominationValues, keyLabel, values, solved, resultText, "paired-grade", 239, (legendUnits, gradeRows) => {
+        const cells = gradeRows.map((row, index) => {
+          const column = index < 3 ? 0 : 1;
+          const rowIndex = index % 3;
+          const left = column ? 260 : 38;
+          const top = 58 + rowIndex * 54;
+          const symbolX = left + 75;
+          const symbolY = top + 20;
+          return `<g class="source61-e1-row" data-row-label="${escape(row.label)}" data-row-value="${row.value === null ? "" : row.value}"><rect x="${left}" y="${top}" width="222" height="54" fill="${row.solved && solved ? "#fff0bd" : rowIndex % 2 ? "#f8fbfd" : "#edf6fb"}" stroke="#7891a5" stroke-width="1"/>${text(left + 28, top + 29, row.label, "font-size=\"10\" font-weight=\"900\"")}${symbols(row.value, legendUnits, symbolX, symbolY, solved && row.solved, { maxPerRow: 8, spacing: 13, rowGap: 16 })}</g>`;
+        }).join("");
+        return cells;
+      }, options);
+      const factoryColumnPictograph = (title, rows, denominationValues, keyLabel, values, solved, resultText, options = {}) => customPictograph(title, rows, denominationValues, keyLabel, values, solved, resultText, "factory-columns", 226, (legendUnits, factoryRows) => {
+        const columns = factoryRows.map((row, index) => {
+          const left = 30 + index * 92;
+          const symbolY = 108;
+          return `<g class="source61-e1-row" data-row-label="${escape(row.label)}" data-row-value="${row.value}"><rect x="${left}" y="58" width="92" height="146" fill="${index % 2 ? "#f8fbfd" : "#edf6fb"}" stroke="#7891a5" stroke-width="1"/>${text(left + 46, 78, row.label, "font-size=\"11\" font-weight=\"900\"")}${row.note ? text(left + 46, 94, row.note, "font-size=\"8\"") : ""}${symbols(row.value, legendUnits, left + 20, symbolY, solved && row.solved, { maxPerRow: 4, spacing: 17, rowGap: 19 })}${row.displayValue ? text(left + 46, 190, row.displayValue, "font-size=\"7.5\"") : ""}</g>`;
+        }).join("");
+        return columns;
+      }, options);
+      const districtPictograph = (title, rows, denominationValues, keyLabel, values, solved, resultText, options = {}) => customPictograph(title, rows, denominationValues, keyLabel, values, solved, resultText, "district-map", 315, (legendUnits, districtRows) => {
+        const regions = [
+          { points: "42,72 252,62 270,150 230,186 42,172", label: [92, 88], symbols: [58, 127] },
+          { points: "42,172 230,186 258,278 62,286", label: [100, 205], symbols: [64, 244] },
+          { points: "230,186 478,172 474,286 258,278", label: [320, 212], symbols: [274, 250] },
+          { points: "252,62 478,82 478,172 230,186 270,150", label: [390, 102], symbols: [288, 139] }
+        ];
+        return regions.map((region, index) => {
+          const row = districtRows[index];
+          return `<g class="source61-e1-row" data-row-label="${escape(row.label)}" data-row-value="${row.value}"><polygon points="${region.points}" fill="${index % 2 ? "#f8fbfd" : "#e8f3fa"}" stroke="#183b56" stroke-width="1.8"/>${text(region.label[0], region.label[1], row.label, "font-size=\"10\" font-weight=\"900\"")}${symbols(row.value, legendUnits, region.symbols[0], region.symbols[1], solved && row.solved)}</g>`;
+        }).join("");
+      }, options);
+      const inlineSymbolPictograph = (title, rows, denominationValues, keyLabel, values, solved, resultText, options = {}) => customPictograph(title, rows, denominationValues, keyLabel, values, solved, resultText, "inline-symbols", 184, (legendUnits, inlineRows) => inlineRows.map((row, index) => {
+        const y = 86 + index * 52;
+        return `<g class="source61-e1-row" data-row-label="${escape(row.label)}" data-row-value="${row.value}">${text(92, y + 3, row.label, "font-size=\"12\" font-weight=\"900\"")}${symbols(row.value, legendUnits, 154, y, solved && row.solved)}</g>`;
+      }).join(""), options);
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림그래프의 자료를 식으로 나타내고, 조건을 차례로 사용해 보세요.</p>` : "";
+      const fixedResult = (prompt, answer, solution, promptVisual, answerVisual, values, contract = "single-value") => result(`${prompt}${promptVisual}${support("범례를 확인하고 그림의 수를 실제 수로 바꾸세요.")}${challenge}${evidence(values, contract)}`, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(values, contract)}${answerVisual}<div class="solution-answer-caption">문제에 나온 자료를 같은 그림으로 다시 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+
+      if (variant === 3) {
+        const values = [[2300, 3000, 3100, 400], [1800, 2400, 3000, 300], [4100, 3500, 2900, 500]][poolIndex];
+        const average = (values[0] + values[1] + values[2]) / 3;
+        const missing = average + values[3];
+        const rows = ["가", "나", "다", "라"].map((label, index) => ({ label, value: index === 3 ? (null) : values[index], solved: index === 3, displayValue: index === 3 ? `평균보다 ${values[3]}가마 더 많음` : "" }));
+        const promptVisual = pictograph("지역별 쌀 소비량", rows, 1000, "가마", values, false, "", { denominations: [1000, 100], symbolShapes: ["bag", "bag"] });
+        const answerVisual = pictograph("지역별 쌀 소비량", rows.map(row => ({ ...row, value: row.label === "라" ? missing : row.value, solved: row.label === "라" })), 1000, "가마", values, true, `라 ${number(missing)}가마`, { denominations: [1000, 100], symbolShapes: ["bag", "bag"] });
+        return fixedResult(`오른쪽 그림그래프는 지역별 쌀 소비량을 나타낸 것입니다. 라 지역의 쌀 소비량은 가, 나, 다 지역의 평균보다 ${values[3]}가마 많습니다. 그림그래프를 완성하세요.`, `라 ${number(missing)}가마`, `가, 나, 다 지역의 평균은 (${number(values[0])}+${number(values[1])}+${number(values[2])})÷3=${number(average)}가마입니다. 라 지역은 ${number(average)}+${values[3]}=${number(missing)}가마입니다.`, promptVisual, answerVisual, values, "ordered-tuple");
+      }
+
+      if (variant === 4) {
+        const values = [[241, 215, 323, 246, 2], [241, 205, 312, 226, 4], [132, 214, 109, 121, 5]][poolIndex];
+        const least = Math.min(...values.slice(0, 4));
+        const answerValue = least + values[4] * 4;
+        const labels = ["가", "나", "다", "라"];
+        const rows = labels.map((label, index) => ({ label, value: values[index], solved: values[index] === least }));
+        const promptVisual = areaPictograph("동네별 하루 동안 캔 고구마의 양", rows, [100, 10, 1], "kg", values, false, "", { symbolShapes: ["leaf", "leaf", "leaf"] });
+        const leastLabel = labels[values.slice(0, 4).indexOf(least)];
+        const answerVisual = areaPictograph("동네별 하루 동안 캔 고구마의 양", rows, [100, 10, 1], "kg", values, true, `${leastLabel}의 이튿날 양 ${number(answerValue)}kg`, { symbolShapes: ["leaf", "leaf", "leaf"] });
+        return fixedResult(`가, 나, 다, 라 네 동네가 하루 동안 캔 고구마의 양을 나타낸 그림그래프입니다. 가장 적은 동네가 이튿날 고구마를 더 캤더니 네 동네가 캔 고구마 양은 전날보다 평균 ${values[4]}kg 많아졌습니다. 이튿날 고구마를 캔 동네는 어느 동네이고, 그 동네가 캔 고구마는 몇 kg인가요?`, `${leastLabel} ${number(answerValue)}kg`, `네 동네의 평균이 ${values[4]}kg 늘었으므로 전체 양은 ${values[4]}×4=${values[4] * 4}kg 늘었습니다. 가장 적은 ${leastLabel} 동네가 전날 ${least}kg을 캤으므로 이튿날에는 ${least}+${values[4] * 4}=${answerValue}kg을 캤습니다.`, promptVisual, answerVisual, values, "ordered-tuple");
+      }
+
+      if (variant === 5) {
+        const values = [[6600, 6200, 5800], [4300, 3500, 2700], [7200, 4800, 3900]][poolIndex];
+        const answerValue = values.reduce((sum, value) => sum + value + 49, 0);
+        const rows = ["가", "나", "다"].map((label, index) => ({ label, value: values[index], solved: true }));
+        const promptVisual = villagePictograph("마을별 초등학생 수", rows, [1000, 100], "명", values, false, "", { symbolShapes: ["face", "face"] });
+        const answerVisual = villagePictograph("마을별 초등학생 수", rows, [1000, 100], "명", values, true, `합의 최댓값 ${number(answerValue)}명`, { symbolShapes: ["face", "face"] });
+        return fixedResult(`오른쪽은 세 마을의 초등학생 수를 백의 자리까지 반올림하여 나타낸 그림그래프입니다. 세 마을의 초등학생 수의 합은 최대 몇 명인가요?`, `${number(answerValue)}명`, `각 마을의 실제 학생 수는 그림의 수보다 작거나 같은 백 단위 범위입니다. 따라서 최댓값은 (${values.map(value => `${value}+49`).join(")+(")})=${number(answerValue)}명입니다.`, promptVisual, answerVisual, values);
+      }
+
+      if (variant === 6) {
+        const values = [[324, 272, 403, 364], [318, 276, 396, 354], [425, 301, 354, 389]][poolIndex];
+        const second = (values[0] + values[1] + values[2]) / 3;
+        const fifth = (second + values[1] + values[3]) / 3;
+        const full = [values[0], second, values[1], values[2], fifth, values[3]];
+        const labels = ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"];
+        const rows = labels.map((label, index) => ({ label, value: index === 1 || index === 4 ? null : full[index], solved: index === 1 || index === 4 }));
+        const promptVisual = pairedGradePictograph("학년별 학생 수", rows, [100, 50, 10, 1], "명", values, false, "", { symbolShapes: ["diamond", "diamond", "diamond", "diamond"] });
+        const answerVisual = pairedGradePictograph("학년별 학생 수", rows.map((row, index) => ({ ...row, value: full[index], solved: index === 1 || index === 4 })), [100, 50, 10, 1], "명", values, true, `2학년 ${number(second)}명 · 5학년 ${number(fifth)}명`, { symbolShapes: ["diamond", "diamond", "diamond", "diamond"] });
+        return fixedResult(`현규네 학교의 학년별 학생 수를 나타낸 그림그래프입니다. 2학년 학생 수는 1학년, 3학년, 4학년 학생 수의 평균과 같고, 5학년 학생 수는 2학년, 3학년, 6학년 학생 수의 평균과 같습니다. 그림그래프를 완성하세요.`, `2학년 ${number(second)}명, 5학년 ${number(fifth)}명`, `2학년은 (${values[0]}+${values[1]}+${values[2]})÷3=${second}명입니다. 5학년은 (${second}+${values[1]}+${values[3]})÷3=${fifth}명입니다.`, promptVisual, answerVisual, values, "ordered-tuple");
+      }
+
+      if (variant === 7) {
+        const values = [[300, 280, 370, 110], [250, 240, 310, 70], [320, 350, 290, 80]][poolIndex];
+        const pairSum = values[0] * 4 - values[1] - values[2];
+        const second = (pairSum - values[3]) / 2;
+        const third = second + values[3];
+        const rows = ["가", "나", "다", "라"].map((label, index) => ({ label, value: [values[1], null, null, values[2]][index], solved: index === 1 || index === 2 }));
+        const promptVisual = pictograph("마을별 학생 수", rows, 100, "명", values, false, "", { denominations: [100, 10], symbolShapes: ["face", "face"] });
+        const answerVisual = pictograph("마을별 학생 수", rows.map(row => ({ ...row, value: row.label === "나" ? second : row.label === "다" ? third : row.value })), 100, "명", values, true, `나 ${number(second)}명 · 다 ${number(third)}명`, { denominations: [100, 10], symbolShapes: ["face", "face"] });
+        return fixedResult(`마을별 학생 수를 조사하여 나타낸 그림그래프입니다. 네 마을의 학생 수 평균은 ${values[0]}명이고, 가 마을은 ${values[1]}명, 라 마을은 ${values[2]}명입니다. 나는 다보다 ${values[3]}명 적을 때 그림그래프를 완성하세요.`, `나 ${number(second)}명, 다 ${number(third)}명`, `네 마을의 합은 ${values[0]}×4=${pairSum + values[1] + values[2]}명입니다. 나와 다의 합은 ${pairSum}명이고, 나가 다보다 ${values[3]}명 적으므로 나=${second}명, 다=${third}명입니다.`, promptVisual, answerVisual, values, "ordered-tuple");
+      }
+
+      if (variant === 8) {
+        const values = [[21500, 34000, 16000, 32000, 25200, 5, 8, 4, 10, 6], [18000, 32000, 18000, 33000, 25200, 5, 8, 4, 10, 6], [22000, 30000, 16400, 35000, 23400, 5, 8, 4, 10, 6]][poolIndex];
+        const production = values.slice(0, 5), machines = values.slice(5);
+        const rates = production.map((value, index) => value / machines[index]);
+        const answerValue = Math.max(...rates) - Math.min(...rates);
+        const rows = ["가", "나", "다", "라", "마"].map((label, index) => ({ label, value: production[index], note: `${machines[index]}대`, solved: true }));
+        const promptVisual = factoryColumnPictograph("공장별 연필 생산량", rows, [10000, 1000, 100], "자루", values, false, "", { symbolShapes: ["pencil", "pencil", "pencil"] });
+        const answerVisual = factoryColumnPictograph("공장별 연필 생산량", rows.map((row, index) => ({ ...row, displayValue: `${number(rates[index])}자루` })), [10000, 1000, 100], "자루", values, true, `가장 큰 값과 가장 작은 값의 차 ${number(answerValue)}자루`, { symbolShapes: ["pencil", "pencil", "pencil"] });
+        return fixedResult(`어느 공업 단지의 공장별 연필 생산량입니다. 공장 가, 나, 다, 라, 마는 각각 ${machines.join(", ")}대의 기계를 사용합니다. 기계 한 대당 평균 생산량이 가장 많은 공장과 가장 적은 공장의 차를 구하세요.`, `${number(answerValue)}자루`, `기계 한 대당 생산량은 ${rates.map((rate, index) => `${["가", "나", "다", "라", "마"][index]} ${number(rate)}자루`).join(", ")}입니다. 따라서 차는 ${number(answerValue)}자루입니다.`, promptVisual, answerVisual, values);
+      }
+
+      if (variant === 9) {
+        const values = [[39000, 33000, 20000, 19000], [42000, 28000, 25000, 17000], [44000, 35000, 26000, 15000]][poolIndex];
+        const difference = Math.max(...values) - Math.min(...values);
+        const average = values.reduce((sum, value) => sum + value, 0) / 4;
+        const rows = ["영등포구", "구로구", "금천구", "관악구"].map((label, index) => ({ label, value: values[index], solved: index === values.indexOf(Math.max(...values)) || index === values.indexOf(Math.min(...values)) }));
+        const promptVisual = districtPictograph("구별 등록외국인 수", rows, [10000, 1000], "명", values, false, "", { symbolShapes: ["face", "face"] });
+        const answerVisual = districtPictograph("구별 등록외국인 수", rows, [10000, 1000], "명", values, true, `(1) 차 ${number(difference)}명  (2) 평균 ${number(average)}명`, { symbolShapes: ["face", "face"] });
+        return fixedResult(`서울 어느 지역의 구별 등록외국인 수를 조사하여 나타낸 그림그래프입니다. (1) 가장 많은 구와 가장 적은 구의 차는 몇 명인가요? (2) 영등포구, 구로구, 금천구, 관악구의 등록외국인 수의 평균은 몇 명인가요?`, `(1) ${number(difference)}명, (2) ${number(average)}명`, `(1) 가장 많은 수 ${number(Math.max(...values))}명에서 가장 적은 수 ${number(Math.min(...values))}명을 빼면 ${number(difference)}명입니다. (2) 네 수의 합을 4로 나누면 ${number(average)}명입니다.`, promptVisual, answerVisual, values, "composite");
+      }
+
+      if (variant === 10) {
+        const values = [[35000, 24000], [47000, 23000], [53000, 27000]][poolIndex];
+        const answerValue = (values[0] + 499) - (values[1] - 500);
+        const rows = [{ label: "많은 사람", value: values[0], solved: true }, { label: "적은 사람", value: values[1], solved: true }];
+        const promptVisual = inlineSymbolPictograph("반올림한 사람 수", rows, [10000, 1000], "명", values, false, "", { symbolShapes: ["square", "circle"] });
+        const answerVisual = inlineSymbolPictograph("반올림한 사람 수", rows, [10000, 1000], "명", values, true, `차의 최댓값 ${number(answerValue)}명`, { symbolShapes: ["square", "circle"] });
+        return fixedResult(`그림그래프로 나타낼 때 1만 명은 큰 기호, 1천 명은 작은 기호로 정하고 천의 자리까지 반올림했습니다. ${number(values[0])}명으로 나타낸 사람 수와 ${number(values[1])}명으로 나타낸 사람 수의 실제 인원 차는 최대 몇 명인가요?`, `${number(answerValue)}명`, `첫 번째 수의 최댓값은 ${values[0]}+499=${values[0] + 499}명이고, 두 번째 수의 최솟값은 ${values[1]}-500=${values[1] - 500}명입니다. 따라서 차의 최댓값은 ${number(answerValue)}명입니다.`, promptVisual, answerVisual, values);
+      }
+
+      if (variant === 11) {
+        const values = [[2800, 5200, 2400, 3800, 30, 10], [3200, 4800, 2600, 4200, 25, 5], [2500, 6000, 3300, 4200, 20, 15]][poolIndex];
+        const total = values.slice(0, 4).reduce((sum, value) => sum + value, 0);
+        const answerValue = total * (100 - values[5]) / 100 / 4;
+        const rows = ["A동", "B동", "C동", "D동"].map((label, index) => ({ label, value: values[index], note: index === 1 ? `B의 ${values[4]}% 이동` : "", solved: true }));
+        const promptVisual = pictograph("2008년 동별 인구", rows, 1000, "명", values, false, "", { denominations: [1000, 100], symbolShapes: ["face", "face"] });
+        const answerVisual = pictograph("2008년 동별 인구", rows, 1000, "명", values, true, `평균 ${number(answerValue)}명`, { denominations: [1000, 100], symbolShapes: ["face", "face"] });
+        return fixedResult(`어느 마을의 2008년 동별 인구를 나타낸 그림그래프입니다. 2009년에 B동 인구의 ${values[4]}%가 A동, C동, D동으로 똑같이 나누어져 이사 갔습니다. 2010년에 각 동에서 ${values[5]}%씩 다른 마을로 이사 갔다면 2010년 이 마을의 동별 평균 인구는 몇 명인가요?`, `${number(answerValue)}명`, `2009년의 동별 이동은 마을 전체 인구의 합을 바꾸지 않습니다. 전체 ${number(total)}명의 ${values[5]}%가 빠져 ${number(total * (100 - values[5]) / 100)}명이 남으므로, 네 동의 평균은 ${number(total * (100 - values[5]) / 100)}÷4=${number(answerValue)}명입니다.`, promptVisual, answerVisual, values);
+      }
+    },
     sourceGrade6FractionDivisionE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u1-e2-exploration-2", "6-1-u1-e2-example-1", "6-1-u1-e2-example-2", "6-1-u1-e2-example-3",
@@ -24408,6 +24651,11 @@
     [type => type.sourceItemId?.startsWith("6-1-u4-e4-"), "sourceGrade6RatioE4"],
     [type => type.sourceItemId?.startsWith("6-1-u4-e5-"), "sourceGrade6RatioE5"],
     [type => type.sourceItemId?.startsWith("6-1-u4-e6-"), "sourceGrade6RatioE6"],
+    [type => [
+      "6-1-u5-e1-example-1", "6-1-u5-e1-example-2", "6-1-u5-e1-example-3",
+      "6-1-u5-e1-mission-1", "6-1-u5-e1-mission-2", "6-1-u5-e1-mission-3",
+      "6-1-u5-e1-mission-4", "6-1-u5-e1-mission-5", "6-1-u5-e1-mission-6"
+    ].includes(type.sourceItemId), "sourceGrade6GraphsE1"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
