@@ -1,0 +1,25 @@
+# /etc/systemd/system/nm-notify-relay.service
+# 설치:  sudo cp relay.js /opt/nm-notify-relay/relay.js
+#        sudo cp relay.env.example /opt/nm-notify-relay/relay.env  (값 채우기, chmod 600)
+#        sudo cp relay.service /etc/systemd/system/nm-notify-relay.service
+#        sudo systemctl daemon-reload && sudo systemctl enable --now nm-notify-relay
+#        curl -s http://127.0.0.1:8090/notify/health
+[Unit]
+Description=Numbers of Magic — Aligo SMS relay
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/opt/nm-notify-relay/relay.env
+ExecStart=/usr/bin/node /opt/nm-notify-relay/relay.js
+Restart=on-failure
+RestartSec=3
+User=nobody
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
