@@ -50,7 +50,7 @@ NM_TGEN['adv_gather'] = function (params, rng) {
     },
     tex: `${a0} \\times ${b0} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
-    steps
+    steps, solution: steps
   };
 };
 
@@ -70,6 +70,11 @@ NM_TGEN['adv_comp100'] = function (params, rng) {
     const front = base - (p + q);
     const back = p * q;
     const answer = front * base + back;
+    const steps = [
+      { tex: `${base} - (${p} + ${q}) = \\square`, blank: front },
+      { tex: `${p} \\times ${q} = \\square`, blank: back },
+      { tex: `${front} \\times ${base} + ${back} = \\square`, blank: answer }
+    ];
     return {
       prompt: {
         ko: `${a} × ${b}를 ${base} 보수 곱셈으로 계산해요 (둘 다 ${base}보다 작아요)`,
@@ -78,11 +83,7 @@ NM_TGEN['adv_comp100'] = function (params, rng) {
       },
       tex: `${a} \\times ${b} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
-      steps: [
-        { tex: `${base} - (${p} + ${q}) = \\square`, blank: front },
-        { tex: `${p} \\times ${q} = \\square`, blank: back },
-        { tex: `${front} \\times ${base} + ${back} = \\square`, blank: answer }
-      ]
+      steps, solution: steps
     };
   }
 
@@ -92,6 +93,11 @@ NM_TGEN['adv_comp100'] = function (params, rng) {
   const front = base + p - q;
   const back = p * q;
   const answer = front * base - back;
+  const steps = [
+    { tex: `${base} + ${p} - ${q} = \\square`, blank: front },
+    { tex: `${p} \\times ${q} = \\square`, blank: back },
+    { tex: `${front} \\times ${base} - ${back} = \\square`, blank: answer }
+  ];
   return {
     prompt: {
       ko: `${a} × ${b}를 ${base} 보수 곱셈으로 계산해요 (${a}는 ${base}보다 크고 ${b}는 작아요)`,
@@ -100,11 +106,7 @@ NM_TGEN['adv_comp100'] = function (params, rng) {
     },
     tex: `${a} \\times ${b} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
-    steps: [
-      { tex: `${base} + ${p} - ${q} = \\square`, blank: front },
-      { tex: `${p} \\times ${q} = \\square`, blank: back },
-      { tex: `${front} \\times ${base} - ${back} = \\square`, blank: answer }
-    ]
+    steps, solution: steps
   };
 };
 
@@ -139,7 +141,11 @@ NM_TGEN['adv_baseSystem'] = function (params, rng) {
       },
       tex: `${N} \\times ${M} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
-      steps
+      steps,
+      solution: [
+        { tex: bits.map(pw => `${N}\\times ${pw} = \\square`).join(',\\quad '), blank: parts },
+        { tex: `${parts.join(' + ')} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -152,11 +158,14 @@ NM_TGEN['adv_baseSystem'] = function (params, rng) {
     const digitsN = params.big ? R(rng, 2, 3) : 2;
     let hex = '';
     let value = 0;
+    const digitVals = [];
     for (let i = 0; i < digitsN; i++) {
       const d = i === 0 ? R(rng, 1, 15) : R(rng, 0, 15);
       hex += d.toString(16).toUpperCase();
       value = value * 16 + d;
+      digitVals.push(d);
     }
+    const weights = digitVals.map((d, i) => d * Math.pow(16, digitsN - 1 - i));
     return {
       prompt: {
         ko: `16진수 ${hex}를 십진수로 바꿔요`,
@@ -164,7 +173,11 @@ NM_TGEN['adv_baseSystem'] = function (params, rng) {
         zh: `把16进制数${hex}换算成十进制`
       },
       tex: `(${hex})_{16} = \\square`,
-      answer: value, answerType: 'number', widget: 'numpad'
+      answer: value, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `(${hex})_{16} = ${digitVals.map((d, i) => `${d}\\times16^{${digitsN - 1 - i}}`).join(' + ')}` },
+        { tex: `${weights.join(' + ')} = \\square`, blank: value }
+      ]
     };
   }
 
@@ -188,7 +201,11 @@ NM_TGEN['adv_baseSystem'] = function (params, rng) {
         zh: `把十进制数${n}换算成${base}进制`
       },
       tex: `(${n})_{10} = (\\square)_{${base}}`,
-      answer: Number(baseStr), answerType: 'number', widget: 'numpad'
+      answer: Number(baseStr), answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${n} = ${digits.map((d, i) => `${d}\\times ${base}^{${digits.length - 1 - i}}`).join(' + ')}` },
+        { tex: `(${n})_{10} = (\\square)_{${base}}`, blank: Number(baseStr) }
+      ]
     };
   }
 
@@ -200,7 +217,11 @@ NM_TGEN['adv_baseSystem'] = function (params, rng) {
       zh: `把${base}进制的${baseStr}换算成十进制`
     },
     tex: `(${baseStr})_{${base}} = \\square`,
-    answer: n, answerType: 'number', widget: 'numpad'
+    answer: n, answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `(${baseStr})_{${base}} = ${digits.map((d, i) => `${d}\\times ${base}^{${digits.length - 1 - i}}`).join(' + ')}` },
+      { tex: `${digits.map((d, i) => d * Math.pow(base, digits.length - 1 - i)).join(' + ')} = \\square`, blank: n }
+    ]
   };
 };
 
@@ -262,7 +283,11 @@ NM_TGEN['adv_1001'] = function (params, rng) {
       },
       tex: `${dividend} \\div ${mult} = \\square`,
       answer: N, answerType: 'steps', widget: 'steps',
-      steps: [{ tex: `${dividend} \\div ${mult} = \\square`, blank: N }]
+      steps: [{ tex: `${dividend} \\div ${mult} = \\square`, blank: N }],
+      solution: [
+        { tex: `${dividend} = ${N} \\times ${mult}` },
+        { tex: `${dividend} \\div ${mult} = \\square`, blank: N }
+      ]
     };
   }
 
@@ -274,7 +299,7 @@ NM_TGEN['adv_1001'] = function (params, rng) {
     },
     tex: `${N} \\times ${mult} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
-    steps
+    steps, solution: steps
   };
 };
 
@@ -299,7 +324,11 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
         zh: `${n} ÷ ${d}：商的循环节是几？（${d}就是提示）`
       },
       tex: `${n} \\div ${d} = 0.\\overline{\\square}`,
-      answer: n, answerType: 'number', widget: 'numpad'
+      answer: n, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${d} = \\underbrace{9\\cdots9}_{${nDigits}\\text{자리}} \\;\\Rightarrow\\; \\text{몫의 반복마디는 나눈 수 그대로}` },
+        { tex: `${n} \\div ${d} = 0.\\overline{\\square}`, blank: n }
+      ]
     };
   }
 
@@ -311,6 +340,7 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
     const k = R(rng, 1, lv === 'practice' ? 4 : 9);
     let rem = n, digit = 0;
     for (let i = 0; i < k; i++) { rem *= 10; digit = Math.floor(rem / d); rem %= d; }
+    const scaled = n * Math.pow(10, k);
     return {
       prompt: {
         ko: `${n} ÷ ${d}의 소수 ${k}번째 자리 숫자는?`,
@@ -318,7 +348,11 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
         zh: `${n} ÷ ${d}的小数点后第${k}位是几？`
       },
       tex: `${n} \\div ${d} = \\square \\;(\\text{소수 ${k}번째 자리})`,
-      answer: digit, answerType: 'number', widget: 'numpad'
+      answer: digit, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${n} \\times 10^{${k}} = ${scaled}` },
+        { tex: `\\lfloor ${scaled} \\div ${d} \\rfloor \\bmod 10 = \\square`, blank: digit }
+      ]
     };
   }
 
@@ -335,7 +369,11 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
     },
     tex: `0.\\overline{${blockStr}} = \\square`,
     answer: [block, d], answerShape: 'fraction',
-    answerType: 'number', widget: 'numpad'
+    answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `0.\\overline{${blockStr}} = \\dfrac{${blockStr}}{\\underbrace{9\\cdots9}_{${k}\\text{자리}}}` },
+      { tex: `0.\\overline{${blockStr}} = \\dfrac{\\square}{\\square}`, blank: [block, d] }
+    ]
   };
 };
 
@@ -394,7 +432,13 @@ NM_TGEN['adv_divNear'] = function (params, rng) {
     },
     tex: `${n} \\div ${d} = \\square \\cdots ${rem}`,
     answer: q, answerType: 'steps', widget: 'steps',
-    steps
+    steps,
+    solution: [
+      { tex: `${rounds[0].before} \\div ${anchor} = \\square \\;(\\text{어림 몫})`, blank: rounds[0].q1 },
+      { tex: `(${anchor}-${d}) \\times ${rounds[0].q1} = \\square \\;(\\text{보정값})`, blank: rounds[0].bump },
+      { tex: `\\text{보정한 나머지를 계속 더해가며 반복}` },
+      { tex: `${n} \\div ${d} = \\square \\cdots ${rem}`, blank: q }
+    ]
   };
 };
 
@@ -431,6 +475,11 @@ NM_TGEN['adv_nearSquare'] = function (params, rng) {
       { tex: `${base} ${a >= 0 ? '+' : '-'} ${mult} \\times ${Math.abs(a)} = \\square`, blank: front },
       { tex: `${a}^2 = \\square`, blank: aSq },
       { tex: `${front} \\times ${P} + ${aSq} = \\square`, blank: answer }
+    ],
+    solution: [
+      { tex: `${base} ${a >= 0 ? '+' : '-'} ${mult} \\times ${Math.abs(a)} = \\square`, blank: front },
+      { tex: `${a}^2 = \\square`, blank: aSq },
+      { tex: `${front} \\times ${P} + ${aSq} = \\square`, blank: answer }
     ]
   };
 };
@@ -462,6 +511,11 @@ NM_TGEN['adv_sqcube'] = function (params, rng) {
         { tex: `(${x}) \\times ${n} \\times (${y}) = \\square`, blank: part1 },
         { tex: `${star}^2 \\times ${n} = \\square`, blank: part2 },
         { tex: `${part1} + ${part2} = \\square`, blank: answer }
+      ],
+      solution: [
+        { tex: `(${x}) \\times ${n} \\times (${y}) = \\square`, blank: part1 },
+        { tex: `${star}^2 \\times ${n} = \\square`, blank: part2 },
+        { tex: `${part1} + ${part2} = \\square`, blank: answer }
       ]
     };
   }
@@ -478,6 +532,11 @@ NM_TGEN['adv_sqcube'] = function (params, rng) {
     tex: `${n}^2 = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `(${x}) \\times (${y}) = \\square`, blank: xy },
+      { tex: `${star}^2 = \\square`, blank: starSq },
+      { tex: `${xy} + ${starSq} = \\square`, blank: answer }
+    ],
+    solution: [
       { tex: `(${x}) \\times (${y}) = \\square`, blank: xy },
       { tex: `${star}^2 = \\square`, blank: starSq },
       { tex: `${xy} + ${starSq} = \\square`, blank: answer }
@@ -510,6 +569,12 @@ NM_TGEN['adv_splitSquare'] = function (params, rng) {
     tex: `${N}^2 = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `${front}^2 = \\square`, blank: frontSq },
+      { tex: `2 \\times ${front} \\times ${back} = \\square`, blank: twoFB },
+      { tex: `${back}^2 = \\square`, blank: backSq },
+      { tex: `${frontSq}\\times10^{${2 * s}} + ${twoFB}\\times10^{${s}} + ${backSq} = \\square`, blank: answer }
+    ],
+    solution: [
       { tex: `${front}^2 = \\square`, blank: frontSq },
       { tex: `2 \\times ${front} \\times ${back} = \\square`, blank: twoFB },
       { tex: `${back}^2 = \\square`, blank: backSq },
@@ -559,7 +624,12 @@ NM_TGEN['adv_sumSquares'] = function (params, rng) {
     },
     tex: `${a}^2 + ${a + 1}^2 + \\cdots + ${b}^2 = \\square`,
     answer, answerType: 'steps', widget: 'steps',
-    steps
+    steps,
+    solution: [
+      { tex: `${b} \\times (${b}+1) \\times (2\\times ${b}+1) \\div 6 = \\square`, blank: Sb },
+      { tex: `${a - 1} \\times ${a} \\times (2\\times ${a - 1}+1) \\div 6 = \\square`, blank: Sa1 },
+      { tex: `${Sb} - ${Sa1} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -587,6 +657,11 @@ NM_TGEN['adv_anchorTens'] = function (params, rng) {
         { tex: `${t} \\times ${t + 1} = \\square`, blank: front },
         { tex: `${b1} \\times ${b2} = \\square`, blank: back },
         { tex: `${front} \\times 100 + ${back} = \\square`, blank: answer }
+      ],
+      solution: [
+        { tex: `${t} \\times ${t + 1} = \\square`, blank: front },
+        { tex: `${b1} \\times ${b2} = \\square`, blank: back },
+        { tex: `${front} \\times 100 + ${back} = \\square`, blank: answer }
       ]
     };
   }
@@ -604,6 +679,11 @@ NM_TGEN['adv_anchorTens'] = function (params, rng) {
       tex: `${a} \\times ${c} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
+        { tex: `${t1} \\times ${t2} + ${ones} = \\square`, blank: front },
+        { tex: `${ones}^2 = \\square`, blank: back },
+        { tex: `${front} \\times 100 + ${back} = \\square`, blank: answer }
+      ],
+      solution: [
         { tex: `${t1} \\times ${t2} + ${ones} = \\square`, blank: front },
         { tex: `${ones}^2 = \\square`, blank: back },
         { tex: `${front} \\times 100 + ${back} = \\square`, blank: answer }
@@ -634,6 +714,11 @@ NM_TGEN['adv_anchorTens'] = function (params, rng) {
     tex: `${a} \\times ${c} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `${base} \\times (${base} + ${b1} + ${b2}) = \\square`, blank: part1 },
+      { tex: `${b1} \\times ${b2} = \\square`, blank: part2 },
+      { tex: `${part1} + ${part2} = \\square`, blank: answer }
+    ],
+    solution: [
       { tex: `${base} \\times (${base} + ${b1} + ${b2}) = \\square`, blank: part1 },
       { tex: `${b1} \\times ${b2} = \\square`, blank: part2 },
       { tex: `${part1} + ${part2} = \\square`, blank: answer }
@@ -670,6 +755,11 @@ NM_TGEN['adv_estimate'] = function (params, rng) {
     tex: `${a} \\times ${b} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `${roundVal} \\times ${b} = \\square`, blank: estimate },
+      { tex: `${Math.abs(e)} \\times ${b} = \\square`, blank: crossTerm },
+      { tex: `${estimate} ${e > 0 ? '+' : '-'} ${crossTerm} = \\square`, blank: answer }
+    ],
+    solution: [
       { tex: `${roundVal} \\times ${b} = \\square`, blank: estimate },
       { tex: `${Math.abs(e)} \\times ${b} = \\square`, blank: crossTerm },
       { tex: `${estimate} ${e > 0 ? '+' : '-'} ${crossTerm} = \\square`, blank: answer }
@@ -715,6 +805,11 @@ NM_TGEN['adv_bigscale'] = function (params, rng) {
     tex: `${a} \\times ${b} = \\square\\,\\text{${unit.ko}}`,
     answer: X, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `\\text{0의 개수}: ${p1} + ${p2} = \\square`, blank: totalZeros },
+      { tex: `${k1} \\times ${k2} = \\square`, blank: k1k2 },
+      { tex: `${k1k2} \\times 10^{${remainder}} = \\square \\;(${unit.ko}\\ \\text{단위})`, blank: X }
+    ],
+    solution: [
       { tex: `\\text{0의 개수}: ${p1} + ${p2} = \\square`, blank: totalZeros },
       { tex: `${k1} \\times ${k2} = \\square`, blank: k1k2 },
       { tex: `${k1k2} \\times 10^{${remainder}} = \\square \\;(${unit.ko}\\ \\text{단위})`, blank: X }

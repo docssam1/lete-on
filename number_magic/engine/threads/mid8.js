@@ -93,7 +93,11 @@ NM_TGEN['md47_expressionNotation'] = function (params, rng) {
         en: `In algebraic notation, division becomes a fraction — simplify ${v}×${m}÷${d} into one fractional coefficient (in lowest terms)`,
         zh: `代数式中除法要写成分数——把${v}×${m}÷${d}整理成一个最简分数系数` },
       tex: `${v} \\times ${m} \\div ${d} = \\dfrac{\\square}{\\square} ${v}`,
-      answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false
+      answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `${v} \\times ${m} \\div ${d} = \\dfrac{${m}}{${d}} ${v}` },
+        { tex: `\\dfrac{${m}}{${d}} = \\dfrac{\\square}{\\square}`, blank: answer }
+      ]
     };
   }
 
@@ -109,7 +113,11 @@ NM_TGEN['md47_expressionNotation'] = function (params, rng) {
         en: `Multiplying the same letter repeatedly becomes an exponent — drop the multiplication signs and simplify (coefficient, exponent of ${v1}, exponent of ${v2})`,
         zh: `同一字母连乘要写成指数——省略乘号后整理(依次是系数、${v1}的指数、${v2}的指数)` },
       tex: `${c} \\times ${chain1} \\times ${chain2} = \\square ${v1}^{\\square} ${v2}^{\\square}`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `${chain1} = ${v1}^{${e1}},\\quad ${chain2} = ${v2}^{${e2}}` },
+        { tex: `${c} \\times ${v1}^{${e1}} \\times ${v2}^{${e2}} = \\square ${v1}^{\\square} ${v2}^{\\square}`, blank: answer }
+      ]
     };
   }
 
@@ -124,7 +132,11 @@ NM_TGEN['md47_expressionNotation'] = function (params, rng) {
       en: `Drop the multiplication sign(×), put the number before the letter, and write a repeated letter as an exponent`,
       zh: `乘号(×)省略，数字写在字母前面，同一字母连乘写成指数` },
     tex: `${c} \\times ${chain} = \\square ${v}^{\\square}`,
-    answer, answerType: 'number', widget: 'numpad', negative: false
+    answer, answerType: 'number', widget: 'numpad', negative: false,
+    solution: [
+      { tex: `${chain} = ${v}^{${n}}` },
+      { tex: `${c} \\times ${v}^{${n}} = \\square ${v}^{\\square}`, blank: answer }
+    ]
   };
 };
 
@@ -143,7 +155,12 @@ NM_TGEN['md48_expressionValue'] = function (params, rng) {
         en: `When substituting a number for a letter, restore the multiplication sign — plug in x=${x} directly`,
         zh: `代入数值时要把乘号补回来——直接代入x=${x}计算` },
       tex: `x=${x}\\text{일 때 } ${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+      answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+      solution: [
+        { tex: `${a} \\times (${x})^2 = \\square`, blank: a * x * x },
+        { tex: `${b} \\times ${x} = \\square`, blank: b * x },
+        { tex: `${a * x * x} ${wrapPlus(b * x)} ${wrapPlus(c)} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -156,7 +173,12 @@ NM_TGEN['md48_expressionValue'] = function (params, rng) {
         en: `With two letters, substitute each one's matching value`,
         zh: `有两个字母就分别代入各自对应的数值` },
       tex: `x=${x},\\;y=${y}\\text{일 때 } ${coefLead(a)}x ${wrapPlusCoef(b)}y = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+      answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+      solution: [
+        { tex: `${a} \\times ${x} = \\square`, blank: a * x },
+        { tex: `${b} \\times ${y} = \\square`, blank: b * y },
+        { tex: `${a * x} ${wrapPlus(b * y)} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -169,7 +191,11 @@ NM_TGEN['md48_expressionValue'] = function (params, rng) {
       en: `When substituting a number for a letter, restore the multiplication sign`,
       zh: `代入数值时要把乘号补回来` },
     tex: `x=${x}\\text{일 때 } ${coefLead(a)}x ${wrapPlus(b)} = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+    answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+    solution: [
+      { tex: `${a} \\times ${x} = \\square`, blank: a * x },
+      { tex: `${a * x} ${wrapPlus(b)} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -193,7 +219,12 @@ NM_TGEN['md49_linearExprOps'] = function (params, rng) {
         en: `Add or subtract only like terms (same letter, same degree)`,
         zh: `只把文字和次数相同的项(同类项)相加或相减` },
       tex: `(${coefLead(a1)}x ${wrapPlus(b1)}) ${op} ${rhs} = \\square x + \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `${a1} ${op} ${a2} = \\square`, blank: cx },
+        { tex: `${b1} ${op} ${b2} = \\square`, blank: cc },
+        { tex: `(${coefLead(a1)}x ${wrapPlus(b1)}) ${op} ${rhs} = \\square x + \\square`, blank: answer }
+      ]
     };
   }
 
@@ -209,7 +240,12 @@ NM_TGEN['md49_linearExprOps'] = function (params, rng) {
         en: `First expand the parentheses with the distributive law, then combine like terms`,
         zh: `先用分配律展开括号，再合并同类项` },
       tex: `${k}(${coefLead(a1)}x ${wrapPlus(b1)}) - (${coefLead(a2)}x ${wrapPlus(b2)}) = \\square x + \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `${k} \\times ${a1} = \\square`, blank: k * a1 },
+        { tex: `${k} \\times ${b1} = \\square`, blank: k * b1 },
+        { tex: `${k * a1} - ${a2} = \\square,\\quad ${k * b1} - ${b2} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -222,7 +258,12 @@ NM_TGEN['md49_linearExprOps'] = function (params, rng) {
       en: `Multiply the number in front of the parentheses by every term inside (distributive law)`,
       zh: `把括号前的数分别乘到括号里每一项(分配律)` },
     tex: `${k}(${coefLead(a)}x ${wrapPlus(b)}) = \\square x + \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `${k} \\times ${a} = \\square`, blank: k * a },
+      { tex: `${k} \\times ${b} = \\square`, blank: k * b },
+      { tex: `${k}(${coefLead(a)}x ${wrapPlus(b)}) = \\square x + \\square`, blank: answer }
+    ]
   };
 };
 
@@ -243,7 +284,12 @@ NM_TGEN['md50_linearEquation'] = function (params, rng) {
         en: `When x appears on both sides, move the x-terms to one side and the constants to the other`,
         zh: `两边都有x时，把x项移到一边，常数项移到另一边` },
       tex: `${coefLead(a)}x ${wrapPlus(b)} = ${coefLead(c)}x ${wrapPlus(d)} \\;\\Rightarrow\\; x = \\square`,
-      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0
+      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+      solution: [
+        { tex: `${b} - ${d} = \\square`, blank: b - d },
+        { tex: `${c} - ${a} = \\square`, blank: c - a },
+        { tex: `\\dfrac{${b - d}}{${c - a}} = \\square`, blank: x }
+      ]
     };
   }
 
@@ -257,7 +303,11 @@ NM_TGEN['md50_linearEquation'] = function (params, rng) {
         en: `Use the properties of equality to move the constant first, then divide by x's coefficient`,
         zh: `先用等式性质移项常数，最后除以x的系数` },
       tex: `${coefLead(a)}x ${wrapPlus(b)} = ${c} \\;\\Rightarrow\\; x = \\square`,
-      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0
+      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+      solution: [
+        { tex: `${c} - ${b} = \\square`, blank: c - b },
+        { tex: `\\dfrac{${c - b}}{${a}} = \\square`, blank: x }
+      ]
     };
   }
 
@@ -270,7 +320,11 @@ NM_TGEN['md50_linearEquation'] = function (params, rng) {
       en: `Divide both sides by x's coefficient to isolate x`,
       zh: `两边除以x的系数，只留下x` },
     tex: `${a}x = ${c} \\;\\Rightarrow\\; x = \\square`,
-    answer: x, answerType: 'number', widget: 'numpad', negative: x < 0
+    answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+    solution: [
+      { tex: `${a}x = ${c} \\;\\Rightarrow\\; x = ${c} \\div ${a}` },
+      { tex: `${c} \\div ${a} = \\square`, blank: x }
+    ]
   };
 };
 
@@ -293,7 +347,11 @@ NM_TGEN['md51_proportion'] = function (params, rng) {
         en: `Inverse proportion y=a/x keeps the product of x and y constant(a) — find a from the point (${x0},${y0}), then find y when x=${x1}`,
         zh: `反比例y=a/x中x与y的乘积恒为a——用点(${x0},${y0})求出a，再求x=${x1}时的y` },
       tex: `y=\\dfrac{a}{x},\\;(${x0},\\,${y0})\\text{를 지남} \\;\\Rightarrow\\; x=${x1}\\text{일 때 } y=\\square`,
-      answer: y1, answerType: 'number', widget: 'numpad', negative: y1 < 0
+      answer: y1, answerType: 'number', widget: 'numpad', negative: y1 < 0,
+      solution: [
+        { tex: `${x0} \\times ${y0} = \\square`, blank: a },
+        { tex: `${a} \\div ${x1} = \\square`, blank: y1 }
+      ]
     };
   }
 
@@ -307,7 +365,11 @@ NM_TGEN['md51_proportion'] = function (params, rng) {
         en: `Direct proportion y=ax keeps the ratio(a) of y to x constant — find the ratio, then find y when x=${x1}`,
         zh: `正比例y=ax中y与x的比值(a)恒定——求出比值后，再求x=${x1}时的y` },
       tex: `y=ax,\\;a=${a} \\;\\Rightarrow\\; x=${x1}\\text{일 때 } y=\\square`,
-      answer: y1, answerType: 'number', widget: 'numpad', negative: y1 < 0
+      answer: y1, answerType: 'number', widget: 'numpad', negative: y1 < 0,
+      solution: [
+        { tex: `y = ${a}x` },
+        { tex: `${a} \\times ${x1} = \\square`, blank: y1 }
+      ]
     };
   }
 
@@ -340,7 +402,12 @@ NM_TGEN['md52_expEquation'] = function (params, rng) {
           en: `First rewrite the right side as a power of ${a} (unify the base), then compare exponents`,
           zh: `先把右边化成${a}的幂(统一底数)，再比较指数` },
         tex: `${a}^{${p}x ${wrapPlus(q)}} = ${N} \\;\\Rightarrow\\; x = \\square`,
-        answer: x, answerType: 'number', widget: 'numpad', negative: x < 0
+        answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+        solution: [
+          { tex: `${N} = ${a}^{${k}}` },
+          { tex: `${k} - (${q}) = \\square`, blank: k - q },
+          { tex: `\\dfrac{${k - q}}{${p}} = \\square`, blank: x }
+        ]
       };
     }
     return {
@@ -348,7 +415,11 @@ NM_TGEN['md52_expEquation'] = function (params, rng) {
         en: `With equal bases, the exponents themselves form an equation — solve ${p}x${wrapPlus(q)}=${k}`,
         zh: `底数相同时，指数本身构成等式——解${p}x${wrapPlus(q)}=${k}` },
       tex: `${a}^{${p}x ${wrapPlus(q)}} = ${a}^{${k}} \\;\\Rightarrow\\; x = \\square`,
-      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0
+      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+      solution: [
+        { tex: `${k} - (${q}) = \\square`, blank: k - q },
+        { tex: `\\dfrac{${k - q}}{${p}} = \\square`, blank: x }
+      ]
     };
   }
 
@@ -360,7 +431,11 @@ NM_TGEN['md52_expEquation'] = function (params, rng) {
       en: `With equal bases, the exponents themselves form an equation — solve x${wrapPlus(q)}=${k}`,
       zh: `底数相同时，指数本身构成等式——解x${wrapPlus(q)}=${k}` },
     tex: `${a}^{x ${wrapPlus(q)}} = ${a}^{${k}} \\;\\Rightarrow\\; x = \\square`,
-    answer: x, answerType: 'number', widget: 'numpad', negative: x < 0
+    answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+    solution: [
+      { tex: `x ${wrapPlus(q)} = ${k}` },
+      { tex: `${k} - ${q} = \\square`, blank: x }
+    ]
   };
 };
 
@@ -380,7 +455,11 @@ NM_TGEN['md53_logEquation'] = function (params, rng) {
         en: `log_a X + log_a Y = log_a(XY) — turn the sum of two logs into a product to find x`,
         zh: `log_a X + log_a Y = log_a(XY)——把两个对数之和化成乘积来求x` },
       tex: `\\log_{${a}} x + \\log_{${a}} ${c} = \\log_{${a}} ${N} \\;\\Rightarrow\\; x = \\square`,
-      answer: x, answerType: 'number', widget: 'numpad', negative: false
+      answer: x, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\log_{${a}}(x \\times ${c}) = \\log_{${a}} ${N} \\;\\Rightarrow\\; x \\times ${c} = ${N}` },
+        { tex: `${N} \\div ${c} = \\square`, blank: x }
+      ]
     };
   }
 
@@ -396,7 +475,12 @@ NM_TGEN['md53_logEquation'] = function (params, rng) {
         en: `log_a X - log_a Y = log_a(X÷Y) — turn the subtraction into a quotient, then use the definition (a^k=argument) to find x`,
         zh: `log_a X - log_a Y = log_a(X÷Y)——把减法化成除法，再用对数定义(a^k=真数)求x` },
       tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) - \\log_{${a}} ${c} = ${k} \\;\\Rightarrow\\; x = \\square`,
-      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0
+      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+      solution: [
+        { tex: `${a}^{${k}} \\times ${c} = \\square`, blank: N },
+        { tex: `${N} - (${q}) = \\square`, blank: N - q },
+        { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x }
+      ]
     };
   }
 
@@ -411,7 +495,11 @@ NM_TGEN['md53_logEquation'] = function (params, rng) {
       en: `log_a N = k means a^k=N — replace the argument with that value, then solve for x`,
       zh: `log_a N = k即a^k=N——把真数换成那个值，再解出x` },
     tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) = ${k} \\;\\Rightarrow\\; x = \\square`,
-    answer: x, answerType: 'number', widget: 'numpad', negative: x < 0
+    answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+    solution: [
+      { tex: `${N} - (${q}) = \\square`, blank: N - q },
+      { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x }
+    ]
   };
 };
 
@@ -435,7 +523,11 @@ NM_TGEN['md54_expLogInequality'] = function (params, rng) {
         en: `Since the base(${a}) exceeds 1, log is increasing — find the boundary value where equality holds (a^k=argument)`,
         zh: `底数(${a})大于1时log是增函数——求出等号成立的边界值(a^k=真数)` },
       tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) ${cmp} ${k} \\;\\Rightarrow\\; x ${cmp} \\square`,
-      answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0
+      answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0,
+      solution: [
+        { tex: `${N} - (${q}) = \\square`, blank: N - q },
+        { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x0 }
+      ]
     };
   }
 
@@ -447,7 +539,11 @@ NM_TGEN['md54_expLogInequality'] = function (params, rng) {
       en: `Since the base(${a}) exceeds 1, the exponential is increasing — find the boundary value where equality holds`,
       zh: `底数(${a})大于1时指数函数是增函数——求出等号成立的边界值` },
     tex: `${a}^{${p===1?'':p}x ${wrapPlus(q)}} ${cmp} ${a}^{${k}} \\;\\Rightarrow\\; x ${cmp} \\square`,
-    answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0
+    answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0,
+    solution: [
+      { tex: `${k} - (${q}) = \\square`, blank: k - q },
+      { tex: `\\dfrac{${k - q}}{${p}} = \\square`, blank: x0 }
+    ]
   };
 };
 
@@ -470,7 +566,11 @@ NM_TGEN['md55_lawOfSines'] = function (params, rng) {
           en: `Law of sines a/sinA = 2R — since sin45°=√2/2, 2R = a÷(√2/2) = a√2`,
           zh: `正弦定理a/sinA = 2R——sin45°=√2/2，所以2R = a÷(√2/2) = a√2` },
         tex: `\\dfrac{${a}}{\\sin 45^\\circ} = 2R \\;\\Rightarrow\\; 2R = \\square\\sqrt{\\square}`,
-        answer, answerType: 'number', widget: 'numpad', negative: false
+        answer, answerType: 'number', widget: 'numpad', negative: false,
+        solution: [
+          { tex: `\\sin 45^\\circ = \\dfrac{\\sqrt2}{2}` },
+          { tex: `${a} \\div \\dfrac{\\sqrt2}{2} = \\square\\sqrt{\\square}`, blank: answer }
+        ]
       };
     }
     /* reverse, 45° 분기 — 2R=2a(짝수)를 주고 변 a=R√2를 구함 */
@@ -480,7 +580,11 @@ NM_TGEN['md55_lawOfSines'] = function (params, rng) {
         en: `Reversing the law of sines — a = 2R×sinA. Since sin45°=√2/2, a = 2R×(√2/2) = R√2`,
         zh: `反过来用正弦定理——a = 2R×sinA。sin45°=√2/2，所以a = 2R×(√2/2) = R√2` },
       tex: `2R=${2*a},\\;A=45^\\circ \\;\\Rightarrow\\; a = \\square\\sqrt{\\square}`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\sin 45^\\circ = \\dfrac{\\sqrt2}{2}` },
+        { tex: `${2 * a} \\times \\dfrac{\\sqrt2}{2} = \\square\\sqrt{\\square}`, blank: answer }
+      ]
     };
   }
 
@@ -497,7 +601,11 @@ NM_TGEN['md55_lawOfSines'] = function (params, rng) {
         en: `Reversing the law of sines — a = 2R×sinA. Since sin${A}°=${A === 30 ? '1/2' : '1'}, compute a`,
         zh: `反过来用正弦定理——a = 2R×sinA。sin${A}°=${A === 30 ? '1/2' : '1'}，算出a` },
       tex: `2R=${R2},\\;A=${A}^\\circ \\;\\Rightarrow\\; a = \\square`,
-      answer: a, answerType: 'number', widget: 'numpad', negative: false
+      answer: a, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\sin ${A}^\\circ = ${A === 30 ? '\\dfrac{1}{2}' : '1'}` },
+        { tex: `${R2} \\times ${A === 30 ? '\\dfrac{1}{2}' : '1'} = \\square`, blank: a }
+      ]
     };
   }
   const answer = A === 30 ? 2 * a : a;
@@ -506,7 +614,11 @@ NM_TGEN['md55_lawOfSines'] = function (params, rng) {
       en: `Law of sines a/sinA = 2R — since sin${A}°=${A === 30 ? '1/2' : '1'}, it comes out by multiplication, not division`,
       zh: `正弦定理a/sinA = 2R——sin${A}°=${A === 30 ? '1/2' : '1'}，用乘法而不是除法就能算出` },
     tex: `\\dfrac{${a}}{\\sin ${A}^\\circ} = 2R \\;\\Rightarrow\\; 2R = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: false
+    answer, answerType: 'number', widget: 'numpad', negative: false,
+    solution: [
+      { tex: `\\sin ${A}^\\circ = ${A === 30 ? '\\dfrac{1}{2}' : '1'}` },
+      { tex: `${a} \\div ${A === 30 ? '\\dfrac{1}{2}' : '1'} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -561,7 +673,12 @@ NM_TGEN['md56_lawOfCosines'] = function (params, rng) {
         en: `Law of cosines a²=b²+c²-2bc·cosA — substitute cos${deg}°=${cosTxt} to find a², then take the square root`,
         zh: `余弦定理a²=b²+c²-2bc·cosA——代入cos${deg}°=${cosTxt}求出a²，再开平方` },
       tex: `b=${b},\\;c=${c},\\;A=${deg}^\\circ \\;\\Rightarrow\\; a = \\square`,
-      answer: a, answerType: 'number', widget: 'numpad', negative: false
+      answer: a, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `${b}^2 + ${c}^2 = \\square`, blank: b * b + c * c },
+        { tex: `${b} \\times ${c} = \\square`, blank: b * c },
+        { tex: `\\sqrt{${b * b + c * c} ${deg === 60 ? '-' : '+'} ${b * c}} = \\square`, blank: a }
+      ]
     };
   }
 
@@ -580,7 +697,11 @@ NM_TGEN['md56_lawOfCosines'] = function (params, rng) {
       en: `Law of cosines a²=b²+c²-2bc·cosA — since cos90°=0, the last term vanishes (this is just the Pythagorean theorem)`,
       zh: `余弦定理a²=b²+c²-2bc·cosA——cos90°=0，最后一项消失(就是勾股定理)` },
     tex: `b=${b},\\;c=${c},\\;A=90^\\circ \\;\\Rightarrow\\; a = \\square`,
-    answer: a, answerType: 'number', widget: 'numpad', negative: false
+    answer: a, answerType: 'number', widget: 'numpad', negative: false,
+    solution: [
+      { tex: `${b}^2 + ${c}^2 = \\square`, blank: b * b + c * c },
+      { tex: `\\sqrt{${b * b + c * c}} = \\square`, blank: a }
+    ]
   };
 };
 
@@ -603,7 +724,12 @@ NM_TGEN['md57_trigMaxMinPeriod'] = function (params, rng) {
         en: `For y=a·${fn}(bx)+c, the max is a+c and the min is c-a (the amplitude a swings up and down)`,
         zh: `y=a\\${fn}(bx)+c的最大值是a+c，最小值是c-a(振幅a上下摆动的范围)` },
       tex: `y = ${a}\\${fn}(${b}x) ${wrapPlus(c)} \\;\\Rightarrow\\; \\text{최댓값}=\\square,\\;\\text{최솟값}=\\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `${a} + ${c} = \\square \\;(\\text{최댓값})`, blank: a + c },
+        { tex: `${c} - ${a} = \\square \\;(\\text{최솟값})`, blank: c - a },
+        { tex: `\\text{최댓값}=\\square,\\;\\text{최솟값}=\\square`, blank: answer }
+      ]
     };
   }
   function periodCase(wide){
@@ -617,7 +743,11 @@ NM_TGEN['md57_trigMaxMinPeriod'] = function (params, rng) {
         en: `The period of y=${fn}(bx) is 2π÷b — express it as a reduced fraction times π`,
         zh: `y=\\${fn}(bx)的周期是2π÷b——用最简分数表示是π的几倍` },
       tex: `y = \\${fn}(${b}x) \\;\\Rightarrow\\; \\text{주기} = \\dfrac{\\square}{\\square}\\pi`,
-      answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false
+      answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\text{주기} = \\dfrac{2}{${b}}\\pi` },
+        { tex: `\\dfrac{2}{${b}} = \\dfrac{\\square}{\\square}`, blank: answer }
+      ]
     };
   }
   function tanPeriodCase(){
@@ -628,7 +758,11 @@ NM_TGEN['md57_trigMaxMinPeriod'] = function (params, rng) {
         en: `The period of y=tan(bx) is π÷b (different from the sin/cos rule — watch out!)`,
         zh: `y=\\tan(bx)的周期是π÷b(和sin·cos的规则不同，要小心！)` },
       tex: `y = \\tan(${b}x) \\;\\Rightarrow\\; \\text{주기} = \\dfrac{\\square}{\\square}\\pi`,
-      answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false
+      answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `y=\\tan(${b}x) \\;\\Rightarrow\\; \\text{주기}=\\dfrac{\\pi}{${b}}` },
+        { tex: `\\dfrac{\\pi}{${b}} = \\dfrac{\\square}{\\square}\\pi`, blank: answer }
+      ]
     };
   }
 
@@ -670,7 +804,11 @@ NM_TGEN['md58_limitRationalize'] = function (params, rng) {
         en: `To clear the root in the denominator, multiply top and bottom by the conjugate (√(x+p)+${m}) — then (x-a) cancels`,
         zh: `要去掉分母的根号，就把分子分母都乘以共轭式(√(x+p)+${m})——这样(x-a)就能约掉` },
       tex: `\\lim_{x\\to ${a}} \\dfrac{x ${wrapPlus(-a)}}{\\sqrt{x ${wrapPlus(p)}} - ${m}} = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\sqrt{${a} ${wrapPlus(p)}} = \\sqrt{${m * m}} = ${m}` },
+        { tex: `${m} + ${m} = \\square`, blank: answer }
+      ]
     };
   }
   function numCase(){
@@ -680,7 +818,11 @@ NM_TGEN['md58_limitRationalize'] = function (params, rng) {
         en: `To clear the root in the numerator, multiply top and bottom by the conjugate (√(x+p)+${m}) — the numerator cancels to (x-a), leaving the root's value below`,
         zh: `要去掉分子的根号，就把分子分母都乘以共轭式(√(x+p)+${m})——分子约成(x-a)，根号的值留在分母` },
       tex: `\\lim_{x\\to ${a}} \\dfrac{\\sqrt{x ${wrapPlus(p)}} - ${m}}{x ${wrapPlus(-a)}} = \\dfrac{\\square}{\\square}`,
-      answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false
+      answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\sqrt{${a} ${wrapPlus(p)}} = \\sqrt{${m * m}} = ${m}` },
+        { tex: `\\dfrac{1}{${m}+${m}} = \\dfrac{\\square}{\\square}`, blank: answer }
+      ]
     };
   }
 
@@ -706,7 +848,12 @@ NM_TGEN['md59_continuityConstant'] = function (params, rng) {
         en: `For the two pieces to meet at x=c, plugging x=c into the left and right expressions must give the same value`,
         zh: `两段函数在x=c处相接，需要把x=c代入左右两式得到相同的值` },
       tex: `f(x)=\\begin{cases}${coefLead(a1)}x + b & (x<${c}) \\\\ ${coefLead(a2)}x ${wrapPlus(e)} & (x\\ge ${c})\\end{cases}\\text{, 연속} \\;\\Rightarrow\\; b=\\square`,
-      answer: b, answerType: 'number', widget: 'numpad', negative: b < 0
+      answer: b, answerType: 'number', widget: 'numpad', negative: b < 0,
+      solution: [
+        { tex: `${a2} \\times ${c} ${wrapPlus(e)} = \\square`, blank: a2 * c + e },
+        { tex: `${a1} \\times ${c} = \\square`, blank: a1 * c },
+        { tex: `${a2 * c + e} - ${a1 * c} = \\square`, blank: b }
+      ]
     };
   }
 
@@ -721,7 +868,11 @@ NM_TGEN['md59_continuityConstant'] = function (params, rng) {
         en: `For f(x) to be continuous at x=${a}, k must equal the limit there — factor the numerator and cancel`,
         zh: `f(x)在x=${a}处连续，k必须等于那里的极限值——把分子因式分解后约分` },
       tex: `f(x)=\\begin{cases}\\dfrac{x^2 ${wrapPlusCoef(b1)}x ${wrapPlus(b0)}}{x ${wrapPlus(-a)}} & (x\\ne ${a}) \\\\ k & (x=${a})\\end{cases} \\;\\Rightarrow\\; k=\\square`,
-      answer: k, answerType: 'number', widget: 'numpad', negative: k < 0
+      answer: k, answerType: 'number', widget: 'numpad', negative: k < 0,
+      solution: [
+        { tex: `\\dfrac{(x-${a})(x-${d})}{x-${a}} = x-${d}` },
+        { tex: `${a} - ${d} = \\square`, blank: k }
+      ]
     };
   }
 
@@ -735,7 +886,11 @@ NM_TGEN['md59_continuityConstant'] = function (params, rng) {
       en: `For f(x) to be continuous at x=${a}, k must equal the limit there — cancel using (x²-a²)=(x-a)(x+a)`,
       zh: `f(x)在x=${a}处连续，k必须等于那里的极限值——用(x²-a²)=(x-a)(x+a)约分` },
     tex: `f(x)=\\begin{cases}\\dfrac{x^2-${a * a}}{x ${wrapPlus(-a)}} & (x\\ne ${a}) \\\\ k & (x=${a})\\end{cases} \\;\\Rightarrow\\; k=\\square`,
-    answer: k, answerType: 'number', widget: 'numpad', negative: k < 0
+    answer: k, answerType: 'number', widget: 'numpad', negative: k < 0,
+    solution: [
+      { tex: `\\dfrac{(x-${a})(x+${a})}{x-${a}} = x+${a}` },
+      { tex: `${a} + ${a} = \\square`, blank: k }
+    ]
   };
 };
 
@@ -763,7 +918,12 @@ NM_TGEN['md60_extrema'] = function (params, rng) {
         en: `Solving f'(x)=0 gives the x-values with extrema (sign + to - is a local max, - to + is a local min)`,
         zh: `解f'(x)=0就能得到取极值的x(符号由+变-是极大，由-变+是极小)` },
       tex: `f(x)=${coefLead(k)}x^3 ${wrapPlusCoef(a2)}x^2 ${wrapPlusCoef(a1)}x ${wrapPlus(a0)} \\;\\Rightarrow\\; f'(x)=0\\text{의 해}: x=\\square,\\;\\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `\\dfrac{-2\\times(${a2})}{3\\times ${k}} = \\square \\;(r_1+r_2)`, blank: r1 + r2 },
+        { tex: `\\dfrac{${a1}}{3\\times ${k}} = \\square \\;(r_1\\times r_2)`, blank: r1 * r2 },
+        { tex: `x^2 - (${r1 + r2})x + ${r1 * r2} = 0 \\;\\Rightarrow\\; x=\\square,\\;\\square`, blank: answer }
+      ]
     };
   }
 
@@ -774,7 +934,11 @@ NM_TGEN['md60_extrema'] = function (params, rng) {
       en: `Find the x where f'(x)=0, then substitute it back into f(x) to get the local max and min values`,
       zh: `求出f'(x)=0的x后，代回原函数f(x)就能得到极大值·极小值` },
     tex: `f(x)=${coefLead(k)}x^3 ${wrapPlusCoef(a2)}x^2 ${wrapPlusCoef(a1)}x ${wrapPlus(a0)} \\;\\Rightarrow\\; \\text{극댓값}=\\square,\\;\\text{극솟값}=\\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `f'(x)=0 \\;\\Rightarrow\\; x=${r1},\\;${r2}` },
+      { tex: `f(${r1})=\\square,\\;f(${r2})=\\square`, blank: answer }
+    ]
   };
 };
 
@@ -811,7 +975,12 @@ NM_TGEN['md61_areaUnderCurve'] = function (params, rng) {
       en: `The area between the curve and the x-axis is the definite integral over the interval between the two intersection points — find the antiderivative, then compute F(q)-F(p)`,
       zh: `曲线与x轴之间的面积，就是以两个交点为区间的定积分——求出原函数后计算F(q)-F(p)` },
     tex: `f(x) = ${coefLead(A)}x^2 ${wrapPlusCoef(B)}x ${wrapPlus(C)} \\;\\Rightarrow\\; \\int_{${p}}^{${q}} f(x)\\,dx = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: false
+    answer, answerType: 'number', widget: 'numpad', negative: false,
+    solution: [
+      { tex: `F(${q}) = \\square`, blank: F(q) },
+      { tex: `F(${p}) = \\square`, blank: F(p) },
+      { tex: `${F(q)} - ${F(p)} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -837,7 +1006,12 @@ NM_TGEN['md62_velocityDistance'] = function (params, rng) {
           en: `Distance traveled is the integral of velocity v(t) (when v(t)≥0 throughout, distance equals the change in position) — find the antiderivative, then compute S(t2)-S(t1)`,
           zh: `移动距离是速度v(t)的积分(当v(t)始终≥0时，距离等于位置变化量)——求出原函数后计算S(t2)-S(t1)` },
         tex: `v(t) = ${coefLead(a)}t^2 ${wrapPlusCoef(b)}t ${wrapPlus(e)} \\;\\Rightarrow\\; \\int_{${t1}}^{${t2}} v(t)\\,dt = \\square`,
-        answer, answerType: 'number', widget: 'numpad', negative: false
+        answer, answerType: 'number', widget: 'numpad', negative: false,
+        solution: [
+          { tex: `S(${t2}) = \\square`, blank: S(t2) },
+          { tex: `S(${t1}) = \\square`, blank: S(t1) },
+          { tex: `${S(t2)} - ${S(t1)} = \\square`, blank: answer }
+        ]
       };
     }
     /* distance(기본) — v(t)=at+b(a=2k), 거리=∫[0,T]v(t)dt=S(T) */
@@ -850,7 +1024,12 @@ NM_TGEN['md62_velocityDistance'] = function (params, rng) {
         en: `Distance traveled is the integral of velocity v(t) from 0 to T — find the antiderivative S(t), then compute S(T)-S(0)`,
         zh: `移动距离是速度v(t)从0到T的积分——求出原函数S(t)后计算S(T)-S(0)` },
       tex: `v(t) = ${coefLead(a)}t ${wrapPlus(b)} \\;\\Rightarrow\\; \\int_{0}^{${T}} v(t)\\,dt = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `${k} \\times ${T}^2 = \\square`, blank: k * T * T },
+        { tex: `${b} \\times ${T} = \\square`, blank: b * T },
+        { tex: `${k * T * T} + ${b * T} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -863,7 +1042,11 @@ NM_TGEN['md62_velocityDistance'] = function (params, rng) {
       en: `Velocity is the derivative s'(t) of the position function s(t) — find s'(t), then substitute t=${t0}`,
       zh: `速度是位置函数s(t)的导数s'(t)——求出s'(t)后代入t=${t0}` },
     tex: `s(t) = ${coefLead(a)}t^2 ${wrapPlusCoef(b)}t \\;\\Rightarrow\\; s'(${t0}) = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+    answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+    solution: [
+      { tex: `s'(t) = ${2 * a}t ${wrapPlus(b)}` },
+      { tex: `${2 * a}\\times ${t0} ${wrapPlus(b)} = \\square`, blank: answer }
+    ]
   };
 };
 

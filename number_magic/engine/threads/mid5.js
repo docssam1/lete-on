@@ -13,6 +13,12 @@
    [중심x,중심y,반지름] 세 정수. 전부 forward 생성(목표값을 먼저
    정하고 그로부터 문제 계수를 역산)이라 나눗셈으로 인한 소수 답이
    원천적으로 나오지 않는다 — 검증 하네스가 다시 확인한다.
+
+   solution 필드(2026-09-04, 학습지 v2 §2-4 ★예시 문항용) — 각
+   생성기가 실제로 답에 이르는 과정을 {tex,blank} 배열로 함께
+   반환한다. 마지막 줄의 blank는 항상 answer와 동일(검증:
+   scripts/check-solution-steps.js). tex·answer 등 기존 필드는
+   전혀 바뀌지 않는다.
    ============================================================ */
 (function(){
 'use strict';
@@ -56,7 +62,12 @@ NM_TGEN['md31_distance'] = function (params, rng) {
       zh: `两点间距离：把横、纵坐标差分别平方后相加，再开平方(勾股定理)`
     },
     tex: `A(${x1}, ${y1}), \\;\\; B(${x2}, ${y2}) \\;\\Rightarrow\\; \\overline{AB} = \\square\\sqrt{\\square}`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `(x_2-x_1)^2 = (${x2}-(${x1}))^2 = \\square`, blank: dx * dx },
+      { tex: `(y_2-y_1)^2 = (${y2}-(${y1}))^2 = \\square`, blank: dy * dy },
+      { tex: `\\sqrt{${dx * dx}+${dy * dy}} = \\square\\sqrt{\\square}`, blank: [coeff, rad] }
+    ]
   };
 };
 
@@ -79,7 +90,12 @@ NM_TGEN['md32_midSection'] = function (params, rng) {
         zh: `中点：把两个坐标分别相加再除以2`
       },
       tex: `A(${x1}, ${y1}), \\;\\; B(${x2}, ${y2}) \\;\\Rightarrow\\; M = (\\square, \\square)`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `M_x = \\dfrac{${x1}+${x2}}{2} = \\square`, blank: mx },
+        { tex: `M_y = \\dfrac{${y1}+${y2}}{2} = \\square`, blank: my },
+        { tex: `M = (\\square, \\square)`, blank: [mx, my] }
+      ]
     };
   }
 
@@ -99,7 +115,12 @@ NM_TGEN['md32_midSection'] = function (params, rng) {
         zh: `按m:n内分的点，A乘n、B乘m后相加，再除以(m+n)`
       },
       tex: `A(${x1}, ${y1}), \\;\\; B(${x2}, ${y2}), \\;\\; ${m}:${n} \\;\\Rightarrow\\; P = (\\square, \\square)`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `P_x = \\dfrac{${n}\\times ${x1}+${m}\\times ${x2}}{${m}+${n}} = \\square`, blank: px },
+        { tex: `P_y = \\dfrac{${n}\\times ${y1}+${m}\\times ${y2}}{${m}+${n}} = \\square`, blank: py },
+        { tex: `P = (\\square, \\square)`, blank: [px, py] }
+      ]
     };
   }
 
@@ -119,7 +140,12 @@ NM_TGEN['md32_midSection'] = function (params, rng) {
       zh: `外分点结构和内分一样，但分母是(m-n)——m=n时无法确定`
     },
     tex: `A(${x1}, ${y1}), \\;\\; B(${x2}, ${y2}), \\;\\; ${m}:${n} \\;\\Rightarrow\\; Q = (\\square, \\square)`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `Q_x = \\dfrac{${m}\\times ${x2}-${n}\\times ${x1}}{${m}-${n}} = \\square`, blank: px },
+      { tex: `Q_y = \\dfrac{${m}\\times ${y2}-${n}\\times ${y1}}{${m}-${n}} = \\square`, blank: py },
+      { tex: `Q = (\\square, \\square)`, blank: [px, py] }
+    ]
   };
 };
 
@@ -143,7 +169,12 @@ NM_TGEN['md33_lineEquation'] = function (params, rng) {
         zh: `斜率是y的变化量除以x的变化量，求出斜率后代入一点即可求y轴截距`
       },
       tex: `A(${x1}, ${y1}), \\;\\; B(${x2}, ${y2}) \\;\\Rightarrow\\; y = \\square x + \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `a = \\dfrac{${y2}-${y1}}{${x2}-${x1}} = \\square`, blank: a },
+        { tex: `b = ${y1}-(${a})\\times(${x1}) = \\square`, blank: b },
+        { tex: `y = \\square x + \\square`, blank: [a, b] }
+      ]
     };
   }
 
@@ -160,7 +191,13 @@ NM_TGEN['md33_lineEquation'] = function (params, rng) {
       zh: `把Ax+By=C改写成y=...的形式，先把y项单独留下，其余移项后再除以B`
     },
     tex: `${A}x + ${B}y = ${C} \\;\\Rightarrow\\; y = \\square x + \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `${B}y = ${-A}x + ${C}` },
+      { tex: `a = \\dfrac{${-A}}{${B}} = \\square`, blank: a },
+      { tex: `b = \\dfrac{${C}}{${B}} = \\square`, blank: b },
+      { tex: `y = \\square x + \\square`, blank: [a, b] }
+    ]
   };
 };
 
@@ -202,7 +239,14 @@ NM_TGEN['md34_parallelPerp'] = function (params, rng) {
       zh: `两直线垂直时Ak+BD=0成立(斜率之积为-1)`
     },
     tex: `${A}x ${wrapPlus(B)}y ${wrapPlus(C1)} = 0, \\;\\; kx ${wrapPlus(D)}y ${wrapPlus(C2)} = 0 \\;\\Rightarrow\\; k = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+    answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+    solution: which === 'parallel' ? [
+      { tex: `A:B = k:D \\;\\Rightarrow\\; k = \\dfrac{A\\times D}{B}` },
+      { tex: `k = \\dfrac{${A}\\times ${D}}{${B}} = \\square`, blank: k }
+    ] : [
+      { tex: `Ak+BD=0 \\;\\Rightarrow\\; k = \\dfrac{-BD}{A}` },
+      { tex: `k = \\dfrac{-(${B})\\times(${D})}{${A}} = \\square`, blank: k }
+    ]
   };
 };
 
@@ -228,7 +272,13 @@ NM_TGEN['md35_circleEquation'] = function (params, rng) {
         zh: `x²、y²前有公共系数时，先用它除全式，再配方成完全平方`
       },
       tex: `${m}x^2 + ${m}y^2 ${wrapPlus(m * A)}x ${wrapPlus(m * B)}y ${wrapPlus(m * C)} = 0 \\;\\Rightarrow\\; (x-\\square)^2+(y-\\square)^2=\\square^2`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `x^2+y^2 ${wrapPlus(A)}x ${wrapPlus(B)}y ${wrapPlus(C)} = 0` },
+        { tex: `a=-\\dfrac{${A}}{2}=\\square,\\;\\;b=-\\dfrac{${B}}{2}=\\square`, blank: [a, b] },
+        { tex: `r=\\sqrt{${a}^2+${b}^2-(${C})}=\\square`, blank: r },
+        { tex: `(x-\\square)^2+(y-\\square)^2=\\square^2`, blank: [a, b, r] }
+      ]
     };
   }
 
@@ -239,7 +289,12 @@ NM_TGEN['md35_circleEquation'] = function (params, rng) {
       zh: `把x项、y项分别配成完全平方式，中心和半径就一目了然`
     },
     tex: `x^2+y^2 ${wrapPlus(A)}x ${wrapPlus(B)}y ${wrapPlus(C)} = 0 \\;\\Rightarrow\\; (x-\\square)^2+(y-\\square)^2=\\square^2`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    solution: [
+      { tex: `a=-\\dfrac{${A}}{2}=\\square,\\;\\;b=-\\dfrac{${B}}{2}=\\square`, blank: [a, b] },
+      { tex: `r=\\sqrt{${a}^2+${b}^2-(${C})}=\\square`, blank: r },
+      { tex: `(x-\\square)^2+(y-\\square)^2=\\square^2`, blank: [a, b, r] }
+    ]
   };
 };
 

@@ -64,7 +64,11 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
         zh: `同底数幂相乘——指数相加`
       },
       tex: `${base}^{${m}} \\times ${base}^{${n}} = ${base}^{\\square}`,
-      answer: m + n, answerType: 'number', widget: 'numpad'
+      answer: m + n, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${base}^{${m}} \\times ${base}^{${n}} = ${base}^{${m}+${n}}` },
+        { tex: `${base}^{${m}+${n}} = ${base}^{\\square}`, blank: m + n }
+      ]
     };
   }
 
@@ -77,7 +81,11 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
         zh: `幂的乘方——指数相乘`
       },
       tex: `(${base}^{${m}})^{${n}} = ${base}^{\\square}`,
-      answer: m * n, answerType: 'number', widget: 'numpad'
+      answer: m * n, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `(${base}^{${m}})^{${n}} = ${base}^{${m}\\times${n}}` },
+        { tex: `${base}^{${m}\\times${n}} = ${base}^{\\square}`, blank: m * n }
+      ]
     };
   }
 
@@ -90,7 +98,11 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
         zh: `同底数幂相除——指数相减(大指数减小指数)`
       },
       tex: `${base}^{${m}} \\div ${base}^{${n}} = ${base}^{\\square}`,
-      answer: m - n, answerType: 'number', widget: 'numpad'
+      answer: m - n, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${base}^{${m}} \\div ${base}^{${n}} = ${base}^{${m}-${n}}` },
+        { tex: `${base}^{${m}-${n}} = ${base}^{\\square}`, blank: m - n }
+      ]
     };
   }
 
@@ -110,6 +122,10 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
       tex: `(${base}^{${m}})^{${n}} \\times ${base}^{${k}} = ${base}^{\\square}`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
+        { tex: `(${base}^{${m}})^{${n}} = ${base}^{\\square}`, blank: mid },
+        { tex: `${base}^{${mid}} \\times ${base}^{${k}} = ${base}^{\\square}`, blank: answer }
+      ],
+      solution: [
         { tex: `(${base}^{${m}})^{${n}} = ${base}^{\\square}`, blank: mid },
         { tex: `${base}^{${mid}} \\times ${base}^{${k}} = ${base}^{\\square}`, blank: answer }
       ]
@@ -132,6 +148,10 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
       steps: [
         { tex: `${base}^{${p}} \\times ${base}^{${q}} = ${base}^{\\square}`, blank: sum },
         { tex: `${base}^{${sum}} \\div ${base}^{${k}} = ${base}^{\\square}`, blank: answer }
+      ],
+      solution: [
+        { tex: `${base}^{${p}} \\times ${base}^{${q}} = ${base}^{\\square}`, blank: sum },
+        { tex: `${base}^{${sum}} \\div ${base}^{${k}} = ${base}^{\\square}`, blank: answer }
       ]
     };
   }
@@ -149,6 +169,10 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     tex: `(${base}^{${m}} \\times ${base}^{${n}})^{${p}} = ${base}^{\\square}`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `${base}^{${m}} \\times ${base}^{${n}} = ${base}^{\\square}`, blank: inner },
+      { tex: `(${base}^{${inner}})^{${p}} = ${base}^{\\square}`, blank: answer }
+    ],
+    solution: [
       { tex: `${base}^{${m}} \\times ${base}^{${n}} = ${base}^{\\square}`, blank: inner },
       { tex: `(${base}^{${inner}})^{${p}} = ${base}^{\\square}`, blank: answer }
     ]
@@ -177,7 +201,12 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
       /* 개념 애니메이션용 장면 필드 (개념애니-설계.md §4-1) — 계수·지수가
          monoTex()로 만든 문자열 안에만 있어서 "두 표기를 나란히"를 그릴 수
          없었다. tex 파싱 금지라 지역변수를 그대로 내보낸다. 기존 반환값 불변. */
-      scene: { archetype: 'notation', op: 'mul', a: { c: c1, e: m }, b: { c: c2, e: n }, coeff, exp }
+      scene: { archetype: 'notation', op: 'mul', a: { c: c1, e: m }, b: { c: c2, e: n }, coeff, exp },
+      solution: [
+        { tex: `${c1} \\times ${c2} = ${coeff}` },
+        { tex: `x^{${m}} \\times x^{${n}} = x^{${m + n}}` },
+        { tex: `${monoTex(c1, m, false)} \\times ${monoTex(c2, n, true)} = \\square x^{\\square}`, blank: [coeff, exp] }
+      ]
     };
   }
 
@@ -195,7 +224,12 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
       },
       tex: `${monoTex(c1, m, false)} \\div ${monoTex(c2, n, true)} = \\square x^{\\square}`,
       answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0,
-      scene: { archetype: 'notation', op: 'div', a: { c: c1, e: m }, b: { c: c2, e: n }, coeff, exp }
+      scene: { archetype: 'notation', op: 'div', a: { c: c1, e: m }, b: { c: c2, e: n }, coeff, exp },
+      solution: [
+        { tex: `${c1} \\div ${c2} = ${coeff}` },
+        { tex: `x^{${m}} \\div x^{${n}} = x^{${m - n}}` },
+        { tex: `${monoTex(c1, m, false)} \\div ${monoTex(c2, n, true)} = \\square x^{\\square}`, blank: [coeff, exp] }
+      ]
     };
   }
 
@@ -225,6 +259,8 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
     }
   }
   const exprTex = terms.map((t, i) => i === 0 ? monoTex(t.c, t.m, false) : ` ${t.op} ${monoTex(t.c, t.m, true)}`).join('');
+  const coeffChainTex = terms.map((t, i) => i === 0 ? String(t.c) : ` ${t.op} ${t.c}`).join('');
+  const expChainTex = terms.map((t, i) => i === 0 ? String(t.m) : ` ${t.op === '\\times' ? '+' : '-'} ${t.m}`).join('');
   return {
     prompt: {
       ko: `세 단항식의 곱셈·나눗셈 혼합이에요. 앞에서부터 차례로 계산해요`,
@@ -232,7 +268,12 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
       zh: `三个单项式的乘除混合——从左到右依次计算`
     },
     tex: `${exprTex} = \\square x^{\\square}`,
-    answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0
+    answer: [coeff, exp], answerType: 'number', widget: 'numpad', negative: coeff < 0,
+    solution: [
+      { tex: `\\text{계수}: ${coeffChainTex} = ${coeff}` },
+      { tex: `\\text{지수}: ${expChainTex} = ${exp}` },
+      { tex: `\\square x^{\\square}`, blank: [coeff, exp] }
+    ]
   };
 };
 
@@ -256,7 +297,12 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
         zh: `只把同类项(字母和次数都相同)相加或相减`
       },
       tex: `(${a1}x ${wrapPlus(b1)}) ${op} (${a2}x ${wrapPlus(b2)}) = \\square x + \\square`,
-      answer: [xc, cc], answerType: 'number', widget: 'numpad', negative: xc < 0 || cc < 0
+      answer: [xc, cc], answerType: 'number', widget: 'numpad', negative: xc < 0 || cc < 0,
+      solution: [
+        { tex: `${a1} ${op} ${a2} = ${xc}` },
+        { tex: `${b1} ${op} ${b2} = ${cc}` },
+        { tex: `\\square x + \\square`, blank: [xc, cc] }
+      ]
     };
   }
 
@@ -274,7 +320,13 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
         zh: `按次数分类——x²项、x项、常数项分别合并`
       },
       tex: `(${a1}x^2 ${wrapPlus(b1)}x ${wrapPlus(c1)}) ${op} (${a2}x^2 ${wrapPlus(b2)}x ${wrapPlus(c2)}) = \\square x^2 + \\square x + \\square`,
-      answer: [x2c, xc, cc], answerType: 'number', widget: 'numpad', negative: x2c < 0 || xc < 0 || cc < 0
+      answer: [x2c, xc, cc], answerType: 'number', widget: 'numpad', negative: x2c < 0 || xc < 0 || cc < 0,
+      solution: [
+        { tex: `${a1} ${op} ${a2} = ${x2c}` },
+        { tex: `${b1} ${op} ${b2} = ${xc}` },
+        { tex: `${c1} ${op} ${c2} = ${cc}` },
+        { tex: `\\square x^2 + \\square x + \\square`, blank: [x2c, xc, cc] }
+      ]
     };
   }
 
@@ -289,7 +341,13 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
       zh: `括号前是−号，就要把括号里每一项的符号都变号`
     },
     tex: `${a1}x ${wrapPlus(b1)} - (${a2}x ${wrapPlus(b2)}) = \\square x + \\square`,
-    answer: [xc, cc], answerType: 'number', widget: 'numpad', negative: xc < 0 || cc < 0
+    answer: [xc, cc], answerType: 'number', widget: 'numpad', negative: xc < 0 || cc < 0,
+    solution: [
+      { tex: `-(${a2}x ${wrapPlus(b2)}) = ${-a2}x ${wrapPlus(-b2)}` },
+      { tex: `${a1} - ${a2} = ${xc}` },
+      { tex: `${b1} - ${b2} = ${cc}` },
+      { tex: `\\square x + \\square`, blank: [xc, cc] }
+    ]
   };
 };
 
@@ -311,7 +369,12 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
         zh: `用分配律——分别乘括号里的每一项`
       },
       tex: `${k}(${a}x ${wrapPlus(b)}) = \\square x + \\square`,
-      answer: [k * a, k * b], answerType: 'number', widget: 'numpad', negative: (k * a < 0) || (k * b < 0)
+      answer: [k * a, k * b], answerType: 'number', widget: 'numpad', negative: (k * a < 0) || (k * b < 0),
+      solution: [
+        { tex: `${k} \\times ${a} = ${k * a}` },
+        { tex: `${k} \\times ${b} = ${k * b}` },
+        { tex: `\\square x + \\square`, blank: [k * a, k * b] }
+      ]
     };
   }
 
@@ -325,7 +388,12 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
         zh: `把${k}x分别乘括号里的每一项——x的次数各加1`
       },
       tex: `${k}x(${a}x ${wrapPlus(b)}) = \\square x^2 + \\square x`,
-      answer: [k * a, k * b], answerType: 'number', widget: 'numpad', negative: (k * a < 0) || (k * b < 0)
+      answer: [k * a, k * b], answerType: 'number', widget: 'numpad', negative: (k * a < 0) || (k * b < 0),
+      solution: [
+        { tex: `${k} \\times ${a} = ${k * a}` },
+        { tex: `${k} \\times ${b} = ${k * b}` },
+        { tex: `\\square x^2 + \\square x`, blank: [k * a, k * b] }
+      ]
     };
   }
 
@@ -340,7 +408,13 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
     },
     tex: `${k}(${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)}) = \\square x^2 + \\square x + \\square`,
     answer: [k * a, k * b, k * c], answerType: 'number', widget: 'numpad',
-    negative: (k * a < 0) || (k * b < 0) || (k * c < 0)
+    negative: (k * a < 0) || (k * b < 0) || (k * c < 0),
+    solution: [
+      { tex: `${k} \\times ${a} = ${k * a}` },
+      { tex: `${k} \\times ${b} = ${k * b}` },
+      { tex: `${k} \\times ${c} = ${k * c}` },
+      { tex: `\\square x^2 + \\square x + \\square`, blank: [k * a, k * b, k * c] }
+    ]
   };
 };
 
@@ -362,7 +436,11 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
         zh: `x + ${a} = ${b}：把左边的+${a}移到右边，符号要变`
       },
       tex: `x + ${a} = ${b} \\;\\Rightarrow\\; x = ${b} - \\square`,
-      answer: a, answerType: 'number', widget: 'numpad'
+      answer: a, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `x + ${a} = ${b}` },
+        { tex: `x = ${b} - \\square`, blank: a }
+      ]
     };
   }
 
@@ -376,7 +454,11 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
         zh: `x - ${a} = ${b}：把左边的-${a}移到右边，符号要变`
       },
       tex: `x - ${a} = ${b} \\;\\Rightarrow\\; x = ${b} + \\square`,
-      answer: a, answerType: 'number', widget: 'numpad'
+      answer: a, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `x - ${a} = ${b}` },
+        { tex: `x = ${b} + \\square`, blank: a }
+      ]
     };
   }
 
@@ -394,6 +476,10 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
     tex: `${aC}x ${wrapPlus(b)} = ${c} \\;\\Rightarrow\\; x = \\square`,
     answer: x0, answerType: 'steps', widget: 'steps', negative: x0 < 0,
     steps: [
+      { tex: `${aC}x = ${c} - \\square`, blank: b },
+      { tex: `${aC}x = ${c - b} \\;\\Rightarrow\\; x = \\square`, blank: x0 }
+    ],
+    solution: [
       { tex: `${aC}x = ${c} - \\square`, blank: b },
       { tex: `${aC}x = ${c - b} \\;\\Rightarrow\\; x = \\square`, blank: x0 }
     ]

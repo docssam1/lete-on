@@ -661,6 +661,7 @@ function render(){
   else if(S.view==='roadmap')screenRoadmap();
   else if(S.view==='courseroad')screenCourseRoad();
   else if(S.view==='placement')screenPlacement();
+  else if(S.view==='startpick')screenStartPick();
   else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
   else if(S.view==='gradecourse')screenGradeCourse();
   else if(S.view==='mailbox')screenMailbox();
@@ -2069,6 +2070,7 @@ function screenCourseRoad(){
       <div class="nm-cr-titlerow">
         <div class="nm-cr-title">🛤️ ${lk('연산 로드맵','Course Road','运算路线图')}</div>
         <button class="nm-cr-diagbtn" id="crDiag">🧭 ${lk('진단하기','Level Check','水平测评')}</button>
+        <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}">🎯</button>
       </div>
       <div class="nm-cr-sub">${lk('지금 어디까지 왔고 앞으로 어디로 가는지, 한 길로 보여요.','See the whole path — where you are now and where it leads.','用一条路看清现在走到哪里、接下来去哪里。')}</div>
       <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
@@ -2085,6 +2087,7 @@ function screenCourseRoad(){
   </div>`;
   $('#crBack').onclick=()=>{S._roadFocus=null;S.view='town';save();render();};
   $('#crDiag').onclick=()=>startPlacement();
+  $('#crPick').onclick=()=>{S.view='startpick';save();render();};
 
   const body=$('#crBody');
 
@@ -2175,7 +2178,21 @@ function screenCourseRoad(){
     if(S.placement&&S.placement.course){
       const pc=(window.NM_COURSES||{})[S.placement.course];
       const pnum=String(S.placement.course).replace(/^C/,'');
-      if(pc) html+=`<div class="nm-cr-diagchip">🧭 ${lk('진단 추천','Check-up suggests','测评建议')} — ${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}</div>`;
+      if(pc){
+        const weak=S.placement.weak||[];
+        const label=S.placement.self
+          ? `🎯 ${lk('내가 고른 시작점','My chosen start','我选的起点')}`
+          : `🧭 ${lk('진단 추천','Check-up suggests','测评建议')}`;
+        let suffix='';
+        if(!S.placement.self && weak.length){
+          const names=weak.slice(0,3).map(tid=>{
+            const th=(window.NM_THREADS||{})[tid];
+            return th?esc(L(th.name)):esc(tid);
+          });
+          suffix=` · ${lk('연습 필요','needs practice','需要练习')} ${weak.length}: ${names.join(', ')}`;
+        }
+        html+=`<div class="nm-cr-diagchip">${label} — ${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</div>`;
+      }
     }
 
     /* ── 길 ── */
@@ -2309,75 +2326,65 @@ function screenCourseRoad(){
 }
 
 /* ============================================================
-   진단하기 (S.view==='placement') — 짧은 레벨 확인
+   진단하기 v2 (S.view==='placement') — 세밀한 레벨 확인 + 세부 스킬 체크
    ------------------------------------------------------------
-   이 앱엔 배치 진단이 없었다(유닛 안의 "진단 스킵"은 그 유닛 한 곳을
-   건너뛸지 묻는 것이라 다른 물건이다). 그래서 최소한으로 만든다:
-   연산 구간을 대표하는 사다리에서 한 칸씩 한 문제를 묻고, "풀 수 있는
-   칸"과 "아직 못 푸는 칸"의 경계를 찾으면 거기서 멈춰 그 과정을
-   시작점으로 권한다.
+   원장 지시 두 가지: ①"진단을 더 세밀하게" — 45개 과정(C1~C45) 전부를
+   사다리에 얹고, 경계를 찾은 뒤에는 그 근처 과정들의 스킬을 하나씩 더
+   물어 "어느 스킬이 익숙하고, 어느 게 맞혔지만 느리고, 어느 게 연습이
+   필요한지"까지 알려준다. ②"시작을 스스로 고를 수도 있게" — 진단 없이
+   과정을 직접 골라 시작하는 화면(S.view==='startpick', screenStartPick)을
+   더했다.
+
+   세 단계로 진행된다(d=S._diag, d.stage):
+   1. age    — 나이를 고른다(원장 지시: "현재 나이에 따라 연산 정도를
+      물어보는 설문이 달라야 해"). 나이마다 사다리의 다른 칸에서 시작한다.
+   2. q      — 위아래로 좁히기(bracketing). 맞히면 위로(맞힐 때마다 도약
+      폭이 커진다: 4→8→12칸), 틀리면 아래로 절반씩. 최대 9문항
+      (PLACEMENT-CORE.MAX_Q). scripts/sim-placement.js가 나이×실력 전
+      조합을 돌려 최대 문항 수·경계 오차를 검증한다(0건이어야 통과).
+   3. fine   — 경계 과정 K를 찾으면 K와 K-1 두 과정의 자기 드릴 재료를
+      모아 하나씩 더 묻는다(최대 8문항, 이미 2단계에서 물어본 스레드는
+      다시 안 묻고 그 결과를 재활용). 25초 기준으로 익숙함(✅)·맞혔지만
+      느림(🟡)·연습 필요(❌)를 가른다.
+   → 결과: 추천 과정(K, 단 K-1 자기 재료 중 오답 2개 이상이면 K-1로 낮춤)
+     + 영역별(수와 덧셈·뺄셈·곱셈·나눗셈·분수·소수·혼합응용·경시·중고등)
+     스킬 칩 목록. "직접 고를래요" 버튼으로 언제든 startpick으로 갈 수
+     있다 — 결과는 권유일 뿐 어떤 과정도 잠그지 않는다.
+
+   사다리 만들기·좁히기 순수 로직은 app/placement-core.js에 있다(node
+   시뮬레이터도 같이 쓴다 — main.js는 DOM이 있어야 로드되므로 못 부른다).
    문항은 전부 기존 생성기(NM_TGEN)가 만든다 — 새 문제를 지어내지 않는다.
-   결과는 권유일 뿐 어떤 과정도 잠그지 않는다.
-
-   ── 나이를 먼저 묻는다 (원장 지시: "현재 나이에 따라 연산 정도를 물어보는
-   설문이 달라야 해") ──
-   예전엔 모두가 사다리 맨 아래(AD1 · 한 자리 덧셈)에서 출발했다. 그래서
-   열 살 아이는 시시한 문제를 여덟 개 푼 뒤에야 자기 자리에 닿았고, 여섯 살
-   아이는 첫 문제부터 한 자리 덧셈을 만났다(그보다 아래가 없었다).
-   이제 나이를 먼저 고르면 그 나이의 칸에서 시작하고, 사다리 아래쪽에는
-   수의 나라(NL) 칸을 붙여 유아도 수 세기부터 시작한다.
-
-   ── 위아래로 좁혀 간다(bracketing) ──
-   맞히면 위로, 틀리면 아래로 가며 경계를 좁힌다. 아래는 절반씩 내려가고
-   위는 한 번에 최대 네 칸까지만 올라간다(아이에게 너무 큰 도약이 되지
-   않게). 이미 "푼 칸"과 "못 푼 칸"이 둘 다 생기면 그 사이를 반씩 접는다.
-   16칸 × 모든 실력 조합을 전부 돌려 보면 최대 6문제 안에 경계가 정확히
-   나온다. 한 칸에서 두 번 묻던 예전의 재시도는 없앴다 — 위아래로 좁히는
-   방식에선 같은 칸을 두 번 묻는 게 경계를 흐리고 문항 수만 늘린다.
    ============================================================ */
-const PLACEMENT_LADDER=[
-  /* 수의 나라(유아) — 아직 과정으로 갈라지지 않는 구간이라 모두 C1이 시작점.
-     이 칸들은 tex가 없고 조작 위젯으로만 답하는 문제라, 화면이 위젯을
-     그려 준다(아래 screenPlacement 참고).
-     고르는 기준은 둘이다 — 답이 정수 하나여야 하고, **틀릴 수 있어야** 한다.
-     NL6(10 짝꿍)는 tenframe 위젯이 칸을 다 채운 순간 problem.answer를 그대로
-     넘겨서 오답이 나올 수가 없다. 진단 칸으로는 못 쓰므로 뺐다(위젯 자체는
-     학습 화면에선 제 역할을 한다 — 고칠 대상이 아니다). 같은 이유로 NL7L3·
-     NL14L3(matchLine)과 NL4L3·NL12L1(dotToDot)도 뺐다.
-     tex가 있는 교과연산 칸은 예전처럼 식+숫자패드로 받으므로 이 문제와
-     무관하다(AD1의 cubes 위젯도 여기선 쓰이지 않는다). */
-  {course:'C1',  thread:'NL1', level:1},   /* 수 세기와 개수 */
-  {course:'C1',  thread:'NL4', level:1},   /* 수의 순서 */
-  {course:'C1',  thread:'NL2', level:2},   /* 모으기와 가르기 */
-  {course:'C1',  thread:'NL5', level:1},   /* 이웃 수 더하기 — 덧셈으로 건너가는 다리 */
-  /* 교과연산 */
-  {course:'C1',  thread:'AD1', level:1},
-  {course:'C3',  thread:'AD3', level:1},
-  {course:'C4',  thread:'AD5', level:1},
-  {course:'C5',  thread:'ML2', level:1},
-  {course:'C7',  thread:'ML3', level:1},
-  {course:'C9',  thread:'ML6', level:1},
-  {course:'C11', thread:'ML8', level:1},
-  {course:'C12', thread:'DV3', level:1},
-  {course:'C13', thread:'FR1', level:1},
-  {course:'C16', thread:'MX1', level:1},
-  {course:'C17', thread:'DC1', level:1},
-  {course:'C19', thread:'DV7', level:1}
-];
-const PLACEMENT_TOP='C20'; /* 사다리를 전부 통과했을 때 권하는 시작 과정 */
-const PLACEMENT_MAX_Q=6;   /* 진단은 시험이 아니다 — 문항 수를 여기서 끊는다 */
-const PLACEMENT_UP_CAP=4;  /* 맞혔을 때 한 번에 올라가는 최대 칸 수 */
+/* 사다리·좁히기(bracketing) 순수 로직은 app/placement-core.js에 있다(node
+   시뮬레이터 scripts/sim-placement.js가 같이 쓴다 — main.js는 DOM이 있어야
+   로드되므로 거기서는 못 부른다). 여기서는 한 번 만들어 캐시만 한다(과정
+   데이터는 페이지 켜져 있는 동안 안 바뀐다).
+   45개 과정(C1~C45) 전부를 사다리에 한 칸씩 얹는다 — 예전엔 16칸짜리
+   손으로 고른 표였지만, 이제 buildLadder()가 courseBuilt인 과정마다
+   "그 과정 자기 드릴 재료 중 생성기 답이 숫자 하나인 첫 스레드"를 데이터에서
+   직접 고른다(전부 배열 답이면 첫 재료로 대체). 수의 나라(유아) 4칸은
+   그대로 맨 앞에 고정. */
+let _placementLadder=null;
+function placementLadder(){
+  if(!_placementLadder) _placementLadder=window.NM_PLACEMENT_CORE?window.NM_PLACEMENT_CORE.buildLadder():[];
+  return _placementLadder;
+}
 
 /* 나이 선택지. 이름·나이 문구는 지어내지 않고 이 앱이 이미 쓰는 것을
-   그대로 가져온다 — 교과연산 구간은 ROAD_TIERS의 name/band(로드맵 역 이름과
-   같은 문구)를, 유아 구간은 data/curriculum.js 수의 나라 tier의
-   ageLabel/subtitle을 쓴다. entry = 그 나이가 첫 문제로 만나는 사다리 칸. */
+   그대로 가져온다 — 교과연산·중등·고등 구간은 ROAD_TIERS의 name/band를,
+   유아 구간은 data/curriculum.js 수의 나라 tier의 ageLabel을 쓴다.
+   entry(사다리 칸)는 course 키로 매 렌더 때 사다리에서 찾는다(하드코딩 인덱스
+   없음) — placementAgeEntry() 참고. */
 const PLACEMENT_AGES=[
-  {key:'pre',   emoji:'🌱', tier:null,       entry:0},
-  {key:'g1',    emoji:'🌿', tier:'level1',   entry:4},
-  {key:'g2',    emoji:'🌳', tier:'level2',   entry:10},
-  {key:'g3',    emoji:'⛰️', tier:'level3',   entry:14},
-  {key:'adv',   emoji:'🗼', tier:'challenge',entry:15}
+  {key:'pre', emoji:'🌱', tier:null,        course:null},
+  {key:'g1',  emoji:'🌿', tier:'level1',    course:'C1'},
+  {key:'g2',  emoji:'🌳', tier:'level2',    course:'C11'},
+  {key:'g3',  emoji:'⛰️', tier:'level3',    course:'C17'},
+  {key:'adv', emoji:'🗼', tier:'challenge', course:'C26'},
+  {key:'m1',  emoji:'📘', tier:'middle1',   course:'C29'},
+  {key:'m2',  emoji:'📗', tier:'middle2',   course:'C32'},
+  {key:'m3',  emoji:'📙', tier:'middle3',   course:'C34'},
+  {key:'hi',  emoji:'🎓', tier:'highmath1', course:'C36'}
 ];
 /* 수의 나라 구간의 이름·나이 — curriculum.js에서 읽고, 없으면 같은 문구로 적는다. */
 function placementPreLabel(){
@@ -2394,29 +2401,44 @@ function placementAgeLabel(opt){
   const info=roadTierInfo(opt.tier);
   return {name:info.name, band:info.band};
 }
+/* 나이가 가리키는 사다리 칸 — course가 없으면(수의 나라) 0번 칸, 있으면
+   사다리에서 그 과정의 칸을 찾는다(못 찾으면 안전하게 0). */
+function placementAgeEntry(opt){
+  if(!opt.course) return 0;
+  const CORE=window.NM_PLACEMENT_CORE;
+  if(!CORE) return 0;
+  const idx=CORE.rungIndexOfCourse(placementLadder(), opt.course);
+  return idx>=0?idx:0;
+}
 
 function startPlacement(){
   /* lo = 풀 수 있다고 확인된 가장 높은 칸(없으면 -1)
-     hi = 아직 못 푼다고 확인된 가장 낮은 칸(없으면 사다리 길이) */
+     hi = 아직 못 푼다고 확인된 가장 낮은 칸(없으면 사다리 길이)
+     log = 지금까지 물은 모든 문제의 {t,lv,ok,sec} — 세부 진단이 "이미 물은
+     스레드는 다시 안 묻는다"를 판단하는 근거이자 결과 화면 스킬 목록의 재료. */
   S._diag={ run:Date.now(), stage:'age', age:null, entry:0,
-            lo:-1, hi:PLACEMENT_LADDER.length, at:null,
-            asked:0, correct:0, cur:null };
+            lo:-1, hi:placementLadder().length, at:null, ups:0,
+            asked:0, correct:0, cur:null, qStart:null, log:[] };
   S.view='placement'; save(); render();
 }
-/* 다음에 물을 칸. null이면 경계를 찾은 것 — 더 묻지 않는다. */
+/* 다음에 물을 칸(bracketing). null이면 경계를 찾은 것 — placement-core.js로 위임. */
 function placementNext(d){
-  const N=PLACEMENT_LADDER.length;
-  if(d.hi-d.lo<=1) return null;
-  if(d.at===null) return Math.min(N-1, Math.max(0, d.entry));
-  if(d.hi===N) return Math.min(N-1, d.lo+1+Math.min(PLACEMENT_UP_CAP-1, Math.floor((N-1-d.lo)/2)));
-  if(d.lo===-1) return Math.floor(d.hi/2);
-  return Math.floor((d.lo+d.hi)/2);
+  return window.NM_PLACEMENT_CORE.nextRung(d, placementLadder().length);
 }
-/* 아직 못 넘은 첫 칸. 경계를 못 찾고 문항 수가 다 찼으면 알고 있는 것 중
-   확실히 못 푼 칸(hi)을, 그것도 없으면 다음 칸(lo+1)을 쓴다. */
+/* 한 문제의 채점 결과를 위아래 좁히기(lo/hi)에 반영 — placement-core.js로 위임. */
+function placementGrade(d, rungIndex, ok){
+  window.NM_PLACEMENT_CORE.grade(d, rungIndex, ok, placementLadder().length);
+}
+/* 아직 못 넘은 첫 칸 — placement-core.js로 위임. */
 function placementBoundary(d){
-  if(d.hi-d.lo<=1) return d.hi;
-  return d.hi<PLACEMENT_LADDER.length ? d.hi : d.lo+1;
+  return window.NM_PLACEMENT_CORE.boundary(d, placementLadder().length);
+}
+/* 물어본 스레드마다 결과를 남긴다(위아래 좁히기 문제든 세부 진단 문제든 공용).
+   나중에(finishPlacement) 이 log에서 "구역 스레드 중 이미 물어본 것"을 찾아
+   스킬 목록·재활용 판단에 쓴다. */
+function placementLog(d, threadId, level, ok, sec){
+  d.log=d.log||[];
+  d.log.push({t:threadId, lv:level, ok:!!ok, sec:sec});
 }
 function placementProblem(rung, i, run){
   const th=(window.NM_THREADS||{})[rung.thread];
@@ -2426,22 +2448,111 @@ function placementProblem(rung, i, run){
   return gen ? gen(params,rng)
              : {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
 }
-/* 한 문제의 채점 결과를 사다리에 반영한다. */
-function placementGrade(d, rungIndex, ok){
-  d.asked++;
-  if(ok){ d.correct++; d.lo=Math.max(d.lo,rungIndex); }
-  else  { d.hi=Math.min(d.hi,rungIndex); }
-  d.at=rungIndex; d.cur=null;
+/* ── 세부 진단(스킬 체크) 단계 ──
+   위아래 좁히기가 끝나면(경계를 찾았거나 문항 수가 다 찼으면) 경계 과정 K를
+   구하고, K와 K-1(바로 아래 과정) 두 과정의 자기 드릴 재료를 모아 "이 근처를
+   더 자세히" 물어본다. 이미 위아래 좁히기에서 물어본 스레드는 다시 안 묻고
+   그 결과를 그대로 재활용한다(placementLog가 쌓아 둔 d.log에서 찾는다). */
+function placementAfterBracketing(d){
+  const ladder=placementLadder();
+  const CORE=window.NM_PLACEMENT_CORE;
+  const N=ladder.length;
+  const b=CORE.boundary(d,N);
+  const K=CORE.courseAtIndex(ladder,b);
+  d.boundaryIdx=b;
+  d.K=K;
+  d.zone=CORE.fineZoneCourseKeys(ladder,K);
+  const already=(d.log||[]).map(l=>l.t);
+  const fineThreads=CORE.fineZoneThreads(d.zone, already);
+  if(!fineThreads.length){
+    placementFinish(d);
+  } else {
+    d.stage='fine';
+    d.fineThreads=fineThreads;
+    d.fineIdx=0;
+    d.fineAsked=0;
+    d.cur=null; d.qStart=null;
+  }
 }
-function finishPlacement(){
-  const d=S._diag;
-  const b=placementBoundary(d);
-  const key=(PLACEMENT_LADDER[b]) ? PLACEMENT_LADDER[b].course : PLACEMENT_TOP;
-  S.placement={ at:Date.now(), course:key, asked:d.asked, correct:d.correct,
-    age:d.age||null, cleared:b };
+/* 결과 계산 — 구역(zone) 과정들의 자기 드릴 재료 순서대로, log에 기록이 있는
+   것만(=실제로 물어본 것만) 스킬 목록에 올린다. 추천 과정은 K를 기본값으로
+   하되, K-1 자기 재료 중 오답이 2개 이상이면 한 칸 낮춘다. */
+function placementFinish(d){
+  const ladder=placementLadder();
+  const CORE=window.NM_PLACEMENT_CORE;
+  const zone=d.zone||CORE.fineZoneCourseKeys(ladder,d.K);
+  const recommended=CORE.recommendationAdjust(CORE.recommendedCourseKey(ladder,d.K), zone, d.log||[]);
+  const spec=window.NM_COURSE_SPEC||[];
+  const seen={}, orderedIds=[];
+  (zone||[]).forEach(key=>{
+    const num=parseInt(String(key).replace(/^C/,''),10);
+    const s=spec.find(x=>x.id===num);
+    if(!s) return;
+    (s.drills||[]).forEach(t=>{ if(!seen[t]){ seen[t]=true; orderedIds.push(t); } });
+  });
+  const profile=[];
+  orderedIds.forEach(t=>{
+    const e=(d.log||[]).find(l=>l.t===t);
+    if(e) profile.push({t:e.t, lv:e.lv, ok:e.ok, sec:e.sec});
+  });
+  const weak=profile.filter(p=>!p.ok).map(p=>p.t);
+  const slow=profile.filter(p=>p.ok&&p.sec>25).map(p=>p.t);
+  S.placement={ at:Date.now(), course:recommended, asked:d.asked||0, correct:d.correct||0,
+    age:d.age||null, cleared:d.boundaryIdx, profile, weak, slow, self:false };
+  d.stage='result';
   save();
-  return key;
 }
+
+/* ── 결과 화면의 스킬 목록 — 스레드 id 접두사로 영역을 가른다 ── */
+const PLACEMENT_AREAS=[
+  {prefix:['NS','AD'], icon:'➕', name:{ko:'수와 덧셈',en:'Numbers & Addition',zh:'数与加法'}},
+  {prefix:['SB'],      icon:'➖', name:{ko:'뺄셈',en:'Subtraction',zh:'减法'}},
+  {prefix:['ML'],      icon:'✖️', name:{ko:'곱셈',en:'Multiplication',zh:'乘法'}},
+  {prefix:['DV'],      icon:'➗', name:{ko:'나눗셈',en:'Division',zh:'除法'}},
+  {prefix:['FR'],      icon:'🍕', name:{ko:'분수',en:'Fractions',zh:'分数'}},
+  {prefix:['DC'],      icon:'🔢', name:{ko:'소수',en:'Decimals',zh:'小数'}},
+  {prefix:['MX','EL'], icon:'🧮', name:{ko:'혼합·응용',en:'Mixed & Applied',zh:'混合·应用'}},
+  {prefix:['CH'],      icon:'🏆', name:{ko:'경시',en:'Challenge',zh:'竞赛'}},
+  {prefix:['MD'],      icon:'📐', name:{ko:'중·고등',en:'Middle & High',zh:'中学·高中'}}
+];
+function placementAreaOf(threadId){
+  const pfx=String(threadId).replace(/[0-9]+$/,'');
+  return PLACEMENT_AREAS.find(a=>a.prefix.indexOf(pfx)>=0)
+    || {prefix:[pfx], icon:'✨', name:{ko:pfx,en:pfx,zh:pfx}};
+}
+/* ✅ 익숙해요 / 🟡 맞혔지만 느려요 / ❌ 연습이 필요해요 — 25초 기준. */
+function placementVerdict(p){
+  if(!p.ok) return {kind:'weak', icon:'❌'};
+  if(p.sec>25) return {kind:'slow', icon:'🟡'};
+  return {kind:'solid', icon:'✅'};
+}
+function placementVerdictLabel(kind, lk){
+  return kind==='weak'?lk('연습이 필요해요','Needs practice','需要练习')
+    :kind==='slow'?lk('맞혔지만 느려요','Correct but slow','答对但较慢')
+    :lk('익숙해요','Solid','很熟练');
+}
+function placementSkillListHtml(profile, lk){
+  if(!profile||!profile.length) return '';
+  const groups=[]; const byIdx={};
+  profile.forEach(p=>{
+    const a=placementAreaOf(p.t);
+    const gkey=a.name.ko;
+    if(byIdx[gkey]==null){ byIdx[gkey]=groups.length; groups.push({area:a, items:[]}); }
+    groups[byIdx[gkey]].items.push(p);
+  });
+  return `<div class="nm-dg-skills">
+    <div class="nm-dg-skills-h">${lk('세부 결과','Skill details','细项结果')}</div>
+    ${groups.map(g=>`<div class="nm-dg-skgroup">
+      <div class="nm-dg-skgroup-h">${g.area.icon} ${esc(L(g.area.name))}</div>
+      <div class="nm-dg-skchips">${g.items.map(p=>{
+        const th=(window.NM_THREADS||{})[p.t];
+        const v=placementVerdict(p);
+        return `<span class="nm-dg-skchip ${v.kind}" title="${esc(placementVerdictLabel(v.kind,lk))}">${v.icon} ${th?esc(L(th.name)):esc(p.t)}</span>`;
+      }).join('')}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
 function screenPlacement(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -2450,15 +2561,19 @@ function screenPlacement(){
   const lk=(k,e,z)=>ko?k:en?e:z;
   const d=S._diag;
   if(!d){ S.view='town'; save(); render(); return; }
-  /* S._diag는 저장된다. 예전 형식(바닥부터 한 칸씩 오르던 시절)의 진행 중
-     상태로 돌아오면 새 방식에 이어 붙일 수가 없으니 처음부터 다시 시작한다. */
-  if(d.stage===undefined||typeof d.lo!=='number'||typeof d.hi!=='number'){ startPlacement(); return; }
+  /* S._diag는 저장된다. 예전 형식(나이 단계 이전, 또는 세부 진단이 없던
+     v1)의 진행 중 상태로 돌아오면 새 사다리(49칸)·새 필드(log 등)와 안
+     맞으니 처음부터 다시 시작한다. */
+  if(d.stage===undefined||typeof d.lo!=='number'||typeof d.hi!=='number'||!Array.isArray(d.log)){ startPlacement(); return; }
+
+  const CORE=window.NM_PLACEMENT_CORE;
+  const back=()=>{ S._diag=null; S.view='town'; save(); render(); };
 
   /* ── 나이 고르기 ── */
   if(d.stage==='age'){
     const opts=PLACEMENT_AGES.map(o=>{
       const lab=placementAgeLabel(o);
-      return `<button class="nm-dg-age" data-entry="${o.entry}" data-age="${o.key}">
+      return `<button class="nm-dg-age" data-entry="${placementAgeEntry(o)}" data-age="${o.key}">
         <span class="nm-dg-age-ico">${o.emoji}</span>
         <span class="nm-dg-age-txt"><b>${esc(L(lab.band))}</b><small>${esc(L(lab.name))}</small></span>
       </button>`;}).join('');
@@ -2474,86 +2589,119 @@ function screenPlacement(){
           'We will start with questions that fit your age. Just a few questions.',
           '我们从适合你年龄的题目开始，只要几道题就好。')}</p>
         <div class="nm-dg-ages">${opts}</div>
+        <button class="nm-dg-selfpick" id="dgSelfPick">🎯 ${lk('진단 없이 직접 고를래요','Skip the check — pick myself','不测评，自己选')}</button>
         <button class="nm-dg-again" id="dgSkip">${lk('잘 모르겠어요 · 건너뛰기','Not sure · Skip','不太清楚 · 跳过')}</button>
       </div>
     </div>`;
-    $('#dgBack').onclick=()=>{ S._diag=null; S.view='town'; save(); render(); };
+    $('#dgBack').onclick=back;
     scr.querySelectorAll('.nm-dg-age').forEach(b=>{
       b.onclick=()=>{ d.age=b.dataset.age; d.entry=+b.dataset.entry;
         d.stage='q'; save(); screenPlacement(); };
     });
     /* 건너뛰기 = 예전 그대로 맨 아래 칸부터 */
     $('#dgSkip').onclick=()=>{ d.age='skip'; d.entry=0; d.stage='q'; save(); screenPlacement(); };
+    $('#dgSelfPick').onclick=()=>{ S._diag=null; S.view='startpick'; save(); render(); };
+    return;
+  }
+
+  /* ── 위아래로 좁히기(bracketing) — 경계를 찾으면 세부 진단으로 넘어간다 ── */
+  if(d.stage==='q'){
+    const ladder=placementLadder();
+    const nextIdx=placementNext(d);
+    if(nextIdx===null || d.asked>=CORE.MAX_Q){
+      placementAfterBracketing(d); save(); screenPlacement(); return;
+    }
+    renderPlacementQuestion(d, ladder[nextIdx], nextIdx, 'q');
+    return;
+  }
+
+  /* ── 세부 진단(스킬 체크) ── */
+  if(d.stage==='fine'){
+    if(d.fineIdx>=d.fineThreads.length || d.fineAsked>=CORE.FINE_MAX_Q){
+      placementFinish(d); save(); screenPlacement(); return;
+    }
+    const threadId=d.fineThreads[d.fineIdx];
+    const rung={course:(d.zone&&d.zone[d.zone.length-1])||d.K||'C1', thread:threadId, level:1};
+    renderPlacementQuestion(d, rung, null, 'fine');
     return;
   }
 
   /* ── 결과 ── */
-  const nextIdx=placementNext(d);
-  if(nextIdx===null || d.asked>=PLACEMENT_MAX_Q){
-    const key=finishPlacement();
-    const c=(window.NM_COURSES||{})[key];
-    const num=String(key).replace(/^C/,'');
-    const tierDef=c?roadTierInfo(c.tier):null;
-    scr.innerHTML=`<div class="nm-unit-bar">
-      <button class="nm-back" id="dgBack">${t('back')}</button>
-      <div class="nm-unit-title">🧭 ${lk('진단 결과','Check-up Result','测评结果')}</div>
-    </div>
-    <div class="nm-step-body nm-wsh-wrap nm-dg-wrap">
-      <div class="nm-card center">
-        <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
-        <div class="nm-card-h">${lk('여기서 시작하면 좋아요!','A good place to start!','从这里开始正合适！')}</div>
-        <div class="nm-dg-course">${lk('과정','Course','课程')} ${num}${c?` · ${esc(L(c.title))}`:''}</div>
-        ${tierDef?`<div class="nm-dg-tier">${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</div>`:''}
-        ${placementAgeNoteHtml(d,lk)}
-        <div class="nm-score">${d.correct} / ${d.asked}</div>
-        <p class="nm-wsh-sentence">${lk('맞힌 문제까지가 이미 익숙한 곳이에요. 여기서부터 새로 배우면 딱 맞아요.','Everything you answered is already comfortable — starting here fits just right.','答对的部分已经很熟练了，从这里开始正好。')}</p>
-        <p class="nm-dg-free">${lk('이건 권유일 뿐이에요. 과정은 언제든 자유롭게 골라도 좋아요.','This is only a suggestion — you can pick any course you like, any time.','这只是建议，任何时候都可以自由选择课程。')}</p>
-        <button class="nm-btn full" id="dgGoRoad">🛤️ ${lk('로드맵에서 이 과정 보기','See this course on the road','在路线图上看这个课程')}</button>
-        <button class="nm-dg-again" id="dgAgain">${lk('다시 진단하기','Take it again','再测一次')}</button>
-      </div>
-    </div>`;
-    $('#dgBack').onclick=()=>{ S._diag=null; S.view='town'; save(); render(); };
-    $('#dgGoRoad').onclick=()=>{ S._diag=null; S._roadFocus=key; S.view='courseroad'; save(); render(); };
-    $('#dgAgain').onclick=()=>startPlacement();
+  if(d.stage==='result'){
+    renderPlacementResult(d);
     return;
   }
+  /* 알 수 없는 stage — 안전하게 다시 시작 */
+  startPlacement();
+}
 
-  /* ── 문항 ── */
-  const rung=PLACEMENT_LADDER[nextIdx];
-  if(!d.cur) d.cur=placementProblem(rung,d.asked,d.run);
+/* 문항 화면(위아래 좁히기·세부 진단 공용). stage='q'면 idx가 사다리 칸
+   번호(위아래 좁히기에 반영), stage='fine'이면 idx는 null(사다리 칸이
+   아니라 구역 재료를 그냥 순서대로 묻는 것이라 lo/hi에 반영하지 않는다). */
+function renderPlacementQuestion(d, rung, idx, stage){
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const CORE=window.NM_PLACEMENT_CORE;
+  const isFine=stage==='fine';
+  if(!d.cur){ d.cur=placementProblem(rung, isFine?(1000+d.fineIdx):d.asked, d.run); d.qStart=Date.now(); }
   const cur=d.cur;
   const th=(window.NM_THREADS||{})[rung.thread];
   /* tex가 있으면 예전 그대로 식 + 넘패드. 수의 나라 문제는 tex가 없고 그림을
      만져야 답이 나오므로 기존 위젯 렌더러(runPracticeWidget과 같은 길)를 쓴다. */
   const useWidget = !cur.tex && cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
+  const isMulti = Array.isArray(cur.answer);
+
+  const stepNum = isFine ? (d.fineAsked+1) : (d.asked+1);
+  const totalDots = isFine ? Math.min(CORE.FINE_MAX_Q, d.fineThreads.length) : CORE.MAX_Q;
+  const curDot = isFine ? d.fineAsked : d.asked;
+  const headerTitle = isFine ? lk('세부 진단','Skill check','细项测评') : lk('진단하기','Level Check','水平测评');
+  const canStop = isFine && d.fineAsked>=3;
 
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="dgBack">${t('back')}</button>
-    <div class="nm-unit-title">🧭 ${lk('진단하기','Level Check','水平测评')}</div>
+    <div class="nm-unit-title">🧭 ${headerTitle}</div>
   </div>
   <div class="nm-step-body">
     <div class="nm-dialog">
-      <div class="nm-dg-step">${lk(`${d.asked+1}번째 문제`,`Question ${d.asked+1}`,`第${d.asked+1}题`)}${th?` · ${esc(L(th.name))}`:''}</div>
-      <div class="nm-prog">${dots(PLACEMENT_MAX_Q,d.asked)}</div>
+      ${isFine?`<p class="nm-dg-finesub">${lk('몇 문제만 더 풀면 어떤 걸 잘하는지 알 수 있어요','A few more and we will know your strong skills','再做几题就能知道你擅长什么')}</p>`:''}
+      <div class="nm-dg-step">${lk(`${stepNum}번째 문제`,`Question ${stepNum}`,`第${stepNum}题`)}${th?` · ${esc(L(th.name))}`:''}</div>
+      <div class="nm-prog">${dots(totalDots,curDot)}</div>
       <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
       <div class="nm-bubble">${esc(L(cur.prompt))}</div>
       ${useWidget?`<div id="dgWidget" class="nm-lab-widget"></div>`:`
       <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
+      ${isMulti?`<p class="nm-dg-multihint">${lk('답이 여러 개면 쉼표(,)로 나눠 써요','Separate multiple answers with commas','多个答案用逗号分开')}</p>`:''}
       <div class="nm-numpad-screen" id="dgScreen">&nbsp;</div>
       <div class="nm-numpad" id="dgPad"></div>`}
+      ${canStop?`<button class="nm-dg-again" id="dgStop">${lk('그만하고 결과 보기','Stop and see result','结束并看结果')}</button>`:''}
     </div>
   </div>`;
   $('#dgBack').onclick=()=>{ S._diag=null; S.view='town'; save(); render(); };
+  if(canStop) $('#dgStop').onclick=()=>{ placementFinish(d); save(); screenPlacement(); };
   renderMath(scr);
 
   const submit=ok=>{
-    placementGrade(d,nextIdx,ok);
+    const sec=Math.max(0, Math.round((Date.now()-(d.qStart||Date.now()))/1000));
+    if(stage==='q'){
+      placementGrade(d, idx, ok);
+    } else {
+      d.fineIdx=(d.fineIdx||0)+1; d.fineAsked=(d.fineAsked||0)+1;
+      d.asked=(d.asked||0)+1; if(ok) d.correct=(d.correct||0)+1;
+    }
+    placementLog(d, rung.thread, rung.level, ok, sec);
+    d.cur=null; d.qStart=null;
     save();
     if(ok) playSfx('success');
     setTimeout(()=>screenPlacement(), ok?520:820);
   };
   if(useWidget){
-    NM_WIDGETS.render(cur,$('#dgWidget'),val=>submit(+val===cur.answer));
+    NM_WIDGETS.render(cur,$('#dgWidget'),val=>{
+      const ok = isMulti
+        ? Array.isArray(val) && val.length===cur.answer.length && val.every((v,i)=>+v===cur.answer[i])
+        : +val===cur.answer;
+      submit(ok);
+    });
     return;
   }
   const screenEl=$('#dgScreen');
@@ -2561,22 +2709,170 @@ function screenPlacement(){
   buildNumpad($('#dgPad'),val=>{
     if(val==='ok'){
       if(inp===''||inp==='-') return;
-      submit(parseFloat(inp)===cur.answer);
+      if(isMulti){
+        const parts=inp.split(',').map(s=>s.trim()).filter(s=>s!=='');
+        const nums=parts.map(parseFloat);
+        submit(nums.length===cur.answer.length && nums.every((v,i)=>v===cur.answer[i]));
+      } else {
+        submit(parseFloat(inp)===cur.answer);
+      }
       return;
     }
     if(val==='del') inp=inp.slice(0,-1);
     else if(val==='-') inp=applyMinusKey(inp);
-    else if(inp.replace('-','').length<6&&!(val==='.'&&inp.includes('.'))) inp+=val;
+    else if(val===','){ if(inp!==''&&!inp.endsWith(',')) inp+=','; }
+    else if(inp.replace(/[-,]/g,'').length<(isMulti?16:6)&&!(val==='.'&&inp.split(',').pop().includes('.'))) inp+=val;
     screenEl.textContent=inp||' ';
-  },{decimal:!Number.isInteger(cur.answer), negative:!!cur.negative});
+  },{decimal:isMulti?true:!Number.isInteger(cur.answer), negative:isMulti?true:!!cur.negative, comma:isMulti});
 }
-/* 결과 화면에서 "몇 살이라고 했는지"를 한 줄로 되짚어 준다. 건너뛴 경우엔 없음. */
+
+/* 결과 화면 — S.placement는 placementFinish()(진단) 또는 screenStartPick()
+   (직접 고르기)가 채운다. */
+function renderPlacementResult(d){
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const key=S.placement.course;
+  const c=(window.NM_COURSES||{})[key];
+  const num=String(key).replace(/^C/,'');
+  const tierDef=c?roadTierInfo(c.tier):null;
+  scr.innerHTML=`<div class="nm-unit-bar">
+    <button class="nm-back" id="dgBack">${t('back')}</button>
+    <div class="nm-unit-title">🧭 ${lk('진단 결과','Check-up Result','测评结果')}</div>
+  </div>
+  <div class="nm-step-body nm-wsh-wrap nm-dg-wrap">
+    <div class="nm-card center">
+      <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+      <div class="nm-card-h">${lk('여기서 시작하면 좋아요!','A good place to start!','从这里开始正合适！')}</div>
+      <div class="nm-dg-course">${lk('과정','Course','课程')} ${num}${c?` · ${esc(L(c.title))}`:''}</div>
+      ${tierDef?`<div class="nm-dg-tier">${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</div>`:''}
+      ${placementAgeNoteHtml(S.placement,lk)}
+      <div class="nm-score">${S.placement.correct||0} / ${S.placement.asked||0}</div>
+      <p class="nm-wsh-sentence">${lk('맞힌 문제까지가 이미 익숙한 곳이에요. 여기서부터 새로 배우면 딱 맞아요.','Everything you answered is already comfortable — starting here fits just right.','答对的部分已经很熟练了，从这里开始正好。')}</p>
+      ${placementSkillListHtml(S.placement.profile,lk)}
+      <p class="nm-dg-free">${lk('이건 권유일 뿐이에요. 과정은 언제든 자유롭게 골라도 좋아요.','This is only a suggestion — you can pick any course you like, any time.','这只是建议，任何时候都可以自由选择课程。')}</p>
+      <button class="nm-btn full" id="dgGoRoad">🛤️ ${lk('로드맵에서 이 과정 보기','See this course on the road','在路线图上看这个课程')}</button>
+      <button class="nm-btn full ghost" id="dgPickInstead">🎯 ${lk('다른 곳에서 시작할래요 · 직접 고르기','Start somewhere else · pick myself','想从别处开始 · 自己选')}</button>
+      <button class="nm-dg-again" id="dgAgain">${lk('다시 진단하기','Take it again','再测一次')}</button>
+    </div>
+  </div>`;
+  $('#dgBack').onclick=()=>{ S._diag=null; S.view='town'; save(); render(); };
+  $('#dgGoRoad').onclick=()=>{ S._diag=null; S._roadFocus=key; S.view='courseroad'; save(); render(); };
+  $('#dgPickInstead').onclick=()=>{ S._diag=null; S.view='startpick'; save(); render(); };
+  $('#dgAgain').onclick=()=>startPlacement();
+}
+/* 결과 화면에서 "몇 살이라고 했는지"를 한 줄로 되짚어 준다. 건너뛴/직접
+   고른 경우엔 없음(둘 다 age가 없거나 'skip'). */
 function placementAgeNoteHtml(d,lk){
   if(!d.age||d.age==='skip')return'';
   const opt=PLACEMENT_AGES.find(o=>o.key===d.age);
   if(!opt)return'';
   const lab=placementAgeLabel(opt);
   return `<div class="nm-dg-agenote">${opt.emoji} ${lk('고른 나이','Age picked','所选年龄')} · ${esc(L(lab.band))}</div>`;
+}
+
+/* ============================================================
+   시작점 고르기 (S.view==='startpick') — 진단 없이 과정을 직접 골라
+   시작한다(원장 지시 "시작 스스로 선택하기"). ROAD_TIERS 순서로 접을 수
+   있는 구간마다 과정 카드(제목·드릴 재료 이름·예시 문제·시작 버튼)를
+   늘어놓는다. 예시 문제는 고정 시드(pick+과정키)라 새로고침해도 같은
+   문제 — "미리보기"라는 인상을 주려는 것이지 실제로 풀 필요는 없다.
+   ============================================================ */
+function screenStartPick(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+
+  if(!window.NM_COURSES||!window.NM_THREADS){
+    scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="spBack">${t('back')}</button>
+      <div class="nm-unit-title">🎯 ${lk('시작점 고르기','Pick your start','选择起点')}</div></div>
+      <div class="nm-step-body"><div class="nm-card">${lk('과정 자료를 아직 불러오지 못했어요.','Course data is not ready yet.','课程数据还没准备好。')}</div></div>`;
+    $('#spBack').onclick=()=>{S.view='town';save();render();};
+    return;
+  }
+
+  const curKey=currentCourseKey();
+  const curCourse=(window.NM_COURSES||{})[curKey];
+  const curTier=curCourse?curCourse.tier:null;
+  const list=roadCourseList();
+  const specById={};
+  (window.NM_COURSE_SPEC||[]).forEach(s=>{ specById[s.id]=s; });
+
+  /* 과정의 "첫 숫자 답 드릴"로 미리보기 문제 하나(고정 시드) — buildLadder()와
+     같은 고르는 기준(생성기 답이 숫자 하나)을 쓴다. tex 없는 문제(수의 나라
+     위젯형)는 미리보기를 건너뛴다. */
+  function sampleFor(spec, key){
+    if(!spec || !window.NM_PLACEMENT_CORE) return null;
+    const drills=spec.drills||[];
+    for(let i=0;i<drills.length;i++){
+      const id=drills[i];
+      if(!window.NM_PLACEMENT_CORE.isScalarDrill(id)) continue;
+      const th=(window.NM_THREADS||{})[id];
+      const gen=(window.NM_TGEN||{})[th&&th.gen];
+      if(!gen) continue;
+      const lvl=(th.levels||[]).find(l=>l.id===1)||th.levels[0];
+      try{
+        const rng=NM_RNG.mulberry32(NM_RNG.hashSeed('pick'+key));
+        const p=gen(lvl.params||{}, rng);
+        if(p && p.tex) return p;
+      }catch(e){}
+    }
+    return null;
+  }
+
+  function courseCardHtml(x){
+    const key=x.key, c=x.c, spec=specById[x.num];
+    const built=courseBuilt(c);
+    const names=(spec?spec.drills:[]).slice(0,3).map(id=>{
+      const th=(window.NM_THREADS||{})[id];
+      return th?esc(L(th.name)):esc(id);
+    });
+    const sample=built?sampleFor(spec,key):null;
+    return `<div class="nm-sp-card${built?'':' off'}">
+      <div class="nm-sp-num">${lk('과정','Course','课程')} ${x.num}</div>
+      <div class="nm-sp-title">${esc(L(c.title))}</div>
+      ${names.length?`<div class="nm-sp-drills">${names.join(' · ')}</div>`:''}
+      ${sample?`<div class="nm-sp-sample">${labExprHtml(sample.tex)}</div>`:''}
+      ${built
+        ? `<button class="nm-btn small full nm-sp-go" data-c="${key}">${lk('여기서 시작','Start here','从这里开始')}</button>`
+        : `<span class="nm-sp-soon">${lk('준비 중','Coming soon','准备中')}</span>`}
+    </div>`;
+  }
+
+  let body='';
+  ROAD_TIERS.forEach(tierDef=>{
+    const items=list.filter(x=>x.c.tier===tierDef.key);
+    if(!items.length) return;
+    const open=tierDef.key===curTier;
+    body+=`<details class="nm-sp-tier"${open?' open':''} style="--acc:${tierDef.accent}">
+      <summary class="nm-sp-tier-h">
+        <span class="nm-sp-tier-bar"></span>
+        <span class="nm-sp-tier-txt"><b>${esc(L(tierDef.name))}</b><small>${esc(L(tierDef.band))}</small></span>
+      </summary>
+      <div class="nm-sp-grid">${items.map(courseCardHtml).join('')}</div>
+    </details>`;
+  });
+
+  scr.innerHTML=`<div class="nm-cr-wrap">
+    <div class="nm-cr-header">
+      <button class="nm-back" id="spBack">${t('back')}</button>
+      <div class="nm-cr-titlerow"><div class="nm-cr-title">🎯 ${lk('시작점 고르기','Pick your start','选择起点')}</div></div>
+      <div class="nm-cr-sub">${lk('진단 없이 원하는 과정에서 바로 시작할 수 있어요. 언제든 바꿔도 돼요.','Start at any course without a check-up. You can change it any time.','不用测评也能从想要的课程开始，随时都可以换。')}</div>
+    </div>
+    <div class="nm-cr-body nm-sp-body">${body}</div>
+  </div>`;
+  $('#spBack').onclick=()=>{S.view='town';save();render();};
+  scr.querySelectorAll('.nm-sp-go').forEach(b=>{
+    b.onclick=()=>{
+      const key=b.dataset.c;
+      S.placement={ at:Date.now(), course:key, self:true,
+        asked:0, correct:0, profile:[], weak:[], slow:[] };
+      S._roadFocus=key; S.view='courseroad'; save(); render();
+    };
+  });
+  renderMath(scr);
 }
 
 /* ============================================================
@@ -2676,6 +2972,11 @@ function currentCourseKey(){
     const cid = courseForUnit(uid);
     if(cid) return cid;
   }
+  /* 진도가 전혀 없는데 진단(또는 직접 고르기)이 시작점을 정해 뒀으면 그 과정을
+     "지금 여기"로 삼는다 — 로드맵의 지금 여기·다음 목표, 시작점 고르기의
+     기본 펼침 탭이 이 값을 따른다. syncProgressUnlocks()는 캐릭터 해금 판정이라
+     일부러 이 함수를 안 쓴다(§syncProgressUnlocks 주석) — 그대로 둔다. */
+  if(S.placement && S.placement.course && (window.NM_COURSES||{})[S.placement.course]) return S.placement.course;
   return 'C1';
 }
 /* 숫자 캐릭터 해금의 "티어" 그룹 경계 — 캐릭터-승급-설계.md §1 표 그대로
@@ -4493,17 +4794,24 @@ function stepStamp(body,u){
 function buildNumpad(pad,cb,opts){
   opts=opts||{};
   pad.innerHTML='';
-  const keys=opts.decimal&&opts.negative
-    ?['1','2','3','4','5','6','7','8','9','.','-','0','del','ok']
-    :opts.decimal
-    ?['1','2','3','4','5','6','7','8','9','.','0','del','ok']
-    :opts.negative
-    ?['1','2','3','4','5','6','7','8','9','-','0','del','ok']
-    :['1','2','3','4','5','6','7','8','9','del','0','ok'];
-  /* 소수·음수 어느 쪽이든 4열 레이아웃(기존 .dec CSS 재사용) */
-  if(opts.decimal||opts.negative) pad.classList.add('dec'); else pad.classList.remove('dec');
+  /* comma: 답이 배열(여러 칸)인 진단 문항용 — 쉼표로 나눠 입력받는다(§진단하기 v2).
+     기존 decimal/negative 세 조합은 순서·구성 그대로(회귀 없음), comma는
+     그 뒤에 덧붙이기만 한다. */
+  const wide=opts.decimal||opts.negative||opts.comma;
+  let keys;
+  if(!wide){
+    keys=['1','2','3','4','5','6','7','8','9','del','0','ok'];
+  } else {
+    keys=['1','2','3','4','5','6','7','8','9'];
+    if(opts.decimal) keys.push('.');
+    if(opts.negative) keys.push('-');
+    if(opts.comma) keys.push(',');
+    keys.push('0','del','ok');
+  }
+  /* 소수·음수·쉼표 중 하나라도 있으면 4열 레이아웃(기존 .dec CSS 재사용) */
+  if(wide) pad.classList.add('dec'); else pad.classList.remove('dec');
   keys.forEach(k=>{
-    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':k==='-'?' neg':'');
+    const b=document.createElement('button');b.className='nm-key'+(k==='ok'?' ok':k==='del'?' del':k==='.'?' dot':k==='-'?' neg':k===','?' comma':'');
     b.textContent=k==='del'?'←':k==='ok'?'✓':k==='-'?'−':k;b.onclick=()=>{playSfx('tap');cb(k);};pad.appendChild(b);
   });
 }

@@ -62,7 +62,11 @@ NM_TGEN['md1_intConcept'] = function (params, rng) {
         zh: `求|${a}|——绝对值是这个数到原点(0)的距离`
       },
       tex: `|${a}| = \\square`,
-      answer: mag, answerType: 'number', widget: 'numpad'
+      answer: mag, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `|${a}| \\;\\Rightarrow\\; \\text{0까지 거리}` },
+        { tex: `|${a}| = \\square`, blank: mag }
+      ]
     };
   }
 
@@ -71,6 +75,7 @@ NM_TGEN['md1_intConcept'] = function (params, rng) {
     do { a = R(rng, -50, 50); b = R(rng, -50, 50); } while (a === b);
     const askMax = pick(rng, [true, false]);
     const answer = askMax ? Math.max(a, b) : Math.min(a, b);
+    const cmp = a > b ? '>' : '<';
     return {
       prompt: {
         ko: `${a}와 ${b} 중 ${askMax ? '더 큰' : '더 작은'} 수는 무엇일까요?`,
@@ -78,7 +83,11 @@ NM_TGEN['md1_intConcept'] = function (params, rng) {
         zh: `${a}和${b}中，哪个${askMax ? '更大' : '更小'}？`
       },
       tex: `${askMax ? '\\max' : '\\min'}(${a},\\,${b}) = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+      answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+      solution: [
+        { tex: `${a} ${cmp} ${b}` },
+        { tex: `${askMax ? '\\max' : '\\min'}(${a},\\,${b}) = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -93,7 +102,11 @@ NM_TGEN['md1_intConcept'] = function (params, rng) {
       zh: `在数轴上，${a}和${b}相距几格？`
     },
     tex: `|${a} - (${b})| = \\square`,
-    answer: dist, answerType: 'number', widget: 'numpad'
+    answer: dist, answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `|${a} - (${b})| = |${a - b}|` },
+      { tex: `|${a - b}| = \\square`, blank: dist }
+    ]
   };
 };
 
@@ -124,6 +137,10 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
       steps: [
         { tex: `|${a}| + |${b}| = \\square`, blank: absSum },
         { tex: `${wa} + ${wb} = \\square`, blank: sum }
+      ],
+      solution: [
+        { tex: `|${a}| + |${b}| = \\square`, blank: absSum },
+        { tex: `${wa} + ${wb} = \\square`, blank: sum }
       ]
     };
   }
@@ -144,6 +161,10 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
       tex: `${wa} + ${wb} = \\square`,
       answer: sum, answerType: 'steps', widget: 'steps',
       steps: [
+        { tex: `|${a}| - |${b}| = \\square \\;(\\text{절댓값 차})`, blank: diff },
+        { tex: `${wa} + ${wb} = \\square`, blank: sum }
+      ],
+      solution: [
         { tex: `|${a}| - |${b}| = \\square \\;(\\text{절댓값 차})`, blank: diff },
         { tex: `${wa} + ${wb} = \\square`, blank: sum }
       ]
@@ -169,6 +190,10 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
       steps: [
         { tex: `${x} ${op} (${y}) = ${x} + \\square`, blank: flipped },
         { tex: `${x} + (${flipped}) = \\square`, blank: answer }
+      ],
+      solution: [
+        { tex: `${x} ${op} (${y}) = ${x} + \\square`, blank: flipped },
+        { tex: `${x} + (${flipped}) = \\square`, blank: answer }
       ]
     };
   }
@@ -188,6 +213,10 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
     tex: `${m1} ${op1} ${m2} ${op2} ${m3} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `${m1} ${op1} ${m2} = \\square`, blank: step1 },
+      { tex: `${step1} ${op2} ${m3} = \\square`, blank: answer }
+    ],
+    solution: [
       { tex: `${m1} ${op1} ${m2} = \\square`, blank: step1 },
       { tex: `${step1} ${op2} ${m3} = \\square`, blank: answer }
     ]
@@ -214,7 +243,11 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
       },
       tex: `\\dfrac{${a1}}{${d}} + \\dfrac{${a2}}{${d}} = \\square`,
       answer: [n, den], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
-      negative: (a1 + a2) < 0
+      negative: (a1 + a2) < 0,
+      solution: [
+        { tex: `\\dfrac{${a1}}{${d}} + \\dfrac{${a2}}{${d}} = \\dfrac{${a1 + a2}}{${d}}` },
+        { tex: `\\dfrac{${a1 + a2}}{${d}} = \\dfrac{\\square}{\\square}`, blank: [n, den] }
+      ]
     };
   }
 
@@ -235,7 +268,11 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
       },
       tex: `\\dfrac{${a1}}{${d1}} + \\dfrac{${a2}}{${d2}} = \\square`,
       answer: [n, den], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
-      negative: (conv1 + conv2) < 0
+      negative: (conv1 + conv2) < 0,
+      solution: [
+        { tex: `\\dfrac{${a1}}{${d1}} + \\dfrac{${a2}}{${d2}} = \\dfrac{${conv1}}{${LCD}} + \\dfrac{${conv2}}{${LCD}}` },
+        { tex: `\\dfrac{${conv1}}{${LCD}} + \\dfrac{${conv2}}{${LCD}} = \\dfrac{\\square}{\\square}`, blank: [n, den] }
+      ]
     };
   }
 
@@ -255,7 +292,11 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
     },
     tex: `${exprTex} = \\square`,
     answer: [n, den], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
-    negative: sumNum < 0
+    negative: sumNum < 0,
+    solution: [
+      { tex: `${exprTex} = \\dfrac{${sumNum}}{${LCD}}` },
+      { tex: `\\dfrac{${sumNum}}{${LCD}} = \\dfrac{\\square}{\\square}`, blank: [n, den] }
+    ]
   };
 };
 
@@ -285,6 +326,11 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
         { tex: `\\text{음수 개수}: \\square`, blank: negCount },
         { tex: `|${a}| \\times |${b}| = \\square`, blank: absProduct },
         { tex: `${a} \\times ${wrapSigned(b)} = \\square`, blank: product }
+      ],
+      solution: [
+        { tex: `\\text{음수 개수}: \\square`, blank: negCount },
+        { tex: `|${a}| \\times |${b}| = \\square`, blank: absProduct },
+        { tex: `${a} \\times ${wrapSigned(b)} = \\square`, blank: product }
       ]
     };
   }
@@ -303,6 +349,11 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
       tex: `${a} \\div ${wrapSigned(b)} = \\square`,
       answer: q, answerType: 'steps', widget: 'steps',
       steps: [
+        { tex: `\\text{음수 개수}: \\square`, blank: negCount },
+        { tex: `|${a}| \\div |${b}| = \\square`, blank: Math.abs(q) },
+        { tex: `${a} \\div ${wrapSigned(b)} = \\square`, blank: q }
+      ],
+      solution: [
         { tex: `\\text{음수 개수}: \\square`, blank: negCount },
         { tex: `|${a}| \\div |${b}| = \\square`, blank: Math.abs(q) },
         { tex: `${a} \\div ${wrapSigned(b)} = \\square`, blank: q }
@@ -331,6 +382,11 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
         { tex: `\\text{음수 개수}: \\square`, blank: negCount },
         { tex: `${absTex} = \\square`, blank: absProduct },
         { tex: `${exprTex} = \\square`, blank: product }
+      ],
+      solution: [
+        { tex: `\\text{음수 개수}: \\square`, blank: negCount },
+        { tex: `${absTex} = \\square`, blank: absProduct },
+        { tex: `${exprTex} = \\square`, blank: product }
       ]
     };
   }
@@ -354,6 +410,10 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
       steps: [
         { tex: `${a} \\div ${wrapSigned(b)} = \\square`, blank: q1 },
         { tex: `${q1} \\times ${wrapSigned(c)} = \\square`, blank: answer }
+      ],
+      solution: [
+        { tex: `${a} \\div ${wrapSigned(b)} = \\square`, blank: q1 },
+        { tex: `${q1} \\times ${wrapSigned(c)} = \\square`, blank: answer }
       ]
     };
   }
@@ -372,6 +432,10 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     tex: `${a} \\times ${wrapSigned(b)} \\div ${wrapSigned(c)} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `${a} \\times ${wrapSigned(b)} = \\square`, blank: interim },
+      { tex: `${interim} \\div ${wrapSigned(c)} = \\square`, blank: answer }
+    ],
+    solution: [
       { tex: `${a} \\times ${wrapSigned(b)} = \\square`, blank: interim },
       { tex: `${interim} \\div ${wrapSigned(c)} = \\square`, blank: answer }
     ]
@@ -398,6 +462,7 @@ NM_TGEN['md5_signedPower'] = function (params, rng) {
       prod = next;
     }
     const answer = prod;
+    const repeated = Array(n).fill(`(${-a})`).join(' \\times ');
     return {
       prompt: {
         ko: `(-${a})^{${n}}: 밑이 통째로 괄호 안에 있어요 — (-${a})를 ${n}번 곱해요`,
@@ -405,7 +470,11 @@ NM_TGEN['md5_signedPower'] = function (params, rng) {
         zh: `(-${a})^{${n}}：整个底数都在括号里——把(-${a})连乘${n}次`
       },
       tex: `(-${a})^{${n}} = \\square`,
-      answer, answerType: 'steps', widget: 'steps', steps
+      answer, answerType: 'steps', widget: 'steps', steps,
+      solution: [
+        { tex: `(-${a})^{${n}} = ${repeated}` },
+        { tex: `${repeated} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -421,6 +490,10 @@ NM_TGEN['md5_signedPower'] = function (params, rng) {
     tex: `-${a}^{${n}} = \\square`,
     answer, answerType: 'steps', widget: 'steps',
     steps: [
+      { tex: `${a}^{${n}} = \\square`, blank: pw },
+      { tex: `-${pw} = \\square`, blank: answer }
+    ],
+    solution: [
       { tex: `${a}^{${n}} = \\square`, blank: pw },
       { tex: `-${pw} = \\square`, blank: answer }
     ]
@@ -453,6 +526,10 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
       steps: [
         { tex: `${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square \\;(\\text{먼저!})`, blank: bc },
         { tex: `${a} + ${wrapSigned(bc)} = \\square`, blank: answer }
+      ],
+      solution: [
+        { tex: `${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square \\;(\\text{먼저!})`, blank: bc },
+        { tex: `${a} + ${wrapSigned(bc)} = \\square`, blank: answer }
       ]
     };
   }
@@ -476,6 +553,11 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
       tex: `(${wa} + ${wb}) \\times ${wc} - ${wd} = \\square`,
       answer, answerType: 'steps', widget: 'steps',
       steps: [
+        { tex: `${wa} + ${wb} = \\square \\;(\\text{괄호 먼저})`, blank: ab },
+        { tex: `${ab} \\times ${wc} = \\square`, blank: abc },
+        { tex: `${abc} - ${wd} = \\square`, blank: answer }
+      ],
+      solution: [
         { tex: `${wa} + ${wb} = \\square \\;(\\text{괄호 먼저})`, blank: ab },
         { tex: `${ab} \\times ${wc} = \\square`, blank: abc },
         { tex: `${abc} - ${wd} = \\square`, blank: answer }
@@ -505,6 +587,11 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
       { tex: `${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square`, blank: bc },
       { tex: `${wrapSigned(bc)} \\div ${wrapSigned(d)} = \\square`, blank: bcd },
       { tex: `${a} + ${wrapSigned(bcd)} = \\square`, blank: answer }
+    ],
+    solution: [
+      { tex: `${wrapSigned(b)} \\times ${wrapSigned(c)} = \\square`, blank: bc },
+      { tex: `${wrapSigned(bc)} \\div ${wrapSigned(d)} = \\square`, blank: bcd },
+      { tex: `${a} + ${wrapSigned(bcd)} = \\square`, blank: answer }
     ]
   };
 };
@@ -528,7 +615,11 @@ NM_TGEN['md7_ratMulDiv'] = function (params, rng) {
       },
       tex: `\\dfrac{${a1}}{${d1}} \\times \\dfrac{${a2}}{${d2}} = \\square`,
       answer: [n, den], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
-      negative: (a1 * a2) < 0
+      negative: (a1 * a2) < 0,
+      solution: [
+        { tex: `\\dfrac{${a1}}{${d1}} \\times \\dfrac{${a2}}{${d2}} = \\dfrac{${a1 * a2}}{${d1 * d2}}` },
+        { tex: `\\dfrac{${a1 * a2}}{${d1 * d2}} = \\dfrac{\\square}{\\square}`, blank: [n, den] }
+      ]
     };
   }
 
@@ -546,7 +637,11 @@ NM_TGEN['md7_ratMulDiv'] = function (params, rng) {
       },
       tex: `\\dfrac{${a1}}{${d1}} \\div \\dfrac{${a2}}{${d2}} = \\square`,
       answer: [n, den], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
-      negative: (a1 * d2 * (d1 * a2)) < 0
+      negative: (a1 * d2 * (d1 * a2)) < 0,
+      solution: [
+        { tex: `\\dfrac{${a1}}{${d1}} \\div \\dfrac{${a2}}{${d2}} = \\dfrac{${a1}}{${d1}} \\times \\dfrac{${d2}}{${a2}}` },
+        { tex: `\\dfrac{${a1}}{${d1}} \\times \\dfrac{${d2}}{${a2}} = \\dfrac{\\square}{\\square}`, blank: [n, den] }
+      ]
     };
   }
 
@@ -569,8 +664,12 @@ NM_TGEN['md7_ratMulDiv'] = function (params, rng) {
     },
     tex: `\\dfrac{${a1}}{${d1}} \\times \\dfrac{${a2}}{${d2}} ${op2} \\dfrac{${a3}}{${d3}} = \\square`,
     answer: [n, dd], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
-    negative: n < 0   /* den(=d1*d2*(op2==='÷'?a3:d3))이 ÷일 때 a3의 부호를 타고 음수가 될 수
+    negative: n < 0,  /* den(=d1*d2*(op2==='÷'?a3:d3))이 ÷일 때 a3의 부호를 타고 음수가 될 수
                           있어 normFrac()이 부호를 뒤집을 수 있다 — 정규화 이후 값 n을 봐야 한다 */
+    solution: [
+      { tex: `\\dfrac{${a1}}{${d1}} \\times \\dfrac{${a2}}{${d2}} ${op2} \\dfrac{${a3}}{${d3}} = \\dfrac{${num}}{${den}}` },
+      { tex: `\\dfrac{${num}}{${den}} = \\dfrac{\\square}{\\square}`, blank: [n, dd] }
+    ]
   };
 };
 
@@ -603,6 +702,9 @@ NM_TGEN['md8_terminating'] = function (params, rng) {
   }
 
   const answer = willTerminate ? 1 : 0;
+  let remaining = redDen;
+  while (remaining % 2 === 0) remaining /= 2;
+  while (remaining % 5 === 0) remaining /= 5;
   return {
     prompt: {
       ko: `\\dfrac{${dispNum}}{${dispDen}}를 소수로 나타내면 유한소수일까요? 유한소수면 1, 순환소수(무한소수)면 0을 눌러요`,
@@ -610,7 +712,12 @@ NM_TGEN['md8_terminating'] = function (params, rng) {
       zh: `${dispNum}/${dispDen}化成小数是有限小数吗？有限小数按1，循环小数按0`
     },
     tex: `\\dfrac{${dispNum}}{${dispDen}} \\;\\Rightarrow\\; \\square \\;(1=\\text{유한},\\,0=\\text{순환})`,
-    answer, answerType: 'number', widget: 'numpad'
+    answer, answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `\\dfrac{${dispNum}}{${dispDen}} = \\dfrac{${num}}{${redDen}} \\;(\\text{기약분수})` },
+      { tex: `${redDen} \\;\\to\\; \\text{2,5 이외 소인수} = ${remaining}` },
+      { tex: `\\Rightarrow \\square \\;(1=\\text{유한},\\,0=\\text{순환})`, blank: answer }
+    ]
   };
 };
 
@@ -641,7 +748,12 @@ NM_TGEN['md9_repeatToFrac'] = function (params, rng) {
       zh: `把循环小数化成分数：用"前缀+循环节"连成的数减去前缀，分母是10^{${k}}×(10^{${m}}-1)`
     },
     tex: `0.${Ppad}\\overline{${Rpad}} = \\square`,
-    answer: [numerator, denominator], answerShape: 'fraction', answerType: 'number', widget: 'numpad'
+    answer: [numerator, denominator], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `${PRconcat} - ${P} = ${PRconcat - P}` },
+      { tex: `10^{${k}} \\times (10^{${m}}-1) = ${Math.pow(10, k) * (Math.pow(10, m) - 1)}` },
+      { tex: `\\dfrac{${PRconcat - P}}{${Math.pow(10, k) * (Math.pow(10, m) - 1)}} = \\dfrac{\\square}{\\square}`, blank: [numerator, denominator] }
+    ]
   };
 };
 

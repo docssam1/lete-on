@@ -1147,11 +1147,18 @@ html[data-nm-band="young"] .nm-host-bubble{font-size:14.5px}
 .nm-ex-road-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .nm-ex-road-chip{font-size:10.5px;font-weight:700;color:var(--sub);
   background:#eef2fa;border-radius:8px;padding:3px 8px;white-space:nowrap}
-.nm-ex-road-print-btn{margin-top:10px;width:100%;border:none;border-radius:10px;
+.nm-ex-road-btn-row{display:flex;gap:8px;margin-top:10px}
+.nm-ex-road-print-btn{flex:1;width:100%;border:none;border-radius:10px;
   background:var(--blue-deep);color:#fff;font-size:12.5px;font-weight:800;
   padding:9px 10px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
 .nm-ex-road-print-btn:hover{background:#1a4d93}
 .nm-ex-road-print-btn:active{transform:scale(.97)}
+/* 화면으로 풀기(학습지-v2-설계.md §3) — 인쇄 버튼과 짝, 보조 색으로 구분 */
+.nm-ex-road-online-btn{flex:1;width:100%;border:1px solid var(--blue-deep);border-radius:10px;
+  background:#fff;color:var(--blue-deep);font-size:12.5px;font-weight:800;
+  padding:9px 10px;cursor:pointer;font-family:'Pretendard',sans-serif;transition:.15s}
+.nm-ex-road-online-btn:hover{background:rgba(28,77,147,.08)}
+.nm-ex-road-online-btn:active{transform:scale(.97)}
 /* ── 인쇄 회수 표시 + 재인쇄(2026-09-04, "웹페이지 들어가면 추가로 계속 인쇄") ── */
 .nm-ex-road-printed{display:flex;align-items:center;justify-content:space-between;
   gap:8px;margin-top:8px;flex-wrap:wrap}
@@ -2037,3 +2044,63 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-rp-bar.low{background:#e8a44a}
 .nm-rp-dow{font-size:11px;font-weight:700;color:var(--sub)}
 .nm-rp-day.today .nm-rp-dow{color:var(--blue);text-decoration:underline}
+
+/* ============================================================
+   진단하기 v2 — 나이 2열 그리드 · 직접 고르기 버튼 · 세부 진단 · 스킬 목록
+   (nm-dg-*, 2026-09-04)
+   ============================================================ */
+@media(min-width:480px){
+  .nm-dg-ages{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+}
+.nm-dg-selfpick{display:block;width:100%;margin-top:10px;border:1.5px dashed var(--blue);
+  background:#f6f9ff;color:var(--blue-deep);border-radius:14px;padding:11px 14px;
+  font-size:13.5px;font-weight:800;cursor:pointer;font-family:'Pretendard',sans-serif}
+.nm-dg-selfpick:hover{background:#eef3ff}
+.nm-dg-selfpick:active{transform:scale(.97)}
+.nm-dg-finesub{font-size:12px;font-weight:700;color:var(--sub);text-align:center;
+  line-height:1.5;margin:0 0 6px;word-break:keep-all}
+.nm-dg-multihint{font-size:11.5px;font-weight:700;color:var(--blue);text-align:center;margin:2px 0 0}
+.nm-key.comma{color:#5a7ab8;font-size:24px;font-weight:900}
+
+.nm-dg-skills{text-align:left;margin:10px 0 4px;padding-top:8px;border-top:1px solid var(--line)}
+.nm-dg-skills-h{font-size:12.5px;font-weight:900;color:var(--blue-deep);margin-bottom:8px}
+.nm-dg-skgroup{margin-bottom:8px}
+.nm-dg-skgroup-h{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:4px}
+.nm-dg-skchips{display:flex;flex-wrap:wrap;gap:6px}
+.nm-dg-skchip{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;
+  font-size:11.5px;font-weight:800;border:1px solid var(--line);background:#fff;white-space:nowrap}
+.nm-dg-skchip.solid{background:#f0faf2;border-color:#bfe3c6;color:#276b3a}
+.nm-dg-skchip.slow{background:#fff8e8;border-color:var(--gold);color:#7a5a10}
+.nm-dg-skchip.weak{background:#fdeeee;border-color:#f0bcbc;color:#a33636}
+
+.nm-cr-pickbtn{border:1.5px solid var(--blue-deep);background:#fff;color:var(--blue-deep);
+  border-radius:999px;padding:6px 11px;font-size:14px;cursor:pointer;font-family:'Pretendard',sans-serif}
+.nm-cr-pickbtn:active{transform:scale(.9)}
+
+/* ============================================================
+   시작점 고르기 (nm-sp-*, 2026-09-04) — ROAD_TIERS별 접이 섹션 + 과정 카드
+   ============================================================ */
+.nm-sp-body{padding:12px 14px 28px}
+.nm-sp-tier{margin-bottom:10px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.nm-sp-tier-h{list-style:none;display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;
+  font-family:'Pretendard',sans-serif;user-select:none}
+.nm-sp-tier-h::-webkit-details-marker{display:none}
+.nm-sp-tier-bar{width:6px;height:26px;border-radius:4px;background:var(--acc);flex:none}
+.nm-sp-tier-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.nm-sp-tier-txt b{font-size:13.5px;font-weight:900;color:var(--blue-deep)}
+.nm-sp-tier-txt small{font-size:11px;font-weight:700;color:var(--sub);word-break:keep-all}
+.nm-sp-grid{display:grid;grid-template-columns:1fr;gap:10px;padding:0 13px 13px}
+@media(min-width:720px){
+  .nm-sp-grid{grid-template-columns:1fr 1fr}
+}
+.nm-sp-card{border:1px solid var(--line);border-radius:14px;padding:12px 13px;background:#fbfaf7;
+  display:flex;flex-direction:column;gap:6px;text-align:left}
+.nm-sp-card.off{opacity:.55}
+.nm-sp-num{font-size:10.5px;font-weight:800;color:var(--sub)}
+.nm-sp-title{font-size:14px;font-weight:900;color:var(--blue-deep);word-break:keep-all}
+.nm-sp-drills{font-size:11px;font-weight:700;color:var(--sub);word-break:keep-all}
+.nm-sp-sample{font-size:14px;font-weight:700;color:var(--blue);background:#fff;
+  border:1px solid var(--line);border-radius:10px;padding:6px 8px;overflow-x:auto}
+.nm-sp-go{margin-top:2px}
+.nm-sp-soon{align-self:flex-start;margin-top:2px;font-size:11px;font-weight:800;color:var(--sub);
+  background:#eee;border-radius:999px;padding:4px 10px}

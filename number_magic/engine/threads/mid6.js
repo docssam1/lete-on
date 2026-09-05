@@ -33,6 +33,12 @@
    기호가 시키는 일을 읽기"이므로 완성된 식을 그대로 보여주고 그중
    한 자리(밑·진수·항의 개수 등)만 읽어 입력하게 한다. threads.js에
    등록하는 1~3레벨은 전부 실제 계산 모드다.
+
+   solution 필드(2026-09-04, 학습지 v2 §2-4 ★예시 문항용) — 각
+   생성기가 실제로 답에 이르는 과정을 {tex,blank} 배열로 함께
+   반환한다. 마지막 줄의 blank는 항상 answer와 동일(검증:
+   scripts/check-solution-steps.js). tex·answer 등 기존 필드는
+   전혀 바뀌지 않는다.
    ============================================================ */
 (function(){
 'use strict';
@@ -56,6 +62,14 @@ function pickLogPair(rng, xMax, aMax, ceiling){
   const aCap = Math.max(2, Math.min(aMax, Math.floor(Math.pow(ceiling, 1 / x))));
   const a = R(rng, 2, aCap);
   return { a, x, N: Math.pow(a, x) };
+}
+/* MD39 solution용 — 계수 c를 곱하기 전, 그 특수각의 "원래" 값을
+   그대로 tex로 옮긴다(표는 coeff가 항상 1이라 계수 표기는 생략). */
+function trigBaseTex(e){
+  if (e.kind === 'int') return String(e.val);
+  if (e.kind === 'fracSimple') return `\\dfrac{${e.n}}{${e.d}}`;
+  if (e.kind === 'fracRoot') return `\\dfrac{\\sqrt{${e.rad}}}{${e.denom}}`;
+  return `\\sqrt{${e.rad}}`; /* rootOnly */
 }
 
 /* ── MD36 — 거듭제곱근과 유리수 지수 ── ⁿ√(aᵐ)을 a^(p/q)(기약분수)로
@@ -84,7 +98,12 @@ NM_TGEN['md36_rationalExponent'] = function (params, rng) {
       zh: `aᵐ的n次方根等于a的m/n次方(约分后)——根指数(n)作分母，幂指数(m)作分子`
     },
     tex: `\\sqrt[${n}]{${a}^{${m}}} = ${a}^{\\frac{\\square}{\\square}}`,
-    answer, answerType: 'number', widget: 'numpad', negative: false
+    answer, answerType: 'number', widget: 'numpad', negative: false,
+    solution: [
+      { tex: `\\dfrac{${m}}{${n}}` },
+      { tex: `\\gcd(${m},${n})=${k}` },
+      { tex: `\\dfrac{${m}}{${n}} = \\dfrac{\\square}{\\square}`, blank: [p, q] }
+    ]
   };
 };
 
@@ -115,10 +134,14 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
         en: `Just read off the value on the right of the equals sign (which rung of the exponent ladder) — no calculation needed`,
         zh: `直接读出等号右边的值(是指数梯子的第几级)——不用计算` }
     };
+    const decodeTex = which === 'base' ? `\\log_{\\square} ${N} = ${x}`
+      : which === 'arg' ? `\\log_{${a}} \\square = ${x}`
+      : `\\log_{${a}} ${N} = \\square`;
     return {
       prompt: promptMap[which],
       tex: `\\log_{${a}} ${N} = ${x}`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [ { tex: decodeTex, blank: answer } ]
     };
   }
 
@@ -135,7 +158,11 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
         zh: `log_a N = x的意思是"a自乘x次得到N"——算出aˣ就是N`
       },
       tex: `\\log_{${a}} \\square = ${x}`,
-      answer: N, answerType: 'number', widget: 'numpad', negative: false
+      answer: N, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\log_{${a}} N = ${x} \\;\\Rightarrow\\; N=${a}^{${x}}` },
+        { tex: `${a}^{${x}} = \\square`, blank: N }
+      ]
     };
   }
 
@@ -150,7 +177,11 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
         zh: `求log_a N=x中的底数a，需要找到自乘x次后等于N的那个数`
       },
       tex: `\\log_{\\square} ${N} = ${x}`,
-      answer: a, answerType: 'number', widget: 'numpad', negative: false
+      answer: a, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `a^{${x}} = ${N}` },
+        { tex: `a = \\square`, blank: a }
+      ]
     };
   }
 
@@ -165,7 +196,11 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
       zh: `log_a N = x问的是"a要乘几次才能得到N"——沿着指数梯子往上爬确认：a¹,a²,a³…`
     },
     tex: `\\log_{${a}} ${N} = \\square`,
-    answer: x, answerType: 'number', widget: 'numpad', negative: false
+    answer: x, answerType: 'number', widget: 'numpad', negative: false,
+    solution: [
+      { tex: `${a}^{\\square} = ${N}`, blank: x },
+      { tex: `\\log_{${a}} ${N} = \\square`, blank: x }
+    ]
   };
 };
 
@@ -193,7 +228,11 @@ NM_TGEN['md38_logProperties'] = function (params, rng) {
         zh: `log_a X + log_a Y = log_a(XY)——两个对数之和等于真数相乘后的对数`
       },
       tex: `\\log_{${a}} ${X} + \\log_{${a}} ${Y} = \\log_{${a}} \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\log_{${a}} ${X} + \\log_{${a}} ${Y} = \\log_{${a}} (XY)` },
+        { tex: `XY = ${X}\\times ${Y} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -213,7 +252,11 @@ NM_TGEN['md38_logProperties'] = function (params, rng) {
         zh: `log_a X - log_a Y = log_a(X÷Y)——两个对数之差等于真数相除后的对数`
       },
       tex: `\\log_{${a}} ${X} - \\log_{${a}} ${Y} = \\log_{${a}} \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\log_{${a}} ${X} - \\log_{${a}} ${Y} = \\log_{${a}} (X\\div Y)` },
+        { tex: `X\\div Y = ${X}\\div ${Y} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -232,7 +275,11 @@ NM_TGEN['md38_logProperties'] = function (params, rng) {
       zh: `求log_b N时，如果b本身就是某数的整数次幂，只需数b要乘几次得到N(换底后恰为整数的情形)`
     },
     tex: `\\log_{${b}} ${N} = \\square`,
-    answer: r, answerType: 'number', widget: 'numpad', negative: false
+    answer: r, answerType: 'number', widget: 'numpad', negative: false,
+    solution: [
+      { tex: `${b}^{\\square} = ${N}`, blank: r },
+      { tex: `\\log_{${b}} ${N} = \\square`, blank: r }
+    ]
   };
 };
 
@@ -294,8 +341,10 @@ NM_TGEN['md39_trigSpecialAngle'] = function (params, rng) {
   const c = R(rng, 1, cMax);
   const head = `\\${e.fn} ${e.deg}^\\circ`;
   const prefix = c === 1 ? '' : `${c} \\times `;
+  const baseLine = { tex: `${head} = ${trigBaseTex(e)}` };
   if (e.kind === 'int') {
-    return { prompt: TRIG_PROMPT.int, tex: `${prefix}${head} = \\square`, answer: c * e.val, answerType: 'number', widget: 'numpad', negative: false };
+    return { prompt: TRIG_PROMPT.int, tex: `${prefix}${head} = \\square`, answer: c * e.val, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [ baseLine, { tex: `${prefix}${head} = \\square`, blank: c * e.val } ] };
   }
   /* 약분 정책(2026-08-29 원장): 5학년 이상은 기약분수가 정답. 고1 삼각함수도
      마찬가지인데 예전엔 계수를 곱한 값을 그대로 냈다 — 6×sin30°의 정답키가
@@ -305,21 +354,26 @@ NM_TGEN['md39_trigSpecialAngle'] = function (params, rng) {
     const g = gcd(c * e.n, e.d);
     const nn = (c * e.n) / g, dd = e.d / g;
     if (dd === 1) {
-      return { prompt: TRIG_PROMPT.int, tex: `${prefix}${head} = \\square`, answer: nn, answerType: 'number', widget: 'numpad', negative: false };
+      return { prompt: TRIG_PROMPT.int, tex: `${prefix}${head} = \\square`, answer: nn, answerType: 'number', widget: 'numpad', negative: false,
+        solution: [ baseLine, { tex: `${prefix}${head} = ${c}\\times\\dfrac{${e.n}}{${e.d}} = \\square`, blank: nn } ] };
     }
-    return { prompt: TRIG_PROMPT.fracSimple, tex: `${prefix}${head} = \\dfrac{\\square}{\\square}`, answer: [nn, dd], answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false };
+    return { prompt: TRIG_PROMPT.fracSimple, tex: `${prefix}${head} = \\dfrac{\\square}{\\square}`, answer: [nn, dd], answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
+      solution: [ baseLine, { tex: `${prefix}${head} = \\dfrac{${c}\\times ${e.n}}{${e.d}} = \\dfrac{\\square}{\\square}`, blank: [nn, dd] } ] };
   }
   if (e.kind === 'fracRoot') {
     const g = gcd(c * e.coeff, e.denom);
     const cc = (c * e.coeff) / g, dd = e.denom / g;
     if (dd === 1) {
       /* 분모가 사라지면 "계수√근호" 꼴 — rootOnly와 같은 모양이 된다 */
-      return { prompt: TRIG_PROMPT.rootOnly, tex: `${prefix}${head} = \\square\\sqrt{\\square}`, answer: [cc, e.rad], answerShape: 'coeffRadical', answerType: 'number', widget: 'numpad', negative: false };
+      return { prompt: TRIG_PROMPT.rootOnly, tex: `${prefix}${head} = \\square\\sqrt{\\square}`, answer: [cc, e.rad], answerShape: 'coeffRadical', answerType: 'number', widget: 'numpad', negative: false,
+        solution: [ baseLine, { tex: `${prefix}${head} = \\dfrac{${c}\\times\\sqrt{${e.rad}}}{${e.denom}} = \\square\\sqrt{\\square}`, blank: [cc, e.rad] } ] };
     }
-    return { prompt: TRIG_PROMPT.fracRoot, tex: `${prefix}${head} = \\dfrac{\\square\\sqrt{\\square}}{\\square}`, answer: [cc, e.rad, dd], answerShape: 'coeffRadicalFraction', answerType: 'number', widget: 'numpad', negative: false };
+    return { prompt: TRIG_PROMPT.fracRoot, tex: `${prefix}${head} = \\dfrac{\\square\\sqrt{\\square}}{\\square}`, answer: [cc, e.rad, dd], answerShape: 'coeffRadicalFraction', answerType: 'number', widget: 'numpad', negative: false,
+      solution: [ baseLine, { tex: `${prefix}${head} = \\dfrac{${c}\\times\\sqrt{${e.rad}}}{${e.denom}} = \\dfrac{\\square\\sqrt{\\square}}{\\square}`, blank: [cc, e.rad, dd] } ] };
   }
   /* rootOnly */
-  return { prompt: TRIG_PROMPT.rootOnly, tex: `${prefix}${head} = \\square\\sqrt{\\square}`, answer: [c * e.coeff, e.rad], answerShape: 'coeffRadical', answerType: 'number', widget: 'numpad', negative: false };
+  return { prompt: TRIG_PROMPT.rootOnly, tex: `${prefix}${head} = \\square\\sqrt{\\square}`, answer: [c * e.coeff, e.rad], answerShape: 'coeffRadical', answerType: 'number', widget: 'numpad', negative: false,
+    solution: [ baseLine, { tex: `${prefix}${head} = ${c}\\times\\sqrt{${e.rad}} = \\square\\sqrt{\\square}`, blank: [c * e.coeff, e.rad] } ] };
 };
 
 /* ── MD40 — 등차수열 ── aₙ=a₁+(n-1)d, Sₙ=n(2a₁+(n-1)d)/2. Sₙ은
@@ -341,7 +395,11 @@ NM_TGEN['md40_arithmeticSeq'] = function (params, rng) {
         en: `Substitute directly into the general term formula aₙ=a₁+(n-1)d`,
         zh: `直接代入等差数列通项公式aₙ=a₁+(n-1)d` },
       tex: `a_1=${a1},\\;d=${d} \\;\\Rightarrow\\; a_{${n}} = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+      answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+      solution: [
+        { tex: `(n-1)d = (${n}-1)\\times ${d} = \\square`, blank: (n - 1) * d },
+        { tex: `a_{${n}} = a_1+(n-1)d = ${a1}+${(n - 1) * d} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -356,7 +414,12 @@ NM_TGEN['md40_arithmeticSeq'] = function (params, rng) {
         en: `Find d = (later term − earlier term) ÷ (index difference), then a₁ = X − (p−1)d`,
         zh: `先求d=(后项-前项)÷(项数之差)，再求a₁=X-(p-1)d` },
       tex: `a_{${p}}=${X},\\;a_{${q}}=${Y} \\;\\Rightarrow\\; a_1=\\square,\\;d=\\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `d = \\dfrac{${Y}-${X}}{${q}-${p}} = \\square`, blank: d },
+        { tex: `a_1 = ${X}-(${p}-1)\\times ${d} = \\square`, blank: a1 },
+        { tex: `a_1=\\square,\\;d=\\square`, blank: [a1, d] }
+      ]
     };
   }
 
@@ -370,7 +433,11 @@ NM_TGEN['md40_arithmeticSeq'] = function (params, rng) {
       en: `Substitute into the arithmetic series sum Sₙ=n(2a₁+(n-1)d)÷2`,
       zh: `代入等差数列求和公式Sₙ=n(2a₁+(n-1)d)÷2` },
     tex: `a_1=${a1},\\;d=${d} \\;\\Rightarrow\\; S_{${n}} = \\square`,
-    answer: Sn, answerType: 'number', widget: 'numpad', negative: Sn < 0
+    answer: Sn, answerType: 'number', widget: 'numpad', negative: Sn < 0,
+    solution: [
+      { tex: `2a_1+(n-1)d = 2\\times ${a1}+(${n}-1)\\times ${d} = \\square`, blank: 2 * a1 + (n - 1) * d },
+      { tex: `S_{${n}} = \\dfrac{n(2a_1+(n-1)d)}{2} = \\dfrac{${n}\\times ${2 * a1 + (n - 1) * d}}{2} = \\square`, blank: Sn }
+    ]
   };
 };
 
@@ -393,7 +460,11 @@ NM_TGEN['md41_geometricSeq'] = function (params, rng) {
         en: `Substitute into the geometric general term aₙ=a₁×r^(n-1)`,
         zh: `代入等比数列通项公式aₙ=a₁×r^(n-1)` },
       tex: `a_1=${a1},\\;r=${r} \\;\\Rightarrow\\; a_{${n}} = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+      answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+      solution: [
+        { tex: `r^{${n - 1}} = \\square`, blank: Math.pow(r, n - 1) },
+        { tex: `a_{${n}} = a_1\\times r^{${n - 1}} = ${a1}\\times ${Math.pow(r, n - 1)} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -408,7 +479,13 @@ NM_TGEN['md41_geometricSeq'] = function (params, rng) {
         en: `Find the common ratio r from the ratio of two terms, then a₁ = X ÷ r^(p-1)`,
         zh: `先由两项之比求出公比r，再求a₁=X÷r^(p-1)` },
       tex: `a_{${p}}=${X},\\;a_{${q}}=${Y} \\;\\Rightarrow\\; a_1=\\square,\\;r=\\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer)
+      answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+      solution: [
+        { tex: `Y\\div X = ${Y}\\div ${X} = \\square`, blank: Y / X },
+        { tex: `r = \\square`, blank: r },
+        { tex: `a_1 = X\\div r^{${p - 1}} = ${X}\\div ${Math.pow(r, p - 1)} = \\square`, blank: a1 },
+        { tex: `a_1=\\square,\\;r=\\square`, blank: [a1, r] }
+      ]
     };
   }
 
@@ -416,14 +493,19 @@ NM_TGEN['md41_geometricSeq'] = function (params, rng) {
   const a1 = nzInt(rng, 1, wide ? 8 : 5);
   const r = pickR(true);
   const n = R(rng, 2, 4);
-  let Sn = 0, term = a1;
-  for (let i = 0; i < n; i++) { Sn += term; term *= r; }
+  let Sn = 0, term = a1, terms = [];
+  for (let i = 0; i < n; i++) { terms.push(term); Sn += term; term *= r; }
+  const sumExpr = terms.map((t, i) => i === 0 ? String(t) : wrapPlus(t)).join(' ');
   return {
     prompt: { ko: `등비수열의 합은 각 항을 직접 나열해 더한 것과 같아요 — a₁+a₁r+a₁r²+…`,
       en: `The sum of a geometric series is just adding each term one by one — a₁+a₁r+a₁r²+…`,
       zh: `等比数列的和就是把每一项依次相加——a₁+a₁r+a₁r²+…` },
     tex: `a_1=${a1},\\;r=${r} \\;\\Rightarrow\\; S_{${n}} = \\square`,
-    answer: Sn, answerType: 'number', widget: 'numpad', negative: Sn < 0
+    answer: Sn, answerType: 'number', widget: 'numpad', negative: Sn < 0,
+    solution: [
+      { tex: `S_{${n}} = ${sumExpr}` },
+      { tex: `S_{${n}} = \\square`, blank: Sn }
+    ]
   };
 };
 
@@ -453,10 +535,14 @@ NM_TGEN['md42_sigmaSum'] = function (params, rng) {
         en: `Σ means substitute k one by one from start to end and add them all — just count how many terms that is (no summing, just counting!)`,
         zh: `Σ的意思是把k从起点到终点依次代入并全部相加——数一数要加几项就好(不用求和，只数个数)` }
     };
+    const solution = which === 'start' ? [ { tex: `\\sum_{k=\\square}^{${b}} k`, blank: a } ]
+      : which === 'end' ? [ { tex: `\\sum_{k=${a}}^{\\square} k`, blank: b } ]
+      : [ { tex: `\\sum_{k=${a}}^{${b}} k` }, { tex: `${b}-${a}+1 = \\square`, blank: b - a + 1 } ];
     return {
       prompt: promptMap[which],
       tex: `\\sum_{k=${a}}^{${b}} k`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution
     };
   }
 
@@ -471,7 +557,11 @@ NM_TGEN['md42_sigmaSum'] = function (params, rng) {
         en: `Σk from 1 to n is exactly the rainbow-sum trick — n(n+1)÷2`,
         zh: `Σk(k=1~n)就是彩虹加法法——n(n+1)÷2` },
       tex: `\\sum_{k=1}^{${n}} k = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `n(n+1) = ${n}\\times(${n}+1) = \\square`, blank: n * (n + 1) },
+        { tex: `\\sum_{k=1}^{${n}} k = \\dfrac{n(n+1)}{2} = \\dfrac{${n * (n + 1)}}{2} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -483,7 +573,11 @@ NM_TGEN['md42_sigmaSum'] = function (params, rng) {
         en: `Σk² from 1 to n is exactly the sum-of-squares formula — n(n+1)(2n+1)÷6`,
         zh: `Σk²(k=1~n)就是平方数之和公式——n(n+1)(2n+1)÷6` },
       tex: `\\sum_{k=1}^{${n}} k^2 = \\square`,
-      answer, answerType: 'number', widget: 'numpad', negative: false
+      answer, answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `n(n+1)(2n+1) = ${n}\\times(${n}+1)\\times(2\\times ${n}+1) = \\square`, blank: n * (n + 1) * (2 * n + 1) },
+        { tex: `\\sum_{k=1}^{${n}} k^2 = \\dfrac{n(n+1)(2n+1)}{6} = \\square`, blank: answer }
+      ]
     };
   }
 
@@ -497,7 +591,12 @@ NM_TGEN['md42_sigmaSum'] = function (params, rng) {
       en: `Σ(pk+q) splits into p·Σk + q·Σ1 — the first part is the rainbow sum, the second is q added n times`,
       zh: `Σ(pk+q)拆成p·Σk + q·Σ1——前面是彩虹求和，后面是q加n次` },
     tex: `\\sum_{k=1}^{${n}} (${p}k ${wrapPlus(q)}) = \\square`,
-    answer, answerType: 'number', widget: 'numpad', negative: answer < 0
+    answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+    solution: [
+      { tex: `p\\sum k = ${p}\\times \\dfrac{${n}(${n}+1)}{2} = \\square`, blank: p * n * (n + 1) / 2 },
+      { tex: `q\\sum 1 = ${q}\\times ${n} = \\square`, blank: q * n },
+      { tex: `\\sum_{k=1}^{${n}} (${p}k ${wrapPlus(q)}) = \\square`, blank: answer }
+    ]
   };
 };
 
