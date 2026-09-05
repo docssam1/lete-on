@@ -383,7 +383,12 @@ NM_TGEN['ad2_addCarry1d'] = function(params, rng){
         { tex: `\\square`,                            blank: sum  }
       ],
       widget: 'steps',
-      cubes: { piles: [a, b], moveTo: 10 }
+      cubes: { piles: [a, b], moveTo: 10 },
+      solution: [
+        { tex: `${a} + \\square = 10`,        blank: need1 },
+        { tex: `${b} - ${need1} = \\square`,  blank: rest1 },
+        { tex: `10 + ${rest1} + ${c} = \\square`, blank: sum }
+      ]
     };
   }
 
@@ -413,7 +418,12 @@ NM_TGEN['ad2_addCarry1d'] = function(params, rng){
       { tex: `\\square`,                 blank: sum  }
     ],
     widget: 'steps',
-    cubes: { piles: [a, b], moveTo: 10 }
+    cubes: { piles: [a, b], moveTo: 10 },
+    solution: [
+      { tex: `${a} + \\square = 10`,       blank: need },
+      { tex: `${b} - ${need} = \\square`,  blank: rest },
+      { tex: `10 + ${rest} = \\square`,    blank: sum  }
+    ]
   };
 };
 
@@ -670,7 +680,8 @@ NM_TGEN['ad5_add2d2d'] = function(params, rng){
       { tex: `\\text{일의 자리: } ${oA} + ${oB} = \\square`, blank: onesResult },
       { tex: `\\text{십의 자리: } ${tA} + ${tB}${onesCarry ? ' + 1' : ''} = \\square`, blank: tensSum }
     ],
-    widget: 'vertical'
+    widget: 'vertical',
+    solution: _addPlaceLines(a, b, sum, 2)
   };
 };
 
@@ -715,7 +726,8 @@ NM_TGEN['ad6_add3d'] = function(params, rng){
       { tex: `\\text{십: } ${tA} + ${tB}${oC ? ' + 1' : ''} = \\square`, blank: tensR  },
       { tex: `\\text{백: } ${hA} + ${hB}${tC ? ' + 1' : ''} = \\square`, blank: hunsSum }
     ],
-    widget: 'vertical'
+    widget: 'vertical',
+    solution: _addPlaceLines(a, b, sum, 3)
   };
 };
 

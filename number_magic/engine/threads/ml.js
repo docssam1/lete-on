@@ -349,6 +349,12 @@ NM_TGEN['ml7_mul3d1d'] = function(params, rng) {
         { tex: `${t * 10} \\times ${b} = \\square`,                blank: tPart  },
         { tex: `${o} \\times ${b} = \\square`,                     blank: oPart  },
         { tex: `${hPart} + ${tPart} + ${oPart} = \\square`,        blank: answer }
+      ],
+      solution: [
+        { tex: `${h * 100} \\times ${b} = \\square`,               blank: hPart  },
+        { tex: `${t * 10} \\times ${b} = \\square`,                blank: tPart  },
+        { tex: `${o} \\times ${b} = \\square`,                     blank: oPart  },
+        { tex: `${hPart} + ${tPart} + ${oPart} = \\square`,        blank: answer }
       ]
     };
   }
@@ -374,6 +380,12 @@ NM_TGEN['ml7_mul3d1d'] = function(params, rng) {
       { tex: `${o} \\times ${b} = \\square`,                        blank: oRes   },
       { tex: `${t} \\times ${b} + ${oCarry} = \\square`,           blank: tRes   },
       { tex: `${h} \\times ${b} + ${tCarry} = \\square`,           blank: hRes   }
+    ],
+    solution: [
+      { tex: `${o} \\times ${b} = \\square`,                        blank: oRes   },
+      { tex: `${t} \\times ${b} + ${oCarry} = \\square`,           blank: tRes   },
+      { tex: `${h} \\times ${b} + ${tCarry} = \\square`,           blank: hRes   },
+      { tex: `${hRes} \\times 100 + ${tRes % 10} \\times 10 + ${oRes % 10} = \\square`, blank: answer }
     ]
   };
 };

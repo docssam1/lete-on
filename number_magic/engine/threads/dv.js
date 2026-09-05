@@ -167,6 +167,9 @@
         widget:     'steps',
         steps: [
           { tex: `${dv} \\div ${b} = \\square`, blank: q }
+        ],
+        solution: [
+          { tex: `${dv} \\div ${b} = \\square`, blank: q }
         ]
       };
     }
@@ -184,6 +187,11 @@
       steps: [
         { tex: `${dv} \\div ${b} = \\square`,      blank: q },
         { tex: `\\text{나머지}: \\square`,          blank: r }
+      ],
+      solution: [
+        { tex: `${b} \\times ${q} = ${b * q}` },
+        { tex: `${dv} - ${b * q} = \\square`, blank: r },
+        { tex: `${dv} \\div ${b} = \\square \\cdots ${r}`, blank: q }
       ]
     };
   };
@@ -216,6 +224,14 @@
           { tex: `\\text{나머지}: \\square`,                blank: r }
         ];
 
+    const solution = r === 0
+      ? [{ tex: `${dv} = ${b} \\times \\square`, blank: q }]
+      : [
+          { tex: `${b} \\times ${q} = ${b * q}` },
+          { tex: `${dv} - ${b * q} = \\square`, blank: r },
+          { tex: `${dv} \\div ${b} = \\square \\cdots ${r}`, blank: q }
+        ];
+
     return {
       prompt: {
         ko: `${dv} ÷ ${b}의 몫과 나머지를 구해요`,
@@ -226,7 +242,8 @@
       answer:     q,
       answerType: 'steps',
       widget:     'steps',
-      steps
+      steps,
+      solution
     };
   };
 

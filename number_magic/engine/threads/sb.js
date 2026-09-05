@@ -208,7 +208,8 @@ NM_TGEN['sb4_sub2d2d'] = function(params, rng) {
       steps: [
         { tex: `일의 자리: ${a % 10} - ${b % 10} = \\square`,  blank: ans % 10 },
         { tex: `십의 자리: \\square`,                            blank: Math.floor(ans / 10) }
-      ]
+      ],
+      solution: _subPlaceLines(a, b, ans, 2)
     };
   }
 
@@ -235,7 +236,8 @@ NM_TGEN['sb4_sub2d2d'] = function(params, rng) {
     steps: [
       { tex: `일의 자리: 10 + ${a % 10} - ${b % 10} = \\square`, blank: borrowOnes },
       { tex: `십의 자리: \\square`,                                blank: Math.floor(ans / 10) }
-    ]
+    ],
+    solution: _subPlaceLines(a, b, ans, 2)
   };
 };
 

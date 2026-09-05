@@ -77,7 +77,10 @@ NM_TGEN['fr2_improperMixed'] = function(params, rng){
         { tex: impN + ' \\div ' + d + ' = ' + whole + ' \\cdots ' + rem + ' \\quad \\text{(몫=}\\square\\text{)}', blank: whole },
         { tex: whole + '\\frac{' + rem + '}{' + d + '}', blank: whole }
       ],
-      widget: 'steps'
+      widget: 'steps',
+      solution: [
+        { tex: impN + ' \\div ' + d + ' = \\square \\cdots ' + rem, blank: whole }
+      ]
     };
   } else {
     // 대분수 → 가분수: 빈칸 = 분자(impN)
@@ -94,7 +97,10 @@ NM_TGEN['fr2_improperMixed'] = function(params, rng){
         { tex: whole + ' \\times ' + d + ' + ' + rem + ' = \\square', blank: impN },
         { tex: '\\frac{' + impN + '}{' + d + '}', blank: impN }
       ],
-      widget: 'steps'
+      widget: 'steps',
+      solution: [
+        { tex: whole + ' \\times ' + d + ' + ' + rem + ' = \\square', blank: impN }
+      ]
     };
   }
 };
@@ -128,7 +134,11 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
         { tex: '\\text{정수: } ' + a_w + ' + ' + b_w + ' = \\square', blank: res_w },
         { tex: '\\text{분자: } ' + a_n + ' + ' + b_n + ' = \\square', blank: res_n }
       ],
-      widget: 'steps'
+      widget: 'steps',
+      solution: [
+        { tex: '\\text{분자: } ' + a_n + ' + ' + b_n + ' = \\square', blank: res_n },
+        { tex: '\\text{정수: } ' + a_w + ' + ' + b_w + ' = \\square', blank: res_w }
+      ]
     };
   } else {
     // 분수 부분 내림(받아내림) 있는 뺄셈
@@ -156,7 +166,11 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
         { tex: '\\text{분수: } \\frac{' + (d+a_n) + '}{' + d + '} - \\frac{' + b_n + '}{' + d + '} = \\frac{\\square}{' + d + '} \\quad(1\\text{을 빌림})', blank: fracPart },
         { tex: '\\text{정수: } ' + (a_w-1) + ' - ' + b_w + ' = \\square', blank: wholePart }
       ],
-      widget: 'steps'
+      widget: 'steps',
+      solution: [
+        { tex: '\\text{분수: } \\frac{' + (d+a_n) + '}{' + d + '} - \\frac{' + b_n + '}{' + d + '} = \\frac{\\square}{' + d + '} \\quad(1\\text{을 빌림})', blank: fracPart },
+        { tex: '\\text{정수: } ' + (a_w-1) + ' - ' + b_w + ' = \\square', blank: wholePart }
+      ]
     };
   }
 };
@@ -468,7 +482,11 @@ NM_TGEN['fr7_frDiv'] = function(params, rng){
       { tex: '\\frac{' + a_n + '}{' + a_d + '} \\times \\frac{' + b_d + '}{' + b_n + '} \\quad (\\text{역수를 곱해요})', blank: a_n * b_d },
       { tex: '= \\frac{' + pn + '}{' + pd + '} = \\frac{\\square}{' + s.d + '} \\quad (\\text{약분})', blank: s.n }
     ],
-    widget: 'steps'
+    widget: 'steps',
+    solution: [
+      { tex: '\\frac{' + a_n + '}{' + a_d + '} \\div \\frac{' + b_n + '}{' + b_d + '} = \\frac{' + a_n + '}{' + a_d + '} \\times \\frac{' + b_d + '}{' + b_n + '}' },
+      { tex: '\\frac{' + pn + '}{' + pd + '} = \\frac{\\square}{' + s.d + '}', blank: s.n }
+    ]
   };
 };
 
