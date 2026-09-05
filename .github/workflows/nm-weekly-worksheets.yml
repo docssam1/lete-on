@@ -1,0 +1,42 @@
+name: NM weekly worksheets
+
+# 매주 월요일 06:30 KST(일 21:30 UTC)에 동의한 학부모의 학생별 주간 학습지 PDF를 만들어 Supabase Storage에 올린다.
+# 08:00 KST 에 weekly-notify(Edge Function, pg_cron)가 nm_weekly_pdf 의 URL을 문자에 넣는다.
+# 수동 실행: name/course 를 주면 연락처와 무관하게 그 한 명만 만든다(점검용).
+on:
+  schedule:
+    - cron: '30 21 * * 0'
+  workflow_dispatch:
+    inputs:
+      name:
+        description: '학생 이름 (한 명만 만들 때)'
+        required: false
+      course:
+        description: '과정 키 (예 C4)'
+        required: false
+      week:
+        description: '주차 강제 (예 2026-W36)'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright Chromium
+        run: |
+          npm i --no-save playwright@1.47.2
+          npx playwright install --with-deps chromium
+      - name: Generate and upload
+        env:
+          SUPABASE_URL: https://fgahqumaldheqettmvqg.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          WEEK: ${{ github.event.inputs.week }}
+        run: |
+          ARGS=""
+          if [ -n "${{ github.event.inputs.name }}" ]; then ARGS="--name '${{ github.event.inputs.name }}' --course '${{ github.event.inputs.course }}'"; fi
+          eval node scripts/nm-weekly-worksheets.cjs $ARGS

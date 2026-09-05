@@ -45,3 +45,4 @@ __pycache__/
 # Generated from the private project question index for an authenticated Edge Function.
 # The deploy snapshot is operational metadata, not public repository content.
 /supabase/functions/highselect-catalog/catalog.json
+out/

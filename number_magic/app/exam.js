@@ -884,6 +884,7 @@ function lk(ko, en, zh){ const l = examLang(); return l === 'en' ? en : l === 'z
 /* 학생 이름(프로필) — 인쇄 워터마크용. 앱 상태가 없는 페이지(drill.html)에서도
    같은 저장본을 읽으므로 로그인해 쓰던 브라우저면 이름이 나온다. 없으면 빈 문자열. */
 function printStudentName(){
+  if(typeof window.NM_PRINT_NAME==='string') return window.NM_PRINT_NAME.trim(); // ws.html(링크 학습지)이 URL의 이름을 넘긴다
   try{
     const st=JSON.parse(localStorage.getItem(NM_LANG_KEY)||'null');
     return (st&&typeof st.name==='string')?st.name.trim():'';
@@ -2277,7 +2278,7 @@ ${roundsHtml}
   document.body.appendChild(sheet);
   sheet.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex || '', el));
 
-  setTimeout(() => { window.print(); }, 350);
+  if(!window.NM_NO_AUTOPRINT) setTimeout(() => { window.print(); }, 350);
 }
 
 /* 스레드 레벨 params 가져오기 */
@@ -2792,7 +2793,7 @@ ${printWatermarkHtml()}
 </table>
 <p class="nm-pp-note">${esc(lk('이 표는 추천 계획이에요. 순서는 언제든 자유롭게 바꿔도 좋아요.','This is a suggested plan — feel free to change the order any time.','这是推荐计划，顺序可以随时自由调整。'))}</p>`;
         document.body.appendChild(sheet);
-        setTimeout(()=>{window.print();},250);
+        if(!window.NM_NO_AUTOPRINT) setTimeout(()=>{window.print();},250);
       }
 
       function tierInfo(tierKey){
@@ -3606,7 +3607,7 @@ ${round.html}
 
     sheet.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
 
-    setTimeout(() => { window.print(); }, 350);
+    if(!window.NM_NO_AUTOPRINT) setTimeout(() => { window.print(); }, 350);
   },
 
   /* ── 4b. 혼합 학습지 인쇄(편지함 봉투용) ──────────────────────
@@ -3692,7 +3693,7 @@ ${answerSectionsHtml}`;
       fillPrintGrid(b.problems, problemGrid, answerGrid, { bond: !!BOND_THREADS[b.cfg.thread] });
     });
 
-    setTimeout(() => { window.print(); }, 350);
+    if(!window.NM_NO_AUTOPRINT) setTimeout(() => { window.print(); }, 350);
   },
 
   /* ── 5. 인쇄 미리보기 편집기 ──────────────────────────────────

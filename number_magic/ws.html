@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Numbers of Magic — 주간 학습지</title>
+<!-- 주간 학습지 링크 페이지 (2026-09-05, 원장: "문자에는 학습지 PDF 링크를").
+     앱의 편지함 봉투(main.js envelopeForWeek)와 같은 규칙으로 학습지를 다시 그린다:
+       주차(w) + 과정(c) → primarySessionOf(course).drills, 항목 시드 = envItemSeed(w, c, i)
+     그래서 링크만으로 학생이 앱에서 보는 것과 같은 문항이 나온다(Math.random 없음).
+     쿼리: ?w=2026-W36&c=C4&n=이름[&auto=0][&l=ko|en|zh]
+       auto=0  — 인쇄 대화상자를 자동으로 띄우지 않는다(PDF 생성기 scripts/nm-weekly-worksheets.cjs 가 쓴다).
+     앱 상태(main.js)는 싣지 않는다. 라이선스 원문 없음 — 전부 생성기 산출물. -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="app/styles.css">
+<style>
+  body{margin:0;background:#f4efe6;font-family:Pretendard,system-ui,sans-serif}
+  .ws-bar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    padding:10px 14px;background:#fffaf0;border-bottom:1px solid #e6dcc8}
+  .ws-bar b{font-size:15px}
+  .ws-bar .ws-sub{color:#6b6257;font-size:13px}
+  .ws-bar button{margin-left:auto;padding:10px 16px;border:0;border-radius:10px;background:#2f6f4e;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+  .ws-err{margin:40px auto;max-width:520px;padding:20px;background:#fff;border-radius:12px;color:#7a2e2e;line-height:1.6}
+  body>.nm-print-sheet{display:block!important;margin:12px auto;max-width:210mm;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  @media print{ .ws-bar,.ws-err,#wsBody{display:none!important} body{background:#fff} body>.nm-print-sheet{margin:0;box-shadow:none;max-width:none} }
+</style>
+<script src="vendor/katex/katex.min.js"></script>
+</head>
+<body>
+<div class="ws-bar" id="wsBar">
+  <b id="wsTitle">Numbers of Magic · 주간 학습지</b>
+  <span class="ws-sub" id="wsSub">불러오는 중…</span>
+  <button id="wsPrint" type="button">🖨 인쇄 · PDF로 저장</button>
+</div>
+<div id="wsBody"></div>
+
+<script src="engine/generators.js"></script>
+<script src="engine/rng.js"></script>
+<script src="../geometry/worksheet/render.js"></script>
+<script>if(!window.GW_RENDER)document.write('<scr'+'ipt src="geometry/worksheet/render.js"></scr'+'ipt>');</script>
+<script src="engine/scene-model.js"></script>
+<script src="engine/threads/ns_ad.js"></script>
+<script src="engine/threads/sb.js"></script>
+<script src="engine/threads/ml.js"></script>
+<script src="engine/threads/dv.js"></script>
+<script src="engine/threads/fr.js"></script>
+<script src="engine/threads/dc_mx.js"></script>
+<script src="engine/threads/el.js"></script>
+<script src="engine/threads/nl.js"></script>
+<script src="engine/threads/wp.js"></script>
+<script src="engine/threads/adv.js"></script>
+<script src="engine/threads/mid.js"></script>
+<script src="engine/threads/mid2.js"></script>
+<script src="engine/threads/mid3.js"></script>
+<script src="engine/threads/mid4.js"></script>
+<script src="engine/threads/mid5.js"></script>
+<script src="engine/threads/mid6.js"></script>
+<script src="engine/threads/mid7.js"></script>
+<script src="engine/threads/mid8.js"></script>
+<script src="data/threads.js"></script>
+<script src="data/courses.js"></script>
+<script src="vendor/qrcode.js"></script>
+<script src="app/exam.js"></script>
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  function isoWeekKey(date){
+    var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    var dayNum = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - dayNum + 3);
+    var ft = new Date(Date.UTC(d.getUTCFullYear(), 0, 4)); var fd = (ft.getUTCDay() + 6) % 7; ft.setUTCDate(ft.getUTCDate() - fd + 3);
+    var wk = 1 + Math.round((d - ft) / (7*86400000));
+    return d.getUTCFullYear() + '-W' + String(wk).padStart(2,'0');
+  }
+  /* main.js primarySessionOf / envItemSeed 와 같은 규칙 — 바꾸면 양쪽을 같이 바꿀 것 */
+  function primarySessionOf(course){
+    if(!course || !course.sessions) return null;
+    var withMagic = course.sessions.find(function(s){ return !s.test && s.magic && s.magic.length; });
+    return withMagic || course.sessions.find(function(s){ return !s.test; }) || null;
+  }
+  function envItemSeed(weekKey, courseKey, i){
+    return (weekKey + courseKey + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g,'');
+  }
+  var lang = q.get('l'); if(lang==='en'||lang==='zh'||lang==='ko') document.documentElement.lang = lang;
+  var w = (q.get('w') || isoWeekKey(new Date(Date.now() + 9*3600000))).trim();
+  var c = (q.get('c') || '').trim();
+  var name = (q.get('n') || '').trim();
+  var auto = q.get('auto') !== '0';
+  window.NM_PRINT_NAME = name;
+  if(!auto) window.NM_NO_AUTOPRINT = true;
+
+  var sub = document.getElementById('wsSub');
+  function fail(msg){
+    sub.textContent = '';
+    document.getElementById('wsBody').innerHTML = '<div class="ws-err">' + msg + '</div>';
+    window.NM_WS_READY = 'error';
+  }
+  var course = window.NM_COURSES && NM_COURSES[c];
+  if(!c || !course) return fail('학습지 주소가 올바르지 않아요. (과정 ' + (c||'없음') + ')');
+  var session = primarySessionOf(course);
+  if(!session || !(session.drills||[]).length) return fail('이 과정에는 아직 학습지가 없어요.');
+  var items = session.drills.map(function(d,i){ return { thread:d.t, level:d.lv, n:d.n, seed: envItemSeed(w, c, i) }; });
+  var wsId = 'W' + w + '-' + c;
+  var title = (course.title && (course.title.ko || course.title)) || c;
+  document.title = 'Numbers of Magic — ' + wsId;
+  sub.textContent = (name ? name + ' · ' : '') + w + ' · ' + c + '. ' + title;
+
+  try{
+    NM_EXAM.renderPrintMulti(items, wsId, { mixed: 20 });
+  }catch(e){ return fail('학습지를 만드는 중 문제가 생겼어요: ' + (e && e.message || e)); }
+  /* renderPrintMulti 는 시트를 body 직속으로 붙인다. 인쇄 CSS가 body>*:not(.nm-print-sheet)를 숨기므로
+     다른 요소 안으로 옮기면 인쇄(PDF)가 백지가 된다 — 그대로 둔다(2026-09-05 확인). */
+  document.getElementById('wsPrint').onclick = function(){ window.print(); };
+  setTimeout(function(){ window.NM_WS_READY = true; }, 600); /* PDF 생성기가 이 플래그를 기다린다 */
+})();
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v10
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v11
 // 트리거: POST { trigger_key, dry?, test_phone?, probe? }  — pg_cron 또는 수동 curl.
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
@@ -19,6 +19,9 @@
 //      (2분마다 nm_notify_reconcile())이 net._http_response 에서 맞춰 넣는다. 동기로 기다리면 pg_cron→pg_net→함수→pg_net
 //      구조에서 pg_net 워커가 앞 배치(함수 호출)를 기다리느라 알리고 요청을 안 꺼내 서로 기다린다(2026-09-05 확인).
 // 시크릿 이름: NOTIFY_TRIGGER_KEY, NOTIFY_RELAY_URL?, NOTIFY_RELAY_KEY?, ALIGO_API_KEY?, ALIGO_USER_ID?, ALIGO_SENDER?
+// 문안(v11, 원장: "학습지 PDF 링크를"): nm_weekly_pdf(profile_name, week_key)의 URL(GitHub Actions가 월 06:30 KST에 생성)
+//   → 없으면 number_magic/ws.html?w=<주차>&c=<과정>&n=<이름> (같은 학습지를 브라우저에서 바로 그림) → 그것도 없으면 일반 안내.
+//   주차 키는 KST 날짜 기준(일 23:00 UTC 실행이 UTC로는 아직 일요일이라 지난 주가 되는 것을 막는다).
 // 설계: number_magic/알림서비스-설계.md — 번호는 nm_contacts(anon insert만)에만,
 // 발송 이력은 nm_notify_log(주 1회 상한, (phone,week_key,kind) unique)로 중복 방지.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
@@ -50,17 +53,37 @@ function calLabel(cadence: string): string {
   return cadence === "w2" ? `${m}월 ${nth}주차(주2회)` : `${m}월 ${nth}주차`;
 }
 
-function composeMsg(profileName: string, digest: any, cadence: string): { title: string; msg: string } {
+const APP_BASE = "https://docssam1.github.io/lete-on/number_magic";
+
+function kstNow(): Date { return new Date(Date.now() + 9 * 3600000); }
+
+// 학습지 링크: ① nm_weekly_pdf 의 PDF ② ws.html(브라우저 렌더) ③ 없음
+async function worksheetLink(sb: any, profileName: string, wk: string, digest: any): Promise<{ url: string; kind: "pdf" | "web" | "" }> {
+  try {
+    const { data } = await sb.from("nm_weekly_pdf").select("url").eq("profile_name", profileName).eq("week_key", wk).limit(1);
+    if (data && data[0] && data[0].url) return { url: data[0].url, kind: "pdf" };
+  } catch (_) { /* 표가 없거나 권한 문제면 웹 링크로 */ }
+  if (digest && digest.courseKey) {
+    return { url: `${APP_BASE}/ws.html?w=${wk}&c=${encodeURIComponent(digest.courseKey)}&n=${encodeURIComponent(profileName)}`, kind: "web" };
+  }
+  return { url: "", kind: "" };
+}
+
+function composeMsg(profileName: string, digest: any, cadence: string, link: { url: string; kind: string }): { title: string; msg: string } {
   const cal = calLabel(cadence);
   const cur = digest && digest.courseTitle
     ? `이번 주 과정: ${digest.courseNum}. ${digest.courseTitle}`
     : "이번 주 학습지가 준비되었어요";
+  const linkLine = link.url
+    ? (link.kind === "pdf" ? `📄 학습지 PDF: ${link.url}\n` : `📄 학습지 열기(인쇄·PDF 저장): ${link.url}\n`)
+    : `앱 > 학습지 모드 > 연산 로드맵에서 이번 주 학습지를 뽑을 수 있어요.\n`;
   const msg =
-    `[Numbers of Magic] ${cal} 학습 안내\n\n` +
+    `[Numbers of Magic] ${cal} 학습지\n\n` +
     `${profileName} 학생\n${cur}\n\n` +
-    `앱 > 학습지 모드 > 연산 로드맵에서 이번 주 학습지를 뽑을 수 있어요.\n` +
+    linkLine +
+    `인쇄해서 풀고, 앱에서 채점할 수 있어요.\n` +
     `문의·수신해지: 학원으로 연락 주세요.`;
-  return { title: `${cal} 학습 안내`, msg };
+  return { title: `${cal} 학습지`, msg };
 }
 
 type SendResult = { ok: boolean | null; detail: string; via: string; request_id?: number };
@@ -128,7 +151,7 @@ Deno.serve(async (req: Request) => {
     return new Response(JSON.stringify({ error: "bad trigger_key" }), { status: 403 });
   }
   const dry = !!body.dry;
-  const wk = weekKey(new Date());
+  const wk = weekKey(kstNow()); // KST 기준 주차 (런타임 TZ는 UTC라 getFullYear 등이 KST 달력 날짜를 돌려준다)
 
   // 연결·계약 확인: 릴레이에 ping 만 보낸다. 문자 발송 없음. Apps Script면 "Unknown action: ping" 류가 오면 정상.
   // 지난 실행분 결과 맞춰 넣기(SQL만, 싸다)
@@ -156,8 +179,11 @@ Deno.serve(async (req: Request) => {
   if (body.test_phone) {
     const phone = String(body.test_phone).replace(/\D/g, "");
     if (!/^01\d{8,9}$/.test(phone)) return new Response(JSON.stringify({ error: "bad test_phone" }), { status: 400 });
-    const { title, msg } = composeMsg("테스트", null, "w1");
-    if (dry) return new Response(JSON.stringify({ week: wk, test: true, dry: true, phone, title, msg }), { headers: { "Content-Type": "application/json" } });
+    const demo = { courseKey: "C4", courseNum: 4, courseTitle: "두 자리 올림 덧뺄셈" }; // 시험 문자에도 실제 링크가 실리도록
+    const tName = String(body.test_name || "테스트");
+    const link = await worksheetLink(sb, tName, wk, demo);
+    const { title, msg } = composeMsg(tName, demo, "w1", link);
+    if (dry) return new Response(JSON.stringify({ week: wk, test: true, dry: true, phone, title, msg, link }), { headers: { "Content-Type": "application/json" } });
     const res = await sendOne(sb, phone, title, msg);
     const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk + "-t" + Date.now().toString(36), kind: "test", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
     return new Response(JSON.stringify({ week: wk, test: true, phone, ...res, log_error: lErr ? lErr.message : undefined }), { headers: { "Content-Type": "application/json" } });
@@ -182,9 +208,10 @@ Deno.serve(async (req: Request) => {
     const { data: prof } = await sb.from("nm_profiles").select("state")
       .eq("name", c.profile_name).limit(1);
     const st = prof && prof[0] && prof[0].state || {};
-    const { title, msg } = composeMsg(c.profile_name, st.weeklyDigest, st.roadCadence || "w1");
+    const link = await worksheetLink(sb, c.profile_name, wk, st.weeklyDigest);
+    const { title, msg } = composeMsg(c.profile_name, st.weeklyDigest, st.roadCadence || "w1", link);
 
-    if (dry) { results.push({ phone, dry: true, title, msg }); continue; }
+    if (dry) { results.push({ phone, dry: true, title, msg, link: link.kind }); continue; }
 
     const res = await sendOne(sb, phone, title, msg);
     // 로그 insert 실패는 조용히 넘기지 않는다(주 1회 상한이 이 로그에 기대므로). 2026-09-05: 열 추가 뒤 PostgREST
