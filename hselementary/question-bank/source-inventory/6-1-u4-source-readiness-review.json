@@ -64,16 +64,16 @@
     "normalizedTypeCount": 68,
     "directlyReviewedCount": 68,
     "sourceVerifiedCount": 68,
-    "independentCalculationPassCount": 45,
-    "singleAnswerPassCount": 64,
-    "openOrAmbiguousCount": 4,
+    "independentCalculationPassCount": 56,
+    "singleAnswerPassCount": 65,
+    "openOrAmbiguousCount": 3,
     "visualAssetRequiredCount": 6,
     "duplicateSourceItemIds": 0,
     "duplicateNormalizedTypeIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 43,
-    "publicDecisionLockedCount": 25,
-    "releaseLockedCount": 25,
+    "publicCandidateCount": 54,
+    "publicDecisionLockedCount": 14,
+    "releaseLockedCount": 14,
     "notes": [
       "개념탐구 6개는 각 실제 소문항 2개씩 나누어 12개로 기록했습니다.",
       "예제 1-1은 인쇄물에서 필요한 비의 값 일부가 그림에 가려져 확정하지 않았습니다.",
@@ -88,7 +88,8 @@
       "Mission 5의 원본은 두 은행의 1개월 이자율만 묻고, Mission 6은 엥겔 지수 관계로 소득 수준이 가장 높은 가구의 식료품비를 묻습니다.",
       "개념탐구 3의 11유형은 원본 구조·독립 계산·고정 3문항·문제와 답의 같은 그림·PC·모바일·A4 검수를 통과한 뒤 공개 후보로 전환합니다.",
       "나머지 항목은 중앙 생성기 연결·수식 화면·PC·모바일·A4 검수 전이므로 fail-closed locked입니다.",
-      "개념탐구 4의 12유형은 원본 구조·독립 계산·고정 3문항·문제와 답의 같은 그림·PC·모바일·A4 검수를 통과한 뒤 공개 후보로 전환합니다."
+      "개념탐구 4의 12유형은 원본 구조·독립 계산·고정 3문항·문제와 답의 같은 그림·PC·모바일·A4 검수를 통과한 뒤 공개 후보로 전환합니다.",
+      "개념탐구 5의 11유형은 원문 구조와 답을 다시 계산하고, 고정 3문항의 문제·답 그림과 답 개수를 확인한 뒤 공개 후보로 전환합니다."
     ]
   },
   "items": [
@@ -2126,24 +2127,43 @@
       "sourcePrintedPage": 38,
       "childFriendlyTypeLabel": "여러 번 오른 가격으로 다음 가격 구하기",
       "commonTypeId": "successive-price-increase-equation",
-      "originalStructure": "두 물건의 처음 합계와 각각의 가격 상승률로 다음 해 각각의 가격을 구합니다.",
+      "originalStructure": "지난해 두 메뉴의 가격 합과 올해 각각의 상승률, 올해 합계 상승률을 이용해 지난해 두 가격을 구한 뒤 같은 상승률을 한 번 더 적용합니다.",
       "conditions": [
-        "작년 스테이크와 주스 합32000원",
-        "스테이크35% 상승",
-        "주스25% 상승",
-        "합계32.5% 상승"
+        "지난해 스테이크와 주스 합 32000원",
+        "올해 스테이크 35% 상승",
+        "올해 주스 25% 상승",
+        "올해 두 가격의 합 32.5% 상승",
+        "내년에도 각각 같은 비율로 상승"
       ],
       "visualRequirement": "두 물건의 가격과 상승률을 표로 대응해야 합니다.",
-      "independentCalculation": "처음 가격을 x,y라 하면 x+y=32000, 0.35x+0.25y=0.325×32000=10400입니다. x=y=16000, 다음 가격은21600원과20000원입니다.",
-      "independentAnswer": "스테이크21600원, 주스20000원",
-      "answerFormula": "x+y=32000; .35x+.25y=10400 -> x=y=16000",
+      "independentCalculation": "지난해 가격을 각각 x원, y원이라 하면 x+y=32000이고 0.35x+0.25y=10400입니다. 따라서 x=24000, y=8000입니다. 올해는 32400원과 10000원이고, 내년에 같은 비율로 다시 오르면 43740원과 12500원입니다.",
+      "independentAnswer": "스테이크 43740원, 주스 12500원",
+      "answerFormula": "x+y=32000, 0.35x+0.25y=10400 -> x=24000, y=8000 -> 32400×1.35=43740, 10000×1.25=12500",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 식의 해가 하나입니다.",
+      "singleAnswerCheck": "가능한 경우를 모두 계산하고 원래 조건에 다시 넣었을 때, 두 값을 함께 적는 답 한 묶음만 남습니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "가격·백분율 식의 수식 화면 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "two-values",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "두 물건의 가격과 상승률을 표로 대응해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "조건에 맞는 두 값을 모두 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-exploration"
     },
     {
       "sourceItemId": "6-1-u4-e5-example-5-1",
@@ -2166,11 +2186,29 @@
       "answerFormula": "N=5N/9+2+3N/7+1 -> N=189 -> 107:82",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "전체 수가 하나로 정해져 남녀 수도 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "분수 식의 기준 전체 표시를 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "남녀와 전체의 관계를 식으로 나란히 보여야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-example-1"
     },
     {
       "sourceItemId": "6-1-u4-e5-example-5-2",
@@ -2193,11 +2231,29 @@
       "answerFormula": "(20.8-18.4)÷(84%-72%)=20; 18.4-20×72%=4",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "같은 통 조건에서 빈 무게가 하나로 정해집니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "통 무게와 페인트 비율의 기준을 화면에서 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "같은 통의 빈 무게와 페인트 양을 그림·표로 대응해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-example-2"
     },
     {
       "sourceItemId": "6-1-u4-e5-example-5-3",
@@ -2220,11 +2276,29 @@
       "answerFormula": "5x²=45y² -> y=x/3; 12x:(28x/3)=9:7",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "양의 길이 조건에서 둘레 비가 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "두 직사각형의 비와 넓이 대응을 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "각 직사각형의 가로·세로 위치를 같은 방향으로 표시해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-example-3"
     },
     {
       "sourceItemId": "6-1-u4-e5-example-5-4",
@@ -2245,13 +2319,31 @@
       "independentCalculation": "전체를 L이라 하면 두 땅 위 길이 차의 절댓값 조건은 |0.35L-26.4|=0.13L입니다. 양쪽 경우를 풀면 L=120 또는55가 되고 둘 다 조건을 만족합니다.",
       "independentAnswer": "55cm, 120cm",
       "answerFormula": "|0.35L-26.4|=0.13L -> L=55 또는120",
-      "candidateAnswerCount": 2,
-      "singleAnswer": false,
-      "singleAnswerCheck": "원문 조건에서 두 양의 해가 생겨 단일 답이 아닙니다.",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "singleAnswerCheck": "가능한 경우를 모두 계산하고 원래 조건에 다시 넣었을 때, 두 값을 함께 적는 답 한 묶음만 남습니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "정답 후보가 두 개이므로 단일 정답 기준을 통과하지 못합니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "two-values",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "전체 길이·묻힌 길이·땅 위 길이를 두 말뚝에 대응해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "조건에 맞는 두 값을 모두 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-example-4"
     },
     {
       "sourceItemId": "6-1-u4-e5-mission-1",
@@ -2275,11 +2367,29 @@
       "answerFormula": "43x/90-3.2=0.3x -> x=18",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "먹은 비율의 기준이 날마다 명확하여 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "단계별 남은 양의 분수 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "날짜별 남은 양과 먹은 양을 단계 그림으로 보여야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-mission-1"
     },
     {
       "sourceItemId": "6-1-u4-e5-mission-2",
@@ -2303,11 +2413,29 @@
       "answerFormula": "(30×20-117)÷(30×70%)=23; 23:20",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "새 세로가 하나로 정해집니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "넓이 단위와 비의 방향을 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "처음·새 직사각형의 가로와 세로를 나란히 보여야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-mission-2"
     },
     {
       "sourceItemId": "6-1-u4-e5-mission-3",
@@ -2330,11 +2458,29 @@
       "answerFormula": "3(60-x)=5(20+x) -> x=10",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "그림의 분할점과 넓이 영역이 고정되면 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "도형 좌표와 영역 이름을 점·선분 모델로 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "윗변의 10cm·20cm 구간과 아래 분할점, 선분 ㄹㄷ의 위치를 원본과 같게 그려야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-mission-3"
     },
     {
       "sourceItemId": "6-1-u4-e5-mission-4",
@@ -2358,11 +2504,29 @@
       "answerFormula": "200(30-x)+400x=7200 -> x=6",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "4월을30일로 보는 원문 조건에서 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "월의 날짜 수와 두 배 기준을 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "평일·특별일의 하루 포인트와 한 달 날짜 수를 표로 보여야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-mission-4"
     },
     {
       "sourceItemId": "6-1-u4-e5-mission-5",
@@ -2385,11 +2549,29 @@
       "answerFormula": "유:성=4:3, 성:대=3:2 -> 유:대=4:2=2:1 -> 대/유=1/2",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "비의 방향이 고정되어 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "대분수·분수 표시 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "세 사람의 돈 관계를 화살표로 표시해야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-mission-5"
     },
     {
       "sourceItemId": "6-1-u4-e5-mission-6",
@@ -2398,7 +2580,7 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 34,
       "sourcePrintedPage": 39,
-      "childFriendlyTypeLabel": "두 통의 진하기로 기름의 양 구하기",
+      "childFriendlyTypeLabel": "두 채움 상태로 사용 뒤 기름통 무게 구하기",
       "commonTypeId": "container-fill-percent-weight",
       "originalStructure": "기름통이 일정 비율로 찼을 때의 무게 두 개로 기름통이 가득 찼을 때와 사용 후 무게를 구합니다.",
       "conditions": [
@@ -2408,16 +2590,34 @@
         "남은 무게의100배"
       ],
       "visualRequirement": "통의 빈 무게·기름 양·사용량을 단계 그림으로 보여야 합니다.",
-      "independentCalculation": "두 상태 차에서 기름 전체 무게 O는 (7/60)O=7/5이므로 O=12kg입니다. 빈 통은13/20kg, 사용 후 전체 무게는13/20+12-3/4=119/10kg입니다. 100배는1190kg입니다.",
-      "independentAnswer": "1190kg",
-      "answerFormula": "(5/12-3/10)O=5 13/20-4 1/4 -> O=12; (13/20+12-3/4)×100=1190",
+      "independentCalculation": "두 상태의 차에서 기름 전체 무게 O는 (5/12-3/10)O=5 13/20-4 1/4이므로 O=12kg입니다. 빈 통은 13/20kg입니다. 2주는 14일이므로 사용한 기름은 3/8×14=21/4kg입니다. 남은 통 전체 무게는 13/20+12-21/4=37/5kg이고, 100배는 740kg입니다.",
+      "independentAnswer": "740kg",
+      "answerFormula": "(5/12-3/10)O=5 13/20-4 1/4 -> O=12; (13/20+12-3/8×14)×100=740",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "같은 통과 사용량 조건에서 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 원래 조건에 다시 넣었을 때 답이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "대분수와 단위 수식 화면 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "비, 비율, 백분율과 초등 교육과정 표현",
+          "representations": "통의 빈 무게·기름 양·사용량을 단계 그림으로 보여야 합니다.",
+          "prerequisites": "분수와 소수의 계산, 비와 비율",
+          "reasoning-load": "여러 조건을 표나 그림으로 잇고 두 단계 이상 계산",
+          "response-mode": "값 하나 또는 기약비 쓰기"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e5-mission-6"
     },
     {
       "sourceItemId": "6-1-u4-e6-exploration-6-1",
