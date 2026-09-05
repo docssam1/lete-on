@@ -1255,7 +1255,9 @@ var SCOPE=get('scope','volume');
 // off this one value.
 var course='', workTab='print';
 var sel={diag:{},book:{},strat:{}};
-BOOKS.forEach(function(b){sel.book[b.id]={ch:{},parts:{vocab:false,extra:true,similar:false}};});
+// A direct book link is a textbook-printing entry point, so show the licensed
+// original first. Extra and parallel passages remain available as explicit picks.
+BOOKS.forEach(function(b){sel.book[b.id]={ch:{},parts:{vocab:false,original:true,extra:false,similar:false}};});
 function stratOn(){return STRATS.some(function(_,i){return sel.strat[i];});}
 // Keep the original question numbers so a practice sheet still tells the teacher
 // which of the twelve items each question is.

@@ -35,6 +35,19 @@ async function answerLevel(page, id, misses = []) {
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
   try {
+    await page.goto(`${base}#c=c`, { waitUntil: 'load' });
+    await page.waitForTimeout(250);
+    assert.equal(
+      await page.locator('[data-part-cb="c:original"]').isChecked(),
+      true,
+      'the direct CARS C link must show the licensed original by default'
+    );
+    assert.equal(
+      await page.locator('[data-part-cb="c:extra"]').isChecked(),
+      false,
+      'extra reading must remain an explicit selection'
+    );
+
     await openCourse(page, 'diag');
 
     // The default P chip is removed, then levels are deliberately clicked backwards.
