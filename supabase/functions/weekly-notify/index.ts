@@ -1,4 +1,4 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v7
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v8
 // 트리거: POST { trigger_key, dry?, test_phone?, probe? }  — pg_cron 또는 수동 curl.
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
@@ -109,11 +109,13 @@ async function sendOne(sb: any, phone: string, title: string, msg: string): Prom
   }
 }
 
-// DB(pg_net)를 거쳐 알리고를 부르고 응답이 올 때까지(최대 ~12초) 폴링한다.
+// DB(pg_net)를 거쳐 알리고를 부르고 응답이 올 때까지(최대 ~40초) 폴링한다.
+// pg_net 워커는 배치(batch_size 200) 전체가 끝나야 응답을 기록하므로, 같은 배치에 느린 요청이 섞이면
+// 알리고 응답(~1초)도 그만큼 늦게 보인다(2026-09-05 점검 중 확인). 그래서 넉넉히 기다린다.
 async function aligoViaDb(sb: any, endpoint: "send" | "remain", query: string): Promise<any> {
   const { data: id, error } = await sb.rpc("nm_aligo_send", { p_endpoint: endpoint, p_query: query });
   if (error) throw new Error("nm_aligo_send: " + error.message);
-  for (let i = 0; i < 24; i++) {
+  for (let i = 0; i < 80; i++) {
     await new Promise((r) => setTimeout(r, 500));
     const { data } = await sb.rpc("nm_aligo_result", { p_id: id });
     if (data && (data.status != null || data.error)) {
