@@ -1,9 +1,9 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v6
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v7
 // 트리거: POST { trigger_key, dry?, test_phone?, probe? }  — pg_cron 또는 수동 curl.
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
 //   probe:true    → 릴레이에 {action:'ping'}만 보내 응답 원문을 돌려준다(문자 발송 없음, 연결·계약 확인용).
-//   probe:'aligo' → 알리고 /remain/(잔여 건수 조회)로 키·IP 인증만 확인 + 이 함수의 외부 IP. 문자 발송 없음.
+//   probe:'aligo' → 알리고 /remain/(잔여 건수 조회)로 키·IP 인증만 확인. 문자 발송 없음.
 // 시크릿 읽기: 환경변수(Edge Secrets) 우선, 없으면 Vault(public.nm_notify_secret RPC, service_role 전용).
 // 발송 경로(우선순위):
 //   1) NOTIFY_RELAY_URL 이 Apps Script 웹앱(script.google.com)이면
@@ -11,7 +11,10 @@
 //      → 응답 {result:'success'} 를 성공으로 본다. (키는 Apps Script 쪽에만 있다.)
 //   2) NOTIFY_RELAY_URL 이 그 밖의 주소면 사설서버 릴레이(설계 §8):
 //      POST {receiver, msg, title, msg_type:'LMS'} + X-Relay-Key → {ok:true|false}
-//   3) NOTIFY_RELAY_URL 이 없으면 알리고 직접(ALIGO_API_KEY/USER_ID/SENDER) — IP 화이트리스트에 막힐 수 있음.
+//   3) NOTIFY_RELAY_URL 이 없으면 알리고 — 단, 이 함수의 외부 IP는 호출마다 바뀌어(확인: 54.180.141.19 → 13.209.98.43)
+//      알리고 IP 화이트리스트에 못 올린다. 그래서 **DB(pg_net)에서 호출**한다: public.nm_aligo_send RPC가 Vault의
+//      키·아이디·발신번호를 붙여 GET https://apis.aligo.in/send/?… 를 보내고(DB 외부 IP 54.116.72.251, 고정 —
+//      알리고 관리자에 이 IP를 등록), nm_aligo_result 로 응답을 폴링한다. /remain/ 이 GET 쿼리를 받는 것 확인(2026-09-05).
 // 시크릿 이름: NOTIFY_TRIGGER_KEY, NOTIFY_RELAY_URL?, NOTIFY_RELAY_KEY?, ALIGO_API_KEY?, ALIGO_USER_ID?, ALIGO_SENDER?
 // 설계: number_magic/알림서비스-설계.md — 번호는 nm_contacts(anon insert만)에만,
 // 발송 이력은 nm_notify_log(주 1회 상한, (phone,week_key,kind) unique)로 중복 방지.
@@ -97,21 +100,28 @@ async function sendOne(sb: any, phone: string, title: string, msg: string): Prom
       const j: any = await r.json().catch(() => ({}));
       return { ok: r.ok && j.ok === true, detail: JSON.stringify(j).slice(0, 500), via: "relay" };
     }
-    // 3) 알리고 직접 (LMS — 본문이 90바이트를 넘으므로)
-    const form = new FormData();
-    form.set("key", await secret(sb, "ALIGO_API_KEY"));
-    form.set("user_id", await secret(sb, "ALIGO_USER_ID"));
-    form.set("sender", await secret(sb, "ALIGO_SENDER"));
-    form.set("receiver", phone);
-    form.set("msg", msg);
-    form.set("msg_type", "LMS");
-    form.set("title", title);
-    const r = await fetch("https://apis.aligo.in/send/", { method: "POST", body: form });
-    const j: any = await r.json();
-    return { ok: String(j.result_code) === "1", detail: JSON.stringify(j).slice(0, 500), via: "aligo" };
+    // 3) 알리고 — DB 외부 IP로 호출 (LMS — 본문이 90바이트를 넘으므로)
+    const q = new URLSearchParams({ receiver: phone, msg, msg_type: "LMS", title });
+    const j: any = await aligoViaDb(sb, "send", q.toString());
+    return { ok: String(j.result_code) === "1", detail: JSON.stringify(j).slice(0, 500), via: "aligo-db" };
   } catch (e) {
-    return { ok: false, detail: String(e).slice(0, 500), via: relay ? "relay" : "aligo" };
+    return { ok: false, detail: String(e).slice(0, 500), via: relay ? "relay" : "aligo-db" };
   }
+}
+
+// DB(pg_net)를 거쳐 알리고를 부르고 응답이 올 때까지(최대 ~12초) 폴링한다.
+async function aligoViaDb(sb: any, endpoint: "send" | "remain", query: string): Promise<any> {
+  const { data: id, error } = await sb.rpc("nm_aligo_send", { p_endpoint: endpoint, p_query: query });
+  if (error) throw new Error("nm_aligo_send: " + error.message);
+  for (let i = 0; i < 24; i++) {
+    await new Promise((r) => setTimeout(r, 500));
+    const { data } = await sb.rpc("nm_aligo_result", { p_id: id });
+    if (data && (data.status != null || data.error)) {
+      if (data.error) return { result_code: "-999", message: String(data.error).slice(0, 200) };
+      try { return JSON.parse(data.body); } catch (_) { return { result_code: "-998", message: String(data.body).slice(0, 200) }; }
+    }
+  }
+  return { result_code: "-997", message: "timeout waiting for pg_net response", request_id: id };
 }
 
 Deno.serve(async (req: Request) => {
@@ -127,18 +137,10 @@ Deno.serve(async (req: Request) => {
 
   // 연결·계약 확인: 릴레이에 ping 만 보낸다. 문자 발송 없음. Apps Script면 "Unknown action: ping" 류가 오면 정상.
   if (body.probe === "aligo") {
-    // 알리고 직접 경로 점검: 인증(키·아이디·IP 화이트리스트)만 /remain/ 으로 확인한다. 발송 없음.
-    let ip = "";
-    try { ip = (await (await fetch("https://api.ipify.org")).text()).trim(); } catch (_) { ip = "?"; }
-    const form = new FormData();
-    form.set("key", await secret(sb, "ALIGO_API_KEY"));
-    form.set("user_id", await secret(sb, "ALIGO_USER_ID"));
-    let status = 0, text = "";
-    try {
-      const r = await fetch("https://apis.aligo.in/remain/", { method: "POST", body: form });
-      status = r.status; text = (await r.text()).slice(0, 400);
-    } catch (e) { text = String(e).slice(0, 400); }
-    return new Response(JSON.stringify({ probe: "aligo", egress_ip: ip, status, text }), { headers: { "Content-Type": "application/json" } });
+    // 알리고 경로 점검: DB 외부 IP로 /remain/ 을 불러 키·아이디·IP 등록 여부만 본다. 발송 없음.
+    let j: any = {};
+    try { j = await aligoViaDb(sb, "remain", ""); } catch (e) { j = { result_code: "-996", message: String(e).slice(0, 200) }; }
+    return new Response(JSON.stringify({ probe: "aligo", via: "aligo-db", aligo: j }), { headers: { "Content-Type": "application/json" } });
   }
   if (body.probe) {
     const relay = await secret(sb, "NOTIFY_RELAY_URL");
