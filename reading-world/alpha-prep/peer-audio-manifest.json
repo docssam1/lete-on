@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "audioConfig": {
+    "audioEncoding": "MP3",
+    "speakingRate": 0.96,
+    "pitch": 2
+  },
+  "files": {
+    "alpha-prep/peers/city-trees-mina.mp3": {
+      "fingerprint": "1996b95f550413fb6b1f56e8fbbdca9c36b995ab0441bf615b006bfc8ca5b37b",
+      "passageId": "city-trees",
+      "peerId": "mina",
+      "gender": "female",
+      "voice": "en-US-Wavenet-C"
+    },
+    "alpha-prep/peers/borrowed-shade-emma.mp3": {
+      "fingerprint": "ad142100c213b615bb75f4b4013dc3dc09bc962b952d4c27a161520688b22fd4",
+      "passageId": "borrowed-shade",
+      "peerId": "emma",
+      "gender": "female",
+      "voice": "en-US-Wavenet-F"
+    },
+    "alpha-prep/peers/bee-dance-emma.mp3": {
+      "fingerprint": "3639552e27e5ab99c78ad74676f4890adf157be3c8db20202d59b6c8d6551a1f",
+      "passageId": "bee-dance",
+      "peerId": "emma",
+      "gender": "female",
+      "voice": "en-US-Wavenet-F"
+    },
+    "alpha-prep/peers/bell-on-hill-noah.mp3": {
+      "fingerprint": "baaf409aa8072a7d6c4f69b564698645f74b88b134012a283f76bf28c1f73bc2",
+      "passageId": "bell-on-hill",
+      "peerId": "noah",
+      "gender": "male",
+      "voice": "en-US-Wavenet-I"
+    },
+    "alpha-prep/peers/tide-pools-noah.mp3": {
+      "fingerprint": "d93bdb7fd9c65b48cacb160bf81c390762b86e8de837052f9529ecffc45f77c0",
+      "passageId": "tide-pools",
+      "peerId": "noah",
+      "gender": "male",
+      "voice": "en-US-Wavenet-I"
+    },
+    "alpha-prep/peers/small-shell-mina.mp3": {
+      "fingerprint": "71f2c53075282a6ce792cc5ccc969e1a4ce95fe80f4fb4ab21c8d537543f55ca",
+      "passageId": "small-shell",
+      "peerId": "mina",
+      "gender": "female",
+      "voice": "en-US-Wavenet-C"
+    },
+    "alpha-prep/peers/sleep-memory-mina.mp3": {
+      "fingerprint": "4287d07e4bb613be04beaf4903752aea1b869232fb8bb70aea7fbd9cd97a0146",
+      "passageId": "sleep-memory",
+      "peerId": "mina",
+      "gender": "female",
+      "voice": "en-US-Wavenet-C"
+    },
+    "alpha-prep/peers/missing-line-emma.mp3": {
+      "fingerprint": "a3f2cc0ff0e58b5ca460f2387eac2bd765512c54d41fd1fb508d535bd180cff4",
+      "passageId": "missing-line",
+      "peerId": "emma",
+      "gender": "female",
+      "voice": "en-US-Wavenet-F"
+    },
+    "alpha-prep/peers/bike-library-emma.mp3": {
+      "fingerprint": "41e4ce56bfa0ebf28f1e8bf4be2a434cda2f13f1fac0189c04b085c448fcf1aa",
+      "passageId": "bike-library",
+      "peerId": "emma",
+      "gender": "female",
+      "voice": "en-US-Wavenet-F"
+    },
+    "alpha-prep/peers/paper-bridge-noah.mp3": {
+      "fingerprint": "822c160d09c43177505162cfa49493a3aab56344dc1332571fad7cabbd391697",
+      "passageId": "paper-bridge",
+      "peerId": "noah",
+      "gender": "male",
+      "voice": "en-US-Wavenet-I"
+    },
+    "alpha-prep/peers/community-fridge-noah.mp3": {
+      "fingerprint": "fcf92c56ba22d8b717e3ad0634bf2642790949a22b2595dd4216068f8f6daa54",
+      "passageId": "community-fridge",
+      "peerId": "noah",
+      "gender": "male",
+      "voice": "en-US-Wavenet-I"
+    },
+    "alpha-prep/peers/two-brooms-mina.mp3": {
+      "fingerprint": "f7db64769bfe81b0d6495552670ddaa7e4c700147c4568aeb7ce41ca2b24e0af",
+      "passageId": "two-brooms",
+      "peerId": "mina",
+      "gender": "female",
+      "voice": "en-US-Wavenet-C"
+    },
+    "alpha-prep/peers/forest-partners-mina.mp3": {
+      "fingerprint": "92a08f085ffd159c8ffa08e37ba1cb17ad9e01812b76463fb376d93843a422b5",
+      "passageId": "forest-partners",
+      "peerId": "mina",
+      "gender": "female",
+      "voice": "en-US-Wavenet-C"
+    },
+    "alpha-prep/peers/quiet-channel-emma.mp3": {
+      "fingerprint": "c09c456be2b4c87e3e2bcd6f728dfc7cc00569f7d1fa4562f0c1bc32b35e6209",
+      "passageId": "quiet-channel",
+      "peerId": "emma",
+      "gender": "female",
+      "voice": "en-US-Wavenet-F"
+    },
+    "alpha-prep/peers/night-migration-emma.mp3": {
+      "fingerprint": "385a8502e378c860c6292cce72dd27dc49c7c3198cb13baa166346029b774747",
+      "passageId": "night-migration",
+      "peerId": "emma",
+      "gender": "female",
+      "voice": "en-US-Wavenet-F"
+    },
+    "alpha-prep/peers/moth-lantern-noah.mp3": {
+      "fingerprint": "2a95a32210d8d0f53553acc8bf7420194e90c92ac73e518a40bc268da0a62489",
+      "passageId": "moth-lantern",
+      "peerId": "noah",
+      "gender": "male",
+      "voice": "en-US-Wavenet-I"
+    },
+    "alpha-prep/peers/moving-bridges-noah.mp3": {
+      "fingerprint": "a18f6a3f1a4c03de4f7acd06616b1afab98a505e2269ab55fd112f350cfc5618",
+      "passageId": "moving-bridges",
+      "peerId": "noah",
+      "gender": "male",
+      "voice": "en-US-Wavenet-I"
+    },
+    "alpha-prep/peers/jar-basket-mina.mp3": {
+      "fingerprint": "6906e810d915209a521abbb5b5a6bf25634431eec0336a2d585b7752ccb8d10b",
+      "passageId": "jar-basket",
+      "peerId": "mina",
+      "gender": "female",
+      "voice": "en-US-Wavenet-C"
+    },
+    "alpha-prep/peers/seed-banks-mina.mp3": {
+      "fingerprint": "c41ab2e0a0d8903a48481fc3caedacaefeb903b06be52aa4de5ccd230675a2c6",
+      "passageId": "seed-banks",
+      "peerId": "mina",
+      "gender": "female",
+      "voice": "en-US-Wavenet-C"
+    },
+    "alpha-prep/peers/finch-seeds-emma.mp3": {
+      "fingerprint": "c6fbad1ac5cb857d1c6ada4f45142a2ce192d2cc5622655d23091503f4b77bfb",
+      "passageId": "finch-seeds",
+      "peerId": "emma",
+      "gender": "female",
+      "voice": "en-US-Wavenet-F"
+    }
+  }
+}

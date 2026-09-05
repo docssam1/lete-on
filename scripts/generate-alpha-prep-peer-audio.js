@@ -11,8 +11,9 @@ const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY || '';
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://fgahqumaldheqettmvqg.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const DRY_RUN = process.argv.includes('--dry-run');
+const WRITE_MANIFEST = process.argv.includes('--write-manifest');
 const STORAGE_ROOT = 'alpha-prep/peers';
-const MANIFEST_PATH = `${STORAGE_ROOT}/tts-manifest-v1.json`;
+const MANIFEST_FILE = path.join(__dirname, '../reading-world/alpha-prep/peer-audio-manifest.json');
 const AUDIO_CONFIG = { audioEncoding: 'MP3', speakingRate: 0.96, pitch: 2 };
 
 function loadAlphaPrepData() {
@@ -69,7 +70,7 @@ function buildTasks(data) {
 function request(method, storagePath, body, contentType) {
   const base = new URL(SUPABASE_URL);
   const encodedPath = storagePath.split('/').map(encodeURIComponent).join('/');
-  const isRead = method === 'GET' || method === 'HEAD';
+  const isRead = method === 'HEAD';
   const requestPath = isRead
     ? `/storage/v1/object/public/audio/${encodedPath}`
     : `/storage/v1/object/audio/${encodedPath}`;
@@ -93,12 +94,25 @@ function request(method, storagePath, body, contentType) {
   });
 }
 
-async function readManifest() {
-  const response = await request('GET', MANIFEST_PATH);
-  if (response.status === 400 || response.status === 404) return { version: 1, files: {} };
-  if (response.status !== 200) throw new Error(`Manifest read failed (${response.status}).`);
-  const manifest = JSON.parse(response.body.toString('utf8'));
-  return manifest && manifest.version === 1 && manifest.files ? manifest : { version: 1, files: {} };
+function manifestFor(tasks) {
+  return {
+    version: 1,
+    audioConfig: AUDIO_CONFIG,
+    files: Object.fromEntries(tasks.map((task) => [task.storagePath, {
+      fingerprint: task.fingerprint,
+      passageId: task.passageId,
+      peerId: task.peerId,
+      gender: task.gender,
+      voice: task.voice,
+    }])),
+  };
+}
+
+function readManifest() {
+  if (!fs.existsSync(MANIFEST_FILE)) throw new Error('Peer audio manifest is missing. Run with --write-manifest and review it before synthesis.');
+  const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf8'));
+  if (!manifest || manifest.version !== 1 || !manifest.files) throw new Error('Peer audio manifest is invalid.');
+  return manifest;
 }
 
 async function objectExists(storagePath) {
@@ -153,6 +167,11 @@ async function main() {
   const characters = tasks.reduce((total, task) => total + task.text.length, 0);
   console.log(`Alpha Prep peer audio: ${tasks.length} files, ${characters.toLocaleString()} characters`);
   console.log(`Peers: ${[...new Set(tasks.map((task) => `${task.peerId}=${task.voice}`))].join(', ')}`);
+  if (WRITE_MANIFEST) {
+    fs.writeFileSync(MANIFEST_FILE, `${JSON.stringify(manifestFor(tasks), null, 2)}\n`);
+    console.log(`Wrote manifest: ${MANIFEST_FILE}`);
+    return;
+  }
   if (DRY_RUN) {
     console.log('Dry run complete: no API calls or uploads were made.');
     return;
@@ -160,35 +179,26 @@ async function main() {
   if (!GOOGLE_TTS_KEY) throw new Error('GOOGLE_TTS_KEY is required.');
   if (!SUPABASE_KEY) throw new Error('SUPABASE_SERVICE_ROLE_KEY is required.');
 
-  const manifest = await readManifest();
+  const manifest = readManifest();
+  tasks.forEach((task) => {
+    const approved = manifest.files[task.storagePath];
+    if (!approved || approved.fingerprint !== task.fingerprint) {
+      throw new Error(`Manifest approval is missing or stale for ${task.storagePath}. Run with --write-manifest and commit the reviewed result first.`);
+    }
+  });
   let generated = 0;
   let skipped = 0;
   for (const task of tasks) {
-    const previous = manifest.files[task.storagePath];
-    if (previous && previous.fingerprint === task.fingerprint && await objectExists(task.storagePath)) {
+    if (await objectExists(task.storagePath)) {
       skipped += 1;
       console.log(`skip (audio input unchanged): ${task.passageId}-${task.peerId}`);
       continue;
     }
     const audio = await synthesize(task.text, task.voice);
     await upload(task.storagePath, audio, 'audio/mpeg');
-    manifest.files[task.storagePath] = {
-      fingerprint: task.fingerprint,
-      passageId: task.passageId,
-      peerId: task.peerId,
-      gender: task.gender,
-      voice: task.voice,
-      bytes: audio.length,
-    };
     generated += 1;
     console.log(`generated: ${task.passageId}-${task.peerId} (${audio.length} bytes)`);
   }
-
-  manifest.version = 1;
-  manifest.audioConfig = AUDIO_CONFIG;
-  manifest.updatedAt = new Date().toISOString();
-  const manifestBody = Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`);
-  await upload(MANIFEST_PATH, manifestBody, 'application/json');
   console.log(`Complete: generated=${generated}, skipped=${skipped}, total=${tasks.length}`);
 }
 
@@ -199,4 +209,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { AUDIO_CONFIG, buildTasks, fingerprint, loadAlphaPrepData };
+module.exports = { AUDIO_CONFIG, buildTasks, fingerprint, loadAlphaPrepData, manifestFor };
