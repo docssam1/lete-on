@@ -3564,7 +3564,8 @@ ${printWatermarkHtml()}
     });
 
     $('#nm-res-print', container).addEventListener('click', () => {
-      NM_EXAM.renderPrint({thread, level, count:total, seed});
+      // 결과 화면의 🖨도 바로 인쇄하지 않고 편집기를 거친다(원장 지시 2026-09-05: 고를 때는 제너레이터로).
+      NM_EXAM.openPrintEditor([{ thread, level, seed }], `${thread}-L${level}`, { count: total });
     });
 
     $('#nm-res-retry-wrong', container).addEventListener('click', () => {
@@ -4180,7 +4181,9 @@ window.examScreen = function(container, opts){
        세로셈까지 지원하도록 올리고(fillPrintGrid) 이 함수는 그걸 그대로
        호출하도록 합쳤다 — 표지·개념 페이지·QR 전부 자동으로 따라온다. */
     function printWorksheet(){
-      NM_EXAM.renderPrint({ thread, level, count, seed, wordType, topicName: label, grade });
+      // 온라인 문제지의 인쇄도 편집기를 거친다 — 같은 시드로 열리므로 화면과 같은 문항에서 시작.
+      NM_EXAM.openPrintEditor([{ thread, level, seed, wordType, topicName: label, grade }],
+        label || `${thread}-L${level}`, { count });
     }
 
     render();
