@@ -463,6 +463,7 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
   if (mode === 'simpleRatio') {
     const kind = pick(rng, ['whole', 'dec', 'frac']);
     let leftTex, rightTex, sa, sb;          /* sa:sb = 가장 간단한 자연수의 비 */
+    let natU, natV, factor;                 /* 약분 전 자연수 쌍과 공약수(풀이용) */
 
     if (kind === 'whole') {
       /* 서로소인 뼈대 sa:sb 를 먼저 잡고 공배수 g를 곱해 문제를 만든다 */
@@ -470,6 +471,7 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       const g = R(rng, 2, 9);
       leftTex  = String(sa * g);
       rightTex = String(sb * g);
+      natU = sa * g; natV = sb * g; factor = g;
     } else if (kind === 'dec') {
       /* 소수 비 — 10을 곱해 자연수로 만든 뒤 약분한다. 예) 0.6 : 0.8 → 6:8 → 3:4 */
       let x, y;
@@ -478,6 +480,7 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       sa = x / g2; sb = y / g2;
       leftTex  = '0.' + x;
       rightTex = '0.' + y;
+      natU = x; natV = y; factor = g2;
     } else {
       /* 분수 비 — 분모의 최소공배수를 곱해 자연수로 만든다. 예) 1/2 : 1/3 → 3:2 */
       const DEN = [2, 3, 4, 5, 6, 8];
@@ -490,6 +493,7 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       sa = x2 / g3; sb = y2 / g3;
       leftTex  = `\\dfrac{1}{${e1}}`;
       rightTex = `\\dfrac{1}{${e2}}`;
+      natU = x2; natV = y2; factor = g3;
     }
 
     /* 두 항 중 하나만 비운다 — 남긴 항이 답을 하나로 못 박는다 */
@@ -509,7 +513,16 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       tex,
       answer,
       answerType: 'number',
-      widget:     'numpad'
+      widget:     'numpad',
+      solution: [
+        { tex: `${natU} : ${natV} = (${natU} \\div ${factor}) : (${natV} \\div ${factor})` },
+        {
+          tex: blankFirst
+            ? `\\square : ${shown} = ${sa} : ${sb}`
+            : `${shown} : \\square = ${sa} : ${sb}`,
+          blank: answer
+        }
+      ]
     };
   }
 
@@ -545,6 +558,9 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
         widget:     'steps',
         steps: [
           { tex: `${base} \\times \\dfrac{${pct}}{100} = \\square`, blank: cmp }
+        ],
+        solution: [
+          { tex: `${base} \\times \\dfrac{${pct}}{100} = \\square`, blank: cmp }
         ]
       };
     }
@@ -559,6 +575,9 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       answerType: 'steps',
       widget:     'steps',
       steps: [
+        { tex: `${cmp} \\div \\dfrac{${pct}}{100} = \\square`, blank: base }
+      ],
+      solution: [
         { tex: `${cmp} \\div \\dfrac{${pct}}{100} = \\square`, blank: base }
       ]
     };
@@ -580,6 +599,9 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       answerType: 'steps',
       widget:     'steps',
       steps: [
+        { tex: `${a} \\div ${d} \\times 100 = \\square`, blank: pct }
+      ],
+      solution: [
         { tex: `${a} \\div ${d} \\times 100 = \\square`, blank: pct }
       ]
     };
@@ -608,6 +630,13 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       { tex: `\\text{할 (0.1 단위)} = \\square`, blank: hal },
       { tex: `\\text{푼 (0.01 단위)} = \\square`, blank: pun },
       { tex: `\\text{리 (0.001 단위)} = \\square`, blank: ri  }
+    ],
+    /* answer는 가장 큰 자리(할)이므로 solution의 마지막 줄도 할로 끝낸다
+       (steps 필드는 자리 순서 그대로 두고, solution만 답 순서에 맞춘다) */
+    solution: [
+      { tex: `\\text{푼 (0.01 단위)} = \\square`, blank: pun },
+      { tex: `\\text{리 (0.001 단위)} = \\square`, blank: ri  },
+      { tex: `\\text{할 (0.1 단위)} = \\square`, blank: hal }
     ]
   };
 };
@@ -637,7 +666,11 @@ NM_TGEN['mx4_sqrt'] = function(params, rng) {
     answer:     n,
     answerType: 'number',
     widget:     'array',
-    array:      { n: sq, rows: n }
+    array:      { n: sq, rows: n },
+    solution: [
+      { tex: `${n} \\times ${n} = \\square`, blank: sq },
+      { tex: `\\sqrt{${sq}} = \\square`,      blank: n }
+    ]
   };
 };
 

@@ -44,7 +44,11 @@ NM_TGEN['fr1_properAddSub'] = function(params, rng){
     tex: tex,
     answer: resultN,
     answerType: 'number',
-    widget: 'numpad'
+    widget: 'numpad',
+    solution: [
+      { tex: '\\text{분모는 그대로: } ' + d },
+      { tex: a + ' ' + op + ' ' + b + ' = \\square', blank: resultN }
+    ]
   };
 };
 
@@ -309,7 +313,11 @@ NM_TGEN['fr5_simplify'] = function(params, rng){
          + '\\dfrac{' + a2 + '}{' + d2 + '} = \\dfrac{\\square}{' + L + '}',
       answer:     [c1, c2],
       answerType: 'number',
-      widget:     'numpad'
+      widget:     'numpad',
+      solution: [
+        { tex: 'k_1 = ' + L + ' \\div ' + d1 + ' = ' + k1 + '\\, ,\\; k_2 = ' + L + ' \\div ' + d2 + ' = ' + k2 },
+        { tex: a1 + ' \\times ' + k1 + ' = \\square\\, ,\\; ' + a2 + ' \\times ' + k2 + ' = \\square', blank: [c1, c2] }
+      ]
     };
   }
 
@@ -342,7 +350,10 @@ NM_TGEN['fr5_simplify'] = function(params, rng){
     steps: [
       { tex: '\\frac{' + n + ' \\div ' + g + '}{' + d + ' \\div ' + g + '} = \\frac{\\square}{' + sd + '}', blank: sn }
     ],
-    widget: 'steps'
+    widget: 'steps',
+    solution: [
+      { tex: '\\frac{' + n + ' \\div ' + g + '}{' + d + ' \\div ' + g + '} = \\frac{\\square}{' + sd + '}', blank: sn }
+    ]
   };
 };
 
@@ -490,7 +501,10 @@ NM_TGEN['fr8_frDec'] = function(params, rng){
       steps: [
         { tex: fr.n + ' \\div ' + fr.d + ' = ' + fr.decStr + ' \\quad \\Rightarrow \\times 100 = \\square', blank: fr.dec }
       ],
-      widget: 'steps'
+      widget: 'steps',
+      solution: [
+        { tex: fr.n + ' \\div ' + fr.d + ' = ' + fr.decStr + ' \\quad \\Rightarrow \\times 100 = \\square', blank: fr.dec }
+      ]
     };
   } else {
     // 소수 → 분수: answer = 분자(n)
@@ -503,7 +517,11 @@ NM_TGEN['fr8_frDec'] = function(params, rng){
       tex: fr.decStr + ' = \\frac{\\square}{' + fr.d + '}',
       answer: fr.n,
       answerType: 'number',
-      widget: 'numpad'
+      widget: 'numpad',
+      solution: [
+        { tex: fr.decStr + ' = \\dfrac{' + fr.dec + '}{100}' },
+        { tex: '\\dfrac{' + fr.dec + '}{100} = \\dfrac{\\square}{' + fr.d + '}', blank: fr.n }
+      ]
     };
   }
 };

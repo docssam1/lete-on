@@ -61,7 +61,11 @@
         answer:     half,
         answerType: 'number',
         widget:     'array',
-        array:      { n, rows: 2 }
+        array:      { n, rows: 2 },
+        solution: [
+          { tex: `${n} = ${half} + ${half}` },
+          { tex: `${n} \\div 2 = \\square`, blank: half }
+        ]
       };
     }
 
@@ -79,7 +83,11 @@
       answer:     ans,
       answerType: 'number',
       widget:     'array',
-      array:      { n, rows: 2 }
+      array:      { n, rows: 2 },
+      solution: [
+        { tex: `${n} = ${ans * 2} + 1` },
+        { tex: `${n} \\div 2 = \\square \\cdots 1`, blank: ans }
+      ]
     };
   };
 
@@ -100,7 +108,11 @@
       answer:     q,
       answerType: 'number',
       widget:     'array',
-      array:      { n: dividend, rows: b }
+      array:      { n: dividend, rows: b },
+      solution: [
+        { tex: `${b} \\times \\square = ${dividend}`, blank: q },
+        { tex: `${dividend} \\div ${b} = \\square`,   blank: q }
+      ]
     };
   };
 
@@ -236,7 +248,11 @@
         tex:        `${digs.join('+')} = \\square`,
         answer:     dsum,
         answerType: 'number',
-        widget:     'numpad'
+        widget:     'numpad',
+        solution: [
+          { tex: `${n} \\Rightarrow ${digs.join(',\\,')}` },
+          { tex: `${digs.join('+')} = \\square`, blank: dsum }
+        ]
       };
     }
 
@@ -265,7 +281,11 @@
         tex:        `${n} \\rightarrow ${a} - 2 \\times ${b} = \\square`,
         answer:     red,
         answerType: 'number',
-        widget:     'numpad'
+        widget:     'numpad',
+        solution: [
+          { tex: `${n} \\Rightarrow a=${a},\\; b=${b}` },
+          { tex: `${a} - 2 \\times ${b} = \\square`, blank: red }
+        ]
       };
     }
 
@@ -292,7 +312,11 @@
         tex:        `${n} \\rightarrow (${d[0]}+${d[2]}) - (${d[1]}+${d[3]}) = \\square`,
         answer:     diff,
         answerType: 'number',
-        widget:     'numpad'
+        widget:     'numpad',
+        solution: [
+          { tex: `\\text{odd}=${d[0]}+${d[2]}=${odd}\\;,\\;\\text{even}=${d[1]}+${d[3]}=${even}` },
+          { tex: `${odd} - ${even} = \\square`, blank: diff }
+        ]
       };
     }
 
@@ -327,6 +351,25 @@
     /* 절대 폴백 (이론상 발생 안 함) */
     if (!found) { prefix = 10; d = 0; }
 
+    /* 풀이용: 이 prefix에서 실제로 r의 배수를 만드는 자리 숫자 후보 전부 재계산
+       (rng 미사용, prefix·r만으로 결정적) — 2·5·10은 끝자리 규칙, 3·6·9는
+       자릿수 합 규칙이라 방법을 갈라 보여 준다. */
+    const cands = [];
+    for (let i = 0; i <= 9; i++) if ((prefix * 10 + i) % r === 0) cands.push(i);
+    let solution;
+    if (r === 2 || r === 5 || r === 10) {
+      solution = [
+        { tex: `${r}\\text{의 배수} \\Rightarrow \\text{끝자리} \\in \\{${cands.join(',\\,')}\\}` },
+        { tex: `\\text{가장 큰 숫자} = \\square`, blank: d }
+      ];
+    } else {
+      const psum = String(prefix).split('').reduce((s, ch) => s + Number(ch), 0);
+      solution = [
+        { tex: `${psum} + \\text{끝자리} \\equiv 0\\ (\\text{mod}\\ ${r}) \\Rightarrow \\{${cands.join(',\\,')}\\}` },
+        { tex: `\\text{가장 큰 숫자} = \\square`, blank: d }
+      ];
+    }
+
     return {
       prompt: {
         ko: `${r}의 배수가 되도록 □에 넣을 수 있는 가장 큰 숫자는?`,
@@ -336,7 +379,8 @@
       tex:        `${prefix}\\square`,
       answer:     d,
       answerType: 'number',
-      widget:     'missing'
+      widget:     'missing',
+      solution
     };
   };
 
@@ -358,7 +402,11 @@
         tex:        `${n}\\text{의 약수 개수} = \\square`,
         answer:     fs.length,
         answerType: 'number',
-        widget:     'numpad'
+        widget:     'numpad',
+        solution: [
+          { tex: `${n}\\text{의 약수}: ${fs.join(',\\,')}` },
+          { tex: `\\text{개수} = \\square`, blank: fs.length }
+        ]
       };
     }
 
@@ -406,7 +454,8 @@
         answer:     g,
         answerType: 'steps',
         widget:     'steps',
-        steps
+        steps,
+        solution: steps.slice()
       };
     }
 
@@ -437,6 +486,10 @@
       steps: [
         { tex: `\\gcd(${a},\\,${b}) = \\square`,                              blank: g },
         { tex: `\\text{lcm} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
+      ],
+      solution: [
+        { tex: `\\gcd(${a},\\,${b}) = \\square`,                              blank: g },
+        { tex: `\\text{lcm} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
       ]
     };
   };
@@ -464,7 +517,11 @@
         tex:        `${n}\\text{의 최소 소인수} = \\square`,
         answer:     spf,
         answerType: 'number',
-        widget:     'numpad'
+        widget:     'numpad',
+        solution: [
+          { tex: `${n} \\div ${spf} = \\square`, blank: n / spf },
+          { tex: `\\text{최소 소인수} = \\square`, blank: spf }
+        ]
       };
     }
 
@@ -500,7 +557,8 @@
         answer:     largestPrime,
         answerType: 'steps',
         widget:     'steps',
-        steps
+        steps,
+        solution: steps.slice()
       };
     }
 
@@ -535,6 +593,12 @@
       answerType: 'steps',
       widget:     'steps',
       steps: [
+        {
+          tex:   `(${a}+1) \\times (${b}+1) = \\square`,
+          blank: count
+        }
+      ],
+      solution: [
         {
           tex:   `(${a}+1) \\times (${b}+1) = \\square`,
           blank: count

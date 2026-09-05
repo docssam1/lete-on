@@ -193,7 +193,11 @@ NM_TGEN['el_compare'] = function(params, rng){
       prompt:{ ko:`두 식의 값을 비교해요: ${L.tex.replace(/\\times/,'×')} 와 ${R2.tex.replace(/\\times/,'×')} 중 더 큰 값과, 그 차를 순서대로 입력해요`,
                en:`Compare the two expressions and enter [bigger value, difference]`,
                zh:`比较两个算式的值，依次填入[较大值, 差]` },
-      tex, answer:[bigger, diff], answerType:'number', widget:'numpad'
+      tex, answer:[bigger, diff], answerType:'number', widget:'numpad',
+      solution: [
+        { tex: `${L.tex} = ${L.val}\\, ,\\; ${R2.tex} = ${R2.val}` },
+        { tex: `\\max(${L.val}, ${R2.val}) = \\square \\, ,\\; ${bigger} - ${smaller} = \\square`, blank: [bigger, diff] }
+      ]
     };
   }
 
@@ -201,7 +205,11 @@ NM_TGEN['el_compare'] = function(params, rng){
     prompt:{ ko:`두 식 중 더 큰 값을 구해요: ${L.tex.replace(/\\times/,'×')} ○ ${R2.tex.replace(/\\times/,'×')}`,
              en:`Find the greater value of the two expressions`,
              zh:`求两个算式中较大的值` },
-    tex, answer:bigger, answerType:'number', widget:'numpad'
+    tex, answer:bigger, answerType:'number', widget:'numpad',
+    solution: [
+      { tex: `${L.tex} = ${L.val}\\, ,\\; ${R2.tex} = ${R2.val}` },
+      { tex: `\\max(${L.val}, ${R2.val}) = \\square`, blank: bigger }
+    ]
   };
 };
 
@@ -292,7 +300,11 @@ NM_TGEN['el_ratio'] = function(params, rng){
       tex: `\\square + \\bigcirc = ${total} \\;,\\;\\; \\square : \\bigcirc = ${a} : ${b}`,
       answer:     [p1, p2],
       answerType: 'number',
-      widget:     'numpad'
+      widget:     'numpad',
+      solution: [
+        { tex: `${total} \\div (${a}+${b}) = \\square`, blank: unit },
+        { tex: `${a} \\times ${unit} = \\square\\, ,\\; ${b} \\times ${unit} = \\square`, blank: [p1, p2] }
+      ]
     };
   }
   const aMax = params.max || 12;
@@ -313,7 +325,11 @@ NM_TGEN['el_ratio'] = function(params, rng){
                en:`Find □ so the proportion holds: ${a}:${b} = ${c}:□`,
                zh:`求□使比例式成立：${a}:${b} = ${c}:□` },
       tex, answer:d, answerType:'steps', widget:'steps',
-      steps:[ { tex, blank:d } ]
+      steps:[ { tex, blank:d } ],
+      solution: [
+        { tex:`${b} \\times ${c} = \\square`, blank: b * c },
+        { tex:`${b * c} \\div ${a} = \\square`, blank: d }
+      ]
     };
   }
 
@@ -325,6 +341,10 @@ NM_TGEN['el_ratio'] = function(params, rng){
              zh:`利用"外项之积=内项之积"求□：${a}:${b} = ${c}:□` },
     tex, answer:d, answerType:'steps', widget:'steps',
     steps:[
+      { tex:`${b} \\times ${c} = \\square`, blank: bc },
+      { tex:`${bc} \\div ${a} = \\square`,  blank: d  }
+    ],
+    solution:[
       { tex:`${b} \\times ${c} = \\square`, blank: bc },
       { tex:`${bc} \\div ${a} = \\square`,  blank: d  }
     ]
