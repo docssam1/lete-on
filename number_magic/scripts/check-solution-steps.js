@@ -37,7 +37,11 @@ try {
 } catch(e){ console.log('(HEAD 비교 생략: ' + e.message.split('\n')[0] + ')'); }
 
 const T = cur.NM_THREADS, G = cur.NM_TGEN, R = cur.NM_RNG;
-const targets = Object.keys(T).filter(k => /^(MD|CH)\d+$/.test(k)).filter(k => !ONLY.length || ONLY.includes(k));
+/* 기본 대상은 MD·CH. `--all`이면 전 스레드(steps를 이미 주는 유형은 solution 대신
+   steps로 통과), 스레드 id를 주면 그것만. */
+const ALL = ONLY.includes('--ALL');
+const ids = ONLY.filter(x => x !== '--ALL');
+const targets = Object.keys(T).filter(k => ALL ? true : (ids.length ? ids.includes(k) : /^(MD|CH)\d+$/.test(k)));
 const norm = v => Array.isArray(v) ? v.map(x => String(x).trim()).join(',') : String(v).trim();
 const strip = p => { const o = Object.assign({}, p); delete o.solution; return JSON.stringify(o); };
 let fails = 0, checked = 0, withSol = 0;
@@ -52,8 +56,8 @@ for(const k of targets){
       checked++;
       if(hgen){ let hp = null; try { hp = hgen(params, head.NM_RNG.mulberry32(seed)); } catch(e){}
         if(hp && strip(hp) !== strip(p)){ console.log(`FAIL ${k} L${lv.id} #${i}: solution 외 출력이 HEAD와 다름`); fails++; } }
-      const sol = p.solution;
-      if(!Array.isArray(sol) || !sol.length){ if(i===0) console.log(`MISS ${k} L${lv.id}: solution 없음`); fails++; continue; }
+      const sol = (Array.isArray(p.solution) && p.solution.length) ? p.solution : ((Array.isArray(p.steps) && p.steps.length) ? p.steps : null);
+      if(!sol){ if(i===0) console.log(`MISS ${k} L${lv.id}: solution/steps 없음`); fails++; continue; }
       withSol++;
       let bad = null;
       sol.forEach((s, j) => {
