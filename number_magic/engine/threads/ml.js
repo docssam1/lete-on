@@ -34,7 +34,11 @@ NM_TGEN['ml1_double'] = function(params, rng) {
       answer,
       answerType: 'number',
       widget: 'array',
-      array: { n: answer, rows: 2 }
+      array: { n: answer, rows: 2 },
+      solution: [
+        { tex: `${n} \\times 2 = ${n} + ${n}` },
+        { tex: `${n} + ${n} = \\square`, blank: answer }
+      ]
     };
   } else {
     /* d2: 짝수 n = R(rng,1,max/2)*2 → n/2 가 정수 보장, max를 최대로 활용 */
@@ -54,7 +58,11 @@ NM_TGEN['ml1_double'] = function(params, rng) {
       answer,
       answerType: 'number',
       widget: 'array',
-      array: { n, rows: 2 }
+      array: { n, rows: 2 },
+      solution: [
+        { tex: `${n} = ${answer} + ${answer}` },
+        { tex: `${n} \\div 2 = \\square`, blank: answer }
+      ]
     };
   }
 };
@@ -82,7 +90,10 @@ NM_TGEN['ml2_tt25'] = function(params, rng) {
     answer,
     answerType: 'number',
     widget: 'array',
-    array: { n: answer, rows: t }
+    array: { n: answer, rows: t },
+    solution: [
+      { tex: `${t} \\times ${n} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -98,6 +109,28 @@ NM_TGEN['ml3_tt69'] = function(params, rng) {
     ? `${n} \\times ${t} = \\square`
     : `${t} \\times ${n} = \\square`;
 
+  /* 6~9단은 더 작은 아는 곱에서 옮겨간다: n이 짝수면 절반을 곱해 두 배,
+     홀수면 한 묶음 적은 곱에 t를 한 번 더 더한다 */
+  const nEven = n % 2 === 0;
+  let solution;
+  if (nEven) {
+    const halfN = n / 2;
+    const halfProd = t * halfN;
+    solution = [
+      { tex: `${t} \\times ${n} = ${t} \\times ${halfN} \\times 2` },
+      { tex: `${t} \\times ${halfN} = \\square`, blank: halfProd },
+      { tex: `${halfProd} \\times 2 = \\square`, blank: answer }
+    ];
+  } else {
+    const prevN = n - 1;
+    const prevProd = t * prevN;
+    solution = [
+      { tex: `${t} \\times ${n} = ${t} \\times ${prevN} + ${t}` },
+      { tex: `${t} \\times ${prevN} = \\square`, blank: prevProd },
+      { tex: `${prevProd} + ${t} = \\square`, blank: answer }
+    ];
+  }
+
   return {
     prompt: {
       ko: `${t} × ${n}은 얼마일까요?`,
@@ -108,7 +141,8 @@ NM_TGEN['ml3_tt69'] = function(params, rng) {
     answer,
     answerType: 'number',
     widget: 'array',
-    array: { n: answer, rows: t }
+    array: { n: answer, rows: t },
+    solution
   };
 };
 
@@ -129,7 +163,10 @@ NM_TGEN['ml4_ttMix'] = function(params, rng) {
       tex: `${t} \\times ${n} = \\square`,
       answer: product,
       answerType: 'number',
-      widget: 'numpad'
+      widget: 'numpad',
+      solution: [
+        { tex: `${t} \\times ${n} = \\square`, blank: product }
+      ]
     };
   }
 
@@ -149,7 +186,10 @@ NM_TGEN['ml4_ttMix'] = function(params, rng) {
     tex,
     answer,
     answerType: 'number',
-    widget: 'missing'
+    widget: 'missing',
+    solution: missingFirst
+      ? [ { tex: `${product} \\div ${n} = \\square`, blank: t } ]
+      : [ { tex: `${product} \\div ${t} = \\square`, blank: n } ]
   };
 };
 
@@ -454,6 +494,12 @@ NM_TGEN['ml9_mul3d2d'] = function(params, rng) {
   const b      = R(rng, 11, 99);
   const answer = a * b;
 
+  /* b를 십의 자리·일의 자리로 나눠 두 번 곱하고 더한다 */
+  const bTens = Math.floor(b / 10) * 10;
+  const bOnes = b % 10;
+  const p1    = a * bOnes;
+  const p2    = a * bTens;
+
   return {
     prompt: {
       ko: `${a} × ${b}을 계산해요`,
@@ -463,7 +509,13 @@ NM_TGEN['ml9_mul3d2d'] = function(params, rng) {
     tex: `${a} \\times ${b} = \\square`,
     answer,
     answerType: 'number',
-    widget: 'vertical'
+    widget: 'vertical',
+    solution: [
+      { tex: `${b} = ${bTens} + ${bOnes}` },
+      { tex: `${a} \\times ${bOnes} = \\square`, blank: p1 },
+      { tex: `${a} \\times ${bTens} = \\square`, blank: p2 },
+      { tex: `${p1} + ${p2} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -1342,7 +1394,11 @@ NM_TGEN['ml_frac_same'] = function(params, rng) {
                en:`Add the fractions`,
                zh:`分数加法` },
       tex:`\\dfrac{${num1}}{${den}} + \\dfrac{${num2}}{${den}} = \\dfrac{\\square}{${den}}`,
-      answer, answerType:'number', widget:'numpad'
+      answer, answerType:'number', widget:'numpad',
+      solution: [
+        { tex: `\\dfrac{${num1}}{${den}} + \\dfrac{${num2}}{${den}} = \\dfrac{${num1} + ${num2}}{${den}}` },
+        { tex: `${num1} + ${num2} = \\square`, blank: numR }
+      ]
     };
   }
 
@@ -1356,7 +1412,11 @@ NM_TGEN['ml_frac_same'] = function(params, rng) {
              en:`Subtract the fractions`,
              zh:`分数减法` },
     tex:`\\dfrac{${num1}}{${den}} - \\dfrac{${num2}}{${den}} = \\dfrac{\\square}{${den}}`,
-    answer, answerType:'number', widget:'numpad'
+    answer, answerType:'number', widget:'numpad',
+    solution: [
+      { tex: `\\dfrac{${num1}}{${den}} - \\dfrac{${num2}}{${den}} = \\dfrac{${num1} - ${num2}}{${den}}` },
+      { tex: `${num1} - ${num2} = \\square`, blank: numR }
+    ]
   };
 };
 
@@ -1790,24 +1850,34 @@ NM_TGEN['ml_frac_muldiv'] = function(params, rng) {
   const n2 = R(rng, 1, d2 - 1);   /* div일 때도 n2>=1 항상 보장 */
 
   if (op === 'mul') {
+    const [mn, md] = _fracReduce(n1 * n2, d1 * d2);
     return {
       prompt:{ ko:`분자는 분자끼리, 분모는 분모끼리 곱한 뒤 기약분수로 줄여요`,
                en:`Multiply numerators together and denominators together, then reduce`,
                zh:`分子乘分子，分母乘分母，最后约成最简分数` },
       tex:`\\dfrac{${n1}}{${d1}} \\times \\dfrac{${n2}}{${d2}} = \\square`,
-      answer:_fracReduce(n1 * n2, d1 * d2), answerShape:'fraction',
-      answerType:'number', widget:'numpad'
+      answer:[mn, md], answerShape:'fraction',
+      answerType:'number', widget:'numpad',
+      solution: [
+        { tex: `\\dfrac{${n1}}{${d1}} \\times \\dfrac{${n2}}{${d2}} = \\dfrac{${n1 * n2}}{${d1 * d2}}` },
+        { tex: `\\dfrac{${n1 * n2}}{${d1 * d2}} = \\dfrac{\\square}{\\square}`, blank: [mn, md] }
+      ]
     };
   }
 
   /* div: (n1/d1) ÷ (n2/d2) = (n1/d1) × (d2/n2) */
+  const [dn, dd] = _fracReduce(n1 * d2, d1 * n2);
   return {
     prompt:{ ko:`나눗셈을 곱셈으로 바꾸고 뒤집은 뒤, 기약분수로 줄여요`,
              en:`Turn division into multiplication, flip the second fraction, then reduce`,
              zh:`把除法变成乘法，再把第二个分数倒过来，最后约成最简分数` },
     tex:`\\dfrac{${n1}}{${d1}} \\div \\dfrac{${n2}}{${d2}} = \\square`,
-    answer:_fracReduce(n1 * d2, d1 * n2), answerShape:'fraction',
-    answerType:'number', widget:'numpad'
+    answer:[dn, dd], answerShape:'fraction',
+    answerType:'number', widget:'numpad',
+    solution: [
+      { tex: `\\dfrac{${n1}}{${d1}} \\div \\dfrac{${n2}}{${d2}} = \\dfrac{${n1}}{${d1}} \\times \\dfrac{${d2}}{${n2}}` },
+      { tex: `\\dfrac{${n1}}{${d1}} \\times \\dfrac{${d2}}{${n2}} = \\dfrac{\\square}{\\square}`, blank: [dn, dd] }
+    ]
   };
 };
 
@@ -1821,12 +1891,24 @@ NM_TGEN['ml_frac_conv'] = function(params, rng) {
   /* d가 2·4·5·8·20·25뿐이라 소수 셋째자리 이하에서 끊기므로 반올림해도 오차 없음 */
   const answer = Math.round(n / d * 1000) / 1000;
 
+  /* d의 배수로 떨어지는 큰 덩어리(I×d)와 나머지(r)로 쪼갠 뒤 각각 나눠 더한다 */
+  const whole = Math.floor(n / d);
+  const chunk = whole * d;
+  const rest  = n - chunk;
+  const restPart = Math.round((rest / d) * 1000) / 1000;
+
   return {
     prompt:{ ko:`${n} ÷ ${d}: 수를 쪼개서 나누고 소수로 나타내요`,
              en:`${n} ÷ ${d}: split the number apart, divide, and write it as a decimal`,
              zh:`${n} ÷ ${d}：把数拆开来除，用小数表示` },
     tex:`${n} \\div ${d} = \\square`,
-    answer, answerType:'number', widget:'numpad'
+    answer, answerType:'number', widget:'numpad',
+    solution: [
+      { tex: `${n} = ${chunk} + ${rest}` },
+      { tex: `${chunk} \\div ${d} = \\square`, blank: whole },
+      { tex: `${rest} \\div ${d} = \\square`, blank: restPart },
+      { tex: `${whole} + ${restPart} = \\square`, blank: answer }
+    ]
   };
 };
 
@@ -1850,12 +1932,25 @@ NM_TGEN['ml_decimal_div'] = function(params, rng) {
   const nStr = trim(n.toFixed(lv === 'practice' ? 2 : 3));
   const vStr = trim(v.toFixed(lv === 'practice' ? 1 : 2));
 
+  /* 나누는 수(vStr)의 소수점을 오른쪽으로 밀어 자연수로 만들고, 나누어지는 수(nStr)도
+     같은 자리만큼 밀어준다. 실제 표시된 소수 자리 수(k)만큼 10^k를 곱한다. */
+  const decPlaces = s => { const i = s.indexOf('.'); return i === -1 ? 0 : s.length - i - 1; };
+  const k       = decPlaces(vStr);
+  const mult    = Math.pow(10, k);
+  const newV    = Math.round(parseFloat(vStr) * mult);
+  const newNVal = Math.round(parseFloat(nStr) * mult * 1e6) / 1e6;
+  const newNStr = trim(newNVal.toFixed(6));
+
   return {
     prompt:{ ko:`${nStr} ÷ ${vStr}: 나누는 수를 자연수로 만들어 나눠요`,
              en:`${nStr} ÷ ${vStr}: turn the divisor into a whole number, then divide`,
              zh:`${nStr} ÷ ${vStr}：把除数变成整数再除` },
     tex:`${nStr} \\div ${vStr} = \\square`,
-    answer, answerType:'number', widget:'numpad'
+    answer, answerType:'number', widget:'numpad',
+    solution: [
+      { tex: `${nStr} \\div ${vStr} = ${newNStr} \\div ${newV}` },
+      { tex: `${newNStr} \\div ${newV} = \\square`, blank: answer }
+    ]
   };
 };
 
