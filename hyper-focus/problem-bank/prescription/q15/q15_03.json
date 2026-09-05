@@ -1,0 +1,30 @@
+{
+  "pattern": [
+    "pentagon",
+    "square"
+  ],
+  "colors": [
+    "#3498DB",
+    "#F39C12"
+  ],
+  "period": 2,
+  "seq_len": 6,
+  "choices_raw": [
+    [
+      "pentagon",
+      "#3498DB"
+    ],
+    [
+      "diamond",
+      "#3498DB"
+    ],
+    [
+      "pentagon",
+      "#9B59B6"
+    ],
+    [
+      "diamond",
+      "#3498DB"
+    ]
+  ]
+}

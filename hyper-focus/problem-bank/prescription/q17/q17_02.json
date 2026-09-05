@@ -1,0 +1,9 @@
+{
+  "case_desc": "큰 삼각형을 4개로 나누면 삼각형은 모두 몇 개?",
+  "items": [
+    [
+      "big_triangle_4split",
+      1
+    ]
+  ]
+}
