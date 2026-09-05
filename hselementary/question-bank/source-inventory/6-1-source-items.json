@@ -3445,10 +3445,11 @@
       "section": "exploration",
       "ordinal": 1,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "ordered-table-circle",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-exploration"
     },
     {
       "sourceItemId": "6-1-u5-e3-example-1",
@@ -3461,10 +3462,11 @@
       "section": "example",
       "ordinal": 1,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-example-1"
     },
     {
       "sourceItemId": "6-1-u5-e3-example-2",
@@ -3477,10 +3479,11 @@
       "section": "example",
       "ordinal": 2,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-example-2"
     },
     {
       "sourceItemId": "6-1-u5-e3-example-3",
@@ -3493,10 +3496,11 @@
       "section": "example",
       "ordinal": 3,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-example-3"
     },
     {
       "sourceItemId": "6-1-u5-e3-mission-1",
@@ -3509,10 +3513,11 @@
       "section": "mission",
       "ordinal": 1,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-mission-1"
     },
     {
       "sourceItemId": "6-1-u5-e3-mission-2",
@@ -3525,10 +3530,11 @@
       "section": "mission",
       "ordinal": 2,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "ordered-tuple",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-mission-2"
     },
     {
       "sourceItemId": "6-1-u5-e3-mission-3",
@@ -3541,10 +3547,11 @@
       "section": "mission",
       "ordinal": 3,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-mission-3"
     },
     {
       "sourceItemId": "6-1-u5-e3-mission-4",
@@ -3557,10 +3564,11 @@
       "section": "mission",
       "ordinal": 4,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-mission-4"
     },
     {
       "sourceItemId": "6-1-u5-e3-mission-5",
@@ -3573,10 +3581,11 @@
       "section": "mission",
       "ordinal": 5,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "ordered-tuple",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-mission-5"
     },
     {
       "sourceItemId": "6-1-u5-e3-mission-6",
@@ -3589,10 +3598,11 @@
       "section": "mission",
       "ordinal": 6,
       "sourceShape": "원그래프의 중심각 또는 비율과 전체 수를 함께 읽어 부분의 수나 두 자료의 관계를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 구조·독립 계산·고정 3문항·각도 대상·문제와 답의 같은 자료·PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u5-e3-mission-6"
     },
     {
       "sourceItemId": "6-1-u5-e4-exploration",

@@ -58,6 +58,12 @@ jobs:
           cp -R boarding-school-math/. _site/boarding-school-math/
           cp -R fields-classic/. _site/fields-classic/
           cp -R hselementary/. _site/hselementary/
+          rm -rf _site/hselementary/question-bank/source-inventory
+          rm -rf _site/hselementary/question-bank/tmp
+          find _site/hselementary/question-bank -maxdepth 1 -type f \( -name '*audit*.js' -o -name 'build-source-inventory*.js' -o -name '*.md' \) -delete
+          test ! -e _site/hselementary/question-bank/source-inventory
+          test ! -e _site/hselementary/question-bank/tmp
+          test -z "$(find _site/hselementary/question-bank -maxdepth 1 -type f \( -name '*audit*.js' -o -name 'build-source-inventory*.js' -o -name '*.md' \) -print -quit)"
           cp -R hsmiddle/. _site/hsmiddle/
           rm -rf _site/hsmiddle/question-bank/audits
           rm -f _site/hsmiddle/question-bank/data/source-page-fingerprints.json

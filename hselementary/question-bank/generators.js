@@ -24421,6 +24421,309 @@
       };
       return fixed("표의 자료를 두 직사각형 모양의 띠그래프로 나타냈습니다. 두 띠그래프의 가로와 세로가 각각 " + pools.dimensions[0] + "cm, " + pools.dimensions[1] + "cm와 " + pools.dimensions[2] + "cm, " + pools.dimensions[3] + "cm일 때 6학년이 차지하는 넓이의 차를 구하세요." + dualRectangles(false), String(answer) + "cm²", "두 직사각형 넓이의 차를 계산하고 6학년 비율을 곱하면 " + answer + "cm²입니다.", "", dualRectangles(true), [...pools.counts, ...pools.dimensions, ...pools.percents]);
     },
+    sourceGrade6GraphsE3({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u5-e3-exploration", "6-1-u5-e3-example-1", "6-1-u5-e3-example-2", "6-1-u5-e3-example-3",
+        "6-1-u5-e3-mission-1", "6-1-u5-e3-mission-2", "6-1-u5-e3-mission-3", "6-1-u5-e3-mission-4",
+        "6-1-u5-e3-mission-5", "6-1-u5-e3-mission-6"
+      ];
+      const layouts = [
+        "pet-table-blank-circle", "mixed-tree-circle", "paired-job-circles", "three-overlap-circles",
+        "book-circle-sum-difference", "paired-livestock-circles", "paired-grain-circles", "nutrition-circle-nested-percent",
+        "paired-sales-mixed-unit-circles", "three-preference-circles"
+      ];
+      const visibilityContracts = [
+        "problem:pet-counts-visible;table-and-circle-empty|answer:completed-table-and-circle",
+        "problem:two-percent-one-degree-visible;other-hidden|answer:other-percent-and-chestnut-count",
+        "problem:two-five-part-circles-visible;female-total-hidden|answer:linked-counts-and-total",
+        "problem:three-circle-angles-visible;neither-hidden|answer:both-angle-and-neither-count",
+        "problem:other-rate-only;three-book-rates-hidden|answer:all-book-counts-and-gap",
+        "problem:two-five-part-circles-visible|answer:horse-counts-and-gap",
+        "problem:two-four-part-circles-visible|answer:weighted-bean-rate",
+        "problem:four-nutrients-visible;nested-share-stated|answer:potassium-per-fruit-and-minimum",
+        "problem:mixed-money-percent-degree-visible;sundae-hidden|answer:sundae-money-and-gap",
+        "problem:three-circle-angles-visible;neither-hidden|answer:three-counts-and-neither-count"
+      ];
+      const answerContracts = [
+        "ordered-table-circle", "tree-count", "combined-population", "neither-preference-count",
+        "book-count-gap", "livestock-count-gap", "combined-grain-percent", "minimum-fruit-count",
+        "sales-money-gap", "neither-preference-count"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 여러 가지 그래프 개념탐구 3 유형은 0부터 9까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const layoutKind = layouts[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const esc = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const num = value => Number(value).toLocaleString("ko-KR");
+      const colors = ["#dcecf5", "#ffe3a3", "#cce8dc", "#e5dcf5", "#f5d4dc", "#d8e0e7"];
+      const evidence = (values, phase = "problem", resultContract = "single-value") => `<span hidden data-source61-graphs-e3-kind="${layoutKind}" data-source-item="${sourceItemId}" data-values="${phase === "answer" ? values.join(",") : ""}" data-layout="${layoutKind}" data-phase="${phase}" data-result-contract="${resultContract}" data-visibility-contract="${esc(visibilityContracts[variant])}" data-answer-contract="${esc(answerContracts[variant])}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">원그래프에 적힌 수가 백분율인지 중심각인지 확인하고 실제 수로 바꾸어 보세요.</p>` : "";
+      const polar = (cx, cy, radius, degrees) => {
+        const radians = degrees * Math.PI / 180;
+        return [cx + radius * Math.cos(radians), cy + radius * Math.sin(radians)];
+      };
+      const arcPath = (cx, cy, radius, start, angle) => {
+        const [sx, sy] = polar(cx, cy, radius, start);
+        const [ex, ey] = polar(cx, cy, radius, start + angle);
+        return `M ${sx.toFixed(2)} ${sy.toFixed(2)} A ${radius} ${radius} 0 ${angle > 180 ? 1 : 0} 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`;
+      };
+      const sectorPath = (cx, cy, radius, start, angle) => {
+        const [sx, sy] = polar(cx, cy, radius, start);
+        const [ex, ey] = polar(cx, cy, radius, start + angle);
+        return `M ${cx} ${cy} L ${sx.toFixed(2)} ${sy.toFixed(2)} A ${radius} ${radius} 0 ${angle > 180 ? 1 : 0} 1 ${ex.toFixed(2)} ${ey.toFixed(2)} Z`;
+      };
+      const chartMarkup = ({ chart, cx, cy, radius, solved, chartIndex, chartCount }) => {
+        const angleTotal = chart.segments.reduce((sum, segment) => sum + segment.angle, 0);
+        if (Math.abs(angleTotal - 360) > 1e-8) throw new Error(`${sourceItemId}: 원그래프 중심각의 합이 ${angleTotal}도입니다.`);
+        let start = chart.startAngle ?? -90;
+        const sectors = chart.segments.map((segment, segmentIndex) => {
+          const segmentStart = start;
+          const midpoint = segmentStart + segment.angle / 2;
+          start += segment.angle;
+          const highlight = solved && segment.highlight;
+          const degree = solved ? (segment.answerDegree ?? segment.problemDegree) : segment.problemDegree;
+          let degreeMarkup = "";
+          if (degree !== undefined && degree !== null) {
+            const [dx, dy] = polar(cx, cy, radius * .48, midpoint);
+            degreeMarkup = `<path class="source61-e3-angle-arc" data-angle-owner="${esc(segment.label)}" data-angle-value="${degree}" data-angle-start="${segmentStart}" data-angle-end="${segmentStart + segment.angle}" d="${arcPath(cx, cy, radius * .32, segmentStart + 5, Math.max(1, segment.angle - 10))}" fill="none" stroke="#a85f00" stroke-width="2"/><text class="source61-e3-angle-label" x="${dx.toFixed(2)}" y="${(dy + 4).toFixed(2)}" text-anchor="middle" fill="#7a4300" font-size="${chartCount === 3 ? 8.5 : 10}" font-weight="900">${esc(degree)}°</text>`;
+          }
+          return `<g class="source61-e3-sector${highlight ? " is-solved" : ""}" data-chart-index="${chartIndex}" data-segment-index="${segmentIndex}" data-segment-label="${esc(segment.label)}" data-segment-angle="${solved ? segment.angle : ""}" data-segment-start="${solved ? segmentStart : ""}" data-segment-end="${solved ? segmentStart + segment.angle : ""}"><path d="${sectorPath(cx, cy, radius, segmentStart, segment.angle)}" fill="${highlight ? "#ffd86b" : colors[segmentIndex % colors.length]}" stroke="#183b56" stroke-width="1.4"/>${degreeMarkup}</g>`;
+        }).join("");
+        const titleY = cy - radius - 18;
+        const legendStartY = cy + radius + 22;
+        const legendColumns = chartCount === 1 ? 2 : 1;
+        const legendWidth = chartCount === 1 ? 210 : chartCount === 2 ? 205 : 126;
+        const legend = chart.segments.filter(segment => segment.label).map((segment, index) => {
+          const col = index % legendColumns;
+          const row = Math.floor(index / legendColumns);
+          const chartEdgeInset = chartCount === 3 ? 10 : 0;
+          const x = cx - (legendColumns === 2 ? 190 : radius) + chartEdgeInset + col * legendWidth;
+          const y = legendStartY + row * 18;
+          const rawDisplay = solved ? (segment.answerText ?? segment.problemText ?? "") : (segment.problemText ?? "");
+          const degree = solved ? (segment.answerDegree ?? segment.problemDegree) : segment.problemDegree;
+          const display = degree === undefined || degree === null ? rawDisplay : rawDisplay.replace(new RegExp(`^${String(degree).replace(".", "\\.")}°(?:\\s*·\\s*)?`), "");
+          const text = `${segment.label}${display ? ` · ${display}` : ""}`;
+          return `<rect x="${x}" y="${y - 9}" width="9" height="9" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width=".7"/><text x="${x + 13}" y="${y}" text-anchor="start" fill="#183b56" font-size="${chartCount === 3 ? 7.5 : 8.5}">${esc(text)}</text>`;
+        }).join("");
+        return `<g class="source61-e3-chart" data-chart-title="${esc(chart.title)}" data-angle-signature="${solved ? chart.segments.map(segment => segment.angle).join(",") : ""}"><text x="${cx}" y="${titleY}" text-anchor="middle" fill="#183b56" font-size="11" font-weight="900">${esc(chart.title)}</text>${sectors}${legend}</g>`;
+      };
+      const circleSet = ({ title, charts, values, solved = false, resultText = "", extra = "" }) => {
+        const count = charts.length;
+        const positions = count === 1 ? [{ cx: 270, cy: 160, radius: 82 }] : count === 2 ? [{ cx: 145, cy: 150, radius: 70 }, { cx: 395, cy: 150, radius: 70 }] : [{ cx: 92, cy: 145, radius: 58 }, { cx: 270, cy: 145, radius: 58 }, { cx: 448, cy: 145, radius: 58 }];
+        const maxSegments = Math.max(...charts.map(chart => chart.segments.length));
+        const legendRows = count === 1 ? Math.ceil(maxSegments / 2) : maxSegments;
+        const resultY = (count === 3 ? 233 : count === 2 ? 246 : 272) + legendRows * 18 + (extra ? 34 : 0);
+        const height = resultY + (solved && resultText ? 50 : 24);
+        const markup = charts.map((chart, index) => chartMarkup({ chart, ...positions[index], solved, chartIndex: index, chartCount: count })).join("");
+        const final = solved && resultText ? `<rect class="source61-e3-result-box" data-final-answer="${esc(resultText)}" x="92" y="${resultY}" width="356" height="30" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/><text x="270" y="${resultY + 20}" text-anchor="middle" fill="#183b56" font-size="10" font-weight="900">답: ${esc(resultText)}</text>` : "";
+        return `<svg class="geometry-diagram source61-graphs-e3-diagram" style="width:min(620px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e3-structure="${esc(title)}" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="${solved ? values.join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="520" height="${height - 18}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">${esc(title)}</text>${markup}${extra}${final}</svg>`;
+      };
+      const table = (headers, rows, solved = false) => `<table class="problem-table source61-e3-table" data-source61-e3-summary-table="student-and-percent" data-phase="${solved ? "answer" : "problem"}"><thead><tr>${headers.map(value => `<th>${esc(value)}</th>`).join("")}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+      const blankCircle = () => {
+        const cx = 270;
+        const cy = 160;
+        const radius = 82;
+        const ticks = [
+          { label: "0", x: cx, y: cy - radius, tx: cx, ty: cy - radius - 9 },
+          { label: "25", x: cx + radius, y: cy, tx: cx + radius + 18, ty: cy + 4 },
+          { label: "50", x: cx, y: cy + radius, tx: cx, ty: cy + radius + 17 },
+          { label: "75", x: cx - radius, y: cy, tx: cx - radius - 18, ty: cy + 4 }
+        ];
+        const guides = ticks.map((tick, index) => `<line data-empty-circle-tick="${index}" x1="${cx}" y1="${cy}" x2="${tick.x}" y2="${tick.y}" stroke="#8296a6" stroke-width="1" stroke-dasharray="3 3"/><text x="${tick.tx}" y="${tick.ty}" text-anchor="middle" fill="#526b7d" font-size="10" font-weight="800">${tick.label}</text>`).join("");
+        return `<svg class="geometry-diagram source61-graphs-e3-diagram source61-e3-empty-chart" style="width:min(620px,100%);height:auto" viewBox="0 0 540 275" role="img" aria-label="0·25·50·75 눈금의 빈 원그래프" data-source61-graphs-e3-structure="empty-circle-grid" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="" data-phase="problem"><rect x="10" y="10" width="520" height="247" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">0·25·50·75 눈금의 빈 원그래프</text><g data-empty-circle="true"><circle class="source61-e3-empty-circle-outline" cx="${cx}" cy="${cy}" r="${radius}" fill="#fff" stroke="#183b56" stroke-width="2"/>${guides}<circle cx="${cx}" cy="${cy}" r="3" fill="#183b56"/></g></svg>`;
+      };
+      const fixed = (prompt, answer, solution, promptVisual, answerVisual, values, resultContract = "single-value") => result(`${prompt}${promptVisual}${support("원그래프의 전체를 360° 또는 100%로 보고, 같은 항목끼리 연결하세요.")}${challenge}${evidence(values, "problem", resultContract)}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e3-visibility-contract="${esc(visibilityContracts[variant])}" data-source61-e3-answer-contract="${esc(answerContracts[variant])}" data-final-answer="${esc(answer)}">${evidence(values, "answer", resultContract)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId, resultContract });
+      const segment = (label, percent, problemText = "", answerText = problemText, options = {}) => ({ label, angle: percent * 3.6, problemText, answerText, ...options });
+
+      if (variant === 0) {
+        const counts = [[120, 75, 60, 45], [140, 100, 88, 72], [210, 140, 90, 60]][poolIndex];
+        const total = counts.reduce((sum, value) => sum + value, 0);
+        const percents = counts.map(value => value * 100 / total);
+        const labels = ["강아지", "고양이", "햄스터", "토끼"];
+        const petIcon = (kind, x) => {
+          const ears = kind === 1 ? `<path d="M ${x - 18} 59 L ${x - 8} 38 L ${x - 2} 60 M ${x + 18} 59 L ${x + 8} 38 L ${x + 2} 60"/>` : kind === 3 ? `<ellipse cx="${x - 9}" cy="43" rx="6" ry="20"/><ellipse cx="${x + 9}" cy="43" rx="6" ry="20"/>` : kind === 0 ? `<ellipse cx="${x - 22}" cy="62" rx="8" ry="18"/><ellipse cx="${x + 22}" cy="62" rx="8" ry="18"/>` : `<circle cx="${x - 18}" cy="52" r="8"/><circle cx="${x + 18}" cy="52" r="8"/>`;
+          return `<g class="source61-e3-pet-icon" data-pet="${labels[kind]}" fill="#dcecf5" stroke="#183b56" stroke-width="2">${ears}<circle cx="${x}" cy="68" r="26"/><circle cx="${x - 9}" cy="64" r="2" fill="#183b56"/><circle cx="${x + 9}" cy="64" r="2" fill="#183b56"/><path d="M ${x - 7} 78 Q ${x} 84 ${x + 7} 78" fill="none"/></g><text x="${x}" y="108" text-anchor="middle" fill="#183b56" font-size="10" font-weight="900">${labels[kind]} ${counts[kind]}명</text>`;
+        };
+        const pets = `<svg class="geometry-diagram source61-e3-pets" style="width:min(620px,100%);height:auto" viewBox="0 0 540 125" role="img" aria-label="반려동물별 학생 수" data-source61-e3-pet-grid="4">${[75, 205, 335, 465].map((x, index) => petIcon(index, x)).join("")}</svg>`;
+        const charts = [{ title: "키우는 반려동물별 학생 수", segments: labels.map((label, index) => segment(label, percents[index], "", `${percents[index]}%`, { highlight: true })) }];
+        const answer = `학생 수 ${counts.join(", ")}명, 백분율 ${percents.join(", ")}%`;
+        const promptVisual = `${pets}${table(["동물", ...labels, "합계"], [["학생 수(명)", ...labels.map(() => "□"), "□"], ["백분율(%)", ...labels.map(() => "□"), "□"]])}${blankCircle()}`;
+        const answerVisual = `${pets}${table(["동물", ...labels, "합계"], [["학생 수(명)", ...counts, total], ["백분율(%)", ...percents.map(value => `${value}%`), "100%"]], true)}${circleSet({ title: "완성한 원그래프", charts, values: [...counts, ...percents], solved: true, resultText: answer })}`;
+        return fixed("반려동물별 학생 수를 보고 표를 완성한 뒤 원그래프로 나타내세요.", answer, `전체는 ${total}명입니다. 각 학생 수를 ${total}으로 나누어 백분율을 구하면 ${percents.join("%, ")}%입니다.`, promptVisual, answerVisual, [...counts, ...percents], "ordered-table-circle");
+      }
+
+      if (variant === 1) {
+        const d = [
+          { total: 500, rates: [32, 23, 15, 30], part: 20 },
+          { total: 600, rates: [28, 24, 18, 30], part: 25 },
+          { total: 800, rates: [35, 20, 20, 25], part: 30 }
+        ][poolIndex];
+        const labels = ["소나무", "은행나무", "벚나무", "기타"];
+        const birchAngle = d.rates[2] * 3.6;
+        const answerCount = d.total * d.rates[3] * d.part / 10000;
+        const values = [d.total, ...d.rates, d.part, answerCount];
+        const make = solved => [{ title: "수목원의 종류별 나무 수", segments: labels.map((label, index) => segment(label, d.rates[index], index === 0 ? `${d.rates[index]}%` : index === 1 ? `${d.rates[index]}%` : index === 2 ? `${birchAngle}°` : "", `${d.rates[index]}%${index === 2 ? ` · ${birchAngle}°` : ""}`, { problemDegree: index === 2 ? birchAngle : undefined, highlight: index === 3 })) }];
+        const answer = `${answerCount}그루`;
+        return fixed(`수목원에 나무가 ${d.total}그루 있습니다. 원그래프에서 기타의 ${d.part}%가 밤나무라면 밤나무는 몇 그루인지 구하세요.`, answer, `벚나무 ${birchAngle}°는 ${d.rates[2]}%이고 기타는 100-${d.rates[0]}-${d.rates[1]}-${d.rates[2]}=${d.rates[3]}%입니다. 밤나무는 ${d.total}×${d.rates[3]}%×${d.part}%=${answerCount}그루입니다.`, circleSet({ title: "나무 종류별 원그래프", charts: make(false), values }), circleSet({ title: "나무 종류별 원그래프", charts: make(true), values, solved: true, resultText: answer }), values);
+      }
+
+      if (variant === 2) {
+        const d = [
+          { men: 500000, male: [35, 27, 20, 12, 6], female: [26, 18, 32, 8, 16], gap: 6000 },
+          { men: 360000, male: [34, 25, 18, 15, 8], female: [28, 15, 30, 12, 15], gap: 9000 },
+          { men: 480000, male: [36, 28, 18, 10, 8], female: [27, 16, 31, 11, 15], gap: 8000 }
+        ][poolIndex];
+        const labels = ["회사원", "자영업", "학생", "전문직", "기타"];
+        const maleProfessional = d.men * d.male[3] / 100;
+        const femaleSelf = maleProfessional - d.gap;
+        const women = femaleSelf * 100 / d.female[1];
+        const answerTotal = d.men + women;
+        const make = solved => [
+          { title: "남자", segments: labels.map((label, index) => segment(label, d.male[index], `${d.male[index]}%`, `${d.male[index]}%${solved && index === 3 ? ` · ${num(maleProfessional)}명` : ""}`, { highlight: index === 3 })) },
+          { title: "여자", segments: labels.map((label, index) => segment(label, d.female[index], `${d.female[index]}%`, `${d.female[index]}%${solved && index === 1 ? ` · ${num(femaleSelf)}명` : ""}`, { highlight: index === 1 })) }
+        ];
+        const values = [d.men, ...d.male, ...d.female, d.gap, maleProfessional, femaleSelf, women, answerTotal];
+        const answer = `${num(answerTotal)}명`;
+        return fixed(`남자가 ${num(d.men)}명인 나라의 하는 일별 원그래프입니다. 전문직 남자는 자영업 여자보다 ${num(d.gap)}명 더 많습니다. 남자와 여자는 모두 몇 명인지 구하세요.`, answer, `전문직 남자는 ${num(d.men)}×${d.male[3]}%=${num(maleProfessional)}명입니다. 자영업 여자는 ${num(femaleSelf)}명이고 이것이 여자의 ${d.female[1]}%이므로 여자는 ${num(women)}명입니다. 모두 ${num(answerTotal)}명입니다.`, circleSet({ title: "하는 일별 사람 수", charts: make(false), values }), circleSet({ title: "하는 일별 사람 수", charts: make(true), values, solved: true, resultText: answer }), values);
+      }
+
+      const preferenceCharts = ({ firstTitle, secondTitle, thirdTitle, firstAngle, secondAngle, thirdAngle, thirdMeansBoth, solved }) => [
+        { title: firstTitle, segments: [{ label: "좋아하는 학생", angle: firstAngle, problemText: `${firstAngle}°`, answerText: `${firstAngle}°`, problemDegree: firstAngle, highlight: true }, { label: "좋아하지 않는 학생", angle: 360 - firstAngle, problemText: "" }] },
+        { title: secondTitle, segments: [{ label: "좋아하는 학생", angle: secondAngle, problemText: `${secondAngle}°`, answerText: `${secondAngle}°`, problemDegree: secondAngle, highlight: true }, { label: "좋아하지 않는 학생", angle: 360 - secondAngle, problemText: "" }] },
+        thirdMeansBoth
+          ? { title: thirdTitle, segments: [{ label: "둘 다 좋아하는 학생", angle: thirdAngle, problemText: `${thirdAngle}°`, answerText: `${thirdAngle}°`, problemDegree: thirdAngle, highlight: true }, { label: "둘 다 좋아하지 않는 쪽", angle: 360 - thirdAngle, problemText: "" }] }
+          : { title: thirdTitle, segments: [{ label: "둘 다 좋아하는 학생", angle: 360 - thirdAngle, problemText: "", answerText: `${360 - thirdAngle}°`, highlight: true }, { label: "둘 다 좋아하지 않는 쪽", angle: thirdAngle, problemText: `${thirdAngle}°`, answerText: `${thirdAngle}°`, problemDegree: thirdAngle }] }
+      ];
+
+      if (variant === 3) {
+        const d = [
+          { total: 1860, art: 270, pe: 240, nonBoth: 150 },
+          { total: 1800, art: 252, pe: 216, nonBoth: 180 },
+          { total: 2160, art: 252, pe: 234, nonBoth: 162 }
+        ][poolIndex];
+        const both = 360 - d.nonBoth;
+        const neitherAngle = 360 - d.art - d.pe + both;
+        const answerCount = d.total * neitherAngle / 360;
+        const values = [d.total, d.art, d.pe, d.nonBoth, both, neitherAngle, answerCount];
+        const charts = solved => preferenceCharts({ firstTitle: "미술", secondTitle: "체육", thirdTitle: "미술과 체육", firstAngle: d.art, secondAngle: d.pe, thirdAngle: d.nonBoth, thirdMeansBoth: false, solved });
+        const answer = `${answerCount}명`;
+        return fixed(`학생 ${num(d.total)}명의 미술과 체육 선호를 나타낸 원그래프입니다. 미술과 체육을 모두 좋아하지 않는 학생은 몇 명인지 구하세요.`, answer, `미술을 좋아하는 각 ${d.art}°와 체육을 좋아하는 각 ${d.pe}°를 더하면 둘 다 좋아하는 학생을 두 번 셉니다. 둘 다 좋아하는 각은 360-${d.nonBoth}=${both}°이므로 적어도 하나를 좋아하는 각은 ${d.art}+${d.pe}-${both}=${360 - neitherAngle}°입니다. 모두 좋아하지 않는 각은 ${neitherAngle}°이고 학생 수는 ${num(d.total)}×${neitherAngle}÷360=${answerCount}명입니다.`, circleSet({ title: "미술과 체육 선호", charts: charts(false), values }), circleSet({ title: "미술과 체육 선호", charts: charts(true), values, solved: true, resultText: answer }), values);
+      }
+
+      if (variant === 4) {
+        const d = [
+          { total: 1200, sumRate: 69, difference: 60, otherRate: 7 },
+          { total: 1000, sumRate: 64, difference: 40, otherRate: 8 },
+          { total: 1500, sumRate: 68, difference: 120, otherRate: 10 }
+        ][poolIndex];
+        const pair = d.total * d.sumRate / 100;
+        const fairy = (pair + d.difference) / 2;
+        const biography = (pair - d.difference) / 2;
+        const other = d.total * d.otherRate / 100;
+        const novel = d.total - fairy - biography - other;
+        const rates = [fairy, biography, novel, other].map(value => value * 100 / d.total);
+        const labels = ["동화책", "위인전", "소설책", "기타"];
+        const segments = solved => labels.map((label, index) => segment(label, rates[index], index === 3 ? `${d.otherRate}%` : "", `${rates[index]}% · ${[fairy, biography, novel, other][index]}권`, { highlight: index === 1 || index === 2 }));
+        const answerGap = biography - novel;
+        const values = [d.total, d.sumRate, d.difference, d.otherRate, fairy, biography, novel, other, answerGap];
+        const answer = `${answerGap}권`;
+        return fixed(`도서관의 책은 ${num(d.total)}권입니다. 동화책과 위인전은 전체의 ${d.sumRate}%이고 동화책이 위인전보다 ${d.difference}권 많습니다. 원그래프를 보고 위인전은 소설책보다 몇 권 더 많은지 구하세요.`, answer, `동화책과 위인전은 ${pair}권입니다. 합과 차로 동화책 ${fairy}권, 위인전 ${biography}권을 구합니다. 기타는 ${other}권, 소설책은 ${novel}권이므로 차는 ${answerGap}권입니다.`, circleSet({ title: "종류별 책 수", charts: [{ title: "도서관 책", segments: segments(false) }], values }), circleSet({ title: "종류별 책 수", charts: [{ title: "도서관 책", segments: segments(true) }], values, solved: true, resultText: answer }), values);
+      }
+
+      if (variant === 5) {
+        const d = [
+          { totals: [800, 700], a: [43, 19, 17, 15, 6], b: [39, 32, 9, 17, 3] },
+          { totals: [1000, 800], a: [38, 21, 18, 14, 9], b: [36, 28, 12, 17, 7] },
+          { totals: [900, 750], a: [40, 20, 17, 16, 7], b: [35, 27, 13, 20, 5] }
+        ][poolIndex];
+        const labels = ["닭", "돼지", "염소", "말", "기타"];
+        const counts = [d.totals[0] * d.a[3] / 100, d.totals[1] * d.b[3] / 100];
+        const winner = counts[0] >= counts[1] ? "수정이네" : "진영이네";
+        const gap = Math.abs(counts[0] - counts[1]);
+        const make = solved => [
+          { title: `수정이네 · 전체 ${d.totals[0]}마리`, segments: labels.map((label, index) => segment(label, d.a[index], `${d.a[index]}%`, `${d.a[index]}%${solved && index === 3 ? ` · ${counts[0]}마리` : ""}`, { highlight: index === 3 })) },
+          { title: `진영이네 · 전체 ${d.totals[1]}마리`, segments: labels.map((label, index) => segment(label, d.b[index], `${d.b[index]}%`, `${d.b[index]}%${solved && index === 3 ? ` · ${counts[1]}마리` : ""}`, { highlight: index === 3 })) }
+        ];
+        const values = [...d.totals, ...d.a, ...d.b, ...counts, gap];
+        const answer = `${winner}가 ${gap}마리 더 많음`;
+        return fixed(`수정이네 마을은 가축 ${d.totals[0]}마리, 진영이네 마을은 ${d.totals[1]}마리를 기릅니다. 말은 어느 마을이 몇 마리 더 많이 기르는지 구하세요.`, answer, `말은 수정이네 ${d.totals[0]}×${d.a[3]}%=${counts[0]}마리, 진영이네 ${d.totals[1]}×${d.b[3]}%=${counts[1]}마리입니다. 따라서 ${answer}입니다.`, circleSet({ title: "마을별 가축 수", charts: make(false), values }), circleSet({ title: "마을별 가축 수", charts: make(true), values, solved: true, resultText: answer }), values, "ordered-tuple");
+      }
+
+      if (variant === 6) {
+        const d = [
+          { totals: [200, 300], a: [40, 29, 19, 12], b: [15, 43, 24, 18] },
+          { totals: [400, 600], a: [38, 28, 20, 14], b: [18, 40, 30, 12] },
+          { totals: [300, 700], a: [42, 26, 20, 12], b: [16, 38, 30, 16] }
+        ][poolIndex];
+        const labels = ["쌀", "보리", "콩", "기타"];
+        const beanCounts = [d.totals[0] * d.a[2] / 100, d.totals[1] * d.b[2] / 100];
+        const answerRate = (beanCounts[0] + beanCounts[1]) * 100 / (d.totals[0] + d.totals[1]);
+        const make = solved => [
+          { title: `선영이네 · 전체 ${d.totals[0]}t`, segments: labels.map((label, index) => segment(label, d.a[index], `${d.a[index]}%`, `${d.a[index]}%${solved && index === 2 ? ` · ${beanCounts[0]}t` : ""}`, { highlight: index === 2 })) },
+          { title: `기문이네 · 전체 ${d.totals[1]}t`, segments: labels.map((label, index) => segment(label, d.b[index], `${d.b[index]}%`, `${d.b[index]}%${solved && index === 2 ? ` · ${beanCounts[1]}t` : ""}`, { highlight: index === 2 })) }
+        ];
+        const values = [...d.totals, ...d.a, ...d.b, ...beanCounts, answerRate];
+        const answer = `${answerRate}%`;
+        return fixed(`선영이네 마을은 곡물 ${d.totals[0]}t, 기문이네 마을은 ${d.totals[1]}t을 생산합니다. 두 마을의 콩 생산량은 전체 곡물 생산량의 몇 %인지 구하세요.`, answer, `콩은 ${d.totals[0]}×${d.a[2]}%=${beanCounts[0]}t과 ${d.totals[1]}×${d.b[2]}%=${beanCounts[1]}t으로 모두 ${beanCounts[0] + beanCounts[1]}t입니다. 전체 ${d.totals[0] + d.totals[1]}t의 ${answerRate}%입니다.`, circleSet({ title: "마을별 곡물 생산량", charts: make(false), values }), circleSet({ title: "마을별 곡물 생산량", charts: make(true), values, solved: true, resultText: answer }), values);
+      }
+
+      if (variant === 7) {
+        const d = [
+          { weight: 400, otherRate: 2, part: 25, need: 5 },
+          { weight: 300, otherRate: 4, part: 25, need: 10 },
+          { weight: 500, otherRate: 2, part: 20, need: 9 }
+        ][poolIndex];
+        const rates = [100 - 7 - 2 - d.otherRate, 7, 2, d.otherRate];
+        const labels = ["수분", "탄수화물", "단백질", "기타"];
+        const perFruit = d.weight * d.otherRate * d.part / 10000;
+        const answerCount = Math.ceil(d.need / perFruit);
+        const segments = solved => labels.map((label, index) => segment(label, rates[index], `${rates[index]}%`, `${rates[index]}%${solved && index === 3 ? ` · 한 개에 칼륨 ${perFruit}g` : ""}`, { highlight: index === 3 }));
+        const values = [d.weight, ...rates, d.part, d.need, perFruit, answerCount];
+        const answer = `${answerCount}개`;
+        return fixed(`참외 1개의 무게는 ${d.weight}g이고, 원그래프의 기타 성분 가운데 ${d.part}%가 칼륨입니다. 칼륨의 하루 충분 섭취량 ${d.need}g을 참외만으로 채우려면 적어도 몇 개를 먹어야 하는지 구하세요.`, answer, `기타 성분은 ${d.weight}×${d.otherRate}%=${d.weight * d.otherRate / 100}g이고 그중 칼륨은 ${d.part}%인 ${perFruit}g입니다. ${d.need}÷${perFruit}=${d.need / perFruit}이므로 적어도 ${answerCount}개가 필요합니다.`, circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(false) }], values }), circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(true) }], values, solved: true, resultText: answer }), values);
+      }
+
+      if (variant === 8) {
+        const d = [
+          { totals: [200, 250], a: [22, 18, 10, 35, 15], b: [18, 16, 24, 28, 14] },
+          { totals: [300, 400], a: [20, 15, 12, 30, 23], b: [18, 15, 25, 27, 15] },
+          { totals: [250, 300], a: [24, 16, 12, 30, 18], b: [18, 16, 22, 24, 20] }
+        ][poolIndex];
+        const labels = ["김밥", "어묵", "튀김", "떡볶이", "순대"];
+        const amountsA = d.a.map(rate => d.totals[0] * rate / 100);
+        const amountsB = d.b.map(rate => d.totals[1] * rate / 100);
+        const shownA = [`${amountsA[0]}만원`, `${d.a[1]}%`, `${amountsA[2]}만원`, `${d.a[3] * 3.6}°`, ""];
+        const shownB = [`${d.b[0]}%`, `${amountsB[1]}만원`, `${d.b[2] * 3.6}°`, `${amountsB[3]}만원`, ""];
+        const make = solved => [
+          { title: `A 분식점 · ${d.totals[0]}만원`, segments: labels.map((label, index) => segment(label, d.a[index], shownA[index], `${d.a[index]}% · ${amountsA[index]}만원`, { problemDegree: index === 3 ? d.a[index] * 3.6 : undefined, highlight: index === 4 })) },
+          { title: `B 분식점 · ${d.totals[1]}만원`, segments: labels.map((label, index) => segment(label, d.b[index], shownB[index], `${d.b[index]}% · ${amountsB[index]}만원`, { problemDegree: index === 2 ? d.b[index] * 3.6 : undefined, highlight: index === 4 })) }
+        ];
+        const gap = Math.abs(amountsA[4] - amountsB[4]);
+        const winner = amountsA[4] >= amountsB[4] ? "A" : "B";
+        const values = [...d.totals, ...d.a, ...d.b, ...amountsA, ...amountsB, gap];
+        const answer = `${winner} 분식점, ${gap}만원 더 많음`;
+        return fixed(`A 분식점의 하루 매출은 ${d.totals[0]}만원, B 분식점은 ${d.totals[1]}만원입니다. 두 원그래프에서 순대 매출은 어느 분식점이 몇 만원 더 많은지 구하세요.`, answer, `표시된 금액·백분율·중심각을 각 분식점의 전체 매출에 맞게 바꾸면 순대 매출은 A ${amountsA[4]}만원, B ${amountsB[4]}만원입니다. 따라서 ${answer}입니다.`, circleSet({ title: "분식점별 매출액", charts: make(false), values }), circleSet({ title: "분식점별 매출액", charts: make(true), values, solved: true, resultText: answer }), values, "ordered-tuple");
+      }
+
+      const d = [
+        { total: 4320, mountain: 220, seaDislike: 100, both: 160 },
+        { total: 3600, mountain: 216, seaDislike: 126, both: 162 },
+        { total: 2880, mountain: 252, seaDislike: 108, both: 180 }
+      ][poolIndex];
+      const sea = 360 - d.seaDislike;
+      const neitherAngle = 360 - d.mountain - sea + d.both;
+      const answerCount = d.total * neitherAngle / 360;
+      const values = [d.total, d.mountain, d.seaDislike, d.both, sea, neitherAngle, answerCount];
+      const charts = [
+        { title: "산", segments: [{ label: "좋아하는 학생", angle: d.mountain, problemText: `${d.mountain}°`, answerText: `${d.mountain}° · ${d.total * d.mountain / 360}명`, problemDegree: d.mountain, highlight: true }, { label: "싫어하는 학생", angle: 360 - d.mountain, problemText: "" }] },
+        { title: "바다", segments: [{ label: "좋아하는 학생", angle: sea, problemText: "", answerText: `${sea}° · ${d.total * sea / 360}명`, highlight: true }, { label: "싫어하는 학생", angle: d.seaDislike, problemText: `${d.seaDislike}°`, answerText: `${d.seaDislike}°`, problemDegree: d.seaDislike }] },
+        { title: "산과 바다", segments: [{ label: "둘 다 좋아하는 학생", angle: d.both, problemText: `${d.both}°`, answerText: `${d.both}° · ${d.total * d.both / 360}명`, problemDegree: d.both, highlight: true }, { label: "둘 다 좋아하지 않는 쪽", angle: 360 - d.both, problemText: "" }] }
+      ];
+      const answer = `${answerCount}명`;
+      return fixed(`학생 ${num(d.total)}명의 산과 바다 선호를 나타낸 원그래프입니다. 산과 바다를 모두 싫어하는 학생은 몇 명인지 구하세요.`, answer, `산을 좋아하는 각은 ${d.mountain}°, 바다를 좋아하는 각은 360-${d.seaDislike}=${sea}°, 둘 다 좋아하는 각은 ${d.both}°입니다. 둘 다 좋아하는 학생을 두 번 세었으므로 한 번 빼면 적어도 하나를 좋아하는 각은 ${d.mountain}+${sea}-${d.both}=${360 - neitherAngle}°입니다. 모두 싫어하는 각은 ${neitherAngle}°이고 ${num(d.total)}×${neitherAngle}÷360=${answerCount}명입니다.`, circleSet({ title: "산과 바다 선호", charts, values }), circleSet({ title: "산과 바다 선호", charts, values, solved: true, resultText: answer }), values);
+    },
     polygonPerimeterE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "5-1-u6-e1-exploration", "5-1-u6-e1-example-1-1", "5-1-u6-e1-example-1-2", "5-1-u6-e1-example-1-3",
@@ -24929,6 +25232,7 @@
       "6-1-u5-e1-mission-4", "6-1-u5-e1-mission-5", "6-1-u5-e1-mission-6"
     ].includes(type.sourceItemId), "sourceGrade6GraphsE1"],
     [type => type.sourceItemId?.startsWith("6-1-u5-e2-"), "sourceGrade6GraphsE2"],
+    [type => type.sourceItemId?.startsWith("6-1-u5-e3-"), "sourceGrade6GraphsE3"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
