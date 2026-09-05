@@ -22733,6 +22733,210 @@
       if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}명이 아닙니다.`);
       return fixedResult(`인구가 ${cityTotal.toLocaleString()}명인 도시에 사는 초등학교 6학년 어린이는 전체 인구의 ${gradeRate}%입니다. 이들 중 ${femaleRate}%가 여자 어린이이고, 6학년 남자 어린이 중 ${glassesRate}%가 안경을 낀 어린이일 때, 이 도시에 사는 안경을 쓰지 않은 초등학교 6학년 남자 어린이는 몇 명인지 구하세요.${promptVisual}`, `${actual.toLocaleString()}명`, `6학년 어린이는 ${cityTotal.toLocaleString()}×${gradeRate}÷100=${gradeTotal.toLocaleString()}명입니다. 남자 어린이는 그중 ${maleRate}%이므로 ${maleTotal.toLocaleString()}명입니다. 안경을 쓰지 않은 비율은 ${noGlassesRate}%이므로 ${maleTotal.toLocaleString()}×${noGlassesRate}÷100=${actual.toLocaleString()}명입니다.`, promptVisual, answerVisual, pools);
     },
+    sourceGrade6RatioE3({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u4-e3-exploration-3-1", "6-1-u4-e3-example-3-1", "6-1-u4-e3-example-3-2", "6-1-u4-e3-example-3-3",
+        "6-1-u4-e3-example-3-4", "6-1-u4-e3-mission-1", "6-1-u4-e3-mission-2", "6-1-u4-e3-mission-3",
+        "6-1-u4-e3-mission-4", "6-1-u4-e3-mission-5", "6-1-u4-e3-mission-6"
+      ];
+      const kinds = [
+        "population-density-area-difference", "rejected-count-difference", "simple-compound-interest-sum", "target-batting-average",
+        "fuel-distance-multiple", "stagewise-applicant-count", "invalid-vote-rate", "population-density-table",
+        "defect-rate-maximum", "monthly-interest-rate", "engel-index-food-cost"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 여러 가지 비율 개념탐구 3 원문 분기는 0부터 10까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">조건의 기준량을 먼저 정하고, 필요한 비율을 차례로 계산해 보세요.</p>` : "";
+      const escape = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const text = (x, y, value, extra = "") => `<text x="${x}" y="${y}" fill="#183b56" font-size="13" text-anchor="middle" ${extra}>${escape(value)}</text>`;
+      const line = (x1, y1, x2, y2, extra = "") => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#183b56" stroke-width="1.5" ${extra}/>`;
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-ratio-e3-kind="${kinds[variant]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const svg = (kind, body, values, solved = false) => `<svg class="geometry-diagram source61-ratio-e3-diagram" style="width:min(430px,100%);height:auto" viewBox="0 0 360 240" role="img" aria-label="${escape(kind)}" data-source61-ratio-e3-structure="${escape(kind)}" data-source61-ratio-e3-values="${values.join(",")}"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}>${body}</svg>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const decimalRational = (value, places = 2) => String(Math.round(value.numerator * 10 ** places / value.denominator) / 10 ** places);
+      const fractionText = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plainFractionText = value => mixedFraction(value.numerator, value.denominator);
+      const percentText = value => decimalRational(rationalOperation(value, rationalValue(100), "×"), 2);
+      const displayRational = value => value.denominator === 1 ? String(value.numerator) : fraction(value.numerator, value.denominator);
+      const displayFood = value => value.denominator === 1 ? String(value.numerator) : decimalRational(value, 2);
+      const fixedResult = (prompt, answer, solution, promptVisual, answerVisual, values, contract = "single-value") => {
+        const fullPrompt = `${prompt}${support("문제의 표나 그림에서 기준이 되는 양을 찾아보세요.")}${challenge}${evidence(values, contract)}`;
+        return result(fullPrompt, answer, solution, {
+          answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-ratio-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(values, contract)}${answerVisual}<div class="solution-answer-caption">문제에 나온 자료를 다시 그려 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: poolIndex,
+          verifiedVariantCount: 3,
+          sourceItemId
+        });
+      };
+
+      if (variant === 0) {
+        const pools = [[360, 7.5, 4, 63, 297, 52], [420, 7, 5, 70, 70, 13], [540, 9, 6, 72, 78, 11]][poolIndex];
+        const [nPopulation, nDensity, areaDifference, populationDifference, expectedNumerator, expectedDenominator] = pools;
+        const nArea = nPopulation / nDensity;
+        const aArea = nArea + areaDifference;
+        const aPopulation = nPopulation - populationDifference;
+        const actual = rationalValue(aPopulation * 2, aArea * 2);
+        const visual = solved => svg("두 마을의 넓이와 인구", `<rect x="28" y="35" width="138" height="56" fill="#edf6fb" stroke="#183b56"/><rect x="194" y="35" width="138" height="56" fill="#fff0bd" stroke="#183b56"/>${text(97,54,"가 마을")}${text(263,54,"나 마을")}${text(97,76,solved ? `${aPopulation}명, ${aArea}km²` : "인구 ?, 넓이 ?", "font-size=\"11\"")}${text(263,76,`${nPopulation}명, ${nArea}km²`, "font-size=\"11\"")}${line(97,91,263,91, "stroke-dasharray=\"4 3\"")}${text(180,125,`넓이 차 ${areaDifference}km², 인구 차 ${populationDifference}명`, "font-size=\"11\"")}${solved ? `${text(180,151,"1 km²당", "font-size=\"11\"")}${svgMeasurementLabel({ x: 180, y: 181, value: fraction(actual.numerator, actual.denominator), unit: "명" })}` : text(180,174,"가 마을의 인구 밀도 ?", "font-size=\"14\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("두 마을의 기준량", row("나 마을의 인구 밀도", `1 km²당 ${nDensity}명`) + row("가 마을의 넓이", `나 마을보다 ${areaDifference}km² 넓음`) + row("가 마을의 인구", `나 마을보다 ${populationDifference}명 적음`) + row("구할 것", "가 마을의 인구 밀도"), `data-source61-visual="population-density-area-difference"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("인구 밀도로 확인", row("나 마을의 넓이", `${nPopulation}÷${nDensity}=${nArea}km²`) + row("가 마을", `${aPopulation}명, ${aArea}km²`) + row("답", `1 km²당 ${fractionText(actual)}명`))}`;
+        if (actual.numerator !== expectedNumerator || actual.denominator !== expectedDenominator) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 맞지 않습니다.`);
+        return fixedResult(`가 마을의 넓이는 나 마을보다 ${areaDifference}km² 더 넓지만 사람 수는 나 마을의 인구 ${nPopulation}명보다 ${populationDifference}명 더 적습니다. 나 마을의 인구 밀도가 1 km²당 ${nDensity}명일 때, 가 마을의 인구 밀도는 얼마인지 구하세요.${promptVisual}`, `1 km²당 ${plainFractionText(actual)}명`, `나 마을의 넓이는 ${nPopulation}÷${nDensity}=${nArea}km²입니다. 가 마을의 넓이는 ${aArea}km², 인구는 ${aPopulation}명이므로 인구 밀도는 1 km²당 ${aPopulation}÷${aArea}=${fractionText(actual)}명입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 1) {
+        const pools = [[40, 23, 35, 480], [30, 21, 31, 300], [50, 18, 27, 450]][poolIndex];
+        const [capacity, lastDenominator, thisDenominator, expected] = pools;
+        const lastApplicants = capacity * lastDenominator;
+        const thisApplicants = capacity * thisDenominator;
+        const lastRejected = lastApplicants - capacity;
+        const thisRejected = thisApplicants - capacity;
+        const actual = thisRejected - lastRejected;
+        const visual = solved => svg("두 해의 합격자와 불합격자", `<rect x="28" y="30" width="138" height="75" fill="#edf6fb" stroke="#183b56"/><rect x="194" y="30" width="138" height="75" fill="#fff0bd" stroke="#183b56"/>${text(97,51,"지난해 합격률", "font-size=\"11\"")}${text(263,51,"올해 합격률", "font-size=\"11\"")}${svgMeasurementLabel({ x: 97, y: 82, value: fraction(1, lastDenominator), unit: "" })}${svgMeasurementLabel({ x: 263, y: 82, value: fraction(1, thisDenominator), unit: "" })}${line(97,105,97,140)}${line(263,105,263,140)}${text(97,163,solved ? `지원 ${lastApplicants}명` : "지원 ?명", "font-size=\"12\"")}${text(263,163,solved ? `지원 ${thisApplicants}명` : "지원 ?명", "font-size=\"12\"")}${solved ? text(180,207,`불합격자 차 ${actual}명`, "font-size=\"15\"") : text(180,207,"불합격자 수의 차 ?", "font-size=\"15\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("합격률의 기준", row("정원", `${capacity}명`) + row("지난해", `지원자의 ${fractionMarkup(1, lastDenominator)} 합격`) + row("올해", `지원자의 ${fractionMarkup(1, thisDenominator)} 합격`) + row("구할 것", "두 해의 불합격자 수의 차"), `data-source61-visual="rejected-count-difference"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("불합격자 수로 확인", row("지난해 불합격", `${lastApplicants}-${capacity}=${lastRejected}명`) + row("올해 불합격", `${thisApplicants}-${capacity}=${thisRejected}명`) + row("답", `${actual}명`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}명이 아닙니다.`);
+        return fixedResult(`정원이 ${capacity}명인 학과의 지난해 합격률은 ${fractionMarkup(1, lastDenominator)}, 올해 합격률은 ${fractionMarkup(1, thisDenominator)}입니다. 지난해와 올해 이 학과에 합격하지 못한 학생 수의 차를 구하세요.${promptVisual}`, `${actual}명`, `정원이 합격자 수이므로 지난해 지원자는 ${capacity}×${lastDenominator}=${lastApplicants}명, 불합격자는 ${lastRejected}명입니다. 올해 불합격자는 ${thisRejected}명이므로 차는 ${actual}명입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 2) {
+        const pools = [[50000, 3, 2, 3, 107560.4], [40000, 4, 5, 2, 87300], [100000, 2, 3, 2, 210090]][poolIndex];
+        const [principal, simpleRate, compoundRate, years, expected] = pools;
+        const simple = rationalValue(principal * simpleRate * years, 100);
+        const compound = rationalValue(principal * (100 + compoundRate) ** years, 100 ** years);
+        const simplePrincipal = rationalOperation(rationalValue(principal), simple, "+");
+        const total = rationalOperation(simplePrincipal, compound, "+");
+        const actual = Number(decimalRational(total, 1));
+        const visual = solved => svg("단리와 복리의 원리금", `<rect x="24" y="32" width="144" height="78" fill="#edf6fb" stroke="#183b56"/><rect x="192" y="32" width="144" height="78" fill="#fff0bd" stroke="#183b56"/>${text(96,53,"골드 통장")}${text(264,53,"스타 통장")}${text(96,76,`단리 ${simpleRate}%`)}${text(264,76,`복리 ${compoundRate}%`)}${text(96,98,`${years}년, ${principal}원`)}${text(264,98,`${years}년, ${principal}원`)}${solved ? text(180,155,`합계 ${actual}원`, "font-size=\"15\"") : text(180,155,"두 통장의 원리금 합 ?", "font-size=\"15\"")}${solved ? text(180,188,`단리 ${decimalRational(simple,1)}원 + 복리 ${decimalRational(compound,1)}원`, "font-size=\"11\"") : ""}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("이자를 계산하는 방법", row("단리", `원금에 ${simpleRate}%씩 ${years}번`) + row("복리", `원금과 이자를 합한 금액에 ${compoundRate}%씩 ${years}번`) + row("구할 것", "두 통장에서 찾는 원리금의 합"), `data-source61-visual="simple-compound-interest-sum"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("해마다 계산하여 확인", row("단리 원리금", `${principal}+${decimalRational(simple,1)}=${principal + Number(decimalRational(simple,1))}원`) + row("복리 원리금", `${decimalRational(compound,1)}원`) + row("답", `${actual}원`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}원이 아닙니다.`);
+        return fixedResult(`명주가 골드 통장과 스타 통장에 각각 ${principal}원을 예금하려고 합니다. 골드 통장은 단리 연 ${simpleRate}%, 스타 통장은 복리 연 ${compoundRate}%이고, 두 통장은 각각 한 번만 예금하며 이자는 1년에 한 번 받습니다. ${years}년 뒤 두 통장에서 찾을 수 있는 원리금의 합은 얼마인지 구하세요.${promptVisual}`, `${actual}원`, `단리 이자는 ${principal}×${simpleRate}÷100×${years}=${decimalRational(simple,1)}원입니다. 복리는 ${years}년 동안 해마다 원금과 이자를 합한 금액에 ${compoundRate}%를 곱하여 원리금을 ${decimalRational(compound,1)}원으로 계산합니다. 합은 ${actual}원입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 3) {
+        const pools = [[150, 24, 50, 27, 9, 25], [120, 25, 80, 30, 3, 8], [200, 28, 50, 30, 19, 50]][poolIndex];
+        const [currentAtBats, currentRatePercent, futureAtBats, targetRatePercent, expectedNumerator, expectedDenominator] = pools;
+        const currentHits = currentAtBats * currentRatePercent / 100;
+        const totalAtBats = currentAtBats + futureAtBats;
+        const requiredHits = totalAtBats * targetRatePercent / 100;
+        const actual = rationalValue((requiredHits - currentHits) * 100, futureAtBats * 100);
+        const expected = rationalValue(expectedNumerator, expectedDenominator);
+        const visual = solved => svg("타율의 기준이 이어지는 타수", `<rect x="28" y="35" width="304" height="38" fill="#edf6fb" stroke="#183b56"/>${text(180,59,`현재 ${currentAtBats}타수, 타율 ${currentRatePercent / 100}`, "font-size=\"12\"")}${line(180,73,180,104)}<rect x="78" y="104" width="204" height="38" fill="#fff0bd" stroke="#183b56"/>${text(180,128,`앞으로 ${futureAtBats}타수`, "font-size=\"12\"")}${solved ? svgMeasurementLabel({ x: 180, y: 181, value: decimalRational(actual, 3), unit: " 이상" }) : text(180,181,"앞으로 필요한 타율 ? 이상", "font-size=\"14\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("타율의 기준", row("현재 안타 수", `${currentAtBats}×${currentRatePercent / 100}=${currentHits}개`) + row("목표 전체 타율", `${targetRatePercent / 100} 이상`) + row("앞으로 칠 타수", `${futureAtBats}타수`) + row("구할 것", "앞으로의 타율"), `data-source61-visual="target-batting-average"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("전체 타수로 확인", row("목표 안타 수", `${totalAtBats}×${targetRatePercent / 100}=${requiredHits}개`) + row("앞으로 필요한 안타", `${requiredHits}-${currentHits}=${requiredHits - currentHits}개`) + row("답", `${decimalRational(actual, 3)} 이상`))}`;
+        if (actual.numerator !== expected.numerator || actual.denominator !== expected.denominator) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 맞지 않습니다.`);
+        return fixedResult(`야구 선수의 현재까지 타수는 ${currentAtBats}타수이고 타율은 ${currentRatePercent / 100}입니다. 목표 타율이 ${targetRatePercent / 100} 이상일 때, 앞으로 ${futureAtBats}타수 동안의 타율은 얼마 이상이어야 하는지 구하세요.${promptVisual}`, `${decimalRational(actual, 3)} 이상`, `현재 안타는 ${currentHits}개입니다. 전체 타수는 ${totalAtBats}타수이고 목표 안타 수는 ${requiredHits}개 이상이어야 하므로 앞으로 ${requiredHits - currentHits}개 이상 쳐야 합니다. 따라서 앞으로의 타율은 ${decimalRational(actual, 3)} 이상입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 4) {
+        const pools = [[1500, 45000, 34500, 13, 12, 33, 33, 10], [1600, 48000, 32000, 10, 14, 28, 2, 1], [1800, 54000, 36000, 15, 15, 30, 7, 3]][poolIndex];
+        const [price, normalCost, hybridExtraCost, hybridStartLiters, normalEfficiency, hybridEfficiency, expectedNumerator, expectedDenominator] = pools;
+        const normalLiters = normalCost / price;
+        const hybridLiters = hybridStartLiters + hybridExtraCost / price;
+        const normalDistance = normalLiters * normalEfficiency;
+        const hybridDistance = hybridLiters * hybridEfficiency;
+        const actual = rationalValue(hybridDistance, normalDistance);
+        const expected = rationalValue(expectedNumerator, expectedDenominator);
+        const visual = solved => svg("일반 자동차와 하이브리드 자동차의 연비", `<rect x="22" y="28" width="148" height="112" fill="#edf6fb" stroke="#183b56"/><rect x="190" y="28" width="148" height="112" fill="#fff0bd" stroke="#183b56"/>${text(96,49,"일반 자동차")}${text(264,49,"하이브리드")}${text(96,73,solved ? `전체 ${normalLiters}L` : `${normalCost}원어치 주유`, "font-size=\"11\"")}${text(264,73,solved ? `전체 ${hybridLiters}L` : `기존 ${hybridStartLiters}L`, "font-size=\"11\"")}${text(96,97,`1L당 ${normalEfficiency}km`, "font-size=\"11\"")}${text(264,97,`1L당 ${hybridEfficiency}km`, "font-size=\"11\"")}${text(96,121,solved ? `${normalDistance}km` : "거리 ?", "font-size=\"12\"")}${text(264,121,solved ? `${hybridDistance}km` : `${hybridExtraCost}원어치 추가`, "font-size=\"11\"")}${solved ? svgMeasurementLabel({ x: 180, y: 183, value: fraction(actual.numerator, actual.denominator), unit: "배" }) : text(180,183,"몇 배 더 멀리 ?", "font-size=\"14\"")}`, pools, solved);
+        const easyFuelGuide = level === 0 ? row("계산 순서", "주유한 기름 양 → 전체 기름 양 → 갈 수 있는 거리") : "";
+        const promptVisual = `${visual(false)}${mathBoard("연료와 거리의 비", row("일반 자동차", `${normalCost}원어치 주유, 1L당 ${normalEfficiency}km`) + row("하이브리드", `기존 ${hybridStartLiters}L에 ${hybridExtraCost}원어치 추가`) + row("기름 가격", `1L에 ${price}원`) + easyFuelGuide + row("구할 것", "하이브리드가 달린 거리의 몇 배인지"), `data-source61-visual="fuel-distance-multiple"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("달린 거리로 확인", row("일반 거리", `${normalLiters}×${normalEfficiency}=${normalDistance}km`) + row("하이브리드 거리", `${hybridLiters}×${hybridEfficiency}=${hybridDistance}km`) + row("답", `${fractionText(actual)}배`))}`;
+        if (actual.numerator !== expected.numerator || actual.denominator !== expected.denominator) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 맞지 않습니다.`);
+        return fixedResult(`연료 1L의 가격이 ${price}원입니다. 일반 자동차에는 연료를 ${normalCost}원어치 넣고 연료 1L로 ${normalEfficiency}km를 갑니다. 하이브리드 자동차에는 연료가 ${hybridStartLiters}L 들어 있었고 ${hybridExtraCost}원어치를 더 넣었으며 연료 1L로 ${hybridEfficiency}km를 갑니다. 연료가 다 떨어질 때까지 달린다면 하이브리드 자동차는 일반 자동차보다 몇 배 더 멀리 갈 수 있는지 소수 또는 분수로 나타내세요.${promptVisual}`, `${plainFractionText(actual)}배`, `일반 자동차는 ${normalLiters}L로 ${normalDistance}km를 갑니다. 하이브리드는 ${hybridLiters}L로 ${hybridDistance}km를 가므로 ${hybridDistance}÷${normalDistance}=${fractionText(actual)}배입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 5) {
+        const pools = [[80, 75, 120, 12800], [60, 80, 144, 10800], [50, 60, 150, 12500]][poolIndex];
+        const [firstDenominator, finalRate, finalAccepted, expected] = pools;
+        const finalApplicants = finalAccepted * 100 / finalRate;
+        const firstPassed = finalApplicants;
+        const firstApplicants = firstPassed * firstDenominator;
+        const visual = solved => svg("단계별 합격자 수", `<rect x="36" y="28" width="288" height="34" fill="#edf6fb" stroke="#183b56"/>${text(180,50,`최종 합격 ${finalAccepted}명`)}${line(180,62,180,84)}<rect x="76" y="84" width="208" height="34" fill="#fff0bd" stroke="#183b56"/>${text(180,106,solved ? `1차 통과 ${firstPassed}명` : `1차 통과 ?명`)}${line(180,118,180,140)}${solved ? text(180,166,`1차 지원 ${firstApplicants}명`, "font-size=\"14\"") : text(180,166,"1차 전형 지원자 전체 ?명", "font-size=\"14\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("합격률의 기준", row("최종 합격자", `${finalAccepted}명`) + row("최종 합격률", `${finalRate}%`) + row("1차 합격률", fractionMarkup(1, firstDenominator)) + row("구할 것", "1차 서류 전형 지원자 수"), `data-source61-visual="stagewise-applicant-count"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("단계별로 거꾸로 확인", row("최종 지원자", `${finalAccepted}÷${finalRate / 100}=${finalApplicants}명`) + row("1차 지원자", `${finalApplicants}×${firstDenominator}=${firstApplicants}명`) + row("답", `${expected}명`))}`;
+        if (firstApplicants !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}명이 아닙니다.`);
+        return fixedResult(`국토순례 참가자 모집에서 1차 서류 전형 합격률은 ${fractionMarkup(1, firstDenominator)}이었고, 1차 통과자 중 ${finalRate}%인 ${finalAccepted}명이 최종 합격하였습니다. 1차 서류 전형에 접수한 인원은 모두 몇 명인지 구하세요.${promptVisual}`, `${expected}명`, `최종 합격자 ${finalAccepted}명은 1차 통과자의 ${finalRate}%이므로 1차 통과자는 ${finalApplicants}명입니다. 이 수가 1차 지원자의 ${fractionMarkup(1, firstDenominator)}이므로 지원자는 ${firstApplicants}명입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 6) {
+        const pools = [[500, 25, 15, 46], [600, 30, 30, 45], [750, 30, 60, 44]][poolIndex];
+        const [totalVotes, invalidVotes, winningDifference, expected] = pools;
+        const validVotes = totalVotes - invalidVotes;
+        const losingVotes = (validVotes - winningDifference) / 2;
+        const actual = losingVotes / totalVotes * 100;
+        const visual = solved => svg("무효표를 제외한 득표수", `<rect x="28" y="32" width="304" height="38" fill="#edf6fb" stroke="#183b56"/>${text(180,56,`총 ${totalVotes}표 중 무효 ${invalidVotes}표`)}${line(180,70,180,100)}<rect x="48" y="100" width="116" height="38" fill="#fff0bd" stroke="#183b56"/><rect x="196" y="100" width="116" height="38" fill="#edf6fb" stroke="#183b56"/>${text(106,124,solved ? `현우 ${losingVotes}표` : "현우 ?표", "font-size=\"11\"")}${text(254,124,solved ? `상우 ${losingVotes + winningDifference}표` : "상우 ?표", "font-size=\"11\"")}${solved ? text(180,178,`현우 득표율 ${actual}%`, "font-size=\"14\"") : text(180,178,"현우의 득표율 ?", "font-size=\"14\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("득표율의 기준", row("유효표", `${totalVotes}-${invalidVotes}=${validVotes}표`) + row("상우가 더 받은 표", `${winningDifference}표`) + row("구할 것", "현우의 득표율"), `data-source61-visual="invalid-vote-rate"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("유효표로 확인", row("현우 표", `(${validVotes}-${winningDifference})÷2=${losingVotes}표`) + row("현우 득표율", `${losingVotes}÷${totalVotes}×100=${actual}%`) + row("답", `${actual}%`))}`;
+        if (actual !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 답이 ${expected}%가 아닙니다.`);
+        return fixedResult(`상우네 학교 전교 어린이회장 선거에서 상우와 현우가 출마하였습니다. 총투표수 ${totalVotes}표 중 무효는 ${invalidVotes}표였고, 상우가 현우보다 ${winningDifference}표를 더 얻어 당선되었습니다. 현우의 득표율은 몇 %인지 구하세요.${promptVisual}`, `${actual}%`, `유효표는 ${validVotes}표입니다. 현우 표를 가라 하면 상우 표는 가+${winningDifference}표이므로 ${validVotes}에서 차를 빼고 2로 나누면 ${losingVotes}표입니다. 전체 투표수에 대한 비율은 ${losingVotes}÷${totalVotes}×100=${actual}%입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 7) {
+        const pools = [
+          { areas: [800, 780, 820], popB: 10296000, popC: 10168000, difference: 696000, expected: 12000 },
+          { areas: [600, 640, 625], popB: 8000000, popC: 7500000, difference: 1400000, expected: 11000 },
+          { areas: [900, 840, 880], popB: 12600000, popC: 12320000, difference: 900000, expected: 13000 }
+        ][poolIndex];
+        const [areaA, areaB, areaC] = pools.areas;
+        const popA = pools.popB - pools.difference;
+        const densities = [popA / areaA, pools.popB / areaB, pools.popC / areaC];
+        const visual = solved => svg("세 도시의 넓이와 인구 표", `<rect x="28" y="30" width="304" height="116" fill="#fff" stroke="#183b56"/><line x1="28" y1="68" x2="332" y2="68" stroke="#183b56"/><line x1="28" y1="107" x2="332" y2="107" stroke="#183b56"/><line x1="105" y1="30" x2="105" y2="146" stroke="#183b56"/><line x1="181" y1="30" x2="181" y2="146" stroke="#183b56"/><line x1="257" y1="30" x2="257" y2="146" stroke="#183b56"/>${text(66,54,"도시")}${text(143,54,"가")}${text(219,54,"나")}${text(295,54,"다")}${text(66,93,"넓이")}${text(143,93,`${areaA}km²`, "font-size=\"11\"")}${text(219,93,`${areaB}km²`, "font-size=\"11\"")}${text(295,93,`${areaC}km²`, "font-size=\"11\"")}${text(66,132,"인구")}${text(143,132,solved ? `${popA}` : "□", "font-size=\"11\"")}${text(219,132,`${pools.popB}`, "font-size=\"10\"")}${text(295,132,`${pools.popC}`, "font-size=\"10\"")}${solved ? text(180,190,`가: 1 km²당 ${pools.expected}명`, "font-size=\"14\"") : text(180,190,"가 인구 밀도 ?", "font-size=\"14\"")}`, [areaA, areaB, areaC, pools.popB, pools.popC, pools.difference], solved);
+        const promptVisual = `${visual(false)}${mathBoard("인구 밀도 표", row("가 인구", "다 도시보다 적음") + row("가·나 인구 차", `${pools.difference}명`) + row("가·나·다 밀도", "나가 가장 높고 가가 가장 낮음") + row("구할 것", "가 도시의 인구 밀도"), `data-source61-visual="population-density-table"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("세 도시를 비교하여 확인", row("가 인구", `${pools.popB}-${pools.difference}=${popA}명`) + row("가 밀도", `1 km²당 ${popA}÷${areaA}=${pools.expected}명`) + row("밀도 비교", `${densities.join(", ")}명`) + row("답", `1 km²당 ${pools.expected}명`))}`;
+        if (densities[1] <= densities[0] || densities[1] <= densities[2] || densities[0] >= densities[2] || densities[0] !== pools.expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 도시 밀도 조건이 맞지 않습니다.`);
+        return fixedResult(`가, 나, 다 세 도시의 넓이와 인구를 조사한 표입니다. 인구 밀도가 가장 높은 도시는 나이고 가장 낮은 도시는 가입니다. 가장 높은 도시와 가장 낮은 도시의 인구 차가 ${pools.difference}명일 때, 가 도시의 인구 밀도를 구하세요. 단, 가 도시의 인구는 다 도시보다 적습니다.${promptVisual}`, `1 km²당 ${pools.expected}명`, `나의 인구 ${pools.popB}명에서 차를 빼면 가의 인구는 ${popA}명입니다. 세 도시의 1 km²당 인구를 계산하면 가 ${pools.expected}명, 나 ${densities[1]}명, 다 ${densities[2]}명이므로 조건에 맞습니다.`, promptVisual, answerVisual, [areaA, areaB, areaC, pools.popB, pools.popC, pools.difference, pools.expected]);
+      }
+
+      if (variant === 8) {
+        const pools = [[2000, 70, 2600, 90], [1500, 45, 2400, 71], [2000, 60, 2750, 82]][poolIndex];
+        const [yesterdayTotal, yesterdayDefect, todayTotal, expected] = pools;
+        const yesterdayRate = rationalValue(yesterdayDefect, yesterdayTotal);
+        const actual = Math.floor(todayTotal * yesterdayRate.numerator / yesterdayRate.denominator - 1e-9);
+        const visual = solved => svg("어제와 오늘의 불량률", `<rect x="30" y="35" width="132" height="64" fill="#edf6fb" stroke="#183b56"/><rect x="198" y="35" width="132" height="64" fill="#fff0bd" stroke="#183b56"/>${text(96,57,"어제")}${text(264,57,"오늘")}${text(96,80,`${yesterdayTotal}개 중 ${yesterdayDefect}개`, "font-size=\"11\"")}${text(264,80,`${todayTotal}개 중 ?개`, "font-size=\"11\"")}${solved ? text(180,151,`오늘 불량품 최대 ${actual}개`, "font-size=\"14\"") : text(180,151,"오늘 불량품 최대 ?개", "font-size=\"14\"")}${text(180,188,`오늘 불량률 < 어제 불량률`, "font-size=\"11\"")}`, pools, solved);
+        const promptVisual = `${visual(false)}${mathBoard("불량률의 기준", row("어제 불량률", `${yesterdayDefect}÷${yesterdayTotal}`) + row("오늘 전체", `${todayTotal}개`) + row("조건", "오늘 불량률이 어제보다 낮음") + row("구할 것", "오늘 불량품의 최대 자연수"), `data-source61-visual="defect-rate-maximum"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("엄격히 비교하여 확인", row("어제 불량률", `${yesterdayDefect}÷${yesterdayTotal}=${decimalRational(yesterdayRate, 4)}`) + row("오늘 불량품", `${actual}개이면 ${actual}÷${todayTotal}`) + row("답", `${actual}개 이하`))}`;
+        if (actual !== expected || !(actual / todayTotal < yesterdayDefect / yesterdayTotal) || ((actual + 1) / todayTotal < yesterdayDefect / yesterdayTotal)) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 최대 자연수 답이 맞지 않습니다.`);
+        return fixedResult(`탁구공을 생산하는 공장에서 어제 만든 ${yesterdayTotal}개 중 ${yesterdayDefect}개가 불량품이었습니다. 오늘 ${todayTotal}개의 탁구공을 만든다고 할 때 어제보다 불량률을 낮추려면 불량품은 몇 개 이하이어야 하는지 구하세요.${promptVisual}`, `${actual}개 이하`, `어제 불량률은 ${fractionMarkup(yesterdayDefect, yesterdayTotal)}입니다. 오늘 불량품 수를 자연수로 하나씩 늘려 비교하면 ${actual}개까지는 어제보다 낮고 ${actual + 1}개부터는 낮지 않으므로 최대 ${actual}개입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 9) {
+        const pools = [[[60000, 8, 6480], [40000, 6, 6000], 135, 250], [[80000, 10, 12000], [50000, 5, 5000], 150, 200], [[75000, 6, 6750], [120000, 8, 11520], 150, 120]][poolIndex];
+        const [bankA, bankB, expectedANumerator, expectedBNumerator] = pools;
+        const rows = [bankA, bankB];
+        const rates = rows.map(([principal, months, interest]) => rationalValue(interest * 100, principal * months));
+        const expectedA = rationalValue(expectedANumerator, 100);
+        const expectedB = rationalValue(expectedBNumerator, 100);
+        const visual = solved => svg("두 은행의 한 달 이자율 표", `<rect x="24" y="25" width="312" height="122" fill="#fff" stroke="#183b56"/><line x1="24" y1="55" x2="336" y2="55" stroke="#183b56"/><line x1="24" y1="91" x2="336" y2="91" stroke="#183b56"/><line x1="24" y1="119" x2="336" y2="119" stroke="#183b56"/><line x1="94" y1="25" x2="94" y2="147" stroke="#183b56"/><line x1="175" y1="25" x2="175" y2="147" stroke="#183b56"/><line x1="238" y1="25" x2="238" y2="147" stroke="#183b56"/>${text(59,46,"은행")}${text(134,46,"빌린 돈")}${text(206,46,"기간")}${text(287,46,"이자")}${text(59,78,"가")}${text(59,108,"나")}${text(134,78,`${bankA[0]}원`, "font-size=\"10\"")}${text(134,108,`${bankB[0]}원`, "font-size=\"10\"")}${text(206,78,`${bankA[1]}개월`)}${text(206,108,`${bankB[1]}개월`)}${text(287,78,`${bankA[2]}원`)}${text(287,108,`${bankB[2]}원`)}${solved ? text(180,184,`가 ${decimalRational(rates[0],2)}%, 나 ${decimalRational(rates[1],2)}%`, "font-size=\"14\"") : text(180,184,"각 은행의 1개월 이자율 ?", "font-size=\"14\"")}`, rows.flat(), solved);
+        const promptVisual = `${visual(false)}${mathBoard("한 달 이자율", row("가 은행", `${bankA[2]}÷${bankA[0]}÷${bankA[1]}×100`) + row("나 은행", `${bankB[2]}÷${bankB[0]}÷${bankB[1]}×100`) + row("구할 것", "각 은행의 1개월 이자율"), `data-source61-visual="monthly-interest-rate"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("기간을 맞추어 확인", row("가", `${bankA[2]}÷${bankA[0]}÷${bankA[1]}×100=${decimalRational(rates[0],2)}%`) + row("나", `${bankB[2]}÷${bankB[0]}÷${bankB[1]}×100=${decimalRational(rates[1],2)}%`) + row("답", `가 ${decimalRational(rates[0],2)}%, 나 ${decimalRational(rates[1],2)}%`))}`;
+        if (rates[0].numerator !== expectedA.numerator || rates[0].denominator !== expectedA.denominator || rates[1].numerator !== expectedB.numerator || rates[1].denominator !== expectedB.denominator) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 이자율이 맞지 않습니다.`);
+        return fixedResult(`은행에서 돈을 빌리면 빌린 돈과 함께 이자를 내야 합니다. 다음 표는 가와 나 은행에서 빌린 돈과 빌린 기간, 이자를 나타낸 표입니다. 각 은행의 1개월 이자율을 구하여 표를 완성하세요.${promptVisual}`, `가 ${decimalRational(rates[0], 2)}%, 나 ${decimalRational(rates[1], 2)}%`, `1개월 이자율은 이자÷빌린 돈÷개월 수×100입니다. 가 은행은 ${decimalRational(rates[0],2)}%, 나 은행은 ${decimalRational(rates[1],2)}%입니다.`, promptVisual, answerVisual, [...rows.flat(), expectedANumerator, expectedBNumerator], "two-values");
+      }
+
+      const pools = [
+        [[150, 400, 280], 60, 1, 2, 5, 4, 80],
+        [[300, 120, 400], 60, 1, 2, 3, 2, 12],
+        [[400, 300, 200], 80, 1, 2, 3, 2, 30]
+      ][poolIndex];
+      const [totals, foodA, indexBNumerator, indexBDenominator, indexCNumerator, indexCDenominator, expected] = pools;
+      const indexA = rationalValue(foodA, totals[0]);
+      const indexB = rationalOperation(indexA, rationalValue(indexBNumerator, indexBDenominator), "×");
+      const indexC = rationalOperation(indexB, rationalValue(indexCNumerator, indexCDenominator), "×");
+      const foods = [rationalValue(foodA), rationalValue(totals[1] * indexB.numerator, indexB.denominator), rationalValue(totals[2] * indexC.numerator, indexC.denominator)];
+      const indices = [indexA, indexB, indexC];
+      const highestIncomeIndex = indices.reduce((best, value, index) => value.numerator * indices[best].denominator < indices[best].numerator * value.denominator ? index : best, 0);
+      const actual = foods[highestIncomeIndex];
+      const visual = solved => svg("세 가구의 지출액과 식료품비 표", `<rect x="24" y="25" width="312" height="112" fill="#fff" stroke="#183b56"/><line x1="24" y1="62" x2="336" y2="62" stroke="#183b56"/><line x1="24" y1="99" x2="336" y2="99" stroke="#183b56"/><line x1="102" y1="25" x2="102" y2="137" stroke="#183b56"/><line x1="180" y1="25" x2="180" y2="137" stroke="#183b56"/><line x1="258" y1="25" x2="258" y2="137" stroke="#183b56"/>${text(63,48,"구분")}${text(141,48,"가")}${text(219,48,"나")}${text(297,48,"다")}${text(63,85,"전체 지출")}${text(141,85,`${totals[0]}만 원`)}${text(219,85,`${totals[1]}만 원`)}${text(297,85,`${totals[2]}만 원`)}${text(63,122,"식료품비")}${text(141,122,`${foodA}만 원`)}${text(219,122,solved ? `${displayFood(foods[1])}만 원` : "□")}${text(297,122,solved ? `${displayFood(foods[2])}만 원` : "□")}${solved ? text(180,174,`가 ${percentText(indexA)}%, 나 ${percentText(indexB)}%, 다 ${percentText(indexC)}%`, "font-size=\"11\"") : text(180,174,"소득이 가장 높은 가구의 식료품비 ?", "font-size=\"13\"")}`, pools, solved);
+      const promptVisual = `${visual(false)}${mathBoard("엥겔 지수의 관계", row("엥겔 지수", "식료품비 ÷ 전체 지출액") + row("나의 지수", `가의 ${fractionMarkup(indexBNumerator, indexBDenominator)}배`) + row("다의 지수", `나의 ${fractionMarkup(indexCNumerator, indexCDenominator)}배`) + row("구할 것", "소득 수준이 가장 높은 가구의 식료품비"), `data-source61-visual="engel-index-food-cost"`)}`;
+      const answerVisual = `${visual(true)}${mathBoard("엥겔 지수로 확인", row("가의 지수", `${foodA}÷${totals[0]}=${percentText(indexA)}%`) + row("나의 식료품비", `${totals[1]}×${percentText(indexB)}%=${displayFood(foods[1])}만원`) + row("다의 식료품비", `${totals[2]}×${percentText(indexC)}%=${displayFood(foods[2])}만원`) + row("답", `${displayFood(actual)}만원`))}`;
+      if (highestIncomeIndex !== 1 || actual.denominator !== 1 || actual.numerator !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 엥겔 지수 답이 맞지 않습니다.`);
+      return fixedResult(`가, 나, 다 세 가구의 전체 지출액 중에서 식료품비가 차지하는 비율을 엥겔 지수라고 합니다. 엥겔 지수는 소득 수준이 높아짐에 따라 점차 감소합니다. 엥겔 지수는 나 가구가 가 가구의 ${fractionMarkup(indexBNumerator, indexBDenominator)}배이고, 다 가구가 나 가구의 ${fractionMarkup(indexCNumerator, indexCDenominator)}배라고 할 때 세 가구 중 소득 수준이 가장 높은 가구의 식료품비는 얼마인지 구하세요.${promptVisual}`, `${expected}만원`, `가의 엥겔 지수는 ${percentText(indexA)}%입니다. 나와 다의 지수를 차례로 계산하면 나 ${percentText(indexB)}%, 다 ${percentText(indexC)}%입니다. 가장 낮은 나의 지수가 소득이 가장 높은 가구를 뜻하므로 나의 식료품비 ${displayFood(actual)}만원이 답입니다.`, promptVisual, answerVisual, pools);
+    },
     sourceGrade6FractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u1-e1-example-1", "6-1-u1-e1-example-2", "6-1-u1-e1-example-3", "6-1-u1-e1-example-4",

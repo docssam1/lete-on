@@ -6,6 +6,8 @@ const vm = require("vm");
 
 const catalogPath = path.join(__dirname, "source-inventory-grade6.js");
 const curriculumPath = path.join(__dirname, "curriculum.js");
+const rawInventoryPath = path.join(__dirname, "source-inventory", "6-1-source-items.json");
+const readinessPath = path.join(__dirname, "source-inventory", "6-1-u4-source-readiness-review.json");
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
 
@@ -25,6 +27,8 @@ vm.runInContext(fs.readFileSync(curriculumPath, "utf8"), context, { filename: cu
 
 const catalog = context.window.HSE_SOURCE_INVENTORY_GRADE6;
 const curriculum = context.window.HSE_CURRICULUM;
+const rawInventory = JSON.parse(fs.readFileSync(rawInventoryPath, "utf8"));
+const readiness = JSON.parse(fs.readFileSync(readinessPath, "utf8"));
 const items = catalog?.items || [];
 check(catalog?.oneSourceItemOneType === true, "원문 한 문제를 한 유형으로 다루는 표시가 없습니다.");
 check(catalog?.totals?.items === items.length && items.length > 0, "공개 분류표의 유형 수가 실제와 다릅니다.");
@@ -32,9 +36,17 @@ check(new Set(items.map(item => item.sourceItemId)).size === items.length, "6학
 check(items.every(item => item.normalizedTypeId === item.sourceItemId), "원문 한 문제와 고유 유형의 연결이 깨졌습니다.");
 const readyItems = items.filter(item => !item.reviewLocked);
 const lockedItems = items.filter(item => item.reviewLocked);
+const ratioE3Items = items.filter(item => item.generatorKey === "sourceGrade6RatioE3");
+check(ratioE3Items.length === 11, `6-1 비와 비율 개념탐구 3의 공개 유형이 11개가 아닙니다: ${ratioE3Items.length}`);
+ratioE3Items.forEach(item => {
+  const rawItem = rawInventory.items.find(candidate => candidate.publicSourceItemId === item.sourceItemId);
+  const readinessItem = readiness.items.find(candidate => candidate.sourceItemId === item.sourceItemId);
+  check(Boolean(item.rawSourceItemId && rawItem && readinessItem), `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID 연결이 없습니다.`);
+  check(rawItem?.sourceItemId === item.rawSourceItemId && readinessItem?.rawSourceItemId === item.rawSourceItemId, `${item.sourceItemId}: 원자료 ID가 양쪽 연결표에서 다릅니다.`);
+});
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 94 && lockedItems.length === 539, `6학년 원문 유형의 공개 94개·잠금 539개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => ["sourceGrade6FractionDivisionE1", "sourceGrade6FractionDivisionE2", "sourceGrade6PrismsPyramidsE1", "sourceGrade6PrismsPyramidsE2", "sourceGrade6PrismsPyramidsE3", "sourceGrade6PrismsPyramidsE4", "sourceGrade6DecimalDivisionE1", "sourceGrade6DecimalDivisionE2", "sourceGrade6DecimalDivisionE3", "sourceGrade6DecimalDivisionE4", "sourceGrade6RatioE1", "sourceGrade6RatioE2"].includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6-1 원문 94유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 105 && lockedItems.length === 528, `6학년 원문 유형의 공개 105개·잠금 528개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => ["sourceGrade6FractionDivisionE1", "sourceGrade6FractionDivisionE2", "sourceGrade6PrismsPyramidsE1", "sourceGrade6PrismsPyramidsE2", "sourceGrade6PrismsPyramidsE3", "sourceGrade6PrismsPyramidsE4", "sourceGrade6DecimalDivisionE1", "sourceGrade6DecimalDivisionE2", "sourceGrade6DecimalDivisionE3", "sourceGrade6DecimalDivisionE4", "sourceGrade6RatioE1", "sourceGrade6RatioE2", "sourceGrade6RatioE3"].includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6-1 원문 105유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.every(item => item.problemVisualRequired === true && item.answerVisualRequired === true), "6학년 원문 유형의 문제·정답 화면 계약이 빠졌습니다.");
 check(items.every(item => item.generationMode === "fixed-verified-pool" && item.verifiedVariantTarget === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "원문 유형별 고정 검증 문항 계약이 다릅니다.");
@@ -49,7 +61,7 @@ for (const semesterId of ["6-1", "6-2"]) {
     const actual = unit.subunits.flatMap(subunit => subunit.types).filter(type => type.sourceItemId && type.normalizedTypeId);
     check(actual.length === expected.length, `${unit.id}: 화면 원문 유형 수 ${actual.length}개가 분류표 ${expected.length}개와 다릅니다.`);
     check(new Set(actual.map(type => type.sourceItemId)).size === actual.length, `${unit.id}: 화면에 같은 원문 유형이 두 번 나옵니다.`);
-    check(actual.every(type => type.reviewLocked ? type.generatorKey === "" : ["sourceGrade6FractionDivisionE1", "sourceGrade6FractionDivisionE2", "sourceGrade6PrismsPyramidsE1", "sourceGrade6PrismsPyramidsE2", "sourceGrade6PrismsPyramidsE3", "sourceGrade6PrismsPyramidsE4", "sourceGrade6DecimalDivisionE1", "sourceGrade6DecimalDivisionE2", "sourceGrade6DecimalDivisionE3", "sourceGrade6DecimalDivisionE4", "sourceGrade6RatioE1", "sourceGrade6RatioE2"].includes(type.generatorKey)), `${unit.id}: 원문 유형의 잠금과 생성기 연결이 다릅니다.`);
+    check(actual.every(type => type.reviewLocked ? type.generatorKey === "" : ["sourceGrade6FractionDivisionE1", "sourceGrade6FractionDivisionE2", "sourceGrade6PrismsPyramidsE1", "sourceGrade6PrismsPyramidsE2", "sourceGrade6PrismsPyramidsE3", "sourceGrade6PrismsPyramidsE4", "sourceGrade6DecimalDivisionE1", "sourceGrade6DecimalDivisionE2", "sourceGrade6DecimalDivisionE3", "sourceGrade6DecimalDivisionE4", "sourceGrade6RatioE1", "sourceGrade6RatioE2", "sourceGrade6RatioE3"].includes(type.generatorKey)), `${unit.id}: 원문 유형의 잠금과 생성기 연결이 다릅니다.`);
     check(unit.subunits.some(subunit => subunit.name === "기존 생성 문제" && subunit.types.length > 0), `${unit.id}: 기존 생성 문제 비교 묶음이 없습니다.`);
     const sourceGroups = unit.subunits.filter(subunit => subunit.id.includes("-source-e"));
     check(sourceGroups.every(group => /^개념탐구 \d+ 원문 유형$/.test(group.name)), `${unit.id}: 원문 유형이 개념탐구별로 묶이지 않았습니다.`);
@@ -62,4 +74,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6학년 공개 분류표·화면 연결 감사 통과: ${items.length}개 원문 문제 = ${items.length}개 세부 유형 · 생성 가능 94 · 검수 잠금 539 · 기존 생성 문제 보존`);
+console.log(`6학년 공개 분류표·화면 연결 감사 통과: ${items.length}개 원문 문제 = ${items.length}개 세부 유형 · 생성 가능 105 · 검수 잠금 528 · 기존 생성 문제 보존`);
