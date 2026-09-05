@@ -24,11 +24,16 @@
 
 let UID = 0; // 그라디언트 id 충돌 방지
 
-/* 숫자 → 이미지 파일 (한 자리, 0~10) */
+/* 숫자 → 이미지 파일 (한 자리, 0~10). 이 중 표정 파일(-happy/-think)이 있는 것은
+   IMG_HAS_MOOD의 세 캐릭터뿐(학습무대-작화지시서.md §3) — 나머지 num-N.png는
+   표정 파일이 없으므로 mood가 와도 기본 그림을 그대로 쓴다. */
 const IMG_FILE = {0:'numi-0.png', 3:'poco-3.png', 8:'momo-8.png'};
-function digitImgSrc(n){
+const IMG_HAS_MOOD = {0:true, 3:true, 8:true};
+function digitImgSrc(n, mood){
   const base = window.NM_CHAR_BASE || 'assets/characters/';
-  return base + (IMG_FILE[n] || ('num-'+n+'.png'));
+  const file = IMG_FILE[n] || ('num-'+n+'.png');
+  if(mood && IMG_HAS_MOOD[n]) return base + file.replace(/\.png$/,'') + '-' + mood + '.png';
+  return base + file;
 }
 /* 기호 → PNG 경로(캐릭터-승급-설계.md §0 수정사항: PNG 우선, 없으면 SVG 폴백).
    파일 존재를 미리 확인(HEAD 등)하지 않고 <img onerror>로만 판별 — 없으면
@@ -372,14 +377,19 @@ window.renderPartyHtml = function(avatarKind, character, size){
   return `<div class="nm-party">${human}<span class="nm-party-buddy">${buddy}</span></div>`;
 };
 
-/* ── 메인 렌더 ── */
-window.renderNumiChar = function(char, size){
+/* ── 메인 렌더 ──
+   opts.mood ∈ 'think'|'happy'|undefined(기본 그림) — 학습 무대(§2 학습무대-작화지시서.md).
+   표정 파일이 있는 캐릭터(0·3·8)의 <img>에만 실제로 반영되고, 그 img에는 항상
+   data-mood(현재 무드)·data-mood-base(파일 stem, 예: 'numi-0')를 남겨 나중에
+   feedbackFx()가 정답 시 -happy로, 시간이 지나면 -think로 갈아 끼울 수 있게 한다. */
+window.renderNumiChar = function(char, size, opts){
   char = char || {};
   const num     = char.number != null ? +char.number : 3;
   const colorId = char.color  || 'blue';
   const bgId    = char.bg     || 'plain';
   const capeId  = char.cape   || 'none';
   const hatId   = char.hat    || 'none';  // 기존 저장본엔 hat 필드가 없어도 기본값 'none'으로 동작(하위호환)
+  const mood    = (opts && opts.mood) || null;
   size = size || 120;
 
   const fg = getCol(colorId).fg;
@@ -433,7 +443,10 @@ style="max-width:100%;max-height:100%;object-fit:contain;margin-right:-6%;filter
 style="max-width:100%;max-height:100%;object-fit:contain;filter:${tint} ${shadow}">
 </span>`;
   } else {
-    figure = `<img src="${digitImgSrc(num)}" alt="${num}" draggable="false"
+    const moodAttrs = IMG_HAS_MOOD[num]
+      ? ` data-mood="${mood||'base'}" data-mood-base="${IMG_FILE[num].replace(/\.png$/,'')}"`
+      : '';
+    figure = `<img src="${digitImgSrc(num, mood)}" alt="${num}" draggable="false"${moodAttrs}
 style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);
 max-width:76%;max-height:88%;object-fit:contain;filter:${tint} ${shadow}">`;
   }
@@ -441,6 +454,18 @@ max-width:76%;max-height:88%;object-fit:contain;filter:${tint} ${shadow}">`;
   return `<span class="numi-fig" style="position:relative;display:inline-block;width:${size}px;height:${ph}px;vertical-align:middle">
 ${aura}${decorSvg}${capeSvg}${figure}${hatSvg}
 </span>`;
+};
+
+/* window.preloadNumiMoodImgs(char) — 유닛 진입 시 그 동행의 -think/-happy 두 장을
+   미리 받아 둬(§4 학습무대-작화지시서.md) feedbackFx()의 정답 스와핑이 깜빡이지
+   않게 한다. 표정 파일이 없는 캐릭터(0·3·8 외)는 조용히 아무 것도 안 함. */
+window.preloadNumiMoodImgs = function(char){
+  char = char || {};
+  const num = char.number != null ? +char.number : 3;
+  if(!IMG_HAS_MOOD[num]) return;
+  const base = window.NM_CHAR_BASE || 'assets/characters/';
+  const stem = IMG_FILE[num].replace(/\.png$/,'');
+  ['think','happy'].forEach(mood=>{ new Image().src = base+stem+'-'+mood+'.png'; });
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.renderNumiChar;

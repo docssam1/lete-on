@@ -1823,3 +1823,16 @@ check-print·check-answerable 통과.
 - 검증: C4·C13·C30·C36 A4 캡처 전 페이지 ≤1123px, 박스 0, check-print 통과, 화면 풀기 탭 0 오류.
   ⚠️ 캡처 전 `localhost:8767` 서버 생존 확인 — 죽은 서버로 캡처하면 옛 PNG가 그대로 남아 "안 바뀐 것처럼"
   보인다(이날 한 번 겪음).
+
+## 2026-09-05 — 학습무대 배경 4장 + 동행 표정 6장 연결 (작화 Drive 도착)
+
+- 자산: `assets/stages/stage-{numberland,prime,advance,challenge}.jpg`(1024×1536 JPEG q82, 아래 60%는 빈 바닥),
+  `assets/characters/{numi-0,poco-3,momo-8}-{happy,think}.png`(투명, 여백 잘라 기본 그림 높이의 2배).
+- 배경: `screenUnit`이 `.nm-unit-view`에 `data-stage`를 단다(`stageKeyForUnit` → `tierIdForUnit`). N-* 유닛은 과정1에
+  얹혀 있어도 numberland. level1/2→prime, level3→advance, challenge·중·고→challenge. CSS는 하늘 그라데이션 위에
+  `background-image` 두 겹(폴백 유지).
+- 표정: `renderNumiChar(char,size,{mood})` — 0·3·8만 표정 파일(`IMG_HAS_MOOD`), img에 `data-mood`/`data-mood-base`.
+  유닛 안 동행은 전부 think로 그리고, `feedbackFx(true)`가 happy로 바꾼 뒤 1.3초 후 think로 복귀(`window.feedbackFx`
+  노출은 검증용). 유닛 진입 시 두 장 프리로드.
+- 검증(Playwright 390×844): A-01→prime · N-06→numberland · M-01→challenge, 기본 연산 탭에서 think→happy→think,
+  pageerror 0. ⚠️ 마법 노트 탭엔 `.nm-numi`가 없다 — 표정 검사는 기본 연산 탭에서.

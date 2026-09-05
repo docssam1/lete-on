@@ -474,16 +474,33 @@ function toast(msg,ok){if(!ok&&(msg===t('tryAgain')||msg==='✗'))logDaily(false
    practice/check/lab/arena 정오답 경로가 전부 거치는 지점이라 여기 한 곳에서만
    클래스를 토글한다(로직 변경 없음, 순수 시각 효과). 대상이 화면에 없으면
    querySelector가 null이라 조용히 아무 일도 없다(예: 아레나엔 .nm-numi가 없음). */
+let _numiMoodTimer=null;
 function feedbackFx(ok){
   if(ok){
     const n=document.querySelector('.nm-numi');
     if(n){n.classList.remove('sparkle');void n.offsetWidth;n.classList.add('sparkle');}
+    /* 표정 갈아입기(학습무대-작화지시서.md §3) — 정답이면 -happy로, 1.3초 뒤 -think로
+       되돌린다. data-mood-base(파일 stem)로만 자기 자신을 다시 찾으므로, 그 사이
+       화면이 다음 문제로 넘어가 새 img(같은 캐릭터면 이미 think)가 서 있어도 안전하고,
+       캐릭터 자체가 바뀌었거나 그 화면에 동행이 없어졌으면 조용히 아무 일도 안 한다. */
+    clearTimeout(_numiMoodTimer);
+    const img=document.querySelector('.nm-numi img[data-mood]');
+    if(img&&img.dataset.moodBase){
+      const base=window.NM_CHAR_BASE||'assets/characters/';
+      const stem=img.dataset.moodBase;
+      img.dataset.mood='happy';img.src=base+stem+'-happy.png';
+      _numiMoodTimer=setTimeout(()=>{
+        const cur=document.querySelector('.nm-numi img[data-mood-base="'+stem+'"]');
+        if(cur){cur.dataset.mood='think';cur.src=base+stem+'-think.png';}
+      },1300);
+    }
   }else{
     playSfx('wrong');
     const board=document.querySelector('.nm-board,.nm-arena-expr');
     if(board){board.classList.remove('nm-shake');void board.offsetWidth;board.classList.add('nm-shake');}
   }
 }
+window.feedbackFx=feedbackFx; // 검증 하네스(Playwright)가 실제 정답 없이도 표정 스와핑을 확인할 수 있게
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n){S.coins+=n;save();
   /* 화면 전환 없이 코인이 바뀌는 경우(출석 카드 등) 상단 🪙 표시를 바로 맞춘다 */
@@ -1692,6 +1709,37 @@ function recentWeekKeys(n){
     out.push(weekKeyFor(d));
   }
   return out;
+}
+
+/* 유닛id → 그 등급(tier id, 'beginner'·'middle1' 등). 먼저 courseForUnit()으로 과정을
+   찾아 그 과정의 tier를 쓰고(NM_COURSES), 못 찾으면(교과연산 밖 유닛) NM_CURRICULUM의
+   levels[].units 목록을 훑어 그 유닛을 담은 tier를 찾는다. 둘 다 없으면 null. */
+function tierIdForUnit(unitId){
+  const cid = courseForUnit(unitId);
+  const C = window.NM_COURSES || {};
+  if(cid && C[cid] && C[cid].tier) return C[cid].tier;
+  const tiers = (CUR && CUR.tiers) || [];
+  for(const tier of tiers){
+    for(const lv of (tier.levels||[])){
+      if((lv.units||[]).indexOf(unitId) >= 0) return tier.id;
+    }
+  }
+  return null;
+}
+/* 학습 무대 배경(학습무대-작화지시서.md) — 등급 → 배경 키 4종.
+   미확인 등급은 'prime'으로 폴백(가장 낮은 학습 등급이라 안전). */
+function stageKeyForTier(tierId){
+  if(tierId==='numberland') return 'numberland';
+  if(tierId==='level1' || tierId==='level2' || tierId==='beginner') return 'prime';
+  if(tierId==='level3' || tierId==='intermediate') return 'advance';
+  if(tierId==='challenge' || tierId==='advanced' || /^middle/.test(tierId||'') ||
+     /^highmath/.test(tierId||'') || tierId==='algebra' || /^calculus/.test(tierId||'')) return 'challenge';
+  return 'prime';
+}
+function stageKeyForUnit(unitId){
+  /* 수의 나라 유닛(N-*)은 과정1(level1)에 얹혀 있어도 배경은 버섯집 놀이방 — 유닛 id가 곧 세계다. */
+  if(/^N-/.test(String(unitId||''))) return 'numberland';
+  return stageKeyForTier(tierIdForUnit(unitId));
 }
 
 /* 유닛id → 그 유닛을 마법 슬롯으로 쓰는 과정 키('C4' 등). 없으면 null. */
@@ -3793,6 +3841,7 @@ function enterUnit(uid){
   const u=UNITS[uid];
   const introSeen=!!(S.progress[uid]&&S.progress[uid].introSeen);
   S.step=(u.introVideo&&!introSeen)?'intro':(u.ranges?'range':'practice');
+  if(window.preloadNumiMoodImgs)window.preloadNumiMoodImgs(S.character);
   save();render();
 }
 function pickRange(rk){S.range=rk;S.step='practice';S.sub={};save();render();}
@@ -3832,7 +3881,7 @@ function screenUnit(){
      첫 화면으로 친다. 그 외(경로 우회로 S.step이 비어 있는 경우 대비) null도 포함.
      unitFlowOf(u)[0].key는 항상 'practice'(§curriculum.js unitFlow). */
   const isFirstUnitStep = !S.step || S.step==='range' || S.step==='intro' || S.step===unitFlowOf(u)[0].key;
-  scr.innerHTML=`<div class="nm-unit-view"><div class="nm-unit-inner">
+  scr.innerHTML=`<div class="nm-unit-view" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backMap" aria-label="${t('back')}">←</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
@@ -3874,7 +3923,7 @@ function stepPractice(body,u){
   // 진단 스킵(B안): 아직 이 단계 안 했고 스킵 물어보기 전이면
   if(!S.sub.skipAsked && !stepDone(S.unit,'practice')){
     body.innerHTML=`<div class="nm-skip">
-      <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+      <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
       <div class="nm-skip-q">${t('skipAsk')}</div>
       <div class="nm-skip-btns">
         <button class="nm-btn ghost" id="skipNo">${t('skipNo')}</button>
@@ -3899,7 +3948,7 @@ function runPractice(body,u){
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
-    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
     <div class="nm-board">
       ${pracTex}
@@ -3919,7 +3968,7 @@ function runPracticeWidget(body,u,cur,first,need){
   const cfg=u.practice;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
-    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
     <div id="pracWidget" class="nm-lab-widget nm-board"></div>
   </div>`;
@@ -4564,7 +4613,7 @@ function stepLabWidget(body,u){
   /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
   body.innerHTML=`<div class="nm-dialog${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
-    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     ${origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div id="labWidget" class="nm-lab-widget nm-board"></div>
@@ -4592,7 +4641,7 @@ function stepLabPairs(body,u){
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
-    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div class="nm-expr nm-board" id="expr"></div>
     <button class="nm-btn full" id="pick" disabled>${t('picked')}</button>
@@ -4630,7 +4679,7 @@ function stepLabNumpad(body,u){
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
-    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
     <div class="nm-board">
       <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
@@ -4748,7 +4797,7 @@ function arenaEnd(body,u){
   const need=u.arena.count||10;const sc=S.sub.score;
   markStepDone(S.unit,'arena');
   body.innerHTML=`<div class="nm-card center">
-    <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-card-h">${t('score')}</div>
     <div class="nm-score">${sc} / ${need}</div>
     <button class="nm-btn full" id="toStamp">${t('next')}</button>

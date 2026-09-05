@@ -98,12 +98,25 @@ body{font-family:'Pretendard',sans-serif;color:var(--ink);
    (내용이 길어 #screen이 스크롤돼도 배경 띠는 그대로 바닥에). */
 .nm-unit-view{flex:1 0 auto;min-height:0;display:flex;flex-direction:column;padding:0;
   position:relative;isolation:isolate;
-  background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+  background-image:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%);
+  background-size:cover;background-position:top center;background-attachment:scroll}
 .nm-unit-view::after{content:'';position:fixed;left:0;right:0;bottom:0;height:90px;z-index:-1;
   pointer-events:none;background:linear-gradient(0deg,var(--ground-tint),transparent)}
 @media(prefers-reduced-motion:no-preference){.nm-unit-view{transition:background .2s}}
+/* 학습 무대 배경 4장(학습무대-작화지시서.md) — 위 40%는 그린 방, 아래 60%는 얇은
+   바닥·벽이라 문제판·말풍선이 그 위에 얹혀도 읽힌다. data-stage가 없거나 모르는
+   값이면 위 하늘 그라데이션만 남는다(폴백). 그라데이션은 배경 사진 아래 겹쳐 둬
+   사진이 늦게 뜨거나 실패해도 학습 화면이 하늘색으로는 항상 채워진다. */
+.nm-unit-view[data-stage="numberland"]{background-image:url(../assets/stages/stage-numberland.jpg),linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+.nm-unit-view[data-stage="prime"]{background-image:url(../assets/stages/stage-prime.jpg),linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+.nm-unit-view[data-stage="advance"]{background-image:url(../assets/stages/stage-advance.jpg),linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+.nm-unit-view[data-stage="challenge"]{background-image:url(../assets/stages/stage-challenge.jpg),linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
 .nm-unit-inner{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;padding:4px 14px 6px}
-.nm-unit-bar{flex:none;display:flex;align-items:center;gap:12px;padding:6px 0}
+/* 배경 사진 위에서도 제목이 읽히도록 옅은 반투명 받침(사진 없는 폴백 하늘에서는
+   거의 안 보이는 정도로 옅게 — 가로폭·패딩은 그대로 두고 배경·둥근 모서리만 얹는다,
+   아래 여러 미디어쿼리가 이 규칙의 padding을 계속 덮어써도 어긋나지 않게) */
+.nm-unit-bar{flex:none;display:flex;align-items:center;gap:12px;padding:6px 0;
+  border-radius:14px;background:rgba(255,253,246,.55);backdrop-filter:blur(2px)}
 .nm-back{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;flex:none}
 .nm-unit-title{font-size:15px;font-weight:900;color:var(--blue-deep);line-height:1.15}
 .nm-unit-title small{display:block;font-size:11px;font-weight:600;color:var(--sub)}
