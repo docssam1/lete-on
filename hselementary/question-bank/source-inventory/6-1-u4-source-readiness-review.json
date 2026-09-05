@@ -64,16 +64,16 @@
     "normalizedTypeCount": 68,
     "directlyReviewedCount": 68,
     "sourceVerifiedCount": 68,
-    "independentCalculationPassCount": 64,
-    "singleAnswerPassCount": 63,
-    "openOrAmbiguousCount": 5,
+    "independentCalculationPassCount": 45,
+    "singleAnswerPassCount": 64,
+    "openOrAmbiguousCount": 4,
     "visualAssetRequiredCount": 6,
     "duplicateSourceItemIds": 0,
     "duplicateNormalizedTypeIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 31,
-    "publicDecisionLockedCount": 37,
-    "releaseLockedCount": 37,
+    "publicCandidateCount": 43,
+    "publicDecisionLockedCount": 25,
+    "releaseLockedCount": 25,
     "notes": [
       "개념탐구 6개는 각 실제 소문항 2개씩 나누어 12개로 기록했습니다.",
       "예제 1-1은 인쇄물에서 필요한 비의 값 일부가 그림에 가려져 확정하지 않았습니다.",
@@ -87,7 +87,8 @@
       "예제 3-4의 원본은 일반 자동차 45000원 주유와 하이브리드 자동차의 기존 13L+34500원 추가 주유를 비교하므로 답은 3.3배입니다.",
       "Mission 5의 원본은 두 은행의 1개월 이자율만 묻고, Mission 6은 엥겔 지수 관계로 소득 수준이 가장 높은 가구의 식료품비를 묻습니다.",
       "개념탐구 3의 11유형은 원본 구조·독립 계산·고정 3문항·문제와 답의 같은 그림·PC·모바일·A4 검수를 통과한 뒤 공개 후보로 전환합니다.",
-      "나머지 항목은 중앙 생성기 연결·수식 화면·PC·모바일·A4 검수 전이므로 fail-closed locked입니다."
+      "나머지 항목은 중앙 생성기 연결·수식 화면·PC·모바일·A4 검수 전이므로 fail-closed locked입니다.",
+      "개념탐구 4의 12유형은 원본 구조·독립 계산·고정 3문항·문제와 답의 같은 그림·PC·모바일·A4 검수를 통과한 뒤 공개 후보로 전환합니다."
     ]
   },
   "items": [
@@ -1582,21 +1583,39 @@
       "commonTypeId": "profit-and-discount",
       "originalStructure": "과일을 산 값에 이익을 붙인 정가, 정가 판매·원가 판매·할인 판매를 섞어 전체 이익을 구합니다.",
       "conditions": [
-        "수박20개를 총240만원에 구입",
-        "정가는 원가에60% 이익",
-        "12개 정가,1개 사용,2개 원가, 나머지30% 할인"
+        "수박 20개를 총 2400000원에 구입",
+        "정가는 원가에 60% 이익",
+        "12개 정가 판매, 1개 사용, 2개 원가 판매, 나머지 30% 할인 판매"
       ],
       "visualRequirement": "정가·원가·할인 가격과 판매 수량을 표로 나누어야 합니다.",
-      "independentCalculation": "개당 원가120000원, 정가192000원입니다. 수입은12×192000+2×120000+5×192000×0.7=3216000원, 이익은816000원입니다.",
+      "independentCalculation": "개당 원가는 120000원, 정가는 192000원입니다. 판매액은 12×192000+2×120000+5×134400=3216000원이므로 이익은 816000원입니다.",
       "independentAnswer": "816000원",
       "answerFormula": "12×192000+2×120000+5×134400-2400000=816000",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "수량 합이20개이고 각 가격이 정해져 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "가격·수량 표와 원 단위 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "원가, 정가, 할인, 이익",
+          "representations": "가격과 수량 표",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "백분율과 여러 단계 계산",
+          "response-mode": "원"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-exploration-1"
     },
     {
       "sourceItemId": "6-1-u4-e4-exploration-4-2",
@@ -1605,26 +1624,44 @@
       "sourceItemLabel": "개념탐구 4-(2)",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 36,
-      "childFriendlyTypeLabel": "섞은 소금물의 진하기 구하기",
+      "childFriendlyTypeLabel": "섞은 소금물을 사용하고 물을 더한 뒤 진하기 구하기",
       "commonTypeId": "mixture-concentration",
-      "originalStructure": "서로 다른 진하기의 소금물을 섞고 일부를 물로 묽게 한 뒤 새 진하기를 구합니다.",
+      "originalStructure": "서로 다른 진하기의 소금물을 섞고 일부를 사용한 뒤 물을 더하여 새 진하기를 구합니다.",
       "conditions": [
-        "20% 소금물150g",
-        "5% 소금물300g",
-        "섞은 것 중100g 사용",
-        "물250g 추가"
+        "20% 소금물 150g",
+        "5% 소금물 300g",
+        "섞은 소금물 100g을 사용함",
+        "물 250g을 더함"
       ],
       "visualRequirement": "소금물 전체와 사용한 양·더한 물의 관계를 단계 그림으로 보여야 합니다.",
-      "independentCalculation": "소금은30+15=45g입니다. 사용한100g에 소금9? 혼합 농도는45/450=10%이므로 사용 소금은10g, 물250g을 더하면 전체350g입니다. 새 진하기=10/350×100=20/7%입니다.",
-      "independentAnswer": "20/7%",
-      "answerFormula": "(150×20%+300×5%)÷(100+250)×100=20/7%",
+      "independentCalculation": "처음 소금은 30+15=45g이고 혼합물 450g의 진하기는 10%입니다. 100g을 사용하면 소금 10g도 줄어 35g이 남고, 물 250g을 더한 뒤 전체는 600g입니다. 새 진하기는 35÷600×100=35/6%입니다.",
+      "independentAnswer": "5 5/6%",
+      "answerFormula": "(45-100×10%)÷(450-100+250)×100=35/6%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "혼합 농도와 사용량이 고정되어 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "사용한 소금물의 소금 양과 물 추가 단계 수식을 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "소금물의 진하기, 따라내기, 물 더하기",
+          "representations": "소금과 전체 양의 단계 그림",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "혼합물 일부의 소금 양을 먼저 계산",
+          "response-mode": "%"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-exploration-2"
     },
     {
       "sourceItemId": "6-1-u4-e4-example-4-1",
@@ -1637,20 +1674,38 @@
       "commonTypeId": "profit-rate",
       "originalStructure": "두 상자의 과일 원가와 개당 판매 가격으로 전체 판매 이익의 비율을 구합니다.",
       "conditions": [
-        "14개씩 든 배 두 상자 원가70000원",
-        "한 개2800원에 모두 판매"
+        "14개씩 든 배 2상자의 원가 70000원",
+        "한 개에 2800원으로 모두 판매"
       ],
       "visualRequirement": "두 상자와 전체 과일 수를 분명히 보여야 합니다.",
-      "independentCalculation": "전체는28개, 판매액은28×2800=78400원, 이익은8400원입니다. 8400/70000×100=12%이고 70000×1.12=78400으로 확인했습니다.",
+      "independentCalculation": "전체 28개의 판매액은 78400원, 이익은 8400원입니다. 원가에 대한 이익의 비율은 8400÷70000×100=12%입니다.",
       "independentAnswer": "12%",
       "answerFormula": "(28×2800-70000)÷70000×100=12%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "원가를 기준으로 이익률을 계산하도록 문장이 고정되어 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원가 기준의 백분율 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "원가, 판매 가격, 이익률",
+          "representations": "상자와 전체 개수",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "원가를 기준으로 한 백분율",
+          "response-mode": "%"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-example-1"
     },
     {
       "sourceItemId": "6-1-u4-e4-example-4-2",
@@ -1661,24 +1716,42 @@
       "sourcePrintedPage": 36,
       "childFriendlyTypeLabel": "손해를 보지 않는 최대 할인율 구하기",
       "commonTypeId": "maximum-no-loss-discount",
-      "originalStructure": "원가에 이익을 붙인 정가를 다시 올려 판매할 때 손해를 보지 않는 최대 할인율을 구합니다.",
+      "originalStructure": "원가에 이익을 붙인 정가를 다시 올려 판매할 때 손해를 보지 않는 정수 할인율의 최댓값을 구합니다.",
       "conditions": [
-        "원가12000원",
-        "처음 정가35% 이익",
-        "정가를 다시15% 올림",
-        "일의 자리까지"
+        "원가 12000원",
+        "처음 정가는 원가에 35% 이익",
+        "정가를 다시 15% 올림",
+        "할인율은 정수 퍼센트"
       ],
       "visualRequirement": "원가·처음 정가·올린 정가·할인 가격의 기준을 단계로 보여야 합니다.",
-      "independentCalculation": "처음 정가16200원, 올린 정가18630원입니다. 손해가 없는 할인율은 (18630-12000)/18630×100≈35.587%이므로 일의 자리까지 36%가 한계처럼 보이지만, 36% 할인 가격은11923.2원으로 원가보다 작습니다. 따라서 정수 퍼센트 최대는35%입니다.",
+      "independentCalculation": "처음 정가는 16200원, 올린 정가는 18630원입니다. 35% 할인 가격은 12109.5원으로 원가 이상이고, 36% 할인 가격은 11923.2원으로 원가보다 작으므로 최대 할인율은 35%입니다.",
       "independentAnswer": "35%",
       "answerFormula": "18630×65%=12109.5≥12000, 18630×64%=11923.2<12000",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "할인율을 정수 퍼센트로 읽을 때 최대값은35%입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 '일의 자리'가 할인율 반올림인지 정수 단위인지 추가 확인이 필요합니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "원가, 정가, 할인율",
+          "representations": "가격 변화 단계",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "손해가 시작되는 경계 비교",
+          "response-mode": "%"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-example-2"
     },
     {
       "sourceItemId": "6-1-u4-e4-example-4-3",
@@ -1687,25 +1760,43 @@
       "sourceItemLabel": "예제 4-3",
       "sourcePdfPage": 31,
       "sourcePrintedPage": 36,
-      "childFriendlyTypeLabel": "물을 증발시킨 소금물의 진하기 구하기",
+      "childFriendlyTypeLabel": "물을 증발시킨 설탕물의 진하기 구하기",
       "commonTypeId": "evaporation-concentration",
-      "originalStructure": "소금물에서 물만 증발시켜 양을 줄였을 때 소금물의 진하기를 구합니다.",
+      "originalStructure": "설탕물에서 물만 증발시켜 양을 줄였을 때 설탕물의 진하기를 구합니다.",
       "conditions": [
-        "15% 소금물200g",
-        "증발 후150g",
-        "소금은 증발하지 않음"
+        "15% 설탕물 200g",
+        "증발한 뒤 150g",
+        "설탕은 증발하지 않음"
       ],
-      "visualRequirement": "증발하는 것은 물이고 소금 양은 그대로라는 그림을 명시해야 합니다.",
-      "independentCalculation": "소금은200×15%=30g으로 그대로입니다. 새 진하기는30/150×100=20%이고 150×20%=30g으로 역산됩니다.",
+      "visualRequirement": "증발하는 것은 물이고 설탕 양은 그대로라는 그림을 명시해야 합니다.",
+      "independentCalculation": "설탕은 200×15%=30g으로 그대로입니다. 새 진하기는 30÷150×100=20%입니다.",
       "independentAnswer": "20%",
       "answerFormula": "200×15%÷150×100=20%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "증발하지 않는 성분이 명시되어 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "소금과 물의 양 보존 표시를 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "설탕물의 진하기, 증발",
+          "representations": "증발 전후 단계 그림",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "설탕 양 보존",
+          "response-mode": "%"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-example-3"
     },
     {
       "sourceItemId": "6-1-u4-e4-example-4-4",
@@ -1718,21 +1809,39 @@
       "commonTypeId": "mixture-sample-salt-mass",
       "originalStructure": "서로 다른 진하기의 소금물을 섞은 뒤 일정 양을 덜어 그 안의 소금 양을 구합니다.",
       "conditions": [
-        "20% 소금물200g",
-        "10% 소금물300g",
-        "섞은 소금물150g 사용"
+        "20% 소금물 200g",
+        "10% 소금물 300g",
+        "섞은 소금물 150g을 덜어냄"
       ],
       "visualRequirement": "섞은 뒤 전체 진하기와 덜어낸 양을 구분해 보여야 합니다.",
-      "independentCalculation": "소금은40+30=70g, 혼합량은500g이므로 진하기14%입니다. 150g에 든 소금은150×14%=21g입니다.",
+      "independentCalculation": "전체 소금은 40+30=70g, 전체는 500g이므로 진하기는 14%입니다. 150g에 든 소금은 150×14%=21g입니다.",
       "independentAnswer": "21g",
       "answerFormula": "(200×20%+300×10%)÷500×150=21",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "혼합물이 고르게 섞였다는 보통 조건에서 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "혼합물의 진하기와 사용량 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "소금물 섞기, 덜어내기",
+          "representations": "전체와 덜어낸 양의 단계 그림",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "혼합 진하기를 먼저 계산",
+          "response-mode": "g"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-example-4"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-1",
@@ -1745,22 +1854,40 @@
       "commonTypeId": "discount-table-order",
       "originalStructure": "책의 정가와 할인 가격 표에서 할인율을 계산해 높은 순서로 배열합니다.",
       "conditions": [
-        "소설24000->19200",
-        "수필28000->25200",
-        "시집16000->14080",
-        "만화12000->10200"
+        "가 24000원에서 19200원",
+        "나 28000원에서 25200원",
+        "다 16000원에서 14080원",
+        "라 12000원에서 10200원"
       ],
       "visualRequirement": "표의 책 종류와 두 가격 행을 정확히 대응해야 합니다.",
-      "independentCalculation": "할인율은 소설20%, 수필10%, 시집12%, 만화15%입니다. 높은 순서는 소설, 만화, 시집, 수필로 가·라·다·나입니다.",
+      "independentCalculation": "할인율은 가 20%, 나 10%, 다 12%, 라 15%입니다. 높은 순서는 가, 라, 다, 나입니다.",
       "independentAnswer": "가, 라, 다, 나",
       "answerFormula": "20%>15%>12%>10%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "네 할인율이 서로 달라 순서가 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "표 순서와 백분율 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "ordered-list",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "정가, 할인 가격, 할인율",
+          "representations": "책 종류별 가격 표",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "네 비율 계산과 크기 비교",
+          "response-mode": "순서"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-mission-1"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-2",
@@ -1769,27 +1896,45 @@
       "sourceItemLabel": "Mission 2",
       "sourcePdfPage": 32,
       "sourcePrintedPage": 37,
-      "childFriendlyTypeLabel": "두 물건의 할인율로 연필 가격 구하기",
+      "childFriendlyTypeLabel": "노트값을 빼고 연필의 할인율 구하기",
       "commonTypeId": "mixed-discount-total",
-      "originalStructure": "연필과 노트의 단가를 알고 한 품목만 할인해 전체 지불액으로 그 할인율을 구합니다.",
+      "originalStructure": "연필과 노트의 묶음 가격을 알고 연필만 할인한 전체 지불액으로 연필의 할인율을 구합니다.",
       "conditions": [
-        "연필1타2500원",
-        "노트5권4500원",
-        "연필3타와 노트16권",
-        "지불액19650원",
+        "연필 1타 2500원",
+        "노트 5권 4500원",
+        "연필 3타와 노트 16권 구입",
+        "전체 지불액 19650원",
         "연필만 할인"
       ],
-      "visualRequirement": "묶음 가격을 실제 수량으로 바꾸는 표가 필요합니다.",
-      "independentCalculation": "연필 정가는3×2500=7500원, 노트 정가는16×900=14400원으로 정상 합계21900원입니다. 지불액19650원이면 연필 지불액5250원으로 정가보다 작지 않아 연필만 할인이라는 조건과 맞지 않습니다.",
-      "independentAnswer": "확인 필요",
-      "answerFormula": "3×2500+16×(4500/5)=21900>19650; 연필만 할인 조건과 충돌",
-      "candidateAnswerCount": null,
-      "singleAnswer": false,
-      "singleAnswerCheck": "인쇄 수치 그대로는 할인율이 음수가 되어 조건과 모순됩니다.",
+      "visualRequirement": "묶음 가격을 실제 수량으로 바꾸고 할인 대상과 정가를 나누는 표가 필요합니다.",
+      "independentCalculation": "노트 한 권은 900원이므로 노트값은 14400원입니다. 연필의 실제 지불액은 19650-14400=5250원, 정가는 7500원입니다. 할인액 2250원은 정가의 30%입니다.",
+      "independentAnswer": "30%",
+      "answerFormula": "(7500-(19650-14400))÷7500×100=30%",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 지불액과 '연필만 정가보다 싸게' 조건이 서로 맞지 않아 수정 없이 공개하지 않습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "묶음 가격, 낱개 가격, 할인율",
+          "representations": "연필과 노트 가격 표",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "할인하지 않은 물건값을 먼저 빼기",
+          "response-mode": "%"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-mission-2"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-3",
@@ -1802,22 +1947,40 @@
       "commonTypeId": "multi-price-profit",
       "originalStructure": "과일의 원가와 이익을 붙인 정가, 서로 다른 할인 가격으로 판 수량을 이용해 전체 이익을 구합니다.",
       "conditions": [
-        "오렌지100개를 한 개800원에 구입",
-        "정가에75% 이익",
-        "60개 정가",
-        "남은 것의1/4은 정가20% 할인, 나머지는 정가 절반"
+        "오렌지 100개를 한 개 800원에 구입",
+        "정가는 원가에 75% 이익",
+        "60개 정가 판매",
+        "남은 것의 1/4은 20% 할인, 나머지는 정가의 절반"
       ],
       "visualRequirement": "100개가 세 판매 경우로 정확히 나뉘는 표가 필요합니다.",
-      "independentCalculation": "정가는1400원입니다. 수입은60×1400+10×1120+30×700=116200원, 원가는80000원이므로 이익은36200원입니다.",
+      "independentCalculation": "정가는 1400원입니다. 판매액은 60×1400+10×1120+30×700=116200원, 원가는 80000원이므로 이익은 36200원입니다.",
       "independentAnswer": "36200원",
       "answerFormula": "60×1400+10×1120+30×700-100×800=36200",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "판매 수량과 가격이 모두 정해져 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "수량 분할과 할인 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "원가, 정가, 할인 가격, 이익",
+          "representations": "판매 수량과 가격 표",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "남은 수량을 다시 나누어 계산",
+          "response-mode": "원"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-mission-3"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-4",
@@ -1826,25 +1989,43 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 32,
       "sourcePrintedPage": 37,
-      "childFriendlyTypeLabel": "서로 다른 진하기를 섞은 소금물의 진하기 구하기",
+      "childFriendlyTypeLabel": "서로 다른 진하기를 섞은 설탕물의 진하기 구하기",
       "commonTypeId": "mixture-concentration",
-      "originalStructure": "두 소금물을 섞어 새 소금물의 진하기를 구합니다.",
+      "originalStructure": "두 설탕물을 모두 섞어 새 설탕물의 진하기를 구합니다.",
       "conditions": [
-        "14% 소금물250g",
-        "20% 소금물125g",
-        "전체 혼합"
+        "14% 설탕물 250g",
+        "20% 설탕물 125g",
+        "두 설탕물을 모두 섞음"
       ],
-      "visualRequirement": "두 양과 소금 양을 단계 표로 보여야 합니다.",
-      "independentCalculation": "소금은35+25=60g, 전체는375g이므로 진하기는60/375×100=16%입니다.",
+      "visualRequirement": "두 양과 설탕 양을 단계 표로 보여야 합니다.",
+      "independentCalculation": "설탕은 35+25=60g, 전체는 375g이므로 진하기는 60÷375×100=16%입니다.",
       "independentAnswer": "16%",
       "answerFormula": "(250×14%+125×20%)÷375×100=16%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 용액의 양과 농도가 고정되어 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "소금 양과 전체 양 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "설탕물의 진하기, 섞기",
+          "representations": "두 설탕물의 양과 설탕 양 표",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "설탕의 합과 전체 양 계산",
+          "response-mode": "%"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-mission-4"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-5",
@@ -1855,23 +2036,41 @@
       "sourcePrintedPage": 37,
       "childFriendlyTypeLabel": "섞은 소금물에서 남은 소금 양 구하기",
       "commonTypeId": "mixture-sample-remainder",
-      "originalStructure": "서로 다른 진하기의 소금물을 섞어 일부를 사용한 뒤 남은 소금의 양을 구합니다.",
+      "originalStructure": "서로 다른 진하기의 소금물을 섞어 일부를 덜어낸 뒤 남은 소금의 양을 구합니다.",
       "conditions": [
-        "40% 소금물150g",
-        "25% 소금물300g",
-        "섞은 것 중200g 사용"
+        "40% 소금물 150g",
+        "25% 소금물 300g",
+        "섞은 소금물 200g을 덜어냄"
       ],
-      "visualRequirement": "섞은 전체와 사용한 양·남은 양을 구분해야 합니다.",
-      "independentCalculation": "전체 소금은60+75=135g, 전체450g입니다. 남은 양은250g이고 소금은135-(135/450×200)=75g입니다.",
+      "visualRequirement": "섞은 전체와 덜어낸 양·남은 양을 구분해야 합니다.",
+      "independentCalculation": "전체 소금은 60+75=135g이고 전체는 450g입니다. 덜어낸 200g에는 소금 60g이 들어 있으므로 남은 소금은 75g입니다.",
       "independentAnswer": "75g",
-      "answerFormula": "135-(135/450×200)=75",
+      "answerFormula": "135-(135÷450×200)=75",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "고르게 섞인 소금물이라는 조건에서 하나입니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "혼합물에서 덜어낸 양의 비례 수식 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "medium",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "소금물 섞기, 덜어내기",
+          "representations": "전체·덜어낸 양·남은 양 그림",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "덜어낸 소금 양을 빼기",
+          "response-mode": "g"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-mission-5"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-6",
@@ -1880,25 +2079,43 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 32,
       "sourcePrintedPage": 37,
-      "childFriendlyTypeLabel": "물을 증발시킨 뒤 소금물의 진하기 구하기",
+      "childFriendlyTypeLabel": "소금물을 따라내고 물을 더한 뒤 진하기 구하기",
       "commonTypeId": "evaporation-concentration",
-      "originalStructure": "소금물에서 물 일부가 증발한 뒤 같은 양의 물을 더했을 때 새 진하기를 구합니다.",
+      "originalStructure": "소금물을 일부 따라낸 뒤 같은 양의 물을 더했을 때 새 진하기를 구합니다.",
       "conditions": [
-        "8% 소금물500g",
-        "물200g 증발",
-        "같은 양의 물을 다시 더함"
+        "8% 소금물 500g",
+        "섞인 소금물 200g을 따라냄",
+        "물 200g을 더함"
       ],
-      "visualRequirement": "증발한 물과 다시 더한 물의 양을 단계로 보여야 합니다.",
-      "independentCalculation": "소금은40g 그대로입니다. 200g 증발 후300g, 다시 물200g을 더해500g이므로 진하기는40/500×100=8%입니다. 원문 필기와 무관하게 질량 보존으로 확인했습니다.",
-      "independentAnswer": "8%",
-      "answerFormula": "500×8%÷(500-200+200)×100=8%",
+      "visualRequirement": "따라낸 혼합물과 다시 더한 물을 서로 다른 단계로 보여야 합니다.",
+      "independentCalculation": "처음 소금은 40g입니다. 200g을 따라내면 소금 16g도 빠져 소금 24g과 혼합물 300g이 남습니다. 물 200g을 더하면 전체 500g이므로 진하기는 24÷500×100=4.8%입니다.",
+      "independentAnswer": "4.8%",
+      "answerFormula": "(500×8%-200×8%)÷500×100=4.8%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "증발량과 추가량이 같아 전체 양이 다시500g으로 정해집니다.",
+      "singleAnswerCheck": "고정된 조건을 독립 계산하고 역산했을 때 답이 하나이며, 고정 3문항을 전수 검산합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "증발·추가 단계의 양 표시를 검수 전입니다."
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "confirmed",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "single-value",
+      "riskLevel": "high",
+      "publicCandidate": true,
+      "learnerFitGate": {
+        "id": "learner-fit",
+        "status": "pass",
+        "learner_stage": "초등 6학년 1학기",
+        "criteria": {
+          "language": "소금물 따라내기, 물 더하기",
+          "representations": "따라내기 전후 단계 그림",
+          "prerequisites": "백분율과 소수·분수의 계산",
+          "reasoning-load": "따라낸 소금 양과 새 전체 양 계산",
+          "response-mode": "%"
+        }
+      },
+      "rawSourceItemId": "6-1-u4-e4-mission-6"
     },
     {
       "sourceItemId": "6-1-u4-e5-exploration-5-1",

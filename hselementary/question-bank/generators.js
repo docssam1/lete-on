@@ -22937,6 +22937,216 @@
       if (highestIncomeIndex !== 1 || actual.denominator !== 1 || actual.numerator !== expected) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 엥겔 지수 답이 맞지 않습니다.`);
       return fixedResult(`가, 나, 다 세 가구의 전체 지출액 중에서 식료품비가 차지하는 비율을 엥겔 지수라고 합니다. 엥겔 지수는 소득 수준이 높아짐에 따라 점차 감소합니다. 엥겔 지수는 나 가구가 가 가구의 ${fractionMarkup(indexBNumerator, indexBDenominator)}배이고, 다 가구가 나 가구의 ${fractionMarkup(indexCNumerator, indexCDenominator)}배라고 할 때 세 가구 중 소득 수준이 가장 높은 가구의 식료품비는 얼마인지 구하세요.${promptVisual}`, `${expected}만원`, `가의 엥겔 지수는 ${percentText(indexA)}%입니다. 나와 다의 지수를 차례로 계산하면 나 ${percentText(indexB)}%, 다 ${percentText(indexC)}%입니다. 가장 낮은 나의 지수가 소득이 가장 높은 가구를 뜻하므로 나의 식료품비 ${displayFood(actual)}만원이 답입니다.`, promptVisual, answerVisual, pools);
     },
+    sourceGrade6RatioE4({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u4-e4-exploration-4-1", "6-1-u4-e4-exploration-4-2", "6-1-u4-e4-example-4-1", "6-1-u4-e4-example-4-2",
+        "6-1-u4-e4-example-4-3", "6-1-u4-e4-example-4-4", "6-1-u4-e4-mission-1", "6-1-u4-e4-mission-2",
+        "6-1-u4-e4-mission-3", "6-1-u4-e4-mission-4", "6-1-u4-e4-mission-5", "6-1-u4-e4-mission-6"
+      ];
+      const kinds = [
+        "profit-and-discount", "mixture-concentration", "profit-rate", "maximum-no-loss-discount",
+        "evaporation-concentration", "mixture-sample-salt-mass", "discount-table-order", "mixed-discount-total",
+        "multi-price-profit", "mixture-concentration", "mixture-sample-remainder", "refill-concentration"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 비와 비율 개념탐구 4 원문 분기는 0부터 11까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">기준량과 변하지 않는 양을 먼저 정하고, 조건을 차례로 식으로 나타내 보세요.</p>` : "";
+      const escape = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const text = (x, y, value, extra = "") => `<text x="${x}" y="${y}" fill="#183b56" font-size="12" text-anchor="middle" ${extra}>${escape(value)}</text>`;
+      const evidence = (values, contract = "single-value") => `<span hidden data-source61-ratio-e4-kind="${kinds[variant]}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const rowText = (x, y, value, extra = "font-size=\"11\"") => text(x, y, value, extra);
+      const svgValue = (x, y, value) => {
+        const match = String(value).match(/^((?:(?:\d+)\s+)?\d+\/\d+)(.*)$/);
+        return match
+          ? svgMeasurementLabel({ x, y, value: match[1], unit: match[2] })
+          : rowText(x, y, value);
+      };
+      const tableSvg = (kind, rows, values, solved, resultText) => {
+        const rowMarkup = rows.map((row, index) => {
+          const y = 65 + index * 25;
+          return `<line x1="28" y1="${y - 14}" x2="332" y2="${y - 14}" stroke="#183b56" stroke-width="1"/>${rowText(92, y, row[0])}${svgValue(250, y, solved ? row[2] : row[1])}`;
+        }).join("");
+        const resultY = 65 + rows.length * 25;
+        return `<svg class="geometry-diagram source61-ratio-e4-diagram" style="width:min(430px,100%);height:auto" viewBox="0 0 360 240" role="img" aria-label="${escape(kind)}" data-source61-ratio-e4-structure="${escape(kind)}" data-source61-ratio-e4-values="${values.join(",")}"${solved ? ` data-result-highlight="${values.join(",")}"` : ""}><rect x="24" y="27" width="312" height="${Math.min(166, resultY + 18)}" rx="4" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${text(180, 45, kind, "font-size=\"13\" font-weight=\"700\"")}${rowMarkup}<line x1="28" y1="${resultY + 10}" x2="332" y2="${resultY + 10}" stroke="#183b56" stroke-width="1.5"/>${solved ? `<rect class="source61-e4-result-label" x="45" y="${resultY + 19}" width="270" height="27" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgValue(180, resultY + 37, resultText)}` : text(180, resultY + 37, "구할 값은 ?", "font-size=\"13\"")}</svg>`;
+      };
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const decimalRational = (value, places = 3) => {
+        const scale = 10 ** places;
+        return String(Math.round(value.numerator * scale / value.denominator) / scale);
+      };
+      const percentMarkup = value => `${mixedFractionMarkup(value.numerator, value.denominator)}%`;
+      const percentPlain = value => `${mixedFraction(value.numerator, value.denominator)}%`;
+      const numberPlain = value => value.denominator === 1 ? String(value.numerator) : mixedFraction(value.numerator, value.denominator);
+      const fixedResult = (prompt, answer, solution, promptVisual, answerVisual, values, contract = "single-value") => {
+        const fullPrompt = `${prompt}${support("표나 그림에서 기준이 되는 양을 찾아보세요.")}${challenge}${evidence(values, contract)}`;
+        return result(fullPrompt, answer, solution, {
+          answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-ratio-e4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence(values, contract)}${answerVisual}<div class="solution-answer-caption">문제에 나온 자료를 다시 그려 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: poolIndex,
+          verifiedVariantCount: 3,
+          sourceItemId
+        });
+      };
+
+      if (variant === 0) {
+        const pools = [[20, 2400000, 60, 12, 2, 30], [18, 1800000, 50, 10, 2, 20], [24, 3000000, 40, 15, 2, 25]][poolIndex];
+        const [count, totalCost, profitRate, regularSold, costSold, discountRate] = pools;
+        const costEach = totalCost / count;
+        const listEach = costEach * (100 + profitRate) / 100;
+        const discountedSold = count - regularSold - costSold - 1;
+        const saleTotal = regularSold * listEach + costSold * costEach + discountedSold * listEach * (100 - discountRate) / 100;
+        const profit = saleTotal - totalCost;
+        const visual = solved => tableSvg("수박의 판매 방법", [["전체 수량", `${count}개`, `${count}개`], ["개당 원가", "?원", `${costEach}원`], ["정가", `원가의 ${profitRate}% 이익`, `${listEach}원`], ["판매 수량", `${regularSold}개 정가 · ${costSold}개 원가 · ${discountedSold}개 할인`, `${regularSold}개 정가 · ${costSold}개 원가 · ${discountedSold}개 ${100 - discountRate}%`]], pools, solved, `${profit}원`);
+        const promptVisual = `${visual(false)}${mathBoard("판매 조건", row("정가", `원가에 ${profitRate}% 이익`) + row("판매", `${regularSold}개 정가, 1개 사용, ${costSold}개 원가, 나머지는 ${discountRate}% 할인`) + row("구할 것", "팔아 얻은 이익"), `data-source61-visual="profit-and-discount"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("가격별 수입으로 확인", row("개당 원가", `${totalCost}÷${count}=${costEach}원`) + row("개당 정가", `${costEach}×${100 + profitRate}÷100=${listEach}원`) + row("이익", `${saleTotal}-${totalCost}=${profit}원`) + row("답", `${profit}원`))}`;
+        return fixedResult(`수박 ${count}개를 모두 ${totalCost}원에 사 와서 개당 원가에 ${profitRate}%의 이익을 붙여 정가를 정했습니다. ${regularSold}개는 정가로 팔고 1개는 사용했으며, ${costSold}개는 원가로 팔고 나머지는 정가에서 ${discountRate}% 할인하여 팔았습니다. 수박을 팔아 얻은 이익은 얼마인지 구하세요.${promptVisual}`, `${profit}원`, `개당 원가는 ${totalCost}÷${count}=${costEach}원이고 정가는 ${costEach}×${100 + profitRate}÷100=${listEach}원입니다. 판매액에서 전체 원가를 빼면 ${saleTotal}-${totalCost}=${profit}원이므로 답은 ${profit}원입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 1) {
+        const pools = [[20, 150, 5, 300, 100, 250], [30, 200, 10, 400, 150, 250], [20, 200, 10, 300, 100, 200]][poolIndex];
+        const [rateA, massA, rateB, massB, used, addedWater] = pools;
+        const totalMass = massA + massB;
+        const totalSalt = rationalValue(massA * rateA + massB * rateB, 100);
+        const usedSalt = rationalOperation(totalSalt, rationalValue(used, totalMass), "×");
+        const remainingSalt = rationalOperation(totalSalt, usedSalt, "-");
+        const finalMass = totalMass - used + addedWater;
+        const actual = rationalValue(remainingSalt.numerator * 100, remainingSalt.denominator * finalMass);
+        const visual = solved => tableSvg("섞은 소금물의 단계", [["처음 소금물", `${rateA}% ${massA}g + ${rateB}% ${massB}g`, `${numberPlain(totalSalt)}g 소금`], ["사용한 양", `${used}g`, `${numberPlain(usedSalt)}g 소금 제거`], ["더한 물", `${addedWater}g`, `전체 ${finalMass}g`], ["새 진하기", "?", percentPlain(actual)]], pools, solved, percentPlain(actual));
+        const promptVisual = `${visual(false)}${mathBoard("소금의 양과 전체 양", row("섞기 전", `${rateA}% ${massA}g, ${rateB}% ${massB}g`) + row("변화", `${used}g 사용 후 물 ${addedWater}g 추가`) + row("구할 것", "새 소금물의 진하기"), `data-source61-visual="mixture-concentration"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("소금이 함께 빠지는지 확인", row("처음 소금", `${massA}×${rateA}% + ${massB}×${rateB}% = ${numberPlain(totalSalt)}g`) + row("남은 소금", `${numberPlain(totalSalt)}-${numberPlain(usedSalt)}=${numberPlain(remainingSalt)}g`) + row("답", `${numberPlain(remainingSalt)}÷${finalMass}×100=${percentMarkup(actual)}`))}`;
+        return fixedResult(`진하기가 ${rateA}%인 소금물 ${massA}g과 ${rateB}%인 소금물 ${massB}g을 섞었습니다. 이 중에서 소금물 ${used}g을 사용한 후 ${addedWater}g의 물을 넣었다면 소금물의 진하기는 몇 %가 되었는지 구하세요.${promptVisual}`, percentPlain(actual), `처음 소금은 ${numberPlain(totalSalt)}g입니다. 섞은 소금물 ${used}g을 사용하면 소금 ${numberPlain(usedSalt)}g도 함께 줄어 남은 소금은 ${numberPlain(remainingSalt)}g입니다. 전체는 ${finalMass}g이므로 ${numberPlain(remainingSalt)}÷${finalMass}×100=${percentMarkup(actual)}입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 2) {
+        const pools = [[14, 2, 70000, 2800], [12, 3, 90000, 3000], [18, 2, 144000, 10000]][poolIndex];
+        const [perBox, boxes, totalCost, saleEach] = pools;
+        const totalFruit = perBox * boxes;
+        const saleTotal = totalFruit * saleEach;
+        const actual = rationalValue((saleTotal - totalCost) * 100, totalCost);
+        const visual = solved => tableSvg("배 두 상자의 판매", [["과일 수", `${perBox}개씩 ${boxes}상자`, `${totalFruit}개`], ["전체 원가", `${totalCost}원`, `${totalCost}원`], ["판매 가격", `1개 ${saleEach}원`, `${saleTotal}원`], ["이익률", "?", percentPlain(actual)]], pools, solved, percentPlain(actual));
+        const promptVisual = `${visual(false)}${mathBoard("원가를 기준으로", row("원가", `${totalCost}원`) + row("판매액", `${totalFruit}개를 1개 ${saleEach}원에 판매`) + row("구할 것", "원가에 대한 판매 이익의 비율"), `data-source61-visual="profit-rate"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("원가에 대한 비율", row("전체 과일", `${perBox}×${boxes}=${totalFruit}개`) + row("이익", `${saleTotal}-${totalCost}=${saleTotal - totalCost}원`) + row("답", `${saleTotal - totalCost}÷${totalCost}×100=${percentMarkup(actual)}`))}`;
+        return fixedResult(`한 상자에 배 ${perBox}개씩 들어 있는 배 ${boxes}상자의 원가가 모두 ${totalCost}원입니다. 배를 한 개에 ${saleEach}원씩 모두 팔았을 때, 배 ${boxes}상자의 원가에 대한 판매 이익금의 비율은 몇 %인지 구하세요.${promptVisual}`, percentPlain(actual), `전체 ${totalFruit}개를 팔아 ${saleTotal}원이고 이익은 ${saleTotal - totalCost}원입니다. 원가를 기준으로 계산하면 ${saleTotal - totalCost}÷${totalCost}×100=${percentMarkup(actual)}입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 3) {
+        const pools = [[12000, 35, 15], [10000, 30, 20], [15000, 25, 10]][poolIndex];
+        const [cost, initialProfitRate, raiseRate] = pools;
+        const firstList = cost * (100 + initialProfitRate) / 100;
+        const raisedList = firstList * (100 + raiseRate) / 100;
+        const actual = Math.floor((raisedList - cost) * 100 / raisedList + 1e-9);
+        const visual = solved => tableSvg("손해 없는 할인 한계", [["원가", `${cost}원`, `${cost}원`], ["처음 정가", `원가의 ${initialProfitRate}% 이익`, `${firstList}원`], ["올린 정가", `${raiseRate}% 인상`, `${raisedList}원`], ["최대 정수 할인율", "?", `${actual}%`]], pools, solved, `${actual}%`);
+        const promptVisual = `${visual(false)}${mathBoard("할인 가격의 기준", row("정가", `원가에 ${initialProfitRate}% 이익 후 ${raiseRate}% 인상`) + row("조건", "할인한 가격이 원가보다 작아지지 않음") + row("구할 것", "일의 자리까지 최대 할인율"), `data-source61-visual="maximum-no-loss-discount"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("정수 할인율을 비교", row("올린 정가", `${cost}×${100 + initialProfitRate}%×${100 + raiseRate}%=${raisedList}원`) + row(`${actual}% 할인`, `${raisedList}×${100 - actual}%=${raisedList * (100 - actual) / 100}원`) + row("답", `${actual}%`))}`;
+        return fixedResult(`원가가 ${cost}원인 상품에 ${initialProfitRate}%의 이익을 붙여 정가를 정했습니다. 그런데 정가를 ${raiseRate}%만큼 더 올려 팔려고 합니다. 손해를 보지 않을 만큼 최대 몇 %까지 할인해 줄 수 있는지 일의 자리까지 구하세요.${promptVisual}`, `${actual}%`, `처음 정가는 ${firstList}원이고 올린 정가는 ${raisedList}원입니다. ${actual}% 할인하면 ${raisedList}×${100 - actual}%=${raisedList * (100 - actual) / 100}원으로 원가 이상이지만, ${actual + 1}% 할인하면 ${raisedList * (99 - actual) / 100}원으로 원가보다 작습니다. 따라서 최대 할인율은 ${actual}%입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 4) {
+        const pools = [[15, 200, 150], [12, 250, 200], [20, 250, 200]][poolIndex];
+        const [rate, initialMass, finalMass] = pools;
+        const salt = rationalValue(initialMass * rate, 100);
+        const actual = rationalValue(salt.numerator * 100, salt.denominator * finalMass);
+        const visual = solved => tableSvg("물을 증발시킨 설탕물", [["처음 진하기", `${rate}%`, `${rate}%`], ["처음 양", `${initialMass}g`, `${initialMass}g`], ["증발 후 양", `${finalMass}g`, `${finalMass}g`], ["새 진하기", "?", percentPlain(actual)]], pools, solved, percentPlain(actual));
+        const promptVisual = `${visual(false)}${mathBoard("변하지 않는 설탕", row("설탕의 양", "물을 증발시켜도 설탕은 그대로") + row("변화", `${initialMass}g에서 ${finalMass}g으로 감소`) + row("구할 것", "증발 후 진하기"), `data-source61-visual="evaporation-concentration"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("설탕은 그대로", row("설탕", `${initialMass}×${rate}%=${numberPlain(salt)}g`) + row("진하기", `${numberPlain(salt)}÷${finalMass}×100=${percentMarkup(actual)}`) + row("답", percentMarkup(actual)))}`;
+        return fixedResult(`진하기가 ${rate}%인 설탕물 ${initialMass}g이 있습니다. 이 설탕물을 물이 증발하도록 하여 ${finalMass}g으로 만들었을 때 설탕물의 진하기는 몇 %가 되는지 구하세요.${promptVisual}`, percentPlain(actual), `설탕은 증발하지 않으므로 ${initialMass}×${rate}%=${numberPlain(salt)}g 그대로입니다. 따라서 진하기는 ${numberPlain(salt)}÷${finalMass}×100=${percentMarkup(actual)}입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 5) {
+        const pools = [[20, 200, 10, 300, 150], [15, 240, 5, 360, 100], [30, 180, 10, 420, 200]][poolIndex];
+        const [rateA, massA, rateB, massB, used] = pools;
+        const totalMass = massA + massB;
+        const totalSalt = rationalValue(massA * rateA + massB * rateB, 100);
+        const actual = rationalOperation(totalSalt, rationalValue(used, totalMass), "×");
+        const visual = solved => tableSvg("사용한 소금물의 소금", [["섞은 소금물", `${rateA}% ${massA}g + ${rateB}% ${massB}g`, `${numberPlain(totalSalt)}g 소금`], ["사용한 양", `${used}g`, `${used}g`], ["전체 양", `${totalMass}g`, `${totalMass}g`], ["사용한 소금", "?", `${numberPlain(actual)}g`]], pools, solved, `${numberPlain(actual)}g`);
+        const promptVisual = `${visual(false)}${mathBoard("섞은 소금물의 비율", row("소금물", `${rateA}% ${massA}g와 ${rateB}% ${massB}g`) + row("사용", `섞은 소금물 ${used}g`) + row("구할 것", "사용한 소금물 속 소금의 양"), `data-source61-visual="mixture-sample-salt-mass"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("전체 소금물과 같은 비", row("전체 소금", `${massA}×${rateA}% + ${massB}×${rateB}% = ${numberPlain(totalSalt)}g`) + row("사용한 비", `${used}÷${totalMass}`) + row("답", `${numberPlain(totalSalt)}×${used}÷${totalMass}=${numberPlain(actual)}g`))}`;
+        return fixedResult(`진하기가 ${rateA}%인 소금물 ${massA}g과 ${rateB}%인 소금물 ${massB}g을 섞었습니다. 이 중에서 소금물 ${used}g을 사용했다면 사용한 소금물에 들어 있는 소금의 양은 몇 g인지 구하세요.${promptVisual}`, `${numberPlain(actual)}g`, `섞은 소금물 전체의 소금은 ${numberPlain(totalSalt)}g입니다. 사용한 양은 전체의 ${used}÷${totalMass}이므로 소금의 양은 ${numberPlain(totalSalt)}×${used}÷${totalMass}=${numberPlain(actual)}g입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 6) {
+        const pools = [
+          { prices: [[24000, 19200], [28000, 25200], [16000, 14080], [12000, 10200]], order: ["가", "라", "다", "나"] },
+          { prices: [[30000, 24000], [25000, 22500], [18000, 15120], [16000, 14080]], order: ["가", "다", "라", "나"] },
+          { prices: [[36000, 28800], [22000, 19360], [18000, 15120], [14000, 12600]], order: ["가", "다", "나", "라"] }
+        ][poolIndex];
+        const values = pools.prices.flat();
+        const rates = pools.prices.map(([list, sale]) => rationalValue((list - sale) * 100, list));
+        const visual = solved => tableSvg("책의 할인율 표", pools.prices.map(([list, sale], index) => [`${["가", "나", "다", "라"][index]}`, `${list}→${sale}원`, solved ? `${percentPlain(rates[index])}` : `${list}→${sale}원`]), values, solved, pools.order.join(", "));
+        const promptVisual = `${visual(false)}${mathBoard("할인율 비교", row("할인율", "(정가-할인가)÷정가×100") + row("판단", "할인율이 높은 책부터") + row("구할 것", "기호의 순서"), `data-source61-visual="discount-table-order"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("각 할인율로 비교", pools.prices.map(([list, sale], index) => row(`${["가", "나", "다", "라"][index]}`, `${list}-${sale}÷${list}×100=${percentMarkup(rates[index])}`)).join("") + row("답", pools.order.join(", ")))}`;
+        return fixedResult(`다음 표는 서점에서 할인 판매하는 책의 정가와 할인 가격을 나타낸 것입니다. 할인율이 높은 책부터 차례로 기호를 써 보세요.${promptVisual}`, pools.order.join(", "), `할인율은 (정가-할인가)÷정가×100으로 계산합니다. 네 할인율을 비교하면 높은 순서는 ${pools.order.join(", ")}입니다.`, promptVisual, answerVisual, values);
+      }
+
+      if (variant === 7) {
+        const pools = [[2500, 3, 5, 4500, 16, 19650], [1800, 4, 6, 4200, 18, 18000], [3200, 2, 4, 3600, 12, 15920]][poolIndex];
+        const [pencilPack, pencilPacks, notebookPack, notebookPackPrice, notebooks, paid] = pools;
+        const pencilList = pencilPack * pencilPacks;
+        const notebookList = notebooks / notebookPack * notebookPackPrice;
+        const saving = pencilList + notebookList - paid;
+        const actual = rationalValue(saving * 100, pencilList);
+        const visual = solved => tableSvg("연필과 노트의 할인", [["연필 정가", `${pencilPack}원×${pencilPacks}타`, `${pencilList}원`], ["노트 정가", `${notebookPack}권 ${notebookPackPrice}원`, `${notebookList}원`], ["지불한 돈", `${paid}원`, `${paid}원`], ["연필 할인율", "?", percentPlain(actual)]], pools, solved, percentPlain(actual));
+        const promptVisual = `${visual(false)}${mathBoard("연필만 할인", row("노트", `${notebookPack}권에 ${notebookPackPrice}원, ${notebooks}권 구입`) + row("연필", `${pencilPacks}타 구입`) + row("조건", `연필과 노트 정가 합보다 ${paid}원 지불`) + row("구할 것", "연필의 할인율"), `data-source61-visual="mixed-discount-total"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("노트 값을 먼저 빼기", row("노트 정가", `${notebooks}÷${notebookPack}×${notebookPackPrice}=${notebookList}원`) + row("연필 할인액", `${pencilList}+${notebookList}-${paid}=${saving}원`) + row("답", `${saving}÷${pencilList}×100=${percentMarkup(actual)}`))}`;
+        return fixedResult(`연필은 1타에 ${pencilPack}원, 노트는 ${notebookPack}권에 ${notebookPackPrice}원입니다. 지혜가 연필 ${pencilPacks}타와 노트 ${notebooks}권을 사면서 연필만 정가보다 싸게 사서 ${paid}원을 지불했다면, 연필은 정가보다 몇 % 싸게 산 것인지 구하세요.${promptVisual}`, percentPlain(actual), `노트 정가는 ${notebooks}÷${notebookPack}×${notebookPackPrice}=${notebookList}원입니다. 연필 할인액은 ${pencilList}+${notebookList}-${paid}=${saving}원이므로 연필 정가에 대한 비율은 ${saving}÷${pencilList}×100=${percentMarkup(actual)}입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 8) {
+        const pools = [[100, 800, 75, 60, 4, 20, 50], [120, 600, 50, 72, 4, 25, 50], [90, 1000, 60, 54, 3, 30, 50]][poolIndex];
+        const [count, costEach, profitRate, regularSold, partialDenominator, discountRate, finalRate] = pools;
+        const listEach = costEach * (100 + profitRate) / 100;
+        const remaining = count - regularSold;
+        const discountedCount = remaining / partialDenominator;
+        const finalCount = remaining - discountedCount;
+        const saleTotal = regularSold * listEach + discountedCount * listEach * (100 - discountRate) / 100 + finalCount * listEach * finalRate / 100;
+        const actual = saleTotal - count * costEach;
+        const visual = solved => tableSvg("오렌지의 판매 가격", [["전체 원가", `${count}개×${costEach}원`, `${count * costEach}원`], ["정가", `원가에 ${profitRate}% 이익`, `${listEach}원`], ["판매 방법", `${regularSold}개 정가 · 나머지 나누어 판매`, `${regularSold}개 · ${discountedCount}개 · ${finalCount}개`], ["전체 이익", "?", `${actual}원`]], pools, solved, `${actual}원`);
+        const promptVisual = `${visual(false)}${mathBoard("판매 단계", row("정가", `원가에 ${profitRate}% 이익`) + row("첫 판매", `${regularSold}개는 정가`) + row("남은 판매", `남은 것의 1/${partialDenominator}은 ${discountRate}% 할인, 나머지는 정가의 ${finalRate}%`) + row("구할 것", "전체 이익"), `data-source61-visual="multi-price-profit"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("세 판매액을 더하기", row("개당 정가", `${costEach}×${100 + profitRate}÷100=${listEach}원`) + row("판매액", `${saleTotal}원`) + row("답", `${saleTotal}-${count * costEach}=${actual}원`))}`;
+        return fixedResult(`오렌지 ${count}개를 한 개에 ${costEach}원에 사 와서 ${profitRate}%의 이익을 붙여 정가를 정했습니다. ${regularSold}개를 정가에 팔고, 남은 오렌지의 1/${partialDenominator}은 정가에서 ${discountRate}% 할인하여 팔고, 나머지는 정가의 ${finalRate}%에 모두 팔았다면 오렌지를 팔아 얻은 이익은 모두 얼마인지 구하세요.${promptVisual}`, `${actual}원`, `개당 정가는 ${costEach}×${100 + profitRate}÷100=${listEach}원입니다. 세 부분의 판매액을 더한 뒤 전체 원가 ${count * costEach}원을 빼면 전체 이익은 ${actual}원입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 9) {
+        const pools = [[14, 250, 20, 125], [10, 300, 25, 100], [8, 250, 20, 150]][poolIndex];
+        const [rateA, massA, rateB, massB] = pools;
+        const totalMass = massA + massB;
+        const totalSalt = rationalValue(massA * rateA + massB * rateB, 100);
+        const actual = rationalValue(totalSalt.numerator * 100, totalSalt.denominator * totalMass);
+        const visual = solved => tableSvg("두 설탕물을 섞기", [["가 설탕물", `${rateA}% ${massA}g`, `${numberPlain(rationalValue(massA * rateA, 100))}g 설탕`], ["나 설탕물", `${rateB}% ${massB}g`, `${numberPlain(rationalValue(massB * rateB, 100))}g 설탕`], ["전체 양", `${totalMass}g`, `${totalMass}g`], ["새 진하기", "?", percentPlain(actual)]], pools, solved, percentPlain(actual));
+        const promptVisual = `${visual(false)}${mathBoard("설탕의 양은 더하기", row("가 설탕물", `${rateA}% ${massA}g`) + row("나 설탕물", `${rateB}% ${massB}g`) + row("구할 것", "섞은 설탕물의 진하기"), `data-source61-visual="mixture-concentration"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("설탕과 전체 양으로", row("설탕", `${massA}×${rateA}% + ${massB}×${rateB}%=${numberPlain(totalSalt)}g`) + row("진하기", `${numberPlain(totalSalt)}÷${totalMass}×100=${percentMarkup(actual)}`) + row("답", percentMarkup(actual)))}`;
+        return fixedResult(`진하기가 ${rateA}%인 설탕물 ${massA}g과 ${rateB}%인 설탕물 ${massB}g을 섞은 후, 새로 만든 설탕물의 진하기는 몇 %인지 구하세요.${promptVisual}`, percentPlain(actual), `가 설탕물의 설탕은 ${massA}×${rateA}%g, 나 설탕물의 설탕은 ${massB}×${rateB}%g이므로 전체 설탕은 ${numberPlain(totalSalt)}g입니다. 전체 ${totalMass}g에 대한 비는 ${numberPlain(totalSalt)}÷${totalMass}×100=${percentMarkup(actual)}입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      if (variant === 10) {
+        const pools = [[40, 150, 25, 300, 200], [25, 240, 10, 360, 125], [20, 300, 30, 200, 100]][poolIndex];
+        const [rateA, massA, rateB, massB, used] = pools;
+        const totalMass = massA + massB;
+        const totalSalt = rationalValue(massA * rateA + massB * rateB, 100);
+        const usedSalt = rationalOperation(totalSalt, rationalValue(used, totalMass), "×");
+        const actual = rationalOperation(totalSalt, usedSalt, "-");
+        const visual = solved => tableSvg("남은 소금의 양", [["섞은 소금물", `${rateA}% ${massA}g + ${rateB}% ${massB}g`, `${numberPlain(totalSalt)}g 소금`], ["사용한 양", `${used}g`, `${numberPlain(usedSalt)}g 소금`], ["처음 소금", "?", `${numberPlain(totalSalt)}g`], ["남은 소금", "?", `${numberPlain(actual)}g`]], pools, solved, `${numberPlain(actual)}g`);
+        const promptVisual = `${visual(false)}${mathBoard("사용한 부분의 소금", row("소금물", `${rateA}% ${massA}g와 ${rateB}% ${massB}g`) + row("사용", `섞은 소금물 ${used}g`) + row("구할 것", "남은 소금의 양"), `data-source61-visual="mixture-sample-remainder"`)}`;
+        const answerVisual = `${visual(true)}${mathBoard("전체에서 사용한 만큼 빼기", row("전체 소금", `${numberPlain(totalSalt)}g`) + row("사용한 소금", `${numberPlain(totalSalt)}×${used}÷${totalMass}=${numberPlain(usedSalt)}g`) + row("답", `${numberPlain(totalSalt)}-${numberPlain(usedSalt)}=${numberPlain(actual)}g`))}`;
+        return fixedResult(`진하기가 ${rateA}%인 소금물 ${massA}g과 ${rateB}%인 소금물 ${massB}g을 섞었습니다. 이 중에서 소금물 ${used}g을 사용했다면 사용하고 남은 소금물에 들어 있는 소금의 양은 몇 g인지 구하세요.${promptVisual}`, `${numberPlain(actual)}g`, `처음 소금은 ${numberPlain(totalSalt)}g입니다. 사용한 ${used}g에 들어 있는 소금은 ${numberPlain(usedSalt)}g이므로 남은 소금은 ${numberPlain(totalSalt)}-${numberPlain(usedSalt)}=${numberPlain(actual)}g입니다.`, promptVisual, answerVisual, pools);
+      }
+
+      const pools = [[8, 500, 200, 200], [10, 600, 150, 150], [12, 400, 100, 100]][poolIndex];
+      const [initialRate, initialMass, poured, addedWater] = pools;
+      const initialSalt = rationalValue(initialMass * initialRate, 100);
+      const pouredSalt = rationalOperation(initialSalt, rationalValue(poured, initialMass), "×");
+      const remainingSalt = rationalOperation(initialSalt, pouredSalt, "-");
+      const finalMass = initialMass - poured + addedWater;
+      const actual = rationalValue(remainingSalt.numerator * 100, remainingSalt.denominator * finalMass);
+      const visual = solved => tableSvg("따라내고 물을 보충하기", [["처음 소금물", `${initialRate}% ${initialMass}g`, `${numberPlain(initialSalt)}g 소금`], ["따라낸 양", `${poured}g`, `${numberPlain(pouredSalt)}g 소금`], ["더한 물", `${addedWater}g`, `전체 ${finalMass}g`], ["새 진하기", "?", `${decimalRational(actual, 2)}%`]], pools, solved, `${decimalRational(actual, 2)}%`);
+      const promptVisual = `${visual(false)}${mathBoard("물만 더해지는 단계", row("처음", `${initialRate}% 소금물 ${initialMass}g`) + row("변화", `${poured}g을 따라내고 물 ${addedWater}g 추가`) + row("구할 것", "새 소금물의 진하기"), `data-source61-visual="refill-concentration"`)}`;
+      const answerVisual = `${visual(true)}${mathBoard("따라낸 소금과 남은 소금", row("처음 소금", `${initialMass}×${initialRate}%=${numberPlain(initialSalt)}g`) + row("남은 소금", `${numberPlain(initialSalt)}-${numberPlain(pouredSalt)}=${numberPlain(remainingSalt)}g`) + row("답", `${numberPlain(remainingSalt)}÷${finalMass}×100=${decimalRational(actual, 2)}%`))}`;
+      return fixedResult(`진하기가 ${initialRate}%인 소금물 ${initialMass}g 중에서 소금물 ${poured}g을 따라낸 후 같은 양의 물을 다시 부었습니다. 이때 소금물의 진하기는 몇 %인지 구하세요.${promptVisual}`, `${decimalRational(actual, 2)}%`, `처음 소금은 ${numberPlain(initialSalt)}g이고, 따라낸 ${poured}g에 소금 ${numberPlain(pouredSalt)}g도 함께 들어 있습니다. 남은 소금은 ${numberPlain(remainingSalt)}g, 전체는 ${finalMass}g이므로 진하기는 ${numberPlain(remainingSalt)}÷${finalMass}×100=${decimalRational(actual, 2)}%입니다.`, promptVisual, answerVisual, pools);
+    },
     sourceGrade6FractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u1-e1-example-1", "6-1-u1-e1-example-2", "6-1-u1-e1-example-3", "6-1-u1-e1-example-4",
@@ -23821,6 +24031,7 @@
       "6-1-u3-e4-exploration-1", "6-1-u3-e4-example-2", "6-1-u3-e4-example-3", "6-1-u3-e4-example-4",
       "6-1-u3-e4-mission-1", "6-1-u3-e4-mission-2", "6-1-u3-e4-mission-3", "6-1-u3-e4-mission-5", "6-1-u3-e4-mission-6"
     ].includes(type.sourceItemId), "sourceGrade6DecimalDivisionE4"],
+    [type => type.sourceItemId?.startsWith("6-1-u4-e4-"), "sourceGrade6RatioE4"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],

@@ -21,15 +21,15 @@
     "answerContractMeaning": "candidate는 정답 형식 후보일 뿐, 원문 정답이나 출제 가능 판정이 아닙니다."
   },
   "integrity": {
-    "expectedTotalItems": 264,
-    "actualTotalItems": 264,
+    "expectedTotalItems": 265,
+    "actualTotalItems": 265,
     "expectedBySection": {
-      "exploration": 24,
+      "exploration": 25,
       "example": 96,
       "mission": 144
     },
     "actualBySection": {
-      "exploration": 24,
+      "exploration": 25,
       "example": 96,
       "mission": 144
     },
@@ -37,7 +37,7 @@
       "6-1-u1": 22,
       "6-1-u2": 44,
       "6-1-u3": 44,
-      "6-1-u4": 66,
+      "6-1-u4": 67,
       "6-1-u5": 44,
       "6-1-u6": 44
     },
@@ -59,8 +59,8 @@
       },
       "6-1-u4": {
         "unitName": "비와 비율",
-        "expectedItems": 66,
-        "actualItems": 66
+        "expectedItems": 67,
+        "actualItems": 67
       },
       "6-1-u5": {
         "unitName": "여러 가지 그래프",
@@ -78,9 +78,10 @@
     "checks": {
       "totalMatchesExpected": true,
       "everyItemHasRequiredIdentity": true,
-      "everyItemLocked": true,
-      "noItemClaimsDirectVerification": true,
-      "identifiersUnique": true
+      "everyItemLocked": false,
+      "noItemClaimsDirectVerification": false,
+      "identifiersUnique": true,
+      "verifiedItemsHavePublicMapping": false
     }
   },
   "items": [
@@ -2384,20 +2385,38 @@
       "publicSourceItemId": "6-1-u4-e3-mission-6"
     },
     {
-      "sourceItemId": "6-1-u4-e4-exploration",
+      "sourceItemId": "6-1-u4-e4-exploration-1",
       "unitId": "6-1-u4",
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 31,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 36,
+      "visualRisk": "정가·원가·할인 가격과 각 판매 수량, 판매하지 않은 수량이 한 표에서 정확히 대응해야 함",
       "section": "exploration",
       "ordinal": 1,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "수박의 개당 원가와 정가를 구하고 정가 판매, 원가 판매, 할인 판매 수량을 나누어 전체 이익을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-exploration-4-1"
+    },
+    {
+      "sourceItemId": "6-1-u4-e4-exploration-2",
+      "unitId": "6-1-u4",
+      "unitName": "비와 비율",
+      "exploration": 4,
+      "pdfPage": 31,
+      "printedPage": 36,
+      "visualRisk": "섞기 전 두 소금물, 사용한 혼합물, 남은 혼합물, 더한 물을 서로 다른 단계로 표시해야 함",
+      "section": "exploration",
+      "ordinal": 2,
+      "sourceShape": "두 소금물을 섞고 일부를 사용한 뒤 물을 더하여 남은 소금 양과 전체 양으로 새 진하기를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-exploration-4-2"
     },
     {
       "sourceItemId": "6-1-u4-e4-example-1",
@@ -2405,15 +2424,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 31,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 36,
+      "visualRisk": "상자 수, 한 상자의 개수, 전체 개수, 원가와 판매가의 기준이 바뀌지 않아야 함",
       "section": "example",
       "ordinal": 1,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "상자 수와 상자마다 든 과일 수로 전체 개수를 구하고 판매액과 원가의 차를 원가에 대한 비율로 나타냄",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-example-4-1"
     },
     {
       "sourceItemId": "6-1-u4-e4-example-2",
@@ -2421,15 +2441,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 31,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 36,
+      "visualRisk": "처음 정가와 다시 올린 정가를 구분하고, 답 할인율과 그 다음 할인율의 판매가를 모두 비교해야 함",
       "section": "example",
       "ordinal": 2,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원가에 이익을 붙인 정가를 다시 올린 뒤 정수 퍼센트로 할인할 때 손해가 생기지 않는 가장 큰 할인율을 경계값으로 찾음",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-example-4-2"
     },
     {
       "sourceItemId": "6-1-u4-e4-example-3",
@@ -2437,15 +2458,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 31,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 36,
+      "visualRisk": "증발하는 것은 물뿐이며 설탕 양은 그대로라는 점과 증발 전후 전체 양을 표시해야 함",
       "section": "example",
       "ordinal": 3,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "설탕물에서 물만 증발할 때 설탕 양은 그대로임을 이용해 줄어든 전체 양의 진하기를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-example-4-3"
     },
     {
       "sourceItemId": "6-1-u4-e4-example-4",
@@ -2453,15 +2475,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 31,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 36,
+      "visualRisk": "섞은 전체와 덜어낸 양을 구분하고 덜어낸 혼합물에도 같은 진하기를 적용해야 함",
       "section": "example",
       "ordinal": 4,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 소금물을 섞어 전체 진하기를 구한 뒤 덜어낸 혼합물에 든 소금 양을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-example-4-4"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-1",
@@ -2469,15 +2492,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 32,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 37,
+      "visualRisk": "책 이름, 정가, 할인 가격이 같은 열에 맞고 네 할인율이 서로 달라야 함",
       "section": "mission",
       "ordinal": 1,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "책 종류별 정가와 할인 가격으로 할인율을 각각 계산해 큰 순서로 배열함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-mission-1"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-2",
@@ -2485,15 +2509,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 32,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 37,
+      "visualRisk": "연필 1타와 노트 5권의 묶음 단위, 구입 수량, 할인 대상이 연필뿐임을 표에서 분리해야 함",
       "section": "mission",
       "ordinal": 2,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "연필과 노트의 묶음 가격을 낱개 가격으로 바꾸고 노트값을 먼저 빼서 연필에 적용된 할인율을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-mission-2"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-3",
@@ -2501,15 +2526,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 32,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 37,
+      "visualRisk": "100개의 판매 수량이 세 경우로 정확히 나뉘고 각 경우의 판매 가격이 같은 행에 맞아야 함",
       "section": "mission",
       "ordinal": 3,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "과일을 정가, 할인 가격, 정가의 절반으로 나누어 팔고 전체 판매액에서 원가를 빼 이익을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-mission-3"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-4",
@@ -2517,15 +2543,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 32,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 37,
+      "visualRisk": "두 설탕물의 양과 설탕 양을 같은 단계에서 더하고 전체 혼합임을 표시해야 함",
       "section": "mission",
       "ordinal": 4,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "서로 다른 진하기와 양의 설탕물을 모두 섞어 설탕의 합과 전체 양으로 새 진하기를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-mission-4"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-5",
@@ -2533,15 +2560,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 32,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 37,
+      "visualRisk": "섞은 전체, 덜어낸 혼합물, 남은 혼합물의 양과 소금 양을 각각 표시해야 함",
       "section": "mission",
       "ordinal": 5,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 소금물을 섞고 일부를 덜어낸 뒤 처음 소금 양에서 빠진 소금 양을 빼 남은 소금 양을 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-mission-5"
     },
     {
       "sourceItemId": "6-1-u4-e4-mission-6",
@@ -2549,15 +2577,16 @@
       "unitName": "비와 비율",
       "exploration": 4,
       "pdfPage": 32,
-      "printedPage": null,
-      "visualRisk": "비의 순서, 기준량, 백분율의 기준 전체를 명확히 표시해야 하며, 띠·표·그림이 있으면 각 부분의 대응 관계와 단위를 가시적으로 확인해야 함",
+      "printedPage": 37,
+      "visualRisk": "따라내는 것은 물만이 아니라 섞인 소금물이고, 더하는 것은 물뿐이라는 차이를 단계로 표시해야 함",
       "section": "mission",
       "ordinal": 6,
-      "sourceShape": "가격, 할인, 이익 또는 진하기 조건을 비율로 나타내어 필요한 값을 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "소금물을 일부 따라내어 소금과 물이 같은 비율로 줄어든 뒤 물만 더해 새 진하기를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 직접 대조, 독립 계산, 고정 3문항, 문제·답 그림, PC·모바일·A4 검수를 통과한 뒤 공개합니다.",
+      "publicSourceItemId": "6-1-u4-e4-mission-6"
     },
     {
       "sourceItemId": "6-1-u4-e5-exploration",
