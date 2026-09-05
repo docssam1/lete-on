@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const { buildTasks } = require('./generate-alpha-prep-peer-audio.js');
 
 const source = fs.readFileSync(path.join(__dirname, '..', 'reading-world', 'alpha-prep', 'data.js'), 'utf8');
 const sandbox = { window: {} };
@@ -70,4 +71,10 @@ for (const id of ids) {
 assert.deepEqual(Array.from(peers, (peer) => peer.name), ['Mina', 'Emma', 'Noah']);
 assert.deepEqual(Array.from(peers, (peer) => peer.seat), [1, 3, 4]);
 assert.deepEqual(Array.from(peers, (peer) => peer.gender), ['female', 'female', 'male']);
+const audioTasks = buildTasks(sandbox.window);
+const audioManifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'reading-world', 'alpha-prep', 'peer-audio-manifest.json'), 'utf8'));
+assert.equal(audioTasks.length, 20);
+for (const task of audioTasks) {
+  assert.equal(audioManifest.files[task.storagePath]?.fingerprint, task.fingerprint, `stale peer audio manifest: ${task.storagePath}`);
+}
 console.log('alpha-prep content: 10 sets, 20 passages, all checks passed');
