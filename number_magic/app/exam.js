@@ -19,16 +19,26 @@
   .nm-print-sheet { display: block !important; font-family: sans-serif; }
   /* 이름 워터마크 — fixed는 인쇄에서 페이지마다 반복된다. 문제를 가리지 않게
      아주 옅게(6%), 흑백 프린터에서도 회색 띠가 아닌 큰 글자로 남는다. */
+  .nm-print-wm { display: block !important; position: fixed; top: 46%; left: 0; right: 0;
+    text-align: center; transform: rotate(-27deg); font-size: 46px; font-weight: 900;
+    color: #1A2233; opacity: .06; letter-spacing: .12em; pointer-events: none; z-index: 0;
+    white-space: nowrap; }
+}
+/* ── 조판 규칙(레이아웃·타이포)만 화면에서도 켠다(2026-09-05, 인쇄 미리보기
+   편집기 openPrintEditor) — renderRoundPages 등이 만드는 같은 HTML을 그대로
+   화면에 얹어 보여주기 위해서다. 위 블록의 두 규칙(전체 숨기고 .nm-print-sheet만
+   보이기·워터마크 fixed 오버레이)은 실제 인쇄에만 필요해 print 전용으로 남겨
+   뒀다 — 이 아래는 전부 특정 클래스(.nm-print-*, .nm-w2-*, .nm-cv-*, .nm-ak-*,
+   .nm-cp-*, .nm-b10*, .nm-nl*, .nm-bond*, .nm-pp-*)에만 걸리는 순수 조판
+   규칙이라, 그 클래스를 달지 않는 일반 화면 UI에는 영향이 없다(전수 grep
+   확인, styles.css·main.js 어디도 이 접두어를 쓰지 않는다). */
+@media print, screen {
   .nm-print-plan { width: 100%; border-collapse: collapse; font-size: 0.95em; }
   .nm-print-plan th, .nm-print-plan td { border: 1px solid #999; padding: 7px 9px; text-align: left; vertical-align: top; }
   .nm-print-plan th { background: #f0f0f0; font-size: 0.85em; }
   .nm-print-plan .nm-pp-cal { white-space: nowrap; font-weight: 700; }
   .nm-print-plan .nm-pp-magic { font-weight: 700; }
   .nm-pp-note { margin-top: 12px; font-size: 0.85em; color: #555; }
-  .nm-print-wm { display: block !important; position: fixed; top: 46%; left: 0; right: 0;
-    text-align: center; transform: rotate(-27deg); font-size: 46px; font-weight: 900;
-    color: #1A2233; opacity: .06; letter-spacing: .12em; pointer-events: none; z-index: 0;
-    white-space: nowrap; }
   .nm-print-answer-key { page-break-before: always; }
   .nm-print-header { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 16px; }
   .nm-print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -1833,7 +1843,11 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
         `<div class="nm-print-step"><span class="nm-w2-tex" data-tex="${esc(texDisplay(s.tex||''))}"></span></div>`).join('')}</div>`
     : '';
   const rampPill = isFirstRamp ? `<span class="nm-w2-ramp-pill">${esc(lk('도전','Challenge','挑战'))}</span>` : '';
-  return `<div class="${cls}"><span class="nm-w2-num">(${num})</span>${rampPill}${askHtml}${inner}${stepsHtml}</div>`;
+  /* data-slot — buildProblems가 매긴 원래(정렬 전) 자리(§overrides). 실제 인쇄에는
+     아무 영향 없는 순수 데이터 속성이고, 인쇄 미리보기 편집기가 이 칸을 다시
+     지정할 때만 읽는다. */
+  const slotAttr = (p.__slot != null) ? ` data-slot="${esc(String(p.__slot))}"` : '';
+  return `<div class="${cls}"${slotAttr}><span class="nm-w2-num">(${num})</span>${rampPill}${askHtml}${inner}${stepsHtml}</div>`;
 }
 
 /* 정답지 항목 — 문항 번호와 같은 "(n)" 표기(§6 "정답지 번호가 문항 번호와 일치"). */
@@ -1998,11 +2012,12 @@ function w2ExampleHtml(threadId, level, code){
    (가)(나)(다)로 싣는다(w2GuidedAnswerKeyHtml). */
 const GUIDE_LABELS = { ko:['가','나','다'], en:['a','b','c'], zh:['甲','乙','丙'] };
 function guideLabels(){ return GUIDE_LABELS[examLang()] || GUIDE_LABELS.ko; }
-function w2GuidedHtml(threadId, level, code){
+function w2GuidedHtml(threadId, level, code, guideSeedOverride){
   const labs = guideLabels();
   const problems = [];
+  const seedBase = guideSeedOverride || ('guide' + code);
   const itemsHtml = [0, 1, 2].map(i => {
-    const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('guide' + code + i));
+    const rng = NM_RNG.mulberry32(NM_RNG.hashSeed(seedBase + i));
     const p = generateProblem(threadId, level, rng);
     problems.push(p);
     const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
@@ -2070,10 +2085,16 @@ function renderRoundPages(item, opts){
   opts = opts || {};
   const count = opts.count || 20;
   const numericSeed = NM_RNG.hashSeed(item.seed);
-  let problems = buildProblems(item.thread, item.level, count, numericSeed);
+  let problems = buildProblems(item.thread, item.level, count, numericSeed, item.overrides);
   applyWordProblems(problems, item.wordType, numericSeed);
   if(BOND_THREADS[item.thread]) problems.forEach(p => { p.__bond = true; });
-  const code = NM_EXAM.worksheetCode({thread:item.thread, level:item.level, count, seed:item.seed});
+  /* baseCode(문항 덮어쓰기 반영 전)는 ★예시·따라풀기(기본 시드)의 씨앗으로만 쓴다 —
+     한 문항을 편집기에서 바꿔도 code가 바뀌어 예시·따라풀기까지 같이 바뀌면
+     "그 문항만 바뀐다"는 편집기의 전제가 깨진다(2026-09-05). 실제 회차 코드
+     (헤더·정답지·?ws= 되돌리기용)는 overrides/guideSeed까지 실은 code다. */
+  const baseCode = NM_EXAM.worksheetCode({thread:item.thread, level:item.level, count, seed:item.seed});
+  const code = NM_EXAM.worksheetCode({thread:item.thread, level:item.level, count, seed:item.seed,
+    overrides:item.overrides, guideSeed:item.guideSeed});
   const layout = classifyRoundLayout(problems, item.thread);
   problems = sortRoundProblems(problems, layout.type);
 
@@ -2106,8 +2127,8 @@ function renderRoundPages(item, opts){
   const exLevel = rampN ? (rampLevelFor(item.thread, item.level) || item.level) : item.level;
   /* 개념·예시·따라풀기는 첫 장 필수(토글 없음, v2.1 build 1). */
   const conceptHtml = w2ConceptPanelHtml(item.thread, item.level, {rampN});
-  const exampleHtml = w2ExampleHtml(item.thread, exLevel, code);
-  const guided = w2GuidedHtml(item.thread, item.level, code);
+  const exampleHtml = w2ExampleHtml(item.thread, exLevel, baseCode);
+  const guided = w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed);
 
   let num = 1;
   let rampTagged = false; // 도전 알약은 회차 전체에서 첫 램프 문항 하나에만(§build 6)
@@ -2299,7 +2320,14 @@ function rampLevelFor(threadId, lv){
 function rampCount(threadId, lv, count){
   return (count >= 8 && rampLevelFor(threadId, lv)) ? Math.round(count * 0.3) : 0;
 }
-function buildProblems(threadId, lv, count, seed){
+/* overrides(§인쇄 미리보기 편집기, 2026-09-05) — {slotIndex: seedString}. slotIndex는
+   이 함수가 만드는 순서 그대로(정렬 전, 0-base) — renderRoundPages가 나중에
+   sortRoundProblems로 순서를 바꾸므로, 화면에 보이는 위치와 다를 수 있다. 그래서
+   각 문항에 원래 자리를 __slot으로 남겨 둔다(정렬을 거쳐도 값은 그대로 딸려간다) —
+   편집기가 렌더된 칸의 data-slot을 읽어 그 자리를 다시 지정할 수 있게. 덮어쓴
+   문항은 그 자리가 원래 base였는지 ramp(램프 30%)였는지 그대로 유지한다(레벨이
+   갑자기 바뀌어 보이지 않도록). */
+function buildProblems(threadId, lv, count, seed, overrides){
   const rng = NM_RNG.mulberry32(seed);
   const problems = [];
   const nRamp = rampCount(threadId, lv, count);
@@ -2308,16 +2336,45 @@ function buildProblems(threadId, lv, count, seed){
     const useRamp = nRamp && i >= count - nRamp;
     const p = generateProblem(threadId, useRamp ? rampLv : lv, rng);
     if(useRamp) p.__ramp = true;
+    p.__slot = i;
     problems.push(p);
+  }
+  if(overrides){
+    Object.keys(overrides).forEach(key => {
+      const idx = parseInt(key, 10);
+      const seedStr = overrides[key];
+      if(!(idx >= 0 && idx < problems.length) || !seedStr) return;
+      const wasRamp = !!problems[idx].__ramp;
+      const orng = NM_RNG.mulberry32(NM_RNG.hashSeed(String(seedStr) + '#' + idx));
+      const np = generateProblem(threadId, wasRamp ? rampLv : lv, orng);
+      if(wasRamp) np.__ramp = true;
+      np.__slot = idx;
+      problems[idx] = np;
+    });
   }
   return problems;
 }
 
-/* 학습지 코드 → 설정 파싱 */
+/* 학습지 코드 → 설정 파싱. 기본형 뒤에 `~` 구간이 붙을 수 있다(인쇄 미리보기
+   편집기, 2026-09-05) — `~3.k9f2`(슬롯 3번 문항을 시드 k9f2로 다시 만듦),
+   `~g.zz12`(따라 풀기 3문항을 시드 zz12로 다시 만듦). 순서·개수 상관없음. */
 function parseWorksheetCode(code){
-  const m = code.match(/^#?([A-Z0-9]+)-L(\d+)x(\d+)-([a-z0-9]+)$/i);
+  const parts = String(code||'').split('~');
+  const m = parts[0].match(/^#?([A-Z0-9]+)-L(\d+)x(\d+)-([a-z0-9]+)$/i);
   if(!m) return null;
-  return { thread:m[1], level:parseInt(m[2]), count:parseInt(m[3]), seed:m[4] };
+  const result = { thread:m[1], level:parseInt(m[2]), count:parseInt(m[3]), seed:m[4] };
+  const overrides = {};
+  let guideSeed = null;
+  for(let i=1;i<parts.length;i++){
+    const seg = parts[i];
+    const gm = seg.match(/^g\.([a-z0-9]+)$/i);
+    if(gm){ guideSeed = gm[1]; continue; }
+    const om = seg.match(/^(\d+)\.([a-z0-9]+)$/i);
+    if(om) overrides[parseInt(om[1],10)] = om[2];
+  }
+  if(Object.keys(overrides).length) result.overrides = overrides;
+  if(guideSeed) result.guideSeed = guideSeed;
+  return result;
 }
 
 /* ────────────────────────────────────────────────────────
@@ -2332,8 +2389,15 @@ const NM_EXAM = {
 
   /* 학습지 코드 생성 */
   worksheetCode(config){
-    const { thread, level, count, seed } = config;
-    return `#${thread}-L${level}x${count}-${seed}`;
+    const { thread, level, count, seed, overrides, guideSeed } = config;
+    let code = `#${thread}-L${level}x${count}-${seed}`;
+    if(overrides){
+      Object.keys(overrides).map(k => parseInt(k,10)).filter(k => Number.isInteger(k) && overrides[k])
+        .sort((a,b) => a-b)
+        .forEach(k => { code += `~${k}.${overrides[k]}`; });
+    }
+    if(guideSeed) code += `~g.${guideSeed}`;
+    return code;
   },
 
   /* 학습지 코드 → 설정 파싱 (main.js의 ?ws= 도우미 화면이 사용). 실패 시 null. */
@@ -2947,9 +3011,13 @@ ${printWatermarkHtml()}
           if(!items.length) return;
           const off = courseStartOffset(courseKey);
           const cal = (off===null) ? '' : calLabelFor(off+sessionIdx)+' · ';
-          NM_EXAM.renderPrintMulti(items, `${cal}${courseKey}-S${sessionIdx+1}`, { mixed: roadCountMode });
-          if(opts.onPrinted) opts.onPrinted(printKey(courseKey, sessionIdx));
-          rerenderKeepScroll();
+          /* "발송 말고 고를 때는 제너레이터로"(2026-09-05) — 여기서는 더 이상
+             바로 인쇄하지 않는다. 편집기를 열고, 실제 인쇄 횟수 갱신은 편집기의
+             🖨 인쇄 버튼을 눌렀을 때(opts.onPrint)만 센다. */
+          NM_EXAM.openPrintEditor(items, `${cal}${courseKey}-S${sessionIdx+1}`, {
+            mixed: roadCountMode, courseKey,
+            onPrint: () => { if(opts.onPrinted) opts.onPrinted(printKey(courseKey, sessionIdx)); rerenderKeepScroll(); },
+          });
         }
 
         container.querySelectorAll('.nm-ex-road-print-btn, .nm-ex-road-reprint-btn').forEach(btn => {
@@ -3226,7 +3294,9 @@ ${printWatermarkHtml()}
           onStart && onStart(makeConfig());
         });
         container.querySelector('#nm-ex-print-start').addEventListener('click', () => {
-          NM_EXAM.renderPrint(makeConfig());
+          const cfg = makeConfig();
+          NM_EXAM.openPrintEditor([{ thread: cfg.thread, level: cfg.level, wordType: cfg.wordType,
+            seed: cfg.seed, topicName: cfg.topicName, grade: cfg.grade }], cfg.label, { count: cfg.count });
         });
       }
       render();
@@ -3314,7 +3384,9 @@ ${printWatermarkHtml()}
         onStart && onStart(getConfig());
       });
       container.querySelector('#nm-ex-print').addEventListener('click', () => {
-        NM_EXAM.renderPrint(getConfig());
+        const cfg = getConfig();
+        NM_EXAM.openPrintEditor([{ thread: cfg.thread, level: cfg.level, seed: cfg.seed }],
+          cfg.label, { count: cfg.count });
       });
 
       refreshLevels();
@@ -3325,9 +3397,9 @@ ${printWatermarkHtml()}
 
   /* ── 2. 시험 실행 (순차) ── */
   runExam(config, container, onDone){
-    const { thread, level, count, timer, seed, wordType } = config;
+    const { thread, level, count, timer, seed, wordType, overrides } = config;
     const numericSeed = NM_RNG.hashSeed(seed);
-    const problems = buildProblems(thread, level, count, numericSeed);
+    const problems = buildProblems(thread, level, count, numericSeed, overrides);
     /* 문장제 유형 — 인쇄(renderPrint)만 적용되고 화면 풀이는 빠져 있던 것을 통일
        (2026-08-31, 문제은행에서 문장제 선택 지원). 렌더는 아래 p.word 분기가 이미 처리. */
     applyWordProblems(problems, wordType, numericSeed);
@@ -3620,7 +3692,373 @@ ${answerSectionsHtml}`;
     });
 
     setTimeout(() => { window.print(); }, 350);
-  }
+  },
+
+  /* ── 5. 인쇄 미리보기 편집기 ──────────────────────────────────
+     "발송 말고 고를 때는 제너레이터로 바뀌도록"(원장 지시 2026-09-05) — 학습지의
+     모든 인쇄 진입점은 이제 여기를 거친다. 실제 window.print()는 이 화면의
+     🖨 인쇄 버튼(아래 #nm-pe-print)에서만 일어난다. 문항은 이미 있는 생성기
+     (buildProblems)가 그대로 만들고, 이 화면은 그 결과를 보여주며 슬롯 하나(🔄)·
+     회차 하나(🎲/유형 바꾸기)·전체(🎲 전체 새 문제)를 다시 만들 수 있게 한다.
+     items: [{thread, level, wordType?, seed, topicName?, overrides?, guideSeed?}, ...]
+     label: 표지·머리띠에 쓰이는 라벨(예: "AD5-S1", "9월 2주차 · C4-S1").
+     opts: {mixed?:10|20|40(유형당 문항 수) · count?:같은 뜻(단일 유형 흐름) ·
+            courseKey?:그룹 드롭다운 ①에 쓸 과정 키 · onPrint?:🖨 인쇄를 실제로
+            눌렀을 때 호출(인쇄 횟수 갱신 등, 인자 없음)}. */
+  openPrintEditor(items, label, opts){
+    opts = opts || {};
+    const old = document.getElementById('nm-pe-overlay');
+    if(old) old.remove();
+    if(!items || !items.length) return;
+
+    let rounds = items.map(it => ({
+      thread: it.thread, level: it.level, wordType: it.wordType || 'none',
+      seed: it.seed || NM_RNG.newCode(),
+      topicName: it.topicName, grade: it.grade,
+      overrides: Object.assign({}, it.overrides || {}),
+      guideSeed: it.guideSeed || null,
+    }));
+
+    /* 편집기 툴바는 유형당 문항 수를 10/20/40 세 개로만 제공한다(§build 3). 그 밖의
+       값(예: 교과 흐름의 15/25/30/50)이 넘어오면 가장 가까운 값으로 맞춘다 —
+       조용히 20으로 되돌리면 사용자가 고른 값과 너무 멀어질 수 있다. */
+    const rawCount = ([10,20,40].indexOf(opts.mixed) >= 0) ? opts.mixed
+      : (typeof opts.count === 'number') ? opts.count : 20;
+    let perTypeCount = [10,20,40].reduce((best, n) =>
+      Math.abs(n - rawCount) < Math.abs(best - rawCount) ? n : best, 20);
+    let coverOn = getCoverOn();
+
+    /* 그룹 드롭다운(①이 과정의 유형 ②복습 — 이전 과정 유형 ③전체) — courses.js·
+       threads.js를 전역에서 직접 읽는다(showRoadPick 클로저 밖에서도 호출될 수
+       있으므로 opts.courseKey 문자열만 받는다). */
+    function threadName(t){ return pickL(((window.NM_THREADS||{})[t]||{}).name) || t; }
+    function levelLabelOf(t, lv){
+      const th = (window.NM_THREADS||{})[t] || {};
+      const l = (th.levels||[]).find(x => x.id === lv);
+      return (l && l.label) ? (pickL(l.label) || ('Lv.'+lv)) : ('Lv.'+lv);
+    }
+    function defaultLevelOf(t){
+      const th = (window.NM_THREADS||{})[t] || {};
+      return (th.levels && th.levels[0]) ? th.levels[0].id : 1;
+    }
+    function courseDrillList(courseKey){
+      const c = (window.NM_COURSES||{})[courseKey]; if(!c) return [];
+      const seen = {}, out = [];
+      (c.sessions||[]).forEach(s => {
+        (s.test ? (s.pool||[]) : (s.drills||[])).forEach(d => {
+          const key = d.t+'-L'+d.lv;
+          if(seen[key]) return; seen[key] = true;
+          out.push({t:d.t, lv:d.lv});
+        });
+      });
+      return out;
+    }
+    function reviewDrillList(courseKey){
+      const COURSES = window.NM_COURSES || {};
+      const cur = COURSES[courseKey]; if(!cur) return [];
+      const seen = {}, out = [];
+      Object.keys(COURSES).forEach(k => {
+        const c = COURSES[k];
+        if(!c || (c.order||0) >= (cur.order||0)) return;
+        (c.sessions||[]).forEach(s => {
+          (s.test ? (s.pool||[]) : (s.drills||[])).forEach(d => {
+            const key = d.t+'-L'+d.lv;
+            if(seen[key]) return; seen[key] = true;
+            out.push({t:d.t, lv:d.lv});
+          });
+        });
+      });
+      return out;
+    }
+    const PE_GROUPS = [
+      {prefixes:['NS','AD'], label:{ko:'수와 덧셈',en:'Number & Addition',zh:'数与加法'}},
+      {prefixes:['SB'],      label:{ko:'뺄셈',en:'Subtraction',zh:'减法'}},
+      {prefixes:['ML'],      label:{ko:'곱셈',en:'Multiplication',zh:'乘法'}},
+      {prefixes:['DV'],      label:{ko:'나눗셈',en:'Division',zh:'除法'}},
+      {prefixes:['FR'],      label:{ko:'분수',en:'Fractions',zh:'分数'}},
+      {prefixes:['DC'],      label:{ko:'소수',en:'Decimals',zh:'小数'}},
+      {prefixes:['MX','EL'], label:{ko:'혼합·응용',en:'Mixed & Applied',zh:'混合与应用'}},
+      {prefixes:['CH'],      label:{ko:'경시',en:'Challenge',zh:'竞赛'}},
+      {prefixes:['MD'],      label:{ko:'중·고등',en:'Middle & High',zh:'初高中'}},
+      {prefixes:['NL'],      label:{ko:'수의 나라',en:'Number Land',zh:'数字王国'}},
+      {prefixes:['WP'],      label:{ko:'문장제',en:'Word Problems',zh:'应用题'}},
+    ];
+    function allThreadsGrouped(){
+      const TH = window.NM_THREADS || {};
+      const groups = PE_GROUPS.map(g => ({label:g.label, items:[]}));
+      const other = [];
+      Object.keys(TH).forEach(t => {
+        const prefix = t.replace(/[0-9].*$/, '');
+        const gi = PE_GROUPS.findIndex(g => g.prefixes.indexOf(prefix) >= 0);
+        const entry = {t, lv: defaultLevelOf(t)};
+        if(gi >= 0) groups[gi].items.push(entry); else other.push(entry);
+      });
+      if(other.length) groups.push({label:{ko:'기타',en:'Other',zh:'其他'}, items:other});
+      return groups.filter(g => g.items.length);
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'nm-pe-overlay';
+    overlay.id = 'nm-pe-overlay';
+    document.body.appendChild(overlay);
+
+    let pickTarget = null; // number(round idx) | 'add' | null
+
+    function closePicker(){
+      pickTarget = null;
+      const bd = overlay.querySelector('.nm-pe-pick-backdrop');
+      if(bd) bd.remove();
+    }
+    function openPicker(anchorBtn, target){
+      closePicker();
+      pickTarget = target;
+      const courseItems = opts.courseKey ? courseDrillList(opts.courseKey) : [];
+      const reviewItems = opts.courseKey ? reviewDrillList(opts.courseKey) : [];
+      const groups = allThreadsGrouped();
+      const rowBtn = (t, lv) => `<button class="nm-pe-pick-item" data-t="${esc(t)}" data-lv="${lv}">
+        <b>${esc(t)}</b><span>${esc(threadName(t))} · ${esc(levelLabelOf(t,lv))}</span></button>`;
+      let html = '';
+      if(courseItems.length) html += `<div class="nm-pe-pick-sec"><div class="nm-pe-pick-sec-h">① ${esc(lk('이 과정의 유형','This course','本课程'))}</div>${courseItems.map(d=>rowBtn(d.t,d.lv)).join('')}</div>`;
+      if(reviewItems.length) html += `<div class="nm-pe-pick-sec"><div class="nm-pe-pick-sec-h">② ${esc(lk('복습 — 이전 과정 유형','Review — earlier courses','复习——之前课程'))}</div>${reviewItems.map(d=>rowBtn(d.t,d.lv)).join('')}</div>`;
+      html += `<div class="nm-pe-pick-sec"><div class="nm-pe-pick-sec-h">③ ${esc(lk('전체','All types','全部'))}</div>`
+        + (groups.length ? groups.map(g => `<div class="nm-pe-pick-group-h">${esc(pickL(g.label))}</div>${g.items.map(d=>rowBtn(d.t,d.lv)).join('')}`).join('')
+          : `<div class="nm-pe-pick-empty">${esc(lk('유형 데이터를 불러오지 못했어요.','No thread data.','没有可用的类型数据。'))}</div>`)
+        + `</div>`;
+      const backdrop = document.createElement('div');
+      backdrop.className = 'nm-pe-pick-backdrop';
+      const panel = document.createElement('div');
+      panel.className = 'nm-pe-pick-panel';
+      panel.innerHTML = html;
+      backdrop.appendChild(panel);
+      overlay.appendChild(backdrop);
+      const r = anchorBtn.getBoundingClientRect();
+      const vw = window.innerWidth, vh = window.innerHeight;
+      panel.style.top = (r.bottom + 4) + 'px';
+      panel.style.left = r.left + 'px';
+      /* 화면 밖으로 나가면 안쪽으로 당긴다(패널 크기는 삽입 후에만 잴 수 있다) */
+      requestAnimationFrame(() => {
+        const pr = panel.getBoundingClientRect();
+        if(pr.right > vw - 8) panel.style.left = Math.max(8, vw - pr.width - 8) + 'px';
+        if(pr.bottom > vh - 8) panel.style.top = Math.max(8, r.top - pr.height - 4) + 'px';
+      });
+      backdrop.addEventListener('click', (e) => { if(e.target === backdrop) closePicker(); });
+      panel.querySelectorAll('.nm-pe-pick-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const t = btn.dataset.t, lv = parseInt(btn.dataset.lv, 10) || 1;
+          const tgt = pickTarget;
+          closePicker();
+          if(tgt === 'add'){
+            rounds.push({ thread:t, level:lv, wordType:'none', seed:NM_RNG.newCode(),
+              overrides:{}, guideSeed:null });
+            renderAll();
+          } else if(typeof tgt === 'number'){
+            rounds[tgt] = Object.assign({}, rounds[tgt], { thread:t, level:lv,
+              seed:NM_RNG.newCode(), overrides:{}, guideSeed:null });
+            mountRound(tgt);
+            updateCodeLine();
+            applyScale();
+          }
+        });
+      });
+    }
+
+    function compositeCode(){
+      return rounds.map(r => r.__code || '').filter(Boolean).join(' + ');
+    }
+    function updateCodeLine(){
+      const el = overlay.querySelector('#nm-pe-code-text');
+      if(el) el.textContent = compositeCode();
+    }
+
+    function attachCellSwap(roundEl, idx){
+      roundEl.querySelectorAll('.nm-w2-item[data-slot]').forEach(cell => {
+        cell.style.position = 'relative';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'nm-pe-cell-swap';
+        btn.title = lk('새 문제','New problem','换一题');
+        btn.textContent = '🔄';
+        btn.addEventListener('click', (e) => {
+          e.preventDefault(); e.stopPropagation();
+          const slot = cell.getAttribute('data-slot');
+          rounds[idx].overrides[slot] = NM_RNG.newCode();
+          mountRound(idx);
+          updateCodeLine();
+          applyScale();
+        });
+        cell.appendChild(btn);
+      });
+    }
+    function attachGuideReroll(roundEl, idx){
+      const title = roundEl.querySelector('.nm-w2-guide-title');
+      if(!title) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'nm-pe-guide-reroll';
+      btn.textContent = '🔄 ' + lk('따라 풀기 새로','New guide set','换一组示范题');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        rounds[idx].guideSeed = NM_RNG.newCode();
+        mountRound(idx);
+        updateCodeLine();
+        applyScale();
+      });
+      title.appendChild(btn);
+    }
+
+    function roundHeadHtml(idx){
+      const r = rounds[idx];
+      const th = (window.NM_THREADS||{})[r.thread] || {};
+      const levels = th.levels || [{id:r.level}];
+      return `<div class="nm-pe-round-head">
+        <span class="nm-pe-round-name">${esc(threadName(r.thread))} · ${esc(levelLabelOf(r.thread, r.level))}</span>
+        <div class="nm-pe-round-actions">
+          <select class="nm-pe-lvl-sel" data-lvl-sel="${idx}">
+            ${levels.map(l => `<option value="${l.id}"${l.id===r.level?' selected':''}>${esc(pickL(l.label)||('Lv.'+l.id))}</option>`).join('')}
+          </select>
+          <button class="nm-pe-mini-btn" data-type-btn="${idx}">${esc(lk('유형 바꾸기 ▾','Change type ▾','换类型 ▾'))}</button>
+          <button class="nm-pe-mini-btn" data-reroll-btn="${idx}">🎲 ${esc(lk('이 유형 새 문제','New problems','换一批题'))}</button>
+          <button class="nm-pe-remove-btn" data-remove-btn="${idx}" ${rounds.length<=1?'disabled':''} title="${esc(lk('이 유형 지우기','Remove','删除'))}">×</button>
+        </div>
+      </div>`;
+    }
+
+    function mountRound(idx){
+      const roundEl = overlay.querySelector(`.nm-pe-round[data-round="${idx}"]`);
+      if(!roundEl) return;
+      const r = rounds[idx];
+      const built = renderRoundPages(r, { count: perTypeCount });
+      r.__code = built.code;
+      roundEl.setAttribute('data-code', built.code);
+      roundEl.innerHTML = roundHeadHtml(idx) + built.html;
+      roundEl.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex||'', el));
+      attachCellSwap(roundEl, idx);
+      attachGuideReroll(roundEl, idx);
+      bindRoundHeadControls(idx);
+    }
+
+    function bindRoundHeadControls(idx){
+      const roundEl = overlay.querySelector(`.nm-pe-round[data-round="${idx}"]`);
+      if(!roundEl) return;
+      const lvlSel = roundEl.querySelector(`[data-lvl-sel="${idx}"]`);
+      if(lvlSel) lvlSel.addEventListener('change', () => {
+        rounds[idx].level = parseInt(lvlSel.value, 10) || rounds[idx].level;
+        rounds[idx].overrides = {}; rounds[idx].guideSeed = null;
+        mountRound(idx); updateCodeLine(); applyScale();
+      });
+      const typeBtn = roundEl.querySelector(`[data-type-btn="${idx}"]`);
+      if(typeBtn) typeBtn.addEventListener('click', () => openPicker(typeBtn, idx));
+      const rerollBtn = roundEl.querySelector(`[data-reroll-btn="${idx}"]`);
+      if(rerollBtn) rerollBtn.addEventListener('click', () => {
+        rounds[idx].seed = NM_RNG.newCode();
+        rounds[idx].overrides = {}; rounds[idx].guideSeed = null;
+        mountRound(idx); updateCodeLine(); applyScale();
+      });
+      const removeBtn = roundEl.querySelector(`[data-remove-btn="${idx}"]`);
+      if(removeBtn) removeBtn.addEventListener('click', () => {
+        if(rounds.length <= 1) return;
+        rounds.splice(idx, 1);
+        renderAll();
+      });
+    }
+
+    function applyScale(){
+      const outer = overlay.querySelector('.nm-pe-scale-outer');
+      const wrap = overlay.querySelector('.nm-pe-scale-wrap');
+      const sheet = overlay.querySelector('.nm-pe-sheet');
+      if(!outer || !wrap || !sheet) return;
+      const availW = outer.clientWidth - 16;
+      const sheetW = sheet.offsetWidth || 1;
+      let scale = Math.min(1, availW / sheetW);
+      if(scale < 0.28) scale = 0.28;
+      wrap.style.transform = `scale(${scale})`;
+      wrap.style.height = (sheet.offsetHeight * scale) + 'px';
+    }
+
+    function toolbarHtml(){
+      return `<div class="nm-pe-toolbar">
+        <div class="nm-pe-toolbar-row">
+          <span class="nm-pe-title">🖨 ${esc(lk('학습지 미리보기','Worksheet preview','学习单预览'))} — ${esc(label||'')}</span>
+          <button class="nm-pe-close" id="nm-pe-close">${esc(lk('닫기 ✕','Close ✕','关闭 ✕'))}</button>
+        </div>
+        <div class="nm-pe-toolbar-row">
+          <span class="nm-pe-opt-label">${esc(lk('문항 수','Count','题量'))}</span>
+          <div class="nm-pe-seg" id="nm-pe-count-seg">
+            ${[10,20,40].map(n => `<button data-n="${n}" class="${perTypeCount===n?'sel':''}">${n}</button>`).join('')}
+          </div>
+          <label class="nm-ex-concept-toggle" style="margin-left:4px">
+            <input type="checkbox" id="nm-pe-cover-chk" ${coverOn?'checked':''}>
+            <span>📘 ${esc(lk('표지','Cover','封面'))}</span>
+          </label>
+          <button class="nm-pe-btn nm-pe-btn-ghost" id="nm-pe-reroll-all">🎲 ${esc(lk('전체 새 문제','New problems (all)','全部换题'))}</button>
+          <button class="nm-pe-btn nm-pe-btn-primary" id="nm-pe-print" style="margin-left:auto">🖨 ${esc(lk('인쇄','Print','打印'))}</button>
+        </div>
+        <div class="nm-pe-code-row">
+          <span>${esc(lk('코드','Code','代码'))}:</span>
+          <code id="nm-pe-code-text"></code>
+          <button class="nm-pe-copy-btn" id="nm-pe-copy">${esc(lk('복사','Copy','复制'))}</button>
+        </div>
+      </div>`;
+    }
+
+    function renderAll(){
+      closePicker();
+      overlay.innerHTML = toolbarHtml() + `
+        <div class="nm-pe-body">
+          <div class="nm-pe-scale-outer">
+            <div class="nm-pe-scale-wrap">
+              <div class="nm-pe-sheet" id="nm-pe-sheet">
+                ${rounds.map((r, i) => `<div class="nm-pe-round" data-round="${i}"></div>`).join('')}
+                <div class="nm-pe-add-row"><button class="nm-pe-add-btn" id="nm-pe-add">+ ${esc(lk('유형 추가','Add type','添加类型'))}</button></div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+      overlay.querySelector('#nm-pe-close').addEventListener('click', () => overlay.remove());
+      overlay.querySelectorAll('#nm-pe-count-seg button').forEach(b => {
+        b.addEventListener('click', () => {
+          perTypeCount = parseInt(b.dataset.n, 10) || 20;
+          renderAll();
+        });
+      });
+      const coverChk = overlay.querySelector('#nm-pe-cover-chk');
+      if(coverChk) coverChk.addEventListener('change', () => {
+        coverOn = coverChk.checked; setCoverOn(coverOn);
+      });
+      overlay.querySelector('#nm-pe-reroll-all').addEventListener('click', () => {
+        rounds.forEach(r => { r.seed = NM_RNG.newCode(); r.overrides = {}; r.guideSeed = null; });
+        rounds.forEach((_, i) => mountRound(i));
+        updateCodeLine();
+        applyScale();
+      });
+      overlay.querySelector('#nm-pe-add').addEventListener('click', (e) => openPicker(e.currentTarget, 'add'));
+      overlay.querySelector('#nm-pe-copy').addEventListener('click', () => {
+        const text = compositeCode();
+        try{ navigator.clipboard && navigator.clipboard.writeText(text); }catch(err){}
+      });
+      overlay.querySelector('#nm-pe-print').addEventListener('click', () => {
+        NM_EXAM.renderPrintMulti(rounds, label, { mixed: perTypeCount });
+        if(typeof opts.onPrint === 'function') opts.onPrint();
+      });
+
+      rounds.forEach((_, i) => mountRound(i));
+      updateCodeLine();
+      applyScale();
+    }
+
+    renderAll();
+    window.addEventListener('resize', applyScale);
+    /* overlay가 사라지면 리사이즈 리스너도 정리한다 — 안 그러면 편집기를 여러 번
+       열었다 닫을 때마다 죽은 리스너가 쌓인다. */
+    const mo = new MutationObserver(() => {
+      if(!document.body.contains(overlay)){
+        window.removeEventListener('resize', applyScale);
+        mo.disconnect();
+      }
+    });
+    mo.observe(document.body, { childList: true });
+  },
 
 }; // end NM_EXAM
 

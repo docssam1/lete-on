@@ -3404,8 +3404,10 @@ function screenMailbox(){
       /* 로드맵 세션 인쇄와 같은 20문항/페이지 경로(2026-09-04) — 드릴별 count를
          그대로 가중치(n)로 써서 한 세션을 한 장에 이어붙인다(exam.js
          buildMixedProblemSet 참조). */
+      /* "발송 말고 고를 때는 제너레이터로"(2026-09-05) — 바로 인쇄하지 않고
+         편집기를 먼저 연다(문항 스왑·유형 교체·인쇄는 편집기 안에서). */
       const items = env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
-      if(window.NM_EXAM && NM_EXAM.renderPrintMulti) NM_EXAM.renderPrintMulti(items, env.wsId, {mixed:20});
+      if(window.NM_EXAM && NM_EXAM.openPrintEditor) NM_EXAM.openPrintEditor(items, env.wsId, {mixed:20});
     };
     if(!S.mailbox.opened) S.mailbox.opened={};
     if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }

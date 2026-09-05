@@ -2117,3 +2117,99 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-sp-go{margin-top:2px}
 .nm-sp-soon{align-self:flex-start;margin-top:2px;font-size:11px;font-weight:800;color:var(--sub);
   background:#eee;border-radius:999px;padding:4px 10px}
+
+/* ============================================================
+   인쇄 미리보기 편집기 (nm-pe-*, 2026-09-05) — NM_EXAM.openPrintEditor
+   "발송 말고 고를 때는 제너레이터로" — 인쇄는 이 화면의 🖨 인쇄 버튼에서만
+   일어난다. 미리보기 본문은 exam.js가 renderRoundPages로 만든 그 HTML을
+   그대로 얹으므로(.nm-w2-*, .nm-print-* 등) 조판 CSS는 여기 없다(exam.js의
+   injectPrintCSS가 @media print, screen으로 화면에도 켜 둔다) — 여기는
+   편집기 자체의 크롬(툴바·드롭다운·swap 버튼)만.
+   ============================================================ */
+.nm-pe-overlay{position:fixed;inset:0;z-index:9000;background:#e9e7e1;
+  display:flex;flex-direction:column;font-family:'Pretendard',sans-serif}
+.nm-pe-toolbar{flex:none;background:#fff;border-bottom:1px solid var(--line);
+  padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.nm-pe-toolbar-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nm-pe-title{font-size:14.5px;font-weight:900;color:var(--blue-deep);flex:1;min-width:0;
+  word-break:keep-all}
+.nm-pe-close{border:1px solid var(--line);background:#fff;border-radius:10px;
+  padding:7px 13px;font-size:13px;font-weight:800;color:var(--sub);cursor:pointer;flex:none}
+.nm-pe-close:hover{background:var(--mist)}
+.nm-pe-opt-label{font-size:11.5px;font-weight:800;color:var(--sub);white-space:nowrap}
+.nm-pe-seg{display:flex;gap:4px;flex-wrap:wrap}
+.nm-pe-seg button{border:1px solid var(--line);background:var(--paper);border-radius:99px;
+  padding:5px 11px;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer}
+.nm-pe-seg button.sel{background:var(--blue);border-color:var(--blue);color:#fff}
+.nm-pe-btn{border:none;border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:800;
+  cursor:pointer;white-space:nowrap}
+.nm-pe-btn-primary{background:var(--blue-deep);color:#fff}
+.nm-pe-btn-primary:hover{background:#1a4d93}
+.nm-pe-btn-secondary{background:#f0f0f0;color:#374151}
+.nm-pe-btn-secondary:hover{background:#e6e6e6}
+.nm-pe-btn-ghost{background:none;border:1px solid var(--line);color:var(--sub)}
+.nm-pe-btn-ghost:hover{background:var(--mist)}
+.nm-pe-code-row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--sub)}
+.nm-pe-code-row code{font-size:11px;background:var(--mist);padding:3px 8px;border-radius:6px;
+  flex:1;min-width:0;word-break:break-all}
+.nm-pe-copy-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:3px 9px;
+  font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;flex:none}
+
+.nm-pe-body{flex:1;min-height:0;overflow:auto;padding:18px 10px 60px;
+  display:flex;justify-content:center}
+.nm-pe-scale-outer{width:100%;display:flex;justify-content:center;overflow-x:auto}
+.nm-pe-scale-wrap{transform-origin:top center;flex:none}
+.nm-pe-sheet{width:210mm;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.18);margin:0 auto}
+
+.nm-pe-round{margin-bottom:14px;border:1px solid #d8d3c5;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.nm-pe-round-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  background:#F5F3EE;border-bottom:1px solid #e2ddd0;padding:8px 12px}
+.nm-pe-round-name{font-size:12.5px;font-weight:900;color:var(--blue-deep);white-space:nowrap}
+.nm-pe-round-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-left:auto}
+.nm-pe-lvl-sel{border:1px solid var(--line);border-radius:8px;padding:4px 6px;font-size:11.5px;
+  background:#fff;color:var(--ink)}
+.nm-pe-mini-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 9px;
+  font-size:11.5px;font-weight:700;color:var(--ink);cursor:pointer;white-space:nowrap}
+.nm-pe-mini-btn:hover{background:var(--mist)}
+.nm-pe-remove-btn{border:1px solid #f0c9c2;background:#fff5f3;border-radius:8px;
+  width:26px;height:26px;font-size:14px;font-weight:800;color:#b8321f;cursor:pointer;line-height:1}
+.nm-pe-remove-btn:hover{background:#ffe4de}
+.nm-pe-remove-btn:disabled{opacity:.3;cursor:not-allowed}
+
+.nm-pe-add-row{padding:14px;text-align:center}
+.nm-pe-add-btn{border:1.5px dashed var(--gold-deep);background:#fffaf1;border-radius:12px;
+  padding:10px 20px;font-size:13px;font-weight:800;color:var(--blue-deep);cursor:pointer}
+.nm-pe-add-btn:hover{background:#fff3dd}
+
+/* 문항 칸 위 🔄 — 데스크탑은 hover로만, 터치 기기는 항상 보인다(§인쇄 미리보기 편집기).
+   .nm-w2-item은 exam.js 쪽 print/screen CSS가 이미 있어 여기서는 위치만 잡는다. */
+.nm-pe-cell-swap{position:absolute;top:2px;right:2px;z-index:5;border:1px solid var(--line);
+  background:#fff;border-radius:999px;width:20px;height:20px;font-size:10.5px;line-height:1;
+  cursor:pointer;opacity:0;transition:opacity .12s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.nm-w2-item:hover .nm-pe-cell-swap{opacity:1}
+@media (hover:none){ .nm-pe-cell-swap{opacity:1} }
+.nm-pe-guide-reroll{margin-left:8px;border:1px solid #d8d3c5;background:#fff;border-radius:999px;
+  padding:2px 9px;font-size:10.5px;font-weight:700;color:var(--sub);cursor:pointer;vertical-align:middle}
+.nm-pe-guide-reroll:hover{background:var(--mist)}
+
+/* 유형 바꾸기 그룹 드롭다운 */
+.nm-pe-pick-backdrop{position:fixed;inset:0;z-index:9010;background:transparent}
+.nm-pe-pick-panel{position:fixed;z-index:9011;background:#fff;border:1px solid var(--line);
+  border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.22);width:min(320px,90vw);
+  max-height:min(70vh,520px);overflow:auto;padding:6px}
+.nm-pe-pick-sec{margin-bottom:6px}
+.nm-pe-pick-sec-h{font-size:11px;font-weight:900;color:var(--blue-deep);padding:6px 8px 2px}
+.nm-pe-pick-group-h{font-size:10.5px;font-weight:800;color:var(--sub);padding:5px 8px 1px}
+.nm-pe-pick-item{display:flex;align-items:baseline;gap:6px;width:100%;text-align:left;
+  border:none;background:none;border-radius:8px;padding:6px 8px;font-size:12.5px;
+  color:var(--ink);cursor:pointer}
+.nm-pe-pick-item:hover{background:var(--mist)}
+.nm-pe-pick-item b{color:var(--blue-deep);font-weight:900;flex:none}
+.nm-pe-pick-item span{color:var(--sub);word-break:keep-all}
+.nm-pe-pick-empty{padding:10px;font-size:12px;color:var(--sub);text-align:center}
+
+@media (max-width:640px){
+  .nm-pe-title{font-size:13px}
+  .nm-pe-round-actions{width:100%;margin-left:0}
+  .nm-pe-body{padding:12px 4px 40px}
+}

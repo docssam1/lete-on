@@ -1221,12 +1221,17 @@ function bindHome(){
   var search = document.getElementById('dr-search');
   search.addEventListener('input', function(){ state.search = this.value; renderDrawer(); });
 
-  /* 코드로 시작 */
+  /* 코드로 시작 — NM_EXAM.parseWorksheetCode를 그대로 쓴다(직접 정규식을 다시
+     짜지 않음). 인쇄 미리보기 편집기(openPrintEditor)가 문항을 바꾼 코드는
+     기본형 뒤에 `~3.k9f2`(슬롯 덮어쓰기)·`~g.zz12`(따라 풀기 재시드) 구간이
+     붙는다 — parseWorksheetCode가 이를 overrides/guideSeed로 풀어 주므로
+     여기서는 그대로 넘기기만 하면 편집기에서 바꾼 그 문항 그대로 재현된다. */
   document.getElementById('dr-code-start').addEventListener('click', function(){
     var code = document.getElementById('dr-code-in').value.trim();
-    var m = code.match(/^#?([A-Z0-9]+)-L(\d+)x(\d+)-([a-z0-9]+)$/i);
-    if(!m){ alert(dt('코드 형식이 맞지 않아요.\n예) #AD2-L1x20-k3f9z','That code does not look right.\ne.g. #AD2-L1x20-k3f9z','代码格式不对。\n例：#AD2-L1x20-k3f9z')); return; }
-    showDrill({thread:m[1],level:parseInt(m[2]),count:parseInt(m[3]),timer:0,seed:m[4]});
+    var cfg = NM_EXAM.parseWorksheetCode(code);
+    if(!cfg){ alert(dt('코드 형식이 맞지 않아요.\n예) #AD2-L1x20-k3f9z','That code does not look right.\ne.g. #AD2-L1x20-k3f9z','代码格式不对。\n例：#AD2-L1x20-k3f9z')); return; }
+    showDrill({thread:cfg.thread, level:cfg.level, count:cfg.count, timer:0, seed:cfg.seed,
+      overrides:cfg.overrides, guideSeed:cfg.guideSeed});
   });
 
   document.getElementById('dr-code-in').addEventListener('keydown', function(e){
