@@ -4,7 +4,7 @@
 <!-- 단문(SMS 90바이트) 문자용 짧은 링크 (2026-09-06, 원장: "단문 문자로 간단히, 비용 아끼자").
      저장소 루트 /w/ 에 두는 이유: 단문 90바이트 안에 링크를 넣으려면 한 글자가 아쉽다(number_magic/ 경로면 13바이트 초과).
      형식: /w/?YYWW.TOKEN   → Storage 의 주간 학습지 PDF 로 이동
-           /w/?YYWW.COURSE  → number_magic/ws.html 웹 학습지(PDF 가 없을 때 폴백)
+           /w/?YYWW.COURSE  → number_magic/ws.html 웹 학습지(PDF 가 없을 때 폴백). COURSE-2 = 주 2회반 두 번째 회차
      예)  ?2636.e07b75a2129c  →  https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/nm-worksheets/2026-W36/e07b75a2129c.pdf
           ?2636.C4            →  ../ws.html?w=2026-W36&c=C4
      토큰은 HMAC 앞 8자(scripts/nm-weekly-worksheets.cjs). 라이선스 원문 없음. -->
@@ -21,7 +21,8 @@
   if(/^[0-9a-f]{8,}$/.test(part)){
     url = 'https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/nm-worksheets/' + week + '/' + part + '.pdf';
   }else{
-    url = '../number_magic/ws.html?w=' + week + '&c=' + encodeURIComponent(part);
+    var ck = /^(.+)-(\d)$/.exec(part); // 'C4-2' = 주 2회반 두 번째 회차
+    url = '../number_magic/ws.html?w=' + week + '&c=' + encodeURIComponent(ck ? ck[1] : part) + (ck ? '&k=' + ck[2] : '');
   }
   el.innerHTML = '열리지 않으면 <a href="' + url + '">여기</a>를 눌러 주세요.';
   location.replace(url);

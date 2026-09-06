@@ -17,6 +17,9 @@ on:
       week:
         description: '주차 강제 (예 2026-W36)'
         required: false
+      cadence:
+        description: '주 2회반이면 w2 (이름 지정 시)'
+        required: false
 
 jobs:
   build:
@@ -38,5 +41,5 @@ jobs:
           WEEK: ${{ github.event.inputs.week }}
         run: |
           ARGS=""
-          if [ -n "${{ github.event.inputs.name }}" ]; then ARGS="--name '${{ github.event.inputs.name }}' --course '${{ github.event.inputs.course }}'"; fi
+          if [ -n "${{ github.event.inputs.name }}" ]; then ARGS="--name '${{ github.event.inputs.name }}' --course '${{ github.event.inputs.course }}' --cadence '${{ github.event.inputs.cadence }}'"; fi
           eval node scripts/nm-weekly-worksheets.cjs $ARGS

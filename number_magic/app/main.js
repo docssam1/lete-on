@@ -5056,12 +5056,19 @@ function renderNotifyCard(){
       <button class="nm-btn small" id="nmNotifyGo">${lk('등록','Register','登记')}</button>
     </div>
     <div class="nm-notify-row nm-notify-dow">
-      <span>${lk('받는 요일','Send on','发送日')}</span>
+      <span>${S.roadCadence==='w2'?lk('1회차 요일','1st day','第1次'):lk('받는 요일','Send on','发送日')}</span>
       <select id="nmNotifyDow">
         <option value="">${lk('학원 기본(월요일)','Academy default (Monday)','学院默认（周一）')}</option>
         ${[1,2,3,4,5,6,0].map(d=>`<option value="${d}">${lk(['일','월','화','수','목','금','토'][d]+'요일',['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d],['周日','周一','周二','周三','周四','周五','周六'][d])}</option>`).join('')}
       </select>
     </div>
+    ${S.roadCadence==='w2'?`<div class="nm-notify-row nm-notify-dow">
+      <span>${lk('2회차 요일','2nd day','第2次')}</span>
+      <select id="nmNotifyDow2">
+        <option value="">${lk('학원 기본(목요일)','Academy default (Thursday)','学院默认（周四）')}</option>
+        ${[1,2,3,4,5,6,0].map(d=>`<option value="${d}">${lk(['일','월','화','수','목','금','토'][d]+'요일',['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d],['周日','周一','周二','周三','周四','周五','周六'][d])}</option>`).join('')}
+      </select>
+    </div>`:''}
     <label class="nm-notify-consent">
       <input type="checkbox" id="nmNotifyConsent">
       <span>${lk('학습 안내 발송을 위한 전화번호 수집·이용에 동의합니다(수신 해지 시까지 보관).',
@@ -5087,7 +5094,8 @@ function renderNotifyCard(){
         method:'POST',headers:sbHdr(),
         body:JSON.stringify({profile_name:S.name||('#'+(S.character&&S.character.number)),
           phone:raw,consent:true,consent_at:new Date().toISOString(),
-          send_dow:($('#nmNotifyDow').value==='')?null:Number($('#nmNotifyDow').value)})});
+          send_dow:($('#nmNotifyDow').value==='')?null:Number($('#nmNotifyDow').value),
+          send_dow2:(!$('#nmNotifyDow2')||$('#nmNotifyDow2').value==='')?null:Number($('#nmNotifyDow2').value)})});
       if(r.ok||r.status===409){ /* 409=이미 등록(같은 프로필·번호) — 성공 취급 */
         S.notifyReg=raw.slice(0,3)+'-****-'+raw.slice(-4);
         save();

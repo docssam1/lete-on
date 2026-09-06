@@ -9,7 +9,8 @@
      앱의 편지함 봉투(main.js envelopeForWeek)와 같은 규칙으로 학습지를 다시 그린다:
        주차(w) + 과정(c) → primarySessionOf(course).drills, 항목 시드 = envItemSeed(w, c, i)
      그래서 링크만으로 학생이 앱에서 보는 것과 같은 문항이 나온다(Math.random 없음).
-     쿼리: ?w=2026-W36&c=C4&n=이름[&auto=0][&l=ko|en|zh]
+     쿼리: ?w=2026-W36&c=C4&n=이름[&k=1|2][&auto=0][&l=ko|en|zh]
+       k=2     — 주 2회반의 그 주 두 번째 학습지: 기본 세션의 다음 세션 드릴 + 시드 접미사 '-2' (k=1 은 앱 봉투와 동일).
        auto=0  — 인쇄 대화상자를 자동으로 띄우지 않는다(PDF 생성기 scripts/nm-weekly-worksheets.cjs 가 쓴다).
      앱 상태(main.js)는 싣지 않는다. 라이선스 원문 없음 — 전부 생성기 산출물. -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -99,10 +100,18 @@
   }
   var course = window.NM_COURSES && NM_COURSES[c];
   if(!c || !course) return fail('학습지 주소가 올바르지 않아요. (과정 ' + (c||'없음') + ')');
+  var k = Math.max(1, Math.min(2, parseInt(q.get('k') || '1', 10) || 1));
   var session = primarySessionOf(course);
+  if(k === 2 && session){
+    /* 주 2회반 두 번째 회차: 기본 세션 다음의(시험 아닌) 세션. 없으면 같은 세션에 다른 시드. */
+    var list = (course.sessions || []).filter(function(s){ return !s.test; });
+    var idx = list.indexOf(session);
+    if(list.length > 1) session = list[(idx + 1) % list.length];
+  }
   if(!session || !(session.drills||[]).length) return fail('이 과정에는 아직 학습지가 없어요.');
-  var items = session.drills.map(function(d,i){ return { thread:d.t, level:d.lv, n:d.n, seed: envItemSeed(w, c, i) }; });
-  var wsId = 'W' + w + '-' + c;
+  var seedWeek = k === 2 ? (w + '-2') : w;
+  var items = session.drills.map(function(d,i){ return { thread:d.t, level:d.lv, n:d.n, seed: envItemSeed(seedWeek, c, i) }; });
+  var wsId = 'W' + w + '-' + c + (k === 2 ? '-2' : '');
   var title = (course.title && (course.title.ko || course.title)) || c;
   document.title = 'Numbers of Magic — ' + wsId;
   sub.textContent = (name ? name + ' · ' : '') + w + ' · ' + c + '. ' + title;

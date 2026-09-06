@@ -8,7 +8,7 @@
  *
  * env: SUPABASE_SERVICE_ROLE_KEY(필수) · SUPABASE_URL(기본 프로젝트) · BASE_URL(기본: 저장소 루트를 로컬로 띄움)
  *      WEEK(주차 강제, 예 2026-W36) · DRY=1(업로드 없이 PDF만 ./out/ 에)
- * 수동: node scripts/nm-weekly-worksheets.cjs --name 홍길동 --course C4   (연락처 없이 한 명만)
+ * 수동: node scripts/nm-weekly-worksheets.cjs --name 홍길동 --course C4 [--cadence w2]   (연락처 없이 한 명만; w2면 k=1,2 두 벌)
  */
 'use strict';
 const path = require('path');
@@ -42,14 +42,14 @@ async function sb(pathname, init = {}) {
 
 async function listTargets() {
   const name = argOf('--name'), course = argOf('--course');
-  if (name) return [{ name, courseKey: course || '' }];
+  if (name) return [{ name, courseKey: course || '', cadence: argOf('--cadence') === 'w2' ? 'w2' : 'w1' }];
   const contacts = await sb('/rest/v1/nm_contacts?select=profile_name&active=eq.true&consent=eq.true');
   const names = [...new Set(contacts.map(c => c.profile_name).filter(Boolean))];
   const out = [];
   for (const n of names) {
     const prof = await sb(`/rest/v1/nm_profiles?select=state&name=eq.${encodeURIComponent(n)}&limit=1`);
     const st = prof && prof[0] && prof[0].state || {};
-    out.push({ name: n, courseKey: st.weeklyDigest && st.weeklyDigest.courseKey || '' });
+    out.push({ name: n, courseKey: st.weeklyDigest && st.weeklyDigest.courseKey || '', cadence: st.roadCadence === 'w2' ? 'w2' : 'w1' });
   }
   return out;
 }
@@ -82,7 +82,9 @@ async function main() {
   try {
     for (const t of targets) {
       if (!t.courseKey) { console.log(`[ws] skip ${t.name}: weeklyDigest.courseKey 없음(앱에서 로드맵을 아직 안 열었음)`); skip++; continue; }
-      const url = `${base}/number_magic/ws.html?w=${WEEK}&c=${encodeURIComponent(t.courseKey)}&n=${encodeURIComponent(t.name)}&auto=0`;
+      const ks = t.cadence === 'w2' ? [1, 2] : [1]; // 주 2회반은 그 주 학습지 두 벌
+      for (const k of ks) {
+      const url = `${base}/number_magic/ws.html?w=${WEEK}&c=${encodeURIComponent(t.courseKey)}&n=${encodeURIComponent(t.name)}&k=${k}&auto=0`;
       const page = await browser.newPage({ viewport: { width: 900, height: 1200 } });
       try {
         await page.goto(url, { waitUntil: 'load', timeout: 60000 });
@@ -91,16 +93,17 @@ async function main() {
         if (ready !== true) throw new Error('ws.html 렌더 실패: ' + await page.evaluate(() => (document.querySelector('.ws-err') || {}).textContent));
         await page.emulateMedia({ media: 'print' });
         const pdf = await page.pdf({ format: 'A4', printBackground: true, margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' } });
-        const token = crypto.createHmac('sha256', KEY || 'dry').update(`${t.name}|${WEEK}|${t.courseKey}`).digest('hex').slice(0, 8); // 8자: 단문(90바이트) 짧은 링크(/w/)용
+        const token = crypto.createHmac('sha256', KEY || 'dry').update(`${t.name}|${WEEK}|${t.courseKey}${k > 1 ? '|' + k : ''}`).digest('hex').slice(0, 8); // 8자: 단문(90바이트) 짧은 링크(/w/)용
         const objPath = `${WEEK}/${token}.pdf`;
-        if (DRY) { fs.writeFileSync(path.join(outDir, objPath.replace('/', '_')), pdf); console.log(`[ws] DRY ${t.name} → out/${objPath.replace('/', '_')} (${pdf.length}B)`); okN++; continue; }
+        if (DRY) { fs.writeFileSync(path.join(outDir, objPath.replace('/', '_')), pdf); console.log(`[ws] DRY ${t.name} k=${k} → out/${objPath.replace('/', '_')} (${pdf.length}B)`); okN++; continue; }
         await sb(`/storage/v1/object/nm-worksheets/${objPath}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf', 'x-upsert': 'true' }, body: pdf });
         const publicUrl = `${SB_URL}/storage/v1/object/public/nm-worksheets/${objPath}`;
         await sb('/rest/v1/nm_weekly_pdf', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
-          body: JSON.stringify({ profile_name: t.name, week_key: WEEK, course_key: t.courseKey, url: publicUrl }) });
-        console.log(`[ws] ok ${t.name} ${t.courseKey} → ${publicUrl} (${pdf.length}B)`); okN++;
-      } catch (e) { console.error(`[ws] FAIL ${t.name}: ${e && e.message || e}`); fail++; }
+          body: JSON.stringify({ profile_name: t.name, week_key: WEEK, k, course_key: t.courseKey, url: publicUrl }) });
+        console.log(`[ws] ok ${t.name} ${t.courseKey} k=${k} → ${publicUrl} (${pdf.length}B)`); okN++;
+      } catch (e) { console.error(`[ws] FAIL ${t.name} k=${k}: ${e && e.message || e}`); fail++; }
       finally { await page.close(); }
+      }
     }
   } finally { await browser.close(); if (srv) srv.kill(); }
   console.log(`[ws] done ok=${okN} skip=${skip} fail=${fail}`);

@@ -1,7 +1,9 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v14
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v15
 // 트리거: POST { trigger_key, dry?, test_phone?, probe?, force? }  — pg_cron(매시 정각) 또는 수동 curl.
 //   발송 요일·시각(v13, 원장 "요일 지정"): nm_notify_settings(send_dow 0=일…6=토, send_hour 0~23, KST)이 전역 기본,
 //   nm_contacts.send_dow 가 학부모별 덮어쓰기. 매시 깨어나 KST 요일·시각이 맞는 연락처만 보낸다. force:true 면 무시(수동).
+//   주 2회반(v15, 원장 "주 2회 선택일 수도"): 프로필 roadCadence='w2' 면 한 주에 두 번(k=1,2). 2번째 요일은 send_dow2(전역 기본 4=목,
+//   nm_contacts.send_dow2). 학습지도 k별 두 벌(nm_weekly_pdf.k / ws.html?k=2). 중복 방지 kind = 'weekly' | 'weekly-2'.
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
 //   probe:true    → 릴레이에 {action:'ping'}만 보내 응답 원문을 돌려준다(문자 발송 없음, 연결·계약 확인용).
@@ -46,15 +48,15 @@ function weekKey(d: Date): string {
   return `${t.getUTCFullYear()}-W${String(wk).padStart(2, "0")}`;
 }
 
-function calLabel(cadence: string): string {
-  // 이번 주 월요일 기준 "M월 N주차" (앱 exam.js calLabelFor와 같은 규칙, KST)
+function calLabel(cadence: string, k = 1): string {
+  // 이번 주 월요일 기준 "M월 N주차" (앱 exam.js calLabelFor와 같은 규칙, KST). 주 2회반은 "M월 N-k주차".
   const now = new Date(Date.now() + 9 * 3600000); // KST
   const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const day = (d.getDay() + 6) % 7;
   d.setDate(d.getDate() - day);
   const m = d.getMonth() + 1;
   const nth = Math.floor((d.getDate() - 1) / 7) + 1;
-  return cadence === "w2" ? `${m}월 ${nth}주차(주2회)` : `${m}월 ${nth}주차`;
+  return cadence === "w2" ? `${m}월 ${nth}-${k}주차` : `${m}월 ${nth}주차`;
 }
 
 const APP_BASE = "https://docssam1.github.io/lete-on/number_magic";
@@ -71,15 +73,15 @@ function shortLink(wk: string, part: string): string {
 }
 
 // 학습지 링크: ① nm_weekly_pdf 의 PDF(토큰) ② ws.html(과정 키) ③ 없음
-async function worksheetLink(sb: any, profileName: string, wk: string, digest: any): Promise<{ url: string; kind: "pdf" | "web" | "" }> {
+async function worksheetLink(sb: any, profileName: string, wk: string, digest: any, k = 1): Promise<{ url: string; kind: "pdf" | "web" | "" }> {
   try {
-    const { data } = await sb.from("nm_weekly_pdf").select("url").eq("profile_name", profileName).eq("week_key", wk).limit(1);
+    const { data } = await sb.from("nm_weekly_pdf").select("url").eq("profile_name", profileName).eq("week_key", wk).eq("k", k).limit(1);
     const u = data && data[0] && data[0].url;
     const m = u ? /\/nm-worksheets\/[^/]+\/([0-9a-f]+)\.pdf/.exec(String(u)) : null;
     if (m) return { url: shortLink(wk, m[1]), kind: "pdf" };
     if (u) return { url: String(u), kind: "pdf" };
   } catch (_) { /* 표가 없거나 권한 문제면 웹 링크로 */ }
-  if (digest && digest.courseKey) return { url: shortLink(wk, String(digest.courseKey)), kind: "web" };
+  if (digest && digest.courseKey) return { url: shortLink(wk, String(digest.courseKey) + (k > 1 ? `-${k}` : "")), kind: "web" };
   return { url: "", kind: "" };
 }
 
@@ -90,8 +92,8 @@ function smsBytes(s: string): number {
   return n;
 }
 
-function composeMsg(profileName: string, digest: any, cadence: string, link: { url: string; kind: string }): { title: string; msg: string; msgType: "SMS" | "LMS" } {
-  const cal = calLabel(cadence);
+function composeMsg(profileName: string, digest: any, cadence: string, link: { url: string; kind: string }, k = 1): { title: string; msg: string; msgType: "SMS" | "LMS" } {
+  const cal = calLabel(cadence, k);
   // 단문 우선: "[숫자마법] 이름 9월 1주차 학습지\n<짧은 링크>"  (≈ 60~85바이트)
   if (link.url) {
     const short = `[숫자마법] ${profileName} ${cal} 학습지\n${link.url}`;
@@ -181,13 +183,14 @@ Deno.serve(async (req: Request) => {
   const kstDow = now.getUTCDay(), kstHour = now.getUTCHours(); // +9h 시프트한 Date의 UTC 필드 = KST 달력
 
   // 전역 발송 설정
-  const settings: Record<string, string> = { send_dow: "1", send_hour: "8" };
+  const settings: Record<string, string> = { send_dow: "1", send_dow2: "4", send_hour: "8" };
   try {
     const { data } = await sb.from("nm_notify_settings").select("key, value");
     for (const r of data ?? []) settings[r.key] = String(r.value);
   } catch (_) { /* 기본값 */ }
   const gHour = parseInt(settings.send_hour, 10);
   const gDow = parseInt(settings.send_dow, 10);
+  const gDow2 = parseInt(settings.send_dow2, 10);
 
   // 연결·계약 확인: 릴레이에 ping 만 보낸다. 문자 발송 없음. Apps Script면 "Unknown action: ping" 류가 오면 정상.
   // 지난 실행분 결과 맞춰 넣기(SQL만, 싸다)
@@ -217,9 +220,11 @@ Deno.serve(async (req: Request) => {
     if (!/^01\d{8,9}$/.test(phone)) return new Response(JSON.stringify({ error: "bad test_phone" }), { status: 400 });
     const demo = { courseKey: "C4", courseNum: 4, courseTitle: "두 자리 올림 덧뺄셈" }; // 시험 문자에도 실제 링크가 실리도록
     const tName = String(body.test_name || "테스트");
-    const link = await worksheetLink(sb, tName, wk, demo);
-    const { title, msg, msgType } = composeMsg(tName, demo, "w1", link);
-    if (dry) return new Response(JSON.stringify({ week: wk, test: true, dry: true, phone, title, msg, msgType, bytes: smsBytes(msg), link }), { headers: { "Content-Type": "application/json" } });
+    const tCad = body.test_cadence === "w2" ? "w2" : "w1";
+    const tK = tCad === "w2" && Number(body.test_k) === 2 ? 2 : 1;
+    const link = await worksheetLink(sb, tName, wk, demo, tK);
+    const { title, msg, msgType } = composeMsg(tName, demo, tCad, link, tK);
+    if (dry) return new Response(JSON.stringify({ week: wk, test: true, dry: true, phone, cadence: tCad, k: tK, title, msg, msgType, bytes: smsBytes(msg), link }), { headers: { "Content-Type": "application/json" } });
     const res = await sendOne(sb, phone, title, msg, msgType);
     const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk + "-t" + Date.now().toString(36), kind: "test", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
     return new Response(JSON.stringify({ week: wk, test: true, phone, ...res, log_error: lErr ? lErr.message : undefined }), { headers: { "Content-Type": "application/json" } });
@@ -231,7 +236,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const { data: contacts, error: cErr } = await sb
-    .from("nm_contacts").select("profile_name, phone, send_dow")
+    .from("nm_contacts").select("profile_name, phone, send_dow, send_dow2")
     .eq("active", true).eq("consent", true);
   if (cErr) return new Response(JSON.stringify({ error: cErr.message }), { status: 500 });
 
@@ -240,31 +245,38 @@ Deno.serve(async (req: Request) => {
     const phone = String(c.phone).replace(/\D/g, "");
     if (!/^01\d{8,9}$/.test(phone)) { results.push({ phone: c.phone, skip: "bad-phone" }); continue; }
 
-    // 요일 게이트: 학부모별 send_dow, 없으면 전역
-    const dow = (c.send_dow === null || c.send_dow === undefined) ? gDow : Number(c.send_dow);
-    if (!force && !dry && dow !== kstDow) { results.push({ phone, skip: "not-send-day", send_dow: dow }); continue; }
-
-    // 주 1회 상한 — 이미 보냈으면 건너뜀
-    const { data: dup } = await sb.from("nm_notify_log").select("id")
-      .eq("phone", phone).eq("week_key", wk).eq("kind", "weekly").limit(1);
-    if (dup && dup.length) { results.push({ phone, skip: "already-sent" }); continue; }
-
-    // 프로필 state에서 주간 요약(weeklyDigest, 앱이 저장) 읽기
+    // 프로필 state에서 주간 요약(weeklyDigest, 앱이 저장)과 주기(roadCadence) 읽기
     const { data: prof } = await sb.from("nm_profiles").select("state")
       .eq("name", c.profile_name).limit(1);
     const st = prof && prof[0] && prof[0].state || {};
-    const link = await worksheetLink(sb, c.profile_name, wk, st.weeklyDigest);
-    const { title, msg, msgType } = composeMsg(c.profile_name, st.weeklyDigest, st.roadCadence || "w1", link);
+    const cadence = st.roadCadence === "w2" ? "w2" : "w1";
+    const ks = cadence === "w2" ? [1, 2] : [1];
 
-    if (dry) { results.push({ phone, dry: true, title, msg, msgType, bytes: smsBytes(msg), link: link.kind }); continue; }
+    for (const k of ks) {
+      const kind = k === 1 ? "weekly" : "weekly-2";
+      // 요일 게이트: 학부모별 send_dow / send_dow2, 없으면 전역
+      const own = k === 1 ? c.send_dow : c.send_dow2;
+      const dow = (own === null || own === undefined) ? (k === 1 ? gDow : gDow2) : Number(own);
+      if (!force && !dry && dow !== kstDow) { results.push({ phone, k, skip: "not-send-day", send_dow: dow }); continue; }
 
-    const res = await sendOne(sb, phone, title, msg, msgType);
-    // 로그 insert 실패는 조용히 넘기지 않는다(주 1회 상한이 이 로그에 기대므로). 2026-09-05: 열 추가 뒤 PostgREST
-    // 스키마 캐시가 안 갱신돼 insert가 통째로 실패했던 적이 있다(notify pgrst, 'reload schema' 로 해결).
-    const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk, kind: "weekly", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
-    results.push({ phone, ok: res.ok, via: res.via, request_id: res.request_id, detail: res.ok ? undefined : res.detail, log_error: lErr ? lErr.message : undefined });
+      // 회차당 1회 상한 — 이미 보냈으면 건너뜀
+      const { data: dup } = await sb.from("nm_notify_log").select("id")
+        .eq("phone", phone).eq("week_key", wk).eq("kind", kind).limit(1);
+      if (dup && dup.length) { results.push({ phone, k, skip: "already-sent" }); continue; }
+
+      const link = await worksheetLink(sb, c.profile_name, wk, st.weeklyDigest, k);
+      const { title, msg, msgType } = composeMsg(c.profile_name, st.weeklyDigest, cadence, link, k);
+
+      if (dry) { results.push({ phone, k, dry: true, send_dow: dow, title, msg, msgType, bytes: smsBytes(msg), link: link.kind }); continue; }
+
+      const res = await sendOne(sb, phone, title, msg, msgType);
+      // 로그 insert 실패는 조용히 넘기지 않는다(상한이 이 로그에 기대므로). 2026-09-05: 열 추가 뒤 PostgREST
+      // 스키마 캐시가 안 갱신돼 insert가 통째로 실패했던 적이 있다(notify pgrst, 'reload schema' 로 해결).
+      const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk, kind, ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
+      results.push({ phone, k, ok: res.ok, via: res.via, request_id: res.request_id, detail: res.ok ? undefined : res.detail, log_error: lErr ? lErr.message : undefined });
+    }
   }
-  return new Response(JSON.stringify({ week: wk, kst: { dow: kstDow, hour: kstHour }, settings: { send_dow: gDow, send_hour: gHour }, count: results.length, results }), {
+  return new Response(JSON.stringify({ week: wk, kst: { dow: kstDow, hour: kstHour }, settings: { send_dow: gDow, send_dow2: gDow2, send_hour: gHour }, count: results.length, results }), {
     headers: { "Content-Type": "application/json" },
   });
 });
