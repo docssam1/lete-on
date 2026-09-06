@@ -1,5 +1,6 @@
 import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260905e";
-import { hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260905a";
+import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260906c";
+import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260905d";
 import { book01Markup } from "./book01-renderers.js?v=20260904c";
@@ -8,10 +9,11 @@ import { book03Markup } from "./book03-renderers.js?v=20260905a";
 import { book04Markup } from "./book04-renderers.js?v=20260905d";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
-import { book07Markup } from "./book07-renderers.js?v=20260828q";
-import { book08Markup } from "./book08-renderers.js?v=20260905d";
+import { book07Markup } from "./book07-renderers.js?v=20260906a";
+import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
+import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260906b";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -26,14 +28,19 @@ async function ensureProtectedBook(bookId) {
   if (protectedBooks.has(bookId)) return true;
   if (protectedLoads.has(bookId)) return protectedLoads.get(bookId);
   const task = loadProtectedGoldenBellBook(bookId, student).then((payload) => {
-    hydrateProtectedAnswers(goldenBellBookById(bookId), payload.answers);
+    const book = goldenBellBookById(bookId);
+    hydrateProtectedAnswers(book, payload.answers);
+    const recovery = appendProtectedRecoveryItems(book, payload.answers);
+    for (const lessonId of recovery.lessonIds) sourceAnimationCache.delete(book.lessons.find((lesson) => lesson.id === lessonId));
     protectedBooks.add(bookId);
     protectedMessage = "";
     return true;
   }).catch((error) => {
     protectedMessage = error.message === "login_required"
       ? "정답과 풀이를 보려면 학습 서재에서 승인번호로 접속해 주세요."
-      : "정답 보호 서버에 연결하지 못했습니다. 잠시 뒤 다시 열어 주세요.";
+      : error.message === "protected_answers_incomplete"
+        ? "정답 자료를 모두 불러오지 못해 채점을 잠시 멈췄어요. 오답으로 기록하지 않습니다."
+        : "정답 보호 서버에 연결하지 못했습니다. 잠시 뒤 다시 열어 주세요.";
     return false;
   }).finally(() => protectedLoads.delete(bookId));
   protectedLoads.set(bookId, task);
@@ -49,6 +56,7 @@ const state = {
   bookId: goldenBellBookById(requestedBook).id,
   lessonId: null,
   phase: "concept",
+  sourceTrackId: null,
   selections: {},
   originalAssists: {},
   originalChecks: {},
@@ -79,6 +87,17 @@ function recordOutcome(scope, itemId, status) {
 
 function activeBook() { return goldenBellBookById(state.bookId); }
 function activeLesson() { return activeBook().lessons.find((lesson) => lesson.id === state.lessonId) || activeBook().lessons[0]; }
+const sourceAnimationCache = new WeakMap();
+function sourceTracks(lesson = activeLesson()) {
+  if (!protectedBooks.has(state.bookId)) return [];
+  if (!sourceAnimationCache.has(lesson)) sourceAnimationCache.set(lesson, sourceAnimationsForLesson(lesson));
+  return sourceAnimationCache.get(lesson);
+}
+function activeSourceAnimation(lesson = activeLesson()) {
+  const tracks = sourceTracks(lesson);
+  return tracks.find((track) => track.sourceItemId === state.sourceTrackId) || tracks[0];
+}
+function activeExperience() { return activeSourceAnimation() || activeLesson().experience; }
 function lessonProgress(lesson = activeLesson()) { return state.progress[state.bookId]?.[lesson?.id] || {}; }
 function extensionItems(lesson = activeLesson()) {
   return [{ ...lesson.extension, id: `${lesson.id}:extension`, estimatedMinutes: 4 }, ...(lesson.similarPractice || [])];
@@ -93,6 +112,7 @@ function clearExperiencePlayback() {
 
 function resetExperience() {
   clearExperiencePlayback();
+  state.sourceTrackId = null;
   state.experience.step = 0;
   state.experience.previousStep = 0;
   state.experience.checkStep = 0;
@@ -122,15 +142,17 @@ function completeExtension() {
   saveProgress();
 }
 
-function isLessonComplete(lesson) { return Boolean(lessonProgress(lesson).original && lessonProgress(lesson).extension); }
+function originalProgressComplete(lesson) {
+  const progress = lessonProgress(lesson);
+  if (!progress.original) return false;
+  return lesson.original.items.filter(item => item.answerRef?.startsWith("/recovery/")).every(item =>
+    ["correct", "revealed", "skipped"].includes(progress.outcomes?.original?.[item.id]?.status));
+}
+function isLessonComplete(lesson) { return originalProgressComplete(lesson) && Boolean(lessonProgress(lesson).extension); }
 
 function conceptReady(lesson = activeLesson()) {
-  const experience = lesson?.experience;
-  if (["guided-concept", "progressive-concept"].includes(experience?.kind)) return ["correct", "revealed"].includes(state.experience.checks[`guided:${lesson.id}`]);
-  if (experience?.kind !== "triangular-stair") return true;
-  const stepsComplete = experience.beats.every((beat) => state.experience.checks[beat.id] === true);
-  const practiceComplete = (experience.practice || []).every((item) => ["correct", "revealed"].includes(state.experience.practice[item.id]?.status));
-  return stepsComplete && practiceComplete;
+  // Concept checks are optional practice, not a prerequisite for the lesson questions.
+  return Boolean(lesson?.original?.items?.length);
 }
 
 function phaseAllowed(phase) {
@@ -138,7 +160,7 @@ function phaseAllowed(phase) {
   if (phase === "concept") return true;
   if (phase === "original") return conceptReady();
   if (phase === "extension") return Boolean(progress.original);
-  return Boolean(progress.original && progress.extension);
+  return isLessonComplete(activeLesson());
 }
 
 function setPhase(phase) {
@@ -148,7 +170,12 @@ function setPhase(phase) {
   state.selections = {};
   state.originalAssists = {};
   state.originalChecks = {};
-  state.originalIndex = phase === "original" ? 0 : state.originalIndex;
+  if (phase === "original") {
+    const progress = lessonProgress();
+    const pending = progress.original ? activeLesson().original.items.findIndex(item =>
+      item.answerRef?.startsWith("/recovery/") && !["correct", "revealed", "skipped"].includes(progress.outcomes?.original?.[item.id]?.status)) : -1;
+    state.originalIndex = Math.max(0, pending);
+  }
   state.extensionAssist = null;
   state.extensionIndex = phase === "extension" ? 0 : state.extensionIndex;
   state.feedback = null;
@@ -369,6 +396,20 @@ function renderGuidedConceptExperience(experience) {
   return `<section class="concept-experience guided-concept" data-guided-family="${experience.family}"><header><div><span>직접 해보기</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track">${progress}</div><div class="guided-concept-scene">${guidedConceptVisual(experience, currentStep)}<p class="experience-caption">${experience.beats[currentStep].caption}</p></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
 }
 
+function renderSourceExperience(lesson) {
+  const tracks = sourceTracks(lesson);
+  const animation = activeSourceAnimation(lesson);
+  const authorized = protectedBooks.has(state.bookId);
+  const step = authorized ? Math.min(state.experience.step, animation.beats.length - 1) : 0;
+  const beat = animation.beats[step];
+  const animate = authorized && state.experience.previousStep < step && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const picker = `<label class="source-animation-picker"><span>함께 풀어볼 문제</span><select data-source-track aria-label="설명할 문제 선택">${tracks.map((track, index) => `<option value="${escapeAttribute(track.sourceItemId)}" ${track === animation ? "selected" : ""}>${index + 1}. ${escapeAttribute(track.label)}</option>`).join("")}</select></label>`;
+  const steps = animation.beats.map((frame, index) => `<button type="button" data-source-step="${index}" aria-label="${index + 1}단계${authorized ? `: ${escapeAttribute(frame.caption)}` : ""}" ${index === step ? 'aria-current="step"' : ""} ${!authorized && index > 0 ? "disabled" : ""}>${index + 1}</button>`).join("");
+  const markup = `<section class="concept-experience source-animation" data-source-family="${escapeAttribute(animation.family)}" data-source-item="${escapeAttribute(animation.sourceItemId)}"><header><div><span>개념 설명</span><strong>${escapeAttribute(animation.title)}</strong></div><span class="experience-progress">${step + 1} / ${animation.beats.length}</span></header>${picker}<p class="source-animation-problem">${escapeAttribute(animation.problem)}</p><div class="experience-step-track" aria-label="풀이 순서">${steps}</div><div class="source-animation-scene">${sourceAnimationFrame(animation, step, { animate })}</div><p class="experience-caption">${escapeAttribute(beat.caption)}</p>${experienceControlsMarkup(animation, { atFirst: step === 0, atLast: step === animation.beats.length - 1, nextDisabled: !authorized })}</section>`;
+  state.experience.previousStep = step;
+  return markup;
+}
+
 function progressiveSumMatrixMarkup(lesson, visualStep, currentStep) {
   const visual = lesson.original.visual.panels[0].visual;
   const symbols = visual.cells.flat();
@@ -406,6 +447,7 @@ function renderProgressiveConceptExperience(lesson, experience) {
 }
 
 function renderExperience(lesson) {
+  if (sourceTracks(lesson).length) return renderSourceExperience(lesson);
   const experience = lesson.experience;
   if (!experience) return "";
   if (experience.kind === "clock-turning") return renderClockExperience(experience);
@@ -415,18 +457,20 @@ function renderExperience(lesson) {
   return "";
 }
 
-function updateExperienceStep(step) {
-  const experience = activeLesson().experience;
+function updateExperienceStep(step, { animate = true } = {}) {
+  const experience = activeExperience();
   if (!experience) return;
+  if (experience.kind === "source-animation" && !protectedBooks.has(state.bookId)) return;
   clearExperiencePlayback();
-  state.experience.previousStep = state.experience.step;
+  state.experience.previousStep = animate ? state.experience.step : step;
   state.experience.step = Math.max(0, Math.min(step, experience.beats.length - 1));
   renderContent();
 }
 
 function playExperience() {
-  const experience = activeLesson().experience;
+  const experience = activeExperience();
   if (!experience) return;
+  if (experience.kind === "source-animation" && !protectedBooks.has(state.bookId)) return;
   if (state.experience.playing) {
     clearExperiencePlayback();
     renderContent();
@@ -447,11 +491,22 @@ function playExperience() {
     state.experience.previousStep = state.experience.step;
     state.experience.step += 1;
     renderContent();
-    state.experience.timer = window.setTimeout(next, 1500 / state.experience.speed);
+    state.experience.timer = window.setTimeout(next, experience.kind === "source-animation"
+      ? sourceAnimationDelay(experience, state.experience.step, state.experience.speed)
+      : 1500 / state.experience.speed);
   };
   renderContent();
-  state.experience.timer = window.setTimeout(next, 500 / state.experience.speed);
+  state.experience.timer = window.setTimeout(next, experience.kind === "source-animation"
+    ? sourceAnimationDelay(experience, state.experience.step, state.experience.speed)
+    : 500 / state.experience.speed);
 }
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && state.experience.playing) {
+    clearExperiencePlayback();
+    renderContent();
+  }
+});
 
 function scheduleTriangularAutoplay(lesson) {
   if (state.phase !== "concept" || lesson?.experience?.kind !== "triangular-stair" || state.experience.autoplayStarted) return;
@@ -628,8 +683,19 @@ function polyominoShapeMarkup(cells, label) {
   return `<figure class="polyomino-shape" aria-label="${label}"><div style="--shape-columns:${width};--shape-rows:${height}">${blocks}</div></figure>`;
 }
 
+const polyominoNames = ["", "모노미노", "도미노", "트리미노", "테트로미노"];
+
+function polyominoVocabularyMarkup() {
+  const terms = polyominoNames.slice(1).map((name, index) => {
+    const count = index + 1;
+    const sample = Array.from({ length: count }, (_, x) => [x, 0]);
+    return `<div class="polyomino-term" data-polyomino-count="${count}"><dt><span>정사각형 ${count}개</span><strong>${name}</strong></dt><dd>${polyominoShapeMarkup(sample, `${name}: 정사각형 ${count}개를 변끼리 붙인 모양의 한 예`)}</dd></div>`;
+  }).join("");
+  return `<section class="polyomino-vocabulary" aria-label="폴리오미노 이름 알아보기"><h3>조각 수에 따라 이름이 달라요</h3><p>크기가 같은 정사각형을 변끼리 이어 만든 평면 모양을 <strong>폴리오미노</strong>라고 해요. 꼭짓점만 닿게 붙이지 않아요.</p><dl>${terms}</dl><p>이름은 <strong>정사각형 조각의 수</strong>를 알려 줘요. 만들 수 있는 모양의 가짓수와는 달라요.</p><p>이 활동에서는 돌리거나 뒤집어서 꼭 포개지면 같은 종류로 세어요.</p></section>`;
+}
+
 function polyominoFamilyMarkup(count, shapes) {
-  return `<section class="polyomino-family"><strong>정사각형 ${count}개</strong><div>${shapes.map((shape, index) => polyominoShapeMarkup(shape, `${count}칸 모양 ${index + 1}`)).join("")}</div></section>`;
+  return `<section class="polyomino-family"><strong>정사각형 ${count}개 · ${polyominoNames[count]}</strong><div>${shapes.map((shape, index) => polyominoShapeMarkup(shape, `${polyominoNames[count]} 모양 ${index + 1}`)).join("")}</div></section>`;
 }
 
 function book04PolyominoMarkup(story = false) {
@@ -781,6 +847,20 @@ function generatedCryptarithmMarkup(visual) {
   return `<div class="similar-cryptarithm">${addends.map((cells, index) => row(cells, index === addends.length - 1 ? "+" : "")).join("")}<hr>${row(visual.sum)}</div>`;
 }
 
+function book04SourceBalanceMarkup(visual) {
+  const shapes = { "네모": "squares", "세모": "triangles", "동그라미": "circles", "별": "stars" };
+  const load = (objects) => Object.entries(objects).map(([label, count]) => {
+    if (label === "빈접시" || count == null) return '<span class="balance-question">?</span>';
+    if (shapes[label]) return balanceTokensMarkup(label === "별" ? "★" : "", count, shapes[label]);
+    return `<span class="balance-tokens labeled">${Array.from({ length: count }, () => `<i>${escapeAttribute(label)}</i>`).join("")}</span>`;
+  }).join("");
+  const sameLoad = (left, right) => Object.keys(left).length === Object.keys(right).length
+    && Object.entries(left).every(([key, value]) => right[key] === value);
+  const equations = [...visual.equations];
+  if (!equations.some((equation) => sameLoad(equation.left, visual.target.left) || sameLoad(equation.right, visual.target.left))) equations.push(visual.target);
+  return `<div class="balance-substitution single source-balance-board">${equations.map((equation) => balanceBeamMarkup(load(equation.left), load(equation.right), "level")).join("")}</div>`;
+}
+
 function simplePracticeMarkup(visual) {
   if (visual.kind === "practice-expression") return `<div class="practice-expression">${visual.expression}</div>`;
   if (visual.kind === "practice-groups") return `<div class="practice-groups"><strong>${visual.total}</strong><span>${Array.from({ length: visual.groups }, () => `<i>${visual.unit}</i>`).join("")}</span></div>`;
@@ -795,6 +875,7 @@ function visualMarkup(visual) {
   if (visual.kind === "book4" && visual.subtype === "source-hidden-cube") {
     return book04HiddenCubesMarkup({ scenes: [visual], topLabels: true });
   }
+  if (visual.kind === "book4" && visual.subtype === "source-balance-equations") return book04SourceBalanceMarkup(visual);
   if (visual.kind === "book4") return `<div class="book04-visual">${book04Markup(visual)}</div>`;
   if (visual.kind === "shape-sum-table") return generatedShapeSumMarkup(visual);
   if (visual.kind === "balance-order-chain") return generatedBalanceOrderMarkup(visual);
@@ -867,7 +948,8 @@ function renderBookTabs() {
     next.searchParams.set("book", state.bookId);
     history.replaceState(null, "", next);
     render();
-    if (await ensureProtectedBook(state.bookId)) render();
+    await ensureProtectedBook(state.bookId);
+    render();
   }));
   requestAnimationFrame(() => {
     const tabs = $("bookTabs");
@@ -911,7 +993,7 @@ function renderStageSteps() {
   ];
   const progress = lessonProgress();
   $("stageSteps").innerHTML = phases.map(([id, number, label]) => {
-    const complete = id === "concept" ? state.phase !== "concept" : id === "original" ? progress.original : id === "extension" || id === "complete" ? progress.extension : false;
+    const complete = id === "concept" ? state.phase !== "concept" : id === "original" ? originalProgressComplete(activeLesson()) : id === "extension" ? progress.extension : id === "complete" ? isLessonComplete(activeLesson()) : false;
     return `<button type="button" class="stage-step ${state.phase === id ? "active" : ""} ${complete ? "complete" : ""}" data-phase="${id}" ${state.phase === id ? 'aria-current="step"' : ""} ${phaseAllowed(id) ? "" : "disabled"}><strong>${complete ? "✓" : number}</strong><span>${label}</span></button>`;
   }).join("");
   $("stageSteps").querySelectorAll("button").forEach((button) => button.addEventListener("click", () => setPhase(button.dataset.phase)));
@@ -928,13 +1010,15 @@ function conceptOpeningQuestion(lesson) {
 }
 
 function renderConcept(lesson) {
+  if (sourceTracks(lesson).length) return `<p class="lesson-kicker">${escapeAttribute(lesson.unit)} · 개념 학습</p><h2>${escapeAttribute(lesson.title)}</h2>${renderSourceExperience(lesson)}<button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
   const tutorialSteps = lesson.explanation.steps.map((step, index) => `<li><span>${index + 1}</span><div><strong>${index + 1}단계</strong><p>${step}</p></div></li>`).join("");
   const experience = renderExperience(lesson);
   const openingQuestion = conceptOpeningQuestion(lesson);
+  const terminology = lesson.id === "polyomino-family-count" ? polyominoVocabularyMarkup() : "";
   const typeOverview = lesson.typeOverview?.length
     ? `<section class="concept-type-overview"><h3>이 단원에서 만나는 문제</h3><div>${lesson.typeOverview.map((item, index) => `<article><span>${index + 1}</span><strong>${item.label}</strong><p>${item.text}</p></article>`).join("")}</div></section>`
     : "";
-  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p><section class="concept-opening-question"><span>생각할 문제</span><strong>${openingQuestion}</strong></section><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div>${typeOverview}${experience}<section class="concept-tutorial"><header><span>${experience ? "핵심 정리" : "풀이 튜토리얼"}</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original" ${conceptReady(lesson) ? "" : "disabled"}>문제로 확인하기</button>`;
+  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p>${terminology}<section class="concept-opening-question"><span>생각할 문제</span><strong>${openingQuestion}</strong></section><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div>${typeOverview}${experience}<section class="concept-tutorial"><header><span>${experience ? "핵심 정리" : "풀이 튜토리얼"}</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original" ${conceptReady(lesson) ? "" : "disabled"}>문제로 확인하기</button>`;
 }
 
 function choiceButtons(groupId, options) {
@@ -946,6 +1030,7 @@ function normalizeAnswer(value) {
 }
 
 function answersMatch(actual, expected) {
+  if (!hasAnswer(actual) || !hasProtectedAnswer({ answer: expected })) return false;
   const approved = Array.isArray(expected) ? expected : [expected];
   return approved.some((value) => normalizeAnswer(actual) === normalizeAnswer(value));
 }
@@ -956,6 +1041,10 @@ function hasAnswer(value) {
 
 function approvedAnswer(item) {
   return Array.isArray(item.answer) ? item.answer[0] : item.answer;
+}
+
+function canCheckAnswer(item) {
+  return protectedBooks.has(state.bookId) && hasProtectedAnswer(item);
 }
 
 function originalItemResolved(item) {
@@ -1088,11 +1177,32 @@ function renderPending(book) {
 
 function printResponseMarkup(item) {
   if (item.parts?.length) return `<span class="gold-print-part-answers">${item.parts.map((part) => `<span><b>${escapeAttribute(part.label)}</b><i></i>${part.unit ? `<small>${escapeAttribute(part.unit)}</small>` : ""}</span>`).join("")}</span>`;
-  if (item.answerMode === "input") return '<span class="gold-print-answer" aria-label="답 쓰는 칸"><b>답</b><i></i></span>';
+  if (item.answerMode === "input") return `<span class="gold-print-answer${item.answerRef?.startsWith("/recovery/") ? " recovered-source-answer" : ""}" aria-label="답 쓰는 칸"><b>답</b><i></i></span>`;
   return `<span class="gold-print-options">${item.options.map((option, index) => `${index + 1}. ${option}`).join("　")}</span>`;
 }
 
+function printSourceStoryboards(lesson, lessonNumber, book) {
+  if (!sourceTracks(lesson).length || !protectedBooks.has(book.id)) return "";
+  const animation = lesson === activeLesson() ? activeSourceAnimation(lesson) : sourceTracks(lesson)[0];
+  const selectedSteps = animation.printSteps || [0, animation.beats.length - 1];
+  const pages = [];
+  const framesPerPage = animation.family.startsWith("book10-") ? 1 : 2;
+  for (let start = 0; start < selectedSteps.length; start += framesPerPage) {
+    const pageNumber = start / framesPerPage + 1;
+    const frames = selectedSteps.slice(start, start + framesPerPage).map((step) => `<section class="source-animation-print-frame" data-source-item="${escapeAttribute(animation.sourceItemId)}"><h2>${step + 1}단계</h2>${sourceAnimationFrame(animation, step, { animate: false })}<p>${escapeAttribute(animation.beats[step].caption)}</p></section>`).join("");
+    pages.push(`<article class="gold-print-page source-animation-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="animation-${pageNumber}" data-watermark="${escapeAttribute(student)} · GFIELD"><header class="gold-print-head"><div><span>FIELDS CLASSIC · 함께 풀어보기</span><h1>${book.label} ${lessonNumber}. ${escapeAttribute(animation.title)}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div></dl></header><p class="gold-print-concept">${escapeAttribute(animation.problem)}</p>${frames}<footer class="gold-print-footer">${book.label} · ${escapeAttribute(lesson.unit)} · 설명 ${pageNumber}</footer></article>`);
+  }
+  return pages.join("");
+}
+
 function printLessonPage(lesson, lessonNumber, book) {
+  const vocabulary = lesson.id === "polyomino-family-count"
+    ? `<article class="gold-print-page polyomino-vocabulary-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="vocabulary" data-watermark="${escapeAttribute(student)} · GFIELD"><header class="gold-print-head"><div><span>FIELDS CLASSIC · 개념 학습</span><h1>${book.label} ${lessonNumber}. 모양의 이름을 알아요</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div></dl></header>${polyominoVocabularyMarkup()}<footer class="gold-print-footer">${book.label} · ${escapeAttribute(lesson.unit)} · 개념</footer></article>`
+    : "";
+  return vocabulary + printSourceStoryboards(lesson, lessonNumber, book) + printLessonExercises(lesson, lessonNumber, book);
+}
+
+function printLessonExercises(lesson, lessonNumber, book) {
   const header = (part) => `<header class="gold-print-head"><div><span>FIELDS CLASSIC · GOLDEN BELL · ${part}</span><h1>${book.label} ${lessonNumber}. ${lesson.title}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>`;
   const footer = `<footer class="gold-print-footer">${book.label} · ${lesson.unit}</footer>`;
   const concept = `<p class="gold-print-concept"><strong>생각할 개념</strong><br>${lesson.representativeConcept}</p>`;
@@ -1107,7 +1217,7 @@ function printLessonPage(lesson, lessonNumber, book) {
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(item);
     });
-    const sourceExperience = lesson.experience ? experienceSummaryMarkup(lesson.experience) : "";
+    const sourceExperience = !sourceTracks(lesson).length && lesson.experience ? experienceSummaryMarkup(lesson.experience) : "";
     const conceptPage = separateConceptPrint
       ? `<article class="gold-print-page source-practice-print concept-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="concept" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${sourceExperience}${footer}</article>`
       : "";
@@ -1128,6 +1238,8 @@ function printLessonPage(lesson, lessonNumber, book) {
 }
 
 async function printLessons(lessons) {
+  clearExperiencePlayback();
+  renderContent();
   const book = activeBook();
   const root = $("goldPrintRoot");
   root.innerHTML = lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("");
@@ -1144,6 +1256,17 @@ async function printLessons(lessons) {
 }
 
 function bindLessonActions() {
+  $("lessonContent").querySelector("[data-source-track]")?.addEventListener("change", (event) => {
+    clearExperiencePlayback();
+    state.sourceTrackId = event.currentTarget.value;
+    state.experience.step = 0;
+    state.experience.previousStep = 0;
+    renderContent();
+  });
+  $("lessonContent").querySelectorAll("[data-source-step]").forEach((button) => button.addEventListener("click", () => {
+    const step = Number(button.dataset.sourceStep);
+    updateExperienceStep(step, { animate: false });
+  }));
   $("lessonContent").querySelector("[data-next-phase]")?.addEventListener("click", (event) => setPhase(event.currentTarget.dataset.nextPhase));
   $("lessonContent").querySelectorAll("[data-experience-action]").forEach((button) => button.addEventListener("click", () => {
     const action = button.dataset.experienceAction;
@@ -1166,6 +1289,10 @@ function bindLessonActions() {
   }));
   $("lessonContent").querySelector("[data-experience-speed]")?.addEventListener("change", (event) => {
     state.experience.speed = Number(event.currentTarget.value) || 1;
+    if (state.experience.playing) {
+      clearExperiencePlayback();
+      playExperience();
+    }
   });
   $("lessonContent").querySelectorAll("[data-type-track-select]").forEach((button) => button.addEventListener("click", () => {
     state.experience.typeTrackId = button.dataset.typeTrackSelect;
@@ -1174,7 +1301,7 @@ function bindLessonActions() {
   $("lessonContent").querySelectorAll("[data-type-track-check]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
     const track = experience?.typeTracks?.find((item) => item.id === button.dataset.typeTrackCheck);
-    if (!track) return;
+    if (!track || !canCheckAnswer(track[button.dataset.typeTrackStage])) return;
     const stage = button.dataset.typeTrackStage;
     const record = state.experience.typeTracks[track.id] || {};
     const selected = button.dataset.typeTrackValue;
@@ -1186,7 +1313,7 @@ function bindLessonActions() {
   $("lessonContent").querySelectorAll("[data-type-track-answer]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
     const track = experience?.typeTracks?.find((item) => item.id === button.dataset.typeTrackAnswer);
-    if (!track) return;
+    if (!track || !canCheckAnswer(track[button.dataset.typeTrackStage])) return;
     const stage = button.dataset.typeTrackStage;
     const record = state.experience.typeTracks[track.id] || {};
     record[`${stage}Value`] = track[stage].answer;
@@ -1196,6 +1323,8 @@ function bindLessonActions() {
   }));
   $("lessonContent").querySelectorAll("[data-experience-choice]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
+    const check = experience?.kind === "triangular-stair" ? experience.beats[state.experience.checkStep]?.check : experience?.check;
+    if (!canCheckAnswer(check)) return;
     state.experience.answer = button.dataset.experienceChoice;
     if (["guided-concept", "progressive-concept"].includes(experience.kind)) {
       const passed = state.experience.answer === experience.check.answer;
@@ -1223,6 +1352,7 @@ function bindLessonActions() {
     const lesson = activeLesson();
     const experience = lesson.experience;
     if (!["guided-concept", "progressive-concept"].includes(experience?.kind)) return;
+    if (!canCheckAnswer(experience.check)) return;
     state.experience.answer = experience.check.answer;
     state.experience.checks[`guided:${lesson.id}`] = "revealed";
     state.experience.feedback = { passed: false, message: `답: ${experience.check.answer}. ${experience.check.explanation}` };
@@ -1231,7 +1361,7 @@ function bindLessonActions() {
   $("lessonContent").querySelectorAll("[data-concept-practice-choice]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
     const practice = experience?.practice?.find((item) => item.id === button.dataset.conceptPracticeChoice);
-    if (!practice) return;
+    if (!practice || !canCheckAnswer(practice)) return;
     const selected = button.dataset.conceptPracticeValue;
     state.experience.practice[practice.id] = {
       selected,
@@ -1242,7 +1372,7 @@ function bindLessonActions() {
   $("lessonContent").querySelectorAll("[data-concept-practice-answer]").forEach((button) => button.addEventListener("click", () => {
     const experience = activeLesson().experience;
     const practice = experience?.practice?.find((item) => item.id === button.dataset.conceptPracticeAnswer);
-    if (!practice) return;
+    if (!practice || !canCheckAnswer(practice)) return;
     state.experience.practice[practice.id] = { selected: practice.answer, status: "revealed" };
     render();
   }));
@@ -1259,7 +1389,7 @@ function bindLessonActions() {
   }));
   $("lessonContent").querySelectorAll("[data-original-answer]").forEach((button) => button.addEventListener("click", () => {
     const item = activeLesson().original.items.find((candidate) => candidate.id === button.dataset.originalAnswer);
-    if (!item) return;
+    if (!canCheckAnswer(item)) return;
     if (item.parts?.length) item.parts.forEach((part) => { state.selections[`${item.id}:${part.id}`] = approvedAnswer(part); });
     else state.selections[item.id] = approvedAnswer(item);
     state.originalAssists[item.id] = "revealed";
@@ -1297,16 +1427,19 @@ function bindLessonActions() {
       ? $("lessonContent").querySelector(`[data-original-check="${CSS.escape(itemId || "")}"]`)
       : $("lessonContent").querySelector(`[data-check="${scope}"]`);
     if (!checkButton) return;
-    checkButton.disabled = scope === "original"
+    const currentItem = scope === "original"
+      ? lesson.original.mode === "paged" ? lesson.original.items[state.originalIndex] : lesson.original.items.find(candidate => candidate.id === itemId)
+      : activeExtensionItem(lesson);
+    checkButton.disabled = !canCheckAnswer(currentItem) || (scope === "original"
       ? lesson.original.mode === "paged"
         ? !originalItemResolved(lesson.original.items[state.originalIndex])
         : !originalItemResolved(lesson.original.items.find((candidate) => candidate.id === itemId))
-      : !hasAnswer(state.selections[activeExtensionItem(lesson).id]);
+      : !hasAnswer(state.selections[activeExtensionItem(lesson).id]));
     checkButton.textContent = "확인";
   }));
   $("lessonContent").querySelectorAll("[data-original-check]").forEach((button) => button.addEventListener("click", () => {
     const item = activeLesson().original.items.find((candidate) => candidate.id === button.dataset.originalCheck);
-    if (!item || !originalItemResolved(item) || state.originalAssists[item.id]) return;
+    if (!canCheckAnswer(item) || !originalItemResolved(item) || state.originalAssists[item.id]) return;
     const passed = originalItemCorrect(item);
     state.originalChecks[item.id] = {
       passed,
@@ -1331,6 +1464,7 @@ function bindLessonActions() {
         completeOriginal();
         return setPhase("extension");
       }
+      if (!canCheckAnswer(item) || !originalItemResolved(item)) return;
       const passed = originalItemCorrect(item);
       state.originalChecks[item.id] = { passed };
       recordOutcome("original", item.id, passed ? "correct" : "wrong");
@@ -1367,14 +1501,16 @@ function bindLessonActions() {
       return setPhase("complete");
     }
     const selected = state.selections[groupId];
+    if (!canCheckAnswer(item) || !hasAnswer(selected)) return;
     const passed = answersMatch(selected, item.answer);
     recordOutcome("extension", groupId, passed ? "correct" : "wrong");
-    state.feedback = { kind: "extension", itemId: groupId, passed, message: passed ? "맞았어요. 풀이로 생각한 순서를 확인해 보세요." : `배운 원리를 다시 떠올려 보세요. ${lesson.explanation.steps[0]}` };
+    state.feedback = { kind: "extension", itemId: groupId, passed, message: passed ? "맞았어요. 풀이로 생각한 순서를 확인해 보세요." : "이 문제의 조건과 그림을 다시 살펴보세요. 어려우면 풀이를 확인해도 괜찮아요." };
     render();
   });
   $("lessonContent").querySelector("[data-extension-answer]")?.addEventListener("click", () => {
     const lesson = activeLesson();
     const item = activeExtensionItem(lesson);
+    if (!canCheckAnswer(item)) return;
     const groupId = item.id;
     state.selections[groupId] = approvedAnswer(item);
     state.extensionAssist = "revealed";
@@ -1425,6 +1561,7 @@ function renderContent() {
     notice.textContent = protectedMessage;
     $("lessonContent").prepend(notice);
     $("lessonContent").querySelectorAll("[data-experience-choice],[data-experience-answer],[data-type-track-check],[data-type-track-answer],[data-concept-practice-choice],[data-concept-practice-answer],[data-original-answer],[data-original-check],[data-check],[data-extension-answer]").forEach((control) => { control.disabled = true; });
+    $("lessonContent").querySelectorAll('.source-animation [data-experience-action="play"]').forEach((control) => { control.disabled = true; });
   }
   scheduleTriangularAutoplay(lesson);
 }
@@ -1482,4 +1619,4 @@ window.addEventListener("keydown", (event) => {
   }
 });
 render();
-ensureProtectedBook(state.bookId).then((ready) => { if (ready) render(); });
+ensureProtectedBook(state.bookId).then(() => render());

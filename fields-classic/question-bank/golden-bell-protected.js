@@ -36,13 +36,36 @@ export async function loadProtectedGoldenBellBook(bookId, student) {
   return request("golden-bell-answers", { bookId }, token);
 }
 
+function validAnswer(value) {
+  if (Array.isArray(value)) return value.length > 0 && value.every(entry => !Array.isArray(entry) && validAnswer(entry));
+  return typeof value === "number" ? Number.isFinite(value) : typeof value === "string" && value.trim() !== "";
+}
+
+export function hasProtectedAnswer(item) {
+  if (!item || typeof item !== "object") return false;
+  return item.parts?.length ? item.parts.every(hasProtectedAnswer) : validAnswer(item.answer);
+}
+
 export function hydrateProtectedAnswers(value, records) {
-  if (!value || typeof value !== "object") return;
-  const record = value.answerRef ? records?.[value.answerRef] : null;
-  if (record) {
-    if (Object.hasOwn(record, "answer")) value.answer = record.answer;
-    if (Object.hasOwn(record, "solution")) value.solution = record.solution;
-    if (Object.hasOwn(record, "explanation")) value.explanation = record.explanation;
+  const bindings = [];
+  const visit = node => {
+    if (!node || typeof node !== "object") return;
+    if (node.answerRef) {
+      const record = Object.hasOwn(records || {}, node.answerRef) ? records[node.answerRef] : null;
+      const hasAnswer = record && Object.hasOwn(record, "answer");
+      const hasSolution = typeof record?.solution === "string" && record.solution.trim() !== "";
+      if (!record || (hasAnswer ? !validAnswer(record.answer) : !hasSolution)) {
+        throw new Error("protected_answers_incomplete");
+      }
+      bindings.push([node, record]);
+    }
+    Object.values(node).forEach(visit);
+  };
+  // Validate the complete book before exposing any answers from this response.
+  visit(value);
+  for (const [node, record] of bindings) {
+    for (const key of ["answer", "solution", "explanation"]) {
+      if (Object.hasOwn(record, key)) node[key] = record[key];
+    }
   }
-  Object.values(value).forEach(child => hydrateProtectedAnswers(child, records));
 }

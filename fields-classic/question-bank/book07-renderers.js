@@ -50,6 +50,7 @@ function clocks(visual) {
 }
 
 function sequence(visual) {
+  if (visual.sourceLayout) return `<div class="b7-source-sequence" role="img" aria-label="${escapeHtml(visual.values.join(", "))} 순서로 나열된 수">${visual.values.map(value => valueBox(value)).join("")}<span>...</span></div>`;
   return `<div class="b7-sequence"><p>${visual.values.map((value) => valueBox(value)).join("<i>→</i>")}</p><strong>${visual.position === "?" ? "몇 번째?" : `${visual.position}번째`} · ${visual.step}씩</strong></div>`;
 }
 
@@ -123,7 +124,15 @@ function climb(visual) {
 }
 
 function exchange(visual) {
-  return `<div class="b7-exchange"><strong>처음 ${visual.initial}병</strong><i>→</i><span>빈 병 ${visual.rate}개</span><i>→</i><b>새 음료 1병</b><small>더 바꿀 수 없을 때까지</small></div>`;
+  const initialLabel = visual.initialLabel || "병";
+  const tokenLabel = visual.tokenLabel || "빈 병";
+  const tokenUnit = visual.tokenUnit || "개";
+  const rewardLabel = visual.rewardLabel || "새 음료 1병";
+  if (visual.sourceLayout) {
+    const coupons = Array.from({ length: visual.rate }, () => `<span>${escapeHtml(tokenLabel)}</span>`).join("");
+    return `<div class="b7-source-exchange"><div class="b7-coupon-grid" aria-label="${escapeHtml(tokenLabel)} ${visual.rate}${escapeHtml(tokenUnit)}">${coupons}</div><b class="exchange-arrow" aria-hidden="true">→</b><div class="b7-exchange-reward">${escapeHtml(rewardLabel)}</div></div>`;
+  }
+  return `<div class="b7-exchange"><strong>처음 ${visual.initial}${escapeHtml(initialLabel)}</strong><i>→</i><span>${escapeHtml(tokenLabel)} ${visual.rate}${escapeHtml(tokenUnit)}</span><i>→</i><b>${escapeHtml(rewardLabel)}</b><small>더 바꿀 수 없을 때까지</small></div>`;
 }
 
 function doubling(visual) {

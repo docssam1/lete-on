@@ -1,0 +1,50 @@
+.source-animation-b10{display:grid;gap:16px;min-width:0;min-height:0;color:#244b5e;letter-spacing:0}
+.source-animation-b10 *{box-sizing:border-box;min-width:0;letter-spacing:0}
+.source-animation-b10__source-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:22px}
+.source-animation-b10__targets{border-left:2px solid #c7d9df;padding-left:16px}
+@media(max-width:560px){.source-animation-b10__source-pair{grid-template-columns:minmax(0,1fr);gap:16px}.source-animation-b10__targets{border-left:0;border-top:2px solid #c7d9df;padding:12px 0 0}}
+@media print{.source-animation-b10__source-pair{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4mm}.source-animation-b10__targets{border-top:0;border-left:1px solid #c7d9df;padding:0 0 0 3mm}}
+.source-animation-b10__conditions{display:grid;min-width:0;padding:0 0 14px;border-bottom:3px solid #d6a33c}
+.source-animation-b10__conditions .b10-quantity-legend{display:none}
+.source-animation-b10__conditions .b10-quantity-equations{gap:10px}
+.source-animation-b10__conditions .b10-quantity-equation{min-height:0;padding:8px 0;gap:10px;border-bottom:1px solid #c7d9df}
+.source-animation-b10__conditions .b10-quantity-equation:last-child{border-bottom:0}
+.source-animation-b10__conditions .b10-quantity-piece{font-size:26px}
+.source-animation-b10__conditions .b10-scale-reading b{font-size:20px}
+.source-animation-b10__conditions .b10-target-score{gap:16px}
+.source-animation-b10__conditions .b10-target-board p{gap:18px;font-size:16px}
+.source-animation-b10__conditions .b10-target-attempt{padding:9px 0;border-bottom:1px solid #c7d9df;font-size:16px}
+.source-animation-b10__conditions .b10-target-attempt>b{width:36px;height:36px;font-size:18px}
+.source-animation-b10__conditions .b10-target-attempt>strong{font-size:22px}
+.source-animation-b10__calculation-area{display:grid;place-items:center;min-width:0;min-height:108px;padding:4px 0}
+.source-animation-b10__work,.source-animation-b10__records{display:grid;gap:10px;width:min(100%,680px)}
+.source-animation-b10__equation{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;padding:10px 0;border-bottom:2px solid #d3e0e4;font-size:18px;font-weight:900}
+.source-animation-b10__term{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px}
+.source-animation-b10__plus,.source-animation-b10__equals{font-style:normal;color:#50707c}
+.source-animation-b10__symbol{position:relative;display:inline-grid;grid-template-columns:auto auto;align-items:center;gap:5px;padding:3px 5px;border-bottom:2px solid #85b1c0;color:#22596b}
+.source-animation-b10__symbol b{font-size:28px;line-height:1}
+.source-animation-b10__symbol small{font-size:16px;line-height:1.2;font-weight:900;overflow-wrap:anywhere}
+.source-animation-b10__symbol.orange{border-color:#d08235}
+.source-animation-b10__symbol.blue{border-color:#3687b3}
+.source-animation-b10__symbol.is-known{border-color:#b88927}
+.source-animation-b10__symbol.is-cancelled,.source-animation-b10__hit.is-cancelled{opacity:.6}
+.source-animation-b10__symbol.is-cancelled:after,.source-animation-b10__hit.is-cancelled:after{content:"";position:absolute;left:8%;right:8%;top:48%;border-top:3px solid #bd4b43;transform:rotate(-28deg);transform-origin:center}
+.source-animation-b10__combine-sign{justify-self:center;color:#a66f1b;font-size:28px;font-style:normal;font-weight:900}
+.source-animation-b10__groups{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;width:min(100%,680px)}
+.source-animation-b10__groups>div{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;padding:6px 4px;border-bottom:3px solid #c2d7de}
+.source-animation-b10__calculation{display:grid;gap:7px;justify-items:center;width:min(100%,680px);padding:8px 0;color:#385965;text-align:center}
+.source-animation-b10__calculation strong{font-size:24px;line-height:1.45;overflow-wrap:anywhere}
+.source-animation-b10__calculation span{font-size:17px;font-weight:900;line-height:1.45;overflow-wrap:anywhere}
+.source-animation-b10__record{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 0;border-bottom:2px solid #d3e0e4;font-size:18px;font-weight:900}
+.source-animation-b10__record>b{display:grid;place-items:center;width:38px;height:38px;background:#1e718b;color:#fff;font-size:18px}
+.source-animation-b10__record>span{display:flex;flex-wrap:wrap;gap:6px}
+.source-animation-b10__record>strong{font-size:22px}
+.source-animation-b10__hit{position:relative;display:grid;place-items:center;min-width:31px;height:31px;padding:0 6px;border-bottom:2px solid #5b98ae;color:#244f60;font-size:16px;font-style:normal}
+.source-animation-b10 .is-matching .is-matched{border-color:#c38e2e;background:#fff4ca}
+.source-animation-b10 .has-cancellation .is-cancelled{border-color:#bd4b43;background:#fff0ee}
+.source-animation-b10 .is-moving{animation:source-animation-b10-token-in .62s ease both}
+.source-animation-b10 .is-animated .is-cancelled{animation:source-animation-b10-cancel .68s ease both}
+@keyframes source-animation-b10-token-in{from{opacity:.25;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes source-animation-b10-cancel{from{transform:scale(1.08)}to{transform:scale(1)}}
+@media(max-width:560px){.source-animation-b10{gap:12px}.source-animation-b10__conditions{padding-bottom:10px}.source-animation-b10__conditions .b10-quantity-equation{padding:7px 0;gap:8px}.source-animation-b10__conditions .b10-quantity-piece{font-size:24px}.source-animation-b10__conditions .b10-scale-reading b{font-size:19px}.source-animation-b10__conditions .b10-target-score{grid-template-columns:1fr;gap:12px}.source-animation-b10__conditions .b10-target-board>div{width:142px;height:142px}.source-animation-b10__conditions .b10-target-attempt{grid-template-columns:36px minmax(0,1fr) auto;font-size:16px}.source-animation-b10__equation{gap:7px;padding:8px 0;font-size:18px}.source-animation-b10__symbol{grid-template-columns:1fr;justify-items:center;gap:3px;padding:4px}.source-animation-b10__symbol b{font-size:26px}.source-animation-b10__symbol small{font-size:16px;text-align:center}.source-animation-b10__calculation-area{min-height:96px}.source-animation-b10__calculation strong{font-size:22px}.source-animation-b10__calculation span{font-size:16px}.source-animation-b10__record{grid-template-columns:36px minmax(0,1fr) auto;gap:7px;padding:8px 0;font-size:18px}.source-animation-b10__record>b{width:34px;height:34px;font-size:17px}.source-animation-b10__record>strong{font-size:20px}.source-animation-b10__hit{min-width:30px;height:30px;font-size:16px}}
+@media print{.source-animation-b10{gap:4mm;break-inside:avoid;page-break-inside:avoid}.source-animation-b10__conditions{padding-bottom:3mm;border-bottom-width:1mm}.source-animation-b10__conditions .b10-quantity-equation{padding:2mm 0;gap:2mm}.source-animation-b10__conditions .b10-quantity-piece{font-size:18px}.source-animation-b10__conditions .b10-scale-reading b{font-size:16px}.source-animation-b10__conditions .b10-target-score{grid-template-columns:34mm minmax(0,1fr);gap:3mm}.source-animation-b10__conditions .b10-target-board>div{width:30mm;height:30mm}.source-animation-b10__conditions .b10-target-board p{font-size:12px}.source-animation-b10__conditions .b10-target-attempt{grid-template-columns:8mm minmax(0,1fr) auto;padding:2mm 0;font-size:15px}.source-animation-b10__conditions .b10-target-attempt>b{width:8mm;height:8mm;font-size:15px}.source-animation-b10__conditions .b10-target-attempt>strong{font-size:16px}.source-animation-b10__calculation-area{min-height:0;padding:1mm 0}.source-animation-b10__work,.source-animation-b10__records{gap:2mm}.source-animation-b10__equation{gap:2mm;padding:2mm 0;font-size:16px}.source-animation-b10__symbol{gap:1mm;padding:1mm}.source-animation-b10__symbol b{font-size:18px}.source-animation-b10__symbol small{font-size:12px}.source-animation-b10__groups{gap:2mm}.source-animation-b10__groups>div{gap:1mm;padding:1mm 0}.source-animation-b10__calculation{gap:2mm;padding:2mm 0}.source-animation-b10__calculation strong{font-size:18px}.source-animation-b10__calculation span{font-size:16px}.source-animation-b10__record{grid-template-columns:8mm minmax(0,1fr) auto;gap:2mm;padding:2mm 0;font-size:16px}.source-animation-b10__record>b{width:8mm;height:8mm;font-size:15px}.source-animation-b10__record>strong{font-size:18px}.source-animation-b10__hit{min-width:7mm;height:7mm;padding:0 1mm;font-size:15px}.source-animation-b10 .is-moving,.source-animation-b10 .is-animated .is-cancelled{animation:none}}

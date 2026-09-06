@@ -20,6 +20,10 @@ function symbolEquations(visual) {
   return `<div class="b8-symbol-equations">${visual.equations.map((equation) => `<p>${escapeHtml(equation)}</p>`).join("")}<strong>${escapeHtml(visual.target)} = ?</strong></div>`;
 }
 
+function sourceWeightScales(visual) {
+  return `<div class="b8-source-weight-scales" role="img" aria-label="두 저울의 전체 무게 비교"><div class="scales">${visual.scales.map((scale, index) => `<figure class="source-weight-scale"><div class="beam"><span class="pan">${scale.rows.map((row) => `<span class="weight-row">${row.map((item) => box(item, "weight-item")).join("")}</span>`).join("")}</span></div><figcaption>저울 ${index + 1} · ${escapeHtml(scale.total)}</figcaption></figure>`).join("")}</div><strong>${escapeHtml(visual.target)} 한 개 = ?${escapeHtml(visual.targetUnit || "")}</strong></div>`;
+}
+
 function matrix(visual) {
   const rowLabels = visual.rowLabels || visual.rows;
   const columnLabels = visual.columnLabels || visual.columns;
@@ -28,6 +32,12 @@ function matrix(visual) {
 
 function sumMatrix(visual) {
   return `<div class="b8-sum-matrix" role="img" aria-label="가로와 세로의 합을 맞추는 3 곱하기 3 덧셈 매트릭스"><div class="cells">${visual.cells.flat().map((value) => `<span>${escapeHtml(value)}</span>`).join("")}</div><div class="rows">${visual.rowTotals.map((value) => `<b class="${value === "?" ? "target" : ""}">${escapeHtml(value)}</b>`).join("")}</div><div class="columns">${visual.columnTotals.map((value) => `<b class="${value === "?" ? "target" : ""}">${escapeHtml(value)}</b>`).join("")}</div></div>`;
+}
+
+function sourceSumMatrix(visual) {
+  const size = visual.cells.length;
+  const columnTotals = visual.columnTotals.map((value) => value === null ? "?" : value);
+  return `<div class="b8-source-sum-matrix" style="--size:${size}" role="img" aria-label="오른쪽 가로 합과 아래 세로 합이 있는 4 곱하기 4 덧셈 매트릭스"><div class="cells">${visual.cells.flat().map((value) => `<span>${escapeHtml(value)}</span>`).join("")}</div><div class="rows">${visual.rowTotals.map((value) => `<b>${escapeHtml(value)}</b>`).join("")}</div><div class="columns">${columnTotals.map((value) => `<b class="${value === "?" ? "target" : ""}">${escapeHtml(value)}</b>`).join("")}</div></div>`;
 }
 
 function operationGrid(visual) {
@@ -99,8 +109,10 @@ export function book08Markup(visual) {
     case "balance": return balance(visual);
     case "overlap-circles": return overlapCircles(visual);
     case "symbol-equations": return symbolEquations(visual);
+    case "source-weight-scales": return sourceWeightScales(visual);
     case "matrix": return matrix(visual);
     case "sum-matrix": return sumMatrix(visual);
+    case "source-sum-matrix": return sourceSumMatrix(visual);
     case "operation-grid": return operationGrid(visual);
     case "conditions": return conditions(visual);
     case "vertical": return vertical(visual);
