@@ -1,0 +1,26 @@
+/* GFIELD shared interface tokens. Apply only inside .gfield-ui. */
+.gfield-ui {
+  --gf-paper: #ffffff;
+  --gf-canvas: #f5f6f8;
+  --gf-ink: #182230;
+  --gf-muted: #566274;
+  --gf-line: #d8dee8;
+  --gf-action: #2456c4;
+  --gf-control-border: var(--gf-muted);
+  --gf-focus: var(--gf-action);
+  --gf-action-hover: #1d469f;
+  --gf-selected: #eaf0ff;
+  --gf-success: #16734b;
+  --gf-error: #b42332;
+  --gf-space-1: 4px;
+  --gf-space-2: 8px;
+  --gf-space-3: 12px;
+  --gf-space-4: 16px;
+  --gf-space-6: 24px;
+  --gf-space-8: 32px;
+  --gf-control-radius: 6px;
+  --gf-control-min-size: 44px;
+  --gf-font-size-input: 16px;
+  --gf-font-body: "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --gf-font-cover: "Batang", "바탕", serif;
+}
