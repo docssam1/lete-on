@@ -17,15 +17,25 @@ test.after(async function(){if(browser)await browser.close();if(server)await new
 test("student edition renders a 12-page, 36-item answer-free book",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);
   await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});
+  await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
   assert.equal(await page.locator(".book-page").count(),12);
   assert.equal(await page.locator(".book-problem").count(),36);
   assert.equal(await page.locator(".concept-card").count(),2);
   assert.equal(await page.locator(".teacher-key,.teacher-move").count(),0);
+  assert.equal(await page.locator('[data-audience="teacher"]').count(),0);
+  assert.equal(await page.locator("#edition-label").innerText(),"학생용");
+  assert.equal(await page.locator('[data-mode="recheck"]').isDisabled(),true);
+  assert.equal(await page.locator("#print-book").isEnabled(),true);
   assert.equal(await page.locator(".record-page").count(),1);
+  const palette=await page.evaluate(function(){const body=getComputedStyle(document.body);const paper=getComputedStyle(document.querySelector(".book-page"));const print=getComputedStyle(document.getElementById("print-book"));return{body:body.backgroundColor,paper:paper.backgroundColor,print:print.backgroundColor,watermark:getComputedStyle(document.querySelector(".book-page"),"::before").content};});
+  assert.deepEqual(palette,{body:"rgb(245, 246, 248)",paper:"rgb(255, 255, 255)",print:"rgb(36, 86, 196)",watermark:'"GFIELD MATH"'});
   const first=page.locator('[data-item-id="spa-w01"]');
   await first.locator('[data-answer-id="N"]').click();assert.equal(await first.locator(".choice-feedback.wrong").count(),1);
   await first.locator('[data-answer-id="S"]').click();assert.equal(await first.locator(".choice-feedback.correct").count(),1);
   assert.equal(await page.locator("#progress-chip").textContent(),"1 / 36");
+  await page.locator("#locale-select").selectOption("en");
+  assert.equal(await page.locator("#progress-chip").textContent(),"1 / 36");
+  assert.equal(await first.locator('[data-answer-id="S"].is-selected.is-correct').count(),1);
   await page.emulateMedia({media:"print"});
   const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});
   assert.deepEqual(overflow,[]);
@@ -35,10 +45,26 @@ test("student edition renders a 12-page, 36-item answer-free book",async functio
 test("all 36 verified responses unlock only the separate recheck route",async function(){
   const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
   await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator('[data-mode="recheck"]').isDisabled(),true);
   for(const item of workbookSource.pack.workbookItems){await page.locator(`[data-item-id="${item.id}"] [data-answer-id="${workbookSource.solveItem(item)}"]`).click();}
   assert.equal(await page.locator("#progress-chip").textContent(),"36 / 36");
   assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-clinic-workbook:6.SP.A:v1");}),"complete-v1");
+  assert.equal(await page.locator('[data-mode="recheck"]').isEnabled(),true);
+  await page.locator('[data-mode="recheck"]').click();
+  assert.equal(await page.locator(".book-problem").count(),8);
+  assert.equal(await page.locator("#progress-chip").textContent(),"0 / 8");
+  assert.equal(new URL(page.url()).searchParams.get("mode"),"recheck");
   assert.equal(await page.locator(".teacher-key,.teacher-move").count(),0);
+  assert.deepEqual(errors,[]);await context.close();
+});
+
+test("a fresh student cannot bypass the unit by opening the recheck URL",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});
+  assert.equal(new URL(page.url()).searchParams.get("mode"),"workbook");
+  assert.equal(await page.locator(".book-problem").count(),36);
+  assert.equal(await page.locator('[data-mode="recheck"]').isDisabled(),true);
+  assert.match(await page.locator('[data-mode="recheck"]').getAttribute("title"),/36문항을 모두 맞힌 뒤/);
   assert.deepEqual(errors,[]);await context.close();
 });
 
@@ -50,6 +76,9 @@ test("teacher Chinese edition keeps the same 36 items and adds guidance without 
   assert.equal(await page.locator(".teacher-key").count(),36);
   assert.equal(await page.locator(".teacher-move").count(),36);
   assert.equal(await page.locator(".choice-feedback,.record-page").count(),0);
+  assert.equal(await page.locator('[data-audience="student"]').count(),0);
+  assert.equal(await page.locator("#edition-label").innerText(),"教师版");
+  assert.equal(await page.locator('[data-mode="recheck"]').isEnabled(),true);
   assert.match(await page.locator(".teacher-observation").innerText(),/自己提出一个统计问题/);
   await page.emulateMedia({media:"print"});
   const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});
@@ -89,6 +118,6 @@ test("curriculum-specific Grade 6 wording renders cleanly in every locale",async
 });
 
 test("mobile and A4 or Letter print layouts stay within their intended width",async function(){
-  for(const width of [320,390]){const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});const dimensions=await page.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];});assert.deepEqual(dimensions,[width,width]);const targets=await page.locator("button,select,.brand").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).map(function(node){const box=node.getBoundingClientRect();return[box.width,box.height];});});targets.forEach(function(size){assert.ok(size[0]>=44);assert.ok(size[1]>=44);});assert.deepEqual(errors,[]);await page.close();}
-  for(const paper of ["A4","Letter"]){const page=await browser.newPage({viewport:{width:1000,height:1200}});await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=${paper}`,{waitUntil:"networkidle"});await page.emulateMedia({media:"print"});const box=await page.locator(".book-page").first().evaluate(function(node){const style=getComputedStyle(node);return{width:parseFloat(style.width),height:parseFloat(style.height)};});if(paper==="A4"){assert.ok(box.width>790&&box.width<797);assert.ok(box.height>1115&&box.height<1122);}else{assert.ok(box.width>813&&box.width<820);assert.ok(box.height>1046&&box.height<1054);}assert.match(await page.locator("#dynamic-page-size").textContent(),new RegExp("size: "+paper));assert.equal(await page.locator(".teacher-key").count(),0);await page.close();}
+  for(const width of [320,390]){const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});const dimensions=await page.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];});assert.deepEqual(dimensions,[width,width]);assert.equal(await page.locator(".site-header nav").evaluate(function(node){return getComputedStyle(node).display;}),"none");assert.equal(await page.locator(".workbook-toolbar").evaluate(function(node){return getComputedStyle(node).position;}),"static");const targets=await page.locator("button,select,.brand").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).map(function(node){const box=node.getBoundingClientRect();return[box.width,box.height];});});targets.forEach(function(size){assert.ok(size[0]>=44);assert.ok(size[1]>=44);});assert.deepEqual(errors,[]);await page.close();}
+  for(const paper of ["A4","Letter"]){const page=await browser.newPage({viewport:{width:794,height:1123}});await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=${paper}`,{waitUntil:"networkidle"});await page.emulateMedia({media:"print"});const box=await page.locator(".book-page").first().evaluate(function(node){const style=getComputedStyle(node);return{width:parseFloat(style.width),height:parseFloat(style.height)};});if(paper==="A4"){assert.ok(box.width>790&&box.width<797);assert.ok(box.height>1115&&box.height<1122);}else{assert.ok(box.width>813&&box.width<820);assert.ok(box.height>1046&&box.height<1054);}const columns=await page.locator(".problem-list").first().evaluate(function(node){return getComputedStyle(node).gridTemplateColumns.split(" ").length;});assert.equal(columns,2);const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});assert.deepEqual(overflow,[],JSON.stringify(overflow));assert.match(await page.locator("#dynamic-page-size").textContent(),new RegExp("size: "+paper));assert.equal(await page.locator(".teacher-key").count(),0);await page.close();}
 });
