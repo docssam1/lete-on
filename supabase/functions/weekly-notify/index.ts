@@ -1,4 +1,4 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v15
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v16
 // 트리거: POST { trigger_key, dry?, test_phone?, probe?, force? }  — pg_cron(매시 정각) 또는 수동 curl.
 //   발송 요일·시각(v13, 원장 "요일 지정"): nm_notify_settings(send_dow 0=일…6=토, send_hour 0~23, KST)이 전역 기본,
 //   nm_contacts.send_dow 가 학부모별 덮어쓰기. 매시 깨어나 KST 요일·시각이 맞는 연락처만 보낸다. force:true 면 무시(수동).
@@ -94,12 +94,12 @@ function smsBytes(s: string): number {
 
 function composeMsg(profileName: string, digest: any, cadence: string, link: { url: string; kind: string }, k = 1): { title: string; msg: string; msgType: "SMS" | "LMS" } {
   const cal = calLabel(cadence, k);
-  // 단문 우선: "[숫자마법] 이름 9월 1주차 학습지\n<짧은 링크>"  (≈ 60~85바이트)
+  // 단문 — 원장이 확정한 형식(2026-09-06 "이정도가 딱 단문이다"):
+  //   [numbers of magic] 8월 5-1주차 학습지⏎https://docssam1.github.io/lete-on/w/?2636.e07b75a2   (89바이트, 12월도 90)
+  // 이름은 넣지 않는다(한글 3자면 이미 넘친다). 링크가 없으면 장문 폴백.
   if (link.url) {
-    const short = `[숫자마법] ${profileName} ${cal} 학습지\n${link.url}`;
+    const short = `[numbers of magic] ${cal} 학습지\n${link.url}`;
     if (smsBytes(short) <= 90) return { title: "", msg: short, msgType: "SMS" };
-    const shorter = `[숫자마법] ${cal} 학습지\n${link.url}`;
-    if (smsBytes(shorter) <= 90) return { title: "", msg: shorter, msgType: "SMS" };
   }
   // 장문 폴백
   const cur = digest && digest.courseTitle
@@ -108,7 +108,7 @@ function composeMsg(profileName: string, digest: any, cadence: string, link: { u
   const linkLine = link.url
     ? `학습지: ${link.url}\n`
     : `앱 > 학습지 모드 > 연산 로드맵에서 이번 주 학습지를 뽑을 수 있어요.\n`;
-  const msg = `[숫자마법] ${cal} 학습지\n${profileName} 학생 · ${cur}\n${linkLine}문의·수신해지: 학원`;
+  const msg = `[numbers of magic] ${cal} 학습지\n${profileName} 학생 · ${cur}\n${linkLine}문의·수신해지: 학원`;
   return { title: `${cal} 학습지`, msg, msgType: "LMS" };
 }
 
