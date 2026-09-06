@@ -1,5 +1,7 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v11
-// 트리거: POST { trigger_key, dry?, test_phone?, probe? }  — pg_cron 또는 수동 curl.
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v13
+// 트리거: POST { trigger_key, dry?, test_phone?, probe?, force? }  — pg_cron(매시 정각) 또는 수동 curl.
+//   발송 요일·시각(v13, 원장 "요일 지정"): nm_notify_settings(send_dow 0=일…6=토, send_hour 0~23, KST)이 전역 기본,
+//   nm_contacts.send_dow 가 학부모별 덮어쓰기. 매시 깨어나 KST 요일·시각이 맞는 연락처만 보낸다. force:true 면 무시(수동).
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
 //   probe:true    → 릴레이에 {action:'ping'}만 보내 응답 원문을 돌려준다(문자 발송 없음, 연결·계약 확인용).
@@ -151,7 +153,19 @@ Deno.serve(async (req: Request) => {
     return new Response(JSON.stringify({ error: "bad trigger_key" }), { status: 403 });
   }
   const dry = !!body.dry;
-  const wk = weekKey(kstNow()); // KST 기준 주차 (런타임 TZ는 UTC라 getFullYear 등이 KST 달력 날짜를 돌려준다)
+  const force = !!body.force;
+  const now = kstNow();
+  const wk = weekKey(now); // KST 기준 주차 (런타임 TZ는 UTC라 getFullYear 등이 KST 달력 날짜를 돌려준다)
+  const kstDow = now.getUTCDay(), kstHour = now.getUTCHours(); // +9h 시프트한 Date의 UTC 필드 = KST 달력
+
+  // 전역 발송 설정
+  const settings: Record<string, string> = { send_dow: "1", send_hour: "8" };
+  try {
+    const { data } = await sb.from("nm_notify_settings").select("key, value");
+    for (const r of data ?? []) settings[r.key] = String(r.value);
+  } catch (_) { /* 기본값 */ }
+  const gHour = parseInt(settings.send_hour, 10);
+  const gDow = parseInt(settings.send_dow, 10);
 
   // 연결·계약 확인: 릴레이에 ping 만 보낸다. 문자 발송 없음. Apps Script면 "Unknown action: ping" 류가 오면 정상.
   // 지난 실행분 결과 맞춰 넣기(SQL만, 싸다)
@@ -189,8 +203,13 @@ Deno.serve(async (req: Request) => {
     return new Response(JSON.stringify({ week: wk, test: true, phone, ...res, log_error: lErr ? lErr.message : undefined }), { headers: { "Content-Type": "application/json" } });
   }
 
+  // 시각 게이트: 설정 시각이 아니면 아무것도 안 한다(매시 호출되므로). force/dry 는 통과.
+  if (!force && !dry && kstHour !== gHour) {
+    return new Response(JSON.stringify({ week: wk, kst: { dow: kstDow, hour: kstHour }, skip: "not-send-hour", send_hour: gHour }), { headers: { "Content-Type": "application/json" } });
+  }
+
   const { data: contacts, error: cErr } = await sb
-    .from("nm_contacts").select("profile_name, phone")
+    .from("nm_contacts").select("profile_name, phone, send_dow")
     .eq("active", true).eq("consent", true);
   if (cErr) return new Response(JSON.stringify({ error: cErr.message }), { status: 500 });
 
@@ -198,6 +217,10 @@ Deno.serve(async (req: Request) => {
   for (const c of contacts ?? []) {
     const phone = String(c.phone).replace(/\D/g, "");
     if (!/^01\d{8,9}$/.test(phone)) { results.push({ phone: c.phone, skip: "bad-phone" }); continue; }
+
+    // 요일 게이트: 학부모별 send_dow, 없으면 전역
+    const dow = (c.send_dow === null || c.send_dow === undefined) ? gDow : Number(c.send_dow);
+    if (!force && !dry && dow !== kstDow) { results.push({ phone, skip: "not-send-day", send_dow: dow }); continue; }
 
     // 주 1회 상한 — 이미 보냈으면 건너뜀
     const { data: dup } = await sb.from("nm_notify_log").select("id")
@@ -219,7 +242,7 @@ Deno.serve(async (req: Request) => {
     const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk, kind: "weekly", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
     results.push({ phone, ok: res.ok, via: res.via, request_id: res.request_id, detail: res.ok ? undefined : res.detail, log_error: lErr ? lErr.message : undefined });
   }
-  return new Response(JSON.stringify({ week: wk, count: results.length, results }), {
+  return new Response(JSON.stringify({ week: wk, kst: { dow: kstDow, hour: kstHour }, settings: { send_dow: gDow, send_hour: gHour }, count: results.length, results }), {
     headers: { "Content-Type": "application/json" },
   });
 });

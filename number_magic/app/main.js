@@ -5055,6 +5055,13 @@ function renderNotifyCard(){
         placeholder="${lk('학부모 휴대폰 번호','Parent phone number','家长手机号')}">
       <button class="nm-btn small" id="nmNotifyGo">${lk('등록','Register','登记')}</button>
     </div>
+    <div class="nm-notify-row nm-notify-dow">
+      <span>${lk('받는 요일','Send on','发送日')}</span>
+      <select id="nmNotifyDow">
+        <option value="">${lk('학원 기본(월요일)','Academy default (Monday)','学院默认（周一）')}</option>
+        ${[1,2,3,4,5,6,0].map(d=>`<option value="${d}">${lk(['일','월','화','수','목','금','토'][d]+'요일',['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d],['周日','周一','周二','周三','周四','周五','周六'][d])}</option>`).join('')}
+      </select>
+    </div>
     <label class="nm-notify-consent">
       <input type="checkbox" id="nmNotifyConsent">
       <span>${lk('학습 안내 발송을 위한 전화번호 수집·이용에 동의합니다(수신 해지 시까지 보관).',
@@ -5079,7 +5086,8 @@ function renderNotifyCard(){
       const r=await fetch(`${SB_URL}/rest/v1/nm_contacts`,{
         method:'POST',headers:sbHdr(),
         body:JSON.stringify({profile_name:S.name||('#'+(S.character&&S.character.number)),
-          phone:raw,consent:true,consent_at:new Date().toISOString()})});
+          phone:raw,consent:true,consent_at:new Date().toISOString(),
+          send_dow:($('#nmNotifyDow').value==='')?null:Number($('#nmNotifyDow').value)})});
       if(r.ok||r.status===409){ /* 409=이미 등록(같은 프로필·번호) — 성공 취급 */
         S.notifyReg=raw.slice(0,3)+'-****-'+raw.slice(-4);
         save();

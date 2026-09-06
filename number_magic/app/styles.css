@@ -2213,3 +2213,7 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
   .nm-pe-round-actions{width:100%;margin-left:0}
   .nm-pe-body{padding:12px 4px 40px}
 }
+
+/* 학부모 알림 카드 — 받는 요일 선택 (2026-09-06) */
+.nm-notify-dow{align-items:center;gap:8px;font-size:13px;color:#5d5548}
+.nm-notify-dow select{flex:1;padding:8px 10px;border:1px solid #d9cfbd;border-radius:10px;background:#fffdf8;font:inherit}
