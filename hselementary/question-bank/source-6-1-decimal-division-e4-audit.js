@@ -31,6 +31,8 @@ const attr = (markup, name) => String(markup).match(new RegExp(`${name}="([^"]*)
 const close = (a, b) => Math.abs(Number(a) - Number(b)) < 1e-8;
 const toOne = value => Number(value).toFixed(1).replace(/\.0$/, "");
 const sourceValue = value => Number(value).toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+const familyRelations = [51.6, 44.6, 59.9];
+const familyAnswers = [18.8, 23.2, 16.6];
 const answerFor = (variant, pool) => {
   if (variant === 0) return `${toOne(pool[1] - pool[2])}kg`;
   if (variant === 1) return `${sourceValue(pool[2] / (pool[0] * pool[1] - 1))}m²`;
@@ -74,25 +76,28 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
     if (variant === 0) {
       if (!close(expected[0] + expected[1] + expected[2], expected[3])) fail(`${label}: 가족 합계 관계 재검산 실패`);
       if (!close(expected[1] - expected[0], expected[4])) fail(`${label}: 가족 아버지-예훈 관계 재검산 실패`);
-      if (!close(3 * expected[2] - expected[1] - expected[0], expected[5])) fail(`${label}: 가족 관계 3×어머니-(아버지+예훈) 재검산 실패`);
-      if (poolIndex === 0 && generated.answer !== "18.8kg") fail(`${label}: 원문 가족 답 불일치`);
+      if (!close(3 * expected[2] - (expected[1] + expected[0]), expected[5]) || !close(expected[5], familyRelations[poolIndex])) fail(`${label}: 가족 관계 3×어머니-(아버지+예훈) 재검산 실패`);
+      if (generated.answer !== `${sourceValue(familyAnswers[poolIndex])}kg`) fail(`${label}: 가족 pool별 답 불일치`);
+      if (expected[5] === 48.8 || expected[5] === 61.6) fail(`${label}: 잘못된 가족 관계값이 남아 있습니다.`);
     }
     if (variant === 2) {
       if (!close(expected[2] / expected[0], expected[4] + expected[5]) || !close(expected[3] / expected[1], expected[4] - expected[5])) fail(`${label}: 수도의 합·차를 각 시간으로 나눈 식이 아닙니다.`);
       if (generated.prompt.includes("남은") || generated.solution.includes("남은")) fail(`${label}: 수도 풀이에 잘못된 남은 시간 논리가 남아 있습니다.`);
       if (!generated.prompt.includes(`${expected[0]}시간 동안`) || !generated.prompt.includes(`${expected[1]}시간 동안`)) fail(`${label}: 수도 두 조건의 시간이 분리되지 않았습니다.`);
+      if ((problemSvg.match(/1시간 →/g) || []).length !== 2 || !generated.prompt.includes("첫째 조건 · 합") || !generated.prompt.includes("둘째 조건 · 차")) fail(`${label}: 두 수도 카드·조건 표가 분리되지 않았습니다.`);
+      if (generated.prompt.includes(`${expected[1]}-${expected[0]}`) || generated.solution.includes(`${expected[1]}-${expected[0]}`)) fail(`${label}: 수도 식에 남은 시간 차가 들어갔습니다.`);
       if (problemSvg.includes(`${expected[4]}L`) || problemSvg.includes(`${expected[5]}L`)) fail(`${label}: 수도 문제 그림에 답이 노출되었습니다.`);
     }
     if (variant === 3 || variant === 7) {
       if (!generated.prompt.includes(expected[2] % 1 ? `${Math.floor(expected[2])}시간 ${Math.round(expected[2] % 1 * 60)}분` : `${expected[2]}시간`)) fail(`${label}: 왕복 시간 표기가 잘못되었습니다.`);
       if (answerSvg.includes("source61-e4-midpoint") || answerSvg.includes('cx="180" cy="92"') || answerSvg.includes('cx="180" cy="100"')) fail(`${label}: 고정된 가운데 만남점이 남아 있습니다.`);
-      if (!answerSvg.includes("source61-e4-route") || !answerSvg.includes("source61-e4-measure")) fail(`${label}: 세 구간 선분 모델이 없습니다.`);
+      if (!answerSvg.includes('data-source61-e4-model="three-segment-route"') || !answerSvg.includes('data-segment-count="3"') || (answerSvg.match(/source61-e4-measure/g) || []).length < 4) fail(`${label}: 세 구간 선분 모델이 없습니다.`);
     }
     if (variant === 7 && poolIndex === 0 && !generated.prompt.includes("1시간 48분")) fail(`${label}: 1.8시간이 시간·분으로 변환되지 않았습니다.`);
     if (variant === 4 && poolIndex === 1 && !generated.answer.includes("103.0cm")) fail(`${label}: 한 자리 정밀도 103.0 표기가 보존되지 않았습니다.`);
-    if (variant === 6 && (!problemSvg.includes("폭") || !problemSvg.includes("source61-e4-measure"))) fail(`${label}: 공원 폭 치수선이 없습니다.`);
+    if (variant === 6 && (!problemSvg.includes("폭") || !problemSvg.includes('data-source61-e4-width-dimension="both-ends"') || (problemSvg.match(/source61-e4-arrow/g) || []).length !== 4)) fail(`${label}: 공원 폭의 양끝 치수선·화살표가 없습니다.`);
     if (variant === 8) {
-      if (!answerSvg.includes("source61-e4-section-highlight") || answerSvg.includes('cx="180" cy="100"')) fail(`${label}: 펼친 원형 길의 남은 구간 표시가 없습니다.`);
+      if (!answerSvg.includes('data-source61-e4-model="unwrapped-circle-segment"') || !answerSvg.includes("source61-e4-section-highlight") || answerSvg.includes('cx="180" cy="100"') || answerSvg.includes("source61-e4-circle-path")) fail(`${label}: 펼친 원형 길의 실제 이동 구간 표시가 없습니다.`);
     }
     const plain = `${generated.prompt}\n${generated.solution}\n${generated.answerVisual}`.replace(/<svg[\s\S]*?<\/svg>/g, " ").replace(/<[^>]+>/g, " ");
     if (/undefined|null|NaN|Infinity|\$\{[^}]+\}|순열|조합|일차식|절댓값/.test(plain)) fail(`${label}: 깨진 값 또는 학년 밖 표현`);

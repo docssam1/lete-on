@@ -183,9 +183,9 @@ async function captureA4(page, filename, label) {
     const mission5 = api.generate({ sourceItemId: sourceIds[7], reviewLocked: false }, 0, 0, 610440 + 7 * 100000 + 1000 + 17, 7);
     if (!mission5.prompt.includes("1시간 48분") || mission5.prompt.includes("1.8시간 48분")) fail("mission-5: 시간 표기가 원문 단위로 정리되지 않았습니다.");
     const mission6 = api.generate({ sourceItemId: sourceIds[8], reviewLocked: false }, 0, 0, 610440 + 8 * 100000 + 1000 + 17, 8);
-    if (svgMarkup(mission6.answerVisual).includes('cx="180" cy="100"') || !svgMarkup(mission6.answerVisual).includes("source61-e4-section-highlight")) fail("mission-6: 원형 길의 실제 이동 구간이 아닙니다.");
+    if (!svgMarkup(mission6.answerVisual).includes('data-source61-e4-model="unwrapped-circle-segment"') || svgMarkup(mission6.answerVisual).includes('cx="180" cy="100"') || !svgMarkup(mission6.answerVisual).includes("source61-e4-section-highlight")) fail("mission-6: 원형 길의 실제 이동 구간이 아닙니다.");
     const park = api.generate({ sourceItemId: sourceIds[6], reviewLocked: false }, 0, 0, 610440 + 6 * 100000 + 1000 + 17, 6);
-    if (!svgMarkup(park.prompt).includes("폭") || !svgMarkup(park.prompt).includes("source61-e4-measure")) fail("mission-3: 길 폭 치수선이 없습니다.");
+    if (!svgMarkup(park.prompt).includes('data-source61-e4-width-dimension="both-ends"') || (svgMarkup(park.prompt).match(/source61-e4-arrow/g) || []).length !== 4) fail("mission-3: 길 폭 양끝 치수선·화살표가 없습니다.");
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
