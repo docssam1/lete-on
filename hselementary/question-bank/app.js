@@ -163,10 +163,11 @@
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
-    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-controls="typePreviewPopover" aria-expanded="false">' +
+    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
       '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
+      '<span class="tree-type-preview-action" aria-hidden="true">미리보기</span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "검수 대기") + '</span>' +
     '</div>';
   }
@@ -203,7 +204,7 @@
     previewPopover.id = "typePreviewPopover";
     previewPopover.className = "type-preview-popover";
     previewPopover.setAttribute("role", "region");
-    previewPopover.setAttribute("aria-label", "선택한 유형 대표 문제 미리보기");
+    previewPopover.setAttribute("aria-label", "선택한 유형 예시 미리보기");
     previewPopover.setAttribute("aria-live", "polite");
     previewPopover.hidden = true;
     previewPopover.addEventListener("click", event => {
@@ -245,7 +246,7 @@
     const source = type.sourceItemLabel
       ? `원문 ${escapeHtml(type.sourceItemLabel)}${sourcePage}`
       : `${type.grade}학년 ${type.term}학기 분류`;
-    const sourceLine = `<div class="type-preview-source"><b>대표 문제</b><small>${source}</small></div>`;
+    const sourceLine = `<div class="type-preview-source"><b>유형 예시</b><small>대표 문제 · ${source}</small></div>`;
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
     if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
@@ -253,7 +254,7 @@
     } else {
       const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
       if (!generated) return;
-      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} · 고정된 유형 예시</footer>`;
     }
     placeTypePreview(anchor, popover);
     popover.hidden = false;
