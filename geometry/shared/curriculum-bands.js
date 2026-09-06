@@ -6,10 +6,11 @@ export const curriculumBands = {
 
 export const activityBands = {
   "mirror-manor": { 1: "facto1", 2: "facto1", 3: "facto1", 4: "1031-intro-entry", 5: "1031-intro-entry" },
-  geoboard: { 1: "1031-intro-entry", 2: "1031-intro-entry", 3: "1031-basic", 4: "1031-basic", 5: "1031-basic" }
+  geoboard: { 1: "1031-intro-entry", 2: "1031-intro-entry", 3: "1031-basic", 4: "1031-basic", 5: "1031-basic" },
+  "shape-transform": { 1: "facto1", 2: "1031-intro-entry", 3: "1031-intro-entry", 4: "1031-basic", 5: "1031-basic" }
 };
 
-export const excludedConcepts = ["similarity", "scale-up", "scale-down"];
+export const excludedConcepts = ["similarity"];
 
 export function curriculumBandLabel(game, level, language = "ko") {
   const band = curriculumBands[activityBands[game]?.[level]];
