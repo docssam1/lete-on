@@ -141,12 +141,11 @@ if(S.name===undefined)S.name='';
    hadSave(저장본이 이미 있었는지)로만 "신규 설치 vs 기존 프로필"을 구분해야
    병합 후에도 미설정 여부를 알 수 있다. 기존 프로필(이미 쓰던 사용자)은 승인번호 없이도
    자동 active(grandfather) — 재원생이 게이트 도입으로 잠기면 안 된다는 원장 지시. */
-/* 2026-08-29 원장 지시 "우선 승인 없이 다 되도록 열고" — 신규 프로필도 active로
-   시작한다. 게이트 코드(TRIAL_UNITS·unitLocked·안내 모달·승인번호 입력)는 그대로
-   살려 두었으므로, 학원이 승인번호를 실제로 발급하기 시작하면 아래 'active'를
-   'trial'로 되돌리는 한 줄이면 다시 켜진다. HANDOFF §체험 게이트의 단계 설명
-   ("지금(승인 없음) → 승인번호 도입 시 체험 모드 활성화")과 같은 상태다. */
-if(!S.account)S.account={status:'active',code:null,checkedAt:0};
+/* 2026-09-06 원장 지시 "이제 접속 승인번호 연결하자" — 게이트를 켠다.
+   완전 신규 설치(hadSave===false)만 체험으로 시작하고, 이미 쓰던 프로필은 승인번호 없이도
+   active 로 남긴다(위 주석의 grandfather — 재원생이 게이트 도입으로 잠기면 안 된다).
+   전에는 이 줄이 무조건 'active' 였다가 잠깐 무조건 'trial' 이었는데, 둘 다 한쪽을 깨뜨린다. */
+if(!S.account)S.account={status:hadSave?'active':'trial',code:null,checkedAt:0};
 /* 소급 마이그레이션: 과거 완료(done) 유닛에 steps.stamp가 빠져 로드맵 별이 안 켜지던 버그 —
    기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
@@ -199,12 +198,63 @@ function switchToSlot(target){
    승인번호 없이는 각 티어의 대표 유닛만 플레이 가능. 대표 유닛 선정은
    과정-로드맵.md §10 "체험 유닛 선정" 그대로: 유아 N-01·N-09, 초급 A-01, 창의 C-06.
    난이도 잠금(자유 선택 원칙)과는 무관한 별개의 축 — active면 이 체크는 전부 통과. */
-const TRIAL_UNITS=['N-01','N-09','A-01','C-06'];
-function isTrialUnit(uid){return TRIAL_UNITS.indexOf(uid)>=0;}
+/* 체험 범위 (2026-09-06, 원장 지시 "유치 초등 중등 고등 2개씩과 게임마을 2개 챕터씩").
+   두 축의 합집합을 연다 — 유닛 목록을 손으로 박지 않고 데이터에서 계산하므로
+   커리큘럼이 바뀌어도 따라온다.
+   ① 학년 밴드: data/roadmap.js 의 chapter.grade 를 유치/초등/중등/고등으로 묶어
+      밴드마다 앞에서 2유닛 (로드맵·학년교실 화면의 축).
+   ② 마을 등급: data/curriculum.js 의 tier 마다 열려 있는 앞 2개 레벨(=챕터) 전체
+      (마을에서 건물에 들어갔을 때의 축). screenTier 가 3번째 레벨부터 자물쇠로 그린다. */
+const TRIAL_BANDS=[
+  {key:'유치', grades:['유아']},
+  {key:'초등', grades:['초1','초2','초3','초4','초5','창의']},
+  {key:'중등', grades:['중1','중2','중3']},
+  {key:'고등', grades:['공통수학1','공통수학2','대수','미적분Ⅰ']}
+];
+const TRIAL_PER_BAND=2;
+const TRIAL_LEVELS_PER_TIER=2;
+let _trialSet=null;
+function trialUnitSet(){
+  if(_trialSet)return _trialSet;
+  const set=new Set();
+  const chapters=(window.NM_ROADMAP&&NM_ROADMAP.chapters)||[];
+  TRIAL_BANDS.forEach(band=>{
+    let n=0;
+    chapters.forEach(ch=>{
+      if(n>=TRIAL_PER_BAND||band.grades.indexOf(ch.grade)<0)return;
+      (ch.units||[]).forEach(uid=>{ if(n<TRIAL_PER_BAND&&UNITS[uid]){set.add(uid);n++;} });
+    });
+  });
+  /* 마을 축은 '마을에 실제로 서 있는 건물'(TOWN_SPOTS)만 센다. curriculum.js 에는 중·고등
+     등급도 tier 로 들어 있지만 마을 지도에는 없다 — 전부 세면 체험이 199유닛 중 70개가 된다. */
+  const townTiers=TOWN_SPOTS.map(sp=>sp.tier).filter(id=>id.charAt(0)!=='_');
+  townTiers.forEach(id=>{
+    const tier=(CUR&&CUR.tiers||[]).find(t=>t.id===id);
+    if(!tier)return;
+    (tier.levels||[]).filter(l=>l.available&&(l.units||[]).some(u=>UNITS[u]))
+      .slice(0,TRIAL_LEVELS_PER_TIER)
+      .forEach(l=>(l.units||[]).forEach(uid=>{ if(UNITS[uid])set.add(uid); }));
+  });
+  if(set.size)_trialSet=set;   // 데이터 미로딩(스크립트 순서)이면 캐시하지 않는다
+  return set;
+}
+function isTrialUnit(uid){return trialUnitSet().has(uid);}
+/* 체험에서 열리는 마을 챕터인가(등급 안 레벨 index, 0부터) */
+function trialLevelOpen(tierId,idx){
+  if(accountActive())return true;
+  const isTown=TOWN_SPOTS.some(sp=>sp.tier===tierId);
+  return isTown ? idx<TRIAL_LEVELS_PER_TIER : true;  // 마을 건물만 2챕터 제한
+}
+/* 체험 중에는 마을 밖(도형 나라·탐험대 등 다른 서비스)으로 나가지 않는다 —
+   원장 지시 2026-09-06 "지오메트리나 외부로 나가는 마을은 막기". 앱 안 화면(view)은 그대로. */
+function externalBlocked(){return !accountActive();}
+/* 검증 하네스(Playwright)가 화면을 헤집지 않고 게이트 판정을 확인할 수 있게 — 읽기 전용 조회만.
+   window.feedbackFx 와 같은 목적의 훅이다. */
+window.NM_GATE={trialUnitSet,isTrialUnit,unitLocked,accountActive,externalBlocked,trialLevelOpen};
 /* 원장 지시 2026-09-03 "우선 승인번호 없이도 모두 열리도록": 계정 상태와 무관하게 항상 열림.
    승인번호 입력·재검증 코드는 그대로 두었으니, 게이트를 되살릴 때는 아래 한 줄만
    `return !!(S.account&&S.account.status==='active');` 로 되돌리면 된다. */
-function accountActive(){return true;}
+function accountActive(){return !!(S.account&&S.account.status==='active');}
 function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
 /* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
@@ -237,11 +287,17 @@ async function cloudClaim(name,state){
    행이 오면 유효(=active)한 것이고 안 오면 오타든 비활성이든 똑같이 "없음"이다 —
    회수(재검증)도 같은 함수 재사용: 비활성화된 코드는 RLS가 그 순간부터 숨겨준다. */
 async function nmCheckCode(code){
-  const url=`${SB_URL}/rest/v1/nm_codes?code=eq.${encodeURIComponent(code)}&select=code`;
-  const r=await fetch(url,{headers:sbHdr()});
+  /* 2026-09-06: 예전에는 여기서 nm_codes 를 anon 키로 직접 SELECT 했다. RLS 가 active=true 라
+     "코드를 알아야만 조회된다"고 봤지만 그건 행 필터일 뿐이라 select=code 한 번이면 유효 코드가
+     전부 나왔다(실측 200 + 목록). 검증을 Edge Function 으로 옮기고 표의 anon SELECT 는 지웠다.
+     함수는 코드 존재 여부만 돌려주고(오타·회수 구분 안 함) IP 기준 속도 제한을 건다. */
+  const r=await fetch(`${SB_URL}/functions/v1/nm-auth`,{
+    method:'POST',headers:sbHdr(),
+    body:JSON.stringify({action:'verify',code})});
+  if(r.status===429)throw new Error('nmCheckCode rate_limited');
   if(!r.ok)throw new Error('nmCheckCode '+r.status);
-  const rows=await r.json();
-  return rows.length>0;
+  const j=await r.json();
+  return !!(j&&j.ok);
 }
 /* 코드 제출(잠금 모달·설정 화면 공용). 성공 시 S.account를 active로 갱신하고 저장까지 한다. */
 async function applyAccountCode(code){
@@ -256,6 +312,8 @@ async function applyAccountCode(code){
     }
     return{ok:false,reason:'invalid'};
   }catch(e){
+    /* 같은 IP 에서 10분에 12회를 넘기면 nm-auth 가 429 를 준다 — 오타 반복과 구분해서 알린다. */
+    if(/rate_limited/.test(String(e&&e.message)))return{ok:false,reason:'rate'};
     return{ok:false,reason:'network'};
   }
 }
@@ -911,6 +969,10 @@ function showGateLinksModal(gate){
       if(link.view){
         return `<button class="nm-btn full" data-view="${esc(link.view)}">${esc(L(link.name))} →</button>`;
       }
+      /* 체험 중에는 다른 서비스로 나가지 않는다 — 앱 안 화면(view)은 그대로 둔다. */
+      if(externalBlocked()){
+        return `<button class="nm-btn full ghost" data-gatecode="1">🔒 ${esc(L(link.name))} · ${lk('승인 후 이용','Needs an approval code','授权后可用')}</button>`;
+      }
       return `<button class="nm-btn full" data-url="${esc(link.url)}">${esc(L(link.name))} →</button>`;
     }
     return `<button class="nm-btn full ghost" disabled>${esc(L(link.name))} · ${lk('준비 중','Coming soon','准备中')}</button>`;
@@ -928,6 +990,9 @@ function showGateLinksModal(gate){
   const close=()=>wrap.remove();
   wrap.querySelectorAll('[data-url]').forEach(b=>{
     b.onclick=()=>{ window.open(b.dataset.url,'_blank','noopener'); };
+  });
+  wrap.querySelectorAll('[data-gatecode]').forEach(b=>{
+    b.onclick=()=>{ close(); showGateModal(); };
   });
   /* view 링크 — 새 탭이 아니라 이 앱 안의 화면으로 이동(마을 밖으로 안 나감) */
   wrap.querySelectorAll('[data-view]').forEach(b=>{
@@ -1238,7 +1303,12 @@ function screenRoadmap(){
   });
   /* 외부 링크 스톤 클릭 — 새 탭에서 연다(2026-08-25, 미적분 실험실 이식) */
   scr.querySelectorAll('.nm-road-linkstone[data-link]').forEach(el=>{
-    el.onclick=()=>{ window.open(el.dataset.link,'_blank','noopener'); };
+    el.onclick=()=>{
+      /* '../' 로 시작하면 넘버스 밖(다른 서비스)이다 — 체험 중에는 막는다.
+         labs/*.html 같은 앱 안 링크는 그대로 열린다. */
+      if(externalBlocked()&&/^\.\.\//.test(el.dataset.link||'')){showGateModal();return;}
+      window.open(el.dataset.link,'_blank','noopener');
+    };
   });
 }
 
@@ -3466,7 +3536,7 @@ function gateModalHtml(){
       <button class="nm-gate-x" id="nmGateClose" aria-label="close">✕</button>
       <div class="nm-gate-ico doc">${window.renderHumanChar?window.renderHumanChar('doc',64):'🔒'}<span class="nm-gate-ico-lock">🔒</span></div>
       <h3>${ko?'승인번호가 있으면 모두 열려요':en?'Unlock everything with your academy code':'输入学院授权码即可解锁全部'}</h3>
-      <p>${ko?'지금은 체험 모드예요. 각 단계 대표 유닛만 먼저 만나볼 수 있어요.':en?'You’re in trial mode — try a taste from each level first.':'当前为体验模式，先体验各阶段的代表单元。'}</p>
+      <p>${ko?'지금은 체험 모드예요. 유치·초등·중등·고등에서 2개씩, 마을 건물마다 앞 2챕터를 둘러볼 수 있어요.':en?'You’re in trial mode — two units from each school band, plus the first two chapters in every village building.':'当前为体验模式：幼儿·小学·初中·高中各2个单元，村庄每栋建筑前2章。'}</p>
       <div class="nm-gate-inputrow">
         <input id="nmGateCode" placeholder="${ko?'승인번호 입력':en?'Enter code':'输入授权码'}" maxlength="24" autocomplete="off">
         <button class="nm-btn" id="nmGateSubmit">${ko?'확인':en?'Apply':'确认'}</button>
@@ -3495,6 +3565,8 @@ function showGateModal(){
       toast(ko?'승인 완료! 모두 열렸어요 ✨':en?'Approved! Everything is unlocked ✨':'授权成功，全部解锁 ✨',true);
       close();
       render();
+    }else if(res.reason==='rate'){
+      msg.textContent=ko?'시도가 너무 많아요. 10분 뒤에 다시 해 주세요.':en?'Too many tries — please wait 10 minutes.':'尝试次数过多，请10分钟后再试。';
     }else if(res.reason==='network'){
       msg.textContent=ko?'연결에 실패했어요. 잠시 후 다시 시도해 주세요.':en?'Connection failed — try again soon.':'连接失败，请稍后重试。';
     }else{
@@ -3806,8 +3878,18 @@ function screenTier(){
     <div class="nm-tier" style="--tier-accent:${esc(accent)}">
       <p class="nm-tier-desc">${L(tier.desc)}</p>
       <div class="nm-levels">`;
+  /* 체험 중에는 등급마다 앞 2챕터만 연다(원장 지시 2026-09-06). availIdx 는 '열려 있는
+     레벨' 기준 순번 — trialUnitSet 이 쓰는 filter(available).slice(0,2) 와 같은 셈법이라야
+     여기서 열어 준 챕터와 실제로 풀리는 유닛이 어긋나지 않는다. */
+  let availIdx=-1;
   tier.levels.forEach(lvl=>{
     const units=(lvl.units||[]).filter(u=>UNITS[u]);
+    if(lvl.available&&units.length)availIdx++;
+    const trialOpen=trialLevelOpen(tier.id,availIdx);
+    if(lvl.available&&units.length&&!trialOpen){
+      html+=`<div class="nm-level locked trial-locked" data-trial-level="1"><div class="nm-level-t">${L(lvl.title)}</div><span class="nm-lock">🔒 ${esc(lk('승인번호가 있으면 열려요','Unlocks with an approval code','有授权码即可解锁'))}</span></div>`;
+      return;
+    }
     const open=lvl.available&&units.length;
     if(open){
       const lt=splitLevelTitle(L(lvl.title));
@@ -3832,6 +3914,7 @@ function screenTier(){
   scr.innerHTML=html;
   $('#backTown').onclick=exitTier;
   scr.querySelectorAll('[data-unit]').forEach(b=>b.onclick=()=>enterUnit(b.dataset.unit));
+  scr.querySelectorAll('[data-trial-level]').forEach(b=>b.onclick=()=>showGateModal());
 }
 
 /* ============================================================
@@ -5139,6 +5222,8 @@ function renderAccountCard(){
     if(res.ok){
       toast(ko?'승인 완료! 모두 열렸어요 ✨':en?'Approved! Everything is unlocked ✨':'授权成功，全部解锁 ✨',true);
       renderAccountCard();
+    }else if(res.reason==='rate'){
+      msg.textContent=ko?'시도가 너무 많아요. 10분 뒤에 다시 해 주세요.':en?'Too many tries — please wait 10 minutes.':'尝试次数过多，请10分钟后再试。';
     }else if(res.reason==='network'){
       msg.textContent=ko?'연결에 실패했어요. 잠시 후 다시 시도해 주세요.':en?'Connection failed — try again soon.':'连接失败，请稍后重试。';
     }else{
