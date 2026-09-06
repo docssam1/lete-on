@@ -3791,6 +3791,7 @@
     },
     {
       "sourceItemId": "6-1-u6-e1-exploration",
+      "publicSourceItemId": "6-1-u6-e1-exploration",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3800,13 +3801,14 @@
       "section": "exploration",
       "ordinal": 1,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e1-example-1",
+      "publicSourceItemId": "6-1-u6-e1-example-1",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3816,13 +3818,14 @@
       "section": "example",
       "ordinal": 1,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e1-example-2",
+      "publicSourceItemId": "6-1-u6-e1-example-2",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3832,13 +3835,14 @@
       "section": "example",
       "ordinal": 2,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e1-example-3",
+      "publicSourceItemId": "6-1-u6-e1-example-3",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3848,13 +3852,14 @@
       "section": "example",
       "ordinal": 3,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e1-example-4",
+      "publicSourceItemId": "6-1-u6-e1-example-4",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3864,13 +3869,14 @@
       "section": "example",
       "ordinal": 4,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e1-mission-1",
+      "publicSourceItemId": "6-1-u6-e1-mission-1",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3880,13 +3886,14 @@
       "section": "mission",
       "ordinal": 1,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e1-mission-2",
+      "publicSourceItemId": "6-1-u6-e1-mission-2",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3896,13 +3903,14 @@
       "section": "mission",
       "ordinal": 2,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e1-mission-3",
+      "publicSourceItemId": "6-1-u6-e1-mission-3",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3912,13 +3920,14 @@
       "section": "mission",
       "ordinal": 3,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e1-mission-4",
+      "publicSourceItemId": "6-1-u6-e1-mission-4",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3928,13 +3937,14 @@
       "section": "mission",
       "ordinal": 4,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
+      "answerContract": "drawing-dependent-candidate",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원본 그림에서 두 절단의 방향과 깊이가 하나로 확인되기 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-1-u6-e1-mission-5",
+      "publicSourceItemId": "6-1-u6-e1-mission-5",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3944,13 +3954,14 @@
       "section": "mission",
       "ordinal": 5,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
+      "answerContract": "drawing-dependent-candidate",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원본 그림의 빠진 쌓기나무 위치를 모두 확인하기 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-1-u6-e1-mission-6",
+      "publicSourceItemId": "6-1-u6-e1-mission-6",
       "unitId": "6-1-u6",
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 1,
@@ -3960,10 +3971,10 @@
       "section": "mission",
       "ordinal": 6,
       "sourceShape": "직육면체 또는 연결한 정육면체의 겉넓이에서 보이는 면과 맞닿은 면을 구분하여 필요한 넓이를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-1-u6-e2-exploration",

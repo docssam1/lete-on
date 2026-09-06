@@ -6,6 +6,7 @@ require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
 require("./source-grade6-volume-e4.js");
+require("./source-grade6-surface-e1.js");
 
 const generatorApi = window.HSE_GENERATORS;
 const failures = [];
@@ -25,10 +26,10 @@ const locked = types.filter(type => !generatorApi.generatorKey(type) || type.rev
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
 
 if (types.length !== 1893) failures.push(`런타임 유형은 1893개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1368) failures.push(`생성 가능 유형은 1368개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 525) failures.push(`검수 대기 유형은 525개여야 하나 ${locked.length}개입니다.`);
+if (ready.length !== 1377) failures.push(`생성 가능 유형은 1377개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 516) failures.push(`검수 대기 유형은 516개여야 하나 ${locked.length}개입니다.`);
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
-if (sourceGrade6.filter(type => !type.reviewLocked).length !== 199 || sourceGrade6.filter(type => type.reviewLocked).length !== 434) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
+if (sourceGrade6.filter(type => !type.reviewLocked).length !== 208 || sourceGrade6.filter(type => type.reviewLocked).length !== 425) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
 if (!sourceGrade6.every(type => {
   if (!type.answerVisualRequired) return false;
   if (type.generationMode === "review-locked") {
@@ -68,4 +69,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`런타임 생성 가능성 감사 통과: 전체 1893 · 생성 가능 1368 · 검수 대기 525(6학년 원문 434 포함) · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`런타임 생성 가능성 감사 통과: 전체 1893 · 생성 가능 1377 · 검수 대기 516(6학년 원문 425 포함) · ${generatedCount.toLocaleString()}회 생성`);
