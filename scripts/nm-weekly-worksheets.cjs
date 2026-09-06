@@ -84,13 +84,15 @@ async function main() {
       if (!t.courseKey) { console.log(`[ws] skip ${t.name}: weeklyDigest.courseKey 없음(앱에서 로드맵을 아직 안 열었음)`); skip++; continue; }
       const ks = t.cadence === 'w2' ? [1, 2] : [1]; // 주 2회반은 그 주 학습지 두 벌
       for (const k of ks) {
-      const url = `${base}/number_magic/ws.html?w=${WEEK}&c=${encodeURIComponent(t.courseKey)}&n=${encodeURIComponent(t.name)}&k=${k}&auto=0`;
+      const url = `${base}/number_magic/ws.html?w=${WEEK}&c=${encodeURIComponent(t.courseKey)}&n=${encodeURIComponent(t.name)}&k=${k}&cad=${t.cadence}&auto=0`;
       const page = await browser.newPage({ viewport: { width: 900, height: 1200 } });
       try {
         await page.goto(url, { waitUntil: 'load', timeout: 60000 });
         await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 });
         const ready = await page.evaluate(() => window.NM_WS_READY);
         if (ready !== true) throw new Error('ws.html 렌더 실패: ' + await page.evaluate(() => (document.querySelector('.ws-err') || {}).textContent));
+        const fonts = await page.evaluate(() => ({ pretendard: document.fonts.check('16px Pretendard'), gowun: document.fonts.check('16px "Gowun Batang"'), status: document.fonts.status }));
+        if (!fonts.pretendard) console.warn(`[ws] ${t.name}: Pretendard 미로딩(${JSON.stringify(fonts)}) — 시스템 한글 글꼴로 대체됨`);
         await page.emulateMedia({ media: 'print' });
         const pdf = await page.pdf({ format: 'A4', printBackground: true, margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' } });
         const token = crypto.createHmac('sha256', KEY || 'dry').update(`${t.name}|${WEEK}|${t.courseKey}${k > 1 ? '|' + k : ''}`).digest('hex').slice(0, 8); // 8자: 단문(90바이트) 짧은 링크(/w/)용

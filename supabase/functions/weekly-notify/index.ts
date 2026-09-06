@@ -1,4 +1,4 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v16
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v17
 // 트리거: POST { trigger_key, dry?, test_phone?, probe?, force? }  — pg_cron(매시 정각) 또는 수동 curl.
 //   발송 요일·시각(v13, 원장 "요일 지정"): nm_notify_settings(send_dow 0=일…6=토, send_hour 0~23, KST)이 전역 기본,
 //   nm_contacts.send_dow 가 학부모별 덮어쓰기. 매시 깨어나 KST 요일·시각이 맞는 연락처만 보낸다. force:true 면 무시(수동).
@@ -97,7 +97,11 @@ function composeMsg(profileName: string, digest: any, cadence: string, link: { u
   // 단문 — 원장이 확정한 형식(2026-09-06 "이정도가 딱 단문이다"):
   //   [numbers of magic] 8월 5-1주차 학습지⏎https://docssam1.github.io/lete-on/w/?2636.e07b75a2   (89바이트, 12월도 90)
   // 이름은 넣지 않는다(한글 3자면 이미 넘친다). 링크가 없으면 장문 폴백.
+  // v17(원장 "magic 다음에 이름을 넣자"): 이름을 넣으면 '학습지'(6바이트)를 뺀다 — 3자 이름+12월+주2회도 90 안.
+  // 4자 이상 이름 등으로 넘치면 이름 없는 형식으로.
   if (link.url) {
+    const named = `[numbers of magic] ${profileName} ${cal}\n${link.url}`;
+    if (profileName && smsBytes(named) <= 90) return { title: "", msg: named, msgType: "SMS" };
     const short = `[numbers of magic] ${cal} 학습지\n${link.url}`;
     if (smsBytes(short) <= 90) return { title: "", msg: short, msgType: "SMS" };
   }

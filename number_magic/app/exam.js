@@ -311,6 +311,18 @@
     padding:0 2mm; font-size:10px; font-weight:800; letter-spacing:1px; color:#0E2C57; }
   .nm-cv-footer b { color:var(--cv-accent); }
   .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9px; color:#93a0a8; }
+  /* 주간 학습지 표지(weeklyCoverHtml) — 학생 이름을 제목으로, 회차 목차 표 */
+  .nm-cvw .nm-cvw-hero { position:relative; margin:auto 0 0; text-align:center; }
+  .nm-cvw .nm-cvw-student { margin:0; font-family:'Gowun Batang','Pretendard',serif; font-size:46px; line-height:1.2;
+    font-weight:700; color:#0E2C57; letter-spacing:2px; word-break:keep-all; }
+  .nm-cvw .nm-cvw-course { margin:5mm 0 0; font-size:15px; font-weight:800; color:#3b4756; }
+  .nm-cvw .nm-cvw-toc { position:relative; width:auto; margin:0 auto auto; border-collapse:collapse; font-size:12px; min-width:120mm; }
+  .nm-cvw .nm-cvw-toc th { font-size:10px; font-weight:800; letter-spacing:1px; color:#7a8590; text-align:left; padding:0 4mm 2mm; border-bottom:1.5px solid #0E2C57; }
+  .nm-cvw .nm-cvw-toc td { padding:3mm 4mm; border-bottom:1px solid #dcd9d1; color:#1A2233; white-space:nowrap; }
+  .nm-cvw .nm-cvw-toc td.nm-cvw-no { font-family:monospace; font-weight:700; color:var(--cv-accent); }
+  .nm-cvw .nm-cvw-toc td.nm-cvw-name { font-weight:800; min-width:56mm; white-space:normal; }
+  .nm-cvw .nm-cvw-toc td.nm-cvw-chk { font-size:16px; text-align:center; color:#0E2C57; }
+  .nm-cvw .nm-cv-meta { margin-top:10mm; }
 
   /* ── 학습지 v2 · 유형별 회차 (학습지-v2-설계.md §2, 2026-09-04) ───────
      A4 고정 높이 페이지(flex column). 머리띠·개념·예시·지시문은 flex:0 0 auto로
@@ -1074,6 +1086,41 @@ function coverPageHtml(items, code, totalCount){
   </div>
   <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS</b></div>
   <div class="nm-cv-code">${esc(code||'')}</div>
+</div>`;
+}
+
+/* 주간 학습지(링크·PDF) 전용 표지 — ws.html 이 opts.cover 로 넘긴다(2026-09-06, 원장: "표지도 제대로").
+   cv: {name, weekLabel, courseNum, courseTitle, k, cadence, code}. rounds: renderRoundPages 결과 배열. */
+function weeklyCoverHtml(cv, rounds, totalCount){
+  const pagesOf = r => (r.html.match(/class="nm-w2-page"/g) || []).length;
+  let page = 2; // 표지가 1쪽
+  const rows = rounds.map((r, i) => {
+    const n = r.problems.length, from = page, to = page + pagesOf(r) - 1; page = to + 1;
+    return `<tr><td class="nm-cvw-no">${i+1}</td><td class="nm-cvw-name">${esc(r.thName)}</td>
+      <td>${n}${esc(lk('문항','','题'))}</td><td>${from === to ? from : from + '–' + to}${esc(lk('쪽','p.','页'))}</td><td class="nm-cvw-chk">☐</td></tr>`;
+  }).join('');
+  const totalPages = page - 1;
+  const kTxt = cv.cadence === 'w2' ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
+  const brandName = cv.name ? ` · ${esc(cv.name)}` : '';
+  return `<div class="nm-print-cover nm-cvw">
+  <div class="nm-cv-brand"><span>GFIELD</span><strong>NUMBERS <i>of</i> MAGIC${brandName}</strong></div>
+  <div class="nm-cvw-hero">
+    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}</p>
+    <h1 class="nm-cvw-student">${esc(cv.name || lk('이름','Name','姓名'))}</h1>
+    <p class="nm-cvw-course">${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
+    <div class="nm-cv-rule"></div>
+  </div>
+  <table class="nm-cvw-toc">
+    <thead><tr><th></th><th>${esc(lk('유형','Type','题型'))}</th><th>${esc(lk('문항','Items','题数'))}</th><th>${esc(lk('쪽','Page','页'))}</th><th>${esc(lk('완료','Done','完成'))}</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="nm-cv-meta">
+    <div><span>${esc(lk('푼 날짜','Date','日期'))}</span><i></i></div>
+    <div><span>${esc(lk('점수','Score','得分'))}</span><i></i></div>
+    <div><span>${esc(lk('확인','Checked','确认'))}</span><i></i></div>
+  </div>
+  <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS · ${totalPages} PAGES</b></div>
+  <div class="nm-cv-code">${esc(cv.code||'')}</div>
 </div>`;
 }
 
@@ -2116,10 +2163,13 @@ function renderRoundPages(item, opts){
   }
   const totalPages = pages.length;
 
+  /* 행 수를 항상 명시한다(2026-09-06). 전에는 행 흐름(세로셈 등)에서 grid-auto-rows:1fr 만 있어
+     둘째 장에 8문항이 남으면 2행이 페이지 전체로 늘어나 문항 사이가 텅 비어 보였다(원장: "문항 배치도 잘").
+     이제 마지막 장도 전체 장과 같은 행 높이를 쓰고 남는 아래는 풀이 여백으로 비운다. */
   function gridStyleFor(rowsCount){
     return layout.flow === 'col'
       ? `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:repeat(${rowsCount},1fr);grid-auto-flow:column;`
-      : `grid-template-columns:repeat(${layout.cols},1fr);`;
+      : `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:repeat(${rowsCount},1fr);`;
   }
 
   /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
@@ -2141,10 +2191,20 @@ function renderRoundPages(item, opts){
           ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
           : lk('계산을 하시오.','Solve each problem.','请计算下列各题。'))}</div>`
       : '';
-    const cellsHtml = pageItems.map(p => {
+    /* 열 흐름(짧은식·중간식) 부분 페이지: grid-auto-flow:column 이면 남은 10문항이 왼쪽 한 열에만
+       세로로 늘어선다(2026-09-06 확인). 열 수만큼 나눠 위에서부터 채우도록 자리를 직접 지정한다 —
+       행 트랙은 전체 장과 같게 두어(rowsCount) 문항 간격이 첫 장과 같다. */
+    const partialCol = !first && layout.flow === 'col' && pageItems.length < layout.perPage;
+    const rowsPerCol = partialCol ? Math.max(1, Math.ceil(pageItems.length / layout.cols)) : 0;
+    const cellsHtml = pageItems.map((p, i) => {
       const isFirstRamp = !!p.__ramp && !rampTagged;
       if(isFirstRamp) rampTagged = true;
-      const h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp); num++; return h;
+      let h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp); num++;
+      if(partialCol){
+        const r = (i % rowsPerCol) + 1, c = Math.floor(i / rowsPerCol) + 1;
+        h = h.replace(/^(\s*<div\b)/, `$1 style="grid-row:${r};grid-column:${c}"`);
+      }
+      return h;
     }).join('');
     return `<div class="nm-w2-page">
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count)}
@@ -2245,7 +2305,10 @@ function pageCapacityFor(items){
 function renderMixedSheet(items, envelopeCode, opts){
   const perTypeCount = opts.mixed || 20;
 
-  const rounds = items.map(it => renderRoundPages(it, { count: perTypeCount }));
+  /* 항목별 count 가 있으면 그것(문장제 회차 6문항 등). optionalWord 회차는 문장제로 못 바꾼
+     생성기(소수·분수 등)면 통째로 뺀다 — 숫자식만 6개 더 붙는 것을 막는다(2026-09-06). */
+  const rounds = items.map(it => renderRoundPages(it, { count: it.count || perTypeCount }))
+    .filter((r, i) => !(items[i].optionalWord && !r.problems.some(p => p.word)));
   const allProblems = [];
   rounds.forEach(r => allProblems.push.apply(allProblems, r.problems));
 
@@ -2254,7 +2317,8 @@ function renderMixedSheet(items, envelopeCode, opts){
   sheet.setAttribute('aria-hidden', 'true');
   sheet.setAttribute('lang', examLang());
 
-  const coverHtml = getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '';
+  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length)
+    : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 드릴별 학습지 코드 — ?ws= 도우미가 그대로 이해하는 형식 그대로 나열한다. */
   const codesLine = rounds.map(r => r.code).join(', ');
   const roundsHtml = rounds.map(r => r.html).join('');
