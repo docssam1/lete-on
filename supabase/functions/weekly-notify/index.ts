@@ -1,4 +1,4 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v13
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v14
 // 트리거: POST { trigger_key, dry?, test_phone?, probe?, force? }  — pg_cron(매시 정각) 또는 수동 curl.
 //   발송 요일·시각(v13, 원장 "요일 지정"): nm_notify_settings(send_dow 0=일…6=토, send_hour 0~23, KST)이 전역 기본,
 //   nm_contacts.send_dow 가 학부모별 덮어쓰기. 매시 깨어나 KST 요일·시각이 맞는 연락처만 보낸다. force:true 면 무시(수동).
@@ -21,8 +21,10 @@
 //      (2분마다 nm_notify_reconcile())이 net._http_response 에서 맞춰 넣는다. 동기로 기다리면 pg_cron→pg_net→함수→pg_net
 //      구조에서 pg_net 워커가 앞 배치(함수 호출)를 기다리느라 알리고 요청을 안 꺼내 서로 기다린다(2026-09-05 확인).
 // 시크릿 이름: NOTIFY_TRIGGER_KEY, NOTIFY_RELAY_URL?, NOTIFY_RELAY_KEY?, ALIGO_API_KEY?, ALIGO_USER_ID?, ALIGO_SENDER?
-// 문안(v11, 원장: "학습지 PDF 링크를"): nm_weekly_pdf(profile_name, week_key)의 URL(GitHub Actions가 월 06:30 KST에 생성)
-//   → 없으면 number_magic/ws.html?w=<주차>&c=<과정>&n=<이름> (같은 학습지를 브라우저에서 바로 그림) → 그것도 없으면 일반 안내.
+// 문안(v11, 원장: "학습지 PDF 링크를"): nm_weekly_pdf(profile_name, week_key)의 URL(GitHub Actions가 월 00:30 KST에 생성)
+//   → 없으면 ws.html 웹 학습지 → 그것도 없으면 일반 안내.
+// 단문(v14, 원장: "단문 문자로 간단히, 비용 아끼자"): 링크를 /w/?YYWW.TOKEN 짧은 주소로 바꾸고
+//   본문을 90바이트(EUC-KR: 한글 2·영숫자 1) 안에 맞춰 msg_type SMS 로 보낸다. 넘치면 LMS 로 자동 전환.
 //   주차 키는 KST 날짜 기준(일 23:00 UTC 실행이 UTC로는 아직 일요일이라 지난 주가 되는 것을 막는다).
 // 설계: number_magic/알림서비스-설계.md — 번호는 nm_contacts(anon insert만)에만,
 // 발송 이력은 nm_notify_log(주 1회 상한, (phone,week_key,kind) unique)로 중복 방지.
@@ -59,33 +61,53 @@ const APP_BASE = "https://docssam1.github.io/lete-on/number_magic";
 
 function kstNow(): Date { return new Date(Date.now() + 9 * 3600000); }
 
-// 학습지 링크: ① nm_weekly_pdf 의 PDF ② ws.html(브라우저 렌더) ③ 없음
+// 짧은 링크: <저장소 루트>/w/?YYWW.PART  (PART = PDF 토큰(hex 8자) 또는 과정 키). /w/index.html 이 풀어 준다.
+// 51자 — 단문 90바이트에서 한글 이름·주차까지 넣으려면 이 길이여야 한다(number_magic/ 밑이면 넘친다).
+const SHORT_BASE = "https://docssam1.github.io/lete-on/w/";
+function shortLink(wk: string, part: string): string {
+  const m = /^(\d{4})-W(\d{2})$/.exec(wk);
+  const yyww = m ? m[1].slice(2) + m[2] : wk;
+  return `${SHORT_BASE}?${yyww}.${part}`;
+}
+
+// 학습지 링크: ① nm_weekly_pdf 의 PDF(토큰) ② ws.html(과정 키) ③ 없음
 async function worksheetLink(sb: any, profileName: string, wk: string, digest: any): Promise<{ url: string; kind: "pdf" | "web" | "" }> {
   try {
     const { data } = await sb.from("nm_weekly_pdf").select("url").eq("profile_name", profileName).eq("week_key", wk).limit(1);
-    if (data && data[0] && data[0].url) return { url: data[0].url, kind: "pdf" };
+    const u = data && data[0] && data[0].url;
+    const m = u ? /\/nm-worksheets\/[^/]+\/([0-9a-f]+)\.pdf/.exec(String(u)) : null;
+    if (m) return { url: shortLink(wk, m[1]), kind: "pdf" };
+    if (u) return { url: String(u), kind: "pdf" };
   } catch (_) { /* 표가 없거나 권한 문제면 웹 링크로 */ }
-  if (digest && digest.courseKey) {
-    return { url: `${APP_BASE}/ws.html?w=${wk}&c=${encodeURIComponent(digest.courseKey)}&n=${encodeURIComponent(profileName)}`, kind: "web" };
-  }
+  if (digest && digest.courseKey) return { url: shortLink(wk, String(digest.courseKey)), kind: "web" };
   return { url: "", kind: "" };
 }
 
-function composeMsg(profileName: string, digest: any, cadence: string, link: { url: string; kind: string }): { title: string; msg: string } {
+// EUC-KR 기준 바이트 수(한글·기호 2, ASCII 1). 알리고 단문 한도 90.
+function smsBytes(s: string): number {
+  let n = 0;
+  for (const ch of s) n += (ch.codePointAt(0)! < 128) ? 1 : 2;
+  return n;
+}
+
+function composeMsg(profileName: string, digest: any, cadence: string, link: { url: string; kind: string }): { title: string; msg: string; msgType: "SMS" | "LMS" } {
   const cal = calLabel(cadence);
+  // 단문 우선: "[숫자마법] 이름 9월 1주차 학습지\n<짧은 링크>"  (≈ 60~85바이트)
+  if (link.url) {
+    const short = `[숫자마법] ${profileName} ${cal} 학습지\n${link.url}`;
+    if (smsBytes(short) <= 90) return { title: "", msg: short, msgType: "SMS" };
+    const shorter = `[숫자마법] ${cal} 학습지\n${link.url}`;
+    if (smsBytes(shorter) <= 90) return { title: "", msg: shorter, msgType: "SMS" };
+  }
+  // 장문 폴백
   const cur = digest && digest.courseTitle
     ? `이번 주 과정: ${digest.courseNum}. ${digest.courseTitle}`
     : "이번 주 학습지가 준비되었어요";
   const linkLine = link.url
-    ? (link.kind === "pdf" ? `📄 학습지 PDF: ${link.url}\n` : `📄 학습지 열기(인쇄·PDF 저장): ${link.url}\n`)
+    ? `학습지: ${link.url}\n`
     : `앱 > 학습지 모드 > 연산 로드맵에서 이번 주 학습지를 뽑을 수 있어요.\n`;
-  const msg =
-    `[Numbers of Magic] ${cal} 학습지\n\n` +
-    `${profileName} 학생\n${cur}\n\n` +
-    linkLine +
-    `인쇄해서 풀고, 앱에서 채점할 수 있어요.\n` +
-    `문의·수신해지: 학원으로 연락 주세요.`;
-  return { title: `${cal} 학습지`, msg };
+  const msg = `[숫자마법] ${cal} 학습지\n${profileName} 학생 · ${cur}\n${linkLine}문의·수신해지: 학원`;
+  return { title: `${cal} 학습지`, msg, msgType: "LMS" };
 }
 
 type SendResult = { ok: boolean | null; detail: string; via: string; request_id?: number };
@@ -104,7 +126,7 @@ function isAppsScript(url: string): boolean {
   return /script\.google(?:usercontent)?\.com/.test(url);
 }
 
-async function sendOne(sb: any, phone: string, title: string, msg: string): Promise<SendResult> {
+async function sendOne(sb: any, phone: string, title: string, msg: string, msgType: "SMS" | "LMS" = "LMS"): Promise<SendResult> {
   const relay = await secret(sb, "NOTIFY_RELAY_URL");
   try {
     if (relay && isAppsScript(relay)) {
@@ -123,13 +145,13 @@ async function sendOne(sb: any, phone: string, title: string, msg: string): Prom
       const r = await fetch(relay, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Relay-Key": await secret(sb, "NOTIFY_RELAY_KEY") },
-        body: JSON.stringify({ receiver: phone, msg, title, msg_type: "LMS" }),
+        body: JSON.stringify({ receiver: phone, msg, title, msg_type: msgType }),
       });
       const j: any = await r.json().catch(() => ({}));
       return { ok: r.ok && j.ok === true, detail: JSON.stringify(j).slice(0, 500), via: "relay" };
     }
-    // 3) 알리고 — DB 외부 IP로 호출 (LMS — 본문이 90바이트를 넘으므로). 큐잉만 하고 결과는 reconcile이 채운다.
-    const q = new URLSearchParams({ receiver: phone, msg, msg_type: "LMS", title });
+    // 3) 알리고 — DB 외부 IP로 호출. 단문이면 SMS(제목 없음), 넘치면 LMS. 큐잉만 하고 결과는 reconcile이 채운다.
+    const q = new URLSearchParams(msgType === "SMS" ? { receiver: phone, msg, msg_type: "SMS" } : { receiver: phone, msg, msg_type: "LMS", title });
     const id = await aligoEnqueue(sb, "send", q.toString());
     return { ok: null, detail: "queued", via: "aligo-db", request_id: id };
   } catch (e) {
@@ -196,9 +218,9 @@ Deno.serve(async (req: Request) => {
     const demo = { courseKey: "C4", courseNum: 4, courseTitle: "두 자리 올림 덧뺄셈" }; // 시험 문자에도 실제 링크가 실리도록
     const tName = String(body.test_name || "테스트");
     const link = await worksheetLink(sb, tName, wk, demo);
-    const { title, msg } = composeMsg(tName, demo, "w1", link);
-    if (dry) return new Response(JSON.stringify({ week: wk, test: true, dry: true, phone, title, msg, link }), { headers: { "Content-Type": "application/json" } });
-    const res = await sendOne(sb, phone, title, msg);
+    const { title, msg, msgType } = composeMsg(tName, demo, "w1", link);
+    if (dry) return new Response(JSON.stringify({ week: wk, test: true, dry: true, phone, title, msg, msgType, bytes: smsBytes(msg), link }), { headers: { "Content-Type": "application/json" } });
+    const res = await sendOne(sb, phone, title, msg, msgType);
     const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk + "-t" + Date.now().toString(36), kind: "test", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
     return new Response(JSON.stringify({ week: wk, test: true, phone, ...res, log_error: lErr ? lErr.message : undefined }), { headers: { "Content-Type": "application/json" } });
   }
@@ -232,11 +254,11 @@ Deno.serve(async (req: Request) => {
       .eq("name", c.profile_name).limit(1);
     const st = prof && prof[0] && prof[0].state || {};
     const link = await worksheetLink(sb, c.profile_name, wk, st.weeklyDigest);
-    const { title, msg } = composeMsg(c.profile_name, st.weeklyDigest, st.roadCadence || "w1", link);
+    const { title, msg, msgType } = composeMsg(c.profile_name, st.weeklyDigest, st.roadCadence || "w1", link);
 
-    if (dry) { results.push({ phone, dry: true, title, msg, link: link.kind }); continue; }
+    if (dry) { results.push({ phone, dry: true, title, msg, msgType, bytes: smsBytes(msg), link: link.kind }); continue; }
 
-    const res = await sendOne(sb, phone, title, msg);
+    const res = await sendOne(sb, phone, title, msg, msgType);
     // 로그 insert 실패는 조용히 넘기지 않는다(주 1회 상한이 이 로그에 기대므로). 2026-09-05: 열 추가 뒤 PostgREST
     // 스키마 캐시가 안 갱신돼 insert가 통째로 실패했던 적이 있다(notify pgrst, 'reload schema' 로 해결).
     const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk, kind: "weekly", ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });

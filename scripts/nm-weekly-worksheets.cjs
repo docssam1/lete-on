@@ -91,7 +91,7 @@ async function main() {
         if (ready !== true) throw new Error('ws.html 렌더 실패: ' + await page.evaluate(() => (document.querySelector('.ws-err') || {}).textContent));
         await page.emulateMedia({ media: 'print' });
         const pdf = await page.pdf({ format: 'A4', printBackground: true, margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' } });
-        const token = crypto.createHmac('sha256', KEY || 'dry').update(`${t.name}|${WEEK}|${t.courseKey}`).digest('hex').slice(0, 24);
+        const token = crypto.createHmac('sha256', KEY || 'dry').update(`${t.name}|${WEEK}|${t.courseKey}`).digest('hex').slice(0, 8); // 8자: 단문(90바이트) 짧은 링크(/w/)용
         const objPath = `${WEEK}/${token}.pdf`;
         if (DRY) { fs.writeFileSync(path.join(outDir, objPath.replace('/', '_')), pdf); console.log(`[ws] DRY ${t.name} → out/${objPath.replace('/', '_')} (${pdf.length}B)`); okN++; continue; }
         await sb(`/storage/v1/object/nm-worksheets/${objPath}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf', 'x-upsert': 'true' }, body: pdf });
