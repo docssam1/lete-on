@@ -311,6 +311,35 @@
     padding:0 2mm; font-size:10px; font-weight:800; letter-spacing:1px; color:#0E2C57; }
   .nm-cv-footer b { color:var(--cv-accent); }
   .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9px; color:#93a0a8; }
+  /* 수학사 지면 + 실험실 QR (w2HistoryPageHtml, 2026-09-06) */
+  .nm-hist-page { gap:0; }
+  .nm-hist-head { flex:0 0 auto; display:flex; align-items:baseline; gap:10px;
+    border-bottom:1.5px solid #0E2C57; padding-bottom:6px; margin-bottom:10px; }
+  .nm-hist-kicker { font-size:10px; font-weight:900; letter-spacing:2px; color:#C9A063; }
+  .nm-hist-head b { font-size:14px; color:#0E2C57; }
+  .nm-hist-code { margin-left:auto; font-family:monospace; font-size:9px; color:#93a0a8; }
+  .nm-hist-grid { flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;
+    gap:7mm 6mm; min-height:0; }
+  .nm-hist-panel { position:relative; margin:0; display:flex; flex-direction:column; gap:3mm;
+    border:1px solid #E4E2DC; border-radius:4mm; padding:5mm 5mm 4mm; background:#FBFAF7;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-hist-no { position:absolute; top:-3mm; left:5mm; width:7mm; height:7mm; border-radius:50%;
+    background:#0E2C57; color:#F5D98B; font-size:10px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-hist-art { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; }
+  .nm-hist-art svg { width:100%; height:100%; max-height:38mm; }
+  .nm-hist-panel figcaption { font-size:11px; line-height:1.6; color:#1A2233; word-break:keep-all; }
+  .nm-hist-labs { flex:0 0 auto; margin-top:6mm; padding-top:5mm; border-top:1px solid #E4E2DC; }
+  .nm-hist-labs-t { font-size:11px; font-weight:800; color:#0E2C57; margin-bottom:4mm; }
+  .nm-hist-lab { display:flex; align-items:center; gap:5mm; padding:3mm 0; }
+  .nm-hist-lab + .nm-hist-lab { border-top:1px dashed #E4E2DC; }
+  .nm-hist-lab-qr { flex:0 0 20mm; }
+  .nm-hist-lab-qr svg { width:20mm; height:20mm; display:block; }
+  .nm-hist-lab-txt { display:flex; flex-direction:column; gap:1.5mm; min-width:0; }
+  .nm-hist-lab-txt b { font-size:12.5px; color:#0E2C57; }
+  .nm-hist-lab-txt span { font-size:10.5px; line-height:1.55; color:#5c6a72; }
+
   /* 주간 학습지 표지(weeklyCoverHtml) — 학생 이름을 제목으로, 회차 목차 표 */
   .nm-cvw .nm-cvw-hero { position:relative; margin:auto 0 0; text-align:center; }
   .nm-cvw .nm-cvw-title { margin:0; font-family:'Gowun Batang','Pretendard',serif; font-size:44px; line-height:1.2;
@@ -1098,6 +1127,66 @@ function coverPageHtml(items, code, totalCount){
   </div>
   <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS</b></div>
   <div class="nm-cv-code">${esc(code||'')}</div>
+</div>`;
+}
+
+/* ── 수학사 지면 + 실험실 QR (2026-09-06, 원장 "지금 상황에 맞는 수학사를 지면으로, 실험실은 QR로") ──
+   회차의 유형(스레드+레벨)이 가리키는 유닛으로 그 자리에 맞는 것만 고른다:
+     · 만화 — data/story-comics.js 의 NM_COMICS[유닛id] 4컷(그림 SVG + 3언어 글).
+     · 실험실 — data/labs.js 의 NM_LABS.byUnit[유닛id]. 종이에서는 열 수 없으니 QR 로 건다.
+   둘 다 없으면 지면을 만들지 않는다(빈 장을 인쇄하지 않기 위해). 만화가 있는 첫 유닛 하나만
+   싣는다 — 한 주 학습지에 네 편을 넣으면 문제보다 읽을거리가 많아진다. */
+function w2HistoryPageHtml(items, code){
+  const comics = window.NM_COMICS || {};
+  const labData = (window.NM_LABS && window.NM_LABS.byUnit) || {};
+  const labList = (window.NM_LABS && window.NM_LABS.list) || [];
+  let comic = null, comicUnit = '', comicThread = null;
+  const labFiles = [];
+  (items || []).forEach(it => {
+    const info = resolveConceptUnit(it.thread, it.level);
+    const uid = info && info.unitId;
+    if(!uid) return;
+    if(!comic && comics[uid] && (comics[uid].panels || []).length){
+      comic = comics[uid]; comicUnit = uid; comicThread = info.thread;
+    }
+    const v = labData[uid];
+    (Array.isArray(v) ? v : (v ? [v] : [])).forEach(f => { if(labFiles.indexOf(f) < 0) labFiles.push(f); });
+  });
+  if(!comic && !labFiles.length) return '';
+
+  const panels = comic ? comic.panels.slice(0, 4).map((pn, i) => `
+      <figure class="nm-hist-panel">
+        <span class="nm-hist-no">${i + 1}</span>
+        <div class="nm-hist-art">${pn.art || ''}</div>
+        <figcaption>${esc(pickL(pn.text) || '')}</figcaption>
+      </figure>`).join('') : '';
+
+  const labs = labFiles.slice(0, 2).map(f => {
+    const meta = labList.find(l => l.file === f) || {};
+    return `
+      <div class="nm-hist-lab">
+        <div class="nm-hist-lab-qr">${qrSvg(APP_HOME_URL + f)}</div>
+        <div class="nm-hist-lab-txt">
+          <b>${esc(meta.icon || '🔬')} ${esc(pickL(meta.name) || f)}</b>
+          <span>${esc(pickL(meta.desc) || '')}</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  const topicName = comicThread ? (pickL(comicThread.name) || '') : '';
+  return `<div class="nm-w2-page nm-hist-page">
+  <div class="nm-hist-head">
+    <span class="nm-hist-kicker">${esc(lk('수학사 이야기','A Story from the History of Math','数学史小故事'))}</span>
+    ${topicName ? `<b>${esc(topicName)}</b>` : ''}
+    <span class="nm-hist-code">${esc(code || '')}</span>
+  </div>
+  ${comic ? `<div class="nm-hist-grid">${panels}</div>` : ''}
+  ${labs ? `<div class="nm-hist-labs">
+    <div class="nm-hist-labs-t">${esc(lk('휴대폰으로 QR을 찍으면 실험실이 열려요 — 손으로 움직여 보는 화면이에요.',
+      'Scan with a phone to open the lab — a screen you can move with your hands.',
+      '用手机扫码打开实验室——可以动手操作的画面。'))}</div>
+    ${labs}
+  </div>` : ''}
 </div>`;
 }
 
@@ -2345,6 +2434,8 @@ function renderMixedSheet(items, envelopeCode, opts){
   /* 드릴별 학습지 코드 — ?ws= 도우미가 그대로 이해하는 형식 그대로 나열한다. */
   const codesLine = rounds.map(r => r.code).join(', ');
   const roundsHtml = rounds.map(r => r.html).join('');
+  /* 수학사 지면은 문제 뒤·정답지 앞. 해당하는 만화도 실험실도 없으면 빈 문자열이라 지면이 안 생긴다. */
+  const historyHtml = w2HistoryPageHtml(items, envelopeCode);
 
   const akSections = rounds.map(r => `
 <div class="nm-ak-section">
@@ -2356,6 +2447,7 @@ function renderMixedSheet(items, envelopeCode, opts){
 ${printWatermarkHtml()}
 ${coverHtml}
 ${roundsHtml}
+${historyHtml}
 <div class="nm-print-answer-key">
   <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(envelopeCode || '')}</span></h3>
   <div class="nm-print-mix-note">${esc(codesLine)}</div>
