@@ -313,16 +313,27 @@
   .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9px; color:#93a0a8; }
   /* 주간 학습지 표지(weeklyCoverHtml) — 학생 이름을 제목으로, 회차 목차 표 */
   .nm-cvw .nm-cvw-hero { position:relative; margin:auto 0 0; text-align:center; }
-  .nm-cvw .nm-cvw-student { margin:0; font-family:'Gowun Batang','Pretendard',serif; font-size:46px; line-height:1.2;
-    font-weight:700; color:#0E2C57; letter-spacing:2px; word-break:keep-all; }
-  .nm-cvw .nm-cvw-course { margin:5mm 0 0; font-size:15px; font-weight:800; color:#3b4756; }
+  .nm-cvw .nm-cvw-title { margin:0; font-family:'Gowun Batang','Pretendard',serif; font-size:44px; line-height:1.2;
+    font-weight:700; color:#0E2C57; letter-spacing:1px; }
+  .nm-cvw .nm-cvw-title i { font-style:italic; color:var(--cv-accent); font-weight:400; }
+  .nm-cvw .nm-cvw-tagline { margin:4mm 0 0; font-size:15px; font-weight:700; letter-spacing:1px; color:#3b4756; word-break:keep-all; }
+  .nm-cvw .nm-cvw-course { margin:0 0 7mm; font-size:16px; font-weight:700; color:#3b4756; }
+  .nm-cvw .nm-cvw-course b { font-size:22px; font-weight:800; color:#0E2C57; }
   .nm-cvw .nm-cvw-toc { position:relative; width:auto; margin:0 auto auto; border-collapse:collapse; font-size:12px; min-width:120mm; }
   .nm-cvw .nm-cvw-toc th { font-size:10px; font-weight:800; letter-spacing:1px; color:#7a8590; text-align:left; padding:0 4mm 2mm; border-bottom:1.5px solid #0E2C57; }
   .nm-cvw .nm-cvw-toc td { padding:3mm 4mm; border-bottom:1px solid #dcd9d1; color:#1A2233; white-space:nowrap; }
   .nm-cvw .nm-cvw-toc td.nm-cvw-no { font-family:monospace; font-weight:700; color:var(--cv-accent); }
   .nm-cvw .nm-cvw-toc td.nm-cvw-name { font-weight:800; min-width:56mm; white-space:normal; }
   .nm-cvw .nm-cvw-toc td.nm-cvw-chk { font-size:16px; text-align:center; color:#0E2C57; }
-  .nm-cvw .nm-cv-meta { margin-top:10mm; }
+  .nm-cvw .nm-cv-meta { margin-top:8mm; }
+  .nm-cvw .nm-cvw-qr { position:relative; display:flex; align-items:center; gap:6mm; margin:7mm 6mm 0; padding:5mm 6mm;
+    border:1px solid #dcd9d1; border-radius:3mm; background:#fff; }
+  .nm-cvw .nm-cvw-qr-img { flex:0 0 26mm; width:26mm; height:26mm; }
+  .nm-cvw .nm-cvw-qr-img svg { width:26mm; height:26mm; display:block; }
+  .nm-cvw .nm-cvw-qr-txt { display:flex; flex-direction:column; gap:1.5mm; min-width:0; }
+  .nm-cvw .nm-cvw-qr-txt b { font-size:13px; font-weight:800; color:#0E2C57; }
+  .nm-cvw .nm-cvw-qr-txt span { font-size:10.5px; line-height:1.55; color:#5c6a72; }
+  .nm-cvw .nm-cvw-qr-txt i { font-style:normal; font-family:monospace; font-size:9.5px; color:#93a0a8; }
 
   /* ── 학습지 v2 · 유형별 회차 (학습지-v2-설계.md §2, 2026-09-04) ───────
      A4 고정 높이 페이지(flex column). 머리띠·개념·예시·지시문은 flex:0 0 auto로
@@ -775,6 +786,7 @@ function runSessionTabs(container, items, meta){
    학습지 ID(=worksheetCode에서 '#'을 뗀 값)는 스레드·레벨·문항수·시드를 그대로 담고 있어서
    나중에 문항을 재생성할 수 있다(과정-로드맵.md §11) — 채점 회수는 Phase 2. */
 const WS_BASE_URL = 'https://docssam1.github.io/lete-on/number_magic/?ws=';
+const APP_HOME_URL = 'https://docssam1.github.io/lete-on/number_magic/'; // 주간 학습지 표지 QR(원장 2026-09-06 "추가 학습은 홈페이지로")
 function wsUrlFromCode(code){ return WS_BASE_URL + String(code||'').replace(/^#/,''); }
 
 /* QR을 <img>/canvas가 아니라 인라인 SVG(경로 하나)로 그린다 — 인쇄 시 canvas는
@@ -1106,9 +1118,10 @@ function weeklyCoverHtml(cv, rounds, totalCount){
   <div class="nm-cv-brand"><span>GFIELD</span><strong>NUMBERS <i>of</i> MAGIC${brandName}</strong></div>
   <div class="nm-cvw-hero">
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}</p>
-    <h1 class="nm-cvw-student">${esc(cv.name || lk('이름','Name','姓名'))}</h1>
-    <p class="nm-cvw-course">${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
+    <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
+    <p class="nm-cvw-tagline">${esc(lk('선행부터 창의연산, 문장제까지','From advanced work to creative arithmetic and word problems','从超前学习到创意运算与应用题'))}</p>
     <div class="nm-cv-rule"></div>
+    <p class="nm-cvw-course">${cv.name ? `<b>${esc(cv.name)}</b> · ` : ''}${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
   </div>
   <table class="nm-cvw-toc">
     <thead><tr><th></th><th>${esc(lk('유형','Type','题型'))}</th><th>${esc(lk('문항','Items','题数'))}</th><th>${esc(lk('쪽','Page','页'))}</th><th>${esc(lk('완료','Done','完成'))}</th></tr></thead>
@@ -1118,6 +1131,16 @@ function weeklyCoverHtml(cv, rounds, totalCount){
     <div><span>${esc(lk('푼 날짜','Date','日期'))}</span><i></i></div>
     <div><span>${esc(lk('점수','Score','得分'))}</span><i></i></div>
     <div><span>${esc(lk('확인','Checked','确认'))}</span><i></i></div>
+  </div>
+  <div class="nm-cvw-qr">
+    <div class="nm-cvw-qr-img">${qrSvg(APP_HOME_URL)}</div>
+    <div class="nm-cvw-qr-txt">
+      <b>${esc(lk('추가 학습을 원하면 언제든 홈페이지에 접속하세요','Want more practice? Visit the site any time','想加练？随时访问主页'))}</b>
+      <span>${esc(lk('QR을 찍으면 Numbers of Magic이 열려요 — 화면에서 풀고, 새 학습지를 뽑고, 진도를 볼 수 있어요.',
+        'Scan to open Numbers of Magic — solve on screen, print new worksheets, see progress.',
+        '扫码打开 Numbers of Magic——在线做题、打印新学习单、查看进度。'))}</span>
+      <i>${esc(APP_HOME_URL.replace(/^https?:\/\//,''))}</i>
+    </div>
   </div>
   <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS · ${totalPages} PAGES</b></div>
   <div class="nm-cv-code">${esc(cv.code||'')}</div>

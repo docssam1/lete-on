@@ -1,4 +1,4 @@
-// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v17
+// Numbers of Magic — 주간 학부모 알림 발송 (알리고 SMS/LMS)  v18
 // 트리거: POST { trigger_key, dry?, test_phone?, probe?, force? }  — pg_cron(매시 정각) 또는 수동 curl.
 //   발송 요일·시각(v13, 원장 "요일 지정"): nm_notify_settings(send_dow 0=일…6=토, send_hour 0~23, KST)이 전역 기본,
 //   nm_contacts.send_dow 가 학부모별 덮어쓰기. 매시 깨어나 KST 요일·시각이 맞는 연락처만 보낸다. force:true 면 무시(수동).
@@ -223,7 +223,7 @@ Deno.serve(async (req: Request) => {
     const phone = String(body.test_phone).replace(/\D/g, "");
     if (!/^01\d{8,9}$/.test(phone)) return new Response(JSON.stringify({ error: "bad test_phone" }), { status: 400 });
     const demo = { courseKey: "C4", courseNum: 4, courseTitle: "두 자리 올림 덧뺄셈" }; // 시험 문자에도 실제 링크가 실리도록
-    const tName = String(body.test_name || "테스트");
+    const tName = String(body.test_name || "김도윤"); // 시험용 가상 학생(표지에 "테스트"가 찍히지 않도록, 2026-09-06)
     const tCad = body.test_cadence === "w2" ? "w2" : "w1";
     const tK = tCad === "w2" && Number(body.test_k) === 2 ? 2 : 1;
     const link = await worksheetLink(sb, tName, wk, demo, tK);
