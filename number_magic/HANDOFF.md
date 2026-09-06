@@ -1836,3 +1836,26 @@ check-print·check-answerable 통과.
   노출은 검증용). 유닛 진입 시 두 장 프리로드.
 - 검증(Playwright 390×844): A-01→prime · N-06→numberland · M-01→challenge, 기본 연산 탭에서 think→happy→think,
   pageerror 0. ⚠️ 마법 노트 탭엔 `.nm-numi`가 없다 — 표정 검사는 기본 연산 탭에서.
+
+## 2026-09-05~06 — 학부모 문자 알림 가동 + 주간 학습지 PDF 링크 (설계 Fable, 구현 Fable)
+> 상세는 `알림서비스-설계.md` §8. 여기는 다음 세션이 알아야 할 것만.
+
+- **문자는 실제로 나간다.** 알리고 SMS, 함수 `weekly-notify` **v18**(Supabase Edge). 키·아이디·발신번호·호출암호는 **Vault**
+  (`vault.secrets`, RPC `nm_notify_secret`은 service_role 전용). git·앱·채팅에 키 없음. 알리고 호출은 **DB(pg_net)** 가 한다 —
+  DB 외부 IP `54.116.72.251`이 알리고에 등록돼 있음(함수 IP는 매번 바뀌어 등록 불가). 이 IP가 바뀌면 문자가 `-IP` 인증오류로
+  전부 실패한다 → `select net.http_get('https://api.ipify.org')`로 확인해 알리고 관리자에 재등록.
+- **비동기**: 함수는 큐에 넣고 즉시 반환, `nm_notify_reconcile()`(pg_cron 2분)이 결과를 `nm_notify_log`에 채움. 동기 폴링은
+  pg_net 자기대기 때문에 **안 된다**(§8-3).
+- **스케줄**: pg_cron `nm-weekly-notify`가 **매시** 함수를 깨우고, 함수가 `nm_notify_settings`(send_dow 기본 1=월, send_dow2 기본 4=목,
+  send_hour 기본 8 KST)와 `nm_contacts.send_dow/send_dow2`로 보낼지 정한다. 주 2회반(`roadCadence==='w2'`)은 k=1,2 두 번.
+- **문안(단문 89바이트)**: `[numbers of magic] 김도윤 8월 5-1주차⏎https://docssam1.github.io/lete-on/w/?2636.e0bd95a5`.
+  넘치면 이름 없이, 그래도 넘치면 LMS. 짧은 링크는 저장소 루트 `/w/index.html`이 풀어 준다.
+- **학습지 PDF**: GitHub Actions `NM weekly worksheets`(월 00:30 KST)가 `number_magic/ws.html`을 헤드리스 크롬으로 열어 학생별 PDF를
+  Storage `nm-worksheets`에 올리고 `nm_weekly_pdf`에 기록. ws.html은 앱 편지함 봉투와 같은 규칙(주차+과정 → 시드)으로 문항을 만들고,
+  **표지**(Numbers of Magic · 선행부터 창의연산, 문장제까지 · 학생 이름 · 회차 목차 · 홈페이지 QR)와 **문장제 회차 6문항**을 붙인다.
+  둘째 장 이후 배치는 첫 장과 같은 행 간격(`grid-template-rows` 명시 + 열 흐름 부분 페이지 자리 지정).
+- **수동 점검**: SQL 편집기에서 pg_net으로 함수 호출(§8-0-1). `{test_phone, dry:true}` → 문안 확인, `probe:'aligo'` → 인증 확인.
+  PDF 한 명만: Actions → Run workflow(name/course/cadence).
+- **미완**: 앱 편지함 인쇄(`envelopeForWeek` → `openPrintEditor`)에는 문장제 회차·새 표지가 아직 없다(편집기가 유형당 문항 수를
+  10/20/40으로만 받아 6문항 회차를 못 실음). 붙이려면 편집기에 항목별 `count` 지원부터.
+- **오늘 시험 발송**: 원장 번호로 6통(장문 4·단문 2). 실제 학부모 발송은 앱에서 알림 등록한 뒤 첫 지정 요일부터.
