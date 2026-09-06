@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>GFIELD 도형 변환 공방</title>
+  <link rel="stylesheet" href="./styles.css?v=shape-transform-5">
+  <link rel="stylesheet" href="../../shared/pwa.css?v=2">
+  <link rel="manifest" href="/geometry/manifest.webmanifest">
+  <meta name="theme-color" content="#21776b">
+</head>
+<body>
+  <main class="workshop-shell">
+    <header class="topbar">
+      <a id="backLink" class="icon-button" href="../../shape-garden/"></a>
+      <div class="brand"><strong>GFIELD</strong><span id="workshopName"></span></div>
+      <a id="worksheetLink" class="text-button" href="../../worksheet/shape-transform/"></a>
+      <button id="soundButton" class="icon-button" type="button"></button>
+    </header>
+    <nav id="domainTabs" class="domain-tabs"></nav>
+    <section class="mission">
+      <div class="mission-heading"><p id="bandLabel"></p><h1 id="missionTitle"></h1><p id="guideText"></p></div>
+      <div class="progress"><span id="problemLabel">1 / 5</span><div id="progressDots"></div></div>
+    </section>
+    <section class="principle">
+      <div><strong id="principleLabel"></strong><p id="principleText"></p></div>
+      <details id="lesson"><summary id="lessonSummary"></summary><div id="lessonContent"></div></details>
+    </section>
+    <section class="question" aria-labelledby="prompt">
+      <header class="question-heading"><h2 id="prompt"></h2><strong id="operationLabel"></strong></header>
+      <div class="workbench">
+        <figure class="target-panel"><figcaption id="targetTag"></figcaption><div id="targetBoard" class="shape-board"></div></figure>
+        <div id="choiceGrid" class="choice-grid"></div>
+        <figure id="manipulationPanel" class="target-panel learner-panel" hidden><figcaption id="manipulationTag"></figcaption><div id="manipulationBoard" class="shape-board" tabindex="0" role="group" aria-describedby="manipulationReadout"></div></figure>
+      </div>
+      <div id="manipulationActions" class="manipulation-actions" hidden><div id="manipulationControls" class="manipulation-controls"></div><output id="manipulationReadout" aria-live="polite"></output><button id="checkShape" class="primary-button" type="button"></button></div>
+      <div class="feedback-row"><p id="statusLabel" role="status" aria-live="polite"></p><button id="hintButton" class="text-button" type="button"></button></div>
+      <p id="hintText" class="hint-text" hidden></p>
+    </section>
+    <section id="reviewPanel" class="review-panel" hidden aria-labelledby="reviewTitle">
+      <div class="review-copy"><p class="eyebrow" id="reviewEyebrow"></p><h2 id="reviewTitle"></h2><p id="reviewText"></p><div class="review-legend"><span id="beforeLegend"></span><span id="afterLegend"></span></div><div class="review-actions"><button id="replayButton" class="text-button" type="button"></button><button id="compareButton" class="text-button" type="button" hidden></button></div></div>
+      <div id="reviewBoard" class="review-board"></div>
+    </section>
+    <footer class="action-bar"><button id="retryButton" class="icon-button" type="button"></button><span id="areaFooter"></span><button id="nextButton" class="primary-button" type="button" hidden></button></footer>
+    <dialog id="completeDialog"><button id="closeComplete" class="icon-button close-dialog" type="button"></button><div class="completion-check" id="completionIcon"></div><h2 id="completeTitle"></h2><p id="completeText"></p><p id="supportText"></p><div class="complete-actions"><a id="practiceButton" class="text-button"></a><button id="nextLevelButton" class="primary-button" type="button"></button><a id="gardenButton" class="text-button" href="../../shape-garden/"></a></div></dialog>
+  </main>
+  <script type="module" src="./app.js?v=shape-transform-5"></script>
+  <script src="../../shared/pwa.js?v=3" defer></script>
+</body>
+</html>

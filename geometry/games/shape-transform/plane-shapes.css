@@ -1,0 +1,19 @@
+.shape-fill {
+  fill: #9fd4c3;
+  fill-opacity: .78;
+  stroke: none;
+}
+.choice-grid button .shape-fill { fill: #9fcfc2; }
+.plane-shape .shape-line {
+  stroke: #235c59;
+  stroke-width: 2.8;
+}
+.plane-shape .plane-kink {
+  r: 1.65;
+  fill: #fff;
+  stroke: #235c59;
+  stroke-width: .85;
+}
+.choice-grid button:hover .shape-fill,
+.choice-grid button:focus-visible .shape-fill { fill: #e8c66e; }
+.choice-grid button.correct .shape-fill { fill: #89c8ae; }

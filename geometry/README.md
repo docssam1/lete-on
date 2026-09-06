@@ -34,6 +34,7 @@
 - games/path-walk/ - 길 잇기 산책로: 한 길·숨은 타일·갈림길·막힌 길·최단 경로 5단계, 50문제
 - games/hidden-shape/ - 숨은 도형 탐정: 삼각형·정사각형·직사각형 세기 5단계, 50문제
 - games/equal-partition/ - 똑같이 나누기: 같은 넓이·합동·수 조건 분할 5단계, 50문제
+- games/shape-transform/ - 도형 변환 공방: 모양 관찰·평행이동·회전·확대·줄이기 5영역, 50문제
 - games/soma-cube/ - 소마큐브 공방: 7조각 회전·2~3조각 합성·3×3×3 완성 5단계, 50문제
 
 ## 색종이 생각 놀이터
@@ -62,9 +63,15 @@ RAY와 프리즘 자료를 시각적으로 확인해 기존 게임과 겹치지 
 원본·수학 모델·단일정답·가시성·학습자 적합성·PC/모바일/A4·negative control 관문을 통과해야 합니다.
 
 인쇄 학습지는 `worksheet/paper-fold/`, `worksheet/mirror-manor/`, `worksheet/path-walk/`, `worksheet/hidden-shape/`,
-`worksheet/net-observatory/`, `worksheet/dice-roll/`, `worksheet/geoboard/`에서 각 게임의 검증 데이터를 그대로 사용해 만듭니다.
-거울 저택과 점판 공작소 학습지는 1~20문항을 만들 수 있습니다. 전체 유형 20문항은 다섯 단계에서
-4문항씩 중복 없이 뽑고, 표지 1장 뒤에 5문항씩 정렬한 A4 문제지 4장을 생성합니다.
+`worksheet/net-observatory/`, `worksheet/dice-roll/`, `worksheet/geoboard/`, `worksheet/shape-transform/`에서 각 게임의 검증 데이터를 기반으로 만듭니다.
+거울 저택, 점판 공작소, 도형 변환 공방 학습지는 1~20문항을 만들 수 있습니다. 전체 유형 20문항은 다섯 영역에서
+4문항씩 중복 없이 뽑습니다. 거울 저택과 점판 공작소는 표지 1장 뒤에 5문항씩 A4 문제지 4장을 생성합니다.
+도형 변환 공방은 영역마다 페이지를 나누어 표지 1장과 본문 5장을 생성합니다. 단일 영역은 해당 영역의
+보유량인 10문항까지만 만들며, 문항 수를 늘리기 위해 다른 영역을 섞지 않습니다.
+
+도형 변환 공방의 문항·피드백·학습지 기준은 `docs/24_SHAPE_TRANSFORM_LEARNING_DESIGN.md`를 따릅니다.
+평행이동·회전 게임은 한 회차의 마지막 두 문항을 직접 조작하고 최종 도형의 좌표로 확인합니다.
+학습지는 영역별 마지막 1~2문항을 보기 없이 그리며, 모눈에 맞춘 별도 표현과 검산된 답을 사용합니다.
 
 ## 공통 성장 요소
 
@@ -127,4 +134,20 @@ node geometry/games/geoboard/geoboard.selftest.mjs
 node geometry/games/geoboard/geoboard.browsercheck.mjs
 node geometry/games/piece-play/piece-play.selftest.mjs
 node geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs
+```
+
+## 도형 변환 공방 회귀 검사
+
+영역별 독립 문항 검산, PC·모바일의 동일 크기 도형, 4언어, 힌트·실제 변환 애니메이션,
+영역별 학습지 선택과 A4 PDF를 검사합니다.
+
+```powershell
+node geometry/games/shape-transform/shape-transform.selftest.mjs
+node geometry/games/shape-transform/domain-content-audit.mjs
+node geometry/games/shape-transform/choice-feedback.selftest.mjs
+node geometry/games/shape-transform/manipulation.selftest.mjs
+node geometry/games/shape-transform/shape-transform.browsercheck.mjs
+node geometry/games/shape-transform/manipulation.browsercheck.mjs
+node geometry/worksheet/shape-transform/workbook.selftest.mjs
+node geometry/worksheet/shape-transform/workbook.browsercheck.mjs
 ```

@@ -1,6 +1,7 @@
 import { levels as polyLevels } from "../games/polyomino/levels.js?v=polyomino-2";
 import { levels as equalLevels } from "../games/equal-partition/levels.js?v=equal-1";
 import { levels as hiddenLevels } from "../games/hidden-shape/levels.js?v=hidden-shape-3";
+import { levels as transformLevels } from "../games/shape-transform/levels.js?v=shape-transform-3";
 import { readProfile } from "../shared/profile-storage.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -35,6 +36,18 @@ const courseNames = {
   }
 };
 
+Object.assign(copy.ko, { transformTitle: "도형 변환 공방", transformDesc: "비슷한 꺾임 구별에서 평행이동·회전·확대·줄이기까지" });
+Object.assign(copy.en, { transformTitle: "Transform Workshop", transformDesc: "Spot subtle bends, then slide, turn, enlarge, and reduce" });
+Object.assign(copy.zh, { transformTitle: "图形变换工坊", transformDesc: "辨别细微折点，再学习平移、旋转、放大与缩小" });
+Object.assign(copy.ja, { transformTitle: "図形変換工房", transformDesc: "わずかな曲がりを見分け、平行移動・回転・拡大・縮小へ" });
+
+courseNames.transform = {
+  ko: [["모양 관찰", "꺾인 구간의 위치와 길이 비교"], ["평행이동", "방향을 바꾸지 않고 옮기기"], ["회전", "왼쪽·오른쪽·반 바퀴 돌리기"], ["확대", "모든 부분을 같은 비율로 크게"], ["줄이기", "모든 부분을 같은 비율로 작게"]],
+  en: [["Observe Shapes", "Compare bend positions and lengths"], ["Translation", "Move in the given direction and distance"], ["Rotation", "Quarter and half turns about a fixed center"], ["Enlargement", "Double every edge length"], ["Reduction", "Halve every edge length"]],
+  zh: [["图形观察", "比较拐弯的位置和长度"], ["平移", "不改变方向移动"], ["旋转", "四分之一转与半转"], ["放大", "各部分同比例放大"], ["缩小", "各部分同比例缩小"]],
+  ja: [["図形の観察", "曲がる位置と長さを比べる"], ["平行移動", "向きを変えずに動かす"], ["回転", "4分の1回転と半回転"], ["拡大", "すべてを同じ割合で大きく"], ["縮小", "すべてを同じ割合で小さく"]]
+};
+
 const pieceTracks = {
   ko: [["킨더 조각 놀이", "같은 모양·빈칸·가리기·담요의 4가지 유형"], ["키즈 조각 놀이", "한 칸 옮기기·빠진 조각·다른 방법의 3가지 유형"]],
   en: [["Kinder Piece Play", "Four types: match, gap, reveal, and blanket"], ["Kids Piece Play", "Three types: move, missing piece, and another way"]],
@@ -43,9 +56,9 @@ const pieceTracks = {
 };
 
 const t = (key) => copy[lang]?.[key] || copy.ko[key];
-[["title", "title"], ["subtitle", "subtitle"], ["pieceTitle", "pieceTitle"], ["pieceDesc", "pieceDesc"], ["polyTitle", "polyTitle"], ["polyDesc", "polyDesc"], ["equalTitle", "equalTitle"], ["equalDesc", "equalDesc"], ["hiddenTitle", "hiddenTitle"], ["hiddenDesc", "hiddenDesc"]]
+[["title", "title"], ["subtitle", "subtitle"], ["pieceTitle", "pieceTitle"], ["pieceDesc", "pieceDesc"], ["polyTitle", "polyTitle"], ["polyDesc", "polyDesc"], ["equalTitle", "equalTitle"], ["equalDesc", "equalDesc"], ["hiddenTitle", "hiddenTitle"], ["hiddenDesc", "hiddenDesc"], ["transformTitle", "transformTitle"], ["transformDesc", "transformDesc"]]
   .forEach(([id, key]) => { $(`#${id}`).textContent = t(key); });
-[$("#sessionLabel"), $("#sessionLabel2"), $("#sessionLabel3")].forEach((element) => { element.textContent = t("session"); });
+[$("#sessionLabel"), $("#sessionLabel2"), $("#sessionLabel3"), $("#sessionLabel4")].forEach((element) => { element.textContent = t("session"); });
 $("#sessionLabel0").textContent = t("pieceSession");
 $("#playerName").textContent = profile.name || "GFIELD";
 $("#playerPoints").textContent = `${Number(localStorage.getItem("gfield-points") || 120)} P`;
@@ -82,4 +95,5 @@ function renderPieceTracks() {
 renderLevels(polyLevels, "#polyLevels", "polyomino", courseNames.poly);
 renderLevels(equalLevels, "#equalLevels", "equal-partition", courseNames.equal);
 renderLevels(hiddenLevels, "#hiddenLevels", "hidden-shape", courseNames.hidden);
+renderLevels(transformLevels, "#transformLevels", "shape-transform", courseNames.transform);
 renderPieceTracks();

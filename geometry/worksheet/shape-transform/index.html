@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>도형의 변화 | GFIELD 학습지</title>
+  <link rel="stylesheet" href="./styles.css?v=workbook-5" />
+  <link rel="stylesheet" href="./plane-shapes.css?v=workbook-5" />
+</head>
+<body>
+  <header class="maker-bar">
+    <div class="maker-identity">
+      <a class="icon-button" href="../../games/shape-transform/" aria-label="도형 변환으로 돌아가기" title="도형 변환으로 돌아가기"><img src="./icons/arrow-left.svg" alt="" /></a>
+      <div class="maker-title"><strong>도형의 변화</strong><small>GFIELD 학습지</small></div>
+    </div>
+    <div class="maker-settings">
+      <label class="domain-control" for="levelSelect">영역 <select id="levelSelect" aria-label="학습 영역"></select></label>
+      <label for="countInput">문항 수 <input id="countInput" type="number" min="1" max="20" value="10" inputmode="numeric" aria-describedby="countNotice" /></label>
+      <label class="toggle"><input id="coverToggle" type="checkbox" checked />표지</label>
+      <label class="toggle"><input id="answerToggle" type="checkbox" />정답·풀이</label>
+      <button class="icon-button" id="refreshButton" type="button" aria-label="문제 섞기" title="문제 섞기"><img src="./icons/shuffle.svg" alt="" /></button>
+      <button class="icon-button print-button" id="printButton" type="button" aria-label="학습지 인쇄" title="학습지 인쇄"><img src="./icons/printer.svg" alt="" /></button>
+    </div>
+    <p id="countNotice" class="count-notice" role="status" aria-live="polite"></p>
+  </header>
+  <p id="loadError" class="load-error" role="alert" hidden></p>
+  <main id="worksheet" class="worksheet-pages" aria-label="학습지">
+    <section id="coverSheet" class="book-cover">
+      <span class="page-watermark" aria-hidden="true">GFIELD</span>
+      <div class="cover-brand"><strong>GFIELD</strong><span>수학 · 도형 탐구</span></div>
+      <div class="cover-copy"><p>관찰하고, 움직이고, 확인하는</p><h1>도형의 변화</h1><h2 id="coverTitle"></h2><p id="coverSubtitle"></p></div>
+      <div class="cover-examples-head"><span>살펴보기</span><span>기준 도형</span><span>변화한 도형</span></div>
+      <div id="coverExamples" class="cover-examples"></div>
+      <div class="cover-meta"><label>이름 <span></span></label><label>날짜 <span></span></label></div>
+      <footer class="cover-footer"><span id="coverLevel"></span><strong id="coverCount"></strong></footer>
+    </section>
+  </main>
+  <template id="sheetTemplate">
+    <section class="sheet">
+      <span class="page-watermark" aria-hidden="true">GFIELD</span>
+      <header class="sheet-head"><div class="sheet-heading"><small>GFIELD · 도형의 변화</small><h2 class="sheet-title"></h2><p class="sheet-description"></p></div><div class="name-line">이름 <span></span></div></header>
+      <div class="problem-grid"></div>
+      <footer><span class="sheet-footer-text"></span><b class="page-number"></b></footer>
+    </section>
+  </template>
+  <script type="module" src="./app.js?v=workbook-5"></script>
+</body>
+</html>

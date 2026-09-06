@@ -1,0 +1,18 @@
+.grid-line { fill: none; stroke: #dbe1de; stroke-width: .45; }
+.grid-border { fill: none; stroke: #aebbb5; stroke-width: .7; }
+.grid-point { fill: #a7b4ae; }
+.drawing-svg .shape-line { stroke-width: 1.25; }
+.drawing-svg .shape-fill { fill-opacity: .3; }
+.shape-fill { fill: #83b9aa; fill-opacity: .44; stroke: none; }
+.shape-line { fill: none; stroke: #284d46; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.vertex-dot { fill: #284d46; }
+.pivot-dot { fill: #fff; stroke: #6a4c44; stroke-width: 1; }
+.point-label { font: 6px Arial, sans-serif; fill: #463b36; paint-order: stroke; stroke: #fff; stroke-width: 1.8; stroke-linejoin: round; }
+.direction-cue { fill: none; stroke: #6a4c44; stroke-width: 1; }
+.ghost-line { fill: none; stroke: #707f78; stroke-width: 1.1; stroke-dasharray: 3 2; }
+.proof-line { fill: none; stroke: #aa4e42; stroke-width: 1.5; stroke-linecap: round; }
+.proof-ray { fill: none; stroke: #aa4e42; stroke-width: .8; stroke-dasharray: 2 1.5; }
+.proof-circle { fill: none; stroke: #aa4e42; stroke-width: 1.5; }
+.proof-edge { fill: none; stroke: #aa4e42; stroke-width: 2.8; stroke-linecap: round; }
+.proof-label { fill: #933b30; font: bold 6px Arial, sans-serif; paint-order: stroke; stroke: #fff; stroke-width: 2; }
+.arrow-head { fill: #aa4e42; }
