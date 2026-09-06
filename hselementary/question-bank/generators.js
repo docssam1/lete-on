@@ -21157,6 +21157,226 @@
       const answerVisual = `${triangleNetSvg({ ...data, na, areaGa: data.areaGa, areaNa, H, solved: true })}${mathBoard("ㄴㅊ와 나의 넓이", row("공통 높이 H", `${fractionText(H)}cm`) + row("다의 넓이", `${data.da}×${fractionText(H)}=${fractionText(daArea)}cm²`) + row("나", `${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×${fractionText(daArea)}=${fractionText(areaNa)}cm²`) + row("ㄴㅊ", `${fractionText(areaNa)}÷${fractionText(H)}=${fractionText(na)}cm`))}`;
       return fixedResult(`삼각기둥 전개도에서 세 직사각형 가, 나, 다가 연결되어 있습니다. 가의 가로는 삼각형의 변 ㄱㄴ과 같고 ${data.ga}cm, 다의 가로는 변 ㄱㅊ과 같고 ${data.da}cm입니다. 가의 넓이는 ${data.areaGa}cm²이고, 나의 넓이는 다의 넓이의 ${mixedFractionMarkup(data.ratio[0], data.ratio[1])}배입니다. ㄴㅊ의 길이와 나의 넓이를 각각 구하세요.${promptVisual}${support("가의 넓이를 가의 가로로 나누어 같은 직사각형 높이를 구한 뒤, 나의 넓이와 ㄴㅊ의 길이를 찾아 보세요.")}${challenge}${evidence("triangular-prism-net-ratio-area", [data.ga, data.da, data.ratio[0], data.ratio[1], data.areaGa, H.numerator, H.denominator, na.numerator, na.denominator, areaNa.numerator, areaNa.denominator], "two-values")}`, `ㄴㅊ=${plainFractionText(na)}cm, 나=${plainFractionText(areaNa)}cm²`, `가의 넓이 ${data.areaGa}cm²를 가의 가로 ${data.ga}cm로 나누면 같은 직사각형의 높이 H=${fractionText(H)}cm입니다. 다의 넓이는 ${data.da}×${fractionText(H)}=${fractionText(daArea)}cm²이고, 나의 넓이는 ${mixedFractionMarkup(data.ratio[0], data.ratio[1])}×${fractionText(daArea)}=${fractionText(areaNa)}cm²입니다. 따라서 ㄴㅊ=${fractionText(areaNa)}÷${fractionText(H)}=${fractionText(na)}cm입니다.`, answerVisual);
     },
+    sourceGrade6VolumeSurfaceE3({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u6-e3-exploration", "6-1-u6-e3-example-1", "6-1-u6-e3-example-2", "6-1-u6-e3-example-3",
+        "6-1-u6-e3-example-4", "6-1-u6-e3-mission-2", "6-1-u6-e3-mission-4", "6-1-u6-e3-mission-5", "6-1-u6-e3-mission-6"
+      ];
+      const kinds = [
+        "notched-cuboid-volume", "cuboid-net-volume", "alternating-chain-surface", "three-face-volume",
+        "staircase-unpainted-surface", "seven-cube-cross-surface", "parallel-cut-volume", "top-front-volume", "incremental-stair-layers"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 직육면체의 부피와 겉넓이 개념탐구 3 공개 분기는 0부터 8까지여야 합니다.");
+      const sourceItemId = sourceIds[variant];
+      const kind = kinds[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">조건 사이의 관계를 식으로 나타내어 계산한 뒤 그림에서 다시 확인해 보세요.</p>` : "";
+      const evidence = `<span hidden data-source61-vs-e3-kind="${kind}" data-source-item="${sourceItemId}" data-pool="${poolIndex}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board source61-vs-e3-board" ${attributes}><strong>${title}</strong>${body}</div>`;
+      const text = (x, y, value, extra = "") => `<text x="${x}" y="${y}" ${extra}>${value}</text>`;
+      const line = (x1, y1, x2, y2, extra = "") => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ${extra}/>`;
+      const polygon = (points, className = "source61-vs-e3-face", extra = "") => `<polygon class="${className}" points="${points.map(point => point.join(",")).join(" ")}" ${extra}/>`;
+      const wrap = (body, model, solved = false, viewBox = "0 0 420 240") => `<svg class="geometry-diagram source61-vs-e3-diagram${solved ? " is-solved" : ""}" viewBox="${viewBox}" role="img" aria-label="${kind}의 ${solved ? "답" : "문제"} 그림" data-source61-vs-e3-structure="${kind}" data-source61-vs-e3-model="${model}" data-phase="${solved ? "answer" : "problem"}">${body}</svg>`;
+      const fixed = (prompt, answer, solution, promptVisual, answerVisual, contract = "single-value") => result(
+        `${prompt}${promptVisual}${support("그림의 같은 색 표시와 공유하는 면을 먼저 찾아보세요.")}${challenge}${evidence}`,
+        answer,
+        solution,
+        {
+          answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-vs-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${evidence}${answerVisual}<div class="solution-answer-caption">문제의 도형을 다시 그려 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: poolIndex,
+          verifiedVariantCount: 3,
+          sourceItemId,
+          resultContract: contract
+        }
+      );
+      const project = (scale, origin = [64, 166]) => ([x, y, z]) => [origin[0] + (x - y) * scale, origin[1] - z * scale * .9 + (x + y) * scale * .32];
+      const cuboidBody = ({ a, b, c, solved = false, cut = 0, labels = true }) => {
+        const scale = Math.min(8, 146 / Math.max(a, b));
+        const p = project(scale);
+        const face = (points, className, extra = "") => polygon(points.map(p), className, extra);
+        // The removed cube is the top-front-right corner: the remaining faces are L-shaped,
+        // and the three newly exposed square faces close the notch.
+        const front = [[0, 0, 0], [a, 0, 0], [a, 0, c - cut], [a - cut, 0, c - cut], [a - cut, 0, c], [0, 0, c]];
+        const right = [[a, 0, 0], [a, b, 0], [a, b, c], [a, cut, c], [a, cut, c - cut], [a, 0, c - cut]];
+        const top = [[0, 0, c], [a - cut, 0, c], [a - cut, cut, c], [a, b, c], [0, b, c]];
+        const cutX = [[a - cut, 0, c - cut], [a - cut, cut, c - cut], [a - cut, cut, c], [a - cut, 0, c]];
+        const cutY = [[a - cut, cut, c - cut], [a, cut, c - cut], [a, cut, c], [a - cut, cut, c]];
+        const cutZ = [[a - cut, 0, c - cut], [a, 0, c - cut], [a, cut, c - cut], [a - cut, cut, c - cut]];
+        const faces = `${face(top, "source61-vs-e3-face source61-vs-e3-top-face")}${face(right, "source61-vs-e3-face source61-vs-e3-right-face")}${face(front, "source61-vs-e3-face source61-vs-e3-front-face")}${face(cutX, solved ? "source61-vs-e3-cut-face is-solved" : "source61-vs-e3-cut-face", `data-cut-position="top-front-right-corner" data-cut-face="x=${a - cut}"`)}${face(cutY, solved ? "source61-vs-e3-cut-face is-solved" : "source61-vs-e3-cut-face", `data-cut-position="top-front-right-corner" data-cut-face="y=${cut}"`)}${face(cutZ, solved ? "source61-vs-e3-cut-face is-solved" : "source61-vs-e3-cut-face", `data-cut-position="top-front-right-corner" data-cut-face="z=${c - cut}"`)}`;
+        const edges = [
+          [[0, 0, 0], [a, 0, 0]], [[a, 0, 0], [a, 0, c - cut]], [[a, 0, c - cut], [a - cut, 0, c - cut]], [[a - cut, 0, c - cut], [a - cut, 0, c]], [[a - cut, 0, c], [0, 0, c]], [[0, 0, c], [0, 0, 0]],
+          [[a, 0, 0], [a, b, 0]], [[a, b, 0], [a, b, c]], [[a, b, c], [a, cut, c]], [[a, cut, c], [a, cut, c - cut]], [[a, cut, c - cut], [a, 0, c - cut]],
+          [[0, 0, c], [0, b, c]], [[0, b, c], [a, b, c]], [[a - cut, 0, c], [a - cut, cut, c]], [[a - cut, cut, c], [a, cut, c]],
+          [[a - cut, 0, c - cut], [a - cut, cut, c - cut]], [[a, 0, c - cut], [a, cut, c - cut]], [[a - cut, cut, c - cut], [a, cut, c - cut]]
+        ].map(([start, end], index) => line(...p(start), ...p(end), `class="${index >= 11 ? "source61-vs-e3-cut-edge" : index > 5 && index < 11 ? "source61-vs-e3-hidden-edge" : "source61-vs-e3-edge"}"`)).join("");
+        const labelsMarkup = labels ? `${text(120, 213, `밑면 ${a}cm × ${b}cm`)}${solved ? text(33, 103, `${c}cm`, `class="source61-vs-e3-result-label"`) : ""}${cut ? text(300, 41, solved ? `모서리 홈 ${cut}cm` : "모서리에서 잘라 냄", `class="source61-vs-e3-cut-label"`) : ""}` : "";
+        return `${faces}${edges}${labelsMarkup}${text(305, 68, solved ? `절단면 3개` : "홈 위치", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
+      };
+      const netBody = ({ a, b, c, givenA, givenSum, solved = false }) => {
+        const scale = 10;
+        const x = 158, y = 82, aw = a * scale, bh = b * scale, cw = c * scale;
+        const rect = (rx, ry, width, height, face, fill) => `<rect class="source61-vs-e3-net-face ${fill}" x="${rx}" y="${ry}" width="${width}" height="${height}" data-net-face="${face}"/>`;
+        const faces = `${rect(x, y, aw, bh, "front", "source61-vs-e3-net-a")}${rect(x - cw, y, cw, bh, "left", "source61-vs-e3-net-b")}${rect(x + aw, y, cw, bh, "right", "source61-vs-e3-net-c")}${rect(x, y - cw, aw, cw, "top", "source61-vs-e3-net-c")}${rect(x, y + bh, aw, cw, "bottom", "source61-vs-e3-net-c")}${rect(x - cw, y + bh, cw, bh, "back", "source61-vs-e3-net-b")}`;
+        const marks = `<line class="source61-vs-e3-net-edge is-a" x1="${x}" y1="${y + bh}" x2="${x + aw}" y2="${y + bh}"/><line class="source61-vs-e3-net-edge is-b" x1="${x - cw}" y1="${y}" x2="${x - cw}" y2="${y + bh}"/><line class="source61-vs-e3-net-edge is-c" x1="${x + aw}" y1="${y}" x2="${x + aw + cw}" y2="${y}"/>`;
+        const labels = solved ? `${text(185, 42, `세 변 ${a}cm, ${b}cm, ${c}cm`, `class="source61-vs-e3-result-label"`)}${text(210, 218, `접은 뒤 ${a}cm × ${b}cm × ${c}cm`, `class="source61-vs-e3-result-label"`)}` : `${text(70, 209, `${givenA}cm`, `class="source61-vs-e3-measure"`)}${text(214, 35, `${givenSum}cm`, `class="source61-vs-e3-measure"`)}${text(210, 218, "같은 색 변을 대응시켜 접기", `class="source61-vs-e3-note"`)}`;
+        return `${faces}${marks}${labels}`;
+      };
+      const chainBody = ({ a, b, c, s, solved = false }) => {
+        const totalLength = 4 * a + 4 * s;
+        const depthSkew = .45, depthRise = .3, heightScale = .86;
+        const scale = 388 / (totalLength + depthSkew * b);
+        const originX = 16 + depthSkew * b * scale, originY = 145;
+        const p = ([x, y, z]) => [originX + x * scale - y * scale * depthSkew, originY + y * scale * depthRise - z * scale * heightScale];
+        const pieces = Array.from({ length: 8 }, (_, index) => {
+          const big = index % 2 === 0, x = Array.from({ length: index }, (_, prior) => prior % 2 === 0 ? a : s).reduce((sum, value) => sum + value, 0), length = big ? a : s, depth = big ? b : s, height = big ? c : s;
+          const front = [[x, 0, 0], [x + length, 0, 0], [x + length, 0, height], [x, 0, height]];
+          const side = [[x + length, 0, 0], [x + length, depth, 0], [x + length, depth, height], [x + length, 0, height]];
+          const top = [[x, 0, height], [x + length, 0, height], [x + length, depth, height], [x, depth, height]];
+          const pieceClass = big ? "source61-vs-e3-big" : "source61-vs-e3-small";
+          return `<g class="${pieceClass}" data-chain-index="${index + 1}" data-chain-length="${length}" data-chain-depth="${depth}" data-chain-height="${height}">${polygon(front.map(p), big ? "source61-vs-e3-chain-front" : "source61-vs-e3-chain-cube")}${polygon(side.map(p), big ? "source61-vs-e3-chain-side" : "source61-vs-e3-chain-cube-side")}${polygon(top.map(p), big ? "source61-vs-e3-chain-top" : "source61-vs-e3-chain-cube-top")}</g>`;
+        }).join("");
+        const contacts = Array.from({ length: 7 }, (_, index) => {
+          const x = Array.from({ length: index + 1 }, (_, prior) => prior % 2 === 0 ? a : s).reduce((sum, value) => sum + value, 0);
+          const plane = [[x, 0, 0], [x, s, 0], [x, s, s], [x, 0, s]];
+          const contactClass = solved ? "source61-vs-e3-contact-face is-solved" : "source61-vs-e3-chain-seam";
+          const edgeClass = solved ? "source61-vs-e3-contact is-solved" : "source61-vs-e3-contact";
+          return `${polygon(plane.map(p), contactClass, `data-contact-face="${index + 1}" data-contact-size="${s}x${s}"`)}${line(...p([x, 0, 0]), ...p([x, 0, s]), `class="${edgeClass}" data-contact-edge="${index + 1}"`)}`;
+        }).join("");
+        const answerBand = solved ? `<g class="source61-vs-e3-annotation-band" data-annotation-band="contact-summary"><rect x="22" y="198" width="376" height="34" rx="4"/>${text(210, 215, `접촉면 7개 · 각 접촉면 ${s}cm × ${s}cm`, `class="source61-vs-e3-result-label"`)}</g>` : "";
+        return `${pieces}${contacts}${answerBand}`;
+      };
+      const threeFaceBody = ({ a, b, c, areas, solved = false }) => {
+        const p = project(8, [76, 170]);
+        const front = [[0, 0, 0], [a, 0, 0], [a, 0, c], [0, 0, c]].map(p);
+        const right = [[a, 0, 0], [a, b, 0], [a, b, c], [a, 0, c]].map(p);
+        const top = [[0, 0, c], [a, 0, c], [a, b, c], [0, b, c]].map(p);
+        const labels = solved ? `${text(135, 215, `${a}cm × ${b}cm × ${c}cm`, `class="source61-vs-e3-result-label"`)}${text(135, 232, `부피 ${a * b * c}cm³`, `class="source61-vs-e3-result-label"`)}` : `${text(92, 111, `${areas[0]}cm²`, `class="source61-vs-e3-measure"`)}${text(216, 116, `${areas[1]}cm²`, `class="source61-vs-e3-measure"`)}${text(132, 45, `${areas[2]}cm²`, `class="source61-vs-e3-measure"`)}`;
+        return `${polygon(top, "source61-vs-e3-face source61-vs-e3-area-face-a")}${polygon(front, "source61-vs-e3-face source61-vs-e3-area-face-b")}${polygon(right, "source61-vs-e3-face source61-vs-e3-area-face-c")}${line(front[0][0], front[0][1], front[1][0], front[1][1], `class="source61-vs-e3-edge"`)}${line(front[1][0], front[1][1], front[2][0], front[2][1], `class="source61-vs-e3-edge"`)}${line(right[1][0], right[1][1], right[2][0], right[2][1], `class="source61-vs-e3-hidden-edge"`)}${labels}`;
+      };
+      const stairCells = () => {
+        const cells = [];
+        for (let z = 0; z < 4; z += 1) for (let x = 0; x < 4 - z; x += 1) for (let y = 0; y < 4 - z; y += 1) cells.push([x, y, z]);
+        return cells;
+      };
+      const stairBody = ({ faceArea, solved = false }) => {
+        const cells = stairCells();
+        const occupied = new Set(cells.map(cell => cell.join(",")));
+        const p = project(25, [122, 154]);
+        const directions = { top: [0, 0, 1], front: [0, -1, 0], right: [1, 0, 0] };
+        const facePoints = {
+          top: ([x, y, z]) => [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+          front: ([x, y, z]) => [[x, y, z], [x + 1, y, z], [x + 1, y, z + 1], [x, y, z + 1]],
+          right: ([x, y, z]) => [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]]
+        };
+        const isOccupied = ([x, y, z]) => occupied.has(`${x},${y},${z}`);
+        const cubes = [...cells].sort((left, right) => (left[2] - right[2]) || ((left[0] + left[1]) - (right[0] + right[1]))).map(([x, y, z], index) => {
+          const coordinate = `${x},${y},${z}`;
+          const layer = z + 1;
+          const faceMarkup = Object.entries(directions).filter(([, [dx, dy, dz]]) => !isOccupied([x + dx, y + dy, z + dz])).map(([name]) => {
+            const classes = `source61-vs-e3-stair-face source61-vs-e3-stair-${name}-face${solved ? " is-solved" : ""}`;
+            return polygon(facePoints[name]([x, y, z]).map(p), classes, `data-face-type="${name}" data-coordinate="${coordinate}" data-layer="${layer}"`);
+          }).join("");
+          return `<g class="source61-vs-e3-stair-cube layer-${layer}" data-stair-cube="${index + 1}" data-coordinate="${coordinate}" data-layer="${layer}">${faceMarkup}</g>`;
+        }).join("");
+        const sizes = [4, 3, 2, 1];
+        const layerMap = sizes.map((size, layer) => {
+          const left = 274, top = 62 + layer * 35, cell = 8;
+          const cellsMarkup = Array.from({ length: size * size }, (_, index) => {
+            const x = index % size, y = Math.floor(index / size);
+            const coordinate = `${x},${y},${layer}`;
+            return `<rect class="source61-vs-e3-stair-layer-cell${solved ? " is-solved" : ""}" x="${left + x * cell}" y="${top + y * cell}" width="${cell - 1}" height="${cell - 1}" data-layer-cell="${coordinate}"/>`;
+          }).join("");
+          return `<g data-layer="${layer + 1}" data-layer-size="${size}">${cellsMarkup}${text(258, top + Math.max(7, size * cell / 2), `z=${layer}`, `class="source61-vs-e3-note"`)}</g>`;
+        }).join("");
+        const summary = solved
+          ? `${text(210, 240, "노출면 72개 · 인접쌍 54개 · 안 칠한 면 108개", `class="source61-vs-e3-result-label"`)}${text(210, 256, `한 면 ${faceArea}cm² · 칠하지 않은 면 ${108 * faceArea}cm²`, `class="source61-vs-e3-result-label"`)}`
+          : `${text(210, 240, "밑층에서 꼭대기까지 실제 큐브가 쌓인 입체", `class="source61-vs-e3-note"`)}${text(210, 256, "층별 자리 4×4 → 3×3 → 2×2 → 1×1", `class="source61-vs-e3-note"`)}`;
+        return `${cubes}${text(210, 24, solved ? "같은 30개 좌표 모델 · 공유 관계를 강조" : "30개 단위 정육면체의 3D 계단 쌓기", `class="source61-vs-e3-note"`)}${layerMap}${summary}`;
+      };
+      const cubeMarkup = (x, y, size, solved = false, label = "", extra = "") => {
+        const d = 11, top = [[x, y], [x + size, y], [x + size + d, y - d], [x + d, y - d]], side = [[x + size, y], [x + size + d, y - d], [x + size + d, y + size - d], [x + size, y + size]], front = [[x, y], [x + size, y], [x + size, y + size], [x, y + size]];
+        return `<g ${extra}>${polygon(top, "source61-vs-e3-cube-top")}${polygon(side, "source61-vs-e3-cube-side")}${polygon(front, solved ? "source61-vs-e3-cube-front is-solved" : "source61-vs-e3-cube-front")}${label ? text(x + size / 2, y + size / 2 + 4, label) : ""}</g>`;
+      };
+      const crossBody = ({ side, solved = false }) => {
+        const coords = [[0, 0, -1], [0, 1, 0], [-1, 0, 0], [1, 0, 0], [0, 0, 0], [0, -1, 0], [0, 0, 1]];
+        const directions = ["아래", "뒤", "왼쪽", "오른쪽", "가운데", "앞", "위"];
+        const mapped = coords.map(([x, y, z]) => [188 + (x - y) * 34, 112 + (x + y) * 12 - z * 34]);
+        const cubes = mapped.map(([x, y], index) => cubeMarkup(x, y, 34, solved && index !== 4, index === 4 ? "가운데" : "", `data-cross-coordinate="${coords[index].join(",")}" data-cross-direction="${directions[index]}"`)).join("");
+        const joins = solved ? mapped.slice(1).map(([x, y], index) => line(188 + (coords[index + 1][0] - coords[index + 1][1]) * 17, 129 + (coords[index + 1][0] + coords[index + 1][1]) * 6 - coords[index + 1][2] * 17, x + 17, y + 17, `class="source61-vs-e3-shared-face" data-shared-face="${index + 1}"`)).join("") : "";
+        return `${cubes}${joins}${text(210, 25, `가운데 1개 + 앞·뒤·왼쪽·오른쪽·위·아래 6개`, `class="source61-vs-e3-note"`)}${text(210, 218, solved ? `정육면체 한 변 ${side}cm · 공유면 6개` : "일곱 정육면체의 위치를 그림에서 확인하세요", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
+      };
+      const cutBody = ({ side, height, solved = false }) => {
+        const p = project(9, [70, 168]);
+        const front = [[0, 0, 0], [side, 0, 0], [side, 0, height], [0, 0, height]].map(p);
+        const top = [[0, 0, height], [side, 0, height], [side, side, height], [0, side, height]].map(p);
+        const mid = [[0, 0, height / 2], [side, 0, height / 2], [side, side, height / 2], [0, side, height / 2]].map(p);
+        return `${polygon(top, "source61-vs-e3-face")}${polygon(front, "source61-vs-e3-face source61-vs-e3-front-face")}${polygon(mid, solved ? "source61-vs-e3-cut-plane is-solved" : "source61-vs-e3-cut-plane")}${line(mid[0][0], mid[0][1], mid[1][0], mid[1][1], `class="source61-vs-e3-cut-edge"`)}${line(mid[1][0], mid[1][1], mid[2][0], mid[2][1], `class="source61-vs-e3-cut-edge"`)}${text(210, 30, `${side}cm × ${side}cm 밑면에 평행한 절단`, `class="source61-vs-e3-note"`)}${text(210, 210, solved ? `새 절단면 2개 · 밑면 ${side}cm × ${side}cm` : "위와 아래에 새로 생긴 절단면을 표시", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
+      };
+      const viewsBody = ({ a, b, h, solved = false }) => `${polygon([[70, 52], [190, 52], [190, 122], [70, 122]], "source61-vs-e3-view-face")}${polygon([[245, 52], [365, 52], [365, 122], [245, 122]], "source61-vs-e3-view-face")}${text(130, 42, "위", `class="source61-vs-e3-view-label"`)}${text(305, 42, "앞", `class="source61-vs-e3-view-label"`)}${text(130, 88, solved ? `${a}cm × ${b}cm` : `${a}cm, 둘레 ${2 * (a + b)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(305, 88, solved ? `${a}cm × ${h}cm` : `${a}cm, 둘레 ${2 * (a + h)}cm`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${text(130, 148, `같은 변 ${a}cm`, `class="source61-vs-e3-note"`)}${solved ? text(210, 197, `부피 ${a * b * h}cm³`, `class="source61-vs-e3-result-label"`) : ""}`;
+      const layerBody = ({ side, target, n, solved = false }) => {
+        const shown = solved ? [1, 2, 3, 4, "…", n - 1, n] : [1, 2, 3, 4, "…", "?"];
+        const bands = shown.map((count, index) => { const x = 24 + index * 53, width = count === "…" ? 28 : count === "?" ? 18 : Math.min(42, 8 + Number(count) * 3); return count === "…" ? text(x + 14, 88, "…", `class="source61-vs-e3-note"`) : `<g data-layer-summary="${count}">${Array.from({ length: Math.min(Number(count), 8) }, (_, cell) => `<rect class="source61-vs-e3-layer-cell" x="${x + cell * 4}" y="${128 - Math.min(Number(count), 8) * 4}" width="4" height="${Math.min(Number(count), 8) * 4}" data-coordinate="${cell},0,${count - 1}"/>`).join("")}${text(x + width / 2, 153, `${count}칸`)}</g>`; }).join("");
+        return `${bands}${text(210, 28, "한 칸 깊이 · 아래층으로 갈수록 한 칸씩 증가", `class="source61-vs-e3-note"`)}${text(210, 184, solved ? `모서리 ${side}cm · 노출면 ${target}cm² · ${n}층` : `한 면 ${side * side}cm² · 겉넓이 ${target}cm²`, `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-measure"}"`)}${solved ? text(210, 211, `n(${n}+1)+4n = ${target / (side * side)}`, `class="source61-vs-e3-result-label"`) : ""}`;
+      };
+
+      if (variant === 0) {
+        const d = [{ a: 25, b: 10, c: 13, cut: 8, cutVolume: 512, surface: 1410 }, { a: 27, b: 12, c: 15, cut: 9, cutVolume: 729, surface: 1818 }, { a: 30, b: 15, c: 18, cut: 10, cutVolume: 1000, surface: 2520 }][poolIndex];
+        const answer = d.a * d.b * d.c - d.cutVolume;
+        const model = `${d.a},${d.b},${d.cutVolume},${d.surface}`;
+        const visual = solved => wrap(cuboidBody({ ...d, solved, labels: true }), model, solved);
+        return fixed(`직육면체의 한 모서리에서 부피가 ${d.cutVolume}cm³인 정육면체를 잘라 냈습니다. 잘라 낸 뒤 겉넓이가 ${d.surface}cm²이고, 밑면의 두 변이 ${d.a}cm, ${d.b}cm일 때 남은 입체의 부피를 구하세요.`, `${answer}cm³`, `정육면체의 모서리는 ${d.cut}cm입니다. 모서리에서 잘라 냈으므로 겉넓이는 변하지 않습니다. 원래 높이는 (${d.surface}-2×${d.a}×${d.b})÷(2×${d.a}+2×${d.b})=${d.c}cm입니다. 원래 부피 ${d.a}×${d.b}×${d.c}에서 ${d.cutVolume}cm³를 빼면 ${answer}cm³입니다.`, visual(false), visual(true));
+      }
+      if (variant === 1) {
+        const d = [{ a: 5, b: 7, c: 8, givenA: 5, givenSum: 12 }, { a: 6, b: 8, c: 9, givenA: 6, givenSum: 14 }, { a: 7, b: 9, c: 10, givenA: 7, givenSum: 16 }][poolIndex];
+        const surface = 2 * (d.a * d.b + d.b * d.c + d.c * d.a);
+        const answer = d.a * d.b * d.c;
+        const model = `${d.givenA},${d.givenSum},${surface}`;
+        const visual = solved => wrap(netBody({ ...d, solved }), model, solved, "0 0 420 240");
+        return fixed(`오른쪽 전개도의 겉넓이는 ${surface}cm²입니다. 파란색으로 표시된 변은 ${d.givenA}cm이고, 파란색 변과 주황색 변을 이어 잰 길이는 ${d.givenSum}cm입니다. 같은 색 변을 대응시켜 접었을 때 직육면체의 부피를 구하세요.`, `${answer}cm³`, `파란색 변은 ${d.a}cm이므로 주황색 변은 ${d.givenSum}-${d.a}=${d.b}cm입니다. 겉넓이는 2×(${d.a}×${d.b}+${d.b}×높이+높이×${d.a})=${surface}cm²이므로 높이는 ${d.c}cm입니다. 부피는 ${d.a}×${d.b}×${d.c}=${answer}cm³입니다.`, visual(false), visual(true));
+      }
+      if (variant === 2) {
+        const d = [{ a: 8, b: 6, c: 12, s: 4 }, { a: 12, b: 9, c: 18, s: 6 }, { a: 16, b: 12, c: 24, s: 8 }][poolIndex];
+        const single = d.a * d.b * d.c, answer = 4 * (2 * (d.a * d.b + d.b * d.c + d.c * d.a)) + 4 * 6 * d.s * d.s - 2 * 7 * d.s * d.s;
+        const model = `${d.a},${d.b},${d.c},ratio-1/9`;
+        const visual = solved => wrap(chainBody({ ...d, solved }), model, solved, solved ? "0 44 420 192" : "0 44 420 136");
+        return fixed(`가로 ${d.a}cm, 세로 ${d.b}cm, 높이 ${d.c}cm인 직육면체 4개와, 그 부피의 1/9인 정육면체 4개를 번갈아 일렬로 붙였습니다. 입체도형의 겉넓이를 구하세요.`, `${answer}cm²`, `직육면체 한 개의 부피는 ${single}cm³이므로 작은 정육면체 한 개의 부피는 ${single}÷9=${d.s * d.s * d.s}cm³, 모서리는 ${d.s}cm입니다. 각 겉넓이의 합에서 7개의 공유 면을 두 번씩 빼면 4×${2 * (d.a * d.b + d.b * d.c + d.c * d.a)}+4×${6 * d.s * d.s}-2×7×${d.s * d.s}=${answer}cm²입니다.`, visual(false), visual(true));
+      }
+      if (variant === 3) {
+        const d = [{ sides: [8, 6, 14], areas: [48, 84, 112] }, { sides: [9, 6, 12], areas: [54, 72, 108] }, { sides: [10, 7, 14], areas: [70, 98, 140] }][poolIndex];
+        const [a, b, c] = d.sides, answer = a * b * c, model = d.areas.join(",");
+        const visual = solved => wrap(threeFaceBody({ a, b, c, areas: d.areas, solved }), model, solved, "0 0 420 240");
+        return fixed(`직육면체에서 서로 이웃한 세 면의 넓이가 각각 ${d.areas[0]}cm², ${d.areas[1]}cm², ${d.areas[2]}cm²일 때 부피를 구하세요.`, `${answer}cm³`, `세 면 중 ${d.areas[0]}cm²와 ${d.areas[1]}cm²를 곱한 뒤 ${d.areas[2]}cm²로 나누면 같은 모서리를 두 번 곱한 값이 됩니다. (${d.areas[0]}×${d.areas[1]})÷${d.areas[2]}=${b * b}이므로 그 모서리는 ${b}cm입니다. 나머지 모서리는 ${d.areas[0]}÷${b}=${a}cm, ${d.areas[1]}÷${b}=${c}cm이고, 부피는 ${a}×${b}×${c}=${answer}cm³입니다.`, visual(false), visual(true));
+      }
+      if (variant === 4) {
+        const faceArea = [4, 5, 6][poolIndex], painted = 72 * faceArea, answer = 108 * faceArea, model = `4,3,2,1,${painted}`;
+        const visual = solved => wrap(stairBody({ faceArea, solved }), model, solved, "0 0 420 270");
+        return fixed(`같은 정육면체 30개를 4×4, 3×3, 2×2, 1×1 계단 모양으로 쌓고 겉면을 칠했습니다. 색칠한 면의 넓이가 ${painted}cm²일 때 색칠하지 않은 면의 넓이를 구하세요.`, `${answer}cm²`, `층별 단위 큐브 좌표를 세면 드러난 면은 72개이고 안쪽에서 서로 맞닿은 공유 면은 108개입니다. 한 면의 넓이는 ${painted}÷72=${faceArea}cm²이므로 색칠하지 않은 면은 108×${faceArea}=${answer}cm²입니다.`, visual(false), visual(true));
+      }
+      if (variant === 5) {
+        const side = [5, 6, 7][poolIndex], totalVolume = 7 * side * side * side, answer = 7 * 6 * side * side - 2 * 6 * side * side, model = `${totalVolume},7,cross`;
+        const visual = solved => wrap(crossBody({ side, solved }), model, solved, "0 0 420 240");
+        return fixed(`크기가 같은 정육면체 7개를 가운데 한 개와 앞·뒤·왼쪽·오른쪽·위·아래에 한 개씩 붙였습니다. 전체 부피가 ${totalVolume}cm³일 때 겉넓이를 구하세요.`, `${answer}cm²`, `정육면체 한 개의 부피는 ${totalVolume}÷7=${side * side * side}cm³이므로 모서리는 ${side}cm입니다. 7개를 따로 놓은 겉넓이에서 여섯 공유 면을 두 번씩 빼면 7×6×${side * side}-2×6×${side * side}=${answer}cm²입니다.`, visual(false), visual(true));
+      }
+      if (variant === 6) {
+        const d = [{ side: 7, height: 12 }, { side: 6, height: 10 }, { side: 8, height: 14 }][poolIndex];
+        const surface = 2 * d.side * d.side + 4 * d.side * d.height, splitSurface = surface + 2 * d.side * d.side, answer = d.side * d.side * d.height, model = `${surface},${splitSurface},square-base-parallel-cut`;
+        const visual = solved => wrap(cutBody({ ...d, solved }), model, solved, "0 0 420 240");
+        return fixed(`밑면이 정사각형인 직육면체의 겉넓이가 ${surface}cm²입니다. 밑면에 평행하게 잘라 두 직육면체로 나누었더니 겉넓이의 합이 ${splitSurface}cm²가 되었습니다. 처음 직육면체의 부피를 구하세요.`, `${answer}cm³`, `나눈 뒤 새로 생긴 절단면은 2개이므로 두 절단면의 합은 ${splitSurface}-${surface}=${2 * d.side * d.side}cm²입니다. 밑면 한 개의 넓이는 ${d.side}×${d.side}=${d.side * d.side}cm²입니다. 처음 겉넓이 식에 넣으면 높이는 ${d.height}cm이고, 부피는 ${d.side}×${d.side}×${d.height}=${answer}cm³입니다.`, visual(false), visual(true));
+      }
+      if (variant === 7) {
+        const d = [{ a: 6, b: 7, h: 4 }, { a: 7, b: 8, h: 4 }, { a: 8, b: 9, h: 5 }][poolIndex];
+        const topPerimeter = 2 * (d.a + d.b), frontPerimeter = 2 * (d.a + d.h), answer = d.a * d.b * d.h, model = `${d.a},${topPerimeter},${frontPerimeter}`;
+        const visual = solved => wrap(viewsBody({ ...d, solved }), model, solved, "0 0 420 240");
+        return fixed(`직육면체를 위와 앞에서 본 모양이 다음과 같습니다. 위에서 본 모양의 한 변은 ${d.a}cm이고 둘레는 ${topPerimeter}cm, 앞에서 본 모양의 같은 변은 ${d.a}cm이고 둘레는 ${frontPerimeter}cm입니다. 직육면체의 부피를 구하세요.`, `${answer}cm³`, `위에서 본 다른 변은 ${topPerimeter}÷2-${d.a}=${d.b}cm입니다. 앞에서 본 높이는 ${frontPerimeter}÷2-${d.a}=${d.h}cm입니다. 따라서 부피는 ${d.a}×${d.b}×${d.h}=${answer}cm³입니다.`, visual(false), visual(true));
+      }
+      const side = 2, n = [12, 10, 8][poolIndex], target = side * side * n * (n + 5), model = `${target},cube-volume-8,one-cell-deep-stair`;
+      const visual = solved => wrap(layerBody({ side, target, n, solved }), model, solved, "0 0 420 240");
+      return fixed(`부피가 8cm³인 정육면체 모양 쌓기나무를 한 층에 1개로 시작하여 아래층에 한 개씩 더 놓습니다. 완성한 입체도형의 겉넓이가 ${target}cm²일 때 몇 층으로 쌓았는지 구하세요.`, `${n}층`, `정육면체의 모서리는 ${side}cm이고 한 면의 넓이는 ${side}×${side}=${side * side}cm²입니다. 한 칸 깊이 계단의 노출 면 수는 n(n+1)+4n입니다. ${side * side}×{n(n+1)+4n}=${target}를 만족하는 자연수는 n=${n}이므로 ${n}층입니다.`, visual(false), visual(true));
+    },
     sourceGrade6PrismsPyramidsE3({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e3-example-3-1", "6-1-u2-e3-mission-1", "6-1-u2-e3-mission-5", "6-1-u2-e3-mission-6"
@@ -25411,6 +25631,7 @@
     [type => type.id === "5-1-u5-t2", "fifthFractionSubtractionAdvanced"],
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
+    [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
     [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e1-"), "sourceGrade6DecimalDivisionE1"],

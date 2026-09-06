@@ -9,6 +9,7 @@ const curriculumPath = path.join(__dirname, "curriculum.js");
 const rawInventoryPath = path.join(__dirname, "source-inventory", "6-1-source-items.json");
 const readinessPath = path.join(__dirname, "source-inventory", "6-1-u4-source-readiness-review.json");
 const readinessU5Path = path.join(__dirname, "source-inventory", "6-1-u5-source-readiness-review.json");
+const readinessU6Path = path.join(__dirname, "source-inventory", "6-1-u6-source-readiness-review.json");
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
 
@@ -31,6 +32,7 @@ const curriculum = context.window.HSE_CURRICULUM;
 const rawInventory = JSON.parse(fs.readFileSync(rawInventoryPath, "utf8"));
 const readiness = JSON.parse(fs.readFileSync(readinessPath, "utf8"));
 const readinessU5 = JSON.parse(fs.readFileSync(readinessU5Path, "utf8"));
+const readinessU6 = JSON.parse(fs.readFileSync(readinessU6Path, "utf8"));
 const items = catalog?.items || [];
 const readinessDecisionCounts = readinessU5.items.reduce((counts, item) => {
   counts.publicDecision[item.publicDecision || "undefined"] = (counts.publicDecision[item.publicDecision || "undefined"] || 0) + 1;
@@ -44,6 +46,7 @@ const readyGeneratorKeys = [
   "sourceGrade6DecimalDivisionE1", "sourceGrade6DecimalDivisionE2", "sourceGrade6DecimalDivisionE3", "sourceGrade6DecimalDivisionE4",
   "sourceGrade6RatioE1", "sourceGrade6RatioE2", "sourceGrade6RatioE3", "sourceGrade6RatioE4", "sourceGrade6RatioE5", "sourceGrade6RatioE6"
   , "sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"
+  , "sourceGrade6VolumeSurfaceE3"
 ];
 check(rawInventory.items.length === 264, `6-1 원자료 장부는 번호가 붙은 개념탐구 소문항을 나눈 264개여야 하나 ${rawInventory.items.length}개입니다.`);
 check(new Set(rawInventory.items.map(item => item.sourceItemId)).size === rawInventory.items.length, "6-1 원자료 장부의 항목 ID가 중복되었습니다.");
@@ -68,20 +71,26 @@ for (const [generatorKey, expectedCount, label] of [
   ["sourceGrade6GraphsE1", 9, "개념탐구 1 그림그래프 공개 유형"],
   ["sourceGrade6GraphsE2", 10, "개념탐구 2 여러 가지 그래프 공개 유형"],
   ["sourceGrade6GraphsE3", 10, "개념탐구 3 원그래프 공개 유형"],
-  ["sourceGrade6GraphsE4", 9, "개념탐구 4 여러 가지 그래프 공개 유형"]
+  ["sourceGrade6GraphsE4", 9, "개념탐구 4 여러 가지 그래프 공개 유형"],
+  ["sourceGrade6VolumeSurfaceE3", 9, "6단원 개념탐구 3 공개 유형"]
 ]) {
   const mappedItems = items.filter(item => item.generatorKey === generatorKey);
   check(mappedItems.length === expectedCount, `6-1 비와 비율 ${label}의 공개 유형이 ${expectedCount}개가 아닙니다: ${mappedItems.length}`);
   mappedItems.forEach(item => {
     const rawItem = rawInventory.items.find(candidate => candidate.publicSourceItemId === item.sourceItemId);
-    const readinessItem = (["sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"].includes(generatorKey) ? readinessU5 : readiness).items.find(candidate => candidate.sourceItemId === item.sourceItemId);
-    check(Boolean(item.rawSourceItemId && rawItem && readinessItem), `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID 연결이 없습니다.`);
-    check(rawItem?.sourceItemId === item.rawSourceItemId && readinessItem?.rawSourceItemId === item.rawSourceItemId, `${item.sourceItemId}: 원자료 ID가 양쪽 연결표에서 다릅니다.`);
+    const readinessItem = (["sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"].includes(generatorKey) ? readinessU5 : generatorKey === "sourceGrade6VolumeSurfaceE3" ? readinessU6 : readiness).items.find(candidate => candidate.sourceItemId === item.sourceItemId);
+    if (generatorKey === "sourceGrade6VolumeSurfaceE3") {
+      check(Boolean(rawItem && readinessItem), `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID 연결이 없습니다.`);
+      check(rawItem?.sourceItemId === item.sourceItemId && readinessItem?.sourceItemId === item.sourceItemId, `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID가 다릅니다.`);
+    } else {
+      check(Boolean(item.rawSourceItemId && rawItem && readinessItem), `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID 연결이 없습니다.`);
+      check(rawItem?.sourceItemId === item.rawSourceItemId && readinessItem?.rawSourceItemId === item.rawSourceItemId, `${item.sourceItemId}: 원자료 ID가 양쪽 연결표에서 다릅니다.`);
+    }
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 177 && lockedItems.length === 456, `6학년 원문 유형의 공개 177개·잠금 456개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 177유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 186 && lockedItems.length === 447, `6학년 원문 유형의 공개 186개·잠금 447개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 186유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU5.integrity?.publicCandidateCount === readinessDecisionCounts.publicCandidate, `6-1 5단원 readiness publicCandidate 집계가 실제 ${readinessDecisionCounts.publicCandidate}개와 다릅니다.`);
@@ -121,4 +130,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6학년 공개 분류표·화면 연결 감사 통과: ${items.length}개 원문 문제 = ${items.length}개 세부 유형 · 생성 가능 177 · 검수 잠금 456 · 기존 생성 문제 보존`);
+console.log(`6학년 공개 분류표·화면 연결 감사 통과: ${items.length}개 원문 문제 = ${items.length}개 세부 유형 · 생성 가능 186 · 검수 잠금 447 · 기존 생성 문제 보존`);
