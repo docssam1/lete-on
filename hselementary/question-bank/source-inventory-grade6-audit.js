@@ -47,6 +47,7 @@ const readyGeneratorKeys = [
   "sourceGrade6RatioE1", "sourceGrade6RatioE2", "sourceGrade6RatioE3", "sourceGrade6RatioE4", "sourceGrade6RatioE5", "sourceGrade6RatioE6"
   , "sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"
   , "sourceGrade6VolumeSurfaceE3"
+  , "sourceGrade6VolumeE4"
 ];
 check(rawInventory.items.length === 264, `6-1 원자료 장부는 번호가 붙은 개념탐구 소문항을 나눈 264개여야 하나 ${rawInventory.items.length}개입니다.`);
 check(new Set(rawInventory.items.map(item => item.sourceItemId)).size === rawInventory.items.length, "6-1 원자료 장부의 항목 ID가 중복되었습니다.");
@@ -89,8 +90,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 186 && lockedItems.length === 447, `6학년 원문 유형의 공개 186개·잠금 447개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 186유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 199 && lockedItems.length === 434, `6학년 원문 유형의 공개 199개·잠금 434개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 199유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU5.integrity?.publicCandidateCount === readinessDecisionCounts.publicCandidate, `6-1 5단원 readiness publicCandidate 집계가 실제 ${readinessDecisionCounts.publicCandidate}개와 다릅니다.`);
@@ -130,4 +131,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6학년 공개 분류표·화면 연결 감사 통과: ${items.length}개 원문 문제 = ${items.length}개 세부 유형 · 생성 가능 186 · 검수 잠금 447 · 기존 생성 문제 보존`);
+console.log(`6학년 공개 분류표·화면 연결 감사 통과: ${items.length}개 원문 문제 = ${items.length}개 세부 유형 · 생성 가능 199 · 검수 잠금 434 · 기존 생성 문제 보존`);

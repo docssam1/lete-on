@@ -53,13 +53,29 @@
       cursor = match.index + match[0].length;
     });
     if (cursor < text.length) tokens.push({ type: "text", value: text.slice(cursor) });
-    return tokens;
+    if (depth) return tokens;
+    const combined = [];
+    tokens.forEach(token => {
+      const previous = combined[combined.length - 1];
+      if (token.type === "fraction" && previous?.type === "text") {
+        const whole = previous.value.match(/(\d+)\s+$/);
+        if (whole) {
+          previous.value = previous.value.slice(0, whole.index);
+          if (!previous.value) combined.pop();
+          combined.push({ type: "mixed", whole: whole[1], fraction: token });
+          return;
+        }
+      }
+      combined.push(token);
+    });
+    return combined;
   }
 
   function spokenText(tokens) {
     return tokens.map(token => {
       if (token.type === "text") return token.value;
       if (token.type === "power") return `${token.base} ${token.power === "2" ? "제곱" : "세제곱"}`;
+      if (token.type === "mixed") return mixedAria(token);
       return fractionAria(token);
     }).join("").replace(/\s+/g, " ").trim();
   }
@@ -71,5 +87,9 @@
     return nested ? `분자는 ${numerator}, 분모는 ${denominator}인 분수` : `${denominator}분의 ${numerator}`;
   }
 
-  window.HSE_MATH_NOTATION = { fractionAria, normalizeMathText, spokenText, tokenize };
+  function mixedAria(token) {
+    return `${token.whole}와 ${fractionAria(token.fraction)}`;
+  }
+
+  window.HSE_MATH_NOTATION = { fractionAria, mixedAria, normalizeMathText, spokenText, tokenize };
 })();

@@ -29,6 +29,16 @@
           appendMathTokens(denominator, token.denominator);
           fraction.append(numerator, denominator);
           target.append(fraction);
+        } else if (token.type === "mixed") {
+          const mixed = document.createElement("span");
+          mixed.className = "math-mixed-number";
+          mixed.setAttribute("role", "img");
+          mixed.setAttribute("aria-label", mathNotation.mixedAria(token));
+          const whole = document.createElement("span");
+          whole.textContent = token.whole;
+          mixed.append(whole);
+          appendMathTokens(mixed, [token.fraction]);
+          target.append(mixed);
         } else {
           const unit = document.createElement("span");
           unit.className = "math-unit";
@@ -391,7 +401,8 @@
     let weight = 0;
     questions.forEach(question => {
       const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
-      const questionWeight = graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
+      const hasSource61VolumeE4 = question.prompt.includes("source61-volume-e4-diagram");
+      const questionWeight = hasSource61VolumeE4 ? 6 : graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
       if (page.length && weight + questionWeight > 6) {
         pages.push(page);
         page = [];
