@@ -58,6 +58,7 @@ try {
     if (width === 1440) {
       await page.evaluate(() => { window.print = () => {}; });
       await page.locator("#printLessonButton").click();
+      await page.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 "));
       await page.waitForSelector(".polyomino-vocabulary-page", { state: "attached" });
       await page.emulateMedia({ media: "print" });
       assert.equal(await page.locator(".polyomino-vocabulary-page .polyomino-term").count(), 4);
@@ -73,7 +74,7 @@ try {
       assert.equal(pdfDoc.getPageCount(), await page.locator(".gold-print-page").count());
       const lesson = GOLDEN_BELL_BOOKS.find((item) => item.id === "book-04").lessons.find((item) => item.id === "polyomino-family-count");
       assert.equal(await page.locator(".gold-print-source-item").count(), lesson.original.items.length);
-      assert.equal(await page.locator('[data-print-part^="story-"]').count(), 1 + (lesson.similarPractice || []).length);
+      assert.equal(await page.locator('.gold-print-story').count(), 1 + (lesson.similarPractice || []).length);
       if (output) await fs.writeFile(path.join(output, "polyomino-learning.pdf"), pdf);
       report.print = { pages: pdfDoc.getPageCount(), terms: 4, questions: lesson.original.items.length };
     }

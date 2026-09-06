@@ -14,6 +14,7 @@ import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260906b";
+import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20260906a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -1176,9 +1177,20 @@ function renderPending(book) {
 }
 
 function printResponseMarkup(item) {
-  if (item.parts?.length) return `<span class="gold-print-part-answers">${item.parts.map((part) => `<span><b>${escapeAttribute(part.label)}</b><i></i>${part.unit ? `<small>${escapeAttribute(part.unit)}</small>` : ""}</span>`).join("")}</span>`;
+  if (item.parts?.length) return `<span class="gold-print-part-answers">${item.parts.map((part) => {
+    const label = part.equation && !part.label.includes(part.equation) ? `${part.label} · ${part.equation}` : part.label;
+    return `<span data-print-part-id="${escapeAttribute(part.id)}"><b>${escapeAttribute(label)}</b><i></i>${part.unit ? `<small>${escapeAttribute(part.unit)}</small>` : ""}</span>`;
+  }).join("")}</span>`;
   if (item.answerMode === "input") return `<span class="gold-print-answer${item.answerRef?.startsWith("/recovery/") ? " recovered-source-answer" : ""}" aria-label="답 쓰는 칸"><b>답</b><i></i></span>`;
   return `<span class="gold-print-options">${item.options.map((option, index) => `${index + 1}. ${option}`).join("　")}</span>`;
+}
+
+function printSourceItemVisual(item, fallback) {
+  const visual = item.visual || fallback;
+  const repeatedParts = visual?.subtype === "multipart-conditions" && visual.context
+    && visual.rows?.length === item.parts?.length
+    && visual.rows.every((row, index) => ["id", "label", "equation"].every((key) => row[key] === item.parts[index][key]));
+  return visual ? visualMarkup(repeatedParts ? visual.context : visual) : "";
 }
 
 function printSourceStoryboards(lesson, lessonNumber, book) {
@@ -1209,7 +1221,10 @@ function printLessonExercises(lesson, lessonNumber, book) {
   const sourcePrintPaged = lesson.original.mode === "paged" || lesson.original.printMode === "paged";
   const separateConceptPrint = Boolean(lesson.original.separateConceptPrint);
   const sourcePageCount = (sourcePrintPaged ? new Set(lesson.original.items.map((item) => item.printGroup)).size : 1) + (separateConceptPrint ? 1 : 0);
-  const storyPages = extensionItems(lesson).map((item, index, items) => `<article class="gold-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(sourcePageCount + index + 1).padStart(2, "0"))}${concept}<section class="gold-print-block gold-print-story"><h2>추가 학습 ${index + 1} / ${items.length}</h2><p>${item.story}<br>${item.prompt}</p><div class="gold-print-visual">${visualMarkup(item.visual)}</div><ol class="gold-print-items"><li class="gold-print-item"><span>${item.prompt}</span>${printResponseMarkup(item)}</li></ol></section>${footer}</article>`).join("");
+  const storyPages = extensionItems(lesson).map((item, index, items) => {
+    const visual = item.visual ? visualMarkup(item.visual) : "";
+    return `<article class="gold-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(sourcePageCount + index + 1).padStart(2, "0"))}<section class="gold-print-block gold-print-story" data-story-number="${index + 1}"><h2>추가 학습 ${index + 1} / ${items.length}</h2><p>${item.story}<br>${item.prompt}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}<ol class="gold-print-items"><li class="gold-print-item">${printResponseMarkup(item)}</li></ol></section>${footer}</article>`;
+  }).join("");
   if (sourcePrintPaged) {
     const groups = new Map();
     lesson.original.items.forEach((item) => {
@@ -1222,7 +1237,10 @@ function printLessonExercises(lesson, lessonNumber, book) {
       ? `<article class="gold-print-page source-practice-print concept-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="concept" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${sourceExperience}${footer}</article>`
       : "";
     const sourcePages = [...groups.entries()].map(([group, items], pageIndex) => {
-      const blocks = items.map((item) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo)}</span>${escapeAttribute(item.typeLabel)}</h2><p>${escapeAttribute(item.prompt)}</p><div class="gold-print-visual">${visualMarkup(item.visual || lesson.original.visual)}</div>${printResponseMarkup(item)}</section>`).join("");
+      const blocks = items.map((item) => {
+        const visual = printSourceItemVisual(item, lesson.original.visual);
+        return `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo)}</span>${escapeAttribute(item.typeLabel)}</h2><p>${escapeAttribute(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}${printResponseMarkup(item)}</section>`;
+      }).join("");
       const printConcept = !separateConceptPrint && pageIndex === 0 ? concept + sourceExperience : "";
       return `<article class="gold-print-page source-practice-print" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original-${group}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(pageIndex + 1 + (separateConceptPrint ? 1 : 0)).padStart(2, "0"))}${printConcept}<section class="gold-print-block"><h2>교재 연습 ${pageIndex + 1} / ${groups.size}</h2>${blocks}</section>${footer}</article>`;
     }).join("");
@@ -1238,21 +1256,30 @@ function printLessonExercises(lesson, lessonNumber, book) {
 }
 
 async function printLessons(lessons) {
+  if ($("printLessonButton").disabled || $("printBookButton").disabled) return;
   clearExperiencePlayback();
   renderContent();
   const book = activeBook();
   const root = $("goldPrintRoot");
-  root.innerHTML = lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("");
-  root.setAttribute("aria-hidden", "false");
-  if (document.fonts?.ready) await document.fonts.ready;
-  await Promise.all([...root.querySelectorAll("img")].map((image) => image.complete
-    ? Promise.resolve()
-    : new Promise((resolve) => {
-        image.addEventListener("load", resolve, { once: true });
-        image.addEventListener("error", resolve, { once: true });
-      })));
-  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-  window.print();
+  const buttons = [$("printLessonButton"), $("printBookButton")];
+  buttons.forEach((button) => { button.disabled = true; });
+  $("printStatus").textContent = "인쇄 분량을 정리하고 있습니다.";
+  try {
+    root.innerHTML = lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("");
+    if (document.fonts?.ready) await document.fonts.ready;
+    await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode()));
+    const count = compactGoldenBellPrint(root);
+    root.setAttribute("aria-hidden", "false");
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    $("printStatus").textContent = `A4 ${count}쪽 · 추가 학습 포함`;
+    window.print();
+  } catch {
+    root.replaceChildren();
+    root.setAttribute("aria-hidden", "true");
+    $("printStatus").textContent = "인쇄 자료를 준비하지 못했습니다. 다시 인쇄를 눌러 주세요.";
+  } finally {
+    buttons.forEach((button) => { button.disabled = !activeBook().lessons.length; });
+  }
 }
 
 function bindLessonActions() {

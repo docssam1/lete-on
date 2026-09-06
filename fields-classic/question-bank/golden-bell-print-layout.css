@@ -1,0 +1,108 @@
+@media print {
+  .gold-print-root { width: 188mm; max-width: none; }
+  .gold-print-exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4mm 6mm;
+    align-items: start;
+    margin-top: 3mm;
+  }
+  .gold-print-exercise-grid > * {
+    min-width: 0;
+    break-inside: avoid;
+    overflow-wrap: anywhere;
+  }
+  .gold-print-exercise-grid > .full-width-exercise { grid-column: 1 / -1; }
+  .gold-print-exercise-grid > .gold-print-source-item { padding: 1mm 0 3mm; gap: 1mm; }
+  .gold-print-exercise-grid > .gold-print-story { margin: 0; padding: 1mm 0 3mm; }
+  .gold-print-exercise-grid .gold-print-part-answers { grid-template-columns: minmax(0, 1fr); }
+  .gold-print-exercise-grid > .full-width-exercise .gold-print-part-answers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .compact-exercise-page .gold-print-block:not(.gold-print-story) ~ .gold-print-block:not(.gold-print-story) > h2 {
+    display: none;
+  }
+  .gold-print-root .compact-exercise-page .gold-print-source-item > p {
+    font-size: 12pt;
+    line-height: 1.5;
+    margin: 1mm 0;
+  }
+  .gold-print-root .compact-exercise-page .gold-print-source-item > h2 {
+    font-size: 10pt;
+  }
+  .compact-exercise-page .gold-print-part-answers > span {
+    grid-template-columns: minmax(0, 1fr) 18mm auto;
+    gap: 2mm;
+  }
+  .compact-exercise-page .gold-print-part-answers b {
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+  .gold-print-root .compact-exercise-page .gold-print-source-item > .gold-print-visual {
+    min-height: 0;
+    border: 0;
+  }
+  .gold-print-root .compact-exercise-page .gold-print-visual > :is(
+    .book01-visual, .book02-visual, .book03-visual, .book04-visual, .book05-visual,
+    .book06-visual, .book07-visual, .book08-visual, .book09-visual, .book10-visual
+  ) {
+    min-height: 0;
+    padding: 1mm;
+  }
+  .gold-print-root .compact-exercise-page .b8-source-sum-matrix {
+    width: min(100%, 64mm);
+    grid-template-columns: minmax(0, 1fr) 10mm;
+    grid-template-rows: auto 10mm;
+  }
+  .gold-print-root .compact-exercise-page .b8-source-sum-matrix .cells > span {
+    font-size: 16pt;
+  }
+  .gold-print-root .compact-exercise-page .b8-source-sum-matrix :is(.rows, .columns) > b {
+    font-size: 12pt;
+  }
+  .compact-exercise-page .gold-print-story {
+    margin: 3mm 0 0;
+    padding: 3mm 0 0;
+    border: 0;
+    border-top: 1px solid #cbd7da;
+    background: #fff;
+    break-inside: avoid;
+  }
+  .compact-exercise-page .gold-print-story > p {
+    font-size: 12pt;
+    line-height: 1.5;
+    margin: 0 0 2mm;
+  }
+  .compact-exercise-page .gold-print-story > .gold-print-visual {
+    min-height: 0;
+    margin: 1mm 0 2mm;
+    padding: 1mm 0;
+    border: 0;
+  }
+  .compact-exercise-page .gold-print-story .gold-print-item {
+    display: block;
+    padding: 1mm 0 3mm;
+    border: 0;
+    font-size: 12pt;
+  }
+  .compact-exercise-page .gold-print-story .gold-print-answer {
+    width: min(100%, 70mm);
+    height: 9mm;
+  }
+  .compact-exercise-page .gold-print-story .gold-print-answer b {
+    font-size: 10pt;
+  }
+  .compact-exercise-page .gold-print-story .gold-print-options {
+    display: block;
+    line-height: 1.6;
+  }
+  .gold-print-page-number { margin-left: 4mm; }
+}
+
+.gold-print-status {
+  margin: 4px 0;
+  color: #566274;
+  font-size: 14px;
+}
+.gold-print-status:empty { display: none; }
+@media print { .gold-print-status { display: none; } }

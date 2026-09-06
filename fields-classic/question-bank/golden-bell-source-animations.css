@@ -30,7 +30,7 @@
 .source-animation-print-frame > p { margin: 8px 0; font-size: 16px; line-height: 1.6; }
 @keyframes source-column-mark { from { background: #fff; } to { background: #dceef3; } }
 @keyframes source-label-reveal { from { opacity: 0; } to { opacity: 1; } }
-@media (max-width: 600px) {
+@media screen and (max-width: 600px) {
   .source-animation-scene { min-height: 430px; padding: 12px 0; }
   .source-cube-model { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .source-cube-model .ws-iso { height: 210px; }

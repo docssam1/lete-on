@@ -98,7 +98,8 @@ try {
     assert.equal(await card.locator(".quiz-item-solution").count(), 1, "The correct answer must open its worked solution");
     await page.evaluate(() => { window.print = () => {}; });
     await page.locator("#printLessonButton").click();
-    const printed = page.locator(`.gold-print-page[data-print-part="original-${approved.printGroup}"]`);
+    await page.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 "));
+    const printed = page.locator(`.gold-print-source-item[data-print-source-part="original-${approved.printGroup}"]`);
     assert.equal(await printed.count(), 1);
     assert.equal(await printed.locator(".balance-unit").count(), 3);
     assert.equal(await printed.locator(".quiz-item-solution").count(), 0);

@@ -84,7 +84,8 @@ try {
       assert.ok(await baseline.page.locator("[data-original-item]").count());
       for (const item of update.items) assert.equal(await baseline.page.locator(`[data-original-item="${item.id}"]`).count(), 0);
       await baseline.page.locator("#printLessonButton").click();
-      for (const item of update.items) assert.equal(await baseline.page.locator(`.gold-print-page[data-print-part="original-${item.printGroup}"]`).count(), 0);
+      await baseline.page.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 "));
+      for (const item of update.items) assert.equal(await baseline.page.locator(`[data-print-source-part="original-${item.printGroup}"]`).count(), 0);
     }
   }
   assert.deepEqual(baseline.errors, []);
@@ -166,25 +167,26 @@ try {
           if (lesson.original.mode === "paged") await check.click();
         }
         await page.locator("#printLessonButton").click();
+        await page.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 "));
         await page.evaluate(async () => { await document.fonts.ready; });
         const extraCount = 1 + (lesson.similarPractice || []).length;
-        assert.equal(await page.locator('.gold-print-page[data-print-part^="story-"]').count(), extraCount, "Extra practice must remain in current lesson printing");
+        assert.equal(await page.locator('.gold-print-story').count(), extraCount, "Extra practice must remain in current lesson printing");
         await page.emulateMedia({ media: "print" });
         const bounds = await page.locator(".gold-print-page").evaluateAll(nodes => nodes.map(node => {
           const frame = node.getBoundingClientRect();
           const footer = node.querySelector(":scope > .gold-print-footer").getBoundingClientRect();
           const bottom = Math.max(...[...node.children].filter(child => !child.classList.contains("gold-print-footer")).map(child => child.getBoundingClientRect().bottom));
-          return { part: node.dataset.printPart, height: frame.height, footerClear: bottom < footer.top - 1, overflow: node.scrollWidth > node.clientWidth + 2, watermark: Boolean(node.dataset.watermark) };
+          return { part: node.dataset.printPart, parts: JSON.parse(node.dataset.printParts), height: frame.height, footerClear: bottom < footer.top - 1, overflow: node.scrollWidth > node.clientWidth + 2, watermark: Boolean(node.dataset.watermark) };
         }));
         assert.deepEqual(bounds.filter(bound => bound.height > 1022 || !bound.footerClear || bound.overflow || !bound.watermark), [], `${lesson.id}: A4 bounds or watermark failure`);
         for (const item of update.items) {
-          const printed = page.locator(`.gold-print-page[data-print-part="original-${item.printGroup}"]`);
+          const printed = page.locator(`.gold-print-source-item[data-print-source-part="original-${item.printGroup}"]`);
           assert.equal(await printed.count(), 1);
           assert.ok((await printed.innerText()).includes(item.prompt));
           assert.equal(await printed.locator(".gold-print-answer").count(), 1);
-          assert.ok(await printed.locator(".gold-print-source-item>p").evaluate(node => parseFloat(getComputedStyle(node).fontSize) >= 16), "Printed recovery question text must be at least 12pt");
+          assert.ok(await printed.locator(":scope>p").evaluate(node => parseFloat(getComputedStyle(node).fontSize) >= 16), "Printed recovery question text must be at least 12pt");
           assert.equal(await printed.locator(".quiz-item-solution").count(), 0);
-          assert.ok(await printed.evaluate(node => Number(getComputedStyle(node, "::after").zIndex) >= 2), "Watermark must not be hidden behind an opaque diagram");
+          assert.ok(await printed.evaluate(node => Number(getComputedStyle(node.closest(".gold-print-page"), "::after").zIndex) >= 2), "Watermark must not be hidden behind an opaque diagram");
           assert.deepEqual(await clippedVisualParts(printed.locator(".gold-print-visual")), [], `${item.id}: printed diagram parts clipped`);
           assert.ok(!(await printed.innerText()).includes(bank.books[book.id][item.answerRef].solution));
           if (output && width === 1440) await printed.screenshot({ path: path.join(output, `${book.id}-${item.id}-print.png`) });
@@ -193,7 +195,7 @@ try {
         const pdfPages = (await PDFDocument.load(pdfBytes)).getPageCount();
         assert.equal(pdfPages, bounds.length, "No extra or missing physical PDF pages");
         if (output && width === 1440) await writeFile(path.join(output, `${book.id}-${lesson.id}.pdf`), pdfBytes);
-        const newPdfPages = update.items.map(item => ({ id: item.id, page: bounds.findIndex(bound => bound.part === `original-${item.printGroup}`) + 1 }));
+        const newPdfPages = update.items.map(item => ({ id: item.id, page: bounds.findIndex(bound => bound.parts.includes(`original-${item.printGroup}`)) + 1 }));
         results.push({ book: book.id, lesson: lesson.id, width, newItems: update.items.length, extraCount, pdfPages, newPdfPages, bounds });
         await page.emulateMedia({ media: "screen" });
       }

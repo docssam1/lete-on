@@ -82,6 +82,7 @@ async function auditPerQuestionAnswersAndPrint() {
 
   await page.evaluate(() => { window.print = () => {}; });
   await page.locator("#printLessonButton").click();
+  await page.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 "));
   const sourcePages = page.locator('.gold-print-page[data-print-part^="original-"]');
   assert.equal(await sourcePages.count(), 1, "the three source questions must share one A4 page");
   const printItems = sourcePages.locator(".gold-print-source-item");

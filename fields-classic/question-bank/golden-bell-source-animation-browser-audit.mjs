@@ -123,9 +123,10 @@ try {
     await printPage.locator("[data-source-track]").selectOption(value);
     await printPage.evaluate(() => { window.print = () => {}; });
     await printPage.locator("#printLessonButton").click();
+    await printPage.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 "));
     await printPage.waitForFunction(() => document.querySelectorAll(".source-animation-print-frame").length > 0);
     assert.equal(await printPage.locator(".gold-print-source-item").count(), lesson.original.items.length);
-    assert.equal(await printPage.locator('[data-print-part^="story-"]').count(), 1 + (lesson.similarPractice || []).length);
+    assert.equal(await printPage.locator('.gold-print-story').count(), 1 + (lesson.similarPractice || []).length);
     await printPage.emulateMedia({ media: "print" });
     const smallCoreText = await printPage.locator(".source-animation-print-page > .gold-print-concept, .source-animation-print-frame > p, .source-animation-print-frame .source-animation-b10__calculation strong").evaluateAll((nodes) => nodes.filter((node) => parseFloat(getComputedStyle(node).fontSize) < 16).map((node) => node.className || node.tagName));
     assert.deepEqual(smallCoreText, [], `${book}/${value}: core print type must remain readable`);

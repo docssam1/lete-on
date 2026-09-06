@@ -86,9 +86,9 @@ try {
   await printPage.locator('.lesson-button[data-lesson="catch-up-acorns"]').click();
   await printPage.evaluate(() => { window.print = () => {}; });
   await printPage.locator("#printLessonButton").click();
-  await printPage.waitForTimeout(100);
-  assert.equal(await printPage.locator('.gold-print-page[data-print-part^="original-"]').count(), 9, "source practice print needs nine source-page groups");
-  assert.equal(await printPage.locator('.gold-print-page[data-print-part^="story-"]').count(), 2, "additional learning print pages missing");
+  await printPage.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 "));
+  assert.equal(await printPage.locator('.gold-print-source-item').evaluateAll(nodes => new Set(nodes.map(node => node.dataset.printSourcePart)).size), 9, "source practice print needs all nine source groups");
+  assert.equal(await printPage.locator('.gold-print-story').count(), 2, "additional learning print questions missing");
   assert.equal(await printPage.locator(".gold-print-source-item").count(), 18, "print omitted a source item");
   assert.equal(await printPage.locator(".gold-print-source-item .gold-print-part-answers").count(), 18, "print answer fields missing");
   await printPage.emulateMedia({ media: "print" });

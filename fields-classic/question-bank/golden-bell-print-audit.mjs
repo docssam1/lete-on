@@ -34,6 +34,7 @@ const bookIds = requestedBook === "all"
   ? Array.from({ length: 10 }, (_, index) => `book-${String(index + 1).padStart(2, "0")}`)
   : requestedBook.split(",");
 assert.ok(bookIds.every((id) => GOLDEN_BELL_BOOKS.some((book) => book.id === id)), "Unknown print audit book");
+const viewportWidth = Number(process.env.FIELDS_VIEWPORT_WIDTH || 1440);
 
 function sourceParts(lesson) {
   const concept = lesson.original.separateConceptPrint ? ["concept"] : [];
@@ -53,7 +54,7 @@ function lessonParts(lesson) {
 
 const browser = await chromium.launch({ headless: true });
 try {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const page = await browser.newPage({ viewport: { width: viewportWidth, height: 1000 } });
   let token = "isolated-print-audit";
   if (privateFixture) {
     await page.route("**/functions/v1/fields-auth", route => route.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
@@ -90,21 +91,32 @@ try {
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     await page.evaluate(() => { window.print = () => {}; });
     await page.locator("#printLessonButton").click();
-    await page.waitForTimeout(100);
+    await page.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 "));
     const expectedLessonParts = lessonParts(currentLesson);
-    const expectedLessonPages = expectedLessonParts.length;
-    assert.equal(await page.locator(".gold-print-page").count(), expectedLessonPages, `${bookId}: current learning print page count mismatch`);
-    assert.deepEqual(await page.locator(".gold-print-page").evaluateAll((nodes) => nodes.map((node) => node.dataset.printPart)), expectedLessonParts, `${bookId}: current learning print parts are incomplete`);
+    const expectedLessonPages = await page.locator(".gold-print-page").count();
+    assert.ok(expectedLessonPages <= expectedLessonParts.length, `${bookId}: current learning print grew`);
+    assert.deepEqual(await page.locator(".gold-print-page").evaluateAll((nodes) => [...new Set(nodes.flatMap((node) => JSON.parse(node.dataset.printParts)))]), expectedLessonParts, `${bookId}: current learning print parts are incomplete`);
     await page.emulateMedia({ media: "print" });
     const lessonPdf = await PDFDocument.load(await page.pdf({ format: "A4", printBackground: true }));
     assert.equal(lessonPdf.getPageCount(), expectedLessonPages, `${bookId}: current learning PDF page count mismatch`);
 
     await page.emulateMedia({ media: "screen" });
     await page.locator("#printBookButton").click();
-    await page.waitForTimeout(100);
-    const expectedBookPages = book.lessons.reduce((sum, lesson) => sum + lessonParts(lesson).length, 0);
-    assert.equal(await page.locator(".gold-print-page").count(), expectedBookPages, `${bookId}: print DOM page count mismatch`);
-    assert.deepEqual(await page.locator(".gold-print-page").evaluateAll((nodes) => nodes.map((node) => [node.dataset.printLesson, node.dataset.printPart])), book.lessons.flatMap((lesson) => lessonParts(lesson).map((part) => [lesson.id, part])), `${bookId}: book print order or contents mismatch`);
+    await page.waitForFunction(() => document.querySelector("#printStatus").textContent.startsWith("A4 ") && !document.querySelector("#printBookButton").disabled);
+    const previousBookPages = book.lessons.reduce((sum, lesson) => sum + lessonParts(lesson).length, 0);
+    const expectedBookPages = await page.locator(".gold-print-page").count();
+    assert.ok(expectedBookPages < previousBookPages, `${bookId}: print page count was not reduced`);
+    assert.deepEqual(await page.locator(".gold-print-page").evaluateAll((nodes) => [...new Set(nodes.flatMap((node) => JSON.parse(node.dataset.printParts).map((part) => JSON.stringify([node.dataset.printLesson, part]))))].map((entry) => JSON.parse(entry))), book.lessons.flatMap((lesson) => lessonParts(lesson).map((part) => [lesson.id, part])), `${bookId}: book print order or contents mismatch`);
+    for (const lesson of book.lessons) {
+      const content = page.locator(`.gold-print-page[data-print-lesson="${lesson.id}"]`);
+      const expectedStories = 1 + (lesson.similarPractice || []).length;
+      assert.deepEqual(await content.locator(".gold-print-story").evaluateAll((nodes) => nodes.map((node) => Number(node.dataset.storyNumber))), Array.from({ length: expectedStories }, (_, index) => index + 1), `${bookId}/${lesson.id}: additional practice lost or reordered`);
+      assert.equal(await content.locator(".gold-print-story .gold-print-item").count(), expectedStories, `${bookId}/${lesson.id}: an answer area is missing`);
+      assert.equal(await content.locator(".gold-print-story .gold-print-item > span:not(.gold-print-answer,.gold-print-part-answers,.gold-print-options)").count(), 0, "Duplicated story prompt");
+      const expectedSources = lesson.original.visual?.kind === "book03-six-original" ? 0 : lesson.original.items.length;
+      assert.equal(await content.locator(".gold-print-source-item").count(), expectedSources, `${bookId}/${lesson.id}: source exercise lost`);
+      assert.deepEqual(await content.locator(".gold-print-source-item [data-print-part-id]").evaluateAll((nodes) => nodes.map((node) => node.dataset.printPartId)), lesson.original.items.flatMap((item) => (item.parts || []).map((part) => part.id)), `${bookId}/${lesson.id}: multipart answer order changed`);
+    }
     assert.equal(await page.locator('.gold-print-page:not([data-watermark])').count(), 0, `${bookId}: print watermark missing`);
     assert.deepEqual(await page.locator('#goldPrintRoot img').evaluateAll((nodes) => nodes.filter((node) => !node.complete || !node.naturalWidth).map((node) => node.getAttribute('src'))), [], `${bookId}: print image missing or not loaded`);
 
@@ -157,7 +169,9 @@ try {
     if (process.env.GOLDEN_BELL_PDF_PATH && bookIds.length === 1) await writeFile(process.env.GOLDEN_BELL_PDF_PATH, pdfBytes);
     const pdf = await PDFDocument.load(pdfBytes);
     assert.equal(pdf.getPageCount(), expectedBookPages, `${bookId}: physical PDF page count mismatch`);
-    console.log(`GOLDEN_BELL_PRINT_OK book=${bookId} pages=${pdf.getPageCount()} footerClear=pass auth=${privateFixture ? "isolated-fixture" : "live-session"}`);
+    const perPage = await page.locator(".gold-print-exercise-grid").evaluateAll((nodes) => nodes.map((node) => node.children.length));
+    assert.ok(perPage.some((count) => count >= 2), `${bookId}: still printing only one exercise on each page`);
+    console.log(`GOLDEN_BELL_PRINT_OK book=${bookId} pages=${previousBookPages}->${pdf.getPageCount()} exercisesPerPage=${Math.min(...perPage)}-${Math.max(...perPage)} viewport=${viewportWidth} footerClear=pass auth=${privateFixture ? "isolated-fixture" : "live-session"}`);
   }
   assert.deepEqual(errors, [], `print browser errors: ${errors.join(" | ")}`);
 } finally {
