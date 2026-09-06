@@ -858,6 +858,11 @@ function screenWelcome(){
       const st=existing&&existing.state?existing.state:{};
       S={...defaults(),...st};
       S.name=name; S.onboarded=true; S.cloudLinked=true;
+      /* 클라우드에서 되불러온 프로필 = 이미 쓰던 학생이다 → 승인번호 없이도 active(grandfather).
+         부팅 때의 hadSave 판정은 이 시점 이후라 여기서 한 번 더 봐야 한다. 안 그러면 새 기기에서
+         이어하기 한 재원생이 체험으로 잠긴다 — 클라우드 19명 중 10명이 account 키 자체가 없다
+         (게이트 도입 전에 저장된 프로필, 2026-09-06 확인). */
+      if(!S.account||!S.account.status)S.account={status:'active',code:null,checkedAt:0};
       if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
       if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
       save(); render();
@@ -5291,6 +5296,11 @@ function renderIdCard(){
       const st=existing&&existing.state?existing.state:{};
       S={...defaults(),...st};
       S.name=name; S.onboarded=true; S.cloudLinked=true;
+      /* 클라우드에서 되불러온 프로필 = 이미 쓰던 학생이다 → 승인번호 없이도 active(grandfather).
+         부팅 때의 hadSave 판정은 이 시점 이후라 여기서 한 번 더 봐야 한다. 안 그러면 새 기기에서
+         이어하기 한 재원생이 체험으로 잠긴다 — 클라우드 19명 중 10명이 account 키 자체가 없다
+         (게이트 도입 전에 저장된 프로필, 2026-09-06 확인). */
+      if(!S.account||!S.account.status)S.account={status:'active',code:null,checkedAt:0};
       if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
       if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
       S.view='closet';
