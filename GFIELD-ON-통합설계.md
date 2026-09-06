@@ -75,7 +75,11 @@ access    : { "<SHA-256(salt+승인번호)>": ["권한열쇠", ...] }   // 해�
 
 ## 5. 통합관리(admin) 사용법
 
-파일: `gfield-on-admin.html` · 비밀번호: `01020837265` (config `meta.adminPass`로 변경 가능)
+파일: `gfield-on-admin.html` · 로그인: **아이디 + 승인번호**(원장 지시 2026-09-06 고정).
+  값은 저장소에 두지 않는다 — `sha256('gfield-admin-2026-v1:아이디:승인번호')` 만 페이지에 적혀 있다
+  (`ADMIN_HASH`). `admin.html` 도 같은 값·같은 방식. 바꾸려면 새 해시를 계산해 두 파일의
+  `ADMIN_HASH` 를 교체한다. `config.meta.adminPass` 경로는 폐기했다.
+  ⚠️ 정적 페이지의 게이트는 소스를 고치면 넘을 수 있다 — 실제 방어는 저장 때 필요한 GitHub 토큰이다.
 
 | 탭 | 하는 일 |
 |---|---|

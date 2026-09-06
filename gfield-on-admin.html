@@ -85,8 +85,9 @@ td .keys{color:var(--sub);font-size:11px}
   <div class="gate-card">
     <div style="font-size:28px">🔐</div>
     <h1>GFIELD-ON 통합관리</h1>
-    <p>관리자 비밀번호를 입력하세요.</p>
-    <input id="passInput" type="password" placeholder="비밀번호" autocomplete="off">
+    <p>아이디와 승인번호를 입력하세요.</p>
+    <input id="idInput" type="text" placeholder="아이디" autocomplete="username" style="margin-bottom:8px">
+    <input id="passInput" type="password" placeholder="승인번호" autocomplete="current-password">
     <button id="passBtn">들어가기</button>
     <div class="gate-err" id="gateErr"></div>
   </div>
@@ -117,7 +118,17 @@ td .keys{color:var(--sub);font-size:11px}
 "use strict";
 const CFG={owner:"docssam1",repo:"lete-on",branch:"main",path:"config.js",globalVar:"GFIELD_CONFIG"};
 const LS_PASS="gfieldon_admin_ok", LS_PAT="gfieldon_pat", LS_REG="gfieldon_registry";
-const FALLBACK_PASS="01020837265";
+/* 관리자 로그인 — 아이디 + 승인번호 (원장 지시 2026-09-06 "어드민 아이디 docssam, 승인번호 고정").
+   평문을 저장소에 두지 않는다: sha256(SALT:아이디:승인번호) 만 적는다. 예전에는 이 파일에
+   비밀번호가 그대로 적혀 있어 공개 저장소를 읽는 누구나 볼 수 있었다.
+   ⚠️ 정적 페이지의 게이트는 소스를 고치면 넘을 수 있는 '문고리'다 — 실제 방어는
+   저장할 때 필요한 GitHub 토큰(과 Supabase service_role)이다. */
+const ADMIN_SALT='gfield-admin-2026-v1';
+const ADMIN_HASH='a958f29d25bd27ce3234e11c408ce5041b0a66ca2e4bde0a06b4e4f16c38bc64';
+async function adminHash(id,code){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(ADMIN_SALT+':'+String(id||'').trim().toLowerCase()+':'+String(code||'').trim()));
+  return Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,'0')).join('');
+}
 const LOCKS=["open","closed","soon"];
 const LOCKLABEL={open:"🔓 미리보기",closed:"🔒 승인필요",soon:"준비중"};
 let DATA=null;
@@ -133,13 +144,12 @@ function getPAT(){return localStorage.getItem(LS_PAT)||"";}
 function ensurePAT(){let t=getPAT();if(!t){t=(prompt("GitHub PAT 입력 (Contents: Read and write)")||"").trim();if(t)localStorage.setItem(LS_PAT,t);}return t;}
 async function sha256(m){const b=new TextEncoder().encode(m);const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("");}
 function genCode(){const s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let r="GF";for(let i=0;i<5;i++)r+=s[Math.floor(Math.random()*s.length)];return r;}
-$("passBtn").addEventListener("click",()=>{
-  const p=$("passInput").value.trim();
-  const ok=(DATA&&DATA.meta&&DATA.meta.adminPass)?(p===DATA.meta.adminPass):(p===FALLBACK_PASS);
+$("passBtn").addEventListener("click",async ()=>{
+  const ok=(await adminHash($("idInput").value,$("passInput").value))===ADMIN_HASH;
   if(ok){localStorage.setItem(LS_PASS,"1");$("gate").style.display="none";}
-  else $("gateErr").textContent="비밀번호가 올바르지 않습니다.";
+  else $("gateErr").textContent="아이디 또는 승인번호가 올바르지 않습니다.";
 });
-$("passInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("passBtn").click();});
+["idInput","passInput"].forEach(k=>$(k).addEventListener("keydown",e=>{if(e.key==="Enter")$("passBtn").click();}));
 async function load(){
   $("status").innerHTML='<span class="spinner"></span> 불러오는 중…';
   REG=JSON.parse(localStorage.getItem(LS_REG)||"[]");
