@@ -97,18 +97,20 @@
       "noHandwritingUsed": true,
       "sourcePdfAndPageRangeReviewed": true
     },
-    "independentCalculationPassCount": 37,
-    "singleAnswerTrueCount": 37,
+    "independentCalculationPassCount": 38,
+    "singleAnswerTrueCount": 38,
     "singleAnswerFalseCount": 3,
-    "singleAnswerNullCount": 3,
-    "openOrAmbiguousCount": 6,
+    "singleAnswerNullCount": 2,
+    "openOrAmbiguousCount": 5,
     "visualAssetRequiredCount": 43,
     "duplicateSourceItemIds": 0,
     "duplicateNormalizedTypeIds": 2,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 20,
-    "publicDecisionLockedCount": 14,
-    "releaseLockedCount": 14,
+    "publicCandidateCount": 38,
+    "publicDecisionPublicCount": 29,
+    "publicDecisionConfirmedCount": 9,
+    "publicDecisionLockedCount": 5,
+    "releaseLockedCount": 5,
     "notes": [
       "원본 6-1심화.pdf PDF 38~45쪽을 600dpi로 직접 확인했습니다. PDF 38~45쪽은 인쇄 쪽 44~51쪽입니다.",
       "기존 6-1-source-items.json은 시작 위치만 참고했습니다. 실제 분류는 개념탐구 소문항 7개, 예제 12개, Mission 번호 24개로 다시 세었습니다.",
@@ -117,9 +119,9 @@
       "개념탐구 2·3의 그래프 20유형은 원본 수치·구조와 고정 3문항, 독립 계산, 문제·답 같은 자료, PC·모바일·A4 검수를 마쳐 공개 후보로 전환했습니다.",
       "Mission 5의 자료와 가능성은 4문제가 비율이 아닌 실제 개수입니다. 서술형50문제에서 알려진 수를 빼 도형11문제, 틀린 수2문제로 계산했습니다."
     ],
-    "calculationCheckedCount": 37,
-    "calculationNeedsClarificationCount": 6,
-    "lockedCount": 14,
+    "calculationCheckedCount": 38,
+    "calculationNeedsClarificationCount": 5,
+    "lockedCount": 5,
     "allImplementationLocked": false,
     "allReleaseLocked": false
   },
@@ -302,17 +304,19 @@
         "total": "5000명",
         "percentageScale": "0~100%"
       },
-      "independentCalculation": "찬성 중 가장 많은 이유는5000×70%×34%=1190명, 반대 중 가장 많은 이유는5000×30%×33%=495명입니다. 차는695명입니다.",
-      "independentAnswer": "695명",
+      "independentCalculation": "찬성 중 가장 많은 이유는5000×70%×35%=1225명, 반대 중 가장 많은 이유는5000×30%×33%=495명입니다. 차는730명입니다.",
+      "independentAnswer": "730명",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원그래프와 두 띠그래프의 경계를 구현하기 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "circle-strip-difference",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-exploration-1"
     },
     {
       "sourceItemId": "6-1-u5-e4-exploration-2",
@@ -339,12 +343,14 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "전후 이동을 나타내는 구간 표시를 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "before-after-percent",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-exploration-2"
     },
     {
       "sourceItemId": "6-1-u5-e1-example-1",
@@ -664,12 +670,14 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "두 그래프의 연결을 구현 전 검수합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "population-difference",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-example-1"
     },
     {
       "sourceItemId": "6-1-u5-e4-example-2",
@@ -694,12 +702,14 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원그래프와 띠그래프 순서를 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "ordered-tuple"
+      "releaseStatus": "verified",
+      "resultContract": "largest-category",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-example-2"
     },
     {
       "sourceItemId": "6-1-u5-e4-example-3",
@@ -727,7 +737,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문 그래프의 눈금과 막대 값을 정수 투표 수로 안전하게 맞출 수 없어 독립 답을 확정하지 못했습니다.",
+      "lockReason": "원문의 여학생 원그래프와 후보별 남녀 띠그래프 경계가 5% 눈금에 명확히 맞지 않아 정확한 투표 수를 확정할 수 없습니다.",
       "calculationStatus": "needs-clarification",
       "releaseStatus": "locked",
       "resultContract": "provisional"
@@ -1339,12 +1349,14 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "ordered-list"
+      "releaseStatus": "verified",
+      "resultContract": "ordered-percent-list",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-mission-1"
     },
     {
       "sourceItemId": "6-1-u5-e4-mission-2",
@@ -1368,12 +1380,14 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "nested-percent",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-mission-2"
     },
     {
       "sourceItemId": "6-1-u5-e4-mission-3",
@@ -1401,7 +1415,7 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "원문 선거 그래프의 눈금과 후보별 값 판독이 충분히 선명하지 않아 독립 답을 확정하지 못했습니다.",
+      "lockReason": "원문의 후보별 가·나 모둠 경계가 5% 눈금에 명확히 맞지 않아 후보별 정확한 투표 수를 확정할 수 없습니다.",
       "calculationStatus": "needs-clarification",
       "releaseStatus": "locked",
       "resultContract": "provisional"
@@ -1428,12 +1442,14 @@
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "nested-percent-count",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-mission-4"
     },
     {
       "sourceItemId": "6-1-u5-e4-mission-5",
@@ -1445,8 +1461,9 @@
       "childFriendlyTypeLabel": "원그래프와 표로 평균 점수 구하기",
       "originalStructure": "세 문제의 맞힌 학생 수 원그래프와 점수별 표로 평균 점수를 구합니다.",
       "conditions": [
-        "학생80명, 점수0·6·8·12점",
-        "1번 맞힌 학생81도, 2번 맞힌 학생162도, 3번 맞힌 학생은 나머지"
+        "학생80명, 1번·2번·3번 문제는 각각6점·6점·8점",
+        "모두 틀린 학생36도, 1문제 맞힌 학생81도, 2문제 맞힌 학생162도, 3문제 맞힌 학생은 나머지",
+        "0점8명, 6점8명, 12점12명"
       ],
       "visualRequirement": "원그래프 각도와 표의 점수별 칸을 대응해야 합니다.",
       "graphScale": {
@@ -1455,17 +1472,19 @@
         "angleScale": "360도",
         "scores": "0,6,8,12점"
       },
-      "independentCalculation": null,
-      "independentAnswer": null,
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
+      "independentCalculation": "모두 틀린8명, 1문제 맞힌 학생18명, 2문제 맞힌 학생36명, 3문제 맞힌 학생18명입니다. 따라서 8점은10명, 14점은24명, 20점은18명이고 평균은 (0×8+6×8+8×10+12×12+14×24+20×18)÷80=12.1점입니다.",
+      "independentAnswer": "12.1점",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 원그래프와 표의 빈칸 위치·수치를 충분히 판독할 수 없어 독립 답을 확정하지 못했습니다.",
-      "calculationStatus": "needs-clarification",
-      "releaseStatus": "locked",
-      "resultContract": "provisional"
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
+      "calculationStatus": "checked",
+      "releaseStatus": "verified",
+      "resultContract": "circle-weighted-average",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-mission-5"
     },
     {
       "sourceItemId": "6-1-u5-e4-mission-6",
@@ -1485,17 +1504,19 @@
         "type": "circle-and-strip",
         "segments": "전체 남52%·여48%; 여학생 나24%"
       },
-      "independentCalculation": "여학생 전체72÷24%=300명, 전체625명, 나 상품 합176명, 176÷625×100=28.16%입니다.",
-      "independentAnswer": "28.16%",
+      "independentCalculation": "여학생 전체는72÷24%=300명이고, 여학생이 전체의48%이므로 전체는625명, 남학생은325명입니다. 남학생 중 나 상품을 좋아하는 비율은104÷325×100=32%입니다.",
+      "independentAnswer": "32%",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 그래프와 계산 대응을 구현 전 확인합니다.",
+      "implementationStatus": "fixed-verified-pool",
+      "publicDecision": "public",
+      "lockReason": "",
       "calculationStatus": "checked",
-      "releaseStatus": "locked",
-      "resultContract": "single-value"
+      "releaseStatus": "verified",
+      "resultContract": "gender-nested-percent",
+      "publicCandidate": true,
+      "rawSourceItemId": "6-1-u5-e4-mission-6"
     }
   ]
 }

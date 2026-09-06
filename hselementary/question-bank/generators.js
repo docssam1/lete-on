@@ -25096,7 +25096,202 @@
       const speed = pick(rng, speedChoices);
       const answer = distance / speed;
       return result(`점 P가 평행사변형의 밑변 위에서 D를 출발하여 C 쪽으로 초당 ${speed}cm씩 움직입니다. 삼각형 ADP의 넓이가 평행사변형 넓이의 ${numerator}/${denominator}이 되는 것은 출발한 지 몇 초 후입니까?${movingPointSvg({ base, height, numerator, denominator, speed, expected: answer })}`, answer, `DP를 xcm라 하면 삼각형 ADP와 평행사변형의 높이는 같습니다. 넓이의 비는 (x×높이÷2):(${base}×높이)=x:${2 * base}입니다. x=${distance}cm이므로 ${distance}÷${speed}=${answer}초 후입니다.`);
-    }
+    },
+    sourceGrade6GraphsE4({ rng, level, variant = 0 }) {
+      const sourceIds = [
+        "6-1-u5-e4-exploration-1", "6-1-u5-e4-exploration-2", "6-1-u5-e4-example-1",
+        "6-1-u5-e4-example-2", "6-1-u5-e4-mission-1", "6-1-u5-e4-mission-2",
+        "6-1-u5-e4-mission-4", "6-1-u5-e4-mission-5", "6-1-u5-e4-mission-6"
+      ];
+      const layouts = [
+        "consent-circle-reason-strip", "consent-transfer-strip", "surname-circle-strip",
+        "academy-gender-circle-strips", "book-replacement-strip", "class-gender-circle-strip",
+        "gift-nested-circle-strip", "score-circle-table", "product-gender-circle-strip"
+      ];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 여러 가지 그래프 E4 유형 번호가 잘못되었습니다.");
+      const sourceItemId = sourceIds[variant];
+      const layoutKind = layouts[variant];
+      const poolIndex = int(rng, 0, 2);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const esc = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+      const num = value => Number(value).toLocaleString("ko-KR");
+      const formatPercent = value => `${Number(Number(value).toFixed(2))}%`;
+      const colors = ["#dcecf5", "#ffe3a3", "#cce8dc", "#e5dcf5", "#f5d4dc", "#d8e0e7"];
+      const evidence = values => `<span hidden data-source61-graphs-e4-kind="${layoutKind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-layout="${layoutKind}" data-phase="answer" data-difficulty-design="${difficultyDesign}"></span>`;
+      const problemEvidence = `<span hidden data-source61-graphs-e4-kind="${layoutKind}" data-source-item="${sourceItemId}" data-values="" data-layout="${layoutKind}" data-phase="problem" data-difficulty-design="${difficultyDesign}"></span>`;
+      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 그래프의 전체를 따로 보고, 어느 비율을 곱하거나 빼야 하는지 스스로 정리해 보세요.</p>` : "";
+      const polar = (cx, cy, radius, degrees) => {
+        const radians = degrees * Math.PI / 180;
+        return [cx + radius * Math.cos(radians), cy + radius * Math.sin(radians)];
+      };
+      const sectorPath = (cx, cy, radius, start, percent) => {
+        const angle = percent * 3.6;
+        const [sx, sy] = polar(cx, cy, radius, start);
+        const [ex, ey] = polar(cx, cy, radius, start + angle);
+        return `M ${cx} ${cy} L ${sx.toFixed(2)} ${sy.toFixed(2)} A ${radius} ${radius} 0 ${angle > 180 ? 1 : 0} 1 ${ex.toFixed(2)} ${ey.toFixed(2)} Z`;
+      };
+      const pie = ({ title, segments, solved = false, resultText = "" }) => {
+        const total = segments.reduce((sum, segment) => sum + segment.percent, 0);
+        if (Math.abs(total - 100) > 1e-8) throw new Error(`${sourceItemId}: 원그래프 비율 합이 ${total}%입니다.`);
+        let start = -90;
+        const cx = 135, cy = 110, radius = 72;
+        const sectors = segments.map((segment, index) => {
+          const path = sectorPath(cx, cy, radius, start, segment.percent);
+          const middle = start + segment.percent * 1.8;
+          const [lx, ly] = polar(cx, cy, radius * .72, middle);
+          start += segment.percent * 3.6;
+          const display = segment.display || formatPercent(segment.percent);
+          const inChart = segment.showInChart || segment.percent >= 20;
+          return `<path class="source61-e4-sector${solved && segment.highlight ? " is-solved" : ""}" data-segment-label="${esc(segment.label)}" data-segment-percent="${segment.percent}" data-segment-angle="${segment.percent * 3.6}" d="${path}" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width="1.4"/>${inChart ? `<text class="source61-e4-readable-text source61-e4-important-value source61-e4-sector-value" x="${lx.toFixed(2)}" y="${(ly + 3).toFixed(2)}" text-anchor="middle" fill="#183b56" font-size="22" font-weight="900">${esc(display)}</text>` : ""}`;
+        }).join("");
+        const legend = segments.map((segment, index) => {
+          const y = 67 + index * 30;
+          const display = segment.text || segment.display || formatPercent(segment.percent);
+          return `<rect x="263" y="${y - 11}" width="16" height="16" rx="1" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width="1"/><text class="source61-e4-readable-text source61-e4-category-label" x="290" y="${y}" text-anchor="start" fill="#183b56" font-size="20" font-weight="800">${esc(segment.label)}</text><text class="source61-e4-readable-text source61-e4-important-value source61-e4-legend-value" x="598" y="${y}" text-anchor="end" fill="#183b56" font-size="22" font-weight="900">${esc(display)}</text>`;
+        }).join("");
+        const finalY = 76 + segments.length * 30;
+        const final = solved && resultText ? `<text class="source61-e4-readable-text source61-e4-important-value source61-e4-final-value" x="430" y="${finalY}" text-anchor="middle" fill="#7a5200" font-size="22" font-weight="900">답: ${esc(resultText)}</text>` : "";
+        const svgHeight = Math.max(205, finalY + (final ? 24 : 10));
+        return `<svg class="geometry-diagram source61-graphs-e4-diagram" style="width:min(620px,100%);height:auto" viewBox="0 0 620 ${svgHeight}" role="img" aria-label="${esc(title)}" data-source61-graphs-e4-structure="${esc(title)}" data-source61-graphs-e4-layout="${layoutKind}" data-source61-graphs-e4-values="${solved ? segments.map(segment => segment.percent).join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="600" height="${svgHeight - 20}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text class="source61-e4-readable-text source61-e4-chart-title" x="310" y="31" text-anchor="middle" fill="#183b56" font-size="24" font-weight="900">${esc(title)}</text><g class="source61-e4-pie" data-chart-title="${esc(title)}">${sectors}</g>${legend}${final}</svg>`;
+      };
+      const strip = ({ title, segments, solved = false, resultText = "", blank = false }) => {
+        const x = 40, y = 88, width = 600, height = 58;
+        let cursor = 0;
+        const guide = Array.from({ length: 11 }, (_, index) => index * 10).map(value => {
+          const gx = x + width * value / 100;
+          return `<line data-strip-guide="${value}" x1="${gx}" y1="${y - 14}" x2="${gx}" y2="${y + height + 6}" stroke="#9fb0bd" stroke-width="1" stroke-dasharray="2 3"/><text class="source61-e4-readable-text source61-e4-axis-label" x="${gx}" y="${y - 24}" text-anchor="middle" fill="#526b7d" font-size="20">${value}%</text>`;
+        }).join("");
+        const blocks = blank ? "" : segments.map((segment, index) => {
+          const start = cursor;
+          cursor += segment.percent;
+          const sx = x + width * start / 100;
+          const sw = width * segment.percent / 100;
+          const center = sx + sw / 2;
+          return `<rect class="source61-e4-strip-segment${solved && segment.highlight ? " is-solved" : ""}" data-strip-label="${esc(segment.label)}" data-strip-percent="${segment.percent}" x="${sx.toFixed(2)}" y="${y}" width="${sw.toFixed(2)}" height="${height}" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width="2"/><text class="source61-e4-readable-text source61-e4-important-value source61-e4-strip-value" x="${center.toFixed(2)}" y="${y + 34}" text-anchor="middle" fill="#183b56" font-size="22" font-weight="900">${formatPercent(segment.percent)}</text>`;
+        }).join("");
+        const legendRows = Math.ceil(segments.length / 2);
+        const legend = blank ? "" : segments.map((segment, index) => {
+          const column = index % 2;
+          const row = Math.floor(index / 2);
+          const lx = 54 + column * 315;
+          const ly = 177 + row * 31;
+          return `<rect x="${lx}" y="${ly - 12}" width="16" height="16" rx="1" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width="1"/><text class="source61-e4-readable-text source61-e4-category-label" x="${lx + 26}" y="${ly}" text-anchor="start" fill="#183b56" font-size="20" font-weight="800">${esc(segment.label)}</text>`;
+        }).join("");
+        let boundaryCursor = 0;
+        const boundaries = blank ? "" : segments.map(segment => {
+          boundaryCursor += segment.percent;
+          const gx = x + width * boundaryCursor / 100;
+          return `<line data-strip-boundary="${boundaryCursor}" x1="${gx.toFixed(2)}" y1="${y}" x2="${gx.toFixed(2)}" y2="${y + height}" stroke="#183b56" stroke-width="2"/>`;
+        }).join("");
+        const finalY = 177 + legendRows * 31 + 12;
+        const final = solved && resultText ? `<text class="source61-e4-readable-text source61-e4-important-value source61-e4-final-value" x="340" y="${finalY}" text-anchor="middle" fill="#7a5200" font-size="22" font-weight="900">답: ${esc(resultText)}</text>` : "";
+        const svgHeight = blank ? 172 : finalY + (final ? 25 : 8);
+        return `<svg class="geometry-diagram source61-graphs-e4-diagram" style="width:min(680px,100%);height:auto" viewBox="0 0 680 ${svgHeight}" role="img" aria-label="${esc(title)}" data-source61-graphs-e4-structure="${esc(title)}" data-source61-graphs-e4-layout="${layoutKind}" data-source61-graphs-e4-values="${solved ? segments.map(segment => segment.percent).join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="660" height="${svgHeight - 20}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text class="source61-e4-readable-text source61-e4-chart-title" x="340" y="29" text-anchor="middle" fill="#183b56" font-size="24" font-weight="900">${esc(title)}</text>${blocks}${guide}${boundaries}${legend}${final}</svg>`;
+      };
+      const table = (headers, rows, solved = false) => `<table class="problem-table source61-e4-table" data-phase="${solved ? "answer" : "problem"}"><thead><tr>${headers.map(value => `<th>${esc(value)}</th>`).join("")}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+      const fixed = (prompt, answer, solution, problemVisual, answerVisual, values, contract) => result(`${prompt}${problemVisual}${support("각 그래프의 전체를 100%로 보고, 필요한 두 비율을 차례로 계산하세요.")}${challenge}${problemEvidence}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e4-answer-contract="${contract}" data-final-answer="${esc(answer)}">${evidence(values)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId });
+      const consentPools = [
+        { total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] },
+        { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] },
+        { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }
+      ];
+      const agreeLabels = ["일자리가 생기므로", "관광 수요 증가", "지역의 성장", "기타"];
+      const opposeLabels = ["공사 중 공해 발생", "환경 훼손 염려", "교통 체증", "기타"];
+      if (variant === 0) {
+        const d = consentPools[poolIndex];
+        const agreeMax = Math.max(...d.agreeReasons), opposeMax = Math.max(...d.opposeReasons);
+        const answer = `${d.total * d.agree / 100 * agreeMax / 100 - d.total * d.oppose / 100 * opposeMax / 100}명`;
+        const main = pie({ title: "찬반 여부", segments: [{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }] });
+        const p1 = strip({ title: "찬성 이유", segments: agreeLabels.map((label, i) => ({ label, percent: d.agreeReasons[i] })) });
+        const p2 = strip({ title: "반대 이유", segments: opposeLabels.map((label, i) => ({ label, percent: d.opposeReasons[i] })) });
+        const a1 = pie({ title: "찬반 여부", solved: true, resultText: answer, segments: [{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }] });
+        const a2 = strip({ title: "찬성 이유", solved: true, segments: agreeLabels.map((label, i) => ({ label, percent: d.agreeReasons[i], highlight: d.agreeReasons[i] === agreeMax })) });
+        const a3 = strip({ title: "반대 이유", solved: true, segments: opposeLabels.map((label, i) => ({ label, percent: d.opposeReasons[i], highlight: d.opposeReasons[i] === opposeMax })) });
+        return fixed(`${num(d.total)}명에게 정책에 대한 찬반을 물었습니다. 찬성 중 가장 큰 이유와 반대 중 가장 큰 이유의 사람 수 차를 구하세요.`, answer, `찬성의 큰 이유는 ${num(d.total * d.agree / 100 * agreeMax / 100)}명, 반대의 큰 이유는 ${num(d.total * d.oppose / 100 * opposeMax / 100)}명입니다. 차는 ${answer}입니다.`, `${main}${p1}${p2}`, `${a1}${a2}${a3}`, [d.total, d.agree, d.oppose, ...d.agreeReasons, ...d.opposeReasons], "circle-strip-difference");
+      }
+      if (variant === 1) {
+        const d = [{ total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] }, { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] }, { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }][poolIndex];
+        const trafficRate = d.opposeReasons[2];
+        const moved = d.total * d.oppose * trafficRate / 10000, oldOther = d.total * d.agree * d.agreeReasons[3] / 10000;
+        const newAgree = d.total * d.agree / 100 + moved, newOther = oldOther + moved, answer = `${(newOther * 100 / newAgree).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}%`;
+        const beforeOppose = strip({ title: "이동 전 반대 이유", segments: opposeLabels.map((label, index) => ({ label, percent: d.opposeReasons[index] })) });
+        const solvedOppose = strip({ title: "이동 전 반대 이유", solved: true, segments: opposeLabels.map((label, index) => ({ label, percent: d.opposeReasons[index], highlight: index === 2 })) });
+        const solvedAfter = strip({ title: "바뀐 뒤 찬성 이유", solved: true, resultText: answer, segments: [{ label: "기타", percent: newOther * 100 / newAgree, highlight: true, text: answer }, { label: "기타 외", percent: 100 - newOther * 100 / newAgree }] });
+        const beforeCircle = (segments, solved = false) => pie({ title: "이동 전 찬반 여부", solved, segments });
+        const beforeAgree = (solved = false) => strip({ title: "이동 전 찬성 이유", solved, segments: agreeLabels.map((label, index) => ({ label, percent: d.agreeReasons[index], highlight: solved && index === 3 })) });
+        return fixed(`반대했던 사람 중 교통 체증을 이유로 든 사람은 반대 이유 중 ${trafficRate}%이고, 그 사람들은 모두 찬성 중 기타 이유로 돌아섰습니다. 처음 찬성 중 기타 이유는 ${d.agreeReasons[3]}%였습니다. 바뀐 뒤 찬성한 사람 중 기타 이유의 비율을 구하세요.`, answer, `${num(moved)}명이 이동하고, 기타는 ${num(oldOther)}명에서 ${num(newOther)}명이 됩니다. 새 찬성 인원은 ${num(newAgree)}명이므로 ${num(newOther)}÷${num(newAgree)}×100=${answer}입니다.`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }])}${beforeAgree()}${beforeOppose}`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }], true)}${beforeAgree(true)}${solvedOppose}${pie({ title: "바뀐 뒤 찬반 여부", solved: true, segments: [{ label: "찬성", percent: newAgree * 100 / d.total, highlight: true }, { label: "반대", percent: 100 - newAgree * 100 / d.total }] })}${solvedAfter}`, [d.total, d.agree, d.oppose, trafficRate, d.agreeReasons[3], ...d.agreeReasons, ...d.opposeReasons, moved, oldOther, newAgree, newOther], "before-after-percent");
+      }
+      if (variant === 2) {
+        const d = [{ totalMan: 5000, surname: [22, 15, 8, 55], branches: [42, 17, 9, 32] }, { totalMan: 4000, surname: [25, 10, 12, 53], branches: [40, 20, 15, 25] }, { totalMan: 5000, surname: [20, 15, 10, 55], branches: [45, 20, 12, 23] }][poolIndex];
+        const kim = d.surname[0];
+        const answer = `${d.totalMan * kim / 100 * (d.branches[0] - d.branches[2]) / 100}만명`;
+        const circle = (segments, solved = false) => pie({ title: "우리나라 성씨별 사람 수", solved, segments });
+        const surnameLabels = ["김씨", "이씨", "박씨", "기타"];
+        const surnameSegments = surnameLabels.map((label, index) => ({ label, percent: d.surname[index] }));
+        const stripGraph = solved => strip({ title: "김씨의 본관별 사람 수", solved, segments: [{ label: "김해 김씨", percent: d.branches[0], highlight: solved }, { label: "경주 김씨", percent: d.branches[1] }, { label: "광산 김씨", percent: d.branches[2], highlight: solved }, { label: "기타", percent: d.branches[3] }] });
+        return fixed(`우리나라 사람은 약 ${d.totalMan}만 명이고, 김씨는 ${kim}%입니다. 김씨 중 김해 김씨와 광산 김씨의 사람 수 차를 구하세요.`, answer, `김씨는 ${d.totalMan}만×${kim}%이고, 두 본관의 비율 차는 ${d.branches[0]}-${d.branches[2]}=${d.branches[0] - d.branches[2]}%입니다. 따라서 차는 ${answer}입니다.`, `${circle(surnameSegments)}${stripGraph(false)}`, `${circle(surnameSegments, true)}${stripGraph(true)}`, [d.totalMan, ...d.surname, ...d.branches], "population-difference");
+      }
+      if (variant === 3) {
+        const d = [{ total: 600, male: 60, female: 40, maleRates: [25, 35, 40], femaleRates: [45, 25, 30] }, { total: 800, male: 55, female: 45, maleRates: [30, 30, 40], femaleRates: [40, 35, 25] }, { total: 500, male: 48, female: 52, maleRates: [20, 45, 35], femaleRates: [30, 30, 40] }][poolIndex];
+        const names = ["피아노", "미술", "태권도"], counts = names.map((_, i) => d.total * (d.male * d.maleRates[i] + d.female * d.femaleRates[i]) / 10000), max = Math.max(...counts), maxName = names[counts.indexOf(max)];
+        const answer = `${maxName}, ${num(max)}명`;
+        const student = pie({ title: "남녀 학생 수", segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female }] });
+        const bars = `${strip({ title: "다니는 학원별 남학생 수", segments: names.map((name, i) => ({ label: name, percent: d.maleRates[i] })) })}${strip({ title: "다니는 학원별 여학생 수", segments: names.map((name, i) => ({ label: name, percent: d.femaleRates[i] })) })}`;
+        const solvedBars = `${strip({ title: "다니는 학원별 남학생 수", solved: true, segments: names.map((name, i) => ({ label: name, percent: d.maleRates[i], highlight: counts[i] === max })) })}${strip({ title: "다니는 학원별 여학생 수", solved: true, segments: names.map((name, i) => ({ label: name, percent: d.femaleRates[i], highlight: counts[i] === max })) })}`;
+        return fixed(`전체 학생 ${num(d.total)}명의 남녀 비율과 학원별 남녀 비율을 보고, 가장 많은 학원과 그 학생 수를 구하세요.`, answer, `남학생 ${num(d.total * d.male / 100)}명과 여학생 ${num(d.total * d.female / 100)}명으로 각 학원의 수를 계산합니다. 가장 많은 학원은 ${answer}입니다.`, `${student}${bars}`, `${pie({ title: "남녀 학생 수", solved: true, segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female }] })}${solvedBars}`, [d.total, d.male, d.female, ...d.maleRates, ...d.femaleRates, ...counts], "largest-category");
+      }
+      if (variant === 4) {
+        const d = [{ before: [30, 25, 20, 15, 10] }, { before: [40, 20, 15, 15, 10] }, { before: [20, 30, 25, 15, 10] }][poolIndex];
+        const after = [d.before[0] / 2, d.before[1], d.before[2] + d.before[0] / 2, d.before[3], d.before[4]];
+        const names = ["소설", "참고서", "위인전", "시집", "기타"];
+        const answer = names.map((name, i) => `${name}${after[i]}%`).join(", ");
+        const original = pie({ title: "1학기 학급 문고의 종류별 권수", segments: names.map((label, i) => ({ label, percent: d.before[i] })) });
+        const blank = strip({ title: "2학기 학급 문고의 종류별 권수", segments: [], blank: true });
+        const completed = strip({ title: "2학기 학급 문고의 종류별 권수", solved: true, resultText: answer, segments: names.map((label, i) => ({ label, percent: after[i], highlight: i === 2 })) });
+        return fixed(`책의 비율이 소설 ${d.before[0]}%, 참고서 ${d.before[1]}%, 위인전 ${d.before[2]}%, 시집 ${d.before[3]}%, 기타 ${d.before[4]}%입니다. 소설의 절반을 위인전으로 바꾸었을 때 새 비율을 구하세요.`, answer, `소설은 ${d.before[0]}%의 절반인 ${after[0]}%가 되고, 그만큼 위인전에 더해집니다. 새 비율은 ${answer}입니다.`, `${original}${blank}`, `${pie({ title: "1학기 학급 문고의 종류별 권수", solved: true, segments: names.map((label, i) => ({ label, percent: d.before[i] })) })}${completed}`, [...d.before, ...after], "ordered-percent-list");
+      }
+      if (variant === 5) {
+        const d = [{ group: [62, 38], femaleAcademy: [35, 30, 20, 15] }, { group: [55, 45], femaleAcademy: [30, 20, 35, 15] }, { group: [64, 36], femaleAcademy: [40, 25, 20, 15] }][poolIndex];
+        const academyNames = ["미술 학원", "피아노 학원", "발레 학원", "기타"], target = d.femaleAcademy[1];
+        const answer = `${d.group[1] * target / 100}%`;
+        const circle = pie({ title: "남녀의 수", segments: [{ label: "남학생", percent: d.group[0] }, { label: "여학생", percent: d.group[1] }] });
+        const stripGraph = solved => strip({ title: "여학생이 다니고 싶은 학원별 학생 수", solved, resultText: solved ? answer : "", segments: academyNames.map((label, index) => ({ label, percent: d.femaleAcademy[index], highlight: index === 1 })) });
+        return fixed(`남학생과 여학생의 비율은 ${d.group[0]}%와 ${d.group[1]}%입니다. 여학생이 다니고 싶은 학원은 미술 학원 ${d.femaleAcademy[0]}%, 피아노 학원 ${d.femaleAcademy[1]}%, 발레 학원 ${d.femaleAcademy[2]}%, 기타 ${d.femaleAcademy[3]}%입니다. 전체 학생 중 피아노 학원을 다니고 싶은 학생의 비율을 구하세요.`, answer, `전체에서 여학생은 ${d.group[1]}%이고, 그중 피아노 학원은 ${target}%이므로 ${d.group[1]}×${target}÷100=${answer}입니다.`, `${circle}${stripGraph(false)}`, `${pie({ title: "남녀의 수", solved: true, segments: [{ label: "남학생", percent: d.group[0] }, { label: "여학생", percent: d.group[1], highlight: true }] })}${stripGraph(true)}`, [...d.group, ...d.femaleAcademy], "nested-percent");
+      }
+      if (variant === 6) {
+        const d = [{ gifts: [30, 25, 20, 25], toys: [45, 20, 10, 25], count: 24 }, { gifts: [25, 30, 20, 25], toys: [40, 25, 15, 20], count: 30 }, { gifts: [35, 20, 20, 25], toys: [50, 15, 10, 25], count: 18 }][poolIndex];
+        const answer = `${d.count * 10000 / (d.gifts[2] * d.toys[1])}명`;
+        const giftNames = ["휴대전화", "게임기", "장난감", "기타"], toyNames = ["로봇", "팽이", "큐브", "기타"];
+        const gifts = giftNames.map((label, index) => ({ label, percent: d.gifts[index], highlight: index === 2 }));
+        const toys = toyNames.map((label, index) => ({ label, percent: d.toys[index], highlight: index === 1 }));
+        return fixed(`받고 싶은 선물은 휴대전화 ${d.gifts[0]}%, 게임기 ${d.gifts[1]}%, 장난감 ${d.gifts[2]}%, 기타 ${d.gifts[3]}%입니다. 장난감을 받고 싶은 학생 중 로봇 ${d.toys[0]}%, 팽이 ${d.toys[1]}%, 큐브 ${d.toys[2]}%, 기타 ${d.toys[3]}%입니다. 팽이를 받고 싶은 학생이 ${d.count}명일 때 전체 학생 수를 구하세요.`, answer, `팽이는 전체의 ${d.gifts[2]}%×${d.toys[1]}%=${d.gifts[2] * d.toys[1] / 100}%입니다. 전체 학생 수는 ${d.count}÷${d.gifts[2] * d.toys[1] / 100}=${answer}입니다.`, `${strip({ title: "받고 싶은 선물별 학생 수", segments: gifts })}${pie({ title: "장난감 종류별 학생 수", segments: toys })}`, `${strip({ title: "받고 싶은 선물별 학생 수", solved: true, segments: gifts })}${pie({ title: "장난감 종류별 학생 수", solved: true, resultText: answer, segments: toys })}`, [...d.gifts, ...d.toys, d.count], "nested-percent-count");
+      }
+      if (variant === 7) {
+        const pools = [
+          { total: 80, angles: [36, 81, 162, 81], known: [8, 8, 12], points: [6, 6, 8] },
+          { total: 100, angles: [36, 72, 180, 72], known: [10, 10, 20], points: [5, 5, 8] },
+          { total: 60, angles: [60, 60, 180, 60], known: [10, 6, 15], points: [4, 4, 5] }
+        ];
+        const d = pools[poolIndex], groups = d.angles.map(angle => d.total * angle / 360), counts = [d.known[0], d.known[1], groups[1] - d.known[1], d.known[2], groups[2] - d.known[2], groups[3]];
+        const scoreValues = [0, d.points[0], d.points[2], d.points[0] + d.points[1], d.points[1] + d.points[2], d.points.reduce((a, b) => a + b, 0)];
+        const scoreCounts = scoreValues.map((score, index) => ({ score, count: counts[index] })).sort((a, b) => a.score - b.score);
+        if (new Set(scoreCounts.map(item => item.score)).size !== scoreCounts.length) throw new Error(`${sourceItemId}: 점수 행이 겹칩니다.`);
+        const average = scoreCounts.reduce((sum, item) => sum + item.count * item.score, 0) / d.total;
+        const answer = `${average}점`;
+        const segments = [{ label: "3문제 모두 틀린 학생", percent: d.angles[0] / 3.6, display: `${d.angles[0]}°`, highlight: true, showInChart: true }, { label: "1문제 맞힌 학생", percent: d.angles[1] / 3.6, display: `${d.angles[1]}°`, showInChart: true }, { label: "2문제 맞힌 학생", percent: d.angles[2] / 3.6, display: `${d.angles[2]}°`, showInChart: true }, { label: "3문제 맞힌 학생", percent: d.angles[3] / 3.6, display: `${d.angles[3]}°`, showInChart: true }];
+        const rows = scoreCounts.map(item => [`${item.score}점`, item.count]);
+        const knownScores = new Map([[scoreValues[0], counts[0]], [scoreValues[1], counts[1]], [scoreValues[3], counts[3]]]);
+        const problemRows = scoreCounts.map(item => [`${item.score}점`, knownScores.has(item.score) ? knownScores.get(item.score) : "□"]);
+        const visual = solved => `${pie({ title: "시험 결과", solved, resultText: solved ? answer : "", segments })}${table(["점수", "학생 수"], solved ? rows : problemRows, solved)}`;
+        return fixed(`세 문제의 점수는 각각 ${d.points[0]}점, ${d.points[1]}점, ${d.points[2]}점입니다. 원그래프와 표를 보고 전체 학생의 평균 점수를 구하세요.`, answer, `각 구간의 학생 수는 ${counts.join(", ")}명입니다. 점수와 곱해 더한 뒤 ${d.total}으로 나누면 평균은 ${average}점입니다.`, visual(false), visual(true), [d.total, ...d.angles, ...d.points, ...counts, average], "circle-weighted-average");
+      }
+      const d = [{ male: 52, female: 48, maleItem: 104, femaleItem: 72, femaleRate: 24 }, { male: 55, female: 45, maleItem: 99, femaleItem: 54, femaleRate: 20 }, { male: 48, female: 52, maleItem: 72, femaleItem: 65, femaleRate: 25 }][poolIndex];
+      const femaleTotal = d.femaleItem * 100 / d.femaleRate, total = femaleTotal * 100 / d.female, maleTotal = total * d.male / 100, answer = `${(d.maleItem * 100 / maleTotal).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}%`;
+      const gender = solved => pie({ title: "남·여학생 수", solved, segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female, highlight: solved }] });
+      const products = solved => strip({ title: "여학생이 좋아하는 상표", solved, resultText: solved ? answer : "", segments: [{ label: "가 상표", percent: 34 }, { label: "나 상표", percent: d.femaleRate, highlight: true }, { label: "다 상표", percent: 20 }, { label: "라 상표", percent: 12 }, { label: "기타", percent: 100 - 34 - d.femaleRate - 20 - 12 }] });
+      return fixed(`남학생과 여학생의 비율은 ${d.male}%와 ${d.female}%입니다. 나 상품을 좋아하는 학생은 남학생 ${d.maleItem}명, 여학생 ${d.femaleItem}명이고 여학생 중 나 상품의 비율은 ${d.femaleRate}%입니다. 남학생 중 나 상품을 좋아하는 학생의 비율을 구하세요.`, answer, `여학생 전체는 ${d.femaleItem}÷${d.femaleRate}%=${num(femaleTotal)}명, 전체는 ${num(total)}명, 남학생은 ${num(maleTotal)}명입니다. 따라서 ${d.maleItem}÷${num(maleTotal)}×100=${answer}입니다.`, `${gender(false)}${products(false)}`, `${gender(true)}${products(true)}`, [d.male, d.female, d.maleItem, d.femaleItem, d.femaleRate, femaleTotal, total, maleTotal], "gender-nested-percent");
+    },
   };
 
   const rules = [
@@ -25235,6 +25430,10 @@
     ].includes(type.sourceItemId), "sourceGrade6GraphsE1"],
     [type => type.sourceItemId?.startsWith("6-1-u5-e2-"), "sourceGrade6GraphsE2"],
     [type => type.sourceItemId?.startsWith("6-1-u5-e3-"), "sourceGrade6GraphsE3"],
+    [type => [
+      "6-1-u5-e4-exploration-1", "6-1-u5-e4-exploration-2", "6-1-u5-e4-example-1", "6-1-u5-e4-example-2",
+      "6-1-u5-e4-mission-1", "6-1-u5-e4-mission-2", "6-1-u5-e4-mission-4", "6-1-u5-e4-mission-5", "6-1-u5-e4-mission-6"
+    ].includes(type.sourceItemId), "sourceGrade6GraphsE4"],
     [type => type.id === "5-1-u5-t4", "unitPartialFractionAdvanced"],
     [type => type.id === "5-1-u6-t1", "advancedPolygonPerimeter"],
     [type => type.id === "5-1-u6-t2", "rectangleRightTriangleAreaAdvanced"],
