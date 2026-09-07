@@ -1330,7 +1330,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   return `<div class="nm-print-cover nm-cvw">
   <div class="nm-cv-brand"><span>${esc(brandName())}</span><strong>NUMBERS <i>of</i> MAGIC${studentTag}</strong></div>
   <div class="nm-cvw-hero">
-    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}</p>
+    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
     <p class="nm-cvw-tagline">${esc(lk('선행부터 창의연산, 문장제까지','From advanced work to creative arithmetic and word problems','从超前学习到创意运算与应用题'))}</p>
     <div class="nm-cv-rule"></div>

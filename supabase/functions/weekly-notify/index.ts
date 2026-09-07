@@ -6,6 +6,7 @@
 //   nm_contacts.send_dow2). 학습지도 k별 두 벌(nm_weekly_pdf.k / ws.html?k=2). 중복 방지 kind = 'weekly' | 'weekly-2'.
 //   dry:true      → 발송 없이 문안만 돌려준다.
 //   test_phone    → 연락처를 돌지 않고 그 번호 한 건만 보낸다(연결 점검용, kind='test').
+//   test_course   → 그 시험 문자에 실을 과정(기본 C4). 예: "C3" 두 자리 덧뺄셈 시작.
 //   probe:true    → 릴레이에 {action:'ping'}만 보내 응답 원문을 돌려준다(문자 발송 없음, 연결·계약 확인용).
 //   probe:'aligo' → 알리고 /remain/(잔여 건수 조회)로 키·IP 인증만 확인. 문자 발송 없음.
 // 시크릿 읽기: 환경변수(Edge Secrets) 우선, 없으면 Vault(public.nm_notify_secret RPC, service_role 전용).
@@ -222,7 +223,13 @@ Deno.serve(async (req: Request) => {
   if (body.test_phone) {
     const phone = String(body.test_phone).replace(/\D/g, "");
     if (!/^01\d{8,9}$/.test(phone)) return new Response(JSON.stringify({ error: "bad test_phone" }), { status: 400 });
-    const demo = { courseKey: "C4", courseNum: 4, courseTitle: "두 자리 올림 덧뺄셈" }; // 시험 문자에도 실제 링크가 실리도록
+    // 시험 문자에도 실제 링크가 실린다. test_course 로 과정을 고를 수 있다(2026-09-07, 원장 "두자리-한자리로 보내봐").
+    const DEMOS: Record<string, { courseKey: string; courseNum: number; courseTitle: string }> = {
+      C3: { courseKey: "C3", courseNum: 3, courseTitle: "두 자리 덧뺄셈 시작" },
+      C4: { courseKey: "C4", courseNum: 4, courseTitle: "두 자리 올림 덧뺄셈" },
+    };
+    const demoKey = String(body.test_course || "C4").toUpperCase();
+    const demo = DEMOS[demoKey] || { courseKey: demoKey, courseNum: parseInt(demoKey.replace(/^C/, ""), 10) || 0, courseTitle: "" };
     const tName = String(body.test_name || "김도윤"); // 시험용 가상 학생(표지에 "테스트"가 찍히지 않도록, 2026-09-06)
     const tCad = body.test_cadence === "w2" ? "w2" : "w1";
     const tK = tCad === "w2" && Number(body.test_k) === 2 ? 2 : 1;
