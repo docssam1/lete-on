@@ -138,9 +138,16 @@
     return cad === 'w2' ? (mo + '월 ' + nth + '-' + k + '주차') : (mo + '월 ' + nth + '주차');
   }
   var cover = { name: name, weekLabel: weekLabel(), courseNum: course.order, courseTitle: title, k: k, cadence: cad, code: wsId };
+  /* 과정의 마법 유닛(이번 세션 것 먼저, 그다음 다른 세션) — 수학사 지면의 대안 조회(2026-09-06).
+     초등 스레드(AD5·SB4·NS1 …)는 threads.js 에 unit 이 없어 스레드로는 만화를 못 찾는다(C4 에 지면이
+     없었다). 스레드로 찾은 만화가 있으면 이 목록은 쓰이지 않는다(C34 는 그대로). */
+  var units = [].concat.apply([], (session.magic || []))
+    .concat([].concat.apply([], (course.sessions || []).filter(function(s){ return !s.test; })
+      .map(function(s){ return [].concat.apply([], s.magic || []); })))
+    .filter(function(u, i, a){ return u && a.indexOf(u) === i; });
 
   try{
-    NM_EXAM.renderPrintMulti(items, wsId, { mixed: 20, cover: cover });
+    NM_EXAM.renderPrintMulti(items, wsId, { mixed: 20, cover: cover, units: units });
   }catch(e){ return fail('학습지를 만드는 중 문제가 생겼어요: ' + (e && e.message || e)); }
   /* renderPrintMulti 는 시트를 body 직속으로 붙인다. 인쇄 CSS가 body>*:not(.nm-print-sheet)를 숨기므로
      다른 요소 안으로 옮기면 인쇄(PDF)가 백지가 된다 — 그대로 둔다(2026-09-05 확인). */
