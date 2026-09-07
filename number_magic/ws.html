@@ -22,6 +22,10 @@
 <link rel="stylesheet" href="app/styles.css">
 <style>
   /* 글꼴: Pretendard(CDN) → Noto Sans KR/CJK(Actions 러너에 apt로 설치) → 시스템 한글 순. 표지 이름은 Gowun Batang. */
+  /* app/styles.css 는 앱 셸용이라 html,body{height:100%} + body{overflow:hidden} 을 건다.
+     그 시트를 여기서도 불러오기 때문에 학습지 페이지가 통째로 스크롤되지 않았다
+     (2026-09-07, 원장 "학습지 html까지는 나오는데 스크롤이 안 된다"). 여기서 되돌린다. */
+  html,body{height:auto;min-height:100%;overflow:visible}
   body,.nm-print-sheet{margin:0;background:#f4efe6;font-family:Pretendard,'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif}
   .ws-bar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
     padding:10px 14px;background:#fffaf0;border-bottom:1px solid #e6dcc8}
