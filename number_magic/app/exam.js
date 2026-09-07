@@ -1175,10 +1175,10 @@ function coverLevelBadge(items){
 function brandName(){
   try{ return localStorage.getItem('nm_brand_name') || 'GFIELD'; }catch(e){ return 'GFIELD'; }
 }
-/* 표지 발치 왼쪽 — 학원명 + DOCSSAM 영재 트랙(landing.html 발치와 같은 관계 표기).
-   문구 확정은 원장 몫이라 lk() 한 줄에 모아 둔다. */
+/* 표지 발치 왼쪽 — 학원명 + 제품명. 원장 확정(2026-09-07): "그냥 numbers of magic".
+   앞서 쓰던 "DOCSSAM 영재 트랙"은 새 이름을 짓는 대신 제품명 하나로 정리했다. */
 function coverFooterBrand(){
-  return `${esc(brandName())} · ${esc(lk('DOCSSAM 영재 트랙','DOCSSAM gifted track','DOCSSAM 资优课程'))}`;
+  return `${esc(brandName())} · Numbers of Magic`;
 }
 function coverPageHtml(items, code, totalCount){
   const theme = coverTheme(items[0]);
@@ -2770,7 +2770,18 @@ function renderMixedSheet(items, envelopeCode, opts){
   const rounds = [];
   let droppedWord = false;
   items.forEach(it => {
-    const r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1 });
+    let r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1 });
+    /* 문장제 회차가 비면 같은 회차의 **다른 유형**으로 다시 시도한다(2026-09-07).
+       전에는 세션의 첫 드릴 하나만 보고 그것이 문장으로 안 바뀌면 회차를 통째로 뺐다 —
+       45개 과정 중 12개에만 문장제가 붙어 있었던 원인이다(실측). 곱셈·나눗셈 드릴이
+       두 번째·세 번째 자리에 있는 과정이 많다. */
+    if(it.optionalWord && !r.problems.some(p => p.word) && (it.wordAlts || []).length){
+      for(const alt of it.wordAlts){
+        const cand = Object.assign({}, it, alt);
+        const rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1 });
+        if(rr.problems.some(p => p.word)){ r = rr; break; }
+      }
+    }
     if(it.optionalWord && !r.problems.some(p => p.word)){ droppedWord = true; return; }
     rounds.push(r);
   });
