@@ -1224,7 +1224,32 @@ function screenRoadmap(){
     </div>
     <div class="nm-road-path">`;
 
+  /* 단계 머리(2026-09-08) — 챕터 60개가 평평하게 늘어서 있어 "지금 어느 단계인지"가 안 보였다.
+     data/stages.js 의 일곱 단계로 묶어 준다. 광고·주간 학습지 표지와 같은 이름을 쓴다.
+     stages.js 가 없으면(옛 캐시) 조용히 건너뛴다 — 화면이 죽지 않게. */
+  let lastStageKey=null;
+  const stageOf=window.NM_STAGE_OF_CHAPTER||null;
   road.chapters.forEach((ch,ci)=>{
+    if(stageOf&&ch.id){
+      const st=stageOf(ch.id);
+      if(st&&st.key!==lastStageKey){
+        lastStageKey=st.key;
+        /* 그 단계 유닛의 진도 — 완료 비율만 보여 주고 잠그지 않는다(자유 선택 원칙). */
+        let tot=0,don=0;
+        st.chapters.forEach(cid=>{
+          const c2=road.chapters.find(x=>x.id===cid);
+          (c2&&c2.units||[]).forEach(uid=>{ if(UNITS[uid]){tot++; if(stepDone(uid,'stamp'))don++;} });
+        });
+        const pct=tot?Math.round(don/tot*100):0;
+        html+=`<div class="nm-road-stage" data-stage="${esc(st.key)}" style="--st:${esc(st.accent||'#0E2C57')}">
+          <div class="nm-road-stage-top"><span class="nm-road-stage-ic">${st.icon||''}</span>
+            <b>${esc(L(st.name).split(' — ')[0])}</b>
+            <span class="nm-road-stage-band">${esc(L(st.band))}</span></div>
+          <div class="nm-road-stage-bar"><i style="width:${pct}%"></i></div>
+          <div class="nm-road-stage-meta">${esc(L(st.meta))} · ${pct}%</div>
+        </div>`;
+      }
+    }
     /* 미니게임 챕터 */
     if(ch.game){
       const played=S.gamesPlayed&&S.gamesPlayed[ch.game];
@@ -2829,6 +2854,10 @@ function renderPlacementResult(d){
       <div class="nm-card-h">${lk('여기서 시작하면 좋아요!','A good place to start!','从这里开始正合适！')}</div>
       <div class="nm-dg-course">${lk('과정','Course','课程')} ${num}${c?` · ${esc(L(c.title))}`:''}</div>
       ${tierDef?`<div class="nm-dg-tier">${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</div>`:''}
+      ${(function(){ /* 단계 이름(2026-09-08) — 광고·학습지 표지와 같은 말로 "지금 여기"를 찍는다 */
+        const f=window.NM_STAGE_OF_COURSE, st=f?f(num):null;
+        return st?`<div class="nm-dg-stage">${st.icon||''} ${esc(L(st.name).split(' — ')[0])} · ${esc(L(st.band))}</div>`:'';
+      })()}
       ${placementAgeNoteHtml(S.placement,lk)}
       <div class="nm-score">${S.placement.correct||0} / ${S.placement.asked||0}</div>
       <p class="nm-wsh-sentence">${lk('맞힌 문제까지가 이미 익숙한 곳이에요. 여기서부터 새로 배우면 딱 맞아요.','Everything you answered is already comfortable — starting here fits just right.','答对的部分已经很熟练了，从这里开始正好。')}</p>
