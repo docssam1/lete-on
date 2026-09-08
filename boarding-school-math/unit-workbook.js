@@ -6,12 +6,13 @@
     "6.RP.A": window.GFIELDGrade6RPAUnitWorkbook,
     "6.NS.A": window.GFIELDGrade6NSAUnitWorkbook,
     "6.NS.B": window.GFIELDGrade6NSBUnitWorkbook,
+    "6.NS.C": window.GFIELDGrade6NSCUnitWorkbook,
     "6.SP.A": window.GFIELDGrade6SPAUnitWorkbook
   };
   const source = sources[requestedCluster];
   if (!source) throw new Error("UNIT_WORKBOOK_SOURCE_MISSING");
   source.validatePack();
-  const completionKey = (["6.RP.A","6.NS.A","6.NS.B"].includes(source.pack.clusterId)?"gfield-unit-workbook:":"gfield-clinic-workbook:")+source.pack.clusterId+":v1";
+  const completionKey = (["6.RP.A","6.NS.A","6.NS.B","6.NS.C"].includes(source.pack.clusterId)?"gfield-unit-workbook:":"gfield-clinic-workbook:")+source.pack.clusterId+":v1";
   function workbookCompleted() {
     try { return localStorage.getItem(completionKey) === "complete-v1"; }
     catch (_error) { return false; }
@@ -86,7 +87,7 @@
     const card=el("article","book-problem"); card.dataset.itemId=problem.id;
     const meta=el("div","problem-meta"); meta.append(el("span","",String(index+1).padStart(2,"0")),el("span","",text(source.pack.strands[problem.strand])));
     card.append(meta,el("p","problem-prompt",text(problem.prompt)));
-    const visualMarkup=typeof source.renderVisual==="function"?source.renderVisual(problem,state.locale):"";
+    const visualMarkup=typeof source.renderVisual==="function"?source.renderVisual(problem,state.locale,state.audience):"";
     if(visualMarkup){const visual=el("div","problem-visual");visual.innerHTML=visualMarkup;card.append(visual);}
     const restored=state.selected.get(problem.id);
     function recordResult(response,control){
