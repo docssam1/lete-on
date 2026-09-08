@@ -140,6 +140,16 @@
   var items = session.drills.map(function(d,i){ return { thread:d.t, level:d.lv, n:d.n, seed: envItemSeed(seedWeek, c, i) }; });
   /* 문장제 회차(원장 2026-09-06 "문장제도 같이"): 그 세션 첫 드릴의 문항을 문장으로 바꿔 6문항.
      문장으로 못 바꾸는 유형(소수·분수 등)이면 renderMixedSheet 가 이 회차를 뺀다(optionalWord). */
+  /* 창의 연산 회차(원장 2026-09-08 "사이사이에 필산 후 창의 연산도 같이 할 수 있도록").
+     필산 회차 다음, 문장제 앞에 온다 — 그 주 마법(창의수연 전략)을 손으로 푸는 자리다.
+     재료는 courses.js 의 session.creative(스레드+레벨). 초급 A유닛처럼 대응 스레드가
+     아직 없는 과정은 이 회차가 비고, 그때는 필산+문장제만 나간다. */
+  var thName0 = function(t){ var th=(window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
+  (session.creative || []).forEach(function(d, ci){
+    items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4,
+      topicName:'창의 연산 · ' + thName0(d.t),
+      seed: envItemSeed(seedWeek + 'cr', c, ci) });
+  });
   if(session.drills.length){
     var d0 = session.drills[0];
     /* 문장제 회차 — 첫 드릴이 문장으로 안 바뀌면 그 세션의 나머지 드릴로 차례로 시도한다

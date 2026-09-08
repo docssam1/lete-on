@@ -4426,7 +4426,8 @@ ${answerSectionsHtml}`;
       const c = (window.NM_COURSES||{})[courseKey]; if(!c) return [];
       const seen = {}, out = [];
       (c.sessions||[]).forEach(s => {
-        (s.test ? (s.pool||[]) : (s.drills||[])).forEach(d => {
+        /* 창의 연산 회차(2026-09-08)도 그 과정의 재료다 — 유형 고르기 목록에 함께 싣는다. */
+        (s.test ? (s.pool||[]) : (s.drills||[]).concat(s.creative||[])).forEach(d => {
           const key = d.t+'-L'+d.lv;
           if(seen[key]) return; seen[key] = true;
           out.push({t:d.t, lv:d.lv});
@@ -4442,7 +4443,7 @@ ${answerSectionsHtml}`;
         const c = COURSES[k];
         if(!c || (c.order||0) >= (cur.order||0)) return;
         (c.sessions||[]).forEach(s => {
-          (s.test ? (s.pool||[]) : (s.drills||[])).forEach(d => {
+          (s.test ? (s.pool||[]) : (s.drills||[]).concat(s.creative||[])).forEach(d => {
             const key = d.t+'-L'+d.lv;
             if(seen[key]) return; seen[key] = true;
             out.push({t:d.t, lv:d.lv});

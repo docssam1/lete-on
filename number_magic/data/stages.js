@@ -52,7 +52,7 @@ window.NM_STAGES = [
     name:{ko:'계산의 새싹',en:'Sprout',zh:'计算的新芽'},
     band:{ko:'6~7세 · 초등 1학년',en:'Ages 6–7 · Grade 1',zh:'6~7岁 · 小学一年级'},
     chapters:['R0','R1','G0','G1','R2','R3','R4','T4','R5','R6','R7','R8'],
-    tiers:['level1'], courses:{from:1,to:10}, weeks:55,
+    tiers:['level1'], courses:{from:1,to:10}, weeks:54,
     learn:{
       ko:'자릿값과 모으기·가르기, 보수 5와 10, 받아올림·받아내림, 두 자리에서 네 자리 덧뺄셈, 구구단 2~9단, 나눗셈의 시작.',
       en:'Place value, gathering and splitting, complements of 5 and 10, carrying and borrowing, two- to four-digit addition and subtraction, times tables 2–9, the start of division.',
@@ -69,14 +69,14 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.',
       en:'The plan runs ahead of school, so times tables already sit in this stage.',
       zh:'编排比学校进度提前，所以乘法口诀已经在这一阶段。'},
-    meta:{ko:'과정 1~10 · 주 1회 기준 55주',en:'Courses 1–10 · 55 weeks at one sheet a week',zh:'课程1~10 · 每周1次约55周'}
+    meta:{ko:'과정 1~10 · 주 1회 기준 54주',en:'Courses 1–10 · 54 weeks at one sheet a week',zh:'课程1~10 · 每周1次约54周'}
   },
   {
     key:'leap', icon:'🚀', accent:'#16417C', status:'live',
     name:{ko:'계산의 도약',en:'Leap',zh:'计算的跃进'},
     band:{ko:'초등 1학년 말 ~ 2학년',en:'End of Grade 1 – Grade 2',zh:'小学一年级末~二年级'},
     chapters:['T8','R9','T9','R10','R11','R12','R13','R14'],
-    tiers:['level2'], courses:{from:11,to:16}, weeks:26,
+    tiers:['level2'], courses:{from:11,to:16}, weeks:29,
     learn:{
       ko:'두 자리×두 자리, 나눗셈과 역연산, 분수의 첫걸음, 세 자리×두 자리, 두 자리로 나누기, 혼합계산.',
       en:'Two-digit × two-digit, division and inverse operations, first steps in fractions, three-digit × two-digit, dividing by two digits, mixed operations.',
@@ -89,7 +89,7 @@ window.NM_STAGES = [
     symbols:[
       {sym:'a/b', tr:{ko:'b로 나눈 것 중 a — 분수 막대 그림이 기호보다 먼저입니다',en:'a of b equal parts — the fraction bar picture comes before the symbol',zh:'分成b份中的a份——分数条的图先于符号'}},
       {sym:'( )', tr:{ko:'먼저 계산할 묶음',en:'the bundle to compute first',zh:'先算的那一组'}}],
-    meta:{ko:'과정 11~16 · 주 1회 기준 26주',en:'Courses 11–16 · 26 weeks at one sheet a week',zh:'课程11~16 · 每周1次约26周'}
+    meta:{ko:'과정 11~16 · 주 1회 기준 29주',en:'Courses 11–16 · 29 weeks at one sheet a week',zh:'课程11~16 · 每周1次约29周'}
   },
   {
     key:'mastery', icon:'👑', accent:'#0E2C57', status:'live',
