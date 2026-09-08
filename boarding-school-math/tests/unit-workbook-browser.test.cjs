@@ -9,6 +9,7 @@ const {chromium}=require("playwright");
 const workbookSource=require("../learning/grade6-sp-a-unit-workbook.js");
 const ratioSource=require("../learning/grade6-rp-a-unit-workbook.js");
 const fractionSource=require("../learning/grade6-ns-a-unit-workbook.js");
+const computationSource=require("../learning/grade6-ns-b-unit-workbook.js");
 const root=path.resolve(__dirname,"..","..");
 let server,browser,baseUrl;
 function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";if(file.endsWith(".css"))return"text/css; charset=utf-8";if(file.endsWith(".js"))return"text/javascript; charset=utf-8";return"application/octet-stream";}
@@ -136,6 +137,23 @@ test("fraction-division Chinese teacher guide keeps 36 answers out of student co
   assert.deepEqual(errors,[]);await page.close();
 });
 
+test("number-system student edition renders 36 exact-response items on 12 pages",async function(){
+  const context=await browser.newContext({viewport:{width:1280,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.NS.B&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator(".book-page").count(),12);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".answer-input").count(),36);assert.equal(await page.locator(".teacher-key,.teacher-move,.choice-button").count(),0);assert.equal(await page.locator("h1").innerText(),"6.NS.B 수 체계 계산 단원 워크북");assert.match(await page.locator("main").innerText(),/최대공약수, 최소공배수와 분배법칙/);assert.match(await page.locator('[data-item-id="nsba-w16"] .problem-visual').innerText(),/1487.5 ÷ 125 = □/);
+  await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("all 36 number-system responses unlock only its eight-item recheck",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.NS.B&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});for(const candidate of computationSource.pack.workbookItems){const card=page.locator(`[data-item-id="${candidate.id}"]`);await card.locator(".answer-input").fill(computationSource.formatResult(candidate));await card.locator(".check-button").click();}
+  assert.equal(await page.locator("#progress-chip").innerText(),"36 / 36");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-unit-workbook:6.NS.B:v1");}),"complete-v1");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-clinic-workbook:6.NS.B:v1");}),null);await page.locator('[data-mode="recheck"]').click();assert.equal(await page.locator(".book-problem").count(),8);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("number-system Chinese teacher guide separates all 36 answers",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.NS.B&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.NS.B 数系计算单元练习册");await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+});
+
 test("all 36 verified responses unlock only the separate recheck route",async function(){
   const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
   await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});
@@ -222,8 +240,8 @@ test("mobile and A4 or Letter print layouts stay within their intended width",as
   for(const paper of ["A4","Letter"]){const page=await browser.newPage({viewport:{width:794,height:1123}});await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=${paper}`,{waitUntil:"networkidle"});await page.emulateMedia({media:"print"});const box=await page.locator(".book-page").first().evaluate(function(node){const style=getComputedStyle(node);return{width:parseFloat(style.width),height:parseFloat(style.height)};});if(paper==="A4"){assert.ok(box.width>790&&box.width<797);assert.ok(box.height>1121&&box.height<1124);}else{assert.ok(box.width>814&&box.width<818);assert.ok(box.height>1054&&box.height<1058);}const columns=await page.locator(".problem-list").first().evaluate(function(node){return getComputedStyle(node).gridTemplateColumns.split(" ").length;});assert.equal(columns,2);const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});assert.deepEqual(overflow,[],JSON.stringify(overflow));assert.match(await page.locator("#dynamic-page-size").textContent(),new RegExp("size: "+paper));assert.equal(await page.locator(".teacher-key").count(),0);await page.close();}
 });
 
-test("ratio and fraction-division workbooks stay usable at 320px and 390px",async function(){
-  for(const cluster of ["6.RP.A","6.NS.A"]) for(const width of [320,390]){
+test("ratio and number-system workbooks stay usable at 320px and 390px",async function(){
+  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B"]) for(const width of [320,390]){
     const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});
     const errors=errorsFor(page);
     await page.goto(`${baseUrl}?cluster=${cluster}&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});
