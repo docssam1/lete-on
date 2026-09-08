@@ -294,7 +294,7 @@
       const visual = solved
         ? `<div class="source61-surface-e1-comparison"><div><strong>가장 큰 경우</strong>${boxSvg(maxBoxes, true, `${num(max)}cm²`, "가장 큰 겉넓이가 되는 배치")}</div><div><strong>가장 작은 경우</strong>${boxSvg(minBoxes, true, `${num(min)}cm²`, "가장 작은 겉넓이가 되는 배치")}</div></div>`
         : separateCubeSizesSvg(s, "서로 붙이기 전의 크기가 다른 정육면체 세 개");
-      return { answer, visual, prompt: `한 모서리의 길이가 ${s}cm, ${2 * s}cm, ${3 * s}cm인 정육면체가 각각 1개씩 있습니다. 면과 면이 맞닿도록 만들 때 겉넓이의 가장 큰 경우와 가장 작은 경우를 구하세요. ${visual}`, solution: `겉넓이의 합에서 맞닿은 면을 두 번씩 뺍니다. 가장 큰 경우는 맞닿은 면의 넓이가 ${s * s}cm²씩 2곳, 가장 작은 경우는 ${s * s}cm²와 ${4 * s * s}cm²가 맞닿습니다. ${answer}입니다.` };
+      return { answer, visual, prompt: `한 모서리의 길이가 ${s}cm, ${2 * s}cm, ${3 * s}cm인 정육면체가 각각 1개씩 있습니다. 면과 면이 맞닿도록 만들 때 겉넓이의 가장 큰 경우와 가장 작은 경우를 구하세요. ${visual}`, solution: `겉넓이의 합에서 맞닿은 면을 두 번씩 뺍니다. 가장 큰 경우는 넓이가 ${s * s}cm²인 면 2곳만 맞닿습니다. 가장 작은 경우는 넓이가 ${4 * s * s}cm²인 면 1곳과 넓이가 ${s * s}cm²인 면 2곳이 맞닿습니다. ${answer}입니다.` };
     }
     if (kind === "example-2") {
       const boxes = triangularBoxes(p.side, p.lowerGap, p.middleGap);

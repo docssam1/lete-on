@@ -1,5 +1,5 @@
 window.HSE_SOURCE_INVENTORY_GRADE6 = {
-  "version": "2026-09-06",
+  "version": "2026-09-09",
   "policy": "public-taxonomy-only-no-source-answer-or-private-path",
   "oneSourceItemOneType": true,
   "totals": {
@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 208
+    "unlocked": 213
   },
   "items": [
     {
@@ -6317,17 +6317,19 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "cut-corners-box-volume",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-1-u6-e2-exploration",
+      "variant": 0
     },
     {
       "semester": "6-1",
@@ -6343,17 +6345,19 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "twelve-cubes-distinct-cuboids",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-1-u6-e2-example-1",
+      "variant": 1
     },
     {
       "semester": "6-1",
@@ -6447,17 +6451,19 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "forty-eight-cubes-distinct-cuboids",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-1-u6-e2-mission-1",
+      "variant": 2
     },
     {
       "semester": "6-1",
@@ -6473,17 +6479,19 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "cube-cuboid-rope-volume",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-1-u6-e2-mission-2",
+      "variant": 3
     },
     {
       "semester": "6-1",
@@ -6499,17 +6507,19 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "fifty-centimeter-stair-solid-surface-volume",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-1-u6-e2-mission-3",
+      "variant": 4
     },
     {
       "semester": "6-1",

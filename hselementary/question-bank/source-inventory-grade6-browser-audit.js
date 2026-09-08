@@ -214,7 +214,17 @@ async function inspectUnit(browser, baseUrl, semester, unitNumber, viewport, vie
     await openUnit(page, baseUrl, semester, unitId);
     const state = await collectUnitState(page, semester, unitId);
     assertUnitState(state, semester, unitId, viewportLabel);
-    findings.push({ semester, unitId, viewport: viewportLabel, sourceTypes: state.sourceRows.length, sourceGroups: state.sourceGroupCount, legacyTypes: state.legacyCount, legacyReady: state.legacyReadyIds.length });
+    findings.push({
+      semester,
+      unitId,
+      viewport: viewportLabel,
+      sourceTypes: state.sourceRows.length,
+      sourceReady: state.sourceRows.filter(row => !row.expectedLocked).length,
+      sourceLocked: state.sourceRows.filter(row => row.expectedLocked).length,
+      sourceGroups: state.sourceGroupCount,
+      legacyTypes: state.legacyCount,
+      legacyReady: state.legacyReadyIds.length
+    });
     await screenshot(page, `${semester}-${unitId}-${viewportLabel}-catalog.png`, page.locator("#catalogPanel"));
     await inspectLockedPreview(page, semester, unitId, viewportLabel);
     return state.legacyReadyIds[0] || "";
@@ -312,12 +322,15 @@ async function inspectGeneratedWorksheet(browser, baseUrl, typeId, viewport, lab
     await new Promise(resolve => server.close(resolve));
   }
   const sourceTotal = findings.reduce((total, item) => total + (item.viewport === "desktop" ? item.sourceTypes : 0), 0);
+  const sourceReady = findings.reduce((total, item) => total + (item.viewport === "desktop" ? item.sourceReady : 0), 0);
+  const sourceLocked = findings.reduce((total, item) => total + (item.viewport === "desktop" ? item.sourceLocked : 0), 0);
   if (sourceTotal !== 633) fail(`PC 화면에서 확인한 원문 유형 합계가 ${sourceTotal}개입니다. 633개여야 합니다.`);
-  fs.writeFileSync(detailPath, JSON.stringify({ sourceTotal, screenshots, pdfs, findings, failures }, null, 2), "utf8");
-  const summary = `${failures.length ? "실패" : "통과"}: 6학년 원문 ${sourceTotal}/633유형, 화면 ${screenshots}장, A4 PDF ${pdfs}개\n${failures.join("\n")}\n`;
+  if (sourceReady + sourceLocked !== sourceTotal) fail(`생성 가능 ${sourceReady}개와 잠금 ${sourceLocked}개의 합이 전체 ${sourceTotal}개와 다릅니다.`);
+  fs.writeFileSync(detailPath, JSON.stringify({ sourceTotal, sourceReady, sourceLocked, screenshots, pdfs, findings, failures }, null, 2), "utf8");
+  const summary = `${failures.length ? "실패" : "통과"}: 6학년 원문 ${sourceTotal}/633유형 · 생성 가능 ${sourceReady} · 잠금 ${sourceLocked}, 화면 ${screenshots}장, A4 PDF ${pdfs}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(summaryPath, summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6학년 원문 세부 유형 브라우저 감사 통과: 633유형 중 생성 가능 186·잠금 447, 12단원 기존 생성 문제 선택·생성 확인, 화면 ${screenshots}장, A4 PDF ${pdfs}개`);
+  console.log(`6학년 원문 세부 유형 브라우저 감사 통과: ${sourceTotal}유형 중 생성 가능 ${sourceReady}·잠금 ${sourceLocked}, 12단원 기존 생성 문제 선택·생성 확인, 화면 ${screenshots}장, A4 PDF ${pdfs}개`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

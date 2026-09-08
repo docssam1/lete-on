@@ -192,7 +192,7 @@ assert(baseStairRelations.exposed === 72, "예제 3-4 좌표 모델의 노출면
 assert(baseStairRelations.adjacentPairs === 54, "예제 3-4 좌표 모델의 인접쌍이 54개가 아닙니다.");
 assert(baseStairRelations.sharedFaceSides === 108, "예제 3-4 좌표 모델의 안쪽 공유면이 108개가 아닙니다.");
 assert(readiness.items.filter(item => publicIds.includes(item.sourceItemId)).length === 9, "공개 E3 대상이 9개가 아닙니다.");
-assert(readiness.items.filter(item => item.sourceItemId.endsWith("mission-1") || item.sourceItemId.endsWith("mission-3")).every(item => item.publicDecision === "locked" && item.implementationStatus === "review-locked"), "Mission 1·3 잠금 계약이 바뀌었습니다.");
+assert(readiness.items.filter(item => item.sourceItemId === "6-1-u6-e3-mission-1" || item.sourceItemId === "6-1-u6-e3-mission-3").every(item => item.publicDecision === "locked" && item.implementationStatus === "review-locked"), "Mission 1·3 잠금 계약이 바뀌었습니다.");
 
 const api = loadGenerators();
 assert(api.names.includes("sourceGrade6VolumeSurfaceE3"), "직육면체 부피·겉넓이 E3 생성기가 등록되지 않았습니다.");
