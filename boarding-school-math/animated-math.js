@@ -127,10 +127,12 @@
       elements.clinic.replaceChildren();
       return;
     }
+    const workbookCount=route.workbook.itemCount||12;
+    const recheckCount=route.workbook.recheckCount||4;
     const copy = {
-      en: { eyebrow: "DIAGNOSTIC CLINIC", title: "Visual lesson for " + requestedClusterId, body: "Continue with the reviewed 12-item workbook. The four-item recheck opens after accurate completion.", back: "Back to concept", workbook: "Open workbook" },
-      ko: { eyebrow: "진단 클리닉", title: requestedClusterId + " 시각 강의", body: "검수된 12문항 워크북으로 이어서 연습하세요. 4문항 재확인은 정확히 완료한 뒤 열립니다.", back: "개념으로 돌아가기", workbook: "워크북 시작" },
-      zh: { eyebrow: "诊断学习路径", title: requestedClusterId + " 可视化课程", body: "继续完成已审核的12题练习册。全部答对后开放4题复测。", back: "返回概念", workbook: "开始练习册" }
+      en: { eyebrow: "DIAGNOSTIC CLINIC", title: "Visual lesson for " + requestedClusterId, body: "Continue with the reviewed "+workbookCount+"-item workbook. The "+recheckCount+"-item recheck opens after accurate completion.", back: "Back to concept", workbook: "Open workbook" },
+      ko: { eyebrow: "진단 클리닉", title: requestedClusterId + " 시각 강의", body: "검수된 "+workbookCount+"문항 워크북으로 이어서 연습하세요. "+recheckCount+"문항 재확인은 정확히 완료한 뒤 열립니다.", back: "개념으로 돌아가기", workbook: "워크북 시작" },
+      zh: { eyebrow: "诊断学习路径", title: requestedClusterId + " 可视化课程", body: "继续完成已审核的"+workbookCount+"题练习册。全部答对后开放"+recheckCount+"题复测。", back: "返回概念", workbook: "开始练习册" }
     }[locale];
     const textWrap = document.createElement("div");
     const eyebrow = document.createElement("span");

@@ -61,7 +61,9 @@ test("ratio diagnosis opens the exact concept and animated clinic path", async f
   assert.equal(await page.locator("#clinic-context").isVisible(), true);
   assert.match(await page.locator("#clinic-context strong").innerText(), /6\.RP\.A/);
   assert.equal(await page.locator('#clinic-context a[href*="concept-learning.html"]').getAttribute("href"), "./concept-learning.html?cluster=6.RP.A&from=diagnostic");
-  assert.equal(await page.locator('[data-clinic-action="workbook"]').getAttribute("href"), "./clinic-practice.html?cluster=6.RP.A&mode=workbook&audience=student&locale=ko");
+  assert.equal(await page.locator('[data-clinic-action="workbook"]').getAttribute("href"), "./unit-workbook.html?cluster=6.RP.A&mode=workbook&audience=student&locale=ko");
+  assert.match(await page.locator("#clinic-context").innerText(),/36문항 워크북/);
+  assert.match(await page.locator("#clinic-context").innerText(),/8문항 재확인/);
   assert.deepEqual(errors, []);
   await page.close();
 });

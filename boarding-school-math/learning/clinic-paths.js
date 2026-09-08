@@ -15,15 +15,15 @@
     "6.G.A": Object.freeze({ lessonId: "coordinate-l-shape-area", labelKo: "좌표 도형 분해 넓이 강의", locale: "ko" })
   });
   const WORKBOOK_BY_CLUSTER = Object.freeze({
-    "6.RP.A": Object.freeze({ packId: "gfield-grade6-rp-a-clinic-v1", labelKo: "비·비율 12문항 클리닉" }),
-    "6.NS.A": Object.freeze({ packId: "gfield-grade6-ns-a-clinic-v1", labelKo: "분수 나눗셈 12문항 클리닉" }),
-    "6.NS.B": Object.freeze({ packId: "gfield-grade6-ns-b-clinic-v1", labelKo: "수 체계 계산 12문항 클리닉" }),
-    "6.NS.C": Object.freeze({ packId: "gfield-grade6-ns-c-clinic-v1", labelKo: "음수·좌표평면 12문항 클리닉" }),
-    "6.EE.A": Object.freeze({ packId: "gfield-grade6-ee-a-clinic-v1", labelKo: "식의 구조와 동치식 12문항 클리닉" }),
-    "6.EE.B": Object.freeze({ packId: "gfield-grade6-ee-b-clinic-v1", labelKo: "방정식과 부등식 12문항 클리닉" }),
-    "6.EE.C": Object.freeze({ packId: "gfield-grade6-ee-c-clinic-v1", labelKo: "변수 관계 12문항 클리닉" }),
-    "6.G.A": Object.freeze({ packId: "gfield-grade6-g-a-clinic-v1", labelKo: "기하 측정 12문항 클리닉" }),
-    "6.SP.A": Object.freeze({ packId: "gfield-grade6-sp-a-unit-workbook-v1", labelKo: "자료를 모아 답하는 질문과 자료의 분포 단원 워크북", delivery: "unit-workbook" })
+    "6.RP.A": Object.freeze({ packId: "gfield-grade6-rp-a-unit-workbook-v1", labelKo: "비와 비율 36문항 단원 워크북", delivery: "unit-workbook", itemCount:36, recheckCount:8 }),
+    "6.NS.A": Object.freeze({ packId: "gfield-grade6-ns-a-clinic-v1", labelKo: "분수 나눗셈 12문항 클리닉", itemCount:12, recheckCount:4 }),
+    "6.NS.B": Object.freeze({ packId: "gfield-grade6-ns-b-clinic-v1", labelKo: "수 체계 계산 12문항 클리닉", itemCount:12, recheckCount:4 }),
+    "6.NS.C": Object.freeze({ packId: "gfield-grade6-ns-c-clinic-v1", labelKo: "음수·좌표평면 12문항 클리닉", itemCount:12, recheckCount:4 }),
+    "6.EE.A": Object.freeze({ packId: "gfield-grade6-ee-a-clinic-v1", labelKo: "식의 구조와 동치식 12문항 클리닉", itemCount:12, recheckCount:4 }),
+    "6.EE.B": Object.freeze({ packId: "gfield-grade6-ee-b-clinic-v1", labelKo: "방정식과 부등식 12문항 클리닉", itemCount:12, recheckCount:4 }),
+    "6.EE.C": Object.freeze({ packId: "gfield-grade6-ee-c-clinic-v1", labelKo: "변수 관계 12문항 클리닉", itemCount:12, recheckCount:4 }),
+    "6.G.A": Object.freeze({ packId: "gfield-grade6-g-a-clinic-v1", labelKo: "기하 측정 12문항 클리닉", itemCount:12, recheckCount:4 }),
+    "6.SP.A": Object.freeze({ packId: "gfield-grade6-sp-a-unit-workbook-v1", labelKo: "자료를 모아 답하는 질문과 자료의 분포 단원 워크북", delivery: "unit-workbook", itemCount:36, recheckCount:8 })
   });
   const COMPLETION_PREFIX = "gfield-clinic-workbook:";
 
@@ -39,7 +39,8 @@
   }
 
   function completionKey(clusterId) {
-    return COMPLETION_PREFIX + safeCluster(clusterId) + ":v1";
+    const cluster = safeCluster(clusterId);
+    return (cluster === "6.RP.A" ? "gfield-unit-workbook:" : COMPLETION_PREFIX) + cluster + ":v1";
   }
 
   function workbookUrl(clusterId, mode, audience, locale) {
@@ -69,13 +70,16 @@
         state: "available",
         packId: workbook.packId,
         delivery: workbook.delivery || "clinic-practice",
+        itemCount: workbook.itemCount,
+        recheckCount: workbook.recheckCount,
         labelKo: workbook.labelKo,
         url: workbookUrl(cluster, "workbook", "student", "ko"),
         teacherUrl: workbookUrl(cluster, "workbook", "teacher", "ko")
       }) : Object.freeze({ state: "review-pending", packId: "", labelKo: "맞춤 워크북 검수 대기", url: "", teacherUrl: "" }),
       recheck: workbook && workbookCompleted ? Object.freeze({
         state: "available",
-        labelKo: workbook.delivery === "unit-workbook" ? "5영역 재확인" : "4영역 재확인",
+        labelKo: workbook.recheckCount + "문항 재확인",
+        itemCount: workbook.recheckCount,
         url: workbookUrl(cluster, "recheck", "student", "ko")
       }) : Object.freeze({ state: workbook ? "locked-after-learning" : "review-pending", labelKo: workbook ? "재확인 · 워크북 완료 후" : "재확인 검수 대기", url: "" })
     });
@@ -94,5 +98,5 @@
     return true;
   }
 
-  return Object.freeze({ schemaVersion: 8, animatedByCluster: ANIMATED_BY_CLUSTER, workbookByCluster: WORKBOOK_BY_CLUSTER, conceptUrl: conceptUrl, workbookUrl: workbookUrl, completionKey: completionKey, routeFor: routeFor, validateAnimatedMapping: validateAnimatedMapping });
+  return Object.freeze({ schemaVersion: 9, animatedByCluster: ANIMATED_BY_CLUSTER, workbookByCluster: WORKBOOK_BY_CLUSTER, conceptUrl: conceptUrl, workbookUrl: workbookUrl, completionKey: completionKey, routeFor: routeFor, validateAnimatedMapping: validateAnimatedMapping });
 });

@@ -86,12 +86,15 @@
     return node;
   }
   function workbookComplete() {
-    try { return window.localStorage.getItem(paths.completionKey(state.cluster)) === "complete-v1"; }
+    try { return window.localStorage.getItem("gfield-clinic-workbook:"+state.cluster+":v1") === "complete-v1"; }
     catch (error) { return false; }
   }
   function markWorkbookComplete() {
-    try { window.localStorage.setItem(paths.completionKey(state.cluster), "complete-v1"); }
+    try { window.localStorage.setItem("gfield-clinic-workbook:"+state.cluster+":v1", "complete-v1"); }
     catch (error) { /* completion remains available for this page session */ }
+  }
+  function clinicUrl(mode, audience, locale) {
+    return "./clinic-practice.html?"+new URLSearchParams({cluster:state.cluster,mode:mode,audience:audience,locale:locale}).toString();
   }
   function setUrl(next) {
     Object.assign(state, next);
@@ -298,7 +301,7 @@
     const card = el("section", "lock-card");
     card.append(el("p", "eyebrow", state.cluster + " · " + c.recheck), el("h2", "", c.lockedTitle), el("p", "", c.lockedBody));
     const link = el("a", "primary-action", c.goWorkbook);
-    link.href = paths.workbookUrl(state.cluster, "workbook", "student", state.locale);
+    link.href = clinicUrl("workbook", "student", state.locale);
     card.append(link);
     return card;
   }
@@ -323,7 +326,7 @@
       if (state.mode === "workbook") {
         completion.append(el("h2", "", copy().completeTitle), el("p", "", copy().completeBody));
         const link = el("a", "primary-action", copy().goRecheck);
-        link.href = paths.workbookUrl(state.cluster, "recheck", "student", state.locale);
+        link.href = clinicUrl("recheck", "student", state.locale);
         completion.append(link);
       }
       host.append(progress, completion);
