@@ -21,7 +21,7 @@ test("all reviewed Grade 6 clusters receive a private-data-free concept route", 
 });
 
 test("reviewed clusters open workbooks with completion-gated rechecks", function () {
-  ["6.RP.A", "6.NS.A", "6.NS.B", "6.NS.C", "6.EE.A", "6.EE.B", "6.EE.C", "6.G.A"].forEach(function (cluster) {
+  ["6.NS.A", "6.NS.B", "6.NS.C", "6.EE.A", "6.EE.B", "6.EE.C", "6.G.A"].forEach(function (cluster) {
     const before = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: false });
     assert.equal(before.workbook.state, "available");
     assert.equal(before.workbook.url, `./clinic-practice.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
@@ -47,7 +47,16 @@ test("reviewed clusters open workbooks with completion-gated rechecks", function
   assert.equal(statistics.workbook.url, "./unit-workbook.html?cluster=6.SP.A&mode=workbook&audience=student&locale=ko");
   assert.equal(statistics.workbook.teacherUrl, "./unit-workbook.html?cluster=6.SP.A&mode=workbook&audience=teacher&locale=ko");
   assert.equal(statistics.recheck.url, "./unit-workbook.html?cluster=6.SP.A&mode=recheck&audience=student&locale=ko");
-  assert.equal(statistics.recheck.labelKo, "5영역 재확인");
+  assert.equal(statistics.recheck.labelKo, "8문항 재확인");
+
+  const ratioUnit = paths.routeFor("6.RP.A", { workbookCompleted: true });
+  assert.equal(ratioUnit.workbook.packId, "gfield-grade6-rp-a-unit-workbook-v1");
+  assert.equal(ratioUnit.workbook.delivery, "unit-workbook");
+  assert.equal(ratioUnit.workbook.itemCount, 36);
+  assert.equal(ratioUnit.workbook.recheckCount, 8);
+  assert.equal(paths.completionKey("6.RP.A"), "gfield-unit-workbook:6.RP.A:v1");
+  assert.equal(ratioUnit.workbook.url, "./unit-workbook.html?cluster=6.RP.A&mode=workbook&audience=student&locale=ko");
+  assert.equal(ratioUnit.recheck.url, "./unit-workbook.html?cluster=6.RP.A&mode=recheck&audience=student&locale=ko");
 });
 
 test("only exact cluster matches open reviewed animated clinic lessons", function () {

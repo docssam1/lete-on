@@ -7,6 +7,7 @@ const fs=require("node:fs");
 const path=require("node:path");
 const {chromium}=require("playwright");
 const workbookSource=require("../learning/grade6-sp-a-unit-workbook.js");
+const ratioSource=require("../learning/grade6-rp-a-unit-workbook.js");
 const root=path.resolve(__dirname,"..","..");
 let server,browser,baseUrl;
 function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";if(file.endsWith(".css"))return"text/css; charset=utf-8";if(file.endsWith(".js"))return"text/javascript; charset=utf-8";return"application/octet-stream";}
@@ -40,6 +41,62 @@ test("student edition renders a 12-page, 36-item answer-free book",async functio
   const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});
   assert.deepEqual(overflow,[]);
   assert.deepEqual(errors,[]);await page.close();
+});
+
+test("ratio student edition is a 36-item printable unit with exact-response inputs",async function(){
+  const context=await browser.newContext({viewport:{width:1280,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});
+  await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator(".book-page").count(),12);
+  assert.equal(await page.locator(".book-problem").count(),36);
+  assert.equal(await page.locator(".answer-input").count(),36);
+  assert.equal(await page.locator(".choice-button,.teacher-key,.teacher-move").count(),0);
+  assert.equal(await page.locator("h1").innerText(),"6.RP.A 비와 비율 단원 워크북");
+  assert.match(await page.locator("main").innerText(),/단위율과 같은 비로 구하기/);
+  assert.doesNotMatch(await page.locator("main").innerText(),/비례값/);
+  assert.match(await page.locator(".scope-notice").innerText(),/전체 숙달·배치·승급을 결정하지 않습니다/);
+  assert.match(await page.locator(".reflection-box").innerText(),/내가 설명하는 비와 단위율/);
+  const first=page.locator('[data-item-id="rpa-w01"]');
+  await first.locator(".answer-input").fill("21");await first.locator(".check-button").click();assert.equal(await first.locator(".choice-feedback.wrong").count(),1);
+  await first.locator(".answer-input").fill("20");await first.locator(".check-button").click();assert.equal(await first.locator(".choice-feedback.correct").count(),1);
+  assert.equal(await page.locator("#progress-chip").innerText(),"1 / 36");
+  await page.emulateMedia({media:"print"});
+  assert.equal(await page.locator(".screen-answer").first().evaluate(function(node){return getComputedStyle(node).display;}),"none");
+  assert.equal(await page.locator(".print-answer-line").first().evaluate(function(node){return getComputedStyle(node).display;}),"block");
+  const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});
+  assert.deepEqual(overflow,[]);
+  assert.deepEqual(errors,[]);await context.close();
+});
+
+test("all 36 ratio responses unlock only the new 8-item recheck",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});
+  for(const item of ratioSource.pack.workbookItems){const card=page.locator(`[data-item-id="${item.id}"]`);await card.locator(".answer-input").fill(ratioSource.formatResult(item));await card.locator(".check-button").click();}
+  assert.equal(await page.locator("#progress-chip").innerText(),"36 / 36");
+  assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-unit-workbook:6.RP.A:v1");}),"complete-v1");
+  assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-clinic-workbook:6.RP.A:v1");}),null);
+  assert.equal(await page.locator('[data-mode="recheck"]').isEnabled(),true);
+  await page.locator('[data-mode="recheck"]').click();
+  assert.equal(await page.locator(".book-problem").count(),8);
+  assert.equal(await page.locator(".answer-input").count(),8);
+  assert.equal(await page.locator("#progress-chip").innerText(),"0 / 8");
+  assert.deepEqual(errors,[]);await context.close();
+});
+
+test("ratio Chinese teacher guide keeps answers separate from the student edition",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator(".book-page").count(),20);
+  assert.equal(await page.locator(".book-problem").count(),36);
+  assert.equal(await page.locator(".teacher-key").count(),36);
+  assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);
+  assert.equal(await page.locator("h1").innerText(),"6.RP.A 比与比率单元练习册");
+  assert.match(await page.locator("main").innerText(),/单位率与按比例求值/);
+  assert.doesNotMatch(await page.locator("main").innerText(),/比例值/);
+  assert.match(await page.locator(".teacher-observation").innerText(),/表格、比率条或双数轴/);
+  await page.emulateMedia({media:"print"});
+  const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});
+  assert.deepEqual(overflow,[]);assert.deepEqual(errors,[]);await page.close();
 });
 
 test("all 36 verified responses unlock only the separate recheck route",async function(){
@@ -125,5 +182,20 @@ test("curriculum-specific Grade 6 wording renders cleanly in every locale",async
 
 test("mobile and A4 or Letter print layouts stay within their intended width",async function(){
   for(const width of [320,390]){const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});const dimensions=await page.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];});assert.deepEqual(dimensions,[width,width]);assert.equal(await page.locator(".site-header nav").evaluate(function(node){return getComputedStyle(node).display;}),"none");assert.equal(await page.locator(".workbook-toolbar").evaluate(function(node){return getComputedStyle(node).position;}),"static");const targets=await page.locator("button,select,.brand").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).map(function(node){const box=node.getBoundingClientRect();return[box.width,box.height];});});targets.forEach(function(size){assert.ok(size[0]>=44);assert.ok(size[1]>=44);});assert.deepEqual(errors,[]);await page.close();}
-  for(const paper of ["A4","Letter"]){const page=await browser.newPage({viewport:{width:794,height:1123}});await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=${paper}`,{waitUntil:"networkidle"});await page.emulateMedia({media:"print"});const box=await page.locator(".book-page").first().evaluate(function(node){const style=getComputedStyle(node);return{width:parseFloat(style.width),height:parseFloat(style.height)};});if(paper==="A4"){assert.ok(box.width>790&&box.width<797);assert.ok(box.height>1115&&box.height<1122);}else{assert.ok(box.width>813&&box.width<820);assert.ok(box.height>1046&&box.height<1054);}const columns=await page.locator(".problem-list").first().evaluate(function(node){return getComputedStyle(node).gridTemplateColumns.split(" ").length;});assert.equal(columns,2);const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});assert.deepEqual(overflow,[],JSON.stringify(overflow));assert.match(await page.locator("#dynamic-page-size").textContent(),new RegExp("size: "+paper));assert.equal(await page.locator(".teacher-key").count(),0);await page.close();}
+  for(const paper of ["A4","Letter"]){const page=await browser.newPage({viewport:{width:794,height:1123}});await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=${paper}`,{waitUntil:"networkidle"});await page.emulateMedia({media:"print"});const box=await page.locator(".book-page").first().evaluate(function(node){const style=getComputedStyle(node);return{width:parseFloat(style.width),height:parseFloat(style.height)};});if(paper==="A4"){assert.ok(box.width>790&&box.width<797);assert.ok(box.height>1121&&box.height<1124);}else{assert.ok(box.width>814&&box.width<818);assert.ok(box.height>1054&&box.height<1058);}const columns=await page.locator(".problem-list").first().evaluate(function(node){return getComputedStyle(node).gridTemplateColumns.split(" ").length;});assert.equal(columns,2);const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});assert.deepEqual(overflow,[],JSON.stringify(overflow));assert.match(await page.locator("#dynamic-page-size").textContent(),new RegExp("size: "+paper));assert.equal(await page.locator(".teacher-key").count(),0);await page.close();}
+});
+
+test("ratio workbook stays usable at 320px and 390px",async function(){
+  for(const width of [320,390]){
+    const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});
+    const errors=errorsFor(page);
+    await page.goto(`${baseUrl}?cluster=6.RP.A&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});
+    const dimensions=await page.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];});
+    assert.deepEqual(dimensions,[width,width]);
+    assert.equal(await page.locator(".answer-input").count(),36);
+    const targets=await page.locator("button,select,input,.brand").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).map(function(node){const box=node.getBoundingClientRect();return[box.width,box.height];});});
+    targets.forEach(function(size){assert.ok(size[0]>=44);assert.ok(size[1]>=44);});
+    assert.deepEqual(errors,[]);
+    await page.close();
+  }
 });

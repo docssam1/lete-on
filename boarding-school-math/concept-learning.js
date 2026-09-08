@@ -244,7 +244,7 @@
       recheckLink.dataset.clinicAction = "recheck";
       recheck.append(recheckLink);
     } else {
-      recheck.append(element("small", "", route.recheck.state === "locked-after-learning" ? "워크북 12문항 완료 후 열림" : "문항 검수 대기"));
+      recheck.append(element("small", "", route.recheck.state === "locked-after-learning" ? "워크북 "+route.workbook.itemCount+"문항 완료 후 열림" : "문항 검수 대기"));
     }
     steps.append(analysis, conceptStep, animation, workbook, recheck);
     section.append(steps);
