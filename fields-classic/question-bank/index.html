@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f3f7fa" />
   <title>필즈 더 클래식 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=20260902a" />
+  <link rel="stylesheet" href="./styles.css?v=20260908a" />
 </head>
 <body>
   <header class="app-header">
@@ -30,9 +30,9 @@
       </div>
 
       <div class="bank-search" role="search">
-        <label for="bankSearch"><span aria-hidden="true">⌕</span><input id="bankSearch" type="search" autocomplete="off" placeholder="낱말이나 단원을 검색하세요" /></label>
+        <label for="bankSearch"><span aria-hidden="true">⌕</span><input id="bankSearch" type="search" autocomplete="off" placeholder="낱말이나 단원을 검색하세요" aria-label="낱말이나 단원 검색" aria-describedby="bankSearchStatus" /></label>
         <button id="clearBankSearch" type="button" aria-label="검색어 지우기" hidden>×</button>
-        <small id="bankSearchStatus">낱말·권·단원·유형·대표 개념 검색</small>
+        <small id="bankSearchStatus" role="status">낱말·권·단원·유형·대표 개념 검색</small>
       </div>
 
       <div class="builder-body">
@@ -66,7 +66,7 @@
           </section>
         </div>
 
-        <aside class="settings-pane">
+        <aside class="settings-pane" id="bankSettings" aria-label="문제 구성 설정" tabindex="-1">
           <section class="setting-block">
             <div class="setting-title"><strong>문제 수</strong><span>최대 50문제</span></div>
             <div class="choice-grid count-choices" id="countChoices"><button data-count="10">10</button><button data-count="15">15</button><button data-count="20" class="active">20</button><button data-count="25">25</button><button data-count="30">30</button></div>
@@ -94,9 +94,12 @@
             <label class="switch-row"><span>풀이 핵심 포함</span><input id="solutionToggle" type="checkbox" checked /></label>
             <label class="switch-row"><span>이름 워터마크</span><input id="watermarkToggle" type="checkbox" checked /></label>
           </section>
-          <div class="selection-total"><span>선택 결과</span><strong id="selectionTotal">0개 유형 · 20문제</strong><small id="selectionHelp">왼쪽에서 시험 문항이나 유형을 선택하세요.</small></div>
-          <button id="buildButton" class="next-button" type="button" disabled>문제 구성 확인</button>
         </aside>
+      </div>
+      <div class="selection-dock" aria-label="선택 요약과 문제 구성">
+        <div class="selection-total"><span>구성 예정</span><strong id="selectionTotal" role="status">0개 유형 · 20문제</strong><small id="selectionHelp">왼쪽에서 시험 문항이나 유형을 선택하세요.</small></div>
+        <a class="settings-jump" href="#bankSettings">구성 설정</a>
+        <button id="buildButton" class="next-button" type="button" disabled>문제 구성 확인</button>
       </div>
     </section>
 
@@ -119,6 +122,6 @@
   <script src="../../geometry/worksheet/generators.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/render.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/card.js?v=20260829g"></script>
-  <script type="module" src="./app.js?v=20260905d"></script>
+  <script type="module" src="./app.js?v=20260908c"></script>
 </body>
 </html>

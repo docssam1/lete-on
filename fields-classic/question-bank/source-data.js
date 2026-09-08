@@ -1,4 +1,5 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
+import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
 // id는 URL 파라미터와 EXAMS의 stage 참조에 쓰이므로 바꾸지 않는다.
@@ -3876,6 +3877,7 @@ export const CURRICULUM_REVIEW_CROSSWALK = Object.freeze({
 });
 
 const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
+  ...BOOK01_02_UNIT_TEST_LINKS,
   "book-03": Object.freeze([
     { number: 1, typeId: "unit-grid-area", label: "모눈 도형의 넓이", verified: true, difficulty: 2 },
     { number: 2, typeId: "nested-square-outer-area", label: "커지는 정사각형 넓이의 합", verified: true, difficulty: 1 },
@@ -4400,6 +4402,7 @@ const sourceQuestionRecord = (sourceKind, sourceId, sourceLabel, entry, extra = 
     verified: entry.verified === true,
     sourceFidelity: entry.sourceFidelity || "classified",
     sourceVisualSignature: entry.sourceVisualSignature || null,
+    ...(entry.reason ? { reviewReason: entry.reason } : {}),
     classification: entry.classification || classifications[0],
     classifications: Object.freeze(classifications),
     ...extra

@@ -12,6 +12,7 @@ const SHAPES = Object.freeze({
 
 function token(value, options = {}) {
   if (value == null || value === "?") return '<span class="b2-token blank" aria-label="빈칸">?</span>';
+  if (value === "cross") return '<span class="b2-token shape cross-shape" role="img" aria-label="십자"></span>';
   const raw = SHAPES[value] || value;
   const shape = Object.hasOwn(SHAPES, value) || /^[○●□■△▲◇◆☆★♡♥]$/u.test(String(raw));
   return `<span class="b2-token${shape ? " shape" : ""}${options.known ? " known" : ""}">${esc(raw)}</span>`;

@@ -23,6 +23,16 @@ const warn = (category, message) => warnings.push({ category, message });
 const list = (value) => [...new Set(value)].sort();
 const keyFor = (sourceKind, sourceId, number) => `${sourceKind}:${sourceId}:q${number}`;
 const typeIdsFor = (entry) => list(entry.typeIds || [entry.typeId, ...(entry.relatedTypeIds || [])].filter(Boolean));
+const isUnclassifiedHold = (record) => record.sourceKind === "unit-test"
+  && record.verified === false && Array.isArray(record.typeIds) && record.typeIds.length === 0
+  && typeof record.reviewReason === "string" && record.reviewReason.trim().length > 0;
+const heldProbe = { sourceKind: "unit-test", verified: false, typeIds: [], reviewReason: "source review pending" };
+if (!isUnclassifiedHold(heldProbe) || [
+  { verified: true }, { verified: undefined }, { reviewReason: " " },
+  { sourceKind: "textbook" }, { typeIds: undefined }, { typeIds: ["some-type"] }
+].some((change) => isUnclassifiedHold({ ...heldProbe, ...change }))) {
+  fail("보류 계약", "유형 미분류 예외는 사유가 있는 미검증 단원 테스트에만 허용해야 합니다.");
+}
 const referenceNumbers = (reference) => reference.numbers
   || Array.from({ length: reference.to - (reference.from || 1) + 1 }, (_, index) => (reference.from || 1) + index);
 const expectedRecordKey = (bookId, unitIndex, stageId, reference, number) =>
@@ -80,6 +90,8 @@ for (const book of CURRICULUM) {
         sourceLabel: `${book.label} 단원 테스트`,
         number: entry.number,
         typeIds: typeIdsFor(entry),
+        verified: entry.verified,
+        reviewReason: entry.reason || null,
         path: `${book.label} 단원 테스트 ${entry.number}번`
       });
     }
@@ -148,7 +160,7 @@ for (const [sourceKey, records] of expectedByKey) {
     fail("원본 중복 sourceKey", `${sourceKey}: ${records.map((record) => record.path).join(" | ")} / 유형 ${assignments.join(", ") || "없음"}`);
   }
   const typeIds = list(records.flatMap((record) => record.typeIds));
-  if (typeIds.length === 0) fail("원본 유형 누락", `${sourceKey}: 원본 참조 문항에 typeId가 없습니다.`);
+  if (typeIds.length === 0 && !records.every(isUnclassifiedHold)) fail("원본 유형 누락", `${sourceKey}: 원본 참조 문항에 typeId가 없습니다.`);
 }
 
 const indexByKey = new Map();
@@ -188,6 +200,7 @@ const routeForType = (typeId) => {
 
 for (const record of SOURCE_QUESTION_INDEX) {
   for (const field of requiredRecordFields) {
+    if (isUnclassifiedHold(record) && ["typeId", "classification"].includes(field)) continue;
     if (record[field] === undefined || record[field] === null || record[field] === "") {
       fail("필수 메타데이터", `${record.sourceKey}: ${field} 누락`);
     }
@@ -196,7 +209,7 @@ for (const record of SOURCE_QUESTION_INDEX) {
   if (!["classified", "exact-generator"].includes(record.sourceFidelity)) fail("원본 재현 수준", `${record.sourceKey}: ${record.sourceFidelity}`);
   if (record.sourceFidelity === "exact-generator" && !record.sourceVisualSignature) fail("원본 시각 서명", `${record.sourceKey}: exact-generator인데 sourceVisualSignature가 없습니다.`);
   if (!Number.isInteger(record.number) || record.number < 1) fail("문항번호", `${record.sourceKey}: 잘못된 number ${record.number}`);
-  if (!Array.isArray(record.typeIds) || record.typeIds.length === 0) fail("세부유형", `${record.sourceKey}: typeIds가 비어 있습니다.`);
+  if (!Array.isArray(record.typeIds) || (record.typeIds.length === 0 && !isUnclassifiedHold(record))) fail("세부유형", `${record.sourceKey}: typeIds가 비어 있습니다.`);
   const recordTypeIds = list(record.typeIds || []);
   if (record.typeId !== record.typeIds?.[0]) fail("대표 세부유형", `${record.sourceKey}: typeId와 typeIds[0]이 다릅니다.`);
   for (const typeId of recordTypeIds) {

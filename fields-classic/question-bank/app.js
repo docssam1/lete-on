@@ -1,7 +1,8 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260902b";
-import { GENERATORS } from "./generators.js?v=20260827e";
+import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260906a";
+import { GENERATORS } from "./generators.js?v=20260908a";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260829f";
+import { book02Markup } from "./book02-renderers.js?v=20260907a";
 import { book03Markup } from "./book03-renderers.js?v=20260827b";
 import { book04Markup } from "./book04-renderers.js?v=20260905d";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
@@ -204,11 +205,59 @@ function ensureTypePreviewPanel() {
   return typePreviewPanel;
 }
 
-function previewProblem(item) {
+function unitTestPreviewContext(anchor) {
+  const key = anchor?.dataset.previewUnitTestKey;
+  if (!key) return null;
+  const separator = key.lastIndexOf(":");
+  const bookId = key.slice(0, separator);
+  const number = Number(key.slice(separator + 1));
+  const book = CURRICULUM.find((entry) => entry.id === bookId);
+  const question = book?.source.unitTestQuestions?.find((entry) => entry.number === number);
+  if (!book || !question?.verified) return null;
+  const matrixConcepts = {
+    1: {
+      label: "같은 도형 3개인 줄부터 값 찾기",
+      summary: "같은 네모 3개의 세로 합을 똑같이 나누어 네모의 값을 먼저 찾습니다.",
+      principle: "네모를 찾은 뒤 가로줄의 합을 이용해 마름모와 세모, 동그라미를 차례로 찾습니다."
+    },
+    2: {
+      label: "같은 도형 4개인 줄부터 값 찾기",
+      summary: "같은 동그라미 4개의 세로 합을 똑같이 나누어 동그라미의 값을 먼저 찾습니다.",
+      principle: "동그라미를 찾은 뒤 이미 아는 도형을 빼면서 네모, 마름모, 세모의 값을 이어 찾습니다."
+    },
+    22: {
+      label: "두 가로줄을 비교하고 세로 합 이용하기",
+      summary: "첫째와 셋째 가로줄의 합을 비교해 네모와 동그라미의 값을 먼저 찾습니다.",
+      principle: "찾은 두 도형의 값을 각 세로줄에 넣어 십자, 마름모, 세모를 차례로 구합니다."
+    }
+  };
+  return {
+    cacheKey: key,
+    reference: `${book.label} 단원 테스트 ${number}번 · ${question.label}`,
+    fixedSeed: `preview:unit-test:${key}`,
+    difficulty: question.difficulty || 2,
+    classification: question.classification,
+    generationCase: generationCaseForSource("unit-test", bookId, number),
+    label: question.label,
+    concept: bookId === "book-02" ? matrixConcepts[number] || null : null
+  };
+}
+
+function previewProblem(item, anchor = null) {
+  const source = unitTestPreviewContext(anchor);
   const levelKey = state.mode === "curriculum" ? `curriculum:${state.curriculumStage}` : `source:${state.difficulty}`;
-  const key = `${item.id}:${levelKey}`;
+  const key = `${item.id}:${levelKey}:${source?.cacheKey || "type"}`;
   if (!typePreviewCache.has(key)) {
-    typePreviewCache.set(key, generatedProblem(item, 0, "유형 예시", `preview:${item.id}`, 0));
+    typePreviewCache.set(key, generatedProblem(
+      item,
+      0,
+      source?.reference || "유형 예시",
+      source?.fixedSeed || `preview:${item.id}`,
+      0,
+      source?.difficulty || null,
+      source?.classification || null,
+      source?.generationCase || null
+    ));
   }
   return typePreviewCache.get(key);
 }
@@ -249,15 +298,17 @@ function showTypePreview(anchor) {
   if (!item || !isSelectableType(item)) return;
   clearTimeout(typePreviewHideTimer);
   const panel = ensureTypePreviewPanel();
-  const problem = previewProblem(item);
+  const problem = previewProblem(item, anchor);
   if (!problem) {
     hideTypePreview();
     return;
   }
   const domain = DOMAINS.find((entry) => entry.id === item.domain);
-  const representativeConcept = representativeConceptForType(item.id);
+  const sourcePreview = unitTestPreviewContext(anchor);
+  const representativeConcept = sourcePreview?.concept || representativeConceptForType(item.id);
+  const previewLabel = sourcePreview?.label || item.label;
   const isConceptStage = problem.studyStage?.id === "concept";
-  panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${item.label}</strong></div>
+  panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${previewLabel}</strong></div>
     ${problem.studyStage ? `<div class="study-stage-banner ${problem.studyStage.id}"><strong>${problem.studyStage.label}</strong><span>${problem.studyStage.sourceLabel} · ${problem.studyStage.description}</span></div>` : ""}
     ${isConceptStage ? textbookConceptTutorialMarkup(problem, true) : representativeConcept ? `<section class="representative-concept"><strong>대표 개념 · ${representativeConcept.label}</strong><p>${representativeConcept.summary}</p><small>이 유형의 핵심 · ${representativeConcept.principle}</small></section>` : ""}
     ${learningMapPreviewMarkup(item)}
@@ -292,7 +343,21 @@ function initTypePreviews() {
   }, true);
   document.addEventListener("pointerdown", (event) => {
     keyboardPreviewMode = false;
+    if (event.target.closest("[data-touch-preview]")) return;
     if (event.target.closest("[data-preview-type]")) hideTypePreview();
+  }, true);
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-touch-preview]");
+    if (!trigger) return;
+    event.preventDefault();
+    event.stopPropagation();
+    showTypePreview(trigger);
+  }, true);
+  document.addEventListener("keydown", (event) => {
+    const trigger = event.target.closest("[data-touch-preview]");
+    if (!trigger || !["Enter", " "].includes(event.key)) return;
+    event.preventDefault();
+    showTypePreview(trigger);
   }, true);
   document.addEventListener("pointerover", (event) => {
     if (!canHover.matches) return;
@@ -333,6 +398,22 @@ function setMode(mode) {
   if (mode === "curriculum") renderCurriculum();
   if (mode === "type") renderTypeTree();
   updateSummary();
+}
+
+function installTouchPreviewButtons(root) {
+  root.querySelectorAll("label[data-preview-type]").forEach((anchor) => {
+    if (anchor.querySelector("[data-touch-preview]")) return;
+    const trigger = document.createElement("span");
+    trigger.className = "touch-preview-button";
+    trigger.dataset.touchPreview = "true";
+    trigger.dataset.previewType = anchor.dataset.previewType;
+    if (anchor.dataset.previewUnitTestKey) trigger.dataset.previewUnitTestKey = anchor.dataset.previewUnitTestKey;
+    trigger.setAttribute("role", "button");
+    trigger.setAttribute("tabindex", "0");
+    trigger.setAttribute("aria-label", `${typeById(anchor.dataset.previewType)?.label || "문제"} 미리보기`);
+    trigger.textContent = "보기";
+    anchor.append(trigger);
+  });
 }
 
 function typeTaxonomyLabel(item) {
@@ -412,6 +493,7 @@ function renderExamList() {
     const heading = group.label ? `<div class="exam-collection-title"><strong>${group.label}</strong><span>${group.exams.length}개 시험지</span></div>` : "";
     return `<section class="exam-collection">${heading}${group.exams.map(examMarkup).join("")}</section>`;
   }).join("") || `<div class="source-notice">이 시기의 원본 시험지는 아직 등록되지 않았습니다.</div>`;
+  installTouchPreviewButtons($("examTypeList"));
 
   $("examTypeList").querySelectorAll("input[data-exam-key]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.exam.add(input.dataset.examKey);
@@ -549,7 +631,7 @@ function renderCurriculum() {
         const item = typeById(question.typeId);
         const ready = question.verified && isSelectableType(item);
         const key = unitTestKey(book.id, question.number);
-        return `<label class="unit-test-question ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}"` : ""}>
+        return `<label class="unit-test-question ${ready ? "" : "not-ready"}"${ready ? ` data-preview-type="${item.id}" data-preview-unit-test-key="${key}"` : ""}>
           <input type="checkbox" data-unit-test-key="${key}" ${state.selected.unitTest.has(key) ? "checked" : ""} ${ready ? "" : "disabled"} />
           <b>${question.number}번</b><span><strong>${question.label}</strong><small>${item?.middle || "유형 대조 중"}</small></span>
           <em>${ready ? "유사문제 연결" : "원본 구조 재설계 중"}</em>
@@ -573,6 +655,7 @@ function renderCurriculum() {
   }).join("");
   const emptyResult = hasQuery && !bookModels.length ? `<div class="search-empty"><strong>검색 결과가 없습니다.</strong><span>다른 낱말이나 단원 이름으로 찾아보세요.</span></div>` : "";
   $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}${emptyResult}`;
+  installTouchPreviewButtons($("curriculumTree"));
 
   $("curriculumTree").querySelectorAll("button[data-curriculum-book]").forEach((button) => button.addEventListener("click", () => {
     state.curriculumBookId = button.dataset.curriculumBook;
@@ -724,6 +807,7 @@ function renderTypeTree() {
       }).join("")}
     </div></details>`).join("")}
   </details>`).join("") || `<div class="search-empty"><strong>검색 결과가 없습니다.</strong><span>다른 낱말이나 대표 개념으로 찾아보세요.</span></div>`;
+  installTouchPreviewButtons($("bankTypeTree"));
 
   $("bankTypeTree").querySelectorAll("input[data-type-id]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.selected.type.add(input.dataset.typeId);
@@ -1953,10 +2037,16 @@ function g1SourceMarkup(visual) {
   }
   if (visual.kind === "g1-summer-balance-chain") {
     const pieces = (symbol, count, center) => {
-      const spacing = Math.min(20, 54 / Math.max(1, count - 1));
-      return Array.from({ length: count }, (_, index) => `<text x="${center - (count - 1) * spacing / 2 + index * spacing}" y="33">${symbol}</text>`).join("");
+      const row = (rowCount, y, rowName) => {
+        const spacing = 24;
+        const start = center - (rowCount - 1) * spacing / 2;
+        return Array.from({ length: rowCount }, (_, index) => `<text class="balance-piece" data-piece-row="${rowName}" x="${start + index * spacing}" y="${y}">${symbol}</text>`).join("");
+      };
+      if (count < 4) return row(count, 38, "lower");
+      const lowerCount = Math.ceil(count / 2);
+      return `${row(count - lowerCount, 15, "upper")}${row(lowerCount, 45, "lower")}`;
     };
-    const scale = (left, right, label) => `<section><svg viewBox="0 0 220 104" role="img" aria-label="${label} 양팔저울"><line x1="24" y1="62" x2="196" y2="62"/><line x1="110" y1="54" x2="110" y2="87"/><path d="M84 88h52l-12 10H96z"/><ellipse cx="58" cy="55" rx="39" ry="7"/><ellipse cx="162" cy="55" rx="39" ry="7"/>${left}${right}</svg><small>${label}</small></section>`;
+    const scale = (left, right, label) => `<section><svg viewBox="0 -8 220 112" role="img" aria-label="${label} 양팔저울"><line x1="24" y1="62" x2="196" y2="62"/><line x1="110" y1="54" x2="110" y2="87"/><path d="M84 88h52l-12 10H96z"/><ellipse cx="58" cy="55" rx="39" ry="7"/><ellipse cx="162" cy="55" rx="39" ry="7"/>${left}${right}</svg><small>${label}</small></section>`;
     return `<div class="g1-summer-balance">${scale(pieces("○", visual.circles, 58), pieces("□", visual.squares, 162), "[그림 1]")}${scale(pieces("□", 1, 58), pieces("△", visual.triangles, 162), "[그림 2]")}${scale(pieces("○", 1, 58), `<text x="162" y="33" class="target">△ (　)개</text>`, "[그림 3]")}</div>`;
   }
   if (visual.kind === "g1-summer-five-box-weight") {
@@ -2268,45 +2358,28 @@ function foldNumberGridMarkup(visual) {
     for (let k = 1; k < dim.h; k += 1) out += `<line x1="${ox}" y1="${oy + k * cell}" x2="${ox + dim.w * cell}" y2="${oy + k * cell}" stroke="#e0aaa4" stroke-dasharray="3 2"/>`;
     if (showNumbers) {
       for (let r = 0; r < dim.h; r += 1) for (let c = 0; c < dim.w; c += 1) {
-        out += `<text x="${ox + c * cell + cell / 2}" y="${oy + r * cell + cell / 2 + 5}" text-anchor="middle" font-size="15" font-weight="600" fill="#333">${grid[r][c]}</text>`;
+        out += `<text x="${ox + c * cell + cell / 2}" y="${oy + r * cell + cell / 2 + 5}" text-anchor="middle" font-size="18" font-weight="600" fill="#333">${grid[r][c]}</text>`;
       }
     }
     return out;
   };
 
-  let x = 8;
-  const top = 6;
-  let parts = numberGrid(visual.grid, x, top, { w: N, h: N }, true);
-  parts += `<line x1="${x + 2 * cell}" y1="${top}" x2="${x + 2 * cell}" y2="${top + size}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
-  parts += `<line x1="${x}" y1="${top + 2 * cell}" x2="${x + size}" y2="${top + 2 * cell}" stroke="#d4756c" stroke-width="1.6" stroke-dasharray="6 4"/>`;
-  x += size + 14;
-  parts += foldStepArrowSvg(x, top + size / 2);
-  x += 44;
-
-  const midW = visual.hDir === "up" || visual.hDir === "down" ? N : 2;
-  const midH = 2;
-  const midGrid = visual.hDir === "up" ? [visual.grid[0], visual.grid[1]] : [visual.grid[2], visual.grid[3]];
-  parts += numberGrid(midGrid, x, top + cell, { w: N, h: 2 }, false);
-  parts += `<line x1="${x + 2 * cell}" y1="${top + cell}" x2="${x + 2 * cell}" y2="${top + cell + 2 * cell}" stroke="#7ba7bb" stroke-width="1.6" stroke-dasharray="5 4"/>`;
-  x += size + 14;
-  parts += foldStepArrowSvg(x, top + size / 2);
-  x += 44;
-
-  const half = size / 2;
-  parts += numberGrid([[0, 0], [0, 0]], x, top + cell / 2, { w: 2, h: 2 }, false).replace(/width="[\d.]+" height="[\d.]+"/, `width="${half}" height="${half}"`);
-  const cutSet = new Set(visual.cells.map((c) => c.r * 2 + c.c));
-  for (const cell2 of visual.cells) {
-    const cx2 = x + (cell2.c * half) / 2;
-    const cy2 = top + cell / 2 + (cell2.r * half) / 2;
-    parts += `<rect x="${cx2}" y="${cy2}" width="${half / 2}" height="${half / 2}" fill="#b03a5b"/>`;
-  }
-  x += half + 14;
-  parts += foldStepArrowSvg(x, top + size / 2);
-  x += 44;
-
-  parts += numberGrid(visual.grid, x, top, { w: N, h: N }, true);
-
-  return `<svg class="fold-number-svg" viewBox="0 0 ${x + size + 10} ${size + 16}" role="img" aria-label="수가 쓰인 색종이 접기 문제">${parts}</svg>`;
+  const origin = 8;
+  const midY = visual.hDir === "up" ? origin : origin + size / 2;
+  const cutX = visual.vDir === "left" ? origin : origin + size / 2;
+  const first = numberGrid(visual.grid, origin, origin, { w: N, h: N }, true)
+    + `<line x1="${origin}" y1="${origin + size / 2}" x2="${origin + size}" y2="${origin + size / 2}" stroke="#775052" stroke-width="2" stroke-dasharray="5 4"/>`;
+  const second = numberGrid([], origin, midY, { w: N, h: 2 }, false)
+    + `<line x1="${origin + size / 2}" y1="${midY}" x2="${origin + size / 2}" y2="${midY + size / 2}" stroke="#775052" stroke-width="2" stroke-dasharray="5 4"/>`;
+  const third = numberGrid([], cutX, midY, { w: 2, h: 2 }, false)
+    + visual.cells.map(({ r, c }) => `<rect x="${cutX + c * cell}" y="${midY + r * cell}" width="${cell}" height="${cell}" fill="#b03a5b"/>`).join("");
+  const steps = [
+    { label: visual.hDir === "up" ? "아래쪽을 위로 접어요" : "위쪽을 아래로 접어요", picture: first },
+    { label: visual.vDir === "left" ? "오른쪽을 왼쪽으로 접어요" : "왼쪽을 오른쪽으로 접어요", picture: second },
+    { label: "진한 색 부분을 잘라요", picture: third },
+    { label: "펼쳐서 잘린 칸을 찾아요", picture: numberGrid(visual.grid, origin, origin, { w: N, h: N }, true) }
+  ];
+  return `<div class="fold-number-steps" data-fold-horizontal="${visual.hDir}" data-fold-vertical="${visual.vDir}">${steps.map((step, index) => `<figure><figcaption>${index + 1}. ${step.label}</figcaption><svg class="fold-number-svg" viewBox="0 0 ${size + 16} ${size + 16}" role="img" aria-label="${step.label}">${step.picture}</svg></figure>`).join("")}</div>`;
 }
 
 function foldDiagonalGridMarkup(visual) {
@@ -3362,6 +3435,7 @@ function visualMarkup(visual) {
   if (!visual) return "";
   if (visual.kind.startsWith("mock6-")) return `<div class="visual mock06-visual">${mock06Markup(visual)}</div>`;
   if (visual.kind === "book1") return `<div class="visual book01-visual">${book01Markup(visual)}</div>`;
+  if (visual.kind === "book2") return `<div class="visual book02-visual">${book02Markup(visual)}</div>`;
   if (visual.kind === "book3") return `<div class="visual book03-visual">${book03Markup(visual)}</div>`;
   if (visual.kind === "book4") return `<div class="visual book04-visual">${book04Markup(visual)}</div>`;
   if (visual.kind === "book5") return `<div class="visual book05-visual">${book05Markup(visual)}</div>`;
@@ -3521,6 +3595,7 @@ function visualMarkup(visual) {
 
 function worksheetVisualMarkup(question) {
   if (question.image) return `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />`;
+  if (question.visual?.layoutRole === "support" && question.visual.compactPolicy === "omit") return "";
   if (!Array.isArray(question.parts) || question.parts.length <= 1) return visualMarkup(question.visual);
   return `<div class="multi-part-visuals">${question.parts.map((part, index) => {
     const picture = visualMarkup(part.visual);
@@ -3551,7 +3626,10 @@ function renderWorksheet() {
   $("worksheetTitle").textContent = title;
   const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
-    return `<article class="question-card" data-question-index="${index}" data-type-id="${escapeAttribute(question.type.id)}">
+    const visualPolicy = question.visual?.layoutRole === "support"
+      ? `support-${question.visual.compactPolicy || "keep"}`
+      : "required";
+    return `<article class="question-card" data-question-index="${index}" data-type-id="${escapeAttribute(question.type.id)}" data-visual-policy="${visualPolicy}">
       <div class="question-edit-tools" aria-label="${index + 1}번 문항 편집">
         <button type="button" draggable="true" data-drag-handle title="끌어서 순서 변경" aria-label="끌어서 순서 변경">↕</button>
         <button type="button" data-question-action="up" data-question-index="${index}" title="위로 이동" aria-label="위로 이동" ${index === 0 ? "disabled" : ""}>↑</button>

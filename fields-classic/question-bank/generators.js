@@ -10,6 +10,7 @@ import { BOOK08_GENERATORS, BOOK08_UNIT_TEST_GENERATORS } from "./book08-generat
 import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generators.js?v=20260826h";
 import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20260826h";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
+import { book02UnitTestShapeMatrix } from "./book02-unit-test-generators.js?v=20260907a";
 
 const COLORS = ["흰색", "검은색"];
 const SHAPES = ["동그라미", "세모", "네모"];
@@ -1323,7 +1324,14 @@ function totalDifference({ difficulty = 2 }) {
   const sum = older + younger;
   return {
     prompt: `${withOf(pair[0])} ${pair[1]}의 나이의 합은 ${sum}${pair[2]}이고, ${topicOf(pair[0])} ${pair[1]}보다 ${gap}${pair[2]} 더 많습니다. ${topicOf(pair[0])} 몇 ${pair[2]}입니까?`,
-    visual: { kind: "total-difference-bars", total: sum, difference: gap, showHint: difficulty === 1 },
+    visual: {
+      kind: "total-difference-bars",
+      total: sum,
+      difference: gap,
+      showHint: difficulty === 1,
+      layoutRole: "support",
+      compactPolicy: "omit"
+    },
     answer: `${older}${pair[2]}`,
     solution: `합 ${sum}에서 ${objectOf(`차 ${gap}`)} 빼면 ${pair[1]} 나이의 두 배인 ${subjectOf(sum - gap)} 됩니다. ${topicOf(pair[1])} ${younger}${pair[2]}이고 ${topicOf(pair[0])} ${younger} + ${gap} = ${older}${pair[2]}입니다.`,
     meta: { difficulty, sum, gap, older, younger }
@@ -1347,7 +1355,16 @@ function totalDifferenceShare({ difficulty = 2 }) {
   if (agePair) {
     return {
       prompt: `${koreanParticle(agePair[0], "과", "와")} ${agePair[1]}의 나이의 합은 ${total}살인데 ${koreanParticle(agePair[0], "이", "가")} ${agePair[1]}보다 ${difference}살 더 많습니다. ${koreanParticle(agePair[0], "은", "는")} 몇 살입니까?`,
-      visual: { kind: "total-difference-share", total, difference, transfer: 0, afterDifference: 0, showHint: difficulty === 1 },
+      visual: {
+        kind: "total-difference-share",
+        total,
+        difference,
+        transfer: 0,
+        afterDifference: 0,
+        showHint: difficulty === 1,
+        layoutRole: "support",
+        compactPolicy: "omit"
+      },
       answer: `${larger}살`,
       solution: `합 ${total}에서 차 ${difference}를 빼면 ${agePair[1]} 나이의 두 배인 ${total - difference}이 됩니다. ${agePair[1]}은 ${smaller}살이고 ${agePair[0]}은 ${smaller} + ${difference} = ${larger}살입니다.`,
       meta: { difficulty, largerName: agePair[0], smallerName: agePair[1], base, transfer: 0, afterDifference: 0, difference, larger, smaller, total, scenario: "age" }
@@ -1358,7 +1375,16 @@ function totalDifferenceShare({ difficulty = 2 }) {
     : `${total}개의 큐브가 있습니다. ${koreanParticle(largerName, "이", "가")} ${smallerName}보다 큐브를 ${difference}개 더 많이 가지려고 합니다. ${koreanParticle(largerName, "은", "는")} 큐브를 몇 개 가져야 합니까?`;
   return {
     prompt,
-    visual: { kind: "total-difference-share", total, difference, transfer, afterDifference, showHint: difficulty === 1 },
+    visual: {
+      kind: "total-difference-share",
+      total,
+      difference,
+      transfer,
+      afterDifference,
+      showHint: difficulty === 1,
+      layoutRole: "support",
+      compactPolicy: "omit"
+    },
     answer: `${larger}개`,
     solution: `${difficulty === 3 ? `${transfer}개를 주면 두 사람의 차이는 ${transfer * 2}개 줄어드므로, 처음 차이는 ${difference}개입니다. ` : ""}전체에서 차이 ${difference}개를 먼저 떼어 놓으면 ${total - difference}개가 남습니다. 남은 큐브를 똑같이 나누면 한 사람당 ${base}개이고, 더 많이 가진 ${largerName}의 큐브는 ${base}+${difference}=${larger}개입니다.`,
     meta: { difficulty, largerName, smallerName, base, transfer, afterDifference, difference, larger, smaller, total }
@@ -1381,7 +1407,16 @@ function totalDifferenceCandyShare({ difficulty = 2 }) {
     : `${total}개의 사탕이 있습니다. ${koreanParticle(largerName, "이", "가")} ${smallerName}보다 사탕을 ${difference}개 더 많이 가지려고 합니다. ${koreanParticle(largerName, "은", "는")} 사탕을 몇 개 가져야 합니까?`;
   return {
     prompt,
-    visual: { kind: "total-difference-candy", total, difference, transfer, afterDifference, showHint: difficulty === 1 },
+    visual: {
+      kind: "total-difference-candy",
+      total,
+      difference,
+      transfer,
+      afterDifference,
+      showHint: difficulty === 1,
+      layoutRole: "support",
+      compactPolicy: "omit"
+    },
     answer: `${larger}개`,
     solution: `${difficulty === 3 ? `${transfer}개를 주면 두 사람의 차이는 ${transfer * 2}개 줄어드므로, 처음 차이는 ${difference}개입니다. ` : ""}전체에서 차이 ${difference}개를 먼저 떼어 놓으면 ${total - difference}개가 남습니다. 남은 사탕을 똑같이 나누면 한 사람당 ${base}개이고, 더 많이 가진 ${largerName}의 사탕은 ${base}+${difference}=${larger}개입니다.`,
     meta: { difficulty, largerName, smallerName, base, transfer, afterDifference, difference, larger, smaller, total }
@@ -1774,7 +1809,9 @@ function discNumberRule({ difficulty = 2 }) {
   };
 }
 
-function shapeSumTable({ difficulty = 2 }) {
+function shapeSumTable({ difficulty = 2, sourceCase = null }) {
+  const sourceVariant = book02UnitTestShapeMatrix({ difficulty, sourceCase });
+  if (sourceVariant) return sourceVariant;
   const max = difficulty === 1 ? 5 : difficulty === 2 ? 9 : 15;
   const diamond = randomInt(1, max);
   const square = randomInt(1, max);

@@ -47,7 +47,7 @@
 - 구현: `fields-classic/question-bank/`
 - 실제 선발시험 PDF 사본: `tmp/pdfs/source-audit/`
 - 실제 선발시험 렌더: `tmp/pdfs/selection-test-render/`
-- 1과정 원본: `G:\내 드라이브\1과정(N30)`
+- 1과정 원본: 비공개 자료 보관소의 `1과정(N30)`
 - 단원 테스트 렌더: `tmp/pdfs/unit-test-render/book01` ~ `book10`
 - 단원 테스트 텍스트: `tmp/pdfs/unit-test-text/book01.txt` ~ `book10.txt`
 
@@ -290,7 +290,7 @@ main 갈래에서 이 갈래(codex/question-bank-f01)로 옮겨 온 것:
 - 단원 테스트 질문 페이지는 7장이지만 공개 뷰어 자산은 6장이라 1~4번 페이지가 빠져 있다. 원본 전체 페이지를 공개 저장소에 추가하지 말고 비공개 자산 경로를 먼저 정한다.
 
 ```powershell
-$node='C:\Users\user\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'
+$node=(Get-Command node).Source
 & $node --check fields-classic/question-bank/source-data.js
 & $node --check fields-classic/question-bank/generators.js
 & $node --check fields-classic/question-bank/app.js
