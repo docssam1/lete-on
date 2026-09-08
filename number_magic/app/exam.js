@@ -535,6 +535,9 @@
 .nm-w2-concept-stage { margin:0 0 3px; font-size:11.5px; line-height:1.5; color:#3a3a3a; }
 .nm-w2-concept-rule { margin:0; font-size:12px; line-height:1.55; color:#2a2a2a; }
 .nm-w2-concept-ramp { margin:4px 0 0; font-size:12px; font-weight:800; color:#b8321f; }
+.nm-w2-concept-tip { margin:5px 0 0; padding:5px 8px; border-left:3px solid #0E2C57; background:#fff; border-radius:0 6px 6px 0; }
+.nm-w2-concept-tip p { margin:0 0 2px; font-size:12px; line-height:1.55; color:#2a2a2a; }
+.nm-w2-concept-tip p b { color:#0E2C57; margin-right:4px; }
 .nm-w2-example { border:1.4px dashed #c33; border-radius:8px; padding:7px 12px; margin-bottom:8px; }
 .nm-w2-ex-badge { display:inline-block; font-size:10.5px; color:#c33; font-weight:800; margin-bottom:4px; }
 .nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; gap:5px; color:#c33; font-size:14px; }
@@ -2544,12 +2547,21 @@ function w2ConceptPanelHtml(threadId, level, extra){
   }).join('');
   const rule = (info.unit && info.unit.discover && info.unit.discover.rule)
     ? pickL(info.unit.discover.rule) : '';
-  if(!sentence && !stageLines && !rule) return '';
+  /* 수학 팁(기억 고리, data/math-tips.js) — 원장 2026-09-08 "잘 기억하고 이해할 수 있는 스킬이나 팁".
+     개념 문장 아래, 예시 위. 없는 스레드는 조용히 생략. 평문만 오므로 esc 로 충분하다. */
+  const tip = (window.NM_MATH_TIPS || {})[threadId];
+  const tipHtml = tip ? `<div class="nm-w2-concept-tip">
+    <p><b>💡 ${esc(lk('기억 고리','Remember it','记忆钩'))}</b> ${esc(pickL(tip.hook) || '')}</p>
+    ${pickL(tip.why) ? `<p><b>${esc(lk('왜','Why','为什么'))}</b> ${esc(pickL(tip.why))}</p>` : ''}
+    ${pickL(tip.mistake) ? `<p><b>${esc(lk('조심','Watch out','小心'))}</b> ${esc(pickL(tip.mistake))}</p>` : ''}
+  </div>` : '';
+  if(!sentence && !stageLines && !rule && !tipHtml) return '';
   return `<div class="nm-w2-concept">
   <div class="nm-w2-concept-badge">${esc(lk('개념','Concept','概念'))} · ${esc(nm)}</div>
   ${sentence ? `<p class="nm-w2-concept-sentence">${esc(sentence)}</p>` : ''}
   ${stageLines}
   ${rule ? `<p class="nm-w2-concept-rule"><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}:</b> ${esc(rule)}</p>` : ''}
+  ${tipHtml}
   ${extra.rampN ? `<p class="nm-w2-concept-ramp">${esc(lk(`뒤 ${extra.rampN}문항은 한 단계 어려운 문제예요 — 예시처럼 풀어 보세요.`,`The last ${extra.rampN} are one step harder — solve them like the example.`,`最后${extra.rampN}题难度高一级——照例题的方法做。`))}</p>` : ''}
 </div>`;
 }
