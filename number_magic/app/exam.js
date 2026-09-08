@@ -319,6 +319,11 @@
   .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9.5px; color:#555; }
   /* 표지 점수 칸 "점수 ___ / 60" — 분모(총 문항)를 같이 찍는다(2026-09-06) */
   .nm-cvw .nm-cv-meta-total { grid-template-columns:auto 1fr auto; }
+  /* 개인 로드맵 표의 단계 구분 줄(2026-09-08) */
+  .nm-print-plan tr.nm-pp-stage td { background:#EFEDE7; font-weight:800; color:#0E2C57; font-size:0.95em;
+    padding-top:4mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-print-plan tr.nm-pp-stage span { font-weight:700; color:#6b6257; margin-left:6px; font-size:.88em; }
+
   /* 종이 교구 지면 (w2PaperToolPageHtml, 2026-09-08) */
   .nm-pt-page { gap:0; }
   .nm-pt-why { flex:0 0 auto; margin:4mm 0 0; font-size:11.5px; line-height:1.6; color:#333; }
@@ -3418,6 +3423,9 @@ const NM_EXAM = {
             const items=s.test?(s.pool||[]):(s.drills||[]);
             rows.push({
               cal:calLabelFor(off),
+              /* 단계(2026-09-08) — 표가 과정 번호만 나열해 "지금 어느 단계인지"가 없었다.
+                 단계가 바뀌는 행 앞에 구분 줄을 넣는다. stages.js 가 없으면 조용히 생략. */
+              stage:(window.NM_STAGE_OF_COURSE&&window.NM_STAGE_OF_COURSE(x.c.order))||null,
               course:`${x.c.order}. ${pickL(x.c.title)||x.key}`,
               sess:s.test?lk('과정 시험','Course Test','课程测验'):`${lk('세션','Session','课节')} ${i+1}`,
               magic:(!s.test&&s.magic&&s.magic.length)?s.magic.map(magicLabel).join(' · '):'',
@@ -3448,12 +3456,17 @@ ${printWatermarkHtml()}
     <th>${esc(lk('세션','Session','课节'))}</th><th>${esc(lk('구성','Contents','内容'))}</th>
   </tr></thead>
   <tbody>
-    ${rows.map(r=>`<tr>
+    ${(function(){ let last=null; return rows.map(r=>{
+      let head='';
+      if(r.stage&&r.stage.key!==last){ last=r.stage.key;
+        head=`<tr class="nm-pp-stage"><td colspan="4">${esc(r.stage.icon||'')} ${esc((pickL(r.stage.name)||'').split(' — ')[0])} <span>${esc(pickL(r.stage.band))}</span></td></tr>`;
+      }
+      return head+`<tr>
       <td class="nm-pp-cal">${esc(r.cal)}</td>
       <td>${esc(r.course)}</td>
       <td>${esc(r.sess)}</td>
       <td>${r.magic?`<span class="nm-pp-magic">✨ ${esc(r.magic)}</span><br>`:''}${esc(r.drills)}</td>
-    </tr>`).join('')}
+    </tr>`; }).join(''); })()}
   </tbody>
 </table>
 <p class="nm-pp-note">${esc(lk('이 표는 추천 계획이에요. 순서는 언제든 자유롭게 바꿔도 좋아요.','This is a suggested plan — feel free to change the order any time.','这是推荐计划，顺序可以随时自由调整。'))}</p>`;
