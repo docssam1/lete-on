@@ -90,6 +90,21 @@ test("number-system computation concept opens the 36-item unit workbook and 8-it
   await workbook.click();await page.waitForLoadState("networkidle");assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".book-page").count(),12);assert.match(await page.locator('[data-mode="recheck"]').innerText(),/8/);assert.deepEqual(errors,[]);await page.close();
 });
 
+test("signed-number concept opens the calculated 36-item coordinate workbook",async function(){
+  const page=await browser.newPage({viewport:{width:1080,height:850}});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}/concept-learning.html?cluster=6.NS.C&from=diagnostic`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator('[data-clinic-action="animated"]').getAttribute("href"),"./animated-math.html?lesson=signed-rational-number-line&cluster=6.NS.C&locale=ko");
+  const workbook=page.locator('[data-clinic-action="workbook"]');
+  assert.equal(await workbook.getAttribute("href"),"./unit-workbook.html?cluster=6.NS.C&mode=workbook&audience=student&locale=ko");
+  assert.match(await workbook.innerText(),/음수와 좌표평면 36문항 단원 워크북/);
+  await workbook.click();await page.waitForLoadState("networkidle");
+  assert.equal(await page.locator(".book-problem").count(),36);
+  assert.equal(await page.locator(".book-page").count(),12);
+  assert.equal(await page.locator(".nsc-number-line,.nsc-coordinate-plane").count(),36);
+  assert.match(await page.locator('[data-mode="recheck"]').innerText(),/8/);
+  assert.deepEqual(errors,[]);await page.close();
+});
+
 test("Grade 6 geometry links to its exact area lesson and never to the unrelated isosceles sample", async function () {
   const page = await browser.newPage({ viewport: { width: 1080, height: 850 } });
   const errors = errorsFor(page);

@@ -10,6 +10,7 @@ const workbookSource=require("../learning/grade6-sp-a-unit-workbook.js");
 const ratioSource=require("../learning/grade6-rp-a-unit-workbook.js");
 const fractionSource=require("../learning/grade6-ns-a-unit-workbook.js");
 const computationSource=require("../learning/grade6-ns-b-unit-workbook.js");
+const signedNumberSource=require("../learning/grade6-ns-c-unit-workbook.js");
 const root=path.resolve(__dirname,"..","..");
 let server,browser,baseUrl;
 function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";if(file.endsWith(".css"))return"text/css; charset=utf-8";if(file.endsWith(".js"))return"text/javascript; charset=utf-8";return"application/octet-stream";}
@@ -154,6 +155,24 @@ test("number-system Chinese teacher guide separates all 36 answers",async functi
   const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.NS.B&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.NS.B 数系计算单元练习册");await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
 });
 
+test("signed-number student edition renders 36 answer-free calculated visuals on 12 pages",async function(){
+  const context=await browser.newContext({viewport:{width:1280,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.NS.C&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator(".book-page").count(),12);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".answer-input").count(),36);assert.equal(await page.locator(".teacher-key,.teacher-move,.choice-button").count(),0);assert.equal(await page.locator("h1").innerText(),"6.NS.C 음수와 좌표평면 단원 워크북");assert.equal(await page.locator(".nsc-number-line,.nsc-coordinate-plane").count(),36);assert.equal(await page.locator("svg[aria-label*='7/4'],svg[aria-label*='Quadrant']").count(),0);
+  const yMirror=page.locator('[data-item-id="nsca-w35"] circle');assert.equal(await yMirror.count(),1);assert.equal(await page.locator('[data-item-id="nsca-w35"] .is-target').count(),0);assert.equal(await page.locator(".nsc-target-label").count(),0);
+  await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("all 36 signed-number responses unlock only its eight-item recheck",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.NS.C&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});for(const candidate of signedNumberSource.pack.workbookItems){const card=page.locator(`[data-item-id="${candidate.id}"]`);await card.locator(".answer-input").fill(signedNumberSource.formatResult(candidate));await card.locator(".check-button").click();}
+  assert.equal(await page.locator("#progress-chip").innerText(),"36 / 36");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-unit-workbook:6.NS.C:v1");}),"complete-v1");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-clinic-workbook:6.NS.C:v1");}),null);await page.locator('[data-mode="recheck"]').click();assert.equal(await page.locator(".book-problem").count(),8);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("signed-number Chinese teacher guide separates all 36 answers",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.NS.C&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.NS.C 负数与坐标平面单元练习册");assert.match(await page.locator(".teacher-observation").innerText(),/基准与方向/);const yMirror=await page.locator('[data-item-id="nsca-w35"] circle').evaluateAll(function(nodes){return nodes.map(function(node){return[Number(node.getAttribute("cx")),Number(node.getAttribute("cy"))];});});assert.equal(yMirror.length,2);assert.ok(Math.abs(yMirror[0][0]+yMirror[1][0]-280)<.01);assert.equal(yMirror[0][1],yMirror[1][1]);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+});
+
 test("all 36 verified responses unlock only the separate recheck route",async function(){
   const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
   await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});
@@ -241,7 +260,7 @@ test("mobile and A4 or Letter print layouts stay within their intended width",as
 });
 
 test("ratio and number-system workbooks stay usable at 320px and 390px",async function(){
-  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B"]) for(const width of [320,390]){
+  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B","6.NS.C"]) for(const width of [320,390]){
     const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});
     const errors=errorsFor(page);
     await page.goto(`${baseUrl}?cluster=${cluster}&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});
