@@ -153,6 +153,27 @@ node geometry/games/piece-play/piece-play.selftest.mjs
 node geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs
 ```
 
+## 원 탐구 검증
+
+원의 중심 찾기, 반지름·지름 구별, 길이 관계, 컴퍼스 원 그리기를 독립적인 4영역으로 제공합니다.
+영역별 신규 20문항을 게임과 표지 포함 최대 20문항 학습지가 공유합니다. 원주·원넓이는 다루지 않습니다.
+원 그리기는 중심을 정하고 벌린 길이를 유지하며 원을 그리는 순서로 진행하고,
+인쇄 학습지의 해당 모눈은 실제 A4 출력에서 한 칸 1 cm가 되도록 검증합니다.
+
+```powershell
+node geometry/games/circle-studio/core.selftest.mjs
+node geometry/games/circle-studio/holdout.selftest.mjs
+node geometry/games/circle-studio/render.audit.mjs
+node geometry/games/circle-studio/browsercheck.mjs
+node geometry/games/circle-studio/offline.browsercheck.mjs
+node geometry/worksheet/circle-studio/workbook.selftest.mjs
+node geometry/worksheet/circle-studio/workbook.browsercheck.mjs
+node geometry/games/circle-studio/integration.browsercheck.mjs
+```
+
+브라우저 검사는 `GFIELD_BASE_URL`로 공개 사이트를 지정할 수 있습니다.
+자세한 학습 범위와 검증 조건은 `docs/CIRCLE_STUDIO_DESIGN.md`를 확인합니다.
+
 ## 사각형 탐구 검증
 
 평행한 변, 직각, 성질에 따른 분류, 사각형 완성하기를 독립적인 4영역으로 제공합니다.
