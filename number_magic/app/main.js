@@ -3470,8 +3470,13 @@ function screenMailbox(){
          buildMixedProblemSet 참조). */
       /* "발송 말고 고를 때는 제너레이터로"(2026-09-05) — 바로 인쇄하지 않고
          편집기를 먼저 연다(문항 스왑·유형 교체·인쇄는 편집기 안에서). */
-      const items = env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
-      if(window.NM_EXAM && NM_EXAM.openPrintEditor) NM_EXAM.openPrintEditor(items, env.wsId, {mixed:20});
+      /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 창의 연산 + 문장제, 표지·
+         마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
+      const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
+        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence }) : null;
+      const items = wk ? wk.items : env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
+      if(window.NM_EXAM && NM_EXAM.openPrintEditor) NM_EXAM.openPrintEditor(items, env.wsId,
+        wk ? {mixed:20, cover:wk.cover, units:wk.units, courseKey:env.courseKey} : {mixed:20});
     };
     if(!S.mailbox.opened) S.mailbox.opened={};
     if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }

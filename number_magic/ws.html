@@ -131,71 +131,14 @@
   var course = window.NM_COURSES && NM_COURSES[c];
   if(!c || !course) return fail('학습지 주소가 올바르지 않아요. (과정 ' + (c||'없음') + ')');
   var k = Math.max(1, Math.min(2, parseInt(q.get('k') || '1', 10) || 1));
-  var session = primarySessionOf(course);
-  if(k === 2 && session){
-    /* 주 2회반 두 번째 회차: 기본 세션 다음의(시험 아닌) 세션. 없으면 같은 세션에 다른 시드. */
-    var list = (course.sessions || []).filter(function(s){ return !s.test; });
-    var idx = list.indexOf(session);
-    if(list.length > 1) session = list[(idx + 1) % list.length];
-  }
-  if(!session || !(session.drills||[]).length) return fail('이 과정에는 아직 학습지가 없어요.');
-  var seedWeek = k === 2 ? (w + '-2') : w;
-  var items = session.drills.map(function(d,i){ return { thread:d.t, level:d.lv, n:d.n, seed: envItemSeed(seedWeek, c, i) }; });
-  /* 문장제 회차(원장 2026-09-06 "문장제도 같이"): 그 세션 첫 드릴의 문항을 문장으로 바꿔 6문항.
-     문장으로 못 바꾸는 유형(소수·분수 등)이면 renderMixedSheet 가 이 회차를 뺀다(optionalWord). */
-  /* 창의 연산 회차(원장 2026-09-08 "사이사이에 필산 후 창의 연산도 같이 할 수 있도록").
-     필산 회차 다음, 문장제 앞에 온다 — 그 주 마법(창의수연 전략)을 손으로 푸는 자리다.
-     재료는 courses.js 의 session.creative(스레드+레벨). 초급 A유닛처럼 대응 스레드가
-     아직 없는 과정은 이 회차가 비고, 그때는 필산+문장제만 나간다. */
-  var thName0 = function(t){ var th=(window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
-  (session.creative || []).forEach(function(d, ci){
-    items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4,
-      topicName:'창의 연산 · ' + thName0(d.t),
-      seed: envItemSeed(seedWeek + 'cr', c, ci) });
-  });
-  if(session.drills.length){
-    var d0 = session.drills[0];
-    /* 문장제 회차 — 첫 드릴이 문장으로 안 바뀌면 그 세션의 나머지 드릴로 차례로 시도한다
-       (wordAlts, 2026-09-07). 회차 제목은 실제로 쓰인 유형 이름을 따라간다. */
-    var thName = function(t){ var th=(window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
-    items.push({ thread:d0.t, level:d0.lv, n:6, count:6, wordType:'all', optionalWord:true, seed: envItemSeed(seedWeek + 'wp', c, 0),
-      topicName: '문장제 · ' + thName(d0.t),
-      wordAlts: (function(){
-        /* 이 세션의 나머지 드릴 → 같은 과정의 다른 세션 드릴 순(2026-09-08). 과정 23처럼 첫 세션이
-           수열·변환식뿐이고 소수 나눗셈(DC3)은 뒤 세션에 있는 경우, 그 과정의 문장제가 통째로
-           빠지지 않게 한다. 스레드 중복은 뺀다. */
-        var seen = {}; seen[d0.t] = true; var alts = [];
-        var push = function(d){ if(seen[d.t]) return; seen[d.t] = true;
-          alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) }); };
-        session.drills.slice(1).forEach(push);
-        (course.sessions || []).forEach(function(s){ if(s !== session && !s.test) (s.drills || []).forEach(push); });
-        return alts;
-      })() });
-  }
-  var wsId = 'W' + w + '-' + c + (k === 2 ? '-2' : '');
-  var title = (course.title && (course.title.ko || course.title)) || c;
   var cad = (q.get('cad') === 'w2' || k === 2) ? 'w2' : 'w1';
+  /* 봉투 구성은 exam.js weeklyEnvelope 하나(2026-09-08) — 앱 편지함 인쇄와 같은 학습지가 나온다.
+     세션 선택(주 2회 두 번째 회차)·필산 회차·창의 연산 회차·문장제(대안 포함)·표지·마법 유닛 전부 그쪽. */
+  var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad });
+  if(!wk) return fail('이 과정에는 아직 학습지가 없어요.');
+  var items = wk.items, wsId = wk.wsId, cover = wk.cover, units = wk.units, title = wk.title;
   document.title = 'Numbers of Magic' + (name ? ' · ' + name : '') + ' — ' + wsId;
   sub.textContent = (name ? name + ' · ' : '') + w + ' · ' + c + '. ' + title;
-  /* 주차 라벨 — 앱 exam.js calLabelFor / weekly-notify calLabel 과 같은 규칙(그 주 월요일 기준 "M월 N주차") */
-  function weekLabel(){
-    var m = /^(\d{4})-W(\d{2})$/.exec(w); if(!m) return w;
-    var jan4 = new Date(Date.UTC(+m[1], 0, 4)); var day = (jan4.getUTCDay() + 6) % 7;
-    var mon = new Date(jan4.getTime() - day * 86400000 + (+m[2] - 1) * 7 * 86400000);
-    var mo = mon.getUTCMonth() + 1, nth = Math.floor((mon.getUTCDate() - 1) / 7) + 1;
-    return cad === 'w2' ? (mo + '월 ' + nth + '-' + k + '주차') : (mo + '월 ' + nth + '주차');
-  }
-  /* 단계 이름(data/stages.js) — 표지가 "지금 어느 단계인지"를 한 줄로 말한다(2026-09-07). */
-  var stage = (window.NM_STAGE_OF_COURSE && NM_STAGE_OF_COURSE(course.order)) || null;
-  var cover = { name: name, weekLabel: weekLabel(), courseNum: course.order, courseTitle: title, k: k, cadence: cad, code: wsId,
-    stage: stage ? (stage.name.ko || '') : '' };
-  /* 과정의 마법 유닛(이번 세션 것 먼저, 그다음 다른 세션) — 수학사 지면의 대안 조회(2026-09-06).
-     초등 스레드(AD5·SB4·NS1 …)는 threads.js 에 unit 이 없어 스레드로는 만화를 못 찾는다(C4 에 지면이
-     없었다). 스레드로 찾은 만화가 있으면 이 목록은 쓰이지 않는다(C34 는 그대로). */
-  var units = [].concat.apply([], (session.magic || []))
-    .concat([].concat.apply([], (course.sessions || []).filter(function(s){ return !s.test; })
-      .map(function(s){ return [].concat.apply([], s.magic || []); })))
-    .filter(function(u, i, a){ return u && a.indexOf(u) === i; });
 
   try{
     NM_EXAM.renderPrintMulti(items, wsId, { mixed: 20, cover: cover, units: units });

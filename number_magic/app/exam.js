@@ -4417,6 +4417,60 @@ ${round.html}
      페이지당 20문항(문장제만이면 10문항) 그리드 한 장으로 합쳐 찍는다 — 예전처럼
      드릴마다 새 페이지가 시작되지 않는다. 편지함 봉투 인쇄도 같은 함수를 타므로
      opts.mixed를 넘기면 그대로 이 경로를 쓴다(넘기지 않으면 아래의 예전 방식 그대로). */
+  /* ── 4a. 주간 봉투 구성(2026-09-08) ──────────────────────────
+     ws.html(링크·PDF)과 main.js 편지함 인쇄가 **같은 학습지**를 내도록 구성 규칙을 한 곳에 둔다.
+     전에는 ws.html 에만 창의 회차·문장제·표지가 있었고 편지함은 필산 드릴만 편집기에 넘겨
+     같은 주 학습지가 두 모양으로 나갔다.
+     opts: {k:1|2, name, cad:'w1'|'w2'}. 반환 {wsId, session, items, cover, units}.
+     세션 선택·항목 시드 규칙은 main.js primarySessionOf/envItemSeed 와 같아야 한다(바꾸면 양쪽). */
+  weeklyEnvelope(course, courseKey, weekKey, opts){
+    opts = opts || {};
+    if(!course || !course.sessions) return null;
+    const c = courseKey, w = weekKey;
+    const k = Math.max(1, Math.min(2, opts.k || 1));
+    const cad = (opts.cad === 'w2' || k === 2) ? 'w2' : 'w1';
+    const name = opts.name || '';
+    const seedOf = (wk, i) => (wk + c + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
+    let session = course.sessions.find(s => !s.test && s.magic && s.magic.length) || course.sessions.find(s => !s.test) || null;
+    if(k === 2 && session){
+      const list = course.sessions.filter(s => !s.test);
+      const idx = list.indexOf(session);
+      if(list.length > 1) session = list[(idx + 1) % list.length];
+    }
+    if(!session || !(session.drills||[]).length) return null;
+    const seedWeek = k === 2 ? (w + '-2') : w;
+    const thName = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
+    const items = session.drills.map((d,i) => ({ thread:d.t, level:d.lv, n:d.n, seed:seedOf(seedWeek, i) }));
+    (session.creative || []).forEach((d, ci) => {
+      items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4,
+        topicName:'창의 연산 · ' + thName(d.t), seed:seedOf(seedWeek + 'cr', ci) });
+    });
+    const d0 = session.drills[0];
+    const seen = {}; seen[d0.t] = true; const alts = [];
+    const push = d => { if(seen[d.t]) return; seen[d.t] = true;
+      alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) }); };
+    session.drills.slice(1).forEach(push);
+    course.sessions.forEach(s => { if(s !== session && !s.test) (s.drills||[]).forEach(push); });
+    items.push({ thread:d0.t, level:d0.lv, n:6, count:6, wordType:'all', optionalWord:true,
+      seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t), wordAlts:alts });
+    const wsId = 'W' + w + '-' + c + (k === 2 ? '-2' : '');
+    const title = (course.title && (course.title.ko || course.title)) || c;
+    const weekLabel = (() => {
+      const m = /^(\d{4})-W(\d{2})$/.exec(w); if(!m) return w;
+      const jan4 = new Date(Date.UTC(+m[1], 0, 4)); const day = (jan4.getUTCDay() + 6) % 7;
+      const mon = new Date(jan4.getTime() - day * 86400000 + (+m[2] - 1) * 7 * 86400000);
+      const mo = mon.getUTCMonth() + 1, nth = Math.floor((mon.getUTCDate() - 1) / 7) + 1;
+      return cad === 'w2' ? (mo + '월 ' + nth + '-' + k + '주차') : (mo + '월 ' + nth + '주차');
+    })();
+    const stage = (window.NM_STAGE_OF_COURSE && NM_STAGE_OF_COURSE(course.order)) || null;
+    const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId,
+      stage: stage ? (stage.name.ko || '') : '' };
+    const units = [].concat.apply([], (session.magic || []))
+      .concat([].concat.apply([], course.sessions.filter(s => !s.test).map(s => [].concat.apply([], s.magic || []))))
+      .filter((u, i, a) => u && a.indexOf(u) === i);
+    return { wsId, session, items, cover, units, k, cad, title };
+  },
+
   renderPrintMulti(items, envelopeCode, opts){
     if(!items || !items.length) return;
     const old = document.querySelector('.nm-print-sheet');
@@ -4512,6 +4566,10 @@ ${answerSectionsHtml}`;
       topicName: it.topicName, grade: it.grade,
       overrides: Object.assign({}, it.overrides || {}),
       guideSeed: it.guideSeed || null,
+      /* 주간 봉투의 문장제(6)·창의 연산(4) 회차는 유형당 문항 수(10/20/40)를 따르지 않는다 —
+         renderMixedSheet 와 같은 규칙(it.count 우선). optionalWord·wordAlts 도 그대로 넘겨
+         편집기에서 인쇄해도 링크 학습지와 같은 결과가 나온다(2026-09-08 편지함 파리티). */
+      count: it.count || null, optionalWord: !!it.optionalWord, wordAlts: it.wordAlts || null,
     }));
 
     /* 편집기 툴바는 유형당 문항 수를 10/20/40 세 개로만 제공한다(§build 3). 그 밖의
@@ -4707,7 +4765,7 @@ ${answerSectionsHtml}`;
       const th = (window.NM_THREADS||{})[r.thread] || {};
       const levels = th.levels || [{id:r.level}];
       return `<div class="nm-pe-round-head">
-        <span class="nm-pe-round-name">${esc(threadName(r.thread))} · ${esc(levelLabelOf(r.thread, r.level))}</span>
+        <span class="nm-pe-round-name">${esc(pickL(r.topicName) || threadName(r.thread))} · ${esc(levelLabelOf(r.thread, r.level))}</span>
         <div class="nm-pe-round-actions">
           <select class="nm-pe-lvl-sel" data-lvl-sel="${idx}">
             ${levels.map(l => `<option value="${l.id}"${l.id===r.level?' selected':''}>${esc(pickL(l.label)||('Lv.'+l.id))}</option>`).join('')}
@@ -4723,7 +4781,7 @@ ${answerSectionsHtml}`;
       const roundEl = overlay.querySelector(`.nm-pe-round[data-round="${idx}"]`);
       if(!roundEl) return;
       const r = rounds[idx];
-      const built = renderRoundPages(r, { count: perTypeCount });
+      const built = renderRoundPages(r, { count: r.count || perTypeCount });
       r.__code = built.code;
       roundEl.setAttribute('data-code', built.code);
       roundEl.innerHTML = roundHeadHtml(idx) + built.html;
@@ -4834,7 +4892,7 @@ ${answerSectionsHtml}`;
         try{ navigator.clipboard && navigator.clipboard.writeText(text); }catch(err){}
       });
       overlay.querySelector('#nm-pe-print').addEventListener('click', () => {
-        NM_EXAM.renderPrintMulti(rounds, label, { mixed: perTypeCount });
+        NM_EXAM.renderPrintMulti(rounds, label, { mixed: perTypeCount, cover: opts.cover || null, units: opts.units || null });
         if(typeof opts.onPrint === 'function') opts.onPrint();
       });
 
