@@ -319,6 +319,29 @@
   .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9.5px; color:#555; }
   /* 표지 점수 칸 "점수 ___ / 60" — 분모(총 문항)를 같이 찍는다(2026-09-06) */
   .nm-cvw .nm-cv-meta-total { grid-template-columns:auto 1fr auto; }
+  /* 종이 교구 지면 (w2PaperToolPageHtml, 2026-09-08) */
+  .nm-pt-page { gap:0; }
+  .nm-pt-why { flex:0 0 auto; margin:4mm 0 0; font-size:11.5px; line-height:1.6; color:#333; }
+  .nm-pt-art { flex:1 1 auto; min-height:0; display:block; margin:3mm 0; overflow:hidden; }
+  /* 종이 교구는 크게 인쇄돼야 오리기 쉽다 — 남는 세로 공간까지 채운다(비율은 유지).
+     한 지면 안의 조각들은 같은 배율로 커지므로 서로 맞물리는 크기 관계는 그대로다. */
+  /* viewBox + preserveAspectRatio 기본값이라 비율을 지키며 상자에 꽉 맞는다. */
+  .nm-pt-art svg { width:100%; height:100%; display:block; }
+  .nm-pt-steps { flex:0 0 auto; list-style:none; margin:0; padding:0; display:grid;
+    grid-template-columns:repeat(3,1fr); gap:3mm; }
+  .nm-pt-steps li { font-size:10.5px; line-height:1.55; color:#333; padding-left:6mm; position:relative; }
+  .nm-pt-steps b { position:absolute; left:0; top:0; width:4.4mm; height:4.4mm; border-radius:50%;
+    background:#0E2C57; color:#fff; font-size:8px; display:flex; align-items:center; justify-content:center;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-pt-buys { flex:0 0 auto; margin-top:4mm; padding-top:3mm; border-top:1px solid #C9A063; }
+  .nm-pt-buys-t { font-size:10px; font-weight:800; color:#0E2C57; margin-bottom:2.5mm; }
+  .nm-pt-buys-body { display:grid; grid-template-columns:repeat(3,1fr); gap:3mm; }
+  .nm-pt-buy { display:block; text-decoration:none; color:inherit; border:1px solid #ddd;
+    border-radius:2mm; padding:2.5mm 3mm; }
+  .nm-pt-buy b { display:block; font-size:10.5px; }
+  .nm-pt-buy span { display:block; font-size:9px; color:#555; margin-top:.6mm; }
+  .nm-pt-buy i { display:block; font-size:8.5px; color:#777; font-style:normal; margin-top:1mm; }
+
   /* 수학사 지면 + 실험실 QR (w2HistoryPageHtml, 2026-09-06) */
   .nm-hist-page { gap:0; }
   .nm-hist-head { flex:0 0 auto; display:flex; align-items:baseline; gap:10px;
@@ -1214,6 +1237,44 @@ function coverPageHtml(items, code, totalCount){
      · 실험실 — data/labs.js 의 NM_LABS.byUnit[유닛id]. 종이에서는 열 수 없으니 QR 로 건다.
    둘 다 없으면 지면을 만들지 않는다(빈 장을 인쇄하지 않기 위해). 만화가 있는 첫 유닛 하나만
    싣는다 — 한 주 학습지에 네 편을 넣으면 문제보다 읽을거리가 많아진다. */
+/* 종이 교구 지면(2026-09-08) — 원장 "교구 학습도 있으면 좋겠어" + "쿠팡·네이버 교구는 너무 비싸".
+   파는 교구를 링크하는 대신 그 주에 쓸 교구를 **오려 쓰도록 인쇄**한다. 학부모 비용 0원이고,
+   매주 인쇄물이 간다는 우리 강점 위에 그대로 얹힌다. 정말 사야 하는 셋(바둑돌·빨대·주사위)만
+   맨 아래에 검색 기준으로 적는다 — 상품 번호·가격은 박지 않는다(가격은 매일 바뀐다).
+   courseNum 이 없거나 그 과정에 맞는 교구가 없으면 빈 문자열이라 지면이 안 생긴다. */
+function w2PaperToolPageHtml(courseNum, code){
+  const pick = window.NM_PAPER_TOOL_OF_COURSE;
+  const tool = (pick && courseNum) ? pick(courseNum) : null;
+  if(!tool || typeof tool.build !== 'function') return '';
+  let art = '';
+  try{ art = tool.build(); }catch(e){ return ''; }
+  if(!art) return '';
+  const steps = (pickL(tool.steps) || []).map((t, i) =>
+    `<li><b>${i + 1}</b>${esc(t)}</li>`).join('');
+  const buys = (window.NM_BUY_TOOLS || []).map(b => {
+    /* 네이버 검색 — 특정 상품이 아니라 검색어를 건다(링크가 죽지 않는다). */
+    const url = 'https://search.shopping.naver.com/search/all?query=' + encodeURIComponent(b.q);
+    return `<a class="nm-pt-buy" href="${esc(url)}"><b>${esc(pickL(b.name))}</b>` +
+      `<span>${esc(pickL(b.use))}</span><i>${esc(pickL(b.pick))}</i></a>`;
+  }).join('');
+  return `<div class="nm-w2-page nm-pt-page">
+  <div class="nm-hist-head">
+    <span class="nm-hist-kicker">${esc(lk('이번 주 종이 교구','This Week\'s Paper Tool','本周纸教具'))}</span>
+    <b>${esc(pickL(tool.name))}</b>
+  </div>
+  <p class="nm-pt-why">${esc(pickL(tool.why))}</p>
+  <div class="nm-pt-art">${art}</div>
+  <ol class="nm-pt-steps">${steps}</ol>
+  <div class="nm-pt-buys">
+    <div class="nm-pt-buys-t">${esc(lk('사야 하는 것은 이 셋뿐입니다. 나머지는 위에서 오려 쓰세요.',
+      'Only these three need buying. Everything else is cut from the page above.',
+      '只有这三样需要买，其余从上面剪下来用。'))}</div>
+    <div class="nm-pt-buys-body">${buys}</div>
+  </div>
+  <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
+</div>`;
+}
+
 function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
   const comics = window.NM_COMICS || {};
   const labData = (window.NM_LABS && window.NM_LABS.byUnit) || {};
@@ -1297,7 +1358,8 @@ function weeklyPageCount(rounds, extra){
   extra = extra || {};
   let page = 1;
   rounds.forEach(r => { page += w2PagesOf(r); });
-  if(extra.history) page += 1;
+  /* history 는 참/거짓 또는 **지면 수**(수학사 + 종이 교구, 2026-09-08). */
+  page += Number(extra.history) || 0;
   if(extra.answerKey !== false) page += 1;
   return page;
 }
@@ -1319,6 +1381,10 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   if(extra.history){
     rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('수학사 이야기','Math history','数学史小故事'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
+  }
+  if(extra.paper){
+    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('이번 주 종이 교구','This week\'s paper tool','本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    page += 1;
   }
   if(extra.answerKey !== false){
     rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('정답지','Answer key','答案'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
@@ -2804,8 +2870,11 @@ function renderMixedSheet(items, envelopeCode, opts){
      표지보다 먼저 만든다 — 표지의 쪽 수·목차가 이 지면의 유무를 알아야 한다(2026-09-06).
      opts.units: 과정의 마법 유닛 목록(ws.html) — 스레드로 만화를 못 찾을 때의 대안. */
   const historyHtml = w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle);
-  const totalPages = weeklyPageCount(rounds, { history: !!historyHtml, answerKey: true });
-  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!historyHtml, answerKey: true })
+  /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
+  const paperHtml = w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
+  const extraPages = (historyHtml ? 1 : 0) + (paperHtml ? 1 : 0);
+  const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
+  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!historyHtml, paper: !!paperHtml, answerKey: true })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
      회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
@@ -2813,6 +2882,7 @@ function renderMixedSheet(items, envelopeCode, opts){
   const stampPg = html => html.replace(/<div class="nm-w2-foot">/g, () => `<div class="nm-w2-foot"><span class="nm-w2-pg">${pg++} / ${totalPages}</span>`);
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
   const historyStamped = historyHtml ? stampPg(historyHtml) : '';
+  const paperStamped = paperHtml ? stampPg(paperHtml) : '';
 
   const akSections = rounds.map(r => `
 <div class="nm-ak-section">
@@ -2825,6 +2895,7 @@ function renderMixedSheet(items, envelopeCode, opts){
 ${coverHtml}
 ${roundsHtml}
 ${historyStamped}
+${paperStamped}
 <div class="nm-print-answer-key">
   ${w2AnswerKeyHeadHtml(envelopeCode)}
   ${akSections}
