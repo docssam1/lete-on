@@ -335,8 +335,14 @@
     -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-pt-choose { flex:0 0 auto; margin-top:4mm; padding-top:3mm; border-top:1px solid #C9A063;
     display:grid; grid-template-columns:1fr auto 1fr; gap:3mm; align-items:stretch; }
-  .nm-pt-opt { display:block; text-decoration:none; color:inherit; border:1px solid #ccc;
+  .nm-pt-opt { display:flex; gap:3mm; text-decoration:none; color:inherit; border:1px solid #ccc;
     border-radius:2mm; padding:3mm 3.5mm; }
+  .nm-pt-opt-txt { min-width:0; }
+  /* QR — 인쇄물이라 링크는 못 누른다. 18mm 는 폰이 넉넉히 읽는 크기(실험실 QR 26mm 보다 작지만
+     주소가 짧아 모듈이 굵다). 여백(quiet zone)을 흰 테두리로 남긴다. */
+  .nm-pt-qr { flex:0 0 24mm; text-align:center; }
+  .nm-pt-qr svg { width:24mm; height:24mm; display:block; background:#fff; padding:1mm; box-sizing:border-box; }
+  .nm-pt-qr span { display:block; font-size:7.5px; color:#777; margin-top:.8mm; }
   .nm-pt-opt-buy { border-color:#0E2C57; }
   .nm-pt-opt-make { border-style:dashed; }
   .nm-pt-tag { display:inline-block; font-size:8.5px; font-weight:800; letter-spacing:.04em;
@@ -1260,20 +1266,29 @@ function w2PaperToolPageHtml(courseNum, code){
      주변에 있는 것으로 만들기, 둘 중 선택하도록"). 사는 쪽은 네이버 **검색 링크** — 상품 번호와
      가격은 박지 않는다(가격은 매일 바뀌고 링크는 죽는다). */
   const buy = tool.buy, make = tool.make;
-  const buyUrl = buy && buy.q ? 'https://search.shopping.naver.com/search/all?query=' + encodeURIComponent(buy.q) : '';
+  /* 짧은 링크(저장소 루트 /g/) 를 거친다 — 검색 주소를 그대로 QR 에 넣으면 한글 퍼센트 인코딩으로
+     90자가 넘어 18~24mm QR 의 모듈이 너무 촘촘해진다. 실측으로 300dpi 인쇄본에서 안 읽혔고
+     600dpi 에서만 디코딩됐다. ASCII 40자 안쪽이면 모듈이 굵어져 폰이 읽는다. 목적지가 바뀌어도
+     이미 나간 학습지의 QR 이 계속 맞는다는 이점도 있다. */
+  const buyUrl = buy && buy.key ? 'https://docssam1.github.io/lete-on/g/?' + buy.key : '';
   const choices = (buy && make) ? `<div class="nm-pt-choose">
     <a class="nm-pt-opt nm-pt-opt-buy" href="${esc(buyUrl)}">
-      <span class="nm-pt-tag">A ${esc(lk('사서 쓰기','Buy it','买来用'))}</span>
-      <b>${esc(pickL(buy.name))}</b>
-      <p>${esc(pickL(buy.why))}</p>
-      <i>${esc(lk('살 때 보는 것','What to check','挑选要点'))} — ${esc(pickL(buy.pick))}</i>
+      <div class="nm-pt-qr">${qrSvg(buyUrl)}<span>${esc(lk('QR 찍기','Scan','扫码'))}</span></div>
+      <div class="nm-pt-opt-txt">
+        <span class="nm-pt-tag">A ${esc(lk('구매하여 사용하기','Buy and use','买来使用'))}</span>
+        <b>${esc(pickL(buy.name))}</b>
+        <p>${esc(pickL(buy.why))}</p>
+        <i>${esc(lk('살 때 보는 것','What to check','挑选要点'))} — ${esc(pickL(buy.pick))}</i>
+      </div>
     </a>
     <div class="nm-pt-or">${esc(lk('또는','or','或'))}</div>
     <div class="nm-pt-opt nm-pt-opt-make">
-      <span class="nm-pt-tag">B ${esc(lk('만들어 쓰기','Make it','自己做'))}</span>
-      <b>${esc(pickL(make.name))}</b>
-      <p>${esc(pickL(make.how))}</p>
-      <i>${esc(lk('돈이 들지 않습니다. 위 그림을 오려 쓰세요.','No cost — cut out the sheet above.','不花钱，把上面的图剪下来用。'))}</i>
+      <div class="nm-pt-opt-txt">
+        <span class="nm-pt-tag">B ${esc(lk('주변에 있는 것으로 만들기','Make it from what you have','用身边的东西做'))}</span>
+        <b>${esc(pickL(make.name))}</b>
+        <p>${esc(pickL(make.how))}</p>
+        <i>${esc(lk('돈이 들지 않습니다. 위 그림을 오려 쓰세요.','No cost — cut out the sheet above.','不花钱，把上面的图剪下来用。'))}</i>
+      </div>
     </div>
   </div>` : '';
   return `<div class="nm-w2-page nm-pt-page">
