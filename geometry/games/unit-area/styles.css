@@ -1,0 +1,28 @@
+@import url("../angle-studio/styles.css?v=angle-1");
+.area-studio .workbench { grid-template-columns: minmax(0,1.2fr) minmax(280px,.8fr); align-items: start; }
+.area-studio .board { aspect-ratio: auto; min-height: 300px; }
+.area-studio .board > svg { max-height: none; height: auto; overflow: visible; }
+.area-studio .drawing-surface { min-width: 0; }
+.area-studio .response { padding-top: 24px; }
+.board-tools { display: flex; align-items: center; gap: 12px; padding: 8px 0 18px; min-height: 70px; flex-wrap: wrap; }
+.board-tools p { margin: 0; font-size: 14px; line-height: 1.7; color: #566274; }
+.align-control { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; line-height: 1.5; margin: 0; cursor: pointer; min-height: 44px; }
+.area-studio input[type="checkbox"], .area-studio input[type="radio"] { width: 20px; height: 20px; padding: 0; margin: 0; accent-color: #2456c4; flex-shrink: 0; }
+.area-studio fieldset { border: 0; padding: 0; margin: 0 0 20px; min-width: 0; }
+.area-studio legend { margin-bottom: 14px; font-weight: 700; }
+.comparison-choices { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+.comparison-choices label { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 6px; margin: 0; min-height: 52px; border: 1px solid #657482; border-radius: 4px; cursor: pointer; font-size: 17px; }
+.comparison-choices label:has(input:checked) { background: #eef6f5; border-color: #24616c; }
+.comparison-choices label:has(input:focus-visible) { outline: 3px solid #2456c4; outline-offset: 3px; }
+#buildReadout { font-size: 19px; line-height: 1.6; margin: 0 0 18px; }
+[data-cell], [data-half] { cursor: pointer; }
+[data-cell]:focus-visible, [data-half]:focus-visible { outline: 3px solid #2456c4; outline-offset: 1px; }
+.area-studio .number-field input { width: 120px; }
+@media(max-width:700px) {
+  .area-studio .workbench { grid-template-columns: minmax(0,1fr); }
+  .area-studio .response { padding-top: 0; }
+  .area-studio #answerForm { display: block; }
+  .area-studio #numberResponse { margin-bottom: 18px; }
+  .area-studio .board { min-height: 250px; }
+  .area-studio .comparison-choices { max-width: 420px; }
+}

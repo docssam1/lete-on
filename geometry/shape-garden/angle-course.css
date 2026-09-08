@@ -1,0 +1,11 @@
+.angle-course { letter-spacing: 0; }
+.angle-levels { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
+.angle-card { display: flex; flex-direction: column; gap: 12px; min-width: 0; border: 1px solid #bac9cd; border-radius: 6px; background: #fff; padding: 14px; text-decoration: none; }
+.angle-card:focus-visible { outline: 3px solid #2456c4; outline-offset: 3px; }
+.angle-card:hover { border-color: #24616c; }
+.angle-preview { aspect-ratio: 1.35; display: grid; place-items: center; overflow: hidden; }
+.angle-preview svg { height: 100%; max-height: 160px; width: 100%; }
+.angle-card strong { font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
+.angle-card span { color: #24616c; font-size: 13px; margin-top: auto; }
+@media(max-width:850px) { .angle-levels { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media(max-width:380px) { .angle-card { padding: 10px; } .angle-card strong { font-size: 15px; } }

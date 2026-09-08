@@ -1,0 +1,32 @@
+@import url("../angle-studio/styles.css?v=angle-1");
+.perimeter-studio .workbench { align-items:start; }
+.perimeter-studio .board { aspect-ratio:auto; min-height:300px; max-width:380px; }
+.perimeter-studio .board > svg { height:auto; max-height:none; }
+.perimeter-studio .drawing-surface { min-width:0; }
+.perimeter-studio .response { padding-top:24px; position:sticky; top:20px; }
+.perimeter-studio .board-tools { display:flex; align-items:center; flex-wrap:wrap; gap:12px; min-height:66px; padding:10px 0; }
+.perimeter-studio .board-tools p { font-size:14px; line-height:1.7; margin:0; color:#566274; }
+.perimeter-studio .align-control { display:flex; align-items:center; gap:10px; min-height:44px; line-height:1.5; font-size:15px; cursor:pointer; margin:0; }
+.perimeter-studio input[type=checkbox], .perimeter-studio input[type=radio] { width:20px; height:20px; padding:0; margin:0; accent-color:#2456c4; flex-shrink:0; }
+.perimeter-studio fieldset { border:0; padding:0; margin:0 0 20px; min-width:0; }
+.perimeter-studio legend { font-weight:700; margin-bottom:14px; }
+.comparison-choices { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.comparison-choices label { display:flex; align-items:center; justify-content:center; gap:6px; padding:12px 6px; min-height:52px; border:1px solid #657482; border-radius:4px; margin:0; cursor:pointer; font-size:17px; }
+.comparison-choices label:has(input:checked) { background:#eef6f5; border-color:#24616c; }
+.comparison-choices label:has(input:focus-visible) { outline:3px solid #2456c4; outline-offset:3px; }
+#buildReadout { font-size:18px; line-height:1.6; margin:0 0 18px; }
+.perimeter-studio .number-field input { width:120px; }
+.perimeter-studio[data-paired=true] .workbench { grid-template-columns:minmax(0,1fr); gap:6px; }
+.perimeter-studio[data-paired=true] .board { max-width:760px; margin:auto; }
+.perimeter-studio[data-paired=true] .response { position:static; padding-top:0; }
+.perimeter-studio[data-paired=true] #answerForm { display:flex; flex-wrap:wrap; align-items:center; gap:20px; }
+.perimeter-studio[data-paired=true] #compareResponse { margin:0; }
+.perimeter-studio[data-paired=true] #buildReadout { margin:0; }
+@media(max-width:700px) {
+  .perimeter-studio .response { position:static; padding-top:0; }
+  .perimeter-studio #answerForm { display:block; }
+  .perimeter-studio #numberResponse { margin-bottom:18px; }
+  .perimeter-studio .board { max-width:324px; min-height:250px; }
+  .perimeter-studio .comparison-choices { max-width:420px; }
+  .perimeter-studio[data-paired=true] .board { max-width:none; min-height:0; }
+}
