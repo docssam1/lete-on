@@ -5392,6 +5392,9 @@ function screenWorksheetHelper(wsId){
             `<p class="nm-wsh-sentence nm-wsh-noconcept">${ko?'이 유형은 아직 개념 설명이 준비되지 않았어요.':en?'A concept note for this type is not ready yet.':'这个类型的概念说明还没准备好。'}</p>
              <p class="nm-wsh-sentence">${ko?'학습지에 인쇄된 코드를 문제은행에 넣으면 같은 문제를 다시 풀거나 인쇄할 수 있어요.':en?'Enter the code printed on the sheet in the problem bank to redo or reprint the same worksheet.':'把单子上印的代码输入题库，就能重做或重新打印同一份学习单。'}</p>
              <a class="nm-btn full nm-wsh-bank" href="drill.html">${ko?'📚 문제은행 열기':en?'📚 Open problem bank':'📚 打开题库'}</a>`);
+    /* 수학 팁 — QR 을 찍고 들어온 자리에서도 같은 기억 고리를 본다(2026-09-08, 원장
+       "팁이 잘 녹아들어갈 수 있도록"). 학습지·정답지와 같은 함수라 문구가 어긋나지 않는다. */
+    const tipBox = (NM_EXAM.mathTipHtml && NM_EXAM.mathTipHtml(cfg.thread)) || '';
     const ruleBox = (u && u.discover && u.discover.rule)
       ? `<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${esc(L(u.discover.rule))}</p></div>` : '';
     const unitBtn = info.unitId
@@ -5403,6 +5406,7 @@ function screenWorksheetHelper(wsId){
       <div class="nm-card-h">📄 ${esc(wsId)}</div>
       <div class="nm-wsh-name">${esc(L(th.name))}</div>
       ${conceptBody}
+      ${tipBox}
       ${ruleBox}
       ${unitBtn}
     </div>`;

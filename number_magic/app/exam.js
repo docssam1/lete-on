@@ -538,6 +538,7 @@
 .nm-w2-concept-tip { margin:5px 0 0; padding:5px 8px; border-left:3px solid #0E2C57; background:#fff; border-radius:0 6px 6px 0; }
 .nm-w2-concept-tip p { margin:0 0 2px; font-size:12px; line-height:1.55; color:#2a2a2a; }
 .nm-w2-concept-tip p b { color:#0E2C57; margin-right:4px; }
+.nm-w2-tip-brief { margin:0 0 6px; background:#F7F6F2; }
 .nm-w2-example { border:1.4px dashed #c33; border-radius:8px; padding:7px 12px; margin-bottom:8px; }
 .nm-w2-ex-badge { display:inline-block; font-size:10.5px; color:#c33; font-weight:800; margin-bottom:4px; }
 .nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; gap:5px; color:#c33; font-size:14px; }
@@ -2475,7 +2476,10 @@ function w2AnswerKeySectionHtml(round){
     start += n;
     return html;
   }).join('');
-  return `${guide ? `<div class="nm-ak-guide">${guide}</div>` : ''}${pages}`;
+  /* 채점하는 자리에서 팁을 한 번 더(2026-09-08). 틀린 문항을 짚는 순간이 "조심"이 가장
+     잘 박히는 때다 — 여기서는 '왜'를 빼고 기억 고리와 조심만(brief). */
+  const tip = mathTipHtml(round.thread || (round.cfg && round.cfg.thread), 'brief');
+  return `${tip}${guide ? `<div class="nm-ak-guide">${guide}</div>` : ''}${pages}`;
 }
 /* 정답지 머리띠(2026-09-06) — 회차 머리띠(.nm-w2-head)와 같은 짜임(학원 칩 · 네이비 띠 · 코드)으로
    정답지도 같은 묶음의 지면으로 보이게. 고정 높이 페이지에 넣지 않는다(정답지는 흐름 조판). */
@@ -2524,6 +2528,25 @@ const W2_INSTR = {
   NS1: {ko:'□ 안에 알맞은 숫자를 쓰시오.', en:'Write the correct digit in each box.', zh:'在□里填上正确的数字。'},
   MD16: {ko:'근호 안을 가장 간단히 하시오.', en:'Simplify each radical.', zh:'把根号化到最简。'}
 };
+/* 수학 팁(기억 고리, data/math-tips.js) — 원장 2026-09-08 "잘 기억하고 이해할 수 있는 스킬이나 팁".
+   한 번 찍고 마는 상자가 아니라 그 유형을 다시 만나는 자리마다 같이 나온다(원장 "팁이 잘
+   녹아들어갈 수 있도록"): 회차 첫 장 개념 아래 · 정답지 머리 아래(채점하며 다시 읽는 자리) ·
+   학습지 QR 도우미 화면. 없는 스레드는 빈 문자열이라 호출부가 그냥 붙여도 안전하다.
+   mode 'full' 기억고리·왜·조심 / 'brief' 기억고리·조심(채점 자리에선 '왜'가 길다).
+   평문만 오므로 esc 로 충분하다(math-tips.js 가 백슬래시를 막는다). */
+function mathTipHtml(threadId, mode){
+  const tip = (window.NM_MATH_TIPS || {})[threadId];
+  if(!tip) return '';
+  const hook = pickL(tip.hook) || '', why = pickL(tip.why) || '', mistake = pickL(tip.mistake) || '';
+  if(!hook && !why && !mistake) return '';
+  const brief = mode === 'brief';
+  return `<div class="nm-w2-concept-tip${brief ? ' nm-w2-tip-brief' : ''}">
+    ${hook ? `<p><b>💡 ${esc(lk('기억 고리','Remember it','记忆钩'))}</b> ${esc(hook)}</p>` : ''}
+    ${(!brief && why) ? `<p><b>${esc(lk('왜','Why','为什么'))}</b> ${esc(why)}</p>` : ''}
+    ${mistake ? `<p><b>${esc(lk('조심','Watch out','小心'))}</b> ${esc(mistake)}</p>` : ''}
+  </div>`;
+}
+
 function w2ConceptPanelHtml(threadId, level, extra){
   extra = extra || {};
   const info = resolveConceptUnit(threadId, level);
@@ -2547,14 +2570,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
   }).join('');
   const rule = (info.unit && info.unit.discover && info.unit.discover.rule)
     ? pickL(info.unit.discover.rule) : '';
-  /* 수학 팁(기억 고리, data/math-tips.js) — 원장 2026-09-08 "잘 기억하고 이해할 수 있는 스킬이나 팁".
-     개념 문장 아래, 예시 위. 없는 스레드는 조용히 생략. 평문만 오므로 esc 로 충분하다. */
-  const tip = (window.NM_MATH_TIPS || {})[threadId];
-  const tipHtml = tip ? `<div class="nm-w2-concept-tip">
-    <p><b>💡 ${esc(lk('기억 고리','Remember it','记忆钩'))}</b> ${esc(pickL(tip.hook) || '')}</p>
-    ${pickL(tip.why) ? `<p><b>${esc(lk('왜','Why','为什么'))}</b> ${esc(pickL(tip.why))}</p>` : ''}
-    ${pickL(tip.mistake) ? `<p><b>${esc(lk('조심','Watch out','小心'))}</b> ${esc(pickL(tip.mistake))}</p>` : ''}
-  </div>` : '';
+  const tipHtml = mathTipHtml(threadId);
   if(!sentence && !stageLines && !rule && !tipHtml) return '';
   return `<div class="nm-w2-concept">
   <div class="nm-w2-concept-badge">${esc(lk('개념','Concept','概念'))} · ${esc(nm)}</div>
@@ -2898,7 +2914,8 @@ function renderRoundPages(item, opts){
 
   const thName = pickL(item.topicName) || pickL(((window.NM_THREADS||{})[item.thread]||{}).name) || item.thread;
   /* pageSizes: 쪽별 문항 수 — 정답지가 학습지 쪽 순서대로 격자를 나누는 데 쓴다(w2AnswerKeySectionHtml). */
-  return { html, problems, code, thName, guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length) };
+  /* thread: 정답지가 그 회차의 수학 팁을 찾는 데 쓴다(w2AnswerKeySectionHtml, 2026-09-08). */
+  return { html, problems, code, thName, thread: item.thread, guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length) };
 }
 
 /* ── 로드맵 세션 학습지: 20문항/페이지 혼합 인쇄 (원장 지시 2026-09-04) ──
@@ -4488,6 +4505,9 @@ ${round.html}
       .filter((u, i, a) => u && a.indexOf(u) === i);
     return { wsId, session, items, cover, units, k, cad, title };
   },
+
+  /* 수학 팁 HTML — 학습지 QR 도우미 화면(main.js)이 같은 팁을 같은 모양으로 쓴다. */
+  mathTipHtml(threadId, mode){ return mathTipHtml(threadId, mode); },
 
   renderPrintMulti(items, envelopeCode, opts){
     if(!items || !items.length) return;
