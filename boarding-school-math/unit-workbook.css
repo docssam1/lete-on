@@ -120,6 +120,25 @@ button, select { font:inherit; }
 .fraction-model span { width:18mm; border-top:1px solid var(--ink); }
 .fraction-model em { color:var(--primary); font:900 8pt var(--gf-font-body); }
 .conversion-model { grid-template-columns:auto auto auto; font:800 14pt Georgia,serif; }
+.division-model { width:min(62mm,96%); display:grid; gap:3mm; color:var(--ink); }
+.division-row { display:grid; gap:1mm; justify-items:center; }
+.division-row > em { color:var(--muted); font:800 7pt var(--gf-font-body); }
+.division-bars { min-height:9mm; display:flex; justify-content:center; gap:2mm; }
+.division-bar { position:relative; width:18mm; height:9mm; overflow:hidden; border:1px solid var(--ink); background:#fff; }
+.division-bar span { position:absolute; inset:0 auto 0 0; width:var(--fraction-width); border-right:1px solid var(--ink); background:#dbe6ff; }
+.division-bar.divisor { height:6mm; }
+.division-bar.divisor span { background:#d8eee4; }
+.division-labels { display:flex; align-items:center; justify-content:center; gap:3mm; font:800 10pt Georgia,serif; }
+.division-context, .division-equation, .division-area { width:min(62mm,96%); display:flex; align-items:center; justify-content:center; gap:3mm; color:var(--ink); font:800 12pt Georgia,serif; }
+.division-context { display:grid; grid-template-columns:auto auto; padding:4mm; border:1px solid var(--line); background:#fff; }
+.division-context em { color:var(--muted); font:800 7.5pt var(--gf-font-body); }
+.division-rate { width:min(58mm,96%); display:grid; gap:2mm; place-items:center; }
+.division-rate-grid { width:100%; display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--ink); border-left:1px solid var(--ink); }
+.division-rate-grid span, .division-rate-grid strong { min-height:9mm; display:grid; place-items:center; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); }
+.division-rate span { color:var(--muted); font:800 7pt var(--gf-font-body); }
+.division-rate strong { font:800 11pt Georgia,serif; }
+.division-rate em { color:var(--primary); font:900 9pt Georgia,serif; }
+.division-area { padding:4mm; border:1px solid var(--ink); background:linear-gradient(90deg,#f7f9ff 0 50%,#fff 50%); font-size:9pt; }
 .teacher-key { margin-top:auto; padding:3mm; border-left:3px solid var(--success); background:#e8f5ee; font-size:7.6pt; line-height:1.4; }
 .teacher-key strong { display:block; margin-bottom:1mm; }
 .teacher-move { margin-top:2mm; padding:2.5mm 3mm; border-left:3px solid var(--primary); background:var(--primary-soft); font-size:7.2pt; line-height:1.35; }
