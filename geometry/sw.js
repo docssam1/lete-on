@@ -6,7 +6,7 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v31";
+const CACHE = "gfield-geo-v34";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/mirror-manor/",
@@ -58,6 +58,46 @@ const CORE = [
   "/geometry/shape-garden/",
   "/geometry/shape-garden/app.js?v=shape-7",
   "/geometry/shape-garden/transform-course.css?v=transform-course-1",
+  "/geometry/shape-garden/angle-course.css?v=angle-1",
+  "/geometry/shape-garden/angle-course.js?v=angle-1",
+  "/geometry/shape-garden/area-course.js?v=area-1",
+  "/geometry/shape-garden/perimeter-course.js?v=perimeter-1",
+  "/geometry/games/perimeter/",
+  "/geometry/games/perimeter/app.js?v=perimeter-1",
+  "/geometry/games/perimeter/styles.css?v=perimeter-1",
+  "/geometry/games/perimeter/core.js?v=perimeter-1",
+  "/geometry/games/perimeter/render.js?v=perimeter-1",
+  "/geometry/games/perimeter/i18n.js?v=perimeter-1",
+  "/geometry/worksheet/perimeter/",
+  "/geometry/worksheet/perimeter/app.js?v=perimeter-sheet-1",
+  "/geometry/worksheet/perimeter/styles.css?v=perimeter-sheet-1",
+  "/geometry/worksheet/perimeter/workbook-core.js?v=perimeter-sheet-1",
+  "/geometry/worksheet/perimeter/i18n.js?v=perimeter-sheet-1",
+  "/geometry/games/unit-area/",
+  "/geometry/games/unit-area/app.js?v=area-1",
+  "/geometry/games/unit-area/styles.css?v=area-1",
+  "/geometry/games/unit-area/core.js?v=area-1",
+  "/geometry/games/unit-area/render.js?v=area-1",
+  "/geometry/games/unit-area/i18n.js?v=area-1",
+  "/geometry/worksheet/unit-area/",
+  "/geometry/worksheet/unit-area/app.js?v=area-sheet-1",
+  "/geometry/worksheet/unit-area/styles.css?v=area-sheet-1",
+  "/geometry/worksheet/unit-area/workbook-core.js?v=area-sheet-1",
+  "/geometry/worksheet/unit-area/i18n.js?v=area-sheet-1",
+  "/geometry/games/angle-studio/",
+  "/geometry/games/angle-studio/app.js?v=angle-1",
+  "/geometry/games/angle-studio/styles.css?v=angle-1",
+  "/geometry/games/angle-studio/core.js?v=angle-1",
+  "/geometry/games/angle-studio/basic.js?v=angle-1",
+  "/geometry/games/angle-studio/basic-render.js?v=angle-1",
+  "/geometry/games/angle-studio/polygon.js?v=angle-1",
+  "/geometry/games/angle-studio/parallel.js?v=angle-1",
+  "/geometry/games/angle-studio/render.js?v=angle-1",
+  "/geometry/games/angle-studio/i18n.js?v=angle-1",
+  "/geometry/worksheet/angle-studio/",
+  "/geometry/worksheet/angle-studio/app.js?v=angle-sheet-1",
+  "/geometry/worksheet/angle-studio/styles.css?v=angle-sheet-1",
+  "/geometry/worksheet/angle-studio/workbook-core.js?v=angle-sheet-1",
   "/geometry/games/shape-transform/",
   "/geometry/games/shape-transform/styles.css?v=shape-transform-5",
   "/geometry/games/shape-transform/app.js?v=shape-transform-5",
@@ -171,6 +211,11 @@ self.addEventListener("fetch", (event) => {
       const cached = await caches.match(req);
       if (cached) return cached;
       if (req.mode === "navigate") {
+        const path = new URL(req.url).pathname;
+        if (["/geometry/games/angle-studio/", "/geometry/worksheet/angle-studio/", "/geometry/games/unit-area/", "/geometry/worksheet/unit-area/", "/geometry/games/perimeter/", "/geometry/worksheet/perimeter/"].includes(path)) {
+          const activityPage = await caches.match(path);
+          if (activityPage) return activityPage;
+        }
         const fallback = await caches.match("/geometry/world-map/");
         if (fallback) return fallback;
       }

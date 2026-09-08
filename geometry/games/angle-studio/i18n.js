@@ -1,0 +1,25 @@
+const ko = {
+  title: "각 탐구실", back: "도형 정원", worksheet: "학습지", language: "언어", count: "개", estimate: "어림한 각도", answer: "나의 답", point: "점 B", choosePoint: "점 B를 골라 주세요.", chosen: "고른 점 B", check: "답 확인", checkEstimate: "어림값 비교", hint: "생각의 실마리", retry: "다시 풀기", next: "다음 문제", done: "활동 마치기", correct: "맞았어요.", right: "직각을 만들었어요.", close: "가깝게 어림했어요.", compare: "실제 각도와 비교해 보세요.", acute: "직각보다 작은 각이에요. 점 B를 옮겨 보세요.", obtuse: "직각보다 큰 각이에요. 점 B를 옮겨 보세요.", tryAgain: "각의 관계를 다시 살펴보세요.", invalid: "답을 먼저 입력해 주세요.", estimateInvalid: "0°부터 180° 사이의 수를 입력해 주세요.", complete: "각 탐구를 마쳤어요", completeText: "문제 5개를 살펴봤어요.", practice: "새 문제로 연습", area: "다른 영역", reference: "직각과 비교하기", estimateRule: "실제 각도와 10° 이내로 차이가 나면 가깝게 어림한 것으로 봐요.", rightRule: "점 O가 꼭짓점이에요. OA와 OB가 직각으로 만나면 돼요.", polygonRule: "한 꼭짓점에서 삼각형으로 나누어 내각의 합을 생각해 보세요.", parallelRule: "동위각과 엇각은 위치로 구별해요. 두 직선이 평행할 때 각의 크기가 같아요.", review: "확인한 내용", storage: "이 기기에는 학습 기록을 저장하지 못했어요.", pointTip: "점 위치", progress: "문제"
+};
+const en = {
+  title: "Angle Studio", back: "Shape Garden", worksheet: "Worksheet", language: "Language", count: "", estimate: "Your estimate", answer: "Your answer", point: "Point B", choosePoint: "Choose a point B.", chosen: "Chosen point B", check: "Check answer", checkEstimate: "Compare estimate", hint: "A clue", retry: "Try again", next: "Next problem", done: "Finish activity", correct: "That's right.", right: "You made a right angle.", close: "A close estimate.", compare: "Compare with the actual angle.", acute: "This is smaller than a right angle. Move point B.", obtuse: "This is larger than a right angle. Move point B.", tryAgain: "Look at the angle relationships again.", invalid: "Enter an answer first.", estimateInvalid: "Enter a number from 0° to 180°.", complete: "Angle exploration complete", completeText: "You explored five problems.", practice: "Practise new problems", area: "Choose an area", reference: "Compare with a right angle", estimateRule: "An estimate within 10° of the actual angle counts as close.", rightRule: "O is the vertex. OA and OB should meet at a right angle.", polygonRule: "Divide a polygon into triangles from one vertex to think about the interior angle sum.", parallelRule: "Corresponding and alternate angles describe positions. They are equal when the two lines are parallel.", review: "What we found", storage: "Learning progress could not be saved on this device.", pointTip: "Point position", progress: "Problem"
+};
+const zh = {
+  title: "角度探究室", back: "图形花园", worksheet: "练习纸", language: "语言", count: "个", estimate: "估计的角度", answer: "我的答案", point: "点 B", choosePoint: "请选择点 B。", chosen: "选中的点 B", check: "检查答案", checkEstimate: "比较估计值", hint: "思考线索", retry: "重新尝试", next: "下一题", done: "完成活动", correct: "答对了。", right: "你画出了一个直角。", close: "估计得很接近。", compare: "与实际角度比较一下。", acute: "这个角比直角小。请移动点 B。", obtuse: "这个角比直角大。请移动点 B。", tryAgain: "再看看角之间的关系。", invalid: "请先输入答案。", estimateInvalid: "请输入0°至180°之间的数。", complete: "角度探究完成", completeText: "你探究了5道题。", practice: "练习新题", area: "选择其他领域", reference: "与直角比较", estimateRule: "与实际角度相差不超过10°，就算估计得接近。", rightRule: "O 是顶点。OA 与 OB 应构成直角。", polygonRule: "从一个顶点把多边形分成三角形，思考内角和。", parallelRule: "同位角和内错角表示位置关系。当两条直线平行时，它们的角度相等。", review: "我们的发现", storage: "无法在此设备上保存学习进度。", pointTip: "点的位置", progress: "题目"
+};
+const ja = {
+  title: "角の探究室", back: "図形の庭", worksheet: "学習プリント", language: "言語", count: "個", estimate: "見積もった角度", answer: "自分の答え", point: "点 B", choosePoint: "点 B を選びましょう。", chosen: "選んだ点 B", check: "答えを確認", checkEstimate: "見積もりを比べる", hint: "考えるヒント", retry: "もう一度", next: "次の問題", done: "活動を終える", correct: "正解です。", right: "直角ができました。", close: "近く見積もれました。", compare: "実際の角度と比べましょう。", acute: "直角より小さい角です。点 B を動かしましょう。", obtuse: "直角より大きい角です。点 B を動かしましょう。", tryAgain: "角の関係をもう一度考えましょう。", invalid: "先に答えを入力しましょう。", estimateInvalid: "0°から180°までの数を入力しましょう。", complete: "角の探究が終わりました", completeText: "5問を探究しました。", practice: "新しい問題で練習", area: "ほかの領域", reference: "直角と比べる", estimateRule: "実際の角度との差が10°以内なら、近い見積もりです。", rightRule: "O は頂点です。OA と OB が直角になるようにしましょう。", polygonRule: "一つの頂点から三角形に分けて、内角の和を考えましょう。", parallelRule: "同位角と錯角は位置の関係です。二つの直線が平行なとき、角の大きさが等しくなります。", review: "わかったこと", storage: "この端末に学習記録を保存できませんでした。", pointTip: "点の位置", progress: "問題"
+};
+Object.assign(ko, { joinAll: "대각선을 먼저 이어 삼각형으로 나누어 보세요.", neighbor: "이웃한 꼭짓점은 변으로 이어져 있어요. 이웃하지 않는 꼭짓점을 골라 보세요." });
+Object.assign(en, { joinAll: "Join the diagonals to divide the polygon into triangles first.", neighbor: "An adjacent vertex is already joined by a side. Choose a nonadjacent vertex." });
+Object.assign(zh, { joinAll: "请先连接对角线，把多边形分成三角形。", neighbor: "相邻顶点已经由边连接。请选择不相邻的顶点。" });
+Object.assign(ja, { joinAll: "先に対角線を結んで、三角形に分けましょう。", neighbor: "隣の頂点は辺でつながっています。隣ではない頂点を選びましょう。" });
+ko.pointSelected = "점 B를 골랐어요.";
+ko.angleNumberUnit = "번";
+en.pointSelected = "Point B is selected.";
+en.angleNumberUnit = "";
+zh.pointSelected = "已选择点 B。";
+zh.angleNumberUnit = "号";
+ja.pointSelected = "点 B を選びました。";
+ja.angleNumberUnit = "番";
+export function translation(lang) { return ({ ko, en, zh, ja })[lang] || ko; }

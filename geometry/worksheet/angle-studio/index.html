@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>각도 탐구 | GFIELD 학습지</title>
+  <link rel="stylesheet" href="./styles.css?v=angle-sheet-1" />
+</head>
+<body class="gfield-ui">
+  <header class="maker-bar">
+    <div class="maker-identity">
+      <a class="icon-button" id="backLink" href="../../games/angle-studio/" aria-label="각도 스튜디오로 돌아가기" title="각도 스튜디오로 돌아가기"></a>
+      <div class="maker-title"><strong>각도 탐구</strong><small>GFIELD 학습지</small></div>
+    </div>
+    <div class="maker-settings">
+      <label class="domain-control" for="domainSelect">활동 <select id="domainSelect" disabled aria-label="학습 활동"></select></label>
+      <label for="countInput">문항 수 <input id="countInput" type="number" min="1" max="20" value="20" inputmode="numeric" aria-describedby="countNotice" disabled /></label>
+      <label class="toggle"><input id="coverToggle" type="checkbox" checked disabled />표지</label>
+      <label class="toggle"><input id="answerToggle" type="checkbox" disabled />정답·풀이</label>
+      <div class="maker-actions">
+        <button class="icon-button" id="refreshButton" type="button" aria-label="새 문제" title="새 문제" disabled></button>
+        <button class="icon-button print-button" id="printButton" type="button" aria-label="학습지 인쇄" title="학습지 인쇄" disabled><img src="../shape-transform/icons/printer.svg" alt="" /></button>
+      </div>
+    </div>
+    <p id="countNotice" class="count-notice" role="status" aria-live="polite"></p>
+  </header>
+  <section id="loadState" class="load-state" aria-live="polite">
+    <p id="loadMessage">학습지를 불러오는 중입니다.</p>
+    <button id="retryButton" type="button" hidden>다시 불러오기</button>
+  </section>
+  <noscript><p class="load-state">학습지를 보려면 자바스크립트를 켜 주세요.</p></noscript>
+  <main id="worksheet" class="worksheet-pages" aria-label="각도 탐구 학습지" hidden></main>
+  <script type="module" src="./app.js?v=angle-sheet-1"></script>
+</body>
+</html>
