@@ -670,6 +670,15 @@ function renderKaTeX(tex, el){
 }
 
 function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+/* 문장제 본문 HTML(2026-09-08, 원장 "분수를 1/2처럼 쓰지 않고 정확히 수학 수식으로").
+   프레임은 분수를 평문 `1/3`·`4 1/4`로 넘긴다(세 언어 공통). 여기서 그 토큰만 KaTeX
+   span으로 바꿔 위아래로 선 분수로 찍는다 — 호출부의 KaTeX 패스(.nm-w2-tex / .nm-vp-tex)가
+   그대로 렌더한다. 소수·정수는 손대지 않는다. cls 는 그 화면의 패스가 찾는 클래스. */
+function wordHtml(text, cls){
+  const t = esc(text);
+  return t.replace(/(?<![\d.])(?:(\d+) )?(\d+)\/(\d+)(?![\d])/g, (m, w, n, d) =>
+    `<span class="${cls}" data-tex="${w ? w : ''}\\frac{${n}}{${d}}"></span>`);
+}
 
 /* 다칸 답(배열) 표기: [3,5] → "3, 5". 단일 답은 그대로.
    answerShape가 있으면(분수 정답) 이 대신 ansTex()의 \dfrac 수식을 쓴다 — fmtAns는
@@ -748,7 +757,7 @@ function gridCellHtml(p, i, mode, graded, userAnswers){
     }
     const wc = pickChoices(p), wAsk = pickL(p.wordAsk);
     inner = `<div class="nm-vp-wordwrap">
-  <div class="nm-vp-word">${esc(pickL(p.word))}</div>
+  <div class="nm-vp-word">${wordHtml(pickL(p.word), 'nm-vp-tex')}</div>
   ${wAsk ? `<div class="nm-vp-wordask">${esc(wAsk)}</div>` : ''}
   ${p.wordEqn ? `<div class="nm-vp-word-eq">${esc(pickL(p.wordEqn))}</div>` : ''}
   ${wc ? `<ol class="nm-vp-choices">${wc.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
@@ -1889,7 +1898,7 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
     } else if(p.word){
       const texEl = document.createElement('div');
       texEl.className = 'nm-print-word';
-      texEl.textContent = pickL(p.word);
+      texEl.innerHTML = wordHtml(pickL(p.word), 'nm-w2-tex');
       card.appendChild(texEl);
       /* 물음이 본문과 따로 있는 문장제(WP 스레드) — 본문만 찍으면 무엇을 묻는지
          알 수 없다. 인쇄물만 보고 풀 수 있어야 한다는 원칙 그대로. */
@@ -2362,7 +2371,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
       + `<span>${esc(lk('식','Equation','算式'))}: <span class="nm-w2-blank" style="width:42mm"></span></span>`
       + `<span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-blank" style="width:22mm"></span>${unit ? ' ' + esc(unit) : ''}</span>`
       + `</div>`;
-    inner = `<div class="nm-print-word">${esc(pickL(p.word))}</div>`
+    inner = `<div class="nm-print-word">${wordHtml(pickL(p.word), 'nm-w2-tex')}</div>`
       + (p.wordAsk ? `<div class="nm-print-wordask">${esc(pickL(p.wordAsk))}</div>` : '')
       + (wc ? wc.outerHTML : '')
       + (p.wordEqn
@@ -3976,7 +3985,7 @@ ${printWatermarkHtml()}
           let inner;
           if(p.word){
             const pvAsk = pickL(p.wordAsk);
-            inner = `<div class="nm-vp-word nm-vp-word-sm">${esc(pickL(p.word))}${pvAsk ? ' ' + esc(pvAsk) : ''}</div>`;
+            inner = `<div class="nm-vp-word nm-vp-word-sm">${wordHtml(pickL(p.word), 'nm-vp-tex')}${pvAsk ? ' ' + esc(pvAsk) : ''}</div>`;
           } else {
             const v = parseVert(p.tex);
             inner = v

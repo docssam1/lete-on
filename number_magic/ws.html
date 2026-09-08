@@ -160,9 +160,17 @@
     var thName = function(t){ var th=(window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
     items.push({ thread:d0.t, level:d0.lv, n:6, count:6, wordType:'all', optionalWord:true, seed: envItemSeed(seedWeek + 'wp', c, 0),
       topicName: '문장제 · ' + thName(d0.t),
-      wordAlts: session.drills.slice(1).map(function(d){
-        return { thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) };
-      }) });
+      wordAlts: (function(){
+        /* 이 세션의 나머지 드릴 → 같은 과정의 다른 세션 드릴 순(2026-09-08). 과정 23처럼 첫 세션이
+           수열·변환식뿐이고 소수 나눗셈(DC3)은 뒤 세션에 있는 경우, 그 과정의 문장제가 통째로
+           빠지지 않게 한다. 스레드 중복은 뺀다. */
+        var seen = {}; seen[d0.t] = true; var alts = [];
+        var push = function(d){ if(seen[d.t]) return; seen[d.t] = true;
+          alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) }); };
+        session.drills.slice(1).forEach(push);
+        (course.sessions || []).forEach(function(s){ if(s !== session && !s.test) (s.drills || []).forEach(push); });
+        return alts;
+      })() });
   }
   var wsId = 'W' + w + '-' + c + (k === 2 ? '-2' : '');
   var title = (course.title && (course.title.ko || course.title)) || c;
