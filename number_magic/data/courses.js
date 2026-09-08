@@ -141,7 +141,7 @@ const COURSE_SPEC = [
  {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
    drills:['MX2','FR8','DC3'], magic:[['C-05'],['C-35'],['C-33']], creative:['MX6@1','DC5@1']},
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
-   drills:['MX3','DV8','EL4'], magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1']},
+   drills:['MX3','MX3@4','MX3@5','DV8','EL4'], magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1']},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
    drills:['MX5'], magic:[], /* 레벨 보스는 세션이 3개로 고정이라 창의도 3종만 실린다(4개를 적으면 마지막이 안 나온다).
       레벨 3을 대표하는 셋 — 분수 · 소수 · 수열(가우스). */
@@ -267,13 +267,17 @@ function buildCourses(NM_THREADS){
 
   COURSE_SPEC.forEach(spec => {
     const ownDrills = spec.drills.map(parsePin);
+    /* 레벨을 여기서 확정한다. 고정 레벨('MX3@4')은 **그 항목만** 그 레벨이고, 같은 과정의
+       맨 항목('MX3')을 밀어 올리지 않는다 — 안 그러면 과정 24 처럼 1·4·5 를 같이 내려던
+       것이 전부 5 가 되어 버린다(2026-09-08 발견). 복습 풀(priorPool)에는 그 과정에서 쓴
+       가장 높은 레벨을 남긴다. */
     ownDrills.forEach(d => {
-      if(d.pin != null){
-        const lv = Math.min(d.pin, maxLevel(d.t));
-        homeLevel[d.t] = Math.max(homeLevel[d.t] || 0, lv);
-      } else if(homeLevel[d.t] == null){ homeLevel[d.t] = 1; }
+      if(d.pin != null){ d.lv = Math.min(d.pin, maxLevel(d.t)); return; }
+      if(homeLevel[d.t] == null) homeLevel[d.t] = 1;
       else homeLevel[d.t] = Math.min(homeLevel[d.t] + 1, maxLevel(d.t));
+      d.lv = homeLevel[d.t];
     });
+    ownDrills.forEach(d => { if(d.pin != null) homeLevel[d.t] = Math.max(homeLevel[d.t] || 0, d.lv); });
     /* 창의 연산 회차(2026-09-08, 원장 "사이사이에 필산 후 창의 연산도 같이").
        그 과정의 마법(창의수연 전략)을 손으로 푸는 드릴이다. 필산 레벨 사다리
        (homeLevel·priorPool)와 섞지 않는다 — 계열이 다르고, 섞으면 창의 회차가
@@ -299,7 +303,7 @@ function buildCourses(NM_THREADS){
       const ownA = ownDrills[(i*2) % ownDrills.length];
       const ownB = ownDrills.length > 1 ? ownDrills[(i*2+1) % ownDrills.length] : null;
       const picked = (ownB && ownB !== ownA) ? [ownA, ownB] : [ownA];
-      const drills = picked.map(d => ({t:d.t, lv:(d.pin != null ? Math.min(d.pin, maxLevel(d.t)) : homeLevel[d.t]), n:6}));
+      const drills = picked.map(d => ({t:d.t, lv:d.lv, n:6}));
       if(spec.id > 1 && priorPool.length){
         const pt = priorPool[globalSessionIdx % priorPool.length];
         drills.push({t:pt, lv:homeLevel[pt], n:4});
