@@ -105,6 +105,21 @@ test("signed-number concept opens the calculated 36-item coordinate workbook",as
   assert.deepEqual(errors,[]);await page.close();
 });
 
+test("expression concept opens the 36-item powers and equivalence workbook",async function(){
+  const page=await browser.newPage({viewport:{width:1080,height:850}});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}/concept-learning.html?cluster=6.EE.A&from=diagnostic`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator('[data-clinic-action="animated"]').getAttribute("href"),"./animated-math.html?lesson=expression-structure-order&cluster=6.EE.A&locale=ko");
+  const workbook=page.locator('[data-clinic-action="workbook"]');
+  assert.equal(await workbook.getAttribute("href"),"./unit-workbook.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko");
+  assert.match(await workbook.innerText(),/식의 구조와 동치식 36문항 단원 워크북/);
+  await workbook.click();await page.waitForLoadState("networkidle");
+  assert.equal(await page.locator(".book-problem").count(),36);
+  assert.equal(await page.locator(".book-page").count(),12);
+  assert.equal(await page.locator(".eea-expression-model").count(),36);
+  assert.match(await page.locator('[data-mode="recheck"]').innerText(),/8/);
+  assert.deepEqual(errors,[]);await page.close();
+});
+
 test("Grade 6 geometry links to its exact area lesson and never to the unrelated isosceles sample", async function () {
   const page = await browser.newPage({ viewport: { width: 1080, height: 850 } });
   const errors = errorsFor(page);

@@ -163,6 +163,10 @@ button, select { font:inherit; }
 .nsc-distance.is-reflection { stroke-dasharray:5 4; }
 .nsc-point { fill:var(--primary); stroke:#fff; stroke-width:2; }
 .nsc-point.is-target { fill:#fff; stroke:var(--primary); }
+.eea-expression-model { width:min(62mm,96%); min-height:30mm; padding:5mm; display:grid; place-items:center; gap:3mm; border:1px solid var(--line); background:#fff; color:var(--ink); text-align:center; }
+.eea-expression-model span { color:var(--muted); font:800 7.5pt var(--gf-font-body); }
+.eea-expression-model strong { font:800 13pt Georgia,serif; line-height:1.45; word-break:keep-all; }
+.eea-expression-model sup { font-size:.7em; }
 .teacher-key { margin-top:auto; padding:3mm; border-left:3px solid var(--success); background:#e8f5ee; font-size:7.6pt; line-height:1.4; }
 .teacher-key strong { display:block; margin-bottom:1mm; }
 .teacher-move { margin-top:2mm; padding:2.5mm 3mm; border-left:3px solid var(--primary); background:var(--primary-soft); font-size:7.2pt; line-height:1.35; }
