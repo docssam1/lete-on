@@ -6,7 +6,7 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v35";
+const CACHE = "gfield-geo-v36";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/mirror-manor/",
@@ -63,6 +63,18 @@ const CORE = [
   "/geometry/shape-garden/area-course.js?v=area-1",
   "/geometry/shape-garden/perimeter-course.js?v=perimeter-1",
   "/geometry/shape-garden/quadrilateral-course.js?v=quad-1",
+  "/geometry/shape-garden/circle-course.js?v=circle-1",
+  "/geometry/games/circle-studio/",
+  "/geometry/games/circle-studio/app.js?v=circle-1",
+  "/geometry/games/circle-studio/styles.css?v=circle-1",
+  "/geometry/games/circle-studio/core.js?v=circle-1",
+  "/geometry/games/circle-studio/render.js?v=circle-1",
+  "/geometry/games/circle-studio/i18n.js?v=circle-1",
+  "/geometry/worksheet/circle-studio/",
+  "/geometry/worksheet/circle-studio/app.js?v=circle-sheet-1",
+  "/geometry/worksheet/circle-studio/styles.css?v=circle-sheet-1",
+  "/geometry/worksheet/circle-studio/workbook-core.js?v=circle-sheet-1",
+  "/geometry/worksheet/circle-studio/i18n.js?v=circle-sheet-1",
   "/geometry/games/quadrilateral/",
   "/geometry/games/quadrilateral/app.js?v=quad-1",
   "/geometry/games/quadrilateral/styles.css?v=quad-1",
@@ -224,7 +236,7 @@ self.addEventListener("fetch", (event) => {
       if (cached) return cached;
       if (req.mode === "navigate") {
         const path = new URL(req.url).pathname;
-        if (["/geometry/games/angle-studio/", "/geometry/worksheet/angle-studio/", "/geometry/games/unit-area/", "/geometry/worksheet/unit-area/", "/geometry/games/perimeter/", "/geometry/worksheet/perimeter/", "/geometry/games/quadrilateral/", "/geometry/worksheet/quadrilateral/"].includes(path)) {
+        if (["/geometry/games/angle-studio/", "/geometry/worksheet/angle-studio/", "/geometry/games/unit-area/", "/geometry/worksheet/unit-area/", "/geometry/games/perimeter/", "/geometry/worksheet/perimeter/", "/geometry/games/quadrilateral/", "/geometry/worksheet/quadrilateral/", "/geometry/games/circle-studio/", "/geometry/worksheet/circle-studio/"].includes(path)) {
           const activityPage = await caches.match(path);
           if (activityPage) return activityPage;
         }
