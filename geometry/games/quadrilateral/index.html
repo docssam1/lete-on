@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GFIELD 사각형 탐구</title><link rel="stylesheet" href="./styles.css?v=quad-1"><link rel="manifest" href="/geometry/manifest.webmanifest"><meta name="theme-color" content="#24616c"></head>
+<body><main class="studio quadrilateral-studio">
+  <header class="topbar"><a id="back" class="icon-button" href="../../shape-garden/"></a><div class="brand"><strong>GFIELD</strong><span id="studioTitle"></span></div><a id="worksheet" class="icon-button" href="../../worksheet/quadrilateral/"></a><select id="language" aria-label="언어"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option><option value="ja">日本語</option></select></header>
+  <nav id="domainTabs" class="domain-tabs"></nav>
+  <header class="mission"><h1 id="title"></h1><div class="progress"><span id="progress"></span><progress id="progressBar" max="5" value="0"></progress></div></header>
+  <section class="question" aria-labelledby="prompt"><h2 id="prompt" tabindex="-1"></h2><div id="conditions" class="conditions"></div>
+    <div class="workbench"><div class="drawing-surface"><div id="board" class="board"></div><p id="legend" class="legend" hidden></p><div class="board-tools"><button id="undo" class="icon-button" type="button"></button><p id="pointReadout" role="status"></p></div></div>
+      <div class="response"><form id="answerForm"><fieldset id="selectionResponse"><legend id="choicesTitle"></legend><div id="choices" class="choices"></div></fieldset><button id="check" class="primary-button" type="submit"></button></form><p id="feedback" role="status" aria-live="polite"></p><details id="hint"><summary id="hintTitle"></summary><p id="hintText"></p></details><section id="review" class="review" hidden><h3 id="reviewTitle"></h3><p id="solution"></p></section></div>
+    </div>
+  </section><footer class="actions"><button id="retry" class="icon-button" type="button"></button><button id="next" class="primary-button" type="button" hidden></button></footer><p class="watermark">GFIELD</p><p id="storageWarning" role="status"></p>
+  <dialog id="completion"><h2 id="completeTitle"></h2><p id="completeText"></p><div class="dialog-actions"><a id="practice" class="primary-button"></a><a id="garden" class="button" href="../../shape-garden/"></a><button id="close" class="icon-button" type="button"></button></div></dialog>
+</main><script type="module" src="./app.js?v=quad-1"></script><script src="../../shared/pwa.js?v=3" defer></script></body></html>

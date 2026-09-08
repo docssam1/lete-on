@@ -6,7 +6,7 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v34";
+const CACHE = "gfield-geo-v35";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/mirror-manor/",
@@ -62,6 +62,18 @@ const CORE = [
   "/geometry/shape-garden/angle-course.js?v=angle-1",
   "/geometry/shape-garden/area-course.js?v=area-1",
   "/geometry/shape-garden/perimeter-course.js?v=perimeter-1",
+  "/geometry/shape-garden/quadrilateral-course.js?v=quad-1",
+  "/geometry/games/quadrilateral/",
+  "/geometry/games/quadrilateral/app.js?v=quad-1",
+  "/geometry/games/quadrilateral/styles.css?v=quad-1",
+  "/geometry/games/quadrilateral/core.js?v=quad-1",
+  "/geometry/games/quadrilateral/render.js?v=quad-1",
+  "/geometry/games/quadrilateral/i18n.js?v=quad-1",
+  "/geometry/worksheet/quadrilateral/",
+  "/geometry/worksheet/quadrilateral/app.js?v=quad-sheet-1",
+  "/geometry/worksheet/quadrilateral/styles.css?v=quad-sheet-1",
+  "/geometry/worksheet/quadrilateral/workbook-core.js?v=quad-sheet-1",
+  "/geometry/worksheet/quadrilateral/i18n.js?v=quad-sheet-1",
   "/geometry/games/perimeter/",
   "/geometry/games/perimeter/app.js?v=perimeter-1",
   "/geometry/games/perimeter/styles.css?v=perimeter-1",
@@ -212,7 +224,7 @@ self.addEventListener("fetch", (event) => {
       if (cached) return cached;
       if (req.mode === "navigate") {
         const path = new URL(req.url).pathname;
-        if (["/geometry/games/angle-studio/", "/geometry/worksheet/angle-studio/", "/geometry/games/unit-area/", "/geometry/worksheet/unit-area/", "/geometry/games/perimeter/", "/geometry/worksheet/perimeter/"].includes(path)) {
+        if (["/geometry/games/angle-studio/", "/geometry/worksheet/angle-studio/", "/geometry/games/unit-area/", "/geometry/worksheet/unit-area/", "/geometry/games/perimeter/", "/geometry/worksheet/perimeter/", "/geometry/games/quadrilateral/", "/geometry/worksheet/quadrilateral/"].includes(path)) {
           const activityPage = await caches.match(path);
           if (activityPage) return activityPage;
         }

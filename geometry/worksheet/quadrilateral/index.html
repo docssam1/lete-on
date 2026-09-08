@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>사각형 탐구 | GFIELD</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./styles.css?v=quad-sheet-1" />
+</head>
+<body class="gfield-ui">
+  <header class="maker-bar">
+    <div class="maker-identity"><a class="icon-button" id="backLink" href="../../games/quadrilateral/" aria-label="사각형 게임으로"></a><div class="maker-title"><strong data-copy="title">사각형 탐구</strong><small data-copy="brand">GFIELD 학습지</small></div></div>
+    <div class="maker-settings">
+      <label class="domain-control"><span data-copy="activity">활동</span><select id="domainSelect" disabled></select></label>
+      <label><span data-copy="count">문항 수</span><input id="countInput" type="number" min="1" max="20" value="20" inputmode="numeric" aria-describedby="countNotice" disabled /></label>
+      <label><span data-copy="language">언어</span><select id="languageSelect" disabled><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option><option value="ja">日本語</option></select></label>
+      <label class="toggle"><input id="coverToggle" type="checkbox" checked disabled /><span data-copy="cover">표지</span></label>
+      <label class="toggle"><input id="answerToggle" type="checkbox" disabled /><span data-copy="answers">정답·풀이</span></label>
+      <div class="maker-actions"><button class="icon-button" id="refreshButton" type="button" disabled></button><button class="icon-button print-button" id="printButton" type="button" disabled><img src="../shape-transform/icons/printer.svg" alt="" /></button></div>
+    </div>
+    <p id="countNotice" role="status" aria-live="polite"></p>
+  </header>
+  <section id="loadState" class="load-state" aria-live="polite"><p id="loadMessage">학습지를 불러오는 중입니다.</p><button id="retryButton" type="button" hidden>다시 불러오기</button></section>
+  <noscript>JavaScript is required.</noscript>
+  <main id="worksheet" hidden></main>
+  <script type="module" src="./app.js?v=quad-sheet-1"></script>
+</body>
+</html>
