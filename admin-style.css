@@ -1,0 +1,80 @@
+/* ============================================================
+   GFIELD 어드민 공통 외피 (2026-09-06, 원장 "우리 스타일로 만들어")
+   값은 number_magic/landing.html 의 :root 를 그대로 가져왔다 — 제품과 관리자가
+   같은 종이·같은 남색·같은 금색을 쓴다. 각 콘솔의 인라인 <style> 다음에 실어서
+   구조(레이아웃·클래스)는 건드리지 않고 토큰과 표면만 갈아끼운다.
+   ============================================================ */
+:root{
+  --paper:#FBFAF7; --paper-warm:#F5F1E8; --mist:#EFEDE7;
+  --blue:#16417C; --blue-deep:#0E2C57; --blue-ink:#0A1C38;
+  --gold-h:#C9A063; --gold-soft:#EAC996; --gold-bright:#F5D98B;
+  --serif:'Gowun Batang','Noto Serif KR',ui-serif,Georgia,serif;
+  --sans:'Pretendard',-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  --shadow-1:0 8px 24px -12px rgba(26,34,51,.22);
+  --shadow-2:0 30px 60px -30px rgba(14,44,87,.45);
+
+  /* 두 콘솔이 이미 쓰던 변수 이름을 하우스 값으로 다시 매핑 */
+  --bg:#FBFAF7; --surface:#fff; --surface2:#F5F1E8;
+  --ink:#1A2233; --sub:#4a5468; --faint:#8a92a3;
+  --line:#E4E2DC;
+  --navy:#16417C; --navy-d:#0E2C57;
+  --purple:#0E2C57; --purple-l:#F5F1E8;      /* 레테 콘솔의 보라 강조 → 남색 */
+  --gold:#C9A063; --gold2:#EAC996;           /* 통합관리의 금색 → 하우스 금색 */
+  --ok:#3f7d4e; --okbg:#E4F0DC; --off:#8a92a3; --offbg:#EFEDE7;
+  --danger:#9b2c3c; --warn:#a9762a;
+}
+body{background:var(--paper)!important;color:var(--ink)!important;font-family:var(--sans)!important}
+
+/* ── 머리띠 ── */
+header{background:linear-gradient(120deg,var(--blue-deep),var(--blue-ink))!important;
+  color:#fff!important;border-bottom:0!important;box-shadow:var(--shadow-1)!important}
+header .brand{font-family:var(--serif);font-weight:700;letter-spacing:.02em;color:#fff!important}
+header .brand small{color:var(--gold-bright)!important;font-family:var(--sans);letter-spacing:.16em}
+header button{background:rgba(255,255,255,.10)!important;border:1px solid rgba(255,255,255,.22)!important;
+  color:#fff!important;border-radius:11px!important;font-weight:700}
+header button:hover{background:rgba(255,255,255,.18)!important}
+header button.save,header button.primary{background:linear-gradient(135deg,var(--gold-h),var(--gold-soft))!important;
+  color:var(--blue-ink)!important;border:0!important}
+
+/* ── 로그인 게이트 ── */
+#gate{background:
+  radial-gradient(1200px 600px at 12% -10%,rgba(201,160,99,.16),transparent 60%),
+  radial-gradient(900px 500px at 100% 0%,rgba(191,224,242,.28),transparent 55%),
+  var(--paper)!important}
+.gate-card{background:#fff!important;border:1px solid var(--line)!important;border-radius:24px!important;
+  padding:34px 30px!important;box-shadow:var(--shadow-2)!important;text-align:center}
+.gate-card .lock,.gate-card>div:first-child{filter:saturate(.85)}
+.gate-card h1{font-family:var(--serif)!important;font-size:23px!important;font-weight:700!important;
+  color:var(--blue-deep)!important;margin:6px 0 4px!important;letter-spacing:.01em}
+.gate-card p{color:var(--sub)!important;font-size:13px!important}
+/* 금색 줄은 부제 바로 아래에 — .gate-card::after 로 두면 카드 맨 끝(버튼 밑)에 붙는다 */
+.gate-card p::after{content:"";display:block;width:46px;height:3px;margin:16px auto 4px;
+  background:var(--gold-h);border-radius:2px}
+.gate-card input{background:var(--paper)!important;border:1px solid var(--line)!important;
+  border-radius:12px!important;color:var(--ink)!important;height:46px!important;font-size:15px!important}
+.gate-card input::placeholder{color:var(--faint)!important}
+.gate-card input:focus{border-color:var(--gold-h)!important;outline:0;
+  box-shadow:0 0 0 3px rgba(201,160,99,.18)!important}
+.gate-card button{background:linear-gradient(135deg,var(--blue),var(--blue-deep))!important;
+  color:#fff!important;border:0!important;border-radius:12px!important;font-weight:800!important;
+  height:48px!important;letter-spacing:.02em}
+.gate-card button:hover{filter:brightness(1.06)}
+.gate-err{color:var(--danger)!important;font-weight:700}
+
+/* ── 카드·입력·탭 ── */
+.card,.sec,.panel,.box{background:#fff!important;border:1px solid var(--line)!important;
+  border-radius:18px!important;box-shadow:var(--shadow-1)!important}
+h1,h2,h3,.card>h2,.sec>h2{font-family:var(--serif);color:var(--blue-deep)}
+input,select,textarea{font-family:var(--sans)!important;background:#fff!important;
+  border:1px solid var(--line)!important;border-radius:11px!important;color:var(--ink)!important}
+input:focus,select:focus,textarea:focus{border-color:var(--gold-h)!important;outline:0;
+  box-shadow:0 0 0 3px rgba(201,160,99,.16)!important}
+.tab,.tabs button,.chip{border-radius:999px!important;border:1px solid var(--line)!important;
+  background:#fff!important;color:var(--sub)!important;font-weight:700!important}
+.tab.on,.tabs button.on,.tab.active,.chip.on{background:var(--blue-deep)!important;color:#fff!important;
+  border-color:var(--blue-deep)!important}
+button{font-family:var(--sans)}
+table th{color:var(--sub)!important;border-bottom:1.5px solid var(--blue-deep)!important;
+  font-weight:800!important;letter-spacing:.04em}
+table td{border-bottom:1px solid var(--line)!important}
+.toast{background:var(--blue-ink)!important;color:#fff!important;border-radius:12px!important}

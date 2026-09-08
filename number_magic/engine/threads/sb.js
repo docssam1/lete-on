@@ -205,9 +205,11 @@ NM_TGEN['sb4_sub2d2d'] = function(params, rng) {
       answer: ans,
       answerType: 'steps',
       widget: 'vertical',
+      /* 십의 자리 줄에도 피연산자(2026-09-06) — "십의 자리: □"만으로는 따라풀기가 무엇을 빼는지
+         안 보였다(AD5 의 "4 + 3 + 1 = □"과 같은 꼴로). 빈칸 값 불변. */
       steps: [
         { tex: `일의 자리: ${a % 10} - ${b % 10} = \\square`,  blank: ans % 10 },
-        { tex: `십의 자리: \\square`,                            blank: Math.floor(ans / 10) }
+        { tex: `십의 자리: ${Math.floor(a / 10)} - ${Math.floor(b / 10)} = \\square`, blank: Math.floor(ans / 10) }
       ],
       solution: _subPlaceLines(a, b, ans, 2)
     };
@@ -233,9 +235,10 @@ NM_TGEN['sb4_sub2d2d'] = function(params, rng) {
     answer: ans,
     answerType: 'steps',
     widget: 'vertical',
+    /* 십의 자리도 피연산자를 보인다(2026-09-06): 빌려준 1을 뺀 뒤 뺀다. 빈칸 값 불변. */
     steps: [
       { tex: `일의 자리: 10 + ${a % 10} - ${b % 10} = \\square`, blank: borrowOnes },
-      { tex: `십의 자리: \\square`,                                blank: Math.floor(ans / 10) }
+      { tex: `십의 자리: ${Math.floor(a / 10)} - 1 - ${Math.floor(b / 10)} = \\square`, blank: Math.floor(ans / 10) }
     ],
     solution: _subPlaceLines(a, b, ans, 2)
   };

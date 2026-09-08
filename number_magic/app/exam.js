@@ -16,7 +16,11 @@
 .nm-print-wm { display: none; }
 @media print {
   body > *:not(.nm-print-sheet) { display: none !important; }
-  .nm-print-sheet { display: block !important; font-family: sans-serif; }
+  /* 글꼴은 지정하지 않는다(2026-09-06). 전에는 여기서 sans-serif를 박았는데, 이 <style>은
+     exam.js 로딩 시 <head> 끝에 붙어 ws.html의 Pretendard 스택(같은 특이도)을 인쇄 매체에서
+     덮어써 PDF 전체가 러너 기본 산세리프(DejaVu)로 나갔다. 페이지(ws.html·styles.css)의
+     글꼴 스택을 그대로 물려받는다. */
+  .nm-print-sheet { display: block !important; }
   /* 이름 워터마크 — fixed는 인쇄에서 페이지마다 반복된다. 문제를 가리지 않게
      아주 옅게(6%), 흑백 프린터에서도 회색 띠가 아닌 큰 글자로 남는다. */
   .nm-print-wm { display: block !important; position: fixed; top: 46%; left: 0; right: 0;
@@ -262,7 +266,7 @@
   .nm-print-qr-wrap { margin-left: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .nm-print-qr-code { font-family: monospace; font-size: 10px; }
   .nm-print-qr-wrap svg { width: 21mm; height: 21mm; shape-rendering: crispEdges; }
-  .nm-print-qr-cap { font-size: 8px; color: #333; max-width: 26mm; text-align: center; line-height: 1.15; }
+  .nm-print-qr-cap { font-size: 8.5px; color: #333; max-width: 26mm; text-align: center; line-height: 1.15; }
   .nm-print-concept-page { page-break-after: always; break-after: page; }
   .nm-cp-body { margin-top: 6px; }
   .nm-cp-block { margin-bottom: 16px; }
@@ -280,9 +284,11 @@
 
   /* 표지 — 지오메트리 랩 학습지의 A4 표지(브랜드/제목/구분선/캐릭터/이름칸/코드)와
      같은 짜임이지만, 톤은 Numbers of Magic(종이+잉크+골드)로. 2026-08-28. */
+  /* 높이는 .nm-w2-page와 같은 277mm 고정(2026-09-06). min-height:255mm이던 때는 크림 지면과
+     ::after 테두리가 아래 30mm를 남기고 끊겨 흰 띠가 생겼다(단일 표지·주간 표지 공용). */
   .nm-print-cover { --cv-accent:#C9A063; position:relative; display:flex; flex-direction:column;
-    min-height:255mm; padding:16mm 14mm; box-sizing:border-box; background:#FBFAF7;
-    break-after:page; page-break-after:always; }
+    height:277mm; min-height:0; padding:16mm 14mm; box-sizing:border-box; background:#FBFAF7;
+    break-after:page; page-break-after:always; overflow:hidden; }
   .nm-print-cover::after { content:""; position:absolute; inset:7mm; border:1px solid #E4E2DC; pointer-events:none; }
   .nm-cv-brand { position:relative; display:flex; align-items:baseline; justify-content:space-between;
     padding:0 2mm 5mm; border-bottom:2px solid #0E2C57; }
@@ -310,7 +316,68 @@
   .nm-cv-footer { position:relative; display:flex; justify-content:space-between; margin-top:8mm;
     padding:0 2mm; font-size:10px; font-weight:800; letter-spacing:1px; color:#0E2C57; }
   .nm-cv-footer b { color:var(--cv-accent); }
-  .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9px; color:#93a0a8; }
+  .nm-cv-code { position:relative; margin:3mm 2mm 0; font-family:monospace; font-size:9.5px; color:#555; }
+  /* 표지 점수 칸 "점수 ___ / 60" — 분모(총 문항)를 같이 찍는다(2026-09-06) */
+  .nm-cvw .nm-cv-meta-total { grid-template-columns:auto 1fr auto; }
+  /* 종이 교구 지면 (w2PaperToolPageHtml, 2026-09-08) */
+  .nm-pt-page { gap:0; }
+  .nm-pt-why { flex:0 0 auto; margin:4mm 0 0; font-size:11.5px; line-height:1.6; color:#333; }
+  .nm-pt-art { flex:1 1 auto; min-height:0; display:block; margin:3mm 0; overflow:hidden; }
+  /* 종이 교구는 크게 인쇄돼야 오리기 쉽다 — 남는 세로 공간까지 채운다(비율은 유지).
+     한 지면 안의 조각들은 같은 배율로 커지므로 서로 맞물리는 크기 관계는 그대로다. */
+  /* viewBox + preserveAspectRatio 기본값이라 비율을 지키며 상자에 꽉 맞는다. */
+  .nm-pt-art svg { width:100%; height:100%; display:block; }
+  .nm-pt-steps { flex:0 0 auto; list-style:none; margin:0; padding:0; display:grid;
+    grid-template-columns:repeat(3,1fr); gap:3mm; }
+  .nm-pt-steps li { font-size:10.5px; line-height:1.55; color:#333; padding-left:6mm; position:relative; }
+  .nm-pt-steps b { position:absolute; left:0; top:0; width:4.4mm; height:4.4mm; border-radius:50%;
+    background:#0E2C57; color:#fff; font-size:8px; display:flex; align-items:center; justify-content:center;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-pt-buys { flex:0 0 auto; margin-top:4mm; padding-top:3mm; border-top:1px solid #C9A063; }
+  .nm-pt-buys-t { font-size:10px; font-weight:800; color:#0E2C57; margin-bottom:2.5mm; }
+  .nm-pt-buys-body { display:grid; grid-template-columns:repeat(3,1fr); gap:3mm; }
+  .nm-pt-buy { display:block; text-decoration:none; color:inherit; border:1px solid #ddd;
+    border-radius:2mm; padding:2.5mm 3mm; }
+  .nm-pt-buy b { display:block; font-size:10.5px; }
+  .nm-pt-buy span { display:block; font-size:9px; color:#555; margin-top:.6mm; }
+  .nm-pt-buy i { display:block; font-size:8.5px; color:#777; font-style:normal; margin-top:1mm; }
+
+  /* 수학사 지면 + 실험실 QR (w2HistoryPageHtml, 2026-09-06) */
+  .nm-hist-page { gap:0; }
+  .nm-hist-head { flex:0 0 auto; display:flex; align-items:baseline; gap:10px;
+    border-bottom:1.5px solid #0E2C57; padding-bottom:6px; margin-bottom:10px; }
+  .nm-hist-kicker { font-size:10px; font-weight:900; letter-spacing:2px; color:#C9A063; }
+  .nm-hist-head b { font-size:14px; color:#0E2C57; }
+  .nm-hist-code { margin-left:auto; font-family:monospace; font-size:9.5px; color:#555; }
+  .nm-hist-grid { flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;
+    gap:7mm 6mm; min-height:0; }
+  /* 칸 안 채우기(2026-09-06): 그림 상한 38mm→55mm(만화 SVG는 전부 200×140 viewBox라 그대로
+     커진다), 캡션 11→12.5px. 칸 크기(2×2 grid, flex:1)는 그대로 — 전엔 칸의 60%가 비었다. */
+  .nm-hist-panel { position:relative; margin:0; display:flex; flex-direction:column; gap:3mm;
+    border:1px solid #E4E2DC; border-radius:4mm; padding:6mm 6mm 5mm; background:#FBFAF7;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-hist-no { position:absolute; top:-3mm; left:5mm; width:7mm; height:7mm; border-radius:50%;
+    background:#0E2C57; color:#F5D98B; font-size:10px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-hist-art { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; }
+  .nm-hist-art svg { width:100%; height:100%; max-height:55mm; }
+  .nm-hist-panel figcaption { font-size:12.5px; line-height:1.65; color:#1A2233; word-break:keep-all; }
+  .nm-hist-labs { flex:0 0 auto; margin-top:6mm; padding-top:5mm; border-top:1px solid #E4E2DC; }
+  .nm-hist-labs-t { font-size:11px; font-weight:800; color:#0E2C57; margin-bottom:4mm; }
+  /* 실험실 두 개를 나란히(2026-09-06) — 세로로 쌓으면 오른쪽 90mm가 비었다. 1개·3개여도 grid라 문제없다. */
+  .nm-hist-labs-body { display:grid; grid-template-columns:1fr 1fr; gap:6mm; }
+  /* .nm-hist-lab 은 <a>다(PDF 에 링크 주석이 실려 휴대폰에서 바로 열린다) — 앵커가 곧 flex 컨테이너라
+     안쪽 마크업은 그대로. 색·밑줄은 물려받지 않는다. */
+  .nm-hist-lab { display:flex; align-items:center; gap:5mm; padding:2mm 0; color:inherit; text-decoration:none; }
+  /* QR 26mm(표지 QR와 같은 크기) — 20mm 였을 때 버전 5 심벌이 모듈당 0.44mm 라 흑백 프린터에서 흐릿했다. */
+  .nm-hist-lab-qr { flex:0 0 26mm; }
+  .nm-hist-lab-qr svg { width:26mm; height:26mm; display:block; }
+  .nm-hist-lab-txt { display:flex; flex-direction:column; gap:1.5mm; min-width:0; }
+  .nm-hist-lab-txt b { font-size:12.5px; color:#0E2C57; }
+  .nm-hist-lab-txt span { font-size:10.5px; line-height:1.55; color:#5c6a72; }
+  .nm-hist-lab-txt i { font-style:normal; font-family:monospace; font-size:9.5px; color:#0E2C57; word-break:break-all; }
+
   /* 주간 학습지 표지(weeklyCoverHtml) — 학생 이름을 제목으로, 회차 목차 표 */
   .nm-cvw .nm-cvw-hero { position:relative; margin:auto 0 0; text-align:center; }
   .nm-cvw .nm-cvw-title { margin:0; font-family:'Gowun Batang','Pretendard',serif; font-size:44px; line-height:1.2;
@@ -326,28 +393,40 @@
   .nm-cvw .nm-cvw-toc td.nm-cvw-name { font-weight:800; min-width:56mm; white-space:normal; }
   .nm-cvw .nm-cvw-toc td.nm-cvw-chk { font-size:16px; text-align:center; color:#0E2C57; }
   .nm-cvw .nm-cv-meta { margin-top:8mm; }
+  /* .nm-cvw-qr 도 <a>(홈페이지 링크 주석) — 컨테이너 자체가 앵커라 flex 배치는 그대로 */
   .nm-cvw .nm-cvw-qr { position:relative; display:flex; align-items:center; gap:6mm; margin:7mm 6mm 0; padding:5mm 6mm;
-    border:1px solid #dcd9d1; border-radius:3mm; background:#fff; }
+    border:1px solid #dcd9d1; border-radius:3mm; background:#fff; color:inherit; text-decoration:none; }
   .nm-cvw .nm-cvw-qr-img { flex:0 0 26mm; width:26mm; height:26mm; }
   .nm-cvw .nm-cvw-qr-img svg { width:26mm; height:26mm; display:block; }
   .nm-cvw .nm-cvw-qr-txt { display:flex; flex-direction:column; gap:1.5mm; min-width:0; }
   .nm-cvw .nm-cvw-qr-txt b { font-size:13px; font-weight:800; color:#0E2C57; }
   .nm-cvw .nm-cvw-qr-txt span { font-size:10.5px; line-height:1.55; color:#5c6a72; }
-  .nm-cvw .nm-cvw-qr-txt i { font-style:normal; font-family:monospace; font-size:9.5px; color:#93a0a8; }
+  .nm-cvw .nm-cvw-qr-txt i { font-style:normal; font-family:monospace; font-size:11px; color:#0E2C57; }
 
   /* ── 학습지 v2 · 유형별 회차 (학습지-v2-설계.md §2, 2026-09-04) ───────
      A4 고정 높이 페이지(flex column). 머리띠·개념·예시·지시문은 flex:0 0 auto로
      제 높이만 쓰고, 문항 그리드가 flex:1로 남는 높이를 전부 채운다 —
      grid-auto-rows:1fr라 문항 수가 적어도 줄 간격이 균등하게 늘어나고,
      문항 수가 표(§2-5)대로여도 페이지 밖으로 넘치지 않는다(칸이 줄어들 뿐). */
-  .nm-w2-page { display:flex; flex-direction:column; height:277mm; box-sizing:border-box;
+  .nm-w2-page { position:relative; display:flex; flex-direction:column; height:277mm; box-sizing:border-box;
     page-break-before:always; break-before:page; overflow:hidden; }
+  /* 회차 페이지 워터마크(2026-09-06) — 예전 .nm-print-wm(position:fixed)은 인쇄 시 "모든" 장에
+     반복돼 만화 지면에서는 불투명한 칸 사이로 글자 조각만 남고, 정답지에서는 숫자 위를 지났다.
+     이제 문항 페이지 안에만 absolute 로 한 장씩 넣는다(만화·정답지·표지엔 없음). 화면(인쇄
+     미리보기 편집기)에서는 예전처럼 숨긴다. 모양(6%·46px·-27°)은 원장이 승인한 그대로. */
+  .nm-w2-wm { display:none; }
   .nm-w2-head { --w2-accent:#0E2C57; flex:0 0 auto; border-bottom:1px solid #1A2233;
     padding-bottom:5px; margin-bottom:7px; }
-  .nm-w2-head-top { display:flex; gap:16px; font-size:9px; color:#555; margin-bottom:4px; }
+  /* 이름·날짜·점수 줄 — 9px/3mm 였던 것을 손으로 쓸 수 있는 크기로(2026-09-06): 11px, 빈칸 6mm. */
+  .nm-w2-head-top { display:flex; align-items:flex-end; gap:16px; font-size:11px; color:#333; margin-bottom:4px; }
+  .nm-w2-head-top b { color:#0E2C57; }
+  .nm-w2-blank { display:inline-block; height:6mm; vertical-align:bottom; border-bottom:1px solid #000; }
   .nm-w2-head-row { display:flex; align-items:center; gap:8px; }
-  .nm-w2-head-brand { font-size:10px; font-weight:800; letter-spacing:1px; color:#333;
-    border:1px solid #ccc; border-radius:3px; padding:3px 7px; white-space:nowrap; }
+  /* 학원 칩은 표지의 .nm-cv-brand span 과 같은 골드 소문자 대문자체 — 회색 기본 산세리프였다. */
+  .nm-w2-head-brand { font-size:10px; font-weight:900; letter-spacing:2px; color:#C9A063;
+    border:1px solid #C9A063; border-radius:3px; padding:3px 7px; white-space:nowrap; }
+  /* 색띠는 인쇄에서 항상 네이비(--w2-accent 를 w2HeadHtml 이 고정) — 스레드별 파랑·빨강·보라
+     (THREAD_PREFIX_THEME, 앱 UI용)가 한 묶음 안에서 번갈아 나와 표지의 종이·네이비·골드와 어긋났다. */
   .nm-w2-head-mid { flex:1; min-width:0; background:var(--w2-accent); color:#fff; border-radius:4px;
     padding:5px 10px; display:flex; align-items:baseline; gap:8px; overflow:hidden;
     -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -362,28 +441,69 @@
   .nm-w2-item.nm-print-item { border:0; background:none; padding:2px 4px; min-height:0;
     border-radius:0; display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
   .nm-w2-item .nm-w2-num { font-size:10px; color:#666; font-weight:700; margin-right:4px; }
+  /* 번호 줄 — 번호와 도전 알약을 한 줄(flex row)에 둔다(2026-09-06). 칸이 flex-column 이라
+     알약 span 이 flex item 으로 늘어나 40~90mm 빨간 막대가 됐었다. 그림형 칸은 가운데 정렬 유지. */
+  .nm-w2-numrow { display:flex; align-items:center; gap:4px; }
+  .nm-w2-item-vis .nm-w2-numrow { justify-content:center; }
   /* 도전 알약(§2-6 items 6) — 회차 전체에서 램프(__ramp)가 시작되는 첫 문항
      번호 옆에만 한 번 붙는다(classifyRoundLayout/renderRoundPages의
-     rampTagged 플래그). */
-  .nm-w2-ramp-pill { display:inline-block; font-size:7.5px; font-weight:800; color:#fff;
-    background:#c0392b; border-radius:7px; padding:1px 5px; margin-right:4px; vertical-align:middle;
-    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+     rampTagged 플래그). 흑백 레이저에서도 읽히게 네이비 외곽선, 채움 없음. */
+  .nm-w2-ramp-pill { display:inline-block; font-size:9px; font-weight:700; color:#0E2C57;
+    background:none; border:1px solid #0E2C57; border-radius:7px; padding:0 5px; line-height:1.3;
+    white-space:nowrap; }
   .nm-w2-item .nm-w2-tex { font-size:15px; }
   .nm-w2-grid-medium .nm-w2-item .nm-w2-tex { font-size:16px; }
   .nm-w2-grid-long .nm-w2-item .nm-w2-tex { font-size:13.5px; }
-  .nm-w2-grid-vertical .nm-print-vp { font-size:14px; margin:0 auto; }
+  /* 세로셈(회차 레이아웃 vertical = 초등 덧뺄셈뿐, classifyRoundLayout 이 MD/CH/EL/MX 를 뺀다):
+     14px 이던 숫자를 22px 로, 올림/내림을 쓸 줄(.nm-print-vp-carry)을 위에, 답 줄을 1.6em 으로
+     (2026-09-06, 1~2학년이 손으로 쓰는 칸). 나이 밴드(.nm-print-age-*)와 무관하게 이 레이아웃만. */
+  .nm-w2-grid-vertical .nm-print-vp { font-size:22px; min-width:3.4em; margin:0 auto; }
+  .nm-w2-grid-vertical .nm-print-vp-carry { min-height:.8em; font-size:.7em; color:#999;
+    border-bottom:1px dotted #bbb; margin-bottom:2px; }
+  .nm-w2-grid-vertical .nm-print-vp-bot { min-height:1.6em; border-bottom:1px solid #ddd; }
   .nm-w2-item-vis.nm-print-item { align-items:center; text-align:center; }
   .nm-w2-item-word.nm-print-item { align-items:flex-start; }
+  /* 문장제 답 줄 "식: ______  답: ______ 개"(2026-09-06) — 식을 먼저 쓰는 자리와 단위. */
+  .nm-w2-page .nm-print-word-blank { font-size:12px; margin-top:8px; display:flex; gap:10mm; flex-wrap:wrap; }
+  .nm-w2-page .nm-print-word-blank .nm-w2-blank { height:7mm; }
+  /* 부분 페이지 아래 풀이 여백(2026-09-06) — 남는 높이를 "풀이 · 검산" 점 격자로 채워 빈 종이가
+     아니라 쓰라고 둔 자리로 읽히게. 흑백 레이저에서도 남게 print-color-adjust. */
+  .nm-w2-scratch { flex:1; min-height:0; margin-top:6mm; display:flex; flex-direction:column; gap:2mm; }
+  .nm-w2-scratch-t { flex:0 0 auto; font-size:9.5px; font-weight:700; color:#8A8F99; letter-spacing:1px; }
+  .nm-w2-scratch-body { flex:1; min-height:0; border-radius:2mm; border:1px solid #e6e3dc;
+    background-color:#fff; background-image:radial-gradient(circle, #c9c6be 0.45mm, transparent 0.5mm);
+    background-size:5mm 5mm; background-position:2.5mm 2.5mm;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-w2-abox { display:inline-block; width:14mm; height:8mm; border:1px solid #000;
     margin-left:8px; vertical-align:middle; }
   .nm-w2-page .nm-print-ask { margin:1px 0 3px; }
   .nm-w2-page .nm-print-steps { margin-top:3px; }
-  .nm-w2-foot { flex:0 0 auto; margin-top:4px; font-size:8px; color:#999; font-family:monospace;
-    text-align:right; }
+  /* 발치 — 왼쪽 통산 쪽 번호(renderMixedSheet 가 채움, 단일 인쇄엔 없음) · 오른쪽 전체 코드
+     (?ws= 되돌리기 키라 페이지마다 한 번은 읽히는 크기여야 한다: 8.5px #555, 2026-09-06). */
+  .nm-w2-foot { flex:0 0 auto; margin-top:4px; font-size:8.5px; color:#555; font-family:monospace;
+    display:flex; justify-content:space-between; }
+  .nm-w2-foot > :only-child { margin-left:auto; }
+  .nm-w2-pg { color:#8A8F99; }
+  /* 정답지 페이지 워터마크 없음 — 숫자 위를 지나면 채점을 방해한다 */
+  .nm-print-answer-key .nm-w2-wm { display:none !important; }
+  .nm-print-answer-key .nm-w2-head { margin-bottom:10px; }
 
   .nm-ak-section { margin-bottom:14px; }
-  .nm-ak-subhead { margin:0 0 6px; font-size:13px; border-bottom:1px solid #ccc; padding-bottom:3px; }
-  .nm-ak-subcode { font-family:monospace; font-size:10px; color:#777; margin-left:8px; font-weight:400; }
+  .nm-ak-subhead { margin:0 0 6px; font-size:13px; color:#0E2C57; border-bottom:1px solid #C9A227; padding-bottom:3px; }
+  .nm-ak-subcode { font-family:monospace; font-size:10px; color:#555; margin-left:8px; font-weight:400; }
+  /* 따라 풀기 (가)(나)(다)는 제 줄에 — 번호 답 (1)이 새 줄에서 시작해야 열을 따라 읽힌다 */
+  .nm-ak-guide { grid-column:1 / -1; display:flex; gap:14px; flex-wrap:wrap; }
+  /* 학습지 쪽마다 정답 격자 하나(renderRoundPages 의 pageSizes) — 정답지가 학습지 쪽 순서를
+     그대로 따른다. 10열이라 한 줄 = 짧은식 회차의 왼쪽 열 10문항. */
+  .nm-ak-page { margin-bottom:4px; }
+  .nm-ak-pg { font-size:9px; color:#8A8F99; font-family:monospace; margin:0 0 2px; }
+  .nm-print-answer-key .nm-ak-page .nm-ak-grid { grid-template-columns:repeat(10,1fr); gap:5px 4px; }
+  .nm-print-answer-key .nm-ak-page .nm-ak-item { font-size:0.85em; white-space:nowrap; }
+}
+@media print {
+  .nm-w2-wm { display:block; position:absolute; top:46%; left:0; right:0; text-align:center;
+    transform:rotate(-27deg); font-size:36px; font-weight:900; color:#1A2233; opacity:.06;
+    letter-spacing:.12em; pointer-events:none; z-index:0; white-space:nowrap; }
 }
 @media screen {
   .nm-print-sheet { display: none; }
@@ -1073,6 +1193,16 @@ function coverLevelBadge(items){
 }
 /* items: [{thread,level,topicName?,topicIcon?,topicColor?,topicLabel?}], code: 표지 하단 코드,
    totalCount: 표지 발치에 적을 실제 문항 수(합계). */
+/* 학원명 한 곳(2026-09-06) — 표지 머리·표지 발치·회차 머리띠가 같은 값을 쓴다. 전에는 머리띠만
+   localStorage 를 읽고 표지 발치는 "DOCSSAM'S MATH LAB" 글자가 박혀 있어 한 표지에 발행처가 둘로 보였다. */
+function brandName(){
+  try{ return localStorage.getItem('nm_brand_name') || 'GFIELD'; }catch(e){ return 'GFIELD'; }
+}
+/* 표지 발치 왼쪽 — 학원명 + 제품명. 원장 확정(2026-09-07): "그냥 numbers of magic".
+   앞서 쓰던 "DOCSSAM 영재 트랙"은 새 이름을 짓는 대신 제품명 하나로 정리했다. */
+function coverFooterBrand(){
+  return `${esc(brandName())} · Numbers of Magic`;
+}
 function coverPageHtml(items, code, totalCount){
   const theme = coverTheme(items[0]);
   const names = items.map(it => pickL(it.topicName) ||
@@ -1081,7 +1211,7 @@ function coverPageHtml(items, code, totalCount){
   const title = names.length <= 2 ? names.join(' · ')
     : names.slice(0,2).join(' · ') + lk(` 외 ${more}가지`, ` and ${more} more`, ` 等${more}种`);
   return `<div class="nm-print-cover" style="--cv-accent:${esc(theme.color)}">
-  <div class="nm-cv-brand"><span>GFIELD</span><strong>NUMBERS <i>of</i> MAGIC</strong></div>
+  <div class="nm-cv-brand"><span>${esc(brandName())}</span><strong>NUMBERS <i>of</i> MAGIC</strong></div>
   <div class="nm-cv-copy">
     <p class="nm-cv-kicker">${esc(theme.icon)} ${esc(worksheetTitle(theme.label))}</p>
     <h1 class="nm-cv-title">${esc(title)}</h1>
@@ -1096,28 +1226,177 @@ function coverPageHtml(items, code, totalCount){
     <div><span>${esc(lk('시작한 날','Started','开始日期'))}</span><i></i></div>
     <div><span>${esc(lk('레벨','Level','级别'))}</span><b>${esc(coverLevelBadge(items))}</b></div>
   </div>
-  <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS</b></div>
+  <div class="nm-cv-footer"><span>${coverFooterBrand()}</span><b>${totalCount||''} QUESTIONS</b></div>
   <div class="nm-cv-code">${esc(code||'')}</div>
+</div>`;
+}
+
+/* ── 수학사 지면 + 실험실 QR (2026-09-06, 원장 "지금 상황에 맞는 수학사를 지면으로, 실험실은 QR로") ──
+   회차의 유형(스레드+레벨)이 가리키는 유닛으로 그 자리에 맞는 것만 고른다:
+     · 만화 — data/story-comics.js 의 NM_COMICS[유닛id] 4컷(그림 SVG + 3언어 글).
+     · 실험실 — data/labs.js 의 NM_LABS.byUnit[유닛id]. 종이에서는 열 수 없으니 QR 로 건다.
+   둘 다 없으면 지면을 만들지 않는다(빈 장을 인쇄하지 않기 위해). 만화가 있는 첫 유닛 하나만
+   싣는다 — 한 주 학습지에 네 편을 넣으면 문제보다 읽을거리가 많아진다. */
+/* 종이 교구 지면(2026-09-08) — 원장 "교구 학습도 있으면 좋겠어" + "쿠팡·네이버 교구는 너무 비싸".
+   파는 교구를 링크하는 대신 그 주에 쓸 교구를 **오려 쓰도록 인쇄**한다. 학부모 비용 0원이고,
+   매주 인쇄물이 간다는 우리 강점 위에 그대로 얹힌다. 정말 사야 하는 셋(바둑돌·빨대·주사위)만
+   맨 아래에 검색 기준으로 적는다 — 상품 번호·가격은 박지 않는다(가격은 매일 바뀐다).
+   courseNum 이 없거나 그 과정에 맞는 교구가 없으면 빈 문자열이라 지면이 안 생긴다. */
+function w2PaperToolPageHtml(courseNum, code){
+  const pick = window.NM_PAPER_TOOL_OF_COURSE;
+  const tool = (pick && courseNum) ? pick(courseNum) : null;
+  if(!tool || typeof tool.build !== 'function') return '';
+  let art = '';
+  try{ art = tool.build(); }catch(e){ return ''; }
+  if(!art) return '';
+  const steps = (pickL(tool.steps) || []).map((t, i) =>
+    `<li><b>${i + 1}</b>${esc(t)}</li>`).join('');
+  const buys = (window.NM_BUY_TOOLS || []).map(b => {
+    /* 네이버 검색 — 특정 상품이 아니라 검색어를 건다(링크가 죽지 않는다). */
+    const url = 'https://search.shopping.naver.com/search/all?query=' + encodeURIComponent(b.q);
+    return `<a class="nm-pt-buy" href="${esc(url)}"><b>${esc(pickL(b.name))}</b>` +
+      `<span>${esc(pickL(b.use))}</span><i>${esc(pickL(b.pick))}</i></a>`;
+  }).join('');
+  return `<div class="nm-w2-page nm-pt-page">
+  <div class="nm-hist-head">
+    <span class="nm-hist-kicker">${esc(lk('이번 주 종이 교구','This Week\'s Paper Tool','本周纸教具'))}</span>
+    <b>${esc(pickL(tool.name))}</b>
+  </div>
+  <p class="nm-pt-why">${esc(pickL(tool.why))}</p>
+  <div class="nm-pt-art">${art}</div>
+  <ol class="nm-pt-steps">${steps}</ol>
+  <div class="nm-pt-buys">
+    <div class="nm-pt-buys-t">${esc(lk('사야 하는 것은 이 셋뿐입니다. 나머지는 위에서 오려 쓰세요.',
+      'Only these three need buying. Everything else is cut from the page above.',
+      '只有这三样需要买，其余从上面剪下来用。'))}</div>
+    <div class="nm-pt-buys-body">${buys}</div>
+  </div>
+  <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
+</div>`;
+}
+
+function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
+  const comics = window.NM_COMICS || {};
+  const labData = (window.NM_LABS && window.NM_LABS.byUnit) || {};
+  const labList = (window.NM_LABS && window.NM_LABS.list) || [];
+  let comic = null, comicUnit = '', comicThread = null;
+  const labFiles = [];
+  const addLabs = uid => {
+    const v = labData[uid];
+    (Array.isArray(v) ? v : (v ? [v] : [])).forEach(f => { if(labFiles.indexOf(f) < 0) labFiles.push(f); });
+  };
+  (items || []).forEach(it => {
+    const info = resolveConceptUnit(it.thread, it.level);
+    const uid = info && info.unitId;
+    if(!uid) return;
+    if(!comic && comics[uid] && (comics[uid].panels || []).length){
+      comic = comics[uid]; comicUnit = uid; comicThread = info.thread;
+    }
+    addLabs(uid);
+  });
+  /* 과정의 마법 유닛으로 되돌아가기(2026-09-06) — 초등 스레드(AD5·SB4·NS1 …)는 threads.js 에
+     unit 이 없어 resolveConceptUnit 이 null 이라 C4 는 만화 지면이 통째로 빠졌다. ws.html 이
+     그 과정의 세션 magic 유닛 목록을 넘기면, 스레드로 못 찾았을 때만 그 중 만화가 있는 첫
+     유닛을 싣는다(편지함 편집기는 이 인자를 안 넘기므로 그쪽 출력은 그대로). */
+  if(!comic && Array.isArray(fallbackUnits)){
+    for(const uid of fallbackUnits){
+      if(comics[uid] && (comics[uid].panels || []).length){ comic = comics[uid]; comicUnit = uid; break; }
+    }
+    if(comic) addLabs(comicUnit);
+  }
+  if(!comic && !labFiles.length) return '';
+
+  const panels = comic ? comic.panels.slice(0, 4).map((pn, i) => `
+      <figure class="nm-hist-panel">
+        <span class="nm-hist-no">${i + 1}</span>
+        <div class="nm-hist-art">${pn.art || ''}</div>
+        <figcaption>${esc(pickL(pn.text) || '')}</figcaption>
+      </figure>`).join('') : '';
+
+  /* 실험실 블록은 <a>(PDF 링크 주석 — 휴대폰으로 열어 보는 부모가 바로 누른다) + 읽을 수 있는 주소 한 줄.
+     이모지 아이콘은 인쇄에서 뺀다(흑백 프린터·글꼴 의존). */
+  const labs = labFiles.slice(0, 2).map(f => {
+    const meta = labList.find(l => l.file === f) || {};
+    const url = APP_HOME_URL + f;
+    return `
+      <a class="nm-hist-lab" href="${esc(url)}">
+        <div class="nm-hist-lab-qr">${qrSvg(url)}</div>
+        <div class="nm-hist-lab-txt">
+          <b>${esc(pickL(meta.name) || f)}</b>
+          <span>${esc(pickL(meta.desc) || '')}</span>
+          <i>${esc(url.replace(/^https?:\/\//,''))}</i>
+        </div>
+      </a>`;
+  }).join('');
+
+  /* 제목: 스레드에서 찾은 만화면 그 회차 이름, 과정의 마법 유닛에서 찾은 만화면 과정 제목
+     (2026-09-07 — C4 는 스레드 유닛이 없어 제목 칸이 비어 나왔다). */
+  const topicName = comicThread ? (pickL(comicThread.name) || '') : (pickL(comic && comic.title) || fallbackTitle || '');
+  return `<div class="nm-w2-page nm-hist-page">
+  <div class="nm-hist-head">
+    <span class="nm-hist-kicker">${esc(lk('수학사 이야기','A Story from the History of Math','数学史小故事'))}</span>
+    ${topicName ? `<b>${esc(topicName)}</b>` : ''}
+  </div>
+  ${comic ? `<div class="nm-hist-grid">${panels}</div>` : ''}
+  ${labs ? `<div class="nm-hist-labs">
+    <div class="nm-hist-labs-t">${esc(lk('휴대폰으로 QR을 찍으면 실험실이 열려요 — 손으로 움직여 보는 화면이에요.',
+      'Scan with a phone to open the lab — a screen you can move with your hands.',
+      '用手机扫码打开实验室——可以动手操作的画面。'))}</div>
+    <div class="nm-hist-labs-body">${labs}</div>
+  </div>` : ''}
+  <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
 </div>`;
 }
 
 /* 주간 학습지(링크·PDF) 전용 표지 — ws.html 이 opts.cover 로 넘긴다(2026-09-06, 원장: "표지도 제대로").
    cv: {name, weekLabel, courseNum, courseTitle, k, cadence, code}. rounds: renderRoundPages 결과 배열. */
-function weeklyCoverHtml(cv, rounds, totalCount){
-  const pagesOf = r => (r.html.match(/class="nm-w2-page"/g) || []).length;
+/* 주간 학습지 쪽 수 — 표지 1 + 회차 쪽 + 수학사 지면(있으면 1) + 정답지 1. 표지·발치 통산 번호가
+   같은 값을 쓰도록 renderMixedSheet 와 weeklyCoverHtml 이 둘 다 이 함수를 부른다(2026-09-06).
+   정답지는 흐름 조판이라 길면 두 장이 될 수 있다 — 표지의 총 쪽수는 정답지 시작 쪽까지다. */
+function w2PagesOf(r){ return (r.html.match(/class="nm-w2-page/g) || []).length; }
+function weeklyPageCount(rounds, extra){
+  extra = extra || {};
+  let page = 1;
+  rounds.forEach(r => { page += w2PagesOf(r); });
+  /* history 는 참/거짓 또는 **지면 수**(수학사 + 종이 교구, 2026-09-08). */
+  page += Number(extra.history) || 0;
+  if(extra.answerKey !== false) page += 1;
+  return page;
+}
+/* extra: {history:bool, answerKey:bool} — 표지 뒤에 실제로 붙는 지면을 표지가 안다(2026-09-06).
+   전에는 회차만 세어 "7 PAGES"라 적고 실제 PDF 는 9쪽이었다(수학사·정답지 누락).
+   문장제 회차가 빠진 사실은 표지에 적지 않는다(2026-09-07) — 학부모에게 가는 표지에 태그라인의 약속과
+   "없어요"가 한 장에 실렸고 '문장으로 바꿀 수 없는 유형'은 내부 용어다. 운영자용 신호는
+   renderMixedSheet 의 console.warn + 시트의 data-nm-dropped-word 로 간다. */
+function weeklyCoverHtml(cv, rounds, totalCount, extra){
+  extra = extra || {};
   let page = 2; // 표지가 1쪽
+  const pTxt = (from, to) => `${from === to ? from : from + '–' + to}${esc(lk('쪽','p.','页'))}`;
   const rows = rounds.map((r, i) => {
-    const n = r.problems.length, from = page, to = page + pagesOf(r) - 1; page = to + 1;
+    const n = r.problems.length, from = page, to = page + w2PagesOf(r) - 1; page = to + 1;
     return `<tr><td class="nm-cvw-no">${i+1}</td><td class="nm-cvw-name">${esc(r.thName)}</td>
-      <td>${n}${esc(lk('문항','','题'))}</td><td>${from === to ? from : from + '–' + to}${esc(lk('쪽','p.','页'))}</td><td class="nm-cvw-chk">☐</td></tr>`;
-  }).join('');
+      <td>${n}${esc(lk('문항','','题'))}</td><td>${pTxt(from, to)}</td><td class="nm-cvw-chk">☐</td></tr>`;
+  });
+  /* 수학사·정답지는 번호·완료 칸 없이 — 푸는 지면이 아니라서 */
+  if(extra.history){
+    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('수학사 이야기','Math history','数学史小故事'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    page++;
+  }
+  if(extra.paper){
+    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('이번 주 종이 교구','This week\'s paper tool','本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    page += 1;
+  }
+  if(extra.answerKey !== false){
+    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('정답지','Answer key','答案'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    page++;
+  }
   const totalPages = page - 1;
   const kTxt = cv.cadence === 'w2' ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
-  const brandName = cv.name ? ` · ${esc(cv.name)}` : '';
+  const studentTag = cv.name ? ` · ${esc(cv.name)}` : '';
   return `<div class="nm-print-cover nm-cvw">
-  <div class="nm-cv-brand"><span>GFIELD</span><strong>NUMBERS <i>of</i> MAGIC${brandName}</strong></div>
+  <div class="nm-cv-brand"><span>${esc(brandName())}</span><strong>NUMBERS <i>of</i> MAGIC${studentTag}</strong></div>
   <div class="nm-cvw-hero">
-    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}</p>
+    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
     <p class="nm-cvw-tagline">${esc(lk('선행부터 창의연산, 문장제까지','From advanced work to creative arithmetic and word problems','从超前学习到创意运算与应用题'))}</p>
     <div class="nm-cv-rule"></div>
@@ -1125,14 +1404,14 @@ function weeklyCoverHtml(cv, rounds, totalCount){
   </div>
   <table class="nm-cvw-toc">
     <thead><tr><th></th><th>${esc(lk('유형','Type','题型'))}</th><th>${esc(lk('문항','Items','题数'))}</th><th>${esc(lk('쪽','Page','页'))}</th><th>${esc(lk('완료','Done','完成'))}</th></tr></thead>
-    <tbody>${rows}</tbody>
+    <tbody>${rows.join('')}</tbody>
   </table>
   <div class="nm-cv-meta">
     <div><span>${esc(lk('푼 날짜','Date','日期'))}</span><i></i></div>
-    <div><span>${esc(lk('점수','Score','得分'))}</span><i></i></div>
+    <div class="nm-cv-meta-total"><span>${esc(lk('점수','Score','得分'))}</span><i></i><b>/ ${totalCount||''}</b></div>
     <div><span>${esc(lk('확인','Checked','确认'))}</span><i></i></div>
   </div>
-  <div class="nm-cvw-qr">
+  <a class="nm-cvw-qr" href="${esc(APP_HOME_URL)}">
     <div class="nm-cvw-qr-img">${qrSvg(APP_HOME_URL)}</div>
     <div class="nm-cvw-qr-txt">
       <b>${esc(lk('추가 학습을 원하면 언제든 홈페이지에 접속하세요','Want more practice? Visit the site any time','想加练？随时访问主页'))}</b>
@@ -1141,8 +1420,8 @@ function weeklyCoverHtml(cv, rounds, totalCount){
         '扫码打开 Numbers of Magic——在线做题、打印新学习单、查看进度。'))}</span>
       <i>${esc(APP_HOME_URL.replace(/^https?:\/\//,''))}</i>
     </div>
-  </div>
-  <div class="nm-cv-footer"><span>DOCSSAM'S MATH LAB</span><b>${totalCount||''} QUESTIONS · ${totalPages} PAGES</b></div>
+  </a>
+  <div class="nm-cv-footer"><span>${coverFooterBrand()}</span><b>${esc(lk(`문제 ${totalCount||''}문항 · 총 ${totalPages}쪽`, `${totalCount||''} QUESTIONS · ${totalPages} PAGES`, `${totalCount||''}题 · 共${totalPages}页`))}</b></div>
   <div class="nm-cv-code">${esc(cv.code||'')}</div>
 </div>`;
 }
@@ -1694,56 +1973,119 @@ function kJosa(word, withBatchim, without){
   if(code<0xAC00||code>0xD7A3) return word+without;
   return ((code-0xAC00)%28>0) ? word+withBatchim : word+without;
 }
-function wordifyProblem(p, rng){
+/* 회차 안에서 이름·사물이 겹치지 않게(2026-09-06) — used:{names:Set, items:Set}. 뽑은 index 가
+   이미 쓰였으면 다음 index 로 돌려 가며 빈 것을 잡는다(10개 안에서 6문항이라 늘 남는다).
+   index 순서로만 결정되므로 같은 시드면 같은 배정. */
+function pickUnused(list, rng, usedSet){
+  const n = list.length;
+  let idx = (rng()*n)|0;
+  if(usedSet && usedSet.size < n){
+    let tries = 0;
+    while(usedSet.has(idx) && tries++ < n) idx = (idx + 1) % n;
+  }
+  if(usedSet) usedSet.add(idx);
+  return list[idx];
+}
+/* 반환 {ko,en,zh, unit:{ko,en,zh}} — unit 은 정답지·답 줄이 단위("80장")를 붙이는 데 쓴다.
+   applyWordProblems 가 p.word(세 언어 문장)와 p.wordUnit 으로 나눠 싣는다(pickL 이 p.word 를
+   언어 키로 고르므로 문장 객체에 다른 키를 섞지 않는다).
+   틀(frame)은 +·− 에 3개씩(2026-09-06) — 여섯 문항이 한 문장 틀에 명사만 바뀌어 나갔었다.
+   새 틀은 반드시 세 언어를 함께 갖춘다(pickL 이 화면 언어로 고른다). ×·÷ 는 예전 한 틀 그대로. */
+function wordifyProblem(p, rng, used){
   const v = parseVert(p.tex||'');
   if(!v) return null;
   if(v.a.indexOf('.')>=0 || v.b.indexOf('.')>=0) return null; /* 소수는 숫자식 유지 */
   const a=+v.a, b=+v.b;
   if(!isFinite(a)||!isFinite(b)||a>100000||b>100000) return null;
-  const who = WP_NAMES[(rng()*WP_NAMES.length)|0];
-  const pick = WP_ITEMS[(rng()*WP_ITEMS.length)|0];
+  used = used || {};
+  const who = pickUnused(WP_NAMES, rng, used.names);
+  const pick = pickUnused(WP_ITEMS, rng, used.items);
   const item=pick.ko[0], unit=pick.ko[1];
   const enPair=pick.en, enMany=pick.en[1], zhN=pick.zh[0], zhU=pick.zh[1];
   const nameJ = kJosa(who.ko,'이는','는');
   const itemJ = kJosa(item,'을','를');
   const bUnitJ = b+kJosa(unit,'을','를');
+  const unitObj = {ko:unit, en:enMany, zh:zhU};
+  const done = w => { w.unit = unitObj; return w; };
   /* 세 언어를 한 번에 만든다 — 이름·사물은 같은 index라 언어를 바꿔도 같은 상황. */
   switch(v.op){
-    case '+':
-      return {
+    case '+': {
+      const frame = (rng()*3)|0;
+      if(frame === 1){
+        /* 두 사람이 각각 — 이름 둘 */
+        const who2 = pickUnused(WP_NAMES, rng, used.names);
+        const name2J = kJosa(who2.ko,'이는','는');
+        return done({
+          ko:`${nameJ} ${itemJ} ${a}${unit}, ${name2J} ${b}${unit} 가지고 있어요. 두 사람이 가진 ${kJosa(item,'은','는')} 모두 몇 ${unit}일까요?`,
+          en:`${who.en} has ${enCount(a,enPair)} and ${who2.en} has ${b}. How many ${enMany} do they have together?`,
+          zh:`${who.zh}有${a}${zhU}${zhN}，${who2.zh}有${b}${zhU}。两人一共有多少${zhU}？`});
+      }
+      if(frame === 2){
+        return done({
+          ko:`${nameJ} 어제 ${itemJ} ${a}${unit} 모았고, 오늘 ${b}${unit} 더 모았어요. 이틀 동안 모은 ${kJosa(item,'은','는')} 모두 몇 ${unit}일까요?`,
+          en:`${who.en} collected ${enCount(a,enPair)} yesterday and ${b} more today. How many ${enMany} did ${who.pr.toLowerCase()} collect in the two days?`,
+          zh:`${who.zh}昨天收集了${a}${zhU}${zhN}，今天又收集了${b}${zhU}。两天一共收集了多少${zhU}？`});
+      }
+      return done({
         ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${bUnitJ} 더 받으면 모두 몇 ${unit}일까요?`,
         en:`${who.en} has ${enCount(a,enPair)}. ${who.pr} gets ${b} more. How many ${enMany} are there in all?`,
-        zh:`${who.zh}有${a}${zhU}${zhN}。再得到${b}${zhU}，一共有多少${zhU}？`};
-    case '−': case '-':
+        zh:`${who.zh}有${a}${zhU}${zhN}。再得到${b}${zhU}，一共有多少${zhU}？`});
+    }
+    case '−': case '-': {
       if(a<b) return null;
-      return {
+      const frame = (rng()*3)|0;
+      if(frame === 1){
+        /* 두 사람 비교 — 이름 둘 */
+        const who2 = pickUnused(WP_NAMES, rng, used.names);
+        const name2J = kJosa(who2.ko,'이는','는');
+        return done({
+          ko:`${nameJ} ${itemJ} ${a}${unit}, ${name2J} ${b}${unit} 가지고 있어요. ${kJosa(who.ko,'이가','가')} 몇 ${unit} 더 많을까요?`,
+          en:`${who.en} has ${enCount(a,enPair)} and ${who2.en} has ${b}. How many more ${enMany} does ${who.en} have?`,
+          zh:`${who.zh}有${a}${zhU}${zhN}，${who2.zh}有${b}${zhU}。${who.zh}比${who2.zh}多多少${zhU}？`});
+      }
+      if(frame === 2){
+        return done({
+          ko:`상자에 ${kJosa(item,'이','가')} ${a}${unit} 들어 있었어요. 그중 ${bUnitJ} 꺼내 썼어요. 상자에 남은 ${kJosa(item,'은','는')} 몇 ${unit}일까요?`,
+          en:`A box held ${enCount(a,enPair)}. ${b} of them were taken out and used. How many ${enMany} are left in the box?`,
+          zh:`盒子里原来有${a}${zhU}${zhN}，拿出用掉了${b}${zhU}。盒子里还剩多少${zhU}？`});
+      }
+      return done({
         ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있었는데 ${bUnitJ} 친구에게 주었어요. 남은 ${kJosa(item,'은','는')} 몇 ${unit}일까요?`,
         en:`${who.en} had ${enCount(a,enPair)} and gave ${b} to a friend. How many ${enMany} are left?`,
-        zh:`${who.zh}原来有${a}${zhU}${zhN}，送给朋友${b}${zhU}。还剩多少${zhU}？`};
+        zh:`${who.zh}原来有${a}${zhU}${zhN}，送给朋友${b}${zhU}。还剩多少${zhU}？`});
+    }
     case '×':
-      return {
+      return done({
         ko:`${item} 한 묶음에 ${a}${unit}씩 들어 있어요. ${b}묶음에는 ${kJosa(item,'이','가')} 모두 몇 ${unit} 있을까요?`,
         en:`Each pack holds ${enCount(a,enPair)}. How many ${enMany} are in ${b} ${b===1?'pack':'packs'}?`,
-        zh:`每包有${a}${zhU}${zhN}。${b}包一共有多少${zhU}？`};
+        zh:`每包有${a}${zhU}${zhN}。${b}包一共有多少${zhU}？`});
     case '÷':
       if(b===0 || b===1 || a%b!==0) return null; /* 나머지 있거나 ÷1이면 문장제 제외(상황이 안 만들어짐) */
-      return {
+      return done({
         ko:`${nameJ} ${itemJ} ${a}${unit} 가지고 있어요. ${b}명이 똑같이 나누어 가지면 한 명이 몇 ${unit}씩 가질까요?`,
         en:`${who.en} has ${enCount(a,enPair)}. If ${b} children share them equally, how many does each child get?`,
-        zh:`${who.zh}有${a}${zhU}${zhN}。${b}个小朋友平分，每人分到多少${zhU}？`};
+        zh:`${who.zh}有${a}${zhU}${zhN}。${b}个小朋友平分，每人分到多少${zhU}？`});
   }
   return null;
 }
-/* wordType: 'none' | 'mix'(약 1/3) | 'all' */
+/* wordType: 'none' | 'mix'(약 1/3) | 'all'
+   rng 는 문항마다 따로(numericSeed ^ index, 2026-09-06) — 한 흐름을 이어 쓰면 편집기에서 문항 하나를
+   바꿨을 때 뒤 문항의 이름·틀이 전부 밀린다("그 문항만 바뀐다"는 편집기의 전제, §overrides).
+   이름·사물 중복 방지 집합은 index 순서로 채운다. */
 function applyWordProblems(problems, wordType, numericSeed){
   if(!wordType || wordType==='none') return problems;
-  const rng = NM_RNG.mulberry32(((numericSeed>>>0) ^ 0x5f3759df)>>>0);
+  const used = { names: new Set(), items: new Set() };
   problems.forEach((p,i)=>{
     if(wordType==='mix' && i%3!==1) return;
-    const w = wordifyProblem(p, rng);
+    const rng = NM_RNG.mulberry32((((numericSeed>>>0) ^ 0x5f3759df) ^ Math.imul(i + 1, 0x9e3779b1))>>>0);
+    const w = wordifyProblem(p, rng, used);
     /* wordifyProblem이 ko·en·zh 세 벌을 함께 만든다(2026-09-01 한영 확장) —
        pickL이 화면 언어에 맞는 벌을 고른다. WP 스레드는 원래부터 3언어. */
-    if(w) p.word = w;
+    if(w){
+      const unit = w.unit; delete w.unit;
+      p.word = w;
+      if(unit) p.wordUnit = unit;
+    }
   });
   return problems;
 }
@@ -1799,38 +2141,44 @@ function texDisplay(tex){
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 
+/* firstRows: 첫 장(머리띠+개념+예시+따라풀기 아래)에 들어가는 행 수 — 판정별 고정표(2026-09-06).
+   전에는 일괄 ceil(rows/2)라 20문항 회차가 늘 10/10 으로 갈려 둘째 장의 절반~3/4이 비었다.
+   기준 C34·C4 실측: 개념~따라풀기 묶음이 약 100~130mm 로 거의 일정 → 남는 140~170mm.
+     짧은식 10행×~14mm(20문항 전부 첫 장) · 중간식 6행 · 긴식 4행 · 세로셈 4행(16, 칸 ~36mm) ·
+     문장제 3행 · 그림형 2행. 문항이 한 장에 다 안 들어가면 둘째 장은 perPage 그대로.
+   pitch: 부분 페이지에서 행 하나의 높이(mm) — 전체 장과 같은 간격으로 위에서부터 채우고 남는
+   아래는 풀이 여백(.nm-w2-scratch)으로 둔다. */
 function classifyRoundLayout(problems, threadId){
-  if(!problems || !problems.length) return {type:'short', cols:2, rows:10, perPage:20, flow:'col'};
+  if(!problems || !problems.length) return {type:'short', cols:2, rows:10, perPage:20, flow:'col', firstRows:10, pitch:14};
   const nonWord = problems.filter(p => !p.word);
-  if(!nonWord.length) return {type:'word', cols:1, rows:6, perPage:6, flow:'row'};
+  if(!nonWord.length) return {type:'word', cols:1, rows:6, perPage:6, flow:'row', firstRows:3, pitch:42};
   const withTex = nonWord.filter(p => p.tex);
   if(nonWord.length === problems.length && !withTex.length){
-    return {type:'visual', cols:2, rows:4, perPage:8, flow:'row'};
+    return {type:'visual', cols:2, rows:4, perPage:8, flow:'row', firstRows:2, pitch:55};
   }
   /* 세로셈 판정은 회차 전체를 보고 "한 번만" — 칸마다 다시 parseVert를 걸면
      우연히 둘 다 양수인 문항(예: MD4가 부호 없는 5×2를 낼 때)만 세로 박스로
      튀어 다른 칸과 형식이 갈린다(2026-09-04 버그). 조건: 전부 세로셈
-     가능 + 피연산자에 음수가 하나도 없음(부호/혼합/검산 계열 스레드는
-     음수·괄호가 그림 자체라 세로 박스가 안 맞는다) + 스레드가
-     MD/CH/EL/MX(부호·경시·검산·혼합)로 시작하지 않음. */
-  const hasNegativeOperand = p => /-\s*[\d(]/.test(String(p.tex||''));
+     가능 + 스레드가 MD/CH/EL/MX(부호·경시·검산·혼합)로 시작하지 않음.
+     음수 피연산자 검사는 parseVert 가 이미 한다(`^[\d.]+ op [\d.]+ = \square$`만 받으므로
+     음수·괄호가 있으면 애초에 통과 못 함). 전에 따로 두었던 /-\s*[\d(]/ 검사는 "58 - 57"의
+     뺄셈 기호 자체에 걸려 뺄셈 회차가 한 번도 세로셈이 되지 못했다(2026-09-06 제거). */
   const excludedPrefix = /^(MD|CH|EL|MX)/.test(threadId||'');
-  if(withTex.length && !excludedPrefix
-     && withTex.every(p => parseVert(p.tex) && !hasNegativeOperand(p))){
-    return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row'};
+  if(withTex.length && !excludedPrefix && withTex.every(p => parseVert(p.tex))){
+    return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:4, pitch:44};
   }
   if(nonWord.length < problems.length){
     /* 섞인 경우(문장제 일부 + 숫자식 일부, wordType='mix') — 문장제가 있으면
        칸을 넓게 줘야 하므로 "긴 식"과 같은 1열로 간다. */
-    return {type:'long', cols:1, rows:8, perPage:8, flow:'row'};
+    return {type:'long', cols:1, rows:8, perPage:8, flow:'row', firstRows:4, pitch:28};
   }
   /* §2-5 판정은 "보이는" 길이로만 한다 — steps 단계 수로 강제로 "긴 식"으로
      미는 규칙은 폐기(2026-09-04, MD4·MD21·FR1이 전부 잘못 판정되던 원인). */
   let maxLen = 0;
   withTex.forEach(p => { maxLen = Math.max(maxLen, texVisibleLength(p.tex)); });
-  if(maxLen <= 16) return {type:'short', cols:2, rows:10, perPage:20, flow:'col'};
-  if(maxLen <= 44) return {type:'medium', cols:2, rows:8, perPage:16, flow:'col'};
-  return {type:'long', cols:1, rows:8, perPage:8, flow:'row'};
+  if(maxLen <= 16) return {type:'short', cols:2, rows:10, perPage:20, flow:'col', firstRows:10, pitch:14};
+  if(maxLen <= 44) return {type:'medium', cols:2, rows:8, perPage:16, flow:'col', firstRows:6, pitch:18};
+  return {type:'long', cols:1, rows:8, perPage:8, flow:'row', firstRows:4, pitch:28};
 }
 
 /* 난이도 정렬 §2-6: 피연산자 자릿수 합 → |answer| → tex 길이. 문장제·그림형은
@@ -1875,12 +2223,20 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
   } else if(p.word){
     cls += ' nm-w2-item-word';
     const wc = wordChoices(p);
+    /* 답 줄(2026-09-06): 보기·식 틀이 없는 문장제는 "식: ____  답: ____ 단위" — 말에서 식으로
+       가는 자리를 먼저 주고, 단위(p.wordUnit, wordifyProblem)가 있으면 답 뒤에 붙인다.
+       클래스 .nm-print-word-blank 는 check-print.js 가 "풀 수 있는 문장제" 판정에 쓰므로 유지. */
+    const unit = p.wordUnit ? pickL(p.wordUnit) : '';
+    const blankLine = `<div class="nm-print-word-blank">`
+      + `<span>${esc(lk('식','Equation','算式'))}: <span class="nm-w2-blank" style="width:42mm"></span></span>`
+      + `<span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-blank" style="width:22mm"></span>${unit ? ' ' + esc(unit) : ''}</span>`
+      + `</div>`;
     inner = `<div class="nm-print-word">${esc(pickL(p.word))}</div>`
       + (p.wordAsk ? `<div class="nm-print-wordask">${esc(pickL(p.wordAsk))}</div>` : '')
       + (wc ? wc.outerHTML : '')
       + (p.wordEqn
           ? `<div class="nm-print-word-eq">${esc(pickL(p.wordEqn))}</div>`
-          : `<div class="nm-print-word-blank">${esc(lk('답','Answer','答'))}: __________</div>`);
+          : blankLine);
   } else {
     /* 세로셈 마크업은 회차 전체가 vertical로 판정됐을 때만 — 칸마다
        parseVert를 다시 걸면 우연히 부호 없는 문항 하나만 다른 칸과 형식이
@@ -1889,7 +2245,10 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
     const v = isVerticalRound ? parseVert(p.tex) : null;
     if(v){
       cls += ' nm-w2-item-vp';
+      /* .nm-print-vp-carry — 올림/내림 숫자를 적는 빈 줄(w2 세로셈 전용, 2026-09-06). 편집기의
+         옛 vp 마크업(~1697)은 그대로. check-print.js 는 .nm-print-vp 만 찾는다. */
       inner = `<div class="nm-print-vp">
+  <div class="nm-print-vp-carry">&nbsp;</div>
   <div class="nm-print-vp-top">${esc(v.a)}</div>
   <div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span><span>${esc(v.b)}</span></div>
   <div class="nm-print-vp-line"></div>
@@ -1913,28 +2272,70 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
     ? `<div class="nm-print-steps">${steps.map(s =>
         `<div class="nm-print-step"><span class="nm-w2-tex" data-tex="${esc(texDisplay(s.tex||''))}"></span></div>`).join('')}</div>`
     : '';
-  const rampPill = isFirstRamp ? `<span class="nm-w2-ramp-pill">${esc(lk('도전','Challenge','挑战'))}</span>` : '';
+  /* 알약은 램프 첫 문항 하나(§build 6). 문구는 "여기부터 도전" — 개념 패널의 "뒤 N문항"과
+     맞아떨어지게(한 문항만 어렵다고 읽히지 않도록, 2026-09-06). */
+  const rampPill = isFirstRamp ? `<span class="nm-w2-ramp-pill">${esc(lk('여기부터 도전','Challenge from here','从这里开始挑战'))}</span>` : '';
   /* data-slot — buildProblems가 매긴 원래(정렬 전) 자리(§overrides). 실제 인쇄에는
      아무 영향 없는 순수 데이터 속성이고, 인쇄 미리보기 편집기가 이 칸을 다시
      지정할 때만 읽는다. */
   const slotAttr = (p.__slot != null) ? ` data-slot="${esc(String(p.__slot))}"` : '';
-  return `<div class="${cls}"${slotAttr}><span class="nm-w2-num">(${num})</span>${rampPill}${askHtml}${inner}${stepsHtml}</div>`;
+  return `<div class="${cls}"${slotAttr}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span>${rampPill}</span>${askHtml}${inner}${stepsHtml}</div>`;
 }
 
-/* 정답지 항목 — 문항 번호와 같은 "(n)" 표기(§6 "정답지 번호가 문항 번호와 일치"). */
-function w2AnswerKeyItemsHtml(problems){
+/* 정답 한 개의 표시 HTML(2026-09-06, 번호 답·따라풀기 답 공용).
+   · answerShape 있으면 ansTex(분수·유리화 등).
+   · 답이 [계수, 근호 안]인데 answerShape 가 없는 경우(MD16 등, tex 가 `\square\sqrt{\square}` 꼴) —
+     fmtAns 로 "3, 2"라고 찍히던 것을 3√2 로(정답지에서만 처리, 생성기·앱 채점은 그대로).
+   · 문장제(p.wordUnit)는 단위를 붙인다("80장"). answerNote 가 있는 WP 스레드는 원래대로. */
+function w2AnswerValueHtml(p){
+  const akTex = ansTex(p);
+  if(akTex) return `<span class="nm-w2-tex" data-tex="${esc(akTex)}"></span>`;
+  if(Array.isArray(p.answer) && p.answer.length === 2 && /\\square\\sqrt\{\\square\}/.test(String(p.tex||''))){
+    const [c, r] = p.answer;
+    return `<span class="nm-w2-tex" data-tex="${esc(`${c === 1 ? '' : c}\\sqrt{${r}}`)}"></span>`;
+  }
+  const note = pickL(p.answerNote);
+  const unit = (!note && p.word && p.wordUnit) ? pickL(p.wordUnit) : '';
+  return esc(String(fmtAns(p.answer)) + (unit ? unit : '') + (note ? ` (${note})` : ''));
+}
+/* 정답지 항목 — 문항 번호와 같은 "(n)" 표기(§6 "정답지 번호가 문항 번호와 일치").
+   numStart: 학습지 쪽별 격자로 나눠 부를 때의 시작 번호(0-base, 기본 0). */
+function w2AnswerKeyItemsHtml(problems, numStart){
+  const base = numStart || 0;
   return problems.map((p,i) => {
     const steps = printSteps(p);
     if(steps){
-      return `<div class="nm-ak-item">(${i+1}) ${esc(steps.map(s => fmtAns(s.blank)).join(' , '))}</div>`;
+      return `<div class="nm-ak-item">(${base+i+1}) ${esc(steps.map(s => fmtAns(s.blank)).join(' , '))}</div>`;
     }
-    const akTex = ansTex(p);
-    if(akTex){
-      return `<div class="nm-ak-item">(${i+1}) <span class="nm-w2-tex" data-tex="${esc(akTex)}"></span></div>`;
-    }
-    const note = pickL(p.answerNote);
-    return `<div class="nm-ak-item">(${i+1}) ${esc(String(fmtAns(p.answer)) + (note ? ` (${note})` : ''))}</div>`;
+    return `<div class="nm-ak-item">(${base+i+1}) ${w2AnswerValueHtml(p)}</div>`;
   }).join('');
+}
+/* 회차 정답 블록(2026-09-06) — 따라풀기 (가)(나)(다)는 제 줄(.nm-ak-guide), 번호 답은 학습지 쪽마다
+   격자 하나(.nm-ak-page, pageSizes = renderRoundPages 가 나눈 쪽별 문항 수)로 학습지 쪽 순서를 그대로
+   따른다. 전에는 (가)(나)(다)와 (1)(2)…가 한 격자에 흘러 (1)(6)(11)이 열을 못 맞췄다.
+   .nm-ak-item 수 = 문항 수(check-print.js 회귀 검사)는 그대로다. */
+function w2AnswerKeySectionHtml(round){
+  const guide = w2GuidedAnswerKeyHtml(round.guidedProblems);
+  const sizes = (Array.isArray(round.pageSizes) && round.pageSizes.length) ? round.pageSizes : [round.problems.length];
+  let start = 0;
+  const pages = sizes.map((n, pi) => {
+    const slice = round.problems.slice(start, start + n);
+    const html = `<div class="nm-ak-page">${sizes.length > 1 ? `<div class="nm-ak-pg">${pi+1}/${sizes.length}</div>` : ''}<div class="nm-ak-grid">${w2AnswerKeyItemsHtml(slice, start)}</div></div>`;
+    start += n;
+    return html;
+  }).join('');
+  return `${guide ? `<div class="nm-ak-guide">${guide}</div>` : ''}${pages}`;
+}
+/* 정답지 머리띠(2026-09-06) — 회차 머리띠(.nm-w2-head)와 같은 짜임(학원 칩 · 네이비 띠 · 코드)으로
+   정답지도 같은 묶음의 지면으로 보이게. 고정 높이 페이지에 넣지 않는다(정답지는 흐름 조판). */
+function w2AnswerKeyHeadHtml(code){
+  return `<div class="nm-w2-head">
+  <div class="nm-w2-head-row">
+    <span class="nm-w2-head-brand">${esc(brandName())}</span>
+    <span class="nm-w2-head-mid"><b>${esc(answerKeyTitle())}</b></span>
+    <span class="nm-w2-head-code">${esc(code || '')}</span>
+  </div>
+</div>`;
 }
 
 /* 개념 패널의 단계 요약 줄용 — desc는 자체 저작 HTML(<b> 등)을 담고 있어서
@@ -1952,12 +2353,33 @@ const CONCEPT_STAGE_MARKS = ['①','②'];
    stages 전체를 붓지 않는다(conceptBlockHtml처럼 단 단위 노트로 되돌아가지
    않기 위함) — 옛 conceptBlockHtml의 "앞 1~2단계만" 추출을 그대로 따르되
    한 단계 = 한 줄로 더 압축한다. */
+/* 레벨별 개념 문장(2026-09-06) — 스레드 하나의 concept 이 레벨마다 다른 기술을 설명 못 하던 곳:
+   SB4 L1(내림 없음인데 내림 설명) · MX2 L2(홀·짝 합인데 1~n 공식) · MD15 L1(완전제곱수뿐인데 세 모드).
+   판독 순서는 levels[].concept(threads.js) → 이 표 → thread.concept. 데이터가 threads.js 로
+   옮겨 가면 이 표는 지워도 된다(렌더러는 levels[].concept 을 먼저 본다). */
+const W2_LEVEL_CONCEPTS = {
+  'SB4:1': {ko:'자리를 맞춰 일의 자리부터 빼요. 이번 회차는 대부분 내림 없이 풀고, 뒤 6문항만 모자라면 윗자리에서 10을 빌려요(63−28: 13−8=5, 5−2=3 → 35).',
+            en:'Line up the places and subtract from the ones. Most of this round needs no borrowing; only the last 6 borrow 10 from the tens (63−28: 13−8=5, 5−2=3 → 35).',
+            zh:'对齐数位，从个位开始减。本轮大多不需要退位，只有最后6题要向十位借10（63−28：13−8=5，5−2=3 → 35）。'},
+  'MX2:2': {ko:'짝수의 합 2+4+…+2n은 n×(n+1), 홀수의 합 1+3+…+(2n−1)은 n²예요. 먼저 몇 개를 더했는지(n)부터 세요 — 2+4+6+8은 4개라 4×5=20.',
+            en:'Even sums 2+4+…+2n equal n×(n+1); odd sums 1+3+…+(2n−1) equal n². Count how many terms (n) first — 2+4+6+8 has 4 terms, so 4×5=20.',
+            zh:'偶数和2+4+…+2n等于n×(n+1)，奇数和1+3+…+(2n−1)等于n²。先数一共加了几个数(n)——2+4+6+8有4项，所以4×5=20。'},
+  'MD15:1': {ko:'완전제곱수의 제곱근은 정수예요. 어떤 수를 두 번 곱해 그 수가 되는지 찾으면 돼요 — 10000=100×100이라 √10000=100.',
+             en:'The square root of a perfect square is an integer: find the number that multiplies by itself to give it — 10000=100×100, so √10000=100.',
+             zh:'完全平方数的平方根是整数：找出哪个数自己乘自己得到它——10000=100×100，所以√10000=100。'}
+};
+/* 지시문(2026-09-06) — "계산을 하시오."가 안 맞는 유형. 없으면 renderRoundPages 가 기본 문구. */
+const W2_INSTR = {
+  NS1: {ko:'□ 안에 알맞은 숫자를 쓰시오.', en:'Write the correct digit in each box.', zh:'在□里填上正确的数字。'},
+  MD16: {ko:'근호 안을 가장 간단히 하시오.', en:'Simplify each radical.', zh:'把根号化到最简。'}
+};
 function w2ConceptPanelHtml(threadId, level, extra){
   extra = extra || {};
   const info = resolveConceptUnit(threadId, level);
   if(!info) return '';
   const nm = pickL(info.thread.name) || threadId;
-  const sentence = info.thread.concept ? pickL(info.thread.concept) : '';
+  const lvObj = (info.thread.levels || []).find(l => l.id === level);
+  const sentence = pickL((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || info.thread.concept) || '';
   const stages = (info.unit && info.unit.discover && Array.isArray(info.unit.discover.stages))
     ? info.unit.discover.stages.slice(0, 2) : [];
   const stageLines = stages.map((s, i) => {
@@ -2026,9 +2448,25 @@ function fixNegSigns(tex){
    격자 칸과 같은 그림 ②steps 있으면 "완성된 식"(전체 대입, 빨강) 아래에
    단계별 대입을 이어서 ③세로셈이면 세로 배치+빨간 답 ④그 외엔 "완성된 식"
    한 줄 — steps가 없을 때만 개념 문장 중 숫자가 든 첫 문장을 덧붙인다. */
-function w2ExampleHtml(threadId, level, code){
+/* 문항 중복 키(2026-09-06) — tex(공백 제거) + 답. 그림형·모으기 문항은 tex 가 같아도 답이 다를 수
+   있어 답까지 본다. buildProblems 의 중복 제거와 예시·따라풀기의 회피가 같은 키를 쓴다. */
+function problemKey(p){
+  return String(p && p.tex || '').replace(/\s+/g,'') + '|' + JSON.stringify(p && p.answer);
+}
+/* 같은 rng 흐름에서 exclude 에 없는 문항이 나올 때까지 다시 뽑는다(최대 maxTries). 뽑기 수만 늘고
+   시드는 그대로라 재현 가능. 유한한 풀(한 자리 덧셈 36가지 등)에서는 횟수를 다 쓰면 중복을 받아들인다. */
+function drawUnique(threadId, level, rng, exclude, maxTries){
+  let p = generateProblem(threadId, level, rng);
+  if(!exclude) return p;
+  let tries = 0;
+  while(exclude.has(problemKey(p)) && tries++ < (maxTries || 40)) p = generateProblem(threadId, level, rng);
+  return p;
+}
+/* exclude(선택, Set of problemKey) — 회차의 채점 문항과 같은 문제가 예시로 나오지 않게(2026-09-06). */
+function w2ExampleHtml(threadId, level, code, exclude){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
-  const p = generateProblem(threadId, level, rng);
+  const p = drawUnique(threadId, level, rng, exclude, 12);
+  if(exclude) exclude.add(problemKey(p));
   /* steps(드릴 위젯용) 또는 solution(예시 전용 풀이 — 중·고등 생성기가 2026-09-04부터 제공,
      위젯·인쇄 채점에는 쓰이지 않는다) 둘 중 있는 것을 풀이 줄로 쓴다. */
   const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
@@ -2083,13 +2521,18 @@ function w2ExampleHtml(threadId, level, code){
    (가)(나)(다)로 싣는다(w2GuidedAnswerKeyHtml). */
 const GUIDE_LABELS = { ko:['가','나','다'], en:['a','b','c'], zh:['甲','乙','丙'] };
 function guideLabels(){ return GUIDE_LABELS[examLang()] || GUIDE_LABELS.ko; }
-function w2GuidedHtml(threadId, level, code, guideSeedOverride){
+/* exclude(선택) — 회차 채점 문항·예시와 겹치지 않게 다시 뽑고, 뽑은 것은 집합에 더해 (가)(나)(다)끼리도
+   안 겹치게(2026-09-06). levels(선택, [lv,lv,lv]) — 램프가 있으면 (다)만 램프 레벨로 뽑아 예시가
+   보여 준 기술(받아내림 등)을 따라 풀 문항이 하나는 있게 한다. */
+function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels){
   const labs = guideLabels();
   const problems = [];
   const seedBase = guideSeedOverride || ('guide' + code);
   const itemsHtml = [0, 1, 2].map(i => {
     const rng = NM_RNG.mulberry32(NM_RNG.hashSeed(seedBase + i));
-    const p = generateProblem(threadId, level, rng);
+    const lv = (Array.isArray(levels) && levels[i]) || level;
+    const p = drawUnique(threadId, lv, rng, exclude, 12);
+    if(exclude) exclude.add(problemKey(p));
     problems.push(p);
     const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
     const raw = String(p.tex || '');
@@ -2121,30 +2564,39 @@ function w2GuidedAnswerKeyHtml(problems){
      `.nm-ak-item` 개수를 문항 수(COUNT)와 정확히 맞춰 비교한다(회귀 검사). 따라풀기
      3개는 회차 N문항과 별개(§4)라 그 카운트에 안 들어가야 같은 검사가 계속 통과한다.
      스타일은 아래 CSS에서 .nm-ak-item과 동일하게 맞춘다. */
-  return problems.map((p, i) => {
-    const akTex = ansTex(p);
-    if(akTex){
-      return `<div class="nm-ak-guide-item">(${esc(labs[i])}) <span class="nm-w2-tex" data-tex="${esc(akTex)}"></span></div>`;
-    }
-    const note = pickL(p.answerNote);
-    return `<div class="nm-ak-guide-item">(${esc(labs[i])}) ${esc(String(fmtAns(p.answer)) + (note ? ` (${note})` : ''))}</div>`;
-  }).join('');
+  return problems.map((p, i) =>
+    `<div class="nm-ak-guide-item">(${esc(labs[i])}) ${w2AnswerValueHtml(p)}</div>`).join('');
 }
 
 /* 머리띠(§2-2) — 좌:학원명 · 중:색띠(유형 이름+부제) · 우:코드+페이지 번호.
    맨 위 작은 줄에 이름/날짜/점수. */
-function w2HeadHtml(item, code, pageLabel, count){
+/* 이름·날짜·점수 줄(2026-09-06, 주간 학습지). 이름이 있으면(표지의 학생) 빈칸 대신 이름을 찍고,
+   날짜·점수는 회차 첫 장에만(둘째 장에도 점수 칸이 또 있어 한 회차에 점수 칸이 둘이었다).
+   라벨은 표지와 같은 "푼 날짜". 옛 printMetaFieldsHtml 은 다른 두 헤더(레거시 인쇄)가 계속 쓴다. */
+function w2MetaFieldsHtml(count, o){
+  o = o || {};
+  const blank = w => `<span class="nm-w2-blank" style="width:${w}mm"></span>`;
+  const parts = [`<span>${esc(lk('이름','Name','姓名'))}: ${o.name ? `<b>${esc(o.name)}</b>` : blank(40)}</span>`];
+  if(o.first !== false){
+    parts.push(`<span>${esc(lk('푼 날짜','Date','日期'))}: ${blank(30)}</span>`);
+    if(count != null) parts.push(`<span>${esc(lk('점수','Score','得分'))}: ${blank(18)} / ${count}</span>`);
+  }
+  return parts.join('\n    ');
+}
+/* opts: {roundNo, name, first} — 회차 번호(표지 목차와 같은 번호, 이모지 대신) · 학생 이름 · 첫 장 여부.
+   색띠는 인쇄 팔레트의 네이비로 고정(THREAD_PREFIX_THEME 색은 앱 UI 용). 오른쪽은 짧은 코드
+   "MD15-L1 · 1/2"(§2-7) — 전체 코드는 발치에 한 번. */
+function w2HeadHtml(item, code, pageLabel, count, opts){
+  opts = opts || {};
   const th = (window.NM_THREADS||{})[item.thread] || {};
   const thName = pickL(item.topicName) || pickL(th.name) || item.thread;
-  let brand = 'GFIELD';
-  try{ brand = localStorage.getItem('nm_brand_name') || 'GFIELD'; }catch(e){}
-  const theme = coverTheme(item);
-  return `<div class="nm-w2-head" style="--w2-accent:${esc(theme.color)}">
-  <div class="nm-w2-head-top">${printMetaFieldsHtml(count)}</div>
+  const shortCode = `${item.thread}-L${item.level}`;
+  return `<div class="nm-w2-head" style="--w2-accent:#0E2C57">
+  <div class="nm-w2-head-top">${w2MetaFieldsHtml(count, {name: opts.name, first: opts.first})}</div>
   <div class="nm-w2-head-row">
-    <span class="nm-w2-head-brand">${esc(brand)}</span>
-    <span class="nm-w2-head-mid"><b>${esc(theme.icon)} ${esc(thName)}</b>${item.subLabel ? `<span>${esc(item.subLabel)}</span>` : ''}</span>
-    <span class="nm-w2-head-code">${esc(code)} · ${esc(pageLabel)}</span>
+    <span class="nm-w2-head-brand">${esc(brandName())}</span>
+    <span class="nm-w2-head-mid"><b>${opts.roundNo ? esc(opts.roundNo + '. ') : ''}${esc(thName)}</b>${item.subLabel ? `<span>${esc(item.subLabel)}</span>` : ''}</span>
+    <span class="nm-w2-head-code">${esc(shortCode)} · ${esc(pageLabel)}</span>
   </div>
 </div>`;
 }
@@ -2152,6 +2604,33 @@ function w2HeadHtml(item, code, pageLabel, count){
 /* 회차 한 벌(§2-1) — item:{thread,level,wordType?,seed,topicName?}, opts:{count,conceptOn}.
    반환: {html(페이지들 이어붙인 문자열), problems(정렬된 순서, 정답지가 이 순서를
    그대로 쓴다), code, thName}. */
+/* 문장제 회차의 첫 장 머리(2026-09-06) — 드릴 회차의 개념·예시·따라풀기(자릿값 단계)를 그대로
+   되풀이하는 대신, 말에서 식으로 가는 것을 보여 주는 예시 하나: 문장 → 식 → 답(단위).
+   예시 문항은 시드 고정('ex'+code)으로 뽑아 문장으로 바꾼다. 못 바꾸면 빈 문자열. */
+function w2WordExampleHtml(threadId, level, code, exclude){
+  const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
+  const p = drawUnique(threadId, level, rng, exclude, 12);
+  if(exclude) exclude.add(problemKey(p));
+  const wrng = NM_RNG.mulberry32(NM_RNG.hashSeed('exw' + code));
+  const w = wordifyProblem(p, wrng);
+  const v = parseVert(p.tex || '');
+  if(!w || !v) return '';
+  const unit = pickL(w.unit) || '';
+  const eq = `${v.a} ${v.op} ${v.b} = ${fmtAns(p.answer)}`;
+  const hint = v.op === '+'
+    ? lk('"더 받으면", "모두 몇"은 더하기예요 — 식을 먼저 쓰고 계산해요.', '"gets more" and "in all" mean addition — write the equation first, then solve.', '"再得到""一共"是加法——先列式，再计算。')
+    : v.op === '−'
+    ? lk('"주었어요", "남은", "더 많을까요"는 빼기예요 — 식을 먼저 쓰고 계산해요.', '"gave away", "left" and "how many more" mean subtraction — write the equation first, then solve.', '"送给""还剩""多多少"是减法——先列式，再计算。')
+    : lk('문장에서 수와 낱말을 찾아 식을 먼저 쓰고 계산해요.', 'Find the numbers and key words, write the equation first, then solve.', '从句子里找出数和关键词，先列式，再计算。');
+  return `<div class="nm-w2-example">
+  <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
+  <div class="nm-print-word" style="font-size:12.5px">${esc(pickL(w))}</div>
+  <div class="nm-w2-ex-line"><span>${esc(lk('식','Equation','算式'))}: <span class="nm-w2-ex-ans">${esc(eq)}</span></span>
+    <span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(String(fmtAns(p.answer)) + unit)}</span></span></div>
+  <div class="nm-w2-ex-note">${esc(hint)}</div>
+</div>`;
+}
+
 function renderRoundPages(item, opts){
   opts = opts || {};
   const count = opts.count || 20;
@@ -2159,6 +2638,10 @@ function renderRoundPages(item, opts){
   let problems = buildProblems(item.thread, item.level, count, numericSeed, item.overrides);
   applyWordProblems(problems, item.wordType, numericSeed);
   if(BOND_THREADS[item.thread]) problems.forEach(p => { p.__bond = true; });
+  /* 예시·따라풀기가 피할 채점 문항 키는 "기본" 문항(덮어쓰기 전)에서 만든다(2026-09-06) — 편집기에서
+     문항 하나를 바꿔도 예시·따라풀기가 따라 바뀌지 않아야 한다("그 문항만 바뀐다", 2026-09-05). */
+  const baseProblems = item.overrides ? buildProblems(item.thread, item.level, count, numericSeed) : problems;
+  const exclude = new Set(baseProblems.map(problemKey));
   /* baseCode(문항 덮어쓰기 반영 전)는 ★예시·따라풀기(기본 시드)의 씨앗으로만 쓴다 —
      한 문항을 편집기에서 바꿔도 code가 바뀌어 예시·따라풀기까지 같이 바뀌면
      "그 문항만 바뀐다"는 편집기의 전제가 깨진다(2026-09-05). 실제 회차 코드
@@ -2169,13 +2652,30 @@ function renderRoundPages(item, opts){
   const layout = classifyRoundLayout(problems, item.thread);
   problems = sortRoundProblems(problems, layout.type);
 
-  /* 첫 장 축소 용량(v2.1 §build 5) — 첫 장은 이제 개념·예시·따라풀기까지
-     지고 있어 전체 perPage를 다 못 받는다. "행"을 절반(올림)으로 줄인
-     만큼만 받는다 — 열 수는 그대로라 판정별 예시(세로셈 4×5→4×3(12),
-     짧은식 2×10→2×5(10), 중간식 2×8→2×4(8), 긴식 1×8→1×4(4),
-     문장제 1×6→1×3(3), 그림형 2×4→2×2(4))가 전부 이 식으로 나온다.
-     둘째 장부터는 layout.perPage 그대로(원래 용량). */
-  const firstRows = Math.max(1, Math.ceil(layout.rows / 2));
+  /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
+     예시가 실제로 보여 주도록. */
+  const rampN = problems.filter(p => p.__ramp).length;
+  const exLevel = rampN ? (rampLevelFor(item.thread, item.level) || item.level) : item.level;
+  /* 문장제만인 회차(wordType 'all', 2026-09-06)는 드릴 회차의 개념·예시·따라풀기(같은 세션 첫 회차에
+     이미 찍힌 자릿값 단계)를 되풀이하지 않고, 말→식→답을 보여 주는 예시 하나만 싣는다.
+     따라풀기가 없으니 정답지의 (가)(나)(다)도 없다(w2GuidedAnswerKeyHtml 이 빈 배열을 받는다). */
+  const wordOnly = item.wordType === 'all' && layout.type === 'word';
+  /* 개념·예시·따라풀기는 첫 장 필수(토글 없음, v2.1 build 1). exclude 집합: 채점 문항 → 예시 → (가)(나)(다)
+     순으로 더해 가며 서로 겹치지 않게. 램프가 있으면 (다)만 램프 레벨로(예시와 같은 기술). */
+  const conceptHtml = wordOnly ? '' : w2ConceptPanelHtml(item.thread, item.level, {rampN});
+  const exampleHtml = wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude)
+    : w2ExampleHtml(item.thread, exLevel, baseCode, exclude);
+  const guided = wordOnly ? {html:'', problems:[]}
+    : w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed, exclude,
+        rampN ? [item.level, item.level, exLevel] : null);
+
+  /* 첫 장 용량(2026-09-06) — 판정별 고정표 layout.firstRows(classifyRoundLayout 주석). 개념 패널이
+     유난히 길면(글자 수로만 본다 — 문자열 렌더러라 실측이 없다) 예전 규칙 ceil(rows/2)로 물러선다.
+     문장제만인 회차는 머리 묶음이 예시 하나뿐이라 한 장 용량 그대로(6문항이 한 장에). */
+  const conceptLen = stripConceptTags(conceptHtml).replace(/\s+/g,'').length;
+  const firstRows = wordOnly ? layout.rows
+    : (conceptLen > 330) ? Math.max(1, Math.ceil(layout.rows / 2))
+    : Math.max(1, Math.min(layout.rows, layout.firstRows || Math.ceil(layout.rows / 2)));
   const firstCap = firstRows * layout.cols;
   const pages = [];
   if(problems.length){
@@ -2188,37 +2688,33 @@ function renderRoundPages(item, opts){
 
   /* 행 수를 항상 명시한다(2026-09-06). 전에는 행 흐름(세로셈 등)에서 grid-auto-rows:1fr 만 있어
      둘째 장에 8문항이 남으면 2행이 페이지 전체로 늘어나 문항 사이가 텅 비어 보였다(원장: "문항 배치도 잘").
-     이제 마지막 장도 전체 장과 같은 행 높이를 쓰고 남는 아래는 풀이 여백으로 비운다. */
-  function gridStyleFor(rowsCount){
-    return layout.flow === 'col'
-      ? `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:repeat(${rowsCount},1fr);grid-auto-flow:column;`
-      : `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:repeat(${rowsCount},1fr);`;
+     가득 찬 장은 1fr(남는 높이를 고루), 부분 장은 layout.pitch(mm) 고정 행 + 위 정렬(align-content:start)
+     으로 전체 장과 같은 간격을 쓰고, 남는 아래는 풀이 여백(.nm-w2-scratch)이 받는다. */
+  function gridStyleFor(rowsCount, partial){
+    const rows = partial ? `repeat(${rowsCount},minmax(0,${layout.pitch || 20}mm))` : `repeat(${rowsCount},1fr)`;
+    const flowCol = layout.flow === 'col' ? 'grid-auto-flow:column;' : '';
+    const grow = partial ? 'flex:0 0 auto;align-content:start;' : '';
+    return `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:${rows};${flowCol}${grow}`;
   }
-
-  /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
-     예시가 실제로 보여 주도록. */
-  const rampN = problems.filter(p => p.__ramp).length;
-  const exLevel = rampN ? (rampLevelFor(item.thread, item.level) || item.level) : item.level;
-  /* 개념·예시·따라풀기는 첫 장 필수(토글 없음, v2.1 build 1). */
-  const conceptHtml = w2ConceptPanelHtml(item.thread, item.level, {rampN});
-  const exampleHtml = w2ExampleHtml(item.thread, exLevel, baseCode);
-  const guided = w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed);
+  const scratchHtml = `<div class="nm-w2-scratch"><div class="nm-w2-scratch-t">${esc(lk('풀이 · 검산','Work · Check','演算 · 检查'))}</div><div class="nm-w2-scratch-body"></div></div>`;
 
   let num = 1;
   let rampTagged = false; // 도전 알약은 회차 전체에서 첫 램프 문항 하나에만(§build 6)
+  const th = (window.NM_THREADS||{})[item.thread] || {};
+  const instrText = layout.type === 'word'
+    ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
+    : pickL(th.instr || W2_INSTR[item.thread]) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
   const html = pages.map((pageItems, pi) => {
     const first = pi === 0;
-    const rowsCount = first ? firstRows : layout.rows;
-    const instrHtml = first
-      ? `<div class="nm-w2-instr">■ ${esc(layout.type === 'word'
-          ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
-          : lk('계산을 하시오.','Solve each problem.','请计算下列各题。'))}</div>`
-      : '';
+    const cap = first ? firstCap : layout.perPage;
+    /* 부분 장 = 그 장의 용량보다 문항이 적은 장(첫 장·마지막 장 모두 해당) */
+    const partial = pageItems.length < cap;
+    const rowsCount = partial ? Math.max(1, Math.ceil(pageItems.length / layout.cols)) : (first ? firstRows : layout.rows);
+    const instrHtml = first ? `<div class="nm-w2-instr">■ ${esc(instrText)}</div>` : '';
     /* 열 흐름(짧은식·중간식) 부분 페이지: grid-auto-flow:column 이면 남은 10문항이 왼쪽 한 열에만
-       세로로 늘어선다(2026-09-06 확인). 열 수만큼 나눠 위에서부터 채우도록 자리를 직접 지정한다 —
-       행 트랙은 전체 장과 같게 두어(rowsCount) 문항 간격이 첫 장과 같다. */
-    const partialCol = !first && layout.flow === 'col' && pageItems.length < layout.perPage;
-    const rowsPerCol = partialCol ? Math.max(1, Math.ceil(pageItems.length / layout.cols)) : 0;
+       세로로 늘어선다(2026-09-06 확인). 열 수만큼 나눠 위에서부터 채우도록 자리를 직접 지정한다. */
+    const partialCol = partial && layout.flow === 'col';
+    const rowsPerCol = partialCol ? rowsCount : 0;
     const cellsHtml = pageItems.map((p, i) => {
       const isFirstRamp = !!p.__ramp && !rampTagged;
       if(isFirstRamp) rampTagged = true;
@@ -2229,16 +2725,20 @@ function renderRoundPages(item, opts){
       }
       return h;
     }).join('');
+    /* 워터마크는 문항 페이지 안에 한 장씩(.nm-w2-wm, 화면에선 숨김) — 시트 전체 fixed 오버레이 대신 */
     return `<div class="nm-w2-page">
-  ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count)}
+  <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
+  ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
   ${first ? conceptHtml : ''}${first ? exampleHtml : ''}${first ? guided.html : ''}${instrHtml}
-  <div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount)}">${cellsHtml}</div>
-  <div class="nm-w2-foot">${esc(code)}</div>
+  <div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial)}">${cellsHtml}</div>
+  ${partial ? scratchHtml : ''}
+  <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>
 </div>`;
   }).join('');
 
   const thName = pickL(item.topicName) || pickL(((window.NM_THREADS||{})[item.thread]||{}).name) || item.thread;
-  return { html, problems, code, thName, guidedProblems: guided.problems };
+  /* pageSizes: 쪽별 문항 수 — 정답지가 학습지 쪽 순서대로 격자를 나누는 데 쓴다(w2AnswerKeySectionHtml). */
+  return { html, problems, code, thName, guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length) };
 }
 
 /* ── 로드맵 세션 학습지: 20문항/페이지 혼합 인쇄 (원장 지시 2026-09-04) ──
@@ -2330,8 +2830,27 @@ function renderMixedSheet(items, envelopeCode, opts){
 
   /* 항목별 count 가 있으면 그것(문장제 회차 6문항 등). optionalWord 회차는 문장제로 못 바꾼
      생성기(소수·분수 등)면 통째로 뺀다 — 숫자식만 6개 더 붙는 것을 막는다(2026-09-06). */
-  const rounds = items.map(it => renderRoundPages(it, { count: it.count || perTypeCount }))
-    .filter((r, i) => !(items[i].optionalWord && !r.problems.some(p => p.word)));
+  /* roundNo: 표지 목차와 같은 회차 번호(머리띠 "1. 제곱근의 값"), name: 표지의 학생 이름(머리 이름 칸).
+     optionalWord 회차가 빠지면 번호가 비지 않도록 남은 회차로 다시 매긴다. */
+  const studentName = opts.cover && opts.cover.name;
+  const rounds = [];
+  let droppedWord = false;
+  items.forEach(it => {
+    let r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1 });
+    /* 문장제 회차가 비면 같은 회차의 **다른 유형**으로 다시 시도한다(2026-09-07).
+       전에는 세션의 첫 드릴 하나만 보고 그것이 문장으로 안 바뀌면 회차를 통째로 뺐다 —
+       45개 과정 중 12개에만 문장제가 붙어 있었던 원인이다(실측). 곱셈·나눗셈 드릴이
+       두 번째·세 번째 자리에 있는 과정이 많다. */
+    if(it.optionalWord && !r.problems.some(p => p.word) && (it.wordAlts || []).length){
+      for(const alt of it.wordAlts){
+        const cand = Object.assign({}, it, alt);
+        const rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1 });
+        if(rr.problems.some(p => p.word)){ r = rr; break; }
+      }
+    }
+    if(it.optionalWord && !r.problems.some(p => p.word)){ droppedWord = true; return; }
+    rounds.push(r);
+  });
   const allProblems = [];
   rounds.forEach(r => allProblems.push.apply(allProblems, r.problems));
 
@@ -2339,27 +2858,48 @@ function renderMixedSheet(items, envelopeCode, opts){
   sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems);
   sheet.setAttribute('aria-hidden', 'true');
   sheet.setAttribute('lang', examLang());
+  /* 문장제 회차가 빠졌다는 사실은 운영자에게만(2026-09-07) — 표지에 적지 않는다.
+     ws.html·스크립트가 data 속성으로 읽고, 콘솔에도 남긴다. */
+  if(droppedWord){
+    sheet.setAttribute('data-nm-dropped-word', '1');
+    const wi = items.find(it => it.optionalWord);
+    console.warn('[NM] 문장제 회차 제외: ' + (wi ? wi.thread + '-L' + wi.level : '?') + ' — 문장으로 바꿀 수 없는 유형 (' + (envelopeCode||'') + ')');
+  }
 
-  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length)
+  /* 수학사 지면은 문제 뒤·정답지 앞. 해당하는 만화도 실험실도 없으면 빈 문자열이라 지면이 안 생긴다.
+     표지보다 먼저 만든다 — 표지의 쪽 수·목차가 이 지면의 유무를 알아야 한다(2026-09-06).
+     opts.units: 과정의 마법 유닛 목록(ws.html) — 스레드로 만화를 못 찾을 때의 대안. */
+  const historyHtml = w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle);
+  /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
+  const paperHtml = w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
+  const extraPages = (historyHtml ? 1 : 0) + (paperHtml ? 1 : 0);
+  const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
+  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!historyHtml, paper: !!paperHtml, answerKey: true })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
-  /* 드릴별 학습지 코드 — ?ws= 도우미가 그대로 이해하는 형식 그대로 나열한다. */
-  const codesLine = rounds.map(r => r.code).join(', ');
-  const roundsHtml = rounds.map(r => r.html).join('');
+  /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
+     회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
+  let pg = coverHtml ? 2 : 1;
+  const stampPg = html => html.replace(/<div class="nm-w2-foot">/g, () => `<div class="nm-w2-foot"><span class="nm-w2-pg">${pg++} / ${totalPages}</span>`);
+  const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
+  const historyStamped = historyHtml ? stampPg(historyHtml) : '';
+  const paperStamped = paperHtml ? stampPg(paperHtml) : '';
 
   const akSections = rounds.map(r => `
 <div class="nm-ak-section">
   <h4 class="nm-ak-subhead">${esc(r.thName)} <span class="nm-ak-subcode">${esc(r.code)}</span></h4>
-  <div class="nm-ak-grid">${w2GuidedAnswerKeyHtml(r.guidedProblems)}${w2AnswerKeyItemsHtml(r.problems)}</div>
+  ${w2AnswerKeySectionHtml(r)}
 </div>`).join('');
 
+  /* 시트 전체 워터마크(printWatermarkHtml, fixed)는 더 이상 안 붙인다 — 회차 페이지가 저마다 갖는다. */
   sheet.innerHTML = `
-${printWatermarkHtml()}
 ${coverHtml}
 ${roundsHtml}
+${historyStamped}
+${paperStamped}
 <div class="nm-print-answer-key">
-  <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(envelopeCode || '')}</span></h3>
-  <div class="nm-print-mix-note">${esc(codesLine)}</div>
+  ${w2AnswerKeyHeadHtml(envelopeCode)}
   ${akSections}
+  <div class="nm-w2-foot"><span class="nm-w2-pg">${pg} / ${totalPages}</span><span class="nm-w2-foot-code">${esc(envelopeCode || '')}</span></div>
 </div>`;
 
   document.body.appendChild(sheet);
@@ -2415,14 +2955,22 @@ function rampCount(threadId, lv, count){
    편집기가 렌더된 칸의 data-slot을 읽어 그 자리를 다시 지정할 수 있게. 덮어쓴
    문항은 그 자리가 원래 base였는지 ramp(램프 30%)였는지 그대로 유지한다(레벨이
    갑자기 바뀌어 보이지 않도록). */
+/* 중복 제거(2026-09-06, 원장 학습지 C34: 20문항 중 8개가 바로 옆 문항의 복사본) — 같은 rng 흐름에서
+   이미 나온 문항(problemKey: tex+답)이면 최대 40번까지 다시 뽑는다. 뽑기 수만 늘어나므로 시드
+   재현성은 그대로다(같은 코드 → 같은 학습지). 단, 이미 나간 코드가 다시 만들어지는 문항은 예전과
+   달라진다(PDF 는 정적이라 그대로, 편집기에서 옛 코드를 열면 다른 문항이 보인다).
+   40번을 다 써도 겹치면 받아들인다 — 한 자리 덧셈(36가지)·드릴 미니세트 같은 유한한 풀에서
+   무한히 돌지 않게. 덮어쓰기(overrides)도 그 슬롯의 orng 로 같은 규칙. */
 function buildProblems(threadId, lv, count, seed, overrides){
   const rng = NM_RNG.mulberry32(seed);
   const problems = [];
+  const seen = new Set();
   const nRamp = rampCount(threadId, lv, count);
   const rampLv = nRamp ? rampLevelFor(threadId, lv) : null;
   for(let i=0;i<count;i++){
     const useRamp = nRamp && i >= count - nRamp;
-    const p = generateProblem(threadId, useRamp ? rampLv : lv, rng);
+    const p = drawUnique(threadId, useRamp ? rampLv : lv, rng, seen, 40);
+    seen.add(problemKey(p));
     if(useRamp) p.__ramp = true;
     p.__slot = i;
     problems.push(p);
@@ -2434,7 +2982,8 @@ function buildProblems(threadId, lv, count, seed, overrides){
       if(!(idx >= 0 && idx < problems.length) || !seedStr) return;
       const wasRamp = !!problems[idx].__ramp;
       const orng = NM_RNG.mulberry32(NM_RNG.hashSeed(String(seedStr) + '#' + idx));
-      const np = generateProblem(threadId, wasRamp ? rampLv : lv, orng);
+      const others = new Set(problems.filter((_, j) => j !== idx).map(problemKey));
+      const np = drawUnique(threadId, wasRamp ? rampLv : lv, orng, others, 40);
       if(wasRamp) np.__ramp = true;
       np.__slot = idx;
       problems[idx] = np;
@@ -3681,13 +4230,14 @@ ${printWatermarkHtml()}
 
     const coverHtml = getCoverOn() ? coverPageHtml([config], round.code, count) : '';
 
+    /* 워터마크는 회차 페이지 안에 한 장씩(renderRoundPages) — 시트 전체 fixed 는 정답지까지 덮었다(2026-09-06).
+       정답지 짜임(따라풀기 줄 + 쪽별 격자 + 머리띠)은 주간 학습지(renderMixedSheet)와 같은 함수. */
     sheet.innerHTML = `
-${printWatermarkHtml()}
 ${coverHtml}
 ${round.html}
 <div class="nm-print-answer-key">
-  <h3 style="margin:0 0 8px 0">${esc(answerKeyTitle())} — <span style="font-family:monospace;font-size:0.85em">${esc(round.code)}</span></h3>
-  <div class="nm-ak-grid">${w2GuidedAnswerKeyHtml(round.guidedProblems)}${w2AnswerKeyItemsHtml(round.problems)}</div>
+  ${w2AnswerKeyHeadHtml(round.code)}
+  ${w2AnswerKeySectionHtml(round)}
 </div>`;
 
     document.body.appendChild(sheet);

@@ -35,6 +35,9 @@ b,strong{font-weight:800}
 .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
 .kicker{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
 h1,h2,h3{font-family:var(--serif);font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+/* 한국어는 낱말 중간에서 줄이 바뀌지 않게(2026-09-07) — '공/부해야'처럼 갈라져 보였다.
+   중국어에 keep-all 을 걸면 글자 사이에서 못 끊어 넘쳐 흐르므로 ko 일 때만 건다. */
+html[lang='ko'] body{word-break:keep-all;overflow-wrap:break-word}
 h2{font-size:clamp(28px,4.2vw,40px);line-height:1.25}
 h3{font-size:clamp(18px,2.4vw,22px);line-height:1.35}
 .lead{font-size:clamp(16px,2vw,18px);color:var(--sub);max-width:62ch;margin:16px 0 0}
@@ -141,19 +144,56 @@ section{padding:88px 0}
 .tri-note{margin:18px 0 0;font-size:14px;color:var(--sub);max-width:70ch}
 @media(max-width:760px){.three .tri{grid-template-columns:1fr}}
 
-/* 사다리: 유아부터 고등까지 */
-.ladder{background:var(--paper-warm);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.rungs{list-style:none;padding:0;margin:34px 0 0;display:grid;gap:10px}
-.rung{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px}
-.rung .lv{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--blue-deep);background:var(--sky);border-radius:999px;padding:4px 0;text-align:center}
-.rung b{display:block;font-size:16px}
-.rung small{display:block;color:var(--sub);font-size:13px;margin-top:2px}
-.rung .fx{font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:14px;color:var(--ink);background:var(--paper-warm);padding:6px 10px;border-radius:8px;white-space:nowrap}
-.sym{margin-top:26px;padding:20px 22px;border-radius:var(--radius);background:var(--blue-deep);color:#fff;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+/* 단계 로드맵: 유아부터 고등까지 가로 한 줄 (2026-09-07, 세로 사다리를 대체) */
+.roadmap{background:var(--paper-warm);border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden}
+/* 척추 띠 — 원장 논리 다섯 마디가 로드맵 위에 먼저 선다 */
+.rm-spine{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:28px 0 0;padding:0;list-style:none}
+.rm-spine li{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;color:var(--blue-deep);background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 15px}
+.rm-spine li::after{content:'→';color:var(--gold);font-weight:700;margin-left:2px}
+.rm-spine li:last-child::after{content:''}
+/* 가로 레일 — .rail 과 같은 스크롤 스냅 레시피 */
+.rm-rail{display:flex;gap:16px;overflow-x:auto;padding:26px 24px 30px;scroll-snap-type:x mandatory;scroll-padding-left:24px;scrollbar-width:thin;margin:0 -24px;list-style:none}
+.rm-rail:focus-visible{outline:2px solid var(--blue);outline-offset:-4px;border-radius:12px}
+.rm-stage{flex:0 0 292px;scroll-snap-align:start;background:#fff;border:1px solid var(--line);border-top:4px solid var(--st,var(--blue-deep));border-radius:18px;padding:20px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;gap:11px}
+.rm-top{display:flex;align-items:center;gap:9px}
+.rm-no{font-family:var(--serif);font-size:13px;font-weight:700;color:var(--st,var(--blue-deep));border:1px solid var(--line);border-radius:999px;width:26px;height:26px;display:grid;place-items:center;flex:none}
+.rm-band{font-size:12px;font-weight:800;color:var(--blue-deep);background:var(--sky);border-radius:999px;padding:4px 10px}
+.rm-stage h3{font-family:var(--serif);font-size:19px;line-height:1.3;margin:0}
+.rm-learn{margin:0;font-size:13.5px;line-height:1.55;color:var(--sub)}
+.rm-fx{font-family:ui-monospace,'SF Mono',Consolas,monospace;font-size:13.5px;line-height:1.55;color:var(--ink);background:var(--paper-warm);padding:10px 12px;border-radius:10px;font-variant-numeric:tabular-nums}
+.rm-how{margin:0;font-size:13.5px;line-height:1.6}
+.rm-how b{color:var(--st,var(--blue-deep))}
+.rm-syms{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.rm-syms li{font-size:12px;color:var(--sub);background:var(--mist);border-radius:8px;padding:5px 9px}
+.rm-syms b{font-family:var(--serif);color:var(--ink);font-size:13.5px;margin-right:4px}
+.rm-meta{margin:auto 0 0;padding-top:11px;border-top:1px dashed var(--line);font-size:12px;color:var(--faint);font-weight:700}
+.rm-note{margin:0;font-size:13.5px;color:var(--sub);max-width:74ch}
+.rm-note + .rm-note{margin-top:6px}
+.sym{margin-top:24px;padding:20px 22px;border-radius:var(--radius);background:var(--blue-deep);color:#fff;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
 .sym .glyph{font-family:var(--serif);font-size:44px;color:var(--gold-bright);line-height:1}
 .sym p{margin:0;font-size:15px;color:rgba(255,255,255,.85)}
 .sym p b{color:#fff}
-@media(max-width:640px){.rung{grid-template-columns:60px 1fr}.rung .fx{grid-column:2;justify-self:start;white-space:normal}}
+@media(min-width:1180px){.rm-rail{margin:0;padding-left:0;padding-right:2px;scroll-padding-left:0}}
+@media(max-width:640px){.rm-stage{flex:0 0 84vw}.sym{grid-template-columns:1fr;gap:10px}}
+
+/* 원칙 여섯 — 철학 섹션 안, 두 카드 아래 */
+.ph-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0 0;padding:0;list-style:none}
+.ph-rules li{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.ph-rules .n{display:block;font-family:var(--serif);font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.ph-rules b{display:block;font-size:15px;line-height:1.4;margin-bottom:6px}
+.ph-rules p{margin:0;font-size:13.5px;line-height:1.6;color:var(--sub)}
+@media(max-width:900px){.ph-rules{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.ph-rules{grid-template-columns:1fr}}
+
+/* 장점 여섯 — 근거를 달고 */
+.why{border-top:1px solid var(--line)}
+.why .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+.wcard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;gap:9px}
+.wcard b{font-family:var(--serif);font-size:18px;line-height:1.35}
+.wcard p{margin:0;font-size:14px;line-height:1.65;color:var(--sub)}
+.wcard .fact{margin-top:auto;padding-top:11px;border-top:1px dashed var(--line);font-size:12.5px;font-weight:800;color:var(--gold);letter-spacing:.02em}
+@media(max-width:900px){.why .grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.why .grid{grid-template-columns:1fr}}
 
 /* 수학 실험실 */
 .labs .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
@@ -305,7 +345,7 @@ footer a{color:var(--sub)}
       <div class="card good reveal">
         <span class="tag" data-i18n="goodTag">Numbers of Magic식</span>
         <p class="big" data-i18n="goodBig">"수를 펼쳐<br>쉽게 만든다"</p>
-        <p data-i18n="goodP">8+7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 오늘의 이 습관이 훗날 분배법칙이 되고, 미적분까지 같은 사다리로 이어집니다.</p>
+        <p data-i18n="goodP">8+7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 오늘의 이 습관이 훗날 분배법칙이 되고, 미적분까지 같은 로드맵으로 이어집니다.</p>
       </div>
     </div>
     <div class="eq reveal" aria-label="example">
@@ -315,7 +355,15 @@ footer a{color:var(--sub)}
       <span class="step">15</span>
       <span class="note" data-i18n="eqNote">받아올림을 외운 게 아니라, 10을 만들었을 뿐입니다. 아이가 스스로 고른 길이라 다음 문제에서도 씁니다.</span>
     </div>
-    <p class="philo-link reveal"><a class="btn ghost small" href="about.html" data-i18n="phMore">철학 전문과 사다리(덧셈 → 미적분Ⅰ) 보기 →</a></p>
+    <ol class="ph-rules reveal">
+      <li><span class="n">01</span><b data-i18n="pr1b">목표는 수와 친해지는 것이지 빠른 연산이 아닙니다</b><p data-i18n="pr1p">속도만 재면 아이는 절차를 외웁니다. 5를 2와 3으로 손으로 갈라 보고, 8 + 7 앞에서 스스로 10을 먼저 만들 때 수가 친구가 됩니다. 그래서 유아 단계에는 시간 재기가 없습니다.</p></li>
+      <li><span class="n">02</span><b data-i18n="pr2b">수 감각은 수를 펼쳐 내 손에 맞게 만드는 힘입니다</b><p data-i18n="pr2p">8 + 7 → 8 + 2 + 5, 47 × 6 → 40 × 6 + 7 × 6, × 25 → × 100 ÷ 4. 같은 손놀림이 초1의 보수에서 중3의 (a+b)², 고등의 Σ까지 이어집니다. 과정을 바꿔도 방법은 바뀌지 않습니다.</p></li>
+      <li><span class="n">03</span><b data-i18n="pr3b">그래서 필산 교과연산입니다</b><p data-i18n="pr3p">척추는 교과 흐름을 따르는 세로셈입니다. 학교 진도 그대로, 정확한 절차가 먼저. 창의 연산은 그 척추 위의 마법 슬롯이라 아이는 같은 문제를 필산으로 한 번, 펼쳐서 한 번 만납니다.</p></li>
+      <li><span class="n">04</span><b data-i18n="pr4b">문장 이해력이 같이 자라야 합니다</b><p data-i18n="pr4p">연산만 빨라진 아이는 절차만 익혔기 때문에 문장 속의 수 앞에서 멈춥니다. 수를 펼칠 줄 알아야 문장 속 수도 다룰 수 있습니다. 그래서 초등 연산 구간의 학습지에는 그 주 연산을 문장으로 옮긴 회차가 함께 인쇄됩니다.</p></li>
+      <li><span class="n">05</span><b data-i18n="pr5b">수학은 언어라서 기호는 개념 다음에 옵니다</b><p data-i18n="pr5p">f에 놀라고 i에서 놓아 버린 것은 기호가 개념보다 먼저 왔기 때문입니다. 여기서는 말 → 그림 → 내 표기 → 표준 기호 순서를 지키고, 기호마다 읽는 법과 한 줄 번역문을 붙입니다.</p></li>
+      <li><span class="n">06</span><b data-i18n="pr6b">연산은 가정에서 매일 하는 것입니다</b><p data-i18n="pr6p">그래서 저희가 드리는 것은 수업이 아니라 학습지와 진단, 계획입니다. 짧은 진단이 지금 자리를 찾고, 그 자리가 주차별 로드맵으로 펼쳐지고, 매주 학습지가 도착합니다.</p></li>
+    </ol>
+    <p class="philo-link reveal"><a class="btn ghost small" href="about.html" data-i18n="phMore">철학 전문 보기 →</a></p>
   </div>
 </section>
 
@@ -339,18 +387,89 @@ footer a{color:var(--sub)}
   </div>
 </section>
 
-<section class="ladder">
+<section class="roadmap" id="roadmap">
   <div class="wrap">
-    <p class="kicker reveal" data-i18n="ldKicker">The Ladder · 유아부터 고등 연산까지</p>
-    <h2 class="reveal" data-i18n="ldH2">9까지의 수에서 <span class="accent">미적분Ⅰ</span>까지, 같은 사다리</h2>
-    <p class="lead reveal" data-i18n="ldLead">초급의 "수를 나누어 더하기"가 훗날 분배법칙 그 자체입니다. 오늘의 작은 원리가 사다리를 타고 올라가 결국 미적분의 언어가 됩니다. 과정을 바꿔도 방법은 바뀌지 않습니다.</p>
-    <ol class="rungs">
-      <li class="rung reveal"><span class="lv" data-i18n="r0lv">0급</span><div><b data-i18n="r0b">수의 나라 · 9까지의 수</b><small data-i18n="r0s">수를 알고, 세고, 나누고, 비교하기 — 만 5세</small></div><span class="fx">5 = 2 + 3</span></li>
-      <li class="rung reveal"><span class="lv" data-i18n="r1lv">초급</span><div><b data-i18n="r1b">보수로 펼치기</b><small data-i18n="r1s">10과 100을 만드는 습관</small></div><span class="fx">97 = 100 − 3</span></li>
-      <li class="rung reveal"><span class="lv" data-i18n="r2lv">중급</span><div><b data-i18n="r2b">분배법칙 · 곱셈 공식</b><small data-i18n="r2s">펼치기가 문자로 옮겨 가는 자리</small></div><span class="fx">(a+b)² = a² + 2ab + b²</span></li>
-      <li class="rung reveal"><span class="lv" data-i18n="r3lv">고급</span><div><b data-i18n="r3b">상관관계 · 등차수열 (경시)</b><small data-i18n="r3s">수 사이의 관계로 계산을 없애기</small></div><span class="fx">19 × 21 = 20² − 1 = 399</span></li>
-      <li class="rung reveal"><span class="lv" data-i18n="r4lv">심화</span><div><b data-i18n="r4b">미적분Ⅰ · 극한과 순간의 기울기</b><small data-i18n="r4s">변하는 것을 계산하는 언어</small></div><span class="fx">f′(x) = lim (f(x+h) − f(x)) / h</span></li>
+    <p class="kicker reveal" data-i18n="rmKicker">The Roadmap · 유아부터 미적분Ⅰ까지</p>
+    <h2 class="reveal" data-i18n="rmH2">수는 <span class="accent">이렇게</span> 공부해야 합니다</h2>
+    <p class="lead reveal" data-i18n="rmLead">먼저 수와 친해지고, 수 감각이 생기면 교과 흐름대로 필산으로 다지고, 그 수가 들어 있는 문장을 읽어 내고, 마지막에 기호로 옮겨 적습니다. 아래 일곱 단계가 그 순서입니다.</p>
+    <ol class="rm-spine reveal">
+      <li data-i18n="rmS1">수와 친해지기</li><li data-i18n="rmS2">수 감각</li><li data-i18n="rmS3">필산 교과연산</li><li data-i18n="rmS4">문장 이해력</li><li data-i18n="rmS5">기호</li>
     </ol>
+    <ol class="rm-rail reveal" tabindex="0" aria-label="학습 단계 로드맵">
+
+      <li class="rm-stage" style="--st:#6FA85B">
+        <div class="rm-top"><span class="rm-no">1</span><span class="rm-band" data-i18n="rm1band">유아 5~7세</span></div>
+        <h3 data-i18n="rm1name">수의 나라</h3>
+        <p class="rm-learn" data-i18n="rm1learn">수 세기와 개수, 순서와 뛰어세기, 몇째와 크기 비교, 수의 여러 표현. 손으로 모으고 가릅니다.</p>
+        <div class="rm-fx">5 = 2 + 3</div>
+        <p class="rm-how" data-i18n="rm1how"><b>시간을 재지 않습니다.</b> 구슬을 두 접시로 옮기며 5가 2와 3으로 갈라졌다가 다시 모이는 것을 손으로 봅니다. 이 가르기가 다음 단계의 보수이고, 훗날 분배법칙입니다.</p>
+        <ul class="rm-syms"><li data-i18n="rm1sym"><b>5</b>숫자와 탤리 막대 — 연산 기호는 아직 없습니다</li></ul>
+        <p class="rm-meta" data-i18n="rm1meta">로드맵 5칸 · 유닛 15 · 과정 번호 없는 프롤로그</p>
+      </li>
+
+      <li class="rm-stage" style="--st:#16417C">
+        <div class="rm-top"><span class="rm-no">2</span><span class="rm-band" data-i18n="rm2band">6~7세 · 초등 1학년</span></div>
+        <h3 data-i18n="rm2name">계산의 새싹</h3>
+        <p class="rm-learn" data-i18n="rm2learn">자릿값과 모으기·가르기, 보수 5와 10, 받아올림·받아내림, 두 자리에서 네 자리 덧뺄셈, 구구단 2~9단, 나눗셈의 시작.</p>
+        <div class="rm-fx">8 + 7 → 8 + 2 + 5 → 10 + 5 → 15</div>
+        <p class="rm-how" data-i18n="rm2how"><b>수 감각의 첫 습관은 보수입니다.</b> 8 + 7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 필산은 학교 진도 그대로 정확한 절차로 다지고, 같은 문제를 그 옆에서 펼쳐 다시 만듭니다.</p>
+        <ul class="rm-syms"><li data-i18n="rm2sym1"><b>=</b>양쪽이 같다</li><li data-i18n="rm2sym2"><b>□</b>아직 모르는 수의 자리</li></ul>
+        <p class="rm-meta" data-i18n="rm2meta">과정 1~10 · 주 1회 기준 55주 · 학교보다 앞서 구구단까지</p>
+      </li>
+
+      <li class="rm-stage" style="--st:#16417C">
+        <div class="rm-top"><span class="rm-no">3</span><span class="rm-band" data-i18n="rm3band">초등 1학년 말 ~ 2학년</span></div>
+        <h3 data-i18n="rm3name">계산의 도약</h3>
+        <p class="rm-learn" data-i18n="rm3learn">두 자리×두 자리, 나눗셈과 역연산, 분수의 첫걸음, 세 자리×두 자리, 두 자리로 나누기, 혼합계산.</p>
+        <div class="rm-fx">47 × 6 → 40 × 6 + 7 × 6 → 282</div>
+        <p class="rm-how" data-i18n="rm3how"><b>분배법칙을 문자보다 수로 먼저 배웁니다.</b> 47 × 6은 40 × 6과 7 × 6으로 쪼개고, × 5는 × 10의 절반으로 봅니다. 아이가 가장 자주 멈추는 시기라, 정체 감지와 보강이 여기서 제일 많이 일합니다.</p>
+        <ul class="rm-syms"><li data-i18n="rm3sym1"><b>a/b</b>b로 나눈 것 중 a</li><li data-i18n="rm3sym2"><b>( )</b>먼저 계산할 묶음</li></ul>
+        <p class="rm-meta" data-i18n="rm3meta">과정 11~16 · 주 1회 기준 26주</p>
+      </li>
+
+      <li class="rm-stage" style="--st:#0E2C57">
+        <div class="rm-top"><span class="rm-no">4</span><span class="rm-band" data-i18n="rm4band">초등 2학년 말 ~ 3학년</span></div>
+        <h3 data-i18n="rm4name">계산의 정복</h3>
+        <p class="rm-learn" data-i18n="rm4learn">소수 덧뺄과 곱셈, 제곱수, 약수와 배수, 이분모 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.</p>
+        <div class="rm-fx">1 + 2 + … + 100 → (1 + 100) × 50 → 5050</div>
+        <p class="rm-how" data-i18n="rm4how"><b>수 사이의 관계로 계산을 줄입니다.</b> 2와 5는 친구라서 × 25는 × 100 ÷ 4입니다. 과정은 가로줄이고 계보는 세로줄이라, 마법마다 나중에 무엇으로 자라는지가 카드에 적혀 있습니다.</p>
+        <ul class="rm-syms"><li data-i18n="rm4sym1"><b>0.1</b>1보다 작은 자리를 여는 점</li><li data-i18n="rm4sym2"><b>%</b>100 중 몇</li></ul>
+        <p class="rm-meta" data-i18n="rm4meta">과정 17~25 · 주 1회 기준 38주 · 학교로는 초4~5 내용</p>
+      </li>
+
+      <li class="rm-stage" style="--st:#C9A063">
+        <div class="rm-top"><span class="rm-no">5</span><span class="rm-band" data-i18n="rm5band">초등 심화 · 중등 준비</span></div>
+        <h3 data-i18n="rm5name">경시의 탑</h3>
+        <p class="rm-learn" data-i18n="rm5learn">한쪽으로 모으기와 100 보수 곱, 피라미드 곱셈, 진법과 1001의 법칙, 순환소수, 50·100·1000 근처의 제곱.</p>
+        <div class="rm-fx">19 × 21 → 20² − 1 → 399</div>
+        <p class="rm-how" data-i18n="rm5how"><b>관계를 알면 계산이 사라집니다.</b> 이 단계의 출구가 곧 중학교의 입구라, 여기서 손으로 한 것이 중3의 곱셈공식으로 그대로 이어집니다. 권유일 뿐이라 건너뛰어도 됩니다.</p>
+        <ul class="rm-syms"><li data-i18n="rm5sym"><b>a² a³</b>제곱과 세제곱 — (a+b)(a−b)의 수 버전</li></ul>
+        <p class="rm-meta" data-i18n="rm5meta">과정 26~28 · 주 1회 기준 15주</p>
+      </li>
+
+      <li class="rm-stage" style="--st:#0E2C57">
+        <div class="rm-top"><span class="rm-no">6</span><span class="rm-band" data-i18n="rm6band">중학교 1~3학년</span></div>
+        <h3 data-i18n="rm6name">기호가 바뀌는 자리</h3>
+        <p class="rm-learn" data-i18n="rm6learn">정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 다항식, 제곱근, 곱셈공식과 인수분해.</p>
+        <div class="rm-fx">40 × 6 + 7 × 6 → (a + b)c = ac + bc</div>
+        <p class="rm-how" data-i18n="rm6how"><b>기호가 바뀌는 순간이 진짜 고비입니다.</b> 그래서 말 → 그림 → 내 표기 → 표준 기호 순서를 지킵니다. 음수는 해발과 해저로, √는 땅 위의 9와 뿌리의 3으로 먼저 만납니다.</p>
+        <ul class="rm-syms"><li data-i18n="rm6sym1"><b>x</b>초1의 □가 자란 것</li><li data-i18n="rm6sym2"><b>√</b>제곱하기 전의 나</li></ul>
+        <p class="rm-meta" data-i18n="rm6meta">과정 29~35 · 주 1회 기준 33주 · 실험실 2</p>
+      </li>
+
+      <li class="rm-stage" style="--st:#0E2C57">
+        <div class="rm-top"><span class="rm-no">7</span><span class="rm-band" data-i18n="rm7band">공통수학1·2 · 대수 · 미적분Ⅰ</span></div>
+        <h3 data-i18n="rm7name">새 기호는 아는 마법의 새 이름표</h3>
+        <p class="rm-learn" data-i18n="rm7learn">다항식과 나머지정리, 이차방정식, 점과 직선·원, 지수와 로그, 삼각함수, 수열과 Σ, 극한과 미분, 접선과 적분.</p>
+        <div class="rm-fx">1 + 2 + … + 100 = 5050 → Σk = n(n+1)/2</div>
+        <p class="rm-how" data-i18n="rm7how"><b>새 기호는 이미 아는 마법의 새 이름표입니다.</b> Σ는 초등에서 하던 짝지어 더하기가 기호 옷을 입은 것입니다. 미적분은 기법보다 왜 태어났는지를 실험실에서 먼저 보고 들어갑니다.</p>
+        <ul class="rm-syms"><li data-i18n="rm7sym1"><b>f(x)</b>넣으면 결과가 나오는 기계</li><li data-i18n="rm7sym2"><b>∫</b>잘게 쪼개 다 더해라</li></ul>
+        <p class="rm-meta" data-i18n="rm7meta">과정 36~45 · 주 1회 기준 49주 · 실험실 2</p>
+      </li>
+
+    </ol>
+    <p class="rm-note reveal" data-i18n="rmNote1">주 1회 기준으로 연산 구간(과정 1~25)은 119주 약 2년 3개월, 유아부터 미적분Ⅰ까지 전 구간은 216주 약 4년 2개월입니다. 주 2회를 고르면 각각 88주와 159주로 줄어듭니다.</p>
+    <p class="rm-note reveal" data-i18n="rmNote2">순서는 권유일 뿐 어디에도 잠금이 없습니다. 레벨은 언제든 바꿀 수 있습니다.</p>
     <div class="sym reveal"><span class="glyph">f · i · ∫</span><p data-i18n="symP">함수의 <b>f</b>에 놀라고 허수의 <b>i</b>에서 수학을 놓아 버린 기억, 부모님도 있으실 겁니다. 수학은 언어라서, 기호가 바뀌는 순간이 진짜 고비입니다. 여기서는 모든 기호가 번역문을 갖습니다 — ∫는 "잘게 쪼개 다 더해라".</p></div>
   </div>
 </section>
@@ -364,6 +483,22 @@ footer a{color:var(--sub)}
       <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-diag.jpg" data-i18n-src="m-diag.jpg" alt=""></div><figcaption><span class="stepno">1</span><b data-i18n="lv1b">진단하기</b><span data-i18n="lv1">몇 문제로 어디서 시작할지 찾습니다. 틀려도 괜찮은 자리부터.</span></figcaption></figure>
       <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-roadmap.jpg" data-i18n-src="m-roadmap.jpg" alt=""></div><figcaption><span class="stepno">2</span><b data-i18n="lv2b">지금 여기</b><span data-i18n="lv2">학습 여행 지도에 내 위치가 표시되고, 다음 한 걸음이 보입니다.</span></figcaption></figure>
       <figure class="phone reveal"><div class="frame"><img src="assets/landing/m-road.jpg" data-i18n-src="m-road.jpg" alt=""></div><figcaption><span class="stepno">3</span><b data-i18n="lv3b">주차별 로드맵</b><span data-i18n="lv3">9월 1주차부터 과정 끝까지, 인쇄할 수 있는 개인 계획표가 됩니다.</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="wrap">
+    <p class="kicker reveal" data-i18n="wyKicker">Why · 상담에서 늘 받는 질문</p>
+    <h2 class="reveal" data-i18n="wyH2">학습지가 매주 오고, <span class="accent">멈춘 자리</span>를 아이별로 잡아냅니다</h2>
+    <p class="lead reveal" data-i18n="wyLead">학원은 반 단위로만 멈출 수 있습니다. 같은 유형에서 두 번 연속 막히면 그 아이만 한 단계 아래로 내려갔다 옵니다.</p>
+    <div class="grid">
+      <div class="wcard reveal"><b data-i18n="wy1b">매주 도착하는 학습지</b><p data-i18n="wy1p">진단이 정한 과정의 그 주 회차가 봉투로 옵니다. 회차마다 개념과 빨간 예시 풀이가 앞에 있고, 초등 연산 구간에는 문장제와 <b>그 주에 쓸 종이 교구</b>가 함께 인쇄됩니다. 교구는 오려 쓰면 되니 따로 사실 것이 없습니다.</p><span class="fact" data-i18n="wy1f">주 1회 1만 원 · 주 2회 2만 원</span></div>
+      <div class="wcard reveal"><b data-i18n="wy2b">개인별 정체 감지와 보강</b><p data-i18n="wy2p">같은 유형에서 최근 두 번이 연속으로 기준 아래면 봉투 맨 위에 몸풀기 카드가 올라옵니다. 십진블록·수직선처럼 한 단계 아래 시각화로 내려갔다 다시 올라옵니다.</p><span class="fact" data-i18n="wy2f">권유이지 잠금이 아닙니다</span></div>
+      <div class="wcard reveal"><b data-i18n="wy3b">진단 → 지금 여기 → 주차별 로드맵</b><p data-i18n="wy3p">몇 문제로 유아부터 고등까지 어디서 시작할지 찾고, 그 자리가 로드맵 위에 찍힙니다. 주 1회·주 2회를 고르면 과정 전체가 주차로 나뉜 개인 계획표로 인쇄됩니다.</p><span class="fact" data-i18n="wy3f">레벨은 언제든 바꿉니다</span></div>
+      <div class="wcard reveal"><b data-i18n="wy4b">한국어 · 영어 · 중국어</b><p data-i18n="wy4p">유닛 제목과 개념 설명, 유형 이름, 문장제 본문, 학습지와 진단 화면까지 같은 데이터에서 세 언어가 나옵니다. 다문화 가정과 영어 유치원 아이가 같은 로드맵을 걷습니다.</p><span class="fact" data-i18n="wy4f">세 언어 전 구간</span></div>
+      <div class="wcard reveal"><b data-i18n="wy5b">수학사 만화와 개념 실험실</b><p data-i18n="wy5p">마법마다 그것이 태어난 장면을 만화로 먼저 보고, 눈으로 봐야 이해되는 개념은 손으로 움직이는 실험실에서 만집니다. 전설은 전설이라고 적습니다.</p><span class="fact" data-i18n="wy5f">만화 95편 · 실험실 6</span></div>
+      <div class="wcard reveal"><b data-i18n="wy6b">유아부터 미적분Ⅰ까지 한 줄</b><p data-i18n="wy6p">과정 1의 보수가 과정 45의 적분까지 같은 데이터 위에 이어져 있습니다. 다섯 계보가 유닛마다 "이 마법은 나중에 무엇으로 자라요"로 표시됩니다.</p><span class="fact" data-i18n="wy6f">유닛 199 · 과정 45 · 유형 180</span></div>
     </div>
   </div>
 </section>
@@ -533,7 +668,7 @@ footer a{color:var(--sub)}
   </div>
 </section>
 
-<footer><span data-i18n="foot">GFIELD · Numbers of Magic — DOCSSAM 영재 트랙</span> · <a href="about.html" data-i18n="footAbout">철학</a> · <a href="characters.html" data-i18n="footChars">캐릭터</a></footer>
+<footer><span data-i18n="foot">GFIELD · Numbers of Magic</span> · <a href="about.html" data-i18n="footAbout">철학</a> · <a href="characters.html" data-i18n="footChars">캐릭터</a></footer>
 
 <script src="data/story-comics.js"></script>
 <script>
@@ -556,9 +691,9 @@ footer a{color:var(--sub)}
       phKicker:'Philosophy · 무엇이 다른가', phH2:'답을 빨리 구하는 계산 학습이 <span class="accent">아닙니다</span>',
       phLead:'학교 시험은 틀리기 쉬운 문제로 아이를 가릅니다. 대부분의 학원은 유형을 외워 답을 맞히는 법을 가르치죠. DOCSSAM은 수의 규칙을 이용해 문제를 <b>내 손에 맞게 다시 만드는</b> 힘을 키웁니다. 실수는 줄고, 수에 대한 창의성과 자신감이 자랍니다.',
       badTag:'유형 암기식', badBig:'"이렇게 나오면<br>이렇게 푼다"', badP:'세로셈으로 받아내림하다 실수. 답은 구해도 원리는 모르고, 유형이 바뀌면 무너집니다.',
-      goodTag:'Numbers of Magic식', goodBig:'"수를 펼쳐<br>쉽게 만든다"', goodP:'8+7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 오늘의 이 습관이 훗날 분배법칙이 되고, 미적분까지 같은 사다리로 이어집니다.',
+      goodTag:'Numbers of Magic식', goodBig:'"수를 펼쳐<br>쉽게 만든다"', goodP:'8+7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 오늘의 이 습관이 훗날 분배법칙이 되고, 미적분까지 같은 로드맵으로 이어집니다.',
       eqNote:'받아올림을 외운 게 아니라, 10을 만들었을 뿐입니다. 아이가 스스로 고른 길이라 다음 문제에서도 씁니다.',
-      phMore:'철학 전문과 사다리(덧셈 → 미적분Ⅰ) 보기 →',
+      phMore:'철학 전문 보기 →',
       scKicker:'The App · 아이가 보는 화면', scH2:'숫자 마을에서 배우고, <span class="accent">편지함</span>으로 학습지가 옵니다',
       scLead:'아이는 사람 캐릭터가 되어 고른 숫자 친구와 마을을 걷습니다. 건물이 곧 배움터이고, 게임은 늘리지 않습니다. 마을은 배우러 들어가는 문입니다.',
       s1b:'숫자 마을', s1:'나와 동행 숫자 친구, 정자의 할아버지, 도서관 앞의 독쌤. 건물을 누르면 배움이 시작됩니다.',
@@ -599,13 +734,53 @@ footer a{color:var(--sub)}
       t2no:'창의 연산', t2b:'펼쳐서 다루기', t2p:'같은 문제를 내 손에 맞게 다시 만듭니다. 수 감각은 여기서 자랍니다.',
       t3no:'문장제', t3b:'문장 속의 수', t3ex:'사과가 47개 있었어요. 38개를 더 땄어요. 이제 모두 몇 개일까요?', t3p:'같은 수를 문장에서 꺼내 읽습니다. 한국어·영어·중국어로.',
       trNote:'세 칸이 같은 수 47+38을 다룹니다. 학습지 모드에는 교과 연산 연습, 수의 마법 탐험, 계산·문장제 혼합 옵션이 있어 한 아이가 한 문제를 세 방향에서 만납니다.',
-      ldKicker:'The Ladder · 유아부터 고등 연산까지', ldH2:'9까지의 수에서 <span class="accent">미적분Ⅰ</span>까지, 같은 사다리',
-      ldLead:'초급의 "수를 나누어 더하기"가 훗날 분배법칙 그 자체입니다. 오늘의 작은 원리가 사다리를 타고 올라가 결국 미적분의 언어가 됩니다. 과정을 바꿔도 방법은 바뀌지 않습니다.',
-      r0lv:'0급', r0b:'수의 나라 · 9까지의 수', r0s:'수를 알고, 세고, 나누고, 비교하기 — 만 5세',
-      r1lv:'초급', r1b:'보수로 펼치기', r1s:'10과 100을 만드는 습관',
-      r2lv:'중급', r2b:'분배법칙 · 곱셈 공식', r2s:'펼치기가 문자로 옮겨 가는 자리',
-      r3lv:'고급', r3b:'상관관계 · 등차수열 (경시)', r3s:'수 사이의 관계로 계산을 없애기',
-      r4lv:'심화', r4b:'미적분Ⅰ · 극한과 순간의 기울기', r4s:'변하는 것을 계산하는 언어',
+      rmKicker:'The Roadmap · 유아부터 미적분Ⅰ까지', rmH2:'수는 <span class="accent">이렇게</span> 공부해야 합니다',
+      rmLead:'먼저 수와 친해지고, 수 감각이 생기면 교과 흐름대로 필산으로 다지고, 그 수가 들어 있는 문장을 읽어 내고, 마지막에 기호로 옮겨 적습니다. 아래 일곱 단계가 그 순서입니다.',
+      rmS1:'수와 친해지기', rmS2:'수 감각', rmS3:'필산 교과연산', rmS4:'문장 이해력', rmS5:'기호',
+      rm1band:'유아 5~7세', rm1name:'수의 나라',
+      rm1learn:'수 세기와 개수, 순서와 뛰어세기, 몇째와 크기 비교, 수의 여러 표현. 손으로 모으고 가릅니다.',
+      rm1how:'<b>시간을 재지 않습니다.</b> 구슬을 두 접시로 옮기며 5가 2와 3으로 갈라졌다가 다시 모이는 것을 손으로 봅니다. 이 가르기가 다음 단계의 보수이고, 훗날 분배법칙입니다.',
+      rm1sym:'<b>5</b>숫자와 탤리 막대 — 연산 기호는 아직 없습니다', rm1meta:'로드맵 5칸 · 유닛 15 · 과정 번호 없는 프롤로그',
+      rm2band:'6~7세 · 초등 1학년', rm2name:'계산의 새싹',
+      rm2learn:'자릿값과 모으기·가르기, 보수 5와 10, 받아올림·받아내림, 두 자리에서 네 자리 덧뺄셈, 구구단 2~9단, 나눗셈의 시작.',
+      rm2how:'<b>수 감각의 첫 습관은 보수입니다.</b> 8 + 7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 필산은 학교 진도 그대로 정확한 절차로 다지고, 같은 문제를 그 옆에서 펼쳐 다시 만듭니다.',
+      rm2sym1:'<b>=</b>양쪽이 같다', rm2sym2:'<b>□</b>아직 모르는 수의 자리', rm2meta:'과정 1~10 · 주 1회 기준 55주 · 학교보다 앞서 구구단까지',
+      rm3band:'초등 1학년 말 ~ 2학년', rm3name:'계산의 도약',
+      rm3learn:'두 자리×두 자리, 나눗셈과 역연산, 분수의 첫걸음, 세 자리×두 자리, 두 자리로 나누기, 혼합계산.',
+      rm3how:'<b>분배법칙을 문자보다 수로 먼저 배웁니다.</b> 47 × 6은 40 × 6과 7 × 6으로 쪼개고, × 5는 × 10의 절반으로 봅니다. 아이가 가장 자주 멈추는 시기라, 정체 감지와 보강이 여기서 제일 많이 일합니다.',
+      rm3sym1:'<b>a/b</b>b로 나눈 것 중 a', rm3sym2:'<b>( )</b>먼저 계산할 묶음', rm3meta:'과정 11~16 · 주 1회 기준 26주',
+      rm4band:'초등 2학년 말 ~ 3학년', rm4name:'계산의 정복',
+      rm4learn:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수, 이분모 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
+      rm4how:'<b>수 사이의 관계로 계산을 줄입니다.</b> 2와 5는 친구라서 × 25는 × 100 ÷ 4입니다. 과정은 가로줄이고 계보는 세로줄이라, 마법마다 나중에 무엇으로 자라는지가 카드에 적혀 있습니다.',
+      rm4sym1:'<b>0.1</b>1보다 작은 자리를 여는 점', rm4sym2:'<b>%</b>100 중 몇', rm4meta:'과정 17~25 · 주 1회 기준 38주 · 학교로는 초4~5 내용',
+      rm5band:'초등 심화 · 중등 준비', rm5name:'경시의 탑',
+      rm5learn:'한쪽으로 모으기와 100 보수 곱, 피라미드 곱셈, 진법과 1001의 법칙, 순환소수, 50·100·1000 근처의 제곱.',
+      rm5how:'<b>관계를 알면 계산이 사라집니다.</b> 이 단계의 출구가 곧 중학교의 입구라, 여기서 손으로 한 것이 중3의 곱셈공식으로 그대로 이어집니다. 권유일 뿐이라 건너뛰어도 됩니다.',
+      rm5sym:'<b>a² a³</b>제곱과 세제곱 — (a+b)(a−b)의 수 버전', rm5meta:'과정 26~28 · 주 1회 기준 15주',
+      rm6band:'중학교 1~3학년', rm6name:'기호가 바뀌는 자리',
+      rm6learn:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 다항식, 제곱근, 곱셈공식과 인수분해.',
+      rm6how:'<b>기호가 바뀌는 순간이 진짜 고비입니다.</b> 그래서 말 → 그림 → 내 표기 → 표준 기호 순서를 지킵니다. 음수는 해발과 해저로, √는 땅 위의 9와 뿌리의 3으로 먼저 만납니다.',
+      rm6sym1:'<b>x</b>초1의 □가 자란 것', rm6sym2:'<b>√</b>제곱하기 전의 나', rm6meta:'과정 29~35 · 주 1회 기준 33주 · 실험실 2',
+      rm7band:'공통수학1·2 · 대수 · 미적분Ⅰ', rm7name:'새 기호는 아는 마법의 새 이름표',
+      rm7learn:'다항식과 나머지정리, 이차방정식, 점과 직선·원, 지수와 로그, 삼각함수, 수열과 Σ, 극한과 미분, 접선과 적분.',
+      rm7how:'<b>새 기호는 이미 아는 마법의 새 이름표입니다.</b> Σ는 초등에서 하던 짝지어 더하기가 기호 옷을 입은 것입니다. 미적분은 기법보다 왜 태어났는지를 실험실에서 먼저 보고 들어갑니다.',
+      rm7sym1:'<b>f(x)</b>넣으면 결과가 나오는 기계', rm7sym2:'<b>∫</b>잘게 쪼개 다 더해라', rm7meta:'과정 36~45 · 주 1회 기준 49주 · 실험실 2',
+      rmNote1:'주 1회 기준으로 연산 구간(과정 1~25)은 119주 약 2년 3개월, 유아부터 미적분Ⅰ까지 전 구간은 216주 약 4년 2개월입니다. 주 2회를 고르면 각각 88주와 159주로 줄어듭니다.',
+      rmNote2:'순서는 권유일 뿐 어디에도 잠금이 없습니다. 레벨은 언제든 바꿀 수 있습니다.',
+      pr1b:'목표는 수와 친해지는 것이지 빠른 연산이 아닙니다', pr1p:'속도만 재면 아이는 절차를 외웁니다. 5를 2와 3으로 손으로 갈라 보고, 8 + 7 앞에서 스스로 10을 먼저 만들 때 수가 친구가 됩니다. 그래서 유아 단계에는 시간 재기가 없습니다.',
+      pr2b:'수 감각은 수를 펼쳐 내 손에 맞게 만드는 힘입니다', pr2p:'8 + 7 → 8 + 2 + 5, 47 × 6 → 40 × 6 + 7 × 6, × 25 → × 100 ÷ 4. 같은 손놀림이 초1의 보수에서 중3의 (a+b)², 고등의 Σ까지 이어집니다. 과정을 바꿔도 방법은 바뀌지 않습니다.',
+      pr3b:'그래서 필산 교과연산입니다', pr3p:'척추는 교과 흐름을 따르는 세로셈입니다. 학교 진도 그대로, 정확한 절차가 먼저. 창의 연산은 그 척추 위의 마법 슬롯이라 아이는 같은 문제를 필산으로 한 번, 펼쳐서 한 번 만납니다.',
+      pr4b:'문장 이해력이 같이 자라야 합니다', pr4p:'연산만 빨라진 아이는 절차만 익혔기 때문에 문장 속의 수 앞에서 멈춥니다. 수를 펼칠 줄 알아야 문장 속 수도 다룰 수 있습니다. 그래서 초등 연산 구간의 학습지에는 그 주 연산을 문장으로 옮긴 회차가 함께 인쇄됩니다.',
+      pr5b:'수학은 언어라서 기호는 개념 다음에 옵니다', pr5p:'f에 놀라고 i에서 놓아 버린 것은 기호가 개념보다 먼저 왔기 때문입니다. 여기서는 말 → 그림 → 내 표기 → 표준 기호 순서를 지키고, 기호마다 읽는 법과 한 줄 번역문을 붙입니다.',
+      pr6b:'연산은 가정에서 매일 하는 것입니다', pr6p:'그래서 저희가 드리는 것은 수업이 아니라 학습지와 진단, 계획입니다. 짧은 진단이 지금 자리를 찾고, 그 자리가 주차별 로드맵으로 펼쳐지고, 매주 학습지가 도착합니다.',
+      wyKicker:'Why · 상담에서 늘 받는 질문', wyH2:'학습지가 매주 오고, <span class="accent">멈춘 자리</span>를 아이별로 잡아냅니다',
+      wyLead:'학원은 반 단위로만 멈출 수 있습니다. 같은 유형에서 두 번 연속 막히면 그 아이만 한 단계 아래로 내려갔다 옵니다.',
+      wy1b:'매주 도착하는 학습지', wy1p:'진단이 정한 과정의 그 주 회차가 봉투로 옵니다. 회차마다 개념과 빨간 예시 풀이가 앞에 있고, 초등 연산 구간에는 문장제와 <b>그 주에 쓸 종이 교구</b>가 함께 인쇄됩니다. 교구는 오려 쓰면 되니 따로 사실 것이 없습니다.', wy1f:'주 1회 1만 원 · 주 2회 2만 원',
+      wy2b:'개인별 정체 감지와 보강', wy2p:'같은 유형에서 최근 두 번이 연속으로 기준 아래면 봉투 맨 위에 몸풀기 카드가 올라옵니다. 십진블록·수직선처럼 한 단계 아래 시각화로 내려갔다 다시 올라옵니다.', wy2f:'권유이지 잠금이 아닙니다',
+      wy3b:'진단 → 지금 여기 → 주차별 로드맵', wy3p:'몇 문제로 유아부터 고등까지 어디서 시작할지 찾고, 그 자리가 로드맵 위에 찍힙니다. 주 1회·주 2회를 고르면 과정 전체가 주차로 나뉜 개인 계획표로 인쇄됩니다.', wy3f:'레벨은 언제든 바꿉니다',
+      wy4b:'한국어 · 영어 · 중국어', wy4p:'유닛 제목과 개념 설명, 유형 이름, 문장제 본문, 학습지와 진단 화면까지 같은 데이터에서 세 언어가 나옵니다. 다문화 가정과 영어 유치원 아이가 같은 로드맵을 걷습니다.', wy4f:'세 언어 전 구간',
+      wy5b:'수학사 만화와 개념 실험실', wy5p:'마법마다 그것이 태어난 장면을 만화로 먼저 보고, 눈으로 봐야 이해되는 개념은 손으로 움직이는 실험실에서 만집니다. 전설은 전설이라고 적습니다.', wy5f:'만화 95편 · 실험실 6',
+      wy6b:'유아부터 미적분Ⅰ까지 한 줄', wy6p:'과정 1의 보수가 과정 45의 적분까지 같은 데이터 위에 이어져 있습니다. 다섯 계보가 유닛마다 "이 마법은 나중에 무엇으로 자라요"로 표시됩니다.', wy6f:'유닛 199 · 과정 45 · 유형 180',
       symP:'함수의 <b>f</b>에 놀라고 허수의 <b>i</b>에서 수학을 놓아 버린 기억, 부모님도 있으실 겁니다. 수학은 언어라서, 기호가 바뀌는 순간이 진짜 고비입니다. 여기서는 모든 기호가 번역문을 갖습니다 — ∫는 "잘게 쪼개 다 더해라".',
       lbKicker:'Math Lab · 수학 실험실', lbH2:'눈으로 봐야 이해되는 것은 <span class="accent">직접 만져</span> 봅니다',
       lbLead:'실험실은 그 개념을 배우는 개념 노트 바로 아래에서 열립니다. 슬라이더를 밀고, 수를 바꿔 보고, 왜 그런지 눈으로 확인한 뒤 문제로 돌아옵니다. 과정과 상관없이 언제든 열어 볼 수 있습니다.',
@@ -631,7 +806,7 @@ footer a{color:var(--sub)}
       pr1:'학습지 <b>주 1회</b> — 매주 월요일 편지함 봉투, 집에서 인쇄', pr2:'<b>연산 게임 학습</b> — 숫자 마을의 모든 배움터와 아레나·도장',
       pr3:'<b>무제한 연산 학습</b> — 교과 연산 연습 · 수의 마법 탐험 · 연산 로드맵, 횟수 제한 없음', pr4:'수학 실험실 6곳 · 수학사 만화 95편 · 한국어·영어·중국어',
       prCta:'시작하기 →', heroTrial:'체험하기', prFine:'승인번호 없이도 체험할 수 있어요 — 유치·초등·중등·고등 2개씩과 마을 건물마다 2챕터. 전체 이용은 학원 승인번호가 필요합니다.',
-      foot:'GFIELD · Numbers of Magic — DOCSSAM 영재 트랙', footAbout:'철학', footChars:'캐릭터'
+      foot:'GFIELD · Numbers of Magic', footAbout:'철학', footChars:'캐릭터'
     },
     en:{
       navCta:'Start', heroKicker:'DOCSSAM · From age 5',
@@ -642,9 +817,9 @@ footer a{color:var(--sub)}
       phKicker:"Philosophy · What's different", phH2:'This is <span class="accent">not</span> speed arithmetic',
       phLead:'School tests sort children with trick questions, and most academies teach pattern-matching to get the answer. DOCSSAM builds the power to <b>remake a problem to fit your own hands</b> using the rules of numbers. Fewer slips, more creativity and confidence.',
       badTag:'Pattern memorizing', badBig:'"When it looks like this,<br>solve it like that"', badP:'A slip while borrowing in column subtraction. The answer comes without the why, and it collapses when the pattern changes.',
-      goodTag:'The Numbers of Magic way', goodBig:'"Unfold the number<br>to make it easy"', goodP:'If 8+7 is hard, borrow 2 from the 7 and make 10 first. This habit becomes the distributive law later, and climbs the same ladder up to calculus.',
+      goodTag:'The Numbers of Magic way', goodBig:'"Unfold the number<br>to make it easy"', goodP:'If 8+7 is hard, borrow 2 from the 7 and make 10 first. This habit becomes the distributive law later, and follows the same roadmap up to calculus.',
       eqNote:'Nothing was memorized — the child just made a 10. Because it was their own choice, they use it again next time.',
-      phMore:'Full philosophy and the ladder (addition → Calculus I) →',
+      phMore:'Read the full philosophy →',
       scKicker:'The App · What the child sees', scH2:'Learn in the number village, and worksheets arrive in the <span class="accent">mailbox</span>',
       scLead:'The child becomes a human character walking the village with a chosen number friend. Buildings are classrooms; we do not add games. The village is a door into learning.',
       s1b:'Number Village', s1:'You and your number companion, the elder at the gazebo, Doc-ssaem by the library. Tap a building to begin.',
@@ -685,13 +860,53 @@ footer a{color:var(--sub)}
       t2no:'Creative', t2b:'Unfold and handle', t2p:'Remake the same problem to fit your own hands. This is where number sense grows.',
       t3no:'Word problem', t3b:'The number in the sentence', t3ex:'There were 47 apples. We picked 38 more. How many are there now?', t3p:'Pull the same number out of a sentence — in Korean, English and Chinese.',
       trNote:'All three handle the same 47+38. Worksheet mode offers curriculum practice, Number Magic exploration, and a computation + word-problem mix, so one child meets one problem from three directions.',
-      ldKicker:'The Ladder · From age 5 to high school', ldH2:'From numbers up to 9 to <span class="accent">Calculus I</span>, one ladder',
-      ldLead:'The beginner trick of "split the number to add" is, later on, the distributive law itself. Today\'s small idea climbs the ladder and becomes the language of calculus. The course changes; the method does not.',
-      r0lv:'Lv 0', r0b:'Number Land · up to 9', r0s:'Know, count, split, compare — from age 5',
-      r1lv:'Beginner', r1b:'Unfold with complements', r1s:'The habit of making 10 and 100',
-      r2lv:'Intermediate', r2b:'Distributive law · product formulas', r2s:'Where unfolding moves into letters',
-      r3lv:'Advanced', r3b:'Relations · arithmetic sequences (olympiad)', r3s:'Removing calculation with relations between numbers',
-      r4lv:'Beyond', r4b:'Calculus I · limits and instantaneous slope', r4s:'The language for calculating change',
+      rmKicker:'The Roadmap · From age 5 to Calculus I', rmH2:'This is <span class="accent">how</span> numbers should be studied',
+      rmLead:'First befriend numbers. Once number sense is there, drill the column method along the school curriculum, read the sentence the number lives in, and only at the end write it in symbols. The seven stages below are that order.',
+      rmS1:'Befriend numbers', rmS2:'Number sense', rmS3:'Column arithmetic', rmS4:'Reading sentences', rmS5:'Symbols',
+      rm1band:'Ages 5–7', rm1name:'Number Land',
+      rm1learn:'Counting and quantity, order and skip-counting, ordinals and comparing, the many ways to show a number. Gathering and splitting by hand.',
+      rm1how:'<b>Nothing is timed.</b> The child moves beads onto two plates and sees 5 split into 2 and 3, then come back together. This splitting becomes complements next, and the distributive law later.',
+      rm1sym:'<b>5</b>numerals and tally marks — no operation signs yet', rm1meta:'5 map stops · 15 units · a prologue with no course numbers',
+      rm2band:'Ages 6–7 · Grade 1', rm2name:'Sprout',
+      rm2learn:'Place value, gathering and splitting, complements of 5 and 10, carrying and borrowing, two- to four-digit addition and subtraction, times tables 2–9, the start of division.',
+      rm2how:'<b>The first habit of number sense is the complement.</b> If 8 + 7 is hard, borrow 2 from the 7 and make 10 first. The column method is practised exactly as school teaches it, and beside it the same problem is unfolded and remade.',
+      rm2sym1:'<b>=</b>both sides are the same', rm2sym2:'<b>□</b>the seat of a number we do not know yet', rm2meta:'Courses 1–10 · 55 weeks at one sheet a week · times tables already here',
+      rm3band:'End of Grade 1 – Grade 2', rm3name:'Leap',
+      rm3learn:'Two-digit × two-digit, division and inverse operations, first steps in fractions, three-digit × two-digit, dividing by two digits, mixed operations.',
+      rm3how:'<b>The distributive law is learned with numbers before letters.</b> 47 × 6 splits into 40 × 6 and 7 × 6; × 5 is half of × 10. This is where children stall most often, so stall detection works hardest here.',
+      rm3sym1:'<b>a/b</b>a of b equal parts', rm3sym2:'<b>( )</b>the bundle to compute first', rm3meta:'Courses 11–16 · 26 weeks at one sheet a week',
+      rm4band:'End of Grade 2 – Grade 3', rm4name:'Mastery',
+      rm4learn:'Decimal addition and multiplication, square numbers, factors and multiples, unlike denominators, multiplying and dividing fractions, sequences, percentages and ratios.',
+      rm4how:'<b>Relations between numbers remove the calculation.</b> 2 and 5 are friends, so × 25 is × 100 ÷ 4. Courses run across and lineages run down, so every magic card says what it grows into later.',
+      rm4sym1:'<b>0.1</b>the point that opens places below one', rm4sym2:'<b>%</b>how many out of 100', rm4meta:'Courses 17–25 · 38 weeks · Grade 4–5 material in school terms',
+      rm5band:'Elementary deep-dive · bridge to middle school', rm5name:'The Tower',
+      rm5learn:'Shifting to one side, complement multiplication near 100, pyramid multiplication, number bases and the 1001 rule, repeating decimals, squares near 50, 100 and 1000.',
+      rm5how:'<b>Know the relation and the calculation disappears.</b> The exit here is the entrance to middle school: what the hand does now becomes the product formulas of Grade 9. It is a suggestion, so it can be skipped.',
+      rm5sym:'<b>a² a³</b>squares and cubes — the number version of (a+b)(a−b)', rm5meta:'Courses 26–28 · 15 weeks',
+      rm6band:'Grades 7–9', rm6name:'Where the symbols change',
+      rm6learn:'Integers and rationals, the rules of sign, letters and expressions, equations and proportion, exponents and polynomials, square roots, product formulas and factorisation.',
+      rm6how:'<b>The real hurdle is the moment the symbols change.</b> So the order is fixed: words → picture → my own notation → the standard symbol. Negatives arrive as altitude and depth, √ as the 9 above ground and the 3 in the root.',
+      rm6sym1:'<b>x</b>the □ of Grade 1, grown up', rm6sym2:'<b>√</b>me, before I was squared', rm6meta:'Courses 29–35 · 33 weeks · 2 labs',
+      rm7band:'Common Math 1·2 · Algebra · Calculus I', rm7name:'A new symbol is a new label on a magic you know',
+      rm7learn:'Polynomials and the remainder theorem, quadratic equations, points, lines and circles, exponents and logarithms, trigonometry, sequences and Σ, limits and differentiation, tangents and integration.',
+      rm7how:'<b>A new symbol is a new label on a magic already known.</b> Σ is the pairing-and-adding of elementary school in symbolic clothing. Calculus begins in the lab with why it was born, before any technique.',
+      rm7sym1:'<b>f(x)</b>a machine: put x in, a result comes out', rm7sym2:'<b>∫</b>cut it fine and add it all up', rm7meta:'Courses 36–45 · 49 weeks · 2 labs',
+      rmNote1:'At one sheet a week the arithmetic track (Courses 1–25) runs 119 weeks, about 2 years 3 months, and the whole way from age 5 to Calculus I runs 216 weeks, about 4 years 2 months. Two sheets a week bring those down to 88 and 159 weeks.',
+      rmNote2:'The order is a suggestion; nothing is ever locked. The level can be changed at any time.',
+      pr1b:'The goal is to befriend numbers, not to compute fast', pr1p:'Measure only speed and the child memorises the procedure. Numbers become friends when a child splits 5 into 2 and 3 by hand and chooses to make 10 first in front of 8 + 7. That is why nothing is timed in the early stage.',
+      pr2b:'Number sense is the power to unfold a number to fit your own hand', pr2p:'8 + 7 → 8 + 2 + 5, 47 × 6 → 40 × 6 + 7 × 6, × 25 → × 100 ÷ 4. The same movement runs from the complements of Grade 1 to (a+b)² in Grade 9 and Σ in high school. The course changes; the method does not.',
+      pr3b:'That is why it is column arithmetic along the curriculum', pr3p:'The spine is the column method following the school curriculum — exactly as school teaches it, correct procedure first. Creative arithmetic is the magic slot on that spine, so a child meets the same problem once in columns and once unfolded.',
+      pr4b:'Reading sentences has to grow alongside', pr4p:'A child who only got faster has learned only the procedure, and stops in front of a number inside a sentence. You have to be able to unfold a number to handle the number in a sentence. So in the elementary arithmetic track, each week\'s worksheet also prints that week\'s computation as word problems.',
+      pr5b:'Mathematics is a language, so symbols come after the idea', pr5p:'Being startled by f and letting go at i happens because the symbol arrived before the idea. Here the order is words → picture → my own notation → the standard symbol, and every symbol carries how to read it and a one-line translation.',
+      pr6b:'Arithmetic is something done at home, every day', pr6p:'So what we provide is not a class but worksheets, a diagnosis and a plan. A short diagnosis finds where the child is now, that place unfolds into a week-by-week roadmap, and a worksheet arrives every week.',
+      wyKicker:'Why · the questions parents always ask', wyH2:'A sheet every week, and the <span class="accent">place a child stalls</span> caught one child at a time',
+      wyLead:'A classroom can only pause as a whole class. When the same type falls short twice in a row, that one child steps down a level and comes back up.',
+      wy1b:'A worksheet every week', wy1p:'The week\'s session of the course the diagnosis chose arrives as an envelope. Every round opens with the idea and a worked example in red, and in the elementary arithmetic track it also brings word problems and <b>the paper tool for that week</b> — cut it out, nothing to buy.', wy1f:'10,000 won a week · 20,000 won for twice a week',
+      wy2b:'Per-child stall detection and follow-up', wy2p:'When the two most recent attempts at one type both fall short, a warm-up card goes on top of the envelope. The child steps down to a lower visualisation — base-ten blocks, the number line — and climbs back.', wy2f:'A suggestion, never a lock',
+      wy3b:'Diagnosis → you are here → a week-by-week roadmap', wy3p:'A few questions find where to start, anywhere from age 5 to high school, and that place is marked on the roadmap. Choose one or two sheets a week and the whole course prints as a personal plan divided into weeks.', wy3f:'The level can change any time',
+      wy4b:'Korean · English · Chinese', wy4p:'Unit titles, concept notes, type names, word-problem text, the worksheet and the diagnosis screen all come from the same data in three languages. Multilingual families and English-kindergarten children walk the same roadmap.', wy4f:'Three languages throughout',
+      wy5b:'History-of-maths comics and concept labs', wy5p:'Each magic opens with the scene where it was born, and ideas that need to be seen are handled in a lab you move with your hands. A legend is labelled a legend.', wy5f:'95 comics · 6 labs',
+      wy6b:'One line from age 5 to Calculus I', wy6p:'The complements of Course 1 run on the same data all the way to the integration of Course 45. Five lineages mark each unit with what that magic grows into later.', wy6f:'199 units · 45 courses · 180 types',
       symP:'Being startled by the <b>f</b> of a function and letting go of math at the <b>i</b> of imaginary numbers — many parents remember it. Math is a language, and the moment the symbols change is the real hurdle. Here every symbol comes with a translation — ∫ means "cut it fine and add it all up".',
       lbKicker:'Math Lab', lbH2:'What must be seen to be understood, you <span class="accent">touch</span> yourself',
       lbLead:'Each lab opens right under the concept note it belongs to. Drag a slider, change a number, see why, then return to the problem. Open any of them any time, whatever course you are on.',
@@ -728,9 +943,9 @@ footer a{color:var(--sub)}
       phKicker:'理念 · 有何不同', phH2:'这<span class="accent">不是</span>追求速算的计算训练',
       phLead:'学校考试用易错题来区分孩子，多数补习班教的是背题型得答案。DOCSSAM 培养的是用数的规律<b>把题目改造成自己顺手的样子</b>的能力。失误变少，对数的创造力与自信随之生长。',
       badTag:'背题型', badBig:'"这样出<br>就这样解"', badP:'竖式借位时出错。得了答案却不懂原理，题型一变就崩。',
-      goodTag:'Numbers of Magic 之道', goodBig:'"把数拆开<br>让它变简单"', goodP:'8+7 难，就从7借2先凑10。今天的这个习惯，日后就是分配律，沿同一把梯子一直通到微积分。',
+      goodTag:'Numbers of Magic 之道', goodBig:'"把数拆开<br>让它变简单"', goodP:'8+7 难，就从7借2先凑10。今天的这个习惯，日后就是分配律，沿同一条路线图一直通到微积分。',
       eqNote:'不是背了进位，只是凑了一个10。因为是孩子自己选的路，下一题还会用。',
-      phMore:'完整理念与阶梯（加法 → 微积分Ⅰ）→',
+      phMore:'阅读完整理念 →',
       scKicker:'应用 · 孩子看到的画面', scH2:'在数字村学习，学习单送到<span class="accent">信箱</span>',
       scLead:'孩子化身为人物角色，带着选定的数字朋友走在村里。建筑就是学习场所，我们不增加游戏。村庄是通向学习的门。',
       s1b:'数字村', s1:'我和同行的数字朋友、凉亭的爷爷、图书馆前的独老师。点建筑即开始学习。',
@@ -771,13 +986,53 @@ footer a{color:var(--sub)}
       t2no:'创意运算', t2b:'拆开来运用', t2p:'把同一道题改造成自己顺手的样子。数感在这里生长。',
       t3no:'应用题', t3b:'句子里的数', t3ex:'原来有47个苹果，又摘了38个。现在一共有多少个？', t3p:'从句子里把同一个数读出来。韩语、英语、中文。',
       trNote:'三格处理同一个 47+38。学习单模式提供教材运算练习、数字魔法探索、计算与应用题混合选项，让孩子从三个方向遇见同一道题。',
-      ldKicker:'阶梯 · 从幼儿到高中运算', ldH2:'从9以内的数到<span class="accent">微积分Ⅰ</span>，同一把梯子',
-      ldLead:'初级的"把数拆开来加"，日后就是分配律本身。今天的小原理沿梯子而上，最终成为微积分的语言。课程在变，方法不变。',
-      r0lv:'0级', r0b:'数字王国 · 9以内的数', r0s:'认识、数、拆分、比较 —— 5岁起',
-      r1lv:'初级', r1b:'用补数拆开', r1s:'凑10、凑100的习惯',
-      r2lv:'中级', r2b:'分配律 · 乘法公式', r2s:'拆开的方法走进字母',
-      r3lv:'高级', r3b:'相关关系 · 等差数列（竞赛）', r3s:'用数之间的关系省掉计算',
-      r4lv:'深化', r4b:'微积分Ⅰ · 极限与瞬时斜率', r4s:'计算变化的语言',
+      rmKicker:'路线图 · 从幼儿到微积分Ⅰ', rmH2:'数就该<span class="accent">这样</span>学',
+      rmLead:'先与数亲近，有了数感就按教材顺序用竖式打牢，再读懂数所在的句子，最后才写成符号。下面七个阶段就是这个顺序。',
+      rmS1:'与数亲近', rmS2:'数感', rmS3:'教材竖式运算', rmS4:'读懂句子', rmS5:'符号',
+      rm1band:'幼儿5~7岁', rm1name:'数字之国',
+      rm1learn:'数数与数量、顺序与跳数、第几个与大小比较、数的多种表示。用手来合与分。',
+      rm1how:'<b>不计时。</b> 孩子把珠子分到两个盘子里，亲眼看到5分成2和3，再合回来。这个“分”就是下一阶段的补数，也是日后的分配律。',
+      rm1sym:'<b>5</b>数字与计数符号 —— 还没有运算符号', rm1meta:'地图5站 · 15个单元 · 没有课程编号的序章',
+      rm2band:'6~7岁 · 小学一年级', rm2name:'计算的新芽',
+      rm2learn:'位值与合分、5和10的补数、进位与退位、两位到四位数加减、2~9乘法口诀、除法入门。',
+      rm2how:'<b>数感的第一个习惯是补数。</b> 8＋7难，就从7里借2先凑成10。竖式按学校进度扎实练，旁边再把同一道题拆开重做一遍。',
+      rm2sym1:'<b>=</b>两边一样', rm2sym2:'<b>□</b>还不知道的数的位置', rm2meta:'课程1~10 · 每周1次约55周 · 比学校提前到乘法口诀',
+      rm3band:'小学一年级末~二年级', rm3name:'计算的跃进',
+      rm3learn:'两位数乘两位数、除法与逆运算、分数入门、三位数乘两位数、除以两位数、混合运算。',
+      rm3how:'<b>分配律先用数学会，再用字母。</b> 47×6拆成40×6和7×6；×5看作×10的一半。这个阶段最容易卡住，所以停滞检测在这里工作得最多。',
+      rm3sym1:'<b>a/b</b>分成b份中的a份', rm3sym2:'<b>( )</b>先算的那一组', rm3meta:'课程11~16 · 每周1次约26周',
+      rm4band:'小学二年级末~三年级', rm4name:'计算的征服',
+      rm4learn:'小数加减与乘法、平方数、约数与倍数、异分母分数、分数乘除、数列、百分数与比。',
+      rm4how:'<b>用数与数的关系省掉计算。</b> 2和5是朋友，所以×25就是×100÷4。课程是横线，脉络是竖线，每张魔法卡都写着它以后会长成什么。',
+      rm4sym1:'<b>0.1</b>打开比1更小的位的点', rm4sym2:'<b>%</b>100中的几', rm4meta:'课程17~25 · 约38周 · 按学校进度是小四~小五内容',
+      rm5band:'小学进阶 · 初中衔接', rm5name:'竞赛之塔',
+      rm5learn:'向一边归拢与100补数乘法、金字塔乘法、进位制与1001法则、循环小数、50·100·1000附近的平方。',
+      rm5how:'<b>懂了关系，计算就消失了。</b> 这一阶段的出口就是初中的入口，现在手上做的正是初三的乘法公式。只是建议，可以跳过。',
+      rm5sym:'<b>a² a³</b>平方与立方 —— (a+b)(a−b)的数字版', rm5meta:'课程26~28 · 约15周',
+      rm6band:'初中一~三年级', rm6name:'符号改变的地方',
+      rm6learn:'整数与有理数、符号法则、字母与式、方程与比例、指数与多项式、平方根、乘法公式与因式分解。',
+      rm6how:'<b>真正的坎是符号改变的瞬间。</b> 所以顺序固定为：话 → 图 → 自己的写法 → 标准符号。负数先以海拔和海底出现，√先看作地上的9和根部的3。',
+      rm6sym1:'<b>x</b>小一的□长大了', rm6sym2:'<b>√</b>平方之前的我', rm6meta:'课程29~35 · 约33周 · 2个实验室',
+      rm7band:'共同数学1·2 · 代数 · 微积分Ⅰ', rm7name:'新符号只是熟悉魔法的新标签',
+      rm7learn:'多项式与余数定理、二次方程、点与直线与圆、指数与对数、三角函数、数列与Σ、极限与微分、切线与积分。',
+      rm7how:'<b>新符号只是熟悉魔法的新标签。</b> Σ是小学的首尾配对相加穿上了符号的外衣。微积分先在实验室看它为什么诞生，再谈技巧。',
+      rm7sym1:'<b>f(x)</b>放进去就出结果的机器', rm7sym2:'<b>∫</b>切细了全部加起来', rm7meta:'课程36~45 · 约49周 · 2个实验室',
+      rmNote1:'按每周1次，运算段（课程1~25）约119周、2年3个月；从幼儿到微积分Ⅰ的全程约216周、4年2个月。选每周2次分别缩短为88周和159周。',
+      rmNote2:'顺序只是建议，任何地方都没有锁。级别随时可以更换。',
+      pr1b:'目标是与数亲近，不是算得快', pr1p:'只测速度，孩子就只背步骤。当孩子亲手把5分成2和3，在8＋7面前自己先凑出10，数才成为朋友。所以幼儿阶段不计时。',
+      pr2b:'数感是把数拆开、变成合自己手的力量', pr2p:'8＋7 → 8＋2＋5，47×6 → 40×6＋7×6，×25 → ×100÷4。同一个手法从小一的补数一直连到初三的(a+b)²和高中的Σ。课程会变，方法不变。',
+      pr3b:'所以是跟着教材的竖式运算', pr3p:'脊梁是跟着教材顺序的竖式。按学校进度，先把步骤做准。创意运算是这条脊梁上的魔法格，孩子会用竖式做一次、拆开再做一次同一道题。',
+      pr4b:'读懂句子的能力要一起长', pr4p:'只是变快的孩子只学会了步骤，遇到句子里的数就停住。会拆数，才会处理句子里的数。所以小学运算段的学习单里，会把当周的运算也印成应用题。',
+      pr5b:'数学是语言，所以符号在概念之后', pr5p:'被f吓到、在i放弃，是因为符号来得比概念早。这里坚持“话 → 图 → 自己的写法 → 标准符号”的顺序，每个符号都配读法和一行译文。',
+      pr6b:'运算是在家里每天做的事', pr6p:'所以我们提供的不是课，而是学习单、诊断和计划。简短的诊断找到现在的位置，那个位置展开成按周的路线图，学习单每周寄到。',
+      wyKicker:'Why · 家长最常问的问题', wyH2:'学习单每周寄到，<span class="accent">卡住的地方</span>按孩子一个一个抓出来',
+      wyLead:'补习班只能整班停下。同一类型连续两次不达标，就只让那个孩子降一级再回来。',
+      wy1b:'每周寄到的学习单', wy1p:'诊断定下的课程，当周的课次以信封形式寄到。每一课次前面有概念和红色示范解法，小学运算段还会附上应用题和<b>当周要用的纸教具</b>——剪下来就能用，不用另外买。', wy1f:'每周1次1万韩元 · 每周2次2万韩元',
+      wy2b:'按孩子的停滞检测与补强', wy2p:'同一类型最近两次都低于标准，信封最上面就会加一张热身卡。用十进制方块、数轴等低一级的可视化下去一趟，再爬回来。', wy2f:'是建议，不是锁',
+      wy3b:'诊断 → 现在这里 → 按周路线图', wy3p:'用几道题找出从幼儿到高中该从哪里开始，那个位置会标在路线图上。选每周1次或2次，整个课程会印成按周划分的个人计划表。', wy3f:'级别随时可以改',
+      wy4b:'韩语 · 英语 · 中文', wy4p:'单元标题、概念说明、类型名称、应用题正文、学习单和诊断画面，三种语言都出自同一份数据。多语家庭和英语幼儿园的孩子走同一条路线图。', wy4f:'全程三种语言',
+      wy5b:'数学史漫画与概念实验室', wy5p:'每个魔法先看它诞生的场景，需要用眼睛看才懂的概念，就在能动手操作的实验室里摸一摸。传说会注明是传说。', wy5f:'漫画95篇 · 实验室6个',
+      wy6b:'从幼儿到微积分Ⅰ的一条线', wy6p:'课程1的补数和课程45的积分连在同一份数据上。五条脉络在每个单元标出“这个魔法以后会长成什么”。', wy6f:'单元199 · 课程45 · 类型180',
       symP:'被函数的 <b>f</b> 吓到、在虚数的 <b>i</b> 放弃数学的记忆，很多家长都有。数学是语言，符号变化的那一刻才是真正的坎。在这里每个符号都有译文 —— ∫ 就是"切碎了全部加起来"。',
       lbKicker:'数学实验室', lbH2:'要用眼睛看才懂的，就<span class="accent">亲手</span>试',
       lbLead:'实验室就开在对应概念笔记的下方。拉动滑块、改变数字、亲眼确认为什么，然后回到题目。不论学到哪里，随时可以打开。',

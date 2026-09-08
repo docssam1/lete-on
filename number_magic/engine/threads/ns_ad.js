@@ -43,7 +43,10 @@ function _addPlaceLines(a, b, sum, numDigits){
     const da = Math.floor(a / pv) % 10;
     const db = Math.floor(b / pv) % 10;
     const s  = da + db + carry;
-    lines.push({ tex: `\\text{${PLACE_KO[p]}: } ${da} + ${db}${carry ? ' + 1' : ''} = \\square`, blank: s % 10 });
+    /* 올림이 나면 "= 합 = 10 + □"(2026-09-06, 예시가 "6 + 8 = 4"로 보이지 않게). 빈칸 값 불변. */
+    lines.push({ tex: s >= 10
+      ? `\\text{${PLACE_KO[p]}: } ${da} + ${db}${carry ? ' + 1' : ''} = ${s} = 10 + \\square`
+      : `\\text{${PLACE_KO[p]}: } ${da} + ${db}${carry ? ' + 1' : ''} = \\square`, blank: s % 10 });
     carry = Math.floor(s / 10);
   }
   const lowerPow = Math.pow(10, numDigits - 1);
@@ -144,7 +147,9 @@ NM_TGEN['ns1_placeValue'] = function(params, rng){
       en: `In ${n}, what digit is in the ${en} place?`,
       zh: `${n}的${zh}是几？`
     },
-    tex: `${n}에서 ${ko}의 자리 = \\square`,
+    /* "자리 숫자"(2026-09-06) — "십의 자리 ="만 있으면 자릿값(50)인지 숫자(5)인지 모호한데 정답은 숫자다.
+       prompt 는 원래 "자리 숫자"라고 묻고 있었다. 예시·따라풀기도 이 tex 에서 나온다. */
+    tex: `${n}에서 ${ko}의 자리 숫자 = \\square`,
     answer: digitAt,
     answerType: 'number',
     widget: 'missing',
@@ -650,11 +655,15 @@ NM_TGEN['ad5_add2d2d'] = function(params, rng){
       b = tb * 10 + ob;
     } while(a + b > 99 || Math.floor(a / 10) + Math.floor(b / 10) + 1 > 9);
   } else {
-    /* 임의 올림 (1~2회) */
+    /* 올림 1~2회(2026-09-06) — 전에는 a,b 를 그냥 뽑아 올림이 없는 24+11 도 나왔다. "올림" 스레드의
+       위 레벨(램프 "뒤 6문항은 한 단계 어려운 문제")이 아래 레벨보다 쉬웠던 원인. 일의 자리 올림은
+       항상 있어야 하고, 뽑기마다 절반은 십의 자리도 올리는 꼴(합 ≥ 100)을 요구한다 — 정렬(sortRoundProblems)
+       이 |answer| 순이라 100 넘는 합이 램프 끝에 모인다. 이전 시드의 학습지는 다시 만들어지지 않는다. */
+    const wantTwo = rng() < 0.5;
     do {
       a = R(rng, 11, 89);
       b = R(rng, 11, 89);
-    } while(a + b > 199 || a + b < 11);
+    } while(a % 10 + b % 10 < 10 || (a + b >= 100) !== wantTwo);
   }
 
   const sum        = a + b;
@@ -676,8 +685,13 @@ NM_TGEN['ad5_add2d2d'] = function(params, rng){
     tex: `${a} + ${b} = \\square`,
     answer: sum,
     answerType: 'steps',
+    /* 올림이 있으면 "6 + 8 = 14 = 10 + □"(2026-09-06) — 전에는 "6 + 8 = □"에 4를 넣어 예시가
+       "6 + 8 = 4"라는 거짓 등식을 보여 줬다. 빈칸 값(onesResult)은 그대로라 앱·정답지 채점 불변,
+       기호뿐이라 세 언어 공용. 십의 자리 줄이 이미 "+ 1"을 붙인다. */
     steps: [
-      { tex: `\\text{일의 자리: } ${oA} + ${oB} = \\square`, blank: onesResult },
+      { tex: onesCarry
+          ? `\\text{일의 자리: } ${oA} + ${oB} = ${onesSum} = 10 + \\square`
+          : `\\text{일의 자리: } ${oA} + ${oB} = \\square`, blank: onesResult },
       { tex: `\\text{십의 자리: } ${tA} + ${tB}${onesCarry ? ' + 1' : ''} = \\square`, blank: tensSum }
     ],
     widget: 'vertical',
@@ -721,9 +735,11 @@ NM_TGEN['ad6_add3d'] = function(params, rng){
     tex: `${a} + ${b} = \\square`,
     answer: sum,
     answerType: 'steps',
+    /* AD5 와 같은 규칙(2026-09-06): 올림이 나는 줄은 "= 합 = 10 + □"로 참 등식. 빈칸 값 불변. */
     steps: [
-      { tex: `\\text{일: } ${oA} + ${oB} = \\square`, blank: onesR  },
-      { tex: `\\text{십: } ${tA} + ${tB}${oC ? ' + 1' : ''} = \\square`, blank: tensR  },
+      { tex: oC ? `\\text{일: } ${oA} + ${oB} = ${onesSum} = 10 + \\square` : `\\text{일: } ${oA} + ${oB} = \\square`, blank: onesR  },
+      { tex: tC ? `\\text{십: } ${tA} + ${tB}${oC ? ' + 1' : ''} = ${tensSum} = 10 + \\square`
+                : `\\text{십: } ${tA} + ${tB}${oC ? ' + 1' : ''} = \\square`, blank: tensR  },
       { tex: `\\text{백: } ${hA} + ${hB}${tC ? ' + 1' : ''} = \\square`, blank: hunsSum }
     ],
     widget: 'vertical',
