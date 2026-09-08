@@ -59,7 +59,8 @@ try {
     const expected = await readFile(new URL(file, root));
     const response = await context.request.get(`${base}/${file}?release-check=${Date.now()}`);
     assert.equal(response.status(), 200, file);
-    const digest = data => createHash('sha256').update(data).digest('hex');
+    // Git's Windows checkout may use CRLF; all compared runtime files are text.
+    const digest = data => createHash('sha256').update(data.toString('utf8').replace(/\r\n/g, '\n')).digest('hex');
     assert.equal(digest(await response.body()), digest(expected), `Runtime mismatch: ${file}`);
   }
   const result = { passed: true, base, gardenLinks, games, worksheets, offlineSheets, runtimeFiles: files.length, errors };
