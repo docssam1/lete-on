@@ -120,6 +120,21 @@ test("expression concept opens the 36-item powers and equivalence workbook",asyn
   assert.deepEqual(errors,[]);await page.close();
 });
 
+test("equation concept opens the 36-item equation and inequality workbook",async function(){
+  const page=await browser.newPage({viewport:{width:1080,height:850}});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}/concept-learning.html?cluster=6.EE.B&from=diagnostic`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator('[data-clinic-action="animated"]').getAttribute("href"),"./animated-math.html?lesson=equation-balance-groups&cluster=6.EE.B&locale=ko");
+  const workbook=page.locator('[data-clinic-action="workbook"]');
+  assert.equal(await workbook.getAttribute("href"),"./unit-workbook.html?cluster=6.EE.B&mode=workbook&audience=student&locale=ko");
+  assert.match(await workbook.innerText(),/방정식과 부등식 36문항 단원 워크북/);
+  await workbook.click();await page.waitForLoadState("networkidle");
+  assert.equal(await page.locator(".book-problem").count(),36);
+  assert.equal(await page.locator(".book-page").count(),12);
+  assert.equal(await page.locator(".eeb-equation-model,.eeb-number-line").count(),36);
+  assert.match(await page.locator('[data-mode="recheck"]').innerText(),/8/);
+  assert.deepEqual(errors,[]);await page.close();
+});
+
 test("Grade 6 geometry links to its exact area lesson and never to the unrelated isosceles sample", async function () {
   const page = await browser.newPage({ viewport: { width: 1080, height: 850 } });
   const errors = errorsFor(page);

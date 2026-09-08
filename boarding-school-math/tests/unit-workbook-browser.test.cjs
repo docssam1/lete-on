@@ -12,6 +12,7 @@ const fractionSource=require("../learning/grade6-ns-a-unit-workbook.js");
 const computationSource=require("../learning/grade6-ns-b-unit-workbook.js");
 const signedNumberSource=require("../learning/grade6-ns-c-unit-workbook.js");
 const expressionSource=require("../learning/grade6-ee-a-unit-workbook.js");
+const equationSource=require("../learning/grade6-ee-b-unit-workbook.js");
 const root=path.resolve(__dirname,"..","..");
 let server,browser,baseUrl;
 function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";if(file.endsWith(".css"))return"text/css; charset=utf-8";if(file.endsWith(".js"))return"text/javascript; charset=utf-8";return"application/octet-stream";}
@@ -192,6 +193,24 @@ test("expression Chinese teacher guide separates all 36 answers",async function(
   const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.EE.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.EE.A 式子结构与等价式单元练习册");assert.match(await page.locator(".teacher-observation").innerText(),/区分项与因数/);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
 });
 
+test("equation student edition renders 36 answer-free models on 12 pages",async function(){
+  const context=await browser.newContext({viewport:{width:1280,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.EE.B&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator(".book-page").count(),12);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".answer-input").count(),36);assert.equal(await page.locator(".teacher-key,.teacher-move,.choice-button").count(),0);assert.equal(await page.locator("h1").innerText(),"6.EE.B 방정식과 부등식 단원 워크북");assert.equal(await page.locator(".eeb-equation-model,.eeb-number-line").count(),36);assert.equal(await page.locator('[data-item-id="eebu-w25"] .eeb-number-line text').textContent(),"c");assert.equal(await page.locator('[data-item-id="eebu-w30"] .solution-ray').count(),0);
+  const card=page.locator('[data-item-id="eebu-w20"]');await card.locator(".answer-input").fill("2");await card.locator(".check-button").click();assert.equal(await card.locator(".choice-feedback.wrong").count(),1);await card.locator(".answer-input").fill("3/2");await card.locator(".check-button").click();assert.equal(await card.locator(".choice-feedback.correct").count(),1);
+  await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("all 36 equation responses unlock only its eight-item recheck",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.EE.B&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});for(const candidate of equationSource.pack.workbookItems){const card=page.locator(`[data-item-id="${candidate.id}"]`);await card.locator(".answer-input").fill(equationSource.formatResult(candidate));await card.locator(".check-button").click();}
+  assert.equal(await page.locator("#progress-chip").innerText(),"36 / 36");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-unit-workbook:6.EE.B:v1");}),"complete-v1");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-clinic-workbook:6.EE.B:v1");}),null);await page.locator('[data-mode="recheck"]').click();assert.equal(await page.locator(".book-problem").count(),8);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("equation Chinese teacher guide separates all 36 answers and shows solution rays",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.EE.B&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.EE.B 方程与不等式单元练习册");assert.match(await page.locator(".teacher-observation").innerText(),/边界是否包含/);assert.ok(await page.locator(".solution-ray").count()>0);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+});
+
 test("all 36 verified responses unlock only the separate recheck route",async function(){
   const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
   await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});
@@ -290,7 +309,7 @@ test("HTML workbook renders stacked fractions while slash input remains valid",a
 });
 
 test("ratio and number-system workbooks stay usable at 320px and 390px",async function(){
-  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A"]) for(const width of [320,390]){
+  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A","6.EE.B"]) for(const width of [320,390]){
     const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});
     const errors=errorsFor(page);
     await page.goto(`${baseUrl}?cluster=${cluster}&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});

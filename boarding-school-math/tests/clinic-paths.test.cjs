@@ -21,7 +21,7 @@ test("all reviewed Grade 6 clusters receive a private-data-free concept route", 
 });
 
 test("reviewed clusters open workbooks with completion-gated rechecks", function () {
-  ["6.EE.B", "6.EE.C", "6.G.A"].forEach(function (cluster) {
+  ["6.EE.C", "6.G.A"].forEach(function (cluster) {
     const before = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: false });
     assert.equal(before.workbook.state, "available");
     assert.equal(before.workbook.url, `./clinic-practice.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
@@ -93,6 +93,15 @@ test("reviewed clusters open workbooks with completion-gated rechecks", function
   assert.equal(paths.completionKey("6.EE.A"),"gfield-unit-workbook:6.EE.A:v1");
   assert.equal(expressionUnit.workbook.url,"./unit-workbook.html?cluster=6.EE.A&mode=workbook&audience=student&locale=ko");
   assert.equal(expressionUnit.recheck.url,"./unit-workbook.html?cluster=6.EE.A&mode=recheck&audience=student&locale=ko");
+
+  const equationUnit=paths.routeFor("6.EE.B",{workbookCompleted:true});
+  assert.equal(equationUnit.workbook.packId,"gfield-grade6-ee-b-unit-workbook-v1");
+  assert.equal(equationUnit.workbook.delivery,"unit-workbook");
+  assert.equal(equationUnit.workbook.itemCount,36);
+  assert.equal(equationUnit.workbook.recheckCount,8);
+  assert.equal(paths.completionKey("6.EE.B"),"gfield-unit-workbook:6.EE.B:v1");
+  assert.equal(equationUnit.workbook.url,"./unit-workbook.html?cluster=6.EE.B&mode=workbook&audience=student&locale=ko");
+  assert.equal(equationUnit.recheck.url,"./unit-workbook.html?cluster=6.EE.B&mode=recheck&audience=student&locale=ko");
 });
 
 test("only exact cluster matches open reviewed animated clinic lessons", function () {
