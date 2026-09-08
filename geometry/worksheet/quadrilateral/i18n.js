@@ -1,0 +1,38 @@
+export const COPY = {
+  ko: {
+    title: "사각형 탐구", brand: "GFIELD 학습지", activity: "활동", count: "문항 수", language: "언어", cover: "표지", answers: "정답·풀이", worksheet: "학습지", all: "전체 활동",
+    back: "사각형 게임으로", refresh: "새 문제", print: "학습지 인쇄", retry: "다시 불러오기", loading: "학습지를 불러오는 중입니다.", error: "문제와 그림을 불러오지 못했습니다. 다시 불러와 주세요.", unavailable: "선택한 활동을 찾을 수 없습니다.",
+    name: "이름", date: "날짜", contents: "활동 차례", sample: "네 변과 네 꼭짓점", learnerFit: "초등 도형 · 사각형의 성질과 분류",
+    convention: "이 활동에서는 평행한 변이 한 쌍 이상인 사각형을 사다리꼴이라고 해요. 성질에 맞는 이름은 모두 고릅니다.",
+    enrichment: "평행과 직각을 익힌 뒤, 성질로 분류하는 확장 활동", selectGuide: "해당하는 것을 모두 표시하세요. 없으면 ‘없음’을 표시하세요.", none: "없음", reason: "어떤 성질을 확인했나요?", working: "그림과 설명을 쓰는 공간", set: "선택한 것", draw: "격자점에 D를 찍고 A-B-C-D-A를 이으세요.", example: "가능한 D의 한 예", otherAnswers: "다른 D도 조건을 만족하면 정답입니다.",
+    descriptions: { parallel: "마주 보는 변의 평행 관계", right: "직각인 꼭짓점 찾기", classify: "성질에 맞는 이름 모두 찾기", build: "조건에 맞는 꼭짓점 D 찾기" },
+    criteria: "평행한 변과 직각을 확인하고, 그 성질로 이름을 고르고, 세 점에 한 점을 더해 사각형을 만듭니다.", total: (n, p) => `${n}문항 · A4 ${p}쪽`, questions: (n) => `${n}문항`,
+  },
+  en: {
+    title: "Quadrilateral Studio", brand: "GFIELD Worksheets", activity: "Activity", count: "Questions", language: "Language", cover: "Cover", answers: "Answers", worksheet: "Worksheet", all: "All activities",
+    back: "Quadrilateral game", refresh: "New problems", print: "Print worksheet", retry: "Reload", loading: "Loading worksheet.", error: "The problems or diagrams could not load. Please reload.", unavailable: "This activity is unavailable.",
+    name: "Name", date: "Date", contents: "Contents", sample: "Four sides, four vertices", learnerFit: "Elementary geometry · Quadrilateral properties and classification",
+    convention: "In this activity, a trapezoid has at least one pair of parallel sides. Choose every name whose properties fit.",
+    enrichment: "Classification enrichment after parallel sides and right angles", selectGuide: "Check all that apply. If nothing applies, check None.", none: "None", reason: "Which properties did you check?", working: "Space for drawing and reasoning", set: "Selected set", draw: "Mark D on a grid point. Join A-B-C-D-A.", example: "One possible D", otherAnswers: "Other points D are accepted when they meet the conditions.",
+    descriptions: { parallel: "Parallel pairs of opposite sides", right: "Find vertices with right angles", classify: "Find every matching shape name", build: "Find a fourth vertex that fits" },
+    criteria: "Check parallel sides and right angles, choose names from properties, and add a fourth point to make a quadrilateral.", total: (n, p) => `${n} questions · ${p} A4 pages`, questions: (n) => `${n} questions`,
+  },
+  zh: {
+    title: "四边形探究", brand: "GFIELD 学习单", activity: "活动", count: "题数", language: "语言", cover: "封面", answers: "答案与解析", worksheet: "学习单", all: "全部活动",
+    back: "返回四边形游戏", refresh: "换一组题", print: "打印学习单", retry: "重新加载", loading: "正在加载学习单。", error: "题目或图形加载失败，请重新加载。", unavailable: "找不到所选活动。",
+    name: "姓名", date: "日期", contents: "活动目录", sample: "四条边，四个顶点", learnerFit: "小学几何 · 四边形的性质与分类",
+    convention: "本活动约定：至少有一组对边平行的四边形叫作梯形。请选择所有符合性质的名称。",
+    enrichment: "认识平行和直角后的分类拓展活动", selectGuide: "勾选所有符合的选项。都不符合时，勾选“无”。", none: "无", reason: "你确认了哪些性质？", working: "画图和说明的空间", set: "所选项目", draw: "在格点上标出D，连接A-B-C-D-A。", example: "D的一种可能位置", otherAnswers: "其他D的位置只要满足条件，也算正确。",
+    descriptions: { parallel: "判断对边是否平行", right: "找出直角所在的顶点", classify: "找出所有符合的名称", build: "找出符合条件的顶点D" },
+    criteria: "判断平行和直角，根据性质选择名称，在三个点的基础上添加一点，组成四边形。", total: (n, p) => `${n}题 · A4共${p}页`, questions: (n) => `${n}题`,
+  },
+  ja: {
+    title: "四角形の探究", brand: "GFIELD ワークシート", activity: "活動", count: "問題数", language: "言語", cover: "表紙", answers: "答えと解説", worksheet: "ワークシート", all: "すべての活動",
+    back: "四角形のゲームへ", refresh: "新しい問題", print: "印刷", retry: "再読み込み", loading: "ワークシートを読み込んでいます。", error: "問題や図を読み込めませんでした。再読み込みしてください。", unavailable: "選んだ活動が見つかりません。",
+    name: "名前", date: "日付", contents: "活動の目次", sample: "四つの辺、四つの頂点", learnerFit: "小学校の図形 · 四角形の性質と分類",
+    convention: "この活動では、向かい合う辺が少なくとも1組平行な四角形を台形とします。性質に合う名前をすべて選びます。",
+    enrichment: "平行と直角を学んだあとの分類の発展活動", selectGuide: "当てはまるものをすべて選びましょう。なければ「なし」を選びます。", none: "なし", reason: "どの性質を確かめましたか？", working: "図や説明を書く場所", set: "選んだもの", draw: "格子点にDをとり、A-B-C-D-Aを結びましょう。", example: "Dの位置の一例", otherAnswers: "条件に合うほかのDの位置も正解です。",
+    descriptions: { parallel: "向かい合う辺の平行を調べる", right: "直角のある頂点を見つける", classify: "性質に合う名前をすべて選ぶ", build: "条件に合う頂点Dを見つける" },
+    criteria: "平行な辺や直角を確かめ、性質から名前を選び、三つの点にもう一点を加えて四角形を作ります。", total: (n, p) => `${n}問 · A4 ${p}ページ`, questions: (n) => `${n}問`,
+  },
+};

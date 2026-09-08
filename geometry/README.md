@@ -153,6 +153,27 @@ node geometry/games/piece-play/piece-play.selftest.mjs
 node geometry/worksheet/geoboard/geoboard-sheet.browsercheck.mjs
 ```
 
+## 사각형 탐구 검증
+
+평행한 변, 직각, 성질에 따른 분류, 사각형 완성하기를 독립적인 4영역으로 제공합니다.
+신규 문항은 영역별 20개이며, 게임과 표지 포함 최대 20문항 학습지가 같은 문항을 사용합니다.
+분류는 평행과 직각을 익힌 뒤의 확장 활동입니다. 사다리꼴은 평행한 변이 적어도 한 쌍인
+사각형으로 명시하고, 만들기는 조건을 만족하는 모든 격자점 D를 정답으로 인정합니다.
+
+```powershell
+node geometry/games/quadrilateral/core.selftest.mjs
+node geometry/games/quadrilateral/holdout.selftest.mjs
+node geometry/games/quadrilateral/render.audit.mjs
+node geometry/games/quadrilateral/browsercheck.mjs
+node geometry/games/quadrilateral/offline.browsercheck.mjs
+node geometry/worksheet/quadrilateral/workbook.selftest.mjs
+node geometry/worksheet/quadrilateral/workbook.browsercheck.mjs
+node geometry/games/quadrilateral/integration.browsercheck.mjs
+```
+
+브라우저 검사는 `GFIELD_BASE_URL`로 공개 사이트를 지정할 수 있습니다. 구현·로컬 검증·배포는
+별도 상태이며, 원본 교재 문항을 복제하거나 공식 평가 점수에 연결하지 않습니다.
+
 ## 도형 변환 공방 회귀 검사
 
 영역별 독립 문항 검산, PC·모바일의 동일 크기 도형, 4언어, 힌트·실제 변환 애니메이션,
