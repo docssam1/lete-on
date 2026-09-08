@@ -333,14 +333,19 @@
   .nm-pt-steps b { position:absolute; left:0; top:0; width:4.4mm; height:4.4mm; border-radius:50%;
     background:#0E2C57; color:#fff; font-size:8px; display:flex; align-items:center; justify-content:center;
     -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .nm-pt-buys { flex:0 0 auto; margin-top:4mm; padding-top:3mm; border-top:1px solid #C9A063; }
-  .nm-pt-buys-t { font-size:10px; font-weight:800; color:#0E2C57; margin-bottom:2.5mm; }
-  .nm-pt-buys-body { display:grid; grid-template-columns:repeat(3,1fr); gap:3mm; }
-  .nm-pt-buy { display:block; text-decoration:none; color:inherit; border:1px solid #ddd;
-    border-radius:2mm; padding:2.5mm 3mm; }
-  .nm-pt-buy b { display:block; font-size:10.5px; }
-  .nm-pt-buy span { display:block; font-size:9px; color:#555; margin-top:.6mm; }
-  .nm-pt-buy i { display:block; font-size:8.5px; color:#777; font-style:normal; margin-top:1mm; }
+  .nm-pt-choose { flex:0 0 auto; margin-top:4mm; padding-top:3mm; border-top:1px solid #C9A063;
+    display:grid; grid-template-columns:1fr auto 1fr; gap:3mm; align-items:stretch; }
+  .nm-pt-opt { display:block; text-decoration:none; color:inherit; border:1px solid #ccc;
+    border-radius:2mm; padding:3mm 3.5mm; }
+  .nm-pt-opt-buy { border-color:#0E2C57; }
+  .nm-pt-opt-make { border-style:dashed; }
+  .nm-pt-tag { display:inline-block; font-size:8.5px; font-weight:800; letter-spacing:.04em;
+    color:#0E2C57; background:#EFEDE7; border-radius:1.5mm; padding:.7mm 2mm; margin-bottom:1.5mm;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-pt-opt b { display:block; font-size:11.5px; }
+  .nm-pt-opt p { margin:1mm 0 0; font-size:9.5px; line-height:1.55; color:#444; }
+  .nm-pt-opt i { display:block; font-size:8.5px; font-style:normal; color:#777; margin-top:1.5mm; }
+  .nm-pt-or { align-self:center; font-size:10px; font-weight:800; color:#8a92a3; }
 
   /* 수학사 지면 + 실험실 QR (w2HistoryPageHtml, 2026-09-06) */
   .nm-hist-page { gap:0; }
@@ -1251,12 +1256,26 @@ function w2PaperToolPageHtml(courseNum, code){
   if(!art) return '';
   const steps = (pickL(tool.steps) || []).map((t, i) =>
     `<li><b>${i + 1}</b>${esc(t)}</li>`).join('');
-  const buys = (window.NM_BUY_TOOLS || []).map(b => {
-    /* 네이버 검색 — 특정 상품이 아니라 검색어를 건다(링크가 죽지 않는다). */
-    const url = 'https://search.shopping.naver.com/search/all?query=' + encodeURIComponent(b.q);
-    return `<a class="nm-pt-buy" href="${esc(url)}"><b>${esc(pickL(b.name))}</b>` +
-      `<span>${esc(pickL(b.use))}</span><i>${esc(pickL(b.pick))}</i></a>`;
-  }).join('');
+  /* 둘 중 하나를 고른다(2026-09-08, 원장 "금액은 내지만 구입하는 거 양팔 저울처럼, 아니면
+     주변에 있는 것으로 만들기, 둘 중 선택하도록"). 사는 쪽은 네이버 **검색 링크** — 상품 번호와
+     가격은 박지 않는다(가격은 매일 바뀌고 링크는 죽는다). */
+  const buy = tool.buy, make = tool.make;
+  const buyUrl = buy && buy.q ? 'https://search.shopping.naver.com/search/all?query=' + encodeURIComponent(buy.q) : '';
+  const choices = (buy && make) ? `<div class="nm-pt-choose">
+    <a class="nm-pt-opt nm-pt-opt-buy" href="${esc(buyUrl)}">
+      <span class="nm-pt-tag">A ${esc(lk('사서 쓰기','Buy it','买来用'))}</span>
+      <b>${esc(pickL(buy.name))}</b>
+      <p>${esc(pickL(buy.why))}</p>
+      <i>${esc(lk('살 때 보는 것','What to check','挑选要点'))} — ${esc(pickL(buy.pick))}</i>
+    </a>
+    <div class="nm-pt-or">${esc(lk('또는','or','或'))}</div>
+    <div class="nm-pt-opt nm-pt-opt-make">
+      <span class="nm-pt-tag">B ${esc(lk('만들어 쓰기','Make it','自己做'))}</span>
+      <b>${esc(pickL(make.name))}</b>
+      <p>${esc(pickL(make.how))}</p>
+      <i>${esc(lk('돈이 들지 않습니다. 위 그림을 오려 쓰세요.','No cost — cut out the sheet above.','不花钱，把上面的图剪下来用。'))}</i>
+    </div>
+  </div>` : '';
   return `<div class="nm-w2-page nm-pt-page">
   <div class="nm-hist-head">
     <span class="nm-hist-kicker">${esc(lk('이번 주 종이 교구','This Week\'s Paper Tool','本周纸教具'))}</span>
@@ -1265,12 +1284,7 @@ function w2PaperToolPageHtml(courseNum, code){
   <p class="nm-pt-why">${esc(pickL(tool.why))}</p>
   <div class="nm-pt-art">${art}</div>
   <ol class="nm-pt-steps">${steps}</ol>
-  <div class="nm-pt-buys">
-    <div class="nm-pt-buys-t">${esc(lk('사야 하는 것은 이 셋뿐입니다. 나머지는 위에서 오려 쓰세요.',
-      'Only these three need buying. Everything else is cut from the page above.',
-      '只有这三样需要买，其余从上面剪下来用。'))}</div>
-    <div class="nm-pt-buys-body">${buys}</div>
-  </div>
+  ${choices}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
 </div>`;
 }
