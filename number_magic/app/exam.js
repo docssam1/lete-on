@@ -4445,14 +4445,20 @@ ${round.html}
       items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4,
         topicName:'창의 연산 · ' + thName(d.t), seed:seedOf(seedWeek + 'cr', ci) });
     });
-    const d0 = session.drills[0];
-    const seen = {}; seen[d0.t] = true; const alts = [];
-    const push = d => { if(seen[d.t]) return; seen[d.t] = true;
-      alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) }); };
-    session.drills.slice(1).forEach(push);
-    course.sessions.forEach(s => { if(s !== session && !s.test) (s.drills||[]).forEach(push); });
-    items.push({ thread:d0.t, level:d0.lv, n:6, count:6, wordType:'all', optionalWord:true,
-      seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t), wordAlts:alts });
+    /* 문장제 회차는 초등 구간(레벨 1~3·경시의 탑)에만(2026-09-08, 원장 "중등·고등은 문장제보다는
+       적용이지"). 중고등 과정에도 복습 풀의 초등 드릴이 있어 문장제가 만들어지긴 했지만 그 학년의
+       학습지에 실을 것이 아니다. 중고등의 '적용' 회차는 따로 설계할 일이고 여기서 지어내지 않는다. */
+    const ELEM = { level1:1, level2:1, level3:1, challenge:1 };
+    if(ELEM[course.tier]){
+      const d0 = session.drills[0];
+      const seen = {}; seen[d0.t] = true; const alts = [];
+      const push = d => { if(seen[d.t]) return; seen[d.t] = true;
+        alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) }); };
+      session.drills.slice(1).forEach(push);
+      course.sessions.forEach(s => { if(s !== session && !s.test) (s.drills||[]).forEach(push); });
+      items.push({ thread:d0.t, level:d0.lv, n:6, count:6, wordType:'all', optionalWord:true,
+        seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t), wordAlts:alts });
+    }
     const wsId = 'W' + w + '-' + c + (k === 2 ? '-2' : '');
     const title = (course.title && (course.title.ko || course.title)) || c;
     const weekLabel = (() => {
