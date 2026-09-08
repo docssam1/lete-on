@@ -2099,6 +2099,40 @@ function parseDecExpr(tex){
   return { kind:'dec', op, a:m[1], b:m[3], aNum, bNum, rhs, digits,
            aIsInt: m[1].indexOf('.') < 0, bIsInt: m[3].indexOf('.') < 0 };
 }
+/* 평균 — EL4. "(19 + 9 + 14) \div 3 = \square"(평균 구하기) 와
+   "(11 + 18 + 9 + 18 + \square) \div 5 = 16"(평균이 주어지고 빠진 수 찾기) 두 모양.
+   빈칸이 괄호 안에 있으면 blankIndex 로 알려 준다(문장이 "어떤 수"를 물어야 하므로). */
+function parseAvgExpr(tex){
+  const t = String(tex||'').replace(/\s+/g,' ').trim();
+  const m = t.match(/^\(([^()]+)\)\s*\\div\s*(\d+)\s*=\s*(\\square|\d+)$/);
+  if(!m) return null;
+  const parts = m[1].split('+').map(x => x.trim());
+  const k = +m[2];
+  if(!parts.length || parts.length !== k || k < 2 || k > 8) return null;
+  let blankIndex = -1;
+  for(let i=0;i<parts.length;i++){
+    if(/^\\square$/.test(parts[i])){ if(blankIndex >= 0) return null; blankIndex = i; }
+    else if(!/^\d+$/.test(parts[i])) return null;
+  }
+  const avgGiven = /^\d+$/.test(m[3]) ? +m[3] : null;
+  if(blankIndex >= 0 && avgGiven == null) return null;   /* 빈칸 둘 — 문장으로 못 만든다 */
+  if(blankIndex < 0 && avgGiven != null) return null;    /* 물을 것이 없다 */
+  return { kind:'avg', nums:parts, k, blankIndex, avg:avgGiven, rhs:{form:'plain'} };
+}
+/* 비와 비율 — MX3 의 "비교하는 양"(□ ÷ 470 = 50%) · "기준량"(235 ÷ □ = 50%) 두 모양만.
+   비율→백분율·할푼리·간단한 비(L1~L3)는 변환식이라 문장제로 만들지 않는다. */
+function parsePercentExpr(tex){
+  const t = String(tex||'').replace(/\s+/g,' ').trim();
+  const m = t.match(/^(\\square|\d+)\s*\\div\s*(\\square|\d+)\s*=\s*(\d+)\s*\\,?\s*\\%$/);
+  if(!m) return null;
+  const partBlank = m[1] === '\\square', baseBlank = m[2] === '\\square';
+  if(partBlank === baseBlank) return null;               /* 둘 다이거나 둘 다 아니면 제외 */
+  const pct = +m[3];
+  if(!(pct > 0) || pct > 1000) return null;
+  return { kind:'pct', mode: partBlank ? 'part' : 'base',
+           part: partBlank ? null : m[1], base: baseBlank ? null : m[2],
+           pct:String(pct), rhs:{form:'plain'} };
+}
 /* 정답지용 답 표기 — 빈칸(p.answer)을 rhs 형태에 맞춰 온전한 값으로. */
 function wordAnswerTex(desc, answer){
   if(answer == null) return null;
@@ -2121,9 +2155,13 @@ function wordAnswerTex(desc, answer){
 }
 function wordifyExtended(p, rng, used){
   const REG = window.NM_WORD_FRAMES || {};
-  const desc = parseFracExpr(p.tex||'') || parseDecExpr(p.tex||'');
+  const desc = parseFracExpr(p.tex||'') || parseDecExpr(p.tex||'')
+            || parseAvgExpr(p.tex||'') || parsePercentExpr(p.tex||'');
   if(!desc) return null;
-  const fn = desc.kind === 'frac' ? REG.fraction : REG.decimal;
+  const fn = desc.kind === 'frac' ? REG.fraction
+           : desc.kind === 'dec'  ? REG.decimal
+           : desc.kind === 'avg'  ? REG.average
+           : REG.percent;
   if(typeof fn !== 'function') return null;
   const ctx = { rng, used, names:WP_NAMES, pickUnused, kJosa, enCount };
   let w = null;

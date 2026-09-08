@@ -91,7 +91,7 @@
 
 const COURSE_SPEC = [
  {id:1, tier:'level1', title:{ko:'자릿값과 첫 덧셈',en:'Place Value & First Addition',zh:'位值与加法入门'},
-   drills:['NS1','NS2','NS3','AD1'], magic:[['N-06','N-07']]},
+   drills:['NS1','NS2','NS3','AD1'], magic:[['N-06','N-07']], creative:['NL11@1','NL12@2','NL5@1']},
  {id:2, tier:'level1', title:{ko:'받아올림과 두 배 수',en:'Carrying & Doubles',zh:'进位与翻倍数'},
    drills:['AD2','NS5','NS4'], magic:[['A-01'],['A-02']], creative:['AD9']},
  {id:3, tier:'level1', title:{ko:'두 자리 덧뺄셈 시작',en:'Two-digit ± Begins',zh:'两位数加减开始'},
@@ -143,7 +143,9 @@ const COURSE_SPEC = [
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
    drills:['MX3','DV8','EL4'], magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1']},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
-   drills:['MX5'], magic:[], boss:true},
+   drills:['MX5'], magic:[], /* 레벨 보스는 세션이 3개로 고정이라 창의도 3종만 실린다(4개를 적으면 마지막이 안 나온다).
+      레벨 3을 대표하는 셋 — 분수 · 소수 · 수열(가우스). */
+   creative:['FR11@1','DC5@1','MX6@1'], boss:true},
 
  /* 26~28 실배치(2026-08-25 Phase 2, 고급-목차.md §2②): 로드맵 §3의 4단원 구성 그대로.
     각 과정 4단원 중 신규 유닛(H-01·02, H-03~06, H-07~10)이 magic, 1단계에서 이미
