@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>6세 챌린지 · 생성기 검수</title>
+  <link rel="stylesheet" href="review.css">
+</head>
+<body>
+  <header class="review-toolbar">
+    <div>
+      <span>LE​TE-ON · HYPER FOCUS</span>
+      <strong>6세 챌린지 생성기 검수</strong>
+      <small>검수 전용 · 공개 시험 아님</small>
+    </div>
+    <nav aria-label="검수 도구">
+      <button type="button" id="regenerate">다시 생성</button>
+      <button type="button" id="toggleAnswers">정답 보기</button>
+      <button type="button" id="printQuestions">문제 3개씩 인쇄</button>
+      <button type="button" id="printConcepts">개념 교재 인쇄</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="reviewTitle">
+      <p>REVIEW BUILD</p>
+      <h1 id="reviewTitle">원본 구조를 지키고<br>숫자와 조건만 바꾼 유사문제</h1>
+      <div class="status-row">
+        <span>대상: 6세 챌린지 준비</span>
+        <span>모든 후보 전수검사</span>
+        <span>정답 1개만 통과</span>
+      </div>
+    </section>
+
+    <section id="questionSheets" class="sheet-stack" aria-label="유사문제 검수지"></section>
+
+    <section class="concept-intro">
+      <p>CONCEPT BOOK</p>
+      <h2>워밍업 · 예제 · 유제 · 리뷰</h2>
+    </section>
+    <section id="conceptSheets" class="sheet-stack concept-stack" aria-label="개념 교재 검수지"></section>
+  </main>
+
+  <script src="challenge-bank.js"></script>
+  <script src="review.js"></script>
+</body>
+</html>

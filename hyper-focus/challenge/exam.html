@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LETE-ON · 6세 챌린지 시험</title>
+  <link rel="stylesheet" href="review.css">
+  <link rel="stylesheet" href="exam.css">
+</head>
+<body>
+  <header class="exam-toolbar">
+    <div><b>6세 챌린지 시험</b><small>검수용 시험지</small></div>
+    <label>회차 <select id="round"><option value="1">1회</option><option value="2">2회</option></select></label>
+    <label>학생 이름 <input id="studentName" value="학생이름" maxlength="12"></label>
+    <button type="button" id="regenerateExam">다시 생성</button>
+    <button type="button" id="printExam">시험지 인쇄</button>
+    <button type="button" id="printAnswers">정답지 인쇄</button>
+  </header>
+  <main id="examPages" class="exam-pages" aria-live="polite"></main>
+  <script src="challenge-bank.js"></script>
+  <script src="exam.js"></script>
+</body>
+</html>
