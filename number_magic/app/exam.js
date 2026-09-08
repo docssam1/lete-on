@@ -2025,10 +2025,105 @@ function pickUnused(list, rng, usedSet){
    언어 키로 고르므로 문장 객체에 다른 키를 섞지 않는다).
    틀(frame)은 +·− 에 3개씩(2026-09-06) — 여섯 문항이 한 문장 틀에 명사만 바뀌어 나갔었다.
    새 틀은 반드시 세 언어를 함께 갖춘다(pickL 이 화면 언어로 고른다). ×·÷ 는 예전 한 틀 그대로. */
+/* ── 분수·소수 문장제 (2026-09-08, 원장 "분수 소수 사용해야지") ──────────
+   정수 `a○b=□` 밖의 식은 여기서 서술자(desc)로 풀어 window.NM_WORD_FRAMES 의
+   프레임 함수(app/word-frames-fraction.js · word-frames-decimal.js)에 넘긴다.
+   프레임은 **문장만** 만든다(ko·en·zh + 단위). 답 표기(정답지)는 엔진이
+   rhs 형태와 p.answer 로 계산한다(p.wordAnswerTex) — 프레임이 답을 건드리면
+   드릴 채점과 어긋날 수 있어 금지.
+   '='가 없는 식(FR4 L1 `1/2 + 3/6` 처럼 빈칸이 통분 분모인 단계 문항)은 빈칸의
+   뜻을 모르므로 문장제로 만들지 않는다 — 학습지는 wordAlts 로 다른 드릴을 찾는다. */
+const FRAC_RE = /\\d?frac\{(\d+)\}\{(\d+)\}/;
+function parseFracTerm(t){
+  t = t.trim();
+  let m = t.match(/^(\d+)?\s*\\d?frac\{(\d+)\}\{(\d+)\}$/);
+  if(m) return { w:+(m[1]||0), n:+m[2], d:+m[3] };
+  m = t.match(/^(\d+)$/);
+  if(m) return { w:+m[1], n:0, d:1 };
+  return null;
+}
+function fracStr(f){
+  if(!f.d || f.d === 1) return String(f.w);
+  return (f.w ? f.w + ' ' : '') + f.n + '/' + f.d;
+}
+function fracVal(f){ return f.w + (f.d ? f.n / f.d : 0); }
+function parseFracExpr(tex){
+  const t = String(tex||'').replace(/\\dfrac/g,'\\frac').replace(/\s+/g,' ').trim();
+  if(!FRAC_RE.test(t)) return null;
+  const m = t.match(/^(.+?)\s*(\+|-|−|\\times|\\div)\s*(.+?)\s*=\s*(.+)$/);
+  if(!m) return null;
+  const a = parseFracTerm(m[1]), b = parseFracTerm(m[3]);
+  if(!a || !b) return null;
+  const opMap = {'\\times':'×','\\div':'÷','-':'−'};
+  const op = opMap[m[2]] || m[2];
+  const r = m[4].trim();
+  let rhs = null, mm;
+  if((mm = r.match(/^\\frac\{\\square\}\{(\d+)\}$/))) rhs = { form:'num', d:+mm[1] };
+  else if((mm = r.match(/^\\square\s*\\frac\{(\d+)\}\{(\d+)\}$/))) rhs = { form:'mixed', n:+mm[1], d:+mm[2] };
+  else if(/^\\square$/.test(r)) rhs = { form:'plain' };
+  if(!rhs) return null;
+  if(op === '−' && fracVal(a) < fracVal(b)) return null;
+  return { kind:'frac', op, a, b, rhs, aStr:fracStr(a), bStr:fracStr(b),
+           sameDen: a.d === b.d, aIsInt: a.d === 1, bIsInt: b.d === 1 };
+}
+function parseDecExpr(tex){
+  const t = String(tex||'').replace(/\\dfrac/g,'\\frac').replace(/\s+/g,' ').trim();
+  const m = t.match(/^(\d+(?:\.\d+)?)\s*(\+|-|−|\\times|\\div)\s*(\d+(?:\.\d+)?)\s*=\s*(.+)$/);
+  if(!m) return null;
+  if(m[1].indexOf('.') < 0 && m[3].indexOf('.') < 0) return null;   /* 정수끼리는 parseVert 몫 */
+  const opMap = {'\\times':'×','\\div':'÷','-':'−'};
+  const op = opMap[m[2]] || m[2];
+  const r = m[4].trim();
+  let rhs = null, mm;
+  if((mm = r.match(/^\\frac\{\\square\}\{(\d+)\}$/))) rhs = { form:'num', d:+mm[1] };
+  else if((mm = r.match(/^(\d+)\.\\square$/))) rhs = { form:'dec', int:mm[1] };
+  else if(/^\\square$/.test(r)) rhs = { form:'plain' };
+  if(!rhs) return null;
+  const aNum = +m[1], bNum = +m[3];
+  if(!isFinite(aNum) || !isFinite(bNum) || aNum > 100000 || bNum > 100000) return null;
+  if(op === '−' && aNum < bNum) return null;
+  const digits = Math.max((m[1].split('.')[1]||'').length, (m[3].split('.')[1]||'').length);
+  return { kind:'dec', op, a:m[1], b:m[3], aNum, bNum, rhs, digits,
+           aIsInt: m[1].indexOf('.') < 0, bIsInt: m[3].indexOf('.') < 0 };
+}
+/* 정답지용 답 표기 — 빈칸(p.answer)을 rhs 형태에 맞춰 온전한 값으로. */
+function wordAnswerTex(desc, answer){
+  if(answer == null) return null;
+  const rhs = desc.rhs;
+  if(Array.isArray(answer)){
+    if(answer.length === 2) return `\\dfrac{${answer[0]}}{${answer[1]}}`;
+    if(answer.length === 3) return `${answer[0]}\\dfrac{${answer[1]}}{${answer[2]}}`;
+    return null;
+  }
+  if(rhs.form === 'num'){
+    if(desc.kind === 'dec'){
+      const v = answer / rhs.d;
+      return String(+v.toFixed(String(rhs.d).length - 1));
+    }
+    return `\\dfrac{${answer}}{${rhs.d}}`;
+  }
+  if(rhs.form === 'mixed') return `${answer}\\dfrac{${rhs.n}}{${rhs.d}}`;
+  if(rhs.form === 'dec') return `${rhs.int}.${answer}`;
+  return String(answer);
+}
+function wordifyExtended(p, rng, used){
+  const REG = window.NM_WORD_FRAMES || {};
+  const desc = parseFracExpr(p.tex||'') || parseDecExpr(p.tex||'');
+  if(!desc) return null;
+  const fn = desc.kind === 'frac' ? REG.fraction : REG.decimal;
+  if(typeof fn !== 'function') return null;
+  const ctx = { rng, used, names:WP_NAMES, pickUnused, kJosa, enCount };
+  let w = null;
+  try { w = fn(desc, ctx); } catch(e){ w = null; }
+  if(!w || !w.ko || !w.en || !w.zh) return null;
+  const tex = wordAnswerTex(desc, p.answer);
+  if(tex) w.answerTex = tex;
+  return w;
+}
 function wordifyProblem(p, rng, used){
   const v = parseVert(p.tex||'');
-  if(!v) return null;
-  if(v.a.indexOf('.')>=0 || v.b.indexOf('.')>=0) return null; /* 소수는 숫자식 유지 */
+  if(!v) return wordifyExtended(p, rng, used);
+  if(v.a.indexOf('.')>=0 || v.b.indexOf('.')>=0) return wordifyExtended(p, rng, used);
   const a=+v.a, b=+v.b;
   if(!isFinite(a)||!isFinite(b)||a>100000||b>100000) return null;
   used = used || {};
@@ -2117,8 +2212,10 @@ function applyWordProblems(problems, wordType, numericSeed){
        pickL이 화면 언어에 맞는 벌을 고른다. WP 스레드는 원래부터 3언어. */
     if(w){
       const unit = w.unit; delete w.unit;
+      const aTex = w.answerTex; delete w.answerTex;
       p.word = w;
       if(unit) p.wordUnit = unit;
+      if(aTex) p.wordAnswerTex = aTex;
     }
   });
   return problems;
@@ -2322,6 +2419,14 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
      fmtAns 로 "3, 2"라고 찍히던 것을 3√2 로(정답지에서만 처리, 생성기·앱 채점은 그대로).
    · 문장제(p.wordUnit)는 단위를 붙인다("80장"). answerNote 가 있는 WP 스레드는 원래대로. */
 function w2AnswerValueHtml(p){
+  /* 분수·소수 문장제(2026-09-08): 빈칸 값(분자 2)이 아니라 온전한 값(2/3 · 1.2)을 적는다 —
+     문장제 답은 "몇 m"이지 "빈칸에 들어갈 수"가 아니다. */
+  if(p.word && p.wordAnswerTex){
+    const unit = p.wordUnit ? pickL(p.wordUnit) : '';
+    return /\\/.test(p.wordAnswerTex)
+      ? `<span class="nm-w2-tex" data-tex="${esc(p.wordAnswerTex)}"></span>${unit ? esc(' ' + unit) : ''}`
+      : esc(p.wordAnswerTex + (unit ? ' ' + unit : ''));
+  }
   const akTex = ansTex(p);
   if(akTex) return `<span class="nm-w2-tex" data-tex="${esc(akTex)}"></span>`;
   if(Array.isArray(p.answer) && p.answer.length === 2 && /\\square\\sqrt\{\\square\}/.test(String(p.tex||''))){

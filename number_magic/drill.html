@@ -342,6 +342,9 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
      설명이 열려요" 안내만 찍히고 정작 QR이 안 나온다(2026-08-28 발견). 메인 앱은
      index.html에서 이미 싣고 있었는데 drill.html만 빠져 있었다. exam.js보다 먼저. -->
 <script src="vendor/qrcode.js"></script>
+<!-- 분수·소수 문장제 프레임(2026-09-08) — exam.js 의 wordifyExtended 가 window.NM_WORD_FRAMES 를 본다. exam.js보다 먼저. -->
+<script src="app/word-frames-fraction.js"></script>
+<script src="app/word-frames-decimal.js"></script>
 <script src="app/exam.js"></script>
 
 <script>
