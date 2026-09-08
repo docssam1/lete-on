@@ -16,7 +16,7 @@
   });
   const WORKBOOK_BY_CLUSTER = Object.freeze({
     "6.RP.A": Object.freeze({ packId: "gfield-grade6-rp-a-unit-workbook-v1", labelKo: "비와 비율 36문항 단원 워크북", delivery: "unit-workbook", itemCount:36, recheckCount:8 }),
-    "6.NS.A": Object.freeze({ packId: "gfield-grade6-ns-a-clinic-v1", labelKo: "분수 나눗셈 12문항 클리닉", itemCount:12, recheckCount:4 }),
+    "6.NS.A": Object.freeze({ packId: "gfield-grade6-ns-a-unit-workbook-v1", labelKo: "분수 나눗셈 36문항 단원 워크북", delivery:"unit-workbook", itemCount:36, recheckCount:8 }),
     "6.NS.B": Object.freeze({ packId: "gfield-grade6-ns-b-clinic-v1", labelKo: "수 체계 계산 12문항 클리닉", itemCount:12, recheckCount:4 }),
     "6.NS.C": Object.freeze({ packId: "gfield-grade6-ns-c-clinic-v1", labelKo: "음수·좌표평면 12문항 클리닉", itemCount:12, recheckCount:4 }),
     "6.EE.A": Object.freeze({ packId: "gfield-grade6-ee-a-clinic-v1", labelKo: "식의 구조와 동치식 12문항 클리닉", itemCount:12, recheckCount:4 }),
@@ -40,7 +40,7 @@
 
   function completionKey(clusterId) {
     const cluster = safeCluster(clusterId);
-    return (cluster === "6.RP.A" ? "gfield-unit-workbook:" : COMPLETION_PREFIX) + cluster + ":v1";
+    return (["6.RP.A","6.NS.A"].includes(cluster) ? "gfield-unit-workbook:" : COMPLETION_PREFIX) + cluster + ":v1";
   }
 
   function workbookUrl(clusterId, mode, audience, locale) {
@@ -98,5 +98,5 @@
     return true;
   }
 
-  return Object.freeze({ schemaVersion: 9, animatedByCluster: ANIMATED_BY_CLUSTER, workbookByCluster: WORKBOOK_BY_CLUSTER, conceptUrl: conceptUrl, workbookUrl: workbookUrl, completionKey: completionKey, routeFor: routeFor, validateAnimatedMapping: validateAnimatedMapping });
+  return Object.freeze({ schemaVersion: 10, animatedByCluster: ANIMATED_BY_CLUSTER, workbookByCluster: WORKBOOK_BY_CLUSTER, conceptUrl: conceptUrl, workbookUrl: workbookUrl, completionKey: completionKey, routeFor: routeFor, validateAnimatedMapping: validateAnimatedMapping });
 });

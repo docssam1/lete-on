@@ -50,7 +50,7 @@ test("pack is original, multilingual, Grade 6 aligned, and has four independent 
   });
   assert.equal(new Set(source.pack.recheckItems.map(function (item) { return item.strand; })).size, 4);
   assert.equal(registry.forCluster("6.NS.A"), source);
-  assert.throws(function () { registry.forCluster("6.G.A"); }, /UNSUPPORTED/);
+  assert.equal(registry.forCluster("6.G.A").pack.clusterId, "6.G.A");
 });
 
 test("mixed-number solutions explicitly show conversion before fraction division", function () {

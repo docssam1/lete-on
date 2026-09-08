@@ -4,12 +4,13 @@
   const requestedCluster = query.get("cluster") || "6.SP.A";
   const sources = {
     "6.RP.A": window.GFIELDGrade6RPAUnitWorkbook,
+    "6.NS.A": window.GFIELDGrade6NSAUnitWorkbook,
     "6.SP.A": window.GFIELDGrade6SPAUnitWorkbook
   };
   const source = sources[requestedCluster];
   if (!source) throw new Error("UNIT_WORKBOOK_SOURCE_MISSING");
   source.validatePack();
-  const completionKey = (source.pack.clusterId==="6.RP.A"?"gfield-unit-workbook:":"gfield-clinic-workbook:")+source.pack.clusterId+":v1";
+  const completionKey = (["6.RP.A","6.NS.A"].includes(source.pack.clusterId)?"gfield-unit-workbook:":"gfield-clinic-workbook:")+source.pack.clusterId+":v1";
   function workbookCompleted() {
     try { return localStorage.getItem(completionKey) === "complete-v1"; }
     catch (_error) { return false; }
