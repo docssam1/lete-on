@@ -194,7 +194,7 @@ window.NM_PAPER_TOOLS = [
         'Put 8 counters on one frame and ask "how many spaces are left?" first.',
         'Fill those 2 from the 7, and put the remaining 5 on the second frame.'],
       zh:['沿虚线剪下两张十格框和20个圆片。','在一张框里放8个，先问"还剩几格？"。','从7里拿2个填满，剩下的5个放到另一张框。']},
-    buy:{ name:{ko:"연결 큐브 100개",en:"Snap cubes, 100",zh:"连接方块100个"}, why:{ko:"붙였다 떼며 10을 만듭니다. 8에 2를 붙여 열 칸짜리 막대를 완성하는 그 손동작이 곧 보수입니다.",en:"Snap and unsnap to make ten. Completing a ten-stick by adding 2 to 8 is the complement, in the hand.",zh:"拼上再拆开来凑十。给8接上2凑成一条十，就是补数。"}, pick:{ko:"100개 이상, 한 손에 잡히는 2cm 안팎. 색이 여러 가지인 것.",en:"100 or more, about 2cm, several colours.",zh:"100个以上，约2厘米，多种颜色。"}, key:"cubes" },
+    buy:{ name:{ko:"멀티큐브 100개",en:"Snap cubes, 100",zh:"多连方块100个"}, why:{ko:"붙였다 떼며 10을 만듭니다. 8에 2를 붙여 열 칸짜리 막대를 완성하는 그 손동작이 곧 보수입니다.",en:"Snap and unsnap to make ten. Completing a ten-stick by adding 2 to 8 is the complement, in the hand.",zh:"拼上再拆开来凑十。给8接上2凑成一条十，就是补数。"}, pick:{ko:"100개 이상, 한 손에 잡히는 2cm 안팎. 색이 여러 가지인 것.",en:"100 or more, about 2cm, several colours.",zh:"100个以上，约2厘米，多种颜色。"}, key:"cubes" },
     make:{ name:{ko:"종이 십틀과 병뚜껑",en:"Paper ten-frame and bottle caps",zh:"纸十格框和瓶盖"}, how:{ko:"위 십틀 두 장과 동그라미를 오립니다. 동그라미 대신 병뚜껑, 단추, 콩을 써도 똑같이 됩니다.",en:"Cut out the two frames above. Bottle caps, buttons or beans work just as well as the paper counters.",zh:"剪下上面两张十格框。用瓶盖、纽扣或豆子代替纸圆片一样好用。"} } },
 
   { key:'place', courses:{from:3,to:4}, build:placeValue,
@@ -239,7 +239,7 @@ window.NM_PAPER_TOOLS = [
         'Overlap the covers to frame a 3-by-4 rectangle and count the dots.',
         'Widen it to 4 rows and see how many dots were added.'],
       zh:['剪下阵列板和两张ㄱ形遮板。','用遮板围出3行4列的长方形，数一数点。','扩到4行，看看多了几个点。']},
-    buy:{ name:{ko:"색 타일 100개",en:"Colour tiles, 100",zh:"彩色方块100个"}, why:{ko:"3 곱하기 4를 직사각형으로 깔면 곱셈이 넓이가 됩니다. 판을 돌려 보면 4 곱하기 3과 같다는 것도 바로 압니다.",en:"Laying 3 by 4 as a rectangle turns multiplication into area; turning it shows 4 by 3 is the same.",zh:"把3×4摆成长方形，乘法就成了面积；转一下就知道4×3一样。"}, pick:{ko:"같은 크기 정사각형 100개. 2.5cm 안팎이면 배열이 눈에 잘 들어옵니다.",en:"100 identical squares, about 2.5cm.",zh:"100个大小相同的方块，约2.5厘米。"}, key:"tiles" },
+    buy:{ name:{ko:"투명 색타일 100개",en:"Transparent colour tiles, 100",zh:"彩色方块100个"}, why:{ko:"3 곱하기 4를 직사각형으로 깔면 곱셈이 넓이가 됩니다. 판을 돌려 보면 4 곱하기 3과 같다는 것도 바로 압니다.",en:"Laying 3 by 4 as a rectangle turns multiplication into area; turning it shows 4 by 3 is the same.",zh:"把3×4摆成长方形，乘法就成了面积；转一下就知道4×3一样。"}, pick:{ko:"같은 크기 정사각형 100개. 2.5cm 안팎이면 배열이 눈에 잘 들어옵니다.",en:"100 identical squares, about 2.5cm.",zh:"100个大小相同的方块，约2.5厘米。"}, key:"tiles" },
     make:{ name:{ko:"종이 배열판과 계란판",en:"Paper array board and an egg carton",zh:"纸阵列板和鸡蛋盒"}, how:{ko:"위 배열판과 가림판을 오립니다. 계란판은 그 자체가 2 곱하기 5 배열이라 열 개 묶음을 보여 주기 좋습니다.",en:"Cut out the board and covers above. An egg carton is already a 2 by 5 array, good for seeing groups of ten.",zh:"剪下上面的阵列板和遮板。鸡蛋盒本身就是2×5的阵列，正好看十个一组。"} } },
 
   { key:'balance', courses:{from:11,to:12}, build:balanceMat,
