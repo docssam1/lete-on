@@ -21,8 +21,8 @@
   }
 
   const QUESTION_CHOICES = freeze([
-    { id: "S", label: tr("통계적 질문", "Statistical question", "统计问题") },
-    { id: "N", label: tr("통계적 질문이 아님", "Not a statistical question", "不是统计问题") }
+    { id: "S", label: tr("답이 여러 가지로 나올 수 있는 조사 질문", "Statistical question", "答案可能不同，需要收集数据的调查问题") },
+    { id: "N", label: tr("답이 하나로 정해지는 질문", "Not a statistical question", "答案唯一确定的问题") }
   ]);
   const ROLE_CHOICES = freeze([
     { id: "C", label: tr("자료의 중심을 나타내는 값", "A measure of center", "表示数据中心位置的量") },
@@ -40,7 +40,7 @@
   ]);
 
   function classify(id, section, level, question, expectedMultipleValues) {
-    return item({ id: id, section: section, strand: "statistical-question", standardIds:freeze(["6.SP.A.1"]), level: level, kind: "question-classification", responseFormat: "choice-id", prompt: tr("답이 여러 가지로 나올 수 있는지 생각해 보고, 통계적 질문인지 고르세요.", "Decide whether the question is statistical.", "判断下面的问题是不是统计问题。"), question: question, choices: QUESTION_CHOICES, data: { expectedMultipleValues: expectedMultipleValues }, errorCode: "single-answer-confusion" });
+    return item({ id: id, section: section, strand: "statistical-question", standardIds:freeze(["6.SP.A.1"]), level: level, kind: "question-classification", responseFormat: "choice-id", prompt: tr("여러 사람에게 묻거나 여러 번 관찰했을 때 답이 달라질 수 있는지 고르세요.", "Decide whether the question is statistical.", "判断向多人提问或多次观察时，答案是否可能不同。"), question: question, choices: QUESTION_CHOICES, data: { expectedMultipleValues: expectedMultipleValues }, errorCode: "single-answer-confusion" });
   }
   function variation(id, section, level, question, options) {
     return item({ id: id, section: section, strand: "anticipated-variability", standardIds:freeze(["6.SP.A.1"]), level: level, kind: "variability-source", responseFormat: "choice-id", prompt: tr("이 질문에 답하려면 어떤 자료를 모아야 하나요?", "What data should you collect to answer this question?", "要回答这个问题，应该收集什么数据？"), question: question, choices: freeze(options), data: {}, errorCode: "wrong-varying-quantity" });
@@ -169,14 +169,14 @@
   ]);
 
   const STRANDS = freeze({
-    "statistical-question": tr("통계적 질문인지 판단하기", "Decide whether a question is statistical", "判断是否为统计问题"),
+    "statistical-question": tr("답이 달라지는 조사 질문 찾기", "Decide whether a question is statistical", "判断答案可能不同的调查问题"),
     "anticipated-variability": tr("질문에 필요한 자료 찾기", "Identify the data to collect", "确定需要收集的数据"),
     "distribution-features": tr("평균과 범위로 두 자료 비교하기", "Compare center and spread", "比较数据的中心位置和离散程度"),
     "center-vs-variation": tr("중심을 나타낼까, 퍼짐을 나타낼까", "Distinguish measures of center and variability", "区分表示中心位置和离散程度的量"),
     "distribution-synthesis": tr("평균과 범위로 두 자료 설명하기", "Describe center and variability together", "综合说明中心位置和离散程度")
   });
   const ERROR_GUIDES = freeze({
-    "single-answer-confusion": { label:tr("답이 하나인 질문도 통계적 질문이라고 고름", "Treated a fixed-answer question as statistical", "把答案固定的问题误判为统计问题"), prompt:tr("여러 사람에게 묻거나 여러 번 관찰했을 때 서로 다른 답이 나올 수 있는지 먼저 확인하게 하세요.", "Ask whether the answer could differ across people or repeated observations.", "先判断答案是否会因人或每次观测而不同。") },
+    "single-answer-confusion": { label:tr("답이 하나로 정해지는 질문을 조사 질문으로 고름", "Treated a fixed-answer question as statistical", "把答案唯一的问题当成需要调查的问题"), prompt:tr("여러 사람에게 묻거나 여러 번 관찰했을 때 서로 다른 답이 나올 수 있는지 먼저 확인하게 하세요.", "Ask whether the answer could differ across people or repeated observations.", "先判断答案是否会因人或每次观测而不同。") },
     "wrong-varying-quantity": { label:tr("질문의 조건과 모아야 할 자료를 혼동함", "Confused a condition in the question with the data to collect", "混淆题目条件和需要收集的数据"), prompt:tr("질문에서 사람마다 또는 날짜마다 기록해야 하는 값을 찾아 표시하게 하세요.", "Have the learner underline the value that must be recorded for each person or observation.", "让学生在题目中标出需要为每个人或每次观测记录的数据。") },
     "center-only": { label:tr("자료의 중심만 보고 퍼진 정도를 판단함", "Judged spread from center alone", "只看中心位置就判断离散程度"), prompt:tr("각 자료의 가장 큰 값에서 가장 작은 값을 빼서 범위를 비교하게 하세요.", "Subtract the least value from the greatest value in each set, then compare the ranges.", "用每组的最大值减去最小值，再比较极差。") },
     "spread-only": { label:tr("자료가 퍼진 정도만 보고 평균을 판단함", "Judged center from spread alone", "只看离散程度就判断中心位置"), prompt:tr("각 자료의 합을 자료 수로 나누어 평균을 따로 구하게 하세요.", "Find each mean separately by dividing the sum by the number of values.", "分别用总和除以数据个数求平均数。") },
@@ -197,17 +197,17 @@
     learnerStage: "US Grade 6 ages 11-12",
     contentOrigin: "gfield-original-authored-public-unit-workbook",
     rights: { publication:"public", assetRights:"original", containsThirdPartyAssets:false },
-    title: tr("6.SP.A 통계적 질문과 자료의 분포", "6.SP.A Statistical Questions and Data Distributions", "6.SP.A 统计问题与数据分布"),
+    title: tr("6.SP.A 자료를 모아 답하는 질문과 자료의 분포", "6.SP.A Statistical Questions and Data Distributions", "6.SP.A 用数据回答的问题与数据分布"),
     subtitle: tr("여러 답이 나올 수 있는 질문을 찾고, 자료가 어디에 모이며 얼마나 퍼져 있는지 살펴봅니다.", "Explore how answers vary and describe the center and spread of numerical data.", "找出因人而异的答案，并描述数据的中心位置和离散程度。"),
-    scopeNotice: tr("이 책의 평가 범위는 미국 6학년 통계 기준 6.SP.A.1-3입니다. 통계적 질문, 자료의 분포, 중심과 퍼짐을 나타내는 값을 연습합니다. 제시된 점그래프와 평균·범위 비교는 6.SP.B.4-5로 이어지는 연결 연습이며, 그래프 작성과 맥락 설명을 마쳤다는 증거로 사용하지 않습니다. 조사 계획과 설명은 선생님이 따로 확인하고, 이 책만으로 승급을 결정하지 않습니다.", "This book assesses US Grade 6 standards 6.SP.A.1-3: statistical questions, distributions, and measures of center and variability. Provided dot plots and mean-range comparisons bridge to 6.SP.B.4-5; they do not demonstrate independent graph construction or contextual summaries. A teacher separately reviews those performances, and this book alone does not determine promotion.", "本练习册评估美国六年级数学标准6.SP.A.1-3：统计问题、数据分布以及表示中心位置和离散程度的量。所提供的点图和平均数、极差比较只是衔接6.SP.B.4-5的练习，不能证明学生已经能够独立作图或结合情境概括数据。相关表现由教师另行评估，不能只凭本练习册决定晋级。"),
+    scopeNotice: tr("이 책의 평가 범위는 미국 6학년 통계 기준 6.SP.A.1-3입니다. 답이 여러 가지로 나오는 조사 질문, 자료의 분포, 중심과 퍼짐을 나타내는 값을 연습합니다. 제시된 점그래프와 평균·범위 비교는 6.SP.B.4-5로 이어지는 연결 연습이며, 그래프 작성과 맥락 설명을 마쳤다는 증거로 사용하지 않습니다. 조사 계획과 설명은 선생님이 따로 확인하고, 이 책만으로 승급을 결정하지 않습니다.", "This book assesses US Grade 6 standards 6.SP.A.1-3: statistical questions, distributions, and measures of center and variability. Provided dot plots and mean-range comparisons bridge to 6.SP.B.4-5; they do not demonstrate independent graph construction or contextual summaries. A teacher separately reviews those performances, and this book alone does not determine promotion.", "本练习册评估美国六年级数学标准6.SP.A.1-3：需要收集数据来回答的问题、数据分布，以及表示中心位置和离散程度的量。所提供的点图和平均数、极差比较只是衔接6.SP.B.4-5的练习，不能证明学生已经能够独立作图或结合情境概括数据。相关表现由教师另行评估，不能只凭本练习册决定晋级。"),
     conceptPages: freeze([
-      { title:tr("개념 1 · 통계적 질문", "Concept 1 · Statistical questions", "概念1 · 统计问题"), body:tr("통계적 질문은 여러 사람에게 묻거나 여러 번 관찰했을 때 서로 다른 답이 나올 수 있는 질문입니다. 질문을 읽고 누구에게서 어떤 자료를 모아야 하는지 찾아보세요.", "A statistical question expects the answers to vary. Identify who or what is observed and which value may differ.", "统计问题的答案会因人或每次观测而不同。读题时，要找出观测对象和可能不同的数据。"), example:tr("‘우리 반 학생들은 학교까지 오는 데 몇 분이 걸리는가?’는 학생마다 답이 다를 수 있으므로 통계적 질문입니다.", "‘How many minutes does it take students in our class to travel to school?’ is statistical because the answers may differ from student to student.", "“我们班学生上学需要多少分钟？”是统计问题，因为每名学生的答案可能不同。") },
+      { title:tr("개념 1 · 답이 달라지는 조사 질문", "Concept 1 · Statistical questions", "概念1 · 答案可能不同的调查问题"), body:tr("여러 사람에게 묻거나 여러 번 관찰했을 때 답이 달라질 수 있는 질문은 자료를 모아 답해야 합니다. 미국 6학년 수학에서는 이런 질문을 statistical question이라고 합니다. 질문을 읽고 누구에게서 어떤 자료를 모아야 하는지 찾아보세요.", "A statistical question expects the answers to vary. Identify who or what is observed and which value may differ.", "向多人提问或多次观察时，如果答案可能不同，就需要收集数据来回答。在美国六年级数学中，这类问题称为 statistical question（统计问题）。读题时，要找出调查对象和需要记录的数据。"), example:tr("‘우리 반 학생들은 학교까지 오는 데 몇 분이 걸리는가?’는 학생마다 답이 다를 수 있으므로 자료를 모아 답하는 조사 질문입니다.", "‘How many minutes does it take students in our class to travel to school?’ is statistical because the answers may differ from student to student.", "“我们班学生上学需要多少分钟？”中，每名学生的答案可能不同，所以需要收集数据来回答。") },
       { title:tr("개념 2 · 자료의 중심과 퍼짐", "Concept 2 · Center and spread of a distribution", "概念2 · 数据的中心位置与离散程度"), body:tr("자료를 점그래프 등에 나타내면 값들이 어디쯤 모이는지(중심), 얼마나 흩어져 있는지(퍼짐), 어떤 모양인지 살펴볼 수 있습니다. 평균과 중앙값은 중심을 나타냅니다. 범위와 평균 절대 편차는 퍼짐을 나타냅니다. 평균 절대 편차는 각 값이 평균에서 떨어진 거리의 평균입니다.", "Describe a numerical data distribution by its center, spread, and overall shape. The mean and median are measures of center. The range and mean absolute deviation (MAD) are measures of variability, or spread.", "描述一组数值数据的分布时，要看中心位置、离散程度和整体形状。平均数和中位数反映中心位置；极差和平均绝对偏差反映离散程度。"), example:tr("평균이 같아도 범위가 다르면 자료가 퍼진 정도는 다릅니다. 평균과 범위를 함께 살펴보세요.", "Two data sets can have the same mean but different spreads. Compare both the mean and the range.", "两组数据的平均数可以相同，但离散程度不同。因此要同时比较平均数和极差。") }
     ]),
-    teacherObservation: tr("학생이 직접 통계적 질문을 만들고 조사할 대상과 모아야 할 자료를 말하게 하세요. 사람마다 또는 관찰할 때마다 답이 달라질 수 있다는 점까지 설명하는지 기록합니다.", "Ask the learner to write a statistical question, identify who or what will be observed, and name the data to collect. Record whether the learner also explains why the answers may vary.", "请学生自己提出一个统计问题，说明调查对象和需要收集的数据，并解释为什么答案可能各不相同。"),
+    teacherObservation: tr("학생이 직접 자료를 모아 답하는 조사 질문을 만들고, 조사할 대상과 모아야 할 자료를 말하게 하세요. 이 활동은 미국 6.SP.A.1의 statistical question에 해당합니다. 사람마다 또는 관찰할 때마다 답이 달라질 수 있다는 점까지 설명하는지 기록합니다.", "Ask the learner to write a statistical question, identify who or what will be observed, and name the data to collect. Record whether the learner also explains why the answers may vary.", "请学生自己提出一个需要收集数据来回答的调查问题，说明调查对象和需要记录的数据，并解释为什么答案可能不同。"),
     printPlan: freeze({ paperSizes:["A4","Letter"], itemsPerPracticePage:4, studentPages:12, teacherEdition:true, answerSheetSeparate:true }),
     ui: freeze({ sectionOrder:["questions","variability","distributions","measures","synthesis","recheck"], sectionLabels:{
-      questions:tr("1 · 통계적 질문인가", "1 · Is it a statistical question?", "1 · 是否为统计问题"),
+      questions:tr("1 · 답이 달라지는 질문인가", "1 · Is it a statistical question?", "1 · 答案会不会不同"),
       variability:tr("2 · 어떤 자료를 모을까", "2 · What data should we collect?", "2 · 要收集什么数据"),
       distributions:tr("3 · 평균과 범위로 두 자료 비교하기", "3 · Compare center and spread", "3 · 比较中心位置和离散程度"),
       measures:tr("4 · 중심을 나타낼까, 퍼짐을 나타낼까", "4 · Measures of center and variability", "4 · 表示中心位置和离散程度的量"),
@@ -249,8 +249,8 @@
   function solutionFor(candidate, locale) {
     const answer = solveItem(candidate);
     if (candidate.kind === "question-classification") return candidate.data.expectedMultipleValues
-      ? text(tr("여러 사람에게 묻거나 여러 번 관찰하면 서로 다른 답이 나올 수 있으므로 통계적 질문입니다.", "The answer may differ across people or repeated observations, so the question is statistical.", "答案可能因人或每次观测而不同，因此这是统计问题。"), locale)
-      : text(tr("질문에 나온 조건으로 답이 한 값으로 정해지므로 통계적 질문이 아닙니다.", "The conditions determine one answer, so the question is not statistical.", "条件确定后只有一个答案，因此不是统计问题。"), locale);
+      ? text(tr("여러 사람에게 묻거나 여러 번 관찰하면 서로 다른 답이 나올 수 있으므로 자료를 모아 답하는 조사 질문입니다.", "The answer may differ across people or repeated observations, so the question is statistical.", "向多人提问或多次观察时，答案可能不同，所以需要收集数据来回答。"), locale)
+      : text(tr("질문에 나온 조건으로 답이 한 값으로 정해지므로 여러 사람의 자료를 모아 답하는 질문이 아닙니다.", "The conditions determine one answer, so the question is not statistical.", "题目条件已经确定唯一答案，所以不需要收集多组数据。"), locale);
     if (candidate.kind === "variability-source") return text(tr("이 질문에 답하려면 모아야 할 자료는 ‘", "To answer this question, collect ‘", "要回答这个问题，应收集“"), locale) + choiceLabel(candidate, answer, locale) + text(tr("’입니다.", "’.", "”。"), locale);
     if (candidate.kind === "distribution-comparison") {
       const a = candidate.data.ask === "spread" ? range(candidate.data.valuesA) : average(candidate.data.valuesA);

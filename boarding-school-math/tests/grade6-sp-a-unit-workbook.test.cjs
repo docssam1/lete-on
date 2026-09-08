@@ -69,7 +69,8 @@ test("every item is aligned to 6.SP.A while 6.SP.B remains an explicit bridge", 
 });
 
 test("each locale uses Grade 6 curriculum language rather than literal translation", function () {
-  assert.equal(source.pack.title.ko, "6.SP.A 통계적 질문과 자료의 분포");
+  assert.equal(source.pack.title.ko, "6.SP.A 자료를 모아 답하는 질문과 자료의 분포");
+  assert.equal(source.pack.strands["statistical-question"].ko, "답이 달라지는 조사 질문 찾기");
   assert.equal(source.pack.strands["anticipated-variability"].ko, "질문에 필요한 자료 찾기");
   assert.doesNotMatch(source.pack.strands["anticipated-variability"].ko, /예상되는 변이/);
   assert.match(source.pack.conceptPages[1].body.en, /mean absolute deviation \(MAD\).*variability/);
@@ -77,6 +78,8 @@ test("each locale uses Grade 6 curriculum language rather than literal translati
   assert.match(source.pack.scopeNotice["zh-Hans"], /美国六年级数学标准6\.SP\.A\.1-3/);
   assert.doesNotMatch(source.pack.strands["anticipated-variability"]["zh-Hans"], /预期变异/);
   assert.match(source.pack.strands["center-vs-variation"]["zh-Hans"], /中心位置.*离散程度/);
+  assert.equal(source.pack.title["zh-Hans"], "6.SP.A 用数据回答的问题与数据分布");
+  assert.equal(source.pack.strands["statistical-question"]["zh-Hans"], "判断答案可能不同的调查问题");
   const measurePrompts = source.pack.workbookItems.filter(function (item) { return item.kind === "measure-role"; }).map(function (item) { return item.prompt.ko; });
   assert.ok(measurePrompts.includes("범위는 자료의 중심과 퍼짐 중 어느 것을 나타냅니까?"));
   assert.ok(measurePrompts.includes("중앙값은 자료의 중심과 퍼짐 중 어느 것을 나타냅니까?"));
@@ -96,7 +99,22 @@ test("each locale uses Grade 6 curriculum language rather than literal translati
     })
   });
   assert.doesNotMatch(koreanStudentCopy, /6학년이라는 학년|지난 토요일이라는 날짜|4주라는 기간|이번 시즌이라는 기간|관찰한 14일|예상되는 변이|학생이나 관측마다 달라질 양/);
-  assert.match(source.pack.conceptPages[0].body.ko, /여러 사람에게 묻거나 여러 번 관찰했을 때 서로 다른 답/);
+  assert.doesNotMatch(koreanStudentCopy, /통계적 질문/);
+  assert.match(source.pack.conceptPages[0].body.ko, /여러 사람에게 묻거나 여러 번 관찰했을 때 답이 달라질 수 있는 질문/);
+  assert.match(source.pack.conceptPages[0].body.ko, /statistical question/);
+  assert.deepEqual(source.pack.workbookItems[0].choices.map(function (choice) { return choice.label.ko; }), ["답이 여러 가지로 나올 수 있는 조사 질문","답이 하나로 정해지는 질문"]);
+  const chineseStudentCopy = JSON.stringify({
+    title: source.pack.title["zh-Hans"],
+    scope: source.pack.scopeNotice["zh-Hans"],
+    concepts: source.pack.conceptPages.map(function (page) { return [page.title["zh-Hans"],page.body["zh-Hans"],page.example["zh-Hans"]]; }),
+    sections: Object.values(source.pack.ui.sectionLabels).map(function (label) { return label["zh-Hans"]; }),
+    items: source.pack.workbookItems.concat(source.pack.recheckItems).map(function (item) {
+      return [item.prompt["zh-Hans"],item.question["zh-Hans"],item.choices.map(function (choice) { return choice.label["zh-Hans"]; })];
+    })
+  });
+  assert.match(chineseStudentCopy, /需要收集数据来回答/);
+  assert.equal((chineseStudentCopy.match(/统计问题/g) || []).length, 1);
+  assert.deepEqual(source.pack.workbookItems[0].choices.map(function (choice) { return choice.label["zh-Hans"]; }), ["答案可能不同，需要收集数据的调查问题","答案唯一确定的问题"]);
   assert.match(source.pack.conceptPages[1].body.ko, /평균 절대 편차는 각 값이 평균에서 떨어진 거리의 평균/);
   assert.equal(source.pack.ui.sectionLabels.distributions.ko, "3 · 평균과 범위로 두 자료 비교하기");
   assert.equal(source.pack.ui.sectionLabels.measures.ko, "4 · 중심을 나타낼까, 퍼짐을 나타낼까");

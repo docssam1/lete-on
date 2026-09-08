@@ -79,7 +79,7 @@ test("teacher Chinese edition keeps the same 36 items and adds guidance without 
   assert.equal(await page.locator('[data-audience="student"]').count(),0);
   assert.equal(await page.locator("#edition-label").innerText(),"教师版");
   assert.equal(await page.locator('[data-mode="recheck"]').isEnabled(),true);
-  assert.match(await page.locator(".teacher-observation").innerText(),/自己提出一个统计问题/);
+  assert.match(await page.locator(".teacher-observation").innerText(),/自己提出一个需要收集数据来回答的调查问题/);
   await page.emulateMedia({media:"print"});
   const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});
   assert.deepEqual(overflow,[]);
@@ -92,23 +92,29 @@ test("curriculum-specific Grade 6 wording renders cleanly in every locale",async
     await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=${locale}&paper=A4`,{waitUntil:"networkidle"});
     const visible=await page.locator("main").innerText();
     if(locale==="ko"){
-      assert.match(visible,/6\.SP\.A 통계적 질문과 자료의 분포/);
+      assert.match(visible,/6\.SP\.A 자료를 모아 답하는 질문과 자료의 분포/);
+      assert.match(visible,/미국 6학년 수학에서는 이런 질문을 statistical question이라고 합니다/);
       assert.match(visible,/질문에 필요한 자료 찾기/);
       assert.match(visible,/이 질문에 답하려면 어떤 자료를 모아야 하나요\?/);
       assert.match(visible,/평균과 범위로 두 자료 비교하기/);
       assert.match(visible,/중심을 나타낼까, 퍼짐을 나타낼까/);
       assert.match(visible,/6\.SP\.B\.4-5로 이어지는 연결 연습/);
       assert.match(visible,/그래프 작성과 맥락 설명을 마쳤다는 증거로 사용하지 않습니다/);
-      assert.doesNotMatch(visible,/예상되는 변이|학생이나 관측마다 달라질 양|중심 측도와 변이 측도|6학년이라는 학년|지난 토요일이라는 날짜|4주라는 기간|이번 시즌이라는 기간|관찰한 14일/);
+      assert.doesNotMatch(visible,/통계적 질문|예상되는 변이|학생이나 관측마다 달라질 양|중심 측도와 변이 측도|6학년이라는 학년|지난 토요일이라는 날짜|4주라는 기간|이번 시즌이라는 기간|관찰한 14일/);
       assert.equal(await page.locator(".question-card").first().evaluate(function (node) { return getComputedStyle(node).wordBreak; }),"keep-all");
     }else if(locale==="en"){
       assert.match(visible,/US Grade 6 standards 6\.SP\.A\.1-3/);
       assert.match(visible,/bridge to 6\.SP\.B\.4-5/);
       assert.match(visible,/mean absolute deviation \(MAD\)/);
     }else{
+      assert.match(visible,/6\.SP\.A 用数据回答的问题与数据分布/);
       assert.match(visible,/美国六年级数学标准6\.SP\.A\.1-3/);
       assert.match(visible,/衔接6\.SP\.B\.4-5/);
-      assert.doesNotMatch(visible,/预期变异/);
+      assert.match(visible,/答案可能不同，需要收集数据的调查问题/);
+      assert.match(visible,/这类问题称为 statistical question（统计问题）/);
+      assert.match(visible,/我提出的调查问题/);
+      assert.equal((visible.match(/统计问题/g) || []).length,1);
+      assert.doesNotMatch(visible,/预期变异|我提出的统计问题|是否为统计问题/);
     }
     await page.emulateMedia({media:"print"});
     const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});
