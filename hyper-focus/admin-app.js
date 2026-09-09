@@ -10,10 +10,33 @@
     Object.freeze({ series: "final", key: "premier-final", label: "파이널 3회", expectedCount: 3 }),
     Object.freeze({ series: "last", key: "premier-last", label: "최종 4회", expectedCount: 4 })
   ]);
+  const challengeCatalog = root.HFChallengeAccessCatalog?.list?.() || [];
+  const challengeProducts = challengeCatalog.filter(entry => entry.kind === "concept" || entry.kind === "mock");
+  const challengeBanks = challengeCatalog.filter(entry => entry.kind === "bank");
+  const hfCatalog = root.HFTypeAccessCatalog;
+  const hfRows = hfCatalog?.list?.().sort((left, right) => left.id - right.id) || [];
+  const hfModeKey = hfCatalog?.modeKey || "";
+  const detailKeys = new Set([
+    ...challengeCatalog.map(entry => entry.key),
+    ...hfRows.map(entry => entry.key),
+    hfModeKey
+  ].filter(Boolean));
+  const detailCatalogReady = challengeCatalog.length === 110 && challengeBanks.length === 104 && hfRows.length === 54 && Boolean(hfModeKey);
   const CHARS = "ABCDEFGHJKLMNPQRSTUVWXY23456789";
   const legacy = root.GFIELD_HF_DATA || { students: [], studentCode: {}, studentType: {}, access: {} };
   let remoteStudents = [];
   let remoteMode = false;
+  const approval = {
+    student: null,
+    original: new Set(),
+    desired: new Set(),
+    busy: false,
+    epoch: 0,
+    tab: "challenge",
+    opener: null,
+    notice: "",
+    tone: ""
+  };
 
   legacy.students = Array.isArray(legacy.students) ? legacy.students : [];
   legacy.studentCode = legacy.studentCode || {};
@@ -86,6 +109,21 @@
     });
   }
 
+  function permissionCount(permissions, entries) {
+    const granted = new Set(Array.isArray(permissions) ? permissions : []);
+    return entries.reduce((total, entry) => total + (granted.has(entry.key) ? 1 : 0), 0);
+  }
+
+  function detailSummary(student) {
+    const permissions = Array.isArray(student.permissions) ? student.permissions : [];
+    const concepts = permissionCount(permissions, challengeProducts.filter(entry => entry.kind === "concept"));
+    const mocks = permissionCount(permissions, challengeProducts.filter(entry => entry.kind === "mock"));
+    const challenge = permissionCount(permissions, challengeBanks);
+    const hf = permissionCount(permissions, hfRows);
+    const mode = permissions.includes(hfModeKey) ? " · 개별" : "";
+    return `<button class="ghost detail-summary" type="button" data-action="details" data-student-id="${esc(student.id)}" ${detailCatalogReady ? "" : "disabled"} aria-label="${esc(student.name)} 학생 세부 승인 설정"><b>승인 설정</b><small>교재 ${concepts}/2 · 모의 ${mocks}/4<br>챌린지 ${challenge}/104 · HF ${hf}/54${mode}</small></button>`;
+  }
+
   function renderLegacy() {
     $("#rows").innerHTML = legacy.students.map((name, index) => {
       ensureLegacy(name);
@@ -100,6 +138,7 @@
         ${legacyMockCell(permissions)}
         ${permissionCell(permissions, "vip", false)}
         ${permissionCell(permissions, "problem-bank", false)}
+        <td class="muted-cell">중앙 권한 전용</td>
         <td><button class="danger" type="button" data-action="remove">삭제</button></td>
       </tr>`;
     }).join("");
@@ -118,6 +157,7 @@
         ${remoteMockCell(student)}
         ${permissionCell(permissions, "vip", student.status === "archived")}
         ${permissionCell(permissions, "problem-bank", student.status === "archived")}
+        <td>${detailSummary(student)}</td>
         <td><div class="row-actions"><select data-action="status"><option value="active" ${student.status === "active" ? "selected" : ""}>활성</option><option value="suspended" ${student.status === "suspended" ? "selected" : ""}>정지</option><option value="archived" ${student.status === "archived" ? "selected" : ""}>보관</option></select></div></td>
       </tr>`;
     }).join("");
@@ -146,6 +186,306 @@
     const { data, error } = await client.functions.invoke("admin-students", { body });
     if (error || data?.error) throw new Error("관리자 작업을 처리하지 못했습니다.");
     return data || {};
+  }
+
+  function challengeOrderedKeys() {
+    return challengeCatalog.map(entry => entry.key);
+  }
+
+  function hfOrderedKeys() {
+    return [...hfRows.map(row => row.key), hfCatalog.modeKey];
+  }
+
+  function approvalScopeKeys(scope) {
+    return scope === "challenge" ? challengeOrderedKeys() : hfOrderedKeys();
+  }
+
+  function approvalChanges(scope) {
+    return approvalScopeKeys(scope)
+      .filter(key => approval.original.has(key) !== approval.desired.has(key))
+      .map(key => ({ key, enabled: approval.desired.has(key) }));
+  }
+
+  function allApprovalChanges() {
+    return [...approvalChanges("challenge"), ...approvalChanges("hf")];
+  }
+
+  function setDesired(key, enabled) {
+    if (enabled) approval.desired.add(key);
+    else approval.desired.delete(key);
+  }
+
+  function isApprovalActive() {
+    if (!approval.student || approval.student.status !== "active") return false;
+    return true;
+  }
+
+  function setApprovalNotice(message, tone = "") {
+    approval.notice = message;
+    approval.tone = tone;
+  }
+
+  function approvalChoice(entry, source) {
+    const meta = source === "challenge-bank"
+      ? `${entry.round}회 · ${entry.area} · ${entry.section === "main" ? `본시험 ${entry.number}번` : `추가 ${entry.number}번`}`
+      : source === "hf" ? `유형 ${String(entry.id).padStart(2, "0")}` : "";
+    return `<label class="approval-choice"><input type="checkbox" data-approval-key="${esc(entry.key)}" ${approval.desired.has(entry.key) ? "checked" : ""}><span><b>${esc(entry.label)}</b>${meta ? `<small>${esc(meta)}</small>` : ""}</span></label>`;
+  }
+
+  function renderChallengeProducts() {
+    const groups = [
+      { kind: "concept", title: "개념 교재" },
+      { kind: "mock", title: "모의고사" }
+    ];
+    $("#approvalChallengeProducts").innerHTML = groups.map(group => {
+      const items = challengeProducts.filter(entry => entry.kind === group.kind);
+      return `<section class="approval-product-group"><h4>${group.title}</h4>${items.map(entry => approvalChoice(entry, "challenge-product")).join("")}</section>`;
+    }).join("");
+  }
+
+  function filteredChallengeBanks() {
+    const round = $("#approvalRoundFilter").value;
+    const area = $("#approvalAreaFilter").value;
+    const term = $("#approvalChallengeSearch").value.trim().toLocaleLowerCase("ko-KR");
+    return challengeBanks.filter(entry => {
+      if (round !== "all" && String(entry.round) !== round) return false;
+      if (area !== "all" && entry.area !== area) return false;
+      if (!term) return true;
+      return `${entry.label} ${entry.area} ${entry.typeId}`.toLocaleLowerCase("ko-KR").includes(term);
+    });
+  }
+
+  function renderChallengeBanks() {
+    const items = filteredChallengeBanks();
+    $("#approvalChallengeTypes").innerHTML = items.length
+      ? items.map(entry => approvalChoice(entry, "challenge-bank")).join("")
+      : '<p class="approval-empty">조건에 맞는 유형이 없습니다.</p>';
+  }
+
+  function filteredHfRows() {
+    const term = $("#approvalHfSearch").value.trim().toLocaleLowerCase("ko-KR");
+    if (!term) return hfRows;
+    return hfRows.filter(entry => `${entry.id} ${entry.label}`.toLocaleLowerCase("ko-KR").includes(term));
+  }
+
+  function renderHfRows() {
+    const items = filteredHfRows();
+    $("#approvalHfTypes").innerHTML = items.length
+      ? items.map(entry => approvalChoice(entry, "hf")).join("")
+      : '<p class="approval-empty">조건에 맞는 유형이 없습니다.</p>';
+  }
+
+  function selectedCount(entries) {
+    return entries.reduce((total, entry) => total + (approval.desired.has(entry.key) ? 1 : 0), 0);
+  }
+
+  function defaultApprovalNotice(tab = approval.tab) {
+    if (!approval.student) return "";
+    if (!isApprovalActive()) return "정지·보관 학생은 현재 승인 상태만 확인할 수 있습니다.";
+    const permissions = new Set(approval.student.permissions || []);
+    if (tab === "challenge" && !permissions.has("hyperfocus")) {
+      return "문항 진단 상품 승인이 꺼져 있습니다. 세부 권한은 저장되지만 학생에게는 열리지 않습니다.";
+    }
+    if (tab === "hf" && !permissions.has("problem-bank")) {
+      return "문제 은행 상품 승인이 꺼져 있습니다. 유형 권한은 저장되지만 학생에게는 열리지 않습니다.";
+    }
+    return "체크한 뒤 아래 저장 버튼을 눌러야 이 학생에게 반영됩니다.";
+  }
+
+  function syncApproval() {
+    if (!approval.student) return;
+    const challengeEdits = approvalChanges("challenge").length;
+    const hfEdits = approvalChanges("hf").length;
+    const currentEdits = approval.tab === "challenge" ? challengeEdits : hfEdits;
+    const otherEdits = approval.tab === "challenge" ? hfEdits : challengeEdits;
+    const studentActive = isApprovalActive();
+    const locked = approval.busy || !studentActive;
+    const conceptEntries = challengeProducts.filter(entry => entry.kind === "concept");
+    const mockEntries = challengeProducts.filter(entry => entry.kind === "mock");
+    const challengeSelected = selectedCount(challengeBanks);
+    const hfSelected = selectedCount(hfRows);
+
+    $("#approvalTitle").textContent = `${approval.student.name} 학생 승인 설정`;
+    $("#approvalSummary").textContent = `${approval.student.type === "online" ? "온라인" : "재원"} · ${approval.student.status} · 교재 ${selectedCount(conceptEntries)}/2 · 모의 ${selectedCount(mockEntries)}/4`;
+    $("#approvalChallengeCount").textContent = `${challengeSelected}/104유형 선택 · 현재 ${filteredChallengeBanks().length}유형 표시`;
+    $("#approvalHfCount").textContent = `${hfSelected}/54유형 선택 · 현재 ${filteredHfRows().length}유형 표시`;
+    $("#approvalChallengeTabCount").textContent = challengeEdits ? `(${challengeEdits})` : "";
+    $("#approvalHfTabCount").textContent = hfEdits ? `(${hfEdits})` : "";
+    $("#approvalIndividualMode").checked = approval.desired.has(hfModeKey);
+    $("#approvalModeImpact").textContent = approval.desired.has(hfModeKey)
+      ? `저장 후 선택한 ${hfSelected}유형만 적용됩니다.`
+      : "기존 문제 은행 상품 승인 방식을 유지합니다.";
+    $("#approvalChangeCount").textContent = currentEdits
+      ? `현재 탭 ${currentEdits}개 변경${otherEdits ? ` · 다른 탭 ${otherEdits}개 변경` : ""}`
+      : otherEdits ? `현재 탭 변경 없음 · 다른 탭 ${otherEdits}개 변경` : "변경 없음";
+    $("#approvalSave").textContent = approval.busy
+      ? "저장 중…"
+      : approval.tab === "challenge" ? "챌린지 승인 저장" : "HF 문제은행 승인 저장";
+
+    const status = $("#approvalStatus");
+    status.textContent = approval.notice || defaultApprovalNotice();
+    status.className = `approval-status${approval.tone ? ` ${approval.tone}` : ""}`;
+
+    $("#approvalCenter").querySelectorAll("[data-approval-key]").forEach(input => {
+      input.disabled = approval.busy || !studentActive;
+    });
+    $("#approvalIndividualMode").disabled = locked;
+    $("#approvalChallengeSelectAll").disabled = locked || challengeSelected === challengeBanks.length;
+    $("#approvalHfSelectAll").disabled = locked || hfSelected === hfRows.length;
+    $("#approvalSave").disabled = locked || currentEdits === 0;
+    $("#approvalCenter").querySelectorAll("[data-approval-close],[data-approval-tab]").forEach(control => {
+      control.disabled = approval.busy;
+    });
+    ["#approvalRoundFilter", "#approvalAreaFilter", "#approvalChallengeSearch", "#approvalHfSearch"].forEach(selector => {
+      $(selector).disabled = approval.busy;
+    });
+  }
+
+  function setApprovalTab(tab, focus = true) {
+    if (!approval.student || approval.busy || !["challenge", "hf"].includes(tab)) return;
+    approval.tab = tab;
+    document.querySelectorAll("[data-approval-tab]").forEach(button => {
+      const selected = button.dataset.approvalTab === tab;
+      button.setAttribute("aria-selected", selected ? "true" : "false");
+      button.tabIndex = selected ? 0 : -1;
+    });
+    $("#approvalChallengePanel").hidden = tab !== "challenge";
+    $("#approvalHfPanel").hidden = tab !== "hf";
+    setApprovalNotice(defaultApprovalNotice(tab), !isApprovalActive() ? "warning" : "");
+    syncApproval();
+    if (focus) document.querySelector(`[data-approval-tab="${tab}"]`)?.focus();
+  }
+
+  function openApproval(student, opener) {
+    if (approval.busy) return;
+    if (!detailCatalogReady) {
+      alert("세부 승인 유형 목록을 불러오지 못했습니다. 새로고침 후 다시 확인해 주세요.");
+      return;
+    }
+    approval.epoch += 1;
+    approval.student = {
+      id: student.id,
+      name: student.name,
+      type: student.type,
+      status: student.status,
+      permissions: Array.isArray(student.permissions) ? [...student.permissions] : []
+    };
+    approval.original = new Set(approval.student.permissions.filter(key => detailKeys.has(key)));
+    approval.desired = new Set(approval.original);
+    approval.busy = false;
+    approval.tab = "challenge";
+    approval.opener = opener || null;
+    $("#approvalRoundFilter").value = "all";
+    $("#approvalAreaFilter").value = "all";
+    $("#approvalChallengeSearch").value = "";
+    $("#approvalHfSearch").value = "";
+    renderChallengeProducts();
+    renderChallengeBanks();
+    renderHfRows();
+    setApprovalNotice(defaultApprovalNotice("challenge"), !isApprovalActive() ? "warning" : "");
+    setApprovalTab("challenge", false);
+    $("#approvalCenter").showModal();
+    $("#approvalChallengeTab").focus();
+  }
+
+  function closeApproval(force = false) {
+    if (!approval.student || approval.busy) return false;
+    if (!force && allApprovalChanges().length && !confirm("저장되지 않은 변경한 승인이 있습니다. 변경을 버리고 닫을까요?")) return false;
+    const studentId = approval.student.id;
+    approval.epoch += 1;
+    $("#approvalCenter").close();
+    approval.student = null;
+    approval.original = new Set();
+    approval.desired = new Set();
+    approval.notice = "";
+    approval.tone = "";
+    renderRemote();
+    requestAnimationFrame(() => {
+      [...document.querySelectorAll("[data-action=details]")]
+        .find(button => button.dataset.studentId === String(studentId))?.focus();
+    });
+    return true;
+  }
+
+  function assertExactSetResponse(data, target, edit) {
+    if (data?.ok !== true || data.studentId !== target.id || data.permissionKey !== edit.key || data.enabled !== edit.enabled) {
+      throw new Error("저장 결과의 학생·권한 상태를 확인할 수 없습니다.");
+    }
+  }
+
+  async function invokeApproval(name, body, requestEpoch) {
+    const client = await auth.client();
+    const { data, error } = await client.functions.invoke(name, { body });
+    if (requestEpoch !== approval.epoch) throw new Error("로그인 상태가 변경되어 이전 응답을 반영하지 않습니다.");
+    if (error || data?.error) throw new Error(data?.error || "세부 승인 저장에 실패했습니다.");
+    return data || {};
+  }
+
+  async function setChallengeApproval(target, edit, requestEpoch) {
+    const data = await invokeApproval("challenge-access", {
+      action: "set",
+      studentId: target.id,
+      permissionKey: edit.key,
+      enabled: edit.enabled
+    }, requestEpoch);
+    assertExactSetResponse(data, target, edit);
+  }
+
+  async function setHfApproval(target, edit, requestEpoch) {
+    const data = await invokeApproval("hyperfocus-type-access", {
+      action: "set",
+      studentId: target.id,
+      permissionKey: edit.key,
+      enabled: edit.enabled
+    }, requestEpoch);
+    assertExactSetResponse(data, target, edit);
+  }
+
+  function commitApprovalScope(scope) {
+    if (!approval.student) return;
+    const keys = new Set(approvalScopeKeys(scope));
+    const granted = approvalScopeKeys(scope).filter(key => approval.original.has(key));
+    const merge = permissions => [...new Set([
+      ...(Array.isArray(permissions) ? permissions : []).filter(key => !keys.has(key)),
+      ...granted
+    ])];
+    approval.student.permissions = merge(approval.student.permissions);
+    const remote = remoteStudents.find(student => student.id === approval.student.id);
+    if (remote) remote.permissions = merge(remote.permissions);
+  }
+
+  async function saveApproval() {
+    if (!approval.student || approval.busy || !isApprovalActive()) return;
+    const scope = approval.tab;
+    const edits = approvalChanges(scope);
+    if (!edits.length) return;
+    const target = approval.student;
+    const requestEpoch = approval.epoch;
+    approval.busy = true;
+    setApprovalNotice(`${edits.length}개 승인 항목을 저장하고 있습니다.`);
+    syncApproval();
+    let done = 0;
+    try {
+      for (const edit of edits) {
+        if (scope === "challenge") await setChallengeApproval(target, edit, requestEpoch);
+        else await setHfApproval(target, edit, requestEpoch);
+        setDesired(edit.key, edit.enabled);
+        if (edit.enabled) approval.original.add(edit.key);
+        else approval.original.delete(edit.key);
+        done += 1;
+      }
+      setApprovalNotice(`${done}개 승인 항목을 저장했습니다.`);
+    } catch (error) {
+      if (requestEpoch !== approval.epoch || approval.student !== target) return;
+      const remaining = approvalChanges(scope).length;
+      setApprovalNotice(`${done}개 저장 · ${remaining}개 남음. ${error.message}`, "error");
+    } finally {
+      if (requestEpoch === approval.epoch && approval.student === target) {
+        commitApprovalScope(scope);
+        approval.busy = false;
+        syncApproval();
+      }
+    }
   }
 
   function setRowBusy(row, busy) {
@@ -312,6 +652,72 @@
     }
   }
 
+  function setupApprovalCenter() {
+    const areaSelect = $("#approvalAreaFilter");
+    [...new Set(challengeBanks.map(entry => entry.area))].sort((left, right) => left.localeCompare(right, "ko"))
+      .forEach(area => areaSelect.append(new Option(area, area)));
+
+    $("#approvalCenter").addEventListener("click", event => {
+      const close = event.target.closest("[data-approval-close]");
+      if (close) {
+        closeApproval();
+        return;
+      }
+      const tab = event.target.closest("[data-approval-tab]")?.dataset.approvalTab;
+      if (tab) {
+        setApprovalTab(tab);
+        return;
+      }
+      if (event.target.closest("#approvalChallengeSelectAll") && isApprovalActive() && !approval.busy) {
+        challengeBanks.forEach(entry => approval.desired.add(entry.key));
+        renderChallengeBanks();
+        setApprovalNotice(defaultApprovalNotice("challenge"));
+        syncApproval();
+        return;
+      }
+      if (event.target.closest("#approvalHfSelectAll") && isApprovalActive() && !approval.busy) {
+        hfRows.forEach(entry => approval.desired.add(entry.key));
+        renderHfRows();
+        setApprovalNotice(defaultApprovalNotice("hf"));
+        syncApproval();
+        return;
+      }
+      if (event.target.closest("#approvalSave")) saveApproval();
+    });
+
+    $("#approvalCenter").addEventListener("change", event => {
+      if (!approval.student || approval.busy || !isApprovalActive()) return;
+      const key = event.target.dataset.approvalKey || (event.target.matches("[data-approval-hf-mode]") ? hfModeKey : "");
+      if (!key || !detailKeys.has(key)) return;
+      setDesired(key, event.target.checked);
+      setApprovalNotice(defaultApprovalNotice());
+      syncApproval();
+    });
+
+    $("#approvalRoundFilter").addEventListener("change", () => { renderChallengeBanks(); syncApproval(); });
+    $("#approvalAreaFilter").addEventListener("change", () => { renderChallengeBanks(); syncApproval(); });
+    $("#approvalChallengeSearch").addEventListener("input", () => { renderChallengeBanks(); syncApproval(); });
+    $("#approvalHfSearch").addEventListener("input", () => { renderHfRows(); syncApproval(); });
+
+    $(".approval-tabs").addEventListener("keydown", event => {
+      if (!approval.student || approval.busy || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      event.preventDefault();
+      setApprovalTab(approval.tab === "challenge" ? "hf" : "challenge");
+    });
+    $("#approvalCenter").addEventListener("cancel", event => {
+      event.preventDefault();
+      closeApproval();
+    });
+    $("#approvalCenter").addEventListener("click", event => {
+      if (event.target === $("#approvalCenter")) closeApproval();
+    });
+    root.addEventListener("beforeunload", event => {
+      if (!approval.student || !allApprovalChanges().length) return;
+      event.preventDefault();
+      event.returnValue = "";
+    });
+  }
+
   async function init() {
     const session = await auth.ready();
     if (!session || session.role !== "admin") {
@@ -319,13 +725,18 @@
       return;
     }
     remoteMode = auth.isSupabaseEnabled();
+    setupApprovalCenter();
     $("[data-add-student]").addEventListener("click", addStudent);
     $("#rows").addEventListener("click", async event => {
       const row = event.target.closest("tr[data-index]");
-      const action = event.target.closest("[data-action]")?.dataset.action;
+      const actionControl = event.target.closest("[data-action]");
+      const action = actionControl?.dataset.action;
       if (!row || !action || action === "status") return;
       const index = Number(row.dataset.index);
-      if (remoteMode) await handleRemoteAction(row, action);
+      if (remoteMode && action === "details") {
+        const student = remoteStudents[index];
+        if (student) openApproval(student, actionControl);
+      } else if (remoteMode) await handleRemoteAction(row, action);
       else if (action === "copy") copyLegacy(index);
       else if (action === "remove") removeLegacy(index);
     });
