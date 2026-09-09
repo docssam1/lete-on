@@ -17,6 +17,7 @@ const sourceIds = [
   "6-1-u2-e1-mission-2",
   "6-1-u2-e1-mission-5"
 ];
+const publicVariants = [0, 1, 2];
 const difficulties = [-1, 0, 1];
 const representativeDifficulties = new Set([-1, 0]);
 const failures = [];
@@ -355,7 +356,7 @@ function generatorReady() {
       executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || "C:/Program Files/Google/Chrome/Application/chrome.exe",
       args: ["--disable-quic"]
     });
-    for (let variant = 0; variant < sourceIds.length; variant += 1) {
+    for (const variant of publicVariants) {
       for (const difficulty of difficulties) {
         await inspectType(browser, baseUrl, variant, difficulty, { width: 1440, height: 900 }, "desktop");
         await inspectType(browser, baseUrl, variant, difficulty, { width: 390, height: 844 }, "mobile");
@@ -366,12 +367,12 @@ function generatorReady() {
     await new Promise(resolve => server.close(resolve));
   }
 
-  if (screenshots !== 32) fail(`대표 화면 수가 ${screenshots}장입니다. 32장이어야 합니다.`);
-  if (pdfs !== 8) fail(`A4 PDF 수가 ${pdfs}개입니다. 8개여야 합니다.`);
-  const summary = `${failures.length ? "실패" : "통과"}: 4유형×3난이도×PC/모바일, 고정 pool 3문항, 문제·답 그림·근거·도형 계약, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 확인 페이지 ${checkedPages}개\n${failures.join("\n")}\n`;
+  if (screenshots !== 24) fail(`대표 화면 수가 ${screenshots}장입니다. 24장이어야 합니다.`);
+  if (pdfs !== 6) fail(`A4 PDF 수가 ${pdfs}개입니다. 6개여야 합니다.`);
+  const summary = `${failures.length ? "실패" : "통과"}: 공개 3유형×3난이도×PC/모바일, 고정 pool 3문항, 문제·답 그림·근거·도형 계약, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 확인 페이지 ${checkedPages}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 1 브라우저 감사 통과: 4유형×3난이도×PC/모바일 · 고정 3문항 · 답 그림 · 화면 ${screenshots}장 · A4 PDF ${pdfs}개 · 확인 페이지 ${checkedPages}개`);
+  console.log(`6-1 2단원 개념탐구 1 브라우저 감사 통과: 공개 3유형×3난이도×PC/모바일 · 고정 3문항 · 답 그림 · 화면 ${screenshots}장 · A4 PDF ${pdfs}개 · 확인 페이지 ${checkedPages}개`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

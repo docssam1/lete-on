@@ -576,7 +576,7 @@
       "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
     },
     {
-      "sourceItemId": "6-1-u2-e1-example-1",
+      "sourceItemId": "6-1-u2-e1-example-1-1",
       "unitId": "6-1-u2",
       "unitName": "각기둥과 각뿔",
       "exploration": 1,
@@ -585,11 +585,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 1,
-      "sourceShape": "각기둥의 밑면, 옆면, 꼭짓점, 모서리 또는 전개도에서 주어진 조건을 읽고 구성 요소나 길이를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "면·모서리·꼭짓점 수의 관계식에서 밑면의 변 수를 하나로 정하고 각기둥 이름을 구하는 구조.",
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건과 독립 계산, 고정 문항 묶음의 수식·답 그림을 대조했습니다."
     },
     {
       "sourceItemId": "6-1-u2-e1-example-2",

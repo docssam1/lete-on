@@ -8,6 +8,7 @@ const sourceIds = [
   "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5"
 ];
 const sourceAnswers = new Map([
+  ["6-1-u2-e1-example-1-1", "19각기둥"],
   ["6-1-u2-e1-mission-1", "24"],
   ["6-1-u2-e1-mission-2", "115cm"]
 ]);
