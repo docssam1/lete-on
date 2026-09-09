@@ -12,9 +12,10 @@ const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(os.tmpdir(), "sour
 const sourceIds = [
   "6-1-u3-e4-exploration-1", "6-1-u3-e4-example-2", "6-1-u3-e4-example-3",
   "6-1-u3-e4-example-4", "6-1-u3-e4-mission-1", "6-1-u3-e4-mission-2",
-  "6-1-u3-e4-mission-3", "6-1-u3-e4-mission-5", "6-1-u3-e4-mission-6"
+  "6-1-u3-e4-mission-3", "6-1-u3-e4-mission-5", "6-1-u3-e4-mission-6",
+  "6-1-u3-e4-mission-4"
 ];
-const lockedSourceIds = ["6-1-u3-e4-mission-4"];
+const lockedSourceIds = [];
 const failures = [];
 let screenshots = 0;
 let pdfs = 0;
@@ -39,7 +40,9 @@ function startServer() {
 function buildGenerator() {
   global.window = {};
   delete require.cache[require.resolve("./generators.js")];
+  delete require.cache[require.resolve("./source-grade6-decimal-e4-mission4.js")];
   require("./generators.js");
+  require("./source-grade6-decimal-e4-mission4.js");
   return window.HSE_GENERATORS;
 }
 
@@ -190,10 +193,10 @@ async function captureA4(page, filename, label) {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
   }
-  const summary = `${failures.length ? "실패" : "통과"}: E4 실제 주소 9유형×PC1440/mobile390 문제·그림 답 + 9유형×3난이도 직접 생성 문제·답, 잠금 1유형 차단, 동일 자료·정답 누출·글꼴·글자 겹침·가로 넘침·특수 도형 규칙; 화면 ${screenshots}장, A4 ${pdfs}개, 렌더 ${renderedPdfPages}쪽\n${failures.join("\n")}\n`;
+  const summary = `${failures.length ? "실패" : "통과"}: E4 실제 주소 10유형×PC1440/mobile390 문제·그림 답 + 10유형×3난이도 직접 생성 문제·답, 잠금 없음, 동일 자료·정답 누출·글꼴·글자 겹침·가로 넘침·정삼각형 선분 규칙; 화면 ${screenshots}장, A4 ${pdfs}개, 렌더 ${renderedPdfPages}쪽\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   console.log(`결과 폴더: ${outputDir}`);
   console.log(summary);
-  if (screenshots !== 144 || pdfs !== 18 || renderedPdfPages !== 18) fail(`산출물 수 ${screenshots}/${pdfs}/${renderedPdfPages}, 144/18/18이어야 합니다.`);
+  if (screenshots !== 160 || pdfs !== 20 || renderedPdfPages !== 20) fail(`산출물 수 ${screenshots}/${pdfs}/${renderedPdfPages}, 160/20/20이어야 합니다.`);
   if (failures.length) process.exitCode = 1;
 })().catch(error => { console.error(error.stack || error.message); process.exitCode = 1; });

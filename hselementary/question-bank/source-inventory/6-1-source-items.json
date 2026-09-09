@@ -1249,7 +1249,7 @@
       "exploration": 1,
       "pdfPage": 16,
       "printedPage": null,
-      "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
+      "visualRisk": "정삼각형의 접합점과 ㄱ·ㄴ·ㄷ·ㄹ·ㅁ의 위치, ㄴㅁ·ㄴㄹ 선분이 같은 수평선 위에서 구분되어 읽혀야 함",
       "section": "exploration",
       "ordinal": 1,
       "sourceShape": "원본 16쪽 개념탐구 1. 소수를 자연수로 나누는 계산 다섯 개를 제시된 순서대로 계산하여 소수로 나타냄",
@@ -1914,11 +1914,12 @@
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 4,
-      "sourceShape": "원본 23쪽 Mission 4. 여러 정사각형의 접합 그림에서 ㄴㄷ과 ㄴㄹ의 길이로 정사각형 ㄱㄴㄷㄹ의 한 변을 구함",
-      "answerContract": "drawing-dependent-candidate",
+      "sourceShape": "원본 23쪽 Mission 4. 여러 정삼각형의 접합 그림에서 ㄴㅁ과 ㄴㄹ의 길이로 정삼각형 ㄱㄴㄷ의 한 변을 구함",
+      "answerContract": "equilateral-triangle-segment-chain-fixed-pool",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "겹친 정사각형의 접합점과 선분 이름을 점·선분 모델로 확정하기 전에는 손글씨 계산이나 눈대중 그림을 근거로 쓰지 않고 잠급니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 ㄴㅁ=19.2cm, ㄴㄹ=6cm와 정삼각형 접합을 점·선분 모델로 확정했습니다. ㄹㅁ=정삼각형 ㄱㄴㄷ의 한 변 3개임을 독립 계산한 고정 검증 문항 3개로 제한합니다.",
+      "publicSourceItemId": "6-1-u3-e4-mission-4"
     },
     {
       "sourceItemId": "6-1-u3-e4-mission-5",
