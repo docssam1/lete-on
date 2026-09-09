@@ -6,7 +6,7 @@
   <meta name="description" content="80개 개념유형과 4회의 예측 모의고사로 완성하는 우리 아이의 첫 챌린지 대비 프로그램. 유사유형 문제은행은 구매 구성에 따라 별도로 승인됩니다.">
   <meta name="theme-color" content="#ffffff">
   <title>2026년 9월 챌린지 대비 | GFIELD · LETE-ON</title>
-  <link rel="stylesheet" href="intro.css">
+  <link rel="stylesheet" href="intro.css?v=20260910-1">
 </head>
 <body class="gfield-ui challenge-intro">
   <a class="skip-link" href="#main">본문 바로가기</a>
@@ -83,21 +83,35 @@
             <div class="preview-sheet" aria-hidden="true">
               <div class="preview-kicker"><span>선택한 유형</span><em>유형별 승인</em></div>
               <strong>색종이 두 번 접기</strong>
-              <p class="preview-question">화살표대로 접어 구멍을 한 개 뚫었습니다. 모두 펼쳤을 때 구멍이 생기는 칸을 찾아보세요.</p>
+              <p class="preview-question">화살표대로 두 번 접은 뒤 구멍을 2개 뚫었습니다. 다시 펼쳤을 때 구멍은 모두 몇 개입니까?</p>
               <div class="fold-sequence">
                 <div class="fold-stage">
-                  <div class="paper-grid paper-start"><span class="fold-arrow fold-left"></span></div>
+                  <svg class="fold-paper-figure" viewBox="0 0 84 84" role="img" aria-label="오른쪽 절반을 왼쪽으로 접기">
+                    <rect x="6" y="6" width="72" height="72" class="fold-paper"/>
+                    <path d="M42 6V78" class="fold-crease"/>
+                    <path d="M65 32Q42 8 19 32" class="fold-curve"/><path d="M18 32l8-5v10z" class="fold-head"/>
+                  </svg>
                   <span>① 오른쪽을 왼쪽으로</span>
                 </div>
                 <i class="sequence-arrow">→</i>
                 <div class="fold-stage">
-                  <div class="paper-grid paper-half"><span class="fold-arrow fold-up"></span></div>
+                  <svg class="fold-paper-figure" viewBox="0 0 84 84" role="img" aria-label="접힌 세로 종이의 아래쪽을 위로 접기">
+                    <rect x="6" y="6" width="36" height="72" class="fold-paper fold-paper-second"/>
+                    <rect x="6" y="6" width="4" height="72" class="folded-edge"/>
+                    <path d="M6 42H42" class="fold-crease"/>
+                    <path d="M25 65Q2 42 25 19" class="fold-curve"/><path d="M25 18l-5 8h10z" class="fold-head"/>
+                  </svg>
                   <span>② 아래를 위로</span>
                 </div>
                 <i class="sequence-arrow">→</i>
                 <div class="fold-stage">
-                  <div class="paper-grid paper-folded"><span class="punch-hole"></span></div>
-                  <span>접고 구멍 뚫기</span>
+                  <svg class="fold-paper-figure" viewBox="0 0 84 84" role="img" aria-label="두 번 접힌 사분의 일 크기 종이에 구멍 두 개 뚫기">
+                    <path d="M9 9H45V45H9Z" class="fold-layer-back"/>
+                    <rect x="6" y="6" width="36" height="36" class="fold-paper fold-paper-final"/>
+                    <circle cx="20.4" cy="27.6" r="4.5" class="fold-punch"/>
+                    <circle cx="31.9" cy="19.7" r="4.5" class="fold-punch"/>
+                  </svg>
+                  <span>접고 구멍 2개</span>
                 </div>
               </div>
               <small>정답은 보이지 않은 채 문제를 먼저 확인합니다.</small>
