@@ -4,6 +4,7 @@ global.window = {};
 require("./generators.js");
 require("./source-grade6-decimal-e2-example2.js");
 require("./source-grade6-decimal-e2-example4.js");
+require("./source-grade6-decimal-e2-mission6.js");
 
 const api = window.HSE_GENERATORS;
 const readiness = require("./source-inventory/6-1-u3-source-readiness-review.json");
@@ -12,7 +13,7 @@ const sourceIds = [
   "6-1-u3-e2-exploration-1", "6-1-u3-e2-example-1", "6-1-u3-e2-example-3", "6-1-u3-e2-mission-1",
   "6-1-u3-e2-mission-2", "6-1-u3-e2-mission-3", "6-1-u3-e2-mission-4", "6-1-u3-e2-mission-5"
 ];
-const lockedIds = ["6-1-u3-e2-mission-6"];
+const lockedIds = [];
 const kinds = [
   "catch-up-distance", "rounded-quotient-range", "fuel-efficiency-transfer", "equal-interval-number-line",
   "lap-time", "pencil-case-weight", "same-direction-distance-gap", "fuel-cost-gap"
@@ -129,5 +130,5 @@ if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log("통과: pool 자료·정수 hundredths 전수열거·독립 계산·단일 답·문제/답 동일 SVG·결과 강조·난이도·학년 언어·잠금 라우팅");
+  console.log("통과: 기본 8유형 pool 자료·정수 hundredths 전수열거·독립 계산·단일 답·문제/답 동일 SVG·결과 강조·난이도·학년 언어·라우팅");
 }

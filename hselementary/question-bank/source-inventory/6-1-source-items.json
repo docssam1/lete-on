@@ -1593,10 +1593,11 @@
       "section": "mission",
       "ordinal": 6,
       "sourceShape": "원본 19쪽 Mission 6. 직각이등변삼각형과 직사각형을 서로 마주 보는 방향으로 일정하게 옮긴 뒤 겹친 부분의 넓이를 구함",
-      "answerContract": "drawing-dependent-candidate",
+      "answerContract": "opposing-moving-shapes-single-answer-fixed-pool",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "두 도형의 꼭짓점, 높이, 처음 간격, 이동 방향과 이동 뒤 교집합을 원본 점·선분 모델로 검증하기 전까지 잠급니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "두 도형의 이동량과 교집합을 점·선분 자료와 다각형 자르기로 독립 확인한 고정 검증 문항 3개로 제한합니다.",
+      "publicSourceItemId": "6-1-u3-e2-mission-6"
     },
     {
       "sourceItemId": "6-1-u3-e3-exploration",

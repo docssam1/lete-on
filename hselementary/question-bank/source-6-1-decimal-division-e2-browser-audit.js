@@ -12,7 +12,7 @@ const sourceIds = [
   "6-1-u3-e2-exploration-1", "6-1-u3-e2-example-1", "6-1-u3-e2-example-3", "6-1-u3-e2-mission-1",
   "6-1-u3-e2-mission-2", "6-1-u3-e2-mission-3", "6-1-u3-e2-mission-4", "6-1-u3-e2-mission-5"
 ];
-const lockedIds = ["6-1-u3-e2-mission-6"];
+const lockedIds = [];
 const failures = [];
 let screenshots = 0;
 let pdfs = 0;
@@ -40,6 +40,7 @@ function buildGenerator() {
   require("./generators.js");
   require("./source-grade6-decimal-e2-example2.js");
   require("./source-grade6-decimal-e2-example4.js");
+  require("./source-grade6-decimal-e2-mission6.js");
   return window.HSE_GENERATORS;
 }
 
