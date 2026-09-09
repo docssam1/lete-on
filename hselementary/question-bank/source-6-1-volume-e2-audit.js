@@ -10,7 +10,7 @@ const fail = message => failures.push(message);
 const check = (condition, message) => { if (!condition) fail(message); };
 const sourceIds = [
   "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1",
-  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3"
+  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
 ];
 const allResults = new Set();
 const difficultyBodies = new Map();
@@ -32,7 +32,8 @@ const expected = {
   "example-1": [12, 24, 36],
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
-  "mission-3": [10, 8, 12]
+  "mission-3": [10, 8, 12],
+  "mission-5": [[8, 6, 12], [10, 7, 9], [12, 8, 10]]
 };
 const kindOf = id => id.endsWith("exploration") ? "exploration" : id.match(/e2-(example|mission)-(\d+)$/)?.slice(1).join("-");
 const attr = (tag, name) => tag.match(new RegExp(`${name}=\"([^\"]*)\"`))?.[1] || "";
@@ -167,6 +168,39 @@ for (const sourceItemId of sourceIds) {
           check(promptText.includes(`가에서 남은 끈은 ${cubeLeft}cm`) && promptText.includes(`나는 가보다 사용한 끈이 ${usedDifference}cm 더 깁니다`) && !promptText.includes("나에서 남은 끈"), `${label}: 어려움 문제의 차이 조건이 잘못되었습니다.`);
           check(generated.solution.startsWith(`가에서 사용한 끈은 ${rope}-${cubeLeft}=${cubeUsed}cm입니다.`) && generated.solution.includes(`나에서 사용한 끈은 ${cubeUsed}+${usedDifference}=${cuboidUsed}cm`) && !generated.solution.includes(`${rope}-${cuboidLeft}`), `${label}: 어려움 풀이가 차이로 나의 사용 길이를 먼저 구하지 않습니다.`);
         }
+      } else if (kind === "mission-5") {
+        const [width, height, depth] = expected["mission-5"][pool];
+        const ropeA = 2 * (depth + height);
+        const ropeB = 2 * (width + height);
+        const ropeC = 4 * (width + height + depth);
+        const sideSum = ropeC / 4;
+        const hardDifference = ropeC - ropeA - ropeB;
+        const candidates = [];
+        for (let candidateWidth = 1; candidateWidth < sideSum; candidateWidth += 1) {
+          for (let candidateHeight = 1; candidateHeight < sideSum - candidateWidth; candidateHeight += 1) {
+            const candidateDepth = sideSum - candidateWidth - candidateHeight;
+            if (2 * (candidateDepth + candidateHeight) === ropeA && 2 * (candidateWidth + candidateHeight) === ropeB) candidates.push([candidateWidth, candidateHeight, candidateDepth]);
+          }
+        }
+        const volume = width * height * depth;
+        const promptText = learnerText(generated.prompt).replace(/\s+/g, " ");
+        check(normalize(generated.answer) === normalize(`${volume}cm³`), `${label}: 세 끈 부피가 독립 계산과 다릅니다.`);
+        check(JSON.stringify(candidates) === JSON.stringify([[width, height, depth]]), `${label}: 세 끈 조건의 자연수 해가 하나가 아닙니다: ${JSON.stringify(candidates)}`);
+        check(generated.solution.includes(`가로는 ${sideSum}-${ropeA / 2}=${width}cm`) && generated.solution.includes(`세로는 ${sideSum}-${ropeB / 2}=${depth}cm`) && generated.solution.includes(`높이는 ${sideSum}-${width}-${depth}=${height}cm`), `${label}: 세 변을 찾는 실제 수 풀이가 없습니다.`);
+        ["box-a-depth-height-visible", "box-a-depth-height-hidden", "box-b-width-height-visible", "box-b-width-height-hidden", "box-c-depth-height-visible", "box-c-depth-height-hidden", "box-c-width-height-visible", "box-c-width-height-hidden", "box-c-width-depth-visible", "box-c-width-depth-hidden"].forEach(role => check(generated.answerVisual.includes(`data-visual-element=\"${role}\"`), `${label}: ${role} 끈 경로가 없습니다.`));
+        ["box-width-dimension", "box-height-dimension", "box-depth-dimension"].forEach(role => check(generated.answerVisual.includes(`data-visual-element=\"${role}\"`), `${label}: 답 그림의 ${role} 치수 근거가 없습니다.`));
+        check(promptText.includes("(단, 매듭의 길이는 생각하지 않습니다.)"), `${label}: 원문의 매듭 길이 제외 조건이 없습니다.`);
+        if (difficulty === -1) {
+          check(promptText.includes("가의 끈은 세로와 높이의 합의 2배") && promptText.includes("다의 세 방향 끈은 가로·세로·높이의 합의 4배"), `${label}: 쉬움 문제에 세 끈의 방향별 뜻이 없습니다.`);
+          check(generated.solution.startsWith(`가의 끈 길이의 절반은 ${ropeA}÷2=`), `${label}: 쉬움 풀이가 주어진 끈 해석부터 시작하지 않습니다.`);
+        } else if (difficulty === 0) {
+          check(promptText.includes(`각각 ${ropeA}cm, ${ropeB}cm, ${ropeC}cm`) && !promptText.includes("합보다"), `${label}: 기준 문제가 원문의 세 끈 길이를 그대로 제시하지 않습니다.`);
+          check(generated.solution.startsWith("가의 끈은 세로와 높이를 각각 두 번 지나므로"), `${label}: 기준 풀이가 원문 끈 경로 해석부터 시작하지 않습니다.`);
+        } else {
+          check(promptText.includes(`각각 ${ropeA}cm, ${ropeB}cm`) && promptText.includes(`합보다 ${hardDifference}cm 더 깁니다`) && !promptText.includes(`사용한 끈 ${ropeC}cm`), `${label}: 어려움 문제의 세 번째 끈 관계가 잘못되었습니다.`);
+          check(generated.solution.startsWith(`다에서 사용한 끈은 ${ropeA}+${ropeB}+${hardDifference}=${ropeC}cm입니다.`), `${label}: 어려움 풀이가 세 번째 끈 길이 계산부터 시작하지 않습니다.`);
+        }
+        if (pool === 0) check(generated.answer === "576cm³", `${label}: 원문 세 끈 상자 부피가 576cm³가 아닙니다.`);
       } else {
         const unit = expected["mission-3"][pool];
         const depth = 5 * unit;
@@ -196,7 +230,7 @@ for (const sourceItemId of sourceIds) {
     check(seenPools.size === 3, `${sourceItemId}/difficulty${difficulty}: 3개 풀이 모두 생성되지 않았습니다.`);
   }
 }
-check(allResults.size === 45, `전체 고정 풀·난이도 결과 수가 45개가 아닙니다: ${allResults.size}`);
+check(allResults.size === 54, `전체 고정 풀·난이도 결과 수가 54개가 아닙니다: ${allResults.size}`);
 difficultyBodies.forEach((bodies, label) => {
   check(bodies.size === 3, `${label}: 세 난이도 문제 본문을 모두 모으지 못했습니다.`);
   check(new Set(bodies.values()).size === 3, `${label}: 힌트 문장을 제거하면 세 난이도 문제 본문이 구조적으로 같아집니다.`);
@@ -206,4 +240,4 @@ if (failures.length) {
   console.error(failures.slice(0, 120).join("\n"));
   process.exit(1);
 }
-console.log("6-1 부피 개념탐구 2 수학 감사 통과: 5유형 × 3풀 × 3난이도, 인수 전수 열거·끈 역검산·계단 두 공식·문제/정답 분리 확인");
+console.log("6-1 부피 개념탐구 2 수학 감사 통과: 6유형 × 3풀 × 3난이도, 인수 전수 열거·두 끈 역검산·세 끈 단일해·계단 두 공식·문제/정답 분리 확인");

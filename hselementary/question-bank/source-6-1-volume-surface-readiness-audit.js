@@ -20,7 +20,7 @@ const requiredFields = [
 const publicIds = new Set([
   "6-1-u6-e1-exploration", "6-1-u6-e1-example-1", "6-1-u6-e1-example-2", "6-1-u6-e1-example-3",
   "6-1-u6-e1-example-4", "6-1-u6-e1-mission-1", "6-1-u6-e1-mission-2", "6-1-u6-e1-mission-3", "6-1-u6-e1-mission-6",
-  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1", "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3",
+  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1", "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5",
   "6-1-u6-e3-exploration", "6-1-u6-e3-example-1", "6-1-u6-e3-example-2", "6-1-u6-e3-example-3",
   "6-1-u6-e3-example-4", "6-1-u6-e3-mission-2", "6-1-u6-e3-mission-4", "6-1-u6-e3-mission-5", "6-1-u6-e3-mission-6",
   "6-1-u6-e4-exploration-1", "6-1-u6-e4-exploration-2", "6-1-u6-e4-exploration-3",
@@ -30,7 +30,7 @@ const publicIds = new Set([
 const lockedIds = new Set([
   "6-1-u6-e1-mission-4", "6-1-u6-e1-mission-5",
   "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4",
-  "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5", "6-1-u6-e2-mission-6",
+  "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-6",
   "6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"
 ]);
 
@@ -138,6 +138,13 @@ assert(factorTriples(48).length === 9 && items.find(item => item.sourceItemId ==
 assert((30 - 2 * 6) * (24 - 2 * 6) * 6 === 1296, "종이를 접은 상자의 부피 계산이 맞지 않습니다.");
 assert((110 - 22) / 8 === 11 && (110 - 14 - 6 * 11) / 2 === 15 && 11 * 11 * 15 === 1815, "두 상자와 끈 길이로 구한 부피 계산이 맞지 않습니다.");
 assert(items.find(item => item.sourceItemId === "6-1-u6-e2-mission-2")?.independentAnswer === "1815cm³", "두 상자와 끈 길이로 구한 독립 답이 맞지 않습니다.");
+const threeRopeCandidates = [];
+for (let width = 1; width < 26; width += 1) for (let height = 1; height < 26 - width; height += 1) {
+  const depth = 26 - width - height;
+  if (2 * (depth + height) === 36 && 2 * (width + height) === 28) threeRopeCandidates.push([width, height, depth]);
+}
+assert(JSON.stringify(threeRopeCandidates) === JSON.stringify([[8, 6, 12]]), `세 끈 조건의 자연수 해가 하나가 아닙니다: ${JSON.stringify(threeRopeCandidates)}`);
+assert(items.find(item => item.sourceItemId === "6-1-u6-e2-mission-5")?.independentAnswer === "576cm³", "세 끈 길이로 구한 독립 답이 576cm³가 아닙니다.");
 assert(10 * (10 + 20 + 30 + 40 + 50) * 50 === 75000 && 2 * 1500 + 200 * 50 === 13000, "다섯 층 계단 입체의 부피·겉넓이 계산이 맞지 않습니다.");
 assert(items.find(item => item.sourceItemId === "6-1-u6-e4-exploration-1")?.independentAnswer === "6cm", "기울인 수조의 선분 길이 답이 맞지 않습니다.");
 assert(items.find(item => item.sourceItemId === "6-1-u6-e4-exploration-2")?.independentAnswer === "16cm", "수조를 되돌린 뒤 물높이 답이 맞지 않습니다.");
@@ -152,8 +159,8 @@ assert(items.find(item => item.sourceItemId === "6-1-u6-e4-mission-6")?.independ
 assert(6750 / (25 * 9) === 30 && 13500 / ((15 + 25) * 30) === 11.25, "두 칸 수조의 공통 깊이와 최종 물높이 계산이 맞지 않습니다.");
 
 const e3 = id => items.find(item => item.sourceItemId === id);
-assert(publicIds.size === 36 && lockedIds.size === 10, "공개 36개·잠금 10개 대상 수가 계약과 다릅니다.");
-assert(items.filter(item => publicIds.has(item.sourceItemId)).length === 36, "공개 대상이 36개가 아닙니다.");
+assert(publicIds.size === 37 && lockedIds.size === 9, "공개 37개·잠금 9개 대상 수가 계약과 다릅니다.");
+assert(items.filter(item => publicIds.has(item.sourceItemId)).length === 37, "공개 대상이 37개가 아닙니다.");
 assert(items.filter(item => lockedIds.has(item.sourceItemId)).every(item => item.implementationStatus === "review-locked" && item.publicDecision === "locked"), "추가 확인 대상의 잠금이 풀렸습니다.");
 assert(e3("6-1-u6-e3-exploration")?.independentAnswer === "2738cm³", "개념탐구 3의 독립 답이 2738cm³가 아닙니다.");
 assert(e3("6-1-u6-e3-example-1")?.independentAnswer === "280cm³", "예제 3-1의 독립 답이 280cm³가 아닙니다.");

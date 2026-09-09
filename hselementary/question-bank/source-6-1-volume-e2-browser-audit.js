@@ -15,7 +15,7 @@ const fail = message => failures.push(message);
 const difficultyBodies = new Map();
 const ids = [
   "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1",
-  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3"
+  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
 ];
 const difficulties = process.env.HSE_DIFFICULTY ? [Number(process.env.HSE_DIFFICULTY)] : [-1, 0, 1];
 const outputDir = process.env.HSE_SCREENSHOT_DIR || fs.mkdtempSync(path.join(os.tmpdir(), "hse-volume-e2-browser-"));
@@ -30,7 +30,8 @@ const expected = {
   "example-1": [12, 24, 36],
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
-  "mission-3": [10, 8, 12]
+  "mission-3": [10, 8, 12],
+  "mission-5": [[8, 6, 12], [10, 7, 9], [12, 8, 10]]
 };
 
 const mime = { ".css": "text/css", ".html": "text/html", ".js": "application/javascript", ".png": "image/png" };
@@ -167,6 +168,25 @@ function verify(problem, answer, sourceItemId, difficulty, viewport) {
         if (!solved.solution.startsWith(`가에서 사용한 끈은 ${rope}-${cubeLeft}=${cubeUsed}cm입니다.`) || !solved.solution.includes(`나에서 사용한 끈은 ${cubeUsed}+${usedDifference}=${cuboidUsed}cm`) || solved.solution.includes(`${rope}-${cuboidLeft}`)) fail(`${label}/답/pool${item.pool}: 어려움 풀이가 차이에서 나의 사용 길이를 먼저 구하지 않습니다.`);
       }
       if (!item.text.includes("(단, 매듭의 길이는 생각하지 않습니다.)")) fail(`${label}/문제/pool${item.pool}: 원문의 매듭 길이 제외 조건이 없습니다.`);
+    }
+    if (sourceItemId.endsWith("mission-5")) {
+      const [width, height, depth] = expected["mission-5"][item.pool];
+      const ropeA = 2 * (depth + height);
+      const ropeB = 2 * (width + height);
+      const ropeC = 4 * (width + height + depth);
+      const hardDifference = ropeC - ropeA - ropeB;
+      const ropeRoles = ["box-a-depth-height-visible", "box-a-depth-height-hidden", "box-b-width-height-visible", "box-b-width-height-hidden", "box-c-depth-height-visible", "box-c-depth-height-hidden", "box-c-width-height-visible", "box-c-width-height-hidden", "box-c-width-depth-visible", "box-c-width-depth-hidden"];
+      [item.svgs[0], solved.svgs[0]].forEach((svg, phaseIndex) => ropeRoles.forEach(role => {
+        if (!svg.required.includes(role) || svg.roleCounts[role] !== 1 || svg.paths.filter(entry => entry.role === role).length !== 1) fail(`${label}/${phaseIndex ? "답" : "문제"}/pool${item.pool}: ${role} 끈 경로가 정확히 하나가 아닙니다.`);
+      }));
+      ["box-width-dimension", "box-height-dimension", "box-depth-dimension"].forEach(role => {
+        if (!solved.svgs[0].required.includes(role) || solved.svgs[0].roleCounts[role] !== 1) fail(`${label}/답/pool${item.pool}: ${role} 치수선이 없습니다.`);
+      });
+      if (!item.text.includes("(단, 매듭의 길이는 생각하지 않습니다.)")) fail(`${label}/문제/pool${item.pool}: 원문의 매듭 길이 제외 조건이 없습니다.`);
+      if (!solved.text.includes(`가로 ${width}cm`) || !solved.text.includes(`세로 ${depth}cm`) || !solved.text.includes(`높이 ${height}cm`) || !solved.text.includes(`${width}×${depth}×${height}`)) fail(`${label}/답/pool${item.pool}: 세 변과 부피의 그림 근거가 없습니다.`);
+      if (difficulty === -1 && (!item.text.includes("가의 끈은 세로와 높이의 합의 2배") || !item.text.includes("다의 세 방향 끈은 가로·세로·높이의 합의 4배") || !solved.solution.startsWith(`가의 끈 길이의 절반은 ${ropeA}÷2=`))) fail(`${label}/pool${item.pool}: 쉬움의 방향별 끈 뜻 또는 첫 풀이 단계가 맞지 않습니다.`);
+      if (difficulty === 0 && (!item.text.includes(`각각 ${ropeA}cm, ${ropeB}cm, ${ropeC}cm`) || item.text.includes("합보다") || !solved.solution.startsWith("가의 끈은 세로와 높이를 각각 두 번 지나므로"))) fail(`${label}/pool${item.pool}: 기준의 원문 세 길이 또는 첫 풀이 단계가 맞지 않습니다.`);
+      if (difficulty === 1 && (!item.text.includes(`각각 ${ropeA}cm, ${ropeB}cm`) || !item.text.includes(`합보다 ${hardDifference}cm 더 깁니다`) || item.text.includes(`사용한 끈 ${ropeC}cm`) || !solved.solution.startsWith(`다에서 사용한 끈은 ${ropeA}+${ropeB}+${hardDifference}=${ropeC}cm입니다.`))) fail(`${label}/pool${item.pool}: 어려움의 세 번째 끈 관계 또는 첫 풀이 단계가 맞지 않습니다.`);
     }
     if (sourceItemId.endsWith("exploration") && (item.text.includes("상자의 부피") || !solved.text.match(/\d+개/))) fail(`${label}/pool${item.pool}: 블록 개수 전용 문항 계약이 아닙니다.`);
     if (sourceItemId.endsWith("exploration")) {

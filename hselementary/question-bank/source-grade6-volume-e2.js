@@ -7,7 +7,7 @@
   const generatorKey = "sourceGrade6VolumeE2";
   const ids = Object.freeze([
     "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1",
-    "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3"
+    "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
   ]);
   const idSet = new Set(ids);
   const esc = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
@@ -27,7 +27,12 @@
       { rope: 120, cubeLeft: 24, cuboidLeft: 12 },
       { rope: 96, cubeLeft: 16, cuboidLeft: 8 }
     ]),
-    "mission-3": Object.freeze([{ unit: 10 }, { unit: 8 }, { unit: 12 }])
+    "mission-3": Object.freeze([{ unit: 10 }, { unit: 8 }, { unit: 12 }]),
+    "mission-5": Object.freeze([
+      { width: 8, height: 6, depth: 12 },
+      { width: 10, height: 7, depth: 9 },
+      { width: 12, height: 8, depth: 10 }
+    ])
   });
 
   const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
@@ -79,6 +84,28 @@
       surface: 2 * 15 * data.unit * data.unit + 20 * data.unit * depth
     };
   };
+  const threeRopeFacts = data => {
+    const ropeA = 2 * (data.depth + data.height);
+    const ropeB = 2 * (data.width + data.height);
+    const ropeC = 4 * (data.width + data.height + data.depth);
+    const sideSum = ropeC / 4;
+    const candidates = [];
+    for (let width = 1; width < sideSum; width += 1) {
+      for (let height = 1; height < sideSum - width; height += 1) {
+        const depth = sideSum - width - height;
+        if (2 * (depth + height) === ropeA && 2 * (width + height) === ropeB) candidates.push([width, height, depth]);
+      }
+    }
+    return {
+      ropeA,
+      ropeB,
+      ropeC,
+      sideSum,
+      hardDifference: ropeC - ropeA - ropeB,
+      candidates,
+      volume: data.width * data.height * data.depth
+    };
+  };
   const fractionMarkup = (numerator, denominator) => {
     const divisor = gcd(numerator, denominator);
     const n = numerator / divisor;
@@ -97,7 +124,7 @@
   const circle = (cx, cy, radius, className, role = "") => `<circle class="${className}" cx="${cx}" cy="${cy}" r="${radius}"${role ? ` data-visual-element="${role}"` : ""}/>`;
   const polygon = (points, className = "source61-volume-e2-face", role = "") => `<polygon class="${className}" points="${points.map(point => point.join(",")).join(" ")}"${role ? ` data-visual-element="${role}"` : ""}/>`;
 
-  const svgStyle = `<style>.source61-volume-e2-diagram .source61-volume-e2-sheet{fill:#f8fbfd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-face,.source61-volume-e2-diagram .source61-volume-e2-box{fill:#edf6fb;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-top{fill:#fff0bd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-side{fill:#dceffd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-fold{fill:none;stroke:#7891a5;stroke-width:1.5;stroke-dasharray:5 4}.source61-volume-e2-diagram .source61-volume-e2-grid{fill:none;stroke:#8ca7b8;stroke-width:.65}.source61-volume-e2-diagram .source61-volume-e2-unit-cube,.source61-volume-e2-diagram .source61-volume-e2-card{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-card-solved{fill:#fff0bd;stroke:#b77909;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-rope{fill:none;stroke:#c47b18;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-rope.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-knot{fill:#fff;stroke:#c47b18;stroke-width:3}.source61-volume-e2-diagram .source61-volume-e2-rope-knot.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-stair-cell{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-stair-cell.is-solved{fill:#fff0bd}.source61-volume-e2-diagram .source61-volume-e2-line,.source61-volume-e2-diagram .source61-volume-e2-outline,.source61-volume-e2-diagram .source61-volume-e2-depth{fill:none;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-perimeter{fill:none;stroke:#c53b32;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fff)}.source61-volume-e2-diagram .source61-volume-e2-label,.source61-volume-e2-diagram .source61-volume-e2-measure,.source61-volume-e2-diagram .source61-volume-e2-note,.source61-volume-e2-diagram .source61-volume-e2-title,.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;fill:#183b56!important;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-title{font-size:13px;font-weight:950}.source61-volume-e2-diagram .source61-volume-e2-note{font-size:10px;fill:#526b7d!important}.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-size:11px;font-weight:950;fill:#9a6500!important}</style>`;
+  const svgStyle = `<style>.source61-volume-e2-diagram .source61-volume-e2-sheet{fill:#f8fbfd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-face,.source61-volume-e2-diagram .source61-volume-e2-box{fill:#edf6fb;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-top{fill:#fff0bd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-side{fill:#dceffd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-fold{fill:none;stroke:#7891a5;stroke-width:1.5;stroke-dasharray:5 4}.source61-volume-e2-diagram .source61-volume-e2-grid{fill:none;stroke:#8ca7b8;stroke-width:.65}.source61-volume-e2-diagram .source61-volume-e2-unit-cube,.source61-volume-e2-diagram .source61-volume-e2-card{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-card-solved{fill:#fff0bd;stroke:#b77909;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-rope{fill:none;stroke:#c47b18;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-rope.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden{fill:none;stroke:#c47b18;stroke-width:2.4;stroke-dasharray:5 4;stroke-linecap:round;opacity:.72}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-knot{fill:#fff;stroke:#c47b18;stroke-width:3}.source61-volume-e2-diagram .source61-volume-e2-rope-knot.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-stair-cell{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-stair-cell.is-solved{fill:#fff0bd}.source61-volume-e2-diagram .source61-volume-e2-line,.source61-volume-e2-diagram .source61-volume-e2-outline,.source61-volume-e2-diagram .source61-volume-e2-depth,.source61-volume-e2-diagram .source61-volume-e2-dimension,.source61-volume-e2-diagram .source61-volume-e2-extension{fill:none;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-dimension{stroke:#6d8394;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-extension{stroke:#9aacb9;stroke-width:1}.source61-volume-e2-diagram .source61-volume-e2-perimeter{fill:none;stroke:#c53b32;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fff)}.source61-volume-e2-diagram .source61-volume-e2-label,.source61-volume-e2-diagram .source61-volume-e2-measure,.source61-volume-e2-diagram .source61-volume-e2-note,.source61-volume-e2-diagram .source61-volume-e2-title,.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;fill:#183b56!important;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-title{font-size:13px;font-weight:950}.source61-volume-e2-diagram .source61-volume-e2-note{font-size:10px;fill:#526b7d!important}.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-size:11px;font-weight:950;fill:#9a6500!important}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-title{font-size:22px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-note{font-size:20px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-answer-label{font-size:20px}</style>`;
   const svg = (kind, data, poolIndex, solved, content, required, width = 640, height = 360) => `<svg class="geometry-diagram source61-volume-e2-diagram" style="display:block;width:min(640px,100%);height:auto;margin:12px auto;overflow:visible" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(`${kind} ${solved ? "정답 그림" : "문제 그림"}`)}" data-phase="${solved ? "answer" : "problem"}" data-model-key="${kind}" data-source61-volume-e2-values="${esc(data.values.join(","))}" data-difficulty-level="${data.level}" data-required-elements="${required.join(",")}" data-pool-index="${poolIndex}">${svgStyle}${content}</svg>`;
 
   const explorationSvg = (data, poolIndex, solved) => {
@@ -237,6 +264,67 @@
     return svg("rope-wrapped-box", { values: [data.rope, data.cubeLeft, data.cuboidLeft, data.side, data.height, data.volume], level: data.level }, poolIndex, solved, content, ["cube-continuous-rope", "cuboid-continuous-rope", "cube-rope-knot", "cuboid-rope-knot", "cube-front", "cuboid-front"], 640, 345);
   };
 
+  const threeRopeSvg = (data, poolIndex, solved) => {
+    const path = (points, className, role) => `<path class="${className}${solved ? " is-solved" : ""}" d="${points.map((point, index) => `${index ? "L" : "M"}${point[0]} ${point[1]}`).join(" ")}" data-visual-element="${role}"/>`;
+    const segmentedPath = (segments, className, role) => `<path class="${className}${solved ? " is-solved" : ""}" d="${segments.map(segment => segment.map((point, index) => `${index ? "L" : "M"}${point[0]} ${point[1]}`).join(" ")).join(" ")}" data-visual-element="${role}"/>`;
+    const midpoint = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const box = (x, y, role, loops) => {
+      const width = 96;
+      const height = 72;
+      const dx = 34;
+      const dy = -22;
+      const frontTopLeft = [x, y];
+      const frontTopRight = [x + width, y];
+      const frontBottomRight = [x + width, y + height];
+      const frontBottomLeft = [x, y + height];
+      const backTopLeft = [x + dx, y + dy];
+      const backTopRight = [x + width + dx, y + dy];
+      const backBottomRight = [x + width + dx, y + height + dy];
+      const backBottomLeft = [x + dx, y + height + dy];
+      const faces = `${polygon([frontTopLeft, frontTopRight, frontBottomRight, frontBottomLeft], "source61-volume-e2-box", `${role}-front`)}${polygon([frontTopLeft, backTopLeft, backTopRight, frontTopRight], "source61-volume-e2-box-top", `${role}-top`)}${polygon([frontTopRight, backTopRight, backBottomRight, frontBottomRight], "source61-volume-e2-box-side", `${role}-side`)}`;
+      const depthHeight = () => {
+        const frontTop = midpoint(frontTopLeft, frontTopRight);
+        const backTop = midpoint(backTopLeft, backTopRight);
+        const backBottom = midpoint(backBottomLeft, backBottomRight);
+        const frontBottom = midpoint(frontBottomLeft, frontBottomRight);
+        return `${segmentedPath([[frontTop, backTop], [frontTop, frontBottom]], "source61-volume-e2-rope", `${role}-depth-height-visible`)}${segmentedPath([[backTop, backBottom], [backBottom, frontBottom]], "source61-volume-e2-rope-hidden", `${role}-depth-height-hidden`)}`;
+      };
+      const widthHeight = () => {
+        const topLeft = midpoint(frontTopLeft, backTopLeft);
+        const topRight = midpoint(frontTopRight, backTopRight);
+        const bottomRight = midpoint(frontBottomRight, backBottomRight);
+        const bottomLeft = midpoint(frontBottomLeft, backBottomLeft);
+        return `${segmentedPath([[topLeft, topRight], [topRight, bottomRight]], "source61-volume-e2-rope", `${role}-width-height-visible`)}${segmentedPath([[bottomRight, bottomLeft], [bottomLeft, topLeft]], "source61-volume-e2-rope-hidden", `${role}-width-height-hidden`)}`;
+      };
+      const widthDepth = () => {
+        const frontLeft = midpoint(frontTopLeft, frontBottomLeft);
+        const frontRight = midpoint(frontTopRight, frontBottomRight);
+        const backRight = midpoint(backTopRight, backBottomRight);
+        const backLeft = midpoint(backTopLeft, backBottomLeft);
+        return `${segmentedPath([[frontLeft, frontRight], [frontRight, backRight]], "source61-volume-e2-rope", `${role}-width-depth-visible`)}${segmentedPath([[backRight, backLeft], [backLeft, frontLeft]], "source61-volume-e2-rope-hidden", `${role}-width-depth-hidden`)}`;
+      };
+      const ropeMarkup = `${loops.includes("depth-height") ? depthHeight() : ""}${loops.includes("width-height") ? widthHeight() : ""}${loops.includes("width-depth") ? widthDepth() : ""}`;
+      const dimensions = solved && role === "box-c" ? `${line(frontBottomLeft[0], frontBottomLeft[1] + 12, frontBottomRight[0], frontBottomRight[1] + 12, "source61-volume-e2-dimension", "box-width-dimension")}${text(x + width / 2, y + height + 28, `${data.width}cm`, "source61-volume-e2-answer-label")}${line(x - 12, y, x - 12, y + height, "source61-volume-e2-dimension", "box-height-dimension")}${text(x - 18, y + height / 2 + 4, `${data.height}cm`, "source61-volume-e2-answer-label", "end")}${path([frontTopRight, backTopRight], "source61-volume-e2-dimension", "box-depth-dimension")}${text(x + width + dx / 2, y + dy - 8, `${data.depth}cm`, "source61-volume-e2-answer-label")}` : "";
+      return `${faces}${ropeMarkup}${dimensions}`;
+    };
+    const easy = data.level === 0;
+    const hard = data.level === 2;
+    const caption = (x, title, first, second = "") => `${text(x, 30, title, "source61-volume-e2-title")}${text(x, 214, first, solved ? "source61-volume-e2-answer-label" : "source61-volume-e2-note")}${second ? text(x, 244, second, solved ? "source61-volume-e2-answer-label" : "source61-volume-e2-note") : ""}`;
+    const aCaption = solved ? [`세로+높이=${data.ropeA / 2}cm`, `2배=${data.ropeA}cm`] : easy ? [`끈 ${data.ropeA}cm`, "세로+높이의 2배"] : [`사용한 끈 ${data.ropeA}cm`, ""];
+    const bCaption = solved ? [`가로+높이=${data.ropeB / 2}cm`, `2배=${data.ropeB}cm`] : easy ? [`끈 ${data.ropeB}cm`, "가로+높이의 2배"] : [`사용한 끈 ${data.ropeB}cm`, ""];
+    const cCaption = solved ? [`세 변의 합=${data.sideSum}cm`, `4배=${data.ropeC}cm`] : hard ? ["가·나의 합보다", `${data.hardDifference}cm 더 김`] : easy ? [`끈 ${data.ropeC}cm`, "세 변의 합의 4배"] : [`사용한 끈 ${data.ropeC}cm`, ""];
+    const answerSummary = solved ? `${text(320, 284, `가로 ${data.width}cm · 세로 ${data.depth}cm · 높이 ${data.height}cm`, "source61-volume-e2-answer-label")}${text(320, 314, `부피 ${data.width}×${data.depth}×${data.height}=${num(data.volume)}cm³`, "source61-volume-e2-answer-label")}` : "";
+    const content = `${box(35, 88, "box-a", ["depth-height"])}${box(250, 88, "box-b", ["width-height"])}${box(465, 88, "box-c", ["depth-height", "width-height", "width-depth"])}${caption(100, "가", ...aCaption)}${caption(315, "나", ...bCaption)}${caption(530, "다", ...cCaption)}${answerSummary}`;
+    const required = [
+      "box-a-front", "box-a-top", "box-a-side", "box-a-depth-height-visible", "box-a-depth-height-hidden",
+      "box-b-front", "box-b-top", "box-b-side", "box-b-width-height-visible", "box-b-width-height-hidden",
+      "box-c-front", "box-c-top", "box-c-side", "box-c-depth-height-visible", "box-c-depth-height-hidden",
+      "box-c-width-height-visible", "box-c-width-height-hidden", "box-c-width-depth-visible", "box-c-width-depth-hidden"
+    ];
+    if (solved) required.push("box-width-dimension", "box-height-dimension", "box-depth-dimension");
+    return svg("three-rope-box", { values: [data.width, data.height, data.depth, data.ropeA, data.ropeB, data.ropeC, data.volume], level: data.level }, poolIndex, solved, content, required, 640, 338);
+  };
+
   const stairSvg = (data, poolIndex, solved) => {
     const cell = 22;
     const baseX = 48;
@@ -323,6 +411,19 @@
       const loopSteps = `가의 밑면 한 변은 ${facts.cubeUsed}÷8=${facts.side}cm입니다. 가로 둘레는 4×${facts.side}=${4 * facts.side}cm이고, 위아래 둘레는 2×${facts.side}+2×${facts.side}=${4 * facts.side}cm입니다. 나의 가로 둘레는 4×${facts.side}=${4 * facts.side}cm이고, 위아래 둘레에는 밑면 한 변 두 개와 높이 두 개가 있습니다. 따라서 나의 높이는 (${facts.cuboidUsed}-6×${facts.side})÷2=${facts.height}cm입니다.`;
       return { answer: `${num(facts.volume)}cm³`, visual: ropeSvg(model, poolIndex, solved), solution: `${firstStep} ${loopSteps} 나의 부피는 ${facts.side}×${facts.side}×${facts.height}=${num(facts.volume)}cm³입니다.` };
     }
+    if (kind === "mission-5") {
+      const facts = threeRopeFacts(data);
+      const expected = [data.width, data.height, data.depth];
+      if (facts.candidates.length !== 1 || facts.candidates[0].some((value, index) => value !== expected[index])) throw new Error("세 끈 길이에서 상자의 세 변이 하나로 정해지지 않습니다.");
+      const model = { ...data, ...facts, level };
+      const firstStep = level === 0
+        ? `가의 끈 길이의 절반은 ${facts.ropeA}÷2=${facts.ropeA / 2}cm, 나의 끈 길이의 절반은 ${facts.ropeB}÷2=${facts.ropeB / 2}cm이고, 다의 끈 길이의 4분의 1은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`
+        : level === 2
+          ? `다에서 사용한 끈은 ${facts.ropeA}+${facts.ropeB}+${facts.hardDifference}=${facts.ropeC}cm입니다. 세 방향의 끈을 모두 더한 길이는 가로, 세로, 높이의 합의 4배이므로 세 변의 합은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`
+          : `가의 끈은 세로와 높이를 각각 두 번 지나므로 세로와 높이의 합은 ${facts.ropeA}÷2=${facts.ropeA / 2}cm입니다. 나에서도 같은 방법으로 가로와 높이의 합은 ${facts.ropeB}÷2=${facts.ropeB / 2}cm입니다. 다의 세 방향 끈을 모두 더하면 가로, 세로, 높이가 각각 네 번씩 들어가므로 세 변의 합은 ${facts.ropeC}÷4=${facts.sideSum}cm입니다.`;
+      const dimensions = `가로는 ${facts.sideSum}-${facts.ropeA / 2}=${data.width}cm, 세로는 ${facts.sideSum}-${facts.ropeB / 2}=${data.depth}cm이고, 높이는 ${facts.sideSum}-${data.width}-${data.depth}=${data.height}cm입니다.`;
+      return { answer: `${num(facts.volume)}cm³`, visual: threeRopeSvg(model, poolIndex, solved), solution: `${firstStep} ${dimensions} 따라서 상자의 부피는 ${data.width}×${data.depth}×${data.height}=${num(facts.volume)}cm³입니다.` };
+    }
     const facts = stairFacts(data);
     const model = { ...data, ...facts, level };
     const firstStep = level === 0
@@ -362,6 +463,15 @@
           : `끈의 길이는 ${data.rope}cm이고, 가에서 남은 끈은 ${data.cubeLeft}cm, 나에서 남은 끈은 ${data.cuboidLeft}cm입니다.`;
       return `정육면체 상자 가와 밑면이 가와 같은 정사각형인 직육면체 상자 나를 같은 길이의 끈으로 각각 그림처럼 묶었습니다. ${condition} 나의 부피를 구하세요. (단, 매듭의 길이는 생각하지 않습니다.)`;
     }
+    if (kind === "mission-5") {
+      const facts = threeRopeFacts(data);
+      const condition = level === 0
+        ? `가의 끈은 세로와 높이의 합의 2배, 나의 끈은 가로와 높이의 합의 2배, 다의 세 방향 끈은 가로·세로·높이의 합의 4배입니다.`
+        : level === 2
+          ? `가와 나에서 사용한 끈은 각각 ${facts.ropeA}cm, ${facts.ropeB}cm이고, 다에서 사용한 끈은 가와 나에서 사용한 끈의 합보다 ${facts.hardDifference}cm 더 깁니다.`
+          : `가, 나, 다에서 사용한 끈의 길이는 각각 ${facts.ropeA}cm, ${facts.ropeB}cm, ${facts.ropeC}cm입니다.`;
+      return `같은 크기의 직육면체 모양 상자 세 개를 그림처럼 서로 다른 방향의 끈으로 둘러 묶었습니다. ${condition} 상자 한 개의 부피를 구하세요. (단, 매듭의 길이는 생각하지 않습니다.)`;
+    }
     const facts = stairFacts(data);
     if (level === 0) return `한 칸이 ${data.unit}cm이고 깊이가 ${facts.depth}cm인 계단 모양 입체도형입니다. 높이가 1층부터 5층인 다섯 부분의 앞면 칸 수는 차례로 1칸, 2칸, 3칸, 4칸, 5칸입니다. 부피와 겉넓이를 구하세요.`;
     if (level === 2) return `계단 모양 입체도형의 전체 가로 ${5 * data.unit}cm를 똑같이 5등분했습니다. 한 층 높이는 한 칸의 너비와 같고, 깊이는 전체 가로와 같습니다. 부피와 겉넓이를 구하세요.`;
@@ -371,10 +481,12 @@
   const helpFor = (kind, data) => kind === "exploration" ? "주어진 밑면의 두 길이와 상자 높이를 차례로 곱해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "주어진 가장 짧은 변 후보마다 나머지 두 변을 빠짐없이 찾아보세요."
       : kind === "mission-2" ? "주어진 사용 길이에서 가의 밑면 한 변을 먼저 찾아보세요."
+        : kind === "mission-5" ? "가와 나의 끈 길이는 2로, 다의 끈 길이는 4로 나누어 세 변의 합을 비교해 보세요."
         : "주어진 앞면 칸 수마다 한 칸의 너비와 깊이를 곱해 보세요.";
   const challengeFor = kind => kind === "exploration" ? "종이의 둘레와 두 길이의 차로 가로와 세로를 먼저 구해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "모든 경우를 찾은 뒤 세 변의 길이가 모두 다른 경우만 다시 가려 보세요."
       : kind === "mission-2" ? "가에서 사용한 끈을 구한 뒤, 두 상자가 사용한 끈의 차로 나의 사용 길이를 찾아보세요."
+        : kind === "mission-5" ? "먼저 다에서 사용한 끈의 길이를 관계로 구하고, 세 변의 합에서 두 변의 합을 각각 빼 보세요."
         : "전체 가로를 5등분해 한 칸을 구하고, 깊이가 전체 가로와 같다는 조건을 이용하세요.";
 
   const kindOf = sourceItemId => {
@@ -386,6 +498,7 @@
     if (kind === "exploration") return [data.width, data.height, data.cut];
     if (kind === "example-1" || kind === "mission-1") return [data.cubes];
     if (kind === "mission-2") return [data.rope, data.cubeLeft, data.cuboidLeft];
+    if (kind === "mission-5") return [data.width, data.height, data.depth];
     return [data.unit, 5 * data.unit];
   };
   const markInventory = () => {
