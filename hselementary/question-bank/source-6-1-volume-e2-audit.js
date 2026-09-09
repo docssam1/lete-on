@@ -9,7 +9,7 @@ const failures = [];
 const fail = message => failures.push(message);
 const check = (condition, message) => { if (!condition) fail(message); };
 const sourceIds = [
-  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-mission-1",
+  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
   "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
 ];
 const allResults = new Set();
@@ -61,6 +61,7 @@ const expected = {
     { width: 30, totalDepth: 30, lowDepth: 10, highStart: 22, highEnd: 18, lowHeight: 8 },
     { width: 42, totalDepth: 42, lowDepth: 14, highStart: 24, highEnd: 18, lowHeight: 9 }
   ],
+  "example-4": [[3, 10, 4], [5, 9, 6], [7, 11, 5]],
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
   "mission-3": [10, 8, 12],
@@ -237,6 +238,42 @@ for (const sourceItemId of sourceIds) {
           check(generated.solution.startsWith("폭은 모든 부분에서 같으므로 옆에서 본 단면 넓이를"), `${label}: 어려움 풀이가 공통 폭을 없애는 생각부터 시작하지 않습니다.`);
         }
         if (pool === 0) check(generated.answer === "14m" && highDepth === 24 && highCrossSection === 432 && lowCrossSection === 128 && cutCrossSection === 96, `${label}: 원본 20m·16m·8m·40m·16m 조건의 답과 재검산이 다릅니다.`);
+      } else if (kind === "example-4") {
+        const [width, depth, height] = expected["example-4"][pool];
+        const ropeA = 2 * (depth + height);
+        const ropeB = 2 * (width + height);
+        const horizontalRope = 2 * (width + depth);
+        const ropeC = ropeB + horizontalRope;
+        const candidates = [];
+        for (let candidateWidth = 1; candidateWidth < ropeC; candidateWidth += 1) {
+          for (let candidateDepth = 1; candidateDepth < ropeC; candidateDepth += 1) {
+            for (let candidateHeight = 1; candidateHeight < ropeC; candidateHeight += 1) {
+              if (2 * (candidateDepth + candidateHeight) === ropeA && 2 * (candidateWidth + candidateHeight) === ropeB && ropeB + 2 * (candidateWidth + candidateDepth) === ropeC) candidates.push([candidateWidth, candidateDepth, candidateHeight]);
+            }
+          }
+        }
+        const volume = width * depth * height;
+        const promptText = learnerText(generated.prompt).replace(/\s+/g, " ");
+        check(attr(problemTag, "data-model-key") === "two-loop-rope-box", `${label}: 예제 4가 두 고리 상자 모델이 아닙니다.`);
+        check(normalize(generated.answer) === normalize(`${volume}cm³`), `${label}: 두 고리 끈 부피가 독립 계산과 다릅니다.`);
+        check(JSON.stringify(candidates) === JSON.stringify([[width, depth, height]]), `${label}: 두 고리 끈 조건의 자연수 해가 하나가 아닙니다: ${JSON.stringify(candidates)}`);
+        check(generated.solution.includes(`다에서는 나의 고리 ${ropeB}cm를 빼면 수평 고리는 ${ropeC}-${ropeB}=${horizontalRope}cm`) || generated.solution.includes(`다의 끈에는 나의 고리 ${ropeB}cm가 함께 들어 있습니다.`) || generated.solution.includes(`다의 끈은 나의 고리와 수평 고리 두 개로 되어 있으므로 수평 고리는 ${ropeC}-${ropeB}=${horizontalRope}cm`), `${label}: 다의 두 고리 분해 풀이가 없습니다.`);
+        check(generated.solution.includes(`가로는 (${ropeB / 2}+${horizontalRope / 2}-${ropeA / 2})÷2=${width}cm, 깊이는 ${horizontalRope / 2}-${width}=${depth}cm, 높이는 ${ropeB / 2}-${width}=${height}cm`), `${label}: 세 변을 찾는 실제 수 풀이가 없습니다.`);
+        const ropeRoles = ["box-a-depth-height-visible", "box-a-depth-height-hidden", "box-b-width-height-visible", "box-b-width-height-hidden", "box-c-width-height-visible", "box-c-width-height-hidden", "box-c-width-depth-visible", "box-c-width-depth-hidden"];
+        [generated.prompt, generated.answerVisual].forEach((markup, phaseIndex) => ropeRoles.forEach(role => check((markup.match(new RegExp(`data-visual-element=\\"${role}\\"`, "g")) || []).length === 1, `${label}/${phaseIndex ? "답" : "문제"}: ${role} 끈 경로가 정확히 하나가 아닙니다.`)));
+        ["two-loop-width-dimension", "two-loop-height-dimension", "two-loop-depth-dimension", "two-loop-answer-card"].forEach(role => check((generated.answerVisual.match(new RegExp(`data-visual-element=\\"${role}\\"`, "g")) || []).length === 1, `${label}: 답 그림의 ${role}가 없습니다.`));
+        check((generated.prompt.match(/data-rope-loop="width-height"/g) || []).length === 4 && (generated.prompt.match(/data-rope-loop="width-depth"/g) || []).length === 2, `${label}: 셋째 그림의 두 고리 계약이 아닙니다.`);
+        check(!generated.prompt.includes(`가로 ${width}cm`) && !generated.prompt.includes(`깊이 ${depth}cm`) && !generated.prompt.includes(`높이 ${height}cm`), `${label}: 문제 그림에 답 치수가 노출되었습니다.`);
+        check(promptText.includes("(단, 매듭의 길이는 생각하지 않습니다.)"), `${label}: 원문의 매듭 길이 제외 조건이 없습니다.`);
+        if (difficulty === -1) {
+          check(promptText.includes("가의 끈은 깊이와 높이를 한 바퀴") && promptText.includes("수평 고리로 되어 있습니다") && generated.solution.startsWith(`가의 끈 길이의 절반은 ${ropeA}÷2=`), `${label}: 쉬움의 고리 안내 또는 첫 풀이가 다릅니다.`);
+        } else if (difficulty === 0) {
+          check(promptText.includes(`그림과 같이 ${ropeA}cm, ${ropeB}cm, ${ropeC}cm`) && !promptText.includes("다에는 나의 고리"), `${label}: 기준 문제가 원문의 세 끈 길이만 제시하지 않습니다.`);
+          check(generated.solution.startsWith("가의 끈은 깊이와 높이를"), `${label}: 기준 풀이가 보이는 고리 해석부터 시작하지 않습니다.`);
+        } else {
+          check(promptText.includes("다에는 나의 고리가 함께 들어") && generated.solution.startsWith(`다의 끈에는 나의 고리 ${ropeB}cm가 함께 들어 있습니다.`), `${label}: 어려움의 공통 고리 조건 또는 첫 풀이가 다릅니다.`);
+        }
+        if (pool === 0) check(generated.answer === "120cm³" && ropeA === 28 && ropeB === 14 && ropeC === 40 && JSON.stringify(candidates) === JSON.stringify([[3, 10, 4]]), `${label}: 원문 28cm·14cm·40cm의 120cm³ 계약이 다릅니다.`);
       } else if (kind === "mission-2") {
         const [rope, cubeLeft, cuboidLeft] = expected["mission-2"][pool];
         const s = (rope - cubeLeft) / 8;
@@ -335,7 +372,7 @@ for (const sourceItemId of sourceIds) {
     check(seenPools.size === 3, `${sourceItemId}/difficulty${difficulty}: 3개 풀이 모두 생성되지 않았습니다.`);
   }
 }
-check(allResults.size === 72, `전체 고정 풀·난이도 결과 수가 72개가 아닙니다: ${allResults.size}`);
+check(allResults.size === sourceIds.length * 3 * 3, `전체 고정 풀·난이도 결과 수가 ${sourceIds.length * 3 * 3}개가 아닙니다: ${allResults.size}`);
 difficultyBodies.forEach((bodies, label) => {
   check(bodies.size === 3, `${label}: 세 난이도 문제 본문을 모두 모으지 못했습니다.`);
   check(new Set(bodies.values()).size === 3, `${label}: 힌트 문장을 제거하면 세 난이도 문제 본문이 구조적으로 같아집니다.`);
@@ -345,4 +382,4 @@ if (failures.length) {
   console.error(failures.slice(0, 120).join("\n"));
   process.exit(1);
 }
-console.log("6-1 부피 개념탐구 2 수학 감사 통과: 8유형 × 3풀 × 3난이도, 인수 전수 열거·24개 직육면체 노출 면·흙 부피 보존·두 끈 역검산·세 끈 단일해·계단 두 공식·문제/정답 분리 확인");
+console.log(`6-1 부피 개념탐구 2 수학 감사 통과: ${sourceIds.length}유형 × 3풀 × 3난이도, 인수 전수 열거·24개 직육면체 노출 면·흙 부피 보존·두 끈 역검산·두 고리 단일해·세 끈 단일해·계단 두 공식·문제/정답 분리 확인`);

@@ -6,7 +6,7 @@
 
   const generatorKey = "sourceGrade6VolumeE2";
   const ids = Object.freeze([
-    "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-mission-1",
+    "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
     "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
   ]);
   const idSet = new Set(ids);
@@ -30,6 +30,11 @@
       { width: 36, totalDepth: 40, lowDepth: 16, highStart: 20, highEnd: 16, lowHeight: 8 },
       { width: 30, totalDepth: 30, lowDepth: 10, highStart: 22, highEnd: 18, lowHeight: 8 },
       { width: 42, totalDepth: 42, lowDepth: 14, highStart: 24, highEnd: 18, lowHeight: 9 }
+    ]),
+    "example-4": Object.freeze([
+      { width: 3, depth: 10, height: 4 },
+      { width: 5, depth: 9, height: 6 },
+      { width: 7, depth: 11, height: 5 }
     ]),
     "mission-1": Object.freeze([{ cubes: 48 }, { cubes: 60 }, { cubes: 72 }]),
     "mission-2": Object.freeze([
@@ -172,6 +177,25 @@
       candidates,
       volume: data.width * data.height * data.depth
     };
+  };
+  const twoLoopRopeFacts = data => {
+    const ropeA = 2 * (data.depth + data.height);
+    const ropeB = 2 * (data.width + data.height);
+    const horizontalRope = 2 * (data.width + data.depth);
+    const ropeC = ropeB + horizontalRope;
+    const depthHeight = ropeA / 2;
+    const widthHeight = ropeB / 2;
+    const widthDepth = horizontalRope / 2;
+    const candidates = [];
+    // Check the visible rope contract by enumerating positive-integer boxes separately.
+    for (let width = 1; width < ropeC; width += 1) {
+      for (let depth = 1; depth < ropeC; depth += 1) {
+        for (let height = 1; height < ropeC; height += 1) {
+          if (2 * (depth + height) === ropeA && 2 * (width + height) === ropeB && ropeB + 2 * (width + depth) === ropeC) candidates.push([width, depth, height]);
+        }
+      }
+    }
+    return { ropeA, ropeB, horizontalRope, ropeC, depthHeight, widthHeight, widthDepth, candidates, volume: data.width * data.depth * data.height };
   };
   const fractionMarkup = (numerator, denominator) => {
     const divisor = gcd(numerator, denominator);
@@ -329,6 +353,64 @@
     const answerDetails = `${text(170, 226, cubeMeasure, "source61-volume-e2-answer-label")}${text(170, 248, cubeBase, "source61-volume-e2-answer-label")}${text(170, 270, cubeVertical, "source61-volume-e2-answer-label")}${text(470, 226, cuboidMeasure, "source61-volume-e2-answer-label")}${text(470, 248, cuboidBase, "source61-volume-e2-answer-label")}${text(470, 270, cuboidVertical, "source61-volume-e2-answer-label")}${text(170, 304, `가 전체 끈 길이 8×${data.side}cm=${8 * data.side}cm`, "source61-volume-e2-answer-label")}${text(470, 304, `나 전체 끈 길이 6×${data.side}cm+2×${data.height}cm=${6 * data.side + 2 * data.height}cm`, "source61-volume-e2-answer-label")}`;
     const content = `${text(170, 24, "가: 정육면체 상자", "source61-volume-e2-title")}${text(470, 24, "나: 밑면이 정사각형인 직육면체", "source61-volume-e2-title")}${cuboidBody(cube.x, cube.y, cube.side, cube.side, 34, solved, "cube", cubeMeasure)}${cuboidBody(cuboid.x, cuboid.y, cuboid.s, cuboid.h, 34, solved, "cuboid", cuboidMeasure)}${solved ? answerDetails : problemLengths}`;
     return svg("rope-wrapped-box", { values: [data.rope, data.cubeLeft, data.cuboidLeft, data.side, data.height, data.volume], level: data.level }, poolIndex, solved, content, ["cube-continuous-rope", "cuboid-continuous-rope", "cube-rope-knot", "cuboid-rope-knot", "cube-front", "cuboid-front"], 640, 345);
+  };
+
+  const twoLoopRopeSvg = (data, poolIndex, solved) => {
+    const path = (segments, className, role, loop) => `<path class="${className}${solved ? " is-solved" : ""}" d="${segments.map(segment => segment.map((point, index) => `${index ? "L" : "M"}${point[0]} ${point[1]}`).join(" ")).join(" ")}" data-visual-element="${role}" data-rope-loop="${loop}"/>`;
+    const midpoint = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const box = (x, y, role, loops) => {
+      const width = 92;
+      const height = 68;
+      const dx = 32;
+      const dy = -20;
+      const frontTopLeft = [x, y];
+      const frontTopRight = [x + width, y];
+      const frontBottomRight = [x + width, y + height];
+      const frontBottomLeft = [x, y + height];
+      const backTopLeft = [x + dx, y + dy];
+      const backTopRight = [x + width + dx, y + dy];
+      const backBottomRight = [x + width + dx, y + height + dy];
+      const backBottomLeft = [x + dx, y + height + dy];
+      const faces = `${polygon([frontTopLeft, frontTopRight, frontBottomRight, frontBottomLeft], "source61-volume-e2-box", `${role}-front`)}${polygon([frontTopLeft, backTopLeft, backTopRight, frontTopRight], "source61-volume-e2-box-top", `${role}-top`)}${polygon([frontTopRight, backTopRight, backBottomRight, frontBottomRight], "source61-volume-e2-box-side", `${role}-side`)}`;
+      const depthHeight = () => {
+        const frontTop = midpoint(frontTopLeft, frontTopRight);
+        const backTop = midpoint(backTopLeft, backTopRight);
+        const backBottom = midpoint(backBottomLeft, backBottomRight);
+        const frontBottom = midpoint(frontBottomLeft, frontBottomRight);
+        return `${path([[frontTop, backTop], [frontTop, frontBottom]], "source61-volume-e2-rope", `${role}-depth-height-visible`, "depth-height")}${path([[backTop, backBottom], [backBottom, frontBottom]], "source61-volume-e2-rope-hidden", `${role}-depth-height-hidden`, "depth-height")}`;
+      };
+      const widthHeight = () => {
+        const topLeft = midpoint(frontTopLeft, backTopLeft);
+        const topRight = midpoint(frontTopRight, backTopRight);
+        const bottomRight = midpoint(frontBottomRight, backBottomRight);
+        const bottomLeft = midpoint(frontBottomLeft, backBottomLeft);
+        return `${path([[topLeft, topRight], [topRight, bottomRight]], "source61-volume-e2-rope", `${role}-width-height-visible`, "width-height")}${path([[bottomRight, bottomLeft], [bottomLeft, topLeft]], "source61-volume-e2-rope-hidden", `${role}-width-height-hidden`, "width-height")}`;
+      };
+      const widthDepth = () => {
+        const frontLeft = midpoint(frontTopLeft, frontBottomLeft);
+        const frontRight = midpoint(frontTopRight, frontBottomRight);
+        const backRight = midpoint(backTopRight, backBottomRight);
+        const backLeft = midpoint(backTopLeft, backBottomLeft);
+        return `${path([[frontLeft, frontRight], [frontRight, backRight]], "source61-volume-e2-rope", `${role}-width-depth-visible`, "width-depth")}${path([[backRight, backLeft], [backLeft, frontLeft]], "source61-volume-e2-rope-hidden", `${role}-width-depth-hidden`, "width-depth")}`;
+      };
+      const ropeMarkup = `${loops.includes("depth-height") ? depthHeight() : ""}${loops.includes("width-height") ? widthHeight() : ""}${loops.includes("width-depth") ? widthDepth() : ""}`;
+      const dimensions = solved && role === "box-c" ? `${line(frontBottomLeft[0], frontBottomLeft[1] + 13, frontBottomRight[0], frontBottomRight[1] + 13, "source61-volume-e2-dimension", "two-loop-width-dimension")}${text(x + width / 2, y + height + 30, `가로 ${data.width}cm`, "source61-volume-e2-answer-label")}${line(x - 13, y, x - 13, y + height, "source61-volume-e2-dimension", "two-loop-height-dimension")}${text(x - 18, y + height / 2 + 4, `높이 ${data.height}cm`, "source61-volume-e2-answer-label", "end")}${path([[frontTopRight, backTopRight]], "source61-volume-e2-dimension", "two-loop-depth-dimension", "dimension")}${text(x + width + dx / 2, y + dy - 8, `깊이 ${data.depth}cm`, "source61-volume-e2-answer-label")}` : "";
+      return `${faces}${ropeMarkup}${dimensions}`;
+    };
+    const caption = (x, title, first = "", second = "") => `${text(x, 26, title, "source61-volume-e2-title")}${first ? text(x, 202, first, solved ? "source61-volume-e2-answer-label" : "source61-volume-e2-note") : ""}${second ? text(x, 232, second, solved ? "source61-volume-e2-answer-label" : "source61-volume-e2-note") : ""}`;
+    const aCaption = solved ? [`깊이+높이 = ${data.depthHeight}cm`, `2배 = ${data.ropeA}cm`] : [`끈 ${data.ropeA}cm`];
+    const bCaption = solved ? [`가로+높이 = ${data.widthHeight}cm`, `2배 = ${data.ropeB}cm`] : [`끈 ${data.ropeB}cm`];
+    const cCaption = solved ? [] : [`끈 ${data.ropeC}cm`];
+    const answerSummary = solved ? `${rect(56, 252, 528, 96, "source61-volume-e2-card-solved", "two-loop-answer-card")}${text(320, 278, `나의 고리 ${data.ropeB}cm + 수평 고리 ${data.horizontalRope}cm = 다의 끈 ${data.ropeC}cm`, "source61-volume-e2-answer-label")}${text(320, 308, `가로 ${data.width}cm · 깊이 ${data.depth}cm · 높이 ${data.height}cm`, "source61-volume-e2-answer-label")}${text(320, 338, `부피 ${data.width}×${data.depth}×${data.height}=${num(data.volume)}cm³`, "source61-volume-e2-answer-label")}` : "";
+    const twoLoopType = `<style>.source61-volume-e2-diagram[data-model-key="two-loop-rope-box"] .source61-volume-e2-title{font-size:24px}.source61-volume-e2-diagram[data-model-key="two-loop-rope-box"] .source61-volume-e2-note{font-size:22px}.source61-volume-e2-diagram[data-model-key="two-loop-rope-box"] .source61-volume-e2-answer-label{font-size:22px}</style>`;
+    const content = `${twoLoopType}${box(20, 90, "box-a", ["depth-height"])}${box(240, 90, "box-b", ["width-height"])}${box(460, 90, "box-c", ["width-height", "width-depth"])}${caption(100, "가", ...aCaption)}${caption(305, "나", ...bCaption)}${caption(525, "다", ...cCaption)}${answerSummary}`;
+    const required = [
+      "box-a-front", "box-a-top", "box-a-side", "box-a-depth-height-visible", "box-a-depth-height-hidden",
+      "box-b-front", "box-b-top", "box-b-side", "box-b-width-height-visible", "box-b-width-height-hidden",
+      "box-c-front", "box-c-top", "box-c-side", "box-c-width-height-visible", "box-c-width-height-hidden", "box-c-width-depth-visible", "box-c-width-depth-hidden"
+    ];
+    if (solved) required.push("two-loop-width-dimension", "two-loop-height-dimension", "two-loop-depth-dimension", "two-loop-answer-card");
+    return svg("two-loop-rope-box", { values: [data.width, data.depth, data.height, data.ropeA, data.ropeB, data.ropeC], level: data.level }, poolIndex, solved, content, required, 640, 352);
   };
 
   const threeRopeSvg = (data, poolIndex, solved) => {
@@ -646,6 +728,19 @@
       const leveling = `흙을 옮겨도 전체 부피는 같으므로 나중 높이는 (${num(facts.highCrossSection)}+${num(facts.lowCrossSection)})÷${data.totalDepth}=${facts.finalHeight}m입니다. 다시 확인하면 깎은 쪽 단면 넓이와 채운 쪽 단면 넓이는 각각 ${num(facts.cutCrossSection)}m²로 같습니다.`;
       return { answer: `${facts.finalHeight}m`, visual: earthworkSvg(model, poolIndex, solved), solution: `${firstStep} ${crossSections} ${leveling}` };
     }
+    if (kind === "example-4") {
+      const facts = twoLoopRopeFacts(data);
+      const expected = [data.width, data.depth, data.height];
+      if (facts.candidates.length !== 1 || facts.candidates[0].some((value, index) => value !== expected[index])) throw new Error("두 고리 끈 조건에서 상자의 세 변이 하나로 정해지지 않습니다.");
+      const model = { ...data, ...facts, level };
+      const firstStep = level === 0
+        ? `가의 끈 길이의 절반은 ${facts.ropeA}÷2=${facts.depthHeight}cm이고, 나의 끈 길이의 절반은 ${facts.ropeB}÷2=${facts.widthHeight}cm입니다. 다에서는 나의 고리 ${facts.ropeB}cm를 빼면 수평 고리는 ${facts.ropeC}-${facts.ropeB}=${facts.horizontalRope}cm입니다.`
+        : level === 2
+          ? `다의 끈에는 나의 고리 ${facts.ropeB}cm가 함께 들어 있습니다. 따라서 수평 고리는 ${facts.ropeC}-${facts.ropeB}=${facts.horizontalRope}cm입니다.`
+          : `가의 끈은 깊이와 높이를, 나의 끈은 가로와 높이를 각각 한 바퀴 돕니다. 다의 끈은 나의 고리와 수평 고리 두 개로 되어 있으므로 수평 고리는 ${facts.ropeC}-${facts.ropeB}=${facts.horizontalRope}cm입니다.`;
+      const dimensions = `깊이와 높이의 합은 ${facts.ropeA}÷2=${facts.depthHeight}cm, 가로와 높이의 합은 ${facts.ropeB}÷2=${facts.widthHeight}cm, 가로와 깊이의 합은 ${facts.horizontalRope}÷2=${facts.widthDepth}cm입니다. 가로는 (${facts.widthHeight}+${facts.widthDepth}-${facts.depthHeight})÷2=${data.width}cm, 깊이는 ${facts.widthDepth}-${data.width}=${data.depth}cm, 높이는 ${facts.widthHeight}-${data.width}=${data.height}cm입니다.`;
+      return { answer: `${num(facts.volume)}cm³`, visual: twoLoopRopeSvg(model, poolIndex, solved), solution: `${firstStep} ${dimensions} 따라서 상자의 부피는 ${data.width}×${data.depth}×${data.height}=${num(facts.volume)}cm³입니다.` };
+    }
     if (kind === "mission-2") {
       const facts = ropeFacts(data);
       if (![facts.side, facts.height, facts.volume].every(Number.isInteger)) throw new Error("끈 고정 풀 계산 결과가 자연수가 아닙니다.");
@@ -714,6 +809,15 @@
       if (level === 2) return `그림과 같은 흙더미에서 높은 부분의 흙을 깎아 낮은 부분에 쌓아 전체 높이를 같게 만듭니다. 모든 부분의 폭은 같습니다. 나중 높이를 구하세요.`;
       return `폭이 ${data.width}m이고 전체 깊이가 ${data.totalDepth}m인 흙더미가 있습니다. 그림에서 높은 부분의 양 끝 높이는 ${data.highStart}m와 ${data.highEnd}m이고, 낮은 부분은 깊이 ${data.lowDepth}m, 높이 ${data.lowHeight}m입니다. 높은 부분의 흙을 깎아 낮은 부분에 쌓아 전체 높이를 같게 만들 때, 나중 높이를 구하세요.`;
     }
+    if (kind === "example-4") {
+      const facts = twoLoopRopeFacts(data);
+      const condition = level === 0
+        ? `가의 끈은 깊이와 높이를 한 바퀴 돌고, 나의 끈은 가로와 높이를 한 바퀴 돕니다. 다의 끈은 나의 고리와 가로·깊이를 도는 수평 고리로 되어 있습니다. 세 끈의 길이는 그림과 같이 ${facts.ropeA}cm, ${facts.ropeB}cm, ${facts.ropeC}cm입니다.`
+        : level === 2
+          ? `세 끈의 길이는 그림과 같이 ${facts.ropeA}cm, ${facts.ropeB}cm, ${facts.ropeC}cm입니다. 다에는 나의 고리가 함께 들어 있다는 점을 이용하세요.`
+          : `세 끈의 길이는 그림과 같이 ${facts.ropeA}cm, ${facts.ropeB}cm, ${facts.ropeC}cm입니다.`;
+      return `똑같은 직육면체 모양 상자를 그림처럼 묶었습니다. ${condition} 이 상자의 부피를 구하세요. (단, 매듭의 길이는 생각하지 않습니다.)`;
+    }
     if (kind === "mission-2") {
       const facts = ropeFacts(data);
       const condition = level === 0
@@ -742,6 +846,7 @@
     : kind === "example-1" || kind === "mission-1" ? "주어진 가장 짧은 변 후보마다 나머지 두 변을 빠짐없이 찾아보세요."
       : kind === "example-2" ? "앞에서 보이는 계단의 칸 수에 깊이 방향의 줄 수를 곱해 조각 수부터 확인해 보세요."
         : kind === "example-3" ? "전체 깊이에서 낮은 부분의 깊이를 빼 높은 부분의 깊이를 먼저 구해 보세요."
+        : kind === "example-4" ? "다의 끈에서 나의 고리 길이를 빼 수평 고리 길이부터 찾아보세요."
         : kind === "mission-2" ? "주어진 사용 길이에서 가의 밑면 한 변을 먼저 찾아보세요."
           : kind === "mission-5" ? "가와 나의 끈 길이는 2로, 다의 끈 길이는 4로 나누어 세 변의 합을 비교해 보세요."
           : "주어진 앞면 칸 수마다 한 칸의 너비와 깊이를 곱해 보세요.";
@@ -749,6 +854,7 @@
     : kind === "example-1" || kind === "mission-1" ? "모든 경우를 찾은 뒤 세 변의 길이가 모두 다른 경우만 다시 가려 보세요."
       : kind === "example-2" ? "문제에 조각 수가 없으므로 계단의 각 층과 깊이 줄을 그림에서 직접 세어 보세요."
         : kind === "example-3" ? "폭이 같다는 점을 이용하여 옆에서 본 두 단면의 넓이만으로 나중 높이를 구해 보세요."
+        : kind === "example-4" ? "세 가지 두 변의 합을 모두 구한 뒤, 두 합을 더하고 남은 한 합을 빼서 가로를 찾아보세요."
         : kind === "mission-2" ? "가에서 사용한 끈을 구한 뒤, 두 상자가 사용한 끈의 차로 나의 사용 길이를 찾아보세요."
           : kind === "mission-5" ? "먼저 다에서 사용한 끈의 길이를 관계로 구하고, 세 변의 합에서 두 변의 합을 각각 빼 보세요."
           : "전체 가로를 5등분해 한 칸을 구하고, 깊이가 전체 가로와 같다는 조건을 이용하세요.";
@@ -763,6 +869,7 @@
     if (kind === "example-1" || kind === "mission-1") return [data.cubes];
     if (kind === "example-2") return [data.totalLength, data.totalDepth, data.totalHeight, data.depthRows, ...data.columnHeights];
     if (kind === "example-3") return [data.width, data.totalDepth, data.lowDepth, data.highStart, data.highEnd, data.lowHeight];
+    if (kind === "example-4") return [data.width, data.depth, data.height];
     if (kind === "mission-2") return [data.rope, data.cubeLeft, data.cuboidLeft];
     if (kind === "mission-5") return [data.width, data.height, data.depth];
     return [data.unit, 5 * data.unit];

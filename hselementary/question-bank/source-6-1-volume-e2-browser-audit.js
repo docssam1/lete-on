@@ -14,7 +14,7 @@ const failures = [];
 const fail = message => failures.push(message);
 const difficultyBodies = new Map();
 const ids = [
-  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-mission-1",
+  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
   "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
 ];
 const difficulties = process.env.HSE_DIFFICULTY ? [Number(process.env.HSE_DIFFICULTY)] : [-1, 0, 1];
@@ -43,6 +43,7 @@ const expected = {
     { width: 30, totalDepth: 30, lowDepth: 10, highStart: 22, highEnd: 18, lowHeight: 8, finalHeight: 16 },
     { width: 42, totalDepth: 42, lowDepth: 14, highStart: 24, highEnd: 18, lowHeight: 9, finalHeight: 17 }
   ],
+  "example-4": [[3, 10, 4], [5, 9, 6], [7, 11, 5]],
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
   "mission-3": [10, 8, 12],
@@ -117,7 +118,7 @@ async function snapshot(page, phase, viewportName, sourceItemId, difficulty) {
       const present = new Set(visualRoles);
       const roleCounts = visualRoles.reduce((counts, role) => ({ ...counts, [role]: (counts[role] || 0) + 1 }), {});
       const lines = [...svg.querySelectorAll("line[data-visual-element]")].map(node => ({ role: node.dataset.visualElement, x1: Number(node.getAttribute("x1")), y1: Number(node.getAttribute("y1")), x2: Number(node.getAttribute("x2")), y2: Number(node.getAttribute("y2")) }));
-      const paths = [...svg.querySelectorAll("path[data-visual-element]")].map(node => ({ role: node.dataset.visualElement, d: node.getAttribute("d") || "", join: node.dataset.ropeJoin || "", style: node.dataset.ropeStyle || "", loops: node.dataset.ropeLoopCount || "", cells: node.dataset.cellCount || "" }));
+      const paths = [...svg.querySelectorAll("path[data-visual-element]")].map(node => ({ role: node.dataset.visualElement, d: node.getAttribute("d") || "", join: node.dataset.ropeJoin || "", style: node.dataset.ropeStyle || "", loops: node.dataset.ropeLoopCount || "", loop: node.dataset.ropeLoop || "", cells: node.dataset.cellCount || "" }));
       return { phase: svg.dataset.phase, model: svg.dataset.modelKey, values: svg.dataset.source61VolumeE2Values, required, missing: required.filter(role => !present.has(role)), roleCounts, lines, paths, box, bbox: { x: bbox.x, y: bbox.y, right: bbox.x + bbox.width, bottom: bbox.y + bbox.height, width: bbox.width, height: bbox.height }, view: { x: viewBox.x, y: viewBox.y, right: viewBox.x + viewBox.width, bottom: viewBox.y + viewBox.height }, texts, overlaps, solved: svg.querySelectorAll(".is-solved").length };
     };
     const items = [...view.querySelectorAll("article")].map(article => ({ source: article.dataset.source, pool: Number(article.dataset.pool), svgs: [...article.querySelectorAll("svg")].map(svgState), text: article.innerText, solution: article.querySelector(":scope > p")?.innerText || "" }));
@@ -215,6 +216,40 @@ function verify(problem, answer, sourceItemId, difficulty, viewport) {
       if (difficulty === 0 && (!item.text.includes(`폭이 ${data.width}m`) || !item.text.includes(`전체 깊이가 ${data.totalDepth}m`) || !solved.solution.startsWith(`높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${highDepth}m입니다.`))) fail(`${label}/pool${item.pool}: 기준의 원본 치수 또는 첫 풀이 단계가 맞지 않습니다.`);
       if (difficulty === 1 && (!item.text.includes("모든 부분의 폭은 같습니다") || item.text.includes(`폭이 ${data.width}m`) || !solved.solution.startsWith("폭은 모든 부분에서 같으므로 옆에서 본 단면 넓이를"))) fail(`${label}/pool${item.pool}: 어려움의 공통 폭 조건 또는 첫 풀이 단계가 맞지 않습니다.`);
       if (item.pool === 0 && (data.finalHeight !== 14 || highDepth !== 24 || highCrossSection !== 432 || lowCrossSection !== 128 || cutCrossSection !== 96)) fail(`${label}: 원본 수치의 14m 계산이 다릅니다.`);
+    }
+    if (sourceItemId.endsWith("example-4")) {
+      const [width, depth, height] = expected["example-4"][item.pool];
+      const ropeA = 2 * (depth + height);
+      const ropeB = 2 * (width + height);
+      const horizontalRope = 2 * (width + depth);
+      const ropeC = ropeB + horizontalRope;
+      const candidates = [];
+      for (let candidateWidth = 1; candidateWidth < ropeC; candidateWidth += 1) {
+        for (let candidateDepth = 1; candidateDepth < ropeC; candidateDepth += 1) {
+          for (let candidateHeight = 1; candidateHeight < ropeC; candidateHeight += 1) {
+            if (2 * (candidateDepth + candidateHeight) === ropeA && 2 * (candidateWidth + candidateHeight) === ropeB && ropeB + 2 * (candidateWidth + candidateDepth) === ropeC) candidates.push([candidateWidth, candidateDepth, candidateHeight]);
+          }
+        }
+      }
+      const ropeRoles = ["box-a-depth-height-visible", "box-a-depth-height-hidden", "box-b-width-height-visible", "box-b-width-height-hidden", "box-c-width-height-visible", "box-c-width-height-hidden", "box-c-width-depth-visible", "box-c-width-depth-hidden"];
+      [item.svgs[0], solved.svgs[0]].forEach((svg, phaseIndex) => ropeRoles.forEach(role => {
+        if (!svg.required.includes(role) || svg.roleCounts[role] !== 1 || svg.paths.filter(entry => entry.role === role).length !== 1) fail(`${label}/${phaseIndex ? "답" : "문제"}/pool${item.pool}: ${role} 끈 경로가 정확히 하나가 아닙니다.`);
+      }));
+      ["two-loop-width-dimension", "two-loop-height-dimension", "two-loop-depth-dimension", "two-loop-answer-card"].forEach(role => {
+        if (!solved.svgs[0].required.includes(role) || solved.svgs[0].roleCounts[role] !== 1) fail(`${label}/답/pool${item.pool}: ${role} 답 그림 근거가 없습니다.`);
+      });
+      const problemPaths = item.svgs[0].paths;
+      const countLoop = loop => problemPaths.filter(entry => entry.loop === loop).length;
+      if (countLoop("depth-height") !== 2 || countLoop("width-height") !== 4 || countLoop("width-depth") !== 2) fail(`${label}/문제/pool${item.pool}: 가·나·다의 고리 수가 원문과 다릅니다.`);
+      if (problemPaths.some(entry => entry.role?.startsWith("box-c-depth-height"))) fail(`${label}/문제/pool${item.pool}: 다 그림에 원문에 없는 깊이·높이 고리가 추가되었습니다.`);
+      if (!item.text.includes("(단, 매듭의 길이는 생각하지 않습니다.)")) fail(`${label}/문제/pool${item.pool}: 원문의 매듭 길이 제외 조건이 없습니다.`);
+      if (item.text.includes(`가로 ${width}cm`) || item.text.includes(`깊이 ${depth}cm`) || item.text.includes(`높이 ${height}cm`)) fail(`${label}/문제/pool${item.pool}: 문제에 답 치수가 노출되었습니다.`);
+      if (!solved.text.includes(`가로 ${width}cm`) || !solved.text.includes(`깊이 ${depth}cm`) || !solved.text.includes(`높이 ${height}cm`) || !solved.text.includes(`나의 고리 ${ropeB}cm`) || !solved.text.includes(`수평 고리 ${horizontalRope}cm`) || !solved.text.includes(`${width}×${depth}×${height}`)) fail(`${label}/답/pool${item.pool}: 세 변 또는 두 고리 분해가 답 그림에 없습니다.`);
+      if (JSON.stringify(candidates) !== JSON.stringify([[width, depth, height]]) || solved.text.replace(/\s+/g, "").indexOf(`${width * depth * height}cm³`) < 0) fail(`${label}/pool${item.pool}: 단일 답 또는 부피가 다릅니다.`);
+      if (difficulty === -1 && (!item.text.includes("가의 끈은 깊이와 높이를 한 바퀴") || !item.text.includes("수평 고리로 되어 있습니다") || !solved.solution.startsWith(`가의 끈 길이의 절반은 ${ropeA}÷2=`))) fail(`${label}/pool${item.pool}: 쉬움의 고리 안내 또는 풀이가 다릅니다.`);
+      if (difficulty === 0 && (!item.text.includes(`그림과 같이 ${ropeA}cm, ${ropeB}cm, ${ropeC}cm`) || item.text.includes("다에는 나의 고리가") || !solved.solution.startsWith("가의 끈은 깊이와 높이를"))) fail(`${label}/pool${item.pool}: 기준의 원문 고리 구조 또는 풀이가 다릅니다.`);
+      if (difficulty === 1 && (!item.text.includes("다에는 나의 고리가 함께 들어") || !solved.solution.startsWith(`다의 끈에는 나의 고리 ${ropeB}cm가 함께 들어 있습니다.`))) fail(`${label}/pool${item.pool}: 어려움의 공통 고리 조건 또는 풀이가 다릅니다.`);
+      if (item.pool === 0 && (ropeA !== 28 || ropeB !== 14 || ropeC !== 40 || width * depth * height !== 120)) fail(`${label}: 원문 28cm·14cm·40cm·120cm³ 계약이 다릅니다.`);
     }
     if (sourceItemId.endsWith("mission-2")) {
       const [rope, cubeLeft, cuboidLeft] = expected["mission-2"][item.pool];
