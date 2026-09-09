@@ -23,7 +23,7 @@ Public student practice may contain original GFIELD-authored content. Private di
 
 - `6.NS.C`: merged to `main` in `18eabffade549c0b07721d3bbb82fa01968316ed`. Public student and teacher routes, mobile layout, A4/Letter PDFs, and completion-gated recheck were verified.
 - `6.EE.A`: merged to `main` in `1c5f8c8e13a16f4d141f781c3dcc9e8b2541b67c` through pull request [#199](https://github.com/docssam1/lete-on/pull/199). The HTML generator, 390px mobile view, student Korean A4 print, teacher Simplified-Chinese Letter print, completion gate, and live routes were verified. Visible numeric fractions now render as accessible stacked MathML while slash-form response input remains accepted.
-- `6.EE.B`: commit `7f850f13` on `codex/boarding-grade6-eeb-unit-workbook-20260909`; pull request [#200](https://github.com/docssam1/lete-on/pull/200). It has been rebased directly onto the merged `6.EE.A` main state. Code, answer, student/teacher separation, desktop screen, and 390px mobile checks passed. Final browser-print export inspection is still required before merge.
+- `6.EE.B`: commits through `de9ed460` on `codex/boarding-grade6-eeb-unit-workbook-20260909`; pull request [#200](https://github.com/docssam1/lete-on/pull/200). It has been rebased directly onto the merged `6.EE.A` main state. Code, answer, student/teacher separation, desktop screen, and 390px mobile checks passed. Context variables now stay identical across prompts and visual models, and every recheck page uses the recheck heading. Final browser-print export inspection is still required before merge.
 
 ## Verified `6.EE.A` contract
 
@@ -48,7 +48,7 @@ Public student practice may contain original GFIELD-authored content. Private di
 
 ## Tests and known blockers
 
-- Focused `6.EE.B` code/browser run after rebasing onto merged `6.EE.A`: 53/53 passed.
+- Focused `6.EE.B` code/browser run after the context-variable and recheck-heading fixes: 55/55 passed.
 - Full Node and browser suites after rebasing `6.EE.B`: 437 total, 427 passed, 10 failed (code 354/363; browser 73/74).
 - The 10 existing failures do not overlap the workbook changes: two stale Number Magic count assertions and eight private Grade 6 runtime/browser tests that require the absent private authoring directory.
 - The public-exposure audit still reports the existing `hsmiddle/data.js` student-record bundle. This is outside the Boarding School Math change and must not be silently edited here.
