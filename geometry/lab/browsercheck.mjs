@@ -11,12 +11,12 @@ const expected = {
   observe: ["숨은 도형", "길 잇기"],
   solid: ["주사위 굴리기", "전개도 전망대"]
 };
-const countEnabled = new Set(["점판 도형", "각도 탐구", "사각형 탐구", "원 탐구", "둘레 탐구", "단위 넓이", "도형의 변화", "거울대칭"]);
+const countEnabled = new Set(["점판 도형", "각도 탐구", "사각형 탐구", "원 탐구", "둘레 탐구", "단위 넓이", "도형의 변화", "거울대칭", "주사위 굴리기"]);
 const targetReady = new Map([
   ["점판 도형", "#countInput"], ["각도 탐구", "#countInput"], ["사각형 탐구", "#countInput"],
   ["원 탐구", "#countInput"], ["둘레 탐구", "#countInput"], ["단위 넓이", "#countInput"],
   ["도형의 변화", "#countInput"], ["거울대칭", "#countInput"], ["숨은 도형", "#problemGrid .problem"],
-  ["길 잇기", "#problemGrid .problem"], ["주사위 굴리기", "#problemGrid .problem"], ["전개도 전망대", "#problemGrid .problem"]
+  ["길 잇기", "#problemGrid .problem"], ["주사위 굴리기", "#countInput"], ["전개도 전망대", "#problemGrid .problem"]
 ]);
 const domainLabels = ["쌓기나무", "평면도형", "이동·대칭", "관찰·경로", "입체·전개도", "색종이 접기"];
 

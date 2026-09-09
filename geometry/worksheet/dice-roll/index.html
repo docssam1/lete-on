@@ -4,7 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>GFIELD 주사위 굴리기 학습지</title>
-  <link rel="stylesheet" href="./styles.css?v=dice-sheet-1" />
+  <link rel="stylesheet" href="../../shared/worksheet-book-cover.css?v=worksheet-cover-1" />
+  <link rel="stylesheet" href="./styles.css?v=dice-sheet-6" />
   <link rel="stylesheet" href="./board-die.css?v=dice-sheet-3" />
   <link rel="stylesheet" href="./material-refresh.css?v=dice-sheet-1" />
   <link rel="stylesheet" href="./perspective.css?v=dice-sheet-1" />
@@ -13,16 +14,17 @@
   <header class="maker-bar">
     <a href="../../games/dice-roll/" aria-label="게임으로 돌아가기">&larr;</a>
     <div><strong>GFIELD 주사위 굴리기 학습지</strong><small>DICE ROLLING WORKSHEET</small></div>
-    <label>유형<select id="levelSelect"></select></label>
-    <label class="answer-toggle"><input id="answerToggle" type="checkbox" /><span>정답 보기</span></label>
-    <button id="refreshButton" type="button">새 문제</button>
-    <button id="printButton" type="button">인쇄</button>
+    <label><span data-copy="activity">활동</span><select id="activitySelect"></select></label>
+    <label><span data-copy="level">난이도</span><select id="levelSelect"></select></label>
+    <label><span data-copy="count">문항 수</span><input id="countInput" type="number" min="1" max="20" value="20" inputmode="numeric" aria-describedby="countNotice" /></label>
+    <label><span data-copy="language">언어</span><select id="languageSelect"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option><option value="ja">日本語</option></select></label>
+    <label class="answer-toggle"><input id="coverToggle" type="checkbox" checked /><span data-copy="cover">표지</span></label>
+    <label class="answer-toggle"><input id="answerToggle" type="checkbox" /><span data-copy="answers">정답·풀이</span></label>
+    <button id="refreshButton" type="button" data-copy="newSet">새 문제</button>
+    <button id="printButton" type="button" data-copy="print">인쇄</button>
+    <small id="countNotice" role="status"></small>
   </header>
-  <main class="sheet">
-    <header><div><small>GFIELD SPATIAL SOLIDS</small><h1 id="sheetTitle"></h1><p id="sheetDescription"></p></div><dl><div><dt>이름</dt><dd></dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>
-    <section id="problemGrid" class="problem-grid"></section>
-    <footer>격자의 화살표 방향과 주사위의 윗면·앞면·오른쪽 면을 차례로 살펴보세요.</footer>
-  </main>
-  <script type="module" src="./app.js?v=dice-sheet-4"></script>
+  <main id="worksheet" class="worksheet-pages" hidden></main>
+  <script type="module" src="./app.js?v=dice-sheet-6"></script>
 </body>
 </html>
