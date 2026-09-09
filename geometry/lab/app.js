@@ -17,6 +17,7 @@
   const WORKSHEET_URL = "../worksheet/index.html";
   const BOOK_URL = "../cube-town/print.html";
   const FOLD_URL = "../worksheet/paper-fold/";
+  const STUDIO_COUNTS = [5, 10, 15, 20];
 
   // 문항 수 선택지는 학습지 생성기의 문항 수 select와 같은 값만 쓴다 — 거기
   // 없는 값을 넘기면 생성기가 무시하고 기본값으로 되돌아간다.
@@ -29,16 +30,41 @@
   const FOLD_COUNTS = [10, 20, 30, 40, 50];
 
   // ---------------------------------------------------------------------
-  // 영역 — 랩이 다루는 두 갈래. 쌓기나무는 이 랩이 직접 문제를 만들고, 색종이
-  // 접기는 자기 엔진을 가진 학습지 페이지로 넘긴다. 사람이 고르는 자리는
-  // 하나여야 하므로, 만드는 쪽이 다르다는 사정은 카탈로그 뒤로 숨긴다.
+  // 영역 — 학습지 엔진의 내부 구조가 아니라 학생이 연습할 수학 행동으로 묶는다.
+  // 각 독립 학습지는 검증된 자기 문제 풀과 인쇄 엔진을 그대로 사용한다.
   // ---------------------------------------------------------------------
   const DOMAIN_CUBE = "cube";
+  const DOMAIN_PLANE = "plane";
+  const DOMAIN_MOVE = "move";
+  const DOMAIN_OBSERVE = "observe";
+  const DOMAIN_SOLID = "solid";
   const DOMAIN_FOLD = "fold";
 
   const DOMAINS = [
     { code: DOMAIN_CUBE, label: "쌓기나무", note: "입체를 보고 세고, 옮겨 그리고, 규칙을 찾는 유형." },
+    { code: DOMAIN_PLANE, label: "평면도형", note: "점·선·각·사각형·원과 둘레·넓이를 단계별로 탐구하는 영역." },
+    { code: DOMAIN_MOVE, label: "이동·대칭", note: "도형을 옮기고 돌리고 뒤집으며 같은 모양과 대칭을 살펴보는 영역." },
+    { code: DOMAIN_OBSERVE, label: "관찰·경로", note: "숨은 도형을 빠짐없이 찾고 조건에 맞는 길을 이어 보는 영역." },
+    { code: DOMAIN_SOLID, label: "입체·전개도", note: "주사위를 굴리고 전개도를 접은 뒤 보이는 면과 방향을 추론하는 영역." },
     { code: DOMAIN_FOLD, label: "색종이 접기", note: "접고 자르고 뚫은 다음, 펼친 모양을 머릿속으로 그려 보는 유형." }
+  ];
+
+  // 독립 문제은행. url은 실제 학습지 생성기의 공개 입구이고 count=true인 항목은
+  // 이 화면에서 고른 1~20문항 수를 그대로 넘긴다. count=false인 활동지는 한 장의
+  // 문항 밀도가 고정되어 있어 다음 화면에서 유형만 바꾼다.
+  const STUDIOS = [
+    { code: "GB", domain: DOMAIN_PLANE, label: "점판 도형", note: "점판에서 선분과 여러 도형을 그리고 나누기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/geoboard/", count: true, params: { level: "all", cover: "1" } },
+    { code: "AN", domain: DOMAIN_PLANE, label: "각도 탐구", note: "각을 어림하고 직각·다각형의 각을 탐구하기", levels: ["L3", "L4", "L5"], url: "../worksheet/angle-studio/", count: true, params: { domain: "all" } },
+    { code: "QU", domain: DOMAIN_PLANE, label: "사각형 탐구", note: "평행·수직과 사각형의 성질을 구분하기", levels: ["L3", "L4", "L5"], url: "../worksheet/quadrilateral/", count: true, params: { domain: "all", lang: "ko", cover: "1" } },
+    { code: "CI", domain: DOMAIN_PLANE, label: "원 탐구", note: "중심·반지름·지름과 컴퍼스 작도 익히기", levels: ["L3", "L4", "L5"], url: "../worksheet/circle-studio/", count: true, params: { domain: "all", lang: "ko", cover: "1" } },
+    { code: "PE", domain: DOMAIN_PLANE, label: "둘레 탐구", note: "곧은 변과 격자 도형의 둘레를 여러 방법으로 구하기", levels: ["L4", "L5"], url: "../worksheet/perimeter/", count: true, params: { domain: "all", lang: "ko", cover: "1" } },
+    { code: "AR", domain: DOMAIN_PLANE, label: "단위 넓이", note: "단위 정사각형으로 넓이를 재고 비교하기", levels: ["L3", "L4", "L5"], url: "../worksheet/unit-area/", count: true, params: { domain: "all", lang: "ko", cover: "1" } },
+    { code: "TR", domain: DOMAIN_MOVE, label: "도형의 변화", note: "옮기기·돌리기·뒤집기와 절반·두 배 크기", levels: ["L2", "L3", "L4", "L5"], url: "../worksheet/shape-transform/", count: true, params: { level: "all", cover: "1" } },
+    { code: "MI", domain: DOMAIN_MOVE, label: "거울대칭", note: "거울선에서 같은 줄과 같은 거리를 찾아 그리기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/mirror-manor/", count: true, params: { level: "all", cover: "1" } },
+    { code: "HS", domain: DOMAIN_OBSERVE, label: "숨은 도형", note: "크기와 방향이 다른 도형을 빠짐없이 세기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/hidden-shape/", count: false },
+    { code: "PW", domain: DOMAIN_OBSERVE, label: "길 잇기", note: "타일의 길을 연결하고 가장 가까운 경로 찾기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/path-walk/", count: false },
+    { code: "DR", domain: DOMAIN_SOLID, label: "주사위 굴리기", note: "굴린 순서에 따라 위·앞·옆면의 눈 추론하기", levels: ["L2", "L3", "L4", "L5"], url: "../worksheet/dice-roll/", count: false },
+    { code: "NE", domain: DOMAIN_SOLID, label: "전개도 전망대", note: "전개도를 접어 마주 보는 면과 보이는 방향 찾기", levels: ["L3", "L4", "L5"], url: "../worksheet/net-observatory/", count: false }
   ];
 
   // 고정 문제 학습지 — 랩이 문제를 만들지 않고, 손으로 고른 문제 풀을 그대로
@@ -103,6 +129,8 @@
     bookCount: 10,
     fold: null,
     foldCount: 20,
+    studio: null,
+    studioCount: 20,
     levelNote: "",
     // 단계·영역을 바꿔 골라 둔 유형이 이 조합에서 지원되지 않아 해제된 경우의
     // 안내 한 줄. 유형 줄의 기존 안내 자리(#typeNote)를 그대로 재활용한다.
@@ -134,6 +162,10 @@
     return FOLDS.filter((f) => f.code === code)[0] || null;
   }
 
+  function studioInfo(code) {
+    return STUDIOS.filter((studio) => studio.code === code)[0] || null;
+  }
+
   // "전체"에서는 고정 문제 학습지를 계속 켜 둔다 — 어차피 그 풀의 전체 레벨을
   // 섞어 넘기므로(BOOKS 위 설명 참고), 학습지 쪽 단계가 "전체"로 바뀌었다고
   // 이것만 흐려질 이유가 없다. 색종이도 같은 규칙이다.
@@ -158,7 +190,8 @@
   function levelOffered(code) {
     const info = GEN.levelInfo(code);
     return Boolean(
-      (info && info.available) || booksForLevel(code).length || foldsForLevel(code).length
+      (info && info.available) || booksForLevel(code).length || foldsForLevel(code).length ||
+      STUDIOS.some((studio) => entrySupportsLevel(studio, code))
     );
   }
 
@@ -224,13 +257,18 @@
     const folds = foldsForLevel(state.level);
     if (state.book && !books.some((b) => b.code === state.book)) state.book = null;
     if (state.fold && !folds.some((f) => f.code === state.fold)) state.fold = null;
+    if (state.studio) {
+      const studio = studioInfo(state.studio);
+      if (!studio || studio.domain !== state.domain || !entrySupportsLevel(studio, state.level)) state.studio = null;
+    }
   }
 
   function setDomain(domain) {
     state.typeAutoNote = "";
     state.domain = domain;
-    if (domain === DOMAIN_FOLD) state.book = null;
-    else state.fold = null;
+    if (domain !== DOMAIN_CUBE) state.book = null;
+    if (domain !== DOMAIN_FOLD) state.fold = null;
+    if (domain === DOMAIN_CUBE || domain === DOMAIN_FOLD) state.studio = null;
     syncMode();
   }
 
@@ -307,8 +345,7 @@
     });
   }
 
-  // 영역 탭 — 쌓기나무 / 색종이 접기. 두 카탈로그를 한 격자에 쏟아 놓으면
-  // 스무 장 넘는 카드가 한 덩어리로 보여 무엇이 무엇의 이웃인지 읽히지 않는다.
+  // 영역 탭은 수학 행동을 먼저 고르게 하고, 그 아래에 해당 학습지만 보여 준다.
   function renderDomains() {
     const row = $("domainRow");
     if (!row) return;
@@ -344,12 +381,13 @@
     card.dataset.type = opts.code;
     if (opts.book) card.dataset.book = opts.code;
     if (opts.fold) card.dataset.fold = opts.code;
+    if (opts.studio) card.dataset.studio = opts.code;
     card.disabled = !opts.ok;
     card.innerHTML = '<span class="type-head"><span class="type-code"></span></span>' +
       '<span class="type-label"></span><span class="type-levels"></span>';
     card.querySelector(".type-code").textContent = opts.code;
     card.querySelector(".type-label").textContent = opts.label;
-    card.querySelector(".type-levels").textContent = levelRange(opts.levels);
+    card.querySelector(".type-levels").textContent = opts.meta || levelRange(opts.levels);
     if (!opts.ok) card.title = "이 단계에서는 제공되지 않아요";
     card.addEventListener("click", opts.onClick);
     return card;
@@ -422,11 +460,31 @@
     });
   }
 
+  function renderStudioTypes(grid) {
+    STUDIOS.filter((studio) => studio.domain === state.domain).forEach((studio) => {
+      const ok = entrySupportsLevel(studio, state.level);
+      grid.appendChild(typeCard({
+        code: studio.code,
+        label: studio.label,
+        levels: studio.levels,
+        meta: studio.note + " · " + (studio.count ? "최대 20문항" : "한 장 활동지"),
+        studio: true,
+        ok,
+        active: state.studio === studio.code,
+        onClick() {
+          state.studio = state.studio === studio.code ? null : studio.code;
+          renderAll();
+        }
+      }));
+    });
+  }
+
   function renderTypes() {
     const grid = $("typeGrid");
     grid.replaceChildren();
     if (state.domain === DOMAIN_FOLD) renderFoldTypes(grid);
-    else renderCubeTypes(grid);
+    else if (state.domain === DOMAIN_CUBE) renderCubeTypes(grid);
+    else renderStudioTypes(grid);
     const note = $("typeNote");
     if (note) {
       if (state.typeAutoNote) {
@@ -436,6 +494,8 @@
         note.textContent = state.typeAutoNote;
       } else if (state.domain === DOMAIN_FOLD) {
         note.textContent = "원하는 유형을 선택하세요. 선택하지 않은 상태로 두어도 돼요.";
+      } else if (state.domain !== DOMAIN_CUBE) {
+        note.textContent = "학습지 하나를 선택하세요. 각 학습지의 검증된 문제은행과 인쇄 화면으로 이어져요.";
       } else if (state.book) {
         note.textContent = "이 학습지는 손으로 고른 문제 풀을 그대로 쓰므로 한 번에 하나만 만들어요.";
       } else {
@@ -447,16 +507,19 @@
 
   function currentCounts() {
     if (state.domain === DOMAIN_FOLD) return FOLD_COUNTS;
+    if (state.domain !== DOMAIN_CUBE) return STUDIO_COUNTS;
     return state.book ? BOOK_COUNTS : COUNTS;
   }
 
   function currentCount() {
     if (state.domain === DOMAIN_FOLD) return state.foldCount;
+    if (state.domain !== DOMAIN_CUBE) return state.studioCount;
     return state.book ? state.bookCount : state.count;
   }
 
   function setCount(value) {
     if (state.domain === DOMAIN_FOLD) state.foldCount = value;
+    else if (state.domain !== DOMAIN_CUBE) state.studioCount = value;
     else if (state.book) state.bookCount = value;
     else state.count = value;
   }
@@ -466,28 +529,42 @@
     row.replaceChildren();
     const counts = currentCounts();
     const current = currentCount();
+    const studio = state.studio ? studioInfo(state.studio) : null;
+    const applies = state.domain === DOMAIN_CUBE || state.domain === DOMAIN_FOLD || Boolean(studio && studio.count);
     const word = state.domain === DOMAIN_CUBE && state.book ? "문제" : "문항";
     counts.forEach((count) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "count-btn" + (count === current ? " is-active" : "");
+      button.className = "count-btn" + (applies && count === current ? " is-active" : "");
       button.dataset.count = String(count);
       button.textContent = count + word;
-      button.setAttribute("aria-pressed", String(count === current));
+      button.disabled = !applies;
+      button.setAttribute("aria-pressed", String(applies && count === current));
       button.addEventListener("click", () => {
         setCount(count);
         renderAll();
       });
       row.appendChild(button);
     });
+    const field = $("countField");
+    if (field) field.classList.toggle("is-muted", !applies);
+    const note = $("countNote");
+    if (note) {
+      note.textContent = !state.studio && state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD
+        ? "학습지를 선택하면 적용할 수 있는 문항 수가 켜져요."
+        : studio && !studio.count
+          ? "이 활동지는 문제 크기에 맞춘 한 장 구성을 사용해요."
+          : (state.domain === DOMAIN_FOLD || (state.domain === DOMAIN_CUBE && !state.book))
+            ? "최대 50문항까지 만들 수 있어요."
+            : "최대 20문항까지 만들 수 있어요.";
+    }
   }
 
-  // 난이도는 어느 학습지에나 뜻이 있다 — 생성형은 묻는 깊이가, 똑같이 쌓기는
-  // 원목/컬러 표현이, 색종이는 저쪽 하/중/상 라디오가 달라진다. 그래서 줄을
-  // 감추는 건 개수 세기·여러 방향처럼 정말 해당이 없는 경우뿐이고, 그때도
-  // 흐리게만 두어 되돌리면 고르던 난이도가 그대로 남아 있음을 보여 준다.
+  // 공용 난이도는 쌓기나무와 색종이에만 적용한다. 독립 학습지는 자기 화면에서
+  // 활동 단계를 고르므로 이 줄을 흐리게 두어 서로 다른 단계 체계를 억지로 섞지 않는다.
   function intensityApplies() {
     if (state.domain === DOMAIN_FOLD) return true;
+    if (state.domain !== DOMAIN_CUBE) return false;
     if (!state.book) return true;
     const book = bookInfo(state.book);
     return Boolean(book && book.games);
@@ -502,7 +579,11 @@
     const note = $("intensityNote");
     if (!note) return;
     if (!applies) {
-      note.textContent = "이 학습지는 정해진 문제를 그대로 쓰므로 난이도를 따로 고르지 않아요.";
+      note.textContent = state.studio
+        ? "선택한 학습지 안에서 활동 단계나 영역을 고를 수 있어요."
+        : state.domain !== DOMAIN_CUBE
+          ? "학습지를 선택하면 그 안에서 활동 단계나 영역을 고를 수 있어요."
+          : "이 학습지는 정해진 문제를 그대로 쓰므로 난이도를 따로 고르지 않아요.";
       return;
     }
     const book = state.domain === DOMAIN_CUBE && state.book ? bookInfo(state.book) : null;
@@ -546,6 +627,13 @@
       const fold = state.fold ? foldInfo(state.fold) : null;
       if (head) head.textContent = fold ? fold.label : "";
       previewMessage("색종이 접기 학습지는 만들기를 누르면 열리는 화면에서 유형 미리보기를 볼 수 있어요.");
+      panel.classList.add("is-static");
+      return;
+    }
+    if (state.domain !== DOMAIN_CUBE) {
+      const studio = studioInfo(state.studio);
+      if (head) head.textContent = studio ? studio.label : "";
+      previewMessage(studio ? studio.note + ". 만들기를 누르면 실제 문제와 인쇄 구성을 바로 확인할 수 있어요." : "학습지를 하나 선택하세요.");
       panel.classList.add("is-static");
       return;
     }
@@ -594,7 +682,7 @@
     const tabs = $("previewTabs");
     if (!tabs) return;
     tabs.replaceChildren();
-    if (state.domain === DOMAIN_FOLD || state.book) return;
+    if (state.domain !== DOMAIN_CUBE || state.book || state.studio) return;
     const list = previewableTypes();
     if (list.length < 2) return;
     list.forEach((code) => {
@@ -618,6 +706,13 @@
   // 마우스 오른쪽 클릭으로 복사하거나 즐겨찾기에 넣어도 그대로 재현된다.
   // ---------------------------------------------------------------------
   function buildUrl() {
+    if (state.studio) {
+      const studio = studioInfo(state.studio);
+      const params = new URLSearchParams(studio.params || {});
+      if (studio.count) params.set("count", String(state.studioCount));
+      const query = params.toString();
+      return studio.url + (query ? "?" + query : "");
+    }
     if (state.domain === DOMAIN_FOLD) {
       const params = new URLSearchParams();
       if (state.fold) params.set("mode", state.fold);
@@ -651,8 +746,11 @@
     const link = $("buildBtn");
     const ready = state.domain === DOMAIN_FOLD
       ? Boolean(state.fold)
-      : Boolean(state.book || previewableTypes().length);
+      : state.domain === DOMAIN_CUBE
+        ? Boolean(state.book || previewableTypes().length)
+        : Boolean(state.studio);
     link.href = ready ? buildUrl() : "#";
+    link.textContent = state.studio ? "학습지 열기" : "학습지 만들기";
     link.classList.toggle("is-disabled", !ready);
     link.setAttribute("aria-disabled", String(!ready));
     const head = document.createElement("b");
@@ -663,7 +761,11 @@
       $("buildSummary").replaceChildren(head, document.createTextNode(tail));
       return;
     }
-    if (state.domain === DOMAIN_FOLD) {
+    if (state.studio) {
+      const studio = studioInfo(state.studio);
+      head.textContent = studio.label + (studio.count ? " · " + state.studioCount + "문항" : " · 한 장 활동지");
+      tail = " · " + studio.note;
+    } else if (state.domain === DOMAIN_FOLD) {
       const fold = state.fold ? foldInfo(state.fold) : null;
       head.textContent = "색종이 접기 · 난이도 " + GEN.intensityWord(state.intensity) + " · " + state.foldCount + "문항";
       tail = fold ? " · " + fold.label : "";

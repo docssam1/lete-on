@@ -233,9 +233,12 @@ function newSelection() {
 try {
   validateLevels();
   select.innerHTML = levels.map((level) => `<option value="${level.id}">${level.id}. ${domainNames[level.id - 1]}</option>`).join("") + `<option value="all">전체 영역</option>`;
-  const initial = new URLSearchParams(location.search).get("level");
+  const params = new URLSearchParams(location.search);
+  const initial = params.get("level");
   select.value = initial === "all" || levels.some((level) => String(level.id) === initial) ? initial : "1";
-  if (select.value === "all") countInput.value = "20";
+  countInput.value = params.get("count") ?? (select.value === "all" ? "20" : countInput.value);
+  coverToggle.checked = params.get("cover") !== "0";
+  answerToggle.checked = params.get("answers") === "1";
   select.addEventListener("change", newSelection);
   countInput.addEventListener("change", newSelection);
   answerToggle.addEventListener("change", render);

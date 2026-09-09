@@ -6,9 +6,16 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v36";
+const CACHE = "gfield-geo-v37";
 const CORE = [
   "/geometry/world-map/",
+  "/geometry/lab/",
+  "/geometry/lab/styles.css?v=lab-studio-8",
+  "/geometry/lab/app.js?v=lab-studio-8",
+  "/geometry/shared/question-bank.js?v=20260829g",
+  "/geometry/worksheet/generators.js?v=20260829g",
+  "/geometry/worksheet/render.js?v=20260829g",
+  "/geometry/worksheet/card.js?v=20260829g",
   "/geometry/mirror-manor/",
   "/geometry/mirror-manor/app.js?v=mirror-lobby-1",
   "/geometry/geoboard/",
@@ -54,7 +61,7 @@ const CORE = [
   "/geometry/games/geoboard/lattice-enumerator.js?v=1",
   "/geometry/worksheet/geoboard/",
   "/geometry/worksheet/geoboard/styles.css?v=geoboard-sheet-3",
-  "/geometry/worksheet/geoboard/app.js?v=geoboard-sheet-3",
+  "/geometry/worksheet/geoboard/app.js?v=geoboard-sheet-4",
   "/geometry/shape-garden/",
   "/geometry/shape-garden/app.js?v=shape-7",
   "/geometry/shape-garden/transform-course.css?v=transform-course-1",
@@ -150,7 +157,7 @@ const CORE = [
   "/geometry/worksheet/shape-transform/",
   "/geometry/worksheet/shape-transform/styles.css?v=workbook-5",
   "/geometry/worksheet/shape-transform/plane-shapes.css?v=workbook-5",
-  "/geometry/worksheet/shape-transform/app.js?v=workbook-5",
+  "/geometry/worksheet/shape-transform/app.js?v=workbook-6",
   "/geometry/worksheet/shape-transform/workbook-core.js?v=workbook-5",
   "/geometry/worksheet/shape-transform/drawing-problems.js?v=draw-1",
   "/geometry/worksheet/shape-transform/icons/arrow-left.svg",
@@ -170,7 +177,7 @@ const CORE = [
   "/geometry/games/mirror-manor/i18n.js?v=mirror-manor-11",
   "/geometry/worksheet/mirror-manor/",
   "/geometry/worksheet/mirror-manor/styles.css?v=mirror-sheet-3",
-  "/geometry/worksheet/mirror-manor/app.js?v=mirror-sheet-3",
+  "/geometry/worksheet/mirror-manor/app.js?v=mirror-sheet-4",
   "/geometry/manifest.webmanifest",
   "/geometry/shared/viewport-fit.js?v=1",
   "/geometry/shared/problem-pool.js",
