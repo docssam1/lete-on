@@ -7,6 +7,7 @@ const vm = require("vm");
 const catalogPath = path.join(__dirname, "source-inventory-grade6.js");
 const curriculumPath = path.join(__dirname, "curriculum.js");
 const rawInventoryPath = path.join(__dirname, "source-inventory", "6-1-source-items.json");
+const readinessU1Path = path.join(__dirname, "source-inventory", "6-1-u1-source-readiness-review.json");
 const readinessU3Path = path.join(__dirname, "source-inventory", "6-1-u3-source-readiness-review.json");
 const readinessPath = path.join(__dirname, "source-inventory", "6-1-u4-source-readiness-review.json");
 const readinessU5Path = path.join(__dirname, "source-inventory", "6-1-u5-source-readiness-review.json");
@@ -31,11 +32,18 @@ vm.runInContext(fs.readFileSync(curriculumPath, "utf8"), context, { filename: cu
 const catalog = context.window.HSE_SOURCE_INVENTORY_GRADE6;
 const curriculum = context.window.HSE_CURRICULUM;
 const rawInventory = JSON.parse(fs.readFileSync(rawInventoryPath, "utf8"));
+const readinessU1 = JSON.parse(fs.readFileSync(readinessU1Path, "utf8"));
 const readinessU3 = JSON.parse(fs.readFileSync(readinessU3Path, "utf8"));
 const readiness = JSON.parse(fs.readFileSync(readinessPath, "utf8"));
 const readinessU5 = JSON.parse(fs.readFileSync(readinessU5Path, "utf8"));
 const readinessU6 = JSON.parse(fs.readFileSync(readinessU6Path, "utf8"));
 const items = catalog?.items || [];
+const readinessU1E1Items = readinessU1.items.filter(item => item.sourceItemId.startsWith("6-1-u1-e1-"));
+const readinessU1E1Counts = readinessU1E1Items.reduce((counts, item) => {
+  counts[item.publicDecision || "undefined"] = (counts[item.publicDecision || "undefined"] || 0) + 1;
+  counts.releaseLocked += item.releaseStatus === "locked" ? 1 : 0;
+  return counts;
+}, { confirmed: 0, locked: 0, candidate: 0, releaseLocked: 0 });
 const readinessDecisionCounts = readinessU5.items.reduce((counts, item) => {
   counts.publicDecision[item.publicDecision || "undefined"] = (counts.publicDecision[item.publicDecision || "undefined"] || 0) + 1;
   counts.publicCandidate += item.publicCandidate === true ? 1 : 0;
@@ -120,6 +128,21 @@ check(readyItems.length === 227 && lockedItems.length === 406, `6학년 원문 �
 check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 227유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
+check(readinessU1E1Items.length === 12 && readinessU1E1Counts.confirmed === 10 && readinessU1E1Counts.locked === 2 && readinessU1E1Counts.candidate === 0 && readinessU1E1Counts.releaseLocked === 2, `6-1 1단원 개념탐구 1 readiness 확인 10개·열린 설명 잠금 2개 구성이 다릅니다: 전체 ${readinessU1E1Items.length}, 확인 ${readinessU1E1Counts.confirmed}, 잠금 ${readinessU1E1Counts.locked}/${readinessU1E1Counts.releaseLocked}`);
+readinessU1E1Items.forEach(readinessItem => {
+  const catalogItem = items.find(item => item.sourceItemId === readinessItem.sourceItemId);
+  check(Boolean(catalogItem), `${readinessItem.sourceItemId}: 1단원 readiness 항목과 공개 분류표가 연결되지 않았습니다.`);
+  if (!catalogItem) return;
+  if (readinessItem.releaseStatus === "verified") {
+    const rawItem = rawInventory.items.find(item => item.publicSourceItemId === readinessItem.sourceItemId);
+    check(readinessItem.implementationStatus === "fixed-verified-pool" && readinessItem.publicDecision === "confirmed" && readinessItem.sourceVerified === true, `${readinessItem.sourceItemId}: 확인됨 readiness 상태가 완결되지 않았습니다.`);
+    check(Boolean(rawItem && rawItem.sourceVerified === true && rawItem.implementationStatus === "fixed-verified-pool"), `${readinessItem.sourceItemId}: 원자료 장부의 확인됨 연결이 없습니다.`);
+    check(!catalogItem.reviewLocked && catalogItem.generatorKey === "sourceGrade6FractionDivisionE1" && catalogItem.answerVisualStatus === "verified" && catalogItem.verifiedVariantCount === 3, `${readinessItem.sourceItemId}: 확인됨 readiness와 생성기·답 그림 계약이 다릅니다.`);
+  } else {
+    check(readinessItem.releaseStatus === "locked" && readinessItem.publicDecision === "locked", `${readinessItem.sourceItemId}: 열린 설명형 잠금 상태가 다릅니다.`);
+    check(catalogItem.reviewLocked && catalogItem.generatorKey === "" && catalogItem.answerVisualStatus === "not-implemented", `${readinessItem.sourceItemId}: 열린 설명형이 생성 가능 상태입니다.`);
+  }
+});
 check(readinessU5.integrity?.publicCandidateCount === readinessDecisionCounts.publicCandidate, `6-1 5단원 readiness publicCandidate 집계가 실제 ${readinessDecisionCounts.publicCandidate}개와 다릅니다.`);
 check(readinessU5.integrity?.publicDecisionPublicCount === (readinessDecisionCounts.publicDecision.public || 0), `6-1 5단원 readiness public 집계가 실제 ${readinessDecisionCounts.publicDecision.public || 0}개와 다릅니다.`);
 check(readinessU5.integrity?.publicDecisionConfirmedCount === (readinessDecisionCounts.publicDecision.confirmed || 0), `6-1 5단원 readiness confirmed 집계가 실제 ${readinessDecisionCounts.publicDecision.confirmed || 0}개와 다릅니다.`);

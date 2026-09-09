@@ -81,7 +81,7 @@
       "everyItemLocked": false,
       "noItemClaimsDirectVerification": false,
       "identifiersUnique": true,
-      "verifiedItemsHavePublicMapping": false,
+      "verifiedItemsHavePublicMapping": true,
       "falseExampleIdsAbsent": true
     },
     "expectedByPdfPage": {
@@ -212,11 +212,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "example",
       "ordinal": 1,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "짝수 분수들의 합에서 홀수 분수들의 합을 뺀 뒤 10 1/2를 곱하고 7로 나눕니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-example-1"
     },
     {
       "sourceItemId": "6-1-u1-e1-example-2",
@@ -228,11 +229,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "example",
       "ordinal": 2,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "세 자연수 가, 나, 다의 두 나눗셈 관계에서 가와 다의 비를 구합니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-example-2"
     },
     {
       "sourceItemId": "6-1-u1-e1-example-3",
@@ -244,11 +246,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "example",
       "ordinal": 3,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "직사각형 안에서 사다리꼴 ㄱㄴㅁㄹ의 넓이가 삼각형 ㄴㅁㄷ의 5배일 때 선분 ㅁㄷ을 구합니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-example-3"
     },
     {
       "sourceItemId": "6-1-u1-e1-example-4",
@@ -260,11 +263,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "example",
       "ordinal": 4,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "네 자연수 가, 나, 다, 라를 두 조건식으로 정한 뒤 가÷나÷5+다÷라×3을 계산합니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-example-4"
     },
     {
       "sourceItemId": "6-1-u1-e1-mission-1",
@@ -276,11 +280,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "mission",
       "ordinal": 1,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "2□/11×22÷6의 값이 자연수 중 가장 커지도록 분자 □를 찾습니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-mission-1"
     },
     {
       "sourceItemId": "6-1-u1-e1-mission-2",
@@ -292,11 +297,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "mission",
       "ordinal": 2,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "24개씩 든 장난감 자동차 상자 5개의 전체 무게와 빈 상자 무게로 자동차 한 개의 무게를 구합니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-mission-2"
     },
     {
       "sourceItemId": "6-1-u1-e1-mission-3",
@@ -308,11 +314,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "mission",
       "ordinal": 3,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "1/2÷3, 2/3÷4, 3/4÷5, ...에서 계산값이 1/10보다 큰 식의 개수를 구합니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-mission-3"
     },
     {
       "sourceItemId": "6-1-u1-e1-mission-4",
@@ -324,11 +331,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "mission",
       "ordinal": 4,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "네 기호가 들어간 분수 나눗셈식의 값이 모두 같을 때 가, 나, 다, 라를 큰 순서로 씁니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-mission-4"
     },
     {
       "sourceItemId": "6-1-u1-e1-mission-5",
@@ -340,11 +348,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "mission",
       "ordinal": 5,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "사과 10개와 복숭아 3개가 든 바구니의 무게와 사과를 꺼낸 뒤의 무게로 복숭아 한 개의 무게를 구합니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-mission-5"
     },
     {
       "sourceItemId": "6-1-u1-e1-mission-6",
@@ -356,11 +365,12 @@
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않도록 수식 표시를 검수해야 하며, 상황 그림을 쓸 때 전체와 부분의 관계가 한 가지로 읽혀야 함",
       "section": "mission",
       "ordinal": 6,
-      "sourceShape": "분수로 나타낸 양을 같은 크기로 나누는 뜻을 그림, 식, 또는 상황으로 연결하고 몫을 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 사람이 함께 한 일의 양과 한 사람의 남은 일을 이용해 다른 사람이 혼자 끝내는 날 수를 구합니다.",
+      "answerContract": "fixed-verified-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 조건·수식·그림과 독립 계산, 단일 답, 고정 검증 문항 3개를 확인했습니다.",
+      "publicSourceItemId": "6-1-u1-e1-mission-6"
     },
     {
       "sourceItemId": "6-1-u1-e2-exploration",
