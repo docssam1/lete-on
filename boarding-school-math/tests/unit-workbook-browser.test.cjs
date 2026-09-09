@@ -278,6 +278,17 @@ test("mobile and A4 or Letter print layouts stay within their intended width",as
   for(const paper of ["A4","Letter"]){const page=await browser.newPage({viewport:{width:794,height:1123}});await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=${paper}`,{waitUntil:"networkidle"});await page.emulateMedia({media:"print"});const box=await page.locator(".book-page").first().evaluate(function(node){const style=getComputedStyle(node);return{width:parseFloat(style.width),height:parseFloat(style.height)};});if(paper==="A4"){assert.ok(box.width>790&&box.width<797);assert.ok(box.height>1121&&box.height<1124);}else{assert.ok(box.width>814&&box.width<818);assert.ok(box.height>1054&&box.height<1058);}const columns=await page.locator(".problem-list").first().evaluate(function(node){return getComputedStyle(node).gridTemplateColumns.split(" ").length;});assert.equal(columns,2);const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});assert.deepEqual(overflow,[],JSON.stringify(overflow));assert.match(await page.locator("#dynamic-page-size").textContent(),new RegExp("size: "+paper));assert.equal(await page.locator(".teacher-key").count(),0);await page.close();}
 });
 
+test("HTML workbook renders stacked fractions while slash input remains valid",async function(){
+  const cases=[{locale:"ko",label:"8분의 5"},{locale:"en",label:"1 over 16"},{locale:"zh-Hans",label:"8分之5"}];
+  for(const candidate of cases){
+    const page=await browser.newPage({viewport:{width:1100,height:900}});const errors=errorsFor(page);
+    await page.goto(`${baseUrl}?cluster=6.NS.A&mode=workbook&audience=student&locale=${candidate.locale}&paper=A4`,{waitUntil:"networkidle"});
+    const fractionCard=page.locator('[data-item-id="nsa-w04"]'),prompt=fractionCard.locator(".problem-prompt");assert.equal(await prompt.locator("mfrac").count(),2);assert.equal(await prompt.locator("math").first().getAttribute("aria-label"),candidate.label);assert.equal(await fractionCard.locator(".problem-visual mfrac").count(),2);
+    const answerCard=page.locator('[data-item-id="nsa-w18"]');await answerCard.locator(".answer-input").fill("6/5");await answerCard.locator(".check-button").click();assert.equal(await answerCard.locator(".choice-feedback.correct").count(),1);
+    assert.deepEqual(errors,[]);await page.close();
+  }
+});
+
 test("ratio and number-system workbooks stay usable at 320px and 390px",async function(){
   for(const cluster of ["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A"]) for(const width of [320,390]){
     const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});

@@ -44,6 +44,29 @@
   }
   function text(value) { return value && (value[state.locale] || value.en || value.ko) || ""; }
   function el(tag, className, value) { const node=document.createElement(tag); if(className) node.className=className; if(value!=null) node.textContent=value; return node; }
+  function fractionLabel(numerator,denominator) {
+    if(state.locale==="ko") return denominator+"분의 "+numerator;
+    if(state.locale==="zh-Hans") return denominator+"分之"+numerator;
+    return numerator+" over "+denominator;
+  }
+  function mathFraction(numerator,denominator) {
+    const ns="http://www.w3.org/1998/Math/MathML";
+    const math=document.createElementNS(ns,"math"); math.classList.add("math-inline-fraction"); math.setAttribute("display","inline"); math.setAttribute("aria-label",fractionLabel(numerator.replace(/^[-−]/,""),denominator));
+    const fraction=document.createElementNS(ns,"mfrac");
+    function number(value){const negative=/^[-−]/.test(value),row=document.createElementNS(ns,"mrow");if(negative){const minus=document.createElementNS(ns,"mo");minus.textContent="−";row.append(minus);}const numberNode=document.createElementNS(ns,"mn");numberNode.textContent=value.replace(/^[-−]/,"");row.append(numberNode);return row;}
+    fraction.append(number(numerator),number(denominator)); math.append(fraction); return math;
+  }
+  function appendMathText(node,value) {
+    const content=String(value==null?"":value),pattern=/([−-]?\d+)\s*\/\s*([1-9]\d*)/g; let cursor=0,match;
+    while((match=pattern.exec(content))){if(match.index>cursor)node.append(document.createTextNode(content.slice(cursor,match.index)));node.append(mathFraction(match[1],match[2]));cursor=pattern.lastIndex;}
+    if(cursor<content.length)node.append(document.createTextNode(content.slice(cursor))); return node;
+  }
+  function mathEl(tag,className,value){return appendMathText(el(tag,className),value);}
+  function upgradeMathFractions(root) {
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); const candidates=[]; let current;
+    while((current=walker.nextNode()))if(/([−-]?\d+)\s*\/\s*([1-9]\d*)/.test(current.nodeValue||"")&&!current.parentElement.closest("svg"))candidates.push(current);
+    candidates.forEach(function(textNode){const fragment=document.createDocumentFragment();appendMathText(fragment,textNode.nodeValue);textNode.replaceWith(fragment);});
+  }
   function setUrl() {
     const url=new URL(location.href); url.search="";
     Object.entries(state).forEach(function(entry){ if(["selected","correct","cluster"].includes(entry[0])) return; url.searchParams.set(entry[0],entry[1]); });
@@ -69,27 +92,27 @@
   }
   function renderCover(pageNumber) {
     const node=page(pageNumber,"book-cover");
-    node.append(el("p","page-kicker","GFIELD MATH · US GRADE 6 · "+source.pack.standardRange),el("h1","",text(source.pack.title)),el("p","book-subtitle",text(source.pack.subtitle)),el("div","cover-rule"));
+    node.append(el("p","page-kicker","GFIELD MATH · US GRADE 6 · "+source.pack.standardRange),el("h1","",text(source.pack.title)),mathEl("p","book-subtitle",text(source.pack.subtitle)),el("div","cover-rule"));
     const grid=el("div","cover-grid");
     [[c().name,""],[c().class,""],[c().date,""]].forEach(function(entry){ const box=el("div"); box.append(el("span","",entry[0]),el("strong","","")); grid.append(box); });
     node.append(grid);
-    const notice=el("p","scope-notice",text(source.pack.scopeNotice)); node.append(notice); return node;
+    const notice=mathEl("p","scope-notice",text(source.pack.scopeNotice)); node.append(notice); return node;
   }
   function renderConcepts(pageNumber) {
     const node=page(pageNumber,"concept-page");
-    node.append(el("p","page-kicker",c().concept+" · "+source.pack.clusterId),el("h2","",text(source.pack.subtitle)));
+    node.append(el("p","page-kicker",c().concept+" · "+source.pack.clusterId),mathEl("h2","",text(source.pack.subtitle)));
     const grid=el("div","concept-grid");
-    source.pack.conceptPages.forEach(function(concept,index){ const card=el("article","concept-card"); card.append(el("span","concept-number",String(index+1)),el("h3","",text(concept.title)),el("p","",text(concept.body)),el("p","concept-example",text(concept.example))); grid.append(card); });
+    source.pack.conceptPages.forEach(function(concept,index){ const card=el("article","concept-card"); card.append(el("span","concept-number",String(index+1)),mathEl("h3","",text(concept.title)),mathEl("p","",text(concept.body)),mathEl("p","concept-example",text(concept.example))); grid.append(card); });
     node.append(grid);
-    if(state.audience==="teacher") node.append(el("div","teacher-observation",text(source.pack.teacherObservation)));
+    if(state.audience==="teacher") node.append(mathEl("div","teacher-observation",text(source.pack.teacherObservation)));
     return node;
   }
   function renderProblem(problem,index) {
     const card=el("article","book-problem"); card.dataset.itemId=problem.id;
     const meta=el("div","problem-meta"); meta.append(el("span","",String(index+1).padStart(2,"0")),el("span","",text(source.pack.strands[problem.strand])));
-    card.append(meta,el("p","problem-prompt",text(problem.prompt)));
+    card.append(meta,mathEl("p","problem-prompt",text(problem.prompt)));
     const visualMarkup=typeof source.renderVisual==="function"?source.renderVisual(problem,state.locale,state.audience):"";
-    if(visualMarkup){const visual=el("div","problem-visual");visual.innerHTML=visualMarkup;card.append(visual);}
+    if(visualMarkup){const visual=el("div","problem-visual");visual.innerHTML=visualMarkup;upgradeMathFractions(visual);card.append(visual);}
     const restored=state.selected.get(problem.id);
     function recordResult(response,control){
       state.selected.set(problem.id,response);
@@ -98,22 +121,22 @@
         state.correct.add(problem.id); if(control) control.classList.add("is-correct"); feedback.className="choice-feedback correct"; feedback.textContent=c().correct;
         const active=state.mode==="workbook"?source.pack.workbookItems:source.pack.recheckItems;
         if(state.mode==="workbook"&&state.correct.size===active.length){try{localStorage.setItem(completionKey,"complete-v1");}catch(_error){/* session progress remains visible */}syncModeControls();}
-      }else{state.correct.delete(problem.id);if(control)control.classList.remove("is-correct");feedback.className="choice-feedback wrong";feedback.textContent=c().wrong+" "+source.hintFor(problem,state.locale);}
+      }else{state.correct.delete(problem.id);if(control)control.classList.remove("is-correct");feedback.className="choice-feedback wrong";feedback.replaceChildren();appendMathText(feedback,c().wrong+" "+source.hintFor(problem,state.locale));}
       updateProgress();
     }
     if(state.audience==="student"&&Array.isArray(problem.choices)){
       const choices=el("div","choice-list");
-      problem.choices.forEach(function(choice,choiceIndex){const button=el("button","choice-button",text(choice.label));button.type="button";button.dataset.choice=String.fromCharCode(65+choiceIndex);button.dataset.answerId=choice.id;const selected=restored===choice.id;button.classList.toggle("is-selected",selected);button.classList.toggle("is-correct",selected&&source.evaluateResponse(problem,choice.id));button.addEventListener("click",function(){card.querySelectorAll(".choice-button").forEach(function(node){node.classList.toggle("is-selected",node===button);node.classList.remove("is-correct");});recordResult(choice.id,button);});choices.append(button);});
+      problem.choices.forEach(function(choice,choiceIndex){const button=mathEl("button","choice-button",text(choice.label));button.type="button";button.dataset.choice=String.fromCharCode(65+choiceIndex);button.dataset.answerId=choice.id;const selected=restored===choice.id;button.classList.toggle("is-selected",selected);button.classList.toggle("is-correct",selected&&source.evaluateResponse(problem,choice.id));button.addEventListener("click",function(){card.querySelectorAll(".choice-button").forEach(function(node){node.classList.toggle("is-selected",node===button);node.classList.remove("is-correct");});recordResult(choice.id,button);});choices.append(button);});
       card.append(choices);
     }else if(state.audience==="student"){
       const responseRow=el("div","answer-row screen-answer");const input=el("input","answer-input");input.type="text";input.inputMode=["ratio-pair","decimal-or-fraction"].includes(problem.responseFormat)?"text":"decimal";input.placeholder=c().answerPlaceholder;input.setAttribute("aria-label",String(index+1)+" "+c().answerPlaceholder);input.autocomplete="off";input.spellcheck=false;input.value=restored||"";const button=el("button","check-button",c().check);button.type="button";button.addEventListener("click",function(){if(!input.value.trim()){const feedback=card.querySelector(".choice-feedback");feedback.className="choice-feedback wrong";feedback.textContent=c().answerPlaceholder;input.focus();return;}recordResult(input.value.trim(),input);if(source.evaluateResponse(problem,input.value.trim())){input.disabled=true;button.disabled=true;}});input.addEventListener("keydown",function(event){if(event.key==="Enter")button.click();});responseRow.append(input,button);card.append(responseRow,el("div","print-answer-line",c().answerPlaceholder));
     }
     if(state.audience==="student"){
-      const feedback=el("p","choice-feedback","");if(restored&&source.evaluateResponse(problem,restored)){feedback.className="choice-feedback correct";feedback.textContent=c().correct;}else if(restored){feedback.className="choice-feedback wrong";feedback.textContent=c().wrong+" "+source.hintFor(problem,state.locale);}card.append(feedback);
+      const feedback=el("p","choice-feedback","");if(restored&&source.evaluateResponse(problem,restored)){feedback.className="choice-feedback correct";feedback.textContent=c().correct;}else if(restored){feedback.className="choice-feedback wrong";appendMathText(feedback,c().wrong+" "+source.hintFor(problem,state.locale));}card.append(feedback);
     }else{
       const answerValue=Array.isArray(problem.choices)&&typeof source.choiceLabel==="function"?source.choiceLabel(problem,source.solveItem(problem),state.locale):source.formatResult(problem)+(text(problem.unit)?" "+text(problem.unit):"");
-      const answer=el("div","teacher-key");answer.append(el("strong","",c().answer+" · "+answerValue),document.createTextNode(source.solutionFor(problem,state.locale)));
-      const move=el("div","teacher-move");move.append(el("strong","",c().teaching+" · "),document.createTextNode(source.hintFor(problem,state.locale)));card.append(answer,move);
+      const answer=el("div","teacher-key"),answerHeading=mathEl("strong","",c().answer+" · "+answerValue);answer.append(answerHeading);appendMathText(answer,source.solutionFor(problem,state.locale));
+      const move=el("div","teacher-move");move.append(el("strong","",c().teaching+" · "));appendMathText(move,source.hintFor(problem,state.locale));card.append(answer,move);
     }
     return card;
   }
