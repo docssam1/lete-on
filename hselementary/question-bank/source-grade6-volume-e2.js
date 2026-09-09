@@ -7,7 +7,7 @@
   const generatorKey = "sourceGrade6VolumeE2";
   const ids = Object.freeze([
     "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
-    "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5"
+    "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5", "6-1-u6-e2-mission-6"
   ]);
   const idSet = new Set(ids);
   const esc = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
@@ -52,6 +52,11 @@
       { width: 8, height: 6, depth: 12 },
       { width: 10, height: 7, depth: 9 },
       { width: 12, height: 8, depth: 10 }
+    ]),
+    "mission-6": Object.freeze([
+      { unit: 5 },
+      { unit: 4 },
+      { unit: 6 }
     ])
   });
 
@@ -181,6 +186,19 @@
       && (cubeX + cubeSide <= cuboidX || cuboidX + data.cuboidLength <= cubeX || cubeY + cubeSide <= cuboidY || cuboidY + data.cuboidDepth <= cubeY);
     if (!fits || cubeVolume >= totalVolume || cuboidVolume * 2 !== cuboidBaseArea * doubledHeight) throw new Error("흙 부피 보존 풀의 배치 또는 정확한 높이가 성립하지 않습니다.");
     return { cubeSide, totalVolume, cubeVolume, cuboidBaseArea, cuboidVolume, doubledHeight, heightWhole: Math.floor(doubledHeight / 2), cubeX, cubeY, cuboidX, cuboidY };
+  };
+  const wrappedTriangleFacts = data => {
+    const width = 4 * data.unit;
+    const depth = 3 * data.unit;
+    const height = data.unit;
+    const unfoldedHeight = depth + height;
+    const paperArea = width * unfoldedHeight / 2;
+    const candidates = [];
+    for (let candidate = 1; candidate <= 100; candidate += 1) {
+      if (4 * candidate * (candidate + 3 * candidate) / 2 === paperArea) candidates.push(candidate);
+    }
+    if (candidates.length !== 1 || candidates[0] !== data.unit) throw new Error("삼각형 종이의 넓이에서 가장 짧은 모서리가 하나로 정해지지 않습니다.");
+    return { width, depth, height, unfoldedHeight, paperArea, squareArea: paperArea / 8, candidates, volume: width * depth * height };
   };
   const threeRopeFacts = data => {
     const ropeA = 2 * (data.depth + data.height);
@@ -719,6 +737,47 @@
     return svg("soil-solids-flattened-volume", { values: [data.boardLength, data.boardDepth, data.flatHeight, data.cuboidLength, data.cuboidDepth, data.rightGap, facts.cubeSide, facts.doubledHeight], level: data.level }, poolIndex, solved, content, required, 640, solved ? 520 : 365);
   };
 
+  const wrappedTriangleSvg = (data, poolIndex, solved) => {
+    const facts = wrappedTriangleFacts(data);
+    const frontTopLeft = [118, 132];
+    const frontTopRight = [398, 132];
+    const frontBottomLeft = [118, 222];
+    const frontBottomRight = [398, 222];
+    const projection = [88, -66];
+    const backTopLeft = [frontTopLeft[0] + projection[0], frontTopLeft[1] + projection[1]];
+    const backTopRight = [frontTopRight[0] + projection[0], frontTopRight[1] + projection[1]];
+    const backBottomRight = [frontBottomRight[0] + projection[0], frontBottomRight[1] + projection[1]];
+    const backBottomLeft = [frontBottomLeft[0] + projection[0], frontBottomLeft[1] + projection[1]];
+    const apexShare = 0.5;
+    const apex = [backTopLeft[0] + (backTopRight[0] - backTopLeft[0]) * apexShare, backTopLeft[1]];
+    // The intersections come from unfolding the top face beside the front face.
+    const leftFoldShare = apexShare * facts.height / facts.unfoldedHeight;
+    const rightFoldShare = 1 - (1 - apexShare) * facts.height / facts.unfoldedHeight;
+    const foldLeft = [frontTopLeft[0] + (frontTopRight[0] - frontTopLeft[0]) * leftFoldShare, frontTopLeft[1]];
+    const foldRight = [frontTopLeft[0] + (frontTopRight[0] - frontTopLeft[0]) * rightFoldShare, frontTopLeft[1]];
+    const localStyle = `<style>.source61-volume-e2-diagram .wrapped-paper-front{fill:#91d5ea;fill-opacity:.78;stroke:#136d8a;stroke-width:2.4}.source61-volume-e2-diagram .wrapped-paper-top{fill:#b9e9f5;fill-opacity:.86;stroke:#136d8a;stroke-width:2.4}.source61-volume-e2-diagram .wrapped-paper-outline{fill:none;stroke:#136d8a;stroke-width:3;stroke-linejoin:round}.source61-volume-e2-diagram[data-model-key="cuboid-wrapped-triangle-paper-volume"] .source61-volume-e2-label,.source61-volume-e2-diagram[data-model-key="cuboid-wrapped-triangle-paper-volume"] .source61-volume-e2-measure{font-size:17px}.source61-volume-e2-diagram[data-model-key="cuboid-wrapped-triangle-paper-volume"] .source61-volume-e2-title{font-size:20px}.source61-volume-e2-diagram[data-model-key="cuboid-wrapped-triangle-paper-volume"] .source61-volume-e2-note{font-size:15px}.source61-volume-e2-diagram[data-model-key="cuboid-wrapped-triangle-paper-volume"] .source61-volume-e2-answer-label{font-size:17px}</style>`;
+    const faces = `${polygon([frontTopLeft, frontTopRight, frontBottomRight, frontBottomLeft], "source61-volume-e2-box", "wrapped-box-front-face")}${polygon([frontTopLeft, backTopLeft, backTopRight, frontTopRight], "source61-volume-e2-box-top", "wrapped-box-top-face")}${polygon([frontTopRight, backTopRight, backBottomRight, frontBottomRight], "source61-volume-e2-box-side", "wrapped-box-right-face")}${line(...backTopLeft, ...backBottomLeft, "source61-volume-e2-fold", "wrapped-box-hidden-left")}${line(...backBottomLeft, ...backBottomRight, "source61-volume-e2-fold", "wrapped-box-hidden-bottom")}`;
+    const paper = `${polygon([frontBottomLeft, frontBottomRight, foldRight, foldLeft], "wrapped-paper-front", "wrapped-paper-front-part")}${polygon([foldLeft, foldRight, apex], "wrapped-paper-top", "wrapped-paper-top-part")}${line(...frontBottomLeft, ...foldLeft, "wrapped-paper-outline", "wrapped-paper-left-edge")}${line(...foldLeft, ...apex, "wrapped-paper-outline", "wrapped-paper-left-top-edge")}${line(...apex, ...foldRight, "wrapped-paper-outline", "wrapped-paper-right-top-edge")}${line(...foldRight, ...frontBottomRight, "wrapped-paper-outline", "wrapped-paper-right-edge")}${line(...frontBottomLeft, ...frontBottomRight, "wrapped-paper-outline", "wrapped-paper-base-edge")}`;
+    const vertexLabels = [
+      [frontTopLeft, "ㄴ", -16, 4, "vertex-n"], [frontTopRight, "ㄷ", 12, -8, "vertex-d"], [frontBottomLeft, "ㅂ", -17, 6, "vertex-b"],
+      [frontBottomRight, "ㅅ", 10, 19, "vertex-s"], [backTopLeft, "ㄱ", -15, -5, "vertex-g"], [backTopRight, "ㄹ", 10, -7, "vertex-r"],
+      [backBottomRight, "ㅇ", 13, 8, "vertex-o"], [apex, "ㅈ", 0, -12, "vertex-j"]
+    ].map(([point, label, dx, dy, role]) => text(point[0] + dx, point[1] + dy, label, "source61-volume-e2-label", "middle", role)).join("");
+    const relationLabels = `${text(258, 250, "ㄴㄷ = ㄷㅅ의 4배", "source61-volume-e2-measure", "middle", "width-ratio-label")}${text(622, 124, "ㄷㄹ = ㄷㅅ의 3배", "source61-volume-e2-measure", "end", "depth-ratio-label")}${text(258, 184, `종이 넓이 ${facts.paperArea}cm²`, "source61-volume-e2-title", "middle", "paper-area-label")}`;
+    let answerPanel = "";
+    if (solved) {
+      const netBaseLeft = [78, 424];
+      const netBaseRight = [326, 424];
+      const netApex = [202, 286];
+      const foot = [202, 424];
+      answerPanel = `${rect(24, 268, 592, 258, "source61-volume-e2-card-solved", "wrapped-answer-card")}${text(44, 298, "종이를 한 평면에 펼쳐 보기", "source61-volume-e2-title", "start")}${polygon([netBaseLeft, netBaseRight, netApex], "wrapped-paper-top is-solved", "unfolded-paper-triangle")}${line(...netApex, ...foot, "source61-volume-e2-fold is-solved", "unfolded-paper-height")}${line(foot[0], foot[1], foot[0] + 15, foot[1], "source61-volume-e2-line is-solved", "unfolded-right-angle-horizontal")}${line(foot[0] + 15, foot[1], foot[0] + 15, foot[1] - 15, "source61-volume-e2-line is-solved", "unfolded-right-angle-vertical")}${text(202, 450, `밑변 ${facts.width}cm`, "source61-volume-e2-answer-label", "middle", "unfolded-base-label")}${text(218, 352, `높이 ${facts.height}+${facts.depth}=${facts.unfoldedHeight}cm`, "source61-volume-e2-answer-label", "start", "unfolded-height-label")}${text(356, 326, `${facts.paperArea}÷8=${facts.squareArea}`, "source61-volume-e2-answer-label", "start", "unit-square-area-calc")}${text(356, 358, `${data.unit}×${data.unit}=${facts.squareArea}`, "source61-volume-e2-answer-label", "start", "unit-length-calc")}${text(356, 398, `가로 ${facts.width}cm · 세로 ${facts.depth}cm`, "source61-volume-e2-answer-label", "start", "box-width-depth-calc")}${text(356, 430, `높이 ${facts.height}cm`, "source61-volume-e2-answer-label", "start", "box-height-calc")}${text(356, 474, `부피 ${facts.width}×${facts.depth}×${facts.height}`, "source61-volume-e2-answer-label", "start", "box-volume-expression")}${text(356, 504, `= ${num(facts.volume)}cm³`, "source61-volume-e2-answer-label", "start", "box-volume-answer")}`;
+    }
+    const content = `${localStyle}${text(320, 28, solved ? "직육면체와 펼친 종이로 답 확인" : "겉면에 붙인 삼각형 종이 한 장", "source61-volume-e2-title")}${faces}${paper}${vertexLabels}${relationLabels}${answerPanel}`;
+    const required = ["wrapped-box-front-face", "wrapped-box-top-face", "wrapped-box-right-face", "wrapped-paper-front-part", "wrapped-paper-top-part", "wrapped-paper-left-edge", "wrapped-paper-left-top-edge", "wrapped-paper-right-top-edge", "wrapped-paper-right-edge", "wrapped-paper-base-edge", "vertex-n", "vertex-d", "vertex-b", "vertex-s", "vertex-g", "vertex-r", "vertex-o", "vertex-j", "width-ratio-label", "depth-ratio-label", "paper-area-label"];
+    if (solved) required.push("wrapped-answer-card", "unfolded-paper-triangle", "unfolded-paper-height", "unfolded-right-angle-horizontal", "unfolded-right-angle-vertical", "unfolded-base-label", "unfolded-height-label", "unit-square-area-calc", "unit-length-calc", "box-width-depth-calc", "box-height-calc", "box-volume-expression", "box-volume-answer");
+    return svg("cuboid-wrapped-triangle-paper-volume", { values: [data.unit, facts.paperArea, facts.width, facts.depth, facts.height, facts.volume], level: data.level }, poolIndex, solved, content, required, 640, solved ? 548 : 282);
+  };
+
   const stairSvg = (data, poolIndex, solved) => {
     const cell = 22;
     const baseX = 48;
@@ -873,6 +932,17 @@
       const dimensions = `가로는 ${facts.sideSum}-${facts.ropeA / 2}=${data.width}cm, 세로는 ${facts.sideSum}-${facts.ropeB / 2}=${data.depth}cm이고, 높이는 ${facts.sideSum}-${data.width}-${data.depth}=${data.height}cm입니다.`;
       return { answer: `${num(facts.volume)}cm³`, visual: threeRopeSvg(model, poolIndex, solved), solution: `${firstStep} ${dimensions} 따라서 상자의 부피는 ${data.width}×${data.depth}×${data.height}=${num(facts.volume)}cm³입니다.` };
     }
+    if (kind === "mission-6") {
+      const facts = wrappedTriangleFacts(data);
+      const model = { ...data, ...facts, level };
+      const firstStep = level === 0
+        ? `종이를 펼친 삼각형의 밑변은 가장 짧은 모서리의 4배이고, 높이는 가장 짧은 모서리의 1배와 3배를 더한 4배입니다.`
+        : level === 2
+          ? "삼각형 종이 한 장을 앞면과 윗면이 만나는 모서리를 따라 펼쳐, 한 삼각형으로 생각합니다."
+          : "앞면과 윗면에 걸쳐 붙인 삼각형 종이 한 장을 펼쳐 봅니다.";
+      const steps = `가장 짧은 모서리로 만든 정사각형의 넓이는 ${facts.paperArea}÷8=${facts.squareArea}cm²입니다. ${data.unit}×${data.unit}=${facts.squareArea}이므로 가장 짧은 모서리는 ${data.unit}cm입니다. 가로는 ${data.unit}×4=${facts.width}cm, 세로는 ${data.unit}×3=${facts.depth}cm입니다. 따라서 부피는 ${facts.width}×${facts.depth}×${facts.height}=${num(facts.volume)}cm³입니다.`;
+      return { answer: `${num(facts.volume)}cm³`, visual: wrappedTriangleSvg(model, poolIndex, solved), solution: `${firstStep} ${steps}` };
+    }
     const facts = stairFacts(data);
     const model = { ...data, ...facts, level };
     const firstStep = level === 0
@@ -948,6 +1018,15 @@
           : `가, 나, 다에서 사용한 끈의 길이는 각각 ${facts.ropeA}cm, ${facts.ropeB}cm, ${facts.ropeC}cm입니다.`;
       return `같은 크기의 직육면체 모양 상자 세 개를 그림처럼 서로 다른 방향의 끈으로 둘러 묶었습니다. ${condition} 상자 한 개의 부피를 구하세요. (단, 매듭의 길이는 생각하지 않습니다.)`;
     }
+    if (kind === "mission-6") {
+      const facts = wrappedTriangleFacts(data);
+      const condition = level === 0
+        ? "종이를 펼치면 삼각형의 밑변은 가장 짧은 모서리의 4배이고, 높이는 가장 짧은 모서리의 1배와 3배를 더한 길이입니다."
+        : level === 2
+          ? "그림의 모서리 이름과 종이가 꺾인 자리를 이용하여 삼각형 종이를 한 평면에 펼쳐 생각하세요."
+          : "";
+      return `직육면체에서 모서리 ㄴㄷ의 길이는 모서리 ㄷㅅ의 길이의 4배이고, 모서리 ㄷㄹ의 길이는 모서리 ㄷㅅ의 길이의 3배입니다. 이 직육면체의 겉면에 그림과 같이 넓이가 ${facts.paperArea}cm²인 삼각형 모양의 종이 한 장을 붙였습니다. ${condition} 이 직육면체의 부피는 몇 cm³인지 구하세요.`;
+    }
     const facts = stairFacts(data);
     if (level === 0) return `한 칸이 ${data.unit}cm이고 깊이가 ${facts.depth}cm인 계단 모양 입체도형입니다. 높이가 1층부터 5층인 다섯 부분의 앞면 칸 수는 차례로 1칸, 2칸, 3칸, 4칸, 5칸입니다. 부피와 겉넓이를 구하세요.`;
     if (level === 2) return `계단 모양 입체도형의 전체 가로 ${5 * data.unit}cm를 똑같이 5등분했습니다. 한 층 높이는 한 칸의 너비와 같고, 깊이는 전체 가로와 같습니다. 부피와 겉넓이를 구하세요.`;
@@ -962,6 +1041,7 @@
         : kind === "mission-2" ? "주어진 사용 길이에서 가의 밑면 한 변을 먼저 찾아보세요."
           : kind === "mission-4" ? `${data.boardDepth}-${data.cuboidDepth}으로 가의 한 변을 찾고, 고르게 편 흙 전체의 부피를 먼저 구해 보세요.`
           : kind === "mission-5" ? "가와 나의 끈 길이는 2로, 다의 끈 길이는 4로 나누어 세 변의 합을 비교해 보세요."
+          : kind === "mission-6" ? "삼각형 종이를 앞면과 윗면이 만나는 모서리에서 펼쳐 밑변과 높이를 살펴보세요."
           : "주어진 앞면 칸 수마다 한 칸의 너비와 깊이를 곱해 보세요.";
   const challengeFor = kind => kind === "exploration" ? "종이의 둘레와 두 길이의 차로 가로와 세로를 먼저 구해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "모든 경우를 찾은 뒤 세 변의 길이가 모두 다른 경우만 다시 가려 보세요."
@@ -971,6 +1051,7 @@
         : kind === "mission-2" ? "가에서 사용한 끈을 구한 뒤, 두 상자가 사용한 끈의 차로 나의 사용 길이를 찾아보세요."
           : kind === "mission-4" ? "그림의 치수에서 가의 한 변과 나의 밑면 넓이를 차례로 찾아, 흙의 전체 부피가 그대로임을 이용해 보세요."
           : kind === "mission-5" ? "먼저 다에서 사용한 끈의 길이를 관계로 구하고, 세 변의 합에서 두 변의 합을 각각 빼 보세요."
+          : kind === "mission-6" ? "종이 한 장을 펼쳤을 때 생기는 삼각형의 밑변과 높이를 모서리의 배수 관계로 나타내 보세요."
           : "전체 가로를 5등분해 한 칸을 구하고, 깊이가 전체 가로와 같다는 조건을 이용하세요.";
 
   const kindOf = sourceItemId => {
@@ -987,6 +1068,7 @@
     if (kind === "mission-2") return [data.rope, data.cubeLeft, data.cuboidLeft];
     if (kind === "mission-4") return [data.boardLength, data.boardDepth, data.flatHeight, data.cuboidLength, data.cuboidDepth, data.rightGap];
     if (kind === "mission-5") return [data.width, data.height, data.depth];
+    if (kind === "mission-6") return [data.unit, wrappedTriangleFacts(data).paperArea];
     return [data.unit, 5 * data.unit];
   };
   const markInventory = () => {
@@ -997,6 +1079,7 @@
       verifiedVariantProvenance: ["source-values", "source-structure-variant", "source-structure-variant"]
       });
       if (item.sourceItemId === "6-1-u6-e2-mission-4") Object.assign(item, { commonTypeId: "soil-solids-flattened-volume-height", typeLabel: "흙을 평평하게 펴기 전 직육면체의 높이 구하기" });
+      if (item.sourceItemId === "6-1-u6-e2-mission-6") Object.assign(item, { commonTypeId: "cuboid-wrapped-triangle-paper-volume", typeLabel: "겉면에 붙인 삼각형 종이의 넓이로 직육면체의 부피 구하기" });
     });
     const semesters = window.HSE_CURRICULUM?.semesters || [];
     semesters.flatMap(semester => semester.units || []).flatMap(unit => unit.subunits || []).flatMap(subunit => subunit.types || []).filter(type => idSet.has(type.sourceItemId)).forEach(type => Object.assign(type, { generatorKey, reviewLocked: false, verifiedVariantCount: 3 }));

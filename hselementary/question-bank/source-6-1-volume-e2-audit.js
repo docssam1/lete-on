@@ -10,7 +10,7 @@ const fail = message => failures.push(message);
 const check = (condition, message) => { if (!condition) fail(message); };
 const sourceIds = [
   "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
-  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5"
+  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5", "6-1-u6-e2-mission-6"
 ];
 const allResults = new Set();
 const difficultyBodies = new Map();
@@ -70,7 +70,8 @@ const expected = {
     { boardLength: 32, boardDepth: 12, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 8, doubledHeight: 7 },
     { boardLength: 28, boardDepth: 10, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 6, doubledHeight: 9 }
   ],
-  "mission-5": [[8, 6, 12], [10, 7, 9], [12, 8, 10]]
+  "mission-5": [[8, 6, 12], [10, 7, 9], [12, 8, 10]],
+  "mission-6": [5, 4, 6]
 };
 const kindOf = id => id.endsWith("exploration") ? "exploration" : id.match(/e2-(example|mission)-(\d+)$/)?.slice(1).join("-");
 const attr = (tag, name) => tag.match(new RegExp(`${name}=\"([^\"]*)\"`))?.[1] || "";
@@ -377,6 +378,32 @@ for (const sourceItemId of sourceIds) {
           check(generated.solution.startsWith(`다에서 사용한 끈은 ${ropeA}+${ropeB}+${hardDifference}=${ropeC}cm입니다.`), `${label}: 어려움 풀이가 세 번째 끈 길이 계산부터 시작하지 않습니다.`);
         }
         if (pool === 0) check(generated.answer === "576cm³", `${label}: 원문 세 끈 상자 부피가 576cm³가 아닙니다.`);
+      } else if (kind === "mission-6") {
+        const unit = expected["mission-6"][pool];
+        const width = 4 * unit;
+        const depth = 3 * unit;
+        const height = unit;
+        const unfoldedHeight = height + depth;
+        const paperArea = width * unfoldedHeight / 2;
+        const volume = width * depth * height;
+        const candidates = [];
+        for (let candidate = 1; candidate <= 100; candidate += 1) if (4 * candidate * (candidate + 3 * candidate) / 2 === paperArea) candidates.push(candidate);
+        const promptText = learnerText(generated.prompt).replace(/\s+/g, " ");
+        check(attr(problemTag, "data-model-key") === "cuboid-wrapped-triangle-paper-volume", `${label}: 겉면에 붙인 삼각형 종이 모델이 아닙니다.`);
+        check(type(sourceItemId).commonTypeId === "cuboid-wrapped-triangle-paper-volume", `${label}: 삼각형 종이 세부 유형 ID가 다릅니다.`);
+        check(JSON.stringify(candidates) === JSON.stringify([unit]), `${label}: 삼각형 넓이 조건의 양의 자연수 모서리가 하나가 아닙니다: ${JSON.stringify(candidates)}`);
+        check(normalize(generated.answer) === normalize(`${volume}cm³`), `${label}: 삼각형 종이 넓이로 구한 부피가 다릅니다.`);
+        check(promptText.includes("삼각형 모양의 종이 한 장") && !promptText.includes("두 장"), `${label}: 원본의 종이 한 장 조건이 아닙니다.`);
+        check(promptText.includes("모서리 ㄴㄷ의 길이는 모서리 ㄷㅅ의 길이의 4배") && promptText.includes("모서리 ㄷㄹ의 길이는 모서리 ㄷㅅ의 길이의 3배"), `${label}: 원본 모서리 배수 관계가 없습니다.`);
+        const normalizedSolution = normalize(generated.solution);
+        check(normalizedSolution.includes(normalize(`${paperArea}÷8=${paperArea / 8}cm²`)) && normalizedSolution.includes(normalize(`${unit}×${unit}=${paperArea / 8}`)) && normalizedSolution.includes(normalize(`${width}×${depth}×${height}=${volume}cm³`)), `${label}: 종이 넓이·한 변·부피 풀이가 없습니다.`);
+        [generated.prompt, generated.answerVisual].forEach((markup, phaseIndex) => ["wrapped-box-front-face", "wrapped-box-top-face", "wrapped-box-right-face", "wrapped-paper-front-part", "wrapped-paper-top-part", "wrapped-paper-left-edge", "wrapped-paper-right-edge", "wrapped-paper-base-edge", "vertex-n", "vertex-d", "vertex-s", "vertex-r", "paper-area-label"].forEach(role => check(markup.includes(`data-visual-element=\"${role}\"`), `${label}/${phaseIndex ? "답" : "문제"}: ${role} 시각 역할이 없습니다.`)));
+        ["wrapped-answer-card", "unfolded-paper-triangle", "unfolded-paper-height", "unfolded-right-angle-horizontal", "unfolded-right-angle-vertical", "unfolded-base-label", "unfolded-height-label", "unit-square-area-calc", "unit-length-calc", "box-volume-answer"].forEach(role => check(generated.answerVisual.includes(`data-visual-element=\"${role}\"`), `${label}: 답 그림의 ${role} 근거가 없습니다.`));
+        check(!textOnly(generated.prompt).includes(`${unit}cm`) && !textOnly(generated.prompt).includes(`${volume}cm³`), `${label}: 문제에 가장 짧은 모서리나 부피 답이 노출되었습니다.`);
+        if (difficulty === -1) check(promptText.includes("밑변은 가장 짧은 모서리의 4배") && promptText.includes("1배와 3배를 더한 길이") && generated.solution.startsWith("종이를 펼친 삼각형의 밑변은"), `${label}: 쉬움의 펼친 삼각형 안내가 없습니다.`);
+        if (difficulty === 0) check(!promptText.includes("종이를 펼치면") && !promptText.includes("한 평면에 펼쳐") && generated.solution.startsWith("앞면과 윗면에 걸쳐 붙인 삼각형 종이 한 장을 펼쳐 봅니다."), `${label}: 기준 문제에 힌트가 섞였거나 첫 풀이가 다릅니다.`);
+        if (difficulty === 1) check(promptText.includes("모서리 이름과 종이가 꺾인 자리를 이용") && generated.solution.startsWith("삼각형 종이 한 장을 앞면과 윗면이 만나는 모서리를 따라 펼쳐"), `${label}: 어려움의 그림 구조 추론이 없습니다.`);
+        if (pool === 0) check(paperArea === 200 && unit === 5 && width === 20 && depth === 15 && volume === 1500, `${label}: 원본 200cm²·5cm·20cm·15cm·1500cm³ 계약이 다릅니다.`);
       } else {
         const unit = expected["mission-3"][pool];
         const depth = 5 * unit;
@@ -416,4 +443,4 @@ if (failures.length) {
   console.error(failures.slice(0, 120).join("\n"));
   process.exit(1);
 }
-console.log(`6-1 부피 개념탐구 2 수학 감사 통과: ${sourceIds.length}유형 × 3풀 × 3난이도, 인수 전수 열거·24개 직육면체 노출 면·흙 부피 보존·두 끈 역검산·두 고리 단일해·세 끈 단일해·계단 두 공식·문제/정답 분리 확인`);
+console.log(`6-1 부피 개념탐구 2 수학 감사 통과: ${sourceIds.length}유형 × 3풀 × 3난이도, 인수 전수 열거·24개 직육면체 노출 면·흙 부피 보존·두 끈 역검산·두 고리 단일해·세 끈 단일해·삼각형 종이 단일해·계단 두 공식·문제/정답 분리 확인`);

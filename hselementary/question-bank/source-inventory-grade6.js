@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 218
+    "unlocked": 219
   },
   "items": [
     {
@@ -6608,21 +6608,28 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u6-e2-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "삼각형 두 장을 붙인 직육면체의 부피 구하기",
-      "commonTypeId": "cuboid-triangle-face-volume",
+      "typeLabel": "겉면에 붙인 삼각형 종이의 넓이로 직육면체의 부피 구하기",
+      "commonTypeId": "cuboid-wrapped-triangle-paper-volume",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ],
+      "rawSourceItemId": "6-1-u6-e2-mission-6",
+      "variant": 6
     },
     {
       "semester": "6-1",

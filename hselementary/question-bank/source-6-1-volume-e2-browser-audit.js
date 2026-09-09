@@ -15,7 +15,7 @@ const fail = message => failures.push(message);
 const difficultyBodies = new Map();
 const allIds = [
   "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
-  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5"
+  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5", "6-1-u6-e2-mission-6"
 ];
 const ids = process.env.HSE_SOURCE_ITEM_ID
   ? allIds.filter(id => id === process.env.HSE_SOURCE_ITEM_ID)
@@ -56,7 +56,8 @@ const expected = {
     { boardLength: 32, boardDepth: 12, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 8, doubledHeight: 7 },
     { boardLength: 28, boardDepth: 10, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 6, doubledHeight: 9 }
   ],
-  "mission-5": [[8, 6, 12], [10, 7, 9], [12, 8, 10]]
+  "mission-5": [[8, 6, 12], [10, 7, 9], [12, 8, 10]],
+  "mission-6": [5, 4, 6]
 };
 
 const mime = { ".css": "text/css", ".html": "text/html", ".js": "application/javascript", ".png": "image/png" };
@@ -342,6 +343,34 @@ function verify(problem, answer, sourceItemId, difficulty, viewport) {
       if (difficulty === -1 && (!item.text.includes("가의 끈은 세로와 높이의 합의 2배") || !item.text.includes("다의 세 방향 끈은 가로·세로·높이의 합의 4배") || !solved.solution.startsWith(`가의 끈 길이의 절반은 ${ropeA}÷2=`))) fail(`${label}/pool${item.pool}: 쉬움의 방향별 끈 뜻 또는 첫 풀이 단계가 맞지 않습니다.`);
       if (difficulty === 0 && (!item.text.includes(`각각 ${ropeA}cm, ${ropeB}cm, ${ropeC}cm`) || item.text.includes("합보다") || !solved.solution.startsWith("가의 끈은 세로와 높이를 각각 두 번 지나므로"))) fail(`${label}/pool${item.pool}: 기준의 원문 세 길이 또는 첫 풀이 단계가 맞지 않습니다.`);
       if (difficulty === 1 && (!item.text.includes(`각각 ${ropeA}cm, ${ropeB}cm`) || !item.text.includes(`합보다 ${hardDifference}cm 더 깁니다`) || item.text.includes(`사용한 끈 ${ropeC}cm`) || !solved.solution.startsWith(`다에서 사용한 끈은 ${ropeA}+${ropeB}+${hardDifference}=${ropeC}cm입니다.`))) fail(`${label}/pool${item.pool}: 어려움의 세 번째 끈 관계 또는 첫 풀이 단계가 맞지 않습니다.`);
+    }
+    if (sourceItemId.endsWith("mission-6")) {
+      const unit = expected["mission-6"][item.pool];
+      const width = 4 * unit;
+      const depth = 3 * unit;
+      const height = unit;
+      const paperArea = width * (depth + height) / 2;
+      const volume = width * depth * height;
+      const candidates = [];
+      for (let candidate = 1; candidate <= 100; candidate += 1) if (4 * candidate * (candidate + 3 * candidate) / 2 === paperArea) candidates.push(candidate);
+      const sharedRoles = ["wrapped-box-front-face", "wrapped-box-top-face", "wrapped-box-right-face", "wrapped-paper-front-part", "wrapped-paper-top-part", "wrapped-paper-left-edge", "wrapped-paper-left-top-edge", "wrapped-paper-right-top-edge", "wrapped-paper-right-edge", "wrapped-paper-base-edge", "vertex-n", "vertex-d", "vertex-b", "vertex-s", "vertex-g", "vertex-r", "vertex-o", "vertex-j", "width-ratio-label", "depth-ratio-label", "paper-area-label"];
+      [item.svgs[0], solved.svgs[0]].forEach((svg, phaseIndex) => sharedRoles.forEach(role => {
+        if (!svg.required.includes(role) || svg.roleCounts[role] !== 1) fail(`${label}/${phaseIndex ? "답" : "문제"}/pool${item.pool}: ${role}가 정확히 하나가 아닙니다.`);
+      }));
+      ["wrapped-answer-card", "unfolded-paper-triangle", "unfolded-paper-height", "unfolded-right-angle-horizontal", "unfolded-right-angle-vertical", "unfolded-base-label", "unfolded-height-label", "unit-square-area-calc", "unit-length-calc", "box-width-depth-calc", "box-height-calc", "box-volume-expression", "box-volume-answer"].forEach(role => {
+        if (!solved.svgs[0].required.includes(role) || solved.svgs[0].roleCounts[role] !== 1) fail(`${label}/답/pool${item.pool}: ${role}가 정확히 하나가 아닙니다.`);
+      });
+      if (item.svgs[0].model !== "cuboid-wrapped-triangle-paper-volume" || solved.svgs[0].model !== "cuboid-wrapped-triangle-paper-volume") fail(`${label}/pool${item.pool}: 삼각형 종이 직육면체 모델이 아닙니다.`);
+      if (JSON.stringify(candidates) !== JSON.stringify([unit])) fail(`${label}/pool${item.pool}: 가장 짧은 모서리 후보가 하나가 아닙니다.`);
+      if (!item.text.includes("삼각형 모양의 종이 한 장") || item.text.includes("두 장")) fail(`${label}/문제/pool${item.pool}: 원본 종이 한 장 조건이 아닙니다.`);
+      if (item.text.includes(`${unit}cm`) || item.text.includes(`${volume}cm³`)) fail(`${label}/문제/pool${item.pool}: 답 모서리 또는 부피가 노출되었습니다.`);
+      const normalizedAnswerText = solved.text.replace(/,/g, "");
+      if (!normalizedAnswerText.includes(`밑변 ${width}cm`) || !normalizedAnswerText.includes(`높이 ${height}+${depth}=${height + depth}cm`) || !normalizedAnswerText.includes(`${paperArea}÷8=${paperArea / 8}`) || !normalizedAnswerText.includes(`${width}×${depth}×${height}`) || !normalizedAnswerText.includes(`${volume}cm³`)) fail(`${label}/답/pool${item.pool}: 펼친 삼각형과 부피 근거가 없습니다.`);
+      if (viewport === "mobile390" && [...item.svgs[0].texts, ...solved.svgs[0].texts].filter(entry => entry.role).some(entry => entry.height < 8.5)) fail(`${label}/pool${item.pool}: 모바일 시각 라벨이 읽기 기준보다 작습니다.`);
+      if (difficulty === -1 && (!item.text.includes("밑변은 가장 짧은 모서리의 4배") || !solved.solution.startsWith("종이를 펼친 삼각형의 밑변은"))) fail(`${label}/pool${item.pool}: 쉬움의 펼침 안내 또는 첫 풀이가 다릅니다.`);
+      if (difficulty === 0 && (item.text.includes("종이를 펼치면") || item.text.includes("한 평면에 펼쳐") || !solved.solution.startsWith("앞면과 윗면에 걸쳐 붙인 삼각형 종이 한 장을 펼쳐 봅니다."))) fail(`${label}/pool${item.pool}: 기준 문제·풀이 구조가 다릅니다.`);
+      if (difficulty === 1 && (!item.text.includes("종이가 꺾인 자리를 이용") || !solved.solution.startsWith("삼각형 종이 한 장을 앞면과 윗면이 만나는 모서리를 따라 펼쳐"))) fail(`${label}/pool${item.pool}: 어려움의 구조 추론이 없습니다.`);
+      if (item.pool === 0 && (paperArea !== 200 || unit !== 5 || width !== 20 || depth !== 15 || volume !== 1500)) fail(`${label}: 원본 계산 계약이 다릅니다.`);
     }
     if (sourceItemId.endsWith("exploration") && (item.text.includes("상자의 부피") || !solved.text.match(/\d+개/))) fail(`${label}/pool${item.pool}: 블록 개수 전용 문항 계약이 아닙니다.`);
     if (sourceItemId.endsWith("exploration")) {
