@@ -797,18 +797,18 @@ function screenWelcome(){
       <div class="nm-ob-card">
         <h1 class="nm-ob-title">${lk('넌 누구야?','Who are you?','你是谁？')}</h1>
         <p class="nm-ob-sub">${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
-        <!-- 이름 하늘·보라(2026-09-09, 원장 지시 승인) — "남자아이"/"여자아이"라는 성별 라벨 대신
-             실제 이름을 붙였다. 지어낸 게 아니라 사람아바타-작화지시서.md가 이미 정한 튜닉 색에서
-             그대로 땄다: 하늘=하늘색 견습 튜닉, 보라=보라색 견습 튜닉. 내부 식별자(data-av="boy"/"girl",
-             renderHumanChar·HUMAN_IMG 키)는 손대지 않았다 — 화면에 보이는 이름만 바뀐다. -->
+        <!-- 이름 유준·유빈(2026-09-09, 원장 지시) — "남자아이"/"여자아이"라는 성별 라벨 대신
+             실제 이름을 붙였다(처음엔 하늘·보라로 튜닉 색을 땄다가, 원장이 유준·유빈으로 다시 지음).
+             내부 식별자(data-av="boy"/"girl", renderHumanChar·HUMAN_IMG 키)는 손대지 않았다 —
+             화면에 보이는 이름만 바뀐다. -->
         <div class="nm-av-row">
           <button class="nm-av-card${ob.avatar==='boy'?' sel':''}" data-av="boy">
             ${window.renderHumanChar?window.renderHumanChar('boy',120):''}
-            <span>${lk('하늘','Sky','小天')}</span>
+            <span>${lk('유준','Yujun','宥俊')}</span>
           </button>
           <button class="nm-av-card${ob.avatar==='girl'?' sel':''}" data-av="girl">
             ${window.renderHumanChar?window.renderHumanChar('girl',120):''}
-            <span>${lk('보라','Violet','小紫')}</span>
+            <span>${lk('유빈','Yubin','宥彬')}</span>
           </button>
         </div>
         <button class="nm-btn nm-ob-go" id="obAvNext"${ob.avatar?'':' disabled'}>${lk('다음 ›','Next ›','下一步 ›')}</button>
@@ -1189,8 +1189,8 @@ function showAvatarMigrateModal(){
     <h3>${lk('너는 누구야?','Who are you?','你是谁？')}</h3>
     <p>${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
     <div class="nm-av-row">
-      <button class="nm-av-card" data-av="boy">${window.renderHumanChar?window.renderHumanChar('boy',110):''}<span>${lk('하늘','Sky','小天')}</span></button>
-      <button class="nm-av-card" data-av="girl">${window.renderHumanChar?window.renderHumanChar('girl',110):''}<span>${lk('보라','Violet','小紫')}</span></button>
+      <button class="nm-av-card" data-av="boy">${window.renderHumanChar?window.renderHumanChar('boy',110):''}<span>${lk('유준','Yujun','宥俊')}</span></button>
+      <button class="nm-av-card" data-av="girl">${window.renderHumanChar?window.renderHumanChar('girl',110):''}<span>${lk('유빈','Yubin','宥彬')}</span></button>
     </div>
   </div>`;
   document.body.appendChild(wrap);
