@@ -263,6 +263,61 @@ function pair10_2d(opts){
   };
 }
 
+/* ---------- B-16 : 구구단 짝 찾기 (곱해서 목표수 만들기) ----------
+   개념: A-01 "더해서 10을 찾아라"와 같은 게임을 구구단으로. 여러 수 중
+   곱해서 목표수가 되는 짝을 찾아 먼저 묶는다(선택식·selectPairs, pickTile
+   재사용 — 2026-09-09 원장 지시 "곱도 있지 않을까").
+   구구단(2~9단)을 이미 배운 뒤(B-16 총정리)라야 뜻이 있어서 그 유닛의
+   lab 단계에만 붙인다. 목표수는 두 자리 인수쌍이 정확히 둘 나오는 것만
+   고른다(그래야 "하나 더 있어" 라운드가 A-01처럼 성립한다) — 12=2×6=3×4,
+   24=3×8=4×6, 36=4×9=6×6, 18=2×9=3×6, 16=2×8=4×4.
+   level: 'practice' = 목표수 즉답(한 짝) / 'main' = 여러 항 묶기(선택식) */
+function pairMul(opts){
+  opts=opts||{};
+  const lv=opts.level||'main';
+  const TARGETS=[
+    {t:12,pairs:[[2,6],[3,4]]},
+    {t:24,pairs:[[3,8],[4,6]]},
+    {t:36,pairs:[[4,9],[6,6]]},
+    {t:18,pairs:[[2,9],[3,6]]},
+    {t:16,pairs:[[2,8],[4,4]]}
+  ];
+  if(lv==='practice'){
+    const pick=TARGETS[R(0,TARGETS.length-1)];
+    const pair=pick.pairs[R(0,pick.pairs.length-1)];
+    const a=pair[R(0,1)];
+    return {
+      gen:'pairMul', mode:'practice',
+      ask:a, answer:pick.t/a,
+      prompt:{ ko:`${a}단! ${a} 곱하기 얼마가 ${pick.t}일까?`, en:`${a} times what makes ${pick.t}?`, zh:`${a}乘几等于${pick.t}？` },
+      tex:`${a} \\times \\square = ${pick.t}`,
+      answerType:'number'
+    };
+  }
+  // main: 목표수 하나 골라 그 두 짝을 다 넣고, 그 목표와 짝이 안 되는 "남는 수" 1~2개 추가
+  const pick=TARGETS[R(0,TARGETS.length-1)];
+  let nums=[];
+  pick.pairs.forEach(pr=>nums.push(pr[0],pr[1]));
+  let orphan=opts.orphans!=null?opts.orphans:R(1,2);
+  let tries=0;
+  while(orphan>0 && tries<80){
+    tries++;
+    const o=R(1,9);
+    const partner=pick.t/o;
+    const formsPair=Number.isInteger(partner)&&partner>=1&&partner<=9&&nums.includes(partner);
+    if(!formsPair){ nums.push(o); orphan--; }
+  }
+  nums=shuffle(nums);
+  const sum=nums.reduce((s,n)=>s*n,1);
+  return {
+    gen:'pairMul', mode:'main',
+    nums, sum, pairCount:pick.pairs.length, op:'mul',
+    prompt:{ ko:`곱해서 ${pick.t}이 되는 두 수를 골라 묶어요`, en:`Pick two numbers that multiply to ${pick.t}`, zh:`选出乘积是${pick.t}的两个数` },
+    tex:nums.join(' \\times '),
+    answerType:'selectPairs', target:pick.t, answer:sum
+  };
+}
+
 /* ---------- A-07 : 끼리끼리 더해요 ----------
    개념: 십의 자리끼리, 일의 자리끼리 따로 더한 후 합산.
    초급 B 챕터3 실제 내용. 73+62+50+41 → 220+6 = 226
@@ -1200,7 +1255,7 @@ function addSubDecimal(opts){
     ],answerType:'number'};
 }
 
-window.NM_GEN = { pair10, move10, add10sub, stairAdd, splitNum, comp100, pair10_2d, splitPlace, move10_2d, jumpAdd, subByPlace, restSubtract, addSubGroup, splitHundred, digitShiftSub, expandRewrite, splitAddByDigit,
+window.NM_GEN = { pair10, pairMul, move10, add10sub, stairAdd, splitNum, comp100, pair10_2d, splitPlace, move10_2d, jumpAdd, subByPlace, restSubtract, addSubGroup, splitHundred, digitShiftSub, expandRewrite, splitAddByDigit,
   splitAdd2Digit, addFromFront, fillReverse, addSameSub, subSameSub,
   splitSubtract, moveAndSub, addSimilarNums, addSubGroup2,
   galaxy999, countBetween, gaussAdd1, deficientFrom10,

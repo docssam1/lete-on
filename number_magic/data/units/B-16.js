@@ -82,13 +82,15 @@ window.NM_UNITS['B-16'] = {
       zh:'例）8的口诀难？8×5=40（4×5=20翻倍），8×6=48（交换6×8），8×7=56特别记忆！' }
   },
 
+  /* 매직 랩 — 곱해서 목표수 찾기(2026-09-09, 원장 "곱도 있지 않을까"). A-01
+     "더해서 10을 찾아라"와 같은 짝 찾기 게임을 이미 배운 구구단으로 그대로 옮긴다
+     (pairMul, engine/generators.js). 필산(practice·arena)은 그대로 ml4_ttMix. */
   lab:{
-    generator:'ml4_ttMix', level:'main', count:4,
-    params:{ missing:false },
+    generator:'pairMul', level:'main', count:4,
     intro:{
-      ko:'이제 2~9단 전부를 섞어서 도전! 패턴과 전략을 활용해 봐.',
-      en:'Now mix it all up — 2 through 9! Use your patterns and tricks.',
-      zh:'现在混合2到9的全部口诀来挑战！运用你的规律和技巧。'
+      ko:'이번엔 짝 찾기! 곱해서 목표수가 되는 두 수를 골라 묶어봐.',
+      en:"Now let's pair up! Pick two numbers that multiply to the target.",
+      zh:'现在来配对！选出乘积等于目标数的两个数。'
     }
   },
 

@@ -4766,8 +4766,9 @@ function stepLabPairs(body,u){
   S.sub.labStarted=true;S.sub.picked=[];
   say(first?L(cfg.intro):L(cur.prompt));
   const expr=$('#expr');
+  const opSign=cur.op==='mul'?'×':'+';   // 곱셈 짝 찾기(B-16, 2026-09-09)는 + 대신 ×
   cur.nums.forEach((n,i)=>{
-    if(i)expr.insertAdjacentHTML('beforeend','<span class="nm-plus">+</span>');
+    if(i)expr.insertAdjacentHTML('beforeend',`<span class="nm-plus">${opSign}</span>`);
     const b=document.createElement('button');b.className='nm-tile';b.textContent=n;b.dataset.i=i;
     b.onclick=()=>pickTile(b,i,n,body,u);expr.appendChild(b);
   });
@@ -4851,7 +4852,10 @@ function pickTile(el,i,n,body,u){
   else{if(p.length>=2){const f=p.shift();const fe=document.querySelector(`.nm-tile[data-i="${f.i}"]`);if(fe)fe.classList.remove('sel');}p.push({i,n});el.classList.add('sel');}
   const pk=$('#pick');pk.disabled=p.length!==2;
   pk.onclick=()=>{
-    const cur=S.sub.cur;const sum=p[0].n+p[1].n;
+    const cur=S.sub.cur;
+    /* op:'mul'(B-16 구구단 짝 찾기, 2026-09-09) — 더하기 대신 곱해서 목표수를 맞춘다.
+       op가 없으면(A-01·A-05 등 기존 유닛) 그대로 더한다 — 기존 동작 그대로. */
+    const sum=(cur.op==='mul')?p[0].n*p[1].n:p[0].n+p[1].n;
     if(sum===(cur.target||10)){
       playSfx("success");numiHappy();
       p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e){e.classList.remove('sel');e.classList.add('paired');}});
