@@ -403,7 +403,8 @@
     questions.forEach(question => {
       const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
       const hasSource61VolumeE4 = question.prompt.includes("source61-volume-e4-diagram");
-      const questionWeight = hasSource61VolumeE4 ? 6 : graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
+      const hasSource61E2Example2 = question.prompt.includes("source61-e2ex2-diagram");
+      const questionWeight = hasSource61VolumeE4 || hasSource61E2Example2 ? 6 : graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
       if (page.length && weight + questionWeight > 6) {
         pages.push(page);
         page = [];
@@ -433,7 +434,8 @@
     let solutionWeight = 0;
     state.questions.forEach(question => {
       const hasVisual = Boolean(question.answerVisual) || /<svg\b|class="(?:graph-figure|diagram-pair|source41-)/.test(question.solution || "");
-      const weight = hasVisual ? 3 : 1;
+      const hasSource61E2Example2 = String(question.answerVisual || "").includes("source61-e2ex2-diagram");
+      const weight = hasSource61E2Example2 ? 8 : hasVisual ? 3 : 1;
       if (solutionPage.length && (solutionPage.length >= 8 || solutionWeight + weight > 8)) {
         solutionPages.push(solutionPage);
         solutionPage = [];
