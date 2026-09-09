@@ -226,7 +226,9 @@ async function inspectUnit(browser, baseUrl, semester, unitNumber, viewport, vie
       legacyReady: state.legacyReadyIds.length
     });
     await screenshot(page, `${semester}-${unitId}-${viewportLabel}-catalog.png`, page.locator("#catalogPanel"));
-    await inspectLockedPreview(page, semester, unitId, viewportLabel);
+    if (state.sourceRows.some(row => row.expectedLocked)) {
+      await inspectLockedPreview(page, semester, unitId, viewportLabel);
+    }
     return state.legacyReadyIds[0] || "";
   } catch (error) {
     fail(`${semester} ${unitId} ${viewportLabel}: 화면 검사 실패 (${error.message})`);
