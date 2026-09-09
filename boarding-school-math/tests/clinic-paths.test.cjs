@@ -24,20 +24,24 @@ test("reviewed clusters open workbooks with completion-gated rechecks", function
   ["6.EE.C", "6.G.A"].forEach(function (cluster) {
     const before = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: false });
     assert.equal(before.workbook.state, "available");
-    assert.equal(before.workbook.url, `./clinic-practice.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
+    assert.equal(before.workbook.url, `./unit-workbook.html?cluster=${cluster}&mode=workbook&audience=student&locale=ko`);
     assert.equal(before.recheck.state, "locked-after-learning");
     assert.equal(before.recheck.url, "");
     const after = paths.routeFor(cluster, { fromDiagnostic: true, workbookCompleted: true });
     assert.equal(after.recheck.state, "available");
-    assert.equal(after.recheck.url, `./clinic-practice.html?cluster=${cluster}&mode=recheck&audience=student&locale=ko`);
-    assert.equal(paths.completionKey(cluster), `gfield-clinic-workbook:${cluster}:v1`);
+    assert.equal(after.recheck.url, `./unit-workbook.html?cluster=${cluster}&mode=recheck&audience=student&locale=ko`);
+    assert.equal(paths.completionKey(cluster), `gfield-unit-workbook:${cluster}:v1`);
   });
 
   const geometry = paths.routeFor("6.G.A", { workbookCompleted: true });
-  assert.equal(geometry.workbook.packId, "gfield-grade6-g-a-clinic-v1");
+  assert.equal(geometry.workbook.packId, "gfield-grade6-g-a-unit-workbook-v1");
+  assert.equal(geometry.workbook.delivery, "unit-workbook");
+  assert.equal(geometry.workbook.itemCount, 36);
   assert.equal(geometry.recheck.state, "available");
   const variables = paths.routeFor("6.EE.C", { workbookCompleted: true });
-  assert.equal(variables.workbook.packId, "gfield-grade6-ee-c-clinic-v1");
+  assert.equal(variables.workbook.packId, "gfield-grade6-ee-c-unit-workbook-v1");
+  assert.equal(variables.workbook.delivery, "unit-workbook");
+  assert.equal(variables.workbook.itemCount, 36);
   assert.equal(variables.animated.state, "review-pending");
   assert.equal(variables.recheck.state, "available");
 
