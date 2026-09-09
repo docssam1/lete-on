@@ -49,7 +49,7 @@ Public student practice may contain original GFIELD-authored content. Private di
 ## Tests and known blockers
 
 - Focused `6.EE.B` code/browser run after rebasing onto merged `6.EE.A`: 53/53 passed.
-- Full Node and browser suites after `6.EE.B`: 436 total, 426 passed, 10 failed.
+- Full Node and browser suites after rebasing `6.EE.B`: 437 total, 427 passed, 10 failed (code 354/363; browser 73/74).
 - The 10 existing failures do not overlap the workbook changes: two stale Number Magic count assertions and eight private Grade 6 runtime/browser tests that require the absent private authoring directory.
 - The public-exposure audit still reports the existing `hsmiddle/data.js` student-record bundle. This is outside the Boarding School Math change and must not be silently edited here.
 - No GitHub checks are configured for pull requests #199 or #200; local evidence is therefore required.
