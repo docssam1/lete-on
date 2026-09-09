@@ -22,8 +22,8 @@ Public student practice may contain original GFIELD-authored content. Private di
 ## Current release state
 
 - `6.NS.C`: merged to `main` in `18eabffade549c0b07721d3bbb82fa01968316ed`. Public student and teacher routes, mobile layout, A4/Letter PDFs, and completion-gated recheck were verified.
-- `6.EE.A`: commit `9dc0e8f0` on `codex/boarding-grade6-eea-unit-workbook-20260909`; pull request [#199](https://github.com/docssam1/lete-on/pull/199). Code tests and screen renders passed. Two final PDFs and PDF inspection are still required before merge.
-- `6.EE.B`: commit `8515076d` on `codex/boarding-grade6-eeb-unit-workbook-20260909`; pull request [#200](https://github.com/docssam1/lete-on/pull/200). It is stacked on the `6.EE.A` commit. Code tests and screen renders passed. Two final PDFs and PDF inspection are still required before merge.
+- `6.EE.A`: merged to `main` in `1c5f8c8e13a16f4d141f781c3dcc9e8b2541b67c` through pull request [#199](https://github.com/docssam1/lete-on/pull/199). The HTML generator, 390px mobile view, student Korean A4 print, teacher Simplified-Chinese Letter print, completion gate, and live routes were verified. Visible numeric fractions now render as accessible stacked MathML while slash-form response input remains accepted.
+- `6.EE.B`: commit `7f850f13` on `codex/boarding-grade6-eeb-unit-workbook-20260909`; pull request [#200](https://github.com/docssam1/lete-on/pull/200). It has been rebased directly onto the merged `6.EE.A` main state. Code, answer, student/teacher separation, desktop screen, and 390px mobile checks passed. Final browser-print export inspection is still required before merge.
 
 ## Verified `6.EE.A` contract
 
@@ -48,7 +48,7 @@ Public student practice may contain original GFIELD-authored content. Private di
 
 ## Tests and known blockers
 
-- Focused `6.EE.B` code/browser run: 45/45 passed.
+- Focused `6.EE.B` code/browser run after rebasing onto merged `6.EE.A`: 53/53 passed.
 - Full Node and browser suites after `6.EE.B`: 436 total, 426 passed, 10 failed.
 - The 10 existing failures do not overlap the workbook changes: two stale Number Magic count assertions and eight private Grade 6 runtime/browser tests that require the absent private authoring directory.
 - The public-exposure audit still reports the existing `hsmiddle/data.js` student-record bundle. This is outside the Boarding School Math change and must not be silently edited here.
@@ -56,13 +56,10 @@ Public student practice may contain original GFIELD-authored content. Private di
 
 ## Exact next sequence
 
-1. Check `git fetch origin`, current branches, clean state, and whether `main` advanced.
-2. On the `6.EE.A` branch, generate student Korean A4 and teacher Simplified-Chinese Letter PDFs with `scripts/render-eea-unit-workbook-pdfs.cjs`.
-3. Inspect page count, paper size, text extraction, student/teacher answer separation, overflow, and representative rendered pages. Fix and repeat until clean.
-4. Rebase #199 onto current `origin/main`, rerun focused tests, push, merge #199, wait for both Pages workflows, and perform live desktop/mobile/recheck/teacher checks.
-5. Rebase the `6.EE.B` branch after #199 merges so #200 contains only the `6.EE.B` commit.
-6. Generate and inspect the two `6.EE.B` PDFs with `scripts/render-eeb-unit-workbook-pdfs.cjs` using the same gate.
-7. Rerun focused tests, push, merge #200, wait for both Pages workflows, and perform live desktop/mobile/recheck/teacher checks.
-8. Upgrade `6.EE.C` from the current 12-item clinic only after both earlier units are released.
+1. Check `git fetch origin`, current branch, clean state, and whether `main` advanced.
+2. Treat `unit-workbook.html` plus its shared data and renderer as the product source. Generate student Korean A4 and teacher Simplified-Chinese Letter browser-print exports for `6.EE.B` only as release QA artifacts.
+3. Inspect page count, paper size, student/teacher answer separation, overflow, and representative rendered pages. Fix the HTML/CSS/data source and regenerate if any print defect appears.
+4. Rerun focused tests, push, merge #200, wait for the Pages workflow, and perform live desktop/mobile/recheck/teacher checks.
+5. Upgrade `6.EE.C` from the current 12-item clinic only after `6.EE.B` is released.
 
-Do not call either unit complete merely because its code or pull request exists. Completion requires exact-answer verification, student/teacher separation, mobile and print rendering, inspected PDFs, merged remote SHA, successful deployment workflows, and live URL checks.
+Do not call a unit complete merely because its code or pull request exists. Completion requires exact-answer verification, student/teacher separation, mobile and browser-print rendering, inspected print exports, merged remote SHA, successful deployment, and live URL checks. PDF files are QA exports from the same HTML generator, not a second authoring source or the primary product.
