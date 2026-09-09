@@ -13,6 +13,7 @@
 <script src="./supabase-config.js?v=hf-supabase-live-20260903a"></script>
 <script src="./supabase-client.js"></script>
 <script src="./portal-auth.js?v=hf-supabase-live-20260903a"></script>
+<script src="./type-access-catalog.js"></script><script src="./type-access.js"></script>
 <script src="./assets/kr_font.js"></script>
 <script src="./mock/access-policy.js?v=hf-practice-safe-20260903a"></script>
 <script src="./mock/variation-bank.js"></script>
@@ -668,6 +669,9 @@ async function importLegacyHistoryIfPresent(client,name){
 }
 function hasPaidHF(){return currentPermissions.includes('hyperfocus-extra')||currentPermissions.includes('problem-bank')}
 function canUsePaidHF(){return hasPaidHF()&&HFAccessPolicy.paidPracticeReady()}
+function canUseWorksheetType(id,paid=false){return currentBackend!=='supabase'||window.HFTypeAccess?.allowType(id,{paid})===true}
+let worksheetScopeFingerprint='';
+window.addEventListener('hf-type-access-change',()=>{if(currentBackend!=='supabase')return;const next=JSON.stringify([window.HFTypeAccess?.watermarkIdentity?.()?.studentId,Array.from({length:54},(_,i)=>i+1).filter(id=>canUseWorksheetType(id))]);if(next!==worksheetScopeFingerprint){worksheetScopeFingerprint=next;if(document.getElementById('view-similar')?.classList.contains('active'))renderSimilarUI();}});
 function newClientId(){if(crypto.randomUUID)return crypto.randomUUID();const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;const hex=[...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');return`${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`}
 document.addEventListener('DOMContentLoaded',async function(){try{const params=new URLSearchParams(location.search);const gname=params.get('gname');const nameEl=document.getElementById('studentName'),codeEl=document.getElementById('authCode');if(window.GFieldHFPortalAuth?.isSupabaseEnabled()){const portalSession=await window.GFieldHFPortalAuth.ready();if(portalSession?.role==='student'&&window.GFieldHFPortalAuth.canAccess(portalSession,'hyperfocus')){if(nameEl)nameEl.value=portalSession.name;await checkAuth();return}if(gname&&nameEl)nameEl.value=gname;codeEl?.focus();return}const sessionName=sessionStorage.getItem('gfield_hf_name');const sessionCode=sessionStorage.getItem('gfield_hf_code');if(sessionName&&sessionCode){if(nameEl)nameEl.value=sessionName;if(codeEl)codeEl.value=sessionCode;if(document.readyState==='complete')await checkAuth();else window.addEventListener('load',()=>checkAuth(),{once:true})}else if(gname){if(nameEl)nameEl.value=gname;codeEl?.focus()}}catch(e){console.error('Hyper Focus session restore failed',e)}});
 function buildDiagnosisSelector(){const viewArea=document.getElementById('view-area');const listGrid=document.getElementById('list-grid');const quickGrid=document.getElementById('quick-grid');if(!viewArea||!listGrid||!quickGrid||viewArea.dataset.built==='1')return;viewArea.dataset.built='1';let allItems=[];data.forEach(cat=>{let blockHTML=`<div class="category-block"><div class="category-header"><div class="category-num">${cat.categoryNum}</div><div class="category-title">유형 ${cat.categoryNum}. ${cat.categoryTitle}</div><div class="category-divider"></div></div><div class="items-grid">`;cat.items.forEach(item=>{blockHTML+=`<label class="check-item" data-id="${item.id}" onclick="toggleItem(event,${item.id})"><div class="custom-check">${checkSVG}</div><span class="list-num">${String(item.id).padStart(2,'0')}</span><span>${item.text}</span></label>`;allItems.push(item)});blockHTML+=`</div></div>`;viewArea.innerHTML+=blockHTML;});allItems.sort((a,b)=>a.id-b.id);allItems.forEach(item=>{const listLbl=document.createElement('label');listLbl.className='check-item';listLbl.setAttribute('data-id',item.id);listLbl.onclick=(e)=>toggleItem(e,item.id);listLbl.innerHTML=`<div class="custom-check">${checkSVG}</div><span class="list-num">${String(item.id).padStart(2,'0')}</span><span>${item.text}</span>`;listGrid.appendChild(listLbl);const quickLbl=document.createElement('label');quickLbl.className='check-item num-item';quickLbl.setAttribute('data-id',item.id);quickLbl.onclick=(e)=>toggleItem(e,item.id);quickLbl.innerHTML=`<span class="list-num">${String(item.id).padStart(2,'0')}</span>`;quickGrid.appendChild(quickLbl);});}
@@ -687,6 +691,7 @@ async function checkAuth(){
   }
   if(!member||member.role!=='student'||!(member.permissions||[]).includes('hyperfocus')){alert('학생 이름과 승인번호가 일치하지 않거나 이용 권한이 없습니다.');return}
   currentBackend=member.backend||'legacy';currentUserId=member.userId||'';currentApprovalCode=currentBackend==='legacy'?(member.code||code.toUpperCase()):'';currentPermissions=member.permissions;
+  if(currentBackend==='supabase')window.HFTypeAccess?.ready().catch(()=>{});
   currentUserKey=currentBackend==='supabase'?`gfield_hf_user_${currentUserId}`:approvalKey(currentApprovalCode);
   document.getElementById('studentName').value=member.name;
   let migrated=false;
@@ -758,18 +763,21 @@ async function submitNewAttempt(){
 }
 function setView(v){['quick','area','list','similar'].forEach(n=>{const vs=document.getElementById(`view-${n}`);const bs=document.getElementById(`btn-${n}`);if(vs)vs.classList.toggle('active',v===n);if(bs)bs.classList.toggle('active',v===n)});if(v==='similar')renderSimilarUI();}
 function worksheetAvailability(typeId){
+  if(!canUseWorksheetType(typeId))return{easy:false,same:false,hard:false};
   if(typeId>=1&&typeId<=54)return{easy:true,same:true,hard:true};
   if(HFVariationBank.READY_TYPE_IDS.includes(typeId))return{easy:false,same:true,hard:false};
   return{easy:false,same:false,hard:false};
 }
 function setWorksheetDifficulty(typeId,difficulty){const available=worksheetAvailability(typeId);if(!available[difficulty])return;worksheetDifficultyByType.set(typeId,difficulty);renderSimilarUI()}
 function openWorksheetBuilder(){setView('similar');document.getElementById('view-similar')?.scrollIntoView({behavior:'smooth',block:'start'})}
-function createSelectedWorksheet(){
+async function createSelectedWorksheet(){
   const ids=Array.from(selectedSet).sort((a,b)=>a-b);
   const status=document.getElementById('worksheet-build-status');
+  if(currentBackend==='supabase'){try{await window.HFTypeAccess?.ready();}catch(_){}}
   const paid=canUsePaidHF();
   const count=paid?Number(document.getElementById('worksheet-count')?.value):HFAccessPolicy.FREE_PER_DIFFICULTY;
   if(!ids.length){if(status)status.textContent='먼저 틀린 유형을 선택해 주세요.';return}
+  const denied=ids.filter(id=>!canUseWorksheetType(id,paid));if(denied.length){if(status)status.textContent=`이용 승인을 확인할 수 없는 유형: ${denied.map(id=>String(id).padStart(2,'0')).join(', ')}. 진단 기록은 변경되지 않습니다.`;return;}
   if(ids.length>HFAccessPolicy.MAX_SELECTED_TYPES){if(status)status.textContent=`한 번에 최대 ${HFAccessPolicy.MAX_SELECTED_TYPES}개 유형까지 선택할 수 있습니다.`;return}
   try{HFAccessPolicy.validatePracticeRequest({countPerType:count,difficulty:'same',accessTier:paid?'paid':'free'})}catch(error){if(status)status.textContent=String(error.message||error);return}
   for(const id of ids){const difficulty=worksheetDifficultyByType.get(id)||'same';if(!worksheetAvailability(id)[difficulty]){if(status)status.textContent=`유형 ${String(id).padStart(2,'0')}의 선택 난이도는 아직 검수 완료된 문제가 없습니다.`;return}}

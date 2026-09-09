@@ -6,6 +6,9 @@
   const collectionUi = window.GFieldHFPortalCollection;
   const $ = selector => document.querySelector(selector);
   const $$ = selector => Array.from(document.querySelectorAll(selector));
+  const entryQuery = new URLSearchParams(location.search);
+  // A fixed in-product destination only. Never navigate to a URL supplied in a query.
+  const challengeEntry = entryQuery.getAll("next").length === 1 && entryQuery.get("next") === "challenge";
   let session = null;
   let currentCollection = null;
   let collectionViewToken = 0;
@@ -14,6 +17,12 @@
     load: () => Promise.reject(new Error("회차 목록 모듈을 준비하지 못했습니다.")),
     reset: () => {}
   });
+
+  function continueToChallenge() {
+    if (!challengeEntry || session?.role !== "student") return false;
+    location.href = "./challenge/";
+    return true;
+  }
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -209,7 +218,8 @@
 
   function openProduct(key) {
     const product = catalog.products.find(item => item.key === key);
-    if (!product || !session) return;
+    if (!product) return;
+    if (!session) { showModal($("#loginModal")); return; }
     if (!auth.canAccess(session, product.permission)) {
       toast(`${product.shortTitle} 이용 권한이 없습니다. 상담을 통해 승인받아 주세요.`);
       return;
@@ -242,6 +252,7 @@
     }
     secureExamLoader.reset();
     session = result;
+    if (continueToChallenge()) return;
     closeModal($("#loginModal"));
     setMode();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -277,9 +288,11 @@
     renderPublic();
     hrefs();
     bindEvents();
+    if (challengeEntry) $("#loginTitle").textContent = "챌린지 학습 로그인";
     session = await auth.ready();
+    if (continueToChallenge()) return;
     setMode();
-    if (new URLSearchParams(location.search).get("login") === "1" && !session) showModal($("#loginModal"));
+    if (entryQuery.get("login") === "1" && !session) showModal($("#loginModal"));
   }
 
   init().catch(error => {
@@ -287,6 +300,6 @@
     renderPublic();
     hrefs();
     setMode();
-    if (new URLSearchParams(location.search).get("login") === "1") showModal($("#loginModal"));
+    if (entryQuery.get("login") === "1") showModal($("#loginModal"));
   });
 })();
