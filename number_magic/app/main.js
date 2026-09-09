@@ -15,7 +15,11 @@ const GEN=window.NM_GEN, CUR=window.NM_CURRICULUM, UNITS=window.NM_UNITS;
 function genProblem(cfg, level){
   const key=cfg.generator;
   const g=(GEN||{})[key];
-  if(g) return g({level});
+  /* NM_GEN(레거시)도 cfg.params를 받게 한다(2026-09-09, C-02 곱해서 10 만들기를
+     pairMul(targets:[10])로 묶으려면 필요) — 전엔 NM_TGEN만 params를 받아서
+     A/B권 유닛(NM_GEN)은 어떤 params를 적어도 조용히 무시됐다. 기존 유닛 중
+     NM_GEN 생성기에 params를 적어 둔 곳이 없어(전수 확인) 동작이 안 바뀐다. */
+  if(g) return g(Object.assign({level},cfg.params||{}));
   const tg=(window.NM_TGEN||{})[key];
   if(tg){
     const rng=NM_RNG.mulberry32((Math.random()*2147483647)|0);
