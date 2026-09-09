@@ -1,6 +1,6 @@
 # Grade 7 `7.RP.A` learner-fit audit
 
-Status: local content, integration, desktop, mobile, and print gates verified; remote merge, deployment, and live read-back remain.
+Status: published after local content/integration/render gates, merged remote SHA `854c5c7907e013c3509ab8456aa4bce2b161eaea`, Pages deployment `34379456747`, and live student/teacher read-back.
 
 ## Task stage
 
