@@ -805,15 +805,15 @@
       "unitName": "각기둥과 각뿔",
       "exploration": 2,
       "pdfPage": 9,
-      "printedPage": null,
+      "printedPage": 12,
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 4,
-      "sourceShape": "각기둥의 전개도, 자르기, 펼치기 또는 겉면 경로에서 필요한 길이·면·구성 요소를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 9쪽 예제 2-4. 같은 삼각기둥 모양의 프리즘 3개를 이어 사다리꼴을 밑면으로 하는 사각기둥을 만들고, 한 밑면 넓이 144cm²와 그림의 10cm·8cm를 이용해 겉넓이를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "세 삼각형은 밑변 12cm, 높이 8cm, 양쪽 변 10cm이며 합친 사다리꼴의 둘레는 56cm입니다. 기둥 높이 10cm를 적용해 겉넓이 848cm²를 독립 계산하고, 같은 점·선 모델의 문제·답 그림을 3개 고정 문항으로 검증합니다."
     },
     {
       "sourceItemId": "6-1-u2-e2-mission-1",

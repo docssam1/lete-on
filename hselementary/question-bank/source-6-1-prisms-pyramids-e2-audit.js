@@ -13,21 +13,24 @@ const sourceIds = [
   "6-1-u2-e2-mission-2",
   "6-1-u2-e2-mission-5",
   "6-1-u2-e2-mission-6",
-  "6-1-u2-e2-mission-1"
+  "6-1-u2-e2-mission-1",
+  "6-1-u2-e2-example-2-4"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e2-example-2-2", 74],
   ["6-1-u2-e2-mission-2", 63],
   ["6-1-u2-e2-mission-5", 92],
   ["6-1-u2-e2-mission-6", 77],
-  ["6-1-u2-e2-mission-1", 60]
+  ["6-1-u2-e2-mission-1", 60],
+  ["6-1-u2-e2-example-2-4", 848]
 ]);
 const evidenceKinds = [
   "cuboid-all-corners-cut",
   "regular-prism-radial-cut",
   "prism-all-vertices-truncated",
   "pentagonal-prism-shortest-net-area",
-  "pentagonal-prism-45-degree-spiral-height"
+  "pentagonal-prism-45-degree-spiral-height",
+  "three-triangular-prisms-trapezoidal-prism-surface-area"
 ];
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
@@ -55,6 +58,11 @@ const expectedPools = [
     { values: [10, 5, 1, 6, 60], answer: 60 },
     { values: [8, 5, 1, 6, 48], answer: 48 },
     { values: [12, 5, 1, 6, 72], answer: 72 }
+  ],
+  [
+    { values: [10, 8, 10, 144, 12, 56, 848], answer: 848 },
+    { values: [13, 12, 9, 180, 10, 56, 864], answer: 864 },
+    { values: [17, 15, 8, 360, 16, 82, 1376], answer: 1376 }
   ]
 ];
 
@@ -145,6 +153,15 @@ function independentAnswer(evidence) {
     check(extraFaces === 1 && crossedFaces === facesPerTurn + extraFaces, "도착점까지 한 바퀴 뒤 옆면 한 장을 더 지나는 구조가 아닙니다.");
     check(height === crossedFaces * side, "45도 경로의 가로 이동과 각기둥 높이가 같지 않습니다.");
     return height;
+  }
+  if (evidence.kind === "three-triangular-prisms-trapezoidal-prism-surface-area") {
+    const [slant, altitude, prismLength, baseArea, triangleBase, basePerimeter, surfaceArea] = values;
+    check([[10, 8, 10, 144], [13, 12, 9, 180], [17, 15, 8, 360]].some(pool => pool.join(",") === [slant, altitude, prismLength, baseArea].join(",")), "세 삼각기둥의 길이와 밑면 넓이가 고정 pool과 다릅니다.");
+    check(Number.isInteger(triangleBase) && triangleBase === 2 * baseArea / (3 * altitude), "한 삼각형의 넓이에서 구한 밑변이 다릅니다.");
+    check(slant * slant === altitude * altitude + (triangleBase / 2) ** 2, "삼각형의 양쪽 변·높이·밑변이 직각삼각형 관계와 맞지 않습니다.");
+    check(basePerimeter === 3 * triangleBase + 2 * slant, "세 삼각형이 만든 사다리꼴의 바깥 둘레가 다릅니다.");
+    check(surfaceArea === 2 * baseArea + basePerimeter * prismLength, "두 밑면과 옆면으로 계산한 겉넓이가 다릅니다.");
+    return surfaceArea;
   }
   throw new Error(`알 수 없는 E2 검산 종류: ${evidence.kind}`);
 }
@@ -255,23 +272,45 @@ function checkVariant(variant, generated, evidence) {
     return;
   }
 
-  const [side, facesPerTurn, extraFaces, crossedFaces, height] = values;
-  const promptText = visibleText(prompt);
-  check(prompt.includes("오각기둥") && prompt.includes("45°") && prompt.includes("점 ㄱ") && prompt.includes("점 ㄴ"), "원문의 오각기둥·45도·출발점·도착점 조건이 없습니다.");
-  check(!new RegExp(`(^|\\D)${height}(?=\\D|$)`).test(promptText), "문제에 각기둥 높이 답이 노출되었습니다.");
-  for (const markup of [prompt, answer]) {
-    check(markup.includes('data-base-sides="5"') && markup.includes(`data-base-edge="${side}"`), "정오각기둥과 밑면 한 변 semantic data가 다릅니다.");
-    check(markup.includes(`data-faces-per-turn="${facesPerTurn}"`) && markup.includes(`data-extra-face-count="${extraFaces}"`), "한 바퀴와 추가 옆면 수 semantic data가 다릅니다.");
-    check(markup.includes(`data-crossed-face-count="${crossedFaces}"`) && markup.includes(`data-route-segment-count="${crossedFaces}"`), "지나간 옆면과 이동 조각 수 semantic data가 다릅니다.");
-    check(markup.includes(`data-prism-height="${height}"`), "45도 이동으로 구한 높이 semantic data가 다릅니다.");
-    check(markup.includes(`data-unfolded-width="${height}"`) && markup.includes(`data-unfolded-height="${height}"`) && markup.includes('data-unfolded-angle="45"'), "펼친 가로·세로의 같은 축척과 45도 자료가 다릅니다.");
-    check(countClass(markup, "source61-e2-spiral-route") === crossedFaces, "입체 그림의 45도 이동 조각이 6개가 아닙니다.");
-    check(countClass(markup, "source61-e2-spiral-angle-arc") >= 1, "점 ㄱ에 45도 각 표시가 없습니다.");
+  if (variant === 4) {
+    const [side, facesPerTurn, extraFaces, crossedFaces, height] = values;
+    const promptText = visibleText(prompt);
+    check(prompt.includes("오각기둥") && prompt.includes("45°") && prompt.includes("점 ㄱ") && prompt.includes("점 ㄴ"), "원문의 오각기둥·45도·출발점·도착점 조건이 없습니다.");
+    check(!new RegExp(`(^|\\D)${height}(?=\\D|$)`).test(promptText), "문제에 각기둥 높이 답이 노출되었습니다.");
+    for (const markup of [prompt, answer]) {
+      check(markup.includes('data-base-sides="5"') && markup.includes(`data-base-edge="${side}"`), "정오각기둥과 밑면 한 변 semantic data가 다릅니다.");
+      check(markup.includes(`data-faces-per-turn="${facesPerTurn}"`) && markup.includes(`data-extra-face-count="${extraFaces}"`), "한 바퀴와 추가 옆면 수 semantic data가 다릅니다.");
+      check(markup.includes(`data-crossed-face-count="${crossedFaces}"`) && markup.includes(`data-route-segment-count="${crossedFaces}"`), "지나간 옆면과 이동 조각 수 semantic data가 다릅니다.");
+      check(markup.includes(`data-prism-height="${height}"`), "45도 이동으로 구한 높이 semantic data가 다릅니다.");
+      check(markup.includes(`data-unfolded-width="${height}"`) && markup.includes(`data-unfolded-height="${height}"`) && markup.includes('data-unfolded-angle="45"'), "펼친 가로·세로의 같은 축척과 45도 자료가 다릅니다.");
+      check(countClass(markup, "source61-e2-spiral-route") === crossedFaces, "입체 그림의 45도 이동 조각이 6개가 아닙니다.");
+      check(countClass(markup, "source61-e2-spiral-angle-arc") >= 1, "점 ㄱ에 45도 각 표시가 없습니다.");
+    }
+    check(countClass(prompt, "source61-e2-spiral-net-face") === 0 && countClass(prompt, "source61-e2-spiral-net-route") === 0, "문제에 펼친 답 그림이 미리 노출되었습니다.");
+    check(countClass(answer, "source61-e2-spiral-net-face") === crossedFaces, "답 그림에 펼친 옆면 6장이 없습니다.");
+    check(countClass(answer, "source61-e2-spiral-net-route") === 1 && countClass(answer, "source61-e2-spiral-triangle") === 1, "답 그림에 45도 선과 직각삼각형이 없습니다.");
+    check(answer.includes(`data-result-highlight="${height}"`), "답에서 각기둥 높이가 강조되지 않았습니다.");
+    return;
   }
-  check(countClass(prompt, "source61-e2-spiral-net-face") === 0 && countClass(prompt, "source61-e2-spiral-net-route") === 0, "문제에 펼친 답 그림이 미리 노출되었습니다.");
-  check(countClass(answer, "source61-e2-spiral-net-face") === crossedFaces, "답 그림에 펼친 옆면 6장이 없습니다.");
-  check(countClass(answer, "source61-e2-spiral-net-route") === 1 && countClass(answer, "source61-e2-spiral-triangle") === 1, "답 그림에 45도 선과 직각삼각형이 없습니다.");
-  check(answer.includes(`data-result-highlight="${height}"`), "답에서 각기둥 높이가 강조되지 않았습니다.");
+
+  const [slant, altitude, prismLength, baseArea, triangleBase, basePerimeter, surfaceArea] = values;
+  const promptText = visibleText(prompt);
+  check(prompt.includes("같은 삼각기둥 세 개") && prompt.includes("사다리꼴") && prompt.includes("사각기둥"), "원문의 세 삼각기둥 결합과 사각기둥 물음이 없습니다.");
+  check(!new RegExp(`(^|\\D)${surfaceArea}(?=\\D|$)`).test(promptText), "문제에 겉넓이 답이 노출되었습니다.");
+  check(!new RegExp(`(^|\\D)${basePerimeter}(?=\\D|$)`).test(promptText), "문제에 사다리꼴 둘레 답이 노출되었습니다.");
+  for (const markup of [prompt, answer]) {
+    check(markup.includes('data-triangle-count="3"') && markup.includes('data-shared-face-count="2"') && markup.includes('data-base-sides="4"'), "삼각기둥 3개·붙인 면 2개·사각형 밑면 자료가 다릅니다.");
+    check(markup.includes(`data-slant="${slant}"`) && markup.includes(`data-altitude="${altitude}"`) && markup.includes(`data-prism-length="${prismLength}"`), "그림의 길이 자료가 고정 pool과 다릅니다.");
+    check(markup.includes(`data-base-area="${baseArea}"`) && markup.includes(`data-triangle-base="${triangleBase}"`) && markup.includes(`data-base-perimeter="${basePerimeter}"`) && markup.includes(`data-surface-area="${surfaceArea}"`), "밑면·둘레·겉넓이 자료가 독립 계산과 다릅니다.");
+    check(countClass(markup, "source61-e2-combined-triangle") === 3, "합친 사다리꼴의 삼각형 조각이 3개가 아닙니다.");
+    check(countClass(markup, "source61-e2-combined-join") === 5, "붙인 선의 앞·뒤·기둥 방향 표시가 5개가 아닙니다.");
+    check(countClass(markup, "source61-e2-combined-right-angle") === 1, "8cm 높이의 직각 표시가 없습니다.");
+    check(allAttrs(markup, "data-prism-dimension").length === 1 && markup.includes(`data-prism-dimension="${prismLength}"`), "기둥 높이가 두 밑면을 잇는 방향의 치수선으로 표시되지 않았습니다.");
+    check(countClass(markup, "source61-e2-combined-prism-dimension-label") === 1 && markup.includes(`기둥 높이 ${prismLength}cm`), "기둥 높이 이름과 값이 그림에 분명히 표시되지 않았습니다.");
+  }
+  check(countClass(prompt, "source61-e2-combined-exterior") === 0, "문제에 답인 바깥 둘레 강조가 노출되었습니다.");
+  check(countClass(answer, "source61-e2-combined-exterior") === 1 && answer.includes(`data-exterior-perimeter="${basePerimeter}"`), "답 그림에 사다리꼴 바깥 둘레가 강조되지 않았습니다.");
+  check(answer.includes(`data-result-highlight="${surfaceArea}"`), "답에서 겉넓이가 강조되지 않았습니다.");
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E2 전용 생성기가 등록되지 않았습니다.");
@@ -283,7 +322,8 @@ const ledgerContracts = [
   { id: "6-1-u2-e2-mission-2", page: 10, words: ["Mission 2", "정칠각기둥", "수직", "삼각기둥 7개"] },
   { id: "6-1-u2-e2-mission-5", page: 10, words: ["Mission 5", "오각기둥", "삼등분", "모든 꼭짓점"] },
   { id: "6-1-u2-e2-mission-6", page: 10, words: ["Mission 6", "정오각형", "7cm", "11cm", "삼각형"] },
-  { id: "6-1-u2-e2-mission-1", page: 10, words: ["Mission 1", "오각기둥", "10cm", "45°"] }
+  { id: "6-1-u2-e2-mission-1", page: 10, words: ["Mission 1", "오각기둥", "10cm", "45°"] },
+  { id: "6-1-u2-e2-example-4", page: 9, words: ["예제 2-4", "삼각기둥", "3개", "144cm²", "겉넓이"] }
 ];
 for (const expected of ledgerContracts) {
   context = `${expected.id} / 원본 장부`;
@@ -333,4 +373,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 5유형 · 15개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);
+console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 6유형 · 18개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);
