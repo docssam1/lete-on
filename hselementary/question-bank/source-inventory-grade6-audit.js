@@ -44,6 +44,12 @@ const readinessU1E1Counts = readinessU1E1Items.reduce((counts, item) => {
   counts.releaseLocked += item.releaseStatus === "locked" ? 1 : 0;
   return counts;
 }, { confirmed: 0, locked: 0, candidate: 0, releaseLocked: 0 });
+const readinessU1E2Items = readinessU1.items.filter(item => item.sourceItemId.startsWith("6-1-u1-e2-"));
+const readinessU1E2Counts = readinessU1E2Items.reduce((counts, item) => {
+  counts[item.publicDecision || "undefined"] = (counts[item.publicDecision || "undefined"] || 0) + 1;
+  counts.releaseLocked += item.releaseStatus === "locked" ? 1 : 0;
+  return counts;
+}, { confirmed: 0, locked: 0, candidate: 0, releaseLocked: 0 });
 const readinessDecisionCounts = readinessU5.items.reduce((counts, item) => {
   counts.publicDecision[item.publicDecision || "undefined"] = (counts.publicDecision[item.publicDecision || "undefined"] || 0) + 1;
   counts.publicCandidate += item.publicCandidate === true ? 1 : 0;
@@ -142,6 +148,15 @@ readinessU1E1Items.forEach(readinessItem => {
     check(readinessItem.releaseStatus === "locked" && readinessItem.publicDecision === "locked", `${readinessItem.sourceItemId}: 열린 설명형 잠금 상태가 다릅니다.`);
     check(catalogItem.reviewLocked && catalogItem.generatorKey === "" && catalogItem.answerVisualStatus === "not-implemented", `${readinessItem.sourceItemId}: 열린 설명형이 생성 가능 상태입니다.`);
   }
+});
+check(readinessU1E2Items.length === 11 && readinessU1E2Counts.confirmed === 11 && readinessU1E2Counts.locked === 0 && readinessU1E2Counts.candidate === 0 && readinessU1E2Counts.releaseLocked === 0, `6-1 1단원 개념탐구 2 readiness 확인 11개 구성이 다릅니다: 전체 ${readinessU1E2Items.length}, 확인 ${readinessU1E2Counts.confirmed}, 잠금 ${readinessU1E2Counts.locked}/${readinessU1E2Counts.releaseLocked}`);
+readinessU1E2Items.forEach(readinessItem => {
+  const catalogItem = items.find(item => item.sourceItemId === readinessItem.sourceItemId);
+  const rawItem = rawInventory.items.find(item => item.publicSourceItemId === readinessItem.sourceItemId);
+  check(Boolean(catalogItem && rawItem), `${readinessItem.sourceItemId}: 1단원 둘째 탐구의 원자료·검수표·공개 분류표 연결이 없습니다.`);
+  check(readinessItem.releaseStatus === "verified" && readinessItem.publicDecision === "confirmed" && readinessItem.implementationStatus === "fixed-verified-pool" && readinessItem.sourceVerified === true, `${readinessItem.sourceItemId}: 둘째 탐구 readiness 상태가 완결되지 않았습니다.`);
+  check(rawItem?.sourceVerified === true && rawItem.implementationStatus === "fixed-verified-pool", `${readinessItem.sourceItemId}: 둘째 탐구 원자료 장부의 확인됨 연결이 없습니다.`);
+  check(!catalogItem?.reviewLocked && catalogItem?.generatorKey === "sourceGrade6FractionDivisionE2" && catalogItem?.answerVisualStatus === "verified" && catalogItem?.verifiedVariantCount === 3, `${readinessItem.sourceItemId}: 둘째 탐구 readiness와 생성기·답 그림 계약이 다릅니다.`);
 });
 check(readinessU5.integrity?.publicCandidateCount === readinessDecisionCounts.publicCandidate, `6-1 5단원 readiness publicCandidate 집계가 실제 ${readinessDecisionCounts.publicCandidate}개와 다릅니다.`);
 check(readinessU5.integrity?.publicDecisionPublicCount === (readinessDecisionCounts.publicDecision.public || 0), `6-1 5단원 readiness public 집계가 실제 ${readinessDecisionCounts.publicDecision.public || 0}개와 다릅니다.`);
