@@ -15,6 +15,7 @@ const expressionSource=require("../learning/grade6-ee-a-unit-workbook.js");
 const equationSource=require("../learning/grade6-ee-b-unit-workbook.js");
 const relationshipSource=require("../learning/grade6-ee-c-unit-workbook.js");
 const geometrySource=require("../learning/grade6-g-a-unit-workbook.js");
+const grade7RatioSource=require("../learning/grade7-rp-a-unit-workbook.js");
 const root=path.resolve(__dirname,"..","..");
 let server,browser,baseUrl;
 function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";if(file.endsWith(".css"))return"text/css; charset=utf-8";if(file.endsWith(".js"))return"text/javascript; charset=utf-8";return"application/octet-stream";}
@@ -350,7 +351,7 @@ test("geometry student workbook renders 36 calculated figures without teacher an
   await page.goto(`${baseUrl}?cluster=6.G.A&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
   assert.equal(await page.locator(".book-page").count(),12);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".answer-input").count(),36);assert.equal(await page.locator(".teacher-key,.teacher-move,.choice-button").count(),0);assert.equal(await page.locator("h1").innerText(),"6.G.A 기하 측정 단원 워크북");assert.equal(await page.locator(".clinic-geometry-svg").count(),36);
   const polygon=page.locator('[data-item-id="gau-w01"] .clinic-geometry-svg');assert.equal(await polygon.locator("polygon").count(),1);const coordinate=page.locator('[data-item-id="gau-w21"] .clinic-geometry-svg');assert.equal(await coordinate.locator("polygon").count(),1);
-  await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+  await page.emulateMedia({media:"print"});const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(entry){return entry.scrollHeight>entry.clientHeight+1;});});assert.deepEqual(overflow,[]);assert.deepEqual(errors,[]);await page.close();
 });
 
 test("all 36 geometry responses unlock only the separate eight-structure recheck",async function(){
@@ -363,4 +364,25 @@ test("all 36 geometry responses unlock only the separate eight-structure recheck
 test("geometry Chinese teacher guide separates all answers and printable figures",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.G.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});
   assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.G.A 几何测量单元练习册");assert.equal(await page.locator(".clinic-geometry-svg").count(),36);assert.match(await page.locator(".teacher-observation").innerText(),/作图/);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+});
+
+test("Grade 7 proportionality student edition renders a 12-page 36-item answer-free workbook",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=7.RP.A&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator(".book-page").count(),12);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".choice-button").count(),144);assert.equal(await page.locator(".teacher-key,.teacher-move,.answer-input").count(),0);assert.equal(await page.locator("h1").innerText(),"7.RP.A 비례관계 단원 워크북");assert.equal(await page.locator(".g7rpa-rate-model,.g7rpa-table,.g7rpa-graph,.g7rpa-percent-flow").count(),36);
+  const first=page.locator('[data-item-id="g7rpa-w01"]');await first.locator('[data-answer-id="A"]').click();assert.equal(await first.locator(".choice-feedback.wrong").count(),1);await first.locator('[data-answer-id="B"]').click();assert.equal(await first.locator(".choice-feedback.correct").count(),1);assert.equal(await page.locator("#progress-chip").innerText(),"1 / 36");
+  await page.emulateMedia({media:"print"});const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(entry){return entry.scrollHeight>entry.clientHeight+1;});});assert.deepEqual(overflow,[]);assert.deepEqual(errors,[]);await page.close();
+});
+
+test("Grade 7 proportionality completion unlocks only its own recheck",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=7.RP.A&mode=recheck&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});assert.equal(new URL(page.url()).searchParams.get("mode"),"workbook");assert.equal(await page.locator('[data-mode="recheck"]').isDisabled(),true);
+  for(const item of grade7RatioSource.pack.workbookItems){const card=page.locator(`[data-item-id="${item.id}"]`);await card.locator(`[data-answer-id="${grade7RatioSource.solveItem(item)}"]`).click();}
+  assert.equal(await page.locator("#progress-chip").innerText(),"36 / 36");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-unit-workbook:7.RP.A:v1");}),"complete-v1");assert.equal(await page.locator('[data-mode="recheck"]').isEnabled(),true);await page.locator('[data-mode="recheck"]').click();assert.equal(await page.locator(".book-problem").count(),8);assert.equal(await page.locator(".teacher-key,.teacher-move").count(),0);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("Grade 7 proportionality Chinese teacher guide and mobile view keep the audience and layout boundary",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=7.RP.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key,.teacher-move").count(),72);assert.equal(await page.locator(".choice-button,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"7.RP.A 正比例关系单元练习册");await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);await page.close();
+  const mobile=await browser.newPage({viewport:{width:390,height:844},isMobile:true});await mobile.goto(`${baseUrl}?cluster=7.RP.A&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});assert.deepEqual(await mobile.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];}),[390,390]);assert.deepEqual(errors,[]);await mobile.close();
 });

@@ -11,12 +11,13 @@
     "6.EE.B": window.GFIELDGrade6EEBUnitWorkbook,
     "6.EE.C": window.GFIELDGrade6EECUnitWorkbook,
     "6.G.A": window.GFIELDGrade6GAUnitWorkbook,
-    "6.SP.A": window.GFIELDGrade6SPAUnitWorkbook
+    "6.SP.A": window.GFIELDGrade6SPAUnitWorkbook,
+    "7.RP.A": window.GFIELDGrade7RPAUnitWorkbook
   };
   const source = sources[requestedCluster];
   if (!source) throw new Error("UNIT_WORKBOOK_SOURCE_MISSING");
   source.validatePack();
-  const completionKey = (["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A","6.EE.B","6.EE.C","6.G.A"].includes(source.pack.clusterId)?"gfield-unit-workbook:":"gfield-clinic-workbook:")+source.pack.clusterId+":v1";
+  const completionKey = source.pack.completionKey || (["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A","6.EE.B","6.EE.C","6.G.A"].includes(source.pack.clusterId)?"gfield-unit-workbook:":"gfield-clinic-workbook:")+source.pack.clusterId+":v1";
   function workbookCompleted() {
     try { return localStorage.getItem(completionKey) === "complete-v1"; }
     catch (_error) { return false; }

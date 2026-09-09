@@ -124,9 +124,10 @@
   function renderUnits() {
     const units = registry.units.filter(function (unit) { return sameGrade(unit.grade); });
     document.getElementById("unit-list").innerHTML = units.map(function (unit) {
+      const released = unit.clusterId === "7.RP.A";
       return `<button type="button" class="unit-item" data-unit-id="${unit.unitId}" aria-pressed="${unit.unitId === state.unitId}">
         <div><b>${local(unit.title)}</b><span>${unit.standardRange}</span></div>
-        <small>${copy[state.locale].unitLocked}</small>
+        <small>${released ? (state.locale === "ko" ? "공개 워크북" : state.locale === "zh-Hans" ? "已发布练习册" : "Published workbook") : copy[state.locale].unitLocked}</small>
       </button>`;
     }).join("");
   }
@@ -135,6 +136,7 @@
     const unit = selectedUnit();
     const plan = resourcePlan.buildUnitPlan(unit.unitId);
     const resources = resourcePlan.projectAudience(plan, state.role).resources;
+    const released = unit.clusterId === "7.RP.A";
     const grouped = new Map();
     resources.forEach(function (resource) {
       const existing = grouped.get(resource.resourceType) || { resourceType: resource.resourceType, levels: new Set(), components: 0, sessions: new Set() };
@@ -143,9 +145,14 @@
       resource.plannedComponents.forEach(function (component) { existing.components += component.plannedCount; });
       grouped.set(resource.resourceType, existing);
     });
-    document.getElementById("resource-state").textContent = state.role === "teacher"
-      ? `${copy[state.locale].resourceLocked} ${copy[state.locale].teacherMetadataOnly}`
-      : copy[state.locale].resourceLocked;
+    const stateNode = document.getElementById("resource-state");
+    if (released) {
+      const href = `./unit-workbook.html?cluster=7.RP.A&mode=workbook&audience=${state.role}&locale=${encodeURIComponent(state.locale)}&paper=A4`;
+      const label = state.locale === "ko" ? (state.role === "teacher" ? "7.RP.A 교사용 지도서 열기" : "7.RP.A 학생용 단원 워크북 열기") : state.locale === "zh-Hans" ? (state.role === "teacher" ? "打开 7.RP.A 教师教学指南" : "打开 7.RP.A 学生单元练习册") : (state.role === "teacher" ? "Open 7.RP.A teacher guide" : "Open 7.RP.A student unit workbook");
+      const note = state.locale === "ko" ? "36문항 원본 워크북과 8문항 재확인이 공개되어 있습니다. 진단·자동 배정은 별도 검수 상태입니다." : state.locale === "zh-Hans" ? "36题原创练习册和8题复测已发布；诊断与自动分配仍处于单独审核状态。" : "The original 36-item workbook and eight-item recheck are published; diagnosis and automatic assignment remain separately reviewed.";
+      stateNode.replaceChildren(document.createTextNode(note + " "));
+      const link = document.createElement("a"); link.href = href; link.textContent = label; stateNode.append(link);
+    } else stateNode.textContent = state.role === "teacher" ? `${copy[state.locale].resourceLocked} ${copy[state.locale].teacherMetadataOnly}` : copy[state.locale].resourceLocked;
     const cadence = document.getElementById("cadence-summary");
     cadence.innerHTML = `<strong>${copy[state.locale].cadenceTitle}</strong><span>${copy[state.locale].selectedUnit}: ${local(unit.title)} · ${unit.clusterId}</span><span>${plan.cadence ? copy[state.locale].grade6Cadence : copy[state.locale].templateCadence}</span>${plan.retentionSchedule ? `<span>${copy[state.locale].grade6Retention}</span>` : ""}`;
     document.getElementById("resource-list").innerHTML = [...grouped.values()].map(function (resource) {
