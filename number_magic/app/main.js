@@ -476,6 +476,31 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function math(tex,el){try{katex.render(tex,el,{throwOnError:false,displayMode:false});}catch(e){el.textContent=tex;}}
 function renderMath(root){(root||document).querySelectorAll('[data-tex]').forEach(el=>{if(el.dataset.done)return;math(el.getAttribute('data-tex'),el);el.dataset.done='1';});}
+/* □ 자리에 입력값을 바로 써 넣기(2026-09-09, 원장 "?에 수를 쓰면 실제 답의 위치에 답이
+   써져야지"). 그동안 타이핑한 값은 수식 밑 별도 화면(.nm-numpad-screen)에만 떴고, 수식의
+   \square는 정답을 맞힐 때까지 그대로였다 — 눈이 문제와 입력칸 두 곳을 오가야 했다.
+   이제 키를 누를 때마다 그 문제의 \square를 파란 숫자로 바꿔 같은 자리에 다시 그린다.
+   여러 칸(배열 답)은 순서대로 \square를 채운다. 빈 값은 \square 그대로 둔다(칸 표시가
+   사라지면 안 되니까). */
+function fillLiveTex(tex,vals){
+  vals=Array.isArray(vals)?vals:[vals];
+  let i=0;
+  return String(tex||'').replace(/\\square/g,()=>{
+    const v=vals[i++];
+    return (v===undefined||v===''||v==='-')?'\\square':('\\textcolor{#1c56b3}{'+v+'}');
+  });
+}
+/* sel 안에서 \square가 있는 data-tex 스팬을 찾아 vals로 채워 다시 그린다. 스팬이 여러 개
+   (labExprHtml이 \Rightarrow로 줄을 나눈 경우)면 건너뛴다 — 어느 줄의 빈칸인지 확정할 수
+   없어서다(안전한 쪽으로 아무것도 안 함). renderMath의 1회 캐시를 우회해 매 입력마다 부른다. */
+function updateLiveFill(sel,vals){
+  const el=$(sel);if(!el)return;
+  const spans=[].slice.call(el.querySelectorAll('[data-tex]'));
+  if(spans.length!==1)return;
+  const tex=spans[0].getAttribute('data-tex')||'';
+  if(!/\\square/.test(tex))return;
+  math(fillLiveTex(tex,vals),spans[0]);
+}
 let _ttsCache={};
 function say(text){
   if(!text)return;
@@ -4083,7 +4108,7 @@ function handlePractice(val,body,u){
         if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
         S.sub.cur=genProblem(u.practice,'practice');save();
         setTimeout(()=>runPractice(body,u),650);
-      }else{toast(t('tryAgain'),false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+      }else{toast(t('tryAgain'),false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-lab-expr',S.sub.mvals);}
       return;
     }
     const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
@@ -4093,18 +4118,20 @@ function handlePractice(val,body,u){
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
       S.sub.cur=genProblem(u.practice,'practice');save();
       setTimeout(()=>runPractice(body,u),650);
-    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';}
+    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-lab-expr','');}
     return;
   }
   if(isMulti){
     applyMultiKey(val);
     const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);
+    updateLiveFill('.nm-lab-expr',S.sub.mvals);
     return;
   }
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
   else if(val==='-'){S.sub.inp=applyMinusKey(S.sub.inp||'');}
   else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
   $('#pscreen').textContent=S.sub.inp||' ';
+  updateLiveFill('.nm-lab-expr',S.sub.inp||'');
 }
 
 /* ---------- STEP2 디스커버 (마법 노트) ---------- */
@@ -4646,7 +4673,7 @@ function stepCheck(body,u){
           S.sub.fi++;S.sub.mvals=null;
           if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
           else setTimeout(()=>stepCheck(body,u),700);
-        }else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);multiClear(fill.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+        }else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);multiClear(fill.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-fill',S.sub.mvals);}
         return;
       }
       const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
@@ -4656,13 +4683,14 @@ function stepCheck(body,u){
         if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
         else setTimeout(()=>stepCheck(body,u),700);
       }
-      else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';}
+      else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-fill','');}
       return;}
-    if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
+    if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-fill',S.sub.mvals);return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
     else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
     else if((S.sub.inp||'').replace('-','').length<6&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
+    updateLiveFill('.nm-fill',S.sub.inp||'');
   },{decimal:isMulti?fill.answer.some(a=>!Number.isInteger(a)):!Number.isInteger(fill.answer),negative:!!fill.negative});
 }
 function openQuestion(body,u){
@@ -4792,7 +4820,7 @@ function handleLabNumpad(val,body,u){
         if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
         S.sub.cur=genProblem(u.lab,'main');save();
         setTimeout(()=>stepLab(body,u),650);
-      }else{voiceLine(u,u.voice.wrong,false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);}
+      }else{voiceLine(u,u.voice.wrong,false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-lab-expr',S.sub.mvals);}
       return;
     }
     const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
@@ -4802,14 +4830,15 @@ function handleLabNumpad(val,body,u){
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
       setTimeout(()=>stepLab(body,u),650);
-    }else{voiceLine(u,u.voice.wrong,false);S.sub.inp='';$('#pscreen').textContent=' ';}
+    }else{voiceLine(u,u.voice.wrong,false);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-lab-expr','');}
     return;
   }
-  if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
+  if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-lab-expr',S.sub.mvals);return;}
   if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
   else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
   else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
   $('#pscreen').textContent=S.sub.inp||' ';
+  updateLiveFill('.nm-lab-expr',S.sub.inp||'');
 }
 function pickTile(el,i,n,body,u){
   const p=S.sub.picked;const at=p.findIndex(x=>x.i===i);
@@ -4870,11 +4899,12 @@ function nextArena(body,u,need){
       S.sub.ai++;
       if(S.sub.ai>=need){clearInterval(window._nmTimer);arenaEnd(body,u);return;}
       nextArena(body,u,need);return;}
-    if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);return;}
+    if(isMulti){applyMultiKey(val);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-arena-expr',S.sub.mvals);return;}
     if(val==='del')S.sub.inp=(S.sub.inp||'').slice(0,-1);
     else if(val==='-')S.sub.inp=applyMinusKey(S.sub.inp||'');
     else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.')))S.sub.inp=(S.sub.inp||'')+val;
     $('#pscreen').textContent=S.sub.inp||' ';
+    updateLiveFill('.nm-arena-expr',S.sub.inp||'');
   },{decimal:decAny,negative:!!cur.negative});
 }
 function arenaEnd(body,u){
