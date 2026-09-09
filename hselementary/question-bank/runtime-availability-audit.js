@@ -5,6 +5,7 @@ require("./source-inventory-4-1.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-grade6-decimal-e1-mission4.js");
 require("./source-grade6-volume-e2.js");
 require("./source-grade6-volume-e3-mission3.js");
 require("./source-grade6-volume-e4.js");
@@ -28,10 +29,10 @@ const locked = types.filter(type => !generatorApi.generatorKey(type) || type.rev
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
 
 if (types.length !== 1893) failures.push(`런타임 유형은 1893개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1389) failures.push(`생성 가능 유형은 1389개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 504) failures.push(`검수 대기 유형은 504개여야 하나 ${locked.length}개입니다.`);
+if (ready.length !== 1390) failures.push(`생성 가능 유형은 1390개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 503) failures.push(`검수 대기 유형은 503개여야 하나 ${locked.length}개입니다.`);
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
-if (sourceGrade6.filter(type => !type.reviewLocked).length !== 220 || sourceGrade6.filter(type => type.reviewLocked).length !== 413) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
+if (sourceGrade6.filter(type => !type.reviewLocked).length !== 221 || sourceGrade6.filter(type => type.reviewLocked).length !== 412) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
 if (!sourceGrade6.every(type => {
   if (!type.answerVisualRequired) return false;
   if (type.generationMode === "review-locked") {

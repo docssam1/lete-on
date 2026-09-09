@@ -7,6 +7,7 @@ const vm = require("vm");
 const catalogPath = path.join(__dirname, "source-inventory-grade6.js");
 const curriculumPath = path.join(__dirname, "curriculum.js");
 const rawInventoryPath = path.join(__dirname, "source-inventory", "6-1-source-items.json");
+const readinessU3Path = path.join(__dirname, "source-inventory", "6-1-u3-source-readiness-review.json");
 const readinessPath = path.join(__dirname, "source-inventory", "6-1-u4-source-readiness-review.json");
 const readinessU5Path = path.join(__dirname, "source-inventory", "6-1-u5-source-readiness-review.json");
 const readinessU6Path = path.join(__dirname, "source-inventory", "6-1-u6-source-readiness-review.json");
@@ -30,6 +31,7 @@ vm.runInContext(fs.readFileSync(curriculumPath, "utf8"), context, { filename: cu
 const catalog = context.window.HSE_SOURCE_INVENTORY_GRADE6;
 const curriculum = context.window.HSE_CURRICULUM;
 const rawInventory = JSON.parse(fs.readFileSync(rawInventoryPath, "utf8"));
+const readinessU3 = JSON.parse(fs.readFileSync(readinessU3Path, "utf8"));
 const readiness = JSON.parse(fs.readFileSync(readinessPath, "utf8"));
 const readinessU5 = JSON.parse(fs.readFileSync(readinessU5Path, "utf8"));
 const readinessU6 = JSON.parse(fs.readFileSync(readinessU6Path, "utf8"));
@@ -54,7 +56,7 @@ const readinessU6Counts = readinessU6.items.reduce((counts, item) => {
 const readyGeneratorKeys = [
   "sourceGrade6FractionDivisionE1", "sourceGrade6FractionDivisionE2",
   "sourceGrade6PrismsPyramidsE1", "sourceGrade6PrismsPyramidsE2", "sourceGrade6PrismsPyramidsE3", "sourceGrade6PrismsPyramidsE4",
-  "sourceGrade6DecimalDivisionE1", "sourceGrade6DecimalDivisionE2", "sourceGrade6DecimalDivisionE3", "sourceGrade6DecimalDivisionE4",
+  "sourceGrade6DecimalDivisionE1", "sourceGrade6DecimalDivisionE1Mission4", "sourceGrade6DecimalDivisionE2", "sourceGrade6DecimalDivisionE3", "sourceGrade6DecimalDivisionE4",
   "sourceGrade6RatioE1", "sourceGrade6RatioE2", "sourceGrade6RatioE3", "sourceGrade6RatioE4", "sourceGrade6RatioE5", "sourceGrade6RatioE6"
   , "sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"
   , "sourceGrade6VolumeSurfaceE3"
@@ -91,13 +93,14 @@ for (const [generatorKey, expectedCount, label] of [
   , ["sourceGrade6SurfaceE1", 9, "6단원 개념탐구 1 공개 유형"]
   , ["sourceGrade6VolumeE2", 11, "6단원 개념탐구 2 공개 유형"]
   , ["sourceGrade6VolumeE3Mission3", 1, "6단원 개념탐구 3 Mission 3 공개 유형"]
+  , ["sourceGrade6DecimalDivisionE1Mission4", 1, "3단원 개념탐구 1 Mission 4 공개 유형"]
 ]) {
   const mappedItems = items.filter(item => item.generatorKey === generatorKey);
   check(mappedItems.length === expectedCount, `${label}의 공개 유형이 ${expectedCount}개가 아닙니다: ${mappedItems.length}`);
   mappedItems.forEach(item => {
     const rawItem = rawInventory.items.find(candidate => candidate.publicSourceItemId === item.sourceItemId);
-    const readinessItem = (["sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"].includes(generatorKey) ? readinessU5 : ["sourceGrade6VolumeSurfaceE3", "sourceGrade6SurfaceE1", "sourceGrade6VolumeE2", "sourceGrade6VolumeE3Mission3"].includes(generatorKey) ? readinessU6 : readiness).items.find(candidate => candidate.sourceItemId === item.sourceItemId);
-    if (["sourceGrade6VolumeSurfaceE3", "sourceGrade6VolumeE3Mission3"].includes(generatorKey)) {
+    const readinessItem = (generatorKey === "sourceGrade6DecimalDivisionE1Mission4" ? readinessU3 : ["sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"].includes(generatorKey) ? readinessU5 : ["sourceGrade6VolumeSurfaceE3", "sourceGrade6SurfaceE1", "sourceGrade6VolumeE2", "sourceGrade6VolumeE3Mission3"].includes(generatorKey) ? readinessU6 : readiness).items.find(candidate => candidate.sourceItemId === item.sourceItemId);
+    if (["sourceGrade6VolumeSurfaceE3", "sourceGrade6VolumeE3Mission3", "sourceGrade6DecimalDivisionE1Mission4"].includes(generatorKey)) {
       check(Boolean(rawItem && readinessItem), `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID 연결이 없습니다.`);
       check(rawItem?.sourceItemId === item.sourceItemId && readinessItem?.sourceItemId === item.sourceItemId, `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID가 다릅니다.`);
     } else {
@@ -107,8 +110,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 220 && lockedItems.length === 413, `6학년 원문 유형의 공개 220개·잠금 413개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 220유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 221 && lockedItems.length === 412, `6학년 원문 유형의 공개 221개·잠금 412개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 221유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU5.integrity?.publicCandidateCount === readinessDecisionCounts.publicCandidate, `6-1 5단원 readiness publicCandidate 집계가 실제 ${readinessDecisionCounts.publicCandidate}개와 다릅니다.`);

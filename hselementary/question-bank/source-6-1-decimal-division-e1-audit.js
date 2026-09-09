@@ -2,6 +2,7 @@
 
 global.window = {};
 require("./generators.js");
+require("./source-grade6-decimal-e1-mission4.js");
 
 const api = window.HSE_GENERATORS;
 const readiness = require("./source-inventory/6-1-u3-source-readiness-review.json");
@@ -90,11 +91,11 @@ sourceIds.forEach(sourceId => {
   const item = readinessById.get(sourceId);
   if (!item || item.implementationStatus !== "fixed-verified-pool" || item.publicDecision !== "confirmed" || item.releaseStatus !== "verified") fail(`${sourceId}: 원문 검토표의 공개 상태가 다릅니다.`);
 });
-["6-1-u3-e1-mission-3", "6-1-u3-e1-mission-4"].forEach(sourceId => {
+["6-1-u3-e1-mission-3"].forEach(sourceId => {
   const item = readinessById.get(sourceId);
   if (!item || item.implementationStatus !== "review-locked" || item.publicDecision !== "locked" || item.releaseStatus !== "locked") fail(`${sourceId}: 그림 의존 문항의 잠금 상태가 다릅니다.`);
 });
-if (readiness.integrity.publicCandidateCount !== 10 || readiness.integrity.publicDecisionLockedCount !== 35 || readiness.integrity.releaseLockedCount !== 35) fail("6-1 3단원 원문 검토표의 공개·잠금 요약 수가 다릅니다.");
+if (readiness.integrity.publicCandidateCount !== 38 || readiness.integrity.publicDecisionLockedCount !== 6 || readiness.integrity.releaseLockedCount !== 6) fail("6-1 3단원 원문 검토표의 공개·잠금 요약 수가 다릅니다.");
 
 for (let variant = 0; variant < sourceIds.length; variant += 1) {
   const seenPools = new Set();

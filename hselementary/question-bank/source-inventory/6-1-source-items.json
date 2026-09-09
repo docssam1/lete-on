@@ -1376,15 +1376,16 @@
       "unitName": "소수의 나눗셈",
       "exploration": 1,
       "pdfPage": 17,
-      "printedPage": null,
+      "printedPage": 21,
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 4,
       "sourceShape": "원본 17쪽 Mission 4. 8로 나누는 소수 세로셈에서 기호로 가려진 숫자를 계산 순서대로 찾아 몫을 구함",
-      "answerContract": "drawing-dependent-candidate",
+      "answerContract": "single-answer-fixed-pool",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "독립 계산 몫 7.35는 확인했지만 문제와 답에서 같은 세로셈 자릿값 자료로 56→28→24→40→40을 정확히 그리는 전용 화면 검수 전까지 잠급니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 기호 자리와 계산 순서를 독립 대조하고, 문제와 답에 같은 세로셈 자리 자료를 쓰는 고정 검증 문항 3개로 제한합니다.",
+      "publicSourceItemId": "6-1-u3-e1-mission-4"
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-5",
