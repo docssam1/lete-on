@@ -1,11 +1,13 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { directionInfo, orientationKey, roll, startingOrientation } from "./levels.js?v=dice-roll-3";
+import { VIEWPOINT_ID } from "./projection.js?v=dice-roll-1";
 
 const DIE_SIZE = 1;
 const TILE_SIZE = 1.08;
 const TILE_HEIGHT = 0.12;
 const TILE_TOP = TILE_HEIGHT / 2;
+const LABEL_PLANE_SIZE = .5;
 const ROLL_DURATION = 520;
 const BASE_PIP_LAYOUT = {
   1: [[0, 0]],
@@ -59,6 +61,21 @@ function makeArrowTexture(direction) {
   context.lineCap = "round";
   context.beginPath(); context.moveTo(-30, 0); context.lineTo(24, 0); context.stroke();
   context.beginPath(); context.moveTo(30, 0); context.lineTo(5, -19); context.lineTo(5, 19); context.closePath(); context.fill();
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function makeNumberTexture(value) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 96; canvas.height = 96;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "rgba(255,255,255,.88)";
+  context.beginPath(); context.roundRect(12, 12, 72, 72, 14); context.fill();
+  context.fillStyle = "#294b52";
+  context.font = "900 46px Arial";
+  context.textAlign = "center"; context.textBaseline = "middle";
+  context.fillText(String(value), 48, 51);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
@@ -130,10 +147,14 @@ export class DiceRouteScene {
     host.dataset.tileRatio = String(TILE_SIZE / DIE_SIZE);
     host.dataset.rolling = "false";
     host.dataset.material = "satin-enamel";
+    host.dataset.viewpoint = VIEWPOINT_ID;
+    host.dataset.cameraVector = "1,1,1";
+    host.dataset.labelPlaneSize = String(LABEL_PLANE_SIZE);
 
     this.tiles = new THREE.Group();
     this.arrows = new THREE.Group();
-    this.scene.add(this.tiles, this.arrows);
+    this.labels = new THREE.Group();
+    this.scene.add(this.tiles, this.arrows, this.labels);
     this.tileMeshes = new Map();
     this.die = this.makeDie();
     this.scene.add(this.die);
@@ -179,7 +200,7 @@ export class DiceRouteScene {
   }
 
   clearRoute() {
-    [this.tiles, this.arrows].forEach((group) => {
+    [this.tiles, this.arrows, this.labels].forEach((group) => {
       while (group.children.length) {
         const child = group.children[0]; group.remove(child);
         child.traverse((object) => {
@@ -197,13 +218,26 @@ export class DiceRouteScene {
     this.clearRoute();
     const tileGeometry = new THREE.BoxGeometry(TILE_SIZE, TILE_HEIGHT, TILE_SIZE);
     const edgeGeometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(.99, TILE_HEIGHT + .006, .99));
-    [...new Map(problem.path.map((cell) => [cellKey(cell), cell])).values()].forEach((cell) => {
+    const routeKeys = new Set(problem.path.map(cellKey));
+    Array.from({ length: problem.rows * problem.cols }, (_, index) => [Math.floor(index / problem.cols), index % problem.cols]).forEach((cell, index) => {
       const mesh = new THREE.Mesh(tileGeometry.clone(), new THREE.MeshStandardMaterial({ color: 0xf0f6f5, roughness: .62 }));
       mesh.position.set(cell[1], 0, cell[0]); mesh.receiveShadow = true;
+      mesh.userData.onRoute = routeKeys.has(cellKey(cell));
       const edges = new THREE.LineSegments(edgeGeometry.clone(), new THREE.LineBasicMaterial({ color: 0x6d8a92, transparent: true, opacity: .72 }));
       edges.position.y = .002; mesh.add(edges);
       this.tiles.add(mesh); this.tileMeshes.set(cellKey(cell), mesh);
+
+      const label = new THREE.Mesh(
+        new THREE.PlaneGeometry(LABEL_PLANE_SIZE, LABEL_PLANE_SIZE),
+        new THREE.MeshBasicMaterial({ map: makeNumberTexture(index + 1), transparent: true, depthWrite: false, side: THREE.DoubleSide })
+      );
+      label.rotation.x = -Math.PI / 2;
+      label.position.set(cell[1] - .34, TILE_TOP + .012, cell[0] - .34);
+      label.renderOrder = 4;
+      this.labels.add(label);
     });
+    this.host.dataset.tileCount = String(problem.rows * problem.cols);
+    this.host.dataset.labelCount = String(problem.rows * problem.cols);
     tileGeometry.dispose(); edgeGeometry.dispose();
     problem.path.slice(0, -1).forEach((cell, index) => {
       const plane = new THREE.Mesh(
@@ -218,14 +252,12 @@ export class DiceRouteScene {
   }
 
   frameRoute() {
-    const rows = this.problem.path.map((cell) => cell[0]);
-    const cols = this.problem.path.map((cell) => cell[1]);
-    const minRow = Math.min(...rows), maxRow = Math.max(...rows), minCol = Math.min(...cols), maxCol = Math.max(...cols);
+    const minRow = 0, maxRow = this.problem.rows - 1, minCol = 0, maxCol = this.problem.cols - 1;
     this.target = new THREE.Vector3((minCol + maxCol) / 2, .18, (minRow + maxRow) / 2);
-    const spanX = maxCol - minCol + 1;
-    const spanZ = maxRow - minRow + 1;
+    const spanX = this.problem.cols;
+    const spanZ = this.problem.rows;
     this.viewSize = Math.max(3.2, (spanX + spanZ) * .5 + 1.2);
-    this.camera.position.copy(this.target).add(new THREE.Vector3(6.2, 7.4, 8.2));
+    this.camera.position.copy(this.target).add(new THREE.Vector3(7.6, 7.6, 7.6));
     this.camera.lookAt(this.target);
     this.resize();
   }
@@ -238,6 +270,8 @@ export class DiceRouteScene {
     this.host.dataset.step = String(step);
     this.host.dataset.top = String(orientation.top);
     this.host.dataset.bottom = String(orientation.bottom);
+    this.host.dataset.front = String(orientation.south);
+    this.host.dataset.right = String(orientation.east);
     this.updateTiles(step);
     this.render();
   }
@@ -247,7 +281,7 @@ export class DiceRouteScene {
       const indices = this.problem.path.map(cellKey).reduce((all, item, index) => item === key ? [...all, index] : all, []);
       const current = indices.includes(Math.min(step, this.problem.path.length - 1));
       const passed = indices.some((index) => index < step);
-      mesh.material.color.set(current ? 0xf1c555 : passed ? 0xa8d3ca : 0xf0f6f5);
+      mesh.material.color.set(current ? 0xf1c555 : passed ? 0xa8d3ca : mesh.userData.onRoute ? 0xf0f6f5 : 0xf8fbfa);
       mesh.material.roughness = current ? .42 : .62;
     });
     this.arrows.children.forEach((arrow, index) => { arrow.material.opacity = index < step ? .34 : .92; });
@@ -278,6 +312,8 @@ export class DiceRouteScene {
         this.host.dataset.step = String(nextStep);
         this.host.dataset.top = String(orientation.top);
         this.host.dataset.bottom = String(orientation.bottom);
+        this.host.dataset.front = String(orientation.south);
+        this.host.dataset.right = String(orientation.east);
         this.host.dataset.rolling = "false";
         this.animating = false; this.updateTiles(nextStep); this.render(); resolve();
       };

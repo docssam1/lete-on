@@ -6,7 +6,7 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v37";
+const CACHE = "gfield-geo-v38";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/lab/",
@@ -50,9 +50,16 @@ const CORE = [
   "/geometry/games/soma-cube/i18n.js?v=soma-5",
   "/geometry/games/dice-roll/",
   "/geometry/games/dice-roll/styles.css?v=dice-roll-6",
-  "/geometry/games/dice-roll/app.js?v=dice-roll-9",
+  "/geometry/games/dice-roll/app.js?v=dice-roll-10",
   "/geometry/games/dice-roll/levels.js?v=dice-roll-3",
-  "/geometry/games/dice-roll/route-scene.js?v=dice-roll-3",
+  "/geometry/games/dice-roll/route-scene.js?v=dice-roll-4",
+  "/geometry/games/dice-roll/projection.js?v=dice-roll-1",
+  "/geometry/worksheet/dice-roll/",
+  "/geometry/worksheet/dice-roll/styles.css?v=dice-sheet-1",
+  "/geometry/worksheet/dice-roll/board-die.css?v=dice-sheet-3",
+  "/geometry/worksheet/dice-roll/material-refresh.css?v=dice-sheet-1",
+  "/geometry/worksheet/dice-roll/perspective.css?v=dice-sheet-1",
+  "/geometry/worksheet/dice-roll/app.js?v=dice-sheet-4",
   "/geometry/games/geoboard/",
   "/geometry/games/geoboard/styles.css?v=geoboard-8",
   "/geometry/games/geoboard/app.js?v=geoboard-8",
