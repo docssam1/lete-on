@@ -825,11 +825,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 1,
-      "sourceShape": "원본 10쪽 Mission 1. 밑면의 각 변이 10cm인 오각기둥에서 개미가 한 점을 출발해 옆면과 45°를 이루며 옆면을 따라 올라가 다른 점에 닿을 때 각기둥의 높이를 구함",
-      "answerContract": "candidate",
+      "sourceShape": "원본 10쪽 Mission 1. 밑면의 각 변이 10cm인 오각기둥에서 개미가 한 점을 출발해 그림처럼 45°의 각도로 옆면을 따라 올라가 다른 점에 닿을 때 각기둥의 높이를 구함",
+      "answerContract": "single-answer-fixed-pool",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 출발점과 도착점 사이에 거치는 옆면 수를 점·면 모델로 다시 확인해야 합니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문의 오각기둥, 밑면 한 변 10cm, 점 ㄱ·ㄴ과 45° 경로를 직접 대조했습니다. 출발 모서리에서 한 바퀴 뒤 옆면 한 장을 더 지난 도착 모서리까지 모두 6장을 펼쳐 높이 60cm를 독립 계산했습니다."
     },
     {
       "sourceItemId": "6-1-u2-e2-mission-2",

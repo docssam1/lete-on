@@ -16,13 +16,15 @@ const sourceIds = [
   "6-1-u2-e2-example-2-2",
   "6-1-u2-e2-mission-2",
   "6-1-u2-e2-mission-5",
-  "6-1-u2-e2-mission-6"
+  "6-1-u2-e2-mission-6",
+  "6-1-u2-e2-mission-1"
 ];
 const sources = [
   { id: sourceIds[0], search: "예제 2-2", kind: "cuboid-all-corners-cut" },
   { id: sourceIds[1], search: "Mission 2", kind: "regular-prism-radial-cut" },
   { id: sourceIds[2], search: "Mission 5", kind: "prism-all-vertices-truncated" },
-  { id: sourceIds[3], search: "Mission 6", kind: "pentagonal-prism-shortest-net-area" }
+  { id: sourceIds[3], search: "Mission 6", kind: "pentagonal-prism-shortest-net-area" },
+  { id: sourceIds[4], search: "Mission 1", kind: "pentagonal-prism-45-degree-spiral-height" }
 ];
 const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
@@ -214,6 +216,19 @@ async function inspectView(page, selector, source, difficulty, answerView, label
         dataOtherFaces: svg?.dataset.otherFaceCount || "",
         dataTriangleBase: svg?.dataset.triangleBase || "",
         dataArea: svg?.dataset.area || "",
+        spiralRoutes: svg?.querySelectorAll(".source61-e2-spiral-route").length || 0,
+        spiralNetFaces: svg?.querySelectorAll(".source61-e2-spiral-net-face").length || 0,
+        spiralNetRoute: svg?.querySelectorAll(".source61-e2-spiral-net-route").length || 0,
+        spiralTriangle: svg?.querySelectorAll(".source61-e2-spiral-triangle").length || 0,
+        spiralAngleMarks: svg?.querySelectorAll(".source61-e2-spiral-angle-arc").length || 0,
+        dataFacesPerTurn: svg?.dataset.facesPerTurn || "",
+        dataExtraFaces: svg?.dataset.extraFaceCount || "",
+        dataCrossedFaces: svg?.dataset.crossedFaceCount || "",
+        dataRouteSegments: svg?.dataset.routeSegmentCount || "",
+        dataPrismHeight: svg?.dataset.prismHeight || "",
+        dataUnfoldedWidth: svg?.dataset.unfoldedWidth || "",
+        dataUnfoldedHeight: svg?.dataset.unfoldedHeight || "",
+        dataUnfoldedAngle: svg?.dataset.unfoldedAngle || "",
         dataResultVertices: svg?.dataset.resultVertexCount || "",
         dataResultHighlight: svg?.dataset.resultHighlight || ""
       };
@@ -318,6 +333,14 @@ function checkGeometryContracts(state, source, label, answerView) {
       if (Number(svg.dataTriangleBase) <= 0 || Number(svg.dataArea) <= 0) fail(`${label}: 펼친 삼각형의 밑변 또는 넓이 자료가 없습니다.`);
       if (!answerView && (svg.netRoute !== 0 || svg.resultTriangle !== 0)) fail(`${label}: 문제 전개도에 정답 선분 또는 삼각형이 노출되었습니다.`);
       if (answerView && (svg.netRoute !== 1 || svg.resultTriangle !== 1 || !svg.dataResultHighlight)) fail(`${label}: 답 전개도에 최단 선분·삼각형·넓이 강조가 없습니다.`);
+    } else if (source.kind === "pentagonal-prism-45-degree-spiral-height") {
+      if (n !== 5 || svg.spiralRoutes !== 6) fail(`${label}: 정오각기둥의 45도 이동 경로가 옆면 6조각으로 그려지지 않았습니다.`);
+      if (Number(svg.dataFacesPerTurn) !== 5 || Number(svg.dataExtraFaces) !== 1 || Number(svg.dataCrossedFaces) !== 6 || Number(svg.dataRouteSegments) !== 6) fail(`${label}: 한 바퀴 5면과 추가 1면 자료가 그림과 맞지 않습니다.`);
+      if (Number(svg.dataPrismHeight) <= 0) fail(`${label}: 독립 계산할 각기둥 높이 자료가 없습니다.`);
+      if (Number(svg.dataUnfoldedWidth) !== Number(svg.dataUnfoldedHeight) || Number(svg.dataUnfoldedAngle) !== 45) fail(`${label}: 펼친 가로·세로가 같은 축척이 아니거나 45도 자료가 다릅니다.`);
+      if (svg.spiralAngleMarks < 1) fail(`${label}: 점 ㄱ에 45도 각 표시가 없습니다.`);
+      if (!answerView && (svg.spiralNetFaces !== 0 || svg.spiralNetRoute !== 0 || svg.spiralTriangle !== 0)) fail(`${label}: 문제에 펼친 답 그림이 노출되었습니다.`);
+      if (answerView && (svg.spiralNetFaces !== 6 || svg.spiralNetRoute !== 1 || svg.spiralTriangle !== 1 || !svg.dataResultHighlight)) fail(`${label}: 답에 옆면 6장·45도 선·삼각형·높이 강조가 없습니다.`);
     }
   }
 }
@@ -327,7 +350,8 @@ function checkAnswerLeak(state, source, difficulty, label) {
     [sourceIds[0]]: ["14", "24", "36", "74"],
     [sourceIds[1]]: ["45", "63", "72"],
     [sourceIds[2]]: ["30", "45", "54", "92", "110", "128"],
-    [sourceIds[3]]: ["12", "14", "16", "77", "90", "104"]
+    [sourceIds[3]]: ["12", "14", "16", "77", "90", "104"],
+    [sourceIds[4]]: ["48", "60", "72"]
   }[source.id];
   for (const text of state.visibleText) {
     if (results.some(value => new RegExp(`(^|\\D)${value}(?=\\D|$)`).test(text))) {
@@ -437,14 +461,14 @@ function generatorReady() {
     await new Promise(resolve => server.close(resolve));
   }
 
-  if (screenshots !== 48) fail(`화면 캡처 수가 ${screenshots}장입니다. 48장이어야 합니다.`);
-  if (pdfs !== 8) fail(`A4 PDF 수가 ${pdfs}개입니다. 8개여야 합니다.`);
+  if (screenshots !== 60) fail(`화면 캡처 수가 ${screenshots}장입니다. 60장이어야 합니다.`);
+  if (pdfs !== 10) fail(`A4 PDF 수가 ${pdfs}개입니다. 10개여야 합니다.`);
   if (renderedPdfPages < pdfs) fail(`A4 PDF ${pdfs}개에서 전체 PNG 렌더가 ${renderedPdfPages}쪽뿐입니다.`);
   const status = failures.length ? "실패" : "통과";
-  const summary = `${status}: 4유형×3난이도×PC/모바일, 실제 UI 선택, 고정 pool 3문항, 문제·답 구조·SVG·답 그림·누출·화면 검사, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 렌더 ${renderedPdfPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
+  const summary = `${status}: 5유형×3난이도×PC/모바일, 실제 UI 선택, 고정 pool 3문항, 문제·답 구조·SVG·답 그림·누출·화면 검사, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 렌더 ${renderedPdfPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 2 브라우저 감사 통과: 4유형×3난이도×PC/모바일 · 실제 UI 선택 · 고정 3문항 · 답 그림 · A4 PDF 8개 전 ${renderedPdfPages}쪽`);
+  console.log(`6-1 2단원 개념탐구 2 브라우저 감사 통과: 5유형×3난이도×PC/모바일 · 실제 UI 선택 · 고정 3문항 · 답 그림 · A4 PDF 10개 전 ${renderedPdfPages}쪽`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

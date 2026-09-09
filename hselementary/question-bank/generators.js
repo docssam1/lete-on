@@ -22486,15 +22486,15 @@
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5",
-        "6-1-u2-e2-mission-6"
+        "6-1-u2-e2-mission-6", "6-1-u2-e2-mission-1"
       ];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 3까지여야 합니다.");
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 4까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, 2);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
       const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
       const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림에 적힌 수를 바로 계산하지 말고, 잘라 낸 뒤 생기는 면·모서리·꼭짓점의 관계를 스스로 설명해 보세요.</p>` : "";
-      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated", "pentagonal-prism-shortest-net-area"];
+      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated", "pentagonal-prism-shortest-net-area", "pentagonal-prism-45-degree-spiral-height"];
       const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e2-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const mathBoard = (title, body) => `<div class="source61-math-board"><strong>${title}</strong>${body}</div>`;
@@ -22635,6 +22635,53 @@
         return `<svg class="geometry-diagram source61-e2-diagram source61-e2-shortest-net${solved ? " is-solved" : ""}" viewBox="0 0 400 270" role="img" aria-label="정오각기둥 겉면의 가장 짧은 선과 다섯 옆면을 펼친 전개도" data-source61-e2-structure="pentagonal-prism-shortest-${side}-${height}" data-base-sides="5" data-n="5" data-base-edge="${side}" data-prism-height="${height}" data-net-face-count="5" data-shortest-face-count="${shortFaces}" data-other-face-count="${longFaces}" data-triangle-base="${triangleBase}" data-triangle-height="${height}" data-area="${area}"${solved ? ` data-result-highlight="${area}"` : ""}><g aria-label="정오각기둥 입체 그림">${solidFaces}${solidEdges}${solidRoute}${label(solidG, "ㄱ", -12, -8)}${label(solidN, "ㄴ", 12, 14)}<text class="source61-e2-shortest-measure" x="129" y="105">${height}cm</text><text class="source61-e2-shortest-measure" x="75" y="171">${side}cm</text></g><path class="source61-e2-shortest-arrow" d="M136 130h20m-7-7 7 7-7 7"/><g aria-label="정오각기둥 전개도">${netFaces}<polygon class="source61-e2-shortest-base" points="${topBase.map(pointText).join(" ")}"/><polygon class="source61-e2-shortest-base" points="${bottomBase.map(pointText).join(" ")}"/>${netRoute}${label(pointG, "ㄱ", -10, -10)}${label(pointD, "ㄷ", -10, 14)}${solved ? label(pointN, "ㄴ", 11, 14) : ""}<line class="source61-e2-shortest-dimension" x1="${stripX - 12}" y1="${stripTop}" x2="${stripX - 12}" y2="${stripTop + stripHeight}"/><text class="source61-e2-shortest-measure" x="${stripX - 24}" y="${stripTop + stripHeight / 2}">${height}cm</text><line class="source61-e2-shortest-dimension" x1="${stripX}" y1="${stripTop + stripHeight + 28}" x2="${pointN[0]}" y2="${stripTop + stripHeight + 28}"/><text class="source61-e2-shortest-measure" x="${(stripX + pointN[0]) / 2}" y="${stripTop + stripHeight + 43}">${solved ? `${shortFaces}×${side}=${triangleBase}cm` : `한 칸 ${side}cm`}</text></g></svg>`;
       };
 
+      const pentagonalPrismSpiral45Svg = ({ side, solved = false }) => {
+        const facesPerTurn = 5, extraFaces = 1, crossedFaces = facesPerTurn + extraFaces;
+        const height = crossedFaces * side;
+        const top = regularPolygonPoints(5, 82, 52, 46).map(([x, y]) => [x, 52 + (y - 52) * 0.48]);
+        const bottom = top.map(([x, y]) => [x, y + 138]);
+        const sideFaces = top.map((point, index) => {
+          const next = (index + 1) % 5;
+          return `<polygon class="source61-e2-spiral-face" points="${pointText(point)} ${pointText(top[next])} ${pointText(bottom[next])} ${pointText(bottom[index])}"/>`;
+        }).join("");
+        const edges = top.map((point, index) => {
+          const next = (index + 1) % 5;
+          const hidden = index === 0 || index === 4;
+          return lineMarkup(point, top[next], `source61-e2-spiral-edge${hidden ? " is-hidden" : ""}`)
+            + lineMarkup(bottom[index], bottom[next], `source61-e2-spiral-edge${hidden ? " is-hidden" : ""}`)
+            + lineMarkup(point, bottom[index], `source61-e2-spiral-edge${hidden ? " is-hidden" : ""}`);
+        }).join("");
+        const startIndex = 3;
+        const boundaryOrder = [startIndex, 2, 1, 0, 4, 3, 2];
+        const routePoints = boundaryOrder.map((index, step) => interpolate(top[index], bottom[index], 1 - step / crossedFaces));
+        const route = routePoints.slice(0, -1).map((point, index) => lineMarkup(point, routePoints[index + 1], `source61-e2-spiral-route${index === 2 || index === 3 ? " is-hidden" : ""}`, `data-route-segment="${index + 1}"`)).join("");
+        const label = (point, value, dx, dy) => `<circle class="source61-e2-spiral-point" cx="${point[0]}" cy="${point[1]}" r="3.4"/><text class="source61-e2-spiral-label" x="${point[0] + dx}" y="${point[1] + dy}">${value}</text>`;
+        const unitVector = (from, to) => {
+          const dx = to[0] - from[0], dy = to[1] - from[1], length = Math.hypot(dx, dy);
+          return [dx / length, dy / length];
+        };
+        const start = routePoints[0], baseDirection = unitVector(start, bottom[2]), routeDirection = unitVector(start, routePoints[1]);
+        const angleRadius = 14;
+        const angleStart = [start[0] + baseDirection[0] * angleRadius, start[1] + baseDirection[1] * angleRadius];
+        const angleEnd = [start[0] + routeDirection[0] * angleRadius, start[1] + routeDirection[1] * angleRadius];
+        const bisectorLength = Math.hypot(baseDirection[0] + routeDirection[0], baseDirection[1] + routeDirection[1]);
+        const angleLabel = [start[0] + (baseDirection[0] + routeDirection[0]) / bisectorLength * 25, start[1] + (baseDirection[1] + routeDirection[1]) / bisectorLength * 25];
+        const sweep = baseDirection[0] * routeDirection[1] - baseDirection[1] * routeDirection[0] > 0 ? 1 : 0;
+        const solidAngle = `<path class="source61-e2-spiral-angle-arc" data-angle-vertex="ㄱ" d="M ${pointText(angleStart)} A ${angleRadius} ${angleRadius} 0 0 ${sweep} ${pointText(angleEnd)}"/><text class="source61-e2-spiral-angle" x="${angleLabel[0].toFixed(2)}" y="${angleLabel[1].toFixed(2)}">45°</text>`;
+        const solid = `<g aria-label="오각기둥 옆면을 따라 45도로 올라가는 경로">${sideFaces}${edges}${route}${solidAngle}${label(routePoints[0], "ㄱ", -13, 14)}${label(routePoints[routePoints.length - 1], "ㄴ", 13, -8)}<text class="source61-e2-spiral-measure" x="80" y="218">밑면의 한 변 ${side}cm</text></g>`;
+        let unfolded = `<g class="source61-e2-spiral-unsolved" aria-label="옆면을 펼쳐 생각할 자리"><text x="275" y="112">옆면을 따라</text><text x="275" y="132">계속 올라갑니다.</text></g>`;
+        if (solved) {
+          const stripX = 188, stripY = 52, stripWidth = 180, stripHeight = 180, faceWidth = stripWidth / crossedFaces;
+          const faces = Array.from({ length: crossedFaces }, (_, index) => `<rect class="source61-e2-spiral-net-face${index === facesPerTurn ? " is-extra" : ""}" data-unwrapped-face="${index + 1}" x="${stripX + index * faceWidth}" y="${stripY}" width="${faceWidth}" height="${stripHeight}"/>`).join("");
+          const netBottom = stripY + stripHeight;
+          const netAngleRadius = 18, netArcEnd = netAngleRadius / Math.sqrt(2);
+          const netAngle = `<path class="source61-e2-spiral-angle-arc" data-angle-vertex="ㄱ" d="M ${stripX + netAngleRadius},${netBottom} A ${netAngleRadius} ${netAngleRadius} 0 0 0 ${stripX + netArcEnd},${netBottom - netArcEnd}"/><text class="source61-e2-spiral-angle" x="${stripX + 34}" y="${netBottom - 8}">45°</text>`;
+          unfolded = `<g aria-label="한 바퀴와 옆면 한 장을 이어 펼친 띠">${faces}<polygon class="source61-e2-spiral-triangle is-solved" points="${stripX},${netBottom} ${stripX + stripWidth},${netBottom} ${stripX + stripWidth},${stripY}"/><line class="source61-e2-spiral-net-route is-solved" x1="${stripX}" y1="${netBottom}" x2="${stripX + stripWidth}" y2="${stripY}"/>${netAngle}${label([stripX, netBottom], "ㄱ", -11, 14)}${label([stripX + stripWidth, stripY], "ㄴ", 12, -8)}<line class="source61-e2-spiral-dimension" x1="${stripX}" y1="${netBottom + 25}" x2="${stripX + stripWidth}" y2="${netBottom + 25}"/><text class="source61-e2-spiral-measure" x="${stripX + stripWidth / 2}" y="${netBottom + 42}">${crossedFaces}×${side}=${height}cm</text><text class="source61-e2-spiral-turn-label" x="${stripX + faceWidth * 2.5}" y="34">한 바퀴: 옆면 ${facesPerTurn}장</text><text class="source61-e2-spiral-turn-label" x="${stripX + faceWidth * 5.5}" y="34">한 장 더</text></g>`;
+        }
+        const viewHeight = solved ? 295 : 235;
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-spiral-prism${solved ? " is-solved" : ""}" viewBox="0 0 410 ${viewHeight}" role="img" aria-label="오각기둥 옆면을 45도로 한 바퀴와 한 면 더 올라가는 경로" data-source61-e2-structure="pentagonal-prism-45-spiral-${side}" data-base-sides="5" data-n="5" data-base-edge="${side}" data-faces-per-turn="${facesPerTurn}" data-extra-face-count="${extraFaces}" data-crossed-face-count="${crossedFaces}" data-route-segment-count="${crossedFaces}" data-prism-height="${height}" data-unfolded-width="${height}" data-unfolded-height="${height}" data-unfolded-angle="45"${solved ? ` data-result-highlight="${height}"` : ""}>${solid}<path class="source61-e2-shortest-arrow" d="M142 130h25m-7-7 7 7-7 7"/>${unfolded}</svg>`;
+      };
+
       if (variant === 0) {
         const distance = [1, 2, 3][poolIndex];
         const minimumEdge = 3 * distance + 1;
@@ -22661,13 +22708,22 @@
         return fixedResult(`${n}각기둥의 모든 모서리를 삼등분하고, 한 꼭짓점에서 만나는 세 모서리의 삼등분점을 지나는 평면으로 모든 꼭짓점을 잘라 냅니다. 남은 입체도형의 면, 꼭짓점, 모서리 수의 합을 구하세요.${promptVisual}${support("원래 모서리 하나에서 남는 새 꼭짓점 2개와, 잘라서 새로 생기는 삼각형 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("prism-all-vertices-truncated", [n, originalVertices, originalEdges, faces, vertices, edges, total])}`, String(total), `처음 ${n}각기둥의 모서리는 ${originalEdges}개이고, 모서리마다 삼등분점 2개가 새 꼭짓점이 되므로 꼭짓점은 ${vertices}개입니다. 원래 모서리에서 남은 ${originalEdges}개와 잘라서 생긴 삼각형 면 ${originalVertices}개의 변 3개씩을 더하면 모서리는 ${originalEdges}+3×${originalVertices}=${edges}개입니다. 처음 면 ${n + 2}개에 새 삼각형 면 ${originalVertices}개를 더하면 면은 ${faces}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
       }
 
-      const [side, height] = [[7, 11], [8, 13], [6, 15]][poolIndex];
-      const shortFaces = 2, longFaces = 3, triangleBase = shortFaces * side;
-      const area = triangleBase * height / 2;
-      const promptVisual = `${pentagonalPrismShortestNetSvg({ side, height })}${mathBoard("정오각기둥의 길이", row("밑면의 한 변", `${side}cm`) + row("높이", `${height}cm`) + row("구할 것", "삼각형 ㄱㄴㄷ의 넓이"))}`;
-      const answerVisual = `${pentagonalPrismShortestNetSvg({ side, height, solved: true })}${mathBoard("전개도에서 계산", row("짧은 쪽", `옆면 ${shortFaces}개`) + row("선분 ㄷㄴ", `${shortFaces}×${side}=${triangleBase}cm`) + row("선분 ㄱㄷ", `${height}cm`) + row("삼각형의 넓이", `${triangleBase}×${height}÷2=${area}cm²`))}`;
-      const shortestChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">반대쪽 옆면 ${longFaces}개를 지나는 길이도 펼쳐 비교하여, 왜 옆면 ${shortFaces}개를 지나는 선이 가장 짧은지 설명해 보세요.</p>` : "";
-      return fixedResult(`밑면이 정오각형인 각기둥의 한 밑면의 한 변은 ${side}cm이고 높이는 ${height}cm입니다. 그림처럼 각기둥의 겉면을 지나 점 ㄱ과 점 ㄴ을 잇는 가장 짧은 선을 전개도에 옮겨 그었을 때, 삼각형 ㄱㄴㄷ의 넓이는 몇 cm²인지 구하세요.${promptVisual}${support("점 ㄱ에서 점 ㄴ까지 옆면 2개를 펼치면 선분 ㄷㄴ의 길이가 얼마인지 구해 보세요.")}${shortestChallenge}${evidence("pentagonal-prism-shortest-net-area", [side, height, shortFaces, longFaces, triangleBase, area])}`, `${area}cm²`, `정오각기둥의 옆면을 한쪽으로는 ${shortFaces}개, 반대쪽으로는 ${longFaces}개 지나갈 수 있습니다. 펼친 가로 길이는 각각 ${shortFaces}×${side}=${triangleBase}cm와 ${longFaces}×${side}=${longFaces * side}cm이므로 옆면 ${shortFaces}개를 지나는 쪽이 더 짧습니다. 전개도에서 삼각형 ㄱㄴㄷ의 밑변 ㄷㄴ은 ${triangleBase}cm, 높이 ㄱㄷ은 ${height}cm이므로 넓이는 ${triangleBase}×${height}÷2=${area}cm²입니다.`, answerVisual);
+      if (variant === 3) {
+        const [side, height] = [[7, 11], [8, 13], [6, 15]][poolIndex];
+        const shortFaces = 2, longFaces = 3, triangleBase = shortFaces * side;
+        const area = triangleBase * height / 2;
+        const promptVisual = `${pentagonalPrismShortestNetSvg({ side, height })}${mathBoard("정오각기둥의 길이", row("밑면의 한 변", `${side}cm`) + row("높이", `${height}cm`) + row("구할 것", "삼각형 ㄱㄴㄷ의 넓이"))}`;
+        const answerVisual = `${pentagonalPrismShortestNetSvg({ side, height, solved: true })}${mathBoard("전개도에서 계산", row("짧은 쪽", `옆면 ${shortFaces}개`) + row("선분 ㄷㄴ", `${shortFaces}×${side}=${triangleBase}cm`) + row("선분 ㄱㄷ", `${height}cm`) + row("삼각형의 넓이", `${triangleBase}×${height}÷2=${area}cm²`))}`;
+        const shortestChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">반대쪽 옆면 ${longFaces}개를 지나는 길이도 펼쳐 비교하여, 왜 옆면 ${shortFaces}개를 지나는 선이 가장 짧은지 설명해 보세요.</p>` : "";
+        return fixedResult(`밑면이 정오각형인 각기둥의 한 밑면의 한 변은 ${side}cm이고 높이는 ${height}cm입니다. 그림처럼 각기둥의 겉면을 지나 점 ㄱ과 점 ㄴ을 잇는 가장 짧은 선을 전개도에 옮겨 그었을 때, 삼각형 ㄱㄴㄷ의 넓이는 몇 cm²인지 구하세요.${promptVisual}${support("점 ㄱ에서 점 ㄴ까지 옆면 2개를 펼치면 선분 ㄷㄴ의 길이가 얼마인지 구해 보세요.")}${shortestChallenge}${evidence("pentagonal-prism-shortest-net-area", [side, height, shortFaces, longFaces, triangleBase, area])}`, `${area}cm²`, `정오각기둥의 옆면을 한쪽으로는 ${shortFaces}개, 반대쪽으로는 ${longFaces}개 지나갈 수 있습니다. 펼친 가로 길이는 각각 ${shortFaces}×${side}=${triangleBase}cm와 ${longFaces}×${side}=${longFaces * side}cm이므로 옆면 ${shortFaces}개를 지나는 쪽이 더 짧습니다. 전개도에서 삼각형 ㄱㄴㄷ의 밑변 ㄷㄴ은 ${triangleBase}cm, 높이 ㄱㄷ은 ${height}cm이므로 넓이는 ${triangleBase}×${height}÷2=${area}cm²입니다.`, answerVisual);
+      }
+
+      const side = [10, 8, 12][poolIndex];
+      const facesPerTurn = 5, extraFaces = 1, crossedFaces = facesPerTurn + extraFaces, height = crossedFaces * side;
+      const promptVisual = `${pentagonalPrismSpiral45Svg({ side })}${mathBoard("개미의 길", row("밑면의 각 변", `${side}cm`) + row("올라가는 각", "45°") + row("출발과 도착", "점 ㄱ에서 점 ㄴ까지"))}`;
+      const answerVisual = `${pentagonalPrismSpiral45Svg({ side, solved: true })}${mathBoard("옆면을 펼쳐 계산", row("한 바퀴", `옆면 ${facesPerTurn}장`) + row("한 장 더", `옆면 ${extraFaces}장`) + row("가로 이동", `${crossedFaces}×${side}=${height}cm`) + row("높이", `${height}cm`))}`;
+      const spiralChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">출발한 모서리와 도착한 모서리를 살펴 한 바퀴 뒤 옆면을 한 장 더 지나는 까닭을 설명해 보세요.</p>` : "";
+      return fixedResult(`밑면의 각 변이 ${side}cm인 오각기둥이 있습니다. 개미가 점 ㄱ에서 출발하여 그림처럼 45°의 각도로 옆면을 따라 계속 올라가 점 ㄴ에 도착했습니다. 이 오각기둥의 높이는 몇 cm인지 구하세요.${promptVisual}${support("오각기둥의 옆면 5장이 한 바퀴이고, 도착점까지 옆면 한 장을 더 지나는지 살펴보세요.")}${spiralChallenge}${evidence("pentagonal-prism-45-degree-spiral-height", [side, facesPerTurn, extraFaces, crossedFaces, height])}`, `${height}cm`, `오각기둥의 옆면 ${facesPerTurn}장을 지나면 한 바퀴를 돌고, 점 ㄴ까지 옆면 ${extraFaces}장을 더 지나므로 모두 ${crossedFaces}장을 지납니다. 옆면을 펼치면 가로 이동은 ${crossedFaces}×${side}=${height}cm입니다. 45°로 올라가므로 가로 이동과 세로 이동이 같아 오각기둥의 높이는 ${height}cm입니다.`, answerVisual);
     },
     sourceGrade6RatioE1({ rng, level, variant = 0 }) {
       const sourceIds = [

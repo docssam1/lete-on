@@ -12,19 +12,22 @@ const sourceIds = [
   "6-1-u2-e2-example-2-2",
   "6-1-u2-e2-mission-2",
   "6-1-u2-e2-mission-5",
-  "6-1-u2-e2-mission-6"
+  "6-1-u2-e2-mission-6",
+  "6-1-u2-e2-mission-1"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e2-example-2-2", 74],
   ["6-1-u2-e2-mission-2", 63],
   ["6-1-u2-e2-mission-5", 92],
-  ["6-1-u2-e2-mission-6", 77]
+  ["6-1-u2-e2-mission-6", 77],
+  ["6-1-u2-e2-mission-1", 60]
 ]);
 const evidenceKinds = [
   "cuboid-all-corners-cut",
   "regular-prism-radial-cut",
   "prism-all-vertices-truncated",
-  "pentagonal-prism-shortest-net-area"
+  "pentagonal-prism-shortest-net-area",
+  "pentagonal-prism-45-degree-spiral-height"
 ];
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
@@ -47,6 +50,11 @@ const expectedPools = [
     { values: [7, 11, 2, 3, 14, 77], answer: 77 },
     { values: [8, 13, 2, 3, 16, 104], answer: 104 },
     { values: [6, 15, 2, 3, 12, 90], answer: 90 }
+  ],
+  [
+    { values: [10, 5, 1, 6, 60], answer: 60 },
+    { values: [8, 5, 1, 6, 48], answer: 48 },
+    { values: [12, 5, 1, 6, 72], answer: 72 }
   ]
 ];
 
@@ -129,6 +137,14 @@ function independentAnswer(evidence) {
     check(shortPathSquared < longPathSquared, "옆면 2개를 지나는 경로가 옆면 3개 경로보다 유일하게 짧지 않습니다.");
     check(area === triangleBase * height / 2 && area === side * height, "삼각형 넓이가 독립 계산과 다릅니다.");
     return area;
+  }
+  if (evidence.kind === "pentagonal-prism-45-degree-spiral-height") {
+    const [side, facesPerTurn, extraFaces, crossedFaces, height] = values;
+    check([8, 10, 12].includes(side), "정오각기둥의 밑면 한 변이 고정 pool 8, 10, 12가 아닙니다.");
+    check(facesPerTurn === 5, "정오각기둥 한 바퀴의 옆면 수가 5가 아닙니다.");
+    check(extraFaces === 1 && crossedFaces === facesPerTurn + extraFaces, "도착점까지 한 바퀴 뒤 옆면 한 장을 더 지나는 구조가 아닙니다.");
+    check(height === crossedFaces * side, "45도 경로의 가로 이동과 각기둥 높이가 같지 않습니다.");
+    return height;
   }
   throw new Error(`알 수 없는 E2 검산 종류: ${evidence.kind}`);
 }
@@ -219,22 +235,43 @@ function checkVariant(variant, generated, evidence) {
     return;
   }
 
-  const [side, height, shortFaces, longFaces, triangleBase, area] = values;
-  const promptText = visibleText(prompt);
-  check(prompt.includes("정오각기둥") && prompt.includes("삼각형 ㄱㄴㄷ"), "원문의 정오각기둥과 삼각형 ㄱㄴㄷ 물음이 없습니다.");
-  check(!new RegExp(`(^|\\D)${area}(?=\\D|$)`).test(promptText), "문제에 삼각형 넓이 답이 노출되었습니다.");
-  check(!new RegExp(`(^|\\D)${triangleBase}(?=\\D|$)`).test(promptText), "문제에 펼친 밑변의 계산 결과가 노출되었습니다.");
-  for (const markup of [prompt, answer]) {
-    check(markup.includes('data-base-sides="5"') && markup.includes('data-net-face-count="5"'), "정오각기둥과 옆면 다섯 장의 semantic data가 없습니다.");
-    check(markup.includes(`data-base-edge="${side}"`) && markup.includes(`data-prism-height="${height}"`), "밑면의 한 변과 높이 semantic data가 고정 pool과 다릅니다.");
-    check(markup.includes(`data-shortest-face-count="${shortFaces}"`) && markup.includes(`data-other-face-count="${longFaces}"`), "두 방향의 옆면 수 semantic data가 다릅니다.");
-    check(markup.includes(`data-triangle-base="${triangleBase}"`) && markup.includes(`data-area="${area}"`), "펼친 삼각형의 길이·넓이 semantic data가 다릅니다.");
-    check(countClass(markup, "source61-e2-shortest-face") === 5, "전개도의 옆면 사각형이 5개가 아닙니다.");
-    check(countClass(markup, "source61-e2-shortest-solid-route") === 1, "입체 그림의 가장 짧은 경로가 하나가 아닙니다.");
+  if (variant === 3) {
+    const [side, height, shortFaces, longFaces, triangleBase, area] = values;
+    const promptText = visibleText(prompt);
+    check(prompt.includes("정오각기둥") && prompt.includes("삼각형 ㄱㄴㄷ"), "원문의 정오각기둥과 삼각형 ㄱㄴㄷ 물음이 없습니다.");
+    check(!new RegExp(`(^|\\D)${area}(?=\\D|$)`).test(promptText), "문제에 삼각형 넓이 답이 노출되었습니다.");
+    check(!new RegExp(`(^|\\D)${triangleBase}(?=\\D|$)`).test(promptText), "문제에 펼친 밑변의 계산 결과가 노출되었습니다.");
+    for (const markup of [prompt, answer]) {
+      check(markup.includes('data-base-sides="5"') && markup.includes('data-net-face-count="5"'), "정오각기둥과 옆면 다섯 장의 semantic data가 없습니다.");
+      check(markup.includes(`data-base-edge="${side}"`) && markup.includes(`data-prism-height="${height}"`), "밑면의 한 변과 높이 semantic data가 고정 pool과 다릅니다.");
+      check(markup.includes(`data-shortest-face-count="${shortFaces}"`) && markup.includes(`data-other-face-count="${longFaces}"`), "두 방향의 옆면 수 semantic data가 다릅니다.");
+      check(markup.includes(`data-triangle-base="${triangleBase}"`) && markup.includes(`data-area="${area}"`), "펼친 삼각형의 길이·넓이 semantic data가 다릅니다.");
+      check(countClass(markup, "source61-e2-shortest-face") === 5, "전개도의 옆면 사각형이 5개가 아닙니다.");
+      check(countClass(markup, "source61-e2-shortest-solid-route") === 1, "입체 그림의 가장 짧은 경로가 하나가 아닙니다.");
+    }
+    check(countClass(prompt, "source61-e2-shortest-net-line") === 0, "문제 전개도에 정답 선분이 미리 그려졌습니다.");
+    check(countClass(answer, "source61-e2-shortest-net-line") === 1 && countClass(answer, "source61-e2-shortest-triangle") === 1, "답 그림에 최단 선분과 삼각형 강조가 없습니다.");
+    check(answer.includes(`data-result-highlight="${area}"`), "답에서 삼각형 넓이가 강조되지 않았습니다.");
+    return;
   }
-  check(countClass(prompt, "source61-e2-shortest-net-line") === 0, "문제 전개도에 정답 선분이 미리 그려졌습니다.");
-  check(countClass(answer, "source61-e2-shortest-net-line") === 1 && countClass(answer, "source61-e2-shortest-triangle") === 1, "답 그림에 최단 선분과 삼각형 강조가 없습니다.");
-  check(answer.includes(`data-result-highlight="${area}"`), "답에서 삼각형 넓이가 강조되지 않았습니다.");
+
+  const [side, facesPerTurn, extraFaces, crossedFaces, height] = values;
+  const promptText = visibleText(prompt);
+  check(prompt.includes("오각기둥") && prompt.includes("45°") && prompt.includes("점 ㄱ") && prompt.includes("점 ㄴ"), "원문의 오각기둥·45도·출발점·도착점 조건이 없습니다.");
+  check(!new RegExp(`(^|\\D)${height}(?=\\D|$)`).test(promptText), "문제에 각기둥 높이 답이 노출되었습니다.");
+  for (const markup of [prompt, answer]) {
+    check(markup.includes('data-base-sides="5"') && markup.includes(`data-base-edge="${side}"`), "정오각기둥과 밑면 한 변 semantic data가 다릅니다.");
+    check(markup.includes(`data-faces-per-turn="${facesPerTurn}"`) && markup.includes(`data-extra-face-count="${extraFaces}"`), "한 바퀴와 추가 옆면 수 semantic data가 다릅니다.");
+    check(markup.includes(`data-crossed-face-count="${crossedFaces}"`) && markup.includes(`data-route-segment-count="${crossedFaces}"`), "지나간 옆면과 이동 조각 수 semantic data가 다릅니다.");
+    check(markup.includes(`data-prism-height="${height}"`), "45도 이동으로 구한 높이 semantic data가 다릅니다.");
+    check(markup.includes(`data-unfolded-width="${height}"`) && markup.includes(`data-unfolded-height="${height}"`) && markup.includes('data-unfolded-angle="45"'), "펼친 가로·세로의 같은 축척과 45도 자료가 다릅니다.");
+    check(countClass(markup, "source61-e2-spiral-route") === crossedFaces, "입체 그림의 45도 이동 조각이 6개가 아닙니다.");
+    check(countClass(markup, "source61-e2-spiral-angle-arc") >= 1, "점 ㄱ에 45도 각 표시가 없습니다.");
+  }
+  check(countClass(prompt, "source61-e2-spiral-net-face") === 0 && countClass(prompt, "source61-e2-spiral-net-route") === 0, "문제에 펼친 답 그림이 미리 노출되었습니다.");
+  check(countClass(answer, "source61-e2-spiral-net-face") === crossedFaces, "답 그림에 펼친 옆면 6장이 없습니다.");
+  check(countClass(answer, "source61-e2-spiral-net-route") === 1 && countClass(answer, "source61-e2-spiral-triangle") === 1, "답 그림에 45도 선과 직각삼각형이 없습니다.");
+  check(answer.includes(`data-result-highlight="${height}"`), "답에서 각기둥 높이가 강조되지 않았습니다.");
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E2 전용 생성기가 등록되지 않았습니다.");
@@ -245,7 +282,8 @@ const ledgerContracts = [
   { id: "6-1-u2-e2-example-2", page: 9, words: ["예제 2-2", "직육면체", "모든 꼭짓점", "면·꼭짓점·모서리"] },
   { id: "6-1-u2-e2-mission-2", page: 10, words: ["Mission 2", "정칠각기둥", "수직", "삼각기둥 7개"] },
   { id: "6-1-u2-e2-mission-5", page: 10, words: ["Mission 5", "오각기둥", "삼등분", "모든 꼭짓점"] },
-  { id: "6-1-u2-e2-mission-6", page: 10, words: ["Mission 6", "정오각형", "7cm", "11cm", "삼각형"] }
+  { id: "6-1-u2-e2-mission-6", page: 10, words: ["Mission 6", "정오각형", "7cm", "11cm", "삼각형"] },
+  { id: "6-1-u2-e2-mission-1", page: 10, words: ["Mission 1", "오각기둥", "10cm", "45°"] }
 ];
 for (const expected of ledgerContracts) {
   context = `${expected.id} / 원본 장부`;
@@ -295,4 +333,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 4유형 · 12개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);
+console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 5유형 · 15개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);
