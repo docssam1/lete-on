@@ -22,7 +22,7 @@ test("each course keeps prerequisites, student and teacher paths, and availabili
   });
   const preAlgebra = pathways.courses.find(function (course) { return course.id === "pre-algebra"; });
   assert.equal(preAlgebra.studentHref, "./concept-learning.html");
-  assert.match(preAlgebra.availability, /Grade 6 개념 10개 공개/);
+  assert.match(preAlgebra.availability, /Grade 6 개념 10개와 검증된 단원 워크북 9개 공개/);
   const algebra2 = pathways.courses.find(function (course) { return course.id === "algebra-2"; });
   assert.equal(algebra2.studentHref, "#availability");
   assert.equal(algebra2.teacherHref, "#high-school-bridge");
