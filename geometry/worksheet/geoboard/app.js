@@ -15,6 +15,7 @@ const toggle = $("#answerToggle");
 const coverToggle = $("#coverToggle");
 const worksheet = $("#worksheet");
 const sheetTemplate = $("#sheetTemplate");
+const params = new URLSearchParams(location.search);
 let offset = 0;
 
 const copy = {
@@ -43,6 +44,10 @@ levels.forEach((level) => {
   option.textContent = `${level.id}. ${copy[level.id].title} · ${level.stage} ${level.difficulty}`;
   select.append(option);
 });
+if (params.get("level") === "all" || levels.some((level) => String(level.id) === params.get("level"))) select.value = params.get("level");
+if (params.get("count") !== null) countInput.value = params.get("count");
+coverToggle.checked = params.get("cover") !== "0";
+toggle.checked = params.get("answers") === "1";
 
 function requestedCount() {
   const count = Math.max(1, Math.min(20, Math.round(Number(countInput.value) || 6)));
