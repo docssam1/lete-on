@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 225
+    "unlocked": 227
   },
   "items": [
     {
@@ -749,17 +749,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "각기둥의 꼭짓점, 모서리, 면의 수로 식의 값 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6PrismsPyramidsE1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문 그림과 검수 원장의 연결 근거를 다시 확인해야 합니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
-      "generationMode": "review-locked",
-      "verifiedVariantTarget": 0,
-      "verifiedVariantCount": 0
+      "answerVisualStatus": "verified",
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantTarget": 3,
+      "verifiedVariantCount": 3,
+      "variant": 1
     },
     {
       "semester": "6-1",
@@ -774,17 +775,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "오각기둥을 굴려 칠한 넓이로 모서리 길이 합 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6PrismsPyramidsE1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문 그림과 검수 원장의 연결 근거를 다시 확인해야 합니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
-      "generationMode": "review-locked",
-      "verifiedVariantTarget": 0,
-      "verifiedVariantCount": 0
+      "answerVisualStatus": "verified",
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantTarget": 3,
+      "verifiedVariantCount": 3,
+      "variant": 2
     },
     {
       "semester": "6-1",

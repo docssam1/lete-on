@@ -8,6 +8,7 @@ const catalogPath = path.join(__dirname, "source-inventory-grade6.js");
 const curriculumPath = path.join(__dirname, "curriculum.js");
 const rawInventoryPath = path.join(__dirname, "source-inventory", "6-1-source-items.json");
 const readinessU1Path = path.join(__dirname, "source-inventory", "6-1-u1-source-readiness-review.json");
+const readinessU2Path = path.join(__dirname, "source-inventory", "6-1-u2-source-readiness-review.json");
 const readinessU3Path = path.join(__dirname, "source-inventory", "6-1-u3-source-readiness-review.json");
 const readinessPath = path.join(__dirname, "source-inventory", "6-1-u4-source-readiness-review.json");
 const readinessU5Path = path.join(__dirname, "source-inventory", "6-1-u5-source-readiness-review.json");
@@ -33,6 +34,7 @@ const catalog = context.window.HSE_SOURCE_INVENTORY_GRADE6;
 const curriculum = context.window.HSE_CURRICULUM;
 const rawInventory = JSON.parse(fs.readFileSync(rawInventoryPath, "utf8"));
 const readinessU1 = JSON.parse(fs.readFileSync(readinessU1Path, "utf8"));
+const readinessU2 = JSON.parse(fs.readFileSync(readinessU2Path, "utf8"));
 const readinessU3 = JSON.parse(fs.readFileSync(readinessU3Path, "utf8"));
 const readiness = JSON.parse(fs.readFileSync(readinessPath, "utf8"));
 const readinessU5 = JSON.parse(fs.readFileSync(readinessU5Path, "utf8"));
@@ -50,6 +52,26 @@ const readinessU1E2Counts = readinessU1E2Items.reduce((counts, item) => {
   counts.releaseLocked += item.releaseStatus === "locked" ? 1 : 0;
   return counts;
 }, { confirmed: 0, locked: 0, candidate: 0, releaseLocked: 0 });
+const prismE1VerifiedIds = ["6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2"];
+const readinessU2Counts = readinessU2.items.reduce((counts, item) => {
+  const hasIndependentAnswer = Boolean(item.independentAnswer && item.independentAnswer !== "확인 필요");
+  counts.independentCalculationPass += hasIndependentAnswer ? 1 : 0;
+  counts.singleAnswerPass += item.singleAnswer === true ? 1 : 0;
+  counts.visualAssetRequired += item.visualRequirement && item.visualRequirement !== "none" ? 1 : 0;
+  counts.visualAmbiguityLocked += item.releaseStatus === "locked" && item.visualRequirement && item.visualRequirement !== "none" ? 1 : 0;
+  counts.publicCandidate += item.publicCandidate === true ? 1 : 0;
+  counts.publicDecisionLocked += item.publicDecision === "locked" ? 1 : 0;
+  counts.releaseLocked += item.releaseStatus === "locked" ? 1 : 0;
+  return counts;
+}, {
+  independentCalculationPass: 0,
+  singleAnswerPass: 0,
+  visualAssetRequired: 0,
+  visualAmbiguityLocked: 0,
+  publicCandidate: 0,
+  publicDecisionLocked: 0,
+  releaseLocked: 0
+});
 const readinessDecisionCounts = readinessU5.items.reduce((counts, item) => {
   counts.publicDecision[item.publicDecision || "undefined"] = (counts.publicDecision[item.publicDecision || "undefined"] || 0) + 1;
   counts.publicCandidate += item.publicCandidate === true ? 1 : 0;
@@ -130,8 +152,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 225 && lockedItems.length === 408, `6학년 원문 유형의 공개 225개·잠금 408개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 225유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 227 && lockedItems.length === 406, `6학년 원문 유형의 공개 227개·잠금 406개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 227유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU1E1Items.length === 12 && readinessU1E1Counts.confirmed === 10 && readinessU1E1Counts.locked === 2 && readinessU1E1Counts.candidate === 0 && readinessU1E1Counts.releaseLocked === 2, `6-1 1단원 개념탐구 1 readiness 확인 10개·열린 설명 잠금 2개 구성이 다릅니다: 전체 ${readinessU1E1Items.length}, 확인 ${readinessU1E1Counts.confirmed}, 잠금 ${readinessU1E1Counts.locked}/${readinessU1E1Counts.releaseLocked}`);
@@ -158,6 +180,24 @@ readinessU1E2Items.forEach(readinessItem => {
   check(rawItem?.sourceVerified === true && rawItem.implementationStatus === "fixed-verified-pool", `${readinessItem.sourceItemId}: 둘째 탐구 원자료 장부의 확인됨 연결이 없습니다.`);
   check(!catalogItem?.reviewLocked && catalogItem?.generatorKey === "sourceGrade6FractionDivisionE2" && catalogItem?.answerVisualStatus === "verified" && catalogItem?.verifiedVariantCount === 3, `${readinessItem.sourceItemId}: 둘째 탐구 readiness와 생성기·답 그림 계약이 다릅니다.`);
 });
+prismE1VerifiedIds.forEach(sourceItemId => {
+  const readinessItem = readinessU2.items.find(item => item.sourceItemId === sourceItemId);
+  const rawItem = rawInventory.items.find(item => item.sourceItemId === sourceItemId);
+  const catalogItem = items.find(item => item.sourceItemId === sourceItemId);
+  check(Boolean(readinessItem && rawItem && catalogItem), `${sourceItemId}: 원자료·검수표·공개 분류표 연결이 없습니다.`);
+  if (!readinessItem || !rawItem || !catalogItem) return;
+  check(readinessItem.sourceVerified === true && readinessItem.publicDecision === "confirmed" && readinessItem.releaseStatus === "verified" && readinessItem.implementationStatus === "fixed-verified-pool" && readinessItem.singleAnswer === true, `${sourceItemId}: 원문 확인·단일 정답·공개 상태가 완결되지 않았습니다.`);
+  check(rawItem.sourceVerified === true && rawItem.implementationStatus === "fixed-verified-pool" && rawItem.answerContract === "single-value", `${sourceItemId}: 원자료 장부의 구조·공개 계약이 다릅니다.`);
+  check(!catalogItem.reviewLocked && catalogItem.generatorKey === "sourceGrade6PrismsPyramidsE1" && catalogItem.answerVisualStatus === "verified" && catalogItem.verifiedVariantCount === 3, `${sourceItemId}: 검수표와 생성기·답 그림 계약이 다릅니다.`);
+});
+check(readinessU2.integrity?.independentCalculationPassCount === readinessU2Counts.independentCalculationPass, `6-1 2단원 독립 계산 확인 집계가 실제 ${readinessU2Counts.independentCalculationPass}개와 다릅니다.`);
+check(readinessU2.integrity?.singleAnswerPassCount === readinessU2Counts.singleAnswerPass, `6-1 2단원 단일 정답 집계가 실제 ${readinessU2Counts.singleAnswerPass}개와 다릅니다.`);
+check(readinessU2.integrity?.visualAssetRequiredCount === readinessU2Counts.visualAssetRequired, `6-1 2단원 그림 필수 집계가 실제 ${readinessU2Counts.visualAssetRequired}개와 다릅니다.`);
+check(readinessU2.integrity?.visualAmbiguityLockedCount === readinessU2Counts.visualAmbiguityLocked, `6-1 2단원 그림 검수 잠금 집계가 실제 ${readinessU2Counts.visualAmbiguityLocked}개와 다릅니다.`);
+check(readinessU2.integrity?.publicCandidateCount === readinessU2Counts.publicCandidate, `6-1 2단원 공개 후보 집계가 실제 ${readinessU2Counts.publicCandidate}개와 다릅니다.`);
+check(readinessU2.integrity?.publicDecisionLockedCount === readinessU2Counts.publicDecisionLocked, `6-1 2단원 공개 결정 잠금 집계가 실제 ${readinessU2Counts.publicDecisionLocked}개와 다릅니다.`);
+check(readinessU2.integrity?.releaseLockedCount === readinessU2Counts.releaseLocked, `6-1 2단원 출제 잠금 집계가 실제 ${readinessU2Counts.releaseLocked}개와 다릅니다.`);
+check(readinessU2.summary?.independentCalculationPassCount === readinessU2Counts.independentCalculationPass && readinessU2.summary?.singleAnswerPassCount === readinessU2Counts.singleAnswerPass && readinessU2.summary?.visualAssetRequiredCount === readinessU2Counts.visualAssetRequired && readinessU2.summary?.visualAmbiguityLockedCount === readinessU2Counts.visualAmbiguityLocked && readinessU2.summary?.publicCandidateCount === readinessU2Counts.publicCandidate && readinessU2.summary?.publicDecisionLockedCount === readinessU2Counts.publicDecisionLocked && readinessU2.summary?.releaseLockedCount === readinessU2Counts.releaseLocked, "6-1 2단원 summary 집계가 integrity·실제 목록과 다릅니다.");
 check(readinessU5.integrity?.publicCandidateCount === readinessDecisionCounts.publicCandidate, `6-1 5단원 readiness publicCandidate 집계가 실제 ${readinessDecisionCounts.publicCandidate}개와 다릅니다.`);
 check(readinessU5.integrity?.publicDecisionPublicCount === (readinessDecisionCounts.publicDecision.public || 0), `6-1 5단원 readiness public 집계가 실제 ${readinessDecisionCounts.publicDecision.public || 0}개와 다릅니다.`);
 check(readinessU5.integrity?.publicDecisionConfirmedCount === (readinessDecisionCounts.publicDecision.confirmed || 0), `6-1 5단원 readiness confirmed 집계가 실제 ${readinessDecisionCounts.publicDecision.confirmed || 0}개와 다릅니다.`);

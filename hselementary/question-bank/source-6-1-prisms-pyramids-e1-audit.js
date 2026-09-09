@@ -7,6 +7,10 @@ const api = window.HSE_GENERATORS;
 const sourceIds = [
   "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5"
 ];
+const sourceAnswers = new Map([
+  ["6-1-u2-e1-mission-1", "24"],
+  ["6-1-u2-e1-mission-2", "115cm"]
+]);
 const failures = [];
 let checked = 0;
 let context = "";
@@ -164,6 +168,9 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
   }
   check(pools.size === 3, "pool 0, 1, 2를 모두 확인하지 못했습니다.");
   check(answers.size === 3, `고정 묶음 답이 3종이어야 하나 ${answers.size}종입니다.`);
+  if (sourceAnswers.has(sourceIds[variant])) {
+    check(answers.has(sourceAnswers.get(sourceIds[variant])), `원문 답 ${sourceAnswers.get(sourceIds[variant])}이 고정 문항 묶음에 없습니다.`);
+  }
 }
 
 if (failures.length) {
