@@ -1488,6 +1488,17 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-road-stone-title{font-size:13px;font-weight:800}
 .nm-road-next-lbl{font-size:10px;font-weight:700;color:#7a5b10}
 .nm-road-tip{font-size:11px;color:#7a8aa0;font-weight:600;padding:6px 4px 2px;line-height:1.5}
+/* 학습 여행 지도 — 넓은 화면(2026-09-09, 원장 "맵도 잘 정리, 오류 없고 더 넓게").
+   전에는 1280px 화면에서도 420px 한 줄로 60개 챕터가 세로로만 늘어져 스크롤이 끝없었다.
+   900px부터는 격자로 펼친다: 단계 머리는 한 줄을 다 차지하고, 그 아래 챕터 카드가 여러 열로
+   흐른다. 챕터 사이 ↓ 화살표는 세로 한 줄일 때의 것이라 격자에선 숨긴다. DOM 순서는 그대로다. */
+@media(min-width:900px){
+  .nm-road-path{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px 14px;align-items:start;max-width:1200px;margin:0 auto;padding:18px 24px 28px;width:100%}
+  .nm-road-stage{grid-column:1/-1;max-width:none;margin:14px 0 2px}
+  .nm-road-chapter{max-width:none;margin-bottom:0;height:100%}
+  .nm-road-arrow{display:none}
+  .nm-road-stone{max-width:none}
+}
 .nm-road-arrow{font-size:22px;color:#c8bfb0;margin:4px 0;text-align:center;width:100%;max-width:420px}
 
 /* ============================================================

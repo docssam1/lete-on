@@ -10,7 +10,7 @@
 window.NM_ROADMAP = {
   id:'main-road',
   title:{ko:'마법 학습 여행',en:'Magic Learning Journey',zh:'魔法学习之旅'},
-  subtitle:{ko:'작은 수부터 분수까지 — 한 걸음씩',en:'From small numbers to fractions — one step at a time',zh:'从小数字到分数——一步一步'},
+  subtitle:{ko:'유아부터 미적분Ⅰ까지 — 한 걸음씩',en:'From age 5 to Calculus I — one step at a time',zh:'从幼儿到微积分Ⅰ——一步一步'},
 
   chapters:[
 
