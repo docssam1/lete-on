@@ -13,10 +13,14 @@ const root = path.resolve(dir, "..", "..");
 const failures = [];
 const fail = message => failures.push(message);
 const difficultyBodies = new Map();
-const ids = [
+const allIds = [
   "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
-  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
+  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5"
 ];
+const ids = process.env.HSE_SOURCE_ITEM_ID
+  ? allIds.filter(id => id === process.env.HSE_SOURCE_ITEM_ID)
+  : allIds;
+if (!ids.length) throw new Error(`알 수 없는 문항 ID: ${process.env.HSE_SOURCE_ITEM_ID}`);
 const difficulties = process.env.HSE_DIFFICULTY ? [Number(process.env.HSE_DIFFICULTY)] : [-1, 0, 1];
 const outputDir = process.env.HSE_SCREENSHOT_DIR || fs.mkdtempSync(path.join(os.tmpdir(), "hse-volume-e2-browser-"));
 const forbiddenLearnerNotation = /a≤b≤c|a²|[VS][₁₂₃₄₅]|\b(?:s|h|a|V|S|N)\b|\d\s*[sah](?=\s|$|[=×()+\-0-9])/;
@@ -47,6 +51,11 @@ const expected = {
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
   "mission-3": [10, 8, 12],
+  "mission-4": [
+    { boardLength: 25, boardDepth: 11, flatHeight: 1, cuboidLength: 10, cuboidDepth: 6, rightGap: 7, doubledHeight: 5 },
+    { boardLength: 32, boardDepth: 12, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 8, doubledHeight: 7 },
+    { boardLength: 28, boardDepth: 10, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 6, doubledHeight: 9 }
+  ],
   "mission-5": [[8, 6, 12], [10, 7, 9], [12, 8, 10]]
 };
 
@@ -109,7 +118,7 @@ async function snapshot(page, phase, viewportName, sourceItemId, difficulty) {
     const rect = node => { const value = node.getBoundingClientRect(); return { left: value.left, right: value.right, top: value.top, bottom: value.bottom, width: value.width, height: value.height }; };
     const svgState = svg => {
       const box = rect(svg); const viewBox = svg.viewBox.baseVal; const bbox = svg.getBBox();
-      const texts = [...svg.querySelectorAll("text")].map(node => ({ value: node.textContent.trim(), ...rect(node) })).filter(item => item.value);
+      const texts = [...svg.querySelectorAll("text")].map(node => ({ value: node.textContent.trim(), role: node.dataset.visualElement || "", ...rect(node) })).filter(item => item.value);
       const overlaps = []; for (let i = 0; i < texts.length; i += 1) for (let j = i + 1; j < texts.length; j += 1) {
         const a = texts[i], b = texts[j]; if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1) overlaps.push(`${a.value}<>${b.value}`);
       }
@@ -283,6 +292,38 @@ function verify(problem, answer, sourceItemId, difficulty, viewport) {
       }
       if (!item.text.includes("(단, 매듭의 길이는 생각하지 않습니다.)")) fail(`${label}/문제/pool${item.pool}: 원문의 매듭 길이 제외 조건이 없습니다.`);
     }
+    if (sourceItemId.endsWith("mission-4")) {
+      const data = expected["mission-4"][item.pool];
+      const cubeSide = data.boardDepth - data.cuboidDepth;
+      const totalVolume = data.boardLength * data.boardDepth * data.flatHeight;
+      const cubeVolume = cubeSide ** 3;
+      const baseArea = data.cuboidLength * data.cuboidDepth;
+      const remainingVolume = totalVolume - cubeVolume;
+      const expectedAnswer = `${Math.floor(data.doubledHeight / 2)} 1/2cm`;
+      const semanticRoles = ["initial-board-plan", "soil-cube-front-face", "soil-cube-side-face", "soil-cube-top-face", "soil-cuboid-front-face", "soil-cuboid-side-face", "soil-cuboid-top-face", "right-gap-dimension", "cuboid-length-dimension", "cuboid-depth-dimension", "initial-board-length-label", "initial-board-depth-label", "cuboid-length-label", "cuboid-depth-label", "right-gap-label", "flattened-board-plan", "flattened-soil-top-face", "flattened-height-dimension", "flattened-length-label", "flattened-depth-label", "flattened-height-label"];
+      [item.svgs[0], solved.svgs[0]].forEach((svg, phaseIndex) => semanticRoles.forEach(role => {
+        if (!svg.required.includes(role) || svg.roleCounts[role] !== 1) fail(`${label}/${phaseIndex ? "답" : "문제"}/pool${item.pool}: ${role} 시각 역할이 없습니다.`);
+      }));
+      const problemLabels = Object.fromEntries(item.svgs[0].texts.filter(entry => entry.role).map(entry => [entry.role, entry.value]));
+      if (item.svgs[0].model !== "soil-solids-flattened-volume" || solved.svgs[0].model !== "soil-solids-flattened-volume") fail(`${label}/pool${item.pool}: 홈 판이 아닌 흙 부피 보존 모델이 아닙니다.`);
+      const exactLabels = { "initial-board-length-label": `${data.boardLength}cm`, "initial-board-depth-label": `${data.boardDepth}cm`, "cuboid-length-label": `${data.cuboidLength}cm`, "cuboid-depth-label": `${data.cuboidDepth}cm`, "right-gap-label": `${data.rightGap}cm`, "flattened-length-label": `${data.boardLength}cm`, "flattened-depth-label": `${data.boardDepth}cm`, "flattened-height-label": `${data.flatHeight}cm` };
+      if (Object.entries(exactLabels).some(([role, value]) => problemLabels[role] !== value)) fail(`${label}/문제/pool${item.pool}: 원문 판·나의 밑면·오른쪽 빈 곳·고르게 편 높이 치수 라벨이 정확하지 않습니다.`);
+      if (viewport === "mobile390" && item.svgs[0].texts.filter(entry => entry.role.endsWith("-label")).some(entry => entry.height < 8.5)) fail(`${label}/문제/pool${item.pool}: 모바일 치수 글자가 읽기 기준보다 작습니다.`);
+      if (item.text.includes(`가의 한 변: ${cubeSide}cm`) || item.text.includes(`나의 높이: ${expectedAnswer}`) || item.text.includes(`남은 부피: ${remainingVolume}cm³`)) fail(`${label}/문제/pool${item.pool}: 정답 계산값이 문제에 노출되었습니다.`);
+      const answerRoleText = Object.fromEntries(solved.svgs[0].texts.filter(entry => entry.role).map(entry => [entry.role, entry.value]));
+      const expectedAnswerRoleText = { "soil-total-volume-calc": `전체 흙 ${data.boardLength}×${data.boardDepth}×${data.flatHeight}=${totalVolume}cm³`, "soil-cube-side-calc": `가의 한 변 ${data.boardDepth}-${data.cuboidDepth}=${cubeSide}cm`, "soil-cube-volume-calc": `가의 부피 ${cubeSide}×${cubeSide}×${cubeSide}=${cubeVolume}cm³`, "soil-cuboid-base-area-calc": `나의 밑면 ${data.cuboidLength}×${data.cuboidDepth}=${baseArea}cm²`, "soil-cuboid-volume-calc": `나의 부피 ${totalVolume}-${cubeVolume}=${remainingVolume}cm³`, "soil-cuboid-height-calc": `나의 높이 ${remainingVolume}÷${baseArea}=` };
+      if (Object.entries(expectedAnswerRoleText).some(([role, value]) => answerRoleText[role] !== value)) fail(`${label}/답/pool${item.pool}: 부피 보존 계산 근거가 답 그림의 올바른 위치에 없습니다.`);
+      ["soil-volume-answer-card", "soil-total-volume-calc", "soil-cube-side-calc", "soil-cube-volume-calc", "soil-cuboid-base-area-calc", "soil-cuboid-volume-calc", "soil-cuboid-height-calc", "cuboid-height-mixed-fraction", "cuboid-height-whole", "cuboid-height-numerator", "cuboid-height-fraction-bar", "cuboid-height-denominator", "cuboid-height-unit"].forEach(role => {
+        if (!solved.svgs[0].required.includes(role) || solved.svgs[0].roleCounts[role] !== 1) fail(`${label}/답/pool${item.pool}: ${role} 대분수 역할이 정확히 하나가 아닙니다.`);
+      });
+      const answerLabels = solved.svgs[0].texts.map(entry => entry.value);
+      if (answerLabels.includes(`${data.doubledHeight}/2`) || answerLabels.some(value => /\d+\s*\/\s*\d+/.test(value)) || !answerLabels.includes(String(Math.floor(data.doubledHeight / 2))) || !answerLabels.includes("1") || !answerLabels.includes("2") || !answerLabels.includes("cm")) fail(`${label}/답/pool${item.pool}: 정답 SVG가 적층 대분수 역할로 표시되지 않습니다.`);
+      if ((solved.solution.match(/나의 높이는/g) || []).length !== 1 || !solved.solution.includes(`${remainingVolume}÷${baseArea}=`)) fail(`${label}/답/pool${item.pool}: 높이 나눗셈이 하나로 계산되지 않았습니다.`);
+      if (difficulty === -1 && (!item.text.includes(`${data.boardDepth}-${data.cuboidDepth}으로 가의 한 변`) || !item.text.includes("전체의 부피를 먼저"))) fail(`${label}/pool${item.pool}: 쉬움의 첫 계산 안내가 없습니다.`);
+      if (difficulty === 0 && (item.text.includes("나의 밑면은") || item.text.includes("가의 한 변이나 나의 밑면 넓이는"))) fail(`${label}/pool${item.pool}: 기준 문제에 난이도별 보조 조건이 섞였습니다.`);
+      if (difficulty === 1 && (!item.text.includes("가의 한 변이나 나의 밑면 넓이는 직접 알려주지 않았습니다") || !item.text.includes("그림의 치수에서 가의 한 변과 나의 밑면 넓이를"))) fail(`${label}/pool${item.pool}: 어려움의 그림 치수 추론 조건이 없습니다.`);
+      if (item.pool === 0 && (data.doubledHeight !== 5 || totalVolume !== 275 || cubeVolume !== 125 || remainingVolume !== 150 || expectedAnswer !== "2 1/2cm")) fail(`${label}: 원문 5/2cm 흙 부피 보존 계약이 다릅니다.`);
+    }
     if (sourceItemId.endsWith("mission-5")) {
       const [width, height, depth] = expected["mission-5"][item.pool];
       const ropeA = 2 * (depth + height);
@@ -399,6 +440,14 @@ function renderPages(file, prefix, count) {
           for (const [phase, hiddenSelector, visibleSelector] of [["problem", ".answer-view", ".problem-view"], ["answer", ".problem-view", ".answer-view"]]) {
             await page.evaluate(({ hidden, visible }) => { document.querySelector(hidden).hidden = true; document.querySelector(visible).hidden = false; }, { hidden: hiddenSelector, visible: visibleSelector });
             await page.emulateMedia({ media: "print" });
+            if (sourceItemId.endsWith("mission-4") && phase === "problem") {
+              const printLabels = await page.evaluate(() => [...document.querySelectorAll(".problem-view article")].map(article => ({ pool: Number(article.dataset.pool), labels: [...article.querySelectorAll("svg text")].map(node => node.textContent.trim()) })));
+              printLabels.forEach(entry => {
+                const data = expected["mission-4"][entry.pool];
+                const labels = entry.labels.join(" ");
+                [data.boardLength, data.boardDepth, data.cuboidLength, data.cuboidDepth, data.rightGap, data.flatHeight].forEach(value => { if (!labels.includes(`${value}cm`)) fail(`${sourceItemId}/d${difficulty}/A4/problem/pool${entry.pool}: ${value}cm 수치 라벨이 인쇄 DOM에 없습니다.`); });
+              });
+            }
             const pdf = path.join(outputDir, `${sourceItemId}-d${difficulty}-${phase}.pdf`);
             await page.pdf({ path: pdf, format: "A4", printBackground: true, preferCSSPageSize: true }); pdfCount += 1;
             await page.emulateMedia({ media: "screen" });

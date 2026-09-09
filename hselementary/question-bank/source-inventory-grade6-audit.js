@@ -88,7 +88,7 @@ for (const [generatorKey, expectedCount, label] of [
   ["sourceGrade6GraphsE4", 9, "개념탐구 4 여러 가지 그래프 공개 유형"],
   ["sourceGrade6VolumeSurfaceE3", 9, "6단원 개념탐구 3 공개 유형"]
   , ["sourceGrade6SurfaceE1", 9, "6단원 개념탐구 1 공개 유형"]
-  , ["sourceGrade6VolumeE2", 9, "6단원 개념탐구 2 공개 유형"]
+  , ["sourceGrade6VolumeE2", 10, "6단원 개념탐구 2 공개 유형"]
 ]) {
   const mappedItems = items.filter(item => item.generatorKey === generatorKey);
   check(mappedItems.length === expectedCount, `${label}의 공개 유형이 ${expectedCount}개가 아닙니다: ${mappedItems.length}`);
@@ -105,8 +105,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 217 && lockedItems.length === 416, `6학년 원문 유형의 공개 217개·잠금 416개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 217유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 218 && lockedItems.length === 415, `6학년 원문 유형의 공개 218개·잠금 415개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 218유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU5.integrity?.publicCandidateCount === readinessDecisionCounts.publicCandidate, `6-1 5단원 readiness publicCandidate 집계가 실제 ${readinessDecisionCounts.publicCandidate}개와 다릅니다.`);
@@ -127,7 +127,7 @@ readinessU6E1Items.forEach(readinessItem => {
     check(catalogItem.reviewLocked && catalogItem.generatorKey === "" && catalogItem.answerVisualStatus === "not-implemented" && catalogItem.verifiedVariantCount === 0, `${readinessItem.sourceItemId}: 잠금 readiness 항목이 생성 가능 상태입니다.`);
   }
 });
-check(readinessU6.items.length === 46 && readinessU6Counts.public === 40 && readinessU6Counts.locked === 6 && readinessU6Counts.releaseLocked === 6, `6-1 6단원 readiness 공개 40개·잠금 6개 구성이 다릅니다: 전체 ${readinessU6.items.length}, 공개 ${readinessU6Counts.public}, 잠금 ${readinessU6Counts.locked}/${readinessU6Counts.releaseLocked}`);
+check(readinessU6.items.length === 46 && readinessU6Counts.public === 41 && readinessU6Counts.locked === 5 && readinessU6Counts.releaseLocked === 5, `6-1 6단원 readiness 공개 41개·잠금 5개 구성이 다릅니다: 전체 ${readinessU6.items.length}, 공개 ${readinessU6Counts.public}, 잠금 ${readinessU6Counts.locked}/${readinessU6Counts.releaseLocked}`);
 readinessU6.items.forEach(readinessItem => {
   const catalogItem = items.find(item => item.sourceItemId === readinessItem.sourceItemId);
   check(Boolean(catalogItem), `${readinessItem.sourceItemId}: 6단원 readiness 항목과 공개 분류표가 연결되지 않았습니다.`);
@@ -170,4 +170,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6학년 공개 분류표·화면 연결 감사 통과: ${items.length}개 원문 문제 = ${items.length}개 세부 유형 · 생성 가능 217 · 검수 잠금 416 · 기존 생성 문제 보존`);
+console.log(`6학년 공개 분류표·화면 연결 감사 통과: ${items.length}개 원문 문제 = ${items.length}개 세부 유형 · 생성 가능 218 · 검수 잠금 415 · 기존 생성 문제 보존`);

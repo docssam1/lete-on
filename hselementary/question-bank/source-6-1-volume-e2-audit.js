@@ -10,7 +10,7 @@ const fail = message => failures.push(message);
 const check = (condition, message) => { if (!condition) fail(message); };
 const sourceIds = [
   "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
-  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
+  "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5"
 ];
 const allResults = new Set();
 const difficultyBodies = new Map();
@@ -65,6 +65,11 @@ const expected = {
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
   "mission-3": [10, 8, 12],
+  "mission-4": [
+    { boardLength: 25, boardDepth: 11, flatHeight: 1, cuboidLength: 10, cuboidDepth: 6, rightGap: 7, doubledHeight: 5 },
+    { boardLength: 32, boardDepth: 12, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 8, doubledHeight: 7 },
+    { boardLength: 28, boardDepth: 10, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 6, doubledHeight: 9 }
+  ],
   "mission-5": [[8, 6, 12], [10, 7, 9], [12, 8, 10]]
 };
 const kindOf = id => id.endsWith("exploration") ? "exploration" : id.match(/e2-(example|mission)-(\d+)$/)?.slice(1).join("-");
@@ -106,7 +111,7 @@ for (const sourceItemId of sourceIds) {
       check(!textOnly(generated.prompt).includes(generated.answer), `${label}: 문제에 정답 문자열이 노출되었습니다.`);
       check(!/<svg[^>]*data-phase=\"problem\"[^>]*>[\s\S]*?(?:답:|정답|=\s*\d+cm³|가지)/.test(generated.prompt), `${label}: 문제 SVG에 답·해결 배치가 노출되었습니다.`);
       check(!/(?:cm|m)\^[23]/.test([generated.prompt, generated.solution, generated.answerVisual].join("\n")), `${label}: caret 단위가 남았습니다.`);
-      check(!/\d+\s*\/\s*\d+/.test([generated.prompt, generated.solution, generated.answerVisual].join("\n")), `${label}: slash 분수가 남았습니다.`);
+      check(!/\d+\s*\/\s*\d+/.test([generated.prompt, generated.answerVisual].join("\n")), `${label}: 문제 또는 SVG에 slash 분수가 남았습니다.`);
       const visibleLearnerText = [generated.prompt, generated.solution, generated.answerVisual].map(learnerText).join("\n");
       check(!forbiddenLearnerNotation.test(visibleLearnerText), `${label}: 학습자 표시 영역에 문자식 기호가 남았습니다.`);
       check(!forbiddenTechnicalLabels.test(visibleLearnerText), `${label}: 학습자 표시 영역에 기술 라벨이 노출되었습니다.`);
@@ -310,6 +315,35 @@ for (const sourceItemId of sourceIds) {
           check(promptText.includes(`가에서 남은 끈은 ${cubeLeft}cm`) && promptText.includes(`나는 가보다 사용한 끈이 ${usedDifference}cm 더 깁니다`) && !promptText.includes("나에서 남은 끈"), `${label}: 어려움 문제의 차이 조건이 잘못되었습니다.`);
           check(generated.solution.startsWith(`가에서 사용한 끈은 ${rope}-${cubeLeft}=${cubeUsed}cm입니다.`) && generated.solution.includes(`나에서 사용한 끈은 ${cubeUsed}+${usedDifference}=${cuboidUsed}cm`) && !generated.solution.includes(`${rope}-${cuboidLeft}`), `${label}: 어려움 풀이가 차이로 나의 사용 길이를 먼저 구하지 않습니다.`);
         }
+      } else if (kind === "mission-4") {
+        const data = expected["mission-4"][pool];
+        const cubeSide = data.boardDepth - data.cuboidDepth;
+        const totalVolume = data.boardLength * data.boardDepth * data.flatHeight;
+        const cubeVolume = cubeSide ** 3;
+        const baseArea = data.cuboidLength * data.cuboidDepth;
+        const remainingVolume = totalVolume - cubeVolume;
+        const doubledHeight = 2 * remainingVolume / baseArea;
+        const expectedAnswer = `${Math.floor(doubledHeight / 2)} 1/2cm`;
+        const cubeX = 0;
+        const cubeY = data.cuboidDepth;
+        const cuboidX = data.boardLength - data.rightGap - data.cuboidLength;
+        const nonOverlapping = cubeX + cubeSide <= cuboidX || cuboidX + data.cuboidLength <= cubeX || cubeY + cubeSide <= 0 || data.cuboidDepth <= cubeY;
+        const promptText = learnerText(generated.prompt).replace(/\s+/g, " ");
+        check(attr(problemTag, "data-model-key") === "soil-solids-flattened-volume", `${label}: 흙을 고르게 편 부피 보존 모델이 아닙니다.`);
+        check(type(sourceItemId).commonTypeId === "soil-solids-flattened-volume-height", `${label}: mission-4의 세부 유형 ID가 평평하게 펴기 전 높이 유형과 다릅니다.`);
+        check(Number.isInteger(doubledHeight) && doubledHeight === data.doubledHeight && remainingVolume * 2 === baseArea * doubledHeight, `${label}: 높이의 정확한 유리수 부피 등식이 다릅니다.`);
+        check(cubeSide > 0 && cubeVolume < totalVolume && cuboidX >= 0 && cuboidX + data.cuboidLength + data.rightGap === data.boardLength && cubeY + cubeSide <= data.boardDepth && data.cuboidDepth <= data.boardDepth && nonOverlapping, `${label}: 판 위 가·나 배치가 맞지 않거나 겹칩니다.`);
+        check(normalize(generated.answer) === normalize(expectedAnswer), `${label}: 나의 높이가 정확한 대분수 답과 다릅니다.`);
+        check(generated.solution.includes(`${data.boardLength}×${data.boardDepth}×${data.flatHeight}=${totalVolume}cm³`) && generated.solution.includes(`${data.boardDepth}-${data.cuboidDepth}=${cubeSide}cm`) && generated.solution.includes(`${cubeSide}×${cubeSide}×${cubeSide}=${cubeVolume}cm³`) && generated.solution.includes(`${data.cuboidLength}×${data.cuboidDepth}=${baseArea}cm²`) && generated.solution.includes(`${totalVolume}-${cubeVolume}=${remainingVolume}cm³`) && generated.solution.includes(`${remainingVolume}÷${baseArea}=${expectedAnswer}`), `${label}: 전체 흙·가의 한 변·가의 부피·나의 밑면 넓이·남은 부피·나눗셈 풀이가 없습니다.`);
+        check((generated.solution.match(/나의 높이는/g) || []).length === 1, `${label}: 계산된 나의 높이가 하나로 정해지지 않았습니다.`);
+        [generated.prompt, generated.answerVisual].forEach((markup, phaseIndex) => ["initial-board-plan", "soil-cube-front-face", "soil-cuboid-front-face", "right-gap-dimension", "cuboid-length-dimension", "cuboid-depth-dimension", "flattened-board-plan", "flattened-soil-top-face", "flattened-height-dimension"].forEach(role => check(markup.includes(`data-visual-element=\"${role}\"`), `${label}/${phaseIndex ? "답" : "문제"}: ${role} 시각 역할이 없습니다.`)));
+        ["cuboid-height-mixed-fraction", "cuboid-height-whole", "cuboid-height-numerator", "cuboid-height-fraction-bar", "cuboid-height-denominator", "cuboid-height-unit", "soil-volume-answer-card"].forEach(role => check(generated.answerVisual.includes(`data-visual-element=\"${role}\"`), `${label}: 정답 SVG의 ${role} 역할이 없습니다.`));
+        check(!/\d+\s*\/\s*\d+/.test(generated.answerVisual), `${label}: 정답 SVG 라벨에 raw slash 분수가 남았습니다.`);
+        check(!textOnly(generated.prompt).includes(`가의 한 변: ${cubeSide}cm`) && !textOnly(generated.prompt).includes(`나의 높이: ${expectedAnswer}`) && !textOnly(generated.prompt).includes(`남은 부피: ${remainingVolume}cm³`), `${label}: 문제에 가의 한 변·나의 높이·남은 부피가 새어 나왔습니다.`);
+        if (difficulty === -1) check(promptText.includes(`나의 밑면은 가로 ${data.cuboidLength}cm, 세로 ${data.cuboidDepth}cm`) && generated.prompt.includes('data-step-evidence="guided"') && generated.prompt.includes(`${data.boardDepth}-${data.cuboidDepth}으로 가의 한 변`), `${label}: 쉬움의 한 변·전체 부피 첫 단계 안내가 없습니다.`);
+        if (difficulty === 0) check(!promptText.includes("나의 밑면은") && !generated.prompt.includes("data-step-evidence="), `${label}: 기준 문제에 쉬움 힌트 또는 답 밑면이 섞였습니다.`);
+        if (difficulty === 1) check(promptText.includes("가의 한 변이나 나의 밑면 넓이는 직접 알려주지 않았습니다") && generated.prompt.includes('data-step-evidence="independent-reasoning"') && !promptText.includes("나의 밑면은"), `${label}: 어려움의 그림 치수 추론 조건이 없습니다.`);
+        if (pool === 0) check(doubledHeight === 5 && generated.answer === "2 1/2cm" && totalVolume === 275 && cubeVolume === 125 && remainingVolume === 150, `${label}: 원문 5/2cm와 275·125·150 부피 계약이 다릅니다.`);
       } else if (kind === "mission-5") {
         const [width, height, depth] = expected["mission-5"][pool];
         const ropeA = 2 * (depth + height);

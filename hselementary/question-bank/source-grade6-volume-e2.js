@@ -7,7 +7,7 @@
   const generatorKey = "sourceGrade6VolumeE2";
   const ids = Object.freeze([
     "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4", "6-1-u6-e2-mission-1",
-    "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
+    "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-5"
   ]);
   const idSet = new Set(ids);
   const esc = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
@@ -43,6 +43,11 @@
       { rope: 96, cubeLeft: 16, cuboidLeft: 8 }
     ]),
     "mission-3": Object.freeze([{ unit: 10 }, { unit: 8 }, { unit: 12 }]),
+    "mission-4": Object.freeze([
+      { boardLength: 25, boardDepth: 11, flatHeight: 1, cuboidLength: 10, cuboidDepth: 6, rightGap: 7 },
+      { boardLength: 32, boardDepth: 12, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 8 },
+      { boardLength: 28, boardDepth: 10, flatHeight: 1, cuboidLength: 8, cuboidDepth: 6, rightGap: 6 }
+    ]),
     "mission-5": Object.freeze([
       { width: 8, height: 6, depth: 12 },
       { width: 10, height: 7, depth: 9 },
@@ -156,6 +161,27 @@
       baseArea, finalHeight, cutCrossSection, fillCrossSection, heightCandidates
     };
   };
+  const soilSolidsFacts = data => {
+    const cubeSide = data.boardDepth - data.cuboidDepth;
+    const totalVolume = data.boardLength * data.boardDepth * data.flatHeight;
+    const cubeVolume = cubeSide * cubeSide * cubeSide;
+    const cuboidBaseArea = data.cuboidLength * data.cuboidDepth;
+    const cuboidVolume = totalVolume - cubeVolume;
+    // Work with doubled values so every verified half-centimeter height stays exact.
+    const doubledHeight = 2 * cuboidVolume / cuboidBaseArea;
+    const cubeX = 0;
+    const cubeY = data.cuboidDepth;
+    const cuboidX = data.boardLength - data.rightGap - data.cuboidLength;
+    const cuboidY = 0;
+    const fits = Number.isInteger(cubeSide) && cubeSide > 0
+      && Number.isInteger(doubledHeight) && doubledHeight > 0
+      && cubeX >= 0 && cubeY >= 0 && cubeX + cubeSide <= data.boardLength && cubeY + cubeSide <= data.boardDepth
+      && cuboidX >= 0 && cuboidY >= 0 && cuboidX + data.cuboidLength + data.rightGap === data.boardLength
+      && cuboidY + data.cuboidDepth <= data.boardDepth
+      && (cubeX + cubeSide <= cuboidX || cuboidX + data.cuboidLength <= cubeX || cubeY + cubeSide <= cuboidY || cuboidY + data.cuboidDepth <= cubeY);
+    if (!fits || cubeVolume >= totalVolume || cuboidVolume * 2 !== cuboidBaseArea * doubledHeight) throw new Error("흙 부피 보존 풀의 배치 또는 정확한 높이가 성립하지 않습니다.");
+    return { cubeSide, totalVolume, cubeVolume, cuboidBaseArea, cuboidVolume, doubledHeight, heightWhole: Math.floor(doubledHeight / 2), cubeX, cubeY, cuboidX, cuboidY };
+  };
   const threeRopeFacts = data => {
     const ropeA = 2 * (data.depth + data.height);
     const ropeB = 2 * (data.width + data.height);
@@ -209,13 +235,13 @@
   const support = (level, message) => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
   const challenge = (level, message) => level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">${message}</p>` : "";
 
-  const text = (x, y, value, className = "source61-volume-e2-label", anchor = "middle") => `<text class="${className}" x="${x}" y="${y}" text-anchor="${anchor}" style="text-anchor:${anchor}">${esc(value)}</text>`;
+  const text = (x, y, value, className = "source61-volume-e2-label", anchor = "middle", role = "") => `<text class="${className}" x="${x}" y="${y}" text-anchor="${anchor}" style="text-anchor:${anchor}"${role ? ` data-visual-element="${role}"` : ""}>${esc(value)}</text>`;
   const line = (x1, y1, x2, y2, className = "source61-volume-e2-line", role = "") => `<line class="${className}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"${role ? ` data-visual-element="${role}"` : ""}/>`;
   const rect = (x, y, width, height, className = "source61-volume-e2-face", role = "") => `<rect class="${className}" x="${x}" y="${y}" width="${width}" height="${height}"${role ? ` data-visual-element="${role}"` : ""}/>`;
   const circle = (cx, cy, radius, className, role = "") => `<circle class="${className}" cx="${cx}" cy="${cy}" r="${radius}"${role ? ` data-visual-element="${role}"` : ""}/>`;
   const polygon = (points, className = "source61-volume-e2-face", role = "") => `<polygon class="${className}" points="${points.map(point => point.join(",")).join(" ")}"${role ? ` data-visual-element="${role}"` : ""}/>`;
 
-  const svgStyle = `<style>.source61-volume-e2-diagram .source61-volume-e2-sheet{fill:#f8fbfd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-face,.source61-volume-e2-diagram .source61-volume-e2-box{fill:#edf6fb;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-top{fill:#fff0bd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-side{fill:#dceffd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-fold{fill:none;stroke:#7891a5;stroke-width:1.5;stroke-dasharray:5 4}.source61-volume-e2-diagram .source61-volume-e2-grid{fill:none;stroke:#8ca7b8;stroke-width:.65}.source61-volume-e2-diagram .source61-volume-e2-unit-cube,.source61-volume-e2-diagram .source61-volume-e2-card{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-card-solved{fill:#fff0bd;stroke:#b77909;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-rope{fill:none;stroke:#c47b18;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-rope.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden{fill:none;stroke:#c47b18;stroke-width:2.4;stroke-dasharray:5 4;stroke-linecap:round;opacity:.72}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-knot{fill:#fff;stroke:#c47b18;stroke-width:3}.source61-volume-e2-diagram .source61-volume-e2-rope-knot.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-stair-cell{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-stair-cell.is-solved{fill:#fff0bd}.source61-volume-e2-diagram .source61-volume-e2-soil-front{fill:#d9e7d0;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-high{fill:#c9dfb8;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-low{fill:#e3edd9;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-cliff{fill:#b7ceb0;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-cut{fill:#f5b7ae;fill-opacity:.82;stroke:#b33d35;stroke-width:1.5}.source61-volume-e2-diagram .source61-volume-e2-soil-fill{fill:#b7dcf0;fill-opacity:.9;stroke:#2175a6;stroke-width:1.5}.source61-volume-e2-diagram .source61-volume-e2-final-level{fill:none;stroke:#b33d35;stroke-width:3;stroke-dasharray:8 5}.source61-volume-e2-diagram .source61-volume-e2-line,.source61-volume-e2-diagram .source61-volume-e2-outline,.source61-volume-e2-diagram .source61-volume-e2-depth,.source61-volume-e2-diagram .source61-volume-e2-dimension,.source61-volume-e2-diagram .source61-volume-e2-extension{fill:none;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-dimension{stroke:#6d8394;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-extension{stroke:#9aacb9;stroke-width:1}.source61-volume-e2-diagram .source61-volume-e2-perimeter{fill:none;stroke:#c53b32;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fff)}.source61-volume-e2-diagram .source61-volume-e2-label,.source61-volume-e2-diagram .source61-volume-e2-measure,.source61-volume-e2-diagram .source61-volume-e2-note,.source61-volume-e2-diagram .source61-volume-e2-title,.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;fill:#183b56!important;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-title{font-size:13px;font-weight:950}.source61-volume-e2-diagram .source61-volume-e2-note{font-size:10px;fill:#526b7d!important}.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-size:11px;font-weight:950;fill:#9a6500!important}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-title{font-size:22px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-note{font-size:20px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-answer-label{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-title{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-note{font-size:17px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-measure,.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-answer-label{font-size:18px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-title{font-size:18px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-note{font-size:15px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-measure,.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-answer-label{font-size:16px}</style>`;
+  const svgStyle = `<style>.source61-volume-e2-diagram .source61-volume-e2-sheet{fill:#f8fbfd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-face,.source61-volume-e2-diagram .source61-volume-e2-box{fill:#edf6fb;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-top{fill:#fff0bd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-side{fill:#dceffd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-fold{fill:none;stroke:#7891a5;stroke-width:1.5;stroke-dasharray:5 4}.source61-volume-e2-diagram .source61-volume-e2-grid{fill:none;stroke:#8ca7b8;stroke-width:.65}.source61-volume-e2-diagram .source61-volume-e2-unit-cube,.source61-volume-e2-diagram .source61-volume-e2-card{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-card-solved{fill:#fff0bd;stroke:#b77909;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-rope{fill:none;stroke:#c47b18;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-rope.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden{fill:none;stroke:#c47b18;stroke-width:2.4;stroke-dasharray:5 4;stroke-linecap:round;opacity:.72}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-knot{fill:#fff;stroke:#c47b18;stroke-width:3}.source61-volume-e2-diagram .source61-volume-e2-rope-knot.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-stair-cell{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-stair-cell.is-solved{fill:#fff0bd}.source61-volume-e2-diagram .source61-volume-e2-soil-front{fill:#d9e7d0;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-high{fill:#c9dfb8;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-low{fill:#e3edd9;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-cliff{fill:#b7ceb0;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-cut{fill:#f5b7ae;fill-opacity:.82;stroke:#b33d35;stroke-width:1.5}.source61-volume-e2-diagram .source61-volume-e2-soil-fill{fill:#b7dcf0;fill-opacity:.9;stroke:#2175a6;stroke-width:1.5}.source61-volume-e2-diagram .source61-volume-e2-final-level{fill:none;stroke:#b33d35;stroke-width:3;stroke-dasharray:8 5}.source61-volume-e2-diagram .source61-volume-e2-line,.source61-volume-e2-diagram .source61-volume-e2-outline,.source61-volume-e2-diagram .source61-volume-e2-depth,.source61-volume-e2-diagram .source61-volume-e2-dimension,.source61-volume-e2-diagram .source61-volume-e2-extension{fill:none;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-dimension{stroke:#6d8394;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-extension{stroke:#9aacb9;stroke-width:1}.source61-volume-e2-diagram .source61-volume-e2-perimeter{fill:none;stroke:#c53b32;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fff)}.source61-volume-e2-diagram .source61-volume-e2-label,.source61-volume-e2-diagram .source61-volume-e2-measure,.source61-volume-e2-diagram .source61-volume-e2-note,.source61-volume-e2-diagram .source61-volume-e2-title,.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;fill:#183b56!important;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-title{font-size:13px;font-weight:950}.source61-volume-e2-diagram .source61-volume-e2-note{font-size:10px;fill:#526b7d!important}.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-size:11px;font-weight:950;fill:#9a6500!important}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-title{font-size:22px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-note{font-size:20px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-answer-label{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-title{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-note{font-size:17px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-measure,.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-answer-label{font-size:18px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-title{font-size:18px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-note{font-size:15px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-measure,.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-answer-label{font-size:16px}.source61-volume-e2-diagram[data-model-key="soil-solids-flattened-volume"] .source61-volume-e2-title{font-size:20px}.source61-volume-e2-diagram[data-model-key="soil-solids-flattened-volume"] .source61-volume-e2-measure{font-size:19px}.source61-volume-e2-diagram[data-model-key="soil-solids-flattened-volume"] .source61-volume-e2-answer-label{font-size:17px}</style>`;
   const svg = (kind, data, poolIndex, solved, content, required, width = 640, height = 360) => `<svg class="geometry-diagram source61-volume-e2-diagram" style="display:block;width:min(${Math.min(width, 640)}px,100%);height:auto;margin:12px auto;overflow:visible" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(`${kind} ${solved ? "정답 그림" : "문제 그림"}`)}" data-phase="${solved ? "answer" : "problem"}" data-model-key="${kind}" data-source61-volume-e2-values="${esc(data.values.join(","))}" data-difficulty-level="${data.level}" data-required-elements="${required.join(",")}" data-pool-index="${poolIndex}">${svgStyle}${content}</svg>`;
 
   const explorationSvg = (data, poolIndex, solved) => {
@@ -624,6 +650,75 @@
     return svg("earthwork-leveling", { values: [data.width, data.totalDepth, data.lowDepth, data.highStart, data.highEnd, data.lowHeight, facts.finalHeight], level: data.level }, poolIndex, solved, content, required, 640, solved ? 600 : 370);
   };
 
+  const soilSolidsSvg = (data, poolIndex, solved) => {
+    const facts = soilSolidsFacts(data);
+    const board = (originX, originY, scale, heightScale, flat) => {
+      const point = (x, y, z = 0) => [originX + x * scale + y * scale * 0.42, originY - y * scale * 0.42 - z * heightScale];
+      const plan = [point(0, 0), point(data.boardLength, 0), point(data.boardLength, data.boardDepth), point(0, data.boardDepth)];
+      const solid = (x, y, width, depth, height, role, label) => {
+        const front = [point(x, y), point(x + width, y), point(x + width, y, height), point(x, y, height)];
+        const side = [point(x + width, y), point(x + width, y + depth), point(x + width, y + depth, height), point(x + width, y, height)];
+        const top = [point(x, y, height), point(x + width, y, height), point(x + width, y + depth, height), point(x, y + depth, height)];
+        const hidden = `${line(...point(x, y + depth), ...point(x + width, y + depth), "source61-volume-e2-fold", `${role}-hidden-base`)}${line(...point(x, y + depth), ...point(x, y + depth, height), "source61-volume-e2-fold", `${role}-hidden-edge`)}`;
+        return `${hidden}${polygon(front, `source61-volume-e2-soil-front${solved ? " is-solved" : ""}`, `${role}-front-face`)}${polygon(side, `source61-volume-e2-soil-cliff${solved ? " is-solved" : ""}`, `${role}-side-face`)}${polygon(top, `source61-volume-e2-soil-high${solved ? " is-solved" : ""}`, `${role}-top-face`)}${text((top[0][0] + top[2][0]) / 2, (top[0][1] + top[2][1]) / 2 + 4, label, solved ? "source61-volume-e2-answer-label" : "source61-volume-e2-title")}`;
+      };
+      const boardFace = `${polygon(plan, "source61-volume-e2-sheet", flat ? "flattened-board-plan" : "initial-board-plan")}${line(...plan[0], ...plan[1], "source61-volume-e2-outline", flat ? "flattened-board-front" : "initial-board-front")}${line(...plan[2], ...plan[3], "source61-volume-e2-fold", flat ? "flattened-board-hidden" : "initial-board-hidden")}`;
+      return { point, boardFace, solid };
+    };
+    const initialOriginX = 30;
+    const initialScale = Math.min(8, 275 / (data.boardLength + data.boardDepth * 0.42));
+    const flatOriginX = 350;
+    const flatScale = Math.min(6.4, 240 / (data.boardLength + data.boardDepth * 0.42));
+    const initial = board(initialOriginX, 272, initialScale, 10, false);
+    const flat = board(flatOriginX, 244, flatScale, 11, true);
+    const cube = initial.solid(facts.cubeX, facts.cubeY, facts.cubeSide, facts.cubeSide, facts.cubeSide, "soil-cube", "가");
+    const cuboid = initial.solid(facts.cuboidX, facts.cuboidY, data.cuboidLength, data.cuboidDepth, facts.doubledHeight / 2, "soil-cuboid", "나");
+    const flatSolid = flat.solid(0, 0, data.boardLength, data.boardDepth, data.flatHeight, "flattened-soil", "고르게 편 흙");
+    const initialLengthY = 326;
+    const initialDepthStart = initial.point(data.boardLength, 0);
+    const initialDepthEnd = initial.point(data.boardLength, data.boardDepth);
+    const cuboidStart = initial.point(facts.cuboidX, 0);
+    const cuboidEnd = initial.point(facts.cuboidX + data.cuboidLength, 0);
+    const cuboidDepthEnd = initial.point(facts.cuboidX, data.cuboidDepth);
+    const gapEnd = initial.point(data.boardLength, 0);
+    const flatLengthY = 304;
+    const flatDepthStart = flat.point(data.boardLength, 0);
+    const flatDepthEnd = flat.point(data.boardLength, data.boardDepth);
+    const dimensions = [
+      line(...initial.point(0, 0), initialOriginX, initialLengthY, "source61-volume-e2-dimension", "initial-board-length-dimension"),
+      line(...initial.point(data.boardLength, 0), initialOriginX + data.boardLength * initialScale, initialLengthY, "source61-volume-e2-dimension", "initial-board-length-extension"),
+      line(initialOriginX, initialLengthY, initialOriginX + data.boardLength * initialScale, initialLengthY, "source61-volume-e2-dimension", "initial-board-length-line"),
+      text(initialOriginX + data.boardLength * initialScale / 2, initialLengthY + 22, `${data.boardLength}cm`, "source61-volume-e2-measure", "middle", "initial-board-length-label"),
+      line(...initialDepthStart, ...initialDepthEnd, "source61-volume-e2-dimension", "initial-board-depth-dimension"),
+      text(initialDepthEnd[0] + 12, initialDepthEnd[1] - 12, `${data.boardDepth}cm`, "source61-volume-e2-measure", "start", "initial-board-depth-label"),
+      line(...cuboidStart, ...cuboidEnd, "source61-volume-e2-dimension", "cuboid-length-dimension"),
+      text((cuboidStart[0] + cuboidEnd[0]) / 2, cuboidStart[1] + 22, `${data.cuboidLength}cm`, "source61-volume-e2-measure", "middle", "cuboid-length-label"),
+      line(...cuboidStart, ...cuboidDepthEnd, "source61-volume-e2-dimension", "cuboid-depth-dimension"),
+      text((cuboidStart[0] + cuboidDepthEnd[0]) / 2 - 8, (cuboidStart[1] + cuboidDepthEnd[1]) / 2 - 12, `${data.cuboidDepth}cm`, "source61-volume-e2-measure", "end", "cuboid-depth-label"),
+      line(...cuboidEnd, ...gapEnd, "source61-volume-e2-dimension", "right-gap-dimension"),
+      text((cuboidEnd[0] + gapEnd[0]) / 2, cuboidEnd[1] - 12, `${data.rightGap}cm`, "source61-volume-e2-measure", "middle", "right-gap-label"),
+      line(...flat.point(0, 0), flatOriginX, flatLengthY, "source61-volume-e2-dimension", "flattened-length-dimension"),
+      line(...flat.point(data.boardLength, 0), flatOriginX + data.boardLength * flatScale, flatLengthY, "source61-volume-e2-dimension", "flattened-length-extension"),
+      line(flatOriginX, flatLengthY, flatOriginX + data.boardLength * flatScale, flatLengthY, "source61-volume-e2-dimension", "flattened-length-line"),
+      text(flatOriginX + data.boardLength * flatScale / 2, flatLengthY + 22, `${data.boardLength}cm`, "source61-volume-e2-measure", "middle", "flattened-length-label"),
+      line(...flatDepthStart, ...flatDepthEnd, "source61-volume-e2-dimension", "flattened-depth-dimension"),
+      text(Math.min(flatDepthEnd[0] + 12, 590), flatDepthEnd[1] - 10, `${data.boardDepth}cm`, "source61-volume-e2-measure", "start", "flattened-depth-label"),
+      line(...flat.point(data.boardLength, 0), ...flat.point(data.boardLength, 0, data.flatHeight), "source61-volume-e2-dimension", "flattened-height-dimension"),
+      text(flat.point(data.boardLength, 0, data.flatHeight)[0] + 14, flat.point(data.boardLength, 0, data.flatHeight)[1] + 12, `${data.flatHeight}cm`, "source61-volume-e2-measure", "start", "flattened-height-label")
+    ].join("");
+    const mixedFraction = solved ? `<g data-visual-element="cuboid-height-mixed-fraction" class="is-solved"><text class="source61-volume-e2-answer-label" x="500" y="474" text-anchor="middle" data-visual-element="cuboid-height-whole">${facts.heightWhole}</text><text class="source61-volume-e2-answer-label" x="528" y="455" text-anchor="middle" data-visual-element="cuboid-height-numerator">1</text><line class="source61-volume-e2-line is-solved" x1="518" y1="465" x2="538" y2="465" data-visual-element="cuboid-height-fraction-bar"/><text class="source61-volume-e2-answer-label" x="528" y="487" text-anchor="middle" data-visual-element="cuboid-height-denominator">2</text><text class="source61-volume-e2-answer-label" x="560" y="474" text-anchor="start" data-visual-element="cuboid-height-unit">cm</text></g>` : "";
+    const answerCard = solved ? `${rect(26, 350, 588, 150, "source61-volume-e2-card-solved", "soil-volume-answer-card")}${text(48, 377, "흙의 양은 그대로", "source61-volume-e2-title", "start")}${text(48, 404, `전체 흙 ${data.boardLength}×${data.boardDepth}×${data.flatHeight}=${facts.totalVolume}cm³`, "source61-volume-e2-answer-label", "start", "soil-total-volume-calc")}${text(48, 431, `가의 한 변 ${data.boardDepth}-${data.cuboidDepth}=${facts.cubeSide}cm`, "source61-volume-e2-answer-label", "start", "soil-cube-side-calc")}${text(48, 458, `가의 부피 ${facts.cubeSide}×${facts.cubeSide}×${facts.cubeSide}=${facts.cubeVolume}cm³`, "source61-volume-e2-answer-label", "start", "soil-cube-volume-calc")}${text(322, 404, `나의 밑면 ${data.cuboidLength}×${data.cuboidDepth}=${facts.cuboidBaseArea}cm²`, "source61-volume-e2-answer-label", "start", "soil-cuboid-base-area-calc")}${text(322, 431, `나의 부피 ${facts.totalVolume}-${facts.cubeVolume}=${facts.cuboidVolume}cm³`, "source61-volume-e2-answer-label", "start", "soil-cuboid-volume-calc")}${text(322, 474, `나의 높이 ${facts.cuboidVolume}÷${facts.cuboidBaseArea}=`, "source61-volume-e2-answer-label", "start", "soil-cuboid-height-calc")}${mixedFraction}` : "";
+    const content = `${text(170, 25, "처음 쌓은 흙", "source61-volume-e2-title")}${text(490, 25, "모두 고르게 편 흙", "source61-volume-e2-title")}${initial.boardFace}${cube}${cuboid}${flat.boardFace}${flatSolid}${dimensions}${answerCard}`;
+    const required = [
+      "initial-board-plan", "initial-board-front", "initial-board-hidden", "soil-cube-front-face", "soil-cube-side-face", "soil-cube-top-face", "soil-cube-hidden-base", "soil-cube-hidden-edge",
+      "soil-cuboid-front-face", "soil-cuboid-side-face", "soil-cuboid-top-face", "soil-cuboid-hidden-base", "soil-cuboid-hidden-edge", "initial-board-length-dimension", "initial-board-depth-dimension", "cuboid-length-dimension", "cuboid-depth-dimension", "right-gap-dimension",
+      "initial-board-length-label", "initial-board-depth-label", "cuboid-length-label", "cuboid-depth-label", "right-gap-label",
+      "flattened-board-plan", "flattened-board-front", "flattened-board-hidden", "flattened-soil-front-face", "flattened-soil-side-face", "flattened-soil-top-face", "flattened-height-dimension", "flattened-length-dimension", "flattened-depth-dimension", "flattened-length-label", "flattened-depth-label", "flattened-height-label"
+    ];
+    if (solved) required.push("soil-volume-answer-card", "soil-total-volume-calc", "soil-cube-side-calc", "soil-cube-volume-calc", "soil-cuboid-base-area-calc", "soil-cuboid-volume-calc", "soil-cuboid-height-calc", "cuboid-height-mixed-fraction", "cuboid-height-whole", "cuboid-height-numerator", "cuboid-height-fraction-bar", "cuboid-height-denominator", "cuboid-height-unit");
+    return svg("soil-solids-flattened-volume", { values: [data.boardLength, data.boardDepth, data.flatHeight, data.cuboidLength, data.cuboidDepth, data.rightGap, facts.cubeSide, facts.doubledHeight], level: data.level }, poolIndex, solved, content, required, 640, solved ? 520 : 365);
+  };
+
   const stairSvg = (data, poolIndex, solved) => {
     const cell = 22;
     const baseX = 48;
@@ -753,6 +848,18 @@
       const loopSteps = `가의 밑면 한 변은 ${facts.cubeUsed}÷8=${facts.side}cm입니다. 가로 둘레는 4×${facts.side}=${4 * facts.side}cm이고, 위아래 둘레는 2×${facts.side}+2×${facts.side}=${4 * facts.side}cm입니다. 나의 가로 둘레는 4×${facts.side}=${4 * facts.side}cm이고, 위아래 둘레에는 밑면 한 변 두 개와 높이 두 개가 있습니다. 따라서 나의 높이는 (${facts.cuboidUsed}-6×${facts.side})÷2=${facts.height}cm입니다.`;
       return { answer: `${num(facts.volume)}cm³`, visual: ropeSvg(model, poolIndex, solved), solution: `${firstStep} ${loopSteps} 나의 부피는 ${facts.side}×${facts.side}×${facts.height}=${num(facts.volume)}cm³입니다.` };
     }
+    if (kind === "mission-4") {
+      const facts = soilSolidsFacts(data);
+      const model = { ...data, ...facts, level };
+      const answer = `${facts.heightWhole} 1/2cm`;
+      const firstStep = level === 0
+        ? "그림의 깊이 차로 가의 한 변을 먼저 구하고, 고르게 편 흙의 부피부터 계산합니다."
+        : level === 2
+          ? "그림에 표시된 길이에서 가의 한 변과 나의 밑면 넓이를 직접 찾아야 합니다."
+          : "흙을 다시 펴도 전체 양은 같습니다.";
+      const steps = `전체 흙의 부피는 ${data.boardLength}×${data.boardDepth}×${data.flatHeight}=${facts.totalVolume}cm³입니다. 가의 한 변은 ${data.boardDepth}-${data.cuboidDepth}=${facts.cubeSide}cm이므로 가의 부피는 ${facts.cubeSide}×${facts.cubeSide}×${facts.cubeSide}=${facts.cubeVolume}cm³입니다. 나의 밑면 넓이는 ${data.cuboidLength}×${data.cuboidDepth}=${facts.cuboidBaseArea}cm²입니다. 나의 남은 부피는 ${facts.totalVolume}-${facts.cubeVolume}=${facts.cuboidVolume}cm³입니다. 따라서 나의 높이는 ${facts.cuboidVolume}÷${facts.cuboidBaseArea}=${answer}입니다.`;
+      return { answer, visual: soilSolidsSvg(model, poolIndex, solved), solution: `${firstStep} ${steps}` };
+    }
     if (kind === "mission-5") {
       const facts = threeRopeFacts(data);
       const expected = [data.width, data.height, data.depth];
@@ -827,6 +934,11 @@
           : `끈의 길이는 ${data.rope}cm이고, 가에서 남은 끈은 ${data.cubeLeft}cm, 나에서 남은 끈은 ${data.cuboidLeft}cm입니다.`;
       return `정육면체 상자 가와 밑면이 가와 같은 정사각형인 직육면체 상자 나를 같은 길이의 끈으로 각각 그림처럼 묶었습니다. ${condition} 나의 부피를 구하세요. (단, 매듭의 길이는 생각하지 않습니다.)`;
     }
+    if (kind === "mission-4") {
+      if (level === 0) return `그림과 같이 가로 ${data.boardLength}cm, 세로 ${data.boardDepth}cm인 직사각형 모양 판에 흙으로 정육면체 모양 가와 직육면체 모양 나를 만들었습니다. 나의 밑면은 가로 ${data.cuboidLength}cm, 세로 ${data.cuboidDepth}cm입니다. 흙을 모두 고르게 펴서 가로 ${data.boardLength}cm, 세로 ${data.boardDepth}cm, 높이 ${data.flatHeight}cm인 직육면체로 만들었습니다. 나에 처음 쌓여 있던 흙의 높이를 구하세요.`;
+      if (level === 2) return `그림과 같이 판 위의 흙으로 정육면체 모양 가와 직육면체 모양 나를 만들었다가, 모두 고르게 펴서 높이 ${data.flatHeight}cm인 직육면체로 만들었습니다. 가의 한 변이나 나의 밑면 넓이는 직접 알려주지 않았습니다. 표시된 그림의 길이를 이용하여 나에 처음 쌓여 있던 흙의 높이를 구하세요.`;
+      return `그림과 같이 가로 ${data.boardLength}cm, 세로 ${data.boardDepth}cm인 직사각형 모양 판에 흙으로 정육면체 모양 가와 직육면체 모양 나를 만들었습니다. 흙을 모두 고르게 펴서 가로 ${data.boardLength}cm, 세로 ${data.boardDepth}cm, 높이 ${data.flatHeight}cm인 직육면체로 만들었습니다. 나에 처음 쌓여 있던 흙의 높이를 구하세요.`;
+    }
     if (kind === "mission-5") {
       const facts = threeRopeFacts(data);
       const condition = level === 0
@@ -848,6 +960,7 @@
         : kind === "example-3" ? "전체 깊이에서 낮은 부분의 깊이를 빼 높은 부분의 깊이를 먼저 구해 보세요."
         : kind === "example-4" ? "다의 끈에서 나의 고리 길이를 빼 수평 고리 길이부터 찾아보세요."
         : kind === "mission-2" ? "주어진 사용 길이에서 가의 밑면 한 변을 먼저 찾아보세요."
+          : kind === "mission-4" ? `${data.boardDepth}-${data.cuboidDepth}으로 가의 한 변을 찾고, 고르게 편 흙 전체의 부피를 먼저 구해 보세요.`
           : kind === "mission-5" ? "가와 나의 끈 길이는 2로, 다의 끈 길이는 4로 나누어 세 변의 합을 비교해 보세요."
           : "주어진 앞면 칸 수마다 한 칸의 너비와 깊이를 곱해 보세요.";
   const challengeFor = kind => kind === "exploration" ? "종이의 둘레와 두 길이의 차로 가로와 세로를 먼저 구해 보세요."
@@ -856,6 +969,7 @@
         : kind === "example-3" ? "폭이 같다는 점을 이용하여 옆에서 본 두 단면의 넓이만으로 나중 높이를 구해 보세요."
         : kind === "example-4" ? "세 가지 두 변의 합을 모두 구한 뒤, 두 합을 더하고 남은 한 합을 빼서 가로를 찾아보세요."
         : kind === "mission-2" ? "가에서 사용한 끈을 구한 뒤, 두 상자가 사용한 끈의 차로 나의 사용 길이를 찾아보세요."
+          : kind === "mission-4" ? "그림의 치수에서 가의 한 변과 나의 밑면 넓이를 차례로 찾아, 흙의 전체 부피가 그대로임을 이용해 보세요."
           : kind === "mission-5" ? "먼저 다에서 사용한 끈의 길이를 관계로 구하고, 세 변의 합에서 두 변의 합을 각각 빼 보세요."
           : "전체 가로를 5등분해 한 칸을 구하고, 깊이가 전체 가로와 같다는 조건을 이용하세요.";
 
@@ -871,15 +985,19 @@
     if (kind === "example-3") return [data.width, data.totalDepth, data.lowDepth, data.highStart, data.highEnd, data.lowHeight];
     if (kind === "example-4") return [data.width, data.depth, data.height];
     if (kind === "mission-2") return [data.rope, data.cubeLeft, data.cuboidLeft];
+    if (kind === "mission-4") return [data.boardLength, data.boardDepth, data.flatHeight, data.cuboidLength, data.cuboidDepth, data.rightGap];
     if (kind === "mission-5") return [data.width, data.height, data.depth];
     return [data.unit, 5 * data.unit];
   };
   const markInventory = () => {
     const items = window.HSE_SOURCE_INVENTORY_GRADE6?.items;
-    if (Array.isArray(items)) items.filter(item => idSet.has(item.sourceItemId)).forEach(item => Object.assign(item, {
+    if (Array.isArray(items)) items.filter(item => idSet.has(item.sourceItemId)).forEach(item => {
+      Object.assign(item, {
       generatorKey, reviewLocked: false, reviewReason: "", answerVisualStatus: "verified", verifiedVariantCount: 3,
       verifiedVariantProvenance: ["source-values", "source-structure-variant", "source-structure-variant"]
-    }));
+      });
+      if (item.sourceItemId === "6-1-u6-e2-mission-4") Object.assign(item, { commonTypeId: "soil-solids-flattened-volume-height", typeLabel: "흙을 평평하게 펴기 전 직육면체의 높이 구하기" });
+    });
     const semesters = window.HSE_CURRICULUM?.semesters || [];
     semesters.flatMap(semester => semester.units || []).flatMap(unit => unit.subunits || []).flatMap(subunit => subunit.types || []).filter(type => idSet.has(type.sourceItemId)).forEach(type => Object.assign(type, { generatorKey, reviewLocked: false, verifiedVariantCount: 3 }));
   };

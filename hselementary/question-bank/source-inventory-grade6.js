@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 217
+    "unlocked": 218
   },
   "items": [
     {
@@ -6547,21 +6547,28 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u6-e2-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "typeLabel": "홈을 판 판으로 입체를 만든 뒤 높이 구하기",
-      "commonTypeId": "grooved-board-flattened-volume-height",
+      "typeLabel": "흙을 평평하게 펴기 전 직육면체의 높이 구하기",
+      "commonTypeId": "soil-solids-flattened-volume-height",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ],
+      "rawSourceItemId": "6-1-u6-e2-mission-4",
+      "variant": 0
     },
     {
       "semester": "6-1",
