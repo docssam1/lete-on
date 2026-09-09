@@ -11,17 +11,20 @@ const generatorKey = "sourceGrade6PrismsPyramidsE2";
 const sourceIds = [
   "6-1-u2-e2-example-2-2",
   "6-1-u2-e2-mission-2",
-  "6-1-u2-e2-mission-5"
+  "6-1-u2-e2-mission-5",
+  "6-1-u2-e2-mission-6"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e2-example-2-2", 74],
   ["6-1-u2-e2-mission-2", 63],
-  ["6-1-u2-e2-mission-5", 92]
+  ["6-1-u2-e2-mission-5", 92],
+  ["6-1-u2-e2-mission-6", 77]
 ]);
 const evidenceKinds = [
   "cuboid-all-corners-cut",
   "regular-prism-radial-cut",
-  "prism-all-vertices-truncated"
+  "prism-all-vertices-truncated",
+  "pentagonal-prism-shortest-net-area"
 ];
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
@@ -39,6 +42,11 @@ const expectedPools = [
     { values: [5, 10, 15, 17, 30, 45, 92], answer: 92 },
     { values: [6, 12, 18, 20, 36, 54, 110], answer: 110 },
     { values: [7, 14, 21, 23, 42, 63, 128], answer: 128 }
+  ],
+  [
+    { values: [7, 11, 2, 3, 14, 77], answer: 77 },
+    { values: [8, 13, 2, 3, 16, 104], answer: 104 },
+    { values: [6, 15, 2, 3, 12, 90], answer: 90 }
   ]
 ];
 
@@ -111,6 +119,17 @@ function independentAnswer(evidence) {
     check(vertices + edges + faces === total && total === 18 * n + 2, "절단 뒤 전체 수가 독립 계산과 다릅니다.");
     return total;
   }
+  if (evidence.kind === "pentagonal-prism-shortest-net-area") {
+    const [side, height, shortFaces, longFaces, triangleBase, area] = values;
+    check([6, 7, 8].includes(side) && [11, 13, 15].includes(height), "정오각기둥의 고정 길이 pool이 아닙니다.");
+    check(shortFaces === 2 && longFaces === 3 && shortFaces + longFaces === 5, "정오각기둥의 두 둘레 방향이 옆면 2개와 3개가 아닙니다.");
+    check(triangleBase === shortFaces * side, "펼친 삼각형의 밑변이 옆면 2장의 너비와 다릅니다.");
+    const shortPathSquared = height * height + (shortFaces * side) ** 2;
+    const longPathSquared = height * height + (longFaces * side) ** 2;
+    check(shortPathSquared < longPathSquared, "옆면 2개를 지나는 경로가 옆면 3개 경로보다 유일하게 짧지 않습니다.");
+    check(area === triangleBase * height / 2 && area === side * height, "삼각형 넓이가 독립 계산과 다릅니다.");
+    return area;
+  }
   throw new Error(`알 수 없는 E2 검산 종류: ${evidence.kind}`);
 }
 
@@ -182,20 +201,40 @@ function checkVariant(variant, generated, evidence) {
     check(answer.includes(`data-result-highlight="${9 * n}"`), "답에서 9n 결과가 강조되지 않았습니다.");
     return;
   }
-  const [n, originalVertices, originalEdges, faces, vertices, edges, total] = values;
+  if (variant === 2) {
+    const [n, originalVertices, originalEdges, faces, vertices, edges, total] = values;
+    const promptText = visibleText(prompt);
+    for (const forbidden of [String(faces), String(vertices), String(edges), String(total)]) {
+      check(!new RegExp(`\\b${forbidden}\\b`).test(promptText), `문제에 절두 뒤 결과 ${forbidden}가 노출되었습니다.`);
+    }
+    check(!/(?:18n\\+2|18×n\\+2|18n)/.test(promptText), "문제에 절두 뒤 전체 공식이 노출되었습니다.");
+    for (const markup of [prompt, answer]) {
+      check(markup.includes(`data-n="${n}"`) && markup.includes(`data-original-vertices="${originalVertices}"`) && markup.includes(`data-original-edges="${originalEdges}"`), "원래 각기둥 semantic data가 계약과 다릅니다.");
+      check(markup.includes(`data-result-vertex-count="${vertices}"`) && markup.includes(`data-result-edge-count="${edges}"`) && markup.includes(`data-result-face-count="${faces}"`) && markup.includes(`data-total-count="${total}"`), "절두 뒤 결과 semantic data가 계약과 다릅니다.");
+      check(countClass(markup, "source61-e2-corner-cut") === 2 * n, "절단면 polygon이 2n개가 아닙니다.");
+      check(countClass(markup, "source61-e2-prism-vertex") === 6 * n, "절단 뒤 꼭짓점 dot이 6n개가 아닙니다.");
+    }
+    check(!prompt.includes("data-result-highlight="), "문제에 결과 강조 속성이 있습니다.");
+    check(answer.includes(`data-result-highlight="${total}"`), "답에서 절두 뒤 전체 수가 강조되지 않았습니다.");
+    return;
+  }
+
+  const [side, height, shortFaces, longFaces, triangleBase, area] = values;
   const promptText = visibleText(prompt);
-  for (const forbidden of [String(faces), String(vertices), String(edges), String(total)]) {
-    check(!new RegExp(`\\b${forbidden}\\b`).test(promptText), `문제에 절두 뒤 결과 ${forbidden}가 노출되었습니다.`);
-  }
-  check(!/(?:18n\\+2|18×n\\+2|18n)/.test(promptText), "문제에 절두 뒤 전체 공식이 노출되었습니다.");
+  check(prompt.includes("정오각기둥") && prompt.includes("삼각형 ㄱㄴㄷ"), "원문의 정오각기둥과 삼각형 ㄱㄴㄷ 물음이 없습니다.");
+  check(!new RegExp(`(^|\\D)${area}(?=\\D|$)`).test(promptText), "문제에 삼각형 넓이 답이 노출되었습니다.");
+  check(!new RegExp(`(^|\\D)${triangleBase}(?=\\D|$)`).test(promptText), "문제에 펼친 밑변의 계산 결과가 노출되었습니다.");
   for (const markup of [prompt, answer]) {
-    check(markup.includes(`data-n="${n}"`) && markup.includes(`data-original-vertices="${originalVertices}"`) && markup.includes(`data-original-edges="${originalEdges}"`), "원래 각기둥 semantic data가 계약과 다릅니다.");
-    check(markup.includes(`data-result-vertex-count="${vertices}"`) && markup.includes(`data-result-edge-count="${edges}"`) && markup.includes(`data-result-face-count="${faces}"`) && markup.includes(`data-total-count="${total}"`), "절두 뒤 결과 semantic data가 계약과 다릅니다.");
-    check(countClass(markup, "source61-e2-corner-cut") === 2 * n, "절단면 polygon이 2n개가 아닙니다.");
-    check(countClass(markup, "source61-e2-prism-vertex") === 6 * n, "절단 뒤 꼭짓점 dot이 6n개가 아닙니다.");
+    check(markup.includes('data-base-sides="5"') && markup.includes('data-net-face-count="5"'), "정오각기둥과 옆면 다섯 장의 semantic data가 없습니다.");
+    check(markup.includes(`data-base-edge="${side}"`) && markup.includes(`data-prism-height="${height}"`), "밑면의 한 변과 높이 semantic data가 고정 pool과 다릅니다.");
+    check(markup.includes(`data-shortest-face-count="${shortFaces}"`) && markup.includes(`data-other-face-count="${longFaces}"`), "두 방향의 옆면 수 semantic data가 다릅니다.");
+    check(markup.includes(`data-triangle-base="${triangleBase}"`) && markup.includes(`data-area="${area}"`), "펼친 삼각형의 길이·넓이 semantic data가 다릅니다.");
+    check(countClass(markup, "source61-e2-shortest-face") === 5, "전개도의 옆면 사각형이 5개가 아닙니다.");
+    check(countClass(markup, "source61-e2-shortest-solid-route") === 1, "입체 그림의 가장 짧은 경로가 하나가 아닙니다.");
   }
-  check(!prompt.includes("data-result-highlight="), "문제에 결과 강조 속성이 있습니다.");
-  check(answer.includes(`data-result-highlight="${total}"`), "답에서 절두 뒤 전체 수가 강조되지 않았습니다.");
+  check(countClass(prompt, "source61-e2-shortest-net-line") === 0, "문제 전개도에 정답 선분이 미리 그려졌습니다.");
+  check(countClass(answer, "source61-e2-shortest-net-line") === 1 && countClass(answer, "source61-e2-shortest-triangle") === 1, "답 그림에 최단 선분과 삼각형 강조가 없습니다.");
+  check(answer.includes(`data-result-highlight="${area}"`), "답에서 삼각형 넓이가 강조되지 않았습니다.");
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E2 전용 생성기가 등록되지 않았습니다.");
@@ -205,7 +244,8 @@ const ledgerItems = new Map(sourceLedger.items.map(item => [item.sourceItemId, i
 const ledgerContracts = [
   { id: "6-1-u2-e2-example-2", page: 9, words: ["예제 2-2", "직육면체", "모든 꼭짓점", "면·꼭짓점·모서리"] },
   { id: "6-1-u2-e2-mission-2", page: 10, words: ["Mission 2", "정칠각기둥", "수직", "삼각기둥 7개"] },
-  { id: "6-1-u2-e2-mission-5", page: 10, words: ["Mission 5", "오각기둥", "삼등분", "모든 꼭짓점"] }
+  { id: "6-1-u2-e2-mission-5", page: 10, words: ["Mission 5", "오각기둥", "삼등분", "모든 꼭짓점"] },
+  { id: "6-1-u2-e2-mission-6", page: 10, words: ["Mission 6", "정오각형", "7cm", "11cm", "삼각형"] }
 ];
 for (const expected of ledgerContracts) {
   context = `${expected.id} / 원본 장부`;
@@ -255,4 +295,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 3유형 · 9개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);
+console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 4유형 · 12개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);

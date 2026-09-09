@@ -22485,15 +22485,16 @@
     },
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
-        "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5"
+        "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5",
+        "6-1-u2-e2-mission-6"
       ];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 2까지여야 합니다.");
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 3까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, 2);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
       const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
       const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림에 적힌 수를 바로 계산하지 말고, 잘라 낸 뒤 생기는 면·모서리·꼭짓점의 관계를 스스로 설명해 보세요.</p>` : "";
-      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated"];
+      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated", "pentagonal-prism-shortest-net-area"];
       const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e2-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const mathBoard = (title, body) => `<div class="source61-math-board"><strong>${title}</strong>${body}</div>`;
@@ -22600,6 +22601,40 @@
         return `<svg class="geometry-diagram source61-e2-diagram source61-e2-truncated-prism${solved ? " is-solved" : ""}" viewBox="0 0 330 285" role="img" aria-label="${n}각기둥의 모든 모서리를 삼등분한 점을 이어 모든 꼭짓점을 잘라 낸 그림. 뒤쪽 절단면은 연한 선으로 나타냄" data-source61-e2-structure="regular-${n}-prism-all-${2 * n}-vertices-truncated" data-base-sides="${n}" data-n="${n}" data-original-vertices="${2 * n}" data-original-edges="${3 * n}" data-cut-corners="${2 * n}" data-edge-division="thirds" data-result-vertex-count="${6 * n}" data-result-edge-count="${9 * n}" data-result-face-count="${3 * n + 2}" data-total-count="${18 * n + 2}"${solved ? ` data-result-highlight="${18 * n + 2}"` : ""}>${cutPlanes.join("")}${solidEdges.join("")}${resultVertices}${hiddenFaceKey}<text x="165" y="274" text-anchor="middle">연한 선은 뒤쪽에 가려진 절단면입니다.</text></svg>`;
       };
 
+      const pentagonalPrismShortestNetSvg = ({ side, height, solved = false }) => {
+        const faceWidth = 42, stripX = 166, stripTop = 77, stripHeight = 112;
+        const shortFaces = 2, longFaces = 3;
+        const pointG = [stripX, stripTop];
+        const pointD = [stripX, stripTop + stripHeight];
+        const pointN = [stripX + shortFaces * faceWidth, stripTop + stripHeight];
+        const pentagonRadius = faceWidth / (2 * Math.sin(Math.PI / 5));
+        const topBase = regularPolygonPoints(5, stripX + 2.5 * faceWidth, stripTop - pentagonRadius * 0.81, pentagonRadius);
+        const bottomBase = regularPolygonPoints(5, stripX + 2.5 * faceWidth, stripTop + stripHeight + pentagonRadius * 0.81, pentagonRadius, Math.PI / 2);
+        const netFaces = Array.from({ length: 5 }, (_, index) => `<rect class="source61-e2-shortest-face${index < shortFaces ? " is-short-route" : ""}" data-net-face="${index + 1}" x="${stripX + index * faceWidth}" y="${stripTop}" width="${faceWidth}" height="${stripHeight}"/>`).join("");
+        const netRoute = solved ? `<polygon class="source61-e2-shortest-triangle is-solved" points="${pointText(pointG)} ${pointText(pointD)} ${pointText(pointN)}"/><line class="source61-e2-shortest-net-line is-solved" x1="${pointG[0]}" y1="${pointG[1]}" x2="${pointN[0]}" y2="${pointN[1]}"/>` : "";
+        const label = (point, textValue, dx, dy) => `<circle class="source61-e2-shortest-point" cx="${point[0]}" cy="${point[1]}" r="3.2"/><text class="source61-e2-shortest-label" x="${point[0] + dx}" y="${point[1] + dy}">${textValue}</text>`;
+
+        const top = regularPolygonPoints(5, 74, 56, 42).map(([x, y]) => [x, 56 + (y - 56) * 0.48]);
+        const bottom = top.map(([x, y]) => [x, y + 92]);
+        const solidFaces = top.map((point, index) => {
+          const next = (index + 1) % 5;
+          return `<polygon class="source61-e2-shortest-solid-face" points="${pointText(point)} ${pointText(top[next])} ${pointText(bottom[next])} ${pointText(bottom[index])}"/>`;
+        }).join("");
+        const solidEdges = top.map((point, index) => {
+          const next = (index + 1) % 5;
+          const hidden = index === 0 || index === 4;
+          return lineMarkup(point, top[next], `source61-e2-shortest-solid-edge${hidden ? " is-hidden" : ""}`)
+            + lineMarkup(bottom[index], bottom[next], `source61-e2-shortest-solid-edge${hidden ? " is-hidden" : ""}`)
+            + lineMarkup(point, bottom[index], `source61-e2-shortest-solid-edge${hidden ? " is-hidden" : ""}`);
+        }).join("");
+        const solidG = top[4], solidN = bottom[2], foldPoint = interpolate(top[3], bottom[3], 0.5);
+        const solidRoute = `<polyline class="source61-e2-shortest-solid-route" points="${pointText(solidG)} ${pointText(foldPoint)} ${pointText(solidN)}"/>`;
+        const triangleBase = shortFaces * side;
+        const area = triangleBase * height / 2;
+
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-shortest-net${solved ? " is-solved" : ""}" viewBox="0 0 400 270" role="img" aria-label="정오각기둥 겉면의 가장 짧은 선과 다섯 옆면을 펼친 전개도" data-source61-e2-structure="pentagonal-prism-shortest-${side}-${height}" data-base-sides="5" data-n="5" data-base-edge="${side}" data-prism-height="${height}" data-net-face-count="5" data-shortest-face-count="${shortFaces}" data-other-face-count="${longFaces}" data-triangle-base="${triangleBase}" data-triangle-height="${height}" data-area="${area}"${solved ? ` data-result-highlight="${area}"` : ""}><g aria-label="정오각기둥 입체 그림">${solidFaces}${solidEdges}${solidRoute}${label(solidG, "ㄱ", -12, -8)}${label(solidN, "ㄴ", 12, 14)}<text class="source61-e2-shortest-measure" x="129" y="105">${height}cm</text><text class="source61-e2-shortest-measure" x="75" y="171">${side}cm</text></g><path class="source61-e2-shortest-arrow" d="M136 130h20m-7-7 7 7-7 7"/><g aria-label="정오각기둥 전개도">${netFaces}<polygon class="source61-e2-shortest-base" points="${topBase.map(pointText).join(" ")}"/><polygon class="source61-e2-shortest-base" points="${bottomBase.map(pointText).join(" ")}"/>${netRoute}${label(pointG, "ㄱ", -10, -10)}${label(pointD, "ㄷ", -10, 14)}${solved ? label(pointN, "ㄴ", 11, 14) : ""}<line class="source61-e2-shortest-dimension" x1="${stripX - 12}" y1="${stripTop}" x2="${stripX - 12}" y2="${stripTop + stripHeight}"/><text class="source61-e2-shortest-measure" x="${stripX - 24}" y="${stripTop + stripHeight / 2}">${height}cm</text><line class="source61-e2-shortest-dimension" x1="${stripX}" y1="${stripTop + stripHeight + 28}" x2="${pointN[0]}" y2="${stripTop + stripHeight + 28}"/><text class="source61-e2-shortest-measure" x="${(stripX + pointN[0]) / 2}" y="${stripTop + stripHeight + 43}">${solved ? `${shortFaces}×${side}=${triangleBase}cm` : `한 칸 ${side}cm`}</text></g></svg>`;
+      };
+
       if (variant === 0) {
         const distance = [1, 2, 3][poolIndex];
         const minimumEdge = 3 * distance + 1;
@@ -22617,12 +22652,22 @@
         return fixedResult(`정${n}각기둥을 밑면의 중심과 각 꼭짓점을 잇는 선을 따라 밑면에 수직으로 잘라, 서로 같은 삼각기둥 ${n}개로 나누었습니다. 나누어진 삼각기둥 ${n}개의 모서리 수를 모두 합하면 몇 개인지 구하세요.${promptVisual}${support("삼각기둥 한 개의 모서리 수를 먼저 세고 조각 수를 곱하세요.")}${challenge}${evidence("regular-prism-radial-cut", [n, edgesPerPiece, total])}`, `${total}개`, `삼각기둥 한 개의 모서리는 밑면 두 개에서 3개씩, 옆모서리 3개로 모두 ${edgesPerPiece}개입니다. 같은 삼각기둥이 ${n}개이므로 모서리 수의 합은 ${edgesPerPiece}×${n}=${total}개입니다.`, answerVisual);
       }
 
-      const n = [5, 6, 7][poolIndex];
-      const originalVertices = 2 * n, originalEdges = 3 * n;
-      const vertices = 2 * originalEdges, edges = 3 * vertices / 2, faces = n + 2 + originalVertices, total = vertices + edges + faces;
-      const promptVisual = `${truncatedPrismSvg({ n })}${mathBoard("자르는 조건", row("처음 입체도형", `${n}각기둥`) + row("모서리마다", "삼등분점 2개 표시") + row("자를 곳", "모든 꼭짓점"))}`;
-      const answerVisual = `${truncatedPrismSvg({ n, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("꼭짓점", `${originalEdges}×2=${vertices}개`) + row("모서리", `${originalEdges}+3×${originalVertices}=${edges}개`) + row("면", `${n + 2}+${originalVertices}=${faces}개`) + row("합", `${vertices}+${edges}+${faces}=${total}`))}`;
-      return fixedResult(`${n}각기둥의 모든 모서리를 삼등분하고, 한 꼭짓점에서 만나는 세 모서리의 삼등분점을 지나는 평면으로 모든 꼭짓점을 잘라 냅니다. 남은 입체도형의 면, 꼭짓점, 모서리 수의 합을 구하세요.${promptVisual}${support("원래 모서리 하나에서 남는 새 꼭짓점 2개와, 잘라서 새로 생기는 삼각형 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("prism-all-vertices-truncated", [n, originalVertices, originalEdges, faces, vertices, edges, total])}`, String(total), `처음 ${n}각기둥의 모서리는 ${originalEdges}개이고, 모서리마다 삼등분점 2개가 새 꼭짓점이 되므로 꼭짓점은 ${vertices}개입니다. 원래 모서리에서 남은 ${originalEdges}개와 잘라서 생긴 삼각형 면 ${originalVertices}개의 변 3개씩을 더하면 모서리는 ${originalEdges}+3×${originalVertices}=${edges}개입니다. 처음 면 ${n + 2}개에 새 삼각형 면 ${originalVertices}개를 더하면 면은 ${faces}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
+      if (variant === 2) {
+        const n = [5, 6, 7][poolIndex];
+        const originalVertices = 2 * n, originalEdges = 3 * n;
+        const vertices = 2 * originalEdges, edges = 3 * vertices / 2, faces = n + 2 + originalVertices, total = vertices + edges + faces;
+        const promptVisual = `${truncatedPrismSvg({ n })}${mathBoard("자르는 조건", row("처음 입체도형", `${n}각기둥`) + row("모서리마다", "삼등분점 2개 표시") + row("자를 곳", "모든 꼭짓점"))}`;
+        const answerVisual = `${truncatedPrismSvg({ n, solved: true })}${mathBoard("잘라 낸 뒤의 수", row("꼭짓점", `${originalEdges}×2=${vertices}개`) + row("모서리", `${originalEdges}+3×${originalVertices}=${edges}개`) + row("면", `${n + 2}+${originalVertices}=${faces}개`) + row("합", `${vertices}+${edges}+${faces}=${total}`))}`;
+        return fixedResult(`${n}각기둥의 모든 모서리를 삼등분하고, 한 꼭짓점에서 만나는 세 모서리의 삼등분점을 지나는 평면으로 모든 꼭짓점을 잘라 냅니다. 남은 입체도형의 면, 꼭짓점, 모서리 수의 합을 구하세요.${promptVisual}${support("원래 모서리 하나에서 남는 새 꼭짓점 2개와, 잘라서 새로 생기는 삼각형 면의 수를 먼저 세어 보세요.")}${challenge}${evidence("prism-all-vertices-truncated", [n, originalVertices, originalEdges, faces, vertices, edges, total])}`, String(total), `처음 ${n}각기둥의 모서리는 ${originalEdges}개이고, 모서리마다 삼등분점 2개가 새 꼭짓점이 되므로 꼭짓점은 ${vertices}개입니다. 원래 모서리에서 남은 ${originalEdges}개와 잘라서 생긴 삼각형 면 ${originalVertices}개의 변 3개씩을 더하면 모서리는 ${originalEdges}+3×${originalVertices}=${edges}개입니다. 처음 면 ${n + 2}개에 새 삼각형 면 ${originalVertices}개를 더하면 면은 ${faces}개입니다. 따라서 합은 ${total}입니다.`, answerVisual);
+      }
+
+      const [side, height] = [[7, 11], [8, 13], [6, 15]][poolIndex];
+      const shortFaces = 2, longFaces = 3, triangleBase = shortFaces * side;
+      const area = triangleBase * height / 2;
+      const promptVisual = `${pentagonalPrismShortestNetSvg({ side, height })}${mathBoard("정오각기둥의 길이", row("밑면의 한 변", `${side}cm`) + row("높이", `${height}cm`) + row("구할 것", "삼각형 ㄱㄴㄷ의 넓이"))}`;
+      const answerVisual = `${pentagonalPrismShortestNetSvg({ side, height, solved: true })}${mathBoard("전개도에서 계산", row("짧은 쪽", `옆면 ${shortFaces}개`) + row("선분 ㄷㄴ", `${shortFaces}×${side}=${triangleBase}cm`) + row("선분 ㄱㄷ", `${height}cm`) + row("삼각형의 넓이", `${triangleBase}×${height}÷2=${area}cm²`))}`;
+      const shortestChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">반대쪽 옆면 ${longFaces}개를 지나는 길이도 펼쳐 비교하여, 왜 옆면 ${shortFaces}개를 지나는 선이 가장 짧은지 설명해 보세요.</p>` : "";
+      return fixedResult(`밑면이 정오각형인 각기둥의 한 밑면의 한 변은 ${side}cm이고 높이는 ${height}cm입니다. 그림처럼 각기둥의 겉면을 지나 점 ㄱ과 점 ㄴ을 잇는 가장 짧은 선을 전개도에 옮겨 그었을 때, 삼각형 ㄱㄴㄷ의 넓이는 몇 cm²인지 구하세요.${promptVisual}${support("점 ㄱ에서 점 ㄴ까지 옆면 2개를 펼치면 선분 ㄷㄴ의 길이가 얼마인지 구해 보세요.")}${shortestChallenge}${evidence("pentagonal-prism-shortest-net-area", [side, height, shortFaces, longFaces, triangleBase, area])}`, `${area}cm²`, `정오각기둥의 옆면을 한쪽으로는 ${shortFaces}개, 반대쪽으로는 ${longFaces}개 지나갈 수 있습니다. 펼친 가로 길이는 각각 ${shortFaces}×${side}=${triangleBase}cm와 ${longFaces}×${side}=${longFaces * side}cm이므로 옆면 ${shortFaces}개를 지나는 쪽이 더 짧습니다. 전개도에서 삼각형 ㄱㄴㄷ의 밑변 ㄷㄴ은 ${triangleBase}cm, 높이 ㄱㄷ은 ${height}cm이므로 넓이는 ${triangleBase}×${height}÷2=${area}cm²입니다.`, answerVisual);
     },
     sourceGrade6RatioE1({ rng, level, variant = 0 }) {
       const sourceIds = [

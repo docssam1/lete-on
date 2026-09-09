@@ -15,12 +15,14 @@ const outputDir = process.env.HSE_SCREENSHOT_DIR
 const sourceIds = [
   "6-1-u2-e2-example-2-2",
   "6-1-u2-e2-mission-2",
-  "6-1-u2-e2-mission-5"
+  "6-1-u2-e2-mission-5",
+  "6-1-u2-e2-mission-6"
 ];
 const sources = [
   { id: sourceIds[0], search: "예제 2-2", kind: "cuboid-all-corners-cut" },
   { id: sourceIds[1], search: "Mission 2", kind: "regular-prism-radial-cut" },
-  { id: sourceIds[2], search: "Mission 5", kind: "prism-all-vertices-truncated" }
+  { id: sourceIds[2], search: "Mission 5", kind: "prism-all-vertices-truncated" },
+  { id: sourceIds[3], search: "Mission 6", kind: "pentagonal-prism-shortest-net-area" }
 ];
 const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
@@ -205,6 +207,13 @@ async function inspectView(page, selector, source, difficulty, answerView, label
         dataFanCount: svg?.dataset.fanCount || "",
         dataVerticalCutPlanes: svg?.dataset.verticalCutPlaneCount || "",
         dataN: svg?.dataset.n || "",
+        netFaces: svg?.querySelectorAll(".source61-e2-shortest-face").length || 0,
+        netRoute: svg?.querySelectorAll(".source61-e2-shortest-net-line").length || 0,
+        resultTriangle: svg?.querySelectorAll(".source61-e2-shortest-triangle").length || 0,
+        dataShortestFaces: svg?.dataset.shortestFaceCount || "",
+        dataOtherFaces: svg?.dataset.otherFaceCount || "",
+        dataTriangleBase: svg?.dataset.triangleBase || "",
+        dataArea: svg?.dataset.area || "",
         dataResultVertices: svg?.dataset.resultVertexCount || "",
         dataResultHighlight: svg?.dataset.resultHighlight || ""
       };
@@ -303,6 +312,12 @@ function checkGeometryContracts(state, source, label, answerView) {
       if (Number(svg.dataResultVertices) !== 6 * n) fail(`${label}: 절두 각기둥 결과 꼭짓점 메타데이터가 6n과 다릅니다.`);
       if (svg.hiddenCutPlanes < 1 || svg.hiddenCutPlanes >= svg.cutPlanes) fail(`${label}: 절두 각기둥의 보이는 절단면과 뒤쪽 절단면이 구분되지 않았습니다.`);
       if (answerView && svg.hiddenFaceKeyCount !== n) fail(`${label}: 답 그림에 뒤쪽 절단면 ${n}개를 따로 보여 주지 않았습니다.`);
+    } else if (source.kind === "pentagonal-prism-shortest-net-area") {
+      if (n !== 5 || svg.netFaces !== 5) fail(`${label}: 정오각기둥 전개도의 옆면이 5개가 아닙니다.`);
+      if (Number(svg.dataShortestFaces) !== 2 || Number(svg.dataOtherFaces) !== 3) fail(`${label}: 두 둘레 방향의 옆면 수가 2개와 3개로 표시되지 않았습니다.`);
+      if (Number(svg.dataTriangleBase) <= 0 || Number(svg.dataArea) <= 0) fail(`${label}: 펼친 삼각형의 밑변 또는 넓이 자료가 없습니다.`);
+      if (!answerView && (svg.netRoute !== 0 || svg.resultTriangle !== 0)) fail(`${label}: 문제 전개도에 정답 선분 또는 삼각형이 노출되었습니다.`);
+      if (answerView && (svg.netRoute !== 1 || svg.resultTriangle !== 1 || !svg.dataResultHighlight)) fail(`${label}: 답 전개도에 최단 선분·삼각형·넓이 강조가 없습니다.`);
     }
   }
 }
@@ -311,7 +326,8 @@ function checkAnswerLeak(state, source, difficulty, label) {
   const results = {
     [sourceIds[0]]: ["14", "24", "36", "74"],
     [sourceIds[1]]: ["45", "63", "72"],
-    [sourceIds[2]]: ["30", "45", "54", "92", "110", "128"]
+    [sourceIds[2]]: ["30", "45", "54", "92", "110", "128"],
+    [sourceIds[3]]: ["12", "14", "16", "77", "90", "104"]
   }[source.id];
   for (const text of state.visibleText) {
     if (results.some(value => new RegExp(`(^|\\D)${value}(?=\\D|$)`).test(text))) {
@@ -421,14 +437,14 @@ function generatorReady() {
     await new Promise(resolve => server.close(resolve));
   }
 
-  if (screenshots !== 36) fail(`화면 캡처 수가 ${screenshots}장입니다. 36장이어야 합니다.`);
-  if (pdfs !== 6) fail(`A4 PDF 수가 ${pdfs}개입니다. 6개여야 합니다.`);
+  if (screenshots !== 48) fail(`화면 캡처 수가 ${screenshots}장입니다. 48장이어야 합니다.`);
+  if (pdfs !== 8) fail(`A4 PDF 수가 ${pdfs}개입니다. 8개여야 합니다.`);
   if (renderedPdfPages < pdfs) fail(`A4 PDF ${pdfs}개에서 전체 PNG 렌더가 ${renderedPdfPages}쪽뿐입니다.`);
   const status = failures.length ? "실패" : "통과";
-  const summary = `${status}: 3유형×3난이도×PC/모바일, 실제 UI 선택, 고정 pool 3문항, 문제·답 구조·SVG·답 그림·누출·화면 검사, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 렌더 ${renderedPdfPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
+  const summary = `${status}: 4유형×3난이도×PC/모바일, 실제 UI 선택, 고정 pool 3문항, 문제·답 구조·SVG·답 그림·누출·화면 검사, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 렌더 ${renderedPdfPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 2 브라우저 감사 통과: 3유형×3난이도×PC/모바일 · 실제 UI 선택 · 고정 3문항 · 답 그림 · A4 PDF 6개 전 ${renderedPdfPages}쪽`);
+  console.log(`6-1 2단원 개념탐구 2 브라우저 감사 통과: 4유형×3난이도×PC/모바일 · 실제 UI 선택 · 고정 3문항 · 답 그림 · A4 PDF 8개 전 ${renderedPdfPages}쪽`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;
