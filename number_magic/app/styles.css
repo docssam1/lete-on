@@ -949,35 +949,66 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 
 /* ============================================================
    타이틀 화면 — 게임처럼 모드를 고르고 들어간다 (§14, 2026-08-27 Phase 3)
-   ============================================================ */
+   디자인 리터치(2026-09-09, 원장 "세련되게" 승인) — 마크업·JS 핸들러는 그대로 두고
+   CSS만 다듬었다. 캐릭터 그림은 이미 커미션된 완성 일러스트라(사람아바타-작화지시서.md)
+   새로 그리지 않는다 — 그 그림을 담는 틀(배경·카드·타이포·그림자)만 다시 짰다.
+   기존 팔레트(--blue-deep·--gold 등)만 쓰고 새 색은 안 만든다. */
 .nm-title{width:100%;min-height:100dvh;display:flex;align-items:center;justify-content:center;
-  padding:28px 20px;overflow-y:auto;
-  background:radial-gradient(1100px 600px at 50% -10%,#1c4a86,transparent 65%),
-    linear-gradient(165deg,var(--blue-deep) 0%,var(--blue) 55%,#123a6e 100%)}
-.nm-title-card{max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
-.nm-title-logo{margin-bottom:6px}
+  padding:28px 20px;overflow-y:auto;position:relative;isolation:isolate;
+  background:
+    radial-gradient(1200px 640px at 50% -12%,#2c5a9c,transparent 62%),
+    radial-gradient(760px 420px at 100% 108%,rgba(234,201,150,.16),transparent 60%),
+    linear-gradient(165deg,var(--blue-deep) 0%,var(--blue) 52%,#0c2e5c 100%);
+}
+/* 별가루 — 이미지 없이 작은 원 반복만으로. 데스크톱 큰 화면에서 배경이 밋밋하게 남던 것을
+   메운다(2026-09-09 렌더 검토). 저채도라 글자와 안 겹쳐도 시선을 안 뺏는다. */
+.nm-title::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%,rgba(255,255,255,.55),transparent),
+    radial-gradient(1.5px 1.5px at 82% 14%,rgba(255,255,255,.45),transparent),
+    radial-gradient(1px 1px at 32% 62%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1.5px 1.5px at 68% 78%,rgba(255,255,255,.35),transparent),
+    radial-gradient(1px 1px at 90% 55%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1px 1px at 8% 82%,rgba(255,255,255,.3),transparent);
+}
+@media(prefers-reduced-motion:reduce){.nm-title-char{animation:none}}
+.nm-title-card{max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;
+  align-items:center;gap:6px;position:relative;z-index:1;
+  padding:26px 22px 22px;border-radius:28px;
+  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 30px 60px -24px rgba(2,10,26,.55),0 10px 24px -14px rgba(2,10,26,.4);
+}
+.nm-title-logo{margin-bottom:2px}
 .nm-title-logo-kr{
   font-size:clamp(28px,8vw,38px);font-weight:900;letter-spacing:-.02em;
   background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
   -webkit-background-clip:text;background-clip:text;color:transparent;
   text-shadow:0 2px 0 rgba(0,0,0,.15);
 }
-.nm-title-logo-sub{font-size:11px;font-weight:800;letter-spacing:.25em;color:rgba(255,255,255,.55);margin-top:2px}
-.nm-title-char{filter:drop-shadow(0 10px 18px rgba(0,0,0,.35));animation:bob 3s ease-in-out infinite;margin:4px 0}
-.nm-title-hello{font-size:14px;font-weight:700;color:#fff;opacity:.92;margin-bottom:4px}
+.nm-title-logo-sub{font-size:11px;font-weight:800;letter-spacing:.28em;color:rgba(255,255,255,.55);margin-top:3px}
+/* 로고 밑 가는 금색 선 — 로고와 캐릭터 사이의 빈 자리를 정리(2026-09-09) */
+.nm-title-logo::after{content:'';display:block;width:56px;height:2px;margin:12px auto 0;border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--gold-bright),transparent);opacity:.7}
+.nm-title-char{filter:drop-shadow(0 10px 18px rgba(0,0,0,.35));animation:bob 3s ease-in-out infinite;margin:6px 0 2px;position:relative}
+/* 캐릭터 발 아래 은은한 후광 — 배경과 카드 사이에 초점을 하나 더 준다 */
+.nm-title-char::before{content:'';position:absolute;left:50%;bottom:-6px;width:120px;height:36px;
+  transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(245,217,139,.35),transparent);
+  z-index:-1}
+.nm-title-hello{font-size:14px;font-weight:700;color:#fff;opacity:.92;margin-bottom:4px;text-shadow:0 1px 3px rgba(0,0,0,.25)}
 .nm-title-stats{display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
 .nm-title-chip{font-size:12.5px;font-weight:800;color:#fff;background:rgba(255,255,255,.14);
   border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px}
 .nm-title-chip.gold{color:#4a370f;background:linear-gradient(180deg,var(--gold-bright),var(--gold));border-color:var(--gold-deep)}
-.nm-title-btns{display:flex;flex-direction:column;gap:12px;width:100%;margin-top:10px}
+.nm-title-btns{display:flex;flex-direction:column;gap:12px;width:100%;margin-top:12px}
 .nm-title-btn{
   display:flex;align-items:center;gap:14px;width:100%;text-align:left;
-  border:1.5px solid rgba(255,255,255,.25);border-radius:18px;background:rgba(255,255,255,.08);
-  color:#fff;padding:14px 18px;cursor:pointer;transition:transform .12s,background .15s;
-  font-family:'Pretendard',sans-serif;
+  border:1.5px solid rgba(255,255,255,.22);border-radius:18px;background:rgba(255,255,255,.07);
+  color:#fff;padding:14px 18px;cursor:pointer;transition:transform .12s ease,background .15s ease,box-shadow .15s ease;
+  font-family:'Pretendard',sans-serif;box-shadow:0 1px 0 rgba(255,255,255,.08) inset;
 }
 .nm-title-btn:active{transform:scale(.97)}
-.nm-title-btn:hover{background:rgba(255,255,255,.15)}
+.nm-title-btn:hover{background:rgba(255,255,255,.14);box-shadow:0 10px 22px -14px rgba(2,10,26,.5),0 1px 0 rgba(255,255,255,.1) inset}
 .nm-title-btn-ico{font-size:24px;flex-shrink:0;width:30px;text-align:center}
 .nm-title-btn-txt{display:flex;flex-direction:column;gap:2px}
 .nm-title-btn-txt b{font-size:16px;font-weight:900}
@@ -985,7 +1016,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-title-btn.primary{
   border-color:var(--gold-deep);
   background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
-  color:#3a2a08;box-shadow:0 14px 28px -14px rgba(0,0,0,.5);
+  color:#3a2a08;box-shadow:0 16px 30px -16px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.5) inset;
 }
 .nm-title-btn.primary:hover{background:linear-gradient(180deg,#fce4ab,var(--gold-deep))}
 .nm-title-btn.primary .nm-title-btn-txt small{opacity:.85}
@@ -1812,8 +1843,9 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
   background:linear-gradient(180deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.10) 48%,rgba(255,255,255,.05) 100%);
   color:#fff;cursor:pointer;font-family:'Pretendard',sans-serif;text-align:left;
   box-shadow:0 12px 24px -16px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.45);
-  transition:transform .12s,background .15s}
-.nm-title-blk:hover{background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,.12))}
+  transition:transform .12s ease,background .15s ease,box-shadow .15s ease}
+.nm-title-blk:hover{background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,.12));
+  box-shadow:0 16px 28px -16px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.5)}
 .nm-title-blk:active{transform:scale(.96)}
 .nm-title-blk-ico{font-size:23px;line-height:1.1}
 .nm-title-blk b{font-size:14.5px;font-weight:900}
@@ -1821,10 +1853,10 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
   text-shadow:0 1px 2px rgba(0,0,0,.35);word-break:keep-all}
 .nm-title-blk b{text-shadow:0 1px 2px rgba(0,0,0,.3)}
 .nm-title-sub-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:2px}
-.nm-title-pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);
+.nm-title-pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);
   color:#fff;border-radius:999px;padding:8px 15px;font-size:12.5px;font-weight:800;
-  cursor:pointer;font-family:'Pretendard',sans-serif}
-.nm-title-pill:hover{background:rgba(255,255,255,.16)}
+  cursor:pointer;font-family:'Pretendard',sans-serif;transition:background .15s ease,transform .12s ease}
+.nm-title-pill:hover{background:rgba(255,255,255,.18)}
 .nm-title-pill:active{transform:scale(.95)}
 
 /* ============================================================
