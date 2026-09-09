@@ -24,7 +24,7 @@
   request.promise=(async()=>{try{
    if(root.GFieldHFSupabase?.enabled()!==true)throw Error('server_disabled');
    const client=await root.GFieldHFSupabase.ready();if(!client)throw Error('server_missing');
-   if(!listener&&client.auth?.onAuthStateChange){listener=true;client.auth.onAuthStateChange(event=>{if(['SIGNED_OUT','SIGNED_IN','USER_UPDATED'].includes(event))clear('session-changed');else if(event==='TOKEN_REFRESHED')void refresh({background:true});});}
+   if(!listener&&client.auth?.onAuthStateChange){listener=true;client.auth.onAuthStateChange((event,session)=>{if(['SIGNED_OUT','USER_UPDATED'].includes(event))clear('session-changed');else if(event==='SIGNED_IN'&&verified&&verified.studentId!==session?.user?.id)clear('session-changed');else if(event==='TOKEN_REFRESHED')void refresh({background:true});});}
    const {data,error}=await client.functions.invoke('challenge-access',{body:{action:'self'}});
    if(requestEpoch!==epoch)throw Error('session_changed');
    const now=Date.now();
