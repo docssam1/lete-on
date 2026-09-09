@@ -14,7 +14,7 @@ const sourceIds = [
   "6-1-u3-e4-example-4", "6-1-u3-e4-mission-1", "6-1-u3-e4-mission-2",
   "6-1-u3-e4-mission-3", "6-1-u3-e4-mission-5", "6-1-u3-e4-mission-6"
 ];
-const lockedSourceIds = ["6-1-u3-e4-example-1", "6-1-u3-e4-mission-4"];
+const lockedSourceIds = ["6-1-u3-e4-mission-4"];
 const failures = [];
 let screenshots = 0;
 let pdfs = 0;
@@ -190,7 +190,7 @@ async function captureA4(page, filename, label) {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
   }
-  const summary = `${failures.length ? "실패" : "통과"}: E4 실제 주소 9유형×PC1440/mobile390 문제·그림 답 + 9유형×3난이도 직접 생성 문제·답, 잠금 2유형 차단, 동일 자료·정답 누출·글꼴·글자 겹침·가로 넘침·특수 도형 규칙; 화면 ${screenshots}장, A4 ${pdfs}개, 렌더 ${renderedPdfPages}쪽\n${failures.join("\n")}\n`;
+  const summary = `${failures.length ? "실패" : "통과"}: E4 실제 주소 9유형×PC1440/mobile390 문제·그림 답 + 9유형×3난이도 직접 생성 문제·답, 잠금 1유형 차단, 동일 자료·정답 누출·글꼴·글자 겹침·가로 넘침·특수 도형 규칙; 화면 ${screenshots}장, A4 ${pdfs}개, 렌더 ${renderedPdfPages}쪽\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   console.log(`결과 폴더: ${outputDir}`);
   console.log(summary);

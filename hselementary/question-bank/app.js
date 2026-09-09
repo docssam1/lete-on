@@ -406,7 +406,8 @@
       const hasSource61E2Example2 = question.prompt.includes("source61-e2ex2-diagram");
       const hasSource61E2Example4 = question.prompt.includes("source61-e2ex4-diagram");
       const hasSource61E2Mission6 = question.prompt.includes("source61-e2m6-diagram");
-      const questionWeight = hasSource61VolumeE4 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 ? 6 : graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
+      const hasSource61E4Example1 = question.prompt.includes("source61-e4ex1-diagram");
+      const questionWeight = hasSource61VolumeE4 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 ? 6 : graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
       if (page.length && weight + questionWeight > 6) {
         pages.push(page);
         page = [];
@@ -439,7 +440,8 @@
       const hasSource61E2Example2 = String(question.answerVisual || "").includes("source61-e2ex2-diagram");
       const hasSource61E2Example4 = String(question.answerVisual || "").includes("source61-e2ex4-diagram");
       const hasSource61E2Mission6 = String(question.answerVisual || "").includes("source61-e2m6-diagram");
-      const weight = hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 ? 8 : hasVisual ? 3 : 1;
+      const hasSource61E4Example1 = String(question.answerVisual || "").includes("source61-e4ex1-diagram");
+      const weight = hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 ? 8 : hasVisual ? 3 : 1;
       if (solutionPage.length && (solutionPage.length >= 8 || solutionWeight + weight > 8)) {
         solutionPages.push(solutionPage);
         solutionPage = [];

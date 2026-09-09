@@ -1802,10 +1802,11 @@
       "section": "example",
       "ordinal": 1,
       "sourceShape": "원본 22쪽 예제 4-1. 같은 직사각형 7개를 이어 붙인 도형 전체와 격자점에 그린 삼각형의 넓이 비를 구함",
-      "answerContract": "drawing-dependent-candidate",
+      "answerContract": "equal-rectangle-grid-triangle-ratio-fixed-pool",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "직사각형 격자의 실제 꼭짓점과 삼각형 세 점을 점·선분 모델로 확정하기 전에는 눈대중 SVG를 만들지 않고 잠급니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 아래 4칸·위 3칸과 삼각형 세 격자점을 좌표화하고 셀 합과 신발끈 공식으로 독립 확인한 고정 검증 문항 3개로 제한합니다.",
+      "publicSourceItemId": "6-1-u3-e4-example-1"
     },
     {
       "sourceItemId": "6-1-u3-e4-example-2",
