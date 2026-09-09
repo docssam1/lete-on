@@ -1496,10 +1496,11 @@
       "section": "example",
       "ordinal": 4,
       "sourceShape": "원본 18쪽 예제 2-4. 직사각형을 일정한 빠르기로 옮긴 뒤 직각이등변삼각형과 겹친 부분의 넓이를 구함",
-      "answerContract": "drawing-dependent-candidate",
+      "answerContract": "moving-drawing-single-answer-fixed-pool",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "직사각형과 직각이등변삼각형의 꼭짓점, 높이, 처음 간격과 이동 뒤 교집합을 원본 점·선분 모델로 검증하기 전까지 잠급니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "이동 전후 직사각형과 직각이등변삼각형을 같은 점·선분 자료로 만들고, 삼각형 넓이와 다각형 교집합 넓이를 독립 확인한 고정 검증 문항 3개로 제한합니다.",
+      "publicSourceItemId": "6-1-u3-e2-example-4"
     },
     {
       "sourceItemId": "6-1-u3-e2-mission-1",

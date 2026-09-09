@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 223
+    "unlocked": 224
   },
   "items": [
     {
@@ -2144,17 +2144,23 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "도형을 움직인 뒤 겹친 부분의 넓이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6DecimalDivisionE2Example4",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ],
+      "variant": 0
     },
     {
       "semester": "6-1",

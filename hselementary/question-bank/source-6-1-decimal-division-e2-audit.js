@@ -3,6 +3,7 @@
 global.window = {};
 require("./generators.js");
 require("./source-grade6-decimal-e2-example2.js");
+require("./source-grade6-decimal-e2-example4.js");
 
 const api = window.HSE_GENERATORS;
 const readiness = require("./source-inventory/6-1-u3-source-readiness-review.json");
@@ -11,7 +12,7 @@ const sourceIds = [
   "6-1-u3-e2-exploration-1", "6-1-u3-e2-example-1", "6-1-u3-e2-example-3", "6-1-u3-e2-mission-1",
   "6-1-u3-e2-mission-2", "6-1-u3-e2-mission-3", "6-1-u3-e2-mission-4", "6-1-u3-e2-mission-5"
 ];
-const lockedIds = ["6-1-u3-e2-example-4", "6-1-u3-e2-mission-6"];
+const lockedIds = ["6-1-u3-e2-mission-6"];
 const kinds = [
   "catch-up-distance", "rounded-quotient-range", "fuel-efficiency-transfer", "equal-interval-number-line",
   "lap-time", "pencil-case-weight", "same-direction-distance-gap", "fuel-cost-gap"
