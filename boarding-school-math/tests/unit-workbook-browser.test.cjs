@@ -14,6 +14,7 @@ const signedNumberSource=require("../learning/grade6-ns-c-unit-workbook.js");
 const expressionSource=require("../learning/grade6-ee-a-unit-workbook.js");
 const equationSource=require("../learning/grade6-ee-b-unit-workbook.js");
 const relationshipSource=require("../learning/grade6-ee-c-unit-workbook.js");
+const geometrySource=require("../learning/grade6-g-a-unit-workbook.js");
 const root=path.resolve(__dirname,"..","..");
 let server,browser,baseUrl;
 function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";if(file.endsWith(".css"))return"text/css; charset=utf-8";if(file.endsWith(".js"))return"text/javascript; charset=utf-8";return"application/octet-stream";}
@@ -309,8 +310,8 @@ test("HTML workbook renders stacked fractions while slash input remains valid",a
   }
 });
 
-test("ratio and number-system workbooks stay usable at 320px and 390px",async function(){
-  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A","6.EE.B","6.EE.C"]) for(const width of [320,390]){
+test("ratio, algebra, and geometry workbooks stay usable at 320px and 390px",async function(){
+  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A","6.EE.B","6.EE.C","6.G.A"]) for(const width of [320,390]){
     const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});
     const errors=errorsFor(page);
     await page.goto(`${baseUrl}?cluster=${cluster}&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});
@@ -342,4 +343,24 @@ test("all 36 variable-relationship responses unlock only its separate eight-item
 test("variable-relationship Chinese teacher guide separates all answers and retains calculated graphs",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.EE.C&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});
   assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.EE.C 变量关系与图象单元练习册");assert.equal(await page.locator(".eec-coordinate-plane").count(),12);assert.match(await page.locator(".teacher-observation").innerText(),/情境中的作用/);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+});
+
+test("geometry student workbook renders 36 calculated figures without teacher answers",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.G.A&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator(".book-page").count(),12);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".answer-input").count(),36);assert.equal(await page.locator(".teacher-key,.teacher-move,.choice-button").count(),0);assert.equal(await page.locator("h1").innerText(),"6.G.A 기하 측정 단원 워크북");assert.equal(await page.locator(".clinic-geometry-svg").count(),36);
+  const polygon=page.locator('[data-item-id="gau-w01"] .clinic-geometry-svg');assert.equal(await polygon.locator("polygon").count(),1);const coordinate=page.locator('[data-item-id="gau-w21"] .clinic-geometry-svg');assert.equal(await coordinate.locator("polygon").count(),1);
+  await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+});
+
+test("all 36 geometry responses unlock only the separate eight-structure recheck",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);await context.addInitScript(function(){localStorage.setItem("gfield-clinic-workbook:6.G.A:v1","complete-v1");});
+  await page.goto(`${baseUrl}?cluster=6.G.A&mode=recheck&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});assert.equal(new URL(page.url()).searchParams.get("mode"),"workbook");
+  for(const candidate of geometrySource.pack.workbookItems){const card=page.locator(`[data-item-id="${candidate.id}"]`);await card.locator(".answer-input").fill(geometrySource.formatResult(candidate));await card.locator(".check-button").click();}
+  assert.equal(await page.locator("#progress-chip").innerText(),"36 / 36");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-unit-workbook:6.G.A:v1");}),"complete-v1");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-clinic-workbook:6.G.A:v1");}),"complete-v1");await page.locator('[data-mode="recheck"]').click();assert.equal(await page.locator(".book-problem").count(),8);assert.deepEqual(await page.locator(".practice-heading h2").allInnerTexts(),["New figures · Eight-structure recheck","New figures · Eight-structure recheck"]);assert.equal(await page.locator(".teacher-key,.teacher-move").count(),0);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("geometry Chinese teacher guide separates all answers and printable figures",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.G.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.G.A 几何测量单元练习册");assert.equal(await page.locator(".clinic-geometry-svg").count(),36);assert.match(await page.locator(".teacher-observation").innerText(),/作图/);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
 });
