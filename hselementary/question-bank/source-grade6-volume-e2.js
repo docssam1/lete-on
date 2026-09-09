@@ -6,7 +6,7 @@
 
   const generatorKey = "sourceGrade6VolumeE2";
   const ids = Object.freeze([
-    "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1",
+    "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-mission-1",
     "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
   ]);
   const idSet = new Set(ids);
@@ -21,6 +21,11 @@
       { width: 36, height: 26, cut: 5 }
     ]),
     "example-1": Object.freeze([{ cubes: 12 }, { cubes: 24 }, { cubes: 36 }]),
+    "example-2": Object.freeze([
+      { totalLength: 8, totalDepth: 3, totalHeight: 3, columnHeights: [3, 2, 1], depthRows: 4 },
+      { totalLength: 9, totalDepth: 4, totalHeight: 6, columnHeights: [3, 2, 1], depthRows: 4 },
+      { totalLength: 12, totalDepth: 6, totalHeight: 3, columnHeights: [3, 2, 1], depthRows: 4 }
+    ]),
     "mission-1": Object.freeze([{ cubes: 48 }, { cubes: 60 }, { cubes: 72 }]),
     "mission-2": Object.freeze([
       { rope: 110, cubeLeft: 22, cuboidLeft: 14 },
@@ -84,6 +89,42 @@
       surface: 2 * 15 * data.unit * data.unit + 20 * data.unit * depth
     };
   };
+  const congruentStairFacts = data => {
+    const columnCount = data.columnHeights.length;
+    const maxLayers = Math.max(...data.columnHeights);
+    const profileCells = data.columnHeights.reduce((sum, value) => sum + value, 0);
+    const blockCount = profileCells * data.depthRows;
+    const boundingCellCount = columnCount * data.depthRows * maxLayers;
+    const blockLength = data.totalLength / columnCount;
+    const blockDepth = data.totalDepth / data.depthRows;
+    const blockHeight = data.totalHeight / maxLayers;
+    const blockVolume = blockLength * blockDepth * blockHeight;
+    const volume = blockCount * blockVolume;
+    const profileArea = profileCells * blockLength * blockHeight;
+    const frontBackArea = 2 * profileArea;
+    const topBottomArea = 2 * data.totalLength * data.totalDepth;
+    const stepEndArea = 2 * data.totalHeight * data.totalDepth;
+    const surface = frontBackArea + topBottomArea + stepEndArea;
+    const occupied = new Set();
+    data.columnHeights.forEach((height, x) => {
+      for (let y = 0; y < data.depthRows; y += 1) for (let z = 0; z < height; z += 1) occupied.add(`${x},${y},${z}`);
+    });
+    const faces = [
+      [1, 0, 0, blockDepth * blockHeight], [-1, 0, 0, blockDepth * blockHeight],
+      [0, 1, 0, blockLength * blockHeight], [0, -1, 0, blockLength * blockHeight],
+      [0, 0, 1, blockLength * blockDepth], [0, 0, -1, blockLength * blockDepth]
+    ];
+    let exposedSurface = 0;
+    occupied.forEach(cell => {
+      const [x, y, z] = cell.split(",").map(Number);
+      faces.forEach(([dx, dy, dz, area]) => { if (!occupied.has(`${x + dx},${y + dy},${z + dz}`)) exposedSurface += area; });
+    });
+    return {
+      columnCount, maxLayers, profileCells, blockCount, boundingCellCount,
+      blockLength, blockDepth, blockHeight, blockVolume, volume, profileArea,
+      frontBackArea, topBottomArea, stepEndArea, surface, exposedSurface
+    };
+  };
   const threeRopeFacts = data => {
     const ropeA = 2 * (data.depth + data.height);
     const ropeB = 2 * (data.width + data.height);
@@ -124,8 +165,8 @@
   const circle = (cx, cy, radius, className, role = "") => `<circle class="${className}" cx="${cx}" cy="${cy}" r="${radius}"${role ? ` data-visual-element="${role}"` : ""}/>`;
   const polygon = (points, className = "source61-volume-e2-face", role = "") => `<polygon class="${className}" points="${points.map(point => point.join(",")).join(" ")}"${role ? ` data-visual-element="${role}"` : ""}/>`;
 
-  const svgStyle = `<style>.source61-volume-e2-diagram .source61-volume-e2-sheet{fill:#f8fbfd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-face,.source61-volume-e2-diagram .source61-volume-e2-box{fill:#edf6fb;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-top{fill:#fff0bd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-side{fill:#dceffd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-fold{fill:none;stroke:#7891a5;stroke-width:1.5;stroke-dasharray:5 4}.source61-volume-e2-diagram .source61-volume-e2-grid{fill:none;stroke:#8ca7b8;stroke-width:.65}.source61-volume-e2-diagram .source61-volume-e2-unit-cube,.source61-volume-e2-diagram .source61-volume-e2-card{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-card-solved{fill:#fff0bd;stroke:#b77909;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-rope{fill:none;stroke:#c47b18;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-rope.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden{fill:none;stroke:#c47b18;stroke-width:2.4;stroke-dasharray:5 4;stroke-linecap:round;opacity:.72}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-knot{fill:#fff;stroke:#c47b18;stroke-width:3}.source61-volume-e2-diagram .source61-volume-e2-rope-knot.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-stair-cell{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-stair-cell.is-solved{fill:#fff0bd}.source61-volume-e2-diagram .source61-volume-e2-line,.source61-volume-e2-diagram .source61-volume-e2-outline,.source61-volume-e2-diagram .source61-volume-e2-depth,.source61-volume-e2-diagram .source61-volume-e2-dimension,.source61-volume-e2-diagram .source61-volume-e2-extension{fill:none;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-dimension{stroke:#6d8394;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-extension{stroke:#9aacb9;stroke-width:1}.source61-volume-e2-diagram .source61-volume-e2-perimeter{fill:none;stroke:#c53b32;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fff)}.source61-volume-e2-diagram .source61-volume-e2-label,.source61-volume-e2-diagram .source61-volume-e2-measure,.source61-volume-e2-diagram .source61-volume-e2-note,.source61-volume-e2-diagram .source61-volume-e2-title,.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;fill:#183b56!important;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-title{font-size:13px;font-weight:950}.source61-volume-e2-diagram .source61-volume-e2-note{font-size:10px;fill:#526b7d!important}.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-size:11px;font-weight:950;fill:#9a6500!important}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-title{font-size:22px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-note{font-size:20px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-answer-label{font-size:20px}</style>`;
-  const svg = (kind, data, poolIndex, solved, content, required, width = 640, height = 360) => `<svg class="geometry-diagram source61-volume-e2-diagram" style="display:block;width:min(640px,100%);height:auto;margin:12px auto;overflow:visible" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(`${kind} ${solved ? "정답 그림" : "문제 그림"}`)}" data-phase="${solved ? "answer" : "problem"}" data-model-key="${kind}" data-source61-volume-e2-values="${esc(data.values.join(","))}" data-difficulty-level="${data.level}" data-required-elements="${required.join(",")}" data-pool-index="${poolIndex}">${svgStyle}${content}</svg>`;
+  const svgStyle = `<style>.source61-volume-e2-diagram .source61-volume-e2-sheet{fill:#f8fbfd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-face,.source61-volume-e2-diagram .source61-volume-e2-box{fill:#edf6fb;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-top{fill:#fff0bd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-side{fill:#dceffd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-fold{fill:none;stroke:#7891a5;stroke-width:1.5;stroke-dasharray:5 4}.source61-volume-e2-diagram .source61-volume-e2-grid{fill:none;stroke:#8ca7b8;stroke-width:.65}.source61-volume-e2-diagram .source61-volume-e2-unit-cube,.source61-volume-e2-diagram .source61-volume-e2-card{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-card-solved{fill:#fff0bd;stroke:#b77909;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-rope{fill:none;stroke:#c47b18;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-rope.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden{fill:none;stroke:#c47b18;stroke-width:2.4;stroke-dasharray:5 4;stroke-linecap:round;opacity:.72}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-knot{fill:#fff;stroke:#c47b18;stroke-width:3}.source61-volume-e2-diagram .source61-volume-e2-rope-knot.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-stair-cell{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-stair-cell.is-solved{fill:#fff0bd}.source61-volume-e2-diagram .source61-volume-e2-line,.source61-volume-e2-diagram .source61-volume-e2-outline,.source61-volume-e2-diagram .source61-volume-e2-depth,.source61-volume-e2-diagram .source61-volume-e2-dimension,.source61-volume-e2-diagram .source61-volume-e2-extension{fill:none;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-dimension{stroke:#6d8394;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-extension{stroke:#9aacb9;stroke-width:1}.source61-volume-e2-diagram .source61-volume-e2-perimeter{fill:none;stroke:#c53b32;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fff)}.source61-volume-e2-diagram .source61-volume-e2-label,.source61-volume-e2-diagram .source61-volume-e2-measure,.source61-volume-e2-diagram .source61-volume-e2-note,.source61-volume-e2-diagram .source61-volume-e2-title,.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;fill:#183b56!important;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-title{font-size:13px;font-weight:950}.source61-volume-e2-diagram .source61-volume-e2-note{font-size:10px;fill:#526b7d!important}.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-size:11px;font-weight:950;fill:#9a6500!important}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-title{font-size:22px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-note{font-size:20px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-answer-label{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-title{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-note{font-size:17px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-measure,.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-answer-label{font-size:18px}</style>`;
+  const svg = (kind, data, poolIndex, solved, content, required, width = 640, height = 360) => `<svg class="geometry-diagram source61-volume-e2-diagram" style="display:block;width:min(${Math.min(width, 640)}px,100%);height:auto;margin:12px auto;overflow:visible" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(`${kind} ${solved ? "정답 그림" : "문제 그림"}`)}" data-phase="${solved ? "answer" : "problem"}" data-model-key="${kind}" data-source61-volume-e2-values="${esc(data.values.join(","))}" data-difficulty-level="${data.level}" data-required-elements="${required.join(",")}" data-pool-index="${poolIndex}">${svgStyle}${content}</svg>`;
 
   const explorationSvg = (data, poolIndex, solved) => {
     const scale = Math.min(9.2, 300 / data.width, 190 / data.height);
@@ -325,6 +366,87 @@
     return svg("three-rope-box", { values: [data.width, data.height, data.depth, data.ropeA, data.ropeB, data.ropeC, data.volume], level: data.level }, poolIndex, solved, content, required, 640, 338);
   };
 
+  const congruentStairSvg = (data, poolIndex, solved) => {
+    const heights = data.columnHeights;
+    const columns = heights.length;
+    const maxLayers = Math.max(...heights);
+    const cellWidth = 54;
+    const cellHeight = 44;
+    const depthX = 96;
+    const depthY = -58;
+    const canvasWidth = solved ? 420 : 460;
+    const canvasHeight = solved ? 610 : 350;
+    const baseX = solved ? 82 : 92;
+    const baseY = solved ? 250 : 230;
+    const solvedClass = solved ? " is-solved" : "";
+    const profile = [[baseX, baseY], [baseX + columns * cellWidth, baseY], [baseX + columns * cellWidth, baseY - heights[columns - 1] * cellHeight]];
+    for (let column = columns - 1; column >= 0; column -= 1) {
+      const x = baseX + column * cellWidth;
+      profile.push([x, baseY - heights[column] * cellHeight]);
+      if (column > 0 && heights[column - 1] !== heights[column]) profile.push([x, baseY - heights[column - 1] * cellHeight]);
+    }
+    const backProfile = profile.map(([x, y]) => [x + depthX, y + depthY]);
+    const backFace = polygon(backProfile, `source61-volume-e2-box-side${solvedClass}`, "congruent-stair-back-profile");
+    const topFaces = heights.map((height, column) => {
+      const x1 = baseX + column * cellWidth;
+      const x2 = x1 + cellWidth;
+      const y = baseY - height * cellHeight;
+      return polygon([[x1, y], [x1 + depthX, y + depthY], [x2 + depthX, y + depthY], [x2, y]], `source61-volume-e2-box-top${solvedClass}`, "congruent-stair-top-face");
+    }).join("");
+    const riserFaces = heights.map((height, column) => {
+      const nextHeight = column === columns - 1 ? 0 : heights[column + 1];
+      if (height === nextHeight) return "";
+      const x = baseX + (column + 1) * cellWidth;
+      const top = baseY - height * cellHeight;
+      const bottom = baseY - nextHeight * cellHeight;
+      return polygon([[x, top], [x + depthX, top + depthY], [x + depthX, bottom + depthY], [x, bottom]], `source61-volume-e2-face${solvedClass}`, "congruent-stair-riser-face");
+    }).join("");
+    const depthGrid = heights.map((height, column) => {
+      const x1 = baseX + column * cellWidth;
+      const x2 = x1 + cellWidth;
+      const y = baseY - height * cellHeight;
+      return Array.from({ length: data.depthRows - 1 }, (_, index) => {
+        const ratio = (index + 1) / data.depthRows;
+        return line(x1 + depthX * ratio, y + depthY * ratio, x2 + depthX * ratio, y + depthY * ratio, "source61-volume-e2-grid", "congruent-stair-depth-grid");
+      }).join("");
+    }).join("");
+    const riserGrid = heights.map((height, column) => {
+      const nextHeight = column === columns - 1 ? 0 : heights[column + 1];
+      if (height === nextHeight) return "";
+      const x = baseX + (column + 1) * cellWidth;
+      const top = baseY - height * cellHeight;
+      const bottom = baseY - nextHeight * cellHeight;
+      return Array.from({ length: data.depthRows - 1 }, (_, index) => {
+        const ratio = (index + 1) / data.depthRows;
+        return line(x + depthX * ratio, top + depthY * ratio, x + depthX * ratio, bottom + depthY * ratio, "source61-volume-e2-grid", "congruent-stair-riser-grid");
+      }).join("");
+    }).join("");
+    const frontCells = heights.map((height, column) => Array.from({ length: height }, (_, layer) => rect(
+      baseX + column * cellWidth,
+      baseY - (layer + 1) * cellHeight,
+      cellWidth,
+      cellHeight,
+      `source61-volume-e2-stair-cell${solvedClass}`,
+      "congruent-stair-front-cell"
+    )).join("")).join("");
+    const profileOutline = `<path class="source61-volume-e2-${solved ? "perimeter is-solved" : "outline"}" d="${profile.map(([x, y], index) => `${index ? "L" : "M"}${x} ${y}`).join(" ")} Z" data-visual-element="congruent-stair-profile-outline" data-cell-count="${data.profileCells}"/>`;
+    const lengthDimension = `${line(baseX, baseY + 16, baseX + columns * cellWidth, baseY + 16, "source61-volume-e2-dimension", "congruent-stair-length-dimension")}${line(baseX, baseY, baseX, baseY + 16, "source61-volume-e2-extension", "congruent-stair-length-start")}${line(baseX + columns * cellWidth, baseY, baseX + columns * cellWidth, baseY + 16, "source61-volume-e2-extension", "congruent-stair-length-end")}${text(baseX + columns * cellWidth / 2, baseY + 40, `${data.totalLength}cm`, "source61-volume-e2-measure")}`;
+    const heightDimension = `${line(baseX - 18, baseY, baseX - 18, baseY - maxLayers * cellHeight, "source61-volume-e2-dimension", "congruent-stair-height-dimension")}${line(baseX - 18, baseY, baseX, baseY, "source61-volume-e2-extension", "congruent-stair-height-start")}${line(baseX - 18, baseY - maxLayers * cellHeight, baseX, baseY - maxLayers * cellHeight, "source61-volume-e2-extension", "congruent-stair-height-end")}${text(baseX - 8, baseY - maxLayers * cellHeight / 2 + 5, `${data.totalHeight}cm`, "source61-volume-e2-measure", "end")}`;
+    const depthDimension = `${line(baseX, baseY - maxLayers * cellHeight, baseX + depthX, baseY - maxLayers * cellHeight + depthY, "source61-volume-e2-dimension", "congruent-stair-depth-dimension")}${text(baseX + depthX / 2, baseY - maxLayers * cellHeight + depthY / 2 - 10, `${data.totalDepth}cm`, "source61-volume-e2-measure")}`;
+    const levelLabels = solved ? heights.map((height, column) => text(baseX + (column + 0.5) * cellWidth, baseY - height * cellHeight - 12, `${height}층`, "source61-volume-e2-answer-label")).join("") : "";
+    const answerCard = solved ? `${rect(20, 320, 380, 270, "source61-volume-e2-card-solved", "congruent-stair-answer-card")}${text(40, 350, "그림의 칸과 실제 길이로 확인", "source61-volume-e2-title", "start")}${text(40, 380, `앞면 ${heights.join("+")}=${data.profileCells}칸`, "source61-volume-e2-answer-label", "start")}${text(40, 406, `깊이 ${data.depthRows}줄 → 조각 ${data.blockCount}개`, "source61-volume-e2-answer-label", "start")}${text(40, 432, `가득 채우면 ${data.columnCount}×${data.depthRows}×${data.maxLayers}=${data.boundingCellCount}칸`, "source61-volume-e2-note", "start")}${text(40, 458, `한 조각 부피 ${num(data.totalLength * data.totalDepth * data.totalHeight)}÷${data.boundingCellCount}=${num(data.blockVolume)}cm³`, "source61-volume-e2-note", "start")}${text(40, 484, `부피 ${data.blockCount}×${num(data.blockVolume)}=${num(data.volume)}cm³`, "source61-volume-e2-answer-label", "start")}${line(38, 502, 382, 502, "source61-volume-e2-fold", "congruent-stair-answer-rule")}${text(40, 528, `앞·뒤 ${num(data.frontBackArea)}cm² · 위·아래 ${num(data.topBottomArea)}cm²`, "source61-volume-e2-note", "start")}${text(40, 554, `양 끝과 계단 면 ${num(data.stepEndArea)}cm²`, "source61-volume-e2-note", "start")}${text(40, 580, `겉넓이 ${num(data.surface)}cm²`, "source61-volume-e2-answer-label", "start")}` : "";
+    const guide = !solved && data.level === 0 ? text(canvasWidth / 2, 324, `앞면 ${heights.join("+")}칸 · 깊이 ${data.depthRows}줄`, "source61-volume-e2-note") : "";
+    const content = `${text(canvasWidth / 2, 24, "같은 직육면체로 쌓은 계단", "source61-volume-e2-title")}${backFace}${topFaces}${riserFaces}${depthGrid}${riserGrid}${frontCells}${profileOutline}${lengthDimension}${heightDimension}${depthDimension}${levelLabels}${answerCard}${guide}`;
+    const required = [
+      "congruent-stair-back-profile", "congruent-stair-top-face", "congruent-stair-riser-face",
+      "congruent-stair-depth-grid", "congruent-stair-riser-grid", "congruent-stair-front-cell",
+      "congruent-stair-profile-outline", "congruent-stair-length-dimension", "congruent-stair-height-dimension",
+      "congruent-stair-depth-dimension"
+    ];
+    if (solved) required.push("congruent-stair-answer-card", "congruent-stair-answer-rule");
+    return svg("congruent-block-stair", { values: [data.totalLength, data.totalDepth, data.totalHeight, data.depthRows, ...heights, data.blockCount, data.volume, data.surface], level: data.level }, poolIndex, solved, content, required, canvasWidth, canvasHeight);
+  };
+
   const stairSvg = (data, poolIndex, solved) => {
     const cell = 22;
     const baseX = 48;
@@ -399,6 +521,23 @@
       const answer = level === 2 ? `전체 ${facts.triples.length}가지, 세 변의 길이가 모두 다른 경우 ${facts.allDifferent.length}가지` : `${facts.triples.length}가지`;
       return { answer, visual: factorSvg(model, poolIndex, solved), solution: `${firstStep} 세 변의 곱이 ${data.cubes}가 되는 경우는 ${allCases}입니다. ${ending}` };
     }
+    if (kind === "example-2") {
+      const facts = congruentStairFacts(data);
+      const monotone = data.columnHeights.every((height, index) => height > 0 && (!index || data.columnHeights[index - 1] >= height));
+      if (!monotone || Math.abs(facts.exposedSurface - facts.surface) > 1e-8 || ![facts.blockCount, facts.blockVolume, facts.volume, facts.surface].every(Number.isInteger)) throw new Error("계단 직육면체의 칸·노출 면 계산이 한 답으로 정해지지 않습니다.");
+      const model = { ...data, ...facts, level };
+      const countStep = `앞에서 본 계단은 ${data.columnHeights.join("+")}=${facts.profileCells}칸이고 깊이 방향으로 ${data.depthRows}줄이므로 직육면체는 ${facts.profileCells}×${data.depthRows}=${facts.blockCount}개입니다.`;
+      const firstStep = level === 0
+        ? `앞면 ${data.columnHeights.join("+")}칸과 깊이 ${data.depthRows}줄이 주어졌습니다. ${countStep}`
+        : level === 2
+          ? `먼저 그림의 칸을 빠짐없이 셉니다. ${countStep}`
+          : `그림을 앞면의 계단 칸과 뒤쪽 깊이 줄로 나누어 봅니다. ${countStep}`;
+      const fullVolume = data.totalLength * data.totalDepth * data.totalHeight;
+      const volumeStep = `전체 ${facts.boundingCellCount}칸을 가득 채운 직육면체의 부피는 ${data.totalLength}×${data.totalDepth}×${data.totalHeight}=${num(fullVolume)}cm³이므로 한 조각의 부피는 ${num(fullVolume)}÷${facts.boundingCellCount}=${num(facts.blockVolume)}cm³입니다. 따라서 부피는 ${facts.blockCount}×${num(facts.blockVolume)}=${num(facts.volume)}cm³입니다.`;
+      const surfaceStep = `앞면과 뒷면의 넓이 합은 ${num(facts.frontBackArea)}cm², 위쪽과 아래쪽의 넓이 합은 ${num(facts.topBottomArea)}cm², 양 끝과 계단의 세로 면 넓이 합은 ${num(facts.stepEndArea)}cm²입니다. 따라서 겉넓이는 ${num(facts.frontBackArea)}+${num(facts.topBottomArea)}+${num(facts.stepEndArea)}=${num(facts.surface)}cm²입니다.`;
+      const answer = level === 2 ? `직육면체 ${facts.blockCount}개, 겉넓이 ${num(facts.surface)}cm², 부피 ${num(facts.volume)}cm³` : `겉넓이 ${num(facts.surface)}cm², 부피 ${num(facts.volume)}cm³`;
+      return { answer, visual: congruentStairSvg(model, poolIndex, solved), solution: `${firstStep} ${volumeStep} ${surfaceStep}` };
+    }
     if (kind === "mission-2") {
       const facts = ropeFacts(data);
       if (![facts.side, facts.height, facts.volume].every(Number.isInteger)) throw new Error("끈 고정 풀 계산 결과가 자연수가 아닙니다.");
@@ -454,6 +593,13 @@
           : " 서로 다른 직육면체는 몇 가지인가요?";
       return `한 모서리의 길이가 1cm인 정육면체 ${data.cubes}개를 모두 사용하여 직육면체를 만들려고 합니다. 회전하거나 뒤집어 같은 모양이 되는 것은 한 가지로 셉니다.${extra}`;
     }
+    if (kind === "example-2") {
+      const facts = congruentStairFacts(data);
+      const dimensions = `전체 가로 ${data.totalLength}cm, 깊이 ${data.totalDepth}cm, 높이 ${data.totalHeight}cm`;
+      if (level === 0) return `모양과 크기가 같은 직육면체 ${facts.blockCount}개를 그림처럼 계단 모양으로 쌓았습니다. ${dimensions}입니다. 앞에서 본 계단의 칸 수는 높은 쪽부터 ${data.columnHeights.join("칸, ")}칸이고 깊이 방향은 ${data.depthRows}줄입니다. 이 입체도형의 겉넓이와 부피를 구하세요.`;
+      if (level === 2) return `모양과 크기가 같은 직육면체를 그림처럼 계단 모양으로 쌓았습니다. ${dimensions}입니다. 사용한 직육면체의 수, 입체도형의 겉넓이와 부피를 모두 구하세요.`;
+      return `오른쪽 그림은 모양과 크기가 같은 직육면체 ${facts.blockCount}개를 쌓아 만든 입체도형입니다. ${dimensions}입니다. 이 입체도형의 겉넓이와 부피를 구하세요.`;
+    }
     if (kind === "mission-2") {
       const facts = ropeFacts(data);
       const condition = level === 0
@@ -480,14 +626,16 @@
 
   const helpFor = (kind, data) => kind === "exploration" ? "주어진 밑면의 두 길이와 상자 높이를 차례로 곱해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "주어진 가장 짧은 변 후보마다 나머지 두 변을 빠짐없이 찾아보세요."
-      : kind === "mission-2" ? "주어진 사용 길이에서 가의 밑면 한 변을 먼저 찾아보세요."
-        : kind === "mission-5" ? "가와 나의 끈 길이는 2로, 다의 끈 길이는 4로 나누어 세 변의 합을 비교해 보세요."
-        : "주어진 앞면 칸 수마다 한 칸의 너비와 깊이를 곱해 보세요.";
+      : kind === "example-2" ? "앞에서 보이는 계단의 칸 수에 깊이 방향의 줄 수를 곱해 조각 수부터 확인해 보세요."
+        : kind === "mission-2" ? "주어진 사용 길이에서 가의 밑면 한 변을 먼저 찾아보세요."
+          : kind === "mission-5" ? "가와 나의 끈 길이는 2로, 다의 끈 길이는 4로 나누어 세 변의 합을 비교해 보세요."
+          : "주어진 앞면 칸 수마다 한 칸의 너비와 깊이를 곱해 보세요.";
   const challengeFor = kind => kind === "exploration" ? "종이의 둘레와 두 길이의 차로 가로와 세로를 먼저 구해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "모든 경우를 찾은 뒤 세 변의 길이가 모두 다른 경우만 다시 가려 보세요."
-      : kind === "mission-2" ? "가에서 사용한 끈을 구한 뒤, 두 상자가 사용한 끈의 차로 나의 사용 길이를 찾아보세요."
-        : kind === "mission-5" ? "먼저 다에서 사용한 끈의 길이를 관계로 구하고, 세 변의 합에서 두 변의 합을 각각 빼 보세요."
-        : "전체 가로를 5등분해 한 칸을 구하고, 깊이가 전체 가로와 같다는 조건을 이용하세요.";
+      : kind === "example-2" ? "문제에 조각 수가 없으므로 계단의 각 층과 깊이 줄을 그림에서 직접 세어 보세요."
+        : kind === "mission-2" ? "가에서 사용한 끈을 구한 뒤, 두 상자가 사용한 끈의 차로 나의 사용 길이를 찾아보세요."
+          : kind === "mission-5" ? "먼저 다에서 사용한 끈의 길이를 관계로 구하고, 세 변의 합에서 두 변의 합을 각각 빼 보세요."
+          : "전체 가로를 5등분해 한 칸을 구하고, 깊이가 전체 가로와 같다는 조건을 이용하세요.";
 
   const kindOf = sourceItemId => {
     if (sourceItemId === ids[0]) return "exploration";
@@ -497,6 +645,7 @@
   const valuesFor = (kind, data) => {
     if (kind === "exploration") return [data.width, data.height, data.cut];
     if (kind === "example-1" || kind === "mission-1") return [data.cubes];
+    if (kind === "example-2") return [data.totalLength, data.totalDepth, data.totalHeight, data.depthRows, ...data.columnHeights];
     if (kind === "mission-2") return [data.rope, data.cubeLeft, data.cuboidLeft];
     if (kind === "mission-5") return [data.width, data.height, data.depth];
     return [data.unit, 5 * data.unit];

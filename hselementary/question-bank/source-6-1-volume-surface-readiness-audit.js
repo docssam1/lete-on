@@ -20,7 +20,7 @@ const requiredFields = [
 const publicIds = new Set([
   "6-1-u6-e1-exploration", "6-1-u6-e1-example-1", "6-1-u6-e1-example-2", "6-1-u6-e1-example-3",
   "6-1-u6-e1-example-4", "6-1-u6-e1-mission-1", "6-1-u6-e1-mission-2", "6-1-u6-e1-mission-3", "6-1-u6-e1-mission-6",
-  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1", "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5",
+  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-mission-1", "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5",
   "6-1-u6-e3-exploration", "6-1-u6-e3-example-1", "6-1-u6-e3-example-2", "6-1-u6-e3-example-3",
   "6-1-u6-e3-example-4", "6-1-u6-e3-mission-2", "6-1-u6-e3-mission-4", "6-1-u6-e3-mission-5", "6-1-u6-e3-mission-6",
   "6-1-u6-e4-exploration-1", "6-1-u6-e4-exploration-2", "6-1-u6-e4-exploration-3",
@@ -29,7 +29,7 @@ const publicIds = new Set([
 ]);
 const lockedIds = new Set([
   "6-1-u6-e1-mission-4", "6-1-u6-e1-mission-5",
-  "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-example-4",
+  "6-1-u6-e2-example-3", "6-1-u6-e2-example-4",
   "6-1-u6-e2-mission-4", "6-1-u6-e2-mission-6",
   "6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"
 ]);
@@ -136,6 +136,13 @@ assert(items.find(item => item.sourceItemId === "6-1-u6-e1-mission-2")?.independ
 assert(factorTriples(12).length === 4 && items.find(item => item.sourceItemId === "6-1-u6-e2-example-1")?.independentAnswer === "4가지", "정육면체 12개의 직육면체 모양 수가 맞지 않습니다.");
 assert(factorTriples(48).length === 9 && items.find(item => item.sourceItemId === "6-1-u6-e2-mission-1")?.independentAnswer === "9가지", "정육면체 48개의 직육면체 모양 수가 맞지 않습니다.");
 assert((30 - 2 * 6) * (24 - 2 * 6) * 6 === 1296, "종이를 접은 상자의 부피 계산이 맞지 않습니다.");
+const stairBlocks = [];
+for (let x = 0; x < 3; x += 1) for (let y = 0; y < 4; y += 1) for (let z = 0; z < 3 - x; z += 1) stairBlocks.push([x, y, z]);
+const stairSet = new Set(stairBlocks.map(point => point.join(",")));
+const stairFaces = [[1,0,0,3/4],[-1,0,0,3/4],[0,1,0,8/3],[0,-1,0,8/3],[0,0,1,2],[0,0,-1,2]];
+const stairSurface = stairBlocks.reduce((sum, [x, y, z]) => sum + stairFaces.reduce((faceSum, [dx, dy, dz, area]) => faceSum + (stairSet.has([x + dx, y + dy, z + dz].join(",")) ? 0 : area), 0), 0);
+assert(stairBlocks.length === 24 && 24 * 2 === 48 && Math.abs(stairSurface - 98) < 1e-8, "24개 직육면체 계단의 부피·겉넓이 전수 계산이 맞지 않습니다.");
+assert(items.find(item => item.sourceItemId === "6-1-u6-e2-example-2")?.independentAnswer === "겉넓이 98cm², 부피 48cm³", "24개 직육면체 계단의 독립 답이 맞지 않습니다.");
 assert((110 - 22) / 8 === 11 && (110 - 14 - 6 * 11) / 2 === 15 && 11 * 11 * 15 === 1815, "두 상자와 끈 길이로 구한 부피 계산이 맞지 않습니다.");
 assert(items.find(item => item.sourceItemId === "6-1-u6-e2-mission-2")?.independentAnswer === "1815cm³", "두 상자와 끈 길이로 구한 독립 답이 맞지 않습니다.");
 const threeRopeCandidates = [];
@@ -159,8 +166,8 @@ assert(items.find(item => item.sourceItemId === "6-1-u6-e4-mission-6")?.independ
 assert(6750 / (25 * 9) === 30 && 13500 / ((15 + 25) * 30) === 11.25, "두 칸 수조의 공통 깊이와 최종 물높이 계산이 맞지 않습니다.");
 
 const e3 = id => items.find(item => item.sourceItemId === id);
-assert(publicIds.size === 37 && lockedIds.size === 9, "공개 37개·잠금 9개 대상 수가 계약과 다릅니다.");
-assert(items.filter(item => publicIds.has(item.sourceItemId)).length === 37, "공개 대상이 37개가 아닙니다.");
+assert(publicIds.size === 38 && lockedIds.size === 8, "공개 38개·잠금 8개 대상 수가 계약과 다릅니다.");
+assert(items.filter(item => publicIds.has(item.sourceItemId)).length === 38, "공개 대상이 38개가 아닙니다.");
 assert(items.filter(item => lockedIds.has(item.sourceItemId)).every(item => item.implementationStatus === "review-locked" && item.publicDecision === "locked"), "추가 확인 대상의 잠금이 풀렸습니다.");
 assert(e3("6-1-u6-e3-exploration")?.independentAnswer === "2738cm³", "개념탐구 3의 독립 답이 2738cm³가 아닙니다.");
 assert(e3("6-1-u6-e3-example-1")?.independentAnswer === "280cm³", "예제 3-1의 독립 답이 280cm³가 아닙니다.");

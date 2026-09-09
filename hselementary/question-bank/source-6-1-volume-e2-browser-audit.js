@@ -14,13 +14,14 @@ const failures = [];
 const fail = message => failures.push(message);
 const difficultyBodies = new Map();
 const ids = [
-  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1",
+  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-mission-1",
   "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
 ];
 const difficulties = process.env.HSE_DIFFICULTY ? [Number(process.env.HSE_DIFFICULTY)] : [-1, 0, 1];
 const outputDir = process.env.HSE_SCREENSHOT_DIR || fs.mkdtempSync(path.join(os.tmpdir(), "hse-volume-e2-browser-"));
 const forbiddenLearnerNotation = /a≤b≤c|a²|[VS][₁₂₃₄₅]|\b(?:s|h|a|V|S|N)\b|\d\s*[sah](?=\s|$|[=×()+\-0-9])/;
 const forbiddenTechnicalLabels = /원문 유형|고정 풀|sourceItemId|6-1-u6-e2-/;
+const normalizedMathText = value => String(value || "").replace(/cm\s*2/g, "cm²").replace(/cm\s*3/g, "cm³");
 const poppler = process.env.HSE_POPPLER_BIN || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/Library/bin";
 const pdfinfo = path.join(poppler, "pdfinfo.exe");
 const pdftoppm = path.join(poppler, "pdftoppm.exe");
@@ -28,6 +29,11 @@ const python = process.env.HSE_PYTHON || "C:/Users/user/.cache/codex-runtimes/co
 const expected = {
   exploration: [[30, 24, 6], [28, 20, 4], [36, 26, 5]],
   "example-1": [12, 24, 36],
+  "example-2": [
+    { length: 8, depth: 3, height: 3, heights: [3, 2, 1], rows: 4, surface: 98, volume: 48 },
+    { length: 9, depth: 4, height: 6, heights: [3, 2, 1], rows: 4, surface: 192, volume: 144 },
+    { length: 12, depth: 6, height: 3, heights: [3, 2, 1], rows: 4, surface: 228, volume: 144 }
+  ],
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
   "mission-3": [10, 8, 12],
@@ -120,7 +126,7 @@ function verify(problem, answer, sourceItemId, difficulty, viewport) {
     if (state.broken || state.slash || state.caret) fail(`${label}/${phase}: 깨진 수식 또는 값`);
     state.items.forEach(item => item.svgs.forEach(svg => {
       if (svg.box.width <= 0 || svg.box.height <= 0 || svg.bbox.width <= 0 || svg.bbox.height <= 0) fail(`${label}/${phase}/pool${item.pool}: 빈 SVG`);
-      if (svg.bbox.x < svg.view.x - 1 || svg.bbox.y < svg.view.y - 1 || svg.bbox.right > svg.view.right + 1 || svg.bbox.bottom > svg.view.bottom + 1) fail(`${label}/${phase}/pool${item.pool}: SVG viewBox 밖으로 잘림`);
+      if (svg.bbox.x < svg.view.x - 1 || svg.bbox.y < svg.view.y - 1 || svg.bbox.right > svg.view.right + 1 || svg.bbox.bottom > svg.view.bottom + 1) fail(`${label}/${phase}/pool${item.pool}: SVG viewBox 밖으로 잘림 ${JSON.stringify({ bbox: svg.bbox, view: svg.view })}`);
       if (svg.box.left < -2 || svg.box.right > (viewport === "mobile390" ? 390 : 1440) + 2) fail(`${label}/${phase}/pool${item.pool}: 화면 밖 SVG`);
       if (svg.missing.length || svg.overlaps.length) fail(`${label}/${phase}/pool${item.pool}: 필수 시각 요소 또는 텍스트 겹침 ${JSON.stringify({ missing: svg.missing, overlaps: svg.overlaps })}`);
       if (phase === "답" && svg.solved < 1) fail(`${label}/답/pool${item.pool}: 정답 그림에 계산 근거 강조가 없습니다.`);
@@ -137,6 +143,37 @@ function verify(problem, answer, sourceItemId, difficulty, viewport) {
     if (item.svgs.length !== 1 || solved.svgs.length !== 1) fail(`${label}/pool${item.pool}: 그림 수가 1개가 아닙니다.`);
     if (item.svgs[0].model !== solved.svgs[0].model || item.svgs[0].values !== solved.svgs[0].values) fail(`${label}/pool${item.pool}: 문제·답 구조 데이터 불일치`);
     if (phaseIsProblemLeaking(item.text)) fail(`${label}/문제/pool${item.pool}: 답·해결 정보 노출`);
+    if (sourceItemId.endsWith("example-2")) {
+      const data = expected["example-2"][item.pool];
+      const expectedAnswer = difficulty === 1
+        ? `직육면체 24개, 겉넓이 ${data.surface}cm², 부피 ${data.volume}cm³`
+        : `겉넓이 ${data.surface}cm², 부피 ${data.volume}cm³`;
+      const roles = [
+        "congruent-stair-back-profile", "congruent-stair-top-face", "congruent-stair-riser-face",
+        "congruent-stair-depth-grid", "congruent-stair-riser-grid", "congruent-stair-front-cell",
+        "congruent-stair-profile-outline", "congruent-stair-length-dimension", "congruent-stair-height-dimension",
+        "congruent-stair-depth-dimension"
+      ];
+      [item.svgs[0], solved.svgs[0]].forEach((svg, phaseIndex) => roles.forEach(role => {
+        if (!svg.required.includes(role) || !svg.roleCounts[role]) fail(`${label}/${phaseIndex ? "답" : "문제"}/pool${item.pool}: ${role}가 없습니다.`);
+      }));
+      if (item.svgs[0].model !== "congruent-block-stair" || solved.svgs[0].model !== "congruent-block-stair") fail(`${label}/pool${item.pool}: 같은 직육면체 계단 모델이 아닙니다.`);
+      if (item.svgs[0].roleCounts["congruent-stair-front-cell"] !== 6 || item.svgs[0].roleCounts["congruent-stair-top-face"] !== 3 || item.svgs[0].roleCounts["congruent-stair-depth-grid"] !== 9) fail(`${label}/문제/pool${item.pool}: 3·2·1 앞면과 깊이 4줄의 격자가 다릅니다.`);
+      if (!solved.svgs[0].required.includes("congruent-stair-answer-card") || solved.svgs[0].roleCounts["congruent-stair-answer-card"] !== 1) fail(`${label}/답/pool${item.pool}: 답 그림 계산 표가 없습니다.`);
+      ["congruent-stair-length-dimension", "congruent-stair-height-dimension", "congruent-stair-depth-dimension"].forEach(role => {
+        const dimension = item.svgs[0].lines.find(entry => entry.role === role);
+        if (!dimension || [dimension.x1, dimension.y1, dimension.x2, dimension.y2].some(value => !Number.isFinite(value)) || (dimension.x1 === dimension.x2 && dimension.y1 === dimension.y2)) fail(`${label}/문제/pool${item.pool}: ${role} 치수선이 유효하지 않습니다.`);
+      });
+      const solvedText = normalizedMathText(solved.text);
+      const solvedSolution = normalizedMathText(solved.solution);
+      if (solvedText.replace(/\s+/g, "").indexOf(expectedAnswer.replace(/\s+/g, "")) < 0) fail(`${label}/답/pool${item.pool}: ${expectedAnswer}이 표시되지 않습니다.`);
+      if (!solvedSolution.includes("직육면체는 6×4=24개") || !solvedSolution.includes(`겉넓이는 ${data.surface - 2 * data.length * data.depth - 2 * data.height * data.depth}+${2 * data.length * data.depth}+${2 * data.height * data.depth}=${data.surface}cm²`)) fail(`${label}/답/pool${item.pool}: 조각 수 또는 겉넓이 면 분해 풀이가 없습니다.`);
+      if (!item.text.includes("모양과 크기가 같은 직육면체") || item.text.includes("정육면체 24개")) fail(`${label}/문제/pool${item.pool}: 원문의 직육면체 표현이 다릅니다.`);
+      if (difficulty === -1 && (!item.text.includes("높은 쪽부터 3칸, 2칸, 1칸") || !item.text.includes("깊이 방향은 4줄") || !solved.solution.startsWith("앞면 3+2+1칸과 깊이 4줄이 주어졌습니다."))) fail(`${label}/pool${item.pool}: 쉬움의 칸 안내 또는 첫 풀이가 다릅니다.`);
+      if (difficulty === 0 && (!item.text.includes("직육면체 24개") || item.text.includes("높은 쪽부터") || !solved.solution.startsWith("그림을 앞면의 계단 칸과 뒤쪽 깊이 줄로 나누어 봅니다."))) fail(`${label}/pool${item.pool}: 기준의 원문 24개 조건 또는 그림 풀이가 다릅니다.`);
+      if (difficulty === 1 && (item.text.includes("직육면체 24개") || !item.text.includes("사용한 직육면체의 수") || !solved.solution.startsWith("먼저 그림의 칸을 빠짐없이 셉니다."))) fail(`${label}/pool${item.pool}: 어려움의 조각 수 추론 조건이 다릅니다.`);
+      if (item.pool === 0 && (data.surface !== 98 || data.volume !== 48)) fail(`${label}: 원문 답 계약이 98cm²·48cm³가 아닙니다.`);
+    }
     if (sourceItemId.endsWith("mission-2")) {
       const [rope, cubeLeft, cuboidLeft] = expected["mission-2"][item.pool];
       const cubeUsed = rope - cubeLeft;

@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 214
+    "unlocked": 215
   },
   "items": [
     {
@@ -6369,21 +6369,23 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u6-e2-example-2",
       "sourceSection": "example",
       "sourceItemLabel": "예제 2-2",
-      "typeLabel": "계단 모양 정육면체 쌓기의 부피와 겉넓이 구하기",
-      "commonTypeId": "twenty-four-cubes-stair-volume-surface-area",
+      "typeLabel": "같은 직육면체로 쌓은 계단 모양의 겉넓이와 부피 구하기",
+      "commonTypeId": "congruent-cuboids-stair-volume-surface-area",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-1-u6-e2-example-2",
+      "variant": 2
     },
     {
       "semester": "6-1",

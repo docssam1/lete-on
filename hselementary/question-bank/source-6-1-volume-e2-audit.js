@@ -9,7 +9,7 @@ const failures = [];
 const fail = message => failures.push(message);
 const check = (condition, message) => { if (!condition) fail(message); };
 const sourceIds = [
-  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-mission-1",
+  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-mission-1",
   "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
 ];
 const allResults = new Set();
@@ -27,9 +27,35 @@ const factorTriples = n => {
   for (let a = 1; a * a * a <= n; a += 1) for (let b = a; b * b <= n / a; b += 1) if (n % (a * b) === 0) result.push([a, b, n / (a * b)]);
   return result;
 };
+const congruentStairFacts = data => {
+  const columnCount = data.heights.length;
+  const maxLayers = Math.max(...data.heights);
+  const profileCells = data.heights.reduce((sum, value) => sum + value, 0);
+  const blockLength = data.length / columnCount;
+  const blockDepth = data.depth / data.rows;
+  const blockHeight = data.height / maxLayers;
+  const occupied = new Set();
+  data.heights.forEach((height, x) => { for (let y = 0; y < data.rows; y += 1) for (let z = 0; z < height; z += 1) occupied.add(`${x},${y},${z}`); });
+  const faces = [
+    [1, 0, 0, blockDepth * blockHeight], [-1, 0, 0, blockDepth * blockHeight],
+    [0, 1, 0, blockLength * blockHeight], [0, -1, 0, blockLength * blockHeight],
+    [0, 0, 1, blockLength * blockDepth], [0, 0, -1, blockLength * blockDepth]
+  ];
+  let surface = 0;
+  occupied.forEach(cell => {
+    const [x, y, z] = cell.split(",").map(Number);
+    faces.forEach(([dx, dy, dz, area]) => { if (!occupied.has(`${x + dx},${y + dy},${z + dz}`)) surface += area; });
+  });
+  return { blockCount: occupied.size, blockVolume: blockLength * blockDepth * blockHeight, volume: occupied.size * blockLength * blockDepth * blockHeight, surface, profileCells, boundingCellCount: columnCount * data.rows * maxLayers };
+};
 const expected = {
   exploration: [[30, 24, 6], [28, 20, 4], [36, 26, 5]],
   "example-1": [12, 24, 36],
+  "example-2": [
+    { length: 8, depth: 3, height: 3, heights: [3, 2, 1], rows: 4 },
+    { length: 9, depth: 4, height: 6, heights: [3, 2, 1], rows: 4 },
+    { length: 12, depth: 6, height: 3, heights: [3, 2, 1], rows: 4 }
+  ],
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
   "mission-3": [10, 8, 12],
@@ -132,6 +158,40 @@ for (const sourceItemId of sourceIds) {
           check(generated.answerVisual.includes(`세 변의 길이가 모두 다른 경우 ${allDifferent.length}가지`), `${label}: 어려움 답 그림에 추가 답이 없습니다.`);
         }
         if (kind === "mission-1" && pool === 0 && difficulty !== 1) check(generated.answer === "9가지", `${label}: 원본 정육면체 48개 답이 9가지가 아닙니다.`);
+      } else if (kind === "example-2") {
+        const data = expected["example-2"][pool];
+        const facts = congruentStairFacts(data);
+        const frontBackArea = 2 * data.length * data.height * facts.profileCells / (data.heights.length * Math.max(...data.heights));
+        const topBottomArea = 2 * data.length * data.depth;
+        const stepEndArea = 2 * data.height * data.depth;
+        const expectedAnswer = difficulty === 1
+          ? `직육면체 ${facts.blockCount}개, 겉넓이 ${facts.surface}cm², 부피 ${facts.volume}cm³`
+          : `겉넓이 ${facts.surface}cm², 부피 ${facts.volume}cm³`;
+        const promptText = learnerText(generated.prompt).replace(/\s+/g, " ");
+        check(attr(problemTag, "data-model-key") === "congruent-block-stair", `${label}: 같은 직육면체 계단 모델이 아닙니다.`);
+        check(normalize(generated.answer) === normalize(expectedAnswer), `${label}: 계단 직육면체 답이 노출 면 전수 계산과 다릅니다.`);
+        check(facts.blockCount === 24 && facts.volume === data.length * data.depth * data.height / facts.boundingCellCount * 24, `${label}: 3×4×3칸 중 24조각 부피 계산이 다릅니다.`);
+        check(Math.abs(facts.surface - (frontBackArea + topBottomArea + stepEndArea)) < 1e-8, `${label}: 복셀 노출 면과 세 묶음 겉넓이 계산이 다릅니다.`);
+        check(generated.solution.includes(`앞에서 본 계단은 ${data.heights.join("+")}=${facts.profileCells}칸`) && generated.solution.includes(`직육면체는 ${facts.profileCells}×${data.rows}=${facts.blockCount}개`), `${label}: 3·2·1층과 깊이 4줄의 조각 수 근거가 없습니다.`);
+        check(generated.solution.includes(`겉넓이는 ${frontBackArea}+${topBottomArea}+${stepEndArea}=${facts.surface}cm²`), `${label}: 겉넓이의 독립 면 분해 근거가 없습니다.`);
+        [generated.prompt, generated.answerVisual].forEach((markup, phaseIndex) => {
+          ["congruent-stair-back-profile", "congruent-stair-top-face", "congruent-stair-riser-face", "congruent-stair-depth-grid", "congruent-stair-riser-grid", "congruent-stair-front-cell", "congruent-stair-profile-outline", "congruent-stair-length-dimension", "congruent-stair-height-dimension", "congruent-stair-depth-dimension"].forEach(role => check(markup.includes(`data-visual-element=\"${role}\"`), `${label}/${phaseIndex ? "답" : "문제"}: ${role}가 없습니다.`));
+        });
+        check((generated.prompt.match(/data-visual-element="congruent-stair-front-cell"/g) || []).length === 6, `${label}: 앞면 3+2+1칸이 정확히 여섯 칸이 아닙니다.`);
+        check((generated.prompt.match(/data-visual-element="congruent-stair-depth-grid"/g) || []).length === 9, `${label}: 세 칸의 윗면이 깊이 4줄로 나뉘지 않았습니다.`);
+        check(generated.answerVisual.includes('data-visual-element="congruent-stair-answer-card"'), `${label}: 답 그림의 계산 표가 없습니다.`);
+        check(!promptText.includes("정육면체 24개") && promptText.includes("모양과 크기가 같은 직육면체"), `${label}: 원문의 직육면체 표현이 보존되지 않았습니다.`);
+        if (difficulty === -1) {
+          check(promptText.includes(`높은 쪽부터 ${data.heights.join("칸, ")}칸`) && promptText.includes(`깊이 방향은 ${data.rows}줄`), `${label}: 쉬움 문제에 앞면 칸과 깊이 줄 안내가 없습니다.`);
+          check(generated.solution.startsWith(`앞면 ${data.heights.join("+")}칸과 깊이 ${data.rows}줄이 주어졌습니다.`), `${label}: 쉬움 풀이가 주어진 칸 안내부터 시작하지 않습니다.`);
+        } else if (difficulty === 0) {
+          check(promptText.includes(`직육면체 ${facts.blockCount}개`) && !promptText.includes("높은 쪽부터"), `${label}: 기준 문제가 원문의 24개 조건과 그림 해석을 보존하지 않았습니다.`);
+          check(generated.solution.startsWith("그림을 앞면의 계단 칸과 뒤쪽 깊이 줄로 나누어 봅니다."), `${label}: 기준 풀이가 그림의 칸 읽기부터 시작하지 않습니다.`);
+        } else {
+          check(!promptText.includes(`직육면체 ${facts.blockCount}개`) && promptText.includes("사용한 직육면체의 수"), `${label}: 어려움 문제에서 조각 수를 직접 주거나 묻지 않습니다.`);
+          check(generated.solution.startsWith("먼저 그림의 칸을 빠짐없이 셉니다."), `${label}: 어려움 풀이가 그림에서 조각 수를 찾는 단계부터 시작하지 않습니다.`);
+        }
+        if (pool === 0) check(generated.answer === (difficulty === 1 ? "직육면체 24개, 겉넓이 98cm², 부피 48cm³" : "겉넓이 98cm², 부피 48cm³"), `${label}: 원문 8×3×3 계단 답이 98cm²·48cm³가 아닙니다.`);
       } else if (kind === "mission-2") {
         const [rope, cubeLeft, cuboidLeft] = expected["mission-2"][pool];
         const s = (rope - cubeLeft) / 8;
@@ -230,7 +290,7 @@ for (const sourceItemId of sourceIds) {
     check(seenPools.size === 3, `${sourceItemId}/difficulty${difficulty}: 3개 풀이 모두 생성되지 않았습니다.`);
   }
 }
-check(allResults.size === 54, `전체 고정 풀·난이도 결과 수가 54개가 아닙니다: ${allResults.size}`);
+check(allResults.size === 63, `전체 고정 풀·난이도 결과 수가 63개가 아닙니다: ${allResults.size}`);
 difficultyBodies.forEach((bodies, label) => {
   check(bodies.size === 3, `${label}: 세 난이도 문제 본문을 모두 모으지 못했습니다.`);
   check(new Set(bodies.values()).size === 3, `${label}: 힌트 문장을 제거하면 세 난이도 문제 본문이 구조적으로 같아집니다.`);
@@ -240,4 +300,4 @@ if (failures.length) {
   console.error(failures.slice(0, 120).join("\n"));
   process.exit(1);
 }
-console.log("6-1 부피 개념탐구 2 수학 감사 통과: 6유형 × 3풀 × 3난이도, 인수 전수 열거·두 끈 역검산·세 끈 단일해·계단 두 공식·문제/정답 분리 확인");
+console.log("6-1 부피 개념탐구 2 수학 감사 통과: 7유형 × 3풀 × 3난이도, 인수 전수 열거·24개 직육면체 노출 면·두 끈 역검산·세 끈 단일해·계단 두 공식·문제/정답 분리 확인");

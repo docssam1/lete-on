@@ -3982,8 +3982,8 @@
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 2,
       "pdfPage": 49,
-      "printedPage": null,
-      "visualRisk": "숨은 면·공유 면·바닥 면의 포함 여부와 세 방향 길이를 명시해야 하며, 쌓은 도형은 높이·위치·단위가 한 가지로 읽히고 답 후보를 전수 확인해야 함",
+      "printedPage": 56,
+      "visualRisk": "앞면 3·2·1층, 깊이 4줄과 전체 8cm·3cm·3cm가 한 가지 배치로 읽혀야 하며 정육면체로 잘못 표시하면 안 됨",
       "section": "exploration",
       "ordinal": 1,
       "sourceShape": "직육면체 또는 쌓은 정육면체의 길이·높이·층 조건을 이용하여 부피 또는 관련 값을 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함",
@@ -4020,11 +4020,12 @@
       "visualRisk": "숨은 면·공유 면·바닥 면의 포함 여부와 세 방향 길이를 명시해야 하며, 쌓은 도형은 높이·위치·단위가 한 가지로 읽히고 답 후보를 전수 확인해야 함",
       "section": "example",
       "ordinal": 2,
-      "sourceShape": "직육면체 또는 쌓은 정육면체의 길이·높이·층 조건을 이용하여 부피 또는 관련 값을 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "모양과 크기가 같은 직육면체 24개를 앞면 3·2·1층, 깊이 4줄의 계단 모양으로 쌓고 전체 세 길이에서 겉넓이와 부피를 구하는 구조",
+      "answerContract": "single-composite",
+      "sourceVerified": true,
+      "implementationStatus": "implemented",
+      "reviewReason": "",
+      "publicSourceItemId": "6-1-u6-e2-example-2"
     },
     {
       "sourceItemId": "6-1-u6-e2-example-3",
