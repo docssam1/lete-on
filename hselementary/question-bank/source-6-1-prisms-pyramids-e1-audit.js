@@ -5,13 +5,15 @@ require("./generators.js");
 
 const api = window.HSE_GENERATORS;
 const sourceIds = [
-  "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5"
+  "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5",
+  "6-1-u2-e1-mission-6"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e1-example-1-1", "19각기둥"],
   ["6-1-u2-e1-mission-1", "24"],
   ["6-1-u2-e1-mission-2", "115cm"],
-  ["6-1-u2-e1-mission-5", "ㄴㅊ=16 2/3cm, 나=250cm²"]
+  ["6-1-u2-e1-mission-5", "ㄴㅊ=16 2/3cm, 나=250cm²"],
+  ["6-1-u2-e1-mission-6", "C, 128cm"]
 ]);
 const failures = [];
 let checked = 0;
@@ -81,6 +83,20 @@ function independentAnswer(evidence) {
     check(na[0] === v[7] && na[1] === v[8] && area[0] === v[9] && area[1] === v[10], "ㄴㅊ 길이 또는 나 넓이가 독립 계산과 다릅니다.");
     return `ㄴㅊ=${mixed(na)}cm, 나=${mixed(area)}cm²`;
   }
+  if (evidence.kind === "concave-prism-net-match-edge-total") {
+    const unit = v[0], height = v[1], perimeter = v[2], sideCount = v[3], edgeTotal = v[4], distanceToA = v[5];
+    const baseEdgeUnits = [3, 2, 1, 1, 1, 1, 1, 2];
+    const stripEdgeUnits = [1, 1, 1, 1, 2, 3, 2];
+    const detachedEdgeUnits = [1];
+    check(baseEdgeUnits.reduce((sum, value) => sum + value, 0) * unit === perimeter, "오목한 밑면의 여덟 변 둘레가 저장 자료와 다릅니다.");
+    check(stripEdgeUnits.length + detachedEdgeUnits.length === sideCount, "가로 띠와 따로 붙은 옆면을 합한 수가 8개가 아닙니다.");
+    check([...stripEdgeUnits, ...detachedEdgeUnits].reduce((sum, value) => sum + value, 0) * unit === perimeter, "옆면 너비의 합이 밑면 둘레와 다릅니다.");
+    const candidates = new Map([["B", 5], ["C", 4], ["D", 3], ["E", 2], ["F", 0]]);
+    const matches = [...candidates].filter(([, distance]) => distance === distanceToA);
+    check(matches.length === 1, `점 A와 만나는 후보가 ${matches.length}개입니다.`);
+    check(2 * perimeter + sideCount * height === edgeTotal, "모든 모서리 길이의 합이 독립 계산과 다릅니다.");
+    return `${matches[0][0]}, ${edgeTotal}cm`;
+  }
   throw new Error(`알 수 없는 검산 종류: ${evidence.kind}`);
 }
 
@@ -106,7 +122,7 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
         check(generated.answerVisual.includes(`data-answer-source="${sourceIds[variant]}"`) && generated.answerVisual.includes(`data-verified-pool-index="${generated.verifiedPoolIndex}"`), "답 그림의 유형·고정 묶음 연결이 다릅니다.");
         const parsed = parseEvidence(generated.prompt);
         check(parsed.sourceItemId === sourceIds[variant], "독립 검산 자료의 유형 ID가 다릅니다.");
-        check(parsed.contract === (variant === 3 ? "two-values" : "single-value"), "답 형식 계약이 다릅니다.");
+        check(parsed.contract === ([3, 4].includes(variant) ? "two-values" : "single-value"), "답 형식 계약이 다릅니다.");
         check(parsed.difficulty === difficultyExpected[String(difficulty)], "난이도별 풀이 부담 표시가 다릅니다.");
         if (difficulty === -1) check(generated.prompt.includes('data-step-evidence="guided"'), "쉬움 단계의 안내가 없습니다.");
         if (difficulty === 0) check(!generated.prompt.includes("data-step-evidence="), "원본 단계에 난이도 안내가 섞였습니다.");
@@ -158,6 +174,17 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
           check(generated.prompt.includes("math-fraction") && generated.answerVisual.includes("math-fraction"), "분수에 공통 세로 수식 표시를 사용하지 않았습니다.");
           check(generated.prompt.includes("ㄱㄴ=") && generated.prompt.includes("ㄴㅊ") && generated.prompt.includes("ㄱㅊ="), "삼각형 변 대응이 없습니다.");
         }
+        if (variant === 4) {
+          check(generated.prompt.includes("source61-concave-prism-net") && generated.answerVisual.includes("source61-concave-prism-net"), "오목한 팔각기둥 전개도가 문제와 답에 없습니다.");
+          check((generated.prompt.match(/class="source61-concave-base /g) || []).length === 2, "서로 같은 오목한 밑면 2개가 없습니다.");
+          check((generated.prompt.match(/class="source61-concave-side-face/g) || []).length === 8, "가로 띠 7개와 따로 붙은 1개를 합한 옆면 8개가 아닙니다.");
+          check(generated.prompt.includes('data-strip-edge-units="1,1,1,1,2,3,2"') && generated.prompt.includes('data-detached-side-edge-units="1"'), "원문 옆면의 이어짐과 따로 붙은 옆면이 기록되지 않았습니다.");
+          check(generated.prompt.includes('data-base-edge-units="3,2,1,1,1,1,1,2"'), "오목한 밑면의 여덟 변 구조가 없습니다.");
+          check((generated.prompt.match(/data-candidate="[BCDEF]"/g) || []).length === 5 && generated.prompt.includes('data-point="A"'), "점 A와 후보 B부터 F가 모두 없습니다.");
+          check(!generated.prompt.includes('data-point-a-strip-match="C"') && !generated.prompt.includes("source61-concave-fold-guide"), "문제 그림에 만나는 점 C가 노출되었습니다.");
+          check(generated.answerVisual.includes('data-point-a-strip-match="C"') && generated.answerVisual.includes('data-candidate="C"') && generated.answerVisual.includes("source61-concave-fold-guide is-solved"), "답 그림에서 A와 C의 접힘 대응이 강조되지 않았습니다.");
+          check(generated.answerVisual.includes(`data-target-edge-total="${parsed.values[4]}"`), "답 그림에 모든 모서리 길이 합이 없습니다.");
+        }
         pools.add(generated.verifiedPoolIndex);
         answers.add(String(generated.answer));
         prompts.set(generated.verifiedPoolIndex, generated.prompt.replace(/<p class="question-step"[\s\S]*?<\/p>/g, "").replace(/<span hidden[\s\S]*?<\/span>/g, ""));
@@ -181,4 +208,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 1 각기둥과 각뿔 감사 통과: 4유형 · 12개 고정 문항 · ${checked.toLocaleString()}회 계산·pool·답 3종·답 그림·원문 ID·난이도·도형 semantic 검사`);
+console.log(`6-1 2단원 개념탐구 1 각기둥과 각뿔 감사 통과: 5유형 · 15개 고정 문항 · ${checked.toLocaleString()}회 계산·pool·답 3종·답 그림·원문 ID·난이도·도형 semantic 검사`);

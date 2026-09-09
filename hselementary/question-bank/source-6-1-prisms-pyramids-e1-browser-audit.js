@@ -15,9 +15,10 @@ const sourceIds = [
   "6-1-u2-e1-example-1-1",
   "6-1-u2-e1-mission-1",
   "6-1-u2-e1-mission-2",
-  "6-1-u2-e1-mission-5"
+  "6-1-u2-e1-mission-5",
+  "6-1-u2-e1-mission-6"
 ];
-const publicVariants = [0, 1, 2, 3];
+const publicVariants = [0, 1, 2, 3, 4];
 const difficulties = [-1, 0, 1];
 const representativeDifficulties = new Set([-1, 0]);
 const failures = [];
@@ -148,6 +149,24 @@ async function inspectView(page, selector, label, answerView, variant) {
           targetArea: svg.dataset.targetArea || ""
         };
       }),
+      concaveNetGeometry: items.map(item => {
+        const svg = item.querySelector("svg.source61-concave-prism-net");
+        if (!svg) return null;
+        return {
+          viewBox: svg.getAttribute("viewBox") || "",
+          bases: [...svg.querySelectorAll(".source61-concave-base")].map(node => node.getAttribute("points") || ""),
+          sideFaces: [...svg.querySelectorAll(".source61-concave-side-face")].map(node => [node.dataset.sideFace || "", node.dataset.sideEdgeUnits || ""]),
+          candidates: [...svg.querySelectorAll(".source61-concave-candidate")].map(node => [node.dataset.candidate || "", node.dataset.distanceFromFUnits || ""]),
+          baseEdges: svg.dataset.baseEdgeUnits || "",
+          stripEdges: svg.dataset.stripEdgeUnits || "",
+          detachedEdge: svg.dataset.detachedSideEdgeUnits || "",
+          baseCount: svg.dataset.baseFaceCount || "",
+          lateralCount: svg.dataset.lateralFaceCount || "",
+          pointADistance: svg.dataset.pointADistanceFromFUnits || "",
+          pointAMatch: svg.dataset.pointAStripMatch || "",
+          edgeTotal: svg.dataset.targetEdgeTotal || ""
+        };
+      }),
       visibleText: items.map(item => item.innerText || "")
     };
   }, { selected: selector, isAnswer: answerView });
@@ -240,6 +259,25 @@ function checkSemantic(state, label, variant, answerView, difficulty) {
         fail(`${label}: 답에서 ㄴㅊ와 면 나가 함께 강조되지 않았습니다.`);
       }
     }
+    if (variant === 4) {
+      const model = state.concaveNetGeometry[index];
+      if (!model || model.bases.length !== 2 || model.sideFaces.length !== 8 || model.baseCount !== "2" || model.lateralCount !== "8") {
+        fail(`${label}: 같은 오목한 밑면 2개와 옆면 8개의 전개도가 아닙니다.`);
+        continue;
+      }
+      if (model.baseEdges !== "3,2,1,1,1,1,1,2" || model.stripEdges !== "1,1,1,1,2,3,2" || model.detachedEdge !== "1") {
+        fail(`${label}: 원문 밑면 둘레 또는 가로 띠 밖의 여덟째 옆면 구조가 다릅니다.`);
+      }
+      if (model.candidates.map(candidate => candidate[0]).join("") !== "BCDEF" || model.candidates.map(candidate => candidate[1]).join(",") !== "5,4,3,2,0" || model.pointADistance !== "4") {
+        fail(`${label}: 점 A와 후보 B부터 F의 접힘 거리 자료가 다릅니다.`);
+      }
+      if (!answerView && (model.pointAMatch || model.edgeTotal || markup.includes("source61-concave-fold-guide"))) {
+        fail(`${label}: 문제 그림에 만나는 점이나 모서리 합이 노출되었습니다.`);
+      }
+      if (answerView && (model.pointAMatch !== "C" || !model.edgeTotal || !markup.includes("source61-concave-fold-guide is-solved") || !markup.includes('data-candidate="C"'))) {
+        fail(`${label}: 답 그림에서 A와 C의 대응 또는 모서리 합이 표시되지 않았습니다.`);
+      }
+    }
   }
 }
 
@@ -258,6 +296,24 @@ function compareNetShapes(problem, answer, label) {
   const left = problem.netGeometry.map(value => JSON.stringify(invariant(value))).sort();
   const right = answer.netGeometry.map(value => JSON.stringify(invariant(value))).sort();
   if (left.join("\n") !== right.join("\n")) fail(`${label}: 문제와 답의 삼각기둥 전개도 좌표·점 순서·대상 면 구조가 다릅니다.`);
+}
+
+function compareConcaveNetShapes(problem, answer, label) {
+  const invariant = value => value && ({
+    viewBox: value.viewBox,
+    bases: value.bases,
+    sideFaces: value.sideFaces,
+    candidates: value.candidates,
+    baseEdges: value.baseEdges,
+    stripEdges: value.stripEdges,
+    detachedEdge: value.detachedEdge,
+    baseCount: value.baseCount,
+    lateralCount: value.lateralCount,
+    pointADistance: value.pointADistance
+  });
+  const left = problem.concaveNetGeometry.map(value => JSON.stringify(invariant(value))).sort();
+  const right = answer.concaveNetGeometry.map(value => JSON.stringify(invariant(value))).sort();
+  if (left.join("\n") !== right.join("\n")) fail(`${label}: 문제와 답의 오목한 팔각기둥 전개도 좌표·면·점 구조가 다릅니다.`);
 }
 
 async function captureRepresentative(page, sourceItemId, difficulty, viewportLabel, answerView) {
@@ -303,6 +359,7 @@ async function inspectType(browser, baseUrl, variant, difficulty, viewport, view
     const answer = await inspectView(page, "#solutionView .solution-item", label, true, variant);
     checkSemantic(answer, `${label} / 답`, variant, true, difficulty);
     if (variant === 3) compareNetShapes(problem, answer, label);
+    if (variant === 4) compareConcaveNetShapes(problem, answer, label);
 
     if (representativeDifficulties.has(difficulty)) {
       await page.locator("#problemTab").click();
@@ -367,12 +424,12 @@ function generatorReady() {
     await new Promise(resolve => server.close(resolve));
   }
 
-  if (screenshots !== 32) fail(`대표 화면 수가 ${screenshots}장입니다. 32장이어야 합니다.`);
-  if (pdfs !== 8) fail(`A4 PDF 수가 ${pdfs}개입니다. 8개여야 합니다.`);
-  const summary = `${failures.length ? "실패" : "통과"}: 공개 4유형×3난이도×PC/모바일, 고정 pool 3문항, 문제·답 그림·근거·도형 계약, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 확인 페이지 ${checkedPages}개\n${failures.join("\n")}\n`;
+  if (screenshots !== 40) fail(`대표 화면 수가 ${screenshots}장입니다. 40장이어야 합니다.`);
+  if (pdfs !== 10) fail(`A4 PDF 수가 ${pdfs}개입니다. 10개여야 합니다.`);
+  const summary = `${failures.length ? "실패" : "통과"}: 공개 5유형×3난이도×PC/모바일, 고정 pool 3문항, 문제·답 그림·근거·도형 계약, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 확인 페이지 ${checkedPages}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 1 브라우저 감사 통과: 공개 4유형×3난이도×PC/모바일 · 고정 3문항 · 답 그림 · 화면 ${screenshots}장 · A4 PDF ${pdfs}개 · 확인 페이지 ${checkedPages}개`);
+  console.log(`6-1 2단원 개념탐구 1 브라우저 감사 통과: 공개 5유형×3난이도×PC/모바일 · 고정 3문항 · 답 그림 · 화면 ${screenshots}장 · A4 PDF ${pdfs}개 · 확인 페이지 ${checkedPages}개`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

@@ -21035,9 +21035,10 @@
     },
     sourceGrade6PrismsPyramidsE1({ rng, level, variant = 0 }) {
       const sourceIds = [
-        "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5"
+        "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5",
+        "6-1-u2-e1-mission-6"
       ];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 1 원문 분기는 0부터 3까지여야 합니다.");
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 1 원문 분기는 0부터 4까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, 2);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
@@ -21048,7 +21049,7 @@
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const fractionText = value => mixedFractionMarkup(value.numerator, value.denominator);
       const plainFractionText = value => mixedFraction(value.numerator, value.denominator);
-      const evidenceKinds = ["prism-name-from-counts", "prism-symbol-ratio-value", "rolling-pentagonal-prism-edge-total", "triangular-prism-net-ratio-area"];
+      const evidenceKinds = ["prism-name-from-counts", "prism-symbol-ratio-value", "rolling-pentagonal-prism-edge-total", "triangular-prism-net-ratio-area", "concave-prism-net-match-edge-total"];
       const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
         answerVisual: `<div class="verified-answer-diagram source61-answer-diagram" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><span hidden data-source61-prism-e1-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}"></span>${answerBody}<div class="solution-answer-caption">문제의 조건으로 확인한 답</div></div>`,
         generationMode: "fixed-verified-pool",
@@ -21120,6 +21121,25 @@
         const derivedHeightAttribute = solved ? ` data-derived-height="${H.numerator}/${H.denominator}"` : "";
         return `<svg class="geometry-diagram source61-triangular-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 360 190" role="img" aria-label="가, 나, 다 세 직사각형과 위아래의 같은 삼각형으로 만든 삼각기둥 전개도" data-point-order="ㄷ,ㄴ,ㅊ,ㅈ / ㄹ,ㅁ,ㅅ,ㅇ / apex ㄱ,ㅂ" data-edge-dimensions="ㄱㄴ=${ga};ㄴㅊ=${solved ? `${na.numerator}/${na.denominator}` : "unknown"};ㄱㅊ=${da}" data-area-ga="${areaGa}" data-target-edge="ㄴㅊ" data-target-edge-orientation="horizontal" data-target-area="나"${derivedHeightAttribute}>${triangleTop}${triangleBottom}${rectangles}${targetEdge}${pointLabels}${dimensions}</svg>`;
       };
+      const concavePrismNetSvg = ({ unit, height, edgeTotal, solved = false }) => {
+        const u = 30;
+        const x0 = 24, stripY = 116, stripH = 34;
+        const stripUnits = [1, 1, 1, 1, 2, 3, 2];
+        const boundaries = [x0];
+        stripUnits.forEach(value => boundaries.push(boundaries[boundaries.length - 1] + value * u));
+        const strip = stripUnits.map((value, index) => `<rect class="source61-concave-side-face" x="${boundaries[index]}" y="${stripY}" width="${value * u}" height="${stripH}" data-side-edge-units="${value}" data-side-face="${index + 1}"/>`).join("");
+        const candidateNames = ["B", "C", "D", "E", "F"];
+        const candidates = boundaries.slice(1, 6).map((x, index) => `<g class="source61-concave-candidate${solved && candidateNames[index] === "C" ? " is-solved" : ""}" data-candidate="${candidateNames[index]}" data-distance-from-f-units="${[5, 4, 3, 2, 0][index]}"><circle cx="${x}" cy="${stripY + stripH}" r="${solved && candidateNames[index] === "C" ? 5 : 3.5}"/><text x="${x}" y="${stripY + stripH + 18}">${candidateNames[index]}</text></g>`).join("");
+        const lowerX = boundaries[5], lowerRight = boundaries[6], lowerBottom = stripY + stripH + 2 * u;
+        const lowerPoints = [[lowerX, stripY + stripH], [lowerRight, stripY + stripH], [lowerRight, lowerBottom], [lowerRight - u, lowerBottom], [lowerRight - u, lowerBottom - u], [lowerX + u, lowerBottom - u], [lowerX + u, lowerBottom], [lowerX, lowerBottom]];
+        const pointAX = lowerX + u, pointAY = lowerBottom - u;
+        const topLeft = boundaries[4], topRight = boundaries[5];
+        const topPoints = [[topRight, stripY], [topRight, stripY - 3 * u], [topLeft, stripY - 3 * u], [topLeft, stripY - 2 * u], [topLeft + u, stripY - 2 * u], [topLeft + u, stripY - u], [topLeft, stripY - u], [topLeft, stripY]];
+        const bases = `<polygon class="source61-concave-base source61-concave-base-top" points="${topPoints.map(point => point.join(",")).join(" ")}"/><polygon class="source61-concave-base source61-concave-base-bottom" points="${lowerPoints.map(point => point.join(",")).join(" ")}"/>`;
+        const detachedFace = `<rect class="source61-concave-side-face source61-concave-detached-face" x="${topLeft - u}" y="${stripY - 3 * u}" width="${u}" height="${u}" data-side-edge-units="1" data-side-face="8"/>`;
+        const answerGuide = solved ? `<path class="source61-concave-fold-guide is-solved" d="M${boundaries[5]} ${stripY + 10} H${boundaries[4]} H${boundaries[3]} H${boundaries[2]}"/>` : "";
+        return `<svg class="geometry-diagram source61-concave-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 440 244" role="img" aria-label="오목한 밑면 두 개와 직사각형 옆면으로 이루어진 전개도, 점 A와 후보 B부터 F" data-base-edge-units="3,2,1,1,1,1,1,2" data-strip-edge-units="1,1,1,1,2,3,2" data-detached-side-edge-units="1" data-base-face-count="2" data-lateral-face-count="8" data-base-perimeter="${12 * unit}" data-prism-height="${height}" data-point-a-distance-from-f-units="4" data-point-a-strip-match="${solved ? "C" : ""}" data-target-edge-total="${solved ? edgeTotal : ""}">${bases}${detachedFace}${strip}${answerGuide}${candidates}<g class="source61-concave-point-a${solved ? " is-solved" : ""}" data-point="A"><circle cx="${pointAX}" cy="${pointAY}" r="${solved ? 5 : 3.5}"/><text x="${pointAX - 13}" y="${pointAY + 4}">A</text></g><text class="source61-concave-measure" x="${(boundaries[5] + boundaries[6]) / 2}" y="${stripY + 21}">${3 * unit}cm</text><text class="source61-concave-measure" x="${(boundaries[6] + boundaries[7]) / 2}" y="${stripY + 21}">${2 * unit}cm</text><text class="source61-concave-measure" x="${boundaries[7] + 25}" y="${stripY + stripH / 2}">${height}cm</text><text class="source61-concave-measure" x="${lowerX + u / 2}" y="${lowerBottom + 15}">${unit}cm</text><text class="source61-concave-measure" x="${lowerRight - u / 2}" y="${lowerBottom + 15}">${unit}cm</text><text class="source61-concave-measure" x="${pointAX + 16}" y="${pointAY + 18}">${unit}cm</text></svg>`;
+      };
 
       if (variant === 0) {
         const data = [{ n: 19, k: 40 }, { n: 14, k: 30 }, { n: 23, k: 48 }][poolIndex];
@@ -21143,6 +21163,16 @@
         const promptVisual = `${prismPicture(5, data.h, "rolling")}${rollingSvg({ h: data.h, t: data.t, A, P: data.p, edgeTotal })}${mathBoard("굴린 횟수와 칠한 넓이", row("높이", `${data.h}cm`) + row("굴린 횟수", `${data.t}회`) + row("바닥에 칠한 넓이", `${A}cm²`), `data-source61-visual="rolling-pentagonal-prism"`)}`;
         const answerVisual = `${prismPicture(5, data.h, "rolling", true)}${rollingSvg({ h: data.h, t: data.t, A, P: data.p, edgeTotal, solved: true })}${mathBoard("밑면 둘레와 모든 모서리", row("밑면 둘레 P", `${A}÷(${data.t}×${data.h})=${data.p}cm`) + row("모든 모서리 길이 합", `2×${data.p}+5×${data.h}=${edgeTotal}cm`))}`;
         return fixedResult(`높이가 ${data.h}cm인 오각기둥을 밑면 위에서 ${data.t}바퀴 굴렸더니 각 옆면이 ${data.t}번씩 칠해졌습니다. 바닥에 칠해진 넓이가 ${A}cm²일 때, 이 오각기둥의 모든 모서리 길이의 합을 구하세요.${promptVisual}${support("칠한 넓이를 굴린 횟수와 높이로 나누어 밑면의 둘레를 먼저 구해 보세요.")}${challenge}${evidence("rolling-pentagonal-prism-edge-total", [data.h, data.t, data.p, A, edgeTotal])}`, `${edgeTotal}cm`, `바닥에 칠한 넓이는 t×h×P이므로 P=${A}÷(${data.t}×${data.h})=${data.p}cm입니다. 오각기둥의 모든 모서리는 밑면 모서리 두 바퀴와 옆모서리 5개이므로 2P+5h=2×${data.p}+5×${data.h}=${edgeTotal}cm입니다.`, answerVisual);
+      }
+
+      if (variant === 4) {
+        const unit = [4, 5, 6][poolIndex];
+        const height = unit;
+        const perimeter = 12 * unit;
+        const edgeTotal = 2 * perimeter + 8 * height;
+        const promptVisual = concavePrismNetSvg({ unit, height, edgeTotal });
+        const answerVisual = `${concavePrismNetSvg({ unit, height, edgeTotal, solved: true })}${mathBoard("접은 뒤 만나는 점과 모서리", row("F에서 왼쪽으로", `${2 * unit}cm 뒤 E, ${unit}cm 뒤 D, ${unit}cm 뒤 C`) + row("A와 만나는 점", "C") + row("한 밑면의 둘레", `12×${unit}=${perimeter}cm`) + row("모든 모서리", `2×${perimeter}+8×${height}=${edgeTotal}cm`))}`;
+        return fixedResult(`다음 그림은 어떤 입체도형의 전개도입니다. 전개도를 접었을 때 점 A와 만나는 점을 B, C, D, E, F 중에서 찾고, 모든 모서리 길이의 합을 구하세요.${promptVisual}${support("가로 띠 밖에 따로 붙은 옆면까지 세고, F에서 밑면 둘레를 따라 A까지 이동해 보세요.")}${challenge}${evidence("concave-prism-net-match-edge-total", [unit, height, perimeter, 8, edgeTotal, 4], "two-values")}`, `C, ${edgeTotal}cm`, `밑면에서 F부터 A까지 이어지는 변의 길이는 ${2 * unit}cm, ${unit}cm, ${unit}cm입니다. 전개도의 가로 띠에서 F부터 왼쪽으로 같은 길이를 따라가면 E, D를 지나 C에 닿으므로 A와 만나는 점은 C입니다. 한 밑면의 둘레는 12×${unit}=${perimeter}cm이고 옆모서리는 ${height}cm인 것이 8개이므로 모든 모서리 길이의 합은 2×${perimeter}+8×${height}=${edgeTotal}cm입니다.`, answerVisual);
       }
 
       const data = [
