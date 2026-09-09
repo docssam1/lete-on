@@ -96,11 +96,11 @@
     student: {
       eyebrow: "STUDENT · LEARN",
       title: "학생은 오늘 가능한 학습부터 시작합니다.",
-      description: "Grade 6에서는 공개 개념 10개를 바로 학습할 수 있습니다. 검수를 끝내지 않은 진단·문제·워크북은 잠금 상태로 구분합니다.",
+      description: "Grade 6에서는 공개 개념 10개와 검증된 단원 워크북 9개를 바로 학습할 수 있습니다. 42문항 진단과 자동 배정은 별도 검수 상태로 구분합니다.",
       nav: ["개념 배우기", "영역 확인", "진단 상태", "경시 경로"],
       panel: [
         '<div class="mini-product-top"><span>현재 학생 공개 범위</span><b>Grade 6</b></div>',
-        '<a class="mini-task primary-task" href="./concept-learning.html"><small>지금 가능</small><strong>10개 핵심 개념 학습</strong><span>설명 · 시각 모델 · 완전 풀이 예제 →</span></a>',
+        '<a class="mini-task primary-task" href="./concept-learning.html"><small>지금 가능</small><strong>10개 핵심 개념 · 9개 단원 워크북</strong><span>설명 · 시각 모델 · 유형 연습 · 재확인 →</span></a>',
         '<div class="mini-task"><small>검수 대기</small><strong>42문항 진단·분석</strong><span>학생 운영 잠금</span></div>',
         '<a class="mini-task" href="./sasmo.html"><small>준비 경로</small><strong>SASMO K2–G12</strong><span>공식 형식과 원문 접근 확인 →</span></a>'
       ].join("")
@@ -108,13 +108,13 @@
     teacher: {
       eyebrow: "TEACHER · PLAN",
       title: "교사는 범위, 근거, 검수 상태를 함께 봅니다.",
-      description: "학년·영역·단원을 고르고 수업 자료 상태를 확인합니다. 검수 전 문제·정답·해설은 배정할 수 없습니다.",
+      description: "학년·영역·단원을 고르고 수업 자료 상태를 확인합니다. Grade 6의 검증된 워크북은 수업 자료로 열리며, 진단 배정과 학생 기록은 별도 검수 상태입니다.",
       nav: ["교육과정", "진단 근거", "수업 구성", "검수 상태", "배정 가능 여부"],
       panel: [
         '<div class="mini-product-top"><span>현재 교사 공개 범위</span><b>K–8</b></div>',
         '<a class="mini-task primary-task" href="./catalog.html?role=teacher"><small>구조 공개</small><strong>94개 클러스터·자료 계획</strong><span>학년 → 영역 → 단원 → 자료 →</span></a>',
         '<a class="mini-task" href="./diagnostic.html"><small>비공개 QA</small><strong>Grade 6 진단·분석 흐름</strong><span>42문항 독립 검수 대기 →</span></a>',
-        '<div class="mini-task"><small>배정 잠금</small><strong>문제·워크북·정답·해설</strong><span>독립 검수와 승인 필요</span></div>'
+        '<a class="mini-task" href="./concept-learning.html"><small>수업 자료</small><strong>Grade 6 개념·워크북·교사용 지도</strong><span>9개 단원 워크북 · 재확인 포함 →</span></a>'
       ].join("")
     }
   };
@@ -199,10 +199,10 @@
   }
 
   function localStatus(goalId, grade) {
-    if (goalId === "school" && String(grade) === "6") return "Grade 6 공개 개념 10개 이용 가능 · 42문항 진단은 독립 검수 대기이며 학생 운영은 잠금입니다.";
+    if (goalId === "school" && String(grade) === "6") return "Grade 6 공개 개념 10개와 검증된 단원 워크북 9개를 이용할 수 있습니다. 42문항 진단·자동 배정은 독립 검수 대기입니다.";
     if (goalId === "school" && (String(grade) === "K" || Number(grade) <= 8)) return "영역·클러스터 구조만 공개되었습니다. 학습 문항과 워크북은 검수 전까지 잠금입니다.";
     if (goalId === "school") return "고등 과정은 학교별 실제 과목 순서가 설정될 때까지 공식 개념 범주만 표시합니다.";
-    if (goalId === "singapore" && String(grade) === "6") return "Grade 6 자체 제작 개념 10개를 숙달 순서로 학습할 수 있습니다. 별도 문제·평가는 검수 대기입니다.";
+    if (goalId === "singapore" && String(grade) === "6") return "Grade 6 자체 제작 개념 10개와 검증된 단원 워크북 9개를 숙달 순서로 학습할 수 있습니다. 별도 진단·평가는 검수 대기입니다.";
     if (goalId === "singapore" && Number(grade) <= 8) return "숙달 학습의 구현 경계만 확인되었습니다. 이 학년의 공개 단원·문항은 아직 없습니다.";
     if (goalId === "singapore") return "G9–12 교차표와 학교 과정 설정은 검수 대기입니다.";
     return "";
@@ -269,8 +269,8 @@
       ["02", "분석", "문항·영역·오류 유형", "planned"],
       ["03", "클리닉", "약점별 보완 수업", "planned"],
       ["04", "개념 학습", "설명·모델·완전 풀이", gradeSixLearning ? "public" : "planned"],
-      ["05", "워크북", "수업·가정·퀴즈 구성", "locked"],
-      ["06", "재확인", "유지·전이·교사 확인", "planned"]
+      ["05", "워크북", "수업·가정·퀴즈 구성", gradeSixLearning ? "public" : "locked"],
+      ["06", "재확인", "유지·전이·교사 확인", gradeSixLearning ? "public" : "planned"]
     ];
     target.innerHTML = stages.map(function (stage) {
       const status = stage[3] === "public" ? "현재 공개" : stage[3] === "locked" ? "검수 잠금" : "연결 설계";
@@ -322,8 +322,8 @@
       primary.textContent = "SASMO 학년별 준비 경로 열기";
       primary.href = "./sasmo.html";
     } else if (goalId === "school" && String(grade) === "6") {
-      primary.textContent = "Grade 6 진단·분석 QA 보기";
-      primary.href = "./diagnostic.html";
+      primary.textContent = "Grade 6 개념·워크북 열기";
+      primary.href = "./concept-learning.html";
     } else if (goalId === "singapore" && String(grade) === "6") {
       primary.textContent = "Grade 6 공개 개념 10개 학습";
       primary.href = "./concept-learning.html";

@@ -74,7 +74,8 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#amc-pathway").innerText(), /AMC 8\s*→\s*10\s*→\s*12/);
   assert.equal(await page.locator("[data-goal]").count(), 5);
   assert.equal(await page.locator("#goal-title").textContent(), "Grade 6 학교 수학");
-  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./diagnostic.html");
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./concept-learning.html");
+  assert.match(await page.locator("#goal-primary").textContent(), /Grade 6 개념·워크북 열기/);
   const schoolCapabilities = await page.locator("#goal-capabilities").innerText();
 
   await page.locator(".advanced-home-tools summary").click();
@@ -169,7 +170,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#course-directory").isVisible(), true);
   await page.locator('[data-course-id="pre-algebra"]').click();
   assert.equal(await page.locator('[data-course-id="pre-algebra"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*Grade 6 개념 10개 공개/);
+  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*Grade 6 개념 10개와 검증된 단원 워크북 9개 공개/);
   assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./concept-learning.html");
   await page.locator('[data-course-id="algebra-2"]').click();
   assert.match(await page.locator("#course-map-panel").innerText(), /Algebra 2[\s\S]*Precalculus/);
@@ -180,7 +181,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
 
   assert.equal(await page.locator("#goal-capabilities li").count(), 6);
   assert.match(schoolCapabilities, /진단[\s\S]*분석[\s\S]*클리닉[\s\S]*개념 학습[\s\S]*워크북[\s\S]*재확인/);
-  assert.match(schoolCapabilities, /현재 공개[\s\S]*검수 잠금/);
+  assert.match(schoolCapabilities, /현재 공개[\s\S]*현재 공개/);
 
   const missingHashTargets = await page.locator('a[href^="#"]').evaluateAll(function (anchors) {
     return anchors.map(function (anchor) { return anchor.getAttribute("href"); }).filter(function (href) {
