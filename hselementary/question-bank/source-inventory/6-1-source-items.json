@@ -709,15 +709,15 @@
       "unitName": "각기둥과 각뿔",
       "exploration": 1,
       "pdfPage": 8,
-      "printedPage": null,
+      "printedPage": 11,
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 5,
-      "sourceShape": "각기둥의 밑면, 옆면, 꼭짓점, 모서리 또는 전개도에서 주어진 조건을 읽고 구성 요소나 길이를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "삼각기둥 전개도의 옆면 가·나·다와 삼각형의 세 변을 대응시켜 공통 세로를 찾고, 다의 넓이와 나의 넓이를 거쳐 변 ㄴㅊ의 길이까지 구하는 두 값 답 구조.",
+      "answerContract": "two-values",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 전개도의 점·변 대응과 두 답을 독립 계산하고 고정 문항 묶음의 문제·답 그림을 대조했습니다."
     },
     {
       "sourceItemId": "6-1-u2-e1-mission-6",

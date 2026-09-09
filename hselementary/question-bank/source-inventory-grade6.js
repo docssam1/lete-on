@@ -1,5 +1,5 @@
 window.HSE_SOURCE_INVENTORY_GRADE6 = {
-  "version": "2026-09-09",
+  "version": "2026-09-10",
   "policy": "public-taxonomy-only-no-source-answer-or-private-path",
   "oneSourceItemOneType": true,
   "totals": {
@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 226
+    "unlocked": 227
   },
   "items": [
     {
@@ -851,17 +851,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "삼각기둥 전개도에서 변의 길이와 옆면 넓이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6PrismsPyramidsE1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문 전개도 그림과 답 그림의 대응을 다시 검수해야 합니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 3
     },
     {
       "semester": "6-1",
