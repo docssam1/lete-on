@@ -33,7 +33,7 @@ const I18N={
     checkTitle:'핵심 체크', openTitle:'생각해 보기', submit:'확인', myAnswer:'내 생각 적어보기(선택)',
     arenaGo:'배틀 시작!', timeUp:'시간 종료!', score:'점수', stampGet:'도장 획득!',
     doneUnit:'유닛 완료!', toMap:'마을로', numpadHint:'숫자를 눌러 답해요', pairHint:'짝꿍 두 수를 골라요',
-    picked:'골랐어요!', langName:'한국어',
+    picked:'골랐어요!', langName:'한국어', onePairMore:'정답! 하나 더 있어',
     obTitle:'나만의 숫자 친구', obSub:'캐릭터를 고르고 이름을 알려주세요!',
     obNamePh:'이름을 적어주세요', obGo:'짜잔! 시작하기 ✨', obNeedName:'이름을 알려줘야 시작할 수 있어요!',
     obWelcome:n=>`환영해요, ${n}!`, titleCourse:'과정' },
@@ -44,7 +44,7 @@ const I18N={
     checkTitle:'Key Check', openTitle:'Think about it', submit:'Check', myAnswer:'Write your idea (optional)',
     arenaGo:'Start Battle!', timeUp:"Time's up!", score:'Score', stampGet:'Stamp earned!',
     doneUnit:'Unit complete!', toMap:'To Town', numpadHint:'Tap numbers to answer', pairHint:'Pick two that make the target',
-    picked:'Picked!', langName:'English',
+    picked:'Picked!', langName:'English', onePairMore:'Correct! One more to find',
     obTitle:'Your Number Friend', obSub:'Pick a character and tell us your name!',
     obNamePh:'Enter your name', obGo:'Ta-da! Start ✨', obNeedName:'Tell us your name first!',
     obWelcome:n=>`Welcome, ${n}!`, titleCourse:'Course' },
@@ -55,7 +55,7 @@ const I18N={
     checkTitle:'核心检查', openTitle:'想一想', submit:'确认', myAnswer:'写下你的想法（可选）',
     arenaGo:'开始对战！', timeUp:'时间到！', score:'分数', stampGet:'获得印章！',
     doneUnit:'单元完成！', toMap:'回小镇', numpadHint:'点击数字作答', pairHint:'选出凑成目标的两个数',
-    picked:'选好了！', langName:'中文',
+    picked:'选好了！', langName:'中文', onePairMore:'答对了！还有一对',
     obTitle:'我的数字朋友', obSub:'选一个角色，告诉我你的名字！',
     obNamePh:'请输入名字', obGo:'哇！开始吧 ✨', obNeedName:'请先告诉我你的名字！',
     obWelcome:n=>`欢迎，${n}！`, titleCourse:'课程' }
@@ -4753,7 +4753,7 @@ function stepLabWidget(body,u){
 }
 function stepLabPairs(body,u){
   const cfg=u.lab;const need=cfg.count||4;
-  S.sub.li=S.sub.li||0;S.sub.picked=S.sub.picked||[];
+  S.sub.li=S.sub.li||0;S.sub.picked=S.sub.picked||[];S.sub.pairsFound=S.sub.pairsFound||0;
   const cur=S.sub.cur;const first=S.sub.li===0&&!S.sub.labStarted;
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
@@ -4845,6 +4845,7 @@ function handleLabNumpad(val,body,u){
   updateLiveFill('.nm-lab-expr',S.sub.inp||'');
 }
 function pickTile(el,i,n,body,u){
+  if(el.classList.contains('paired'))return;   // 이미 짝을 찾은 타일은 다시 못 고른다
   const p=S.sub.picked;const at=p.findIndex(x=>x.i===i);
   if(at>=0){p.splice(at,1);el.classList.remove('sel');}
   else{if(p.length>=2){const f=p.shift();const fe=document.querySelector(`.nm-tile[data-i="${f.i}"]`);if(fe)fe.classList.remove('sel');}p.push({i,n});el.classList.add('sel');}
@@ -4852,9 +4853,24 @@ function pickTile(el,i,n,body,u){
   pk.onclick=()=>{
     const cur=S.sub.cur;const sum=p[0].n+p[1].n;
     if(sum===(cur.target||10)){
-      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
+      playSfx("success");numiHappy();
       p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e){e.classList.remove('sel');e.classList.add('paired');}});
-      S.sub.li++;S.sub.cur=null;
+      S.sub.picked=[];pk.disabled=true;
+      S.sub.pairsFound=(S.sub.pairsFound||0)+1;
+      /* 이 문제(cur)에 짝이 둘이면(교재처럼 남는 수도 섞인 문제) 하나 찾았다고 곧바로
+         새 문제로 넘기지 않는다 — 원장 지시(2026-09-09) "3+7+4+5+6일 때 6+4를 고르면
+         하나 더 있어 라고 나오고 3, 7도 고를 수 있도록". 남은 짝을 다 찾아야 이
+         라운드가 끝난다. 화면은 그대로 두면 된다 — 방금 지운 .sel/.paired 클래스이
+         이미 남은 타일을 다시 고를 수 있는 상태로 만들어 준다.
+         voiceLine을 여기선 안 부른다 — 그것도 toast를 띄워서 방금 뜬 onePairMore
+         토스트와 겹쳐 버린다(2026-09-09 실기기 확인, "대단해!"와 "하나 더 있어"가
+         동시에 뜸). 라운드가 완전히 끝났을 때만(아래) voiceLine을 부른다. */
+      if(S.sub.pairsFound<(cur.pairCount||1)){
+        toast(t('onePairMore'),true);
+        return;
+      }
+      voiceLine(u,u.voice.correct,true);
+      S.sub.li++;S.sub.cur=null;S.sub.pairsFound=0;
       const need=u.lab.count||4;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
       setTimeout(()=>stepLab(body,u),900);
