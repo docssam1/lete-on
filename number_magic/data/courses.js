@@ -126,7 +126,9 @@ const COURSE_SPEC = [
    drills:['MX1','EL1'], magic:[['C-09']], creative:['ML21@1']},
 
  {id:17, tier:'level3', title:{ko:'소수의 시작',en:'Decimals Begin',zh:'小数入门'},
-   drills:['DC1'], magic:[['A-36'],['A-37'],['A-38']]},
+   /* 창의 회차 — 이 과정의 마법(A-36~38)은 세로셈 절차라 필산 DC1과 같은 것이어서 짝이
+      없었다. 보수를 소수로 이은 DC6(0.3의 1 짝꿍은 0.7)을 쓴다(2026-09-09). */
+   drills:['DC1'], magic:[['A-36'],['A-37'],['A-38']], creative:['DC6@1','DC6@2','DC6@3']},
  {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
    drills:['DC2','ML11'], magic:[['C-25'],['C-24'],['C-27'],['ML10'],['H-11']],
    creative:['DC4@1','ML20@3','CH11@1']},

@@ -682,6 +682,14 @@ DC5:{ name:{ko:'소수를 나누기',en:'Decimal division',zh:'小数除法'}, g
           {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}}] },
 
 /* ── EL 초등 신규 5종 (과정-로드맵.md §3 Level1~2 신규 소요, 2026-08-25 Phase 1) ── */
+DC6:{ name:{ko:'소수의 짝꿍(1·10 만들기)',en:'Decimal bonds to 1 & 10',zh:'小数的伙伴(凑1与凑10)'}, gen:'dc6_decBond', prereq:['DC1','NS4'],
+  concept:{ko:'더해서 10이 되는 짝을 소수에도 그대로 씁니다. 0.3의 1 짝꿍은 0.7이고, 0.35의 1 짝꿍은 0.65예요. 세로셈을 하지 않아도 십분의 자리끼리 10, 백분의 자리끼리 100을 채우면 바로 보여요.',
+    en:'The pairs that make 10 work for decimals too. The partner of 0.3 to reach 1 is 0.7, and of 0.35 it is 0.65. You do not need column subtraction — fill the tenths to 10, the hundredths to 100, and the answer appears.',
+    zh:'凑十的数对同样适用于小数。0.3凑成1的伙伴是0.7，0.35的是0.65。不用竖式，把十分位凑到10、百分位凑到100，答案就出来了。'},
+  widgets:['numpad','steps'],
+  levels:[{id:1,label:{ko:'1 만들기(소수 한 자리)',en:'make 1 (tenths)',zh:'凑1(十分位)'},params:{target:1,places:1}},
+          {id:2,label:{ko:'1 만들기(소수 두 자리)',en:'make 1 (hundredths)',zh:'凑1(百分位)'},params:{target:1,places:2}},
+          {id:3,label:{ko:'10 만들기',en:'make 10',zh:'凑10'},params:{target:10,places:1}}] },
 EL1:{ name:{ko:'역연산으로 빈칸 찾기',en:'Missing Number by Inverse Operation',zh:'逆运算求空格'}, gen:'el_inverse', prereq:['AD3','DV3'],
   concept:{ko:'덧셈식의 빈칸은 뺄셈으로, 곱셈식의 빈칸은 나눗셈으로 거꾸로 찾아요.',
     en:'Find a blank in an addition by subtracting, and a blank in a multiplication by dividing — go backwards to solve it.',

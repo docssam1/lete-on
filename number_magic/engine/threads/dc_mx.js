@@ -15,6 +15,74 @@ const { R, pick, shuffle } = NM_RNG;
 function _gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ const t = b; b = a % b; a = t; } return a || 1; }
 function _lcm(a, b){ return (a / _gcd(a, b)) * b; }
 
+/* ── DC6 — 소수의 짝꿍(1·10 만들기) ─────────────────────────────
+   과정 17(소수의 시작)의 창의 연산 자리. 이 과정의 마법 유닛 A-36~38은 세로셈 절차라
+   필산(DC1)과 같은 것이어서, 창의 회차에 쓸 짝이 없었다(2026-09-09).
+   보수는 이 교재가 이미 가르치는 전략이다 — NS3 보수 5·10, NS4 보수 100·1000.
+   그걸 소수로 이어 "0.3의 1 짝꿍은 0.7"을 세로셈 없이 바로 찾게 한다.
+   답은 늘 정수(십분의 자리 ×10 · 백분의 자리 ×100) — 모듈 머리의 규약 그대로. */
+NM_TGEN['dc6_decBond'] = function(params, rng) {
+  const target = params.target || 1;
+  const places = params.places || 1;
+
+  if (target === 1 && places === 1) {
+    const a = R(rng, 1, 9);              /* 0.1 ~ 0.9 */
+    const b = 10 - a;
+    return {
+      prompt: { ko: `1을 만드는 짝꿍을 찾아요`,
+                en: `Find the partner that makes 1`,
+                zh: `找出凑成1的伙伴` },
+      tex:        `0.${a} + 0.\\square = 1`,
+      answer:     b,
+      answerType: 'steps',
+      widget:     'numpad',
+      steps: [
+        { tex: `${a} + \\square = 10 \\;(\\text{십분의 자리})`, blank: b },
+        { tex: `0.${a} + 0.\\square = 1`,                        blank: b }
+      ]
+    };
+  }
+
+  if (target === 1) {
+    /* 백분의 자리 — 끝이 0이면 사실상 십분의 자리 문제라 뺀다(11~89, 10의 배수 제외) */
+    let a = R(rng, 11, 89);
+    if (a % 10 === 0) a += 1;
+    const b    = 100 - a;
+    const aStr = String(a).padStart(2, '0');
+    return {
+      prompt: { ko: `1을 만드는 짝꿍을 찾아요 (백분의 자리)`,
+                en: `Find the partner that makes 1 (hundredths)`,
+                zh: `找出凑成1的伙伴（百分位）` },
+      tex:        `0.${aStr} + \\dfrac{\\square}{100} = 1`,
+      answer:     b,
+      answerType: 'steps',
+      widget:     'numpad',
+      steps: [
+        { tex: `${a} + \\square = 100 \\;(\\text{백분의 자리})`, blank: b },
+        { tex: `0.${aStr} + \\dfrac{\\square}{100} = 1`,          blank: b }
+      ]
+    };
+  }
+
+  /* 10 만들기 — 정수 부분이 있는 소수의 짝꿍(7.4 → 2.6) */
+  const w = R(rng, 1, 8);
+  const a = R(rng, 1, 9);
+  const b = 100 - (w * 10 + a);          /* 십분의 자리 단위 */
+  return {
+    prompt: { ko: `10을 만드는 짝꿍을 찾아요`,
+              en: `Find the partner that makes 10`,
+              zh: `找出凑成10的伙伴` },
+    tex:        `${w}.${a} + \\dfrac{\\square}{10} = 10`,
+    answer:     b,
+    answerType: 'steps',
+    widget:     'numpad',
+    steps: [
+      { tex: `${w * 10 + a} + \\square = 100 \\;(\\times 10\\text{ 계산})`, blank: b },
+      { tex: `${w}.${a} + \\dfrac{\\square}{10} = 10`,                       blank: b }
+    ]
+  };
+};
+
 /* ── DC1 — 소수 덧·뺄 (1자리 · 2자리) ───────────────────────── */
 NM_TGEN['dc1_decAddSub'] = function(params, rng) {
   const places = params.places || 1;
