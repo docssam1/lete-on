@@ -11,6 +11,12 @@ const sourceIds = [
   "6-1-u2-e3-mission-5",
   "6-1-u2-e3-mission-6"
 ];
+const sourceAnswers = new Map([
+  ["6-1-u2-e3-example-3-1", 24],
+  ["6-1-u2-e3-mission-1", 1014],
+  ["6-1-u2-e3-mission-5", 173],
+  ["6-1-u2-e3-mission-6", 4]
+]);
 const evidenceKinds = [
   "pyramid-edge-from-counts",
   "prism-pyramid-edge-product",
@@ -250,6 +256,7 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
   context = sourceIds[variant];
   check(pools.size === 3, "고정 pool 0, 1, 2를 모두 확인하지 못했습니다.");
   check(poolValues.size === 3 && poolAnswers.size === 3, "세 고정 pool의 값과 정답이 모두 기록되지 않았습니다.");
+  check(Array.from(poolAnswers.values()).includes(sourceAnswers.get(sourceIds[variant])), `원문 답 ${sourceAnswers.get(sourceIds[variant])}이 고정 문항 묶음에 없습니다.`);
 }
 
 if (failures.length) {
