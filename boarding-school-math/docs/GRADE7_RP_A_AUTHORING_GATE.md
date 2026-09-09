@@ -1,6 +1,6 @@
 # Grade 7 `7.RP.A` authoring gate
 
-Status: **local implementation verified — remote merge, Pages deployment, and live read-back are still required before this is called released**.
+Status: **published** — merged to `main` in `854c5c7907e013c3509ab8456aa4bce2b161eaea` through pull request #215; Pages deployment `34379456747` and live student/teacher read-back passed.
 
 This is the first proposed Grade 7 unit because the existing curriculum map places `7.RP.A` first in Grade 7. That sequence is a GFIELD instructional decision, not an official promotion rule.
 
