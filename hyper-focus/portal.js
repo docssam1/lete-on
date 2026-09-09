@@ -8,7 +8,12 @@
   const $$ = selector => Array.from(document.querySelectorAll(selector));
   const entryQuery = new URLSearchParams(location.search);
   // A fixed in-product destination only. Never navigate to a URL supplied in a query.
-  const challengeEntry = entryQuery.getAll("next").length === 1 && entryQuery.get("next") === "challenge";
+  const requestedEntry = entryQuery.getAll("next").length === 1 ? entryQuery.get("next") : "";
+  const challengeDestinations = Object.freeze({
+    challenge: "./challenge/",
+    "challenge-bank": "./challenge/studio.html?tab=bank"
+  });
+  const challengeEntry = Object.prototype.hasOwnProperty.call(challengeDestinations, requestedEntry);
   let session = null;
   let currentCollection = null;
   let collectionViewToken = 0;
@@ -20,7 +25,7 @@
 
   function continueToChallenge() {
     if (!challengeEntry || session?.role !== "student") return false;
-    location.href = "./challenge/";
+    location.href = challengeDestinations[requestedEntry];
     return true;
   }
 
