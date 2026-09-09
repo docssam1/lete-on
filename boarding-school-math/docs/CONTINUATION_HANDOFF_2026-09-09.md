@@ -23,7 +23,7 @@ Public student practice may contain original GFIELD-authored content. Private di
 
 - `6.NS.C`: merged to `main` in `18eabffade549c0b07721d3bbb82fa01968316ed`. Public student and teacher routes, mobile layout, A4/Letter PDFs, and completion-gated recheck were verified.
 - `6.EE.A`: merged to `main` in `1c5f8c8e13a16f4d141f781c3dcc9e8b2541b67c` through pull request [#199](https://github.com/docssam1/lete-on/pull/199). The HTML generator, 390px mobile view, student Korean A4 print, teacher Simplified-Chinese Letter print, completion gate, and live routes were verified. Visible numeric fractions now render as accessible stacked MathML while slash-form response input remains accepted.
-- `6.EE.B`: commits through `de9ed460` on `codex/boarding-grade6-eeb-unit-workbook-20260909`; pull request [#200](https://github.com/docssam1/lete-on/pull/200). It has been rebased directly onto the merged `6.EE.A` main state. Code, answer, student/teacher separation, desktop screen, and 390px mobile checks passed. Context variables now stay identical across prompts and visual models, and every recheck page uses the recheck heading. Final browser-print export inspection is still required before merge.
+- `6.EE.B`: commits through `386aebdf` on `codex/boarding-grade6-eeb-unit-workbook-20260909`; pull request [#200](https://github.com/docssam1/lete-on/pull/200). It has been rebased onto current `main`. Code, answer, student/teacher separation, desktop screen, and 390px mobile checks passed. Context variables now stay identical across prompts and visual models, and every recheck page uses the recheck heading. Student Korean A4 (12 pages) and teacher Simplified-Chinese Letter (20 pages) browser-print exports were rendered and visually inspected with no overflow, clipping, or answer-boundary leak. Merge, deployment, and live-route checks remain.
 
 ## Verified `6.EE.A` contract
 
@@ -57,9 +57,8 @@ Public student practice may contain original GFIELD-authored content. Private di
 ## Exact next sequence
 
 1. Check `git fetch origin`, current branch, clean state, and whether `main` advanced.
-2. Treat `unit-workbook.html` plus its shared data and renderer as the product source. Generate student Korean A4 and teacher Simplified-Chinese Letter browser-print exports for `6.EE.B` only as release QA artifacts.
-3. Inspect page count, paper size, student/teacher answer separation, overflow, and representative rendered pages. Fix the HTML/CSS/data source and regenerate if any print defect appears.
-4. Rerun focused tests, push, merge #200, wait for the Pages workflow, and perform live desktop/mobile/recheck/teacher checks.
-5. Upgrade `6.EE.C` from the current 12-item clinic only after `6.EE.B` is released.
+2. Treat `unit-workbook.html` plus its shared data and renderer as the product source. The student Korean A4 and teacher Simplified-Chinese Letter browser-print exports for `6.EE.B` have been inspected as release QA artifacts.
+3. Rerun focused tests, push the rebased branch, merge #200, wait for the Pages workflow, and perform live desktop/mobile/recheck/teacher checks.
+4. Upgrade `6.EE.C` from the current 12-item clinic only after `6.EE.B` is released.
 
 Do not call a unit complete merely because its code or pull request exists. Completion requires exact-answer verification, student/teacher separation, mobile and browser-print rendering, inspected print exports, merged remote SHA, successful deployment, and live URL checks. PDF files are QA exports from the same HTML generator, not a second authoring source or the primary product.
