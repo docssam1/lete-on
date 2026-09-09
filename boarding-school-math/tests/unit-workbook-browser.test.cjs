@@ -11,6 +11,7 @@ const ratioSource=require("../learning/grade6-rp-a-unit-workbook.js");
 const fractionSource=require("../learning/grade6-ns-a-unit-workbook.js");
 const computationSource=require("../learning/grade6-ns-b-unit-workbook.js");
 const signedNumberSource=require("../learning/grade6-ns-c-unit-workbook.js");
+const expressionSource=require("../learning/grade6-ee-a-unit-workbook.js");
 const root=path.resolve(__dirname,"..","..");
 let server,browser,baseUrl;
 function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";if(file.endsWith(".css"))return"text/css; charset=utf-8";if(file.endsWith(".js"))return"text/javascript; charset=utf-8";return"application/octet-stream";}
@@ -173,6 +174,24 @@ test("signed-number Chinese teacher guide separates all 36 answers",async functi
   const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.NS.C&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.NS.C 负数与坐标平面单元练习册");assert.match(await page.locator(".teacher-observation").innerText(),/基准与方向/);const yMirror=await page.locator('[data-item-id="nsca-w35"] circle').evaluateAll(function(nodes){return nodes.map(function(node){return[Number(node.getAttribute("cx")),Number(node.getAttribute("cy"))];});});assert.equal(yMirror.length,2);assert.ok(Math.abs(yMirror[0][0]+yMirror[1][0]-280)<.01);assert.equal(yMirror[0][1],yMirror[1][1]);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
 });
 
+test("expression student edition renders 36 answer-free structure models on 12 pages",async function(){
+  const context=await browser.newContext({viewport:{width:1280,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.EE.A&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator(".book-page").count(),12);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".answer-input").count(),36);assert.equal(await page.locator(".teacher-key,.teacher-move,.choice-button").count(),0);assert.equal(await page.locator("h1").innerText(),"6.EE.A 식의 구조와 동치식 단원 워크북");assert.equal(await page.locator(".eea-expression-model").count(),36);assert.match(await page.locator('[data-item-id="eeau-w04"] .eea-expression-model').innerText(),/4 × 4 × 4 = □/);
+  const card=page.locator('[data-item-id="eeau-w16"]');await card.locator(".answer-input").fill("48");await card.locator(".check-button").click();assert.equal(await card.locator(".choice-feedback.wrong").count(),1);await card.locator(".answer-input").fill("47");await card.locator(".check-button").click();assert.equal(await card.locator(".choice-feedback.correct").count(),1);
+  await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("all 36 expression responses unlock only its eight-item recheck",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.EE.A&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});for(const candidate of expressionSource.pack.workbookItems){const card=page.locator(`[data-item-id="${candidate.id}"]`);await card.locator(".answer-input").fill(expressionSource.formatResult(candidate));await card.locator(".check-button").click();}
+  assert.equal(await page.locator("#progress-chip").innerText(),"36 / 36");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-unit-workbook:6.EE.A:v1");}),"complete-v1");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-clinic-workbook:6.EE.A:v1");}),null);await page.locator('[data-mode="recheck"]').click();assert.equal(await page.locator(".book-problem").count(),8);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("expression Chinese teacher guide separates all 36 answers",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.EE.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.EE.A 式子结构与等价式单元练习册");assert.match(await page.locator(".teacher-observation").innerText(),/区分项与因数/);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+});
+
 test("all 36 verified responses unlock only the separate recheck route",async function(){
   const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
   await page.goto(`${baseUrl}?cluster=6.SP.A&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});
@@ -259,8 +278,19 @@ test("mobile and A4 or Letter print layouts stay within their intended width",as
   for(const paper of ["A4","Letter"]){const page=await browser.newPage({viewport:{width:794,height:1123}});await page.goto(`${baseUrl}?cluster=6.SP.A&mode=recheck&audience=student&locale=en&paper=${paper}`,{waitUntil:"networkidle"});await page.emulateMedia({media:"print"});const box=await page.locator(".book-page").first().evaluate(function(node){const style=getComputedStyle(node);return{width:parseFloat(style.width),height:parseFloat(style.height)};});if(paper==="A4"){assert.ok(box.width>790&&box.width<797);assert.ok(box.height>1121&&box.height<1124);}else{assert.ok(box.width>814&&box.width<818);assert.ok(box.height>1054&&box.height<1058);}const columns=await page.locator(".problem-list").first().evaluate(function(node){return getComputedStyle(node).gridTemplateColumns.split(" ").length;});assert.equal(columns,2);const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(result){return result.scrollHeight>result.clientHeight+1;});});assert.deepEqual(overflow,[],JSON.stringify(overflow));assert.match(await page.locator("#dynamic-page-size").textContent(),new RegExp("size: "+paper));assert.equal(await page.locator(".teacher-key").count(),0);await page.close();}
 });
 
+test("HTML workbook renders stacked fractions while slash input remains valid",async function(){
+  const cases=[{locale:"ko",label:"8분의 5"},{locale:"en",label:"1 over 16"},{locale:"zh-Hans",label:"8分之5"}];
+  for(const candidate of cases){
+    const page=await browser.newPage({viewport:{width:1100,height:900}});const errors=errorsFor(page);
+    await page.goto(`${baseUrl}?cluster=6.NS.A&mode=workbook&audience=student&locale=${candidate.locale}&paper=A4`,{waitUntil:"networkidle"});
+    const fractionCard=page.locator('[data-item-id="nsa-w04"]'),prompt=fractionCard.locator(".problem-prompt");assert.equal(await prompt.locator("mfrac").count(),2);assert.equal(await prompt.locator("math").first().getAttribute("aria-label"),candidate.label);assert.equal(await fractionCard.locator(".problem-visual mfrac").count(),2);
+    const answerCard=page.locator('[data-item-id="nsa-w18"]');await answerCard.locator(".answer-input").fill("6/5");await answerCard.locator(".check-button").click();assert.equal(await answerCard.locator(".choice-feedback.correct").count(),1);
+    assert.deepEqual(errors,[]);await page.close();
+  }
+});
+
 test("ratio and number-system workbooks stay usable at 320px and 390px",async function(){
-  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B","6.NS.C"]) for(const width of [320,390]){
+  for(const cluster of ["6.RP.A","6.NS.A","6.NS.B","6.NS.C","6.EE.A"]) for(const width of [320,390]){
     const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});
     const errors=errorsFor(page);
     await page.goto(`${baseUrl}?cluster=${cluster}&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});
