@@ -4866,15 +4866,15 @@ function pickTile(el,i,n,body,u){
          토스트와 겹쳐 버린다(2026-09-09 실기기 확인, "대단해!"와 "하나 더 있어"가
          동시에 뜸). 라운드가 완전히 끝났을 때만(아래) voiceLine을 부른다. */
       if(S.sub.pairsFound<(cur.pairCount||1)){
-        toast(t('onePairMore'),true);
+        toast(t('onePairMore'),true);say(t('onePairMore'));
         return;
       }
-      voiceLine(u,u.voice.correct,true);
+      say(voiceLine(u,u.voice.correct,true));
       S.sub.li++;S.sub.cur=null;S.sub.pairsFound=0;
       const need=u.lab.count||4;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
       setTimeout(()=>stepLab(body,u),900);
-    }else{voiceLine(u,u.voice.wrong,false);p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
+    }else{say(voiceLine(u,u.voice.wrong,false));p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
 }
 
