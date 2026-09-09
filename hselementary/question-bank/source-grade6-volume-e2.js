@@ -6,7 +6,7 @@
 
   const generatorKey = "sourceGrade6VolumeE2";
   const ids = Object.freeze([
-    "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-mission-1",
+    "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-mission-1",
     "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
   ]);
   const idSet = new Set(ids);
@@ -25,6 +25,11 @@
       { totalLength: 8, totalDepth: 3, totalHeight: 3, columnHeights: [3, 2, 1], depthRows: 4 },
       { totalLength: 9, totalDepth: 4, totalHeight: 6, columnHeights: [3, 2, 1], depthRows: 4 },
       { totalLength: 12, totalDepth: 6, totalHeight: 3, columnHeights: [3, 2, 1], depthRows: 4 }
+    ]),
+    "example-3": Object.freeze([
+      { width: 36, totalDepth: 40, lowDepth: 16, highStart: 20, highEnd: 16, lowHeight: 8 },
+      { width: 30, totalDepth: 30, lowDepth: 10, highStart: 22, highEnd: 18, lowHeight: 8 },
+      { width: 42, totalDepth: 42, lowDepth: 14, highStart: 24, highEnd: 18, lowHeight: 9 }
     ]),
     "mission-1": Object.freeze([{ cubes: 48 }, { cubes: 60 }, { cubes: 72 }]),
     "mission-2": Object.freeze([
@@ -125,6 +130,27 @@
       frontBackArea, topBottomArea, stepEndArea, surface, exposedSurface
     };
   };
+  const earthworkFacts = data => {
+    const highDepth = data.totalDepth - data.lowDepth;
+    const highCrossSection = highDepth * (data.highStart + data.highEnd) / 2;
+    const lowCrossSection = data.lowDepth * data.lowHeight;
+    const totalCrossSection = highCrossSection + lowCrossSection;
+    const totalVolume = data.width * totalCrossSection;
+    const baseArea = data.width * data.totalDepth;
+    const finalHeight = totalVolume / baseArea;
+    const cutCrossSection = highDepth * ((data.highStart - finalHeight) + (data.highEnd - finalHeight)) / 2;
+    const fillCrossSection = data.lowDepth * (finalHeight - data.lowHeight);
+    const heightCandidates = [];
+    for (let candidate = data.lowHeight + 1; candidate < data.highEnd; candidate += 1) {
+      const cut = highDepth * ((data.highStart - candidate) + (data.highEnd - candidate)) / 2;
+      const fill = data.lowDepth * (candidate - data.lowHeight);
+      if (cut === fill) heightCandidates.push(candidate);
+    }
+    return {
+      highDepth, highCrossSection, lowCrossSection, totalCrossSection, totalVolume,
+      baseArea, finalHeight, cutCrossSection, fillCrossSection, heightCandidates
+    };
+  };
   const threeRopeFacts = data => {
     const ropeA = 2 * (data.depth + data.height);
     const ropeB = 2 * (data.width + data.height);
@@ -165,7 +191,7 @@
   const circle = (cx, cy, radius, className, role = "") => `<circle class="${className}" cx="${cx}" cy="${cy}" r="${radius}"${role ? ` data-visual-element="${role}"` : ""}/>`;
   const polygon = (points, className = "source61-volume-e2-face", role = "") => `<polygon class="${className}" points="${points.map(point => point.join(",")).join(" ")}"${role ? ` data-visual-element="${role}"` : ""}/>`;
 
-  const svgStyle = `<style>.source61-volume-e2-diagram .source61-volume-e2-sheet{fill:#f8fbfd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-face,.source61-volume-e2-diagram .source61-volume-e2-box{fill:#edf6fb;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-top{fill:#fff0bd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-side{fill:#dceffd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-fold{fill:none;stroke:#7891a5;stroke-width:1.5;stroke-dasharray:5 4}.source61-volume-e2-diagram .source61-volume-e2-grid{fill:none;stroke:#8ca7b8;stroke-width:.65}.source61-volume-e2-diagram .source61-volume-e2-unit-cube,.source61-volume-e2-diagram .source61-volume-e2-card{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-card-solved{fill:#fff0bd;stroke:#b77909;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-rope{fill:none;stroke:#c47b18;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-rope.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden{fill:none;stroke:#c47b18;stroke-width:2.4;stroke-dasharray:5 4;stroke-linecap:round;opacity:.72}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-knot{fill:#fff;stroke:#c47b18;stroke-width:3}.source61-volume-e2-diagram .source61-volume-e2-rope-knot.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-stair-cell{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-stair-cell.is-solved{fill:#fff0bd}.source61-volume-e2-diagram .source61-volume-e2-line,.source61-volume-e2-diagram .source61-volume-e2-outline,.source61-volume-e2-diagram .source61-volume-e2-depth,.source61-volume-e2-diagram .source61-volume-e2-dimension,.source61-volume-e2-diagram .source61-volume-e2-extension{fill:none;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-dimension{stroke:#6d8394;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-extension{stroke:#9aacb9;stroke-width:1}.source61-volume-e2-diagram .source61-volume-e2-perimeter{fill:none;stroke:#c53b32;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fff)}.source61-volume-e2-diagram .source61-volume-e2-label,.source61-volume-e2-diagram .source61-volume-e2-measure,.source61-volume-e2-diagram .source61-volume-e2-note,.source61-volume-e2-diagram .source61-volume-e2-title,.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;fill:#183b56!important;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-title{font-size:13px;font-weight:950}.source61-volume-e2-diagram .source61-volume-e2-note{font-size:10px;fill:#526b7d!important}.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-size:11px;font-weight:950;fill:#9a6500!important}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-title{font-size:22px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-note{font-size:20px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-answer-label{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-title{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-note{font-size:17px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-measure,.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-answer-label{font-size:18px}</style>`;
+  const svgStyle = `<style>.source61-volume-e2-diagram .source61-volume-e2-sheet{fill:#f8fbfd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-face,.source61-volume-e2-diagram .source61-volume-e2-box{fill:#edf6fb;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-top{fill:#fff0bd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-box-side{fill:#dceffd;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-fold{fill:none;stroke:#7891a5;stroke-width:1.5;stroke-dasharray:5 4}.source61-volume-e2-diagram .source61-volume-e2-grid{fill:none;stroke:#8ca7b8;stroke-width:.65}.source61-volume-e2-diagram .source61-volume-e2-unit-cube,.source61-volume-e2-diagram .source61-volume-e2-card{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-card-solved{fill:#fff0bd;stroke:#b77909;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-rope{fill:none;stroke:#c47b18;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-rope.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden{fill:none;stroke:#c47b18;stroke-width:2.4;stroke-dasharray:5 4;stroke-linecap:round;opacity:.72}.source61-volume-e2-diagram .source61-volume-e2-rope-hidden.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-rope-knot{fill:#fff;stroke:#c47b18;stroke-width:3}.source61-volume-e2-diagram .source61-volume-e2-rope-knot.is-solved{stroke:#b33d35}.source61-volume-e2-diagram .source61-volume-e2-stair-cell{fill:#edf6fb;stroke:#294963;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-stair-cell.is-solved{fill:#fff0bd}.source61-volume-e2-diagram .source61-volume-e2-soil-front{fill:#d9e7d0;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-high{fill:#c9dfb8;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-low{fill:#e3edd9;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-cliff{fill:#b7ceb0;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-soil-cut{fill:#f5b7ae;fill-opacity:.82;stroke:#b33d35;stroke-width:1.5}.source61-volume-e2-diagram .source61-volume-e2-soil-fill{fill:#b7dcf0;fill-opacity:.9;stroke:#2175a6;stroke-width:1.5}.source61-volume-e2-diagram .source61-volume-e2-final-level{fill:none;stroke:#b33d35;stroke-width:3;stroke-dasharray:8 5}.source61-volume-e2-diagram .source61-volume-e2-line,.source61-volume-e2-diagram .source61-volume-e2-outline,.source61-volume-e2-diagram .source61-volume-e2-depth,.source61-volume-e2-diagram .source61-volume-e2-dimension,.source61-volume-e2-diagram .source61-volume-e2-extension{fill:none;stroke:#294963;stroke-width:2}.source61-volume-e2-diagram .source61-volume-e2-dimension{stroke:#6d8394;stroke-width:1.4}.source61-volume-e2-diagram .source61-volume-e2-extension{stroke:#9aacb9;stroke-width:1}.source61-volume-e2-diagram .source61-volume-e2-perimeter{fill:none;stroke:#c53b32;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fff)}.source61-volume-e2-diagram .source61-volume-e2-label,.source61-volume-e2-diagram .source61-volume-e2-measure,.source61-volume-e2-diagram .source61-volume-e2-note,.source61-volume-e2-diagram .source61-volume-e2-title,.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:11px;font-weight:850;fill:#183b56!important;paint-order:stroke;stroke:#fff;stroke-width:2px;stroke-linejoin:round}.source61-volume-e2-diagram .source61-volume-e2-title{font-size:13px;font-weight:950}.source61-volume-e2-diagram .source61-volume-e2-note{font-size:10px;fill:#526b7d!important}.source61-volume-e2-diagram .source61-volume-e2-answer-label{font-size:11px;font-weight:950;fill:#9a6500!important}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-title{font-size:22px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-note{font-size:20px}.source61-volume-e2-diagram[data-model-key="three-rope-box"] .source61-volume-e2-answer-label{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-title{font-size:20px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-note{font-size:17px}.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-measure,.source61-volume-e2-diagram[data-model-key="congruent-block-stair"] .source61-volume-e2-answer-label{font-size:18px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-title{font-size:18px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-note{font-size:15px}.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-measure,.source61-volume-e2-diagram[data-model-key="earthwork-leveling"] .source61-volume-e2-answer-label{font-size:16px}</style>`;
   const svg = (kind, data, poolIndex, solved, content, required, width = 640, height = 360) => `<svg class="geometry-diagram source61-volume-e2-diagram" style="display:block;width:min(${Math.min(width, 640)}px,100%);height:auto;margin:12px auto;overflow:visible" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(`${kind} ${solved ? "정답 그림" : "문제 그림"}`)}" data-phase="${solved ? "answer" : "problem"}" data-model-key="${kind}" data-source61-volume-e2-values="${esc(data.values.join(","))}" data-difficulty-level="${data.level}" data-required-elements="${required.join(",")}" data-pool-index="${poolIndex}">${svgStyle}${content}</svg>`;
 
   const explorationSvg = (data, poolIndex, solved) => {
@@ -447,6 +473,75 @@
     return svg("congruent-block-stair", { values: [data.totalLength, data.totalDepth, data.totalHeight, data.depthRows, ...heights, data.blockCount, data.volume, data.surface], level: data.level }, poolIndex, solved, content, required, canvasWidth, canvasHeight);
   };
 
+  const earthworkSvg = (data, poolIndex, solved) => {
+    const facts = earthworkFacts(data);
+    const baseX = 108;
+    const baseY = 270;
+    const profileWidth = 320;
+    const heightScale = 140 / data.highStart;
+    const highEndX = baseX + profileWidth * facts.highDepth / data.totalDepth;
+    const endX = baseX + profileWidth;
+    const yAt = height => baseY - height * heightScale;
+    const backShift = [54, -32];
+    const shifted = ([x, y]) => [x + backShift[0], y + backShift[1]];
+    const front = {
+      baseStart: [baseX, baseY],
+      baseEnd: [endX, baseY],
+      lowEnd: [endX, yAt(data.lowHeight)],
+      lowStart: [highEndX, yAt(data.lowHeight)],
+      highEnd: [highEndX, yAt(data.highEnd)],
+      highStart: [baseX, yAt(data.highStart)]
+    };
+    const back = Object.fromEntries(Object.entries(front).map(([name, point]) => [name, shifted(point)]));
+    const profile = [front.baseStart, front.baseEnd, front.lowEnd, front.lowStart, front.highEnd, front.highStart];
+    const backProfile = [back.baseStart, back.baseEnd, back.lowEnd, back.lowStart, back.highEnd, back.highStart];
+    const faces = [
+      polygon(backProfile, "source61-volume-e2-soil-front", "earthwork-back-profile"),
+      polygon([front.highStart, front.highEnd, back.highEnd, back.highStart], "source61-volume-e2-soil-high", "earthwork-high-top"),
+      polygon([front.lowStart, front.lowEnd, back.lowEnd, back.lowStart], "source61-volume-e2-soil-low", "earthwork-low-top"),
+      polygon([front.highEnd, front.lowStart, back.lowStart, back.highEnd], "source61-volume-e2-soil-cliff", "earthwork-cliff"),
+      polygon([front.lowEnd, front.baseEnd, back.baseEnd, back.lowEnd], "source61-volume-e2-soil-low", "earthwork-end-face"),
+      polygon(profile, "source61-volume-e2-soil-front", "earthwork-front-profile")
+    ].join("");
+    const totalDepthY = baseY + 24;
+    const lowDepthY = baseY + 58;
+    const widthLabel = data.level === 2 ? "공통 폭" : `폭 ${data.width}m`;
+    const dimensions = [
+      line(baseX, totalDepthY, endX, totalDepthY, "source61-volume-e2-dimension", "earthwork-total-depth-dimension"),
+      line(baseX, baseY, baseX, totalDepthY, "source61-volume-e2-extension", "earthwork-total-depth-start"),
+      line(endX, baseY, endX, totalDepthY, "source61-volume-e2-extension", "earthwork-total-depth-end"),
+      text((baseX + endX) / 2, totalDepthY + 18, `전체 깊이 ${data.totalDepth}m`, "source61-volume-e2-measure"),
+      line(highEndX, lowDepthY, endX, lowDepthY, "source61-volume-e2-dimension", "earthwork-low-depth-dimension"),
+      line(highEndX, baseY, highEndX, lowDepthY, "source61-volume-e2-extension", "earthwork-low-depth-start"),
+      line(endX, totalDepthY, endX, lowDepthY, "source61-volume-e2-extension", "earthwork-low-depth-end"),
+      text((highEndX + endX) / 2, lowDepthY + 18, `낮은 부분 깊이 ${data.lowDepth}m`, "source61-volume-e2-measure"),
+      line(baseX - 24, baseY, baseX - 24, yAt(data.highStart), "source61-volume-e2-dimension", "earthwork-high-start-height-dimension"),
+      line(baseX - 24, baseY, baseX, baseY, "source61-volume-e2-extension", "earthwork-high-start-height-base"),
+      line(baseX - 24, yAt(data.highStart), baseX, yAt(data.highStart), "source61-volume-e2-extension", "earthwork-high-start-height-top"),
+      text(baseX - 32, (baseY + yAt(data.highStart)) / 2 + 5, `${data.highStart}m`, "source61-volume-e2-measure", "end"),
+      line(highEndX - 16, baseY, highEndX - 16, yAt(data.highEnd), "source61-volume-e2-dimension", "earthwork-high-end-height-dimension"),
+      text(highEndX - 24, (baseY + yAt(data.highEnd)) / 2 + 5, `높이 ${data.highEnd}m`, "source61-volume-e2-measure", "end"),
+      line(endX + 18, baseY, endX + 18, yAt(data.lowHeight), "source61-volume-e2-dimension", "earthwork-low-height-dimension"),
+      text(endX + 28, (baseY + yAt(data.lowHeight)) / 2 + 5, `${data.lowHeight}m`, "source61-volume-e2-measure", "start"),
+      line(front.highStart[0], front.highStart[1], back.highStart[0], back.highStart[1], "source61-volume-e2-dimension", "earthwork-width-dimension"),
+      text(front.highStart[0] + 34, front.highStart[1] - 28, widthLabel, "source61-volume-e2-measure")
+    ].join("");
+    const regionLabels = `${text((baseX + highEndX) / 2, yAt((data.highStart + data.highEnd) / 2) + 36, "높은 부분", "source61-volume-e2-title")}${text((highEndX + endX) / 2, yAt(data.lowHeight) + 34, "낮은 부분", "source61-volume-e2-title")}`;
+    const finalY = yAt(facts.finalHeight);
+    const solvedOverlay = solved ? `${polygon([front.highStart, front.highEnd, [highEndX, finalY], [baseX, finalY]], "source61-volume-e2-soil-cut is-solved", "earthwork-cut-area")}${polygon([front.lowStart, front.lowEnd, [endX, finalY], [highEndX, finalY]], "source61-volume-e2-soil-fill is-solved", "earthwork-fill-area")}${line(baseX, finalY, endX, finalY, "source61-volume-e2-final-level is-solved", "earthwork-final-level")}${text(endX + 28, finalY + 5, `${facts.finalHeight}m`, "source61-volume-e2-answer-label", "start")}` : "";
+    const answerCard = solved ? `${rect(38, 374, 564, 204, "source61-volume-e2-card-solved", "earthwork-answer-card")}${text(58, 404, "옆에서 본 단면으로 부피 보존 확인", "source61-volume-e2-title", "start")}${text(58, 438, `높은 부분 깊이: ${data.totalDepth}-${data.lowDepth}=${facts.highDepth}m`, "source61-volume-e2-answer-label", "start")}${text(58, 470, `높은 쪽 단면: ${facts.highDepth}×(${data.highStart}+${data.highEnd})÷2=${num(facts.highCrossSection)}m²`, "source61-volume-e2-answer-label", "start")}${text(58, 502, `낮은 쪽 단면: ${data.lowDepth}×${data.lowHeight}=${num(facts.lowCrossSection)}m²`, "source61-volume-e2-answer-label", "start")}${text(58, 534, `같아진 높이: (${num(facts.highCrossSection)}+${num(facts.lowCrossSection)})÷${data.totalDepth}=${facts.finalHeight}m`, "source61-volume-e2-answer-label", "start")}${text(58, 562, `깎은 단면 = 채운 단면 = ${num(facts.cutCrossSection)}m²`, "source61-volume-e2-note", "start")}` : "";
+    const content = `${text(320, 26, solved ? "흙을 옮긴 뒤 높이 확인" : "높은 흙을 낮은 곳으로 옮기기", "source61-volume-e2-title")}${faces}${solvedOverlay}${dimensions}${regionLabels}${answerCard}`;
+    const required = [
+      "earthwork-back-profile", "earthwork-high-top", "earthwork-low-top", "earthwork-cliff", "earthwork-end-face", "earthwork-front-profile",
+      "earthwork-total-depth-dimension", "earthwork-total-depth-start", "earthwork-total-depth-end",
+      "earthwork-low-depth-dimension", "earthwork-low-depth-start", "earthwork-low-depth-end",
+      "earthwork-high-start-height-dimension", "earthwork-high-start-height-base", "earthwork-high-start-height-top",
+      "earthwork-high-end-height-dimension", "earthwork-low-height-dimension", "earthwork-width-dimension"
+    ];
+    if (solved) required.push("earthwork-cut-area", "earthwork-fill-area", "earthwork-final-level", "earthwork-answer-card");
+    return svg("earthwork-leveling", { values: [data.width, data.totalDepth, data.lowDepth, data.highStart, data.highEnd, data.lowHeight, facts.finalHeight], level: data.level }, poolIndex, solved, content, required, 640, solved ? 600 : 370);
+  };
+
   const stairSvg = (data, poolIndex, solved) => {
     const cell = 22;
     const baseX = 48;
@@ -538,6 +633,19 @@
       const answer = level === 2 ? `직육면체 ${facts.blockCount}개, 겉넓이 ${num(facts.surface)}cm², 부피 ${num(facts.volume)}cm³` : `겉넓이 ${num(facts.surface)}cm², 부피 ${num(facts.volume)}cm³`;
       return { answer, visual: congruentStairSvg(model, poolIndex, solved), solution: `${firstStep} ${volumeStep} ${surfaceStep}` };
     }
+    if (kind === "example-3") {
+      const facts = earthworkFacts(data);
+      if (!Number.isInteger(facts.finalHeight) || facts.heightCandidates.length !== 1 || facts.heightCandidates[0] !== facts.finalHeight || facts.cutCrossSection !== facts.fillCrossSection) throw new Error("흙을 옮긴 뒤의 높이가 한 자연수로 정해지지 않습니다.");
+      const model = { ...data, ...facts, level };
+      const firstStep = level === 0
+        ? `높은 부분의 깊이는 ${facts.highDepth}m로 주어졌습니다.`
+        : level === 2
+          ? `폭은 모든 부분에서 같으므로 옆에서 본 단면 넓이를 전체 깊이로 나누어도 같은 높이를 구할 수 있습니다. 높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${facts.highDepth}m입니다.`
+          : `높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${facts.highDepth}m입니다.`;
+      const crossSections = `높은 부분을 옆에서 보면 높이가 ${data.highStart}m와 ${data.highEnd}m인 사다리꼴이므로 넓이는 ${facts.highDepth}×(${data.highStart}+${data.highEnd})÷2=${num(facts.highCrossSection)}m²입니다. 낮은 부분의 옆 단면 넓이는 ${data.lowDepth}×${data.lowHeight}=${num(facts.lowCrossSection)}m²입니다.`;
+      const leveling = `흙을 옮겨도 전체 부피는 같으므로 나중 높이는 (${num(facts.highCrossSection)}+${num(facts.lowCrossSection)})÷${data.totalDepth}=${facts.finalHeight}m입니다. 다시 확인하면 깎은 쪽 단면 넓이와 채운 쪽 단면 넓이는 각각 ${num(facts.cutCrossSection)}m²로 같습니다.`;
+      return { answer: `${facts.finalHeight}m`, visual: earthworkSvg(model, poolIndex, solved), solution: `${firstStep} ${crossSections} ${leveling}` };
+    }
     if (kind === "mission-2") {
       const facts = ropeFacts(data);
       if (![facts.side, facts.height, facts.volume].every(Number.isInteger)) throw new Error("끈 고정 풀 계산 결과가 자연수가 아닙니다.");
@@ -600,6 +708,12 @@
       if (level === 2) return `모양과 크기가 같은 직육면체를 그림처럼 계단 모양으로 쌓았습니다. ${dimensions}입니다. 사용한 직육면체의 수, 입체도형의 겉넓이와 부피를 모두 구하세요.`;
       return `오른쪽 그림은 모양과 크기가 같은 직육면체 ${facts.blockCount}개를 쌓아 만든 입체도형입니다. ${dimensions}입니다. 이 입체도형의 겉넓이와 부피를 구하세요.`;
     }
+    if (kind === "example-3") {
+      const facts = earthworkFacts(data);
+      if (level === 0) return `폭이 ${data.width}m인 흙더미가 있습니다. 높은 부분의 깊이는 ${facts.highDepth}m이고 양 끝 높이는 ${data.highStart}m와 ${data.highEnd}m입니다. 낮은 부분은 깊이 ${data.lowDepth}m, 높이 ${data.lowHeight}m입니다. 높은 부분의 흙을 깎아 낮은 부분에 쌓아 전체 높이를 같게 만들 때, 나중 높이를 구하세요.`;
+      if (level === 2) return `그림과 같은 흙더미에서 높은 부분의 흙을 깎아 낮은 부분에 쌓아 전체 높이를 같게 만듭니다. 모든 부분의 폭은 같습니다. 나중 높이를 구하세요.`;
+      return `폭이 ${data.width}m이고 전체 깊이가 ${data.totalDepth}m인 흙더미가 있습니다. 그림에서 높은 부분의 양 끝 높이는 ${data.highStart}m와 ${data.highEnd}m이고, 낮은 부분은 깊이 ${data.lowDepth}m, 높이 ${data.lowHeight}m입니다. 높은 부분의 흙을 깎아 낮은 부분에 쌓아 전체 높이를 같게 만들 때, 나중 높이를 구하세요.`;
+    }
     if (kind === "mission-2") {
       const facts = ropeFacts(data);
       const condition = level === 0
@@ -627,12 +741,14 @@
   const helpFor = (kind, data) => kind === "exploration" ? "주어진 밑면의 두 길이와 상자 높이를 차례로 곱해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "주어진 가장 짧은 변 후보마다 나머지 두 변을 빠짐없이 찾아보세요."
       : kind === "example-2" ? "앞에서 보이는 계단의 칸 수에 깊이 방향의 줄 수를 곱해 조각 수부터 확인해 보세요."
+        : kind === "example-3" ? "전체 깊이에서 낮은 부분의 깊이를 빼 높은 부분의 깊이를 먼저 구해 보세요."
         : kind === "mission-2" ? "주어진 사용 길이에서 가의 밑면 한 변을 먼저 찾아보세요."
           : kind === "mission-5" ? "가와 나의 끈 길이는 2로, 다의 끈 길이는 4로 나누어 세 변의 합을 비교해 보세요."
           : "주어진 앞면 칸 수마다 한 칸의 너비와 깊이를 곱해 보세요.";
   const challengeFor = kind => kind === "exploration" ? "종이의 둘레와 두 길이의 차로 가로와 세로를 먼저 구해 보세요."
     : kind === "example-1" || kind === "mission-1" ? "모든 경우를 찾은 뒤 세 변의 길이가 모두 다른 경우만 다시 가려 보세요."
       : kind === "example-2" ? "문제에 조각 수가 없으므로 계단의 각 층과 깊이 줄을 그림에서 직접 세어 보세요."
+        : kind === "example-3" ? "폭이 같다는 점을 이용하여 옆에서 본 두 단면의 넓이만으로 나중 높이를 구해 보세요."
         : kind === "mission-2" ? "가에서 사용한 끈을 구한 뒤, 두 상자가 사용한 끈의 차로 나의 사용 길이를 찾아보세요."
           : kind === "mission-5" ? "먼저 다에서 사용한 끈의 길이를 관계로 구하고, 세 변의 합에서 두 변의 합을 각각 빼 보세요."
           : "전체 가로를 5등분해 한 칸을 구하고, 깊이가 전체 가로와 같다는 조건을 이용하세요.";
@@ -646,6 +762,7 @@
     if (kind === "exploration") return [data.width, data.height, data.cut];
     if (kind === "example-1" || kind === "mission-1") return [data.cubes];
     if (kind === "example-2") return [data.totalLength, data.totalDepth, data.totalHeight, data.depthRows, ...data.columnHeights];
+    if (kind === "example-3") return [data.width, data.totalDepth, data.lowDepth, data.highStart, data.highEnd, data.lowHeight];
     if (kind === "mission-2") return [data.rope, data.cubeLeft, data.cuboidLeft];
     if (kind === "mission-5") return [data.width, data.height, data.depth];
     return [data.unit, 5 * data.unit];

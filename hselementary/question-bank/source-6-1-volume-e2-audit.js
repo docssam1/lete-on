@@ -9,7 +9,7 @@ const failures = [];
 const fail = message => failures.push(message);
 const check = (condition, message) => { if (!condition) fail(message); };
 const sourceIds = [
-  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-mission-1",
+  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-mission-1",
   "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
 ];
 const allResults = new Set();
@@ -55,6 +55,11 @@ const expected = {
     { length: 8, depth: 3, height: 3, heights: [3, 2, 1], rows: 4 },
     { length: 9, depth: 4, height: 6, heights: [3, 2, 1], rows: 4 },
     { length: 12, depth: 6, height: 3, heights: [3, 2, 1], rows: 4 }
+  ],
+  "example-3": [
+    { width: 36, totalDepth: 40, lowDepth: 16, highStart: 20, highEnd: 16, lowHeight: 8 },
+    { width: 30, totalDepth: 30, lowDepth: 10, highStart: 22, highEnd: 18, lowHeight: 8 },
+    { width: 42, totalDepth: 42, lowDepth: 14, highStart: 24, highEnd: 18, lowHeight: 9 }
   ],
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
@@ -192,6 +197,46 @@ for (const sourceItemId of sourceIds) {
           check(generated.solution.startsWith("먼저 그림의 칸을 빠짐없이 셉니다."), `${label}: 어려움 풀이가 그림에서 조각 수를 찾는 단계부터 시작하지 않습니다.`);
         }
         if (pool === 0) check(generated.answer === (difficulty === 1 ? "직육면체 24개, 겉넓이 98cm², 부피 48cm³" : "겉넓이 98cm², 부피 48cm³"), `${label}: 원문 8×3×3 계단 답이 98cm²·48cm³가 아닙니다.`);
+      } else if (kind === "example-3") {
+        const data = expected["example-3"][pool];
+        const highDepth = data.totalDepth - data.lowDepth;
+        const highCrossSection = highDepth * (data.highStart + data.highEnd) / 2;
+        const lowCrossSection = data.lowDepth * data.lowHeight;
+        const finalHeight = (highCrossSection + lowCrossSection) / data.totalDepth;
+        const cutCrossSection = highDepth * ((data.highStart - finalHeight) + (data.highEnd - finalHeight)) / 2;
+        const fillCrossSection = data.lowDepth * (finalHeight - data.lowHeight);
+        const candidates = [];
+        for (let candidate = data.lowHeight + 1; candidate < data.highEnd; candidate += 1) {
+          const cut = highDepth * ((data.highStart - candidate) + (data.highEnd - candidate)) / 2;
+          const fill = data.lowDepth * (candidate - data.lowHeight);
+          if (cut === fill) candidates.push(candidate);
+        }
+        const promptText = learnerText(generated.prompt).replace(/\s+/g, " ");
+        check(attr(problemTag, "data-model-key") === "earthwork-leveling", `${label}: 흙 고르기 점·선분 모델이 아닙니다.`);
+        check(Number.isInteger(finalHeight) && normalize(generated.answer) === normalize(`${finalHeight}m`), `${label}: 전체 부피를 전체 밑면으로 나눈 높이가 다릅니다.`);
+        check(cutCrossSection === fillCrossSection && JSON.stringify(candidates) === JSON.stringify([finalHeight]), `${label}: 깎은 양과 채운 양이 같아지는 자연수 높이가 하나가 아닙니다.`);
+        check(generated.solution.includes(`높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${highDepth}m`) || generated.solution.startsWith(`높은 부분의 깊이는 ${highDepth}m로 주어졌습니다.`), `${label}: 높은 부분 깊이 근거가 없습니다.`);
+        check(generated.solution.includes(`${highDepth}×(${data.highStart}+${data.highEnd})÷2=${highCrossSection}m²`) && generated.solution.includes(`${data.lowDepth}×${data.lowHeight}=${lowCrossSection}m²`), `${label}: 사다리꼴·직사각형 단면 계산이 없습니다.`);
+        check(generated.solution.includes(`(${highCrossSection}+${lowCrossSection})÷${data.totalDepth}=${finalHeight}m`) && generated.solution.includes(`각각 ${cutCrossSection}m²로 같습니다`), `${label}: 부피 보존과 깎기·채우기 재검산이 없습니다.`);
+        const roles = [
+          "earthwork-back-profile", "earthwork-high-top", "earthwork-low-top", "earthwork-cliff", "earthwork-end-face", "earthwork-front-profile",
+          "earthwork-total-depth-dimension", "earthwork-low-depth-dimension", "earthwork-high-start-height-dimension",
+          "earthwork-high-end-height-dimension", "earthwork-low-height-dimension", "earthwork-width-dimension"
+        ];
+        [generated.prompt, generated.answerVisual].forEach((markup, phaseIndex) => roles.forEach(role => check(markup.includes(`data-visual-element=\"${role}\"`), `${label}/${phaseIndex ? "답" : "문제"}: ${role}가 없습니다.`)));
+        ["earthwork-cut-area", "earthwork-fill-area", "earthwork-final-level", "earthwork-answer-card"].forEach(role => check(generated.answerVisual.includes(`data-visual-element=\"${role}\"`), `${label}: 답 그림의 ${role}가 없습니다.`));
+        check(!generated.prompt.includes("깎은 단면") && !generated.prompt.includes(`${finalHeight}m`), `${label}: 문제에 최종 높이 또는 재검산 값이 노출되었습니다.`);
+        if (difficulty === -1) {
+          check(promptText.includes(`높은 부분의 깊이는 ${highDepth}m`) && !promptText.includes(`전체 깊이가 ${data.totalDepth}m`), `${label}: 쉬움 문제에 계산된 높은 부분 깊이가 없습니다.`);
+          check(generated.solution.startsWith(`높은 부분의 깊이는 ${highDepth}m로 주어졌습니다.`), `${label}: 쉬움 풀이가 주어진 깊이부터 시작하지 않습니다.`);
+        } else if (difficulty === 0) {
+          check(promptText.includes(`폭이 ${data.width}m`) && promptText.includes(`전체 깊이가 ${data.totalDepth}m`) && promptText.includes(`낮은 부분은 깊이 ${data.lowDepth}m`), `${label}: 기준 문제가 원본의 폭·전체 깊이·낮은 부분 깊이를 보존하지 않습니다.`);
+          check(generated.solution.startsWith(`높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${highDepth}m입니다.`), `${label}: 기준 풀이가 깊이의 차부터 시작하지 않습니다.`);
+        } else {
+          check(promptText.includes("모든 부분의 폭은 같습니다") && !promptText.includes(`폭이 ${data.width}m`), `${label}: 어려움 문제가 공통 폭만 주고 수치를 숨기지 않습니다.`);
+          check(generated.solution.startsWith("폭은 모든 부분에서 같으므로 옆에서 본 단면 넓이를"), `${label}: 어려움 풀이가 공통 폭을 없애는 생각부터 시작하지 않습니다.`);
+        }
+        if (pool === 0) check(generated.answer === "14m" && highDepth === 24 && highCrossSection === 432 && lowCrossSection === 128 && cutCrossSection === 96, `${label}: 원본 20m·16m·8m·40m·16m 조건의 답과 재검산이 다릅니다.`);
       } else if (kind === "mission-2") {
         const [rope, cubeLeft, cuboidLeft] = expected["mission-2"][pool];
         const s = (rope - cubeLeft) / 8;
@@ -290,7 +335,7 @@ for (const sourceItemId of sourceIds) {
     check(seenPools.size === 3, `${sourceItemId}/difficulty${difficulty}: 3개 풀이 모두 생성되지 않았습니다.`);
   }
 }
-check(allResults.size === 63, `전체 고정 풀·난이도 결과 수가 63개가 아닙니다: ${allResults.size}`);
+check(allResults.size === 72, `전체 고정 풀·난이도 결과 수가 72개가 아닙니다: ${allResults.size}`);
 difficultyBodies.forEach((bodies, label) => {
   check(bodies.size === 3, `${label}: 세 난이도 문제 본문을 모두 모으지 못했습니다.`);
   check(new Set(bodies.values()).size === 3, `${label}: 힌트 문장을 제거하면 세 난이도 문제 본문이 구조적으로 같아집니다.`);
@@ -300,4 +345,4 @@ if (failures.length) {
   console.error(failures.slice(0, 120).join("\n"));
   process.exit(1);
 }
-console.log("6-1 부피 개념탐구 2 수학 감사 통과: 7유형 × 3풀 × 3난이도, 인수 전수 열거·24개 직육면체 노출 면·두 끈 역검산·세 끈 단일해·계단 두 공식·문제/정답 분리 확인");
+console.log("6-1 부피 개념탐구 2 수학 감사 통과: 8유형 × 3풀 × 3난이도, 인수 전수 열거·24개 직육면체 노출 면·흙 부피 보존·두 끈 역검산·세 끈 단일해·계단 두 공식·문제/정답 분리 확인");

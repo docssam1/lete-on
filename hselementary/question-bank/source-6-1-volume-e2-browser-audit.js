@@ -14,14 +14,18 @@ const failures = [];
 const fail = message => failures.push(message);
 const difficultyBodies = new Map();
 const ids = [
-  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-mission-1",
+  "6-1-u6-e2-exploration", "6-1-u6-e2-example-1", "6-1-u6-e2-example-2", "6-1-u6-e2-example-3", "6-1-u6-e2-mission-1",
   "6-1-u6-e2-mission-2", "6-1-u6-e2-mission-3", "6-1-u6-e2-mission-5"
 ];
 const difficulties = process.env.HSE_DIFFICULTY ? [Number(process.env.HSE_DIFFICULTY)] : [-1, 0, 1];
 const outputDir = process.env.HSE_SCREENSHOT_DIR || fs.mkdtempSync(path.join(os.tmpdir(), "hse-volume-e2-browser-"));
 const forbiddenLearnerNotation = /a≤b≤c|a²|[VS][₁₂₃₄₅]|\b(?:s|h|a|V|S|N)\b|\d\s*[sah](?=\s|$|[=×()+\-0-9])/;
 const forbiddenTechnicalLabels = /원문 유형|고정 풀|sourceItemId|6-1-u6-e2-/;
-const normalizedMathText = value => String(value || "").replace(/cm\s*2/g, "cm²").replace(/cm\s*3/g, "cm³");
+const normalizedMathText = value => String(value || "")
+  .replace(/cm\s*2/g, "cm²")
+  .replace(/cm\s*3/g, "cm³")
+  .replace(/m\s*2/g, "m²")
+  .replace(/m\s*3/g, "m³");
 const poppler = process.env.HSE_POPPLER_BIN || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/Library/bin";
 const pdfinfo = path.join(poppler, "pdfinfo.exe");
 const pdftoppm = path.join(poppler, "pdftoppm.exe");
@@ -33,6 +37,11 @@ const expected = {
     { length: 8, depth: 3, height: 3, heights: [3, 2, 1], rows: 4, surface: 98, volume: 48 },
     { length: 9, depth: 4, height: 6, heights: [3, 2, 1], rows: 4, surface: 192, volume: 144 },
     { length: 12, depth: 6, height: 3, heights: [3, 2, 1], rows: 4, surface: 228, volume: 144 }
+  ],
+  "example-3": [
+    { width: 36, totalDepth: 40, lowDepth: 16, highStart: 20, highEnd: 16, lowHeight: 8, finalHeight: 14 },
+    { width: 30, totalDepth: 30, lowDepth: 10, highStart: 22, highEnd: 18, lowHeight: 8, finalHeight: 16 },
+    { width: 42, totalDepth: 42, lowDepth: 14, highStart: 24, highEnd: 18, lowHeight: 9, finalHeight: 17 }
   ],
   "mission-1": [48, 60, 72],
   "mission-2": [[110, 22, 14], [120, 24, 12], [96, 16, 8]],
@@ -173,6 +182,39 @@ function verify(problem, answer, sourceItemId, difficulty, viewport) {
       if (difficulty === 0 && (!item.text.includes("직육면체 24개") || item.text.includes("높은 쪽부터") || !solved.solution.startsWith("그림을 앞면의 계단 칸과 뒤쪽 깊이 줄로 나누어 봅니다."))) fail(`${label}/pool${item.pool}: 기준의 원문 24개 조건 또는 그림 풀이가 다릅니다.`);
       if (difficulty === 1 && (item.text.includes("직육면체 24개") || !item.text.includes("사용한 직육면체의 수") || !solved.solution.startsWith("먼저 그림의 칸을 빠짐없이 셉니다."))) fail(`${label}/pool${item.pool}: 어려움의 조각 수 추론 조건이 다릅니다.`);
       if (item.pool === 0 && (data.surface !== 98 || data.volume !== 48)) fail(`${label}: 원문 답 계약이 98cm²·48cm³가 아닙니다.`);
+    }
+    if (sourceItemId.endsWith("example-3")) {
+      const data = expected["example-3"][item.pool];
+      const highDepth = data.totalDepth - data.lowDepth;
+      const highCrossSection = highDepth * (data.highStart + data.highEnd) / 2;
+      const lowCrossSection = data.lowDepth * data.lowHeight;
+      const cutCrossSection = highDepth * ((data.highStart - data.finalHeight) + (data.highEnd - data.finalHeight)) / 2;
+      const fillCrossSection = data.lowDepth * (data.finalHeight - data.lowHeight);
+      const roles = [
+        "earthwork-back-profile", "earthwork-high-top", "earthwork-low-top", "earthwork-cliff", "earthwork-end-face", "earthwork-front-profile",
+        "earthwork-total-depth-dimension", "earthwork-low-depth-dimension", "earthwork-high-start-height-dimension",
+        "earthwork-high-end-height-dimension", "earthwork-low-height-dimension", "earthwork-width-dimension"
+      ];
+      [item.svgs[0], solved.svgs[0]].forEach((svg, phaseIndex) => roles.forEach(role => {
+        if (!svg.required.includes(role) || svg.roleCounts[role] !== 1) fail(`${label}/${phaseIndex ? "답" : "문제"}/pool${item.pool}: ${role}가 정확히 하나가 아닙니다.`);
+      }));
+      if (item.svgs[0].model !== "earthwork-leveling" || solved.svgs[0].model !== "earthwork-leveling") fail(`${label}/pool${item.pool}: 흙 고르기 모델이 아닙니다.`);
+      ["earthwork-cut-area", "earthwork-fill-area", "earthwork-final-level", "earthwork-answer-card"].forEach(role => {
+        if (!solved.svgs[0].required.includes(role) || solved.svgs[0].roleCounts[role] !== 1) fail(`${label}/답/pool${item.pool}: ${role}가 정확히 하나가 아닙니다.`);
+      });
+      ["earthwork-total-depth-dimension", "earthwork-low-depth-dimension", "earthwork-high-start-height-dimension", "earthwork-high-end-height-dimension", "earthwork-low-height-dimension", "earthwork-width-dimension"].forEach(role => {
+        const dimension = item.svgs[0].lines.find(entry => entry.role === role);
+        if (!dimension || [dimension.x1, dimension.y1, dimension.x2, dimension.y2].some(value => !Number.isFinite(value)) || (dimension.x1 === dimension.x2 && dimension.y1 === dimension.y2)) fail(`${label}/문제/pool${item.pool}: ${role} 치수선이 유효하지 않습니다.`);
+      });
+      if (cutCrossSection !== fillCrossSection) fail(`${label}/pool${item.pool}: 깎은 단면과 채운 단면이 다릅니다.`);
+      if (!solved.text.includes(`${data.finalHeight}m`) || !solved.text.includes(`깎은 단면 = 채운 단면 = ${cutCrossSection}m²`)) fail(`${label}/답/pool${item.pool}: 최종 높이 또는 독립 재검산이 보이지 않습니다.`);
+      const solvedSolution = normalizedMathText(solved.solution);
+      if (!solvedSolution.includes(`${highDepth}×(${data.highStart}+${data.highEnd})÷2=${highCrossSection}m²`) || !solvedSolution.includes(`${data.lowDepth}×${data.lowHeight}=${lowCrossSection}m²`)) fail(`${label}/답/pool${item.pool}: 사다리꼴·직사각형 단면 풀이가 없습니다.`);
+      if (item.text.includes(`${data.finalHeight}m`) || item.text.includes("깎은 단면")) fail(`${label}/문제/pool${item.pool}: 정답 또는 재검산 값이 노출되었습니다.`);
+      if (difficulty === -1 && (!item.text.includes(`높은 부분의 깊이는 ${highDepth}m`) || !solved.solution.startsWith(`높은 부분의 깊이는 ${highDepth}m로 주어졌습니다.`))) fail(`${label}/pool${item.pool}: 쉬움의 계산된 깊이 또는 첫 풀이 단계가 맞지 않습니다.`);
+      if (difficulty === 0 && (!item.text.includes(`폭이 ${data.width}m`) || !item.text.includes(`전체 깊이가 ${data.totalDepth}m`) || !solved.solution.startsWith(`높은 부분의 깊이는 ${data.totalDepth}-${data.lowDepth}=${highDepth}m입니다.`))) fail(`${label}/pool${item.pool}: 기준의 원본 치수 또는 첫 풀이 단계가 맞지 않습니다.`);
+      if (difficulty === 1 && (!item.text.includes("모든 부분의 폭은 같습니다") || item.text.includes(`폭이 ${data.width}m`) || !solved.solution.startsWith("폭은 모든 부분에서 같으므로 옆에서 본 단면 넓이를"))) fail(`${label}/pool${item.pool}: 어려움의 공통 폭 조건 또는 첫 풀이 단계가 맞지 않습니다.`);
+      if (item.pool === 0 && (data.finalHeight !== 14 || highDepth !== 24 || highCrossSection !== 432 || lowCrossSection !== 128 || cutCrossSection !== 96)) fail(`${label}: 원본 수치의 14m 계산이 다릅니다.`);
     }
     if (sourceItemId.endsWith("mission-2")) {
       const [rope, cubeLeft, cuboidLeft] = expected["mission-2"][item.pool];
