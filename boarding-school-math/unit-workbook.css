@@ -169,6 +169,15 @@ button, select { font:inherit; }
 .eea-expression-model span { color:var(--muted); font:800 7.5pt var(--gf-font-body); }
 .eea-expression-model strong { font:800 13pt Georgia,serif; line-height:1.45; word-break:keep-all; }
 .eea-expression-model sup { font-size:.7em; }
+.eeb-equation-model,.eeb-number-line { width:min(62mm,96%); min-height:30mm; padding:4mm 5mm; display:grid; place-items:center; gap:2mm; border:1px solid var(--line); background:#fff; color:var(--ink); text-align:center; }
+.eeb-equation-model span { color:var(--muted); font:800 7.5pt var(--gf-font-body); }
+.eeb-equation-model strong,.eeb-number-line strong { font:800 12.5pt Georgia,serif; line-height:1.4; word-break:keep-all; }
+.eeb-number-line svg { display:block; width:100%; max-width:82mm; height:20mm; overflow:visible; }
+.eeb-number-line svg line,.eeb-number-line svg path { stroke:#62758b; stroke-width:2; fill:#62758b; }
+.eeb-number-line .boundary-point { fill:#fff; stroke:#12233f; stroke-width:3; }
+.eeb-number-line svg text { text-anchor:middle; font:700 13px var(--gf-font-body); fill:#12233f; }
+.eeb-number-line .solution-ray { stroke:#12635b; stroke-width:5; }
+.eeb-number-line .solution-ray-head { stroke:none; fill:#12635b; }
 .teacher-key { margin-top:auto; padding:3mm; border-left:3px solid var(--success); background:#e8f5ee; font-size:7.6pt; line-height:1.4; }
 .teacher-key strong { display:block; margin-bottom:1mm; }
 .teacher-move { margin-top:2mm; padding:2.5mm 3mm; border-left:3px solid var(--primary); background:var(--primary-soft); font-size:7.2pt; line-height:1.35; }
