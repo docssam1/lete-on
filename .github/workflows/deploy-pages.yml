@@ -64,7 +64,7 @@ jobs:
           rm -f _site/hsmiddle/question-bank/data/source-pdf-bundle-verification.json
           test ! -e _site/hsmiddle/question-bank/audits
           cp -R geometry/. _site/geometry/
-          cp -R hyper-focus/. _site/hyper-focus/
+          node hyper-focus/qa/stage_public_release.cjs --source hyper-focus --dest _site/hyper-focus
           cp -R number_magic/. _site/number_magic/
           cp -R personality/. _site/personality/
           cp -R premier/. _site/premier/

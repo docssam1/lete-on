@@ -5,6 +5,11 @@ window.GFIELD_HF_PORTAL = {
   version: "2026-08-23",
   applicationUrl: "https://naver.me/xy7bsjyb",
   consultationUrl: "https://open.kakao.com/me/gfield",
+  entryBanners: [
+    { key: "hyperfocus", title: "하이퍼 포커스", href: "./diagnosis.html", permission: "hyperfocus" },
+    { key: "premier-mock", title: "프리미어 모의고사", productKey: "mock", permission: "mock" },
+    { key: "challenge", title: "챌린지 대비", subtitle: "2026년 9월 챌린지 대비", href: "./challenge/studio.html", parent: "hyperfocus", permissionMode: "challenge-granular", releaseStatus: "private-delivery-ready" }
+  ],
   products: [
     {
       key: "hyperfocus",
