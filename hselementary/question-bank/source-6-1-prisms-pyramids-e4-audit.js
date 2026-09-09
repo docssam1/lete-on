@@ -15,6 +15,13 @@ const sourceIds = [
   "6-1-u2-e4-mission-1",
   "6-1-u2-e4-mission-4"
 ];
+const sourceAnswers = new Map([
+  ["6-1-u2-e4-example-4-1", "74"],
+  ["6-1-u2-e4-example-4-2", "50"],
+  ["6-1-u2-e4-example-4-4", "60cm"],
+  ["6-1-u2-e4-mission-1", "면 9개, 모서리 16개, 꼭짓점 9개"],
+  ["6-1-u2-e4-mission-4", "38"]
+]);
 const evidenceKinds = [
   "cube-six-pyramid-assembly",
   "pyramid-vertex-truncation",
@@ -243,6 +250,7 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
   context = sourceIds[variant];
   check(pools.size === expectedPools[variant].length, "모든 고정 pool을 확인하지 못했습니다.");
   check(poolValues.size === expectedPools[variant].length && poolAnswers.size === expectedPools[variant].length, "모든 고정 pool의 값과 정답이 기록되지 않았습니다.");
+  check(Array.from(poolAnswers.values()).includes(sourceAnswers.get(sourceIds[variant])), `원문 답 ${sourceAnswers.get(sourceIds[variant])}이 고정 문항 묶음에 없습니다.`);
 }
 
 if (failures.length) {
