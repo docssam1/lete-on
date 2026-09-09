@@ -1360,15 +1360,16 @@
       "unitName": "소수의 나눗셈",
       "exploration": 1,
       "pdfPage": 17,
-      "printedPage": null,
+      "printedPage": 21,
       "visualRisk": "소수점 위치, 단위 변환, 반올림 기준을 문장과 수식에 함께 고정해야 하며, 세로셈이나 수직선 그림은 숫자와 눈금이 읽혀야 함",
       "section": "mission",
       "ordinal": 3,
       "sourceShape": "원본 17쪽 Mission 3. 겹치지 않게 이어 붙인 평행사변형과 정사각형의 전체 넓이, 밑변, 정사각형 한 변으로 평행사변형의 높이를 구함",
-      "answerContract": "drawing-dependent-candidate",
+      "answerContract": "single-answer-fixed-pool",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "독립 계산 값 4.8cm는 확인했지만 원문과 같은 평행사변형·정사각형 연결 위치를 점·선분 자료로 다시 그리고 PC·모바일·A4에서 확인하기 전까지 잠급니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 공유변과 수직 높이를 점·선분 자료로 계산하고, 문제와 답에 같은 좌표를 쓰는 고정 검증 문항 3개로 제한합니다.",
+      "publicSourceItemId": "6-1-u3-e1-mission-3"
     },
     {
       "sourceItemId": "6-1-u3-e1-mission-4",
