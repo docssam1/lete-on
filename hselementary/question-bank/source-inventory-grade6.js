@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 227
+    "unlocked": 225
   },
   "items": [
     {
@@ -648,18 +648,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "면, 모서리, 꼭짓점 수로 각기둥 이름 찾기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "sourceGrade6PrismsPyramidsE1",
+      "generatorKey": "",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "reviewReason": "",
+      "reviewLocked": true,
+      "reviewReason": "원문 전개도 그림과 답 그림의 대응을 다시 검수해야 합니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "verified",
+      "answerVisualStatus": "not-implemented",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 3,
-      "variant": 0
+      "verifiedVariantCount": 0
     },
     {
       "semester": "6-1",
@@ -851,18 +850,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "삼각기둥 전개도에서 변의 길이와 옆면 넓이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "sourceGrade6PrismsPyramidsE1",
+      "generatorKey": "",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": false,
-      "reviewReason": "",
+      "reviewLocked": true,
+      "reviewReason": "원문 전개도 그림과 답 그림의 대응을 다시 검수해야 합니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "verified",
+      "answerVisualStatus": "not-implemented",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 3,
-      "variant": 3
+      "verifiedVariantCount": 0
     },
     {
       "semester": "6-1",
