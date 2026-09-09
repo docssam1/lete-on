@@ -4287,15 +4287,16 @@
       "unitName": "직육면체의 부피와 겉넓이",
       "exploration": 3,
       "pdfPage": 52,
-      "printedPage": null,
+      "printedPage": 59,
       "visualRisk": "숨은 면·공유 면·바닥 면의 포함 여부와 세 방향 길이를 명시해야 하며, 쌓은 도형은 높이·위치·단위가 한 가지로 읽히고 답 후보를 전수 확인해야 함",
       "section": "mission",
       "ordinal": 3,
-      "sourceShape": "겉넓이와 부피 조건을 함께 사용하여 직육면체나 쌓은 도형의 길이, 개수 또는 넓이를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "높이가 12cm인 옆면 띠에 계단 모양 밑면 두 개가 붙은 각기둥 전개도. 부피와 계단의 20cm·6cm·4cm·10cm·18cm 표시를 이용하여 맨 위 가로 길이를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 선분 대응, 계단 밑넓이 분할, 자연수 전수 계산, 문제와 답의 같은 전개도, PC·모바일·A4 검수를 통과했습니다.",
+      "publicSourceItemId": "6-1-u6-e3-mission-3"
     },
     {
       "sourceItemId": "6-1-u6-e3-mission-4",

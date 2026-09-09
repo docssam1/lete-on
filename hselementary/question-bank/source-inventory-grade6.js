@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 219
+    "unlocked": 220
   },
   "items": [
     {
@@ -6830,20 +6830,26 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
       "typeLabel": "전개도의 빈칸 길이와 부피 구하기",
-      "commonTypeId": "cuboid-net-unknown-edge-volume",
+      "commonTypeId": "step-prism-net-unknown-edge",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6VolumeE3Mission3",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ],
+      "variant": 0
     },
     {
       "semester": "6-1",

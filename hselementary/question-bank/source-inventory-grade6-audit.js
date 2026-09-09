@@ -61,6 +61,7 @@ const readyGeneratorKeys = [
   , "sourceGrade6VolumeE4"
   , "sourceGrade6SurfaceE1"
   , "sourceGrade6VolumeE2"
+  , "sourceGrade6VolumeE3Mission3"
 ];
 check(rawInventory.items.length === 264, `6-1 원자료 장부는 번호가 붙은 개념탐구 소문항을 나눈 264개여야 하나 ${rawInventory.items.length}개입니다.`);
 check(new Set(rawInventory.items.map(item => item.sourceItemId)).size === rawInventory.items.length, "6-1 원자료 장부의 항목 ID가 중복되었습니다.");
@@ -89,13 +90,14 @@ for (const [generatorKey, expectedCount, label] of [
   ["sourceGrade6VolumeSurfaceE3", 9, "6단원 개념탐구 3 공개 유형"]
   , ["sourceGrade6SurfaceE1", 9, "6단원 개념탐구 1 공개 유형"]
   , ["sourceGrade6VolumeE2", 11, "6단원 개념탐구 2 공개 유형"]
+  , ["sourceGrade6VolumeE3Mission3", 1, "6단원 개념탐구 3 Mission 3 공개 유형"]
 ]) {
   const mappedItems = items.filter(item => item.generatorKey === generatorKey);
   check(mappedItems.length === expectedCount, `${label}의 공개 유형이 ${expectedCount}개가 아닙니다: ${mappedItems.length}`);
   mappedItems.forEach(item => {
     const rawItem = rawInventory.items.find(candidate => candidate.publicSourceItemId === item.sourceItemId);
-    const readinessItem = (["sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"].includes(generatorKey) ? readinessU5 : ["sourceGrade6VolumeSurfaceE3", "sourceGrade6SurfaceE1", "sourceGrade6VolumeE2"].includes(generatorKey) ? readinessU6 : readiness).items.find(candidate => candidate.sourceItemId === item.sourceItemId);
-    if (generatorKey === "sourceGrade6VolumeSurfaceE3") {
+    const readinessItem = (["sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"].includes(generatorKey) ? readinessU5 : ["sourceGrade6VolumeSurfaceE3", "sourceGrade6SurfaceE1", "sourceGrade6VolumeE2", "sourceGrade6VolumeE3Mission3"].includes(generatorKey) ? readinessU6 : readiness).items.find(candidate => candidate.sourceItemId === item.sourceItemId);
+    if (["sourceGrade6VolumeSurfaceE3", "sourceGrade6VolumeE3Mission3"].includes(generatorKey)) {
       check(Boolean(rawItem && readinessItem), `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID 연결이 없습니다.`);
       check(rawItem?.sourceItemId === item.sourceItemId && readinessItem?.sourceItemId === item.sourceItemId, `${item.sourceItemId}: 원자료·검수표·공개 유형의 ID가 다릅니다.`);
     } else {
@@ -105,8 +107,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 219 && lockedItems.length === 414, `6학년 원문 유형의 공개 219개·잠금 414개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 219유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 220 && lockedItems.length === 413, `6학년 원문 유형의 공개 220개·잠금 413개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 220유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU5.integrity?.publicCandidateCount === readinessDecisionCounts.publicCandidate, `6-1 5단원 readiness publicCandidate 집계가 실제 ${readinessDecisionCounts.publicCandidate}개와 다릅니다.`);
@@ -127,7 +129,7 @@ readinessU6E1Items.forEach(readinessItem => {
     check(catalogItem.reviewLocked && catalogItem.generatorKey === "" && catalogItem.answerVisualStatus === "not-implemented" && catalogItem.verifiedVariantCount === 0, `${readinessItem.sourceItemId}: 잠금 readiness 항목이 생성 가능 상태입니다.`);
   }
 });
-check(readinessU6.items.length === 46 && readinessU6Counts.public === 42 && readinessU6Counts.locked === 4 && readinessU6Counts.releaseLocked === 4, `6-1 6단원 readiness 공개 42개·잠금 4개 구성이 다릅니다: 전체 ${readinessU6.items.length}, 공개 ${readinessU6Counts.public}, 잠금 ${readinessU6Counts.locked}/${readinessU6Counts.releaseLocked}`);
+check(readinessU6.items.length === 46 && readinessU6Counts.public === 43 && readinessU6Counts.locked === 3 && readinessU6Counts.releaseLocked === 3, `6-1 6단원 readiness 공개 43개·잠금 3개 구성이 다릅니다: 전체 ${readinessU6.items.length}, 공개 ${readinessU6Counts.public}, 잠금 ${readinessU6Counts.locked}/${readinessU6Counts.releaseLocked}`);
 readinessU6.items.forEach(readinessItem => {
   const catalogItem = items.find(item => item.sourceItemId === readinessItem.sourceItemId);
   check(Boolean(catalogItem), `${readinessItem.sourceItemId}: 6단원 readiness 항목과 공개 분류표가 연결되지 않았습니다.`);
