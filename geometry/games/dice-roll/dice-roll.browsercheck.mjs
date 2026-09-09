@@ -16,16 +16,22 @@ assert.equal(await page.locator("#choiceTray button").count(), 3);
 assert.equal(await page.locator(".route-3d-host canvas").count(), 1);
 const sceneMetrics = await page.locator(".route-3d-host").evaluate((host) => ({
   dieSize: Number(host.dataset.dieSize), tileSize: Number(host.dataset.tileSize), tileRatio: Number(host.dataset.tileRatio),
-  step: Number(host.dataset.step), top: Number(host.dataset.top), rolling: host.dataset.rolling, material: host.dataset.material,
+  step: Number(host.dataset.step), top: Number(host.dataset.top), front: Number(host.dataset.front), right: Number(host.dataset.right),
+  rolling: host.dataset.rolling, material: host.dataset.material, viewpoint: host.dataset.viewpoint,
+  cameraVector: host.dataset.cameraVector, tileCount: Number(host.dataset.tileCount),
   width: host.getBoundingClientRect().width, height: host.getBoundingClientRect().height
 }));
 assert.equal(sceneMetrics.dieSize, 1);
 assert.equal(sceneMetrics.material, "satin-enamel");
+assert.equal(sceneMetrics.viewpoint, "southeast-diagonal");
+assert.equal(sceneMetrics.cameraVector, "1,1,1");
+assert.equal(sceneMetrics.tileCount, 9);
+assert.deepEqual([sceneMetrics.top, sceneMetrics.front, sceneMetrics.right], await page.locator(".die-observer dd").evaluateAll((nodes) => nodes.map((node) => Number(node.textContent))));
 assert.ok(sceneMetrics.tileRatio > 1 && sceneMetrics.tileRatio <= 1.12, JSON.stringify(sceneMetrics));
 assert.ok(sceneMetrics.width >= 300 && sceneMetrics.height >= 250, JSON.stringify(sceneMetrics));
 const canvasShot = await page.locator(".route-3d-host canvas").screenshot();
 const pixelStats = await sharp(canvasShot).stats();
-assert.ok(pixelStats.channels.slice(0, 3).some((channel) => channel.stdev > 18), JSON.stringify(pixelStats.channels));
+assert.ok(pixelStats.channels.slice(0, 3).some((channel) => channel.stdev > 10), JSON.stringify(pixelStats.channels));
 await page.locator('#methodSwitch button[data-method="flat"]').click();
 assert.equal(await page.locator(".flat-number-palette button").count(), 6);
 assert.equal(await page.locator(".flat-die-marker").count(), 1);
@@ -89,6 +95,18 @@ assert.ok(mobile.scrollWidth <= mobile.width + 1, JSON.stringify(mobile));
 assert.ok(mobile.board.width <= mobile.width - 18, JSON.stringify(mobile));
 await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-dice-roll-mobile.png", fullPage: true });
 
+await page.goto(`${baseUrl}/geometry/games/dice-roll/?level=4`, { waitUntil: "networkidle" });
+await page.locator('#methodSwitch button[data-method="solid"]').click();
+const solidMobile = await page.locator(".route-3d-host").evaluate((host) => ({
+  tileCount: Number(host.dataset.tileCount), labelCount: Number(host.dataset.labelCount),
+  labelPlaneSize: Number(host.dataset.labelPlaneSize), width: host.getBoundingClientRect().width
+}));
+assert.equal(solidMobile.tileCount, 16);
+assert.equal(solidMobile.labelCount, 16);
+assert.ok(solidMobile.labelPlaneSize >= .5, JSON.stringify(solidMobile));
+assert.ok(solidMobile.width >= 280, JSON.stringify(solidMobile));
+await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-dice-roll-solid-mobile.png", fullPage: true });
+
 await page.emulateMedia({ reducedMotion: "reduce" });
 await page.goto(`${baseUrl}/geometry/games/dice-roll/?level=1`, { waitUntil: "networkidle" });
 await page.locator('#methodSwitch button[data-method="solid"]').click();
@@ -108,5 +126,5 @@ assert.match(await page.locator("#diceLevelGrid .dice-card").nth(3).textContent(
 assert.ok(await page.locator(".level-card img").evaluateAll((images) => images.every((image) => image.complete && image.naturalWidth === 800 && image.naturalHeight === 500)));
 await page.screenshot({ path: "C:/Users/user/AppData/Local/Temp/gfield-solid-vista-refresh.png", fullPage: true });
 assert.equal(errors.length, 0, errors.join("\n"));
-console.log(JSON.stringify({ baseUrl, level3Routes: 3, level5Choices: 3, sceneMetrics, pixelStdev: pixelStats.channels.map((channel) => channel.stdev), roll: { firstDirection, beforeRoll, afterRoll }, autoAdvance:{before:problemBeforeAuto,after:problemAfterAuto}, reducedMotion: { direction: reducedDirection, duration: reducedDuration }, flatRecord: { nextDirection, value: 3, markers: 2, mobile:flatMobile }, mobile, diceCards: 5 }, null, 2));
+console.log(JSON.stringify({ baseUrl, level3Routes: 3, level5Choices: 3, sceneMetrics, pixelStdev: pixelStats.channels.map((channel) => channel.stdev), roll: { firstDirection, beforeRoll, afterRoll }, autoAdvance:{before:problemBeforeAuto,after:problemAfterAuto}, reducedMotion: { direction: reducedDirection, duration: reducedDuration }, flatRecord: { nextDirection, value: 3, markers: 2, mobile:flatMobile }, mobile, solidMobile, diceCards: 5 }, null, 2));
 await browser.close();

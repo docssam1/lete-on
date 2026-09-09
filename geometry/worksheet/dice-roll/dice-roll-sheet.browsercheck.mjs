@@ -9,6 +9,11 @@ await page.goto(`${baseUrl}/geometry/worksheet/dice-roll/`,{waitUntil:"networkid
 assert.equal(await page.locator(".problem").count(),2);
 assert.equal(await page.locator(".route-board .board-die").count(),2);
 assert.equal(await page.locator(".route-board .board-die").first().locator("polygon").count(),3);
+assert.equal(await page.locator(".route-board").first().getAttribute("data-viewpoint"),"southeast-diagonal");
+assert.equal(await page.locator(".route-board").first().locator(".board-cell").count(),9);
+const projectedRoutes=await page.locator(".route-board").first().locator("line[data-direction]").evaluateAll((lines)=>lines.map((line)=>{const[dx,dy]=line.dataset.vector.split(",").map(Number);return{direction:line.dataset.direction,dx,dy};}));
+assert.ok(projectedRoutes.every(({dx,dy})=>Math.abs(dx)>1&&Math.abs(dy)>1),JSON.stringify(projectedRoutes));
+for(const route of projectedRoutes){const expected={N:[69.282,-40],E:[69.282,40],S:[-69.282,40],W:[-69.282,-40]}[route.direction];assert.ok(Math.abs(route.dx-expected[0])<.01&&Math.abs(route.dy-expected[1])<.01,JSON.stringify(route));}
 for(const level of [1,2,3,4,5]){await page.locator("#levelSelect").selectOption(String(level));assert.equal(await page.locator(".problem").count(),2);assert.ok(await page.locator(".route-board").count()>=2);}
 await page.locator("#levelSelect").selectOption("3");
 assert.match(await page.locator(".problem").first().locator("header span").textContent(),/4번 위치에서 시계 반대 방향으로 3번/);
@@ -17,11 +22,15 @@ assert.equal(await page.locator(".problem").first().locator(".flat-five-svg.blan
 await page.locator("#answerToggle").check();
 assert.equal(await page.locator(".problem").first().locator(".flat-five-svg.blank").count(),0);
 await page.screenshot({path:"C:/Users/user/AppData/Local/Temp/gfield-dice-roll-worksheet.png",fullPage:true});
+await page.locator("#levelSelect").selectOption("4");
 await page.emulateMedia({media:"print"});
+const recordRows=await page.locator(".record-row").evaluateAll((nodes)=>nodes.map((node)=>({clientWidth:node.clientWidth,scrollWidth:node.scrollWidth,figures:node.querySelectorAll("figure").length})));
+assert.ok(recordRows.some((row)=>row.figures===4),JSON.stringify(recordRows));
+assert.ok(recordRows.every((row)=>row.scrollWidth<=row.clientWidth+1),JSON.stringify(recordRows));
 const sheet=await page.locator(".sheet").evaluate((node)=>{const box=node.getBoundingClientRect();return{width:box.width,height:box.height,scrollHeight:node.scrollHeight};});
 assert.ok(sheet.height<=1124,JSON.stringify(sheet));
 await page.pdf({path:"C:/Users/user/AppData/Local/Temp/gfield-dice-roll-worksheet.pdf",format:"A4",printBackground:true,preferCSSPageSize:true});
 await page.emulateMedia({media:"screen"});await page.setViewportSize({width:390,height:844});await page.reload({waitUntil:"networkidle"});
 const mobile=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));assert.ok(mobile.scrollWidth<=mobile.width+1,JSON.stringify(mobile));
 await page.goto(`${baseUrl}/geometry/games/dice-roll/`,{waitUntil:"networkidle"});assert.equal(await page.locator('a[href="../../worksheet/dice-roll/"]').count(),1);
-assert.equal(errors.length,0,errors.join("\n"));console.log(JSON.stringify({baseUrl,problems:2,sourceRoute:"4-7-8-5",sheet,mobile},null,2));await browser.close();
+assert.equal(errors.length,0,errors.join("\n"));console.log(JSON.stringify({baseUrl,problems:2,sourceRoute:"4-7-8-5",recordRows,sheet,mobile},null,2));await browser.close();

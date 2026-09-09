@@ -1,7 +1,8 @@
 import { levels, validateLevels, directionInfo, roll, rollMany, visibleFaces, PROGRESS_KEY } from "./levels.js?v=dice-roll-3";
 import { sessionProblems } from "../../shared/problem-pool.js";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
-import { DiceRouteScene } from "./route-scene.js?v=dice-roll-3";
+import { DiceRouteScene } from "./route-scene.js?v=dice-roll-4";
+import { DIE_FACE_QUADS, pointOnQuad } from "./projection.js?v=dice-roll-1";
 
 validateLevels();
 
@@ -53,11 +54,7 @@ function showToast(text) {
   showToast.timer = setTimeout(() => ui.toast.classList.remove("show"), 2200);
 }
 
-const faceQuads = {
-  top: [[45,50],[100,18],[148,46],[92,78]],
-  front: [[45,50],[92,78],[92,142],[45,112]],
-  right: [[92,78],[148,46],[148,110],[92,142]]
-};
+const faceQuads = DIE_FACE_QUADS;
 const pipPositions = {
   1:[[.5,.5]], 2:[[.25,.25],[.75,.75]], 3:[[.24,.24],[.5,.5],[.76,.76]],
   4:[[.25,.25],[.75,.25],[.25,.75],[.75,.75]], 5:[[.23,.23],[.77,.23],[.5,.5],[.23,.77],[.77,.77]],
@@ -70,14 +67,6 @@ const flatFaceQuads = {
   south:[[35,65],[65,65],[100,100],[0,100]],
   west:[[0,0],[35,35],[35,65],[0,100]]
 };
-
-function pointOnQuad(quad, u, v) {
-  const [a,b,c,d] = quad;
-  return [
-    (1-u)*(1-v)*a[0] + u*(1-v)*b[0] + u*v*c[0] + (1-u)*v*d[0],
-    (1-u)*(1-v)*a[1] + u*(1-v)*b[1] + u*v*c[1] + (1-u)*v*d[1]
-  ];
-}
 
 let dieMaterialSequence = 0;
 

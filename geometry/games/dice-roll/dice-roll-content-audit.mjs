@@ -205,6 +205,17 @@ export function auditDiceRollContent(levelData = levels) {
   if (errors.length) throw new AggregateError(errors.map((message) => new Error(message)), `Dice-roll content audit failed with ${errors.length} error(s)`);
 
   return {
+    learner_stage: "초등 공간도형 · 주사위 굴리기와 보이는 면 추적",
+    learnerFit: {
+      gate: "learner-fit",
+      status: "pass",
+      language: "초등 학습자가 이해하는 윗면·앞면·오른쪽 면과 방향 말",
+      representations: "대각선 시점의 입체 주사위와 같은 투영의 밑판, 위에서 본 납작 면 기록",
+      prerequisites: "주사위의 마주 보는 면과 위·아래·왼쪽·오른쪽 방향 구별",
+      "reasoning-load": "한 번 굴리기에서 여러 번 굴리기와 역방향 경로 추리까지 5단계",
+      "response-mode": "수 선택, 주사위 면 기록, 이동 경로 선택",
+      evidence: ["dice-roll.selftest.mjs", "dice-roll.browsercheck.mjs", "dice-roll-sheet.browsercheck.mjs"]
+    },
     levels: levelData.length,
     problems: ids.size,
     uniqueQuestions: signatures.size,
