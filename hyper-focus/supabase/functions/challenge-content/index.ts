@@ -15,7 +15,7 @@ async function readBody(req:Request):Promise<ObjectMap|null>{
  try{const data=JSON.parse(new TextDecoder("utf-8",{fatal:true}).decode(bytes));return data&&typeof data==="object"&&!Array.isArray(data)?data:null;}catch{return null;}
 }
 
-const BUCKET="hf-challenge-private",MANIFEST_PATH="manifest.json";
+const BUCKET=Deno.env.get('CHALLENGE_PRIVATE_BUCKET')||'hf-challenge-private',MANIFEST_PATH="manifest.json";
 async function sha256(bytes:ArrayBuffer){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function downloadJSON(service:ReturnType<typeof createClient>,path:string,hash:string,maxBytes:number){
  if(!/^[a-f0-9]{64}$/.test(hash))throw Error('manifest_pin_required');

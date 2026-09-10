@@ -3,7 +3,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.112.3";
 import { RELEASE } from "./release-settings.ts";
 
-const BUCKET = "hf-challenge-private";
+const BUCKET = Deno.env.get("CHALLENGE_PRIVATE_BUCKET") || "hf-challenge-private";
 const MAX_BYTES = 6 * 1024 * 1024;
 const MAX_LEASE = 6 * 60 * 60 * 1000;
 const HEX = /^[a-f0-9]{64}$/;
