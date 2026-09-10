@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 248
+    "unlocked": 249
   },
   "items": [
     {
@@ -7606,20 +7606,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e1-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "세 분수 조건을 이용해 곱 구하기",
+      "typeLabel": "세 수의 관계를 이용해 곱 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE1Mission6",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "원본의 차·비·합 세 식을 직접 대조했습니다. 세 조건을 독립적으로 연립해 답이 하나인 고정 문항 3개를 문제와 정답에 같은 식 자료로 연결했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

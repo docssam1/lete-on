@@ -24645,6 +24645,41 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Mission6({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-mission-6";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 6 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { a: [10, 9], b: [106, 9], c: [25, 9], multiplier: 2, ratioResult: 5 },
+        { a: [3, 2], b: [13, 2], c: [4, 1], multiplier: 3, ratioResult: 8 },
+        { a: [8, 5], b: [28, 5], c: [14, 5], multiplier: 4, ratioResult: 7 }
+      ][poolIndex];
+      const a = rationalValue(...data.a);
+      const b = rationalValue(...data.b);
+      const c = rationalValue(...data.c);
+      const difference = rationalOperation(c, a, "-");
+      const ratioCheck = rationalOperation(rationalOperation(rationalValue(data.multiplier), c, "×"), a, "÷");
+      const sum = rationalOperation(rationalOperation(a, b, "+"), c, "+");
+      const answerValue = rationalOperation(rationalOperation(a, b, "×"), c, "×");
+      if (ratioCheck.denominator !== 1 || ratioCheck.numerator !== data.ratioResult || [a, b, c].some(value => value.numerator <= 0)) throw new Error("6-2 Mission 6의 세 수 조건이 맞지 않습니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const expressionSignature = [...data.a, ...data.b, ...data.c, data.multiplier, data.ratioResult].join(":");
+      const equation = body => `<div class="source62-three-value-equation">${body}</div>`;
+      const equationBoard = solved => `<div class="source62-three-value-board${solved ? " is-solved" : ""}" data-source62-e1-mission6-structure="difference-ratio-sum-three-values" data-source62-e1-mission6-expression="${expressionSignature}"><strong>㉠, ㉡, ㉢의 관계</strong><div class="source62-three-value-equations">${equation(`㉢−㉠=${mixedFractionMarkup(difference.numerator, difference.denominator)}`)}${equation(`${data.multiplier}×㉢÷㉠=${data.ratioResult}`)}${equation(`㉠+㉡+㉢=${mixedFractionMarkup(sum.numerator, sum.denominator)}`)}</div><p>㉠×㉡×㉢의 값을 구합니다.${solved ? `<b>㉠=${mixedFractionMarkup(a.numerator, a.denominator)}, ㉡=${mixedFractionMarkup(b.numerator, b.denominator)}, ㉢=${mixedFractionMarkup(c.numerator, c.denominator)}</b>` : ""}</p></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-three-value-solution"><strong>세 조건을 차례로 연결하기</strong>${row("㉠", mixedFractionMarkup(a.numerator, a.denominator))}${row("㉢", mixedFractionMarkup(c.numerator, c.denominator))}${row("㉡", mixedFractionMarkup(b.numerator, b.denominator))}${row("㉠×㉡×㉢", mixedFractionMarkup(answerValue.numerator, answerValue.denominator))}</div>`;
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">${data.multiplier}×㉢÷㉠=${data.ratioResult}에서 ㉢이 ㉠의 몇 배인지 먼저 찾고, ㉢−㉠의 값을 이용하세요.</p>` : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">세 조건을 모두 만족하는 세 수를 구한 뒤, 세 식에 다시 넣어 확인하세요.</p>' : "";
+      const values = [...data.a, ...data.b, ...data.c, data.multiplier, data.ratioResult, difference.numerator, difference.denominator, sum.numerator, sum.denominator, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e1-mission6-kind="difference-ratio-sum-three-values" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음 세 식을 모두 만족하는 ㉠, ㉡, ㉢에 대하여 ㉠×㉡×㉢의 값을 구하세요.${equationBoard(false)}${support}${challenge}${evidence}`, fraction(answerValue.numerator, answerValue.denominator), `${data.multiplier}×㉢÷㉠=${data.ratioResult}과 ㉢−㉠=${mixedFractionMarkup(difference.numerator, difference.denominator)}을 함께 이용하면 ㉠=${mixedFractionMarkup(a.numerator, a.denominator)}, ㉢=${mixedFractionMarkup(c.numerator, c.denominator)}입니다. 합의 조건에서 ㉡=${mixedFractionMarkup(b.numerator, b.denominator)}를 구할 수 있으므로 세 수의 곱은 ${mixedFractionMarkup(answerValue.numerator, answerValue.denominator)}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-mission6-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${equationBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">세 식에 다시 넣어 관계와 곱을 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26560,6 +26595,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-mission-3", "sourceGrade6SecondFractionDivisionE1Mission3"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-4", "sourceGrade6SecondFractionDivisionE1Mission4"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-5", "sourceGrade6SecondFractionDivisionE1Mission5"],
+    [type => type.sourceItemId === "6-2-u1-e1-mission-6", "sourceGrade6SecondFractionDivisionE1Mission6"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

@@ -233,12 +233,13 @@
       "ordinal": 6,
       "pdfPage": 4,
       "printedPage": 5,
-      "sourceShape": "분수 나눗셈의 뜻을 수, 그림, 식으로 나타내고 몫 또는 양의 관계를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "PDF 4쪽(인쇄 5쪽)의 ㉢−㉠=1 2/3, 2×㉢÷㉠=5, ㉠+㉡+㉢=15 2/3을 모두 만족하는 세 수의 곱을 구하는 구조.",
+      "answerContract": "single-answer-fixed-pool",
+      "visualRisk": "㉠·㉡·㉢의 위치, 세 식의 순서, 곱셈·나눗셈 기호가 바뀌거나 분수의 분자·분모가 겹치면 다른 조건으로 읽힐 수 있음.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 인쇄 식을 직접 대조했습니다. 비와 차에서 ㉠·㉢을 정하고 합에서 ㉡을 구해 곱 26500/729를 확인했으며 같은 방식의 고정 문항 3개를 독립 계산했습니다.",
+      "publicSourceItemId": "6-2-u1-e1-mission-6"
     },
     {
       "sourceItemId": "6-2-u1-e2-exploration",
