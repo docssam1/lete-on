@@ -275,13 +275,20 @@ function pair10_2d(opts){
 function pairMul(opts){
   opts=opts||{};
   const lv=opts.level||'main';
-  const TARGETS=[
+  const ALL_TARGETS=[
+    {t:10,pairs:[[2,5]]},
     {t:12,pairs:[[2,6],[3,4]]},
     {t:24,pairs:[[3,8],[4,6]]},
     {t:36,pairs:[[4,9],[6,6]]},
     {t:18,pairs:[[2,9],[3,6]]},
     {t:16,pairs:[[2,8],[4,4]]}
   ];
+  /* opts.targets(예: [10]) — 특정 유닛이 목표수를 하나로 고정한다(2026-09-09,
+     C-02 "곱해서 10 만들기" — 원장 "10만들기 곱셈. 곱해서 10"). 안 주면 전체
+     목록에서 고른다(B-16 총정리는 그대로 여러 목표를 섞어 쓴다). */
+  const TARGETS=Array.isArray(opts.targets)&&opts.targets.length
+    ? ALL_TARGETS.filter(x=>opts.targets.includes(x.t))
+    : ALL_TARGETS;
   if(lv==='practice'){
     const pick=TARGETS[R(0,TARGETS.length-1)];
     const pair=pick.pairs[R(0,pick.pairs.length-1)];

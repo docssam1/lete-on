@@ -75,13 +75,17 @@ window.NM_UNITS['C-02'] = {
       zh:'例）(2×5)×(3×4) = 10×12 = 120。或(4×5)×(2×3) = 20×6 = 120。两种都是120！' }
   },
 
+  /* 매직 랩 — 짝 찾기 타일 게임(2026-09-09, 원장 "10만들기 곱셈. 곱해서 10").
+     B-16(2~9단 총정리)에 만든 pairMul을 목표수 10 하나로 묶어 그대로 쓴다 —
+     이 유닛 개념 그대로 "여러 수 중 2×5=10인 짝을 먼저 찾기". 기본 연산·아레나는
+     원래 하던 단계별 계산(ml_pair10, widget:steps)을 그대로 둔다. */
   lab:{
-    generator:'ml_pair10', level:'main', count:4,
-    params:{ target:10 },
+    generator:'pairMul', level:'main', count:4,
+    params:{ targets:[10] },
     intro:{
-      ko:'쌍 찾기 마법을 써볼 시간! 2와 5를 먼저 곱해봐.',
-      en:'Time to find the pair! Multiply 2 and 5 first.',
-      zh:'是时候找对了！先把2和5乘起来。'
+      ko:'쌍 찾기 마법을 써볼 시간! 여러 수 중 곱해서 10이 되는 짝을 찾아봐.',
+      en:'Time to find the pair! Pick the two numbers that multiply to 10.',
+      zh:'是时候找对了！从这些数里找出乘积是10的两个。'
     }
   },
 

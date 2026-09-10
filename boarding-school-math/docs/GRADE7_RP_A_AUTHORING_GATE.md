@@ -1,6 +1,6 @@
 # Grade 7 `7.RP.A` authoring gate
 
-Status: **planning only — no student item, answer key, diagnostic slot, or workbook route is released**.
+Status: **published** — merged to `main` in `854c5c7907e013c3509ab8456aa4bce2b161eaea` through pull request #215; Pages deployment `34379456747` and live student/teacher read-back passed.
 
 This is the first proposed Grade 7 unit because the existing curriculum map places `7.RP.A` first in Grade 7. That sequence is a GFIELD instructional decision, not an official promotion rule.
 
@@ -25,9 +25,9 @@ The source defines learning expectations, not the GFIELD pacing, diagnosis thres
 | Equation and graph meaning | `7.RP.2c–d` | variable meanings, units, origin, unit-rate point, and ordered-pair interpretation | substitute all generated points into the equation; calculate SVG from point data, never hand-place coordinates |
 | Multistep ratio or percent | `7.RP.3` | order of changes, base quantity, percent meaning, and final unit | independent rational/decimal calculation and reverse check where applicable |
 
-## Proposed workbook shape — held for `SOL 울트라` review
+## Verified workbook shape — authored and independently checked with `SOL 울트라`
 
-This is a sizing proposal only, not a release promise:
+This is a local authoring record, not a placement, promotion, or contest-readiness promise:
 
 - 36 original GFIELD-authored workbook items: 8 fractional unit-rate, 12 proportionality-and-constant, 8 equation/graph meaning, 8 multistep ratio-or-percent items.
 - 8 recheck items with structures distinct from the 36 workbook items.
@@ -38,7 +38,7 @@ This is a sizing proposal only, not a release promise:
 
 ## Release gate
 
-Do not add `7.RP.A` to `learning/clinic-paths.js`, `unit-workbook.js`, or a public navigation count until every condition below is true:
+Do not mark `7.RP.A` published until every condition below is true:
 
 1. Each item has a stable ID, standard tag, source-boundary note, original-content declaration, answer cardinality, and solved-answer ledger.
 2. A different calculation path verifies every generated answer; values that are ambiguous, context-dependent, or not independently solved remain locked.
