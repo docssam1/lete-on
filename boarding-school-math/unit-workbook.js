@@ -53,16 +53,16 @@
     if(state.locale==="zh-Hans") return denominator+"分之"+numerator;
     return numerator+" over "+denominator;
   }
-  function mathFraction(numerator,denominator) {
+  function mathFraction(numerator,denominator,factor) {
     const ns="http://www.w3.org/1998/Math/MathML";
-    const math=document.createElementNS(ns,"math"); math.classList.add("math-inline-fraction"); math.setAttribute("display","inline"); math.setAttribute("aria-label",fractionLabel(numerator.replace(/^[-−]/,""),denominator));
+    const math=document.createElementNS(ns,"math"); math.classList.add("math-inline-fraction"); math.setAttribute("display","inline"); math.setAttribute("aria-label",fractionLabel(numerator.replace(/^[-−]/,""),denominator)+(factor?" × "+factor:""));
     const fraction=document.createElementNS(ns,"mfrac");
     function number(value){const negative=/^[-−]/.test(value),row=document.createElementNS(ns,"mrow");if(negative){const minus=document.createElementNS(ns,"mo");minus.textContent="−";row.append(minus);}const numberNode=document.createElementNS(ns,"mn");numberNode.textContent=value.replace(/^[-−]/,"");row.append(numberNode);return row;}
-    fraction.append(number(numerator),number(denominator)); math.append(fraction); return math;
+    fraction.append(number(numerator),number(denominator)); math.append(fraction); if(factor){const identifier=document.createElementNS(ns,"mi");identifier.textContent=factor;math.append(identifier);} return math;
   }
   function appendMathText(node,value) {
-    const content=String(value==null?"":value),pattern=/([−-]?\d+)\s*\/\s*([1-9]\d*)/g; let cursor=0,match;
-    while((match=pattern.exec(content))){if(match.index>cursor)node.append(document.createTextNode(content.slice(cursor,match.index)));node.append(mathFraction(match[1],match[2]));cursor=pattern.lastIndex;}
+    const content=String(value==null?"":value),pattern=/([−-]?\d+)\s*([xX])\s*\/\s*([1-9]\d*)|([−-]?\d+)\s*\/\s*([1-9]\d*)/g; let cursor=0,match;
+    while((match=pattern.exec(content))){if(match.index>cursor)node.append(document.createTextNode(content.slice(cursor,match.index)));node.append(match[1]?mathFraction(match[1],match[3],match[2]):mathFraction(match[4],match[5]));cursor=pattern.lastIndex;}
     if(cursor<content.length)node.append(document.createTextNode(content.slice(cursor))); return node;
   }
   function mathEl(tag,className,value){return appendMathText(el(tag,className),value);}
