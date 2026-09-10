@@ -21,28 +21,33 @@ const path = require('path');
 // ── Config ────────────────────────────────────────────────────────────────────
 const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
 const SUPABASE_URL = 'https://fgahqumaldheqettmvqg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
+/* 2026-09-10 — anon 키로는 더 이상 업로드가 안 된다. 2026-08-25 보안 강화 마이그레이션
+   (restrict_public_storage_to_read_only)이 storage 버킷을 anon read-only로 잠갔다 —
+   anon 키는 store.js에도 박혀 있는 공개 키라 쓰기 허용은 그 자체로 취약점이었다.
+   reading-world 쪽 scripts/generate-audio.js가 이미 쓰는 것과 같은 패턴(서비스
+   롤 키, 저장소 Actions Secret에 이미 등록돼 있음)으로 맞춘다. */
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const OUT_DIR = path.join(__dirname, '../audio-generated');
 const TTS_MAP_FILE = path.join(__dirname, '../data/tts-map.js');
 
-// Google Neural2 voices by language
+// Google voices by language — cmn-CN has no Neural2 tier, Wavenet is the best available
 const VOICES = {
   ko: { languageCode: 'ko-KR', name: 'ko-KR-Neural2-C' },
   en: { languageCode: 'en-US', name: 'en-US-Neural2-F' },
-  zh: { languageCode: 'cmn-CN', name: 'cmn-CN-Neural2-A' },
+  zh: { languageCode: 'cmn-CN', name: 'cmn-CN-Wavenet-A' },
 };
-
-if (!GOOGLE_TTS_KEY) {
-  console.error('❌  Set GOOGLE_TTS_KEY environment variable first.');
-  process.exit(1);
-}
 
 // ── Load all unit data ─────────────────────────────────────────────────────────
 const window = { NM_UNITS: {} };
 const unitsDir = path.join(__dirname, '../data/units');
 /* 유아(N)는 전면 음성(원장 지시: "유아쪽은 mp3를 넣고 다른쪽은 대표적인 것만") —
    N 유닛은 intro·finish에 더해 correct/wrong·마법 노트 rule까지 생성한다. */
-const unitFiles = fs.readdirSync(unitsDir).filter(f => /^[AN]-\d+\.js$/.test(f)).sort();
+/* 2026-09-10 — 짝 찾기(pairMul) 게임을 붙인 B-16·C-02를 명시적으로 추가한다.
+   B·C 시리즈 전체(58유닛)를 여는 게 아니다 — 그건 별도로 비용 검토가 필요하다. */
+const EXTRA_UNIT_FILES = ['B-16.js', 'C-02.js'];
+const unitFiles = fs.readdirSync(unitsDir)
+  .filter(f => /^[AN]-\d+\.js$/.test(f) || EXTRA_UNIT_FILES.includes(f))
+  .sort();
 
 for (const file of unitFiles) {
   try {
@@ -100,8 +105,11 @@ for (const unit of units) {
     }
   }
 
-  // 유아(tier basic) 전면 음성: 정답/오답 코멘트 + 마법 노트 rule
-  if (unit.tier === 'basic') {
+  /* 정답/오답 코멘트 전면 음성 — 유아(tier basic) + 짝 찾기(selectPairs) 게임을 붙인
+     유닛(2026-09-10, pickTile이 tier와 무관하게 항상 말한다 — app/main.js 참고).
+     마법 노트 rule은 유아 전용이라 그대로 basic만. */
+  const FULL_VOICE_UNITS = new Set(['A-01', 'B-16', 'C-02']);
+  if (unit.tier === 'basic' || FULL_VOICE_UNITS.has(id)) {
     ['correct', 'wrong'].forEach(kind => {
       (unit.voice?.[kind] || []).forEach((line, i) => {
         for (const lang of ['ko', 'en', 'zh']) {
@@ -114,7 +122,7 @@ for (const unit of units) {
         }
       });
     });
-    if (unit.discover?.rule) {
+    if (unit.tier === 'basic' && unit.discover?.rule) {
       for (const lang of ['ko', 'en', 'zh']) {
         const text = unit.discover.rule[lang];
         if (text) tasks.push({
@@ -127,6 +135,23 @@ for (const unit of units) {
   }
 }
 
+/* 유닛에 안 묶인 전역 UI 문구 — 짝 찾기(pairMul)에서 짝을 하나 찾았지만 더 있을 때
+   부르는 onePairMore(2026-09-10, app/main.js I18N.onePairMore와 정확히 같은 문자열
+   이어야 say()가 찾아 재생한다 — 하나라도 다르면 조용히 Web Speech로 폴백한다). */
+const GLOBAL_TASKS = {
+  onePairMore: { ko: '정답! 하나 더 있어', en: 'Correct! One more to find', zh: '答对了！还有一对' },
+};
+for (const [key, byLang] of Object.entries(GLOBAL_TASKS)) {
+  for (const lang of ['ko', 'en', 'zh']) {
+    const text = byLang[lang];
+    if (text) tasks.push({
+      unitId: 'ui', key, lang,
+      text,
+      storagePath: `number-magic/ui-${key}-${lang}.mp3`,
+    });
+  }
+}
+
 const totalChars = tasks.reduce((s, t) => s + t.text.length, 0);
 console.log(`📋  ${tasks.length} tasks (~${totalChars.toLocaleString()} chars total)`);
 if (process.env.DRY_RUN) {   // 과금·업로드 없이 태스크 목록만 점검
@@ -135,7 +160,17 @@ if (process.env.DRY_RUN) {   // 과금·업로드 없이 태스크 목록만 점
   console.log(Object.entries(byUnit).map(([k, v]) => `${k}:${v}`).join(' '));
   process.exit(0);
 }
-console.log(`🎙  Voices: ko-KR-Neural2-C / en-US-Neural2-F / cmn-CN-Neural2-A`);
+/* 키 확인은 DRY_RUN 통과 뒤로 옮겼다(2026-09-10) — 전엔 여기 도달하기 전에 죽어서
+   "과금·업로드 없이 태스크 목록만 점검"이라는 DRY_RUN의 존재 의미가 없었다. */
+if (!GOOGLE_TTS_KEY) {
+  console.error('❌  Set GOOGLE_TTS_KEY environment variable first.');
+  process.exit(1);
+}
+if (!SUPABASE_KEY) {
+  console.error('❌  Set SUPABASE_SERVICE_ROLE_KEY environment variable first (anon key is read-only on storage since 2026-08-25).');
+  process.exit(1);
+}
+console.log(`🎙  Voices: ko-KR-Neural2-C / en-US-Neural2-F / cmn-CN-Wavenet-A`);
 console.log('');
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -192,8 +227,18 @@ async function uploadToSupabase(mp3Buffer, storagePath) {
 // ── Main ───────────────────────────────────────────────────────────────────────
 async function main() {
   let done = 0, failed = 0;
-  // map: { lang: { text: url } }
+  /* map: { lang: { text: url } } — 기존 맵으로 시작해서 성공한 항목만 덮어쓴다
+     (2026-09-10). 전엔 매번 빈 맵으로 시작해 실패한 태스크의 자리를 그냥 비워
+     버렸다 — 이번 실행에서 813개 전부 실패하자 기존에 잘 있던 486줄(A·N 시리즈
+     실음성)까지 통째로 지워져 커밋됐다. 실패는 이전 값을 그대로 둔다. */
   const map = { ko: {}, en: {}, zh: {} };
+  try {
+    const prevWindow = { NM_TTS_MAP: {} };
+    eval(fs.readFileSync(TTS_MAP_FILE, 'utf8').replace(/window\.NM_TTS_MAP/, 'prevWindow.NM_TTS_MAP'));
+    for (const lang of ['ko', 'en', 'zh']) Object.assign(map[lang], prevWindow.NM_TTS_MAP[lang] || {});
+  } catch (e) {
+    console.warn(`⚠  Could not load existing ${TTS_MAP_FILE}, starting fresh:`, e.message);
+  }
 
   for (const task of tasks) {
     const label = `${task.unitId} ${task.key} [${task.lang}]`;

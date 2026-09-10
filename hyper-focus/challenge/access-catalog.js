@@ -57,8 +57,8 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-balance-weight-order",
-  "typeId": "balance-weight-order",
+  "key": "challenge-bank-mock-balance-substitution-pictures",
+  "typeId": "mock-balance-substitution-pictures",
   "label": "수평 저울의 무게 바꾸기",
   "area": "문제 해결",
   "round": 1,
@@ -147,10 +147,10 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-animal-race-order",
-  "typeId": "animal-race-order",
-  "label": "조건을 연결해 순서 찾기",
-  "area": "논리 추리",
+  "key": "challenge-bank-mock-dice-target-bottom",
+  "typeId": "mock-dice-target-bottom",
+  "label": "주사위 굴리기",
+  "area": "공간 지각",
   "round": 1,
   "section": "main",
   "number": 12,
@@ -167,8 +167,8 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-priority-length-units",
-  "typeId": "priority-length-units",
+  "key": "challenge-bank-mock-object-length-equivalence",
+  "typeId": "mock-object-length-equivalence",
   "label": "물건으로 길이 비교",
   "area": "문제 해결",
   "round": 1,
@@ -559,8 +559,8 @@
  {
   "key": "challenge-bank-r3-main-1",
   "typeId": "r3-main-1",
-  "label": "빈칸 수를 구해 비교하기",
-  "area": "수와 연산",
+  "label": "처음 수를 거꾸로 찾기",
+  "area": "지문 이해",
   "round": 3,
   "section": "main",
   "number": 1,
@@ -609,7 +609,7 @@
  {
   "key": "challenge-bank-r3-main-6",
   "typeId": "r3-main-6",
-  "label": "꺾인 선의 길이",
+  "label": "대각선이 있는 길이 비교",
   "area": "문제 해결",
   "round": 3,
   "section": "main",
@@ -637,9 +637,9 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r3-main-9",
-  "typeId": "r3-main-9",
-  "label": "겹치지 않게 같은 도형 연결",
+  "key": "challenge-bank-r3-main-9-shortest-path-grid",
+  "typeId": "r3-main-9-shortest-path-grid",
+  "label": "조건이 있는 길의 가짓수",
   "area": "경우의 수",
   "round": 3,
   "section": "main",
@@ -697,10 +697,10 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r3-main-15",
-  "typeId": "r3-main-15",
-  "label": "빈칸 수를 구해 비교하기",
-  "area": "수와 연산",
+  "key": "challenge-bank-r3-main-15-checker-stack-count",
+  "typeId": "r3-main-15-checker-stack-count",
+  "label": "쌓기나무 채우기",
+  "area": "공간 지각",
   "round": 3,
   "section": "main",
   "number": 15,
@@ -727,9 +727,9 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r3-main-18",
-  "typeId": "r3-main-18",
-  "label": "두 시점에서 마주 보는 면",
+  "key": "challenge-bank-r3-main-18-tetra-cube-hole-count",
+  "typeId": "r3-main-18-tetra-cube-hole-count",
+  "label": "길쭉한 블록 세기",
   "area": "공간 지각",
   "round": 3,
   "section": "main",
@@ -757,9 +757,9 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r3-extra-1",
-  "typeId": "r3-extra-1",
-  "label": "패턴블록으로 채우기",
+  "key": "challenge-bank-r3-extra-1-congruent-marked-partition",
+  "typeId": "r3-extra-1-congruent-marked-partition",
+  "label": "조건에 맞게 같은 모양으로 나누기",
   "area": "평면 지각",
   "round": 3,
   "section": "extra",
@@ -777,18 +777,18 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r3-extra-3",
-  "typeId": "r3-extra-3",
-  "label": "서로 다른 세 수 고르기",
-  "area": "경우의 수",
+  "key": "challenge-bank-r3-extra-3-block-build-count",
+  "typeId": "r3-extra-3-block-build-count",
+  "label": "길쭉한 블록 세기",
+  "area": "공간 지각",
   "round": 3,
   "section": "extra",
   "number": 3,
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r3-extra-4",
-  "typeId": "r3-extra-4",
+  "key": "challenge-bank-r3-extra-4-object-length-equivalence",
+  "typeId": "r3-extra-4-object-length-equivalence",
   "label": "물건으로 길이 비교",
   "area": "문제 해결",
   "round": 3,
@@ -807,9 +807,9 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r3-extra-6",
-  "typeId": "r3-extra-6",
-  "label": "길쭉한 블록 세기",
+  "key": "challenge-bank-r3-extra-6-stack-box-fill",
+  "typeId": "r3-extra-6-stack-box-fill",
+  "label": "쌓기나무 채우기",
   "area": "공간 지각",
   "round": 3,
   "section": "extra",
@@ -927,8 +927,8 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-main-12",
-  "typeId": "r4-main-12",
+  "key": "challenge-bank-r4-main-12-block-build-count",
+  "typeId": "r4-main-12-block-build-count",
   "label": "길쭉한 블록 세기",
   "area": "공간 지각",
   "round": 4,
@@ -977,20 +977,20 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-main-17",
-  "typeId": "r4-main-17",
-  "label": "빈칸 수를 구해 비교하기",
-  "area": "수와 연산",
+  "key": "challenge-bank-r4-main-17-balance-substitution-pictures",
+  "typeId": "r4-main-17-balance-substitution-pictures",
+  "label": "수평 저울의 무게 바꾸기",
+  "area": "문제 해결",
   "round": 4,
   "section": "main",
   "number": 17,
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-main-18",
-  "typeId": "r4-main-18",
-  "label": "대각선이 있는 길이 비교",
-  "area": "문제 해결",
+  "key": "challenge-bank-r4-main-18-congruent-marked-partition",
+  "typeId": "r4-main-18-congruent-marked-partition",
+  "label": "조건에 맞게 같은 모양으로 나누기",
+  "area": "평면 지각",
   "round": 4,
   "section": "main",
   "number": 18,
@@ -1017,19 +1017,19 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-extra-1",
-  "typeId": "r4-extra-1",
-  "label": "늘어나는 색의 배열",
-  "area": "규칙",
+  "key": "challenge-bank-r4-extra-1-object-length-equivalence",
+  "typeId": "r4-extra-1-object-length-equivalence",
+  "label": "물건으로 길이 비교",
+  "area": "문제 해결",
   "round": 4,
   "section": "extra",
   "number": 1,
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-extra-2",
-  "typeId": "r4-extra-2",
-  "label": "두 시점에서 마주 보는 면",
+  "key": "challenge-bank-r4-extra-2-checker-stack-count",
+  "typeId": "r4-extra-2-checker-stack-count",
+  "label": "쌓기나무 채우기",
   "area": "공간 지각",
   "round": 4,
   "section": "extra",
@@ -1037,40 +1037,40 @@
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-extra-3",
-  "typeId": "r4-extra-3",
-  "label": "모든 칸을 한 번씩 지나기",
-  "area": "경우의 수",
+  "key": "challenge-bank-r4-extra-3-tetra-cube-hole-count",
+  "typeId": "r4-extra-3-tetra-cube-hole-count",
+  "label": "길쭉한 블록 세기",
+  "area": "공간 지각",
   "round": 4,
   "section": "extra",
   "number": 3,
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-extra-4",
-  "typeId": "r4-extra-4",
-  "label": "기호를 넣어 참인 식 만들기",
-  "area": "수와 연산",
+  "key": "challenge-bank-r4-extra-4-shortest-path-grid",
+  "typeId": "r4-extra-4-shortest-path-grid",
+  "label": "조건이 있는 길의 가짓수",
+  "area": "경우의 수",
   "round": 4,
   "section": "extra",
   "number": 4,
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-extra-5",
-  "typeId": "r4-extra-5",
-  "label": "조각으로 모양 채우기",
-  "area": "평면 지각",
+  "key": "challenge-bank-r4-extra-5-stack-box-fill",
+  "typeId": "r4-extra-5-stack-box-fill",
+  "label": "쌓기나무 채우기",
+  "area": "공간 지각",
   "round": 4,
   "section": "extra",
   "number": 5,
   "kind": "bank"
  },
  {
-  "key": "challenge-bank-r4-extra-6",
-  "typeId": "r4-extra-6",
-  "label": "주사위 굴리기",
-  "area": "공간 지각",
+  "key": "challenge-bank-r4-extra-6-simple-path-network",
+  "typeId": "r4-extra-6-simple-path-network",
+  "label": "조건이 있는 길의 가짓수",
+  "area": "경우의 수",
   "round": 4,
   "section": "extra",
   "number": 6,

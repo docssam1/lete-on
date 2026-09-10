@@ -13,6 +13,10 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-
 // `mock` is derived from per-exam product bundles and cannot be toggled here.
 const PERMISSIONS = new Set(["hyperfocus", "hyperfocus-extra", "vip", "problem-bank"]);
 const MOCK_BUNDLE_ACTION_FIELDS = new Set(["action", "studentId", "bundleKey", "enabled"]);
+const DETAIL_BATCH_ACTION_FIELDS = new Set(["action", "studentId", "scope", "changes"]);
+const DETAIL_CHANGE_FIELDS = new Set(["permissionKey", "enabled"]);
+const MAX_DETAIL_BATCH_CHANGES = 110;
+const DETAIL_SCOPE_LIMITS: Readonly<Record<string, number>> = Object.freeze({ challenge: 110, hf: 55 });
 const MOCK_PRODUCT_BUNDLES: Record<string, { series: "utilization" | "final" | "last"; slugs: readonly string[] }> = Object.freeze({
   "premier-utilization": Object.freeze({
     series: "utilization",
@@ -166,10 +170,27 @@ function requestedDigitHandle(value: unknown): string | null {
   return /^\d{4}$/.test(body) ? body : null;
 }
 
+function currentShortApprovalCode(value: unknown): string | null {
+  const handle = String(value || "").trim();
+  return /^\d{4}$/.test(handle) ? formatCode(handle) : null;
+}
+
 function containsControlCharacter(value: string): boolean {
   for (const character of value) {
     const code = character.charCodeAt(0);
     if (code <= 31 || code === 127) return true;
+  }
+  return false;
+}
+
+function isDetailPermissionForScope(scope: string, permissionKey: string): boolean {
+  if (scope === "challenge") {
+    return /^challenge-(?:concept-[12]|mock-[1-4])$/.test(permissionKey)
+      || /^challenge-bank-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(permissionKey);
+  }
+  if (scope === "hf") {
+    return permissionKey === "hyperfocus-bank-individual-mode"
+      || /^hyperfocus-bank-q(?:0[1-9]|[1-4][0-9]|5[0-4])$/.test(permissionKey);
   }
   return false;
 }
@@ -449,7 +470,7 @@ Deno.serve(async request => {
       const [studentResult, examResult, mockEntitlementResult] = await Promise.all([
         service
           .from("hf_students")
-          .select("id,display_name,student_type,account_status,created_at,hf_entitlements(permission_key,starts_at,expires_at,revoked_at)")
+          .select("id,login_handle,display_name,student_type,account_status,created_at,hf_entitlements(permission_key,starts_at,expires_at,revoked_at)")
           .order("display_name", { ascending: true }),
         service
           .from("hf_mock_exams")
@@ -466,6 +487,7 @@ Deno.serve(async request => {
       const mockEntitlements = (mockEntitlementResult.data || []) as Array<Record<string, unknown>>;
       const students = (studentResult.data || []).map(row => ({
         id: row.id,
+        approvalCode: currentShortApprovalCode(row.login_handle),
         name: row.display_name,
         type: row.student_type,
         status: row.account_status,
@@ -540,6 +562,76 @@ Deno.serve(async request => {
 
     const studentId = String(payload.studentId || "");
     if (!UUID_RE.test(studentId)) return json(request, 400, { error: "invalid_student" });
+
+    if (action === "set_detail_entitlements") {
+      if (Object.keys(payload).some(key => !DETAIL_BATCH_ACTION_FIELDS.has(key))) {
+        return json(request, 400, { error: "invalid_detail_request" });
+      }
+      const scope = String(payload.scope || "");
+      const rawChanges = Array.isArray(payload.changes) ? payload.changes : [];
+      const scopeLimit = DETAIL_SCOPE_LIMITS[scope] || 0;
+      if (
+        !scopeLimit
+        || rawChanges.length < 1
+        || rawChanges.length > scopeLimit
+        || rawChanges.length > MAX_DETAIL_BATCH_CHANGES
+      ) return json(request, 400, { error: "invalid_detail_request" });
+
+      const changes: Array<{ permissionKey: string; enabled: boolean }> = [];
+      for (const rawChange of rawChanges) {
+        if (!rawChange || typeof rawChange !== "object" || Array.isArray(rawChange)) {
+          return json(request, 400, { error: "invalid_detail_request" });
+        }
+        const change = rawChange as Record<string, unknown>;
+        if (
+          Object.keys(change).length !== DETAIL_CHANGE_FIELDS.size
+          || Object.keys(change).some(key => !DETAIL_CHANGE_FIELDS.has(key))
+          || typeof change.permissionKey !== "string"
+          || typeof change.enabled !== "boolean"
+          || !isDetailPermissionForScope(scope, change.permissionKey)
+        ) return json(request, 400, { error: "invalid_detail_permission" });
+        changes.push({ permissionKey: change.permissionKey, enabled: change.enabled });
+      }
+
+      const permissionKeys = changes.map(change => change.permissionKey);
+      if (new Set(permissionKeys).size !== permissionKeys.length) {
+        return json(request, 400, { error: "invalid_detail_permission" });
+      }
+
+      const { data: student, error: studentError } = await service
+        .from("hf_students")
+        .select("id,account_status")
+        .eq("id", studentId)
+        .maybeSingle();
+      if (studentError || !student) return json(request, 404, { error: "student_not_found" });
+      if (changes.some(change => change.enabled) && student.account_status !== "active") {
+        return json(request, 409, { error: "student_not_active" });
+      }
+
+      const { data: changed, error } = await service.rpc("hf_set_student_entitlements_batch", {
+        p_student_id: studentId,
+        p_permission_keys: permissionKeys,
+        p_enabled: changes.map(change => change.enabled),
+        p_granted_by: authData.user.id
+      });
+      if (error) {
+        if (error.code === "22023") return json(request, 409, { error: "detail_catalog_not_ready" });
+        if (error.code === "23503") return json(request, 404, { error: "student_not_found" });
+        if (error.code === "55000") return json(request, 409, { error: "student_not_active" });
+        if (error.code === "P0001" || error.code === "P0002") {
+          return json(request, 503, { error: "detail_save_unavailable" });
+        }
+        throw error;
+      }
+      if (changed !== changes.length) throw new Error("detail_entitlement_change_failed");
+      return json(request, 200, {
+        ok: true,
+        studentId,
+        scope,
+        changedCount: changes.length,
+        changes
+      });
+    }
 
     if (action === "rotate_code") {
       const { data: profile, error } = await service

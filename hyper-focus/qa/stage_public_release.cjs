@@ -6,7 +6,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const CHALLENGE_PUBLIC=Object.freeze([
  'public-catalog.js','index.html','landing.css','landing.js','intro.html','intro.css','access-catalog.js','access-service.js',
  'admin.html','admin.css','admin.js','exam.html','concepts.html','review.css','exam.css','exam-print-revision.css',
- 'concepts-two.css','studio.html','studio.css','studio.js','challenge-taxonomy.js','diagnosis-core.js',
+ 'concepts-two.css','concept-video.js','studio.html','studio.css','studio.js','challenge-taxonomy.js','diagnosis-core.js',
  'content-client.js','secure-document.js','remote-variants.js','studio-loader.js','document-access.js','assets/gfield-logo.png'
 ]);
 // Reviewed runtime entry points; new tracked files are never automatically published.
