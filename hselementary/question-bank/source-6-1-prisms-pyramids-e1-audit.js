@@ -6,7 +6,7 @@ require("./generators.js");
 const api = window.HSE_GENERATORS;
 const sourceIds = [
   "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5",
-  "6-1-u2-e1-mission-6", "6-1-u2-e1-example-1-4"
+  "6-1-u2-e1-mission-6", "6-1-u2-e1-example-1-4", "6-1-u2-e1-exploration-1"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e1-example-1-1", "19각기둥"],
@@ -14,7 +14,8 @@ const sourceAnswers = new Map([
   ["6-1-u2-e1-mission-2", "115cm"],
   ["6-1-u2-e1-mission-5", "ㄴㅊ=16 2/3cm, 나=250cm²"],
   ["6-1-u2-e1-mission-6", "C, 128cm"],
-  ["6-1-u2-e1-example-1-4", "28.5cm"]
+  ["6-1-u2-e1-example-1-4", "28.5cm"],
+  ["6-1-u2-e1-exploration-1", "전개도 한 가지, 자르는 모서리 7개"]
 ]);
 const failures = [];
 let checked = 0;
@@ -110,6 +111,19 @@ function independentAnswer(evidence) {
     check(candidates.length === 1 && candidates[0] === shortBase, `조건을 만족하는 짧은 밑변 후보가 ${candidates.length}개입니다.`);
     return `${prismHeight}cm`;
   }
+  if (evidence.kind === "quadrilateral-prism-net-cut-count") {
+    const topBase = v[0], baseHeight = v[1], slantedSide = v[2], bottomBase = v[3], prismHeight = v[4];
+    const faceCount = v[5], solidEdgeCount = v[6], foldEdgeCount = v[7], cutCount = v[8];
+    const horizontalDifference = bottomBase - topBase;
+    check(topBase > 0 && baseHeight > 0 && prismHeight > 0 && horizontalDifference > 0, "밑면과 각기둥의 길이가 자연수가 아닙니다.");
+    check(baseHeight ** 2 + horizontalDifference ** 2 === slantedSide ** 2, "밑면의 네 변이 직각사다리꼴을 이루지 않습니다.");
+    check(faceCount === 6 && solidEdgeCount === 12, "사각기둥의 면 또는 모서리 수가 다릅니다.");
+    check(foldEdgeCount === faceCount - 1, "면 6개를 한 장으로 잇는 접는 선의 수가 다릅니다.");
+    const candidates = Array.from({ length: solidEdgeCount + 1 }, (_, candidate) => candidate)
+      .filter(candidate => solidEdgeCount - candidate === foldEdgeCount);
+    check(candidates.length === 1 && candidates[0] === cutCount && cutCount === 7, `자르는 모서리 수 후보가 ${candidates.length}개입니다.`);
+    return `전개도 한 가지, 자르는 모서리 ${cutCount}개`;
+  }
   throw new Error(`알 수 없는 검산 종류: ${evidence.kind}`);
 }
 
@@ -135,7 +149,8 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
         check(generated.answerVisual.includes(`data-answer-source="${sourceIds[variant]}"`) && generated.answerVisual.includes(`data-verified-pool-index="${generated.verifiedPoolIndex}"`), "답 그림의 유형·고정 묶음 연결이 다릅니다.");
         const parsed = parseEvidence(generated.prompt);
         check(parsed.sourceItemId === sourceIds[variant], "독립 검산 자료의 유형 ID가 다릅니다.");
-        check(parsed.contract === ([3, 4].includes(variant) ? "two-values" : "single-value"), "답 형식 계약이 다릅니다.");
+        const expectedContract = [3, 4].includes(variant) ? "two-values" : variant === 6 ? "drawing-and-single-value" : "single-value";
+        check(parsed.contract === expectedContract, "답 형식 계약이 다릅니다.");
         check(parsed.difficulty === difficultyExpected[String(difficulty)], "난이도별 풀이 부담 표시가 다릅니다.");
         if (difficulty === -1) check(generated.prompt.includes('data-step-evidence="guided"'), "쉬움 단계의 안내가 없습니다.");
         if (difficulty === 0) check(!generated.prompt.includes("data-step-evidence="), "원본 단계에 난이도 안내가 섞였습니다.");
@@ -211,6 +226,21 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
           check(generated.answerVisual.includes("source61-trapezoid-face-ga is-solved") && generated.answerVisual.includes("source61-trapezoid-short-edge is-solved"), "답 그림에서 (가)와 짧은 밑변이 함께 강조되지 않았습니다.");
           check(generated.solution.includes(`${baseArea}×2÷${baseHeight}`) && generated.solution.includes(`${faceArea}÷${shortBase}=${prismHeight}`), "사다리꼴 넓이와 (가)의 넓이를 잇는 풀이가 없습니다.");
         }
+        if (variant === 6) {
+          const [topBase, baseHeight, slantedSide, bottomBase, prismHeight, faceCount, solidEdgeCount, foldEdgeCount, cutCount] = parsed.values;
+          const structure = `right-trapezoidal-prism-grid-net-${topBase}-${baseHeight}-${slantedSide}-${bottomBase}-${prismHeight}`;
+          check(generated.prompt.includes("source61-prism-net-activity") && generated.answerVisual.includes("source61-prism-net-activity"), "밑면 그림과 1cm 격자 활동 그림이 문제와 답에 없습니다.");
+          check(generated.prompt.includes(`data-source61-e1-structure="${structure}"`) && generated.answerVisual.includes(`data-source61-e1-structure="${structure}"`), "문제와 답의 사각기둥 구조 ID가 다릅니다.");
+          check(generated.prompt.includes('data-phase="problem"') && generated.answerVisual.includes('data-phase="answer"'), "문제 격자와 답 전개도 단계가 구분되지 않았습니다.");
+          check(generated.prompt.includes('data-grid-cell-cm="1"') && generated.answerVisual.includes('data-grid-cell-cm="1"'), "1cm 격자가 문제와 답에 없습니다.");
+          check(generated.prompt.includes('data-reference-base="right-trapezoid"') && [topBase, baseHeight, slantedSide, bottomBase].every(value => generated.prompt.includes(`>${value}cm</text>`)), "원문 밑면의 네 변 길이와 순서가 그림에 없습니다.");
+          check(!generated.prompt.includes("source61-activity-net-side") && !generated.prompt.includes("source61-activity-net-base") && !generated.prompt.includes(`data-cut-count="${cutCount}"`), "문제의 빈 격자에 답 전개도나 자르는 모서리 수가 노출되었습니다.");
+          check((generated.answerVisual.match(/class="source61-activity-net-side"/g) || []).length === 4, "답 전개도에 옆면 4개가 없습니다.");
+          check((generated.answerVisual.match(/class="source61-activity-net-base"/g) || []).length === 2, "답 전개도에 같은 밑면 2개가 없습니다.");
+          check((generated.answerVisual.match(/data-fold-edge="[1-5]"/g) || []).length === foldEdgeCount, "답 전개도의 접는 선이 5개가 아닙니다.");
+          check(generated.answerVisual.includes(`data-cut-count="${cutCount}"`) && generated.answerVisual.includes(`data-solid-edge-count="${solidEdgeCount}"`) && generated.answerVisual.includes(`data-fold-edge-count="${foldEdgeCount}"`), "답 그림의 자른 선·접는 선 검산 값이 없습니다.");
+          check(faceCount === 6 && cutCount === 7 && generated.solution.includes("12-5=7개"), "사각기둥의 면·모서리에서 자르는 모서리 7개를 확인하지 못했습니다.");
+        }
         pools.add(generated.verifiedPoolIndex);
         answers.add(String(generated.answer));
         prompts.set(generated.verifiedPoolIndex, generated.prompt.replace(/<p class="question-step"[\s\S]*?<\/p>/g, "").replace(/<span hidden[\s\S]*?<\/span>/g, ""));
@@ -222,7 +252,7 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
     check(prompts.size === 3, `난이도 ${difficulty}에서 고정 문항 ${prompts.size}개만 확인되었습니다.`);
   }
   check(pools.size === 3, "pool 0, 1, 2를 모두 확인하지 못했습니다.");
-  check(answers.size === 3, `고정 묶음 답이 3종이어야 하나 ${answers.size}종입니다.`);
+  check(answers.size === (variant === 6 ? 1 : 3), `고정 묶음 답의 종류가 예상과 다릅니다 (${answers.size}종).`);
   if (sourceAnswers.has(sourceIds[variant])) {
     check(answers.has(sourceAnswers.get(sourceIds[variant])), `원문 답 ${sourceAnswers.get(sourceIds[variant])}이 고정 문항 묶음에 없습니다.`);
   }
@@ -234,4 +264,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 1 각기둥과 각뿔 감사 통과: 6유형 · 18개 고정 문항 · ${checked.toLocaleString()}회 계산·pool·답 3종·답 그림·원문 ID·난이도·도형 semantic 검사`);
+console.log(`6-1 2단원 개념탐구 1 각기둥과 각뿔 감사 통과: 7유형 · 21개 고정 문항 · ${checked.toLocaleString()}회 계산·pool·답 그림·원문 ID·난이도·도형 semantic 검사`);

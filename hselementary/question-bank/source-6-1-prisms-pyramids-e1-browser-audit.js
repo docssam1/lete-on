@@ -17,9 +17,10 @@ const sourceIds = [
   "6-1-u2-e1-mission-2",
   "6-1-u2-e1-mission-5",
   "6-1-u2-e1-mission-6",
-  "6-1-u2-e1-example-1-4"
+  "6-1-u2-e1-example-1-4",
+  "6-1-u2-e1-exploration-1"
 ];
-const publicVariants = [0, 1, 2, 3, 4, 5];
+const publicVariants = [0, 1, 2, 3, 4, 5, 6];
 const difficulties = [-1, 0, 1];
 const representativeDifficulties = new Set([-1, 0]);
 const failures = [];
@@ -186,6 +187,25 @@ async function inspectView(page, selector, label, answerView, variant) {
           prismHeight: svg.dataset.prismHeight || ""
         };
       }),
+      netActivityGeometry: items.map(item => {
+        const svg = item.querySelector("svg.source61-prism-net-activity");
+        if (!svg) return null;
+        return {
+          viewBox: svg.getAttribute("viewBox") || "",
+          structure: svg.dataset.source61E1Structure || "",
+          phase: svg.dataset.phase || "",
+          referenceBaseCount: svg.querySelectorAll(".source61-activity-base-reference polygon").length,
+          gridCellCm: svg.querySelector(".source61-net-grid")?.dataset.gridCellCm || "",
+          sideFaces: [...svg.querySelectorAll(".source61-activity-net-side")].map(node => [node.dataset.sideFace || "", node.dataset.edgeLength || ""]),
+          baseFaces: [...svg.querySelectorAll(".source61-activity-net-base")].map(node => node.dataset.baseFace || ""),
+          foldEdges: [...svg.querySelectorAll("[data-fold-edge]")].map(node => node.dataset.foldEdge || ""),
+          expectedBaseCount: svg.dataset.expectedBaseFaceCount || "",
+          expectedLateralCount: svg.dataset.expectedLateralFaceCount || "",
+          cutCount: svg.dataset.cutCount || "",
+          foldEdgeCount: svg.dataset.foldEdgeCount || "",
+          solidEdgeCount: svg.dataset.solidEdgeCount || ""
+        };
+      }),
       visibleText: items.map(item => item.innerText || "")
     };
   }, { selected: selector, isAnswer: answerView });
@@ -314,6 +334,21 @@ function checkSemantic(state, label, variant, answerView, difficulty) {
         fail(`${label}: 답 그림에서 짧은 밑변과 (가), 각기둥 높이를 함께 확인할 수 없습니다.`);
       }
     }
+    if (variant === 6) {
+      const model = state.netActivityGeometry[index];
+      if (!model || model.referenceBaseCount !== 1 || model.gridCellCm !== "1" || model.expectedBaseCount !== "2" || model.expectedLateralCount !== "4") {
+        fail(`${label}: 원문 밑면 그림, 1cm 격자 또는 사각기둥의 면 수 정보가 없습니다.`);
+        continue;
+      }
+      if (!model.structure.startsWith("right-trapezoidal-prism-grid-net-")) fail(`${label}: 직각사다리꼴 밑면 사각기둥 구조 ID가 없습니다.`);
+      if (!answerView && (model.phase !== "problem" || model.sideFaces.length || model.baseFaces.length || model.foldEdges.length || model.cutCount || model.foldEdgeCount || model.solidEdgeCount)) {
+        fail(`${label}: 문제의 빈 격자에 전개도 또는 자르는 모서리 수가 노출되었습니다.`);
+      }
+      if (answerView && (model.phase !== "answer" || model.sideFaces.length !== 4 || model.baseFaces.length !== 2 || model.foldEdges.join("") !== "12345" || model.cutCount !== "7" || model.foldEdgeCount !== "5" || model.solidEdgeCount !== "12")) {
+        fail(`${label}: 답 전개도의 밑면 2개·옆면 4개·접는 선 5개·자르는 모서리 7개 구조가 다릅니다.`);
+      }
+      if (answerView && (!markup.includes("실선은 자른 선") || !markup.includes("점선은 접는 선"))) fail(`${label}: 답 그림의 실선·점선 뜻이 없습니다.`);
+    }
   }
 }
 
@@ -370,6 +405,20 @@ function compareTrapezoidalNetShapes(problem, answer, label) {
   if (left.join("\n") !== right.join("\n")) fail(`${label}: 문제와 답의 사다리꼴 밑면 사각기둥 전개도 좌표·면 구조가 다릅니다.`);
 }
 
+function compareNetActivitySource(problem, answer, label) {
+  const invariant = value => value && ({
+    viewBox: value.viewBox,
+    structure: value.structure,
+    referenceBaseCount: value.referenceBaseCount,
+    gridCellCm: value.gridCellCm,
+    expectedBaseCount: value.expectedBaseCount,
+    expectedLateralCount: value.expectedLateralCount
+  });
+  const left = problem.netActivityGeometry.map(value => JSON.stringify(invariant(value))).sort();
+  const right = answer.netActivityGeometry.map(value => JSON.stringify(invariant(value))).sort();
+  if (left.join("\n") !== right.join("\n")) fail(`${label}: 문제와 답의 밑면 길이·1cm 격자·사각기둥 구조가 다릅니다.`);
+}
+
 async function captureRepresentative(page, sourceItemId, difficulty, viewportLabel, answerView) {
   const view = answerView ? "answer" : "problem";
   const file = path.join(outputDir, `${sourceItemId}-${difficulty}-${viewportLabel}-${view}.png`);
@@ -415,6 +464,7 @@ async function inspectType(browser, baseUrl, variant, difficulty, viewport, view
     if (variant === 3) compareNetShapes(problem, answer, label);
     if (variant === 4) compareConcaveNetShapes(problem, answer, label);
     if (variant === 5) compareTrapezoidalNetShapes(problem, answer, label);
+    if (variant === 6) compareNetActivitySource(problem, answer, label);
 
     if (representativeDifficulties.has(difficulty)) {
       await page.locator("#problemTab").click();
@@ -479,12 +529,12 @@ function generatorReady() {
     await new Promise(resolve => server.close(resolve));
   }
 
-  if (screenshots !== 48) fail(`대표 화면 수가 ${screenshots}장입니다. 48장이어야 합니다.`);
-  if (pdfs !== 12) fail(`A4 PDF 수가 ${pdfs}개입니다. 12개여야 합니다.`);
-  const summary = `${failures.length ? "실패" : "통과"}: 공개 6유형×3난이도×PC/모바일, 고정 pool 3문항, 문제·답 그림·근거·도형 계약, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 확인 페이지 ${checkedPages}개\n${failures.join("\n")}\n`;
+  if (screenshots !== 56) fail(`대표 화면 수가 ${screenshots}장입니다. 56장이어야 합니다.`);
+  if (pdfs !== 14) fail(`A4 PDF 수가 ${pdfs}개입니다. 14개여야 합니다.`);
+  const summary = `${failures.length ? "실패" : "통과"}: 공개 7유형×3난이도×PC/모바일, 고정 pool 3문항, 문제·답 그림·근거·도형 계약, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 확인 페이지 ${checkedPages}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 1 브라우저 감사 통과: 공개 6유형×3난이도×PC/모바일 · 고정 3문항 · 답 그림 · 화면 ${screenshots}장 · A4 PDF ${pdfs}개 · 확인 페이지 ${checkedPages}개`);
+  console.log(`6-1 2단원 개념탐구 1 브라우저 감사 통과: 공개 7유형×3난이도×PC/모바일 · 고정 3문항 · 답 그림 · 화면 ${screenshots}장 · A4 PDF ${pdfs}개 · 확인 페이지 ${checkedPages}개`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;
