@@ -24865,6 +24865,53 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Example4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-example-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 2-4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { fillHours: 6, drainHours: 15, initialPart: [1, 4] },
+        { fillHours: 8, drainHours: 24, initialPart: [1, 3] },
+        { fillHours: 10, drainHours: 15, initialPart: [2, 5] }
+      ][poolIndex];
+      const whole = rationalValue(1);
+      const initialPart = rationalValue(...data.initialPart);
+      const fillRate = rationalValue(1, data.fillHours);
+      const drainRate = rationalValue(1, data.drainHours);
+      const netRate = rationalOperation(fillRate, drainRate, "-");
+      const neededPart = rationalOperation(whole, initialPart, "-");
+      const elapsed = rationalOperation(neededPart, netRate, "÷");
+      if (netRate.numerator <= 0 || elapsed.numerator <= 0 || elapsed.numerator * 60 % elapsed.denominator !== 0) throw new Error("6-2 예제 2-4의 순채움 속도와 시간은 양수이고 분 단위로 나타낼 수 있어야 합니다.");
+      const candidateTimes = Array.from({ length: elapsed.numerator * 2 }, (_, index) => rationalValue(index + 1, elapsed.denominator)).filter(time => {
+        const amount = rationalOperation(initialPart, rationalOperation(netRate, time, "×"), "+");
+        return amount.numerator === amount.denominator;
+      });
+      if (candidateTimes.length !== 1 || candidateTimes[0].numerator !== elapsed.numerator || candidateTimes[0].denominator !== elapsed.denominator) throw new Error("6-2 예제 2-4에서 물탱크가 가득 차는 시간이 하나로 정해지지 않습니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const totalMinutes = elapsed.numerator * 60 / elapsed.denominator;
+      const hourPart = Math.floor(totalMinutes / 60);
+      const minutePart = totalMinutes % 60;
+      const answer = `${hourPart}시간${minutePart ? ` ${minutePart}분` : ""}`;
+      const signature = [data.fillHours, data.drainHours, ...data.initialPart].join(":");
+      const tank = (label, waterPart, solved, isTarget = false) => `<div class="source62-tank-state${isTarget ? " is-target" : ""}"><strong>${label}</strong><div class="source62-tank"><span class="source62-tank-water${solved && isTarget ? " is-full" : ""}" style="--water-level:${(waterPart * 100).toFixed(4)}%"></span>${isTarget && !solved ? "<b>?</b>" : ""}</div><small>${isTarget ? (solved ? `${answer} 뒤` : "몇 시간 뒤") : `처음 ${shown(initialPart)}`}</small></div>`;
+      const rateCard = `<div class="source62-tank-rates"><span><b>수도</b> 1시간에 전체의 ${shown(fillRate)}</span><span><b>배수구</b> 1시간에 전체의 ${shown(drainRate)}</span></div>`;
+      const tankBoard = solved => `<div class="source62-tank-rate-board${solved ? " is-solved" : ""}" data-source62-e2-example4-structure="simultaneous-fill-and-drain" data-source62-e2-example4-expression="${signature}" data-initial-part="${plain(initialPart)}" data-fill-rate="${plain(fillRate)}" data-drain-rate="${plain(drainRate)}" data-net-rate="${plain(netRate)}" data-elapsed-time="${plain(elapsed)}"><strong>물을 채우면서 동시에 내보내기</strong><div class="source62-tank-rate-flow">${tank("처음 물의 양", initialPart.numerator / initialPart.denominator, solved)}${rateCard}${tank("가득 찬 물탱크", solved ? 1 : 0, solved, true)}</div></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-tank-rate-solution"><strong>한 시간 동안 늘어나는 양부터 계산하기</strong>${row("한 시간에 채우는 양", shown(fillRate))}${row("한 시간에 빠지는 양", shown(drainRate))}${row("한 시간에 늘어나는 양", `${shown(fillRate)}−${shown(drainRate)}=${shown(netRate)}`)}${row("더 채워야 하는 양", `1−${shown(initialPart)}=${shown(neededPart)}`)}${row("걸린 시간", `${shown(neededPart)}÷${shown(netRate)}=${shown(elapsed)}시간=${answer}`)}</div>`;
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">한 시간 동안 채워지는 양에서 한 시간 동안 빠지는 양을 먼저 빼세요.</p>` : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">처음 물의 양에 시간당 늘어나는 양을 더해 전체가 되는 식을 세워 확인하세요.</p>' : "";
+      const values = [data.fillHours, data.drainHours, ...data.initialPart, fillRate.numerator, fillRate.denominator, drainRate.numerator, drainRate.denominator, netRate.numerator, netRate.denominator, neededPart.numerator, neededPart.denominator, elapsed.numerator, elapsed.denominator, totalMinutes];
+      const evidence = `<span hidden data-source62-fraction-e2-example4-kind="simultaneous-fill-and-drain" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-candidate-count="${candidateTimes.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`일정하게 물이 나오는 수도로 빈 물탱크를 가득 채우는 데 ${data.fillHours}시간이 걸리고, 가득 찬 물탱크의 물을 배수구로 모두 내보내는 데 ${data.drainHours}시간이 걸립니다. 전체의 ${shown(initialPart)}만큼 물이 들어 있는 물탱크에서 수도와 배수구를 동시에 열면 몇 시간 만에 가득 차는지 구하세요.${tankBoard(false)}${support}${challenge}${evidence}`, answer, `한 시간에 전체의 ${shown(fillRate)}만큼 채워지고 ${shown(drainRate)}만큼 빠지므로, 한 시간에 ${shown(netRate)}만큼 늘어납니다. 더 채워야 하는 양은 ${shown(neededPart)}이므로 ${shown(neededPart)}÷${shown(netRate)}=${shown(elapsed)}시간, 곧 ${answer}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-example4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${tankBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">한 시간 동안 늘어나는 양으로 물탱크가 가득 차는 시간을 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26785,6 +26832,7 @@
     [type => type.sourceItemId === "6-2-u1-e2-example-1", "sourceGrade6SecondFractionDivisionE2Example1"],
     [type => type.sourceItemId === "6-2-u1-e2-example-2", "sourceGrade6SecondFractionDivisionE2Example2"],
     [type => type.sourceItemId === "6-2-u1-e2-example-3", "sourceGrade6SecondFractionDivisionE2Example3"],
+    [type => type.sourceItemId === "6-2-u1-e2-example-4", "sourceGrade6SecondFractionDivisionE2Example4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

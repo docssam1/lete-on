@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 253
+    "unlocked": 254
   },
   "items": [
     {
@@ -7739,17 +7739,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "채우는 속도와 비우는 속도로 걸린 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE2Example4",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문의 채우는 시간, 비우는 시간, 처음 물의 양과 동시 작동 조건을 직접 대조했습니다. 고정 문항 3개에서 가득 차는 시간 후보를 모두 검사해 답이 하나임을 확인했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

@@ -313,12 +313,13 @@
       "ordinal": 4,
       "pdfPage": 5,
       "printedPage": 6,
-      "sourceShape": "분수 나눗셈을 생활 상황의 전체, 부분, 횟수와 연결해 필요한 양을 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "빈 물탱크를 채우는 시간과 가득 찬 물탱크를 비우는 시간으로 시간당 순채움 양을 구하고, 처음 들어 있던 물을 제외한 나머지를 채우는 시간을 구하는 구조.",
+      "answerContract": "single-answer-fixed-pool",
+      "visualRisk": "채우는 양과 빠지는 양의 방향을 반대로 읽거나, 처음 들어 있던 물과 더 채울 물을 혼동하지 않도록 같은 물탱크 자료에서 구분해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 5쪽의 인쇄 지문에서 채우기 6시간, 비우기 15시간, 처음 1/4, 두 관을 동시에 여는 조건을 직접 대조했습니다. 시간당 1/10씩 늘고 3/4을 더 채우므로 15/2시간, 곧 7시간 30분임을 독립 계산했습니다.",
+      "publicSourceItemId": "6-2-u1-e2-example-4"
     },
     {
       "sourceItemId": "6-2-u1-e2-mission-1",
