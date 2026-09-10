@@ -24606,6 +24606,45 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Mission5({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-mission-5";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 5 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { leftDividend: 44, leftDivisor: [4, 5], middleDividend: 10, middleNumerator: 2, rightDividend: 24, rightDivisor: [1, 3] },
+        { leftDividend: 24, leftDivisor: [2, 3], middleDividend: 12, middleNumerator: 3, rightDividend: 26, rightDivisor: [1, 2] },
+        { leftDividend: 30, leftDivisor: [1, 2], middleDividend: 18, middleNumerator: 3, rightDividend: 21, rightDivisor: [1, 4] }
+      ][poolIndex];
+      const leftValue = rationalOperation(rationalValue(data.leftDividend), rationalValue(...data.leftDivisor), "÷");
+      const rightValue = rationalOperation(rationalValue(data.rightDividend), rationalValue(...data.rightDivisor), "÷");
+      const coefficient = rationalOperation(rationalValue(data.middleDividend), rationalValue(data.middleNumerator), "÷");
+      if ([leftValue, rightValue, coefficient].some(value => value.denominator !== 1)) throw new Error("6-2 Mission 5 범위 계산은 자연수 배수로 정리되어야 합니다.");
+      const lessThan = (left, right) => left.numerator * right.denominator < right.numerator * left.denominator;
+      const candidates = Array.from({ length: 100 }, (_, index) => index + 1).filter(number => {
+        const middleValue = rationalValue(data.middleDividend * number, data.middleNumerator);
+        return lessThan(leftValue, middleValue) && lessThan(middleValue, rightValue);
+      });
+      if (candidates.length !== 3) throw new Error("6-2 Mission 5 고정 문항은 가능한 자연수가 3개여야 합니다.");
+      const answerValue = candidates.reduce((sum, number) => sum + number, 0);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const expressionSignature = [data.leftDividend, ...data.leftDivisor, data.middleDividend, data.middleNumerator, data.rightDividend, ...data.rightDivisor].join(":");
+      const blankFraction = `<span class="math-fraction source62-range-blank-fraction" role="img" aria-label="빈칸분의 ${data.middleNumerator}"><span>${data.middleNumerator}</span><span>□</span></span>`;
+      const inequality = `${data.leftDividend}÷${fractionMarkup(...data.leftDivisor)}<${data.middleDividend}÷${blankFraction}<${data.rightDividend}÷${fractionMarkup(...data.rightDivisor)}`;
+      const rangeBoard = solved => `<div class="source62-natural-range-board${solved ? " is-solved" : ""}" data-source62-e1-mission5-structure="fraction-division-natural-number-range" data-source62-e1-mission5-expression="${expressionSignature}"><strong>세 나눗셈식의 범위</strong><div class="source62-natural-range-expression">${inequality}</div><p>□ 안에 들어갈 수 있는 모든 자연수의 합을 구합니다.${solved ? `<b>가능한 수: ${candidates.join(", ")}</b>` : ""}</p></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-natural-range-solution"><strong>세 식을 간단히 한 뒤 자연수 찾기</strong>${row("왼쪽 식", String(leftValue.numerator))}${row("가운데 식", `${coefficient.numerator}×□`)}${row("오른쪽 식", String(rightValue.numerator))}${row("가능한 자연수", candidates.join(", "))}${row("합", String(answerValue))}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">왼쪽과 오른쪽 식을 먼저 계산하고, 가운데 식을 자연수×□ 꼴로 간단히 하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 경계 사이에 들어가는 자연수를 빠짐없이 찾고, 각 수를 원래 식에 넣어 확인하세요.</p>' : "";
+      const values = [data.leftDividend, ...data.leftDivisor, data.middleDividend, data.middleNumerator, data.rightDividend, ...data.rightDivisor];
+      const evidence = `<span hidden data-source62-fraction-e1-mission5-kind="fraction-division-natural-number-range" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-candidates="${candidates.join(",")}" data-sum="${answerValue}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음 식의 □ 안에 들어갈 수 있는 모든 자연수의 합을 구하세요.${rangeBoard(false)}${support}${challenge}${evidence}`, String(answerValue), `왼쪽 식은 ${leftValue.numerator}, 가운데 식은 ${coefficient.numerator}×□, 오른쪽 식은 ${rightValue.numerator}입니다. 따라서 가능한 자연수는 ${candidates.join(", ")}이고, 그 합은 ${answerValue}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-mission5-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${rangeBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">경계 사이의 자연수를 모두 대입해 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26520,6 +26559,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-mission-2", "sourceGrade6SecondFractionDivisionE1Mission2"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-3", "sourceGrade6SecondFractionDivisionE1Mission3"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-4", "sourceGrade6SecondFractionDivisionE1Mission4"],
+    [type => type.sourceItemId === "6-2-u1-e1-mission-5", "sourceGrade6SecondFractionDivisionE1Mission5"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
