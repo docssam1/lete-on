@@ -24680,6 +24680,46 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Exploration({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-exploration";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { total: 9, firstPart: [1, 3], firstSpeed: 4, secondPart: [1, 4], secondSpeed: 8, lastSpeed: 4 },
+        { total: 12, firstPart: [1, 4], firstSpeed: 6, secondPart: [1, 3], secondSpeed: 9, lastSpeed: 6 },
+        { total: 15, firstPart: [2, 5], firstSpeed: 5, secondPart: [1, 3], secondSpeed: 10, lastSpeed: 5 }
+      ][poolIndex];
+      const total = rationalValue(data.total);
+      const firstPart = rationalValue(...data.firstPart);
+      const secondPart = rationalValue(...data.secondPart);
+      const firstDistance = rationalOperation(total, firstPart, "×");
+      const afterFirst = rationalOperation(total, firstDistance, "-");
+      const secondDistance = rationalOperation(afterFirst, secondPart, "×");
+      const lastDistance = rationalOperation(afterFirst, secondDistance, "-");
+      const firstTime = rationalOperation(firstDistance, rationalValue(data.firstSpeed), "÷");
+      const secondTime = rationalOperation(secondDistance, rationalValue(data.secondSpeed), "÷");
+      const lastTime = rationalOperation(lastDistance, rationalValue(data.lastSpeed), "÷");
+      const totalTime = rationalOperation(rationalOperation(firstTime, secondTime, "+"), lastTime, "+");
+      const averageSpeed = rationalOperation(total, totalTime, "÷");
+      if ([firstDistance, secondDistance, lastDistance, firstTime, secondTime, lastTime, totalTime, averageSpeed].some(value => value.numerator <= 0)) throw new Error("6-2 개념탐구 2의 거리·시간·평균 속력이 양수가 아닙니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const expressionSignature = [data.total, ...data.firstPart, data.firstSpeed, ...data.secondPart, data.secondSpeed, data.lastSpeed].join(":");
+      const conditionRow = (step, condition, solvedDistance) => `<div class="source62-average-speed-row"><b>${step}</b><span>${condition}</span>${solvedDistance ? `<em>거리 ${mixedFractionMarkup(solvedDistance.numerator, solvedDistance.denominator)}km</em>` : ""}</div>`;
+      const conditionBoard = solved => `<div class="source62-average-speed-board${solved ? " is-solved" : ""}" data-source62-e2-exploration-structure="remaining-distance-average-speed" data-source62-e2-exploration-expression="${expressionSignature}"><strong>전체 ${data.total}km의 이동 순서</strong><div class="source62-average-speed-rows">${conditionRow("처음", `전체의 ${mixedFractionMarkup(...data.firstPart)}을 시속 ${data.firstSpeed}km로 걷기`, solved && firstDistance)}${conditionRow("다음", `남은 거리의 ${mixedFractionMarkup(...data.secondPart)}을 시속 ${data.secondSpeed}km로 달리기`, solved && secondDistance)}${conditionRow("마지막", `다시 남은 거리를 시속 ${data.lastSpeed}km로 걷기`, solved && lastDistance)}</div><p>평균 속력은 전체 거리÷전체 걸린 시간으로 구합니다.</p></div>`;
+      const mathRow = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-average-speed-solution"><strong>구간별 거리와 시간</strong>${mathRow("처음", `${mixedFractionMarkup(firstDistance.numerator, firstDistance.denominator)}÷${data.firstSpeed}=${mixedFractionMarkup(firstTime.numerator, firstTime.denominator)}시간`)}${mathRow("다음", `${mixedFractionMarkup(secondDistance.numerator, secondDistance.denominator)}÷${data.secondSpeed}=${mixedFractionMarkup(secondTime.numerator, secondTime.denominator)}시간`)}${mathRow("마지막", `${mixedFractionMarkup(lastDistance.numerator, lastDistance.denominator)}÷${data.lastSpeed}=${mixedFractionMarkup(lastTime.numerator, lastTime.denominator)}시간`)}${mathRow("전체 시간", `${mixedFractionMarkup(totalTime.numerator, totalTime.denominator)}시간`)}${mathRow("평균 속력", `${mixedFractionMarkup(averageSpeed.numerator, averageSpeed.denominator)}km/시`)}</div>`;
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 처음 간 거리와 그 뒤에 남은 거리를 차례로 구하세요. 각 구간의 시간은 거리÷속력입니다.</p>` : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">세 구간의 거리를 먼저 나눈 뒤, 전체 거리와 전체 시간을 이용해 평균 속력을 구하세요.</p>' : "";
+      const values = [data.total, ...data.firstPart, data.firstSpeed, ...data.secondPart, data.secondSpeed, data.lastSpeed, firstDistance.numerator, firstDistance.denominator, secondDistance.numerator, secondDistance.denominator, lastDistance.numerator, lastDistance.denominator, totalTime.numerator, totalTime.denominator, averageSpeed.numerator, averageSpeed.denominator];
+      const evidence = `<span hidden data-source62-fraction-e2-exploration-kind="remaining-distance-average-speed" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`한 학생이 ${data.total}km의 거리를 갑니다. 처음에는 전체의 ${mixedFractionMarkup(...data.firstPart)}을 시속 ${data.firstSpeed}km로 걷고, 다음에는 남은 거리의 ${mixedFractionMarkup(...data.secondPart)}을 시속 ${data.secondSpeed}km로 달렸습니다. 그리고 남은 거리는 다시 시속 ${data.lastSpeed}km로 걸었습니다. 이 학생은 한 시간에 평균 몇 km씩 간 셈인지 구하세요.${conditionBoard(false)}${support}${challenge}${evidence}`, fraction(averageSpeed.numerator, averageSpeed.denominator), `처음 간 거리는 ${mixedFractionMarkup(firstDistance.numerator, firstDistance.denominator)}km, 다음에 간 거리는 ${mixedFractionMarkup(secondDistance.numerator, secondDistance.denominator)}km, 마지막 거리는 ${mixedFractionMarkup(lastDistance.numerator, lastDistance.denominator)}km입니다. 세 구간의 시간을 더하면 ${mixedFractionMarkup(totalTime.numerator, totalTime.denominator)}시간이므로 평균 속력은 ${data.total}÷${mixedFractionMarkup(totalTime.numerator, totalTime.denominator)}=${mixedFractionMarkup(averageSpeed.numerator, averageSpeed.denominator)}km/시입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-exploration-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${conditionBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">세 구간의 거리와 시간을 모두 확인한 평균 속력</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26596,6 +26636,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-mission-4", "sourceGrade6SecondFractionDivisionE1Mission4"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-5", "sourceGrade6SecondFractionDivisionE1Mission5"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-6", "sourceGrade6SecondFractionDivisionE1Mission6"],
+    [type => type.sourceItemId === "6-2-u1-e2-exploration", "sourceGrade6SecondFractionDivisionE2Exploration"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

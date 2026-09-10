@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 249
+    "unlocked": 250
   },
   "items": [
     {
@@ -7635,17 +7635,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "분수로 나눈 상황에서 평균 속력 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE2Exploration",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "원본의 세 이동 구간과 두 분수 조건을 직접 대조했습니다. 구간별 거리와 시간을 따로 계산해 평균 속력이 하나로 정해지는 고정 문항 3개를 연결했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",
