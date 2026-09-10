@@ -130,17 +130,19 @@
     {
       "sourceItemId": "6-2-u1-e1-example-4",
       "unitId": "6-2-u1",
+      "unitName": "분수의 나눗셈",
       "exploration": 1,
       "section": "example",
       "ordinal": 4,
       "pdfPage": 3,
       "printedPage": 4,
-      "sourceShape": "분수 나눗셈의 뜻을 수, 그림, 식으로 나타내고 몫 또는 양의 관계를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "PDF 3쪽(인쇄 4쪽)의 가×3 3/7=나÷7/8, 가÷다=1 1/3, 나+다=2 1/4를 모두 만족하는 세 수를 구하는 구조.",
+      "answerContract": "ordered-tuple-fixed-pool",
+      "visualRisk": "세 식의 등호·나눗셈 기호·가나다 위치가 바뀌면 다른 문제가 되므로 문제와 답에서 같은 식 자료를 사용해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 세 식을 직접 대조하고 가=3/5, 나=9/5, 다=9/20을 구했습니다. 세 값을 원래 세 식에 다시 넣어 모두 성립하며 해가 한 묶음뿐임을 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e1-example-4"
     },
     {
       "sourceItemId": "6-2-u1-e1-mission-1",

@@ -78,7 +78,7 @@ function independentlyCalculate(values) {
 check(Boolean(type), "6-2 예제 1-1 원장 항목이 없습니다.");
 check(type?.generatorKey === generatorKey && !type?.reviewLocked, "원장 항목이 전용 생성기에 공개 상태로 연결되지 않았습니다.");
 check(api.names.includes(generatorKey), "6-2 예제 1-1 전용 생성기가 등록되지 않았습니다.");
-check(readiness.integrity.publicCandidateCount === 3 && readiness.integrity.lockedCount === 63 && readiness.integrity.allImplementationLocked === false, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
+check(readiness.integrity.publicCandidateCount === 4 && readiness.integrity.lockedCount === 62 && readiness.integrity.allImplementationLocked === false, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
 check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.length === 1 && readinessItem.answerCandidates[0] === "51/58", "비공개 검토표의 원본 답·공개 상태가 완결되지 않았습니다.");
 check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-answer-fixed-pool" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "원자료 장부의 원본 확인·단일 정답·공개 연결이 완결되지 않았습니다.");
 

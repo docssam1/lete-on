@@ -24432,6 +24432,42 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Example4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-example-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { multiplier: [24, 7], divisor: [7, 8], ratio: [4, 3], sum: [9, 4] },
+        { multiplier: [15, 4], divisor: [2, 5], ratio: [5, 4], sum: [23, 4] },
+        { multiplier: [14, 3], divisor: [3, 7], ratio: [3, 2], sum: [3, 1] }
+      ][poolIndex];
+      const multiplier = rationalValue(...data.multiplier);
+      const divisor = rationalValue(...data.divisor);
+      const ratio = rationalValue(...data.ratio);
+      const sum = rationalValue(...data.sum);
+      const bFactor = rationalOperation(multiplier, divisor, "×");
+      const cFactor = rationalOperation(rationalValue(1), ratio, "÷");
+      const a = rationalOperation(sum, rationalOperation(bFactor, cFactor, "+"), "÷");
+      const b = rationalOperation(a, bFactor, "×");
+      const c = rationalOperation(a, cFactor, "×");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const equationRow = value => `<div class="source62-system-equation">${value}</div>`;
+      const systemBoard = `<div class="source62-equation-system" data-source62-e1-example4-structure="three-fraction-equations" data-source62-e1-example4-system="${[...data.multiplier, ...data.divisor, ...data.ratio, ...data.sum].join(":")}"><strong>세 수가 만족하는 식</strong>${equationRow(`가×${mixedFractionMarkup(multiplier.numerator, multiplier.denominator)}=나÷${fractionMarkup(divisor.numerator, divisor.denominator)}`)}${equationRow(`가÷다=${mixedFractionMarkup(ratio.numerator, ratio.denominator)}`)}${equationRow(`나+다=${mixedFractionMarkup(sum.numerator, sum.denominator)}`)}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-system-solution" data-source62-e1-example4-structure="three-fraction-equations" data-source62-e1-example4-system="${[...data.multiplier, ...data.divisor, ...data.ratio, ...data.sum].join(":")}"><strong>가를 기준으로 관계 나타내기</strong>${row("나", `${fractionMarkup(bFactor.numerator, bFactor.denominator)}×가`)}${row("다", `${fractionMarkup(cFactor.numerator, cFactor.denominator)}×가`)}${row("세 수", `가=${fractionMarkup(a.numerator, a.denominator)}, 나=${fractionMarkup(b.numerator, b.denominator)}, 다=${fractionMarkup(c.numerator, c.denominator)}`)}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">첫째 식에서 나를 가로 나타내고, 둘째 식에서 다를 가로 나타내어 보세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">세 식을 모두 이용해 세 수를 구한 뒤, 구한 값을 원래 식에 다시 넣어 확인하세요.</p>' : "";
+      const values = [...data.multiplier, ...data.divisor, ...data.ratio, ...data.sum, a.numerator, a.denominator, b.numerator, b.denominator, c.numerator, c.denominator];
+      const evidence = `<span hidden data-source62-fraction-e1-example4-kind="three-equation-fraction-system" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="ordered-tuple" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `가=${fraction(a.numerator, a.denominator)}, 나=${fraction(b.numerator, b.denominator)}, 다=${fraction(c.numerator, c.denominator)}`;
+      return result(`다음 세 식을 모두 만족하는 수 가, 나, 다를 각각 구하세요.${systemBoard}${support}${challenge}${evidence}`, answer, `첫째 식에서 나=${fractionMarkup(bFactor.numerator, bFactor.denominator)}×가이고, 둘째 식에서 다=${fractionMarkup(cFactor.numerator, cFactor.denominator)}×가입니다. 이를 나+다=${mixedFractionMarkup(sum.numerator, sum.denominator)}에 넣으면 가=${fractionMarkup(a.numerator, a.denominator)}입니다. 따라서 나=${fractionMarkup(b.numerator, b.denominator)}, 다=${fractionMarkup(c.numerator, c.denominator)}이며 세 식에 다시 넣어도 모두 맞습니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-example4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${systemBoard}${answerBoard}${evidence}<div class="solution-answer-caption">구한 세 값을 원래 세 식에 다시 넣어 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26341,6 +26377,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
+    [type => type.sourceItemId === "6-2-u1-e1-example-4", "sourceGrade6SecondFractionDivisionE1Example4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

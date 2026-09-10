@@ -78,7 +78,7 @@ function independentAnswer(values) {
 
 check(Boolean(type) && type.generatorKey === generatorKey && !type.reviewLocked, "예제 1-3 공개 원장이 전용 생성기에 연결되지 않았습니다.");
 check(api.names.includes(generatorKey), "예제 1-3 전용 생성기가 등록되지 않았습니다.");
-check(readiness.integrity.publicCandidateCount === 3 && readiness.integrity.lockedCount === 63, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
+check(readiness.integrity.publicCandidateCount === 4 && readiness.integrity.lockedCount === 62, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
 check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.[0] === "32/21", "예제 1-3 비공개 검토표의 수정 답·공개 상태가 완결되지 않았습니다.");
 check(!String(readinessItem?.independentCalculation || "").includes("8/5") && String(readinessItem?.independentCalculation || "").includes("115번째=10/15"), "예전 한 칸 오차 답이 남았거나 수정 근거가 없습니다.");
 check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-answer-fixed-pool" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "예제 1-3 원자료 장부의 원본 확인·단일 정답·공개 연결이 완결되지 않았습니다.");
