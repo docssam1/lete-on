@@ -21490,9 +21490,9 @@
     },
     sourceGrade6PrismsPyramidsE3({ rng, level, variant = 0 }) {
       const sourceIds = [
-        "6-1-u2-e3-example-3-1", "6-1-u2-e3-mission-1", "6-1-u2-e3-mission-5", "6-1-u2-e3-mission-6"
+        "6-1-u2-e3-example-3-1", "6-1-u2-e3-mission-1", "6-1-u2-e3-mission-5", "6-1-u2-e3-mission-6", "6-1-u2-e3-mission-3"
       ];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 3 원문 분기는 0부터 3까지여야 합니다.");
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 3 원문 분기는 0부터 4까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, 2);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
@@ -21502,7 +21502,7 @@
       const mathBoard = (title, body, attributes = "") => `<div class="source61-math-board" ${attributes}><strong>${title}</strong>${body}</div>`;
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
-        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><span hidden data-source61-prism-e3-kind="${["pyramid-edge-from-counts", "prism-pyramid-edge-product", "pyramid-edge-marks", "paper-solids-edge-difference"][variant]}" data-source-item="${sourceItemId}" data-difficulty-design="${difficultyDesign}"></span>${answerBody}<div class="solution-answer-caption">문제의 그림을 다시 그려 확인한 답</div></div>`,
+        answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><span hidden data-source61-prism-e3-kind="${["pyramid-edge-from-counts", "prism-pyramid-edge-product", "pyramid-edge-marks", "paper-solids-edge-difference", "pyramid-side-face-to-prism-height"][variant]}" data-source-item="${sourceItemId}" data-difficulty-design="${difficultyDesign}"></span>${answerBody}<div class="solution-answer-caption">문제의 그림을 다시 그려 확인한 답</div></div>`,
         generationMode: "fixed-verified-pool",
         verifiedPoolIndex: poolIndex,
         verifiedVariantCount: 3,
@@ -21592,6 +21592,20 @@
         const totalAttributes = solved ? `data-triangular-prism-edge-total="${prismEdges}" data-square-pyramid-edge-total="${pyramidEdges}" data-triangular-prism-vertex-count="6" data-triangular-prism-edge-count="9" data-square-pyramid-vertex-count="5" data-square-pyramid-edge-count="8"` : `data-triangular-prism-edge-total="unknown" data-square-pyramid-edge-total="unknown" data-triangular-prism-vertex-count="unknown" data-triangular-prism-edge-count="unknown" data-square-pyramid-vertex-count="unknown" data-square-pyramid-edge-count="unknown"`;
         return `<svg class="geometry-diagram source61-e3-diagram source61-e3-paper-solids${solved ? " is-solved" : ""}" viewBox="0 0 330 ${solved ? 305 : 112}" role="img" aria-label="${solved ? "세 종이로 만든 삼각기둥과 사각뿔의 모서리 합" : "삼각형, 직사각형, 정사각형 종이와 사용표"}" data-source61-e3-structure="paper-to-triangular-prism-and-square-pyramid-${triangle.join("-")}" ${totalAttributes} data-paper-triangle="${triangle.join(",")}" data-paper-rectangle="${rectangle.join(",")}" data-paper-square="${square.join(",")}"${solved ? ` data-result-highlight="${Math.abs(prismEdges - pyramidEdges)}"` : ""}>${papers}${solidMarkup}${resultLabels}</svg>`;
       };
+      const sideFaceToPrismHeightSvg = ({ baseSide, lateralSide, totalEdgeLength, sides, prismHeight, solved = false }) => {
+        const triangleHeight = Math.sqrt(lateralSide * lateralSide - baseSide * baseSide / 4);
+        const scale = Math.min(11, 96 / baseSide, 108 / triangleHeight);
+        const centerX = 78, baseY = 154, halfBase = baseSide * scale / 2;
+        const triangle = [[centerX, baseY - triangleHeight * scale], [centerX - halfBase, baseY], [centerX + halfBase, baseY]];
+        const trianglePoints = triangle.map(point => point.map(value => value.toFixed(2)).join(",")).join(" ");
+        const answerBase = regularPolygonPoints(sides, 244, 83, sides >= 11 ? 38 : 42);
+        const answerBasePoints = answerBase.map(point => point.map(value => value.toFixed(2)).join(",")).join(" ");
+        const prismSideFace = { x: 218, y: 143, width: baseSide * 5, height: prismHeight * 5 };
+        const relation = solved
+          ? `<g class="source61-e3-height-result"><polygon class="source61-e3-paper" points="${answerBasePoints}" data-prism-base="regular-${sides}"/><text x="244" y="83">${sides}각형 밑면</text><rect class="source61-e3-relation-box" x="${prismSideFace.x}" y="${prismSideFace.y}" width="${prismSideFace.width}" height="${prismSideFace.height}" data-prism-side-face="one" data-side-face-width-cm="${baseSide}" data-side-face-height-cm="${prismHeight}"/><line class="source61-e3-highlight" x1="${prismSideFace.x + prismSideFace.width}" y1="${prismSideFace.y}" x2="${prismSideFace.x + prismSideFace.width}" y2="${prismSideFace.y + prismSideFace.height}"/><text x="${prismSideFace.x + prismSideFace.width / 2}" y="${prismSideFace.y + prismSideFace.height / 2}">옆면 한 개</text><text class="source61-e3-result-label" x="298" y="${prismSideFace.y + prismSideFace.height / 2}">높이 ${prismHeight}cm</text></g>`
+          : `<g class="source61-e3-height-question"><rect class="source61-e3-relation-box" x="199" y="60" width="92" height="86"/><text x="245" y="87">같은 밑면의</text><text x="245" y="109">각기둥</text><text x="245" y="132">높이를 구하세요</text></g>`;
+        return `<svg class="geometry-diagram source61-e3-diagram source61-e3-side-face-height${solved ? " is-solved" : ""}" viewBox="0 0 330 220" role="img" aria-label="두 변이 ${lateralSide}cm이고 밑변이 ${baseSide}cm인 각뿔의 옆면과 같은 밑면의 각기둥" data-source61-e3-structure="pyramid-side-face-to-prism-height-${baseSide}-${lateralSide}-${totalEdgeLength}" data-base-edge-cm="${baseSide}" data-lateral-edge-cm="${lateralSide}" data-total-edge-cm="${totalEdgeLength}" data-base-sides="${solved ? sides : "unknown"}" data-prism-height-cm="${solved ? prismHeight : "unknown"}" data-side-face-count="${solved ? sides : "unknown"}"${solved ? ` data-result-highlight="${prismHeight}"` : ""}><g class="source61-e3-side-face"><polygon class="source61-e3-paper" points="${trianglePoints}" data-side-face="one"/><text class="source61-e3-measure" x="${(triangle[0][0] + triangle[1][0]) / 2 - 12}" y="${(triangle[0][1] + triangle[1][1]) / 2}">${lateralSide}cm</text><text class="source61-e3-measure" x="${(triangle[0][0] + triangle[2][0]) / 2 + 12}" y="${(triangle[0][1] + triangle[2][1]) / 2}">${lateralSide}cm</text><text class="source61-e3-measure" x="${centerX}" y="${baseY + 17}">${baseSide}cm</text><text x="${centerX}" y="198">각뿔의 옆면 한 개</text></g>${relation}</svg>`;
+      };
 
       if (variant === 0) {
         const data = [{ k: 22, n: 10 }, { k: 26, n: 12 }, { k: 30, n: 14 }][poolIndex];
@@ -21615,6 +21629,22 @@
         const promptVisual = `${markedPyramidSvg({ ...data })}${mathBoard("점 찍는 조건", row("사각뿔의 한 모서리", `${data.display} = ${data.edgeCm}cm`) + row("점 사이의 간격", `${data.interval}cm`) + row("꼭짓점", "점에 포함"))}`;
         const answerVisual = `${markedPyramidSvg({ ...data, solved: true })}${mathBoard("안쪽 점과 꼭짓점", row("한 모서리의 안쪽 점", `${data.edgeCm}÷${data.interval}-1=${data.innerMarks}개`) + row("모든 모서리의 안쪽 점", `${data.innerMarks}×8=${data.innerMarks * 8}개`) + row("전체", `${data.innerMarks * 8}+5=${answer}개`))}`;
         return fixedResult(`모든 모서리의 길이가 ${data.display}인 사각뿔이 있습니다. 각 모서리에 ${data.interval}cm 간격으로 점을 찍고 꼭짓점에도 반드시 점을 찍을 때, 점은 모두 몇 개인지 구하세요.${promptVisual}${support("한 모서리에서 양 끝 꼭짓점을 뺀 안쪽 점의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-edge-marks", [data.edgeCm, data.interval, data.innerMarks, answer])}`, `${answer}개`, `한 모서리의 길이는 ${data.edgeCm}cm이고 ${data.interval}cm씩 나누면 ${data.edgeCm}÷${data.interval}=${data.edgeCm / data.interval}구간입니다. 안쪽 점은 ${data.edgeCm / data.interval}-1=${data.innerMarks}개입니다. 사각뿔의 모서리 8개에 찍는 안쪽 점은 ${data.innerMarks}×8=${data.innerMarks * 8}개이고, 꼭짓점 5개를 더하면 ${answer}개입니다.`, answerVisual);
+      }
+
+      if (variant === 4) {
+        const data = [
+          { baseSide: 6, lateralSide: 11, totalEdgeLength: 136, sides: 8, prismHeight: 5 },
+          { baseSide: 8, lateralSide: 14, totalEdgeLength: 220, sides: 10, prismHeight: 6 },
+          { baseSide: 9, lateralSide: 17, totalEdgeLength: 312, sides: 12, prismHeight: 8 }
+        ][poolIndex];
+        const pyramidTotal = data.sides * (data.baseSide + data.lateralSide);
+        const prismBaseEdgesTotal = 2 * data.sides * data.baseSide;
+        const prismTotal = prismBaseEdgesTotal + data.sides * data.prismHeight;
+        if (pyramidTotal !== data.totalEdgeLength || prismTotal !== data.totalEdgeLength || data.prismHeight !== data.lateralSide - data.baseSide) throw new Error(`${sourceItemId}: 각뿔·각기둥 모서리 길이 합이 성립하지 않습니다.`);
+        const values = [data.baseSide, data.lateralSide, data.totalEdgeLength, data.sides, prismBaseEdgesTotal, data.prismHeight];
+        const promptVisual = `${sideFaceToPrismHeightSvg(data)}${mathBoard("주어진 모서리", row("각뿔의 옆면 한 개", `${data.lateralSide}cm, ${data.lateralSide}cm, ${data.baseSide}cm`) + row("각뿔의 모든 모서리 길이 합", `${data.totalEdgeLength}cm`))}`;
+        const answerVisual = `${sideFaceToPrismHeightSvg({ ...data, solved: true })}${mathBoard("같은 밑면의 각기둥", row("각뿔의 옆면 수", `${data.totalEdgeLength}÷(${data.lateralSide}+${data.baseSide})=${data.sides}개`) + row("각기둥의 두 밑면 모서리 합", `${data.baseSide}×${data.sides}×2=${prismBaseEdgesTotal}cm`) + row("각기둥의 높이", `(${data.totalEdgeLength}-${prismBaseEdgesTotal})÷${data.sides}=${data.prismHeight}cm`))}`;
+        return fixedResult(`다음 그림과 같은 옆면으로 이루어진 각뿔의 모든 모서리 길이의 합은 ${data.totalEdgeLength}cm입니다. 이 각뿔과 밑면의 크기와 모양이 같은 각기둥의 모든 모서리 길이의 합도 ${data.totalEdgeLength}cm일 때, 각기둥의 높이를 구하세요.${promptVisual}${support("각뿔의 밑면 모서리와 옆모서리는 옆면의 수만큼씩 있음을 이용해 옆면의 수를 먼저 구하세요.")}${challenge}${evidence("pyramid-side-face-to-prism-height", values)}`, `${data.prismHeight}cm`, `각뿔의 옆면 수를 □개라 하면 길이가 ${data.baseSide}cm인 밑면 모서리와 길이가 ${data.lateralSide}cm인 옆모서리가 각각 □개입니다. 따라서 옆면은 ${data.totalEdgeLength}÷(${data.baseSide}+${data.lateralSide})=${data.sides}개이고 밑면은 ${data.sides}각형입니다. 각기둥의 두 밑면 모서리 길이의 합은 ${data.baseSide}×${data.sides}×2=${prismBaseEdgesTotal}cm입니다. 높이는 (${data.totalEdgeLength}-${prismBaseEdgesTotal})÷${data.sides}=${data.prismHeight}cm입니다.`, answerVisual);
       }
 
       const data = [

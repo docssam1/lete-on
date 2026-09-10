@@ -9,19 +9,22 @@ const sourceIds = [
   "6-1-u2-e3-example-3-1",
   "6-1-u2-e3-mission-1",
   "6-1-u2-e3-mission-5",
-  "6-1-u2-e3-mission-6"
+  "6-1-u2-e3-mission-6",
+  "6-1-u2-e3-mission-3"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e3-example-3-1", 24],
   ["6-1-u2-e3-mission-1", 1014],
   ["6-1-u2-e3-mission-5", 173],
-  ["6-1-u2-e3-mission-6", 4]
+  ["6-1-u2-e3-mission-6", 4],
+  ["6-1-u2-e3-mission-3", 6]
 ]);
 const evidenceKinds = [
   "pyramid-edge-from-counts",
   "prism-pyramid-edge-product",
   "pyramid-edge-marks",
-  "paper-solids-edge-difference"
+  "paper-solids-edge-difference",
+  "pyramid-side-face-to-prism-height"
 ];
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
@@ -44,6 +47,11 @@ const expectedPools = [
     { values: [5, 5, 3, 5, 3, 3, 3, 35, 32, 3], answer: 3 },
     { values: [6, 6, 4, 6, 4, 4, 4, 44, 40, 4], answer: 4 },
     { values: [7, 7, 5, 7, 5, 5, 5, 53, 48, 5], answer: 5 }
+  ],
+  [
+    { values: [6, 11, 136, 8, 96, 5], answer: 5 },
+    { values: [8, 14, 220, 10, 160, 6], answer: 6 },
+    { values: [9, 17, 312, 12, 216, 8], answer: 8 }
   ]
 ];
 
@@ -116,6 +124,16 @@ function independentAnswer(evidence) {
     check(prismEdges === 2 * (a + a2 + b) + 3 * b, "삼각기둥 모서리 합이 독립 계산과 다릅니다.");
     check(pyramidEdges === 4 * a + 4 * b, "사각뿔 모서리 합이 독립 계산과 다릅니다.");
     check(answer === Math.abs(prismEdges - pyramidEdges), "두 입체의 모서리 길이 차가 독립 계산과 다릅니다.");
+    return answer;
+  }
+  if (evidence.kind === "pyramid-side-face-to-prism-height") {
+    const [baseSide, lateralSide, totalEdgeLength, sides, prismBaseEdgesTotal, answer] = v;
+    const sideCandidates = Array.from({ length: 28 }, (_, index) => index + 3).filter(candidate => candidate * (baseSide + lateralSide) === totalEdgeLength);
+    check(sideCandidates.length === 1 && sideCandidates[0] === sides, "각뿔의 옆면 수가 하나로 정해지지 않습니다.");
+    check(prismBaseEdgesTotal === 2 * sides * baseSide, "각기둥의 두 밑면 모서리 길이 합이 독립 계산과 다릅니다.");
+    const heightCandidates = Array.from({ length: 100 }, (_, index) => index + 1).filter(height => prismBaseEdgesTotal + sides * height === totalEdgeLength);
+    check(heightCandidates.length === 1 && heightCandidates[0] === answer, "각기둥의 높이가 자연수 하나로 정해지지 않습니다.");
+    check(answer === lateralSide - baseSide, "각뿔과 각기둥의 같은 모서리 합 관계가 다릅니다.");
     return answer;
   }
   throw new Error(`알 수 없는 E3 검산 종류: ${evidence.kind}`);
@@ -207,23 +225,36 @@ function checkVariant(variant, generated, evidence) {
     check(answer.includes(`data-result-highlight="${result}"`), "사각뿔 점 개수 결과 강조값이 없습니다.");
     return;
   }
-  const [, , , , , , , prismEdges, pyramidEdges, result] = v;
-  check(prompt.includes('data-triangular-prism-edge-total="unknown"') && prompt.includes('data-square-pyramid-edge-total="unknown"'), "문제에 입체의 모서리 합이 노출되었습니다.");
-  check(answer.includes(`data-triangular-prism-edge-total="${prismEdges}"`) && answer.includes(`data-square-pyramid-edge-total="${pyramidEdges}"`), "답의 두 입체 모서리 합 구조 데이터가 pool과 다릅니다.");
-  check(trianglePointCount(prompt) === 3 && trianglePointCount(answer) === 3, "가 종이가 세 꼭짓점인 삼각형으로 그려지지 않았습니다.");
-  check(prompt.includes(`data-paper-triangle="${v.slice(0, 3).join(",")}"`) && answer.includes(`data-paper-triangle="${v.slice(0, 3).join(",")}"`), "가 종이의 두 변과 밑변 길이 자료가 문제·답 그림과 연결되지 않았습니다.");
-  for (const markup of [prompt, answer]) {
-    check(markup.includes('data-paper-triangle="') && markup.includes('data-paper-rectangle="') && markup.includes('data-paper-square="'), "세 종이의 구성 데이터가 없습니다.");
+  if (variant === 3) {
+    const [, , , , , , , prismEdges, pyramidEdges, result] = v;
+    check(prompt.includes('data-triangular-prism-edge-total="unknown"') && prompt.includes('data-square-pyramid-edge-total="unknown"'), "문제에 입체의 모서리 합이 노출되었습니다.");
+    check(answer.includes(`data-triangular-prism-edge-total="${prismEdges}"`) && answer.includes(`data-square-pyramid-edge-total="${pyramidEdges}"`), "답의 두 입체 모서리 합 구조 데이터가 pool과 다릅니다.");
+    check(trianglePointCount(prompt) === 3 && trianglePointCount(answer) === 3, "가 종이가 세 꼭짓점인 삼각형으로 그려지지 않았습니다.");
+    check(prompt.includes(`data-paper-triangle="${v.slice(0, 3).join(",")}"`) && answer.includes(`data-paper-triangle="${v.slice(0, 3).join(",")}"`), "가 종이의 두 변과 밑변 길이 자료가 문제·답 그림과 연결되지 않았습니다.");
+    for (const markup of [prompt, answer]) {
+      check(markup.includes('data-paper-triangle="') && markup.includes('data-paper-rectangle="') && markup.includes('data-paper-square="'), "세 종이의 구성 데이터가 없습니다.");
+    }
+    check(countClass(prompt, "source61-e3-solid") === 0 && countAttribute(prompt, "data-solid-edge", "triangular-prism") === 0 && countAttribute(prompt, "data-solid-edge", "square-pyramid") === 0, "문제에 완성 입체가 미리 표시되어 답이 샙니다.");
+    check(!new RegExp(`(?<!\\d)(?:35|32|44|40|53|48)(?!\\d)`).test(visibleText(prompt)), "문제 화면에 입체의 모서리 합 수치가 노출되었습니다.");
+    check(countClass(answer, "source61-e3-solid") === 2, "답에 삼각기둥과 사각뿔 두 그림이 없습니다.");
+    for (const markup of [answer]) {
+      check(countClass(markup, "source61-e3-solid") === 2, "삼각기둥과 사각뿔 두 그림이 모두 없습니다.");
+      check(countAttribute(markup, "data-solid-edge", "triangular-prism") === 9 && countAttribute(markup, "data-solid-edge", "square-pyramid") === 8, "두 입체의 실제 선분 수가 각각 9개와 8개가 아닙니다.");
+      check(countAttribute(markup, "data-solid-vertex", "triangular-prism") === 6 && countAttribute(markup, "data-solid-vertex", "square-pyramid") === 5, "두 입체의 실제 꼭짓점 수가 각각 6개와 5개가 아닙니다.");
+    }
+    check(answer.includes(`data-result-highlight="${result}"`) && answer.includes(`${prismEdges}-${pyramidEdges}=${result}cm`), "모서리 길이 차의 답 그림·식이 없습니다.");
+    return;
   }
-  check(countClass(prompt, "source61-e3-solid") === 0 && countAttribute(prompt, "data-solid-edge", "triangular-prism") === 0 && countAttribute(prompt, "data-solid-edge", "square-pyramid") === 0, "문제에 완성 입체가 미리 표시되어 답이 샙니다.");
-  check(!new RegExp(`(?<!\\d)(?:35|32|44|40|53|48)(?!\\d)`).test(visibleText(prompt)), "문제 화면에 입체의 모서리 합 수치가 노출되었습니다.");
-  check(countClass(answer, "source61-e3-solid") === 2, "답에 삼각기둥과 사각뿔 두 그림이 없습니다.");
-  for (const markup of [answer]) {
-    check(countClass(markup, "source61-e3-solid") === 2, "삼각기둥과 사각뿔 두 그림이 모두 없습니다.");
-    check(countAttribute(markup, "data-solid-edge", "triangular-prism") === 9 && countAttribute(markup, "data-solid-edge", "square-pyramid") === 8, "두 입체의 실제 선분 수가 각각 9개와 8개가 아닙니다.");
-    check(countAttribute(markup, "data-solid-vertex", "triangular-prism") === 6 && countAttribute(markup, "data-solid-vertex", "square-pyramid") === 5, "두 입체의 실제 꼭짓점 수가 각각 6개와 5개가 아닙니다.");
-  }
-  check(answer.includes(`data-result-highlight="${result}"`) && answer.includes(`${prismEdges}-${pyramidEdges}=${result}cm`), "모서리 길이 차의 답 그림·식이 없습니다.");
+  const [baseSide, lateralSide, totalEdgeLength, sides, prismBaseEdgesTotal, result] = v;
+  check(prompt.includes(`data-base-edge-cm="${baseSide}"`) && prompt.includes(`data-lateral-edge-cm="${lateralSide}"`) && prompt.includes(`data-total-edge-cm="${totalEdgeLength}"`), "문제의 옆면 길이 또는 모서리 합 자료가 pool과 다릅니다.");
+  check(prompt.includes('data-base-sides="unknown"') && prompt.includes('data-prism-height-cm="unknown"'), "문제에 밑면 변 수 또는 높이가 노출되었습니다.");
+  check(answer.includes(`data-base-sides="${sides}"`) && answer.includes(`data-prism-height-cm="${result}"`) && answer.includes(`data-side-face-count="${sides}"`), "답 그림의 밑면 변 수 또는 높이가 pool과 다릅니다.");
+  check(countAttribute(prompt, "data-side-face", "one") === 1 && countAttribute(answer, "data-side-face", "one") === 1, "문제와 답에 같은 삼각형 옆면 한 개가 없습니다.");
+  check(countAttribute(prompt, "data-prism-side-face", "one") === 0, "문제에 각기둥 옆면의 정답 그림이 노출되었습니다.");
+  check(countAttribute(answer, "data-prism-side-face", "one") === 1, "답에 각기둥 옆면 한 개가 없습니다.");
+  check(answer.includes(`data-side-face-width-cm="${baseSide}"`) && answer.includes(`data-side-face-height-cm="${result}"`), "답의 각기둥 옆면 가로·높이가 실제 길이 자료와 연결되지 않았습니다.");
+  check(!new RegExp(`(?<!\\d)${sides}(?!\\d)`).test(visibleText(prompt)) && !new RegExp(`(?<!\\d)${result}(?!\\d)`).test(visibleText(prompt).replace(`${baseSide}cm`, "").replace(`${lateralSide}cm`, "")), "문제에 옆면 수 또는 높이가 노출되었습니다.");
+  check(answer.includes(`data-result-highlight="${result}"`) && answer.includes(`${baseSide}×${sides}×2=${prismBaseEdgesTotal}cm`) && answer.includes(`=${result}cm`), "각기둥 높이의 답 그림·식이 없습니다.");
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E3 전용 생성기가 등록되지 않았습니다.");
@@ -265,4 +296,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 3 각기둥과 각뿔 감사 통과: 4유형 · 12개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·구조 서명·난이도 검사`);
+console.log(`6-1 2단원 개념탐구 3 각기둥과 각뿔 감사 통과: 5유형 · 15개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·구조 서명·난이도 검사`);

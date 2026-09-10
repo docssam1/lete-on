@@ -16,7 +16,8 @@ const sources = [
   { id: "6-1-u2-e3-example-3-1", search: "예제 3-1", kind: "pyramid-edge-from-counts" },
   { id: "6-1-u2-e3-mission-1", search: "Mission 1", kind: "prism-pyramid-edge-product" },
   { id: "6-1-u2-e3-mission-5", search: "Mission 5", kind: "pyramid-edge-marks" },
-  { id: "6-1-u2-e3-mission-6", search: "Mission 6", kind: "paper-solids-edge-difference" }
+  { id: "6-1-u2-e3-mission-6", search: "Mission 6", kind: "paper-solids-edge-difference" },
+  { id: "6-1-u2-e3-mission-3", search: "Mission 3", kind: "pyramid-side-face-to-prism-height" }
 ];
 const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
@@ -24,7 +25,8 @@ const expectedAnswers = {
   "6-1-u2-e3-example-3-1": ["20개", "24개", "28개"],
   "6-1-u2-e3-mission-1": ["864", "1014", "1176"],
   "6-1-u2-e3-mission-5": ["157개", "173개", "189개"],
-  "6-1-u2-e3-mission-6": ["3cm", "4cm", "5cm"]
+  "6-1-u2-e3-mission-6": ["3cm", "4cm", "5cm"],
+  "6-1-u2-e3-mission-3": ["5cm", "6cm", "8cm"]
 };
 const failures = [];
 let screenshots = 0;
@@ -105,13 +107,17 @@ async function inspect(page, source, difficulty, answerView, label) {
       return {
         exists: Boolean(svg), visible: Boolean(svg && readable(svg)), outside: Boolean(svg && (box.left < -2 || box.right > document.documentElement.clientWidth + 2)),
         drawingWidth: drawing.width, drawingHeight: drawing.height, structure: svg?.dataset.source61E3Structure || "", viewBox: svg?.getAttribute("viewBox") || "",
-        signature: [svg?.dataset.source61E3Structure || "", svg?.dataset.paperTriangle || "", svg?.dataset.paperRectangle || "", svg?.dataset.paperSquare || "", svg?.dataset.edgeLengthCm || "", svg?.dataset.markIntervalCm || ""].join("|"),
+        signature: [svg?.dataset.source61E3Structure || "", svg?.dataset.paperTriangle || "", svg?.dataset.paperRectangle || "", svg?.dataset.paperSquare || "", svg?.dataset.edgeLengthCm || "", svg?.dataset.markIntervalCm || "", svg?.dataset.baseEdgeCm || "", svg?.dataset.lateralEdgeCm || "", svg?.dataset.totalEdgeCm || ""].join("|"),
         paperTriangle: svg?.dataset.paperTriangle || "", paperTriangleValueCount: svg?.dataset.paperTriangle?.split(",").filter(Boolean).length || 0, paperTrianglePointCount: svg?.querySelector("polygon")?.getAttribute("points")?.trim().split(/\s+/).length || 0,
         pool: svg?.closest("[data-verified-pool-index]")?.dataset.verifiedPoolIndex || "",
         baseSides: svg?.dataset.baseSides || "", pyramidEdges: svg?.dataset.pyramidEdgeCount || "", innerDots: svg?.querySelectorAll(".source61-e3-mark.is-result").length || 0,
         answerVertices: svg?.querySelectorAll(".source61-e3-answer-vertex").length || 0, prismEdges: svg?.querySelectorAll('[data-solid-edge="triangular-prism"]').length || 0,
         pyramidEdgeLines: svg?.querySelectorAll('[data-solid-edge="square-pyramid"]').length || 0, prismVertices: svg?.querySelectorAll('[data-solid-vertex="triangular-prism"]').length || 0,
-        pyramidVertices: svg?.querySelectorAll('[data-solid-vertex="square-pyramid"]').length || 0
+        pyramidVertices: svg?.querySelectorAll('[data-solid-vertex="square-pyramid"]').length || 0,
+        prismHeight: svg?.dataset.prismHeightCm || "", sideFaceCount: svg?.dataset.sideFaceCount || "", sideFaceTriangles: svg?.querySelectorAll('[data-side-face="one"]').length || 0,
+        prismSideFaces: svg?.querySelectorAll('[data-prism-side-face="one"]').length || 0,
+        prismSideFaceWidth: svg?.querySelector('[data-prism-side-face="one"]')?.dataset.sideFaceWidthCm || "",
+        prismSideFaceHeight: svg?.querySelector('[data-prism-side-face="one"]')?.dataset.sideFaceHeightCm || ""
       };
     };
     return {
@@ -141,6 +147,11 @@ async function inspect(page, source, difficulty, answerView, label) {
     if (answerView && source.id === "6-1-u2-e3-mission-6" && (svg.prismEdges !== 9 || svg.prismVertices !== 6 || svg.pyramidEdgeLines !== 8 || svg.pyramidVertices !== 5)) fail(`${label}: Mission6 답의 모서리·꼭짓점 수가 다릅니다.`);
     if (answerView && source.id === "6-1-u2-e3-example-3-1" && (svg.baseSides !== String([10, 12, 14][Number(svg.pool)]) || svg.pyramidEdges !== String([20, 24, 28][Number(svg.pool)]))) fail(`${label}: Example3-1 답의 모서리 수가 pool과 다릅니다.`);
     if (answerView && source.id === "6-1-u2-e3-mission-1" && (svg.baseSides !== String([12, 13, 14][Number(svg.pool)]) || svg.pyramidEdges !== String([24, 26, 28][Number(svg.pool)]))) fail(`${label}: Mission1 답의 모서리 수가 pool과 다릅니다.`);
+    if (!answerView && source.id === "6-1-u2-e3-mission-3" && (svg.baseSides !== "unknown" || svg.prismHeight !== "unknown")) fail(`${label}: Mission3 문제에 밑면 변 수 또는 높이가 노출되었습니다.`);
+    if (answerView && source.id === "6-1-u2-e3-mission-3" && (svg.baseSides !== String([8, 10, 12][Number(svg.pool)]) || svg.prismHeight !== String([5, 6, 8][Number(svg.pool)]) || svg.sideFaceCount !== String([8, 10, 12][Number(svg.pool)]))) fail(`${label}: Mission3 답의 밑면 변 수·옆면 수·높이가 pool과 다릅니다.`);
+    if (!answerView && source.id === "6-1-u2-e3-mission-3" && svg.prismSideFaces !== 0) fail(`${label}: Mission3 문제에 각기둥 옆면의 정답 그림이 노출되었습니다.`);
+    if (answerView && source.id === "6-1-u2-e3-mission-3" && (svg.prismSideFaces !== 1 || svg.prismSideFaceWidth !== String([6, 8, 9][Number(svg.pool)]) || svg.prismSideFaceHeight !== String([5, 6, 8][Number(svg.pool)]))) fail(`${label}: Mission3 답의 각기둥 옆면 가로·높이가 pool과 다릅니다.`);
+    if (source.id === "6-1-u2-e3-mission-3" && svg.sideFaceTriangles !== 1) fail(`${label}: Mission3 문제·답에 원본 삼각형 옆면 한 개가 없습니다.`);
     if (source.id === "6-1-u2-e3-mission-6" && (svg.paperTrianglePointCount !== 3 || svg.paperTriangleValueCount !== 3)) fail(`${label}: Mission6 첫 삼각형의 점 또는 data-paper-triangle이 맞지 않습니다.`);
     if (source.id === "6-1-u2-e3-mission-6" && ((answerView && svg.viewBox !== "0 0 330 305") || (!answerView && svg.viewBox !== "0 0 330 112"))) fail(`${label}: Mission6 viewBox가 문제/답 기준과 다릅니다.`);
   }
@@ -148,7 +159,7 @@ async function inspect(page, source, difficulty, answerView, label) {
     if (state.svgs.map(svg => svg.pool).sort().join(",") !== "0,1,2") fail(`${label}: 답 그림 pool 0,1,2가 한 번씩 나오지 않습니다.`);
     const problemStructures = await page.evaluate(() => [...document.querySelectorAll("#problemView svg.source61-e3-diagram")].map(svg => svg.dataset.source61E3Structure || ""));
     if (problemStructures.join("|") !== state.svgs.map(svg => svg.structure).join("|")) fail(`${label}: 문제와 답의 SVG 구조 서명이 다릅니다.`);
-    const problemSignatures = await page.evaluate(() => [...document.querySelectorAll("#problemView svg.source61-e3-diagram")].map(svg => [svg.dataset.source61E3Structure || "", svg.dataset.paperTriangle || "", svg.dataset.paperRectangle || "", svg.dataset.paperSquare || "", svg.dataset.edgeLengthCm || "", svg.dataset.markIntervalCm || ""].join("|")));
+    const problemSignatures = await page.evaluate(() => [...document.querySelectorAll("#problemView svg.source61-e3-diagram")].map(svg => [svg.dataset.source61E3Structure || "", svg.dataset.paperTriangle || "", svg.dataset.paperRectangle || "", svg.dataset.paperSquare || "", svg.dataset.edgeLengthCm || "", svg.dataset.markIntervalCm || "", svg.dataset.baseEdgeCm || "", svg.dataset.lateralEdgeCm || "", svg.dataset.totalEdgeCm || ""].join("|")));
     if (problemSignatures.join("|") !== state.svgs.map(svg => svg.signature).join("|")) fail(`${label}: 문제와 답의 data object 서명이 다릅니다.`);
   }
   return state;
@@ -192,7 +203,7 @@ function generatorReady() {
   require("./generators.js");
   const api = global.window.HSE_GENERATORS;
   if (!api?.names?.includes("sourceGrade6PrismsPyramidsE3")) { fail("E3 생성기가 등록되지 않았습니다."); return false; }
-  for (let variant = 0; variant < 4; variant += 1) for (let pool = 0; pool < 3; pool += 1) {
+  for (let variant = 0; variant < sources.length; variant += 1) for (let pool = 0; pool < 3; pool += 1) {
     try {
       const result = api.generate({ generatorKey: "sourceGrade6PrismsPyramidsE3", variant, sourceItemId: sources[variant].id }, 0, 0, 9000 + pool, pool);
       if (result.generationMode !== "fixed-verified-pool" || result.verifiedVariantCount !== 3 || result.sourceItemId !== sources[variant].id) fail(`생성기 variant ${variant}/${pool} 계약이 맞지 않습니다.`);
@@ -213,11 +224,11 @@ function generatorReady() {
       await inspectType(browser, baseUrl, source, difficulty, { width: 390, height: 844 }, "mobile");
     }
   } finally { if (browser) await browser.close(); await new Promise(resolve => server.close(resolve)); }
-  if (screenshots !== 48) fail(`화면 캡처 ${screenshots}장, 48장이어야 합니다.`);
-  if (pdfs !== 8) fail(`A4 PDF ${pdfs}개, 8개이어야 합니다.`);
+  if (screenshots !== 60) fail(`화면 캡처 ${screenshots}장, 60장이어야 합니다.`);
+  if (pdfs !== 10) fail(`A4 PDF ${pdfs}개, 10개이어야 합니다.`);
   if (renderedPages < pdfs) fail(`A4 PDF ${pdfs}개의 전체 페이지 렌더가 부족합니다.`);
-  const summary = `${failures.length ? "실패" : "통과"}: E3 4유형×3난이도×PC/모바일, 3문항 고정 pool, 문제·답 그림 구조·누출·메타데이터·A4 전체 페이지 검사; 화면 ${screenshots}장, A4 ${pdfs}개, PNG ${renderedPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
+  const summary = `${failures.length ? "실패" : "통과"}: E3 5유형×3난이도×PC/모바일, 3문항 고정 pool, 문제·답 그림 구조·누출·메타데이터·A4 전체 페이지 검사; 화면 ${screenshots}장, A4 ${pdfs}개, PNG ${renderedPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 3 E3 브라우저 감사 통과: 4유형×3난이도 · 화면 48장 · A4 8개 전 페이지 ${renderedPages}쪽`);
+  console.log(`6-1 2단원 개념탐구 3 E3 브라우저 감사 통과: 5유형×3난이도 · 화면 60장 · A4 10개 전 페이지 ${renderedPages}쪽`);
 })().catch(error => { console.error(error.stack || error.message); process.exitCode = 1; });
