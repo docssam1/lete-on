@@ -28,9 +28,9 @@
   return result;
  }
  function stamp(node){const name=identity()?.name;if(!name)throw Error('승인 학생을 확인할 수 없습니다.');
-  node.querySelectorAll('.book-watermark').forEach(x=>x.remove());
+  node.querySelectorAll('.book-watermark,.exam-page > .watermark').forEach(x=>x.remove());
   node.querySelectorAll('.concept-page:not(.book-blank)').forEach(page=>{const mark=document.createElement('div');mark.className='book-watermark';mark.innerHTML=Array(3).fill('<span>'+esc('GFIELD · LETE-ON · '+name)+'</span>').join('');page.append(mark);});
-  node.querySelectorAll('.exam-page:not(.blank-page)').forEach(page=>page.dataset.watermark='GFIELD · LETE-ON · '+name);
+  node.querySelectorAll('.exam-page:not(.blank-page)').forEach(page=>{const mark=document.createElement('div');mark.className='watermark';mark.setAttribute('aria-hidden','true');for(let i=0;i<3;i++){const line=document.createElement('span');line.textContent='GFIELD · LETE-ON · '+name;mark.append(line);}page.append(mark);});
   node.querySelectorAll('.candidate-fields label:first-child span,.name-line span').forEach(x=>x.textContent=name);
  }
  root.addEventListener('hfchallengeaccesschange',()=>{epoch++;});

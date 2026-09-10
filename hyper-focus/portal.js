@@ -3,6 +3,7 @@
 
   const catalog = window.GFIELD_HF_PORTAL;
   const auth = window.GFieldHFPortalAuth;
+  const challengeAccess = window.HFChallengeAccess;
   const collectionUi = window.GFieldHFPortalCollection;
   const $ = selector => document.querySelector(selector);
   const $$ = selector => Array.from(document.querySelectorAll(selector));
@@ -48,8 +49,20 @@
     </article>`;
   }
 
+  function canAccessProduct(product) {
+    if (product.permissionMode === "challenge-granular") {
+      return challengeAccess?.hasAnyAccess?.() === true;
+    }
+    return auth.canAccess(session, product.permission);
+  }
+
+  async function refreshChallengeAccess() {
+    if (session?.role !== "student" || !challengeAccess?.refresh) return;
+    await challengeAccess.refresh();
+  }
+
   function bookCard(product) {
-    const allowed = auth.canAccess(session, product.permission);
+    const allowed = canAccessProduct(product);
     const title = esc(product.title).replace(/\n/g, "<br>");
     return `<button class="library-book accent-${esc(product.accent)}${allowed ? " unlocked" : " locked"}" type="button" data-product="${esc(product.key)}" aria-label="${esc(product.shortTitle)} ${allowed ? "열기" : "잠김"}">
       <span class="book-spine"><i>${esc(product.order)}</i><b>G-FIELD</b></span>
@@ -75,7 +88,7 @@
     $("#dateStamp").textContent = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
     $("#productShelf").innerHTML = catalog.products.map(bookCard).join("");
     $("#libraryNav").innerHTML = catalog.products.map(product => {
-      const open = auth.canAccess(session, product.permission);
+      const open = canAccessProduct(product);
       return `<button type="button" data-product="${esc(product.key)}"><span>${esc(product.order)}</span>${esc(product.shortTitle)}<i>${open ? "OPEN" : "LOCK"}</i></button>`;
     }).join("");
   }
@@ -225,7 +238,7 @@
     const product = catalog.products.find(item => item.key === key);
     if (!product) return;
     if (!session) { showModal($("#loginModal")); return; }
-    if (!auth.canAccess(session, product.permission)) {
+    if (!canAccessProduct(product)) {
       toast(`${product.shortTitle} 이용 권한이 없습니다. 상담을 통해 승인받아 주세요.`);
       return;
     }
@@ -258,12 +271,16 @@
     secureExamLoader.reset();
     session = result;
     if (continueToChallenge()) return;
+    await refreshChallengeAccess();
     closeModal($("#loginModal"));
     setMode();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function bindEvents() {
+    window.addEventListener("hfchallengeaccesschange", () => {
+      if (session) renderLibrary();
+    });
     $("#loginForm").addEventListener("submit", login);
     $$('[data-login-open]').forEach(button => button.addEventListener("click", () => showModal($("#loginModal"))));
     $$('[data-modal-close]').forEach(button => button.addEventListener("click", () => closeModal($("#loginModal"))));
@@ -296,6 +313,7 @@
     if (challengeEntry) $("#loginTitle").textContent = "챌린지 학습 로그인";
     session = await auth.ready();
     if (continueToChallenge()) return;
+    await refreshChallengeAccess();
     setMode();
     if (entryQuery.get("login") === "1" && !session) showModal($("#loginModal"));
   }

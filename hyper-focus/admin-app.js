@@ -102,6 +102,15 @@
     }).join("")}</div></td>`;
   }
 
+  function remoteApprovalCodeCell(student) {
+    const approvalCode = /^GF-\d{4}$/.test(String(student.approvalCode || "")) ? student.approvalCode : "";
+    const codeControl = approvalCode
+      ? `<button class="ghost code" type="button" data-action="copy-code" aria-label="${esc(student.name)} 학생 승인번호 ${esc(approvalCode)} 복사">${esc(approvalCode)}</button>`
+      : '<span class="code-unavailable">기존 번호 확인 불가</span>';
+    const resetLabel = approvalCode ? "로그인 재설정" : "새 번호 발급";
+    return `<td><div class="approval-code-actions">${codeControl}<button class="ghost code-reset" type="button" data-action="rotate">${resetLabel}</button></div></td>`;
+  }
+
   function applyMixedBundleStates() {
     document.querySelectorAll('[data-bundle-state="partial"]').forEach(input => {
       input.indeterminate = true;
@@ -149,7 +158,7 @@
       const permissions = Array.isArray(student.permissions) ? student.permissions : [];
       const online = student.type === "online";
       return `<tr data-index="${index}">
-        <td><button class="ghost" type="button" data-action="rotate">새 번호 발급</button></td>
+        ${remoteApprovalCodeCell(student)}
         <td>${esc(student.name)}</td>
         <td><span class="tag${online ? " online" : ""}">${online ? "온라인" : "재원"}</span> <span class="tag ${esc(student.status)}">${esc(student.status)}</span></td>
         ${permissionCell(permissions, "hyperfocus", student.status === "archived")}
@@ -407,38 +416,66 @@
     return true;
   }
 
-  function assertExactSetResponse(data, target, edit) {
-    if (data?.ok !== true || data.studentId !== target.id || data.permissionKey !== edit.key || data.enabled !== edit.enabled) {
-      throw new Error("저장 결과의 학생·권한 상태를 확인할 수 없습니다.");
+  const APPROVAL_FAILURE_MESSAGES = Object.freeze({
+    admin_access_required: "관리자 로그인이 만료됐습니다. 다시 로그인해 주세요.",
+    authentication_required: "관리자 로그인이 만료됐습니다. 다시 로그인해 주세요.",
+    invalid_detail_request: "저장할 승인 목록을 확인할 수 없습니다. 새로고침 후 다시 선택해 주세요.",
+    invalid_detail_permission: "현재 승인 목록과 서버 유형 목록이 맞지 않습니다. 새로고침 후 다시 선택해 주세요.",
+    detail_catalog_not_ready: "서버 유형 목록을 준비하지 못했습니다. 잠시 후 다시 저장해 주세요.",
+    detail_save_unavailable: "승인 결과를 확인하지 못해 모두 취소했습니다. 잠시 후 다시 저장해 주세요.",
+    student_not_found: "학생 정보를 찾지 못했습니다. 목록을 새로고침해 주세요.",
+    student_not_active: "정지·보관 학생에게는 새 승인을 저장할 수 없습니다."
+  });
+
+  async function approvalFailureMessage(error, data) {
+    let code = typeof data?.error === "string" ? data.error : "";
+    const context = error?.context;
+    const status = Number(context?.status || 0);
+    if (!code && context && typeof context.json === "function") {
+      try {
+        const response = typeof context.clone === "function" ? context.clone() : context;
+        const detail = await response.json();
+        if (typeof detail?.error === "string") code = detail.error;
+      } catch (_) {
+        // The mapped HTTP status below remains available when the body is unreadable.
+      }
     }
+    if (APPROVAL_FAILURE_MESSAGES[code]) return APPROVAL_FAILURE_MESSAGES[code];
+    if (status === 401 || status === 403) return APPROVAL_FAILURE_MESSAGES.admin_access_required;
+    if (status === 429) return "요청이 잠시 제한됐습니다. 잠시 후 저장 버튼을 다시 눌러 주세요.";
+    return "세부 승인 저장에 실패했습니다.";
+  }
+
+  function assertExactBatchResponse(data, target, scope, edits) {
+    if (
+      data?.ok !== true
+      || data.studentId !== target.id
+      || data.scope !== scope
+      || data.changedCount !== edits.length
+      || !Array.isArray(data.changes)
+      || data.changes.length !== edits.length
+      || data.changes.some((change, index) => (
+        change?.permissionKey !== edits[index].key || change?.enabled !== edits[index].enabled
+      ))
+    ) throw new Error("저장 결과의 학생·권한 상태를 확인할 수 없습니다.");
   }
 
   async function invokeApproval(name, body, requestEpoch) {
     const client = await auth.client();
     const { data, error } = await client.functions.invoke(name, { body });
     if (requestEpoch !== approval.epoch) throw new Error("로그인 상태가 변경되어 이전 응답을 반영하지 않습니다.");
-    if (error || data?.error) throw new Error(data?.error || "세부 승인 저장에 실패했습니다.");
+    if (error || data?.error) throw new Error(await approvalFailureMessage(error, data));
     return data || {};
   }
 
-  async function setChallengeApproval(target, edit, requestEpoch) {
-    const data = await invokeApproval("challenge-access", {
-      action: "set",
+  async function setApprovalBatch(target, scope, edits, requestEpoch) {
+    const data = await invokeApproval("admin-students", {
+      action: "set_detail_entitlements",
       studentId: target.id,
-      permissionKey: edit.key,
-      enabled: edit.enabled
+      scope,
+      changes: edits.map(edit => ({ permissionKey: edit.key, enabled: edit.enabled }))
     }, requestEpoch);
-    assertExactSetResponse(data, target, edit);
-  }
-
-  async function setHfApproval(target, edit, requestEpoch) {
-    const data = await invokeApproval("hyperfocus-type-access", {
-      action: "set",
-      studentId: target.id,
-      permissionKey: edit.key,
-      enabled: edit.enabled
-    }, requestEpoch);
-    assertExactSetResponse(data, target, edit);
+    assertExactBatchResponse(data, target, scope, edits);
   }
 
   function commitApprovalScope(scope) {
@@ -462,23 +499,19 @@
     const target = approval.student;
     const requestEpoch = approval.epoch;
     approval.busy = true;
-    setApprovalNotice(`${edits.length}개 승인 항목을 저장하고 있습니다.`);
+    setApprovalNotice(`${edits.length}개 승인 항목을 한 번에 저장하고 있습니다.`);
     syncApproval();
-    let done = 0;
     try {
+      await setApprovalBatch(target, scope, edits, requestEpoch);
       for (const edit of edits) {
-        if (scope === "challenge") await setChallengeApproval(target, edit, requestEpoch);
-        else await setHfApproval(target, edit, requestEpoch);
         setDesired(edit.key, edit.enabled);
         if (edit.enabled) approval.original.add(edit.key);
         else approval.original.delete(edit.key);
-        done += 1;
       }
-      setApprovalNotice(`${done}개 승인 항목을 저장했습니다.`);
+      setApprovalNotice(`${edits.length}개 승인 항목을 한 번에 저장했습니다.`);
     } catch (error) {
       if (requestEpoch !== approval.epoch || approval.student !== target) return;
-      const remaining = approvalChanges(scope).length;
-      setApprovalNotice(`${done}개 저장 · ${remaining}개 남음. ${error.message}`, "error");
+      setApprovalNotice(`저장되지 않았습니다. ${error.message}`, "error");
     } finally {
       if (requestEpoch === approval.epoch && approval.student === target) {
         commitApprovalScope(scope);
@@ -524,7 +557,17 @@
 
   function showOneTimeCode(name, code) {
     navigator.clipboard?.writeText(code).catch(() => {});
-    window.prompt(`${name} 학생의 새 승인번호입니다.\n이 창을 닫으면 다시 볼 수 없으며, 필요하면 재발급해야 합니다.`, code);
+    window.prompt(`${name} 학생의 승인번호입니다.\n4자리 승인번호는 관리자 목록에서 다시 확인하고 복사할 수 있습니다.`, code);
+  }
+
+  function copyRemoteCode(student) {
+    const code = /^GF-\d{4}$/.test(String(student.approvalCode || "")) ? student.approvalCode : "";
+    if (!code) return;
+    navigator.clipboard?.writeText(code).then(() => {
+      setStatus("📋 승인번호 복사됨");
+    }).catch(() => {
+      window.prompt(`${student.name} 학생의 현재 승인번호입니다.`, code);
+    });
   }
 
   async function addStudent() {
@@ -572,10 +615,18 @@
   async function handleRemoteAction(row, action, value) {
     const student = remoteStudents[Number(row.dataset.index)];
     if (!student) return;
+    if (action === "copy-code") {
+      copyRemoteCode(student);
+      return;
+    }
     setStatus("중앙 권한을 변경하는 중…");
     try {
       if (action === "rotate") {
-        if (!confirm(`${student.name} 학생의 기존 승인번호를 폐기하고 새 번호를 발급할까요?`)) return;
+        const hasCurrentCode = /^GF-\d{4}$/.test(String(student.approvalCode || ""));
+        const message = hasCurrentCode
+          ? `${student.name} 학생이 현재 승인번호로 다시 로그인할 수 있도록 로그인 정보를 재설정할까요?`
+          : `${student.name} 학생의 기존 승인번호를 폐기하고 새 번호를 발급할까요?`;
+        if (!confirm(message)) return;
         const result = await invokeAdmin({ action: "rotate_code", studentId: student.id });
         showOneTimeCode(student.name, result.oneTimeApprovalCode);
       } else if (action === "status") {
@@ -764,7 +815,7 @@
 
     if (remoteMode) {
       $("#legacySyncCard").hidden = true;
-      $("#adminNote").textContent = "승인번호 원문은 데이터베이스에도 저장하지 않습니다. 모의고사는 활용 8회·파이널 3회·최종 4회 상품 단위로 승인하며, 일부 회차만 연결된 상태는 노란색 개수로 표시됩니다. 학생 삭제 대신 정지·보관 상태를 사용합니다.";
+      $("#adminNote").textContent = "현재 사용하는 4자리 승인번호는 관리자 목록에서 확인하고 복사할 수 있습니다. 이전 장문 승인번호는 원문을 저장하지 않아 확인할 수 없으며 새 번호 발급이 필요합니다. 모의고사는 활용 8회·파이널 3회·최종 4회 상품 단위로 승인하며, 일부 회차만 연결된 상태는 노란색 개수로 표시됩니다. 학생 삭제 대신 정지·보관 상태를 사용합니다.";
       await loadRemote();
     } else {
       $("[data-save-key]").addEventListener("click", saveGithubKey);

@@ -23,6 +23,7 @@ jobs:
       - name: Generate and upload Numbers of Magic MP3s
         env:
           GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node number_magic/scripts/generate-nm-audio.js
 
       - name: Commit updated tts-map.js

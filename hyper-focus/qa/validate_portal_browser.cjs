@@ -30,6 +30,40 @@ async function installVipAdminFixture(page) {
   }));
 }
 
+async function installRemoteAdminFixture(page) {
+  await installOfflineConfig(page);
+  await page.route("**/hyper-focus/portal-auth.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: `window.__HF_ADMIN_CALLS=[];
+window.GFieldHFPortalAuth={
+  ready:async()=>({role:"admin",name:"DOCSSAM",permissions:["*"]}),
+  isSupabaseEnabled:()=>true,
+  client:async()=>({functions:{invoke:async(name,{body}={})=>{
+    window.__HF_ADMIN_CALLS.push({name,body});
+    if(body?.action==="list")return {data:{students:[{id:"11111111-1111-4111-8111-111111111111",name:"승인번호검수",type:"internal",status:"active",approvalCode:"GF-2468",permissions:["hyperfocus","challenge-bank-replace-count-constraints","challenge-bank-split-merge-chain"],mockBundles:{utilization:{state:"none",activeCount:0,expectedCount:8},final:{state:"none",activeCount:0,expectedCount:3},last:{state:"none",activeCount:0,expectedCount:4}}}]},error:null};
+    if(body?.action==="set_detail_entitlements")return {data:{ok:true,studentId:body.studentId,scope:body.scope,changedCount:body.changes.length,changes:body.changes},error:null};
+    return {data:{ok:true},error:null};
+  }}})
+};`
+  }));
+}
+
+async function installConceptVideoFixture(page) {
+  await installOfflineConfig(page);
+  await page.route("**/hyper-focus/challenge/access-service.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: `window.HFChallengeAccess={allow:key=>key==="challenge-concept-1",approvedStudentName:()=>"영상검수",isTeacherPreview:()=>false,refresh:async()=>({verified:true})};`
+  }));
+  await page.route("**/hyper-focus/challenge/document-access.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: "void 0;"
+  }));
+  await page.route("https://www.youtube-nocookie.com/embed/**", route => route.fulfill({
+    contentType: "text/html; charset=utf-8",
+    body: "<!doctype html><title>concept video fixture</title>"
+  }));
+}
+
 async function loginStudentFixture(page) {
   await page.locator("[data-login-open]").first().click();
   assert.equal(await page.locator("#loginCode").getAttribute("type"), "text");
@@ -60,6 +94,9 @@ async function noOverflow(page, label) {
 
     await loginStudentFixture(desktop);
     assert.equal(await desktop.locator("#productShelf .library-book").count(), 4);
+    assert.deepEqual(await desktop.locator("#productShelf .library-book").evaluateAll(rows => rows.map(row => row.dataset.product)), ["hyperfocus", "mock", "challenge", "vip"]);
+    assert.deepEqual(await desktop.locator("#productShelf .library-book strong").allInnerTexts(), ["Hyper Focus\n문항 진단", "프리미어\n모의고사", "2026년 9월\n챌린지 대비", "VIP\n라운지"]);
+    assert.equal(await desktop.evaluate(() => window.GFIELD_HF_PORTAL.products.find(product => product.key === "vip").href), "https://hs.gfieldacademy.net/");
     assert.equal(await desktop.locator("#productShelf .library-book.unlocked").count(), 1);
     assert.equal(await desktop.locator("#productShelf .library-book.locked").count(), 3);
     await desktop.locator('[data-product="mock"]').first().click();
@@ -105,6 +142,45 @@ async function noOverflow(page, label) {
     for (const heading of ["문항 진단", "추가 문제", "모의고사", "VIP 라운지", "문제 은행"]) assert.equal(await admin.getByRole("columnheader", { name: heading }).count(), 1);
     await admin.close();
 
+    const approvalAdmin = await browser.newPage({ viewport: { width: 1200, height: 800 }, deviceScaleFactor: 1 });
+    await installRemoteAdminFixture(approvalAdmin);
+    approvalAdmin.on("pageerror", error => errors.push(`approval admin desktop: ${error.message}`));
+    await approvalAdmin.goto(`${base}/hyper-focus/admin.html`, { waitUntil: "networkidle" });
+    assert.equal(await approvalAdmin.locator("#rows tr").count(), 1);
+    assert.equal(await approvalAdmin.locator('[data-action="copy-code"]').textContent(), "GF-2468");
+    assert.equal(await approvalAdmin.locator('[data-action="rotate"]').textContent(), "로그인 재설정");
+    await approvalAdmin.locator('[data-action="details"]').click();
+    await approvalAdmin.locator("#approvalCenter").waitFor({ state: "visible" });
+    await approvalAdmin.locator("#approvalChallengeSelectAll").click();
+    assert.equal((await approvalAdmin.locator("#approvalChallengeTabCount").textContent()).trim(), "(102)");
+    await approvalAdmin.locator("#approvalSave").click();
+    await approvalAdmin.waitForFunction(() => document.querySelector("#approvalStatus")?.textContent?.includes("102개 승인 항목을 한 번에 저장했습니다."));
+    const batchCalls = await approvalAdmin.evaluate(() => window.__HF_ADMIN_CALLS.filter(call => call.body?.action === "set_detail_entitlements"));
+    assert.equal(batchCalls.length, 1, "전체 유형은 Edge Function 한 번으로 저장해야 합니다.");
+    assert.equal(batchCalls[0].name, "admin-students");
+    assert.equal(batchCalls[0].body.scope, "challenge");
+    assert.equal(batchCalls[0].body.changes.length, 102);
+    assert.ok(batchCalls[0].body.changes.every(change => change.enabled === true));
+    await noOverflow(approvalAdmin, "desktop approval admin");
+    await approvalAdmin.screenshot({ path: "tmp/hf-admin-approval-code-desktop.png", fullPage: true });
+    await approvalAdmin.close();
+
+    const conceptVideo = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+    await installConceptVideoFixture(conceptVideo);
+    conceptVideo.on("pageerror", error => errors.push(`concept video desktop: ${error.message}`));
+    await conceptVideo.goto(`${base}/hyper-focus/challenge/concepts.html?round=1`, { waitUntil: "networkidle" });
+    assert.equal(await conceptVideo.locator("#conceptVideoPanel").isVisible(), true);
+    assert.match(await conceptVideo.locator("#conceptVideoFrame").getAttribute("src"), /youtube-nocookie\.com\/embed\/7KvLEzuKfhk/);
+    assert.equal(await conceptVideo.locator("#conceptVideoLink").getAttribute("href"), "https://youtu.be/7KvLEzuKfhk");
+    assert.equal(await conceptVideo.locator("#conceptVideoWatermark span").count(), 3);
+    assert.match(await conceptVideo.locator("#conceptViewerLayout").evaluate(node => getComputedStyle(node).gridTemplateColumns), /px/);
+    await noOverflow(conceptVideo, "desktop concept video");
+    await conceptVideo.screenshot({ path: "tmp/hf-concept-1-video-desktop.png", fullPage: true });
+    await conceptVideo.locator("#round").selectOption("2");
+    assert.equal(await conceptVideo.locator("#conceptVideoPanel").isHidden(), true);
+    assert.equal(await conceptVideo.locator("#conceptVideoFrame").getAttribute("src"), null);
+    await conceptVideo.close();
+
     const vipAdmin = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
     await installVipAdminFixture(vipAdmin);
     vipAdmin.on("pageerror", error => errors.push(`vip admin desktop: ${error.message}`));
@@ -137,10 +213,29 @@ async function noOverflow(page, label) {
     await vipAdminMobile.screenshot({ path: "tmp/hf-vip-admin-mobile.png", fullPage: true });
     await vipAdminMobile.close();
 
+    const approvalAdminMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+    await installRemoteAdminFixture(approvalAdminMobile);
+    approvalAdminMobile.on("pageerror", error => errors.push(`approval admin mobile: ${error.message}`));
+    await approvalAdminMobile.goto(`${base}/hyper-focus/admin.html`, { waitUntil: "networkidle" });
+    assert.equal(await approvalAdminMobile.locator('[data-action="copy-code"]').textContent(), "GF-2468");
+    await noOverflow(approvalAdminMobile, "mobile approval admin");
+    await approvalAdminMobile.screenshot({ path: "tmp/hf-admin-approval-code-mobile.png", fullPage: true });
+    await approvalAdminMobile.close();
+
+    const conceptVideoMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+    await installConceptVideoFixture(conceptVideoMobile);
+    conceptVideoMobile.on("pageerror", error => errors.push(`concept video mobile: ${error.message}`));
+    await conceptVideoMobile.goto(`${base}/hyper-focus/challenge/concepts.html?round=1`, { waitUntil: "networkidle" });
+    assert.equal(await conceptVideoMobile.locator("#conceptVideoPanel").isVisible(), true);
+    await noOverflow(conceptVideoMobile, "mobile concept video");
+    await conceptVideoMobile.screenshot({ path: "tmp/hf-concept-1-video-mobile.png", fullPage: true });
+    await conceptVideoMobile.close();
+
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({
       status: 200,
       publicPrograms: 4,
+      libraryPrograms: ["hyperfocus", "mock", "challenge", "vip"],
       fixtureUnlocked: 1,
       fixtureLocked: 3,
       diagnosisAutoLogin: true,
@@ -148,6 +243,8 @@ async function noOverflow(page, label) {
       adminDirectAccessBlocked: true,
       adminCredentialLogin: adminCode ? true : "not_requested",
       adminProductPermissions: 5,
+      adminCurrentApprovalCode: true,
+      conceptOneVideoViewer: true,
       vipAdminDesktop: true,
       vipAdminMobile: true,
       desktopOverflow: 0,

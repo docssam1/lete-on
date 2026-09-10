@@ -662,7 +662,7 @@ vm.createContext(portalContext);
 vm.runInContext(portalDataSource, portalContext);
 const portalProducts = portalContext.window.GFIELD_HF_PORTAL.products;
 assert(portalProducts.length === 4, "포털 큰 책 배너 4개 계약 불일치");
-assert(portalProducts.map((product) => product.key).join(",") === "hyperfocus,mock,vip,problem-bank", "포털 상품 순서·키 불일치");
+assert(portalProducts.map((product) => product.key).join(",") === "hyperfocus,mock,challenge,vip", "포털 상품 순서·키 불일치");
 assert(portalProducts.every((product) => product.permission && product.title && product.description), "포털 상품 권한·표시 정보 누락");
 const authSource = fs.readFileSync(path.join(root, "hyper-focus/portal-auth.js"), "utf8");
 assert(authSource.includes("gfield_hf_portal_session_v1") && authSource.includes("gfield_hf_name") && authSource.includes("gfield_hf_code"), "포털·진단 공유 세션 계약 누락");
@@ -672,6 +672,9 @@ assert(!/01[016789]\d{7,8}/.test(authSource), "관리자 승인번호 또는 전
 const adminSource = fs.readFileSync(path.join(root, "hyper-focus/admin.html"), "utf8");
 const adminAppSource = fs.readFileSync(path.join(root, "hyper-focus/admin-app.js"), "utf8");
 const adminContractSource = `${adminSource}\n${adminAppSource}`;
+const adminStudentsFunctionSource = fs.readFileSync(path.join(root, "hyper-focus/supabase/functions/admin-students/index.ts"), "utf8");
+assert(adminStudentsFunctionSource.includes("id,login_handle,display_name") && adminStudentsFunctionSource.includes("approvalCode: currentShortApprovalCode(row.login_handle)"), "관리자 승인번호 목록 응답 계약 누락");
+assert(adminContractSource.includes('data-action="copy-code"') && adminContractSource.includes("student.approvalCode"), "관리자 현재 승인번호 표시·복사 계약 누락");
 ["mock", "vip", "problem-bank"].forEach((permission) => assert(new RegExp(`[\"']${permission}[\"']`).test(adminContractSource), `관리자 상품 권한 계약 누락: ${permission}`));
 assert(adminContractSource.includes("portal-auth.js"), "관리자 상품 권한 계약 누락: portal-auth.js");
 assert(/sessionStorage\.getItem\(["']gfield_hf_gh_token["']\)/.test(adminContractSource), "관리자 GitHub 토큰 세션 저장 계약 누락");
