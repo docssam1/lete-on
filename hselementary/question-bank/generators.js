@@ -24386,6 +24386,52 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Example3({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-example-3";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-3 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { firstPosition: 115, secondPosition: 127 },
+        { firstPosition: 74, secondPosition: 86 },
+        { firstPosition: 168, secondPosition: 182 }
+      ][poolIndex];
+      const triangular = value => value * (value + 1) / 2;
+      const termAt = position => {
+        let denominator = 1;
+        while (triangular(denominator) < position) denominator += 1;
+        return { numerator: position - triangular(denominator - 1), denominator };
+      };
+      const first = termAt(data.firstPosition);
+      const second = termAt(data.secondPosition);
+      const firstValue = rationalValue(first.numerator, first.denominator);
+      const secondValue = rationalValue(second.numerator, second.denominator);
+      const answerValue = rationalOperation(firstValue, secondValue, "÷");
+      const firstPrevious = triangular(first.denominator - 1);
+      const secondPrevious = triangular(second.denominator - 1);
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const termMarkup = ({ numerator, denominator }) => numerator === denominator ? "1" : symbolicFractionMarkup(numerator, denominator);
+      const reducedTermMarkup = term => {
+        const reduced = rationalValue(term.numerator, term.denominator);
+        const raw = termMarkup(term);
+        return reduced.numerator === term.numerator && reduced.denominator === term.denominator ? raw : `${raw}=${fractionMarkup(reduced.numerator, reduced.denominator)}`;
+      };
+      const shownTerms = [[1, 1], [1, 2], [2, 2], [1, 3], [2, 3], [3, 3], [1, 4], [2, 4], [3, 4], [4, 4]];
+      const sequenceMarkup = shownTerms.map(([numerator, denominator], index) => `<span class="source62-sequence-term">${termMarkup({ numerator, denominator })}${index < shownTerms.length - 1 ? '<span class="source62-sequence-comma">,</span>' : ""}</span>`).join("");
+      const sequenceBoard = `<div class="source62-sequence-board" data-source62-e1-example3-structure="growing-denominator-groups" data-source62-e1-example3-sequence="${shownTerms.map(term => term.join("/")).join(":")}"><strong>분수의 규칙</strong><div class="source62-sequence-list">${sequenceMarkup}<span class="source62-sequence-more">, …</span></div></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-sequence-solution" data-source62-e1-example3-structure="growing-denominator-groups" data-source62-e1-example3-sequence="${shownTerms.map(term => term.join("/")).join(":")}"><strong>묶음에서 두 분수 찾기</strong>${row(`${data.firstPosition}번째`, `${firstPrevious}개 다음의 ${first.numerator}번째 → ${reducedTermMarkup(first)}`)}${row(`${data.secondPosition}번째`, `${secondPrevious}개 다음의 ${second.numerator}번째 → ${reducedTermMarkup(second)}`)}${row("나눈 몫", `${fractionMarkup(firstValue.numerator, firstValue.denominator)}÷${fractionMarkup(secondValue.numerator, secondValue.denominator)}=${fractionMarkup(answerValue.numerator, answerValue.denominator)}`)}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">분모가 1, 2, 3, …인 묶음마다 항이 몇 개씩 있는지 차례로 더해 보세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 위치가 어느 분모의 묶음에 있는지 각각 찾은 뒤 몫을 가장 간단한 분수로 나타내세요.</p>' : "";
+      const values = [data.firstPosition, data.secondPosition, first.numerator, first.denominator, second.numerator, second.denominator, firstPrevious, secondPrevious, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e1-example3-kind="growing-denominator-sequence" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음과 같은 규칙으로 분수가 놓여 있습니다. ${data.firstPosition}번째 분수를 ${data.secondPosition}번째 분수로 나눈 몫을 구하세요.${sequenceBoard}${support}${challenge}${evidence}`, fraction(answerValue.numerator, answerValue.denominator), `분모가 ${first.denominator - 1}인 묶음까지 ${firstPrevious}개이므로 ${data.firstPosition}번째 분수는 ${reducedTermMarkup(first)}입니다. 분모가 ${second.denominator - 1}인 묶음까지 ${secondPrevious}개이므로 ${data.secondPosition}번째 분수는 ${reducedTermMarkup(second)}입니다. 따라서 몫은 ${fractionMarkup(firstValue.numerator, firstValue.denominator)}÷${fractionMarkup(secondValue.numerator, secondValue.denominator)}=${fractionMarkup(answerValue.numerator, answerValue.denominator)}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-example3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${sequenceBoard}${answerBoard}${evidence}<div class="solution-answer-caption">묶음의 끝 번호와 실제 나열을 함께 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26294,6 +26340,7 @@
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
+    [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
