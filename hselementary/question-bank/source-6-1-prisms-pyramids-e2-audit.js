@@ -14,7 +14,8 @@ const sourceIds = [
   "6-1-u2-e2-mission-5",
   "6-1-u2-e2-mission-6",
   "6-1-u2-e2-mission-1",
-  "6-1-u2-e2-example-2-4"
+  "6-1-u2-e2-example-2-4",
+  "6-1-u2-e2-example-2-3"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e2-example-2-2", 74],
@@ -22,7 +23,8 @@ const sourceAnswers = new Map([
   ["6-1-u2-e2-mission-5", 92],
   ["6-1-u2-e2-mission-6", 77],
   ["6-1-u2-e2-mission-1", 60],
-  ["6-1-u2-e2-example-2-4", 848]
+  ["6-1-u2-e2-example-2-4", 848],
+  ["6-1-u2-e2-example-2-3", 6]
 ]);
 const evidenceKinds = [
   "cuboid-all-corners-cut",
@@ -30,7 +32,8 @@ const evidenceKinds = [
   "prism-all-vertices-truncated",
   "pentagonal-prism-shortest-net-area",
   "pentagonal-prism-45-degree-spiral-height",
-  "three-triangular-prisms-trapezoidal-prism-surface-area"
+  "three-triangular-prisms-trapezoidal-prism-surface-area",
+  "triangular-prism-three-face-shortest-segment"
 ];
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
@@ -63,6 +66,11 @@ const expectedPools = [
     { values: [10, 8, 10, 144, 12, 56, 848], answer: 848 },
     { values: [13, 12, 9, 180, 10, 56, 864], answer: 864 },
     { values: [17, 15, 8, 360, 16, 82, 1376], answer: 1376 }
+  ],
+  [
+    { values: [9, 18, 3, 2, 6], answer: 6 },
+    { values: [10, 21, 3, 2, 7], answer: 7 },
+    { values: [11, 24, 3, 2, 8], answer: 8 }
   ]
 ];
 
@@ -162,6 +170,18 @@ function independentAnswer(evidence) {
     check(basePerimeter === 3 * triangleBase + 2 * slant, "세 삼각형이 만든 사다리꼴의 바깥 둘레가 다릅니다.");
     check(surfaceArea === 2 * baseArea + basePerimeter * prismLength, "두 밑면과 옆면으로 계산한 겉넓이가 다릅니다.");
     return surfaceArea;
+  }
+  if (evidence.kind === "triangular-prism-three-face-shortest-segment") {
+    const [side, prismHeight, faceCount, crossingCount, targetLength] = values;
+    check([[9, 18], [10, 21], [11, 24]].some(pool => pool.join(",") === [side, prismHeight].join(",")), "삼각기둥의 밑면 한 변과 높이가 고정 pool과 다릅니다.");
+    check(faceCount === 3 && crossingCount === 2, "지나는 옆면 3개와 경계점 2개의 구조가 다릅니다.");
+    check(prismHeight % faceCount === 0, "기둥 높이가 같은 세 부분으로 나누어지지 않습니다.");
+    check(targetLength === prismHeight / faceCount, "선분 ㅇㅂ의 길이가 높이의 3분의 1과 다릅니다.");
+    const unfoldedWidth = side * faceCount;
+    const fullRouteSquared = unfoldedWidth ** 2 + prismHeight ** 2;
+    const oneFaceRouteSquared = side ** 2 + targetLength ** 2;
+    check(fullRouteSquared === faceCount ** 2 * oneFaceRouteSquared, "전개도의 곧은 선이 같은 옆면 세 장에서 같은 비율로 나뉘지 않습니다.");
+    return targetLength;
   }
   throw new Error(`알 수 없는 E2 검산 종류: ${evidence.kind}`);
 }
@@ -293,24 +313,44 @@ function checkVariant(variant, generated, evidence) {
     return;
   }
 
-  const [slant, altitude, prismLength, baseArea, triangleBase, basePerimeter, surfaceArea] = values;
-  const promptText = visibleText(prompt);
-  check(prompt.includes("같은 삼각기둥 세 개") && prompt.includes("사다리꼴") && prompt.includes("사각기둥"), "원문의 세 삼각기둥 결합과 사각기둥 물음이 없습니다.");
-  check(!new RegExp(`(^|\\D)${surfaceArea}(?=\\D|$)`).test(promptText), "문제에 겉넓이 답이 노출되었습니다.");
-  check(!new RegExp(`(^|\\D)${basePerimeter}(?=\\D|$)`).test(promptText), "문제에 사다리꼴 둘레 답이 노출되었습니다.");
-  for (const markup of [prompt, answer]) {
-    check(markup.includes('data-triangle-count="3"') && markup.includes('data-shared-face-count="2"') && markup.includes('data-base-sides="4"'), "삼각기둥 3개·붙인 면 2개·사각형 밑면 자료가 다릅니다.");
-    check(markup.includes(`data-slant="${slant}"`) && markup.includes(`data-altitude="${altitude}"`) && markup.includes(`data-prism-length="${prismLength}"`), "그림의 길이 자료가 고정 pool과 다릅니다.");
-    check(markup.includes(`data-base-area="${baseArea}"`) && markup.includes(`data-triangle-base="${triangleBase}"`) && markup.includes(`data-base-perimeter="${basePerimeter}"`) && markup.includes(`data-surface-area="${surfaceArea}"`), "밑면·둘레·겉넓이 자료가 독립 계산과 다릅니다.");
-    check(countClass(markup, "source61-e2-combined-triangle") === 3, "합친 사다리꼴의 삼각형 조각이 3개가 아닙니다.");
-    check(countClass(markup, "source61-e2-combined-join") === 5, "붙인 선의 앞·뒤·기둥 방향 표시가 5개가 아닙니다.");
-    check(countClass(markup, "source61-e2-combined-right-angle") === 1, "8cm 높이의 직각 표시가 없습니다.");
-    check(allAttrs(markup, "data-prism-dimension").length === 1 && markup.includes(`data-prism-dimension="${prismLength}"`), "기둥 높이가 두 밑면을 잇는 방향의 치수선으로 표시되지 않았습니다.");
-    check(countClass(markup, "source61-e2-combined-prism-dimension-label") === 1 && markup.includes(`기둥 높이 ${prismLength}cm`), "기둥 높이 이름과 값이 그림에 분명히 표시되지 않았습니다.");
+  if (variant === 5) {
+    const [slant, altitude, prismLength, baseArea, triangleBase, basePerimeter, surfaceArea] = values;
+    const promptText = visibleText(prompt);
+    check(prompt.includes("같은 삼각기둥 세 개") && prompt.includes("사다리꼴") && prompt.includes("사각기둥"), "원문의 세 삼각기둥 결합과 사각기둥 물음이 없습니다.");
+    check(!new RegExp(`(^|\\D)${surfaceArea}(?=\\D|$)`).test(promptText), "문제에 겉넓이 답이 노출되었습니다.");
+    check(!new RegExp(`(^|\\D)${basePerimeter}(?=\\D|$)`).test(promptText), "문제에 사다리꼴 둘레 답이 노출되었습니다.");
+    for (const markup of [prompt, answer]) {
+      check(markup.includes('data-triangle-count="3"') && markup.includes('data-shared-face-count="2"') && markup.includes('data-base-sides="4"'), "삼각기둥 3개·붙인 면 2개·사각형 밑면 자료가 다릅니다.");
+      check(markup.includes(`data-slant="${slant}"`) && markup.includes(`data-altitude="${altitude}"`) && markup.includes(`data-prism-length="${prismLength}"`), "그림의 길이 자료가 고정 pool과 다릅니다.");
+      check(markup.includes(`data-base-area="${baseArea}"`) && markup.includes(`data-triangle-base="${triangleBase}"`) && markup.includes(`data-base-perimeter="${basePerimeter}"`) && markup.includes(`data-surface-area="${surfaceArea}"`), "밑면·둘레·겉넓이 자료가 독립 계산과 다릅니다.");
+      check(countClass(markup, "source61-e2-combined-triangle") === 3, "합친 사다리꼴의 삼각형 조각이 3개가 아닙니다.");
+      check(countClass(markup, "source61-e2-combined-join") === 5, "붙인 선의 앞·뒤·기둥 방향 표시가 5개가 아닙니다.");
+      check(countClass(markup, "source61-e2-combined-right-angle") === 1, "8cm 높이의 직각 표시가 없습니다.");
+      check(allAttrs(markup, "data-prism-dimension").length === 1 && markup.includes(`data-prism-dimension="${prismLength}"`), "기둥 높이가 두 밑면을 잇는 방향의 치수선으로 표시되지 않았습니다.");
+      check(countClass(markup, "source61-e2-combined-prism-dimension-label") === 1 && markup.includes(`기둥 높이 ${prismLength}cm`), "기둥 높이 이름과 값이 그림에 분명히 표시되지 않았습니다.");
+    }
+    check(countClass(prompt, "source61-e2-combined-exterior") === 0, "문제에 답인 바깥 둘레 강조가 노출되었습니다.");
+    check(countClass(answer, "source61-e2-combined-exterior") === 1 && answer.includes(`data-exterior-perimeter="${basePerimeter}"`), "답 그림에 사다리꼴 바깥 둘레가 강조되지 않았습니다.");
+    check(answer.includes(`data-result-highlight="${surfaceArea}"`), "답에서 겉넓이가 강조되지 않았습니다.");
+    return;
   }
-  check(countClass(prompt, "source61-e2-combined-exterior") === 0, "문제에 답인 바깥 둘레 강조가 노출되었습니다.");
-  check(countClass(answer, "source61-e2-combined-exterior") === 1 && answer.includes(`data-exterior-perimeter="${basePerimeter}"`), "답 그림에 사다리꼴 바깥 둘레가 강조되지 않았습니다.");
-  check(answer.includes(`data-result-highlight="${surfaceArea}"`), "답에서 겉넓이가 강조되지 않았습니다.");
+
+  const [side, prismHeight, faceCount, crossingCount, targetLength] = values;
+  const promptText = visibleText(prompt);
+  check(prompt.includes("삼각기둥") && prompt.includes("꼭짓점 ㄱ") && prompt.includes("점 ㅅ") && prompt.includes("점 ㅇ") && prompt.includes("꼭짓점 ㄹ") && prompt.includes("선분 ㅇㅂ"), "원문의 삼각기둥·지나는 점·구할 선분 조건이 없습니다.");
+  check(!new RegExp(`(^|\\D)${targetLength}(?=\\D|$)`).test(promptText), "문제에 선분 ㅇㅂ의 답이 노출되었습니다.");
+  for (const markup of [prompt, answer]) {
+    check(markup.includes(`data-triangle-side="${side}"`) && markup.includes(`data-prism-height="${prismHeight}"`), "밑면 한 변과 기둥 높이 semantic data가 고정 pool과 다릅니다.");
+    check(markup.includes(`data-lateral-face-count="${faceCount}"`) && markup.includes('data-route-segment-count="3"') && markup.includes(`data-crossing-count="${crossingCount}"`), "옆면·이동 선분·경계점 수가 다릅니다.");
+    check(markup.includes('data-target-name="ㅇㅂ"'), "구할 선분 이름이 ㅇㅂ으로 고정되지 않았습니다.");
+    check(countClass(markup, "source61-e2-tri-shortest-solid-route") === 3, "입체 그림의 경로가 세 선분이 아닙니다.");
+    check(countClass(markup, "source61-e2-tri-shortest-solid-route is-behind") === 1, "뒤쪽으로 숨는 셋째 경로가 점선 한 개가 아닙니다.");
+    check(countClass(markup, "source61-e2-tri-shortest-point") >= 8, "삼각기둥의 꼭짓점과 경계점 표시가 부족합니다.");
+    check(allAttrs(markup, "data-prism-height-dimension").length === 1 && markup.includes(`data-prism-height-dimension="${prismHeight}"`), "기둥 높이 치수선이 정확히 한 개가 아닙니다.");
+  }
+  check(countClass(prompt, "source61-e2-tri-shortest-net-face") === 0 && countClass(prompt, "source61-e2-tri-shortest-net-route") === 0, "문제에 펼친 답 그림이 노출되었습니다.");
+  check(countClass(answer, "source61-e2-tri-shortest-net-face") === 3 && countClass(answer, "source61-e2-tri-shortest-net-route") === 1 && countClass(answer, "source61-e2-tri-shortest-net-target") === 1, "답 그림에 옆면 세 장·곧은 선·선분 ㅇㅂ이 없습니다.");
+  check(answer.includes(`data-target-length="${targetLength}"`) && answer.includes(`data-result-highlight="${targetLength}"`), "답에서 선분 ㅇㅂ의 길이가 강조되지 않았습니다.");
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E2 전용 생성기가 등록되지 않았습니다.");
@@ -323,7 +363,8 @@ const ledgerContracts = [
   { id: "6-1-u2-e2-mission-5", page: 10, words: ["Mission 5", "오각기둥", "삼등분", "모든 꼭짓점"] },
   { id: "6-1-u2-e2-mission-6", page: 10, words: ["Mission 6", "정오각형", "7cm", "11cm", "삼각형"] },
   { id: "6-1-u2-e2-mission-1", page: 10, words: ["Mission 1", "오각기둥", "10cm", "45°"] },
-  { id: "6-1-u2-e2-example-4", page: 9, words: ["예제 2-4", "삼각기둥", "3개", "144cm²", "겉넓이"] }
+  { id: "6-1-u2-e2-example-4", page: 9, words: ["예제 2-4", "삼각기둥", "3개", "144cm²", "겉넓이"] },
+  { id: "6-1-u2-e2-example-3", page: 9, words: ["예제 2-3", "삼각기둥", "점 ㅅ", "점 ㅇ", "선분 ㅇㅂ"] }
 ];
 for (const expected of ledgerContracts) {
   context = `${expected.id} / 원본 장부`;
@@ -373,4 +414,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 6유형 · 18개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);
+console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 7유형 · 21개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);

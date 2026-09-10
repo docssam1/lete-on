@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 231
+    "unlocked": 232
   },
   "items": [
     {
@@ -976,20 +976,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-1-u2-e2-example-2-3",
       "sourceSection": "example",
       "sourceItemLabel": "예제 2-3",
-      "typeLabel": "삼각기둥을 펼쳐 가장 짧은 선의 길이 구하기",
+      "typeLabel": "삼각기둥을 펼쳐 가장 짧은 선에서 한 부분의 길이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6PrismsPyramidsE2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 6
     },
     {
       "semester": "6-1",

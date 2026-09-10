@@ -18,7 +18,8 @@ const sourceIds = [
   "6-1-u2-e2-mission-5",
   "6-1-u2-e2-mission-6",
   "6-1-u2-e2-mission-1",
-  "6-1-u2-e2-example-2-4"
+  "6-1-u2-e2-example-2-4",
+  "6-1-u2-e2-example-2-3"
 ];
 const sources = [
   { id: sourceIds[0], search: "예제 2-2", kind: "cuboid-all-corners-cut" },
@@ -26,7 +27,8 @@ const sources = [
   { id: sourceIds[2], search: "Mission 5", kind: "prism-all-vertices-truncated" },
   { id: sourceIds[3], search: "Mission 6", kind: "pentagonal-prism-shortest-net-area" },
   { id: sourceIds[4], search: "Mission 1", kind: "pentagonal-prism-45-degree-spiral-height" },
-  { id: sourceIds[5], search: "예제 2-4", kind: "three-triangular-prisms-trapezoidal-prism-surface-area" }
+  { id: sourceIds[5], search: "예제 2-4", kind: "three-triangular-prisms-trapezoidal-prism-surface-area" },
+  { id: sourceIds[6], search: "예제 2-3", kind: "triangular-prism-three-face-shortest-segment" }
 ];
 const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
@@ -238,6 +240,20 @@ async function inspectView(page, selector, source, difficulty, answerView, label
         combinedPrismDimensionValue: svg?.querySelector(".source61-e2-combined-prism-dimension")?.dataset.prismDimension || "",
         combinedPrismDimensionLabel: svg?.querySelector(".source61-e2-combined-prism-dimension-label")?.textContent || "",
         combinedExterior: svg?.querySelectorAll(".source61-e2-combined-exterior").length || 0,
+        triangularRoutes: svg?.querySelectorAll(".source61-e2-tri-shortest-solid-route").length || 0,
+        triangularHiddenRoutes: svg?.querySelectorAll(".source61-e2-tri-shortest-solid-route.is-behind").length || 0,
+        triangularHiddenRoutesVisible: [...(svg?.querySelectorAll(".source61-e2-tri-shortest-solid-route.is-behind") || [])].filter(line => getComputedStyle(line).display !== "none" && getComputedStyle(line).visibility !== "hidden" && Number(getComputedStyle(line).strokeWidth.replace("px", "")) > 0).length,
+        triangularPoints: svg?.querySelectorAll(".source61-e2-tri-shortest-point").length || 0,
+        triangularHeightDimensions: svg?.querySelectorAll("[data-prism-height-dimension]").length || 0,
+        triangularHeightDimensionValue: svg?.querySelector("[data-prism-height-dimension]")?.dataset.prismHeightDimension || "",
+        triangularNetFaces: svg?.querySelectorAll(".source61-e2-tri-shortest-net-face").length || 0,
+        triangularNetRoute: svg?.querySelectorAll(".source61-e2-tri-shortest-net-route").length || 0,
+        triangularNetTarget: svg?.querySelectorAll(".source61-e2-tri-shortest-net-target").length || 0,
+        dataTriangleSide: svg?.dataset.triangleSide || "",
+        dataLateralFaces: svg?.dataset.lateralFaceCount || "",
+        dataCrossings: svg?.dataset.crossingCount || "",
+        dataTargetName: svg?.dataset.targetName || "",
+        dataTargetLength: svg?.dataset.targetLength || "",
         dataBaseSides: svg?.dataset.baseSides || "",
         dataTriangleCount: svg?.dataset.triangleCount || "",
         dataSharedFaces: svg?.dataset.sharedFaceCount || "",
@@ -369,6 +385,15 @@ function checkGeometryContracts(state, source, label, answerView) {
       if (basePerimeter !== 3 * triangleBase + 2 * slant || surfaceArea !== 2 * baseArea + basePerimeter * prismLength) fail(`${label}: 사다리꼴 둘레 또는 사각기둥 겉넓이 계산이 다릅니다.`);
       if (!answerView && svg.combinedExterior !== 0) fail(`${label}: 문제에 답인 바깥 둘레 강조가 노출되었습니다.`);
       if (answerView && (svg.combinedExterior !== 1 || !svg.dataResultHighlight)) fail(`${label}: 답에 사다리꼴 바깥 둘레와 겉넓이 강조가 없습니다.`);
+    } else if (source.kind === "triangular-prism-three-face-shortest-segment") {
+      const side = Number(svg.dataTriangleSide), prismHeight = Number(svg.dataPrismHeight);
+      if (![[9, 18], [10, 21], [11, 24]].some(pool => pool.join(",") === [side, prismHeight].join(","))) fail(`${label}: 삼각기둥 길이가 고정 pool과 다릅니다.`);
+      if (Number(svg.dataLateralFaces) !== 3 || Number(svg.dataRouteSegments) !== 3 || Number(svg.dataCrossings) !== 2) fail(`${label}: 옆면 3개·이동 선분 3개·경계점 2개 구조가 다릅니다.`);
+      if (svg.dataTargetName !== "ㅇㅂ" || prismHeight % 3 !== 0) fail(`${label}: 구할 선분 이름 또는 세 부분으로 나뉘는 높이가 다릅니다.`);
+      if (svg.triangularRoutes !== 3 || svg.triangularHiddenRoutes !== 1 || svg.triangularHiddenRoutesVisible !== 1 || svg.triangularPoints < 8) fail(`${label}: 입체 그림의 세 경로·실제로 보이는 점선 경로·점 표시가 다릅니다.`);
+      if (svg.triangularHeightDimensions !== 1 || Number(svg.triangularHeightDimensionValue) !== prismHeight) fail(`${label}: 기둥 높이 치수선이 정확하지 않습니다.`);
+      if (!answerView && (svg.triangularNetFaces !== 0 || svg.triangularNetRoute !== 0 || svg.triangularNetTarget !== 0)) fail(`${label}: 문제에 펼친 답 그림이 노출되었습니다.`);
+      if (answerView && (svg.triangularNetFaces !== 3 || svg.triangularNetRoute !== 1 || svg.triangularNetTarget !== 1 || Number(svg.dataTargetLength) !== prismHeight / 3 || Number(svg.dataResultHighlight) !== prismHeight / 3)) fail(`${label}: 답에 옆면 세 장·곧은 선·선분 ㅇㅂ 길이 강조가 없습니다.`);
     }
   }
 }
@@ -380,7 +405,8 @@ function checkAnswerLeak(state, source, difficulty, label) {
     [sourceIds[2]]: ["30", "45", "54", "92", "110", "128"],
     [sourceIds[3]]: ["12", "14", "16", "77", "90", "104"],
     [sourceIds[4]]: ["48", "60", "72"],
-    [sourceIds[5]]: ["56", "82", "848", "864", "1376"]
+    [sourceIds[5]]: ["56", "82", "848", "864", "1376"],
+    [sourceIds[6]]: ["6cm", "7cm", "8cm"]
   }[source.id];
   for (const text of state.visibleText) {
     if (results.some(value => new RegExp(`(^|\\D)${value}(?=\\D|$)`).test(text))) {
@@ -490,14 +516,14 @@ function generatorReady() {
     await new Promise(resolve => server.close(resolve));
   }
 
-  if (screenshots !== 72) fail(`화면 캡처 수가 ${screenshots}장입니다. 72장이어야 합니다.`);
-  if (pdfs !== 12) fail(`A4 PDF 수가 ${pdfs}개입니다. 12개여야 합니다.`);
+  if (screenshots !== 84) fail(`화면 캡처 수가 ${screenshots}장입니다. 84장이어야 합니다.`);
+  if (pdfs !== 14) fail(`A4 PDF 수가 ${pdfs}개입니다. 14개여야 합니다.`);
   if (renderedPdfPages < pdfs) fail(`A4 PDF ${pdfs}개에서 전체 PNG 렌더가 ${renderedPdfPages}쪽뿐입니다.`);
   const status = failures.length ? "실패" : "통과";
-  const summary = `${status}: 6유형×3난이도×PC/모바일, 실제 UI 선택, 고정 pool 3문항, 문제·답 구조·SVG·답 그림·누출·화면 검사, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 렌더 ${renderedPdfPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
+  const summary = `${status}: 7유형×3난이도×PC/모바일, 실제 UI 선택, 고정 pool 3문항, 문제·답 구조·SVG·답 그림·누출·화면 검사, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 렌더 ${renderedPdfPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 2 브라우저 감사 통과: 6유형×3난이도×PC/모바일 · 실제 UI 선택 · 고정 3문항 · 답 그림 · A4 PDF 12개 전 ${renderedPdfPages}쪽`);
+  console.log(`6-1 2단원 개념탐구 2 브라우저 감사 통과: 7유형×3난이도×PC/모바일 · 실제 UI 선택 · 고정 3문항 · 답 그림 · A4 PDF 14개 전 ${renderedPdfPages}쪽`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

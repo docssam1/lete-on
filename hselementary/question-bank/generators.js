@@ -22486,15 +22486,16 @@
     sourceGrade6PrismsPyramidsE2({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5",
-        "6-1-u2-e2-mission-6", "6-1-u2-e2-mission-1", "6-1-u2-e2-example-2-4"
+        "6-1-u2-e2-mission-6", "6-1-u2-e2-mission-1", "6-1-u2-e2-example-2-4",
+        "6-1-u2-e2-example-2-3"
       ];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 5까지여야 합니다.");
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 6까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, 2);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
       const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
       const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림에 적힌 수를 바로 계산하지 말고, 잘라 낸 뒤 생기는 면·모서리·꼭짓점의 관계를 스스로 설명해 보세요.</p>` : "";
-      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated", "pentagonal-prism-shortest-net-area", "pentagonal-prism-45-degree-spiral-height", "three-triangular-prisms-trapezoidal-prism-surface-area"];
+      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated", "pentagonal-prism-shortest-net-area", "pentagonal-prism-45-degree-spiral-height", "three-triangular-prisms-trapezoidal-prism-surface-area", "triangular-prism-three-face-shortest-segment"];
       const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e2-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const mathBoard = (title, body) => `<div class="source61-math-board"><strong>${title}</strong>${body}</div>`;
@@ -22725,6 +22726,56 @@
         return `<svg class="geometry-diagram source61-e2-diagram source61-e2-combined-prisms${solved ? " is-solved" : ""}" viewBox="0 0 420 225" role="img" aria-label="같은 삼각기둥 세 개를 이어 붙여 만든 사다리꼴 밑면의 사각기둥" data-source61-e2-structure="three-triangular-prisms-${slant}-${altitude}-${prismLength}-${baseArea}" data-triangle-count="3" data-shared-face-count="2" data-base-sides="4" data-slant="${slant}" data-altitude="${altitude}" data-prism-length="${prismLength}" data-base-area="${baseArea}" data-half-triangle-base="${halfBase}" data-triangle-base="${triangleBase}" data-base-perimeter="${basePerimeter}" data-surface-area="${surfaceArea}"${solved ? ` data-result-highlight="${surfaceArea}"` : ""}>${outerFaces}${backEdges}${connectingEdges}${hiddenJoins}${frontTriangles}${frontEdges}${joins}${altitudeLine}${rightAngle}${prismDimension}${exterior}<text class="source61-e2-combined-measure" x="${(lowerLeft[0] + upperLeft[0]) / 2 - 15}" y="${(lowerLeft[1] + upperLeft[1]) / 2 - 4}">${slant}cm</text><text class="source61-e2-combined-measure" x="${altitudeFoot[0] + 15}" y="${(upperLeft[1] + altitudeFoot[1]) / 2}">${altitude}cm</text>${solvedLabels}</svg>`;
       };
 
+      const triangularPrismShortestRouteSvg = ({ side, prismHeight, solved = false }) => {
+        const solidScale = Math.min(8, 165 / prismHeight);
+        const sidePixels = side * solidScale;
+        const heightPixels = prismHeight * solidScale;
+        const triangleDepth = sidePixels * 0.56;
+        const topLeft = [54, 28];
+        const topRight = [topLeft[0] + sidePixels, topLeft[1]];
+        const topFront = [topLeft[0] + sidePixels / 2, topLeft[1] + triangleDepth];
+        const bottomLeft = [topLeft[0], topLeft[1] + heightPixels];
+        const bottomRight = [topRight[0], topRight[1] + heightPixels];
+        const bottomFront = [topFront[0], topFront[1] + heightPixels];
+        const pointS = interpolate(topFront, bottomFront, 1 / 3);
+        const pointO = interpolate(topRight, bottomRight, 2 / 3);
+        const face = (points, className) => `<polygon class="source61-e2-tri-shortest-face ${className}" points="${points.map(pointText).join(" ")}"/>`;
+        const point = (position, name, dx, dy) => `<circle class="source61-e2-tri-shortest-point" cx="${position[0].toFixed(2)}" cy="${position[1].toFixed(2)}" r="3" data-point-label="${name}"/><text class="source61-e2-tri-shortest-label" x="${(position[0] + dx).toFixed(2)}" y="${(position[1] + dy).toFixed(2)}">${name}</text>`;
+        const solidFaces = `${face([topLeft, topRight, bottomRight, bottomLeft], "is-back")}${face([topLeft, topFront, bottomFront, bottomLeft], "is-left")}${face([topFront, topRight, bottomRight, bottomFront], "is-right")}`;
+        const solidEdges = [
+          [topLeft, topRight], [topRight, topFront], [topFront, topLeft],
+          [bottomLeft, bottomRight], [bottomRight, bottomFront], [bottomFront, bottomLeft],
+          [topLeft, bottomLeft], [topRight, bottomRight], [topFront, bottomFront]
+        ].map(([a, b]) => lineMarkup(a, b, "source61-e2-tri-shortest-edge")).join("");
+        const solidRoute = `${lineMarkup(topLeft, pointS, "source61-e2-tri-shortest-solid-route", 'data-route-segment="1"')}${lineMarkup(pointS, pointO, "source61-e2-tri-shortest-solid-route", 'data-route-segment="2"')}${lineMarkup(pointO, bottomLeft, "source61-e2-tri-shortest-solid-route is-behind", 'data-route-segment="3"')}`;
+        const heightX = topLeft[0] - 18;
+        const solidDimensions = `${lineMarkup([heightX, topLeft[1]], [heightX, bottomLeft[1]], "source61-e2-tri-shortest-dimension", `data-prism-height-dimension="${prismHeight}"`)}${lineMarkup([heightX - 5, topLeft[1]], [heightX + 5, topLeft[1]], "source61-e2-tri-shortest-dimension-tick")}${lineMarkup([heightX - 5, bottomLeft[1]], [heightX + 5, bottomLeft[1]], "source61-e2-tri-shortest-dimension-tick")}<text class="source61-e2-tri-shortest-measure" x="18" y="${(topLeft[1] + bottomLeft[1]) / 2}">${prismHeight}cm</text><text class="source61-e2-tri-shortest-measure" x="${(topLeft[0] + topRight[0]) / 2}" y="17">${side}cm</text><text class="source61-e2-tri-shortest-measure" x="${(bottomLeft[0] + bottomFront[0]) / 2 - 8}" y="${bottomFront[1] + 17}">${side}cm</text><text class="source61-e2-tri-shortest-measure" x="${(bottomFront[0] + bottomRight[0]) / 2 + 8}" y="${bottomFront[1] + 17}">${side}cm</text>`;
+        const solidPoints = `${point(topLeft, "ㄱ", -12, -8)}${point(topFront, "ㄴ", -11, 1)}${point(topRight, "ㄷ", 12, -8)}${point(bottomLeft, "ㄹ", -13, 7)}${point(bottomFront, "ㅁ", 0, 17)}${point(bottomRight, "ㅂ", 13, 7)}${point(pointS, "ㅅ", -13, 4)}${point(pointO, "ㅇ", 13, 4)}`;
+        const targetSegment = lineMarkup(pointO, bottomRight, "source61-e2-tri-shortest-target", 'data-target-segment="ㅇㅂ"');
+        const solid = `<g aria-label="삼각기둥의 세 옆면을 차례로 지나는 가장 짧은 선">${solidFaces}${solidEdges}${solidRoute}${targetSegment}${solidDimensions}${solidPoints}</g>`;
+        let unfolded = "";
+        let solvedData = "";
+        if (solved) {
+          const netScale = Math.min(7, 225 / (3 * side), 145 / prismHeight);
+          const faceWidth = side * netScale;
+          const netHeight = prismHeight * netScale;
+          const netX = 285, netY = 42;
+          const netStart = [netX, netY];
+          const netS = [netX + faceWidth, netY + netHeight / 3];
+          const netO = [netX + 2 * faceWidth, netY + 2 * netHeight / 3];
+          const netEnd = [netX + 3 * faceWidth, netY + netHeight];
+          const netB = [netO[0], netEnd[1]];
+          const faces = Array.from({ length: 3 }, (_, index) => `<rect class="source61-e2-tri-shortest-net-face${index % 2 ? " is-alt" : ""}" data-unfolded-face="${index + 1}" x="${(netX + index * faceWidth).toFixed(2)}" y="${netY}" width="${faceWidth.toFixed(2)}" height="${netHeight.toFixed(2)}"/>`).join("");
+          const netRoute = lineMarkup(netStart, netEnd, "source61-e2-tri-shortest-net-route is-solved", 'data-unfolded-route="shortest"');
+          const netTarget = lineMarkup(netO, netB, "source61-e2-tri-shortest-net-target is-solved", `data-target-length="${prismHeight / 3}"`);
+          const netPoints = `${point(netStart, "ㄱ", -10, -8)}${point(netS, "ㅅ", -11, -7)}${point(netO, "ㅇ", 11, -6)}${point(netB, "ㅂ", 12, 7)}${point(netEnd, "ㄹ", 12, 8)}`;
+          unfolded = `<g aria-label="옆면 세 장을 펼쳐 가장 짧은 선을 곧게 편 전개도"><text class="source61-e2-tri-shortest-net-title" x="${netX + 1.5 * faceWidth}" y="24">옆면 3장을 한 줄로 펼친 그림</text>${faces}${netRoute}${netTarget}${netPoints}<text class="source61-e2-tri-shortest-result" x="${netB[0] + 54}" y="${(netO[1] + netB[1]) / 2}">ㅇㅂ=${prismHeight / 3}cm</text></g>`;
+          solvedData = ` data-unfolded-face-count="3" data-unfolded-width="${3 * side}" data-unfolded-height="${prismHeight}" data-target-length="${prismHeight / 3}" data-result-highlight="${prismHeight / 3}"`;
+        }
+        const viewWidth = solved ? 620 : 230;
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-tri-shortest${solved ? " is-solved" : ""}" viewBox="0 0 ${viewWidth} 285" role="img" aria-label="삼각기둥의 세 옆면을 지나는 최단선과 선분 ㅇㅂ" data-source61-e2-structure="triangular-prism-three-face-shortest-${side}-${prismHeight}" data-triangle-side="${side}" data-prism-height="${prismHeight}" data-lateral-face-count="3" data-route-segment-count="3" data-crossing-count="2" data-target-name="ㅇㅂ"${solvedData}>${solid}${unfolded}</svg>`;
+      };
+
       if (variant === 0) {
         const distance = [1, 2, 3][poolIndex];
         const minimumEdge = 3 * distance + 1;
@@ -22770,13 +22821,23 @@
         return fixedResult(`밑면의 각 변이 ${side}cm인 오각기둥이 있습니다. 개미가 점 ㄱ에서 출발하여 그림처럼 45°의 각도로 옆면을 따라 계속 올라가 점 ㄴ에 도착했습니다. 이 오각기둥의 높이는 몇 cm인지 구하세요.${promptVisual}${support("오각기둥의 옆면 5장이 한 바퀴이고, 도착점까지 옆면 한 장을 더 지나는지 살펴보세요.")}${spiralChallenge}${evidence("pentagonal-prism-45-degree-spiral-height", [side, facesPerTurn, extraFaces, crossedFaces, height])}`, `${height}cm`, `오각기둥의 옆면 ${facesPerTurn}장을 지나면 한 바퀴를 돌고, 점 ㄴ까지 옆면 ${extraFaces}장을 더 지나므로 모두 ${crossedFaces}장을 지납니다. 옆면을 펼치면 가로 이동은 ${crossedFaces}×${side}=${height}cm입니다. 45°로 올라가므로 가로 이동과 세로 이동이 같아 오각기둥의 높이는 ${height}cm입니다.`, answerVisual);
       }
 
-      const [slant, altitude, prismLength, baseArea] = [[10, 8, 10, 144], [13, 12, 9, 180], [17, 15, 8, 360]][poolIndex];
-      const triangleBase = 2 * baseArea / (3 * altitude), basePerimeter = 3 * triangleBase + 2 * slant;
-      const surfaceArea = 2 * baseArea + basePerimeter * prismLength;
-      const promptVisual = `${combinedTriangularPrismsSvg({ slant, altitude, prismLength, baseArea })}${mathBoard("사각기둥의 자료", row("한 밑면의 넓이", `${baseArea}cm²`) + row("삼각형의 높이", `${altitude}cm`) + row("삼각형의 양쪽 변", `${slant}cm`) + row("기둥의 높이", `${prismLength}cm`))}`;
-      const answerVisual = `${combinedTriangularPrismsSvg({ slant, altitude, prismLength, baseArea, solved: true })}${mathBoard("겉넓이 계산", row("삼각형 한 개의 밑변", `${baseArea}÷3×2÷${altitude}=${triangleBase}cm`) + row("사다리꼴 밑면의 둘레", `${triangleBase}×3+${slant}×2=${basePerimeter}cm`) + row("옆면의 넓이", `${basePerimeter}×${prismLength}=${basePerimeter * prismLength}cm²`) + row("겉넓이", `${baseArea}×2+${basePerimeter * prismLength}=${surfaceArea}cm²`))}`;
-      const surfaceChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">붙인 두 면을 겉넓이에 넣지 않는 까닭과, 세 삼각형이 만든 사다리꼴의 둘레를 어떻게 찾았는지 설명해 보세요.</p>` : "";
-      return fixedResult(`같은 삼각기둥 세 개를 그림처럼 이어 붙여 사다리꼴을 밑면으로 하는 사각기둥을 만들었습니다. 이 사각기둥의 한 밑면의 넓이는 ${baseArea}cm²입니다. 겉면에 도화지를 겹치지 않게 붙이려면 필요한 도화지의 넓이는 적어도 몇 cm²인지 구하세요.${promptVisual}${support("먼저 삼각형 한 개의 넓이를 구해 밑변의 길이를 찾고, 합친 사다리꼴의 바깥 둘레만 더해 보세요.")}${surfaceChallenge}${evidence("three-triangular-prisms-trapezoidal-prism-surface-area", [slant, altitude, prismLength, baseArea, triangleBase, basePerimeter, surfaceArea])}`, `${surfaceArea}cm²`, `밑면은 같은 삼각형 3개로 이루어졌으므로 삼각형 한 개의 넓이는 ${baseArea}÷3=${baseArea / 3}cm²입니다. 삼각형의 밑변은 ${baseArea / 3}×2÷${altitude}=${triangleBase}cm입니다. 합친 사다리꼴의 둘레는 삼각형의 밑변 3개와 양쪽 변 2개이므로 ${triangleBase}×3+${slant}×2=${basePerimeter}cm입니다. 따라서 겉넓이는 두 밑면과 옆면을 더한 ${baseArea}×2+${basePerimeter}×${prismLength}=${surfaceArea}cm²입니다.`, answerVisual);
+      if (variant === 5) {
+        const [slant, altitude, prismLength, baseArea] = [[10, 8, 10, 144], [13, 12, 9, 180], [17, 15, 8, 360]][poolIndex];
+        const triangleBase = 2 * baseArea / (3 * altitude), basePerimeter = 3 * triangleBase + 2 * slant;
+        const surfaceArea = 2 * baseArea + basePerimeter * prismLength;
+        const promptVisual = `${combinedTriangularPrismsSvg({ slant, altitude, prismLength, baseArea })}${mathBoard("사각기둥의 자료", row("한 밑면의 넓이", `${baseArea}cm²`) + row("삼각형의 높이", `${altitude}cm`) + row("삼각형의 양쪽 변", `${slant}cm`) + row("기둥의 높이", `${prismLength}cm`))}`;
+        const answerVisual = `${combinedTriangularPrismsSvg({ slant, altitude, prismLength, baseArea, solved: true })}${mathBoard("겉넓이 계산", row("삼각형 한 개의 밑변", `${baseArea}÷3×2÷${altitude}=${triangleBase}cm`) + row("사다리꼴 밑면의 둘레", `${triangleBase}×3+${slant}×2=${basePerimeter}cm`) + row("옆면의 넓이", `${basePerimeter}×${prismLength}=${basePerimeter * prismLength}cm²`) + row("겉넓이", `${baseArea}×2+${basePerimeter * prismLength}=${surfaceArea}cm²`))}`;
+        const surfaceChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">붙인 두 면을 겉넓이에 넣지 않는 까닭과, 세 삼각형이 만든 사다리꼴의 둘레를 어떻게 찾았는지 설명해 보세요.</p>` : "";
+        return fixedResult(`같은 삼각기둥 세 개를 그림처럼 이어 붙여 사다리꼴을 밑면으로 하는 사각기둥을 만들었습니다. 이 사각기둥의 한 밑면의 넓이는 ${baseArea}cm²입니다. 겉면에 도화지를 겹치지 않게 붙이려면 필요한 도화지의 넓이는 적어도 몇 cm²인지 구하세요.${promptVisual}${support("먼저 삼각형 한 개의 넓이를 구해 밑변의 길이를 찾고, 합친 사다리꼴의 바깥 둘레만 더해 보세요.")}${surfaceChallenge}${evidence("three-triangular-prisms-trapezoidal-prism-surface-area", [slant, altitude, prismLength, baseArea, triangleBase, basePerimeter, surfaceArea])}`, `${surfaceArea}cm²`, `밑면은 같은 삼각형 3개로 이루어졌으므로 삼각형 한 개의 넓이는 ${baseArea}÷3=${baseArea / 3}cm²입니다. 삼각형의 밑변은 ${baseArea / 3}×2÷${altitude}=${triangleBase}cm입니다. 합친 사다리꼴의 둘레는 삼각형의 밑변 3개와 양쪽 변 2개이므로 ${triangleBase}×3+${slant}×2=${basePerimeter}cm입니다. 따라서 겉넓이는 두 밑면과 옆면을 더한 ${baseArea}×2+${basePerimeter}×${prismLength}=${surfaceArea}cm²입니다.`, answerVisual);
+      }
+
+      const [side, prismHeight] = [[9, 18], [10, 21], [11, 24]][poolIndex];
+      const faceCount = 3, crossingCount = 2, targetLength = prismHeight / faceCount;
+      const promptVisual = `${triangularPrismShortestRouteSvg({ side, prismHeight })}${mathBoard("삼각기둥의 자료", row("밑면의 세 변", `각각 ${side}cm`) + row("기둥의 높이", `${prismHeight}cm`) + row("지나는 옆면", `${faceCount}개`) + row("구할 선분", "ㅇㅂ"))}`;
+      const answerVisual = `${triangularPrismShortestRouteSvg({ side, prismHeight, solved: true })}${mathBoard("전개도에서 계산", row("옆면 3장의 가로", `${side}×${faceCount}=${side * faceCount}cm`) + row("전체 세로 변화", `${prismHeight}cm`) + row("같은 너비 한 장에서 내려간 길이", `${prismHeight}÷${faceCount}=${targetLength}cm`) + row("선분 ㅇㅂ", `${targetLength}cm`))}`;
+      const shortestSegmentSupport = support("지나간 옆면 3장을 한 줄로 펼치고, 꼭짓점 ㄱ과 꼭짓점 ㄹ을 곧은 선으로 이으세요.");
+      const shortestSegmentChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">전개도에서 너비가 같은 세 옆면을 지나는 곧은 선의 세로 변화가 왜 세 부분으로 똑같이 나뉘는지 설명해 보세요.</p>` : "";
+      return fixedResult(`밑면의 세 변이 각각 ${side}cm이고 높이가 ${prismHeight}cm인 삼각기둥이 있습니다. 그림처럼 꼭짓점 ㄱ에서 출발하여 점 ㅅ과 점 ㅇ을 차례로 지나 꼭짓점 ㄹ까지 겉면에 선을 그었습니다. 이 선의 길이가 가장 짧을 때 선분 ㅇㅂ의 길이는 몇 cm인지 구하세요.${promptVisual}${shortestSegmentSupport}${shortestSegmentChallenge}${evidence("triangular-prism-three-face-shortest-segment", [side, prismHeight, faceCount, crossingCount, targetLength])}`, `${targetLength}cm`, `지나간 옆면 ${faceCount}장을 한 줄로 펼치면 너비가 각각 ${side}cm인 직사각형 ${faceCount}개가 됩니다. 가장 짧은 선은 전개도에서 한 직선입니다. 같은 너비마다 내려간 길이도 같으므로 전체 높이 ${prismHeight}cm가 ${faceCount}부분으로 똑같이 나뉩니다. 점 ㅇ에서 점 ㅂ까지는 마지막 한 부분이므로 ${prismHeight}÷${faceCount}=${targetLength}cm입니다.`, answerVisual);
     },
     sourceGrade6RatioE1({ rng, level, variant = 0 }) {
       const sourceIds = [
