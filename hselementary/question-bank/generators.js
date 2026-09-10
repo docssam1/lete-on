@@ -24820,6 +24820,51 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Example3({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-example-3";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 2-3 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { fillPart: [3, 8], drinkPart: [5, 6], firstWeight: 424, secondWeight: 304 },
+        { fillPart: [2, 5], drinkPart: [3, 4], firstWeight: 510, secondWeight: 390 },
+        { fillPart: [5, 12], drinkPart: [7, 8], firstWeight: 620, secondWeight: 410 }
+      ][poolIndex];
+      const fillPart = rationalValue(...data.fillPart);
+      const drinkPart = rationalValue(...data.drinkPart);
+      const remainingPart = rationalOperation(rationalValue(1), drinkPart, "-");
+      const weightDifference = rationalValue(data.firstWeight - data.secondWeight);
+      const firstWaterMass = rationalOperation(weightDifference, drinkPart, "÷");
+      const remainingWaterMass = rationalOperation(firstWaterMass, remainingPart, "×");
+      const emptyBottleMass = rationalOperation(rationalValue(data.firstWeight), firstWaterMass, "-");
+      if ([firstWaterMass, remainingWaterMass, emptyBottleMass].some(value => value.denominator !== 1 || value.numerator <= 0)) throw new Error("6-2 예제 2-3의 물과 빈 병 무게는 양의 정수여야 합니다.");
+      const candidateBottleMasses = Array.from({ length: data.firstWeight - 1 }, (_, index) => index + 1).filter(bottleMass => {
+        const waterMass = rationalValue(data.firstWeight - bottleMass);
+        const calculatedSecondWeight = rationalOperation(rationalValue(bottleMass), rationalOperation(waterMass, remainingPart, "×"), "+");
+        return calculatedSecondWeight.denominator === 1 && calculatedSecondWeight.numerator === data.secondWeight;
+      });
+      if (candidateBottleMasses.length !== 1 || candidateBottleMasses[0] !== emptyBottleMass.numerator) throw new Error("6-2 예제 2-3에서 빈 병의 무게가 하나로 정해지지 않습니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const fillRatio = fillPart.numerator / fillPart.denominator;
+      const remainingFillRatio = fillRatio * remainingPart.numerator / remainingPart.denominator;
+      const signature = [...data.fillPart, ...data.drinkPart, data.firstWeight, data.secondWeight].join(":");
+      const stateCard = (label, weight, waterRatio, waterMass, solved) => `<div class="source62-bottle-state"><strong>${label}</strong><div class="source62-bottle" aria-label="전체 들이의 ${(waterRatio * 100).toFixed(2)}퍼센트만큼 물이 든 병"><span class="source62-bottle-neck"></span><span class="source62-bottle-water" style="--water-level:${(waterRatio * 100).toFixed(4)}%"></span></div><b>${weight}g</b>${solved ? `<small>물 ${waterMass}g</small>` : ""}</div>`;
+      const bottleBoard = solved => `<div class="source62-bottle-weight-board${solved ? " is-solved" : ""}" data-source62-e2-example3-structure="two-weighings-after-drinking" data-source62-e2-example3-expression="${signature}" data-fill-part="${plain(fillPart)}" data-drink-part="${plain(drinkPart)}" data-first-water-mass="${firstWaterMass.numerator}" data-empty-bottle-mass="${emptyBottleMass.numerator}"><strong>같은 물병을 두 번 잰 무게</strong><div class="source62-bottle-weight-flow">${stateCard("물을 넣은 뒤", data.firstWeight, fillRatio, firstWaterMass.numerator, solved)}<div class="source62-bottle-drink"><span aria-hidden="true">→</span><b>넣은 물의 ${shown(drinkPart)}만큼 마심</b></div>${stateCard("물을 마신 뒤", data.secondWeight, remainingFillRatio, remainingWaterMass.numerator, solved)}</div><p>처음에는 빈 물병에 전체 들이의 ${shown(fillPart)}만큼 물을 넣었습니다.</p></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-bottle-weight-solution"><strong>줄어든 무게로 처음 물의 무게 찾기</strong>${row("줄어든 무게", `${data.firstWeight}−${data.secondWeight}=${weightDifference.numerator}g`)}${row("처음 물의 무게", `${weightDifference.numerator}÷${shown(drinkPart)}=${firstWaterMass.numerator}g`)}${row("빈 물병", `${data.firstWeight}−${firstWaterMass.numerator}=${emptyBottleMass.numerator}g`)}</div>`;
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">두 번 잰 무게의 차는 마신 물의 무게입니다. 이 무게가 처음 넣은 물의 ${shown(drinkPart)}임을 이용하세요.</p>` : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">빈 병의 무게를 하나의 수로 놓고 두 번의 무게를 각각 식으로 나타내어 같은 답인지 확인하세요.</p>' : "";
+      const values = [...data.fillPart, ...data.drinkPart, data.firstWeight, data.secondWeight, weightDifference.numerator, weightDifference.denominator, firstWaterMass.numerator, firstWaterMass.denominator, remainingWaterMass.numerator, remainingWaterMass.denominator, emptyBottleMass.numerator, emptyBottleMass.denominator];
+      const evidence = `<span hidden data-source62-fraction-e2-example3-kind="two-weighings-after-drinking" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-candidate-count="${candidateBottleMasses.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`빈 물병에 전체 들이의 ${shown(fillPart)}만큼 물을 넣고 무게를 재었더니 ${data.firstWeight}g이었습니다. 넣은 물의 ${shown(drinkPart)}만큼을 마신 뒤 다시 무게를 재었더니 ${data.secondWeight}g이었습니다. 빈 물병의 무게는 몇 g인지 구하세요.${bottleBoard(false)}${support}${challenge}${evidence}`, `${emptyBottleMass.numerator}g`, `두 번 잰 무게의 차 ${data.firstWeight}−${data.secondWeight}=${weightDifference.numerator}g은 마신 물의 무게입니다. 이 양이 처음 넣은 물의 ${shown(drinkPart)}이므로 처음 물은 ${weightDifference.numerator}÷${shown(drinkPart)}=${firstWaterMass.numerator}g입니다. 따라서 빈 물병의 무게는 ${data.firstWeight}−${firstWaterMass.numerator}=${emptyBottleMass.numerator}g입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-example3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${bottleBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 물병의 두 무게에서 물의 무게와 빈 병의 무게를 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26739,6 +26784,7 @@
     [type => type.sourceItemId === "6-2-u1-e2-exploration", "sourceGrade6SecondFractionDivisionE2Exploration"],
     [type => type.sourceItemId === "6-2-u1-e2-example-1", "sourceGrade6SecondFractionDivisionE2Example1"],
     [type => type.sourceItemId === "6-2-u1-e2-example-2", "sourceGrade6SecondFractionDivisionE2Example2"],
+    [type => type.sourceItemId === "6-2-u1-e2-example-3", "sourceGrade6SecondFractionDivisionE2Example3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

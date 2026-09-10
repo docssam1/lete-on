@@ -297,12 +297,13 @@
       "ordinal": 3,
       "pdfPage": 5,
       "printedPage": 6,
-      "sourceShape": "분수 나눗셈을 생활 상황의 전체, 부분, 횟수와 연결해 필요한 양을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "같은 물병에 물을 넣은 뒤의 무게와 넣은 물의 일부를 마신 뒤의 무게 차로 처음 물의 무게와 빈 병의 무게를 구하는 구조.",
+      "answerContract": "single-answer-fixed-pool",
+      "visualRisk": "전체 들이에서 넣은 물의 비와 넣은 물에서 마신 비를 서로 다른 기준으로 읽고, 같은 물병의 두 무게를 정확히 연결해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 5쪽의 인쇄 지문에서 전체 들이의 3/8, 넣은 물의 5/6, 424g과 304g을 직접 대조했습니다. 무게 차 120g에서 처음 물 144g, 빈 병 280g을 독립 계산했습니다.",
+      "publicSourceItemId": "6-2-u1-e2-example-3"
     },
     {
       "sourceItemId": "6-2-u1-e2-example-4",
