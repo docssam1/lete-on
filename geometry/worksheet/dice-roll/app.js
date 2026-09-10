@@ -1,6 +1,6 @@
 import { visibleFaces } from "../../games/dice-roll/levels.js?v=dice-roll-3";
 import { BOARD_BASIS, DIE_BASE_CENTER, DIE_FACE_QUADS, DIE_ON_BOARD_SCALE, VIEWPOINT_ID, boardFrame, cellCenter, cellPolygon, pointOnQuad, pointsAttribute } from "../../games/dice-roll/projection.js?v=dice-roll-1";
-import { ACTIVITIES, chooseProblems, groupPages, normalizeActivity, normalizeCount, normalizeLanguage, normalizeLevel, validateProblem } from "./workbook-core.js?v=dice-sheet-6";
+import { ACTIVITIES, chooseProblems, groupPages, normalizeActivity, normalizeCount, normalizeLanguage, normalizeLevel, validateProblem } from "./workbook-core.js?v=dice-sheet-7";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
@@ -84,7 +84,7 @@ function boardSvg(problem, board, boardIndex, reveal) {
   }).join("");
   const hiddenFace = problem.activity === "paired" && boardIndex === 1 ? problem.unknownFace : null;
   const die = boardDie(board.startOrientation, ...cellCenter(start[0], start[1], frame), hiddenFace, reveal);
-  return `<svg class="route-board" viewBox="0 0 ${frame.width} ${frame.height}" role="img" aria-label="${escape(copy().title)}" data-viewpoint="${VIEWPOINT_ID}" data-east-vector="${BOARD_BASIS.east}" data-south-vector="${BOARD_BASIS.south}" data-route="${board.directions.join("")}"><defs><marker id="${markerId}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z"/></marker></defs>${cells}${arrows}${die}${labels}<path class="view-corner" d="M ${frame.origin[0] - 18} ${frame.height - 7} L ${frame.origin[0]} ${frame.height - 1} L ${frame.origin[0] + 18} ${frame.height - 7}"/></svg>`;
+  return `<svg class="route-board" viewBox="0 0 ${frame.width} ${frame.height}" role="img" aria-label="${escape(copy().title)}" data-viewpoint="${VIEWPOINT_ID}" data-east-vector="${BOARD_BASIS.east}" data-south-vector="${BOARD_BASIS.south}" data-route="${board.directions.join("")}"><defs><marker id="${markerId}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z"/></marker></defs>${cells}${arrows}${die}${labels}<path class="view-corner" d="M ${frame.origin[0] - 18} ${frame.height - 7} L ${frame.origin[0]} ${frame.height - 1} L ${frame.origin[0] + 18} ${frame.height - 7}"/></svg>`;
 }
 
 function answerText(problem) {

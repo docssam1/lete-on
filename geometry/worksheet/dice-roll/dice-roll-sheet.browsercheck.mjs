@@ -34,6 +34,7 @@ for (const activity of ["paired", "sequence", "sum", "target", "visible"]) asser
 
 const boardCount = await page.locator(".route-board").count();
 assert.equal(boardCount, 24);
+assert.equal(await page.locator('.route-board marker[markerWidth="5"][markerHeight="5"]').count(), boardCount);
 assert.equal(await page.locator(".route-board .board-die").count(), boardCount);
 assert.equal(await page.locator(".route-board .board-die .die-face").count(), boardCount * 3);
 assert.equal(await page.locator('.route-board[data-viewpoint="southeast-diagonal"]').count(), boardCount);
