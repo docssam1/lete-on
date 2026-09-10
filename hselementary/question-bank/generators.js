@@ -24501,6 +24501,38 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Mission2({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-mission-2";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { a: [8, 5], b: [1, 10] },
+        { a: [3, 2], b: [1, 6] },
+        { a: [9, 4], b: [1, 12] }
+      ][poolIndex];
+      const a = rationalValue(...data.a);
+      const b = rationalValue(...data.b);
+      const aDivB = rationalOperation(a, b, "÷");
+      const bDivA = rationalOperation(b, a, "÷");
+      const answerValue = rationalOperation(aDivB, bDivA, "÷");
+      if (answerValue.denominator !== 1 || answerValue.numerator <= 0) throw new Error("6-2 Mission 2 계산 결과는 양의 정수여야 합니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const expressionSignature = [...data.a, ...data.b].join(":");
+      const ruleBoard = solved => `<div class="source62-defined-operation-board${solved ? " is-solved" : ""}" data-source62-e1-mission2-structure="defined-operation-two-divisions" data-source62-e1-mission2-expression="${expressionSignature}"><strong>◆로 정한 계산</strong><div class="source62-defined-operation-rule"><span class="source62-symbol-token">가</span><span>◆</span><span class="source62-symbol-token">나</span><span>=</span><span>(가÷나)÷(나÷가)</span></div><div class="source62-defined-operation-target">${mixedFractionMarkup(a.numerator, a.denominator)}<b>◆</b>${fractionMarkup(b.numerator, b.denominator)}</div></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-defined-operation-solution"><strong>◆의 뜻에 맞게 계산하기</strong>${row("가÷나", fractionMarkup(aDivB.numerator, aDivB.denominator))}${row("나÷가", fractionMarkup(bDivA.numerator, bDivA.denominator))}${row("두 결과 나누기", `${fractionMarkup(aDivB.numerator, aDivB.denominator)}÷${fractionMarkup(bDivA.numerator, bDivA.denominator)}=${fractionMarkup(answerValue.numerator, answerValue.denominator)}`)}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">가÷나와 나÷가를 각각 계산한 뒤, 앞의 결과를 뒤의 결과로 나누세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">◆의 뜻을 한 단계씩 계산하고, 구한 결과가 원래 규칙과 맞는지 다시 확인하세요.</p>' : "";
+      const values = [...data.a, ...data.b, aDivB.numerator, aDivB.denominator, bDivA.numerator, bDivA.denominator, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e1-mission2-kind="defined-operation-two-divisions" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`두 수 가, 나에 대하여 ◆를 다음과 같이 정했습니다. 주어진 계산의 값을 구하세요.${ruleBoard(false)}${support}${challenge}${evidence}`, fraction(answerValue.numerator, answerValue.denominator), `가÷나=${fractionMarkup(aDivB.numerator, aDivB.denominator)}이고, 나÷가=${fractionMarkup(bDivA.numerator, bDivA.denominator)}입니다. 따라서 두 결과를 차례로 나누면 ${fractionMarkup(answerValue.numerator, answerValue.denominator)}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-mission2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${ruleBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">◆의 뜻에 따라 두 나눗셈을 차례로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26412,6 +26444,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
     [type => type.sourceItemId === "6-2-u1-e1-example-4", "sourceGrade6SecondFractionDivisionE1Example4"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-1", "sourceGrade6SecondFractionDivisionE1Mission1"],
+    [type => type.sourceItemId === "6-2-u1-e1-mission-2", "sourceGrade6SecondFractionDivisionE1Mission2"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
