@@ -42,7 +42,13 @@ function solve(p){switch(p.kind){
  case 'block-build-count':return {A:p.width*p.depth*p.height-p.bPieces.length*2,B:p.bPieces.length};
  case 'stack-box-fill':return p.full-p.placed;
  case 'cube-count-fill-custom':return [p.placed,p.need];
- case 'shortest-path-grid':{const blocked=new Set(p.blocked.map(String)),ways=Array.from({length:p.rows+1},()=>Array(p.cols+1).fill(0));ways[p.rows][0]=1;for(let y=p.rows;y>=0;y--)for(let x=0;x<=p.cols;x++){if(x===0&&y===p.rows||blocked.has(String([x,y])))continue;ways[y][x]=(x?ways[y][x-1]:0)+(y<p.rows?ways[y+1][x]:0);}return ways[0][p.cols];}
+ case 'shortest-path-grid':{
+  const blocked=new Set(p.blocked.map(String)),key=point=>String(point),start=[0,p.rows],target=[p.cols,0],queue=[start],distance=new Map([[key(start),0]]),counts=new Map([[key(start),1]]);let head=0;
+  while(head<queue.length){const point=queue[head++],pointKey=key(point),[x,y]=point,next=[];if(x<p.cols)next.push([x+1,y]);if(y>0)next.push([x,y-1]);for(const [from,to] of p.diagonals||[])if(key(from)===pointKey)next.push(to);
+   for(const candidate of next){const candidateKey=key(candidate);if(blocked.has(candidateKey))continue;const nextDistance=distance.get(pointKey)+1;if(!distance.has(candidateKey)){distance.set(candidateKey,nextDistance);counts.set(candidateKey,counts.get(pointKey));queue.push(candidate);}else if(distance.get(candidateKey)===nextDistance)counts.set(candidateKey,counts.get(candidateKey)+counts.get(pointKey));}
+  }
+  return counts.get(key(target))||0;
+ }
  case 'balance-substitution-pictures':{const query=p.equations.find(equation=>equation.query),weight=items=>items.reduce((total,item)=>total+p.values[item.key]*item.count,0);for(const equation of p.equations)if(weight(equation.left)!==weight(equation.right))throw Error('unbalanced relation');return query.answer;}
  case 'simple-path-network':{const neighbors=new Map(p.vertices.map(vertex=>[vertex.id,[]]));for(const[a,b]of p.edges){neighbors.get(a).push(b);neighbors.get(b).push(a);}let count=0;function visit(node,seen){if(node===p.end){count++;return;}for(const next of neighbors.get(node))if(!seen.has(next)){seen.add(next);visit(next,seen);seen.delete(next);}}visit(p.start,new Set([p.start]));return count;}
  case 'dice-target-bottom':{const step=(o,d)=>d==='N'?{top:o.south,bottom:o.north,north:o.top,south:o.bottom,east:o.east,west:o.west}:d==='S'?{top:o.north,bottom:o.south,north:o.bottom,south:o.top,east:o.east,west:o.west}:d==='E'?{top:o.west,bottom:o.east,north:o.north,south:o.south,east:o.top,west:o.bottom}:{top:o.east,bottom:o.west,north:o.north,south:o.south,east:o.bottom,west:o.top};return p.route.reduce(step,p.startOrientation).bottom;}

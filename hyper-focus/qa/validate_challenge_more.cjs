@@ -51,8 +51,8 @@ assert.deepEqual(r4Roll.payload.moves,['R','R','D','R']);assert.equal(r4Roll.pay
 assert.deepEqual(question(3,'main',1).payload,{kind:'reverse',end:17,changes:[-9,8]},'3회 1번 버스 승하차 거꾸로 해결하기');
 assert(question(3,'main',6).payload.paths.some(path=>path.some((point,index)=>index&&point[0]!==path[index-1][0]&&point[1]!==path[index-1][1])),'3회 6번에 대각선 포함');
 assert(question(3,'main',7).prompt.includes('2년이 지난 후')&&!question(3,'main',7).prompt.includes('두 해'),'3회 7번 표현 수정');
-assert.deepEqual(question(3,'main',9).payload,{kind:'shortest-path-grid',cols:4,rows:3,blocked:[[3,1]],directions:['E','N'],responseMode:'shortest-path-count'},'3회 9번 작은 4×3 표와 검은 지점 1개');
-assert.equal(question(3,'main',9).answer,15,'3회 9번 최단거리 정답');
+assert.deepEqual(question(3,'main',9).payload,{kind:'shortest-path-grid',cols:4,rows:3,blocked:[[3,1]],directions:['E','N','NE'],diagonals:[[[1,2],[2,1]]],responseMode:'shortest-path-count'},'3회 9번 작은 4×3 표, 검은 지점 1개, 대각선 길 1개');
+assert.equal(question(3,'main',9).answer,2,'3회 9번 가장 짧은 길 정답');
 assert.equal(question(3,'main',15).payload.kind,'checker-stack-count');
 assert.equal(question(3,'main',18).payload.kind,'tetra-cube-hole-count');
 assert(!question(3,'main',18).problemHtml.includes('같은 색의 쌓기나무 4개가 테트라큐브 1개입니다.'),'3회 18번 그림 아래 중복 설명 제거');

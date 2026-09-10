@@ -144,20 +144,24 @@
     const escaped=sentence.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     return String(html||'').replace(new RegExp('<text[^>]*>'+escaped+'</text>'),'');
   }
-  function compactShortestPathSvg(solution,blockedPoint=[2,1]){
+  function compactShortestPathSvg(solution,blockedPoint=[2,1],diagonal=null){
     const cols=4,rows=3,left=110,top=32,dx=110,dy=58,blocked=blockedPoint.join(','),ways=Array.from({length:rows+1},()=>Array(cols+1).fill(0));
     ways[rows][0]=1;
     for(let y=rows;y>=0;y--)for(let x=0;x<=cols;x++)if(!(x===0&&y===rows)&&`${x},${y}`!==blocked)ways[y][x]=(x?ways[y][x-1]:0)+(y<rows?ways[y+1][x]:0);
     let body='';
     for(let y=0;y<=rows;y++)for(let x=0;x<cols;x++)body+=`<line x1="${left+x*dx}" y1="${top+y*dy}" x2="${left+(x+1)*dx}" y2="${top+y*dy}" stroke="#8195a2" stroke-width="2.2"/>`;
     for(let x=0;x<=cols;x++)for(let y=0;y<rows;y++)body+=`<line x1="${left+x*dx}" y1="${top+y*dy}" x2="${left+x*dx}" y2="${top+(y+1)*dy}" stroke="#8195a2" stroke-width="2.2"/>`;
+    if(diagonal){
+      const [[x1,y1],[x2,y2]]=diagonal;
+      body+=`<line x1="${left+x1*dx}" y1="${top+y1*dy}" x2="${left+x2*dx}" y2="${top+y2*dy}" stroke="#d17940" stroke-width="4" stroke-linecap="round"/>`;
+    }
     for(let y=0;y<=rows;y++)for(let x=0;x<=cols;x++){
       const cx=left+x*dx,cy=top+y*dy,isBlocked=`${x},${y}`===blocked;
       body+=isBlocked?`<rect x="${cx-9}" y="${cy-9}" width="18" height="18" rx="3" fill="#263641"/>`:`<circle cx="${cx}" cy="${cy}" r="4" fill="#fff" stroke="#4f7488" stroke-width="1.5"/>`;
-      if(solution&&!isBlocked)body+=`<text x="${cx}" y="${cy-14}" text-anchor="middle" font-size="11" font-weight="800" fill="#1f625e">${ways[y][x]}</text>`;
+      if(solution&&!isBlocked&&!diagonal)body+=`<text x="${cx}" y="${cy-14}" text-anchor="middle" font-size="11" font-weight="800" fill="#1f625e">${ways[y][x]}</text>`;
     }
     body+=`<text x="${left}" y="${top+rows*dy+25}" text-anchor="middle" font-size="14" font-weight="800" fill="#203b54">출발</text><text x="${left+cols*dx}" y="${top-17}" text-anchor="middle" font-size="14" font-weight="800" fill="#203b54">도착</text>`;
-    return `<svg class="challenge-visual concept-replacement-visual" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 245" role="img" aria-label="검은 지점 한 곳을 피하는 작은 최단거리 모눈" style="width:100%;height:auto;font-family:'Malgun Gothic',sans-serif">${body}</svg>`;
+    return `<svg class="challenge-visual concept-replacement-visual" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 245" role="img" aria-label="검은 지점 한 곳${diagonal?'과 대각선 길이 하나가 있는':'을 피하는'} 작은 길 모눈" style="width:100%;height:auto;font-family:'Malgun Gothic',sans-serif">${body}</svg>`;
   }
 
   Object.assign(all[3].main[0],{
@@ -172,9 +176,9 @@
   all[3].main[6].solution=all[3].main[6].solution.replace('두 해 뒤','2년이 지난 후');
   replaceWithSpecial(all[3].main[8],'shortest-path-grid',2,'논리추리');
   Object.assign(all[3].main[8],{
-    prompt:'출발점에서 도착점까지 오른쪽 또는 위쪽으로만 최단거리로 가려고 합니다. 검은 지점 1개를 지나지 않는 길은 모두 몇 가지일까요?',
-    answer:15,answerHtml:'15가지',solution:'각 지점까지 오는 길의 수를 아래와 왼쪽에서 오는 수의 합으로 적습니다. 검은 지점은 0으로 두면 도착점의 수는 15이므로 모두 15가지입니다.',
-    problemHtml:compactShortestPathSvg(false,[3,1]),solutionDiagram:compactShortestPathSvg(true,[3,1]),payload:{kind:'shortest-path-grid',cols:4,rows:3,blocked:[[3,1]],directions:['E','N'],responseMode:'shortest-path-count'}
+    prompt:'출발점에서 도착점까지 그어진 길을 따라 가장 짧은 길로 가려고 합니다. 오른쪽, 위쪽 또는 대각선으로 움직이고, 검은 지점 1개를 지나지 않을 때 갈 수 있는 길은 모두 몇 가지일까요?',
+    answer:2,answerHtml:'2가지',solution:'대각선 길을 이용하면 가로·세로 길만 이용할 때보다 한 번 덜 움직이므로, 가장 짧은 길은 모두 대각선 길을 지납니다. 대각선 시작점까지 2가지이고, 대각선 끝점에서 검은 지점을 피해 도착점까지 1가지이므로 2×1=2가지입니다.',
+    problemHtml:compactShortestPathSvg(false,[3,1],[[1,2],[2,1]]),solutionDiagram:compactShortestPathSvg(true,[3,1],[[1,2],[2,1]]),payload:{kind:'shortest-path-grid',cols:4,rows:3,blocked:[[3,1]],directions:['E','N','NE'],diagonals:[[[1,2],[2,1]]],responseMode:'shortest-path-count'}
   });
   replaceWithSpecial(all[3].main[14],'checker-stack-count',2,'수');
   replaceWithSpecial(all[3].main[17],'tetra-cube-hole-count',1,'도형');
