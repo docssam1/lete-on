@@ -37,7 +37,7 @@ const numberedProblems = await page.locator(".problem").evaluateAll((nodes) => n
   const headers = directChildren.filter((child) => child.matches("header"));
   const visuals = directChildren.filter((child) => child.classList.contains("problem-visual"));
   const numberNodes = headers[0] ? [...headers[0].children].filter((child) => child.matches("b")) : [];
-  const responseSelector = ".sequence-slots,.face-slots,.sum-slots,.write-answer,.answer-box";
+  const responseSelector = ".sequence-slots,.roll-sketches,.sum-slots,.write-answer,.answer-box";
   const responses = visuals[0] ? [...visuals[0].children].filter((child) => child.matches(responseSelector)) : [];
   return { id: node.dataset.problemId, number: numberNodes[0]?.textContent.trim(), headers: headers.length, numberNodes: numberNodes.length, prompts: headers[0]?.querySelectorAll("p").length || 0, visuals: visuals.length, responses: responses.length, nestedProblems: node.querySelectorAll(".problem").length };
 }));
@@ -54,10 +54,38 @@ assert.equal(await page.locator(".route-board .board-die").count(), boardCount);
 assert.equal(await page.locator(".route-board .board-die .die-face").count(), boardCount * 3);
 assert.equal(await page.locator('.route-board[data-viewpoint="southeast-diagonal"]').count(), boardCount);
 assert.equal(await page.locator(".paired-problem .unknown-face").count(), 4);
-assert.equal(await page.locator(".visible-problem .finish-die .cube-guide").count(), 4);
-assert.equal(await page.locator(".visible-problem .finish-die .die-svg").count(), 0);
-const cubeGuides = await page.locator(".visible-problem .finish-die .cube-guide").evaluateAll((guides) => guides.map((guide) => ({ squares: guide.querySelectorAll("rect.cube-guide-square").length, connectors: guide.querySelectorAll("line.cube-guide-connector").length, pips: guide.querySelectorAll("circle").length, width: guide.getBBox().width, height: guide.getBBox().height })));
-assert.ok(cubeGuides.every((guide) => guide.squares === 2 && guide.connectors === 4 && guide.pips === 0 && guide.width > 90 && guide.height > 90), JSON.stringify(cubeGuides));
+assert.equal(await page.locator(".visible-problem .face-slots").count(), 0);
+assert.equal(await page.locator(".visible-problem .finish-die").count(), 0);
+const visibleStudentWork = await page.locator(".visible-problem").evaluateAll((problems) => problems.map((problem) => ({
+  moves: problem.querySelectorAll('.route-board line[data-direction]').length,
+  declaredSteps: Number(problem.querySelector(".roll-sketches")?.dataset.stepCount),
+  sketches: problem.querySelectorAll(".roll-sketch").length,
+  finalSketches: problem.querySelectorAll(".roll-sketch.is-final").length,
+  prompt: problem.querySelector("header p")?.textContent || "",
+  layout: (() => {
+    const visual = problem.querySelector(".problem-visual").getBoundingClientRect();
+    const board = problem.querySelector(".route-board").getBoundingClientRect();
+    const sketches = problem.querySelector(".roll-sketches").getBoundingClientRect();
+    return { visualTop: visual.top, visualBottom: visual.bottom, boardTop: board.top, boardBottom: board.bottom, sketchesTop: sketches.top, sketchesBottom: sketches.bottom };
+  })(),
+  guides: [...problem.querySelectorAll(".five-face-guide")].map((guide) => ({
+    faces: guide.querySelectorAll("polygon.five-face-region").length,
+    outerSquares: guide.querySelectorAll("rect.five-face-outer").length,
+    innerSquares: guide.querySelectorAll("rect.five-face-inner").length,
+    connectors: guide.querySelectorAll("line.five-face-connector").length,
+    pips: guide.querySelectorAll("circle.five-face-pip").length,
+    width: guide.getBBox().width,
+    height: guide.getBBox().height
+  }))
+})));
+for (const problem of visibleStudentWork) {
+  assert.equal(problem.declaredSteps, problem.moves, JSON.stringify(problem));
+  assert.equal(problem.sketches, problem.moves, JSON.stringify(problem));
+  assert.equal(problem.finalSketches, 1, JSON.stringify(problem));
+  assert.ok(!/(윗면|앞면|오른쪽 면)/.test(problem.prompt), problem.prompt);
+  assert.ok(problem.layout.boardTop >= problem.layout.visualTop - 1 && problem.layout.boardBottom <= problem.layout.sketchesTop + 1 && problem.layout.sketchesBottom <= problem.layout.visualBottom + 1, JSON.stringify(problem.layout));
+  assert.ok(problem.guides.every((guide) => guide.faces === 5 && guide.outerSquares === 1 && guide.innerSquares === 1 && guide.connectors === 4 && guide.pips === 0 && guide.width > 75 && guide.height > 75), JSON.stringify(problem.guides));
+}
 assert.equal(await page.locator(".answer-box").count(), 0);
 
 const alignments = await page.locator(".board-die").evaluateAll((nodes) => nodes.map((node) => {
@@ -85,10 +113,28 @@ await page.screenshot({ path: path.join(output, "desktop.png"), fullPage: true }
 await page.locator("#answerToggle").check();
 assert.equal(await page.locator(".answer-box").count(), 20);
 assert.equal(await page.locator(".unknown-face").count(), 0);
-assert.equal(await page.locator(".visible-problem .finish-die .cube-guide").count(), 0);
-assert.equal(await page.locator(".visible-problem .finish-die .die-svg").count(), 4);
-const answerDiePips = await page.locator(".visible-problem .finish-die .die-svg").evaluateAll((dice) => dice.map((die) => die.querySelectorAll("circle").length));
-assert.ok(answerDiePips.every((count) => count >= 3), JSON.stringify(answerDiePips));
+const visibleAnswerWork = await page.locator(".visible-problem").evaluateAll((problems) => problems.map((problem) => ({
+  moves: problem.querySelectorAll('.route-board line[data-direction]').length,
+  layout: (() => {
+    const visual = problem.querySelector(".problem-visual").getBoundingClientRect();
+    const board = problem.querySelector(".route-board").getBoundingClientRect();
+    const sketches = problem.querySelector(".roll-sketches").getBoundingClientRect();
+    const answer = problem.querySelector(".answer-box").getBoundingClientRect();
+    return { visualTop: visual.top, visualBottom: visual.bottom, boardTop: board.top, boardBottom: board.bottom, sketchesTop: sketches.top, sketchesBottom: sketches.bottom, answerTop: answer.top, answerBottom: answer.bottom };
+  })(),
+  guides: [...problem.querySelectorAll(".five-face-guide")].map((guide) => ({
+    faces: guide.querySelectorAll("polygon.five-face-region").length,
+    pips: guide.querySelectorAll("circle.five-face-pip").length,
+    state: guide.dataset.state.split(",").map(Number),
+    pipsByFace: Object.fromEntries(["top", "north", "south", "east", "west"].map((face) => [face, guide.querySelectorAll(`circle.five-face-pip[data-face="${face}"]`).length]))
+  }))
+})));
+for (const problem of visibleAnswerWork) {
+  assert.equal(problem.guides.length, problem.moves, JSON.stringify(problem));
+  assert.ok(problem.layout.boardTop >= problem.layout.visualTop - 1 && problem.layout.boardBottom <= problem.layout.sketchesTop + 1 && problem.layout.sketchesBottom <= problem.layout.answerTop + 1 && problem.layout.answerBottom <= problem.layout.visualBottom + 1, JSON.stringify(problem.layout));
+  assert.ok(problem.guides.every((guide) => guide.faces === 5 && guide.pips >= 15 && guide.state.length === 6 && new Set(guide.state).size === 6 && guide.state.every((value) => value >= 1 && value <= 6)
+    && guide.pipsByFace.top === guide.state[0] && guide.pipsByFace.north === guide.state[2] && guide.pipsByFace.south === guide.state[3] && guide.pipsByFace.east === guide.state[4] && guide.pipsByFace.west === guide.state[5]), JSON.stringify(problem.guides));
+}
 for (const lang of ["en", "zh", "ja", "ko"]) {
   await page.locator("#languageSelect").selectOption(lang);
   assert.equal(await page.locator(".problem").count(), 20);
@@ -102,6 +148,14 @@ const afterRoutes = await page.locator(".route-board").evaluateAll((nodes) => no
 assert.notEqual(beforeRoutes, afterRoutes);
 assert.equal(Number(new URL(page.url()).searchParams.get("round")), Number(beforeRound) + 1);
 
+await page.emulateMedia({ media: "print" });
+const answerPrintMetrics = await page.locator(".sheet").evaluateAll((nodes) => nodes.map((node) => ({ height: node.getBoundingClientRect().height, scrollHeight: node.scrollHeight, clientHeight: node.clientHeight })));
+assert.ok(answerPrintMetrics.every((item) => item.height <= 1124 && item.scrollHeight <= item.clientHeight + 1), JSON.stringify(answerPrintMetrics));
+const answerPdfBytes = await page.pdf({ path: path.join(output, "worksheet-answers.pdf"), format: "A4", printBackground: true, preferCSSPageSize: true });
+const answerPdf = await PDFDocument.load(answerPdfBytes);
+assert.equal(answerPdf.getPageCount(), 11);
+
+await page.emulateMedia({ media: "screen" });
 await page.locator("#answerToggle").uncheck();
 await page.emulateMedia({ media: "print" });
 const printMetrics = await page.locator(".sheet").evaluateAll((nodes) => nodes.map((node) => ({ height: node.getBoundingClientRect().height, scrollHeight: node.scrollHeight, clientHeight: node.clientHeight })));
