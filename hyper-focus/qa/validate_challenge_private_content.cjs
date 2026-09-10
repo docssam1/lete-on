@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto'),{stripTypeScriptTypes}=require('node:module');
 const base=path.resolve(__dirname,'..'),folder=path.join(base,'supabase/functions/challenge-content');
 const contract=fs.readFileSync(path.join(folder,'content-contract.ts'),'utf8'),source=fs.readFileSync(path.join(folder,'index.ts'),'utf8');
-const executable=stripTypeScriptTypes(contract.replace(/^export /gm,'')+'\n'+source.replace(/^import .*\n/gm,'').replace(/^export /gm,''),{mode:'strip'});
+const executable=stripTypeScriptTypes(contract.replace(/^export /gm,'')+'\n'+source.replace(/^import .*\r?\n/gm,'').replace(/^export /gm,''),{mode:'strip'});
 const studentId='11111111-1111-4111-8111-111111111111',otherId='22222222-2222-4222-8222-222222222222',typeId='replace-count-constraints',productKey='challenge-mock-1',version='qa-20260909';
 let checks=0;function ok(value,label){assert.ok(value,label);checks++;}
 function hash(s){return crypto.createHash('sha256').update(s).digest('hex');}

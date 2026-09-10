@@ -1,8 +1,14 @@
 (function(root){
   'use strict';
-  const VERSION='challenge-variants-20260909-v4', TITLE='2026년 9월 챌린지 대비', LEVELS=['easy','same','hard'];
-  if(typeof module!=='undefined'&&module.exports){require('./challenge-bank.js');require('./exam-supplement.js');require('./variant-numeric-extension.js');require('./variant-geometry-extension.js');require('./variant-core-levels.js');}
-  const coreLevels=root.HFChallengeCoreLevels;const extensions={'numeric-extension':root.HFChallengeNumericExtension,'geometry-extension':root.HFChallengeGeometryExtension};
+  const VERSION='challenge-variants-20260911-v5', TITLE='2026년 9월 챌린지 대비', LEVELS=['easy','same','hard'];
+  if(typeof module!=='undefined'&&module.exports){require('./challenge-bank.js');require('./exam-supplement.js');require('./variant-numeric-extension.js');require('./variant-geometry-extension.js');require('./variant-replacement-measurement.js');require('./variant-replacement-spatial.js');require('./variant-replacement-paths.js');require('./variant-core-levels.js');}
+  const coreLevels=root.HFChallengeCoreLevels;const extensions={
+    'numeric-extension':root.HFChallengeNumericExtension,
+    'geometry-extension':root.HFChallengeGeometryExtension,
+    'replacement-measurement':root.HFChallengeReplacementMeasurement,
+    'replacement-spatial':root.HFChallengeReplacementSpatial,
+    'replacement-paths':root.HFChallengeReplacementPaths
+  };
   const clone=x=>JSON.parse(JSON.stringify(x));
   function freeze(x){if(x&&typeof x==='object'){Object.values(x).forEach(freeze);Object.freeze(x);}return x;}
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -38,6 +44,25 @@
     'r3-main-6':'routes','r4-main-18':'routes','priority-diagonal-length':'routes'
   };
   const labels={arrow:'보기에서 규칙을 찾는 화살표 수 이동',mirror:'모눈 거울상 다각형 그리기','triangle-count':'선에 따른 삼각형 세기',unknowns:'빈칸의 수를 구해 비교하기',triples:'서로 다른 세 수의 합',operators:'연산 기호를 넣어 식 완성하기',net:'전개도의 마주 보는 면',roll:'주사위 굴리기',runs:'길이가 늘어나는 색 묶음',group:'구슬 묶음의 수와 색',routes:'모눈 선분의 전체 길이 비교'};
+  const replacementLabels={
+    'mock-balance-substitution-pictures':'그림 저울의 관계로 하트 수 구하기',
+    'mock-dice-target-bottom':'주사위 움직이기',
+    'mock-object-length-equivalence':'연필·지우개·클립의 길이',
+    'r3-main-9-shortest-path-grid':'가장 짧은 길 찾기',
+    'r3-main-15-checker-stack-count':'검은색·흰색 쌓기나무의 개수',
+    'r3-main-18-tetra-cube-hole-count':'테트라큐브로 만든 쌓기나무',
+    'r3-extra-1-congruent-marked-partition':'같은 모양으로 나누기',
+    'r3-extra-3-block-build-count':'두 종류 블록으로 만든 모양',
+    'r3-extra-4-object-length-equivalence':'연필·지우개·클립의 길이',
+    'r3-extra-6-stack-box-fill':'쌓기나무 개수와 빈 상자 채우기',
+    'r4-main-18-congruent-marked-partition':'같은 모양으로 나누기',
+    'r4-extra-1-object-length-equivalence':'연필·지우개·클립의 길이',
+    'r4-extra-2-checker-stack-count':'검은색·흰색 쌓기나무의 개수',
+    'r4-extra-3-tetra-cube-hole-count':'테트라큐브로 만든 쌓기나무',
+    'r4-extra-4-shortest-path-grid':'가장 짧은 길 찾기',
+    'r4-extra-5-stack-box-fill':'쌓기나무 개수와 빈 상자 채우기',
+    'r4-extra-6-simple-path-network':'같은 지점을 다시 지나지 않는 길'
+  };
   const policy={
     arrow:['경로 4칸, 방향 2종','경로 8칸, 방향 3종','경로 10칸, 방향 4종'],
     mirror:['꼭짓점 4개, 거울에서 같은 거리','꼭짓점 6개, 오목한 부분 포함','꼭짓점 8개, 오목한 부분 둘'],
@@ -60,7 +85,7 @@
   const sourceCache=new Map();
   function sourceAt(ref){const r=Number(ref.round),section=ref.section||'main',n=Number(ref.number);if(![1,2,3,4].includes(r)||!['main','extra'].includes(section)||!Number.isInteger(n))throw Error('올바른 회차와 문항 번호가 필요합니다.');const bank=root.HFChallengeBank,sup=root.HFChallengeSupplement;if(!bank||!sup)throw Error('시험지 자료를 먼저 불러와야 합니다.');const key=`${r}-${section}`;if(!sourceCache.has(key))sourceCache.set(key,freeze(clone(section==='main'?bank.createMockExam(r,62001):sup.get(r))));const stored=sourceCache.get(key).questions.find(q=>q.number===n);if(!stored)throw Error('등록되지 않은 문항입니다.');if(!stored.conceptSourcePayload)return stored;const q=clone(stored);q.payload=clone(stored.conceptSourcePayload);if(stored.conceptSourcePrompt)q.prompt=stored.conceptSourcePrompt;if(stored.conceptSourceTypeId)q.typeId=stored.conceptSourceTypeId;delete q.conceptSourcePayload;delete q.conceptSourcePrompt;delete q.conceptSourceTypeId;return freeze(q);}
   function family(q){for(const [name,extension]of Object.entries(extensions))if(extension?.supports(q))return name;if(q.subquestions?.length>1)return null;if(nativeIds.has(q.typeId)){if(['balance-weight-order','rectangle-count'].includes(q.typeId)&&q.responsePart!==1)return null;return 'native';}const f=authored[q.typeId];if(!f)return null;const p=q.payload||{};if(sourceFields[f]&&sourceFields[f].some(k=>p[k]===undefined))return null;if(f==='age-chain'&&(p.names.length!==3||p.gaps.length!==2||String(p.sumPeople)!=='1,2'))return null;if(f==='paper-remainder'&&p.equalColors!==2)return null;if(['unknowns','triples','operators','net','roll','runs','group','card-boxes','preference-table','reverse-distribution'].includes(f)&&p.kind!==f)return null;if(f==='routes'&&!['routes','priority-diagonal-length'].includes(p.kind))return null;if(f==='arrow'&&(!p.verticalStep||!p.points))return null;if(f==='mirror'&&(!p.vertices||!p.mirrorX))return null;if(f==='triangle-count'&&(!p.rays||!p.bases))return null;return f;}
-  function describe(ref){const q=sourceAt(ref),f=family(q),extension=extensions[f],eligibility=extension?clone(extension.levels(q)):{easy:!!f,same:!!f,hard:!!f};if(['operators','net'].includes(f))eligibility.hard=false;if(['apartment-floor-order','four-cell-code','triangle-number-rule','minimum-sum-pyramid'].includes(q.typeId))eligibility.easy=eligibility.hard=false;if(['balance-weight-order','rotated-grid-pair'].includes(q.typeId))eligibility.easy=false;if(q.typeId==='mountain-digit-count')eligibility.hard=false;if(f==='group'&&q.payload.mode==='group')eligibility.easy=eligibility.hard=false;for(const d of LEVELS)if(coreLevels?.supports(q,d))eligibility[d]=true;return freeze({key:`${ref.round}-${ref.section||'main'}-${ref.number}`,round:Number(ref.round),section:ref.section||'main',number:Number(ref.number),typeId:q.typeId,label:f==='native'?root.HFChallengeBank.types[q.typeId].label:labels[f]||q.domain||q.typeId,family:f,eligibility,heldReason:!f?hold:Object.values(eligibility).every(Boolean)?'':'일부 난이도는 구조 검수 전입니다.',difficultyNotes:(extension?extension.notes(q):f==='native'?['기존 유형의 기초 조건','기존 유형의 같은 사고 단계','기존 유형의 확장 조건']:policy[f]||[]).map((note,i)=>coreLevels?.supports(q,LEVELS[i])?coreLevels.note(q,LEVELS[i]):note),fingerprint:fingerprint(q)});}
+  function describe(ref){const q=sourceAt(ref),f=family(q),extension=extensions[f],eligibility=extension?clone(extension.levels(q)):{easy:!!f,same:!!f,hard:!!f};if(['operators','net'].includes(f))eligibility.hard=false;if(['apartment-floor-order','four-cell-code','triangle-number-rule','minimum-sum-pyramid'].includes(q.typeId))eligibility.easy=eligibility.hard=false;if(['balance-weight-order','rotated-grid-pair'].includes(q.typeId))eligibility.easy=false;if(q.typeId==='mountain-digit-count')eligibility.hard=false;if(f==='group'&&q.payload.mode==='group')eligibility.easy=eligibility.hard=false;for(const d of LEVELS)if(coreLevels?.supports(q,d))eligibility[d]=true;return freeze({key:`${ref.round}-${ref.section||'main'}-${ref.number}`,round:Number(ref.round),section:ref.section||'main',number:Number(ref.number),typeId:q.typeId,label:f==='native'?root.HFChallengeBank.types[q.typeId].label:replacementLabels[q.typeId]||labels[f]||q.domain||q.typeId,family:f,eligibility,heldReason:!f?hold:Object.values(eligibility).every(Boolean)?'':'일부 난이도는 구조 검수 전입니다.',difficultyNotes:(extension?extension.notes(q):f==='native'?['기존 유형의 기초 조건','기존 유형의 같은 사고 단계','기존 유형의 확장 조건']:policy[f]||[]).map((note,i)=>coreLevels?.supports(q,LEVELS[i])?coreLevels.note(q,LEVELS[i]):note),fingerprint:fingerprint(q)});}
   function list(filter={}){const rows=[];for(let r=1;r<=4;r++)for(const section of ['main','extra']){if(filter.round&&Number(filter.round)!==r||filter.section&&filter.section!==section)continue;for(let n=1;n<=(section==='main'?20:6);n++)rows.push(describe({round:r,section,number:n}));}return freeze(rows);}
   function pointArrow(a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy);return `<g transform="translate(${a[0]},${a[1]}) rotate(${Math.atan2(dy,dx)*180/Math.PI})"><path d="M22 0H${l-23}M${l-31} -5L${l-23} 0L${l-31} 5" stroke="#355f7a" stroke-width="2.2" fill="none"/></g>`;}
   function arrowQuestion(source,d,r){const level=LEVELS.indexOf(d),paths=[[[0,0],[1,0],[2,0],[2,1],[2,2]],[[0,0],[1,0],[1,1],[2,1],[3,1],[3,2],[2,2],[1,2],[1,3]],[[0,0],[1,0],[1,1],[2,1],[3,1],[3,2],[3,3],[2,3],[1,3],[0,3],[0,2]]],points=paths[level];const moves=points.slice(1).map(([x,y],i)=>x>points[i][0]?'R':x<points[i][0]?'L':y>points[i][1]?'U':'D'),verticalStep=r(0,1)?8:10,start=r(62,88),end=start+sum(moves.map(m=>({R:1,L:-1,U:-verticalStep,D:verticalStep})[m])),base=r(30,45);let art=rect(4,4,244,244)+text(126,25,'보기',17);const c=[126,128];for(const [x,y,v]of [[51,128,base-1],[201,128,base+1],[126,53,base-verticalStep],[126,203,base+verticalStep]])art+=pointArrow(c,[x,y])+rect(x-19,y-19,38,38)+text(x,y,v);art+=rect(107,109,38,38)+text(...c,base);const projected=points.map(([x,y])=>[298+83*x,225-63*y]);for(let i=1;i<projected.length;i++)art+=pointArrow(projected[i-1],projected[i]);projected.forEach(([x,y],i)=>{art+=rect(x-19,y-19,38,38)+text(x,y,i===0?start:i===projected.length-1?'㉠':'');});return {payload:{kind:'variant-arrow',points,moves,start,end,missing:'end',verticalStep,reference:base},prompt:'보기에서 수가 바뀌는 규칙을 찾으세요. 오른쪽에서 출발하는 수부터 화살표를 따라 빈칸을 채우고 마지막 ㉠의 수를 쓰세요.',problemHtml:svg(art,660,255,'수의 보기와 꺾인 화살표 경로'),answer:end,solution:`오른쪽은 +1, 왼쪽은 −1, 위쪽은 −${verticalStep}, 아래쪽은 +${verticalStep}입니다. ${[start,...moves.map((_,i)=>start+sum(moves.slice(0,i+1).map(m=>({R:1,L:-1,U:-verticalStep,D:verticalStep})[m])))].join(' → ')}`};}

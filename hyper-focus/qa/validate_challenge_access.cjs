@@ -5,7 +5,7 @@ let checks=0;function ok(v,label){assert.ok(v,label);checks++;}
 const keys=catalog.list().map(e=>e.key),key='challenge-concept-1',studentId='11111111-1111-4111-8111-111111111111',adminId='22222222-2222-4222-8222-222222222222';
 const migration=fs.readFileSync(path.join(base,'supabase/migrations/20260908222618_challenge_permission_catalog.sql'),'utf8');
 const edgeSource=fs.readFileSync(path.join(base,'supabase/functions/challenge-access/index.ts'),'utf8');
-const edgeJs=stripTypeScriptTypes(edgeSource.replace(/^import .*\n/gm,''),{mode:'strip'}).replace('export async function handleRequest','async function handleRequest');
+const edgeJs=stripTypeScriptTypes(edgeSource.replace(/^import .*\r?\n/gm,''),{mode:'strip'}).replace('export async function handleRequest','async function handleRequest');
 function edge(options={}){
  const now=Date.now(),claims={exp:Math.floor(now/1000)+3600,iat:Math.floor(now/1000),aal:'aal2',session_id:'live',app_metadata:{hf_role:options.role||'admin'},...options.claims};
  const token='x.'+Buffer.from(JSON.stringify(claims)).toString('base64url')+'.y';let mutationCalls=[],authCalls=0;
