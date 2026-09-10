@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>2026년 9월 챌린지 대비 · 개념 교재 1·2 | LETE-ON</title>
-  <link rel="stylesheet" href="concepts-two.css?v=20260909-3">
+  <link rel="stylesheet" href="concepts-two.css?v=20260910-video1a">
 </head>
 <body data-document-kind="concept">
   <header class="toolbar" aria-label="개념 교재 보기 설정">
@@ -23,13 +23,24 @@
     </label>
     <label for="answers"><input id="answers" type="checkbox">정답과 풀이 보기</label>
     <button id="print" type="button">PDF · 인쇄</button>
+    <a id="conceptVideoLink" href="https://youtu.be/7KvLEzuKfhk" target="_blank" rel="noopener noreferrer" hidden>영상 새 창</a>
     <a href="./">교재 서재</a>
   </header>
-  <main id="conceptBook" aria-live="polite"></main>
+  <div class="concept-viewer-layout" id="conceptViewerLayout">
+    <aside class="concept-video-panel" id="conceptVideoPanel" hidden>
+      <header><h2 id="conceptVideoTitle">개념 1 영상</h2><p>교재와 함께 보세요.</p></header>
+      <div class="concept-video-frame">
+        <iframe id="conceptVideoFrame" title="개념 1 학습 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div class="concept-video-watermark" id="conceptVideoWatermark" aria-hidden="true"></div>
+      </div>
+    </aside>
+    <div class="concept-document-column"><main id="conceptBook" aria-live="polite"></main></div>
+  </div>
   <script src="../supabase-config.js"></script>
   <script src="../supabase-client.js"></script>
   <script src="access-catalog.js"></script>
   <script src="access-service.js"></script>
+  <script src="concept-video.js?v=20260910a"></script>
   <script src="document-access.js"></script>
 </body>
 </html>

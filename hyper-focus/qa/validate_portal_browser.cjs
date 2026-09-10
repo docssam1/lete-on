@@ -38,6 +38,22 @@ async function installRemoteAdminFixture(page) {
   }));
 }
 
+async function installConceptVideoFixture(page) {
+  await installOfflineConfig(page);
+  await page.route("**/hyper-focus/challenge/access-service.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: `window.HFChallengeAccess={allow:key=>key==="challenge-concept-1",approvedStudentName:()=>"영상검수",isTeacherPreview:()=>false,refresh:async()=>({verified:true})};`
+  }));
+  await page.route("**/hyper-focus/challenge/document-access.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: "void 0;"
+  }));
+  await page.route("https://www.youtube-nocookie.com/embed/**", route => route.fulfill({
+    contentType: "text/html; charset=utf-8",
+    body: "<!doctype html><title>concept video fixture</title>"
+  }));
+}
+
 async function loginStudentFixture(page) {
   await page.locator("[data-login-open]").first().click();
   assert.equal(await page.locator("#loginCode").getAttribute("type"), "text");
@@ -127,6 +143,22 @@ async function noOverflow(page, label) {
     await approvalAdmin.screenshot({ path: "tmp/hf-admin-approval-code-desktop.png", fullPage: true });
     await approvalAdmin.close();
 
+    const conceptVideo = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+    await installConceptVideoFixture(conceptVideo);
+    conceptVideo.on("pageerror", error => errors.push(`concept video desktop: ${error.message}`));
+    await conceptVideo.goto(`${base}/hyper-focus/challenge/concepts.html?round=1`, { waitUntil: "networkidle" });
+    assert.equal(await conceptVideo.locator("#conceptVideoPanel").isVisible(), true);
+    assert.match(await conceptVideo.locator("#conceptVideoFrame").getAttribute("src"), /youtube-nocookie\.com\/embed\/7KvLEzuKfhk/);
+    assert.equal(await conceptVideo.locator("#conceptVideoLink").getAttribute("href"), "https://youtu.be/7KvLEzuKfhk");
+    assert.equal(await conceptVideo.locator("#conceptVideoWatermark span").count(), 3);
+    assert.match(await conceptVideo.locator("#conceptViewerLayout").evaluate(node => getComputedStyle(node).gridTemplateColumns), /px/);
+    await noOverflow(conceptVideo, "desktop concept video");
+    await conceptVideo.screenshot({ path: "tmp/hf-concept-1-video-desktop.png", fullPage: true });
+    await conceptVideo.locator("#round").selectOption("2");
+    assert.equal(await conceptVideo.locator("#conceptVideoPanel").isHidden(), true);
+    assert.equal(await conceptVideo.locator("#conceptVideoFrame").getAttribute("src"), null);
+    await conceptVideo.close();
+
     const vipAdmin = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
     await installVipAdminFixture(vipAdmin);
     vipAdmin.on("pageerror", error => errors.push(`vip admin desktop: ${error.message}`));
@@ -168,6 +200,15 @@ async function noOverflow(page, label) {
     await approvalAdminMobile.screenshot({ path: "tmp/hf-admin-approval-code-mobile.png", fullPage: true });
     await approvalAdminMobile.close();
 
+    const conceptVideoMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+    await installConceptVideoFixture(conceptVideoMobile);
+    conceptVideoMobile.on("pageerror", error => errors.push(`concept video mobile: ${error.message}`));
+    await conceptVideoMobile.goto(`${base}/hyper-focus/challenge/concepts.html?round=1`, { waitUntil: "networkidle" });
+    assert.equal(await conceptVideoMobile.locator("#conceptVideoPanel").isVisible(), true);
+    await noOverflow(conceptVideoMobile, "mobile concept video");
+    await conceptVideoMobile.screenshot({ path: "tmp/hf-concept-1-video-mobile.png", fullPage: true });
+    await conceptVideoMobile.close();
+
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({
       status: 200,
@@ -181,6 +222,7 @@ async function noOverflow(page, label) {
       adminCredentialLogin: adminCode ? true : "not_requested",
       adminProductPermissions: 5,
       adminCurrentApprovalCode: true,
+      conceptOneVideoViewer: true,
       vipAdminDesktop: true,
       vipAdminMobile: true,
       desktopOverflow: 0,
