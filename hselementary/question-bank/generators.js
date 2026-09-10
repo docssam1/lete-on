@@ -21664,19 +21664,20 @@
         "6-1-u2-e4-example-4-4",
         "6-1-u2-e4-mission-1",
         "6-1-u2-e4-mission-4",
-        "6-1-u2-e4-example-4-3"
+        "6-1-u2-e4-example-4-3",
+        "6-1-u2-e4-mission-5"
       ];
-      const poolCounts = [1, 3, 3, 3, 3, 3];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 4 원문 분기는 0부터 5까지여야 합니다.");
+      const poolCounts = [1, 3, 3, 3, 3, 3, 3];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 4 원문 분기는 0부터 6까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, poolCounts[variant] - 1);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
       const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
-      const challengeText = variant === 5
-        ? "밑면 정사각형의 대각선 길이와 바깥의 네 빈 삼각형 넓이를 스스로 찾아 식으로 나타내어 계산해 보세요."
+      const challengeText = [5, 6].includes(variant)
+        ? "밑면 정사각형과 바깥의 네 빈 삼각형 넓이를 스스로 찾아 식으로 나타내어 계산해 보세요."
         : "그림의 면과 모서리의 관계를 스스로 찾아 식으로 나타내어 계산해 보세요.";
       const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">${challengeText}</p>` : "";
-      const evidenceKinds = ["cube-six-pyramid-assembly", "pyramid-vertex-truncation", "tetrahedron-midpoint-quadrilateral", "prism-pyramid-base-join", "pyramid-base-to-base", "square-pyramid-net-area-in-square"];
+      const evidenceKinds = ["cube-six-pyramid-assembly", "pyramid-vertex-truncation", "tetrahedron-midpoint-quadrilateral", "prism-pyramid-base-join", "pyramid-base-to-base", "square-pyramid-net-area-in-square", "square-pyramid-net-area-from-apex-square"];
       const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e4-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const mathBoard = (title, body) => `<div class="source61-math-board"><strong>${title}</strong>${body}</div>`;
@@ -21888,9 +21889,12 @@
         return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid is-solved" viewBox="0 0 330 300" role="img" aria-label="두 각뿔을 밑면끼리 붙인 쌍각뿔" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-solid-face-count="${2 * n}" data-solid-edge-count="${3 * n}" data-solid-vertex-count="${n + 2}" data-result-highlight="${6 * n + 2}">${faceMarkup}${edgeMarkup}${vertexMarkup}<text x="154" y="294" text-anchor="middle">두 각뿔을 밑면끼리 붙인 입체</text></svg>`;
       };
 
-      const squarePyramidNetSvg = ({ outerSide, diagonal, baseArea, netArea, solved = false }) => {
+      const squarePyramidNetSvg = ({ outerSide, diagonal, baseArea, netArea, solved = false, diagonalGiven = false, apexSquare = false }) => {
         const frame = [[55, 32], [275, 32], [275, 252], [55, 252]];
-        const base = [[165, 87], [220, 142], [165, 197], [110, 142]];
+        const center = [165, 142];
+        const frameSidePx = frame[1][0] - frame[0][0];
+        const baseRadius = frameSidePx * diagonal / outerSide / 2;
+        const base = [[center[0], center[1] - baseRadius], [center[0] + baseRadius, center[1]], [center[0], center[1] + baseRadius], [center[0] - baseRadius, center[1]]];
         const lateralFaces = [
           [base[0], base[3], frame[0]],
           [base[1], base[0], frame[1]],
@@ -21909,11 +21913,18 @@
           ? complementFaces.map((points, index) => polygon(points, "source61-e4-complement", `data-complement-region="${index + 1}"`)).join("")
           : "";
         const foldLines = base.map((point, index) => line(point, base[(index + 1) % 4], "source61-e4-fold-edge", `data-fold-edge="${index + 1}"`)).join("");
-        const diagonalLine = solved
-          ? line(base[0], base[2], "source61-e4-base-diagonal", 'data-base-diagonal="shown"')
+        const diagonalLine = solved || diagonalGiven
+          ? line(base[3], base[1], "source61-e4-base-diagonal", `data-base-diagonal="${diagonalGiven ? "given" : "shown"}"`)
           : "";
-        const solvedHeading = solved ? `<text class="source61-e4-net-answer-label" x="165" y="16">밑면 대각선 ${diagonal}cm</text>` : "";
-        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-square-net${solved ? " is-solved" : ""}" viewBox="0 0 330 300" role="img" aria-label="정사각형 안에 그린 정사각뿔 전개도" data-source61-e4-structure="square-pyramid-net-area-in-square" data-source61-e4-geometry="shared-square-pyramid-net-coordinate-model" data-outer-side-cm="${outerSide}" data-base-diagonal-cm="${diagonal}" data-base-area-cm2="${baseArea}"${solved ? ` data-net-area-cm2="${netArea}" data-result-highlight="${netArea}"` : ""}>${solvedHeading}${polygon(frame, "source61-e4-net-frame", 'data-net-frame="outer-square"')}${faces}${complements}${foldLines}${diagonalLine}<text class="source61-e4-net-base-label" x="165" y="136"><tspan x="165">밑면 넓이</tspan><tspan x="165" dy="15">${baseArea}cm²</tspan></text><text class="source61-e4-net-dimension" x="165" y="270">${outerSide}cm</text><text class="source61-e4-net-dimension" x="294" y="142" transform="rotate(-90 294 142)">${outerSide}cm</text>${solved ? `<text class="source61-e4-result-label" x="165" y="290">전개도 넓이 ${netArea}cm²</text>` : ""}</svg>`;
+        const diagonalLabel = diagonalGiven ? `<text class="source61-e4-net-diagonal-label" x="165" y="132">${diagonal}cm</text>` : "";
+        const solvedHeading = solved && !diagonalGiven ? `<text class="source61-e4-net-answer-label" x="165" y="16">밑면 대각선 ${diagonal}cm</text>` : "";
+        const baseLabel = !apexSquare || solved ? `<text class="source61-e4-net-base-label" x="165" y="158">밑면 ${baseArea}cm²</text>` : "";
+        const frameClass = `source61-e4-net-frame${apexSquare ? " source61-e4-apex-frame" : ""}`;
+        const apexPoints = apexSquare ? frame.map((point, index) => circle(point, "source61-e4-apex-point", `data-apex-point="${index + 1}"`)).join("") : "";
+        const frameCaption = apexSquare ? `꼭짓점을 이은 정사각형 한 변 ${outerSide}cm` : `${outerSide}cm`;
+        const frameKind = apexSquare ? "apex-square" : "outer-square";
+        const structure = apexSquare ? "square-pyramid-net-area-from-apex-square" : "square-pyramid-net-area-in-square";
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-square-net${apexSquare ? " source61-e4-apex-square-net" : ""}${solved ? " is-solved" : ""}" viewBox="0 0 330 300" role="img" aria-label="정사각뿔 전개도와 각뿔 꼭짓점을 이은 정사각형" data-source61-e4-structure="${structure}" data-source61-e4-geometry="shared-square-pyramid-net-coordinate-model" data-frame-kind="${frameKind}" data-outer-side-cm="${outerSide}" data-base-diagonal-cm="${diagonal}"${!apexSquare || solved ? ` data-base-area-cm2="${baseArea}"` : ""}${solved ? ` data-net-area-cm2="${netArea}" data-result-highlight="${netArea}"` : ""}>${solvedHeading}${polygon(frame, frameClass, `data-net-frame="${frameKind}"`)}${faces}${complements}${foldLines}${diagonalLine}${diagonalLabel}${baseLabel}${apexPoints}<text class="source61-e4-net-dimension" x="165" y="270">${frameCaption}</text>${!apexSquare ? `<text class="source61-e4-net-dimension" x="294" y="142" transform="rotate(-90 294 142)">${outerSide}cm</text>` : ""}${solved ? `<text class="source61-e4-result-label" x="165" y="290">전개도 넓이 ${netArea}cm²</text>` : ""}</svg>`;
       };
 
       if (variant === 0) {
@@ -21958,6 +21969,22 @@
         const promptVisual = `${squarePyramidNetSvg({ ...data, netArea })}${mathBoard("주어진 길이와 넓이", row("바깥 정사각형 한 변", `${data.outerSide}cm`) + row("사각뿔의 밑면 넓이", `${data.baseArea}cm²`))}`;
         const answerVisual = `${squarePyramidNetSvg({ ...data, netArea, solved: true })}${mathBoard("전개도의 넓이", row("밑면 대각선", `${data.diagonal}×${data.diagonal}÷2=${data.baseArea}`) + row("빈 삼각형 높이", `(${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm`) + row("네 빈 삼각형", `${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²`) + row("전개도", `${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²`))}`;
         return fixedResult(`한 변이 ${data.outerSide}cm인 정사각형 안에 그림과 같이 밑면이 정사각형인 사각뿔의 전개도를 그렸습니다. 사각뿔 밑면의 넓이가 ${data.baseArea}cm²일 때 전개도의 넓이를 구하세요.${promptVisual}${support("밑면 정사각형의 두 대각선 길이를 먼저 찾아 보세요.")}${challenge}${evidence("square-pyramid-net-area-in-square", [data.outerSide, data.diagonal, data.baseArea, netArea])}`, `${netArea}cm²`, `밑면 정사각형의 대각선은 ${data.diagonal}cm입니다. ${data.diagonal}×${data.diagonal}÷2=${data.baseArea}이기 때문입니다. 바깥 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이므로 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
+      }
+      if (variant === 6) {
+        const data = [
+          { outerSide: 18, diagonal: 10 },
+          { outerSide: 22, diagonal: 12 },
+          { outerSide: 26, diagonal: 14 }
+        ][poolIndex];
+        const baseArea = data.diagonal * data.diagonal / 2;
+        const emptyHeight = (data.outerSide - data.diagonal) / 2;
+        const emptyArea = data.outerSide * emptyHeight / 2 * 4;
+        const netArea = data.outerSide * data.outerSide - emptyArea;
+        if (netArea !== data.outerSide * data.diagonal) throw new Error("꼭짓점을 이은 정사각형과 정사각뿔 전개도 넓이가 좌표 모델과 맞지 않습니다.");
+        const values = [data.outerSide, data.diagonal, baseArea, netArea];
+        const promptVisual = `${squarePyramidNetSvg({ ...data, baseArea, netArea, diagonalGiven: true, apexSquare: true })}${mathBoard("주어진 길이", row("밑면의 한 대각선", `${data.diagonal}cm`) + row("각뿔 꼭짓점을 이은 정사각형 한 변", `${data.outerSide}cm`))}`;
+        const answerVisual = `${squarePyramidNetSvg({ ...data, baseArea, netArea, solved: true, diagonalGiven: true, apexSquare: true })}${mathBoard("전개도의 넓이", row("밑면", `${data.diagonal}×${data.diagonal}÷2=${baseArea}cm²`) + row("빈 삼각형 높이", `(${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm`) + row("네 빈 삼각형", `${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²`) + row("전개도", `${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²`))}`;
+        return fixedResult(`밑면이 정사각형인 사각뿔의 전개도입니다. 밑면의 한 대각선 길이는 ${data.diagonal}cm이고, 전개도에서 각뿔의 꼭짓점이 되는 네 점을 이은 정사각형의 한 변은 ${data.outerSide}cm입니다. 사각뿔 전개도의 넓이를 구하세요.${promptVisual}${support("밑면의 넓이와 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 넓이를 차례로 구하세요.")}${challenge}${evidence("square-pyramid-net-area-from-apex-square", values)}`, `${netArea}cm²`, `밑면의 넓이는 ${data.diagonal}×${data.diagonal}÷2=${baseArea}cm²입니다. 꼭짓점을 이은 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이고, 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
       }
       const n = [4, 5, 6][poolIndex];
       const total = 6 * n + 2;
@@ -26168,7 +26195,7 @@
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
-    [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4", "6-1-u2-e4-example-4-3"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
+    [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4", "6-1-u2-e4-example-4-3", "6-1-u2-e4-mission-5"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e1-"), "sourceGrade6DecimalDivisionE1"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e2-") && !["6-1-u3-e2-example-2", "6-1-u3-e2-example-4", "6-1-u3-e2-mission-6"].includes(type.sourceItemId), "sourceGrade6DecimalDivisionE2"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e3-"), "sourceGrade6DecimalDivisionE3"],

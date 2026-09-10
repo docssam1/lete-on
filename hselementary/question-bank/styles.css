@@ -1400,12 +1400,15 @@ button{
 .source61-e4-square-net{aspect-ratio:330/300!important}
 .source61-e4-cube-pyramids.is-solved,.source61-e4-joined-solid.is-solved,.source61-e4-bipyramid.is-solved{aspect-ratio:330/300!important}
 .source61-e4-square-net .source61-e4-net-frame{fill:#fff;stroke:#244b68;stroke-width:2.2;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.source61-e4-square-net .source61-e4-apex-frame{stroke:#6d8798;stroke-width:1.6;stroke-dasharray:6 4}
 .source61-e4-square-net .source61-e4-net-lateral{fill:#cfe6f0;fill-opacity:.9;stroke:none}
 .source61-e4-square-net .source61-e4-net-base{fill:#a7d1e1;fill-opacity:.95;stroke:none}
 .source61-e4-square-net .source61-e4-fold-edge{fill:none;stroke:#557287;stroke-width:1.45;stroke-dasharray:5 4;vector-effect:non-scaling-stroke}
 .source61-e4-square-net .source61-e4-complement{fill:#f6d26b;fill-opacity:.62;stroke:#bd7808;stroke-width:1.1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
 .source61-e4-square-net .source61-e4-base-diagonal{fill:none;stroke:#9a251f;stroke-width:2;stroke-dasharray:5 3;vector-effect:non-scaling-stroke}
+.source61-e4-square-net .source61-e4-apex-point{fill:#244b68;stroke:#fff;stroke-width:1.4;vector-effect:non-scaling-stroke}
 .source61-e4-net-base-label{fill:#183b56;font-size:11px;font-weight:900}
+.source61-e4-net-diagonal-label{fill:#9a251f;font-size:11px;font-weight:950}
 .source61-e4-net-dimension{fill:#183b56;font-size:13px;font-weight:950}
 .source61-e4-net-answer-label{fill:#9a251f;font-size:12px;font-weight:950}
 .source61-e4-answer .source61-math-board{width:min(430px,100%);margin-top:0}

@@ -1242,15 +1242,16 @@
       "unitName": "각기둥과 각뿔",
       "exploration": 4,
       "pdfPage": 14,
-      "printedPage": null,
+      "printedPage": 17,
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 5,
-      "sourceShape": "각뿔과 각기둥을 함께 보거나 전개도·겉면 경로를 이용해 필요한 길이·면·구성 요소를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 14쪽 Mission 5. 밑면 대각선이 12cm인 정사각뿔 전개도에서 각뿔 꼭짓점을 이은 정사각형 한 변이 22cm일 때 전개도 넓이를 구함",
+      "answerContract": "single-answer-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 가운데 밑면·네 옆면·꼭짓점 네 점을 점·선분 자료로 다시 만들고, 좌표 넓이 합과 꼭짓점 정사각형에서 네 빈 삼각형을 빼는 계산이 모두 264cm²임을 확인했습니다. 문제·답 그림이 같은 검증 문항 3개로 제한합니다.",
+      "publicSourceItemId": "6-1-u2-e4-mission-5"
     },
     {
       "sourceItemId": "6-1-u2-e4-mission-6",
