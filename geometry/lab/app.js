@@ -60,7 +60,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     { code: DOMAIN_CUBE, label: "쌓기나무", note: "입체를 보고 세고, 옮겨 그리고, 규칙을 찾는 유형." },
     { code: DOMAIN_PLANE, label: "평면도형", note: "점·선·각·사각형·원과 둘레·넓이를 단계별로 탐구하는 영역." },
     { code: DOMAIN_MOVE, label: "이동·대칭", note: "도형을 옮기고 돌리고 뒤집으며 같은 모양과 대칭을 살펴보는 영역." },
-    { code: DOMAIN_OBSERVE, label: "관찰·경로", note: "숨은 도형을 빠짐없이 찾고 조건에 맞는 길을 이어 보는 영역." },
+    { code: DOMAIN_OBSERVE, label: "도형 찾기·길 잇기", note: "숨은 도형을 빠짐없이 찾고 조건에 맞는 길을 이어 보는 영역." },
     { code: DOMAIN_SOLID, label: "입체·전개도", note: "주사위를 굴리고 전개도를 접은 뒤 보이는 면과 방향을 추론하는 영역." },
     { code: DOMAIN_FOLD, label: "색종이 접기", note: "접고 자르고 뚫은 다음, 펼친 모양을 머릿속으로 그려 보는 유형." }
   ];

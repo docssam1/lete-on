@@ -18,7 +18,7 @@ const targetReady = new Map([
   ["도형의 변화", "#countInput"], ["거울대칭", "#countInput"], ["숨은 도형", "#problemGrid .problem"],
   ["길 잇기", "#problemGrid .problem"], ["주사위 굴리기", "#countInput"], ["전개도 전망대", "#problemGrid .problem"]
 ]);
-const domainLabels = ["쌓기나무", "평면도형", "이동·대칭", "관찰·경로", "입체·전개도", "색종이 접기"];
+const domainLabels = ["쌓기나무", "평면도형", "이동·대칭", "도형 찾기·길 잇기", "입체·전개도", "색종이 접기"];
 
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch();
