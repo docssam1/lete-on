@@ -32,17 +32,17 @@ const VOICES = {
   zh: { languageCode: 'cmn-CN', name: 'cmn-CN-Neural2-A' },
 };
 
-if (!GOOGLE_TTS_KEY) {
-  console.error('❌  Set GOOGLE_TTS_KEY environment variable first.');
-  process.exit(1);
-}
-
 // ── Load all unit data ─────────────────────────────────────────────────────────
 const window = { NM_UNITS: {} };
 const unitsDir = path.join(__dirname, '../data/units');
 /* 유아(N)는 전면 음성(원장 지시: "유아쪽은 mp3를 넣고 다른쪽은 대표적인 것만") —
    N 유닛은 intro·finish에 더해 correct/wrong·마법 노트 rule까지 생성한다. */
-const unitFiles = fs.readdirSync(unitsDir).filter(f => /^[AN]-\d+\.js$/.test(f)).sort();
+/* 2026-09-10 — 짝 찾기(pairMul) 게임을 붙인 B-16·C-02를 명시적으로 추가한다.
+   B·C 시리즈 전체(58유닛)를 여는 게 아니다 — 그건 별도로 비용 검토가 필요하다. */
+const EXTRA_UNIT_FILES = ['B-16.js', 'C-02.js'];
+const unitFiles = fs.readdirSync(unitsDir)
+  .filter(f => /^[AN]-\d+\.js$/.test(f) || EXTRA_UNIT_FILES.includes(f))
+  .sort();
 
 for (const file of unitFiles) {
   try {
@@ -100,8 +100,11 @@ for (const unit of units) {
     }
   }
 
-  // 유아(tier basic) 전면 음성: 정답/오답 코멘트 + 마법 노트 rule
-  if (unit.tier === 'basic') {
+  /* 정답/오답 코멘트 전면 음성 — 유아(tier basic) + 짝 찾기(selectPairs) 게임을 붙인
+     유닛(2026-09-10, pickTile이 tier와 무관하게 항상 말한다 — app/main.js 참고).
+     마법 노트 rule은 유아 전용이라 그대로 basic만. */
+  const FULL_VOICE_UNITS = new Set(['A-01', 'B-16', 'C-02']);
+  if (unit.tier === 'basic' || FULL_VOICE_UNITS.has(id)) {
     ['correct', 'wrong'].forEach(kind => {
       (unit.voice?.[kind] || []).forEach((line, i) => {
         for (const lang of ['ko', 'en', 'zh']) {
@@ -114,7 +117,7 @@ for (const unit of units) {
         }
       });
     });
-    if (unit.discover?.rule) {
+    if (unit.tier === 'basic' && unit.discover?.rule) {
       for (const lang of ['ko', 'en', 'zh']) {
         const text = unit.discover.rule[lang];
         if (text) tasks.push({
@@ -127,6 +130,23 @@ for (const unit of units) {
   }
 }
 
+/* 유닛에 안 묶인 전역 UI 문구 — 짝 찾기(pairMul)에서 짝을 하나 찾았지만 더 있을 때
+   부르는 onePairMore(2026-09-10, app/main.js I18N.onePairMore와 정확히 같은 문자열
+   이어야 say()가 찾아 재생한다 — 하나라도 다르면 조용히 Web Speech로 폴백한다). */
+const GLOBAL_TASKS = {
+  onePairMore: { ko: '정답! 하나 더 있어', en: 'Correct! One more to find', zh: '答对了！还有一对' },
+};
+for (const [key, byLang] of Object.entries(GLOBAL_TASKS)) {
+  for (const lang of ['ko', 'en', 'zh']) {
+    const text = byLang[lang];
+    if (text) tasks.push({
+      unitId: 'ui', key, lang,
+      text,
+      storagePath: `number-magic/ui-${key}-${lang}.mp3`,
+    });
+  }
+}
+
 const totalChars = tasks.reduce((s, t) => s + t.text.length, 0);
 console.log(`📋  ${tasks.length} tasks (~${totalChars.toLocaleString()} chars total)`);
 if (process.env.DRY_RUN) {   // 과금·업로드 없이 태스크 목록만 점검
@@ -134,6 +154,12 @@ if (process.env.DRY_RUN) {   // 과금·업로드 없이 태스크 목록만 점
   tasks.forEach(t => { byUnit[t.unitId] = (byUnit[t.unitId] || 0) + 1; });
   console.log(Object.entries(byUnit).map(([k, v]) => `${k}:${v}`).join(' '));
   process.exit(0);
+}
+/* 키 확인은 DRY_RUN 통과 뒤로 옮겼다(2026-09-10) — 전엔 여기 도달하기 전에 죽어서
+   "과금·업로드 없이 태스크 목록만 점검"이라는 DRY_RUN의 존재 의미가 없었다. */
+if (!GOOGLE_TTS_KEY) {
+  console.error('❌  Set GOOGLE_TTS_KEY environment variable first.');
+  process.exit(1);
 }
 console.log(`🎙  Voices: ko-KR-Neural2-C / en-US-Neural2-F / cmn-CN-Neural2-A`);
 console.log('');
