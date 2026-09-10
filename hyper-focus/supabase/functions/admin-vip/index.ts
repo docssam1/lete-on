@@ -80,6 +80,17 @@ function tags(value: unknown): string[] {
   return [...new Set(value.map(item => text(item, 30)).filter(Boolean))].slice(0, 12);
 }
 
+function externalUrl(value: unknown): string | null | undefined {
+  const candidate = String(value || "").normalize("NFKC").trim();
+  if (!candidate) return null;
+  if (new TextEncoder().encode(candidate).byteLength > 2048) return undefined;
+  try {
+    const parsed = new URL(candidate);
+    if (parsed.protocol !== "https:" || !parsed.hostname || parsed.username || parsed.password) return undefined;
+    return parsed.href;
+  } catch (_) { return undefined; }
+}
+
 function validAsset(kind: string, mimeType: string, byteSize: number): boolean {
   if (!ASSET_KINDS.has(kind) || !MIME_LIMITS[mimeType] || !Number.isInteger(byteSize) || byteSize < 1 || byteSize > MIME_LIMITS[mimeType]) return false;
   if (kind === "cover") return mimeType.startsWith("image/");
@@ -134,7 +145,7 @@ Deno.serve(async request => {
   try {
     if (action === "list") {
       const [contentResult, relationResult, assetResult] = await Promise.all([
-        service.from("hf_vip_contents").select("id,kind,title,summary,content_date,tags,body_html,status,published_at,updated_at").order("updated_at", { ascending: false }),
+        service.from("hf_vip_contents").select("id,kind,title,summary,content_date,tags,body_html,external_url,status,published_at,updated_at").order("updated_at", { ascending: false }),
         service.from("hf_vip_relations").select("content_id,related_content_id,sort_order").order("sort_order", { ascending: true }),
         service.from("hf_vip_assets").select("id,content_id,asset_kind,page_no,mime_type,created_at").order("created_at", { ascending: true })
       ]);
@@ -149,12 +160,13 @@ Deno.serve(async request => {
       const summary = text(payload.summary, 500);
       const bodyText = text(payload.bodyText, 30000);
       const status = text(payload.status, 20);
+      const safeExternalUrl = externalUrl(payload.externalUrl);
       const contentDate = /^\d{4}-\d{2}-\d{2}$/.test(String(payload.contentDate || "")) ? String(payload.contentDate) : null;
-      if (!CONTENT_ID_RE.test(id) || !KINDS.has(kind) || !title || !STATUSES.has(status)) return json(request, 400, { error: "invalid_content" });
+      if (!CONTENT_ID_RE.test(id) || !KINDS.has(kind) || !title || !STATUSES.has(status) || safeExternalUrl === undefined) return json(request, 400, { error: "invalid_content" });
       const { data: existing, error: existingError } = await service.from("hf_vip_contents").select("id,published_at,created_by").eq("id", id).maybeSingle();
       if (existingError) throw existingError;
       const row = {
-        id, kind, title, summary, content_date: contentDate, tags: tags(payload.tags), body_html: bodyText, status,
+        id, kind, title, summary, content_date: contentDate, tags: tags(payload.tags), body_html: bodyText, external_url: safeExternalUrl, status,
         published_at: status === "published" ? existing?.published_at || new Date().toISOString() : null,
         created_by: existing?.created_by || authData.user.id,
         updated_by: authData.user.id

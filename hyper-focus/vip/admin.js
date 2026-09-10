@@ -42,7 +42,7 @@
     if (!item) return;
     $("contentId").value = item.id; $("contentId").readOnly = true;
     $("kind").value = item.kind; $("title").value = item.title; $("contentDate").value = item.content_date || "";
-    $("summary").value = item.summary || ""; $("bodyText").value = item.body_html || ""; $("tags").value = (item.tags || []).join(", ");
+    $("summary").value = item.summary || ""; $("externalUrl").value = item.external_url || ""; $("bodyText").value = item.body_html || ""; $("tags").value = (item.tags || []).join(", ");
     $("relatedIds").value = relationIds(item.id).join(", "); $("status").value = item.status;
     $("assetKind").value = ""; $("assetFile").value = "";
     setStatus("수정할 내용을 확인한 뒤 저장하세요.");
@@ -76,7 +76,7 @@
     saveButton.disabled = true;
     setStatus("콘텐츠와 연결 자료를 저장하는 중입니다.");
     try {
-      await invoke({ action: "saveContent", id, kind: $("kind").value, title: $("title").value, contentDate: $("contentDate").value, summary: $("summary").value, bodyText: $("bodyText").value, tags: splitList($("tags").value), status: $("status").value });
+      await invoke({ action: "saveContent", id, kind: $("kind").value, title: $("title").value, contentDate: $("contentDate").value, summary: $("summary").value, externalUrl: $("externalUrl").value, bodyText: $("bodyText").value, tags: splitList($("tags").value), status: $("status").value });
       await invoke({ action: "saveRelations", contentId: id, relatedIds: splitList($("relatedIds").value) });
       await uploadAsset(id, assetKind, file);
       await load();

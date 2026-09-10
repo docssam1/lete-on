@@ -30,6 +30,29 @@ async function installVipAdminFixture(page) {
   }));
 }
 
+async function installVipStudentFixture(page) {
+  await installOfflineConfig(page);
+  await page.route("**/hyper-focus/portal-auth.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: `window.GFieldHFPortalAuth={
+  ready:async()=>({role:"student",name:"VIP검수",permissions:["vip"]}),
+  canAccess:(session,key)=>session.permissions.includes(key),
+  isSupabaseEnabled:()=>true,
+  client:async()=>({from:table=>({select(){return this},order(){
+    const rows={
+      hf_vip_contents:[
+        {id:"hf-resource-secret-roadmap-ages-5-6-7",kind:"resources",title:"상위권 5·6·7세를 위한 맞춤 시크릿 로드맵",summary:"시크릿 로드맵",content_date:"2026-09-11",tags:["로드맵"],body_html:"",external_url:"https://lete-on.gfieldacademy.net/roadmap/demo/",status:"published",published_at:"2026-09-11T00:00:00Z"},
+        {id:"hf-seminar-soma-premier-strategy",kind:"seminar",title:"소마 프리미어 합격 전략",summary:"전략 영상",content_date:"2026-09-11",tags:["소마"],body_html:"",external_url:"https://youtu.be/h197u-ymJag",status:"published",published_at:"2026-09-11T00:00:00Z"},
+        {id:"hf-seminar-fields-age6-final-strategy",kind:"seminar",title:"6세 필즈대비 파이널 전략",summary:"파이널 전략 영상",content_date:"2026-09-11",tags:["필즈"],body_html:"",external_url:"https://youtu.be/ipM78EnPTTU",status:"published",published_at:"2026-09-11T00:00:00Z"}
+      ],
+      hf_vip_relations:[],hf_vip_assets:[]
+    };
+    return Promise.resolve({data:rows[table]||[],error:null});
+  }})})
+};`
+  }));
+}
+
 async function installRemoteAdminFixture(page) {
   await installOfflineConfig(page);
   await page.route("**/hyper-focus/portal-auth.js*", route => route.fulfill({
@@ -96,7 +119,7 @@ async function noOverflow(page, label) {
     assert.equal(await desktop.locator("#productShelf .library-book").count(), 4);
     assert.deepEqual(await desktop.locator("#productShelf .library-book").evaluateAll(rows => rows.map(row => row.dataset.product)), ["hyperfocus", "mock", "challenge", "vip"]);
     assert.deepEqual(await desktop.locator("#productShelf .library-book strong").allInnerTexts(), ["Hyper Focus\n문항 진단", "프리미어\n모의고사", "2026년 9월\n챌린지 대비", "VIP\n라운지"]);
-    assert.equal(await desktop.evaluate(() => window.GFIELD_HF_PORTAL.products.find(product => product.key === "vip").href), "https://hs.gfieldacademy.net/");
+    assert.equal(await desktop.evaluate(() => window.GFIELD_HF_PORTAL.products.find(product => product.key === "vip").href), "./vip/");
     assert.equal(await desktop.locator("#productShelf .library-book.unlocked").count(), 1);
     assert.equal(await desktop.locator("#productShelf .library-book.locked").count(), 3);
     await desktop.locator('[data-product="mock"]').first().click();
@@ -117,6 +140,30 @@ async function noOverflow(page, label) {
 
     await desktop.goto(`${base}/hyper-focus/vip/`, { waitUntil: "networkidle" });
     assert.equal(await desktop.locator("#blocked:not([hidden])").count(), 1);
+
+    const vipStudent = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+    await installVipStudentFixture(vipStudent);
+    vipStudent.on("pageerror", error => errors.push(`vip student desktop: ${error.message}`));
+    await vipStudent.goto(`${base}/hyper-focus/vip/`, { waitUntil: "networkidle" });
+    assert.equal(await vipStudent.locator("#app:not([hidden])").count(), 1);
+    assert.equal(await vipStudent.locator("#blocked").isHidden(), true);
+    assert.equal(await vipStudent.locator("#contentGrid .content-card").count(), 1);
+    await vipStudent.locator("#contentGrid .content-card").click();
+    const roadmapLink = vipStudent.locator("#detailBody .external-access a");
+    assert.equal(await roadmapLink.getAttribute("href"), "https://lete-on.gfieldacademy.net/roadmap/demo/");
+    assert.equal(await roadmapLink.getAttribute("target"), "_blank");
+    assert.equal(await roadmapLink.getAttribute("rel"), "noopener noreferrer");
+    assert.equal(await roadmapLink.getAttribute("referrerpolicy"), "no-referrer");
+    await vipStudent.locator("#detail .detail-backdrop").click({ position: { x: 10, y: 10 } });
+    await vipStudent.locator("#detail").waitFor({ state: "hidden" });
+    await vipStudent.locator('[data-kind="seminar"]').click();
+    assert.deepEqual(await vipStudent.locator("#contentGrid .content-card h3").allInnerTexts(), ["소마 프리미어 합격 전략", "6세 필즈대비 파이널 전략"]);
+    await noOverflow(vipStudent, "desktop VIP catalog");
+    await vipStudent.screenshot({ path: "tmp/hf-vip-catalog-desktop.png", fullPage: true });
+    await vipStudent.locator("#contentGrid .content-card").first().click();
+    assert.equal(await vipStudent.locator("#detailBody .external-access a").getAttribute("href"), "https://youtu.be/h197u-ymJag");
+    await vipStudent.screenshot({ path: "tmp/hf-vip-detail-desktop.png", fullPage: true });
+    await vipStudent.close();
 
     const directAdmin = await browser.newPage({ viewport: { width: 1200, height: 800 } });
     await directAdmin.goto(`${base}/hyper-focus/admin.html`, { waitUntil: "domcontentloaded" });
@@ -202,6 +249,20 @@ async function noOverflow(page, label) {
     await loginStudentFixture(mobile);
     await noOverflow(mobile, "mobile library");
     await mobile.screenshot({ path: "tmp/hf-portal-library-mobile.png", fullPage: true });
+
+    const vipStudentMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+    await installVipStudentFixture(vipStudentMobile);
+    vipStudentMobile.on("pageerror", error => errors.push(`vip student mobile: ${error.message}`));
+    await vipStudentMobile.goto(`${base}/hyper-focus/vip/`, { waitUntil: "networkidle" });
+    await vipStudentMobile.locator('[data-kind="seminar"]').click();
+    assert.equal(await vipStudentMobile.locator("#contentGrid .content-card").count(), 2);
+    await noOverflow(vipStudentMobile, "mobile VIP catalog");
+    await vipStudentMobile.screenshot({ path: "tmp/hf-vip-catalog-mobile.png", fullPage: true });
+    await vipStudentMobile.locator("#contentGrid .content-card").first().click();
+    assert.equal(await vipStudentMobile.locator("#detailBody .external-access a").getAttribute("href"), "https://youtu.be/h197u-ymJag");
+    await noOverflow(vipStudentMobile, "mobile VIP detail");
+    await vipStudentMobile.screenshot({ path: "tmp/hf-vip-detail-mobile.png", fullPage: true });
+    await vipStudentMobile.close();
 
     const vipAdminMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     await installVipAdminFixture(vipAdminMobile);

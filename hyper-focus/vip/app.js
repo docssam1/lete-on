@@ -12,6 +12,13 @@
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
   }
+  function safeExternalUrl(value) {
+    try {
+      const url = new URL(String(value || ""));
+      if (url.protocol !== "https:" || !url.hostname || url.username || url.password) return "";
+      return url.href;
+    } catch (_) { return ""; }
+  }
   function publishedItems() {
     return contentItems.filter(item => item && item.status === "published");
   }
@@ -21,7 +28,7 @@
     const client = await auth.client();
     const [contentResult, relationResult, assetResult] = await Promise.all([
       client.from("hf_vip_contents")
-        .select("id,kind,title,summary,content_date,tags,body_html,status,published_at")
+        .select("id,kind,title,summary,content_date,tags,body_html,external_url,status,published_at")
         .order("content_date", { ascending: false, nullsFirst: false }),
       client.from("hf_vip_relations").select("content_id,related_content_id,sort_order").order("sort_order", { ascending: true }),
       client.from("hf_vip_assets").select("id,content_id,asset_kind,page_no,mime_type,created_at").order("created_at", { ascending: true })
@@ -46,6 +53,7 @@
       date: row.content_date || String(row.published_at || "").slice(0, 10),
       tags: row.tags || [],
       bodyHtml: row.body_html,
+      externalUrl: safeExternalUrl(row.external_url),
       status: row.status,
       relatedIds: relatedByContent.get(row.id) || [],
       assets: assetsByContent.get(row.id) || []
@@ -81,6 +89,12 @@
     if (!assets.length) return "";
     return `<section class="assets"><h2>전용 자료</h2><div>${assets.map(asset => `<button type="button" data-asset-id="${esc(asset.id)}">${esc(assetLabel(asset))}</button>`).join("")}</div><p>자료 주소는 권한 확인 뒤 잠시 동안만 열립니다.</p></section>`;
   }
+  function externalLink(item) {
+    const url = safeExternalUrl(item.externalUrl);
+    if (!url) return "";
+    const labels = { seminar: "영상 보기", magazine: "기사 원문 보기", resources: "자료 열기", column: "원문 보기" };
+    return `<section class="external-access"><h2>바로 보기</h2><a href="${esc(url)}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">${esc(labels[item.kind] || "원문 열기")} <span aria-hidden="true">↗</span></a><p>새 창에서 연결됩니다.</p></section>`;
+  }
   function render() {
     const section = sections.find(item => item.key === active) || sections[0];
     const items = publishedItems().filter(item => item.kind === section.key);
@@ -94,7 +108,7 @@
     const item = publishedItems().find(value => String(value.id) === String(id));
     if (!item) return;
     const related = relatedFor(item);
-    $("#detailBody").innerHTML = `<p class="eyebrow">${esc(sections.find(value => value.key === item.kind)?.label || "VIP")}</p><h1>${esc(item.title)}</h1><div class="meta">${esc(item.date || "")} · ${(item.tags || []).map(tag => `#${esc(tag)}`).join(" ")}</div><p class="summary">${esc(item.summary || "")}</p>${safeBody(item.bodyHtml)}${assetButtons(item)}${related.length ? `<section class="related"><h2>함께 볼 콘텐츠</h2>${related.map(card).join("")}</section>` : ""}`;
+    $("#detailBody").innerHTML = `<p class="eyebrow">${esc(sections.find(value => value.key === item.kind)?.label || "VIP")}</p><h1>${esc(item.title)}</h1><div class="meta">${esc(item.date || "")} · ${(item.tags || []).map(tag => `#${esc(tag)}`).join(" ")}</div><p class="summary">${esc(item.summary || "")}</p>${safeBody(item.bodyHtml)}${externalLink(item)}${assetButtons(item)}${related.length ? `<section class="related"><h2>함께 볼 콘텐츠</h2>${related.map(card).join("")}</section>` : ""}`;
     $("#detail").hidden = false;
     requestAnimationFrame(() => $("#detail").classList.add("open"));
   }
