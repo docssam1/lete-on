@@ -174,7 +174,7 @@
   replaceWithSpecial(all[3].main[14],'checker-stack-count',2,'수');
   replaceWithSpecial(all[3].main[17],'tetra-cube-hole-count',1,'도형');
   for(const field of ['problemHtml','solutionDiagram'])all[3].main[17][field]=removePictureSentence(all[3].main[17][field],'같은 색의 쌓기나무 4개가 테트라큐브 1개입니다.');
-  const longWalk=[0,1,2,3,4,9,8,7,6,5,10,11,12,13,14,19,18,17,16,15],longCheckpoints=[0,3,8,5,12,19,17,15];
+  const longWalk=[0,1,6,5,10,15,16,11,12,17,18,19,14,13,8,9,4,3,2,7],longCheckpoints=[0,6,15,12,19,8,3,7];
   Object.assign(all[3].main[18],{prompt:'1부터 8까지 순서대로 연결하세요. 가로나 세로로 이웃한 칸으로만 움직이며 5×4의 모든 칸을 한 번씩 지나야 합니다. 지나간 칸은 다시 지날 수 없습니다.',answer:'풀이 그림과 같이 연결',answerHtml:'풀이 그림과 같이 연결',solution:'1에서 윗줄을 지나 2로 간 뒤 줄마다 방향을 바꾸어 지그재그로 이동합니다. 5×4의 스무 칸을 모두 한 번씩 지나 8에 도착합니다.',payload:{kind:'walk',w:5,h:4,checkpoints:longCheckpoints},visual:grid(5,4,Object.fromEntries(longCheckpoints.map((cell,index)=>[String(cell),index+1])),[longWalk]),problemHtml:img('r3-main-19'),solutionDiagram:img('r3-main-19',true)});
   replaceWithSpecial(all[3].extra[0],'congruent-marked-partition',2,'도형');
   replaceWithSpecial(all[3].extra[2],'block-build-count',1,'도형');
@@ -209,6 +209,7 @@
   for(const field of ['problemHtml','solutionDiagram']){
     all[4].extra[0][field]=removePictureSentence(all[4].extra[0][field],'같은 연필·지우개·클립은 각각 길이가 같습니다.');
     all[4].extra[1][field]=removePictureSentence(all[4].extra[1][field],'맞닿은 쌓기나무는 검은색과 흰색이 번갈아 놓입니다.');
+    all[4].extra[1][field]=removePictureSentence(all[4].extra[1][field],'검은색과 흰색 쌓기나무를 각각 세어 보세요.');
   }
   function get(round,section='main'){
     if(!all[round])throw new Error('지원하지 않는 회차');

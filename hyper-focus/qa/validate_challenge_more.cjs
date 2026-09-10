@@ -54,7 +54,8 @@ assert(question(3,'main',7).prompt.includes('2년이 지난 후')&&!question(3,'
 assert.equal(question(3,'main',9).payload.kind,'shortest-path-grid');
 assert.equal(question(3,'main',15).payload.kind,'checker-stack-count');
 assert.equal(question(3,'main',18).payload.kind,'tetra-cube-hole-count');
-assert.equal(question(3,'main',19).payload.w*question(3,'main',19).payload.h,20);assert.equal(question(3,'main',19).payload.checkpoints.length,8);
+assert(!question(3,'main',18).problemHtml.includes('같은 색의 쌓기나무 4개가 테트라큐브 1개입니다.'),'3회 18번 그림 아래 중복 설명 제거');
+assert.equal(question(3,'main',19).payload.w*question(3,'main',19).payload.h,20);assert.deepEqual(question(3,'main',19).payload.checkpoints,[0,6,15,12,19,8,3,7],'3회 19번 숫자 위치를 불규칙하게 배치');
 assert.equal(question(3,'extra',1).payload.boards.length,3,'3회 추가 1번 여러 도형');
 assert.equal(question(3,'extra',4).payload.kind,'object-length-equivalence');
 assert.equal(question(3,'extra',6).payload.kind,'cube-count-fill-custom');
@@ -64,5 +65,8 @@ assert.equal(question(4,'main',18).payload.kind,'congruent-marked-partition');
 const r4MainKinds=new Set(more.get(4,'main').questions.map(q=>q.payload.kind)),r4ExtraKinds=more.get(4,'extra').questions.map(q=>q.payload.kind);
 assert.equal(new Set(r4ExtraKinds).size,6,'4회 추가 연습은 서로 다른 새 유형 여섯 개');
 assert(r4ExtraKinds.every(kind=>!r4MainKinds.has(kind)),'4회 추가 연습은 본시험에 넣지 않은 유형');
+assert(!question(4,'extra',1).problemHtml.includes('같은 연필·지우개·클립은 각각 길이가 같습니다.'),'4회 추가 1번 그림 아래 중복 설명 제거');
+assert(!question(4,'extra',2).problemHtml.includes('검은색과 흰색 쌓기나무를 각각 세어 보세요.'),'4회 추가 2번 그림 아래 설명 제거');
+assert.deepEqual(question(4,'extra',4).payload,{kind:'shortest-path-grid',cols:4,rows:3,blocked:[[2,1]],directions:['E','N'],responseMode:'shortest-path-count'},'4회 추가 4번 작은 4×3 표와 제외 지점 1개');
 const out=path.resolve(__dirname,'../output/qa/challenge-editions-separated');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'more-math-report.json'),JSON.stringify({passed:!failed,checked:result.length,result},null,2));
 console.log(JSON.stringify({passed:!failed,checked:result.length}));if(failed)process.exitCode=1;
