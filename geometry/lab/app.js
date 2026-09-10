@@ -21,13 +21,13 @@
 
   // 문항 수 선택지는 학습지 생성기의 문항 수 select와 같은 값만 쓴다 — 거기
   // 없는 값을 넘기면 생성기가 무시하고 기본값으로 되돌아간다.
-  const COUNTS = [6, 9, 12, 15, 20, 30, 50];
+  const COUNTS = [6, 9, 12, 15, 20];
   // 고정 문제 학습지는 인쇄 엔진이 다르고 문제 수 선택지도 다르다(print.html의
   // select). 랩에서 9문항을 고르고 인쇄물이 10문제로 나오는 일이 없도록, 그쪽을
   // 고르면 문항 수 줄도 저쪽 선택지로 바꿔 보여 준다.
   const BOOK_COUNTS = [5, 10, 20];
   // 색종이 접기 학습지의 문항 수 선택지(paper-fold/index.html의 #count).
-  const FOLD_COUNTS = [10, 20, 30, 40, 50];
+  const FOLD_COUNTS = [10, 20];
 
   // ---------------------------------------------------------------------
   // 영역 — 학습지 엔진의 내부 구조가 아니라 학생이 연습할 수학 행동으로 묶는다.
@@ -129,11 +129,11 @@
     bookCount: 10,
     fold: null,
     foldCount: 20,
-    studio: null,
+    studioByDomain: {},
     studioCount: 20,
     levelNote: "",
-    // 단계·영역을 바꿔 골라 둔 유형이 이 조합에서 지원되지 않아 해제된 경우의
-    // 안내 한 줄. 유형 줄의 기존 안내 자리(#typeNote)를 그대로 재활용한다.
+    // 단계가 달라져 현재 학습지에서 제외되는 선택을 알리는 안내 한 줄. 선택
+    // 자체는 지우지 않고 유형 줄의 기존 안내 자리(#typeNote)를 재활용한다.
     typeAutoNote: "",
     // 미리보기는 학습지 쪽과 마찬가지로 자기 시드를 따로 쓴다 — "새 문제"를
     // 눌러도 아래의 선택은 그대로 있어야 한다.
@@ -166,6 +166,10 @@
     return STUDIOS.filter((studio) => studio.code === code)[0] || null;
   }
 
+  function selectedStudio() {
+    return state.studioByDomain[state.domain] || null;
+  }
+
   // "전체"에서는 고정 문제 학습지를 계속 켜 둔다 — 어차피 그 풀의 전체 레벨을
   // 섞어 넘기므로(BOOKS 위 설명 참고), 학습지 쪽 단계가 "전체"로 바뀌었다고
   // 이것만 흐려질 이유가 없다. 색종이도 같은 규칙이다.
@@ -189,10 +193,11 @@
   // 두고, 카탈로그를 합쳐 보는 판단은 입구인 여기서 한다.
   function levelOffered(code) {
     const info = GEN.levelInfo(code);
-    return Boolean(
-      (info && info.available) || booksForLevel(code).length || foldsForLevel(code).length ||
-      STUDIOS.some((studio) => entrySupportsLevel(studio, code))
-    );
+    if (state.domain === DOMAIN_FOLD) return Boolean(foldsForLevel(code).length);
+    if (state.domain === DOMAIN_CUBE) {
+      return Boolean((info && info.available) || booksForLevel(code).length);
+    }
+    return true;
   }
 
   function nearestOfferedLevel(level) {
@@ -215,21 +220,29 @@
     return levels.map(levelName).join(" · ");
   }
 
+  function levelSpan(levels) {
+    if (!levels.length) return "";
+    if (levels.length === 1) return levelName(levels[0]);
+    return levelName(levels[0]) + "~" + levelName(levels[levels.length - 1]);
+  }
+
   function typeLabel(code) {
     const info = GEN.typeInfo(code);
     return info ? info.label : code;
   }
 
-  // 선택한 단계가 제공하지 않는 유형만 해제한다. 하나도 남지 않아도 다른 유형을
-  // 자동으로 고르지 않는다 — 무엇을 출제할지는 사용자가 직접 정한다.
+  // 단계가 달라져도 사용자가 골라 둔 유형은 지우지 않는다. 현재 단계에서 쓸 수
+  // 없는 항목은 카드에 그대로 남기고 안내만 보여 주어, 되돌아왔을 때 선택이
+  // 복구되게 한다.
   function pruneTypes() {
-    if (state.level === GEN.ALL_LEVEL) return;
-    const previousCount = state.types.length;
-    const kept = state.types.filter(supportsLevel);
-    state.types = kept;
-    if (previousCount && !kept.length) {
-      state.typeAutoNote = "골라 둔 유형이 이 단계에서는 제공되지 않아 선택을 해제했어요.";
+    if (state.level === GEN.ALL_LEVEL) {
+      state.typeAutoNote = "";
+      return;
     }
+    const excluded = state.types.filter((code) => !supportsLevel(code));
+    state.typeAutoNote = excluded.length
+      ? "선택은 유지했어요. 현재 단계에서 맞지 않는 " + excluded.length + "개 유형은 이번 학습지에서 제외돼요."
+      : "";
   }
 
   // 준비 중 단계를 고르면 가장 가까운 제공 단계로 옮기고 왜 옮겼는지 남긴다
@@ -248,28 +261,12 @@
         (target ? target.name + " · " + target.age : state.level) + " 단계로 맞췄어요.";
     }
     pruneTypes();
-    syncMode();
-  }
-
-  // 단계를 옮긴 뒤 현재 단계에서 지원하지 않는 고정 유형만 해제한다.
-  function syncMode() {
-    const books = booksForLevel(state.level);
-    const folds = foldsForLevel(state.level);
-    if (state.book && !books.some((b) => b.code === state.book)) state.book = null;
-    if (state.fold && !folds.some((f) => f.code === state.fold)) state.fold = null;
-    if (state.studio) {
-      const studio = studioInfo(state.studio);
-      if (!studio || studio.domain !== state.domain || !entrySupportsLevel(studio, state.level)) state.studio = null;
-    }
   }
 
   function setDomain(domain) {
     state.typeAutoNote = "";
     state.domain = domain;
-    if (domain !== DOMAIN_CUBE) state.book = null;
-    if (domain !== DOMAIN_FOLD) state.fold = null;
-    if (domain === DOMAIN_CUBE || domain === DOMAIN_FOLD) state.studio = null;
-    syncMode();
+    if (domain === DOMAIN_CUBE) pruneTypes();
   }
 
   // ---------------------------------------------------------------------
@@ -369,31 +366,49 @@
     if (note && current) note.textContent = current.note;
   }
 
-  // 유형 카드 한 장. 어느 영역이든 같은 격자·같은 부품을 쓴다 — 학습지를 고르는
-  // 사람에게 이 카드들은 모두 "무엇을 연습할지"라는 하나의 질문에 대한 답이지,
-  // 서로 다른 메뉴가 아니기 때문이다.
+  function typeGroupHeading(grid, title, rule) {
+    const heading = document.createElement("div");
+    heading.className = "type-group-heading";
+    heading.innerHTML = "<b></b><span></span>";
+    heading.querySelector("b").textContent = title;
+    heading.querySelector("span").textContent = rule;
+    grid.appendChild(heading);
+  }
+
+  // 실제 checkbox/radio를 써서 "여러 개를 섞는 유형"과 "한 학습지를 여는 선택"을
+  // 보이는 모양뿐 아니라 키보드·스크린리더에서도 서로 다르게 전달한다.
   function typeCard(opts) {
-    const card = document.createElement("button");
-    card.type = "button";
+    const card = document.createElement("label");
     card.className = "type-card" +
       (opts.ok ? "" : " is-unavailable") +
-      (opts.ok && opts.active ? " is-active" : "");
+      (opts.active ? " is-active" : "") +
+      (opts.multiple ? " is-multiple" : " is-single");
     card.dataset.type = opts.code;
+    card.dataset.available = String(Boolean(opts.ok));
     if (opts.book) card.dataset.book = opts.code;
     if (opts.fold) card.dataset.fold = opts.code;
     if (opts.studio) card.dataset.studio = opts.code;
-    card.disabled = !opts.ok;
-    card.innerHTML = '<span class="type-head"><span class="type-code"></span></span>' +
+    card.innerHTML = '<input class="type-input" />' +
+      '<span class="type-choice" aria-hidden="true"></span>' +
+      '<span class="type-head"><span class="type-code"></span></span>' +
       '<span class="type-label"></span><span class="type-levels"></span>';
+    const input = card.querySelector(".type-input");
+    input.type = opts.multiple ? "checkbox" : "radio";
+    input.name = opts.group || "worksheet-choice";
+    input.value = opts.code;
+    input.checked = Boolean(opts.active);
+    input.disabled = !opts.ok;
+    input.setAttribute("aria-label", opts.label);
     card.querySelector(".type-code").textContent = opts.code;
     card.querySelector(".type-label").textContent = opts.label;
     card.querySelector(".type-levels").textContent = opts.meta || levelRange(opts.levels);
     if (!opts.ok) card.title = "이 단계에서는 제공되지 않아요";
-    card.addEventListener("click", opts.onClick);
+    input.addEventListener("change", opts.onChange);
     return card;
   }
 
   function renderCubeTypes(grid) {
+    typeGroupHeading(grid, "생성 유형", "여러 개 선택 가능");
     GEN.TYPES.forEach((type) => {
       const ok = supportsLevel(type.code);
       grid.appendChild(typeCard({
@@ -401,26 +416,22 @@
         label: type.label,
         levels: type.levels,
         ok,
-        active: !state.book && state.types.indexOf(type.code) !== -1,
-        onClick() {
-          // 고정 문제 학습지를 담고 있었다면 그것을 내려놓고 이 유형 하나로
-          // 새로 시작한다. 이전 생성형 선택에 토글로 얹으면, 화면에 한 장도
-          // 켜져 있지 않던 상태에서 카드를 눌렀는데 아무 일도 안 일어나
-          // 보이는 순간이 생긴다.
-          if (state.book) {
-            state.book = null;
-            state.types = [type.code];
-          } else {
-            const at = state.types.indexOf(type.code);
-            if (at === -1) state.types.push(type.code);
-            else state.types.splice(at, 1);
-          }
+        active: state.types.indexOf(type.code) !== -1,
+        multiple: true,
+        group: "cube-generated-types",
+        onChange(event) {
+          if (state.book) state.book = null;
+          const at = state.types.indexOf(type.code);
+          if (event.currentTarget.checked && at === -1) state.types.push(type.code);
+          if (!event.currentTarget.checked && at !== -1) state.types.splice(at, 1);
           state.previewType = type.code;
           state.previewSeed = freshSeed();
+          pruneTypes();
           renderAll();
         }
       }));
     });
+    typeGroupHeading(grid, "준비된 학습지", "한 번에 하나 선택");
     BOOKS.forEach((book) => {
       const ok = entrySupportsLevel(book, state.level);
       grid.appendChild(typeCard({
@@ -430,12 +441,12 @@
         book: true,
         ok,
         active: state.book === book.code,
-        onClick() {
-          if (state.book === book.code) {
-            state.book = null;
-          } else {
-            state.book = book.code;
-          }
+        multiple: false,
+        group: "cube-book",
+        onChange() {
+          state.types = [];
+          state.book = book.code;
+          state.typeAutoNote = "";
           renderAll();
         }
       }));
@@ -443,6 +454,7 @@
   }
 
   function renderFoldTypes(grid) {
+    typeGroupHeading(grid, "접기 유형", "한 번에 하나 선택");
     FOLDS.forEach((fold) => {
       const ok = entrySupportsLevel(fold, state.level);
       grid.appendChild(typeCard({
@@ -452,8 +464,10 @@
         fold: true,
         ok,
         active: state.fold === fold.code,
-        onClick() {
-          state.fold = state.fold === fold.code ? null : fold.code;
+        multiple: false,
+        group: "fold-type",
+        onChange() {
+          state.fold = fold.code;
           renderAll();
         }
       }));
@@ -461,18 +475,20 @@
   }
 
   function renderStudioTypes(grid) {
+    typeGroupHeading(grid, "학습지 선택", "한 번에 하나씩 열기");
     STUDIOS.filter((studio) => studio.domain === state.domain).forEach((studio) => {
-      const ok = entrySupportsLevel(studio, state.level);
       grid.appendChild(typeCard({
         code: studio.code,
         label: studio.label,
         levels: studio.levels,
-        meta: studio.note + " · " + (studio.count ? "최대 20문항" : "한 장 활동지"),
+        meta: studio.note + " · 권장 " + levelSpan(studio.levels) + " · " + (studio.count ? "최대 20문항" : "한 장 활동지"),
         studio: true,
-        ok,
-        active: state.studio === studio.code,
-        onClick() {
-          state.studio = state.studio === studio.code ? null : studio.code;
+        ok: true,
+        active: selectedStudio() === studio.code,
+        multiple: false,
+        group: "studio-" + state.domain,
+        onChange() {
+          state.studioByDomain[state.domain] = studio.code;
           renderAll();
         }
       }));
@@ -487,21 +503,25 @@
     else renderStudioTypes(grid);
     const note = $("typeNote");
     if (note) {
-      if (state.typeAutoNote) {
+      const incompatibleBook = state.domain === DOMAIN_CUBE && state.book && !entrySupportsLevel(bookInfo(state.book), state.level);
+      const incompatibleFold = state.domain === DOMAIN_FOLD && state.fold && !entrySupportsLevel(foldInfo(state.fold), state.level);
+      if (incompatibleBook || incompatibleFold) {
+        note.textContent = "선택은 유지했어요. 현재 단계에서 사용할 수 있는 유형을 골라 주세요.";
+      } else if (state.typeAutoNote) {
         // 단계·영역을 바꿔 골라 둔 유형이 전부 잘려나간 경우의 안내가, 이 줄의
         // 다른 안내보다 우선한다 — 방금 화면이 왜 바뀌었는지가 지금 가장 궁금한
         // 정보이기 때문이다.
         note.textContent = state.typeAutoNote;
       } else if (state.domain === DOMAIN_FOLD) {
-        note.textContent = "원하는 유형을 선택하세요. 선택하지 않은 상태로 두어도 돼요.";
+        note.textContent = "접기 유형은 한 번에 하나씩 만들어요.";
       } else if (state.domain !== DOMAIN_CUBE) {
-        note.textContent = "학습지 하나를 선택하세요. 각 학습지의 검증된 문제은행과 인쇄 화면으로 이어져요.";
+        note.textContent = "서로 다른 인쇄 엔진이므로 한 번에 한 학습지를 엽니다. 학습지 안에서 활동을 더 고를 수 있어요.";
       } else if (state.book) {
-        note.textContent = "이 학습지는 손으로 고른 문제 풀을 그대로 쓰므로 한 번에 하나만 만들어요.";
+        note.textContent = "준비된 학습지는 한 번에 하나만 열어요. 생성 유형을 고르면 여러 유형을 한 학습지에 섞을 수 있어요.";
       } else {
-        note.textContent = "원하는 유형만 선택하세요. 여러 장을 고르면 한 학습지에 섞여 나와요.";
+        note.textContent = "체크한 생성 유형이 한 학습지에 고르게 섞여 나와요.";
       }
-      note.classList.toggle("is-warn", Boolean(state.typeAutoNote) || (Boolean(state.book) && state.domain === DOMAIN_CUBE));
+      note.classList.toggle("is-warn", Boolean(incompatibleBook || incompatibleFold || state.typeAutoNote));
     }
   }
 
@@ -528,8 +548,10 @@
     const row = $("countRow");
     row.replaceChildren();
     const counts = currentCounts();
+    row.dataset.options = String(counts.length);
     const current = currentCount();
-    const studio = state.studio ? studioInfo(state.studio) : null;
+    const studioCode = selectedStudio();
+    const studio = studioCode ? studioInfo(studioCode) : null;
     const applies = state.domain === DOMAIN_CUBE || state.domain === DOMAIN_FOLD || Boolean(studio && studio.count);
     const word = state.domain === DOMAIN_CUBE && state.book ? "문제" : "문항";
     counts.forEach((count) => {
@@ -550,18 +572,16 @@
     if (field) field.classList.toggle("is-muted", !applies);
     const note = $("countNote");
     if (note) {
-      note.textContent = !state.studio && state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD
+      note.textContent = !studioCode && state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD
         ? "학습지를 선택하면 적용할 수 있는 문항 수가 켜져요."
         : studio && !studio.count
           ? "이 활동지는 문제 크기에 맞춘 한 장 구성을 사용해요."
-          : (state.domain === DOMAIN_FOLD || (state.domain === DOMAIN_CUBE && !state.book))
-            ? "최대 50문항까지 만들 수 있어요."
-            : "최대 20문항까지 만들 수 있어요.";
+          : "최대 20문항까지 만들 수 있어요.";
     }
   }
 
   // 공용 난이도는 쌓기나무와 색종이에만 적용한다. 독립 학습지는 자기 화면에서
-  // 활동 단계를 고르므로 이 줄을 흐리게 두어 서로 다른 단계 체계를 억지로 섞지 않는다.
+  // 활동 단계를 고르며, 적용되지 않는 난이도 줄은 renderControlVisibility가 숨긴다.
   function intensityApplies() {
     if (state.domain === DOMAIN_FOLD) return true;
     if (state.domain !== DOMAIN_CUBE) return false;
@@ -579,7 +599,7 @@
     const note = $("intensityNote");
     if (!note) return;
     if (!applies) {
-      note.textContent = state.studio
+      note.textContent = selectedStudio()
         ? "선택한 학습지 안에서 활동 단계나 영역을 고를 수 있어요."
         : state.domain !== DOMAIN_CUBE
           ? "학습지를 선택하면 그 안에서 활동 단계나 영역을 고를 수 있어요."
@@ -592,6 +612,22 @@
       return;
     }
     note.textContent = "하 기초 · 중 표준 · 상 심화";
+  }
+
+  // 서로 다른 학습지 엔진에 적용되지 않는 공용 설정은 흐리게 남겨 두지 않는다.
+  // 지금 고른 결과에 실제로 영향을 주는 조작만 보여 주어 단계/난이도를 결과
+  // 파라미터로 오해하지 않게 한다.
+  function renderControlVisibility() {
+    const standalone = state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD;
+    const studioCode = selectedStudio();
+    const studio = studioCode ? studioInfo(studioCode) : null;
+    const previewVisible = state.domain === DOMAIN_CUBE && !state.book;
+    $("levelField").hidden = standalone;
+    $("intensityField").hidden = !intensityApplies();
+    $("countField").hidden = standalone && !(studio && studio.count);
+    $("previewPanel").hidden = !previewVisible;
+    $("typesTitle").textContent = standalone ? "학습지" : "유형";
+    $("builderGrid").classList.toggle("is-compact", !previewVisible);
   }
 
   // ---------------------------------------------------------------------
@@ -619,6 +655,10 @@
     const panel = $("previewPanel");
     const body = $("previewBody");
     if (!panel || !body) return;
+    if (panel.hidden) {
+      window.__LABPREVIEW = null;
+      return;
+    }
     const head = $("previewType");
 
     // 생성형이 아닌 학습지는 미리보기가 없다 — 랩이 문제를 만들지 않고 정해진
@@ -631,7 +671,7 @@
       return;
     }
     if (state.domain !== DOMAIN_CUBE) {
-      const studio = studioInfo(state.studio);
+      const studio = studioInfo(selectedStudio());
       if (head) head.textContent = studio ? studio.label : "";
       previewMessage(studio ? studio.note + ". 만들기를 누르면 실제 문제와 인쇄 구성을 바로 확인할 수 있어요." : "학습지를 하나 선택하세요.");
       panel.classList.add("is-static");
@@ -682,7 +722,7 @@
     const tabs = $("previewTabs");
     if (!tabs) return;
     tabs.replaceChildren();
-    if (state.domain !== DOMAIN_CUBE || state.book || state.studio) return;
+    if (state.domain !== DOMAIN_CUBE || state.book) return;
     const list = previewableTypes();
     if (list.length < 2) return;
     list.forEach((code) => {
@@ -706,8 +746,9 @@
   // 마우스 오른쪽 클릭으로 복사하거나 즐겨찾기에 넣어도 그대로 재현된다.
   // ---------------------------------------------------------------------
   function buildUrl() {
-    if (state.studio) {
-      const studio = studioInfo(state.studio);
+    const studioCode = selectedStudio();
+    if (studioCode) {
+      const studio = studioInfo(studioCode);
       const params = new URLSearchParams(studio.params || {});
       if (studio.count) params.set("count", String(state.studioCount));
       const query = params.toString();
@@ -735,7 +776,7 @@
     const params = new URLSearchParams();
     params.set("level", state.level);
     params.set("intensity", String(state.intensity));
-    params.set("types", state.types.join("."));
+    params.set("types", previewableTypes().join("."));
     params.set("count", String(state.count));
     // types의 구분점(.)까지 인코딩되면 링크가 읽기 어려워지므로 되돌린다.
     // 물음표 뒤 경로가 아닌 값에서 '.'은 인코딩할 필요가 없는 문자다.
@@ -744,25 +785,30 @@
 
   function renderSummary() {
     const link = $("buildBtn");
+    const studioCode = selectedStudio();
+    const selectedBook = state.book ? bookInfo(state.book) : null;
+    const selectedFold = state.fold ? foldInfo(state.fold) : null;
     const ready = state.domain === DOMAIN_FOLD
-      ? Boolean(state.fold)
+      ? Boolean(selectedFold && entrySupportsLevel(selectedFold, state.level))
       : state.domain === DOMAIN_CUBE
-        ? Boolean(state.book || previewableTypes().length)
-        : Boolean(state.studio);
+        ? Boolean((selectedBook && entrySupportsLevel(selectedBook, state.level)) || previewableTypes().length)
+        : Boolean(studioCode);
     link.href = ready ? buildUrl() : "#";
-    link.textContent = state.studio ? "학습지 열기" : "학습지 만들기";
+    link.textContent = studioCode ? "학습지 열기" : "학습지 만들기";
     link.classList.toggle("is-disabled", !ready);
     link.setAttribute("aria-disabled", String(!ready));
     const head = document.createElement("b");
     let tail;
     if (!ready) {
-      head.textContent = "유형을 선택해 주세요";
-      tail = " · 선택 후 학습지를 만들 수 있어요.";
+      const incompatible = (selectedBook && !entrySupportsLevel(selectedBook, state.level)) ||
+        (selectedFold && !entrySupportsLevel(selectedFold, state.level));
+      head.textContent = incompatible ? "선택은 그대로 보관했어요" : (state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD ? "학습지를 선택해 주세요" : "유형을 선택해 주세요");
+      tail = incompatible ? " · 이 단계에서 사용할 수 있는 유형을 골라 주세요." : " · 선택 후 학습지를 만들 수 있어요.";
       $("buildSummary").replaceChildren(head, document.createTextNode(tail));
       return;
     }
-    if (state.studio) {
-      const studio = studioInfo(state.studio);
+    if (studioCode) {
+      const studio = studioInfo(studioCode);
       head.textContent = studio.label + (studio.count ? " · " + state.studioCount + "문항" : " · 한 장 활동지");
       tail = " · " + studio.note;
     } else if (state.domain === DOMAIN_FOLD) {
@@ -791,6 +837,7 @@
     renderTypes();
     renderIntensityState();
     renderCounts();
+    renderControlVisibility();
     // 미리보기가 먼저다 — ensurePreviewType이 여기서 유효한 유형을 정하고,
     // 칩 줄은 그 결과를 읽어 어느 칩을 켤지 정한다. 순서를 바꾸면 유형을
     // 바꾼 직후 한 번은 어느 칩도 켜지지 않은 화면이 나온다.

@@ -19,6 +19,7 @@ const COPY = {
 };
 
 const PIPS = { 1: [[.5, .5]], 2: [[.25, .25], [.75, .75]], 3: [[.24, .24], [.5, .5], [.76, .76]], 4: [[.25, .25], [.75, .25], [.25, .75], [.75, .75]], 5: [[.23, .23], [.77, .23], [.5, .5], [.23, .77], [.77, .77]], 6: [[.25, .2], [.75, .2], [.25, .5], [.75, .5], [.25, .8], [.75, .8]] };
+const CUBE_GUIDE_LABELS = { ko: "두 사각형의 같은 꼭짓점을 이은 정육면체 도움선", en: "Cube guide with matching corners of two squares connected", zh: "连接两个正方形对应顶点的正方体辅助线", ja: "2つの正方形の対応する頂点を結んだ立方体の補助線" };
 let markerSerial = 0;
 const copy = () => COPY[language];
 const markerLabels = () => language === "ko" ? ["가", "나", "다"] : ["A", "B", "C"];
@@ -44,9 +45,12 @@ function boardDie(orientation, x, y, hiddenFace, reveal) {
   return `<g class="board-die" transform="translate(${tx} ${ty}) scale(${scale})" data-contact-center="${x},${y}" data-local-base="${DIE_BASE_CENTER}">${dieFaces(orientation, hiddenFace, reveal)}</g>`;
 }
 
-function dieSvg(orientation, blank = false, hiddenFace = null, reveal = false) {
-  const faces = blank ? Object.entries(DIE_FACE_QUADS).map(([face, quad]) => `<polygon class="die-face ${face} blank" points="${pointsAttribute(quad)}"/>`).join("") : dieFaces(orientation, hiddenFace, reveal);
-  return `<svg class="die-svg${blank ? " blank" : ""}" viewBox="12 4 140 126" aria-hidden="true">${faces}</svg>`;
+function dieSvg(orientation, hiddenFace = null, reveal = false) {
+  return `<svg class="die-svg" viewBox="12 4 140 126" aria-hidden="true">${dieFaces(orientation, hiddenFace, reveal)}</svg>`;
+}
+
+function cubeGuideSvg() {
+  return `<svg class="cube-guide" viewBox="0 0 150 130" role="img" aria-label="${escape(CUBE_GUIDE_LABELS[language])}"><rect class="cube-guide-square cube-guide-back" x="52" y="10" width="74" height="74"/><rect class="cube-guide-square cube-guide-front" x="22" y="40" width="74" height="74"/><line class="cube-guide-connector" x1="22" y1="40" x2="52" y2="10"/><line class="cube-guide-connector" x1="96" y1="40" x2="126" y2="10"/><line class="cube-guide-connector" x1="96" y1="114" x2="126" y2="84"/><line class="cube-guide-connector" x1="22" y1="114" x2="52" y2="84"/></svg>`;
 }
 
 function targetStepsFor(problem, board) {
@@ -102,7 +106,7 @@ function responseMarkup(problem, reveal) {
 
 function problemVisual(problem, reveal) {
   if (problem.activity === "paired") return `<div class="paired-boards">${problem.boards.map((board, index) => `<figure><figcaption>${index + 1}</figcaption>${boardSvg(problem, board, index, reveal)}</figure>`).join("")}</div>${responseMarkup(problem, reveal)}`;
-  if (problem.activity === "visible") return `<div class="visible-work"><div>${boardSvg(problem, problem.boards[0], 0, reveal)}</div><div class="finish-die">${dieSvg(problem.boards[0].finalOrientation, !reveal)}<span>${reveal ? escape(answerText(problem)) : ""}</span></div></div>${responseMarkup(problem, reveal)}`;
+  if (problem.activity === "visible") return `<div class="visible-work"><div>${boardSvg(problem, problem.boards[0], 0, reveal)}</div><div class="finish-die">${reveal ? dieSvg(problem.boards[0].finalOrientation) : cubeGuideSvg()}<span>${reveal ? escape(answerText(problem)) : ""}</span></div></div>${responseMarkup(problem, reveal)}`;
   return `<div class="single-board">${boardSvg(problem, problem.boards[0], 0, reveal)}</div>${responseMarkup(problem, reveal)}`;
 }
 

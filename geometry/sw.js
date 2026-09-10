@@ -6,12 +6,12 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v40";
+const CACHE = "gfield-geo-v41";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/lab/",
-  "/geometry/lab/styles.css?v=lab-studio-8",
-  "/geometry/lab/app.js?v=lab-studio-9",
+  "/geometry/lab/styles.css?v=lab-studio-9",
+  "/geometry/lab/app.js?v=lab-studio-10",
   "/geometry/shared/question-bank.js?v=20260829g",
   "/geometry/worksheet/generators.js?v=20260829g",
   "/geometry/worksheet/render.js?v=20260829g",
@@ -55,11 +55,11 @@ const CORE = [
   "/geometry/games/dice-roll/route-scene.js?v=dice-roll-4",
   "/geometry/games/dice-roll/projection.js?v=dice-roll-1",
   "/geometry/worksheet/dice-roll/",
-  "/geometry/worksheet/dice-roll/styles.css?v=dice-sheet-6",
+  "/geometry/worksheet/dice-roll/styles.css?v=dice-sheet-8",
   "/geometry/worksheet/dice-roll/board-die.css?v=dice-sheet-3",
   "/geometry/worksheet/dice-roll/material-refresh.css?v=dice-sheet-1",
   "/geometry/worksheet/dice-roll/perspective.css?v=dice-sheet-1",
-  "/geometry/worksheet/dice-roll/app.js?v=dice-sheet-7",
+  "/geometry/worksheet/dice-roll/app.js?v=dice-sheet-8",
   "/geometry/worksheet/dice-roll/workbook-core.js?v=dice-sheet-7",
   "/geometry/games/geoboard/",
   "/geometry/games/geoboard/styles.css?v=geoboard-8",

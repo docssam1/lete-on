@@ -32,14 +32,32 @@ assert.deepEqual(await page.locator(".sheet .problem-grid").evaluateAll((nodes) 
 assert.deepEqual(await page.locator(".problem").evaluateAll((nodes) => [...new Set(nodes.map((node) => node.dataset.activity))].sort()), ["paired", "sequence", "sum", "target", "visible"]);
 for (const activity of ["paired", "sequence", "sum", "target", "visible"]) assert.equal(await page.locator(`.problem[data-activity="${activity}"]`).count(), 4);
 
+const numberedProblems = await page.locator(".problem").evaluateAll((nodes) => nodes.map((node) => {
+  const directChildren = [...node.children];
+  const headers = directChildren.filter((child) => child.matches("header"));
+  const visuals = directChildren.filter((child) => child.classList.contains("problem-visual"));
+  const numberNodes = headers[0] ? [...headers[0].children].filter((child) => child.matches("b")) : [];
+  const responseSelector = ".sequence-slots,.face-slots,.sum-slots,.write-answer,.answer-box";
+  const responses = visuals[0] ? [...visuals[0].children].filter((child) => child.matches(responseSelector)) : [];
+  return { id: node.dataset.problemId, number: numberNodes[0]?.textContent.trim(), headers: headers.length, numberNodes: numberNodes.length, prompts: headers[0]?.querySelectorAll("p").length || 0, visuals: visuals.length, responses: responses.length, nestedProblems: node.querySelectorAll(".problem").length };
+}));
+assert.equal(new Set(numberedProblems.map((problem) => problem.id)).size, 20);
+assert.deepEqual(numberedProblems.map((problem) => problem.number), Array.from({ length: 20 }, (_, index) => String(index + 1)));
+for (const problem of numberedProblems) assert.deepEqual({ headers: problem.headers, numberNodes: problem.numberNodes, prompts: problem.prompts, visuals: problem.visuals, responses: problem.responses, nestedProblems: problem.nestedProblems }, { headers: 1, numberNodes: 1, prompts: 1, visuals: 1, responses: 1, nestedProblems: 0 }, JSON.stringify(problem));
+
 const boardCount = await page.locator(".route-board").count();
 assert.equal(boardCount, 24);
 assert.equal(await page.locator('.route-board marker[markerWidth="5"][markerHeight="5"]').count(), boardCount);
+const routeStrokeWidths = await page.locator(".route-board line[data-direction]").evaluateAll((lines) => lines.map((line) => Number.parseFloat(getComputedStyle(line).strokeWidth)));
+assert.ok(routeStrokeWidths.length > 0 && routeStrokeWidths.every((width) => Math.abs(width - 2) < .01), JSON.stringify(routeStrokeWidths));
 assert.equal(await page.locator(".route-board .board-die").count(), boardCount);
 assert.equal(await page.locator(".route-board .board-die .die-face").count(), boardCount * 3);
 assert.equal(await page.locator('.route-board[data-viewpoint="southeast-diagonal"]').count(), boardCount);
 assert.equal(await page.locator(".paired-problem .unknown-face").count(), 4);
-assert.equal(await page.locator(".visible-problem .die-svg.blank").count(), 4);
+assert.equal(await page.locator(".visible-problem .finish-die .cube-guide").count(), 4);
+assert.equal(await page.locator(".visible-problem .finish-die .die-svg").count(), 0);
+const cubeGuides = await page.locator(".visible-problem .finish-die .cube-guide").evaluateAll((guides) => guides.map((guide) => ({ squares: guide.querySelectorAll("rect.cube-guide-square").length, connectors: guide.querySelectorAll("line.cube-guide-connector").length, pips: guide.querySelectorAll("circle").length, width: guide.getBBox().width, height: guide.getBBox().height })));
+assert.ok(cubeGuides.every((guide) => guide.squares === 2 && guide.connectors === 4 && guide.pips === 0 && guide.width > 90 && guide.height > 90), JSON.stringify(cubeGuides));
 assert.equal(await page.locator(".answer-box").count(), 0);
 
 const alignments = await page.locator(".board-die").evaluateAll((nodes) => nodes.map((node) => {
@@ -67,7 +85,10 @@ await page.screenshot({ path: path.join(output, "desktop.png"), fullPage: true }
 await page.locator("#answerToggle").check();
 assert.equal(await page.locator(".answer-box").count(), 20);
 assert.equal(await page.locator(".unknown-face").count(), 0);
-assert.equal(await page.locator(".visible-problem .die-svg.blank").count(), 0);
+assert.equal(await page.locator(".visible-problem .finish-die .cube-guide").count(), 0);
+assert.equal(await page.locator(".visible-problem .finish-die .die-svg").count(), 4);
+const answerDiePips = await page.locator(".visible-problem .finish-die .die-svg").evaluateAll((dice) => dice.map((die) => die.querySelectorAll("circle").length));
+assert.ok(answerDiePips.every((count) => count >= 3), JSON.stringify(answerDiePips));
 for (const lang of ["en", "zh", "ja", "ko"]) {
   await page.locator("#languageSelect").selectOption(lang);
   assert.equal(await page.locator(".problem").count(), 20);

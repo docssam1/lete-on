@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFIELD 지오메트리 랩 · 기하 사고력 문제은행</title>
-    <meta name="description" content="GFIELD 지오메트리 랩 — 단계와 난이도를 골라 인쇄용 기하 학습지를 만드는 문제은행." />
-    <link rel="stylesheet" href="./styles.css?v=lab-studio-8" />
+    <meta name="description" content="GFIELD 지오메트리 랩 — 영역과 학습지를 고르고 적용 가능한 설정으로 인쇄물을 만드는 기하 문제은행." />
+    <link rel="stylesheet" href="./styles.css?v=lab-studio-9" />
   </head>
   <body>
     <header class="lab-header">
@@ -22,13 +22,19 @@
     <main class="lab-wrap">
       <section class="lab-section lab-card" id="builder" aria-labelledby="builderTitle">
         <h2 id="builderTitle">학습지 만들기</h2>
-        <p class="section-note">영역 · 단계 · 난이도 · 유형 · 문항 수를 고르면 인쇄용 학습지가 바로 만들어져요.</p>
+        <p class="section-note">먼저 영역을 고른 뒤, 화면에 나타나는 설정만 차례로 선택하세요. 서로 다른 인쇄 엔진은 한 번에 한 학습지씩 열립니다.</p>
 
         <!-- 데스크톱(1100px 이상)에서는 이 안의 필드들이 왼쪽 열로, 미리보기
              패널만 오른쪽 열로 옮겨져 값을 바꾸는 동안 스크롤 없이 결과를
              볼 수 있다. 1100px 미만에서는 세로 배치로 되돌아간다(아래
              .builder-grid 미디어쿼리, styles.css). -->
-        <div class="builder-grid">
+        <div class="builder-grid" id="builderGrid">
+          <div class="field" id="domainField">
+            <h3>영역</h3>
+            <div class="domain-row" id="domainRow"><!-- app.js --></div>
+            <p class="field-note" id="domainNote"></p>
+          </div>
+
           <div class="field" id="levelField">
             <h3>단계</h3>
             <!-- 예전에 페이지 맨 위 독립 섹션에 있던 안내. 단계 배지가 위아래
@@ -46,16 +52,8 @@
             <p class="field-note" id="intensityNote">하 기초 · 중 표준 · 상 심화</p>
           </div>
 
-          <div class="field" id="domainField">
-            <!-- 영역은 학생이 하는 수학 행동에 따라 나눈다. 각 독립 학습지는
-                 검증된 자기 문제 풀과 인쇄 엔진으로 연결된다. -->
-            <h3>영역</h3>
-            <div class="domain-row" id="domainRow"><!-- app.js --></div>
-            <p class="field-note" id="domainNote"></p>
-          </div>
-
           <div class="field" id="typesField">
-            <h3>유형</h3>
+            <h3 id="typesTitle">유형</h3>
             <div class="type-grid" id="typeGrid"><!-- app.js --></div>
             <p class="field-note" id="typeNote">선택한 단계에서 제공하지 않는 유형은 흐리게 표시돼요.</p>
           </div>
@@ -120,6 +118,6 @@
     <script src="../worksheet/generators.js?v=20260829g"></script>
     <script src="../worksheet/render.js?v=20260829g"></script>
     <script src="../worksheet/card.js?v=20260829g"></script>
-    <script src="./app.js?v=lab-studio-9"></script>
+    <script src="./app.js?v=lab-studio-10"></script>
   </body>
 </html>
