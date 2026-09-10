@@ -144,8 +144,8 @@
     const escaped=sentence.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     return String(html||'').replace(new RegExp('<text[^>]*>'+escaped+'</text>'),'');
   }
-  function compactShortestPathSvg(solution){
-    const cols=4,rows=3,left=110,top=32,dx=110,dy=58,blocked='2,1',ways=Array.from({length:rows+1},()=>Array(cols+1).fill(0));
+  function compactShortestPathSvg(solution,blockedPoint=[2,1]){
+    const cols=4,rows=3,left=110,top=32,dx=110,dy=58,blocked=blockedPoint.join(','),ways=Array.from({length:rows+1},()=>Array(cols+1).fill(0));
     ways[rows][0]=1;
     for(let y=rows;y>=0;y--)for(let x=0;x<=cols;x++)if(!(x===0&&y===rows)&&`${x},${y}`!==blocked)ways[y][x]=(x?ways[y][x-1]:0)+(y<rows?ways[y+1][x]:0);
     let body='';
@@ -171,6 +171,11 @@
   all[3].main[6].prompt=all[3].main[6].prompt.replace('두 해가 지난 뒤','2년이 지난 후');
   all[3].main[6].solution=all[3].main[6].solution.replace('두 해 뒤','2년이 지난 후');
   replaceWithSpecial(all[3].main[8],'shortest-path-grid',2,'논리추리');
+  Object.assign(all[3].main[8],{
+    prompt:'출발점에서 도착점까지 오른쪽 또는 위쪽으로만 최단거리로 가려고 합니다. 검은 지점 1개를 지나지 않는 길은 모두 몇 가지일까요?',
+    answer:15,answerHtml:'15가지',solution:'각 지점까지 오는 길의 수를 아래와 왼쪽에서 오는 수의 합으로 적습니다. 검은 지점은 0으로 두면 도착점의 수는 15이므로 모두 15가지입니다.',
+    problemHtml:compactShortestPathSvg(false,[3,1]),solutionDiagram:compactShortestPathSvg(true,[3,1]),payload:{kind:'shortest-path-grid',cols:4,rows:3,blocked:[[3,1]],directions:['E','N'],responseMode:'shortest-path-count'}
+  });
   replaceWithSpecial(all[3].main[14],'checker-stack-count',2,'수');
   replaceWithSpecial(all[3].main[17],'tetra-cube-hole-count',1,'도형');
   for(const field of ['problemHtml','solutionDiagram'])all[3].main[17][field]=removePictureSentence(all[3].main[17][field],'같은 색의 쌓기나무 4개가 테트라큐브 1개입니다.');
