@@ -91,10 +91,17 @@ try {
       }
       const href = await page.locator("#buildBtn").getAttribute("href");
       assert.ok(href && href !== "#", `${label}: missing build link`);
-      assert.equal(new URL(href, labUrl).pathname.startsWith("/geometry/worksheet/"), true, `${label}: wrong target`);
-      assert.equal(new URL(href, labUrl).searchParams.has("count"), countEnabled.has(label), `${label}: count handoff mismatch`);
-      if (countEnabled.has(label)) assert.equal(new URL(href, labUrl).searchParams.get("count"), "15", `${label}: wrong count`);
-      targetHrefs.push({ label, href: new URL(href, labUrl).href });
+      const targetUrl = new URL(href, labUrl);
+      assert.equal(targetUrl.pathname.startsWith("/geometry/worksheet/"), true, `${label}: wrong target`);
+      assert.equal(targetUrl.searchParams.has("count"), countEnabled.has(label), `${label}: count handoff mismatch`);
+      if (countEnabled.has(label)) assert.equal(targetUrl.searchParams.get("count"), "15", `${label}: wrong count`);
+      if (label === "주사위 굴리기") {
+        assert.match(await card.locator(".type-levels").textContent(), /다섯 면 그림/);
+        assert.equal(targetUrl.pathname, "/geometry/worksheet/dice-roll/");
+        assert.equal(targetUrl.searchParams.get("activity"), "all");
+        assert.equal(targetUrl.searchParams.get("cover"), "1");
+      }
+      targetHrefs.push({ label, href: targetUrl.href });
       links += 1;
     }
   }
@@ -112,6 +119,14 @@ try {
     if (countEnabled.has(label)) {
       assert.equal(await target.locator("#countInput").inputValue(), "15", `${label}: target ignored count`);
       assert.equal(await target.locator("article").count(), 15, `${label}: target did not render 15 problems`);
+    }
+    if (label === "주사위 굴리기") {
+      assert.ok(await target.locator(".visible-problem").count() > 0, "dice bank omitted the five-face activity");
+      const diceWork = await target.locator(".visible-problem").evaluateAll((problems) => problems.map((problem) => ({
+        moves: problem.querySelectorAll('.route-board line[data-direction]').length,
+        guides: problem.querySelectorAll('.five-face-guide').length
+      })));
+      diceWork.forEach(({ moves, guides }) => assert.equal(guides, moves, "dice bank did not render one five-face guide per move"));
     }
     assert.deepEqual(localErrors, [], `${label}: target browser errors`);
     await target.close();

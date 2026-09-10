@@ -63,7 +63,7 @@
     { code: "MI", domain: DOMAIN_MOVE, label: "거울대칭", note: "거울선에서 같은 줄과 같은 거리를 찾아 그리기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/mirror-manor/", count: true, params: { level: "all", cover: "1" } },
     { code: "HS", domain: DOMAIN_OBSERVE, label: "숨은 도형", note: "크기와 방향이 다른 도형을 빠짐없이 세기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/hidden-shape/", count: false },
     { code: "PW", domain: DOMAIN_OBSERVE, label: "길 잇기", note: "타일의 길을 연결하고 가장 가까운 경로 찾기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/path-walk/", count: false },
-    { code: "DR", domain: DOMAIN_SOLID, label: "주사위 굴리기", note: "각 칸의 밑면·목표 칸·표시 칸의 합과 보이는 세 면 추론하기", levels: ["L2", "L3", "L4", "L5"], url: "../worksheet/dice-roll/", count: true, params: { activity: "all", cover: "1" } },
+    { code: "DR", domain: DOMAIN_SOLID, label: "주사위 굴리기", note: "각 칸의 밑면·표시 칸의 합과 다섯 면 그림으로 마지막 주사위 추론하기", levels: ["L2", "L3", "L4", "L5"], url: "../worksheet/dice-roll/", count: true, params: { activity: "all", cover: "1" } },
     { code: "NE", domain: DOMAIN_SOLID, label: "전개도 전망대", note: "전개도를 접어 마주 보는 면과 보이는 방향 찾기", levels: ["L3", "L4", "L5"], url: "../worksheet/net-observatory/", count: false }
   ];
 

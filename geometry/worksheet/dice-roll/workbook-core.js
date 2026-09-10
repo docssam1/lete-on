@@ -5,7 +5,7 @@ export const ACTIVITIES = Object.freeze([
   { id: "target", level: 2, names: { ko: "목표 칸의 밑면", en: "Bottom face at the target", zh: "目标格的底面", ja: "目標マスの底面" } },
   { id: "sum", level: 3, names: { ko: "표시한 칸의 눈의 합", en: "Sum on marked cells", zh: "标记格点数之和", ja: "印のマスの目の和" } },
   { id: "paired", level: 4, names: { ko: "두 주사위 밑면 추리", en: "Compare two dice routes", zh: "比较两条骰子路线", ja: "2つのさいころの経路" } },
-  { id: "visible", level: 3, names: { ko: "도착한 주사위의 세 면", en: "Three faces at the finish", zh: "终点骰子的三个面", ja: "到着したさいころの3面" } }
+  { id: "visible", level: 3, names: { ko: "도착한 주사위의 다섯 면", en: "Five faces at the finish", zh: "终点骰子的五个面", ja: "到着したさいころの5面" } }
 ]);
 
 const ACTIVITY_IDS = new Set(ACTIVITIES.map((activity) => activity.id));
