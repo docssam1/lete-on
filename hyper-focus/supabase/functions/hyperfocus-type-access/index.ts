@@ -42,11 +42,11 @@ export async function handleRequest(request:Request):Promise<Response>{
   }
   if(body.action!=="set")return respond(request,400,{error:"invalid_action"});
   if(!exactKeys(body,["action","studentId","permissionKey","enabled"])||!UUID.test(String(body.studentId))||!PERMISSION_KEYS.has(String(body.permissionKey))||typeof body.enabled!=="boolean")return respond(request,400,{error:"invalid_permission_request"});
-  if(claims.aal!=="aal2"||user.app_metadata?.hf_role!=="admin"||(claims.app_metadata as ObjectMap|undefined)?.hf_role!=="admin")return respond(request,403,{error:"admin_access_required"});
-  // Use the caller-scoped RLS read: an active auth session, current staff role and aal2 are required by existing HF policy.
-  const {data:staff,error:staffError}=await userClient.from("hf_admin_accounts").select("role,account_status,authorization_changed_at").eq("user_id",user.id).maybeSingle();
-  if(staffError||staff?.role!=="admin"||staff.account_status!=="active"||!Number.isFinite(Number(claims.iat))||!Number.isFinite(Date.parse(String(staff.authorization_changed_at)))||Number(claims.iat)*1000<Date.parse(String(staff.authorization_changed_at)))return respond(request,403,{error:"admin_access_required"});
+  if(user.app_metadata?.hf_role!=="admin"||(claims.app_metadata as ObjectMap|undefined)?.hf_role!=="admin")return respond(request,403,{error:"admin_access_required"});
   const service=createClient(url,secret,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+  // Match the unified admin console: verified Auth identity + immutable app role + active server-side staff record + fresh authorization token.
+  const {data:staff,error:staffError}=await service.from("hf_admin_accounts").select("role,account_status,authorization_changed_at").eq("user_id",user.id).maybeSingle();
+  if(staffError||staff?.role!=="admin"||staff.account_status!=="active"||!Number.isFinite(Number(claims.iat))||!Number.isFinite(Date.parse(String(staff.authorization_changed_at)))||Number(claims.iat)*1000<Date.parse(String(staff.authorization_changed_at)))return respond(request,403,{error:"admin_access_required"});
   const {data:student,error:studentError}=await service.from("hf_students").select("id,account_status").eq("id",String(body.studentId)).maybeSingle();
   if(studentError||!student)return respond(request,404,{error:"student_not_available"});
   if(body.enabled&&student.account_status!=="active")return respond(request,409,{error:"student_not_active"});

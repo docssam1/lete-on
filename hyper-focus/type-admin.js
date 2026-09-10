@@ -9,7 +9,7 @@
   const requestEpoch=epoch,client=await root.GFieldHFSupabase.ready();if(!client)throw Error('서버 연결을 확인해 주세요.');
   if(!listener&&client.auth?.onAuthStateChange){listener=true;client.auth.onAuthStateChange(event=>{if(['SIGNED_OUT','SIGNED_IN','USER_UPDATED','TOKEN_REFRESHED'].includes(event))clearPrivate();});}
   if(client.auth?.getSession){const result=await client.auth.getSession(),expires=result.data?.session?.expires_at;if(Number.isFinite(expires)){if(expires*1000<=Date.now()){clearPrivate();throw Error('로그인이 만료되었습니다.');}if(expiryTimer)clearTimeout(expiryTimer);expiryTimer=setTimeout(clearPrivate,expires*1000-Date.now());}}
-  const {data,error}=await client.functions.invoke(name,{body});if(requestEpoch!==epoch)throw Error('로그인 상태가 변경되어 이전 응답을 표시하지 않습니다.');if(error||data?.error)throw Error(data?.error||'관리자 로그인과 2단계 인증을 확인해 주세요.');return data;
+  const {data,error}=await client.functions.invoke(name,{body});if(requestEpoch!==epoch)throw Error('로그인 상태가 변경되어 이전 응답을 표시하지 않습니다.');if(error||data?.error)throw Error(data?.error||'관리자 로그인과 서버 연결을 확인해 주세요.');return data;
  }
  function changes(){return [...rows.map(r=>r.key),catalog.modeKey].filter(k=>original.has(k)!==desired.has(k)).map(key=>({key,enabled:desired.has(key)}));}
  function sync(){const count=changes().length,n=rows.filter(r=>desired.has(r.key)).length,mode=desired.has(catalog.modeKey);$('change-count').textContent=count?`${count}개 항목 변경`:'변경 없음';$('selection-count').textContent=`전체 54유형 중 ${n}유형 선택`;$('save').disabled=busy||!selected||count===0;$('individual-mode').checked=mode;$('individual-mode').disabled=busy||selected?.status!=='active';$('mode-impact').textContent=mode?`저장 후 개별 승인 적용 · ${n}유형${n===0?' · 이용 가능한 문제은행 유형 없음':''}`:'저장 후 기존 상품 승인 유지 · 유형 선택만으로 전환되지 않음';}

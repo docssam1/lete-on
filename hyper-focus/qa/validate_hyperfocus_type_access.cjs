@@ -18,7 +18,7 @@ function edge(options={}){
  const token='x.'+Buffer.from(JSON.stringify(claims)).toString('base64url')+'.y';let mutationCalls=[],authCalls=0;
  const role=options.role||'admin';const user={id:role==='student'?studentId:adminId,is_anonymous:false,app_metadata:{hf_role:role},...options.user};
  function clientFactory(url,k){const service=k==='secret';return {auth:{getUser:async()=>{authCalls++;return {data:{user:options.authFailure?null:user},error:options.authFailure?new Error('invalid'):null};}},from(table){let eq={};const query={select(){return query;},eq(k,v){eq[k]=v;return query;},maybeSingle:async()=>{
-  if(table==='hf_admin_accounts'){const valid=claims.aal==='aal2'&&claims.session_id==='live'&&options.staffVisible!==false;return {data:valid?{role:'admin',account_status:'active',authorization_changed_at:new Date(now-100000).toISOString(),...options.staff}:null,error:null};}
+  if(table==='hf_admin_accounts'){const valid=service&&options.staffVisible!==false;return {data:valid?{role:'admin',account_status:'active',authorization_changed_at:new Date(now-100000).toISOString(),...options.staff}:null,error:null};}
   if(table==='hf_students')return {data:options.studentMissing||(!service&&options.profileVisible===false)?null:{id:eq.id||studentId,display_name:'검수용 학생',account_status:options.studentStatus||'active'},error:null};
   if(table==='hf_permission_catalog')return {data:options.catalogMissing?null:{permission_key:eq.permission_key},error:null};
   throw Error(table);
@@ -63,8 +63,8 @@ async function browserAudit(){
  const set={action:'set',studentId,permissionKey:key,enabled:true};
  for(const [label,opts,body,headers,status]of [
  ['no bearer',{},set,{authorization:''},401],['bad token',{authFailure:true},set,{},401],['expired',{claims:{exp:1}},set,{},401],['anonymous',{user:{is_anonymous:true}},set,{},401],
- ['student writes',{role:'student'},set,{},403],['metadata forged',{role:'student',user:{user_metadata:{hf_role:'admin'}}},set,{},403],['MFA',{claims:{aal:'aal1'}},set,{},403],
- ['RLS revoked session',{claims:{session_id:'revoked'}},set,{},403],['inactive admin',{staff:{account_status:'suspended'}},set,{},403],['stale admin',{claims:{iat:1}},set,{},403],
+ ['student writes',{role:'student'},set,{},403],['metadata forged',{role:'student',user:{user_metadata:{hf_role:'admin'}}},set,{},403],
+ ['inactive admin',{staff:{account_status:'suspended'}},set,{},403],['stale admin',{claims:{iat:1}},set,{},403],
  ['admin role removed',{staffVisible:false},set,{},403],['unknown type',{}, {...set,permissionKey:'hyperfocus-bank-q55'},{},400],['wildcard',{}, {...set,permissionKey:'*'},{},400],
  ['base grant not allowed',{}, {...set,permissionKey:'hyperfocus'},{},400],['challenge grant denied',{}, {...set,permissionKey:'challenge-mock-1'},{},400],
  ['extra field',{}, {...set,mode:true},{},400],['invalid target',{}, {...set,studentId:'123'},{},400],['string enabled',{}, {...set,enabled:'true'},{},400],
@@ -73,6 +73,7 @@ async function browserAudit(){
  ['entitlements unavailable',{role:'student',entitlementError:true},{action:'self'},{},503]
  ]){const f=edge(opts),r=await f.request(body,headers);ok(r.status===status,label);ok(f.mutationCalls.length===0,label+' no writes');}
  for(const k of [key,catalog.modeKey]){const f=edge();ok((await f.request({...set,permissionKey:k})).status===200,'valid explicit key');ok(f.mutationCalls.length===1&&f.mutationCalls[0].args.p_granted_by===adminId,'only requested RPC');}
+ const passwordAdmin=edge({claims:{aal:'aal1'}});ok((await passwordAdmin.request(set)).status===200,'unified password admin may grant');ok(passwordAdmin.mutationCalls.length===1,'password admin performs only requested RPC');
  const now=Date.now(),row=k=>({permission_key:k,starts_at:new Date(now-1000).toISOString(),expires_at:null,revoked_at:null});
  const self=edge({role:'student',entries:[row('hyperfocus'),row(key),row(catalog.modeKey),row('challenge-mock-1'),{...row('hyperfocus-bank-q02'),expires_at:new Date(now-1).toISOString()}]});
  const reply=await(await self.request({action:'self'})).json();ok(reply.basePermissions.join(',')==='hyperfocus','base grants separately verified');ok(reply.permissionKeys.length===2&&reply.approvedStudentName==='검수용 학생','filtered types + server identity');ok(self.mutationCalls.length===0,'self read only');

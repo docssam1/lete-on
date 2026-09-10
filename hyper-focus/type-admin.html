@@ -3,11 +3,10 @@
 <body class="gfield-ui"><header><a class="brand" href="admin.html"><img src="challenge/assets/gfield-logo.png" alt="GFIELD"><span>LETE-ON</span></a><nav><a href="admin.html">학생 관리</a><span> / Hyper Focus</span></nav></header>
 <main><div class="heading"><p class="eyebrow">HYPER FOCUS</p><h1>문제은행 유형별 승인</h1><p>유사문제와 문제은행의 54개 유형을 관리합니다. 본 진단과 성적은 바뀌지 않습니다.</p></div>
 <p class="notice">로컬 승인 관리 준비 화면입니다. 실제 비공개 자료 제공 검증 전에는 운영 완료로 취급하지 않습니다.</p>
-<p id="status" role="status" aria-live="polite">관리자 로그인과 2단계 인증이 필요합니다.</p>
+<p id="status" role="status" aria-live="polite">관리자 로그인이 필요합니다.</p>
 <div class="toolbar"><label>학생<select id="student" disabled><option value="">학생 선택</option></select></label><button id="reload" type="button">학생 목록 불러오기</button><a href="index.html">로그인으로</a></div>
 <section id="permissions" hidden><div class="selection-title"><h2 id="student-name"></h2><p id="current-mode"></p></div>
 <div class="mode-panel"><label class="permission-item"><input id="individual-mode" type="checkbox"><span>이 학생의 문제은행을 개별 승인 방식으로 전환</span></label><p>선택하고 저장하면 아래 승인된 유형만 이용합니다. 선택하지 않으면 기존 상품 승인을 유지합니다. 추가문제 유료 승인 조건은 그대로 적용됩니다.</p><p id="mode-impact" aria-live="polite"></p></div>
 <div class="bank-heading"><h2>승인할 유형</h2><label>유형 찾기<input id="type-search" type="search" placeholder="예: 주사위, 색종이"></label></div><p id="selection-count"></p><div id="bank-options"></div>
 <div class="save-bar"><span id="change-count">변경 없음</span><button id="save" type="button" disabled>변경한 승인 저장</button></div></section>
 </main><script src="supabase-config.js"></script><script src="supabase-client.js"></script><script src="type-access-catalog.js"></script><script src="type-admin.js"></script></body></html>
-

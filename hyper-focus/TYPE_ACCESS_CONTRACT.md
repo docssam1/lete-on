@@ -36,7 +36,7 @@
 `supabase/functions/hyperfocus-type-access/index.ts`는 기존 SDK 버전 `2.112.3`를 고정하고 Auth `getUser(token)` 및 기존 HF의 호출자 RLS를 사용한다.
 
 - `self`: `action`만 허용한다. 본인의 활성 `hf_students` 프로필과 `hf_entitlements`만 읽는다. 기존 학생 RLS의 활성 세션·로그인 버전·자격 변경 검사를 재사용한다. 반환은 활성 55키와 별도 기본 상품 3키, 서버 이름/ID, 시간/버전이다. 다른 학생 ID를 지정할 수 없다.
-- `set`: `action,studentId,permissionKey,enabled`만 허용한다. 고정 55키, UUID, boolean을 검증한다. Auth와 JWT 양쪽 관리자 역할, `aal2`, 호출자 RLS로 조회 가능한 활성 `hf_admin_accounts`, 권한 변경보다 새 토큰을 요구한다. 사용자 수정 가능 `user_metadata`는 사용하지 않는다.
+- `set`: `action,studentId,permissionKey,enabled`만 허용한다. 고정 55키, UUID, boolean을 검증한다. Auth와 JWT 양쪽 관리자 역할, 서버에서 조회한 활성 `hf_admin_accounts`, 권한 변경보다 새 토큰을 요구한다. 통합 관리자 화면과 동일하게 정상 비밀번호 로그인 세션을 허용하며, 사용자 수정 가능 `user_metadata`는 사용하지 않는다.
 - 요청한 대상 학생과 설치된 카탈로그를 확인한 뒤 서비스 전용 기존 `hf_set_student_entitlement` RPC에 한 키만 위임한다. 다른 프로그램 키·와일드카드·임의 필드를 받지 않는다. 비활성 학생 신규 승인은 막으며 회수 API는 가능하다. 현재 화면은 비활성 학생 수정 전체를 막는다.
 - 허용 출처, POST JSON, 4KB 한도, no-store 응답을 적용한다. 서비스 키는 브라우저로 반환하지 않는다.
 

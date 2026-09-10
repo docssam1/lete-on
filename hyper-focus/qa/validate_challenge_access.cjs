@@ -11,7 +11,7 @@ function edge(options={}){
  const token='x.'+Buffer.from(JSON.stringify(claims)).toString('base64url')+'.y';let mutationCalls=[],authCalls=0;
  const role=options.role||'admin';const user={id:role==='student'?studentId:adminId,is_anonymous:false,app_metadata:{hf_role:role},...options.user};
  function clientFactory(url,k){const service=k==='secret';return {auth:{getUser:async()=>{authCalls++;return {data:{user:options.authFailure?null:user},error:options.authFailure?new Error('invalid'):null};}},from(table){let eq={};const query={select(){return query;},eq(k,v){eq[k]=v;return query;},maybeSingle:async()=>{
-  if(table==='hf_admin_accounts'){const valid=claims.aal==='aal2'&&claims.session_id==='live'&&options.staffVisible!==false;return {data:valid?{role:'admin',account_status:'active',authorization_changed_at:new Date(now-100000).toISOString(),...options.staff}:null,error:null};}
+  if(table==='hf_admin_accounts'){const valid=service&&options.staffVisible!==false;return {data:valid?{role:'admin',account_status:'active',authorization_changed_at:new Date(now-100000).toISOString(),...options.staff}:null,error:null};}
   if(table==='hf_students')return {data:options.studentMissing||(!service&&options.profileVisible===false)?null:{id:eq.id||studentId,display_name:'검수용 학생',account_status:options.studentStatus||'active'},error:null};
   if(table==='hf_permission_catalog')return {data:options.catalogMissing?null:{permission_key:eq.permission_key},error:null};
   throw Error(table);
@@ -65,13 +65,14 @@ async function browserAudit(){
   ['missing bearer',{},set,{authorization:''},401],['invalid JWT',{authFailure:true},set,{},401],['anonymous',{user:{is_anonymous:true}},set,{},401],['expired JWT',{claims:{exp:1}},set,{},401],
   ['student cannot set',{role:'student'},set,{},403],['user metadata cannot elevate',{role:'student',user:{user_metadata:{hf_role:'admin'}}},set,{},403],['content editor cannot set',{role:'content_editor'},set,{},403],
   ['staff revoked',{staffVisible:false},set,{},403],['inactive staff',{staff:{account_status:'suspended'}},set,{},403],['old staff token',{claims:{iat:1}},set,{},403],['bad staff issue time',{claims:{iat:'invalid'}},set,{},403],
-  ['RLS MFA required',{claims:{aal:'aal1'}},set,{},403],['revoked session RLS',{claims:{session_id:'revoked'}},set,{},403],['wildcard denied',{}, {...set,permissionKey:'challenge-bank-*'}, {},400],
+  ['wildcard denied',{}, {...set,permissionKey:'challenge-bank-*'}, {},400],
   ['legacy permission denied',{}, {...set,permissionKey:'hyperfocus'}, {},400],['unknown catalog key denied',{}, {...set,permissionKey:'challenge-bank-invented'}, {},400],['extra fields denied',{}, {...set,role:'admin'}, {},400],
   ['string enabled denied',{}, {...set,enabled:'true'}, {},400],['invalid target ID',{}, {...set,studentId:'other'}, {},400],['cross origin denied',{},set,{origin:'https://attacker.example'},403],
   ['target missing',{studentMissing:true},set,{},404],['target suspended',{studentStatus:'suspended'},set,{},409],['migration absent',{catalogMissing:true},set,{},503],
   ['student profile RLS denied',{role:'student',profileVisible:false},{action:'self'},{},403],['self cannot select another',{role:'student'},{action:'self',studentId:adminId},{},403],['entitlement read failed',{role:'student',entitlementError:true},{action:'self'},{},503]
  ]){const f=edge(opts),r=await f.request(body,headers);ok(r.status===status,label);ok(f.mutationCalls.length===0,label+' no mutation');}
  const granted=edge();ok((await granted.request(set)).status===200,'valid admin grant');ok(granted.mutationCalls.length===1&&granted.mutationCalls[0].name==='hf_set_student_entitlement'&&granted.mutationCalls[0].args.p_granted_by===adminId,'existing RPC and caller identity');
+ const passwordAdmin=edge({claims:{aal:'aal1'}});ok((await passwordAdmin.request(set)).status===200,'unified password admin may grant');ok(passwordAdmin.mutationCalls.length===1,'password admin performs only requested RPC');
  const revoked=edge({studentStatus:'suspended'});ok((await revoked.request({...set,enabled:false})).status===200,'inactive target may revoke');
  const student=edge({role:'student'}),reply=await(await student.request({action:'self'})).json();ok(reply.approvedStudentName==='검수용 학생'&&reply.deliveryReady===false,'server name + default release block');ok(student.mutationCalls.length===0,'student read no writes');
  const built=edge({role:'student',noReadyEnvironment:true,buildReady:true}),builtReply=await(await built.request({action:'self'})).json();ok(builtReply.deliveryReady===true,'reviewed build enables release when environment is absent');
