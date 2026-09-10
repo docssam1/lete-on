@@ -13,21 +13,24 @@ const sourceIds = [
   "6-1-u2-e4-example-4-2",
   "6-1-u2-e4-example-4-4",
   "6-1-u2-e4-mission-1",
-  "6-1-u2-e4-mission-4"
+  "6-1-u2-e4-mission-4",
+  "6-1-u2-e4-example-4-3"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e4-example-4-1", "74"],
   ["6-1-u2-e4-example-4-2", "50"],
   ["6-1-u2-e4-example-4-4", "60cm"],
   ["6-1-u2-e4-mission-1", "면 9개, 모서리 16개, 꼭짓점 9개"],
-  ["6-1-u2-e4-mission-4", "38"]
+  ["6-1-u2-e4-mission-4", "38"],
+  ["6-1-u2-e4-example-4-3", "200cm²"]
 ]);
 const evidenceKinds = [
   "cube-six-pyramid-assembly",
   "pyramid-vertex-truncation",
   "tetrahedron-midpoint-quadrilateral",
   "prism-pyramid-base-join",
-  "pyramid-base-to-base"
+  "pyramid-base-to-base",
+  "square-pyramid-net-area-in-square"
 ];
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
@@ -51,6 +54,11 @@ const expectedPools = [
     { values: [4], answer: 26 },
     { values: [5], answer: 32 },
     { values: [6], answer: 38 }
+  ],
+  [
+    { values: [16, 8, 32, 128], answer: "128cm²" },
+    { values: [20, 10, 50, 200], answer: "200cm²" },
+    { values: [24, 12, 72, 288], answer: "288cm²" }
   ]
 ];
 
@@ -84,6 +92,13 @@ const parseEvidence = prompt => {
     values
   };
 };
+
+function polygonArea(points) {
+  return Math.abs(points.reduce((sum, point, index) => {
+    const next = points[(index + 1) % points.length];
+    return sum + point[0] * next[1] - point[1] * next[0];
+  }, 0)) / 2;
+}
 
 // This calculation is intentionally separate from the production generator.
 function independentAnswer(evidence) {
@@ -125,6 +140,28 @@ function independentAnswer(evidence) {
     check(faces === 2 * n && edges === 3 * n && vertices === n + 2, "두 각뿔을 붙인 뒤의 수를 독립 계산하지 못했습니다.");
     check(total === faces + edges + vertices && total === 6 * n + 2, "두 각뿔을 붙인 뒤의 합이 6n+2와 다릅니다.");
     return total;
+  }
+  if (evidence.kind === "square-pyramid-net-area-in-square") {
+    const [outerSide, diagonal, baseArea, recordedNetArea] = values;
+    const halfOuter = outerSide / 2, halfDiagonal = diagonal / 2;
+    const frame = [[-halfOuter, -halfOuter], [halfOuter, -halfOuter], [halfOuter, halfOuter], [-halfOuter, halfOuter]];
+    const base = [[0, -halfDiagonal], [halfDiagonal, 0], [0, halfDiagonal], [-halfDiagonal, 0]];
+    const lateralFaces = [
+      [base[0], base[3], frame[0]],
+      [base[1], base[0], frame[1]],
+      [base[2], base[1], frame[2]],
+      [base[3], base[2], frame[3]]
+    ];
+    const coordinateArea = polygonArea(base) + lateralFaces.reduce((sum, face) => sum + polygonArea(face), 0);
+    const emptyHeight = (outerSide - diagonal) / 2;
+    const complementArea = outerSide * outerSide - 4 * (outerSide * emptyHeight / 2);
+    const diagonalCandidates = Array.from({ length: outerSide - 1 }, (_, index) => index + 1).filter(candidate => candidate * candidate / 2 === baseArea);
+    check([[16, 8, 32], [20, 10, 50], [24, 12, 72]].some(pool => pool.join(",") === [outerSide, diagonal, baseArea].join(",")), "정사각뿔 전개도 자료가 고정 pool과 다릅니다.");
+    check(diagonalCandidates.length === 1 && diagonalCandidates[0] === diagonal, "밑면 넓이로 정해지는 대각선이 하나가 아닙니다.");
+    check(polygonArea(base) === baseArea, "좌표로 계산한 밑면 넓이가 주어진 넓이와 다릅니다.");
+    check(coordinateArea === complementArea && coordinateArea === outerSide * diagonal, "좌표 합과 바깥 정사각형에서 빈 부분을 뺀 넓이가 다릅니다.");
+    check(recordedNetArea === coordinateArea, "기록된 전개도 넓이가 독립 좌표 계산과 다릅니다.");
+    return `${coordinateArea}cm²`;
   }
   throw new Error(`알 수 없는 E4 검산 종류: ${evidence.kind}`);
 }
@@ -169,7 +206,7 @@ function checkTopology(variant, generated, evidence) {
   const values = evidence.values;
   const promptText = visibleText(prompt);
   check(answer.includes("<svg"), "답에 다시 그린 SVG가 없습니다.");
-  if (variant !== 0) check(answer.includes("source61-e4-hidden-edge"), "답 그림에 가려진 모서리를 나타내는 점선이 없습니다.");
+  if (![0, 5].includes(variant)) check(answer.includes("source61-e4-hidden-edge"), "답 그림에 가려진 모서리를 나타내는 점선이 없습니다.");
   if (variant === 0) {
     const [pyramids] = values;
     const faces = pyramids * 4, edges = 12 + pyramids * 4, vertices = 8 + pyramids;
@@ -212,6 +249,22 @@ function checkTopology(variant, generated, evidence) {
     check(countClass(answer, "source61-e4-separate-solid") === 0, "답이 분리된 입체만 그리고 붙인 결과를 그리지 않았습니다.");
     return;
   }
+  if (variant === 5) {
+    const [outerSide, diagonal, baseArea, netArea] = values;
+    const emptyHeight = (outerSide - diagonal) / 2;
+    check(!new RegExp(`(?<!\\d)${netArea}(?!\\d)`).test(promptText), "문제에 전개도 넓이의 답이 노출되었습니다.");
+    check(attr(prompt, "data-outer-side-cm") === String(outerSide) && attr(answer, "data-outer-side-cm") === String(outerSide), "문제와 답의 바깥 정사각형 한 변이 다릅니다.");
+    check(attr(prompt, "data-base-diagonal-cm") === String(diagonal) && attr(answer, "data-base-diagonal-cm") === String(diagonal), "문제와 답의 밑면 대각선 자료가 다릅니다.");
+    check(attr(prompt, "data-base-area-cm2") === String(baseArea) && attr(answer, "data-base-area-cm2") === String(baseArea), "문제와 답의 밑면 넓이가 다릅니다.");
+    check(attr(answer, "data-net-area-cm2") === String(netArea), "답 그림의 전개도 넓이가 독립 계산과 다릅니다.");
+    check(allAttrs(prompt, "data-net-face", "base") === 1 && allAttrs(answer, "data-net-face", "base") === 1, "문제와 답의 밑면이 각각 한 개가 아닙니다.");
+    check(allAttrs(prompt, "data-net-face", "lateral") === 4 && allAttrs(answer, "data-net-face", "lateral") === 4, "문제와 답의 옆면 삼각형이 각각 네 개가 아닙니다.");
+    check(allAttrs(prompt, "data-fold-edge") === 4 && allAttrs(answer, "data-fold-edge") === 4, "문제와 답의 네 접는 선이 모두 표시되지 않았습니다.");
+    check(allAttrs(prompt, "data-complement-region") === 0 && allAttrs(answer, "data-complement-region") === 4, "답에만 네 빈 삼각형이 따로 표시되어야 합니다.");
+    check(allAttrs(prompt, "data-base-diagonal") === 0 && allAttrs(answer, "data-base-diagonal", "shown") === 1, "답에만 밑면 대각선이 표시되어야 합니다.");
+    check(answer.includes(`(${outerSide}-${diagonal})÷2=${emptyHeight}cm`) && answer.includes(`${outerSide}×${outerSide}`), "답 그림의 빈 삼각형 높이와 바깥 정사각형 계산이 없습니다.");
+    return;
+  }
   const [n] = values;
   const faces = 2 * n, edges = 3 * n, vertices = n + 2, total = faces + edges + vertices;
   check(!new RegExp(`(?<!\\d)${total}(?!\\d)`).test(promptText), "문제에 두 각뿔을 붙인 뒤의 합이 노출되었습니다.");
@@ -221,7 +274,7 @@ function checkTopology(variant, generated, evidence) {
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E4 전용 생성기가 등록되지 않았습니다.");
-check(sourceIds.length === 5 && expectedPools.map(pool => pool.length).join(",") === "1,3,3,3,3", "E4 source type 또는 fixed pool 개수가 계약과 다릅니다.");
+check(sourceIds.length === 6 && expectedPools.map(pool => pool.length).join(",") === "1,3,3,3,3,3", "E4 source type 또는 fixed pool 개수가 계약과 다릅니다.");
 
 for (let variant = 0; variant < sourceIds.length; variant += 1) {
   const pools = new Set();
@@ -259,4 +312,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 4 각기둥과 각뿔 감사 통과: 5유형 · ${expectedPools.reduce((sum, pool) => sum + pool.length, 0)}개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·실제 토폴로지·난이도 검사`);
+console.log(`6-1 2단원 개념탐구 4 각기둥과 각뿔 감사 통과: 6유형 · ${expectedPools.reduce((sum, pool) => sum + pool.length, 0)}개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·실제 토폴로지·난이도 검사`);

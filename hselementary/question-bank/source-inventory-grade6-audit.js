@@ -153,8 +153,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 237 && lockedItems.length === 396, `6학년 원문 유형의 공개 237개·잠금 396개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 237유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 238 && lockedItems.length === 395, `6학년 원문 유형의 공개 238개·잠금 395개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 238유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU1E1Items.length === 12 && readinessU1E1Counts.confirmed === 10 && readinessU1E1Counts.locked === 2 && readinessU1E1Counts.candidate === 0 && readinessU1E1Counts.releaseLocked === 2, `6-1 1단원 개념탐구 1 readiness 확인 10개·열린 설명 잠금 2개 구성이 다릅니다: 전체 ${readinessU1E1Items.length}, 확인 ${readinessU1E1Counts.confirmed}, 잠금 ${readinessU1E1Counts.locked}/${readinessU1E1Counts.releaseLocked}`);
@@ -225,6 +225,17 @@ prismE2VerifiedIds.forEach((sourceItemId, variant) => {
   check(readinessItem?.sourceVerified === true && readinessItem?.publicDecision === "confirmed" && readinessItem?.releaseStatus === "verified" && readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.singleAnswer === true && readinessItem?.independentAnswer === "6cm", `${sourceItemId}: 원문 확인·단일 정답·공개 상태가 완결되지 않았습니다.`);
   check(rawItem?.sourceVerified === true && rawItem?.implementationStatus === "fixed-verified-pool" && rawItem?.answerContract === "single-answer-fixed-pool", `${sourceItemId}: 원자료 장부의 검증 상태가 다릅니다.`);
   check(!catalogItem?.reviewLocked && catalogItem?.generatorKey === "sourceGrade6PrismsPyramidsE3" && catalogItem?.variant === 4 && catalogItem?.answerVisualStatus === "verified" && catalogItem?.verifiedVariantCount === 3, `${sourceItemId}: 생성기·순서·답 그림 계약이 다릅니다.`);
+}
+{
+  const sourceItemId = "6-1-u2-e4-example-4-3";
+  const readinessItem = readinessU2.items.find(item => item.sourceItemId === sourceItemId);
+  const rawItem = rawInventory.items.find(item => item.sourceItemId === "6-1-u2-e4-example-3");
+  const catalogItem = items.find(item => item.sourceItemId === sourceItemId);
+  check(items.filter(item => item.generatorKey === "sourceGrade6PrismsPyramidsE4").length === 6, "개념탐구 4 생성기가 확인된 여섯 원문 유형 밖에 연결되었습니다.");
+  check(Boolean(readinessItem && rawItem && catalogItem), `${sourceItemId}: 원자료·검수표·공개 분류표 연결이 없습니다.`);
+  check(readinessItem?.sourceVerified === true && readinessItem?.publicDecision === "confirmed" && readinessItem?.releaseStatus === "verified" && readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.singleAnswer === true && readinessItem?.independentAnswer === "200cm²", `${sourceItemId}: 원문 확인·단일 정답·공개 상태가 완결되지 않았습니다.`);
+  check(rawItem?.publicSourceItemId === sourceItemId && rawItem?.sourceVerified === true && rawItem?.implementationStatus === "fixed-verified-pool" && rawItem?.answerContract === "single-answer-fixed-pool", `${sourceItemId}: 원자료 장부의 검증 상태가 다릅니다.`);
+  check(!catalogItem?.reviewLocked && catalogItem?.generatorKey === "sourceGrade6PrismsPyramidsE4" && catalogItem?.variant === 5 && catalogItem?.answerVisualStatus === "verified" && catalogItem?.verifiedVariantCount === 3, `${sourceItemId}: 생성기·순서·답 그림 계약이 다릅니다.`);
 }
 check(readinessU2.integrity?.independentCalculationPassCount === readinessU2Counts.independentCalculationPass, `6-1 2단원 독립 계산 확인 집계가 실제 ${readinessU2Counts.independentCalculationPass}개와 다릅니다.`);
 check(readinessU2.integrity?.singleAnswerPassCount === readinessU2Counts.singleAnswerPass, `6-1 2단원 단일 정답 집계가 실제 ${readinessU2Counts.singleAnswerPass}개와 다릅니다.`);

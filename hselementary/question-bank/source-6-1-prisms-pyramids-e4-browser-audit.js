@@ -1,6 +1,6 @@
 "use strict";
 
-// Read-only browser and print audit for the five verified E4 source types.
+// Read-only browser and print audit for the six verified E4 source types.
 // All generated evidence is written below tmp/ and is intentionally untracked.
 const fs = require("node:fs");
 const http = require("node:http");
@@ -21,7 +21,8 @@ const sources = [
   { id: "6-1-u2-e4-example-4-2", search: "예제 4-2", kind: "pyramid-vertex-truncation", poolCount: 3 },
   { id: "6-1-u2-e4-example-4-4", search: "예제 4-4", kind: "tetrahedron-midpoint-quadrilateral", poolCount: 3 },
   { id: "6-1-u2-e4-mission-1", search: "Mission 1", kind: "prism-pyramid-base-join", poolCount: 3 },
-  { id: "6-1-u2-e4-mission-4", search: "Mission 4", kind: "pyramid-base-to-base", poolCount: 3 }
+  { id: "6-1-u2-e4-mission-4", search: "Mission 4", kind: "pyramid-base-to-base", poolCount: 3 },
+  { id: "6-1-u2-e4-example-4-3", search: "예제 4-3", kind: "square-pyramid-net-area-in-square", poolCount: 3 }
 ];
 const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
@@ -30,7 +31,8 @@ const expectedAnswers = [
   ["38", "50", "62"],
   ["48cm", "60cm", "72cm"],
   ["면 7개, 모서리 12개, 꼭짓점 7개", "면 9개, 모서리 16개, 꼭짓점 9개", "면 11개, 모서리 20개, 꼭짓점 11개"],
-  ["26", "32", "38"]
+  ["26", "32", "38"],
+  ["128cm²", "200cm²", "288cm²"]
 ];
 
 const failures = [];
@@ -41,6 +43,7 @@ let renderedPages = 0;
 let checkedViews = 0;
 const fail = message => failures.push(message);
 const invalidText = text => /undefined|null|NaN|Infinity|SyntaxError/.test(String(text || ""));
+const compactMathText = text => String(text || "").replace(/\s+/g, "").replace(/㎠|cm2/g, "cm²");
 
 function safePath(urlPath) {
   const relative = decodeURIComponent(urlPath.split("?")[0]).replace(/^\/+/, "");
@@ -220,6 +223,21 @@ async function inspectView(page, source, difficulty, answerView, viewportLabel) 
         midpoints: svg?.querySelectorAll(".source61-e4-midpoint").length || 0,
         section: svg?.querySelectorAll(".source61-e4-section-highlight").length || 0,
         separate: svg?.querySelectorAll(".source61-e4-separate-solid,.source61-e4-separate-pyramid").length || 0,
+        netBase: svg?.querySelectorAll('[data-net-face="base"]').length || 0,
+        netLateral: svg?.querySelectorAll('[data-net-face="lateral"]').length || 0,
+        foldEdges: svg?.querySelectorAll("[data-fold-edge]").length || 0,
+        complementRegions: svg?.querySelectorAll("[data-complement-region]").length || 0,
+        baseDiagonals: svg?.querySelectorAll("[data-base-diagonal]").length || 0,
+        netFrames: svg?.querySelectorAll("[data-net-frame]").length || 0,
+        outerSide: svg?.dataset.outerSideCm || "",
+        baseDiagonal: svg?.dataset.baseDiagonalCm || "",
+        baseArea: svg?.dataset.baseAreaCm2 || "",
+        netArea: svg?.dataset.netAreaCm2 || "",
+        netLateralFill: svg?.querySelector(".source61-e4-net-lateral") ? getComputedStyle(svg.querySelector(".source61-e4-net-lateral")).fill : "",
+        netBaseFill: svg?.querySelector(".source61-e4-net-base") ? getComputedStyle(svg.querySelector(".source61-e4-net-base")).fill : "",
+        complementFill: svg?.querySelector(".source61-e4-complement") ? getComputedStyle(svg.querySelector(".source61-e4-complement")).fill : "",
+        foldDash: svg?.querySelector(".source61-e4-fold-edge") ? getComputedStyle(svg.querySelector(".source61-e4-fold-edge")).strokeDasharray : "",
+        diagonalDash: svg?.querySelector(".source61-e4-base-diagonal") ? getComputedStyle(svg.querySelector(".source61-e4-base-diagonal")).strokeDasharray : "",
         edgeCrossings,
         font,
         overlaps,
@@ -274,7 +292,7 @@ async function inspectView(page, source, difficulty, answerView, viewportLabel) 
     if (state.answerVisuals.length !== expectedCount || state.answerVisuals.some(item => !item.exists || !item.visible || item.outside || item.clipped || !item.svg.exists || !item.svg.visible)) fail(`${label}: 답 그림이 모두 보이지 않거나 잘렸습니다.`);
     if (state.answerVisuals.map(item => item.pool).sort((a, b) => Number(a) - Number(b)).join(",") !== Array.from({ length: expectedCount }, (_, index) => index).join(",")) fail(`${label}: 고정 pool 번호가 0부터 모두 나오지 않습니다.`);
     if (state.answerVisuals.some(item => item.source !== source.id || !item.svg.resultHighlight || !item.svg.rawMarkup.includes("is-solved"))) fail(`${label}: 답 그림의 원문 연결·결과 표시·완성 상태가 없습니다.`);
-    if (source.kind !== "cube-six-pyramid-assembly" && state.answerVisuals.some(item => item.svg.hiddenEdges < 1)) fail(`${label}: 답 그림에 가려진 모서리 점선이 없습니다.`);
+    if (!["cube-six-pyramid-assembly", "square-pyramid-net-area-in-square"].includes(source.kind) && state.answerVisuals.some(item => item.svg.hiddenEdges < 1)) fail(`${label}: 답 그림에 가려진 모서리 점선이 없습니다.`);
     if (source.kind === "cube-six-pyramid-assembly" && state.answerVisuals.some(item => item.svg.edgeCrossings > 20)) fail(`${label}: 답 그림의 선 교차가 과도하여 정육면체와 여섯 사각뿔의 구조가 별 모양처럼 겹쳐 보입니다. 가시성 검수에서 잠급니다.`);
   }
   for (const item of state.items) {
@@ -308,6 +326,15 @@ function checkTopology(source, problem, answer, label) {
     } else if (source.kind === "pyramid-base-to-base") {
       const n = Number(item.svg.baseSides) || svg.answerVertices - 2 || evidenceNumber(answer.items[index]);
       if (![4, 5, 6].includes(n) || svg.facesByKind.bipyramid !== 2 * n || svg.edgesByKind.bipyramid !== 3 * n || svg.verticesByKind.bipyramid !== n + 2 || svg.separate) fail(`${label}: 두 각뿔을 붙인 뒤의 실제 요소 수가 ${n}에 맞지 않습니다.`);
+    } else if (source.kind === "square-pyramid-net-area-in-square") {
+      const values = String(problem.items[index]?.evidence?.[0]?.values || "").split(",").map(Number);
+      const [outerSide, diagonal, baseArea, netArea] = values;
+      const diagonalCandidates = Array.from({ length: Math.max(0, outerSide - 1) }, (_, candidateIndex) => candidateIndex + 1).filter(candidate => candidate * candidate / 2 === baseArea);
+      if (svg.netBase !== 1 || svg.netLateral !== 4 || svg.foldEdges !== 4 || svg.complementRegions !== 4 || svg.baseDiagonals !== 1 || svg.netFrames !== 1) fail(`${label}: 정사각뿔 전개도의 밑면·네 옆면·접는 선·네 빈 삼각형 표시가 다릅니다.`);
+      if (Number(svg.outerSide) !== outerSide || Number(svg.baseDiagonal) !== diagonal || Number(svg.baseArea) !== baseArea || Number(svg.netArea) !== netArea) fail(`${label}: 정사각뿔 전개도 답 그림의 길이·넓이 자료가 문항 자료와 다릅니다.`);
+      if (diagonalCandidates.length !== 1 || diagonalCandidates[0] !== diagonal || netArea !== outerSide * diagonal) fail(`${label}: 밑면 넓이에서 정해지는 대각선 또는 전개도 넓이가 하나가 아닙니다.`);
+      if (!svg.netLateralFill || svg.netLateralFill === "none" || !svg.netBaseFill || svg.netBaseFill === "none" || !svg.complementFill || svg.complementFill === "none") fail(`${label}: 전개도의 옆면·밑면 또는 답의 빈 삼각형 채움색이 보이지 않습니다.`);
+      if (!svg.foldDash || svg.foldDash === "none" || !svg.diagonalDash || svg.diagonalDash === "none") fail(`${label}: 접는 선 또는 답의 밑면 대각선이 점선으로 구분되지 않습니다.`);
     }
   }
 }
@@ -325,6 +352,10 @@ function compareProblemAnswer(problem, answer, source, label) {
     } else if (source.kind === "pyramid-base-to-base") {
       const answerN = answerItem?.svg.answerVertices - 2;
       if (answerN !== Number(problemValues[0])) mismatches.push(`${index + 1}:n`);
+    } else if (source.kind === "square-pyramid-net-area-in-square") {
+      if (item.svg.netBase !== 1 || item.svg.netLateral !== 4 || item.svg.foldEdges !== 4 || item.svg.complementRegions !== 0 || item.svg.baseDiagonals !== 0 || item.svg.netFrames !== 1) mismatches.push(`${index + 1}:net`);
+      if (item.svg.outerSide !== answerItem?.svg.outerSide || item.svg.baseDiagonal !== answerItem?.svg.baseDiagonal || item.svg.baseArea !== answerItem?.svg.baseArea || answerItem?.svg.netArea !== problemValues[3]) mismatches.push(`${index + 1}:net-data`);
+      if (!item.svg.netLateralFill || item.svg.netLateralFill === "none" || !item.svg.netBaseFill || item.svg.netBaseFill === "none" || !item.svg.foldDash || item.svg.foldDash === "none") mismatches.push(`${index + 1}:net-style`);
     } else if (problemValues.some(value => !answerText.includes(value))) mismatches.push(`${index + 1}:data`);
   });
   if (mismatches.length) fail(`${label}: 문제와 답의 구조 지문·도형 지문·n/자료가 다릅니다 (${mismatches.join(", ")}).`);
@@ -371,7 +402,7 @@ async function inspectType(browser, baseUrl, source, difficulty, viewport, viewp
       const pool = Number(item.pool);
       const expected = expectedAnswers[sources.indexOf(source)][pool];
       const answerText = answer.items[index]?.text || "";
-      if (!Number.isInteger(pool) || !expected || !answerText.includes(expected)) fail(`${label}: pool ${pool}의 공식 답 표시가 예상 답과 다릅니다.`);
+      if (!Number.isInteger(pool) || !expected || !compactMathText(answerText).includes(compactMathText(expected))) fail(`${label}: pool ${pool}의 공식 답 표시가 예상 답과 다릅니다.`);
     }
     await page.locator("#problemTab").click();
     await capture(page, source, difficulty, viewportLabel, "problem");
@@ -421,15 +452,15 @@ function generatorReady() {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
   }
-  if (screenshots !== 60) fail(`화면 캡처 ${screenshots}장, 60장이어야 합니다.`);
-  if (pdfs !== 10) fail(`A4 PDF ${pdfs}개, 10개이어야 합니다.`);
+  if (screenshots !== 72) fail(`화면 캡처 ${screenshots}장, 72장이어야 합니다.`);
+  if (pdfs !== 12) fail(`A4 PDF ${pdfs}개, 12개이어야 합니다.`);
   if (renderedPages < pdfs) fail(`A4 전체 페이지 렌더가 부족합니다 (${renderedPages}쪽 / 최소 ${pdfs}쪽).`);
   const status = failures.length ? "실패" : "통과";
-  const summary = `${status}: E4 5유형×3난이도×PC/모바일, 고정 pool 1·3·3·3·3, 문제·답 분리·SVG 지문·실제 토폴로지·글꼴·겹침·누출 검사; 화면 ${screenshots}장, A4 ${pdfs}개, 전체 PNG ${renderedPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
+  const summary = `${status}: E4 6유형×3난이도×PC/모바일, 고정 pool 1·3·3·3·3·3, 문제·답 분리·SVG 지문·실제 토폴로지·글꼴·겹침·누출 검사; 화면 ${screenshots}장, A4 ${pdfs}개, 전체 PNG ${renderedPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   fs.writeFileSync(path.join(outputDir, "audit-detail.json"), JSON.stringify({ sources, difficulties, screenshots, pdfs, renderedPages, checkedViews, findings, failures }, null, 2), "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 4 E4 브라우저·인쇄 감사 통과: 5유형×3난이도 · 고정 pool 1·3·3·3·3 · 화면 60장 · A4 10개 전 ${renderedPages}쪽`);
+  console.log(`6-1 2단원 개념탐구 4 E4 브라우저·인쇄 감사 통과: 6유형×3난이도 · 고정 pool 1·3·3·3·3·3 · 화면 72장 · A4 12개 전 ${renderedPages}쪽`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

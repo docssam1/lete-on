@@ -21663,16 +21663,20 @@
         "6-1-u2-e4-example-4-2",
         "6-1-u2-e4-example-4-4",
         "6-1-u2-e4-mission-1",
-        "6-1-u2-e4-mission-4"
+        "6-1-u2-e4-mission-4",
+        "6-1-u2-e4-example-4-3"
       ];
-      const poolCounts = [1, 3, 3, 3, 3];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 4 원문 분기는 0부터 4까지여야 합니다.");
+      const poolCounts = [1, 3, 3, 3, 3, 3];
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 4 원문 분기는 0부터 5까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, poolCounts[variant] - 1);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
       const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
-      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림의 면과 모서리의 관계를 스스로 찾아 식으로 나타내어 계산해 보세요.</p>` : "";
-      const evidenceKinds = ["cube-six-pyramid-assembly", "pyramid-vertex-truncation", "tetrahedron-midpoint-quadrilateral", "prism-pyramid-base-join", "pyramid-base-to-base"];
+      const challengeText = variant === 5
+        ? "밑면 정사각형의 대각선 길이와 바깥의 네 빈 삼각형 넓이를 스스로 찾아 식으로 나타내어 계산해 보세요."
+        : "그림의 면과 모서리의 관계를 스스로 찾아 식으로 나타내어 계산해 보세요.";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">${challengeText}</p>` : "";
+      const evidenceKinds = ["cube-six-pyramid-assembly", "pyramid-vertex-truncation", "tetrahedron-midpoint-quadrilateral", "prism-pyramid-base-join", "pyramid-base-to-base", "square-pyramid-net-area-in-square"];
       const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e4-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const mathBoard = (title, body) => `<div class="source61-math-board"><strong>${title}</strong>${body}</div>`;
@@ -21884,6 +21888,34 @@
         return `<svg class="geometry-diagram source61-e4-diagram source61-e4-bipyramid is-solved" viewBox="0 0 330 300" role="img" aria-label="두 각뿔을 밑면끼리 붙인 쌍각뿔" data-source61-e4-structure="pyramid-base-to-base" data-source61-e4-geometry="shared-bipyramid-model" data-solid-face-count="${2 * n}" data-solid-edge-count="${3 * n}" data-solid-vertex-count="${n + 2}" data-result-highlight="${6 * n + 2}">${faceMarkup}${edgeMarkup}${vertexMarkup}<text x="154" y="294" text-anchor="middle">두 각뿔을 밑면끼리 붙인 입체</text></svg>`;
       };
 
+      const squarePyramidNetSvg = ({ outerSide, diagonal, baseArea, netArea, solved = false }) => {
+        const frame = [[55, 32], [275, 32], [275, 252], [55, 252]];
+        const base = [[165, 87], [220, 142], [165, 197], [110, 142]];
+        const lateralFaces = [
+          [base[0], base[3], frame[0]],
+          [base[1], base[0], frame[1]],
+          [base[2], base[1], frame[2]],
+          [base[3], base[2], frame[3]]
+        ];
+        const complementFaces = [
+          [frame[0], frame[1], base[0]],
+          [frame[1], frame[2], base[1]],
+          [frame[2], frame[3], base[2]],
+          [frame[3], frame[0], base[3]]
+        ];
+        const faces = lateralFaces.map((points, index) => polygon(points, "source61-e4-net-lateral", `data-net-face="lateral" data-face-index="${index + 1}"`)).join("")
+          + polygon(base, "source61-e4-net-base", 'data-net-face="base" data-face-index="5"');
+        const complements = solved
+          ? complementFaces.map((points, index) => polygon(points, "source61-e4-complement", `data-complement-region="${index + 1}"`)).join("")
+          : "";
+        const foldLines = base.map((point, index) => line(point, base[(index + 1) % 4], "source61-e4-fold-edge", `data-fold-edge="${index + 1}"`)).join("");
+        const diagonalLine = solved
+          ? line(base[0], base[2], "source61-e4-base-diagonal", 'data-base-diagonal="shown"')
+          : "";
+        const solvedHeading = solved ? `<text class="source61-e4-net-answer-label" x="165" y="16">밑면 대각선 ${diagonal}cm</text>` : "";
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-square-net${solved ? " is-solved" : ""}" viewBox="0 0 330 300" role="img" aria-label="정사각형 안에 그린 정사각뿔 전개도" data-source61-e4-structure="square-pyramid-net-area-in-square" data-source61-e4-geometry="shared-square-pyramid-net-coordinate-model" data-outer-side-cm="${outerSide}" data-base-diagonal-cm="${diagonal}" data-base-area-cm2="${baseArea}"${solved ? ` data-net-area-cm2="${netArea}" data-result-highlight="${netArea}"` : ""}>${solvedHeading}${polygon(frame, "source61-e4-net-frame", 'data-net-frame="outer-square"')}${faces}${complements}${foldLines}${diagonalLine}<text class="source61-e4-net-base-label" x="165" y="136"><tspan x="165">밑면 넓이</tspan><tspan x="165" dy="15">${baseArea}cm²</tspan></text><text class="source61-e4-net-dimension" x="165" y="270">${outerSide}cm</text><text class="source61-e4-net-dimension" x="294" y="142" transform="rotate(-90 294 142)">${outerSide}cm</text>${solved ? `<text class="source61-e4-result-label" x="165" y="290">전개도 넓이 ${netArea}cm²</text>` : ""}</svg>`;
+      };
+
       if (variant === 0) {
         const total = 74;
         const promptVisual = `${cubePyramidSvg({})}${mathBoard("붙이는 방법", row("가운데 도형", "정육면체") + row("붙이는 도형", "합동인 사각뿔") + row("붙이는 자리", "정육면체의 각 면에 하나씩"))}`;
@@ -21912,6 +21944,20 @@
         const promptVisual = `${joinedSolidSvg({ n, mode: "prism-pyramid" })}${mathBoard("붙이는 조건", row("도형", `밑면의 모양과 크기가 같은 ${name}기둥과 ${name}뿔`) + row("붙이는 방법", "밑면끼리 꼭 맞게 붙임"))}`;
         const answerVisual = `${joinedSolidSvg({ n, mode: "prism-pyramid", solved: true })}${mathBoard("완성된 입체도형", row("면", `${faces}개`) + row("모서리", `${edges}개`) + row("꼭짓점", `${vertices}개`))}`;
         return fixedResult(`밑면의 모양과 크기가 같은 ${name}기둥과 ${name}뿔을 밑면끼리 꼭 맞게 이어 붙여 새로운 입체도형을 만들었습니다. 이 입체도형의 면, 모서리, 꼭짓점의 수를 각각 구하세요.${promptVisual}${support("붙인 면은 겉에서 보이지 않으므로 두 도형의 수에서 붙인 부분을 한 번 빼 보세요.")}${challenge}${evidence("prism-pyramid-base-join", [n], "three-values")}`, `면 ${faces}개, 모서리 ${edges}개, 꼭짓점 ${vertices}개`, `각기둥의 면·모서리·꼭짓점은 각각 ${n+2}, ${3*n}, ${2*n}개이고, 각뿔은 ${n+1}, ${2*n}, ${n+1}개입니다. 밑면을 붙이면 면 ${2*n+1}개, 모서리 ${4*n}개, 꼭짓점 ${2*n+1}개가 남습니다.`, answerVisual);
+      }
+      if (variant === 5) {
+        const data = [
+          { outerSide: 16, diagonal: 8, baseArea: 32 },
+          { outerSide: 20, diagonal: 10, baseArea: 50 },
+          { outerSide: 24, diagonal: 12, baseArea: 72 }
+        ][poolIndex];
+        const emptyHeight = (data.outerSide - data.diagonal) / 2;
+        const emptyArea = data.outerSide * emptyHeight / 2 * 4;
+        const netArea = data.outerSide * data.outerSide - emptyArea;
+        if (data.diagonal * data.diagonal / 2 !== data.baseArea || netArea !== data.outerSide * data.diagonal) throw new Error("정사각뿔 전개도 넓이 자료가 좌표 모델과 맞지 않습니다.");
+        const promptVisual = `${squarePyramidNetSvg({ ...data, netArea })}${mathBoard("주어진 길이와 넓이", row("바깥 정사각형 한 변", `${data.outerSide}cm`) + row("사각뿔의 밑면 넓이", `${data.baseArea}cm²`))}`;
+        const answerVisual = `${squarePyramidNetSvg({ ...data, netArea, solved: true })}${mathBoard("전개도의 넓이", row("밑면 대각선", `${data.diagonal}×${data.diagonal}÷2=${data.baseArea}`) + row("빈 삼각형 높이", `(${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm`) + row("네 빈 삼각형", `${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²`) + row("전개도", `${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²`))}`;
+        return fixedResult(`한 변이 ${data.outerSide}cm인 정사각형 안에 그림과 같이 밑면이 정사각형인 사각뿔의 전개도를 그렸습니다. 사각뿔 밑면의 넓이가 ${data.baseArea}cm²일 때 전개도의 넓이를 구하세요.${promptVisual}${support("밑면 정사각형의 두 대각선 길이를 먼저 찾아 보세요.")}${challenge}${evidence("square-pyramid-net-area-in-square", [data.outerSide, data.diagonal, data.baseArea, netArea])}`, `${netArea}cm²`, `밑면 정사각형의 대각선은 ${data.diagonal}cm입니다. ${data.diagonal}×${data.diagonal}÷2=${data.baseArea}이기 때문입니다. 바깥 정사각형에서 전개도가 아닌 네 삼각형의 높이는 (${data.outerSide}-${data.diagonal})÷2=${emptyHeight}cm이므로 넓이의 합은 ${data.outerSide}×${emptyHeight}÷2×4=${emptyArea}cm²입니다. 따라서 전개도의 넓이는 ${data.outerSide}×${data.outerSide}-${emptyArea}=${netArea}cm²입니다.`, answerVisual);
       }
       const n = [4, 5, 6][poolIndex];
       const total = 6 * n + 2;
@@ -26122,7 +26168,7 @@
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
-    [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
+    [type => ["6-1-u2-e4-example-4-1", "6-1-u2-e4-example-4-2", "6-1-u2-e4-example-4-4", "6-1-u2-e4-mission-1", "6-1-u2-e4-mission-4", "6-1-u2-e4-example-4-3"].includes(type.sourceItemId), "sourceGrade6PrismsPyramidsE4"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e1-"), "sourceGrade6DecimalDivisionE1"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e2-") && !["6-1-u3-e2-example-2", "6-1-u3-e2-example-4", "6-1-u3-e2-mission-6"].includes(type.sourceItemId), "sourceGrade6DecimalDivisionE2"],
     [type => type.sourceItemId?.startsWith("6-1-u3-e3-"), "sourceGrade6DecimalDivisionE3"],
