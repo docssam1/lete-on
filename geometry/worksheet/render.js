@@ -222,19 +222,17 @@
     return wrapSvg(svg, isoBBox(width, depth, wallH, u), "ws-iso", ' data-viewpoint="' + viewpoint + '"');
   }
 
-  // Bird's-eye "diamond" view for the IN pyramid archetype — the textbook
-  // draws its centred step pyramids looking almost straight down, so the
-  // footprint reads as a 45°-rotated square (equal diagonals: the x and z
-  // screen offsets share one coefficient) and column height only nudges
-  // faces upward a little. Same face set and painter order as renderIso
-  // (viewer still sits on the +z/+x side, just much higher).
+  // Bird's-eye "diamond" view for the IN pyramid archetype. The footprint
+  // stays a 45°-rotated square, while each storey keeps enough vertical face
+  // height to read as a cube stack instead of a flat tiled board. Same face
+  // set and painter order as renderIso (viewer is still on the +z/+x side).
   function renderIsoTop(map, width, depth, options) {
     options = options || {};
     const viewpoint = topViewpointCode(options.viewpoint);
     const u = options.u || 20;
     const a = u * 0.78; // horizontal spread for both x and z (equal → diamond)
     const b = u * 0.55; // downward spread per x/z step
-    const e = u * 0.5; // vertical rise per cube — small, we look from high up
+    const e = u * 0.8; // top-led view with clearly legible vertical cube edges
     const proj = (x, y, z) => ({ px: (x - z) * a, py: (x + z) * b - y * e });
     const poly = (pts, fill, stroke) => polygon(pts, fill, stroke);
     const qY = (x, yP, z) => [proj(x, yP, z), proj(x + 1, yP, z), proj(x + 1, yP, z + 1), proj(x, yP, z + 1)];

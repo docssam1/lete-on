@@ -533,8 +533,8 @@
     farCorner: Object.freeze([0, 0])
   });
   const ISO_TOP_VIEWPOINT = Object.freeze({
-    code: "iso-top-plus-x-plus-z-v1",
-    viewerVector: Object.freeze([1, 2.2, 1]),
+    code: "iso-top-plus-x-plus-z-v2",
+    viewerVector: Object.freeze([1, 1.375, 1]),
     towardViewerAxes: Object.freeze(["+x", "+z"]),
     visibleFaces: Object.freeze(["top", "+x", "+z"]),
     farCorner: Object.freeze([0, 0])

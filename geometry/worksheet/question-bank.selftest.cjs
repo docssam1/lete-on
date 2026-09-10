@@ -200,6 +200,22 @@ test("isometric renderer and visibility audit share one explicit viewpoint", () 
   assert.throws(() => REN.renderIso(readable, 2, 2, { viewpoint: "opposite-camera" }), /unsupported worksheet isometric viewpoint/);
 });
 
+test("bird's-eye hidden-cube view keeps vertical cube edges legible", () => {
+  const svg = REN.renderIsoTop([[2]], 1, 1, { u: 20, viewpoint: GEN.ISO_TOP_VIEWPOINT.code });
+  assert.match(svg, new RegExp('data-viewpoint="' + GEN.ISO_TOP_VIEWPOINT.code + '"'));
+  assert.deepEqual(GEN.ISO_TOP_VIEWPOINT.viewerVector, [1, 1.375, 1]);
+
+  const verticalEdges = [];
+  for (const match of svg.matchAll(/<polygon points="([^"]+)"/g)) {
+    const points = match[1].split(" ").map((pair) => pair.split(",").map(Number));
+    points.forEach((point, index) => {
+      const next = points[(index + 1) % points.length];
+      if (Math.abs(point[0] - next[0]) < 0.01) verticalEdges.push(Math.abs(point[1] - next[1]));
+    });
+  }
+  assert.equal(Math.max(...verticalEdges), 16);
+});
+
 test("every generated isometric cube figure records the renderer viewpoint", () => {
   let checked = 0;
   for (const type of GEN.TYPES) {
