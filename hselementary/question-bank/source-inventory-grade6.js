@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 250
+    "unlocked": 251
   },
   "items": [
     {
@@ -7661,17 +7661,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "도형의 넓이로 선분의 길이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE2Example1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문에서 꼭짓점 ㄱ·ㄹ·ㅁ·ㄷ·ㄴ, 삼각형 ㅁㄴㄷ, 선분 ㄹㅁ을 확대 대조했습니다. 같은 점·선분 모델의 고정 문항 3개를 독립 넓이 계산과 화면 검사로 확인했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

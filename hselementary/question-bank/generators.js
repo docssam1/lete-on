@@ -24720,6 +24720,61 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Example1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-example-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 2-1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { width: [85, 6], totalHeight: [12, 1], triangleArea: [136, 3] },
+        { width: [25, 2], totalHeight: [11, 1], triangleArea: [75, 2] },
+        { width: [44, 3], totalHeight: [13, 1], triangleArea: [44, 1] }
+      ][poolIndex];
+      const width = rationalValue(...data.width);
+      const totalHeight = rationalValue(...data.totalHeight);
+      const triangleArea = rationalValue(...data.triangleArea);
+      const triangleHeight = rationalOperation(rationalOperation(triangleArea, rationalValue(2), "×"), width, "÷");
+      const targetLength = rationalOperation(totalHeight, triangleHeight, "-");
+      if ([width, totalHeight, triangleArea, triangleHeight, targetLength].some(value => !value || value.numerator <= 0)) throw new Error("6-2 예제 2-1의 넓이와 길이는 모두 양수여야 합니다.");
+      const areaCheck = rationalOperation(rationalOperation(width, triangleHeight, "×"), rationalValue(2), "÷");
+      if (areaCheck.numerator !== triangleArea.numerator || areaCheck.denominator !== triangleArea.denominator) throw new Error("6-2 예제 2-1의 삼각형 넓이가 길이 모델과 다릅니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const signature = [width.numerator, width.denominator, totalHeight.numerator, totalHeight.denominator, triangleArea.numerator, triangleArea.denominator].join(":");
+      const geometrySvg = solved => {
+        const widthValue = width.numerator / width.denominator;
+        const heightValue = totalHeight.numerator / totalHeight.denominator;
+        const targetValue = targetLength.numerator / targetLength.denominator;
+        const scale = Math.min(205 / widthValue, 145 / heightValue);
+        const drawWidth = widthValue * scale;
+        const drawHeight = heightValue * scale;
+        const left = (360 - drawWidth) / 2;
+        const top = 42;
+        const right = left + drawWidth;
+        const bottom = top + drawHeight;
+        const middleY = top + targetValue * scale;
+        const point = (x, y) => `${x.toFixed(2)},${y.toFixed(2)}`;
+        const modelPoints = [`0,0`, `${plain(width)},0`, `${plain(width)},${plain(targetLength)}`, `${plain(width)},${plain(totalHeight)}`, `0,${plain(totalHeight)}`].join(";");
+        const targetLabel = solved
+          ? `<g data-measure-role="target">${svgMeasurementLabel({ x: right + 48, y: (top + middleY) / 2, value: plain(targetLength) })}</g>`
+          : `<g data-measure-role="target"><text class="source62-area-target-question" x="${(right + 35).toFixed(1)}" y="${((top + middleY) / 2).toFixed(1)}">?</text></g>`;
+        return `<svg class="geometry-diagram source62-area-segment${solved ? " is-solved" : ""}" viewBox="0 0 360 230" role="img" aria-label="직사각형 ㄱㄴㄷㄹ 안의 삼각형 ㅁㄴㄷ과 구할 선분 ㄹㅁ" data-source62-e2-example1-structure="rectangle-triangle-area-segment" data-source62-e2-example1-expression="${signature}" data-geometry-points="${modelPoints}" data-geometry-segments="0-1:top;1-2:target;2-3:right-lower;3-4:bottom;4-0:left;4-2:diagonal" data-triangle-base="${plain(width)}" data-triangle-height="${plain(triangleHeight)}" data-target-length="${plain(targetLength)}"><polygon class="source62-area-triangle${solved ? " is-solved" : ""}" points="${point(left, bottom)} ${point(right, middleY)} ${point(right, bottom)}"/><line class="source62-area-edge" x1="${left.toFixed(1)}" y1="${top.toFixed(1)}" x2="${right.toFixed(1)}" y2="${top.toFixed(1)}"/><line class="source62-area-target${solved ? " is-solved" : ""}" x1="${right.toFixed(1)}" y1="${top.toFixed(1)}" x2="${right.toFixed(1)}" y2="${middleY.toFixed(1)}"/><line class="source62-area-edge" x1="${right.toFixed(1)}" y1="${middleY.toFixed(1)}" x2="${right.toFixed(1)}" y2="${bottom.toFixed(1)}"/><line class="source62-area-edge" x1="${right.toFixed(1)}" y1="${bottom.toFixed(1)}" x2="${left.toFixed(1)}" y2="${bottom.toFixed(1)}"/><line class="source62-area-edge" x1="${left.toFixed(1)}" y1="${bottom.toFixed(1)}" x2="${left.toFixed(1)}" y2="${top.toFixed(1)}"/><line class="source62-area-diagonal" x1="${left.toFixed(1)}" y1="${bottom.toFixed(1)}" x2="${right.toFixed(1)}" y2="${middleY.toFixed(1)}"/><g data-measure-role="width">${svgMeasurementLabel({ x: (left + right) / 2, y: 22, value: plain(width) })}</g><g data-measure-role="total-height">${svgMeasurementLabel({ x: left - 40, y: (top + bottom) / 2, value: plain(totalHeight) })}</g>${targetLabel}<text class="source62-area-point" x="${(left - 12).toFixed(1)}" y="${(top - 8).toFixed(1)}">ㄱ</text><text class="source62-area-point" x="${(right + 12).toFixed(1)}" y="${(top - 8).toFixed(1)}">ㄹ</text><text class="source62-area-point" x="${(right + 12).toFixed(1)}" y="${(middleY + 2).toFixed(1)}">ㅁ</text><text class="source62-area-point" x="${(right + 12).toFixed(1)}" y="${(bottom + 13).toFixed(1)}">ㄷ</text><text class="source62-area-point" x="${(left - 12).toFixed(1)}" y="${(bottom + 13).toFixed(1)}">ㄴ</text></svg>`;
+      };
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const problemBoard = `<div class="source61-math-board source62-area-given"><strong>주어진 넓이</strong>${row("삼각형 ㅁㄴㄷ", `${shown(triangleArea)}cm²`)}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-area-solution"><strong>삼각형의 높이에서 선분 길이까지</strong>${row("선분 ㅁㄷ", `${shown(triangleArea)}×2÷${shown(width)}=${shown(triangleHeight)}cm`)}${row("선분 ㄹㅁ", `${shown(totalHeight)}−${shown(triangleHeight)}=${shown(targetLength)}cm`)}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 삼각형 ㅁㄴㄷ의 밑변 ㄴㄷ과 높이 ㅁㄷ을 찾아 넓이식을 세우세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림에서 삼각형의 높이를 스스로 정한 뒤, 직사각형의 전체 높이와 비교하세요.</p>' : "";
+      const values = [width.numerator, width.denominator, totalHeight.numerator, totalHeight.denominator, triangleArea.numerator, triangleArea.denominator, triangleHeight.numerator, triangleHeight.denominator, targetLength.numerator, targetLength.denominator];
+      const evidence = `<span hidden data-source62-fraction-e2-example1-kind="rectangle-triangle-area-segment" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`직사각형 ㄱㄴㄷㄹ에서 점 ㅁ은 선분 ㄹㄷ 위에 있습니다. 삼각형 ㅁㄴㄷ의 넓이가 ${shown(triangleArea)}cm²일 때, 선분 ㄹㅁ의 길이를 구하세요.${geometrySvg(false)}${problemBoard}${support}${challenge}${evidence}`, `${fraction(targetLength.numerator, targetLength.denominator)}cm`, `삼각형 ㅁㄴㄷ의 밑변 ㄴㄷ은 ${shown(width)}cm입니다. 넓이=${shown(width)}×ㅁㄷ÷2이므로 ㅁㄷ=${shown(triangleArea)}×2÷${shown(width)}=${shown(triangleHeight)}cm입니다. 따라서 ㄹㅁ=${shown(totalHeight)}−${shown(triangleHeight)}=${shown(targetLength)}cm입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-example1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${geometrySvg(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 점·선분 모델로 삼각형의 높이와 선분 ㄹㅁ을 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26637,6 +26692,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-mission-5", "sourceGrade6SecondFractionDivisionE1Mission5"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-6", "sourceGrade6SecondFractionDivisionE1Mission6"],
     [type => type.sourceItemId === "6-2-u1-e2-exploration", "sourceGrade6SecondFractionDivisionE2Exploration"],
+    [type => type.sourceItemId === "6-2-u1-e2-example-1", "sourceGrade6SecondFractionDivisionE2Example1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
