@@ -24348,6 +24348,44 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Example2({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-example-2";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { left: [12, 5], leftFactor: [1, 4], rightFirst: [5, 6], rightDivisor: [5, 3], rightFactor: [4, 5] },
+        { left: [10, 3], leftFactor: [3, 10], rightFirst: [9, 10], rightDivisor: [3, 4], rightFactor: [1, 2] },
+        { left: [21, 8], leftFactor: [2, 7], rightFirst: [5, 6], rightDivisor: [5, 4], rightFactor: [9, 14] }
+      ][poolIndex];
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const left = rationalValue(...data.left);
+      const leftFactor = rationalValue(...data.leftFactor);
+      const rightFirst = rationalValue(...data.rightFirst);
+      const rightDivisor = rationalValue(...data.rightDivisor);
+      const rightFactor = rationalValue(...data.rightFactor);
+      const rightResult = rationalOperation(rationalOperation(rightFirst, rightDivisor, "÷"), rightFactor, "×");
+      const answerValue = rationalOperation(rationalOperation(left, leftFactor, "×"), rightResult, "÷");
+      const geometrySignature = [...data.left, ...data.leftFactor, ...data.rightFirst, ...data.rightDivisor, ...data.rightFactor].join(":");
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const blank = '<span class="source62-equation-blank" aria-label="빈칸">□</span>';
+      const expressionBoard = solved => `<div class="source61-math-board source62-e1-example2-board${solved ? " is-solved" : ""}" data-source62-e1-example2-structure="equal-result-blank-divisor" data-source62-e1-example2-geometry="${geometrySignature}"><strong>계산 결과가 같은 두 식</strong>${row("(가)", `${mixedFractionMarkup(left.numerator, left.denominator)}÷${blank}×${fractionMarkup(leftFactor.numerator, leftFactor.denominator)}`)}${row("(나)", `${fractionMarkup(rightFirst.numerator, rightFirst.denominator)}÷${mixedFractionMarkup(rightDivisor.numerator, rightDivisor.denominator)}×${fractionMarkup(rightFactor.numerator, rightFactor.denominator)}`)}${solved ? row("빈칸", fractionMarkup(answerValue.numerator, answerValue.denominator)) : ""}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 (나)의 계산 결과를 구한 뒤, (가)의 빈칸에 들어갈 수를 찾아보세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 식의 관계를 한 식으로 나타내어 빈칸의 수를 구하세요.</p>' : "";
+      const values = [
+        ...data.left, ...data.leftFactor, ...data.rightFirst, ...data.rightDivisor, ...data.rightFactor,
+        rightResult.numerator, rightResult.denominator, answerValue.numerator, answerValue.denominator
+      ];
+      const evidence = `<span hidden data-source62-fraction-e1-example2-kind="equal-results-blank-divisor" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      const promptVisual = expressionBoard(false);
+      const answerVisual = `${expressionBoard(true)}<div class="source61-math-board source62-e1-example2-solution"><strong>같은 계산 결과로 빈칸 찾기</strong>${row("(나)의 결과", fractionMarkup(rightResult.numerator, rightResult.denominator))}${row("(가)의 빈칸", fractionMarkup(answerValue.numerator, answerValue.denominator))}</div>`;
+      return result(`두 식의 계산 결과가 같을 때, 빈칸에 알맞은 수를 구하세요.${promptVisual}${support}${challenge}${evidence}`, fraction(answerValue.numerator, answerValue.denominator), `(나)의 계산 결과는 ${fractionMarkup(rightFirst.numerator, rightFirst.denominator)}÷${mixedFractionMarkup(rightDivisor.numerator, rightDivisor.denominator)}×${fractionMarkup(rightFactor.numerator, rightFactor.denominator)}=${fractionMarkup(rightResult.numerator, rightResult.denominator)}입니다. (가)에서 ${mixedFractionMarkup(left.numerator, left.denominator)}×${fractionMarkup(leftFactor.numerator, leftFactor.denominator)}를 먼저 묶어 생각하면, 빈칸은 ${fractionMarkup(answerValue.numerator, answerValue.denominator)}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-example2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${answerVisual}${evidence}<div class="solution-answer-caption">두 식의 계산 결과를 따로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26255,6 +26293,7 @@
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
+    [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
