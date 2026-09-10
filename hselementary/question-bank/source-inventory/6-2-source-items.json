@@ -185,12 +185,13 @@
       "ordinal": 3,
       "pdfPage": 4,
       "printedPage": 5,
-      "sourceShape": "분수 나눗셈의 뜻을 수, 그림, 식으로 나타내고 몫 또는 양의 관계를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "PDF 4쪽(인쇄 5쪽)의 3/2÷3/4, 4/3÷4/5, 5/4÷5/6,…에서 5번째 식의 결과를 7번째 식의 결과로 나누는 구조.",
+      "answerContract": "single-answer-fixed-pool",
+      "visualRisk": "각 항의 같은 분자와 앞뒤 분모, 항의 쉼표, 5번째÷7번째 순서가 화면 줄바꿈으로 달라져 보이면 안 됨.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 처음 세 식과 목표 위치를 직접 대조했습니다. 5번째 결과는 4/3, 7번째 결과는 5/4이므로 몫은 16/15이며 수열을 직접 나열해 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e1-mission-3"
     },
     {
       "sourceItemId": "6-2-u1-e1-mission-4",

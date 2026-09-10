@@ -24533,6 +24533,44 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Mission3({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-mission-3";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 3 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { startNumerator: 3, firstTarget: 5, secondTarget: 7 },
+        { startNumerator: 4, firstTarget: 3, secondTarget: 6 },
+        { startNumerator: 5, firstTarget: 4, secondTarget: 8 }
+      ][poolIndex];
+      const numeratorAt = position => data.startNumerator + position - 1;
+      const expressionAt = position => {
+        const numerator = numeratorAt(position);
+        return `${fractionMarkup(numerator, numerator - 1)}÷${fractionMarkup(numerator, numerator + 1)}`;
+      };
+      const valueAt = position => {
+        const numerator = numeratorAt(position);
+        return rationalOperation(rationalValue(numerator, numerator - 1), rationalValue(numerator, numerator + 1), "÷");
+      };
+      const firstValue = valueAt(data.firstTarget);
+      const secondValue = valueAt(data.secondTarget);
+      const answerValue = rationalOperation(firstValue, secondValue, "÷");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const sequenceSignature = [data.startNumerator, data.firstTarget, data.secondTarget].join(":");
+      const sequenceBoard = solved => `<div class="source62-expression-sequence-board${solved ? " is-solved" : ""}" data-source62-e1-mission3-structure="same-numerator-neighbor-denominators" data-source62-e1-mission3-sequence="${sequenceSignature}"><strong>규칙에 따라 나열한 분수식</strong><div class="source62-expression-sequence">${[1, 2, 3].map(position => `<span class="source62-expression-sequence-term">${expressionAt(position)}</span>`).join('<span class="source62-expression-separator">,</span>')}<span class="source62-expression-separator">, …</span></div><p>${data.firstTarget}번째 식의 계산 결과를 ${data.secondTarget}번째 식의 계산 결과로 나눕니다.</p></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-expression-sequence-solution"><strong>목표 식을 찾아 차례로 계산하기</strong>${row(`${data.firstTarget}번째 식`, `${expressionAt(data.firstTarget)}=${fractionMarkup(firstValue.numerator, firstValue.denominator)}`)}${row(`${data.secondTarget}번째 식`, `${expressionAt(data.secondTarget)}=${fractionMarkup(secondValue.numerator, secondValue.denominator)}`)}${row("두 결과 나누기", `${fractionMarkup(firstValue.numerator, firstValue.denominator)}÷${fractionMarkup(secondValue.numerator, secondValue.denominator)}=${fractionMarkup(answerValue.numerator, answerValue.denominator)}`)}</div>`;
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">각 식의 분자는 1씩 커지고, 두 분모는 분자보다 각각 1 작고 1 큽니다. ${data.firstTarget}번째와 ${data.secondTarget}번째 식을 먼저 써 보세요.</p>` : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 목표 식을 스스로 찾고 각각 계산한 뒤, 문제에서 말한 순서대로 나누었는지 다시 확인하세요.</p>' : "";
+      const values = [data.startNumerator, data.firstTarget, data.secondTarget, firstValue.numerator, firstValue.denominator, secondValue.numerator, secondValue.denominator, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e1-mission3-kind="fraction-expression-sequence-quotient" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음과 같은 규칙으로 분수식이 놓여 있습니다. ${data.firstTarget}번째 식의 계산 결과를 ${data.secondTarget}번째 식의 계산 결과로 나눈 몫을 구하세요.${sequenceBoard(false)}${support}${challenge}${evidence}`, fraction(answerValue.numerator, answerValue.denominator), `${data.firstTarget}번째 식은 ${expressionAt(data.firstTarget)}이므로 ${fractionMarkup(firstValue.numerator, firstValue.denominator)}이고, ${data.secondTarget}번째 식은 ${expressionAt(data.secondTarget)}이므로 ${fractionMarkup(secondValue.numerator, secondValue.denominator)}입니다. 따라서 두 결과의 몫은 ${fractionMarkup(answerValue.numerator, answerValue.denominator)}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-mission3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${sequenceBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">수열의 두 위치와 나누는 순서를 함께 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26445,6 +26483,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-example-4", "sourceGrade6SecondFractionDivisionE1Example4"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-1", "sourceGrade6SecondFractionDivisionE1Mission1"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-2", "sourceGrade6SecondFractionDivisionE1Mission2"],
+    [type => type.sourceItemId === "6-2-u1-e1-mission-3", "sourceGrade6SecondFractionDivisionE1Mission3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
