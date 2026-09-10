@@ -662,7 +662,7 @@ vm.createContext(portalContext);
 vm.runInContext(portalDataSource, portalContext);
 const portalProducts = portalContext.window.GFIELD_HF_PORTAL.products;
 assert(portalProducts.length === 4, "포털 큰 책 배너 4개 계약 불일치");
-assert(portalProducts.map((product) => product.key).join(",") === "hyperfocus,mock,vip,problem-bank", "포털 상품 순서·키 불일치");
+assert(portalProducts.map((product) => product.key).join(",") === "hyperfocus,mock,challenge,vip", "포털 상품 순서·키 불일치");
 assert(portalProducts.every((product) => product.permission && product.title && product.description), "포털 상품 권한·표시 정보 누락");
 const authSource = fs.readFileSync(path.join(root, "hyper-focus/portal-auth.js"), "utf8");
 assert(authSource.includes("gfield_hf_portal_session_v1") && authSource.includes("gfield_hf_name") && authSource.includes("gfield_hf_code"), "포털·진단 공유 세션 계약 누락");

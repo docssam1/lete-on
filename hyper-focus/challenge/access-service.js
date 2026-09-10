@@ -39,8 +39,9 @@
   return request.promise;
  }
  function allow(productKey,typeId){const key=productKey==='challenge-bank'&&typeId?'challenge-bank-'+typeId:productKey;if(!catalog?.has(key))return false;if(isTeacherPreview())return true;return fresh()&&verified.deliveryReady===true&&verified.permissionKeys.has(key);}
+ function hasAnyAccess(){return isTeacherPreview()||(fresh()&&verified.deliveryReady===true&&verified.permissionKeys.size>0);}
  function watermarkIdentity(){if(!fresh()||!verified.permissionKeys.size)return null;return {studentId:verified.studentId,name:verified.name};}
  function approvedStudentName(){return watermarkIdentity()?.name||'';}
- const api={refresh,allow,watermarkIdentity,approvedStudentName,isTeacherPreview,clear,status:()=>({mode:isTeacherPreview()?'teacher-preview':fresh()?'student':'locked',verified:fresh(),deliveryReady:fresh()&&verified.deliveryReady,validUntil:fresh()?verified.validUntil:null,refreshAt:fresh()?refreshAt:null})};
+ const api={refresh,allow,hasAnyAccess,watermarkIdentity,approvedStudentName,isTeacherPreview,clear,status:()=>({mode:isTeacherPreview()?'teacher-preview':fresh()?'student':'locked',verified:fresh(),deliveryReady:fresh()&&verified.deliveryReady,validUntil:fresh()?verified.validUntil:null,refreshAt:fresh()?refreshAt:null})};
  root.HFChallengeAccess=Object.freeze(api);if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
