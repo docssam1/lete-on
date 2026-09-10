@@ -34,7 +34,17 @@ async function installRemoteAdminFixture(page) {
   await installOfflineConfig(page);
   await page.route("**/hyper-focus/portal-auth.js*", route => route.fulfill({
     contentType: "application/javascript; charset=utf-8",
-    body: `window.GFieldHFPortalAuth={ready:async()=>({role:"admin",name:"DOCSSAM",permissions:["*"]}),isSupabaseEnabled:()=>true,client:async()=>({functions:{invoke:async(_name,{body}={})=>body?.action==="list"?({data:{students:[{id:"11111111-1111-4111-8111-111111111111",name:"승인번호검수",type:"internal",status:"active",approvalCode:"GF-2468",permissions:["hyperfocus"],mockBundles:{utilization:{state:"none",activeCount:0,expectedCount:8},final:{state:"none",activeCount:0,expectedCount:3},last:{state:"none",activeCount:0,expectedCount:4}}}]},error:null}):({data:{ok:true},error:null})}})};`
+    body: `window.__HF_ADMIN_CALLS=[];
+window.GFieldHFPortalAuth={
+  ready:async()=>({role:"admin",name:"DOCSSAM",permissions:["*"]}),
+  isSupabaseEnabled:()=>true,
+  client:async()=>({functions:{invoke:async(name,{body}={})=>{
+    window.__HF_ADMIN_CALLS.push({name,body});
+    if(body?.action==="list")return {data:{students:[{id:"11111111-1111-4111-8111-111111111111",name:"승인번호검수",type:"internal",status:"active",approvalCode:"GF-2468",permissions:["hyperfocus","challenge-bank-replace-count-constraints","challenge-bank-split-merge-chain"],mockBundles:{utilization:{state:"none",activeCount:0,expectedCount:8},final:{state:"none",activeCount:0,expectedCount:3},last:{state:"none",activeCount:0,expectedCount:4}}}]},error:null};
+    if(body?.action==="set_detail_entitlements")return {data:{ok:true,studentId:body.studentId,scope:body.scope,changedCount:body.changes.length,changes:body.changes},error:null};
+    return {data:{ok:true},error:null};
+  }}})
+};`
   }));
 }
 
@@ -139,6 +149,18 @@ async function noOverflow(page, label) {
     assert.equal(await approvalAdmin.locator("#rows tr").count(), 1);
     assert.equal(await approvalAdmin.locator('[data-action="copy-code"]').textContent(), "GF-2468");
     assert.equal(await approvalAdmin.locator('[data-action="rotate"]').textContent(), "로그인 재설정");
+    await approvalAdmin.locator('[data-action="details"]').click();
+    await approvalAdmin.locator("#approvalCenter").waitFor({ state: "visible" });
+    await approvalAdmin.locator("#approvalChallengeSelectAll").click();
+    assert.equal((await approvalAdmin.locator("#approvalChallengeTabCount").textContent()).trim(), "(102)");
+    await approvalAdmin.locator("#approvalSave").click();
+    await approvalAdmin.waitForFunction(() => document.querySelector("#approvalStatus")?.textContent?.includes("102개 승인 항목을 한 번에 저장했습니다."));
+    const batchCalls = await approvalAdmin.evaluate(() => window.__HF_ADMIN_CALLS.filter(call => call.body?.action === "set_detail_entitlements"));
+    assert.equal(batchCalls.length, 1, "전체 유형은 Edge Function 한 번으로 저장해야 합니다.");
+    assert.equal(batchCalls[0].name, "admin-students");
+    assert.equal(batchCalls[0].body.scope, "challenge");
+    assert.equal(batchCalls[0].body.changes.length, 102);
+    assert.ok(batchCalls[0].body.changes.every(change => change.enabled === true));
     await noOverflow(approvalAdmin, "desktop approval admin");
     await approvalAdmin.screenshot({ path: "tmp/hf-admin-approval-code-desktop.png", fullPage: true });
     await approvalAdmin.close();

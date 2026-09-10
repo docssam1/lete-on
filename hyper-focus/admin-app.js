@@ -416,38 +416,66 @@
     return true;
   }
 
-  function assertExactSetResponse(data, target, edit) {
-    if (data?.ok !== true || data.studentId !== target.id || data.permissionKey !== edit.key || data.enabled !== edit.enabled) {
-      throw new Error("저장 결과의 학생·권한 상태를 확인할 수 없습니다.");
+  const APPROVAL_FAILURE_MESSAGES = Object.freeze({
+    admin_access_required: "관리자 로그인이 만료됐습니다. 다시 로그인해 주세요.",
+    authentication_required: "관리자 로그인이 만료됐습니다. 다시 로그인해 주세요.",
+    invalid_detail_request: "저장할 승인 목록을 확인할 수 없습니다. 새로고침 후 다시 선택해 주세요.",
+    invalid_detail_permission: "현재 승인 목록과 서버 유형 목록이 맞지 않습니다. 새로고침 후 다시 선택해 주세요.",
+    detail_catalog_not_ready: "서버 유형 목록을 준비하지 못했습니다. 잠시 후 다시 저장해 주세요.",
+    detail_save_unavailable: "승인 결과를 확인하지 못해 모두 취소했습니다. 잠시 후 다시 저장해 주세요.",
+    student_not_found: "학생 정보를 찾지 못했습니다. 목록을 새로고침해 주세요.",
+    student_not_active: "정지·보관 학생에게는 새 승인을 저장할 수 없습니다."
+  });
+
+  async function approvalFailureMessage(error, data) {
+    let code = typeof data?.error === "string" ? data.error : "";
+    const context = error?.context;
+    const status = Number(context?.status || 0);
+    if (!code && context && typeof context.json === "function") {
+      try {
+        const response = typeof context.clone === "function" ? context.clone() : context;
+        const detail = await response.json();
+        if (typeof detail?.error === "string") code = detail.error;
+      } catch (_) {
+        // The mapped HTTP status below remains available when the body is unreadable.
+      }
     }
+    if (APPROVAL_FAILURE_MESSAGES[code]) return APPROVAL_FAILURE_MESSAGES[code];
+    if (status === 401 || status === 403) return APPROVAL_FAILURE_MESSAGES.admin_access_required;
+    if (status === 429) return "요청이 잠시 제한됐습니다. 잠시 후 저장 버튼을 다시 눌러 주세요.";
+    return "세부 승인 저장에 실패했습니다.";
+  }
+
+  function assertExactBatchResponse(data, target, scope, edits) {
+    if (
+      data?.ok !== true
+      || data.studentId !== target.id
+      || data.scope !== scope
+      || data.changedCount !== edits.length
+      || !Array.isArray(data.changes)
+      || data.changes.length !== edits.length
+      || data.changes.some((change, index) => (
+        change?.permissionKey !== edits[index].key || change?.enabled !== edits[index].enabled
+      ))
+    ) throw new Error("저장 결과의 학생·권한 상태를 확인할 수 없습니다.");
   }
 
   async function invokeApproval(name, body, requestEpoch) {
     const client = await auth.client();
     const { data, error } = await client.functions.invoke(name, { body });
     if (requestEpoch !== approval.epoch) throw new Error("로그인 상태가 변경되어 이전 응답을 반영하지 않습니다.");
-    if (error || data?.error) throw new Error(data?.error || "세부 승인 저장에 실패했습니다.");
+    if (error || data?.error) throw new Error(await approvalFailureMessage(error, data));
     return data || {};
   }
 
-  async function setChallengeApproval(target, edit, requestEpoch) {
-    const data = await invokeApproval("challenge-access", {
-      action: "set",
+  async function setApprovalBatch(target, scope, edits, requestEpoch) {
+    const data = await invokeApproval("admin-students", {
+      action: "set_detail_entitlements",
       studentId: target.id,
-      permissionKey: edit.key,
-      enabled: edit.enabled
+      scope,
+      changes: edits.map(edit => ({ permissionKey: edit.key, enabled: edit.enabled }))
     }, requestEpoch);
-    assertExactSetResponse(data, target, edit);
-  }
-
-  async function setHfApproval(target, edit, requestEpoch) {
-    const data = await invokeApproval("hyperfocus-type-access", {
-      action: "set",
-      studentId: target.id,
-      permissionKey: edit.key,
-      enabled: edit.enabled
-    }, requestEpoch);
-    assertExactSetResponse(data, target, edit);
+    assertExactBatchResponse(data, target, scope, edits);
   }
 
   function commitApprovalScope(scope) {
@@ -471,23 +499,19 @@
     const target = approval.student;
     const requestEpoch = approval.epoch;
     approval.busy = true;
-    setApprovalNotice(`${edits.length}개 승인 항목을 저장하고 있습니다.`);
+    setApprovalNotice(`${edits.length}개 승인 항목을 한 번에 저장하고 있습니다.`);
     syncApproval();
-    let done = 0;
     try {
+      await setApprovalBatch(target, scope, edits, requestEpoch);
       for (const edit of edits) {
-        if (scope === "challenge") await setChallengeApproval(target, edit, requestEpoch);
-        else await setHfApproval(target, edit, requestEpoch);
         setDesired(edit.key, edit.enabled);
         if (edit.enabled) approval.original.add(edit.key);
         else approval.original.delete(edit.key);
-        done += 1;
       }
-      setApprovalNotice(`${done}개 승인 항목을 저장했습니다.`);
+      setApprovalNotice(`${edits.length}개 승인 항목을 한 번에 저장했습니다.`);
     } catch (error) {
       if (requestEpoch !== approval.epoch || approval.student !== target) return;
-      const remaining = approvalChanges(scope).length;
-      setApprovalNotice(`${done}개 저장 · ${remaining}개 남음. ${error.message}`, "error");
+      setApprovalNotice(`저장되지 않았습니다. ${error.message}`, "error");
     } finally {
       if (requestEpoch === approval.epoch && approval.student === target) {
         commitApprovalScope(scope);
