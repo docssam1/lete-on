@@ -625,19 +625,20 @@
     },
     {
       "sourceItemId": "6-1-u2-e1-example-4",
+      "publicSourceItemId": "6-1-u2-e1-example-1-4",
       "unitId": "6-1-u2",
       "unitName": "각기둥과 각뿔",
       "exploration": 1,
       "pdfPage": 7,
-      "printedPage": null,
+      "printedPage": 10,
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 4,
-      "sourceShape": "각기둥의 밑면, 옆면, 꼭짓점, 모서리 또는 전개도에서 주어진 조건을 읽고 구성 요소나 길이를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 7쪽, 인쇄 10쪽 예제 1-4. 직각사다리꼴 밑면 두 개와 옆면 네 개의 사각기둥 전개도에서 12cm는 사다리꼴의 높이, 20cm는 긴 밑변입니다. 한 밑면 넓이 228cm²로 짧은 밑변 18cm를 구하고, 그 변에 붙은 (가)의 넓이 513cm²로 각기둥 높이 28.5cm를 구합니다.",
+      "answerContract": "single-value",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원문 수치와 전개도에서 12cm·20cm의 위치를 직접 확인하고, 사다리꼴 넓이와 옆면 넓이를 서로 다른 계산으로 대조한 고정 검증 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e1-mission-1",

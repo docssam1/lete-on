@@ -6,14 +6,15 @@ require("./generators.js");
 const api = window.HSE_GENERATORS;
 const sourceIds = [
   "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5",
-  "6-1-u2-e1-mission-6"
+  "6-1-u2-e1-mission-6", "6-1-u2-e1-example-1-4"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e1-example-1-1", "19각기둥"],
   ["6-1-u2-e1-mission-1", "24"],
   ["6-1-u2-e1-mission-2", "115cm"],
   ["6-1-u2-e1-mission-5", "ㄴㅊ=16 2/3cm, 나=250cm²"],
-  ["6-1-u2-e1-mission-6", "C, 128cm"]
+  ["6-1-u2-e1-mission-6", "C, 128cm"],
+  ["6-1-u2-e1-example-1-4", "28.5cm"]
 ]);
 const failures = [];
 let checked = 0;
@@ -96,6 +97,18 @@ function independentAnswer(evidence) {
     check(matches.length === 1, `점 A와 만나는 후보가 ${matches.length}개입니다.`);
     check(2 * perimeter + sideCount * height === edgeTotal, "모든 모서리 길이의 합이 독립 계산과 다릅니다.");
     return `${matches[0][0]}, ${edgeTotal}cm`;
+  }
+  if (evidence.kind === "trapezoidal-prism-net-height") {
+    const baseHeight = v[0], longBase = v[1], baseArea = v[2], shortBase = v[3], faceArea = v[4], prismHeight = v[5];
+    const independentlyFoundShortBase = 2 * baseArea / baseHeight - longBase;
+    const independentlyFoundPrismHeight = faceArea / independentlyFoundShortBase;
+    check(independentlyFoundShortBase > 0 && independentlyFoundShortBase < longBase, "사다리꼴의 짧은 밑변이 하나로 정해지지 않습니다.");
+    check(independentlyFoundShortBase === shortBase, "사다리꼴 넓이에서 구한 짧은 밑변이 저장 자료와 다릅니다.");
+    check(independentlyFoundPrismHeight === prismHeight, "(가)의 넓이에서 구한 각기둥 높이가 저장 자료와 다릅니다.");
+    const candidates = Array.from({ length: 2000 }, (_, index) => (index + 1) / 10)
+      .filter(candidate => candidate < longBase && (longBase + candidate) * baseHeight / 2 === baseArea && faceArea / candidate === prismHeight);
+    check(candidates.length === 1 && candidates[0] === shortBase, `조건을 만족하는 짧은 밑변 후보가 ${candidates.length}개입니다.`);
+    return `${prismHeight}cm`;
   }
   throw new Error(`알 수 없는 검산 종류: ${evidence.kind}`);
 }
@@ -185,6 +198,19 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
           check(generated.answerVisual.includes('data-point-a-strip-match="C"') && generated.answerVisual.includes('data-candidate="C"') && generated.answerVisual.includes("source61-concave-fold-guide is-solved"), "답 그림에서 A와 C의 접힘 대응이 강조되지 않았습니다.");
           check(generated.answerVisual.includes(`data-target-edge-total="${parsed.values[4]}"`), "답 그림에 모든 모서리 길이 합이 없습니다.");
         }
+        if (variant === 5) {
+          const [baseHeight, longBase, baseArea, shortBase, faceArea, prismHeight] = parsed.values;
+          const structure = `right-trapezoidal-prism-net-${baseHeight}-${longBase}-${baseArea}-${faceArea}`;
+          check(generated.prompt.includes("source61-trapezoidal-prism-net") && generated.answerVisual.includes("source61-trapezoidal-prism-net"), "직각사다리꼴 밑면의 사각기둥 전개도가 문제와 답에 없습니다.");
+          check(generated.prompt.includes(`data-source61-e1-structure="${structure}"`) && generated.answerVisual.includes(`data-source61-e1-structure="${structure}"`), "문제와 답의 전개도 구조 ID가 다릅니다.");
+          check(generated.prompt.includes('data-base-face-count="2"') && generated.prompt.includes('data-lateral-face-count="4"'), "같은 사다리꼴 밑면 2개와 옆면 4개의 전개도가 아닙니다.");
+          check((generated.prompt.match(/data-side-face="[1-4]"/g) || []).length === 4 && (generated.prompt.match(/data-base-face="[12]"/g) || []).length === 2, "전개도의 면 수가 원문 구조와 다릅니다.");
+          check(generated.prompt.includes(`>${baseHeight}cm</text>`) && generated.prompt.includes(`>${longBase}cm</text>`) && generated.prompt.includes(`>${faceArea}cm²</text>`) && generated.prompt.includes(`>밑면 ${baseArea}cm²</text>`), "전개도의 길이와 넓이 표시가 빠졌습니다.");
+          check(!generated.prompt.includes(`짧은 밑변 ${shortBase}cm`) && !generated.prompt.includes(`높이 ${prismHeight}cm`) && !generated.prompt.includes("source61-trapezoid-short-edge"), "문제 그림에 계산해야 할 짧은 밑변이나 각기둥 높이가 노출되었습니다.");
+          check(generated.answerVisual.includes(`data-short-base="${shortBase}"`) && generated.answerVisual.includes(`data-prism-height="${prismHeight}"`), "답 그림에 짧은 밑변과 각기둥 높이 결과가 없습니다.");
+          check(generated.answerVisual.includes("source61-trapezoid-face-ga is-solved") && generated.answerVisual.includes("source61-trapezoid-short-edge is-solved"), "답 그림에서 (가)와 짧은 밑변이 함께 강조되지 않았습니다.");
+          check(generated.solution.includes(`${baseArea}×2÷${baseHeight}`) && generated.solution.includes(`${faceArea}÷${shortBase}=${prismHeight}`), "사다리꼴 넓이와 (가)의 넓이를 잇는 풀이가 없습니다.");
+        }
         pools.add(generated.verifiedPoolIndex);
         answers.add(String(generated.answer));
         prompts.set(generated.verifiedPoolIndex, generated.prompt.replace(/<p class="question-step"[\s\S]*?<\/p>/g, "").replace(/<span hidden[\s\S]*?<\/span>/g, ""));
@@ -208,4 +234,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 1 각기둥과 각뿔 감사 통과: 5유형 · 15개 고정 문항 · ${checked.toLocaleString()}회 계산·pool·답 3종·답 그림·원문 ID·난이도·도형 semantic 검사`);
+console.log(`6-1 2단원 개념탐구 1 각기둥과 각뿔 감사 통과: 6유형 · 18개 고정 문항 · ${checked.toLocaleString()}회 계산·pool·답 3종·답 그림·원문 ID·난이도·도형 semantic 검사`);

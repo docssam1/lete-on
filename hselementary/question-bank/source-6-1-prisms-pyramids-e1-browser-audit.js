@@ -16,9 +16,10 @@ const sourceIds = [
   "6-1-u2-e1-mission-1",
   "6-1-u2-e1-mission-2",
   "6-1-u2-e1-mission-5",
-  "6-1-u2-e1-mission-6"
+  "6-1-u2-e1-mission-6",
+  "6-1-u2-e1-example-1-4"
 ];
-const publicVariants = [0, 1, 2, 3, 4];
+const publicVariants = [0, 1, 2, 3, 4, 5];
 const difficulties = [-1, 0, 1];
 const representativeDifficulties = new Set([-1, 0]);
 const failures = [];
@@ -167,6 +168,24 @@ async function inspectView(page, selector, label, answerView, variant) {
           edgeTotal: svg.dataset.targetEdgeTotal || ""
         };
       }),
+      trapezoidalNetGeometry: items.map(item => {
+        const svg = item.querySelector("svg.source61-trapezoidal-prism-net");
+        if (!svg) return null;
+        return {
+          viewBox: svg.getAttribute("viewBox") || "",
+          structure: svg.dataset.source61E1Structure || "",
+          bases: [...svg.querySelectorAll(".source61-trapezoid-base")].map(node => node.getAttribute("points") || ""),
+          sideFaces: [...svg.querySelectorAll(".source61-trapezoid-side-face")].map(node => [node.dataset.sideFace || "", node.dataset.baseEdge || "", node.getAttribute("x") || "", node.getAttribute("width") || ""]),
+          baseHeight: svg.dataset.baseHeight || "",
+          longBase: svg.dataset.longBase || "",
+          baseArea: svg.dataset.baseArea || "",
+          faceArea: svg.dataset.faceGaArea || "",
+          baseCount: svg.dataset.baseFaceCount || "",
+          lateralCount: svg.dataset.lateralFaceCount || "",
+          shortBase: svg.dataset.shortBase || "",
+          prismHeight: svg.dataset.prismHeight || ""
+        };
+      }),
       visibleText: items.map(item => item.innerText || "")
     };
   }, { selected: selector, isAnswer: answerView });
@@ -278,6 +297,23 @@ function checkSemantic(state, label, variant, answerView, difficulty) {
         fail(`${label}: 답 그림에서 A와 C의 대응 또는 모서리 합이 표시되지 않았습니다.`);
       }
     }
+    if (variant === 5) {
+      const model = state.trapezoidalNetGeometry[index];
+      if (!model || model.bases.length !== 2 || model.sideFaces.length !== 4 || model.baseCount !== "2" || model.lateralCount !== "4") {
+        fail(`${label}: 같은 직각사다리꼴 밑면 2개와 옆면 4개의 전개도가 아닙니다.`);
+        continue;
+      }
+      if (!model.structure.startsWith("right-trapezoidal-prism-net-") || !model.baseHeight || !model.longBase || !model.baseArea || !model.faceArea) {
+        fail(`${label}: 전개도의 원문 구조와 길이·넓이 자료가 없습니다.`);
+      }
+      if (model.sideFaces.map(face => face[0]).join(",") !== "1,2,3,4") fail(`${label}: 옆면 4개의 순서가 끊겼습니다.`);
+      if (!answerView && (model.shortBase || model.prismHeight || markup.includes("source61-trapezoid-short-edge") || markup.includes("source61-trapezoid-answer-label"))) {
+        fail(`${label}: 문제 그림에 계산할 짧은 밑변 또는 각기둥 높이가 노출되었습니다.`);
+      }
+      if (answerView && (!model.shortBase || !model.prismHeight || !markup.includes("source61-trapezoid-short-edge is-solved") || !markup.includes("source61-trapezoid-face-ga is-solved"))) {
+        fail(`${label}: 답 그림에서 짧은 밑변과 (가), 각기둥 높이를 함께 확인할 수 없습니다.`);
+      }
+    }
   }
 }
 
@@ -314,6 +350,24 @@ function compareConcaveNetShapes(problem, answer, label) {
   const left = problem.concaveNetGeometry.map(value => JSON.stringify(invariant(value))).sort();
   const right = answer.concaveNetGeometry.map(value => JSON.stringify(invariant(value))).sort();
   if (left.join("\n") !== right.join("\n")) fail(`${label}: 문제와 답의 오목한 팔각기둥 전개도 좌표·면·점 구조가 다릅니다.`);
+}
+
+function compareTrapezoidalNetShapes(problem, answer, label) {
+  const invariant = value => value && ({
+    viewBox: value.viewBox,
+    structure: value.structure,
+    bases: value.bases,
+    sideFaces: value.sideFaces,
+    baseHeight: value.baseHeight,
+    longBase: value.longBase,
+    baseArea: value.baseArea,
+    faceArea: value.faceArea,
+    baseCount: value.baseCount,
+    lateralCount: value.lateralCount
+  });
+  const left = problem.trapezoidalNetGeometry.map(value => JSON.stringify(invariant(value))).sort();
+  const right = answer.trapezoidalNetGeometry.map(value => JSON.stringify(invariant(value))).sort();
+  if (left.join("\n") !== right.join("\n")) fail(`${label}: 문제와 답의 사다리꼴 밑면 사각기둥 전개도 좌표·면 구조가 다릅니다.`);
 }
 
 async function captureRepresentative(page, sourceItemId, difficulty, viewportLabel, answerView) {
@@ -360,6 +414,7 @@ async function inspectType(browser, baseUrl, variant, difficulty, viewport, view
     checkSemantic(answer, `${label} / 답`, variant, true, difficulty);
     if (variant === 3) compareNetShapes(problem, answer, label);
     if (variant === 4) compareConcaveNetShapes(problem, answer, label);
+    if (variant === 5) compareTrapezoidalNetShapes(problem, answer, label);
 
     if (representativeDifficulties.has(difficulty)) {
       await page.locator("#problemTab").click();
@@ -424,12 +479,12 @@ function generatorReady() {
     await new Promise(resolve => server.close(resolve));
   }
 
-  if (screenshots !== 40) fail(`대표 화면 수가 ${screenshots}장입니다. 40장이어야 합니다.`);
-  if (pdfs !== 10) fail(`A4 PDF 수가 ${pdfs}개입니다. 10개여야 합니다.`);
-  const summary = `${failures.length ? "실패" : "통과"}: 공개 5유형×3난이도×PC/모바일, 고정 pool 3문항, 문제·답 그림·근거·도형 계약, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 확인 페이지 ${checkedPages}개\n${failures.join("\n")}\n`;
+  if (screenshots !== 48) fail(`대표 화면 수가 ${screenshots}장입니다. 48장이어야 합니다.`);
+  if (pdfs !== 12) fail(`A4 PDF 수가 ${pdfs}개입니다. 12개여야 합니다.`);
+  const summary = `${failures.length ? "실패" : "통과"}: 공개 6유형×3난이도×PC/모바일, 고정 pool 3문항, 문제·답 그림·근거·도형 계약, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 확인 페이지 ${checkedPages}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 1 브라우저 감사 통과: 공개 5유형×3난이도×PC/모바일 · 고정 3문항 · 답 그림 · 화면 ${screenshots}장 · A4 PDF ${pdfs}개 · 확인 페이지 ${checkedPages}개`);
+  console.log(`6-1 2단원 개념탐구 1 브라우저 감사 통과: 공개 6유형×3난이도×PC/모바일 · 고정 3문항 · 답 그림 · 화면 ${screenshots}장 · A4 PDF ${pdfs}개 · 확인 페이지 ${checkedPages}개`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

@@ -21036,9 +21036,9 @@
     sourceGrade6PrismsPyramidsE1({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5",
-        "6-1-u2-e1-mission-6"
+        "6-1-u2-e1-mission-6", "6-1-u2-e1-example-1-4"
       ];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 1 원문 분기는 0부터 4까지여야 합니다.");
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 1 원문 분기는 0부터 5까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, 2);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
@@ -21049,7 +21049,7 @@
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const fractionText = value => mixedFractionMarkup(value.numerator, value.denominator);
       const plainFractionText = value => mixedFraction(value.numerator, value.denominator);
-      const evidenceKinds = ["prism-name-from-counts", "prism-symbol-ratio-value", "rolling-pentagonal-prism-edge-total", "triangular-prism-net-ratio-area", "concave-prism-net-match-edge-total"];
+      const evidenceKinds = ["prism-name-from-counts", "prism-symbol-ratio-value", "rolling-pentagonal-prism-edge-total", "triangular-prism-net-ratio-area", "concave-prism-net-match-edge-total", "trapezoidal-prism-net-height"];
       const fixedResult = (prompt, answer, solution, answerBody) => result(prompt, answer, solution, {
         answerVisual: `<div class="verified-answer-diagram source61-answer-diagram" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><span hidden data-source61-prism-e1-kind="${evidenceKinds[variant]}" data-source-item="${sourceItemId}"></span>${answerBody}<div class="solution-answer-caption">문제의 조건으로 확인한 답</div></div>`,
         generationMode: "fixed-verified-pool",
@@ -21140,6 +21140,27 @@
         const answerGuide = solved ? `<path class="source61-concave-fold-guide is-solved" d="M${boundaries[5]} ${stripY + 10} H${boundaries[4]} H${boundaries[3]} H${boundaries[2]}"/>` : "";
         return `<svg class="geometry-diagram source61-concave-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 440 244" role="img" aria-label="오목한 밑면 두 개와 직사각형 옆면으로 이루어진 전개도, 점 A와 후보 B부터 F" data-base-edge-units="3,2,1,1,1,1,1,2" data-strip-edge-units="1,1,1,1,2,3,2" data-detached-side-edge-units="1" data-base-face-count="2" data-lateral-face-count="8" data-base-perimeter="${12 * unit}" data-prism-height="${height}" data-point-a-distance-from-f-units="4" data-point-a-strip-match="${solved ? "C" : ""}" data-target-edge-total="${solved ? edgeTotal : ""}">${bases}${detachedFace}${strip}${answerGuide}${candidates}<g class="source61-concave-point-a${solved ? " is-solved" : ""}" data-point="A"><circle cx="${pointAX}" cy="${pointAY}" r="${solved ? 5 : 3.5}"/><text x="${pointAX - 13}" y="${pointAY + 4}">A</text></g><text class="source61-concave-measure" x="${(boundaries[5] + boundaries[6]) / 2}" y="${stripY + 21}">${3 * unit}cm</text><text class="source61-concave-measure" x="${(boundaries[6] + boundaries[7]) / 2}" y="${stripY + 21}">${2 * unit}cm</text><text class="source61-concave-measure" x="${boundaries[7] + 25}" y="${stripY + stripH / 2}">${height}cm</text><text class="source61-concave-measure" x="${lowerX + u / 2}" y="${lowerBottom + 15}">${unit}cm</text><text class="source61-concave-measure" x="${lowerRight - u / 2}" y="${lowerBottom + 15}">${unit}cm</text><text class="source61-concave-measure" x="${pointAX + 16}" y="${pointAY + 18}">${unit}cm</text></svg>`;
       };
+      const trapezoidalPrismHeightNetSvg = ({ baseHeight, longBase, baseArea, shortBase, faceArea, prismHeight, solved = false }) => {
+        const slantedSide = Math.hypot(baseHeight, longBase - shortBase);
+        const scale = 300 / (shortBase + baseHeight + longBase + slantedSide);
+        const widths = [shortBase, baseHeight, longBase, slantedSide].map(value => value * scale);
+        const x0 = 28, stripY = 92, stripHeight = 66;
+        const boundaries = [x0];
+        widths.forEach(width => boundaries.push(boundaries[boundaries.length - 1] + width));
+        const lateralFaces = widths.map((width, index) => `<rect class="source61-trapezoid-side-face${index === 0 ? " source61-trapezoid-face-ga" : ""}${solved && index === 0 ? " is-solved" : ""}" x="${boundaries[index].toFixed(2)}" y="${stripY}" width="${width.toFixed(2)}" height="${stripHeight}" data-side-face="${index + 1}" data-base-edge="${[shortBase, baseHeight, longBase, slantedSide][index].toFixed(4)}"/>`).join("");
+        const topHeight = baseHeight * scale;
+        const topShort = shortBase * scale;
+        const topBase = [[boundaries[2], stripY], [boundaries[2], stripY - topHeight], [boundaries[2] + topShort, stripY - topHeight], [boundaries[3], stripY]];
+        const bottomY = stripY + stripHeight;
+        const bottomBase = [[boundaries[1], bottomY], [boundaries[1], bottomY + shortBase * scale], [boundaries[2], bottomY + longBase * scale], [boundaries[2], bottomY]];
+        const points = value => value.map(point => point.map(coordinate => coordinate.toFixed(2)).join(",")).join(" ");
+        const topPolygon = `<polygon class="source61-trapezoid-base source61-trapezoid-base-top" points="${points(topBase)}" data-base-face="1"/>`;
+        const bottomPolygon = `<polygon class="source61-trapezoid-base source61-trapezoid-base-bottom" points="${points(bottomBase)}" data-base-face="2"/>`;
+        const shortEdge = solved ? `<line class="source61-trapezoid-short-edge is-solved" x1="${boundaries[2]}" y1="${stripY - topHeight}" x2="${boundaries[2] + topShort}" y2="${stripY - topHeight}"/>` : "";
+        const solvedLabels = solved ? `<text class="source61-trapezoid-answer-label" x="${boundaries[2] + topShort / 2}" y="${stripY - topHeight - 11}">짧은 밑변 ${shortBase}cm</text><text class="source61-trapezoid-answer-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 + 20}">높이 ${prismHeight}cm</text>` : "";
+        const structure = `right-trapezoidal-prism-net-${baseHeight}-${longBase}-${baseArea}-${faceArea}`;
+        return `<svg class="geometry-diagram source61-trapezoidal-prism-net${solved ? " is-solved" : ""}" viewBox="0 0 360 270" role="img" aria-label="밑면이 직각사다리꼴인 사각기둥의 전개도" data-source61-e1-structure="${structure}" data-base-height="${baseHeight}" data-long-base="${longBase}" data-base-area="${baseArea}" data-face-ga-area="${faceArea}" data-base-face-count="2" data-lateral-face-count="4" data-short-base="${solved ? shortBase : ""}" data-prism-height="${solved ? prismHeight : ""}">${topPolygon}${bottomPolygon}${lateralFaces}${shortEdge}<text class="source61-trapezoid-face-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 - 8}">(가)</text><text class="source61-trapezoid-area-label" x="${(boundaries[0] + boundaries[1]) / 2}" y="${stripY + stripHeight / 2 + 10}">${faceArea}cm²</text><text class="source61-trapezoid-area-label" x="${boundaries[2] + topShort / 2}" y="${stripY - topHeight / 2}">밑면 ${baseArea}cm²</text><text class="source61-trapezoid-measure" x="${(boundaries[1] + boundaries[2]) / 2}" y="${stripY - 10}">${baseHeight}cm</text><text class="source61-trapezoid-measure" x="${(boundaries[2] + boundaries[3]) / 2}" y="${bottomY + 15}">${longBase}cm</text>${solvedLabels}</svg>`;
+      };
 
       if (variant === 0) {
         const data = [{ n: 19, k: 40 }, { n: 14, k: 30 }, { n: 23, k: 48 }][poolIndex];
@@ -21173,6 +21194,21 @@
         const promptVisual = concavePrismNetSvg({ unit, height, edgeTotal });
         const answerVisual = `${concavePrismNetSvg({ unit, height, edgeTotal, solved: true })}${mathBoard("접은 뒤 만나는 점과 모서리", row("F에서 왼쪽으로", `${2 * unit}cm 뒤 E, ${unit}cm 뒤 D, ${unit}cm 뒤 C`) + row("A와 만나는 점", "C") + row("한 밑면의 둘레", `12×${unit}=${perimeter}cm`) + row("모든 모서리", `2×${perimeter}+8×${height}=${edgeTotal}cm`))}`;
         return fixedResult(`다음 그림은 어떤 입체도형의 전개도입니다. 전개도를 접었을 때 점 A와 만나는 점을 B, C, D, E, F 중에서 찾고, 모든 모서리 길이의 합을 구하세요.${promptVisual}${support("가로 띠 밖에 따로 붙은 옆면까지 세고, F에서 밑면 둘레를 따라 A까지 이동해 보세요.")}${challenge}${evidence("concave-prism-net-match-edge-total", [unit, height, perimeter, 8, edgeTotal, 4], "two-values")}`, `C, ${edgeTotal}cm`, `밑면에서 F부터 A까지 이어지는 변의 길이는 ${2 * unit}cm, ${unit}cm, ${unit}cm입니다. 전개도의 가로 띠에서 F부터 왼쪽으로 같은 길이를 따라가면 E, D를 지나 C에 닿으므로 A와 만나는 점은 C입니다. 한 밑면의 둘레는 12×${unit}=${perimeter}cm이고 옆모서리는 ${height}cm인 것이 8개이므로 모든 모서리 길이의 합은 2×${perimeter}+8×${height}=${edgeTotal}cm입니다.`, answerVisual);
+      }
+
+      if (variant === 5) {
+        const data = [
+          { baseHeight: 10, longBase: 16, baseArea: 150, faceArea: 336 },
+          { baseHeight: 12, longBase: 20, baseArea: 228, faceArea: 513 },
+          { baseHeight: 8, longBase: 18, baseArea: 136, faceArea: 416 }
+        ][poolIndex];
+        const shortBase = 2 * data.baseArea / data.baseHeight - data.longBase;
+        const prismHeight = data.faceArea / shortBase;
+        if (!Number.isFinite(shortBase) || !Number.isFinite(prismHeight) || shortBase <= 0 || shortBase >= data.longBase || prismHeight <= 0) throw new Error(`${sourceItemId}: 사다리꼴 밑면과 각기둥 높이가 하나로 정해지지 않습니다.`);
+        const values = [data.baseHeight, data.longBase, data.baseArea, shortBase, data.faceArea, prismHeight];
+        const promptVisual = trapezoidalPrismHeightNetSvg({ ...data, shortBase, prismHeight });
+        const answerVisual = `${trapezoidalPrismHeightNetSvg({ ...data, shortBase, prismHeight, solved: true })}${mathBoard("전개도에서 각기둥의 높이 찾기", row("두 밑변의 길이의 합", `${data.baseArea}×2÷${data.baseHeight}=${2 * data.baseArea / data.baseHeight}cm`) + row("짧은 밑변", `${2 * data.baseArea / data.baseHeight}-${data.longBase}=${shortBase}cm`) + row("각기둥의 높이", `${data.faceArea}÷${shortBase}=${prismHeight}cm`), `data-source61-visual="trapezoidal-prism-net-height"`)}`;
+        return fixedResult(`다음 그림은 밑면이 사다리꼴인 사각기둥의 전개도입니다. 밑면의 높이는 ${data.baseHeight}cm, 긴 밑변은 ${data.longBase}cm이고 한 밑면의 넓이는 ${data.baseArea}cm²입니다. 직사각형 (가)의 넓이가 ${data.faceArea}cm²일 때 사각기둥의 높이를 구하세요.${promptVisual}${support("사다리꼴의 넓이에서 짧은 밑변을 먼저 구한 뒤, (가)의 넓이를 짧은 밑변으로 나누어 보세요.")}${challenge}${evidence("trapezoidal-prism-net-height", values)}`, `${prismHeight}cm`, `사다리꼴의 두 밑변의 길이의 합은 ${data.baseArea}×2÷${data.baseHeight}=${2 * data.baseArea / data.baseHeight}cm입니다. 따라서 짧은 밑변은 ${2 * data.baseArea / data.baseHeight}-${data.longBase}=${shortBase}cm입니다. (가)는 짧은 밑변 ${shortBase}cm에 붙은 옆면이므로 사각기둥의 높이는 ${data.faceArea}÷${shortBase}=${prismHeight}cm입니다.`, answerVisual);
       }
 
       const data = [

@@ -52,7 +52,7 @@ const readinessU1E2Counts = readinessU1E2Items.reduce((counts, item) => {
   counts.releaseLocked += item.releaseStatus === "locked" ? 1 : 0;
   return counts;
 }, { confirmed: 0, locked: 0, candidate: 0, releaseLocked: 0 });
-const prismE1VerifiedIds = ["6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5", "6-1-u2-e1-mission-6"];
+const prismE1VerifiedIds = ["6-1-u2-e1-example-1-1", "6-1-u2-e1-mission-1", "6-1-u2-e1-mission-2", "6-1-u2-e1-mission-5", "6-1-u2-e1-mission-6", "6-1-u2-e1-example-1-4"];
 const prismE2VerifiedIds = ["6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5", "6-1-u2-e2-mission-6", "6-1-u2-e2-mission-1", "6-1-u2-e2-example-2-4", "6-1-u2-e2-example-2-3", "6-1-u2-e2-example-2-1", "6-1-u2-e2-mission-4"];
 const readinessU2Counts = readinessU2.items.reduce((counts, item) => {
   const hasIndependentAnswer = Boolean(item.independentAnswer && item.independentAnswer !== "확인 필요");
@@ -153,8 +153,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 234 && lockedItems.length === 399, `6학년 원문 유형의 공개 234개·잠금 399개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 234유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 235 && lockedItems.length === 398, `6학년 원문 유형의 공개 235개·잠금 398개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && Number.isInteger(item.variant) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 235유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU1E1Items.length === 12 && readinessU1E1Counts.confirmed === 10 && readinessU1E1Counts.locked === 2 && readinessU1E1Counts.candidate === 0 && readinessU1E1Counts.releaseLocked === 2, `6-1 1단원 개념탐구 1 readiness 확인 10개·열린 설명 잠금 2개 구성이 다릅니다: 전체 ${readinessU1E1Items.length}, 확인 ${readinessU1E1Counts.confirmed}, 잠금 ${readinessU1E1Counts.locked}/${readinessU1E1Counts.releaseLocked}`);
@@ -183,7 +183,7 @@ readinessU1E2Items.forEach(readinessItem => {
 });
 prismE1VerifiedIds.forEach(sourceItemId => {
   const readinessItem = readinessU2.items.find(item => item.sourceItemId === sourceItemId);
-  const rawItem = rawInventory.items.find(item => item.sourceItemId === sourceItemId);
+  const rawItem = rawInventory.items.find(item => (item.publicSourceItemId || item.sourceItemId) === sourceItemId);
   const catalogItem = items.find(item => item.sourceItemId === sourceItemId);
   check(Boolean(readinessItem && rawItem && catalogItem), `${sourceItemId}: 원자료·검수표·공개 분류표 연결이 없습니다.`);
   if (!readinessItem || !rawItem || !catalogItem) return;
