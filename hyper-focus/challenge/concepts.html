@@ -1,4 +1,35 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>2026년 9월 챌린지 대비 · 개념 1·2 | LETE-ON</title><link rel="stylesheet" href="concepts-two.css?v=20260909-3"></head>
-<body data-document-kind="concept"><header class="toolbar"><b>2026년 9월 챌린지 대비</b><label>교재 <select id="round"><option value="1">개념 1</option><option value="2">개념 2</option></select></label><label>단원 <select id="unit"><option value="all">전체 단원</option></select></label><label><input id="answers" type="checkbox">뒤쪽 정답 보기</label><button id="print">인쇄</button><a href="./">교재 선택</a></header><main id="conceptBook"></main>
-<script src="../supabase-config.js"></script><script src="../supabase-client.js"></script><script src="access-catalog.js"></script><script src="access-service.js"></script><script src="document-access.js"></script></body></html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>2026년 9월 챌린지 대비 · 개념 교재 1·2 | LETE-ON</title>
+  <link rel="stylesheet" href="concepts-two.css?v=20260909-3">
+</head>
+<body data-document-kind="concept">
+  <header class="toolbar" aria-label="개념 교재 보기 설정">
+    <b>HYPER FOCUS · 2026년 9월 챌린지 대비</b>
+    <label for="round">교재
+      <select id="round" aria-label="개념 교재 선택">
+        <option value="1">개념 1</option>
+        <option value="2">개념 2</option>
+      </select>
+    </label>
+    <label for="unit">단원
+      <select id="unit" aria-label="단원 선택">
+        <option value="all">전체 단원</option>
+      </select>
+    </label>
+    <label for="answers"><input id="answers" type="checkbox">정답과 풀이 보기</label>
+    <button id="print" type="button">PDF · 인쇄</button>
+    <a href="./">교재 서재</a>
+  </header>
+  <main id="conceptBook" aria-live="polite"></main>
+  <script src="../supabase-config.js"></script>
+  <script src="../supabase-client.js"></script>
+  <script src="access-catalog.js"></script>
+  <script src="access-service.js"></script>
+  <script src="document-access.js"></script>
+</body>
+</html>

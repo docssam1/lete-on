@@ -10,8 +10,8 @@
  window.addEventListener('beforeprint',()=>{paint();if(!access.allow(key()))clearProtected();});
  let initialized=false,loading=false;const loaded=new Set();
  const teacher=access.isTeacherPreview();
- const scripts=teacher?['balance-diagram.js','exam-replacements.js','exam-editions.js','exam-priority.js','exam-more.js','challenge-bank.js','exam-supplement.js']:['content-client.js','secure-document.js'];
- if(teacher){if(kind==='concept')scripts.push('variant-numeric-extension.js','variant-geometry-extension.js','variant-core-levels.js','variant-provider.js','concept-specials.js','concept-catalog.js','concept-book-plan.js','concepts-two.js');else scripts.push('exam.js');}
+ const scripts=teacher?['balance-diagram.js','concept-replacement-specials.js','exam-replacements.js','exam-editions.js','exam-priority.js','exam-more.js','challenge-bank.js','exam-supplement.js']:['content-client.js','secure-document.js'];
+ if(teacher){if(kind==='concept')scripts.push('variant-numeric-extension.js','variant-geometry-extension.js','variant-core-levels.js','variant-provider.js','concept-specials.js','concept-replacement-specials.js','concept-catalog.js','concept-book-plan.js','concepts-two.js');else scripts.push('exam.js');}
  async function start(){paint();if(initialized||loading||!access.allow(key()))return;loading=true;try{for(const src of scripts){if(!access.allow(key()))return;if(loaded.has(src))continue;await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=reject;document.body.appendChild(script);});loaded.add(src);}initialized=true;if(!teacher)await window.HFChallengeSecureDocument();}finally{loading=false;paint();}}
  round.addEventListener('change',()=>start().catch(()=>{clearProtected();notice.textContent='자료를 불러오지 못했습니다. 다시 열어 주세요.';}));
  await access.refresh();await start();

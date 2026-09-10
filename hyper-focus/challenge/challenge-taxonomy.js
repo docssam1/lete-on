@@ -82,6 +82,17 @@
   '4-extra':['runs','opposite','walk','operators','tiles','roll']
  };
  Object.entries(positions).forEach(([prefix,list])=>list.forEach((key,i)=>byType['r'+prefix+'-'+(i+1)]=key));
+ // The revised mock papers intentionally replace several position-based types.
+ // Bind their authored IDs to the concept-book family that is actually shown.
+ bind('balance','mock-balance-substitution-pictures r4-main-17-balance-substitution-pictures');
+ bind('roll','mock-dice-target-bottom');
+ bind('length','mock-object-length-equivalence r3-extra-4-object-length-equivalence r4-extra-1-object-length-equivalence');
+ bind('diagonal','r3-main-6');
+ bind('routeCount','r3-main-9-shortest-path-grid r4-extra-4-shortest-path-grid r4-extra-6-simple-path-network');
+ bind('cube','r3-main-15-checker-stack-count r3-extra-6-stack-box-fill r4-extra-2-checker-stack-count r4-extra-5-stack-box-fill');
+ bind('bricks','r3-main-18-tetra-cube-hole-count r3-extra-3-block-build-count r4-main-12-block-build-count r4-extra-3-tetra-cube-hole-count');
+ bind('partition','r3-extra-1-congruent-marked-partition r4-main-18-congruent-marked-partition');
+ bind('reverse','r3-main-1');
  function getTaxonomy(question,round,section='main'){
   const source=question.sourceQuestion||question;
   const sourceTypeId=source.typeId||question.typeId;
