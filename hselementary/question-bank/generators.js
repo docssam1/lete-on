@@ -24775,6 +24775,51 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Example2({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-example-2";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 2-2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { sackMass: 15, sackCount: 2, packageMass: [11, 5], unitPrice: 12500 },
+        { sackMass: 14, sackCount: 2, packageMass: [11, 6], unitPrice: 9800 },
+        { sackMass: 18, sackCount: 2, packageMass: [13, 5], unitPrice: 13000 }
+      ][poolIndex];
+      const totalMass = rationalValue(data.sackMass * data.sackCount);
+      const packageMass = rationalValue(...data.packageMass);
+      const quotient = rationalOperation(totalMass, packageMass, "÷");
+      const fullPackageCount = Math.floor(quotient.numerator / quotient.denominator);
+      const soldMass = rationalOperation(packageMass, rationalValue(fullPackageCount), "×");
+      const remainderMass = rationalOperation(totalMass, soldMass, "-");
+      const maximumSale = fullPackageCount * data.unitPrice;
+      const lessThanOrEqual = (left, right) => left.numerator * right.denominator <= right.numerator * left.denominator;
+      const maximumCandidates = Array.from({ length: fullPackageCount + 3 }, (_, count) => count).filter(count => {
+        const current = rationalOperation(packageMass, rationalValue(count), "×");
+        const next = rationalOperation(packageMass, rationalValue(count + 1), "×");
+        return lessThanOrEqual(current, totalMass) && !lessThanOrEqual(next, totalMass);
+      });
+      if (maximumCandidates.length !== 1 || maximumCandidates[0] !== fullPackageCount) throw new Error("6-2 예제 2-2에서 최대 포장 수가 하나로 정해지지 않습니다.");
+      if (remainderMass.numerator <= 0 || !lessThanOrEqual(remainderMass, packageMass) || remainderMass.numerator === packageMass.numerator && remainderMass.denominator === packageMass.denominator) throw new Error("6-2 예제 2-2의 남은 설탕은 한 봉지보다 적은 양수여야 합니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const won = value => `${Number(value).toLocaleString("ko-KR")}원`;
+      const signature = [data.sackMass, data.sackCount, packageMass.numerator, packageMass.denominator, data.unitPrice].join(":");
+      const packingBoard = solved => `<div class="source62-sugar-packing-board${solved ? " is-solved" : ""}" data-source62-e2-example2-structure="equal-package-maximum-sale-remainder" data-source62-e2-example2-expression="${signature}" data-total-mass="${plain(totalMass)}" data-package-mass="${plain(packageMass)}" data-full-package-count="${fullPackageCount}" data-remainder-mass="${plain(remainderMass)}" data-maximum-sale="${maximumSale}"><strong>설탕을 같은 양씩 나누어 담기</strong><div class="source62-sugar-packing-flow"><div class="source62-sugar-sacks" aria-label="${data.sackMass}킬로그램 설탕 두 자루"><span class="source62-sugar-sack"><b>${data.sackMass}kg</b></span><span class="source62-sugar-plus">+</span><span class="source62-sugar-sack"><b>${data.sackMass}kg</b></span></div><span class="source62-sugar-arrow" aria-hidden="true">→</span><div class="source62-sugar-package"><b>${shown(packageMass)}kg</b><span>한 봉지</span><small>${won(data.unitPrice)}</small></div></div><div class="source62-sugar-result"><span><small>완전한 봉지</small><b>${solved ? `${fullPackageCount}봉지` : "?"}</b></span><span><small>최대 판매 금액</small><b>${solved ? won(maximumSale) : "?"}</b></span><span><small>남은 설탕</small><b>${solved ? `${shown(remainderMass)}kg` : "?"}</b></span></div></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-sugar-packing-solution"><strong>완전한 봉지 수와 남은 양 확인하기</strong>${row("전체 설탕", `${data.sackMass}×${data.sackCount}=${plain(totalMass)}kg`)}${row("나눗셈", `${shown(totalMass)}÷${shown(packageMass)}=${fullPackageCount} … ${shown(remainderMass)}kg`)}${row("최대 판매 금액", `${won(data.unitPrice)}×${fullPackageCount}=${won(maximumSale)}`)}${row("남은 설탕", `${shown(totalMass)}−${fullPackageCount}×${shown(packageMass)}=${shown(remainderMass)}kg`)}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">두 자루의 전체 무게를 먼저 구하고, 한 봉지의 무게로 나누어 완전히 담을 수 있는 봉지 수를 찾으세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">몫의 자연수 부분으로 판매할 봉지 수를 정한 뒤, 한 봉지를 더 만들 수 없는지 남은 양으로 확인하세요.</p>' : "";
+      const values = [data.sackMass, data.sackCount, packageMass.numerator, packageMass.denominator, data.unitPrice, totalMass.numerator, totalMass.denominator, fullPackageCount, remainderMass.numerator, remainderMass.denominator, maximumSale];
+      const evidence = `<span hidden data-source62-fraction-e2-example2-kind="equal-package-maximum-sale-remainder" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-answer-order="maximum-sale,remainder-mass" data-result-contract="ordered-tuple" data-candidate-count="${maximumCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `최대 판매 금액 ${won(maximumSale)}, 남은 설탕 ${plain(remainderMass)}kg`;
+      return result(`한 자루에 ${data.sackMass}kg씩 들어 있는 설탕 ${data.sackCount}자루를 섞어 한 봉지에 ${shown(packageMass)}kg씩 나누어 담았습니다. 한 봉지에 ${won(data.unitPrice)}씩 받고 완전한 봉지만 판매할 때, 최대 판매 금액과 남은 설탕의 양을 차례로 구하세요.${packingBoard(false)}${support}${challenge}${evidence}`, answer, `설탕은 모두 ${data.sackMass}×${data.sackCount}=${plain(totalMass)}kg입니다. ${shown(totalMass)}÷${shown(packageMass)}의 몫에서 완전한 봉지는 ${fullPackageCount}개이고, 한 봉지를 더 만들 수 없습니다. 따라서 최대 판매 금액은 ${won(data.unitPrice)}×${fullPackageCount}=${won(maximumSale)}, 남은 설탕은 ${shown(totalMass)}−${fullPackageCount}×${shown(packageMass)}=${shown(remainderMass)}kg입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-example2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${packingBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">판매 금액과 남은 설탕을 문제에서 물은 순서대로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26693,6 +26738,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-mission-6", "sourceGrade6SecondFractionDivisionE1Mission6"],
     [type => type.sourceItemId === "6-2-u1-e2-exploration", "sourceGrade6SecondFractionDivisionE2Exploration"],
     [type => type.sourceItemId === "6-2-u1-e2-example-1", "sourceGrade6SecondFractionDivisionE2Example1"],
+    [type => type.sourceItemId === "6-2-u1-e2-example-2", "sourceGrade6SecondFractionDivisionE2Example2"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
