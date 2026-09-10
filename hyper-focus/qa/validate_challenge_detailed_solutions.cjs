@@ -5,7 +5,7 @@ const V=require('../challenge/variant-provider.js');
 const fs=require('node:fs'),vm=require('node:vm');
 const operators=new Set(['r3-main-11','r4-main-9']);
 const ordering=new Set(['replace-house-between','replace-student-queue','r2-circular-seating','r3-main-10']);
-const unknowns=new Set(['r3-main-1','r4-main-17']);
+const unknowns=new Set(['r3-main-1']);
 const permutations=a=>a.length?a.flatMap((x,i)=>permutations(a.filter((_,j)=>i!==j)).map(row=>[x,...row])):[[]];
 function holds(row,rel){const[a,b,c]=rel.args,A=row.indexOf(a),B=row.indexOf(b),C=row.indexOf(c);switch(rel.kind){case'between':return Math.min(B,C)<A&&A<Math.max(B,C);case'next':return row[A+1]===b;case'before':return A<B;case'notLast':return row.at(-1)!==a;case'place':return row[b]===a;case'clockwise':return row[(A+c)%row.length]===b;default:throw Error('Unrecognized clue');}}
 const normalized=s=>String(s).replaceAll('−','-').replaceAll(' ','');
@@ -28,7 +28,7 @@ function checkOrder(q){const p=q.payload,n=p.people.length,all=permutations(p.pe
   });
   if(p.query!==null)assert(q.solution.includes(`${p.query+1}번 자리에는 ${q.answer}만 남습니다.`));else assert(q.solution.includes(q.answer.join(' → ')));
 }
-function checkOriginals(){let count=0;for(const[round,number]of[[3,1],[4,17]]){const q=V.getSource({round,section:'main',number});assert.equal(q.payload.kind,'unknowns');assert(q.payload.equations.length>=2);assert(['range','minimum-index'].includes(q.payload.select));count++;}return count;}
+function checkOriginals(){const q=V.getSource({round:3,section:'main',number:1});assert.equal(q.payload.kind,'unknowns');assert(q.payload.equations.length>=2);assert(['range','minimum-index'].includes(q.payload.select));const balance=V.getSource({round:4,section:'main',number:17});assert.equal(balance.typeId,'r4-main-17-balance-substitution-pictures');assert.equal(balance.payload.kind,'balance-substitution-pictures');return 2;}
 function checkUnknowns(q){const p=q.payload,values=p.equations.map(([a,op,b],i)=>{const fits=Array.from({length:101},(_,v)=>v).filter(v=>(op==='+'?a+v:a-v)===b);assert.equal(fits.length,1);const value=fits[0],calculation=op==='+'?`${b}−${a}=${value}`:`${a}−${b}=${value}`;assert(q.solution.includes(calculation));assert(q.solution.includes(`${['①','②','③','④'][i]}은`));return value;}),sorted=values.slice().sort((a,b)=>a-b);assert(q.solution.includes(sorted.join(', ')));const answer=p.select==='range'?sorted.at(-1)-sorted[0]:values.indexOf(sorted[0])+1;assert.equal(q.answer,answer);if(p.select==='range')assert(q.solution.includes(`${sorted.at(-1)}−${sorted[0]}=${answer}`));else assert(q.solution.includes(`${['①','②','③','④'][answer-1]}이므로 ${answer}번`));assert(checkArithmetic(q.solution)>=p.equations.length);}
 function checkTemporaryNegative(){
  const source=fs.readFileSync(require.resolve('../challenge/variant-provider.js'),'utf8'),functionText=source.slice(source.indexOf('function operatorsExplanation('),source.indexOf('function operatorsQuestion('));
@@ -39,7 +39,7 @@ function checkTemporaryNegative(){
  return 3;
 }
 function run(){
- let checked=0,detailed=0,negative=0;const rows=V.list().filter(row=>operators.has(row.typeId)||ordering.has(row.typeId)||unknowns.has(row.typeId));assert.equal(rows.length,8);
+ let checked=0,detailed=0,negative=0;const rows=V.list().filter(row=>operators.has(row.typeId)||ordering.has(row.typeId)||unknowns.has(row.typeId));assert.equal(rows.length,7);
  for(const row of rows)for(const difficulty of ['easy','same','hard'])for(let seed=0;seed<40;seed++){
   const q=V.generate({...row,difficulty,seed}).question;
   if(unknowns.has(row.typeId)){checkUnknowns(q);assert.throws(()=>checkUnknowns({...q,solution:q.solution.replace(/−\d+=/,'−999=')}));assert.throws(()=>checkUnknowns({...q,answer:q.answer+1}));negative+=2;}

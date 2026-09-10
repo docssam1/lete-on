@@ -1,6 +1,6 @@
 (function(root){
   'use strict';
-  const VERSION='challenge-variants-20260911-v5', TITLE='2026년 9월 챌린지 대비', LEVELS=['easy','same','hard'];
+  const VERSION='challenge-variants-20260911-v6', TITLE='2026년 9월 챌린지 대비', LEVELS=['easy','same','hard'];
   if(typeof module!=='undefined'&&module.exports){require('./challenge-bank.js');require('./exam-supplement.js');require('./variant-numeric-extension.js');require('./variant-geometry-extension.js');require('./variant-replacement-measurement.js');require('./variant-replacement-spatial.js');require('./variant-replacement-paths.js');require('./variant-core-levels.js');}
   const coreLevels=root.HFChallengeCoreLevels;const extensions={
     'numeric-extension':root.HFChallengeNumericExtension,
@@ -46,6 +46,7 @@
   const labels={arrow:'보기에서 규칙을 찾는 화살표 수 이동',mirror:'모눈 거울상 다각형 그리기','triangle-count':'선에 따른 삼각형 세기',unknowns:'빈칸의 수를 구해 비교하기',triples:'서로 다른 세 수의 합',operators:'연산 기호를 넣어 식 완성하기',net:'전개도의 마주 보는 면',roll:'주사위 굴리기',runs:'길이가 늘어나는 색 묶음',group:'구슬 묶음의 수와 색',routes:'모눈 선분의 전체 길이 비교'};
   const replacementLabels={
     'mock-balance-substitution-pictures':'그림 저울의 관계로 하트 수 구하기',
+    'r4-main-17-balance-substitution-pictures':'수평 저울의 무게 바꾸기',
     'mock-dice-target-bottom':'주사위 움직이기',
     'mock-object-length-equivalence':'연필·지우개·클립의 길이',
     'r3-main-9-shortest-path-grid':'가장 짧은 길 찾기',

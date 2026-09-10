@@ -200,8 +200,6 @@
   all[4].main[11].conceptSourcePayload={kind:'geo-stack',heights:[[2,2,1],[2,1,1]],solid:true};
   all[4].main[11].conceptSourcePrompt='같은 길쪽한 블록으로 만든 모양입니다. 누워 놓은 블록과 세워 놓은 블록을 구별하여 사용한 블록은 모두 몇 개인지 구하세요.';
   replaceWithSpecial(all[4].main[16],'balance-substitution-pictures',2,'수');
-  all[4].main[16].conceptSourceTypeId='r4-main-17';
-  all[4].main[16].conceptSourcePayload={kind:'unknowns',select:'minimum-index',equations:[[12,'-',7],[6,'+',15],[18,'-',9],[8,'+',14]]};
   replaceWithSpecial(all[4].main[17],'congruent-marked-partition',2,'도형');
 
   replaceWithSpecial(all[4].extra[0],'object-length-equivalence',1,'수');

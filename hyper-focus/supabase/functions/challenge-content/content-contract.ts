@@ -93,7 +93,7 @@ export const SOURCE_TYPES:Record<string,string>=Object.freeze({
   "4-main-14": "r4-main-14",
   "4-main-15": "r4-main-15",
   "4-main-16": "r4-main-16",
-  "4-main-17": "r4-main-17",
+  "4-main-17": "r4-main-17-balance-substitution-pictures",
   "4-main-18": "r4-main-18-congruent-marked-partition",
   "4-main-19": "r4-main-19",
   "4-main-20": "r4-main-20",
