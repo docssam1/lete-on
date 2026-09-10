@@ -1,6 +1,6 @@
 (function(root){
   'use strict';
-  const VERSION='challenge-variants-20260911-v6', TITLE='2026년 9월 챌린지 대비', LEVELS=['easy','same','hard'];
+  const VERSION='challenge-variants-20260911-v7', TITLE='2026년 9월 챌린지 대비', LEVELS=['easy','same','hard'];
   if(typeof module!=='undefined'&&module.exports){require('./challenge-bank.js');require('./exam-supplement.js');require('./variant-numeric-extension.js');require('./variant-geometry-extension.js');require('./variant-replacement-measurement.js');require('./variant-replacement-spatial.js');require('./variant-replacement-paths.js');require('./variant-core-levels.js');}
   const coreLevels=root.HFChallengeCoreLevels;const extensions={
     'numeric-extension':root.HFChallengeNumericExtension,
@@ -48,6 +48,8 @@
     'mock-balance-substitution-pictures':'그림 저울의 관계로 하트 수 구하기',
     'r4-main-17-balance-substitution-pictures':'수평 저울의 무게 바꾸기',
     'mock-dice-target-bottom':'주사위 움직이기',
+    'r3-main-13':'주사위 움직이기',
+    'r4-main-15':'주사위 움직이기',
     'mock-object-length-equivalence':'연필·지우개·클립의 길이',
     'r3-main-9-shortest-path-grid':'가장 짧은 길 찾기',
     'r3-main-15-checker-stack-count':'검은색·흰색 쌓기나무의 개수',

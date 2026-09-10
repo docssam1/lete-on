@@ -140,6 +140,12 @@
     const question=JSON.parse(JSON.stringify(replacementSpecials.get()[kind][index])),number=target.number,id=target.id,sourceNumber=target.sourceNumber;
     Object.assign(target,question,{number,id,sourceNumber,domain,typeId:id+'-'+kind,payload:{...question.payload},visual:null,mockConceptRevision:true});
   }
+  function replaceWithVisibleDice(target,index,domain){
+    if(!replacementSpecials||typeof replacementSpecials.cloneDiceFinishVisibleFaces!=='function')throw new Error('공통 주사위 움직이기 문항을 불러오지 못했습니다.');
+    const question=replacementSpecials.cloneDiceFinishVisibleFaces()[index],number=target.number,id=target.id,sourceNumber=target.sourceNumber;
+    if(!question)throw new Error('공통 주사위 움직이기 문항 번호가 올바르지 않습니다.');
+    Object.assign(target,question,{number,id,sourceNumber,domain,typeId:id,payload:{...question.payload,kind:'dice-visible-faces'},visual:null,mockConceptRevision:true});
+  }
   function removePictureSentence(html,sentence){
     const escaped=sentence.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     return String(html||'').replace(new RegExp('<text[^>]*>'+escaped+'</text>'),'');
@@ -180,6 +186,7 @@
     answer:2,answerHtml:'2가지',solution:'대각선 길을 이용하면 가로·세로 길만 이용할 때보다 한 번 덜 움직이므로, 가장 짧은 길은 모두 대각선 길을 지납니다. 대각선 시작점까지 2가지이고, 대각선 끝점에서 검은 지점을 피해 도착점까지 1가지이므로 2×1=2가지입니다.',
     problemHtml:compactShortestPathSvg(false,[3,1],[[1,2],[2,1]]),solutionDiagram:compactShortestPathSvg(true,[3,1],[[1,2],[2,1]]),payload:{kind:'shortest-path-grid',cols:4,rows:3,blocked:[[3,1]],directions:['E','N','NE'],diagonals:[[[1,2],[2,1]]],responseMode:'shortest-path-count'}
   });
+  replaceWithVisibleDice(all[3].main[12],1,'도형');
   replaceWithSpecial(all[3].main[14],'checker-stack-count',2,'수');
   replaceWithSpecial(all[3].main[17],'tetra-cube-hole-count',1,'도형');
   for(const field of ['problemHtml','solutionDiagram'])all[3].main[17][field]=removePictureSentence(all[3].main[17][field],'같은 색의 쌓기나무 4개가 테트라큐브 1개입니다.');
@@ -193,6 +200,7 @@
 
   const hardTile=[[2,1],[2,2],[2,3],[3,3],[0,0],[1,0],[0,1],[1,1]];
   Object.assign(all[4].main[3],{prompt:'보기의 서로 다른 두 조각을 골라 계단처럼 꺾인 모양을 빈틈없이 채우세요. 조각은 돌리거나 뒤집어도 되지만 겹칠 수 없습니다.',answer:'②, ③',answerHtml:'②, ③',solution:'왼쪽 위의 네 칸은 ③ 정사각형 조각으로 채우고, 오른쪽으로 꺾여 내려가는 네 칸은 ② 조각을 돌려 채웁니다. 가능한 서로 다른 조각의 짝은 ②와 ③뿐입니다.',payload:{kind:'tiles',target:hardTile},visual:{kind:'tiles',target:hardTile,answer:true},problemHtml:img('r4-main-4'),solutionDiagram:img('r4-main-4',true)});
+  replaceWithVisibleDice(all[4].main[14],2,'도형');
   const farPairs=[[9,1],[11,7],[12,3]],farLinks=[[9,14,19,18,17,16,15,10,5,0,1],[11,6,7],[12,13,8,3]],farLabels={'9':'●','1':'●','11':'▲','7':'▲','12':'■','3':'■'};
   Object.assign(all[4].main[10],{prompt:'서로 옆에 있지 않은 같은 도형끼리 선으로 연결하세요. 가로나 세로로 이웃한 칸의 가운데로만 움직이며, 선끼리 만나거나 같은 칸을 함께 지날 수 없습니다.',answer:'풀이 그림과 같이 연결',answerHtml:'풀이 그림과 같이 연결',solution:'동그라미는 왼쪽 가장자리를 크게 돌아 연결하고, 세모는 가운데에서 꺾어 연결하며, 네모는 오른쪽 두 칸을 지나 연결합니다. 세 선은 서로 만나지 않습니다.',payload:{kind:'links',w:5,h:4,pairs:farPairs},visual:grid(5,4,farLabels,farLinks),problemHtml:img('r4-main-11'),solutionDiagram:img('r4-main-11',true)});
   replaceWithSpecial(all[4].main[11],'block-build-count',2,'도형');

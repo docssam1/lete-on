@@ -2,10 +2,15 @@
 
 const assert=require('node:assert/strict');
 const spatial=require('../challenge/variant-replacement-spatial.js');
+const specials=require('../challenge/concept-replacement-specials.js');
+require('../challenge/challenge-bank.js');
+const more=require('../challenge/exam-more.js');
 
 const LEVELS=['easy','same','hard'];
 const SOURCES=[
-  ['mock-dice-target-bottom','dice-target-bottom'],
+  ['mock-dice-target-bottom','dice-visible-faces'],
+  ['r3-main-13','dice-visible-faces'],
+  ['r4-main-15','dice-visible-faces'],
   ['r3-main-15-checker-stack-count','checker-stack-count'],
   ['r4-extra-2-checker-stack-count','checker-stack-count'],
   ['r3-main-18-tetra-cube-hole-count','tetra-cube-hole-count'],
@@ -33,14 +38,13 @@ function solveDice(payload){
   for(const direction of payload.route){
     faces=faces.map(face=>{const [x,y,z]=face.normal,normal=direction==='N'?[x,-z,y]:direction==='S'?[x,z,-y]:direction==='E'?[z,y,-x]:[-z,y,x];return {normal,value:face.value};});
   }
-  const bottom=faces.filter(face=>equal(face.normal,[0,0,-1]));
-  assert.equal(bottom.length,1,'the final die must have exactly one bottom face');
-  return bottom[0].value;
+  const valueAt=normal=>{const matches=faces.filter(face=>equal(face.normal,normal));assert.equal(matches.length,1,'each final direction must have exactly one face');return matches[0].value;};
+  return [valueAt([0,0,1]),valueAt([0,1,0]),valueAt([1,0,0])];
 }
 
 function solvePayload(payload){
   switch(payload.kind){
-    case 'dice-target-bottom':return solveDice(payload);
+    case 'dice-visible-faces':return solveDice(payload);
     case 'checker-stack-count':{
       const answer={black:0,white:0};
       payload.heightMap.forEach((row,y)=>row.forEach((height,x)=>{for(let z=0;z<height;z++)answer[(x+y+z+payload.checkerOffset)%2===0?'black':'white']++;}));
@@ -80,12 +84,19 @@ function assertPath(payload,difficulty,label){
   assert.deepEqual(path,payload.path,`${label}: stored path differs from route`);
   const expectedLength=difficulty==='easy'?4:5,turns=payload.route.slice(1).filter((direction,index)=>direction!==payload.route[index]).length;
   assert.equal(payload.route.length,expectedLength,`${label}: roll length`);assert.equal(payload.targetStep,expectedLength,`${label}: target step`);
+  assert.equal(payload.rows,4,`${label}: board rows`);assert.equal(payload.cols,4,`${label}: board columns`);
   assert(turns>=(difficulty==='easy'?1:difficulty==='same'?2:3),`${label}: too few turns`);
   if(difficulty==='hard')assert(new Set(payload.route).size>=3,`${label}: hard route must use three directions`);
   assert.equal((payload.problemHtml.match(/class="roll-arrow"/g)||[]).length,expectedLength,`${label}: every roll needs one arrow`);
   const lengths=[...payload.problemHtml.matchAll(/data-arrow-length="([\d.]+)"/g)].map(match=>Number(match[1]));
   assert.equal(lengths.length,expectedLength,`${label}: arrow length evidence`);assert(lengths.every(length=>length>=37),`${label}: arrow shafts must stay long`);
   assert(/markerWidth="2\.7" markerHeight="2\.7"/.test(payload.problemHtml),`${label}: arrowheads must stay small`);
+  assert(/data-dice-board="4x4"/.test(payload.problemHtml),`${label}: a 4×4 isometric board is required`);
+  assert.equal((payload.problemHtml.match(/data-die-on-start="true"/g)||[]).length,1,`${label}: one 3D die must sit on the start cell`);
+  assert(/data-finish-die="blank"/.test(payload.problemHtml),`${label}: the problem needs a blank finish die`);
+  assert(/data-finish-die="solved"/.test(payload.solutionDiagram),`${label}: the solution needs a filled finish die`);
+  assert.equal((payload.problemHtml.match(/data-response-slot=/g)||[]).length,3,`${label}: top, front, and right response slots are required`);
+  assert.deepEqual([...payload.problemHtml.matchAll(/data-response-slot="([^"]+)"/g)].map(match=>match[1]),['top','front','right'],`${label}: response slot order`);
 }
 
 function assertTetra(payload,difficulty,label){
@@ -148,8 +159,9 @@ function validateQuestion(question,source,difficulty,seed){
   assert(!/undefined|NaN|Infinity/.test(question.problemHtml+question.solutionDiagram),`${label}: invalid drawing value`);
   assert(/<title>[^<]+<\/title>/.test(question.problemHtml)&&/role="img"/.test(question.problemHtml),`${label}: accessible title required`);
   assert(/data-camera="geometry-standard-high-iso"/.test(question.problemHtml),`${label}: canonical high isometric camera required`);
-  if(payload.kind==='dice-target-bottom'){
-    assertPath({...payload,problemHtml:question.problemHtml},difficulty,label);
+  if(payload.kind==='dice-visible-faces'){
+    assertPath({...payload,problemHtml:question.problemHtml,solutionDiagram:question.solutionDiagram},difficulty,label);
+    assert.deepEqual(payload.queryFaces,['top','front','right'],`${label}: queried faces`);assert.equal(payload.responseMode,'three-visible-face-numbers',`${label}: response mode`);
     const orientation=payload.startOrientation,values=Object.values(orientation);assert.deepEqual(values.slice().sort((a,b)=>a-b),[1,2,3,4,5,6],`${label}: die labels`);
     assert.equal(orientation.top+orientation.bottom,7,`${label}: top opposite`);assert.equal(orientation.north+orientation.south,7,`${label}: north opposite`);assert.equal(orientation.east+orientation.west,7,`${label}: east opposite`);
   }else if(payload.kind==='checker-stack-count'){
@@ -164,12 +176,20 @@ function validateQuestion(question,source,difficulty,seed){
 }
 
 function run(){
-  assert.equal(spatial.version,'replacement-spatial-20260911-v1');
+  assert.equal(spatial.version,'replacement-spatial-20260911-v2');
+  const fixed=specials.cloneDiceFinishVisibleFaces();
+  assert.deepEqual(fixed.map(question=>question.payload.route.length),[4,5,5],'shared fixed dice routes must be 4, 5, and 5 rolls');
+  fixed[0].payload.route[0]='W';
+  assert.equal(specials.cloneDiceFinishVisibleFaces()[0].payload.route[0],'E','shared fixed dice API must return a defensive clone');
+  const fixedSources=[globalThis.HFChallengeBank.createMockExam(1,62001).questions[11],more.get(3).questions[12],more.get(4).questions[14]];
+  assert.deepEqual(fixedSources.map(question=>question.typeId),['mock-dice-target-bottom','r3-main-13','r4-main-15'],'fixed dice source type IDs must stay stable');
+  assert(fixedSources.every(question=>question.payload.kind==='dice-visible-faces'),'all fixed dice sources must use one visible-faces family');
+  assert.deepEqual(fixedSources.map(question=>question.payload.route.length),[4,5,5],'fixed exam dice routes must use the shared 4/5-roll progression');
   for(const source of SOURCES){assert(spatial.supports(source),`${source.typeId}: registered occurrence`);assert.deepEqual(spatial.levels(source),{easy:true,same:true,hard:true});assert.equal(spatial.notes(source).length,3);}
   assert(!spatial.supports({typeId:'not-registered',payload:{kind:'checker-stack-count'}}),'generic kind must not widen occurrence scope');
   assert(!spatial.supports({typeId:SOURCES[0].typeId,payload:{kind:'checker-stack-count'}}),'kind mismatch must stay unsupported');
   for(const bad of [-1,1.5,NaN,Infinity,4294967296])assert.throws(()=>spatial.generate(SOURCES[0],'same',bad));
-  assert.throws(()=>spatial.generate(SOURCES[0],'bogus',1));assert.throws(()=>spatial.generate({typeId:'unknown',payload:{kind:'dice-target-bottom'}},'same',1));
+  assert.throws(()=>spatial.generate(SOURCES[0],'bogus',1));assert.throws(()=>spatial.generate({typeId:'unknown',payload:{kind:'dice-visible-faces'}},'same',1));
 
   let independentChecks=0,negativeChecks=0,determinismChecks=0;
   for(const source of SOURCES)for(const difficulty of LEVELS)for(let seed=0;seed<16;seed++){
@@ -184,7 +204,7 @@ function run(){
     const models=new Set();for(let seed=0;seed<64;seed++)models.add(semanticKey(spatial.generate(source,difficulty,seed).payload));
     assert(models.size>=24,`${kind} ${difficulty}: fewer than 24 genuine coordinate models`);uniqueModels.push({kind,difficulty,count:models.size});
   }
-  const report={passed:true,moduleVersion:spatial.version,registeredOccurrences:SOURCES.length,levels:LEVELS,independentChecks,negativeChecks,determinismChecks,minimumUniqueModels:24,uniqueModels,visualContracts:{camera:'geometry-standard-high-iso',diceRolls:'4-5',diceArrowheads:'2.7',tetraVisibleHoles:'1-2',cubeBoundaries:'1.35px exposed-face strokes'}};
+  const report={passed:true,moduleVersion:spatial.version,registeredOccurrences:SOURCES.length,levels:LEVELS,independentChecks,negativeChecks,determinismChecks,minimumUniqueModels:24,uniqueModels,visualContracts:{camera:'geometry-standard-high-iso',diceBoard:'4x4',diceRolls:'4-5',diceArrowheads:'2.7',diceAnswers:'top-front-right',tetraVisibleHoles:'1-2',cubeBoundaries:'1.35px exposed-face strokes'}};
   console.log(JSON.stringify(report,null,2));return report;
 }
 

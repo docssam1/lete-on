@@ -525,7 +525,7 @@
     targetSteps.forEach(function(step){targetByCell[path[step+1].join(',')]=step;});
     var markerId='concept-dice-route-'+(++ROUTE_MARKER_SERIAL);
     var body='<g data-dice-board="4x4" data-viewpoint="southeast-diagonal" data-start="'+board.start.join(',')+'" data-route="'+board.route.join('')+'">';
-    body+='<defs><marker id="'+markerId+'" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto"><path d="M0 1L9 5L0 9z" fill="#327594"/></marker></defs>';
+    body+='<defs><marker id="'+markerId+'" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="2.7" markerHeight="2.7" orient="auto"><path d="M0 1L9 5L0 9z" fill="#327594"/></marker></defs>';
     for(var row=0;row<rows;row++)for(var column=0;column<columns;column++){
       var key=row+','+column,isTarget=Object.prototype.hasOwnProperty.call(targetByCell,key);
       var points=[boardPoint(row,column,options),boardPoint(row,column+1,options),boardPoint(row+1,column+1,options),boardPoint(row+1,column,options)];
@@ -534,7 +534,7 @@
     path.slice(1).forEach(function(cell,index){
       var previous=path[index],from=boardCellCenter(previous[0],previous[1],options),to=boardCellCenter(cell[0],cell[1],options);
       var dx=to[0]-from[0],dy=to[1]-from[1];
-      body+='<line data-direction="'+board.route[index]+'" x1="'+(from[0]+dx*0.13)+'" y1="'+(from[1]+dy*0.13)+'" x2="'+(to[0]-dx*0.08)+'" y2="'+(to[1]-dy*0.08)+'" stroke="#327594" stroke-width="2.25" stroke-linecap="round" marker-end="url(#'+markerId+')"/>';
+      body+='<line data-direction="'+board.route[index]+'" data-roll-arrow="true" x1="'+(from[0]+dx*0.08)+'" y1="'+(from[1]+dy*0.08)+'" x2="'+(to[0]-dx*0.08)+'" y2="'+(to[1]-dy*0.08)+'" stroke="#327594" stroke-width="2.25" stroke-linecap="round" marker-end="url(#'+markerId+')"/>';
     });
     var startCenter=boardCellCenter(board.start[0],board.start[1],options),dieScale=options.dieScale||0.55;
     body+='<g data-die-on-start="true">'+dieBody(board.startOrientation,startCenter[0],startCenter[1]-44*dieScale,dieScale,'front-right',options.hiddenFace,options.revealHidden,false)+'</g>';
@@ -565,9 +565,9 @@
     var body=text(205,18,'화살표를 따라 굴리기',14,INK,700)+text(520,18,'도착한 주사위',14,INK,700);
     body+=diceBoardBody(spec.board,options)+line(390,26,390,258,'#d8e3e6',1.2);
     body+=solution?dieBody(finish,520,94,0.72,'front-right'):dieBody(finish,520,94,0.72,'front-right',null,false,true);
-    [['윗면',finish.top],['앞면',finish.south],['오른쪽 면',finish.east]].forEach(function(item,index){
+    [['top','윗면',finish.top],['front','앞면',finish.south],['right','오른쪽 면',finish.east]].forEach(function(item,index){
       var x=438+index*82;
-      body+=text(x,184,item[0],11,'#526c7a',700)+rect(x-31,198,62,27,solution?'#edf7f2':WHITE,solution?'#23756f':'#7da0b2',1.3,4)+text(x,212,solution?item[1]:'',14,solution?'#1f625e':INK,800);
+      body+='<g data-response-slot="'+item[0]+'">'+text(x,184,item[1],11,'#526c7a',700)+rect(x-31,198,62,27,solution?'#edf7f2':WHITE,solution?'#23756f':'#7da0b2',1.3,4)+text(x,212,solution?item[2]:'',14,solution?'#1f625e':INK,800)+'</g>';
     });
     return svg(body,274,solution?'4×4 등각 격자에서 굴린 뒤 도착 주사위의 윗면 앞면 오른쪽 면을 채운 풀이':'4×4 등각 격자의 시작 칸 위 입체 주사위와 빈 도착 주사위');
   }
@@ -1278,6 +1278,13 @@
     return Object.fromEntries(FAMILY_KEYS.map(function(key){return [key,clone(BANK[key])];}));
   }
 
+  // This family is shared by the mock-exam sources but is intentionally not
+  // added to the concept-book family list. Always return a fresh copy so an
+  // exam adapter cannot mutate the fixed source bank used by another round.
+  function cloneDiceFinishVisibleFaces(){
+    return clone(BANK['dice-finish-visible-faces']);
+  }
+
   function validate(){
     var bank=get();
     validateStructure(bank);
@@ -1454,7 +1461,7 @@
     };
   }
 
-  var api=Object.freeze({get:get,validate:validate});
+  var api=Object.freeze({get:get,validate:validate,cloneDiceFinishVisibleFaces:cloneDiceFinishVisibleFaces});
   root.HFConceptReplacementSpecials=api;
   if(typeof module!=='undefined'&&module.exports){
     module.exports=api;

@@ -46,8 +46,11 @@ assertThreeShapeLinks(question(4,'main',11));
 assert(question(4,'main',11).payload.pairs.every(([a,b])=>Math.abs(a%5-b%5)+Math.abs(Math.floor(a/5)-Math.floor(b/5))>1),'4회 11번 같은 도형은 서로 옆에 있지 않음');
 
 const r3Roll=question(3,'main',13),r4Roll=question(4,'main',15);
-assert.deepEqual(r3Roll.payload.moves,['R','U','R']);assert.equal(roll(r3Roll.payload),6);assert.equal(solve(r3Roll.payload),r3Roll.answer);
-assert.deepEqual(r4Roll.payload.moves,['R','R','D','R']);assert.equal(r4Roll.payload.query,'bottom');assert.equal(roll(r4Roll.payload),6);assert.equal(solve(r4Roll.payload),r4Roll.answer);
+for(const q of [r3Roll,r4Roll]){
+ assert.equal(q.payload.kind,'dice-visible-faces');assert.equal(q.payload.route.length,5);assert.deepEqual(q.payload.queryFaces,['top','front','right']);assert.deepEqual(solve(q.payload),q.answer);
+ assert(/data-dice-board="4x4"/.test(q.problemHtml));assert(/data-die-on-start="true"/.test(q.problemHtml));assert(/data-finish-die="blank"/.test(q.problemHtml));assert.equal((q.problemHtml.match(/data-response-slot=/g)||[]).length,3);
+ assert(/markerWidth="2\.7" markerHeight="2\.7"/.test(q.problemHtml));
+}
 assert.deepEqual(question(3,'main',1).payload,{kind:'reverse',end:17,changes:[-9,8]},'3회 1번 버스 승하차 거꾸로 해결하기');
 assert(question(3,'main',6).payload.paths.some(path=>path.some((point,index)=>index&&point[0]!==path[index-1][0]&&point[1]!==path[index-1][1])),'3회 6번에 대각선 포함');
 assert(question(3,'main',7).prompt.includes('2년이 지난 후')&&!question(3,'main',7).prompt.includes('두 해'),'3회 7번 표현 수정');

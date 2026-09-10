@@ -1,11 +1,13 @@
 (function(root){
   'use strict';
 
-  const VERSION='replacement-spatial-20260911-v1';
+  const VERSION='replacement-spatial-20260911-v2';
   const LEVELS=['easy','same','hard'];
   const INK='#284b60', BLUE='#4f98b9', GREEN='#63a58b', GOLD='#e3bb55', WARM='#c97454';
   const OCCURRENCES=Object.freeze({
-    'mock-dice-target-bottom':'dice-target-bottom',
+    'mock-dice-target-bottom':'dice-visible-faces',
+    'r3-main-13':'dice-visible-faces',
+    'r4-main-15':'dice-visible-faces',
     'r3-main-15-checker-stack-count':'checker-stack-count',
     'r4-extra-2-checker-stack-count':'checker-stack-count',
     'r3-main-18-tetra-cube-hole-count':'tetra-cube-hole-count',
@@ -15,7 +17,7 @@
     'r4-extra-5-stack-box-fill':'stack-box-fill'
   });
   const POLICY=Object.freeze({
-    'dice-target-bottom':['네 칸을 굴리며 두 방향의 면을 추적','다섯 칸을 굴리며 두 번 이상 방향 전환','다섯 칸을 굴리며 세 방향과 세 번 이상 방향 전환'],
+    'dice-visible-faces':['네 칸을 굴린 뒤 윗면·앞면·오른쪽 면 추적','다섯 칸을 굴리며 두 번 이상 방향 전환','다섯 칸을 굴리며 세 방향과 세 번 이상 방향 전환'],
     'checker-stack-count':['높이 2의 작은 계단에서 두 색 세기','높이 3의 넓은 계단에서 층별 색 세기','높이 4의 계단에서 가려진 층까지 추론'],
     'tetra-cube-hole-count':['구멍 1개와 2층 조각 1개','구멍 2개와 2층 조각 2개','구멍 2개와 2층 조각 3개'],
     'block-build-count':['윗면의 B 블록 2~3개','넓어진 윗면의 B 블록 4~5개','더 큰 직육면체의 B 블록 5~6개'],
@@ -88,7 +90,7 @@
   const ROUTE_CACHE=new Map();
   function routeCandidates(length,difficulty){
     const cacheKey=`${length}-${difficulty}`;if(ROUTE_CACHE.has(cacheKey))return ROUTE_CACHE.get(cacheKey);
-    const rows=5,cols=5,out=[];
+    const rows=4,cols=4,out=[];
     function visit(path,directions){
       if(directions.length===length){const turns=directions.slice(1).filter((direction,index)=>direction!==directions[index]).length,kinds=new Set(directions).size,minTurns=difficulty==='easy'?1:difficulty==='same'?2:3,minKinds=difficulty==='hard'?3:2;if(turns>=minTurns&&kinds>=minKinds)out.push({start:path[0],route:directions.slice(),path:path.map(point=>point.slice()),turns});return;}
       for(const direction of ['N','E','S','W']){
@@ -104,31 +106,34 @@
   }
   function quadPoint(points,u,v){const a=[points[0][0]*(1-u)+points[1][0]*u,points[0][1]*(1-u)+points[1][1]*u],b=[points[3][0]*(1-u)+points[2][0]*u,points[3][1]*(1-u)+points[2][1]*u];return [a[0]*(1-v)+b[0]*v,a[1]*(1-v)+b[1]*v];}
   const PIPS={1:[[.5,.5]],2:[[.28,.28],[.72,.72]],3:[[.28,.28],[.5,.5],[.72,.72]],4:[[.28,.28],[.72,.28],[.28,.72],[.72,.72]],5:[[.28,.28],[.72,.28],[.5,.5],[.28,.72],[.72,.72]],6:[[.28,.23],[.72,.23],[.28,.5],[.72,.5],[.28,.77],[.72,.77]]};
-  function dieBody(orientation,cx,cy,scale=.58){
+  function dieBody(orientation,cx,cy,scale=.58,options={}){
+    const blank=options.blank===true,role=options.role==='finish'?'finish':'start';
     const faces=[[[0,-36],[44,-14],[0,8],[-44,-14]],[[-44,-14],[0,8],[0,60],[-44,38]],[[0,8],[44,-14],[44,38],[0,60]]],values=[orientation.top,orientation.south,orientation.east],fills=['#fbfdfe','#e5eef1','#d1e0e5'];
-    const content=faces.map((face,index)=>polygon(face,fills[index],'#315c73',1.75)+PIPS[values[index]].map(position=>{const point=quadPoint(face,...position);return `<circle cx="${point[0]}" cy="${point[1]}" r="3.8" fill="#214d67"/>`;}).join('')).join('');
-    return `<g class="start-die" data-die-on-start="true" transform="translate(${cx} ${cy}) scale(${scale})">${content}</g>`;
+    const content=faces.map((face,index)=>polygon(face,blank?'#fff':fills[index],'#315c73',1.75)+(blank?'':PIPS[values[index]].map(position=>{const point=quadPoint(face,...position);return `<circle cx="${point[0]}" cy="${point[1]}" r="3.8" fill="#214d67"/>`;}).join(''))).join('');
+    return `<g class="${role}-die" ${role==='start'?'data-die-on-start="true"':`data-finish-die="${blank?'blank':'solved'}"`} transform="translate(${cx} ${cy}) scale(${scale})">${content}</g>`;
   }
   function boardPoint(row,column,options){return [options.centerX+(column-row)*options.cellX,options.topY+(column+row)*options.cellY];}
   function boardCenter(row,column,options){return boardPoint(row+.5,column+.5,options);}
   function diceSvg(payload,solution){
-    const options={centerX:330,topY:48,cellX:43,cellY:22},path=payload.path,marker=`spatial-arrow-${hash32(payload.route.join('')+Object.values(payload.startOrientation).join(',')).toString(16)}`;
-    let body=text(330,19,'화살표를 따라 ㉠까지',15,INK,700)+`<g class="dice-board" data-dice-board="5x5" data-camera="geometry-standard-high-iso" data-route="${payload.route.join('')}"><defs><marker id="${marker}" viewBox="0 0 10 10" refX="8.7" refY="5" markerWidth="2.7" markerHeight="2.7" orient="auto"><path d="M0 1L9 5L0 9z" fill="#287594"/></marker></defs>`;
-    for(let row=0;row<5;row++)for(let column=0;column<5;column++){
+    const options={centerX:190,topY:52,cellX:41,cellY:23.67},path=payload.path,marker=`spatial-arrow-${hash32(payload.route.join('')+Object.values(payload.startOrientation).join(',')).toString(16)}`;
+    let finish=clone(payload.startOrientation);for(const direction of payload.route)finish=rollDie(finish,direction);
+    let body=text(190,19,'화살표를 따라 굴리기',15,INK,700)+text(520,19,'도착한 주사위',15,INK,700)+`<g class="dice-board" data-dice-board="4x4" data-camera="geometry-standard-high-iso" data-route="${payload.route.join('')}"><defs><marker id="${marker}" viewBox="0 0 10 10" refX="8.7" refY="5" markerWidth="2.7" markerHeight="2.7" orient="auto"><path d="M0 1L9 5L0 9z" fill="#287594"/></marker></defs>`;
+    for(let row=0;row<4;row++)for(let column=0;column<4;column++){
       const points=[boardPoint(row,column,options),boardPoint(row,column+1,options),boardPoint(row+1,column+1,options),boardPoint(row+1,column,options)],target=path.at(-1)[0]===row&&path.at(-1)[1]===column;
       body+=polygon(points,target?'#fff0aa':'#fff',target?'#b37b16':'#78929f',target?2:1.15,target?'class="target-cell"':'');
     }
-    path.slice(1).forEach((cell,index)=>{const previous=path[index],from=boardCenter(...previous,options),to=boardCenter(...cell,options),dx=to[0]-from[0],dy=to[1]-from[1],a=[from[0]+dx*.09,from[1]+dy*.09],b=[to[0]-dx*.12,to[1]-dy*.12],length=Math.hypot(b[0]-a[0],b[1]-a[1]).toFixed(2);body+=line(a,b,'#287594',2.25,`class="roll-arrow" data-direction="${payload.route[index]}" data-arrow-length="${length}" marker-end="url(#${marker})"`);});
-    const start=boardCenter(...payload.start,options),target=boardCenter(...path.at(-1),options);
-    body+=dieBody(payload.startOrientation,start[0],start[1]-27,.55)+text(target[0],target[1]+13,solution?payload.answer:'㉠',solution?14:17,solution?'#1f685f':'#8a5b09',800)+'</g>';
-    if(solution)body+=rect(245,300,170,30,'#edf7f2','#43877c',1.4,15)+text(330,315,`㉠의 밑면 ${payload.answer}`,14,'#1f685f',800);
-    return svg(body,solution?340:312,solution?'굴린 순서와 마지막 밑면을 확인한 주사위 풀이':'높은 등각 격자에서 화살표를 따라 굴리는 주사위','dice-target-bottom');
+    path.slice(1).forEach((cell,index)=>{const previous=path[index],from=boardCenter(...previous,options),to=boardCenter(...cell,options),dx=to[0]-from[0],dy=to[1]-from[1],a=[from[0]+dx*.08,from[1]+dy*.08],b=[to[0]-dx*.08,to[1]-dy*.08],length=Math.hypot(b[0]-a[0],b[1]-a[1]).toFixed(2);body+=line(a,b,'#287594',2.25,`class="roll-arrow" data-roll-arrow="true" data-direction="${payload.route[index]}" data-arrow-length="${length}" marker-end="url(#${marker})"`);});
+    const start=boardCenter(...payload.start,options);
+    body+=dieBody(payload.startOrientation,start[0],start[1]-30,.5,{role:'start'})+'</g>'+line([382,28],[382,258],'#d5e0e5',1.2);
+    body+=dieBody(finish,520,86,.7,{role:'finish',blank:!solution});
+    [['top','윗면',finish.top],['front','앞면',finish.south],['right','오른쪽 면',finish.east]].forEach((item,index)=>{const x=438+index*82;body+=text(x,182,item[1],11,'#526c7a',700)+rect(x-31,196,62,28,solution?'#edf7f2':'#fff',solution?'#43877c':'#7da0b2',1.3,4,`data-response-slot="${item[0]}"`)+text(x,210,solution?item[2]:'',14,solution?'#1f685f':INK,800);});
+    return svg(body,270,solution?'굴린 순서와 도착한 주사위의 세 면을 확인한 풀이':'4×4 등각 격자의 시작 주사위, 이동 화살표, 빈 도착 주사위와 세 답칸','dice-visible-faces');
   }
   function diceQuestion(difficulty,random){
     const length=difficulty==='easy'?4:5,candidates=routeCandidates(length,difficulty),picked=candidates[random(0,candidates.length-1)],orientation=clone(DIE_ORIENTATIONS[random(0,DIE_ORIENTATIONS.length-1)]);
-    let finish=orientation,trace=[];for(const direction of picked.route){finish=rollDie(finish,direction);trace.push(finish.bottom);}
-    const payload={kind:'dice-target-bottom',rows:5,cols:5,start:picked.start.slice(),route:picked.route.slice(),path:picked.path.map(point=>point.slice()),turns:picked.turns,startOrientation:orientation,oppositeRule:'sum-seven',targetStep:length,view:'geometry-standard-high-iso',responseMode:'target-bottom-number',answer:finish.bottom};
-    return {payload,prompt:'마주 보는 면의 눈의 합이 7인 주사위입니다. 화살표를 따라 ㉠까지 굴렸을 때 바닥에 닿는 면의 눈을 쓰세요.',problemHtml:diceSvg(payload,false),answer:finish.bottom,answerHtml:`${finish.bottom}`,solution:`한 칸씩 굴릴 때 밑면은 ${trace.join(' → ')}로 바뀝니다. ㉠의 밑면은 ${finish.bottom}입니다.`,solutionDiagram:diceSvg(payload,true),difficultyEvidence:{metric:'rolls-and-turns',value:length,turns:picked.turns}};
+    let finish=orientation,trace=[];for(const direction of picked.route){finish=rollDie(finish,direction);trace.push(`${finish.top}·${finish.south}·${finish.east}`);}
+    const answer=[finish.top,finish.south,finish.east],payload={kind:'dice-visible-faces',rows:4,cols:4,start:picked.start.slice(),route:picked.route.slice(),path:picked.path.map(point=>point.slice()),turns:picked.turns,startOrientation:orientation,oppositeRule:'sum-seven',targetStep:length,queryFaces:['top','front','right'],view:'geometry-standard-high-iso',responseMode:'three-visible-face-numbers'};
+    return {payload,prompt:'마주 보는 두 면의 눈의 합이 7인 주사위입니다. 화살표를 따라 끝까지 굴린 뒤 도착한 주사위의 윗면·앞면·오른쪽 면의 눈을 차례로 쓰세요.',problemHtml:diceSvg(payload,false),answer,answerHtml:`윗면 ${answer[0]} · 앞면 ${answer[1]} · 오른쪽 면 ${answer[2]}`,solution:`한 칸씩 굴린 뒤의 윗면·앞면·오른쪽 면은 ${trace.join(' → ')}입니다. 따라서 도착한 세 면은 ${answer.join('·')}입니다.`,solutionDiagram:diceSvg(payload,true),difficultyEvidence:{metric:'rolls-and-turns',value:length,turns:picked.turns}};
   }
 
   function monotoneMap(width,depth,maxHeight,random,minimumCubes){
@@ -264,7 +269,7 @@
     const kind=sourceKind(source);if(!kind)throw Error('지원하지 않는 공간 세부 유형입니다.');
     if(!LEVELS.includes(difficulty))throw Error('easy, same, hard 중 한 난이도가 필요합니다.');
     if(!Number.isInteger(seed)||seed<0||seed>4294967295)throw Error('seed는 0부터 4294967295까지의 정수여야 합니다.');
-    const random=rng((seed^hash32(source.typeId))>>>0),question=kind==='dice-target-bottom'?diceQuestion(difficulty,random):kind==='checker-stack-count'?checkerQuestion(difficulty,random):kind==='tetra-cube-hole-count'?tetraQuestion(difficulty,random):kind==='block-build-count'?blockBuildQuestion(difficulty,random):fillQuestion(kind,difficulty,random);
+    const random=rng((seed^hash32(source.typeId))>>>0),question=kind==='dice-visible-faces'?diceQuestion(difficulty,random):kind==='checker-stack-count'?checkerQuestion(difficulty,random):kind==='tetra-cube-hole-count'?tetraQuestion(difficulty,random):kind==='block-build-count'?blockBuildQuestion(difficulty,random):fillQuestion(kind,difficulty,random);
     const responseMode=question.payload.responseMode,semantic=JSON.stringify(question.payload),id=`spatial-${source.typeId}-${difficulty}-${seed}-${hash32(semantic).toString(16).padStart(8,'0')}`;
     const complete={...question,id,typeId:source.typeId,number:source.number,domain:source.domain||'도형',difficulty,seed,answerCandidates:[clone(question.answer)],variant:{family:'replacement-spatial',spatialFamily:kind,difficulty,seed,version:VERSION,visibleEvidence:'coordinate-model',originalReprint:false},learnerFit:{gate:'learner-fit',learner_stage:'6세 유치원',language:'짧은 한국어 지시문',representations:'높은 등각 입체와 좌표 기반 바탕그림',prerequisites:'수 세기, 쌓기나무, 주사위 면 추적, 간단한 더하기와 빼기',reasoningLoad:POLICY[kind][LEVELS.indexOf(difficulty)],responseMode,status:'candidate'},evidence:{owner:'challenge_studio',reviewer:'parent-independent-qa',release:'locked',sourceLocator:source.typeId,gate:'single-answer-visible-evidence',criteria:['exactly-one-answer','canonical-high-isometric-camera','visible-or-constrained-hidden-cubes','clear-cube-boundaries']}};
     complete.payload.sourceTypeId=source.typeId;complete.payload.difficulty=difficulty;complete.payload.seed=seed;
