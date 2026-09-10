@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 254
+    "unlocked": 255
   },
   "items": [
     {
@@ -7765,17 +7765,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "분수로 나타낸 넓이 관계에서 전체 넓이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE2Mission1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문의 겹친 직사각형·삼각형, 색칠한 넓이와 두 분수 관계를 직접 대조했습니다. 고정 문항 3개에서 두 도형의 넓이 후보를 각각 전수 검사하고 합을 다시 계산했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

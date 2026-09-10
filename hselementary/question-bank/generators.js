@@ -24912,6 +24912,88 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Mission1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-mission-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { coloredArea: [16, 5], rectanglePart: [1, 4], trianglePart: [4, 9] },
+        { coloredArea: [15, 4], rectanglePart: [3, 8], trianglePart: [5, 12] },
+        { coloredArea: [14, 3], rectanglePart: [2, 7], trianglePart: [7, 12] }
+      ][poolIndex];
+      const coloredArea = rationalValue(...data.coloredArea);
+      const rectanglePart = rationalValue(...data.rectanglePart);
+      const trianglePart = rationalValue(...data.trianglePart);
+      const rectangleArea = rationalOperation(coloredArea, rectanglePart, "÷");
+      const triangleArea = rationalOperation(coloredArea, trianglePart, "÷");
+      const totalArea = rationalOperation(rectangleArea, triangleArea, "+");
+      const same = (left, right) => left.numerator === right.numerator && left.denominator === right.denominator;
+      const searchDenominator = lcmMany([coloredArea.denominator, rectanglePart.denominator, trianglePart.denominator, rectangleArea.denominator, triangleArea.denominator]);
+      const searchLimit = Math.ceil(Math.max(rectangleArea.numerator / rectangleArea.denominator, triangleArea.numerator / triangleArea.denominator) + 2) * searchDenominator;
+      const areaCandidates = part => Array.from({ length: searchLimit }, (_, index) => rationalValue(index + 1, searchDenominator)).filter(area => same(rationalOperation(area, part, "×"), coloredArea));
+      const rectangleCandidates = areaCandidates(rectanglePart);
+      const triangleCandidates = areaCandidates(trianglePart);
+      if (rectangleCandidates.length !== 1 || triangleCandidates.length !== 1 || !same(rectangleCandidates[0], rectangleArea) || !same(triangleCandidates[0], triangleArea)) throw new Error("6-2 Mission 1에서 두 도형의 넓이가 하나씩 정해지지 않습니다.");
+      const polygonSignedArea = points => points.reduce((sum, point, index) => {
+        const next = points[(index + 1) % points.length];
+        return sum + point[0] * next[1] - point[1] * next[0];
+      }, 0) / 2;
+      const polygonIntersection = (subject, clip) => {
+        const orientation = Math.sign(polygonSignedArea(clip)) || 1;
+        const cross = (a, b, point) => (b[0] - a[0]) * (point[1] - a[1]) - (b[1] - a[1]) * (point[0] - a[0]);
+        const inside = (point, first, second) => orientation * cross(first, second, point) >= -1e-7;
+        const meet = (start, end, first, second) => {
+          const ray = [end[0] - start[0], end[1] - start[1]];
+          const edge = [second[0] - first[0], second[1] - first[1]];
+          const denominator = ray[0] * edge[1] - ray[1] * edge[0];
+          if (Math.abs(denominator) < 1e-9) return end;
+          const offset = [first[0] - start[0], first[1] - start[1]];
+          const distance = (offset[0] * edge[1] - offset[1] * edge[0]) / denominator;
+          return [start[0] + distance * ray[0], start[1] + distance * ray[1]];
+        };
+        return clip.reduce((output, first, index) => {
+          const second = clip[(index + 1) % clip.length];
+          if (!output.length) return output;
+          const input = output;
+          const nextOutput = [];
+          let start = input[input.length - 1];
+          for (const end of input) {
+            if (inside(end, first, second)) {
+              if (!inside(start, first, second)) nextOutput.push(meet(start, end, first, second));
+              nextOutput.push(end);
+            } else if (inside(start, first, second)) nextOutput.push(meet(start, end, first, second));
+            start = end;
+          }
+          return nextOutput;
+        }, subject);
+      };
+      const rectanglePoints = [[130, 48], [267, 112], [207, 218], [70, 154]];
+      const trianglePoints = [[42, 172], [286, 28], [170, 190]];
+      const overlapPoints = polygonIntersection(trianglePoints, rectanglePoints);
+      if (overlapPoints.length < 3 || polygonSignedArea(overlapPoints) === 0) throw new Error("6-2 Mission 1의 직사각형과 삼각형이 겹친 부분을 만들지 못했습니다.");
+      const points = values => values.map(point => point.map(value => value.toFixed(2)).join(",")).join(" ");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const answer = `${plain(totalArea)}cm²`;
+      const signature = [...data.coloredArea, ...data.rectanglePart, ...data.trianglePart].join(":");
+      const overlapCenter = overlapPoints.reduce((center, point) => [center[0] + point[0] / overlapPoints.length, center[1] + point[1] / overlapPoints.length], [0, 0]);
+      const diagram = solved => `<svg class="geometry-diagram source62-overlap-area${solved ? " is-solved" : ""}" viewBox="0 0 330 245" role="img" aria-label="기울어진 직사각형과 삼각형이 겹치고 겹친 부분이 색칠된 그림" data-source62-e2-mission1-structure="rectangle-triangle-overlap" data-source62-e2-mission1-expression="${signature}" data-rectangle-points="${points(rectanglePoints)}" data-triangle-points="${points(trianglePoints)}" data-overlap-points="${points(overlapPoints)}" data-overlap-vertex-count="${overlapPoints.length}"><polygon class="source62-overlap-rectangle" points="${points(rectanglePoints)}"/><polygon class="source62-overlap-triangle" points="${points(trianglePoints)}"/><polygon class="source62-overlap-colored" points="${points(overlapPoints)}"/><text class="source62-overlap-rectangle-label" x="89" y="213">직사각형</text><text class="source62-overlap-triangle-label" x="268" y="31">삼각형</text><text class="source62-overlap-colored-label" x="${overlapCenter[0].toFixed(2)}" y="${overlapCenter[1].toFixed(2)}">색칠한 부분</text></svg>`;
+      const relationBoard = `<div class="source62-overlap-relation" data-colored-area="${plain(coloredArea)}" data-rectangle-part="${plain(rectanglePart)}" data-triangle-part="${plain(trianglePart)}"><span>색칠한 부분의 넓이 <b>${shown(coloredArea)}cm²</b></span><span>직사각형 넓이의 <b>${shown(rectanglePart)}</b></span><span>삼각형 넓이의 <b>${shown(trianglePart)}</b></span></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-overlap-area-solution"><strong>색칠한 부분을 기준으로 두 도형의 넓이 구하기</strong>${row("직사각형의 넓이", `${shown(coloredArea)}÷${shown(rectanglePart)}=${shown(rectangleArea)}cm²`)}${row("삼각형의 넓이", `${shown(coloredArea)}÷${shown(trianglePart)}=${shown(triangleArea)}cm²`)}${row("두 넓이의 합", `${shown(rectangleArea)}+${shown(triangleArea)}=${shown(totalArea)}cm²`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">색칠한 부분의 넓이를 각각의 분수로 나누어 두 도형의 넓이를 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">구한 두 넓이에 각각의 분수를 곱했을 때 색칠한 넓이가 되는지 확인하세요.</p>' : "";
+      const values = [coloredArea.numerator, coloredArea.denominator, rectanglePart.numerator, rectanglePart.denominator, trianglePart.numerator, trianglePart.denominator, rectangleArea.numerator, rectangleArea.denominator, triangleArea.numerator, triangleArea.denominator, totalArea.numerator, totalArea.denominator];
+      const evidence = `<span hidden data-source62-fraction-e2-mission1-kind="overlap-area-relations" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-rectangle-candidates="${rectangleCandidates.length}" data-triangle-candidates="${triangleCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`그림에서 색칠한 부분의 넓이는 직사각형 넓이의 ${shown(rectanglePart)}이고, 삼각형 넓이의 ${shown(trianglePart)}입니다. 색칠한 부분의 넓이가 ${shown(coloredArea)}cm²일 때 직사각형과 삼각형의 넓이의 합을 구하세요.${diagram(false)}${relationBoard}${support}${challenge}${evidence}`, answer, `직사각형의 넓이는 ${shown(coloredArea)}÷${shown(rectanglePart)}=${shown(rectangleArea)}cm²이고, 삼각형의 넓이는 ${shown(coloredArea)}÷${shown(trianglePart)}=${shown(triangleArea)}cm²입니다. 따라서 두 넓이의 합은 ${shown(rectangleArea)}+${shown(triangleArea)}=${shown(totalArea)}cm²입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-mission1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}${relationBoard}${answerBoard}${evidence}<div class="solution-answer-caption">같은 겹친 도형에서 색칠한 부분을 기준으로 두 넓이를 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26833,6 +26915,7 @@
     [type => type.sourceItemId === "6-2-u1-e2-example-2", "sourceGrade6SecondFractionDivisionE2Example2"],
     [type => type.sourceItemId === "6-2-u1-e2-example-3", "sourceGrade6SecondFractionDivisionE2Example3"],
     [type => type.sourceItemId === "6-2-u1-e2-example-4", "sourceGrade6SecondFractionDivisionE2Example4"],
+    [type => type.sourceItemId === "6-2-u1-e2-mission-1", "sourceGrade6SecondFractionDivisionE2Mission1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
