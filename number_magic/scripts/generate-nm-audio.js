@@ -21,15 +21,20 @@ const path = require('path');
 // ── Config ────────────────────────────────────────────────────────────────────
 const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
 const SUPABASE_URL = 'https://fgahqumaldheqettmvqg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
+/* 2026-09-10 — anon 키로는 더 이상 업로드가 안 된다. 2026-08-25 보안 강화 마이그레이션
+   (restrict_public_storage_to_read_only)이 storage 버킷을 anon read-only로 잠갔다 —
+   anon 키는 store.js에도 박혀 있는 공개 키라 쓰기 허용은 그 자체로 취약점이었다.
+   reading-world 쪽 scripts/generate-audio.js가 이미 쓰는 것과 같은 패턴(서비스
+   롤 키, 저장소 Actions Secret에 이미 등록돼 있음)으로 맞춘다. */
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const OUT_DIR = path.join(__dirname, '../audio-generated');
 const TTS_MAP_FILE = path.join(__dirname, '../data/tts-map.js');
 
-// Google Neural2 voices by language
+// Google voices by language — cmn-CN has no Neural2 tier, Wavenet is the best available
 const VOICES = {
   ko: { languageCode: 'ko-KR', name: 'ko-KR-Neural2-C' },
   en: { languageCode: 'en-US', name: 'en-US-Neural2-F' },
-  zh: { languageCode: 'cmn-CN', name: 'cmn-CN-Neural2-A' },
+  zh: { languageCode: 'cmn-CN', name: 'cmn-CN-Wavenet-A' },
 };
 
 // ── Load all unit data ─────────────────────────────────────────────────────────
@@ -161,7 +166,11 @@ if (!GOOGLE_TTS_KEY) {
   console.error('❌  Set GOOGLE_TTS_KEY environment variable first.');
   process.exit(1);
 }
-console.log(`🎙  Voices: ko-KR-Neural2-C / en-US-Neural2-F / cmn-CN-Neural2-A`);
+if (!SUPABASE_KEY) {
+  console.error('❌  Set SUPABASE_SERVICE_ROLE_KEY environment variable first (anon key is read-only on storage since 2026-08-25).');
+  process.exit(1);
+}
+console.log(`🎙  Voices: ko-KR-Neural2-C / en-US-Neural2-F / cmn-CN-Wavenet-A`);
 console.log('');
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -218,8 +227,18 @@ async function uploadToSupabase(mp3Buffer, storagePath) {
 // ── Main ───────────────────────────────────────────────────────────────────────
 async function main() {
   let done = 0, failed = 0;
-  // map: { lang: { text: url } }
+  /* map: { lang: { text: url } } — 기존 맵으로 시작해서 성공한 항목만 덮어쓴다
+     (2026-09-10). 전엔 매번 빈 맵으로 시작해 실패한 태스크의 자리를 그냥 비워
+     버렸다 — 이번 실행에서 813개 전부 실패하자 기존에 잘 있던 486줄(A·N 시리즈
+     실음성)까지 통째로 지워져 커밋됐다. 실패는 이전 값을 그대로 둔다. */
   const map = { ko: {}, en: {}, zh: {} };
+  try {
+    const prevWindow = { NM_TTS_MAP: {} };
+    eval(fs.readFileSync(TTS_MAP_FILE, 'utf8').replace(/window\.NM_TTS_MAP/, 'prevWindow.NM_TTS_MAP'));
+    for (const lang of ['ko', 'en', 'zh']) Object.assign(map[lang], prevWindow.NM_TTS_MAP[lang] || {});
+  } catch (e) {
+    console.warn(`⚠  Could not load existing ${TTS_MAP_FILE}, starting fresh:`, e.message);
+  }
 
   for (const task of tasks) {
     const label = `${task.unitId} ${task.key} [${task.lang}]`;
