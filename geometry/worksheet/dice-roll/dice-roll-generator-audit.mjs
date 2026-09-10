@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { ACTIVITIES, chooseProblems, groupPages, normalizeCount } from "./workbook-core.js";
+import { ACTIVITIES, chooseProblems, groupPages, normalizeActivities, normalizeCount } from "./workbook-core.js";
 import { directionInfo, roll, visibleFaces } from "../../games/dice-roll/levels.js";
 
 function verifyBoard(board) {
@@ -54,4 +54,9 @@ for (const activity of ACTIVITIES) {
 assert.equal(normalizeCount(0), 1);
 assert.equal(normalizeCount(21), 20);
 assert.equal(chooseProblems("all", 20, { level: 5, seed: 7 }).length, 20);
+assert.deepEqual(normalizeActivities("visible.sequence.visible"), ["sequence", "visible"]);
+const mixedSelection = chooseProblems(["sequence", "visible"], 20, { level: 5, seed: 17 });
+assert.deepEqual([...new Set(mixedSelection.map((problem) => problem.activity))].sort(), ["sequence", "visible"]);
+assert.equal(mixedSelection.filter((problem) => problem.activity === "sequence").length, 10);
+assert.equal(mixedSelection.filter((problem) => problem.activity === "visible").length, 10);
 console.log("DICE_ROLL_GENERATOR_AUDIT_OK activities=5 levels=4 samples=6000 per-sheet=20 pages=10");

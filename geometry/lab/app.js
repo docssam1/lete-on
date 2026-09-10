@@ -1,3 +1,5 @@
+import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-core.js?v=dice-sheet-9";
+
 // GFIELD 지오메트리 랩 — 기하 학습지를 한 곳에서 고르고 만드는 문제은행.
 //
 // 이 파일에는 단계 목록도 쌓기나무 유형 목록도 들어 있지 않다. 둘 다 학습지
@@ -17,7 +19,21 @@
   const WORKSHEET_URL = "../worksheet/index.html";
   const BOOK_URL = "../cube-town/print.html";
   const FOLD_URL = "../worksheet/paper-fold/";
+  const DICE_WORKSHEET_URL = "../worksheet/dice-roll/";
   const STUDIO_COUNTS = [5, 10, 15, 20];
+  const DICE_LEVELS = [
+    { value: 2, label: "2 · 짧은 경로" },
+    { value: 3, label: "3 · 꺾인 경로" },
+    { value: 4, label: "4 · 긴 경로" },
+    { value: 5, label: "5 · 종합 추리" }
+  ];
+  const DICE_TYPE_DETAILS = {
+    sequence: { code: "DR-B", note: "굴릴 때마다 바닥에 닿는 눈을 순서대로 기록" },
+    target: { code: "DR-T", note: "목표 칸에서 바닥에 닿는 눈 하나 구하기" },
+    sum: { code: "DR-S", note: "표시한 칸의 밑면 눈을 찾아 모두 더하기" },
+    paired: { code: "DR-P", note: "두 경로의 마지막 밑면 관계로 빈 눈 찾기" },
+    visible: { code: "DR-5", note: "다섯 면 그림에 눈을 옮겨 마지막 주사위 완성" }
+  };
 
   // 문항 수 선택지는 학습지 생성기의 문항 수 select와 같은 값만 쓴다 — 거기
   // 없는 값을 넘기면 생성기가 무시하고 기본값으로 되돌아간다.
@@ -63,7 +79,6 @@
     { code: "MI", domain: DOMAIN_MOVE, label: "거울대칭", note: "거울선에서 같은 줄과 같은 거리를 찾아 그리기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/mirror-manor/", count: true, params: { level: "all", cover: "1" } },
     { code: "HS", domain: DOMAIN_OBSERVE, label: "숨은 도형", note: "크기와 방향이 다른 도형을 빠짐없이 세기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/hidden-shape/", count: false },
     { code: "PW", domain: DOMAIN_OBSERVE, label: "길 잇기", note: "타일의 길을 연결하고 가장 가까운 경로 찾기", levels: ["L1", "L2", "L3", "L4", "L5"], url: "../worksheet/path-walk/", count: false },
-    { code: "DR", domain: DOMAIN_SOLID, label: "주사위 굴리기", note: "각 칸의 밑면·표시 칸의 합과 다섯 면 그림으로 마지막 주사위 추론하기", levels: ["L2", "L3", "L4", "L5"], url: "../worksheet/dice-roll/", count: true, params: { activity: "all", cover: "1" } },
     { code: "NE", domain: DOMAIN_SOLID, label: "전개도 전망대", note: "전개도를 접어 마주 보는 면과 보이는 방향 찾기", levels: ["L3", "L4", "L5"], url: "../worksheet/net-observatory/", count: false }
   ];
 
@@ -131,6 +146,8 @@
     foldCount: 20,
     studioByDomain: {},
     studioCount: 20,
+    diceActivities: [],
+    diceLevel: 3,
     levelNote: "",
     // 단계가 달라져 현재 학습지에서 제외되는 선택을 알리는 안내 한 줄. 선택
     // 자체는 지우지 않고 유형 줄의 기존 안내 자리(#typeNote)를 재활용한다.
@@ -168,6 +185,10 @@
 
   function selectedStudio() {
     return state.studioByDomain[state.domain] || null;
+  }
+
+  function selectedDiceActivities() {
+    return DICE_ACTIVITIES.filter((activity) => state.diceActivities.includes(activity.id));
   }
 
   // "전체"에서는 고정 문제 학습지를 계속 켜 둔다 — 어차피 그 풀의 전체 레벨을
@@ -388,6 +409,7 @@
     if (opts.book) card.dataset.book = opts.code;
     if (opts.fold) card.dataset.fold = opts.code;
     if (opts.studio) card.dataset.studio = opts.code;
+    if (opts.diceActivity) card.dataset.diceActivity = opts.diceActivity;
     card.innerHTML = '<input class="type-input" />' +
       '<span class="type-choice" aria-hidden="true"></span>' +
       '<span class="type-head"><span class="type-code"></span></span>' +
@@ -495,11 +517,74 @@
     });
   }
 
+  function renderDiceLevels() {
+    const row = $("diceLevelRow");
+    if (!row) return;
+    row.replaceChildren();
+    DICE_LEVELS.forEach((level) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "intensity-btn dice-level-btn" + (level.value === state.diceLevel ? " is-active" : "");
+      button.dataset.diceLevel = String(level.value);
+      button.textContent = level.label;
+      button.setAttribute("aria-label", "주사위 난이도 " + level.label);
+      button.setAttribute("aria-pressed", String(level.value === state.diceLevel));
+      button.addEventListener("click", () => {
+        state.diceLevel = level.value;
+        renderAll();
+      });
+      row.appendChild(button);
+    });
+  }
+
+  function renderSolidTypes(grid) {
+    typeGroupHeading(grid, "주사위 굴리기", "세부유형 여러 개 선택 가능");
+    DICE_ACTIVITIES.forEach((activity) => {
+      const detail = DICE_TYPE_DETAILS[activity.id];
+      grid.appendChild(typeCard({
+        code: detail.code,
+        label: activity.names.ko,
+        meta: detail.note,
+        diceActivity: activity.id,
+        ok: true,
+        active: state.diceActivities.includes(activity.id),
+        multiple: true,
+        group: "dice-generated-types",
+        onChange(event) {
+          state.studioByDomain[DOMAIN_SOLID] = null;
+          const at = state.diceActivities.indexOf(activity.id);
+          if (event.currentTarget.checked && at === -1) state.diceActivities.push(activity.id);
+          if (!event.currentTarget.checked && at !== -1) state.diceActivities.splice(at, 1);
+          renderAll();
+        }
+      }));
+    });
+
+    typeGroupHeading(grid, "전개도", "별도 활동지 한 장");
+    const studio = studioInfo("NE");
+    grid.appendChild(typeCard({
+      code: studio.code,
+      label: studio.label,
+      meta: studio.note + " · 한 장 활동지",
+      studio: true,
+      ok: true,
+      active: selectedStudio() === studio.code,
+      multiple: false,
+      group: "solid-studio",
+      onChange() {
+        state.diceActivities = [];
+        state.studioByDomain[DOMAIN_SOLID] = studio.code;
+        renderAll();
+      }
+    }));
+  }
+
   function renderTypes() {
     const grid = $("typeGrid");
     grid.replaceChildren();
     if (state.domain === DOMAIN_FOLD) renderFoldTypes(grid);
     else if (state.domain === DOMAIN_CUBE) renderCubeTypes(grid);
+    else if (state.domain === DOMAIN_SOLID) renderSolidTypes(grid);
     else renderStudioTypes(grid);
     const note = $("typeNote");
     if (note) {
@@ -514,6 +599,12 @@
         note.textContent = state.typeAutoNote;
       } else if (state.domain === DOMAIN_FOLD) {
         note.textContent = "접기 유형은 한 번에 하나씩 만들어요.";
+      } else if (state.domain === DOMAIN_SOLID) {
+        note.textContent = state.diceActivities.length
+          ? "체크한 주사위 세부유형이 한 학습지에 고르게 섞여 나와요."
+          : selectedStudio()
+            ? "전개도는 주사위 생성기와 분리된 한 장 활동지로 열려요."
+            : "주사위 세부유형은 여러 개 선택할 수 있고, 전개도는 별도로 열어요.";
       } else if (state.domain !== DOMAIN_CUBE) {
         note.textContent = "서로 다른 인쇄 엔진이므로 한 번에 한 학습지를 엽니다. 학습지 안에서 활동을 더 고를 수 있어요.";
       } else if (state.book) {
@@ -552,7 +643,8 @@
     const current = currentCount();
     const studioCode = selectedStudio();
     const studio = studioCode ? studioInfo(studioCode) : null;
-    const applies = state.domain === DOMAIN_CUBE || state.domain === DOMAIN_FOLD || Boolean(studio && studio.count);
+    const diceSelected = state.domain === DOMAIN_SOLID && state.diceActivities.length > 0;
+    const applies = state.domain === DOMAIN_CUBE || state.domain === DOMAIN_FOLD || diceSelected || Boolean(studio && studio.count);
     const word = state.domain === DOMAIN_CUBE && state.book ? "문제" : "문항";
     counts.forEach((count) => {
       const button = document.createElement("button");
@@ -572,8 +664,8 @@
     if (field) field.classList.toggle("is-muted", !applies);
     const note = $("countNote");
     if (note) {
-      note.textContent = !studioCode && state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD
-        ? "학습지를 선택하면 적용할 수 있는 문항 수가 켜져요."
+      note.textContent = !studioCode && !diceSelected && state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD
+        ? (state.domain === DOMAIN_SOLID ? "주사위 세부유형을 선택하면 문항 수를 정할 수 있어요." : "학습지를 선택하면 적용할 수 있는 문항 수가 켜져요.")
         : studio && !studio.count
           ? "이 활동지는 문제 크기에 맞춘 한 장 구성을 사용해요."
           : "최대 20문항까지 만들 수 있어요.";
@@ -621,12 +713,14 @@
     const standalone = state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD;
     const studioCode = selectedStudio();
     const studio = studioCode ? studioInfo(studioCode) : null;
+    const diceSelected = state.domain === DOMAIN_SOLID && state.diceActivities.length > 0;
     const previewVisible = state.domain === DOMAIN_CUBE && !state.book;
     $("levelField").hidden = standalone;
+    $("diceLevelField").hidden = state.domain !== DOMAIN_SOLID || Boolean(studioCode);
     $("intensityField").hidden = !intensityApplies();
-    $("countField").hidden = standalone && !(studio && studio.count);
+    $("countField").hidden = standalone && !diceSelected && !(studio && studio.count);
     $("previewPanel").hidden = !previewVisible;
-    $("typesTitle").textContent = standalone ? "학습지" : "유형";
+    $("typesTitle").textContent = state.domain === DOMAIN_SOLID ? "세부유형" : standalone ? "학습지" : "유형";
     $("builderGrid").classList.toggle("is-compact", !previewVisible);
   }
 
@@ -746,6 +840,16 @@
   // 마우스 오른쪽 클릭으로 복사하거나 즐겨찾기에 넣어도 그대로 재현된다.
   // ---------------------------------------------------------------------
   function buildUrl() {
+    const diceActivities = selectedDiceActivities();
+    if (state.domain === DOMAIN_SOLID && diceActivities.length) {
+      const params = new URLSearchParams();
+      params.set("activities", diceActivities.map((activity) => activity.id).join("."));
+      params.set("level", String(state.diceLevel));
+      params.set("count", String(state.studioCount));
+      params.set("cover", "1");
+      params.set("lang", "ko");
+      return DICE_WORKSHEET_URL + "?" + params.toString().replace(/%2E/gi, ".");
+    }
     const studioCode = selectedStudio();
     if (studioCode) {
       const studio = studioInfo(studioCode);
@@ -786,13 +890,15 @@
   function renderSummary() {
     const link = $("buildBtn");
     const studioCode = selectedStudio();
+    const diceActivities = selectedDiceActivities();
+    const diceReady = state.domain === DOMAIN_SOLID && diceActivities.length > 0;
     const selectedBook = state.book ? bookInfo(state.book) : null;
     const selectedFold = state.fold ? foldInfo(state.fold) : null;
     const ready = state.domain === DOMAIN_FOLD
       ? Boolean(selectedFold && entrySupportsLevel(selectedFold, state.level))
       : state.domain === DOMAIN_CUBE
         ? Boolean((selectedBook && entrySupportsLevel(selectedBook, state.level)) || previewableTypes().length)
-        : Boolean(studioCode);
+        : Boolean(studioCode || diceReady);
     link.href = ready ? buildUrl() : "#";
     link.textContent = studioCode ? "학습지 열기" : "학습지 만들기";
     link.classList.toggle("is-disabled", !ready);
@@ -802,12 +908,16 @@
     if (!ready) {
       const incompatible = (selectedBook && !entrySupportsLevel(selectedBook, state.level)) ||
         (selectedFold && !entrySupportsLevel(selectedFold, state.level));
-      head.textContent = incompatible ? "선택은 그대로 보관했어요" : (state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD ? "학습지를 선택해 주세요" : "유형을 선택해 주세요");
+      head.textContent = incompatible ? "선택은 그대로 보관했어요" : (state.domain === DOMAIN_SOLID ? "주사위 세부유형이나 전개도를 선택해 주세요" : state.domain !== DOMAIN_CUBE && state.domain !== DOMAIN_FOLD ? "학습지를 선택해 주세요" : "유형을 선택해 주세요");
       tail = incompatible ? " · 이 단계에서 사용할 수 있는 유형을 골라 주세요." : " · 선택 후 학습지를 만들 수 있어요.";
       $("buildSummary").replaceChildren(head, document.createTextNode(tail));
       return;
     }
-    if (studioCode) {
+    if (diceReady) {
+      const labels = diceActivities.map((activity) => activity.names.ko);
+      head.textContent = "주사위 굴리기 · 난이도 " + state.diceLevel + " · " + state.studioCount + "문항";
+      tail = " · " + (labels.length <= 3 ? labels.join(" · ") : labels.slice(0, 3).join(" · ") + " 외 " + (labels.length - 3) + "가지");
+    } else if (studioCode) {
       const studio = studioInfo(studioCode);
       head.textContent = studio.label + (studio.count ? " · " + state.studioCount + "문항" : " · 한 장 활동지");
       tail = " · " + studio.note;
@@ -833,6 +943,7 @@
   function renderAll() {
     renderLevels();
     renderIntensity();
+    renderDiceLevels();
     renderDomains();
     renderTypes();
     renderIntensityState();

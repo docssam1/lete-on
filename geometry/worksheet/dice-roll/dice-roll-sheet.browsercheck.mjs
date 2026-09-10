@@ -20,6 +20,7 @@ page.on("console", (message) => { if (message.type() === "error") errors.push(me
 page.on("pageerror", (error) => errors.push(error.message));
 await page.goto(`${baseUrl}/geometry/worksheet/dice-roll/?activity=all&level=5&count=20&cover=1&seed=20260910`, { waitUntil: "networkidle" });
 
+assert.equal(new URL(await page.locator(".maker-bar > a").getAttribute("href"), page.url()).pathname, "/geometry/lab/");
 assert.equal(await page.locator("#coverSheet").count(), 1);
 assert.equal(await page.locator(".sheet").count(), 10);
 assert.equal(await page.locator(".problem").count(), 20);
@@ -31,6 +32,16 @@ assert.equal(await page.locator(".problem").count(), 20);
 assert.deepEqual(await page.locator(".sheet .problem-grid").evaluateAll((nodes) => nodes.map((node) => node.children.length)), Array(10).fill(2));
 assert.deepEqual(await page.locator(".problem").evaluateAll((nodes) => [...new Set(nodes.map((node) => node.dataset.activity))].sort()), ["paired", "sequence", "sum", "target", "visible"]);
 for (const activity of ["paired", "sequence", "sum", "target", "visible"]) assert.equal(await page.locator(`.problem[data-activity="${activity}"]`).count(), 4);
+
+const selectionPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+await selectionPage.goto(`${baseUrl}/geometry/worksheet/dice-roll/?activities=sequence.visible&level=4&count=20&cover=0&seed=20260910`, { waitUntil: "networkidle" });
+assert.equal(await selectionPage.locator("#activitySelect").inputValue(), "sequence.visible");
+assert.equal(await selectionPage.locator("#activitySelect option:checked").textContent(), "선택한 2개 활동 섞기");
+assert.deepEqual(await selectionPage.locator(".problem").evaluateAll((nodes) => [...new Set(nodes.map((node) => node.dataset.activity))].sort()), ["sequence", "visible"]);
+assert.equal(await selectionPage.locator('.problem[data-activity="sequence"]').count(), 10);
+assert.equal(await selectionPage.locator('.problem[data-activity="visible"]').count(), 10);
+assert.equal(new URL(selectionPage.url()).searchParams.get("activities"), "sequence.visible");
+await selectionPage.close();
 
 const numberedProblems = await page.locator(".problem").evaluateAll((nodes) => nodes.map((node) => {
   const directChildren = [...node.children];

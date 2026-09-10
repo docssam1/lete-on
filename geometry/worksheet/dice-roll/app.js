@@ -1,6 +1,6 @@
 import { visibleFaces } from "../../games/dice-roll/levels.js?v=dice-roll-3";
 import { BOARD_BASIS, DIE_BASE_CENTER, DIE_FACE_QUADS, DIE_ON_BOARD_SCALE, VIEWPOINT_ID, boardFrame, cellCenter, cellPolygon, pointOnQuad, pointsAttribute } from "../../games/dice-roll/projection.js?v=dice-roll-1";
-import { ACTIVITIES, chooseProblems, groupPages, normalizeActivity, normalizeCount, normalizeLanguage, normalizeLevel, validateProblem } from "./workbook-core.js?v=dice-sheet-8";
+import { ACTIVITIES, chooseProblems, groupPages, normalizeActivities, normalizeCount, normalizeLanguage, normalizeLevel, validateProblem } from "./workbook-core.js?v=dice-sheet-9";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
@@ -9,6 +9,7 @@ const activitySelect = $("#activitySelect"), levelSelect = $("#levelSelect"), co
 let language = normalizeLanguage(params.get("lang"));
 let round = /^\d+$/.test(params.get("round") || "") ? Number(params.get("round")) >>> 0 : 0;
 const seed = /^\d+$/.test(params.get("seed") || "") ? Number(params.get("seed")) >>> 0 : crypto.getRandomValues(new Uint32Array(1))[0];
+let selectedActivities = normalizeActivities(params.get("activities") ?? params.get("activity"));
 let problems = [];
 
 const COPY = {
@@ -154,18 +155,35 @@ function render() {
 
 function syncUrl() {
   const url = new URL(location.href);
-  const state = { activity: activitySelect.value, level: levelSelect.value, count: problems.length, lang: language, cover: +coverToggle.checked, answers: +answerToggle.checked, seed, round };
+  const state = { activities: activityValue(), level: levelSelect.value, count: problems.length, lang: language, cover: +coverToggle.checked, answers: +answerToggle.checked, seed, round };
+  url.searchParams.delete("activity");
   Object.entries(state).forEach(([key, value]) => url.searchParams.set(key, String(value)));
   history.replaceState(null, "", url);
 }
 
+function activityValue() {
+  return selectedActivities.length === ACTIVITIES.length ? "all" : selectedActivities.join(".");
+}
+
+function selectedMixLabel(count) {
+  return {
+    ko: `선택한 ${count}개 활동 섞기`,
+    en: `Mix ${count} selected activities`,
+    zh: `混合已选的${count}项活动`,
+    ja: `選んだ${count}つの活動を混ぜる`
+  }[language];
+}
+
 function localize() {
-  const currentActivity = activitySelect.value || "all";
+  const currentActivity = activityValue();
   const currentLevel = normalizeLevel(levelSelect.value || params.get("level"));
   document.documentElement.lang = language;
   document.title = `${copy().title} | GFIELD`;
   document.querySelectorAll("[data-copy]").forEach((node) => { node.textContent = copy()[node.dataset.copy]; });
-  activitySelect.innerHTML = `<option value="all">${escape(copy().all)}</option>` + ACTIVITIES.map((activity) => `<option value="${activity.id}">${escape(activity.names[language])}</option>`).join("");
+  const selectedOption = selectedActivities.length > 1 && selectedActivities.length < ACTIVITIES.length
+    ? `<option value="${escape(currentActivity)}">${escape(selectedMixLabel(selectedActivities.length))}</option>`
+    : "";
+  activitySelect.innerHTML = `<option value="all">${escape(copy().all)}</option>` + selectedOption + ACTIVITIES.map((activity) => `<option value="${activity.id}">${escape(activity.names[language])}</option>`).join("");
   activitySelect.value = currentActivity;
   levelSelect.innerHTML = [2, 3, 4, 5].map((level) => `<option value="${level}">${escape(copy().levels[level])}</option>`).join("");
   levelSelect.value = String(currentLevel);
@@ -174,21 +192,19 @@ function localize() {
 
 function generate() {
   countInput.value = normalizeCount(countInput.value);
-  problems = chooseProblems(activitySelect.value, countInput.value, { level: levelSelect.value, seed, round });
+  problems = chooseProblems(selectedActivities, countInput.value, { level: levelSelect.value, seed, round });
   render();
 }
 
-activitySelect.value = normalizeActivity(params.get("activity"));
 levelSelect.value = String(normalizeLevel(params.get("level")));
 countInput.value = String(normalizeCount(params.get("count") ?? 20));
 coverToggle.checked = params.get("cover") !== "0";
 answerToggle.checked = params.get("answers") === "1";
 localize();
-activitySelect.value = normalizeActivity(params.get("activity"));
 levelSelect.value = String(normalizeLevel(params.get("level")));
 generate();
 
-activitySelect.addEventListener("change", () => { round = 0; generate(); });
+activitySelect.addEventListener("change", () => { selectedActivities = normalizeActivities(activitySelect.value); round = 0; generate(); });
 levelSelect.addEventListener("change", () => { round = 0; generate(); });
 countInput.addEventListener("change", generate);
 coverToggle.addEventListener("change", render);

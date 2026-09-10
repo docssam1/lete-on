@@ -30,6 +30,15 @@ export function normalizeActivity(value) {
   return value === "all" || ACTIVITY_IDS.has(value) ? value : "all";
 }
 
+export function normalizeActivities(value) {
+  const requested = Array.isArray(value)
+    ? value
+    : String(value ?? "").split(/[.,]/);
+  if (!requested.length || requested.includes("all")) return ACTIVITIES.map((activity) => activity.id);
+  const selected = new Set(requested.map((item) => String(item).trim()).filter((item) => ACTIVITY_IDS.has(item)));
+  return selected.size ? ACTIVITIES.filter((activity) => selected.has(activity.id)).map((activity) => activity.id) : ACTIVITIES.map((activity) => activity.id);
+}
+
 function seededRandom(seed) {
   let state = seed >>> 0;
   return () => {
@@ -142,12 +151,12 @@ function signature(problem) {
 }
 
 export function chooseProblems(activity, count, options = {}) {
-  const normalizedActivity = normalizeActivity(activity);
+  const normalizedActivities = normalizeActivities(activity);
   const total = normalizeCount(count);
   const level = normalizeLevel(options.level);
   const seed = (Number(options.seed) + Number(options.round || 0) * 2654435761) >>> 0;
   const random = seededRandom(seed);
-  const selected = normalizedActivity === "all" ? ACTIVITIES : ACTIVITIES.filter((item) => item.id === normalizedActivity);
+  const selected = ACTIVITIES.filter((item) => normalizedActivities.includes(item.id));
   const result = [];
   const used = new Set();
   for (let index = 0; index < total; index += 1) {

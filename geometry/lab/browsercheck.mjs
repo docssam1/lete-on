@@ -8,9 +8,9 @@ const out = fileURLToPath(new URL("./qa-artifacts/", import.meta.url));
 const expected = {
   plane: ["점판 도형", "각도 탐구", "사각형 탐구", "원 탐구", "둘레 탐구", "단위 넓이"],
   move: ["도형의 변화", "거울대칭"],
-  observe: ["숨은 도형", "길 잇기"],
-  solid: ["주사위 굴리기", "전개도 전망대"]
+  observe: ["숨은 도형", "길 잇기"]
 };
+const diceLabels = ["칸마다 밑면 기록", "목표 칸의 밑면", "표시한 칸의 눈의 합", "두 주사위 밑면 추리", "도착한 주사위의 다섯 면"];
 const countEnabled = new Set(["점판 도형", "각도 탐구", "사각형 탐구", "원 탐구", "둘레 탐구", "단위 넓이", "도형의 변화", "거울대칭", "주사위 굴리기"]);
 const targetReady = new Map([
   ["점판 도형", "#countInput"], ["각도 탐구", "#countInput"], ["사각형 탐구", "#countInput"],
@@ -95,16 +95,45 @@ try {
       assert.equal(targetUrl.pathname.startsWith("/geometry/worksheet/"), true, `${label}: wrong target`);
       assert.equal(targetUrl.searchParams.has("count"), countEnabled.has(label), `${label}: count handoff mismatch`);
       if (countEnabled.has(label)) assert.equal(targetUrl.searchParams.get("count"), "15", `${label}: wrong count`);
-      if (label === "주사위 굴리기") {
-        assert.match(await card.locator(".type-levels").textContent(), /다섯 면 그림/);
-        assert.equal(targetUrl.pathname, "/geometry/worksheet/dice-roll/");
-        assert.equal(targetUrl.searchParams.get("activity"), "all");
-        assert.equal(targetUrl.searchParams.get("cover"), "1");
-      }
       targetHrefs.push({ label, href: targetUrl.href });
       links += 1;
     }
   }
+
+  await page.locator('.domain-btn[data-domain="solid"]').click();
+  assert.equal(await page.locator("#levelField").isVisible(), false, "solid: unrelated course stage visible");
+  assert.equal(await page.locator("#intensityField").isVisible(), false, "solid: unrelated generic difficulty visible");
+  assert.equal(await page.locator("#diceLevelField").isVisible(), true, "solid: dice difficulty missing");
+  assert.equal(await page.locator("#previewPanel").isVisible(), false, "solid: empty preview visible");
+  assert.equal(await page.locator("#typesTitle").textContent(), "세부유형");
+  assert.deepEqual(await page.locator('.type-card[data-dice-activity] .type-label').allTextContents(), diceLabels);
+  assert.equal(await page.locator('.type-card[data-dice-activity] input[type="checkbox"]').count(), 5, "dice details must be multi-select checkboxes");
+  assert.equal(await page.locator('.type-card[data-studio="NE"] input[type="radio"]').count(), 1, "net worksheet must stay separate");
+  assert.equal(await page.locator("#countField").isVisible(), false, "solid: count should wait for a printable selection");
+  await page.locator('.dice-level-btn[data-dice-level="5"]').click();
+  for (const activity of ["sequence", "sum", "visible"]) await page.locator(`.type-card[data-dice-activity="${activity}"]`).click();
+  assert.equal(await page.locator('.type-card[data-dice-activity] .type-input:checked').count(), 3, "dice detail multi-selection");
+  assert.equal(await page.locator("#countField").isVisible(), true, "dice detail count missing");
+  await page.locator('.count-btn[data-count="15"]').click();
+  const diceHref = new URL(await page.locator("#buildBtn").getAttribute("href"), labUrl);
+  assert.equal(diceHref.pathname, "/geometry/worksheet/dice-roll/");
+  assert.equal(diceHref.searchParams.get("activities"), "sequence.sum.visible");
+  assert.equal(diceHref.searchParams.get("level"), "5");
+  assert.equal(diceHref.searchParams.get("count"), "15");
+  assert.equal(diceHref.searchParams.get("cover"), "1");
+  assert.match(await page.locator("#buildSummary").textContent(), /주사위 굴리기 · 난이도 5 · 15문항/);
+  targetHrefs.push({ label: "주사위 굴리기", href: diceHref.href });
+  links += 1;
+
+  await page.locator('.type-card[data-studio="NE"]').click();
+  assert.equal(await page.locator('.type-card[data-dice-activity] .type-input:checked').count(), 0, "net selection did not clear dice engine");
+  assert.equal(await page.locator("#diceLevelField").isVisible(), false, "net selection kept dice difficulty visible");
+  assert.equal(await page.locator("#countField").isVisible(), false, "net worksheet incorrectly shows generated count");
+  const netHref = new URL(await page.locator("#buildBtn").getAttribute("href"), labUrl);
+  assert.equal(netHref.pathname, "/geometry/worksheet/net-observatory/");
+  assert.equal(netHref.searchParams.has("activities"), false);
+  targetHrefs.push({ label: "전개도 전망대", href: netHref.href });
+  links += 1;
 
   await page.locator('.domain-btn[data-domain="plane"]').click();
   assert.equal(await page.locator('.type-card[data-studio="AR"] .type-input').isChecked(), true, "selection restored per domain");
@@ -121,6 +150,9 @@ try {
       assert.equal(await target.locator("article").count(), 15, `${label}: target did not render 15 problems`);
     }
     if (label === "주사위 굴리기") {
+      const selectedActivities = new URL(href).searchParams.get("activities").split(".").sort();
+      assert.deepEqual(await target.locator(".problem").evaluateAll((problems) => [...new Set(problems.map((problem) => problem.dataset.activity))].sort()), selectedActivities, "dice bank ignored selected detail types");
+      for (const activity of selectedActivities) assert.equal(await target.locator(`.problem[data-activity="${activity}"]`).count(), 5, `dice bank did not distribute ${activity} evenly`);
       assert.ok(await target.locator(".visible-problem").count() > 0, "dice bank omitted the five-face activity");
       const diceWork = await target.locator(".visible-problem").evaluateAll((problems) => problems.map((problem) => ({
         moves: problem.querySelectorAll('.route-board line[data-direction]').length,
@@ -160,6 +192,41 @@ try {
     assert.equal(layout.domains, true, `${width}: clipped domain control`);
     assert.equal(layout.cards, true, `${width}: clipped type card`);
     await page.screenshot({ path: `${out}/lab-${width}.png`, fullPage: true });
+
+    await page.locator('.domain-btn[data-domain="solid"]').click();
+    await page.locator('.dice-level-btn[data-dice-level="4"]').click();
+    await page.locator('.type-card[data-dice-activity="sequence"]').click();
+    await page.locator('.type-card[data-dice-activity="visible"]').click();
+    const solidLayout = await page.evaluate(() => {
+      const types = document.getElementById("typesField").getBoundingClientRect();
+      const count = document.getElementById("countField").getBoundingClientRect();
+      const build = document.querySelector(".build-bar").getBoundingClientRect();
+      return {
+        overflow: document.documentElement.scrollWidth > window.innerWidth,
+        diceLevelVisible: !document.getElementById("diceLevelField").hidden,
+        unrelatedControlsHidden: ["levelField", "intensityField", "previewPanel"].every((id) => document.getElementById(id).hidden),
+        selectedDetails: document.querySelectorAll('.type-card[data-dice-activity] input:checked').length,
+        details: document.querySelectorAll('.type-card[data-dice-activity]').length,
+        cardsFit: [...document.querySelectorAll(".type-card")].every((node) => {
+          const box = node.getBoundingClientRect();
+          return box.left >= 0 && box.right <= window.innerWidth && node.scrollWidth <= node.clientWidth + 1;
+        }),
+        levelsFit: [...document.querySelectorAll(".dice-level-btn")].every((node) => {
+          const box = node.getBoundingClientRect();
+          return box.left >= 0 && box.right <= window.innerWidth;
+        }),
+        ordered: types.bottom <= count.top + 1 && count.bottom <= build.top + 1
+      };
+    });
+    assert.equal(solidLayout.overflow, false, `${width}: solid horizontal overflow`);
+    assert.equal(solidLayout.diceLevelVisible, true, `${width}: solid dice level hidden`);
+    assert.equal(solidLayout.unrelatedControlsHidden, true, `${width}: solid unrelated controls visible`);
+    assert.equal(solidLayout.selectedDetails, 2, `${width}: solid multi-selection lost`);
+    assert.equal(solidLayout.details, 5, `${width}: solid detail cards missing`);
+    assert.equal(solidLayout.cardsFit, true, `${width}: solid card clipped`);
+    assert.equal(solidLayout.levelsFit, true, `${width}: solid level control clipped`);
+    assert.equal(solidLayout.ordered, true, `${width}: solid fields overlap or are out of order`);
+    await page.screenshot({ path: `${out}/lab-solid-${width}.png`, fullPage: true });
     layouts += 1;
   }
   await context.close();
