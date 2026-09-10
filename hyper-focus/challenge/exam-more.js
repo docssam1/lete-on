@@ -140,11 +140,30 @@
     const question=JSON.parse(JSON.stringify(replacementSpecials.get()[kind][index])),number=target.number,id=target.id,sourceNumber=target.sourceNumber;
     Object.assign(target,question,{number,id,sourceNumber,domain,typeId:id+'-'+kind,payload:{...question.payload},visual:null,mockConceptRevision:true});
   }
+  function removePictureSentence(html,sentence){
+    const escaped=sentence.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    return String(html||'').replace(new RegExp('<text[^>]*>'+escaped+'</text>'),'');
+  }
+  function compactShortestPathSvg(solution){
+    const cols=4,rows=3,left=110,top=32,dx=110,dy=58,blocked='2,1',ways=Array.from({length:rows+1},()=>Array(cols+1).fill(0));
+    ways[rows][0]=1;
+    for(let y=rows;y>=0;y--)for(let x=0;x<=cols;x++)if(!(x===0&&y===rows)&&`${x},${y}`!==blocked)ways[y][x]=(x?ways[y][x-1]:0)+(y<rows?ways[y+1][x]:0);
+    let body='';
+    for(let y=0;y<=rows;y++)for(let x=0;x<cols;x++)body+=`<line x1="${left+x*dx}" y1="${top+y*dy}" x2="${left+(x+1)*dx}" y2="${top+y*dy}" stroke="#8195a2" stroke-width="2.2"/>`;
+    for(let x=0;x<=cols;x++)for(let y=0;y<rows;y++)body+=`<line x1="${left+x*dx}" y1="${top+y*dy}" x2="${left+x*dx}" y2="${top+(y+1)*dy}" stroke="#8195a2" stroke-width="2.2"/>`;
+    for(let y=0;y<=rows;y++)for(let x=0;x<=cols;x++){
+      const cx=left+x*dx,cy=top+y*dy,isBlocked=`${x},${y}`===blocked;
+      body+=isBlocked?`<rect x="${cx-9}" y="${cy-9}" width="18" height="18" rx="3" fill="#263641"/>`:`<circle cx="${cx}" cy="${cy}" r="4" fill="#fff" stroke="#4f7488" stroke-width="1.5"/>`;
+      if(solution&&!isBlocked)body+=`<text x="${cx}" y="${cy-14}" text-anchor="middle" font-size="11" font-weight="800" fill="#1f625e">${ways[y][x]}</text>`;
+    }
+    body+=`<text x="${left}" y="${top+rows*dy+25}" text-anchor="middle" font-size="14" font-weight="800" fill="#203b54">출발</text><text x="${left+cols*dx}" y="${top-17}" text-anchor="middle" font-size="14" font-weight="800" fill="#203b54">도착</text>`;
+    return `<svg class="challenge-visual concept-replacement-visual" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 245" role="img" aria-label="검은 지점 한 곳을 피하는 작은 최단거리 모눈" style="width:100%;height:auto;font-family:'Malgun Gothic',sans-serif">${body}</svg>`;
+  }
 
   Object.assign(all[3].main[0],{
-    domain:'수',prompt:'다음 두 계산을 하세요. (1)은 십몇에서 한 자리 수를 빼며 받아내림이 필요하고, (2)는 십몇에 한 자리 수를 더하며 받아올림이 필요합니다.',
-    answer:[6,23],answerHtml:'(1) 6  (2) 23',solution:'(1) 13에서 7을 바로 뺄 수 없으므로 10에서 7을 빼고 남은 3을 더하면 6입니다. (2) 16+7에서 6+7=13이므로 십의 자리로 1을 올려 23입니다.',
-    problemHtml:'<div class="edition-conditions more-conditions"><p>(1) 13 − 7 = □</p><p>(2) 16 + 7 = □</p></div>',solutionDiagram:'',payload:{kind:'carry-borrow',items:[[13,'-',7],[16,'+',7]]},visual:null,
+    domain:'수',prompt:'버스에 몇 명이 타고 있었습니다. 첫 번째 정류장에서 9명이 내리고, 다음 정류장에서 8명이 탔더니 버스에 17명이 되었습니다. 처음 버스에 타고 있던 사람은 몇 명입니까?',
+    answer:18,answerHtml:'18명',solution:'마지막 17명에서 거꾸로 생각합니다. 다음 정류장에서 타기 전에는 17−8=9명입니다. 첫 번째 정류장에서 내리기 전에는 9+9=18명이므로 처음에는 18명이 타고 있었습니다.',
+    problemHtml:'',solutionDiagram:'',payload:{kind:'reverse',end:17,changes:[-9,8]},visual:null,
     conceptSourcePayload:{kind:'unknowns',select:'range',equations:[[14,'-',8],[7,'+',12]]}
   });
   const diagonalPaths=[[[0,0],[3,0],[4,1],[4,3]],[[0,0],[2,2],[5,2]],[[0,0],[0,4],[3,4]]];
@@ -154,7 +173,8 @@
   replaceWithSpecial(all[3].main[8],'shortest-path-grid',2,'논리추리');
   replaceWithSpecial(all[3].main[14],'checker-stack-count',2,'수');
   replaceWithSpecial(all[3].main[17],'tetra-cube-hole-count',1,'도형');
-  const longWalk=[0,1,2,3,4,9,8,7,6,5,10,11,12,13,14,19,18,17,16,15],longCheckpoints=[0,4,9,5,10,14,19,15];
+  for(const field of ['problemHtml','solutionDiagram'])all[3].main[17][field]=removePictureSentence(all[3].main[17][field],'같은 색의 쌓기나무 4개가 테트라큐브 1개입니다.');
+  const longWalk=[0,1,2,3,4,9,8,7,6,5,10,11,12,13,14,19,18,17,16,15],longCheckpoints=[0,3,8,5,12,19,17,15];
   Object.assign(all[3].main[18],{prompt:'1부터 8까지 순서대로 연결하세요. 가로나 세로로 이웃한 칸으로만 움직이며 5×4의 모든 칸을 한 번씩 지나야 합니다. 지나간 칸은 다시 지날 수 없습니다.',answer:'풀이 그림과 같이 연결',answerHtml:'풀이 그림과 같이 연결',solution:'1에서 윗줄을 지나 2로 간 뒤 줄마다 방향을 바꾸어 지그재그로 이동합니다. 5×4의 스무 칸을 모두 한 번씩 지나 8에 도착합니다.',payload:{kind:'walk',w:5,h:4,checkpoints:longCheckpoints},visual:grid(5,4,Object.fromEntries(longCheckpoints.map((cell,index)=>[String(cell),index+1])),[longWalk]),problemHtml:img('r3-main-19'),solutionDiagram:img('r3-main-19',true)});
   replaceWithSpecial(all[3].extra[0],'congruent-marked-partition',2,'도형');
   replaceWithSpecial(all[3].extra[2],'block-build-count',1,'도형');
@@ -179,8 +199,17 @@
   replaceWithSpecial(all[4].extra[1],'checker-stack-count',1,'도형');
   replaceWithSpecial(all[4].extra[2],'tetra-cube-hole-count',1,'도형');
   replaceWithSpecial(all[4].extra[3],'shortest-path-grid',1,'도형');
+  Object.assign(all[4].extra[3],{
+    prompt:'출발점에서 도착점까지 오른쪽 또는 위쪽으로만 최단거리로 가려고 합니다. 검은 지점 1개를 지나지 않는 길은 모두 몇 가지일까요?',
+    answer:17,answerHtml:'17가지',solution:'각 지점까지 오는 길의 수를 아래와 왼쪽에서 오는 수의 합으로 적습니다. 검은 지점은 0으로 두면 도착점의 수는 17이므로 모두 17가지입니다.',
+    problemHtml:compactShortestPathSvg(false),solutionDiagram:compactShortestPathSvg(true),payload:{kind:'shortest-path-grid',cols:4,rows:3,blocked:[[2,1]],directions:['E','N'],responseMode:'shortest-path-count'}
+  });
   replaceWithSpecial(all[4].extra[4],'stack-box-fill',1,'도형');
   replaceWithSpecial(all[4].extra[5],'simple-path-network',1,'논리추리');
+  for(const field of ['problemHtml','solutionDiagram']){
+    all[4].extra[0][field]=removePictureSentence(all[4].extra[0][field],'같은 연필·지우개·클립은 각각 길이가 같습니다.');
+    all[4].extra[1][field]=removePictureSentence(all[4].extra[1][field],'맞닿은 쌓기나무는 검은색과 흰색이 번갈아 놓입니다.');
+  }
   function get(round,section='main'){
     if(!all[round])throw new Error('지원하지 않는 회차');
     return {round,title:section==='main'?'6세 챌린지 시험':'추가 연습',editionId:`challenge-authored-${round}`,generationPolicy:'fixed-authored',questions:all[round][section]};

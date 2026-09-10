@@ -92,6 +92,7 @@
  bind('cube','r3-main-15-checker-stack-count r3-extra-6-stack-box-fill r4-extra-2-checker-stack-count r4-extra-5-stack-box-fill');
  bind('bricks','r3-main-18-tetra-cube-hole-count r3-extra-3-block-build-count r4-main-12-block-build-count r4-extra-3-tetra-cube-hole-count');
  bind('partition','r3-extra-1-congruent-marked-partition r4-main-18-congruent-marked-partition');
+ bind('reverse','r3-main-1');
  function getTaxonomy(question,round,section='main'){
   const source=question.sourceQuestion||question;
   const sourceTypeId=source.typeId||question.typeId;

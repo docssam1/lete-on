@@ -59,7 +59,7 @@ insert into public.hf_permission_catalog(permission_key,label,description) value
 ('challenge-bank-extra-general-quadrilateral-count','선을 따라 사각형 세기','Hyper Focus > 챌린지 대비 / bank'),
 ('challenge-bank-extra-independent-color-shape-period','색과 모양의 다른 반복','Hyper Focus > 챌린지 대비 / bank'),
 ('challenge-bank-extra-circle-bar-code','그림으로 나타낸 수','Hyper Focus > 챌린지 대비 / bank'),
-('challenge-bank-r3-main-1','빈칸 수를 구해 비교하기','Hyper Focus > 챌린지 대비 / bank'),
+('challenge-bank-r3-main-1','처음 수를 거꾸로 찾기','Hyper Focus > 챌린지 대비 / bank'),
 ('challenge-bank-r3-main-2','양이 바뀌는 이야기','Hyper Focus > 챌린지 대비 / bank'),
 ('challenge-bank-r3-main-3','늘어나는 묶음의 규칙','Hyper Focus > 챌린지 대비 / bank'),
 ('challenge-bank-r3-main-4','전개도의 마주 보는 색','Hyper Focus > 챌린지 대비 / bank'),

@@ -559,8 +559,8 @@
  {
   "key": "challenge-bank-r3-main-1",
   "typeId": "r3-main-1",
-  "label": "빈칸 수를 구해 비교하기",
-  "area": "수와 연산",
+  "label": "처음 수를 거꾸로 찾기",
+  "area": "지문 이해",
   "round": 3,
   "section": "main",
   "number": 1,

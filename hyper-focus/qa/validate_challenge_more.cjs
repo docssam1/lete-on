@@ -48,7 +48,7 @@ assert(question(4,'main',11).payload.pairs.every(([a,b])=>Math.abs(a%5-b%5)+Math
 const r3Roll=question(3,'main',13),r4Roll=question(4,'main',15);
 assert.deepEqual(r3Roll.payload.moves,['R','U','R']);assert.equal(roll(r3Roll.payload),6);assert.equal(solve(r3Roll.payload),r3Roll.answer);
 assert.deepEqual(r4Roll.payload.moves,['R','R','D','R']);assert.equal(r4Roll.payload.query,'bottom');assert.equal(roll(r4Roll.payload),6);assert.equal(solve(r4Roll.payload),r4Roll.answer);
-assert.deepEqual(question(3,'main',1).payload.items,[[13,'-',7],[16,'+',7]],'3회 1번 받아내림·받아올림');
+assert.deepEqual(question(3,'main',1).payload,{kind:'reverse',end:17,changes:[-9,8]},'3회 1번 버스 승하차 거꾸로 해결하기');
 assert(question(3,'main',6).payload.paths.some(path=>path.some((point,index)=>index&&point[0]!==path[index-1][0]&&point[1]!==path[index-1][1])),'3회 6번에 대각선 포함');
 assert(question(3,'main',7).prompt.includes('2년이 지난 후')&&!question(3,'main',7).prompt.includes('두 해'),'3회 7번 표현 수정');
 assert.equal(question(3,'main',9).payload.kind,'shortest-path-grid');

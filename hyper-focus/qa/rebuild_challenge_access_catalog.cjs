@@ -38,7 +38,8 @@ fs.writeFileSync(path.join(base,'supabase/migrations/20260908222618_challenge_pe
 const edgePath=path.join(base,'supabase/functions/challenge-access/index.ts');
 const edge=fs.readFileSync(edgePath,'utf8');
 const keys=entries.map(entry=>' '+JSON.stringify(entry.key)).join(',\n');
-const next=edge.replace(/const PERMISSION_KEYS = new Set\(\[\n[\s\S]*?\n\]\);/,`const PERMISSION_KEYS = new Set([\n${keys}\n]);`);
-if(next===edge)throw Error('서버 승인 키 목록을 찾지 못했습니다.');
+const permissionKeyPattern=/const PERMISSION_KEYS = new Set\(\[\n[\s\S]*?\n\]\);/;
+if(!permissionKeyPattern.test(edge))throw Error('서버 승인 키 목록을 찾지 못했습니다.');
+const next=edge.replace(permissionKeyPattern,`const PERMISSION_KEYS = new Set([\n${keys}\n]);`);
 fs.writeFileSync(edgePath,next);
 console.log(JSON.stringify({entries:entries.length,bank:bank.length}));
