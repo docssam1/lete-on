@@ -159,6 +159,11 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     previewAnswer: false
   };
 
+  // 유형 카드의 작은 그림은 난이도나 단계를 다시 눌렀을 때마다 흔들리지 않게
+  // 별도 고정 시드로 만든다. 같은 문제 생성기와 같은 그림 렌더러를 쓰되, 카드
+  // 목록을 다시 그릴 때 불필요하게 19문항을 재계산하지 않도록 결과를 보관한다.
+  const cubeTypePreviewCache = new Map();
+
   function freshSeed() {
     const t = Date.now() % 2147483647;
     const j = Math.floor((typeof performance !== "undefined" ? performance.now() : 0) * 1000) % 97;
@@ -169,6 +174,39 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
 
   function supportsLevel(code) {
     return GEN.typeSupportsLevel(code, state.level);
+  }
+
+  function nearestTypeLevel(type) {
+    if (state.level === GEN.ALL_LEVEL || type.levels.indexOf(state.level) !== -1) return state.level;
+    const parsed = parseInt(String(state.level).replace(/^L/i, ""), 10);
+    const wanted = Number.isFinite(parsed) ? parsed : parseInt(String(GEN.DEFAULT_LEVEL).slice(1), 10);
+    return type.levels.reduce((best, level) => {
+      const distance = Math.abs(parseInt(level.slice(1), 10) - wanted);
+      const bestDistance = Math.abs(parseInt(best.slice(1), 10) - wanted);
+      return distance < bestDistance ? level : best;
+    }, type.levels[0]);
+  }
+
+  function cubeTypePreview(type) {
+    const level = nearestTypeLevel(type);
+    const key = [type.code, level, state.intensity].join(":");
+    if (cubeTypePreviewCache.has(key)) return cubeTypePreviewCache.get(key);
+    let preview = null;
+    try {
+      const rng = GEN.createRng("GWT:" + key);
+      const problem = GEN.make(type.code, rng, level, state.intensity);
+      preview = {
+        html: CARD.renderFigures(problem),
+        type: problem.type,
+        level: problem.level,
+        kind: problem.figures && problem.figures.kind,
+        questionId: problem.identity && problem.identity.questionId
+      };
+    } catch (error) {
+      preview = null;
+    }
+    cubeTypePreviewCache.set(key, preview);
+    return preview;
   }
 
   function bookInfo(code) {
@@ -403,6 +441,8 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     card.className = "type-card" +
       (opts.ok ? "" : " is-unavailable") +
       (opts.active ? " is-active" : "") +
+      (opts.previewing ? " is-previewing" : "") +
+      (opts.visual ? " has-visual" : "") +
       (opts.multiple ? " is-multiple" : " is-single");
     card.dataset.type = opts.code;
     card.dataset.available = String(Boolean(opts.ok));
@@ -412,8 +452,11 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     if (opts.diceActivity) card.dataset.diceActivity = opts.diceActivity;
     card.innerHTML = '<input class="type-input" />' +
       '<span class="type-choice" aria-hidden="true"></span>' +
-      '<span class="type-head"><span class="type-code"></span></span>' +
-      '<span class="type-label"></span><span class="type-levels"></span>';
+      (opts.visual
+        ? '<div class="type-visual" aria-hidden="true"><div class="type-visual-stage"><div class="ws-figures">' + opts.visual.html + "</div></div></div>"
+        : "") +
+      '<span class="type-copy"><span class="type-head"><span class="type-code"></span></span>' +
+      '<span class="type-label"></span><span class="type-levels"></span></span>';
     const input = card.querySelector(".type-input");
     input.type = opts.multiple ? "checkbox" : "radio";
     input.name = opts.group || "worksheet-choice";
@@ -424,23 +467,57 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     card.querySelector(".type-code").textContent = opts.code;
     card.querySelector(".type-label").textContent = opts.label;
     card.querySelector(".type-levels").textContent = opts.meta || levelRange(opts.levels);
+    if (opts.visual) {
+      card.dataset.previewType = opts.visual.type;
+      card.dataset.previewLevel = opts.visual.level;
+      card.dataset.previewKind = opts.visual.kind || "";
+      if (opts.visual.questionId) card.dataset.previewQuestionId = opts.visual.questionId;
+    }
     if (!opts.ok) card.title = "이 단계에서는 제공되지 않아요";
     input.addEventListener("change", opts.onChange);
+    if (opts.ok && opts.onPreview) {
+      card.addEventListener("mouseenter", opts.onPreview);
+      card.addEventListener("focusin", opts.onPreview);
+    }
     return card;
   }
 
+  function showCubeTypePreview(code) {
+    if (state.book || state.previewType === code) return;
+    state.previewType = code;
+    document.querySelectorAll(".type-card.has-visual").forEach((card) => {
+      card.classList.toggle("is-previewing", card.dataset.type === code);
+    });
+    renderPreview();
+    renderPreviewTabs();
+  }
+
   function renderCubeTypes(grid) {
+    if (!state.book) ensurePreviewType();
+    const previewAudit = {};
     typeGroupHeading(grid, "생성 유형", "여러 개 선택 가능");
     GEN.TYPES.forEach((type) => {
       const ok = supportsLevel(type.code);
+      const visual = cubeTypePreview(type);
+      if (visual) previewAudit[type.code] = {
+        type: visual.type,
+        level: visual.level,
+        kind: visual.kind,
+        questionId: visual.questionId || ""
+      };
       grid.appendChild(typeCard({
         code: type.code,
         label: type.label,
         levels: type.levels,
         ok,
         active: state.types.indexOf(type.code) !== -1,
+        previewing: state.previewType === type.code,
+        visual,
         multiple: true,
         group: "cube-generated-types",
+        onPreview() {
+          showCubeTypePreview(type.code);
+        },
         onChange(event) {
           if (state.book) state.book = null;
           const at = state.types.indexOf(type.code);
@@ -453,6 +530,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
         }
       }));
     });
+    window.__LABTYPEPREVIEWS = previewAudit;
     typeGroupHeading(grid, "준비된 학습지", "한 번에 하나 선택");
     BOOKS.forEach((book) => {
       const ok = entrySupportsLevel(book, state.level);
@@ -582,6 +660,8 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
   function renderTypes() {
     const grid = $("typeGrid");
     grid.replaceChildren();
+    grid.classList.toggle("is-cube-preview-grid", state.domain === DOMAIN_CUBE);
+    window.__LABTYPEPREVIEWS = null;
     if (state.domain === DOMAIN_FOLD) renderFoldTypes(grid);
     else if (state.domain === DOMAIN_CUBE) renderCubeTypes(grid);
     else if (state.domain === DOMAIN_SOLID) renderSolidTypes(grid);
@@ -725,7 +805,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
   }
 
   // ---------------------------------------------------------------------
-  // 미리보기 — 고른 유형의 문제 한 개를, 학습지에 실릴 카드 그대로.
+  // 미리보기 — 현재 살펴보는 유형의 문제 한 개를, 학습지에 실릴 카드 그대로.
   //
   // 시드를 학습지와 따로 두는 이유: "새 문제"는 이 한 장만 다시 뽑는 버튼이지
   // 아래 선택을 흔드는 버튼이 아니다.
@@ -734,10 +814,17 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     return state.types.filter((code) => supportsLevel(code));
   }
 
+  function generatedPreviewTypes() {
+    return GEN.TYPES.filter((type) => supportsLevel(type.code)).map((type) => type.code);
+  }
+
   function ensurePreviewType() {
-    const list = previewableTypes();
+    const list = generatedPreviewTypes();
     if (!list.length) { state.previewType = null; return; }
-    if (!state.previewType || list.indexOf(state.previewType) === -1) state.previewType = list[0];
+    if (!state.previewType || list.indexOf(state.previewType) === -1) {
+      const selected = previewableTypes();
+      state.previewType = selected[0] || list[0];
+    }
   }
 
   function previewMessage(text) {
@@ -783,7 +870,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     ensurePreviewType();
     if (head) head.textContent = state.previewType ? typeLabel(state.previewType) : "";
     if (!state.previewType) {
-      previewMessage("이 단계에서 만들 수 있는 유형을 하나 이상 고르세요.");
+      previewMessage("이 단계에서 만들 수 있는 쌓기나무 유형이 없어요.");
       return;
     }
     // 학습지 생성기와 같은 rng 요리법 — 미리보기가 실제 출제와 다른 분포로
