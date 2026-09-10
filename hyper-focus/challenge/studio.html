@@ -7,7 +7,7 @@
   <title>2026년 9월 챌린지 대비 | LETE-ON</title>
   <link rel="stylesheet" href="review.css">
   <link rel="stylesheet" href="exam.css">
-  <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="studio.css?v=20260911-area-type-hover">
 </head>
 <body class="studio gfield-ui">
   <a class="skip-link" href="#workspace">본문으로</a>
@@ -21,10 +21,10 @@
     <nav class="studio-tabs" role="tablist" aria-label="학습 설계">
       <button type="button" id="tab-grade" role="tab" aria-controls="grade-panel" aria-selected="true" data-tab="grade">모의고사 채점·진단</button>
       <button type="button" id="tab-wrong" role="tab" aria-controls="bank-panel" aria-selected="false" tabindex="-1" data-tab="wrong">오답 유사문제</button>
-      <button type="button" id="tab-bank" role="tab" aria-controls="bank-panel" aria-selected="false" tabindex="-1" data-tab="bank">회차별 문제은행</button>
+      <button type="button" id="tab-bank" role="tab" aria-controls="bank-panel" aria-selected="false" tabindex="-1" data-tab="bank">영역·유형 문제은행</button>
     </nav>
     <section class="context-bar" aria-label="학생과 회차">
-      <label>회차<select id="studioRound"><option value="1">모의고사 1회</option><option value="2">모의고사 2회</option><option value="3">모의고사 3회</option><option value="4">모의고사 4회</option></select></label>
+      <label id="roundContext">회차<select id="studioRound"><option value="1">모의고사 1회</option><option value="2">모의고사 2회</option><option value="3">모의고사 3회</option><option value="4">모의고사 4회</option></select></label>
       <label>이름<input id="studioStudent" maxlength="20" autocomplete="off" placeholder="선택 입력"></label>
       <label>유치원<input id="studioSchool" maxlength="30" autocomplete="off" placeholder="선택 입력"></label>
       <span class="cutoff-note">본시험 20문항 · 문항당 5점<br>기준 점수 <b>60점</b></span>
@@ -36,11 +36,11 @@
       <section id="diagnosisPanel" class="diagnosis-panel" hidden aria-label="진단 결과"></section>
     </section>
     <section id="bank-panel" role="tabpanel" aria-labelledby="tab-bank" hidden>
-      <div class="section-title"><div><h2 id="bankTitle">회차별 문제은행</h2><p id="bankScope"></p></div></div>
+      <div class="section-title"><div><h2 id="bankTitle">영역·유형 문제은행</h2><p id="bankScope"></p></div></div>
       <div class="bank-layout">
         <div class="bank-browser">
-          <div class="bank-filters"><label class="search-field">낱말·영역·유형 검색<input id="studioSearch" type="search" autocomplete="off" placeholder="예: 색종이, 화살표, 길이"></label><label>영역<select id="areaFilter"><option value="">전체 영역</option></select></label><label>범위<select id="sectionFilter"><option value="all">본시험과 추가 연습</option><option value="main">본시험</option><option value="extra">추가 연습</option></select></label></div>
-          <div class="selection-tools"><span id="resultCount" role="status"></span><button type="button" id="selectVisible">현재 결과 선택</button><button type="button" id="clearVisible">현재 결과 해제</button></div>
+          <div class="bank-filters"><label class="search-field">낱말·영역·유형 검색<input id="studioSearch" type="search" autocomplete="off" placeholder="예: 색종이, 화살표, 길이"></label><label id="bankRoundControl">문제은행 회차<select id="bankRoundFilter"><option value="all">전체 회차</option><option value="1">모의고사 1회</option><option value="2">모의고사 2회</option><option value="3">모의고사 3회</option><option value="4">모의고사 4회</option></select></label><label>영역<select id="areaFilter"><option value="">전체 영역</option></select></label><label>유형<select id="typeFilter"><option value="">전체 유형</option></select></label><label>범위<select id="sectionFilter"><option value="all">본시험과 추가 연습</option><option value="main">본시험</option><option value="extra">추가 연습</option></select></label></div>
+          <div class="selection-tools"><span id="resultCount" role="status"></span><button type="button" id="selectArea">선택 영역 전체 담기</button><button type="button" id="selectType">선택 유형 전체 담기</button><button type="button" id="selectVisible">검색 결과 전체 담기</button><button type="button" id="clearVisible">현재 결과 해제</button></div>
           <div id="bankRows" class="bank-rows"></div>
         </div>
         <aside class="assembly" id="assemblyPanel" tabindex="-1" aria-label="학습지 구성">
@@ -58,7 +58,8 @@
       <div id="worksheetPages" class="studio-pages"></div>
     </section>
   </main>
+  <aside id="hoverPreview" class="hover-preview" aria-live="polite" hidden></aside>
   <dialog id="questionPreview" aria-labelledby="previewTitle"><header><div><p id="previewLocation"></p><h2 id="previewTitle">원문 미리보기</h2></div><button type="button" id="closePreview" aria-label="미리보기 닫기">닫기</button></header><button type="button" id="togglePreviewZoom" aria-pressed="false">그림 크게 보기</button><p class="zoom-hint">그림을 좌우로 밀어 볼 수 있습니다.</p><div id="previewQuestion"></div><button type="button" id="revealPreview">정답·풀이 보기</button><div id="previewAnswer" hidden></div></dialog>
-  <script src="access-catalog.js"></script><script src="../supabase-config.js"></script><script src="../supabase-client.js"></script><script src="access-service.js"></script><script src="studio-loader.js"></script>
+  <script src="access-catalog.js"></script><script src="../supabase-config.js"></script><script src="../supabase-client.js"></script><script src="access-service.js"></script><script src="studio-loader.js?v=20260911-area-type-hover"></script>
 </body>
 </html>
