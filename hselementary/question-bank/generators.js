@@ -24286,6 +24286,68 @@
       const answerVisual = mathBoard("나 혼자 일하는 달력", row("나의 하루 일한 양", fractionText(secondRate)) + row("필요한 날 수", `${aloneDays}일`) + row("기간", `${data.month}월 ${data.day}일 → ${answer}`));
       return fixedResult(`어떤 일을 가와 나가 함께 ${data.togetherDays}일 동안 하여 전체의 ${fractionMarkup(...data.together)}를 끝냈습니다. 나머지는 가가 혼자 ${data.firstAloneDays}일 동안 하여 끝냈습니다. 같은 일을 나가 ${data.month}월 ${data.day}일부터 쉬지 않고 혼자 한다면 끝나는 날은 몇 월 며칠인가요? (일한 첫날을 1일로 셉니다.)${promptVisual}${support("두 사람이 하루에 한 양에서 가가 하루에 한 양을 빼세요.")}${challenge}${evidence("work-rate-date", [data.togetherDays, ...data.together, data.firstAloneDays, data.month, data.day, secondRate.numerator, secondRate.denominator, aloneDays, endDay], "date")}`, answer, `두 사람이 하루에 한 양은 ${fractionText(togetherRate)}, 가가 하루에 한 양은 ${fractionText(firstRate)}입니다. 따라서 나는 하루에 ${fractionText(secondRate)}만큼 하므로 혼자 ${aloneDays}일 걸립니다. ${data.month}월 ${data.day}일을 첫날로 세면 ${answer}에 끝납니다.`, answerVisual);
     },
+    sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-example-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { denominator: 40, startNumerator: 48, knownFirstIndex: 1, targetFirstIndex: 3, knownSecondIndex: 7, targetSecondIndex: 10 },
+        { denominator: 30, startNumerator: 30, knownFirstIndex: 1, targetFirstIndex: 3, knownSecondIndex: 7, targetSecondIndex: 10 },
+        { denominator: 24, startNumerator: 24, knownFirstIndex: 1, targetFirstIndex: 3, knownSecondIndex: 7, targetSecondIndex: 10 }
+      ][poolIndex];
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const knownFirst = rationalValue(data.startNumerator + data.knownFirstIndex, data.denominator);
+      const targetFirst = rationalValue(data.startNumerator + data.targetFirstIndex, data.denominator);
+      const knownSecond = rationalValue(data.startNumerator + data.knownSecondIndex, data.denominator);
+      const targetSecond = rationalValue(data.startNumerator + data.targetSecondIndex, data.denominator);
+      const answerValue = rationalOperation(targetFirst, targetSecond, "÷");
+      const geometrySignature = [
+        data.denominator,
+        data.startNumerator,
+        data.knownFirstIndex,
+        data.targetFirstIndex,
+        data.knownSecondIndex,
+        data.targetSecondIndex
+      ].join(":");
+      const label = (index, kind, content, solved = false) => {
+        const edgeClass = index === 10 ? " is-edge-end" : "";
+        return `<div class="source62-number-line__label is-${kind}${solved ? " is-solved" : ""}${edgeClass}" style="--tick-index:${index}" data-label-index="${index}" data-label-kind="${kind}">${content}</div>`;
+      };
+      const numberLine = solved => {
+        const marked = new Set([data.knownFirstIndex, data.targetFirstIndex, data.knownSecondIndex, data.targetSecondIndex]);
+        const ticks = Array.from({ length: 11 }, (_, index) => {
+          const x = 50 + index * 50;
+          const kind = index === data.targetFirstIndex || index === data.targetSecondIndex ? "target" : marked.has(index) ? "known" : "plain";
+          return `<line class="source62-number-line__tick is-${kind}" x1="${x}" y1="18" x2="${x}" y2="46" data-tick-index="${index}"/>`;
+        }).join("");
+        return `<div class="source62-number-line${solved ? " is-solved" : ""}" data-source62-e1-structure="fraction-division-number-line" data-source62-e1-geometry="${geometrySignature}" data-tick-count="11" data-target-indices="${data.targetFirstIndex},${data.targetSecondIndex}">
+          <svg class="source62-number-line__axis" viewBox="0 0 600 64" role="img" aria-label="같은 간격으로 나눈 수직선"><line class="source62-number-line__rail" x1="50" y1="32" x2="550" y2="32"/>${ticks}</svg>
+          ${label(data.knownFirstIndex, "known", mixedFractionMarkup(knownFirst.numerator, knownFirst.denominator))}
+          ${label(data.knownSecondIndex, "known", mixedFractionMarkup(knownSecond.numerator, knownSecond.denominator))}
+          ${label(data.targetFirstIndex, "target", solved ? `가 = ${mixedFractionMarkup(targetFirst.numerator, targetFirst.denominator)}` : "가", solved)}
+          ${label(data.targetSecondIndex, "target", solved ? `나 = ${mixedFractionMarkup(targetSecond.numerator, targetSecond.denominator)}` : "나", solved)}
+        </div>`;
+      };
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">눈금 한 칸의 크기를 먼저 구한 뒤 가와 나가 나타내는 수를 읽어 보세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 수를 읽는 과정과 나눗셈 계산을 한 식으로 이어 나타내세요.</p>' : "";
+      const values = [
+        data.denominator, data.startNumerator,
+        data.knownFirstIndex, data.targetFirstIndex, data.knownSecondIndex, data.targetSecondIndex,
+        targetFirst.numerator, targetFirst.denominator, targetSecond.numerator, targetSecond.denominator,
+        answerValue.numerator, answerValue.denominator
+      ];
+      const evidence = `<span hidden data-source62-fraction-e1-kind="fraction-division-number-line" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      const promptVisual = numberLine(false);
+      const answerVisual = `${numberLine(true)}<div class="source61-math-board source62-e1-board" data-source62-e1-calculation="fraction-division"><strong>수직선의 두 수를 나누기</strong>${row("가÷나", `${mixedFractionMarkup(targetFirst.numerator, targetFirst.denominator)}÷${mixedFractionMarkup(targetSecond.numerator, targetSecond.denominator)}=${fractionMarkup(answerValue.numerator, answerValue.denominator)}`)}</div>`;
+      return result(`수직선에서 가와 나가 나타내는 수를 각각 구한 뒤, 가÷나를 계산하세요.${promptVisual}${support}${challenge}${evidence}`, fraction(answerValue.numerator, answerValue.denominator), `눈금 한 칸은 ${fractionMarkup(1, data.denominator)}입니다. 가는 ${mixedFractionMarkup(targetFirst.numerator, targetFirst.denominator)}, 나는 ${mixedFractionMarkup(targetSecond.numerator, targetSecond.denominator)}이므로 가÷나=${mixedFractionMarkup(targetFirst.numerator, targetFirst.denominator)}÷${mixedFractionMarkup(targetSecond.numerator, targetSecond.denominator)}=${fractionMarkup(answerValue.numerator, answerValue.denominator)}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${answerVisual}${evidence}<div class="solution-answer-caption">문제와 같은 수직선에서 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26192,6 +26254,7 @@
     [type => type.id === "5-1-u5-t2", "fifthFractionSubtractionAdvanced"],
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
+    [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
