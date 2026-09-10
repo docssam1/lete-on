@@ -98,6 +98,8 @@ test("official source links are external, isolated, and never embedded", async f
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(url, { waitUntil: "networkidle" });
   await page.locator('[data-goal="sasmo"]').click();
+  assert.match(await page.locator("#goal-primary").getAttribute("href"), /^\.\/competition-practice\.html\?program=sasmo&audience=(student|teacher)&locale=ko$/);
+  assert.match(await page.locator("#goal-status-note").innerText(), /자체 제작 실제 유형 5개/);
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("target"), "_blank");
   const rel = await original.getAttribute("rel");
@@ -105,5 +107,9 @@ test("official source links are external, isolated, and never embedded", async f
   assert.match(rel, /noreferrer/);
   assert.equal(await page.locator("iframe, embed, object").count(), 0);
   assert.equal(await page.locator('a[href$=".pdf"]').count(), 0);
+  await page.locator('[data-goal="kangaroo"]').click();
+  assert.match(await page.locator("#goal-primary").getAttribute("href"), /program=kangaroo/);
+  await page.locator('[data-goal="amc"]').click();
+  assert.match(await page.locator("#goal-primary").getAttribute("href"), /program=amc8/);
   await page.close();
 });
