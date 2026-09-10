@@ -22487,15 +22487,15 @@
       const sourceIds = [
         "6-1-u2-e2-example-2-2", "6-1-u2-e2-mission-2", "6-1-u2-e2-mission-5",
         "6-1-u2-e2-mission-6", "6-1-u2-e2-mission-1", "6-1-u2-e2-example-2-4",
-        "6-1-u2-e2-example-2-3"
+        "6-1-u2-e2-example-2-3", "6-1-u2-e2-example-2-1"
       ];
-      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 6까지여야 합니다.");
+      if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 2 원문 분기는 0부터 7까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, 2);
       const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
       const support = textValue => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${textValue}</p>` : "";
       const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">그림에 적힌 수를 바로 계산하지 말고, 잘라 낸 뒤 생기는 면·모서리·꼭짓점의 관계를 스스로 설명해 보세요.</p>` : "";
-      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated", "pentagonal-prism-shortest-net-area", "pentagonal-prism-45-degree-spiral-height", "three-triangular-prisms-trapezoidal-prism-surface-area", "triangular-prism-three-face-shortest-segment"];
+      const evidenceKinds = ["cuboid-all-corners-cut", "regular-prism-radial-cut", "prism-all-vertices-truncated", "pentagonal-prism-shortest-net-area", "pentagonal-prism-45-degree-spiral-height", "three-triangular-prisms-trapezoidal-prism-surface-area", "triangular-prism-three-face-shortest-segment", "hexagonal-prism-six-congruent-pieces-edge-extremes"];
       const evidence = (kind, values, contract = "single-value") => `<span hidden data-source61-prism-e2-kind="${kind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="${contract}" data-difficulty-design="${difficultyDesign}"></span>`;
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
       const mathBoard = (title, body) => `<div class="source61-math-board"><strong>${title}</strong>${body}</div>`;
@@ -22569,6 +22569,61 @@
         const vertexDots = top.concat(bottom).map((point, index) => `<circle class="source61-e2-original-vertex" data-prism-vertex="${index + 1}" cx="${point[0].toFixed(2)}" cy="${point[1].toFixed(2)}" r="2.8"/>`).join("");
         const piece = solved ? `<g class="source61-e2-triangular-piece" transform="translate(238 48)" data-piece-edges="9"><polygon points="16,34 66,12 95,43"/><polygon points="16,92 66,70 95,101"/><line x1="16" y1="34" x2="16" y2="92"/><line x1="66" y1="12" x2="66" y2="70"/><line x1="95" y1="43" x2="95" y2="101"/><text x="55" y="126" text-anchor="middle">삼각기둥 1개</text><text x="55" y="145" text-anchor="middle">모서리 9개</text></g>` : `<text x="287" y="96" text-anchor="middle">밑면의 중심에서</text><text x="287" y="116" text-anchor="middle">수직으로 자르기</text>`;
         return `<svg class="geometry-diagram source61-e2-diagram source61-e2-radial-prism${solved ? " is-solved" : ""}" viewBox="0 0 370 225" role="img" aria-label="정${n}각기둥을 밑면의 중심에서 ${n}개의 같은 삼각기둥으로 수직으로 나눈 입체 그림" data-source61-e2-structure="regular-${n}-prism-radial-${n}" data-base-sides="${n}" data-n="${n}" data-piece-count="${n}" data-fan-count="${n}" data-vertical-cut-plane-count="${n}" data-edge-per-fan="9" data-total-edge-count="${9 * n}" data-cut-model="center-to-every-base-vertex-vertical-plane"${solved ? ` data-result-highlight="${9 * n}"` : ""}>${sideFaces}${bottomRays}${outerEdges}${sectors}${topRays}${centerLine}${vertexDots}<circle class="source61-e2-center" cx="${centerTop[0]}" cy="${centerTop[1]}" r="4"/><circle class="source61-e2-center is-hidden" cx="${centerBottom[0]}" cy="${centerBottom[1]}" r="3"/>${piece}<text x="128" y="218" text-anchor="middle">같은 삼각기둥 ${n}개</text></svg>`;
+      };
+
+      const hexagonalPrismSixPieceExtremesSvg = ({ prismHeight, solved = false }) => {
+        const baseSides = 6, pieceCount = 6;
+        const minimumBaseSides = 3;
+        const maximumEdgesPerPiece = 3 * baseSides;
+        const minimumEdgesPerPiece = 3 * minimumBaseSides;
+        const maximumTotal = pieceCount * maximumEdgesPerPiece;
+        const minimumTotal = pieceCount * minimumEdgesPerPiece;
+        const drawPrism = ({ cx, topY, radius, height, mode }) => {
+          const topCenter = [cx, topY];
+          const bottomCenter = [cx, topY + height];
+          const top = regularPolygonPoints(baseSides, cx, topY, radius).map(([x, y]) => [x, topY + (y - topY) * 0.43]);
+          const bottom = top.map(([x, y]) => [x, y + height]);
+          const frontFacing = index => top[index][1] >= topY;
+          const sideFaces = top.map((point, index) => {
+            const next = (index + 1) % baseSides;
+            const behind = !frontFacing(index) && !frontFacing(next);
+            return `<polygon class="source61-e2-six-piece-face${behind ? " is-behind" : ""}" points="${pointText(point)} ${pointText(top[next])} ${pointText(bottom[next])} ${pointText(bottom[index])}"/>`;
+          }).join("");
+          const edges = top.map((point, index) => {
+            const next = (index + 1) % baseSides;
+            const behind = !frontFacing(index) && !frontFacing(next);
+            return lineMarkup(point, top[next], `source61-e2-six-piece-edge${behind ? " is-behind" : ""}`)
+              + lineMarkup(bottom[index], bottom[next], `source61-e2-six-piece-edge${behind ? " is-behind" : ""}`)
+              + lineMarkup(point, bottom[index], `source61-e2-six-piece-edge${frontFacing(index) ? "" : " is-behind"}`);
+          }).join("");
+          let cuts = "";
+          if (mode === "layers") {
+            cuts = Array.from({ length: pieceCount - 1 }, (_, layerIndex) => {
+              const ratio = (layerIndex + 1) / pieceCount;
+              const ring = top.map((point, index) => interpolate(point, bottom[index], ratio));
+              return ring.map((point, index) => {
+                const next = (index + 1) % baseSides;
+                const behind = !frontFacing(index) && !frontFacing(next);
+                return lineMarkup(point, ring[next], `source61-e2-six-piece-layer-cut${behind ? " is-behind" : ""}`, `data-layer-cut="${layerIndex + 1}"`);
+              }).join("");
+            }).join("");
+          }
+          if (mode === "radial") {
+            const topRays = top.map((point, index) => lineMarkup(topCenter, point, "source61-e2-six-piece-radial-cut", `data-radial-cut="top-${index + 1}"`)).join("");
+            const bottomRays = bottom.map((point, index) => lineMarkup(bottomCenter, point, `source61-e2-six-piece-radial-cut${frontFacing(index) ? "" : " is-behind"}`, `data-radial-cut="bottom-${index + 1}"`)).join("");
+            cuts = `${topRays}${bottomRays}${lineMarkup(topCenter, bottomCenter, "source61-e2-six-piece-radial-cut is-behind", 'data-radial-cut="axis"')}`;
+          }
+          return `<g class="source61-e2-six-piece-prism" data-prism-mode="${mode}" data-base-sides="${baseSides}" data-piece-count="${pieceCount}">${sideFaces}${cuts}${edges}${mode === "radial" ? `<circle class="source61-e2-six-piece-center" cx="${topCenter[0]}" cy="${topCenter[1]}" r="3.5"/>` : ""}</g>`;
+        };
+        const commonData = `data-source61-e2-structure="hexagonal-prism-six-congruent-pieces-edge-extremes" data-base-sides="${baseSides}" data-piece-count="${pieceCount}" data-minimum-base-sides="${minimumBaseSides}" data-maximum-edges-per-piece="${maximumEdgesPerPiece}" data-minimum-edges-per-piece="${minimumEdgesPerPiece}" data-maximum-total="${maximumTotal}" data-minimum-total="${minimumTotal}" data-cut-rule="straight-planes-congruent-prisms"`;
+        if (!solved) {
+          const body = drawPrism({ cx: 160, topY: 48, radius: 78, height: prismHeight, mode: "original" });
+          return `<svg class="geometry-diagram source61-e2-diagram source61-e2-six-piece-extremes" viewBox="0 0 320 260" role="img" aria-label="밑면이 정육각형인 각기둥 하나" ${commonData}>${body}<text class="source61-e2-six-piece-caption" x="160" y="242">밑면이 정육각형인 각기둥</text></svg>`;
+        }
+        const layerHeight = Math.min(prismHeight, 126);
+        const layers = drawPrism({ cx: 155, topY: 54, radius: 62, height: layerHeight, mode: "layers" });
+        const radial = drawPrism({ cx: 445, topY: 54, radius: 62, height: layerHeight, mode: "radial" });
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-six-piece-extremes is-solved" viewBox="0 0 600 285" role="img" aria-label="정육각기둥을 합동인 각기둥 여섯 개로 자를 때 모서리 수의 최대와 최소" ${commonData} data-layer-cut-count="5" data-radial-piece-count="6" data-result-highlight="${maximumTotal},${minimumTotal}"><text class="source61-e2-six-piece-title" x="155" y="22">최대</text><text class="source61-e2-six-piece-title" x="445" y="22">최소</text>${layers}${radial}<text class="source61-e2-six-piece-caption" x="155" y="235">정육각기둥 6개</text><text class="source61-e2-six-piece-result" x="155" y="260">18×6=${maximumTotal}개</text><text class="source61-e2-six-piece-caption" x="445" y="235">삼각기둥 6개</text><text class="source61-e2-six-piece-result" x="445" y="260">9×6=${minimumTotal}개</text></svg>`;
       };
 
       const truncatedPrismSvg = ({ n, solved = false }) => {
@@ -22831,13 +22886,26 @@
         return fixedResult(`같은 삼각기둥 세 개를 그림처럼 이어 붙여 사다리꼴을 밑면으로 하는 사각기둥을 만들었습니다. 이 사각기둥의 한 밑면의 넓이는 ${baseArea}cm²입니다. 겉면에 도화지를 겹치지 않게 붙이려면 필요한 도화지의 넓이는 적어도 몇 cm²인지 구하세요.${promptVisual}${support("먼저 삼각형 한 개의 넓이를 구해 밑변의 길이를 찾고, 합친 사다리꼴의 바깥 둘레만 더해 보세요.")}${surfaceChallenge}${evidence("three-triangular-prisms-trapezoidal-prism-surface-area", [slant, altitude, prismLength, baseArea, triangleBase, basePerimeter, surfaceArea])}`, `${surfaceArea}cm²`, `밑면은 같은 삼각형 3개로 이루어졌으므로 삼각형 한 개의 넓이는 ${baseArea}÷3=${baseArea / 3}cm²입니다. 삼각형의 밑변은 ${baseArea / 3}×2÷${altitude}=${triangleBase}cm입니다. 합친 사다리꼴의 둘레는 삼각형의 밑변 3개와 양쪽 변 2개이므로 ${triangleBase}×3+${slant}×2=${basePerimeter}cm입니다. 따라서 겉넓이는 두 밑면과 옆면을 더한 ${baseArea}×2+${basePerimeter}×${prismLength}=${surfaceArea}cm²입니다.`, answerVisual);
       }
 
-      const [side, prismHeight] = [[9, 18], [10, 21], [11, 24]][poolIndex];
-      const faceCount = 3, crossingCount = 2, targetLength = prismHeight / faceCount;
-      const promptVisual = `${triangularPrismShortestRouteSvg({ side, prismHeight })}${mathBoard("삼각기둥의 자료", row("밑면의 세 변", `각각 ${side}cm`) + row("기둥의 높이", `${prismHeight}cm`) + row("지나는 옆면", `${faceCount}개`) + row("구할 선분", "ㅇㅂ"))}`;
-      const answerVisual = `${triangularPrismShortestRouteSvg({ side, prismHeight, solved: true })}${mathBoard("전개도에서 계산", row("옆면 3장의 가로", `${side}×${faceCount}=${side * faceCount}cm`) + row("전체 세로 변화", `${prismHeight}cm`) + row("같은 너비 한 장에서 내려간 길이", `${prismHeight}÷${faceCount}=${targetLength}cm`) + row("선분 ㅇㅂ", `${targetLength}cm`))}`;
-      const shortestSegmentSupport = support("지나간 옆면 3장을 한 줄로 펼치고, 꼭짓점 ㄱ과 꼭짓점 ㄹ을 곧은 선으로 이으세요.");
-      const shortestSegmentChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">전개도에서 너비가 같은 세 옆면을 지나는 곧은 선의 세로 변화가 왜 세 부분으로 똑같이 나뉘는지 설명해 보세요.</p>` : "";
-      return fixedResult(`밑면의 세 변이 각각 ${side}cm이고 높이가 ${prismHeight}cm인 삼각기둥이 있습니다. 그림처럼 꼭짓점 ㄱ에서 출발하여 점 ㅅ과 점 ㅇ을 차례로 지나 꼭짓점 ㄹ까지 겉면에 선을 그었습니다. 이 선의 길이가 가장 짧을 때 선분 ㅇㅂ의 길이는 몇 cm인지 구하세요.${promptVisual}${shortestSegmentSupport}${shortestSegmentChallenge}${evidence("triangular-prism-three-face-shortest-segment", [side, prismHeight, faceCount, crossingCount, targetLength])}`, `${targetLength}cm`, `지나간 옆면 ${faceCount}장을 한 줄로 펼치면 너비가 각각 ${side}cm인 직사각형 ${faceCount}개가 됩니다. 가장 짧은 선은 전개도에서 한 직선입니다. 같은 너비마다 내려간 길이도 같으므로 전체 높이 ${prismHeight}cm가 ${faceCount}부분으로 똑같이 나뉩니다. 점 ㅇ에서 점 ㅂ까지는 마지막 한 부분이므로 ${prismHeight}÷${faceCount}=${targetLength}cm입니다.`, answerVisual);
+      if (variant === 6) {
+        const [side, prismHeight] = [[9, 18], [10, 21], [11, 24]][poolIndex];
+        const faceCount = 3, crossingCount = 2, targetLength = prismHeight / faceCount;
+        const promptVisual = `${triangularPrismShortestRouteSvg({ side, prismHeight })}${mathBoard("삼각기둥의 자료", row("밑면의 세 변", `각각 ${side}cm`) + row("기둥의 높이", `${prismHeight}cm`) + row("지나는 옆면", `${faceCount}개`) + row("구할 선분", "ㅇㅂ"))}`;
+        const answerVisual = `${triangularPrismShortestRouteSvg({ side, prismHeight, solved: true })}${mathBoard("전개도에서 계산", row("옆면 3장의 가로", `${side}×${faceCount}=${side * faceCount}cm`) + row("전체 세로 변화", `${prismHeight}cm`) + row("같은 너비 한 장에서 내려간 길이", `${prismHeight}÷${faceCount}=${targetLength}cm`) + row("선분 ㅇㅂ", `${targetLength}cm`))}`;
+        const shortestSegmentSupport = support("지나간 옆면 3장을 한 줄로 펼치고, 꼭짓점 ㄱ과 꼭짓점 ㄹ을 곧은 선으로 이으세요.");
+        const shortestSegmentChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">전개도에서 너비가 같은 세 옆면을 지나는 곧은 선의 세로 변화가 왜 세 부분으로 똑같이 나뉘는지 설명해 보세요.</p>` : "";
+        return fixedResult(`밑면의 세 변이 각각 ${side}cm이고 높이가 ${prismHeight}cm인 삼각기둥이 있습니다. 그림처럼 꼭짓점 ㄱ에서 출발하여 점 ㅅ과 점 ㅇ을 차례로 지나 꼭짓점 ㄹ까지 겉면에 선을 그었습니다. 이 선의 길이가 가장 짧을 때 선분 ㅇㅂ의 길이는 몇 cm인지 구하세요.${promptVisual}${shortestSegmentSupport}${shortestSegmentChallenge}${evidence("triangular-prism-three-face-shortest-segment", [side, prismHeight, faceCount, crossingCount, targetLength])}`, `${targetLength}cm`, `지나간 옆면 ${faceCount}장을 한 줄로 펼치면 너비가 각각 ${side}cm인 직사각형 ${faceCount}개가 됩니다. 가장 짧은 선은 전개도에서 한 직선입니다. 같은 너비마다 내려간 길이도 같으므로 전체 높이 ${prismHeight}cm가 ${faceCount}부분으로 똑같이 나뉩니다. 점 ㅇ에서 점 ㅂ까지는 마지막 한 부분이므로 ${prismHeight}÷${faceCount}=${targetLength}cm입니다.`, answerVisual);
+      }
+
+      const prismHeight = [96, 108, 120][poolIndex];
+      const baseSides = 6, pieceCount = 6, minimumBaseSides = 3;
+      const maximumEdgesPerPiece = 3 * baseSides, minimumEdgesPerPiece = 3 * minimumBaseSides;
+      const maximumTotal = pieceCount * maximumEdgesPerPiece, minimumTotal = pieceCount * minimumEdgesPerPiece;
+      const values = [baseSides, pieceCount, minimumBaseSides, maximumEdgesPerPiece, minimumEdgesPerPiece, maximumTotal, minimumTotal, prismHeight];
+      const promptVisual = `${hexagonalPrismSixPieceExtremesSvg({ prismHeight })}${mathBoard("자르는 조건", row("처음 입체도형", "밑면이 정육각형인 각기둥") + row("자를 때", "평면으로 곧게 자르기") + row("만들 조각", "서로 합동인 각기둥 6개") + row("구할 것", "모서리 수 합의 최대와 최소"))}`;
+      const answerVisual = `${hexagonalPrismSixPieceExtremesSvg({ prismHeight, solved: true })}${mathBoard("두 끝값 비교", row("최대 · 정육각기둥 6개", `${maximumEdgesPerPiece}×${pieceCount}=${maximumTotal}개`) + row("최소 · 삼각기둥 6개", `${minimumEdgesPerPiece}×${pieceCount}=${minimumTotal}개`))}`;
+      const extremesSupport = support("밑면과 나란히 잘라 정육각기둥 6개를 만드는 경우와, 밑면의 중심에서 여섯 부분으로 나누어 삼각기둥 6개를 만드는 경우를 비교하세요.");
+      const extremesChallenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">각기둥의 모서리는 밑면의 변 수의 3배입니다. 한 조각의 밑면이 가질 수 있는 변 수의 큰 값과 작은 값을 먼저 설명해 보세요.</p>` : "";
+      return fixedResult(`밑면의 모양이 정육각형인 각기둥을 평면으로 곧게 잘라 서로 합동인 각기둥 6개를 만들었습니다. 각기둥 6개의 모서리 수를 모두 합한 값이 가장 클 때와 가장 작을 때를 차례로 구하세요.${promptVisual}${extremesSupport}${extremesChallenge}${evidence("hexagonal-prism-six-congruent-pieces-edge-extremes", values, "ordered-two-values")}`, `최대 ${maximumTotal}개, 최소 ${minimumTotal}개`, `밑면과 나란히 잘라 정육각기둥 6개를 만들면 한 조각의 모서리는 6×3=${maximumEdgesPerPiece}개이므로 합은 ${maximumEdgesPerPiece}×${pieceCount}=${maximumTotal}개로 가장 큽니다. 밑면의 중심에서 여섯 꼭짓점으로 나누어 삼각기둥 6개를 만들면 한 조각의 모서리는 3×3=${minimumEdgesPerPiece}개이므로 합은 ${minimumEdgesPerPiece}×${pieceCount}=${minimumTotal}개로 가장 작습니다.`, answerVisual);
     },
     sourceGrade6RatioE1({ rng, level, variant = 0 }) {
       const sourceIds = [

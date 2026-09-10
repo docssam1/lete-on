@@ -757,15 +757,16 @@
       "unitName": "각기둥과 각뿔",
       "exploration": 2,
       "pdfPage": 9,
-      "printedPage": null,
+      "printedPage": 12,
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "example",
       "ordinal": 1,
-      "sourceShape": "각기둥의 전개도, 자르기, 펼치기 또는 겉면 경로에서 필요한 길이·면·구성 요소를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함",
-      "answerContract": "candidate",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "원본 9쪽 예제 2-1. 밑면이 정육각형인 각기둥을 평면으로 곧게 잘라 합동인 각기둥 6개를 만들고, 여섯 각기둥의 모서리 수 합이 최대일 때와 최소일 때를 차례로 구함",
+      "answerContract": "ordered-two-values-fixed-pool",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 문제와 입체 그림을 대조했습니다. 최대 108개와 최소 54개를 만드는 두 절단을 답 그림으로 확인하며 고정 검증 문항 3개로 제한합니다.",
+      "publicSourceItemId": "6-1-u2-e2-example-2-1"
     },
     {
       "sourceItemId": "6-1-u2-e2-example-2",
