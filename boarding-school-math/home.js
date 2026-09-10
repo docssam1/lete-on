@@ -216,6 +216,7 @@
     const matches = originalLinks.findForGrade(programId, grade);
     const record = matches[0];
     const program = findProgram(programId);
+    const gradeSixCompetition = String(grade) === "6" && ["kangaroo", "sasmo", "amc"].includes(state.goalId);
 
     if (!record) {
       anchor.hidden = true;
@@ -228,10 +229,14 @@
         rights.innerHTML = '<span aria-hidden="true">ⓘ</span> 교육과정 기준은 공식 출처로 연결하고, 학습 자료는 공개 상태와 검수 상태를 분리합니다.';
         return;
       }
-      status.textContent = programId === "sasmo-k2-8"
-        ? `${gradeName(grade)}의 검증된 공개 원문 진입은 아직 잠금입니다. 주최기관에서 제공 여부를 먼저 확인합니다.`
-        : "공식 참가·범위는 확인했지만, 원문 문제 제공 경로와 GFIELD 연습 콘텐츠는 아직 검수 대기입니다.";
-      rights.innerHTML = '<span aria-hidden="true">ⓘ</span> 공식 원문 링크가 검증되기 전에는 GFIELD가 문항을 복제하거나 공개하지 않습니다.';
+      status.textContent = gradeSixCompetition
+        ? `${gradeName(grade)} GFIELD 자체 제작 실제 유형 5개를 학생용·교사용으로 풀 수 있습니다. 공식 원문 제공 여부는 주최기관에서 따로 확인합니다.`
+        : programId === "sasmo-k2-8"
+          ? `${gradeName(grade)}의 검증된 공개 원문 진입은 아직 잠금입니다. 주최기관에서 제공 여부를 먼저 확인합니다.`
+          : "공식 참가·범위는 확인했지만, 원문 문제 제공 경로와 GFIELD 연습 콘텐츠는 아직 검수 대기입니다.";
+      rights.innerHTML = gradeSixCompetition
+        ? '<span aria-hidden="true">ⓘ</span> 공개 연습은 공식 범위·형식에 맞춘 GFIELD 자체 제작 문항입니다. 대회 기출과 공식 예상 점수로 표시하지 않습니다.'
+        : '<span aria-hidden="true">ⓘ</span> 공식 원문 링크가 검증되기 전에는 GFIELD가 문항을 복제하거나 공개하지 않습니다.';
       return;
     }
 
@@ -243,16 +248,18 @@
     anchor.dataset.originalRecordId = record.id;
     anchor.textContent = `${yearLabel} ${gradeName(grade)} 공식 원본 접근 ↗`;
     const coverageLabel = record.coverageLabelKo || record.coverageLabel;
-    status.textContent = record.sourceKind === "organizer-lms"
-      ? `${coverageLabel}. 주최기관 로그인 또는 무료 등록 뒤 접근합니다. GFIELD 분석·문항 배정은 아직 잠금입니다.`
-      : `${coverageLabel}. 주최기관의 학년별 원본 진입 페이지입니다. GFIELD 분석·문항 배정은 아직 잠금입니다.`;
+    status.textContent = gradeSixCompetition
+      ? `${coverageLabel}. 공식 원문은 주최기관에서 확인하고, GFIELD 자체 제작 실제 유형 5개는 지금 학생용·교사용으로 풀 수 있습니다.`
+      : record.sourceKind === "organizer-lms"
+        ? `${coverageLabel}. 주최기관 로그인 또는 무료 등록 뒤 접근합니다. GFIELD 분석·문항 배정은 아직 잠금입니다.`
+        : `${coverageLabel}. 주최기관의 학년별 원본 진입 페이지입니다. GFIELD 분석·문항 배정은 아직 잠금입니다.`;
     rights.innerHTML = '<span aria-hidden="true">ⓘ</span> 공식 원문·도형·해설은 주최기관에서 확인합니다. GFIELD 공개 화면에는 검수된 자체 콘텐츠만 제공합니다.';
   }
 
-  function renderGoalFlow(goalId, hasOriginal) {
+  function renderGoalFlow(goalId, hasOriginal, grade) {
     const competition = ["kangaroo", "sasmo", "amc"].includes(goalId);
     const steps = competition
-      ? [["01", "학년·공식 자격 확인"], ["02", hasOriginal ? "주최기관 원문 확인" : "원문 제공 여부 확인"], ["03", "검수 후 분석·학습 연결"]]
+      ? [["01", "학년·공식 자격 확인"], ["02", hasOriginal ? "주최기관 원문 확인" : "원문 제공 여부 확인"], ["03", String(grade) === "6" ? "GFIELD 실제 유형 5개 풀기" : "검수 후 분석·학습 연결"]]
       : [["01", "학년·영역 선택"], ["02", "진단 또는 개념 학습"], ["03", "교사 확인·재학습"]];
     document.getElementById("goal-start-flow").innerHTML = steps.map(function (step) {
       return `<li><b>${step[0]}</b><small>${step[1]}</small></li>`;
@@ -264,7 +271,15 @@
     if (!target) return;
     const gradeSixLearning = String(grade) === "6" && ["school", "singapore"].includes(goalId);
     const competition = ["kangaroo", "sasmo", "amc"].includes(goalId);
-    const stages = [
+    const gradeSixCompetition = String(grade) === "6" && competition;
+    const stages = gradeSixCompetition ? [
+      ["01", "범위 확인", "공식 학년·출제 범위", "public"],
+      ["02", "유형 연습", "자체 제작 실제 유형 5개", "public"],
+      ["03", "오답 확인", "문항별 즉시 정오 확인", "public"],
+      ["04", "개념 학습", "설명·모델·완전 풀이", "planned"],
+      ["05", "워크북", "영역별 반복·혼합 연습", "locked"],
+      ["06", "재확인", "유지·전이·교사 확인", "planned"]
+    ] : [
       ["01", "진단", competition ? "공식 결과·준비 진단" : "학년·영역별 근거", "planned"],
       ["02", "분석", "문항·영역·오류 유형", "planned"],
       ["03", "클리닉", "약점별 보완 수업", "planned"],
@@ -307,7 +322,9 @@
     document.getElementById("goal-summary").textContent = definition.summary;
     document.getElementById("goal-eligibility").textContent = facts.eligibility;
     document.getElementById("goal-format").textContent = facts.format;
-    document.getElementById("goal-route").textContent = definition.route;
+    document.getElementById("goal-route").textContent = ["kangaroo", "sasmo", "amc"].includes(goalId) && String(grade) === "6"
+      ? "공식 범위 확인 → GFIELD 실제 유형 풀이 → 문항별 오답 확인 → 개념·클리닉 연결"
+      : definition.route;
     document.getElementById("goal-grade-note").textContent = goalId === "amc"
       ? `${gradeName(grade)}의 권장 단계 · 실제 참가 자격은 별도 확인`
       : `${gradeName(grade)} 기준`;
@@ -318,7 +335,11 @@
     source.textContent = `${program.title.ko} 공식 정보 ↗`;
 
     const primary = document.getElementById("goal-primary");
-    if (goalId === "sasmo") {
+    if (["kangaroo", "sasmo", "amc"].includes(goalId) && String(grade) === "6") {
+      const program = goalId === "kangaroo" ? "kangaroo" : goalId === "sasmo" ? "sasmo" : "amc8";
+      primary.textContent = `${definition.label} Grade 6 실제 유형 풀기`;
+      primary.href = `./competition-practice.html?program=${program}&audience=${state.roleId}&locale=ko`;
+    } else if (goalId === "sasmo") {
       primary.textContent = "SASMO 학년별 준비 경로 열기";
       primary.href = "./sasmo.html";
     } else if (goalId === "school" && String(grade) === "6") {
@@ -336,7 +357,7 @@
     }
 
     setOriginalLink(definition, grade);
-    renderGoalFlow(goalId, !document.getElementById("goal-original").hidden);
+    renderGoalFlow(goalId, !document.getElementById("goal-original").hidden, grade);
     renderCapabilities(goalId, grade);
 
     if (goalId === "school" && spine.gradeOrder.some(function (entry) { return sameGrade(entry, grade); })) renderGradeMap(grade);

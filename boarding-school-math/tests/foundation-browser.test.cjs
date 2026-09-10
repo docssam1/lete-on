@@ -89,7 +89,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   await page.locator('[data-goal="sasmo"]').click();
   assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("aria-selected"), "true");
   assert.equal(await page.locator("#goal-title").textContent(), "SASMO · Grade 6 준비");
-  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./sasmo.html");
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./competition-practice.html?program=sasmo&audience=student&locale=ko");
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("href"), "https://form.simcc.org/2019-sasmo-year-paper/");
   assert.equal(await original.getAttribute("target"), "_blank");
