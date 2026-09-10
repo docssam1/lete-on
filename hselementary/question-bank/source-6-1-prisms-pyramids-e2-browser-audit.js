@@ -20,7 +20,8 @@ const sourceIds = [
   "6-1-u2-e2-mission-1",
   "6-1-u2-e2-example-2-4",
   "6-1-u2-e2-example-2-3",
-  "6-1-u2-e2-example-2-1"
+  "6-1-u2-e2-example-2-1",
+  "6-1-u2-e2-mission-4"
 ];
 const sources = [
   { id: sourceIds[0], search: "예제 2-2", kind: "cuboid-all-corners-cut" },
@@ -30,7 +31,8 @@ const sources = [
   { id: sourceIds[4], search: "Mission 1", kind: "pentagonal-prism-45-degree-spiral-height" },
   { id: sourceIds[5], search: "예제 2-4", kind: "three-triangular-prisms-trapezoidal-prism-surface-area" },
   { id: sourceIds[6], search: "예제 2-3", kind: "triangular-prism-three-face-shortest-segment" },
-  { id: sourceIds[7], search: "예제 2-1", kind: "hexagonal-prism-six-congruent-pieces-edge-extremes" }
+  { id: sourceIds[7], search: "예제 2-1", kind: "hexagonal-prism-six-congruent-pieces-edge-extremes" },
+  { id: sourceIds[8], search: "Mission 4", kind: "square-prism-four-face-shortest-segment" }
 ];
 const difficulties = [-1, 0, 1];
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
@@ -270,6 +272,17 @@ async function inspectView(page, selector, source, difficulty, answerView, label
         dataLayerCutCount: svg?.dataset.layerCutCount || "",
         dataRadialPieceCount: svg?.dataset.radialPieceCount || "",
         dataCutRule: svg?.dataset.cutRule || "",
+        squareRoutes: svg?.querySelectorAll(".source61-e2-square-shortest-route").length || 0,
+        squareHiddenRoutes: svg?.querySelectorAll(".source61-e2-square-shortest-route.is-behind").length || 0,
+        squareHiddenRoutesVisible: [...(svg?.querySelectorAll(".source61-e2-square-shortest-route.is-behind") || [])].filter(line => getComputedStyle(line).display !== "none" && getComputedStyle(line).visibility !== "hidden" && Number(getComputedStyle(line).strokeWidth.replace("px", "")) > 0).length,
+        squarePoints: svg?.querySelectorAll(".source61-e2-square-shortest-point").length || 0,
+        squareHeightDimensions: svg?.querySelectorAll("[data-prism-height-dimension]").length || 0,
+        squareHeightDimensionValue: svg?.querySelector("[data-prism-height-dimension]")?.dataset.prismHeightDimension || "",
+        squareNetFaces: svg?.querySelectorAll(".source61-e2-square-shortest-net-face").length || 0,
+        squareNetRoute: svg?.querySelectorAll(".source61-e2-square-shortest-net-route").length || 0,
+        squareNetTarget: svg?.querySelectorAll(".source61-e2-square-shortest-net-target").length || 0,
+        dataBaseSide: svg?.dataset.baseSide || "",
+        dataCrossingRatios: svg?.dataset.crossingRatios || "",
         dataBaseSides: svg?.dataset.baseSides || "",
         dataTriangleCount: svg?.dataset.triangleCount || "",
         dataSharedFaces: svg?.dataset.sharedFaceCount || "",
@@ -417,6 +430,15 @@ function checkGeometryContracts(state, source, label, answerView) {
       if (svg.sixPieceBehindLines < 3 || svg.sixPieceBehindLinesVisible !== svg.sixPieceBehindLines) fail(`${label}: 뒤쪽 모서리와 절단선이 실제 점선으로 모두 보이지 않습니다.`);
       if (!answerView && (svg.sixPiecePrisms !== 1 || svg.sixPieceLayerCuts !== 0 || svg.sixPieceRadialCuts !== 0 || svg.dataResultHighlight)) fail(`${label}: 문제에는 자르기 전 정육각기둥 하나만 보여야 합니다.`);
       if (answerView && (svg.sixPiecePrisms !== 2 || svg.sixPieceLayerCuts !== 30 || svg.sixPieceRadialCuts !== 13 || Number(svg.dataLayerCutCount) !== 5 || Number(svg.dataRadialPieceCount) !== 6 || svg.dataResultHighlight !== "108,54")) fail(`${label}: 답에 최대 여섯 층·최소 여섯 삼각기둥·108과 54가 함께 표시되지 않았습니다.`);
+    } else if (source.kind === "square-prism-four-face-shortest-segment") {
+      const side = Number(svg.dataBaseSide), prismHeight = Number(svg.dataPrismHeight);
+      if (![[6, 12], [7, 16], [8, 20]].some(pool => pool.join(",") === [side, prismHeight].join(","))) fail(`${label}: 사각기둥 길이가 고정 pool과 다릅니다.`);
+      if (Number(svg.dataLateralFaces) !== 4 || Number(svg.dataRouteSegments) !== 4 || Number(svg.dataCrossings) !== 3) fail(`${label}: 옆면 4개·이동 선분 4개·경계점 3개 구조가 다릅니다.`);
+      if (svg.dataTargetName !== "ㄴㅈ" || svg.dataCrossingRatios !== "0.25,0.5,0.75" || prismHeight % 4 !== 0) fail(`${label}: 구할 선분·경계점 높이 비 또는 네 부분으로 나뉘는 높이가 다릅니다.`);
+      if (svg.squareRoutes !== 4 || svg.squareHiddenRoutes !== 2 || svg.squareHiddenRoutesVisible !== 2 || svg.squarePoints !== 11) fail(`${label}: 입체 그림의 네 경로·실제로 보이는 점선 두 개·점 11개가 다릅니다.`);
+      if (svg.squareHeightDimensions !== 1 || Number(svg.squareHeightDimensionValue) !== prismHeight) fail(`${label}: 기둥 높이 치수선이 정확하지 않습니다.`);
+      if (!answerView && (svg.squareNetFaces !== 0 || svg.squareNetRoute !== 0 || svg.squareNetTarget !== 0 || svg.dataResultHighlight)) fail(`${label}: 문제에 펼친 답 그림이나 답 값이 노출되었습니다.`);
+      if (answerView && (svg.squareNetFaces !== 4 || svg.squareNetRoute !== 1 || svg.squareNetTarget !== 1 || Number(svg.dataTargetLength) !== prismHeight / 4 || Number(svg.dataResultHighlight) !== prismHeight / 4)) fail(`${label}: 답에 옆면 네 장·곧은 선·선분 ㄴㅈ 길이 강조가 없습니다.`);
     }
   }
 }
@@ -430,7 +452,8 @@ function checkAnswerLeak(state, source, difficulty, label) {
     [sourceIds[4]]: ["48", "60", "72"],
     [sourceIds[5]]: ["56", "82", "848", "864", "1376"],
     [sourceIds[6]]: ["6cm", "7cm", "8cm"],
-    [sourceIds[7]]: ["108", "54"]
+    [sourceIds[7]]: ["108", "54"],
+    [sourceIds[8]]: ["3cm", "4cm", "5cm"]
   }[source.id];
   for (const text of state.visibleText) {
     if (results.some(value => new RegExp(`(^|\\D)${value}(?=\\D|$)`).test(text))) {
@@ -540,14 +563,14 @@ function generatorReady() {
     await new Promise(resolve => server.close(resolve));
   }
 
-  if (screenshots !== 96) fail(`화면 캡처 수가 ${screenshots}장입니다. 96장이어야 합니다.`);
-  if (pdfs !== 16) fail(`A4 PDF 수가 ${pdfs}개입니다. 16개여야 합니다.`);
+  if (screenshots !== 108) fail(`화면 캡처 수가 ${screenshots}장입니다. 108장이어야 합니다.`);
+  if (pdfs !== 18) fail(`A4 PDF 수가 ${pdfs}개입니다. 18개여야 합니다.`);
   if (renderedPdfPages < pdfs) fail(`A4 PDF ${pdfs}개에서 전체 PNG 렌더가 ${renderedPdfPages}쪽뿐입니다.`);
   const status = failures.length ? "실패" : "통과";
-  const summary = `${status}: 8유형×3난이도×PC/모바일, 실제 UI 선택, 고정 pool 3문항, 문제·답 구조·SVG·답 그림·누출·화면 검사, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 렌더 ${renderedPdfPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
+  const summary = `${status}: 9유형×3난이도×PC/모바일, 실제 UI 선택, 고정 pool 3문항, 문제·답 구조·SVG·답 그림·누출·화면 검사, 화면 ${screenshots}장, A4 PDF ${pdfs}개, 렌더 ${renderedPdfPages}쪽, 확인 뷰 ${checkedViews}개\n${failures.join("\n")}\n`;
   fs.writeFileSync(path.join(outputDir, "audit-result.txt"), summary, "utf8");
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`6-1 2단원 개념탐구 2 브라우저 감사 통과: 8유형×3난이도×PC/모바일 · 실제 UI 선택 · 고정 3문항 · 답 그림 · A4 PDF 16개 전 ${renderedPdfPages}쪽`);
+  console.log(`6-1 2단원 개념탐구 2 브라우저 감사 통과: 9유형×3난이도×PC/모바일 · 실제 UI 선택 · 고정 3문항 · 답 그림 · A4 PDF 18개 전 ${renderedPdfPages}쪽`);
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exitCode = 1;

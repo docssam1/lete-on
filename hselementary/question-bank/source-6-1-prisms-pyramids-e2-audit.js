@@ -16,7 +16,8 @@ const sourceIds = [
   "6-1-u2-e2-mission-1",
   "6-1-u2-e2-example-2-4",
   "6-1-u2-e2-example-2-3",
-  "6-1-u2-e2-example-2-1"
+  "6-1-u2-e2-example-2-1",
+  "6-1-u2-e2-mission-4"
 ];
 const sourceAnswers = new Map([
   ["6-1-u2-e2-example-2-2", 74],
@@ -26,7 +27,8 @@ const sourceAnswers = new Map([
   ["6-1-u2-e2-mission-1", 60],
   ["6-1-u2-e2-example-2-4", 848],
   ["6-1-u2-e2-example-2-3", 6],
-  ["6-1-u2-e2-example-2-1", "108,54"]
+  ["6-1-u2-e2-example-2-1", "108,54"],
+  ["6-1-u2-e2-mission-4", 4]
 ]);
 const evidenceKinds = [
   "cuboid-all-corners-cut",
@@ -36,7 +38,8 @@ const evidenceKinds = [
   "pentagonal-prism-45-degree-spiral-height",
   "three-triangular-prisms-trapezoidal-prism-surface-area",
   "triangular-prism-three-face-shortest-segment",
-  "hexagonal-prism-six-congruent-pieces-edge-extremes"
+  "hexagonal-prism-six-congruent-pieces-edge-extremes",
+  "square-prism-four-face-shortest-segment"
 ];
 const difficultyExpected = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const expectedPools = [
@@ -79,6 +82,11 @@ const expectedPools = [
     { values: [6, 6, 3, 18, 9, 108, 54, 96], answer: "108,54" },
     { values: [6, 6, 3, 18, 9, 108, 54, 108], answer: "108,54" },
     { values: [6, 6, 3, 18, 9, 108, 54, 120], answer: "108,54" }
+  ],
+  [
+    { values: [6, 12, 4, 3, 3], answer: 3 },
+    { values: [7, 16, 4, 3, 4], answer: 4 },
+    { values: [8, 20, 4, 3, 5], answer: 5 }
   ]
 ];
 
@@ -200,6 +208,18 @@ function independentAnswer(evidence) {
     check(minimumEdgesPerPiece === 3 * minimumBaseSides && minimumTotal === pieceCount * minimumEdgesPerPiece, "삼각기둥 여섯 조각의 최소 모서리 합이 54가 아닙니다.");
     check(maximumTotal === 108 && minimumTotal === 54 && maximumTotal > minimumTotal, "최대·최소의 값 또는 순서가 다릅니다.");
     return `${maximumTotal},${minimumTotal}`;
+  }
+  if (evidence.kind === "square-prism-four-face-shortest-segment") {
+    const [side, prismHeight, faceCount, crossingCount, targetLength] = values;
+    check([[6, 12], [7, 16], [8, 20]].some(pool => pool.join(",") === [side, prismHeight].join(",")), "사각기둥의 밑면 한 변과 높이가 고정 pool과 다릅니다.");
+    check(faceCount === 4 && crossingCount === 3, "지나는 옆면 4개와 경계점 3개의 구조가 다릅니다.");
+    check(prismHeight % faceCount === 0, "기둥 높이가 같은 네 부분으로 나누어지지 않습니다.");
+    check(targetLength === prismHeight / faceCount, "선분 ㄴㅈ의 길이가 높이의 4분의 1과 다릅니다.");
+    const unfoldedWidth = side * faceCount;
+    const fullRouteSquared = unfoldedWidth ** 2 + prismHeight ** 2;
+    const oneFaceRouteSquared = side ** 2 + targetLength ** 2;
+    check(fullRouteSquared === faceCount ** 2 * oneFaceRouteSquared, "전개도의 곧은 선이 같은 옆면 네 장에서 같은 비율로 나뉘지 않습니다.");
+    return targetLength;
   }
   throw new Error(`알 수 없는 E2 검산 종류: ${evidence.kind}`);
 }
@@ -375,24 +395,45 @@ function checkVariant(variant, generated, evidence) {
     return;
   }
 
-  const [baseSides, pieceCount, minimumBaseSides, maximumEdgesPerPiece, minimumEdgesPerPiece, maximumTotal, minimumTotal, prismHeight] = values;
-  const promptText = visibleText(prompt);
-  check(prompt.includes("밑면의 모양이 정육각형") && prompt.includes("합동인 각기둥 6개") && prompt.includes("가장 클 때와 가장 작을 때"), "원문의 정육각기둥 절단과 최대·최소 물음이 없습니다.");
-  check(!/(?:108|54)/.test(promptText), "문제에 최대 또는 최소 답이 노출되었습니다.");
-  for (const markup of [prompt, answer]) {
-    check(markup.includes('data-base-sides="6"') && markup.includes('data-piece-count="6"') && markup.includes('data-minimum-base-sides="3"'), "정육각형·여섯 조각·삼각형 최소 밑면 자료가 다릅니다.");
-    check(markup.includes(`data-maximum-edges-per-piece="${maximumEdgesPerPiece}"`) && markup.includes(`data-minimum-edges-per-piece="${minimumEdgesPerPiece}"`), "한 조각의 최대·최소 모서리 수 자료가 다릅니다.");
-    check(markup.includes(`data-maximum-total="${maximumTotal}"`) && markup.includes(`data-minimum-total="${minimumTotal}"`), "여섯 조각의 최대·최소 모서리 합 자료가 다릅니다.");
-    check(markup.includes('data-cut-rule="straight-planes-congruent-prisms"'), "평면으로 곧게 잘라 합동인 각기둥을 만드는 범위가 고정되지 않았습니다.");
-    check(countClass(markup, "source61-e2-six-piece-prism") >= 1, "정육각기둥 입체 그림이 없습니다.");
-    check(countClass(markup, "source61-e2-six-piece-edge is-behind") >= 3, "뒤쪽 모서리의 점선 표시가 부족합니다.");
+  if (variant === 7) {
+    const [baseSides, pieceCount, minimumBaseSides, maximumEdgesPerPiece, minimumEdgesPerPiece, maximumTotal, minimumTotal, prismHeight] = values;
+    const promptText = visibleText(prompt);
+    check(prompt.includes("밑면의 모양이 정육각형") && prompt.includes("합동인 각기둥 6개") && prompt.includes("가장 클 때와 가장 작을 때"), "원문의 정육각기둥 절단과 최대·최소 물음이 없습니다.");
+    check(!/(?:108|54)/.test(promptText), "문제에 최대 또는 최소 답이 노출되었습니다.");
+    for (const markup of [prompt, answer]) {
+      check(markup.includes('data-base-sides="6"') && markup.includes('data-piece-count="6"') && markup.includes('data-minimum-base-sides="3"'), "정육각형·여섯 조각·삼각형 최소 밑면 자료가 다릅니다.");
+      check(markup.includes(`data-maximum-edges-per-piece="${maximumEdgesPerPiece}"`) && markup.includes(`data-minimum-edges-per-piece="${minimumEdgesPerPiece}"`), "한 조각의 최대·최소 모서리 수 자료가 다릅니다.");
+      check(markup.includes(`data-maximum-total="${maximumTotal}"`) && markup.includes(`data-minimum-total="${minimumTotal}"`), "여섯 조각의 최대·최소 모서리 합 자료가 다릅니다.");
+      check(markup.includes('data-cut-rule="straight-planes-congruent-prisms"'), "평면으로 곧게 잘라 합동인 각기둥을 만드는 범위가 고정되지 않았습니다.");
+      check(countClass(markup, "source61-e2-six-piece-prism") >= 1, "정육각기둥 입체 그림이 없습니다.");
+      check(countClass(markup, "source61-e2-six-piece-edge is-behind") >= 3, "뒤쪽 모서리의 점선 표시가 부족합니다.");
+    }
+    check(countClass(prompt, "source61-e2-six-piece-layer-cut") === 0 && countClass(prompt, "source61-e2-six-piece-radial-cut") === 0, "문제에 최대·최소를 만드는 절단선이 미리 노출되었습니다.");
+    check(countClass(answer, "source61-e2-six-piece-layer-cut") === 30, "답 그림에 여섯 층을 만드는 다섯 육각형 절단선이 없습니다.");
+    check(countClass(answer, "source61-e2-six-piece-radial-cut") === 13, "답 그림에 삼각기둥 여섯 조각을 만드는 중심 절단선이 없습니다.");
+    check(answer.includes('data-layer-cut-count="5"') && answer.includes('data-radial-piece-count="6"'), "답 그림의 두 절단 방법 요약이 없습니다.");
+    check(answer.includes(`data-result-highlight="${maximumTotal},${minimumTotal}"`), "답에서 최대 108과 최소 54가 순서대로 강조되지 않았습니다.");
+    check(baseSides === 6 && pieceCount === 6 && minimumBaseSides === 3 && [96, 108, 120].includes(prismHeight), "고정 문항 자료가 원본 범위를 벗어났습니다.");
+    return;
   }
-  check(countClass(prompt, "source61-e2-six-piece-layer-cut") === 0 && countClass(prompt, "source61-e2-six-piece-radial-cut") === 0, "문제에 최대·최소를 만드는 절단선이 미리 노출되었습니다.");
-  check(countClass(answer, "source61-e2-six-piece-layer-cut") === 30, "답 그림에 여섯 층을 만드는 다섯 육각형 절단선이 없습니다.");
-  check(countClass(answer, "source61-e2-six-piece-radial-cut") === 13, "답 그림에 삼각기둥 여섯 조각을 만드는 중심 절단선이 없습니다.");
-  check(answer.includes('data-layer-cut-count="5"') && answer.includes('data-radial-piece-count="6"'), "답 그림의 두 절단 방법 요약이 없습니다.");
-  check(answer.includes(`data-result-highlight="${maximumTotal},${minimumTotal}"`), "답에서 최대 108과 최소 54가 순서대로 강조되지 않았습니다.");
-  check(baseSides === 6 && pieceCount === 6 && minimumBaseSides === 3 && [96, 108, 120].includes(prismHeight), "고정 문항 자료가 원본 범위를 벗어났습니다.");
+
+  const [side, prismHeight, faceCount, crossingCount, targetLength] = values;
+  const promptText = visibleText(prompt);
+  check(prompt.includes("사각기둥") && prompt.includes("꼭짓점 ㄱ") && prompt.includes("점 ㅈ") && prompt.includes("점 ㅊ") && prompt.includes("점 ㅋ") && prompt.includes("꼭짓점 ㅁ") && prompt.includes("선분 ㄴㅈ"), "원문의 사각기둥·지나는 점·구할 선분 조건이 없습니다.");
+  check(!new RegExp(`(^|\\D)${targetLength}(?=\\D|$)`).test(promptText), "문제에 선분 ㄴㅈ의 답이 노출되었습니다.");
+  for (const markup of [prompt, answer]) {
+    check(markup.includes(`data-base-side="${side}"`) && markup.includes(`data-prism-height="${prismHeight}"`), "밑면 한 변과 기둥 높이 자료가 고정 pool과 다릅니다.");
+    check(markup.includes(`data-lateral-face-count="${faceCount}"`) && markup.includes('data-route-segment-count="4"') && markup.includes(`data-crossing-count="${crossingCount}"`), "옆면·이동 선분·경계점 수가 다릅니다.");
+    check(markup.includes('data-crossing-ratios="0.25,0.5,0.75"') && markup.includes('data-target-name="ㄴㅈ"'), "경계점의 높이 비 또는 구할 선분 이름이 다릅니다.");
+    check(countClass(markup, "source61-e2-square-shortest-route") === 4, "입체 그림의 경로가 네 선분이 아닙니다.");
+    check(countClass(markup, "source61-e2-square-shortest-route is-behind") === 2, "뒤쪽으로 숨는 경로가 점선 두 개가 아닙니다.");
+    check(countClass(markup, "source61-e2-square-shortest-point") === 11, "사각기둥의 꼭짓점 8개와 경계점 3개가 모두 표시되지 않았습니다.");
+    check(allAttrs(markup, "data-prism-height-dimension").length === 1 && markup.includes(`data-prism-height-dimension="${prismHeight}"`), "기둥 높이 치수선이 정확히 한 개가 아닙니다.");
+  }
+  check(countClass(prompt, "source61-e2-square-shortest-net-face") === 0 && countClass(prompt, "source61-e2-square-shortest-net-route") === 0 && countClass(prompt, "source61-e2-square-shortest-target") === 0, "문제에 전개도 또는 선분 ㄴㅈ의 답 강조가 노출되었습니다.");
+  check(countClass(answer, "source61-e2-square-shortest-net-face") === 4 && countClass(answer, "source61-e2-square-shortest-net-route") === 1 && countClass(answer, "source61-e2-square-shortest-net-target") === 1, "답 그림에 옆면 네 장·곧은 선·선분 ㄴㅈ이 없습니다.");
+  check(answer.includes(`data-target-length="${targetLength}"`) && answer.includes(`data-result-highlight="${targetLength}"`), "답에서 선분 ㄴㅈ의 길이가 강조되지 않았습니다.");
+  check(faceCount === 4 && crossingCount === 3 && targetLength === prismHeight / 4, "고정 문항의 최단 경로 계산이 원본 구조와 다릅니다.");
 }
 
 check(Boolean(api && api.names && api.names.includes(generatorKey)), "E2 전용 생성기가 등록되지 않았습니다.");
@@ -407,7 +448,8 @@ const ledgerContracts = [
   { id: "6-1-u2-e2-mission-1", page: 10, words: ["Mission 1", "오각기둥", "10cm", "45°"] },
   { id: "6-1-u2-e2-example-4", page: 9, words: ["예제 2-4", "삼각기둥", "3개", "144cm²", "겉넓이"] },
   { id: "6-1-u2-e2-example-3", page: 9, words: ["예제 2-3", "삼각기둥", "점 ㅅ", "점 ㅇ", "선분 ㅇㅂ"] },
-  { id: "6-1-u2-e2-example-1", page: 9, words: ["예제 2-1", "정육각형", "잘라", "합동인 각기둥 6개", "최대", "최소"] }
+  { id: "6-1-u2-e2-example-1", page: 9, words: ["예제 2-1", "정육각형", "잘라", "합동인 각기둥 6개", "최대", "최소"] },
+  { id: "6-1-u2-e2-mission-4", page: 10, words: ["Mission 4", "사각기둥", "점 ㅈ", "점 ㅊ", "점 ㅋ", "선분 ㄴㅈ"] }
 ];
 for (const expected of ledgerContracts) {
   context = `${expected.id} / 원본 장부`;
@@ -458,4 +500,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 8유형 · 24개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);
+console.log(`6-1 2단원 개념탐구 2 각기둥과 각뿔 감사 통과: 9유형 · 27개 고정 문항 · ${checked.toLocaleString()}회 독립 계산·pool·단일 정답·답 그림·원문 ID·난이도·도형 semantic 검사`);

@@ -874,11 +874,11 @@
       "visualRisk": "전개도와 입체 그림에서 보이지 않는 모서리·밑면·방향이 한 가지로 정해져야 하며, 접힌 뒤 맞닿는 변과 길이 단위를 실제 화면에서 확인해야 함",
       "section": "mission",
       "ordinal": 4,
-      "sourceShape": "원본 10쪽 Mission 4. 밑면의 한 변이 7cm이고 높이가 16cm인 사각기둥의 겉면에서 여러 점을 차례로 지나 두 꼭짓점을 잇는 선이 가장 짧을 때 한 부분의 길이를 구함",
-      "answerContract": "candidate",
+      "sourceShape": "원본 10쪽 Mission 4. 밑면이 한 변 7cm인 정사각형이고 높이가 16cm인 사각기둥의 겉면에서 꼭짓점 ㄱ을 출발해 점 ㅈ, 점 ㅊ, 점 ㅋ을 차례로 지나 꼭짓점 ㅁ까지 가는 가장 짧은 선을 그었을 때 선분 ㄴㅈ의 길이를 구함",
+      "answerContract": "single-answer-fixed-pool",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 구조는 확인했지만 지나가는 점과 면의 순서를 전개도 좌표로 옮겨 최단 경로를 검산하기 전까지 잠급니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본의 사각기둥과 점·선 순서를 확인하고, 네 옆면을 같은 너비로 펼친 좌표에서 선분 ㄴㅈ이 높이의 4분의 1임을 독립 검산한 고정 문항 3개로 제한합니다."
     },
     {
       "sourceItemId": "6-1-u2-e2-mission-5",
