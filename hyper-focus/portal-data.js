@@ -61,12 +61,12 @@ window.GFIELD_HF_PORTAL = {
       eyebrow: "CURATED FOR MEMBERS",
       title: "VIP\n라운지",
       shortTitle: "VIP 라운지",
-      description: "황소 학습 서재의 VIP 자료실·설명회·칼럼·교육 매거진으로 이동합니다.",
+      description: "황소 대비 핵심 자료·프리미엄 설명회·DOCSSAM 칼럼·교육 매거진을 한곳에서 봅니다.",
       permission: "vip",
       kind: "link",
-      href: "https://hs.gfieldacademy.net/",
+      href: "./vip/",
       accent: "gold",
-      status: "황소 VIP 라운지 연결"
+      status: "VIP 전용 콘텐츠"
     }
   ],
   vipSections: [
