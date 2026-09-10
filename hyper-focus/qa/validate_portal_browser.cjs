@@ -60,6 +60,9 @@ async function noOverflow(page, label) {
 
     await loginStudentFixture(desktop);
     assert.equal(await desktop.locator("#productShelf .library-book").count(), 4);
+    assert.deepEqual(await desktop.locator("#productShelf .library-book").evaluateAll(rows => rows.map(row => row.dataset.product)), ["hyperfocus", "mock", "challenge", "vip"]);
+    assert.deepEqual(await desktop.locator("#productShelf .library-book strong").allInnerTexts(), ["Hyper Focus\n문항 진단", "프리미어\n모의고사", "2026년 9월\n챌린지 대비", "VIP\n라운지"]);
+    assert.equal(await desktop.evaluate(() => window.GFIELD_HF_PORTAL.products.find(product => product.key === "vip").href), "https://hs.gfieldacademy.net/");
     assert.equal(await desktop.locator("#productShelf .library-book.unlocked").count(), 1);
     assert.equal(await desktop.locator("#productShelf .library-book.locked").count(), 3);
     await desktop.locator('[data-product="mock"]').first().click();
@@ -141,6 +144,7 @@ async function noOverflow(page, label) {
     console.log(JSON.stringify({
       status: 200,
       publicPrograms: 4,
+      libraryPrograms: ["hyperfocus", "mock", "challenge", "vip"],
       fixtureUnlocked: 1,
       fixtureLocked: 3,
       diagnosisAutoLogin: true,

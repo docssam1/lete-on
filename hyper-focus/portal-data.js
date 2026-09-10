@@ -28,8 +28,8 @@ window.GFIELD_HF_PORTAL = {
       key: "mock",
       order: "02",
       eyebrow: "PREMIER MOCK EXAMS",
-      title: "온라인\n모의고사",
-      shortTitle: "온라인 모의고사",
+      title: "프리미어\n모의고사",
+      shortTitle: "프리미어 모의고사",
       description: "회차를 선택해 응시하고 채점·유형 진단까지 한 흐름으로 확인합니다.",
       permission: "mock",
       kind: "collection",
@@ -42,30 +42,31 @@ window.GFIELD_HF_PORTAL = {
       ]
     },
     {
-      key: "vip",
+      key: "challenge",
       order: "03",
+      eyebrow: "SEPTEMBER CHALLENGE",
+      title: "2026년 9월\n챌린지 대비",
+      shortTitle: "2026년 9월 챌린지 대비",
+      description: "개념 문제은행과 온라인 모의고사 4회로 챌린지를 준비합니다.",
+      permission: "challenge-granular",
+      permissionMode: "challenge-granular",
+      kind: "link",
+      href: "./challenge/",
+      accent: "green",
+      status: "개념 문제은행 · 온라인 모의고사"
+    },
+    {
+      key: "vip",
+      order: "04",
       eyebrow: "CURATED FOR MEMBERS",
       title: "VIP\n라운지",
       shortTitle: "VIP 라운지",
-      description: "자료실·프리미엄 설명회·DOCSSAM 칼럼·교육 매거진을 연결해 봅니다.",
+      description: "황소 학습 서재의 VIP 자료실·설명회·칼럼·교육 매거진으로 이동합니다.",
       permission: "vip",
       kind: "link",
-      href: "./vip/",
+      href: "https://hs.gfieldacademy.net/",
       accent: "gold",
-      status: "관리자 업로드 연결"
-    },
-    {
-      key: "problem-bank",
-      order: "04",
-      eyebrow: "PERSONAL WORKSHEET",
-      title: "하이퍼 포커스\n54유형 문제은행",
-      shortTitle: "HF 54유형 문제은행",
-      description: "하이퍼 포커스 진단의 54개 유형에서 난이도를 골라 학생별 시험지를 만듭니다.",
-      permission: "problem-bank",
-      kind: "link",
-      href: "./diagnosis.html?section=similar",
-      accent: "green",
-      status: "54유형 · 난이도별 2문항"
+      status: "황소 VIP 라운지 연결"
     }
   ],
   vipSections: [

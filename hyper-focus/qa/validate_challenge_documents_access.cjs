@@ -27,9 +27,18 @@ const protectedPattern=/\/(?:challenge-bank|exam-replacements|exam-editions|exam
   for(const [file,key,selector]of[['concepts.html','challenge-concept-2','.concept-page'],['exam.html','challenge-mock-2','.exam-page']]){
    const f=await open('/challenge/'+file+'?round=2',[key]);await f.page.waitForSelector(selector,{state:'attached',timeout:30000});
    check(file+' round 2 renders',await f.page.locator(selector).count()>0);
+   check(file+' approved student name prints',await f.page.locator('body').innerText().then(text=>text.includes('권한검수학생')));
+   if(file==='concepts.html'){
+    const pages=await f.page.locator('.concept-page:not(.book-blank)').count(),marks=await f.page.locator('.concept-page:not(.book-blank) > .book-watermark span').count();
+    check(file+' visible watermark on every printable page',marks===pages*3,{pages,marks});
+   }else{
+    const pages=await f.page.locator('.exam-page:not(.blank-page)').count(),marks=await f.page.locator('.exam-page:not(.blank-page) > .watermark span').count();
+    check(file+' visible watermark on every printable page',marks===pages*3,{pages,marks});
+   }
    check(file+' round 1 not rendered',file==='concepts.html'?await f.page.locator('.concept-page[data-round="1"]').count()===0:await f.page.locator('.exam-masthead h1').innerText().then(s=>s.includes('2회')));
    check(file+' only round 2 selectable',await f.page.locator('#round').evaluate(el=>[...el.options].filter(o=>!o.disabled).map(o=>o.value).join(',')==='2'));
    await f.page.screenshot({path:path.join(out,file.replace('.html','')+'-round2.png')});
+   await f.page.emulateMedia({media:'print'});await f.page.pdf({path:path.join(out,file.replace('.html','')+'-round2.pdf'),format:'A4',printBackground:true,preferCSSPageSize:true});
    await f.page.evaluate(()=>window.HFChallengeAccess.clear('expired'));
    check(file+' expiry clears document',await f.page.locator('main').innerHTML()==='');
    check(file+' expiry clears personal name',!(await f.page.locator('body').innerText()).includes('권한검수학생')&&await f.page.locator('input').evaluateAll(els=>els.every(el=>!el.value.includes('권한검수학생'))));
