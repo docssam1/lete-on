@@ -53,16 +53,16 @@
     if(state.locale==="zh-Hans") return denominator+"分之"+numerator;
     return numerator+" over "+denominator;
   }
-  function mathFraction(numerator,denominator) {
+  function mathFraction(numerator,denominator,factor) {
     const ns="http://www.w3.org/1998/Math/MathML";
-    const math=document.createElementNS(ns,"math"); math.classList.add("math-inline-fraction"); math.setAttribute("display","inline"); math.setAttribute("aria-label",fractionLabel(numerator.replace(/^[-−]/,""),denominator));
+    const math=document.createElementNS(ns,"math"); math.classList.add("math-inline-fraction"); math.setAttribute("display","inline"); math.setAttribute("aria-label",fractionLabel(numerator.replace(/^[-−]/,""),denominator)+(factor?" × "+factor:""));
     const fraction=document.createElementNS(ns,"mfrac");
     function number(value){const negative=/^[-−]/.test(value),row=document.createElementNS(ns,"mrow");if(negative){const minus=document.createElementNS(ns,"mo");minus.textContent="−";row.append(minus);}const numberNode=document.createElementNS(ns,"mn");numberNode.textContent=value.replace(/^[-−]/,"");row.append(numberNode);return row;}
-    fraction.append(number(numerator),number(denominator)); math.append(fraction); return math;
+    fraction.append(number(numerator),number(denominator)); math.append(fraction); if(factor){const identifier=document.createElementNS(ns,"mi");identifier.textContent=factor;math.append(identifier);} return math;
   }
   function appendMathText(node,value) {
-    const content=String(value==null?"":value),pattern=/([−-]?\d+)\s*\/\s*([1-9]\d*)/g; let cursor=0,match;
-    while((match=pattern.exec(content))){if(match.index>cursor)node.append(document.createTextNode(content.slice(cursor,match.index)));node.append(mathFraction(match[1],match[2]));cursor=pattern.lastIndex;}
+    const content=String(value==null?"":value),pattern=/([−-]?\d+)\s*([xX])\s*\/\s*([1-9]\d*)|([−-]?\d+)\s*\/\s*([1-9]\d*)/g; let cursor=0,match;
+    while((match=pattern.exec(content))){if(match.index>cursor)node.append(document.createTextNode(content.slice(cursor,match.index)));node.append(match[1]?mathFraction(match[1],match[3],match[2]):mathFraction(match[4],match[5]));cursor=pattern.lastIndex;}
     if(cursor<content.length)node.append(document.createTextNode(content.slice(cursor))); return node;
   }
   function mathEl(tag,className,value){return appendMathText(el(tag,className),value);}
@@ -96,7 +96,9 @@
   }
   function renderCover(pageNumber) {
     const node=page(pageNumber,"book-cover");
-    node.append(el("p","page-kicker","GFIELD MATH · US GRADE 6 · "+source.pack.standardRange),el("h1","",text(source.pack.title)),mathEl("p","book-subtitle",text(source.pack.subtitle)),el("div","cover-rule"));
+    const gradeMatch=/^(\d+)\./.exec(String(source.pack.clusterId||source.pack.standardRange||""));
+    const gradeLabel=gradeMatch?"US GRADE "+gradeMatch[1]:"US CORE MATH";
+    node.append(el("p","page-kicker","GFIELD MATH · "+gradeLabel+" · "+source.pack.standardRange),el("h1","",text(source.pack.title)),mathEl("p","book-subtitle",text(source.pack.subtitle)),el("div","cover-rule"));
     const grid=el("div","cover-grid");
     [[c().name,""],[c().class,""],[c().date,""]].forEach(function(entry){ const box=el("div"); box.append(el("span","",entry[0]),el("strong","","")); grid.append(box); });
     node.append(grid);
@@ -130,7 +132,7 @@
     }
     if(state.audience==="student"&&Array.isArray(problem.choices)){
       const choices=el("div","choice-list");
-      problem.choices.forEach(function(choice,choiceIndex){const button=mathEl("button","choice-button",text(choice.label));button.type="button";button.dataset.choice=String.fromCharCode(65+choiceIndex);button.dataset.answerId=choice.id;const selected=restored===choice.id;button.classList.toggle("is-selected",selected);button.classList.toggle("is-correct",selected&&source.evaluateResponse(problem,choice.id));button.addEventListener("click",function(){card.querySelectorAll(".choice-button").forEach(function(node){node.classList.toggle("is-selected",node===button);node.classList.remove("is-correct");});recordResult(choice.id,button);});choices.append(button);});
+      problem.choices.forEach(function(choice,choiceIndex){const button=el("button","choice-button");const label=mathEl("span","choice-label",text(choice.label));button.append(label);button.type="button";button.dataset.choice=String.fromCharCode(65+choiceIndex);button.dataset.answerId=choice.id;const selected=restored===choice.id;button.classList.toggle("is-selected",selected);button.classList.toggle("is-correct",selected&&source.evaluateResponse(problem,choice.id));button.addEventListener("click",function(){card.querySelectorAll(".choice-button").forEach(function(node){node.classList.toggle("is-selected",node===button);node.classList.remove("is-correct");});recordResult(choice.id,button);});choices.append(button);});
       card.append(choices);
     }else if(state.audience==="student"){
       const responseRow=el("div","answer-row screen-answer");const input=el("input","answer-input");input.type="text";input.inputMode=["ratio-pair","decimal-or-fraction"].includes(problem.responseFormat)?"text":"decimal";input.placeholder=c().answerPlaceholder;input.setAttribute("aria-label",String(index+1)+" "+c().answerPlaceholder);input.autocomplete="off";input.spellcheck=false;input.value=restored||"";const button=el("button","check-button",c().check);button.type="button";button.addEventListener("click",function(){if(!input.value.trim()){const feedback=card.querySelector(".choice-feedback");feedback.className="choice-feedback wrong";feedback.textContent=c().answerPlaceholder;input.focus();return;}recordResult(input.value.trim(),input);if(source.evaluateResponse(problem,input.value.trim())){input.disabled=true;button.disabled=true;}});input.addEventListener("keydown",function(event){if(event.key==="Enter")button.click();});responseRow.append(input,button);card.append(responseRow,el("div","print-answer-line",c().answerPlaceholder));
