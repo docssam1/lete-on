@@ -30,6 +30,14 @@ async function installVipAdminFixture(page) {
   }));
 }
 
+async function installRemoteAdminFixture(page) {
+  await installOfflineConfig(page);
+  await page.route("**/hyper-focus/portal-auth.js*", route => route.fulfill({
+    contentType: "application/javascript; charset=utf-8",
+    body: `window.GFieldHFPortalAuth={ready:async()=>({role:"admin",name:"DOCSSAM",permissions:["*"]}),isSupabaseEnabled:()=>true,client:async()=>({functions:{invoke:async(_name,{body}={})=>body?.action==="list"?({data:{students:[{id:"11111111-1111-4111-8111-111111111111",name:"승인번호검수",type:"internal",status:"active",approvalCode:"GF-2468",permissions:["hyperfocus"],mockBundles:{utilization:{state:"none",activeCount:0,expectedCount:8},final:{state:"none",activeCount:0,expectedCount:3},last:{state:"none",activeCount:0,expectedCount:4}}}]},error:null}):({data:{ok:true},error:null})}})};`
+  }));
+}
+
 async function loginStudentFixture(page) {
   await page.locator("[data-login-open]").first().click();
   assert.equal(await page.locator("#loginCode").getAttribute("type"), "text");
@@ -108,6 +116,17 @@ async function noOverflow(page, label) {
     for (const heading of ["문항 진단", "추가 문제", "모의고사", "VIP 라운지", "문제 은행"]) assert.equal(await admin.getByRole("columnheader", { name: heading }).count(), 1);
     await admin.close();
 
+    const approvalAdmin = await browser.newPage({ viewport: { width: 1200, height: 800 }, deviceScaleFactor: 1 });
+    await installRemoteAdminFixture(approvalAdmin);
+    approvalAdmin.on("pageerror", error => errors.push(`approval admin desktop: ${error.message}`));
+    await approvalAdmin.goto(`${base}/hyper-focus/admin.html`, { waitUntil: "networkidle" });
+    assert.equal(await approvalAdmin.locator("#rows tr").count(), 1);
+    assert.equal(await approvalAdmin.locator('[data-action="copy-code"]').textContent(), "GF-2468");
+    assert.equal(await approvalAdmin.locator('[data-action="rotate"]').textContent(), "로그인 재설정");
+    await noOverflow(approvalAdmin, "desktop approval admin");
+    await approvalAdmin.screenshot({ path: "tmp/hf-admin-approval-code-desktop.png", fullPage: true });
+    await approvalAdmin.close();
+
     const vipAdmin = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
     await installVipAdminFixture(vipAdmin);
     vipAdmin.on("pageerror", error => errors.push(`vip admin desktop: ${error.message}`));
@@ -140,6 +159,15 @@ async function noOverflow(page, label) {
     await vipAdminMobile.screenshot({ path: "tmp/hf-vip-admin-mobile.png", fullPage: true });
     await vipAdminMobile.close();
 
+    const approvalAdminMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+    await installRemoteAdminFixture(approvalAdminMobile);
+    approvalAdminMobile.on("pageerror", error => errors.push(`approval admin mobile: ${error.message}`));
+    await approvalAdminMobile.goto(`${base}/hyper-focus/admin.html`, { waitUntil: "networkidle" });
+    assert.equal(await approvalAdminMobile.locator('[data-action="copy-code"]').textContent(), "GF-2468");
+    await noOverflow(approvalAdminMobile, "mobile approval admin");
+    await approvalAdminMobile.screenshot({ path: "tmp/hf-admin-approval-code-mobile.png", fullPage: true });
+    await approvalAdminMobile.close();
+
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({
       status: 200,
@@ -152,6 +180,7 @@ async function noOverflow(page, label) {
       adminDirectAccessBlocked: true,
       adminCredentialLogin: adminCode ? true : "not_requested",
       adminProductPermissions: 5,
+      adminCurrentApprovalCode: true,
       vipAdminDesktop: true,
       vipAdminMobile: true,
       desktopOverflow: 0,

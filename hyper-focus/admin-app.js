@@ -102,6 +102,15 @@
     }).join("")}</div></td>`;
   }
 
+  function remoteApprovalCodeCell(student) {
+    const approvalCode = /^GF-\d{4}$/.test(String(student.approvalCode || "")) ? student.approvalCode : "";
+    const codeControl = approvalCode
+      ? `<button class="ghost code" type="button" data-action="copy-code" aria-label="${esc(student.name)} 학생 승인번호 ${esc(approvalCode)} 복사">${esc(approvalCode)}</button>`
+      : '<span class="code-unavailable">기존 번호 확인 불가</span>';
+    const resetLabel = approvalCode ? "로그인 재설정" : "새 번호 발급";
+    return `<td><div class="approval-code-actions">${codeControl}<button class="ghost code-reset" type="button" data-action="rotate">${resetLabel}</button></div></td>`;
+  }
+
   function applyMixedBundleStates() {
     document.querySelectorAll('[data-bundle-state="partial"]').forEach(input => {
       input.indeterminate = true;
@@ -149,7 +158,7 @@
       const permissions = Array.isArray(student.permissions) ? student.permissions : [];
       const online = student.type === "online";
       return `<tr data-index="${index}">
-        <td><button class="ghost" type="button" data-action="rotate">새 번호 발급</button></td>
+        ${remoteApprovalCodeCell(student)}
         <td>${esc(student.name)}</td>
         <td><span class="tag${online ? " online" : ""}">${online ? "온라인" : "재원"}</span> <span class="tag ${esc(student.status)}">${esc(student.status)}</span></td>
         ${permissionCell(permissions, "hyperfocus", student.status === "archived")}
@@ -524,7 +533,17 @@
 
   function showOneTimeCode(name, code) {
     navigator.clipboard?.writeText(code).catch(() => {});
-    window.prompt(`${name} 학생의 새 승인번호입니다.\n이 창을 닫으면 다시 볼 수 없으며, 필요하면 재발급해야 합니다.`, code);
+    window.prompt(`${name} 학생의 승인번호입니다.\n4자리 승인번호는 관리자 목록에서 다시 확인하고 복사할 수 있습니다.`, code);
+  }
+
+  function copyRemoteCode(student) {
+    const code = /^GF-\d{4}$/.test(String(student.approvalCode || "")) ? student.approvalCode : "";
+    if (!code) return;
+    navigator.clipboard?.writeText(code).then(() => {
+      setStatus("📋 승인번호 복사됨");
+    }).catch(() => {
+      window.prompt(`${student.name} 학생의 현재 승인번호입니다.`, code);
+    });
   }
 
   async function addStudent() {
@@ -572,10 +591,18 @@
   async function handleRemoteAction(row, action, value) {
     const student = remoteStudents[Number(row.dataset.index)];
     if (!student) return;
+    if (action === "copy-code") {
+      copyRemoteCode(student);
+      return;
+    }
     setStatus("중앙 권한을 변경하는 중…");
     try {
       if (action === "rotate") {
-        if (!confirm(`${student.name} 학생의 기존 승인번호를 폐기하고 새 번호를 발급할까요?`)) return;
+        const hasCurrentCode = /^GF-\d{4}$/.test(String(student.approvalCode || ""));
+        const message = hasCurrentCode
+          ? `${student.name} 학생이 현재 승인번호로 다시 로그인할 수 있도록 로그인 정보를 재설정할까요?`
+          : `${student.name} 학생의 기존 승인번호를 폐기하고 새 번호를 발급할까요?`;
+        if (!confirm(message)) return;
         const result = await invokeAdmin({ action: "rotate_code", studentId: student.id });
         showOneTimeCode(student.name, result.oneTimeApprovalCode);
       } else if (action === "status") {
@@ -764,7 +791,7 @@
 
     if (remoteMode) {
       $("#legacySyncCard").hidden = true;
-      $("#adminNote").textContent = "승인번호 원문은 데이터베이스에도 저장하지 않습니다. 모의고사는 활용 8회·파이널 3회·최종 4회 상품 단위로 승인하며, 일부 회차만 연결된 상태는 노란색 개수로 표시됩니다. 학생 삭제 대신 정지·보관 상태를 사용합니다.";
+      $("#adminNote").textContent = "현재 사용하는 4자리 승인번호는 관리자 목록에서 확인하고 복사할 수 있습니다. 이전 장문 승인번호는 원문을 저장하지 않아 확인할 수 없으며 새 번호 발급이 필요합니다. 모의고사는 활용 8회·파이널 3회·최종 4회 상품 단위로 승인하며, 일부 회차만 연결된 상태는 노란색 개수로 표시됩니다. 학생 삭제 대신 정지·보관 상태를 사용합니다.";
       await loadRemote();
     } else {
       $("[data-save-key]").addEventListener("click", saveGithubKey);

@@ -166,6 +166,11 @@ function requestedDigitHandle(value: unknown): string | null {
   return /^\d{4}$/.test(body) ? body : null;
 }
 
+function currentShortApprovalCode(value: unknown): string | null {
+  const handle = String(value || "").trim();
+  return /^\d{4}$/.test(handle) ? formatCode(handle) : null;
+}
+
 function containsControlCharacter(value: string): boolean {
   for (const character of value) {
     const code = character.charCodeAt(0);
@@ -449,7 +454,7 @@ Deno.serve(async request => {
       const [studentResult, examResult, mockEntitlementResult] = await Promise.all([
         service
           .from("hf_students")
-          .select("id,display_name,student_type,account_status,created_at,hf_entitlements(permission_key,starts_at,expires_at,revoked_at)")
+          .select("id,login_handle,display_name,student_type,account_status,created_at,hf_entitlements(permission_key,starts_at,expires_at,revoked_at)")
           .order("display_name", { ascending: true }),
         service
           .from("hf_mock_exams")
@@ -466,6 +471,7 @@ Deno.serve(async request => {
       const mockEntitlements = (mockEntitlementResult.data || []) as Array<Record<string, unknown>>;
       const students = (studentResult.data || []).map(row => ({
         id: row.id,
+        approvalCode: currentShortApprovalCode(row.login_handle),
         name: row.display_name,
         type: row.student_type,
         status: row.account_status,
