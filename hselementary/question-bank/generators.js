@@ -24468,6 +24468,39 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Mission1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-mission-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { outer: 52, plus: [2, 7], minus: [47, 91], subtractA: [2, 9], subtractB: [1, 7], result: 21 },
+        { outer: 36, plus: [1, 4], minus: [5, 12], subtractA: [1, 6], subtractB: [1, 3], result: 15 },
+        { outer: 50, plus: [3, 8], minus: [5, 8], subtractA: [1, 4], subtractB: [1, 8], result: 12 }
+      ][poolIndex];
+      const one = rationalValue(1);
+      const firstBracket = rationalOperation(rationalOperation(one, rationalValue(...data.plus), "+"), rationalValue(...data.minus), "-");
+      const secondBracket = rationalOperation(rationalOperation(one, rationalValue(...data.subtractA), "-"), rationalValue(...data.subtractB), "-");
+      const outerTimesFirst = rationalOperation(rationalValue(data.outer), firstBracket, "×");
+      const answerValue = rationalOperation(outerTimesFirst, rationalOperation(rationalValue(data.result), secondBracket, "×"), "÷");
+      if (answerValue.denominator !== 1 || answerValue.numerator <= 0) throw new Error("6-2 Mission 1 빈칸의 답은 양의 정수여야 합니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const blankFraction = '<span class="math-fraction source62-complex-blank-fraction" role="img" aria-label="빈칸분의 1"><span>1</span><span>□</span></span>';
+      const reciprocal = solved => solved ? fractionMarkup(answerValue.denominator, answerValue.numerator) : blankFraction;
+      const equationBoard = solved => `<div class="source62-complex-equation-board${solved ? " is-solved" : ""}" data-source62-e1-mission1-structure="two-brackets-and-blank-reciprocal" data-source62-e1-mission1-expression="${[data.outer, ...data.plus, ...data.minus, ...data.subtractA, ...data.subtractB, data.result].join(":")}"><strong>빈칸이 있는 분수식</strong><div class="source62-complex-equation"><span>${data.outer}×</span><span>(1+${fractionMarkup(...data.plus)}−${fractionMarkup(...data.minus)})</span><span>×${reciprocal(solved)}</span><span>÷(1−${fractionMarkup(...data.subtractA)}−${fractionMarkup(...data.subtractB)})</span><span>=${data.result}</span></div></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-complex-equation-solution"><strong>괄호부터 차례로 계산하기</strong>${row("첫째 괄호", fractionMarkup(firstBracket.numerator, firstBracket.denominator))}${row("둘째 괄호", fractionMarkup(secondBracket.numerator, secondBracket.denominator))}${row("간단히 한 식", `${fractionMarkup(outerTimesFirst.numerator, outerTimesFirst.denominator)}×${fractionMarkup(answerValue.denominator, answerValue.numerator)}÷${fractionMarkup(secondBracket.numerator, secondBracket.denominator)}=${data.result}`)}${row("빈칸", fractionMarkup(answerValue.numerator, answerValue.denominator))}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">두 괄호를 먼저 각각 계산한 뒤 빈칸이 들어간 분수식을 간단히 하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">연산 순서를 지켜 식을 간단히 하고, 구한 수를 빈칸에 넣어 등식이 맞는지 확인하세요.</p>' : "";
+      const values = [data.outer, ...data.plus, ...data.minus, ...data.subtractA, ...data.subtractB, data.result, firstBracket.numerator, firstBracket.denominator, secondBracket.numerator, secondBracket.denominator, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e1-mission1-kind="complex-fraction-blank" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음 식의 빈칸에 알맞은 수를 구하세요.${equationBoard(false)}${support}${challenge}${evidence}`, fraction(answerValue.numerator, answerValue.denominator), `첫째 괄호는 ${fractionMarkup(firstBracket.numerator, firstBracket.denominator)}, 둘째 괄호는 ${fractionMarkup(secondBracket.numerator, secondBracket.denominator)}입니다. 식을 차례로 계산하고 빈칸에 들어갈 수를 구하면 ${fractionMarkup(answerValue.numerator, answerValue.denominator)}이며, 이 수를 넣으면 왼쪽과 오른쪽이 모두 ${data.result}이 됩니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-mission1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${equationBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">두 괄호와 전체 식을 따로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26378,6 +26411,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
     [type => type.sourceItemId === "6-2-u1-e1-example-4", "sourceGrade6SecondFractionDivisionE1Example4"],
+    [type => type.sourceItemId === "6-2-u1-e1-mission-1", "sourceGrade6SecondFractionDivisionE1Mission1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

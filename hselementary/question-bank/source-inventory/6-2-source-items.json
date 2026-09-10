@@ -147,17 +147,19 @@
     {
       "sourceItemId": "6-2-u1-e1-mission-1",
       "unitId": "6-2-u1",
+      "unitName": "분수의 나눗셈",
       "exploration": 1,
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 4,
       "printedPage": 5,
-      "sourceShape": "분수 나눗셈의 뜻을 수, 그림, 식으로 나타내고 몫 또는 양의 관계를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "PDF 4쪽(인쇄 5쪽)의 52×(1+2/7−47/91)×1/□÷(1−2/9−1/7)=21에서 빈칸을 구하는 구조.",
+      "answerContract": "single-answer-fixed-pool",
+      "visualRisk": "두 괄호의 경계와 1/□의 분수선이 분명해야 하며 곱셈·나눗셈 순서가 화면 줄바꿈으로 바뀌어 보이면 안 됨.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 식을 직접 대조했습니다. 두 괄호는 10/13과 40/63이고 전체 식은 63÷빈칸=21이므로 답은 3입니다. 답을 원래 식에 다시 넣어 등식이 성립함을 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e1-mission-1"
     },
     {
       "sourceItemId": "6-2-u1-e1-mission-2",
