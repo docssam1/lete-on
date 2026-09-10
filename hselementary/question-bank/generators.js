@@ -24571,6 +24571,41 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE1Mission4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e1-mission-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { squareDividend: [15, 8], squareDivisor: [5, 4], triangleDividend: [10, 3], triangleDivisor: [16, 9] },
+        { squareDividend: [9, 4], squareDivisor: [3, 2], triangleDividend: [7, 2], triangleDivisor: [7, 4] },
+        { squareDividend: [25, 8], squareDivisor: [5, 4], triangleDividend: [18, 5], triangleDivisor: [6, 5] }
+      ][poolIndex];
+      const squareDividend = rationalValue(...data.squareDividend);
+      const squareDivisor = rationalValue(...data.squareDivisor);
+      const triangleDividend = rationalValue(...data.triangleDividend);
+      const triangleDivisor = rationalValue(...data.triangleDivisor);
+      const squareValue = rationalOperation(squareDividend, squareDivisor, "÷");
+      const triangleValue = rationalOperation(triangleDividend, triangleDivisor, "÷");
+      const answerValue = rationalOperation(squareValue, triangleValue, "÷");
+      if (answerValue.numerator <= 0 || answerValue.denominator <= 0) throw new Error("6-2 Mission 4 몇 배인지 나타낸 값은 양의 분수여야 합니다.");
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const expressionSignature = [...data.squareDividend, ...data.squareDivisor, ...data.triangleDividend, ...data.triangleDivisor].join(":");
+      const operation = (symbol, dividend, divisor, value, solved) => `<div class="source62-ratio-operation"><span class="source62-ratio-symbol" aria-label="${symbol === "■" ? "네모" : "세모"}">${symbol}</span><span>=</span><span>${mixedFractionMarkup(dividend.numerator, dividend.denominator)}÷${mixedFractionMarkup(divisor.numerator, divisor.denominator)}</span>${solved ? `<span>=</span><b>${fractionMarkup(value.numerator, value.denominator)}</b>` : ""}</div>`;
+      const comparisonBoard = solved => `<div class="source62-ratio-comparison-board${solved ? " is-solved" : ""}" data-source62-e1-mission4-structure="two-mixed-number-divisions-and-ratio" data-source62-e1-mission4-expression="${expressionSignature}"><strong>■와 ▲의 값</strong><div class="source62-ratio-operations">${operation("■", squareDividend, squareDivisor, squareValue, solved)}${operation("▲", triangleDividend, triangleDivisor, triangleValue, solved)}</div><div class="source62-ratio-question">■는 ▲의 몇 배입니까?${solved ? `<b>■÷▲=${fractionMarkup(squareValue.numerator, squareValue.denominator)}÷${fractionMarkup(triangleValue.numerator, triangleValue.denominator)}=${fractionMarkup(answerValue.numerator, answerValue.denominator)}배</b>` : ""}</div></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-ratio-comparison-solution"><strong>두 값을 구한 뒤 몇 배인지 비교하기</strong>${row("■의 값", fractionMarkup(squareValue.numerator, squareValue.denominator))}${row("▲의 값", fractionMarkup(triangleValue.numerator, triangleValue.denominator))}${row("■÷▲", `${fractionMarkup(squareValue.numerator, squareValue.denominator)}÷${fractionMarkup(triangleValue.numerator, triangleValue.denominator)}=${fractionMarkup(answerValue.numerator, answerValue.denominator)}`)}</div>`;
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">■와 ▲를 각각 먼저 계산한 뒤, ■의 값을 ▲의 값으로 나누세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 계산 결과를 스스로 구하고, “■는 ▲의 몇 배”에 맞게 나누는 순서를 확인하세요.</p>' : "";
+      const values = [...data.squareDividend, ...data.squareDivisor, ...data.triangleDividend, ...data.triangleDivisor, squareValue.numerator, squareValue.denominator, triangleValue.numerator, triangleValue.denominator, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e1-mission4-kind="two-division-results-ratio" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-value" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`■는 ▲의 몇 배인지 기약분수로 나타내세요.${comparisonBoard(false)}${support}${challenge}${evidence}`, fraction(answerValue.numerator, answerValue.denominator), `■=${fractionMarkup(squareValue.numerator, squareValue.denominator)}이고 ▲=${fractionMarkup(triangleValue.numerator, triangleValue.denominator)}입니다. 따라서 ■의 값을 ▲의 값으로 나누면 ${fractionMarkup(answerValue.numerator, answerValue.denominator)}이므로, ■는 ▲의 ${fractionMarkup(answerValue.numerator, answerValue.denominator)}배입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e1-mission4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${comparisonBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">두 나눗셈의 결과와 몇 배인지 비교하는 순서를 함께 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26484,6 +26519,7 @@
     [type => type.sourceItemId === "6-2-u1-e1-mission-1", "sourceGrade6SecondFractionDivisionE1Mission1"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-2", "sourceGrade6SecondFractionDivisionE1Mission2"],
     [type => type.sourceItemId === "6-2-u1-e1-mission-3", "sourceGrade6SecondFractionDivisionE1Mission3"],
+    [type => type.sourceItemId === "6-2-u1-e1-mission-4", "sourceGrade6SecondFractionDivisionE1Mission4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

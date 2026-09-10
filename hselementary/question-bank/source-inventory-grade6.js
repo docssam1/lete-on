@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 246
+    "unlocked": 247
   },
   "items": [
     {
@@ -7554,20 +7554,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e1-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "typeLabel": "대분수 나눗셈을 기약분수로 나타내기",
+      "typeLabel": "두 계산 결과가 몇 배인지 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE1Mission4",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "원본의 두 대분수 나눗셈과 ■는 ▲의 몇 배인지 묻는 순서를 직접 대조했습니다. ■와 ▲를 각각 계산한 뒤 ■÷▲를 독립 확인한 고정 문항 3개를 연결했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

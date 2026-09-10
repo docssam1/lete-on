@@ -35,10 +35,10 @@ const locked = types.filter(type => !generatorApi.generatorKey(type) || type.rev
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
 
 if (types.length !== 1893) failures.push(`런타임 유형은 1893개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1415) failures.push(`생성 가능 유형은 1415개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 478) failures.push(`검수 대기 유형은 478개여야 하나 ${locked.length}개입니다.`);
+if (ready.length !== 1416) failures.push(`생성 가능 유형은 1416개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 477) failures.push(`검수 대기 유형은 477개여야 하나 ${locked.length}개입니다.`);
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
-if (sourceGrade6.filter(type => !type.reviewLocked).length !== 246 || sourceGrade6.filter(type => type.reviewLocked).length !== 387) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
+if (sourceGrade6.filter(type => !type.reviewLocked).length !== 247 || sourceGrade6.filter(type => type.reviewLocked).length !== 386) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
 if (!sourceGrade6.every(type => {
   if (!type.answerVisualRequired) return false;
   if (type.generationMode === "review-locked") {
