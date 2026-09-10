@@ -8,6 +8,7 @@ const vm = require("node:vm");
 const hyperFocusRoot = path.resolve(__dirname, "..");
 const indexHtml = fs.readFileSync(path.join(hyperFocusRoot, "mock", "index.html"), "utf8");
 const viewerHtml = fs.readFileSync(path.join(hyperFocusRoot, "mock", "viewer.html"), "utf8");
+const practiceLoader = fs.readFileSync(path.join(hyperFocusRoot, "mock", "secure-practice-loader.js"), "utf8");
 const flowSource = fs.readFileSync(path.join(hyperFocusRoot, "mock", "secure-flow.js"), "utf8");
 const configSource = fs.readFileSync(path.join(hyperFocusRoot, "supabase-config.js"), "utf8");
 
@@ -78,8 +79,16 @@ function testStaticUiSecurityContract() {
 
   [indexHtml, viewerHtml].forEach((html, index) => {
     const label = index ? "viewer" : "index";
-    assert.match(html, /<script src="\.\.\/secure-mock\.js(?:\?v=[^"]+)?"><\/script>/, `${label}: secure-mock.js 연결 누락`);
-    assert.match(html, /<script src="\.\/secure-flow\.js(?:\?v=[^"]+)?"><\/script>/, `${label}: secure-flow.js 연결 누락`);
+    if (index) {
+      assert.match(html, /<script src="\.\/secure-practice-loader\.js"><\/script>/, 'viewer: 분리 로더 누락');
+      assert.match(html, /await window\.HFPracticeBootstrap\.ready;/, 'viewer: 시험 모듈 로딩 대기 누락');
+      assert.match(practiceLoader, /'\.\.\/secure-mock\.js(?:\?v=[^']+)?'/, 'viewer: 기존 시험 전달 모듈 누락');
+      assert.match(practiceLoader, /'\.\/secure-flow\.js(?:\?v=[^']+)?'/, 'viewer: 기존 시험 채점 흐름 누락');
+      assert.match(practiceLoader, /if\(remotePractice\)await startRemote\(\);else for\(const src of legacy\)await load\(src\)/, 'viewer: 학생 연습과 기존 시험 모듈 순차 분리 누락');
+    } else {
+      assert.match(html, /<script src="\.\.\/secure-mock\.js(?:\?v=[^"]+)?"><\/script>/, `${label}: secure-mock.js 연결 누락`);
+      assert.match(html, /<script src="\.\/secure-flow\.js(?:\?v=[^"]+)?"><\/script>/, `${label}: secure-flow.js 연결 누락`);
+    }
     assert.doesNotMatch(html, /canAccess\(portalSession\s*,\s*['"]mock['"]\)/, `${label}: 전역 mock 권한으로 선차단하면 안 됩니다.`);
     assert.doesNotMatch(html, /innerHTML\s*=.*(?:error\?\.|error\.message|String\(error)/, `${label}: 오류 문자열을 innerHTML에 넣으면 안 됩니다.`);
   });
@@ -112,7 +121,7 @@ function testStaticUiSecurityContract() {
   assert.doesNotMatch(indexHtml, /if\(remoteMode\)[\s\S]{0,120}HFMock\.resultFromMarks/);
   assert.match(indexHtml, /if\(remoteMode\)refreshRetakeButton\(\);else if\(exam\.questions\.every[^\n]+newExamBtn[^\n]+display='none'/);
   assert.match(viewerHtml, /if\(remoteExam\|\|doc\.questions\.every[^\n]+regenBtn[^\n]+display='none'/);
-  assert.match(viewerHtml, /if\(remoteExam\)return;params\.set\('seed'/, "원격 regenerate 핸들러는 동작하면 안 됩니다.");
+  assert.match(viewerHtml, /if\(remoteExam\|\|!guardPractice\(\)\)return;params\.set\('seed'/, "원격 시험 및 승인 없는 유형은 regenerate 핸들러가 동작하면 안 됩니다.");
 
   assert.match(viewerHtml, /solutionHtml\(rows\)[\s\S]*esc\(row\.answerText\)/, "원격 answerText는 escape 후 렌더해야 합니다.");
   assert.match(viewerHtml, /setViewerError\([\s\S]*node\.textContent=/, "원격 오류는 textContent로 표시해야 합니다.");

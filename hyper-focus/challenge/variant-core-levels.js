@@ -1,0 +1,129 @@
+(function(root){
+ 'use strict';
+ const gaps={'balance-weight-order':['easy'],'triangle-number-rule':['easy','hard'],'rotated-grid-pair':['easy'],'mountain-digit-count':['hard'],'apartment-floor-order':['easy','hard'],'minimum-sum-pyramid':['easy','hard'],'four-cell-code':['easy','hard'],'r3-main-3':['easy','hard'],'r3-main-4':['hard'],'r3-extra-2':['hard'],'r4-main-8':['hard'],'r3-main-11':['hard'],'r4-main-9':['hard'],'r4-extra-4':['hard'],'r3-main-13':['same','hard']};
+ const notes={'balance-weight-order':{easy:'작은 교환 비율로 두 수평 저울의 관계를 연결'},'triangle-number-rule':{easy:'예시에서 규칙을 찾아 가운데 빈칸에 순서대로 적용',hard:'공통 기호의 수를 먼저 찾아 다음 삼각형에 적용'},'rotated-grid-pair':{easy:'네 보기에서 뒤집지 않고 90도 돌려 같은 두 그림 찾기'},'mountain-digit-count':{hard:'두 숫자가 처음 나타나는 줄을 각각 찾아 전체 횟수 합하기'},'apartment-floor-order':{easy:'세 층이 주어진 상태에서 남은 두 층의 관계 판단',hard:'층을 직접 알려 주지 않는 여러 관계를 결합'},'minimum-sum-pyramid':{easy:'한 장의 자리가 정해진 네 카드의 최댓값과 최솟값 비교',hard:'다섯 카드에서 가운데·그 옆·양끝의 다른 영향을 비교'},'four-cell-code':{easy:'각 칸의 값이 드러난 보기에서 색칠과 수를 서로 변환',hard:'겹쳐 칠한 보기끼리 비교하여 각 칸의 값을 추론'},'r3-main-3':{easy:'표시된 묶음 다음 몇 번째의 수와 색을 함께 예측',hard:'묶음 수의 증가와 세 묶음 색 반복을 함께 추적'},'r3-main-13':{same:'서로 다른 방향으로 세 번 굴려 위치가 바뀌는 면 추적',hard:'세 방향 이상을 사용해 다섯 번 굴리며 여섯 면을 끝까지 추적'}};
+ const clone=x=>JSON.parse(JSON.stringify(x)),sum=a=>a.reduce((s,x)=>s+x,0),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const rng=seed=>{let a=seed>>>0;return(lo,hi)=>{a+=0x6d2b79f5;let t=Math.imul(a^(a>>>15),1|a);t^=t+Math.imul(t^(t>>>7),61|t);return lo+Math.floor(((t^(t>>>14))>>>0)/4294967296*(hi-lo+1));};};
+ const mix=(a,r)=>{a=a.slice();for(let i=a.length-1;i;i--){const j=r(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+ const range=(a,b)=>Array.from({length:b-a+1},(_,i)=>i+a),perms=a=>a.length?a.flatMap((x,i)=>perms(a.filter((_,j)=>j!==i)).map(p=>[x,...p])):[[]];
+ const rect=(x,y,w,h,fill='#fff')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="#5d7b91" stroke-width="1.6"/>`,text=(x,y,s,z=21)=>`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="${z}" fill="#203b54">${esc(s)}</text>`;
+ const svg=(b,h=230)=>`<svg xmlns="http://www.w3.org/2000/svg" class="challenge-visual core-level-visual" viewBox="0 0 660 ${h}" role="img" aria-label="문제 조건 그림" style="width:100%;height:auto;max-height:none;font-family:'Malgun Gothic',sans-serif">${b}</svg>`;
+ function supports(source,difficulty){return !!source&&!!gaps[source.typeId]?.includes(difficulty);}
+ function note(source,d){if(!supports(source,d))return '';return notes[source.typeId]?.[d]||(source.payload?.kind==='net'?'긴 직선 줄이 없는 전개도를 접어 마주 보는 면을 추적':'다섯 수 사이에 제시된 네 기호를 빠짐없이 놓아 식 완성');}
+ function complete(source,d,prompt,payload,answer,art,solution,solutionDiagram){return {typeId:source.typeId,number:source.number,domain:source.domain,difficulty:d,prompt,payload:{...payload,coreLevel:true},answer,answerHtml:Array.isArray(answer)?answer.join(', '):String(answer),answerCandidates:[clone(answer)],problemHtml:art||'',solution,...(solutionDiagram?{solutionDiagram}:{})};}
+ function balance(source,d,r){const a=r(1,2),b=r(2,3),answer=(a+1)*b;const renderer=root.HFChallengeBalance||(typeof require==='function'?require('./balance-diagram.js'):null);if(!renderer)throw Error('양팔저울 그림을 불러오지 못했습니다.');return complete(source,d,`두 저울은 모두 수평입니다. 같은 종류의 과일은 무게가 같습니다. 사과 1개와 배 1개를 모두 배로 바꾸면 ${a+1}개입니다. 이 배들을 딸기로 바꾸면 몇 개가 됩니까?`,{kind:'core-balance',pearsPerApple:a,berriesPerPear:b},answer,svg(renderer.render(0,320,['apple'],Array(a).fill('pear'))+renderer.render(340,320,['pear'],Array(b).fill('berry')),190),`사과는 배 ${a}개와 같습니다. 사과와 배를 모두 배로 바꾸면 ${a}+1=${a+1}개입니다. 배 한 개마다 딸기 ${b}개이므로 ${Array(a+1).fill(b).join('+')}=${answer}개입니다.`);}
+ function triangle(source,d,r){let examples;do{examples=[];for(let i=0;i<3;i++){const top=r(3,8),left=r(2,7),right=r(1,Math.min(8,top+left-1));examples.push({top,left,right,center:top+left-right});}}while(examples.every(t=>t.top+t.right===t.left+t.center)||examples.every(t=>t.top+t.center===t.left+t.right));let targets,answer,solution;
+  if(d==='easy'){const top=r(2,6),left=r(2,6),right=r(1,Math.min(6,top+left-1));answer=top+left-right;targets=[{top,left,right,center:'□'}];solution=`위와 왼쪽 아래를 더한 수에서 오른쪽 아래 수를 빼면 가운데 수입니다. ${top}+${left}−${right}=${answer}입니다.`;}
+  else{const shared=r(3,8),a=r(2,6),b=r(1,Math.min(6,shared+a-1)),c=shared+a-b;let left,right;do{left=r(2,6);right=r(1,Math.min(7,shared+left-1));}while(left-right===a-b);answer=shared+left-right;targets=[{top:'○',left:a,right:b,center:c},{top:'○',left,right,center:'□'}];solution=`예시에서 위+왼쪽 아래=가운데+오른쪽 아래입니다. 첫 그림에서 ○=${c}+${b}−${a}=${shared}입니다. 마지막 가운데는 ${shared}+${left}−${right}=${answer}입니다.`;}
+  const draw=(t,x,y,w=150)=>{const pts=[[x+w/2,y+18],[x+20,y+126],[x+w-20,y+126]],values=[t.top,t.left,t.right];return `<path d="M${pts.map(p=>p.join(' ')).join('L')}Z" fill="#f1f5f7" stroke="#7790a2"/>`+pts.map((p,i)=>rect(p[0]-18,p[1]-18,36,36)+text(...p,values[i],21)).join('')+rect(x+w/2-20,y+67,40,36)+text(x+w/2,y+85,t.center);};
+  const art=svg(examples.map((t,i)=>draw(t,75+i*180,5)).join('')+targets.map((t,i)=>draw(t,targets.length===1?255:165+i*180,175)).join(''),335);return complete(source,d,(d==='easy'?'위 수와 왼쪽 아래 수의 합은 가운데 수와 오른쪽 아래 수의 합과 같습니다. 아래 □에 들어갈 수를 쓰세요.':'세 보기의 삼각형에는 같은 수 규칙이 있습니다. 그 규칙을 찾아 아래 □에 들어갈 수를 쓰세요.')+(d==='hard'?' ○는 두 그림에서 같은 수입니다.':''),{kind:'core-triangle',examples,targets},answer,art,solution);
+ }
+ const cellsKey=c=>c.map(p=>p.join(',')).sort().join(';'),rotate=c=>c.map(([y,x])=>[x,2-y]),rotationKey=c=>{const keys=[];for(let i=0;i<4;i++){keys.push(cellsKey(c));c=rotate(c);}return keys.sort()[0];};
+ function rotation(source,d,r){const all=[];for(let mask=0;mask<512;mask++){const c=range(0,8).filter(i=>mask&(1<<i)).map(i=>[Math.floor(i/3),i%3]);if(c.length===3)all.push(c);}for(let attempt=0;attempt<100;attempt++){const base=all[r(0,all.length-1)],pair=rotate(base);if(cellsKey(base)===cellsKey(pair))continue;const others=[];for(const c of mix(all,r)){if(rotationKey(c)===rotationKey(base)||others.some(x=>rotationKey(x)===rotationKey(c)))continue;others.push(c);if(others.length===2)break;}const options=mix([base,pair,...others],r),answer=options.map((c,i)=>rotationKey(c)===rotationKey(base)?i+1:0).filter(Boolean);let art='';options.forEach((c,i)=>{const x=38+i*158;art+=text(x+45,20,i+1);for(let y=0;y<3;y++)for(let k=0;k<3;k++)art+=rect(x+k*30,43+y*30,30,30,c.some(p=>p[0]===y&&p[1]===k)?'#89bdce':'#fff');});return complete(source,d,'종이를 돌리기만 했을 때 색칠한 칸의 위치가 같아지는 두 그림의 번호를 쓰세요. 종이를 뒤집을 수는 없습니다.',{kind:'core-rotation',options},answer,svg(art,155),`${answer.join('번과 ')}번은 돌리면 색칠한 칸이 겹칩니다. 다른 두 그림은 어느 방향으로 돌려도 겹치지 않습니다.`);}throw Error('회전 조건 생성 실패');}
+ function mountain(source,d,r){const figure=r(7,9),digits=mix(range(2,6),r).slice(0,2).sort(),counts=digits.map(k=>1+2*(figure-k));let art='';for(let n=1;n<=3;n++)range(0,2*n-2).forEach(i=>{const v=i<n?i+1:2*n-1-i;art+=rect(290-(n-1)*28+i*28,12+(n-1)*42,28,34)+text(304-(n-1)*28+i*28,29+(n-1)*42,v,19);});return complete(source,d,`같은 규칙으로 아래에 한 줄씩 늘려 갑니다. ${figure}번째 모양 전체에서 숫자 ${digits[0]}과 ${digits[1]}은 합하여 모두 몇 번 나타납니까?`,{kind:'core-mountain',figure,digits},sum(counts),svg(art,155),digits.map((k,i)=>`${k}는 ${k}번째 줄에 한 번, 아래 ${figure-k}줄에 두 번씩 있으므로 ${counts[i]}번입니다.`).join(' ')+` 모두 ${counts.join('+')}=${sum(counts)}번입니다.`);}
+ const fits=(order,c)=>{const p=n=>order.indexOf(n)+1;return c.kind==='at'?p(c.a)===c.floor:c.kind==='above'?p(c.a)>p(c.b):c.kind==='adjacentAbove'?p(c.a)===p(c.b)+1:c.kind==='gap'?p(c.a)===p(c.b)+c.gap:p(c.a)!==c.floor;};
+ function apartment(source,d,r){const people=mix(['하린','지안','도윤','서준','나은'],r),target=mix(people,r),all=perms(people);let clues=[];
+  if(d==='easy'){const given=mix(range(1,5),r).slice(0,3).sort();clues=given.map(floor=>({kind:'at',a:target[floor-1],floor}));const rest=range(1,5).filter(x=>!given.includes(x));clues.push({kind:'above',a:target[rest[1]-1],b:target[rest[0]-1]});}
+  else{const possible=[];for(let a=1;a<=5;a++)for(let b=1;b<a;b++)if(a-b<=3)possible.push({kind:a-b===1?'adjacentAbove':'gap',a:target[a-1],b:target[b-1],gap:a-b});for(let a=1;a<=5;a++)for(let floor=1;floor<=5;floor++)if(floor!==a)possible.push({kind:'notAt',a:target[a-1],floor});let candidates=all;while(candidates.length>1){const choices=mix(possible.filter(c=>!clues.includes(c)),r).map(c=>({c,left:candidates.filter(o=>fits(o,c))})).filter(x=>x.left.length<candidates.length).sort((a,b)=>a.left.length-b.left.length);if(!choices.length)throw Error('층 관계 생성 실패');clues.push(choices[0].c);candidates=choices[0].left;}if(clues.length>5)throw Error('층 관계가 너무 많습니다.');}
+  const say=c=>c.kind==='at'?`${c.a}이는 ${c.floor}층에 삽니다.`:c.kind==='above'?`${c.a}이는 ${c.b}이보다 높은 층에 삽니다.`:c.kind==='adjacentAbove'?`${c.a}이는 ${c.b}이의 바로 위층에 삽니다.`:c.kind==='gap'?`${c.a}이는 ${c.b}이보다 ${c.gap}층 위에 삽니다.`:`${c.a}이는 ${c.floor}층에 살지 않습니다.`;
+  const art=svg(range(1,5).reverse().map((n,i)=>rect(232,8+i*44,196,44)+text(260,30+i*44,n+'층',18)).join(''),242);return complete(source,d,'다섯 친구가 1층부터 5층까지 한 층에 한 명씩 삽니다. 설명을 모두 만족하도록 빈칸에 이름을 쓰세요.\n'+clues.map(say).join('\n'),{kind:'core-apartment',people,clues},target,art,`1층부터 ${target.join(', ')} 순서입니다. `+clues.map(c=>{const a=target.indexOf(c.a)+1,b=target.indexOf(c.b)+1;return c.kind==='at'?`${c.a} ${a}층`:c.kind==='notAt'?`${c.a}이는 ${a}층이므로 ${c.floor}층이 아닙니다.`:`${c.a} ${a}층, ${c.b} ${b}층으로 ${a-b}층 차이입니다.`;}).join(' '));}
+ const pyramidRows=cards=>{const rows=[cards];while(rows.at(-1).length>1){const a=rows.at(-1);rows.push(a.slice(1).map((v,i)=>v+a[i]));}return rows;};
+ function pyramid(source,d,r){const cards=mix(range(0,d==='easy'?6:5),r).slice(0,d==='easy'?4:5),fixed=d==='easy'?{index:0,value:cards[0]}:null,options=perms(cards).filter(a=>!fixed||a[fixed.index]===fixed.value),values=options.map(a=>pyramidRows(a).at(-1)[0]),lo=Math.min(...values),hi=Math.max(...values),operation=source.payload.operation||'difference',answer=operation==='sum'?hi+lo:hi-lo;let art=cards.map((v,i)=>rect(170+i*60,5,44,39)+text(192+i*60,25,v)).join('');const n=cards.length;for(let row=0;row<n;row++)for(let col=0;col<n-row;col++){const x=330-n*30+row*30+col*60,y=67+(n-1-row)*42;art+=rect(x,y,60,42,fixed&&row===0&&col===0?'#eaf0f5':'#fff')+text(x+30,y+21,fixed&&row===0&&col===0?fixed.value:'');}const minOrder=options[values.indexOf(lo)],maxOrder=options[values.indexOf(hi)];return complete(source,d,`숫자 카드 ${cards.length===4?'네':'다섯'} 장을 아래층에 한 장씩 놓고, 이웃한 아래 두 수를 더하여 바로 위 칸을 채웁니다. ${fixed?'이미 놓인 카드는 옮기지 않습니다. ':''}만들 수 있는 꼭대기 수 중 가장 큰 수와 가장 작은 수의 ${operation==='sum'?'합':'차'}를 구하세요.`,{kind:'core-pyramid',cards,fixed,operation},answer,svg(art,90+n*42),`가장 작은 경우: ${pyramidRows(minOrder).map(a=>a.join('·')).join(' → ')}. 가장 큰 경우: ${pyramidRows(maxOrder).map(a=>a.join('·')).join(' → ')}. ${hi}${operation==='sum'?'+':'−'}${lo}=${answer}입니다.`);}
+ function code(source,d,r){
+  const weights=[1,2,4,8],masks=d==='easy'?[1,2,4,8]:[3,5,7,9];
+  const value=mask=>sum(weights.filter((_,i)=>mask&(1<<i)));
+  const examples=masks.map(mask=>({cells:range(0,3).map(i=>!!(mask&(1<<i))),value:value(mask)}));
+  const allowed=mix(range(1,15).filter(mask=>!masks.includes(mask)&&range(0,3).filter(i=>mask&(1<<i)).length>=2),r);
+  const encodeMask=allowed[0],decodeMask=allowed[1],encode=value(encodeMask),shown=range(0,3).map(i=>!!(decodeMask&(1<<i)));
+  const answer=[range(0,3).filter(i=>encodeMask&(1<<i)).map(i=>i+1),value(decodeMask)];
+  const draw=(cells,x,y,unit=29)=>cells.map((filled,i)=>rect(x+i*unit,y,unit,unit,filled?'#8bbbd0':'#fff')).join('');
+  const example=(item,index)=>{
+   const x=18+index*158;
+   return `<rect x="${x}" y="8" width="146" height="70" rx="4" fill="#f8fbfc" stroke="#bfd0da"/>${draw(item.cells,x+7,24)}${text(x+127,39,'=',19)}${text(x+127,63,item.value,19)}`;
+  };
+  const panel=(x,label,cells,valueText)=>`<rect x="${x}" y="104" width="286" height="102" rx="5" fill="#fff" stroke="#a9bdc9"/>${text(x+28,126,label,18)}${valueText!==''?text(x+143,126,valueText,19):''}${draw(cells,x+76,153,34)}`;
+  const art=examples.map(example).join('')+panel(28,'(1)',[false,false,false,false],encode)+panel(346,'(2)',shown,'');
+  const explanation=(d==='hard'?`세 번째 보기에서 두 번째 보기를 빼면 둘째 칸은 ${examples[2].value}−${examples[1].value}=${weights[1]}입니다. 세 번째 보기에서 첫 번째 보기를 빼면 셋째 칸은 ${examples[2].value}−${examples[0].value}=${weights[2]}입니다. 첫째 칸은 ${examples[0].value}−${weights[1]}=${weights[0]}, 넷째 칸은 ${examples[3].value}−${weights[0]}=${weights[3]}입니다. `:'')+`왼쪽부터 각 칸의 값은 ${weights.join(', ')}입니다. (1) ${answer[0].map(i=>weights[i-1]).join('+')}=${encode}이므로 ${answer[0].join('·')}번째 칸을 칠합니다. (2) ${weights.filter((_,i)=>shown[i]).join('+')}=${answer[1]}입니다.`;
+  const q=complete(source,d,'네 칸에 색을 칠하여 수를 나타냈습니다. 같은 칸은 언제나 같은 값을 나타냅니다. 보기의 규칙을 찾아 (1)은 주어진 수가 되도록 색칠하고, (2)는 그림이 나타내는 수를 쓰세요.',{kind:'core-code',weights,examples,encode,shown},answer,svg(art,222),explanation);
+  q.answerHtml=`(1) 왼쪽부터 ${answer[0].join('·')}번째 칸 (2) ${answer[1]}`;
+  return q;
+ }
+ function group(source,d,r){const hard=d==='hard',step=hard?2:1,period=hard?[0,0,1]:[0,1],colors=mix(['파란색','노란색'],r),position=hard?r(10,14):r(6,8),shown=hard?6:4,count=step*position;let art='';for(let k=1;k<=shown;k++){const x=62+(k-1)*(hard?104:160),color=colors[period[(k-1)%period.length]]==='파란색'?'#72afc7':'#e1c569';for(let j=0;j<step*k;j++)art+=`<circle cx="${x+(j%2)*23}" cy="${214-Math.floor(j/2)*27}" r="9" fill="${color}" stroke="#516e82"/>`;art+=text(x+12,248,k+'번째',15);}const answer=[colors[period[(position-1)%period.length]],count];return complete(source,d,`구슬 묶음의 수와 색이 바뀌는 규칙을 찾아 ${position}번째 묶음의 색과 구슬 수를 쓰세요.`,{kind:'core-group',step,period,colors,position,shown},answer,svg(art,274),`묶음마다 구슬이 ${step}개씩 늘어 ${position}번째는 ${count}개입니다. 색은 ${period.map(i=>colors[i]).join(' → ')} 순서로 반복하므로 ${answer[0]}입니다.`);}
+ const neg=v=>v.map(x=>-x),vecKey=v=>v.join(','),cellKey=a=>a.map(p=>p.join(',')).sort().join(';');
+ function folded(cells){const known=new Map([[cells[0].join(','),{u:[1,0,0],v:[0,1,0],n:[0,0,1]}]]),todo=[cells[0]],set=new Set(cells.map(p=>p.join(',')));while(todo.length){const [x,y]=todo.shift(),a=known.get([x,y].join(','));for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const key=[x+dx,y+dy].join(',');if(!set.has(key))continue;const b=dx===1?{u:neg(a.n),v:a.v,n:a.u}:dx===-1?{u:a.n,v:a.v,n:neg(a.u)}:dy===1?{u:a.u,v:neg(a.n),n:a.v}:{u:a.u,v:a.n,n:neg(a.v)};if(known.has(key)){if(JSON.stringify(known.get(key))!==JSON.stringify(b))return null;}else{known.set(key,b);todo.push([x+dx,y+dy]);}}}const normals=cells.map(c=>known.get(c.join(','))?.n);return normals.every(Boolean)&&new Set(normals.map(vecKey)).size===6?normals:null;}
+ let nets;
+ function allNets(){if(nets)return nets;let shapes=new Map([['0,0',[[0,0]]]]);for(let size=1;size<6;size++){const next=new Map();for(const shape of shapes.values())for(const[x,y]of shape)for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const p=[x+dx,y+dy];if(shape.some(c=>cellKey([c])===cellKey([p])))continue;const a=[...shape,p],mx=Math.min(...a.map(c=>c[0])),my=Math.min(...a.map(c=>c[1])),norm=a.map(([x,y])=>[x-mx,y-my]).sort((a,b)=>a[1]-b[1]||a[0]-b[0]);next.set(cellKey(norm),norm);}shapes=next;}nets=[...shapes.values()].filter(c=>folded(c)&&Math.max(...range(0,5).map(i=>c.filter(p=>p[0]===i).length))<4&&Math.max(...range(0,5).map(i=>c.filter(p=>p[1]===i).length))<4);return nets;}
+ function pips(v,x,y){const dots={1:[[1,1]],2:[[0,0],[2,2]],3:[[0,0],[1,1],[2,2]],4:[[0,0],[2,0],[0,2],[2,2]],5:[[0,0],[2,0],[1,1],[0,2],[2,2]],6:[[0,0],[2,0],[0,1],[2,1],[0,2],[2,2]]};return dots[v].map(([a,b])=>`<circle cx="${x+18+a*18}" cy="${y+18+b*18}" r="5.2" fill="#466d88"/>`).join('');}
+ const rollMove={R:[1,0],L:[-1,0],U:[0,-1],D:[0,1]},rollInverse={R:'L',L:'R',U:'D',D:'U'};
+ function rollOnce(state,move){
+  const s={...state};
+  if(move==='R')return {T:s.L,B:s.R,F:s.F,K:s.K,R:s.T,L:s.B};
+  if(move==='L')return {T:s.R,B:s.L,F:s.F,K:s.K,R:s.B,L:s.T};
+  if(move==='U')return {T:s.F,B:s.K,F:s.B,K:s.T,R:s.R,L:s.L};
+  if(move==='D')return {T:s.K,B:s.F,F:s.T,K:s.B,R:s.R,L:s.L};
+  throw Error('알 수 없는 주사위 이동입니다.');
+ }
+ function rollSequence(state,moves){return moves.reduce(rollOnce,state);}
+ function rollPaths(length,hard){
+  const paths=[];
+  function visit(moves,x,y,seen){
+   if(moves.length===length){
+    const turns=moves.slice(1).filter((move,i)=>move!==moves[i]).length;
+    const directions=new Set(moves).size;
+    if(turns>=(hard?3:2)&&directions>=(hard?3:2))paths.push(moves);
+    return;
+   }
+   for(const move of ['R','L','U','D']){
+    if(moves.length&&rollInverse[move]===moves.at(-1))continue;
+    if(moves.length>=2&&moves.at(-1)===move&&moves.at(-2)===move)continue;
+    const [dx,dy]=rollMove[move],next=[x+dx,y+dy],key=next.join(',');
+    if(seen.has(key))continue;
+    visit([...moves,move],next[0],next[1],new Set([...seen,key]));
+   }
+  }
+  visit([],0,0,new Set(['0,0']));
+  return paths;
+ }
+ const rollDots={1:[[.5,.5]],2:[[.28,.28],[.72,.72]],3:[[.28,.28],[.5,.5],[.72,.72]],4:[[.28,.28],[.72,.28],[.28,.72],[.72,.72]],5:[[.28,.28],[.72,.28],[.5,.5],[.28,.72],[.72,.72]],6:[[.28,.22],[.72,.22],[.28,.5],[.72,.5],[.28,.78],[.72,.78]]};
+ function dieFace(points,value,fill){
+  const point=([u,v])=>{const a=points[0],b=points[1],c=points[2],d=points[3];return [(1-u)*(1-v)*a[0]+u*(1-v)*b[0]+u*v*c[0]+(1-u)*v*d[0],(1-u)*(1-v)*a[1]+u*(1-v)*b[1]+u*v*c[1]+(1-u)*v*d[1]];};
+  return `<polygon points="${points.map(p=>p.join(',')).join(' ')}" fill="${fill}" stroke="#46667c" stroke-width="1.8"/>`+rollDots[value].map(p=>{const[x,y]=point(p);return `<circle cx="${x}" cy="${y}" r="4.5" fill="#284d67"/>`;}).join('');
+ }
+ function roll(source,d,r){
+  const hard=d==='hard',length=hard?5:3,candidates=rollPaths(length,hard),directions={R:'오른쪽',L:'왼쪽',U:'종이의 위쪽',D:'종이의 아래쪽'},short={R:'오른쪽',L:'왼쪽',U:'위쪽',D:'아래쪽'};
+  for(let attempt=0;attempt<200;attempt++){
+   const moves=candidates[r(0,candidates.length-1)],visible=mix([1,2,3],r).map(n=>r(0,1)?n:7-n),query=source.payload.query==='bottom'?'bottom':'top';
+   const start={T:visible[0],B:7-visible[0],F:visible[1],K:7-visible[1],R:visible[2],L:7-visible[2]},finish=rollSequence(start,moves),answer=query==='bottom'?finish.B:finish.T;
+   if(answer===(query==='bottom'?start.B:start.T))continue;
+   const points=[[0,0]];for(const move of moves){const[x,y]=points.at(-1),[dx,dy]=rollMove[move];points.push([x+dx,y+dy]);}
+   const minX=Math.min(...points.map(p=>p[0])),maxX=Math.max(...points.map(p=>p[0])),minY=Math.min(...points.map(p=>p[1])),maxY=Math.max(...points.map(p=>p[1])),cell=44,pathW=(maxX-minX+1)*cell,pathH=(maxY-minY+1)*cell,baseX=274+Math.floor((364-pathW)/2),baseY=20+Math.floor((180-pathH)/2);
+   const mapped=points.map(([x,y])=>[baseX+(x-minX)*cell,baseY+(y-minY)*cell]);
+   let art=dieFace([[40,69],[106,34],[172,69],[106,104]],start.T,'#edf4f7')+dieFace([[40,69],[106,104],[106,170],[40,135]],start.F,'#d6e5ec')+dieFace([[106,104],[172,69],[172,135],[106,170]],start.R,'#b7d1dd')+text(106,202,'출발할 때',17);
+   art+=`<defs><marker id="core-roll-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z" fill="#b36c37"/></marker></defs>`;
+   mapped.forEach(([x,y],i)=>{art+=rect(x,y,cell,cell,i===0?'#e8f2f5':i===mapped.length-1?'#f7ebdd':'#fff');if(i>0){const[a,b]=mapped[i-1];art+=`<path d="M${a+cell/2} ${b+cell/2}L${x+cell/2} ${y+cell/2}" fill="none" stroke="#b36c37" stroke-width="2.2" marker-end="url(#core-roll-arrow)"/>`;}art+=text(x+10,y+10,i===0?'●':i,12);});
+   art+=text(baseX+pathW/2,baseY+pathH+25,moves.map(move=>short[move]).join(' → '),15);
+   const order=['T','B','F','K','R','L'],labels=['윗면','밑면','앞면','뒷면','오른쪽','왼쪽'],steps=[{label:'출발',values:order.map(key=>start[key])}],states=[start];
+   moves.forEach((move,index)=>{states.push(rollOnce(states.at(-1),move));steps.push({label:`${index+1}. ${short[move]}`,values:order.map(key=>states.at(-1)[key])});});
+   const solutionDiagram=`<table class="edition-table" style="width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed"><thead><tr><th>이동</th>${labels.map(label=>`<th>${label}</th>`).join('')}</tr></thead><tbody>${steps.map(step=>`<tr><th>${step.label}</th>${step.values.map(value=>`<td>${value}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+   return complete(source,d,`마주 보는 두 면의 눈의 합이 7인 주사위입니다. ${moves.map(move=>directions[move]).join(' → ')}으로 한 칸씩 굴립니다. 도착했을 때 ${query==='bottom'?'바닥에 닿은 면':'윗면'}의 눈은 몇 개입니까?`,{kind:'roll',top:start.T,front:start.F,right:start.R,moves,query},answer,svg(art,236),`처음에 안 보이는 면은 맞은편 눈의 합이 7인 규칙으로 찾습니다. 밑면은 7−${start.T}=${start.B}, 뒷면은 7−${start.F}=${start.K}, 왼쪽 면은 7−${start.R}=${start.L}입니다. 주사위를 ${moves.map(move=>short[move]).join(', ')}으로 한 번씩 굴려 표의 면을 차례로 옮깁니다. 마지막 ${query==='bottom'?'밑면':'윗면'}은 ${answer}입니다.`,solutionDiagram);
+  }
+  throw Error('출발 면과 다른 도착 면을 만들지 못했습니다.');
+ }
+ function net(source,d,r){const cells=clone(allNets()[r(0,allNets().length-1)]),normals=folded(cells),opposite=normals.map(n=>normals.findIndex(x=>vecKey(x)===vecKey(neg(n)))),pairs=[];for(let i=0;i<6;i++)if(i<opposite[i])pairs.push([i,opposite[i]]);const seven=source.payload.rule==='seven',knownValues=seven?mix([1,2,3],r).map(x=>r(0,1)?x:7-x):mix(['파란색','노란색','빨간색'],r),values=Array(6);pairs.forEach(([a,b],i)=>{values[a]=knownValues[i];values[b]=seven?7-knownValues[i]:knownValues[i];});const query=pairs.map(p=>p[r(0,1)]).slice(0,source.payload.query.length),shown=values.map((v,i)=>query.includes(i)?null:v),results=query.map(i=>values[i]),answer=source.payload.sum?sum(results):results.join(', '),w=Math.max(...cells.map(c=>c[0]))+1;let art='';cells.forEach(([x,y],i)=>{const px=330-w*36+x*72,py=12+y*72,v=shown[i];art+=rect(px,py,72,72,v===null||seven?'#fff':{'파란색':'#8abbd0','노란색':'#e9d582','빨간색':'#db9995'}[v])+(v!==null&&seven?pips(v,px,py):text(px+36,py+36,v===null?['㉠','㉡','㉢'][query.indexOf(i)]:'',24));});return complete(source,d,`마주 보는 두 면의 ${seven?'눈의 합이 7인':'색이 같은'} 주사위를 만듭니다. 전개도를 접었을 때 ${query.map((_,i)=>['㉠','㉡','㉢'][i]).join(', ')}에 들어갈 ${seven?'눈의 수':'색'}${source.payload.sum?'의 합을':'를 차례대로'} 쓰세요.`,{kind:'core-net',cells,shown,query,rule:source.payload.rule,sum:!!source.payload.sum},answer,svg(art,30+72*(Math.max(...cells.map(c=>c[1]))+1)),query.map((i,j)=>`${['㉠','㉡','㉢'][j]}는 맞은편의 ${values[opposite[i]]}${seven?'을 7에서 뺀 '+results[j]: '과 같은 '+results[j]}입니다.`).join(' ')+(source.payload.sum?` 합은 ${results.join('+')}=${answer}입니다.`:''));}
+ function equations(numbers){const symbols=[...new Set(perms(['+','+','-','=']).map(a=>a.join(',')))].map(s=>s.split(','));const evalSide=(a,ops)=>a.slice(1).reduce((s,x,i)=>ops[i]==='+'?s+x:s-x,a[0]);return symbols.filter(ops=>{const at=ops.indexOf('=');return evalSide(numbers.slice(0,at+1),ops.slice(0,at))===evalSide(numbers.slice(at+1),ops.slice(at+1));});}
+ function operatorsWorked(numbers,ops,answer){
+   const parts=['빈칸을 왼쪽부터 1~4번으로 부릅니다. =와 −의 자리를 정하면 남은 두 칸에는 +가 들어갑니다. 다음은 각 경우의 왼쪽 값과 오른쪽 값입니다.'];
+   for(let equal=0;equal<4;equal++){
+     const cases=[];
+     for(let minus=0;minus<4;minus++){if(minus===equal)continue;const signs=Array(4).fill('+');signs[equal]='=';signs[minus]='-';const value=(start,end)=>{let v=numbers[start];for(let i=start;i<end;i++)v+=signs[i]==='+'?numbers[i+1]:-numbers[i+1];return v;},left=value(0,equal),right=value(equal+1,4);cases.push(left<0||right<0?`−가 ${minus+1}번: ${left<0?'왼쪽':'오른쪽'}은 더할 수를 모아도 뺄 수보다 작아 제외`:`−가 ${minus+1}번: ${left}와 ${right}${left===right?'로 같음':'로 다름'}`);}
+     parts.push(`=가 ${equal+1}번일 때 ${cases.join('; ')}.`);
+   }
+   const equal=ops.indexOf('=');parts.push(`양쪽 값이 같은 경우는 =가 ${equal+1}번, −가 ${ops.indexOf('-')+1}번인 경우뿐입니다.`);
+   for(const[label,start,end]of[['왼쪽',0,equal],['오른쪽',equal+1,4]]){let v=numbers[start];const steps=[];for(let i=start;i<end;i++){const next=ops[i]==='+'?v+numbers[i+1]:v-numbers[i+1];steps.push(`${v}${ops[i]==='-'?'−':'+'}${numbers[i+1]}=${next}`);v=next;}parts.push(`${label}은 ${steps.length?steps.join(', '):v}입니다.`);}
+   parts.push(`완성된 식은 ${answer.replace(/-/g,'−')}입니다.`);return parts.join(' ');
+ }
+ function operators(source,d,r){for(let attempt=0;attempt<1000;attempt++){const numbers=mix(range(1,12),r).slice(0,5),solutions=equations(numbers);if(solutions.length!==1)continue;const ops=solutions[0],at=ops.indexOf('='),left=numbers.slice(0,at+1),right=numbers.slice(at+1),safe=(a,o)=>{let v=a[0];for(let i=1;i<a.length;i++){v=o[i-1]==='+'?v+a[i]:v-a[i];if(v<0||v>30)return false;}return true;};if(!safe(left,ops.slice(0,at))||!safe(right,ops.slice(at+1)))continue;const answer=numbers.map((n,i)=>n+(i<4?' '+ops[i]+' ':'')).join('');let art=numbers.map((n,i)=>text(66+i*132,65,n,27)+(i<4?rect(112+i*132,43,40,44):'')).join('');return complete(source,d,'수의 순서를 바꾸지 않고 네 빈칸에 + 두 개, − 한 개, = 한 개를 모두 넣어 참인 식을 완성하세요. 숫자를 붙여 쓰지는 않습니다.',{kind:'core-operators',numbers,symbols:['+','+','-','=']},answer,svg(art,125),operatorsWorked(numbers,ops,answer));}throw Error('유일한 기호 식 생성 실패');}
+ function generate(source,d,seed){if(!supports(source,d)||!Number.isInteger(seed)||seed<0||seed>4294967295)throw Error('지원하지 않는 원문·난이도 또는 seed입니다.');const r=rng(seed),id=source.typeId,fn=id==='balance-weight-order'?balance:id==='triangle-number-rule'?triangle:id==='rotated-grid-pair'?rotation:id==='mountain-digit-count'?mountain:id==='apartment-floor-order'?apartment:id==='minimum-sum-pyramid'?pyramid:id==='four-cell-code'?code:id==='r3-main-3'?group:id==='r3-main-13'?roll:source.payload.kind==='net'?net:operators;return generateSafe(fn(source,d,r));}
+ function generateSafe(q){if(q.answer===undefined||!q.prompt||/undefined|NaN/.test(q.problemHtml))throw Error('문항 표현 검증 실패');return q;}
+ const api=Object.freeze({supports,generate,note,version:'core-levels-20260909-v2'});root.HFChallengeCoreLevels=api;if(typeof module!=='undefined')module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);

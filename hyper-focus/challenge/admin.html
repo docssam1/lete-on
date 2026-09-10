@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>2026년 9월 챌린지 대비 승인 관리 · Hyper Focus</title><link rel="stylesheet" href="admin.css"></head>
+<body class="gfield-ui"><header><a class="brand" href="../admin.html"><img src="assets/gfield-logo.png" alt="GFIELD"><span>LETE-ON</span></a><nav><a href="../admin.html">Hyper Focus 관리</a><span> / 2026년 9월 챌린지 대비</span></nav></header>
+<main><div class="heading"><p class="eyebrow">2026년 9월 챌린지 대비</p><h1>학생별 학습 승인</h1><p>개념 교재, 모의고사, 문제은행 유형을 각각 선택합니다.</p></div>
+<p class="notice">권한 관리 준비 화면입니다. 비공개 문제 제공과 이름 워터마크 검수가 끝나기 전에는 학생용 콘텐츠를 공개하지 않습니다.</p>
+<p id="status" role="status" aria-live="polite">관리자 권한을 확인해 주세요.</p>
+<div class="toolbar"><label>학생<select id="student" disabled><option value="">학생 선택</option></select></label><button id="reload" type="button">학생 목록 불러오기</button><a href="../?login=1">관리자 로그인</a></div>
+<section id="permissions" hidden><div class="selection-title"><h2 id="student-name"></h2><p>선택한 항목만 변경됩니다. 기존 Hyper Focus 권한에는 영향을 주지 않습니다.</p></div>
+<div id="book-options" class="book-options"></div><div class="bank-heading"><h2>문제은행 유형</h2><label>회차<select id="round-filter"><option value="all">전체 회차</option><option value="1">1회</option><option value="2">2회</option><option value="3">3회</option><option value="4">4회</option></select></label><label>영역<select id="area-filter"><option value="all">전체 영역</option></select></label><label>유형 찾기<input id="type-search" type="search" placeholder="예: 주사위, 수 이동"></label></div><div id="bank-options"></div><div class="save-bar"><span id="change-count">변경 없음</span><button id="save" type="button" disabled>변경한 승인 저장</button></div></section>
+</main><script src="../supabase-config.js"></script><script src="../supabase-client.js"></script><script src="access-catalog.js"></script><script src="admin.js"></script></body></html>

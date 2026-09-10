@@ -5,6 +5,11 @@ window.GFIELD_HF_PORTAL = {
   version: "2026-08-23",
   applicationUrl: "https://naver.me/xy7bsjyb",
   consultationUrl: "https://open.kakao.com/me/gfield",
+  entryBanners: [
+    { key: "hyperfocus", title: "하이퍼 포커스", href: "./diagnosis.html", permission: "hyperfocus" },
+    { key: "premier-mock", title: "프리미어 모의고사", productKey: "mock", permission: "mock" },
+    { key: "challenge", title: "챌린지 대비", subtitle: "2026년 9월 챌린지 대비", href: "./challenge/", parent: "hyperfocus", permissionMode: "challenge-granular", releaseStatus: "private-delivery-pending" }
+  ],
   products: [
     {
       key: "hyperfocus",
@@ -53,9 +58,9 @@ window.GFIELD_HF_PORTAL = {
       key: "problem-bank",
       order: "04",
       eyebrow: "PERSONAL WORKSHEET",
-      title: "맞춤\n문제 은행",
-      shortTitle: "문제 은행",
-      description: "선택한 유형과 난이도로 학생별 시험지를 자동 생성합니다.",
+      title: "하이퍼 포커스\n54유형 문제은행",
+      shortTitle: "HF 54유형 문제은행",
+      description: "하이퍼 포커스 진단의 54개 유형에서 난이도를 골라 학생별 시험지를 만듭니다.",
       permission: "problem-bank",
       kind: "link",
       href: "./diagnosis.html?section=similar",

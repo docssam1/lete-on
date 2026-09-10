@@ -394,6 +394,22 @@ verify_jwt = true
 enabled = true
 verify_jwt = true
 
+[functions.challenge-access]
+enabled = true
+verify_jwt = true
+
+[functions.hyperfocus-type-access]
+enabled = true
+verify_jwt = true
+
+[functions.challenge-content]
+enabled = true
+verify_jwt = true
+
+[functions.hyperfocus-practice-content]
+enabled = true
+verify_jwt = true
+
 [functions.admin-vip]
 enabled = true
 verify_jwt = true

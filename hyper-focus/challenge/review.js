@@ -49,24 +49,13 @@
   }
 
   function renderConceptSheets() {
-    conceptSheets.innerHTML = bank.conceptSessions.map((session, index) => {
-      const lesson = bank.createConceptSession(session.number, seed + index * 2003);
-      const copy = (question, phase) => {
-        const concept = bank.types[question.typeId].concept;
-        if (phase === "warmup") return concept.warmup;
-        if (phase === "example") return concept.rule;
-        if (phase === "review") return concept.review;
-        return "예제와 같은 방법으로 해결해 보세요.";
-      };
-      return `<section class="sheet concept-sheet">` +
-        `<header class="concept-head"><em>SESSION ${lesson.number}</em><h2>${escapeHtml(lesson.title)}</h2></header>` +
-        `<div class="concept-grid">` +
-        conceptBlock("warmup", "워밍업", copy(lesson.questions.warmup, "warmup"), lesson.questions.warmup, true) +
-        conceptBlock("example", "예제", copy(lesson.questions.example, "example"), lesson.questions.example, true) +
-        conceptBlock("practice", "유제", copy(lesson.questions.practice, "practice"), lesson.questions.practice, false) +
-        conceptBlock("review", "리뷰", copy(lesson.questions.review, "review"), lesson.questions.review, false) +
-        `</div><footer class="concept-foot"><b>GFIELD · LETE-ON</b><span>${index + 1}</span></footer></section>`;
-    }).join("");
+    const catalog=window.HFConceptCatalog;
+    if(catalog){
+      const lessons=catalog.build(seed);
+      conceptSheets.innerHTML=`<section class="sheet"><header class="sheet-head"><h2>개념 교재 1·2회 · ${lessons.length}개 세부 유형</h2></header><p>회당 8단원에서 대표유형 1문제와 유제 4문제를 풀고, REVIEW 15문제로 확인합니다. 예제의 답과 풀이도 뒤쪽 답안에서만 확인합니다.</p><p><a href="concepts.html?round=1">개념 교재 1회 열기</a> · <a href="concepts.html?round=2">개념 교재 2회 열기</a></p><ol>${lessons.map(l=>`<li style="margin:8px 0">${escapeHtml(l.title)}</li>`).join('')}</ol></section>`;
+      return;
+    }
+    throw new Error('전 유형 개념 교재를 불러오지 못했습니다.');
   }
 
   function render() {
@@ -89,9 +78,7 @@
     delete document.body.dataset.print;
   });
   document.getElementById("printConcepts").addEventListener("click", () => {
-    document.body.dataset.print = "concepts";
-    window.print();
-    delete document.body.dataset.print;
+    location.href='concepts.html';
   });
 
   render();

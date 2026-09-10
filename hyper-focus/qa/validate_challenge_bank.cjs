@@ -1,6 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+require('../challenge/exam-editions.js');
+require('../challenge/exam-replacements.js');
+require('../challenge/exam-priority.js');
+require('../challenge/exam-more.js');
 
 const root = path.resolve(__dirname, "..", "..");
 const source = fs.readFileSync(path.join(root, "hyper-focus/challenge/challenge-bank.js"), "utf8");
@@ -13,8 +17,8 @@ function assert(condition, message) {
 
 assert(bank, "HFChallengeBank 전역 모듈 없음");
 assert(bank.learnerStage === "6세 챌린지 시험 준비 아동", "learner_stage 불일치");
-assert(bank.listTypes().length === 17, "현재 검수 유형은 정확히 17개여야 함");
-assert(bank.conceptSessions.length === 2, "개념 교재는 정확히 2회여야 함");
+assert(bank.listTypes().length === 20, "현재 검수 유형은 정확히 20개여야 함");
+assert(bank.conceptSessions.length === 2, "호환용 개념 회차 API는 2개를 유지함");
 assert(bank.conceptSessions[0].title === "수 · 규칙 · 순서와 논리", "개념 1회 제목 불일치");
 assert(bank.conceptSessions[1].title === "도형과 공간", "개념 2회 제목 불일치");
 assert(bank.types["mountain-digit-count"].maxMockPosition === 8, "산 모양 수 규칙은 실전 8번 이내여야 함");
@@ -37,7 +41,7 @@ for (const type of bank.listTypes()) {
       uniqueChecks += 1;
       assert(JSON.stringify(question.payload) === JSON.stringify(repeated.payload), `${type.id} ${difficulty} seed ${seed}: 재현성 실패`);
       assert(question.answerCandidates.length === 1, `${type.id} ${difficulty} seed ${seed}: 단일정답 실패`);
-      assert(question.problemHtml.includes("<svg"), `${type.id} ${difficulty} seed ${seed}: SVG 없음`);
+      assert(type.id === "line-position-total" ? question.problemHtml === "" : question.problemHtml.includes("<svg"), `${type.id} ${difficulty} seed ${seed}: 그림 계약 위반`);
       assert(!question.problemHtml.includes("undefined"), `${type.id} ${difficulty} seed ${seed}: SVG 값 누락`);
       assert(question.prompt && question.answerHtml, `${type.id} ${difficulty} seed ${seed}: 문장 또는 정답 없음`);
       diversity.get(type.id).add(JSON.stringify(question.answer));
@@ -78,8 +82,12 @@ for (const round of [1, 2]) {
   assert(exam.questionCount === 20 && exam.questions.length === 20, `모의고사 ${round}회 20문항 구성 실패`);
   assert(exam.layout.questionsPerPage === 3 && exam.layout.blankPage === 2, `모의고사 ${round}회 인쇄 계약 실패`);
   const mountain = exam.questions.find((question) => question.typeId === "mountain-digit-count");
-  assert(mountain && mountain.number <= 8, `모의고사 ${round}회 산 모양 규칙 8번 이내 배치 실패`);
-  assert(exam.questions.every((question) => question.answerCandidates.length === 1), `모의고사 ${round}회 단일정답 실패`);
+  if(round===1)assert(mountain && mountain.number <= 8, `모의고사 ${round}회 산 모양 규칙 8번 이내 배치 실패`);
+  if(round===2)assert(!mountain && exam.generationPolicy==='fixed-authored', '2회 별도 구성 실패');
+  for(const question of exam.questions){
+    if(question.answerCandidates)assert(question.answerCandidates.length===1,`모의고사 ${round}회 단일정답 실패`);
+    else require('node:assert/strict').deepEqual(require('./validate_challenge_concepts.cjs').solveQuestion(question),question.answer,`별도 집필 문항 ${round}회 ${question.number}번 독립 검산 실패`);
+  }
 }
 
 const reviewHtml = fs.readFileSync(path.join(root, "hyper-focus/challenge/review.html"), "utf8");

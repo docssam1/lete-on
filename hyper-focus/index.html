@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Noto+Serif+KR:wght@500;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./portal.css?v=hf-editorial-20260828a">
+  <link rel="stylesheet" href="./program-selector.css?v=20260909">
   <script src="./data.js"></script>
   <script src="./portal-data.js"></script>
   <script src="./mock/premier-release-catalog.js"></script>
@@ -33,6 +34,15 @@
   </header>
 
   <main id="mainContent" tabindex="-1">
+    <section class="program-selector" aria-labelledby="programSelectorTitle">
+      <header><h2 id="programSelectorTitle">학습 과정 선택</h2><p>이용할 과정을 선택하세요.</p></header>
+      <nav class="program-banners" aria-label="하이퍼 포커스 학습 과정">
+        <a class="program-banner" href="./diagnosis.html"><strong>하이퍼 포커스</strong><span>유형 진단과 맞춤 학습</span><b>진단 시작</b></a>
+        <button class="program-banner" type="button" data-product="mock"><strong>프리미어 모의고사</strong><span>회차별 응시와 결과 확인</span><b>모의고사 선택</b></button>
+        <a class="program-banner challenge-banner" href="./challenge/"><strong>2026년 9월<br>챌린지 대비</strong><span>개념 교재 · 모의고사 · 문제은행</span><b>교재와 학습 선택</b></a>
+        <a class="program-banner challenge-bank-banner" href="./?login=1&amp;next=challenge-bank"><strong>2026년 9월<br>챌린지 문제은행</strong><span>유형별 선택 · 난이도 3단계 · 문제 미리보기</span><b>문제은행 열기</b></a>
+      </nav>
+    </section>
     <section class="public-home" id="publicHome">
       <div class="hero-shell">
         <div class="hero-copy">

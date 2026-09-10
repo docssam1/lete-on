@@ -1,0 +1,17 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{execFileSync}=require('node:child_process'),{chromium}=require('playwright');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'output/qa/challenge-full-bank-print');
+const server=require('node:http').createServer((req,res)=>{const f=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://local').pathname));if(!f.startsWith(root+path.sep))return res.writeHead(404).end();fs.readFile(f,(e,b)=>{res.writeHead(e?404:200,{'Content-Type':({'.js':'text/javascript','.html':'text/html','.css':'text/css','.png':'image/png'})[path.extname(f)]||'application/octet-stream'});res.end(e?'':b);});});
+(async()=>{fs.mkdirSync(out,{recursive:true});await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch(),page=await browser.newPage({viewport:{width:1440,height:1100}}),results=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
+ try{for(const difficulty of ['easy','same','hard'])for(let round=1;round<=4;round++){
+  await page.goto(`http://127.0.0.1:${server.address().port}/challenge/studio.html?teacherPreview=1&tab=bank&round=${round}`);await page.waitForFunction(()=>!!window.HFChallengeStudio);
+  await page.locator('#tab-bank').click();await page.locator('#studioRound').selectOption(String(round));await page.locator(`[name="difficulty"][value="${difficulty}"]`).check();
+  const select=page.locator('#bankRows [data-select]:not(:disabled)'),count=await select.count();assert(count>0);for(let i=0;i<count;i++)await select.nth(i).check();
+  await page.locator('#variantCount').fill('1');await page.locator('#buildPractice').click();await page.waitForFunction(()=>document.body.dataset.printReady==='true',{},{timeout:30000}).catch(async e=>{throw Error(`${round}/${difficulty}: ${await page.locator('#studioMessage').innerText()} / ${e.message}`);});
+  assert.equal(await page.evaluate(()=>window.HFChallengeStudio.getSnapshot().entries.length),count);await page.locator('#printMode').selectOption('both');await page.waitForFunction(()=>document.body.dataset.printReady==='true');
+  const answerCover=await page.locator('.studio-page').evaluateAll(nodes=>nodes.findIndex(n=>n.classList.contains('answer-front'))+1);assert.equal(answerCover%2,1);
+  await page.emulateMedia({media:'print'});const overflow=await page.locator('.studio-page').evaluateAll(nodes=>nodes.flatMap((n,i)=>n.scrollHeight>n.clientHeight+2?[i+1]:[]));assert.deepEqual(overflow,[],`${round}/${difficulty} overflow`);
+  const file=path.join(out,`round${round}-${difficulty}.pdf`);await page.pdf({path:file,preferCSSPageSize:true,printBackground:true});const pages=Number(execFileSync('pdfinfo',[file],{encoding:'utf8'}).match(/^Pages:\s+(\d+)/m)[1]);assert.equal(pages,await page.locator('.studio-page').count());assert.equal(await page.locator('.studio-problem').count(),count);assert.equal(await page.locator('.studio-answer').count(),count);
+  await page.emulateMedia({media:'screen'});await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.setViewportSize({width:1440,height:1100});
+  results.push({round,difficulty,count,pages,answerCover,overflow});console.log(JSON.stringify(results.at(-1)));
+ }assert.deepEqual(errors,[]);}finally{await browser.close();await new Promise(r=>server.close(r));fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({results,errors,remoteWrites:0},null,2));}
+})().catch(e=>{console.error(e);process.exitCode=1;});

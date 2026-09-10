@@ -1,7 +1,7 @@
 (function (global) {
   "use strict";
 
-  const VERSION = "2026-09-08";
+  const VERSION = "2026-09-08-revision-2";
   const LEARNER_STAGE = "6세 챌린지 시험 준비 아동";
   const DIFFICULTIES = ["easy", "same", "hard"];
   const DIFFICULTY_LABELS = { easy: "쉽게", same: "같게", hard: "어렵게" };
@@ -171,7 +171,7 @@
   function generateNumberBonds(difficulty, seed) {
     const normalized = DIFFICULTIES.includes(difficulty) ? difficulty : "same";
     const rng = makeRng(seed);
-    const panels = NUMBER_TEMPLATES[normalized].map((template, index) => makeNumberPanel(template, rng, normalized, index));
+    const panels = shuffle(NUMBER_TEMPLATES[normalized],rng).slice(0,2).map((template, index) => makeNumberPanel(template, rng, normalized, index));
     const payload = {
       typeId: "split-merge-chain",
       difficulty: normalized,
@@ -409,7 +409,7 @@
   }
 
   function renderTotalDifference(payload) {
-    return `<svg class="challenge-visual" viewBox="0 0 620 205" role="img" aria-label="두 접시의 전체와 차"><text class="logic-label logic-small" x="310" y="30">사탕 ${payload.total}개를 두 접시에 ${payload.difference}개 차이가 나게 담습니다.</text><g transform="translate(80 65)"><ellipse class="plate" cx="105" cy="55" rx="92" ry="29"/><rect class="answer-blank" x="60" y="105" width="90" height="42" rx="4"/></g><g transform="translate(335 65)"><ellipse class="plate" cx="105" cy="55" rx="92" ry="29"/><rect class="answer-blank" x="60" y="105" width="90" height="42" rx="4"/></g></svg>`;
+    return `<svg class="challenge-visual" viewBox="0 0 620 222" role="img" aria-label="두 접시의 전체와 차"><text class="logic-label logic-small" x="310" y="30">사탕 ${payload.total}개를 두 접시에 ${payload.difference}개 차이가 나게 담습니다.</text><g transform="translate(80 65)"><ellipse class="plate" cx="105" cy="55" rx="92" ry="29"/><rect class="answer-blank" x="60" y="105" width="90" height="42" rx="4"/></g><g transform="translate(335 65)"><ellipse class="plate" cx="105" cy="55" rx="92" ry="29"/><rect class="answer-blank" x="60" y="105" width="90" height="42" rx="4"/></g></svg>`;
   }
 
   function generateFamilyDifference(difficulty, seed) {
@@ -438,12 +438,14 @@
     const rng = makeRng(seed);
     const before = rng.int(2, normalized === "hard" ? 9 : 6);
     const after = rng.int(2, normalized === "hard" ? 9 : 6);
-    return { typeId: "line-position-total", difficulty: normalized, seed: Number(seed) || 1, before, after, answer: before + after + 1 };
+    let otherBackRank = rng.int(2, before + after);
+    if (otherBackRank === after + 1) otherBackRank = otherBackRank === before + after ? 2 : otherBackRank + 1;
+    const answer = normalized === "easy" ? before + after + 1 : before + after + 1 - otherBackRank;
+    return { typeId: "line-position-total", difficulty: normalized, seed: Number(seed) || 1, before, after, otherBackRank, answer };
   }
 
   function renderLineTotal(payload) {
-    const people = Array.from({ length: Math.min(payload.answer, 12) }, (_, index) => `<g transform="translate(${42 + index * 47} 58)"><circle cx="15" cy="15" r="12" fill="${index === payload.before ? "#c83a31" : "#9eabb8"}"/><path class="plate-line" d="M15 29 V65 M3 43 H27 M15 65 L4 82 M15 65 L26 82"/></g>`).join("");
-    return `<svg class="challenge-visual" viewBox="0 0 650 165" role="img" aria-label="한 줄로 선 학생 수"><text class="logic-label logic-small" x="325" y="24">윤지 앞에는 ${payload.before}명, 뒤에는 ${payload.after}명이 있습니다.</text>${people}</svg>`;
+    return "";
   }
 
   function mountainDigitCount(figure, digit) {
@@ -454,7 +456,7 @@
   function generateMountainCount(difficulty, seed) {
     const normalized = DIFFICULTIES.includes(difficulty) ? difficulty : "same";
     const rng = makeRng(seed);
-    const figure = rng.int(normalized === "easy" ? 6 : 8, normalized === "hard" ? 15 : 12);
+    const figure = rng.int(normalized === "easy" ? 5 : 6, 8);
     const digit = rng.int(2, Math.min(7, figure - 1));
     return { typeId: "mountain-digit-count", difficulty: normalized, seed: Number(seed) || 1, figure, digit, answer: mountainDigitCount(figure, digit) };
   }
@@ -486,10 +488,7 @@
 
   function renderTriangleRule(payload) {
     const triangle = (x, top, left, right, center, blank) => `<g transform="translate(${x} 10)"><path d="M100 20 L30 145 H170 Z" fill="#e7eaee" stroke="#8d99a7"/><circle class="logic-card" cx="100" cy="20" r="22"/><circle class="logic-card" cx="30" cy="145" r="22"/><circle class="logic-card" cx="170" cy="145" r="22"/><text class="logic-label logic-small" x="100" y="26">${top}</text><text class="logic-label logic-small" x="30" y="151">${left}</text>${blank ? `<rect class="answer-blank" x="148" y="123" width="44" height="44" rx="22"/>` : `<text class="logic-label logic-small" x="170" y="151">${right}</text>`}<text class="logic-label" x="100" y="103">${center}</text></g>`;
-    const exampleRight = 4;
-    const exampleTop = 5;
-    const exampleLeft = 6;
-    return `<svg class="challenge-visual" viewBox="0 0 650 185" role="img" aria-label="삼각형 수 규칙">${triangle(20, exampleTop, exampleLeft, exampleRight, exampleTop + exampleLeft - exampleRight, false)}${triangle(340, payload.top, payload.left, payload.answer, payload.center, true)}</svg>`;
+    return `<svg class="challenge-visual" viewBox="0 0 820 185" role="img" aria-label="세 예시와 빈칸이 있는 삼각형 수 규칙">${triangle(0,5,6,4,7,false)}${triangle(205,8,3,5,6,false)}${triangle(410,4,7,8,3,false)}${triangle(615,payload.top,payload.left,payload.answer,payload.center,true)}</svg>`;
   }
 
   function rotateCells(cells) {
@@ -524,7 +523,7 @@
     const normalized = DIFFICULTIES.includes(difficulty) ? difficulty : "same";
     const rng = makeRng(seed);
     for (let attempt = 0; attempt < 600; attempt += 1) {
-      const all = chooseIndexes(9, normalized === "easy" ? 2 : 3).map((indexes) => indexes.map((value) => [Math.floor(value / 3), value % 3]));
+      const all = chooseIndexes(9, normalized === "hard" ? 4 : 3).map((indexes) => indexes.map((value) => [Math.floor(value / 3), value % 3]));
       const base = all[rng.int(0, all.length - 1)];
       let paired = base;
       const turns = rng.int(1, 3);
@@ -550,17 +549,17 @@
 
   function renderRotationPair(payload) {
     const optionSvg = payload.options.map((cells, index) => {
-      const x = 28 + (index % 3) * 195;
-      const y = 18 + Math.floor(index / 3) * 118;
+      const x = 10 + index * 108;
+      const y = 25;
       const shaded = new Set(cells.map((cell) => cell.join(":")));
       const grid = Array.from({ length: 9 }, (_, cellIndex) => {
         const row = Math.floor(cellIndex / 3);
         const column = cellIndex % 3;
-        return `<rect x="${x + 28 + column * 28}" y="${y + row * 28}" width="28" height="28" class="${shaded.has(`${row}:${column}`) ? "shade-cell" : "grid-cell"}"/>`;
+        return `<rect x="${x + column * 28}" y="${y + row * 28}" width="28" height="28" class="grid-cell${shaded.has(`${row}:${column}`) ? " shade-cell" : ""}"/>`;
       }).join("");
-      return `<text class="logic-label logic-small" x="${x}" y="${y + 49}">${index + 1}</text>${grid}`;
+      return `<text class="logic-label" x="${x + 42}" y="21">${index + 1}</text>${grid}`;
     }).join("");
-    return `<svg class="challenge-visual" viewBox="0 0 620 250" role="img" aria-label="돌렸을 때 같은 격자 모양 찾기">${optionSvg}</svg>`;
+    return `<svg class="challenge-visual rotation-visual" viewBox="0 0 660 115" role="img" aria-label="돌렸을 때 같은 격자 모양 찾기">${optionSvg}</svg>`;
   }
 
   const NAME_POOLS = [
@@ -628,11 +627,12 @@
     const rng = makeRng(seed);
     const length = normalized === "hard" ? 4 : 3;
     const pattern = shuffle(PATTERN_ICONS, rng).slice(0, length);
-    const mode = normalized === "hard" ? "count" : "position";
-    const position = rng.int(normalized === "easy" ? 8 : 13, normalized === "hard" ? 30 : 22);
+    const colors = shuffle(["주황색", "파란색", "초록색"], rng).slice(0, normalized === "hard" ? 3 : 2);
+    const position = rng.int(13, normalized === "hard" ? 28 : 22);
     const target = pattern[rng.int(0, pattern.length - 1)];
-    const answer = mode === "position" ? patternAt(pattern, position) : countPattern(pattern, target, position);
-    return { typeId: "cyclic-picture-pattern", difficulty: normalized, seed: Number(seed) || 1, pattern, mode, position, target, answer };
+    const through = position + rng.int(2, 6);
+    const answer = [`${patternAt(colors, position)} ${patternAt(pattern, position)}`, countPattern(pattern, target, through)];
+    return { typeId: "cyclic-picture-pattern", difficulty: normalized, seed: Number(seed) || 1, pattern, colors, position, through, target, answer };
   }
 
   function iconSvg(name, x, y, color) {
@@ -644,12 +644,12 @@
   }
 
   function renderCyclicPattern(payload) {
-    const preview = Array.from({ length: 11 }, (_, index) => {
+    const palette = { "주황색": "#e88c37", "파란색": "#438dc1", "초록색": "#659747" };
+    const preview = Array.from({ length: 12 }, (_, index) => {
       const name = patternAt(payload.pattern, index + 1);
-      return iconSvg(name, 42 + index * 51, 82, PATTERN_COLORS[PATTERN_ICONS.indexOf(name)]);
+      return iconSvg(name, 27 + index * 51, 44, palette[patternAt(payload.colors, index + 1)]);
     }).join("");
-    const prompt = payload.mode === "position" ? `${payload.position}번째 모양은 무엇일까요?` : `${payload.position}번째까지 ${payload.target}은 몇 개일까요?`;
-    return `<svg class="challenge-visual" viewBox="0 0 620 155" role="img" aria-label="반복 그림 규칙"><text class="logic-label logic-small" x="310" y="28">${escapeText(prompt)}</text>${preview}<text class="logic-label" x="600" y="88">…</text><rect class="answer-blank" x="275" y="112" width="70" height="38" rx="5"/></svg>`;
+    return `<svg class="challenge-visual" viewBox="0 0 670 170" role="img" aria-label="색과 모양의 규칙 문제">${preview}<text class="logic-label" x="650" y="50">…</text><text class="condition" x="15" y="104">(1) ${payload.position}번째에 올 그림의 색과 모양을 쓰세요.</text><text class="condition" x="15" y="147">(2) ${payload.through}번째까지 ${koreanTopic(payload.target)} 모두 몇 개일까요?</text></svg>`;
   }
 
   function propertyPass(value, rule) {
@@ -685,21 +685,42 @@
   }
 
   function enumerateBalanceOrders(payload) {
+    if (payload.exchange) {
+      const answers = new Map();
+      for (let apple = 1; apple <= 30; apple += 1) for (let pear = 1; pear <= 10; pear += 1) {
+        if (apple === payload.pearsPerApple * pear && pear === payload.berriesPerPear) {
+          const pair = [apple, payload.appleCount * apple + payload.pearCount * pear];
+          answers.set(JSON.stringify(pair), pair);
+        }
+      }
+      return [...answers.values()];
+    }
     return permutations(payload.items).filter((order) => payload.comparisons.every(([heavy, light]) => order.indexOf(heavy) < order.indexOf(light)));
   }
 
   function generateBalanceOrder(difficulty, seed) {
     const normalized = DIFFICULTIES.includes(difficulty) ? difficulty : "same";
     const rng = makeRng(seed);
-    const items = shuffle(["가", "나", "다"], rng);
-    const answer = shuffle(items, rng);
-    const comparisons = [[answer[0], answer[1]], [answer[1], answer[2]]];
-    return { typeId: "balance-weight-order", difficulty: normalized, seed: Number(seed) || 1, items, comparisons, answer };
+    const pearsPerApple = rng.int(2, 3), berriesPerPear = rng.int(2, 4);
+    const appleCount = normalized === "hard" ? 2 : 1, pearCount = rng.int(1, 2);
+    const answer = [pearsPerApple * berriesPerPear, (appleCount * pearsPerApple + pearCount) * berriesPerPear];
+    return { typeId: "balance-weight-order", difficulty: normalized, seed: Number(seed) || 1, exchange: true, pearsPerApple, berriesPerPear, appleCount, pearCount, answer };
+  }
+
+  function fruitSvg(kind, x, y, scale = 1) {
+    const leaf = '<path d="M1 -18 Q8 -31 18 -24 Q12 -14 1 -18" fill="#5b813d"/><path d="M0 -15 Q-2 -23 2 -29" fill="none" stroke="#77553b" stroke-width="3" stroke-linecap="round"/>';
+    const shapes = {
+      apple: '<path d="M0 -15 C-26 -31 -33 -1 -21 17 C-12 31 -6 22 0 24 C8 22 16 30 24 13 C37 -10 18 -28 0 -15Z" fill="#cb4b3e" stroke="#a43a31" stroke-width="1.2"/><path d="M-16 -11 Q-23 -1 -17 8" fill="none" stroke="#efb3a1" stroke-width="3" stroke-linecap="round"/>',
+      pear: '<path d="M-8 -17 C-12 -8 -8 -5 -20 7 C-39 35 36 37 22 8 C10 -9 13 -25 0 -24 C-5 -25 -7 -21 -8 -17Z" fill="#d9b74e" stroke="#aa8a30" stroke-width="1.2"/><path d="M-14 7 Q-23 18 -14 23" fill="none" stroke="#f5e3a1" stroke-width="3" stroke-linecap="round"/>',
+      berry: '<path d="M-23 -12 C-30 0 -12 23 0 29 C13 23 30 0 23 -12 Q13 -26 0 -18 Q-13 -26 -23 -12Z" fill="#d25b53" stroke="#a73737" stroke-width="1.2"/><path d="M-21 -20 L-10 -22 L-9 -30 L0 -22 L10 -30 L12 -22 L23 -20 L9 -12 L0 -17 L-9 -12Z" fill="#5a8041"/>' + [[-13,-6],[6,-6],[16,2],[-4,4],[-9,12],[5,17]].map(([cx,cy]) => `<ellipse cx="${cx}" cy="${cy}" rx="1.2" ry="2" fill="#ffe3aa"/>`).join('')
+    };
+    return `<g transform="translate(${x} ${y}) scale(${scale})">${shapes[kind]}${kind === "berry" ? "" : leaf}</g>`;
   }
 
   function renderBalanceOrder(payload) {
-    const balance = (comparison, x, y) => `<g transform="translate(${x} ${y})"><path class="plate-line" d="M20 45 L210 65 M115 56 V105 M80 105 H150"/><ellipse class="plate" cx="35" cy="34" rx="32" ry="10"/><ellipse class="plate" cx="195" cy="75" rx="32" ry="10"/><circle cx="35" cy="22" r="20" fill="#f3d2dd"/><circle cx="195" cy="63" r="20" fill="#cce7eb"/><text class="logic-label logic-small" x="35" y="28">${comparison[0]}</text><text class="logic-label logic-small" x="195" y="69">${comparison[1]}</text></g>`;
-    return `<svg class="challenge-visual" viewBox="0 0 640 215" role="img" aria-label="양팔저울 무게 순서">${balance(payload.comparisons[0], 40, 15)}${balance(payload.comparisons[1], 350, 15)}<g transform="translate(190 170)">${payload.items.map((item, index) => `<rect class="answer-blank" x="${index * 90}" width="56" height="40" rx="5"/><text class="logic-label logic-small" x="${index * 90 + 72}" y="26">${index < 2 ? ">" : ""}</text>`).join("")}</g></svg>`;
+    const pan = (kind, count, center) => `<ellipse cx="${center}" cy="79" rx="69" ry="9" fill="#f3f2ed" stroke="#767e84"/>` + Array.from({length:count},(_,i)=>fruitSvg(kind, center + (i-(count-1)/2)*32,60,.57)).join('');
+    const balance = (x, left, right, count) => `<g transform="translate(${x} 6)"><path d="M65 93 H255 M160 93 L143 127 H177Z" fill="#ced2d2" stroke="#71797e"/><path d="M65 83 V93 M255 83 V93" stroke="#71797e"/>${pan(left,1,65)}${pan(right,count,255)}</g>`;
+    return `<svg class="challenge-visual" viewBox="0 0 680 240" role="img" aria-label="사과 배 딸기를 올린 수평 저울">${balance(5,"apple","pear",payload.pearsPerApple)}${balance(350,"pear","berry",payload.berriesPerPear)}<text class="condition" x="15" y="174">(1) 사과 1개는 딸기 몇 개와 무게가 같습니까?</text><text class="condition" x="15" y="215">(2) 사과 ${payload.appleCount}개와 배 ${payload.pearCount}개는 딸기 몇 개와 무게가 같습니까?</text></svg>`;
   }
 
   function generateInverseStory(difficulty, seed) {
@@ -740,6 +761,14 @@
     if (payload.schema === "birds") return v.initial - v.flew + v.arrive === v.final && payload.answer === v.flew;
     if (payload.schema === "bus") return payload.answer - v.off1 + v.on1 - v.off2 === v.final;
     return payload.answer - v.ate + v.added === v.final;
+  }
+
+  function storyAnswer(p) {
+    const v=p.values;
+    if(p.schema==='relation')return v.smaller+2*v.gap;
+    if(p.schema==='birds')return v.initial+v.arrive-v.final;
+    if(p.schema==='bus')return v.final+v.off1-v.on1+v.off2;
+    return v.final+v.ate-v.added;
   }
 
   function renderStory(payload) {
@@ -810,14 +839,18 @@
   function enumeratePyramidMinimum(payload) {
     const values = new Map();
     permutations(payload.cards).forEach((row) => values.set(row.join(","), pyramidTop(row)));
-    return [Math.min(...values.values())];
+    const min = Math.min(...values.values());
+    const max = Math.max(...values.values());
+    return [payload.operation === "sum" ? max + min : max - min];
   }
 
   function generatePyramidMinimum(difficulty, seed) {
     const normalized = DIFFICULTIES.includes(difficulty) ? difficulty : "same";
     const rng = makeRng(seed);
-    const cards = Array.from({ length: 4 }, () => rng.int(1, normalized === "hard" ? 8 : 6)).sort((a, b) => a - b);
-    const payload = { typeId: "minimum-sum-pyramid", difficulty: normalized, seed: Number(seed) || 1, cards };
+    let cards = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9], rng).slice(0, 4);
+    if (cards.every((value, i) => !i || value > cards[i - 1]) || cards.every((value, i) => !i || value < cards[i - 1])) [cards[0], cards[1]] = [cards[1], cards[0]];
+    const operation = (Number(seed) || 1) % 2 === 0 ? "sum" : "difference";
+    const payload = { typeId: "minimum-sum-pyramid", difficulty: normalized, seed: Number(seed) || 1, cards, operation };
     payload.answer = enumeratePyramidMinimum(payload)[0];
     return payload;
   }
@@ -826,14 +859,93 @@
     const cells = [];
     for (let row = 0; row < 4; row += 1) for (let column = 0; column < 4 - row; column += 1) {
       const x = 218 + row * 31 + column * 62;
-      const y = 132 - row * 42;
+      const y = 210 - row * 42;
       cells.push(`<rect class="logic-cell" x="${x}" y="${y}" width="62" height="42"/>`);
     }
-    const cards = payload.cards.map((value, index) => `<g transform="translate(${190 + index * 72} 184)"><rect class="logic-card" width="50" height="40" rx="3"/><text class="logic-label logic-small" x="25" y="26">${value}</text></g>`).join("");
-    return `<svg class="challenge-visual" viewBox="0 0 640 235" role="img" aria-label="합 피라미드의 가장 작은 꼭대기 수">${cells.join("")}${cards}</svg>`;
+    const cards = payload.cards.map((value, index) => `<g transform="translate(${210 + index * 72} 8)"><rect class="logic-card" width="50" height="40" rx="3"/><text class="logic-label" x="25" y="28">${value}</text></g>`).join("");
+    return `<svg class="challenge-visual pyramid-visual" viewBox="0 0 640 260" role="img" aria-label="위쪽 숫자 카드와 빈 수 피라미드">${cards}${cells.join("")}</svg>`;
+  }
+
+  function cubeAnswers(p) {
+    const total = p.heights.reduce((sum, row) => sum + row.reduce((a,b) => a+b,0),0);
+    return [total, Math.max(...p.heights.flat()) * 4 - total];
+  }
+
+  function generateCube(difficulty, seed) {
+    const rng = makeRng(seed);
+    const highest = rng.int(3, difficulty === "hard" ? 4 : 3);
+    const front = rng.int(1,2);
+    const heights = [[highest,rng.int(front,highest-1)],[rng.int(front,highest-1),front]];
+    const p = {typeId:"cube-count-fill",difficulty,seed,heights};
+    p.answer = cubeAnswers(p);
+    return p;
+  }
+
+  function renderCube(p) {
+    const project = (x,y,z) => [330 + (x-y)*43, 152 + (x+y)*23 - z*43];
+    const face = (vertices, fill) => `<polygon points="${vertices.map(v=>project(...v).join(',')).join(' ')}" fill="${fill}" stroke="#4e6374" stroke-width="1.5" stroke-linejoin="round"/>`;
+    const cubes = [];
+    for(let x=0;x<2;x++) for(let y=0;y<2;y++) for(let z=0;z<p.heights[x][y];z++) cubes.push({x,y,z});
+    cubes.sort((a,b)=>(a.x+a.y)-(b.x+b.y)||a.z-b.z);
+    const drawing = cubes.map(({x,y,z}) => face([[x+1,y,z],[x+1,y+1,z],[x+1,y+1,z+1],[x+1,y,z+1]],"#b5cfdd") + face([[x,y+1,z],[x+1,y+1,z],[x+1,y+1,z+1],[x,y+1,z+1]],"#d2e1e9") + face([[x,y,z+1],[x+1,y,z+1],[x+1,y+1,z+1],[x,y+1,z+1]],"#f5fafc")).join('');
+    return `<div class="spatial-pair"><svg class="challenge-visual" viewBox="225 -35 210 285" role="img" aria-label="네 기둥으로 쌓은 쌓기나무">${drawing}</svg><div class="spatial-asks"><p>(1) 쌓기나무는 모두 몇 개입니까?</p><p>(2) 네 기둥을 가장 높은 기둥과 같게 하려면, 모두 몇 개를 더 쌓아야 합니까?</p></div></div>`;
+  }
+
+  function rectangleAnswers(p) {
+    let rectangles=0,squares=0;
+    const edges=new Set(p.edges);
+    for(let left=0;left<p.cols;left++) for(let right=left+1;right<=p.cols;right++)
+      for(let top=0;top<p.rows;top++) for(let bottom=top+1;bottom<=p.rows;bottom++) {
+        let closed=true;
+        for(let x=left;x<right;x++) if(!edges.has(`h:${x}:${top}`)||!edges.has(`h:${x}:${bottom}`)) closed=false;
+        for(let y=top;y<bottom;y++) if(!edges.has(`v:${left}:${y}`)||!edges.has(`v:${right}:${y}`)) closed=false;
+        if(closed) {rectangles++;if(right-left===bottom-top)squares++;}
+      }
+    return [squares,rectangles];
+  }
+
+  function generateRectangleCount(difficulty,seed) {
+    const rng=makeRng(seed), cols=3,rows=difficulty==="hard"?3:2,edges=[];
+    for(let x=0;x<cols;x++) for(let y=0;y<=rows;y++) edges.push(`h:${x}:${y}`);
+    for(let x=0;x<=cols;x++) for(let y=0;y<rows;y++) edges.push(`v:${x}:${y}`);
+    const remove=new Set([`v:${rng.int(1,cols-1)}:${rng.int(0,rows-1)}`]);
+    if(difficulty!=="easy")remove.add(`h:${rng.int(0,cols-1)}:${rng.int(1,rows-1)}`);
+    const p={typeId:"rectangle-count",difficulty,seed,cols,rows,edges:edges.filter(e=>!remove.has(e))};
+    p.answer=rectangleAnswers(p);return p;
+  }
+
+  function renderRectangleCount(p) {
+    const lines=p.edges.map(e=>{const [kind,a,b]=e.split(':'),x=225+Number(a)*60,y=12+Number(b)*60;return `<path d="M${x} ${y} ${kind==='h'?'h60':'v60'}" fill="none" stroke="#44566a" stroke-width="2"/>`;}).join('');
+    return `<div class="spatial-pair"><svg class="challenge-visual" viewBox="215 0 210 205" role="img" aria-label="일부 선분이 없는 사각형 그림">${lines}</svg><div class="spatial-asks"><p>(1) 크고 작은 정사각형은 모두 몇 개입니까?</p><p>(2) 정사각형을 포함하여 크고 작은 직사각형은 모두 몇 개입니까?</p></div></div>`;
+  }
+
+  function codeCells(value) {return [1,2,4,8].map(unit=>Boolean(value&unit));}
+  function generateNumberCode(difficulty,seed) {
+    const rng=makeRng(seed),encode=rng.int(9,15);
+    let decode=rng.int(9,15);if(decode===encode)decode=decode===15?9:decode+1;
+    return {typeId:"four-cell-code",difficulty,seed,encode,decode,shown:codeCells(decode),answer:[codeCells(encode).map((filled,i)=>filled?i+1:0).filter(Boolean),decode]};
+  }
+  function numberCodeAnswers(p) {
+    return [codeCells(p.encode).map((filled,i)=>filled?i+1:0).filter(Boolean),p.shown.reduce((sum,filled,i)=>sum+(filled?2**i:0),0)];
+  }
+  function renderNumberCode(p) {
+    const strip=(x,y,value,blank=false)=>[0,1,2,3].map(i=>`<rect x="${x+i*26}" y="${y}" width="26" height="30" fill="${!blank&&codeCells(value)[i]?'#798fa3':'#fff'}" stroke="#4e6071"/>`).join('');
+    const examples=[1,2,3,4,5,6,7,8].map((v,i)=>{const x=15+(i%4)*160,y=12+Math.floor(i/4)*68;return strip(x,y,v)+`<text class="logic-label" x="${x+52}" y="${y+52}">${v}</text>`;}).join('');
+    return `<svg class="challenge-visual" viewBox="0 0 660 260" role="img" aria-label="네 칸의 색칠로 나타낸 수 규칙">${examples}<text class="condition" x="15" y="180">(1) ${p.encode}을 나타내도록 색칠하세요.</text>${strip(70,205,0,true)}<text class="condition" x="340" y="180">(2) 다음 그림은 어떤 수입니까?</text>${strip(400,205,p.decode)}</svg>`;
+  }
+
+  function spatialType(id,label,generate,solve,render,prerequisites) {
+    return Object.freeze({id,label,area:"도형과 공간",conceptSession:2,subtype:label,prompt:"그림을 보고 두 물음에 각각 답하세요.",answerContract:"ordered-list",sourceState:"review",
+      learnerFit:{learner_stage:LEARNER_STAGE,language:"그림의 규칙과 두 물음",representations:label,prerequisites,reasoningLoad:"그림을 해석하고 서로 다른 두 값을 구하기",responseMode:"(1), (2)에 각각 답하기"},
+      generate,validate:p=>JSON.stringify(solve(p))===JSON.stringify(p.answer),enumerate:p=>[solve(p)],renderProblem:render,
+      renderAnswer:p=>id==="four-cell-code"?`(1) 왼쪽부터 ${p.answer[0].join('·')}번째 칸 색칠 (2) ${p.answer[1]}`:`(1) ${p.answer[0]}개 (2) ${p.answer[1]}개`,
+      concept:{warmup:"작은 그림에서 구성 요소를 살펴요.",rule:"그림의 규칙을 확인하며 빠짐없이 조사해요.",review:"두 물음에서 구해야 하는 것이 어떻게 다른지 확인해요."}});
   }
 
   const TYPES = Object.freeze({
+    "cube-count-fill": spatialType("cube-count-fill","쌓기나무의 개수와 채우기",generateCube,cubeAnswers,renderCube,"보이지 않는 아래쪽 쌓기나무까지 세기"),
+    "rectangle-count": spatialType("rectangle-count","선분으로 만든 사각형 세기",generateRectangleCount,rectangleAnswers,renderRectangleCount,"크고 작은 도형 구별과 네 변 확인"),
+    "four-cell-code": spatialType("four-cell-code","네 칸으로 나타내는 수",generateNumberCode,numberCodeAnswers,renderNumberCode,"색칠 조합과 수의 대응 찾기"),
     "split-merge-chain": Object.freeze({
       id: "split-merge-chain",
       label: "수 가르기·모으기",
@@ -900,7 +1012,7 @@
       learnerFit: { learner_stage: LEARNER_STAGE, language: "한 자리 수와 합", representations: "숫자 카드", prerequisites: "여러 수 더하기", reasoningLoad: "빠뜨리지 않고 묶어 세기", responseMode: "방법의 수 쓰기" },
       generate: generateCardSums,
       validate: (payload) => enumerateCardSums(payload).length === payload.answer,
-      enumerate: (payload) => [payload.answer],
+      enumerate: (payload) => [enumerateCardSums(payload).length],
       renderProblem: renderCardSums,
       renderAnswer: (payload) => `${payload.answer}가지`,
       concept: { warmup: "목표 수보다 큰 카드는 먼저 빼요.", rule: "카드 수가 적은 방법부터 차례로 찾아요.", review: "순서만 바뀐 방법과 같은 숫자 카드는 한 번만 세어요." }
@@ -936,10 +1048,10 @@
       subtype: "앞과 뒤 인원으로 전체 인원 구하기",
       prompt: "앞과 뒤에 있는 학생 수를 보고 학생은 모두 몇 명인지 구하세요.",
       answerContract: "single-number", sourceState: "review",
-      learnerFit: { learner_stage: LEARNER_STAGE, language: "앞, 뒤, 모두", representations: "한 줄 그림", prerequisites: "세 수 더하기", reasoningLoad: "자기 자신을 한 명 더하기", responseMode: "전체 수 쓰기" },
+      learnerFit: { learner_stage: LEARNER_STAGE, language: "앞, 뒤, 몇 번째", representations: "문장 조건과 빈 풀이 공간", prerequisites: "위치와 앞사람 수를 구별하기", reasoningLoad: "전체를 구한 뒤 다른 학생 앞의 인원 구하기", responseMode: "학생 수 쓰기" },
       generate: generateLineTotal,
-      validate: (payload) => payload.answer === payload.before + payload.after + 1,
-      enumerate: (payload) => [payload.before + payload.after + 1],
+      validate: (p) => p.answer === p.before + p.after + 1 - (p.difficulty === "easy" ? 0 : p.otherBackRank),
+      enumerate: (p) => [p.before + p.after + 1 - (p.difficulty === "easy" ? 0 : p.otherBackRank)],
       renderProblem: renderLineTotal,
       renderAnswer: (payload) => `${payload.answer}명`,
       concept: { warmup: "앞사람과 뒷사람을 따로 세어요.", rule: "앞 + 나 1명 + 뒤로 계산해요.", review: "나를 빠뜨리지 않았는지 확인해요." }
@@ -1000,13 +1112,13 @@
       id: "cyclic-picture-pattern", label: "반복되는 그림 규칙", area: "규칙", conceptSession: 2,
       subtype: "반복 단위로 n번째 모양 또는 특정 모양 개수 구하기",
       prompt: "그림의 반복 규칙을 찾아 물음에 답하세요.",
-      answerContract: "single-value", sourceState: "review",
+      answerContract: "ordered-list", sourceState: "review",
       learnerFit: { learner_stage: LEARNER_STAGE, language: "몇 번째, 몇 개", representations: "색과 도형의 반복", prerequisites: "반복되는 묶음 찾기", reasoningLoad: "반복 단위로 위치 또는 개수 계산", responseMode: "모양 이름 또는 개수 쓰기" },
       generate: generateCyclicPattern,
-      validate: (payload) => payload.answer === (payload.mode === "position" ? patternAt(payload.pattern, payload.position) : countPattern(payload.pattern, payload.target, payload.position)),
-      enumerate: (payload) => [payload.answer],
+      validate: (payload) => JSON.stringify(payload.answer) === JSON.stringify([`${patternAt(payload.colors, payload.position)} ${patternAt(payload.pattern, payload.position)}`, countPattern(payload.pattern, payload.target, payload.through)]),
+      enumerate: (payload) => [[`${patternAt(payload.colors, payload.position)} ${patternAt(payload.pattern, payload.position)}`, countPattern(payload.pattern, payload.target, payload.through)]],
       renderProblem: renderCyclicPattern,
-      renderAnswer: (payload) => typeof payload.answer === "number" ? `${payload.answer}개` : payload.answer,
+      renderAnswer: (payload) => `(1) ${payload.answer[0]} (2) ${payload.answer[1]}개`,
       concept: { warmup: "처음부터 되풀이되는 가장 짧은 묶음을 찾아요.", rule: "반복 묶음마다 같은 자리에 같은 그림이 와요.", review: "묶음의 첫 자리부터 다시 세어 확인해요." }
     }),
     "number-property-filter": Object.freeze({
@@ -1017,30 +1129,30 @@
       learnerFit: { learner_stage: LEARNER_STAGE, language: "두 자리, 짝수, 홀수, 자리 숫자", representations: "조건 상자와 수 카드", prerequisites: "십의 자리와 일의 자리 구분", reasoningLoad: "조건을 하나씩 거르는 교집합", responseMode: "맞는 수 모두 고르기" },
       generate: generateNumberProperty,
       validate: (payload) => JSON.stringify(payload.options.filter((value) => propertyPass(value, payload.rule))) === JSON.stringify(payload.answer),
-      enumerate: (payload) => [payload.answer],
+      enumerate: (payload) => [payload.options.filter(value=>propertyPass(value,payload.rule))],
       renderProblem: renderNumberProperty,
       renderAnswer: (payload) => payload.answer.join(", "),
       concept: { warmup: "첫 번째 조건에 맞지 않는 수를 지워요.", rule: "남은 수에 다음 조건을 차례로 확인해요.", review: "고른 수가 모든 조건에 맞는지 한 번 더 읽어요." }
     }),
     "balance-weight-order": Object.freeze({
-      id: "balance-weight-order", label: "양팔저울 무게 순서", area: "논리와 관계", conceptSession: 1,
-      subtype: "두 비교를 이어 세 물체의 무게 순서 정하기",
-      prompt: "양팔저울을 보고 가장 무거운 것부터 차례로 기호를 쓰세요.",
-      answerContract: "ordered-list-heavy-first", sourceState: "review",
-      learnerFit: { learner_stage: LEARNER_STAGE, language: "무겁다, 가볍다, 차례", representations: "기울어진 양팔저울", prerequisites: "아래로 내려간 쪽이 더 무거움", reasoningLoad: "두 비교 관계 이어 보기", responseMode: "기호 순서 쓰기" },
+      id: "balance-weight-order", label: "과일 저울의 무게 관계", area: "논리와 관계", conceptSession: 1,
+      subtype: "두 수평 관계를 이어 기준 과일의 개수로 바꾸기",
+      prompt: "다음 양팔저울은 모두 수평입니다. 같은 종류의 과일은 무게가 서로 같을 때, 물음에 답하세요.",
+      answerContract: "ordered-list", sourceState: "review",
+      learnerFit: { learner_stage: LEARNER_STAGE, language: "같은 무게, 모두", representations: "과일과 수평 양팔저울", prerequisites: "같은 무게를 가진 과일 묶음으로 바꾸기", reasoningLoad: "두 교환 관계를 이어 혼합 과일의 무게 구하기", responseMode: "딸기 개수 두 가지 쓰기" },
       generate: generateBalanceOrder,
       validate: (payload) => JSON.stringify(enumerateBalanceOrders(payload)) === JSON.stringify([payload.answer]),
       enumerate: enumerateBalanceOrders,
       renderProblem: renderBalanceOrder,
-      renderAnswer: (payload) => payload.answer.join(" > "),
-      concept: { warmup: "아래로 내려간 접시를 찾아요.", rule: "더 무거운 것에서 더 가벼운 것으로 화살표를 이어요.", review: "두 저울에 모두 맞는 순서인지 확인해요." }
+      renderAnswer: (payload) => `(1) ${payload.answer[0]}개 (2) ${payload.answer[1]}개`,
+      concept: { warmup: "수평인 두 접시의 무게는 서로 같아요.", rule: "사과를 배로, 배를 딸기로 바꾸어 생각해요.", review: "사과와 배를 모두 포함해서 계산했는지 확인해요." }
     }),
     "inverse-story-problem": Object.freeze({
       id: "inverse-story-problem", label: "거꾸로 푸는 문장제", area: "수와 연산", conceptSession: 1,
       subtype: "변화한 뒤의 수에서 처음 수 또는 빠진 변화량 구하기",
       prompt: "이야기를 읽고 물음에 알맞은 수를 구하세요.", answerContract: "single-number", sourceState: "review",
       learnerFit: { learner_stage: LEARNER_STAGE, language: "날아가다, 타다, 내리다, 더 가져오다", representations: "짧은 생활 문장", prerequisites: "덧셈과 뺄셈", reasoningLoad: "마지막 상태에서 거꾸로 계산", responseMode: "수 쓰기" },
-      generate: generateInverseStory, validate: validateInverseStory, enumerate: (payload) => [payload.answer], renderProblem: renderStory, renderAnswer: (payload) => `${payload.answer}`,
+      generate: generateInverseStory, validate: validateInverseStory, enumerate: (payload) => [storyAnswer(payload)], renderProblem: renderStory, renderAnswer: (payload) => `${payload.answer}`,
       concept: { warmup: "일어난 일을 순서대로 표시해요.", rule: "처음 수를 물으면 마지막 일부터 반대로 계산해요.", review: "찾은 처음 수로 이야기를 다시 계산해요." }
     }),
     "arrow-number-move": Object.freeze({
@@ -1060,10 +1172,10 @@
       concept: { warmup: "한 가지 모양만 든 식부터 봐요.", rule: "알게 된 모양의 수를 다음 식에 넣어요.", review: "모든 식에 다시 넣어 맞는지 확인해요." }
     }),
     "minimum-sum-pyramid": Object.freeze({
-      id: "minimum-sum-pyramid", label: "가장 작은 수 피라미드", area: "수와 연산", conceptSession: 1,
-      subtype: "아래 네 수를 배열해 꼭대기 합을 최소화",
+      id: "minimum-sum-pyramid", label: "수 피라미드의 최댓값·최솟값", area: "수와 연산", conceptSession: 1,
+      subtype: "카드 배열의 최댓값과 최솟값을 찾은 뒤 합 또는 차 구하기",
       prompt: "카드를 아래 칸에 한 장씩 놓아 꼭대기 수를 가장 작게 만들 때, 꼭대기 수를 구하세요.", answerContract: "single-number", sourceState: "review",
-      learnerFit: { learner_stage: LEARNER_STAGE, language: "가장 작게, 한 장씩", representations: "4층 합 피라미드", prerequisites: "이웃한 두 수 더하기", reasoningLoad: "카드 배열 전체 비교", responseMode: "가장 작은 꼭대기 수 쓰기" },
+      learnerFit: { learner_stage: LEARNER_STAGE, language: "가장 큰 수, 가장 작은 수, 합, 차", representations: "위쪽 카드와 빈 4층 합 피라미드", prerequisites: "이웃한 두 수 더하기", reasoningLoad: "카드 배열을 비교해 양 극값을 찾고 합 또는 차 계산", responseMode: "최종 계산값 쓰기" },
       generate: generatePyramidMinimum, validate: (payload) => enumeratePyramidMinimum(payload)[0] === payload.answer, enumerate: enumeratePyramidMinimum, renderProblem: renderPyramidMinimum, renderAnswer: (payload) => `${payload.answer}`,
       concept: { warmup: "이웃한 두 수를 더해 위 칸을 만들어요.", rule: "같은 카드라도 놓는 자리에 따라 꼭대기 수가 달라져요.", review: "가능한 배열의 꼭대기 수를 비교해 가장 작은 수를 골라요." }
     })
@@ -1080,7 +1192,7 @@
       id: "concept-2",
       number: 2,
       title: "도형과 공간",
-      typeIds: Object.freeze(["rotated-grid-pair", "cyclic-picture-pattern"])
+      typeIds: Object.freeze(["rotated-grid-pair", "cyclic-picture-pattern", "cube-count-fill", "rectangle-count", "four-cell-code"])
     })
   ]);
 
@@ -1088,8 +1200,33 @@
     "line-position-total", "split-merge-chain", "number-property-filter", "triangle-number-rule", "cyclic-picture-pattern",
     "total-difference", "rotated-grid-pair", "mountain-digit-count", "apartment-floor-order", "balance-weight-order",
     "card-sum-count", "animal-race-order", "arrow-number-move", "symbol-equation", "minimum-sum-pyramid",
-    "inverse-story-problem", "family-comparison", "cyclic-picture-pattern", "rotated-grid-pair", "card-sum-count"
+    "inverse-story-problem", "family-comparison", "cube-count-fill", "rectangle-count", "four-cell-code"
   ]);
+
+  function questionPrompt(typeId, p) {
+    const prompts = {
+      "cube-count-fill": "같은 크기의 쌓기나무를 바닥에 빈틈없이 네 기둥으로 쌓았습니다. 각 기둥에는 위아래로 빈 곳이 없고, 뒤에 가려진 쌓기나무도 있습니다. 그림을 보고 다음 두 물음에 각각 답하세요.",
+      "rectangle-count": "같은 크기의 정사각형 칸으로 나눈 종이에서 일부 선을 지웠습니다. 그림에 남아 있는 선만 따라 만들 수 있는 도형을 찾으려고 합니다. 다음 두 물음에 각각 답하세요.",
+      "four-cell-code": "네 칸에 색을 칠하는 방법을 달리하여 수를 나타냈습니다. 아래 1부터 8까지의 그림에서 같은 수를 나타내는 규칙을 찾아, 다음 두 물음에 각각 답하세요.",
+      "line-position-total": p.difficulty === "easy" ? `학생들이 놀이기구를 타려고 한 줄로 서 있습니다. 윤지보다 앞에 있는 학생은 ${p.before}명이고, 윤지보다 뒤에 있는 학생은 ${p.after}명입니다. 이 줄에 서 있는 학생은 모두 몇 명입니까?` : `학생들이 놀이기구를 타려고 한 줄로 서 있습니다. 윤지는 앞에서 ${p.before + 1}번째이고 뒤에서 ${p.after + 1}번째입니다. 같은 줄에서 민수는 뒤에서 ${p.otherBackRank}번째에 서 있습니다. 민수보다 앞에 서 있는 학생은 모두 몇 명입니까?`,
+      "split-merge-chain": "다음은 두 수를 가르거나 모으는 방법을 나타낸 그림입니다. 연결된 두 수를 모으면 한 수가 됩니다. 각 그림의 빈칸에 알맞은 수를 모두 써넣으세요.",
+      "card-sum-count": `다음 숫자 카드 중 몇 장을 골라 카드에 적힌 수를 더하려고 합니다. 합이 ${p.target}이 되는 방법은 모두 몇 가지입니까? 단, 각 카드는 한 번만 쓰며, 고른 수들이 같고 순서만 바뀐 경우는 같은 방법으로 셉니다.`,
+      "total-difference": `사탕 ${p.total}개를 두 접시에 나누어 담으려고 합니다. 한 접시에 담은 사탕이 다른 접시보다 ${p.difference}개 더 많도록 남김없이 담을 때, 각 접시에는 사탕을 몇 개씩 담아야 합니까?`,
+      "family-comparison": "엄마, 아빠, 나, 동생이 가진 사탕의 수를 비교하였더니 다음과 같았습니다. 아래 설명을 모두 읽고, 아빠가 나보다 사탕을 몇 개 더 많이 가지고 있는지 구하세요.",
+      "animal-race-order": "동물들이 달리기 경주를 하고 있습니다. 같은 등수인 동물은 없으며, 달리는 순서는 아래 설명을 모두 만족합니다. 1등부터 마지막 등수까지 동물의 이름을 차례대로 써넣으세요.",
+      "triangle-number-rule": "다음 삼각형의 꼭짓점에 있는 수와 가운데 수 사이에는 모두 같은 규칙이 있습니다. 빈칸이 없는 그림에서 규칙을 찾아, 마지막 삼각형의 빈칸에 들어갈 수를 구하세요.",
+      "rotated-grid-pair": "정사각형 종이를 같은 크기의 아홉 칸으로 나눈 뒤 일부 칸에 색을 칠하였습니다. 종이를 돌리기만 하였을 때 색칠한 칸의 위치가 완전히 같아지는 두 그림의 번호를 쓰세요. 단, 종이를 뒤집을 수는 없습니다.",
+      "mountain-digit-count": `그림과 같은 규칙으로 아래에 한 줄씩 늘려 가며 수를 씁니다. ${p.figure}번째 모양 전체에서 숫자 ${p.digit}은 모두 몇 번 나타나는지 구하세요.`,
+      "apartment-floor-order": "다섯 친구가 1층부터 5층까지 한 층에 한 명씩 살고 있습니다. 아래 설명을 모두 만족하도록 각 친구가 사는 층을 찾아, 빈칸에 이름을 써넣으세요.",
+      "cyclic-picture-pattern": "다음 그림은 모양과 색에 일정한 규칙이 있도록 늘어놓은 것입니다. 같은 규칙으로 계속 늘어놓을 때, 다음 두 물음에 각각 답하세요.",
+      "number-property-filter": "아래 수 카드 중에서 상자에 적힌 조건을 모두 만족하는 수를 찾으려고 합니다. 조건을 하나라도 만족하지 않으면 고를 수 없습니다. 알맞은 수를 모두 찾아 표시하세요.",
+      "arrow-number-move": "상자에서 출발하여 화살표를 왼쪽부터 차례로 따라갑니다. →는 1을 더하고, ←는 1을 빼며, ↓는 10을 더하고, ↑는 10을 뺍니다. 출발하거나 도착하는 상자의 빈칸에 알맞은 수를 쓰세요.",
+      "symbol-equation": "다음 식에서 같은 모양은 항상 같은 수를 나타냅니다. 주어진 식을 모두 만족하도록 각 모양의 수를 생각해 보고, 마지막 식의 네모가 나타내는 수를 구하세요.",
+      "inverse-story-problem": "다음은 시간이 지나면서 수가 달라진 이야기입니다. 일어난 일과 마지막에 남은 수를 살펴보고, 물음에 알맞은 수를 구하세요.",
+      "minimum-sum-pyramid": `위의 숫자 카드 네 장을 아래층에 한 장씩 놓고, 이웃한 아래 두 수를 더하여 바로 위 칸을 채웁니다. 카드의 자리를 바꾸어 만들 수 있는 꼭대기 수 중 가장 큰 수와 가장 작은 수의 ${p.operation === "sum" ? "합을" : "차를"} 구하세요.`
+    };
+    return prompts[typeId] || TYPES[typeId].prompt;
+  }
 
   function createQuestion(typeId, difficulty, seed) {
     const type = TYPES[typeId];
@@ -1106,7 +1243,7 @@
       difficulty,
       difficultyLabel: DIFFICULTY_LABELS[difficulty] || DIFFICULTY_LABELS.same,
       seed: Number(seed) || 1,
-      prompt: type.prompt,
+      prompt: questionPrompt(typeId, payload),
       payload,
       answer: payload.answer,
       answerHtml: type.renderAnswer(payload),
@@ -1152,7 +1289,7 @@
     return { ...session, questions };
   }
 
-  function createMockExam(round, seed) {
+  function createMockExamBase(round, seed) {
     const normalizedRound = Number(round);
     if (![1, 2].includes(normalizedRound)) throw new Error(`모의고사는 1회 또는 2회만 만들 수 있습니다: ${round}`);
     const base = (Number(seed) || 1) + normalizedRound * 100003;
@@ -1160,8 +1297,15 @@
       const type = TYPES[typeId];
       const position = index + 1;
       if (type.maxMockPosition && position > type.maxMockPosition) throw new Error(`${typeId}: ${position}번 배치 제한 위반`);
-      const difficulty = position <= 6 ? "easy" : position <= 15 ? "same" : "hard";
-      return { ...createQuestion(typeId, difficulty, base + position * 7919), number: position };
+      const difficulty = position <= 15 ? "same" : "hard";
+      const first = createQuestion(typeId,difficulty,base+position*7919);
+      if (["triangle-number-rule","rotated-grid-pair","arrow-number-move"].includes(typeId)) {
+        let second=createQuestion(typeId,difficulty,base+position*7919+3511);
+        for(let retry=1;retry<=20&&JSON.stringify(first.answer)===JSON.stringify(second.answer);retry++)second=createQuestion(typeId,difficulty,base+position*7919+3511+retry*97);
+        const answers=[first.answer,second.answer];
+        return {...first,number:position,subquestions:[first,second],answer:answers,answerCandidates:[answers],answerHtml:`(1) ${first.answerHtml}  (2) ${second.answerHtml}`,problemHtml:`<div class="paired-problems">${[first,second].map((q,i)=>`<div class="paired-part"><span>(${i+1})</span>${q.problemHtml}</div>`).join('')}</div>`};
+      }
+      return { ...first, number: position };
     });
     return {
       id: `challenge-mock-${normalizedRound}`,
@@ -1172,6 +1316,21 @@
       layout: { paper: "A4 portrait", side: "single", questionsPerPage: 3, coverPage: 1, blankPage: 2, watermarkLines: 3 },
       questions
     };
+  }
+
+  function createMockExam(round, seed) {
+    if([3,4].includes(Number(round))){
+      const more=global.HFChallengeMore||(typeof require==='function'?require('./exam-more.js'):null);
+      if(!more)throw new Error('3·4회 별도 구성을 불러오지 못했습니다.');
+      return more.get(Number(round));
+    }
+    if(![1,2].includes(Number(round)))throw new Error('지원하지 않는 회차');
+    const editions = global.HFChallengeEditions || (typeof require === 'function' ? require('./exam-editions.js') : null);
+    if (!editions) throw new Error('회차별 출제 구성이 로드되지 않았습니다. 시험지를 생성하지 않습니다.');
+    const priority = global.HFChallengePriority || (typeof require === 'function' ? require('./exam-priority.js') : null);
+    if (!priority) throw new Error('우선 보완 문항을 불러오지 못했습니다.');
+    const exam = Number(round) === 2 ? editions.makeRound2() : editions.reviseRound1(createMockExamBase(round, seed));
+    return priority.apply(exam);
   }
 
   global.HFChallengeBank = Object.freeze({

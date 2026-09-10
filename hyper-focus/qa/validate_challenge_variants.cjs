@@ -1,0 +1,73 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const provider=require('../challenge/variant-provider.js');
+const native=require('./independent_challenge_revision.cjs');
+const more=require('./challenge-more-solvers.cjs');
+const perm=a=>a.length?a.flatMap((x,i)=>perm(a.filter((_,j)=>i!==j)).map(p=>[x,...p])):[[]];
+function independentNet(p){
+ const xy=[[0,1],[1,1],[2,1],[3,1],[1,0],[1,2]],by=new Map(xy.map((c,i)=>[String(c),i])),frames=new Map([[0,{u:[1,0,0],v:[0,1,0],n:[0,0,1]}]]),queue=[0],neg=a=>a.map(x=>-x);
+ while(queue.length){const i=queue.shift(),a=frames.get(i),[x,y]=xy[i];for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const j=by.get(String([x+dx,y+dy]));if(j===undefined||frames.has(j))continue;const f=dx===1?{u:neg(a.n),v:a.v,n:a.u}:dx===-1?{u:a.n,v:a.v,n:neg(a.u)}:dy===1?{u:a.u,v:neg(a.n),n:a.v}:{u:a.u,v:a.n,n:neg(a.v)};frames.set(j,f);queue.push(j);}}
+ assert.equal(new Set([...frames.values()].map(f=>String(f.n))).size,6);
+ const values=p.query.map(i=>{const opposite=[...frames].find(([j,f])=>j!==i&&f.n.every((x,k)=>x===-frames.get(i).n[k]))[0];assert.notEqual(p.values[opposite],null,'opposite clue hidden');return p.rule==='seven'?7-p.values[opposite]:p.values[opposite];});
+ return p.sum?values.reduce((s,v)=>s+v,0):values.join(', ');
+}
+function independentRoll(p){
+ // Rotate face-normal vectors; no face-name state transitions from the provider are reused.
+ let faces=[{n:[0,0,1],v:p.top},{n:[0,0,-1],v:7-p.top},{n:[0,-1,0],v:p.front},{n:[0,1,0],v:7-p.front},{n:[1,0,0],v:p.right},{n:[-1,0,0],v:7-p.right}];
+ assert.equal(new Set(faces.map(f=>f.v)).size,6);
+ for(const m of p.moves)faces=faces.map(f=>{const[x,y,z]=f.n;return {v:f.v,n:m==='R'?[z,y,-x]:m==='L'?[-z,y,x]:m==='U'?[x,z,-y]:[x,-z,y]};});
+ return faces.find(f=>f.n[2]===(p.query==='bottom'?-1:1)).v;
+}
+function solve(q){if(q.variant.family==='core-levels')return require('./validate_challenge_core_levels.cjs').solve(q);if(q.variant.family==='numeric-extension')return require('./validate_challenge_numeric_extension.cjs').solve(q);if(q.variant.family==='geometry-extension')return require('./validate_challenge_geometry_extension.cjs').solve(q);
+ const p=q.payload,f=q.variant.family;
+ if(f==='native'){let a=native.solve(p);if(q.responsePart!==undefined)a=a[q.responsePart];return a;}
+ if(f==='arrow'){assert(p.moves.some(x=>'UD'.includes(x)));assert([8,10].includes(p.verticalStep));let candidates=[];for(let result=0;result<=150;result++){let v=result;for(const m of [...p.moves].reverse())v-=m==='R'?1:m==='L'?-1:m==='U'?-p.verticalStep:p.verticalStep;if(v===p.start)candidates.push(result);}assert.equal(candidates.length,1);return candidates[0];}
+ if(f==='mirror')return p.vertices.map(([x,y])=>[p.mirrorX+(p.mirrorX-x),y]);
+ if(f==='triangle-count'){let n=0;for(let i=0;i<p.rays;i++)for(let j=i+1;j<p.rays;j++)for(let b=0;b<p.bases;b++)n++;return n;}
+ if(f==='net')return independentNet(p);
+ if(f==='roll')return independentRoll(p);
+ if(f==='reverse-distribution'){const candidates=[];for(let n=0;n<=200;n++){if(n<p.remainder||(n-p.remainder)%p.groups)continue;const each=(n-p.remainder)/p.groups;if(each-p.usedEach+p.receivedEach===p.afterEach)candidates.push(n);}assert.equal(candidates.length,1);return candidates[0];}
+ if(['count-conditions','paper-remainder','story-inverse','bird-departure','number-reference'].includes(f)){const candidates=[];for(let n=0;n<=200;n++){const pass=f==='count-conditions'?n>p.lower&&n<p.upper&&n%2===0&&!p.excluded.includes(n):f==='paper-remainder'?(n+p.used)*p.equalColors+p.known.reduce((s,v)=>s+v,0)===p.total:f==='story-inverse'?n-p.ate+p.added-p.lastUsed===p.final:f==='bird-departure'?n<=p.initial&&p.initial-n+p.arrived-p.lastFlew===p.final:n-p.more-p.less===p.result+p.extra;if(pass)candidates.push(n);}assert.equal(candidates.length,1);return candidates[0];}
+ if(f==='age-chain'){const ages=[p.baseAge];for(let i=1;i<p.names.length;i++){const possibilities=Array.from({length:40},(_,n)=>n).filter(n=>n-ages[i-1]===p.gaps[i-1]);assert.equal(possibilities.length,1);ages.push(possibilities[0]);}return [ages,p.query.reduce((s,i)=>s+ages[i]+p.years,0)];}
+ if(f==='operators'){const valid=[];for(const sy of perm(['+','-','='])){if(Object.entries(p.given).some(([i,s])=>sy[i]!==s))continue;const eq=sy.indexOf('='),part=(i,j)=>{let v=p.numbers[i];for(let k=i;k<j;k++)v+=sy[k]==='+'?p.numbers[k+1]:-p.numbers[k+1];return v;};if(part(0,eq)===part(eq+1,3))valid.push(p.numbers.map((n,i)=>n+(i<3?' '+sy[i]+' ':'')).join(''));}assert.equal(valid.length,1);return valid[0];}
+ if(f==='routes'){const values=p.paths.map(a=>a.slice(1).reduce((s,[x,y],i)=>s+Math.sqrt((x-a[i][0])**2+(y-a[i][1])**2),0));assert.equal(new Set(values.map(v=>v.toFixed(8))).size,values.length,'tied path lengths');const order=p.labels.slice().sort((a,b)=>(values[p.labels.indexOf(a)]-values[p.labels.indexOf(b)])*(p.descending?-1:1));return p.difference?[order,Math.round(Math.max(...values)-Math.min(...values))]:order.join(', ');}
+ return more.solve(p);
+}
+const rows=provider.list(),available=rows.filter(r=>r.eligibility.same);assert.equal(rows.length,104);
+let explanationChecks=0,explanationArithmeticChecks=0;
+function checkExplanation(text){assert(text.length>=5);assert(!/조건을 모두 적용하면 정답은|undefined|NaN/.test(text));for(const match of text.matchAll(/(\d+(?:[+−]\d+)+)=(\d+)/g)){const terms=match[1].replace(/−/g,'+-').split('+').map(Number);assert.equal(terms.reduce((a,b)=>a+b,0),+match[2],match[0]+' in '+text);explanationArithmeticChecks++;}}
+for(const type of globalThis.HFChallengeBank.listTypes())for(const difficulty of ['easy','same','hard'])for(let seed=1;seed<=12;seed++){const q=globalThis.HFChallengeBank.createQuestion(type.id,difficulty,seed*991);assert.deepEqual(native.solve(q.payload),q.answer);checkExplanation(provider.explainQuestion(q));explanationChecks++;}
+let checks=0,negativeChecks=0;const counts={easy:0,same:0,hard:0},variantsByRow=[];
+for(const row of rows){const source=provider.getSource(row),before=JSON.stringify(source);if(!row.eligibility.same){assert.equal(provider.generate({...row,seed:1}).status,'held');continue;}const unique=new Set();for(const difficulty of ['easy','same','hard']){if(!row.eligibility[difficulty]){assert.equal(provider.generate({...row,difficulty,seed:3}).status,'held');continue;}counts[difficulty]++;for(let seed=0;seed<60;seed++){const args={...row,difficulty,seed},result=provider.generate(args);assert.equal(result.status,'verified',row.key+' '+result.reason);const q=result.question;if(q.variant.family==='numeric-extension')require('./validate_challenge_numeric_extension.cjs').boundaryCheck(q);checkExplanation(q.solution);assert.deepEqual(q.answer,solve(q),row.key+' '+difficulty+' '+seed);assert.deepEqual(result,provider.generate(args),'non deterministic output');assert.equal(q.typeId,source.typeId);assert.equal(q.answerCandidates.length,1);assert(Object.isFrozen(q.payload));assert.equal(q.source.fingerprint,provider.fingerprint(source));assert.notEqual(q.id,source.id);assert(q.prompt!==source.prompt||q.problemHtml!==source.problemHtml);assert(!/undefined|NaN/.test(q.problemHtml));unique.add(JSON.stringify(q.payload));const broken=JSON.parse(JSON.stringify(q));broken.answer='deliberately wrong';assert.notDeepEqual(broken.answer,solve(broken));negativeChecks++;checks++;}}assert.equal(JSON.stringify(provider.getSource(row)),before,'source changed');assert(unique.size>=2,row.key+' no task variation');variantsByRow.push({key:row.key,typeId:row.typeId,distinctModels:unique.size,eligibility:row.eligibility});}
+for(const seed of [undefined,-1,1.5,NaN,Infinity,4294967296])assert.equal(provider.generate({round:1,section:'main',number:13,difficulty:'same',seed}).status,'held');
+assert.equal(provider.generate({round:1,section:'main',number:13,difficulty:'bogus',seed:1}).status,'held');
+assert.equal(provider.generate({round:99,section:'main',number:1,seed:1}).status,'held');
+assert.equal(provider.generate({round:4,section:'extra',number:6,difficulty:'same',seed:41}).status,'held','a replaced extra-practice item must not remain a hidden symbol-roll source');
+assert.equal(provider.generate({round:4,number:12,difficulty:'same',seed:41}).question.payload.kind,'geo-stack','the concept-only long-block source must remain available without restoring the removed mock item');
+for(const row of rows.filter(r=>r.family==='arrow')){const tasks=['easy','same','hard'].map(difficulty=>provider.generate({...row,difficulty,seed:17}).question);assert(tasks[0].payload.moves.length<tasks[1].payload.moves.length);assert(tasks[1].payload.moves.length<tasks[2].payload.moves.length);}
+for(const f of ['unknowns','routes','mirror']){const row=rows.find(r=>r.family===f);const tasks=['easy','same','hard'].map(difficulty=>provider.generate({...row,difficulty,seed:17}).question.payload),measure=p=>f==='unknowns'?p.equations.length:f==='routes'?p.paths.length:p.vertices.length;assert(measure(tasks[0])<measure(tasks[1]));assert(measure(tasks[1])<measure(tasks[2]));}
+const preference=provider.generate({round:4,number:19,difficulty:'hard',seed:41}).question;
+for(const row of rows.filter(r=>r.family==='runs'||r.family==='group'&&provider.getSource(r).payload.mode==='flat'))for(const difficulty of ['easy','same','hard'])for(let seed=0;seed<12;seed++){const q=provider.generate({...row,difficulty,seed}).question;assert(q.payload.position>(q.problemHtml.match(/<circle\b/g)||[]).length,'visible ordinal answer must not be a new reasoning variant');}
+const contradictory=JSON.parse(JSON.stringify(preference.payload));contradictory.no.push(contradictory.yes[0]||[0,0]);if(!contradictory.yes.length)contradictory.yes.push([0,0]);assert.throws(()=>more.solve(contradictory));
+assert.throws(()=>more.solve({kind:'preference-table',names:['가','나','다','라'],items:['빵','떡','과자','요구르트'],each:2,totals:[2,2,2,2],yes:[],no:[]}));
+assert.throws(()=>more.solve({kind:'card-boxes',cards:[1,2,3,4,5,6],totals:[7,7,7],counts:[2,2,2],anchors:[[1],[1],[]]}));
+for(const typeId of ['apartment-floor-order','four-cell-code','triangle-number-rule','minimum-sum-pyramid']){const row=rows.find(r=>r.typeId===typeId);assert(row.eligibility.same&&row.eligibility.easy&&row.eligibility.hard);for(const difficulty of ['easy','hard'])assert.equal(provider.generate({...row,difficulty,seed:17}).question.variant.family,'core-levels','missing core difficulty must use independently authored structure');}
+assert(!provider.generate({round:2,number:18,difficulty:'same',seed:41}).question.answerHtml.startsWith('['),'raw answer JSON');
+assert.throws(()=>provider.explainQuestion({typeId:'not-registered',payload:{}}));
+const report={passed:true,title:provider.title,explanationChecks,explanationArithmeticChecks,registeredOccurrences:rows.length,verifiedSameOccurrences:available.length,heldSameOccurrences:rows.length-available.length,verifiedByDifficulty:counts,independentChecks:checks,wrongAnswerNegativeChecks:negativeChecks,variantsByRow,held:rows.filter(r=>!r.eligibility.same).map(r=>({key:r.key,typeId:r.typeId,reason:r.heldReason})),notes:['Verified refers to these registered models and independent checks, not calibrated child test scores.','Same/easier/harder is within a subtype; unsupported or replaced source actions remain held.']};
+const out=path.resolve(__dirname,'../output/qa/challenge-variants');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'math-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({...report,variantsByRow:undefined,held:undefined},null,2));
+module.exports={solve,independentNet,independentRoll};
+if(process.argv.includes('--render'))(async()=>{
+ const {chromium}=require('playwright'),{pathToFileURL}=require('node:url');const browser=await chromium.launch();const page=await browser.newPage({viewport:{width:900,height:900},deviceScaleFactor:2});
+ const rootDir=path.resolve(__dirname,'../challenge');
+ const server=require('node:http').createServer((req,res)=>{const file=path.resolve(rootDir,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(!file.startsWith(rootDir+path.sep)){res.writeHead(403);res.end();return;}fs.readFile(file,(e,b)=>{if(e){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',file.endsWith('.png')?'image/png':file.endsWith('.css')?'text/css':file.endsWith('.js')?'text/javascript':'text/html');res.end(b);});});
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));server.unref();const base=`http://127.0.0.1:${server.address().port}/`;
+ const selected=[['arrow',1],['mirror',1],['triangle-count',1],['net',1],['roll',1],['routes',2],['native',2],['operators',1],['card-boxes',1],['preference-table',1],['age-chain',1]];
+ const evidence=[];
+ for(const [family,which]of selected){const row=rows.filter(r=>r.family===family)[which-1],q=provider.generate({...row,difficulty:row.eligibility.hard?'hard':'same',seed:23}).question;
+ await page.setContent(`<base href="${base}"><link rel="stylesheet" href="review.css"><link rel="stylesheet" href="exam.css"><style>body{margin:0;background:#f4f6f8;font-family:'Malgun Gothic',sans-serif}main{background:white;width:740px;margin:24px auto;padding:28px;box-sizing:border-box}p{font-size:20px;line-height:1.7}.challenge-visual{width:100%;height:auto!important;max-height:none!important}h2{font-size:17px;color:#64717d}</style><main><h2>${row.round}회 ${row.number}번 · ${row.label}</h2><p>${q.prompt}</p>${q.problemHtml}</main>`,{waitUntil:'networkidle'});
+ const file=path.join(out,`visual-${family}.png`);await page.locator('main').screenshot({path:file});
+ const clipping=await page.evaluate(()=>[...document.querySelectorAll('svg.variant-visual')].flatMap(svg=>{const v=svg.getBoundingClientRect();return [...svg.children].flatMap(e=>{if(!e.getBBox)return[];const b=e.getBoundingClientRect();return b.x<v.x-2||b.y<v.y-2||b.x+b.width>v.x+v.width+2||b.y+b.height>v.y+v.height+2?[{tag:e.tagName,text:e.textContent,box:[b.x,b.y,b.width,b.height],view:[v.x,v.y,v.width,v.height]}]:[];});}));assert.deepEqual(clipping,[],`${family}: drawing leaves viewBox`);evidence.push({family,key:row.key,file,clipping});
+ }await browser.close();server.close();fs.writeFileSync(path.join(out,'visual-report.json'),JSON.stringify(evidence,null,2));console.log('Visual render passed: '+evidence.length);
+})().catch(e=>{console.error(e);process.exitCode=1;});
