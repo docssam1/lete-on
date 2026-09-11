@@ -488,12 +488,13 @@
       "ordinal": 4,
       "pdfPage": 7,
       "printedPage": 8,
-      "sourceShape": "여러 분수 나눗셈과 조건을 비교하여 알맞은 값 또는 식을 정하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "1/(1×1+1)+1/(2×2+2)+…+1/(㉠×㉠+㉠)의 합 전체를 분모로 하는 역수가 14/13일 때 자연수 ㉠을 구하는 구조.",
+      "answerContract": "single-whole-number-fixed-pool",
+      "visualRisk": "바깥쪽 분수선이 안쪽의 여러 분수 전체를 포함해야 하며, 각 항의 분자·분모와 덧셈 기호가 겹치지 않아야 합니다. 답에는 망원합 변환과 최종 자연수를 함께 표시해야 합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 7쪽의 겹분수 식과 합의 역수 14/13 조건을 직접 대조했습니다. 합이 ㉠/(㉠+1), 역수가 (㉠+1)/㉠이 됨을 계산하고 자연수 후보를 전수 확인해 ㉠=13 한 가지를 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e3-example-4"
     },
     {
       "sourceItemId": "6-2-u1-e3-mission-1",

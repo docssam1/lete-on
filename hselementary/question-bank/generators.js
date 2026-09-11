@@ -25378,6 +25378,43 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Example4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-example-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 3-4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const limit = [7, 13, 19][poolIndex];
+      const target = rationalValue(limit + 1, limit);
+      let directSum = rationalValue(0, 1);
+      for (let number = 1; number <= limit; number += 1) directSum = rationalOperation(directSum, rationalValue(1, number * number + number), "+");
+      const directReciprocal = rationalValue(directSum.denominator, directSum.numerator);
+      const candidates = Array.from({ length: 60 }, (_, index) => index + 1).filter(candidate => {
+        let sum = rationalValue(0, 1);
+        for (let number = 1; number <= candidate; number += 1) sum = rationalOperation(sum, rationalValue(1, number * number + number), "+");
+        const reciprocal = rationalValue(sum.denominator, sum.numerator);
+        return reciprocal.numerator === target.numerator && reciprocal.denominator === target.denominator;
+      });
+      if (directSum.numerator !== limit || directSum.denominator !== limit + 1 || directReciprocal.numerator !== target.numerator || directReciprocal.denominator !== target.denominator || candidates.length !== 1 || candidates[0] !== limit) throw new Error("6-2 예제 3-4의 자연수가 하나로 정해지지 않습니다.");
+      const term = value => symbolicFractionMarkup(1, `${value}×${value}+${value}`);
+      const unknownTerm = symbolicFractionMarkup(1, "㉠×㉠+㉠");
+      const series = `${term(1)}<span class="source62-telescoping-operator">+</span>${term(2)}<span class="source62-telescoping-operator">+</span>${term(3)}<span class="source62-telescoping-operator">+</span><span class="source62-telescoping-dots">…</span><span class="source62-telescoping-operator">+</span>${unknownTerm}`;
+      const targetMarkup = symbolicFractionMarkup(target.numerator, target.denominator);
+      const reciprocalMarkup = `<span class="source62-series-reciprocal" role="img" aria-label="1부터 ㉠까지 각 자연수와 그 다음 자연수의 곱을 분모로 하는 분수의 합의 역수"><span class="source62-series-reciprocal__top">1</span><span class="source62-series-reciprocal__bottom">${series}</span></span>`;
+      const equation = `${reciprocalMarkup}<span class="source62-telescoping-equals">=</span>${targetMarkup}`;
+      const board = solved => `<div class="source62-telescoping-board${solved ? " is-solved" : ""}" data-source62-e3-example4-structure="reciprocal-of-telescoping-fraction-sum" data-source62-e3-example4-limit="${limit}" data-target-fraction="${target.numerator}:${target.denominator}" data-direct-sum="${directSum.numerator}:${directSum.denominator}" data-candidate-count="${candidates.length}"><strong>분수의 합 전체를 1로 나눈 식</strong><div class="source62-telescoping-equation">${equation}</div>${solved ? `<div class="source62-telescoping-result"><span>㉠</span><b>${limit}</b></div>` : `<p>㉠에 알맞은 자연수를 구하세요.</p>`}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-telescoping-solution"><strong>앞뒤에서 같은 분수가 없어지는 성질 이용하기</strong>${row("곱한 자연수를 □라 할 때", `${symbolicFractionMarkup(1, "□×□+□") }=${symbolicFractionMarkup(1, "□")}-${symbolicFractionMarkup(1, "□+1")}`)}${row("㉠까지의 합", `${symbolicFractionMarkup("㉠", "㉠+1")}`)}${row("합의 역수", `${symbolicFractionMarkup("㉠+1", "㉠") }=${targetMarkup}`)}${row("㉠", String(limit))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">곱한 자연수를 □라 할 때 ${symbolicFractionMarkup(1, "□×□+□")}을 ${symbolicFractionMarkup(1, "□")}-${symbolicFractionMarkup(1, "□+1")}로 바꾸어 앞뒤 항을 비교해 보세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">각 항을 두 분수의 차로 바꾼 뒤, 처음 항과 마지막에 남는 항만으로 ㉠을 찾으세요.</p>` : "";
+      const evidence = `<span hidden data-source62-fraction-e3-example4-kind="reciprocal-of-telescoping-fraction-sum" data-source-item="${sourceItemId}" data-limit="${limit}" data-target="${target.numerator}:${target.denominator}" data-direct-sum="${directSum.numerator}:${directSum.denominator}" data-result-contract="single-whole-number" data-candidate-count="${candidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음 식에서 ㉠에 알맞은 자연수를 구하세요.${board(false)}${support}${challenge}${evidence}`, limit, `곱한 자연수를 □라 하면 각 항의 분모는 □×(□+1)이므로 ${symbolicFractionMarkup(1, "□×□+□")}=${symbolicFractionMarkup(1, "□")}-${symbolicFractionMarkup(1, "□+1")}입니다. ㉠까지 더하면 중간의 분수들이 없어져 합은 ${symbolicFractionMarkup("㉠", "㉠+1")}이고, 그 역수는 ${symbolicFractionMarkup("㉠+1", "㉠")}입니다. 이것이 ${targetMarkup}이므로 ㉠=${limit}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-example4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">직접 더한 값과 앞뒤 항이 없어지는 계산을 따로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27308,6 +27345,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-example-1", "sourceGrade6SecondFractionDivisionE3Example1"],
     [type => type.sourceItemId === "6-2-u1-e3-example-2", "sourceGrade6SecondFractionDivisionE3Example2"],
     [type => type.sourceItemId === "6-2-u1-e3-example-3", "sourceGrade6SecondFractionDivisionE3Example3"],
+    [type => type.sourceItemId === "6-2-u1-e3-example-4", "sourceGrade6SecondFractionDivisionE3Example4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
