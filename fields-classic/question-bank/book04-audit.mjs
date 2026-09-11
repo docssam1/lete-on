@@ -102,13 +102,6 @@ function halfTurnNumber(value) {
   return digits.some((digit) => digit == null) || digits[0] === 0 ? null : Number(digits.join(""));
 }
 
-function paperSnapshot(layers, removed, size) {
-  return Array.from({ length: size }, (_, row) => Array.from({ length: size }, (_, column) => {
-    const layer = layers.slice(removed).find((paper) => paper.cells.some(([cellRow, cellColumn]) => cellRow === row && cellColumn === column));
-    return layer ? { label: layer.label, color: layer.color } : null;
-  }));
-}
-
 function foldedCoordinate(row, column, size, folds) {
   let rows = size;
   let columns = size;
@@ -231,10 +224,19 @@ function validate(type, problem, difficulty) {
       return;
     }
     case "overlapping-paper-order": {
-      const snapshots = meta.layers.map((_, removed) => paperSnapshot(meta.layers, removed, meta.size));
-      assert(JSON.stringify(snapshots) === JSON.stringify(meta.snapshots), id, difficulty, "paper snapshots mismatch");
+      assert(meta.boardSize === 4 && meta.paperSize === 2, id, difficulty, "paper dimensions mismatch");
+      assert(meta.layers.length >= 5 && meta.layers.length <= 8, id, difficulty, "paper count mismatch");
+      assert(new Set(meta.layers.map((paper) => paper.label)).size === meta.layers.length, id, difficulty, "paper labels must be unique");
+      assert(new Set(meta.layers.map((paper) => `${paper.row}:${paper.column}`)).size === meta.layers.length, id, difficulty, "paper positions must be unique");
+      meta.layers.forEach((paper) => {
+        assert(Number.isInteger(paper.row) && paper.row >= 0 && paper.row <= meta.boardSize - meta.paperSize, id, difficulty, "paper row is outside the board");
+        assert(Number.isInteger(paper.column) && paper.column >= 0 && paper.column <= meta.boardSize - meta.paperSize, id, difficulty, "paper column is outside the board");
+      });
+      meta.layers.slice(1).forEach((paper, index) => {
+        const previous = meta.layers[index];
+        assert(Math.abs(paper.row - previous.row) <= 1 && Math.abs(paper.column - previous.column) <= 1, id, difficulty, "consecutive papers must overlap");
+      });
       assert(meta.layers.at(-1).label === meta.answer && problem.answer === meta.answer, id, difficulty, "bottom paper mismatch");
-      assert(meta.snapshots.every((snapshot) => snapshot.flat().some(Boolean)), id, difficulty, "empty paper snapshot");
       return;
     }
     case "pair-sum-cards":
@@ -315,8 +317,17 @@ function validate(type, problem, difficulty) {
       return;
     case "three-fold-cut-line-book4":
       assert(meta.folds === 3 && meta.gridRows === 2 && meta.gridColumns === 4, id, difficulty, "source fold/grid structure mismatch");
-      assert(JSON.stringify(meta.repeatStarts) === JSON.stringify([0, 2]), id, difficulty, "unfolded cut must repeat in the two source positions");
-      assert(meta.cutInset >= 15 && meta.cutInset <= 17, id, difficulty, "source cut line geometry mismatch");
+      assert(JSON.stringify(meta.foldDirections) === JSON.stringify(["right-to-left", "top-to-bottom", "right-to-left"]), id, difficulty, "source fold directions mismatch");
+      assert([1.35, 1.5, 1.65].includes(meta.cutApexY), id, difficulty, "source V-cut apex mismatch");
+      assert(meta.cutSegments.length === 16, id, difficulty, "two cut lines across eight layers must unfold to sixteen lines");
+      const segmentKeys = new Set(meta.cutSegments.map((segment) => segment.join(":")));
+      assert(segmentKeys.size === 16, id, difficulty, "unfolded cut lines must be unique");
+      meta.cutSegments.forEach((segment) => segment.forEach((value, index) => assert(value >= 0 && value <= (index % 2 ? meta.gridRows : meta.gridColumns), id, difficulty, "unfolded cut line leaves the paper")));
+      assert(segmentKeys.has([0, meta.cutApexY, 1, 1].join(":")), id, difficulty, "source V cut is missing");
+      meta.cutSegments.forEach(([x1, y1, x2, y2]) => {
+        assert(segmentKeys.has([4 - x1, y1, 4 - x2, y2].join(":")), id, difficulty, "left-right reflection is missing");
+        assert(segmentKeys.has([x1, 2 - y1, x2, 2 - y2].join(":")), id, difficulty, "top-bottom reflection is missing");
+      });
       assert(problem.responseKind === "drawing" && problem.answerVisual, id, difficulty, "drawing answer missing");
       return;
     case "front-back-two-orders-book4": {

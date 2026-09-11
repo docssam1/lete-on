@@ -128,8 +128,15 @@ function cubeLayers(visual) {
   return `<div class="b9-layer-wrap"><div class="layers">${visual.layers.map((layer, index) => smallGrid(layer, `${index + 1}층`)).join("")}</div>${profiles}</div>`;
 }
 
+function fullCubeMap(width, depth, height) {
+  return Array.from({ length: depth }, () => Array.from({ length: width }, () => height));
+}
+
 function cubeBox(visual) {
-  return `<div class="b9-cube-box"><div style="--w:${visual.width};--d:${visual.depth};--h:${visual.height}"><span></span></div><p>가로 ${visual.width} · 세로 ${visual.depth} · 높이 ${visual.height}</p></div>`;
+  const innerWidth = visual.width - 2;
+  const innerDepth = visual.depth - 2;
+  const innerHeight = visual.height - 2;
+  return `<div class="b9-cube-shell"><div class="b9-cube-shell-stage"><figure>${isoMap(fullCubeMap(visual.width, visual.depth, visual.height), true)}<figcaption>가득 쌓은 모양</figcaption></figure><div class="b9-shell-arrow"><span>겉면 한 겹</span><b>→</b></div><figure class="inner">${isoMap(fullCubeMap(innerWidth, innerDepth, innerHeight), true)}<figcaption>남은 안쪽</figcaption></figure></div><p>가로 ${visual.width} · 세로 ${visual.depth} · 높이 ${visual.height}</p></div>`;
 }
 
 function cubeModelChoice(visual) {

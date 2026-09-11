@@ -104,7 +104,11 @@ function foldSurface(visual) {
 }
 
 function overlappingPaper(visual) {
-  return `<div class="b4-paper-snapshots">${visual.snapshots.map((snapshot, index) => `<div><small>${index ? `${index}장 뺀 뒤` : "처음"}</small><span class="b4-paper-grid" style="--columns:${visual.size}">${snapshot.flat().map((cell) => `<i style="background:${cell?.color || "#fff"}">${cell ? escapeHtml(cell.label) : ""}</i>`).join("")}</span></div>`).join("")}</div>`;
+  const snapshot = (removed) => {
+    const sheets = [...visual.layers.slice(removed)].reverse().map((paper, layer) => `<i class="b4-paper-sheet" style="--paper-row:${paper.row};--paper-column:${paper.column};--paper-color:${paper.color};--paper-layer:${layer}"><b>${escapeHtml(paper.label)}</b></i>`).join("");
+    return `<span class="b4-paper-stack">${sheets}</span>`;
+  };
+  return `<div class="b4-paper-snapshots">${visual.layers.map((_, index) => `<div><small>${index ? `${index}장 뺀 뒤` : "처음"}</small>${snapshot(index)}</div>`).join("")}</div>`;
 }
 
 function pairSumCards(visual) {
@@ -170,16 +174,19 @@ function circularSeatBlank(visual) {
 }
 
 function foldedCutLine(visual) {
-  if (!visual.reveal) {
-    const grid = [1,2,3].map((index) => `<path class="fold" d="M${10 + index * 30} 25V85"/>`).join("") + '<path class="fold" d="M10 55H130"/>';
-    return `<div class="b4-fold-line-problem"><svg viewBox="0 0 230 110" role="img" aria-label="세 번 접은 색종이에 그어진 두 사선"><rect x="10" y="25" width="120" height="60"/>${grid}<path class="step-arrow" d="M145 55H168m0 0-8-7m8 7-8 7"/><rect x="188" y="25" width="30" height="60"/><path d="M${188 + visual.cutInset} 25 L188 40 L218 55"/></svg><small>세 번 접은 뒤</small></div>`;
+  const grid = [1,2,3].map((index) => `<path class="crease" d="M${index * 25} 0V50"/>`).join("") + '<path class="crease" d="M0 25H100"/>';
+  const answerLines = visual.cutSegments.map(([x1, y1, x2, y2]) => `<line x1="${x1 * 25}" y1="${y1 * 25}" x2="${x2 * 25}" y2="${y2 * 25}"/>`).join("");
+  if (visual.reveal) {
+    return `<div class="b4-fold-line-answer"><svg viewBox="-2 -2 104 54" role="img" aria-label="세 번 접은 색종이를 펼친 뒤의 잘린 선"><rect class="paper" x="0" y="0" width="100" height="50"/>${grid}<g class="cut-lines">${answerLines}</g></svg></div>`;
   }
-  const grid = [1,2,3].map((index) => `<path class="fold" d="M${index * 25} 0V50"/>`).join("") + '<path class="fold" d="M0 25H100"/>';
-  const paths = visual.repeatStarts.map((column) => {
-    const left = column * 25;
-    return `M${left + visual.cutInset} 0 L${left} 12.5 L${left + 25} 25`;
-  }).join(" ");
-  return `<div class="b4-fold-line-answer"><svg viewBox="0 0 100 50" role="img" aria-label="4열 2행 모눈에 펼친 잘린 선"><rect x="1" y="1" width="98" height="48"/><g>${grid}</g><path d="${paths}"/></svg></div>`;
+  const cutApex = (visual.cutApexY - 1) * 78;
+  const mobileCutApex = (visual.cutApexY - 1) * 64;
+  const marker = (id) => `<defs><marker id="${id}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z"/></marker></defs>`;
+  const desktopArrow = "b4-fold-arrow-desktop";
+  const mobileArrow = "b4-fold-arrow-mobile";
+  const desktop = `<svg class="b4-fold-process b4-fold-process-desktop" viewBox="0 0 520 118" role="img" aria-label="색종이를 세 번 접고 두 사선을 자르는 과정">${marker(desktopArrow)}<g transform="translate(8 9)"><rect class="paper" width="78" height="78"/><path class="crease" d="M39 0V78"/><path class="fold-motion" marker-end="url(#${desktopArrow})" d="M58 31Q39 15 18 31"/><text x="39" y="96">처음</text></g><path class="connector" marker-end="url(#${desktopArrow})" d="M100 48H126"/><g transform="translate(143 9)"><rect class="paper" width="39" height="78"/><path class="crease" d="M0 39H39"/><path class="fold-motion" marker-end="url(#${desktopArrow})" d="M29 18Q12 39 28 58"/><text x="19.5" y="96">1번 접기</text></g><path class="connector" marker-end="url(#${desktopArrow})" d="M198 48H224"/><g transform="translate(241 29)"><rect class="paper" width="42" height="42"/><path class="crease" d="M21 0V42"/><path class="fold-motion" marker-end="url(#${desktopArrow})" d="M31 30Q21 15 10 29"/><text x="21" y="76">2번 접기</text></g><path class="connector" marker-end="url(#${desktopArrow})" d="M299 48H325"/><g transform="translate(342 9)"><rect class="paper" width="34" height="78"/><path class="cut" d="M0 ${cutApex}L34 0M0 ${cutApex}L34 78"/><text x="17" y="96">3번 접은 뒤</text></g><path class="connector" marker-end="url(#${desktopArrow})" d="M394 48H420"/><g transform="translate(438 23)"><rect class="paper" width="72" height="36"/><path class="crease" d="M18 0V36M36 0V36M54 0V36M0 18H72"/><text x="36" y="70">펼친 뒤 그리기</text></g></svg>`;
+  const mobile = `<svg class="b4-fold-process b4-fold-process-mobile" viewBox="0 0 300 218" role="img" aria-label="색종이를 세 번 접고 두 사선을 자르는 과정">${marker(mobileArrow)}<g transform="translate(12 10)"><rect class="paper" width="64" height="64"/><path class="crease" d="M32 0V64"/><path class="fold-motion" marker-end="url(#${mobileArrow})" d="M49 27Q32 12 14 27"/><text x="32" y="82">처음</text></g><path class="connector" marker-end="url(#${mobileArrow})" d="M86 42H107"/><g transform="translate(119 10)"><rect class="paper" width="32" height="64"/><path class="crease" d="M0 32H32"/><path class="fold-motion" marker-end="url(#${mobileArrow})" d="M24 14Q9 32 23 49"/><text x="16" y="82">1번 접기</text></g><path class="connector" marker-end="url(#${mobileArrow})" d="M164 42H185"/><g transform="translate(197 22)"><rect class="paper" width="40" height="40"/><path class="crease" d="M20 0V40"/><path class="fold-motion" marker-end="url(#${mobileArrow})" d="M30 29Q20 13 9 28"/><text x="20" y="70">2번 접기</text></g><path class="connector" marker-end="url(#${mobileArrow})" d="M248 42Q276 42 276 92Q276 112 102 112V130"/><g transform="translate(85 132)"><rect class="paper" width="28" height="64"/><path class="cut" d="M0 ${mobileCutApex}L28 0M0 ${mobileCutApex}L28 64"/><text x="14" y="82">3번 접은 뒤</text></g><path class="connector" marker-end="url(#${mobileArrow})" d="M129 164H153"/><g transform="translate(166 140)"><rect class="paper" width="96" height="48"/><path class="crease" d="M24 0V48M48 0V48M72 0V48M0 24H96"/><text x="48" y="66">펼친 뒤 그리기</text></g></svg>`;
+  return `<div class="b4-fold-line-problem">${desktop}${mobile}</div>`;
 }
 
 function frontBackTwoOrders(visual) {

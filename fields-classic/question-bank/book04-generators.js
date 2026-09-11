@@ -447,47 +447,24 @@ const PAPER_COLORS = Object.freeze([
   { label: "사", color: "#91c8c1" }, { label: "아", color: "#d7b38a" }
 ]);
 
-function connectedPaperMask(size, count) {
-  const cells = [[randomInt(0, size - 1), randomInt(0, size - 1)]];
-  const keys = new Set(cells.map(([row, column]) => `${row}:${column}`));
-  for (let attempt = 0; cells.length < count && attempt < 200; attempt += 1) {
-    const [row, column] = sample(cells);
-    const [dr, dc] = sample([[1,0],[-1,0],[0,1],[0,-1]]);
-    const next = [row + dr, column + dc];
-    const key = `${next[0]}:${next[1]}`;
-    if (next[0] >= 0 && next[0] < size && next[1] >= 0 && next[1] < size && !keys.has(key)) {
-      keys.add(key);
-      cells.push(next);
-    }
-  }
-  return cells;
-}
-
-function topPaperSnapshot(layers, removed, size) {
-  return Array.from({ length: size }, (_, row) => Array.from({ length: size }, (_, column) => {
-    const layer = layers.slice(removed).find((paper) => paper.cells.some(([cellRow, cellColumn]) => cellRow === row && cellColumn === column));
-    return layer ? { label: layer.label, color: layer.color } : null;
-  }));
-}
-
 function overlappingPaperBottom({ difficulty = 2 }) {
-  const size = 4;
   const count = difficulty === 1 ? 5 : difficulty === 2 ? 8 : 7;
-  const papers = shuffle(PAPER_COLORS).slice(0, count);
-  const bottom = papers.at(-1);
-  const layers = papers.map((paper, index) => ({
+  const ring = [[0,0],[0,1],[0,2],[1,2],[2,2],[2,1],[2,0],[1,0]];
+  const offset = randomInt(0, ring.length - 1);
+  const direction = Math.random() < .5 ? 1 : -1;
+  const positions = Array.from({ length: count }, (_, index) => ring[(offset + direction * index + ring.length * 2) % ring.length]);
+  const layers = shuffle(PAPER_COLORS).slice(0, count).map((paper, index) => ({
     ...paper,
-    cells: index === papers.length - 1
-      ? Array.from({ length: size * size }, (_, cellIndex) => [Math.floor(cellIndex / size), cellIndex % size])
-      : connectedPaperMask(size, randomInt(4, 8))
+    row: positions[index][0],
+    column: positions[index][1]
   }));
-  const snapshots = layers.map((_, removed) => topPaperSnapshot(layers, removed, size));
+  const bottom = layers.at(-1);
   return {
-    prompt: `크기가 같은 색종이 ${count}장이 겹쳐 있습니다. 가장 위의 색종이부터 한 장씩 빼어 본 그림을 보고 가장 밑에 있는 색종이를 구하세요.`,
-    visual: { kind: "book4", subtype: "overlapping-paper-order", size, snapshots },
+    prompt: `크기가 같은 정사각형 색종이 ${count}장을 겹쳤습니다. 가장 위부터 한 장씩 빼어 본 그림을 보고 가장 밑의 색종이를 구하세요.`,
+    visual: { kind: "book4", subtype: "overlapping-paper-order", boardSize: 4, paperSize: 2, layers },
     answer: bottom.label,
     solution: `한 장씩 뺀 그림을 끝까지 따라가면 마지막까지 남는 것은 ${bottom.label} 색종이입니다.`,
-    meta: { family: "overlapping-paper-order", size, layers, snapshots, answer: bottom.label }
+    meta: { family: "overlapping-paper-order", boardSize: 4, paperSize: 2, layers, answer: bottom.label }
   };
 }
 
@@ -828,16 +805,23 @@ function threeFoldCutLineBook4({ difficulty = 2 }) {
   const folds = 3;
   const gridRows = 2;
   const gridColumns = 4;
-  const cutInset = sample([15, 16, 17]);
-  const repeatStarts = [0, 2];
+  const reflect = (segments, axis, value) => segments.map(([x1, y1, x2, y2]) => axis === "x"
+    ? [2 * value - x1, y1, 2 * value - x2, y2]
+    : [x1, 2 * value - y1, x2, 2 * value - y2]);
+  const cutApexY = sample([1.35, 1.5, 1.65]);
+  let cutSegments = [[0, cutApexY, 1, 1], [0, cutApexY, 1, 2]];
+  [["x", 1], ["y", 1], ["x", 2]].forEach(([axis, value]) => {
+    cutSegments = [...cutSegments, ...reflect(cutSegments, axis, value)];
+  });
+  const foldDirections = ["right-to-left", "top-to-bottom", "right-to-left"];
   return {
     prompt: "색종이를 세 번 접은 후 표시한 두 사선을 따라 잘랐습니다. 펼쳤을 때 잘린 선의 모양을 모눈에 그리세요.",
-    visual: { kind: "book4", subtype: "three-fold-cut-line", folds, gridRows, gridColumns, cutInset, repeatStarts, reveal: false },
+    visual: { kind: "book4", subtype: "three-fold-cut-line", folds, foldDirections, gridRows, gridColumns, cutApexY, cutSegments, reveal: false },
     answer: "그림 답안",
-    answerVisual: { kind: "book4", subtype: "three-fold-cut-line", folds, gridRows, gridColumns, cutInset, repeatStarts, reveal: true },
+    answerVisual: { kind: "book4", subtype: "three-fold-cut-line", folds, foldDirections, gridRows, gridColumns, cutApexY, cutSegments, reveal: true },
     responseKind: "drawing",
-    solution: "접은 선을 따라 차례로 펼치면 접은 색종이에 있던 두 사선이 윗줄의 왼쪽과 오른쪽에 같은 모양으로 나타납니다.",
-    meta: { family: "three-fold-cut-line-book4", folds, gridRows, gridColumns, cutInset, repeatStarts }
+    solution: "마지막 접기를 되펼쳐 좌우 대칭으로 옮기고, 두 번째 접기는 위아래 대칭, 첫 번째 접기는 다시 좌우 대칭으로 옮깁니다. 두 사선이 8겹에 각각 나타나므로 잘린 선은 모두 16개입니다.",
+    meta: { family: "three-fold-cut-line-book4", folds, foldDirections, gridRows, gridColumns, cutApexY, cutSegments }
   };
 }
 
