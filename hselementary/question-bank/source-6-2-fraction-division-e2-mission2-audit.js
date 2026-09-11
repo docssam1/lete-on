@@ -8,17 +8,17 @@ require("./source-inventory-grade6.js");
 require("./generators.js");
 
 const api = window.HSE_GENERATORS;
-const sourceItemId = "6-2-u1-e2-example-3";
-const generatorKey = "sourceGrade6SecondFractionDivisionE2Example3";
+const sourceItemId = "6-2-u1-e2-mission-2";
+const generatorKey = "sourceGrade6SecondFractionDivisionE2Mission2";
 const type = window.HSE_SOURCE_INVENTORY_GRADE6.items.find(item => item.sourceItemId === sourceItemId);
 const readiness = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory", "6-2-u1-source-readiness-review.json"), "utf8"));
 const sourceLedger = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory", "6-2-source-items.json"), "utf8"));
 const readinessItem = readiness.items.find(item => item.sourceItemId === sourceItemId);
 const sourceLedgerItem = sourceLedger.items.find(item => item.sourceItemId === sourceItemId);
 const expected = new Map([
-  ["3:8:5:6:424:304", 280],
-  ["2:5:3:4:510:390", 350],
-  ["5:12:7:8:620:410", 380]
+  ["4:7:4:5:580:420", 380],
+  ["3:5:3:4:690:510", 450],
+  ["5:8:7:10:780:570", 480]
 ]);
 const difficultyNames = { "-1": "guided", "0": "source", "1": "independent-reasoning" };
 const failures = [];
@@ -47,13 +47,13 @@ const add = (left, right) => rational(left.numerator * right.denominator + right
 const equal = (left, right) => left.numerator === right.numerator && left.denominator === right.denominator;
 
 function parseEvidence(prompt) {
-  const markup = String(prompt).match(/<span\s+hidden[\s\S]*?data-source62-fraction-e2-example3-kind="two-weighings-after-drinking"[\s\S]*?<\/span>/)?.[0] || "";
+  const markup = String(prompt).match(/<span\s+hidden[\s\S]*?data-source62-fraction-e2-mission2-kind="two-weighings-after-drinking"[\s\S]*?<\/span>/)?.[0] || "";
   const values = attr(markup, "data-values").split(",").map(Number);
-  check(Boolean(markup), "예제 2-3 독립 검산 자료가 없습니다.");
-  check(values.length === 14 && values.every(Number.isFinite), `예제 2-3 검산 자료가 깨졌습니다: ${values.join(",")}`);
+  check(Boolean(markup), "Mission 2 독립 검산 자료가 없습니다.");
+  check(values.length === 14 && values.every(Number.isFinite), `Mission 2 검산 자료가 깨졌습니다: ${values.join(",")}`);
   return {
     source: attr(markup, "data-source-item"),
-    kind: attr(markup, "data-source62-fraction-e2-example3-kind"),
+    kind: attr(markup, "data-source62-fraction-e2-mission2-kind"),
     contract: attr(markup, "data-result-contract"),
     candidateCount: Number(attr(markup, "data-candidate-count")),
     difficulty: attr(markup, "data-difficulty-design"),
@@ -69,29 +69,31 @@ function independentSolution(values) {
   const firstWater = divide(difference, drinkPart);
   const remainingWater = multiply(firstWater, remainingPart);
   const emptyBottle = subtract(rational(firstWeight), firstWater);
-  const candidates = Array.from({ length: firstWeight - 1 }, (_, index) => index + 1).filter(bottleMass => {
+  const candidates = [];
+  for (let bottleMass = 1; bottleMass < firstWeight; bottleMass += 1) {
     const waterMass = rational(firstWeight - bottleMass);
-    return equal(add(rational(bottleMass), multiply(waterMass, remainingPart)), rational(secondWeight));
-  });
+    if (equal(add(rational(bottleMass), multiply(waterMass, remainingPart)), rational(secondWeight))) candidates.push(bottleMass);
+  }
   check(fillN > 0 && fillN < fillD, "병에 넣은 물의 비가 전체 들이보다 작아야 합니다.");
+  check(drinkN > 0 && drinkN < drinkD, "마신 물의 비가 처음 넣은 물보다 작아야 합니다.");
   check(equal(difference, rational(diffN, diffD)) && equal(firstWater, rational(waterN, waterD)) && equal(remainingWater, rational(remainingN, remainingD)) && equal(emptyBottle, rational(emptyN, emptyD)), "저장된 무게와 독립 계산값이 다릅니다.");
-  check(equal(add(emptyBottle, firstWater), rational(firstWeight)) && equal(add(emptyBottle, remainingWater), rational(secondWeight)), "두 번의 무게를 거꾸로 확인한 값이 다릅니다.");
+  check(equal(add(emptyBottle, firstWater), rational(firstWeight)) && equal(add(emptyBottle, remainingWater), rational(secondWeight)), "두 번 잰 무게를 거꾸로 확인한 값이 다릅니다.");
   check(candidates.length === 1 && candidates[0] === emptyBottle.numerator && emptyBottle.denominator === 1, `빈 물병 무게 후보가 ${candidates.length}개입니다.`);
-  return { emptyBottle, candidates };
+  return { emptyBottle };
 }
 
-check(Boolean(type) && type.generatorKey === generatorKey && !type.reviewLocked, "예제 2-3 공개 원장이 전용 생성기에 연결되지 않았습니다.");
-check(type?.typeLabel === "분수만큼 덜어 낸 양으로 빈 물병의 무게 구하기", "예제 2-3 유형명이 원문 질문을 쉬운 말로 나타내지 않습니다.");
-check(api.names.includes(generatorKey), "예제 2-3 전용 생성기가 등록되지 않았습니다.");
+check(Boolean(type) && type.generatorKey === generatorKey && !type.reviewLocked, "Mission 2 공개 원장이 전용 생성기에 연결되지 않았습니다.");
+check(type?.typeLabel === "분수만큼 마신 뒤 남은 무게로 빈 병 무게 구하기", "Mission 2 유형명이 원문 질문을 쉬운 말로 나타내지 않습니다.");
+check(api.names.includes(generatorKey), "Mission 2 전용 생성기가 등록되지 않았습니다.");
 check(readiness.integrity.publicCandidateCount === 17 && readiness.integrity.lockedCount === 49, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
-check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.[0] === "280g" && readinessItem?.calculationStatus === "checked-exhaustive" && readinessItem?.candidateAnswerCount === 1, "예제 2-3 검토표의 원본 답·단일 답 상태가 완결되지 않았습니다.");
-check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-answer-fixed-pool" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "예제 2-3 원자료 장부의 원본 확인·단일 답·공개 연결이 완결되지 않았습니다.");
+check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.[0] === "380g" && readinessItem?.calculationStatus === "checked-exhaustive" && readinessItem?.candidateAnswerCount === 1, "Mission 2 검토표의 원본 답·단일 답 상태가 완결되지 않았습니다.");
+check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-answer-fixed-pool" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "Mission 2 원자료 장부의 원본 확인·단일 답·공개 연결이 완결되지 않았습니다.");
 
 for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 1500; seed += 1) {
   const generated = api.generate(type, 0, difficulty, seed, type.variant);
   const evidence = parseEvidence(generated.prompt);
-  const signature = attr(generated.prompt, "data-source62-e2-example3-expression");
-  const answerSignature = attr(generated.answerVisual, "data-source62-e2-example3-expression");
+  const signature = attr(generated.prompt, "data-source62-e2-mission2-expression");
+  const answerSignature = attr(generated.answerVisual, "data-source62-e2-mission2-expression");
   const calculated = independentSolution(evidence.values);
   seenPools.add(generated.verifiedPoolIndex);
   check(generated.generator === generatorKey && generated.sourceItemId === sourceItemId && evidence.source === sourceItemId, `${difficulty}/${seed}: 전용 생성기·원문 연결이 다릅니다.`);
@@ -112,8 +114,8 @@ for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 1500; seed += 1)
 
 check([...seenPools].sort().join(",") === "0,1,2", `세 고정 문항을 모두 확인하지 못했습니다: ${[...seenPools].sort().join(",")}`);
 if (failures.length) {
-  console.error(`6-2 분수의 나눗셈 예제 2-3 감사 실패: ${failures.length}건`);
+  console.error(`6-2 분수의 나눗셈 Mission 2 감사 실패: ${failures.length}건`);
   console.error([...new Set(failures)].slice(0, 100).join("\n"));
   process.exit(1);
 }
-console.log(`6-2 분수의 나눗셈 예제 2-3 감사 통과: ${checked}개 생성 · 고정 문항 3개 · 빈 물병 무게 후보 1개 · 두 무게 역산 확인`);
+console.log(`6-2 분수의 나눗셈 Mission 2 감사 통과: ${checked}개 생성 · 고정 문항 3개 · 빈 물병 무게 후보 1개 · 두 무게 역산 확인`);

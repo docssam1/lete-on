@@ -80,7 +80,7 @@ function independentSolution(values) {
 
 check(Boolean(type) && type.generatorKey === generatorKey && !type.reviewLocked, "Mission 5 공개 원장이 전용 생성기에 연결되지 않았습니다.");
 check(api.names.includes(generatorKey), "Mission 5 전용 생성기가 등록되지 않았습니다.");
-check(readiness.integrity.publicCandidateCount === 16 && readiness.integrity.lockedCount === 50, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
+check(readiness.integrity.publicCandidateCount === 17 && readiness.integrity.lockedCount === 49, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
 check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.[0] === "39" && readinessItem?.calculationStatus === "checked-exhaustive", "Mission 5 비공개 검토표의 원본 답·전수 확인 상태가 완결되지 않았습니다.");
 check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-answer-fixed-pool" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "Mission 5 원자료 장부의 원본 확인·단일 답·공개 연결이 완결되지 않았습니다.");
 

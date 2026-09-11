@@ -345,12 +345,13 @@
       "ordinal": 2,
       "pdfPage": 6,
       "printedPage": 7,
-      "sourceShape": "분수 나눗셈을 생활 상황의 전체, 부분, 횟수와 연결해 필요한 양을 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "빈 물병에 전체 들이의 일정한 분수만큼 물을 넣어 잰 무게와, 넣은 물의 일정한 분수만큼 마신 뒤 잰 무게로 빈 물병의 무게를 역산하는 구조.",
+      "answerContract": "single-answer-fixed-pool",
+      "visualRisk": "전체 들이에서 처음 넣은 비율과 처음 넣은 물에서 마신 비율의 기준이 다름을 물 높이와 글로 분명히 보여야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 6쪽의 인쇄 지문에서 전체 들이의 4/7, 처음 580g, 넣은 물의 4/5를 마신 뒤 420g 조건을 직접 대조했습니다. 줄어든 160g이 처음 물의 4/5이므로 처음 물은 200g, 빈 병은 380g이며 1g부터 579g까지 대입해 유일한 답임을 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e2-mission-2"
     },
     {
       "sourceItemId": "6-2-u1-e2-mission-3",
