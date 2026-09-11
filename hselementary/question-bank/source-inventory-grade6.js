@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 265
+    "unlocked": 266
   },
   "items": [
     {
@@ -8073,20 +8073,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e3-mission-2",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 2",
-      "typeLabel": "분수의 합을 계산해 기약분수로 나타내기",
+      "typeLabel": "홀수 분자의 합이 들어 있는 겹분수 계산하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE3Mission2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "PDF 원문의 1, 3, 5부터 15까지 홀수 분자와 공통 분모 17, 바깥 자연수 2의 위치를 직접 대조했습니다. 홀수의 합과 분수 덧셈을 따로 계산해 답을 확인한 고정 문항 3개를 만들었습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

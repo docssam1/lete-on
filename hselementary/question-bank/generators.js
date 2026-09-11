@@ -25460,6 +25460,44 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Mission2({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-mission-2";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 3 Mission 2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { outer: 2, denominator: 17, last: 15, expected: [111, 64] },
+        { outer: 3, denominator: 19, last: 17, expected: [224, 81] },
+        { outer: 2, denominator: 23, last: 19, expected: [177, 100] }
+      ][poolIndex];
+      const terms = Array.from({ length: (data.last + 1) / 2 }, (_, index) => index * 2 + 1);
+      const sumValue = terms.reduce((sum, numerator) => rationalOperation(sum, rationalValue(numerator, data.denominator), "+"), rationalValue(0));
+      const reciprocalValue = rationalOperation(rationalValue(1), sumValue, "÷");
+      const answerValue = rationalOperation(rationalValue(data.outer), reciprocalValue, "-");
+      const expectedValue = rationalValue(...data.expected);
+      const oddSum = terms.length * terms.length;
+      const independentValue = rationalValue(data.outer * oddSum - data.denominator, oddSum);
+      const candidates = [independentValue].filter(value => value.numerator === expectedValue.numerator && value.denominator === expectedValue.denominator && value.numerator === answerValue.numerator && value.denominator === answerValue.denominator);
+      if (candidates.length !== 1) throw new Error("6-2 개념탐구 3 Mission 2의 홀수 분수 합 계산 결과가 검산값과 다릅니다.");
+      const shown = value => fractionMarkup(value.numerator, value.denominator);
+      const plain = value => fraction(value.numerator, value.denominator);
+      const visibleTerms = [...terms.slice(0, 3), "dots", terms.at(-1)].map(value => value === "dots" ? `<span class="source62-odd-sum-dots">…</span>` : fractionMarkup(value, data.denominator)).join(`<span class="source62-odd-sum-plus">+</span>`);
+      const expressionSignature = [data.outer, data.denominator, data.last].join(":");
+      const board = solved => `<div class="source62-odd-sum-board${solved ? " is-solved" : ""}" data-source62-e3-mission2-structure="reciprocal-of-odd-fraction-sum" data-source62-e3-mission2-expression="${expressionSignature}" data-term-count="${terms.length}" data-odd-sum="${oddSum}" data-answer-fraction="${plain(answerValue)}"><strong>홀수 분자의 분수 합이 들어 있는 겹분수</strong><div class="source62-odd-sum-equation"><span>${data.outer}</span><span class="source62-odd-sum-minus">−</span><span class="source62-series-reciprocal" role="img" aria-label="분모가 같은 홀수 분자의 분수 합의 역수"><span class="source62-series-reciprocal__top">1</span><span class="source62-series-reciprocal__bottom">${visibleTerms}</span></span></div>${solved ? `<div class="source62-odd-sum-result"><span>계산 결과</span><b>${shown(answerValue)}</b></div>` : `<p>분모에 있는 분수의 합부터 계산하세요.</p>`}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-odd-sum-solution"><strong>분모의 합부터 차례로 계산하기</strong>${row("홀수의 합", `${terms.join("+")}=${oddSum}`)}${row("분모의 분수 합", `${oddSum}÷${data.denominator}=${shown(sumValue)}`)}${row("겹분수", `1÷${shown(sumValue)}=${shown(reciprocalValue)}`)}${row("전체 계산", `${data.outer}−${shown(reciprocalValue)}=${shown(answerValue)}`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">${terms.length}개의 홀수를 먼저 더한 뒤 ${data.denominator}로 나눈 값의 역수를 구하세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">처음부터 ${data.last}까지 홀수의 합을 빠뜨리지 않고 구한 뒤 겹분수를 계산하세요.</p>` : "";
+      const values = [data.outer, data.denominator, data.last, terms.length, oddSum, sumValue.numerator, sumValue.denominator, reciprocalValue.numerator, reciprocalValue.denominator, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e3-mission2-kind="reciprocal-of-odd-fraction-sum" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-expression="${expressionSignature}" data-answer="${plain(answerValue)}" data-result-contract="single-fraction" data-candidate-count="${candidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음을 계산하여 기약분수로 나타내세요.${board(false)}${support}${challenge}${evidence}`, plain(answerValue), `분모에 있는 분수의 분자 합은 ${terms.join("+")}=${oddSum}이므로 분수의 합은 ${shown(sumValue)}입니다. 그 역수는 ${shown(reciprocalValue)}이므로 ${data.outer}−${shown(reciprocalValue)}=${shown(answerValue)}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-mission2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">원본과 같은 겹분수에서 분모의 홀수 분자 합부터 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27392,6 +27430,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-example-3", "sourceGrade6SecondFractionDivisionE3Example3"],
     [type => type.sourceItemId === "6-2-u1-e3-example-4", "sourceGrade6SecondFractionDivisionE3Example4"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-1", "sourceGrade6SecondFractionDivisionE3Mission1"],
+    [type => type.sourceItemId === "6-2-u1-e3-mission-2", "sourceGrade6SecondFractionDivisionE3Mission2"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

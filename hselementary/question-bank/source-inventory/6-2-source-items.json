@@ -520,12 +520,13 @@
       "ordinal": 2,
       "pdfPage": 8,
       "printedPage": 9,
-      "sourceShape": "여러 분수 나눗셈과 조건을 비교하여 알맞은 값 또는 식을 정하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "2에서 1/(1/17+3/17+5/17+…+15/17)을 빼는 식으로, 공통 분모를 가진 홀수 분자들의 합 전체가 큰 분수의 분모인 구조.",
+      "answerContract": "single-fraction-fixed-pool",
+      "visualRisk": "큰 분수선이 홀수 분자들의 분수 합 전체를 정확히 감싸야 하며, 작은 분수선·덧셈 기호·줄임표가 서로 겹치지 않아야 합니다. 문제와 답은 같은 식 자료를 사용해야 합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 8쪽의 인쇄된 바깥 자연수 2와 1/17, 3/17, 5/17, …, 15/17의 위치를 직접 대조했습니다. 홀수 합 64와 공통 분모 17을 이용해 답 111/64를 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e3-mission-2"
     },
     {
       "sourceItemId": "6-2-u1-e3-mission-3",
