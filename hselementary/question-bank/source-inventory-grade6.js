@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 266
+    "unlocked": 267
   },
   "items": [
     {
@@ -8099,20 +8099,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e3-mission-3",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
-      "typeLabel": "수 카드로 만들 수 있는 대분수 나눗셈의 가장 큰 몫 구하기",
+      "typeLabel": "수 카드로 대분수÷진분수의 가장 큰 몫 만들기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE3Mission3",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "원문의 수 카드 2, 3, 4, 5, 7과 대분수÷진분수 조건을 직접 대조했습니다. 가능한 120개 배치 중 올바른 30개를 전수 비교해 가장 큰 몫이 하나인 고정 문항 3개를 만들었습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

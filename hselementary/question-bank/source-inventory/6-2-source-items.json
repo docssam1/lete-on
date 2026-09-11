@@ -536,12 +536,13 @@
       "ordinal": 3,
       "pdfPage": 8,
       "printedPage": 9,
-      "sourceShape": "여러 분수 나눗셈과 조건을 비교하여 알맞은 값 또는 식을 정하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "수 카드 2, 3, 4, 5, 7을 한 번씩 모두 써서 (대분수)÷(진분수)를 만들고 몫이 가장 클 때를 구하는 구조.",
+      "answerContract": "single-mixed-number-fixed-pool",
+      "visualRisk": "다섯 카드가 문제와 답에 모두 보여야 하며, 대분수의 분수 부분과 나누는 분수가 모두 진분수여야 합니다. 같은 카드를 두 번 쓰거나 빠뜨린 배치는 금지합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 8쪽의 인쇄된 카드 2, 3, 4, 5, 7과 대분수÷진분수 조건을 직접 대조했습니다. 120개 배치 중 조건에 맞는 30개를 전수 비교해 5와 3/4÷2/7=20과 1/8이 유일한 최댓값임을 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e3-mission-3"
     },
     {
       "sourceItemId": "6-2-u1-e3-mission-4",

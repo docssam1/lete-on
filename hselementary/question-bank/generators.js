@@ -25498,6 +25498,48 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Mission3({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-mission-3";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 3 Mission 3 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { cards: [2, 3, 4, 5, 7], expectedOrder: [5, 3, 4, 2, 7], expectedAnswer: "20 1/8" },
+        { cards: [2, 4, 5, 7, 9], expectedOrder: [7, 4, 5, 2, 9], expectedAnswer: "35 1/10" },
+        { cards: [2, 3, 5, 8, 9], expectedOrder: [8, 3, 5, 2, 9], expectedAnswer: "38 7/10" }
+      ][poolIndex];
+      const arrangements = operatorPermutations(data.cards)
+        .filter(cards => cards[1] < cards[2] && cards[3] < cards[4])
+        .map(cards => {
+          const left = rationalValue(cards[0] * cards[2] + cards[1], cards[2]);
+          const right = rationalValue(cards[3], cards[4]);
+          return { cards, left, right, value: rationalOperation(left, right, "÷") };
+        })
+        .sort((left, right) => right.value.numerator * left.value.denominator - left.value.numerator * right.value.denominator);
+      const maximum = arrangements[0];
+      const winners = arrangements.filter(item => item.value.numerator * maximum.value.denominator === maximum.value.numerator * item.value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const placedMixed = cards => `<span class="math-mixed-number" role="img" aria-label="${cards[0]}와 ${cards[2]}분의 ${cards[1]}"><span>${cards[0]}</span>${symbolicFractionMarkup(cards[1], cards[2])}</span>`;
+      const placedProper = cards => symbolicFractionMarkup(cards[3], cards[4]);
+      if (arrangements.length !== 30 || winners.length !== 1 || maximum.cards.join(":") !== data.expectedOrder.join(":") || plain(maximum.value) !== data.expectedAnswer) throw new Error("6-2 Mission 3의 가장 큰 몫이 원문 검산값 하나로 정해지지 않습니다.");
+      const cardsSignature = data.cards.join(":");
+      const orderSignature = maximum.cards.join(":");
+      const expression = `${placedMixed(maximum.cards)}÷${placedProper(maximum.cards)}`;
+      const board = solved => `<div class="source62-mixed-card-board${solved ? " is-solved" : ""}" data-source62-e3-mission3-structure="five-cards-largest-mixed-proper-quotient" data-source62-e3-mission3-cards="${cardsSignature}" data-best-order="${orderSignature}" data-valid-arrangements="${arrangements.length}" data-answer-fraction="${plain(maximum.value)}"><strong>수 카드로 대분수와 진분수의 나눗셈 만들기</strong>${source41CardRow(data.cards)}<div class="source62-mixed-card-expression">${solved ? `${expression}=${shown(maximum.value)}` : `□ ${symbolicFractionMarkup("□", "□")}÷${symbolicFractionMarkup("□", "□")}`}</div><p>${solved ? "두 분수 부분이 모두 진분수인 가장 큰 몫" : "각 카드를 한 번씩만 사용합니다."}</p></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-mixed-card-solution"><strong>조건에 맞는 카드 배치를 모두 비교하기</strong>${row("확인한 배치", `${arrangements.length}가지`)}${row("가장 큰 몫 식", expression)}${row("가분수로 나타낸 몫", fractionMarkup(maximum.value.numerator, maximum.value.denominator))}${row("대분수로 나타낸 몫", shown(maximum.value))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">대분수는 크게, 나누는 진분수는 작게 만드는 카드 배치부터 비교해 보세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 분수 부분이 진분수인지 확인하며 가능한 카드 배치를 빠짐없이 비교하세요.</p>` : "";
+      const evidence = `<span hidden data-source62-fraction-e3-mission3-kind="five-cards-largest-mixed-proper-quotient" data-source-item="${sourceItemId}" data-cards="${cardsSignature}" data-best-order="${orderSignature}" data-valid-arrangements="${arrangements.length}" data-answer="${plain(maximum.value)}" data-result-contract="single-mixed-number" data-candidate-count="${winners.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`수 카드 ${data.cards.join(", ")}를 한 번씩 모두 사용하여 (대분수)÷(진분수)를 만들려고 합니다. 나눗셈의 몫이 가장 클 때의 몫을 구하세요.${board(false)}${support}${challenge}${evidence}`, plain(maximum.value), `대분수와 진분수의 분수 부분이 모두 진분수가 되도록 카드를 놓는 ${arrangements.length}가지를 모두 비교합니다. ${expression}일 때 몫이 ${shown(maximum.value)}로 가장 큽니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-mission3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">카드 5장을 한 번씩 썼는지와 대분수·진분수 배치를 모두 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27431,6 +27473,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-example-4", "sourceGrade6SecondFractionDivisionE3Example4"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-1", "sourceGrade6SecondFractionDivisionE3Mission1"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-2", "sourceGrade6SecondFractionDivisionE3Mission2"],
+    [type => type.sourceItemId === "6-2-u1-e3-mission-3", "sourceGrade6SecondFractionDivisionE3Mission3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
