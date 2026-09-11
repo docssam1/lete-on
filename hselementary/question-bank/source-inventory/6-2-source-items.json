@@ -792,12 +792,13 @@
       "ordinal": 1,
       "pdfPage": 11,
       "printedPage": 12,
-      "sourceShape": "분수 관계를 식으로 세워 모르는 양을 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "하루 24시간에서 낮의 길이가 밤의 길이의 13/19일 때 밤의 길이를 시간과 분으로 구하는 구조.",
+      "answerContract": "single-duration",
+      "visualRisk": "질문은 낮이 아니라 밤의 길이를 묻습니다. 9시간 45분은 낮이고 밤은 14시간 15분이므로 두 값을 바꾸어 표시하면 안 됩니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 11쪽 인쇄 12쪽 예제 5-1을 직접 대조했습니다. 밤을 직접 식으로 구한 값과 낮·밤 합 24시간을 확인하는 고정 문항 3개를 검산했습니다.",
+      "publicSourceItemId": "6-2-u1-e5-example-1"
     },
     {
       "sourceItemId": "6-2-u1-e5-example-2",

@@ -26258,6 +26258,47 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE5Example1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e5-example-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 5-1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { dayParts: 13, nightParts: 19, expectedNightMinutes: 855 },
+        { dayParts: 7, nightParts: 9, expectedNightMinutes: 810 },
+        { dayParts: 11, nightParts: 13, expectedNightMinutes: 780 }
+      ][poolIndex];
+      const dayToNight = rationalValue(data.dayParts, data.nightParts);
+      const totalParts = data.dayParts + data.nightParts;
+      const onePartHours = rationalValue(24, totalParts);
+      const dayHours = rationalOperation(onePartHours, rationalValue(data.dayParts), "×");
+      const nightHours = rationalOperation(onePartHours, rationalValue(data.nightParts), "×");
+      const dayMinutes = dayHours.numerator * 60 / dayHours.denominator;
+      const nightMinutes = nightHours.numerator * 60 / nightHours.denominator;
+      const nightDirect = rationalOperation(rationalValue(24), rationalOperation(rationalValue(1), dayToNight, "+"), "÷");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const nightCandidates = Array.from({ length: 1439 }, (_, index) => index + 1).filter(minutes => (1440 - minutes) * data.nightParts === minutes * data.dayParts);
+      if ([dayToNight, onePartHours, dayHours, nightHours, nightDirect].some(value => !value || value.numerator <= 0) || !same(nightHours, nightDirect) || !Number.isInteger(dayMinutes) || !Number.isInteger(nightMinutes) || dayMinutes + nightMinutes !== 1440 || nightMinutes !== data.expectedNightMinutes || nightCandidates.length !== 1 || nightCandidates[0] !== nightMinutes) throw new Error("6-2 예제 5-1의 낮·밤 길이 또는 밤 시간 답이 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const duration = minutes => `${Math.floor(minutes / 60)}시간${minutes % 60 ? ` ${minutes % 60}분` : ""}`;
+      const answerDuration = duration(nightMinutes);
+      const signature = `${data.dayParts}:${data.nightParts}:24`;
+      const relationBoard = solved => `<div class="source61-math-board source62-day-night-board${solved ? " is-solved" : ""}" data-source62-e5-example1-structure="day-night-fraction-of-whole-day" data-source62-e5-example1-values="${signature}" data-total-parts="${totalParts}" data-one-part-hours="${onePartHours.numerator}:${onePartHours.denominator}" data-day-minutes="${dayMinutes}" data-night-minutes="${nightMinutes}" data-candidate-count="${nightCandidates.length}"><strong>하루의 낮과 밤</strong>${row("하루", "24시간")}${row("낮의 길이", inline(`밤의 ${shown(dayToNight)}`))}${solved ? row("낮", duration(dayMinutes)) + row("밤", answerDuration) : ""}${solved ? `<div class="source62-day-night-strip" style="--day-share:${data.dayParts}fr;--night-share:${data.nightParts}fr" role="img" aria-label="낮 ${duration(dayMinutes)}, 밤 ${answerDuration}"><span>낮<br><b>${duration(dayMinutes)}</b></span><span>밤<br><b>${answerDuration}</b></span></div>` : ""}</div>`;
+      const solutionBoard = `<div class="source61-math-board source62-day-night-solution"><strong>낮과 밤의 비로 두 번 확인하기</strong>${row("낮 : 밤", `${data.dayParts} : ${data.nightParts}`)}${row("전체", `${data.dayParts}+${data.nightParts}=${totalParts}부분`)}${row("한 부분", inline(`24÷${totalParts}=${shown(onePartHours)}<span class="math-unit">시간</span>`))}${row("밤", inline(`${shown(onePartHours)}×${data.nightParts}=${shown(nightHours)}<span class="math-unit">시간</span>`))}${row("시간과 분", answerDuration)}${row("하루인지 다시 확인", `${duration(dayMinutes)} + ${answerDuration} = 24시간`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">낮과 밤의 길이의 비를 ${data.dayParts}:${data.nightParts}로 나타내고 전체 부분 수를 먼저 구하세요.</p>` : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">구한 낮과 밤의 길이를 더해 하루 24시간이 되는지 확인하세요.</p>' : "";
+      const evidenceValues = [data.dayParts, data.nightParts, totalParts, onePartHours.numerator, onePartHours.denominator, dayHours.numerator, dayHours.denominator, nightHours.numerator, nightHours.denominator, dayMinutes, nightMinutes].join(":");
+      const evidence = `<span hidden data-source62-fraction-e5-example1-kind="night-duration-from-day-fraction" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-duration" data-candidate-count="${nightCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`하루를 낮과 밤으로 구분했을 때 어느 날 낮의 길이가 밤의 길이의 ${shown(dayToNight)}이라면 이 날 밤의 길이는 몇 시간 몇 분인지 구하세요.${relationBoard(false)}${support}${challenge}${evidence}`, answerDuration, `낮의 길이는 밤의 길이의 ${shown(dayToNight)}이므로 낮과 밤의 길이의 비는 ${data.dayParts}:${data.nightParts}입니다. 하루 24시간을 ${totalParts}부분으로 나누면 한 부분은 ${shown(onePartHours)}시간입니다. 밤은 ${data.nightParts}부분이므로 ${shown(onePartHours)}×${data.nightParts}=${shown(nightHours)}시간, 즉 ${answerDuration}입니다. 낮 ${duration(dayMinutes)}과 밤 ${answerDuration}을 더하면 24시간입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e5-example1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${relationBoard(true)}${solutionBoard}${evidence}<div class="solution-answer-caption">낮과 밤의 비와 하루 24시간을 다시 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -28207,6 +28248,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-mission-5", "sourceGrade6SecondFractionDivisionE4Mission5"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-6", "sourceGrade6SecondFractionDivisionE4Mission6"],
     [type => type.sourceItemId === "6-2-u1-e5-exploration", "sourceGrade6SecondFractionDivisionE5Exploration"],
+    [type => type.sourceItemId === "6-2-u1-e5-example-1", "sourceGrade6SecondFractionDivisionE5Example1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
