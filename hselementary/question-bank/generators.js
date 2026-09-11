@@ -25840,6 +25840,64 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Example4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-example-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 4-4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { firstDistance: [8, 7], firstTime: [2, 5], secondDistance: [21, 5], secondTime: [7, 2], targetDistance: [10, 1], expectedMinutes: 290 },
+        { firstDistance: [5, 3], firstTime: [1, 4], secondDistance: [18, 5], secondTime: [3, 2], targetDistance: [10, 1], expectedMinutes: 160 },
+        { firstDistance: [15, 8], firstTime: [1, 2], secondDistance: [4, 1], secondTime: [3, 2], targetDistance: [12, 1], expectedMinutes: 78 }
+      ][poolIndex];
+      const firstDistance = rationalValue(...data.firstDistance);
+      const firstTime = rationalValue(...data.firstTime);
+      const secondDistance = rationalValue(...data.secondDistance);
+      const secondTime = rationalValue(...data.secondTime);
+      const targetDistance = rationalValue(...data.targetDistance);
+      const firstSpeed = rationalOperation(firstDistance, firstTime, "÷");
+      const secondSpeed = rationalOperation(secondDistance, secondTime, "÷");
+      const firstArrivalTime = rationalOperation(targetDistance, firstSpeed, "÷");
+      const secondArrivalTime = rationalOperation(targetDistance, secondSpeed, "÷");
+      const firstScale = rationalOperation(targetDistance, firstDistance, "÷");
+      const secondScale = rationalOperation(targetDistance, secondDistance, "÷");
+      const firstArrivalByScale = rationalOperation(firstTime, firstScale, "×");
+      const secondArrivalByScale = rationalOperation(secondTime, secondScale, "×");
+      const firstIsEarlier = firstArrivalTime.numerator * secondArrivalTime.denominator < secondArrivalTime.numerator * firstArrivalTime.denominator;
+      const laterTime = firstIsEarlier ? secondArrivalTime : firstArrivalTime;
+      const earlierTime = firstIsEarlier ? firstArrivalTime : secondArrivalTime;
+      const timeDifference = rationalOperation(laterTime, earlierTime, "-");
+      const firstMinutes = rationalOperation(firstArrivalTime, rationalValue(60, 1), "×");
+      const secondMinutes = rationalOperation(secondArrivalTime, rationalValue(60, 1), "×");
+      const differenceMinutes = rationalOperation(timeDifference, rationalValue(60, 1), "×");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const arrivalCandidates = [
+        { name: "지선", time: firstArrivalTime, byScale: firstArrivalByScale },
+        { name: "진아", time: secondArrivalTime, byScale: secondArrivalByScale }
+      ].filter(candidate => same(candidate.time, candidate.byScale) && candidate.time.numerator * laterTime.denominator < laterTime.numerator * candidate.time.denominator);
+      if ([firstDistance, firstTime, secondDistance, secondTime, targetDistance, firstSpeed, secondSpeed, firstArrivalTime, secondArrivalTime, firstScale, secondScale, firstArrivalByScale, secondArrivalByScale, timeDifference, firstMinutes, secondMinutes, differenceMinutes].some(value => !value || value.numerator <= 0) || !firstIsEarlier || arrivalCandidates.length !== 1 || [firstMinutes, secondMinutes, differenceMinutes].some(value => value.denominator !== 1) || differenceMinutes.numerator !== data.expectedMinutes) throw new Error("6-2 예제 4-4의 거리·시간 또는 두 독립 계산의 먼저 도착하는 사람이 하나로 정해지지 않습니다.");
+      const duration = minutes => `${Math.floor(minutes / 60)}시간 ${minutes % 60}분`;
+      const answerDuration = duration(differenceMinutes.numerator);
+      const answer = `${arrivalCandidates[0].name}이 ${answerDuration} 먼저`;
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const measure = (value, unit) => inline(`${shown(value)}<span class="math-unit">${unit}</span>`);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [firstDistance, firstTime, secondDistance, secondTime, targetDistance].flatMap(value => [value.numerator, value.denominator]).join(":");
+      const travelBoard = solved => `<div class="source61-math-board source62-travel-time-board${solved ? " is-solved" : ""}" data-source62-e4-example4-structure="compare-constant-speeds" data-source62-e4-example4-values="${signature}" data-first-speed="${firstSpeed.numerator}:${firstSpeed.denominator}" data-second-speed="${secondSpeed.numerator}:${secondSpeed.denominator}" data-first-arrival="${firstArrivalTime.numerator}:${firstArrivalTime.denominator}" data-second-arrival="${secondArrivalTime.numerator}:${secondArrivalTime.denominator}" data-answer-minutes="${differenceMinutes.numerator}"><strong>일정한 빠르기로 가는 두 사람</strong>${row("지선이 간 거리", measure(firstDistance, "km"))}${row("지선이 걸린 시간", measure(firstTime, "시간"))}${row("진아가 간 거리", measure(secondDistance, "km"))}${row("진아가 걸린 시간", measure(secondTime, "시간"))}${row("두 사람이 갈 거리", measure(targetDistance, "km"))}${solved ? row("지선의 도착 시간", inline(duration(firstMinutes.numerator))) + row("진아의 도착 시간", inline(duration(secondMinutes.numerator))) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-travel-time-solution"><strong>빠르기와 거리의 배수로 두 번 확인하기</strong>${row("지선의 1시간 거리", inline(`${shown(firstDistance)}÷${shown(firstTime)}=${shown(firstSpeed)}<span class="math-unit">km</span>`))}${row("진아의 1시간 거리", inline(`${shown(secondDistance)}÷${shown(secondTime)}=${shown(secondSpeed)}<span class="math-unit">km</span>`))}${row("지선의 도착 시간", inline(`${shown(targetDistance)}÷${shown(firstSpeed)}=${shown(firstArrivalTime)}<span class="math-unit">시간</span>`))}${row("진아의 도착 시간", inline(`${shown(targetDistance)}÷${shown(secondSpeed)}=${shown(secondArrivalTime)}<span class="math-unit">시간</span>`))}${row("두 도착 시간의 차", inline(`${shown(secondArrivalTime)}−${shown(firstArrivalTime)}=${shown(timeDifference)}<span class="math-unit">시간</span>`))}${row("시간과 분으로 나타내기", inline(`${shown(timeDifference)}<span class="math-unit">시간</span> = ${answerDuration}`))}${row("지선의 다른 방법", inline(`${shown(firstTime)}×${shown(firstScale)}=${shown(firstArrivalByScale)}<span class="math-unit">시간</span>`))}${row("진아의 다른 방법", inline(`${shown(secondTime)}×${shown(secondScale)}=${shown(secondArrivalByScale)}<span class="math-unit">시간</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 두 사람이 1시간 동안 가는 거리를 각각 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">처음 거리에서 목표 거리까지 몇 배인지 구해 걸린 시간에 곱하는 방법으로 다시 확인하세요.</p>' : "";
+      const evidenceValues = [signature, firstSpeed.numerator, firstSpeed.denominator, secondSpeed.numerator, secondSpeed.denominator, firstArrivalTime.numerator, firstArrivalTime.denominator, secondArrivalTime.numerator, secondArrivalTime.denominator, timeDifference.numerator, timeDifference.denominator, differenceMinutes.numerator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-example4-kind="compare-constant-speeds" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-person-duration" data-candidate-count="${arrivalCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`일정한 빠르기로 지선이는 ${measure(firstDistance, "km")}를 가는 데 ${measure(firstTime, "시간")}이 걸리고, 진아는 ${measure(secondDistance, "km")}를 가는 데 ${measure(secondTime, "시간")}이 걸립니다. 두 사람이 같은 곳에서 동시에 출발하여 ${measure(targetDistance, "km")} 떨어진 장소에 간다면 누가 몇 시간 몇 분 더 먼저 도착하는지 구하세요.${travelBoard(false)}${support}${challenge}${evidence}`, answer, `지선이가 1시간에 가는 거리는 ${shown(firstDistance)}÷${shown(firstTime)}=${measure(firstSpeed, "km")}, 진아가 1시간에 가는 거리는 ${shown(secondDistance)}÷${shown(secondTime)}=${measure(secondSpeed, "km")}입니다. ${measure(targetDistance, "km")}를 가는 데 지선이는 ${shown(targetDistance)}÷${shown(firstSpeed)}=${measure(firstArrivalTime, "시간")}, 진아는 ${shown(targetDistance)}÷${shown(secondSpeed)}=${measure(secondArrivalTime, "시간")}이 걸립니다. 두 시간의 차는 ${shown(secondArrivalTime)}−${shown(firstArrivalTime)}=${measure(timeDifference, "시간")}이므로 ${answer} 도착합니다. 처음 거리에서 목표 거리까지의 배수를 각각 처음 시간에 곱해도 두 도착 시간이 같습니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-example4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${travelBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">빠르기와 거리의 배수로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27781,6 +27839,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-example-1", "sourceGrade6SecondFractionDivisionE4Example1"],
     [type => type.sourceItemId === "6-2-u1-e4-example-2", "sourceGrade6SecondFractionDivisionE4Example2"],
     [type => type.sourceItemId === "6-2-u1-e4-example-3", "sourceGrade6SecondFractionDivisionE4Example3"],
+    [type => type.sourceItemId === "6-2-u1-e4-example-4", "sourceGrade6SecondFractionDivisionE4Example4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
