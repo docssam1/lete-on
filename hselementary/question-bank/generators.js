@@ -26167,6 +26167,47 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Mission6({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-mission-6";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 6 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { times: [[5, 6], [7, 4], [8, 3]], problems: [24, 19, 20], expectedAverage: 12 },
+        { times: [[3, 4], [3, 2], [9, 4]], problems: [10, 26, 36], expectedAverage: 16 },
+        { times: [[5, 6], [4, 3], [5, 2]], problems: [18, 21, 45], expectedAverage: 18 }
+      ][poolIndex];
+      const times = data.times.map(value => rationalValue(...value));
+      const totalTime = times.reduce((total, value) => rationalOperation(total, value, "+"), rationalValue(0));
+      const totalProblems = data.problems.reduce((total, value) => total + value, 0);
+      const average = rationalOperation(rationalValue(totalProblems), totalTime, "÷");
+      const smallTimeDenominator = lcmMany(times.map(value => value.denominator));
+      const timeSlots = times.map(value => value.numerator * smallTimeDenominator / value.denominator);
+      const totalSlots = timeSlots.reduce((total, value) => total + value, 0);
+      const averageBySlots = rationalValue(totalProblems * smallTimeDenominator, totalSlots);
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const answerCandidates = [average].filter(value => same(value, averageBySlots) && value.denominator === 1 && value.numerator === data.expectedAverage && timeSlots.every(Number.isInteger));
+      if (!totalTime || totalTime.numerator <= 0 || !totalProblems || answerCandidates.length !== 1) throw new Error("6-2 Mission 6의 전체 시간·전체 문제 수 또는 한 시간 평균이 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [...data.times.flat(), ...data.problems].join(":");
+      const dayLabels = ["첫째 날", "둘째 날", "셋째 날"];
+      const tableRows = dayLabels.map((label, index) => `<div class="source62-study-row"><b>${label}</b><span>${shown(times[index])}<span class="math-unit">시간</span></span><span>${data.problems[index]}<span class="math-unit">문제</span></span></div>`).join("");
+      const studyTable = solved => `<div class="source62-study-table${solved ? " is-solved" : ""}" data-source62-e4-mission6-structure="three-day-hourly-average" data-source62-e4-mission6-values="${signature}" data-total-time="${totalTime.numerator}:${totalTime.denominator}" data-total-problems="${totalProblems}" data-small-time-denominator="${smallTimeDenominator}" data-total-time-slots="${totalSlots}" data-answer-average="${average.numerator}"><strong>3일 동안 푼 문제</strong><div class="source62-study-row is-head"><b>날</b><span>푼 시간</span><span>문제 수</span></div>${tableRows}${solved ? `<div class="source62-study-row is-total"><b>전체</b><span>${shown(totalTime)}<span class="math-unit">시간</span></span><span>${totalProblems}<span class="math-unit">문제</span></span></div>` : ""}</div>`;
+      const slotBoard = `<div class="source61-math-board source62-study-average-solution"><strong>전체를 작은 시간 칸으로 다시 확인하기</strong>${row("작은 시간 한 칸", inline(`${shown(rationalValue(1, smallTimeDenominator))}<span class="math-unit">시간</span>`))}${dayLabels.map((label, index) => row(`${label} 시간`, `${timeSlots[index]}칸`)).join("")}${row("전체 시간", `${totalSlots}칸`)}${row("한 시간", `${smallTimeDenominator}칸`)}${row("한 시간 평균", inline(`${totalProblems}÷${totalSlots}×${smallTimeDenominator}=${average.numerator}<span class="math-unit">문제</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">3일 동안 푼 문제 수와 공부한 시간을 각각 모두 더하세요.</p>' : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">각 날의 평균을 따로 구하지 말고 전체 ${totalProblems}문제를 전체 시간으로 나누어 확인하세요.</p>` : "";
+      const evidenceValues = [signature, totalTime.numerator, totalTime.denominator, totalProblems, smallTimeDenominator, ...timeSlots, totalSlots, average.numerator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-mission6-kind="three-day-hourly-average" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-whole-number-average" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`정수는 3일 동안 수학 문제를 풀었습니다. 첫째 날에는 ${shown(times[0])}시간 동안 ${data.problems[0]}문제, 둘째 날에는 ${shown(times[1])}시간 동안 ${data.problems[1]}문제, 셋째 날에는 ${shown(times[2])}시간 동안 ${data.problems[2]}문제를 풀었습니다. 3일 동안 한 시간에 평균 몇 문제를 풀었는지 구하세요.${studyTable(false)}${support}${challenge}${evidence}`, `${average.numerator}문제`, `3일 동안 푼 문제는 모두 ${totalProblems}문제이고, 공부한 시간은 ${shown(times[0])}+${shown(times[1])}+${shown(times[2])}=${shown(totalTime)}시간입니다. 따라서 한 시간에 평균 ${totalProblems}÷${shown(totalTime)}=${average.numerator}문제를 풀었습니다. 시간을 ${shown(rationalValue(1, smallTimeDenominator))}시간씩 나누면 모두 ${totalSlots}칸이고 한 시간은 ${smallTimeDenominator}칸이므로 ${totalProblems}÷${totalSlots}×${smallTimeDenominator}=${average.numerator}으로 같은 답이 나옵니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-mission6-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${studyTable(true)}${slotBoard}${evidence}<div class="solution-answer-caption">전체 문제 수와 전체 시간을 두 방법으로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -28114,6 +28155,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-mission-3", "sourceGrade6SecondFractionDivisionE4Mission3"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-4", "sourceGrade6SecondFractionDivisionE4Mission4"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-5", "sourceGrade6SecondFractionDivisionE4Mission5"],
+    [type => type.sourceItemId === "6-2-u1-e4-mission-6", "sourceGrade6SecondFractionDivisionE4Mission6"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

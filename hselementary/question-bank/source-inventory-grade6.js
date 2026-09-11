@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 280
+    "unlocked": 281
   },
   "items": [
     {
@@ -8466,17 +8466,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "3일 동안 한 시간에 평균 몇 문제를 풀었는지 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE4Mission6",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "인쇄 원문은 첫째·둘째·셋째 날의 공부 시간과 푼 문제 수를 더해 한 시간에 평균 몇 문제를 풀었는지 묻습니다. 원문 조건과 답 12문제는 확인했지만 생성기와 화면·인쇄 연결 전이므로 잠금을 유지합니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

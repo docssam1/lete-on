@@ -764,8 +764,9 @@
       "answerContract": "single-whole-number",
       "visualRisk": "세 날의 시간과 문제 수를 서로 바꾸어 읽거나, 하루별 평균의 평균으로 계산하지 않도록 전체 시간과 전체 문제 수를 같은 표에서 구분해야 합니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "PDF 10쪽 인쇄 지문을 직접 대조했습니다. 전체 시간 21/4시간과 전체 63문제에서 답은 12문제 하나지만, 생성기와 화면·인쇄 연결 전이므로 잠금을 유지합니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 10쪽 인쇄 지문을 직접 대조했습니다. 전체 문제 수를 전체 시간으로 나눈 값과 시간을 같은 크기의 작은 칸으로 나눈 값이 일치하는 고정 문항 3개를 검산했습니다.",
+      "publicSourceItemId": "6-2-u1-e4-mission-6"
     },
     {
       "sourceItemId": "6-2-u1-e5-exploration",
