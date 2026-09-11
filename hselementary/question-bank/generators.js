@@ -25753,6 +25753,49 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Example2({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-example-2";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 4-2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { width: [4, 1], height: [29, 8], referencePaint: [13, 6], targetPaint: [26, 1], expectedAnswer: [174, 1] },
+        { width: [3, 1], height: [7, 4], referencePaint: [7, 6], targetPaint: [8, 1], expectedAnswer: [36, 1] },
+        { width: [5, 1], height: [11, 6], referencePaint: [11, 9], targetPaint: [8, 1], expectedAnswer: [60, 1] }
+      ][poolIndex];
+      const width = rationalValue(...data.width);
+      const height = rationalValue(...data.height);
+      const referencePaint = rationalValue(...data.referencePaint);
+      const targetPaint = rationalValue(...data.targetPaint);
+      const referenceArea = rationalOperation(width, height, "×");
+      const areaPerLitre = rationalOperation(referenceArea, referencePaint, "÷");
+      const targetArea = rationalOperation(areaPerLitre, targetPaint, "×");
+      const paintRatio = rationalOperation(targetPaint, referencePaint, "÷");
+      const alternateTargetArea = rationalOperation(referenceArea, paintRatio, "×");
+      const expectedAnswer = rationalValue(...data.expectedAnswer);
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const answerCandidates = [targetArea].filter(value => same(value, expectedAnswer) && same(value, alternateTargetArea));
+      if ([width, height, referencePaint, targetPaint, referenceArea, areaPerLitre, targetArea, paintRatio, alternateTargetArea].some(value => !value || value.numerator <= 0) || same(referencePaint, targetPaint) || answerCandidates.length !== 1) throw new Error("6-2 예제 4-2의 벽 넓이·페인트 양 또는 두 독립 계산의 답이 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const measure = (value, unit) => inline(`${shown(value)}<span class="math-unit">${unit}</span>`);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [width, height, referencePaint, targetPaint].flatMap(value => [value.numerator, value.denominator]).join(":");
+      const paintBoard = solved => `<div class="source61-math-board source62-paint-area-board${solved ? " is-solved" : ""}" data-source62-e4-example2-structure="paint-area-unit-rate" data-source62-e4-example2-values="${signature}" data-reference-area="${referenceArea.numerator}:${referenceArea.denominator}" data-target-area="${targetArea.numerator}:${targetArea.denominator}"><strong>같은 방법으로 벽 칠하기</strong>${row("기준 벽 가로", measure(width, "m"))}${row("기준 벽 세로", measure(height, "m"))}${row("기준 벽에 쓴 페인트", measure(referencePaint, "L"))}${row("새로 쓸 페인트", measure(targetPaint, "L"))}${solved ? row("칠할 수 있는 벽 넓이", measure(targetArea, "m²")) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-paint-area-solution"><strong>1L당 넓이와 페인트 양의 비로 두 번 확인하기</strong>${row("기준 벽 넓이", inline(`${shown(width)}×${shown(height)}=${shown(referenceArea)}<span class="math-unit">m²</span>`))}${row("1L로 칠하는 넓이", inline(`${shown(referenceArea)}÷${shown(referencePaint)}=${shown(areaPerLitre)}<span class="math-unit">m²</span>`))}${row("칠할 수 있는 벽 넓이", inline(`${shown(areaPerLitre)}×${shown(targetPaint)}=${shown(targetArea)}<span class="math-unit">m²</span>`))}${row("페인트 양의 몇 배", inline(`${shown(targetPaint)}÷${shown(referencePaint)}=${shown(paintRatio)}<span class="math-unit">배</span>`))}${row("다른 방법 확인", inline(`${shown(referenceArea)}×${shown(paintRatio)}=${shown(alternateTargetArea)}<span class="math-unit">m²</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 기준이 되는 직사각형 벽의 넓이를 구한 뒤, 페인트 1L로 칠할 수 있는 넓이를 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">1L로 칠하는 넓이를 먼저 구하지 않고, 두 페인트 양이 몇 배인지 이용해 다시 확인하세요.</p>' : "";
+      const evidenceValues = [signature, referenceArea.numerator, referenceArea.denominator, areaPerLitre.numerator, areaPerLitre.denominator, paintRatio.numerator, paintRatio.denominator, targetArea.numerator, targetArea.denominator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-example2-kind="paint-area-unit-rate" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-value" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`가로가 ${measure(width, "m")}, 세로가 ${measure(height, "m")}인 직사각형 모양의 벽을 칠하는 데 페인트를 ${measure(referencePaint, "L")} 사용했습니다. 같은 방법으로 칠할 때, ${measure(targetPaint, "L")}의 페인트로 칠할 수 있는 벽의 넓이는 몇 m²인지 구하세요.${paintBoard(false)}${support}${challenge}${evidence}`, `${plain(targetArea)}m²`, `기준이 되는 벽의 넓이는 ${shown(width)}×${shown(height)}=${measure(referenceArea, "m²")}입니다. 페인트 1L로 칠할 수 있는 넓이는 ${shown(referenceArea)}÷${shown(referencePaint)}=${measure(areaPerLitre, "m²")}이므로 ${measure(targetPaint, "L")}로 칠할 수 있는 넓이는 ${shown(areaPerLitre)}×${shown(targetPaint)}=${measure(targetArea, "m²")}입니다. 또 페인트의 양은 ${shown(targetPaint)}÷${shown(referencePaint)}=${shown(paintRatio)}배이므로 기준 벽 넓이에 이 수를 곱해도 ${measure(alternateTargetArea, "m²")}로 같습니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-example2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${paintBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">1L당 넓이와 페인트 양의 비로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27692,6 +27735,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-mission-6", "sourceGrade6SecondFractionDivisionE3Mission6"],
     [type => type.sourceItemId === "6-2-u1-e4-exploration", "sourceGrade6SecondFractionDivisionE4Exploration"],
     [type => type.sourceItemId === "6-2-u1-e4-example-1", "sourceGrade6SecondFractionDivisionE4Example1"],
+    [type => type.sourceItemId === "6-2-u1-e4-example-2", "sourceGrade6SecondFractionDivisionE4Example2"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
