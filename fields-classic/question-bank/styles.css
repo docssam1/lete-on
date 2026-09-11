@@ -425,12 +425,12 @@
 .b2-promise-set.diamond figure{height:138px}.b2-promise-set.diamond figure:before{top:34px;left:calc(50% - 40px);width:78px;height:78px;border:2px solid #6e98a9;clip-path:none;transform:rotate(45deg)}.b2-promise-set.diamond .left{top:53px;bottom:auto}.b2-promise-set.diamond .right{top:53px;bottom:auto}.b2-promise-set.diamond .bottom{bottom:0;left:calc(50% - 16px)}.b2-promise-set.diamond strong{top:53px}
 .b2-sudoku{display:grid;grid-template-columns:repeat(var(--size),46px);grid-template-rows:repeat(var(--size),46px);border:3px solid #3f7890;background:#fff}.b2-sudoku>span{position:relative;display:grid;place-items:center;border-right:1px dashed #a9bec7;border-bottom:1px dashed #a9bec7;color:#17384a;font-size:20px;font-weight:900}.b2-sudoku>span.region-right{border-right:3px solid #3f7890}.b2-sudoku>span.region-bottom{border-bottom:3px solid #3f7890}.b2-sudoku>span.blank{background:#fbfcfd}.b2-sudoku>span small{position:absolute;top:2px;left:3px;color:#566274;font-size:8px}
 .b2-stone-growth svg{width:122px;max-width:100%;height:96px}.b2-stone-growth circle{stroke:#254b5d;stroke-width:1.2}.b2-stone-growth circle.black{fill:#254b5d}.b2-stone-growth circle.white{fill:#fff}
-.touch-preview-button{display:none}
+label[data-preview-type]{position:relative;padding-right:62px!important}
+.touch-preview-button{position:absolute;right:8px;top:50%;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;transform:translateY(-50%);border:1px solid #566274;border-radius:4px;background:#fff;color:#2456c4;font-size:13px;font-weight:800;line-height:1;cursor:pointer}
+.touch-preview-button:hover{border-color:#2456c4;background:#eaf0ff}
+.touch-preview-button:focus-visible{outline:2px solid #2456c4;outline-offset:2px}
 @media screen and (hover:none),screen and (pointer:coarse){
-  label[data-preview-type]{position:relative;padding-right:62px!important}
   label[data-preview-type]>.type-status,label[data-preview-type]>em{margin-right:4px}
-  .touch-preview-button{position:absolute;right:8px;top:50%;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;transform:translateY(-50%);border:1px solid #566274;border-radius:4px;background:#fff;color:#2456c4;font-size:13px;font-weight:800;line-height:1;cursor:pointer}
-  .touch-preview-button:focus-visible{outline:2px solid #2456c4;outline-offset:2px}
   .book02-visual{min-height:160px;padding:8px}
   .b2-token{min-width:36px;height:36px;font-size:17px}
   .b2-token.shape{font-size:23px}
