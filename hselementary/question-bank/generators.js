@@ -25180,6 +25180,86 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Mission6({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-mission-6";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 6 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { squarePerimeter: [27, 2], squareSpacing: [27, 32], lakeCircumference: [275, 9] },
+        { squarePerimeter: [63, 5], squareSpacing: [21, 20], lakeCircumference: [26, 1] },
+        { squarePerimeter: [22, 1], squareSpacing: [11, 10], lakeCircumference: [42, 1] }
+      ][poolIndex];
+      const perimeter = rationalValue(...data.squarePerimeter);
+      const spacing = rationalValue(...data.squareSpacing);
+      const lakeCircumference = rationalValue(...data.lakeCircumference);
+      const side = rationalOperation(perimeter, rationalValue(4), "÷");
+      const intervalValue = rationalOperation(side, spacing, "÷");
+      if (intervalValue.denominator !== 1 || intervalValue.numerator < 2 || intervalValue.numerator > 12) throw new Error("6-2 Mission 6의 한 변 간격 수가 그림 범위를 벗어납니다.");
+      const intervalsPerSide = intervalValue.numerator;
+      const treesPerSide = intervalsPerSide + 1;
+      const treeCount = treesPerSide * treesPerSide;
+      const answerValue = rationalOperation(lakeCircumference, rationalValue(treeCount), "÷");
+      const intervalCandidates = Array.from({ length: 12 }, (_, index) => index + 1).filter(candidate => {
+        const candidateSide = rationalOperation(spacing, rationalValue(candidate), "×");
+        return candidateSide.numerator === side.numerator && candidateSide.denominator === side.denominator;
+      });
+      if (intervalCandidates.length !== 1 || intervalCandidates[0] !== intervalsPerSide) throw new Error("6-2 Mission 6의 한 변 간격 수가 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const expressionSignature = [...data.squarePerimeter, ...data.squareSpacing, ...data.lakeCircumference].join(":");
+      const marker = (x, y, index, className) => `<g class="source62-tree-marker ${className}" data-tree-index="${index}" transform="translate(${x.toFixed(2)} ${y.toFixed(2)})"><line x1="0" y1="2.5" x2="0" y2="7"/><circle cx="0" cy="0" r="3.2"/></g>`;
+      const squarePlot = solved => {
+        if (!solved) {
+          const sampleSize = 3;
+          const step = 36;
+          const startX = 90;
+          const startY = 64;
+          const lines = Array.from({ length: sampleSize }, (_, index) => {
+            const offset = index * step;
+            return `<line x1="${startX}" y1="${startY + offset}" x2="${startX + step * (sampleSize - 1)}" y2="${startY + offset}"/><line x1="${startX + offset}" y1="${startY}" x2="${startX + offset}" y2="${startY + step * (sampleSize - 1)}"/>`;
+          }).join("");
+          const trees = Array.from({ length: sampleSize * sampleSize }, (_, index) => marker(startX + index % sampleSize * step, startY + Math.floor(index / sampleSize) * step, index, "source62-square-tree")).join("");
+          return `<g class="source62-square-lattice is-sample" data-visible-tree-count="9"><g class="source62-lattice-lines">${lines}</g>${trees}<line class="source62-lattice-continuation" x1="${startX + step * 2}" y1="${startY + step}" x2="232" y2="${startY + step}"/><line class="source62-lattice-continuation" x1="${startX + step}" y1="${startY + step * 2}" x2="${startX + step}" y2="206"/></g>`;
+        }
+        const gridSide = 132;
+        const step = gridSide / intervalsPerSide;
+        const startX = 62;
+        const startY = 54;
+        const lines = Array.from({ length: treesPerSide }, (_, index) => {
+          const offset = index * step;
+          return `<line x1="${startX}" y1="${startY + offset}" x2="${startX + gridSide}" y2="${startY + offset}"/><line x1="${startX + offset}" y1="${startY}" x2="${startX + offset}" y2="${startY + gridSide}"/>`;
+        }).join("");
+        const trees = Array.from({ length: treeCount }, (_, index) => marker(startX + index % treesPerSide * step, startY + Math.floor(index / treesPerSide) * step, index, "source62-square-tree")).join("");
+        return `<g class="source62-square-lattice is-complete" data-visible-tree-count="${treeCount}"><g class="source62-lattice-lines">${lines}</g>${trees}</g>`;
+      };
+      const lakePlot = solved => {
+        const centerX = 480;
+        const centerY = 119;
+        const radiusX = 78;
+        const radiusY = 58;
+        const trees = solved ? Array.from({ length: treeCount }, (_, index) => {
+          const angle = -Math.PI / 2 + 2 * Math.PI * index / treeCount;
+          return marker(centerX + radiusX * Math.cos(angle), centerY + radiusY * Math.sin(angle), index, "source62-lake-tree");
+        }).join("") : "";
+        return `<g class="source62-lake-plot${solved ? " is-complete" : ""}" data-visible-tree-count="${solved ? treeCount : 0}"><ellipse cx="${centerX}" cy="${centerY}" rx="${radiusX}" ry="${radiusY}"/>${trees}</g>`;
+      };
+      const board = solved => `<div class="source62-tree-spacing-board${solved ? " is-solved" : ""}" data-source62-e2-mission6-structure="whole-square-lattice-to-closed-circle-spacing" data-source62-e2-mission6-expression="${expressionSignature}" data-square-perimeter="${plain(perimeter)}" data-square-spacing="${plain(spacing)}" data-intervals-per-side="${intervalsPerSide}" data-trees-per-side="${treesPerSide}" data-tree-count="${treeCount}" data-lake-circumference="${plain(lakeCircumference)}" data-answer-spacing="${plain(answerValue)}"><strong>땅 전체의 나무 수를 호숫가에 그대로 옮기기</strong><svg class="geometry-diagram source62-tree-spacing-diagram" viewBox="0 0 640 250" role="img" aria-label="둘레 ${svgMeasurementAria(plain(perimeter), "m")}인 정사각형 땅 전체에 ${svgMeasurementAria(plain(spacing), "m")} 간격으로 심은 나무와 둘레 ${svgMeasurementAria(plain(lakeCircumference), "m")}인 원 모양 호수"><rect class="source62-tree-panel" x="22" y="24" width="278" height="202"/><rect class="source62-tree-panel" x="340" y="24" width="278" height="202"/><text class="source62-tree-title" x="161" y="44">정사각형 모양의 땅 전체</text><text class="source62-tree-title" x="479" y="44">원 모양의 호수 둘레</text>${squarePlot(solved)}${lakePlot(solved)}${svgMeasurementLabel({ x: 161, y: 215, value: plain(perimeter), unit: "m" })}<g class="source62-square-spacing-label"><text class="source62-tree-note" x="270" y="69">나무 사이</text>${svgMeasurementLabel({ x: 270, y: 86, value: plain(spacing), unit: "m" })}</g>${svgMeasurementLabel({ x: 479, y: 209, value: plain(lakeCircumference), unit: "m" })}<text class="source62-tree-note" x="479" y="105">땅과 같은 수의 나무</text>${solved ? `<g class="source62-lake-spacing-answer"><text class="source62-tree-result" x="479" y="128">간격</text>${svgMeasurementLabel({ x: 479, y: 147, value: plain(answerValue), unit: "m" })}</g>` : `<text class="source62-tree-result" x="479" y="137">나무 사이 간격 ?m</text>`}${solved ? `<text class="source62-tree-count" x="161" y="202">한 줄 ${treesPerSide}그루 · 전체 ${treeCount}그루</text>` : `<text class="source62-tree-note" x="161" y="202">오른쪽과 아래쪽으로 같은 모양이 이어집니다.</text>`}</svg></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-tree-spacing-solution"><strong>간격 수와 나무 수를 구별하여 계산하기</strong>${row("정사각형 한 변", `${shown(perimeter)}÷4=${shown(side)}m`)}${row("한 변의 간격 수", `${shown(side)}÷${shown(spacing)}=${intervalsPerSide}칸`)}${row("한 줄의 나무 수", `${intervalsPerSide}+1=${treesPerSide}그루`)}${row("땅 전체의 나무 수", `${treesPerSide}×${treesPerSide}=${treeCount}그루`)}${row("호숫가의 간격", `${shown(lakeCircumference)}÷${treeCount}=${shown(answerValue)}m`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">정사각형의 한 변을 구한 뒤, 한 변의 간격 수보다 나무 수가 1그루 더 많다는 것을 이용하세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">한 변의 간격 수와 나무 수를 구별하여, 땅 전체의 나무 수를 스스로 식으로 나타내세요.</p>` : "";
+      const values = [...data.squarePerimeter, ...data.squareSpacing, intervalsPerSide, treesPerSide, treeCount, ...data.lakeCircumference, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e2-mission6-kind="whole-square-lattice-to-closed-circle-spacing" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-fraction" data-candidate-count="${intervalCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `${plain(answerValue)}m`;
+      return result(`둘레가 ${shown(perimeter)}m인 정사각형 모양의 땅 전체에 ${shown(spacing)}m 간격으로 나무를 심습니다. 이때 심은 나무와 같은 수의 나무를 둘레가 ${shown(lakeCircumference)}m인 원 모양의 호수 둘레에 일정한 간격으로 심으려고 합니다. 나무와 나무 사이의 간격은 몇 m로 해야 하는지 구하세요.${board(false)}${support}${challenge}${evidence}`, answer, `정사각형의 한 변은 ${shown(perimeter)}÷4=${shown(side)}m이고, 한 변에는 ${shown(side)}÷${shown(spacing)}=${intervalsPerSide}개의 간격이 있습니다. 한 줄에는 나무가 ${treesPerSide}그루이므로 땅 전체에는 ${treesPerSide}×${treesPerSide}=${treeCount}그루가 있습니다. 닫힌 호숫가의 간격 수도 ${treeCount}개이므로 ${shown(lakeCircumference)}÷${treeCount}=${shown(answerValue)}m입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-mission6-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 나무 수를 땅 전체 격자와 닫힌 호숫가에 모두 표시하여 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27106,6 +27186,7 @@
     [type => type.sourceItemId === "6-2-u1-e2-mission-3", "sourceGrade6SecondFractionDivisionE2Mission3"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-4", "sourceGrade6SecondFractionDivisionE2Mission4"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-5", "sourceGrade6SecondFractionDivisionE2Mission5"],
+    [type => type.sourceItemId === "6-2-u1-e2-mission-6", "sourceGrade6SecondFractionDivisionE2Mission6"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

@@ -1,5 +1,5 @@
 window.HSE_SOURCE_INVENTORY_GRADE6 = {
-  "version": "2026-09-10",
+  "version": "2026-09-11",
   "policy": "public-taxonomy-only-no-source-answer-or-private-path",
   "oneSourceItemOneType": true,
   "totals": {
@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 259
+    "unlocked": 260
   },
   "items": [
     {
@@ -7892,20 +7892,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e2-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "반복해서 튀어 오르는 높이의 차 구하기",
+      "typeLabel": "정사각형 땅 전체에 심은 나무 수로 호숫가의 간격 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE2Mission6",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문의 정사각형 땅 전체 격자, 둘레와 나무 간격, 같은 수의 나무를 심는 원 모양 호수 조건을 직접 대조했습니다. 한 변의 간격 수와 땅 전체 나무 수를 독립 계산해 답 하나만 남는 고정 문항 3개를 확인했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",
@@ -8442,14 +8443,14 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e4-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "나무 사이 간격으로 심을 나무 수 구하기",
+      "typeLabel": "3일 동안 한 시간에 평균 몇 문제를 풀었는지 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 1,
       "sourceTier": "advanced",
       "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewReason": "인쇄 원문은 첫째·둘째·셋째 날의 공부 시간과 푼 문제 수를 더해 한 시간에 평균 몇 문제를 풀었는지 묻습니다. 원문 조건과 답 12문제는 확인했지만 생성기와 화면·인쇄 연결 전이므로 잠금을 유지합니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
       "answerVisualStatus": "not-implemented",
