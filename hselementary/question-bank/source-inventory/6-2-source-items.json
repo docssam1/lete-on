@@ -584,12 +584,13 @@
       "ordinal": 6,
       "pdfPage": 8,
       "printedPage": 9,
-      "sourceShape": "여러 분수 나눗셈과 조건을 비교하여 알맞은 값 또는 식을 정하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "㉠과 ㉡이 모두 1보다 큰 한 자리 수일 때 (㉠/㉡)÷(㉡/㉠)×1/2가 자연수가 되는 모든 ㉠×㉡을 더하는 구조.",
+      "answerContract": "single-sum-fixed-pool",
+      "visualRisk": "두 분수의 분자와 분모에서 ㉠과 ㉡의 자리가 서로 바뀌어야 하며, 마지막 1/2까지 같은 줄에 정확히 표시해야 합니다. 답에는 조건에 맞는 순서쌍과 각 곱을 모두 보여야 합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 8쪽의 인쇄 식과 한 자리 수 조건을 직접 대조했습니다. 2부터 9까지의 순서쌍 64가지를 전수 대입해 (4,2),(6,3),(8,2),(8,4)만 조건에 맞고 곱의 합이 74임을 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e3-mission-6"
     },
     {
       "sourceItemId": "6-2-u1-e4-exploration",

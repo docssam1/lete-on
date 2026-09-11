@@ -25623,6 +25623,47 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Mission6({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-mission-6";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 3 Mission 6 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { factorDenominator: 2, expectedPairs: [[4, 2], [6, 3], [8, 2], [8, 4]], expectedSum: 74 },
+        { factorDenominator: 3, expectedPairs: [[6, 2], [9, 3]], expectedSum: 39 },
+        { factorDenominator: 8, expectedPairs: [[8, 2]], expectedSum: 16 }
+      ][poolIndex];
+      const checkedPairs = [];
+      for (let first = 2; first <= 9; first += 1) for (let second = 2; second <= 9; second += 1) {
+        const numerator = first * first;
+        const denominator = data.factorDenominator * second * second;
+        if (numerator % denominator === 0) checkedPairs.push([first, second]);
+      }
+      const products = checkedPairs.map(([first, second]) => first * second);
+      const answerValue = products.reduce((sum, value) => sum + value, 0);
+      const pairSignature = checkedPairs.map(pair => pair.join(":")).join("|");
+      const expectedSignature = data.expectedPairs.map(pair => pair.join(":")).join("|");
+      const answerCandidates = [answerValue].filter(value => value === data.expectedSum && pairSignature === expectedSignature);
+      if (answerCandidates.length !== 1 || checkedPairs.some(([first, second]) => (first * first) % (data.factorDenominator * second * second) !== 0)) throw new Error("6-2 Mission 6의 자연수가 되는 순서쌍과 곱의 합이 전수 검산값 하나로 정해지지 않습니다.");
+      const firstFraction = symbolicFractionMarkup("㉠", "㉡");
+      const secondFraction = symbolicFractionMarkup("㉡", "㉠");
+      const factor = symbolicFractionMarkup(1, data.factorDenominator);
+      const equation = `<span class="math-inline-expression">${firstFraction}÷${secondFraction}×${factor}</span>`;
+      const expressionSignature = String(data.factorDenominator);
+      const board = solved => `<div class="source62-natural-pair-board${solved ? " is-solved" : ""}" data-source62-e3-mission6-structure="one-digit-fraction-expression-product-sum" data-source62-e3-mission6-expression="${expressionSignature}" data-checked-pair-count="64" data-pair-count="${checkedPairs.length}" data-pairs="${pairSignature}" data-products="${products.join(":")}" data-answer-sum="${answerValue}"><strong>두 한 자리 수로 만든 분수 식</strong><div class="source62-natural-pair-equation">${equation}</div><div class="source62-natural-pair-conditions"><span>㉠과 ㉡은 2부터 9까지</span><span>계산 결과는 자연수</span></div>${solved ? `<div class="source62-natural-pair-list">${checkedPairs.map(([first, second], index) => `<span data-first="${first}" data-second="${second}" data-product="${products[index]}">(${first}, ${second}) → ${first}×${second}=${products[index]}</span>`).join("")}</div><b class="source62-natural-pair-total">곱의 합 ${answerValue}</b>` : `<p>조건에 맞는 모든 ㉠×㉡을 더하세요.</p>`}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-natural-pair-solution"><strong>2부터 9까지 빠짐없이 넣어 확인하기</strong>${row("확인한 순서쌍", "64가지")}${row("조건에 맞는 순서쌍", checkedPairs.map(pair => `(${pair.join(", ")})`).join(", "))}${row("곱의 합", `${products.join("+")}=${answerValue}`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">㉠과 ㉡에 2부터 9까지의 수를 차례로 넣어 계산 결과가 자연수인지 확인하세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">㉠과 ㉡의 자리를 바꾸면 다른 순서쌍이므로 빠뜨리지 말고 확인하세요.</p>` : "";
+      const evidence = `<span hidden data-source62-fraction-e3-mission6-kind="one-digit-fraction-expression-product-sum" data-source-item="${sourceItemId}" data-factor-denominator="${data.factorDenominator}" data-checked-pair-count="64" data-pairs="${pairSignature}" data-products="${products.join(":")}" data-answer="${answerValue}" data-result-contract="single-sum" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`㉠과 ㉡은 모두 1보다 큰 한 자리 수입니다. ${equation}의 값이 자연수가 되는 ㉠과 ㉡에 대하여 ㉠×㉡의 값을 모두 더하면 얼마인지 구하세요.${board(false)}${support}${challenge}${evidence}`, String(answerValue), `㉠과 ㉡에 2부터 9까지의 수를 넣어 64가지 순서쌍을 모두 확인합니다. 조건에 맞는 순서쌍은 ${checkedPairs.map(pair => `(${pair.join(", ")})`).join(", ")}이고, 각 곱을 더하면 ${products.join("+")}=${answerValue}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-mission6-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">2부터 9까지의 64가지 순서쌍과 조건에 맞는 곱을 모두 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27559,6 +27600,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-mission-3", "sourceGrade6SecondFractionDivisionE3Mission3"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-4", "sourceGrade6SecondFractionDivisionE3Mission4"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-5", "sourceGrade6SecondFractionDivisionE3Mission5"],
+    [type => type.sourceItemId === "6-2-u1-e3-mission-6", "sourceGrade6SecondFractionDivisionE3Mission6"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
