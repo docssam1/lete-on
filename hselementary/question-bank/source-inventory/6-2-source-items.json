@@ -361,12 +361,13 @@
       "ordinal": 3,
       "pdfPage": 6,
       "printedPage": 7,
-      "sourceShape": "분수 나눗셈을 생활 상황의 전체, 부분, 횟수와 연결해 필요한 양을 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "한 시계는 날마다 일정한 분만큼 빨라지고 다른 시계는 일정한 분만큼 늦어질 때, 두 시계를 맞춘 날짜와 목표 시각 차이로 처음 그 차이가 생기는 날짜와 시각을 구하는 구조.",
+      "answerContract": "single-datetime-fixed-pool",
+      "visualRisk": "빨라지는 양과 늦어지는 양은 더해야 하며, 시간으로 주어진 목표 차이를 분으로 바꾼 뒤 시작 날짜에서 지난 날 수를 정확히 세어야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 6쪽의 인쇄 지문에서 하루 1/6분 빨라지는 시계, 하루 1/10분 늦어지는 시계, 5월 2일 낮 12시, 목표 차 4/15시간을 직접 대조했습니다. 하루 차는 4/15분, 목표는 16분이므로 60일 뒤이며, 5월 2일부터 하루씩 옮기면 7월 1일 낮 12시입니다.",
+      "publicSourceItemId": "6-2-u1-e2-mission-3"
     },
     {
       "sourceItemId": "6-2-u1-e2-mission-4",

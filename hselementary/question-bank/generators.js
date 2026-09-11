@@ -25039,6 +25039,66 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Mission3({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-mission-3";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 3 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { fastRate: [1, 6], slowRate: [1, 10], targetHours: [4, 15], startMonth: 5, startDay: 2, startHour: 12 },
+        { fastRate: [1, 8], slowRate: [1, 12], targetHours: [1, 6], startMonth: 3, startDay: 14, startHour: 9 },
+        { fastRate: [1, 5], slowRate: [1, 15], targetHours: [1, 5], startMonth: 6, startDay: 16, startHour: 15 }
+      ][poolIndex];
+      const fastRate = rationalValue(...data.fastRate);
+      const slowRate = rationalValue(...data.slowRate);
+      const targetHours = rationalValue(...data.targetHours);
+      const dailyGap = rationalOperation(fastRate, slowRate, "+");
+      const targetMinutes = rationalOperation(targetHours, rationalValue(60), "×");
+      const elapsedDays = rationalOperation(targetMinutes, dailyGap, "÷");
+      if (elapsedDays.denominator !== 1 || elapsedDays.numerator <= 0 || elapsedDays.numerator > 365) throw new Error("6-2 Mission 3의 지난 날 수가 1년 안의 자연수가 아닙니다.");
+      const monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      const addDays = (month, day, count) => {
+        let nextMonth = month;
+        let nextDay = day;
+        for (let index = 0; index < count; index += 1) {
+          nextDay += 1;
+          if (nextDay > monthLengths[nextMonth - 1]) {
+            nextMonth += 1;
+            nextDay = 1;
+          }
+          if (nextMonth > 12) throw new Error("6-2 Mission 3의 날짜가 같은 해를 벗어났습니다.");
+        }
+        return { month: nextMonth, day: nextDay };
+      };
+      const targetDate = addDays(data.startMonth, data.startDay, elapsedDays.numerator);
+      const candidates = Array.from({ length: 365 }, (_, index) => index + 1).filter(days => {
+        const gap = rationalOperation(dailyGap, rationalValue(days), "×");
+        return gap.numerator === targetMinutes.numerator && gap.denominator === targetMinutes.denominator;
+      });
+      if (candidates.length !== 1 || candidates[0] !== elapsedDays.numerator) throw new Error("6-2 Mission 3에서 목표 시계 차가 처음 생기는 날이 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const timeText = hour => hour === 12 ? "낮 12시" : hour < 12 ? `오전 ${hour}시` : `오후 ${hour - 12}시`;
+      const startText = `${data.startMonth}월 ${data.startDay}일 ${timeText(data.startHour)}`;
+      const answer = `${targetDate.month}월 ${targetDate.day}일 ${timeText(data.startHour)}`;
+      const signature = [...data.fastRate, ...data.slowRate, ...data.targetHours, data.startMonth, data.startDay, data.startHour].join(":");
+      const driftCard = (kind, title, rate) => `<div class="source62-clock-drift-card is-${kind}"><span class="source62-clock-face" style="--hour-angle:${(data.startHour % 12) * 30}deg" aria-hidden="true"><i></i><b></b></span><strong>${title}</strong><em>하루에 ${shown(rate)}분씩 ${kind === "fast" ? "빨라짐" : "늦어짐"}</em></div>`;
+      const timeline = solved => `<div class="source62-clock-timeline"><span><small>두 시계를 맞춘 때</small><b>${startText}</b></span><i aria-hidden="true">→</i><span class="is-target"><small>두 시계의 차가 ${shown(targetHours)}시간</small><b>${solved ? answer : "몇 월 며칠 몇 시?"}</b>${solved ? `<em>${elapsedDays.numerator}일 뒤</em>` : ""}</span></div>`;
+      const board = solved => `<div class="source62-clock-drift-board${solved ? " is-solved" : ""}" data-source62-e2-mission3-structure="opposite-clock-drift-calendar" data-source62-e2-mission3-expression="${signature}" data-daily-gap="${plain(dailyGap)}" data-target-minutes="${plain(targetMinutes)}" data-elapsed-days="${elapsedDays.numerator}" data-target-date="${targetDate.month}:${targetDate.day}:${data.startHour}"><strong>서로 반대로 어긋나는 두 시계</strong><div class="source62-clock-drift-pair">${driftCard("fast", "첫째 시계", fastRate)}${driftCard("slow", "둘째 시계", slowRate)}</div>${timeline(solved)}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-clock-drift-solution"><strong>시계 차가 커지는 빠르기로 날짜 찾기</strong>${row("하루에 벌어지는 차", `${shown(fastRate)}+${shown(slowRate)}=${shown(dailyGap)}분`)}${row("목표 차를 분으로", `${shown(targetHours)}×60=${shown(targetMinutes)}분`)}${row("지난 날 수", `${shown(targetMinutes)}÷${shown(dailyGap)}=${elapsedDays.numerator}일`)}${row("날짜와 시각", `${startText}에서 ${elapsedDays.numerator}일 뒤 = ${answer}`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">두 시계는 반대 방향으로 어긋나므로 하루에 벌어지는 차는 ${shown(fastRate)}분과 ${shown(slowRate)}분을 더해 구합니다.</p>` : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">구한 날 수만큼 달력을 하루씩 직접 옮겨 날짜를 다시 확인하세요.</p>' : "";
+      const values = [...data.fastRate, ...data.slowRate, ...data.targetHours, dailyGap.numerator, dailyGap.denominator, targetMinutes.numerator, targetMinutes.denominator, elapsedDays.numerator, elapsedDays.denominator, data.startMonth, data.startDay, data.startHour, targetDate.month, targetDate.day];
+      const evidence = `<span hidden data-source62-fraction-e2-mission3-kind="opposite-clock-drift-calendar" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-datetime" data-candidate-count="${candidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`첫째 시계는 하루에 ${shown(fastRate)}분씩 빨라지고, 둘째 시계는 하루에 ${shown(slowRate)}분씩 늦어집니다. 두 시계를 ${startText}에 정확한 시각으로 맞추었습니다. 두 시계가 처음으로 ${shown(targetHours)}시간만큼 차이 나는 때는 몇 월 며칠 몇 시인지 구하세요.${board(false)}${support}${challenge}${evidence}`, answer, `두 시계는 하루에 ${shown(fastRate)}+${shown(slowRate)}=${shown(dailyGap)}분씩 벌어집니다. ${shown(targetHours)}시간은 ${shown(targetMinutes)}분이므로 ${shown(targetMinutes)}÷${shown(dailyGap)}=${elapsedDays.numerator}일 뒤입니다. ${startText}에서 ${elapsedDays.numerator}일 뒤는 ${answer}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-mission3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 두 시계의 하루 차이와 달력 이동으로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -26962,6 +27022,7 @@
     [type => type.sourceItemId === "6-2-u1-e2-example-4", "sourceGrade6SecondFractionDivisionE2Example4"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-1", "sourceGrade6SecondFractionDivisionE2Mission1"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-2", "sourceGrade6SecondFractionDivisionE2Mission2"],
+    [type => type.sourceItemId === "6-2-u1-e2-mission-3", "sourceGrade6SecondFractionDivisionE2Mission3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

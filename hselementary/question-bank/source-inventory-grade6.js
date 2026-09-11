@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 256
+    "unlocked": 257
   },
   "items": [
     {
@@ -7817,17 +7817,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "빠르고 느린 시계의 차가 커지는 때 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE2Mission3",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문의 두 시계가 하루에 어긋나는 양, 시작 날짜와 시각, 목표 차이를 직접 대조했습니다. 고정 문항 3개에서 목표 차이가 처음 생기는 날을 전수 확인하고 달력을 하루씩 옮겨 답을 확인했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",
