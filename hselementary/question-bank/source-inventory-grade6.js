@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 267
+    "unlocked": 268
   },
   "items": [
     {
@@ -8128,17 +8128,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "두 분수로 나누어 자연수가 되는 가장 작은 분수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE3Mission4",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "원문의 1과 14분의 13, 2와 7분의 4를 직접 대조했습니다. 둘째 수의 자연수 부분 2를 포함해 두 수의 가장 작은 공통 분수를 전수 계산한 고정 문항 3개를 만들었습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

@@ -25540,6 +25540,48 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Mission4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-mission-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 3 Mission 4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { first: [27, 14], second: [18, 7], expected: [54, 7], expectedQuotients: [4, 3], expectedMatches: 30 },
+        { first: [11, 6], second: [11, 4], expected: [11, 2], expectedQuotients: [3, 2], expectedMatches: 40 },
+        { first: [13, 8], second: [39, 20], expected: [39, 4], expectedQuotients: [6, 5], expectedMatches: 20 }
+      ][poolIndex];
+      const first = rationalValue(...data.first);
+      const second = rationalValue(...data.second);
+      const commonMultiples = [];
+      for (let firstQuotient = 1; firstQuotient <= 120; firstQuotient += 1) for (let secondQuotient = 1; secondQuotient <= 120; secondQuotient += 1) {
+        const firstValue = rationalValue(first.numerator * firstQuotient, first.denominator);
+        const secondValue = rationalValue(second.numerator * secondQuotient, second.denominator);
+        if (firstValue.numerator * secondValue.denominator === secondValue.numerator * firstValue.denominator) commonMultiples.push({ value: firstValue, firstQuotient, secondQuotient });
+      }
+      commonMultiples.sort((left, right) => left.value.numerator * right.value.denominator - right.value.numerator * left.value.denominator);
+      const minimum = commonMultiples[0];
+      const winners = commonMultiples.filter(item => item.value.numerator * minimum.value.denominator === minimum.value.numerator * item.value.denominator);
+      const formulaValue = rationalValue(lcm(first.numerator, second.numerator), gcd(first.denominator, second.denominator));
+      const expectedValue = rationalValue(...data.expected);
+      const sameValue = (left, right) => left.numerator === right.numerator && left.denominator === right.denominator;
+      if (commonMultiples.length !== data.expectedMatches || winners.length !== 1 || !sameValue(minimum.value, formulaValue) || !sameValue(minimum.value, expectedValue) || [minimum.firstQuotient, minimum.secondQuotient].join(":") !== data.expectedQuotients.join(":")) throw new Error("6-2 Mission 4의 가장 작은 공통 분수가 검산값 하나로 정해지지 않습니다.");
+      const shown = value => fractionMarkup(value.numerator, value.denominator);
+      const mixedShown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => fraction(value.numerator, value.denominator);
+      const signature = [...data.first, ...data.second].join(":");
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const board = solved => `<div class="source61-math-board source62-common-fraction-board${solved ? " is-solved" : ""}" data-source62-e3-mission4-structure="least-fraction-with-natural-quotients" data-source62-e3-mission4-values="${signature}" data-answer-fraction="${plain(minimum.value)}" data-first-quotient="${minimum.firstQuotient}" data-second-quotient="${minimum.secondQuotient}"><strong>두 분수로 나누어도 몫이 자연수가 되는 분수</strong>${row("첫째 조건", `${solved ? shown(minimum.value) : "□"}÷${mixedShown(first)}=${solved ? minimum.firstQuotient : "자연수"}`)}${row("둘째 조건", `${solved ? shown(minimum.value) : "□"}÷${mixedShown(second)}=${solved ? minimum.secondQuotient : "자연수"}`)}${solved ? `${row("가장 작은 분수", shown(minimum.value))}${row("대분수로 나타내기", mixedShown(minimum.value))}` : ""}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">두 분수를 같은 분모로 나타낸 뒤, 두 분자의 공배수 중 가장 작은 수를 찾아보세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">더 작은 분수가 두 나눗셈의 몫을 모두 자연수로 만들 수 없는지도 확인하세요.</p>` : "";
+      const evidence = `<span hidden data-source62-fraction-e3-mission4-kind="least-fraction-with-natural-quotients" data-source-item="${sourceItemId}" data-values="${signature}" data-answer="${plain(minimum.value)}" data-first-quotient="${minimum.firstQuotient}" data-second-quotient="${minimum.secondQuotient}" data-matching-multiple-count="${commonMultiples.length}" data-result-contract="single-fraction" data-candidate-count="${winners.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`${mixedShown(first)}으로 나누어도 몫이 자연수가 되고, ${mixedShown(second)}로 나누어도 몫이 자연수가 되는 분수 중 가장 작은 분수를 구하세요.${board(false)}${support}${challenge}${evidence}`, plain(minimum.value), `두 분수를 같은 분모로 나타내어 분자의 공배수를 비교합니다. 가장 작은 공통 분수는 ${shown(minimum.value)}이고, 각각으로 나누면 ${minimum.firstQuotient}, ${minimum.secondQuotient}가 되어 모두 자연수입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-mission4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${evidence}<div class="solution-answer-caption">두 분수로 나눈 몫과 더 작은 공통 분수가 없는지 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27474,6 +27516,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-mission-1", "sourceGrade6SecondFractionDivisionE3Mission1"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-2", "sourceGrade6SecondFractionDivisionE3Mission2"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-3", "sourceGrade6SecondFractionDivisionE3Mission3"],
+    [type => type.sourceItemId === "6-2-u1-e3-mission-4", "sourceGrade6SecondFractionDivisionE3Mission4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

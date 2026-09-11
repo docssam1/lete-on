@@ -552,12 +552,13 @@
       "ordinal": 4,
       "pdfPage": 8,
       "printedPage": 9,
-      "sourceShape": "여러 분수 나눗셈과 조건을 비교하여 알맞은 값 또는 식을 정하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "1과 14분의 13, 2와 7분의 4로 각각 나누어도 몫이 자연수가 되는 분수 중 가장 작은 분수를 구합니다.",
+      "answerContract": "single-fraction-fixed-pool",
+      "visualRisk": "두 대분수의 자연수 부분과 분수 부분을 빠뜨리지 않고 표시해야 하며, 문제와 답에서 같은 두 수와 같은 분수선을 사용해야 합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 8쪽에서 둘째 수의 자연수 부분 2를 포함해 두 대분수를 직접 대조했습니다. 27/14와 18/7의 공통 분수를 전수 비교해 54/7이 유일한 최솟값임을 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e3-mission-4"
     },
     {
       "sourceItemId": "6-2-u1-e3-mission-5",
