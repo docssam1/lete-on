@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 261
+    "unlocked": 262
   },
   "items": [
     {
@@ -7972,17 +7972,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "세 분수를 모두 자연수가 되게 나누는 가장 큰 분수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE3Example2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문의 세 분수와 몫이 모두 자연수가 되도록 하는 가장 큰 분수 조건을 직접 대조했습니다. 같은 분모로 바꾼 세 분자의 최대공약수와 실제 세 몫을 독립 계산해 답 하나만 남는 고정 문항 3개를 확인했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

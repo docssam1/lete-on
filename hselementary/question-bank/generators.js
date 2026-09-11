@@ -25295,6 +25295,47 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Example2({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-example-2";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 3-2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        [[9, 8], [27, 32], [9, 20]],
+        [[11, 8], [7, 8], [5, 8]],
+        [[7, 5], [14, 15], [7, 10]]
+      ][poolIndex];
+      const values = data.map(([numerator, denominator]) => rationalValue(numerator, denominator));
+      const commonDenominator = lcmMany(values.map(value => value.denominator));
+      const commonNumerators = values.map(value => value.numerator * commonDenominator / value.denominator);
+      const greatestNumerator = gcdMany(commonNumerators);
+      const answerValue = rationalValue(greatestNumerator, commonDenominator);
+      const quotients = values.map(value => rationalOperation(value, answerValue, "÷"));
+      if (quotients.some(value => value.denominator !== 1)) throw new Error("6-2 예제 3-2의 몫이 자연수가 아닙니다.");
+      const commonDivisors = Array.from({ length: Math.max(...commonNumerators) }, (_, index) => index + 1).filter(candidate => commonNumerators.every(numerator => numerator % candidate === 0));
+      const maximumCandidates = commonDivisors.filter(candidate => !commonDivisors.some(other => other > candidate));
+      if (maximumCandidates.length !== 1 || maximumCandidates[0] !== greatestNumerator) throw new Error("6-2 예제 3-2의 가장 큰 공통 분수가 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const valueSignature = values.map(value => `${value.numerator}:${value.denominator}`).join("|");
+      const commonSignature = commonNumerators.join(":");
+      const valueCells = values.map((value, index) => `<span data-value-index="${index}">${shown(value)}</span>`).join("");
+      const board = solved => `<div class="source62-common-fraction-board${solved ? " is-solved" : ""}" data-source62-e3-example2-structure="largest-common-fraction-divisor" data-source62-e3-example2-values="${valueSignature}" data-common-denominator="${commonDenominator}" data-common-numerators="${commonSignature}" data-answer-fraction="${plain(answerValue)}"><strong>세 분수를 같은 분수로 나누기</strong><div class="source62-common-fraction-values">${valueCells}</div><div class="source62-common-fraction-goal"><span>나누는 분수</span><b>${solved ? shown(answerValue) : "?"}</b><span>세 몫이 모두 자연수</span></div>${solved ? `<div class="source62-common-fraction-quotients">${values.map((value, index) => `<span data-quotient-index="${index}">${shown(value)}÷${shown(answerValue)}=${quotients[index].numerator}</span>`).join("")}</div>` : ""}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const commonFractions = commonNumerators.map(numerator => symbolicFractionMarkup(numerator, commonDenominator)).join(", ");
+      const answerBoard = `<div class="source61-math-board source62-common-fraction-solution"><strong>같은 분모로 바꾸어 가장 큰 공통 분수 찾기</strong>${row("같은 분모", commonFractions)}${row("분자의 최대공약수", String(greatestNumerator))}${row("가장 큰 공통 분수", shown(answerValue))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">세 분수를 분모가 ${commonDenominator}인 분수로 바꾸고, 세 분자의 최대공약수를 찾아보세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">세 몫이 자연수가 되는 까닭과 그보다 큰 분수는 안 되는 까닭을 함께 확인하세요.</p>` : "";
+      const evidence = `<span hidden data-source62-fraction-e3-example2-kind="largest-common-fraction-divisor" data-source-item="${sourceItemId}" data-values="${valueSignature}" data-common-numerators="${commonSignature}" data-common-denominator="${commonDenominator}" data-answer="${plain(answerValue)}" data-result-contract="single-fraction" data-candidate-count="${maximumCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = plain(answerValue);
+      return result(`세 분수 ${values.map(shown).join(", ")}를 같은 분수로 나누려고 합니다. 될 수 있는 대로 큰 분수로 나누어 몫이 모두 자연수가 되게 하려면 어떤 분수로 나누면 되는지 구하세요.${board(false)}${support}${challenge}${evidence}`, answer, `세 분수를 분모가 ${commonDenominator}인 분수로 바꾸면 ${commonFractions}입니다. 세 분자 ${commonNumerators.join(", ")}의 최대공약수는 ${greatestNumerator}이므로 가장 큰 공통 분수는 ${shown(answerValue)}입니다. 실제 몫은 ${quotients.map(value => value.numerator).join(", ")}로 모두 자연수입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-example2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 분모의 분자와 세 자연수 몫을 모두 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27223,6 +27264,7 @@
     [type => type.sourceItemId === "6-2-u1-e2-mission-5", "sourceGrade6SecondFractionDivisionE2Mission5"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-6", "sourceGrade6SecondFractionDivisionE2Mission6"],
     [type => type.sourceItemId === "6-2-u1-e3-example-1", "sourceGrade6SecondFractionDivisionE3Example1"],
+    [type => type.sourceItemId === "6-2-u1-e3-example-2", "sourceGrade6SecondFractionDivisionE3Example2"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
