@@ -25711,6 +25711,48 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Example1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-example-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 4-1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { side: [4, 5], referenceWeight: [14, 15], targetArea: [48, 49], expectedAnswer: [10, 7] },
+        { side: [3, 4], referenceWeight: [9, 10], targetArea: [25, 36], expectedAnswer: [10, 9] },
+        { side: [5, 6], referenceWeight: [7, 12], targetArea: [7, 6], expectedAnswer: [49, 50] }
+      ][poolIndex];
+      const side = rationalValue(...data.side);
+      const referenceWeight = rationalValue(...data.referenceWeight);
+      const targetArea = rationalValue(...data.targetArea);
+      const referenceArea = rationalOperation(side, side, "×");
+      const weightPerArea = rationalOperation(referenceWeight, referenceArea, "÷");
+      const targetWeight = rationalOperation(weightPerArea, targetArea, "×");
+      const areaRatio = rationalOperation(targetArea, referenceArea, "÷");
+      const alternateTargetWeight = rationalOperation(referenceWeight, areaRatio, "×");
+      const expectedAnswer = rationalValue(...data.expectedAnswer);
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const answerCandidates = [targetWeight].filter(value => same(value, expectedAnswer) && same(value, alternateTargetWeight));
+      if ([side, referenceWeight, targetArea, referenceArea, weightPerArea, targetWeight, areaRatio, alternateTargetWeight].some(value => !value || value.numerator <= 0) || same(referenceArea, targetArea) || answerCandidates.length !== 1) throw new Error("6-2 예제 4-1의 철판 넓이·무게 또는 두 독립 계산의 답이 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const measure = (value, unit) => inline(`${shown(value)}<span class="math-unit">${unit}</span>`);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [side, referenceWeight, targetArea].flatMap(value => [value.numerator, value.denominator]).join(":");
+      const plateBoard = solved => `<div class="source61-math-board source62-sheet-weight-board${solved ? " is-solved" : ""}" data-source62-e4-example1-structure="same-thickness-sheet-weight" data-source62-e4-example1-values="${signature}" data-reference-area="${referenceArea.numerator}:${referenceArea.denominator}" data-target-weight="${targetWeight.numerator}:${targetWeight.denominator}"><strong>같은 두께의 철판</strong>${row("정사각형 한 변", measure(side, "m"))}${row("정사각형 철판 무게", measure(referenceWeight, "kg"))}${row("새 철판 넓이", measure(targetArea, "m²"))}${solved ? row("새 철판 무게", measure(targetWeight, "kg")) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-sheet-weight-solution"><strong>넓이와 무게의 관계로 두 번 확인하기</strong>${row("정사각형 넓이", inline(`${shown(side)}×${shown(side)}=${shown(referenceArea)}<span class="math-unit">m²</span>`))}${row("1m² 철판 무게", inline(`${shown(referenceWeight)}÷${shown(referenceArea)}=${shown(weightPerArea)}<span class="math-unit">kg</span>`))}${row("새 철판 무게", inline(`${shown(weightPerArea)}×${shown(targetArea)}=${shown(targetWeight)}<span class="math-unit">kg</span>`))}${row("넓이의 몇 배", inline(`${shown(targetArea)}÷${shown(referenceArea)}=${shown(areaRatio)}<span class="math-unit">배</span>`))}${row("다른 방법 확인", inline(`${shown(referenceWeight)}×${shown(areaRatio)}=${shown(alternateTargetWeight)}<span class="math-unit">kg</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 정사각형 철판의 넓이를 구한 뒤, 철판 1m²의 무게를 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">1m²의 무게를 먼저 구하지 않고, 두 철판의 넓이가 몇 배인지 이용해 다시 확인하세요.</p>' : "";
+      const evidenceValues = [signature, referenceArea.numerator, referenceArea.denominator, weightPerArea.numerator, weightPerArea.denominator, areaRatio.numerator, areaRatio.denominator, targetWeight.numerator, targetWeight.denominator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-example1-kind="same-thickness-sheet-weight" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-value" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`한 변의 길이가 ${measure(side, "m")}인 정사각형 모양의 철판 무게는 ${measure(referenceWeight, "kg")}입니다. 같은 두께인 철판 ${measure(targetArea, "m²")}의 무게를 구하세요.${plateBoard(false)}${support}${challenge}${evidence}`, `${plain(targetWeight)}kg`, `정사각형 철판의 넓이는 ${shown(side)}×${shown(side)}=${measure(referenceArea, "m²")}입니다. 철판 1m²의 무게는 ${shown(referenceWeight)}÷${shown(referenceArea)}=${measure(weightPerArea, "kg")}이므로 새 철판의 무게는 ${shown(weightPerArea)}×${shown(targetArea)}=${measure(targetWeight, "kg")}입니다. 또 새 철판의 넓이는 정사각형 철판 넓이의 ${shown(areaRatio)}배이므로 ${shown(referenceWeight)}×${shown(areaRatio)}=${measure(alternateTargetWeight, "kg")}으로 확인할 수 있습니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-example1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${plateBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">1m²의 무게와 두 철판의 넓이 비로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27649,6 +27691,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-mission-5", "sourceGrade6SecondFractionDivisionE3Mission5"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-6", "sourceGrade6SecondFractionDivisionE3Mission6"],
     [type => type.sourceItemId === "6-2-u1-e4-exploration", "sourceGrade6SecondFractionDivisionE4Exploration"],
+    [type => type.sourceItemId === "6-2-u1-e4-example-1", "sourceGrade6SecondFractionDivisionE4Example1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
