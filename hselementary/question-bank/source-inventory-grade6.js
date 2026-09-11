@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 264
+    "unlocked": 265
   },
   "items": [
     {
@@ -8047,20 +8047,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e3-mission-1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
-      "typeLabel": "분수와 자연수의 복잡한 계산식 계산하기",
+      "typeLabel": "세 겹 분수를 안쪽부터 계산하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE3Mission1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문의 세 겹 분수선과 5, 4, 3, 2의 위치를 직접 대조했습니다. 안쪽부터 계산하는 방법과 한 번에 통분하는 방법으로 답을 따로 확인한 고정 문항 3개를 만들었습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

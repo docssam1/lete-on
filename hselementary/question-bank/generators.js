@@ -25415,6 +25415,51 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Mission1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-mission-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 3 Mission 1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { outer: 5, middle: 4, inner: 3, tail: 2, expected: [157, 30] },
+        { outer: 4, middle: 3, inner: 2, tail: 3, expected: [103, 24] },
+        { outer: 6, middle: 5, inner: 4, tail: 3, expected: [421, 68] }
+      ][poolIndex];
+      const tailFraction = rationalValue(1, data.tail);
+      const innerSum = rationalOperation(rationalValue(data.inner), tailFraction, "+");
+      const middleFraction = rationalOperation(rationalValue(1), innerSum, "÷");
+      const middleSum = rationalOperation(rationalValue(data.middle), middleFraction, "+");
+      const outerFraction = rationalOperation(rationalValue(1), middleSum, "÷");
+      const answerValue = rationalOperation(rationalValue(data.outer), outerFraction, "+");
+      const expectedValue = rationalValue(...data.expected);
+      const innerExpanded = data.inner * data.tail + 1;
+      const middleExpanded = data.middle * innerExpanded + data.tail;
+      const independentValue = rationalValue(data.outer * middleExpanded + innerExpanded, middleExpanded);
+      const candidates = [independentValue].filter(value => value.numerator === expectedValue.numerator && value.denominator === expectedValue.denominator && value.numerator === answerValue.numerator && value.denominator === answerValue.denominator);
+      if (candidates.length !== 1) throw new Error("6-2 개념탐구 3 Mission 1의 겹분수 계산 결과가 검산값과 다릅니다.");
+      const deepFraction = (numerator, denominator, aria) => `<span class="source62-deep-fraction" role="img" aria-label="${aria}"><span class="source62-deep-fraction__top">${numerator}</span><span class="source62-deep-fraction__bottom">${denominator}</span></span>`;
+      const tailMarkup = deepFraction("1", data.tail, `${data.tail}분의 1`);
+      const innerMarkup = `${data.inner}<span class="source62-deep-plus">+</span>${tailMarkup}`;
+      const middleMarkup = `${data.middle}<span class="source62-deep-plus">+</span>${deepFraction("1", innerMarkup, `${data.inner} 더하기 ${data.tail}분의 1분의 1`)}`;
+      const expressionMarkup = `${data.outer}<span class="source62-deep-plus">+</span>${deepFraction("1", middleMarkup, `${data.middle} 더하기 ${data.inner} 더하기 ${data.tail}분의 1분의 1분의 1`)}`;
+      const expressionSignature = [data.outer, data.middle, data.inner, data.tail].join(":");
+      const shown = value => fractionMarkup(value.numerator, value.denominator);
+      const plain = value => fraction(value.numerator, value.denominator);
+      const board = solved => `<div class="source62-deep-calculation-board${solved ? " is-solved" : ""}" data-source62-e3-mission1-structure="three-level-nested-fraction" data-source62-e3-mission1-expression="${expressionSignature}" data-answer-fraction="${plain(answerValue)}"><strong>안쪽부터 계산하는 세 겹 분수</strong><div class="source62-deep-calculation-expression">${expressionMarkup}</div>${solved ? `<div class="source62-deep-calculation-result"><span>계산 결과</span><b>${shown(answerValue)}</b></div>` : `<p>계산 결과를 기약분수로 나타내세요.</p>`}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-deep-calculation-solution"><strong>가장 안쪽의 분수부터 차례로 계산하기</strong>${row("가장 안쪽", `${data.inner}+${shown(tailFraction)}=${shown(innerSum)}`)}${row("가운데 분수", `${data.middle}+${shown(middleFraction)}=${shown(middleSum)}`)}${row("바깥쪽 분수", `${data.outer}+${shown(outerFraction)}=${shown(answerValue)}`)}${row("기약분수", shown(answerValue))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">가장 안쪽의 ${data.inner}+${shown(tailFraction)}부터 계산하고, 그 결과의 역수를 차례로 이용하세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">안쪽 계산 결과를 쓸 때마다 분수의 위와 아래가 바뀌는 까닭을 확인하며 계산하세요.</p>` : "";
+      const values = [data.outer, data.middle, data.inner, data.tail, innerSum.numerator, innerSum.denominator, middleSum.numerator, middleSum.denominator, answerValue.numerator, answerValue.denominator];
+      const evidence = `<span hidden data-source62-fraction-e3-mission1-kind="three-level-nested-fraction" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-expression="${expressionSignature}" data-answer="${plain(answerValue)}" data-result-contract="single-fraction" data-candidate-count="${candidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음을 계산하여 기약분수로 나타내세요.${board(false)}${support}${challenge}${evidence}`, plain(answerValue), `가장 안쪽은 ${data.inner}+${shown(tailFraction)}=${shown(innerSum)}입니다. 그 위의 분모는 ${data.middle}+${shown(middleFraction)}=${shown(middleSum)}이므로 바깥쪽에 더하는 분수는 ${shown(outerFraction)}입니다. 따라서 ${data.outer}+${shown(outerFraction)}=${shown(answerValue)}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-mission1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">원본과 같은 세 겹 분수에서 안쪽부터 차례로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27346,6 +27391,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-example-2", "sourceGrade6SecondFractionDivisionE3Example2"],
     [type => type.sourceItemId === "6-2-u1-e3-example-3", "sourceGrade6SecondFractionDivisionE3Example3"],
     [type => type.sourceItemId === "6-2-u1-e3-example-4", "sourceGrade6SecondFractionDivisionE3Example4"],
+    [type => type.sourceItemId === "6-2-u1-e3-mission-1", "sourceGrade6SecondFractionDivisionE3Mission1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
