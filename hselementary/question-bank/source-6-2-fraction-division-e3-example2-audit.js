@@ -44,7 +44,7 @@ function independent(valuesSignature) {
 
 check(type?.generatorKey === generatorKey && !type.reviewLocked, "예제 3-2 공개 원장이 전용 생성기에 연결되지 않았습니다.");
 check(api.names.includes(generatorKey), "예제 3-2 전용 생성기가 등록되지 않았습니다.");
-check(readiness.integrity.publicCandidateCount === 23 && readiness.integrity.lockedCount === 43, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
+check(readiness.integrity.publicCandidateCount === 24 && readiness.integrity.lockedCount === 42, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
 check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.[0] === "9/160" && readinessItem?.candidateAnswerCount === 1, "예제 3-2 검토표의 원본 답·단일 답 상태가 완결되지 않았습니다.");
 check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-fraction-fixed-pool" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "예제 3-2 원자료 장부의 원본 확인·단일 답·공개 연결이 완결되지 않았습니다.");
 
