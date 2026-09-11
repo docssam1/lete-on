@@ -776,12 +776,13 @@
       "ordinal": 1,
       "pdfPage": 11,
       "printedPage": 12,
-      "sourceShape": "분수 관계를 식으로 세워 모르는 양을 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "길이가 다른 막대 ㉠·㉡·㉢에서 ㉠과 ㉢이 잠긴 비와 ㉠+㉡, ㉡+㉢의 길이 합으로 물 높이를 구하는 구조.",
+      "answerContract": "single-natural-centimeter",
+      "visualRisk": "잠긴 비는 막대 전체 길이에 대한 비이며, 두 길이 합의 공통 막대 ㉡이 정확히 같은 기호로 읽혀야 합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 11쪽 인쇄 12쪽 지문을 직접 대조했습니다. 두 길이 합의 차와 막대 길이 배수의 차를 이용한 계산, 세 막대 길이 역대입이 일치하는 고정 문항 3개를 검산했습니다.",
+      "publicSourceItemId": "6-2-u1-e5-exploration"
     },
     {
       "sourceItemId": "6-2-u1-e5-example-1",

@@ -26208,6 +26208,56 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE5Exploration({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e5-exploration";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 5 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { firstSubmerged: [3, 7], thirdSubmerged: [5, 8], firstSecondSum: 127, secondThirdSum: 116, expectedHeight: 15, expectedLengths: [35, 92, 24] },
+        { firstSubmerged: [2, 5], thirdSubmerged: [3, 7], firstSecondSum: 123, secondThirdSum: 120, expectedHeight: 18, expectedLengths: [45, 78, 42] },
+        { firstSubmerged: [4, 9], thirdSubmerged: [5, 12], firstSecondSum: 128, secondThirdSum: 131, expectedHeight: 20, expectedLengths: [45, 83, 48] }
+      ][poolIndex];
+      const firstSubmerged = rationalValue(...data.firstSubmerged);
+      const thirdSubmerged = rationalValue(...data.thirdSubmerged);
+      const firstFactor = rationalOperation(rationalValue(1), firstSubmerged, "÷");
+      const thirdFactor = rationalOperation(rationalValue(1), thirdSubmerged, "÷");
+      const firstIsLonger = firstFactor.numerator * thirdFactor.denominator > thirdFactor.numerator * firstFactor.denominator;
+      const longerFactor = firstIsLonger ? firstFactor : thirdFactor;
+      const shorterFactor = firstIsLonger ? thirdFactor : firstFactor;
+      const factorDifference = rationalOperation(longerFactor, shorterFactor, "-");
+      const sumDifference = rationalValue(Math.abs(data.firstSecondSum - data.secondThirdSum));
+      const height = rationalOperation(sumDifference, factorDifference, "÷");
+      const firstLength = rationalOperation(height, firstFactor, "×");
+      const thirdLength = rationalOperation(height, thirdFactor, "×");
+      const secondLengthFromFirst = rationalOperation(rationalValue(data.firstSecondSum), firstLength, "-");
+      const secondLengthFromThird = rationalOperation(rationalValue(data.secondThirdSum), thirdLength, "-");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const heightCandidates = Array.from({ length: 200 }, (_, index) => index + 1).filter(candidate => same(rationalOperation(rationalValue(candidate), factorDifference, "×"), sumDifference));
+      const lengths = [firstLength, secondLengthFromFirst, thirdLength];
+      const expectedLengths = data.expectedLengths.map(value => rationalValue(value));
+      if ([firstFactor, thirdFactor, factorDifference, height, firstLength, thirdLength, secondLengthFromFirst, secondLengthFromThird].some(value => !value || value.numerator <= 0) || !same(secondLengthFromFirst, secondLengthFromThird) || !same(height, rationalValue(data.expectedHeight)) || !lengths.every((value, index) => value.denominator === 1 && same(value, expectedLengths[index])) || new Set(lengths.map(value => value.numerator)).size !== 3 || heightCandidates.length !== 1 || heightCandidates[0] !== data.expectedHeight) throw new Error("6-2 개념탐구 5의 세 막대 길이 또는 물 높이 답이 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const measure = value => inline(`${shown(value)}<span class="math-unit">cm</span>`);
+      const signature = [...data.firstSubmerged, ...data.thirdSubmerged, data.firstSecondSum, data.secondThirdSum].join(":");
+      const longerName = firstIsLonger ? "㉠" : "㉢";
+      const shorterName = firstIsLonger ? "㉢" : "㉠";
+      const relationBoard = solved => `<div class="source61-math-board source62-rod-water-board${solved ? " is-solved" : ""}" data-source62-e5-exploration-structure="three-rods-submerged-fractions" data-source62-e5-exploration-values="${signature}" data-first-factor="${firstFactor.numerator}:${firstFactor.denominator}" data-third-factor="${thirdFactor.numerator}:${thirdFactor.denominator}" data-factor-difference="${factorDifference.numerator}:${factorDifference.denominator}" data-sum-difference="${sumDifference.numerator}" data-water-height="${height.numerator}" data-rod-lengths="${lengths.map(value => value.numerator).join(":")}" data-candidate-count="${heightCandidates.length}"><strong>세 막대의 길이와 잠긴 부분</strong>${row("㉠ 막대", inline(`전체의 ${shown(firstSubmerged)}만큼 잠김`))}${row("㉢ 막대", inline(`전체의 ${shown(thirdSubmerged)}만큼 잠김`))}${row("㉠과 ㉡의 길이 합", `${data.firstSecondSum}cm`)}${row("㉡과 ㉢의 길이 합", `${data.secondThirdSum}cm`)}${solved ? row("㉠ 막대 길이", measure(firstLength)) + row("㉡ 막대 길이", measure(secondLengthFromFirst)) + row("㉢ 막대 길이", measure(thirdLength)) : ""}</div>`;
+      const solutionBoard = `<div class="source61-math-board source62-rod-water-solution"><strong>두 길이 합의 차로 물 높이 확인하기</strong>${row("㉠ 막대는 물 높이의", `${shown(firstFactor)}배`)}${row("㉢ 막대는 물 높이의", `${shown(thirdFactor)}배`)}${row(`${longerName}−${shorterName}`, `${Math.abs(data.firstSecondSum - data.secondThirdSum)}cm`)}${row("막대 길이의 배수 차", `${shown(factorDifference)}배`)}${row("물 높이", inline(`${sumDifference.numerator}÷${shown(factorDifference)}=${height.numerator}<span class="math-unit">cm</span>`))}${row("두 길이 합 다시 확인", `${firstLength.numerator}+${secondLengthFromFirst.numerator}=${data.firstSecondSum}, ${secondLengthFromFirst.numerator}+${thirdLength.numerator}=${data.secondThirdSum}`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">두 길이 합을 빼면 ㉠ 막대와 ㉢ 막대의 길이 차가 된다는 점을 먼저 찾으세요.</p>' : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">㉠과 ㉢의 전체 길이를 각각 물 높이의 몇 배인지 나타내어 답을 다시 확인하세요.</p>` : "";
+      const evidenceValues = [signature, firstFactor.numerator, firstFactor.denominator, thirdFactor.numerator, thirdFactor.denominator, factorDifference.numerator, factorDifference.denominator, sumDifference.numerator, height.numerator, ...lengths.map(value => value.numerator)].join(":");
+      const evidence = `<span hidden data-source62-fraction-e5-exploration-kind="three-rods-submerged-water-height" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-natural-centimeter" data-candidate-count="${heightCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`길이가 서로 다른 3개의 막대 ㉠, ㉡, ㉢을 물이 들어 있는 물통에 수직으로 넣었더니 ㉠은 전체 길이의 ${shown(firstSubmerged)}만큼, ㉢은 전체 길이의 ${shown(thirdSubmerged)}만큼 물에 잠겼습니다. ㉠과 ㉡의 길이의 합이 ${data.firstSecondSum}cm이고, ㉡과 ㉢의 길이의 합이 ${data.secondThirdSum}cm일 때 물통에 들어 있는 물의 높이는 몇 cm인지 구하세요. (단, 막대의 부피는 생각하지 않습니다.)${relationBoard(false)}${support}${challenge}${evidence}`, `${height.numerator}cm`, `㉠ 막대의 전체 길이는 물 높이의 ${shown(firstFactor)}배이고, ㉢ 막대의 전체 길이는 물 높이의 ${shown(thirdFactor)}배입니다. 두 길이 합의 차는 ${longerName} 막대와 ${shorterName} 막대의 길이 차인 ${sumDifference.numerator}cm입니다. 따라서 물 높이는 ${sumDifference.numerator}÷${shown(factorDifference)}=${height.numerator}cm입니다. 세 막대의 길이는 차례로 ${firstLength.numerator}cm, ${secondLengthFromFirst.numerator}cm, ${thirdLength.numerator}cm이고 두 길이 합에 다시 넣으면 각각 ${data.firstSecondSum}cm와 ${data.secondThirdSum}cm가 됩니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e5-exploration-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${relationBoard(true)}${solutionBoard}${evidence}<div class="solution-answer-caption">두 길이 합의 차와 세 막대 길이를 다시 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -28156,6 +28206,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-mission-4", "sourceGrade6SecondFractionDivisionE4Mission4"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-5", "sourceGrade6SecondFractionDivisionE4Mission5"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-6", "sourceGrade6SecondFractionDivisionE4Mission6"],
+    [type => type.sourceItemId === "6-2-u1-e5-exploration", "sourceGrade6SecondFractionDivisionE5Exploration"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
