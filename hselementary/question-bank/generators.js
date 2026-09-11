@@ -26403,6 +26403,62 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE5Mission1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e5-mission-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { head: [2, 9], tailOfHead: [3, 4], body: [187, 8], expectedTotal: [153, 4], expectedUnits: [4, 3, 11, 18] },
+        { head: [3, 10], tailOfHead: [2, 3], body: [57, 4], expectedTotal: [57, 2], expectedUnits: [3, 2, 5, 10] },
+        { head: [3, 11], tailOfHead: [4, 5], body: [14, 1], expectedTotal: [55, 2], expectedUnits: [15, 12, 28, 55] }
+      ][poolIndex];
+      const headRatio = rationalValue(...data.head);
+      const tailOfHeadRatio = rationalValue(...data.tailOfHead);
+      const bodyLength = rationalValue(...data.body);
+      const total = rationalValue(1, 1);
+      const tailRatio = rationalOperation(headRatio, tailOfHeadRatio, "×");
+      const bodyRatio = rationalOperation(rationalOperation(total, headRatio, "-"), tailRatio, "-");
+      const totalByFraction = rationalOperation(bodyLength, bodyRatio, "÷");
+      const [headUnits, tailUnits, bodyUnits, totalUnits] = data.expectedUnits;
+      const oneUnit = rationalOperation(bodyLength, rationalValue(bodyUnits), "÷");
+      const totalByUnits = rationalOperation(oneUnit, rationalValue(totalUnits), "×");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const gcd = (left, right) => { let a = Math.abs(left); let b = Math.abs(right); while (b) [a, b] = [b, a % b]; return a || 1; };
+      const candidatePartitions = new Map();
+      for (let candidateTotal = 1; candidateTotal <= 220; candidateTotal += 1) {
+        const candidateHead = rationalOperation(rationalValue(candidateTotal), headRatio, "×");
+        const candidateTail = rationalOperation(candidateHead, tailOfHeadRatio, "×");
+        const candidateBody = rationalOperation(rationalOperation(rationalValue(candidateTotal), candidateHead, "-"), candidateTail, "-");
+        if ([candidateHead, candidateTail, candidateBody].some(value => !value || value.denominator !== 1 || value.numerator <= 0)) continue;
+        const divisor = gcd(gcd(candidateHead.numerator, candidateTail.numerator), candidateBody.numerator);
+        const normalized = [candidateHead.numerator / divisor, candidateTail.numerator / divisor, candidateBody.numerator / divisor];
+        candidatePartitions.set(normalized.join(":"), normalized);
+      }
+      const candidates = [...candidatePartitions.values()];
+      const expectedTotal = rationalValue(...data.expectedTotal);
+      const unitsMatchRatios = same(rationalValue(headUnits, totalUnits), headRatio) && same(rationalValue(tailUnits, headUnits), tailOfHeadRatio) && same(rationalValue(tailUnits, totalUnits), tailRatio) && same(rationalValue(bodyUnits, totalUnits), bodyRatio);
+      const expectedPartition = [headUnits, tailUnits, bodyUnits];
+      if (!bodyRatio || bodyRatio.numerator <= 0 || !same(totalByFraction, totalByUnits) || !same(totalByFraction, expectedTotal) || candidates.length !== 1 || candidates[0].join(":") !== expectedPartition.join(":") || !unitsMatchRatios) throw new Error("6-2 Mission 1의 머리·몸통·꼬리 관계, 같은 크기 칸 또는 단일 답 계약이 다릅니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const signature = [headRatio.numerator, headRatio.denominator, tailOfHeadRatio.numerator, tailOfHeadRatio.denominator, bodyLength.numerator, bodyLength.denominator].join(":");
+      const relationBoard = solved => `<div class="source61-math-board source62-fish-length-board${solved ? " is-solved" : ""}" data-source62-e5-mission1-structure="fish-head-body-tail-length" data-source62-e5-mission1-values="${signature}" data-head-ratio="${headRatio.numerator}:${headRatio.denominator}" data-tail-of-head="${tailOfHeadRatio.numerator}:${tailOfHeadRatio.denominator}" data-body-ratio="${bodyRatio.numerator}:${bodyRatio.denominator}" data-unit-partition="${expectedPartition.join(":")}" data-total-units="${totalUnits}" data-candidate-count="${candidates.length}"><strong>붕어의 길이 관계</strong>${row("머리 길이", `전체 길이의 ${shown(headRatio)}`)}${row("꼬리 길이", `머리 길이의 ${shown(tailOfHeadRatio)}`)}${row("몸통 길이", `${shown(bodyLength)}<span class="math-unit">cm</span>`)}${solved ? row("전체를 같은 크기 칸으로 나누기", `머리 ${headUnits}칸, 꼬리 ${tailUnits}칸, 몸통 ${bodyUnits}칸`) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-fish-length-solution"><strong>몸통의 길이와 같은 크기 칸으로 두 번 확인하기</strong>${row("꼬리 길이", inline(`${shown(headRatio)} × ${shown(tailOfHeadRatio)} = ${shown(tailRatio)} (전체의)`))}${row("몸통 길이", inline(`1 − ${shown(headRatio)} − ${shown(tailRatio)} = ${shown(bodyRatio)} (전체의)`))}${row("분수로 구한 전체 길이", inline(`${shown(bodyLength)} ÷ ${shown(bodyRatio)} = ${shown(totalByFraction)}<span class="math-unit">cm</span>`))}${row(`몸통 ${bodyUnits}칸의 길이`, inline(`${shown(bodyLength)} ÷ ${bodyUnits} = ${shown(oneUnit)}<span class="math-unit">cm</span>`))}${row(`전체 ${totalUnits}칸의 길이`, inline(`${shown(oneUnit)} × ${totalUnits} = ${shown(totalByUnits)}<span class="math-unit">cm</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">꼬리 길이를 전체 길이의 얼마로 나타낸 뒤, 몸통이 전체 길이의 얼마인지 구하세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">전체를 ${totalUnits}칸으로 나누었을 때 머리, 꼬리, 몸통이 각각 몇 칸인지로도 확인하세요.</p>` : "";
+      const evidence = `<span hidden data-source62-fraction-e5-mission1-kind="fish-head-body-tail-length" data-source-item="${sourceItemId}" data-values="${signature}:${tailRatio.numerator}:${tailRatio.denominator}:${bodyRatio.numerator}:${bodyRatio.denominator}:${expectedPartition.join(":")}:${totalUnits}:${totalByFraction.numerator}:${totalByFraction.denominator}" data-result-contract="single-positive-centimeter-length" data-candidate-count="${candidates.length}" data-candidate-partitions="${candidates.map(value => value.join(":")).join(",")}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `${plain(totalByFraction)}cm`;
+      return result(`장훈이가 잡은 붕어를 머리, 몸통, 꼬리로 나누어 비교하였습니다. 머리 길이는 붕어 전체 길이의 ${shown(headRatio)}이고, 꼬리 길이는 머리 길이의 ${shown(tailOfHeadRatio)}입니다. 몸통의 길이가 ${shown(bodyLength)}cm일 때, 장훈이가 잡은 붕어의 길이는 몇 cm인지 구하세요.${relationBoard(false)}${support}${challenge}${evidence}`, answer, `꼬리 길이는 전체 길이의 ${shown(headRatio)} × ${shown(tailOfHeadRatio)} = ${shown(tailRatio)}입니다. 따라서 몸통 길이는 전체 길이의 1 − ${shown(headRatio)} − ${shown(tailRatio)} = ${shown(bodyRatio)}입니다. 붕어 전체 길이는 ${shown(bodyLength)} ÷ ${shown(bodyRatio)} = ${shown(totalByFraction)}cm입니다. 전체를 ${totalUnits}칸으로 나누면 머리 ${headUnits}칸, 꼬리 ${tailUnits}칸, 몸통 ${bodyUnits}칸이고, 몸통 ${bodyUnits}칸의 길이로 전체 ${totalUnits}칸의 길이를 구해도 ${shown(totalByUnits)}cm로 같습니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e5-mission1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${relationBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 머리·몸통·꼬리 관계와 같은 크기 칸으로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE5Example4({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e5-example-4";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 5-4 원문 분기는 0이어야 합니다.");
@@ -28448,6 +28504,7 @@
     [type => type.sourceItemId === "6-2-u1-e5-example-2", "sourceGrade6SecondFractionDivisionE5Example2"],
     [type => type.sourceItemId === "6-2-u1-e5-example-3", "sourceGrade6SecondFractionDivisionE5Example3"],
     [type => type.sourceItemId === "6-2-u1-e5-example-4", "sourceGrade6SecondFractionDivisionE5Example4"],
+    [type => type.sourceItemId === "6-2-u1-e5-mission-1", "sourceGrade6SecondFractionDivisionE5Mission1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

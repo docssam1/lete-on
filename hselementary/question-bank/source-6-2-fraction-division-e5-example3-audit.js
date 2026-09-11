@@ -90,7 +90,7 @@ function independentlyCalculate(values) {
 check(Boolean(type) && type.generatorKey === generatorKey && !type.reviewLocked, "예제 5-3 공개 원장이 전용 생성기에 연결되지 않았습니다.");
 check(type?.typeLabel === "수직선의 거리 관계로 두 점 사이 거리 구하기", "예제 5-3 유형명이 원문 질문을 쉬운 말로 나타내지 않습니다.");
 check(api.names.includes(generatorKey), "예제 5-3 전용 생성기가 등록되지 않았습니다.");
-check(readiness.integrity.publicCandidateCount === 47 && readiness.integrity.lockedCount === 19 && readiness.integrity.publicCandidateCount === readiness.items.filter(item => item.publicDecision === "public").length && readiness.integrity.lockedCount === readiness.items.filter(item => item.publicDecision === "locked").length, "6-2 1단원 검토표의 공개 47개·잠금 19개 요약이 다릅니다.");
+check(readiness.integrity.publicCandidateCount === 48 && readiness.integrity.lockedCount === 18 && readiness.integrity.publicCandidateCount === readiness.items.filter(item => item.publicDecision === "public").length && readiness.integrity.lockedCount === readiness.items.filter(item => item.publicDecision === "locked").length, "6-2 1단원 검토표의 공개 48개·잠금 18개 요약이 다릅니다.");
 check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.[0] === "36m" && readinessItem?.calculationStatus === "checked-independent" && readinessItem?.candidateAnswerCount === 1, "예제 5-3 검토표의 원본 답·단일 답 상태가 완결되지 않았습니다.");
 check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-natural-meter" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "예제 5-3 원자료 장부의 원본 확인·단일 답·공개 연결이 완결되지 않았습니다.");
 

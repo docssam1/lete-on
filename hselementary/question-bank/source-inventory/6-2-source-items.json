@@ -856,12 +856,13 @@
       "ordinal": 1,
       "pdfPage": 12,
       "printedPage": 13,
-      "sourceShape": "분수 관계를 식으로 세워 모르는 양을 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "장훈이가 잡은 붕어를 머리·몸통·꼬리로 나누고, 머리는 전체의 2/9, 꼬리는 머리의 3/4, 몸통은 23 3/8cm라는 관계로 전체 길이를 구하는 구조.",
+      "answerContract": "single-positive-centimeter-length",
+      "visualRisk": "원문에는 별도 그림이 없으므로 임의 붕어 그림을 만들지 않고, 문제와 답에서 같은 머리·몸통·꼬리 관계표와 세로 분수식을 사용해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicSourceItemId": "6-2-u1-e5-mission-1",
+      "reviewReason": "원문 문장과 분수 조건을 직접 대조했습니다. 손글씨 답은 근거에서 제외했고, 별도 공식 답안은 현재 확인하지 않았습니다."
     },
     {
       "sourceItemId": "6-2-u1-e5-mission-2",

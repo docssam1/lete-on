@@ -97,7 +97,7 @@ function independentlyCalculate(values) {
 
 check(Boolean(type) && type.generatorKey === generatorKey && !type.reviewLocked && type.verifiedVariantCount === 3, "예제 5-4 공개 원장이 전용 생성기·고정 3문항에 연결되지 않았습니다.");
 check(api.names.includes(generatorKey), "예제 5-4 전용 생성기가 등록되지 않았습니다.");
-check(readiness.integrity.publicCandidateCount === 47 && readiness.integrity.lockedCount === 19, "6-2 1단원 검토표의 공개 47개·잠금 19개 요약이 다릅니다.");
+check(readiness.integrity.publicCandidateCount === 48 && readiness.integrity.lockedCount === 18, "6-2 1단원 검토표의 공개 48개·잠금 18개 요약이 다릅니다.");
 check(readinessItem?.sourceVerified === true && readinessItem?.calculationStatus === "checked-independent" && readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.candidateAnswerCount === 1 && readinessItem?.resultContract === "single-positive-area-ratio", "예제 5-4 검토표의 원문·단일 답·공개 상태가 완결되지 않았습니다.");
 check(ledgerItem?.sourceVerified === true && ledgerItem?.implementationStatus === "fixed-verified-pool" && ledgerItem?.answerContract === "single-positive-area-ratio" && ledgerItem?.publicSourceItemId === sourceItemId, "예제 5-4 원자료 장부의 공개 연결이 완결되지 않았습니다.");
 
