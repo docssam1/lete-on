@@ -649,11 +649,12 @@
       "pdfPage": 9,
       "printedPage": 10,
       "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "answerContract": "single-duration-fixed-pool",
       "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 9쪽의 인쇄 조건을 직접 대조했습니다. 남은 길이를 1시간에 타는 길이로 나누는 방법과 전체가 타는 시간에서 지난 시간을 빼는 방법이 모두 2시간 18분으로 일치하며, 같은 구조의 고정 문항 3개를 두 방법으로 검산했습니다.",
+      "publicSourceItemId": "6-2-u1-e4-example-3"
     },
     {
       "sourceItemId": "6-2-u1-e4-example-4",

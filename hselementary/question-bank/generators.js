@@ -25796,6 +25796,50 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Example3({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-example-3";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 4-3 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { initialLength: [13, 1], elapsedTime: [8, 5], remainingLength: [23, 3], expectedMinutes: 138 },
+        { initialLength: [12, 1], elapsedTime: [3, 2], remainingLength: [15, 2], expectedMinutes: 150 },
+        { initialLength: [14, 1], elapsedTime: [9, 4], remainingLength: [67, 8], expectedMinutes: 201 }
+      ][poolIndex];
+      const initialLength = rationalValue(...data.initialLength);
+      const elapsedTime = rationalValue(...data.elapsedTime);
+      const remainingLength = rationalValue(...data.remainingLength);
+      const burnedLength = rationalOperation(initialLength, remainingLength, "-");
+      const burnPerHour = rationalOperation(burnedLength, elapsedTime, "÷");
+      const remainingTime = rationalOperation(remainingLength, burnPerHour, "÷");
+      const totalBurnTime = rationalOperation(initialLength, burnPerHour, "÷");
+      const alternateRemainingTime = rationalOperation(totalBurnTime, elapsedTime, "-");
+      const minuteValue = rationalOperation(remainingTime, rationalValue(60, 1), "×");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const answerCandidates = [remainingTime].filter(value => same(value, alternateRemainingTime) && minuteValue?.denominator === 1 && minuteValue.numerator === data.expectedMinutes);
+      if ([initialLength, elapsedTime, remainingLength, burnedLength, burnPerHour, remainingTime, totalBurnTime, alternateRemainingTime, minuteValue].some(value => !value || value.numerator <= 0) || initialLength.numerator * remainingLength.denominator <= remainingLength.numerator * initialLength.denominator || answerCandidates.length !== 1) throw new Error("6-2 예제 4-3의 양초 길이·시간 또는 두 독립 계산의 답이 하나로 정해지지 않습니다.");
+      const answerHours = Math.floor(minuteValue.numerator / 60);
+      const answerMinutes = minuteValue.numerator % 60;
+      const duration = `${answerHours}시간 ${answerMinutes}분`;
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const measure = (value, unit) => inline(`${shown(value)}<span class="math-unit">${unit}</span>`);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [initialLength, elapsedTime, remainingLength].flatMap(value => [value.numerator, value.denominator]).join(":");
+      const candleBoard = solved => `<div class="source61-math-board source62-candle-time-board${solved ? " is-solved" : ""}" data-source62-e4-example3-structure="constant-candle-burn" data-source62-e4-example3-values="${signature}" data-burn-per-hour="${burnPerHour.numerator}:${burnPerHour.denominator}" data-remaining-time="${remainingTime.numerator}:${remainingTime.denominator}" data-answer-minutes="${minuteValue.numerator}"><strong>일정한 빠르기로 타는 양초</strong>${row("처음 길이", measure(initialLength, "cm"))}${row("불을 붙인 뒤 지난 시간", measure(elapsedTime, "시간"))}${row("남은 길이", measure(remainingLength, "cm"))}${solved ? row("남은 양초가 타는 시간", inline(duration)) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-candle-time-solution"><strong>남은 시간과 전체 시간으로 두 번 확인하기</strong>${row("지금까지 탄 길이", inline(`${shown(initialLength)}−${shown(remainingLength)}=${shown(burnedLength)}<span class="math-unit">cm</span>`))}${row("1시간에 타는 길이", inline(`${shown(burnedLength)}÷${shown(elapsedTime)}=${shown(burnPerHour)}<span class="math-unit">cm</span>`))}${row("남은 양초가 타는 시간", inline(`${shown(remainingLength)}÷${shown(burnPerHour)}=${shown(remainingTime)}<span class="math-unit">시간</span>`))}${row("시간과 분으로 나타내기", inline(`${shown(remainingTime)}<span class="math-unit">시간</span> = ${duration}`))}${row("전체가 타는 시간", inline(`${shown(initialLength)}÷${shown(burnPerHour)}=${shown(totalBurnTime)}<span class="math-unit">시간</span>`))}${row("다른 방법 확인", inline(`${shown(totalBurnTime)}−${shown(elapsedTime)}=${shown(alternateRemainingTime)}<span class="math-unit">시간</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 지금까지 탄 길이를 구한 뒤, 1시간에 타는 길이를 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">양초 전체가 타는 데 걸리는 시간에서 이미 지난 시간을 빼어 다시 확인하세요.</p>' : "";
+      const evidenceValues = [signature, burnedLength.numerator, burnedLength.denominator, burnPerHour.numerator, burnPerHour.denominator, remainingTime.numerator, remainingTime.denominator, totalBurnTime.numerator, totalBurnTime.denominator, minuteValue.numerator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-example3-kind="constant-candle-burn" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-duration" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`길이가 ${measure(initialLength, "cm")}인 양초에 불을 붙였습니다. ${measure(elapsedTime, "시간")}이 지난 뒤 남은 길이를 재어 보니 ${measure(remainingLength, "cm")}였습니다. 양초가 일정한 빠르기로 탈 때, 남은 양초가 다 타는 데 걸리는 시간은 몇 시간 몇 분인지 구하세요.${candleBoard(false)}${support}${challenge}${evidence}`, duration, `지금까지 탄 길이는 ${shown(initialLength)}−${shown(remainingLength)}=${measure(burnedLength, "cm")}입니다. 1시간에 타는 길이는 ${shown(burnedLength)}÷${shown(elapsedTime)}=${measure(burnPerHour, "cm")}이므로 남은 양초가 타는 시간은 ${shown(remainingLength)}÷${shown(burnPerHour)}=${measure(remainingTime, "시간")}입니다. 이를 시간과 분으로 나타내면 ${duration}입니다. 또 양초 전체가 타는 시간 ${measure(totalBurnTime, "시간")}에서 이미 지난 ${measure(elapsedTime, "시간")}을 빼도 ${measure(alternateRemainingTime, "시간")}으로 같습니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-example3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${candleBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">남은 시간과 전체 시간으로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27736,6 +27780,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-exploration", "sourceGrade6SecondFractionDivisionE4Exploration"],
     [type => type.sourceItemId === "6-2-u1-e4-example-1", "sourceGrade6SecondFractionDivisionE4Example1"],
     [type => type.sourceItemId === "6-2-u1-e4-example-2", "sourceGrade6SecondFractionDivisionE4Example2"],
+    [type => type.sourceItemId === "6-2-u1-e4-example-3", "sourceGrade6SecondFractionDivisionE4Example3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
