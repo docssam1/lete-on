@@ -26403,6 +26403,98 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE5Example4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e5-example-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 5-4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { p: [1, 5], q: [4, 7], r: [7, 8], n: [[-36, 0], [24, 0], [4, 56]], d: [[76, 0], [104, 0], [88, 48]], expected: { n: 1680, d: 672, a: 336, b: 384, answer: [5, 2] }, units: { a: 7, b: 8, n: 35, d: 14 } },
+        { p: [2, 9], q: [3, 5], r: [5, 6], n: [[-30, 0], [24, 0], [6, 60]], d: [[76, 0], [106, 0], [84, 48]], expected: { n: 1620, d: 720, a: 360, b: 432, answer: [9, 4] }, units: { a: 10, b: 12, n: 45, d: 20 } },
+        { p: [1, 4], q: [3, 8], r: [4, 3], n: [[-24, 0], [24, 0], [12, 72]], d: [[76, 0], [108, 0], [97, 54]], expected: { n: 1728, d: 864, a: 432, b: 324, answer: [2, 1] }, units: { a: 4, b: 3, n: 16, d: 8 } }
+      ][poolIndex];
+      const g = [[0, 0], [100, 0], [50, 100]];
+      const p = rationalValue(...data.p);
+      const q = rationalValue(...data.q);
+      const r = rationalValue(...data.r);
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const cross = (origin, first, second) => (first[0] - origin[0]) * (second[1] - origin[1]) - (first[1] - origin[1]) * (second[0] - origin[0]);
+      const signedArea = polygon => polygon.reduce((sum, point, index) => sum + point[0] * polygon[(index + 1) % polygon.length][1] - point[1] * polygon[(index + 1) % polygon.length][0], 0) / 2;
+      const area = polygon => Math.abs(signedArea(polygon));
+      const inside = (point, edgeStart, edgeEnd, orientation) => orientation * cross(edgeStart, edgeEnd, point) >= -1e-9;
+      const crossing = (start, end, edgeStart, edgeEnd) => {
+        const dx = end[0] - start[0]; const dy = end[1] - start[1]; const ex = edgeEnd[0] - edgeStart[0]; const ey = edgeEnd[1] - edgeStart[1];
+        const denominator = dx * ey - dy * ex;
+        if (Math.abs(denominator) < 1e-9) return [end[0], end[1]];
+        const t = ((edgeStart[0] - start[0]) * ey - (edgeStart[1] - start[1]) * ex) / denominator;
+        return [start[0] + t * dx, start[1] + t * dy];
+      };
+      const intersection = (subject, clip) => {
+        const orientation = signedArea(clip) >= 0 ? 1 : -1;
+        return clip.reduce((output, edgeStart, index) => {
+          const edgeEnd = clip[(index + 1) % clip.length]; const input = output;
+          if (!input.length) return [];
+          const next = [];
+          input.forEach((point, pointIndex) => {
+            const previous = input[(pointIndex + input.length - 1) % input.length];
+            const pointInside = inside(point, edgeStart, edgeEnd, orientation); const previousInside = inside(previous, edgeStart, edgeEnd, orientation);
+            if (pointInside && !previousInside) next.push(crossing(previous, point, edgeStart, edgeEnd));
+            if (pointInside) next.push(point);
+            if (!pointInside && previousInside) next.push(crossing(previous, point, edgeStart, edgeEnd));
+          });
+          return next;
+        }, subject.map(point => [...point]));
+      };
+      const distinctVertices = polygon => polygon.filter((point, index) => !polygon.slice(0, index).some(other => Math.hypot(point[0] - other[0], point[1] - other[1]) < 1e-7));
+      const aPolygon = distinctVertices(intersection(g, data.n));
+      const bPolygon = distinctVertices(intersection(g, data.d));
+      const nArea = area(data.n), dArea = area(data.d), aArea = area(aPolygon), bArea = area(bPolygon);
+      const nOverlapD = area(intersection(data.n, data.d)), aOverlapB = area(intersection(aPolygon, bPolygon));
+      const answerRatio = rationalOperation(rationalOperation(r, q, "×"), p, "÷");
+      const independentAnswer = rationalValue(data.expected.n, data.expected.d);
+      const exactRatios = same(rationalValue(aArea, nArea), p) && same(rationalValue(bArea, dArea), q) && same(rationalValue(aArea, bArea), r);
+      const candidateRatioMap = new Map();
+      for (let n = 1; n <= 80; n += 1) for (let d = 1; d <= 80; d += 1) {
+        const aFromN = rationalOperation(p, rationalValue(n, 1), "×");
+        const bFromD = rationalOperation(q, rationalValue(d, 1), "×");
+        if (!same(aFromN, rationalOperation(r, bFromD, "×"))) continue;
+        const ratio = rationalValue(n, d);
+        candidateRatioMap.set(`${ratio.numerator}:${ratio.denominator}`, ratio);
+      }
+      const candidateRatios = [...candidateRatioMap.values()];
+      const unitsExact = same(rationalValue(data.units.a, data.units.n), p) && same(rationalValue(data.units.b, data.units.d), q) && same(rationalValue(data.units.a, data.units.b), r) && same(rationalValue(data.units.n, data.units.d), answerRatio);
+      if (aPolygon.length !== 3 || bPolygon.length !== 3 || nArea !== data.expected.n || dArea !== data.expected.d || aArea !== data.expected.a || bArea !== data.expected.b || nOverlapD > 1e-8 || aOverlapB > 1e-8 || !exactRatios || !same(answerRatio, rationalValue(...data.expected.answer)) || !same(answerRatio, independentAnswer) || candidateRatios.length !== 1 || !same(candidateRatios[0], answerRatio) || !unitsExact) throw new Error("6-2 예제 5-4의 교집합, 넓이 비 또는 단일 답 계약이 다릅니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const pointText = point => `${point[0].toFixed(3)},${point[1].toFixed(3)}`;
+      const centroid = polygon => polygon.reduce((sum, point) => [sum[0] + point[0] / polygon.length, sum[1] + point[1] / polygon.length], [0, 0]);
+      const allPoints = [...g, ...data.n, ...data.d];
+      const bounds = { minX: Math.min(...allPoints.map(point => point[0])), maxX: Math.max(...allPoints.map(point => point[0])), minY: Math.min(...allPoints.map(point => point[1])), maxY: Math.max(...allPoints.map(point => point[1])) };
+      const width = 460, height = 340, padding = 44;
+      const scale = Math.min((width - padding * 2) / (bounds.maxX - bounds.minX), (height - padding * 2) / (bounds.maxY - bounds.minY));
+      const toScreen = point => [padding + (point[0] - bounds.minX) * scale, padding + (bounds.maxY - point[1]) * scale];
+      const screenPoints = polygon => polygon.map(toScreen);
+      const geometrySignature = [p.numerator, p.denominator, q.numerator, q.denominator, r.numerator, r.denominator, ...g.flat(), ...data.n.flat(), ...data.d.flat()].join(":");
+      const polygonSignature = [aPolygon, bPolygon].map(polygon => polygon.map(pointText).join(";")).join("|");
+      const label = (point, value, dx, dy, className = "source62-overlap-label") => { const [x, y] = toScreen(point); return `<text class="${className}" x="${(x + dx).toFixed(2)}" y="${(y + dy).toFixed(2)}">${value}</text>`; };
+      const triangleEdges = triangle => [[triangle[0], triangle[2]], [triangle[2], triangle[1]]].map(([start, end]) => { const [x1, y1] = toScreen(start); const [x2, y2] = toScreen(end); return `<line class="source62-overlap-edge" x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}"/>`; }).join("");
+      const diagram = solved => {
+        const [baseLeftX, baseY] = toScreen([bounds.minX, 0]); const [baseRightX] = toScreen([bounds.maxX, 0]);
+        return `<svg class="geometry-diagram source62-overlap-triangles${solved ? " is-solved" : ""}" viewBox="0 0 ${width} ${height}" role="img" aria-label="세 삼각형 가, 나, 다가 겹치고 ㉠과 ㉡ 영역이 색칠된 그림" data-source62-e5-example4-structure="three-overlapping-triangles-area-ratio" data-source62-e5-example4-values="${geometrySignature}" data-model-fingerprint="${geometrySignature}" data-intersection-fingerprint="${polygonSignature}" data-shape-order="가,나,다" data-shade-order="㉠,㉡" data-intersection-vertex-counts="${aPolygon.length},${bPolygon.length}" data-intersection-areas="${aArea},${bArea}" data-candidate-count="${candidateRatios.length}" data-candidate-ratios="${candidateRatios.map(value => `${value.numerator}:${value.denominator}`).join(",")}"><polygon class="source62-overlap-shade source62-overlap-shade-a" points="${screenPoints(aPolygon).map(pointText).join(" ")}"/><polygon class="source62-overlap-shade source62-overlap-shade-b" points="${screenPoints(bPolygon).map(pointText).join(" ")}"/><line class="source62-overlap-baseline" x1="${baseLeftX.toFixed(2)}" y1="${baseY.toFixed(2)}" x2="${baseRightX.toFixed(2)}" y2="${baseY.toFixed(2)}"/>${triangleEdges(g)}${triangleEdges(data.n)}${triangleEdges(data.d)}${label(g[2], "(가)", 0, -14)}${label(data.n[0], "(나)", -22, 20)}${label(data.d[1], "(다)", 22, 20)}${label(centroid(aPolygon), "㉠", 0, 5, "source62-overlap-shade-label")}${label(centroid(bPolygon), "㉡", 0, 5, "source62-overlap-shade-label")}</svg>`;
+      };
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const relationBoard = `<div class="source61-math-board source62-overlap-relations" data-source62-e5-example4-values="${geometrySignature}"><strong>색칠한 부분의 넓이 관계</strong>${row("㉠의 넓이", `삼각형 (나)의 ${shown(p)}`)}${row("㉡의 넓이", `삼각형 (다)의 ${shown(q)}`)}${row("㉠과 ㉡", `㉡의 ${shown(r)}`)}</div>`;
+      const answerMarkup = `${shown(answerRatio)}배`;
+      const answerBoard = `<div class="source61-math-board source62-overlap-solution"><strong>㉠과 ㉡을 같은 넓이로 이어 계산하기</strong>${row("㉠을 ㉡으로 나타내기", `㉠ = ㉡의 ${shown(r)}`)}${row("(나)와 (다)의 넓이 비", `(${shown(r)} × ${shown(q)}) ÷ ${shown(p)} = ${answerMarkup}`)}${row("같은 크기의 칸으로 확인", `㉡을 ${data.units.b}칸으로 보면 ㉠은 ${data.units.a}칸입니다. (나)는 ${data.units.n}칸, (다)는 ${data.units.d}칸이므로 ${data.units.n}:${data.units.d} = ${answerMarkup}`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ㉠의 넓이를 ㉡의 넓이로 나타낸 뒤, 삼각형 (나)와 (다)의 넓이로 차례로 바꾸어 보세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">색칠한 두 부분을 같은 기준으로 놓고, 삼각형 (나)와 (다)의 넓이 비가 하나로 정해지는지 스스로 확인하세요.</p>` : "";
+      const evidenceValues = [geometrySignature, nArea, dArea, aArea, bArea, answerRatio.numerator, answerRatio.denominator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e5-example4-kind="three-overlapping-triangles-area-ratio" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-positive-area-ratio" data-candidate-count="${candidateRatios.length}" data-candidate-ratios="${candidateRatios.map(value => `${value.numerator}:${value.denominator}`).join(",")}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`그림과 같이 세 삼각형 (가), (나), (다)가 겹쳐 있습니다. ㉠의 넓이는 삼각형 (나)의 ${shown(p)}이고, ㉡의 넓이는 삼각형 (다)의 ${shown(q)}입니다. ㉠의 넓이가 ㉡의 넓이의 ${shown(r)}일 때, 삼각형 (나)의 넓이는 삼각형 (다)의 넓이의 몇 배인지 구하세요.${diagram(false)}${relationBoard}${support}${challenge}${evidence}`, `${plain(answerRatio)}배`, `㉠은 ㉡의 ${shown(r)}이고, ㉡은 삼각형 (다)의 ${shown(q)}입니다. 따라서 ㉠은 삼각형 (다)의 ${shown(r)} × ${shown(q)}입니다. ㉠은 삼각형 (나)의 ${shown(p)}이므로 삼각형 (나)의 넓이는 삼각형 (다)의 넓이의 (${shown(r)} × ${shown(q)}) ÷ ${shown(p)} = ${answerMarkup}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e5-example4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 세 삼각형과 두 색칠한 부분의 넓이 관계로 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -28355,6 +28447,7 @@
     [type => type.sourceItemId === "6-2-u1-e5-example-1", "sourceGrade6SecondFractionDivisionE5Example1"],
     [type => type.sourceItemId === "6-2-u1-e5-example-2", "sourceGrade6SecondFractionDivisionE5Example2"],
     [type => type.sourceItemId === "6-2-u1-e5-example-3", "sourceGrade6SecondFractionDivisionE5Example3"],
+    [type => type.sourceItemId === "6-2-u1-e5-example-4", "sourceGrade6SecondFractionDivisionE5Example4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

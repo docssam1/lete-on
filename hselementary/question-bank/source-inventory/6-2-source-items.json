@@ -840,12 +840,13 @@
       "ordinal": 4,
       "pdfPage": 11,
       "printedPage": 12,
-      "sourceShape": "분수 관계를 식으로 세워 모르는 양을 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "큰 가운데 삼각형 가와 왼쪽 나, 오른쪽 다가 겹치며, 가와 나의 교집합 ㉠과 가와 다의 교집합 ㉡은 서로 떨어진 삼각형입니다.",
+      "answerContract": "single-positive-area-ratio",
+      "visualRisk": "세 삼각형의 공통 밑변과 두 교집합의 위치·음영·기호를 같은 점 좌표에서 계산해야 하며, 문제에는 넓이 값과 답을 보이지 않아야 합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publicSourceItemId": "6-2-u1-e5-example-4",
+      "reviewReason": "원문 쪽의 세 삼각형·분수 조건을 직접 대조하고, 세 고정 문항의 다각형 교집합·독립 계산·화면 검수를 통과했습니다. 별도 공식 답안은 현재 확인하지 않았습니다."
     },
     {
       "sourceItemId": "6-2-u1-e5-mission-1",
