@@ -25898,6 +25898,80 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Mission1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-mission-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { top: [7, 3], bottom: [19, 6], height: [2, 1], referencePaint: [3, 2], targetArea: [90, 1], availablePaint: [12, 1], expectedAnswer: [46, 1] },
+        { top: [9, 4], bottom: [15, 4], height: [5, 2], referencePaint: [5, 4], targetArea: [67, 2], availablePaint: [9, 2], expectedAnswer: [13, 2] },
+        { top: [11, 6], bottom: [10, 3], height: [3, 1], referencePaint: [5, 2], targetArea: [20, 1], availablePaint: [3, 1], expectedAnswer: [107, 10] }
+      ][poolIndex];
+      const top = rationalValue(...data.top);
+      const bottom = rationalValue(...data.bottom);
+      const height = rationalValue(...data.height);
+      const referencePaint = rationalValue(...data.referencePaint);
+      const targetArea = rationalValue(...data.targetArea);
+      const availablePaint = rationalValue(...data.availablePaint);
+      const expectedAnswer = rationalValue(...data.expectedAnswer);
+      const two = rationalValue(2, 1);
+      const baseSum = rationalOperation(top, bottom, "+");
+      const wallArea = rationalOperation(rationalOperation(baseSum, height, "×"), two, "÷");
+      const areaPerLitre = rationalOperation(wallArea, referencePaint, "÷");
+      const paintedArea = rationalOperation(areaPerLitre, availablePaint, "×");
+      const remainingArea = rationalOperation(targetArea, paintedArea, "-");
+      const paintMultiplier = rationalOperation(availablePaint, referencePaint, "÷");
+      const alternatePaintedArea = rationalOperation(wallArea, paintMultiplier, "×");
+      const rectangularArea = rationalOperation(top, height, "×");
+      const triangularBase = rationalOperation(bottom, top, "-");
+      const triangularArea = rationalOperation(rationalOperation(triangularBase, height, "×"), two, "÷");
+      const decomposedArea = rationalOperation(rectangularArea, triangularArea, "+");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const answerCandidates = [remainingArea].filter(value => same(value, expectedAnswer) && same(wallArea, decomposedArea) && same(paintedArea, alternatePaintedArea));
+      if ([top, bottom, height, referencePaint, targetArea, availablePaint, wallArea, areaPerLitre, paintedArea, remainingArea, paintMultiplier, alternatePaintedArea, rectangularArea, triangularBase, triangularArea, decomposedArea].some(value => !value || value.numerator <= 0) || top.numerator * bottom.denominator >= bottom.numerator * top.denominator || paintedArea.numerator * targetArea.denominator >= targetArea.numerator * paintedArea.denominator || answerCandidates.length !== 1) throw new Error("6-2 Mission 1의 직각사다리꼴·페인트 양 또는 두 독립 계산의 남은 넓이가 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const measure = (value, unit) => inline(`${shown(value)}<span class="math-unit">${unit}</span>`);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [top, bottom, height, referencePaint, targetArea, availablePaint].flatMap(value => [value.numerator, value.denominator]).join(":");
+      const pointSignature = values => values.map(value => Number(value.toFixed(2))).join(",");
+      const wallDiagram = solved => {
+        const topValue = top.numerator / top.denominator;
+        const bottomValue = bottom.numerator / bottom.denominator;
+        const heightValue = height.numerator / height.denominator;
+        const scale = Math.min(60, 205 / bottomValue, 145 / heightValue);
+        const left = 72;
+        const topY = 52;
+        const rightTop = left + topValue * scale;
+        const rightBottom = left + bottomValue * scale;
+        const bottomY = topY + heightValue * scale;
+        const topLabelX = (left + rightTop) / 2;
+        const bottomLabelX = (left + rightBottom) / 2;
+        const middleY = (topY + bottomY) / 2;
+        const points = [[left, topY], [rightTop, topY], [rightBottom, bottomY], [left, bottomY]];
+        const pointData = points.map(point => pointSignature(point)).join(";");
+        const segments = "0-1:top-base;1-2:right-slant;2-3:bottom-base;3-0:left-height";
+        const topText = plain(top);
+        const bottomText = plain(bottom);
+        const heightText = plain(height);
+        return `<svg class="geometry-diagram source62-painted-wall-diagram${solved ? " is-solved" : ""}" viewBox="0 0 340 ${Math.ceil(bottomY + 46)}" role="img" aria-label="윗변 ${svgMeasurementAria(topText, "m")}, 아랫변 ${svgMeasurementAria(bottomText, "m")}, 높이 ${svgMeasurementAria(heightText, "m")}인 직각사다리꼴 벽" data-source62-e4-mission1-structure="right-trapezoid-painted-wall" data-source62-e4-mission1-values="${signature}" data-geometry-points="${pointData}" data-geometry-segments="${segments}" data-scale="${scale.toFixed(4)}" data-right-angle-count="2" data-dimension-count="3" data-wall-area="${wallArea.numerator}:${wallArea.denominator}" data-painted-area="${paintedArea.numerator}:${paintedArea.denominator}" data-remaining-area="${remainingArea.numerator}:${remainingArea.denominator}"><polygon class="source62-painted-wall-shape" points="${points.map(point => pointSignature(point)).join(" ")}"/><path class="source62-painted-wall-right-angle" d="M ${left} ${topY + 13} H ${left + 13} V ${topY} M ${left} ${bottomY - 13} H ${left + 13} V ${bottomY}"/><g class="source62-painted-wall-dimensions"><path d="M ${left} ${topY} Q ${left + 16} ${topY - 20} ${topLabelX - 34} ${topY - 27} M ${topLabelX + 34} ${topY - 27} Q ${rightTop - 16} ${topY - 20} ${rightTop} ${topY}"/><path d="M ${left} ${bottomY} Q ${left + 24} ${bottomY + 23} ${bottomLabelX - 39} ${bottomY + 31} M ${bottomLabelX + 39} ${bottomY + 31} Q ${rightBottom - 24} ${bottomY + 23} ${rightBottom} ${bottomY}"/><path d="M ${left} ${topY} Q ${left - 24} ${topY + 18} ${left - 34} ${middleY - 21} M ${left - 34} ${middleY + 21} Q ${left - 24} ${bottomY - 18} ${left} ${bottomY}"/></g>${svgMeasurementLabel({ x: topLabelX, y: topY - 27, value: topText, unit: "m" })}${svgMeasurementLabel({ x: bottomLabelX, y: bottomY + 31, value: bottomText, unit: "m" })}${svgMeasurementLabel({ x: left - 34, y: middleY, value: heightText, unit: "m" })}</svg>`;
+      };
+      const factsBoard = solved => `<div class="source61-math-board source62-painted-wall-board${solved ? " is-solved" : ""}" data-source62-e4-mission1-facts="${signature}"><strong>사다리꼴 벽과 페인트</strong>${row("이 벽에 사용한 페인트", measure(referencePaint, "L"))}${row("새 벽의 넓이", measure(targetArea, "m²"))}${row("가지고 있는 페인트", measure(availablePaint, "L"))}${solved ? row("칠하지 못한 넓이", measure(remainingArea, "m²")) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-painted-wall-solution"><strong>1L의 넓이와 페인트 양의 배수로 두 번 확인하기</strong>${row("사다리꼴 벽 넓이", inline(`(${shown(top)}+${shown(bottom)})×${shown(height)}÷2=${shown(wallArea)}<span class="math-unit">m²</span>`))}${row("직사각형과 삼각형으로 확인", inline(`${shown(rectangularArea)}+${shown(triangularArea)}=${shown(decomposedArea)}<span class="math-unit">m²</span>`))}${row("페인트 1L로 칠하는 넓이", inline(`${shown(wallArea)}÷${shown(referencePaint)}=${shown(areaPerLitre)}<span class="math-unit">m²</span>`))}${row("새 벽에서 칠한 넓이", inline(`${shown(areaPerLitre)}×${shown(availablePaint)}=${shown(paintedArea)}<span class="math-unit">m²</span>`))}${row("칠하지 못한 넓이", inline(`${shown(targetArea)}−${shown(paintedArea)}=${shown(remainingArea)}<span class="math-unit">m²</span>`))}${row("페인트 양의 몇 배", inline(`${shown(availablePaint)}÷${shown(referencePaint)}=${shown(paintMultiplier)}<span class="math-unit">배</span>`))}${row("다른 방법 확인", inline(`${shown(wallArea)}×${shown(paintMultiplier)}=${shown(alternatePaintedArea)}<span class="math-unit">m²</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 사다리꼴 벽의 넓이를 구한 뒤, 페인트 1L로 칠할 수 있는 넓이를 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">페인트의 양이 처음의 몇 배인지 이용해 칠한 넓이를 다시 확인하세요.</p>' : "";
+      const evidenceValues = [signature, wallArea.numerator, wallArea.denominator, decomposedArea.numerator, decomposedArea.denominator, areaPerLitre.numerator, areaPerLitre.denominator, paintMultiplier.numerator, paintMultiplier.denominator, paintedArea.numerator, paintedArea.denominator, remainingArea.numerator, remainingArea.denominator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-mission1-kind="painted-right-trapezoid-proportion" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-area" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`다음 사다리꼴 모양 벽 전체를 칠하는 데 페인트를 ${measure(referencePaint, "L")} 사용했습니다. 페인트 ${measure(availablePaint, "L")}로 넓이가 ${measure(targetArea, "m²")}인 벽을 같은 방법으로 칠한다면, 페인트가 칠해지지 않은 부분의 넓이는 몇 m²인지 구하세요.${wallDiagram(false)}${factsBoard(false)}${support}${challenge}${evidence}`, `${plain(remainingArea)}m²`, `사다리꼴 벽의 넓이는 (${shown(top)}+${shown(bottom)})×${shown(height)}÷2=${measure(wallArea, "m²")}입니다. 페인트 1L로 칠할 수 있는 넓이는 ${shown(wallArea)}÷${shown(referencePaint)}=${measure(areaPerLitre, "m²")}이므로, 가진 페인트로 ${shown(areaPerLitre)}×${shown(availablePaint)}=${measure(paintedArea, "m²")}를 칠합니다. 따라서 칠하지 못한 넓이는 ${shown(targetArea)}−${shown(paintedArea)}=${measure(remainingArea, "m²")}입니다. 또 페인트의 양이 ${shown(availablePaint)}÷${shown(referencePaint)}=${shown(paintMultiplier)}배이므로 처음 벽 넓이에 이 수를 곱해도 칠한 넓이가 같습니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-mission1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${wallDiagram(true)}${factsBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">사다리꼴을 두 도형으로 나누고 페인트의 양으로 다시 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27840,6 +27914,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-example-2", "sourceGrade6SecondFractionDivisionE4Example2"],
     [type => type.sourceItemId === "6-2-u1-e4-example-3", "sourceGrade6SecondFractionDivisionE4Example3"],
     [type => type.sourceItemId === "6-2-u1-e4-example-4", "sourceGrade6SecondFractionDivisionE4Example4"],
+    [type => type.sourceItemId === "6-2-u1-e4-mission-1", "sourceGrade6SecondFractionDivisionE4Mission1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
