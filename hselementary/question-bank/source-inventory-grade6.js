@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 258
+    "unlocked": 259
   },
   "items": [
     {
@@ -7866,20 +7866,21 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u1-e2-mission-5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
-      "typeLabel": "분수만큼 줄어든 수로 현재 남학생 수 구하기",
+      "typeLabel": "줄어든 전체 학생 수로 올해 남학생 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE2Mission5",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문의 작년·올해 전체 학생 수, 작년 남학생 수를 기준으로 한 감소분, 여학생 수가 그대로인 조건을 직접 대조했습니다. 가능한 작년 남학생 수를 모두 대입해 답 하나만 남는 고정 문항 3개를 확인했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

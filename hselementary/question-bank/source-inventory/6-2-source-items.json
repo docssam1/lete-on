@@ -393,12 +393,13 @@
       "ordinal": 5,
       "pdfPage": 6,
       "printedPage": 7,
-      "sourceShape": "분수 나눗셈을 생활 상황의 전체, 부분, 횟수와 연결해 필요한 양을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "작년과 올해의 전체 학생 수 차이, 작년 남학생 수를 기준으로 한 감소 비율, 여학생 수가 그대로인 조건으로 올해 남학생 수를 구하는 구조.",
+      "answerContract": "single-whole-number-fixed-pool",
+      "visualRisk": "감소 비율의 기준이 작년 남학생 수임을 분명히 하고, 여학생 수가 그대로이므로 전체 감소가 남학생 감소와 같다는 관계가 한 가지로 읽혀야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 6쪽의 인쇄 지문에서 작년 584명, 올해 562명, 남학생은 작년 남학생 수의 2/25만큼 감소, 여학생은 변화 없음 조건을 직접 대조했습니다. 전체 감소 22명으로 작년 남학생 275명, 올해 남학생 253명이며 가능한 작년 남학생 수를 전수 대입해 답이 하나임을 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e2-mission-5"
     },
     {
       "sourceItemId": "6-2-u1-e2-mission-6",
