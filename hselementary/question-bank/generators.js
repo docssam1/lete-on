@@ -26299,6 +26299,47 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE5Example2({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e5-example-2";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 5-2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { increaseRate: [3, 14], previousGirls: 154, boys: 162 },
+        { increaseRate: [3, 11], previousGirls: 121, boys: 163 },
+        { increaseRate: [5, 16], previousGirls: 128, boys: 264 }
+      ][poolIndex];
+      const increaseRate = rationalValue(...data.increaseRate);
+      const increased = rationalOperation(rationalValue(data.previousGirls), increaseRate, "×");
+      if (increased.denominator !== 1 || increased.numerator <= 0) throw new Error("6-2 예제 5-2의 늘어난 여학생 수가 자연수가 아닙니다.");
+      const currentGirls = data.previousGirls + increased.numerator;
+      const previousTotal = data.boys + data.previousGirls;
+      const currentTotal = data.boys + currentGirls;
+      const totalIncrease = currentTotal - previousTotal;
+      const candidates = Array.from({ length: previousTotal - 1 }, (_, index) => index + 1).filter(previousGirls => {
+        const change = rationalOperation(rationalValue(previousGirls), increaseRate, "×");
+        return change.denominator === 1 && change.numerator === totalIncrease && previousTotal - previousGirls > 0 && previousTotal - previousGirls + previousGirls + change.numerator === currentTotal;
+      });
+      if (candidates.length !== 1 || candidates[0] !== data.previousGirls || data.boys + currentGirls !== currentTotal) throw new Error("6-2 예제 5-2의 올해 남학생 수가 하나로 정해지지 않습니다.");
+      const shownRate = mixedFractionMarkup(increaseRate.numerator, increaseRate.denominator);
+      const plainRate = mixedFraction(increaseRate.numerator, increaseRate.denominator);
+      const signature = [...data.increaseRate, previousTotal, currentTotal].join(":");
+      const board = solved => `<div class="source62-student-change-board${solved ? " is-solved" : ""}" data-source62-e5-example2-structure="unchanged-boys-girls-fraction-increase" data-source62-e5-example2-expression="${signature}" data-previous-total="${previousTotal}" data-current-total="${currentTotal}" data-increase-rate="${plainRate}" data-total-increase="${totalIncrease}" data-previous-girls="${data.previousGirls}" data-current-girls="${currentGirls}" data-boys="${data.boys}" data-candidate-count="${candidates.length}"><strong>작년과 올해 학생 수 비교</strong><div class="source62-student-change-years"><span><small>작년 전체</small><b>${previousTotal}명</b></span><i aria-hidden="true">→</i><span><small>올해 전체</small><b>${currentTotal}명</b></span></div><div class="source62-student-change-rows"><span><strong>남학생</strong><b>${solved ? `${data.boys}명` : "?명"}</b><i>수 변화 없음</i><b class="is-current">${solved ? `${data.boys}명` : "?명"}</b></span><span><strong>여학생</strong><b>${solved ? `${data.previousGirls}명` : "?명"}</b><i>작년의 ${shownRate}만큼 증가</i><b class="is-current">${solved ? `${currentGirls}명` : "?명"}</b></span></div></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-student-change-solution"><strong>전체에서 늘어난 수를 여학생의 증가분으로 보기</strong>${row("전체에서 늘어난 수", `${currentTotal}-${previousTotal}=${totalIncrease}명`)}${row("작년 여학생 수", `${totalIncrease}÷${shownRate}=${data.previousGirls}명`)}${row("올해 남학생 수", `${previousTotal}-${data.previousGirls}=${data.boys}명`)}${row("올해 전체 다시 확인", `${data.boys}+${currentGirls}=${currentTotal}명`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">남학생 수가 그대로이므로 전체 학생 수가 늘어난 만큼 여학생 수가 늘었습니다.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">전체에서 늘어난 수가 작년 여학생 수의 얼마인지 스스로 식으로 나타내세요.</p>` : "";
+      const values = [...data.increaseRate, previousTotal, currentTotal, totalIncrease, data.previousGirls, currentGirls, data.boys];
+      const evidence = `<span hidden data-source62-fraction-e5-example2-kind="unchanged-boys-girls-fraction-increase" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-whole-number" data-candidate-count="${candidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `${data.boys}명`;
+      return result(`가나네 학교의 작년 학생 수는 ${previousTotal}명이었고, 올해 학생 수는 ${currentTotal}명입니다. 올해 남학생 수는 작년과 같고, 여학생 수는 작년 여학생 수보다 ${shownRate}만큼 늘었습니다. 올해 가나네 학교의 남학생은 몇 명인지 구하세요.${board(false)}${support}${challenge}${evidence}`, answer, `전체 학생 수는 ${currentTotal}-${previousTotal}=${totalIncrease}명 늘었습니다. 남학생 수는 그대로이므로 ${totalIncrease}명은 작년 여학생 수의 ${shownRate}입니다. 작년 여학생 수는 ${totalIncrease}÷${shownRate}=${data.previousGirls}명이고, 남학생 수는 ${previousTotal}-${data.previousGirls}=${data.boys}명입니다. 올해도 남학생 수는 같으므로 답은 ${answer}입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e5-example2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 작년·올해 자료로 여학생 증가와 올해 남학생 수를 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -28249,6 +28290,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-mission-6", "sourceGrade6SecondFractionDivisionE4Mission6"],
     [type => type.sourceItemId === "6-2-u1-e5-exploration", "sourceGrade6SecondFractionDivisionE5Exploration"],
     [type => type.sourceItemId === "6-2-u1-e5-example-1", "sourceGrade6SecondFractionDivisionE5Example1"],
+    [type => type.sourceItemId === "6-2-u1-e5-example-2", "sourceGrade6SecondFractionDivisionE5Example2"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

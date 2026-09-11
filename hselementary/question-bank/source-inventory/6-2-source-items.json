@@ -808,12 +808,13 @@
       "ordinal": 2,
       "pdfPage": 11,
       "printedPage": 12,
-      "sourceShape": "분수 관계를 식으로 세워 모르는 양을 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "작년 전체와 올해 전체의 차가 여학생 증가분이고, 남학생 수는 그대로일 때 올해 남학생 수를 구하는 구조.",
+      "answerContract": "single-whole-number",
+      "visualRisk": "늘어난 분수는 올해 여학생 수가 아니라 작년 여학생 수를 기준으로 합니다. 남학생 수가 그대로라는 조건과 여학생 수가 늘었다는 조건을 바꾸어 표시하면 안 됩니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 11쪽 인쇄 12쪽 예제 5-2를 직접 대조했습니다. 전체 증가분으로 작년 여학생 수를 구하는 계산과 두 해의 남학생 수가 같은지 확인하는 고정 문항 3개를 검산했습니다.",
+      "publicSourceItemId": "6-2-u1-e5-example-2"
     },
     {
       "sourceItemId": "6-2-u1-e5-example-3",
