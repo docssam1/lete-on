@@ -25664,6 +25664,53 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Exploration({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-exploration";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { unitFuel: [7, 10], unitDistance: [18, 5], initialFuel: [13, 5], drivenDistance: [64, 5], additionalDistance: [965, 8], expectedAnswer: [747, 32] },
+        { unitFuel: [3, 4], unitDistance: [9, 2], initialFuel: [7, 3], drivenDistance: [11, 1], additionalDistance: [273, 4], expectedAnswer: [87, 8] },
+        { unitFuel: [7, 8], unitDistance: [25, 6], initialFuel: [18, 5], drivenDistance: [90, 7], additionalDistance: [585, 7], expectedAnswer: [333, 20] }
+      ][poolIndex];
+      const unitFuel = rationalValue(...data.unitFuel);
+      const unitDistance = rationalValue(...data.unitDistance);
+      const initialFuel = rationalValue(...data.initialFuel);
+      const drivenDistance = rationalValue(...data.drivenDistance);
+      const additionalDistance = rationalValue(...data.additionalDistance);
+      const distancePerLitre = rationalOperation(unitDistance, unitFuel, "÷");
+      const totalDistance = rationalOperation(drivenDistance, additionalDistance, "+");
+      const totalFuel = rationalOperation(totalDistance, distancePerLitre, "÷");
+      const addedFuel = rationalOperation(totalFuel, initialFuel, "-");
+      const usedBeforeStation = rationalOperation(drivenDistance, distancePerLitre, "÷");
+      const remainingAtStation = rationalOperation(initialFuel, usedBeforeStation, "-");
+      const fuelForAdditionalDistance = rationalOperation(additionalDistance, distancePerLitre, "÷");
+      const alternateAddedFuel = rationalOperation(fuelForAdditionalDistance, remainingAtStation, "-");
+      const expectedAnswer = rationalValue(...data.expectedAnswer);
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const answerCandidates = [addedFuel].filter(value => same(value, expectedAnswer) && same(value, alternateAddedFuel));
+      if ([unitFuel, unitDistance, initialFuel, drivenDistance, additionalDistance, distancePerLitre, totalDistance, totalFuel, addedFuel, usedBeforeStation, remainingAtStation, fuelForAdditionalDistance].some(value => !value || value.numerator <= 0) || answerCandidates.length !== 1) throw new Error("6-2 개념탐구 4의 거리와 기름 양 또는 두 독립 계산의 주유량이 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const measure = (value, unit) => inline(`${shown(value)}<span class="math-unit">${unit}</span>`);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [unitFuel, unitDistance, initialFuel, drivenDistance, additionalDistance].flatMap(value => [value.numerator, value.denominator]).join(":");
+      const tripBoard = solved => `<div class="source61-math-board source62-unit-rate-trip-board${solved ? " is-solved" : ""}" data-source62-e4-exploration-structure="fuel-distance-unit-rate" data-source62-e4-exploration-values="${signature}" data-distance-per-litre="${distancePerLitre.numerator}:${distancePerLitre.denominator}" data-added-fuel="${addedFuel.numerator}:${addedFuel.denominator}"><strong>자동차의 기름과 이동 거리</strong>${row("기준", inline(`${shown(unitFuel)}<span class="math-unit">L</span> → ${shown(unitDistance)}<span class="math-unit">km</span>`))}${row("처음 넣은 기름", measure(initialFuel, "L"))}${row("주유소까지 간 거리", measure(drivenDistance, "km"))}${row("주유 후 더 갈 수 있는 거리", measure(additionalDistance, "km"))}${solved ? row("주유소에서 넣은 기름", measure(addedFuel, "L")) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-unit-rate-solution"><strong>1L당 이동 거리로 주유량 구하기</strong>${row("1L당 이동 거리", inline(`${shown(unitDistance)}÷${shown(unitFuel)}=${shown(distancePerLitre)}<span class="math-unit">km</span>`))}${row("전체 이동 거리", inline(`${shown(drivenDistance)}+${shown(additionalDistance)}=${shown(totalDistance)}<span class="math-unit">km</span>`))}${row("필요한 전체 기름", inline(`${shown(totalDistance)}÷${shown(distancePerLitre)}=${shown(totalFuel)}<span class="math-unit">L</span>`))}${row("주유한 기름", inline(`${shown(totalFuel)}−${shown(initialFuel)}=${shown(addedFuel)}<span class="math-unit">L</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 기름 1L로 갈 수 있는 거리를 구한 뒤, 처음부터 모두 갈 수 있는 거리에 필요한 기름을 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">전체 이동 거리로 구한 주유량과 주유소에 남은 기름을 이용해 구한 주유량이 같은지 확인하세요.</p>' : "";
+      const evidenceValues = [signature, distancePerLitre.numerator, distancePerLitre.denominator, totalDistance.numerator, totalDistance.denominator, totalFuel.numerator, totalFuel.denominator, usedBeforeStation.numerator, usedBeforeStation.denominator, remainingAtStation.numerator, remainingAtStation.denominator, fuelForAdditionalDistance.numerator, fuelForAdditionalDistance.denominator, addedFuel.numerator, addedFuel.denominator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-exploration-kind="fuel-distance-unit-rate" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-value" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`한 자동차는 ${measure(unitFuel, "L")}의 기름으로 ${measure(unitDistance, "km")}를 갈 수 있습니다. 이 자동차에 처음 ${measure(initialFuel, "L")}의 기름을 넣고 ${measure(drivenDistance, "km")}를 가다가 주유소에서 기름을 더 넣었더니 ${measure(additionalDistance, "km")}를 더 갈 수 있었습니다. 주유소에서 넣은 기름은 몇 L인지 구하세요.${tripBoard(false)}${support}${challenge}${evidence}`, `${plain(addedFuel)}L`, `기름 1L로 ${shown(unitDistance)}÷${shown(unitFuel)}=${measure(distancePerLitre, "km")}를 갑니다. 처음부터 모두 가는 거리는 ${shown(drivenDistance)}+${shown(additionalDistance)}=${measure(totalDistance, "km")}이므로 필요한 전체 기름은 ${shown(totalDistance)}÷${shown(distancePerLitre)}=${measure(totalFuel, "L")}입니다. 따라서 주유소에서 넣은 기름은 ${shown(totalFuel)}−${shown(initialFuel)}=${measure(addedFuel, "L")}입니다. 다른 방법으로 주유소에 남은 기름 ${measure(remainingAtStation, "L")}와 이후 필요한 기름 ${measure(fuelForAdditionalDistance, "L")}를 이용해도 같은 답이 됩니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-exploration-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${tripBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">전체 이동 거리와 주유소에 남은 기름으로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27601,6 +27648,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-mission-4", "sourceGrade6SecondFractionDivisionE3Mission4"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-5", "sourceGrade6SecondFractionDivisionE3Mission5"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-6", "sourceGrade6SecondFractionDivisionE3Mission6"],
+    [type => type.sourceItemId === "6-2-u1-e4-exploration", "sourceGrade6SecondFractionDivisionE4Exploration"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
