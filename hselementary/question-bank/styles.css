@@ -1,5 +1,9 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 
+.source62-work-rate-board,.source62-work-rate-solution,.source62-e4-mission5-answer{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:0}.source62-e4-mission5-answer{min-width:0;max-width:100%;overflow-x:hidden}
+
+.source62-work-rate-board,.source62-work-rate-solution{width:min(600px,100%)}.source62-work-strip{display:grid;grid-template-columns:var(--source62-work-done) minmax(0,1fr);min-height:44px;margin:12px;border:1px solid #93a8b8;background:#fff}.source62-work-strip span{display:flex;align-items:center;justify-content:center;padding:7px 5px;font-size:12px;font-weight:800;text-align:center}.source62-work-strip span:first-child{background:#d9edf3;border-right:2px solid #176a7e;color:#12495a}.source62-work-strip span:last-child{background:#fff4d8;color:#72540b}.source62-work-rate-solution .source61-math-row{grid-template-columns:minmax(150px,.9fr) minmax(0,1.1fr)}@media(max-width:520px){.source62-work-rate-board,.source62-work-rate-solution{width:100%}.source62-work-rate-board .source61-math-row,.source62-work-rate-solution .source61-math-row{grid-template-columns:1fr}.source62-work-strip{margin:9px 8px}.source62-work-strip span{font-size:11px}}@media print{.source62-work-rate-board,.source62-work-rate-solution{width:min(560px,100%)}.print-page:has(.source62-work-rate-board) .question-grid{display:block}.print-page:has(.source62-work-rate-board) .question-item{min-height:0;padding:14px 0}.print-page:has(.source62-work-rate-board) .question-item,.print-page:has(.source62-work-rate-board) .solution-item{break-inside:avoid;page-break-inside:avoid}.answer-page:has(.source62-work-rate-board){page:source62E4Mission5Answer}}
+
 :root{
   --bg:#eef5fb;
   --panel:#ffffff;

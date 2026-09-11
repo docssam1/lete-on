@@ -744,12 +744,13 @@
       "ordinal": 5,
       "pdfPage": 10,
       "printedPage": 11,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 사람의 일정한 빠르기를 각자가 며칠 동안 한 일의 분수로 나타내고, 첫째 사람이 먼저 일한 뒤 둘째 사람이 남은 일을 마치는 데 필요한 날 수를 구하는 구조입니다.",
+      "answerContract": "single-natural-day-count-fixed-pool",
+      "visualRisk": "두 사람이 기준 기간에 한 일과 첫째 사람이 실제로 일한 기간을 구분해야 하며, 먼저 한 일과 남은 일이 하나의 전체로 정확히 이어져야 합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 10쪽의 인쇄 조건을 직접 대조했습니다. 하루에 한 일의 양으로 계산한 결과와 전체를 같은 수의 칸으로 본 결과가 일치하는 고정 문항 3개를 검산했습니다.",
+      "publicSourceItemId": "6-2-u1-e4-mission-5"
     },
     {
       "sourceItemId": "6-2-u1-e4-mission-6",

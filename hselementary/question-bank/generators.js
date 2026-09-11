@@ -26117,6 +26117,56 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Mission5({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-mission-5";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 5 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { firstName: "영명", firstSubject: "영명이는", firstActor: "영명이가", firstDays: 9, firstFraction: [3, 4], firstWorkDays: 4, secondName: "민구", secondSubject: "민구는", secondActor: "민구가", secondDays: 15, secondFraction: [5, 12], expectedDays: 24 },
+        { firstName: "다은", firstSubject: "다은이는", firstActor: "다은이가", firstDays: 10, firstFraction: [2, 3], firstWorkDays: 5, secondName: "서준", secondSubject: "서준이는", secondActor: "서준이가", secondDays: 18, secondFraction: [3, 5], expectedDays: 20 },
+        { firstName: "예린", firstSubject: "예린이는", firstActor: "예린이가", firstDays: 9, firstFraction: [3, 5], firstWorkDays: 3, secondName: "현우", secondSubject: "현우는", secondActor: "현우가", secondDays: 20, secondFraction: [2, 3], expectedDays: 24 }
+      ][poolIndex];
+      const whole = rationalValue(1);
+      const firstFraction = rationalValue(...data.firstFraction);
+      const secondFraction = rationalValue(...data.secondFraction);
+      const firstRate = rationalOperation(firstFraction, rationalValue(data.firstDays), "÷");
+      const secondRate = rationalOperation(secondFraction, rationalValue(data.secondDays), "÷");
+      const firstDone = rationalOperation(firstRate, rationalValue(data.firstWorkDays), "×");
+      const remaining = rationalOperation(whole, firstDone, "-");
+      const answerDays = rationalOperation(remaining, secondRate, "÷");
+      const firstDoneDirect = rationalOperation(firstFraction, rationalValue(data.firstWorkDays, data.firstDays), "×");
+      const remainingDirect = rationalOperation(whole, firstDoneDirect, "-");
+      const secondWholeDays = rationalOperation(rationalValue(data.secondDays), secondFraction, "÷");
+      const answerDaysDirect = rationalOperation(remainingDirect, secondWholeDays, "×");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const wholeUnits = lcmMany([firstRate.denominator, secondRate.denominator, remaining.denominator]);
+      const firstUnitsPerDay = firstRate.numerator * wholeUnits / firstRate.denominator;
+      const secondUnitsPerDay = secondRate.numerator * wholeUnits / secondRate.denominator;
+      const firstDoneUnits = firstDone.numerator * wholeUnits / firstDone.denominator;
+      const remainingUnits = remaining.numerator * wholeUnits / remaining.denominator;
+      const answerCandidates = [answerDays].filter(value => same(firstDone, firstDoneDirect) && same(remaining, remainingDirect) && same(value, answerDaysDirect) && value.denominator === 1 && value.numerator === data.expectedDays && [firstUnitsPerDay, secondUnitsPerDay, firstDoneUnits, remainingUnits].every(Number.isInteger));
+      if ([firstRate, secondRate, firstDone, remaining, answerDays, firstDoneDirect, remainingDirect, secondWholeDays, answerDaysDirect].some(value => !value || value.numerator <= 0) || answerCandidates.length !== 1) throw new Error("6-2 Mission 5의 하루에 한 일·남은 일 또는 필요한 날 수가 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const portion = value => inline(`전체의 ${shown(value)}`);
+      const signature = [data.firstDays, ...data.firstFraction, data.firstWorkDays, data.secondDays, ...data.secondFraction].join(":");
+      const strip = `<div class="source62-work-strip" style="--source62-work-done:${firstDone.numerator / firstDone.denominator * 100}%" role="img" aria-label="${data.firstActor} 한 일은 전체의 ${firstDone.numerator}/${firstDone.denominator}, 남은 일은 전체의 ${remaining.numerator}/${remaining.denominator}"><span>${data.firstActor} 한 일</span><span>남은 일</span></div>`;
+      const workBoard = solved => `<div class="source61-math-board source62-work-rate-board${solved ? " is-solved" : ""}" data-source62-e4-mission5-structure="remaining-work-days" data-source62-e4-mission5-values="${signature}" data-first-rate="${firstRate.numerator}:${firstRate.denominator}" data-second-rate="${secondRate.numerator}:${secondRate.denominator}" data-first-done="${firstDone.numerator}:${firstDone.denominator}" data-remaining="${remaining.numerator}:${remaining.denominator}" data-whole-units="${wholeUnits}" data-answer-days="${answerDays.numerator}"><strong>두 사람이 한 일</strong>${row(`${data.firstActor} ${data.firstDays}일 동안 한 일`, portion(firstFraction))}${row(`${data.secondActor} ${data.secondDays}일 동안 한 일`, portion(secondFraction))}${row(`${data.firstActor} 먼저 일한 날`, `${data.firstWorkDays}일`)}${solved ? row(`${data.firstActor} 먼저 한 일`, portion(firstDone)) + row("남은 일", portion(remaining)) + strip : ""}</div>`;
+      const unitBoard = `<div class="source61-math-board source62-work-rate-solution"><strong>전체를 ${wholeUnits}칸으로 보고 다시 확인하기</strong>${row(`${data.firstName}이의 하루`, `${firstUnitsPerDay}칸`)}${row(`${data.firstName}이가 ${data.firstWorkDays}일 동안 한 일`, `${firstDoneUnits}칸`)}${row("남은 일", `${remainingUnits}칸`)}${row(`${data.secondName}의 하루`, `${secondUnitsPerDay}칸`)}${row(`${data.secondName}가 일할 날`, inline(`${remainingUnits}÷${secondUnitsPerDay}=${answerDays.numerator}<span class="math-unit">일</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">두 사람이 하루에 한 일의 양을 각각 먼저 구하세요.</p>' : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">전체를 ${wholeUnits}칸으로 보았을 때 하루에 몇 칸씩 하는지로 다시 확인하세요.</p>` : "";
+      const evidenceValues = [signature, firstRate.numerator, firstRate.denominator, secondRate.numerator, secondRate.denominator, firstDone.numerator, firstDone.denominator, remaining.numerator, remaining.denominator, wholeUnits, answerDays.numerator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-mission5-kind="remaining-work-days" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-natural-day-count" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`어떤 일을 하는 데 ${data.firstSubject} ${data.firstDays}일 동안 전체의 ${shown(firstFraction)}을 하고, ${data.secondSubject} ${data.secondDays}일 동안 전체의 ${shown(secondFraction)}을 합니다. 이 빠르기로 ${data.firstActor} ${data.firstWorkDays}일 동안 일을 한 후 ${data.secondActor} 나머지 일을 마치려고 합니다. ${data.secondSubject} 며칠 동안 일을 해야 하는지 구하세요.${workBoard(false)}${support}${challenge}${evidence}`, `${answerDays.numerator}일`, `${data.firstSubject} 하루에 전체의 ${shown(firstFraction)}÷${data.firstDays}=${shown(firstRate)}을 하므로 ${data.firstWorkDays}일 동안 ${shown(firstDone)}을 합니다. 남은 일은 1−${shown(firstDone)}=${shown(remaining)}입니다. ${data.secondSubject} 하루에 전체의 ${shown(secondFraction)}÷${data.secondDays}=${shown(secondRate)}을 하므로 ${shown(remaining)}÷${shown(secondRate)}=${answerDays.numerator}일 동안 일해야 합니다. 전체를 ${wholeUnits}칸으로 보아도 남은 ${remainingUnits}칸을 하루 ${secondUnitsPerDay}칸씩 하므로 같은 답이 나옵니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-mission5-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${workBoard(true)}${unitBoard}${evidence}<div class="solution-answer-caption">하루에 한 일의 양과 전체 칸 수로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -28063,6 +28113,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-mission-2", "sourceGrade6SecondFractionDivisionE4Mission2"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-3", "sourceGrade6SecondFractionDivisionE4Mission3"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-4", "sourceGrade6SecondFractionDivisionE4Mission4"],
+    [type => type.sourceItemId === "6-2-u1-e4-mission-5", "sourceGrade6SecondFractionDivisionE4Mission5"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
