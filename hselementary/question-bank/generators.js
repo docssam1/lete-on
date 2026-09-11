@@ -25099,6 +25099,46 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE2Mission4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e2-mission-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { unitTime: [3, 4], dailyWork: [9, 4], month: 6, days: 30 },
+        { unitTime: [2, 3], dailyWork: [8, 3], month: 4, days: 30 },
+        { unitTime: [5, 6], dailyWork: [10, 3], month: 2, days: 28 }
+      ][poolIndex];
+      const unitTime = rationalValue(...data.unitTime);
+      const dailyWork = rationalValue(...data.dailyWork);
+      const perDay = rationalOperation(dailyWork, unitTime, "÷");
+      if (perDay.denominator !== 1 || perDay.numerator <= 0) throw new Error("6-2 Mission 4의 하루 생산량이 자연수가 아닙니다.");
+      const dailyCandidates = Array.from({ length: 20 }, (_, index) => index + 1).filter(count => {
+        const used = rationalOperation(unitTime, rationalValue(count), "×");
+        return used.numerator === dailyWork.numerator && used.denominator === dailyWork.denominator;
+      });
+      if (dailyCandidates.length !== 1 || dailyCandidates[0] !== perDay.numerator) throw new Error("6-2 Mission 4의 하루 생산량이 하나로 정해지지 않습니다.");
+      const total = perDay.numerator * data.days;
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const plain = value => mixedFraction(value.numerator, value.denominator);
+      const signature = [...data.unitTime, ...data.dailyWork, data.month, data.days].join(":");
+      const metric = (label, value, unit) => `<span><small>${label}</small><b>${value}</b><em>${unit}</em></span>`;
+      const board = solved => `<div class="source62-doll-production-board${solved ? " is-solved" : ""}" data-source62-e2-mission4-structure="daily-rate-month-total" data-source62-e2-mission4-expression="${signature}" data-unit-time="${plain(unitTime)}" data-daily-work="${plain(dailyWork)}" data-month-days="${data.days}" data-dolls-per-day="${perDay.numerator}" data-total-dolls="${total}"><strong>인형 제작 일정</strong><div class="source62-doll-production-facts">${metric("인형 1개", shown(unitTime), "시간")}${metric("하루 작업", shown(dailyWork), "시간")}${metric("작업 기간", `${data.month}월`, `${data.days}일`)}</div><div class="source62-doll-production-flow"><span><small>하루에 만드는 수</small><b>${solved ? `${perDay.numerator}개` : "?개"}</b></span><i aria-hidden="true">×</i><span><small>${data.month}월의 날 수</small><b>${data.days}일</b></span><i aria-hidden="true">=</i><span class="is-total"><small>한 달 동안 만든 수</small><b>${solved ? `${total}개` : "?개"}</b></span></div></div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const answerBoard = `<div class="source61-math-board source62-doll-production-solution"><strong>하루 생산량을 먼저 구해 한 달로 넓히기</strong>${row("하루에 만드는 수", `${shown(dailyWork)}÷${shown(unitTime)}=${perDay.numerator}개`)}${row(`${data.month}월의 날 수`, `${data.days}일`)}${row("한 달 생산량", `${perDay.numerator}×${data.days}=${total}개`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">하루 작업 시간에 인형 한 개를 만드는 시간이 몇 번 들어가는지 먼저 구하세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">하루 생산량을 구한 뒤 ${data.month}월의 날 수를 스스로 확인하여 계산하세요.</p>` : "";
+      const values = [...data.unitTime, ...data.dailyWork, data.month, data.days, perDay.numerator, perDay.denominator, total];
+      const evidence = `<span hidden data-source62-fraction-e2-mission4-kind="daily-rate-month-total" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-whole-number" data-candidate-count="${dailyCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `${total}개`;
+      return result(`어떤 기계로 인형 한 개를 만드는 데 ${shown(unitTime)}시간이 걸립니다. 이 기계로 하루에 ${shown(dailyWork)}시간씩 인형을 만든다면 ${data.month}월 한 달 동안 쉬지 않고 만들 수 있는 인형은 모두 몇 개인지 구하세요.${board(false)}${support}${challenge}${evidence}`, answer, `하루에 만드는 인형은 ${shown(dailyWork)}÷${shown(unitTime)}=${perDay.numerator}개입니다. ${data.month}월은 ${data.days}일이므로 한 달 동안 만드는 인형은 ${perDay.numerator}×${data.days}=${total}개입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e2-mission4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 제작 시간과 달력 자료로 하루와 한 달 생산량을 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27023,6 +27063,7 @@
     [type => type.sourceItemId === "6-2-u1-e2-mission-1", "sourceGrade6SecondFractionDivisionE2Mission1"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-2", "sourceGrade6SecondFractionDivisionE2Mission2"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-3", "sourceGrade6SecondFractionDivisionE2Mission3"],
+    [type => type.sourceItemId === "6-2-u1-e2-mission-4", "sourceGrade6SecondFractionDivisionE2Mission4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
