@@ -25582,6 +25582,47 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Mission5({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-mission-5";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 개념탐구 3 Mission 5 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { whole: 12, denominator: 4, expectedCount: 10 },
+        { whole: 18, denominator: 5, expectedCount: 12 },
+        { whole: 20, denominator: 6, expectedCount: 16 }
+      ][poolIndex];
+      const product = data.whole * data.denominator;
+      const pairs = Array.from({ length: product }, (_, index) => index + 1)
+        .filter(second => product % second === 0)
+        .map(second => [product / second, second]);
+      const reversePairs = Array.from({ length: product }, (_, index) => index + 1)
+        .filter(first => product % first === 0)
+        .map(first => [first, product / first])
+        .sort((left, right) => left[1] - right[1]);
+      const pairSignature = pairs.map(pair => pair.join(":")).join("|");
+      const reverseSignature = reversePairs.map(pair => pair.join(":")).join("|");
+      const answerCandidates = [pairs.length].filter(count => count === data.expectedCount && pairSignature === reverseSignature);
+      if (answerCandidates.length !== 1 || pairs.length !== data.expectedCount || pairs.some(([first, second]) => first * second !== product)) throw new Error("6-2 Mission 5의 자연수 순서쌍 개수가 전수 검산값 하나로 정해지지 않습니다.");
+      const fractionTerm = symbolicFractionMarkup("㉡", data.denominator);
+      const equation = `${data.whole}÷${fractionTerm}=㉠`;
+      const expressionSignature = `${data.whole}:${data.denominator}`;
+      const board = solved => `<div class="source62-natural-pair-board${solved ? " is-solved" : ""}" data-source62-e3-mission5-structure="natural-pair-count-from-fraction-division" data-source62-e3-mission5-expression="${expressionSignature}" data-product="${product}" data-pair-count="${pairs.length}" data-pairs="${pairSignature}"><strong>분수의 나눗셈을 만족하는 자연수 순서쌍</strong><div class="source62-natural-pair-equation">${equation}</div><div class="source62-natural-pair-conditions"><span>㉠과 ㉡은 자연수</span><span>순서쌍은 (㉠, ㉡) 순서</span></div>${solved ? `<div class="source62-natural-pair-list">${pairs.map(([first, second]) => `<span data-first="${first}" data-second="${second}">(㉠, ㉡)=(${first}, ${second})</span>`).join("")}</div><b class="source62-natural-pair-total">모두 ${pairs.length}개</b>` : `<p>조건을 만족하는 순서쌍의 개수를 구하세요.</p>`}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const secondValues = pairs.map(pair => pair[1]);
+      const answerBoard = `<div class="source61-math-board source62-natural-pair-solution"><strong>곱이 ${product}이 되는 두 자연수 찾기</strong>${row("식을 바꾸기", `㉠×㉡=${product}`)}${row("가능한 ㉡", secondValues.join(", "))}${row("순서쌍의 개수", `${pairs.length}개`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">식을 ㉠×㉡=${product}로 바꾸고, ${product}의 약수를 작은 수부터 찾아보세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">한쪽 수가 작아지는 순서까지 확인하며 자연수 순서쌍을 빠짐없이 찾으세요.</p>` : "";
+      const evidence = `<span hidden data-source62-fraction-e3-mission5-kind="natural-pair-count-from-fraction-division" data-source-item="${sourceItemId}" data-values="${data.whole},${data.denominator},${product},${pairs.length}" data-pairs="${pairSignature}" data-result-contract="single-count" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `${pairs.length}개`;
+      return result(`㉠과 ㉡이 자연수일 때, ${equation}을 만족하는 자연수의 순서쌍 (㉠, ㉡)은 모두 몇 개인지 구하세요.${board(false)}${support}${challenge}${evidence}`, answer, `${equation}을 ㉠×㉡=${product}로 바꿀 수 있습니다. ㉡이 ${secondValues.join(", ")}일 때 ㉠도 자연수가 되므로 순서쌍은 모두 ${pairs.length}개입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-mission5-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">곱이 ${product}이 되는 자연수 순서쌍을 모두 적어 빠짐없이 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27517,6 +27558,7 @@
     [type => type.sourceItemId === "6-2-u1-e3-mission-2", "sourceGrade6SecondFractionDivisionE3Mission2"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-3", "sourceGrade6SecondFractionDivisionE3Mission3"],
     [type => type.sourceItemId === "6-2-u1-e3-mission-4", "sourceGrade6SecondFractionDivisionE3Mission4"],
+    [type => type.sourceItemId === "6-2-u1-e3-mission-5", "sourceGrade6SecondFractionDivisionE3Mission5"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
