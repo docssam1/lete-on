@@ -25260,6 +25260,41 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE3Example1({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e3-example-1";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 3-1 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { whole: 6, denominator: 16 },
+        { whole: 5, denominator: 18 },
+        { whole: 8, denominator: 15 }
+      ][poolIndex];
+      const product = data.whole * data.denominator;
+      const pairs = Array.from({ length: data.denominator - 1 }, (_, index) => index + 1)
+        .filter(square => product % square === 0 && square !== product / square)
+        .map(square => [square, product / square]);
+      const answerCandidates = Array.from({ length: data.denominator + 1 }, (_, index) => index).filter(count => count === pairs.length);
+      if (answerCandidates.length !== 1 || !pairs.length) throw new Error("6-2 예제 3-1의 순서쌍 개수가 하나로 정해지지 않습니다.");
+      const fractionTerm = symbolicFractionMarkup("■", data.denominator);
+      const equation = `${data.whole}÷${fractionTerm}=▲`;
+      const pairSignature = pairs.map(pair => pair.join(":")).join("|");
+      const board = solved => `<div class="source62-natural-pair-board${solved ? " is-solved" : ""}" data-source62-e3-example1-structure="proper-fraction-natural-pair-count" data-source62-e3-example1-expression="${data.whole}:${data.denominator}" data-product="${product}" data-pair-count="${pairs.length}" data-pairs="${pairSignature}"><strong>조건을 만족하는 두 자연수</strong><div class="source62-natural-pair-equation">${equation}</div><div class="source62-natural-pair-conditions"><span>${fractionTerm}은 진분수</span><span>■와 ▲는 서로 다른 자연수</span></div>${solved ? `<div class="source62-natural-pair-list">${pairs.map(([square, triangle]) => `<span data-square="${square}" data-triangle="${triangle}">(■, ▲)=(${square}, ${triangle})</span>`).join("")}</div><b class="source62-natural-pair-total">모두 ${pairs.length}쌍</b>` : `<p>조건을 만족하는 (■, ▲)의 개수를 구하세요.</p>`}</div>`;
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const squareValues = pairs.map(pair => pair[0]);
+      const answerBoard = `<div class="source61-math-board source62-natural-pair-solution"><strong>■의 범위 안에서 빠짐없이 확인하기</strong>${row("식을 바꾸기", `▲=${product}÷■`)}${row("가능한 ■", squareValues.join(", "))}${row("가능한 순서쌍", `${pairs.length}쌍`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">▲=${product}÷■이므로, ${product}을 나누어떨어지게 하는 ■을 ${data.denominator}보다 작은 수에서 찾아보세요.</p>` : "";
+      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">진분수 조건과 서로 다른 수 조건을 모두 확인하여 가능한 순서쌍을 빠짐없이 찾으세요.</p>` : "";
+      const evidence = `<span hidden data-source62-fraction-e3-example1-kind="proper-fraction-natural-pair-count" data-source-item="${sourceItemId}" data-values="${data.whole},${data.denominator},${product},${pairs.length}" data-pairs="${pairSignature}" data-result-contract="single-whole-number" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `${pairs.length}쌍`;
+      return result(`■와 ▲가 서로 다른 자연수일 때, ${equation}이 성립하도록 하는 (■, ▲)는 모두 몇 쌍인지 구하세요. (단, ${fractionTerm}은 진분수입니다.)${board(false)}${support}${challenge}${evidence}`, answer, `▲=${data.whole}×${data.denominator}÷■=${product}÷■입니다. ${fractionTerm}이 진분수이므로 ■은 1부터 ${data.denominator - 1}까지입니다. 이 범위에서 ${product}을 나누어떨어지게 하고 ▲와 서로 다른 ■은 ${squareValues.join(", ")}이므로 모두 ${pairs.length}쌍입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e3-example1-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}${answerBoard}${evidence}<div class="solution-answer-caption">가능한 순서쌍을 모두 적어 빠짐없이 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27187,6 +27222,7 @@
     [type => type.sourceItemId === "6-2-u1-e2-mission-4", "sourceGrade6SecondFractionDivisionE2Mission4"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-5", "sourceGrade6SecondFractionDivisionE2Mission5"],
     [type => type.sourceItemId === "6-2-u1-e2-mission-6", "sourceGrade6SecondFractionDivisionE2Mission6"],
+    [type => type.sourceItemId === "6-2-u1-e3-example-1", "sourceGrade6SecondFractionDivisionE3Example1"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

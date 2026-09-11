@@ -71,7 +71,7 @@ function independentSolution(values) {
 check(Boolean(type) && type.generatorKey === generatorKey && !type.reviewLocked, "Mission 4 공개 원장이 전용 생성기에 연결되지 않았습니다.");
 check(type?.typeLabel === "한 개 만드는 시간으로 한 달 동안 만든 수 구하기", "Mission 4 유형명이 원문 질문을 쉬운 말로 나타내지 않습니다.");
 check(api.names.includes(generatorKey), "Mission 4 전용 생성기가 등록되지 않았습니다.");
-check(readiness.integrity.publicCandidateCount === 21 && readiness.integrity.lockedCount === 45, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
+check(readiness.integrity.publicCandidateCount === 22 && readiness.integrity.lockedCount === 44, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
 check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.[0] === "90개" && readinessItem?.calculationStatus === "checked-exhaustive" && readinessItem?.candidateAnswerCount === 1, "Mission 4 검토표의 원본 답·단일 답 상태가 완결되지 않았습니다.");
 check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-whole-number-fixed-pool" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "Mission 4 원자료 장부의 원본 확인·단일 답·공개 연결이 완결되지 않았습니다.");
 

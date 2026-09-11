@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 633,
     "answerVisualRequired": 633,
-    "unlocked": 260
+    "unlocked": 261
   },
   "items": [
     {
@@ -7946,17 +7946,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "typeLabel": "분수 나눗셈 조건을 만족하는 자연수 쌍 세기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondFractionDivisionE3Example1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "인쇄 원문의 진분수 조건, 서로 다른 두 자연수 조건과 식을 직접 대조했습니다. 분모보다 작은 자연수를 전수 대입해 가능한 순서쌍을 모두 찾고 답 하나만 남는 고정 문항 3개를 확인했습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0
     },
     {
       "semester": "6-2",

@@ -440,12 +440,13 @@
       "ordinal": 1,
       "pdfPage": 7,
       "printedPage": 8,
-      "sourceShape": "여러 분수 나눗셈과 조건을 비교하여 알맞은 값 또는 식을 정하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "서로 다른 자연수 ■, ▲에 대해 6÷(■/16)=▲이고 ■/16이 진분수일 때 가능한 (■, ▲)의 개수를 구하는 구조.",
+      "answerContract": "single-whole-number-fixed-pool",
+      "visualRisk": "분수의 가로선과 ■가 겹치지 않아야 하고, 진분수 조건과 서로 다른 자연수 조건이 문제에 모두 보여야 합니다. 답에는 가능한 순서쌍을 빠짐없이 표시해야 합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 7쪽의 인쇄 식과 진분수·서로 다른 자연수 조건을 직접 대조했습니다. ■=1~15를 전수 대입해 가능한 일곱 순서쌍과 답 7쌍을 확인했습니다.",
+      "publicSourceItemId": "6-2-u1-e3-example-1"
     },
     {
       "sourceItemId": "6-2-u1-e3-example-2",
