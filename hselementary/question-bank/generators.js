@@ -26063,6 +26063,60 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Mission4({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-mission-4";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 4 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { firstFraction: [9, 10], firstTime: [9, 5], secondFraction: [2, 3], secondTime: [12, 5], expectedMinutes: 96 },
+        { firstFraction: [3, 4], firstTime: [3, 2], secondFraction: [5, 8], secondTime: [5, 2], expectedMinutes: 120 },
+        { firstFraction: [7, 8], firstTime: [7, 3], secondFraction: [5, 6], secondTime: [10, 3], expectedMinutes: 80 }
+      ][poolIndex];
+      const firstFraction = rationalValue(...data.firstFraction);
+      const firstTime = rationalValue(...data.firstTime);
+      const secondFraction = rationalValue(...data.secondFraction);
+      const secondTime = rationalValue(...data.secondTime);
+      const whole = rationalValue(1, 1);
+      const firstPerHour = rationalOperation(firstFraction, firstTime, "÷");
+      const secondPerHour = rationalOperation(secondFraction, secondTime, "÷");
+      const firstTotalTime = rationalOperation(whole, firstPerHour, "÷");
+      const secondTotalTime = rationalOperation(whole, secondPerHour, "÷");
+      const firstDirectTime = rationalOperation(firstTime, firstFraction, "÷");
+      const secondDirectTime = rationalOperation(secondTime, secondFraction, "÷");
+      const timeDifference = rationalOperation(secondTotalTime, firstTotalTime, "-");
+      const directDifference = rationalOperation(secondDirectTime, firstDirectTime, "-");
+      const differenceMinutes = rationalOperation(timeDifference, rationalValue(60, 1), "×");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const answerCandidates = [timeDifference].filter(value => same(firstTotalTime, firstDirectTime) && same(secondTotalTime, secondDirectTime) && same(value, directDifference) && differenceMinutes?.denominator === 1 && differenceMinutes.numerator === data.expectedMinutes);
+      const firstIsFaster = firstTotalTime.numerator * secondTotalTime.denominator < secondTotalTime.numerator * firstTotalTime.denominator;
+      if ([firstFraction, firstTime, secondFraction, secondTime, firstPerHour, secondPerHour, firstTotalTime, secondTotalTime, firstDirectTime, secondDirectTime, timeDifference, directDifference, differenceMinutes].some(value => !value || value.numerator <= 0) || !firstIsFaster || answerCandidates.length !== 1) throw new Error("6-2 Mission 4의 산 높이 비·시간 또는 두 독립 계산의 시간 차가 하나로 정해지지 않습니다.");
+      const duration = minutes => {
+        const hours = Math.floor(minutes / 60);
+        const rest = minutes % 60;
+        return `${hours ? `${hours}시간` : ""}${hours && rest ? " " : ""}${rest ? `${rest}분` : ""}`;
+      };
+      const answerDuration = duration(differenceMinutes.numerator);
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const portion = value => inline(`산 전체의 ${shown(value)}`);
+      const measure = (value, unit) => inline(`${shown(value)}<span class="math-unit">${unit}</span>`);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [firstFraction, firstTime, secondFraction, secondTime].flatMap(value => [value.numerator, value.denominator]).join(":");
+      const climbBoard = solved => `<div class="source61-math-board source62-climb-time-board${solved ? " is-solved" : ""}" data-source62-e4-mission4-structure="mountain-climb-time-difference" data-source62-e4-mission4-values="${signature}" data-first-per-hour="${firstPerHour.numerator}:${firstPerHour.denominator}" data-second-per-hour="${secondPerHour.numerator}:${secondPerHour.denominator}" data-first-total="${firstTotalTime.numerator}:${firstTotalTime.denominator}" data-second-total="${secondTotalTime.numerator}:${secondTotalTime.denominator}" data-answer-minutes="${differenceMinutes.numerator}"><strong>같은 산을 오르는 형과 동생</strong>${row("형이 오른 높이", portion(firstFraction))}${row("형이 걸린 시간", measure(firstTime, "시간"))}${row("동생이 오른 높이", portion(secondFraction))}${row("동생이 걸린 시간", measure(secondTime, "시간"))}${solved ? row("형이 정상까지 걸린 시간", measure(firstTotalTime, "시간")) + row("동생이 정상까지 걸린 시간", measure(secondTotalTime, "시간")) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-climb-time-solution"><strong>1시간에 오르는 높이와 전체 높이의 배수로 두 번 확인하기</strong>${row("형이 1시간에 오른 높이", inline(`${shown(firstFraction)}÷${shown(firstTime)}=${shown(firstPerHour)}`))}${row("동생이 1시간에 오른 높이", inline(`${shown(secondFraction)}÷${shown(secondTime)}=${shown(secondPerHour)}`))}${row("형이 정상까지 걸린 시간", inline(`1÷${shown(firstPerHour)}=${shown(firstTotalTime)}<span class="math-unit">시간</span>`))}${row("동생이 정상까지 걸린 시간", inline(`1÷${shown(secondPerHour)}=${shown(secondTotalTime)}<span class="math-unit">시간</span>`))}${row("두 시간의 차", inline(`${shown(secondTotalTime)}−${shown(firstTotalTime)}=${shown(timeDifference)}<span class="math-unit">시간</span>`))}${row("시간과 분으로 나타내기", inline(`${shown(timeDifference)}<span class="math-unit">시간</span> = ${answerDuration}`))}${row("형의 다른 방법", inline(`${shown(firstTime)}÷${shown(firstFraction)}=${shown(firstDirectTime)}<span class="math-unit">시간</span>`))}${row("동생의 다른 방법", inline(`${shown(secondTime)}÷${shown(secondFraction)}=${shown(secondDirectTime)}<span class="math-unit">시간</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 형과 동생이 각각 1시간에 산 전체 높이의 얼마만큼을 오르는지 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">각 사람이 산 전체 높이를 오르는 데 걸리는 시간을 주어진 시간÷오른 높이의 비로 다시 확인하세요.</p>' : "";
+      const evidenceValues = [signature, firstPerHour.numerator, firstPerHour.denominator, secondPerHour.numerator, secondPerHour.denominator, firstTotalTime.numerator, firstTotalTime.denominator, secondTotalTime.numerator, secondTotalTime.denominator, timeDifference.numerator, timeDifference.denominator, differenceMinutes.numerator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-mission4-kind="mountain-climb-time-difference" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-duration-difference" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`형과 동생이 산을 오르고 있습니다. 형이 산 전체 높이의 ${shown(firstFraction)}를 오르는 데 ${measure(firstTime, "시간")}이 걸렸고, 동생이 산 전체 높이의 ${shown(secondFraction)}를 오르는 데 ${measure(secondTime, "시간")}이 걸렸습니다. 이와 같은 빠르기로 두 사람이 동시에 산을 오르기 시작하여 정상에 오를 때까지 걸리는 시간의 차를 구하세요.${climbBoard(false)}${support}${challenge}${evidence}`, answerDuration, `형이 1시간에 오르는 높이는 산 전체의 ${shown(firstFraction)}÷${shown(firstTime)}=${shown(firstPerHour)}, 동생은 ${shown(secondFraction)}÷${shown(secondTime)}=${shown(secondPerHour)}입니다. 따라서 정상까지 형은 1÷${shown(firstPerHour)}=${measure(firstTotalTime, "시간")}, 동생은 1÷${shown(secondPerHour)}=${measure(secondTotalTime, "시간")}이 걸립니다. 두 시간의 차는 ${shown(secondTotalTime)}−${shown(firstTotalTime)}=${measure(timeDifference, "시간")}, 즉 ${answerDuration}입니다. 주어진 시간을 오른 높이의 비로 나누어도 두 사람의 전체 시간이 각각 같게 나옵니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-mission4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${climbBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">1시간에 오르는 높이와 전체 높이의 배수로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -28008,6 +28062,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-mission-1", "sourceGrade6SecondFractionDivisionE4Mission1"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-2", "sourceGrade6SecondFractionDivisionE4Mission2"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-3", "sourceGrade6SecondFractionDivisionE4Mission3"],
+    [type => type.sourceItemId === "6-2-u1-e4-mission-4", "sourceGrade6SecondFractionDivisionE4Mission4"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
