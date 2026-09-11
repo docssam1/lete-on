@@ -75,7 +75,7 @@ async function installConceptVideoFixture(page) {
   await installOfflineConfig(page);
   await page.route("**/hyper-focus/challenge/access-service.js*", route => route.fulfill({
     contentType: "application/javascript; charset=utf-8",
-    body: `window.HFChallengeAccess={allow:key=>key==="challenge-concept-1",approvedStudentName:()=>"영상검수",isTeacherPreview:()=>false,refresh:async()=>({verified:true})};`
+    body: `window.HFChallengeAccess={allow:key=>["challenge-concept-1","challenge-concept-2"].includes(key),approvedStudentName:()=>"영상검수",isTeacherPreview:()=>false,refresh:async()=>({verified:true})};`
   }));
   await page.route("**/hyper-focus/challenge/document-access.js*", route => route.fulfill({
     contentType: "application/javascript; charset=utf-8",
@@ -224,8 +224,13 @@ async function noOverflow(page, label) {
     await noOverflow(conceptVideo, "desktop concept video");
     await conceptVideo.screenshot({ path: "tmp/hf-concept-1-video-desktop.png", fullPage: true });
     await conceptVideo.locator("#round").selectOption("2");
-    assert.equal(await conceptVideo.locator("#conceptVideoPanel").isHidden(), true);
-    assert.equal(await conceptVideo.locator("#conceptVideoFrame").getAttribute("src"), null);
+    assert.equal(await conceptVideo.locator("#conceptVideoPanel").isVisible(), true);
+    assert.match(await conceptVideo.locator("#conceptVideoFrame").getAttribute("src"), /youtube-nocookie\.com\/embed\/E8I6OpqlBJs/);
+    assert.equal(await conceptVideo.locator("#conceptVideoFrame").getAttribute("title"), "챌린지 대비 개념 2회 학습 영상");
+    assert.equal(await conceptVideo.locator("#conceptVideoLink").getAttribute("href"), "https://youtu.be/E8I6OpqlBJs");
+    assert.equal(await conceptVideo.locator("#conceptVideoWatermark span").count(), 3);
+    await noOverflow(conceptVideo, "desktop concept 2 video");
+    await conceptVideo.screenshot({ path: "tmp/hf-concept-2-video-desktop.png", fullPage: true });
     await conceptVideo.close();
 
     const vipAdmin = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
@@ -286,10 +291,12 @@ async function noOverflow(page, label) {
     const conceptVideoMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     await installConceptVideoFixture(conceptVideoMobile);
     conceptVideoMobile.on("pageerror", error => errors.push(`concept video mobile: ${error.message}`));
-    await conceptVideoMobile.goto(`${base}/hyper-focus/challenge/concepts.html?round=1`, { waitUntil: "networkidle" });
+    await conceptVideoMobile.goto(`${base}/hyper-focus/challenge/concepts.html?round=2`, { waitUntil: "networkidle" });
     assert.equal(await conceptVideoMobile.locator("#conceptVideoPanel").isVisible(), true);
-    await noOverflow(conceptVideoMobile, "mobile concept video");
-    await conceptVideoMobile.screenshot({ path: "tmp/hf-concept-1-video-mobile.png", fullPage: true });
+    assert.match(await conceptVideoMobile.locator("#conceptVideoFrame").getAttribute("src"), /youtube-nocookie\.com\/embed\/E8I6OpqlBJs/);
+    assert.equal(await conceptVideoMobile.locator("#conceptVideoLink").getAttribute("href"), "https://youtu.be/E8I6OpqlBJs");
+    await noOverflow(conceptVideoMobile, "mobile concept 2 video");
+    await conceptVideoMobile.screenshot({ path: "tmp/hf-concept-2-video-mobile.png", fullPage: true });
     await conceptVideoMobile.close();
 
     assert.deepEqual(errors, []);
@@ -305,7 +312,7 @@ async function noOverflow(page, label) {
       adminCredentialLogin: adminCode ? true : "not_requested",
       adminProductPermissions: 5,
       adminCurrentApprovalCode: true,
-      conceptOneVideoViewer: true,
+      conceptVideoViewers: [1, 2],
       vipAdminDesktop: true,
       vipAdminMobile: true,
       desktopOverflow: 0,
