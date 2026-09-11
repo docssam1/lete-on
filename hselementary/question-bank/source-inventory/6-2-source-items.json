@@ -824,12 +824,13 @@
       "ordinal": 3,
       "pdfPage": 11,
       "printedPage": 12,
-      "sourceShape": "분수 관계를 식으로 세워 모르는 양을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "분수의 분자·분모와 나눗셈 기호가 겹치지 않아야 하며, 그림의 전체와 부분 관계가 한 가지로 읽혀야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "가, 나, 다, 라, 마가 차례로 놓인 수직선에서 나다와 다라를 가나의 분수배로 나타내고, 가라와 다마의 거리로 가마를 구하는 구조.",
+      "answerContract": "single-natural-meter",
+      "visualRisk": "다섯 점의 순서와 간격은 계산한 실제 구간 길이의 비로 정해야 합니다. 문제 그림에는 답 구간 길이를 표시하지 않고 답 그림에만 네 구간과 전체 거리를 표시합니다.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "PDF 11쪽 인쇄 12쪽 예제 5-3의 조건과 수직선을 직접 대조했습니다. 손글씨 답은 근거로 쓰지 않고 두 가지 계산과 자연수 거리 전수 확인으로 원문 답 36m 및 고정 문항 3개의 단일 답을 검산했습니다.",
+      "publicSourceItemId": "6-2-u1-e5-example-3"
     },
     {
       "sourceItemId": "6-2-u1-e5-example-4",

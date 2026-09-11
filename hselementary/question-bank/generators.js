@@ -26340,6 +26340,69 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE5Example3({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e5-example-3";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 5-3 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { naDaRatio: [7, 3], daRaRatio: [4, 3], gaRa: 28, daMa: 16, expectedSegments: [6, 14, 8, 8] },
+        { naDaRatio: [7, 4], daRaRatio: [3, 2], gaRa: 34, daMa: 22, expectedSegments: [8, 14, 12, 10] },
+        { naDaRatio: [12, 5], daRaRatio: [8, 5], gaRa: 50, daMa: 25, expectedSegments: [10, 24, 16, 9] }
+      ][poolIndex];
+      const naDaRatio = rationalValue(...data.naDaRatio);
+      const daRaRatio = rationalValue(...data.daRaRatio);
+      const totalFactor = rationalOperation(rationalOperation(rationalValue(1), naDaRatio, "+"), daRaRatio, "+");
+      const gaNa = rationalOperation(rationalValue(data.gaRa), totalFactor, "÷");
+      const naDa = rationalOperation(gaNa, naDaRatio, "×");
+      const daRa = rationalOperation(gaNa, daRaRatio, "×");
+      const raMa = rationalOperation(rationalValue(data.daMa), daRa, "-");
+      const gaDa = rationalOperation(gaNa, naDa, "+");
+      const gaMaFromDa = rationalOperation(gaDa, rationalValue(data.daMa), "+");
+      const gaMaFromRa = rationalOperation(rationalValue(data.gaRa), raMa, "+");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const candidateScale = lcm(naDaRatio.denominator, daRaRatio.denominator);
+      const gaNaCandidates = Array.from({ length: data.gaRa * candidateScale - 1 }, (_, index) => rationalValue(index + 1, candidateScale)).filter(candidate => same(rationalOperation(candidate, totalFactor, "×"), rationalValue(data.gaRa)));
+      const segments = [gaNa, naDa, daRa, raMa];
+      const expectedSegments = data.expectedSegments.map(value => rationalValue(value));
+      const positions = [rationalValue(0), gaNa, gaDa, rationalValue(data.gaRa), gaMaFromDa];
+      if ([naDaRatio, daRaRatio, totalFactor, gaNa, naDa, daRa, raMa, gaDa, gaMaFromDa, gaMaFromRa].some(value => !value || value.numerator < 0) || !same(gaMaFromDa, gaMaFromRa) || !segments.every((value, index) => value.denominator === 1 && value.numerator > 0 && same(value, expectedSegments[index])) || positions.some((value, index) => index > 0 && value.numerator / value.denominator <= positions[index - 1].numerator / positions[index - 1].denominator) || gaNaCandidates.length !== 1 || !same(gaNaCandidates[0], gaNa)) throw new Error("6-2 예제 5-3의 점 순서, 구간 길이 또는 가마 거리가 하나로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const ratioScale = lcm(naDaRatio.denominator, daRaRatio.denominator);
+      const ratioPartsRaw = [ratioScale, naDaRatio.numerator * ratioScale / naDaRatio.denominator, daRaRatio.numerator * ratioScale / daRaRatio.denominator];
+      const ratioDivisor = gcdMany(ratioPartsRaw);
+      const ratioParts = ratioPartsRaw.map(value => value / ratioDivisor);
+      const partTotal = ratioParts.reduce((sum, value) => sum + value, 0);
+      const onePart = rationalValue(data.gaRa, partTotal);
+      const signature = [...data.naDaRatio, ...data.daRaRatio, data.gaRa, data.daMa].join(":");
+      const segmentSignature = segments.map(value => value.numerator).join(":");
+      const positionSignature = positions.map(value => value.numerator).join(":");
+      const pointLine = solved => {
+        const left = 54, right = 586, axisY = 92, totalDistance = gaMaFromDa.numerator;
+        const x = value => left + value.numerator / value.denominator / totalDistance * (right - left);
+        const segmentLines = segments.map((length, index) => `<line class="source62-distance-segment" data-segment-index="${index}" data-segment-length="${length.numerator}" x1="${x(positions[index]).toFixed(2)}" y1="${axisY}" x2="${x(positions[index + 1]).toFixed(2)}" y2="${axisY}"/>`).join("");
+        const labels = ["가", "나", "다", "라", "마"];
+        const ticks = positions.map((position, index) => `<g class="source62-distance-point" data-point-index="${index}" data-point-label="${labels[index]}" data-point-distance="${position.numerator}" transform="translate(${x(position).toFixed(2)} 0)"><line x1="0" y1="74" x2="0" y2="110"/><circle cx="0" cy="${axisY}" r="4"/><text x="0" y="137">${labels[index]}</text></g>`).join("");
+        const measurements = solved ? segments.map((length, index) => `<text class="source62-distance-measure" data-measure-segment="${index}" x="${((x(positions[index]) + x(positions[index + 1])) / 2).toFixed(2)}" y="58">${length.numerator}m</text>`).join("") : "";
+        const total = solved ? `<path class="source62-distance-total" d="M${left} 164v10h${right - left}v-10"/><text class="source62-distance-answer" x="320" y="201">가마 = ${gaMaFromDa.numerator}m</text>` : "";
+        return `<svg class="geometry-diagram source62-distance-line${solved ? " is-solved" : ""}" viewBox="0 0 640 220" role="img" aria-label="${solved ? `가에서 마까지 ${gaMaFromDa.numerator}미터인` : "가부터 마까지 다섯 점이 차례로 놓인"} 수직선" data-source62-e5-example3-structure="five-point-segment-distance" data-source62-e5-example3-values="${signature}" data-point-order="가,나,다,라,마" data-segment-lengths="${segmentSignature}" data-point-positions="${positionSignature}" data-answer-distance="${gaMaFromDa.numerator}" data-candidate-count="${gaNaCandidates.length}">${segmentLines}${ticks}${measurements}${total}</svg>`;
+      };
+      const relationBoard = `<div class="source61-math-board source62-distance-relations" data-source62-e5-example3-values="${signature}"><strong>점 사이의 거리 관계</strong>${row("나와 다 사이", `가와 나 사이의 ${shown(naDaRatio)}배`)}${row("다와 라 사이", `가와 나 사이의 ${shown(daRaRatio)}배`)}${row("가와 라 사이", `${data.gaRa}m`)}${row("다와 마 사이", `${data.daMa}m`)}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-distance-solution"><strong>거리의 비로 두 번 확인하기</strong>${row("가나 : 나다 : 다라", ratioParts.join(" : "))}${row("비의 합", `${ratioParts.join("+")}=${partTotal}`)}${row("한 부분의 길이", `${data.gaRa}÷${partTotal}=${shown(onePart)}m`)}${row("가나, 나다, 다라", `${segments.slice(0, 3).map(value => `${value.numerator}m`).join(", ")}`)}${row("가다", `${gaNa.numerator}+${naDa.numerator}=${gaDa.numerator}m`)}${row("가마", `${gaDa.numerator}+${data.daMa}=${gaMaFromDa.numerator}m`)}${row("다른 방법", `${data.gaRa}+(${data.daMa}-${daRa.numerator})=${gaMaFromRa.numerator}m`)}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? `<p class="question-step" data-step-evidence="guided">가나, 나다, 다라의 길이의 비를 ${ratioParts.join(":")}로 나타내고 가라의 길이를 같은 부분으로 나누어 보세요.</p>` : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">가다에 다마를 더하는 방법과 가라에 라마를 더하는 방법으로 답을 각각 확인하세요.</p>' : "";
+      const values = [...data.naDaRatio, ...data.daRaRatio, data.gaRa, data.daMa, ...segments.map(value => value.numerator), ...positions.map(value => value.numerator), gaMaFromDa.numerator];
+      const evidence = `<span hidden data-source62-fraction-e5-example3-kind="five-point-segment-distance" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-result-contract="single-natural-meter" data-candidate-count="${gaNaCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      const answer = `${gaMaFromDa.numerator}m`;
+      return result(`다음 그림에서 나와 다 사이의 거리는 가와 나 사이의 거리의 ${shown(naDaRatio)}배이고, 다와 라 사이의 거리는 가와 나 사이의 거리의 ${shown(daRaRatio)}배입니다. 가와 라 사이의 거리는 ${data.gaRa}m이고 다와 마 사이의 거리는 ${data.daMa}m일 때, 가와 마 사이의 거리는 몇 m인지 구하세요.${pointLine(false)}${relationBoard}${support}${challenge}${evidence}`, answer, `가나, 나다, 다라의 길이의 비는 ${ratioParts.join(":")}입니다. 가라 ${data.gaRa}m가 ${partTotal}부분이므로 한 부분은 ${shown(onePart)}m이고, 가나=${gaNa.numerator}m, 나다=${naDa.numerator}m, 다라=${daRa.numerator}m입니다. 가다=${gaDa.numerator}m이므로 가마=${gaDa.numerator}+${data.daMa}=${gaMaFromDa.numerator}m입니다. 또 라마=${data.daMa}-${daRa.numerator}=${raMa.numerator}m이므로 가라+라마=${data.gaRa}+${raMa.numerator}=${gaMaFromRa.numerator}m로 같은 답입니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e5-example3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${pointLine(true)}${answerBoard}${evidence}<div class="solution-answer-caption">같은 점·선분 자료로 네 구간과 전체 거리를 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -28291,6 +28354,7 @@
     [type => type.sourceItemId === "6-2-u1-e5-exploration", "sourceGrade6SecondFractionDivisionE5Exploration"],
     [type => type.sourceItemId === "6-2-u1-e5-example-1", "sourceGrade6SecondFractionDivisionE5Example1"],
     [type => type.sourceItemId === "6-2-u1-e5-example-2", "sourceGrade6SecondFractionDivisionE5Example2"],
+    [type => type.sourceItemId === "6-2-u1-e5-example-3", "sourceGrade6SecondFractionDivisionE5Example3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],

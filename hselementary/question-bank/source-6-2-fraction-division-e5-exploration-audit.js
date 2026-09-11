@@ -84,7 +84,7 @@ function independentlyCalculate(values) {
 check(Boolean(type) && type.generatorKey === generatorKey && !type.reviewLocked, "개념탐구 5 공개 원장이 전용 생성기에 연결되지 않았습니다.");
 check(type?.typeLabel === "분수만큼 잠긴 막대의 길이로 물 높이 구하기", "개념탐구 5 유형명이 원문 질문을 쉬운 말로 나타내지 않습니다.");
 check(api.names.includes(generatorKey), "개념탐구 5 전용 생성기가 등록되지 않았습니다.");
-check(readiness.integrity.publicCandidateCount === 45 && readiness.integrity.lockedCount === 21 && readiness.integrity.publicCandidateCount === readiness.items.filter(item => item.publicDecision === "public").length && readiness.integrity.lockedCount === readiness.items.filter(item => item.publicDecision === "locked").length, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
+check(readiness.integrity.publicCandidateCount === 46 && readiness.integrity.lockedCount === 20 && readiness.integrity.publicCandidateCount === readiness.items.filter(item => item.publicDecision === "public").length && readiness.integrity.lockedCount === readiness.items.filter(item => item.publicDecision === "locked").length, "6-2 1단원 검토표의 공개·잠금 요약이 다릅니다.");
 check(readinessItem?.implementationStatus === "fixed-verified-pool" && readinessItem?.publicDecision === "public" && readinessItem?.releaseStatus === "verified" && readinessItem?.answerCandidates?.[0] === "15cm" && readinessItem?.calculationStatus === "checked-independent" && readinessItem?.candidateAnswerCount === 1, "개념탐구 5 검토표의 원본 답·단일 답 상태가 완결되지 않았습니다.");
 check(sourceLedgerItem?.sourceVerified === true && sourceLedgerItem?.implementationStatus === "fixed-verified-pool" && sourceLedgerItem?.answerContract === "single-natural-centimeter" && sourceLedgerItem?.publicSourceItemId === sourceItemId, "개념탐구 5 원자료 장부의 원본 확인·단일 답·공개 연결이 완결되지 않았습니다.");
 
