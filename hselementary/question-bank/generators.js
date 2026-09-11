@@ -25972,6 +25972,50 @@
         sourceItemId
       });
     },
+    sourceGrade6SecondFractionDivisionE4Mission2({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u1-e4-mission-2";
+      if (variant !== 0) throw new Error("6-2 분수의 나눗셈 Mission 2 원문 분기는 0이어야 합니다.");
+      const poolIndex = int(rng, 0, 2);
+      const data = [
+        { trainLength: [9, 20], bridgeLength: [97, 12], passageTime: [13, 5], targetMinutes: 90, expectedAnswer: [3840, 13] },
+        { trainLength: [7, 20], bridgeLength: [25, 6], passageTime: [5, 2], targetMinutes: 90, expectedAnswer: [813, 5] },
+        { trainLength: [5, 12], bridgeLength: [27, 4], passageTime: [10, 3], targetMinutes: 90, expectedAnswer: [387, 2] }
+      ][poolIndex];
+      const trainLength = rationalValue(...data.trainLength);
+      const bridgeLength = rationalValue(...data.bridgeLength);
+      const passageTime = rationalValue(...data.passageTime);
+      const targetTime = rationalValue(data.targetMinutes, 1);
+      const expectedAnswer = rationalValue(...data.expectedAnswer);
+      const passageDistance = rationalOperation(trainLength, bridgeLength, "+");
+      const distancePerMinute = rationalOperation(passageDistance, passageTime, "÷");
+      const targetDistance = rationalOperation(distancePerMinute, targetTime, "×");
+      const timeMultiplier = rationalOperation(targetTime, passageTime, "÷");
+      const alternateDistance = rationalOperation(passageDistance, timeMultiplier, "×");
+      const same = (left, right) => Boolean(left && right && left.numerator === right.numerator && left.denominator === right.denominator);
+      const answerCandidates = [targetDistance].filter(value => same(value, expectedAnswer) && same(value, alternateDistance) && gcd(value.numerator, value.denominator) === 1 && value.numerator > value.denominator);
+      if ([trainLength, bridgeLength, passageTime, targetTime, passageDistance, distancePerMinute, targetDistance, timeMultiplier, alternateDistance].some(value => !value || value.numerator <= 0) || answerCandidates.length !== 1) throw new Error("6-2 Mission 2의 열차·다리·시간 또는 두 독립 계산의 거리가 하나의 기약분수로 정해지지 않습니다.");
+      const shown = value => mixedFractionMarkup(value.numerator, value.denominator);
+      const improper = value => fractionMarkup(value.numerator, value.denominator);
+      const plainImproper = value => value.denominator === 1 ? String(value.numerator) : `${value.numerator}/${value.denominator}`;
+      const inline = value => `<span class="math-inline-expression">${value}</span>`;
+      const measure = (value, unit, format = shown) => inline(`${format(value)}<span class="math-unit">${unit}</span>`);
+      const row = (name, value) => `<div class="source61-math-row"><span>${name}</span><b>${value}</b></div>`;
+      const signature = [trainLength, bridgeLength, passageTime, targetTime].flatMap(value => [value.numerator, value.denominator]).join(":");
+      const tripBoard = solved => `<div class="source61-math-board source62-train-bridge-board${solved ? " is-solved" : ""}" data-source62-e4-mission2-structure="train-completely-crosses-bridge" data-source62-e4-mission2-values="${signature}" data-passage-distance="${passageDistance.numerator}:${passageDistance.denominator}" data-distance-per-minute="${distancePerMinute.numerator}:${distancePerMinute.denominator}" data-target-distance="${targetDistance.numerator}:${targetDistance.denominator}"><strong>열차가 다리를 완전히 통과하기</strong>${row("열차 길이", measure(trainLength, "km"))}${row("다리 길이", measure(bridgeLength, "km"))}${row("완전히 통과하는 데 걸린 시간", measure(passageTime, "분"))}${row("구할 시간", inline("1시간 30분"))}<p class="source62-train-bridge-rule">완전히 통과할 때 간 거리 = 열차 길이 + 다리 길이</p>${solved ? row("완전히 통과할 때 간 거리", measure(passageDistance, "km")) + row("1시간 30분 동안 간 거리", measure(targetDistance, "km", improper)) : ""}</div>`;
+      const answerBoard = `<div class="source61-math-board source62-train-bridge-solution"><strong>1분 동안 간 거리와 시간의 배수로 두 번 확인하기</strong>${row("완전히 통과할 때 간 거리", inline(`${shown(trainLength)}+${shown(bridgeLength)}=${shown(passageDistance)}<span class="math-unit">km</span>`))}${row("1분 동안 간 거리", inline(`${shown(passageDistance)}÷${shown(passageTime)}=${shown(distancePerMinute)}<span class="math-unit">km</span>`))}${row("1시간 30분", inline(`60+30=${data.targetMinutes}<span class="math-unit">분</span>`))}${row("90분 동안 간 거리", inline(`${shown(distancePerMinute)}×${data.targetMinutes}=${improper(targetDistance)}<span class="math-unit">km</span>`))}${row("시간의 몇 배", inline(`${data.targetMinutes}÷${shown(passageTime)}=${shown(timeMultiplier)}<span class="math-unit">배</span>`))}${row("다른 방법 확인", inline(`${shown(passageDistance)}×${shown(timeMultiplier)}=${improper(alternateDistance)}<span class="math-unit">km</span>`))}</div>`;
+      const difficultyDesign = ["guided", "source", "independent-reasoning"][level];
+      const support = level === 0 ? '<p class="question-step" data-step-evidence="guided">먼저 열차가 다리를 완전히 통과할 때 열차의 앞부분이 간 거리를 구하세요.</p>' : "";
+      const challenge = level === 2 ? '<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">1시간 30분이 통과 시간의 몇 배인지 구하여 답을 다시 확인하세요.</p>' : "";
+      const evidenceValues = [signature, passageDistance.numerator, passageDistance.denominator, distancePerMinute.numerator, distancePerMinute.denominator, timeMultiplier.numerator, timeMultiplier.denominator, targetDistance.numerator, targetDistance.denominator].join(":");
+      const evidence = `<span hidden data-source62-fraction-e4-mission2-kind="train-bridge-complete-passage" data-source-item="${sourceItemId}" data-values="${evidenceValues}" data-result-contract="single-improper-fraction-distance" data-candidate-count="${answerCandidates.length}" data-difficulty-design="${difficultyDesign}"></span>`;
+      return result(`길이가 ${measure(trainLength, "km")}인 고속열차가 일정한 빠르기로 길이가 ${measure(bridgeLength, "km")}인 다리를 완전히 통과하는 데 ${measure(passageTime, "분")}이 걸렸습니다. 같은 빠르기로 이 열차가 1시간 30분 동안 달린 거리는 몇 km인지 기약분수로 나타내세요.${tripBoard(false)}${support}${challenge}${evidence}`, `${plainImproper(targetDistance)}km`, `열차가 다리를 완전히 통과할 때 열차의 앞부분이 간 거리는 열차 길이와 다리 길이의 합인 ${shown(trainLength)}+${shown(bridgeLength)}=${measure(passageDistance, "km")}입니다. 따라서 1분 동안 간 거리는 ${shown(passageDistance)}÷${shown(passageTime)}=${measure(distancePerMinute, "km")}입니다. 1시간 30분은 ${data.targetMinutes}분이므로 구하는 거리는 ${shown(distancePerMinute)}×${data.targetMinutes}=${measure(targetDistance, "km", improper)}입니다. 또 1시간 30분은 완전히 통과하는 데 걸린 시간의 ${shown(timeMultiplier)}배이므로 ${shown(passageDistance)}×${shown(timeMultiplier)}로 계산해도 같은 기약분수가 됩니다.`, {
+        answerVisual: `<div class="verified-answer-diagram source62-e4-mission2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${tripBoard(true)}${answerBoard}${evidence}<div class="solution-answer-caption">완전히 통과한 거리와 시간의 배수로 두 번 확인한 답</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: 3,
+        sourceItemId
+      });
+    },
     sourceGrade6RatioE6({ rng, level, variant = 0 }) {
       const sourceIds = [
         "6-1-u4-e6-exploration-6-1", "6-1-u4-e6-example-6-1", "6-1-u4-e6-example-6-2", "6-1-u4-e6-example-6-3",
@@ -27915,6 +27959,7 @@
     [type => type.sourceItemId === "6-2-u1-e4-example-3", "sourceGrade6SecondFractionDivisionE4Example3"],
     [type => type.sourceItemId === "6-2-u1-e4-example-4", "sourceGrade6SecondFractionDivisionE4Example4"],
     [type => type.sourceItemId === "6-2-u1-e4-mission-1", "sourceGrade6SecondFractionDivisionE4Mission1"],
+    [type => type.sourceItemId === "6-2-u1-e4-mission-2", "sourceGrade6SecondFractionDivisionE4Mission2"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e3-") && !["6-1-u6-e3-mission-1", "6-1-u6-e3-mission-3"].includes(type.sourceItemId), "sourceGrade6VolumeSurfaceE3"],
     [type => type.sourceItemId?.startsWith("6-1-u6-e1-"), "sourceGrade6SurfaceE1"],
     [type => type.sourceItemId?.startsWith("6-1-u2-e3-"), "sourceGrade6PrismsPyramidsE3"],
