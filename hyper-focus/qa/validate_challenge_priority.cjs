@@ -30,6 +30,18 @@ for(const round of [1,2]){
   assert.equal(current.find(q=>q.sourceNumber===1).number,round===1?10:15);
   assert.equal(current[0].typeId,round===1?'replace-count-constraints':'r2-fruit-equations');
   assert.equal(current.find(q=>q.sourceNumber===13).number,13,'previous explicit Q13 requirement keeps its number');
+  if(round===1){
+    const balance=current[2],payload=balance.payload,query=payload.equations.find(equation=>equation.query);
+    const weight=items=>items.reduce((total,item)=>total+payload.values[item.key]*item.count,0);
+    payload.equations.forEach(equation=>assert.equal(weight(equation.left),weight(equation.right),'1회 3번의 각 저울은 평형'));
+    assert.equal(balance.answer,4,'1회 3번의 보이는 보라색 도형 1개는 하트 4개');
+    assert.equal(weight(query.left)/payload.values.H,4,'1회 3번 그림을 하트 1 기준으로 독립 계산');
+    assert.deepEqual(query.left,[{key:'T',kind:'circle',color:'#8b78b5',count:1}],'1회 3번 마지막 왼쪽 접시에는 보라색 도형 1개만 표시');
+    assert.deepEqual(query.right,[{key:'H',kind:'heart',color:'#e3c989',count:4}],'1회 3번 마지막 오른쪽 접시 정답은 하트 4개');
+    assert.match(balance.solution,/^가장 가벼운 도형인 하트에 1을 써 봅시다\./,'1회 3번 풀이를 가장 가벼운 도형 1에서 시작');
+    assert.equal((balance.problemHtml.match(/data-balance-key="C"/g)||[]).length,1,'연한 동그라미는 첫 번째 관계에만 표시');
+    assert.equal((balance.problemHtml.match(/data-balance-key="T"/g)||[]).length,2,'보라색 동그라미는 세 번째 관계와 마지막 접시에 표시');
+  }
 }
 const report={passed:true,replacementCount:result.length,items:result,tests:['independent numeric solvers','poisoned answer fields','operative waypoint and blockage','operative unit and quantity premises','path span not equal to length rank','distinct top-view distractors','raster assets present']};
 fs.writeFileSync(path.resolve(__dirname,'../output/qa/challenge-editions-separated/priority-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));

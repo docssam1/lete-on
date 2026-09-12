@@ -98,6 +98,7 @@ function assertCommon(question,source,difficulty,seed){
 
 function validateBalance(question,difficulty){
   const payload=question.payload;
+  assert.match(question.solution,/^가장 가벼운 도형인 하트에 1을 써 봅시다\./);
   assert.match(question.prompt,/마지막 저울/);
   assert.match(question.prompt,/하트를 몇 개/);
   assert.match(question.problemHtml,/data-query="true"/);
@@ -143,7 +144,7 @@ function validateLength(question,difficulty){
 }
 
 function run(){
-  assert.equal(measurement.VERSION,'replacement-measurement-20260911-v1');
+  assert.equal(measurement.VERSION,'replacement-measurement-20260912-v2');
   assert.equal(measurement.supports(null),false);
   assert.equal(measurement.supports({payload:{kind:'shortest-path-grid'}}),false);
   assert.deepEqual(measurement.levels({payload:{kind:'shortest-path-grid'}}),{easy:false,same:false,hard:false});

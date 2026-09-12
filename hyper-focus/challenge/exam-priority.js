@@ -66,7 +66,6 @@
     if(section==='main'&&exam.round===1){
       questions[2]=special('balance-substitution-pictures',2,3,'논리추리',questions[2].sourceNumber);
       questions[2].prompt='앞의 양팔저울은 모두 평형을 이루고 있습니다. 앞의 관계를 이용하여 마지막 저울이 평형을 이루도록 오른쪽 접시에 하트를 몇 개 놓아야 할까요?';
-      questions[2].solution='앞 저울의 같은 무게를 차례로 바꾸어 계산하면 마지막 오른쪽 접시에는 하트 10개가 필요합니다.';
       questions[11]=visibleDiceSpecial(0,12,'도형',questions[11].sourceNumber);
       questions[13]=special('object-length-equivalence',2,14,'수',questions[13].sourceNumber);
       questions[13].solution='둘째 관계에서 지우개 1개는 클립 4개와 같습니다. 첫째 관계의 양끝을 맞추어 비교하면 연필 1개는 클립 9개와 같은 길이입니다.';

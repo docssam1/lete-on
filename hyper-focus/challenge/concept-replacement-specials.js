@@ -331,11 +331,20 @@
     return body;
   }
 
+  function balanceItems(items,x,y){
+    var gap=22,total=items.reduce(function(sum,item){return sum+item.count;},0),offset=0;
+    return items.map(function(item){
+      var center=x-(total-1)*gap/2+(offset+(item.count-1)/2)*gap;
+      offset+=item.count;
+      return '<g class="balance-item-group" data-balance-key="'+esc(item.key)+'" data-balance-count="'+item.count+'">'+balanceItem(item.kind,center,y,item.count,item.color)+'</g>';
+    }).join('');
+  }
+
   function balanceScaleBody(equation,x,y,solution){
     var body=line(x-90,y+7,x+90,y+7,'#6d7f8b',2)+polygon([[x,y+7],[x-10,y+31],[x+10,y+31]],'#e8edf0','#6d7f8b',1.2);
     body+=line(x-73,y+7,x-73,y-7,'#6d7f8b',1.3)+line(x+73,y+7,x+73,y-7,'#6d7f8b',1.3);
-    equation.left.forEach(function(item){body+=balanceItem(item.kind,x-73,y-14,item.count,item.color);});
-    if(equation.query&&!solution)body+=text(x+73,y-19,'?',24,INK,900);else equation.right.forEach(function(item){body+=balanceItem(item.kind,x+73,y-14,item.count,item.color);});
+    body+=balanceItems(equation.left,x-73,y-14);
+    if(equation.query&&!solution)body+=text(x+73,y-19,'?',24,INK,900);else body+=balanceItems(equation.right,x+73,y-14);
     if(equation.query&&solution)body+=text(x+73,y-39,equation.answer+'개',14,'#1f625e',900);
     return body;
   }
@@ -690,11 +699,20 @@
   function balanceToken(key,kind,color,count){return {key:key,kind:kind,color:color,count:count};}
   var Y=function(n){return balanceToken('Y','circle','#f2c94c',n);},G=function(n){return balanceToken('G','circle','#75aa63',n);},P=function(n){return balanceToken('P','circle','#846aa9',n);};
   var C=function(n){return balanceToken('C','circle','#ded3aa',n);},S=function(n){return balanceToken('S','square','#d4b16b',n);},H=function(n){return balanceToken('H','heart','#e3c989',n);},T=function(n){return balanceToken('T','circle','#8b78b5',n);};
+  var BALANCE_LABELS={Y:'노란 동그라미',G:'초록 동그라미',P:'보라 동그라미',C:'연한 동그라미',S:'네모',H:'하트',T:'보라 동그라미'};
   var BALANCE_SUBSTITUTION_SPECS=[
     {id:'balance-substitution-pictures-basic',lessonRole:'basic',difficulty:'easy',values:{Y:1,G:2,P:3},answer:5,equations:[{left:[Y(2)],right:[G(1)]},{left:[Y(1),G(1)],right:[P(1)]},{left:[G(1),P(1)],right:[Y(5)],query:true,answer:5}],evidence:{metric:'substitution-links',value:2}},
     {id:'balance-substitution-pictures-guided',lessonRole:'guided',difficulty:'same',values:{C:4,S:2,H:1,T:3},answer:7,equations:[{left:[C(2)],right:[S(4)]},{left:[S(1)],right:[H(2)]},{left:[H(3)],right:[T(1)]},{left:[C(1),T(1)],right:[H(7)],query:true,answer:7}],evidence:{metric:'substitution-links',value:3}},
-    {id:'balance-substitution-pictures-review',lessonRole:'review',difficulty:'same',values:{C:6,S:2,H:1,T:4},answer:10,equations:[{left:[C(1)],right:[S(3)]},{left:[S(1)],right:[H(2)]},{left:[S(2)],right:[T(1)]},{left:[C(1),T(1)],right:[H(10)],query:true,answer:10}],evidence:{metric:'substitution-links',value:3}}
+    {id:'balance-substitution-pictures-review',lessonRole:'review',difficulty:'same',values:{C:6,S:2,H:1,T:4},answer:4,equations:[{left:[C(1)],right:[S(3)]},{left:[S(1)],right:[H(2)]},{left:[S(2)],right:[T(1)]},{left:[T(1)],right:[H(4)],query:true,answer:4}],evidence:{metric:'substitution-links',value:3}}
   ];
+
+  function balanceSubstitutionSolution(spec){
+    var ordered=Object.entries(spec.values).sort(function(left,right){return left[1]-right[1];});
+    var lightest=ordered[0],query=spec.equations.find(function(equation){return equation.query;});
+    var assignments=ordered.slice(1).map(function(entry){return BALANCE_LABELS[entry[0]]+'에 쓰는 수는 '+entry[1]+'입니다.';});
+    var converted=query.left.map(function(item){return BALANCE_LABELS[item.key]+' '+item.count+'개의 값은 '+(spec.values[item.key]*item.count);});
+    return '가장 가벼운 도형인 '+BALANCE_LABELS[lightest[0]]+'에 1을 써 봅시다. '+assignments.join(' ')+' 마지막 왼쪽 접시의 '+converted.join(', ')+'이므로 오른쪽 접시에 '+BALANCE_LABELS[query.right[0].key]+' '+spec.answer+'개를 놓습니다.';
+  }
 
   var STACK_FILL_SPECS=[
     {
@@ -1144,7 +1162,7 @@
   BANK['balance-substitution-pictures']=BALANCE_SUBSTITUTION_SPECS.map(function(spec){
     return makeQuestion({id:spec.id,kind:'balance-substitution-pictures',lessonRole:spec.lessonRole,difficulty:spec.difficulty,difficultyEvidence:spec.evidence,
       prompt:'앞의 양팔저울은 모두 평형을 이루고 있습니다. 앞의 관계를 이용하여 마지막 저울이 평형을 이루도록 오른쪽 접시에 같은 모양을 몇 개 놓아야 할까요?',
-      answer:spec.answer,answerHtml:spec.answer+'개',solution:'앞 저울의 같은 무게를 차례로 바꾸어 계산하면 마지막 오른쪽 접시에는 '+spec.answer+'개가 필요합니다.',
+      answer:spec.answer,answerHtml:spec.answer+'개',solution:balanceSubstitutionSolution(spec),
       problemHtml:balanceSubstitutionSvg(spec,false),solutionDiagram:balanceSubstitutionSvg(spec,true),payload:{values:spec.values,equations:spec.equations,responseMode:'missing-object-count'}});
   });
 

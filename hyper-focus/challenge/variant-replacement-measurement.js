@@ -1,7 +1,7 @@
 (function(root){
   'use strict';
 
-  const VERSION='replacement-measurement-20260911-v1';
+  const VERSION='replacement-measurement-20260912-v2';
   const STAGE='6세 / 유치원';
   const LEVELS=Object.freeze(['easy','same','hard']);
   const KINDS=Object.freeze(['balance-substitution-pictures','object-length-equivalence']);
@@ -153,7 +153,7 @@
 
   function balanceSolution(model){
     const label=Object.fromEntries(model.objects.map(object=>[object.key,object.label]));
-    const parts=[];
+    const parts=['가장 가벼운 도형인 하트에 1을 써 봅시다.'];
     const values={H:1};
     for(const equation of model.equations){
       const unknown=positiveEntries(equation.left).find(([key])=>values[key]===undefined)?.[0];
@@ -162,7 +162,7 @@
       const knownLeft=positiveEntries(equation.left).filter(([key])=>key!==unknown).reduce((total,[key,count])=>total+model.values[key]*count,0);
       const count=equation.left[unknown];
       values[unknown]=(right-knownLeft)/count;
-      if(rightTerms.length===1&&rightTerms[0][0]==='H')parts.push(`${label[unknown]} ${count}개는 하트 ${right}개와 같습니다.`);
+      if(rightTerms.length===1&&rightTerms[0][0]==='H')parts.push(`${label[unknown]} ${count}개는 하트 ${right}개와 같습니다. 따라서 ${label[unknown]} 1개의 값은 ${values[unknown]}입니다.`);
       else{
         const shown=rightTerms.map(([key,itemCount])=>`${label[key]} ${itemCount}개`).join('와 ');
         const converted=rightTerms.map(([key,itemCount])=>model.values[key]*itemCount);
