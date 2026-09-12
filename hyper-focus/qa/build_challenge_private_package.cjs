@@ -2,6 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),crypto=require('node:crypto');
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),challenge=path.join(root,'challenge');
+const browserPath=process.env.HF_PLAYWRIGHT_EXECUTABLE_PATH;
 const variants=require('../challenge/variant-provider.js'),diagnosis=require('../challenge/diagnosis-core.js');
 const contentVersion='challenge-'+new Date().toISOString().replace(/[^0-9]/g,''),out=path.join(root,'output/private-challenge',contentVersion),publicOut=path.join(out,'public/hyper-focus/challenge'),privateOut=path.join(out,'private');
 const manifest={schemaVersion:1,contentVersion,documents:{},bank:{},sources:{}};
@@ -18,7 +19,7 @@ function answer(q,id){
 const server=http.createServer((req,res)=>{const pathname=decodeURIComponent(new URL(req.url,'http://local').pathname),file=path.resolve(root,'.'+pathname);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{if(err)return res.writeHead(404).end();res.setHeader('Content-Type',({'.js':'text/javascript','.html':'text/html','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'})[path.extname(file)]||'application/octet-stream');res.end(data);});});
 (async()=>{
  fs.mkdirSync(publicOut,{recursive:true});fs.mkdirSync(privateOut,{recursive:true});
- await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port,browser=await chromium.launch({headless:true});
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port,browser=await chromium.launch({headless:true,...(browserPath?{executablePath:browserPath}: {})});
  try{
   const page=await browser.newPage();await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
   for(const kind of ['concept','mock'])for(let round=1;round<=(kind==='concept'?2:4);round++){

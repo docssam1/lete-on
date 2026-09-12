@@ -159,6 +159,17 @@ function validateQuestion(question,source,difficulty,seed){
   assert(!/undefined|NaN|Infinity/.test(question.problemHtml+question.solutionDiagram),`${label}: invalid drawing value`);
   assert(/<title>[^<]+<\/title>/.test(question.problemHtml)&&/role="img"/.test(question.problemHtml),`${label}: accessible title required`);
   assert(/data-camera="geometry-standard-high-iso"/.test(question.problemHtml),`${label}: canonical high isometric camera required`);
+  if(payload.kind!=='dice-visible-faces'){
+    assert(/data-camera-elevation="35"/.test(question.problemHtml),`${label}: raised 35-degree camera required`);
+    assert(/data-projection="0\.82,0\.58,0\.88"/.test(question.problemHtml),`${label}: canonical projection required`);
+    assert(/data-model="height-map"/.test(question.problemHtml),`${label}: coordinate height-map model required`);
+    const cubes=[...question.problemHtml.matchAll(/class="spatial-cube" data-instance="model" data-cube="([^"]+)" data-model-cube-id="model:[^"]+" data-x="(\d+)" data-y="(\d+)" data-z="(\d+)" data-color-key="([^"]+)" data-visible-faces="([^"]*)"/g)];
+    const expected=payload.kind==='block-build-count'?payload.width*payload.depth*payload.height:total(payload.heightMap.flat());
+    assert.equal(cubes.length,expected,`${label}: every cube needs stable coordinates and color semantics`);
+    assert.equal(new Set(cubes.map(match=>match[1])).size,cubes.length,`${label}: cube coordinate IDs must be unique`);
+    for(const match of cubes){assert.equal(match[1],[match[2],match[3],match[4]].join(','),`${label}: cube ID and coordinates differ`);assert(match[5],`${label}: semantic color key required`);for(const face of match[6]?match[6].split(','):[])assert(['top','front','right'].includes(face),`${label}: invalid visible face`);}
+    assert.equal((question.problemHtml.match(/data-face="top" data-tone="light"/g)||[]).length,(question.problemHtml.match(/class="cube-face top"/g)||[]).length,`${label}: top face tone metadata`);
+  }
   if(payload.kind==='dice-visible-faces'){
     assertPath({...payload,problemHtml:question.problemHtml,solutionDiagram:question.solutionDiagram},difficulty,label);
     assert.deepEqual(payload.queryFaces,['top','front','right'],`${label}: queried faces`);assert.equal(payload.responseMode,'three-visible-face-numbers',`${label}: response mode`);
@@ -168,6 +179,9 @@ function validateQuestion(question,source,difficulty,seed){
     assertMonotone(payload.heightMap,label);assert.equal(Math.max(...payload.heightMap.flat()),LEVELS.indexOf(difficulty)+2,`${label}: maximum height`);
     assert.equal(total(Object.values(question.answer)),total(payload.heightMap.flat()),`${label}: color counts cover every cube`);
     assert.equal((question.problemHtml.match(/class="spatial-cube"/g)||[]).length,total(payload.heightMap.flat()),`${label}: one rendered group per cube`);
+    const colorKeys=[...question.problemHtml.matchAll(/data-cube="(\d+),(\d+),(\d+)"[^>]*data-color-key="(black|white)"/g)];
+    assert.equal(colorKeys.length,total(payload.heightMap.flat()),`${label}: every checker cube needs black/white semantics`);
+    for(const match of colorKeys){const expected=(Number(match[1])+Number(match[2])+Number(match[3])+payload.checkerOffset)%2===0?'black':'white';assert.equal(match[4],expected,`${label}: checker color must follow coordinate parity`);}
   }else if(payload.kind==='tetra-cube-hole-count')assertTetra({...payload,problemHtml:question.problemHtml},difficulty,label);
   else if(payload.kind==='block-build-count')assertBlock({...payload,problemHtml:question.problemHtml},difficulty,label);
   else assertFill({...payload,problemHtml:question.problemHtml},difficulty,label);
@@ -176,7 +190,7 @@ function validateQuestion(question,source,difficulty,seed){
 }
 
 function run(){
-  assert.equal(spatial.version,'replacement-spatial-20260911-v2');
+  assert.equal(spatial.version,'replacement-spatial-20260913-v3');
   const fixed=specials.cloneDiceFinishVisibleFaces();
   assert.deepEqual(fixed.map(question=>question.payload.route.length),[4,5,5],'shared fixed dice routes must be 4, 5, and 5 rolls');
   fixed[0].payload.route[0]='W';
@@ -204,7 +218,7 @@ function run(){
     const models=new Set();for(let seed=0;seed<64;seed++)models.add(semanticKey(spatial.generate(source,difficulty,seed).payload));
     assert(models.size>=24,`${kind} ${difficulty}: fewer than 24 genuine coordinate models`);uniqueModels.push({kind,difficulty,count:models.size});
   }
-  const report={passed:true,moduleVersion:spatial.version,registeredOccurrences:SOURCES.length,levels:LEVELS,independentChecks,negativeChecks,determinismChecks,minimumUniqueModels:24,uniqueModels,visualContracts:{camera:'geometry-standard-high-iso',diceBoard:'4x4',diceRolls:'4-5',diceArrowheads:'2.7',diceAnswers:'top-front-right',tetraVisibleHoles:'1-2',cubeBoundaries:'1.35px exposed-face strokes'}};
+  const report={passed:true,moduleVersion:spatial.version,registeredOccurrences:SOURCES.length,levels:LEVELS,independentChecks,negativeChecks,determinismChecks,minimumUniqueModels:24,uniqueModels,visualContracts:{camera:'geometry-standard-high-iso',cameraElevation:'35deg',projection:'0.82,0.58,0.88',coordinateModel:'height-map',semanticCubeColors:true,diceBoard:'4x4',diceRolls:'4-5',diceArrowheads:'2.7',diceAnswers:'top-front-right',tetraVisibleHoles:'1-2',cubeBoundaries:'1.35px exposed-face strokes'}};
   console.log(JSON.stringify(report,null,2));return report;
 }
 

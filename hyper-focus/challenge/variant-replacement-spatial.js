@@ -1,9 +1,10 @@
 (function(root){
   'use strict';
 
-  const VERSION='replacement-spatial-20260911-v2';
+  const VERSION='replacement-spatial-20260913-v3';
   const LEVELS=['easy','same','hard'];
   const INK='#284b60', BLUE='#4f98b9', GREEN='#63a58b', GOLD='#e3bb55', WARM='#c97454';
+  const CAMERA=Object.freeze({name:'geometry-standard-high-iso',x:.82,y:.58,z:.88,elevation:35});
   const OCCURRENCES=Object.freeze({
     'mock-dice-target-bottom':'dice-visible-faces',
     'r3-main-13':'dice-visible-faces',
@@ -43,13 +44,18 @@
   function levels(source){const ok=supports(source);return {easy:ok,same:ok,hard:ok};}
   function notes(source){const kind=sourceKind(source);return kind?POLICY[kind].slice():['','',''];}
 
-  function isoPoint(x,y,z,originX,originY,unit){return [originX+(x-y)*unit*.86,originY+(x+y)*unit*.46-z*unit*.94];}
+  function isoPoint(x,y,z,originX,originY,unit){return [originX+(x-y)*unit*CAMERA.x,originY+(x+y)*unit*CAMERA.y-z*unit*CAMERA.z];}
   function cubeCenterTop(cube,originX,originY,unit){return isoPoint(cube[0]+.5,cube[1]+.5,cube[2]+1,originX,originY,unit);}
+  function cubeStyle(value,fallbackKey='mint'){
+    if(Array.isArray(value))return {key:fallbackKey,faces:value};
+    if(value&&Array.isArray(value.faces))return {key:value.key||fallbackKey,faces:value.faces};
+    return {key:fallbackKey,faces:['#dff1eb','#b9dbd0','#91c5b6']};
+  }
   function pileBody(heightMap,options={}){
-    const depth=heightMap.length,width=heightMap[0].length,originX=options.originX||330,originY=options.originY||150,unit=options.unit||34;
+    const depth=heightMap.length,width=heightMap[0].length,originX=options.originX||330,originY=options.originY||150,unit=options.unit||34,instance=options.instance||'model';
     const cells=[];heightMap.forEach((row,y)=>row.forEach((height,x)=>{for(let z=0;z<height;z++)cells.push([x,y,z]);}));
     const occupied=new Set(cells.map(cell=>cell.join(',')));
-    let body=`<g class="spatial-pile" data-camera="geometry-standard-high-iso" data-width="${width}" data-depth="${depth}">`;
+    let body=`<g class="spatial-pile" data-camera="${CAMERA.name}" data-camera-elevation="${CAMERA.elevation}" data-projection="${CAMERA.x},${CAMERA.y},${CAMERA.z}" data-model="height-map" data-instance="${esc(instance)}" data-width="${width}" data-depth="${depth}">`;
     for(let y=0;y<depth;y++)for(let x=0;x<width;x++){
       const base=[isoPoint(x,y,0,originX,originY,unit),isoPoint(x+1,y,0,originX,originY,unit),isoPoint(x+1,y+1,0,originX,originY,unit),isoPoint(x,y+1,0,originX,originY,unit)];
       const hole=options.markHoles===true&&heightMap[y][x]===0;
@@ -57,14 +63,15 @@
     }
     cells.sort((left,right)=>(left[0]+left[1])-(right[0]+right[1])||left[2]-right[2]||left[1]-right[1]||left[0]-right[0]);
     for(const cell of cells){
-      const [x,y,z]=cell,key=cell.join(','),fills=options.colorForCube?options.colorForCube({x,y,z,key}):['#dff1eb','#b9dbd0','#91c5b6'];
+      const [x,y,z]=cell,key=cell.join(','),style=cubeStyle(options.colorForCube?options.colorForCube({x,y,z,key}):null,options.defaultColorKey||'mint'),fills=style.faces;
       const p000=isoPoint(x,y,z,originX,originY,unit),p100=isoPoint(x+1,y,z,originX,originY,unit),p010=isoPoint(x,y+1,z,originX,originY,unit),p110=isoPoint(x+1,y+1,z,originX,originY,unit);
       const p001=isoPoint(x,y,z+1,originX,originY,unit),p101=isoPoint(x+1,y,z+1,originX,originY,unit),p011=isoPoint(x,y+1,z+1,originX,originY,unit),p111=isoPoint(x+1,y+1,z+1,originX,originY,unit);
       let faces='';
-      if(!occupied.has(`${x+1},${y},${z}`))faces+=polygon([p100,p110,p111,p101],fills[2],'#45687a',1.35,'class="cube-face right"');
-      if(!occupied.has(`${x},${y+1},${z}`))faces+=polygon([p010,p110,p111,p011],fills[1],'#45687a',1.35,'class="cube-face front"');
-      if(!occupied.has(`${x},${y},${z+1}`))faces+=polygon([p001,p101,p111,p011],fills[0],'#45687a',1.35,'class="cube-face top"');
-      body+=`<g class="spatial-cube" data-cube="${key}"${options.pieceAt&&options.pieceAt.has(key)?` data-piece="${options.pieceAt.get(key)}"`:''}>${faces}</g>`;
+      const visible=[];
+      if(!occupied.has(`${x+1},${y},${z}`)){visible.push('right');faces+=polygon([p100,p110,p111,p101],fills[2],'#45687a',1.35,'class="cube-face right" data-face="right" data-tone="shadow"');}
+      if(!occupied.has(`${x},${y+1},${z}`)){visible.push('front');faces+=polygon([p010,p110,p111,p011],fills[1],'#45687a',1.35,'class="cube-face front" data-face="front" data-tone="mid"');}
+      if(!occupied.has(`${x},${y},${z+1}`)){visible.push('top');faces+=polygon([p001,p101,p111,p011],fills[0],'#45687a',1.35,'class="cube-face top" data-face="top" data-tone="light"');}
+      body+=`<g class="spatial-cube" data-instance="${esc(instance)}" data-cube="${key}" data-model-cube-id="${esc(instance)}:${key}" data-x="${x}" data-y="${y}" data-z="${z}" data-color-key="${esc(style.key)}" data-visible-faces="${visible.join(',')}"${options.pieceAt&&options.pieceAt.has(key)?` data-piece="${options.pieceAt.get(key)}"`:''}>${faces}</g>`;
     }
     return {body:body+'</g>',cubeCount:cells.length,cells,originX,originY,unit};
   }
@@ -151,8 +158,8 @@
   }
   function checkerCounts(map,offset){const answer={black:0,white:0};map.forEach((row,y)=>row.forEach((height,x)=>{for(let z=0;z<height;z++)answer[(x+y+z+offset)%2===0?'black':'white']++;}));return answer;}
   function checkerSvg(payload,solution){
-    const maximum=Math.max(...payload.heightMap.flat()),unit=payload.width===4&&payload.depth===4?31:36,originY=48+maximum*unit*.94,palette={black:['#45545d','#303d45','#1f2b31'],white:['#fff','#e6eff2','#cbdde2']};
-    const pile=pileBody(payload.heightMap,{unit,originX:330,originY,colorForCube:cube=>palette[(cube.x+cube.y+cube.z+payload.checkerOffset)%2===0?'black':'white']});
+    const maximum=Math.max(...payload.heightMap.flat()),unit=payload.width===4&&payload.depth===4?31:36,originY=48+maximum*unit*CAMERA.z,palette={black:['#45545d','#303d45','#1f2b31'],white:['#fff','#e6eff2','#cbdde2']};
+    const pile=pileBody(payload.heightMap,{unit,originX:330,originY,colorForCube:cube=>{const key=(cube.x+cube.y+cube.z+payload.checkerOffset)%2===0?'black':'white';return {key,faces:palette[key]};}});
     let body=text(330,19,'검은색과 흰색이 번갈아 맞닿는 쌓기나무',15,INK,700)+pile.body;
     if(solution)body+=rect(200,315,260,32,'#edf7f2','#43877c',1.3,16)+text(330,331,`검은색 ${payload.answer.black}개 · 흰색 ${payload.answer.white}개`,14,'#1f685f',800);
     return svg(body,solution?360:325,solution?'층별 색을 확인한 쌓기나무 풀이':'높은 등각 시점의 검은색과 흰색 계단 쌓기나무','checker-stack-count');
@@ -210,7 +217,7 @@
   function topPlan(heightMap,left,top,cell,solution){let body='<g class="tetra-top-plan" data-plan="marked-holes">';heightMap.forEach((row,y)=>row.forEach((height,x)=>{const hole=!height;body+=rect(left+x*cell,top+y*cell,cell,cell,hole?'#fff8f2':height===2?'#9fcfc0':'#dff1eb',hole?WARM:'#5c9483',hole?1.8:1.1,1,hole?`data-plan-hole="${x},${y}"`:`data-plan-height="${height}"`);if(solution&&hole)body+=text(left+(x+.5)*cell,top+(y+.5)*cell,'×',14,WARM,800);}));return body+'</g>';}
   function tetraSvg(payload,solution){
     const pieceAt=new Map();payload.pieces.forEach((piece,index)=>piece.forEach(cell=>pieceAt.set(cell.join(','),index)));
-    const unit=24,originY=56+2*unit*.94,pile=pileBody(payload.heightMap,{unit,originX:190,originY,pieceAt,markHoles:true,colorForCube:cube=>PIECE_PALETTE[pieceAt.get(cube.key)%PIECE_PALETTE.length]});
+    const unit=24,originY=56+2*unit*CAMERA.z,pile=pileBody(payload.heightMap,{unit,originX:190,originY,pieceAt,markHoles:true,colorForCube:cube=>solution?{key:`piece-${pieceAt.get(cube.key)+1}`,faces:PIECE_PALETTE[pieceAt.get(cube.key)%PIECE_PALETTE.length]}:{key:'mint',faces:PIECE_PALETTE[0]}});
     let body=text(190,19,'입체 모양',15,INK,700)+pile.body+text(500,19,'위에서 본 바탕그림',15,INK,700)+topPlan(payload.heightMap,425,48,25,solution);
     if(solution){const layers=[payload.heightMap.flat().filter(height=>height>=1).length,payload.heightMap.flat().filter(height=>height>=2).length];body+=rect(337,244,300,42,'#edf7f2','#43877c',1.2,9)+text(487,257,`1층 ${layers[0]}개 + 2층 ${layers[1]}개 = ${payload.cubeCount}개`,12,'#1f685f',800)+text(487,274,`${payload.cubeCount} ÷ 4 = ${payload.answer}`,13,'#1f685f',800);}
     return svg(body,300,solution?'구멍과 층별 개수를 확인한 테트라큐브 풀이':'구멍이 보이는 바탕그림과 높은 등각 시점의 테트라큐브 입체','tetra-cube-hole-count');
@@ -228,9 +235,9 @@
   }
   function blockBuildSvg(payload,solution){
     const bAt=new Map();payload.bPieces.forEach((piece,index)=>piece.forEach(cell=>bAt.set(cell.join(','),index)));
-    const map=Array.from({length:payload.depth},()=>Array(payload.width).fill(payload.height)),unit=payload.width===5?29:33,originX=410,originY=62+payload.height*unit*.94;
-    const blue=['#83bdd8','#5a9cbc','#397e9f'],yellow=['#f4d66b','#dfbd4e','#bd9c32'],pile=pileBody(map,{unit,originX,originY,pieceAt:bAt,colorForCube:cube=>bAt.has(cube.key)?yellow:blue});
-    const demoA=pileBody([[1]],{unit:28,originX:70,originY:70,colorForCube:()=>blue}),demoB=pileBody([[1,1]],{unit:27,originX:145,originY:70,colorForCube:()=>yellow});
+    const map=Array.from({length:payload.depth},()=>Array(payload.width).fill(payload.height)),unit=payload.width===5?29:33,originX=410,originY=62+payload.height*unit*CAMERA.z;
+    const blue=['#83bdd8','#5a9cbc','#397e9f'],yellow=['#f4d66b','#dfbd4e','#bd9c32'],pile=pileBody(map,{unit,originX,originY,pieceAt:bAt,colorForCube:cube=>bAt.has(cube.key)?{key:'B',faces:yellow}:{key:'A',faces:blue}});
+    const demoA=pileBody([[1]],{unit:28,originX:70,originY:70,instance:'legend-a',colorForCube:()=>({key:'A',faces:blue})}),demoB=pileBody([[1,1]],{unit:27,originX:145,originY:70,instance:'legend-b',colorForCube:()=>({key:'B',faces:yellow})});
     let body=text(112,18,'보기',15,INK,800)+demoA.body+text(70,118,'A',14,INK,800)+demoB.body+text(168,118,'B',14,INK,800)+line([218,20],[218,246],'#d5e0e5',1.1)+text(430,18,'만든 모양',15,INK,800)+pile.body;
     for(const piece of payload.bPieces){const a=cubeCenterTop(piece[0],originX,originY,unit),b=cubeCenterTop(piece[1],originX,originY,unit);body+=line(a,b,'#8b6a18',2.3,'class="b-piece-connector" data-b-connector="true"');body+=`<circle cx="${a[0]}" cy="${a[1]}" r="3" fill="#8b6a18"/><circle cx="${b[0]}" cy="${b[1]}" r="3" fill="#8b6a18"/>`;}
     body+=text(430,263,`가로 ${payload.width}칸 · 세로 ${payload.depth}칸 · 높이 ${payload.height}칸`,13,'#526c7a',700);
@@ -255,7 +262,7 @@
     throw Error('빈칸이 분명한 상자 모양을 만들지 못했습니다.');
   }
   function fillSvg(payload,solution){
-    const unit=payload.width===4?31:37,originX=330,originY=54+payload.boxH*unit*.94,pile=pileBody(payload.heightMap,{unit,originX,originY,colorForCube:()=>['#dff1eb','#b9dbd0','#91c5b6']}),wire=boxWireframe(payload.width,payload.depth,payload.boxH,originX,originY,unit);
+    const unit=payload.width===4?31:37,originX=330,originY=54+payload.boxH*unit*CAMERA.z,pile=pileBody(payload.heightMap,{unit,originX,originY,defaultColorKey:'mint'}),wire=boxWireframe(payload.width,payload.depth,payload.boxH,originX,originY,unit);
     let body=text(330,19,'점선 상자 안의 쌓기나무',15,INK,700)+pile.body+wire+text(330,291,`가로 ${payload.width}칸 · 세로 ${payload.depth}칸 · 높이 ${payload.boxH}칸`,13,'#526c7a',700);
     if(solution)body+=rect(190,310,280,34,'#edf7f2','#43877c',1.2,17)+text(330,327,`현재 ${payload.placed}개 · 더 필요한 수 ${payload.need}개`,14,'#1f685f',800);
     return svg(body,solution?356:308,solution?'현재 수와 가득 채울 때의 수를 확인한 풀이':'높은 등각 시점의 점선 상자와 계단 모양 쌓기나무',payload.kind);
