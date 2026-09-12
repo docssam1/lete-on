@@ -230,7 +230,7 @@
         return;
       }
       status.textContent = gradeSixCompetition
-        ? `${gradeName(grade)} GFIELD 자체 제작 실제 유형 5개를 학생용·교사용으로 풀 수 있습니다. 공식 원문 제공 여부는 주최기관에서 따로 확인합니다.`
+        ? `${gradeName(grade)} GFIELD 자체 제작 실제 유형 10개를 학생용·교사용으로 풀 수 있습니다. 공식 원문 제공 여부는 주최기관에서 따로 확인합니다.`
         : programId === "sasmo-k2-8"
           ? `${gradeName(grade)}의 검증된 공개 원문 진입은 아직 잠금입니다. 주최기관에서 제공 여부를 먼저 확인합니다.`
           : "공식 참가·범위는 확인했지만, 원문 문제 제공 경로와 GFIELD 연습 콘텐츠는 아직 검수 대기입니다.";
@@ -249,7 +249,7 @@
     anchor.textContent = `${yearLabel} ${gradeName(grade)} 공식 원본 접근 ↗`;
     const coverageLabel = record.coverageLabelKo || record.coverageLabel;
     status.textContent = gradeSixCompetition
-      ? `${coverageLabel}. 공식 원문은 주최기관에서 확인하고, GFIELD 자체 제작 실제 유형 5개는 지금 학생용·교사용으로 풀 수 있습니다.`
+      ? `${coverageLabel}. 공식 원문은 주최기관에서 확인하고, GFIELD 자체 제작 실제 유형 10개는 지금 학생용·교사용으로 풀 수 있습니다.`
       : record.sourceKind === "organizer-lms"
         ? `${coverageLabel}. 주최기관 로그인 또는 무료 등록 뒤 접근합니다. GFIELD 분석·문항 배정은 아직 잠금입니다.`
         : `${coverageLabel}. 주최기관의 학년별 원본 진입 페이지입니다. GFIELD 분석·문항 배정은 아직 잠금입니다.`;
@@ -259,7 +259,7 @@
   function renderGoalFlow(goalId, hasOriginal, grade) {
     const competition = ["kangaroo", "sasmo", "amc"].includes(goalId);
     const steps = competition
-      ? [["01", "학년·공식 자격 확인"], ["02", hasOriginal ? "주최기관 원문 확인" : "원문 제공 여부 확인"], ["03", String(grade) === "6" ? "GFIELD 실제 유형 5개 풀기" : "검수 후 분석·학습 연결"]]
+      ? [["01", "학년·공식 자격 확인"], ["02", hasOriginal ? "주최기관 원문 확인" : "원문 제공 여부 확인"], ["03", String(grade) === "6" ? "GFIELD 실제 유형 10개 풀기" : "검수 후 분석·학습 연결"]]
       : [["01", "학년·영역 선택"], ["02", "진단 또는 개념 학습"], ["03", "교사 확인·재학습"]];
     document.getElementById("goal-start-flow").innerHTML = steps.map(function (step) {
       return `<li><b>${step[0]}</b><small>${step[1]}</small></li>`;
@@ -274,7 +274,7 @@
     const gradeSixCompetition = String(grade) === "6" && competition;
     const stages = gradeSixCompetition ? [
       ["01", "범위 확인", "공식 학년·출제 범위", "public"],
-      ["02", "유형 연습", "자체 제작 실제 유형 5개", "public"],
+      ["02", "유형 연습", "자체 제작 실제 유형 10개", "public"],
       ["03", "오답 확인", "문항별 즉시 정오 확인", "public"],
       ["04", "개념 학습", "설명·모델·완전 풀이", "planned"],
       ["05", "워크북", "영역별 반복·혼합 연습", "locked"],
