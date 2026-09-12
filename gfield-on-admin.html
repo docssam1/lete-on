@@ -77,6 +77,33 @@ td .keys{color:var(--sub);font-size:11px}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(212,175,55,.3);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .addbar{margin-top:8px}
+.admin-home-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:16px}
+.admin-home-head h2{margin:0 0 5px;font-size:20px}
+.admin-home-head p{margin:0;color:var(--sub);font-size:13px}
+.shared-admin{flex:0 0 auto;padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);font-size:12px;color:var(--sub)}
+.shared-admin strong{display:block;color:var(--ink);font-size:13px}
+.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.admin-destination{display:flex;flex-direction:column;min-height:172px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--surface2)}
+.admin-destination h3{margin:8px 0 5px;font-size:16px;color:var(--ink)}
+.admin-destination p{margin:0 0 14px;color:var(--sub);font-size:12.5px;line-height:1.55}
+.admin-kind{font-size:11px;font-weight:800;color:var(--gold)}
+.admin-state{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--ok)}
+.admin-state::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.admin-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:auto;padding:0 14px;border:1px solid var(--blue-deep);border-radius:6px;background:var(--blue-deep);color:#fff;font-size:13px;font-weight:800;text-decoration:none}
+.admin-link:hover{filter:brightness(1.08)}
+.admin-link:focus-visible{outline:3px solid rgba(201,160,99,.35);outline-offset:2px}
+.admin-home-shell{padding:16px}
+@media(max-width:640px){
+  header{padding:10px 12px!important;gap:8px}
+  header .brand{font-size:14px!important;white-space:nowrap}
+  header .brand small{display:none}
+  header .hbtns{gap:6px;flex-wrap:nowrap}
+  header button{min-height:44px;padding:0 10px!important;white-space:nowrap}
+  .admin-home-head{display:block}
+  .shared-admin{margin-top:12px}
+  .admin-grid{grid-template-columns:1fr}
+  .admin-destination{min-height:156px}
+}
 </style>
 <!-- 하우스 스타일(제품과 같은 팔레트·활자) — 인라인 스타일 뒤에 실어 토큰만 갈아끼운다 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,7 +118,7 @@ td .keys{color:var(--sub);font-size:11px}
     <div style="font-size:28px">🔐</div>
     <h1>GFIELD-ON 통합관리</h1>
     <p>아이디와 승인번호를 입력하세요.</p>
-    <input id="idInput" type="text" placeholder="아이디" autocomplete="username" style="margin-bottom:8px">
+    <input id="idInput" type="text" value="DOCSSAM" placeholder="아이디" autocomplete="username" style="margin-bottom:8px">
     <input id="passInput" type="password" placeholder="승인번호" autocomplete="current-password">
     <button id="passBtn">들어가기</button>
     <div class="gate-err" id="gateErr"></div>
@@ -100,19 +127,21 @@ td .keys{color:var(--sub);font-size:11px}
 
 <header>
   <div class="brand">GFIELD-ON 통합관리<small>ONE PLACE · ALL INDEXES</small></div>
-  <div class="hbtns">
-    <button id="reloadBtn">새로고침</button>
-    <button class="save" id="saveBtn">💾 GitHub 저장</button>
+    <div class="hbtns">
+      <button id="reloadBtn">새로고침</button>
+      <button class="save" id="saveBtn">GitHub 저장</button>
   </div>
 </header>
 
 <div class="wrap">
   <div class="status" id="status">불러오는 중…</div>
   <div class="tabs">
-    <div class="tab active" data-tab="structure">① 구조·프로그램</div>
-    <div class="tab" data-tab="members">② 회원·권한</div>
+    <div class="tab active" data-tab="home">관리 홈</div>
+    <div class="tab" data-tab="structure">구조·프로그램</div>
+    <div class="tab" data-tab="members">회원·권한</div>
   </div>
-  <div class="panel active" id="panel-structure"></div>
+  <div class="panel active" id="panel-home"></div>
+  <div class="panel" id="panel-structure"></div>
   <div class="panel" id="panel-members"></div>
 </div>
 
@@ -123,6 +152,17 @@ td .keys{color:var(--sub);font-size:11px}
 "use strict";
 const CFG={owner:"docssam1",repo:"lete-on",branch:"main",path:"config.js",globalVar:"GFIELD_CONFIG"};
 const LS_PASS="gfieldon_admin_ok", LS_PAT="gfieldon_pat", LS_REG="gfieldon_registry";
+const LS_ADMIN_NAME="gfield_admin_login_name";
+const SHARED_ADMIN_NAME="DOCSSAM";
+const ADMIN_DESTINATIONS=[
+  {kind:"전체 운영",name:"레테 ON 관리자",desc:"전체 학생과 콘텐츠, 공통 운영 데이터를 관리합니다.",url:"/admin.html"},
+  {kind:"수학 학습",name:"필즈 더 클래식",desc:"문제은행, 골든벨, 권별 테스트와 학생별 학습 권한을 관리합니다.",url:"/fields-classic/admin.html"},
+  {kind:"수업·성적",name:"고등 성적표 관리",desc:"학생 수업, 교재, 진단 결과와 성적표 업무를 관리합니다.",url:"https://hs.gfieldacademy.net/admin.html"},
+  {kind:"수학 시험",name:"중등 시험지",desc:"중등 시험지 승인과 학생별 열람 범위를 관리합니다.",url:"/hsmiddle/admin.html"},
+  {kind:"심화 학습",name:"하이퍼포커스",desc:"문항 승인, 유형별 학습, VIP와 챌린지 콘텐츠를 관리합니다.",url:"/hyper-focus/admin.html"},
+  {kind:"선발·진단",name:"선발·누적 진단",desc:"시험 구성, 문항 근거 검수와 시험별 승인 업무를 관리합니다.",url:"/highschool-selection/admin/index.html"},
+  {kind:"학습 설계",name:"학습 로드맵",desc:"학생별 학습 경로와 단계별 진행 계획을 관리합니다.",url:"/roadmap/admin.html"}
+];
 /* 관리자 로그인 — 아이디 + 승인번호 (원장 지시 2026-09-06 "어드민 아이디 docssam, 승인번호 고정").
    평문을 저장소에 두지 않는다: sha256(SALT:아이디:승인번호) 만 적는다. 예전에는 이 파일에
    비밀번호가 그대로 적혀 있어 공개 저장소를 읽는 누구나 볼 수 있었다.
@@ -139,7 +179,7 @@ const LOCKLABEL={open:"🔓 미리보기",closed:"🔒 승인필요",soon:"준�
 let DATA=null;
 let FILE_SHA=null;
 let REG=[];
-let curTab="structure";
+let curTab="home";
 const $=id=>document.getElementById(id);
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2200);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -151,10 +191,15 @@ async function sha256(m){const b=new TextEncoder().encode(m);const d=await crypt
 function genCode(){const s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let r="GF";for(let i=0;i<5;i++)r+=s[Math.floor(Math.random()*s.length)];return r;}
 $("passBtn").addEventListener("click",async ()=>{
   const ok=(await adminHash($("idInput").value,$("passInput").value))===ADMIN_HASH;
-  if(ok){localStorage.setItem(LS_PASS,"1");$("gate").style.display="none";}
+  if(ok){
+    localStorage.setItem(LS_PASS,"1");
+    localStorage.setItem(LS_ADMIN_NAME,String($("idInput").value||SHARED_ADMIN_NAME).trim().toUpperCase());
+    $("gate").style.display="none";
+  }
   else $("gateErr").textContent="아이디 또는 승인번호가 올바르지 않습니다.";
 });
 ["idInput","passInput"].forEach(k=>$(k).addEventListener("keydown",e=>{if(e.key==="Enter")$("passBtn").click();}));
+$("idInput").value=localStorage.getItem(LS_ADMIN_NAME)||SHARED_ADMIN_NAME;
 async function load(){
   $("status").innerHTML='<span class="spinner"></span> 불러오는 중…';
   REG=JSON.parse(localStorage.getItem(LS_REG)||"[]");
@@ -178,7 +223,27 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   $("panel-"+curTab).classList.add("active");render();
 }));
-function render(){ curTab==="structure"?renderStructure():renderMembers(); }
+function render(){
+  if(curTab==="home")renderAdminHome();
+  else if(curTab==="structure")renderStructure();
+  else renderMembers();
+}
+function renderAdminHome(){
+  const cards=ADMIN_DESTINATIONS.map(item=>`<article class="admin-destination">
+    <div class="admin-state">운영 중</div>
+    <div class="admin-kind">${esc(item.kind)}</div>
+    <h3>${esc(item.name)}</h3>
+    <p>${esc(item.desc)}</p>
+    <a class="admin-link" href="${esc(item.url)}" target="_blank" rel="noopener">관리 화면 열기</a>
+  </article>`).join("");
+  $("panel-home").innerHTML=`<section class="admin-home-shell">
+    <div class="admin-home-head">
+      <div><h2>프로그램별 관리</h2><p>업무 성격에 맞는 관리자 화면에서 작업합니다. 이 화면은 열린 상태로 유지됩니다.</p></div>
+      <div class="shared-admin">공동 관리자 이름<strong>${esc(localStorage.getItem(LS_ADMIN_NAME)||SHARED_ADMIN_NAME)}</strong></div>
+    </div>
+    <div class="admin-grid">${cards}</div>
+  </section>`;
+}
 function keyList(){
   const out=[];
   (DATA.brands||[]).forEach(b=>{
@@ -351,7 +416,7 @@ async function save(){
     else if(res.status===409){toast("충돌 — 새로고침 후 다시 저장");}
     else toast("저장 실패: "+(j.message||res.status));
   }catch(e){toast("저장 오류: "+e.message);}
-  $("saveBtn").innerHTML="💾 GitHub 저장";
+  $("saveBtn").innerHTML="GitHub 저장";
 }
 $("saveBtn").addEventListener("click",save);
 $("reloadBtn").addEventListener("click",load);

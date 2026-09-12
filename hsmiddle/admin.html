@@ -9,7 +9,7 @@
   const s=HSMIDDLE_AUTH.readSession();
   if(s.valid&&HSMIDDLE_AUTH.isAdmin(s.name))return;
   document.addEventListener("DOMContentLoaded",()=>{
-    document.querySelector("main").innerHTML=`<h1>승인 관리</h1><p class="sub">관리자 계정으로 로그인해 주세요.</p><section class="panel"><div class="form"><input id="an" placeholder="관리자 이름"><input id="ac" placeholder="승인번호" type="password"><button onclick="adminIn()">입장</button></div><p class="status" id="as"></p></section>`;
+    document.querySelector("main").innerHTML=`<h1>승인 관리</h1><p class="sub">관리자 계정으로 로그인해 주세요.</p><section class="panel"><div class="form"><input id="an" value="DOCSSAM" placeholder="관리자 이름"><input id="ac" placeholder="승인번호" type="password"><button onclick="adminIn()">입장</button></div><p class="status" id="as"></p></section>`;
   });
   window.adminIn=()=>{
     const n=document.getElementById("an").value.trim(),c=document.getElementById("ac").value.trim();
