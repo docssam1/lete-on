@@ -4,13 +4,21 @@
 
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8878/hselementary/question-bank/`
-- Total runtime types: 964 across 6 semesters, 36 major units, and 174 subunits
-- Implemented types: 903 (deterministic runtime availability check)
-- Review-locked types: 61
-- Exact source-item mapping: 515 items: all 329 items in 4-1 plus 66 fraction, 44 triangle, 44 decimal, 10 quadrilateral, and 22 line-graph source items in 4-2. Two duplicate line-graph source items are recorded in the inventory but intentionally do not create runtime types. Do not describe the remaining entries as original problem items until every exploration, example, and Mission problem has a unique source locator.
+- Total runtime types: 1,954 across 6 semesters, 36 major units, and 184 subunits
+- Implemented types: 1,453 (deterministic runtime availability check)
+- Review-locked types: 501
+- Source-linked runtime entries: 1,547 currently carry a source item ID (4-1: 329, 4-2: 228, 5-1: 357, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Completed: all six units in grades 4, 5, and 6 for both semesters
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-09-13 5-1 Unit 6 Source And Notation Correction
+
+- Replaced the three unlocked generic area groups with all 75 source-item types from Explorations 1 through 6. Exploration 1 keeps 10 verified generators and one non-unique locked item; the other 64 source items remain review-locked until their own problem, answer visual, and independent checker are complete.
+- Corrected the source inventory collision that had copied Exploration 2 Missions 5 and 6 into Exploration 1. Exploration 1 Mission 5 is the four-rectangle perimeter problem and is ready; Mission 6 is the five-rectangle problem and remains locked because the printed conditions do not determine one perimeter.
+- Fraction layout now uses the widest numerator or denominator as the shared width, so the bar spans the complete fraction and both parts are centered. Fractions, mixed numbers, inline expressions, and squared units inherit the surrounding educational font and remain on one mathematical line.
+- Focused evidence: 30,000 independent Exploration 1 calculations; 121 desktop/mobile captures; 60 A4 problem/solution PDFs; 218,400 math-notation generation samples; and 87,180 whole-bank runtime generations. All passed. Evidence is outside the repository under the 2026-09-13 private geometry audit folder.
+- Do not unlock the remaining 64 Unit 6 items by routing them to `rectangleRightTriangleAreaAdvanced`, `perimeterAreaSquareCompositionAdvanced`, or `quadrilateralAreaAdvanced`. Each printed Exploration, Example, and Mission needs its own source-matched branch.
 
 ## 2026-08-29 4-2 Fraction Completion
 

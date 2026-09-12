@@ -6,6 +6,11 @@ require("./generators.js");
 
 const curriculum = window.HSE_CURRICULUM;
 const api = window.HSE_GENERATORS;
+const sourceInventory = [
+  require("./source-inventory/5-1-u6-e1-e2-readiness-review.json"),
+  require("./source-inventory/5-1-u6-e3-e4-readiness-review.json"),
+  require("./source-inventory/5-1-u6-e5-e6-readiness-review.json")
+];
 
 const expected = [
   ["5-1-u6-e1-exploration", "two-layout-perimeter-difference", "exploration"],
@@ -194,10 +199,25 @@ const semester = curriculum.semesters.find(item => item.id === "5-1");
 const unit = semester?.units.find(item => item.id === "5-1-u6");
 const subunit = unit?.subunits.find(item => item.id === "5-1-u6-s1");
 const types = subunit?.types || [];
+const allTypes = unit?.subunits.flatMap(item => item.types) || [];
+const inventoryItems = sourceInventory.flatMap(inventory => inventory.items);
 check(Boolean(subunit), "5-1 6단원 개념탐구 1을 찾을 수 없습니다.");
 check(types.length === 11, `세부 유형 수가 11개가 아닙니다: ${types.length}`);
 check(new Set(types.map(type => type.sourceItemId)).size === 11, "출처 항목이 중복되었습니다.");
 check(types.filter(type => !type.reviewLocked).length === 10 && types.filter(type => type.reviewLocked).length === 1, "공개 10개·잠금 1개 구성이 아닙니다.");
+check(unit?.subunits.length === 6, `개념탐구 묶음 수가 6개가 아닙니다: ${unit?.subunits.length}`);
+check(allTypes.length === 75, `5-1 6단원 원문 유형 수가 75개가 아닙니다: ${allTypes.length}`);
+check(new Set(allTypes.map(type => type.sourceItemId)).size === 75, "5-1 6단원 원문 유형 ID가 중복되었습니다.");
+check(inventoryItems.length === 75 && new Set(inventoryItems.map(item => item.sourceItemId)).size === 75, "원본 분류표의 75개 ID가 완전하지 않습니다.");
+check(allTypes.every(type => type.sourceItemId && inventoryItems.some(item => item.sourceItemId === type.sourceItemId)), "화면 유형 중 원본 분류표에 없는 항목이 있습니다.");
+check(inventoryItems.every(item => allTypes.some(type => type.sourceItemId === item.sourceItemId)), "원본 분류표 항목 중 화면에서 빠진 유형이 있습니다.");
+check(allTypes.filter(type => !type.reviewLocked).length === 10, "원본 대조가 끝난 10개 외 유형이 공개되었습니다.");
+check(allTypes.slice(11).every(type => type.reviewLocked && !type.generatorKey && type.reviewReason), "개념탐구 2~6의 미구현 유형이 잠금·사유 표시 상태가 아닙니다.");
+check(!allTypes.some(type => !type.sourceItemId), "원본 연결 없는 일반 유형이 5-1 6단원에 남았습니다.");
+const inventoryMission5 = inventoryItems.find(item => item.sourceItemId === "5-1-u6-e1-mission-5");
+const inventoryMission6 = inventoryItems.find(item => item.sourceItemId === "5-1-u6-e1-mission-6");
+check(inventoryMission5?.independentAnswer === "5.5cm, 4.5cm" && inventoryMission5?.publicDecision === "ready", "E1 Mission 5 분류표가 원본 네 직사각형 문제와 다릅니다.");
+check(inventoryMission6?.singleAnswer === false && inventoryMission6?.publicDecision === "locked", "E1 Mission 6의 답 비유일 잠금 근거가 없습니다.");
 
 expected.forEach(([sourceItemId, kind, section], index) => {
   const type = types[index];
