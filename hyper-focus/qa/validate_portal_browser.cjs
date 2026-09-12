@@ -91,7 +91,7 @@ async function installMockVideoFixture(page) {
   await installOfflineConfig(page);
   await page.route("**/hyper-focus/challenge/access-service.js*", route => route.fulfill({
     contentType: "application/javascript; charset=utf-8",
-    body: `window.HFChallengeAccess={allow:key=>key==="challenge-mock-1",approvedStudentName:()=>"영상검수",isTeacherPreview:()=>false,refresh:async()=>({verified:true})};`
+    body: `window.HFChallengeAccess={allow:key=>key==="challenge-mock-2",approvedStudentName:()=>"영상검수",isTeacherPreview:()=>false,refresh:async()=>({verified:true})};`
   }));
   await page.route("**/hyper-focus/challenge/document-access.js*", route => route.fulfill({
     contentType: "application/javascript; charset=utf-8",
@@ -252,10 +252,10 @@ async function noOverflow(page, label) {
     const mockVideo = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
     await installMockVideoFixture(mockVideo);
     mockVideo.on("pageerror", error => errors.push(`challenge mock video desktop: ${error.message}`));
-    await mockVideo.goto(`${base}/hyper-focus/challenge/exam.html?round=1`, { waitUntil: "networkidle" });
+    await mockVideo.goto(`${base}/hyper-focus/challenge/exam.html?round=2`, { waitUntil: "networkidle" });
     assert.equal(await mockVideo.locator("#mockVideoPanel").isVisible(), true);
     assert.match(await mockVideo.locator("#mockVideoFrame").getAttribute("src"), /youtube-nocookie\.com\/embed\/_QHKH2ctLWE/);
-    assert.equal(await mockVideo.locator("#mockVideoFrame").getAttribute("title"), "챌린지 대비 모의고사 1회 학습 영상");
+    assert.equal(await mockVideo.locator("#mockVideoFrame").getAttribute("title"), "챌린지 대비 모의고사 2회 학습 영상");
     assert.equal(await mockVideo.locator("#mockVideoLink").getAttribute("href"), "https://youtu.be/_QHKH2ctLWE");
     assert.equal(await mockVideo.locator("#mockVideoWatermark span").count(), 3);
     assert.equal(await mockVideo.locator("#mockVideoCorrections").isVisible(), true);
@@ -265,11 +265,11 @@ async function noOverflow(page, label) {
     ]);
     assert.match(await mockVideo.locator("#mockViewerLayout").evaluate(node => getComputedStyle(node).gridTemplateColumns), /px/);
     await noOverflow(mockVideo, "desktop challenge mock video");
-    await mockVideo.screenshot({ path: "tmp/hf-challenge-mock-1-video-desktop.png", fullPage: true });
+    await mockVideo.screenshot({ path: "tmp/hf-challenge-mock-2-video-desktop.png", fullPage: true });
     await mockVideo.emulateMedia({ media: "print" });
     assert.equal(await mockVideo.locator("#mockVideoPanel").isHidden(), true);
     await mockVideo.emulateMedia({ media: "screen" });
-    await mockVideo.locator("#round").selectOption("2");
+    await mockVideo.locator("#round").selectOption("1");
     assert.equal(await mockVideo.locator("#mockVideoPanel").isHidden(), true);
     assert.equal(await mockVideo.locator("#mockVideoFrame").getAttribute("src"), null);
     assert.equal(await mockVideo.locator("#mockVideoCorrectionList li").count(), 0);
@@ -344,14 +344,14 @@ async function noOverflow(page, label) {
     const mockVideoMobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     await installMockVideoFixture(mockVideoMobile);
     mockVideoMobile.on("pageerror", error => errors.push(`challenge mock video mobile: ${error.message}`));
-    await mockVideoMobile.goto(`${base}/hyper-focus/challenge/exam.html?round=1`, { waitUntil: "networkidle" });
+    await mockVideoMobile.goto(`${base}/hyper-focus/challenge/exam.html?round=2`, { waitUntil: "networkidle" });
     assert.equal(await mockVideoMobile.locator("#mockVideoPanel").isVisible(), true);
     assert.match(await mockVideoMobile.locator("#mockVideoFrame").getAttribute("src"), /youtube-nocookie\.com\/embed\/_QHKH2ctLWE/);
     assert.equal(await mockVideoMobile.locator("#mockVideoLink").getAttribute("href"), "https://youtu.be/_QHKH2ctLWE");
     assert.equal(await mockVideoMobile.locator("#mockVideoCorrections").isVisible(), true);
     assert.equal(await mockVideoMobile.locator("#mockVideoCorrectionList li").count(), 2);
     await noOverflow(mockVideoMobile, "mobile challenge mock video");
-    await mockVideoMobile.screenshot({ path: "tmp/hf-challenge-mock-1-video-mobile.png", fullPage: true });
+    await mockVideoMobile.screenshot({ path: "tmp/hf-challenge-mock-2-video-mobile.png", fullPage: true });
     await mockVideoMobile.close();
 
     assert.deepEqual(errors, []);
@@ -368,7 +368,7 @@ async function noOverflow(page, label) {
       adminProductPermissions: 5,
       adminCurrentApprovalCode: true,
       conceptVideoViewers: [1, 2],
-      challengeMockOneVideoViewer: true,
+      challengeMockTwoVideoViewer: true,
       vipAdminDesktop: true,
       vipAdminMobile: true,
       desktopOverflow: 0,

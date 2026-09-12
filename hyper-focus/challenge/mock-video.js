@@ -1,8 +1,8 @@
 (function(root){
   'use strict';
   const VIDEOS=Object.freeze({
-    '1':Object.freeze({
-      title:'챌린지 대비 모의고사 1회',
+    '2':Object.freeze({
+      title:'챌린지 대비 모의고사 2회',
       url:'https://youtu.be/_QHKH2ctLWE',
       corrections:Object.freeze([
         '11번: 정답은 5가지입니다. 영상의 ‘6가지’ 표기는 오류입니다.',
