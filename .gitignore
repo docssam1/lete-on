@@ -16,6 +16,7 @@ reading-world/private/
 /tmp/
 /supabase/.temp/
 fields-classic/question-bank/golden-bell-private-*.js
+fields-classic/question-bank/golden-bell-private-*.mjs
 fields-classic/question-bank/golden-bell-answer-bank*.json
 fields-classic/question-bank/golden-bell-book*-source.js
 fields-classic/question-bank/golden-bell-book*-source-audit.mjs

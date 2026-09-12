@@ -7,6 +7,7 @@ import { COURSE02_A1_CYCLE_TOTAL_LESSON } from "./golden-bell-course02-cycle-tot
 import { COURSE03_A1_REMAINDER_LESSON } from "./golden-bell-course03-remainder-lesson.js";
 import { COURSE03_A1_LCM_REMAINDER_LESSON } from "./golden-bell-course03-lcm-remainder-lesson.js";
 import { COURSE03_A1_COMPLEX_FRACTION_LESSON } from "./golden-bell-course03-complex-fraction-lesson.js";
+import { COURSE02_A2_LESSONS, COURSE03_A2_LESSONS } from "./golden-bell-course23-a2-lessons.js";
 
 const patternCycle = ["triangle", "square", "circle", "square"];
 
@@ -85,4 +86,17 @@ course03A1.lessons.push(COURSE03_A1_REMAINDER_LESSON);
 course03A1.lessons.push(COURSE03_A1_LCM_REMAINDER_LESSON);
 course03A1.lessons.push(COURSE03_A1_COMPLEX_FRACTION_LESSON);
 
-export const COURSE23_PILOT_BOOKS = Object.freeze([course02A1, course03A1]);
+const course02A2 = Object.freeze({
+  id: "course-02-a2", bookId: "course-02-a2", courseId: "course-02", label: "A2",
+  title: "복제수와 님게임", status: "pilot", lessons: COURSE02_A2_LESSONS,
+  dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
+  source: { origin: "textbook-derived", note: "교사용 지도서의 네 단원 활동 구조를 확인하고 수와 문장을 새로 구성한 골든벨입니다." }
+});
+const course03A2 = Object.freeze({
+  id: "course-03-a2", bookId: "course-03-a2", courseId: "course-03", label: "A2",
+  title: "순환소수와 수직선좌표", status: "pilot", lessons: COURSE03_A2_LESSONS,
+  dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
+  source: { origin: "textbook-derived", note: "교사용 지도서의 네 단원 활동 구조를 확인하고 수와 문장을 새로 구성한 골든벨입니다." }
+});
+
+export const COURSE23_PILOT_BOOKS = Object.freeze([course02A1, course02A2, course03A1, course03A2]);

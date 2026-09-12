@@ -7,6 +7,7 @@ import { course02CycleTotalAnswer } from "./golden-bell-course02-cycle-total-les
 import { countSolutions, firstSolution } from "./golden-bell-course03-lcm-remainder-lesson.js";
 import { divideFractions, formatContinuedTerms, formatFraction } from "./golden-bell-course03-complex-fraction-lesson.js";
 import { courseConceptMarkup } from "./golden-bell-course-concepts.js";
+import { course23A2Model } from "./golden-bell-course23-a2-lessons.js";
 
 const forbidden = new Set(["answer", "solution", "privateAnswer", "workedSolution", "workedSteps", "evidence", "sourcePath", "fingerprint"]);
 const keys = value => value && typeof value === "object" ? Object.entries(value).flatMap(([key, child]) => [key, ...keys(child)]) : [];
@@ -59,26 +60,29 @@ const expectedAnswer = (item) => {
       ? formatFraction(divideFractions(visual.top, visual.bottom))
       : formatContinuedTerms(visual.numerator, visual.denominator);
   }
+  if (visual.kind === "course23-a2") return course23A2Model(visual).answer;
   throw new Error(`Unknown pilot visual: ${visual.kind}`);
 };
 const ids = new Set(); const refs = new Set();
-let practiceCount = 0; let calculatedAnswerCount = 0;
-assert.equal(COURSE23_PILOT_BOOKS.length, 2);
-assert.deepEqual(COURSE23_PILOT_BOOKS.map(book => book.id), ["course-02-a1", "course-03-a1"]);
-assert.equal(new Set(COURSE23_PILOT_BOOKS.map(book => book.id)).size, 2);
+let practiceCount = 0; let calculatedAnswerCount = 0; let trackCount = 0; let beatCount = 0;
+assert.equal(COURSE23_PILOT_BOOKS.length, 4);
+assert.deepEqual(COURSE23_PILOT_BOOKS.map(book => book.id), ["course-02-a1", "course-02-a2", "course-03-a1", "course-03-a2"]);
+assert.equal(new Set(COURSE23_PILOT_BOOKS.map(book => book.id)).size, 4);
 for (const book of COURSE23_PILOT_BOOKS) {
   assert.equal(book.status, "pilot"); assert.equal(book.source.origin, "textbook-derived");
-  assert.equal(book.lessons.length, book.courseId === "course-02" ? 7 : 4);
+  assert.equal(book.lessons.length, book.id === "course-02-a1" ? 7 : 4);
   for (const [lessonIndex, lesson] of book.lessons.entries()) {
     assert.equal(lesson.experience.kind, "course-concept");
-    assert.equal(lesson.experience.tracks.length, 2);
+    assert.ok(lesson.experience.tracks.length >= 2);
+    trackCount += lesson.experience.tracks.length;
     assert.equal(lesson.experience.tracks.every(track => track.beats.length === 4), true);
+    beatCount += lesson.experience.tracks.reduce((sum, track) => sum + track.beats.length, 0);
     if (lessonIndex === 0) {
       assert.equal(lesson.experience.beats, lesson.experience.tracks[0].beats);
       assert.equal(lesson.experience.openingPrompt, lesson.experience.tracks[0].openingPrompt);
       assert.equal(lesson.experience.hint, lesson.experience.tracks[0].hint);
     } else {
-      assert.equal(lesson.learnerStage, `필즈 더 클래식 ${book.courseId === "course-02" ? "2" : "3"}과정 A1; 연령 미확정`);
+      assert.equal(lesson.learnerStage, `필즈 더 클래식 ${book.courseId === "course-02" ? "2" : "3"}과정 ${book.label}; 연령 미확정`);
     }
     for (const item of [...lesson.original.items, lesson.extension, ...lesson.similarPractice]) {
       practiceCount++; assert(!ids.has(item.id)); ids.add(item.id); assert(!refs.has(item.answerRef)); refs.add(item.answerRef);
@@ -98,5 +102,6 @@ assert.equal((patternPreview.match(/data-cycle-part="full"/g) || []).length, 2);
 assert.equal((patternPreview.match(/data-cycle-part="partial"/g) || []).length, 1);
 assert.match(patternPreview, /다음 마디의 앞 2개/);
 assert.equal((patternPreview.match(/<span><b>/g) || []).length, 10);
-assert.equal(practiceCount, 110); assert.equal(calculatedAnswerCount, practiceCount);
-console.log(`COURSE23 pilot public audit passed: books=2 lessons=11 tracks=22 beats=88 practice=110 uniqueIds=${ids.size} uniqueRefs=${refs.size} calculatedAnswers=${calculatedAnswerCount} publicForbiddenKeys=0`);
+assert.equal(practiceCount, 190); assert.equal(calculatedAnswerCount, practiceCount);
+assert.equal(trackCount, 42); assert.equal(beatCount, 168);
+console.log(`COURSE23 pilot public audit passed: books=4 lessons=19 tracks=${trackCount} beats=${beatCount} practice=190 uniqueIds=${ids.size} uniqueRefs=${refs.size} calculatedAnswers=${calculatedAnswerCount} publicForbiddenKeys=0`);

@@ -9,6 +9,7 @@ import { course02CycleTotalConceptMarkup } from "./golden-bell-course02-cycle-to
 import { course03RemainderConceptMarkup } from "./golden-bell-course03-remainder-lesson.js";
 import { course03LcmRemainderConceptMarkup } from "./golden-bell-course03-lcm-remainder-lesson.js";
 import { course03ComplexFractionConceptMarkup } from "./golden-bell-course03-complex-fraction-lesson.js";
+import { course23A2ConceptMarkup } from "./golden-bell-course23-a2-lessons.js";
 
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 const names = { triangle: "세모", square: "네모", circle: "동그라미", star: "별" };
@@ -69,10 +70,22 @@ export function courseConceptMarkup(visual) {
   if (course03Lcm) return course03Lcm;
   const course03Fraction = course03ComplexFractionConceptMarkup(visual);
   if (course03Fraction) return course03Fraction;
+  const course23A2 = course23A2ConceptMarkup(visual);
+  if (course23A2) return course23A2;
   return "";
 }
 
 export function courseConceptPrintPages(lesson, book, student) {
+  if (book.id.endsWith("-a2")) {
+    const trackGroups = [];
+    for (let index = 0; index < lesson.experience.tracks.length; index += 2) {
+      trackGroups.push(lesson.experience.tracks.slice(index, index + 2));
+    }
+    return trackGroups.map((tracks, pageIndex) => `<article class="gold-print-page course-concept-print-page course-a2-concept-sheet" data-print-book="${esc(book.id)}" data-print-lesson="${esc(lesson.id)}" data-print-part="concept-${pageIndex + 1}" data-watermark="${esc(student)} · GFIELD">
+      <header class="gold-print-head"><div><span>${esc(book.courseId === "course-02" ? "2과정" : "3과정")} · 개념 학습</span><h1>${esc(book.label)} · ${esc(lesson.title)}</h1></div><dl><div><dt>이름</dt><dd>${esc(student)}</dd></div></dl></header>
+      <div class="course-a2-print-tracks">${tracks.map((track, trackIndex) => `<section class="course-a2-print-track"><h2>${pageIndex * 2 + trackIndex + 1}. ${esc(track.title)}</h2><p class="course-print-problem">${esc(track.openingPrompt)}</p><div class="course-print-frames">${track.beats.map((beat, beatIndex) => `<section class="course-print-frame"><h3>${beatIndex + 1}단계</h3>${courseConceptMarkup(beat.visual)}<p>${esc(beat.caption)}</p></section>`).join("")}</div></section>`).join("")}</div>
+      <footer class="gold-print-footer">${esc(book.label)} · ${esc(lesson.unit)}</footer></article>`).join("");
+  }
   return lesson.experience.tracks.flatMap((track, trackIndex) => {
     const pages = ["course-02-a1-multi-pattern-activity", "course-02-a1-windmill-pattern"].includes(lesson.id)
       ? [track.beats.slice(0, 2), track.beats.slice(2, 4)]
