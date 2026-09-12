@@ -13,6 +13,21 @@
     })
   });
 
+  const fixedVerifiedPool = (name, generatorKey, labels, verifiedVariantCount = 3) => detailed(
+    name,
+    generatorKey,
+    labels.map(definition => {
+      const type = typeof definition === "string" ? { label: definition } : definition;
+      return {
+        ...type,
+        generationMode: "fixed-verified-pool",
+        verifiedVariantCount: type.reviewLocked ? 0 : verifiedVariantCount,
+        answerVisualRequired: true,
+        answerVisualStatus: type.reviewLocked ? "locked" : "verified"
+      };
+    })
+  );
+
   const sourced = (label, difficultyBand, sourceTier, sourceEvidence = "4-1 실력 p.4-15 · 심화 p.8-19 · 경시 p.1-12 문제 구조 대조") => ({
     label,
     difficultyBand,
@@ -79,14 +94,95 @@
     reviewLocked,
     reviewReason
   });
+  const factorMultipleLockReasons = {
+    "5-1-u2-e5-example-5-4": "세 쌍의 최대공약수만으로 세 수의 최소공배수는 하나로 정해지지 않습니다. 예를 들어 (90, 36, 60)과 (630, 36, 60)은 같은 조건을 만족하지만 최소공배수가 다릅니다.",
+    "5-1-u2-e5-mission-6": "공통으로 나누는 수가 정해지지 않아 세 수가 하나로 정해지지 않습니다. 몫이 2, 3, 5인 세 수는 공통 수에 따라 여러 가지가 됩니다.",
+    "5-1-u2-e7-example-7-1": "원문 조건에는 학생 수가 7명과 14명인 경우가 모두 들어맞아 답이 하나로 정해지지 않습니다.",
+    "5-1-u2-e7-mission-3": "원문 수를 계산하면 학생 수의 공약수는 3뿐이지만, 6개가 남으려면 학생 수가 6보다 커야 하므로 가능한 답이 없습니다.",
+    "5-1-u2-e8-mission-6": "원문 조건에는 (가, 나, 다)=(7, 30, 50)과 (21, 10, 150)이 모두 들어맞아 세 수가 하나로 정해지지 않습니다."
+  };
   const sourceItem52 = (label, sourceItemId, exploration, reviewLocked = exploration > 4) => {
     const pdfPage = 13 + (exploration - 1) * 2;
     const isMission = sourceItemId.includes("-mission-");
+    const reviewedExploration = exploration === 5 || exploration === 7 || exploration === 8;
+    const shouldLock = reviewedExploration ? Boolean(factorMultipleLockReasons[sourceItemId]) : exploration === 6 ? false : reviewLocked;
+    const reviewReason = factorMultipleLockReasons[sourceItemId]
+      ? factorMultipleLockReasons[sourceItemId]
+      : "현행 원본 구조는 확인했지만, 항목별 계산과 단일 정답 검산 전에는 공개하지 않습니다.";
     return {
-      ...sourceItem51(label, 1, sourceItemId, pdfPage + (isMission ? 1 : 0), pdfPage + 1 + (isMission ? 1 : 0), reviewLocked,
-        reviewLocked ? "현행 원본 구조는 확인했지만, 항목별 계산과 단일 정답 검산 전에는 공개하지 않습니다." : "현행 원본 구조와 독립 계산 검산 완료"),
+      ...sourceItem51(label, 1, sourceItemId, pdfPage + (isMission ? 1 : 0), pdfPage + 1 + (isMission ? 1 : 0), shouldLock,
+        shouldLock ? reviewReason : "현행 원본 구조와 독립 계산 검산 완료"),
       sourceTier: "advanced"
     };
+  };
+  const correspondenceReadyIds = new Set([
+    "5-1-u3-e1-exploration",
+    "5-1-u3-e1-example-1-1",
+    "5-1-u3-e1-example-1-2",
+    "5-1-u3-e1-mission-1",
+    "5-1-u3-e1-mission-2",
+    "5-1-u3-e1-mission-4",
+    "5-1-u3-e1-mission-5",
+    "5-1-u3-e2-example-2-1",
+    "5-1-u3-e2-example-2-2",
+    "5-1-u3-e2-example-2-3",
+    "5-1-u3-e2-mission-1",
+    "5-1-u3-e2-mission-2",
+    "5-1-u3-e2-mission-3",
+    "5-1-u3-e2-mission-4",
+    "5-1-u3-e2-mission-6",
+    "5-1-u3-e3-exploration",
+    "5-1-u3-e3-mission-1",
+    "5-1-u3-e3-mission-2",
+    "5-1-u3-e3-mission-3",
+    "5-1-u3-e3-mission-4",
+    "5-1-u3-e4-exploration",
+    "5-1-u3-e4-example-4-1",
+    "5-1-u3-e4-example-4-2",
+    "5-1-u3-e4-example-4-3",
+    "5-1-u3-e4-mission-1",
+    "5-1-u3-e4-mission-2",
+    "5-1-u3-e4-mission-3",
+    "5-1-u3-e4-mission-4",
+    "5-1-u3-e4-mission-5",
+    "5-1-u3-e4-mission-6"
+  ]);
+  const correspondenceE1LockReasons = {
+    "5-1-u3-e1-example-1-3": "도형 기호가 나타내는 숫자와 계산 기호의 위치를 원본 그림과 같은 점·선분 모델로 복원하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e1-example-1-4": "점과 선의 길이 차이와 날짜 부호를 PC·모바일·A4에서 판독할 수 있게 복원하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e1-mission-3": "도형 기호의 방향과 계산판의 연산 위치를 원본과 1:1로 복원하고 독립 계산하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e1-mission-6": "색칠한 모눈의 위치 규칙을 원본 격자 좌표로 모델링하고 답 유일성을 확인하기 전에는 출제하지 않습니다."
+  };
+  const correspondenceE2LockReasons = {
+    "5-1-u3-e2-exploration": "두 수직선의 눈금과 연결선을 원본 점·선분 모델로 복원하고 표·관계식·값을 한 답 계약으로 검증하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e2-mission-5": "날짜별 표 완성과 대응 관계식 작성을 함께 채점할 수 있는 여러 칸 답 계약을 마련하기 전에는 출제하지 않습니다."
+  };
+  const correspondenceE3LockReasons = {
+    "5-1-u3-e3-example-3-1": "겹쳐 그린 정사각형의 선분을 점·선분 모델로 복원하고, 크기가 다른 삼각형까지 빠짐없이 세는 검산을 마치기 전에는 출제하지 않습니다.",
+    "5-1-u3-e3-example-3-2": "수정판 문제의 바둑돌 배열과 현재 답지의 그림이 서로 달라, 흰 돌과 검은 돌을 원문 배열에서 독립 계산하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e3-example-3-3": "붙인 정사각형의 행과 열이 늘어나는 규칙과 각 누름못의 위치를 격자 좌표로 복원하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e3-mission-5": "나열된 도형에서 크고 작은 삼각형을 점·선분 연결로 전수 열거하고 독립 계산하기 전에는 출제하지 않습니다.",
+    "5-1-u3-e3-mission-6": "검은색과 흰색 타일의 위치 규칙을 칸 좌표로 복원하고 두 색의 개수를 독립 계산하기 전에는 출제하지 않습니다."
+  };
+  const sourceItem53 = (label, sourceItemId, exploration) => {
+    const pdfPage = 31 + (exploration - 1) * 2;
+    const isMission = sourceItemId.includes("-mission-");
+    const ready = correspondenceReadyIds.has(sourceItemId);
+    const reviewReason = correspondenceE1LockReasons[sourceItemId]
+      || correspondenceE2LockReasons[sourceItemId]
+      || correspondenceE3LockReasons[sourceItemId]
+      || (ready
+        ? "현행 원문 구조와 독립 계산 검산 완료"
+        : "원문 문제 구조는 확인했지만, 대응 규칙과 그림·부호 조건을 독립 계산하고 답 하나가 되는지 검산하기 전에는 공개하지 않습니다.");
+    return sourceItem51(
+      label,
+      1,
+      sourceItemId,
+      pdfPage + (isMission ? 1 : 0),
+      pdfPage + 1 + (isMission ? 1 : 0),
+      !ready,
+      reviewReason
+    );
   };
   const factorMultipleGroups = [
     ["약수와 배수", 1, [
@@ -121,6 +217,288 @@
     ["최대공약수와 최소공배수의 관계", 8, [
       ["exploration", "곱과 최대공약수로 차가 가장 작은 두 수와 최소공배수 찾기"], ["example-8-1", "최대공약수와 최소공배수로 가능한 두 수의 합 모두 찾기"], ["example-8-2", "곱과 최소공배수로 공약수의 합 찾기"], ["example-8-3", "최대공약수·최소공배수·차로 큰 수 찾기"], ["example-8-4", "여러 최대공약수와 최소공배수 조건으로 세 수 중 하나 찾기"],
       ["mission-1", "한 수와 최대공약수·최소공배수로 다른 수 찾기"], ["mission-2", "가장 큰 정사각형 조각과 가장 작은 정사각형 배열로 다른 변 찾기"], ["mission-3", "최대공약수와 최소공배수로 가능한 두 수의 합 모두 찾기"], ["mission-4", "최대공약수·최소공배수·차로 두 수 찾기"], ["mission-5", "두 쌍의 최대공약수와 최소공배수로 세 수의 합 찾기"], ["mission-6", "곱과 최대공약수·최소공배수로 세 수 찾기"]
+    ]]
+  ];
+  const correspondenceGroups = [
+    ["대응의 규칙", 1, [
+      ["exploration", "알파벳을 일정한 만큼 옮긴 암호 풀기"], ["example-1-1", "상자 규칙으로 바뀐 수 찾기"], ["example-1-2", "말한 수에 따라 답하는 수의 규칙 찾기"], ["example-1-3", "기호 계산판으로 도형 수식의 값 구하기"], ["example-1-4", "점과 선으로 만든 부호에서 날짜 읽기"],
+      ["mission-1", "두 번 바뀌는 상자 규칙으로 나온 수 찾기"], ["mission-2", "대응 규칙으로 큰 수에 짝인 수 찾기"], ["mission-3", "기호 계산판으로 도형식의 값 구하기"], ["mission-4", "계산기를 여러 번 눌러 1이 되는 수의 합 구하기"], ["mission-5", "자음과 모음 암호로 낱말 풀기"], ["mission-6", "색칠한 모눈의 규칙으로 나타낸 수 구하기"]
+    ]],
+    ["대응표와 대응 관계", 2, [
+      ["exploration", "두 수직선의 연결 규칙으로 대응표와 식 완성하기"], ["example-2-1", "대응표의 두 수 관계를 식으로 나타내기"], ["example-2-2", "세 기호 대응표에서 처음 기호와 끝 기호의 관계 나타내기"], ["example-2-3", "가위바위보 이긴 횟수와 계단 수의 관계 나타내기"],
+      ["mission-1", "대응표의 두 기호 관계와 큰 값의 짝 구하기"], ["mission-2", "세 기호 대응표에서 두 기호의 관계 나타내기"], ["mission-3", "세 줄 대응표에서 두 값의 합 구하기"], ["mission-4", "철사 길이와 직사각형 가로·세로의 관계 나타내기"], ["mission-5", "날짜와 줄넘기 횟수의 관계 나타내기"], ["mission-6", "깨진 도자기 수와 받은 돈의 관계 나타내기"]
+    ]],
+    ["규칙과 대응의 활용 ①", 3, [
+      ["exploration", "직선 수와 나뉜 영역 수의 최대 관계 구하기"], ["example-3-1", "겹쳐 그린 정사각형 수와 삼각형 수의 관계 구하기"], ["example-3-2", "바둑돌 배열에서 흰 돌과 검은 돌 수의 차 구하기"], ["example-3-3", "붙인 정사각형 수와 나눔쪽 수의 관계 구하기"],
+      ["mission-1", "직선 수와 만나는 점 수의 최대 관계 구하기"], ["mission-2", "계단 모양 배열 순서와 사각형 조각 수의 관계 구하기"], ["mission-3", "성냥개비 배열 순서와 가장 작은 정삼각형 수의 관계 구하기"], ["mission-4", "겹쳐 붙인 정사각형 수와 둘레의 관계 구하기"], ["mission-5", "나열된 도형 순서와 큰·작은 삼각형 수의 관계 구하기"], ["mission-6", "바깥쪽 길이와 색 타일 수의 차 구하기"]
+    ]],
+    ["규칙과 대응의 활용 ②", 4, [
+      ["exploration", "지난 시간과 남은 초 길이의 관계로 시각 구하기"], ["example-4-1", "두 사람 나이의 관계로 현재 나이 구하기"], ["example-4-2", "물 넣는 시간과 가득 차는 시간의 관계 구하기"], ["example-4-3", "세 도시 시각의 관계로 전화할 시각 구하기"],
+      ["mission-1", "어머니와 아들 나이의 관계로 몇 년 뒤 구하기"], ["mission-2", "탁자 수와 앉을 수 있는 사람 수의 관계 구하기"], ["mission-3", "원형 길과 나무 사이 거리로 둘레 구하기"], ["mission-4", "주차 시간과 요금의 관계 나타내기"], ["mission-5", "기온과 소리의 빠르기로 번개 친 곳까지 거리 구하기"], ["mission-6", "도시 시각과 동전 쌓는 시간으로 다른 도시 시각 구하기"]
+    ]]
+  ];
+
+  const fractionReductionReadyIds = new Set([
+    "5-1-u4-e1-exploration",
+    "5-1-u4-e1-example-1-1",
+    "5-1-u4-e1-example-1-2",
+    "5-1-u4-e1-example-1-3",
+    "5-1-u4-e1-example-1-4",
+    "5-1-u4-e1-mission-1",
+    "5-1-u4-e1-mission-2",
+    "5-1-u4-e1-mission-3",
+    "5-1-u4-e1-mission-4",
+    "5-1-u4-e1-mission-5",
+    "5-1-u4-e2-exploration",
+    "5-1-u4-e2-example-2-1",
+    "5-1-u4-e2-example-2-2",
+    "5-1-u4-e2-example-2-3",
+    "5-1-u4-e2-example-2-4",
+    "5-1-u4-e2-mission-1",
+    "5-1-u4-e2-mission-2",
+    "5-1-u4-e2-mission-3",
+    "5-1-u4-e2-mission-4",
+    "5-1-u4-e2-mission-5",
+    "5-1-u4-e2-mission-6",
+    "5-1-u4-e3-exploration",
+    "5-1-u4-e3-example-3-1",
+    "5-1-u4-e3-example-3-2",
+    "5-1-u4-e3-example-3-3",
+    "5-1-u4-e3-example-3-4",
+    "5-1-u4-e3-mission-1",
+    "5-1-u4-e3-mission-2",
+    "5-1-u4-e3-mission-3",
+    "5-1-u4-e3-mission-4",
+    "5-1-u4-e3-mission-5",
+    "5-1-u4-e3-mission-6",
+    "5-1-u4-e4-exploration",
+    "5-1-u4-e4-example-4-1",
+    "5-1-u4-e4-example-4-2",
+    "5-1-u4-e4-example-4-3",
+    "5-1-u4-e4-example-4-4",
+    "5-1-u4-e4-mission-1",
+    "5-1-u4-e4-mission-2",
+    "5-1-u4-e4-mission-3",
+    "5-1-u4-e4-mission-4",
+    "5-1-u4-e4-mission-5",
+    "5-1-u4-e4-mission-6"
+  ]);
+  const equalFractionE1LockReasons = {
+    "5-1-u4-e1-mission-6": "원문 조건대로 같은 두 자리 자연수를 분자와 분모에서 빼면 그 수는 3이어야 하므로 조건을 만족하는 두 자리 자연수가 없습니다. 원문 또는 공식 답 근거가 바로잡히기 전에는 출제하지 않습니다."
+  };
+  const sourceItem54 = (label, sourceItemId, exploration) => {
+    const pdfPage = 41 + (exploration - 1) * 2;
+    const isMission = sourceItemId.includes("-mission-");
+    const ready = fractionReductionReadyIds.has(sourceItemId);
+    const reviewReason = equalFractionE1LockReasons[sourceItemId]
+      || (ready ? "현행 원문 구조와 독립 계산 검산 완료" : "현행 원문을 문제 단위로 대조하고 답이 하나인지 검산하기 전에는 공개하지 않습니다.");
+    return sourceItem51(
+      label,
+      1,
+      sourceItemId,
+      pdfPage + (isMission ? 1 : 0),
+      pdfPage + 1 + (isMission ? 1 : 0),
+      !ready,
+      reviewReason
+    );
+  };
+  const fractionReductionGroups = [
+    ["크기가 같은 분수", 1, [
+      ["exploration", "분모와 분자에 두 자리 수를 더해 같은 분수 만들기"],
+      ["example-1-1", "두 분수식에서 기호가 나타내는 분수 구하기"],
+      ["example-1-2", "같은 크기의 분수가 처음 나오는 자리 찾기"],
+      ["example-1-3", "분모를 더하고 뺀 조건으로 처음 분수 구하기"],
+      ["example-1-4", "분자와 분모에서 수를 뺀 뒤 크기가 같은 분수 구하기"],
+      ["mission-1", "분자와 분모에 같은 수를 더해 목표 분수 만들기"],
+      ["mission-2", "분자와 분모의 합과 바꾼 분수로 처음 분수 찾기"],
+      ["mission-3", "분모를 더하고 뺀 두 분수 조건으로 처음 분수 찾기"],
+      ["mission-4", "두 기호의 곱으로 같은 크기의 분수 만드는 짝 세기"],
+      ["mission-5", "분자와 분모가 함께 바뀌는 수열에서 자리 찾기"],
+      ["mission-6", "같은 두 자리 수를 분자와 분모에서 빼는 조건 살펴보기"]
+    ]],
+    ["약분과 기약분수", 2, [
+      ["exploration", "약분할 수 있는 수의 개수와 기약분수 만드는 수 구하기"],
+      ["example-2-1", "약분한 분자가 1이 되는 원래 분자 세기"],
+      ["example-2-2", "분모가 정해진 진분수 중 약분되는 분수 세기"],
+      ["example-2-3", "규칙적인 기약분수 수열에서 두 항의 자리 찾기"],
+      ["example-2-4", "분모가 정해진 기약분수를 나열해 큰 자리의 수 찾기"],
+      ["mission-1", "최대공약수와 최소공배수로 차가 가장 작은 분수 찾기"],
+      ["mission-2", "분자와 분모를 바꾸고 약분한 조건으로 처음 분수 찾기"],
+      ["mission-3", "분모가 정해진 기약 진분수 세기"],
+      ["mission-4", "분모에 같은 수를 곱해 분자를 1로 만드는 수 찾기"],
+      ["mission-5", "약분한 분모가 정해진 세 자리 분자 세기"],
+      ["mission-6", "합과 약분 뒤 조건으로 처음 가분수 찾기"]
+    ]],
+    ["통분과 분수의 크기 비교", 3, [
+      ["exploration", "분자와 분모의 규칙을 보고 여러 분수의 크기 비교하기"],
+      ["example-3-1", "두 분수 사이를 똑같이 나눈 네 분수 찾기"],
+      ["example-3-2", "기준 분수에 가까운 순서로 여러 분수 놓기"],
+      ["example-3-3", "두 분수의 분자에 곱할 수의 합이 가장 작게 하기"],
+      ["example-3-4", "분자와 분모가 규칙적으로 바뀌는 분수 수열 비교하기"],
+      ["mission-1", "세 분수를 큰 수부터 차례로 놓기"],
+      ["mission-2", "통분하기 전 세 분수의 분모 합 구하기"],
+      ["mission-3", "여러 가분수 중 자연수에 가장 가까운 분수 찾기"],
+      ["mission-4", "두 분수 사이에 있는 분수의 개수로 분모 찾기"],
+      ["mission-5", "분자가 연속하도록 두 분수 사이에 다섯 분수 넣기"],
+      ["mission-6", "같은 수가 들어간 분수가 기준보다 커지는 가장 작은 수 찾기"]
+    ]],
+    ["조건에 맞는 분수 찾기", 4, [
+      ["exploration", "두 분수 사이에서 분자가 정해진 분수 모두 찾기"],
+      ["example-4-1", "두 분수 사이에서 짝수 분모인 기약분수 모두 찾기"],
+      ["example-4-2", "두 분수 사이에서 분자가 정해진 기약분수 세기"],
+      ["example-4-3", "분자가 정해진 분수 중 기준에 가장 가까운 분수 찾기"],
+      ["example-4-4", "두 소수 사이에서 분모가 정해진 기약분수 세기"],
+      ["mission-1", "두 분수 사이에 들어가는 분모의 합 구하기"],
+      ["mission-2", "두 분수 사이에서 분모가 정해진 분수 세기"],
+      ["mission-3", "차가 가장 크게 되는 두 빈 분모 찾기"],
+      ["mission-4", "두 조건 분수 사이에서 분자와 분모 차가 1인 분수 찾기"],
+      ["mission-5", "같은 분모인 두 분수 사이에서 분자가 정해진 분수 세기"],
+      ["mission-6", "분자가 정해진 분수 중 기준에 가장 가까운 분수 찾기"]
+    ]]
+  ];
+
+  const fractionAddSubReadyIds = new Set([
+    "5-1-u5-e1-exploration-proper-addition",
+    "5-1-u5-e1-exploration-mixed-addition",
+    "5-1-u5-e1-example-1-1-1",
+    "5-1-u5-e1-example-1-1-2",
+    "5-1-u5-e1-example-1-1-3",
+    "5-1-u5-e1-example-1-2",
+    "5-1-u5-e1-example-1-3",
+    "5-1-u5-e1-example-1-4",
+    "5-1-u5-e1-mission-1-proper-two-term",
+    "5-1-u5-e1-mission-1-mixed-two-term",
+    "5-1-u5-e1-mission-1-proper-three-term",
+    "5-1-u5-e1-mission-2",
+    "5-1-u5-e1-mission-3",
+    "5-1-u5-e1-mission-4",
+    "5-1-u5-e1-mission-5",
+    "5-1-u5-e1-mission-6",
+    "5-1-u5-e2-exploration-1",
+    "5-1-u5-e2-exploration-2",
+    "5-1-u5-e2-exploration-3",
+    "5-1-u5-e2-exploration-4",
+    "5-1-u5-e2-example-2-1",
+    "5-1-u5-e2-example-2-2",
+    "5-1-u5-e2-example-2-3",
+    "5-1-u5-e2-example-2-4",
+    "5-1-u5-e2-mission-1-1",
+    "5-1-u5-e2-mission-1-2",
+    "5-1-u5-e2-mission-1-3-4",
+    "5-1-u5-e2-mission-1-5",
+    "5-1-u5-e2-mission-2",
+    "5-1-u5-e2-mission-3",
+    "5-1-u5-e2-mission-4",
+    "5-1-u5-e2-mission-5",
+    "5-1-u5-e2-mission-6",
+    "5-1-u5-e3-exploration",
+    "5-1-u5-e3-example-3-1",
+    "5-1-u5-e3-example-3-2",
+    "5-1-u5-e3-example-3-3",
+    "5-1-u5-e3-example-3-4",
+    "5-1-u5-e3-mission-1",
+    "5-1-u5-e3-mission-2",
+    "5-1-u5-e3-mission-3",
+    "5-1-u5-e3-mission-4",
+    "5-1-u5-e3-mission-5",
+    "5-1-u5-e3-mission-6",
+    "5-1-u5-e4-exploration-2",
+    "5-1-u5-e4-example-4-1",
+    "5-1-u5-e4-example-4-2",
+    "5-1-u5-e4-example-4-3",
+    "5-1-u5-e4-example-4-4",
+    "5-1-u5-e4-mission-1",
+    "5-1-u5-e4-mission-2",
+    "5-1-u5-e4-mission-3",
+    "5-1-u5-e4-mission-4",
+    "5-1-u5-e4-mission-6"
+  ]);
+  const fractionAddSubMultipleAnswerReasons = {
+    "5-1-u5-e4-exploration-1": "원문 조건을 만족하는 세 단위분수 표현이 여러 개이므로, 답을 하나로 정하는 추가 조건 없이 자동 출제하지 않습니다.",
+    "5-1-u5-e4-mission-5": "원문 조건을 만족하는 세 단위분수 표현이 두 개이므로, 답을 하나로 정하는 추가 조건 없이 자동 출제하지 않습니다."
+  };
+  const sourceItem55 = (label, sourceItemId, pdfPage, printedPage) => {
+    const ready = fractionAddSubReadyIds.has(sourceItemId);
+    const multipleAnswerReason = fractionAddSubMultipleAnswerReasons[sourceItemId];
+    return {
+      ...sourceItem51(
+        label,
+        1,
+        sourceItemId,
+        pdfPage,
+        printedPage,
+        !ready,
+        multipleAnswerReason || (ready
+          ? "현행 원문 구조와 독립 계산 검산 완료"
+          : "현행 원문 구조와 답은 확인했지만 전용 생성기와 독립 검산을 연결하기 전에는 공개하지 않습니다.")
+      ),
+      sourceTier: "advanced"
+    };
+  };
+  const fractionAddSubGroups = [
+    ["분수의 덧셈", "fractionAdditionE1", [
+      ["5-1-u5-e1-exploration-proper-addition", "분모가 다른 진분수 두 개 더하기", 51, 52],
+      ["5-1-u5-e1-exploration-mixed-addition", "분모가 다른 대분수 두 개 더하기", 51, 52],
+      ["5-1-u5-e1-example-1-1-1", "여러 분수와 대분수를 통분하여 더하기", 51, 52],
+      ["5-1-u5-e1-example-1-1-2", "분모가 같은 항끼리 묶어 더하기", 51, 52],
+      ["5-1-u5-e1-example-1-1-3", "분모별 분수 묶음의 규칙을 찾아 더하기", 51, 52],
+      ["5-1-u5-e1-example-1-2", "수 카드로 만든 두 대분수의 합을 가장 크게 하기", 51, 52],
+      ["5-1-u5-e1-example-1-3", "두 수도꼭지로 일정한 양의 물을 받는 시간 구하기", 51, 52],
+      ["5-1-u5-e1-example-1-4", "분모 조건에 맞는 두 기약분수의 덧셈식 세기", 51, 52],
+      ["5-1-u5-e1-mission-1-proper-two-term", "분모가 다른 진분수 두 항 더하기", 52, 53],
+      ["5-1-u5-e1-mission-1-mixed-two-term", "분모가 다른 대분수 두 항 더하기", 52, 53],
+      ["5-1-u5-e1-mission-1-proper-three-term", "분모가 다른 진분수 세 항 더하기", 52, 53],
+      ["5-1-u5-e1-mission-2", "두 분수 사이를 열 등분한 양 끝 분수의 합 구하기", 52, 53],
+      ["5-1-u5-e1-mission-3", "두 대분수의 합과 사이 자연수의 개수로 빈칸 구하기", 52, 53],
+      ["5-1-u5-e1-mission-4", "서로 다른 한 자리 소수로 만든 두 분수의 합을 가장 작게 하기", 52, 53],
+      ["5-1-u5-e1-mission-5", "네 기약분수의 합이 가장 작은 자연수가 되게 하기", 52, 53],
+      ["5-1-u5-e1-mission-6", "분모별 분수 묶음과 자연수 1을 함께 더하기", 52, 53]
+    ]],
+    ["분수의 뺄셈", "fractionSubtractionE2", [
+      ["5-1-u5-e2-exploration-1", "분모가 다른 진분수 빼기", 53, 54],
+      ["5-1-u5-e2-exploration-2", "분모가 다른 진분수 세 항을 차례로 계산하기", 53, 54],
+      ["5-1-u5-e2-exploration-3", "대분수에서 대분수 빼기", 53, 54],
+      ["5-1-u5-e2-exploration-4", "대분수에서 대분수 두 개를 차례로 빼기", 53, 54],
+      ["5-1-u5-e2-example-2-1", "분수를 골라 더하고 뺀 값이 가장 크게 하기", 53, 54],
+      ["5-1-u5-e2-example-2-2", "같은 차로 나열된 대분수의 빈칸 채우기", 53, 54],
+      ["5-1-u5-e2-example-2-3", "두 가지를 모두 좋아하지 않는 학생의 비율 구하기", 53, 54],
+      ["5-1-u5-e2-example-2-4", "구멍이 있는 물통을 두 수도꼭지로 채우기", 53, 54],
+      ["5-1-u5-e2-mission-1-1", "분모가 다른 진분수 세 항 계산하기", 54, 55],
+      ["5-1-u5-e2-mission-1-2", "자연수에서 대분수를 빼고 진분수 더하기", 54, 55],
+      ["5-1-u5-e2-mission-1-3-4", "대분수 세 항을 더하고 빼기", 54, 55],
+      ["5-1-u5-e2-mission-1-5", "괄호가 있는 대분수 덧셈과 뺄셈", 54, 55],
+      ["5-1-u5-e2-mission-2", "여러 분수 중 가장 큰 수와 가장 작은 수의 차 구하기", 54, 55],
+      ["5-1-u5-e2-mission-3", "물을 반 사용한 뒤 빈 물통의 무게 구하기", 54, 55],
+      ["5-1-u5-e2-mission-4", "분수 계산식의 빈칸 채우기", 54, 55],
+      ["5-1-u5-e2-mission-5", "가로·세로·대각선의 합이 같은 분수 표 풀기", 54, 55],
+      ["5-1-u5-e2-mission-6", "수 카드로 만든 두 대분수의 차를 가장 크게 하기", 54, 55]
+    ]],
+    ["분수의 덧셈과 뺄셈 활용", "fractionApplicationE3", [
+      ["5-1-u5-e3-exploration", "정육면체 각 면의 네 수의 합을 같게 만들기", 55, 56],
+      ["5-1-u5-e3-example-3-1", "여러 기간을 더해 전체 나이 구하기", 55, 56],
+      ["5-1-u5-e3-example-3-2", "차와 합을 이용해 세 수 구하기", 55, 56],
+      ["5-1-u5-e3-example-3-3", "팔고 남은 양으로 처음 개수 구하기", 55, 56],
+      ["5-1-u5-e3-example-3-4", "막대가 젖은 길이로 연못 깊이 구하기", 55, 56],
+      ["5-1-u5-e3-mission-1", "세 사람이 나눈 사탕의 처음 개수 구하기", 56, 57],
+      ["5-1-u5-e3-mission-2", "여러 빈칸에 같은 수를 넣어 식 완성하기", 56, 57],
+      ["5-1-u5-e3-mission-3", "사과와 배의 수로 전체 과일 구하기", 56, 57],
+      ["5-1-u5-e3-mission-4", "걸은 거리와 탄 거리로 전체 거리 구하기", 56, 57],
+      ["5-1-u5-e3-mission-5", "두 과목을 좋아하는 학생 수로 전체 구하기", 56, 57],
+      ["5-1-u5-e3-mission-6", "서로 다른 숫자로 분수식 완성하기", 56, 57]
+    ]],
+    ["단위분수와 부분분수", "unitFractionE4", [
+      ["5-1-u5-e4-exploration-1", "분수를 서로 다른 세 단위분수의 합으로 나타내기", 57, 58],
+      ["5-1-u5-e4-exploration-2", "규칙에 따라 나열한 분수의 합 계산하기", 57, 58],
+      ["5-1-u5-e4-example-4-1", "세 분모를 찾아 단위분수 식 완성하기", 57, 58],
+      ["5-1-u5-e4-example-4-2", "두 분모의 합이 정해진 단위분수의 합을 가장 작게 하기", 57, 58],
+      ["5-1-u5-e4-example-4-3", "짝지은 수의 차를 이용해 단위분수 더하기", 57, 58],
+      ["5-1-u5-e4-example-4-4", "분수열의 규칙을 찾아 많은 항 더하기", 57, 58],
+      ["5-1-u5-e4-mission-1", "규칙을 찾아 여러 분수 더하기", 58, 59],
+      ["5-1-u5-e4-mission-2", "두 분수 사이에 있는 단위분수 세기", 58, 59],
+      ["5-1-u5-e4-mission-3", "두 단위분수의 차로 두 분모 찾기", 58, 59],
+      ["5-1-u5-e4-mission-4", "범위 안의 두 분모를 찾아 식 완성하기", 58, 59],
+      ["5-1-u5-e4-mission-5", "분수를 서로 다른 세 단위분수의 합으로 나타내기", 58, 59],
+      ["5-1-u5-e4-mission-6", "여섯 단위분수 중 네 개를 골라 1 만들기", 58, 59]
     ]]
   ];
 
@@ -160,7 +538,11 @@
               sourcePdfPage: Number.isInteger(type.sourcePdfPage) ? type.sourcePdfPage : undefined,
               sourcePrintedPage: Number.isInteger(type.sourcePrintedPage) ? type.sourcePrintedPage : undefined,
               reviewLocked: Boolean(type.reviewLocked),
-              reviewReason: type.reviewReason || type.reviewLockReason || ""
+              reviewReason: type.reviewReason || type.reviewLockReason || "",
+              generationMode: type.generationMode || "",
+              verifiedVariantCount: Number.isInteger(type.verifiedVariantCount) ? type.verifiedVariantCount : undefined,
+              answerVisualRequired: Boolean(type.answerVisualRequired),
+              answerVisualStatus: type.answerVisualStatus || ""
             }))
           };
         })
@@ -719,10 +1101,26 @@
         ])
       ],
       ["약수와 배수", ...factorMultipleGroups.map(([name, exploration, items]) => detailed(name, `factorMultipleE${exploration}`, items.map(([suffix, label], variant) => sourceItem52(label, `5-1-u2-e${exploration}-${suffix}`, exploration))))],
-      ["규칙과 대응", "규칙과 대응", "대응표와 대응 관계", "규칙과 대응의 활용 ①", "규칙과 대응의 활용 ②"],
-      ["약분과 통분", "크기가 같은 분수", "약분과 기약분수", "통분과 분수의 크기 비교", "조건에 맞는 분수 찾기"],
-      ["분수의 덧셈과 뺄셈", "분수의 덧셈", "분수의 뺄셈", "식 세워 풀기", "단위분수와 부분분수"],
-      ["다각형의 둘레와 넓이", "다각형의 둘레", "직사각형과 직각삼각형의 넓이", "둘레와 넓이", "여러 가지 사각형의 넓이"]
+      ["규칙과 대응", ...correspondenceGroups.map(([name, exploration, items]) => detailed(name, `correspondenceE${exploration}`, items.map(([suffix, label]) => sourceItem53(label, `5-1-u3-e${exploration}-${suffix}`, exploration))))],
+      ["약분과 통분",
+        ...fractionReductionGroups.map(([name, exploration, items]) => detailed(name, `equalFractionE${exploration}`, items.map(([suffix, label], variant) => ({ ...sourceItem54(label, `5-1-u4-e${exploration}-${suffix}`, exploration), variant })))),
+      ],
+      ["분수의 덧셈과 뺄셈", ...fractionAddSubGroups.map(([name, generatorKey, items]) => detailed(name, generatorKey, items.map(([sourceItemId, label, pdfPage, printedPage], variant) => ({ ...sourceItem55(label, sourceItemId, pdfPage, printedPage), variant }))))],
+      ["다각형의 둘레와 넓이",
+        fixedVerifiedPool("다각형의 둘레", "polygonPerimeterE1", [
+          { ...sourceItem51("두 배치에서 색칠한 부분의 둘레 비교", 1, "5-1-u6-e1-exploration", 61, 62), reviewReason: "원문 두 배치와 둘레 차를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("꺾인 도형의 빠진 길이 찾아 둘레 구하기", 1, "5-1-u6-e1-example-1-1", 61, 62), reviewReason: "원문 길이와 m·cm 바꾸기를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("겹친 종이 두 곳의 둘레 더하기", 1, "5-1-u6-e1-example-1-2", 61, 62), reviewReason: "원문 겹침 두 곳의 둘레 합을 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("작은 직사각형 12개의 둘레 모두 더하기", 1, "5-1-u6-e1-example-1-3", 61, 62), reviewReason: "원문 3열 4행 나누기와 둘레 합을 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("잘라 낸 정삼각형에서 육각형 둘레 구하기", 1, "5-1-u6-e1-example-1-4", 61, 62), reviewReason: "원문 정삼각형을 자른 여섯 변의 길이를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("꺾인 도형에서 빈 길이 찾기", 1, "5-1-u6-e1-mission-1", 62, 63), reviewReason: "원문 홈의 깊이와 전체 둘레를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("정사각형과 직사각형의 길이로 둘레 구하기", 1, "5-1-u6-e1-mission-2", 62, 63), reviewReason: "원문 정사각형과 바깥 직사각형의 세로 길이를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("육각형의 숨은 두 변 길이 찾아 둘레 구하기", 1, "5-1-u6-e1-mission-3", 62, 63), reviewReason: "원문 120도 육각형의 닫힌 선분 조건을 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("작은 칸 둘레로 큰 정사각형 둘레 구하기", 1, "5-1-u6-e1-mission-4", 62, 63), reviewReason: "원문 3열 4행과 색칠한 두 칸의 둘레를 독립 계산으로 확인했습니다." },
+          { ...sourceItem51("네 직사각형의 둘레로 라의 가로와 세로 구하기", 1, "5-1-u6-e1-mission-5", 62, 63), reviewReason: "원문 2열×2행 배치와 네 직사각형의 둘레를 함께 풀어 라의 가로와 세로를 독립 확인했습니다." },
+          sourceItem51("다섯 직사각형의 둘레 관계 살펴보기", 1, "5-1-u6-e1-mission-6", 62, 63, true, "원문 조건을 만족하는 양의 길이 배치가 둘 이상이고 둘레도 서로 달라 답이 하나로 정해지지 않습니다.")
+        ]),
+        "직사각형과 직각삼각형의 넓이", "둘레와 넓이", "여러 가지 사각형의 넓이"]
     ]),
     semester("5-2", [
       ["수의 범위와 어림하기",
@@ -875,10 +1273,81 @@
     ]));
   };
 
+  const buildSourceSemesterGrade6 = legacySemester => {
+    const inventory = window.HSE_SOURCE_INVENTORY_GRADE6;
+    const sourceItems = inventory?.items?.filter(item => item.semester === legacySemester.id) || [];
+    if (!sourceItems.length) return legacySemester;
+
+    return {
+      ...legacySemester,
+      units: legacySemester.units.map(unit => {
+        const unitItems = sourceItems.filter(item => item.unit === unit.number);
+        if (!unitItems.length) return unit;
+        const byExploration = new Map();
+        unitItems.forEach(item => {
+          const group = byExploration.get(item.exploration) || [];
+          group.push(item);
+          byExploration.set(item.exploration, group);
+        });
+
+        let typeNumber = 0;
+        const sourceGroups = [...byExploration.entries()].sort((left, right) => left[0] - right[0]).map(([exploration, items], groupIndex) => ({
+          id: `${unit.id}-source-e${exploration}`,
+          number: groupIndex + 1,
+          name: `개념탐구 ${exploration} 원문 유형`,
+          types: items.map((item, index) => ({
+            id: item.sourceItemId,
+            number: index + 1,
+            typeNumber: ++typeNumber,
+            name: item.typeLabel,
+            label: item.typeLabel,
+            generatorKey: item.generatorKey || "",
+            variant: Number.isInteger(item.variant) ? item.variant : undefined,
+            difficultyBand: item.difficultyBand,
+            sourceTier: item.sourceTier,
+            sourceVerified: item.sourceVerified,
+            sourceEvidence: `황소 초등 심화 원문 직접 확인 · ${item.sourceItemId}`,
+            sourceItemId: item.sourceItemId,
+            sourceItemLabel: item.sourceItemLabel,
+            sourceSection: item.sourceSection,
+            reviewLocked: item.reviewLocked,
+            reviewReason: item.reviewReason,
+            commonTypeId: item.commonTypeId,
+            normalizedTypeId: item.normalizedTypeId,
+            problemVisualRequired: item.problemVisualRequired,
+            answerVisualRequired: item.answerVisualRequired,
+            answerVisualStatus: item.answerVisualStatus,
+            generationMode: item.generationMode,
+            verifiedVariantTarget: item.verifiedVariantTarget,
+            verifiedVariantCount: item.verifiedVariantCount
+          }))
+        }));
+
+        let legacyNumber = 0;
+        const legacyTypes = unit.subunits.flatMap(subunit => subunit.types.map(type => ({
+          ...type,
+          number: ++legacyNumber,
+          typeNumber: ++typeNumber
+        })));
+        const legacyGroup = {
+          id: `${unit.id}-legacy-generated`,
+          number: sourceGroups.length + 1,
+          name: "기존 생성 문제",
+          types: legacyTypes
+        };
+        return { ...unit, subunits: [...sourceGroups, legacyGroup] };
+      })
+    };
+  };
+
   semesters[0] = buildSourceSemester41(semesters[0]);
+  for (const semesterId of ["6-1", "6-2"]) {
+    const index = semesters.findIndex(item => item.id === semesterId);
+    if (index >= 0) semesters[index] = buildSourceSemesterGrade6(semesters[index]);
+  }
 
   window.HSE_CURRICULUM = {
-    version: "2026-08-29",
+    version: "2026-09-05",
     levels: [
       { id: "simwha", label: "심화 기준", rank: 1 }
     ],

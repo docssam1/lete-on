@@ -5,8 +5,20 @@ const path = require("node:path");
 
 global.window = {};
 require("./source-inventory-4-1.js");
+require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-grade6-decimal-e1-mission4.js");
+require("./source-grade6-decimal-e1-mission3.js");
+require("./source-grade6-decimal-e2-example2.js");
+require("./source-grade6-decimal-e2-example4.js");
+require("./source-grade6-decimal-e2-mission6.js");
+require("./source-grade6-decimal-e4-example1.js");
+require("./source-grade6-decimal-e4-mission4.js");
+require("./source-grade6-volume-e2.js");
+require("./source-grade6-volume-e3-mission3.js");
+require("./source-grade6-volume-e4.js");
+require("./source-grade6-surface-e1.js");
 require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
@@ -25,9 +37,9 @@ let generatedCount = 0;
 let fractionSampleCount = 0;
 let mixedFractionSampleCount = 0;
 let symbolicFractionSampleCount = 0;
-if (types.length !== 1003) failures.push(`공개 검수 대상은 1003개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 1456) failures.push(`공개 검수 대상은 1456개여야 하나 ${types.length}개입니다.`);
 
-const countTokens = (tokens, type) => tokens.reduce((count, token) => count + (token.type === type ? 1 : 0) + (token.type === "fraction" ? countTokens(token.numerator, type) + countTokens(token.denominator, type) : 0), 0);
+const countTokens = (tokens, type) => tokens.reduce((count, token) => count + (token.type === type ? 1 : 0) + (token.type === "fraction" ? countTokens(token.numerator, type) + countTokens(token.denominator, type) : token.type === "mixed" ? countTokens([token.fraction], type) : 0), 0);
 const notationCases = [
   ["3/4", 1, 0],
   ["2 1/3", 1, 0],
@@ -43,6 +55,7 @@ notationCases.forEach(([source, fractionCount, powerCount]) => {
   if (countTokens(tokens, "fraction") !== fractionCount) failures.push(`공통 렌더러 분수 판독 실패: ${source}`);
   if (countTokens(tokens, "power") !== powerCount) failures.push(`공통 렌더러 단위 판독 실패: ${source}`);
 });
+if (countTokens(notation.tokenize("2 1/3"), "mixed") !== 1) failures.push("공통 렌더러 대분수 판독 실패: 2 1/3");
 [
   "km/h",
   "m/s",
@@ -69,7 +82,7 @@ for (const type of types) {
         continue;
       }
 
-      const all = [generated.prompt, String(generated.answer), generated.solution].join("\n");
+      const all = [generated.prompt, String(generated.answer), generated.solution, generated.answerVisual || ""].join("\n");
       const visible = all.replace(/<span hidden\b[^>]*><\/span>/g, "");
       const plainVisible = visible.replace(/<svg\b[\s\S]*?<\/svg>/g, " ").replace(/<[^>]+>/g, " ");
       fractionSampleCount += (plainVisible.match(/(?:\d+|□|[A-Za-z가-힣])\s*\/\s*(?:\d+|□|[A-Za-z가-힣])/g) || []).length;

@@ -29,6 +29,16 @@
           appendMathTokens(denominator, token.denominator);
           fraction.append(numerator, denominator);
           target.append(fraction);
+        } else if (token.type === "mixed") {
+          const mixed = document.createElement("span");
+          mixed.className = "math-mixed-number";
+          mixed.setAttribute("role", "img");
+          mixed.setAttribute("aria-label", mathNotation.mixedAria(token));
+          const whole = document.createElement("span");
+          whole.textContent = token.whole;
+          mixed.append(whole);
+          appendMathTokens(mixed, [token.fraction]);
+          target.append(mixed);
         } else {
           const unit = document.createElement("span");
           unit.className = "math-unit";
@@ -153,10 +163,11 @@
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
-    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-controls="typePreviewPopover" aria-expanded="false">' +
+    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
       '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
+      '<span class="tree-type-preview-action" aria-hidden="true">미리보기</span>' +
       '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "검수 대기") + '</span>' +
     '</div>';
   }
@@ -193,7 +204,7 @@
     previewPopover.id = "typePreviewPopover";
     previewPopover.className = "type-preview-popover";
     previewPopover.setAttribute("role", "region");
-    previewPopover.setAttribute("aria-label", "선택한 유형 대표 문제 미리보기");
+    previewPopover.setAttribute("aria-label", "선택한 유형 예시 미리보기");
     previewPopover.setAttribute("aria-live", "polite");
     previewPopover.hidden = true;
     previewPopover.addEventListener("click", event => {
@@ -229,10 +240,13 @@
     previewAnchor = anchor;
     previewAnchor.classList.add("is-previewing");
     previewAnchor.setAttribute("aria-expanded", "true");
+    const sourcePage = type.sourcePrintedPage !== undefined && type.sourcePrintedPage !== null && type.sourcePrintedPage !== ""
+      ? ` · 교재 ${escapeHtml(type.sourcePrintedPage)}쪽`
+      : "";
     const source = type.sourceItemLabel
-      ? `원문 ${escapeHtml(type.sourceItemLabel)} · 교재 ${type.sourcePrintedPage}쪽`
+      ? `원문 ${escapeHtml(type.sourceItemLabel)}${sourcePage}`
       : `${type.grade}학년 ${type.term}학기 분류`;
-    const sourceLine = `<div class="type-preview-source"><b>대표 문제</b><small>${source}</small></div>`;
+    const sourceLine = `<div class="type-preview-source"><b>유형 예시</b><small>대표 문제 · ${source}</small></div>`;
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
     if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
@@ -240,7 +254,7 @@
     } else {
       const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
       if (!generated) return;
-      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} 변형 대표 문제</footer>`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} · 고정된 유형 예시</footer>`;
     }
     placeTypePreview(anchor, popover);
     popover.hidden = false;
@@ -257,15 +271,40 @@
     document.body.classList.remove("is-type-preview-open");
   }
 
+  function plannedQuestionTypes(selected, requestedCount = state.count) {
+    const ready = selected.filter(type => type?.generator && !type.reviewLocked);
+    const remaining = new Map(ready.map(type => [
+      type.id,
+      type.generationMode === "fixed-verified-pool"
+        ? Math.max(0, Number(type.verifiedVariantCount) || 0)
+        : Infinity
+    ]));
+    const planned = [];
+    while (planned.length < requestedCount) {
+      let added = false;
+      for (const type of ready) {
+        if (planned.length >= requestedCount) break;
+        const count = remaining.get(type.id);
+        if (count <= 0) continue;
+        planned.push(type);
+        if (Number.isFinite(count)) remaining.set(type.id, count - 1);
+        added = true;
+      }
+      if (!added) break;
+    }
+    return planned;
+  }
+
   function renderSummary() {
     const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
+    const plannedCount = plannedQuestionTypes(selected).length;
     $("selectedTypeCount").textContent = selected.length;
-    $("selectedQuestionCount").textContent = selected.length ? state.count : 0;
+    $("selectedQuestionCount").textContent = plannedCount;
     $("selectedTypeSummary").textContent = `${selected.length}개`;
-    $("selectedQuestionSummary").textContent = `${selected.length ? state.count : 0}문항`;
-    $("generateButton").disabled = selected.length === 0;
+    $("selectedQuestionSummary").textContent = `${plannedCount}문항`;
+    $("generateButton").disabled = plannedCount === 0;
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
-      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + '</small></span>' +
+      '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + (type.generationMode === "fixed-verified-pool" ? ' · 검증 문항 ' + type.verifiedVariantCount + '개' : '') + '</small></span>' +
       '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 선택 해제">×</button></div>'
     ).join("") : '<p>왼쪽 교육과정 트리에서 유형을 선택하세요.</p>';
   }
@@ -298,20 +337,24 @@
   function buildQuestions() {
     const selected = [...state.selected].map(id => typeById.get(id)).filter(type => type?.generator && !type.reviewLocked);
     if (!selected.length) return;
+    const plannedTypes = plannedQuestionTypes(selected);
+    if (!plannedTypes.length) return;
     state.generation += 1;
     const level = currentLevel();
     const baseSeed = (Date.now() + state.generation * 1000003) >>> 0;
     const seenPrompts = new Set();
     const seenAnswersByType = new Map();
-    state.questions = Array.from({ length: state.count }, (_, index) => {
-      const type = selected[index % selected.length];
+    const seenPoolIndicesByType = new Map();
+    state.questions = plannedTypes.map((type, index) => {
       const typeAnswers = seenAnswersByType.get(type.id) || new Set();
+      const typePoolIndices = seenPoolIndicesByType.get(type.id) || new Set();
       let generated;
       let uniquePromptFallback;
       for (let attempt = 0; attempt < 32; attempt += 1) {
         const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
         const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
         if (!candidate || seenPrompts.has(candidate.prompt)) continue;
+        if (candidate.generationMode === "fixed-verified-pool" && typePoolIndices.has(candidate.verifiedPoolIndex)) continue;
         uniquePromptFallback ||= candidate;
         if (!typeAnswers.has(String(candidate.answer))) {
           generated = candidate;
@@ -319,6 +362,16 @@
         }
       }
       generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
+      if (generated.generationMode === "fixed-verified-pool") {
+        if (!Number.isInteger(generated.verifiedPoolIndex) || typePoolIndices.has(generated.verifiedPoolIndex)) {
+          throw new Error(`${typeDisplayName(type)}의 검증 문항 묶음이 중복되었습니다.`);
+        }
+        if (generated.verifiedVariantCount !== type.verifiedVariantCount) {
+          throw new Error(`${typeDisplayName(type)}의 검증 문항 수가 분류표와 다릅니다.`);
+        }
+        typePoolIndices.add(generated.verifiedPoolIndex);
+        seenPoolIndicesByType.set(type.id, typePoolIndices);
+      }
       seenPrompts.add(generated.prompt);
       typeAnswers.add(String(generated.answer));
       seenAnswersByType.set(type.id, typeAnswers);
@@ -349,7 +402,12 @@
     let weight = 0;
     questions.forEach(question => {
       const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
-      const questionWeight = graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
+      const hasSource61VolumeE4 = question.prompt.includes("source61-volume-e4-diagram");
+      const hasSource61E2Example2 = question.prompt.includes("source61-e2ex2-diagram");
+      const hasSource61E2Example4 = question.prompt.includes("source61-e2ex4-diagram");
+      const hasSource61E2Mission6 = question.prompt.includes("source61-e2m6-diagram");
+      const hasSource61E4Example1 = question.prompt.includes("source61-e4ex1-diagram");
+      const questionWeight = hasSource61VolumeE4 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 ? 6 : graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
       if (page.length && weight + questionWeight > 6) {
         pages.push(page);
         page = [];
@@ -374,10 +432,30 @@
   }
 
   function renderSolutions() {
-    $("solutionView").innerHTML = chunk(state.questions, 8).map((page, pageIndex) => `<section class="print-page answer-page">
+    const solutionPages = [];
+    let solutionPage = [];
+    let solutionWeight = 0;
+    state.questions.forEach(question => {
+      const hasVisual = Boolean(question.answerVisual) || /<svg\b|class="(?:graph-figure|diagram-pair|source41-)/.test(question.solution || "");
+      const hasSource61E2Example2 = String(question.answerVisual || "").includes("source61-e2ex2-diagram");
+      const hasSource61E2Example4 = String(question.answerVisual || "").includes("source61-e2ex4-diagram");
+      const hasSource61E2Mission6 = String(question.answerVisual || "").includes("source61-e2m6-diagram");
+      const hasSource61E4Example1 = String(question.answerVisual || "").includes("source61-e4ex1-diagram");
+      const weight = hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 ? 8 : hasVisual ? 3 : 1;
+      if (solutionPage.length && (solutionPage.length >= 8 || solutionWeight + weight > 8)) {
+        solutionPages.push(solutionPage);
+        solutionPage = [];
+        solutionWeight = 0;
+      }
+      solutionPage.push(question);
+      solutionWeight += weight;
+    });
+    if (solutionPage.length) solutionPages.push(solutionPage);
+    $("solutionView").innerHTML = solutionPages.map((page, pageIndex) => `<section class="print-page answer-page">
       <div class="page-label">정답·풀이 ${pageIndex + 1}</div>
       <div class="solution-list">${page.map(question => `<article class="solution-item">
         <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${renderMathNotation(escapeHtml(question.answer))}</strong></header>
+        ${question.answerVisual ? `<div class="solution-answer-visual" aria-label="정답 그림">${renderMathNotation(question.answerVisual)}</div>` : ""}
         <p>${renderMathNotation(question.solution)}</p>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");

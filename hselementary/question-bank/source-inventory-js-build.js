@@ -15,6 +15,13 @@ for (const mapping of nativeMappings) mappingBySourceId.set(mapping.sourceItemId
 
 if (new Set(nativeMappings.map(item => item.sourceItemId)).size !== nativeMappings.length) throw new Error("중복된 4-1 전용 생성기 매핑이 있습니다.");
 
+const answerDetailPattern = /(?:제공\s*답|답안|독립\s*계산|답이\s*하나|답을\s*확정|뒤에만\s*\d)/;
+const publicReviewReason = reason => {
+  const text = reason || "원문 구조와 정답을 더 확인해야 합니다.";
+  if (/\d/.test(text) && answerDetailPattern.test(text)) return "원문 답과 독립 검산이 일치하지 않아 검수 중입니다.";
+  return text;
+};
+
 const payload = {
   version: "2026-08-29",
   totals: inventory.totals,
@@ -28,10 +35,15 @@ const payload = {
       variant: mapping?.variant,
       difficultyBand: mapping?.difficultyBand ?? 0,
       sourceTier: mapping?.sourceTier || "advanced",
-      reviewLocked: !mapping
+      reviewLocked: !mapping,
+      reviewReason: !mapping ? publicReviewReason(item.reviewReason) : item.reviewReason
     };
   })
 };
+
+if (payload.items.some(item => item.reviewLocked && /\d/.test(item.reviewReason || "") && answerDetailPattern.test(item.reviewReason || ""))) {
+  throw new Error("공개 잠금 문구에 답 숫자가 남았습니다.");
+}
 
 const output = `window.HSE_SOURCE_INVENTORY_41 = ${JSON.stringify(payload, null, 2)};\n`;
 fs.writeFileSync(path.join(__dirname, "source-inventory-4-1.js"), output);
