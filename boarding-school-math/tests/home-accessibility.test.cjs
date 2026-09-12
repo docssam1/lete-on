@@ -99,7 +99,7 @@ test("official source links are external, isolated, and never embedded", async f
   await page.goto(url, { waitUntil: "networkidle" });
   await page.locator('[data-goal="sasmo"]').click();
   assert.match(await page.locator("#goal-primary").getAttribute("href"), /^\.\/competition-practice\.html\?program=sasmo&audience=(student|teacher)&locale=ko$/);
-  assert.match(await page.locator("#goal-status-note").innerText(), /자체 제작 실제 유형 5개/);
+  assert.match(await page.locator("#goal-status-note").innerText(), /자체 제작 실제 유형 10개/);
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("target"), "_blank");
   const rel = await original.getAttribute("rel");
