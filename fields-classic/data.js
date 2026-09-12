@@ -1,9 +1,26 @@
-/* Public Fields catalog. Student names, codes and permissions are stored server-side. */
+/* =========================================================
+ * 지필드 영재교육 · 필즈 더 클래식 대비 과정
+ * 공용 데이터 파일 — 관리자 콘솔에서 자동 생성됨
+ * 생성: 2026. 9. 12. 오후 6:24:05
+ * ========================================================= */
 window.GFIELD_FC_DATA = {
-  "students": [],
-  "studentCode": {},
-  "studentType": {},
-  "attendance": {},
+  "students": [
+    "김이서"
+  ],
+  "studentCode": {
+    "김이서": "GFHCJMWF"
+  },
+  "studentType": {
+    "김이서": "online"
+  },
+  "attendance": {
+    "김이서": [
+      "연산연습",
+      "진단모의고사",
+      "마무리점검",
+      "진단약점클리닉"
+    ]
+  },
   "content": {
     "개념완성": {
       "notice": "",
