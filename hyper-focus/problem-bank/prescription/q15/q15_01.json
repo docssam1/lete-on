@@ -1,0 +1,30 @@
+{
+  "pattern": [
+    "circle",
+    "pentagon"
+  ],
+  "colors": [
+    "#9B59B6",
+    "#E74C3C"
+  ],
+  "period": 2,
+  "seq_len": 6,
+  "choices_raw": [
+    [
+      "circle",
+      "#9B59B6"
+    ],
+    [
+      "pentagon",
+      "#9B59B6"
+    ],
+    [
+      "square",
+      "#9B59B6"
+    ],
+    [
+      "circle",
+      "#27AE60"
+    ]
+  ]
+}

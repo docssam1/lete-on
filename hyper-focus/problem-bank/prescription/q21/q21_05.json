@@ -1,0 +1,32 @@
+{
+  "shape": "cross",
+  "color": "#9B59B6",
+  "mode": "flip_v",
+  "angle": 0,
+  "opts": [
+    [
+      "flip_v",
+      "cross",
+      "#9B59B6",
+      0
+    ],
+    [
+      "orig",
+      "cross",
+      "#9B59B6",
+      0
+    ],
+    [
+      "rot90",
+      "cross",
+      "#9B59B6",
+      90
+    ],
+    [
+      "flip_h",
+      "cross",
+      "#9B59B6",
+      0
+    ]
+  ]
+}
