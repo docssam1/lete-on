@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>2026년 9월 챌린지 대비 · 모의고사 | LETE-ON</title>
   <link rel="stylesheet" href="review.css">
-  <link rel="stylesheet" href="exam.css">
+  <link rel="stylesheet" href="exam.css?v=20260912-video1a">
   <link rel="stylesheet" href="exam-print-revision.css">
 </head>
 <body data-document-kind="mock">
@@ -16,9 +16,19 @@
     <button type="button" id="regenerateExam">다시 생성</button>
     <button type="button" id="printExam">시험지 인쇄</button>
     <button type="button" id="printAnswers">정답지 인쇄</button>
+    <a id="mockVideoLink" href="https://youtu.be/_QHKH2ctLWE" target="_blank" rel="noopener noreferrer" hidden>영상 새 창</a>
     <a href="./">교재 선택</a>
   </header>
-  <main id="examPages" class="exam-pages" aria-live="polite"></main>
-  <script src="../supabase-config.js"></script><script src="../supabase-client.js"></script><script src="access-catalog.js"></script><script src="access-service.js"></script><script src="document-access.js"></script>
+  <div class="mock-viewer-layout" id="mockViewerLayout">
+    <aside class="mock-video-panel" id="mockVideoPanel" hidden>
+      <header><h2 id="mockVideoTitle">챌린지 대비 모의고사 1회</h2><p>시험지와 함께 보세요.</p></header>
+      <div class="mock-video-frame">
+        <iframe id="mockVideoFrame" title="챌린지 대비 모의고사 학습 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div class="mock-video-watermark" id="mockVideoWatermark" aria-hidden="true"></div>
+      </div>
+    </aside>
+    <main id="examPages" class="exam-pages" aria-live="polite"></main>
+  </div>
+  <script src="../supabase-config.js"></script><script src="../supabase-client.js"></script><script src="access-catalog.js"></script><script src="access-service.js"></script><script src="mock-video.js?v=20260912a"></script><script src="document-access.js"></script>
 </body>
 </html>
