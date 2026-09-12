@@ -9,11 +9,12 @@
   <link rel="stylesheet" href="./golden-bell-source-animations.css?v=20260906b" />
   <link rel="stylesheet" href="./golden-bell-book10-animation.css?v=20260906b" />
   <link rel="stylesheet" href="./golden-bell-print-layout.css?v=20260906a" />
+  <link rel="stylesheet" href="./golden-bell-course-concepts.css?v=20260910f" />
 </head>
 <body>
   <header class="gold-header">
     <a id="backLink" class="back-link" href="./"><span aria-hidden="true">←</span> 문제은행</a>
-    <div class="brand"><span>FIELDS CLASSIC · COURSE 01</span><strong>골든벨 학습</strong></div>
+    <div class="brand"><span id="courseBrand">FIELDS CLASSIC · COURSE 01</span><strong>골든벨 학습</strong></div>
     <div class="student-name"><span>학습자</span><strong id="studentName">DEMO</strong></div>
   </header>
 
@@ -24,9 +25,10 @@
     </section>
 
     <section class="book-index">
+      <label class="course-picker"><span>과정</span><select id="courseSelect" aria-label="학습 과정"></select></label>
       <div class="book-index-label"><span>BOOK INDEX</span><strong>교재 선택</strong></div>
       <nav id="bookTabs" class="book-tabs" aria-label="골든벨 교재 권 선택"></nav>
-      <div class="print-actions"><button id="printLessonButton" type="button">현재 학습 인쇄</button><button id="printBookButton" type="button">이 권 전체 인쇄</button></div>
+      <div class="print-actions"><label id="coursePrintModeWrap" class="course-print-mode" hidden><span>인쇄</span><select id="coursePrintMode" aria-label="인쇄 내용"><option value="study">학습지</option><option value="answers">답안과 풀이</option><option value="both">학습지와 풀이</option><option value="quick">빠른 정답</option></select></label><button id="printLessonButton" type="button">현재 학습 인쇄</button><button id="printBookButton" type="button">이 권 전체 인쇄</button></div>
       <p id="printStatus" class="gold-print-status" role="status"></p>
     </section>
 
@@ -49,6 +51,6 @@
   <script src="../../geometry/shared/question-bank.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/generators.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/render.js?v=20260904a"></script>
-  <script type="module" src="./golden-bell.js?v=20260906g"></script>
+  <script type="module" src="./golden-bell.js?v=20260910f"></script>
 </body>
 </html>

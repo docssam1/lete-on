@@ -930,13 +930,14 @@ function g1StackedShapeDualCycle({ difficulty = 2 }) {
   const target = difficulty === 1 ? randomInt(15, 24) : difficulty === 2 ? randomInt(25, 45) : randomInt(40, 70);
   const shape = shapes[(target - 1) % shapes.length];
   const count = counts[(target - 1) % counts.length];
-  const items = Array.from({ length: 10 }, (_, index) => ({ shape: shapes[index % shapes.length], count: counts[index % counts.length] }));
+  const previewCount = Math.max(shapes.length, counts.length) * 2 + 1;
+  const items = Array.from({ length: previewCount }, (_, index) => ({ shape: shapes[index % shapes.length], count: counts[index % counts.length] }));
   return {
     prompt: `다음은 모양을 일정한 규칙에 따라 나열한 것입니다. ${target}번째에 올 모양을 구하세요.`,
     visual: { kind: "g1-stacked-shape-cycle", items, target },
     answer: `${shape} ${count}개`,
     solution: `모양은 ${shapes.join(" → ")} 순서로, 쌓인 개수는 ${counts.join(" → ")} 순서로 반복됩니다. ${target}번째는 ${shape} ${count}개입니다.`,
-    meta: { difficulty, shapes, counts, target, shape, count }
+    meta: { difficulty, shapes, counts, target, shape, count, previewCount }
   };
 }
 

@@ -1,0 +1,332 @@
+.course-picker {display:flex;align-items:center;gap:8px;font-size:14px;white-space:nowrap}
+.course-picker select {min-height:44px;min-width:0;max-width:170px;flex:1;border:1px solid #566274;border-radius:4px;background:#fff;color:#182230;font-size:16px;padding:8px}
+.book-index {grid-template-columns:180px minmax(0,1fr) auto;column-gap:12px}
+.book-index>.book-index-label {display:none}
+.book-index>.course-picker {grid-column:1;grid-row:1}
+.book-index>.book-tabs {grid-column:2;grid-row:1;min-width:0}
+.book-index>.print-actions {grid-column:3;grid-row:1}
+.book-index>.gold-print-status {grid-column:1 / -1}
+.course-print-mode {display:flex;align-items:center;gap:6px;font-size:14px}
+.course-print-mode[hidden] {display:none}
+.course-print-mode select {min-height:44px;max-width:155px;border:1px solid #566274;background:#fff;font-size:16px;border-radius:4px}
+.course-concept {color:#182230;background:#fff}
+.course-concept h3 {font-size:20px;margin:0}
+.course-track-picker {display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.course-track-picker button {min-height:44px;border:1px solid #566274;border-radius:4px;padding:8px 12px;background:#fff;color:#182230;font-size:16px}
+.course-track-picker button[aria-pressed="true"] {background:#eaf0ff;border:2px solid #2456c4;font-weight:700}
+.course-concept :is(button,select):focus-visible,.course-picker select:focus-visible {outline:3px solid #2456c4;outline-offset:3px}
+.course-concept-problem {font-size:18px;line-height:1.7;margin:16px 0}
+.course-concept-scene {min-width:0;min-height:330px;padding:20px 12px;border-block:1px solid #d8dee8;display:grid;place-items:center}
+.course-concept-scene.animate > * {animation:course-frame-in .32s ease-out both}
+@keyframes course-frame-in {from {opacity:.2;transform:translateY(8px)} to {opacity:1;transform:translateY(0)}}
+.course-concept-caption {font-size:18px;line-height:1.7;min-height:90px;padding:16px 0;margin:0}
+.course-pattern,.course-division {width:100%;min-width:0;text-align:center;font-size:18px;line-height:1.6}
+.course-cycle-groups {display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.course-cycle-group {min-width:0;max-width:100%;padding:10px 8px;border:2px solid transparent}
+.course-cycle-group.grouped {border-color:#2456c4;background:#f5f8ff}
+.course-cycle-group.partial {border-style:dashed;border-color:#8b98a9;background:#fff}
+.course-cycle-group.grouped.partial {border-color:#2456c4;background:#f5f8ff}
+.course-cycle-group>strong {display:block;font-size:14px;color:#566274;margin-bottom:8px}
+.course-cycle-group .b2-sequence {width:auto;max-width:100%}
+.course-cycle-group .b2-sequence section>div {display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.course-cycle-group .b2-sequence span {display:flex;flex-direction:column;align-items:center;justify-content:center;width:42px;min-width:0;height:64px;padding:4px;border:1px solid #566274;background:#fff}
+.course-cycle-group .b2-sequence b {font-size:28px;line-height:1.2}
+.course-cycle-group .b2-sequence i {font-style:normal;font-size:14px}
+.course-cycle-group:is(.slot-1) .b2-sequence span:nth-child(1),.course-cycle-group:is(.slot-2) .b2-sequence span:nth-child(2),.course-cycle-group:is(.slot-3) .b2-sequence span:nth-child(3),.course-cycle-group:is(.slot-4) .b2-sequence span:nth-child(4),.course-cycle-group:is(.slot-5) .b2-sequence span:nth-child(5),.course-cycle-group:is(.slot-6) .b2-sequence span:nth-child(6),.course-cycle-group:is(.slot-7) .b2-sequence span:nth-child(7),.course-cycle-group:is(.slot-8) .b2-sequence span:nth-child(8) {outline:3px solid #2456c4;background:#eaf0ff}
+.course-equation {font-size:24px;font-weight:700;line-height:1.5;margin:16px 0;overflow-wrap:anywhere}
+.course-equation span {display:block;font-size:18px;font-weight:500}
+.course-target {font-weight:700;font-size:20px;color:#2456c4;margin:16px 0}
+.course-number-range {font-size:16px;font-weight:700}
+.course-equal-slots {display:flex;align-items:center;justify-content:center;gap:16px;margin:16px 0}
+.course-equal-slots span {padding:12px 16px;border:1px solid #566274}
+.course-division-groups,.course-equal-groups {display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.course-equal-groups {max-width:260px}
+.course-unit-group {display:flex;align-items:center;justify-content:center;gap:5px;width:52px;height:45px;border:1px solid #2456c4;background:#eaf0ff}
+.course-unit-group.remainder {border-color:#16734b;background:#ecf8f1}
+.course-unit-dot {display:block;width:14px;height:14px;border-radius:50%;background:#2456c4}
+.remainder .course-unit-dot {background:#16734b}
+.course-candidate-table {border-collapse:collapse;width:100%;max-width:580px;margin:12px auto;font-size:17px;table-layout:fixed}
+.course-candidate-table caption {font-size:14px;color:#566274;padding:4px}
+.course-candidate-table th,.course-candidate-table td {border:1px solid #d8dee8;padding:8px 4px;overflow-wrap:anywhere}
+.course-candidate-table th {background:#f5f6f8;font-size:14px}
+.course-candidate-table td:first-child {font-weight:700}
+.course-candidate-table .outside {color:#566274;background:#f5f6f8}
+.course-candidate-table .outside td:nth-child(2) {text-decoration:line-through}
+.course02-polygon-concept,.course02-polygon-transfer,.course03-remainder-visual {width:100%;min-width:0;text-align:center;color:#182230}
+.course02-polygon-svg {display:block;width:min(220px,100%);height:auto;margin:auto;color:#182230}
+.course02-polygon-svg .polygon-segments {stroke:currentColor;stroke-width:2;fill:none}
+.course02-polygon-svg .polygon-points {fill:var(--polygon-color,#2456c4);stroke:#fff;stroke-width:1}
+.course02-polygon-svg text {fill:#182230;font-size:14px;font-family:inherit}
+.course02-polygon-svg.target-outline {color:#566274;stroke-dasharray:5 4}
+.course02-polygon-equation,.course02-transfer-equation,.course03-equation,.course03-proof {font-size:18px;font-weight:700;line-height:1.6;margin:12px 0}
+.course02-polygon-transfer {display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:16px}
+.course02-polygon-transfer>span {font-size:28px;font-weight:700}
+.course02-transfer-equation {grid-column:1 / -1;color:#2456c4}
+.course03-sequence,.course03-number-line {display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px auto}
+.course03-sequence-cell,.course03-range-cell {display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;padding:6px;border:1px solid #566274;background:#fff;font-size:17px}
+.course03-sequence-cell.is-target {border:3px solid #2456c4;background:#eaf0ff;font-weight:700}
+.course03-sequence-gap {font-size:24px;font-weight:700}
+.course03-equation span {display:block;color:#566274;font-size:16px;font-weight:500}
+.course03-proof {color:#2456c4}
+.course03-range-label {font-size:18px;font-weight:700}
+.course03-range-cell.is-inside {background:#eaf0ff;border-color:#2456c4;font-weight:700}
+.course03-range-table {border-collapse:collapse;margin:12px auto;max-width:100%;font-size:16px}
+.course03-range-table caption {padding:6px;color:#566274}
+.course03-range-table td {border:1px solid #d8dee8;padding:8px}
+.course02-stone-growth-concept,.course03-lcm-visual,.course02-counterfeit-visual,.course03-complex-visual {width:100%;min-width:0;text-align:center;color:#182230}
+.b2-stone-growth {display:flex;align-items:end;justify-content:center;gap:14px;width:min(100%,760px);margin-inline:auto}
+.b2-stone-growth figure {display:grid;place-items:center;min-width:0;margin:0}
+.b2-stone-growth svg {display:block;width:122px;max-width:100%;height:auto;max-height:128px}
+.b2-stone-growth figcaption {margin-top:4px;color:#566274;font-size:12px;font-weight:800}
+.b2-stone-growth circle {stroke:#254b5d;stroke-width:1.8}
+.b2-stone-growth circle.black {fill:#254b5d}
+.b2-stone-growth circle.white {fill:#fff}
+.course02-stone-growth-concept .b2-stone-growth {align-items:center;flex-wrap:wrap}
+.course02-stone-ledger {display:grid;grid-template-columns:auto repeat(4,minmax(0,1fr));gap:8px;align-items:center;width:min(100%,720px);margin:16px auto 0;padding:12px;border:1px solid #d8dee8;background:#f5f6f8}
+.course02-stone-ledger strong {font-size:14px}
+.course02-stone-ledger span {min-width:0;padding:8px;border-left:2px solid #2456c4;background:#fff;font-size:16px;font-weight:700}
+.course03-lcm-conditions {display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0}
+.course03-lcm-conditions span {padding:8px 10px;border:1px solid #566274;background:#fff;font-size:16px;font-weight:700}
+.course03-lcm-question,.course03-lcm-rule {font-size:18px;font-weight:700;line-height:1.6;margin:16px 0}
+.course03-lcm-candidate-row {display:grid;grid-template-columns:minmax(150px,auto) repeat(7,minmax(42px,1fr));gap:6px;align-items:center;width:min(100%,760px);margin:8px auto}
+.course03-lcm-candidate-row strong {text-align:left;font-size:14px;color:#566274}
+.course03-lcm-candidate-row span,.course03-lcm-cell {display:inline-flex;align-items:center;justify-content:center;min-width:42px;min-height:42px;border:1px solid #566274;background:#fff;font-size:16px}
+.course03-lcm-candidate-row span.is-common {border:3px solid #2456c4;background:#eaf0ff;font-weight:700}
+.course03-lcm-sequence {display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px auto}
+.course03-lcm-cell {border-color:#2456c4;background:#eaf0ff;font-weight:700}
+.course03-lcm-visual>p:not(.course03-lcm-question):not(.course03-lcm-rule) {font-size:16px;line-height:1.5;margin:6px 0}
+.course02-counterfeit-groups {display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:8px auto 16px}
+.course02-counterfeit-group {display:flex;align-items:center;justify-content:center;gap:5px;min-width:112px;min-height:54px;padding:8px;border:1px solid #566274;background:#fff}
+.course02-counterfeit-group.is-candidate {border:3px solid #2456c4;background:#eaf0ff}
+.course02-counterfeit-group i,.course02-counterfeit-pan i {display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:2px solid #a36a00;border-radius:50%;background:#fff4c7;color:#182230;font-size:15px;font-style:normal;font-weight:700}
+.course02-counterfeit-scale {--left-y:0;--right-y:0;--beam-tilt:0deg;position:relative;display:grid;grid-template-columns:1fr 1fr;gap:56px;width:min(100%,460px);min-height:142px;margin:0 auto;padding:0 18px 72px}
+.course02-counterfeit-scale[data-result="light-left"] {--left-y:-12px;--right-y:12px;--beam-tilt:6deg}
+.course02-counterfeit-scale[data-result="light-right"],.course02-counterfeit-scale[data-result="left-heavy"] {--left-y:12px;--right-y:-12px;--beam-tilt:-6deg}
+.course02-counterfeit-pan {z-index:2;display:flex;align-content:end;align-items:end;justify-content:center;gap:4px;flex-wrap:wrap;min-width:0;min-height:70px;padding:4px 4px 8px;border-bottom:4px solid #566274;transition:transform .28s ease}
+.course02-counterfeit-pan.left {transform:translateY(var(--left-y))}
+.course02-counterfeit-pan.right {transform:translateY(var(--right-y))}
+.course02-counterfeit-beam {position:absolute;left:12%;right:12%;bottom:54px;height:4px;background:#566274;transform:rotate(var(--beam-tilt));transform-origin:center;transition:transform .28s ease}
+.course02-counterfeit-beam b {position:absolute;bottom:0;width:2px;height:22px;background:#566274}
+.course02-counterfeit-beam b:first-child {left:8%}.course02-counterfeit-beam b:last-child {right:8%}
+.course02-counterfeit-stand {position:absolute;left:50%;bottom:8px;width:76px;height:46px;border-bottom:5px solid #566274;transform:translateX(-50%)}
+.course02-counterfeit-stand::before {content:"";position:absolute;left:50%;bottom:0;width:0;height:0;border-left:24px solid transparent;border-right:24px solid transparent;border-bottom:40px solid #d8dee8;transform:translateX(-50%)}
+.course02-counterfeit-note,.course03-complex-visual>p {font-size:16px;line-height:1.6;margin:8px 0}
+.course03-complex-expression {display:flex;align-items:center;justify-content:center;gap:12px;min-height:128px;max-width:100%;font-size:23px;font-weight:700;line-height:1.35}
+.course03-complex-expression>b {font-size:28px}
+.course03-fraction,.course03-compound-fraction {display:inline-grid;grid-template-rows:auto auto;align-items:center;justify-items:stretch;vertical-align:middle;min-width:32px}
+.course03-fraction>span {display:block;padding:2px 6px;text-align:center}
+.course03-fraction>span:first-child {border-bottom:2px solid currentColor}
+.course03-compound-fraction>.course03-fraction:first-child {padding:3px 10px;border-bottom:3px solid #182230}
+.course03-compound-fraction>.course03-fraction:last-child {padding:3px 10px}
+.course03-continued-whole {display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.course03-euclid-steps {display:grid;gap:6px;padding:12px;border:1px solid #d8dee8;background:#f5f6f8;font-size:18px}
+.course03-euclid-steps span {display:block}
+.course-pilot-note {font-size:14px;padding:12px;border-left:3px solid #2456c4;background:#f5f8ff}
+.course02-multi-pattern {width:100%;min-width:0;color:#182230}
+.multi-pattern-rows {display:grid;gap:12px}
+.multi-pattern-row {position:relative;display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px 12px;align-items:center;min-width:0;padding:10px 0;border-bottom:1px solid #d8dee8}
+.multi-pattern-row h3 {font-size:16px;text-align:left}
+.multi-pattern-run {display:flex;align-items:center;gap:4px;min-width:0;overflow-x:auto;padding:3px 2px 6px}
+.multi-pattern-run.grouped {align-items:start;gap:6px;padding-top:16px}
+.multi-pattern-cycle-set {position:relative;display:grid;grid-template-columns:repeat(var(--cycle-size),44px);gap:4px;padding-top:5px;border-top:2px solid #2456c4}
+.multi-pattern-cycle-set[data-cycle-part="partial"] {border-top-style:dashed;border-top-color:#8b98a9}
+.multi-pattern-cycle-set em {position:absolute;left:0;bottom:calc(100% + 2px);font-size:11px;font-style:normal;font-weight:700;color:#566274;white-space:nowrap}
+.multi-pattern-token {display:inline-grid;flex:0 0 44px;width:44px;height:54px;place-items:center;border:1px solid #8b98a9;background:#fff;font-size:12px}
+.multi-pattern-token i {display:grid;place-items:center;width:24px;height:24px;font-style:normal;font-size:20px;line-height:1}
+.multi-pattern-token b {font-size:11px;font-weight:700;white-space:nowrap}
+.multi-pattern-token.color i,.multi-pattern-result .result-color {border:1px solid #566274;background:var(--token-color,#fff)}
+.multi-pattern-token.color.yellow,.multi-pattern-result .yellow {--token-color:#f7cf45}.multi-pattern-token.color.red,.multi-pattern-result .red {--token-color:#d9534f}.multi-pattern-token.color.blue,.multi-pattern-result .blue {--token-color:#4d8fc3}.multi-pattern-token.color.green,.multi-pattern-result .green {--token-color:#5aa36a}.multi-pattern-token.color.purple,.multi-pattern-result .purple {--token-color:#8c6bb1}
+.multi-pattern-token.color.white,.multi-pattern-result .white {--token-color:#fff}
+.multi-pattern-token.color.white i {box-shadow:inset 0 0 0 1px #8b98a9}
+.multi-pattern-token.size i {border-radius:50%;background:#566274}
+.multi-pattern-token.size i.large {width:28px;height:28px}.multi-pattern-token.size i.small {width:16px;height:16px}
+.multi-pattern-token.target {outline:3px solid #2456c4;background:#eaf0ff}
+.multi-pattern-brace {grid-column:2;position:relative;width:calc(44px * var(--cycle-size) + 4px * (var(--cycle-size) - 1));max-width:100%;padding-top:5px;border-top:2px solid #2456c4;color:#566274;font-size:12px;text-align:center}
+.multi-pattern-brace.second {position:absolute;left:calc(68px + 44px * var(--cycle-size) + 4px * var(--cycle-size));bottom:8px}
+.multi-pattern-equation {grid-column:2;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:17px}
+.multi-pattern-equation span {padding:3px 8px;border:1px solid #2456c4;background:#eaf0ff;font-size:14px}
+.multi-pattern-combine {display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:12px}
+.multi-pattern-combine>span {font-size:24px;color:#566274}
+.multi-pattern-result {display:grid;align-items:center;justify-content:center;gap:6px;min-width:110px;min-height:100px;padding:10px 16px;border:2px solid #2456c4;background:#eaf0ff}
+.result-pieces {display:flex;flex-direction:column-reverse;align-items:center;justify-content:center;min-height:58px;color:var(--token-color,#182230)}
+.result-pieces.yellow {--token-color:#e3ad00}.result-pieces.red {--token-color:#c43f3a}.result-pieces.blue {--token-color:#327cad}.result-pieces.green {--token-color:#3c8a50}.result-pieces.purple {--token-color:#78559f}
+.result-pieces.white {--token-color:#fff;text-shadow:-1px -1px 0 #566274,1px -1px 0 #566274,-1px 1px 0 #566274,1px 1px 0 #566274}
+.result-piece.large {height:26px;font-size:34px;line-height:26px}
+.course02-cycle-total {display:grid;gap:14px;min-width:0}
+.cycle-total-preview,.cycle-total-one-cycle {display:flex;align-items:flex-end;justify-content:center;gap:8px;min-width:0}
+.cycle-total-set {display:grid;grid-template-columns:repeat(var(--cycle-length,6),minmax(0,42px));position:relative;padding-top:20px;border-top:2px solid #2456c4}
+.cycle-total-set em {position:absolute;top:-18px;left:0;font-size:11px;font-style:normal;color:#566274;white-space:nowrap}
+.cycle-total-token {display:grid;flex:0 0 42px;width:42px;height:48px;place-items:center;border:1px solid #8b98a9;background:#fff;font-size:18px;font-weight:800}
+.cycle-total-token.stone {grid-template-rows:26px 14px;font-size:10px}
+.cycle-total-token.stone i {width:20px;height:20px;border:1px solid #566274;border-radius:50%;background:#fff}
+.cycle-total-token.stone.black i {background:#182230}
+.cycle-total-token.stone b {font-size:9px;white-space:nowrap}
+.cycle-total-one-cycle strong {align-self:center;margin-right:6px;font-size:13px;color:#566274}
+.cycle-total-target,.cycle-total-equation,.cycle-total-answer {margin:0;text-align:center;font-weight:800}
+.cycle-total-equation {font-size:20px}.cycle-total-answer {padding:12px;border:2px solid #2456c4;background:#eaf0ff;font-size:20px}
+.cycle-total-counts {display:flex;justify-content:center;gap:24px}.cycle-total-counts span {padding:8px 12px;border-bottom:1px solid #8b98a9}
+.result-piece {display:block;height:19px;font-size:25px;line-height:19px;text-shadow:0 0 0 #182230}
+.multi-pattern-result>b {font-size:15px}
+.multi-pattern-result.pending {display:flex;flex-wrap:wrap;border:1px dashed #566274;background:#fff}.multi-pattern-result.pending span {font-size:15px;color:#566274}
+.course02-windmill-pattern {width:100%;min-width:0;text-align:center;color:#182230}
+.windmill-sequence {display:flex;align-items:end;justify-content:center;gap:8px;flex-wrap:wrap}
+.windmill-sequence.grouped {align-items:start;flex-wrap:nowrap;overflow-x:auto;padding-top:18px}
+.windmill-cycle-set {position:relative;display:flex;gap:4px;padding-top:5px;border-top:2px solid #2456c4}
+.windmill-cycle-set.partial {border-top-style:dashed;border-top-color:#8b98a9}
+.windmill-cycle-set em {position:absolute;left:0;bottom:calc(100% + 2px);font-size:11px;font-style:normal;font-weight:700;color:#566274;white-space:nowrap}
+.windmill-figure {flex:0 0 56px;width:56px;margin:0}
+.windmill-figure svg {display:block;width:100%;height:auto}.windmill-figure polygon {fill:#fff;stroke:#566274;stroke-width:1.5}.windmill-figure polygon.filled {fill:#9fc36a;stroke:#52752d}.windmill-figure circle {fill:#566274}
+.windmill-figure figcaption {font-size:11px;font-weight:700;color:#566274;white-space:nowrap}
+.windmill-equation {display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px 0;font-size:18px;font-weight:700}.windmill-equation strong {padding:4px 8px;border:1px solid #2456c4;background:#eaf0ff;font-size:15px}
+.windmill-answer {display:grid;place-items:center;margin-top:12px}.windmill-answer>.windmill-figure {width:96px}.windmill-answer>.windmill-figure figcaption {font-size:14px;color:#182230}
+.windmill-target {display:grid;place-items:center;min-width:150px;min-height:80px;padding:10px;border:1px dashed #566274;background:#fff}.windmill-target span {color:#566274;font-size:14px}
+body[data-course-pilot="true"] .lesson-content h2 {font-size:28px}
+body[data-course-pilot="true"] :is(.lesson-lead,.quiz-item,.answer-input-wrap,.feedback,.extension-solution,.quiz-item-solution) {font-size:18px;line-height:1.7}
+body[data-course-pilot="true"] :is(.quiz-item-solution p,.extension-solution p) {white-space:pre-line}
+body[data-course-pilot="true"] .answer-input-wrap input {font-size:20px;min-height:44px}
+body[data-course-pilot="true"] .quiz-visual {min-height:0;overflow:visible}
+@media (max-width:600px) {
+  .book-index {display:flex;flex-direction:column;gap:8px}
+  .course-picker {width:100%}.course-picker select {max-width:100%;flex:1}
+  .course-concept-scene {padding:12px 0;min-height:330px}
+  .course-concept-problem,.course-concept-caption {font-size:18px}
+  .course-cycle-groups {gap:8px}.course-cycle-group {padding:8px 4px}
+  .course-candidate-table {font-size:16px}
+  .course02-polygon-transfer {grid-template-columns:1fr;gap:4px}
+  .course02-polygon-transfer>span {transform:rotate(90deg)}
+  .course02-transfer-equation {grid-column:1}
+  .course03-sequence-cell,.course03-range-cell {min-width:44px;min-height:44px;font-size:16px}
+  .course02-stone-ledger {grid-template-columns:1fr 1fr;padding:8px}
+  .course02-stone-ledger strong {grid-column:1 / -1}
+  .b2-stone-growth {flex-wrap:wrap;gap:8px}
+  .b2-stone-growth figure {flex:1 1 40%}
+  .course03-lcm-candidate-row {grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .course03-lcm-candidate-row strong {grid-column:1 / -1;text-align:center}
+  .course03-lcm-candidate-row span,.course03-lcm-cell {min-width:44px;min-height:44px}
+  .course02-counterfeit-groups {gap:8px}.course02-counterfeit-group {min-width:96px}
+  .course02-counterfeit-scale {gap:26px;padding-inline:4px}
+  .course02-counterfeit-group i,.course02-counterfeit-pan i {width:32px;height:32px}
+  .course03-complex-expression {font-size:17px;gap:6px;min-height:150px}
+  .course03-complex-expression>b {font-size:22px}
+  .course03-fraction>span {padding:2px 3px}
+  .multi-pattern-row {grid-template-columns:44px minmax(0,1fr);gap:6px}
+  .multi-pattern-run {display:grid;grid-template-columns:repeat(var(--cycle-size),minmax(0,38px));overflow:visible}
+  .multi-pattern-run.grouped {display:flex;flex-direction:column;align-items:start;gap:18px;padding-top:16px}
+  .multi-pattern-cycle-set {grid-template-columns:repeat(var(--cycle-size),38px)}
+  .multi-pattern-token {width:38px;height:52px;min-width:0}
+  .multi-pattern-token b {font-size:9px}
+  .multi-pattern-brace.second {display:none}
+  .multi-pattern-equation {font-size:16px}
+  .cycle-total-preview {flex-direction:column;align-items:center;gap:22px}
+  .cycle-total-set {grid-template-columns:repeat(var(--cycle-length),42px)}
+  .cycle-total-one-cycle {flex-wrap:wrap}
+  .cycle-total-counts {gap:8px}.cycle-total-counts span {padding:8px 6px;font-size:14px}
+  .windmill-sequence.grouped {flex-direction:column;align-items:center;gap:20px;overflow:visible}
+  .windmill-cycle-set {width:min(100%,310px);justify-content:center}
+  .windmill-figure {flex-basis:50px;width:50px}.windmill-figure figcaption {font-size:10px}
+  body[data-course-pilot="true"] .lesson-content h2 {font-size:24px}
+}
+@media (prefers-reduced-motion:reduce) {.course-concept-scene.animate>* {animation:none}}
+@media print {
+  .course-print-problem {font-size:11pt;line-height:1.5}
+  .course-print-frames {display:grid;grid-template-columns:1fr 1fr;gap:4mm;align-items:start}
+  .course-print-frame {min-width:0;border-top:.3mm solid #d8dee8;padding-top:2mm;break-inside:avoid}
+  .course-print-frame h2 {font-size:11pt;margin:1mm 0}
+  .course-print-frame>p {font-size:9pt;line-height:1.45;margin:2mm 0}
+  .course-print-frame .course-pattern,.course-print-frame .course-division {font-size:9pt}
+  .gold-print-page .course-cycle-groups {gap:1mm}
+  .gold-print-page .course-cycle-group {padding:1mm}
+  .gold-print-page .course-cycle-group>strong {font-size:8pt;margin:1mm}
+  .gold-print-page .course-cycle-group .b2-sequence section>div {gap:1mm}
+  .gold-print-page .course-cycle-group .b2-sequence span {width:8mm;height:11mm;padding:.5mm}
+  .gold-print-page .course-cycle-group .b2-sequence b {font-size:17pt}
+  .gold-print-page .course-cycle-group .b2-sequence i {font-size:8pt}
+  .gold-print-page .course-ellipsis {font-size:10pt}
+  .gold-print-page .course-equation {font-size:12pt;margin:2mm 0}
+  .gold-print-page .course-equation span,.gold-print-page .course-target {font-size:10pt;margin:2mm 0}
+  .gold-print-page .course-number-range {font-size:9pt}
+  .gold-print-page .course-equal-slots {gap:2mm;margin:2mm 0}
+  .gold-print-page .course-equal-slots span {padding:2mm;font-size:10pt}
+  .gold-print-page .course-equal-groups {max-width:46mm;gap:1mm}
+  .gold-print-page .course-unit-group {width:13mm;height:9mm;gap:1mm}
+  .gold-print-page .course-unit-dot {width:3mm;height:3mm}
+  .gold-print-page .course-candidate-table {font-size:9pt;margin:2mm 0}
+  .gold-print-page .course-candidate-table :is(th,td) {padding:1mm;font-size:8pt}
+  .gold-print-page .course-candidate-table caption {font-size:8pt}
+  .gold-print-page :is(.course-pattern,.course-division) {font-size:10pt}
+  .gold-print-page .course02-polygon-svg {width:34mm;max-height:32mm}
+  .gold-print-page .course02-polygon-transfer {gap:1mm}
+  .gold-print-page :is(.course02-polygon-equation,.course02-transfer-equation,.course03-equation,.course03-proof) {font-size:9pt;margin:1mm 0}
+  .gold-print-page .course03-equation span {font-size:8pt}
+  .gold-print-page :is(.course03-sequence,.course03-number-line) {gap:1mm;margin:2mm auto}
+  .gold-print-page :is(.course03-sequence-cell,.course03-range-cell) {min-width:8mm;min-height:8mm;padding:1mm;font-size:8pt}
+  .gold-print-page .course03-range-label {font-size:9pt}
+  .gold-print-page .course03-range-table {font-size:8pt;margin:1mm auto}
+  .gold-print-page .course03-range-table td {padding:1mm}
+  .gold-print-page .course-print-frame .course02-stone-growth-concept .b2-stone-growth {gap:1mm;flex-wrap:nowrap;align-items:end}
+  .gold-print-page .course-print-frame .course02-stone-growth-concept .b2-stone-growth figure {flex:1 1 20mm;width:auto;min-width:0}
+  .gold-print-page .course-print-frame .course02-stone-growth-concept .b2-stone-growth svg {width:min(100%,22mm);height:auto;max-height:18mm}
+  .gold-print-page .course-print-frame .course02-stone-growth-concept .b2-stone-growth figcaption {white-space:nowrap}
+  .gold-print-page .course02-stone-ledger {grid-template-columns:auto repeat(4,minmax(0,1fr));gap:1mm;margin:1mm auto 0;padding:1mm}
+  .gold-print-page .course02-stone-ledger :is(strong,span) {font-size:8pt;padding:1mm}
+  .gold-print-page .course03-lcm-conditions {gap:1mm;margin:1mm 0}
+  .gold-print-page .course03-lcm-conditions span {padding:1mm 2mm;font-size:8pt}
+  .gold-print-page :is(.course03-lcm-question,.course03-lcm-rule) {font-size:9pt;margin:2mm 0}
+  .gold-print-page .course03-lcm-candidate-row {grid-template-columns:28mm repeat(7,minmax(7mm,1fr));gap:1mm;margin:1mm auto}
+  .gold-print-page .course03-lcm-candidate-row strong {font-size:7pt}
+  .gold-print-page :is(.course03-lcm-candidate-row span,.course03-lcm-cell) {min-width:7mm;min-height:7mm;font-size:7pt}
+  .gold-print-page .course03-lcm-sequence {gap:1mm;margin:1mm auto}
+  .gold-print-page .course03-lcm-visual>p {font-size:8pt;margin:1mm 0}
+  .gold-print-page .course02-counterfeit-groups {gap:1mm;margin:1mm auto}
+  .gold-print-page .course02-counterfeit-group {min-width:24mm;min-height:10mm;padding:1mm}
+  .gold-print-page :is(.course02-counterfeit-group i,.course02-counterfeit-pan i) {width:6mm;height:6mm;border-width:.3mm;font-size:7pt}
+  .gold-print-page .course02-counterfeit-scale {gap:8mm;width:70mm;min-height:25mm;padding:0 1mm 11mm}
+  .gold-print-page .course02-counterfeit-pan {min-height:12mm;padding:1mm;border-bottom-width:.6mm}
+  .gold-print-page .course02-counterfeit-beam {bottom:9mm;height:.6mm}
+  .gold-print-page .course02-counterfeit-stand {bottom:1mm;width:14mm;height:8mm;border-bottom-width:.7mm}
+  .gold-print-page .course02-counterfeit-stand::before {border-left-width:4mm;border-right-width:4mm;border-bottom-width:7mm}
+  .gold-print-page :is(.course02-counterfeit-note,.course03-complex-visual>p) {font-size:8pt;line-height:1.35;margin:1mm 0}
+  .gold-print-page .course03-complex-expression {min-height:23mm;gap:2mm;font-size:10pt}
+  .gold-print-page .course03-complex-expression>b {font-size:12pt}
+  .gold-print-page .course03-fraction>span {padding:.5mm 1mm}
+  .gold-print-page .course03-compound-fraction>.course03-fraction:first-child {padding:1mm 2mm;border-bottom-width:.4mm}
+  .gold-print-page .course03-compound-fraction>.course03-fraction:last-child {padding:1mm 2mm}
+  .gold-print-page .course03-euclid-steps {gap:1mm;padding:1mm;font-size:8pt}
+  .gold-print-page .multi-pattern-rows {gap:1mm}
+  .course-print-frame:has(.course02-multi-pattern[data-phase="problem"]),.course-print-frame:has(.course02-multi-pattern[data-phase="group"]) {grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,2fr) minmax(36mm,1fr);column-gap:4mm;align-items:center}
+  .course-print-frame:has(.course02-multi-pattern[data-phase="problem"])>h2,.course-print-frame:has(.course02-multi-pattern[data-phase="group"])>h2 {grid-column:1 / -1}
+  .gold-print-page .multi-pattern-row {grid-template-columns:10mm minmax(0,1fr);gap:1mm;padding:1mm 0}
+  .gold-print-page .multi-pattern-row h3 {font-size:8pt}
+  .gold-print-page .multi-pattern-run {gap:.6mm;padding:0;overflow:visible}
+  .gold-print-page .multi-pattern-run.grouped {display:flex;flex-direction:row;gap:1.2mm;padding-top:3mm}
+  .gold-print-page .multi-pattern-cycle-set {grid-template-columns:repeat(var(--cycle-size),6.5mm);gap:.6mm;padding-top:1mm;border-top-width:.35mm}
+  .gold-print-page .multi-pattern-cycle-set em {bottom:calc(100% + .4mm);font-size:5.5pt}
+  .gold-print-page .multi-pattern-token {flex-basis:6.5mm;width:6.5mm;height:9mm;font-size:6pt}
+  .gold-print-page .multi-pattern-token i {width:4mm;height:4mm;font-size:9pt}.gold-print-page .multi-pattern-token b {font-size:5.5pt}
+  .gold-print-page .multi-pattern-brace {display:none}
+  .gold-print-page .multi-pattern-equation {grid-column:2;gap:1mm;font-size:7.5pt}
+  .gold-print-page .multi-pattern-equation span {padding:.5mm 1mm;font-size:7pt}
+  .gold-print-page .multi-pattern-combine {gap:0;margin-top:1mm}.gold-print-page .multi-pattern-combine>span {font-size:9pt}
+  .gold-print-page .multi-pattern-result {min-width:18mm;min-height:14mm;padding:1mm 2mm;gap:1mm}.gold-print-page .result-pieces {min-height:8mm}.gold-print-page .result-piece {height:3mm;font-size:10pt;line-height:3mm}.gold-print-page .multi-pattern-result>b {font-size:7pt}
+  .gold-print-page .course02-cycle-total {gap:2mm}
+  .gold-print-page .cycle-total-preview {gap:2mm}
+  .gold-print-page .cycle-total-set {grid-template-columns:repeat(var(--cycle-length),6.5mm);padding-top:3mm;border-top-width:.35mm}
+  .gold-print-page .cycle-total-set em {top:-2.8mm;font-size:5.5pt}
+  .gold-print-page .cycle-total-token {width:6.5mm;height:8mm;font-size:9pt}
+  .gold-print-page .cycle-total-token.stone {grid-template-rows:4mm 2.5mm}.gold-print-page .cycle-total-token.stone i {width:3.5mm;height:3.5mm}.gold-print-page .cycle-total-token.stone b {font-size:5.5pt}
+  .gold-print-page .cycle-total-target,.gold-print-page .cycle-total-equation {font-size:8pt}
+  .gold-print-page .cycle-total-counts {gap:3mm}.gold-print-page .cycle-total-counts span {padding:1mm 2mm;font-size:7pt}
+  .gold-print-page .cycle-total-answer {padding:2mm;font-size:9pt}
+  .course-print-frame:has(.course02-windmill-pattern[data-phase="problem"]),.course-print-frame:has(.course02-windmill-pattern[data-phase="group"]) {grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,2fr) minmax(36mm,1fr);column-gap:4mm;align-items:center}
+  .course-print-frame:has(.course02-windmill-pattern[data-phase="problem"])>h2,.course-print-frame:has(.course02-windmill-pattern[data-phase="group"])>h2 {grid-column:1 / -1}
+  .gold-print-page .windmill-sequence {gap:1mm}.gold-print-page .windmill-sequence.grouped {gap:2mm;padding-top:3mm;overflow:visible}
+  .gold-print-page .windmill-cycle-set {gap:.5mm;padding-top:1mm;border-top-width:.35mm}.gold-print-page .windmill-cycle-set em {bottom:calc(100% + .4mm);font-size:5.5pt}
+  .gold-print-page .windmill-figure {flex-basis:8.5mm;width:8.5mm}.gold-print-page .windmill-figure figcaption {font-size:5.5pt}
+  .gold-print-page .windmill-equation {gap:1mm;margin:2mm 0;font-size:8pt}.gold-print-page .windmill-equation strong {padding:.5mm 1mm;font-size:7pt}
+  .gold-print-page .windmill-answer {margin-top:1mm}.gold-print-page .windmill-answer>.windmill-figure {width:18mm}.gold-print-page .windmill-answer>.windmill-figure figcaption {font-size:7pt}
+  .gold-print-page .windmill-target {min-width:28mm;min-height:13mm;padding:1mm}.gold-print-page .windmill-target span {font-size:7pt}
+  .course-answer-item>p {white-space:pre-line;font-size:10pt;line-height:1.5}
+  .gold-print-root .compact-exercise-page .course-answer-item>p {margin:0;font-size:8.5pt;line-height:1.25}
+  .course-answer-item .course-solution-visual {margin-top:3mm}
+  .gold-print-page[data-print-book^="course-"] .gold-print-visual {min-height:0;max-height:none;padding:1mm;overflow:visible}
+}

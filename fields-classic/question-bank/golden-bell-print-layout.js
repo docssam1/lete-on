@@ -18,13 +18,14 @@ function exerciseFamily(page) {
   const part = page.dataset.printPart;
   if (part.startsWith("story-")) return "story";
   if (part.startsWith("original-")) return "source";
+  if (part.startsWith("answers-")) return "answer";
   return null;
 }
 
 function exerciseNodes(page) {
   const family = exerciseFamily(page);
   if (!family) return null;
-  return [...page.querySelectorAll(family === "source" ? ".gold-print-source-item" : ".gold-print-story")];
+  return [...page.querySelectorAll(family === "story" ? ".gold-print-story" : ".gold-print-source-item")];
 }
 
 function needsFullWidth(question) {
@@ -74,7 +75,7 @@ function packExercisePages(pages) {
         grid.append(question);
       }
     }
-    if (!contentFits(sheet)) throw new Error("A print exercise does not fit A4 without clipping");
+    if (!contentFits(sheet)) throw new Error(`A print exercise does not fit A4 without clipping: ${question.dataset.printExerciseKey || "unknown"}`);
   }
   packed.forEach((page) => {
     const parts = [...new Set([...page.querySelectorAll("[data-print-source-part]")].map((node) => node.dataset.printSourcePart))];
@@ -106,6 +107,7 @@ export function compactGoldenBellPrint(root) {
       if (!exerciseNodes(page)) continue;
       const group = [page];
       while (pages[index + 1] && exerciseNodes(pages[index + 1])
+        && (exerciseFamily(pages[index + 1]) === "answer") === (exerciseFamily(page) === "answer")
         && pages[index + 1].dataset.printLesson === page.dataset.printLesson
         && pages[index + 1].dataset.printBook === page.dataset.printBook) {
         group.push(pages[++index]);

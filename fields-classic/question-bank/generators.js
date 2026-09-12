@@ -3771,7 +3771,7 @@ function fourShapeCycle({ difficulty = 2 }) {
   ];
   const cycle = shuffle(shapePool).slice(0, 4);
   const target = difficulty === 1 ? randomInt(9, 14) : difficulty === 2 ? randomInt(12, 24) : randomInt(32, 60);
-  const previewCount = difficulty === 1 ? 8 : difficulty === 2 ? 9 : 4;
+  const previewCount = cycle.length * 2 + 1;
   const items = Array.from({ length: previewCount }, (_, index) => cycle[index % cycle.length]);
   const answerShape = cycle[(target - 1) % cycle.length];
   const remainder = target % cycle.length;
@@ -3799,7 +3799,7 @@ function fourItemCycleWithDuplicate({ difficulty = 2 }) {
     ? [first, repeated, last, repeated]
     : [first, repeated, repeated, last];
   const target = difficulty === 1 ? randomInt(9, 14) : difficulty === 2 ? randomInt(12, 24) : randomInt(32, 60);
-  const previewCount = difficulty === 1 ? 8 : difficulty === 2 ? 9 : 4;
+  const previewCount = cycle.length * 2 + 1;
   const items = Array.from({ length: previewCount }, (_, index) => cycle[index % cycle.length]);
   const answerShape = cycle[(target - 1) % cycle.length];
   const remainder = target % cycle.length;
@@ -6377,7 +6377,7 @@ function trianglePositionCycle({ difficulty = 2 }) {
   const start = randomInt(0, 2);
   const outerCycle = [...clockwise.slice(start), ...clockwise.slice(0, start)];
   const cycle = [...outerCycle, "center"];
-  const shown = difficulty === 1 ? 8 : difficulty === 2 ? 6 : 4;
+  const shown = cycle.length * 2 + 1;
   const target = difficulty === 1 ? randomInt(9, 12) : difficulty === 2 ? randomInt(12, 20) : randomInt(25, 40);
   const answerPosition = cycle[(target - 1) % cycle.length];
   const positionName = { top: "위쪽", "bottom-left": "왼쪽 아래", "bottom-right": "오른쪽 아래", center: "가운데" };
