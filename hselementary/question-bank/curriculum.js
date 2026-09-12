@@ -550,6 +550,104 @@
     })
   });
 
+  const lockedPerimeterAreaGroup51 = (name, exploration, firstPdfPage, items) => detailed(
+    name,
+    "",
+    items.map(([suffix, label, sourceItemLabel]) => {
+      const sourceItemId = `5-1-u6-e${exploration}-${suffix}`;
+      const isMission = suffix.startsWith("mission-");
+      return {
+        ...sourceItem51(
+          label,
+          1,
+          sourceItemId,
+          firstPdfPage + (isMission ? 1 : 0),
+          firstPdfPage + 1 + (isMission ? 1 : 0),
+          true,
+          "원문 문항과 유형은 확인했지만, 같은 구조의 문제·정답 그림과 독립 검산기가 모두 갖춰질 때까지 출제하지 않습니다."
+        ),
+        ...(sourceItemLabel ? { sourceItemLabel } : {})
+      };
+    })
+  );
+
+  const perimeterAreaPendingGroups51 = [
+    lockedPerimeterAreaGroup51("직사각형과 직각삼각형의 넓이", 2, 63, [
+      ["exploration-1", "점 네 개로 1cm² 정사각형 그리기", "개념탐구 2 (1)"],
+      ["exploration-2", "점 네 개로 2cm² 정사각형 그리기", "개념탐구 2 (2)"],
+      ["exploration-3", "점 네 개로 5cm² 정사각형 그리기", "개념탐구 2 (3)"],
+      ["exploration-4", "점 네 개로 8cm² 정사각형 그리기", "개념탐구 2 (4)"],
+      ["exploration-5", "점 네 개로 10cm² 정사각형 그리기", "개념탐구 2 (5)"],
+      ["example-2-1", "넓이가 같도록 나눈 길이 찾기"],
+      ["example-2-2", "겹친 색종이의 넓이 비교"],
+      ["example-2-3", "가로와 세로를 1.5배 해 넓이 구하기"],
+      ["example-2-4", "같은 줄의 넓이 관계로 빈칸 구하기"],
+      ["mission-1", "직사각형을 바꿔 만든 정사각형 넓이 구하기"],
+      ["mission-2", "블록 무늬로 지갑 넓이 알아보기"],
+      ["mission-3", "칸 넓이로 색칠한 도형 넓이 구하기"],
+      ["mission-4", "겹친 세 직사각형의 색칠 넓이 찾기"],
+      ["mission-5", "주변 칸 넓이로 빈칸 넓이 찾기"],
+      ["mission-6", "작은 조각 넓이로 큰 직사각형 넓이 구하기"]
+    ]),
+    lockedPerimeterAreaGroup51("평행사변형과 삼각형의 넓이", 3, 65, [
+      ["exploration-1", "1cm 칸을 세어 평행사변형 넓이 구하기", "개념탐구 3 안내 (1)"],
+      ["exploration-2", "1cm 칸을 세어 다른 평행사변형 넓이 구하기", "개념탐구 3 안내 (2)"],
+      ["exploration-3", "밑변과 안쪽 높이로 삼각형 넓이 구하기", "개념탐구 3 안내 (3)"],
+      ["exploration-4", "바깥으로 내려온 높이로 삼각형 넓이 구하기", "개념탐구 3 안내 (4)"],
+      ["example-3-1", "큰 도형에서 색칠한 넓이를 빼서 삼각형 넓이 찾기"],
+      ["example-3-2", "평행사변형 둘레와 삼각형 둘레의 차 구하기"],
+      ["example-3-3", "두 높이로 변의 길이를 찾고 둘레에서 빼기"],
+      ["example-3-4", "조건이 더 필요한 사각형 넓이 문제 확인하기"],
+      ["mission-1", "합동인 삼각형이 겹친 색칠 넓이 구하기"],
+      ["mission-2", "평행사변형 조각 18개의 전체 넓이 구하기"],
+      ["mission-3", "겹친 평행사변형에서 선분 길이 찾기"],
+      ["mission-4", "여러 길이를 이용해 사각형 넓이 나누어 구하기"],
+      ["mission-5", "두 평행사변형 넓이의 차 구하기"],
+      ["mission-6", "두 높이로 한 변을 찾아 삼각형 둘레 완성하기"]
+    ]),
+    lockedPerimeterAreaGroup51("사다리꼴과 마름모의 넓이", 4, 67, [
+      ["exploration-trapezoid", "두 밑변과 높이로 사다리꼴 넓이 구하기", "개념탐구 4 안내 사다리꼴"],
+      ["exploration-rhombus", "두 대각선으로 마름모 넓이 구하기", "개념탐구 4 안내 마름모"],
+      ["example-4-1", "색칠 넓이 비로 사다리꼴 속 높이 찾기"],
+      ["example-4-2", "여러 삼각형으로 나눈 마름모의 색칠 넓이 구하기"],
+      ["example-4-3", "겹친 넓이 비로 마름모의 긴 대각선 찾기"],
+      ["example-4-4", "움직이는 점으로 사다리꼴 넓이 비율 맞추기"],
+      ["mission-1", "가운데점을 이어 반복한 마름모의 색칠 넓이 구하기"],
+      ["mission-2", "사다리꼴 위의 점 비율로 삼각형 넓이 구하기"],
+      ["mission-3", "사다리꼴 넓이 비로 겹친 마름모 넓이 찾기"],
+      ["mission-4", "대각선이 같은 마름모 세 개의 색칠 넓이 구하기"],
+      ["mission-5", "정사각형 안 색칠 부분 넓이 구하기"],
+      ["mission-6", "움직인 직사각형과 사다리꼴의 겹친 넓이 구하기"]
+    ]),
+    lockedPerimeterAreaGroup51("복잡한 도형의 넓이", 5, 69, [
+      ["exploration", "모눈을 세어 복잡한 도형의 넓이 구하기"],
+      ["example-5-1", "네 정사각형 위 대각선 위쪽 넓이 더하기"],
+      ["example-5-2", "다섯 칸 중 색칠된 대각선 위쪽 넓이 구하기"],
+      ["example-5-3", "닮은 직각삼각형으로 빠진 가로 길이 찾기"],
+      ["example-5-4", "삼각형과 사다리꼴 넓이 연결하기"],
+      ["mission-1", "모눈 도형에서 흰 구멍을 빼고 넓이 구하기"],
+      ["mission-2", "크기가 다른 네 칸의 대각선 위쪽 넓이 더하기"],
+      ["mission-3-na", "정사각형 옆 띠 모양의 넓이 구하기", "Mission 3 (나)"],
+      ["mission-3-da", "정사각형 꼭짓점 옆 작은 삼각형 넓이 구하기", "Mission 3 (다)"],
+      ["mission-4", "붙어 있는 평행사변형과 마름모 넓이 더하기"],
+      ["mission-5", "두 대각선 사이 색칠 띠의 넓이 구하기"],
+      ["mission-6", "연장선과 교점으로 삼각형 넓이 더하기"]
+    ]),
+    lockedPerimeterAreaGroup51("넓이의 활용", 6, 71, [
+      ["exploration", "폭이 같은 길을 잘라 낸 종이의 남은 넓이"],
+      ["example-6-1", "같은 넓이 삼각형으로 직사각형 가로 길이 찾기"],
+      ["example-6-2", "네 모서리를 잘라 만든 가운데 정사각형 넓이"],
+      ["example-6-3", "꼭짓점과 변의 중점을 이어 가운데 정사각형 넓이 구하기"],
+      ["example-6-4", "색칠된 가운데 사각형의 넓이 찾기"],
+      ["mission-1", "공원 길을 빼고 색칠된 잔디 넓이 더하기"],
+      ["mission-2", "정원 전체에서 길 넓이를 빼기"],
+      ["mission-3", "네 모서리 쪽을 잘라 남은 넓이 구하기"],
+      ["mission-4", "정사각형에서 네 흰 삼각형을 빼기"],
+      ["mission-5", "정사각형 다섯 칸의 넓이 더하기"],
+      ["mission-6", "주변 삼각형 넓이로 가운데 색칠 사각형 찾기"]
+    ])
+  ];
+
   const semesters = [
     semester("4-1", [
       ["큰 수",
@@ -1120,7 +1218,7 @@
           { ...sourceItem51("네 직사각형의 둘레로 라의 가로와 세로 구하기", 1, "5-1-u6-e1-mission-5", 62, 63), reviewReason: "원문 2열×2행 배치와 네 직사각형의 둘레를 함께 풀어 라의 가로와 세로를 독립 확인했습니다." },
           sourceItem51("다섯 직사각형의 둘레 관계 살펴보기", 1, "5-1-u6-e1-mission-6", 62, 63, true, "원문 조건을 만족하는 양의 길이 배치가 둘 이상이고 둘레도 서로 달라 답이 하나로 정해지지 않습니다.")
         ]),
-        "직사각형과 직각삼각형의 넓이", "둘레와 넓이", "여러 가지 사각형의 넓이"]
+        ...perimeterAreaPendingGroups51]
     ]),
     semester("5-2", [
       ["수의 범위와 어림하기",
@@ -1347,7 +1445,7 @@
   }
 
   window.HSE_CURRICULUM = {
-    version: "2026-09-05",
+    version: "2026-09-13",
     levels: [
       { id: "simwha", label: "심화 기준", rank: 1 }
     ],
