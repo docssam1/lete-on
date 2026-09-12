@@ -258,6 +258,11 @@ async function noOverflow(page, label) {
     assert.equal(await mockVideo.locator("#mockVideoFrame").getAttribute("title"), "챌린지 대비 모의고사 1회 학습 영상");
     assert.equal(await mockVideo.locator("#mockVideoLink").getAttribute("href"), "https://youtu.be/_QHKH2ctLWE");
     assert.equal(await mockVideo.locator("#mockVideoWatermark span").count(), 3);
+    assert.equal(await mockVideo.locator("#mockVideoCorrections").isVisible(), true);
+    assert.deepEqual(await mockVideo.locator("#mockVideoCorrectionList li").allTextContents(), [
+      "11번: 정답은 5가지입니다. 영상의 ‘6가지’ 표기는 오류입니다.",
+      "15번: 가장 큰 수의 합은 53, 가장 작은 수의 합은 39입니다. 따라서 차는 53-39=14입니다."
+    ]);
     assert.match(await mockVideo.locator("#mockViewerLayout").evaluate(node => getComputedStyle(node).gridTemplateColumns), /px/);
     await noOverflow(mockVideo, "desktop challenge mock video");
     await mockVideo.screenshot({ path: "tmp/hf-challenge-mock-1-video-desktop.png", fullPage: true });
@@ -267,6 +272,7 @@ async function noOverflow(page, label) {
     await mockVideo.locator("#round").selectOption("2");
     assert.equal(await mockVideo.locator("#mockVideoPanel").isHidden(), true);
     assert.equal(await mockVideo.locator("#mockVideoFrame").getAttribute("src"), null);
+    assert.equal(await mockVideo.locator("#mockVideoCorrectionList li").count(), 0);
     await mockVideo.close();
 
     const vipAdmin = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
@@ -342,6 +348,8 @@ async function noOverflow(page, label) {
     assert.equal(await mockVideoMobile.locator("#mockVideoPanel").isVisible(), true);
     assert.match(await mockVideoMobile.locator("#mockVideoFrame").getAttribute("src"), /youtube-nocookie\.com\/embed\/_QHKH2ctLWE/);
     assert.equal(await mockVideoMobile.locator("#mockVideoLink").getAttribute("href"), "https://youtu.be/_QHKH2ctLWE");
+    assert.equal(await mockVideoMobile.locator("#mockVideoCorrections").isVisible(), true);
+    assert.equal(await mockVideoMobile.locator("#mockVideoCorrectionList li").count(), 2);
     await noOverflow(mockVideoMobile, "mobile challenge mock video");
     await mockVideoMobile.screenshot({ path: "tmp/hf-challenge-mock-1-video-mobile.png", fullPage: true });
     await mockVideoMobile.close();
