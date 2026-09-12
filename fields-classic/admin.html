@@ -32,6 +32,19 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
 .del-btn{background:none;border:none;color:#dc2626;cursor:pointer;font-size:14px}
 #save-status{font-size:12px;color:#64748b;margin-right:10px}
 .top-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.login-card{max-width:520px;margin:48px auto;background:#fff;border:1px solid #cbd5e1;padding:24px}
+.login-card h2{font-size:20px;margin-bottom:8px;color:#173042}
+.login-card p{font-size:14px;color:#566274;line-height:1.6;margin-bottom:16px}
+.login-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.login-row input{height:44px;border:1px solid #9aa6b2;border-radius:5px;padding:0 12px;font-size:16px}
+.session-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding:10px 12px;background:#eaf0ff;border:1px solid #b8c8ec;font-size:13px}
+.code-state{display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.code-state span{color:#566274}
+.btn.secondary{background:#fff;color:#173042;border:1px solid #9aa6b2}
+.btn.small{height:32px;padding:0 10px;font-size:12px}
+.inactive-row{opacity:.58;background:#f5f6f8}
+.status-ok{color:#16734b;font-weight:800}
+.status-error{color:#b42332;font-weight:800}
 .token-box{display:flex;gap:6px;align-items:center;font-size:12px}
 .token-box input{width:160px;height:32px;border:2px solid #e2e8f0;border-radius:6px;padding:0 8px;font-size:12px}
 .content-week{border:1.5px solid #e8edf5;border-radius:12px;padding:14px;margin-bottom:14px;background:#fafbfc}
@@ -68,13 +81,30 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
 .split-state.done{color:#15803d;font-weight:800}
 .archive-help{font-size:11px;color:#64748b;line-height:1.65;margin-bottom:14px;padding:10px 12px;border:1px solid #dbe5ef;border-radius:9px;background:#f8fafc}
 .archive-help b{color:#16417C}
-@media(max-width:760px){.archive-book{grid-template-columns:1fr}.archive-book .video-input,.archive-book .pdf-link,.archive-book .split-state,.archive-book .book-actions{grid-column:1;grid-row:auto}.archive-book .book-actions{flex-direction:row;justify-content:flex-end}}
+@media(max-width:760px){.archive-book{grid-template-columns:1fr}.archive-book .video-input,.archive-book .pdf-link,.archive-book .split-state,.archive-book .book-actions{grid-column:1;grid-row:auto}.archive-book .book-actions{flex-direction:row;justify-content:flex-end}.login-row{grid-template-columns:1fr}.login-card{margin:20px auto;padding:18px}.btn{min-height:44px}}
 </style>
 </head>
 <body>
 
 <h1>🔐 필즈 더 클래식 대비 과정 · Admin</h1>
 <div class="sub">학생별 상품(회차) 열기/닫기 — 출석부처럼 클릭으로 토글</div>
+
+<section id="loginCard" class="login-card">
+  <h2>공동 관리자 로그인</h2>
+  <p>기존 관리자 계정으로 로그인하면 보안 저장소에 보관된 필즈 승인 목록을 불러옵니다.</p>
+  <div class="login-row">
+    <input id="adminName" value="DOCSSAM" autocomplete="username" aria-label="관리자 아이디">
+    <input id="adminCode" type="password" autocomplete="current-password" placeholder="승인번호" aria-label="관리자 승인번호" onkeydown="if(event.key==='Enter')adminLogin()">
+    <button id="loginButton" class="btn" onclick="adminLogin()">로그인</button>
+  </div>
+  <p id="loginStatus" role="status" style="margin:12px 0 0"></p>
+</section>
+
+<main id="adminApp" hidden>
+<div class="session-bar">
+  <span id="approval-status"><b>필즈 승인 관리</b> · 보안 저장소 연결됨</span>
+  <button class="btn secondary small" onclick="adminLogout()">로그아웃</button>
+</div>
 
 <div class="top-actions">
   <span id="save-status">저장됨</span>
@@ -133,8 +163,11 @@ td.name{text-align:left;font-weight:700;padding-left:10px}
   <div id="archive-list"></div>
 </div>
 
+</main>
+
 <script src="../reading-world/vendor/pdfjs/pdf.min.js"></script>
 <script src="./data.js"></script>
+<script src="./admin-auth.js"></script>
 <script>
 const REPO = "docssam1/lete-on";
 const FILE_PATH = "fields-classic/data.js";
@@ -159,28 +192,26 @@ const PRODUCTS = [
   {id:"마무리점검",      name:"마무리 점검 (시험 직전 최종 점검)"},
 ];
 
-// 기본 데이터 구조
-let S = window.GFIELD_FC_DATA || {
+// 공개 콘텐츠와 보안 승인 데이터는 분리해서 다룹니다.
+let S = JSON.parse(JSON.stringify(window.GFIELD_FC_DATA || {
   students: [],
-  studentCode: {},               // { "이름": "GF-XXXX" } 자동 생성 승인번호
+  studentCode: {},
   studentType: {},
-  attendance: {},                // 이름 기준 저장 (내부 관리용)
+  attendance: {},
   content: {},
-  archiveFolders: [],           // ["약점유형 보충자료", ...]
-  archiveAccess: {},            // { "폴더명": ["*"] 또는 ["학생명",...] }
-  books: []                     // [{folder, title, pdf, video, date}]
-};
+  archiveFolders: [],
+  archiveAccess: {},
+  books: []
+}));
+S.students = [];
+S.studentCode = {};
+S.studentType = {};
+S.attendance = {};
+S.studentActive = {};
 S.archiveFolders = Array.isArray(S.archiveFolders) ? S.archiveFolders : [];
 S.archiveAccess = S.archiveAccess && typeof S.archiveAccess === 'object' ? S.archiveAccess : {};
 S.books = Array.isArray(S.books) ? S.books : [];
-
-function genCode(){
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXY23456789'; // 헷갈리는 문자(0,O,1,I) 제외
-  let s = 'GF';
-  for(let i=0;i<6;i++) s += chars[Math.floor(Math.random()*chars.length)];
-  if(Object.values(S.studentCode).includes(s)) return genCode();
-  return s;
-}
+const ADMIN_API = 'fields-approval-admin';
 
 function esc(s){
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -199,35 +230,30 @@ function ensureStudent(name){
     if(!S.attendance[name].includes('진단모의고사')) S.attendance[name].push('진단모의고사');
   }
   if(!S.studentType[name]) S.studentType[name] = 'internal';
-  if(!S.studentCode[name]) S.studentCode[name] = genCode();
+  if(typeof S.studentActive[name] !== 'boolean') S.studentActive[name] = true;
 }
 
 function renderMatrix(){
-  let html = '<thead><tr><th>승인번호</th><th>학생</th><th>구분</th>';
+  let html = '<thead><tr><th>승인번호</th><th>학생</th><th>구분</th><th>상태</th>';
   PRODUCTS.forEach(p => html += `<th>${p.name}</th>`);
   html += '<th></th></tr></thead><tbody>';
   S.students.forEach(name => {
     ensureStudent(name);
     const type = S.studentType[name];
-    const code = S.studentCode[name];
-    html += `<tr><td class="name" style="font-family:monospace;font-weight:900;color:#16417C;cursor:pointer" onclick="copyCode('${code}')" title="클릭하면 복사됩니다">${code}</td>`;
+    const active = S.studentActive[name] !== false;
+    const encoded = encodeURIComponent(name);
+    html += `<tr class="${active?'':'inactive-row'}"><td><span class="code-state"><span>기존 번호 유지</span><button class="btn secondary small" onclick="resetStudentCode(decodeURIComponent('${encoded}'))">재발급</button></span></td>`;
     html += `<td class="name">${name}</td>`;
     html += `<td><span class="tag ${type}">${type==='internal'?'재원':'온라인'}</span></td>`;
+    html += `<td><button class="btn ${active?'secondary':''} small" onclick="setStudentActive(decodeURIComponent('${encoded}'),${!active})">${active?'사용 중지':'다시 사용'}</button></td>`;
     PRODUCTS.forEach(p => {
       const on = S.attendance[name].includes(p.id);
-      html += `<td><span class="cell ${on?'on':'off'}" onclick="toggleCell('${name}','${p.id}',this)"></span></td>`;
+      html += `<td><button class="cell ${on?'on':'off'}" ${active?'':'disabled'} onclick="toggleCell(decodeURIComponent('${encoded}'),'${p.id}',this)" aria-label="${p.name} ${on?'열림':'닫힘'}"></button></td>`;
     });
-    html += `<td><button class="del-btn" onclick="removeStudent('${name}')">✕</button></td></tr>`;
+    html += '<td></td></tr>';
   });
   html += '</tbody>';
   document.getElementById('matrix').innerHTML = html;
-}
-
-function copyCode(code){
-  navigator.clipboard?.writeText(code).then(()=>{
-    document.getElementById('save-status').textContent = `📋 ${code} 복사됨`;
-    setTimeout(()=>{ document.getElementById('save-status').textContent = '저장됨'; }, 1500);
-  });
 }
 
 function renderContent(){
@@ -417,9 +443,10 @@ function renderArchive(){
   document.getElementById('archive-list').innerHTML = html || '<div style="font-size:12px;color:#94a3b8">폴더를 추가해 주세요.</div>';
 }
 
-function toggleCell(name, pid, el){
+async function toggleCell(name, pid, el){
   ensureStudent(name);
   const arr = S.attendance[name];
+  const before = arr.slice();
   const product=PRODUCTS.find(p=>p.id===pid);
   const i = arr.indexOf(pid);
   if(i >= 0){ arr.splice(i,1); }
@@ -428,43 +455,73 @@ function toggleCell(name, pid, el){
     (product?.grants||[]).forEach(grant=>{if(!arr.includes(grant))arr.push(grant);});
   }
   renderMatrix();
-  dirty();
+  setApprovalStatus('승인 권한 저장 중…');
+  try{
+    await GFIELD_FIELDS_ADMIN_AUTH.functionCall(ADMIN_API,{action:'setAccess',student:name,permissions:arr});
+    setApprovalStatus('승인 권한 저장됨','ok');
+  }catch(error){
+    S.attendance[name]=before;
+    renderMatrix();
+    setApprovalStatus('승인 권한 저장 실패','error');
+    alert(error.message||'승인 권한을 저장하지 못했습니다.');
+  }
 }
 
-function addStudent(){
+async function addStudent(){
   const nameEl = document.getElementById('newName');
   const typeEl = document.getElementById('newType');
   const raw = nameEl.value.trim();
   const type = typeEl.value;
   if(!raw) return;
-  // 쉼표 또는 줄바꿈으로 구분된 여러 이름 처리
   const names = raw.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
-  let added = 0, skipped = [];
-  const issuedCodes = [];
-  names.forEach(name => {
-    if(S.students.includes(name)){ skipped.push(name); return; }
-    S.students.push(name);
-    S.studentType[name] = type;
-    S.studentCode[name] = genCode();
-    // 온라인 학생은 구매 즉시 전체 상품 오픈, 재원생은 빈 상태(진도별로 열어줌)
-    S.attendance[name] = type === 'online' ? PRODUCTS.filter(p=>!p.manualOnly).map(p=>p.id) : [];
-    issuedCodes.push(`${name}: ${S.studentCode[name]}`);
-    added++;
-  });
-  nameEl.value = '';
-  renderMatrix();
-  if(added>0) dirty();
-  if(issuedCodes.length) alert('승인번호가 발급되었습니다 (카카오톡으로 전달해주세요):\n\n' + issuedCodes.join('\n'));
-  if(skipped.length) alert('이미 있어서 건너뜀: ' + skipped.join(', '));
+  const existing = names.filter(name=>S.students.includes(name));
+  const fresh = names.filter(name=>!S.students.includes(name));
+  if(!fresh.length){ alert('모두 이미 등록된 학생입니다.'); return; }
+  const permissions = type === 'online' ? PRODUCTS.filter(p=>!p.manualOnly).map(p=>p.id) : [];
+  setApprovalStatus('학생 승인 발급 중…');
+  try{
+    const result=await GFIELD_FIELDS_ADMIN_AUTH.functionCall(ADMIN_API,{action:'bulkIssue',students:fresh.map(student=>({student,studentType:type,permissions}))});
+    nameEl.value='';
+    await loadApprovalAccounts();
+    const codes=(result.issued||[]).map(item=>`${item.student}: ${item.approvalCode}`);
+    if(codes.length) alert('새 승인번호입니다. 지금 전달해 주세요. 이 창을 닫으면 다시 표시되지 않습니다.\n\n'+codes.join('\n'));
+    const failed=(result.failed||[]).map(item=>item.student).filter(Boolean);
+    if(existing.length||failed.length) alert('건너뛴 학생: '+existing.concat(failed).join(', '));
+  }catch(error){
+    setApprovalStatus('학생 승인 발급 실패','error');
+    alert(error.message||'학생 승인을 발급하지 못했습니다.');
+  }
 }
 
-function removeStudent(name){
-  if(!confirm(`'${name}' 학생을 삭제할까요?`)) return;
-  S.students = S.students.filter(s => s !== name);
-  delete S.attendance[name];
-  delete S.studentType[name];
+async function resetStudentCode(name){
+  if(!confirm(`'${name}' 학생의 승인번호를 새로 발급할까요? 기존 번호는 즉시 사용할 수 없게 됩니다.`)) return;
+  setApprovalStatus('승인번호 재발급 중…');
+  try{
+    const result=await GFIELD_FIELDS_ADMIN_AUTH.functionCall(ADMIN_API,{action:'resetCode',student:name});
+    setApprovalStatus('승인번호 재발급 완료','ok');
+    alert(`${result.student} 학생의 새 승인번호입니다. 지금 전달해 주세요.\n\n${result.approvalCode}\n\n이 창을 닫으면 다시 표시되지 않습니다.`);
+  }catch(error){
+    setApprovalStatus('승인번호 재발급 실패','error');
+    alert(error.message||'승인번호를 재발급하지 못했습니다.');
+  }
+}
+
+async function setStudentActive(name,active){
+  const message=active?`'${name}' 학생 승인을 다시 사용할까요?`:`'${name}' 학생 승인을 중지할까요?`;
+  if(!confirm(message))return;
+  const before=S.studentActive[name];
+  S.studentActive[name]=active;
   renderMatrix();
-  dirty();
+  setApprovalStatus(active?'승인 다시 사용 중…':'승인 사용 중지 중…');
+  try{
+    await GFIELD_FIELDS_ADMIN_AUTH.functionCall(ADMIN_API,{action:'setAccess',student:name,active});
+    setApprovalStatus(active?'승인 다시 사용됨':'승인 사용 중지됨','ok');
+  }catch(error){
+    S.studentActive[name]=before;
+    renderMatrix();
+    setApprovalStatus('승인 상태 저장 실패','error');
+    alert(error.message||'승인 상태를 저장하지 못했습니다.');
+  }
 }
 
 function dirty(){
@@ -472,12 +529,18 @@ function dirty(){
 }
 
 function buildFile(){
+  const publicData=JSON.parse(JSON.stringify(S));
+  publicData.students=[];
+  publicData.studentCode={};
+  publicData.studentType={};
+  publicData.attendance={};
+  delete publicData.studentActive;
   return "/* =========================================================\n"
     + " * 지필드 영재교육 · 필즈 더 클래식 대비 과정\n"
-    + " * 공용 데이터 파일 — 관리자 콘솔에서 자동 생성됨\n"
+    + " * 공용 콘텐츠 파일 — 학생 승인 정보는 보안 저장소에서 관리함\n"
     + " * 생성: " + new Date().toLocaleString('ko-KR') + "\n"
     + " * ========================================================= */\n"
-    + "window.GFIELD_FC_DATA = " + JSON.stringify(S, null, 2) + ";\n";
+    + "window.GFIELD_FC_DATA = " + JSON.stringify(publicData, null, 2) + ";\n";
 }
 
 function ghKeyGet(){ try{ return localStorage.getItem('gfield_fc_gh_token')||''; }catch(e){ return ''; } }
@@ -650,12 +713,78 @@ async function saveToGitHub(){
   }
 }
 
-// 초기화
-renderMatrix();
+function setApprovalStatus(message,state){
+  const el=document.getElementById('approval-status');
+  el.className=state==='ok'?'status-ok':state==='error'?'status-error':'';
+  el.textContent=message;
+}
+
+async function loadApprovalAccounts(){
+  setApprovalStatus('필즈 승인 목록 불러오는 중…');
+  const result=await GFIELD_FIELDS_ADMIN_AUTH.functionCall(ADMIN_API,{action:'list'});
+  S.students=[];
+  S.studentCode={};
+  S.studentType={};
+  S.attendance={};
+  S.studentActive={};
+  (result.accounts||[]).forEach(account=>{
+    const name=String(account.student_name||'');
+    if(!name)return;
+    S.students.push(name);
+    S.studentType[name]=account.student_type==='online'?'online':'internal';
+    S.attendance[name]=Array.isArray(account.permissions)?account.permissions.filter(id=>PRODUCTS.some(p=>p.id===id)):[];
+    S.studentActive[name]=account.active!==false;
+  });
+  renderMatrix();
+  renderArchive();
+  setApprovalStatus(`필즈 승인 ${S.students.length}건 · 보안 저장소 연결됨`,'ok');
+}
+
+async function openAdmin(){
+  document.getElementById('loginCard').hidden=true;
+  document.getElementById('adminApp').hidden=false;
+  try{
+    await loadApprovalAccounts();
+  }catch(error){
+    document.getElementById('adminApp').hidden=true;
+    document.getElementById('loginCard').hidden=false;
+    const status=document.getElementById('loginStatus');
+    status.className='status-error';
+    status.textContent=error.message||'승인 목록을 불러오지 못했습니다. 다시 로그인하세요.';
+    throw error;
+  }
+}
+
+async function adminLogin(){
+  const button=document.getElementById('loginButton');
+  const status=document.getElementById('loginStatus');
+  button.disabled=true;
+  status.className='';
+  status.textContent='관리자 권한 확인 중…';
+  try{
+    await GFIELD_FIELDS_ADMIN_AUTH.signIn(document.getElementById('adminName').value,document.getElementById('adminCode').value);
+    document.getElementById('adminCode').value='';
+    await openAdmin();
+  }catch(error){
+    status.className='status-error';
+    status.textContent=error.message||'관리자 로그인을 확인해 주세요.';
+  }finally{button.disabled=false}
+}
+
+async function adminLogout(){
+  await GFIELD_FIELDS_ADMIN_AUTH.signOut();
+  document.getElementById('adminApp').hidden=true;
+  document.getElementById('loginCard').hidden=false;
+  document.getElementById('loginStatus').textContent='로그아웃했습니다.';
+}
+
 renderContent();
 renderArchive();
 const savedToken = ghKeyGet();
 if(savedToken) document.getElementById('ghKey').value = savedToken;
+(async function(){
+  try{if(await GFIELD_FIELDS_ADMIN_AUTH.getSession())await openAdmin()}catch(error){}
+})();
 </script>
 </body>
 </html>

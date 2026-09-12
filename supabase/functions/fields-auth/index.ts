@@ -98,8 +98,18 @@ Deno.serve(async (req: Request) => {
     const { data: session, error } = await service.from("fields_access_sessions")
       .select("student_name,expires_at").eq("token_hash", tokenHash).gt("expires_at", new Date().toISOString()).maybeSingle();
     if (error || !session) return json(req, { error: "session_invalid" }, 401);
+    const { data: account, error: accountError } = await service.from("fields_access_accounts")
+      .select("student_name,permissions,student_type,active").eq("student_name", session.student_name).maybeSingle();
+    if (accountError) return json(req, { error: "account_lookup_failed" }, 503);
+    if (!account?.active) return json(req, { error: "session_invalid" }, 401);
     await service.from("fields_access_sessions").update({ last_seen_at: new Date().toISOString() }).eq("token_hash", tokenHash);
-    return json(req, { ok: true, name: session.student_name, expiresAt: session.expires_at });
+    return json(req, {
+      ok: true,
+      name: account.student_name,
+      permissions: account.permissions,
+      type: account.student_type,
+      expiresAt: session.expires_at,
+    });
   } catch {
     return json(req, { error: "request_invalid" }, 400);
   }

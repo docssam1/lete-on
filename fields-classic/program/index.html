@@ -536,7 +536,7 @@ const CODES={
   "fcee3d55de77d92a5e3014b3c4dc874ae825fbbf0e0970399766d0a16841d50b":["진단모의고사"],
   "7952b6a2f87c81cf4049e69cf7ece810f2a281c4199483ab39829d9e16dead33":ALL
 };
-// 신규 승인번호(GF-XXXXXX) — admin에서 자동 발급, data.js에서 로드
+// 공개 콘텐츠와 자료실 목록만 data.js에서 로드합니다. 학생 승인은 서버에서 확인합니다.
 const FC = window.GFIELD_FC_DATA || { students:[], studentCode:{}, attendance:{}, studentType:{} };
 const FIELDS_AUTH_URL="https://fgahqumaldheqettmvqg.supabase.co/functions/v1/fields-auth";
 FC.archiveFolders = Array.isArray(FC.archiveFolders) ? FC.archiveFolders : [];
@@ -558,12 +558,6 @@ const TIMELINE_ORDER=[
   {key:"파이널모의고사3회", step:"STEP 12", desc:"최종 점검 파이널 3회차"},
   {key:"마무리점검", step:"FINAL", desc:"시험 직전 최종 점검"},
 ];
-function findByCode(code){
-  const upper = code.trim().toUpperCase();
-  const name = Object.keys(FC.studentCode).find(n => FC.studentCode[n] === upper);
-  if(!name) return null;
-  return { name, perms: FC.attendance[name] || [], type: FC.studentType[name] || 'internal' };
-}
 async function sha256(m){const b=new TextEncoder().encode(m);if(window.crypto?.subtle){const d=await crypto.subtle.digest("SHA-256",b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}return fb(m)}
 function fb(s){function rr(v,a){return v>>>a|v<<32-a}const mp=Math.pow,mw=mp(2,32);let r="",w=[],al=s.length*8;let h=fb.h=fb.h||[],k=fb.k=fb.k||[],pc=k.length;const ic={};for(let c=2;pc<64;c++){if(!ic[c]){for(let i=0;i<313;i+=c)ic[i]=c;h[pc]=mp(c,.5)*mw|0;k[pc++]=mp(c,1/3)*mw|0}}s+="\x80";while(s.length%64-56)s+="\x00";for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return"";w[i>>2]|=j<<(3-i%4)*8}w[w.length]=al/mw|0;w[w.length]=al;for(let j=0;j<w.length;){const wd=w.slice(j,j+=16),oh=h.slice(0);for(let i=0;i<64;i++){const w15=wd[i-15],w2=wd[i-2],a=h[0],e=h[4];const t1=h[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(wd[i]=i<16?wd[i]:wd[i-16]+(rr(w15,7)^rr(w15,18)^w15>>>3)+wd[i-7]+(rr(w2,17)^rr(w2,19)^w2>>>10)|0);const t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[t1+t2|0].concat(h);h[4]=h[4]+t1|0;h.pop()}for(let i=0;i<8;i++)h[i]=h[i]+oh[i]|0}for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=h[i]>>j*8&255;r+=(b<16?0:"")+b.toString(16)}return r}
 async function verify(code,name){
@@ -577,6 +571,15 @@ async function verify(code,name){
   const h=await sha256(SALT+":"+code.trim().toUpperCase());
   const legacyPerms = CODES[h];
   if(legacyPerms) return { perms: legacyPerms, name: null, type: 'legacy' };
+  return null;
+}
+async function restoreFieldsSession(token){
+  if(!token)return null;
+  try{
+    const response=await fetch(FIELDS_AUTH_URL,{method:"POST",headers:{"Content-Type":"application/json","x-fields-session":token},body:JSON.stringify({action:"session"}),cache:"no-store"});
+    const payload=await response.json();
+    if(response.ok&&payload.ok)return {perms:payload.permissions||[],name:payload.name,type:payload.type||"online"};
+  }catch{}
   return null;
 }
 function toast(){const t=document.getElementById("secToast");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1500)}
@@ -709,7 +712,7 @@ const GF={
     S.name=result.name||n;
     S.perms=result.perms;
     S.studentType=result.type||'legacy';
-    sessionStorage.setItem("gf_c",c);sessionStorage.setItem("gf_n",S.name);this.showApp();
+    sessionStorage.removeItem("gf_c");sessionStorage.setItem("gf_n",S.name);this.showApp();
   },
   showApp(){document.getElementById("gate").classList.add("hidden");document.getElementById("app").classList.add("show");document.getElementById("hName").textContent=S.name;
     // 재원생은 타임라인 뷰, 온라인/레거시는 서재 뷰
@@ -1211,8 +1214,8 @@ document.addEventListener("DOMContentLoaded",()=>{
   ci?.addEventListener("keydown",e=>{if(e.key==="Enter")ni?.focus()});
   ni?.addEventListener("keydown",e=>{if(e.key==="Enter")GF.login()});
   setTimeout(()=>ci?.focus(),60);
-  const sc=sessionStorage.getItem("gf_c"),sn=sessionStorage.getItem("gf_n");
-  if(sc&&sn)verify(sc).then(r=>{if(r){S.name=r.name||sn;S.perms=r.perms;S.studentType=r.type||"legacy";GF.showApp()}else sessionStorage.clear()});
+  const token=sessionStorage.getItem("gfield_fields_session"),sn=sessionStorage.getItem("gf_n");
+  if(token&&sn)restoreFieldsSession(token).then(r=>{if(r){S.name=r.name||sn;S.perms=r.perms;S.studentType=r.type||"online";GF.showApp()}else sessionStorage.clear()});
 });
 window.GF=GF;
 })();
