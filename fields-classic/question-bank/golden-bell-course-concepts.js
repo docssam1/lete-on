@@ -10,6 +10,7 @@ import { course03RemainderConceptMarkup } from "./golden-bell-course03-remainder
 import { course03LcmRemainderConceptMarkup } from "./golden-bell-course03-lcm-remainder-lesson.js";
 import { course03ComplexFractionConceptMarkup } from "./golden-bell-course03-complex-fraction-lesson.js";
 import { course23A2ConceptMarkup } from "./golden-bell-course23-a2-lessons.js";
+import { course23A3ConceptMarkup } from "./golden-bell-course23-a3-lessons.js";
 
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 const names = { triangle: "세모", square: "네모", circle: "동그라미", star: "별" };
@@ -72,11 +73,13 @@ export function courseConceptMarkup(visual) {
   if (course03Fraction) return course03Fraction;
   const course23A2 = course23A2ConceptMarkup(visual);
   if (course23A2) return course23A2;
+  const course23A3 = course23A3ConceptMarkup(visual);
+  if (course23A3) return course23A3;
   return "";
 }
 
 export function courseConceptPrintPages(lesson, book, student) {
-  if (book.id.endsWith("-a2")) {
+  if (book.id.endsWith("-a2") || book.id.endsWith("-a3")) {
     const trackGroups = [];
     for (let index = 0; index < lesson.experience.tracks.length; index += 2) {
       trackGroups.push(lesson.experience.tracks.slice(index, index + 2));

@@ -1,6 +1,6 @@
 import { GOLDEN_BELL_BOOKS as courseOneBooks } from "./golden-bell-data.js?v=20260905e";
 import { COURSE_CATALOG, courseById, resolveCourseBook } from "./course-catalog.js";
-import { COURSE23_PILOT_BOOKS } from "./golden-bell-course23-data.js?v=20260913b";
+import { COURSE23_PILOT_BOOKS } from "./golden-bell-course23-data.js?v=20260913c";
 
 export { COURSE_CATALOG };
 const pilotById = new Map(COURSE23_PILOT_BOOKS.map((book) => [book.id, book]));

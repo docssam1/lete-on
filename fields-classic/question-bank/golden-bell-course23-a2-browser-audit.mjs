@@ -11,11 +11,13 @@ const { chromium } = await import(pathToFileURL(path.join(modules, "playwright/i
 const require = createRequire(path.join(modules, "package.json"));
 const { PDFDocument } = require("pdf-lib");
 const base = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8795";
-const output = path.join(os.tmpdir(), "fields-course23-a2-browser-audit");
+const suffix = process.env.FIELDS_COURSE_SUFFIX || "a2";
+assert.ok(["a2", "a3"].includes(suffix), "FIELDS_COURSE_SUFFIX must be a2 or a3");
+const output = path.join(os.tmpdir(), `fields-course23-${suffix}-browser-audit`);
 await mkdir(output, { recursive: true });
-const books = COURSE23_PILOT_BOOKS.filter((book) => book.id.endsWith("-a2"));
+const books = COURSE23_PILOT_BOOKS.filter((book) => book.id.endsWith(`-${suffix}`));
 assert.ok(["localhost", "127.0.0.1", "[::1]"].includes(new URL(base).hostname), "Private fixtures are local-only");
-assert.ok(process.env.FIELDS_PRIVATE_ANSWER_BANK, "Set FIELDS_PRIVATE_ANSWER_BANK to a local private Course 2/3 A2 answer fixture");
+assert.ok(process.env.FIELDS_PRIVATE_ANSWER_BANK, `Set FIELDS_PRIVATE_ANSWER_BANK to a local private Course 2/3 ${suffix.toUpperCase()} answer fixture`);
 const privateBank = JSON.parse(await readFile(process.env.FIELDS_PRIVATE_ANSWER_BANK, "utf8"));
 
 const recordsFor = (book) => {
@@ -38,7 +40,7 @@ async function assertLayout(page, label) {
     for (const host of document.querySelectorAll(".course-concept-scene,.source-question-card,.extension-panel")) {
       if (host.scrollWidth > host.clientWidth + 2) found.push(`${host.className}: horizontal overflow`);
       const box = host.getBoundingClientRect();
-      for (const node of host.querySelectorAll(".course23-a2-visual,.course23-a2-numberline,.a2-weekdays,.a2-stones,.a2-transfer,.a2-schedules,.a2-equation,.a2-catch")) {
+      for (const node of host.querySelectorAll(".course23-a2-visual,.course23-a2-numberline,.a2-weekdays,.a2-stones,.a2-transfer,.a2-schedules,.a2-equation,.a2-catch,.course23-a3-visual,.a3-lattice,.a3-place-bands,.a3-mixture,.a3-route,.a3-work,.a3-clock")) {
         const rect = node.getBoundingClientRect();
         if (rect.width < 1 || rect.height < 1 || rect.left < box.left - 2 || rect.right > box.right + 2) found.push(`${node.className}: out of bounds`);
       }
@@ -58,7 +60,7 @@ async function printAndCheck(page, selector, label, fileName) {
     return [...sheet.children].filter((node) => !node.matches(".gold-print-footer") && node.getBoundingClientRect().bottom > footer.top + 1).map(() => index + 1);
   }));
   assert.deepEqual(overflow, [], `${label}: footer overflow`);
-  assert.equal(await page.locator(`${selector} .course23-a2-visual`).evaluateAll((nodes) => nodes.every((node) => node.children.length > 0)), true, `${label}: empty diagrams`);
+  assert.equal(await page.locator(`${selector} .course23-${suffix}-visual`).evaluateAll((nodes) => nodes.every((node) => node.children.length > 0)), true, `${label}: empty diagrams`);
   const pdf = await page.pdf({ format: "A4", printBackground: true, preferCSSPageSize: true });
   assert.equal((await PDFDocument.load(pdf)).getPageCount(), await sheets.count(), `${label}: browser added pages`);
   await writeFile(path.join(output, fileName), pdf);
@@ -72,7 +74,7 @@ try {
     for (const book of books) {
       const records = recordsFor(book);
       const context = await browser.newContext({ viewport: { width, height: 1000 }, isMobile: width === 390, hasTouch: width === 390 });
-      await context.addInitScript(() => sessionStorage.setItem("gfield_fields_session", "course23-a2-local-audit"));
+      await context.addInitScript((value) => sessionStorage.setItem("gfield_fields_session", `course23-${value}-local-audit`), suffix);
       await context.route("**/functions/v1/fields-auth", (route) => route.fulfill({ json: { ok: true } }));
       await context.route("**/functions/v1/golden-bell-answers", (route) => route.fulfill({ json: { bookId: book.id, answers: records, revision: "local-audit" } }));
       const page = await context.newPage();
@@ -103,14 +105,14 @@ try {
           assert.equal(await page.locator("[data-original-item]").getAttribute("data-original-item"), item.id);
           await page.locator("[data-input-group]").fill(String(records[item.answerRef].answer));
           await page.locator('[data-check="original"]').click();
-          assert.equal(await page.locator(`[data-original-item="${item.id}"] .course-solution-visual .course23-a2-visual`).count(), 1, `${item.id}: solution visual`);
+          assert.equal(await page.locator(`[data-original-item="${item.id}"] .course-solution-visual .course23-${suffix}-visual`).count(), 1, `${item.id}: solution visual`);
           await assertLayout(page, `${book.id}/${width}/${item.id}`);
           await page.locator('[data-check="original"]').click({ force: true });
         }
         for (const item of [lesson.extension, ...lesson.similarPractice]) {
           await page.locator("[data-input-group]").fill(String(records[item.answerRef].answer));
           await page.locator('[data-check="extension"]').click({ force: true });
-          assert.equal(await page.locator("#lessonContent .extension-solution .course23-a2-visual").count(), 1, `${item.id}: extension visual`);
+          assert.equal(await page.locator(`#lessonContent .extension-solution .course23-${suffix}-visual`).count(), 1, `${item.id}: extension visual`);
           await assertLayout(page, `${book.id}/${width}/${item.id}`);
           await page.locator('[data-check="extension"]').click({ force: true });
         }
@@ -146,7 +148,7 @@ try {
       await context.close();
     }
   }
-  console.log(JSON.stringify({ status: "COURSE23_A2_BROWSER_OK", output, results }));
+  console.log(JSON.stringify({ status: `COURSE23_${suffix.toUpperCase()}_BROWSER_OK`, output, results }));
 } finally {
   await browser.close();
 }
