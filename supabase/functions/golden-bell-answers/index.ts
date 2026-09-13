@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js@2.5.0/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { isFieldsGoldenBellBookId } from "../_shared/fields-golden-bell-book-id.js";
 
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
@@ -64,7 +65,7 @@ Deno.serve(async (req: Request) => {
     if (sessionError || !session) return json(req, { error: "session_invalid" }, 401);
     const body = await req.json();
     const bookId = String(body?.bookId || "");
-    if (!/^book-[0-9]{2}$/u.test(bookId)) return json(req, { error: "book_invalid" }, 400);
+    if (!isFieldsGoldenBellBookId(bookId)) return json(req, { error: "book_invalid" }, 400);
     const { data: book, error: bookError } = await service.from("golden_bell_answer_books")
       .select("payload,payload_sha256,updated_at").eq("book_id", bookId).maybeSingle();
     if (bookError || !book) return json(req, { error: "answer_book_unavailable" }, 404);

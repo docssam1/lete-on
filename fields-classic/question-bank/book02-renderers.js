@@ -71,6 +71,24 @@ function sequenceMarkup(visual) {
   return `<div class="b2-sequence" role="img" aria-label="규칙에 따라 이어지는 수와 모양"><div>${(visual.values || []).map((value, index) => `<span><b>${value == null ? "?" : esc(SHAPES[value] || value)}</b><i>${index + 1}</i></span>`).join("")}</div>${visual.target ? `<strong>${esc(visual.target)}</strong>` : ""}</div>`;
 }
 
+function stoneGrowthMarkup(visual) {
+  const stageSvg = (stage) => {
+    const points = [];
+    const spacing = 16;
+    for (let row = 0; row <= stage; row += 1) {
+      for (let column = 0; column <= row; column += 1) {
+        const boundary = row === stage || column === 0 || column === row;
+        const x = 64 + (column - row / 2) * spacing;
+        const y = 10 + row * 14;
+        points.push(`<circle cx="${x}" cy="${y}" r="5" class="${boundary ? "black" : "white"}"/>`);
+      }
+    }
+    return `<svg viewBox="0 0 128 ${stage * 14 + 22}" aria-hidden="true">${points.join("")}</svg>`;
+  };
+  const stages = (visual.stages || []).map((stage) => `<figure>${stageSvg(stage)}<figcaption>${stage}번째</figcaption></figure>`).join("");
+  return `<div class="b2-stone-growth" role="img" aria-label="삼각형 둘레의 검은 돌과 안쪽 흰 돌이 늘어나는 과정">${stages}<strong>처음 흰 돌이 더 많은 단계는?</strong></div>`;
+}
+
 function growthMarkup(visual) {
   const stages = visual.stages || [];
   return `<div class="b2-growth ${esc(visual.form || "dots")}" role="img" aria-label="단계에 따라 개수가 변하는 규칙"><div>${stages.map((count, index) => `<figure><div>${Array.from({ length: Math.min(Number(count) || 0, 36) }, () => "<i></i>").join("")}</div><figcaption>${index + 1}단계 ${esc(count)}개</figcaption></figure>`).join("")}</div><strong>${esc(visual.rule || "개수의 변화를 살펴보세요")}</strong></div>`;
@@ -146,6 +164,7 @@ export function book02Markup(visual) {
   if (visual.subtype === "equation") return equationBoardMarkup(visual);
   if (visual.subtype === "balance") return balanceMarkup(visual);
   if (visual.subtype === "sequence") return sequenceMarkup(visual);
+  if (visual.subtype === "stone-growth") return stoneGrowthMarkup(visual);
   if (visual.subtype === "growth") return growthMarkup(visual);
   if (visual.subtype === "promise") return promiseMarkup(visual);
   if (visual.subtype === "sudoku") return sudokuMarkup(visual);

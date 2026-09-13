@@ -1,10 +1,11 @@
-import { GOLDEN_BELL_BOOKS, goldenBellBookById } from "./golden-bell-data.js?v=20260905e";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20260913e";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20260913e";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260905d";
 import { book01Markup } from "./book01-renderers.js?v=20260904c";
-import { book02Markup } from "./book02-renderers.js?v=20260904b";
+import { book02Markup } from "./book02-renderers.js?v=20260913a";
 import { book03Markup } from "./book03-renderers.js?v=20260905a";
 import { book04Markup } from "./book04-renderers.js?v=20260905d";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
@@ -14,18 +15,19 @@ import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260906b";
-import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20260906a";
+import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20260909b";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const student = params.get("student") || "DEMO";
-const requestedBook = params.get("book") || "book-01";
+const requestedRoute = goldenBellLocation(params);
 const storageKey = `fields-classic-golden-bell:${student}`;
 const protectedBooks = new Set();
 const protectedLoads = new Map();
 let protectedMessage = "정답과 풀이는 승인번호 확인 후 열립니다.";
 
 async function ensureProtectedBook(bookId) {
+  if (!goldenBellBookById(bookId)?.lessons.length) return false;
   if (protectedBooks.has(bookId)) return true;
   if (protectedLoads.has(bookId)) return protectedLoads.get(bookId);
   const task = loadProtectedGoldenBellBook(bookId, student).then((payload) => {
@@ -54,7 +56,7 @@ function loadProgress() {
 }
 
 const state = {
-  bookId: goldenBellBookById(requestedBook).id,
+  bookId: requestedRoute?.bookId || UNAVAILABLE_BOOK.id,
   lessonId: null,
   phase: "concept",
   sourceTrackId: null,
@@ -86,10 +88,11 @@ function recordOutcome(scope, itemId, status) {
   saveProgress();
 }
 
-function activeBook() { return goldenBellBookById(state.bookId); }
+function activeBook() { return goldenBellBookById(state.bookId) || UNAVAILABLE_BOOK; }
 function activeLesson() { return activeBook().lessons.find((lesson) => lesson.id === state.lessonId) || activeBook().lessons[0]; }
 const sourceAnimationCache = new WeakMap();
 function sourceTracks(lesson = activeLesson()) {
+  if (lesson?.experience?.kind === "course-concept") return [];
   if (!protectedBooks.has(state.bookId)) return [];
   if (!sourceAnimationCache.has(lesson)) sourceAnimationCache.set(lesson, sourceAnimationsForLesson(lesson));
   return sourceAnimationCache.get(lesson);
@@ -98,7 +101,12 @@ function activeSourceAnimation(lesson = activeLesson()) {
   const tracks = sourceTracks(lesson);
   return tracks.find((track) => track.sourceItemId === state.sourceTrackId) || tracks[0];
 }
-function activeExperience() { return activeSourceAnimation() || activeLesson().experience; }
+function activeExperience() {
+  const experience = activeSourceAnimation() || activeLesson()?.experience;
+  if (experience?.kind !== "course-concept") return experience;
+  const track = experience.tracks.find((item) => item.id === state.experience.courseTrackId) || experience.tracks[0];
+  return { ...experience, ...track };
+}
 function lessonProgress(lesson = activeLesson()) { return state.progress[state.bookId]?.[lesson?.id] || {}; }
 function extensionItems(lesson = activeLesson()) {
   return [{ ...lesson.extension, id: `${lesson.id}:extension`, estimatedMinutes: 4 }, ...(lesson.similarPractice || [])];
@@ -124,6 +132,7 @@ function resetExperience() {
   state.experience.typeTracks = {};
   state.experience.feedback = null;
   state.experience.autoplayStarted = false;
+  state.experience.courseTrackId = null;
 }
 
 function completeOriginal() {
@@ -451,6 +460,7 @@ function renderExperience(lesson) {
   if (sourceTracks(lesson).length) return renderSourceExperience(lesson);
   const experience = lesson.experience;
   if (!experience) return "";
+  if (experience.kind === "course-concept") return renderCourseConceptExperience(experience);
   if (experience.kind === "clock-turning") return renderClockExperience(experience);
   if (experience.kind === "triangular-stair") return renderTriangularStairExperience(experience);
   if (experience.kind === "guided-concept") return renderGuidedConceptExperience(experience);
@@ -500,6 +510,17 @@ function playExperience() {
   state.experience.timer = window.setTimeout(next, experience.kind === "source-animation"
     ? sourceAnimationDelay(experience, state.experience.step, state.experience.speed)
     : 500 / state.experience.speed);
+}
+
+function renderCourseConceptExperience(experience) {
+  const track = activeExperience();
+  const step = Math.min(state.experience.step, track.beats.length - 1);
+  const beat = track.beats[step];
+  const animate = state.experience.previousStep < step;
+  const picker = experience.tracks.map((item, index) => `<button type="button" data-course-track="${escapeAttribute(item.id)}" aria-pressed="${item.id === track.id}">${index + 1}. ${escapeAttribute(item.title)}</button>`).join("");
+  const markup = `<section class="concept-experience course-concept"><header><h3>${escapeAttribute(track.title)}</h3><span class="experience-progress">${step + 1} / ${track.beats.length}</span></header><div class="course-track-picker" aria-label="개념 예제 선택">${picker}</div><p class="course-concept-problem">${escapeAttribute(track.openingPrompt)}</p><div class="course-concept-scene ${animate ? "animate" : ""}" data-course-step="${step}">${courseConceptMarkup(beat.visual)}</div><p class="course-concept-caption">${escapeAttribute(beat.caption)}</p>${experienceControlsMarkup(track, { atFirst: step === 0, atLast: step === track.beats.length - 1, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${escapeAttribute(track.hint)}</p></details></section>`;
+  state.experience.previousStep = step;
+  return markup;
 }
 
 document.addEventListener("visibilitychange", () => {
@@ -870,6 +891,8 @@ function simplePracticeMarkup(visual) {
 
 function visualMarkup(visual) {
   if (!visual) return "";
+  const courseMarkup = courseConceptMarkup(visual);
+  if (courseMarkup) return courseMarkup;
   if (visual.kind === "book2") return `<div class="book02-visual">${book02Markup(visual)}</div>`;
   if (visual.kind === "book1") return `<div class="book01-visual">${book01Markup(visual)}</div>`;
   if (visual.kind === "book3") return `<div class="book03-visual">${book03Markup(visual)}</div>`;
@@ -932,7 +955,8 @@ function visualMarkup(visual) {
 }
 
 function renderBookTabs() {
-  $("bookTabs").innerHTML = GOLDEN_BELL_BOOKS.map((book, index) => `<button type="button" class="${book.id === state.bookId ? "active" : ""} ${book.status}" data-book="${book.id}" ${book.id === state.bookId ? 'aria-current="page"' : ""}><span>${String(index + 1).padStart(2, "0")}</span><strong>${book.label}</strong></button>`).join("");
+  const books = GOLDEN_BELL_BOOKS.filter((book) => book.courseId === activeBook().courseId);
+  $("bookTabs").innerHTML = books.map((book, index) => `<button type="button" class="${book.id === state.bookId ? "active" : ""} ${book.status}" data-book="${book.id}" ${book.id === state.bookId ? 'aria-current="page"' : ""}><span>${String(index + 1).padStart(2, "0")}</span><strong>${book.label}</strong></button>`).join("");
   $("bookTabs").querySelectorAll("button").forEach((button) => button.addEventListener("click", async () => {
     state.bookId = button.dataset.book;
     state.lessonId = activeBook().lessons[0]?.id || null;
@@ -947,6 +971,7 @@ function renderBookTabs() {
     resetExperience();
     const next = new URL(location.href);
     next.searchParams.set("book", state.bookId);
+    next.searchParams.set("course", activeBook().courseId);
     history.replaceState(null, "", next);
     render();
     await ensureProtectedBook(state.bookId);
@@ -985,7 +1010,7 @@ function renderLessonList() {
 }
 
 function renderStageSteps() {
-  const sourceLabel = activeBook().source?.origin === "textbook-derived" ? "교재" : "골든벨";
+  const sourceLabel = activeBook().source?.origin === "textbook-derived" ? "교재" : activeBook().status === "pilot" ? "연습" : "골든벨";
   const phases = [
     ["concept", "1", "개념"],
     ["original", "2", sourceLabel],
@@ -1011,6 +1036,7 @@ function conceptOpeningQuestion(lesson) {
 }
 
 function renderConcept(lesson) {
+  if (lesson.experience?.kind === "course-concept") return `<p class="lesson-kicker">${escapeAttribute(lesson.unit)} · 개념 학습</p><h2>${escapeAttribute(lesson.title)}</h2><p class="lesson-lead">${escapeAttribute(lesson.representativeConcept)}</p>${renderExperience(lesson)}<button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
   if (sourceTracks(lesson).length) return `<p class="lesson-kicker">${escapeAttribute(lesson.unit)} · 개념 학습</p><h2>${escapeAttribute(lesson.title)}</h2>${renderSourceExperience(lesson)}<button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
   const tutorialSteps = lesson.explanation.steps.map((step, index) => `<li><span>${index + 1}</span><div><strong>${index + 1}단계</strong><p>${step}</p></div></li>`).join("");
   const experience = renderExperience(lesson);
@@ -1030,9 +1056,25 @@ function normalizeAnswer(value) {
   return String(value ?? "").normalize("NFC").replace(/\s+/g, "").trim();
 }
 
-function answersMatch(actual, expected) {
+function normalizedSetAnswer(value) {
+  return String(value ?? "")
+    .normalize("NFC")
+    .split(/[;,，；\s]+/)
+    .map(normalizeAnswer)
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right, "ko", { numeric: true }));
+}
+
+function answersMatch(actual, expected, resultContract) {
   if (!hasAnswer(actual) || !hasProtectedAnswer({ answer: expected })) return false;
   const approved = Array.isArray(expected) ? expected : [expected];
+  if (resultContract?.type === "set") {
+    const actualSet = normalizedSetAnswer(actual);
+    return approved.some((value) => {
+      const expectedSet = normalizedSetAnswer(value);
+      return actualSet.length === expectedSet.length && actualSet.every((entry, index) => entry === expectedSet[index]);
+    });
+  }
   return approved.some((value) => normalizeAnswer(actual) === normalizeAnswer(value));
 }
 
@@ -1057,8 +1099,8 @@ function originalItemResolved(item) {
 
 function originalItemCorrect(item) {
   if (state.originalAssists[item.id]) return true;
-  if (item.parts?.length) return item.parts.every((part) => answersMatch(state.selections[`${item.id}:${part.id}`], part.answer));
-  return answersMatch(state.selections[item.id], item.answer);
+  if (item.parts?.length) return item.parts.every((part) => answersMatch(state.selections[`${item.id}:${part.id}`], part.answer, part.resultContract));
+  return answersMatch(state.selections[item.id], item.answer, item.resultContract);
 }
 
 function originalItemComplete(item) {
@@ -1110,7 +1152,7 @@ function renderOriginal(lesson) {
         : correct
           ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
           : "";
-    const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemComplete(candidate) ? "complete" : ""}">${candidate.sourceNo || index + 1}</span>`).join("");
+    const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemComplete(candidate) ? "complete" : ""}" role="img" title="${escapeAttribute(candidate.sourceNo || index + 1)}" aria-label="${index + 1}번째 문제 · 원문 번호 ${escapeAttribute(candidate.sourceNo || index + 1)}" ${index === state.originalIndex ? 'aria-current="step"' : ""}>${index + 1}</span>`).join("");
     const nextLabel = state.originalIndex === items.length - 1 ? "추가 학습으로" : "다음 문제";
     const sourceCount = lesson.original.sourceQuestionCount || items.length;
     const progressLabel = sourceCount === items.length
@@ -1158,7 +1200,9 @@ function renderExtension(lesson) {
       : "";
   const dots = items.map((candidate, index) => `<span class="${index === state.extensionIndex ? "active" : index < state.extensionIndex ? "complete" : ""}">${index + 1}</span>`).join("");
   const nextLabel = state.extensionIndex === items.length - 1 ? "학습 완료" : "다음 문제";
-  return `<div class="quiz-head daily-quiz-head"><div><span>오늘의 추가 학습 · ${item.title}</span><h2>${item.story}</h2></div><aside><strong>${items.length}문제 중 ${state.extensionIndex + 1}번째</strong><small>이 권 ${activeBook().dailyPractice?.problemCount || 8}문제 · 약 ${activeBook().dailyPractice?.estimatedMinutes || 30}분</small></aside></div><div class="daily-question-progress" aria-label="추가 학습 문제 진행">${dots}</div><p class="lesson-lead">배운 원리를 같은 유형의 새 문제에 적용해 보세요.</p><div class="quiz-visual">${visualMarkup(item.visual)}</div><section class="quiz-item extension-study ${status}"><strong>${item.prompt}</strong>${answerControl(groupId, item, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>풀이 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? nextLabel : "확인"}</button>`;
+  const pilot = activeBook().status === "pilot";
+  const minutes = pilot ? "" : ` · 약 ${activeBook().dailyPractice?.estimatedMinutes || 30}분`;
+  return `<div class="quiz-head daily-quiz-head"><div><span>오늘의 추가 학습 · ${item.title || item.typeLabel || lesson.title}</span><h2>${item.story || lesson.title}</h2></div><aside><strong>${items.length}문제 중 ${state.extensionIndex + 1}번째</strong><small>추가 학습 ${activeBook().dailyPractice?.problemCount || 8}문제${minutes}</small></aside></div><div class="daily-question-progress" aria-label="추가 학습 문제 진행">${dots}</div><p class="lesson-lead">${pilot ? escapeAttribute(item.prompt) : "배운 원리를 같은 유형의 새 문제에 적용해 보세요."}</p><div class="quiz-visual">${visualMarkup(item.visual)}</div><section class="quiz-item extension-study ${status}">${pilot ? "" : `<strong>${item.prompt}</strong>`}${answerControl(groupId, item, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>풀이 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? nextLabel : "확인"}</button>`;
 }
 
 function renderComplete(lesson) {
@@ -1173,6 +1217,7 @@ function renderComplete(lesson) {
 }
 
 function renderPending(book) {
+  if (book.status === "unavailable") return '<section class="pending-panel" role="alert"><h2>요청한 교재를 찾을 수 없습니다.</h2><p>과정과 권을 다시 선택해 주세요.</p></section>';
   return `<section class="pending-panel"><span>!</span><h2>${book.label} 골든벨 학습 준비 중</h2><p>학습 자료를 준비하고 있습니다.</p></section>`;
 }
 
@@ -1208,6 +1253,7 @@ function printSourceStoryboards(lesson, lessonNumber, book) {
 }
 
 function printLessonPage(lesson, lessonNumber, book) {
+  if (lesson.experience?.kind === "course-concept") return courseConceptPrintPages(lesson, book, student) + printLessonExercises(lesson, lessonNumber, book);
   const vocabulary = lesson.id === "polyomino-family-count"
     ? `<article class="gold-print-page polyomino-vocabulary-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="vocabulary" data-watermark="${escapeAttribute(student)} · GFIELD"><header class="gold-print-head"><div><span>FIELDS CLASSIC · 개념 학습</span><h1>${book.label} ${lessonNumber}. 모양의 이름을 알아요</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div></dl></header>${polyominoVocabularyMarkup()}<footer class="gold-print-footer">${book.label} · ${escapeAttribute(lesson.unit)} · 개념</footer></article>`
     : "";
@@ -1219,11 +1265,12 @@ function printLessonExercises(lesson, lessonNumber, book) {
   const footer = `<footer class="gold-print-footer">${book.label} · ${lesson.unit}</footer>`;
   const concept = `<p class="gold-print-concept"><strong>생각할 개념</strong><br>${lesson.representativeConcept}</p>`;
   const sourcePrintPaged = lesson.original.mode === "paged" || lesson.original.printMode === "paged";
-  const separateConceptPrint = Boolean(lesson.original.separateConceptPrint);
+  const separateConceptPrint = Boolean(lesson.original.separateConceptPrint) && lesson.experience?.kind !== "course-concept";
   const sourcePageCount = (sourcePrintPaged ? new Set(lesson.original.items.map((item) => item.printGroup)).size : 1) + (separateConceptPrint ? 1 : 0);
   const storyPages = extensionItems(lesson).map((item, index, items) => {
     const visual = item.visual ? visualMarkup(item.visual) : "";
-    return `<article class="gold-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(sourcePageCount + index + 1).padStart(2, "0"))}<section class="gold-print-block gold-print-story" data-story-number="${index + 1}"><h2>추가 학습 ${index + 1} / ${items.length}</h2><p>${item.story}<br>${item.prompt}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}<ol class="gold-print-items"><li class="gold-print-item">${printResponseMarkup(item)}</li></ol></section>${footer}</article>`;
+    const context = item.story || item.title || item.typeLabel || lesson.title;
+    return `<article class="gold-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(sourcePageCount + index + 1).padStart(2, "0"))}<section class="gold-print-block gold-print-story" data-story-number="${index + 1}"><h2>추가 학습 ${index + 1} / ${items.length}</h2><p>${escapeAttribute(context)}<br>${escapeAttribute(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}<ol class="gold-print-items"><li class="gold-print-item">${printResponseMarkup(item)}</li></ol></section>${footer}</article>`;
   }).join("");
   if (sourcePrintPaged) {
     const groups = new Map();
@@ -1261,19 +1308,27 @@ async function printLessons(lessons) {
   renderContent();
   const book = activeBook();
   const root = $("goldPrintRoot");
+  const mode = book.status === "pilot" ? $("coursePrintMode").value : "study";
+  if (mode !== "study" && !protectedBooks.has(book.id)) {
+    $("printStatus").textContent = "답안과 풀이를 불러온 뒤 인쇄할 수 있습니다.";
+    return;
+  }
   const buttons = [$("printLessonButton"), $("printBookButton")];
   buttons.forEach((button) => { button.disabled = true; });
   $("printStatus").textContent = "인쇄 분량을 정리하고 있습니다.";
   try {
-    root.innerHTML = lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("");
+    const study = mode === "study" || mode === "both" ? lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") : "";
+    const answers = mode === "study" ? "" : lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: mode === "quick" })).join("");
+    root.innerHTML = study + answers;
     if (document.fonts?.ready) await document.fonts.ready;
     await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode()));
     const count = compactGoldenBellPrint(root);
     root.setAttribute("aria-hidden", "false");
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    $("printStatus").textContent = `A4 ${count}쪽 · 추가 학습 포함`;
+    $("printStatus").textContent = `A4 ${count}쪽 · ${mode === "answers" ? "답안과 풀이" : mode === "quick" ? "빠른 정답" : "추가 학습 포함"}`;
     window.print();
-  } catch {
+  } catch (error) {
+    console.error("Golden Bell print preparation failed", error);
     root.replaceChildren();
     root.setAttribute("aria-hidden", "true");
     $("printStatus").textContent = "인쇄 자료를 준비하지 못했습니다. 다시 인쇄를 눌러 주세요.";
@@ -1283,6 +1338,13 @@ async function printLessons(lessons) {
 }
 
 function bindLessonActions() {
+  $("lessonContent").querySelectorAll("[data-course-track]").forEach((button) => button.addEventListener("click", () => {
+    clearExperiencePlayback();
+    state.experience.courseTrackId = button.dataset.courseTrack;
+    state.experience.step = 0;
+    state.experience.previousStep = 0;
+    renderContent();
+  }));
   $("lessonContent").querySelector("[data-source-track]")?.addEventListener("change", (event) => {
     clearExperiencePlayback();
     state.sourceTrackId = event.currentTarget.value;
@@ -1529,7 +1591,7 @@ function bindLessonActions() {
     }
     const selected = state.selections[groupId];
     if (!canCheckAnswer(item) || !hasAnswer(selected)) return;
-    const passed = answersMatch(selected, item.answer);
+    const passed = answersMatch(selected, item.answer, item.resultContract);
     recordOutcome("extension", groupId, passed ? "correct" : "wrong");
     state.feedback = { kind: "extension", itemId: groupId, passed, message: passed ? "맞았어요. 풀이로 생각한 순서를 확인해 보세요." : "이 문제의 조건과 그림을 다시 살펴보세요. 어려우면 풀이를 확인해도 괜찮아요." };
     render();
@@ -1581,6 +1643,22 @@ function renderContent() {
       : state.phase === "extension" ? renderExtension(lesson)
         : renderComplete(lesson);
   $("lessonContent").innerHTML = markup;
+  if (lesson.experience?.kind === "course-concept") {
+    const item = state.phase === "original" ? lesson.original.items[state.originalIndex] : state.phase === "extension" ? activeExtensionItem(lesson) : null;
+    const solution = $("lessonContent").querySelector(".quiz-item-solution,.extension-solution");
+    if (item?.visual && solution && canCheckAnswer(item)) {
+      const figure = document.createElement("div");
+      figure.className = "course-solution-visual";
+      figure.innerHTML = courseConceptMarkup({ ...item.visual, phase: "verify" });
+      solution.append(figure);
+    }
+    if (item?.hint) {
+      const hint = document.createElement("details");
+      hint.className = "concept-hint";
+      hint.innerHTML = `<summary>힌트</summary><p>${escapeAttribute(item.hint)}</p>`;
+      $("lessonContent").querySelector(".quiz-item-actions,.daily-answer-actions")?.before(hint);
+    }
+  }
   bindLessonActions();
   if (!protectedBooks.has(state.bookId)) {
     const notice = document.createElement("div");
@@ -1595,6 +1673,10 @@ function renderContent() {
 
 function renderSummary() {
   const book = activeBook();
+  document.body.dataset.coursePilot = String(book.status === "pilot");
+  $("coursePrintModeWrap").hidden = book.status !== "pilot";
+  $("courseSelect").value = book.courseId || "";
+  $("courseBrand").textContent = book.courseId ? `FIELDS CLASSIC · COURSE ${book.courseId.slice(-2)}` : "FIELDS CLASSIC";
   const completed = book.lessons.filter(isLessonComplete).length;
   $("currentBookLabel").textContent = book.label;
   $("completedCount").textContent = `${completed} / ${book.lessons.length || "-"}`;
@@ -1603,7 +1685,7 @@ function renderSummary() {
   const readyNote = book.source?.origin === "textbook-derived"
     ? `교재 기반 학습입니다. ${book.source.note}`
     : "개념을 골든벨과 이야기로 익힙니다.";
-  const dailyNote = book.lessons.length ? `<br>추가 학습 ${book.dailyPractice?.problemCount || 8}문제 · 약 ${book.dailyPractice?.estimatedMinutes || 30}분` : "";
+  const dailyNote = book.lessons.length ? `<br>추가 학습 ${book.dailyPractice?.problemCount || 8}문제${book.status === "pilot" ? "" : ` · 약 ${book.dailyPractice?.estimatedMinutes || 30}분`}` : "";
   $("bookSource").innerHTML = `<strong>학습 안내</strong><br>${book.lessons.length ? readyNote : "준비 중입니다."}${dailyNote}`;
   $("printLessonButton").disabled = !book.lessons.length;
   $("printBookButton").disabled = !book.lessons.length;
@@ -1621,13 +1703,23 @@ function render() {
 }
 
 $("studentName").textContent = student;
+$("courseSelect").innerHTML = '<option value="" disabled>과정 선택</option>' + COURSE_CATALOG.map((course, index) => `<option value="${course.id}">${index + 1}과정${index ? " · 검토본" : ""}</option>`).join("");
+$("courseSelect").addEventListener("change", (event) => {
+  const course = COURSE_CATALOG.find((item) => item.id === event.currentTarget.value);
+  if (!course) return;
+  clearExperiencePlayback();
+  const next = new URL(location.href);
+  next.searchParams.set("course", course.id);
+  next.searchParams.set("book", course.books[0].id);
+  location.assign(next);
+});
 $("backLink").href = `./?student=${encodeURIComponent(student)}&mode=curriculum`;
 $("printLessonButton").addEventListener("click", () => printLessons([activeLesson()]));
 $("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons));
 window.addEventListener("keydown", (event) => {
   const lesson = activeLesson();
-  if (state.phase !== "concept" || !lesson?.experience || !["clock-turning", "triangular-stair", "guided-concept"].includes(lesson.experience.kind)) return;
-  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement) return;
+  if (state.phase !== "concept" || !lesson?.experience || !["clock-turning", "triangular-stair", "guided-concept", "course-concept"].includes(lesson.experience.kind)) return;
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLButtonElement) return;
   if (event.key === "ArrowLeft") {
     event.preventDefault();
     updateExperienceStep(state.experience.step - 1);

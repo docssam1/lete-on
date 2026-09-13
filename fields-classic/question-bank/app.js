@@ -1599,17 +1599,57 @@ function shapeSumRepeatedColumnTargetMarkup(visual) {
 
 function repeatShapeSequenceMarkup(visual) {
   const symbol = (item) => item === "세모" ? "△" : "○";
-  return `<div class="repeat-sequence">${visual.items.map((item, index) => `<span>${symbol(item)}<small>${index + 1}</small></span>`).join("")}<b>…</b><strong>${visual.target}번째<br>모양 (　)</strong></div>`;
+  return `<div class="repeat-sequence">${visual.items.map((item, index) => `<span>${visualShapeToken(symbol(item), "repeat-shape-token")}<small>${index + 1}</small></span>`).join("")}<b>…</b><strong>${visual.target}번째<br>모양 (　)</strong></div>`;
 }
 
 function repeatShapeColorDualMarkup(visual) {
   const guide = visual.showGuide ? `<small>모양 ${visual.shapeCount}개 주기 · 색 ${visual.fillCount}개 주기</small>` : "";
-  return `<div class="dual-pattern-work">${guide}<div class="dual-pattern-sequence" style="--preview-count:${visual.previewCount}">${visual.items.map((item, index) => `<span class="${item.filled ? "filled" : "outline"}"><b>${item.symbol}</b><i>${index + 1}</i></span>`).join("")}</div><div class="dual-pattern-target"><b>…</b><strong>${visual.target}번째<br><i>(　　　　)</i></strong></div></div>`;
+  return `<div class="dual-pattern-work">${guide}<div class="dual-pattern-sequence" style="--preview-count:${visual.previewCount}">${visual.items.map((item, index) => `<span class="${item.filled ? "filled" : "outline"}"><b>${visualShapeToken(item.symbol, `dual-shape-token${item.filled ? " is-filled" : ""}`)}</b><i>${index + 1}</i></span>`).join("")}</div><div class="dual-pattern-target"><b>…</b><strong>${visual.target}번째<br><i>(　　　　)</i></strong></div></div>`;
+}
+
+function patternShapeSvg(shape, extraClass = "") {
+  const symbol = typeof shape === "string" ? shape : shape.symbol;
+  const names = { "○": "동그라미", "◎": "겹동그라미", "□": "네모", "▭": "긴 네모", "△": "세모", "▽": "아래쪽 세모", "◇": "마름모", "☆": "별", "♡": "하트", "♣": "클로버", "✚": "십자", "⬠": "오각형", "⬡": "육각형" };
+  const paths = {
+    "○": '<circle class="shape-surface" cx="24" cy="24" r="18"/>',
+    "◎": '<circle class="shape-surface" cx="24" cy="24" r="19"/><circle class="shape-cut" cx="24" cy="24" r="11"/>',
+    "□": '<rect class="shape-surface" x="6" y="6" width="36" height="36" rx="2"/>',
+    "▭": '<rect class="shape-surface" x="3" y="11" width="42" height="26" rx="2"/>',
+    "△": '<polygon class="shape-surface" points="24,4 44,42 4,42"/>',
+    "▽": '<polygon class="shape-surface" points="4,6 44,6 24,44"/>',
+    "◇": '<polygon class="shape-surface" points="24,3 45,24 24,45 3,24"/>',
+    "☆": '<polygon class="shape-surface" points="24,3 29.6,17.1 45,18 33.1,27.8 37,43 24,34.6 11,43 14.9,27.8 3,18 18.4,17.1"/>',
+    "♡": '<path class="shape-surface" d="M24 43C18 36 5 28 5 16C5 7 16 3 24 12C32 3 43 7 43 16C43 28 30 36 24 43Z"/>',
+    "♣": '<path class="shape-surface" d="M24 18C18 18 14 14 14 9C14 4 18 2 22 5C22 1 26 1 26 5C30 2 34 4 34 9C34 14 30 18 24 18ZM20 17C14 12 6 15 6 22C6 29 14 31 20 27C18 34 14 39 11 43H37C34 39 30 34 28 27C34 31 42 29 42 22C42 15 34 12 28 17Z"/>',
+    "✚": '<path class="shape-surface" d="M18 5H30V18H43V30H30V43H18V30H5V18H18Z"/>',
+    "⬠": '<polygon class="shape-surface" points="24,3 44,17.5 36.4,41 11.6,41 4,17.5"/>',
+    "⬡": '<polygon class="shape-surface" points="14,4 34,4 45,24 34,44 14,44 3,24"/>'
+  };
+  const classes = { "○": "circle", "◎": "double-circle", "□": "square", "▭": "rectangle", "△": "triangle", "▽": "triangle", "◇": "diamond", "☆": "star", "♡": "heart", "♣": "club", "✚": "plus", "⬠": "pentagon", "⬡": "hexagon" };
+  return `<svg class="pattern-shape-svg shape-${classes[symbol] || "unknown"} ${extraClass}" viewBox="0 0 48 48" role="img" aria-label="${typeof shape === "string" ? names[symbol] || "도형" : shape.name}">${paths[symbol] || paths["○"]}</svg>`;
+}
+
+function visualShapeToken(value, extraClass = "") {
+  const aliases = { "●": ["○", true], "■": ["□", true], "▣": ["□", true], "◆": ["◇", true], "▲": ["△", true], "▼": ["▽", true], "★": ["☆", true], "♥": ["♡", true] };
+  const direct = new Set(["○", "◎", "□", "▭", "△", "▽", "◇", "☆", "♡", "♣", "✚", "⬠", "⬡"]);
+  const alias = aliases[value];
+  const symbol = alias ? alias[0] : value;
+  if (!direct.has(symbol)) return String(value);
+  return patternShapeSvg(symbol, `inline-shape-token ${extraClass}${alias?.[1] ? " is-filled" : ""}`.trim());
+}
+
+function vectorizeShapeText(value) {
+  return [...String(value)].map((character) => visualShapeToken(character)).join("");
+}
+
+function balancePiecesMarkup(kind, count) {
+  const tokens = { circle: "○", square: "□", rectangle: "▭", triangle: "△", diamond: "◇", star: "☆" };
+  return Array.from({ length: count }, () => `<i class="weight-piece ${kind}">${patternShapeSvg(tokens[kind], "balance-shape-svg")}</i>`).join("");
 }
 
 function threeShapeCycleMarkup(visual) {
   const guide = visual.showGuide ? `<strong class="cycle-guide">반복마디 ${visual.cycle.map((shape) => shape.symbol).join(" ")}</strong>` : "";
-  return `<div class="three-shape-cycle">${guide}<div class="cycle-items">${visual.items.map((shape, index) => `<span><b>${shape.symbol}</b><small>${index + 1}번째</small></span>`).join("")}<i>…</i><strong><b>(　)</b><small>${visual.target}번째</small></strong></div></div>`;
+  return `<div class="three-shape-cycle">${guide}<div class="cycle-items">${visual.items.map((shape, index) => `<span><b>${patternShapeSvg(shape)}</b><small>${index + 1}번째</small></span>`).join("")}<i>…</i><strong><b>(　)</b><small>${visual.target}번째</small></strong></div></div>`;
 }
 
 function arrowNumberGridMarkup(visual) {
@@ -1861,25 +1901,23 @@ function sourcePianoMarkup() {
 }
 
 function balanceRelationsMarkup(visual) {
-  const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}">${kind === "circle" ? "○" : kind === "star" ? "☆" : ""}</i>`).join("");
+  const pieces = balancePiecesMarkup;
   const scale = (left, right, label) => `<div class="balance-example"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
-  return `<div class="balance-relations"><p>양쪽에 있는 물건의 무게가 같을 때 저울은 수평이 됩니다.</p>${scale(`${pieces("circle", visual.leftCircleCount)}${pieces("square", visual.starRectangles)}`, `${pieces("star", 1)}${pieces("circle", visual.rightCircleCount)}`, "[그림 1]")}${scale(pieces("circle", visual.rectangleWeight * visual.middleRectangleCount), pieces("rectangle", visual.middleRectangleCount), "[그림 2]")}${scale(`${pieces("star", 1)}${pieces("rectangle", visual.targetRectangles)}`, `<strong>○ (　)개</strong>`, "[그림 3]")}${visual.hint ? `<p>${visual.hint}</p>` : ""}</div>`;
+  return `<div class="balance-relations"><p>양쪽에 있는 물건의 무게가 같을 때 저울은 수평이 됩니다.</p>${scale(`${pieces("circle", visual.leftCircleCount)}${pieces("rectangle", visual.starRectangles)}`, `${pieces("star", 1)}${pieces("circle", visual.rightCircleCount)}`, "[그림 1]")}${scale(pieces("circle", visual.rectangleWeight * visual.middleRectangleCount), pieces("rectangle", visual.middleRectangleCount), "[그림 2]")}${scale(`${pieces("star", 1)}${pieces("rectangle", visual.targetRectangles)}`, `<strong>○ (　)개</strong>`, "[그림 3]")}${visual.hint ? `<p>${visual.hint}</p>` : ""}</div>`;
 }
 
 function balanceScaleThreeObjectsMarkup(visual) {
-  const symbols = { circle: "○", square: "□", star: "☆", diamond: "◇" };
-  const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
+  const pieces = balancePiecesMarkup;
   const scale = (left, right, label) => `<div class="balance-example three-object-scale"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
   const first = scale(pieces("circle", 1), `${pieces("square", visual.squareBesideStar)}${pieces("star", 1)}`, "[그림 1]");
   const second = scale(`${pieces("circle", 1)}${pieces("square", visual.squareBesideCircle)}`, `${pieces("diamond", 1)}${pieces("star", 1)}`, "[그림 2]");
   const third = scale(pieces("star", 1), `${pieces("square", visual.squareBesideDiamond)}${pieces("diamond", 1)}`, "[그림 3]");
   const target = visual.askCombined ? "○ + ◇ = □ (　)개" : "○ = □ (　)개";
-  return `<div class="three-object-balances">${first}${second}${third}${visual.hint ? `<p class="balance-hint">도움: ${visual.hint}</p>` : ""}<strong class="balance-target">${target}</strong></div>`;
+  return `<div class="three-object-balances">${first}${second}${third}${visual.hint ? `<p class="balance-hint">도움: ${visual.hint}</p>` : ""}<strong class="balance-target">${vectorizeShapeText(target)}</strong></div>`;
 }
 
 function balanceScaleCircleTargetMarkup(visual) {
-  const symbols = { circle: "○", star: "☆", diamond: "◇" };
-  const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
+  const pieces = balancePiecesMarkup;
   const scale = (left, right, label) => `<div class="balance-example three-object-scale"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
   const first = scale(`${pieces("circle", visual.circleCount)}${pieces("diamond", visual.diamondCount)}`, pieces("star", visual.starCount), "[그림 1]");
   const second = scale(`${pieces("diamond", visual.secondDiamondCount)}${pieces("star", visual.secondStarCount)}`, pieces("circle", visual.secondCircleCount), "[그림 2]");
@@ -1888,8 +1926,7 @@ function balanceScaleCircleTargetMarkup(visual) {
 }
 
 function balanceScaleStarTargetMarkup(visual) {
-  const symbols = { circle: "○", square: "□", star: "☆", triangle: "△" };
-  const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
+  const pieces = balancePiecesMarkup;
   const scale = (left, right, label) => `<div class="balance-example three-object-scale"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
   if (visual.mode === "direct") {
     const first = scale(pieces("circle", visual.circleCount), pieces("square", visual.squareCount), "[그림 1]");
@@ -1905,8 +1942,7 @@ function balanceScaleStarTargetMarkup(visual) {
 }
 
 function balanceScaleFourObjectsMarkup(visual) {
-  const symbols = { circle: "○", square: "□", star: "☆", diamond: "◇" };
-  const pieces = (kind, count) => Array.from({ length: count }, () => `<i class="weight-piece ${kind}" aria-label="${symbols[kind]}">${symbols[kind]}</i>`).join("");
+  const pieces = balancePiecesMarkup;
   const scale = (left, right, label) => `<div class="balance-example three-object-scale"><div class="balance-pan">${left}</div><b>=</b><div class="balance-pan">${right}</div><small>${label}</small></div>`;
   const first = scale(pieces("circle", 1), `${pieces("square", visual.circleSquareCount)}${pieces("diamond", visual.circleDiamondCount)}`, "[그림 1]");
   const second = scale(pieces("star", visual.starCount), pieces("diamond", visual.diamondCount), "[그림 2]");
@@ -2211,7 +2247,7 @@ function g1SourceMarkup(visual) {
     return `<div class="g1-winter-card-chain"><div>${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div><ul>${visual.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul></div>`;
   }
   if (visual.kind === "g1-stacked-shape-cycle") {
-    return `<div class="g1-stacked-cycle">${visual.items.map((item, index) => `<section><span>${Array.from({ length: item.count }, () => `<i>${item.shape}</i>`).join("")}</span><b>${index + 1}</b></section>`).join("")}<em>…</em><strong>${visual.target}번째</strong></div>`;
+    return `<div class="g1-stacked-cycle">${visual.items.map((item, index) => `<section><span>${Array.from({ length: item.count }, () => `<i>${patternShapeSvg(item.shape, "stacked-shape-svg")}</i>`).join("")}</span><b>${index + 1}</b></section>`).join("")}<em>…</em><strong>${visual.target}번째</strong></div>`;
   }
   if (visual.kind === "g1-triangle-color-difference") {
     const stage = (size) => `<section><div>${Array.from({ length: size }, (_, row) => `<span>${Array.from({ length: row + 1 }, () => "△").join("")}</span>${row < size - 1 ? `<span class="filled">${Array.from({ length: row + 1 }, () => "▽").join("")}</span>` : ""}`).join("")}</div><b>${size}번째</b></section>`;
