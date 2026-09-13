@@ -9,6 +9,8 @@ import { COURSE03_A1_LCM_REMAINDER_LESSON } from "./golden-bell-course03-lcm-rem
 import { COURSE03_A1_COMPLEX_FRACTION_LESSON } from "./golden-bell-course03-complex-fraction-lesson.js";
 import { COURSE02_A2_LESSONS, COURSE03_A2_LESSONS } from "./golden-bell-course23-a2-lessons.js";
 import { COURSE02_A3_LESSONS, COURSE03_A3_LESSONS } from "./golden-bell-course23-a3-lessons.js";
+import { COURSE02_A4_LESSONS } from "./golden-bell-course02-a4-lessons.js";
+import { COURSE02_G4_LESSONS } from "./golden-bell-course02-g4-lessons.js";
 
 const patternCycle = ["triangle", "square", "circle", "square"];
 
@@ -113,4 +115,17 @@ const course03A3 = Object.freeze({
   source: { origin: "textbook-derived", note: "최신 교사용 지도서의 실제 활동과 권별 테스트를 교차 확인하고 새 수와 상황으로 구성한 골든벨입니다." }
 });
 
-export const COURSE23_PILOT_BOOKS = Object.freeze([course02A1, course02A2, course02A3, course03A1, course03A2, course03A3]);
+const course02A4 = Object.freeze({
+  id: "course-02-a4", bookId: "course-02-a4", courseId: "course-02", label: "A4",
+  title: "마방진·복면산과 비", status: "pilot", lessons: COURSE02_A4_LESSONS,
+  dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
+  source: { origin: "textbook-derived", note: "학생용 교재와 권별 테스트의 실제 네 단원 및 답 계약을 대조하고 새 수와 상황으로 구성한 골든벨입니다." }
+});
+const course02G4 = Object.freeze({
+  id: "course-02-g4", bookId: "course-02-g4", courseId: "course-02", label: "G4",
+  title: "도형의 복원과 측정", status: "pilot", lessons: COURSE02_G4_LESSONS,
+  dailyPractice: { problemCount: 40, estimatedMinutes: 30 },
+  source: { origin: "textbook-derived", note: "교사용 지도서의 실제 네 단원과 풀이 근거를 확인하고 새 수와 도형으로 구성한 골든벨입니다." }
+});
+
+export const COURSE23_PILOT_BOOKS = Object.freeze([course02A1, course02A2, course02A3, course02A4, course02G4, course03A1, course03A2, course03A3]);

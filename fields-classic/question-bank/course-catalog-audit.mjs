@@ -17,6 +17,8 @@ assert.equal(course3.books.length, 8);
 assert.deepEqual(course1.books.map(({ id }) => id), Array.from({ length: 10 }, (_, i) => `book-${String(i + 1).padStart(2, "0")}`));
 assert.equal(course2.books[0].label, "A1");
 assert.equal(course2.books[5].label, "G1");
+assert.equal(courseBookById("course-02", "course-02-a4").title, "마방진·복면산과 비");
+assert.equal(courseBookById("course-02", "course-02-g4").title, "도형의 복원과 측정");
 assert.equal(course3.books[0].label, "A1");
 assert.equal(course3.books[4].label, "G1");
 

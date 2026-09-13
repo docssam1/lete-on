@@ -8,9 +8,10 @@ const freeze = (value) => {
   return value;
 };
 
-const makeBook = ({ id, label, edition, status, release, goldenBellOrigin }) => ({
+const makeBook = ({ id, label, title = "", edition, status, release, goldenBellOrigin }) => ({
   id,
   label,
+  title,
   edition,
   status,
   release,
@@ -29,18 +30,30 @@ const course1Books = Array.from({ length: 10 }, (_, index) => {
   });
 });
 
-const newBook = (id, label, edition) => makeBook({
+const newBook = (id, label, edition, title = "") => makeBook({
   id,
   label,
+  title,
   edition,
   status: "pending",
   release: "locked",
   goldenBellOrigin: "textbook-derived",
 });
 
+const course2Titles = Object.freeze({
+  "course-02-a4": "마방진·복면산과 비",
+  "course-02-g4": "도형의 복원과 측정",
+});
+
 const course2Books = [
-  ...Array.from({ length: 5 }, (_, index) => newBook(`course-02-a${index + 1}`, `A${index + 1}`, "N30")),
-  ...Array.from({ length: 5 }, (_, index) => newBook(`course-02-g${index + 1}`, `G${index + 1}`, "N30")),
+  ...Array.from({ length: 5 }, (_, index) => {
+    const id = `course-02-a${index + 1}`;
+    return newBook(id, `A${index + 1}`, "N30", course2Titles[id]);
+  }),
+  ...Array.from({ length: 5 }, (_, index) => {
+    const id = `course-02-g${index + 1}`;
+    return newBook(id, `G${index + 1}`, "N30", course2Titles[id]);
+  }),
 ];
 
 const course3Books = [

@@ -12,7 +12,8 @@ const require = createRequire(path.join(modules, "package.json"));
 const { PDFDocument } = require("pdf-lib");
 const base = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8795";
 const suffix = process.env.FIELDS_COURSE_SUFFIX || "a2";
-assert.ok(["a2", "a3"].includes(suffix), "FIELDS_COURSE_SUFFIX must be a2 or a3");
+assert.ok(["a2", "a3", "a4", "g4"].includes(suffix), "FIELDS_COURSE_SUFFIX must be a2, a3, a4, or g4");
+const visualSelector = suffix === "a4" ? ".course02-a4-visual" : suffix === "g4" ? ".course02-g4-visual" : `.course23-${suffix}-visual`;
 const output = path.join(os.tmpdir(), `fields-course23-${suffix}-browser-audit`);
 await mkdir(output, { recursive: true });
 const books = COURSE23_PILOT_BOOKS.filter((book) => book.id.endsWith(`-${suffix}`));
@@ -40,7 +41,7 @@ async function assertLayout(page, label) {
     for (const host of document.querySelectorAll(".course-concept-scene,.source-question-card,.extension-panel")) {
       if (host.scrollWidth > host.clientWidth + 2) found.push(`${host.className}: horizontal overflow`);
       const box = host.getBoundingClientRect();
-      for (const node of host.querySelectorAll(".course23-a2-visual,.course23-a2-numberline,.a2-weekdays,.a2-stones,.a2-transfer,.a2-schedules,.a2-equation,.a2-catch,.course23-a3-visual,.a3-lattice,.a3-place-bands,.a3-mixture,.a3-route,.a3-work,.a3-clock")) {
+      for (const node of host.querySelectorAll(".course23-a2-visual,.course23-a2-numberline,.a2-weekdays,.a2-stones,.a2-transfer,.a2-schedules,.a2-equation,.a2-catch,.course23-a3-visual,.a3-lattice,.a3-place-bands,.a3-mixture,.a3-route,.a3-work,.a3-clock,.course02-a4-visual,.course02-g4-visual,.a4-assumption,.a4-operation-matrix,.a4-balance")) {
         const rect = node.getBoundingClientRect();
         if (rect.width < 1 || rect.height < 1 || rect.left < box.left - 2 || rect.right > box.right + 2) found.push(`${node.className}: out of bounds`);
       }
@@ -50,7 +51,7 @@ async function assertLayout(page, label) {
   assert.deepEqual(issues, [], label);
 }
 
-async function printAndCheck(page, selector, label, fileName) {
+async function printAndCheck(page, selector, label, fileName, { expectVisuals = true } = {}) {
   await page.emulateMedia({ media: "print" });
   const sheets = page.locator("#goldPrintRoot>.gold-print-page");
   assert.ok(await sheets.count() > 0, `${label}: no print sheets`);
@@ -60,10 +61,12 @@ async function printAndCheck(page, selector, label, fileName) {
     return [...sheet.children].filter((node) => !node.matches(".gold-print-footer") && node.getBoundingClientRect().bottom > footer.top + 1).map(() => index + 1);
   }));
   assert.deepEqual(overflow, [], `${label}: footer overflow`);
-  assert.equal(await page.locator(`${selector} .course23-${suffix}-visual`).evaluateAll((nodes) => nodes.every((node) => node.children.length > 0)), true, `${label}: empty diagrams`);
+  if (expectVisuals) {
+    assert.equal(await page.locator(`${selector} ${visualSelector}`).evaluateAll((nodes) => nodes.length > 0 && nodes.every((node) => node.children.length > 0)), true, `${label}: empty diagrams`);
+  }
   const pdf = await page.pdf({ format: "A4", printBackground: true, preferCSSPageSize: true });
-  assert.equal((await PDFDocument.load(pdf)).getPageCount(), await sheets.count(), `${label}: browser added pages`);
   await writeFile(path.join(output, fileName), pdf);
+  assert.equal((await PDFDocument.load(pdf)).getPageCount(), await sheets.count(), `${label}: browser added pages`);
   await page.emulateMedia({ media: "screen" });
 }
 
@@ -83,6 +86,8 @@ try {
       page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
       await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=A2-QA&course=${book.courseId}&book=${book.id}`, { waitUntil: "networkidle" });
       assert.equal(await page.locator(".lesson-button").count(), 4, `${book.id}: lesson count`);
+      const expectedSourceLabel = book.source?.origin === "textbook-derived" ? "교재" : book.status === "pilot" ? "연습" : "골든벨";
+      assert.equal((await page.locator('[data-phase="original"] span').textContent())?.trim(), expectedSourceLabel, `${book.id}: source phase label`);
       for (const [lessonIndex, lesson] of book.lessons.entries()) {
         await page.locator(`[data-lesson="${lesson.id}"]`).click();
         assert.equal(await page.locator("[data-course-track]").count(), lesson.experience.tracks.length);
@@ -105,14 +110,14 @@ try {
           assert.equal(await page.locator("[data-original-item]").getAttribute("data-original-item"), item.id);
           await page.locator("[data-input-group]").fill(String(records[item.answerRef].answer));
           await page.locator('[data-check="original"]').click();
-          assert.equal(await page.locator(`[data-original-item="${item.id}"] .course-solution-visual .course23-${suffix}-visual`).count(), 1, `${item.id}: solution visual`);
+          assert.equal(await page.locator(`[data-original-item="${item.id}"] .course-solution-visual ${visualSelector}`).count(), 1, `${item.id}: solution visual`);
           await assertLayout(page, `${book.id}/${width}/${item.id}`);
           await page.locator('[data-check="original"]').click({ force: true });
         }
         for (const item of [lesson.extension, ...lesson.similarPractice]) {
           await page.locator("[data-input-group]").fill(String(records[item.answerRef].answer));
           await page.locator('[data-check="extension"]').click({ force: true });
-          assert.equal(await page.locator(`#lessonContent .extension-solution .course23-${suffix}-visual`).count(), 1, `${item.id}: extension visual`);
+          assert.equal(await page.locator(`#lessonContent .extension-solution ${visualSelector}`).count(), 1, `${item.id}: extension visual`);
           await assertLayout(page, `${book.id}/${width}/${item.id}`);
           await page.locator('[data-check="extension"]').click({ force: true });
         }
@@ -134,7 +139,7 @@ try {
           await page.evaluate(() => { window.__printed = false; });
           await page.locator("#printBookButton").click();
           await page.waitForFunction(() => window.__printed === true);
-          await printAndCheck(page, "#goldPrintRoot", `${book.id}/whole/${mode}`, `${book.id}-whole-${mode}.pdf`);
+          await printAndCheck(page, "#goldPrintRoot", `${book.id}/whole/${mode}`, `${book.id}-whole-${mode}.pdf`, { expectVisuals: mode !== "quick" });
         }
       }
       assert.deepEqual(errors, [], `${book.id}/${width}: browser errors`);

@@ -1,6 +1,6 @@
 import { GOLDEN_BELL_BOOKS as courseOneBooks } from "./golden-bell-data.js?v=20260905e";
 import { COURSE_CATALOG, courseById, resolveCourseBook } from "./course-catalog.js";
-import { COURSE23_PILOT_BOOKS } from "./golden-bell-course23-data.js?v=20260913c";
+import { COURSE23_PILOT_BOOKS } from "./golden-bell-course23-data.js?v=20260913d";
 
 export { COURSE_CATALOG };
 const pilotById = new Map(COURSE23_PILOT_BOOKS.map((book) => [book.id, book]));
@@ -8,7 +8,7 @@ export const GOLDEN_BELL_BOOKS = COURSE_CATALOG.flatMap((course) => course.books
   if (course.id === "course-01") return { ...courseOneBooks.find((book) => book.id === metadata.id), courseId: course.id };
   return pilotById.get(metadata.id) || {
     id: metadata.id, courseId: course.id, label: metadata.label,
-    title: "", status: "pending", lessons: [], source: { origin: "textbook-derived", note: "" }
+    title: metadata.title || "", status: "pending", lessons: [], source: { origin: "textbook-derived", note: "" }
   };
 }));
 const byId = new Map(GOLDEN_BELL_BOOKS.map((book) => [book.id, book]));

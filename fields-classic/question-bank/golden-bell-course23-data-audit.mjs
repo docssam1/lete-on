@@ -9,6 +9,8 @@ import { divideFractions, formatContinuedTerms, formatFraction } from "./golden-
 import { courseConceptMarkup } from "./golden-bell-course-concepts.js";
 import { course23A2Model } from "./golden-bell-course23-a2-lessons.js";
 import { course23A3Model } from "./golden-bell-course23-a3-lessons.js";
+import { course02A4Model } from "./golden-bell-course02-a4-lessons.js";
+import { course02G4Model } from "./golden-bell-course02-g4-lessons.js";
 
 const forbidden = new Set(["answer", "solution", "privateAnswer", "workedSolution", "workedSteps", "evidence", "sourcePath", "fingerprint"]);
 const keys = value => value && typeof value === "object" ? Object.entries(value).flatMap(([key, child]) => [key, ...keys(child)]) : [];
@@ -63,13 +65,15 @@ const expectedAnswer = (item) => {
   }
   if (visual.kind === "course23-a2") return course23A2Model(visual).answer;
   if (visual.kind === "course23-a3") return course23A3Model(visual).answer;
+  if (visual.kind === "course02-a4") return course02A4Model(visual).answer;
+  if (visual.kind === "course02-g4") return course02G4Model(visual).answer;
   throw new Error(`Unknown pilot visual: ${visual.kind}`);
 };
 const ids = new Set(); const refs = new Set();
 let practiceCount = 0; let calculatedAnswerCount = 0; let trackCount = 0; let beatCount = 0;
-assert.equal(COURSE23_PILOT_BOOKS.length, 6);
-assert.deepEqual(COURSE23_PILOT_BOOKS.map(book => book.id), ["course-02-a1", "course-02-a2", "course-02-a3", "course-03-a1", "course-03-a2", "course-03-a3"]);
-assert.equal(new Set(COURSE23_PILOT_BOOKS.map(book => book.id)).size, 6);
+assert.equal(COURSE23_PILOT_BOOKS.length, 8);
+assert.deepEqual(COURSE23_PILOT_BOOKS.map(book => book.id), ["course-02-a1", "course-02-a2", "course-02-a3", "course-02-a4", "course-02-g4", "course-03-a1", "course-03-a2", "course-03-a3"]);
+assert.equal(new Set(COURSE23_PILOT_BOOKS.map(book => book.id)).size, 8);
 for (const book of COURSE23_PILOT_BOOKS) {
   assert.equal(book.status, "pilot"); assert.equal(book.source.origin, "textbook-derived");
   assert.equal(book.lessons.length, book.id === "course-02-a1" ? 7 : 4);
@@ -104,6 +108,6 @@ assert.equal((patternPreview.match(/data-cycle-part="full"/g) || []).length, 2);
 assert.equal((patternPreview.match(/data-cycle-part="partial"/g) || []).length, 1);
 assert.match(patternPreview, /다음 마디의 앞 2개/);
 assert.equal((patternPreview.match(/<span><b>/g) || []).length, 10);
-assert.equal(practiceCount, 270); assert.equal(calculatedAnswerCount, practiceCount);
-assert.equal(trackCount, 65); assert.equal(beatCount, 260);
-console.log(`COURSE23 pilot public audit passed: books=6 lessons=27 tracks=${trackCount} beats=${beatCount} practice=270 uniqueIds=${ids.size} uniqueRefs=${refs.size} calculatedAnswers=${calculatedAnswerCount} publicForbiddenKeys=0`);
+assert.equal(practiceCount, 350); assert.equal(calculatedAnswerCount, practiceCount);
+assert.equal(trackCount, 91); assert.equal(beatCount, 364);
+console.log(`COURSE23 pilot public audit passed: books=8 lessons=35 tracks=${trackCount} beats=${beatCount} practice=350 uniqueIds=${ids.size} uniqueRefs=${refs.size} calculatedAnswers=${calculatedAnswerCount} publicForbiddenKeys=0`);

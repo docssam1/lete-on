@@ -1,5 +1,5 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20260913c";
-import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20260913c";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20260913e";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20260913e";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
@@ -1010,7 +1010,7 @@ function renderLessonList() {
 }
 
 function renderStageSteps() {
-  const sourceLabel = activeBook().status === "pilot" ? "연습" : activeBook().source?.origin === "textbook-derived" ? "교재" : "골든벨";
+  const sourceLabel = activeBook().source?.origin === "textbook-derived" ? "교재" : activeBook().status === "pilot" ? "연습" : "골든벨";
   const phases = [
     ["concept", "1", "개념"],
     ["original", "2", sourceLabel],
@@ -1056,9 +1056,25 @@ function normalizeAnswer(value) {
   return String(value ?? "").normalize("NFC").replace(/\s+/g, "").trim();
 }
 
-function answersMatch(actual, expected) {
+function normalizedSetAnswer(value) {
+  return String(value ?? "")
+    .normalize("NFC")
+    .split(/[;,，；\s]+/)
+    .map(normalizeAnswer)
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right, "ko", { numeric: true }));
+}
+
+function answersMatch(actual, expected, resultContract) {
   if (!hasAnswer(actual) || !hasProtectedAnswer({ answer: expected })) return false;
   const approved = Array.isArray(expected) ? expected : [expected];
+  if (resultContract?.type === "set") {
+    const actualSet = normalizedSetAnswer(actual);
+    return approved.some((value) => {
+      const expectedSet = normalizedSetAnswer(value);
+      return actualSet.length === expectedSet.length && actualSet.every((entry, index) => entry === expectedSet[index]);
+    });
+  }
   return approved.some((value) => normalizeAnswer(actual) === normalizeAnswer(value));
 }
 
@@ -1083,8 +1099,8 @@ function originalItemResolved(item) {
 
 function originalItemCorrect(item) {
   if (state.originalAssists[item.id]) return true;
-  if (item.parts?.length) return item.parts.every((part) => answersMatch(state.selections[`${item.id}:${part.id}`], part.answer));
-  return answersMatch(state.selections[item.id], item.answer);
+  if (item.parts?.length) return item.parts.every((part) => answersMatch(state.selections[`${item.id}:${part.id}`], part.answer, part.resultContract));
+  return answersMatch(state.selections[item.id], item.answer, item.resultContract);
 }
 
 function originalItemComplete(item) {
@@ -1575,7 +1591,7 @@ function bindLessonActions() {
     }
     const selected = state.selections[groupId];
     if (!canCheckAnswer(item) || !hasAnswer(selected)) return;
-    const passed = answersMatch(selected, item.answer);
+    const passed = answersMatch(selected, item.answer, item.resultContract);
     recordOutcome("extension", groupId, passed ? "correct" : "wrong");
     state.feedback = { kind: "extension", itemId: groupId, passed, message: passed ? "맞았어요. 풀이로 생각한 순서를 확인해 보세요." : "이 문제의 조건과 그림을 다시 살펴보세요. 어려우면 풀이를 확인해도 괜찮아요." };
     render();
