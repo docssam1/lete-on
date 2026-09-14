@@ -7,6 +7,11 @@ on:
     paths:
       - '.github/workflows/generate-nm-audio.yml'
       - 'number_magic/scripts/generate-nm-audio.js'
+      - 'number_magic/data/units/**'
+
+concurrency:
+  group: numbers-of-magic-audio
+  cancel-in-progress: false
 
 jobs:
   generate:
