@@ -10,7 +10,10 @@
  * Usage:
  *   GOOGLE_TTS_KEY=AIza... node number_magic/scripts/generate-nm-audio.js
  *
- * Re-running is safe: existing files are overwritten (x-upsert:true).
+ * 2026-09-14 — 스킵 로직 추가(원장 지시: "모두다 추가 비용이 너무 많이 들어").
+ * tts-map.js에 같은 텍스트가 이미 있으면 그 태스크는 건너뛴다(과금 없음) — 새
+ * 텍스트이거나 문구가 바뀐 경우만 실제로 Google TTS를 호출한다. 강제로 전부
+ * 다시 만들려면 FORCE_REGEN=1을 붙여서 실행.
  */
 
 'use strict';
@@ -226,7 +229,7 @@ async function uploadToSupabase(mp3Buffer, storagePath) {
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 async function main() {
-  let done = 0, failed = 0;
+  let done = 0, failed = 0, skipped = 0;
   /* map: { lang: { text: url } } — 기존 맵으로 시작해서 성공한 항목만 덮어쓴다
      (2026-09-10). 전엔 매번 빈 맵으로 시작해 실패한 태스크의 자리를 그냥 비워
      버렸다 — 이번 실행에서 813개 전부 실패하자 기존에 잘 있던 486줄(A·N 시리즈
@@ -242,6 +245,12 @@ async function main() {
 
   for (const task of tasks) {
     const label = `${task.unitId} ${task.key} [${task.lang}]`;
+
+    if (!process.env.FORCE_REGEN && map[task.lang][task.text]) {
+      skipped++;
+      continue;
+    }
+
     process.stdout.write(`  🎙  ${label} (${task.text.length}c)... `);
 
     try {
@@ -264,7 +273,7 @@ async function main() {
   }
 
   console.log('');
-  console.log(`✅  Done: ${done} generated, ${failed} failed`);
+  console.log(`✅  Done: ${done} generated, ${skipped} skipped (cached), ${failed} failed`);
 
   // Write tts-map.js
   const mapContent = `/* Numbers of Magic — pre-generated TTS lookup map
