@@ -551,9 +551,23 @@ function playSfx(kind){
     if(!a){a=new Audio(url);_sfxCache[url]=a;}
     a.currentTime=0;a.volume=.85;
     a.play().catch(()=>{});
+    return a;   // success/great-job/good-job는 효과음이 아니라 언어별 음성 클립이라
+                // 호출자가 끝나기를 기다렸다가 다음 안내 음성을 이어 틀 수 있게 돌려준다
   }catch(e){}
 }
 window.NM_SFX=playSfx;
+/* 2026-09-14 — "success"/"great-job" 같은 음성형 효과음과 뒤이은 안내 음성이 동시에
+   틀어져 겹쳐 들리던 문제(원장 확인) 수정. sfxAudio가 끝난 뒤에 say()를 부른다.
+   'ended' 이벤트가 어떤 이유로 안 오면(재생 실패 등) 900ms 뒤 강제로 이어 말한다
+   (클립이 전부 1초 미만이라 충분한 여유). sfxAudio가 없으면(beep류) 바로 말한다. */
+function sayAfterSfx(sfxAudio,text){
+  if(sfxAudio&&typeof sfxAudio.addEventListener==='function'){
+    let done=false;const go=()=>{if(done)return;done=true;say(text);};
+    sfxAudio.addEventListener('ended',go,{once:true});
+    sfxAudio.addEventListener('error',go,{once:true});
+    setTimeout(go,900);
+  }else say(text);
+}
 window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
 function toast(msg,ok){if(!ok&&(msg===t('tryAgain')||msg==='✗'))logDaily(false);const el=document.createElement('div');el.className='nm-toast '+(ok?'ok':'no');el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1100);feedbackFx(ok);}
@@ -644,7 +658,15 @@ function maybeAwardWeeklyBonus(weekKey){
 
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
 /* 유아(tier basic)는 글을 못 읽으니 정답/오답 코멘트도 음성으로 — MP3(tts-map) 있으면 실음성 */
-function voiceLine(u,arr,ok){const line=pickVoice(arr);toast(line,ok);if(u&&u.tier==='basic')say(line);return line;}
+/* opts.afterSfx — 직전에 playSfx()가 돌려준 Audio를 넘기면 그게 끝난 뒤에 말한다
+   (2026-09-14, success/great-job 음성과 겹쳐 들리던 문제 수정). opts.force는 tier
+   와 무관하게 항상 말하게 한다(매직 랩 짝 찾기가 씀 — pickTile 참고). */
+function voiceLine(u,arr,ok,opts){
+  opts=opts||{};
+  const line=pickVoice(arr);toast(line,ok);
+  if(opts.force||(u&&u.tier==='basic'))sayAfterSfx(opts.afterSfx,line);
+  return line;
+}
 
 /* ---------- Web Audio 앰비언스 (신비한 배경음악 + 물소리, 외부 파일 없이 합성) ---------- */
 let actx=null;
@@ -4745,7 +4767,7 @@ function stepLabWidget(body,u){
   NM_WIDGETS.render(cur,$('#labWidget'),val=>{
     if(+val===cur.answer){
       if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
-      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
+      {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
       S.sub.li++;S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
@@ -4824,7 +4846,7 @@ function handleLabNumpad(val,body,u){
     if(isMulti){
       if(!multiIsFull())return;
       if(multiEquals(cur.answer)){
-        playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
+        {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
         S.sub.li++;S.sub.mvals=null;S.sub.cur=null;
         if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
         S.sub.cur=genProblem(u.lab,'main');save();
@@ -4834,7 +4856,7 @@ function handleLabNumpad(val,body,u){
     }
     const inp=S.sub.inp||'';if(inp===''||inp==='-')return;
     if(parseFloat(inp)===cur.answer){
-      playSfx("success");voiceLine(u,u.voice.correct,true);numiHappy();
+      {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
@@ -4861,7 +4883,7 @@ function pickTile(el,i,n,body,u){
        op가 없으면(A-01·A-05 등 기존 유닛) 그대로 더한다 — 기존 동작 그대로. */
     const sum=(cur.op==='mul')?p[0].n*p[1].n:p[0].n+p[1].n;
     if(sum===(cur.target||10)){
-      playSfx("success");numiHappy();
+      const sfx=playSfx("success");numiHappy();
       p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e){e.classList.remove('sel');e.classList.add('paired');}});
       S.sub.picked=[];pk.disabled=true;
       S.sub.pairsFound=(S.sub.pairsFound||0)+1;
@@ -4872,17 +4894,19 @@ function pickTile(el,i,n,body,u){
          이미 남은 타일을 다시 고를 수 있는 상태로 만들어 준다.
          voiceLine을 여기선 안 부른다 — 그것도 toast를 띄워서 방금 뜬 onePairMore
          토스트와 겹쳐 버린다(2026-09-09 실기기 확인, "대단해!"와 "하나 더 있어"가
-         동시에 뜸). 라운드가 완전히 끝났을 때만(아래) voiceLine을 부른다. */
+         동시에 뜸). 라운드가 완전히 끝났을 때만(아래) voiceLine을 부른다.
+         sayAfterSfx(sfx,...) — "success" 음성 클립과 안내 음성이 동시에 겹쳐
+         들리던 문제도 2026-09-14에 같이 고쳤다: sfx가 끝난 뒤에 말한다. */
       if(S.sub.pairsFound<(cur.pairCount||1)){
-        toast(t('onePairMore'),true);say(t('onePairMore'));
+        toast(t('onePairMore'),true);sayAfterSfx(sfx,t('onePairMore'));
         return;
       }
-      say(voiceLine(u,u.voice.correct,true));
+      voiceLine(u,u.voice.correct,true,{force:true,afterSfx:sfx});
       S.sub.li++;S.sub.cur=null;S.sub.pairsFound=0;
       const need=u.lab.count||4;
       if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
       setTimeout(()=>stepLab(body,u),900);
-    }else{say(voiceLine(u,u.voice.wrong,false));p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
+    }else{voiceLine(u,u.voice.wrong,false,{force:true});p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
 }
 
@@ -4975,7 +4999,7 @@ function stepStamp(body,u){
     ${evo}
     <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
   </div>`;
-  playSfx('stamp');confetti();playSfx("great-job");say(L(u.voice.finish));
+  playSfx('stamp');confetti();const sfx=playSfx("great-job");sayAfterSfx(sfx,L(u.voice.finish));
   bindLineageEvoCard(body);
   $('#toMap').onclick=exitUnit;
   if(newLineageBadge)setTimeout(()=>showLineageBadgeOverlay(newLineageBadge),700);
