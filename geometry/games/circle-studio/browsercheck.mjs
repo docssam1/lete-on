@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'file:///C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs';
 import { domains, problemsFor, answerFor, promptPartsFor, learner_stage } from './core.js';
+const gameDomains=domains.filter(d=>d.id!=='center');
 
 const base=process.env.GFIELD_BASE_URL || 'http://127.0.0.1:8765';
 const out=fileURLToPath(new URL('./qa-artifacts/',import.meta.url));
@@ -52,12 +53,12 @@ async function pixels() {
   });
 }
 try {
-  await visit('center');
+  await visit('parts');
   const preserved={name:'QA fixture',progress:{perimeter:{untouched:true},other:{score:91}},settings:{a:1}};
   await page.evaluate(profile=>localStorage.setItem('gfield-profile',JSON.stringify(profile)),preserved);
   for(const width of [1280,390]) {
     await page.setViewportSize({width,height:900});
-    for(const domain of domains)for(let round=0;round<4;round++) {
+    for(const domain of gameDomains)for(let round=0;round<4;round++) {
       const lang=languages[round];
       await page.evaluate(({level,round})=>localStorage.setItem(`gfield-pool-circle-studio-${level}`,String(round)),{level:domain.level,round});
       await visit(domain.id,lang);
@@ -68,10 +69,7 @@ try {
         assert.deepEqual({question:await page.locator('#prompt').textContent(),conditions:await page.locator('#conditions p').allTextContents()},promptPartsFor(p,lang));
         await layout();
         if(i===0&&round===0)await page.screenshot({path:`${out}/${domain.id}-${width}-student.png`,fullPage:true});
-        if(domain.id==='center') {
-          assert.equal(await page.locator('[data-selected-center],[data-center-label]').count(),0);
-          await page.locator('[data-point="0,0"]').click();
-        } else if(domain.id==='parts') {
+        if(domain.id==='parts') {
           assert.equal(await page.locator('[data-part]').count(),4);
           for(const id of ['A','B','C','D'])await page.locator(`#choice-${id}`).check();
         } else if(domain.id==='measure') {
@@ -97,11 +95,11 @@ try {
       assert.equal(await page.locator('#completion').isVisible(),true);await page.keyboard.press('Escape');
     }
   }
-  for(const width of [320,768])for(const lang of languages)for(const domain of domains) {
+  for(const width of [320,768])for(const lang of languages)for(const domain of gameDomains) {
     await page.setViewportSize({width,height:900});await visit(domain.id,lang);await layout();
     assert.equal(await page.locator('html').getAttribute('lang'),lang);
     assert.ok((await page.locator('#worksheet').getAttribute('href')).includes(`domain=${domain.id}&lang=${lang}`));
-    if(['center','draw'].includes(domain.id)) {
+    if(domain.id==='draw') {
       assert.equal(await page.locator('[data-point]').count(),49);
       if(width===320) {const b=await page.locator('[data-point="2,2"] rect').boundingBox();assert.ok(b.width>=44&&b.height>=44,JSON.stringify(b));}
     }
@@ -113,10 +111,6 @@ try {
     assert.equal(await page.locator('#review').isVisible(),false);assert.equal(await page.locator('#length').getAttribute('aria-invalid'),'true');negativeAnswers++;
   }
   await page.locator('#length').fill('');assert.equal(await page.locator('#check').isDisabled(),true);
-  await visit('center');await page.locator('[data-point="0,0"]').focus();await page.keyboard.press('ArrowRight');await page.keyboard.press(' ');
-  assert.equal(await page.locator('[data-point="1,0"]').getAttribute('aria-pressed'),'true');
-  await page.selectOption('#language','ja');assert.equal(await page.locator('[data-point="1,0"]').getAttribute('tabindex'),'0');
-  await page.locator('#undo').click();assert.equal(await page.locator('[aria-pressed="true"]').count(),0);
   await visit('parts');await page.locator('#choice-A').focus();await page.keyboard.press(' ');assert.equal(await page.locator('#choice-A').isChecked(),true);
   await page.selectOption('#language','zh');assert.equal(await page.locator('#choice-A').isChecked(),true);
   await page.locator('#undo').click();assert.equal(await page.locator('#choice-A').isChecked(),false);
@@ -177,11 +171,14 @@ try {
   const bp=await blocked.newPage();await bp.goto(`${base}/geometry/games/circle-studio/?domain=measure`);await bp.waitForSelector('#board svg');
   const id=await bp.locator('#board').getAttribute('data-problem-id'),problem=problemsFor('measure').find(p=>p.id===id);
   await bp.locator('#length').fill(String(answerFor(problem)));await bp.locator('#check').click();assert.equal(await bp.locator('#review').isVisible(),true);assert.ok(await bp.locator('#storageWarning').textContent());await blocked.close();
-  await visit('center');const first=await page.locator('#board').getAttribute('data-problem-id');
-  await page.goto(`${base}/geometry/games/circle-studio/?domain=center&level=1&practice=1`);await page.waitForSelector('#board svg');assert.notEqual(await page.locator('#board').getAttribute('data-problem-id'),first);
+  await visit('parts');
+  await page.goto(`${base}/geometry/games/circle-studio/?domain=center&level=1&practice=1`);await page.waitForSelector('#board svg');
+  assert.equal(new URL(page.url()).searchParams.get('domain'),'parts');
+  assert.equal(await page.locator('#domainTabs a').count(),gameDomains.length);
+  assert.equal(await page.locator('#domainTabs').textContent().then(text=>text.includes('원의 중심 찾기')),false);
   assert.deepEqual(errors,[]);
   const sourceHashes={};for(const file of ['app.js','core.js','render.js','i18n.js','styles.css','index.html'])sourceHashes[file]=createHash('sha256').update(await readFile(new URL(file,import.meta.url))).digest('hex');
-  const report={passed:true,flows,layouts,negativeAnswers,animationBeats,cancellations,edgeGuards,lifecycleChecks,lifecycleMethod:'Synthetic persisted pagehide/pageshow: complete ungraded, accepted, interrupted sweep',touch:true,keyboard:true,reducedMotion:true,profilePreserved:true,storageFailureHandled:true,languages,viewports:[320,390,768,1280],learner_stage,'learner-fit':{language:'All four languages exercised through complete flows',representations:'Fixed true circles, four separate parts diagrams, cm labels, 49-point grid',prerequisites:'Grid points, cm, doubling and halving even whole numbers','reasoning-load':'Four separate domains; five questions per visit','response-mode':'Roving point buttons, native checkboxes, numeric cm input, integer opening and compass trace'},sourceHashes,errors};
+  const report={passed:true,flows,layouts,negativeAnswers,animationBeats,cancellations,edgeGuards,lifecycleChecks,lifecycleMethod:'Synthetic persisted pagehide/pageshow: complete ungraded, accepted, interrupted sweep',touch:true,keyboard:true,reducedMotion:true,profilePreserved:true,storageFailureHandled:true,gameDomains:gameDomains.length,languages,viewports:[320,390,768,1280],learner_stage,'learner-fit':{language:'All four languages exercised through complete flows',representations:'Fixed true circles, four separate parts diagrams, cm labels, 49-point grid',prerequisites:'Grid points, cm, doubling and halving even whole numbers','reasoning-load':'Three interactive domains; five questions per visit. Center marking remains worksheet-only.','response-mode':'Roving point buttons, native checkboxes, numeric cm input, integer opening and compass trace'},sourceHashes,errors};
   await writeFile(`${out}/game-report.json`,JSON.stringify(report,null,2));console.log(JSON.stringify(report));
 } catch(error) {await page.screenshot({path:`${out}/game-failure.png`,fullPage:true});throw error;}
 finally {await browser.close();}

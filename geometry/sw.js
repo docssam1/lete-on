@@ -6,12 +6,12 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v47";
+const CACHE = "gfield-geo-v49";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/lab/",
-  "/geometry/lab/styles.css?v=lab-studio-11",
-  "/geometry/lab/app.js?v=lab-studio-14",
+  "/geometry/lab/styles.css?v=lab-studio-12",
+  "/geometry/lab/app.js?v=lab-studio-15",
   "/geometry/shared/question-bank.js?v=20260829g",
   "/geometry/worksheet/generators.js?v=20260911a",
   "/geometry/worksheet/render.js?v=20260911a",
@@ -78,9 +78,9 @@ const CORE = [
   "/geometry/shape-garden/area-course.js?v=area-1",
   "/geometry/shape-garden/perimeter-course.js?v=perimeter-1",
   "/geometry/shape-garden/quadrilateral-course.js?v=quad-1",
-  "/geometry/shape-garden/circle-course.js?v=circle-1",
+  "/geometry/shape-garden/circle-course.js?v=circle-2",
   "/geometry/games/circle-studio/",
-  "/geometry/games/circle-studio/app.js?v=circle-1",
+  "/geometry/games/circle-studio/app.js?v=circle-2",
   "/geometry/games/circle-studio/styles.css?v=circle-1",
   "/geometry/games/circle-studio/core.js?v=circle-1",
   "/geometry/games/circle-studio/render.js?v=circle-1",

@@ -8,9 +8,8 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
 // 유형을 하나 늘리거나 어떤 단계를 열어 준 날 이 랜딩만 옛 목록을 보여 주고,
 // "만들기" 버튼은 그 단계가 지원하지 않는 유형을 넘기게 된다.
 //
-// 미리보기도 같은 이유로 GW_CARD(../worksheet/card.js)를 부른다 — 학습지에
-// 실제로 인쇄될 카드 마크업 그대로를 보여 주어야 "보고 고른 것"과 "받은 것"이
-// 같아진다.
+// 생성형 쌓기나무 미리보기는 GW_CARD를 쓰고, 독립 학습지는 해당 학습지 엔진의
+// 첫 문항을 그대로 불러온다 — "보고 고른 것"과 "받은 것"이 같아야 한다.
 (function () {
   "use strict";
 
@@ -155,6 +154,9 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     // 미리보기는 학습지 쪽과 마찬가지로 자기 시드를 따로 쓴다 — "새 문제"를
     // 눌러도 아래의 선택은 그대로 있어야 한다.
     previewType: null,
+    previewStudio: null,
+    previewDiceActivity: null,
+    previewFold: null,
     previewSeed: freshSeed(),
     previewAnswer: false
   };
@@ -223,6 +225,48 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
 
   function selectedStudio() {
     return state.studioByDomain[state.domain] || null;
+  }
+
+  function studioChoices(domain) {
+    return STUDIOS.filter((studio) => studio.domain === (domain || state.domain));
+  }
+
+  function ensureStudioPreview() {
+    const choices = studioChoices();
+    if (!choices.length) {
+      state.previewStudio = null;
+      return null;
+    }
+    if (!choices.some((studio) => studio.code === state.previewStudio)) {
+      state.previewStudio = selectedStudio() || choices[0].code;
+    }
+    return studioInfo(state.previewStudio);
+  }
+
+  function ensureDicePreview() {
+    const selected = state.diceActivities;
+    if (selected.length && !selected.includes(state.previewDiceActivity)) {
+      state.previewDiceActivity = selected[0];
+    }
+    if (!state.previewDiceActivity && DICE_ACTIVITIES.length) {
+      state.previewDiceActivity = DICE_ACTIVITIES[0].id;
+    }
+    return DICE_ACTIVITIES.filter((activity) => activity.id === state.previewDiceActivity)[0] || null;
+  }
+
+  function ensureFoldPreview() {
+    const choices = foldsForLevel(state.level);
+    if (!choices.length) {
+      state.previewFold = null;
+      return null;
+    }
+    if (!choices.some((fold) => fold.code === state.previewFold)) {
+      const selected = state.fold ? foldInfo(state.fold) : null;
+      state.previewFold = selected && entrySupportsLevel(selected, state.level)
+        ? selected.code
+        : choices[0].code;
+    }
+    return foldInfo(state.previewFold);
   }
 
   function selectedDiceActivities() {
@@ -555,6 +599,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
 
   function renderFoldTypes(grid) {
     typeGroupHeading(grid, "접기 유형", "한 번에 하나 선택");
+    const previewCode = ensureFoldPreview() ? state.previewFold : null;
     FOLDS.forEach((fold) => {
       const ok = entrySupportsLevel(fold, state.level);
       grid.appendChild(typeCard({
@@ -564,10 +609,15 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
         fold: true,
         ok,
         active: state.fold === fold.code,
+        previewing: previewCode === fold.code,
         multiple: false,
         group: "fold-type",
+        onPreview() {
+          showFoldPreview(fold.code);
+        },
         onChange() {
           state.fold = fold.code;
+          state.previewFold = fold.code;
           renderAll();
         }
       }));
@@ -576,6 +626,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
 
   function renderStudioTypes(grid) {
     typeGroupHeading(grid, "학습지 선택", "한 번에 하나씩 열기");
+    const previewCode = ensureStudioPreview() ? state.previewStudio : null;
     STUDIOS.filter((studio) => studio.domain === state.domain).forEach((studio) => {
       grid.appendChild(typeCard({
         code: studio.code,
@@ -585,10 +636,15 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
         studio: true,
         ok: true,
         active: selectedStudio() === studio.code,
+        previewing: previewCode === studio.code,
         multiple: false,
         group: "studio-" + state.domain,
+        onPreview() {
+          showStudioPreview(studio.code);
+        },
         onChange() {
           state.studioByDomain[state.domain] = studio.code;
+          state.previewStudio = studio.code;
           renderAll();
         }
       }));
@@ -617,6 +673,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
 
   function renderSolidTypes(grid) {
     typeGroupHeading(grid, "주사위 굴리기", "세부유형 여러 개 선택 가능");
+    const previewActivity = ensureDicePreview();
     DICE_ACTIVITIES.forEach((activity) => {
       const detail = DICE_TYPE_DETAILS[activity.id];
       grid.appendChild(typeCard({
@@ -626,10 +683,15 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
         diceActivity: activity.id,
         ok: true,
         active: state.diceActivities.includes(activity.id),
+        previewing: previewActivity && previewActivity.id === activity.id,
         multiple: true,
         group: "dice-generated-types",
+        onPreview() {
+          showDicePreview(activity.id);
+        },
         onChange(event) {
           state.studioByDomain[DOMAIN_SOLID] = null;
+          state.previewDiceActivity = activity.id;
           const at = state.diceActivities.indexOf(activity.id);
           if (event.currentTarget.checked && at === -1) state.diceActivities.push(activity.id);
           if (!event.currentTarget.checked && at !== -1) state.diceActivities.splice(at, 1);
@@ -647,10 +709,15 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
       studio: true,
       ok: true,
       active: selectedStudio() === studio.code,
+      previewing: state.previewStudio === studio.code,
       multiple: false,
       group: "solid-studio",
+      onPreview() {
+        showStudioPreview(studio.code);
+      },
       onChange() {
         state.diceActivities = [];
+        state.previewStudio = studio.code;
         state.studioByDomain[DOMAIN_SOLID] = studio.code;
         renderAll();
       }
@@ -794,7 +861,9 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     const studioCode = selectedStudio();
     const studio = studioCode ? studioInfo(studioCode) : null;
     const diceSelected = state.domain === DOMAIN_SOLID && state.diceActivities.length > 0;
-    const previewVisible = state.domain === DOMAIN_CUBE && !state.book;
+    // 쌓기나무 생성형뿐 아니라 각 독립 학습지의 실제 첫 문항도 같은 자리에
+    // 보여 준다. 고정 쌓기나무 풀만 자체 인쇄 화면을 쓰므로 여기서는 감춘다.
+    const previewVisible = state.domain !== DOMAIN_CUBE || !state.book;
     $("levelField").hidden = standalone;
     $("diceLevelField").hidden = state.domain !== DOMAIN_SOLID || Boolean(studioCode);
     $("intensityField").hidden = !intensityApplies();
@@ -832,6 +901,127 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     window.__LABPREVIEW = null;
   }
 
+  function showStudioPreview(code) {
+    if (state.previewStudio === code) return;
+    state.previewStudio = code;
+    renderPreview();
+  }
+
+  function showDicePreview(activityId) {
+    if (state.previewDiceActivity === activityId) return;
+    state.previewDiceActivity = activityId;
+    document.querySelectorAll(".type-card[data-dice-activity]").forEach((card) => {
+      card.classList.toggle("is-previewing", card.dataset.diceActivity === activityId);
+    });
+    renderPreview();
+  }
+
+  function showFoldPreview(code) {
+    if (state.previewFold === code) return;
+    state.previewFold = code;
+    document.querySelectorAll(".type-card[data-fold]").forEach((card) => {
+      card.classList.toggle("is-previewing", card.dataset.fold === code);
+    });
+    renderPreview();
+  }
+
+  function studioPreviewUrl(studio) {
+    const params = new URLSearchParams(studio.params || {});
+    if (studio.count) params.set("count", "1");
+    params.set("cover", "0");
+    return studio.url + "?" + params.toString();
+  }
+
+  function dicePreviewUrl(activity) {
+    const params = new URLSearchParams();
+    params.set("activities", activity.id);
+    params.set("level", String(state.diceLevel));
+    params.set("count", "1");
+    params.set("cover", "0");
+    params.set("lang", "ko");
+    return DICE_WORKSHEET_URL + "?" + params.toString();
+  }
+
+  function foldPreviewUrl(fold) {
+    const params = new URLSearchParams();
+    params.set("mode", fold.code);
+    params.set("difficulty", FOLD_DIFFICULTY[state.intensity] || "mid");
+    params.set("count", "10");
+    params.set("answers", "0");
+    return FOLD_URL + "?" + params.toString();
+  }
+
+  // 독립 학습지는 저마다 그림 생성기와 글꼴·선 규칙이 다르다. iframe 안에서
+  // 그 학습지의 첫 문항만 남겨 보여 주면 Lab의 미리보기와 실제 인쇄물이 같은
+  // 렌더러를 공유하면서도 각 활동지의 시각 언어를 잃지 않는다.
+  function prepareEmbeddedPreview(frame, kind) {
+    try {
+      const doc = frame.contentDocument;
+      const win = frame.contentWindow;
+      if (!doc || !win) return;
+      const style = doc.createElement("style");
+      style.textContent = kind === "fold"
+        ? [
+            "html,body{margin:0!important;background:#fff!important;overflow-x:hidden!important;}",
+            ".lab-bar,.subject-switch,.controls,.type-preview{display:none!important;}",
+            ".fold-app{display:block!important;min-height:0!important;}",
+            ".preview-panel{display:block!important;margin:0!important;padding:0!important;}",
+            "#sheetRoot{display:block!important;margin:0!important;}",
+            "#sheetRoot .sheet-page:not(:first-child),#sheetRoot .problem-card:not(:first-child){display:none!important;}",
+            "#sheetRoot .sheet-page{width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:12px!important;box-shadow:none!important;}",
+            "#sheetRoot .sheet-head{min-height:0!important;padding-bottom:10px!important;}",
+            "#sheetRoot .problem-grid{display:block!important;min-height:0!important;padding:8px 0!important;}",
+            "#sheetRoot .problem-card{margin:0!important;}",
+            "#sheetRoot img{display:block!important;width:100%!important;height:auto!important;max-width:100%!important;}"
+          ].join("")
+        : [
+            "html,body{margin:0!important;min-width:0!important;overflow-x:hidden!important;background:#fff!important;}",
+            "body{padding-bottom:0!important;}",
+            ".problem-card:not(:first-child){display:none!important;}",
+            ".problem:not(:first-of-type){display:none!important;}",
+            ".maker-bar,.worksheet-controls,.sheet-controls,.toolbar,.actions{display:none!important;}",
+            "svg,img,canvas{max-width:100%;}"
+          ].join("");
+      doc.head.appendChild(style);
+
+      if (kind === "fold") {
+        const target = doc.querySelector("#sheetRoot .problem-card") || doc.body;
+        const targetHeight = target.getBoundingClientRect().height;
+        frame.style.height = Math.min(Math.max(targetHeight + 20, 220), 420) + "px";
+        const y = target.getBoundingClientRect().top + win.scrollY;
+        win.scrollTo(0, Math.max(0, y - 8));
+        return;
+      }
+
+      const candidates = Array.from(doc.querySelectorAll("article.problem, .problem"));
+      const first = candidates[0] || doc.querySelector("article");
+      candidates.slice(1).forEach((node) => {
+        const entry = node.matches("article") ? node : (node.closest("article") || node);
+        entry.style.display = "none";
+      });
+      if (first) {
+        const firstHeight = first.getBoundingClientRect().height;
+        frame.style.height = Math.min(Math.max(firstHeight + 28, 420), 620) + "px";
+        const y = first.getBoundingClientRect().top + win.scrollY;
+        win.scrollTo(0, Math.max(0, y - 8));
+      }
+    } catch (error) {
+      // 같은 출처가 아닌 미리보기 환경에서는 iframe 자체를 그대로 보여 준다.
+    }
+  }
+
+  function renderEmbeddedPreview(url, label, code, kind) {
+    const panel = $("previewPanel");
+    const body = $("previewBody");
+    panel.classList.add("is-static", "is-embedded");
+    body.innerHTML = '<div class="preview-embed"><iframe title="' + CARD.escapeHtml(label) + ' 실제 문항 미리보기"></iframe></div>';
+    const frame = body.querySelector("iframe");
+    frame.addEventListener("load", () => prepareEmbeddedPreview(frame, kind), { once: true });
+    const separator = url.includes("?") ? "&" : "?";
+    frame.src = url + separator + "previewSeed=" + encodeURIComponent(String(state.previewSeed));
+    window.__LABPREVIEW = { mode: "worksheet-frame", type: code, kind, url };
+  }
+
   function renderPreview() {
     const panel = $("previewPanel");
     const body = $("previewBody");
@@ -840,22 +1030,32 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
       window.__LABPREVIEW = null;
       return;
     }
+    panel.classList.remove("is-static", "is-embedded");
     const head = $("previewType");
 
-    // 생성형이 아닌 학습지는 미리보기가 없다 — 랩이 문제를 만들지 않고 정해진
-    // 문제 풀을 그대로 넘기므로, 여기서 보여 줄 "생성 결과"라는 것이 없다.
+    // 독립 학습지는 각자의 실제 렌더러에서 첫 문항을 불러온다. 그래야 점판,
+    // 각도, 대칭, 주사위, 색종이처럼 서로 다른 그림 규칙을 억지로 한 카드에
+    // 맞추지 않고 학습지와 같은 결과를 보여 줄 수 있다.
     if (state.domain === DOMAIN_FOLD) {
-      const fold = state.fold ? foldInfo(state.fold) : null;
+      const fold = ensureFoldPreview();
       if (head) head.textContent = fold ? fold.label : "";
-      previewMessage("색종이 접기 학습지는 만들기를 누르면 열리는 화면에서 유형 미리보기를 볼 수 있어요.");
-      panel.classList.add("is-static");
+      if (fold) renderEmbeddedPreview(foldPreviewUrl(fold), fold.label, fold.code, "fold");
+      else previewMessage("이 단계에서 볼 수 있는 색종이 접기 유형이 없어요.");
       return;
     }
     if (state.domain !== DOMAIN_CUBE) {
-      const studio = studioInfo(selectedStudio());
+      const studio = state.domain === DOMAIN_SOLID && selectedStudio() !== "NE"
+        ? null
+        : ensureStudioPreview();
+      const dice = state.domain === DOMAIN_SOLID && !studio ? ensureDicePreview() : null;
+      if (dice) {
+        if (head) head.textContent = dice.names.ko;
+        renderEmbeddedPreview(dicePreviewUrl(dice), dice.names.ko, dice.id, "dice");
+        return;
+      }
       if (head) head.textContent = studio ? studio.label : "";
-      previewMessage(studio ? studio.note + ". 만들기를 누르면 실제 문제와 인쇄 구성을 바로 확인할 수 있어요." : "학습지를 하나 선택하세요.");
-      panel.classList.add("is-static");
+      if (studio) renderEmbeddedPreview(studioPreviewUrl(studio), studio.label, studio.code, "studio");
+      else previewMessage("학습지를 하나 선택하세요.");
       return;
     }
     if (state.book) {

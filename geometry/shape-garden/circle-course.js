@@ -13,4 +13,7 @@ const copy = {
 document.querySelector("#circleTitle").textContent = copy[0];
 document.querySelector("#circleDesc").textContent = copy[1];
 document.querySelector("#circleSession").textContent = copy[2];
-document.querySelector("#circleLevels").innerHTML = domains.map(d => `<a class="angle-card" href="../games/circle-studio/?domain=${d.id}&level=${d.level}&lang=${lang}"><div class="angle-preview" aria-hidden="true">${renderProblem(problemsFor(d.id)[0], { lang })}</div><strong>${d.names[lang]}</strong><span>${copy[3]} →</span></a>`).join("");
+// 중심 찾기는 종이에 표시하는 학습지 전용 문항이다. 게임 입구에는 실제
+// 조작과 피드백이 있는 활동만 보여 준다.
+const gameDomains = domains.filter(d => d.id !== "center");
+document.querySelector("#circleLevels").innerHTML = gameDomains.map(d => `<a class="angle-card" href="../games/circle-studio/?domain=${d.id}&level=${d.level}&lang=${lang}"><div class="angle-preview" aria-hidden="true">${renderProblem(problemsFor(d.id)[0], { lang })}</div><strong>${d.names[lang]}</strong><span>${copy[3]} →</span></a>`).join("");

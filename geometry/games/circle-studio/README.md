@@ -2,10 +2,12 @@
 
 Learner stage: 초등 도형 · 원의 중심, 반지름, 지름과 원 그리기
 
-Original 80-item bank, four domains, five problems per visit, ko/en/zh/ja.
+Original 80-item bank. The worksheet uses four domains; the game exposes three
+interactive domains, with five problems per visit in ko/en/zh/ja.
 Prerequisites: grid points, cm, doubling and halving even whole numbers.
-Separate domains limit reasoning load: center choice, radius/diameter multi-selection,
-numeric length, then a fixed-opening compass construction.
+Separate domains limit reasoning load: radius/diameter multi-selection, numeric
+length, then a fixed-opening compass construction. Center marking stays in the
+worksheet because it is an observation and construction task, not a game mission.
 
 ## Shared renderer
 
@@ -64,9 +66,9 @@ parent-owned service worker integration. Independent mathematical, rendering and
 integration audits are parent-owned; they are not replaced by these game checks.
 No dependencies are downloaded by these checks. Local QA is not release approval.
 
-## Local evidence (2026-09-09)
+## Local evidence (2026-09-13)
 
-- `browsercheck.mjs`: 160 completed flows, 376 layout checks, 165 negative
+- `browsercheck.mjs`: 120 completed flows, 288 layout checks, 125 negative
   submissions, 48 animation beats, six interruption cases, 64 out-of-grid guards;
   ko/en/zh/ja and 320/390/768/1280 px. Touch, keyboard, reduced motion, additive
   profile preservation and storage failure recovery passed. Browser errors: zero.
@@ -79,7 +81,7 @@ No dependencies are downloaded by these checks. Local QA is not release approval
   opening. Each is checked after the old animation would otherwise have finished.
 - `offline.browsercheck.mjs`: a fresh browser context visits only Shape Garden,
   installs its service worker, then goes offline before its first Circle Studio
-  visit. Four domains in four languages complete 16 correct submissions, with no
+  visit. Three game domains in four languages complete 12 correct submissions, with no
   game dependency warming and no browser errors.
 - Parent-owned `render.audit.mjs`, run read-only after the final label adjustment:
   640 static states, 3,500 fixed-radius construction beats, 5,420 label bounds,
@@ -94,6 +96,7 @@ No dependencies are downloaded by these checks. Local QA is not release approval
 - Reports: `qa-artifacts/game-report.json` (includes runtime SHA-256 values) and
   `qa-artifacts/offline-report.json`. Screenshots include initial/accepted states,
   all four languages at 320/768 px and `compass-mid-sweep.png`.
-- No core, worksheet, parent test, service worker or release files were edited by
-  the game implementer. Parent handles independent mathematics, integration,
-  worksheet final verification and release. No commit, push or deployment here.
+- The shared core and worksheet generators remain the source for the four-domain
+  worksheet bank. This change only narrows the game entry to three interactive
+  domains and refreshes the service-worker asset versions. No commit, push or
+  deployment here.

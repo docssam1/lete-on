@@ -7,7 +7,10 @@ import { saveGameProgress } from '../../shared/profile-storage.js';
 
 const $ = selector => document.querySelector(selector);
 const url = new URL(location.href);
-const domain = domains.find(d=>d.id===url.searchParams.get('domain')) || domains.find(d=>d.level===Number(url.searchParams.get('level'))) || domains[0];
+// 중심 표시·작도 문제는 활동지의 관찰/작도 문항으로 남긴다. 게임에는
+// 선택·계산·그리기 피드백이 있는 세 활동만 노출한다.
+const gameDomains = domains.filter(d => d.id !== 'center');
+const domain = gameDomains.find(d=>d.id===url.searchParams.get('domain')) || gameDomains.find(d=>d.level===Number(url.searchParams.get('level'))) || gameDomains[0];
 let savedLanguage;
 try { savedLanguage=localStorage.getItem('gfield-language'); } catch { /* Storage is optional. */ }
 let lang=url.searchParams.get('lang') || savedLanguage || 'ko';
@@ -67,7 +70,7 @@ function renderCopy() {
   $('#language').value=lang;$('#language').setAttribute('aria-label',t('language'));
   $('#studioTitle').textContent=t('title');$('#title').textContent=domain.names[lang];
   $('#domainTabs').setAttribute('aria-label',t('area'));
-  $('#domainTabs').innerHTML=domains.map(d=>`<a href="?domain=${d.id}&level=${d.level}&lang=${lang}" ${d.id===domain.id?'aria-current="page"':''}>${d.names[lang]}</a>`).join('');
+  $('#domainTabs').innerHTML=gameDomains.map(d=>`<a href="?domain=${d.id}&level=${d.level}&lang=${lang}" ${d.id===domain.id?'aria-current="page"':''}>${d.names[lang]}</a>`).join('');
   action('#back','back','back',true);action('#retry','retry','retry',true);action('#undo','back','undo',true);
   action('#worksheet','book','worksheet',true);$('#worksheet').href=`../../worksheet/circle-studio/?domain=${domain.id}&lang=${lang}`;
   action('#check','check','check');action('#next','next',state.index===queue.length-1?'done':'next');action('#close','close','done',true);

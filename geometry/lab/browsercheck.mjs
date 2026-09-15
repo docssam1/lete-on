@@ -27,6 +27,14 @@ let links = 0;
 let layouts = 0;
 let targetLoads = 0;
 
+async function waitForEmbeddedPreview(page) {
+  await page.waitForFunction(() => {
+    const frame = document.querySelector("#previewBody iframe");
+    if (!frame || !frame.contentDocument) return false;
+    return Boolean(frame.contentDocument.querySelector("article.problem, .problem, article, #cv"));
+  }, null, { timeout: 10000 });
+}
+
 try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: "block", reducedMotion: "reduce" });
   const page = await context.newPage();
@@ -91,9 +99,11 @@ try {
 
   await page.locator('.domain-btn[data-domain="fold"]').click();
   await page.locator('.stage-badge[data-level="L3"]').click();
+  await waitForEmbeddedPreview(page);
   assert.equal(await page.locator("#levelField").isVisible(), true, "fold level filter");
   assert.equal(await page.locator("#intensityField").isVisible(), true, "fold difficulty handoff");
-  assert.equal(await page.locator("#previewPanel").isVisible(), false, "fold has no fake preview");
+  assert.equal(await page.locator("#previewPanel").isVisible(), true, "fold worksheet preview");
+  assert.equal(await page.locator("#previewBody iframe").count(), 1, "fold preview frame missing");
   assert.ok(await page.locator('.type-card[data-fold] input[type="radio"]').count() > 1, "fold types use radios");
   assert.ok(Math.max(...(await page.locator(".count-btn").evaluateAll((buttons) => buttons.map((button) => Number(button.dataset.count))))) <= 20, "fold count cap");
   await page.locator('.type-card[data-fold="hole2"]').click();
@@ -104,14 +114,16 @@ try {
   const targetHrefs = [];
   for (const [domain, labels] of Object.entries(expected)) {
     await page.locator(`.domain-btn[data-domain="${domain}"]`).click();
+    await waitForEmbeddedPreview(page);
     assert.equal(await page.locator("#levelField").isVisible(), false, `${domain}: irrelevant level hidden`);
     assert.equal(await page.locator("#intensityField").isVisible(), false, `${domain}: irrelevant difficulty hidden`);
-    assert.equal(await page.locator("#previewPanel").isVisible(), false, `${domain}: empty preview hidden`);
+    assert.equal(await page.locator("#previewPanel").isVisible(), true, `${domain}: worksheet preview hidden`);
     assert.deepEqual(await page.locator('.type-card[data-available="true"] .type-label').allTextContents(), labels);
     assert.equal(await page.locator('.type-card input[type="radio"]').count(), labels.length, `${domain}: worksheet cards use radios`);
     for (const label of labels) {
       const card = page.locator(".type-card", { hasText: label });
       await card.click();
+      await waitForEmbeddedPreview(page);
       assert.equal(await page.locator('.type-card .type-input:checked').count(), 1, `${label}: one print engine selected`);
       if (countEnabled.has(label)) {
         assert.equal(await page.locator("#countField").isVisible(), true, `${label}: count field visible`);
@@ -135,10 +147,11 @@ try {
   }
 
   await page.locator('.domain-btn[data-domain="solid"]').click();
+  await waitForEmbeddedPreview(page);
   assert.equal(await page.locator("#levelField").isVisible(), false, "solid: unrelated course stage visible");
   assert.equal(await page.locator("#intensityField").isVisible(), false, "solid: unrelated generic difficulty visible");
   assert.equal(await page.locator("#diceLevelField").isVisible(), true, "solid: dice difficulty missing");
-  assert.equal(await page.locator("#previewPanel").isVisible(), false, "solid: empty preview visible");
+  assert.equal(await page.locator("#previewPanel").isVisible(), true, "solid: worksheet preview hidden");
   assert.equal(await page.locator("#typesTitle").textContent(), "세부유형");
   assert.deepEqual(await page.locator('.type-card[data-dice-activity] .type-label').allTextContents(), diceLabels);
   assert.equal(await page.locator('.type-card[data-dice-activity] input[type="checkbox"]').count(), 5, "dice details must be multi-select checkboxes");
@@ -224,7 +237,7 @@ try {
     await page.keyboard.press("Space");
     const layout = await page.evaluate(() => ({
       overflow: document.documentElement.scrollWidth > window.innerWidth,
-      irrelevantControlsHidden: ["levelField", "intensityField", "previewPanel"].every((id) => document.getElementById(id).hidden),
+      unrelatedControlsHidden: ["levelField", "intensityField"].every((id) => document.getElementById(id).hidden) && !document.getElementById("previewPanel").hidden,
       selectedRadios: document.querySelectorAll('.type-card input[type="radio"]:checked').length,
       buildTop: document.getElementById("buildBtn").getBoundingClientRect().top,
       domains: [...document.querySelectorAll(".domain-btn")].every((node) => {
@@ -237,9 +250,9 @@ try {
       })
     }));
     assert.equal(layout.overflow, false, `${width}: horizontal overflow`);
-    assert.equal(layout.irrelevantControlsHidden, true, `${width}: irrelevant controls visible`);
+    assert.equal(layout.unrelatedControlsHidden, true, `${width}: unrelated controls visible`);
     assert.equal(layout.selectedRadios, 1, `${width}: keyboard radio selection`);
-    if (width === 390) assert.ok(layout.buildTop < 1300, `390: build action too far below selection (${layout.buildTop})`);
+    if (width === 390) assert.ok(layout.buildTop < 2400, `390: build action too far below selection (${layout.buildTop})`);
     assert.equal(layout.domains, true, `${width}: clipped domain control`);
     assert.equal(layout.cards, true, `${width}: clipped type card`);
     await page.screenshot({ path: `${out}/lab-${width}.png`, fullPage: true });
@@ -255,7 +268,7 @@ try {
       return {
         overflow: document.documentElement.scrollWidth > window.innerWidth,
         diceLevelVisible: !document.getElementById("diceLevelField").hidden,
-        unrelatedControlsHidden: ["levelField", "intensityField", "previewPanel"].every((id) => document.getElementById(id).hidden),
+        unrelatedControlsHidden: ["levelField", "intensityField"].every((id) => document.getElementById(id).hidden) && !document.getElementById("previewPanel").hidden,
         selectedDetails: document.querySelectorAll('.type-card[data-dice-activity] input:checked').length,
         details: document.querySelectorAll('.type-card[data-dice-activity]').length,
         cardsFit: [...document.querySelectorAll(".type-card")].every((node) => {
