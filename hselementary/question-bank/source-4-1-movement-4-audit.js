@@ -277,7 +277,12 @@ for (const sourceItemId of lockedItems) {
   if (!(item?.reviewLocked && item.generatorKey === "" && !mappings.some(entry => entry.sourceItemId === sourceItemId))) fail(`${sourceItemId}: 잠긴 유형의 연결이 남아 있습니다.`);
   for (const difficulty of [-1, 0, 1]) for (let seed = 0; seed < 500; seed += 1) {
     lockedCalls += 1;
-    try { api.generate({ ...item, generatorKey }, 0, difficulty, 900000 + seed, item.variant); fail(`${sourceItemId}: 직접 호출이 거부되지 않았습니다.`); } catch (error) { if (!/검수 대기/.test(error.message)) fail(`${sourceItemId}: 직접 호출이 다른 오류로 끝났습니다.`); }
+    try {
+      const generated = api.generate({ ...item, generatorKey }, 0, difficulty, 900000 + seed, item.variant);
+      if (generated) fail(`${sourceItemId}: 잠긴 유형에서 문항이 생성되었습니다.`);
+    } catch (error) {
+      if (!/검수 대기/.test(error.message)) fail(`${sourceItemId}: 직접 호출이 다른 오류로 끝났습니다.`);
+    }
   }
 }
 

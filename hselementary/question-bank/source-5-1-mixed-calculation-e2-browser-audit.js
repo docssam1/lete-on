@@ -100,7 +100,7 @@ async function inspectCatalog(browser, viewport, label) {
       };
     }, { typeId: type.id, mobile: viewport.width <= 700 });
     const source = inventoryById.get(type.sourceItemId);
-    if (!state.expanded || !state.inViewport || state.overflow) fail(`${label} ${type.id}: 미리보기 위치 또는 가로 폭이 올바르지 않습니다.`);
+    if (!state.expanded || !state.inViewport || state.overflow) fail(`${label} ${type.id}: 미리보기 위치 또는 가로 폭이 올바르지 않습니다. ${JSON.stringify(state)}`);
     if (viewport.width <= 700) {
       if (!state.belowRow || rectsOverlap(state.rowBox, state.popoverBox) || state.footerVisible) fail(`${label} ${type.id}: 모바일 미리보기가 행 아래에 놓이지 않거나 하단 바가 가립니다.`);
     } else if (rectsOverlap(state.rowBox, state.popoverBox) || rectsOverlap(state.treeBox, state.popoverBox)) fail(`${label} ${type.id}: PC 미리보기가 목록을 가립니다.`);

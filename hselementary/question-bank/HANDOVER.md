@@ -4,13 +4,39 @@
 
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8878/hselementary/question-bank/`
-- Total runtime types: 1,954 across 6 semesters, 36 major units, and 184 subunits
-- Implemented types: 1,453 (deterministic runtime availability check)
-- Review-locked types: 501
-- Source-linked runtime entries: 1,547 currently carry a source item ID (4-1: 329, 4-2: 228, 5-1: 357, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
+- Total runtime types: 1,962 across 6 semesters, 36 major units, and 184 subunits
+- Runtime-available types: 1,064 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 898
+- Source-linked runtime entries: 1,558 currently carry a source item ID (4-1: 329, 4-2: 239, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
+- Semester release counts: 4-1 `309/329`, 4-2 `196/263`, 5-1 `272/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `48/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
-- Completed: all six units in grades 4, 5, and 6 for both semesters
+- Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-09-13 Parallel-Angle Repair And Release Gates
+
+- Added nine source-matched Exploration, Example, and Mission types from the advanced 4-2 parallel-angle group. Each has three fixed verified variants and a separate answer diagram; these are finite pools, not unlimited generation or empirically calibrated difficulty bands.
+- Point/line models now determine intersections, angle sectors, leaders, and clipped line endpoints. Corrected the original incidence relations, target vertices, and parallel/perpendicular marks. Thin black strokes and normal-weight educational text replace the heavy navigation colors within these diagrams.
+- Where the source determines only a sum, individual unknown angles remain symbolic in the solution. Coordinate choices must not be presented as additional given values.
+- Examples 2-1 and 2-2 remain locked. Quadrilateral entries without individual source-item links also remain locked; do not reconnect them to generic generators to raise the available count.
+- Focused checks: 27 fixed variants, 735 independent angle cases, 36 desktop/mobile problem-and-solution states, and 18 substantive A4 PDFs. Browser geometry checks include frame bounds, text/line clearance, sector-label placement, and answer visibility. Private evidence stays outside Git.
+- Whole-bank runtime check: 63,840 generations; notation check: 159,600 generations plus real-DOM fraction centering at 1440px and 390px. These checks do not replace original-source and learner-difficulty review for other groups.
+- Public review reasons must not contain answer values. Keep detailed counterexamples in private evidence, and run `public-inventory-review-reason-audit.js` before release.
+
+## 2026-09-16 5-2 Source Gate
+
+- All 124 legacy 5-2 generated types are review-locked. They did not carry individual advanced-source item IDs, and direct comparison with the current 5-2 advanced book showed that the displayed type structures were not one-to-one matches for the printed Exploration, Example, and Mission items.
+- Keep the legacy generators as private candidates only. Reopen one type at a time after its source item, figure, official answer, child-readable solution, independent calculation, and screen/A4 rendering have all been verified.
+- An improper fraction is not automatically an error, but every displayed fraction must belong to the printed problem structure and use the shared mathematical notation. Do not introduce an improper fraction merely because a random parameter makes one.
+- Number lists containing thousands separators must use separate list items rather than a second comma as the item separator.
+- The same release gate now applies across the whole elementary bank: a runtime type without an individual source item ID is review-locked. This also locks 256 legacy Grade 6 generators while retaining their code as private reconstruction candidates.
+
+## 2026-09-16 Whole-Public-Bank Layout Sweep
+
+- The browser sweep covers every currently public type: Grade 4 has 505 types and 2,020 desktop/mobile problem-and-solution states, Grade 5 has 272 types and 1,088 states, and Grade 6 has 287 types and 1,148 states. Each grade also receives substantive A4 output checks.
+- The sweep loads the same Grade 6 source-specific modules as the real page and respects each type's verified fixed-pool count. It rejects SVG text or line overflow, text-to-text collisions, missing answer visuals, invalid values, and clipped page content.
+- Direct visual review repaired four failures found by the sweep: the pentagonal-prism spiral label collision, the tree-spacing perimeter-label collision, the decimal digit-pair table clipping, and the long strip-graph solution calculation. Targeted independent math audits and desktop, 390px, and A4 reruns pass after the repairs.
+- This is a layout and runtime release check, not a claim that every locked type or every source-book figure has been rebuilt. A public figure must still be based on its individual source item, use a dedicated point/line/data model, include a matching answer figure when required, and pass human visual comparison before release.
 
 ## 2026-09-13 5-1 Unit 6 Source And Notation Correction
 
@@ -83,11 +109,11 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Runtime availability policy: `runtime-availability-audit.js` checks all 894 public types across 20 seeds per difficulty
+- Runtime availability policy: `runtime-availability-audit.js` checks all 1,064 public types across 20 seeds per difficulty
 - 4-1 source policy: `source-inventory-audit.js`, `source-crosswalk-audit.js`, and `source-runtime-taxonomy-audit.js`
 - 4-1 type-language policy: `source-type-language-audit.js` requires 329 unique child-readable Korean type names. Source labels such as `예제 1-1` remain provenance only; they must never replace the explanatory type name.
-- Elementary explanation policy: `elementary-language-audit.js` checks all 894 public runtime types across 100 seeds per difficulty, including the source-mapped public types
-- Numeric display policy: `numeric-display-audit.js` checks all 894 public runtime types across 100 seeds per difficulty; the runtime sweep separately checks availability
+- Elementary explanation policy: `elementary-language-audit.js` checks the public runtime types across 100 seeds per difficulty, including the source-mapped public types
+- Numeric display policy: `numeric-display-audit.js` checks the public runtime types across 100 seeds per difficulty; the runtime sweep separately checks availability
 - 4-2 fraction source routing and independent answer check: `fraction-add-sub-4-2-audit.js` covers 66 types and 66 distinct source structures; `source-4-2-fraction-browser-audit.js` covers all 132 PC/mobile states
 - 4-2 triangle source routing, publication gate, and independent answer check: `triangle-4-2-audit.js` maps all 44 source items and permits only the 31 directly source-matched types to run
 - 4-2 decimal source routing, integer-scaled calculation, exhaustive candidate checks, and independent answer check: `decimal-add-sub-4-2-audit.js` covers 24 types and 24 distinct source structures

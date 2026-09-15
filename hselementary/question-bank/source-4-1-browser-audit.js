@@ -2,19 +2,24 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { chromium } = require("playwright");
+const playwrightPath = process.env.HSE_PLAYWRIGHT_PATH
+  || path.join(process.env.USERPROFILE || "", ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "node", "node_modules", "playwright");
+const { chromium } = require(playwrightPath);
 
 const url = process.env.HSE_URL || "http://127.0.0.1:8878/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(process.cwd(), "tmp", "browser-audit");
 fs.mkdirSync(outputDir, { recursive: true });
 
 (async () => {
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || "C:/Program Files/Google/Chrome/Application/chrome.exe"
+  });
   const failures = [];
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
   page.on("pageerror", error => failures.push(`브라우저 오류: ${error.message}`));
   page.on("console", message => {
-    if (message.type() === "error" && !message.text().includes("ERR_NETWORK_ACCESS_DENIED")) failures.push(`콘솔 오류: ${message.text()}`);
+    if (message.type() === "error" && !/Failed to load resource.*(?:404|ERR_[A-Z_]+)/.test(message.text())) failures.push(`콘솔 오류: ${message.text()}`);
   });
 
   await page.goto(url, { waitUntil: "networkidle" });

@@ -76,6 +76,15 @@
     sourcePrintedPage: printedPage,
     reviewLocked
   });
+  const sourceItem42ParallelAngle = (label, difficultyBand, sourceItemId, sourceItemLabel, reviewLocked = false, reviewReason = "") => ({
+    ...sourceItem42(label, difficultyBand, sourceItemId, sourceItemId.includes("mission") ? 38 : 37, sourceItemId.includes("mission") ? 43 : 42, reviewLocked),
+    sourceItemLabel,
+    generationMode: reviewLocked ? "review-locked" : "fixed-verified-pool",
+    verifiedVariantCount: reviewLocked ? 0 : 3,
+    answerVisualRequired: true,
+    answerVisualStatus: reviewLocked ? "locked" : "verified",
+    reviewReason
+  });
   const sourceItemLabel51 = sourceItemId => {
     const exploration = sourceItemId.match(/-e(\d+)-exploration(?:-(\d+))?$/);
     if (exploration) return `개념탐구 ${exploration[1]} 본문${exploration[2] ? ` (${exploration[2]})` : ""}`;
@@ -1021,10 +1030,18 @@
           sourceItem42Ability("조건에 맞게 다섯 직선 이름 정하기", 1, "4-2-quad-1-mission-4", 39, 41)
         ]),
         detailed("평행선의 조건과 성질", "quadParallelAngleCondition", [
-          sourced42("여러 평행선의 동위각 합", -1, "4-2 심화 p.37-38 개념탐구 2·Mission"),
-          sourced42("여러 평행선의 엇각 합", 0, "4-2 심화 p.37-38 개념탐구 2·Mission"),
-          sourced42("각의 조건으로 평행한 직선 찾기", 1, "4-2 심화 p.37-38 개념탐구 2·Mission"),
-          sourceItem42Ability("평행선 사이 두 각으로 바깥각 구하기", 0, "4-2-quad-2-example-2-1", 40, 42)
+          sourceItem42ParallelAngle("표시한 두 각의 합 비교하기", -1, "4-2-advanced-quad-2-exploration", "개념탐구 2 본문"),
+          sourceItem42ParallelAngle("여러 직선에서 평행한 두 쌍과 표시각 구하기", 1, "4-2-advanced-quad-2-example-2-1", "예제 2-1", true, "원문 (3)·(4)에서 동위각과 엇각을 세는 범위를 공식 답과 대조하기 전에는 한 문제 전체를 출제하지 않습니다."),
+          sourceItem42ParallelAngle("같은 크기의 각을 모두 세기", 1, "4-2-advanced-quad-2-example-2-2", "예제 2-2", true, "직선 사의 기울기 조건이 없어 같은 크기의 각 개수가 그림에 따라 달라질 수 있으므로 출제하지 않습니다."),
+          sourceItem42Ability("평행선 사이 두 각으로 바깥각 구하기", 0, "4-2-quad-2-example-2-1", 40, 42),
+          sourceItem42ParallelAngle("두 평행선에 걸친 네 각의 합 구하기", 0, "4-2-advanced-quad-2-example-2-3", "예제 2-3"),
+          sourceItem42ParallelAngle("평행선과 세 빗선에서 두 각의 합 구하기", 0, "4-2-advanced-quad-2-example-2-4", "예제 2-4"),
+          sourceItem42ParallelAngle("평행선과 나란한 선분을 이용해 각 구하기", 0, "4-2-advanced-quad-2-mission-1", "Mission 1"),
+          sourceItem42ParallelAngle("평행선과 수직선에서 두 각의 차 구하기", 1, "4-2-advanced-quad-2-mission-2", "Mission 2"),
+          sourceItem42ParallelAngle("표시된 각을 비교해 평행한 두 직선 찾기", 0, "4-2-advanced-quad-2-mission-3", "Mission 3"),
+          sourceItem42ParallelAngle("한 각의 동위각을 모두 찾아 합하기", 1, "4-2-advanced-quad-2-mission-4", "Mission 4"),
+          sourceItem42ParallelAngle("두 쌍의 평행선에서 표시각 구하기", 0, "4-2-advanced-quad-2-mission-5", "Mission 5"),
+          sourceItem42ParallelAngle("수직선과 평행한 빗선에서 큰 각 구하기", 0, "4-2-advanced-quad-2-mission-6", "Mission 6")
         ]),
         detailed("평행선 사이의 각도 ①", "quadAngleChainOne", [
           sourced42("한 번 꺾인 선의 끝각", -1, "4-2 심화 p.39-40 개념탐구 3·Mission"),
@@ -1444,8 +1461,30 @@
     if (index >= 0) semesters[index] = buildSourceSemesterGrade6(semesters[index]);
   }
 
+  const semester42 = semesters.find(item => item.id === "4-2");
+  const quadrilateralUnit42 = semester42?.units.find(item => item.number === 4);
+  quadrilateralUnit42?.subunits.forEach(subunit => subunit.types.forEach(type => {
+    if (type.sourceItemId) return;
+    type.sourceVerified = false;
+    type.reviewLocked = true;
+    type.reviewReason = "현행 심화 원본의 문항 번호와 그림 구조가 연결되지 않아 출제하지 않습니다.";
+    type.generationMode = "review-locked";
+    type.verifiedVariantCount = 0;
+    type.answerVisualStatus = "locked";
+  }));
+
+  semesters.forEach(semester => semester.units.forEach(unit => unit.subunits.forEach(subunit => subunit.types.forEach(type => {
+    if (type.sourceItemId) return;
+    type.sourceVerified = false;
+    type.reviewLocked = true;
+    type.reviewReason = "현행 심화 원본의 개별 문항·그림·정답과 연결되지 않아 출제하지 않습니다.";
+    type.generationMode = "review-locked";
+    type.verifiedVariantCount = 0;
+    type.answerVisualStatus = "locked";
+  }))));
+
   window.HSE_CURRICULUM = {
-    version: "2026-09-13",
+    version: "2026-09-16a",
     levels: [
       { id: "simwha", label: "심화 기준", rank: 1 }
     ],

@@ -396,18 +396,40 @@
     return result;
   }
 
-  function paginateProblems(questions) {
+  function needsWidePrint(question) {
+    const prompt = String(question?.prompt || "");
+    const fractionCount = (prompt.match(/class="math-fraction"/g) || []).length;
+    const equations = [...prompt.matchAll(/class="[^"]*equation[^"]*"[^>]*>([\s\S]*?)<\/div>/g)]
+      .map(match => match[1].replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/\s+/g, " ").trim());
+    return fractionCount >= 3 || equations.some(equation => {
+      const operatorCount = (equation.match(/[+\-×÷=<>]/g) || []).length;
+      return equation.length >= 72 || operatorCount >= 5 || equation.includes("↔");
+    });
+  }
+
+  function problemWeight(question) {
+    const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
+    const hasSource61VolumeE4 = question.prompt.includes("source61-volume-e4-diagram");
+    const hasSource61E2Example2 = question.prompt.includes("source61-e2ex2-diagram");
+    const hasSource61E2Example4 = question.prompt.includes("source61-e2ex4-diagram");
+    const hasSource61E2Mission6 = question.prompt.includes("source61-e2m6-diagram");
+    const hasSource61E4Example1 = question.prompt.includes("source61-e4ex1-diagram");
+    const hasSource42ParallelAngle = question.prompt.includes("source42-pa");
+    return needsWidePrint(question) || hasSource61VolumeE4 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1
+      ? 6
+      : hasSource42ParallelAngle || graphCount === 1
+        ? 3
+        : graphCount > 1
+          ? 6
+          : 1;
+  }
+
+  function paginateWeightedProblems(questions) {
     const pages = [];
     let page = [];
     let weight = 0;
     questions.forEach(question => {
-      const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
-      const hasSource61VolumeE4 = question.prompt.includes("source61-volume-e4-diagram");
-      const hasSource61E2Example2 = question.prompt.includes("source61-e2ex2-diagram");
-      const hasSource61E2Example4 = question.prompt.includes("source61-e2ex4-diagram");
-      const hasSource61E2Mission6 = question.prompt.includes("source61-e2m6-diagram");
-      const hasSource61E4Example1 = question.prompt.includes("source61-e4ex1-diagram");
-      const questionWeight = hasSource61VolumeE4 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 ? 6 : graphCount > 1 ? 6 : graphCount === 1 ? 3 : 1;
+      const questionWeight = problemWeight(question);
       if (page.length && weight + questionWeight > 6) {
         pages.push(page);
         page = [];
@@ -420,8 +442,45 @@
     return pages;
   }
 
+  function paginateProblems(questions) {
+    const isParallelAngle = question => question.prompt.includes("source42-pa");
+    if (!questions.some(isParallelAngle)) {
+      return paginateWeightedProblems(questions).map(page => ({ questions: page, paired: false }));
+    }
+    const pages = [];
+    let page = [];
+    let height = 0;
+    const flushPage = () => {
+      if (!page.length) return;
+      pages.push({ questions: page, paired: true });
+      page = [];
+      height = 0;
+    };
+
+    for (let index = 0; index < questions.length;) {
+      const question = questions[index];
+      if (problemWeight(question) >= 6) {
+        flushPage();
+        pages.push({ questions: [question], paired: false });
+        index += 1;
+        continue;
+      }
+
+      const row = [question];
+      const next = questions[index + 1];
+      if (next && problemWeight(next) < 6) row.push(next);
+      const rowHeight = row.some(item => problemWeight(item) >= 3) ? 2 : 1;
+      if (page.length && height + rowHeight > 3) flushPage();
+      page.push(...row);
+      height += rowHeight;
+      index += row.length;
+    }
+    flushPage();
+    return pages;
+  }
+
   function renderProblems() {
-    $("problemView").innerHTML = paginateProblems(state.questions).map((page, pageIndex) => `<section class="print-page${page.length === 1 ? " print-page--single" : ""}">
+    $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
       <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
