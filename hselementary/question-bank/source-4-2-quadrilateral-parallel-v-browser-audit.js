@@ -2,7 +2,9 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { chromium } = require("playwright");
+const playwrightPath = process.env.HSE_PLAYWRIGHT_PATH
+  || path.join(process.env.USERPROFILE || "", ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "node", "node_modules", "playwright");
+const { chromium } = require(playwrightPath);
 
 const baseUrl = process.env.HSE_URL || "http://127.0.0.1:8878/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(process.cwd(), "tmp", "4-2-quadrilateral-parallel-v-browser-audit");
@@ -95,7 +97,7 @@ const inspect = async (browser, viewport, label, failures) => {
   await page.screenshot({ path: path.join(outputDir, `${label}-problem.png`), fullPage: true });
   await page.click("#solutionTab");
   const solutions = await page.evaluate(() => [...document.querySelectorAll(".solution-item")].map(item => item.textContent?.replace(/\s+/g, " ").trim() || ""));
-  if (solutions.length !== 3 || solutions.some(text => !["삼각형의 오른쪽 안쪽 각", "㉠=180-"].every(token => text.includes(token)))) failures.push(`${label}: 세 풀이의 보각 계산이 없습니다.`);
+  if (solutions.length !== 3 || solutions.some(text => !["맞꼭지각", "삼각형의 오른쪽 안쪽 각", "㉠=180-"].every(token => text.includes(token)))) failures.push(`${label}: 세 풀이에 맞꼭지각과 보각 계산이 모두 나오지 않습니다.`);
   await page.screenshot({ path: path.join(outputDir, `${label}-solution.png`), fullPage: true });
   if (label === "desktop") {
     await page.emulateMedia({ media: "print" });
@@ -130,8 +132,8 @@ const inspect = async (browser, viewport, label, failures) => {
 (async () => {
   const failures = [];
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
-  await inspect(browser, { width: 1280, height: 900 }, "desktop", failures);
-  await inspect(browser, { width: 375, height: 812 }, "mobile", failures);
+  await inspect(browser, { width: 1440, height: 1000 }, "desktop", failures);
+  await inspect(browser, { width: 390, height: 844 }, "mobile", failures);
   await browser.close();
   if (failures.length) {
     console.error(`4-2 사각형 평행선 브이 바깥각 브라우저 감사 실패: ${failures.length}건`);

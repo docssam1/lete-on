@@ -8,6 +8,7 @@ require("./source-inventory-4-1.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-4-2-parallel-angle.js");
 require("./source-grade6-decimal-e1-mission4.js");
 require("./source-grade6-decimal-e1-mission3.js");
 require("./source-grade6-decimal-e2-example2.js");
@@ -23,6 +24,7 @@ require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
+const EXPECTED_PUBLIC_TYPE_COUNT = 1064;
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,
@@ -37,7 +39,7 @@ let generatedCount = 0;
 let fractionSampleCount = 0;
 let mixedFractionSampleCount = 0;
 let symbolicFractionSampleCount = 0;
-if (types.length !== 1453) failures.push(`공개 검수 대상은 1453개여야 하나 ${types.length}개입니다.`);
+if (types.length !== EXPECTED_PUBLIC_TYPE_COUNT) failures.push(`공개 검수 대상은 ${EXPECTED_PUBLIC_TYPE_COUNT}개여야 하나 ${types.length}개입니다.`);
 
 const countTokens = (tokens, type) => tokens.reduce((count, token) => count + (token.type === type ? 1 : 0) + (token.type === "fraction" ? countTokens(token.numerator, type) + countTokens(token.denominator, type) : token.type === "mixed" ? countTokens([token.fraction], type) : 0), 0);
 const notationCases = [
@@ -130,6 +132,7 @@ async function auditFractionLayout() {
         <p id="mixed-line"><span class="math-mixed-number" id="mixed"><span id="mixed-whole">2</span><span class="math-fraction" data-fraction="mixed"><span>11</span><span>15</span></span></span> 입니다.</p>
         <p id="expression-line"><span class="math-inline-expression" id="expression"><span class="math-fraction"><span>11</span><span>15</span></span> + <span class="math-fraction"><span>5</span><span>120</span></span> = <span class="math-fraction"><span>9</span><span>10</span></span></span></p>
         <p id="atom-line">수량은 <span class="math-inline-expression" id="number-unit">120<span class="math-unit">cm<sup>2</sup></span></span> 입니다.</p>
+        <div class="equation expanded" id="expanded-equation">9,999 × 2,222 + 3,333 × 3,334 = □</div>
       </main>
     </body></html>`);
     await page.addStyleTag({ content: styleSource.replace(/^@import[^;]+;\s*/, "") });
@@ -159,6 +162,9 @@ async function auditFractionLayout() {
         const mixed = document.querySelector("#mixed");
         const expression = document.querySelector("#expression");
         const atom = document.querySelector("#number-unit");
+        const expanded = document.querySelector("#expanded-equation");
+        const expandedRange = document.createRange();
+        expandedRange.selectNodeContents(expanded);
         return {
           fractions: Object.fromEntries([...document.querySelectorAll("[data-fraction]")].map(element => [element.dataset.fraction, fraction(element)])),
           korean: rect(koreanRange),
@@ -171,6 +177,10 @@ async function auditFractionLayout() {
           atomRects: atom.getClientRects().length,
           expressionWhiteSpace: getComputedStyle(expression).whiteSpace,
           atomWhiteSpace: getComputedStyle(atom).whiteSpace,
+          expandedLineCount: expandedRange.getClientRects().length,
+          expandedWhiteSpace: getComputedStyle(expanded).whiteSpace,
+          expandedOverflowWrap: getComputedStyle(expanded).overflowWrap,
+          expandedFits: expanded.scrollWidth <= expanded.clientWidth + 1,
           documentOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
         };
       });
@@ -185,6 +195,7 @@ async function auditFractionLayout() {
       if (baselineOffset > 1 || inlineFraction.top < layout.koreanLine.top - 0.5 || inlineFraction.bottom > layout.koreanLine.bottom + 0.5) failures.push(`${viewport.label}: 5/120이 주변 한글의 기준선 또는 줄높이와 맞지 않습니다 (${baselineOffset.toFixed(2)}px, 실제 ${Math.abs(inlineFraction.centerY - layout.baselineY).toFixed(2)}px, 기대 ${Math.abs(layout.expectedMiddleY - layout.baselineY).toFixed(2)}px).`);
       if (Math.abs(layout.mixedWhole.centerY - layout.mixedFraction.centerY) > 0.5) failures.push(`${viewport.label}: 대분수의 자연수와 분수가 수직으로 맞지 않습니다.`);
       if (layout.expressionRects !== 1 || layout.atomRects !== 1 || layout.expressionWhiteSpace !== "nowrap" || layout.atomWhiteSpace !== "nowrap") failures.push(`${viewport.label}: 수식 또는 숫자·단위 원자가 줄바꿈될 수 있습니다.`);
+      if (layout.expandedLineCount !== 1 || layout.expandedWhiteSpace !== "nowrap" || layout.expandedOverflowWrap !== "normal" || !layout.expandedFits) failures.push(`${viewport.label}: 한 줄 계산식이 중간에서 갈라지거나 칸을 넘습니다.`);
       if (layout.documentOverflow > 0.5) failures.push(`${viewport.label}: 수식 검수 화면에 가로 넘침이 있습니다.`);
     }
   } catch (error) {

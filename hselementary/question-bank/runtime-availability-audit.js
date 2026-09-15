@@ -5,6 +5,7 @@ require("./source-inventory-4-1.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-4-2-parallel-angle.js");
 require("./source-grade6-decimal-e1-mission4.js");
 require("./source-grade6-decimal-e1-mission3.js");
 require("./source-grade6-decimal-e2-example2.js");
@@ -34,9 +35,10 @@ const ready = types.filter(type => generatorApi.generatorKey(type) && !type.revi
 const locked = types.filter(type => !generatorApi.generatorKey(type) || type.reviewLocked);
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
 
-if (types.length !== 1954) failures.push(`런타임 유형은 1954개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1453) failures.push(`생성 가능 유형은 1453개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 501) failures.push(`검수 대기 유형은 501개여야 하나 ${locked.length}개입니다.`);
+if (types.length !== 1962) failures.push(`런타임 유형은 1962개여야 하나 ${types.length}개입니다.`);
+if (ready.length !== 1064) failures.push(`생성 가능 유형은 1064개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 898) failures.push(`검수 대기 유형은 898개여야 하나 ${locked.length}개입니다.`);
+if (ready.some(type => !type.sourceItemId)) failures.push("원문 문항 ID가 없는 유형이 생성 가능 상태입니다.");
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
 if (sourceGrade6.filter(type => !type.reviewLocked).length !== 287 || sourceGrade6.filter(type => type.reviewLocked).length !== 346) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
 if (!sourceGrade6.every(type => {
@@ -66,6 +68,19 @@ for (const type of ready) {
       const visible = `${generated.prompt} ${generated.answer} ${generated.solution}`.replace(/<[^>]*>/g, " ");
       if (/undefined|null|NaN|Infinity/.test(visible)) {
         failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 잘못된 값이 노출됩니다.`);
+        break;
+      }
+      if (type.answerVisualRequired && !String(generated.answerVisual || "").trim()) {
+        failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 필수 정답 그림이 비었습니다.`);
+        break;
+      }
+      const visual = String(generated.answerVisual || "");
+      if (visual && /<svg\b/.test(visual) && !/viewBox="[^"]+"/.test(visual)) {
+        failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 정답 SVG에 viewBox가 없습니다.`);
+        break;
+      }
+      if (visual && /undefined|null|NaN|Infinity/.test(visual.replace(/<title>[\s\S]*?<\/title>/g, ""))) {
+        failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 정답 그림에 잘못된 값이 있습니다.`);
         break;
       }
     }

@@ -4369,7 +4369,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "좌우 뒤집기 띠무늬의 도형 수",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 답과 독립 검산이 일치하지 않아 검수 중입니다.",
+      "reviewReason": "주어진 조건으로 서로 다른 두 배치가 가능해 답이 하나로 정해지지 않습니다.",
       "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,

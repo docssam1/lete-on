@@ -3,6 +3,7 @@
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+require("./source-4-2-parallel-angle.js");
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
@@ -30,13 +31,28 @@ const exactConcernType = targetSubunits.flatMap(subunit => subunit.types).find(t
 const exactConcern = api.generate(exactConcernType, 0, 0, 297, exactConcernType.variant);
 if (attr(exactConcern.prompt, "data-parallel-v-angles") !== "54,58,68,112" || exactConcern.answer !== "112") failures.push("사용자 지적 사례 54°, 58°의 그림 자료 또는 정답 112°가 달라졌습니다.");
 
+const allTypes = targetSubunits.flatMap(subunit => subunit.types);
+const sourceTypes = allTypes.filter(type => type.sourceItemId);
+const genericTypes = allTypes.filter(type => !type.sourceItemId);
+const publicSourceTypes = sourceTypes.filter(type => !type.reviewLocked);
+const lockedSourceTypes = sourceTypes.filter(type => type.reviewLocked);
+const expectedLockedSourceIds = [
+  "4-2-advanced-quad-2-example-2-1",
+  "4-2-advanced-quad-2-example-2-2"
+];
+if (allTypes.length !== 45 || sourceTypes.length !== 21 || genericTypes.length !== 24) failures.push(`사각형 유형 원장 수가 다릅니다: 전체 ${allTypes.length}, 원본 ${sourceTypes.length}, 미연결 ${genericTypes.length}`);
+if (!genericTypes.every(type => !type.sourceVerified && type.reviewLocked && type.reviewReason && type.generationMode === "review-locked" && type.verifiedVariantCount === 0 && type.answerVisualStatus === "locked")) failures.push("원본 미연결 사각형 유형이 모두 검수 대기로 잠기지 않았습니다.");
+if (publicSourceTypes.length !== 19) failures.push(`원본 연결 공개 유형은 19개여야 하나 ${publicSourceTypes.length}개입니다.`);
+if (JSON.stringify(lockedSourceTypes.map(type => type.sourceItemId).sort()) !== JSON.stringify(expectedLockedSourceIds)) failures.push(`원본 연결 잠금 유형이 다릅니다: ${lockedSourceTypes.map(type => type.sourceItemId).join(", ")}`);
+if (!lockedSourceTypes.every(type => type.sourceVerified && type.reviewReason && type.generationMode === "review-locked" && type.verifiedVariantCount === 0 && type.answerVisualStatus === "locked")) failures.push("원본 연결 잠금 유형의 근거 또는 잠금 사유가 빠졌습니다.");
+
 for (const subunit of targetSubunits) {
   for (const type of subunit.types) {
     if (type.reviewLocked) {
-      if (type.sourceVerified) failures.push(`${type.id}: 검수 대기 유형이 원본 검증 완료로 표시됩니다.`);
+      if (!type.sourceItemId && type.sourceVerified) failures.push(`${type.id}: 원본 미연결 유형이 원본 검증 완료로 표시됩니다.`);
       continue;
     }
-    if (!type.sourceVerified || !type.sourceEvidence.includes(type.label)) {
+    if (!type.sourceVerified || !type.sourceItemId || !String(type.sourceEvidence || "").trim()) {
       failures.push(`${type.id}: 유형별 원본 근거가 없습니다.`);
     }
     for (const difficulty of [-1, 0, 1]) {
@@ -204,9 +220,14 @@ for (const subunit of targetSubunits) {
               }
             }
           }
+        } else if (type.generatorKey === "sourceGrade4AdvancedParallelAngle") {
+          if (generated.answerCandidateCount !== 1 || generated.answerVisualRequired !== true || generated.answerVisualStatus !== "verified") {
+            failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 평행선 각의 단일 정답 또는 답 그림 계약이 없습니다.`);
+            break;
+          }
         }
 
-        if (String(generated.answer) !== String(expected)) {
+        if (expected !== undefined && String(generated.answer) !== String(expected)) {
           failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 정답 ${generated.answer}, 독립 계산 ${expected}`);
           break;
         }
@@ -216,10 +237,10 @@ for (const subunit of targetSubunits) {
 }
 
 if (targetSubunits[0].types.length !== 10) failures.push(`수선과 평행선: ${targetSubunits[0].types.length}유형`);
-if (targetSubunits[1].types.length !== 4) failures.push(`평행선의 조건과 성질: ${targetSubunits[1].types.length}유형`);
+if (targetSubunits[1].types.length !== 12) failures.push(`평행선의 조건과 성질: ${targetSubunits[1].types.length}유형`);
 if (targetSubunits[2].types.length !== 3) failures.push(`평행선 사이의 각도 ①: ${targetSubunits[2].types.length}유형`);
 if (targetSubunits[3].types.length !== 2) failures.push(`평행선 사이의 각도 ②: ${targetSubunits[3].types.length}유형`);
-const readyCounts = [9, 4, 3, 2, 2, 1, 3, 4];
+const readyCounts = [9, 10, 0, 0, 0, 0, 0, 0];
 targetSubunits.forEach((subunit, index) => {
   const ready = subunit.types.filter(type => !type.reviewLocked).length;
   if (ready !== readyCounts[index]) failures.push(`${subunit.name}: 공개 ${ready}유형, 예상 ${readyCounts[index]}유형`);
@@ -231,4 +252,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-2 사각형 개념탐구 1~8 · 공개 28개 세부 유형 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);
+console.log(`4-2 사각형 원본 연결 21유형 중 19유형 공개 · 근거 부족 2유형과 원본 미연결 24유형 잠금 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);

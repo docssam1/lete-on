@@ -193,6 +193,7 @@
     ...(Number.isInteger(options.verifiedVariantCount) ? { verifiedVariantCount: options.verifiedVariantCount } : {}),
     ...(options.sourceItemId ? { sourceItemId: options.sourceItemId } : {})
   });
+  const numberSequenceMarkup = values => `<div class="sequence number-sequence" role="list" aria-label="수 목록">${values.map(value => `<span role="listitem">${Number(value).toLocaleString()}</span>`).join("")}</div>`;
   const source41DigitWords = ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
   const source41SmallUnits = ["", "십", "백", "천"];
   const source41LargeUnits = ["", "만", "억", "조", "경", "해"];
@@ -1201,14 +1202,15 @@
     const sideLength = source41Distance(origin, pOrigin);
     const exteriorLength = Math.min(38, 340 - cOrigin[0]);
     const halfSecond = data.second / 2;
+    const pArcRadius = Math.min(48, Math.max(24, 5 / Math.sin(data.p * Math.PI / 360)));
     const rays = [0, triangleRay, creaseAngle, reflectedRay, 180];
     const labels = [
-      source41AngleFiveLabel({ origin: pOrigin, start: 360 - data.first, sector: data.p, radius: 20, text: `${data.p}°`, role: "p-given", attributes: 'data-label-origin="p"' }),
+      source41AngleFiveLabel({ origin: pOrigin, start: 360 - data.first, sector: data.p, radius: pArcRadius + 12, text: `${data.p}°`, role: "p-given", attributes: 'data-label-origin="p"' }),
       source41AngleFiveLabel({ origin: cOrigin, start: 0, sector: data.c, radius: 23, text: `${data.c}°`, role: "c-given", attributes: 'data-label-origin="c"' }),
       source41AngleFiveLabel({ origin, start: triangleRay, sector: data.first, radius: 38, text: "㉠", className: "source41-target-label", role: "first" }),
       source41AngleFiveLabel({ origin, start: triangleRay, sector: data.second, radius: 64, text: "㉡", className: "source41-target-label", role: "second" })
     ];
-    const body = `<polygon data-source-shape="original-fold-triangle" points="${source41PointsText([origin, cOrigin, pOrigin])}"/><polygon class="source41-turned-shape" data-source-shape="reflected-fold-triangle" points="${source41PointsText([origin, reflectedC, reflectedP])}"/>${source41AngleFiveRay(origin, 0, baseLength, "original-base", "", 0)}${source41AngleFiveRay(origin, triangleRay, sideLength, "original-triangle-side", "", 1, "main", 'data-reflection-pair="one" data-reflection-role="original"')}${source41AngleFiveRay(origin, creaseAngle, 174, "fold-axis", "source41-fold-line", 2, "main", 'data-fold-axis="vertical" data-reflection-axis="90" data-reflection-pair="one" data-reflection-role="crease"')}${source41AngleFiveRay(origin, reflectedRay, sideLength, "reflected-triangle-side", "source41-reflected-line", 3, "main", 'data-reflection-pair="one" data-reflection-role="reflected"')}${source41AngleFiveRay(origin, 180, baseLength, "base-extension", "source41-extension-line", 4)}${source41AngleFiveRay(cOrigin, 0, exteriorLength, "c-angle-extension", "source41-extension-line", 5, "helper")}${source41AngleFiveSectorArc(pOrigin, 360 - data.first, data.p, 15, "p-given")}${source41AngleFiveSectorArc(cOrigin, 0, data.c, 18, "c-given")}${source41AngleFiveSectorArc(origin, triangleRay, data.first, 31, "first", true)}${source41AngleFiveSectorArc(origin, triangleRay, data.second, 56, "second", true)}${source41AngleFiveEqualMark(origin, triangleRay, halfSecond, 44, 1)}${source41AngleFiveEqualMark(origin, creaseAngle, halfSecond, 44, 2)}${source41AngleFiveFoldTick(origin, creaseAngle, 68, 1)}`;
+    const body = `<polygon data-source-shape="original-fold-triangle" points="${source41PointsText([origin, cOrigin, pOrigin])}"/><polygon class="source41-turned-shape" data-source-shape="reflected-fold-triangle" points="${source41PointsText([origin, reflectedC, reflectedP])}"/>${source41AngleFiveRay(origin, 0, baseLength, "original-base", "", 0)}${source41AngleFiveRay(origin, triangleRay, sideLength, "original-triangle-side", "", 1, "main", 'data-reflection-pair="one" data-reflection-role="original"')}${source41AngleFiveRay(origin, creaseAngle, 174, "fold-axis", "source41-fold-line", 2, "main", 'data-fold-axis="vertical" data-reflection-axis="90" data-reflection-pair="one" data-reflection-role="crease"')}${source41AngleFiveRay(origin, reflectedRay, sideLength, "reflected-triangle-side", "source41-reflected-line", 3, "main", 'data-reflection-pair="one" data-reflection-role="reflected"')}${source41AngleFiveRay(origin, 180, baseLength, "base-extension", "source41-extension-line", 4)}${source41AngleFiveRay(cOrigin, 0, exteriorLength, "c-angle-extension", "source41-extension-line", 5, "helper")}${source41AngleFiveSectorArc(pOrigin, 360 - data.first, data.p, pArcRadius, "p-given")}${source41AngleFiveSectorArc(cOrigin, 0, data.c, 18, "c-given")}${source41AngleFiveSectorArc(origin, triangleRay, data.first, 31, "first", true)}${source41AngleFiveSectorArc(origin, triangleRay, data.second, 56, "second", true)}${source41AngleFiveEqualMark(origin, triangleRay, halfSecond, 44, 1)}${source41AngleFiveEqualMark(origin, creaseAngle, halfSecond, 44, 2)}${source41AngleFiveFoldTick(origin, creaseAngle, 68, 1)}`;
     return source41AngleFiveRoot({ variant: 3, origin, rays, sectors: [data.c, data.p, data.first, data.second], targetAngle: data.answerNumber, labels, attributes: `data-p="${data.p}" data-crossing-angle="${data.c}" data-first-angle="${data.first}" data-reflected-angle="${data.second}" data-target-difference="${data.answerNumber}" data-fold-axis="90"`, body, aria: "서로 다른 꼭짓점의 각과 접은 뒤 대칭인 삼각형의 각" });
   };
   const source41AngleFiveFoldedSquareSvg = data => {
@@ -3153,7 +3155,7 @@
     const bottom = [[58, bottomY], [126, bottomY], [194, bottomY]];
     const boundary = `<line x1="${top[0][0]}" y1="${topY}" x2="${top[2][0]}" y2="${topY}"/><line x1="${bottom[0][0]}" y1="${bottomY}" x2="${bottom[2][0]}" y2="${bottomY}"/><line x1="${top[0][0]}" y1="${topY}" x2="${bottom[0][0]}" y2="${bottomY}"/><line x1="${top[2][0]}" y1="${topY}" x2="${bottom[2][0]}" y2="${bottomY}"/>`;
     const inner = `<line x1="${top[1][0]}" y1="${topY}" x2="${bottom[0][0]}" y2="${bottomY}"/><line x1="${top[1][0]}" y1="${topY}" x2="${bottom[1][0]}" y2="${bottomY}"/><line x1="${top[2][0]}" y1="${topY}" x2="${bottom[1][0]}" y2="${bottomY}"/>`;
-    const labels = unknown ? "" : `<text class="source-length-label" x="58" y="22">${base}cm</text><text class="source-length-label" x="12" y="84">${equalSide}cm</text>`;
+    const labels = unknown ? "" : `<text class="source-length-label" x="58" y="22">${base}cm</text><text class="source-length-label source-length-label-left" x="6" y="84">${equalSide}cm</text>`;
     return `<svg class="geometry-diagram isosceles-strip-source" viewBox="0 0 240 164" data-count="${count}" data-equal-side="${equalSide}" data-base="${base}" aria-label="이등변삼각형 ${count}개를 겹치지 않게 이어 붙인 띠 모양"><g>${boundary}${inner}</g>${labels}<text class="source-ellipsis" x="226" y="84">…</text></svg>`;
   };
   const isoscelesChainSvg = count => `<svg class="geometry-diagram isosceles-chain" viewBox="0 0 260 150" data-count="${count}" aria-label="이등변삼각형을 이어 붙인 도형"><g>${Array.from({ length: Math.min(5, count) }, (_, index) => { const x = 18 + index * 44; return `<polygon points="${x},126 ${x + 44},126 ${x + 22},42"/>`; }).join("")}</g><text x="238" y="88">…</text></svg>`;
@@ -12867,7 +12869,7 @@
         const target = int(rng, 12 + tier * 8, 32 + tier * 20);
         const symbol = target * 2 + 1;
         const evidence = fraction42Evidence("fraction-5-example-4", [target], symbol);
-        return result(`★는 모두 같은 자연수입니다.<div class="equation">${symbolicFractionMarkup(1, "★")} + ${symbolicFractionMarkup(2, "★")} + ${symbolicFractionMarkup(3, "★")} + … + ${symbolicFractionMarkup("★-2", "★")} + ${symbolicFractionMarkup("★-1", "★")} = ${target}</div>★에 알맞은 수를 구하세요.${evidence}`, symbol, `분자의 합은 1부터 ★-1까지의 합이므로 전체 합은 ${symbolicFractionMarkup("★-1", 2)}입니다. ${symbolicFractionMarkup("★-1", 2)}=${target}이므로 ★=${symbol}입니다.`);
+        return result(`★는 모두 같은 자연수입니다.<div class="equation expanded">${symbolicFractionMarkup(1, "★")} + ${symbolicFractionMarkup(2, "★")} + ${symbolicFractionMarkup(3, "★")} + … + ${symbolicFractionMarkup("★-2", "★")} + ${symbolicFractionMarkup("★-1", "★")} = ${target}</div>★에 알맞은 수를 구하세요.${evidence}`, symbol, `분자의 합은 1부터 ★-1까지의 합이므로 전체 합은 ${symbolicFractionMarkup("★-1", 2)}입니다. ${symbolicFractionMarkup("★-1", 2)}=${target}이므로 ★=${symbol}입니다.`);
       }
       if (kind === 5) {
         const denominator = pick(rng, [[6, 7], [7, 8, 9], [9, 10, 11]][tier]);
@@ -12944,7 +12946,7 @@
         const target = int(rng, 30 + tier * 20, 70 + tier * 35);
         const symbol = target + 1;
         const evidence = fraction42Evidence("fraction-5-mission-5", [target], symbol);
-        return result(`■는 모두 같은 자연수입니다.<div class="equation">${symbolicFractionMarkup(2, "■")} + ${symbolicFractionMarkup(4, "■")} + ${symbolicFractionMarkup(6, "■")} + … + ${symbolicFractionMarkup("2×(■-2)", "■")} + ${symbolicFractionMarkup("2×(■-1)", "■")} = ${target}</div>■에 알맞은 수를 구하세요.${evidence}`, symbol, `분자의 합은 2×(1+2+…+■-1)=■×(■-1)입니다. 이를 ■로 나누면 ■-1=${target}이므로 ■=${symbol}입니다.`);
+        return result(`■는 모두 같은 자연수입니다.<div class="equation expanded">${symbolicFractionMarkup(2, "■")} + ${symbolicFractionMarkup(4, "■")} + ${symbolicFractionMarkup(6, "■")} + … + ${symbolicFractionMarkup("2×(■-2)", "■")} + ${symbolicFractionMarkup("2×(■-1)", "■")} = ${target}</div>■에 알맞은 수를 구하세요.${evidence}`, symbol, `분자의 합은 2×(1+2+…+■-1)=■×(■-1)입니다. 이를 ■로 나누면 ■-1=${target}이므로 ■=${symbol}입니다.`);
       }
       const firstGroup = int(rng, 5 + tier, 7 + tier * 2);
       const secondGroup = int(rng, firstGroup + 1, firstGroup + 4 + tier);
@@ -13090,7 +13092,7 @@
         const differenceNumerator = symbol - addGap;
         const lowerBound = Math.max(rightAdd, differenceNumerator);
         const evidence = fraction42Evidence("fraction-6-mission-5", [leftMultiplier, leftAdd, rightMultiplier, rightAdd, differenceWhole, differenceNumerator, lowerBound], symbol);
-        return result(`★는 ${lowerBound}보다 큰 자연수이고, 모든 ★는 같은 수를 나타냅니다.<div class="equation">${symbolicFractionMarkup(`${leftMultiplier}×★+${leftAdd}`, "★")} 는 ${symbolicFractionMarkup(`${rightMultiplier}×★+${rightAdd}`, "★")} 보다 ${differenceWhole} ${symbolicFractionMarkup(differenceNumerator, "★")}만큼 더 큽니다.</div>★에 알맞은 자연수를 구하세요.${evidence}`, symbol, `두 분수의 차는 ${leftMultiplier - rightMultiplier}-${symbolicFractionMarkup(rightAdd - leftAdd, "★")}입니다. 이를 ${differenceWhole}+${symbolicFractionMarkup(differenceNumerator, "★")}와 같게 놓으면 ★=${symbol}입니다. ${lowerBound}보다 큰 자연수를 식에 차례로 넣어도 맞는 값은 ${symbol} 하나뿐입니다.`);
+        return result(`★는 ${lowerBound}보다 큰 자연수이고, 모든 ★는 같은 수를 나타냅니다.<div class="equation expanded">${symbolicFractionMarkup(`${leftMultiplier}×★+${leftAdd}`, "★")} 는 ${symbolicFractionMarkup(`${rightMultiplier}×★+${rightAdd}`, "★")} 보다 ${differenceWhole} ${symbolicFractionMarkup(differenceNumerator, "★")}만큼 더 큽니다.</div>★에 알맞은 자연수를 구하세요.${evidence}`, symbol, `두 분수의 차는 ${leftMultiplier - rightMultiplier}-${symbolicFractionMarkup(rightAdd - leftAdd, "★")}입니다. 이를 ${differenceWhole}+${symbolicFractionMarkup(differenceNumerator, "★")}와 같게 놓으면 ★=${symbol}입니다. ${lowerBound}보다 큰 자연수를 식에 차례로 넣어도 맞는 값은 ${symbol} 하나뿐입니다.`);
       }
       const denominator = pick(rng, [[7, 8], [7, 9, 10], [9, 10, 12]][tier]);
       const triangle = denominator * int(rng, 1, 3 + tier) + int(rng, 1, denominator - 1);
@@ -13961,7 +13963,9 @@
         const totalLength = segments.at(-1).end;
         const token = `mixed-e2-${length}-${width}-${overlap}-${count}`;
         const overlapWidth = Math.max(14, Math.min(38, 150 * overlap / length));
-        const pairSecondX = 320 + 150 - overlapWidth;
+        const pairFirstX = 280;
+        const pairFirstEnd = pairFirstX + 150;
+        const pairSecondX = pairFirstEnd - overlapWidth;
         const sampleWidth = 108;
         const sampleOverlap = Math.max(10, Math.min(30, sampleWidth * overlap / length));
         const sampleStep = sampleWidth - sampleOverlap;
@@ -13974,12 +13978,12 @@
           <rect x="40" y="39" width="150" height="36" fill="#e3f1f8" stroke="#183d56" stroke-width="2.4"/>
           <line x1="40" y1="96" x2="190" y2="96" stroke="#183d56" marker-start="url(#${token}-arrow)" marker-end="url(#${token}-arrow)"/>
           <text x="115" y="120" text-anchor="middle" font-size="18" font-weight="700" fill="#183d56">길이 ${length}cm · 폭 ${width}cm</text>
-          <text class="svg-measure-text" x="320" y="24" font-size="19" font-weight="700" fill="#183d56">두 장을 겹친 모습</text>
-          <rect x="320" y="39" width="150" height="36" fill="#e3f1f8" stroke="#183d56" stroke-width="2.2"/>
+          <text class="svg-measure-text" x="400" y="24" font-size="19" font-weight="700" fill="#183d56">두 장을 겹친 모습</text>
+          <rect x="${pairFirstX}" y="39" width="150" height="36" fill="#e3f1f8" stroke="#183d56" stroke-width="2.2"/>
           <rect x="${pairSecondX.toFixed(2)}" y="39" width="150" height="36" fill="#fbf3dc" fill-opacity="0.84" stroke="#183d56" stroke-width="2.2"/>
           <rect x="${pairSecondX.toFixed(2)}" y="39" width="${overlapWidth.toFixed(2)}" height="36" fill="url(#${token}-hatch)" stroke="#a85f00" stroke-width="1.5"/>
-          <line x1="${pairSecondX.toFixed(2)}" y1="96" x2="470" y2="96" stroke="#a85f00" marker-start="url(#${token}-arrow)" marker-end="url(#${token}-arrow)"/>
-          <text x="${((pairSecondX + 470) / 2).toFixed(2)}" y="120" text-anchor="middle" font-size="18" font-weight="700" fill="#8a4e00">겹친 길이 ${overlap}cm</text>
+          <line x1="${pairSecondX.toFixed(2)}" y1="96" x2="${pairFirstEnd}" y2="96" stroke="#a85f00" marker-start="url(#${token}-arrow)" marker-end="url(#${token}-arrow)"/>
+          <text x="${((pairSecondX + pairFirstEnd) / 2).toFixed(2)}" y="120" text-anchor="middle" font-size="18" font-weight="700" fill="#8a4e00">겹친 길이 ${overlap}cm</text>
           <text class="svg-measure-text" x="40" y="151" font-size="19" font-weight="700" fill="#183d56">같은 테이프 ${count}장</text>
           ${sampleRects}${sampleOverlaps}
           <text x="382" y="190" text-anchor="middle" font-size="28" font-weight="700" fill="#183d56">…</text>
@@ -14101,7 +14105,7 @@
       const totalLength = length * count - overlap * (count - 1);
       const answer = 2 * (totalLength + width);
       const diagram = tapeStripSvg({ length, width, overlap, count });
-      return result(`길이 ${length}cm, 폭 ${width}cm인 같은 테이프 ${count}장을 한 줄로 붙입니다. 이웃한 두 테이프는 ${overlap}cm씩 겹칩니다. 붙인 테이프의 둘레는 몇 cm입니까?${diagram}<div class="equation" data-mixed-kind="e2-tape-perimeter" data-values="${length},${width},${overlap},${count},${count - 1},${totalLength}">보이는 길이 = ${length} × ${count} - ${overlap} × (${count} - 1)</div>`, `${answer}cm`, `테이프 ${count}장은 겹치는 곳이 ${count} - 1 = ${count - 1}곳입니다. 보이는 길이는 ${length} × ${count} - ${overlap} × ${count - 1} = ${totalLength}cm입니다. 따라서 둘레는 (${totalLength} + ${width}) × 2 = ${answer}cm입니다.`);
+      return result(`길이 ${length}cm, 폭 ${width}cm인 같은 테이프 ${count}장을 한 줄로 붙입니다. 이웃한 두 테이프는 ${overlap}cm씩 겹칩니다. 붙인 테이프의 둘레는 몇 cm입니까?${diagram}<div class="equation" data-mixed-kind="e2-tape-perimeter" data-values="${length},${width},${overlap},${count},${count - 1},${totalLength}">보이는 길이 = ${length} × ${count} - ${overlap} × (${count} - 1)</div>`, `${answer}cm`, `테이프 ${count}장은 겹치는 곳이 ${count} - 1 = ${count - 1}곳입니다. 보이는 길이는 ${length} × ${count} - ${overlap} × ${count - 1} = ${totalLength}cm입니다. 따라서 둘레는 (${totalLength} + ${width}) × 2 = ${answer}cm입니다.`, { answerVisual: diagram });
     },
     mixedOrderAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
@@ -14339,7 +14343,7 @@
         const perimeter = 2 * (smallLong + smallShort);
         const side = smallShort * 4;
         const svg = rectangleSquareSvg({ smallLong, smallShort, perimeter, side });
-        return result(`다음 정사각형의 점선을 따라 잘라 같은 직사각형 8개를 만들었습니다. 작은 직사각형 한 개의 네 변의 합이 ${perimeter}cm일 때, 큰 정사각형의 한 변은 몇 cm입니까?${svg}<div class="equation" data-mixed-kind="e3-rectangle-square" data-values="${smallLong},${smallShort},${perimeter},${side},4,2">큰 정사각형 = 작은 직사각형 2열 × 4행</div>`, `${side}cm`, `작은 직사각형의 긴 변과 짧은 변의 합은 ${perimeter} ÷ 2 = ${smallLong + smallShort}cm입니다. 그림에서 긴 변은 짧은 변의 2배이므로 짧은 변은 ${smallShort}cm입니다. 큰 정사각형의 한 변은 짧은 변 4개와 같으므로 ${smallShort} × 4 = ${side}cm입니다.`);
+        return result(`다음 정사각형의 점선을 따라 잘라 같은 직사각형 8개를 만들었습니다. 작은 직사각형 한 개의 네 변의 합이 ${perimeter}cm일 때, 큰 정사각형의 한 변은 몇 cm입니까?${svg}<div class="equation" data-mixed-kind="e3-rectangle-square" data-values="${smallLong},${smallShort},${perimeter},${side},4,2">큰 정사각형 = 작은 직사각형 2열 × 4행</div>`, `${side}cm`, `작은 직사각형의 긴 변과 짧은 변의 합은 ${perimeter} ÷ 2 = ${smallLong + smallShort}cm입니다. 그림에서 긴 변은 짧은 변의 2배이므로 짧은 변은 ${smallShort}cm입니다. 큰 정사각형의 한 변은 짧은 변 4개와 같으므로 ${smallShort} × 4 = ${side}cm입니다.`, { answerVisual: svg });
       }
       if (variant === 7) {
         const girls = int(rng, 28 * scale, 74 * scale);
@@ -14590,7 +14594,7 @@
         }
         const answer = valid.length;
         const evidence = `<span hidden data-round-kind="conditions" data-candidates="${candidates.join(",")}" data-round-expected="${answer}"></span>`;
-        return result(`다음 수 중 두 조건을 모두 만족하는 수는 몇 개인지 구하세요.<div class="sequence">${candidates.map(value => value.toLocaleString()).join(", ")}</div><ul><li>올림하여 백의 자리까지 나타낸 수와 반올림하여 백의 자리까지 나타낸 수가 다릅니다.</li><li>버림하여 십의 자리까지 나타낸 수와 반올림하여 십의 자리까지 나타낸 수가 다릅니다.</li></ul>${evidence}`, answer, `각 수의 백의 자리 아래와 십의 자리 아래를 차례로 확인합니다. 두 결과가 모두 다른 수는 ${valid.map(value => value.toLocaleString()).join(", ")}이므로 ${answer}개입니다.`);
+        return result(`다음 수 중 두 조건을 모두 만족하는 수는 몇 개인지 구하세요.${numberSequenceMarkup(candidates)}<ul><li>올림하여 백의 자리까지 나타낸 수와 반올림하여 백의 자리까지 나타낸 수가 다릅니다.</li><li>버림하여 십의 자리까지 나타낸 수와 반올림하여 십의 자리까지 나타낸 수가 다릅니다.</li></ul>${evidence}`, answer, `각 수의 백의 자리 아래와 십의 자리 아래를 차례로 확인합니다. 두 결과가 모두 다른 수는 ${valid.map(value => value.toLocaleString()).join(", ")}이므로 ${answer}개입니다.`);
       }
       let digits = [];
       let numbers = [];
@@ -17923,7 +17927,7 @@
         const rightInterior = 180 - leftAngle - vertexAngle;
         const answer = 180 - rightInterior;
         const diagram = parallelVExteriorSvg({ leftAngle, vertexAngle, rightInterior, answer });
-        return result(`직선 가와 나는 서로 평행합니다. 그림에서 ㉠의 크기를 구하세요.${diagram}`, answer, `왼쪽 빗선이 직선 나와 이루는 삼각형 안쪽 각은 ${leftAngle}°입니다. 삼각형의 오른쪽 안쪽 각은 180-${leftAngle}-${vertexAngle}=${rightInterior}°입니다. ㉠과 이 각의 합은 180°이므로 ㉠=180-${rightInterior}=${answer}°입니다.`);
+        return result(`직선 가와 나는 서로 평행합니다. 그림에서 ㉠의 크기를 구하세요.${diagram}`, answer, `왼쪽 위의 ${leftAngle}°와 마주 보는 삼각형 안쪽 각은 맞꼭지각이므로 ${leftAngle}°입니다. 삼각형의 오른쪽 안쪽 각은 180-${leftAngle}-${vertexAngle}=${rightInterior}°입니다. ㉠과 이 각의 합은 180°이므로 ㉠=180-${rightInterior}=${answer}°입니다.`);
       }
       if (variant === 0 || variant === 1) {
         const count = 3 + level;
@@ -19640,14 +19644,16 @@
         : level === 2
           ? " 답을 구한 뒤 이웃한 두 분수의 크기를 다시 비교하세요."
           : "";
-      const intervalNumberLine = fractions => {
+      const intervalNumberLine = (fractions, solved = false) => {
         const left = 30;
         const right = 270;
         const y = 58;
         const step = (right - left) / (fractions.length - 1);
         const ticks = fractions.map((item, index) => {
           const x = left + step * index;
-          const label = index === 0 || index === fractions.length - 1 ? svgMeasurementLabel({ x, y: 91, value: fraction(item.numerator, item.denominator), unit: "" }) : `<text x="${x.toFixed(1)}" y="91">□</text>`;
+          const label = solved || index === 0 || index === fractions.length - 1
+            ? svgMeasurementLabel({ x, y: 91, value: fraction(item.numerator, item.denominator), unit: "" })
+            : `<text x="${x.toFixed(1)}" y="91">□</text>`;
           return `<line x1="${x.toFixed(1)}" y1="48" x2="${x.toFixed(1)}" y2="68"/>${label}`;
         }).join("");
         return `<svg class="geometry-diagram fraction-interval-number-line" viewBox="0 0 300 112" data-fraction-intervals="${fractions.map(item => `${item.numerator}/${item.denominator}`).join(",")}" role="img" aria-label="두 분수 사이를 다섯 구간으로 똑같이 나눈 수직선"><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}<text x="150" y="22">각 눈금의 간격은 같습니다.</text></svg>`;
@@ -19674,7 +19680,7 @@
         const step = rationalOperation(rationalOperation(rightValue, leftValue, "-"), rationalValue(1, 5), "×");
         const fractions = Array.from({ length: 6 }, (_, index) => rationalOperation(leftValue, rationalValue(step.numerator * index, step.denominator), "+"));
         const inserted = fractions.slice(1, 5);
-        return result(`수직선에서 ${fractionMarkup(leftNumerator, leftDenominator)}과 ${fractionMarkup(rightNumerator, rightDenominator)} 사이를 5등분하는 네 분수를 작은 수부터 기약분수로 나타내세요.${intervalNumberLine(fractions)}${difficultyInstruction}${tag("five-part-fraction-interval", [leftNumerator, leftDenominator, rightNumerator, rightDenominator], "ordered")}`, inserted.map(item => fraction(item.numerator, item.denominator)).join(", "), `두 분수의 차를 5로 나눈 만큼씩 더합니다. 네 눈금은 ${inserted.map(item => fractionMarkup(item.numerator, item.denominator)).join(", ")}입니다.`);
+        return result(`수직선에서 ${fractionMarkup(leftNumerator, leftDenominator)}과 ${fractionMarkup(rightNumerator, rightDenominator)} 사이를 5등분하는 네 분수를 작은 수부터 기약분수로 나타내세요.${intervalNumberLine(fractions)}${difficultyInstruction}${tag("five-part-fraction-interval", [leftNumerator, leftDenominator, rightNumerator, rightDenominator], "ordered")}`, inserted.map(item => fraction(item.numerator, item.denominator)).join(", "), `두 분수의 차를 5로 나눈 만큼씩 더합니다. 네 눈금은 ${inserted.map(item => fractionMarkup(item.numerator, item.denominator)).join(", ")}입니다.`, { answerVisual: intervalNumberLine(fractions, true) });
       }
       if (variant === 2) {
         const [targetNumerator, targetDenominator, candidates] = choose([
@@ -20124,8 +20130,14 @@
           const denominator = index + 2;
           return Array.from({ length: denominator - 1 }, (__, numerator) => fractionMarkup(numerator + 1, denominator)).join(" + ");
         });
-        const shown = variant === 15 ? `1 + ${groups.join(" + 1 + ")} + 1` : groups.join(" + ");
-        return result(`분모별로 묶어 규칙을 찾아 다음 합을 구하세요.<div class="equation">${shown} = □</div>${tag(variant === 4 ? "grouped-fraction-series" : "grouped-series-with-ones", [lastDenominator, extraOnes])}`, display(total), `분모가 n인 묶음은 ${symbolicFractionMarkup("1+2+…+(n-1)", "n")}=${symbolicFractionMarkup("n-1", "2")}입니다. 모든 묶음${extraOnes ? `과 자연수 1을 ${extraOnes}개` : ""} 더하면 ${markup(total)}입니다.`);
+        const shown = groups.map((group, index) => {
+          const prefix = variant === 15
+            ? index === 0 ? "1 + " : "+ 1 + "
+            : index === 0 ? "" : "+ ";
+          const suffix = variant === 15 && index === groups.length - 1 ? " + 1" : "";
+          return `<span class="fraction-series-group">${prefix}${group}${suffix}</span>`;
+        }).join("");
+        return result(`분모별로 묶어 규칙을 찾아 다음 합을 구하세요.<div class="equation fraction-series-equation">${shown}<span class="fraction-series-result">= □</span></div>${tag(variant === 4 ? "grouped-fraction-series" : "grouped-series-with-ones", [lastDenominator, extraOnes])}`, display(total), `분모가 n인 묶음은 ${symbolicFractionMarkup("1+2+…+(n-1)", "n")}=${symbolicFractionMarkup("n-1", "2")}입니다. 모든 묶음${extraOnes ? `과 자연수 1을 ${extraOnes}개` : ""} 더하면 ${markup(total)}입니다.`);
       }
       if (variant === 5) {
         const cards = choose([
@@ -20547,17 +20559,21 @@
         const lines = uniqueEdges.map(([from, to]) => `<line x1="${points[from][0]}" y1="${points[from][1]}" x2="${points[to][0]}" y2="${points[to][1]}" stroke="#1f506b" stroke-width="2.5" ${hidden.has(edgeKey([from, to])) ? "stroke-dasharray=\"4 4\"" : ""}/>`).join("");
         const labelNames = { A: "", B: "", C: "가", D: "", E: "", F: "다", G: "나", H: "" };
         const labelStyles = { A: [76, 0], B: [202, 0], C: [8, 52], D: [180, 72], E: [8, 178], F: [178, 178], G: [76, 126], H: [202, 126] };
-        const labelMarkup = Object.entries(vertices).map(([name, current]) => {
-          const [left, top] = labelStyles[name];
-          const label = labelNames[name] || markup(current);
-          return `<span class="e3-cube-label" data-vertex="${name}" style="position:absolute;left:${left}px;top:${top}px">${label}</span>`;
-        }).join("");
-        const cube = `<div class="e3-cube-diagram" data-source-e3-cube="coordinate-model" data-vertices="${Object.entries(vertices).map(([name, current]) => `${name}:${current.numerator},${current.denominator}`).join("|")}" data-edges="${uniqueEdges.map(edgeKey).join(",")}" data-hidden-edges="${[...hidden].join(",")}" style="position:relative;width:min(270px,100%);height:225px;margin:12px auto;font-size:14px"><svg viewBox="0 0 264 214" style="position:absolute;inset:0;width:100%;height:100%" role="img" aria-label="정육면체의 여덟 꼭짓점과 점선으로 표시한 모서리">${lines}</svg>${labelMarkup}</div>`;
+        const cubeMarkup = solved => {
+          const labelMarkup = Object.entries(vertices).map(([name, current]) => {
+            const [left, top] = labelStyles[name];
+            const label = solved ? markup(current) : labelNames[name] || markup(current);
+            const answerClass = solved && labelNames[name] ? " is-answer" : "";
+            return `<span class="e3-cube-label${answerClass}" data-vertex="${name}" style="position:absolute;left:${left}px;top:${top}px">${label}</span>`;
+          }).join("");
+          return `<div class="e3-cube-diagram${solved ? " is-solved" : ""}" data-source-e3-cube="coordinate-model" data-vertices="${Object.entries(vertices).map(([name, current]) => `${name}:${current.numerator},${current.denominator}`).join("|")}" data-edges="${uniqueEdges.map(edgeKey).join(",")}" data-hidden-edges="${[...hidden].join(",")}" style="position:relative;width:min(270px,100%);height:225px;margin:12px auto;font-size:14px"><svg viewBox="0 0 264 214" style="position:absolute;inset:0;width:100%;height:100%" role="img" aria-label="${solved ? "빈 꼭짓점의 답을 채운 " : ""}정육면체의 여덟 꼭짓점과 점선으로 표시한 모서리">${lines}</svg>${labelMarkup}</div>`;
+        };
+        const cube = cubeMarkup(false);
         const faces = [["A", "B", "D", "C"], ["E", "F", "H", "G"], ["A", "C", "E", "G"], ["B", "D", "F", "H"], ["C", "D", "F", "E"], ["A", "B", "H", "G"]];
         const sums = faces.map(face => face.reduce((total, name) => add(total, vertices[name]), value(0)));
         if (new Set(sums.map(display)).size !== 1) throw new Error("정육면체 여섯 면의 합이 같지 않습니다.");
         const answer = answers.map(display).join(", ");
-        return result(`아래 정육면체에서 각 면의 네 꼭짓점에 적힌 수의 합이 모두 같도록 할 때, (가), (나), (다)에 알맞은 수를 각각 구하세요.${cube}${tag("cube-equal-face-sums", Object.values(vertices).flatMap(current => [current.numerator, current.denominator]), "single-tuple")}`, answer, `여섯 면의 네 수를 각각 더해 공통 합을 비교합니다. (가)=${markup(answers[0])}, (나)=${markup(answers[1])}, (다)=${markup(answers[2])}입니다.`);
+        return result(`아래 정육면체에서 각 면의 네 꼭짓점에 적힌 수의 합이 모두 같도록 할 때, (가), (나), (다)에 알맞은 수를 각각 구하세요.${cube}${tag("cube-equal-face-sums", Object.values(vertices).flatMap(current => [current.numerator, current.denominator]), "single-tuple")}`, answer, `여섯 면의 네 수를 각각 더해 공통 합을 비교합니다. (가)=${markup(answers[0])}, (나)=${markup(answers[1])}, (다)=${markup(answers[2])}입니다.`, { answerVisual: cubeMarkup(true) });
       }
 
       if (variant === 1) {
@@ -22071,7 +22087,14 @@
         });
         const answer = counts.reduce((sum, count) => sum + count, 0);
         if (answer !== pools.answer) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 숫자쌍 검산값이 다릅니다.`);
-        const answerHtml = `${svg("0부터 9까지 숫자 카드 전수 확인", `<line class="source61-e1-grid-line" x1="34" y1="26" x2="34" y2="164"/><line class="source61-e1-grid-line" x1="34" y1="164" x2="326" y2="164"/>${safeRows(counts.map((count, index) => `▲=${index}: ■에 넣을 수 있는 수 ${count}개`), 43, 13)}<text class="source61-e1-result" x="180" y="181">모두 더한 수: ${answer}쌍</text>`, true, [answer])}${mathBoard("전수 확인 결과", row("확인한 조건", `${pools.left} &gt; ${pools.right}`) + row("모든 경우", `10×10=${100}쌍`) + row("조건에 맞는 경우", `${answer}쌍`))}`;
+        const digitRows = counts.map((count, index) => {
+          const column = index < 5 ? 0 : 1;
+          const rowIndex = index % 5;
+          const x = column === 0 ? 24 : 188;
+          const y = 43 + rowIndex * 24;
+          return `<g class="source61-e1-digit-pair-row"><rect x="${x}" y="${y - 15}" width="148" height="20" rx="2"/><text x="${x + 9}" y="${y}" text-anchor="start">▲ = ${index}</text><text x="${x + 139}" y="${y}" text-anchor="end">${count}개</text></g>`;
+        }).join("");
+        const answerHtml = `${svg("0부터 9까지 숫자 카드 전수 확인", `<text class="source61-e1-table-heading" x="180" y="18">▲에 넣은 수에 따른 ■의 개수</text>${digitRows}<text class="source61-e1-result" x="180" y="174">모두 더하면 ${answer}쌍</text>`, true, [answer])}${mathBoard("전수 확인 결과", row("확인한 조건", `${pools.left} &gt; ${pools.right}`) + row("모든 경우", `10×10=${100}쌍`) + row("조건에 맞는 경우", `${answer}쌍`))}`;
         return fixedResult(`다음에서 숫자 ■와 ▲에 알맞은 수의 쌍은 모두 몇 개인가요?${mathBoard("두 수의 크기 비교", row("조건", `${pools.left} &gt; ${pools.right}`))}${support("▲를 하나 정한 뒤 ■에 0부터 9까지 차례로 넣어 보세요.")}${challenge}${evidence([leftBase, rightBase, answer])}`, String(answer), `■와 ▲에 0부터 9까지 차례로 넣어 확인하면 조건에 맞는 쌍이 모두 ${answer}개입니다.`, answerWrap(answerHtml, [answer]));
       }
 
@@ -22959,8 +22982,8 @@
         const angleLabel = [start[0] + (baseDirection[0] + routeDirection[0]) / bisectorLength * 25, start[1] + (baseDirection[1] + routeDirection[1]) / bisectorLength * 25];
         const sweep = baseDirection[0] * routeDirection[1] - baseDirection[1] * routeDirection[0] > 0 ? 1 : 0;
         const solidAngle = `<path class="source61-e2-spiral-angle-arc" data-angle-vertex="ㄱ" d="M ${pointText(angleStart)} A ${angleRadius} ${angleRadius} 0 0 ${sweep} ${pointText(angleEnd)}"/><text class="source61-e2-spiral-angle" x="${angleLabel[0].toFixed(2)}" y="${angleLabel[1].toFixed(2)}">45°</text>`;
-        const solid = `<g aria-label="오각기둥 옆면을 따라 45도로 올라가는 경로">${sideFaces}${edges}${route}${solidAngle}${label(routePoints[0], "ㄱ", -13, 14)}${label(routePoints[routePoints.length - 1], "ㄴ", 13, -8)}<text class="source61-e2-spiral-measure" x="80" y="218">밑면의 한 변 ${side}cm</text></g>`;
-        let unfolded = `<g class="source61-e2-spiral-unsolved" aria-label="옆면을 펼쳐 생각할 자리"><text x="275" y="112">옆면을 따라</text><text x="275" y="132">계속 올라갑니다.</text></g>`;
+        const solid = `<g aria-label="오각기둥 옆면을 따라 45도로 올라가는 경로">${sideFaces}${edges}${route}${solidAngle}${label(routePoints[0], "ㄱ", -15, 4)}${label(routePoints[routePoints.length - 1], "ㄴ", 13, -8)}<text class="source61-e2-spiral-measure" x="90" y="232">밑면의 한 변 ${side}cm</text></g>`;
+        let unfolded = `<g class="source61-e2-spiral-unsolved" aria-label="옆면을 펼쳐 생각할 자리"><text x="235" y="112">옆면을 따라</text><text x="235" y="132">계속 올라갑니다.</text></g>`;
         if (solved) {
           const stripX = 188, stripY = 52, stripWidth = 180, stripHeight = 180, faceWidth = stripWidth / crossedFaces;
           const faces = Array.from({ length: crossedFaces }, (_, index) => `<rect class="source61-e2-spiral-net-face${index === facesPerTurn ? " is-extra" : ""}" data-unwrapped-face="${index + 1}" x="${stripX + index * faceWidth}" y="${stripY}" width="${faceWidth}" height="${stripHeight}"/>`).join("");
@@ -22969,8 +22992,9 @@
           const netAngle = `<path class="source61-e2-spiral-angle-arc" data-angle-vertex="ㄱ" d="M ${stripX + netAngleRadius},${netBottom} A ${netAngleRadius} ${netAngleRadius} 0 0 0 ${stripX + netArcEnd},${netBottom - netArcEnd}"/><text class="source61-e2-spiral-angle" x="${stripX + 34}" y="${netBottom - 8}">45°</text>`;
           unfolded = `<g aria-label="한 바퀴와 옆면 한 장을 이어 펼친 띠">${faces}<polygon class="source61-e2-spiral-triangle is-solved" points="${stripX},${netBottom} ${stripX + stripWidth},${netBottom} ${stripX + stripWidth},${stripY}"/><line class="source61-e2-spiral-net-route is-solved" x1="${stripX}" y1="${netBottom}" x2="${stripX + stripWidth}" y2="${stripY}"/>${netAngle}${label([stripX, netBottom], "ㄱ", -11, 14)}${label([stripX + stripWidth, stripY], "ㄴ", 12, -8)}<line class="source61-e2-spiral-dimension" x1="${stripX}" y1="${netBottom + 25}" x2="${stripX + stripWidth}" y2="${netBottom + 25}"/><text class="source61-e2-spiral-measure" x="${stripX + stripWidth / 2}" y="${netBottom + 42}">${crossedFaces}×${side}=${height}cm</text><text class="source61-e2-spiral-turn-label" x="${stripX + faceWidth * 2.5}" y="34">한 바퀴: 옆면 ${facesPerTurn}장</text><text class="source61-e2-spiral-turn-label" x="${stripX + faceWidth * 5.5}" y="34">한 장 더</text></g>`;
         }
-        const viewHeight = solved ? 295 : 235;
-        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-spiral-prism${solved ? " is-solved" : ""}" viewBox="0 0 410 ${viewHeight}" role="img" aria-label="오각기둥 옆면을 45도로 한 바퀴와 한 면 더 올라가는 경로" data-source61-e2-structure="pentagonal-prism-45-spiral-${side}" data-base-sides="5" data-n="5" data-base-edge="${side}" data-faces-per-turn="${facesPerTurn}" data-extra-face-count="${extraFaces}" data-crossed-face-count="${crossedFaces}" data-route-segment-count="${crossedFaces}" data-prism-height="${height}" data-unfolded-width="${height}" data-unfolded-height="${height}" data-unfolded-angle="45"${solved ? ` data-result-highlight="${height}"` : ""}>${solid}<path class="source61-e2-shortest-arrow" d="M142 130h25m-7-7 7 7-7 7"/>${unfolded}</svg>`;
+        const viewWidth = solved ? 410 : 330;
+        const viewHeight = solved ? 295 : 245;
+        return `<svg class="geometry-diagram source61-e2-diagram source61-e2-spiral-prism${solved ? " is-solved" : ""}" viewBox="0 0 ${viewWidth} ${viewHeight}" role="img" aria-label="오각기둥 옆면을 45도로 한 바퀴와 한 면 더 올라가는 경로" data-source61-e2-structure="pentagonal-prism-45-spiral-${side}" data-base-sides="5" data-n="5" data-base-edge="${side}" data-faces-per-turn="${facesPerTurn}" data-extra-face-count="${extraFaces}" data-crossed-face-count="${crossedFaces}" data-route-segment-count="${crossedFaces}" data-prism-height="${height}" data-unfolded-width="${height}" data-unfolded-height="${height}" data-unfolded-angle="45"${solved ? ` data-result-highlight="${height}"` : ""}>${solid}<path class="source61-e2-shortest-arrow" d="M142 130h25m-7-7 7 7-7 7"/>${unfolded}</svg>`;
       };
 
       const combinedTriangularPrismsSvg = ({ slant, altitude, prismLength, baseArea, solved = false }) => {
@@ -27340,12 +27364,14 @@
           { totals: [2400, 2000, 1600], rows: [[25, 35, 40], [30, 35, 35], [32, 43, 25]] },
           { totals: [3600, 2800, 2400], rows: [[18, 42, 40], [25, 40, 35], [35, 40, 25]] }
         ][poolIndex];
-        const labels = ["1시간 미만", "1시간 이상 2시간 미만", "2시간 이상"], years = ["2015년", "2016년", "2017년"];
-        const rows = years.map((label, index) => ({ label, meta: `전체 ${num(pools.totals[index])}명`, segments: labels.map((segment, segmentIndex) => ({ label: segment, percent: pools.rows[index][segmentIndex] })) }));
-        const answer = pools.totals.reduce((sum, total, index) => sum + total * (pools.rows[index][0] + pools.rows[index][1]) / 100, 0);
-        const resultText = `${answer}명`;
-        const visual = solved => stripSvg({ title: "TV를 시청하는 시간별 학생 수", rows, values: [...pools.totals, ...pools.rows.flat()], solved, highlights: solved ? [[0, 1], [0, 1], [0, 1]] : [[], [], []], resultText: solved ? resultText : "" });
-        return fixed(`2015년부터 2017년까지 초등학교 6학년 학생들의 하루 TV 시청 시간을 조사했습니다. 조사한 전체 학생 수가 각각 ${pools.totals.join(", ")}명일 때, 2시간 미만인 학생은 모두 몇 명인지 구하세요.`, resultText, `2시간 미만은 첫째 구간과 둘째 구간입니다. ${pools.totals.map((total, index) => `${total}×(${pools.rows[index][0]}%+${pools.rows[index][1]}%)`).join("+")}=${answer}명입니다.`, visual(false), visual(true), [...pools.totals, ...pools.rows.flat()]);
+          const labels = ["1시간 미만", "1시간 이상 2시간 미만", "2시간 이상"], years = ["2015년", "2016년", "2017년"];
+          const rows = years.map((label, index) => ({ label, meta: `전체 ${num(pools.totals[index])}명`, segments: labels.map((segment, segmentIndex) => ({ label: segment, percent: pools.rows[index][segmentIndex] })) }));
+          const answer = pools.totals.reduce((sum, total, index) => sum + total * (pools.rows[index][0] + pools.rows[index][1]) / 100, 0);
+          const resultText = `${answer}명`;
+          const visual = solved => stripSvg({ title: "TV를 시청하는 시간별 학생 수", rows, values: [...pools.totals, ...pools.rows.flat()], solved, highlights: solved ? [[0, 1], [0, 1], [0, 1]] : [[], [], []], resultText: solved ? resultText : "" });
+          const calculationTerms = pools.totals.map((total, index) => `${total}×(${pools.rows[index][0]}% + ${pools.rows[index][1]}%)`);
+          const calculation = `<span class="solution-calculation">${calculationTerms.map((term, index) => `${index ? "<i>+</i>" : ""}<span>${term}</span>`).join("")}<i>=</i><strong>${answer}명</strong></span>`;
+          return fixed(`2015년부터 2017년까지 초등학교 6학년 학생들의 하루 TV 시청 시간을 조사했습니다. 조사한 전체 학생 수가 각각 ${pools.totals.join(", ")}명일 때, 2시간 미만인 학생은 모두 몇 명인지 구하세요.`, resultText, `2시간 미만은 첫째 구간과 둘째 구간입니다.${calculation}`, visual(false), visual(true), [...pools.totals, ...pools.rows.flat()]);
       }
 
       if (variant === 3) {
