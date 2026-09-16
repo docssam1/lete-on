@@ -2366,14 +2366,41 @@ html[data-nm-band="young"] .nm-tile{min-width:64px;height:64px;font-size:31px}
 .nm-btn.nm-lab-link:active{transform:translateY(2px);box-shadow:inset 0 2px 0 #fff,inset 0 -1px 0 #E6D3AE}
 
 /* ── 숫자판 키: 크림색 3D 키캡, ✓는 남색 ── */
-.nm-key{border:1px solid #D9D2C2;border-bottom:1px solid #D9D2C2;border-radius:14px;font-size:24px;font-weight:700;
-  background:linear-gradient(180deg,#FFFFFF,#F4F0E7);
-  box-shadow:inset 0 2px 0 #fff,inset 0 -4px 0 #D6CFBF,0 4px 8px -5px rgba(0,0,0,.28);transition:transform .1s,box-shadow .1s}
-.nm-key:active{transform:translateY(2px);border-bottom-color:#D9D2C2;box-shadow:inset 0 2px 0 #fff,inset 0 -1px 0 #D6CFBF}
+/* 원장(2026-09-16): "수를 넣는 번호 버튼이 사용자 중심으로 편했으면 — 입체적으로".
+   키캡을 진짜 물리 버튼처럼: 두께 6px(바깥 하드 섀도)가 누르면 2px로 줄며 내려앉는다.
+   키 자체도 60px로 키우고 숫자는 게임 서체 27px. */
+.nm-numpad{gap:10px;max-width:320px}
+.nm-key{height:60px;border:1px solid #D9D2C2;border-bottom:1px solid #D9D2C2;border-radius:16px;font-size:27px;font-weight:700;
+  color:var(--blue-deep);background:linear-gradient(180deg,#FFFFFF 0,#FBF8F1 55%,#F1ECE1);
+  box-shadow:inset 0 2px 0 #fff,0 6px 0 #C9C0AE,0 12px 14px -8px rgba(60,40,10,.35);
+  transition:transform .08s,box-shadow .08s}
+.nm-key:active{transform:translateY(4px);border-bottom-color:#D9D2C2;box-shadow:inset 0 2px 0 #fff,0 2px 0 #C9C0AE,0 4px 6px -4px rgba(60,40,10,.3)}
 .nm-key.ok{border-color:#0B2447;border-bottom-color:#0B2447;color:#fff;
-  background:linear-gradient(180deg,#3B6FBE,var(--blue-deep) 55%,#0B2447);
-  box-shadow:inset 0 2px 0 rgba(255,255,255,.28),inset 0 -4px 0 #061a36,0 4px 8px -5px rgba(0,0,0,.4)}
-.nm-key.ok:active{border-bottom-color:#0B2447;box-shadow:inset 0 2px 0 rgba(255,255,255,.2),inset 0 -1px 0 #061a36}
+  background:linear-gradient(180deg,#3B6FBE,var(--blue-deep) 55%,#12376A);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.28),0 6px 0 #061A36,0 12px 14px -8px rgba(14,44,87,.5)}
+.nm-key.ok:active{border-bottom-color:#0B2447;box-shadow:inset 0 2px 0 rgba(255,255,255,.2),0 2px 0 #061A36}
+html[data-nm-band="young"] .nm-key{height:64px;font-size:30px}
+
+/* "3+7+9 식이 눈에 확 들어와야" — 문제식은 KaTeX 서체를 유지하되(분수·근호 등 모든 수식이 안전)
+   굵게·크게·남색으로. KaTeX_Main-Bold는 katex.min.css에 이미 들어 있다. */
+.nm-board .nm-lab-expr .katex,.nm-board .nm-fill .katex,.nm-arena-expr .katex,.nm-lab-orig .katex{
+  font-size:clamp(30px,8.5vw,42px)!important;color:var(--blue-deep);text-shadow:0 2px 0 rgba(255,255,255,.9)}
+.nm-board .katex .mord,.nm-board .katex .mbin,.nm-board .katex .mrel,.nm-board .katex .mopen,.nm-board .katex .mclose,
+.nm-arena-expr .katex .mord,.nm-arena-expr .katex .mbin,.nm-arena-expr .katex .mrel{font-weight:700}
+@media(min-width:768px){
+  .nm-board .nm-lab-expr .katex,.nm-board .nm-fill .katex,.nm-arena-expr .katex{font-size:46px!important}
+}
+
+/* "대화하는 폰트도 제대로" — 동행 말풍선·안내 띠를 게임 서체(Jua/Fredoka)로, 조금 더 크게.
+   (중국어는 Jua에 없어 Pretendard로 자연 폴백) 위쪽 모바일 압축 규칙(.nm-unit-view .nm-bubble)보다
+   뒤에 있어 그대로 이긴다. */
+.nm-bubble,.nm-unit-view .nm-bubble{font-family:var(--font-game);font-weight:400;font-size:18px;line-height:1.5;letter-spacing:.01em;color:#1F2A44}
+.nm-host-bubble{font-family:var(--font-game);font-weight:400;font-size:15.5px;line-height:1.45}
+html[data-nm-band="young"] .nm-bubble,html[data-nm-band="young"] .nm-unit-view .nm-bubble{font-size:20px}
+@media(min-width:768px){
+  .nm-bubble,.nm-unit-view .nm-bubble{font-size:20px;padding:14px 22px}
+  .nm-host-bubble{font-size:17px}
+}
 .nm-numpad-screen{font-size:31px;font-weight:700;color:var(--blue-deep)}
 .nm-ans-box{font-size:24px;font-weight:700;border-radius:10px;background:linear-gradient(180deg,#fff,#F7F2E8);
   box-shadow:inset 0 -3px 0 #D6CFBF}
@@ -2414,6 +2441,49 @@ html[data-nm-band="young"] .nm-tile{min-width:64px;height:64px;font-size:31px}
 .nm-stamp-label::before{left:-18px;border-right-color:#0E2C57;border-left-color:transparent}
 .nm-stamp-label::after{right:-18px;border-left-color:#0E2C57;border-right-color:transparent}
 .nm-stamp-coins{font-size:17px;font-weight:600}
+
+/* ── 디자인 패스 2b (2026-09-16): 게임 모드는 가로 기준 ──
+   원장: "가로형이 더 게임하기 좋지 않아? 학습지·로드맵만 세로". 마을 지도는 원래 가로 그림이고
+   큐브 게임도 가로에선 한 줄에 들어간다. 학습 화면을 가로(태블릿·PC)에서 두 칸으로 편다 —
+   왼쪽: 동행 캐릭터 + 말풍선 / 오른쪽: 쟁반 + 숫자판(또는 타일·위젯). 세로(폰)는 그대로 한 줄 쌓기.
+   가로 1024×768 스크린샷에서 기본 연산의 숫자판이 4~✓ 줄이 화면 밖으로 밀려 있었던 것이 계기.
+   DOM 무변경 — grid-auto-flow:dense로 오른쪽 칸 부품이 위로 당겨져 캐릭터 옆에 붙는다. */
+@media (orientation:landscape) and (min-width:700px){
+  .nm-unit-view .nm-unit-inner{max-width:1100px;padding:4px 24px 8px}
+  .nm-unit-view .nm-dialog{display:grid;grid-template-columns:minmax(240px,36%) minmax(0,1fr);
+    grid-auto-flow:dense;column-gap:26px;row-gap:6px;align-items:start;align-content:start}
+  .nm-unit-view .nm-dialog>.nm-prog{grid-column:1/-1}
+  .nm-unit-view .nm-dialog>.nm-numi{grid-column:1;align-self:end;margin-top:8px}
+  .nm-unit-view .nm-dialog>.nm-bubble{grid-column:1;align-self:start;max-width:none;margin-top:14px}
+  .nm-unit-view .nm-dialog>:not(.nm-prog):not(.nm-numi):not(.nm-bubble){grid-column:2}
+  .nm-unit-view .nm-dialog .nm-board{margin:0 0 6px}
+  .nm-unit-view .nm-dialog .nm-expr.nm-board{margin:0 0 6px;padding:28px 22px}
+  .nm-unit-view .nm-dialog .nm-numpad{max-width:340px}
+  .nm-unit-view .nm-dialog .nm-numpad-screen{margin-top:0}
+  .nm-unit-view .nm-dialog .nm-btn.full{margin-top:8px}
+  /* 아레나(타임 배틀)도 같은 두 칸: 왼쪽 안내 캐릭터 띠, 오른쪽 식·답칸·숫자판 */
+  .nm-unit-view .nm-arena{display:grid;grid-template-columns:minmax(240px,36%) minmax(0,1fr);
+    grid-auto-flow:dense;column-gap:26px;row-gap:6px;align-items:start;align-content:start}
+  .nm-unit-view .nm-arena>.nm-arena-top{grid-column:1/-1}
+  .nm-unit-view .nm-arena>.nm-host{grid-column:1;margin:0}
+  .nm-unit-view .nm-arena>:not(.nm-arena-top):not(.nm-host){grid-column:2}
+  .nm-unit-view .nm-arena-expr{flex:none;min-height:110px;margin:0}
+  .nm-unit-view .nm-arena .nm-numpad{max-width:340px}
+  /* 세로 높이가 빠듯한 태블릿(768px)에서 안내 문구까지 들어오게 — 흐름 바·키 높이만 살짝 */
+  .nm-unit-view .nm-flow{padding:2px 0 4px}
+  .nm-unit-view .nm-key{height:54px}
+  html[data-nm-band="young"] .nm-unit-view .nm-key{height:58px}
+  .nm-unit-view .nm-numpad{gap:8px}
+  .nm-unit-view .nm-dialog .nm-board:not(.nm-expr){padding:10px 18px}
+  .nm-unit-view .nm-hint{margin-top:2px}
+  /* 가로판 무대 배경(학습무대-작화지시서 §2b, stage-*-wide.jpg)이 설치되면 그것을 쓰고,
+     없으면(지금) 세로 그림을 위쪽 기준으로 잘라 쓴다 — 이미지 층은 실패하면 투명이라 다음 층이 보인다 */
+  .nm-unit-view{background-position:center top}
+  .nm-unit-view[data-stage="numberland"]{background-image:url(../assets/stages/stage-numberland-wide.jpg),url(../assets/stages/stage-numberland.jpg),linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+  .nm-unit-view[data-stage="prime"]{background-image:url(../assets/stages/stage-prime-wide.jpg),url(../assets/stages/stage-prime.jpg),linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+  .nm-unit-view[data-stage="advance"]{background-image:url(../assets/stages/stage-advance-wide.jpg),url(../assets/stages/stage-advance.jpg),linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+  .nm-unit-view[data-stage="challenge"]{background-image:url(../assets/stages/stage-challenge-wide.jpg),url(../assets/stages/stage-challenge.jpg),linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 40%,var(--sky-bottom) 100%)}
+}
 
 /* ── ② 그림 부품 모드 — assets/ui/ 세트가 설치돼 있을 때만(index.html 감지) ── */
 html[data-nm-ui="art"] .nm-tile{border-radius:0;background:url(../assets/ui/cube-blue.png) center/100% 100% no-repeat;
