@@ -592,6 +592,30 @@
 .nm-w2-retry-txt { display:flex; flex-direction:column; gap:0.8mm; min-width:0; }
 .nm-w2-retry-txt b { font-size:calc(10pt * var(--ws-fs)); font-weight:800; color:#1A2233; }
 .nm-w2-retry-txt small { font-size:calc(8.5pt * var(--ws-fs)); color:#6a6357; line-height:1.5; word-break:keep-all; }
+
+/* ── 정답 및 해설(풀이형) — 번호·답 표 + 해설 카드 ── */
+.nm-ak-table { width:100%; border-collapse:collapse; margin:0 0 3mm; table-layout:fixed;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.nm-ak-table th, .nm-ak-table td { border:1px solid #cfc8b6; padding:1.4mm 1mm; text-align:center;
+  font-size:calc(9.5pt * var(--ws-fs)); }
+.nm-ak-table th { width:13mm; background:#F3EFE4; font-weight:800; color:#5C4514; }
+.nm-ak-table .nm-ak-th td { background:#F8F5EC; font-weight:800; }
+.nm-ak-key { margin:0 0 3mm; padding:2mm 3mm; border-left:3px solid #C9A063; background:#F8F5EC;
+  font-size:calc(9.5pt * var(--ws-fs)); font-weight:700; color:#3a3730; word-break:keep-all;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.nm-ak-sols { display:flex; flex-direction:column; gap:2.5mm; }
+.nm-ak-sol { border:1px solid #ddd7c8; border-radius:3px; padding:2mm 3mm;
+  break-inside:avoid; page-break-inside:avoid; }
+.nm-ak-sol.bare { padding:1.2mm 3mm; }
+.nm-ak-sol.bare .nm-ak-sol-head { margin-bottom:0; }
+.nm-ak-sol-head { display:flex; align-items:baseline; gap:3mm; margin-bottom:1mm; }
+.nm-ak-sol-head b { font-size:calc(10pt * var(--ws-fs)); font-weight:800; color:#1A2233; }
+.nm-ak-sol-ans { margin-left:auto; font-size:calc(10pt * var(--ws-fs)); font-weight:800; color:#0E2C57; }
+.nm-ak-sol-note { font-size:calc(9pt * var(--ws-fs)); color:#4a4536; margin-bottom:0.8mm; word-break:keep-all; }
+.nm-ak-sol-steps { display:flex; flex-direction:column; gap:0.8mm; }
+.nm-ak-sol-step { display:flex; align-items:center; gap:2mm; }
+.nm-ak-sol-step > span:first-child { flex:0 0 auto; font-size:calc(9pt * var(--ws-fs)); color:#8a8172; font-weight:800; }
+.nm-ak-sol-step .nm-w2-tex { font-size:calc(11pt * var(--ws-fs)); }
 /* ── 자릿값 색 힌트 범례(2026-09-16) — 앱과 같은 마크업(.nm-pv-legend).
    ⚠️ print-color-adjust:exact 가 없으면 브라우저가 인쇄에서 배경색을 버린다.
    글자색(\color·span color)은 살아남지만 범례의 색 네모가 통째로 사라져
@@ -2746,6 +2770,65 @@ function w2AnswerKeyItemsHtml(problems, numStart){
     return `<div class="nm-ak-item">(${base+i+1}) ${w2AnswerValueHtml(p)}</div>`;
   }).join('');
 }
+/* ── 정답 및 해설 (풀이형, 2026-09-16) ──
+   원장이 준 참고 학습지 둘째 장의 구성: ①번호·답 표 ②문항마다 해설 카드.
+   ★ 해설을 **지어내지 않는다.** 카드에 들어가는 것은 전부 이미 있는 데이터다:
+     · 답        — 그 문항의 answer
+     · 풀이 단계 — 생성기가 낸 p.steps(빈칸을 채운 식). 없으면 단계 줄을 안 그린다.
+     · 식        — 문장제의 answerNote(생성기가 채점용으로 만든 식)
+     · 핵심      — 그 회차의 공부 전략 한 줄(문항마다 다른 핵심은 데이터가 없다)
+   참고 학습지의 "확인:" 줄은 우리 데이터에 없으므로 만들지 않는다. */
+function w2AnswerTableHtml(problems, perRow){
+  const n = perRow || 10;
+  let out = '';
+  for(let i = 0; i < problems.length; i += n){
+    const slice = problems.slice(i, i + n);
+    out += `<table class="nm-ak-table"><tbody>`
+      + `<tr class="nm-ak-th"><th>${esc(lk('번호','No.','题号'))}</th>`
+      + slice.map((_, j) => `<td>${i + j + 1}</td>`).join('') + `</tr>`
+      + `<tr><th>${esc(lk('답','Answer','答'))}</th>`
+      + slice.map(p => `<td>${w2AnswerValueHtml(p)}</td>`).join('') + `</tr>`
+      + `</tbody></table>`;
+  }
+  return out;
+}
+/* 한 문항의 풀이 단계 — steps의 \square를 그 단계의 답으로 채워 순서대로. */
+function w2SolutionStepsHtml(p){
+  const st = Array.isArray(p.steps) ? p.steps.filter(x => x && x.tex) : [];
+  if(!st.length) return '';
+  const marks = ['①','②','③','④','⑤','⑥'];
+  return `<div class="nm-ak-sol-steps">` + st.map((x, i) => {
+    const filled = String(x.tex).replace(/\\square/g, () => String(fmtAns(x.blank)));
+    return `<div class="nm-ak-sol-step"><span>${marks[i] || (i + 1) + '.'}</span>`
+      + `<span class="nm-w2-tex" data-tex="${esc(texDisplay(filled))}"></span></div>`;
+  }).join('') + `</div>`;
+}
+function w2SolutionCardsHtml(round){
+  /* ⚠️ 여러 스레드를 섞은 회차(단계 점검)는 "핵심" 한 줄을 쓸 수 없다 — 첫 스레드의
+     전략을 적으면 나머지 문항에는 틀린 말이 된다(실제로 점검 회차에 곱셈 전략이
+     붙어 나왔다). 섞인 회차는 표와 카드만 낸다. */
+  const mixed = !!(round.threadMix && round.threadMix.length);
+  const key = mixed ? '' : w2StrategyLine(round.thread, round.level != null ? round.level : (round.cfg && round.cfg.level));
+  const head = key ? `<div class="nm-ak-key">${esc(lk('핵심','Key idea','要点'))}: ${esc(key)}</div>` : '';
+  /* 단계가 하나도 없는 회차는 카드 자체를 안 만든다(표가 이미 답을 다 보여 준다).
+     하지만 한 문항이라도 단계가 있으면 **전부** 카드를 만든다 — 빈 문항을 건너뛰면
+     1·2·4처럼 번호가 비어 채점하는 사람이 빠진 줄로 읽는다. */
+  const anySteps = round.problems.some(p => Array.isArray(p.steps) && p.steps.some(x => x && x.tex));
+  const anyNote = round.problems.some(p => p.answerNote || p.wordEqn);
+  if(!anySteps && !anyNote) return head;
+  const cards = round.problems.map((p, i) => {
+    const steps = w2SolutionStepsHtml(p);
+    const note = p.answerNote ? `<div class="nm-ak-sol-note">${esc(pickL(p.answerNote))}</div>` : '';
+    const eqn = p.wordEqn ? `<div class="nm-ak-sol-note">${esc(pickL(p.wordEqn))}</div>` : '';
+    const body = eqn + note + steps;
+    return `<div class="nm-ak-sol${body ? '' : ' bare'}">
+      <div class="nm-ak-sol-head"><b>${i + 1}.</b><span class="nm-ak-sol-ans">${esc(lk('답','Answer','答'))}: ${w2AnswerValueHtml(p)}</span></div>
+      ${body}
+    </div>`;
+  }).join('');
+  return head + `<div class="nm-ak-sols">${cards}</div>`;
+}
+
 /* 회차 정답 블록(2026-09-06) — 따라풀기 (가)(나)(다)는 제 줄(.nm-ak-guide), 번호 답은 학습지 쪽마다
    격자 하나(.nm-ak-page, pageSizes = renderRoundPages 가 나눈 쪽별 문항 수)로 학습지 쪽 순서를 그대로
    따른다. 전에는 (가)(나)(다)와 (1)(2)…가 한 격자에 흘러 (1)(6)(11)이 열을 못 맞췄다.
@@ -2763,6 +2846,14 @@ function w2AnswerKeySectionHtml(round){
   /* 채점하는 자리에서 팁을 한 번 더(2026-09-08). 틀린 문항을 짚는 순간이 "조심"이 가장
      잘 박히는 때다 — 여기서는 '왜'를 빼고 기억 고리와 조심만(brief). */
   const tip = mathTipHtml(round.thread || (round.cfg && round.cfg.thread), 'brief');
+  /* 풀이형이면 참고 학습지 둘째 장의 구성으로 — 번호·답 표 + 해설 카드.
+     빽빽하게 모드는 예전 그대로(쪽마다 번호 답 격자). */
+  if(getSolveMode()){
+    return `${tip}${guide ? `<div class="nm-ak-guide">${guide}</div>` : ''}`
+      + w2AnswerTableHtml(round.problems, 10)
+      + w2SolutionCardsHtml(round)
+      + `<div class="nm-ak-page" hidden><div class="nm-ak-grid">${w2AnswerKeyItemsHtml(round.problems, 0)}</div></div>`;
+  }
   return `${tip}${guide ? `<div class="nm-ak-guide">${guide}</div>` : ''}${pages}`;
 }
 /* 정답지 머리띠(2026-09-06) — 회차 머리띠(.nm-w2-head)와 같은 짜임(학원 칩 · 네이비 띠 · 코드)으로
@@ -3247,7 +3338,11 @@ function renderRoundPages(item, opts){
   const thName = pickL(item.topicName) || pickL(((window.NM_THREADS||{})[item.thread]||{}).name) || item.thread;
   /* pageSizes: 쪽별 문항 수 — 정답지가 학습지 쪽 순서대로 격자를 나누는 데 쓴다(w2AnswerKeySectionHtml). */
   /* thread: 정답지가 그 회차의 수학 팁을 찾는 데 쓴다(w2AnswerKeySectionHtml, 2026-09-08). */
-  return { html, problems, code, thName, thread: item.thread, guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length) };
+  /* level — 정답지의 해설이 그 회차의 공부 전략 한 줄을 다시 찾을 때 쓴다(2026-09-16).
+     전에는 round에 레벨이 없어 해설의 "핵심" 줄이 늘 레벨 미상으로 나갔다. */
+  return { html, problems, code, thName, thread: item.thread, level: item.level,
+    threadMix: item.threadMix || null,
+    guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length) };
 }
 
 /* ── 로드맵 세션 학습지: 20문항/페이지 혼합 인쇄 (원장 지시 2026-09-04) ──
