@@ -80,6 +80,114 @@ function computeBand(){
   }catch(e){}
   return 'young';
 }
+/* ============================================================
+   학령(school age) — 원장 지시 2026-09-16
+   "나이도 입력해야 돼 … 초1 8월 정도라면 중등 연산 열려도 되지만 그 전에는
+    무리일 수 있어. 열리더라도 안내 정도는 해야 돼. 고등은 초3 3월"
+   ------------------------------------------------------------
+   왜 학년을 그대로 저장하지 않는가: 3월이 지나면 틀린 값이 된다. 바뀌지 않는
+   기준은 "초1 3월에 들어간 해" 하나뿐이라 그것만 저장하고(S.schoolAge.entryYear)
+   학년·학령개월은 오늘 날짜에서 매번 계산한다. 학기는 3월 시작으로 센다.
+   학령개월 0 = 초1 3월. 그래서 초1 8월 = 5, 초3 3월 = 24.
+   ============================================================ */
+/* 오늘이 속한 학년도(3월 시작). 1·2월은 아직 앞 학년도다. */
+function academicYearNow(d){ d=d||new Date(); const y=d.getFullYear(); return (d.getMonth()+1)>=3?y:y-1; }
+/* 3월=0 … 2월=11 */
+function academicMonthIdx(d){ d=d||new Date(); const m=d.getMonth()+1; return (m-3+12)%12; }
+/* 학년(초1=1 … 초6=6, 중1=7 … 중3=9, 고1=10 … 고3=12). 1 미만이면 미취학. */
+function schoolGradeNum(d){
+  const sa=S.schoolAge;
+  if(!sa||!sa.entryYear) return null;
+  return academicYearNow(d)-sa.entryYear+1;
+}
+/* 학령개월 — 초1 3월을 0으로 센다. 미취학이면 음수. */
+function schoolMonths(d){
+  const g=schoolGradeNum(d);
+  if(g==null) return null;
+  return (g-1)*12 + academicMonthIdx(d);
+}
+/* 사람이 읽는 학년 이름. 미취학은 학년 대신 "미취학"으로만 적는다 — 몇 살인지는
+   묻지 않았으므로 지어내지 않는다. */
+function schoolGradeLabel(d){
+  const g=schoolGradeNum(d);
+  if(g==null) return null;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  if(g<1) return lk('미취학','Preschool','学龄前');
+  if(g<=6) return lk('초'+g,'Grade '+g,'小'+g);
+  if(g<=9) return lk('중'+(g-6),'Grade '+g,'初'+(g-6));
+  if(g<=12) return lk('고'+(g-9),'Grade '+g,'高'+(g-9));
+  return lk('졸업','Graduated','已毕业');
+}
+/* "초1 8월"처럼 학년과 달을 같이 — 안내 문구가 기준을 말할 때 쓴다. */
+function schoolNowLabel(d){
+  d=d||new Date();
+  const g=schoolGradeLabel(d);
+  if(!g) return null;
+  const m=d.getMonth()+1;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  return ko?`${g} ${m}월`:en?`${g}, month ${m}`:`${g} ${m}月`;
+}
+/* 학령개월 → "초1 8월" 꼴. 기준선을 사람 말로 적는 데 쓴다. */
+function schoolMonthsLabel(mo){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const g=Math.floor(mo/12)+1;
+  const month=((mo%12)+2)%12+1;   // 학년도 0번째 달 = 3월
+  const gl=g<=6?(ko?'초'+g:en?'Grade '+g:'小'+g)
+          :g<=9?(ko?'중'+(g-6):en?'Grade '+g:'初'+(g-6))
+          :(ko?'고'+(g-9):en?'Grade '+g:'高'+(g-9));
+  return ko?`${gl} ${month}월`:en?`${gl}, month ${month}`:`${gl} ${month}月`;
+}
+/* 학년을 고르면 입학 연도로 환산해 저장 — 고른 학년은 "지금" 기준이다. */
+function setSchoolGrade(gradeNum){
+  S.schoolAge={ entryYear: academicYearNow()-(gradeNum-1), setAt: Date.now() };
+}
+/* 고르기 목록. 값은 학년 번호(미취학 0·-1·-2 = 1·2·3년 뒤 입학). */
+function schoolGradeOptions(){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const out=[{g:-2,label:lk('5세','Age 5','5岁')},{g:-1,label:lk('6세','Age 6','6岁')},{g:0,label:lk('7세','Age 7','7岁')}];
+  for(let i=1;i<=6;i++) out.push({g:i,label:lk('초'+i,'G'+i,'小'+i)});
+  for(let i=1;i<=3;i++) out.push({g:6+i,label:lk('중'+i,'G'+(6+i),'初'+i)});
+  for(let i=1;i<=3;i++) out.push({g:9+i,label:lk('고'+i,'G'+(9+i),'高'+i)});
+  return out;
+}
+
+/* ── 티어별 권장 학령 (원장이 준 두 기준선만 쓴다 — 나머지는 지어내지 않는다) ──
+   중등 연산 = 초1 8월(5) · 고등 = 초3 3월(24).
+   이건 잠금이 아니다. 로드맵은 어떤 과정도 잠그지 않는다는 원칙 그대로이고,
+   여기서 하는 일은 "열리더라도 안내 정도는 해야 돼"에 해당하는 안내뿐이다. */
+const TIER_READY_MONTHS={ middle1:5, middle2:5, middle3:5,
+  highmath1:24, highmath2:24, algebra:24, calculus1:24 };
+/* 이 티어에 대해 지금 학령이 기준선을 넘었는가.
+   null = 기준선이 없는 티어이거나 학령을 아직 모름(=안내할 근거가 없음). */
+function tierReadiness(tierKey){
+  const need=TIER_READY_MONTHS[tierKey];
+  if(need==null) return null;
+  const have=schoolMonths();
+  if(have==null) return {need, have:null, ready:false, unknown:true};
+  return {need, have, ready:have>=need, unknown:false};
+}
+/* 안내 문구 한 덩어리 — 과정 시트와 티어 표지가 같은 말을 쓰게 한 곳에서 만든다.
+   계산만 된다고 되는 게 아니라는 것(문장제·개념 이해)이 이 안내의 요지다. */
+function readinessNote(tierKey){
+  const r=tierReadiness(tierKey);
+  if(!r||r.ready) return null;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const line=schoolMonthsLabel(r.need);
+  if(r.unknown){
+    return { kind:'unknown',
+      text:lk(`이 구간은 보통 ${line}부터 권해요. 학년을 알려 주면 지금 시작해도 될지 같이 봐 드릴게요.`,
+              `This stretch is usually recommended from ${line}. Tell us the grade and we can say whether now is a good time.`,
+              `这一段通常建议从${line}开始。告诉我们年级，就能一起看现在是否合适。`) };
+  }
+  return { kind:'early',
+    text:lk(`이 구간은 보통 ${line}부터 권해요. 지금은 ${schoolNowLabel()}이라 계산은 따라가더라도 문장제와 개념을 읽어 내기가 아직 벅찰 수 있어요. 시작해도 막지 않아요 — 다만 어려우면 실력이 모자라서가 아니라 아직 때가 이른 것뿐이에요.`,
+            `This stretch is usually recommended from ${line}. Right now it is ${schoolNowLabel()}, so the arithmetic may keep up while the word problems and concepts are still a stretch. You can start anyway — if it feels hard, that is timing, not ability.`,
+            `这一段通常建议从${line}开始。现在是${schoolNowLabel()}，计算也许跟得上，但应用题和概念的理解可能还吃力。可以开始，不会阻止——如果觉得难，那是时候未到，不是能力不足。`) };
+}
+
 /* 말투 오버레이 — ko 전용. 시스템 문자열만 바꾸고 유닛 콘텐츠는 손대지 않는다.
    young=반말·같이하자, mid=해요체(기존 I18N.ko가 이미 이 톤), senior=간결체. */
 const VOICE_BANDS={
@@ -119,7 +227,18 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   symbolDex:{}, /* 기호 도감 수집(§13) — {sym:{unitId,earnedAt}} */
   seenUnlocks:{}, /* 과정 진도로 새로 연 캐릭터 토스트 재알림 방지(캐릭터-승급-설계.md §3) — {'number_42':true,'symbol_pi':true} */
   seenR0Banner:false, /* N-15 완료 시 R0 추천 배너 — 프로필당 1회만(2차 디자인 패스) */
-  pendingR0Banner:false /* stepStamp에서 세우고 다음 마을 진입 때 소비하는 1회성 표시 플래그 */ };}
+  pendingR0Banner:false, /* stepStamp에서 세우고 다음 마을 진입 때 소비하는 1회성 표시 플래그 */
+  /* ── 학령(2026-09-16 원장 "나이도 입력해야 돼") ──
+     {entryYear:2025, setAt:...} = 초등 1학년 3월에 들어간(또는 들어갈) 해.
+     학년을 그대로 저장하면 3월이 지날 때마다 틀린 값이 되므로, 바뀌지 않는
+     기준 하나(입학 연도)만 저장하고 학년·개월은 오늘 날짜에서 매번 계산한다.
+     null = 아직 안 알려 줌(그래도 앱은 전부 그대로 동작한다 — 안내만 못 할 뿐). */
+  schoolAge:null,
+  /* ── 연산 점검 기록(2026-09-16 원장 "중간에 연산 점검 모드도 3단계 정도마다") ──
+     {'C3':{at, calcOk, calcTotal, wpOk, wpTotal}} — 계산과 문장제를 따로 센다.
+     원장 지시의 핵심이 "계산이 되는 것과 문장제를 이해하는 것은 다르다"이므로
+     한 점수로 합치지 않는다. 어떤 것도 잠그지 않고 안내에만 쓴다. */
+  checkups:{} };}
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
 const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
 let S=load();
@@ -786,6 +905,7 @@ function render(){
   if(S.view==='town')screenTown();
   else if(S.view==='roadmap')screenRoadmap();
   else if(S.view==='courseroad')screenCourseRoad();
+  else if(S.view==='checkup')screenCheckup();
   else if(S.view==='placement')screenPlacement();
   else if(S.view==='startpick')screenStartPick();
   else if(S.view==='minigame')screenMiniGame(S.miniGameId||'make10');
@@ -813,7 +933,7 @@ function screenWelcome(){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const ob = { number:S.character.number||3, color:S.character.color||'blue',
     bg:S.character.bg||'plain', cape:S.character.cape||'none',
-    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&S.avatar.kind)||null };
+    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&S.avatar.kind)||null, grade:null };
   const NUMS=[0,1,2,3,4,5,6,7,8,9];
 
   /* 1단계 — 나(사람 아바타) 고르기. 고를 때까지 "다음"이 비활성. */
@@ -843,7 +963,32 @@ function screenWelcome(){
     scr.querySelectorAll('[data-av]').forEach(b=>{
       b.onclick=()=>{ ob.avatar=b.dataset.av; stepAvatar(); };
     });
-    $('#obAvNext').onclick=()=>{ if(ob.avatar) draw(); };
+    $('#obAvNext').onclick=()=>{ if(ob.avatar) stepGrade(); };
+  }
+
+  /* 2단계 — 학년(2026-09-16 원장 "나이도 입력해야 돼").
+     건너뛸 수 있게 둔다. 학년은 잠금에 쓰지 않고 안내에만 쓰므로, 모른다고
+     해서 앱이 막히면 안 된다(모르면 안내를 안 할 뿐이다). */
+  function stepGrade(){
+    const opts=schoolGradeOptions();
+    scr.innerHTML=`
+    <div class="nm-ob">
+      <div class="nm-ob-card">
+        <h1 class="nm-ob-title">${lk('몇 학년이야?','What grade are you in?','你上几年级？')}</h1>
+        <p class="nm-ob-sub">${lk('학년에 맞춰 말투와 안내를 골라 줄게요. 학습은 어디서든 시작할 수 있어요.',
+          'We use this to pick the right tone and guidance. You can still start anywhere.',
+          '我们用这个来选择合适的语气和提示。学习仍然可以从任何地方开始。')}</p>
+        <div class="nm-ob-grades">${opts.map(o=>
+          `<button class="nm-ob-grade${ob.grade===o.g?' sel':''}" data-g="${o.g}">${esc(o.label)}</button>`).join('')}</div>
+        <button class="nm-btn nm-ob-go" id="obGrNext"${ob.grade==null?' disabled':''}>${lk('다음 ›','Next ›','下一步 ›')}</button>
+        <button class="nm-btn ghost nm-ob-go" id="obGrSkip">${lk('나중에 할래요','Later','以后再说')}</button>
+      </div>
+    </div>`;
+    scr.querySelectorAll('[data-g]').forEach(b=>{
+      b.onclick=()=>{ ob.grade=+b.dataset.g; stepGrade(); };
+    });
+    $('#obGrNext').onclick=()=>{ if(ob.grade!=null) draw(); };
+    $('#obGrSkip').onclick=()=>{ ob.grade=null; draw(); };
   }
 
   function draw(){
@@ -959,6 +1104,7 @@ function screenWelcome(){
     S.character = {number:ob.number,color:ob.color,bg:ob.bg,cape:ob.cape,hat:ob.hat};
     S.avatar = {kind:ob.avatar};
     S.name = ob.name;
+    if(ob.grade!=null) setSchoolGrade(ob.grade);
     S.onboarded = true;
     if(ob.claimed)S.cloudLinked = true;   // 이름 클레임 성공 → 이후 진행상황 자동 동기화
     save();
@@ -2262,6 +2408,8 @@ function openCourseSheet(key){
     :!built?`📦 ${lk('준비 중','Coming soon','准备中')}`:'';
   const startTxt=isNow?`▶ ${lk('이어서 하기','Continue','继续')}`
     :`🚩 ${lk('여기서부터 시작하기','Start from here','从这里开始')}`;
+  /* 준비도 안내(중등·고등 구간) — 잠그지 않는다. 안내만 얹고 버튼은 그대로 둔다. */
+  const ready=readinessNote(c.tier);
 
   const html=`<div class="nm-gate-overlay nm-cs-overlay" id="nmCourseSheet">
     <div class="nm-gate-card nm-cs-card" style="--acc:${tierDef.accent}">
@@ -2272,6 +2420,12 @@ function openCourseSheet(key){
       ${prog.total?`<div class="nm-cs-prog">
         <div class="nm-cs-bar"><span style="width:${pct}%"></span></div>
         <div class="nm-cs-progtxt">${lk('마법','Magic','魔法')} ${prog.done} / ${prog.total}</div>
+      </div>`:''}
+      ${ready?`<div class="nm-cs-ready ${ready.kind}">
+        <b>${ready.kind==='unknown'?`🎒 ${lk('학년을 아직 몰라요','Grade not set yet','还不知道年级')}`
+          :`⏳ ${lk('아직 이를 수 있어요','This may be early','可能还早')}`}</b>
+        <span>${ready.text}</span>
+        ${ready.kind==='unknown'?`<button class="nm-cs-readybtn" id="csAge">${lk('학년 알려주기','Tell us the grade','告诉我们年级')}</button>`:''}
       </div>`:''}
       <div class="nm-cs-peek" id="csPeek" hidden>
         <div class="nm-cs-peek-h">${lk('이 과정에서 배우는 것','What this course covers','这个课程学什么')}</div>
@@ -2298,6 +2452,8 @@ function openCourseSheet(key){
     peekBtn.textContent=open?`👀 ${lk('접기','Hide','收起')}`:`👀 ${lk('둘러보기','Take a look','看一看')}`;
     if(open) peek.scrollIntoView({block:'nearest',behavior:'smooth'});
   };
+  const ageBtn=document.getElementById('csAge');
+  if(ageBtn) ageBtn.onclick=()=>{ close(); openAgeSheet(()=>{ render(); openCourseSheet(key); }); };
   const startBtn=document.getElementById('csStart');
   if(built) startBtn.onclick=()=>{
     close();
@@ -2315,6 +2471,276 @@ function openCourseSheet(key){
    로드맵에서도 고를 수 있게 한 것. 전환 절차는 switchToSlot() 하나만 쓴다
    (지금 저장본을 백업하고 대상 슬롯을 활성 자리로 올린 뒤 새로고침) — 여기서
    따로 상태를 옮기지 않는다. 빈 슬롯은 새 프로필이 되므로 온보딩이 뜬다. */
+/* ============================================================
+   연산 점검 (S.view==='checkup') — 원장 지시 2026-09-16
+   "중간에 연산 점검 모드도 3단계 정도마다 꼭. 그게 아니라도 문장제 이해 정도도,
+    인지 능력이라는 것이 있잖아"
+   ------------------------------------------------------------
+   과정 3개마다(과정 3·6·9…) 한 번, 그 직전 세 과정에서 실제로 쓴 드릴 재료로만
+   문제를 낸다 — 새 문제를 지어내지 않고 기존 생성기(NM_TGEN)를 그대로 쓴다.
+   ★ 계산과 문장제를 따로 센다. 이게 이 기능의 요지다. 계산이 되는 것과 문장을
+   읽어 내는 것은 다른 능력이라, 한 점수로 합치면 정확히 원장이 지적한
+   "계산은 되는데 문장제가 안 되는 상태"가 숫자 뒤로 숨는다.
+   ★ 어떤 것도 잠그지 않는다. 결과는 안내와 기록일 뿐이다.
+   ============================================================ */
+const CHECKUP_EVERY=3;
+function checkupKeyFor(num){ return 'C'+num; }
+function isCheckupPoint(num){ return num>0 && num%CHECKUP_EVERY===0; }
+function checkupRecord(num){ return (S.checkups||{})[checkupKeyFor(num)]||null; }
+/* 점검이 볼 과정 세 개(과정 3이면 1·2·3) */
+function checkupCourseNums(num){
+  const out=[];
+  for(let n=num-CHECKUP_EVERY+1;n<=num;n++) if(n>=1) out.push(n);
+  return out;
+}
+/* 이 점검을 지금 할 차례인가 — 세 과정을 다 정복했고 아직 안 봤으면. */
+function checkupDue(num){
+  if(!isCheckupPoint(num)) return false;
+  if(checkupRecord(num)) return false;
+  const C=window.NM_COURSES||{};
+  return checkupCourseNums(num).every(n=>{
+    const c=C['C'+n];
+    return c && (courseUnitIds(c).length===0 || courseConquered(c));
+  });
+}
+/* 문항 목록 — 계산은 그 세 과정의 드릴 재료에서, 문장제는 WP 스레드에서.
+   문장제는 첫 점검(과정 3)에서 '문제 이해' 하나만 낸다. 이제 막 두 자리
+   덧뺄셈을 뗀 아이에게 연산 고르기·식 세우기까지 물으면 측정이 아니라 벌이 된다. */
+function buildCheckupItems(num){
+  const C=window.NM_COURSES||{}, TH=window.NM_THREADS||{};
+  const calc=[];
+  checkupCourseNums(num).forEach(n=>{
+    const c=C['C'+n]; if(!c) return;
+    (c.sessions||[]).forEach(ses=>{
+      (ses.drills||[]).forEach(d=>{
+        if(!TH[d.t]) return;
+        if(calc.some(x=>x.t===d.t)) return;
+        const lv=(TH[d.t].levels||[]).some(l=>l.id===d.lv)?d.lv:1;
+        calc.push({t:d.t, lv, kind:'calc'});
+      });
+    });
+  });
+  const picked=[];
+  if(calc.length<=6) picked.push(...calc);
+  else { const step=calc.length/6; for(let i=0;i<6;i++) picked.push(calc[Math.floor(i*step)]); }
+  const wpIds = num<=3?['WP1'] : num<=9?['WP1','WP3'] : ['WP1','WP3','WP4'];
+  const wpLv  = num<=10?1 : num<=20?2 : 3;
+  wpIds.forEach(t=>{
+    const th=TH[t]; if(!th) return;
+    const lv=(th.levels||[]).some(l=>l.id===wpLv)?wpLv:1;
+    picked.push({t, lv, kind:'wp'});
+  });
+  return picked;
+}
+function startCheckup(num){
+  const items=buildCheckupItems(num);
+  if(!items.length){ toast(S.lang==='ko'?'점검할 재료가 아직 없어요':'Nothing to check yet',false); return; }
+  S._checkup={ run:Date.now(), num, items, i:0, stage:'intro',
+    calcOk:0, calcTotal:items.filter(x=>x.kind==='calc').length,
+    wpOk:0,   wpTotal:items.filter(x=>x.kind==='wp').length,
+    cur:null, qStart:null, log:[] };
+  S.view='checkup'; save(); render();
+}
+function finishCheckup(k){
+  if(!S.checkups) S.checkups={};
+  const prevRewarded=!!S.checkups[checkupKeyFor(k.num)];
+  S.checkups[checkupKeyFor(k.num)]={ at:Date.now(),
+    calcOk:k.calcOk, calcTotal:k.calcTotal, wpOk:k.wpOk, wpTotal:k.wpTotal };
+  k.stage='result';
+  /* 보상은 맞힌 수만큼 — 점수로 가르지 않는다. 점검은 시험이 아니라 지금 어디가
+     막혔는지 보는 자리라, 결과가 나쁘면 손해를 보는 구조로 만들면 안 된다.
+     한 점검당 한 번만 준다(다시 점검하기로 코인을 반복해서 벌 수 없게). */
+  if(!k.rewarded){
+    k.rewarded=true;
+    const got=(k.calcOk+k.wpOk)*3;
+    if(got>0 && !prevRewarded) coinAdd(got);
+  }
+  save();
+}
+
+function screenCheckup(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  const k=S._checkup;
+  if(!k){ S.view='courseroad'; save(); render(); return; }
+  const scr=$('#screen');
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(a,b,c)=>ko?a:en?b:c;
+  const back=()=>{ S._checkup=null; S.view='courseroad'; save(); render(); };
+
+  if(k.stage==='intro'){
+    const nums=checkupCourseNums(k.num);
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="cuBack">${t('back')}</button>
+      <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
+    </div>
+    <div class="nm-step-body"><div class="nm-dialog"><div class="nm-cu-wrap">
+      <div class="nm-cu-hero">🩺</div>
+      <h2 class="nm-cu-h">${lk(`과정 ${nums[0]}~${nums[nums.length-1]} 점검`,`Check-up for courses ${nums[0]}–${nums[nums.length-1]}`,`课程${nums[0]}~${nums[nums.length-1]}检查`)}</h2>
+      <p class="nm-cu-p">${lk('지금까지 배운 것에서만 물어봐요. 새로 배우는 건 없어요.',
+        'Only what you have already learned. Nothing new here.','只问学过的内容，不会出新东西。')}</p>
+      <div class="nm-cu-parts">
+        <div class="nm-cu-part"><b>🔢 ${lk('계산','Calculating','计算')}</b><span>${k.calcTotal}${lk('문제','questions','题')}</span></div>
+        <div class="nm-cu-part wp"><b>📖 ${lk('문장제 이해','Reading word problems','应用题理解')}</b><span>${k.wpTotal}${lk('문제','questions','题')}</span></div>
+      </div>
+      <p class="nm-cu-why">${lk('두 가지를 따로 세요. 계산이 빠른 것과 문장을 읽어 내는 것은 다른 힘이라, 합쳐 버리면 어느 쪽이 막혔는지 안 보여요.',
+        'We score these separately. Computing quickly and reading a problem are different abilities — one combined score hides which one is stuck.',
+        '两项分开计分。算得快和读懂题是不同的能力，合成一个分数就看不出卡在哪里。')}</p>
+      <button class="nm-btn full" id="cuGo">${lk('시작하기','Start','开始')}</button>
+    </div></div></div>`;
+    $('#cuBack').onclick=back;
+    $('#cuGo').onclick=()=>{ k.stage='q'; save(); screenCheckup(); };
+    return;
+  }
+
+  if(k.stage==='result'){
+    const rec=checkupRecord(k.num);
+    const calcPct=k.calcTotal?Math.round(k.calcOk/k.calcTotal*100):null;
+    const wpPct=k.wpTotal?Math.round(k.wpOk/k.wpTotal*100):null;
+    const calcGood=calcPct!=null&&calcPct>=70;
+    const wpGood=wpPct!=null&&wpPct>=60;
+    /* 읽어 주는 말은 네 경우로 갈린다. 원장이 말한 그 상태(계산 ○·문장제 ✕)가
+       가장 중요한 칸이라 거기에 가장 구체적인 처방을 붙인다. */
+    const verdict = calcGood&&wpGood
+      ? lk('계산도 문장제도 잘 따라가고 있어요. 다음 과정으로 가도 좋아요.',
+           'Both the computing and the reading are holding up. Good to move on.',
+           '计算和应用题都跟得上，可以继续下一个课程。')
+      : calcGood&&!wpGood
+      ? lk('계산은 잘 돼요. 그런데 문장을 읽어 내는 쪽이 아직 덜 여물었어요. 이건 연산을 더 시킨다고 따라오지 않아요 — 문제를 소리 내어 읽고 "무엇을 알려 줬고 무엇을 묻는지"를 먼저 갈라 보는 연습이 필요해요. 진도를 서두르면 뒤에서 더 크게 걸려요.',
+           'The computing is fine, but reading the problem is not there yet. More drills will not fix this — read the problem aloud and separate what is given from what is asked. Rushing ahead makes this bite harder later.',
+           '计算没问题，但读题还没成熟。多做计算练习解决不了——要把题读出声，先分清"给了什么"和"问什么"。赶进度以后会更吃力。')
+      : !calcGood&&wpGood
+      ? lk('무엇을 묻는지는 잘 읽어 내요. 계산이 아직 손에 안 붙었을 뿐이라, 같은 자리를 조금만 더 반복하면 돼요.',
+           'You read the problem well; the computing just needs more time in the hand. A little more repetition at the same spot.',
+           '题读得很好，只是计算还不够熟。在同一处多练一点就好。')
+      : lk('두 가지 다 한 번 더 다지고 가요. 앞으로 가는 것보다 지금 자리를 단단히 하는 편이 빨라요.',
+           'Both could use another pass. Firming up here beats pushing ahead.',
+           '两项都再巩固一次。把现在这一步走稳比往前赶更快。');
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="cuBack">${t('back')}</button>
+      <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
+    </div>
+    <div class="nm-step-body"><div class="nm-dialog"><div class="nm-cu-wrap">
+      <h2 class="nm-cu-h">${lk('점검 결과','Check-up result','检查结果')}</h2>
+      <div class="nm-cu-scores">
+        <div class="nm-cu-score${calcGood?' good':''}">
+          <b>🔢 ${lk('계산','Calculating','计算')}</b>
+          <span class="nm-cu-num">${k.calcOk}<i>/${k.calcTotal}</i></span>
+        </div>
+        <div class="nm-cu-score wp${wpGood?' good':''}">
+          <b>📖 ${lk('문장제 이해','Reading','应用题理解')}</b>
+          <span class="nm-cu-num">${k.wpOk}<i>/${k.wpTotal}</i></span>
+        </div>
+      </div>
+      <p class="nm-cu-verdict">${verdict}</p>
+      <button class="nm-btn full" id="cuDone">${lk('로드맵으로','Back to the roadmap','回到路线图')}</button>
+      <button class="nm-btn full ghost" id="cuAgain">${lk('다시 점검하기','Check again','再检查一次')}</button>
+    </div></div></div>`;
+    $('#cuBack').onclick=back; $('#cuDone').onclick=back;
+    $('#cuAgain').onclick=()=>startCheckup(k.num);
+    if(rec&&calcGood&&wpGood) confetti();
+    return;
+  }
+
+  /* ── 문항 ── */
+  if(k.i>=k.items.length){ finishCheckup(k); screenCheckup(); return; }
+  const item=k.items[k.i];
+  const TH=window.NM_THREADS||{};
+  const th=TH[item.t];
+  if(!k.cur){
+    k.cur=placementProblem({thread:item.t, level:item.lv}, k.i, 'chk'+k.run);
+    k.qStart=Date.now();
+  }
+  const cur=k.cur;
+  const isMulti=Array.isArray(cur.answer);
+  const hasTex=!!cur.tex;
+  const useWidget=!hasTex && cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
+  scr.innerHTML=`<div class="nm-unit-bar">
+    <button class="nm-back" id="cuBack">${t('back')}</button>
+    <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
+  </div>
+  <div class="nm-step-body"><div class="nm-dialog">
+    <div class="nm-dg-step">${item.kind==='wp'?`📖 ${lk('문장제 이해','Reading word problems','应用题理解')}`:`🔢 ${lk('계산','Calculating','计算')}`}${th?` · ${esc(L(th.name))}`:''}</div>
+    <div class="nm-prog">${dots(k.items.length,k.i)}</div>
+    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
+    <div class="nm-bubble${item.kind==='wp'?' nm-bubble-wp':''}">${esc(L(cur.prompt))}</div>
+    ${useWidget?`<div id="cuWidget" class="nm-lab-widget"></div>`:`
+    ${hasTex?`<div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>`:''}
+    ${isMulti?`<p class="nm-dg-multihint">${lk('답이 여러 개면 쉼표(,)로 나눠 써요','Separate multiple answers with commas','多个答案用逗号分开')}</p>`:''}
+    <div class="nm-numpad-screen" id="cuScreen">&nbsp;</div>
+    <div class="nm-numpad" id="cuPad"></div>`}
+  </div></div>`;
+  $('#cuBack').onclick=back;
+  renderMath(scr);
+
+  const submit=ok=>{
+    if(item.kind==='wp'){ if(ok) k.wpOk++; } else { if(ok) k.calcOk++; }
+    k.log.push({t:item.t, lv:item.lv, kind:item.kind, ok,
+      sec:Math.max(0,Math.round((Date.now()-(k.qStart||Date.now()))/1000))});
+    k.i++; k.cur=null; k.qStart=null;
+    save();
+    if(ok) playSfx('success');
+    setTimeout(()=>screenCheckup(), ok?520:820);
+  };
+  if(useWidget){
+    NM_WIDGETS.render(cur,$('#cuWidget'),val=>{
+      const ok=isMulti
+        ? Array.isArray(val)&&val.length===cur.answer.length&&val.every((v,i)=>+v===cur.answer[i])
+        : +val===cur.answer;
+      submit(ok);
+    });
+    return;
+  }
+  const screenEl=$('#cuScreen');
+  let inp='';
+  buildNumpad($('#cuPad'),val=>{
+    if(val==='ok'){
+      if(inp===''||inp==='-') return;
+      if(isMulti){
+        const parts=inp.split(',').map(x=>x.trim()).filter(x=>x!=='');
+        const nums=parts.map(parseFloat);
+        submit(nums.length===cur.answer.length&&nums.every((v,i)=>v===cur.answer[i]));
+      } else submit(parseFloat(inp)===cur.answer);
+      return;
+    }
+    if(val==='del') inp=inp.slice(0,-1);
+    else if(val==='-') inp=applyMinusKey(inp);
+    else if(val===','){ if(inp!==''&&!inp.endsWith(',')) inp+=','; }
+    else if(inp.replace(/[-,]/g,'').length<(isMulti?16:6)&&!(val==='.'&&inp.split(',').pop().includes('.'))) inp+=val;
+    screenEl.textContent=inp||' ';
+  },{decimal:isMulti?true:!Number.isInteger(cur.answer), negative:isMulti?true:!!cur.negative, comma:isMulti});
+}
+
+/* 학년 고치기 시트 — 온보딩에서 건너뛰었거나 학년이 바뀐 경우.
+   저장은 setSchoolGrade() 하나만 쓴다(입학 연도로 환산해 넣는다). */
+function openAgeSheet(after){
+  if(document.getElementById('nmAgeSheet')) return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const cur=schoolGradeNum();
+  const opts=schoolGradeOptions();
+  document.body.insertAdjacentHTML('beforeend',`<div class="nm-gate-overlay nm-cs-overlay" id="nmAgeSheet">
+    <div class="nm-gate-card nm-cs-card">
+      <button class="nm-gate-x" id="ageX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
+      <h3 class="nm-cs-title">🎒 ${lk('몇 학년인가요?','What grade?','几年级？')}</h3>
+      <p class="nm-cs-lead">${lk('학년은 어떤 과정도 잠그지 않아요. 중등·고등 구간을 열 때 지금 시작해도 될지 안내하는 데만 써요.',
+        'Grade never locks a course. We only use it to advise when you open the middle- and high-school stretches.',
+        '年级不会锁住任何课程，只在打开初中、高中区间时用来提示现在是否合适。')}</p>
+      <div class="nm-ob-grades sheet">${opts.map(o=>
+        `<button class="nm-ob-grade${cur===o.g?' sel':''}" data-g="${o.g}">${esc(o.label)}</button>`).join('')}</div>
+      ${S.schoolAge?`<button class="nm-btn full ghost" id="ageClear">${lk('학년 지우기','Clear grade','清除年级')}</button>`:''}
+    </div>
+  </div>`);
+  const close=()=>{ const m=document.getElementById('nmAgeSheet'); if(m)m.remove(); };
+  document.getElementById('ageX').onclick=close;
+  document.getElementById('nmAgeSheet').addEventListener('click',e=>{ if(e.target.id==='nmAgeSheet') close(); });
+  document.querySelectorAll('#nmAgeSheet .nm-ob-grade').forEach(b=>{
+    b.onclick=()=>{ setSchoolGrade(+b.dataset.g); save(); close(); if(after)after(); else render(); };
+  });
+  const clr=document.getElementById('ageClear');
+  if(clr) clr.onclick=()=>{ S.schoolAge=null; save(); close(); if(after)after(); else render(); };
+}
+
 function openStudentSwitch(){
   if(document.getElementById('nmWhoSheet')) return;
   const ko=S.lang==='ko', en=S.lang==='en';
@@ -2350,6 +2776,9 @@ function openStudentSwitch(){
       <button class="nm-gate-x" id="whoX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
       <h3 class="nm-cs-title">🧙 ${lk('누구의 로드맵을 볼까요?','Whose roadmap?','看谁的路线图？')}</h3>
       <div class="nm-slots-grid">${cards}</div>
+      <button class="nm-btn full ghost" id="whoAge">🎒 ${schoolGradeLabel()
+        ? lk(`학년 — ${schoolNowLabel()} · 고치기`,`Grade — ${schoolNowLabel()} · change`,`年级 — ${schoolNowLabel()} · 修改`)
+        : lk('학년 알려주기','Tell us the grade','告诉我们年级')}</button>
       <p class="nm-cs-note">${lk('바꾸면 그 학생의 진도·과정·속도가 그대로 나와요.',
         'Switching shows that student’s own progress, course and pace.',
         '切换后会显示该学生自己的进度、课程和速度。')}</p>
@@ -2361,6 +2790,7 @@ function openStudentSwitch(){
   document.querySelectorAll('#nmWhoSheet .nm-slot-card[data-slot]').forEach(b=>{
     b.onclick=()=>switchToSlot(b.dataset.slot);
   });
+  document.getElementById('whoAge').onclick=()=>{ close(); openAgeSheet(()=>render()); };
 }
 
 function screenCourseRoad(){
@@ -2395,7 +2825,7 @@ function screenCourseRoad(){
            표시가 없어 남의 진도를 자기 것으로 읽을 수 있었다. 칩을 누르면 바로 바꾼다. -->
       <button class="nm-cr-who" id="crWho">
         <span class="nm-cr-who-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,34):''}</span>
-        <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}</b></span>
+        <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}${schoolNowLabel()?` <em class="nm-cr-who-gr">${esc(schoolNowLabel())}</em>`:''}</b></span>
         <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
       </button>
       <div class="nm-cr-sub">${lk('지금 어디까지 왔고 앞으로 어디로 가는지, 한 길로 보여요.','See the whole path — where you are now and where it leads.','用一条路看清现在走到哪里、接下来去哪里。')}</div>
@@ -2561,6 +2991,10 @@ function screenCourseRoad(){
           </span>
           ${again?'':`<span class="nm-cr-stband">${esc(L(tierDef.band))}</span>`}
           <span class="nm-cr-strange">${lk('과정','Course','课程')} ${rangeTxt}${embHtml}</span>
+          ${(()=>{ const r=tierReadiness(c.tier); if(!r||r.ready) return '';
+            /* 한국어는 "초1 8월부터"처럼 붙여 써야 한다 — 조사 앞에 빈칸을 두면 어색하다 */
+            return `<span class="nm-cr-stready">${r.unknown?'🎒':'⏳'} ${ko?`보통 ${schoolMonthsLabel(r.need)}부터 권해요`
+              :en?`Usually from ${schoolMonthsLabel(r.need)}`:`通常从${schoolMonthsLabel(r.need)}起`}</span>`; })()}
         </div>`;
         prevTier=c.tier;
       }
@@ -2602,6 +3036,27 @@ function screenCourseRoad(){
           </button>
         </div>`;
         ci++;
+        /* ── 세 과정마다 연산 점검 정거장(2026-09-16) ──
+           길 위에 그대로 얹어야 "중간에 꼭"이 된다 — 따로 있는 메뉴로 빼면
+           지나쳐 버린다. 지나가는 것을 막지는 않는다(잠금 아님). */
+        if(isCheckupPoint(x.num)){
+          const rec=checkupRecord(x.num);
+          const due=checkupDue(x.num);
+          const cls=rec?'done':due?'due':'ahead';
+          const nums=checkupCourseNums(x.num);
+          const scoreTxt=rec
+            ? `🔢 ${rec.calcOk}/${rec.calcTotal} · 📖 ${rec.wpOk}/${rec.wpTotal}`
+            : due?lk('지금 할 차례','Your turn now','轮到你了'):lk('과정 3개마다','every 3 courses','每3个课程');
+          html+=`<div class="nm-cr-checkrow">
+            <button class="nm-cr-check ${cls}" data-chk="${x.num}">
+              <span class="nm-cr-check-ic">🩺</span>
+              <span class="nm-cr-check-body">
+                <b>${lk('연산 점검','Check-up','运算检查')} · ${lk('과정','Course','课程')} ${nums[0]}~${nums[nums.length-1]}</b>
+                <span class="nm-cr-check-meta">${scoreTxt}</span>
+              </span>
+            </button>
+          </div>`;
+        }
       }
     });
     html+=`</div>`;
@@ -2627,6 +3082,9 @@ function screenCourseRoad(){
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
+    });
+    body.querySelectorAll('.nm-cr-check[data-chk]').forEach(el=>{
+      el.onclick=()=>startCheckup(+el.dataset.chk);
     });
     body.querySelectorAll('.nm-cr-lab[data-lab]').forEach(el=>{
       el.onclick=()=>{ window.open(el.dataset.lab,'_blank','noopener'); };

@@ -2222,6 +2222,84 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
   margin:10px 0 0;word-break:keep-all;text-align:left}
 .nm-cs-card .nm-slots-grid{margin-bottom:2px}
 
+/* ── 학년 고르기 (온보딩 2단계 · 고치기 시트, 2026-09-16) ── */
+.nm-ob-grades{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:4px 0 14px;width:100%}
+.nm-ob-grade{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 2px;
+  font-size:13.5px;font-weight:800;color:var(--ink);cursor:pointer;font-family:'Pretendard',sans-serif;
+  min-width:0;transition:.12s}
+.nm-ob-grade:hover{border-color:var(--blue)}
+.nm-ob-grade.sel{background:var(--blue);border-color:var(--blue-deep);color:#fff;
+  box-shadow:0 6px 14px -8px rgba(22,65,124,.8)}
+.nm-ob-grades.sheet{grid-template-columns:repeat(4,1fr);margin-bottom:10px}
+.nm-cs-lead{font-size:12.5px;line-height:1.55;font-weight:600;color:var(--sub);margin:0 0 11px;word-break:keep-all}
+.nm-cr-who-gr{font-style:normal;font-size:11.5px;font-weight:800;color:var(--sub);margin-left:5px}
+
+/* ── 준비도 안내 (중등·고등 구간) ──
+   잠그는 표시가 아니다. 자물쇠·빨강을 쓰지 않고 "아직 이르다"는 시간의 말로만 쓴다. */
+.nm-cs-ready{display:flex;flex-direction:column;gap:5px;margin:0 0 12px;padding:10px 12px;
+  border-radius:13px;border:1px solid var(--gold);background:#fdf6e8}
+.nm-cs-ready.unknown{border-color:var(--line);background:var(--mist)}
+.nm-cs-ready b{font-size:12.5px;font-weight:900;color:#7a5a12}
+.nm-cs-ready.unknown b{color:var(--sub)}
+.nm-cs-ready span{font-size:12px;line-height:1.6;font-weight:600;color:var(--ink);word-break:keep-all}
+.nm-cs-readybtn{align-self:flex-start;margin-top:3px;border:1.5px solid var(--blue);background:#fff;
+  color:var(--blue);border-radius:999px;padding:5px 13px;font-size:12px;font-weight:800;
+  cursor:pointer;font-family:'Pretendard',sans-serif}
+.nm-cr-stready{display:block;margin-top:5px;font-size:11px;font-weight:800;color:#7a5a12;
+  background:#fdf6e8;border:1px solid var(--gold);border-radius:999px;padding:3px 9px;
+  width:fit-content;word-break:keep-all}
+
+/* ── 연산 점검 정거장 (길 위) ── */
+.nm-cr-checkrow{display:flex;justify-content:center;position:relative;z-index:1;margin:2px 0 10px}
+.nm-cr-check{display:flex;align-items:center;gap:10px;width:min(100%,320px);
+  border:1.5px dashed var(--line);background:#fff;border-radius:16px;padding:9px 12px;
+  cursor:pointer;font-family:'Pretendard',sans-serif;text-align:left}
+.nm-cr-check:active{transform:scale(.99)}
+.nm-cr-check-ic{flex:none;font-size:20px;width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:var(--mist);border:1px solid var(--line)}
+.nm-cr-check-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nm-cr-check-body b{font-size:13px;font-weight:900;color:var(--ink);word-break:keep-all;line-height:1.35}
+.nm-cr-check-meta{font-size:11.5px;font-weight:800;color:var(--sub)}
+.nm-cr-check.due{border-style:solid;border-color:var(--gold-deep);background:#fffdf3;
+  box-shadow:0 0 0 3px rgba(230,172,0,.16)}
+.nm-cr-check.due .nm-cr-check-ic{background:linear-gradient(180deg,var(--gold-bright),var(--gold));border-color:var(--gold-deep)}
+.nm-cr-check.due .nm-cr-check-meta{color:#7a5a12}
+.nm-cr-check.done{border-style:solid;border-color:#bfe3c6;background:#f6fbf7}
+.nm-cr-check.done .nm-cr-check-ic{background:#e8f5ec;border-color:#bfe3c6}
+
+/* ── 연산 점검 화면 ──
+   .nm-dialog는 문항 화면을 위해 만들어져 있어서(.nm-btn.full에 margin-top:auto)
+   글만 있는 안내·결과 화면을 그대로 넣으면 버튼이 화면 맨 아래로 떨어지고 글줄이
+   화면 끝까지 늘어난다. 그래서 안내·결과만 이 상자에 담아 폭을 잡고 버튼을 푼다. */
+.nm-cu-wrap{width:100%;max-width:440px;margin:0 auto;display:flex;flex-direction:column;
+  align-items:stretch;text-align:center;padding:10px 16px 24px}
+.nm-cu-wrap .nm-btn.full{margin-top:10px}
+.nm-cu-hero{font-size:44px;text-align:center;margin-bottom:2px}
+.nm-cu-h{font-size:19px;font-weight:900;color:var(--blue-deep);text-align:center;margin:0 0 6px;word-break:keep-all}
+.nm-cu-p{font-size:13px;font-weight:600;color:var(--sub);text-align:center;margin:0 0 14px;word-break:keep-all;line-height:1.55}
+.nm-cu-parts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.nm-cu-part{display:flex;flex-direction:column;gap:3px;align-items:center;padding:12px 8px;
+  border:1.5px solid var(--line);border-radius:15px;background:#fff;text-align:center}
+.nm-cu-part.wp{border-color:var(--gold);background:#fdf6e8}
+.nm-cu-part b{font-size:12.5px;font-weight:900;color:var(--ink);word-break:keep-all;line-height:1.35}
+.nm-cu-part span{font-size:11.5px;font-weight:800;color:var(--sub)}
+.nm-cu-why{font-size:12px;line-height:1.65;font-weight:600;color:var(--sub);margin:0 0 14px;word-break:keep-all}
+.nm-cu-scores{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 14px}
+.nm-cu-score{display:flex;flex-direction:column;gap:5px;align-items:center;padding:14px 8px;
+  border:1.5px solid var(--line);border-radius:16px;background:#fff;text-align:center}
+.nm-cu-score.wp{border-color:var(--gold);background:#fdf6e8}
+.nm-cu-score.good{border-color:#bfe3c6;background:#f6fbf7}
+.nm-cu-score b{font-size:12.5px;font-weight:900;color:var(--ink);word-break:keep-all;line-height:1.35}
+.nm-cu-num{font-size:26px;font-weight:900;color:var(--blue-deep);line-height:1}
+.nm-cu-num i{font-style:normal;font-size:14px;font-weight:800;color:var(--sub)}
+.nm-cu-score.good .nm-cu-num{color:#276b3a}
+.nm-cu-verdict{font-size:13px;line-height:1.7;font-weight:600;color:var(--ink);
+  background:var(--mist);border:1px solid var(--line);border-radius:14px;padding:12px 13px;
+  margin:0 0 14px;word-break:keep-all}
+/* 문장제는 읽을 글이 길다 — 말풍선을 왼쪽 정렬하고 줄 간격을 넓힌다 */
+.nm-bubble-wp{text-align:left;line-height:1.75;font-size:14px;word-break:keep-all}
+@media(max-width:380px){.nm-ob-grades{grid-template-columns:repeat(4,1fr)}}
+
 /* ============================================================
    시작점 고르기 (nm-sp-*, 2026-09-04) — ROAD_TIERS별 접이 섹션 + 과정 카드
    ============================================================ */
