@@ -20,4 +20,11 @@
 [hidden]{display:none!important}
 .cubi-guide{bottom:132px}.guide-bubble{margin-bottom:58px}
 button:focus-visible,a:focus-visible,.viewer-host:focus-visible{outline:3px solid #ffd34f;outline-offset:2px}
+.build-header-tools{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0}
+.view-tools{display:flex;align-items:center;gap:3px;min-width:0}
+.view-tools button{min-width:28px;height:25px;padding:2px 5px;border:1px solid #9eb3b6;border-radius:5px;background:#fffaf0;color:#4d7478;font-size:10px;font-weight:950;cursor:pointer;white-space:nowrap}
+.view-tools button[aria-pressed="true"]{border-color:#267b83;background:#267b83;color:#fff;box-shadow:0 2px 0 rgba(23,57,77,.2)}
+.view-tools button[data-view="auto"]{min-width:35px}
+.view-tools .view-clues{margin-left:3px}
+@media(max-width:800px){.viewer-panel>header{padding-inline:7px}.viewer-panel h2{font-size:12px}.build-header-tools{gap:3px}.view-tools{gap:2px}.view-tools button{min-width:24px;height:22px;padding-inline:3px;font-size:9px}.view-tools button[data-view="auto"]{min-width:31px}#pieceStatus{font-size:9px}}
 @media(max-height:590px) and (orientation:landscape){.cubi-guide{display:none}.cubi-guide.show{display:flex;bottom:101px}.cubi-guide.show .guide-bubble{display:block;max-width:210px;margin-bottom:35px;font-size:10px}}

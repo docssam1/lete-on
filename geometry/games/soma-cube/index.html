@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>GFIELD Geometry World - Soma Cube Workshop</title>
-  <link rel="stylesheet" href="./styles.css?v=soma-5" />
+  <link rel="stylesheet" href="./styles.css?v=soma-6" />
   <link rel="stylesheet" href="./material-refresh.css?v=soma-1" />
   <script type="importmap">{"imports":{"three":"../../vendor/three/three.module.js","three/addons/":"../../vendor/three/addons/"}}</script>
   <script src="../../shared/viewport-fit.js?v=1"></script>
@@ -28,11 +28,11 @@
 
     <section class="comparison" id="comparison">
       <article class="viewer-panel target-panel">
-        <header><h2 id="targetTitle"></h2><div id="viewClues" class="view-clues" hidden></div></header>
+        <header><h2 id="targetTitle"></h2><div class="view-tools" data-view-tools="target" aria-label="보기 방식"><button type="button" data-view="iso"></button><button type="button" data-view="top"></button><button type="button" data-view="front"></button><button type="button" data-view="right"></button><button type="button" data-view="auto"></button><div id="viewClues" class="view-clues" hidden></div></div></header>
         <div id="targetViewer" class="viewer-host" role="img" aria-describedby="prompt"></div>
       </article>
       <article class="viewer-panel build-panel">
-        <header><h2 id="buildTitle"></h2><strong id="pieceStatus"></strong></header>
+        <header><h2 id="buildTitle"></h2><div class="build-header-tools"><strong id="pieceStatus"></strong><div class="view-tools" data-view-tools="build" aria-label="보기 방식"><button type="button" data-view="iso"></button><button type="button" data-view="top"></button><button type="button" data-view="front"></button><button type="button" data-view="right"></button><button type="button" data-view="auto"></button></div></div></header>
         <div id="buildViewer" class="viewer-host" role="img" aria-describedby="prompt"></div>
         <div id="choiceGrid" class="choice-grid" hidden></div>
       </article>
@@ -80,7 +80,7 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
   <div class="portrait-guard"><div class="rotate-device" aria-hidden="true"></div><strong id="rotateMessage"></strong><a href="../../solid-vista/" id="rotateExit"></a></div>
-  <script type="module" src="./app.js?v=soma-9"></script>
+  <script type="module" src="./app.js?v=soma-10"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

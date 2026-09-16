@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { levels, PIECE_BY_ID, normalize, orientations, canonical, canonicalArrangement, solveExactCover, viewsOf, validateLevels, PROGRESS_KEY } from "./levels.js?v=soma-3";
-import { getLanguage, t } from "./i18n.js?v=soma-5";
+import { getLanguage, t } from "./i18n.js?v=soma-6";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 const validation = validateLevels();
@@ -44,6 +44,12 @@ function applyCopy() {
   ui.dialogTitle.textContent = t(state.lang,"levelPick"); ui.completeTitle.textContent = t(state.lang,"completeTitle"); ui.completeText.textContent = t(state.lang,"completeText");
   ui.nextLevelButton.textContent = t(state.lang,"nextLevel"); ui.practiceButton.textContent = t(state.lang,"practice"); ui.districtLink.textContent = t(state.lang,"district");
   ui.tutorialSkip.textContent = t(state.lang,"tutorialSkip"); ui.rotateMessage.textContent = t(state.lang,"rotate"); ui.rotateExit.textContent = t(state.lang,"exit");
+  const viewModes = t(state.lang,"viewModes");
+  document.querySelectorAll("[data-view-tools]").forEach((tools) => tools.querySelectorAll("[data-view]").forEach((button,index) => {
+    button.textContent = viewModes[index];
+    button.title = viewModes[index];
+    button.setAttribute("aria-label", viewModes[index]);
+  }));
   const rotateActions = t(state.lang,"rotateActions");
   document.querySelectorAll("[data-rotate]").forEach((button,index)=>{const label=rotateActions[index];button.title=label;button.setAttribute("aria-label",label);button.querySelector("span").textContent=label});
   ui.soundButton.classList.toggle("muted",!state.sound); ui.soundButton.textContent = state.sound ? "♪" : "×"; ui.soundButton.setAttribute("aria-label",t(state.lang,state.sound?"soundOn":"soundOff"));
@@ -103,13 +109,27 @@ function makeViewer(host, interactive=false) {
   const floor=new THREE.Mesh(new THREE.BoxGeometry(4.2,.18,4.2),new THREE.MeshPhysicalMaterial({color:0xe2eceb,roughness:.68,metalness:.01,clearcoat:.16,clearcoatRoughness:.62})); floor.position.y=-.14; floor.receiveShadow=true; scene.add(floor);
   const grid=new THREE.GridHelper(3,3,0x597984,0x9ab0b5); grid.position.y=-.04; scene.add(grid);
   const content=new THREE.Group(); const markers=new THREE.Group(); scene.add(content,markers);
-  const viewer={host,scene,camera,renderer,controls,content,markers,interactive,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2(),down:null};
+  const viewer={host,scene,camera,renderer,controls,content,markers,interactive,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2(),down:null,viewMode:"iso",viewDistance:6};
   const resize=()=>{const rect=host.getBoundingClientRect(); if(!rect.width||!rect.height)return; renderer.setSize(rect.width,rect.height,false); camera.aspect=rect.width/rect.height; camera.updateProjectionMatrix()};
   new ResizeObserver(resize).observe(host); resize(); return viewer;
 }
 
 const targetView=makeViewer(ui.targetViewer,false);
 const buildView=makeViewer(ui.buildViewer,true);
+
+function bindViewTools(viewer) {
+  const name=viewer===targetView?"target":"build";
+  document.querySelector(`[data-view-tools="${name}"]`)?.querySelectorAll("[data-view]").forEach((button)=>button.addEventListener("click",()=>{
+    if(button.dataset.view==="auto") {
+      viewer.controls.autoRotate=!viewer.controls.autoRotate;
+      applyViewerView(viewer,viewer.controls.autoRotate?"auto":"iso");
+      return;
+    }
+    viewer.controls.autoRotate=false;
+    applyViewerView(viewer,button.dataset.view);
+  }));
+}
+bindViewTools(targetView); bindViewTools(buildView);
 
 function materialFor(id, transparent=false) {
   return new THREE.MeshPhysicalMaterial({color:PIECE_BY_ID[id]?.color || 0x5bb8c4,map:enamelMap,roughness:.28,metalness:.01,clearcoat:.52,clearcoatRoughness:.3,transparent,opacity:transparent?.28:1,depthWrite:!transparent});
@@ -144,9 +164,22 @@ function addTargetEnvelope(group,bounds) {
 
 function clearGroup(group) { while(group.children.length){const child=group.children.pop();child.traverse?.((node)=>{if(node.material && !Array.isArray(node.material))node.material.dispose?.();if(node.geometry&&node.geometry!==cubeGeometry&&node.geometry!==markerGeometry)node.geometry.dispose?.()})} }
 
+function applyViewerView(viewer,mode=viewer.viewMode) {
+  const distance=viewer.viewDistance; const target=viewer.controls.target;
+  viewer.viewMode=mode;
+  viewer.camera.up.set(0,1,0);
+  if(mode==="top") { viewer.camera.position.set(target.x,target.y+distance*1.18,target.z+.001); viewer.camera.up.set(0,0,-1); }
+  else if(mode==="front") viewer.camera.position.set(target.x,target.y+distance*.22,target.z+distance);
+  else if(mode==="right") viewer.camera.position.set(target.x+distance,target.y+distance*.22,target.z);
+  else viewer.camera.position.set(target.x+distance*.72,target.y+distance*.64,target.z+distance*.86);
+  viewer.camera.lookAt(target); viewer.controls.update();
+  const tools=document.querySelector(`[data-view-tools="${viewer===targetView?"target":"build"}"]`);
+  tools?.querySelectorAll("[data-view]").forEach((button)=>button.setAttribute("aria-pressed",String(button.dataset.view===mode)));
+}
+
 function frameViewer(viewer,cells) {
-  const bounds=boundsOf(cells); const span=Math.max(...bounds.max.map((value,axis)=>value-bounds.min[axis]+1)); const distance=span*2.1+2.3;
-  viewer.camera.position.set(distance*.72,distance*.64,distance*.86); viewer.controls.target.set(0,Math.max(.7,(bounds.max[1]+1)*.42),0); viewer.controls.update();
+  const bounds=boundsOf(cells); const span=Math.max(...bounds.max.map((value,axis)=>value-bounds.min[axis]+1)); viewer.viewDistance=span*2.1+2.3;
+  viewer.controls.target.set(0,Math.max(.7,(bounds.max[1]+1)*.42),0); applyViewerView(viewer,viewer.controls.autoRotate?"auto":viewer.viewMode);
 }
 
 function renderTarget() {
@@ -231,7 +264,8 @@ function renderChoices() {
 function renderTray() {
   const problem=currentProblem(); ui.pieceTray.replaceChildren(); const ids=problem.mode==="recognize"?[]:problem.pieceIds;
   ids.forEach((id)=>{const piece=PIECE_BY_ID[id];const shownCells=state.selectedId===id&&state.selectedShape?state.selectedShape:piece.cells;const button=document.createElement("button");button.type="button";button.className="piece-card";button.dataset.piece=id;button.setAttribute("aria-label",t(state.lang,"pieceLabel",{id}));button.innerHTML=`<img alt="" src="${makeThumbnail(shownCells,piece.color)}"><span>${id}</span>`;const isPlaced=placedIds().has(id);button.classList.toggle("placed",isPlaced);button.classList.toggle("selected",state.selectedId===id);button.disabled=isPlaced;button.addEventListener("click",()=>selectPiece(id));ui.pieceTray.append(button)});
-  ui.pieceStatus.textContent=problem.mode==="recognize"?"":t(state.lang,"pieces",{done:state.placements.length-fixedCount(),total:problem.pieceIds.length});
+  const filledCells=state.placements.flatMap((placement)=>placement.cells).length;
+  ui.pieceStatus.textContent=problem.mode==="recognize"?"":t(state.lang,"pieces",{done:state.placements.length-fixedCount(),total:problem.pieceIds.length,cells:filledCells,totalCells:problem.target.length});
 }
 
 function renderViewClues() {
