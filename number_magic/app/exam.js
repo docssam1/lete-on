@@ -524,6 +524,22 @@
 @media screen {
   .nm-print-sheet { display: none; }
 }
+/* ── 자릿값 색 힌트 범례(2026-09-16) — 앱과 같은 마크업(.nm-pv-legend).
+   ⚠️ print-color-adjust:exact 가 없으면 브라우저가 인쇄에서 배경색을 버린다.
+   글자색(\color·span color)은 살아남지만 범례의 색 네모가 통째로 사라져
+   "무슨 색 얘기인지 알 수 없는 범례"가 된다. 색 네모에만 걸어 둔다. */
+.nm-pv-legend { display:flex; align-items:center; justify-content:center; gap:9px;
+  flex-wrap:wrap; margin:0 0 2.5mm; padding:1.2mm 3mm; border:1px solid #ddd6c6;
+  border-radius:99px; background:#FAF7F0; font-size:9.5pt; font-weight:800; color:#6a6357;
+  width:fit-content; flex:0 0 auto;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.nm-pv-legend b { font-weight:800; color:#3a3730; }
+.nm-pv-chip { display:inline-flex; align-items:center; gap:3px; white-space:nowrap; }
+.nm-pv-chip i { width:8px; height:8px; border-radius:2px; display:inline-block;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+/* 세로셈 숫자에 입힌 자리 색도 인쇄에서 살려 둔다 */
+.nm-print-vp-top span, .nm-print-vp-mid span {
+  -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 /* ── 개념 패널·★예시(빨강) — 인쇄와 화면(온라인 회차 탭)이 같은 마크업을
    공유한다(학습지-v2-설계.md §3 "탭마다 개념 패널 + ★예시"). 미디어 쿼리로
    가두지 않고 항상 켜 둔다. */
@@ -1537,6 +1553,74 @@ function printAgeBand(config, problems){
   return 'senior';
 }
 
+/* ============================================================
+   자릿값 색 힌트 (2026-09-16) — app/place-color.js 의 규칙을 학습지에도
+   원장 지시: "어린 아이들은 자릿수의 개념이 없어서 몇 문제는 같은 색으로 힌트를
+   주는 거야. 십의 자리끼리는 같은 색을 한다든지 … 그래서 학습지도 이런 스킬이
+   들어가야 돼."
+   ── 어디에 칠하나 ──
+   ① 가로식(tex) — `\color{}`를 tex에 넣는다. KaTeX가 없어도 texToPlain이
+      \color를 벗겨 내므로 글자가 깨지지 않는다.
+   ② 세로셈(.nm-print-vp) — 여기가 자릿값의 본진이다. 위아래 수가 자리로 줄 맞춰
+      서는 자리라 색이 가장 크게 듣는다. tex가 아니라 낱낱의 문자열이므로
+      spanDigits()로 <span>을 입힌다.
+   ── 얼마나 칠하나 ──
+   "몇 문제는"이다. 세 문제에 하나만 — 전부 칠하면 색이 배경이 되어 힌트가 아니다.
+   세는 것은 문항 번호가 아니라 **칠할 수 있는 문항**이다(앱과 같은 이유:
+   번호로 세면 그 자리가 한 자리 덧셈일 때 힌트가 통째로 날아간다).
+   ── 누구에게 ──
+   printAgeBand가 young·mid(초1~4)일 때만. senior는 자릿수 개념이 이미 있다.
+   ── 흑백 인쇄 ──
+   색은 명도까지 다르게 골라 뒀다(place-color.js). 회색으로 바뀌어도 자리마다
+   회색 값이 달라 구분이 남는다.
+   ============================================================ */
+let pvSeen = 0;           /* 회차마다 0으로 — 칠할 수 있는 문항을 센다 */
+let pvOnPage = false;     /* 이 쪽에 색을 쓴 문항이 있나(범례를 그릴지) */
+
+/* 힌트를 줄지는 **문제의 난이도가 아니라 아이의 학년**으로 정한다.
+   printAgeBand는 문항에서 난이도를 되짚는 값이라 여기 쓰면 두 가지가 어긋난다:
+   ① 초1이 쉬운 학습지를 풀면 young이지만 초5가 같은 걸 풀어도 young이 된다
+   ② printAgeBand는 회차를 다 만든 뒤에야 나오는데 색은 만들면서 넣어야 한다.
+   앱이 저장한 학령(nm_state_v1.schoolAge.entryYear)을 그대로 읽는다 — 기준은
+   앱과 같은 24개월(초3 3월) 미만. 학년을 모르면 켜지 않는다(모르면서 칠하면
+   중고등 학습지에 색이 들어간다). ws.html은 window.NM_PV_HINT로 덮어쓸 수 있다. */
+function pvGradeWantsHint(){
+  if(typeof window.NM_PV_HINT === 'boolean') return window.NM_PV_HINT;
+  try{
+    const st = JSON.parse(localStorage.getItem(NM_LANG_KEY) || 'null');
+    const ey = st && st.schoolAge && st.schoolAge.entryYear;
+    if(!ey) return false;
+    const d = new Date();
+    const ay = (d.getMonth() + 1) >= 3 ? d.getFullYear() : d.getFullYear() - 1;
+    const months = (ay - ey) * 12 + ((d.getMonth() + 1) - 3 + 12) % 12;
+    return months < 24;
+  }catch(e){ return false; }
+}
+function pvOn(){
+  return !!window.NM_PLACE_COLOR && pvGradeWantsHint();
+}
+/* 이 문항에 색을 줄 차례인가 — 줄 차례면 true를 돌려주고 카운터를 올린다.
+   eligible이 아니면 카운터를 올리지 않는다(세는 대상이 아니다). */
+function pvTake(canTint){
+  if(!pvOn() || !canTint) return false;
+  const take = (pvSeen % 3) === 0;
+  pvSeen++;
+  if(take) pvOnPage = true;
+  return take;
+}
+/* 세로셈 두 수에 색을 줄 수 있나 — 정수이고 한쪽이라도 두 자리 이상, 네 자리까지 */
+function pvVertOk(a, b){
+  const A = String(a == null ? '' : a), B = String(b == null ? '' : b);
+  if(!/^\d+$/.test(A) || !/^\d+$/.test(B)) return false;
+  const m = Math.max(A.length, B.length);
+  return m >= 2 && m <= (window.NM_PLACE_COLOR ? window.NM_PLACE_COLOR.MAX_PLACES : 4);
+}
+/* 범례 — 학습지 쪽에 한 줄. 앱과 같은 마크업(.nm-pv-legend)을 쓴다. */
+function pvLegendHtml(places){
+  if(!window.NM_PLACE_COLOR) return '';
+  return window.NM_PLACE_COLOR.legendHtml(examLang(), places || 2);
+}
+
 /* ── 십진블록(base10) · 수직선 점프(numline) 인쇄 도형 ─────────────
    레벨 이름이 "십진블록 읽기"·"십진블록 더하기"·"수직선 점프"인데 인쇄물엔
    `600 + 50 + 3 = □`, `61 + 9 = □` 같은 등식만 찍혀 그림이 통째로 빠져
@@ -2429,10 +2513,14 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
       cls += ' nm-w2-item-vp';
       /* .nm-print-vp-carry — 올림/내림 숫자를 적는 빈 줄(w2 세로셈 전용, 2026-09-06). 편집기의
          옛 vp 마크업(~1697)은 그대로. check-print.js 는 .nm-print-vp 만 찾는다. */
+      /* 세로셈은 자릿값의 본진 — 위아래가 자리로 줄 맞춰 서는 자리다(2026-09-16) */
+      const vTint = pvTake(pvVertOk(v.a, v.b));
+      const vA = vTint ? window.NM_PLACE_COLOR.spanDigits(v.a) : esc(v.a);
+      const vB = vTint ? window.NM_PLACE_COLOR.spanDigits(v.b) : esc(v.b);
       inner = `<div class="nm-print-vp">
   <div class="nm-print-vp-carry">&nbsp;</div>
-  <div class="nm-print-vp-top">${esc(v.a)}</div>
-  <div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span><span>${esc(v.b)}</span></div>
+  <div class="nm-print-vp-top">${vA}</div>
+  <div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span><span>${vB}</span></div>
   <div class="nm-print-vp-line"></div>
   <div class="nm-print-vp-bot">&nbsp;</div>
 </div>`;
@@ -2446,7 +2534,10 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
          (printAgeBand)으로 켜면 MD 같은 중고등 스레드도 숫자가 작다는 이유로
          "young"으로 잘못 판정돼 박스가 붙는다(2026-09-04 버그, MD4/C30). */
       const abox = /^NL/i.test(threadId||'') ? '<span class="nm-w2-abox"></span>' : '';
-      inner = `<span class="nm-w2-tex" data-tex="${esc(texDisplay(texStr))}"></span>${abox}`;
+      /* 자릿값 색 힌트 — 칠할 수 있는 식이고 차례가 되면(2026-09-16) */
+      const PVm = window.NM_PLACE_COLOR;
+      const tinted = pvTake(!!PVm && PVm.eligible(texStr)) ? PVm.tint(texStr) : texStr;
+      inner = `<span class="nm-w2-tex" data-tex="${esc(texDisplay(tinted))}"></span>${abox}`;
     }
   }
   const steps = printSteps(p);
@@ -2849,12 +2940,12 @@ function renderRoundPages(item, opts){
   opts = opts || {};
   const count = opts.count || 20;
   const numericSeed = NM_RNG.hashSeed(item.seed);
-  let problems = buildProblems(item.thread, item.level, count, numericSeed, item.overrides);
+  let problems = buildProblems(item.thread, item.level, count, numericSeed, item.overrides, item.threadMix);
   applyWordProblems(problems, item.wordType, numericSeed);
   if(BOND_THREADS[item.thread]) problems.forEach(p => { p.__bond = true; });
   /* 예시·따라풀기가 피할 채점 문항 키는 "기본" 문항(덮어쓰기 전)에서 만든다(2026-09-06) — 편집기에서
      문항 하나를 바꿔도 예시·따라풀기가 따라 바뀌지 않아야 한다("그 문항만 바뀐다", 2026-09-05). */
-  const baseProblems = item.overrides ? buildProblems(item.thread, item.level, count, numericSeed) : problems;
+  const baseProblems = item.overrides ? buildProblems(item.thread, item.level, count, numericSeed, null, item.threadMix) : problems;
   const exclude = new Set(baseProblems.map(problemKey));
   /* baseCode(문항 덮어쓰기 반영 전)는 ★예시·따라풀기(기본 시드)의 씨앗으로만 쓴다 —
      한 문항을 편집기에서 바꿔도 code가 바뀌어 예시·따라풀기까지 같이 바뀌면
@@ -2874,12 +2965,16 @@ function renderRoundPages(item, opts){
      이미 찍힌 자릿값 단계)를 되풀이하지 않고, 말→식→답을 보여 주는 예시 하나만 싣는다.
      따라풀기가 없으니 정답지의 (가)(나)(다)도 없다(w2GuidedAnswerKeyHtml 이 빈 배열을 받는다). */
   const wordOnly = item.wordType === 'all' && layout.type === 'word';
+  /* 점검 회차는 가르치지 않는다(2026-09-16) — 개념 설명·★예시·따라풀기를 얹으면
+     푸는 법을 옆에 펴 놓고 실력을 재는 꼴이 된다. 문항만 낸다. */
+  const noTeach = !!item.noTeach;
   /* 개념·예시·따라풀기는 첫 장 필수(토글 없음, v2.1 build 1). exclude 집합: 채점 문항 → 예시 → (가)(나)(다)
      순으로 더해 가며 서로 겹치지 않게. 램프가 있으면 (다)만 램프 레벨로(예시와 같은 기술). */
-  const conceptHtml = wordOnly ? '' : w2ConceptPanelHtml(item.thread, item.level, {rampN});
-  const exampleHtml = wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude)
+  const conceptHtml = (wordOnly || noTeach) ? '' : w2ConceptPanelHtml(item.thread, item.level, {rampN});
+  const exampleHtml = noTeach ? ''
+    : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude)
     : w2ExampleHtml(item.thread, exLevel, baseCode, exclude);
-  const guided = wordOnly ? {html:'', problems:[]}
+  const guided = (wordOnly || noTeach) ? {html:'', problems:[]}
     : w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed, exclude,
         rampN ? [item.level, item.level, exLevel] : null);
 
@@ -2887,7 +2982,7 @@ function renderRoundPages(item, opts){
      유난히 길면(글자 수로만 본다 — 문자열 렌더러라 실측이 없다) 예전 규칙 ceil(rows/2)로 물러선다.
      문장제만인 회차는 머리 묶음이 예시 하나뿐이라 한 장 용량 그대로(6문항이 한 장에). */
   const conceptLen = stripConceptTags(conceptHtml).replace(/\s+/g,'').length;
-  const firstRows = wordOnly ? layout.rows
+  const firstRows = (wordOnly || noTeach) ? layout.rows
     : (conceptLen > 330) ? Math.max(1, Math.ceil(layout.rows / 2))
     : Math.max(1, Math.min(layout.rows, layout.firstRows || Math.ceil(layout.rows / 2)));
   const firstCap = firstRows * layout.cols;
@@ -2914,8 +3009,10 @@ function renderRoundPages(item, opts){
 
   let num = 1;
   let rampTagged = false; // 도전 알약은 회차 전체에서 첫 램프 문항 하나에만(§build 6)
+  pvSeen = 0;             // 자릿값 색 힌트는 회차마다 다시 센다(세 문항에 하나)
   const th = (window.NM_THREADS||{})[item.thread] || {};
-  const instrText = layout.type === 'word'
+  const instrText = item.instr ? pickL(item.instr)
+    : layout.type === 'word'
     ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
     : pickL(th.instr || W2_INSTR[item.thread]) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
   const html = pages.map((pageItems, pi) => {
@@ -2929,6 +3026,7 @@ function renderRoundPages(item, opts){
        세로로 늘어선다(2026-09-06 확인). 열 수만큼 나눠 위에서부터 채우도록 자리를 직접 지정한다. */
     const partialCol = partial && layout.flow === 'col';
     const rowsPerCol = partialCol ? rowsCount : 0;
+    pvOnPage = false;   /* 이 쪽에 색을 쓴 문항이 있으면 아래에서 범례를 붙인다 */
     const cellsHtml = pageItems.map((p, i) => {
       const isFirstRamp = !!p.__ramp && !rampTagged;
       if(isFirstRamp) rampTagged = true;
@@ -2939,11 +3037,20 @@ function renderRoundPages(item, opts){
       }
       return h;
     }).join('');
+    /* 범례는 색을 실제로 쓴 쪽에만 — 안 쓴 쪽에 붙으면 무슨 색 얘긴지 알 수 없다.
+       쪽에 나온 가장 큰 자리 수까지만 그린다(두 자리 문제에 '천의 자리'를 설명하지 않는다). */
+    let pvPlaces = 0;
+    if(pvOnPage && window.NM_PLACE_COLOR){
+      pageItems.forEach(p => {
+        pvPlaces = Math.max(pvPlaces, window.NM_PLACE_COLOR.placesUsed(String(p.tex||'')));
+      });
+    }
+    const pvLegend = pvOnPage ? pvLegendHtml(pvPlaces || 2) : '';
     /* 워터마크는 문항 페이지 안에 한 장씩(.nm-w2-wm, 화면에선 숨김) — 시트 전체 fixed 오버레이 대신 */
     return `<div class="nm-w2-page">
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
-  ${first ? conceptHtml : ''}${first ? exampleHtml : ''}${first ? guided.html : ''}${instrHtml}
+  ${first ? conceptHtml : ''}${first ? exampleHtml : ''}${first ? guided.html : ''}${instrHtml}${pvLegend}
   <div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial)}">${cellsHtml}</div>
   ${partial ? scratchHtml : ''}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>
@@ -3176,15 +3283,23 @@ function rampCount(threadId, lv, count){
    달라진다(PDF 는 정적이라 그대로, 편집기에서 옛 코드를 열면 다른 문항이 보인다).
    40번을 다 써도 겹치면 받아들인다 — 한 자리 덧셈(36가지)·드릴 미니세트 같은 유한한 풀에서
    무한히 돌지 않게. 덮어쓰기(overrides)도 그 슬롯의 orng 로 같은 규칙. */
-function buildProblems(threadId, lv, count, seed, overrides){
+/* mix — [{t,lv}, ...]가 오면 한 회차 안에서 여러 스레드를 번갈아 낸다(2026-09-16).
+   단계 점검 회차가 쓴다: 과정 세 개를 한 회차로 묶어야 점검이 세 쪽으로 흩어지지
+   않는다. 섞인 회차에는 램프(뒤쪽 난이도 상승)를 걸지 않는다 — 점검은 실력을
+   재는 자리지 한 단계 올려 보는 자리가 아니고, 섞인 상태에서 '뒤 N문항'이라는
+   말 자체가 성립하지 않는다. */
+function buildProblems(threadId, lv, count, seed, overrides, mix){
   const rng = NM_RNG.mulberry32(seed);
   const problems = [];
   const seen = new Set();
-  const nRamp = rampCount(threadId, lv, count);
+  const useMix = !!(mix && mix.length);
+  const nRamp = useMix ? 0 : rampCount(threadId, lv, count);
   const rampLv = nRamp ? rampLevelFor(threadId, lv) : null;
   for(let i=0;i<count;i++){
     const useRamp = nRamp && i >= count - nRamp;
-    const p = drawUnique(threadId, useRamp ? rampLv : lv, rng, seen, 40);
+    const src = useMix ? mix[i % mix.length] : null;
+    const p = drawUnique(src ? src.t : threadId,
+                         src ? src.lv : (useRamp ? rampLv : lv), rng, seen, 40);
     seen.add(problemKey(p));
     if(useRamp) p.__ramp = true;
     p.__slot = i;

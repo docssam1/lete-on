@@ -879,9 +879,25 @@ function charChipInner(){
 function charChipHTML(){
   return `<button class="nm-char-chip" id="charChipBtn">${charChipInner()}</button>`;
 }
+/* 지금 화면 뒤에 깔 사진 (2026-09-16, 원장 "우리 맵이나 방 이미지를 흐리게 넣어 줘").
+   학습 화면(.nm-unit-view)은 자기 방 사진을 선명하게 깔고 있으므로 여기서는 손대지
+   않는다 — 흐린 배경은 그 밖의 설명·안내 화면을 위한 것이다.
+   지금 과정의 방을 고르고, 과정을 아직 모르면 마을 지도. */
+function bgKeyForView(){
+  try{
+    /* 마을·타이틀은 자기 배경이 있다 — 지도로 둔다(흐린 층이 보일 일이 없다) */
+    if(S.view==='town'||S.view==='title') return 'map';
+    if(S.unit) return stageKeyForUnit(S.unit);
+    const c=(window.NM_COURSES||{})[currentCourseKey()];
+    if(c&&c.tier) return stageKeyForTier(c.tier);
+  }catch(e){}
+  return 'map';
+}
+
 function render(){
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
+  document.documentElement.dataset.nmBg=bgKeyForView();   // 설명·안내 화면 뒤에 깔 사진(styles.css body::before)
   if(S.onboarded)updateWeeklyDigest();                    // 알림용 주간 요약(변화 있을 때만 저장)
   window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
@@ -2653,6 +2669,34 @@ function finishCheckup(k){
   save();
 }
 
+/* 문장제 한 문항을 제대로 그리기 (2026-09-16 원장 "문제를 줄 바뀜도 정리하고 제대로 만들어").
+   생성기(engine/threads/wp.js)는 이야기·물음·보기·식틀을 따로 준다(word·wordAsk·
+   choices·wordEqn). 그런데 화면은 그것들을 한 줄로 이어 붙인 prompt만 찍고 있었다.
+   그래서 "…모두 몇 개일까요? 지우가 더 받은 쿠키는 몇 개일까요? 문제에서 찾아 쓰세요"
+   처럼 이야기와 물음이 한 덩어리로 흘러 어디까지가 상황이고 어디부터가 묻는 말인지
+   가려지지 않았다. 인쇄(exam.js)는 이미 세 조각을 따로 그린다 — 화면을 거기에 맞춘다.
+   ── 줄 바꿈 ──
+   한국어는 낱말 가운데서 끊기면 안 되므로 word-break:keep-all(.nm-wq-*)을 쓰고,
+   이야기는 문장 단위로 쪼개 한 문장씩 줄을 준다. 문장이 길면 그 안에서만 접힌다. */
+function wpBlockHtml(cur, lang){
+  const L2=o=>o?(o[lang]??o.ko??o.en??''):'';
+  const story=L2(cur.word), ask=L2(cur.wordAsk);
+  if(!story&&!ask) return null;
+  /* 문장 끝(. ? !)에서 자른다. 중국어는 。？！도 함께. 끝 부호는 붙여 남긴다. */
+  const sents=String(story).split(/(?<=[.?!。？！])\s+/).filter(Boolean);
+  const storyHtml=sents.length
+    ? `<p class="nm-wq-story">${sents.map(x=>`<span>${esc(x)}</span>`).join('')}</p>` : '';
+  const askHtml=ask?`<p class="nm-wq-ask">${esc(ask)}</p>`:'';
+  let choicesHtml='';
+  const ch=cur.choices&&(cur.choices[lang]||cur.choices.ko);
+  if(ch&&ch.length){
+    choicesHtml=`<ol class="nm-wq-choices">${ch.map((c,i)=>
+      `<li><b>${i+1}</b><span>${esc(String(c))}</span></li>`).join('')}</ol>`;
+  }
+  const eqn=cur.wordEqn?`<div class="nm-wq-eqn">${esc(String(cur.wordEqn))}</div>`:'';
+  return `<div class="nm-wq">${storyHtml}${askHtml}${choicesHtml}${eqn}</div>`;
+}
+
 function screenCheckup(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -2800,6 +2844,8 @@ function screenCheckup(){
   }
   const wantHint=!!item.pv && !!PV;
   const texForShow=wantHint?PV.tint(cur.tex):cur.tex;
+  /* 문장제는 이야기·물음·보기를 따로 그린다(말풍선 한 덩어리 대신) */
+  const wpHtml=(item.kind==='wp')?wpBlockHtml(cur, S.lang):null;
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="cuBack">${t('back')}</button>
     <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
@@ -2810,7 +2856,7 @@ function screenCheckup(){
       :`🔢 ${lk('계산','Calculating','计算')}`}${th?` · ${esc(L(th.name))}`:''}</div>
     <div class="nm-prog">${dots(k.items.length,k.i)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
-    <div class="nm-bubble${item.kind==='wp'?' nm-bubble-wp':''}">${esc(L(cur.prompt))}</div>
+    ${wpHtml||`<div class="nm-bubble">${esc(L(cur.prompt))}</div>`}
     ${useWidget?`<div id="cuWidget" class="nm-lab-widget"></div>`:`
     ${hasTex?`<div class="nm-lab-expr">${labExprHtml(texForShow)}</div>`:''}
     ${wantHint?PV.legendHtml(S.lang, PV.placesUsed(cur.tex)):''}
