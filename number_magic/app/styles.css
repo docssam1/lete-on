@@ -2394,8 +2394,9 @@ html[data-nm-band="young"] .nm-key{height:64px;font-size:30px}
 /* "대화하는 폰트도 제대로" — 동행 말풍선·안내 띠를 게임 서체(Jua/Fredoka)로, 조금 더 크게.
    (중국어는 Jua에 없어 Pretendard로 자연 폴백) 위쪽 모바일 압축 규칙(.nm-unit-view .nm-bubble)보다
    뒤에 있어 그대로 이긴다. */
-.nm-bubble,.nm-unit-view .nm-bubble{font-family:var(--font-game);font-weight:400;font-size:18px;line-height:1.5;letter-spacing:.01em;color:#1F2A44}
-.nm-host-bubble{font-family:var(--font-game);font-weight:400;font-size:15.5px;line-height:1.45}
+.nm-bubble,.nm-unit-view .nm-bubble{font-family:var(--font-game);font-weight:400;font-size:18px;line-height:1.5;letter-spacing:.01em;color:#1F2A44;
+  word-break:keep-all;overflow-wrap:break-word}   /* 원장 지적: "내가"가 "내/가"로 낱말 중간에서 잘리던 것 — 한글은 낱말 단위로만 줄바꿈 */
+.nm-host-bubble{font-family:var(--font-game);font-weight:400;font-size:15.5px;line-height:1.45;word-break:keep-all;overflow-wrap:break-word}
 html[data-nm-band="young"] .nm-bubble,html[data-nm-band="young"] .nm-unit-view .nm-bubble{font-size:20px}
 @media(min-width:768px){
   .nm-bubble,.nm-unit-view .nm-bubble{font-size:20px;padding:14px 22px}
@@ -2450,12 +2451,18 @@ html[data-nm-band="young"] .nm-bubble,html[data-nm-band="young"] .nm-unit-view .
    DOM 무변경 — grid-auto-flow:dense로 오른쪽 칸 부품이 위로 당겨져 캐릭터 옆에 붙는다. */
 @media (orientation:landscape) and (min-width:700px){
   .nm-unit-view .nm-unit-inner{max-width:1100px;padding:4px 24px 8px}
-  .nm-unit-view .nm-dialog{display:grid;grid-template-columns:minmax(240px,36%) minmax(0,1fr);
+  .nm-unit-view .nm-dialog{display:grid;grid-template-columns:clamp(300px,34%,380px) minmax(0,1fr);
     grid-auto-flow:dense;column-gap:26px;row-gap:6px;align-items:start;align-content:start}
   .nm-unit-view .nm-dialog>.nm-prog{grid-column:1/-1}
-  .nm-unit-view .nm-dialog>.nm-numi{grid-column:1;align-self:end;margin-top:8px}
-  .nm-unit-view .nm-dialog>.nm-bubble{grid-column:1;align-self:start;max-width:none;margin-top:14px}
+  .nm-unit-view .nm-dialog>.nm-numi{grid-column:1;align-self:end;margin-top:8px;width:120px}
+  /* 왼쪽 대화는 고정 크기 상자(원장: "박스로 고정하면 줄바뀜 안 되고 시각적으로도 좋지 않아?") —
+     칸 폭은 clamp로 고정, 높이는 최소 170px을 항상 차지해 문제가 바뀌어도 상자 크기가 안 흔들린다.
+     글은 상자 가운데. 아주 긴 안내(첫 문제의 2문단)는 상자가 늘어나되 낱말은 끊기지 않는다. */
+  .nm-unit-view .nm-dialog>.nm-bubble{grid-column:1;align-self:start;max-width:none;width:100%;margin-top:14px;
+    min-height:170px;padding:16px 20px;display:flex;align-items:center;justify-content:center}
   .nm-unit-view .nm-dialog>:not(.nm-prog):not(.nm-numi):not(.nm-bubble){grid-column:2}
+  /* 안내 문구는 대화 상자 아래(왼쪽 칸) — 오른쪽 칸에 두면 상자가 높은 줄 다음 행으로 밀려 뚝 떨어져 보였다 */
+  .nm-unit-view .nm-dialog>.nm-hint{grid-column:1;margin-top:6px}
   .nm-unit-view .nm-dialog .nm-board{margin:0 0 6px}
   .nm-unit-view .nm-dialog .nm-expr.nm-board{margin:0 0 6px;padding:28px 22px}
   .nm-unit-view .nm-dialog .nm-numpad{max-width:340px}
