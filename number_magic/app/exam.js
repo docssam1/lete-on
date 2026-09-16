@@ -16,6 +16,11 @@
 .nm-print-wm { display: none; }
 @media print {
   body > *:not(.nm-print-sheet) { display: none !important; }
+  /* ⚠️ 앱이 body::before/::after 로 깔아 둔 흐린 마을·방 사진(styles.css, 2026-09-16)은
+     position:fixed 라 위의 자식 선택자 규칙에 걸리지 않는다 — 그대로 두면 학습지 종이 위에
+     마을 지도가 인쇄된다(실제로 그렇게 나왔다). 인쇄에서는 반드시 끈다. */
+  body::before, body::after { display: none !important; }
+  body { background: #fff !important; }
   /* 글꼴은 지정하지 않는다(2026-09-06). 전에는 여기서 sans-serif를 박았는데, 이 <style>은
      exam.js 로딩 시 <head> 끝에 붙어 ws.html의 Pretendard 스택(같은 특이도)을 인쇄 매체에서
      덮어써 PDF 전체가 러너 기본 산세리프(DejaVu)로 나갔다. 페이지(ws.html·styles.css)의
@@ -425,7 +430,9 @@
      grid-auto-rows:1fr라 문항 수가 적어도 줄 간격이 균등하게 늘어나고,
      문항 수가 표(§2-5)대로여도 페이지 밖으로 넘치지 않는다(칸이 줄어들 뿐). */
   .nm-w2-page { position:relative; display:flex; flex-direction:column; height:277mm; box-sizing:border-box;
-    page-break-before:always; break-before:page; overflow:hidden; }
+    page-break-before:always; break-before:page; overflow:hidden;
+    /* 종이는 흰 종이다 — 미리보기 편집기(화면)에서도 앱 배경이 비치면 안 된다 */
+    background:#fff; }
   /* 회차 페이지 워터마크(2026-09-06) — 예전 .nm-print-wm(position:fixed)은 인쇄 시 "모든" 장에
      반복돼 만화 지면에서는 불투명한 칸 사이로 글자 조각만 남고, 정답지에서는 숫자 위를 지났다.
      이제 문항 페이지 안에만 absolute 로 한 장씩 넣는다(만화·정답지·표지엔 없음). 화면(인쇄
@@ -524,6 +531,8 @@
 @media screen {
   .nm-print-sheet { display: none; }
 }
+/* 미리보기 편집기는 화면에 시트를 띄운다 — 앱 배경(흐린 사진)이 비치지 않게 흰 바탕 */
+.nm-print-sheet { background:#fff; }
 /* ── 자릿값 색 힌트 범례(2026-09-16) — 앱과 같은 마크업(.nm-pv-legend).
    ⚠️ print-color-adjust:exact 가 없으면 브라우저가 인쇄에서 배경색을 버린다.
    글자색(\color·span color)은 살아남지만 범례의 색 네모가 통째로 사라져
@@ -3347,6 +3356,45 @@ function parseWorksheetCode(code){
 /* ────────────────────────────────────────────────────────
    공개 API
    ──────────────────────────────────────────────────────── */
+/* ── 단계 점검 회차 (2026-09-16) ──
+   원장 지시 "학습지 모드에도 단계마다 넣어". 앱의 연산 점검과 같은 자리 —
+   과정 3개마다 한 번(과정 3·6·9…) — 에 학습지에도 점검 회차를 얹는다.
+   ★ 세 과정을 **한 회차**로 묶는다(threadMix). 과정마다 회차를 따로 만들면 점검이
+     세 쪽으로 흩어져 주간 학습지가 세 장 두꺼워진다.
+   ★ 가르치지 않는다(noTeach) — 개념 설명·★예시·따라풀기를 얹으면 푸는 법을 옆에
+     펴 놓고 실력을 재는 꼴이다.
+   그 세 과정이 실제로 쓴 드릴 재료만 쓴다(새 재료를 지어내지 않는다). */
+function stageCheckItem(course, courseKey, seedBase){
+  const C = window.NM_COURSES || {};
+  const n = course && course.order;
+  if(!n || n % 3 !== 0) return null;
+  const mix = [];
+  for(let k = n - 2; k <= n; k++){
+    const c = C['C' + k]; if(!c) continue;
+    const pool = [];
+    (c.sessions||[]).forEach(ss => (ss.drills||[]).forEach(d => {
+      if(!(window.NM_THREADS||{})[d.t]) return;
+      if(pool.some(x => x.t === d.t)) return;
+      pool.push({ t:d.t, lv:d.lv });
+    }));
+    if(!pool.length) continue;
+    /* 과정마다 넷 — 재료 전체에 고루 퍼지게(앞에서부터 집으면 뒤 재료를 영영 안 묻는다) */
+    for(let i = 0; i < 4; i++){
+      pool.length && mix.push(pool[Math.min(pool.length - 1, Math.floor(i * pool.length / 4))]);
+    }
+  }
+  if(!mix.length) return null;
+  return {
+    thread: mix[0].t, level: mix[0].lv, threadMix: mix, noTeach: true,
+    n: mix.length, count: mix.length,
+    topicName: '단계 점검 · 과정 ' + (n - 2) + '~' + n,
+    instr: { ko:'지금까지 배운 것을 모아서 풀어 보세요. 새로 배우는 것은 없어요.',
+             en:'A round-up of everything so far. Nothing new here.',
+             zh:'把学过的内容集中做一遍，没有新内容。' },
+    seed: seedBase + 'stagechk'
+  };
+}
+
 const NM_EXAM = {
 
   /* LaTeX→평문 치환(KaTeX 미로딩 폴백). drill.html 등 다른 스코프도 이걸 재사용한다. */
@@ -3983,6 +4031,20 @@ ${printWatermarkHtml()}
             wordType: roadWordType,
             seed: NM_RNG.newCode(),
           }));
+          /* 창의 회차 — 주간 봉투(weeklyEnvelope)에는 있었는데 이 길에는 빠져 있었다
+             (2026-09-16 확인). 원장 "창의 연산은 같이 점검 안 해?"의 절반이 여기였다. */
+          const thNm = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
+          (session.creative || []).forEach(d => {
+            if(!(window.NM_THREADS||{})[d.t]) return;
+            items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4,
+              topicName:'창의 연산 · ' + thNm(d.t), seed: NM_RNG.newCode() });
+          });
+          /* 단계 점검 — 과정 3개마다, 그 과정의 **마지막 세션**에만. 매 세션마다
+             붙이면 한 과정에서 점검이 다섯 번 나온다. */
+          if(sessionIdx === (course.sessions || []).length - 1){
+            const chk = stageCheckItem(course, courseKey, NM_RNG.newCode());
+            if(chk) items.push(chk);
+          }
           if(!items.length) return;
           const off = courseStartOffset(courseKey);
           const cal = (off===null) ? '' : calLabelFor(off+sessionIdx)+' · ';
@@ -4641,6 +4703,10 @@ ${round.html}
       items.push({ thread:d0.t, level:d0.lv, n:6, count:6, wordType:'all', optionalWord:true,
         seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t), wordAlts:alts });
     }
+    /* 단계 점검 — 과정 3개마다(2026-09-16, 원장 "학습지 모드에도 단계마다 넣어").
+       문장제 회차 뒤, 회차 목록의 맨 끝에 온다 — 그 주에 배운 것 다음이 순서다. */
+    const chk = stageCheckItem(course, c, seedOf(seedWeek, 900));
+    if(chk) items.push(chk);
     const wsId = 'W' + w + '-' + c + (k === 2 ? '-2' : '');
     const title = (course.title && (course.title.ko || course.title)) || c;
     const weekLabel = (() => {
