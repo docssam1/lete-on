@@ -51,12 +51,14 @@
           <button data-lang="ja">日本語</button>
           <button data-lang="en">English</button>
         </div>
-        <button id="topLevelPickerButton" class="top-level-button" type="button" aria-haspopup="dialog">레벨 선택</button>
       </header>
 
       <section class="play-area">
         <article class="viewer target-view">
-          <div class="viewer-heading"><h2 id="targetTitle">문제 모양</h2></div>
+          <div class="viewer-heading">
+            <h2 id="targetTitle">문제 모양</h2>
+            <button id="topLevelPickerButton" class="problem-progress" type="button" aria-haspopup="dialog">레벨 4</button>
+          </div>
           <div id="targetCanvas" class="canvas-wrap"></div>
         </article>
         <article class="viewer build-view">
@@ -119,7 +121,7 @@
       </div>
     </main>
 
-    <script type="module" src="./shape-build.js?v=rail-fix-colors-20260728a"></script>
+    <script type="module" src="./shape-build.js?v=cube-access-1"></script>
     <script>
       window.GF_TUTORIAL = {
         key: "gfield-shape-build-tutorial-v1",
@@ -155,6 +157,6 @@
         }
       };
     </script>
-    <script src="../../shared/concept-tutorial.js?v=1" defer></script>
+    <script src="../../shared/concept-tutorial.js?v=2" defer></script>
   </body>
 </html>

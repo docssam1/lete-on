@@ -1488,7 +1488,14 @@ function getLevel() {
 function updateStepDisplay() {
   const level = getLevel();
   const progress = document.querySelector("#problemProgress");
-  if (progress) progress.textContent = `${state.problemIndex + 1}/${level.problems.length}`;
+  if (progress) {
+    const label = t("levelProgress")
+      .replace("{level}", String(level.level))
+      .replace("{current}", String(state.problemIndex + 1))
+      .replace("{total}", String(level.problems.length));
+    progress.textContent = label;
+    progress.setAttribute("aria-label", `${t("levelSelect")} · ${label}`);
+  }
 }
 
 function updateGuideCharacter() {

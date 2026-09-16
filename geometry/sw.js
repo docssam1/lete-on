@@ -6,7 +6,7 @@
  * deploy; the cache is only a fallback when the network is unavailable. This
  * deliberately avoids the classic "PWA keeps serving an old version" trap.
  */
-const CACHE = "gfield-geo-v50";
+const CACHE = "gfield-geo-v51";
 const CORE = [
   "/geometry/world-map/",
   "/geometry/lab/",
@@ -21,6 +21,34 @@ const CORE = [
   "/geometry/geoboard/",
   "/geometry/geoboard/app.js?v=geoboard-lobby-1",
   "/geometry/cube-town/",
+  "/geometry/cube-town/styles.css?v=catalog-studio-3",
+  "/geometry/cube-town/app.js?v=catalog-studio-4",
+  "/geometry/cube-town/catalog.js",
+  "/geometry/cube-town/assets/copy-levels/level-1.png",
+  "/geometry/cube-town/assets/copy-levels/level-2.png",
+  "/geometry/cube-town/assets/copy-levels/level-3.png",
+  "/geometry/cube-town/assets/copy-levels/level-4.png",
+  "/geometry/cube-town/assets/copy-levels/level-5.png",
+  "/geometry/games/copy-build/",
+  "/geometry/games/shape-build/",
+  "/geometry/styles.css?v=menu-cleanup-20260719a",
+  "/geometry/app.js?v=cube-access-1",
+  "/geometry/data/copy-build-levels.js",
+  "/geometry/games/shape-build/shape-build.css?v=shape-build-20260728a",
+  "/geometry/games/shape-build/shape-build.js?v=cube-access-1",
+  "/geometry/shared/portrait-lock.css?v=1",
+  "/geometry/shared/level-complete.js?v=1",
+  "/geometry/shared/evolution.js?v=evolve4-20260720a",
+  "/geometry/shared/profile-storage.js?v=evolve2-20260719a",
+  "/geometry/shared/concept-tutorial.js?v=2",
+  "/geometry/shared/pwa.js?v=2",
+  "/geometry/assets/ui/cube-blue.webp",
+  "/geometry/assets/ui/cube-green.webp",
+  "/geometry/assets/ui/cube-rose.webp",
+  "/geometry/assets/ui/cube-wood.webp",
+  "/geometry/assets/ui/cube-yellow.webp",
+  "/geometry/assets/ui/panel-cream.webp",
+  "/geometry/assets/ui/wood-light.webp",
   "/geometry/solid-vista/",
   "/geometry/solid-vista/styles.css?v=solid-studio-3",
   "/geometry/solid-vista/soma.css?v=solid-2",
@@ -251,10 +279,8 @@ self.addEventListener("fetch", (event) => {
       if (cached) return cached;
       if (req.mode === "navigate") {
         const path = new URL(req.url).pathname;
-        if (["/geometry/games/angle-studio/", "/geometry/worksheet/angle-studio/", "/geometry/games/unit-area/", "/geometry/worksheet/unit-area/", "/geometry/games/perimeter/", "/geometry/worksheet/perimeter/", "/geometry/games/quadrilateral/", "/geometry/worksheet/quadrilateral/", "/geometry/games/circle-studio/", "/geometry/worksheet/circle-studio/"].includes(path)) {
-          const activityPage = await caches.match(path);
-          if (activityPage) return activityPage;
-        }
+        const activityPage = await caches.match(path);
+        if (activityPage) return activityPage;
         const fallback = await caches.match("/geometry/world-map/");
         if (fallback) return fallback;
       }

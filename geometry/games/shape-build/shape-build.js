@@ -42,7 +42,8 @@ const UI_TEXT = {
     guideTapRotate: "놓은 조각을 톡 누르면 방향을 바꿀 수 있어!",
     wrong: "조각의 위치와 방향을 다시 살펴보세요.", success: "정확하게 만들었어요!", needMore: "조각을 5개 이상 사용해 보세요.",
     invalid: "그 자리에는 놓을 수 없어요.", rotateState: "조각 방향을 바꿨어요.", removed: "조각을 보관함에 돌려놓았어요.",
-    popupRotate: "돌리기", popupStand: "세우기", popupLay: "눕히기", popupRemove: "빼기", popupClose: "닫기"
+    popupRotate: "돌리기", popupStand: "세우기", popupLay: "눕히기", popupRemove: "빼기", popupClose: "닫기",
+    levelSelect: "레벨 선택", levelLabel: "레벨 {level}", problemCount: "{count}문제"
   },
   zh: {
     target: "目标形状", creative: "我的作品", build: "我的形状", check: "确认", finish: "完成",
@@ -52,7 +53,8 @@ const UI_TEXT = {
     guideTapRotate: "轻点放好的积木就能改变方向！",
     wrong: "再看看积木的位置和方向。", success: "做得完全一样！", needMore: "请至少使用5块积木。",
     invalid: "这里不能放。", rotateState: "方向已改变。", removed: "积木已放回托盘。",
-    popupRotate: "旋转", popupStand: "立起", popupLay: "放平", popupRemove: "移除", popupClose: "关闭"
+    popupRotate: "旋转", popupStand: "立起", popupLay: "放平", popupRemove: "移除", popupClose: "关闭",
+    levelSelect: "选择等级", levelLabel: "等级 {level}", problemCount: "{count}题"
   },
   ja: {
     target: "問題の形", creative: "わたしの作品", build: "作った形", check: "確認", finish: "完成",
@@ -62,7 +64,8 @@ const UI_TEXT = {
     guideTapRotate: "置いたブロックをトンと押すと向きを変えられるよ！",
     wrong: "位置と向きをもう一度見てください。", success: "同じ形にできました！", needMore: "ブロックを5個以上使ってください。",
     invalid: "そこには置けません。", rotateState: "向きを変えました。", removed: "ブロックをトレイに戻しました。",
-    popupRotate: "まわす", popupStand: "たてる", popupLay: "ねかす", popupRemove: "はずす", popupClose: "とじる"
+    popupRotate: "まわす", popupStand: "たてる", popupLay: "ねかす", popupRemove: "はずす", popupClose: "とじる",
+    levelSelect: "レベル選択", levelLabel: "レベル {level}", problemCount: "{count}問"
   },
   en: {
     target: "Target Shape", creative: "My Creation", build: "My Build", check: "Check", finish: "Finish",
@@ -72,7 +75,8 @@ const UI_TEXT = {
     guideTapRotate: "Tap a placed piece to change its direction!",
     wrong: "Check every piece position and direction.", success: "You made the same shape!", needMore: "Use at least five pieces.",
     invalid: "That piece cannot go there.", rotateState: "The piece direction changed.", removed: "The piece returned to the tray.",
-    popupRotate: "Rotate", popupStand: "Stand up", popupLay: "Lay down", popupRemove: "Remove", popupClose: "Close"
+    popupRotate: "Rotate", popupStand: "Stand up", popupLay: "Lay down", popupRemove: "Remove", popupClose: "Close",
+    levelSelect: "Select level", levelLabel: "Level {level}", problemCount: "{count} problems"
   }
 };
 
@@ -534,6 +538,7 @@ function loadProblem() {
     levelIndex: state.level - 1,
     problemIndex: state.problemIndex
   });
+  updateLevelPickerLabel();
   state.pieces = [];
   state.drag = null;
   state.successPending = false;
@@ -1112,14 +1117,14 @@ function renderLevelOptions() {
     button.type = "button";
     button.className = "level-option";
     button.classList.toggle("active", level === state.level);
-    title.textContent = `레벨 ${level}`;
+    title.textContent = getText("levelLabel").replace("{level}", String(level));
     stars.textContent = `${"★".repeat(level)}${"☆".repeat(5 - level)}`;
     const problemCount = level <= 3 ? 10 : level === 4 ? level4Problems.length : level5Problems.length;
-    count.textContent = `${problemCount}문제`;
+    count.textContent = getText("problemCount").replace("{count}", String(problemCount));
     button.append(title, stars, count);
     button.addEventListener("click", () => {
       if (level <= 3) {
-        window.location.href = `../../?level=${level}`;
+        window.location.href = `../copy-build/?level=${level}`;
       } else {
         state.level = level;
         state.problemIndex = 0;
@@ -1134,6 +1139,7 @@ function renderLevelOptions() {
 
 function openLevelDialog() {
   closePiecePopup();
+  window.dispatchEvent(new Event("gfield:level-picker-open"));
   document.querySelector("#levelDialog").hidden = false;
 }
 
@@ -1153,11 +1159,21 @@ function setLanguage(lang) {
   document.querySelector("#viewTop span").textContent = getText("top");
   document.querySelector(".menu-exit small").textContent = getText("exit");
   document.querySelector(".menu-exit").setAttribute("aria-label", getText("exit"));
+  updateLevelPickerLabel();
+  renderLevelOptions();
   updateAudioButton();
   refreshBoardLabels(targetViewer);
   refreshBoardLabels(buildViewer);
   updateLevelBadge(state.lang, BADGE_POS);
   loadProblem();
+}
+
+function updateLevelPickerLabel() {
+  const button = document.querySelector("#topLevelPickerButton");
+  if (!button) return;
+  const label = getText("levelLabel").replace("{level}", String(state.level));
+  button.textContent = label;
+  button.setAttribute("aria-label", `${getText("levelSelect")} · ${label}`);
 }
 
 function toggleAudio() {

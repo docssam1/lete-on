@@ -51,6 +51,7 @@
 
   var step = 0;
   var els = null;
+  var finished = false;
 
   function speak(message) {
     if (read("gfield-audio-muted", "false") === "true") return;
@@ -110,12 +111,15 @@
   }
 
   function finish() {
+    if (finished || !els) return;
+    finished = true;
     try {
       localStorage.setItem(config.key, "done");
     } catch (e) {
       /* ignore */
     }
     els.veil.hidden = true;
+    window.removeEventListener("gfield:level-picker-open", finish);
     if ("speechSynthesis" in window) {
       try {
         window.speechSynthesis.cancel();
@@ -167,6 +171,7 @@
     document.body.append(veil);
 
     els = { veil: veil, message: message, dots: dots, next: next };
+    window.addEventListener("gfield:level-picker-open", finish);
 
     next.addEventListener("click", function () {
       if (step < steps.length - 1) {

@@ -1,4 +1,5 @@
 import { groups, games } from "./catalog.js";
+import { readProfile } from "../shared/profile-storage.js";
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -158,7 +159,7 @@ function render() {
   renderCopyLevelDialog();
 }
 
-const profile = JSON.parse(localStorage.getItem("gfield-profile") || "{}");
+const profile = readProfile();
 const characterIndex = { cubi: 0, orbi: 1, pyra: 2, cylo: 3, recto: 4, arco: 5, coni: 6, pris: 7, nova: 8, foldy: 9 }[profile.character] || 0;
 $("#avatar").className = `avatar character-sprite sprite-${characterIndex} color-${profile.color || "original"}`;
 $("#playerName").textContent = profile.name || "";
