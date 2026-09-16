@@ -2460,8 +2460,9 @@ html[data-nm-band="young"] .nm-bubble,html[data-nm-band="young"] .nm-unit-view .
      글은 상자 가운데. 아주 긴 안내(첫 문제의 2문단)는 상자가 늘어나되 낱말은 끊기지 않는다. */
   .nm-unit-view .nm-dialog>.nm-bubble{grid-column:1;align-self:start;max-width:none;width:100%;margin-top:14px;
     min-height:170px;padding:16px 20px;display:flex;align-items:center;justify-content:center}
-  .nm-unit-view .nm-dialog>:not(.nm-prog):not(.nm-numi):not(.nm-bubble){grid-column:2}
-  /* 안내 문구는 대화 상자 아래(왼쪽 칸) — 오른쪽 칸에 두면 상자가 높은 줄 다음 행으로 밀려 뚝 떨어져 보였다 */
+  .nm-unit-view .nm-dialog>:not(.nm-prog):not(.nm-numi):not(.nm-bubble):not(.nm-hint){grid-column:2}
+  /* 안내 문구는 대화 상자 아래(왼쪽 칸) — 오른쪽 칸에 두면 상자가 높은 줄 다음 행으로 밀려 뚝 떨어져 보였다.
+     (:not()은 인자의 특이도를 갖는다 — 위 일반 규칙에서 .nm-hint를 빼지 않으면 이 규칙이 진다) */
   .nm-unit-view .nm-dialog>.nm-hint{grid-column:1;margin-top:6px}
   .nm-unit-view .nm-dialog .nm-board{margin:0 0 6px}
   .nm-unit-view .nm-dialog .nm-expr.nm-board{margin:0 0 6px;padding:28px 22px}
