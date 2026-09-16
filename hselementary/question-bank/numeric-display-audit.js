@@ -2,8 +2,26 @@
 
 global.window = {};
 require("./source-inventory-4-1.js");
+require("./source-inventory-5-2.js");
+require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-5-2-e1.js");
+require("./source-5-2-u2-e2.js");
+require("./source-5-2-u2-e3.js");
+require("./source-5-2-u2-e4.js");
+require("./source-4-2-parallel-angle.js");
+require("./source-grade6-decimal-e1-mission4.js");
+require("./source-grade6-decimal-e1-mission3.js");
+require("./source-grade6-decimal-e2-example2.js");
+require("./source-grade6-decimal-e2-example4.js");
+require("./source-grade6-decimal-e2-mission6.js");
+require("./source-grade6-decimal-e4-example1.js");
+require("./source-grade6-decimal-e4-mission4.js");
+require("./source-grade6-volume-e2.js");
+require("./source-grade6-volume-e3-mission3.js");
+require("./source-grade6-volume-e4.js");
+require("./source-grade6-surface-e1.js");
 
 const api = window.HSE_GENERATORS;
 const allTypes = window.HSE_CURRICULUM.semesters
@@ -12,7 +30,7 @@ const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLock
 const floatingTail = /\b\d+\.\d{10,}\b/;
 const failures = [];
 let count = 0;
-if (types.length !== 1169) failures.push(`공개 검수 대상은 1169개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 1132) failures.push(`공개 검수 대상은 1132개여야 하나 ${types.length}개입니다.`);
 
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {

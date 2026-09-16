@@ -2,9 +2,14 @@
 
 global.window = {};
 require("./source-inventory-4-1.js");
+require("./source-inventory-5-2.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-5-2-e1.js");
+require("./source-5-2-u2-e2.js");
+require("./source-5-2-u2-e3.js");
+require("./source-5-2-u2-e4.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-grade6-decimal-e1-mission4.js");
 require("./source-grade6-decimal-e1-mission3.js");
@@ -34,11 +39,13 @@ const types = window.HSE_CURRICULUM.semesters.flatMap(semester =>
 const ready = types.filter(type => generatorApi.generatorKey(type) && !type.reviewLocked);
 const locked = types.filter(type => !generatorApi.generatorKey(type) || type.reviewLocked);
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
+const source52 = types.filter(type => /^5-2-/.test(type.sourceItemId || ""));
 
-if (types.length !== 1962) failures.push(`런타임 유형은 1962개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1064) failures.push(`생성 가능 유형은 1064개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 898) failures.push(`검수 대기 유형은 898개여야 하나 ${locked.length}개입니다.`);
+if (types.length !== 2044) failures.push(`런타임 유형은 2044개여야 하나 ${types.length}개입니다.`);
+if (ready.length !== 1132) failures.push(`생성 가능 유형은 1132개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 912) failures.push(`검수 대기 유형은 912개여야 하나 ${locked.length}개입니다.`);
 if (ready.some(type => !type.sourceItemId)) failures.push("원문 문항 ID가 없는 유형이 생성 가능 상태입니다.");
+if (source52.length !== 106 || source52.filter(type => !type.reviewLocked).length !== 68 || source52.filter(type => type.reviewLocked).length !== 38) failures.push("5-2 1·2단원 원문 유형의 전체·공개·잠금 수가 다릅니다.");
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
 if (sourceGrade6.filter(type => !type.reviewLocked).length !== 287 || sourceGrade6.filter(type => type.reviewLocked).length !== 346) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
 if (!sourceGrade6.every(type => {
@@ -93,4 +100,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`런타임 생성 가능성 감사 통과: 전체 ${types.length} · 생성 가능 ${ready.length} · 검수 대기 ${locked.length}(6학년 원문 ${sourceGrade6.filter(type => type.reviewLocked).length} 포함) · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`런타임 생성 가능성 감사 통과: 전체 ${types.length} · 생성 가능 ${ready.length} · 검수 대기 ${locked.length}(5-2 원문 ${source52.filter(type => type.reviewLocked).length} · 6학년 원문 ${sourceGrade6.filter(type => type.reviewLocked).length}) · ${generatedCount.toLocaleString()}회 생성`);

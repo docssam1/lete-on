@@ -5,9 +5,14 @@ const path = require("node:path");
 
 global.window = {};
 require("./source-inventory-4-1.js");
+require("./source-inventory-5-2.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-5-2-e1.js");
+require("./source-5-2-u2-e2.js");
+require("./source-5-2-u2-e3.js");
+require("./source-5-2-u2-e4.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-grade6-decimal-e1-mission4.js");
 require("./source-grade6-decimal-e1-mission3.js");
@@ -24,7 +29,7 @@ require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
-const EXPECTED_PUBLIC_TYPE_COUNT = 1064;
+const EXPECTED_PUBLIC_TYPE_COUNT = 1132;
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,

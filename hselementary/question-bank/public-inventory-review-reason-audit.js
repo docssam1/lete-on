@@ -2,11 +2,13 @@
 
 global.window = {};
 require("./source-inventory-4-1.js");
+require("./source-inventory-5-2.js");
 require("./source-inventory-grade6.js");
 
 const answerDetailPattern = /(?:제공\s*답|답안|독립\s*계산|답이\s*하나|답을\s*확정|뒤에만\s*\d)/;
 const catalogs = [
   ["4-1", window.HSE_SOURCE_INVENTORY_41?.items || []],
+  ["5-2", window.HSE_SOURCE_INVENTORY_52?.items || []],
   ["6학년", window.HSE_SOURCE_INVENTORY_GRADE6?.items || []]
 ];
 const failures = [];

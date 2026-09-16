@@ -1455,7 +1455,63 @@
     };
   };
 
+  const buildSourceSemester52 = legacySemester => {
+    const inventory = window.HSE_SOURCE_INVENTORY_52;
+    const sourceItems = inventory?.items || [];
+    if (legacySemester.id !== "5-2" || sourceItems.length !== 106) return legacySemester;
+
+    return {
+      ...legacySemester,
+      units: legacySemester.units.map(unit => {
+        if (![1, 2].includes(unit.number)) return unit;
+        const unitItems = sourceItems.filter(item => item.unit === unit.number);
+        const byExploration = new Map();
+        unitItems.forEach(item => {
+          const group = byExploration.get(item.exploration) || [];
+          group.push(item);
+          byExploration.set(item.exploration, group);
+        });
+
+        let typeNumber = 0;
+        const sourceGroups = [...byExploration.entries()].sort((left, right) => left[0] - right[0]).map(([exploration, items], groupIndex) => ({
+          id: `${unit.id}-source-e${exploration}`,
+          number: groupIndex + 1,
+          name: `개념탐구 ${exploration} 원문 유형`,
+          types: items.map((item, index) => ({
+            id: item.sourceItemId,
+            number: index + 1,
+            typeNumber: ++typeNumber,
+            name: item.typeLabel,
+            label: item.typeLabel,
+            generatorKey: item.generatorKey || "",
+            difficultyBand: item.difficultyBand,
+            sourceTier: item.sourceTier,
+            sourceVerified: item.sourceVerified,
+            sourceEvidence: `5-2 심화 원문 직접 확인 · PDF p.${item.sourcePdfPage} · 교재 p.${item.sourcePrintedPage}`,
+            sourceItemId: item.sourceItemId,
+            sourceItemLabel: item.sourceItemLabel,
+            sourceSection: item.sourceSection,
+            sourcePdfPage: item.sourcePdfPage,
+            sourcePrintedPage: item.sourcePrintedPage,
+            reviewLocked: item.reviewLocked,
+            reviewReason: item.reviewReason,
+            normalizedTypeId: item.normalizedTypeId,
+            problemVisualRequired: item.problemVisualRequired,
+            answerVisualRequired: item.answerVisualRequired,
+            answerVisualStatus: item.answerVisualStatus,
+            generationMode: item.generationMode,
+            verifiedVariantTarget: item.verifiedVariantTarget,
+            verifiedVariantCount: item.verifiedVariantCount
+          }))
+        }));
+        return { ...unit, subunits: sourceGroups };
+      })
+    };
+  };
+
   semesters[0] = buildSourceSemester41(semesters[0]);
+  const semester52Index = semesters.findIndex(item => item.id === "5-2");
+  if (semester52Index >= 0) semesters[semester52Index] = buildSourceSemester52(semesters[semester52Index]);
   for (const semesterId of ["6-1", "6-2"]) {
     const index = semesters.findIndex(item => item.id === semesterId);
     if (index >= 0) semesters[index] = buildSourceSemesterGrade6(semesters[index]);
@@ -1484,7 +1540,7 @@
   }))));
 
   window.HSE_CURRICULUM = {
-    version: "2026-09-16a",
+    version: "2026-09-16d",
     levels: [
       { id: "simwha", label: "심화 기준", rank: 1 }
     ],

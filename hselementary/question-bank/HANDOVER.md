@@ -3,12 +3,12 @@
 ## Current State
 
 - Branch: `agent/hsmiddle-question-bank`
-- Local page: `http://127.0.0.1:8878/hselementary/question-bank/`
-- Total runtime types: 1,962 across 6 semesters, 36 major units, and 184 subunits
-- Runtime-available types: 1,064 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 898
-- Source-linked runtime entries: 1,558 currently carry a source item ID (4-1: 329, 4-2: 239, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `196/263`, 5-1 `272/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `48/477` types are runtime-available. The remainder stay review-locked.
+- Local audit page: `http://127.0.0.1:8893/hselementary/question-bank/`
+- Total runtime types: 2,044 across 6 semesters, 36 major units, and 184 subunits
+- Runtime-available types: 1,132 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 912
+- Source-linked runtime entries: 1,664 currently carry a source item ID (4-1: 329, 4-2: 239, 5-1: 357, 5-2: 106, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog contains all 75 directly classified source items, and 5-2 Units 1-2 now contain 106 individually indexed source items.
+- Semester release counts: 4-1 `309/329`, 4-2 `196/263`, 5-1 `272/357`, 5-2 `68/206`, 6-1 `239/412`, and 6-2 `48/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
@@ -23,10 +23,15 @@
 - Whole-bank runtime check: 63,840 generations; notation check: 159,600 generations plus real-DOM fraction centering at 1440px and 390px. These checks do not replace original-source and learner-difficulty review for other groups.
 - Public review reasons must not contain answer values. Keep detailed counterexamples in private evidence, and run `public-inventory-review-reason-audit.js` before release.
 
-## 2026-09-16 5-2 Source Gate
+## 2026-09-16 5-2 Units 1-2 Source Reconstruction
 
-- All 124 legacy 5-2 generated types are review-locked. They did not carry individual advanced-source item IDs, and direct comparison with the current 5-2 advanced book showed that the displayed type structures were not one-to-one matches for the printed Exploration, Example, and Mission items.
-- Keep the legacy generators as private candidates only. Reopen one type at a time after its source item, figure, official answer, child-readable solution, independent calculation, and screen/A4 rendering have all been verified.
+- The 5-2 source inventory now indexes 106 individual Exploration, Example, and Mission items: 50 in Unit 1 and 56 in Unit 2. It normalizes them into 95 mathematical families without losing each source-item ID.
+- Unit 2 publishes 54 of 56 source items. Exploration 1 stays locked because it is an open explanation task without a single numeric answer rubric. Exploration 2 Mission 6 stays locked because the printed overlapping-circle diagram does not give enough numeric center-spacing information to determine the rectangle area from text alone.
+- Unit 2 source groups publish 16 Exploration 2 types, 11 Exploration 3 types, and 11 Exploration 4 types in addition to the verified Exploration 1 set. Every public type has three fixed, source-matched variants; these are finite verified pools, not unlimited random generation or empirically calibrated difficulty bands.
+- Repaired source-fidelity defects found during visual comparison: stacked squares now share exact calculated vertices instead of drifting inside one another; the irreducible-fraction task keeps symbolic `가/나` instead of leaking its value; the equal-interval number line includes calculated interval arcs and equality marks; diagrams use thin black workbook strokes and shared centered fraction/mixed-number notation.
+- Independent group audits cover 48, 33, and 33 Unit 2 fixed questions and 4,593 difficulty-seed runs. Whole-bank checks cover 67,920 runtime generations, 169,800 notation generations, and 339,600 language plus 339,600 numeric-display generations.
+- Full source-browser evidence covers all 106 indexed items: 212 catalog previews, 1,224 desktop/mobile problem-and-solution states, 818 screenshots, and 408 substantive A4 files. Sixty-eight items are public and 38 remain review-locked. This validates source structure, answer contract, notation, and rendering; it is not a claim of measured student difficulty.
+- The 124 legacy 5-2 generated types remain review-locked. They did not carry individual advanced-source item IDs, and direct comparison showed that their displayed structures were not one-to-one matches for the printed items. Keep them as private candidates only.
 - An improper fraction is not automatically an error, but every displayed fraction must belong to the printed problem structure and use the shared mathematical notation. Do not introduce an improper fraction merely because a random parameter makes one.
 - Number lists containing thousands separators must use separate list items rather than a second comma as the item separator.
 - The same release gate now applies across the whole elementary bank: a runtime type without an individual source item ID is review-locked. This also locks 256 legacy Grade 6 generators while retaining their code as private reconstruction candidates.
@@ -94,6 +99,7 @@
 - Grade 5-1 unit 4: simplifying and common denominators, 4 types
 - Grade 5-1 unit 5: fraction addition and subtraction, 4 types
 - Grade 5-1 unit 6: polygon perimeter and area, 4 types
+- Grade 5-2 units 1-2: 106 source items indexed; 68 source-matched types ready and 38 locked. Unit 2 publishes 54 of 56 items and keeps two items locked for open-response or missing-diagram-condition reasons
 
 > The long paragraph below is retained as the 2026-08-29 regression snapshot. Its runtime and line-graph counts are superseded by `Current State` and `2026-08-30 4-2 Line-Graph Completion` above.
 
@@ -109,7 +115,7 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Runtime availability policy: `runtime-availability-audit.js` checks all 1,064 public types across 20 seeds per difficulty
+- Runtime availability policy: `runtime-availability-audit.js` checks all 1,132 public types across 20 seeds per difficulty
 - 4-1 source policy: `source-inventory-audit.js`, `source-crosswalk-audit.js`, and `source-runtime-taxonomy-audit.js`
 - 4-1 type-language policy: `source-type-language-audit.js` requires 329 unique child-readable Korean type names. Source labels such as `예제 1-1` remain provenance only; they must never replace the explanatory type name.
 - Elementary explanation policy: `elementary-language-audit.js` checks the public runtime types across 100 seeds per difficulty, including the source-mapped public types
@@ -126,6 +132,9 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Simplifying-and-common-denominators regression check: `fractions-audit.js`
 - Fraction-addition-and-subtraction regression check: `fraction-add-sub-audit.js`
 - Perimeter-and-area regression check: `perimeter-area-audit.js`
+- 5-2 source inventory and grouping: `source-inventory-5-2.js` and `source-inventory-5-2-build.js`
+- 5-2 Unit 2 source routing and independent checks: `source-5-2-u2-e2-audit.js`, `source-5-2-u2-e3-audit.js`, and `source-5-2-u2-e4-audit.js`
+- 5-2 Units 1-2 PC/mobile/A4 source sweep: `source-5-2-e1-browser-audit.js`
 - Geometry single-answer and visibility gate: `GEOMETRY_VALIDATION.md`
 - Space-and-solids source and visibility contract: `SPACE_SOLIDS_SOURCE_ALIGNMENT.md`
 - Duplicate names must be resolved with semester/unit/type IDs. Do not route generators by display name alone.

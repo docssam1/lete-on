@@ -27753,10 +27753,13 @@
         const labels = ["수분", "탄수화물", "단백질", "기타"];
         const perFruit = d.weight * d.otherRate * d.part / 10000;
         const answerCount = Math.ceil(d.need / perFruit);
+        const oneLessCount = answerCount - 1;
+        const oneLessAmount = oneLessCount * perFruit;
+        const enoughAmount = answerCount * perFruit;
         const segments = solved => labels.map((label, index) => segment(label, rates[index], `${rates[index]}%`, `${rates[index]}%${solved && index === 3 ? ` · 한 개에 칼륨 ${perFruit}g` : ""}`, { highlight: index === 3 }));
         const values = [d.weight, ...rates, d.part, d.need, perFruit, answerCount];
         const answer = `${answerCount}개`;
-        return fixed(`참외 1개의 무게는 ${d.weight}g이고, 원그래프의 기타 성분 가운데 ${d.part}%가 칼륨입니다. 칼륨의 하루 충분 섭취량 ${d.need}g을 참외만으로 채우려면 적어도 몇 개를 먹어야 하는지 구하세요.`, answer, `기타 성분은 ${d.weight}×${d.otherRate}%=${d.weight * d.otherRate / 100}g이고 그중 칼륨은 ${d.part}%인 ${perFruit}g입니다. ${d.need}÷${perFruit}=${d.need / perFruit}이므로 적어도 ${answerCount}개가 필요합니다.`, circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(false) }], values }), circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(true) }], values, solved: true, resultText: answer }), values);
+        return fixed(`참외 1개의 무게는 ${d.weight}g이고, 원그래프의 기타 성분 가운데 ${d.part}%가 칼륨입니다. 칼륨의 하루 충분 섭취량 ${d.need}g을 참외만으로 채우려면 적어도 몇 개를 먹어야 하는지 구하세요.`, answer, `기타 성분은 ${d.weight}×${d.otherRate}%=${d.weight * d.otherRate / 100}g이고 그중 칼륨은 ${d.part}%인 ${perFruit}g입니다. ${oneLessCount}개로는 ${oneLessAmount}g이라 부족하고 ${answerCount}개면 ${enoughAmount}g이므로 적어도 ${answerCount}개가 필요합니다.`, circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(false) }], values }), circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(true) }], values, solved: true, resultText: answer }), values);
       }
 
       if (variant === 8) {
