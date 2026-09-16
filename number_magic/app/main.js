@@ -4793,6 +4793,7 @@ function stepLabPairs(body,u){
   say(first?L(cfg.intro):L(cur.prompt));
   const expr=$('#expr');
   const opSign=cur.op==='mul'?'×':'+';   // 곱셈 짝 찾기(B-16, 2026-09-09)는 + 대신 ×
+  expr.dataset.op=opSign;   // CSS가 연산자를 타일 왼쪽에 붙여 그린다 — 세로에서 줄이 꺾여도 '+'가 줄 끝에 안 매달림(2026-09-16)
   cur.nums.forEach((n,i)=>{
     if(i)expr.insertAdjacentHTML('beforeend',`<span class="nm-plus">${opSign}</span>`);
     const b=document.createElement('button');b.className='nm-tile';b.textContent=n;b.dataset.i=i;
