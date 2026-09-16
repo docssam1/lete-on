@@ -3065,10 +3065,15 @@ function screenTitle(){
            오른쪽 메뉴 높이에 맞춰 행이 늘어나며 위아래로 벌어지던 것을 막는다(2026-09-16). -->
       <div class="nm-title-hero">
       <div class="nm-title-logo">
-        <div class="nm-title-logo-kr">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
+        <!-- data-text는 CSS ::before가 같은 글자를 한 겹 더 찍어 "흰 테두리 뒤 + 그라데이션 앞"을
+             만드는 데 쓴다(2026-09-16). 한 요소에 text-stroke와 background-clip:text를 같이 주면
+             테두리가 그라데이션을 덮어 흰 글자로 보인다 — 인트로 영상 로고와 같은 결로 맞춘 것. -->
+        <div class="nm-title-logo-kr" data-text="${lk('수의 마법','Numbers of Magic','数字魔法')}">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
         <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','NUMBER VILLAGE · DOCSSAM','NUMBERS OF MAGIC')}</div>
       </div>
-      <div class="nm-title-char">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,88):''}</div>
+      <!-- 캐릭터 크기 88→136(2026-09-16, 원장 "캐릭터를 더 키워야지"). 원본 해상도로 크게 그려야
+           흐려지지 않는다 — CSS 확대가 아니라 렌더 크기 자체를 키운다. -->
+      <div class="nm-title-char">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,136):''}</div>
       <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
       <div class="nm-title-stats">
         <span class="nm-title-chip">🪙 ${S.coins}</span>

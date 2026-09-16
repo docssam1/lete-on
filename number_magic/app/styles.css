@@ -2566,7 +2566,29 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
    세 가지를 앱의 언어(입체 + 게임 서체 + 금색 강조)로 맞춘다. 파일 맨 뒤라 같은
    특이도의 옛 규칙을 그대로 이긴다. 배경·로고·캐릭터는 그대로 둔다.
    ============================================================ */
-.nm-title-logo-sub{font-family:var(--font-game);color:rgba(245,217,139,.62);letter-spacing:.3em}
+/* ── 로고 — 인트로 영상(assets/gemini_generated_video_*.mp4)의 타이틀과 같은 결로:
+   하늘색→파랑→보라 그라데이션 글자에 두꺼운 흰 테두리, 그 아래 보라 그림자.
+   paint-order:stroke fill 이라 테두리가 먼저 깔리고 그라데이션이 그 위에 찍힌다. */
+/* 뒷장 = 두꺼운 흰 테두리, 앞장(::before) = 그라데이션 글자. 한 요소에 둘을 같이 주면
+   테두리가 그라데이션을 덮어 흰 글자가 된다(실제로 그렇게 나왔다). */
+.nm-title-logo-kr{
+  position:relative;display:inline-block;
+  font-family:var(--font-game);font-weight:400;
+  font-size:clamp(46px,12.5vw,70px);letter-spacing:.01em;line-height:1.06;
+  color:#fff;-webkit-text-stroke:6px #fff;background:none;text-shadow:none;
+  filter:drop-shadow(0 4px 0 rgba(58,26,110,.5)) drop-shadow(0 12px 26px rgba(128,70,225,.6));
+}
+.nm-title-logo-kr::before{
+  content:attr(data-text);position:absolute;left:0;top:0;width:100%;
+  -webkit-text-stroke:0;
+  /* 글자 안이 흰 테두리에 씻겨 보이지 않도록 채도를 세게 — 영상 로고와 같은 하늘→파랑→보라 */
+  background:linear-gradient(180deg,#7FE0FF 0%,#2E9BF2 28%,#4A5FE6 56%,#8B37E0 82%,#C734D6 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  pointer-events:none;
+}
+.nm-title-logo-sub{font-family:var(--font-game);font-weight:400;font-size:13px;letter-spacing:.24em;
+  color:#EEDCFF;text-shadow:0 2px 0 rgba(48,20,96,.55),0 0 14px rgba(186,126,255,.55)}
+.nm-title-logo::after{background:linear-gradient(90deg,transparent,#C9A6FF,transparent);opacity:.75}
 .nm-title-hello{font-family:var(--font-game);font-weight:400;font-size:16px;color:#EAF2FF;opacity:1;
   text-shadow:0 2px 6px rgba(2,10,26,.55)}
 .nm-title-chip{font-family:var(--font-game);font-weight:400;font-size:14px;
@@ -2577,13 +2599,13 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 
 /* 모드 타일 — 반투명 유리 → 눌리는 입체 패널(윗면 하이라이트 + 아래 밑면) */
 .nm-title-blk{font-family:var(--font-game);gap:4px;border-radius:20px;padding:14px 14px 13px;
-  border:1px solid rgba(255,255,255,.2);
-  background:linear-gradient(180deg,rgba(92,138,206,.55) 0%,rgba(42,84,154,.5) 55%,rgba(26,60,118,.55) 100%);
-  box-shadow:inset 0 2px 0 rgba(255,255,255,.34),0 6px 0 rgba(10,32,70,.72),0 15px 24px -13px rgba(2,10,26,.7);
+  border:1px solid rgba(226,206,255,.24);
+  background:linear-gradient(180deg,rgba(138,118,234,.52) 0%,rgba(88,66,186,.5) 55%,rgba(60,42,144,.56) 100%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.34),0 6px 0 rgba(38,22,92,.75),0 15px 24px -13px rgba(18,8,48,.7);
   transition:transform .1s ease,box-shadow .1s ease,background .15s ease}
-.nm-title-blk:hover{background:linear-gradient(180deg,rgba(108,156,224,.6),rgba(32,70,134,.55))}
+.nm-title-blk:hover{background:linear-gradient(180deg,rgba(158,138,248,.58),rgba(72,52,164,.55))}
 .nm-title-blk:active{transform:translateY(4px);
-  box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 2px 0 rgba(10,32,70,.72),0 6px 10px -8px rgba(2,10,26,.6)}
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 2px 0 rgba(38,22,92,.75),0 6px 10px -8px rgba(18,8,48,.6)}
 /* 이모지를 그냥 띄우지 않고 동그란 받침 위에 올린다 — "놓여 있는 물건"으로 보이게 */
 .nm-title-blk-ico{font-size:21px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
   background:radial-gradient(circle at 50% 32%,rgba(255,255,255,.34),rgba(255,255,255,.07));
@@ -2620,6 +2642,16 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 /* 가로에선 2단으로 — 게임 모드는 가로 기준(원장 결정)인데 타이틀만 세로 한 줄이라 1024×768에서
    카드가 위아래로 잘리고 양옆이 크게 비었다. 왼쪽=로고·캐릭터·인사·칩, 오른쪽=메뉴.
    DOM은 그대로 두고 grid 배치만 바꾼다. */
+/* 배경 — 인트로 영상의 보라빛 성운. 학습 화면(따뜻한 양피지)과 달리 타이틀만 "우주" 한 장면으로 둔다. */
+.nm-title{background:
+  radial-gradient(1100px 620px at 50% -12%,#6E4FD0,transparent 62%),
+  radial-gradient(900px 540px at 88% 10%,rgba(214,124,255,.34),transparent 62%),
+  radial-gradient(820px 520px at 8% 94%,rgba(86,196,255,.26),transparent 60%),
+  linear-gradient(165deg,#2B1C62 0%,#3A2A88 46%,#221850 100%)}
+.nm-title::before{opacity:.75}
+.nm-title-card{border-color:rgba(226,206,255,.2);
+  background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.035))}
+.nm-title-char::before{background:radial-gradient(closest-side,rgba(190,140,255,.45),transparent)}
 .nm-title-hero{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
 @media (orientation:landscape) and (min-width:760px){
   .nm-title{padding:20px 24px}
