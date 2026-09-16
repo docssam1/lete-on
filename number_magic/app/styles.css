@@ -1929,6 +1929,12 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 /* 주차 보기 + 합계 — 부가 정보(주인공 아님) */
 .nm-cr-cad{max-width:520px;margin:0 auto 14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 13px}
 .nm-cr-cad-h{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:7px}
+/* 이 카드는 읽는 정보가 아니라 고르는 설정이다(2026-09-16 원장 "학습 속도 지정하기도
+   있어야 하고"). 컨트롤은 원래 있었는데 제목이 "한 과정에 걸리는 시간"이라 정보로만
+   읽혀 아무도 누르지 않았다 — 제목을 설정의 말로 바꾸고 크기로도 그렇게 보이게 한다. */
+.nm-cr-cad-h.big{font-size:15px;font-weight:900;color:var(--blue-deep);margin-bottom:4px}
+.nm-cr-cad-h.sub{margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+.nm-cr-cadlead{font-size:12px;line-height:1.55;font-weight:600;color:var(--sub);margin:0 0 9px;word-break:keep-all}
 .nm-cr-seg{display:flex;gap:0;background:var(--mist);border:1px solid var(--line);border-radius:999px;padding:3px;margin-bottom:9px}
 .nm-cr-seg button{flex:1;border:none;background:none;border-radius:999px;padding:8px 6px;font-size:13px;font-weight:800;
   color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;transition:.14s}
@@ -2167,6 +2173,54 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-cr-pickbtn{border:1.5px solid var(--blue-deep);background:#fff;color:var(--blue-deep);
   border-radius:999px;padding:6px 11px;font-size:14px;cursor:pointer;font-family:'Pretendard',sans-serif}
 .nm-cr-pickbtn:active{transform:scale(.9)}
+
+/* ── 누구의 로드맵인가 (2026-09-16) ──
+   형제가 한 기기를 쓰므로 슬롯이 3개인데 로드맵엔 표시가 없었다. 머리글에 칩으로
+   붙이고 누르면 바꾼다. 캐릭터 그림이 있어야 아이가 자기 것을 알아본다. */
+.nm-cr-who{display:flex;align-items:center;gap:9px;width:100%;margin-top:8px;
+  border:1.5px solid #e2d8c8;background:#fffdf7;border-radius:14px;padding:6px 10px 6px 7px;
+  cursor:pointer;font-family:'Pretendard',sans-serif;text-align:left}
+.nm-cr-who:active{transform:scale(.99)}
+.nm-cr-who-fig{flex:none;width:34px;height:42px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.nm-cr-who-fig .nm-party{transform:scale(.8);transform-origin:bottom center}
+.nm-cr-who-txt{display:flex;flex-direction:column;min-width:0}
+.nm-cr-who-txt small{font-size:10.5px;font-weight:800;color:var(--sub);letter-spacing:.02em}
+.nm-cr-who-txt b{font-size:14px;font-weight:900;color:var(--blue-deep);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm-cr-who-sw{flex:none;margin-left:auto;font-size:11.5px;font-weight:800;color:var(--blue);
+  border:1px solid var(--blue);border-radius:999px;padding:3px 9px;background:#fff}
+
+/* ── 과정 노드 시트 (2026-09-16) — 누르면 바로 들어가지 않고 먼저 묻는다 ── */
+.nm-cs-overlay{z-index:95}
+.nm-cs-card{max-width:400px;text-align:left;padding:22px 20px 18px;
+  border-top:5px solid var(--acc,var(--blue))}
+.nm-cs-eyebrow{font-size:11px;font-weight:800;color:var(--sub);letter-spacing:.02em;margin-bottom:3px}
+.nm-cs-title{display:flex;flex-direction:column;gap:3px;font-size:19px;font-weight:900;
+  color:var(--blue-deep);margin:0 0 8px;word-break:keep-all;line-height:1.3;text-align:left}
+.nm-cs-num{font-size:11.5px;font-weight:800;color:var(--acc,var(--blue));letter-spacing:.04em}
+.nm-cs-state{display:inline-block;font-size:12px;font-weight:800;color:var(--ink);
+  background:var(--mist);border:1px solid var(--line);border-radius:999px;padding:4px 11px;margin-bottom:9px}
+.nm-cs-prog{margin-bottom:11px}
+.nm-cs-bar{height:8px;border-radius:99px;background:var(--mist);overflow:hidden;border:1px solid var(--line)}
+.nm-cs-bar>span{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-bright));transition:width .3s ease}
+.nm-cs-progtxt{font-size:11.5px;font-weight:800;color:var(--sub);margin-top:4px}
+.nm-cs-peek{margin:2px 0 12px;border:1px solid var(--line);border-radius:14px;
+  background:var(--mist);padding:10px 11px;max-height:38vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.nm-cs-peek-h{font-size:11.5px;font-weight:800;color:var(--sub);margin-bottom:7px}
+.nm-cs-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.nm-cs-ses{display:flex;gap:9px;align-items:flex-start}
+.nm-cs-sesno{flex:none;width:20px;height:20px;border-radius:50%;background:#fff;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:900;color:var(--sub)}
+.nm-cs-ses.test .nm-cs-sesno{background:var(--gold-bright);border-color:var(--gold-deep);color:#4a370f}
+.nm-cs-sestxt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nm-cs-sestxt b{font-size:13px;font-weight:800;color:var(--ink);word-break:keep-all;line-height:1.4}
+.nm-cs-sestxt small{font-size:11px;font-weight:700;color:var(--sub);word-break:keep-all;line-height:1.45}
+.nm-cs-empty{font-size:12.5px;font-weight:700;color:var(--sub);margin:0}
+.nm-cs-btns{display:flex;flex-direction:column;gap:8px}
+.nm-cs-note{font-size:11.5px;font-weight:600;color:var(--sub);line-height:1.5;
+  margin:10px 0 0;word-break:keep-all;text-align:left}
+.nm-cs-card .nm-slots-grid{margin-bottom:2px}
 
 /* ============================================================
    시작점 고르기 (nm-sp-*, 2026-09-04) — ROAD_TIERS별 접이 섹션 + 과정 카드

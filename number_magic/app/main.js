@@ -2208,6 +2208,161 @@ function enterCourseNode(key){
   S.view='exam'; save(); render();
 }
 
+/* ============================================================
+   과정 노드 시트 — 로드맵에서 과정을 누르면 바로 들어가지 않고 먼저 묻는다
+   (2026-09-16 원장 지시: "연산 로드맵 들어가면 클릭하고 여기서부터 시작하기가
+   있어야 하지 않아? 둘러보기나").
+   예전엔 노드를 누르는 순간 유닛으로 들어가 버려서, 앞으로 뭘 배우는지 구경만
+   하려다 학습이 시작되는 일이 생겼다. 이제 셋 중에 고른다:
+     ① 여기서부터 시작하기 — 시작점을 이 과정으로 정하고 들어간다
+        (시작점 고르기 화면과 같은 방식: S.placement에 self:true로 기록)
+     ② 둘러보기 — 세션 편성(배우는 것·연습하는 것)만 펼쳐 본다. 학습은 시작 안 함
+     ③ 닫기
+   지금 있는 과정이면 ①의 말이 "이어서 하기"가 된다 — 시작점을 다시 찍을 일이 없다.
+   ============================================================ */
+function courseOutlineHtml(c){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const TH=window.NM_THREADS||{};
+  const nameOf=(id)=>{ const u=UNITS[id]; if(u) return esc(L(u.title)); const th=TH[id]; return th?esc(L(th.name)):esc(id); };
+  const rows=(c.sessions||[]).map((ses,i)=>{
+    const no=`<span class="nm-cs-sesno">${i+1}</span>`;
+    if(ses.test){
+      return `<li class="nm-cs-ses test">${no}<span class="nm-cs-sestxt">
+        <b>${lk('확인 세션','Check session','检查课')}</b>
+        <small>${lk('그동안 배운 것을 모아서 확인해요.','A round-up of everything so far.','把学过的内容集中检查一次。')}</small></span></li>`;
+    }
+    const magic=(ses.magic||[]).map(nameOf);
+    const drills=(ses.drills||[]).map(d=>nameOf(d.t));
+    const uniqDrills=drills.filter((v,ix)=>drills.indexOf(v)===ix);
+    return `<li class="nm-cs-ses">${no}<span class="nm-cs-sestxt">
+      <b>${magic.length?magic.join(' · '):lk('연습 회차','Practice session','练习课')}</b>
+      ${uniqDrills.length?`<small>${lk('연습','Drills','练习')} — ${uniqDrills.join(' · ')}</small>`:''}
+    </span></li>`;
+  }).join('');
+  return rows?`<ul class="nm-cs-list">${rows}</ul>`
+    :`<p class="nm-cs-empty">${lk('이 과정의 편성은 아직 준비 중이에요.','This course is still being put together.','这个课程还在编排中。')}</p>`;
+}
+
+function openCourseSheet(key){
+  const c=(window.NM_COURSES||{})[key];
+  if(!c) return;
+  if(document.getElementById('nmCourseSheet')) return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const num=String(key).replace(/^C/,'');
+  const tierDef=roadTierInfo(c.tier);
+  const built=courseBuilt(c);
+  const prog=courseProgress(c);
+  const isNow=key===currentCourseKey();
+  const isDone=courseConquered(c);
+  const pct=prog.total?Math.round(prog.done/prog.total*100):0;
+  const stateTxt=isDone?`🏳️ ${lk('정복함','Conquered','已征服')}`
+    :isNow?`📍 ${lk('지금 여기','You are here','当前位置')}`
+    :!built?`📦 ${lk('준비 중','Coming soon','准备中')}`:'';
+  const startTxt=isNow?`▶ ${lk('이어서 하기','Continue','继续')}`
+    :`🚩 ${lk('여기서부터 시작하기','Start from here','从这里开始')}`;
+
+  const html=`<div class="nm-gate-overlay nm-cs-overlay" id="nmCourseSheet">
+    <div class="nm-gate-card nm-cs-card" style="--acc:${tierDef.accent}">
+      <button class="nm-gate-x" id="csX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
+      <div class="nm-cs-eyebrow">${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</div>
+      <h3 class="nm-cs-title"><span class="nm-cs-num">${lk('과정','Course','课程')} ${num}</span>${esc(L(c.title))}</h3>
+      ${stateTxt?`<div class="nm-cs-state">${stateTxt}</div>`:''}
+      ${prog.total?`<div class="nm-cs-prog">
+        <div class="nm-cs-bar"><span style="width:${pct}%"></span></div>
+        <div class="nm-cs-progtxt">${lk('마법','Magic','魔法')} ${prog.done} / ${prog.total}</div>
+      </div>`:''}
+      <div class="nm-cs-peek" id="csPeek" hidden>
+        <div class="nm-cs-peek-h">${lk('이 과정에서 배우는 것','What this course covers','这个课程学什么')}</div>
+        ${courseOutlineHtml(c)}
+      </div>
+      <div class="nm-cs-btns">
+        ${built?`<button class="nm-btn full" id="csStart">${startTxt}</button>`
+          :`<button class="nm-btn full" id="csStart" disabled>📦 ${lk('아직 준비 중이에요','Not ready yet','还在准备中')}</button>`}
+        <button class="nm-btn full ghost" id="csPeekBtn">👀 ${lk('둘러보기','Take a look','看一看')}</button>
+      </div>
+      <p class="nm-cs-note">${lk('둘러봐도 학습은 시작되지 않아요. 시작점은 언제든 다시 고를 수 있어요.',
+        'Looking around does not start anything. You can pick a different start any time.',
+        '只是看一看不会开始学习。起点随时可以重新选择。')}</p>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  const close=()=>{ const m=document.getElementById('nmCourseSheet'); if(m)m.remove(); };
+  document.getElementById('csX').onclick=close;
+  document.getElementById('nmCourseSheet').addEventListener('click', e=>{ if(e.target.id==='nmCourseSheet') close(); });
+  const peekBtn=document.getElementById('csPeekBtn'), peek=document.getElementById('csPeek');
+  peekBtn.onclick=()=>{
+    const open=peek.hidden;
+    peek.hidden=!open;
+    peekBtn.textContent=open?`👀 ${lk('접기','Hide','收起')}`:`👀 ${lk('둘러보기','Take a look','看一看')}`;
+    if(open) peek.scrollIntoView({block:'nearest',behavior:'smooth'});
+  };
+  const startBtn=document.getElementById('csStart');
+  if(built) startBtn.onclick=()=>{
+    close();
+    /* 지금 있는 과정이 아니면 시작점을 이 과정으로 다시 찍는다 — 시작점 고르기
+       화면(screenStartPick)과 정확히 같은 기록 방식이라 두 경로가 갈리지 않는다. */
+    if(!isNow){
+      S.placement={ at:Date.now(), course:key, self:true,
+        asked:0, correct:0, profile:[], weak:[], slow:[] };
+    }
+    enterCourseNode(key);
+  };
+}
+
+/* 학생 바꾸기 시트 — 옷장의 "우리 집 마법사들"(renderSlotCards)과 같은 슬롯을
+   로드맵에서도 고를 수 있게 한 것. 전환 절차는 switchToSlot() 하나만 쓴다
+   (지금 저장본을 백업하고 대상 슬롯을 활성 자리로 올린 뒤 새로고침) — 여기서
+   따로 상태를 옮기지 않는다. 빈 슬롯은 새 프로필이 되므로 온보딩이 뜬다. */
+function openStudentSwitch(){
+  if(document.getElementById('nmWhoSheet')) return;
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const active=activeSlot();
+  let cards='';
+  for(let n=1;n<=SLOT_COUNT;n++){
+    if(n===active){
+      cards+=`<div class="nm-slot-card active">
+        <span class="nm-slot-badge">${lk('지금','Now','当前')}</span>
+        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,56):''}</div>
+        <div class="nm-slot-name">${S.name?esc(S.name):'#'+S.character.number}</div>
+      </div>`;
+      continue;
+    }
+    const st=readSlotState(n);
+    if(st&&(st.onboarded||st.name)){
+      const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
+      const avk=(st.avatar&&st.avatar.kind)||'boy';
+      cards+=`<button class="nm-slot-card" data-slot="${n}">
+        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avk,ch,56):''}</div>
+        <div class="nm-slot-name">${st.name?esc(st.name):'#'+ch.number}</div>
+      </button>`;
+    } else {
+      cards+=`<button class="nm-slot-card empty" data-slot="${n}">
+        <div class="nm-slot-plus">＋</div>
+        <div class="nm-slot-name">${lk('새 친구','New Friend','新朋友')}</div>
+      </button>`;
+    }
+  }
+  document.body.insertAdjacentHTML('beforeend',`<div class="nm-gate-overlay nm-cs-overlay" id="nmWhoSheet">
+    <div class="nm-gate-card nm-cs-card">
+      <button class="nm-gate-x" id="whoX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
+      <h3 class="nm-cs-title">🧙 ${lk('누구의 로드맵을 볼까요?','Whose roadmap?','看谁的路线图？')}</h3>
+      <div class="nm-slots-grid">${cards}</div>
+      <p class="nm-cs-note">${lk('바꾸면 그 학생의 진도·과정·속도가 그대로 나와요.',
+        'Switching shows that student’s own progress, course and pace.',
+        '切换后会显示该学生自己的进度、课程和速度。')}</p>
+    </div>
+  </div>`);
+  const close=()=>{ const m=document.getElementById('nmWhoSheet'); if(m)m.remove(); };
+  document.getElementById('whoX').onclick=close;
+  document.getElementById('nmWhoSheet').addEventListener('click',e=>{ if(e.target.id==='nmWhoSheet') close(); });
+  document.querySelectorAll('#nmWhoSheet .nm-slot-card[data-slot]').forEach(b=>{
+    b.onclick=()=>switchToSlot(b.dataset.slot);
+  });
+}
+
 function screenCourseRoad(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -2235,6 +2390,14 @@ function screenCourseRoad(){
         <button class="nm-cr-diagbtn" id="crDiag">🧭 ${lk('진단하기','Level Check','水平测评')}</button>
         <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}">🎯</button>
       </div>
+      <!-- 누구의 로드맵인지 (2026-09-16 원장 "선택한 학생의 연산 로드맵이 나와야지").
+           한 기기를 형제가 같이 쓰므로 슬롯 3개가 이미 있는데, 로드맵에는 누구 것인지
+           표시가 없어 남의 진도를 자기 것으로 읽을 수 있었다. 칩을 누르면 바로 바꾼다. -->
+      <button class="nm-cr-who" id="crWho">
+        <span class="nm-cr-who-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,34):''}</span>
+        <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}</b></span>
+        <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
+      </button>
       <div class="nm-cr-sub">${lk('지금 어디까지 왔고 앞으로 어디로 가는지, 한 길로 보여요.','See the whole path — where you are now and where it leads.','用一条路看清现在走到哪里、接下来去哪里。')}</div>
       <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
            DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
@@ -2251,6 +2414,7 @@ function screenCourseRoad(){
   $('#crBack').onclick=()=>{S._roadFocus=null;S.view='town';save();render();};
   $('#crDiag').onclick=()=>startPlacement();
   $('#crPick').onclick=()=>{S.view='startpick';save();render();};
+  $('#crWho').onclick=()=>openStudentSwitch();
 
   const body=$('#crBody');
 
@@ -2289,8 +2453,11 @@ function screenCourseRoad(){
     </div>`;
 
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
-    html+=`<div class="nm-cr-cad">
-      <div class="nm-cr-cad-h">${lk('한 과정에 걸리는 시간','How long a course takes','一个课程需要多久')}</div>
+    html+=`<div class="nm-cr-cad" id="crPace">
+      <div class="nm-cr-cad-h big">⏱ ${lk('학습 속도 정하기','Set the pace','设定学习速度')}</div>
+      <p class="nm-cr-cadlead">${lk('수업 횟수와 목표 속도를 고르면 아래 주차·개월이 그대로 바뀌어요. 배우는 순서와 내용은 그대로예요.',
+           'Pick how often you meet and how fast you aim to go — the weeks and months below follow. The order and content of the path stay the same.',
+           '选择上课次数和目标速度，下面的周数和月数会跟着变。学习顺序和内容保持不变。')}</p>
       <p class="nm-cr-caveat">${lk('여기 주차는 연산 트랙만 센 거예요. 사고력·교과를 함께하면 그만큼 더 걸려요.',
            'These weeks count the arithmetic track only. Doing thinking-math and school-math alongside takes longer.',
            '这里的周数只算运算课程。同时上思维和教材课程会更久。')}</p>
@@ -2318,6 +2485,7 @@ function screenCourseRoad(){
              'Only the walking speed changes — the order and the content of the path stay the same. Switch any time.',
              '只是走这条路的速度不同，学习顺序和内容都一样。随时可以切换。')}</p>
       </div>
+      <div class="nm-cr-cad-h sub">${lk('이 속도로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
       <div class="nm-cr-totals">
         <div class="nm-cr-total">
           <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~${ROAD_OP_LAST}</small></b>
@@ -2458,7 +2626,7 @@ function screenCourseRoad(){
       el.onclick=()=>{ S.roadPace=el.dataset.pace; save(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
-      el.onclick=()=>enterCourseNode(el.dataset.c);
+      el.onclick=()=>openCourseSheet(el.dataset.c);
     });
     body.querySelectorAll('.nm-cr-lab[data-lab]').forEach(el=>{
       el.onclick=()=>{ window.open(el.dataset.lab,'_blank','noopener'); };
@@ -3099,17 +3267,17 @@ function screenTitle(){
           <button class="nm-title-blk nm-gloss" id="ttGame">
             <span class="nm-title-blk-ico">🎮</span>
             <b>${lk('게임 모드','Game Mode','游戏模式')}</b>
-            <small>${lk('마을을 돌아다녀요','Roam the town','在小镇里逛逛')}</small>
+            <small>${lk('수를 체험해요','Experience numbers','体验数字')}</small>
           </button>
           <button class="nm-title-blk nm-gloss" id="ttSheet">
             <span class="nm-title-blk-ico">📄</span>
             <b>${lk('학습지 모드','Worksheet Mode','学习单模式')}</b>
-            <small>${lk('뽑아서 풀어요','Print and solve','打印后来做')}</small>
+            <small>${lk('종이로 공부해요','Study on paper','用纸来学习')}</small>
           </button>
           <button class="nm-title-blk nm-gloss" id="ttRoad">
             <span class="nm-title-blk-ico">🛤️</span>
             <b>${lk('연산 로드맵','Course Road','运算路线图')}</b>
-            <small>${lk('전체 길과 지금 위치','The whole path','整条路与当前位置')}</small>
+            <small>${lk('순서대로 공부해요','Study in order','按顺序学习')}</small>
           </button>
         </div>
         <div class="nm-title-sub-row">
