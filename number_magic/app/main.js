@@ -2484,6 +2484,11 @@ function openCourseSheet(key){
    ★ 어떤 것도 잠그지 않는다. 결과는 안내와 기록일 뿐이다.
    ============================================================ */
 const CHECKUP_EVERY=3;
+/* 과정 하나당 계산 문항 수. 처음엔 세 과정을 통틀어 6문제였는데 원장이 "과정 점검
+   너무 적어"라고 했다 — 세 과정(12~18세션)을 6문제로 재는 건 실제로 표본이 아니다.
+   과정마다 4문제씩 = 계산 12문제로 올리고, 재료가 4개보다 적은 과정은 같은 재료를
+   다시 쓰되 문항 번호가 씨앗에 들어가므로 같은 문제가 두 번 나오지는 않는다. */
+const CHECKUP_PER_COURSE=4;
 function checkupKeyFor(num){ return 'C'+num; }
 function isCheckupPoint(num){ return num>0 && num%CHECKUP_EVERY===0; }
 function checkupRecord(num){ return (S.checkups||{})[checkupKeyFor(num)]||null; }
@@ -2508,22 +2513,31 @@ function checkupDue(num){
    덧뺄셈을 뗀 아이에게 연산 고르기·식 세우기까지 물으면 측정이 아니라 벌이 된다. */
 function buildCheckupItems(num){
   const C=window.NM_COURSES||{}, TH=window.NM_THREADS||{};
-  const calc=[];
+  const picked=[];
+  /* 계산 — 과정마다 따로 뽑는다. 세 과정을 한 통에 부어 놓고 고르면 재료가 많은
+     과정이 표본을 다 차지해 어떤 과정은 한 문제도 안 나온다. */
   checkupCourseNums(num).forEach(n=>{
     const c=C['C'+n]; if(!c) return;
+    const pool=[];
     (c.sessions||[]).forEach(ses=>{
       (ses.drills||[]).forEach(d=>{
         if(!TH[d.t]) return;
-        if(calc.some(x=>x.t===d.t)) return;
+        if(pool.some(x=>x.t===d.t)) return;
         const lv=(TH[d.t].levels||[]).some(l=>l.id===d.lv)?d.lv:1;
-        calc.push({t:d.t, lv, kind:'calc'});
+        pool.push({t:d.t, lv, kind:'calc', from:n});
       });
     });
+    if(!pool.length) return;
+    for(let i=0;i<CHECKUP_PER_COURSE;i++){
+      /* 재료 전체에 고루 퍼지게 — 앞에서부터 4개만 집으면 뒤쪽 재료를 영영 안 묻는다 */
+      picked.push(Object.assign({}, pool[Math.min(pool.length-1, Math.floor(i*pool.length/CHECKUP_PER_COURSE))]));
+    }
   });
-  const picked=[];
-  if(calc.length<=6) picked.push(...calc);
-  else { const step=calc.length/6; for(let i=0;i<6;i++) picked.push(calc[Math.floor(i*step)]); }
-  const wpIds = num<=3?['WP1'] : num<=9?['WP1','WP3'] : ['WP1','WP3','WP4'];
+  /* 문장제 — 계산만큼은 아니어도 판단이 설 만큼은 낸다(1문제로는 맞고 틀림이 곧
+     운이다). 첫 점검은 '문제 이해'만, 그다음부터 '연산 찾기'와 '식으로 나타내기'. */
+  const wpIds = num<=3?['WP1','WP1','WP1']
+              : num<=9?['WP1','WP1','WP3','WP3']
+              : ['WP1','WP1','WP3','WP3','WP4','WP4'];
   const wpLv  = num<=10?1 : num<=20?2 : 3;
   wpIds.forEach(t=>{
     const th=TH[t]; if(!th) return;
@@ -2532,7 +2546,17 @@ function buildCheckupItems(num){
   });
   return picked;
 }
-function startCheckup(num){
+/* 중간에 나간 점검이 남아 있으면 그것 — 문항이 15~18개로 길어졌으니 한 번에 다
+   못 끝내는 게 정상이다. 나갔다 와도 처음부터 다시 풀게 하면 아무도 안 끝낸다. */
+function checkupInProgress(num){
+  const k=S._checkup;
+  return (k && k.num===num && k.stage!=='result' && k.i>0) ? k : null;
+}
+function startCheckup(num, fresh){
+  if(!fresh){
+    const k=checkupInProgress(num);
+    if(k){ S.view='checkup'; save(); render(); return; }
+  }
   const items=buildCheckupItems(num);
   if(!items.length){ toast(S.lang==='ko'?'점검할 재료가 아직 없어요':'Nothing to check yet',false); return; }
   S._checkup={ run:Date.now(), num, items, i:0, stage:'intro',
@@ -2566,7 +2590,10 @@ function screenCheckup(){
   const scr=$('#screen');
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(a,b,c)=>ko?a:en?b:c;
-  const back=()=>{ S._checkup=null; S.view='courseroad'; save(); render(); };
+  /* 뒤로 나가도 진행분을 지우지 않는다(끝난 점검만 치운다) — 정거장에서 "이어서
+     하기"로 다시 들어온다. 다시 처음부터 풀고 싶으면 결과 화면의 '다시 점검하기'. */
+  const back=()=>{ if(S._checkup&&S._checkup.stage==='result') S._checkup=null;
+    S.view='courseroad'; save(); render(); };
 
   if(k.stage==='intro'){
     const nums=checkupCourseNums(k.num);
@@ -2583,6 +2610,9 @@ function screenCheckup(){
         <div class="nm-cu-part"><b>🔢 ${lk('계산','Calculating','计算')}</b><span>${k.calcTotal}${lk('문제','questions','题')}</span></div>
         <div class="nm-cu-part wp"><b>📖 ${lk('문장제 이해','Reading word problems','应用题理解')}</b><span>${k.wpTotal}${lk('문제','questions','题')}</span></div>
       </div>
+      <p class="nm-cu-count">${lk(`모두 ${k.items.length}문제예요. 중간에 나가도 풀던 자리에서 이어서 할 수 있어요.`,
+        `${k.items.length} questions in all. You can leave and pick up where you stopped.`,
+        `一共${k.items.length}题。中途离开也能从停下的地方继续。`)}</p>
       <p class="nm-cu-why">${lk('두 가지를 따로 세요. 계산이 빠른 것과 문장을 읽어 내는 것은 다른 힘이라, 합쳐 버리면 어느 쪽이 막혔는지 안 보여요.',
         'We score these separately. Computing quickly and reading a problem are different abilities — one combined score hides which one is stuck.',
         '两项分开计分。算得快和读懂题是不同的能力，合成一个分数就看不出卡在哪里。')}</p>
@@ -2637,7 +2667,7 @@ function screenCheckup(){
       <button class="nm-btn full ghost" id="cuAgain">${lk('다시 점검하기','Check again','再检查一次')}</button>
     </div></div></div>`;
     $('#cuBack').onclick=back; $('#cuDone').onclick=back;
-    $('#cuAgain').onclick=()=>startCheckup(k.num);
+    $('#cuAgain').onclick=()=>startCheckup(k.num, true);
     if(rec&&calcGood&&wpGood) confetti();
     return;
   }
@@ -3042,11 +3072,15 @@ function screenCourseRoad(){
         if(isCheckupPoint(x.num)){
           const rec=checkupRecord(x.num);
           const due=checkupDue(x.num);
-          const cls=rec?'done':due?'due':'ahead';
+          const going=checkupInProgress(x.num);
+          const cls=going?'due':rec?'done':due?'due':'ahead';
           const nums=checkupCourseNums(x.num);
-          const scoreTxt=rec
+          const qN=buildCheckupItems(x.num).length;
+          const scoreTxt=going
+            ? `▶ ${lk('이어서 하기','Continue','继续')} · ${going.i}/${going.items.length}`
+            : rec
             ? `🔢 ${rec.calcOk}/${rec.calcTotal} · 📖 ${rec.wpOk}/${rec.wpTotal}`
-            : due?lk('지금 할 차례','Your turn now','轮到你了'):lk('과정 3개마다','every 3 courses','每3个课程');
+            : `${due?lk('지금 할 차례','Your turn now','轮到你了'):lk('과정 3개마다','every 3 courses','每3个课程')} · ${qN}${lk('문제','questions','题')}`;
           html+=`<div class="nm-cr-checkrow">
             <button class="nm-cr-check ${cls}" data-chk="${x.num}">
               <span class="nm-cr-check-ic">🩺</span>
