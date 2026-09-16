@@ -2339,13 +2339,12 @@ html[data-nm-band="young"] .nm-tile{min-width:64px;height:64px;font-size:31px}
 .nm-expr.nm-board{flex:0 0 auto;margin:auto 0;padding:24px 18px;gap:14px}
 
 /* ── 쟁반(트레이): 나무 테두리 + 안쪽 양피지. 마법판·아레나 식 표시·아레나 답칸 ── */
-.nm-board,.nm-arena-expr,.nm-arena .nm-numpad-screen{
+.nm-board,.nm-arena-expr{
   border:7px solid transparent;border-radius:20px;
   background:linear-gradient(180deg,var(--parch-hi),var(--parch)) padding-box,
     linear-gradient(180deg,var(--wood-hi),var(--wood) 55%,var(--wood-lo)) border-box;
   box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -2px 0 rgba(120,80,30,.12),
     0 3px 0 var(--wood-lo),0 12px 22px -12px rgba(60,40,10,.5)}
-.nm-arena .nm-numpad-screen{border-width:5px;border-radius:14px}
 
 /* ── 버튼: 두툼한 3D(윗면 광택 + 아래 밑면) ── */
 .nm-btn{border-radius:16px;font-weight:700;letter-spacing:.02em;
@@ -2385,6 +2384,40 @@ html[data-nm-band="young"] .nm-key{height:64px;font-size:30px}
    굵게·크게·남색으로. KaTeX_Main-Bold는 katex.min.css에 이미 들어 있다. */
 .nm-board .nm-lab-expr .katex,.nm-board .nm-fill .katex,.nm-arena-expr .katex,.nm-lab-orig .katex{
   font-size:clamp(30px,8.5vw,42px)!important;color:var(--blue-deep);text-shadow:0 2px 0 rgba(255,255,255,.9)}
+
+/* 입체 글씨 — 원장 확인(2026-09-16). 유아·초등(young·mid)만, 중3 이상(senior)은 지금처럼 깔끔하게.
+   ① 분수·근호가 나오는 단원(대부분 senior)에서 두꺼운 효과는 얇은 분수 가로줄과 따로 놀고
+   ② 중·고등 화면에서는 입체 글씨가 오히려 유치해 보인다.
+   -webkit-text-stroke는 쓰지 않는다(획이 두꺼워지며 근호·분수가 뭉갠다) — 위로 흰 하이라이트,
+   아래로 모래색 그림자만 얹는 얕은 엠보스. 작은 보조 배너(.nm-lab-orig)는 제외. */
+html:not([data-nm-band="senior"]) .nm-board .nm-lab-expr .katex,
+html:not([data-nm-band="senior"]) .nm-board .nm-fill .katex,
+html:not([data-nm-band="senior"]) .nm-arena-expr .katex,
+html:not([data-nm-band="senior"]) .nm-numpad-screen{
+  text-shadow:0 -1px 0 rgba(255,255,255,.95),0 2px 0 rgba(255,255,255,.55),
+    0 3px 0 rgba(198,180,142,.5),0 6px 9px rgba(70,50,15,.22)}
+
+/* 답이 들어갈 자리를 쟁반에 판 홈으로 — 지금은 빈 칸이 안 보여서 "아래가 휑한 여백"으로 읽힌다
+   (실측: 세로 48px·가로 57px를 이미 차지하고 있다). 홈으로 만들면 같은 자리가 "여기에 답이
+   들어간다"는 안내가 된다. 답칸을 따로 그리는 다칸(.nm-multi)·아레나는 제외(이중 테두리 방지). */
+.nm-board .nm-numpad-screen:not(.nm-multi),.nm-arena .nm-numpad-screen:not(.nm-multi){border:0;border-radius:12px;padding:2px 14px;
+  width:100%;max-width:240px;margin-left:auto;margin-right:auto;   /* 쟁반 폭 전체로 늘리면 긴 물받이처럼 보인다 — 답 상자 크기로 */
+  background:linear-gradient(180deg,#EFE7D4,#F8F3E6);
+  box-shadow:inset 0 2px 4px rgba(120,95,45,.28),inset 0 -1px 0 rgba(255,255,255,.8)}
+.nm-board .nm-numpad-screen:not(.nm-multi):empty,.nm-arena .nm-numpad-screen:not(.nm-multi):empty{min-height:44px}
+
+/* 아레나(세로) — 식 칸이 flex:1로 남은 높이를 전부 먹어 숫자판 ✓ 줄이 화면 밖으로 밀렸다
+   (키를 60px로 키운 뒤 드러났다). 식은 제 높이만 쓰고, 숫자판을 아래로 붙여 엄지에 닿게. */
+.nm-arena-expr{flex:0 1 auto;min-height:92px;margin-top:auto}
+.nm-arena .nm-numpad-screen{margin-bottom:auto}   /* 위아래 auto — 식+답칸이 숫자판 위 남은 공간 가운데에 뜬다 */
+/* 아레나 식은 최대 6항+"= □"라 세로 폰에서 46px이면 좌우가 잘린다(실측). 조금 작게 잡아 한 줄에 담는다. */
+.nm-arena-expr .katex{font-size:clamp(24px,6.6vw,38px)!important}
+@media(min-width:768px){.nm-arena-expr .katex{font-size:42px!important}}
+
+/* 식+답칸을 한 덩어리로 쟁반 세로 가운데에(원장 지시 "연산도 가로 세로 가운데 정렬").
+   .nm-expr(타일 쟁반)는 가로 flex라 제외 — 세로로 바꾸면 큐브가 한 줄로 서 버린다. */
+.nm-board:not(.nm-expr){display:flex;flex-direction:column;justify-content:center;gap:6px}
+.nm-board:not(.nm-expr)>*{margin-top:0;margin-bottom:0}
 .nm-board .katex .mord,.nm-board .katex .mbin,.nm-board .katex .mrel,.nm-board .katex .mopen,.nm-board .katex .mclose,
 .nm-arena-expr .katex .mord,.nm-arena-expr .katex .mbin,.nm-arena-expr .katex .mrel{font-weight:700}
 @media(min-width:768px){
@@ -2476,6 +2509,7 @@ html[data-nm-band="young"] .nm-bubble,html[data-nm-band="young"] .nm-unit-view .
   .nm-unit-view .nm-arena>.nm-host{grid-column:1;margin:0}
   .nm-unit-view .nm-arena>:not(.nm-arena-top):not(.nm-host){grid-column:2}
   .nm-unit-view .nm-arena-expr{flex:none;min-height:110px;margin:0}
+  .nm-unit-view .nm-arena .nm-numpad-screen{margin-bottom:0}
   .nm-unit-view .nm-arena .nm-numpad{max-width:340px}
   /* 세로 높이가 빠듯한 태블릿(768px)에서 안내 문구까지 들어오게 — 흐름 바·키 높이만 살짝 */
   .nm-unit-view .nm-flow{padding:2px 0 4px}
@@ -2501,7 +2535,7 @@ html[data-nm-ui="art"] .nm-tile.sel{background-image:url(../assets/ui/cube-gold.
   box-shadow:0 0 0 3px rgba(245,217,139,.55),0 12px 16px -7px rgba(120,80,10,.5)}
 html[data-nm-ui="art"] .nm-tile.paired{background-image:url(../assets/ui/cube-green.png);
   box-shadow:0 6px 12px -7px rgba(20,90,50,.5)}
-html[data-nm-ui="art"] .nm-board,html[data-nm-ui="art"] .nm-arena-expr,html[data-nm-ui="art"] .nm-arena .nm-numpad-screen{
+html[data-nm-ui="art"] .nm-board,html[data-nm-ui="art"] .nm-arena-expr{
   border:24px solid transparent;border-image:url(../assets/ui/tray.png) 64 fill / 24px stretch;
   background:none;border-radius:0;box-shadow:0 12px 22px -12px rgba(60,40,10,.5)}
 html[data-nm-ui="art"] .nm-btn{border:16px solid transparent;border-image:url(../assets/ui/btn-primary.png) 40 fill / 16px stretch;
