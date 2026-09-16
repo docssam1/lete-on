@@ -2642,15 +2642,23 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 /* 가로에선 2단으로 — 게임 모드는 가로 기준(원장 결정)인데 타이틀만 세로 한 줄이라 1024×768에서
    카드가 위아래로 잘리고 양옆이 크게 비었다. 왼쪽=로고·캐릭터·인사·칩, 오른쪽=메뉴.
    DOM은 그대로 두고 grid 배치만 바꾼다. */
-/* 배경 — 인트로 영상의 보라빛 성운. 학습 화면(따뜻한 양피지)과 달리 타이틀만 "우주" 한 장면으로 둔다. */
+/* 배경 — 원장 지시(2026-09-16) "제목 뒷배경, 우리 게임에 있는 뒷배경 넣자. 넘 단색이야".
+   그라데이션만 깔려 있어 밋밋했다. 게임의 마을 지도(assets/map.jpg — 이 앱의 세계 그 자체)를
+   깔고 그 위에 인트로 영상의 보라 성운을 반투명으로 얹는다. 지도가 밝고 복잡하므로 덮개는
+   충분히 진하게(0.7~0.9) — 그래도 언덕·탑·강의 실루엣이 비쳐 "이 마을로 들어간다"가 읽힌다.
+   온보딩(.nm-ob)이 이미 같은 방식(지도 위 반투명)이라 첫 화면끼리 결이 맞는다. */
 .nm-title{background:
-  radial-gradient(1100px 620px at 50% -12%,#6E4FD0,transparent 62%),
+  radial-gradient(1100px 620px at 50% -12%,rgba(110,79,208,.82),rgba(110,79,208,0) 62%),
   radial-gradient(900px 540px at 88% 10%,rgba(214,124,255,.34),transparent 62%),
   radial-gradient(820px 520px at 8% 94%,rgba(86,196,255,.26),transparent 60%),
-  linear-gradient(165deg,#2B1C62 0%,#3A2A88 46%,#221850 100%)}
+  linear-gradient(165deg,rgba(43,28,98,.88) 0%,rgba(58,42,136,.76) 46%,rgba(30,20,72,.92) 100%),
+  url(../assets/map.jpg) center 42%/cover no-repeat,
+  linear-gradient(165deg,#2B1C62,#221850)}
 .nm-title::before{opacity:.75}
-.nm-title-card{border-color:rgba(226,206,255,.2);
-  background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.035))}
+/* 카드 뒤가 그림이라 흐림을 넣어야 메뉴 글자가 읽힌다 */
+.nm-title-card{border-color:rgba(226,206,255,.22);
+  background:linear-gradient(180deg,rgba(40,26,92,.42),rgba(28,18,66,.5));
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
 .nm-title-char::before{background:radial-gradient(closest-side,rgba(190,140,255,.45),transparent)}
 .nm-title-hero{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
 @media (orientation:landscape) and (min-width:760px){
