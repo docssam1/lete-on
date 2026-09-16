@@ -2555,3 +2555,84 @@ html[data-nm-ui="art"] .stamp .nm-stamp-seal{font-size:0;width:128px;height:128p
 html[data-nm-ui="art"] .nm-stamp-label{background:url(../assets/ui/ribbon.png) center/100% 100% no-repeat;
   padding:16px 64px;border-radius:0;box-shadow:none}
 html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-label::after{display:none}
+
+/* ============================================================
+   타이틀 화면 리디자인 (2026-09-16)
+   원장: "처음 메뉴 하얀 글씨들도 제대로 디자인해서 — 80년대 게임 같아".
+   원인은 타이틀만 옛 디자인에 남아 있던 것이다:
+     ① 게임 서체를 안 쓰고 font-family:'Pretendard'가 버튼·타일·알약에 박혀 있었다
+     ② 학습 화면은 전부 두툼한 3D인데 여기만 납작한 반투명 유리
+     ③ 제목과 설명이 둘 다 흰색이라 위계가 없었다(그래서 "하얀 글씨들")
+   세 가지를 앱의 언어(입체 + 게임 서체 + 금색 강조)로 맞춘다. 파일 맨 뒤라 같은
+   특이도의 옛 규칙을 그대로 이긴다. 배경·로고·캐릭터는 그대로 둔다.
+   ============================================================ */
+.nm-title-logo-sub{font-family:var(--font-game);color:rgba(245,217,139,.62);letter-spacing:.3em}
+.nm-title-hello{font-family:var(--font-game);font-weight:400;font-size:16px;color:#EAF2FF;opacity:1;
+  text-shadow:0 2px 6px rgba(2,10,26,.55)}
+.nm-title-chip{font-family:var(--font-game);font-weight:400;font-size:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.07));
+  border-color:rgba(255,255,255,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 rgba(8,28,64,.45)}
+.nm-title-chip.gold{box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 0 #9A7430}
+
+/* 모드 타일 — 반투명 유리 → 눌리는 입체 패널(윗면 하이라이트 + 아래 밑면) */
+.nm-title-blk{font-family:var(--font-game);gap:4px;border-radius:20px;padding:14px 14px 13px;
+  border:1px solid rgba(255,255,255,.2);
+  background:linear-gradient(180deg,rgba(92,138,206,.55) 0%,rgba(42,84,154,.5) 55%,rgba(26,60,118,.55) 100%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.34),0 6px 0 rgba(10,32,70,.72),0 15px 24px -13px rgba(2,10,26,.7);
+  transition:transform .1s ease,box-shadow .1s ease,background .15s ease}
+.nm-title-blk:hover{background:linear-gradient(180deg,rgba(108,156,224,.6),rgba(32,70,134,.55))}
+.nm-title-blk:active{transform:translateY(4px);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 2px 0 rgba(10,32,70,.72),0 6px 10px -8px rgba(2,10,26,.6)}
+/* 이모지를 그냥 띄우지 않고 동그란 받침 위에 올린다 — "놓여 있는 물건"으로 보이게 */
+.nm-title-blk-ico{font-size:21px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 32%,rgba(255,255,255,.34),rgba(255,255,255,.07));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 6px rgba(2,10,26,.4);margin-bottom:3px}
+/* 제목은 따뜻한 상아색, 설명은 한 톤 낮은 푸른 흰색 — 흰색 두 줄이던 것에 위계를 준다 */
+.nm-title-blk b{font-family:var(--font-game);font-weight:400;font-size:17px;color:#FFF6E2;
+  text-shadow:0 2px 0 rgba(6,24,54,.5)}
+.nm-title-blk small{font-family:var(--font-game);font-weight:400;font-size:12px;
+  color:rgba(196,218,250,.92);text-shadow:0 1px 2px rgba(2,10,26,.5)}
+
+/* 아래 알약 버튼도 같은 입체로 */
+.nm-title-pill{font-family:var(--font-game);font-weight:400;font-size:14px;padding:9px 17px;
+  color:#EAF2FF;border:1px solid rgba(255,255,255,.2);
+  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.06));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 0 rgba(10,32,70,.6);
+  transition:transform .1s ease,box-shadow .1s ease,background .15s ease}
+.nm-title-pill:hover{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.1))}
+.nm-title-pill:active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 1px 0 rgba(10,32,70,.6)}
+
+/* 큰 버튼(이어서 모험 등) — 서체와 밑면 두께를 학습 화면 버튼과 맞춘다 */
+.nm-title-btn{font-family:var(--font-game)}
+.nm-title-btn-txt b{font-family:var(--font-game);font-weight:400;font-size:19px}
+.nm-title-btn-txt small{font-family:var(--font-game);font-weight:400;font-size:13px}
+.nm-title-btn:not(.primary):not(.gold){
+  background:linear-gradient(180deg,rgba(92,138,206,.5),rgba(26,60,118,.5));border-color:rgba(255,255,255,.2);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.28),0 6px 0 rgba(10,32,70,.7)}
+.nm-title-btn:not(.primary):not(.gold):active{transform:translateY(4px);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.24),0 2px 0 rgba(10,32,70,.7)}
+.nm-title-btn.primary,.nm-title-btn.nm-gloss.gold{
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.75),0 6px 0 #9A7430,0 16px 26px -14px rgba(0,0,0,.55)}
+.nm-title-btn.primary:active,.nm-title-btn.nm-gloss.gold:active{transform:translateY(4px);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 2px 0 #9A7430}
+
+/* 가로에선 2단으로 — 게임 모드는 가로 기준(원장 결정)인데 타이틀만 세로 한 줄이라 1024×768에서
+   카드가 위아래로 잘리고 양옆이 크게 비었다. 왼쪽=로고·캐릭터·인사·칩, 오른쪽=메뉴.
+   DOM은 그대로 두고 grid 배치만 바꾼다. */
+.nm-title-hero{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+@media (orientation:landscape) and (min-width:760px){
+  .nm-title{padding:20px 24px}
+  .nm-title-card{max-width:900px;display:grid;
+    grid-template-columns:minmax(250px,38%) minmax(0,1fr);
+    grid-template-rows:auto;column-gap:30px;align-items:center;align-content:center;padding:24px 28px}
+  .nm-title-card>.nm-title-hero{grid-column:1;grid-row:1}
+  .nm-title-card>.nm-title-btns{grid-column:2;grid-row:1;margin-top:0}
+  .nm-title-logo::after{margin-top:10px}
+  .nm-title-char{margin:2px 0}
+}
+/* 가로인데 세로가 짧은 폰(예: 844×390)은 캐릭터를 줄여 메뉴가 한 화면에 더 들어오게 */
+@media (orientation:landscape) and (max-height:520px){
+  .nm-title-char{transform:scale(.82);margin:0}
+  .nm-title-logo-kr{font-size:26px}
+}

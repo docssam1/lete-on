@@ -3061,6 +3061,9 @@ function screenTitle(){
   scr.innerHTML=`
   <div class="nm-title">
     <div class="nm-title-card">
+      <!-- 로고·캐릭터·인사·칩을 한 덩어리(.nm-title-hero)로 묶는다 — 가로 2단 배치에서 왼쪽 칸이
+           오른쪽 메뉴 높이에 맞춰 행이 늘어나며 위아래로 벌어지던 것을 막는다(2026-09-16). -->
+      <div class="nm-title-hero">
       <div class="nm-title-logo">
         <div class="nm-title-logo-kr">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
         <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','NUMBER VILLAGE · DOCSSAM','NUMBERS OF MAGIC')}</div>
@@ -3073,6 +3076,7 @@ function screenTitle(){
         ${badge?`<span class="nm-title-chip gold">🏅 ${esc(badge.label)}</span>`:''}
       </div>
       ${lineageBadgeRowHtml()}
+      </div>
       <div class="nm-title-btns">
         <button class="nm-title-btn nm-gloss gold" id="ttContinue">
           <span class="nm-title-btn-ico">▶</span>
