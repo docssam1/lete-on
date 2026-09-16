@@ -16,6 +16,11 @@
   /* 적응형 밴드 기본값(=mid). render()가 html[data-nm-band]를 세팅하면 아래에서 재정의.
      적응형-타이포-말투-설계.md §2 — 컴포넌트에 직접 크기를 박지 말고 토큰만 쓸 것. */
   --nm-fs-body:15.5px; --nm-fs-num:1.15em; --nm-btn-h:46px; --nm-lh:1.7; --nm-ls:0;
+  /* 디자인 패스 2(2026-09-16) — 게임 UI 부품 토큰. 숫자·점수·버튼은 둥글고 두툼한 게임 서체
+     (Fredoka=숫자·라틴, Jua=한글), 큐브 3색은 타일 상태(기본/고름/맞춤)와 1:1. */
+  --font-game:'Fredoka','Jua','Pretendard',sans-serif;
+  --cube-face:#2B5AA3;--cube-top:#5D8AD6;--cube-side:#12335F;--cube-ink:#fff;
+  --wood-hi:#CFA26B;--wood:#A8783F;--wood-lo:#7E5A2C;--parch-hi:#FFFDF6;--parch:#F6EEDB;
 }
 /* young: 6~7세·초1 — 크게·성기게·또박또박 */
 html[data-nm-band="young"]{--nm-fs-body:17px;--nm-fs-num:1.35em;--nm-btn-h:52px;--nm-lh:1.85;--nm-ls:.01em}
@@ -2271,3 +2276,152 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 /* 학부모 알림 카드 — 받는 요일 선택 (2026-09-06) */
 .nm-notify-dow{align-items:center;gap:8px;font-size:13px;color:#5d5548}
 .nm-notify-dow select{flex:1;padding:8px 10px;border:1px solid #d9cfbd;border-radius:10px;background:#fffdf8;font:inherit}
+
+/* ============================================================
+   디자인 패스 2 (2026-09-16) — "UI까지 그림"
+   원장이 보여 준 참고 화면(저울 위 색깔 숫자 큐브)에서 가져온 것: 배경만 그림이 아니라
+   숫자 타일·판·버튼·게이지·도장 같은 UI 부품이 전부 부피 있는 물건이라는 점.
+   DOM은 손대지 않는다 — 기존 클래스에 모양만 덧씌운다(아래 선택자들은 위쪽의 같은
+   선택자보다 뒤에 있어 그대로 이긴다).
+   두 겹: ① 그림 파일 없이 CSS만으로 만드는 3D 폴백(지금 보이는 것)
+          ② assets/ui/ 그림 부품이 설치되면 html[data-nm-ui="art"]가 켜지고(index.html
+             감지 스크립트) 큐브·쟁반·버튼·리본·도장을 그림으로 교체(UI부품-작화지시서.md).
+   ============================================================ */
+
+/* ── 게임 서체 + 윤곽선 글자. 큰 숫자·점수·시간에만 쓴다(본문은 Pretendard 그대로) ── */
+.nm-tile,.nm-key,.nm-numpad-screen,.nm-ans-box,.nm-plus,.nm-arena-time,.nm-arena-q,.nm-score,
+.nm-stamp-label,.nm-stamp-coins,.stamp .nm-card-h,.nm-ml-num,.nm-w-pile-count,.nm-w-cubes-target-badge,
+.nm-btn{font-family:var(--font-game)}
+.nm-score,.nm-arena-time,.nm-stamp-label{paint-order:stroke fill;-webkit-text-stroke:3px #fff;
+  text-shadow:0 2px 0 rgba(0,0,0,.12),0 6px 14px rgba(14,44,87,.22)}
+
+/* ── 숫자 큐브(매직 랩 타일) — 윗면 밝게, 앞면 단색, 아랫면·오른쪽 어두운 띠로 부피감 ── */
+.nm-expr{gap:12px}
+.nm-tile{position:relative;min-width:58px;height:58px;padding:0 13px;border:0;border-radius:13px;
+  color:var(--cube-ink);font-size:27px;font-weight:700;letter-spacing:.01em;
+  background:linear-gradient(180deg,var(--cube-top) 0 20%,var(--cube-face) 20% 100%);
+  box-shadow:inset 0 -6px 0 var(--cube-side),inset -3px 0 0 rgba(0,0,0,.16),
+    inset 0 2px 0 rgba(255,255,255,.38),0 9px 14px -7px rgba(14,44,87,.55);
+  paint-order:stroke fill;-webkit-text-stroke:2px rgba(8,28,60,.5);text-shadow:0 2px 0 rgba(0,0,0,.28);
+  transition:transform .15s,box-shadow .15s,background .15s}
+.nm-tile:active{transform:translateY(3px);box-shadow:inset 0 -3px 0 var(--cube-side),inset -3px 0 0 rgba(0,0,0,.16),
+  inset 0 2px 0 rgba(255,255,255,.38),0 4px 8px -5px rgba(14,44,87,.55)}
+/* 위쪽의 옛 .nm-tile.sel/.paired(2클래스)가 background·color를 아직 갖고 있어 여기서 다시 명시한다 */
+.nm-tile.sel,.nm-tile.paired{background:linear-gradient(180deg,var(--cube-top) 0 20%,var(--cube-face) 20% 100%);color:var(--cube-ink)}
+.nm-tile.sel{--cube-face:#DBB165;--cube-top:#F5D68F;--cube-side:#A87C2D;--cube-ink:#4A370F;
+  -webkit-text-stroke:2px rgba(255,255,255,.55);text-shadow:0 1px 0 rgba(255,255,255,.4);
+  transform:translateY(-4px);
+  box-shadow:inset 0 -6px 0 var(--cube-side),inset -3px 0 0 rgba(0,0,0,.12),inset 0 2px 0 rgba(255,255,255,.6),
+    0 0 0 3px rgba(245,217,139,.55),0 12px 16px -7px rgba(120,80,10,.5)}
+.nm-tile.paired{--cube-face:#3AA874;--cube-top:#72CF9E;--cube-side:#237A52;--cube-ink:#fff;transform:none;
+  box-shadow:inset 0 -6px 0 var(--cube-side),inset -3px 0 0 rgba(0,0,0,.14),inset 0 2px 0 rgba(255,255,255,.4),
+    0 6px 12px -7px rgba(20,90,50,.5)}
+.nm-plus{font-size:26px;font-weight:700;color:#5E6B84;text-shadow:0 2px 0 #fff}
+html[data-nm-band="young"] .nm-tile{min-width:64px;height:64px;font-size:31px}
+
+/* ── 학습 화면의 큰 카드: 불투명 크림 슬래브 → 반투명(무대의 벽·바닥이 비쳐 보이게).
+   수정 전 스크린샷에서 타일 3개가 텅 빈 크림 카드 한가운데 떠 있었다(참고 화면엔 그런 판이
+   없고 큐브가 쟁반 위에 놓여 장면이 계속 보인다). 무대 그림 아래 60%는 밝고 균일한 벽이라
+   (학습무대-작화지시서 §2) 글자 대비는 유지된다. */
+.nm-unit-view .nm-card{background:rgba(255,253,246,.5);border-color:rgba(255,255,255,.7);
+  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+/* 짝 찾기 쟁반(.nm-expr.nm-board)은 카드 높이를 다 채우지 않고 타일만 감싸서 가운데 뜬다 */
+.nm-expr.nm-board{flex:0 0 auto;margin:auto 0;padding:24px 18px;gap:14px}
+
+/* ── 쟁반(트레이): 나무 테두리 + 안쪽 양피지. 마법판·아레나 식 표시·아레나 답칸 ── */
+.nm-board,.nm-arena-expr,.nm-arena .nm-numpad-screen{
+  border:7px solid transparent;border-radius:20px;
+  background:linear-gradient(180deg,var(--parch-hi),var(--parch)) padding-box,
+    linear-gradient(180deg,var(--wood-hi),var(--wood) 55%,var(--wood-lo)) border-box;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -2px 0 rgba(120,80,30,.12),
+    0 3px 0 var(--wood-lo),0 12px 22px -12px rgba(60,40,10,.5)}
+.nm-arena .nm-numpad-screen{border-width:5px;border-radius:14px}
+
+/* ── 버튼: 두툼한 3D(윗면 광택 + 아래 밑면) ── */
+.nm-btn{border-radius:16px;font-weight:700;letter-spacing:.02em;
+  background:linear-gradient(180deg,#3B6FBE,var(--blue) 55%,#12376A);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -4px 0 #0B2447,0 9px 16px -9px rgba(14,44,87,.7);
+  transition:transform .12s,box-shadow .12s}
+.nm-btn:active{transform:translateY(3px);box-shadow:inset 0 2px 0 rgba(255,255,255,.2),inset 0 -1px 0 #0B2447}
+.nm-btn.ghost{color:var(--blue);border:1.5px solid #D9D2C2;
+  background:linear-gradient(180deg,#FFFDF7,#F2ECDF);
+  box-shadow:inset 0 2px 0 #fff,inset 0 -4px 0 #D8CFB8,0 6px 12px -9px rgba(0,0,0,.35)}
+.nm-btn.ghost:active{box-shadow:inset 0 2px 0 #fff,inset 0 -1px 0 #D8CFB8}
+.nm-btn.small{border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -3px 0 #0B2447}
+.nm-btn:disabled{transform:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15);
+  background:linear-gradient(180deg,#9EB0C8,#7F93AE)}
+/* 흰 바탕·갈색 테두리 변형(개념 노트의 '매직 랩으로' 링크)은 남색 밑면이 아니라 크림 밑면 */
+.nm-btn.nm-lab-link{background:linear-gradient(180deg,#FFFFFF,#FBF5E8);
+  box-shadow:inset 0 2px 0 #fff,inset 0 -4px 0 #E6D3AE,0 6px 12px -9px rgba(0,0,0,.3)}
+.nm-btn.nm-lab-link:active{transform:translateY(2px);box-shadow:inset 0 2px 0 #fff,inset 0 -1px 0 #E6D3AE}
+
+/* ── 숫자판 키: 크림색 3D 키캡, ✓는 남색 ── */
+.nm-key{border:1px solid #D9D2C2;border-bottom:1px solid #D9D2C2;border-radius:14px;font-size:24px;font-weight:700;
+  background:linear-gradient(180deg,#FFFFFF,#F4F0E7);
+  box-shadow:inset 0 2px 0 #fff,inset 0 -4px 0 #D6CFBF,0 4px 8px -5px rgba(0,0,0,.28);transition:transform .1s,box-shadow .1s}
+.nm-key:active{transform:translateY(2px);border-bottom-color:#D9D2C2;box-shadow:inset 0 2px 0 #fff,inset 0 -1px 0 #D6CFBF}
+.nm-key.ok{border-color:#0B2447;border-bottom-color:#0B2447;color:#fff;
+  background:linear-gradient(180deg,#3B6FBE,var(--blue-deep) 55%,#0B2447);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.28),inset 0 -4px 0 #061a36,0 4px 8px -5px rgba(0,0,0,.4)}
+.nm-key.ok:active{border-bottom-color:#0B2447;box-shadow:inset 0 2px 0 rgba(255,255,255,.2),inset 0 -1px 0 #061a36}
+.nm-numpad-screen{font-size:31px;font-weight:700;color:var(--blue-deep)}
+.nm-ans-box{font-size:24px;font-weight:700;border-radius:10px;background:linear-gradient(180deg,#fff,#F7F2E8);
+  box-shadow:inset 0 -3px 0 #D6CFBF}
+.nm-ans-box.cur{box-shadow:inset 0 -3px 0 var(--gold-deep),0 0 0 3px rgba(245,217,139,.5)}
+
+/* ── 진행 구슬(단계 점) ── */
+.nm-dot{width:10px;height:10px;background:linear-gradient(180deg,#F1EEE6,#D9D5CB);
+  box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.15)}
+.nm-dot.on{background:linear-gradient(180deg,var(--gold-bright),var(--gold-deep));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(120,80,10,.3),0 1px 2px rgba(0,0,0,.2)}
+.nm-dot.now{background:linear-gradient(180deg,#3B6FBE,var(--blue-deep));transform:scale(1.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 3px rgba(22,65,124,.18)}
+
+/* ── 말풍선: 양피지 톤 ── */
+.nm-bubble{background:linear-gradient(180deg,#FFFEFB,#FBF6EC);border-color:#E3D8C2;
+  box-shadow:0 8px 20px -14px rgba(60,40,10,.45),inset 0 1px 0 #fff}
+.nm-bubble::before{border-bottom-color:#E3D8C2}
+.nm-bubble::after{border-bottom-color:#FFFEFB}
+
+/* ── 아레나: 시간·문항 라벨을 게임 글자로 ── */
+.nm-arena-q{font-size:16px;font-weight:600;color:var(--sub)}
+.nm-arena-time{font-size:28px;font-weight:700}
+.nm-score{font-size:46px;-webkit-text-stroke:4px #fff}
+
+/* ── 도장 화면: 금색 메달 받침 + 리본 이름표 ── */
+.stamp .nm-card-h{font-size:18px;color:var(--blue-deep)}
+.stamp .nm-stamp-seal{display:inline-grid;place-items:center;width:112px;height:112px;margin:0 auto;
+  border-radius:50%;font-size:60px;line-height:1;
+  background:radial-gradient(circle at 50% 38%,#FBEBB6,#E9C46A 58%,#C99A3E 72%,transparent 73%);
+  filter:drop-shadow(0 8px 14px rgba(120,80,10,.35))}
+.nm-stamp-label{position:relative;display:inline-block;margin:12px auto 8px;padding:9px 30px;
+  font-size:22px;font-weight:700;color:var(--gold-bright);
+  background:linear-gradient(180deg,#2A5AA0,var(--blue) 60%,#12376A);border-radius:6px;
+  -webkit-text-stroke:0;text-shadow:0 2px 0 rgba(0,0,0,.35);
+  box-shadow:0 4px 0 #0B2447,inset 0 1px 0 rgba(255,255,255,.25),0 10px 18px -10px rgba(14,44,87,.6)}
+.nm-stamp-label::before,.nm-stamp-label::after{content:'';position:absolute;top:7px;z-index:-1;
+  border:16px solid #0E2C57;border-left-color:transparent}
+.nm-stamp-label::before{left:-18px;border-right-color:#0E2C57;border-left-color:transparent}
+.nm-stamp-label::after{right:-18px;border-left-color:#0E2C57;border-right-color:transparent}
+.nm-stamp-coins{font-size:17px;font-weight:600}
+
+/* ── ② 그림 부품 모드 — assets/ui/ 세트가 설치돼 있을 때만(index.html 감지) ── */
+html[data-nm-ui="art"] .nm-tile{border-radius:0;background:url(../assets/ui/cube-blue.png) center/100% 100% no-repeat;
+  box-shadow:0 10px 16px -8px rgba(14,44,87,.55)}
+html[data-nm-ui="art"] .nm-tile:active{box-shadow:0 5px 8px -5px rgba(14,44,87,.55)}
+html[data-nm-ui="art"] .nm-tile.sel{background-image:url(../assets/ui/cube-gold.png);
+  box-shadow:0 0 0 3px rgba(245,217,139,.55),0 12px 16px -7px rgba(120,80,10,.5)}
+html[data-nm-ui="art"] .nm-tile.paired{background-image:url(../assets/ui/cube-green.png);
+  box-shadow:0 6px 12px -7px rgba(20,90,50,.5)}
+html[data-nm-ui="art"] .nm-board,html[data-nm-ui="art"] .nm-arena-expr,html[data-nm-ui="art"] .nm-arena .nm-numpad-screen{
+  border:24px solid transparent;border-image:url(../assets/ui/tray.png) 64 fill / 24px stretch;
+  background:none;border-radius:0;box-shadow:0 12px 22px -12px rgba(60,40,10,.5)}
+html[data-nm-ui="art"] .nm-btn{border:16px solid transparent;border-image:url(../assets/ui/btn-primary.png) 40 fill / 16px stretch;
+  border-radius:0;background:none;box-shadow:none;padding:0 14px;line-height:1.1}
+html[data-nm-ui="art"] .nm-btn.ghost{border-image-source:url(../assets/ui/btn-ghost.png)}
+html[data-nm-ui="art"] .nm-btn:active{transform:translateY(2px);box-shadow:none}
+html[data-nm-ui="art"] .stamp .nm-stamp-seal{font-size:0;width:128px;height:128px;
+  background:url(../assets/ui/seal.png) center/contain no-repeat}
+html[data-nm-ui="art"] .nm-stamp-label{background:url(../assets/ui/ribbon.png) center/100% 100% no-repeat;
+  padding:16px 64px;border-radius:0;box-shadow:none}
+html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-label::after{display:none}
