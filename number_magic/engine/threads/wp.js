@@ -616,6 +616,28 @@
     Object.keys(weights).forEach(k => { for (let i = 0; i < weights[k]; i++) bag.push(k); });
     return pick(rng, bag);
   }
+  /* params.kinds — 의미 유형을 좁히는 선택적 허용 목록 (2026-09-16).
+     원장 지시 "문장제도 과정마다 다르게 나오게 해 줘": 곱셈을 배우는 과정에서
+     덧셈 문장제가 나오면 그 과정을 점검하는 게 아니다. 부르는 쪽이 그 과정이
+     실제로 연습하는 연산에 맞는 유형만 넘긴다.
+     허용 목록에 이 range가 쓸 수 있는 유형이 하나도 없으면 원래 표를 그대로 쓴다 —
+     좁히려다 아무것도 못 고르는 상황을 만들지 않는다. */
+  function weightsFor(range, allow) {
+    const base = KIND_W[range] || KIND_W.A;
+    if (!allow || !allow.length) return base;
+    const w = {};
+    allow.forEach(k => { if (base[k] != null) w[k] = base[k]; });
+    return Object.keys(w).length ? w : base;
+  }
+  /* 고정 표(INFO_KINDS·BOX_KINDS)를 허용 목록과 교집합 — 그 문제 형식이 원래
+     쓸 수 있는 유형 밖으로 나가지 않으면서 과정에 맞게 좁힌다. 교집합이 비면
+     원래 표 그대로(형식이 성립하지 않는 좁히기는 무시한다). */
+  function narrow(table, allow) {
+    if (!allow || !allow.length) return table;
+    const w = {};
+    allow.forEach(k => { if (table[k] != null) w[k] = table[k]; });
+    return Object.keys(w).length ? w : table;
+  }
   const KIND_W = {
     A: { 합병:2, 첨가:2, 구잔:2, 구차:3, 배수:2 },
     B: { 합병:2, 첨가:2, 구잔:2, 구차:3, 배수:2, 등분:2, 포함:2 },
@@ -696,10 +718,11 @@
     const modes = range === 'C' ? ['target', 'need', 'target'] : ['target', 'given', 'need'];
     const mode  = pick(rng, modes);
     const ACTOR_KINDS = { 합병:1, 첨가:1, 구잔:1, 구차:1 };
-    let kind = pickKind(rng, range, KIND_W[range]);
+    let kind = pickKind(rng, range, weightsFor(range, params && params.kinds));
     if (mode === 'need' && !ACTOR_KINDS[kind]) {
-      const w = {}; Object.keys(KIND_W[range]).forEach(k => { if (ACTOR_KINDS[k]) w[k] = KIND_W[range][k]; });
-      kind = pickKind(rng, range, w);
+      const base = weightsFor(range, params && params.kinds);
+      const w = {}; Object.keys(base).forEach(k => { if (ACTOR_KINDS[k]) w[k] = base[k]; });
+      kind = pickKind(rng, range, Object.keys(w).length ? w : base);
     }
     /* need는 소수로만 낸다 — 분수를 쓰면 분모(3/8의 8)까지 "필요 없는 수" 후보로
        읽혀 유일해가 깨진다. 정수 잡음 하나만 맨 수로 남아야 한다. */
@@ -778,14 +801,15 @@
   NM_TGEN['wp3_operation'] = function (params, rng) {
     const range = (params && params.range) || 'A';
     const mode  = pick(rng, ['op', 'expr', 'same']);
-    let kind = pickKind(rng, range, KIND_W[range]);
+    let kind = pickKind(rng, range, weightsFor(range, params && params.kinds));
     /* same 모드의 문두는 '같은 연산을 쓰는 다른 의미 유형'이 있는 유형에서만 뽑는다.
        배수는 ×를 쓰는 유일한 유형이라 정답 보기가 문두와 판박이가 되어, 구조가 아니라
        겉모습만 맞춰도 풀려 버린다(실제 인쇄물에서 그렇게 나왔다). */
     if (mode === 'same' && !hasPartner(range, kind)) {
+      const base = weightsFor(range, params && params.kinds);
       const w = {};
-      Object.keys(KIND_W[range]).forEach(k => { if (hasPartner(range, k)) w[k] = KIND_W[range][k]; });
-      kind = pickKind(rng, range, w);
+      Object.keys(base).forEach(k => { if (hasPartner(range, k)) w[k] = base[k]; });
+      kind = pickKind(rng, range, Object.keys(w).length ? w : base);
     }
     const s = makeSituation(rng, { range, kind, numeric: (params && params.numeric) || 'mix' });
     const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
@@ -916,7 +940,20 @@
     const range   = (params && params.range) || 'A';
     const numeric = (params && params.numeric) || 'mix';
     /* C는 수가 분수·소수라 빈칸(정수)으로 받을 수 없다 — fill을 뺀다 */
-    const mode = pick(rng, range === 'C' ? ['info', 'box'] : ['fill', 'info', 'box']);
+    let modes = range === 'C' ? ['info', 'box'] : ['fill', 'info', 'box'];
+    /* 과정에 맞는 유형만 쓰라고 했는데(params.kinds) 그 유형을 표현할 수 없는
+       문제 형식이 있다 — info·box는 배수(×)나 등분·포함(÷)을 아예 못 쓴다.
+       그런 형식은 폴백으로 딴 유형을 내는 대신 **그 형식 자체를 뺀다.**
+       예: 곱셈 과정 → fill만 남아 전부 "□ ○ □ = □" 식 세우기가 된다. */
+    if (params && params.kinds && params.kinds.length) {
+      const can = { fill: weightsFor(range, params.kinds) !== (KIND_W[range] || KIND_W.A)
+                          || params.kinds.some(k => (KIND_W[range] || KIND_W.A)[k] != null),
+                    info: params.kinds.some(k => INFO_KINDS[k] != null),
+                    box:  params.kinds.some(k => (BOX_KINDS[range] || BOX_KINDS.A)[k] != null) };
+      const kept = modes.filter(m => can[m]);
+      if (kept.length) modes = kept;
+    }
+    const mode = pick(rng, modes);
 
     if (mode === 'fill') {
       /* ── 유일해를 지시문이 아니라 **산술**로 만든다 ──────────────────
@@ -937,7 +974,7 @@
          옮긴 아이는 마지막 칸(결과)에서 반드시 걸린다 — 구차 함정이 여기 있다. */
       let s = null, r = 0, ok = false;
       for (let tryN = 0; tryN < 30 && !ok; tryN++) {
-        const kind = pickKind(rng, range, KIND_W[range]);
+        const kind = pickKind(rng, range, weightsFor(range, params && params.kinds));
         s = makeSituation(rng, { range, kind, numeric });
         r = resultOf(s);
         ok = uniqueFill(s, r);
@@ -962,7 +999,7 @@
     }
 
     if (mode === 'info') {
-      const kind = pickKind(rng, range, INFO_KINDS);
+      const kind = pickKind(rng, range, narrow(INFO_KINDS, params && params.kinds));
       const s = makeSituation(rng, { range, kind, numeric });
       /* 문제를 푸는 데 필요 없는 수를 하나 끼운다 — 그 수를 쓴 식이 오답이 된다 */
       const nz = pick(rng, NOISES);
@@ -992,7 +1029,7 @@
     /* box — 뺄셈 상황을 덧셈식으로, 나눗셈 상황을 곱셈식으로 되짚어 쓴다.
        구잔 "먹은 것 + 남은 것 = 처음 것" · 구차 "적은 쪽 + 차이 = 많은 쪽"
        등분 "사람 수 × 한 명 몫 = 전체" · 포함 "한 상자 몫 × 상자 수 = 전체" */
-    const kind = pickKind(rng, range, BOX_KINDS[range]);
+    const kind = pickKind(rng, range, narrow(BOX_KINDS[range] || BOX_KINDS.A, params && params.kinds));
     const s = makeSituation(rng, { range, kind, numeric });
     const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
     const a = numStr(s, 1), b = numStr(s, 2), iv = INV_OP[s.op];
@@ -1063,7 +1100,7 @@
       /* ×·÷에서 두 번째 수가 1이면 결과가 처음 수와 같아 '크다/작다'가 사라진다 */
       let s = null;
       for (let tryN = 0; tryN < 20; tryN++) {
-        s = makeSituation(rng, { range, kind: pickKind(rng, range, KIND_W[range]), numeric });
+        s = makeSituation(rng, { range, kind: pickKind(rng, range, weightsFor(range, params && params.kinds)), numeric });
         if (!((s.op === '×' || s.op === '÷') && s.n2 === 1)) break;
       }
       const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
@@ -1088,7 +1125,7 @@
     }
 
     if (mode === 'mean') {
-      const s = makeSituation(rng, { range, kind: pickKind(rng, range, KIND_W[range]), numeric });
+      const s = makeSituation(rng, { range, kind: pickKind(rng, range, weightsFor(range, params && params.kinds)), numeric });
       const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
       const rt = resultText(s, resultOf(s));
       const t = s.targets;
@@ -1104,7 +1141,7 @@
     }
 
     /* spot — 바르게 푼 것 고르기 */
-    const s = makeSituation(rng, { range, kind: pickKind(rng, range, KIND_W[range]), numeric });
+    const s = makeSituation(rng, { range, kind: pickKind(rng, range, weightsFor(range, params && params.kinds)), numeric });
     const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
     const a = numStr(s, 1), b = numStr(s, 2);
     const r = resultOf(s);

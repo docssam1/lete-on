@@ -153,6 +153,15 @@ function schoolGradeOptions(){
   return out;
 }
 
+/* 자릿값 색 힌트를 줄 대상인가 (2026-09-16 원장 "어린 아이들은 자릿수의 개념이 없어서").
+   기준은 학령 24개월(초3 3월) 미만 — 원장이 고등 기준선으로 준 그 자리를 그대로 쓴다.
+   학년을 모르면 진도로 대신 본다(NM_BAND가 young이면 어린 쪽으로 친다). */
+function placeHintWanted(){
+  const mo=schoolMonths();
+  if(mo==null) return NM_BAND==='young';
+  return mo<24;
+}
+
 /* ── 티어별 권장 학령 (원장이 준 두 기준선만 쓴다 — 나머지는 지어내지 않는다) ──
    중등 연산 = 초1 8월(5) · 고등 = 초3 3월(24).
    이건 잠금이 아니다. 로드맵은 어떤 과정도 잠그지 않는다는 원칙 그대로이고,
@@ -2489,6 +2498,33 @@ const CHECKUP_EVERY=3;
    과정마다 4문제씩 = 계산 12문제로 올리고, 재료가 4개보다 적은 과정은 같은 재료를
    다시 쓰되 문항 번호가 씨앗에 들어가므로 같은 문제가 두 번 나오지는 않는다. */
 const CHECKUP_PER_COURSE=4;
+/* ── 문장제를 과정에 맞춰 고르기 (2026-09-16) ──
+   원장 지시 "문장제도 과정마다 다르게 나오게 해 줘". 곱셈을 배우는 과정에서
+   덧셈 문장제가 나오면 그 과정을 점검하는 게 아니다. 그 과정이 실제로 연습하는
+   스레드의 머리글자로 의미 유형을 정해 wp 생성기에 params.kinds로 넘긴다
+   (engine/threads/wp.js의 weightsFor·narrow 참고 — 그 형식이 못 쓰는 유형이면
+   그 형식 자체를 뺀다). range는 나눗셈이 있으면 B, 분수·소수가 있으면 C. */
+const WP_KINDS_BY_PREFIX={
+  NS:['합병','첨가'], AD:['합병','첨가'], SB:['구잔','구차'],
+  ML:['배수'], DV:['등분','포함'],
+  FR:['합병','첨가','구잔','구차'], DC:['합병','첨가','구잔','구차'],
+  EL:['구잔','구차'], MX:['합병','첨가','구잔','구차','배수','등분','포함']
+};
+function wpPlanForCourses(nums){
+  const C=window.NM_COURSES||{};
+  const pre={}, kinds=[];
+  nums.forEach(n=>{
+    const c=C['C'+n]; if(!c) return;
+    (c.sessions||[]).forEach(ses=>(ses.drills||[]).forEach(d=>{
+      const m=String(d.t||'').match(/^[A-Z]+/); if(m) pre[m[0]]=true;
+    }));
+  });
+  Object.keys(pre).forEach(k=>{
+    (WP_KINDS_BY_PREFIX[k]||[]).forEach(v=>{ if(kinds.indexOf(v)<0) kinds.push(v); });
+  });
+  const range = (pre.FR||pre.DC) ? 'C' : (pre.DV||pre.MX) ? 'B' : 'A';
+  return { range, kinds };
+}
 function checkupKeyFor(num){ return 'C'+num; }
 function isCheckupPoint(num){ return num>0 && num%CHECKUP_EVERY===0; }
 function checkupRecord(num){ return (S.checkups||{})[checkupKeyFor(num)]||null; }
@@ -2533,16 +2569,48 @@ function buildCheckupItems(num){
       picked.push(Object.assign({}, pool[Math.min(pool.length-1, Math.floor(i*pool.length/CHECKUP_PER_COURSE))]));
     }
   });
+  /* ── 창의 연산 (2026-09-16 원장 "그런데 창의 연산은 같이 점검 안 해?") ──
+     그 세 과정의 창의 회차(courses.js의 session.creative)에서 뽑는다. 원장의 다음
+     문장이 요지다 — "무조건 계산하는 것이 아니라 푸는 과정에 대한 연습도 되어야지.
+     창의 연산 때 한 문제는 빈칸 넣기도 있어야 하지 않겠어."
+     그래서 **과정을 채우는 문항(steps)을 맨 앞에 세운다.** 생성기가 steps를 내면
+     widgets.js의 steps 위젯이 단계마다 빈칸을 받는다(답만 쓰는 게 아니라 푸는
+     과정을 채운다). 어떤 스레드가 steps를 내는지는 미리 적어 두지 않고 한 번
+     생성해서 확인한다 — 생성기가 바뀌면 적어 둔 표가 조용히 틀리기 때문이다. */
+  const cre=[];
+  checkupCourseNums(num).forEach(n=>{
+    const c=C['C'+n]; if(!c) return;
+    (c.sessions||[]).forEach(ses=>(ses.creative||[]).forEach(d=>{
+      if(!TH[d.t]) return;
+      if(cre.some(x=>x.t===d.t&&x.lv===d.lv)) return;
+      cre.push({t:d.t, lv:d.lv||1, kind:'creative', from:n});
+    }));
+  });
+  if(cre.length){
+    const hasSteps=x=>{
+      try{
+        const q=placementProblem({thread:x.t, level:x.lv}, 0, 'probe');
+        return !!(q && Array.isArray(q.steps) && q.steps.length);
+      }catch(e){ return false; }
+    };
+    const withSteps=cre.filter(hasSteps), without=cre.filter(x=>!withSteps.includes(x));
+    const order=withSteps.concat(without);
+    /* 창의는 3문제. 첫 자리는 되도록 과정을 채우는 문항(빈칸)으로 둔다. */
+    for(let i=0;i<3;i++) picked.push(Object.assign({}, order[i % order.length]));
+  }
   /* 문장제 — 계산만큼은 아니어도 판단이 설 만큼은 낸다(1문제로는 맞고 틀림이 곧
      운이다). 첫 점검은 '문제 이해'만, 그다음부터 '연산 찾기'와 '식으로 나타내기'. */
   const wpIds = num<=3?['WP1','WP1','WP1']
               : num<=9?['WP1','WP1','WP3','WP3']
               : ['WP1','WP1','WP3','WP3','WP4','WP4'];
   const wpLv  = num<=10?1 : num<=20?2 : 3;
+  const wpPlan= wpPlanForCourses(checkupCourseNums(num));
   wpIds.forEach(t=>{
     const th=TH[t]; if(!th) return;
-    const lv=(th.levels||[]).some(l=>l.id===wpLv)?wpLv:1;
-    picked.push({t, lv, kind:'wp'});
+    /* 레벨은 range를 정하므로 계획의 range와 어긋나지 않게 맞춘다 */
+    const wantLv = wpPlan.range==='C' ? 3 : wpPlan.range==='B' ? Math.max(2,wpLv) : wpLv;
+    const lv=(th.levels||[]).some(l=>l.id===wantLv)?wantLv:1;
+    picked.push({t, lv, kind:'wp', kinds:wpPlan.kinds});
   });
   return picked;
 }
@@ -2561,6 +2629,7 @@ function startCheckup(num, fresh){
   if(!items.length){ toast(S.lang==='ko'?'점검할 재료가 아직 없어요':'Nothing to check yet',false); return; }
   S._checkup={ run:Date.now(), num, items, i:0, stage:'intro',
     calcOk:0, calcTotal:items.filter(x=>x.kind==='calc').length,
+    creOk:0,  creTotal:items.filter(x=>x.kind==='creative').length,
     wpOk:0,   wpTotal:items.filter(x=>x.kind==='wp').length,
     cur:null, qStart:null, log:[] };
   S.view='checkup'; save(); render();
@@ -2569,14 +2638,16 @@ function finishCheckup(k){
   if(!S.checkups) S.checkups={};
   const prevRewarded=!!S.checkups[checkupKeyFor(k.num)];
   S.checkups[checkupKeyFor(k.num)]={ at:Date.now(),
-    calcOk:k.calcOk, calcTotal:k.calcTotal, wpOk:k.wpOk, wpTotal:k.wpTotal };
+    calcOk:k.calcOk, calcTotal:k.calcTotal,
+    creOk:k.creOk||0, creTotal:k.creTotal||0,
+    wpOk:k.wpOk, wpTotal:k.wpTotal };
   k.stage='result';
   /* 보상은 맞힌 수만큼 — 점수로 가르지 않는다. 점검은 시험이 아니라 지금 어디가
      막혔는지 보는 자리라, 결과가 나쁘면 손해를 보는 구조로 만들면 안 된다.
      한 점검당 한 번만 준다(다시 점검하기로 코인을 반복해서 벌 수 없게). */
   if(!k.rewarded){
     k.rewarded=true;
-    const got=(k.calcOk+k.wpOk)*3;
+    const got=(k.calcOk+(k.creOk||0)+k.wpOk)*3;
     if(got>0 && !prevRewarded) coinAdd(got);
   }
   save();
@@ -2606,16 +2677,17 @@ function screenCheckup(){
       <h2 class="nm-cu-h">${lk(`과정 ${nums[0]}~${nums[nums.length-1]} 점검`,`Check-up for courses ${nums[0]}–${nums[nums.length-1]}`,`课程${nums[0]}~${nums[nums.length-1]}检查`)}</h2>
       <p class="nm-cu-p">${lk('지금까지 배운 것에서만 물어봐요. 새로 배우는 건 없어요.',
         'Only what you have already learned. Nothing new here.','只问学过的内容，不会出新东西。')}</p>
-      <div class="nm-cu-parts">
+      <div class="nm-cu-parts three">
         <div class="nm-cu-part"><b>🔢 ${lk('계산','Calculating','计算')}</b><span>${k.calcTotal}${lk('문제','questions','题')}</span></div>
-        <div class="nm-cu-part wp"><b>📖 ${lk('문장제 이해','Reading word problems','应用题理解')}</b><span>${k.wpTotal}${lk('문제','questions','题')}</span></div>
+        <div class="nm-cu-part cre"><b>✨ ${lk('창의 연산','Creative moves','创意运算')}</b><span>${k.creTotal||0}${lk('문제','questions','题')}</span></div>
+        <div class="nm-cu-part wp"><b>📖 ${lk('문장제 이해','Reading','应用题理解')}</b><span>${k.wpTotal}${lk('문제','questions','题')}</span></div>
       </div>
       <p class="nm-cu-count">${lk(`모두 ${k.items.length}문제예요. 중간에 나가도 풀던 자리에서 이어서 할 수 있어요.`,
         `${k.items.length} questions in all. You can leave and pick up where you stopped.`,
         `一共${k.items.length}题。中途离开也能从停下的地方继续。`)}</p>
-      <p class="nm-cu-why">${lk('두 가지를 따로 세요. 계산이 빠른 것과 문장을 읽어 내는 것은 다른 힘이라, 합쳐 버리면 어느 쪽이 막혔는지 안 보여요.',
-        'We score these separately. Computing quickly and reading a problem are different abilities — one combined score hides which one is stuck.',
-        '两项分开计分。算得快和读懂题是不同的能力，合成一个分数就看不出卡在哪里。')}</p>
+      <p class="nm-cu-why">${lk('셋을 따로 세요. 빨리 계산하는 것, 푸는 길을 세우는 것, 문장을 읽어 내는 것은 서로 다른 힘이라, 합쳐 버리면 어느 쪽이 막혔는지 안 보여요. 창의 연산에는 답만 쓰는 게 아니라 <b>푸는 과정의 빈칸</b>을 채우는 문제가 들어 있어요.',
+        'We score the three separately. Computing fast, building a route through a problem, and reading a problem are different abilities — one combined score hides which one is stuck. The creative part includes questions where you fill in <b>the steps</b>, not just the answer.',
+        '三项分开计分。算得快、想出解法路径、读懂题是不同的能力，合成一个分数就看不出卡在哪里。创意运算里有需要填<b>解题步骤空格</b>的题，不只是写答案。')}</p>
       <button class="nm-btn full" id="cuGo">${lk('시작하기','Start','开始')}</button>
     </div></div></div>`;
     $('#cuBack').onclick=back;
@@ -2626,8 +2698,10 @@ function screenCheckup(){
   if(k.stage==='result'){
     const rec=checkupRecord(k.num);
     const calcPct=k.calcTotal?Math.round(k.calcOk/k.calcTotal*100):null;
+    const crePct=k.creTotal?Math.round(k.creOk/k.creTotal*100):null;
     const wpPct=k.wpTotal?Math.round(k.wpOk/k.wpTotal*100):null;
     const calcGood=calcPct!=null&&calcPct>=70;
+    const creGood=crePct==null||crePct>=60;   /* 창의가 없는 과정이면 발목 잡지 않는다 */
     const wpGood=wpPct!=null&&wpPct>=60;
     /* 읽어 주는 말은 네 경우로 갈린다. 원장이 말한 그 상태(계산 ○·문장제 ✕)가
        가장 중요한 칸이라 거기에 가장 구체적인 처방을 붙인다. */
@@ -2646,23 +2720,39 @@ function screenCheckup(){
       : lk('두 가지 다 한 번 더 다지고 가요. 앞으로 가는 것보다 지금 자리를 단단히 하는 편이 빨라요.',
            'Both could use another pass. Firming up here beats pushing ahead.',
            '两项都再巩固一次。把现在这一步走稳比往前赶更快。');
+    /* 창의(푸는 과정)만 따로 처진 경우는 위 네 갈래로는 안 보인다 — 계산도 문장제도
+       되는데 길을 세우는 데서 막히는 아이가 있다. 한 줄을 덧붙여 그 자리를 짚는다. */
+    const creNote = (k.creTotal && !creGood)
+      ? lk('창의 연산(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
+           'The creative part — building a route — lags on its own. If the answer comes but the step blanks stall, practise saying <b>why</b> the steps go in that order, not more answer drills.',
+           '创意运算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。')
+      : (k.creTotal && creGood && !calcGood)
+      ? lk('푸는 길은 잘 세워요. 그 길 위에서 손이 느릴 뿐이에요.',
+           'You build the route well — the hand on that route is just still slow.',
+           '解法路径想得好，只是在这条路上手还慢。')
+      : '';
     scr.innerHTML=`<div class="nm-unit-bar">
       <button class="nm-back" id="cuBack">${t('back')}</button>
       <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
     </div>
     <div class="nm-step-body"><div class="nm-dialog"><div class="nm-cu-wrap">
       <h2 class="nm-cu-h">${lk('점검 결과','Check-up result','检查结果')}</h2>
-      <div class="nm-cu-scores">
+      <div class="nm-cu-scores${k.creTotal?' three':''}">
         <div class="nm-cu-score${calcGood?' good':''}">
           <b>🔢 ${lk('계산','Calculating','计算')}</b>
           <span class="nm-cu-num">${k.calcOk}<i>/${k.calcTotal}</i></span>
         </div>
+        ${k.creTotal?`<div class="nm-cu-score cre${crePct>=60?' good':''}">
+          <b>✨ ${lk('창의 연산','Creative','创意运算')}</b>
+          <span class="nm-cu-num">${k.creOk}<i>/${k.creTotal}</i></span>
+        </div>`:''}
         <div class="nm-cu-score wp${wpGood?' good':''}">
           <b>📖 ${lk('문장제 이해','Reading','应用题理解')}</b>
           <span class="nm-cu-num">${k.wpOk}<i>/${k.wpTotal}</i></span>
         </div>
       </div>
       <p class="nm-cu-verdict">${verdict}</p>
+      ${creNote?`<p class="nm-cu-verdict cre">${creNote}</p>`:''}
       <button class="nm-btn full" id="cuDone">${lk('로드맵으로','Back to the roadmap','回到路线图')}</button>
       <button class="nm-btn full ghost" id="cuAgain">${lk('다시 점검하기','Check again','再检查一次')}</button>
     </div></div></div>`;
@@ -2678,24 +2768,52 @@ function screenCheckup(){
   const TH=window.NM_THREADS||{};
   const th=TH[item.t];
   if(!k.cur){
-    k.cur=placementProblem({thread:item.t, level:item.lv}, k.i, 'chk'+k.run);
+    /* item.kinds — 문장제만 넘어온다(그 과정이 연습하는 의미 유형). 없으면 예전 그대로. */
+    k.cur=placementProblem({thread:item.t, level:item.lv}, k.i, 'chk'+k.run,
+      item.kinds?{kinds:item.kinds}:null);
     k.qStart=Date.now();
   }
   const cur=k.cur;
   const isMulti=Array.isArray(cur.answer);
   const hasTex=!!cur.tex;
-  const useWidget=!hasTex && cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
+  /* 창의 연산만 steps 위젯으로 보낸다 — tex가 같이 있어도.
+     원장 지시의 "빈칸 넣기"가 바로 그 위젯이라, 창의 문항을 tex 한 줄로 떨어뜨리면
+     푸는 과정이 사라지고 답만 묻는 문제가 된다.
+     반대로 **계산 문항은 steps가 있어도 위젯으로 보내지 않는다.** 필산 스레드도
+     상당수가 steps를 내는데(예: 세 자리×한 자리), 그것까지 단계 입력으로 바꾸면
+     계산 12문항이 전부 여러 단계짜리가 되어 점검이 학습이 되어 버린다. */
+  const hasSteps=Array.isArray(cur.steps)&&cur.steps.length;
+  const useWidget=!!(window.NM_WIDGETS && cur.widget && cur.widget!=='numpad'
+    && (!hasTex || (item.kind==='creative' && (hasSteps || cur.widget==='steps'))));
+  /* 자릿값 색 힌트 — 어린 학습자에게만, 그리고 세 문제에 하나만(원장 "몇 문제는").
+     전부 칠하면 색이 배경이 되어 힌트가 아니게 된다.
+     ★ 문항 번호가 아니라 **색을 칠할 수 있는 문항**을 센다. 번호로 세면 그 자리가
+     마침 자릿값이 없는 문제(한 자리 덧셈·자릿값 읽기)일 때 힌트가 통째로 날아간다 —
+     실제로 첫 시안이 18문항 중 한 번도 안 칠했다.
+     판정은 문항에 한 번만 박아 둔다(다시 그려도 색이 켜졌다 꺼졌다 하지 않게). */
+  const PV=window.NM_PLACE_COLOR;
+  if(item.pv===undefined){
+    const can=!!PV && item.kind==='calc' && placeHintWanted() && PV.eligible(cur.tex);
+    if(can){ k.pvCount=(k.pvCount||0); item.pv=(k.pvCount%3===0); k.pvCount++; }
+    else item.pv=false;
+    save();
+  }
+  const wantHint=!!item.pv && !!PV;
+  const texForShow=wantHint?PV.tint(cur.tex):cur.tex;
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="cuBack">${t('back')}</button>
     <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
   </div>
   <div class="nm-step-body"><div class="nm-dialog">
-    <div class="nm-dg-step">${item.kind==='wp'?`📖 ${lk('문장제 이해','Reading word problems','应用题理解')}`:`🔢 ${lk('계산','Calculating','计算')}`}${th?` · ${esc(L(th.name))}`:''}</div>
+    <div class="nm-dg-step">${item.kind==='wp'?`📖 ${lk('문장제 이해','Reading word problems','应用题理解')}`
+      :item.kind==='creative'?`✨ ${lk('창의 연산','Creative moves','创意运算')}`
+      :`🔢 ${lk('계산','Calculating','计算')}`}${th?` · ${esc(L(th.name))}`:''}</div>
     <div class="nm-prog">${dots(k.items.length,k.i)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
     <div class="nm-bubble${item.kind==='wp'?' nm-bubble-wp':''}">${esc(L(cur.prompt))}</div>
     ${useWidget?`<div id="cuWidget" class="nm-lab-widget"></div>`:`
-    ${hasTex?`<div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>`:''}
+    ${hasTex?`<div class="nm-lab-expr">${labExprHtml(texForShow)}</div>`:''}
+    ${wantHint?PV.legendHtml(S.lang, PV.placesUsed(cur.tex)):''}
     ${isMulti?`<p class="nm-dg-multihint">${lk('답이 여러 개면 쉼표(,)로 나눠 써요','Separate multiple answers with commas','多个答案用逗号分开')}</p>`:''}
     <div class="nm-numpad-screen" id="cuScreen">&nbsp;</div>
     <div class="nm-numpad" id="cuPad"></div>`}
@@ -2704,7 +2822,9 @@ function screenCheckup(){
   renderMath(scr);
 
   const submit=ok=>{
-    if(item.kind==='wp'){ if(ok) k.wpOk++; } else { if(ok) k.calcOk++; }
+    if(item.kind==='wp'){ if(ok) k.wpOk++; }
+    else if(item.kind==='creative'){ if(ok) k.creOk=(k.creOk||0)+1; }
+    else { if(ok) k.calcOk++; }
     k.log.push({t:item.t, lv:item.lv, kind:item.kind, ok,
       sec:Math.max(0,Math.round((Date.now()-(k.qStart||Date.now()))/1000))});
     k.i++; k.cur=null; k.qStart=null;
@@ -3263,12 +3383,15 @@ function placementLog(d, threadId, level, ok, sec){
   d.log=d.log||[];
   d.log.push({t:threadId, lv:level, ok:!!ok, sec:sec});
 }
-function placementProblem(rung, i, run){
+/* extra — 레벨 params 위에 얹는 추가 인자(2026-09-16). 연산 점검이 문장제를
+   그 과정에 맞는 의미 유형으로 좁힐 때 쓴다(params.kinds). 안 넘기면 예전 그대로다. */
+function placementProblem(rung, i, run, extra){
   const th=(window.NM_THREADS||{})[rung.thread];
   const gen=(window.NM_TGEN||{})[th&&th.gen];
   const params=(th&&(th.levels||[]).find(l=>l.id===rung.level)||{}).params||{};
+  const merged=extra?Object.assign({},params,extra):params;
   const rng=NM_RNG.mulberry32(NM_RNG.hashSeed('diag'+run+rung.thread+rung.level+'i'+i));
-  return gen ? gen(params,rng)
+  return gen ? gen(merged,rng)
              : {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
 }
 /* ── 세부 진단(스킬 체크) 단계 ──
