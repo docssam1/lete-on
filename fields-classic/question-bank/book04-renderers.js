@@ -87,9 +87,45 @@ function digitalSelfHalfTurn(visual) {
   return `<div class="b4-self-turn">${visual.rows.map((row, index) => `<div><b>(${index + 1})</b><strong>${row.source}</strong><em>${row.operator}</em>${visual.showTurned ? `<span>${row.turned}</span>` : '<span class="b4-turn-pair"><i></i><i></i></span>'}<i>=</i><span class="answer-space">?</span></div>`).join("")}<small>두 빈칸에는 왼쪽 수를 반 바퀴 돌려 읽은 수가 들어갑니다.</small></div>`;
 }
 
+const FOLD_ARROW_MODEL = Object.freeze({
+  "오른쪽을 왼쪽으로": { crease: "M50 4V96", arrow: "M82 50Q58 22 28 50" },
+  "왼쪽을 오른쪽으로": { crease: "M50 4V96", arrow: "M18 50Q42 22 72 50" },
+  "아래쪽을 위쪽으로": { crease: "M4 50H96", arrow: "M50 82Q78 58 50 28" },
+  "위쪽을 아래쪽으로": { crease: "M4 50H96", arrow: "M50 18Q78 42 50 72" }
+});
+
+function foldBoard(rows, columns, values, { fold = null, target = null, cutCells = [] } = {}) {
+  const cutKeys = new Set(cutCells.map(({ row, column }) => `${row}:${column}`));
+  const cells = Array.from({ length: rows * columns }, (_, index) => {
+    const row = Math.floor(index / columns);
+    const column = index % columns;
+    const isTarget = target?.row === row && target?.column === column;
+    const isCut = cutKeys.has(`${row}:${column}`);
+    const value = values?.[row]?.[column] ?? "";
+    return `<span class="${isTarget ? "is-target" : ""}${isCut ? " is-cut" : ""}">${isTarget ? "✂" : escapeHtml(value)}</span>`;
+  }).join("");
+  const motion = fold ? FOLD_ARROW_MODEL[fold.direction] : null;
+  const overlay = motion
+    ? `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><marker id="b4-fold-arrow-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z"/></marker></defs><path class="crease" d="${motion.crease}"/><path class="motion" marker-end="url(#b4-fold-arrow-head)" d="${motion.arrow}"/></svg>`
+    : "";
+  return `<span class="b4-fold-board" style="--rows:${rows};--columns:${columns}">${cells}${overlay}</span>`;
+}
+
 function foldedGrid(visual) {
-  const folded = Array.from({ length: visual.foldedRows }, () => Array.from({ length: visual.foldedColumns }, () => ""));
-  return `<div class="b4-transform-grid b4-fold-grid"><div><small>번호판</small>${numberGrid(visual.grid)}</div><div class="b4-step-arrow">${visual.folds.map((fold) => `<span>→</span><em>${escapeHtml(fold.direction)}</em>`).join("")}</div><div><small>접은 뒤</small>${numberGrid(folded, visual.target, true)}</div></div>`;
+  if (visual.reveal) {
+    return `<div class="b4-fold-answer"><small>펼쳐서 함께 잘린 칸</small>${foldBoard(visual.grid.length, visual.grid[0].length, visual.grid, { cutCells: visual.cutCells })}</div>`;
+  }
+  let rows = visual.grid.length;
+  let columns = visual.grid[0].length;
+  const stages = visual.folds.map((fold, index) => {
+    const values = index === 0 ? visual.grid : null;
+    const stage = `<figure><figcaption>${index ? `${index}번 접은 뒤` : "처음"}</figcaption>${foldBoard(rows, columns, values, { fold })}<small>${escapeHtml(fold.direction)}</small></figure>`;
+    if (fold.axis === "vertical") columns /= 2;
+    else rows /= 2;
+    return stage;
+  });
+  stages.push(`<figure><figcaption>접은 뒤</figcaption>${foldBoard(rows, columns, null, { target: visual.target })}<small>표시한 칸 자르기</small></figure>`);
+  return `<div class="b4-fold-sequence">${stages.join('<b class="b4-sequence-arrow">→</b>')}</div>`;
 }
 
 const COLOR_CLASS = Object.freeze({ "빨강": "red", "노랑": "yellow", "초록": "green", "파랑": "blue" });
@@ -104,11 +140,15 @@ function foldSurface(visual) {
 }
 
 function overlappingPaper(visual) {
-  const snapshot = (removed) => {
+  const snapshot = (removed, stackClass = "b4-paper-stack") => {
     const sheets = [...visual.layers.slice(removed)].reverse().map((paper, layer) => `<i class="b4-paper-sheet" style="--paper-row:${paper.row};--paper-column:${paper.column};--paper-color:${paper.color};--paper-layer:${layer}"><b>${escapeHtml(paper.label)}</b></i>`).join("");
-    return `<span class="b4-paper-stack">${sheets}</span>`;
+    return `<span class="${stackClass}">${sheets}</span>`;
   };
-  return `<div class="b4-paper-snapshots">${visual.layers.map((_, index) => `<div><small>${index ? `${index}장 뺀 뒤` : "처음"}</small>${snapshot(index)}</div>`).join("")}</div>`;
+  if (!visual.reveal) {
+    const steps = visual.layers.slice(1).map((_, index) => `<div><small>${index + 1}장 뺀 뒤</small>${snapshot(index + 1, "b4-paper-step-stack")}</div>`).join("");
+    return `<div class="b4-paper-problem"><div class="b4-paper-snapshots is-problem"><div><small>겹친 모습</small>${snapshot(0)}</div></div><button type="button" class="b4-paper-toggle" aria-expanded="false">한 장씩 보기</button><div class="b4-paper-snapshots is-steps" hidden>${steps}</div></div>`;
+  }
+  return `<div class="b4-paper-snapshots is-answer">${visual.layers.map((_, index) => `<div class="${index === visual.layers.length - 1 ? "is-last" : ""}"><small>${index ? `${index}장 뺀 뒤` : "처음"}</small>${snapshot(index)}</div>`).join("")}</div>`;
 }
 
 function pairSumCards(visual) {
@@ -159,7 +199,11 @@ function circularSeat(visual) {
 }
 
 function raceThirdPlace(visual) {
-  return cluePanel(visual, `<div class="b4-target-strip">세 번째로 들어온 사람 = <b>?</b></div>`);
+  const places = Array.from({ length: 5 }, (_, index) => {
+    const name = visual.reveal ? visual.order[index] : "?";
+    return `<li class="${index === 2 ? "is-third" : ""}"><small>${index + 1}위</small><strong>${escapeHtml(name)}</strong></li>`;
+  }).join("");
+  return `<div class="b4-race-layout">${cluePanel(visual)}<ol class="b4-race-order">${places}</ol></div>`;
 }
 
 function circularSeatBlank(visual) {
@@ -167,7 +211,11 @@ function circularSeatBlank(visual) {
     const angle = -Math.PI / 2 + index * Math.PI * 2 / visual.count;
     const left = 50 + Math.cos(angle) * 39;
     const top = 50 + Math.sin(angle) * 39;
-    const label = index === 0 ? escapeHtml(visual.anchor) : index === visual.targetSeat ? "㉠" : "?";
+    const label = visual.reveal
+      ? escapeHtml(visual.order[index])
+      : index === 0
+        ? escapeHtml(visual.anchor)
+        : index === visual.targetSeat ? "㉠" : "?";
     return `<span class="${index === visual.targetSeat ? "is-target" : ""}" style="left:${left}%;top:${top}%">${label}</span>`;
   }).join("");
   return `<div class="b4-seat-layout">${cluePanel(visual)}<div class="b4-circle-seats b4-circle-blank">${seats}<i>원탁</i></div></div>`;

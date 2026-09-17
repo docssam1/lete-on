@@ -367,9 +367,19 @@ function foldNumberGridOrthogonal({ difficulty = 2, foldCount = 2 }) {
     if (folded.row === target.row && folded.column === target.column) cutCells.push({ row, column, value });
   }));
   const answer = cutCells.reduce((sum, cell) => sum + cell.value, 0);
+  const visual = {
+    kind: "book4",
+    subtype: "fold-number-grid",
+    grid,
+    folds,
+    foldedRows: finalSize.rows,
+    foldedColumns: finalSize.columns,
+    target
+  };
   return {
-    prompt: `번호판을 ${folds.map((fold) => fold.direction).join(" 접고, 다시 ")} 접었습니다. 표시한 칸을 잘랐을 때 잘린 수의 합을 구하세요.`,
-    visual: { kind: "book4", subtype: "fold-number-grid", grid, folds, foldedRows: finalSize.rows, foldedColumns: finalSize.columns, target },
+    prompt: `수가 쓰인 색종이를 그림처럼 ${foldCount === 1 ? "한 번" : "두 번"} 접었습니다. 표시한 칸을 잘랐을 때 잘린 수의 합을 구하세요.`,
+    visual,
+    answerVisual: { ...visual, reveal: true, cutCells },
     answer: String(answer),
     solution: `접은 선을 따라 표시한 칸을 펼치면 ${cutCells.map((cell) => cell.value).join(", ")}이 함께 잘립니다. 합은 ${cutCells.map((cell) => cell.value).join(" + ")} = ${answer}입니다.`,
     meta: { family: "fold-number-grid", structure: foldCount === 1 ? "one-orthogonal-fold" : "two-orthogonal-folds", size, grid, folds, finalSize, target, cutCells, answer }
@@ -459,11 +469,13 @@ function overlappingPaperBottom({ difficulty = 2 }) {
     column: positions[index][1]
   }));
   const bottom = layers.at(-1);
+  const visual = { kind: "book4", subtype: "overlapping-paper-order", boardSize: 4, paperSize: 2, layers };
   return {
-    prompt: `크기가 같은 정사각형 색종이 ${count}장을 겹쳤습니다. 가장 위부터 한 장씩 빼어 본 그림을 보고 가장 밑의 색종이를 구하세요.`,
-    visual: { kind: "book4", subtype: "overlapping-paper-order", boardSize: 4, paperSize: 2, layers },
+    prompt: `색종이 ${count}장이 겹쳐 있습니다. 가장 밑의 색종이는 무엇일까요?`,
+    visual,
+    answerVisual: { ...visual, reveal: true },
     answer: bottom.label,
-    solution: `한 장씩 뺀 그림을 끝까지 따라가면 마지막까지 남는 것은 ${bottom.label} 색종이입니다.`,
+    solution: `위에서부터 ${layers.map((paper) => paper.label).join(" → ")} 순서입니다. 마지막에 남는 ${bottom.label} 색종이가 가장 밑에 있습니다.`,
     meta: { family: "overlapping-paper-order", boardSize: 4, paperSize: 2, layers, answer: bottom.label }
   };
 }
@@ -554,12 +566,14 @@ function measurementDifferenceChain({ difficulty = 2, sceneId: requestedSceneId 
     return { first, second, difference, relation };
   });
   const clues = rules.map((rule) => `${topic(rule.first)} ${rule.second}보다 ${rule.difference}${scene.unit} ${scene[rule.relation]}.`);
-  const firstIndex = difficulty === 1 ? 0 : randomInt(0, count - 2);
-  const secondIndex = difficulty === 1 ? count - 1 : randomInt(firstIndex + 1, count - 1);
+  const minimumSpan = Math.min(2, count - 1);
+  const firstIndex = difficulty === 1 ? 0 : randomInt(0, count - 1 - minimumSpan);
+  const secondIndex = difficulty === 1 ? count - 1 : randomInt(firstIndex + minimumSpan, count - 1);
   const answer = offsets[secondIndex] - offsets[firstIndex];
+  const targetPairLabel = `${withOf(names[firstIndex])} ${names[secondIndex]}`;
   return {
-    prompt: `${count}명의 ${scene.comparison} 비교한 조건입니다. ${names[firstIndex]}와 ${names[secondIndex]}의 차이를 구하세요.`,
-    visual: { kind: "book4", subtype: "measurement-difference", clues, target: `${names[firstIndex]}와 ${names[secondIndex]}의 차이` },
+    prompt: `${count}명의 ${scene.comparison} 비교한 조건입니다. ${targetPairLabel}의 차이를 구하세요.`,
+    visual: { kind: "book4", subtype: "measurement-difference", clues, target: `${targetPairLabel}의 차이` },
     answer: `${answer}${scene.unit}`,
     solution: `${names[firstIndex]}에서 ${names[secondIndex]}까지의 차 ${increments.slice(firstIndex, secondIndex).join(" + ")}를 더하면 ${answer}${scene.unit}입니다.`,
     meta: { family: "measurement-difference", sceneId, unit: scene.unit, names, increments, offsets, rules, firstIndex, secondIndex, answer }
@@ -683,22 +697,7 @@ function directionalLandmarkPlacementBook4({ difficulty = 2 }) {
 }
 
 function circularSeatPlacement({ difficulty = 2 }) {
-  const count = difficulty === 1 ? 5 : 6;
-  const names = shuffle(SEAT_NAMES).slice(0, count);
-  const clockwise = difficulty === 3 ? [...names].reverse() : names;
-  const clues = [`${topic(clockwise[0])} 맨 위 자리에 앉습니다.`];
-  for (let index = 1; index < clockwise.length; index += 1) clues.push(`${topic(clockwise[index])} ${clockwise[index - 1]}의 시계 방향 바로 옆에 앉습니다.`);
-  const targetIndex = randomInt(1, count - 1);
-  const askOpposite = count % 2 === 0 && difficulty >= 2 && Math.random() < 0.5;
-  const answerIndex = askOpposite ? (targetIndex + count / 2) % count : (targetIndex + 1) % count;
-  const relation = askOpposite ? "마주 보는" : "시계 방향 바로 옆의";
-  return {
-    prompt: `조건에 맞게 원탁에 앉을 때, ${clockwise[targetIndex]}와 ${relation} 사람은 누구인가요?`,
-    visual: { kind: "book4", subtype: "circular-seat", count, clues, anchor: clockwise[0], target: clockwise[targetIndex], relation },
-    answer: clockwise[answerIndex],
-    solution: `맨 위 자리부터 시계 방향으로 ${clockwise.join(" → ")} 순서입니다. 따라서 답은 ${clockwise[answerIndex]}입니다.`,
-    meta: { family: "circular-seat", count, clockwise, clues, targetIndex, answerIndex, relation, answer: clockwise[answerIndex] }
-  };
+  return circularSeatBlankBook4({ difficulty });
 }
 
 function ordinalLinePlacement({ difficulty = 2 }) {
@@ -712,47 +711,35 @@ function ordinalLinePlacement({ difficulty = 2 }) {
 }
 
 function raceThirdPlaceBook4({ difficulty = 2 }) {
-  const names = shuffle(SEAT_NAMES).slice(0, 5);
+  const order = shuffle(SEAT_NAMES).slice(0, 5);
+  const [onlyAhead, second, answer, fourth, last] = order;
+  const names = [...order];
   const orders = permutations(names);
-  const solution = sample(orders);
   const position = (order, name) => order.indexOf(name);
-  const rules = [];
-  for (let first = 0; first < names.length; first += 1) {
-    for (let second = first + 1; second < names.length; second += 1) {
-      const a = names[first];
-      const b = names[second];
-      const before = position(solution, a) < position(solution, b) ? a : b;
-      const after = before === a ? b : a;
-      rules.push({ kind: "before", first: before, second: after, text: `${topic(before)} ${after}보다 먼저 들어왔습니다.` });
-      if (Math.abs(position(solution, a) - position(solution, b)) === 1) {
-        rules.push({ kind: "immediate", first: before, second: after, text: `${topic(before)} ${after}의 바로 앞에 들어왔습니다.` });
-      }
-    }
-  }
-  solution.forEach((name, index) => {
-    if (index !== 2) rules.push({ kind: "position", name, position: index, text: `${name} 앞에는 ${index ? `${index}명` : "아무도"} 없습니다.` });
-  });
+  const rules = [
+    { kind: "before", first: fourth, second: last },
+    { kind: "before", first: second, second: last },
+    { kind: "before", first: answer, second: fourth },
+    { kind: "position", name: onlyAhead, position: 0 },
+    { kind: "position", name: second, position: 1 }
+  ];
   const matches = (order, rule) => {
     if (rule.kind === "before") return position(order, rule.first) < position(order, rule.second);
-    if (rule.kind === "immediate") return position(order, rule.second) - position(order, rule.first) === 1;
     return position(order, rule.name) === rule.position;
   };
-  const active = [];
-  let candidates = orders;
-  const pool = shuffle(rules).sort((a, b) => Number(a.kind === "position") - Number(b.kind === "position"));
-  for (const rule of pool) {
-    active.push(rule);
-    candidates = orders.filter((order) => active.every((item) => matches(order, item)));
-    if (new Set(candidates.map((order) => order[2])).size === 1) break;
-  }
-  if (!candidates.length || new Set(candidates.map((order) => order[2])).size !== 1) return raceThirdPlaceBook4({ difficulty });
-  const answer = candidates[0][2];
+  const candidates = orders.filter((candidate) => rules.every((rule) => matches(candidate, rule)));
+  const clues = [
+    `${fourth}, ${second} 두 사람은 ${last}보다 먼저 들어왔습니다.`,
+    `${topic(answer)} ${fourth}보다 먼저 들어왔습니다.`,
+    `${second} 앞에는 ${onlyAhead} 한 명만 있습니다.`
+  ];
   return {
-    prompt: "다섯 명이 달리기 시합을 했습니다. 조건을 보고 세 번째로 들어온 사람을 구하세요.",
-    visual: { kind: "book4", subtype: "race-third-place", clues: active.map((rule) => rule.text) },
+    prompt: "조건을 보고 세 번째로 들어온 사람을 쓰세요.",
+    visual: { kind: "book4", subtype: "race-third-place", clues },
+    answerVisual: { kind: "book4", subtype: "race-third-place", clues, reveal: true, order },
     answer,
-    solution: `조건을 앞에서부터 이어 놓으면 세 번째로 들어온 사람은 ${answer}입니다.`,
-    meta: { family: "race-third-place-book4", names, rules: active, candidateOrders: candidates, answer }
+    solution: `${second} 앞에는 ${onlyAhead}만 있으므로 두 사람은 1, 2위입니다. 남은 조건을 이으면 ${answer} → ${fourth} → ${last} 순서이므로 ${answer}가 3위입니다.`,
+    meta: { family: "race-third-place-book4", names, rules, candidateOrders: candidates, order, answer }
   };
 }
 
@@ -788,16 +775,22 @@ function circularSeatBlankBook4({ difficulty = 2 }) {
   for (const rule of shuffle(rules)) {
     active.push(rule);
     remaining = candidates.filter((order) => active.every((item) => matches(order, item)));
-    if (remaining.length && new Set(remaining.map((order) => order[targetSeat])).size === 1) break;
+    const targetIsUnique = remaining.length && new Set(remaining.map((order) => order[targetSeat])).size === 1;
+    if (targetIsUnique && active.length >= 3) break;
+    if (active.length === 5) break;
   }
-  if (!remaining.length || new Set(remaining.map((order) => order[targetSeat])).size !== 1) return circularSeatBlankBook4({ difficulty });
+  if (!remaining.length || active.length < 3 || active.length > 5 || new Set(remaining.map((order) => order[targetSeat])).size !== 1) {
+    return circularSeatBlankBook4({ difficulty });
+  }
   const answer = remaining[0][targetSeat];
+  const visual = { kind: "book4", subtype: "circular-seat-blank", count, clues: active.map((rule) => rule.text), anchor, targetSeat };
   return {
     prompt: "친구들이 원탁에 앉아 있습니다. 조건을 보고 ㉠에 앉아 있는 사람을 구하세요.",
-    visual: { kind: "book4", subtype: "circular-seat-blank", count, clues: active.map((rule) => rule.text), anchor, targetSeat },
+    visual,
+    answerVisual: { ...visual, reveal: true, order: solution },
     answer,
-    solution: `${anchor} 자리를 기준으로 조건을 시계 방향으로 이어 놓으면 ㉠에는 ${subjectOf(answer)} 앉습니다.`,
-    meta: { family: "circular-seat-blank-book4", count, anchor, targetSeat, rules: active, candidateOrders: remaining, answer }
+    solution: `${anchor} 자리를 먼저 고정하고, 바로 옆·사이·마주 보는 조건을 하나씩 표시합니다. 조건을 모두 만족하는 배열에서 ㉠에는 ${subjectOf(answer)} 앉습니다.`,
+    meta: { family: "circular-seat-blank-book4", count, anchor, targetSeat, rules: active, candidateOrders: remaining, order: solution, answer }
   };
 }
 

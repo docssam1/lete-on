@@ -174,6 +174,9 @@ function validate(type, problem, difficulty) {
       assert(expected === meta.weekdayIndex, id, difficulty, "calendar weekday mismatch");
       assert(meta.date >= 1 && meta.date <= meta.days, id, difficulty, "invalid date");
       if (meta.askDate) assert(problem.visual.hiddenDates?.includes(meta.date), id, difficulty, "asked date is visible");
+      assert(meta.visibleDates.length === 3 && meta.visibleDates.every((date, index) => index === 0 || date === meta.visibleDates[index - 1] + 1), id, difficulty, "calendar anchors must be three consecutive dates");
+      assert(!meta.visibleDates.includes(meta.date), id, difficulty, "calendar target is exposed as an anchor");
+      assert(problem.answerVisual?.targetDate === meta.date && problem.answerVisual.visibleDates == null, id, difficulty, "calendar answer view missing");
       return;
     }
     case "calendar-cross-month": {
@@ -182,13 +185,17 @@ function validate(type, problem, difficulty) {
       const targetDate = serial <= meta.days ? serial : serial - meta.days;
       assert(targetMonth === meta.targetMonth && targetDate === meta.targetDate, id, difficulty, "cross-month date mismatch");
       assert(meta.weekdayIndex === (meta.firstWeekday + meta.sourceDate - 1 + meta.offset) % 7, id, difficulty, "cross-month weekday mismatch");
+      assert(problem.visual.calendars[0].visibleDates.includes(meta.sourceDate), id, difficulty, "source date anchor missing");
+      assert(problem.visual.calendars[1].visibleDates.length === 0, id, difficulty, "next month answer dates are exposed");
+      assert(problem.answerVisual, id, difficulty, "cross-month answer calendar missing");
       return;
     }
     case "calendar-same-weekday":
       assert(meta.pair[0] + meta.pair[1] === meta.pairSum, id, difficulty, "calendar pair sum mismatch");
       assert(Math.abs(meta.pair[0] - meta.pair[1]) % 7 === 0, id, difficulty, "calendar dates are not same weekday");
       assert(meta.target + meta.shown === meta.pairSum, id, difficulty, "calendar hidden date mismatch");
-      assert(problem.visual.hiddenDates?.includes(meta.target), id, difficulty, "calendar target date is visible");
+      assert(meta.visibleDates.includes(meta.shown) && !meta.visibleDates.includes(meta.target), id, difficulty, "calendar target is exposed or shown anchor is missing");
+      assert(problem.answerVisual?.targetDate === meta.target, id, difficulty, "same-weekday answer calendar missing");
       return;
     case "shortest-rectangle":
       assert(countPaths(meta.rows, meta.columns) === meta.answer && numeric === meta.answer, id, difficulty, "rectangle path mismatch");

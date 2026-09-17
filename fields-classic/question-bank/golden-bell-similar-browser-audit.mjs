@@ -52,6 +52,16 @@ async function auditViewport(browser, viewport, label) {
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     for (const lesson of book.lessons) {
       await page.locator(`.lesson-button[data-lesson="${lesson.id}"]`).click();
+      if (book.id === "book-05" && lesson.id === "path-number-grid") {
+        await page.locator('.stage-step[data-phase="original"]').click();
+        const sourceVisual = await page.locator(".item-quiz-visual .book05-visual").evaluate((node) => ({
+          width: node.getBoundingClientRect().width,
+          pathWidth: node.querySelector(".b5-path-grid")?.getBoundingClientRect().width || 0,
+          calendars: node.querySelectorAll(".b5-calendar,.torn-calendar").length
+        }));
+        assert.ok(sourceVisual.width > 240 && sourceVisual.pathWidth > 180, `${label}/book-05/path-number-grid: source number array collapsed: ${JSON.stringify(sourceVisual)}`);
+        assert.equal(sourceVisual.calendars, 0, `${label}/book-05/path-number-grid: calendar leaked into the number-array lesson`);
+      }
       const extensionStep = page.locator('.stage-step[data-phase="extension"]');
       assert.equal(await extensionStep.isDisabled(), false, `${label}/${book.id}/${lesson.id}: additional learning is locked`);
       await extensionStep.click();

@@ -72,6 +72,18 @@ try {
       assert.ok(overflow <= 1, `${typeId}: card overflows by ${overflow}px at ${width}px`);
       assert.deepEqual(errors, [], `${typeId}: browser errors at ${width}px: ${errors.join(" | ")}`);
       await card.screenshot({ path: path.join(output, `${typeId}-${width}.png`) });
+      if (typeId === "overlapping-paper-bottom") {
+        const toggle = card.locator(".b4-paper-toggle");
+        const steps = card.locator(".b4-paper-snapshots.is-steps");
+        assert.equal(await toggle.getAttribute("aria-expanded"), "false", "paper steps must start closed");
+        assert.equal(await steps.isHidden(), true, "paper steps are visible before learner opens them");
+        await toggle.click();
+        assert.equal(await toggle.getAttribute("aria-expanded"), "true", "paper steps did not open");
+        assert.equal(await steps.isVisible(), true, "paper steps stayed hidden after learner opened them");
+        const expandedOverflow = await card.evaluate((node) => node.scrollWidth - node.clientWidth);
+        assert.ok(expandedOverflow <= 1, `${typeId}: expanded steps overflow by ${expandedOverflow}px at ${width}px`);
+        await card.screenshot({ path: path.join(output, `${typeId}-${width}-expanded.png`) });
+      }
       if (width === 1440) {
         await page.emulateMedia({ media: "print" });
         await page.pdf({ path: path.join(output, `${typeId}-a4.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });

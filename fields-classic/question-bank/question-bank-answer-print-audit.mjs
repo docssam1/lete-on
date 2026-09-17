@@ -23,7 +23,9 @@ try {
   await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
 
   await page.locator('#builderTabs button[data-mode="type"]').click();
-  const candidates = ["fold-number-grid-one", "shape-quarter-half-turn", "gakuro-grid-nine-sum"];
+  const candidates = process.env.FIELDS_ANSWER_TYPES
+    ? process.env.FIELDS_ANSWER_TYPES.split(",").map((value) => value.trim()).filter(Boolean)
+    : ["fold-number-grid-one", "shape-quarter-half-turn", "gakuro-grid-nine-sum"];
   const selected = await page.evaluate((typeIds) => {
     const found = [];
     for (const typeId of typeIds) {
@@ -62,6 +64,11 @@ try {
       const cell = node.closest("td").getBoundingClientRect();
       return media.left < cell.left - 1 || media.right > cell.right + 1;
     });
+    const escapedVisuals = [...dialog.querySelectorAll("tbody .b4-circle-seats")].filter((node) => {
+      const visual = node.getBoundingClientRect();
+      const cell = node.closest("td").getBoundingClientRect();
+      return visual.left < cell.left - 1 || visual.right > cell.right + 1;
+    });
     const dialogRect = dialog.getBoundingClientRect();
     const tableRect = table.getBoundingClientRect();
     return {
@@ -70,6 +77,7 @@ try {
       rowBreaks: [...new Set(rows.map((row) => getComputedStyle(row).breakInside))],
       tallestRow: Math.max(...rows.map((row) => row.getBoundingClientRect().height)),
       escapedMedia: escapedMedia.length,
+      escapedVisuals: escapedVisuals.length,
       scrollOverflow: dialog.scrollWidth > dialog.clientWidth + 1
     };
   });
@@ -78,13 +86,15 @@ try {
   assert.ok(layout.rowBreaks.every((value) => value === "avoid"), `Answer rows may split across pages: ${layout.rowBreaks.join(", ")}`);
   assert.ok(layout.tallestRow < 900, `An answer row is taller than a printable page: ${layout.tallestRow}`);
   assert.equal(layout.escapedMedia, 0, "Answer figures must stay inside their cells");
+  assert.equal(layout.escapedVisuals, 0, "Answer layout visuals must stay inside their cells");
   assert.equal(layout.scrollOverflow, false, "The printed answer sheet must not overflow horizontally");
 
   const pdfBytes = await page.pdf({ format: "A4", printBackground: true, preferCSSPageSize: true });
   const pdfPath = path.join(output, "answer-sheet-20.pdf");
   await fs.writeFile(pdfPath, pdfBytes);
   const pdf = await PDFDocument.load(pdfBytes);
-  assert.ok(pdf.getPageCount() >= 2 && pdf.getPageCount() <= 20, `Unexpected answer PDF page count: ${pdf.getPageCount()}`);
+  const maximumPages = Number(process.env.FIELDS_ANSWER_MAX_PAGES || 20);
+  assert.ok(pdf.getPageCount() >= 2 && pdf.getPageCount() <= maximumPages, `Unexpected answer PDF page count: ${pdf.getPageCount()}`);
   for (const sheet of pdf.getPages()) {
     const { width, height } = sheet.getSize();
     assert.ok(Math.abs(width - 595.28) < 2 && Math.abs(height - 841.89) < 2, `Non-A4 page: ${width}x${height}`);
