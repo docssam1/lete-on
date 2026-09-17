@@ -606,10 +606,12 @@ DV11:{ name:{ko:'부풀려 나눗셈',en:'Scale-up division',zh:'放大除法'},
   levels:[{id:1,label:{ko:'연습',en:'practice',zh:'练习'},params:{level:'practice'}},
           {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}}] },
 /* ── DV12~DV15 나눗셈의 뜻 (2026-09-17, 원장 "직접 나누기·같은 수 빼기·묶어서 나누기") ──
+   processFirst: 앱의 계산 회차(과정 드릴·점검)에서도 답만 받지 않고 위젯(배열·단계 카드)으로
+     과정을 밟게 한다 — 뜻을 묻는 유형이라 숫자패드로 답만 찍으면 DV2와 같아진다(main.js useWidget).
    noVertical: 인쇄에서 세로셈 판정에서 뺀다 — `12 ÷ 3 = □`가 세로셈 상자로 찍히면
    뜻을 묻는 문항이 필산 문항이 된다. instr: 학습지 회차 첫 장 안내문. */
 DV12:{ name:{ko:'똑같이 나누기',en:'Sharing equally',zh:'平均分'}, gen:'dv12_share', prereq:['ML4'],
-  unit:'B-24', noVertical:true,
+  unit:'B-24', noVertical:true, processFirst:true,
   instr:{ko:'이야기를 읽고 한 명이 몇 개씩 가지는지 구하시오.',en:'Read the story and find how many each child gets.',zh:'读题，求每人分到几个。'},
   concept:{ko:'똑같이 나누어 주는 것이 나눗셈이에요. 사탕 12개를 3명에게 하나씩 돌아가며 주면 한 명이 4개씩 — 12÷3=4예요. "한 명이 몇 개?"를 물을 때는 사람 수만큼 줄을 만들어요.',
     en:'Sharing equally is division. Deal 12 candies to 3 children one at a time and each gets 4 — that is 12÷3=4. When the question is "how many each?", make one row per child.',
@@ -619,7 +621,7 @@ DV12:{ name:{ko:'똑같이 나누기',en:'Sharing equally',zh:'平均分'}, gen:
           {id:2,label:{ko:'2~9명',en:'2–9 kids',zh:'2~9人'},params:{hi:true}},
           {id:3,label:{ko:'몫이 두 자리',en:'2-digit share',zh:'两位数的份'},params:{big:true}}] },
 DV13:{ name:{ko:'묶어서 나누기',en:'Grouping',zh:'分组'}, gen:'dv13_group', prereq:['DV12'],
-  unit:'B-24', noVertical:true,
+  unit:'B-24', noVertical:true, processFirst:true,
   instr:{ko:'이야기를 읽고 몇 묶음인지, 또는 한 명이 몇 개씩인지 구하시오.',en:'Read the story and find how many groups, or how many each.',zh:'读题，求几组或每人几个。'},
   concept:{ko:'몇 개씩 묶어 세는 것도 나눗셈이에요. 12개를 3개씩 묶으면 3, 6, 9, 12 — 4묶음이니까 12÷3=4예요. 똑같은 식인데 이번엔 "몇 묶음?"을 물어요. 문장을 읽고 무엇을 세는지 먼저 정해요.',
     en:'Counting in groups is division too. Bundle 12 into groups of 3: 3, 6, 9, 12 — 4 groups, so 12÷3=4. Same equation, but now the question is "how many groups?". Read first, then decide what you are counting.',
@@ -629,7 +631,7 @@ DV13:{ name:{ko:'묶어서 나누기',en:'Grouping',zh:'分组'}, gen:'dv13_grou
           {id:2,label:{ko:'2~9개씩',en:'groups of 2–9',zh:'每组2~9'},params:{hi:true}},
           {id:3,label:{ko:'나눠주기·묶기 섞기',en:'share & group mixed',zh:'平均分与分组混合'},params:{mix:true}}] },
 DV14:{ name:{ko:'같은 수를 빼서 나누기',en:'Repeated subtraction',zh:'连续减法'}, gen:'dv14_repsub', prereq:['DV13'],
-  unit:'B-24', noVertical:true,
+  unit:'B-24', noVertical:true, processFirst:true,
   instr:{ko:'같은 수를 차례로 빼면서 몇 번 뺐는지 세시오.',en:'Subtract the same number again and again, and count how many times.',zh:'反复减去同一个数，数一数减了几次。'},
   concept:{ko:'나눗셈은 같은 수를 여러 번 빼는 것이기도 해요. 12에서 3을 빼면 9, 또 빼면 6, 또 3, 또 0 — 네 번 뺐으니 12÷3=4예요. 더 못 뺄 때 남는 수가 나머지예요.',
     en:'Division is also subtracting the same number over and over. 12 minus 3 is 9, then 6, then 3, then 0 — four times, so 12÷3=4. Whatever is left when you can no longer subtract is the remainder.',
@@ -638,7 +640,7 @@ DV14:{ name:{ko:'같은 수를 빼서 나누기',en:'Repeated subtraction',zh:'�
   levels:[{id:1,label:{ko:'0이 될 때까지',en:'down to 0',zh:'减到0'},params:{rem:false}},
           {id:2,label:{ko:'남는 수가 있을 때',en:'with leftover',zh:'有剩余'},params:{rem:true}}] },
 DV15:{ name:{ko:'곱셈으로 나눗셈',en:'Division from multiplication',zh:'用乘法做除法'}, gen:'dv15_family', prereq:['DV12'],
-  unit:'B-24', noVertical:true,
+  unit:'B-24', noVertical:true, processFirst:true,
   instr:{ko:'곱셈과 나눗셈의 관계를 이용해 □를 구하시오.',en:'Use the link between multiplication and division to find □.',zh:'利用乘除法的关系求□。'},
   concept:{ko:'곱셈 하나에는 나눗셈이 둘 숨어 있어요. 4×6=24이면 24÷4=6이고 24÷6=4예요. □÷6=4처럼 나누어지는 수를 모를 때는 6×4로 되돌리고, 24÷□=4처럼 나누는 수를 모를 때는 □×4=24로 생각해요.',
     en:'Every multiplication hides two divisions. If 4×6=24, then 24÷4=6 and 24÷6=4. When the number being divided is missing (□÷6=4), multiply back: 6×4. When the divisor is missing (24÷□=4), think □×4=24.',

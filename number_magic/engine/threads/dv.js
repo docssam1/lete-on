@@ -663,6 +663,23 @@
   /* 숫자 읽기의 받침: 2·4·5·9 → 받침 없음(를), 3·6·7·8·10 → 있음(을) */
   function dvNumJosa(n, withB, noB){ return String(n) + ([2,4,5,9].indexOf(n % 10) >= 0 && n % 10 !== 0 ? noB : withB); }
 
+  /* 풀이 사슬(인쇄 예시·따라풀기·정답지 해설용) — 답만 보여 주지 않는다(2026-09-17,
+     원장 "아이들이 답만 본다고 알아? 과정을 연결하여 보여 줘야지").
+       ① b씩 세기: 3, 6, 9, 12 ⇒ □(몇 번?)  — 등분이면 "한 바퀴 돌 때마다 b개",
+                                             포함이면 "묶음마다 b개". 그림(array)과 짝.
+       ② b × □ = a                            — 센 횟수를 곱셈으로 확인
+       ③ a ÷ b = □                            — 나눗셈 식으로 마무리
+     ①의 답이 곧 몫이라 세 단계의 빈칸이 모두 같은 수로 이어진다 — 그래서 '연결'이다. */
+  function dvSolutionChain(a, b, q){
+    const skip = [];
+    for (let i = 1; i <= q; i++) skip.push(String(i * b));
+    return [
+      { tex: `${skip.join(',\\;')} \\Rightarrow \\square`, blank: q },
+      { tex: `${b} \\times \\square = ${a}`, blank: q },
+      { tex: `${a} \\div ${b} = \\square`,   blank: q }
+    ];
+  }
+
   /* ── DV12 — 똑같이 나누기(등분) ──────────────────────────── */
   function dvShareProblem(rng, b, q, item, who){
     const a = b * q;
@@ -684,10 +701,7 @@
       answer: q, answerType: 'number',
       widget: 'array', array: { n: a, rows: b },   /* b명 = b줄 → 한 줄이 한 사람 몫 */
       meaning: 'share',
-      solution: [
-        { tex: `${b} \\times \\square = ${a}`, blank: q },
-        { tex: `${a} \\div ${b} = \\square`,   blank: q }
-      ]
+      solution: dvSolutionChain(a, b, q)
     };
   }
   NM_TGEN['dv12_share'] = function (params, rng) {
@@ -723,10 +737,7 @@
       answer: q, answerType: 'number',
       widget: 'array', array: { n: a, rows: q },   /* q줄 = q묶음 → 한 줄이 한 묶음(b개) */
       meaning: 'group',
-      solution: [
-        { tex: `\\square \\times ${b} = ${a}`, blank: q },
-        { tex: `${a} \\div ${b} = \\square`,   blank: q }
-      ]
+      solution: dvSolutionChain(a, b, q)
     };
   }
   NM_TGEN['dv13_group'] = function (params, rng) {

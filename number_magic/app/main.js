@@ -2827,8 +2827,11 @@ function screenCheckup(){
      상당수가 steps를 내는데(예: 세 자리×한 자리), 그것까지 단계 입력으로 바꾸면
      계산 12문항이 전부 여러 단계짜리가 되어 점검이 학습이 되어 버린다. */
   const hasSteps=Array.isArray(cur.steps)&&cur.steps.length;
+  /* processFirst(threads.js, DV12~15) — 뜻을 묻는 나눗셈은 계산 회차여도 배열·단계 위젯으로
+     과정을 밟는다(2026-09-17). 숫자패드로 답만 찍으면 "몇 명에게 몇 개씩"이 사라진다. */
+  const processFirst=!!(th && th.processFirst);
   const useWidget=!!(window.NM_WIDGETS && cur.widget && cur.widget!=='numpad'
-    && (!hasTex || (item.kind==='creative' && (hasSteps || cur.widget==='steps'))));
+    && (!hasTex || processFirst || (item.kind==='creative' && (hasSteps || cur.widget==='steps'))));
   /* 자릿값 색 힌트 — 어린 학습자에게만, 그리고 세 문제에 하나만(원장 "몇 문제는").
      전부 칠하면 색이 배경이 되어 힌트가 아니게 된다.
      ★ 문항 번호가 아니라 **색을 칠할 수 있는 문항**을 센다. 번호로 세면 그 자리가
@@ -2837,7 +2840,7 @@ function screenCheckup(){
      판정은 문항에 한 번만 박아 둔다(다시 그려도 색이 켜졌다 꺼졌다 하지 않게). */
   const PV=window.NM_PLACE_COLOR;
   if(item.pv===undefined){
-    const can=!!PV && item.kind==='calc' && placeHintWanted() && PV.eligible(cur.tex);
+    const can=!!PV && item.kind==='calc' && !processFirst && placeHintWanted() && PV.eligible(cur.tex);
     if(can){ k.pvCount=(k.pvCount||0); item.pv=(k.pvCount%3===0); k.pvCount++; }
     else item.pv=false;
     save();
@@ -4066,7 +4069,7 @@ function unlockOverlayHtml(item){
   const previewChar=unlockPreviewChar(item);
   const partyHtml=window.renderPartyHtml?window.renderPartyHtml(avatarKind(),previewChar,96)
     :(window.renderNumiChar?window.renderNumiChar(previewChar,96):'');
-  const line=esc(lk('새 친구가 왔어! 옷장에서 동행으로 데려갈 수 있어.','A new friend arrived! You can take them along from the closet.','新朋友来了！可以在衣橱里带上一起走。'));
+  const line=esc(lk('새 친구가 왔어! 옷장에서 고르면 나랑 같이 다니는 친구가 돼.','A new friend arrived! Pick them in the closet and they will walk with you.','新朋友来了！在衣橱里选它，它就会陪你一起走。'));
   return `<div class="nm-gate-overlay nm-unlock-overlay" id="nmUnlockOverlay">
     <div class="nm-gate-card nm-unlock-card">
       <h3>${lk('새 친구가 도착했어요! ✨','A new friend arrived! ✨','新朋友到啦！✨')}</h3>

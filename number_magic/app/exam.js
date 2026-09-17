@@ -655,6 +655,15 @@
 .nm-w2-ex-ans, .nm-w2-ex-ans-tex { color:#c33; font-weight:700; }
 .nm-w2-ex-note { color:#c33; font-size:11.5px; margin-top:3px; }
 .nm-w2-ex-vp { display:inline-flex; flex-direction:column; font-family:monospace; font-size:14px; color:#000; }
+/* 나눗셈 뜻 그림(divPictureHtml) — 예시·따라풀기에 붙는 점 그림과 한 줄 설명 */
+.nm-divpic-wrap { margin:3px 0 4px; }
+.nm-divpic { display:block; height:auto; max-width:100%; }
+.nm-divpic circle { stroke:#333; stroke-width:1; }
+.nm-divpic rect { fill:none; stroke:#333; stroke-width:1.1; }
+.nm-divpic text { font-family:sans-serif; font-size:9px; font-weight:700; fill:#555; }
+.nm-divpic-cap { font-size:11px; color:#444; margin-top:2px; }
+.nm-w2-ex-story, .nm-w2-guide-story { font-size:12.5px; line-height:1.55; color:#000; word-break:keep-all; margin-bottom:2px; }
+.nm-w2-guide-story { font-size:12px; }
 .nm-w2-ex-vp-line { border-top:1.5px solid #000; margin:2px 0; }
 .nm-w2-ex-vp-ans { text-align:right; color:#c33; font-weight:700; }
 /* 따라 풀기(§4 guided items) — 예시 바로 다음, 문항 (1) 앞. 과정은 검정,
@@ -1873,6 +1882,51 @@ function bondSvg(whole, known){
 </svg>`;
 }
 
+/* ── 나눗셈 뜻 그림(2026-09-17) — DV12 등분·DV13 포함 ──────────────
+   생성기가 주는 p.array{n,rows}·p.meaning만 읽는다(dv.js). 등분은 "사람 수만큼 줄"이라
+   b줄×q개, 포함은 "b개씩 묶음"이라 q상자×b개. 예시·따라풀기에 붙어 풀이 사슬
+   (b씩 세기 ⇒ 몇 번 → b×□=a → a÷b=□)의 첫 칸을 눈으로 세게 한다 —
+   원장 "답만 본다고 알아? 과정을 연결하여 보여 줘야지". */
+const DIVPIC_FILL = ['#cfe3ff','#cdeed8','#ffe0c2','#e6d6ff','#ffd4e5','#fff2b3','#c9ecf7','#d9f0c4','#eadcc8'];
+function divPictureHtml(p, opts){
+  opts = opts || {};
+  if(!p || !p.array || !(p.meaning === 'share' || p.meaning === 'group')) return '';
+  const a = +p.array.n, r = +p.array.rows;
+  if(!(a > 0 && r > 0) || a % r) return '';
+  const share = p.meaning === 'share';
+  const b = share ? r : a / r;          // 등분: 줄 수 = 사람 수 / 포함: 한 묶음 크기
+  const q = a / b;
+  /* 따라풀기(compact)는 작은 그림만 — 8줄짜리를 세 개 붙이면 첫 장의 개념 패널이 눌려 사라진다
+     (2026-09-17 첫 시안). 줄이 5를 넘거나 묶음이 두 줄로 넘어가면 그림을 빼고 사슬만 둔다. */
+  if(opts.compact && (share ? b > 5 : Math.ceil(q / Math.max(1, Math.floor(40 / b))) > 1)) return '';
+  const scale = opts.compact ? 0.26 : 0.3;
+  const D = 14, R = 5;                   // 점 간격·반지름(viewBox 단위)
+  let body = '', W, H, cap;
+  if(share){
+    const lab = 20;                      // 왼쪽 "1·2·3" 줄 번호 자리
+    W = lab + q * D + 6; H = b * D + 4;
+    for(let i = 0; i < b; i++){
+      const y = 2 + i * D + D / 2;
+      body += `<text x="${lab - 6}" y="${y}" text-anchor="end" dominant-baseline="central">${i + 1}</text>`;
+      for(let j = 0; j < q; j++) body += `<circle cx="${lab + j * D + D / 2}" cy="${y}" r="${R}" fill="${DIVPIC_FILL[i % DIVPIC_FILL.length]}"/>`;
+    }
+    cap = lk(`${b}명 → ${b}줄 · 한 줄이 한 사람 몫(${q}개)`, `${b} children → ${b} rows · one row = one share (${q})`, `${b}人→${b}行 · 一行是一个人的份（${q}个）`);
+  } else {
+    const per = Math.max(1, Math.floor(40 / b));          // 한 줄에 놓는 묶음 수(점 40개 안쪽)
+    const bw = b * D + 6, bh = D + 6, gx = 6, gy = 6;
+    const lines = Math.ceil(q / per), cols = Math.min(q, per);
+    W = cols * (bw + gx) - gx + 2; H = lines * (bh + gy) - gy + 2;
+    for(let g = 0; g < q; g++){
+      const x0 = 1 + (g % per) * (bw + gx), y0 = 1 + Math.floor(g / per) * (bh + gy);
+      body += `<rect x="${x0}" y="${y0}" width="${bw}" height="${bh}" rx="4"/>`;
+      for(let j = 0; j < b; j++) body += `<circle cx="${x0 + 3 + j * D + D / 2}" cy="${y0 + bh / 2}" r="${R}" fill="${DIVPIC_FILL[g % DIVPIC_FILL.length]}"/>`;
+    }
+    cap = lk(`${b}개씩 묶으면 → ${q}묶음`, `groups of ${b} → ${q} groups`, `每${b}个一组→${q}组`);
+  }
+  const label = share ? lk('똑같이 나누기','Sharing equally','平均分') : lk('묶어서 나누기','Grouping','分组');
+  return `<div class="nm-divpic-wrap"><svg class="nm-divpic" viewBox="0 0 ${W} ${H}" style="width:${Math.min(78, Math.round(W * scale))}mm" role="img" aria-label="${esc(label)}">${body}</svg><div class="nm-divpic-cap">${esc(cap)}</div></div>`;
+}
+
 /* ── NL(유아 5~7세) 인쇄 시각화 (2026-08-29) ──────────────────
    engine/threads/nl.js의 16개 생성기는 다른 158개 스레드와 달리 tex를 전혀 주지
    않는다 — 화면은 widget이 그리고(town-game 실습 화면), 문제 자체는 prompt 문장
@@ -2799,12 +2853,21 @@ function w2AnswerTableHtml(problems, perRow){
   return out;
 }
 /* 한 문항의 풀이 단계 — steps의 \square를 그 단계의 답으로 채워 순서대로. */
+/* 해설에 쓸 단계 — 위젯용 steps가 없으면 예시용 solution(2026-09-17, DV12·13 풀이 사슬). */
+function solutionStepsOf(p){
+  const src = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : []);
+  return src.filter(x => x && x.tex);
+}
 function w2SolutionStepsHtml(p){
-  const st = Array.isArray(p.steps) ? p.steps.filter(x => x && x.tex) : [];
+  const st = solutionStepsOf(p);
   if(!st.length) return '';
   const marks = ['①','②','③','④','⑤','⑥'];
   return `<div class="nm-ak-sol-steps">` + st.map((x, i) => {
-    const filled = String(x.tex).replace(/\\square/g, () => String(fmtAns(x.blank)));
+    /* blank가 배열이면 \square 차례로, 아니면 전부 같은 값으로(빈칸 없는 줄은 그대로) */
+    const bl = ('blank' in x) ? x.blank : null;
+    let k = 0;
+    const filled = bl == null ? String(x.tex)
+      : String(x.tex).replace(/\\square/g, () => String(fmtAns(Array.isArray(bl) ? bl[k++] : bl)));
     return `<div class="nm-ak-sol-step"><span>${marks[i] || (i + 1) + '.'}</span>`
       + `<span class="nm-w2-tex" data-tex="${esc(texDisplay(filled))}"></span></div>`;
   }).join('') + `</div>`;
@@ -2819,7 +2882,7 @@ function w2SolutionCardsHtml(round){
   /* 단계가 하나도 없는 회차는 카드 자체를 안 만든다(표가 이미 답을 다 보여 준다).
      하지만 한 문항이라도 단계가 있으면 **전부** 카드를 만든다 — 빈 문항을 건너뛰면
      1·2·4처럼 번호가 비어 채점하는 사람이 빠진 줄로 읽는다. */
-  const anySteps = round.problems.some(p => Array.isArray(p.steps) && p.steps.some(x => x && x.tex));
+  const anySteps = round.problems.some(p => solutionStepsOf(p).length);
   const anyNote = round.problems.some(p => p.answerNote || p.wordEqn);
   if(!anySteps && !anyNote) return head;
   const cards = round.problems.map((p, i) => {
@@ -3048,6 +3111,12 @@ function w2ExampleHtml(threadId, level, code, exclude){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
   const p = drawUnique(threadId, level, rng, exclude, 12);
   if(exclude) exclude.add(problemKey(p));
+  return w2ExampleBodyHtml(p, threadId);
+}
+/* 예시 본체 — 문항 하나를 "완성된 식 + 풀이 사슬"로. 이야기(p.word)가 있으면 이야기를
+   먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
+   회차(w2WordExampleHtml)도 생성기 자체 이야기가 있으면 이 본체를 그대로 쓴다. */
+function w2ExampleBodyHtml(p, threadId){
   /* steps(드릴 위젯용) 또는 solution(예시 전용 풀이 — 중·고등 생성기가 2026-09-04부터 제공,
      위젯·인쇄 채점에는 쓰이지 않는다) 둘 중 있는 것을 풀이 줄로 쓴다. */
   const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
@@ -3066,8 +3135,12 @@ function w2ExampleHtml(threadId, level, code, exclude){
       const t = ('blank' in s) ? fixNegSigns(texSubstituteAnswer(String(s.tex||''), s.blank)) : String(s.tex||'');
       return `<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span>`;
     });
+    /* 이야기가 있는 문항은 답에 단위를 붙여 한 번 더(식만 보면 "8"이 무엇의 8인지 모른다) */
+    const unitAns = (p.word && p.wordUnit)
+      ? `<div class="nm-w2-ex-line"><span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(String(fmtAns(p.answer)) + (pickL(p.wordUnit) || ''))}</span></span></div>`
+      : '';
     bodyHtml = completedHtml
-      + `<div class="nm-w2-ex-steps">${stepParts.join('<span class="nm-w2-ex-arrow">→</span>')}</div>`;
+      + `<div class="nm-w2-ex-steps">${stepParts.join('<span class="nm-w2-ex-arrow">→</span>')}</div>` + unitAns;
   } else {
     const v = !p.word && parseVert(p.tex);
     if(v){
@@ -3088,9 +3161,12 @@ function w2ExampleHtml(threadId, level, code, exclude){
     const digitSentence = sentence.split(/(?:[.!?](?=\s|$))|\n/).map(s=>s.trim()).find(s => /\d/.test(s));
     if(digitSentence) bodyHtml += `<div class="nm-w2-ex-note">${esc(digitSentence)}</div>`;
   }
+  const storyHtml = p.word
+    ? `<div class="nm-w2-ex-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>`
+    : '';
   return `<div class="nm-w2-example">
   <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
-  ${bodyHtml}
+  ${storyHtml}${divPictureHtml(p)}${bodyHtml}
 </div>`;
 }
 
@@ -3123,9 +3199,13 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels)
       ? stepSrc.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
           .join('<span class="nm-w2-guide-arrow">→</span>')
       : `<span class="nm-w2-guide-blank">= ____</span>`;
+    /* 이야기가 있는 문항(DV12·13 등)은 식 앞에 이야기, 사슬 앞에 뜻 그림(2026-09-17) */
+    const storyHtml = p.word
+      ? `<div class="nm-w2-guide-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>`
+      : '';
     return `<div class="nm-w2-guide-item">
-  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span>${qHtml}</div>
-  <div class="nm-w2-guide-chain">${chainHtml}</div>
+  <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${storyHtml}${qHtml}</span></div>
+  ${i === 0 ? divPictureHtml(p, {compact:true}) : ''}<div class="nm-w2-guide-chain">${chainHtml}</div>
 </div>`;
   }).join('');
   return {
@@ -3192,6 +3272,9 @@ function w2WordExampleHtml(threadId, level, code, exclude){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
   const p = drawUnique(threadId, level, rng, exclude, 12);
   if(exclude) exclude.add(problemKey(p));
+  /* 생성기가 이야기를 직접 낸 문항(DV12·13)은 새로 문장을 입히지 않는다 — 원래 이야기와
+     뜻 그림·풀이 사슬이 그대로 예시가 된다(2026-09-17). */
+  if(p.word && Array.isArray(p.solution) && p.solution.length) return w2ExampleBodyHtml(p, threadId);
   const wrng = NM_RNG.mulberry32(NM_RNG.hashSeed('exw' + code));
   const w = wordifyProblem(p, wrng);
   const v = parseVert(p.tex || '');
@@ -3266,9 +3349,13 @@ function renderRoundPages(item, opts){
      유난히 길면(글자 수로만 본다 — 문자열 렌더러라 실측이 없다) 예전 규칙 ceil(rows/2)로 물러선다.
      문장제만인 회차는 머리 묶음이 예시 하나뿐이라 한 장 용량 그대로(6문항이 한 장에). */
   const conceptLen = stripConceptTags(conceptHtml).replace(/\s+/g,'').length;
-  const firstRows = (wordOnly || noTeach) ? layout.rows
-    : (conceptLen > 330) ? Math.max(1, Math.ceil(layout.rows / 2))
+  /* 이야기·뜻 그림이 붙는 머리(DV12·13: 예시와 따라풀기에 이야기 한 줄과 점 그림)는 한 줄 더 먹는다
+     — 그대로 두면 첫 장이 넘쳐 개념 패널이 눌린다(2026-09-17). */
+  const tallHead = !(wordOnly || noTeach) && problems.some(p => p.word && p.array && p.meaning);
+  const baseFirst = (conceptLen > 330) ? Math.max(1, Math.ceil(layout.rows / 2))
     : Math.max(1, Math.min(layout.rows, layout.firstRows || Math.ceil(layout.rows / 2)));
+  const firstRows = (wordOnly || noTeach) ? layout.rows
+    : tallHead ? Math.max(1, baseFirst - 1) : baseFirst;
   const firstCap = firstRows * layout.cols;
   const pages = [];
   if(problems.length){
