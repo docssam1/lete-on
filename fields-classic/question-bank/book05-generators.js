@@ -147,14 +147,19 @@ function calendarMonthPosition({ difficulty = 2 }) {
   const askDate = difficulty === 3 && Math.random() < 0.5;
   const week = Math.floor((firstWeekday + date - 1) / 7) + 1;
   const answer = askDate ? `${date}일` : `${WEEKDAYS[weekdayIndex]}요일`;
+  const anchorStart = sample(Array.from({ length: days - 2 }, (_, index) => index + 1)
+    .filter((start) => ![start, start + 1, start + 2].includes(date)));
+  const visibleDates = [anchorStart, anchorStart + 1, anchorStart + 2];
+  const visual = { kind: "book5", subtype: "calendar", month, days, firstWeekday, cells: calendarCells(days, firstWeekday), visibleDates, hiddenDates: askDate ? [date] : [] };
   return {
     prompt: askDate
       ? `${month}월 달력에서 ${week}번째 줄의 ${WEEKDAYS[weekdayIndex]}요일은 며칠인가요?`
       : `${month}월 ${date}일은 무슨 요일인가요?`,
-    visual: { kind: "book5", subtype: "calendar", month, days, firstWeekday, cells: calendarCells(days, firstWeekday), targetDate: askDate ? null : date, targetWeekday: askDate ? weekdayIndex : null, hiddenDates: askDate ? [date] : [] },
+    visual,
+    answerVisual: { ...visual, visibleDates: null, hiddenDates: [], targetDate: date, targetWeekday: null },
     answer,
-    solution: `달력의 첫 줄부터 같은 요일 칸을 따라가면 ${answer}입니다.`,
-    meta: { family: "calendar-position", month, days, firstWeekday, date, weekdayIndex, week, askDate, answer }
+    solution: `${anchorStart}일이 놓인 칸에서 날짜가 하루 늘 때마다 오른쪽으로 한 칸씩 옮깁니다. 7일 뒤는 같은 요일 칸이므로 ${date}일의 답은 ${answer}입니다.`,
+    meta: { family: "calendar-position", month, days, firstWeekday, date, weekdayIndex, week, askDate, anchorStart, visibleDates, answer }
   };
 }
 
@@ -168,15 +173,22 @@ function calendarCrossMonthWeekday({ difficulty = 2 }) {
   const targetMonth = serial <= days ? month : month + 1;
   const targetDate = serial <= days ? serial : serial - days;
   const weekdayIndex = (firstWeekday + sourceDate - 1 + offset) % 7;
+  const nextDays = MONTH_DAYS[month];
+  const nextFirstWeekday = (firstWeekday + days) % 7;
+  const sourceVisibleDates = [sourceDate - 1, sourceDate, sourceDate + 1].filter((date) => date >= 1 && date <= days);
   return {
     prompt: `${month}월 ${sourceDate}일에서 ${offset}일 뒤는 몇 월 며칠이며 무슨 요일인가요?`,
     visual: { kind: "book5", subtype: "calendar-pair", calendars: [
-      { month, days, firstWeekday, cells: calendarCells(days, firstWeekday) },
-      { month: month + 1, days: MONTH_DAYS[month], firstWeekday: (firstWeekday + days) % 7, cells: calendarCells(MONTH_DAYS[month], (firstWeekday + days) % 7) }
+      { month, days, firstWeekday, cells: calendarCells(days, firstWeekday), visibleDates: sourceVisibleDates },
+      { month: month + 1, days: nextDays, firstWeekday: nextFirstWeekday, cells: calendarCells(nextDays, nextFirstWeekday), visibleDates: [] }
     ], sourceDate },
+    answerVisual: { kind: "book5", subtype: "calendar-pair", calendars: [
+      { month, days, firstWeekday, cells: calendarCells(days, firstWeekday) },
+      { month: month + 1, days: nextDays, firstWeekday: nextFirstWeekday, cells: calendarCells(nextDays, nextFirstWeekday) }
+    ], sourceDate, targetMonth, targetDate },
     answer: `${targetMonth}월 ${targetDate}일 ${WEEKDAYS[weekdayIndex]}요일`,
     solution: `${month}월의 마지막 날까지 먼저 센 뒤 남은 날을 다음 달에서 셉니다. 요일도 ${offset}칸 옮기면 ${targetMonth}월 ${targetDate}일 ${WEEKDAYS[weekdayIndex]}요일입니다.`,
-    meta: { family: "calendar-cross-month", month, days, firstWeekday, sourceDate, offset, targetMonth, targetDate, weekdayIndex }
+    meta: { family: "calendar-cross-month", month, days, firstWeekday, sourceDate, sourceVisibleDates, offset, targetMonth, targetDate, weekdayIndex }
   };
 }
 
@@ -193,12 +205,15 @@ function calendarSameWeekdaySum({ difficulty = 2 }) {
   const shown = pair[1 - hiddenSide];
   const target = pair[hiddenSide];
   const pairSum = pair[0] + pair[1];
+  const visibleDates = [shown - 1, shown, shown + 1].filter((date) => date >= 1 && date <= days && date !== target);
+  const visual = { kind: "book5", subtype: "calendar", month, days, firstWeekday, cells: calendarCells(days, firstWeekday), visibleDates, targetDate: shown };
   return {
     prompt: `${month}월의 같은 ${WEEKDAYS[weekdayIndex]}요일인 두 날짜의 합이 ${pairSum}입니다. 한 날짜가 ${shown}일일 때 다른 날짜를 구하세요.`,
-    visual: { kind: "book5", subtype: "calendar", month, days, firstWeekday, cells: calendarCells(days, firstWeekday), targetDate: shown, targetWeekday: weekdayIndex, hiddenDates: [target] },
+    visual,
+    answerVisual: { ...visual, visibleDates: null, targetDate: target },
     answer: `${target}일`,
     solution: `같은 요일 날짜는 7일씩 차이 납니다. 날짜의 합 ${pairSum}에서 ${shown}를 빼면 다른 날짜는 ${target}일입니다.`,
-    meta: { family: "calendar-same-weekday", month, days, firstWeekday, weekdayIndex, dates, pair, shown, target, pairSum }
+    meta: { family: "calendar-same-weekday", month, days, firstWeekday, weekdayIndex, dates, pair, shown, target, visibleDates, pairSum }
   };
 }
 

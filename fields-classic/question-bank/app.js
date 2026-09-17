@@ -3697,6 +3697,16 @@ function renderWorksheet() {
   $("questionGrid").innerHTML = pages.join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   $("answerWatermark").innerHTML = state.watermark ? watermarkMarkup() : "";
+  document.querySelectorAll(".b4-paper-toggle").forEach((button) => {
+    button.addEventListener("click", () => {
+      const steps = button.nextElementSibling;
+      if (!steps?.classList.contains("is-steps")) return;
+      const expanded = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!expanded));
+      button.textContent = expanded ? "한 장씩 보기" : "과정 접기";
+      steps.hidden = expanded;
+    });
+  });
   bindQuestionEditor();
 }
 

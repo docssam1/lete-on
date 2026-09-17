@@ -203,6 +203,11 @@ function validate(type, problem, difficulty) {
       assert(JSON.stringify(expectedCells) === JSON.stringify(actualCells), id, difficulty, "fold orbit mismatch");
       assert(expectedCells.reduce((sum, value) => sum + value, 0) === meta.answer && numeric === meta.answer, id, difficulty, "fold sum mismatch");
       assert(meta.cutCells.length === 2 ** meta.folds.length, id, difficulty, "fold layer count mismatch");
+      const problemMarkup = book04Markup(problem.visual);
+      assert(problemMarkup.includes("b4-fold-sequence"), id, difficulty, "fold sequence diagram missing");
+      assert((problemMarkup.match(/<figure>/g) || []).length === meta.folds.length + 1, id, difficulty, "fold stage count mismatch");
+      assert(problem.answerVisual?.reveal === true, id, difficulty, "fold answer reveal missing");
+      assert(book04Markup(problem.answerVisual).includes("is-cut"), id, difficulty, "fold answer cut cells missing");
       return;
     }
     case "fold-number-grid-diagonal-two": {
@@ -237,6 +242,11 @@ function validate(type, problem, difficulty) {
         assert(Math.abs(paper.row - previous.row) <= 1 && Math.abs(paper.column - previous.column) <= 1, id, difficulty, "consecutive papers must overlap");
       });
       assert(meta.layers.at(-1).label === meta.answer && problem.answer === meta.answer, id, difficulty, "bottom paper mismatch");
+      const problemMarkup = book04Markup(problem.visual);
+      const answerMarkup = book04Markup(problem.answerVisual);
+      assert((problemMarkup.match(/class="b4-paper-stack"/g) || []).length === 1, id, difficulty, "problem must open with one overlapping-paper scene");
+      assert(problemMarkup.includes("class=\"b4-paper-toggle\""), id, difficulty, "paper removal steps must stay behind learner control");
+      assert((answerMarkup.match(/b4-paper-stack/g) || []).length === meta.layers.length, id, difficulty, "answer removal sequence is incomplete");
       return;
     }
     case "pair-sum-cards":
@@ -265,6 +275,9 @@ function validate(type, problem, difficulty) {
         assert(rule.relation === "more" ? actual === rule.difference : actual === -rule.difference, id, difficulty, "difference clue mismatch");
       });
       assert(meta.offsets[meta.secondIndex] - meta.offsets[meta.firstIndex] === meta.answer && numeric === meta.answer, id, difficulty, "difference answer mismatch");
+      assert(meta.secondIndex - meta.firstIndex >= 2, id, difficulty, "target difference is stated directly instead of requiring linked clues");
+      const targetPair = new Set([meta.names[meta.firstIndex], meta.names[meta.secondIndex]]);
+      assert(!meta.rules.some((rule) => targetPair.has(rule.first) && targetPair.has(rule.second)), id, difficulty, "target pair appears together in a clue");
       const expectedScene = {
         "measurement-age-difference-book4": "age",
         "measurement-distance-difference-book4": "distance",
@@ -306,14 +319,21 @@ function validate(type, problem, difficulty) {
       assert(meta.uniqueCount === 1 && numeric === meta.answer, id, difficulty, "ordinal line answer not unique");
       return;
     case "race-third-place-book4":
-      assert(meta.candidateOrders.length > 0, id, difficulty, "race candidates missing");
+      assert(meta.candidateOrders.length === 1, id, difficulty, "race order is not uniquely determined");
       assert(new Set(meta.candidateOrders.map((order) => order[2])).size === 1, id, difficulty, "third place is not unique");
       assert(meta.candidateOrders[0][2] === meta.answer && problem.answer === meta.answer, id, difficulty, "third place answer mismatch");
+      assert(problem.visual.clues.length === 3, id, difficulty, "race clues must stay in three source-like groups");
+      assert(problem.prompt.length <= 30, id, difficulty, "race prompt is too long");
+      assert(problem.answerVisual?.reveal === true, id, difficulty, "race answer order missing");
+      assert((book04Markup(problem.answerVisual).match(/<li/g) || []).length === 5, id, difficulty, "race answer rank row missing");
       return;
     case "circular-seat-blank-book4":
       assert(meta.candidateOrders.length > 0, id, difficulty, "circle candidates missing");
       assert(new Set(meta.candidateOrders.map((order) => order[meta.targetSeat])).size === 1, id, difficulty, "marked circular seat is not unique");
       assert(meta.candidateOrders[0][meta.targetSeat] === meta.answer && problem.answer === meta.answer, id, difficulty, "marked circular seat mismatch");
+      assert(meta.rules.length >= 3 && meta.rules.length <= 5, id, difficulty, "circle clues must stay within the source range of three to five");
+      assert(problem.prompt.includes("㉠") && problem.visual.subtype === "circular-seat-blank", id, difficulty, "source marked-seat structure missing");
+      assert(problem.answerVisual?.reveal === true && problem.answerVisual.order?.[meta.targetSeat] === meta.answer, id, difficulty, "circular answer diagram missing");
       return;
     case "three-fold-cut-line-book4":
       assert(meta.folds === 3 && meta.gridRows === 2 && meta.gridColumns === 4, id, difficulty, "source fold/grid structure mismatch");
