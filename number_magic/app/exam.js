@@ -658,10 +658,9 @@
 /* 나눗셈 뜻 그림(divPictureHtml) — 예시·따라풀기에 붙는 점 그림과 한 줄 설명 */
 .nm-divpic-wrap { margin:3px 0 4px; }
 .nm-divpic { display:block; height:auto; max-width:100%; }
-.nm-divpic circle { stroke:#333; stroke-width:1; }
-.nm-divpic rect { fill:none; stroke:#333; stroke-width:1.1; }
-.nm-divpic text { font-family:sans-serif; font-size:9px; font-weight:700; fill:#555; }
-.nm-divpic-cap { font-size:11px; color:#444; margin-top:2px; }
+.nm-divpic rect { stroke-width:1; }
+.nm-divpic text { font-family:sans-serif; font-size:9px; font-weight:800; fill:#fff; }
+.nm-divpic-cap { font-size:11px; color:#5a5346; margin-top:3px; }
 .nm-w2-ex-story, .nm-w2-guide-story { font-size:12.5px; line-height:1.55; color:#000; word-break:keep-all; margin-bottom:2px; }
 .nm-w2-guide-story { font-size:12px; }
 .nm-w2-ex-vp-line { border-top:1.5px solid #000; margin:2px 0; }
@@ -1887,7 +1886,12 @@ function bondSvg(whole, known){
    b줄×q개, 포함은 "b개씩 묶음"이라 q상자×b개. 예시·따라풀기에 붙어 풀이 사슬
    (b씩 세기 ⇒ 몇 번 → b×□=a → a÷b=□)의 첫 칸을 눈으로 세게 한다 —
    원장 "답만 본다고 알아? 과정을 연결하여 보여 줘야지". */
-const DIVPIC_FILL = ['#cfe3ff','#cdeed8','#ffe0c2','#e6d6ff','#ffd4e5','#fff2b3','#c9ecf7','#d9f0c4','#eadcc8'];
+/* 색 — 앱 배열 위젯(widgets.js ARRAY_COLORS)과 같은 계열을 인쇄용으로 한 톤 눌렀다.
+   [면, 테두리]. 줄(등분)·묶음(포함)마다 한 색씩 돌아가며 쓴다. */
+const DIVPIC_COLORS = [
+  ['#7CB7F5','#3E86D8'], ['#7ED4A6','#2FA86B'], ['#FFB36B','#E0802A'], ['#B9A2F2','#8560DB'],
+  ['#F7A0C6','#D9578F'], ['#FFE070','#D9B21C'], ['#8AD8EF','#38A9CC'], ['#B5E38A','#6FB83E'], ['#E7C9A8','#B98A5A']
+];
 function divPictureHtml(p, opts){
   opts = opts || {};
   if(!p || !p.array || !(p.meaning === 'share' || p.meaning === 'group')) return '';
@@ -1898,35 +1902,49 @@ function divPictureHtml(p, opts){
   const q = a / b;
   /* 따라풀기(compact)는 작은 그림만 — 8줄짜리를 세 개 붙이면 첫 장의 개념 패널이 눌려 사라진다
      (2026-09-17 첫 시안). 줄이 5를 넘거나 묶음이 두 줄로 넘어가면 그림을 빼고 사슬만 둔다. */
-  if(opts.compact && (share ? b > 5 : Math.ceil(q / Math.max(1, Math.floor(40 / b))) > 1)) return '';
-  const scale = opts.compact ? 0.26 : 0.3;
-  const D = 14, R = 5;                   // 점 간격·반지름(viewBox 단위)
+  const perLine = Math.max(1, Math.floor(26 / b));
+  if(opts.compact && (share ? b > 5 : Math.ceil(q / perLine) > 1)) return '';
+  /* 큐브(둥근 네모)로 그린다 — 앱의 배열 위젯과 같은 모양이라 화면에서 놓던 것이 종이에 그대로
+     이어진다. 예전 작은 원은 구슬처럼 보여 소재와 상관없이 촌스러웠다(원장, 2026-09-17). */
+  const U = 16, C = 12, RX = 3;          // 칸 간격·큐브 한 변·모서리(viewBox 단위)
+  const cube = (x, y, i) => {
+    const col = DIVPIC_COLORS[i % DIVPIC_COLORS.length];
+    return `<rect x="${x}" y="${y}" width="${C}" height="${C}" rx="${RX}" fill="${col[0]}" stroke="${col[1]}"/>`
+         + `<rect x="${x + 2}" y="${y + 2}" width="${C - 4}" height="${(C - 4) / 2}" rx="${RX - 1}" fill="#fff" opacity="0.32"/>`;
+  };
   let body = '', W, H, cap;
   if(share){
-    const lab = 20;                      // 왼쪽 "1·2·3" 줄 번호 자리
-    W = lab + q * D + 6; H = b * D + 4;
+    /* 줄마다 옅은 띠 + 왼쪽 번호 칩 — "한 줄 = 한 사람(한 자리)의 몫"이 띠로 보인다 */
+    const chip = 14, lab = chip + 8, padY = 2, bandH = U + 2;
+    W = lab + q * U + 4; H = b * (bandH + padY) + 2;
     for(let i = 0; i < b; i++){
-      const y = 2 + i * D + D / 2;
-      body += `<text x="${lab - 6}" y="${y}" text-anchor="end" dominant-baseline="central">${i + 1}</text>`;
-      for(let j = 0; j < q; j++) body += `<circle cx="${lab + j * D + D / 2}" cy="${y}" r="${R}" fill="${DIVPIC_FILL[i % DIVPIC_FILL.length]}"/>`;
+      const y0 = 1 + i * (bandH + padY), cy = y0 + bandH / 2;
+      body += `<rect x="1" y="${y0}" width="${W - 2}" height="${bandH}" rx="6" fill="#F5F3EC"/>`;
+      body += `<circle cx="${1 + chip / 2 + 1}" cy="${cy}" r="${chip / 2}" fill="#0E2C57"/>`
+            + `<text x="${1 + chip / 2 + 1}" y="${cy}" text-anchor="middle" dominant-baseline="central">${i + 1}</text>`;
+      for(let j = 0; j < q; j++) body += cube(lab + j * U + (U - C) / 2, cy - C / 2, i);
     }
     cap = lk(`${b}명 → ${b}줄 · 한 줄이 한 사람 몫(${q}개)`, `${b} children → ${b} rows · one row = one share (${q})`, `${b}人→${b}行 · 一行是一个人的份（${q}个）`);
   } else {
-    const per = Math.max(1, Math.floor(40 / b));          // 한 줄에 놓는 묶음 수(점 40개 안쪽)
-    const bw = b * D + 6, bh = D + 6, gx = 6, gy = 6;
-    const lines = Math.ceil(q / per), cols = Math.min(q, per);
+    /* 묶음마다 둥근 상자 — 상자 수가 곧 답 */
+    const bw = b * U + 6, bh = U + 6, gx = 6, gy = 6;
+    const lines = Math.ceil(q / perLine), cols = Math.min(q, perLine);
     W = cols * (bw + gx) - gx + 2; H = lines * (bh + gy) - gy + 2;
     for(let g = 0; g < q; g++){
-      const x0 = 1 + (g % per) * (bw + gx), y0 = 1 + Math.floor(g / per) * (bh + gy);
-      body += `<rect x="${x0}" y="${y0}" width="${bw}" height="${bh}" rx="4"/>`;
-      for(let j = 0; j < b; j++) body += `<circle cx="${x0 + 3 + j * D + D / 2}" cy="${y0 + bh / 2}" r="${R}" fill="${DIVPIC_FILL[g % DIVPIC_FILL.length]}"/>`;
+      const x0 = 1 + (g % perLine) * (bw + gx), y0 = 1 + Math.floor(g / perLine) * (bh + gy);
+      const col = DIVPIC_COLORS[g % DIVPIC_COLORS.length];
+      body += `<rect x="${x0}" y="${y0}" width="${bw}" height="${bh}" rx="6" fill="#F5F3EC" stroke="${col[1]}" stroke-opacity="0.55"/>`;
+      for(let j = 0; j < b; j++) body += cube(x0 + 3 + j * U + (U - C) / 2, y0 + (bh - C) / 2, g);
     }
     cap = lk(`${b}개씩 묶으면 → ${q}묶음`, `groups of ${b} → ${q} groups`, `每${b}个一组→${q}组`);
   }
   /* 생성기가 틀에 맞는 설명을 줬으면 그것을(필통·명·며칠… 틀마다 다르다) */
   if(p.picCap) cap = pickL(p.picCap) || cap;
   const label = share ? lk('똑같이 나누기','Sharing equally','平均分') : lk('묶어서 나누기','Grouping','分组');
-  return `<div class="nm-divpic-wrap"><svg class="nm-divpic" viewBox="0 0 ${W} ${H}" style="width:${Math.min(78, Math.round(W * scale))}mm" role="img" aria-label="${esc(label)}">${body}</svg><div class="nm-divpic-cap">${esc(cap)}</div></div>`;
+  /* 크기 — 큐브 한 변이 예시 4mm·따라풀기 3.4mm쯤 되게(viewBox 단위 → mm), 너비는 100mm 안쪽.
+     줄이 많으면(8명 = 8줄) 높이를 48mm 안쪽으로(따라풀기는 26mm) — 첫 장은 머리만 실으므로 그 안이면 넉넉하다. */
+  const scale = Math.max(0.2, Math.min(opts.compact ? 0.28 : 0.34, (opts.compact ? 26 : 48) / H));
+  return `<div class="nm-divpic-wrap"><svg class="nm-divpic" viewBox="0 0 ${W} ${H}" style="width:${Math.min(100, Math.round(W * scale))}mm" role="img" aria-label="${esc(label)}">${body}</svg><div class="nm-divpic-cap">${esc(cap)}</div></div>`;
 }
 
 /* ── NL(유아 5~7세) 인쇄 시각화 (2026-08-29) ──────────────────
@@ -3373,8 +3391,9 @@ function renderRoundPages(item, opts){
      3행이 되어 첫 장이 넘쳤다(2026-09-17). 둘 중 작은 쪽. */
   const baseFirst = (conceptLen > 330) ? Math.max(1, Math.min(layout.firstRows || layout.rows, Math.ceil(layout.rows / 2)))
     : Math.max(1, Math.min(layout.rows, layout.firstRows || Math.ceil(layout.rows / 2)));
+  /* 그림 머리는 첫 장을 통째로 쓴다(firstRows 0) — 한 줄만 남겨도 칸이 눌려 답 줄이 잘렸다(측정). */
   const firstRows = (wordOnly || noTeach) ? layout.rows
-    : tallHead ? Math.max(1, baseFirst - 1) : baseFirst;
+    : tallHead ? 0 : baseFirst;
   const firstCap = firstRows * layout.cols;
   const pages = [];
   if(problems.length){
@@ -3411,7 +3430,11 @@ function renderRoundPages(item, opts){
     /* 부분 장 = 그 장의 용량보다 문항이 적은 장(첫 장·마지막 장 모두 해당) */
     const partial = pageItems.length < cap;
     const rowsCount = partial ? Math.max(1, Math.ceil(pageItems.length / layout.cols)) : (first ? firstRows : layout.rows);
-    const instrHtml = first ? `<div class="nm-w2-instr">■ ${esc(instrText)}</div>` : '';
+    /* 머리만 있는 첫 장(문항 0개, tallHead) — 안내문·격자 없이 풀이 여백만. 안내문은 문항이 처음
+       나오는 장(둘째 장)에 붙는다. */
+    const headOnly = pageItems.length === 0;
+    const instrPage = headOnly ? false : (first || (pi === 1 && pages[0].length === 0));
+    const instrHtml = instrPage ? `<div class="nm-w2-instr">■ ${esc(instrText)}</div>` : '';
     /* 열 흐름(짧은식·중간식) 부분 페이지: grid-auto-flow:column 이면 남은 10문항이 왼쪽 한 열에만
        세로로 늘어선다(2026-09-06 확인). 열 수만큼 나눠 위에서부터 채우도록 자리를 직접 지정한다. */
     const partialCol = partial && layout.flow === 'col';
@@ -3441,8 +3464,8 @@ function renderRoundPages(item, opts){
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
   ${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first ? exampleHtml : ''}${first ? guided.html : ''}${instrHtml}${pvLegend}
-  <div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial)}">${cellsHtml}</div>
-  ${partial ? scratchHtml : ''}${(pi === totalPages - 1) ? retryQrHtml(code) : ''}
+  ${headOnly ? '' : `<div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial)}">${cellsHtml}</div>`}
+  ${(partial || headOnly) ? scratchHtml : ''}${(pi === totalPages - 1) ? retryQrHtml(code) : ''}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>
 </div>`;
   }).join('');
