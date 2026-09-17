@@ -138,6 +138,14 @@ function schoolMonthsLabel(mo){
           :(ko?'고'+(g-9):en?'Grade '+g:'高'+(g-9));
   return ko?`${gl} ${month}월`:en?`${gl}, month ${month}`:`${gl} ${month}月`;
 }
+/* 인쇄용 학년 키 — exam.js printAgeBand가 앞 글자로 나이 밴드를 정한다('1'·'2' → young, '3'·'4' → mid).
+   미취학은 '1'로(초1과 같은 크기), 학년을 모르면 undefined(학습지가 문항으로 추정). */
+function printGradeKey(){
+  const g=schoolGradeNum();
+  if(g==null) return undefined;
+  return String(Math.max(1, Math.min(12, g)));
+}
+window.NM_PRINT_GRADE=printGradeKey;
 /* 학년을 고르면 입학 연도로 환산해 저장 — 고른 학년은 "지금" 기준이다. */
 function setSchoolGrade(gradeNum){
   S.schoolAge={ entryYear: academicYearNow()-(gradeNum-1), setAt: Date.now() };
@@ -4369,7 +4377,7 @@ function screenMailbox(){
       /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 창의 연산 + 문장제, 표지·
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
       const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
-        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence }) : null;
+        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey() }) : null;
       const items = wk ? wk.items : env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
       if(window.NM_EXAM && NM_EXAM.openPrintEditor) NM_EXAM.openPrintEditor(items, env.wsId,
         wk ? {mixed:20, cover:wk.cover, units:wk.units, courseKey:env.courseKey} : {mixed:20});

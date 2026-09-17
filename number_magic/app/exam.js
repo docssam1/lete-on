@@ -457,7 +457,7 @@
   .nm-w2-head-mid span { font-size:10px; opacity:.85; }
   .nm-w2-head-code { font-size:10px; font-family:monospace; color:#555; white-space:nowrap; }
 
-  .nm-w2-instr { flex:0 0 auto; font-weight:700; font-size:12px; margin-bottom:6px; }
+  .nm-w2-instr { flex:0 0 auto; font-weight:700; font-size:calc(12px * var(--ws-fs, 1)); margin-bottom:6px; }
 
   .nm-w2-grid { flex:1; display:grid; gap:3px 16px; grid-auto-rows:1fr; align-content:stretch;
     min-height:0; }
@@ -487,11 +487,11 @@
   .nm-w2-item-vis.nm-print-item { align-items:center; text-align:center; }
   .nm-w2-item-word.nm-print-item { align-items:flex-start; }
   /* 문장제 답 줄 "식: ______  답: ______ 개"(2026-09-06) — 식을 먼저 쓰는 자리와 단위. */
-  .nm-w2-page .nm-print-word-blank { font-size:12px; margin-top:8px; display:flex; gap:10mm; flex-wrap:wrap; }
-  .nm-w2-page .nm-print-word-blank .nm-w2-blank { height:7mm; }
+  .nm-w2-page .nm-print-word-blank { font-size:calc(12px * var(--ws-fs, 1)); margin-top:8px; display:flex; gap:10mm; flex-wrap:wrap; }
+  .nm-w2-page .nm-print-word-blank .nm-w2-blank { height:calc(7mm * var(--ws-fs, 1)); }
   /* 부분 페이지 아래 풀이 여백(2026-09-06) — 남는 높이를 "풀이 · 검산" 점 격자로 채워 빈 종이가
      아니라 쓰라고 둔 자리로 읽히게. 흑백 레이저에서도 남게 print-color-adjust. */
-  .nm-w2-scratch { flex:1; min-height:0; margin-top:6mm; display:flex; flex-direction:column; gap:2mm; }
+  .nm-w2-scratch { flex:1; min-height:0; margin-top:6mm; display:flex; flex-direction:column; gap:2mm; overflow:hidden; }
   .nm-w2-scratch-t { flex:0 0 auto; font-size:9.5px; font-weight:700; color:#8A8F99; letter-spacing:1px; }
   .nm-w2-scratch-body { flex:1; min-height:0; border-radius:2mm; border:1px solid #e6e3dc;
     background-color:#fff; background-image:radial-gradient(circle, #c9c6be 0.45mm, transparent 0.5mm);
@@ -554,6 +554,18 @@
 .nm-print-sheet .nm-print-choices { font-size: calc(12.5px * var(--ws-fs)); }
 .nm-print-sheet .nm-w2-num      { font-size: calc(10px * var(--ws-fs)); }
 .nm-print-sheet .nm-print-vp    { font-size: calc(15px * var(--ws-fs)); }
+/* 저학년(초1·2, 미취학) — 원장 "7세·초1이 할 건데 글씨와 이미지가 너무 작고 공부하기 싫을 것 같다"
+   (2026-09-17). 사용자가 고른 크기 위에 1.28배를 더 얹는다(작게 1.1 · 보통 1.28 · 크게 1.45 · 아주 크게 1.65).
+   본문·그림·머리 글씨가 전부 --ws-fs 하나로 움직이므로 여기만 바꾸면 된다. */
+.nm-print-age-young.nm-print-fs-s  { --ws-fs: 1.1; }
+.nm-print-age-young.nm-print-fs-m  { --ws-fs: 1.28; }
+.nm-print-age-young.nm-print-fs-l  { --ws-fs: 1.45; }
+.nm-print-age-young.nm-print-fs-xl { --ws-fs: 1.65; }
+/* 저학년 문장제 칸은 카드로 — 하나씩 또렷이, 여백 넉넉히 */
+.nm-print-age-young .nm-w2-item-word.nm-print-item { background:#FBFAF5; border:1.5px solid #E8E2D2;
+  border-radius:12px; padding:8px 12px 10px; }
+.nm-print-age-young .nm-w2-item-word .nm-print-word { line-height:1.75; }
+.nm-print-age-young .nm-w2-page .nm-print-word-blank { margin-top:10px; }
 
 /* ── 공부 전략 띠 — 참고 학습지의 맨 윗 띠 ── */
 .nm-w2-strategy { flex:0 0 auto; display:flex; gap:7px; align-items:baseline;
@@ -635,45 +647,45 @@
 /* ── 개념 패널·★예시(빨강) — 인쇄와 화면(온라인 회차 탭)이 같은 마크업을
    공유한다(학습지-v2-설계.md §3 "탭마다 개념 패널 + ★예시"). 미디어 쿼리로
    가두지 않고 항상 켜 둔다. */
-.nm-w2-concept { background:#F5F3EE; border:1px solid #ece7da; border-radius:8px;
+.nm-w2-concept { flex:0 0 auto; background:#F5F3EE; border:1px solid #ece7da; border-radius:8px;
   padding:8px 12px; margin-bottom:8px; max-height:70mm; overflow:hidden; }
-.nm-w2-concept-badge { display:inline-block; font-size:11px; background:#fff; border:1px solid #e2ddcf;
+.nm-w2-concept-badge { display:inline-block; font-size:calc(11px * var(--ws-fs, 1)); background:#fff; border:1px solid #e2ddcf;
   border-radius:8px; padding:1px 9px; margin-bottom:4px; font-weight:700; color:#6b6250; }
-.nm-w2-concept-sentence { margin:0 0 4px; font-size:12.5px; line-height:1.6; color:#2a2a2a; }
-.nm-w2-concept-stage { margin:0 0 3px; font-size:11.5px; line-height:1.5; color:#3a3a3a; }
-.nm-w2-concept-rule { margin:0; font-size:12px; line-height:1.55; color:#2a2a2a; }
-.nm-w2-concept-ramp { margin:4px 0 0; font-size:12px; font-weight:800; color:#b8321f; }
+.nm-w2-concept-sentence { margin:0 0 4px; font-size:calc(12.5px * var(--ws-fs, 1)); line-height:1.6; color:#2a2a2a; }
+.nm-w2-concept-stage { margin:0 0 3px; font-size:calc(11.5px * var(--ws-fs, 1)); line-height:1.5; color:#3a3a3a; }
+.nm-w2-concept-rule { margin:0; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; color:#2a2a2a; }
+.nm-w2-concept-ramp { margin:4px 0 0; font-size:calc(12px * var(--ws-fs, 1)); font-weight:800; color:#b8321f; }
 .nm-w2-concept-tip { margin:5px 0 0; padding:5px 8px; border-left:3px solid #0E2C57; background:#fff; border-radius:0 6px 6px 0; }
-.nm-w2-concept-tip p { margin:0 0 2px; font-size:12px; line-height:1.55; color:#2a2a2a; }
+.nm-w2-concept-tip p { margin:0 0 2px; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; color:#2a2a2a; }
 .nm-w2-concept-tip p b { color:#0E2C57; margin-right:4px; }
 .nm-w2-tip-brief { margin:0 0 6px; background:#F7F6F2; }
 .nm-w2-example { border:1.4px dashed #c33; border-radius:8px; padding:7px 12px; margin-bottom:8px; }
-.nm-w2-ex-badge { display:inline-block; font-size:10.5px; color:#c33; font-weight:800; margin-bottom:4px; }
-.nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; gap:5px; color:#c33; font-size:14px; }
+.nm-w2-ex-badge { display:inline-block; font-size:calc(10.5px * var(--ws-fs, 1)); color:#c33; font-weight:800; margin-bottom:4px; }
+.nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; gap:5px; color:#c33; font-size:calc(14px * var(--ws-fs, 1)); }
 .nm-w2-ex-arrow { color:#c33; }
-.nm-w2-ex-line { display:flex; align-items:center; gap:8px; font-size:14px; flex-wrap:wrap; }
+.nm-w2-ex-line { display:flex; align-items:center; gap:8px; font-size:calc(14px * var(--ws-fs, 1)); flex-wrap:wrap; }
 .nm-w2-ex-ans, .nm-w2-ex-ans-tex { color:#c33; font-weight:700; }
-.nm-w2-ex-note { color:#c33; font-size:11.5px; margin-top:3px; }
+.nm-w2-ex-note { color:#c33; font-size:calc(11.5px * var(--ws-fs, 1)); margin-top:3px; }
 .nm-w2-ex-vp { display:inline-flex; flex-direction:column; font-family:monospace; font-size:14px; color:#000; }
 /* 나눗셈 뜻 그림(divPictureHtml) — 예시·따라풀기에 붙는 점 그림과 한 줄 설명 */
 .nm-divpic-wrap { margin:3px 0 4px; }
 .nm-divpic { display:block; height:auto; max-width:100%; }
 .nm-divpic rect { stroke-width:1; }
 .nm-divpic text { font-family:sans-serif; font-size:9px; font-weight:800; fill:#fff; }
-.nm-divpic-cap { font-size:11px; color:#5a5346; margin-top:3px; }
-.nm-w2-ex-story, .nm-w2-guide-story { font-size:12.5px; line-height:1.55; color:#000; word-break:keep-all; margin-bottom:2px; }
-.nm-w2-guide-story { font-size:12px; }
+.nm-divpic-cap { font-size:calc(11px * var(--ws-fs, 1)); color:#5a5346; margin-top:3px; }
+.nm-w2-ex-story, .nm-w2-guide-story { font-size:calc(12.5px * var(--ws-fs, 1)); line-height:1.55; color:#000; word-break:keep-all; margin-bottom:2px; }
+.nm-w2-guide-story { font-size:calc(12px * var(--ws-fs, 1)); }
 .nm-w2-ex-vp-line { border-top:1.5px solid #000; margin:2px 0; }
 .nm-w2-ex-vp-ans { text-align:right; color:#c33; font-weight:700; }
 /* 따라 풀기(§4 guided items) — 예시 바로 다음, 문항 (1) 앞. 과정은 검정,
    \square는 채우지 않고 그대로 둬(빈칸 글리프) 학생이 직접 쓴다. */
 .nm-w2-guide { border:1px solid #d8d3c5; border-radius:8px; padding:7px 12px; margin-bottom:8px; background:#fff; }
-.nm-w2-guide-title { font-weight:700; font-size:12px; margin-bottom:5px; }
+.nm-w2-guide-title { font-weight:700; font-size:calc(12px * var(--ws-fs, 1)); margin-bottom:5px; }
 .nm-w2-guide-item { padding:4px 0; border-top:1px dashed #e3ded0; }
 .nm-w2-guide-item:first-of-type { border-top:0; padding-top:0; }
-.nm-w2-guide-q { display:flex; align-items:baseline; gap:8px; font-size:13px; }
+.nm-w2-guide-q { display:flex; align-items:baseline; gap:8px; font-size:calc(13px * var(--ws-fs, 1)); }
 .nm-w2-guide-label { font-weight:800; color:#555; flex:0 0 auto; }
-.nm-w2-guide-chain { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12.5px;
+.nm-w2-guide-chain { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:calc(12.5px * var(--ws-fs, 1));
   color:#000; margin-top:3px; padding-left:18px; }
 .nm-w2-guide-arrow { color:#000; }
 .nm-w2-guide-blank { font-weight:700; }
@@ -1715,13 +1727,25 @@ function printAgeBand(config, problems){
     if(/^[34]/.test(g)) return 'mid';
     return 'senior';
   }
-  let longest = 0, maxNum = 0;
+  let longest = 0, maxNum = 0, anyWord = false;
   (problems||[]).forEach(p => {
-    if(p.word){ longest = Infinity; return; }
     const t = String(p.tex||'');
+    if(p.word){
+      /* 문장제는 식 길이가 아니라 수의 크기로 본다 — 전엔 문장제면 무조건 senior 가 되어
+         초1 나눗셈 이야기가 가장 작은 글씨로 나갔다(2026-09-17). */
+      anyWord = true;
+      const src = t || (p.word && (p.word.ko || p.word.en) ) || '';
+      (String(src).match(/\d+/g)||[]).forEach(d => { maxNum = Math.max(maxNum, +d); });
+      return;
+    }
     longest = Math.max(longest, t.length);
     (t.match(/\d+/g)||[]).forEach(d => { maxNum = Math.max(maxNum, +d); });
   });
+  if(anyWord){
+    if(maxNum <= 100)  return 'young';
+    if(maxNum <= 1000) return 'mid';
+    return 'senior';
+  }
   if(longest <= 26 && maxNum <= 20)   return 'young';
   if(longest <= 40 && maxNum <= 1000) return 'mid';
   return 'senior';
@@ -1943,8 +1967,9 @@ function divPictureHtml(p, opts){
   const label = share ? lk('똑같이 나누기','Sharing equally','平均分') : lk('묶어서 나누기','Grouping','分组');
   /* 크기 — 큐브 한 변이 예시 4mm·따라풀기 3.4mm쯤 되게(viewBox 단위 → mm), 너비는 100mm 안쪽.
      줄이 많으면(8명 = 8줄) 높이를 48mm 안쪽으로(따라풀기는 26mm) — 첫 장은 머리만 실으므로 그 안이면 넉넉하다. */
-  const scale = Math.max(0.2, Math.min(opts.compact ? 0.28 : 0.34, (opts.compact ? 26 : 48) / H));
-  return `<div class="nm-divpic-wrap"><svg class="nm-divpic" viewBox="0 0 ${W} ${H}" style="width:${Math.min(100, Math.round(W * scale))}mm" role="img" aria-label="${esc(label)}">${body}</svg><div class="nm-divpic-cap">${esc(cap)}</div></div>`;
+  const capH = opts.compact ? 26 : (opts.young ? 36 : 48);   // 저학년은 배율(1.28)이 곱해지므로 원판을 눌러 둔다
+  const scale = Math.max(0.2, Math.min(opts.compact ? 0.28 : 0.34, capH / H));
+  return `<div class="nm-divpic-wrap"><svg class="nm-divpic" viewBox="0 0 ${W} ${H}" style="width:calc(${Math.min(100, Math.round(W * scale))}mm * var(--ws-fs, 1))" role="img" aria-label="${esc(label)}">${body}</svg><div class="nm-divpic-cap">${esc(cap)}</div></div>`;
 }
 
 /* ── NL(유아 5~7세) 인쇄 시각화 (2026-08-29) ──────────────────
@@ -2657,13 +2682,15 @@ function texDisplay(tex){
      문장제 3행 · 그림형 2행. 문항이 한 장에 다 안 들어가면 둘째 장은 perPage 그대로.
    pitch: 부분 페이지에서 행 하나의 높이(mm) — 전체 장과 같은 간격으로 위에서부터 채우고 남는
    아래는 풀이 여백(.nm-w2-scratch)으로 둔다. */
-function classifyRoundLayout(problems, threadId){
+function classifyRoundLayout(problems, threadId, young){
   if(!problems || !problems.length) return {type:'short', cols:2, rows:10, perPage:20, flow:'col', firstRows:10, pitch:14};
   /* 풀이형(2026-09-16) — 판정보다 먼저다. 켜져 있으면 문항 종류와 상관없이 한 쪽에
      4문항(2열×2행), 칸마다 풀이 줄과 "▶ 답:"을 준다. 첫 장은 개념·예시가 위에
      들어가므로 2문항만(firstRows:1). */
   if(getSolveMode()) return {type:'solve', cols:2, rows:2, perPage:4, flow:'row', firstRows:1, pitch:120};
   const nonWord = problems.filter(p => !p.word);
+  /* 저학년(young)은 글씨가 1.28배라 6문항이면 줄이 겹친다 — 4문항/쪽(2026-09-17) */
+  if(!nonWord.length && young) return {type:'word', cols:1, rows:4, perPage:4, flow:'row', firstRows:2, pitch:62};
   if(!nonWord.length) return {type:'word', cols:1, rows:6, perPage:6, flow:'row', firstRows:3, pitch:42};
   const withTex = nonWord.filter(p => p.tex);
   if(nonWord.length === problems.length && !withTex.length){
@@ -3128,16 +3155,16 @@ function drawUnique(threadId, level, rng, exclude, maxTries){
   return p;
 }
 /* exclude(선택, Set of problemKey) — 회차의 채점 문항과 같은 문제가 예시로 나오지 않게(2026-09-06). */
-function w2ExampleHtml(threadId, level, code, exclude){
+function w2ExampleHtml(threadId, level, code, exclude, young){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
   const p = drawUnique(threadId, level, rng, exclude, 12);
   if(exclude) exclude.add(problemKey(p));
-  return w2ExampleBodyHtml(p, threadId);
+  return w2ExampleBodyHtml(p, threadId, young);
 }
 /* 예시 본체 — 문항 하나를 "완성된 식 + 풀이 사슬"로. 이야기(p.word)가 있으면 이야기를
    먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
    회차(w2WordExampleHtml)도 생성기 자체 이야기가 있으면 이 본체를 그대로 쓴다. */
-function w2ExampleBodyHtml(p, threadId){
+function w2ExampleBodyHtml(p, threadId, young){
   /* 보기 고르기 문항(WP1처럼 식이 없는 것) — 이야기·보기·답 번호와 그 문장.
      식 자리에 " = 2"가 찍히는 것을 막는다(2026-09-17). */
   if(p.word && p.choices && !p.tex){
@@ -3199,7 +3226,7 @@ function w2ExampleBodyHtml(p, threadId){
     : '';
   return `<div class="nm-w2-example">
   <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
-  ${storyHtml}${divPictureHtml(p)}${bodyHtml}
+  ${storyHtml}${divPictureHtml(p, {young: !!young})}${bodyHtml}
 </div>`;
 }
 
@@ -3214,7 +3241,7 @@ function guideLabels(){ return GUIDE_LABELS[examLang()] || GUIDE_LABELS.ko; }
 /* exclude(선택) — 회차 채점 문항·예시와 겹치지 않게 다시 뽑고, 뽑은 것은 집합에 더해 (가)(나)(다)끼리도
    안 겹치게(2026-09-06). levels(선택, [lv,lv,lv]) — 램프가 있으면 (다)만 램프 레벨로 뽑아 예시가
    보여 준 기술(받아내림 등)을 따라 풀 문항이 하나는 있게 한다. */
-function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels){
+function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels, young){
   const labs = guideLabels();
   const problems = [];
   const seedBase = guideSeedOverride || ('guide' + code);
@@ -3240,7 +3267,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels)
       : '';
     return `<div class="nm-w2-guide-item">
   <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${storyHtml}${qHtml}</span></div>
-  ${i === 0 ? divPictureHtml(p, {compact:true}) : ''}<div class="nm-w2-guide-chain">${chainHtml}</div>
+  ${(i === 0 && !young) ? divPictureHtml(p, {compact:true}) : ''}<div class="nm-w2-guide-chain">${chainHtml}</div>
 </div>`;
   }).join('');
   return {
@@ -3303,13 +3330,13 @@ function w2HeadHtml(item, code, pageLabel, count, opts){
 /* 문장제 회차의 첫 장 머리(2026-09-06) — 드릴 회차의 개념·예시·따라풀기(자릿값 단계)를 그대로
    되풀이하는 대신, 말에서 식으로 가는 것을 보여 주는 예시 하나: 문장 → 식 → 답(단위).
    예시 문항은 시드 고정('ex'+code)으로 뽑아 문장으로 바꾼다. 못 바꾸면 빈 문자열. */
-function w2WordExampleHtml(threadId, level, code, exclude){
+function w2WordExampleHtml(threadId, level, code, exclude, young){
   const rng = NM_RNG.mulberry32(NM_RNG.hashSeed('ex' + code));
   const p = drawUnique(threadId, level, rng, exclude, 12);
   if(exclude) exclude.add(problemKey(p));
   /* 생성기가 이야기를 직접 낸 문항(DV12·13)은 새로 문장을 입히지 않는다 — 원래 이야기와
      뜻 그림·풀이 사슬이 그대로 예시가 된다(2026-09-17). */
-  if(p.word && Array.isArray(p.solution) && p.solution.length) return w2ExampleBodyHtml(p, threadId);
+  if(p.word && Array.isArray(p.solution) && p.solution.length) return w2ExampleBodyHtml(p, threadId, young);
   const wrng = NM_RNG.mulberry32(NM_RNG.hashSeed('exw' + code));
   const w = wordifyProblem(p, wrng);
   const v = parseVert(p.tex || '');
@@ -3352,7 +3379,8 @@ function renderRoundPages(item, opts){
   const baseCode = NM_EXAM.worksheetCode({thread:item.thread, level:item.level, count, seed:item.seed});
   const code = NM_EXAM.worksheetCode({thread:item.thread, level:item.level, count, seed:item.seed,
     overrides:item.overrides, guideSeed:item.guideSeed});
-  const layout = classifyRoundLayout(problems, item.thread);
+  const young = printAgeBand(item, problems) === 'young';
+  const layout = classifyRoundLayout(problems, item.thread, young);
   problems = sortRoundProblems(problems, layout.type);
 
   /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
@@ -3374,11 +3402,11 @@ function renderRoundPages(item, opts){
   const conceptHtml = (wordOnly || noTeach) ? ''
     : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml});
   const exampleHtml = noTeach ? ''
-    : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude)
-    : w2ExampleHtml(item.thread, exLevel, baseCode, exclude);
+    : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude, young)
+    : w2ExampleHtml(item.thread, exLevel, baseCode, exclude, young);
   const guided = (wordOnly || noTeach) ? {html:'', problems:[]}
     : w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed, exclude,
-        rampN ? [item.level, item.level, exLevel] : null);
+        rampN ? [item.level, item.level, exLevel] : null, young);
 
   /* 첫 장 용량(2026-09-06) — 판정별 고정표 layout.firstRows(classifyRoundLayout 주석). 개념 패널이
      유난히 길면(글자 수로만 본다 — 문자열 렌더러라 실측이 없다) 예전 규칙 ceil(rows/2)로 물러선다.
@@ -5084,6 +5112,7 @@ ${round.html}
     const k = Math.max(1, Math.min(2, opts.k || 1));
     const cad = (opts.cad === 'w2' || k === 2) ? 'w2' : 'w1';
     const name = opts.name || '';
+    const grade = opts.grade != null ? opts.grade : (window.NM_PRINT_GRADE ? window.NM_PRINT_GRADE() : undefined);
     const seedOf = (wk, i) => (wk + c + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
     let session = course.sessions.find(s => !s.test && s.magic && s.magic.length) || course.sessions.find(s => !s.test) || null;
     if(k === 2 && session){
@@ -5132,6 +5161,9 @@ ${round.html}
     const units = [].concat.apply([], (session.magic || []))
       .concat([].concat.apply([], course.sessions.filter(s => !s.test).map(s => [].concat.apply([], s.magic || []))))
       .filter((u, i, a) => u && a.indexOf(u) === i);
+    /* 나이 밴드(printAgeBand)는 첫 항목의 grade를 본다 — 앱이 아는 학년을 모든 항목에 싣는다(2026-09-17,
+       원장 "7세·초1이 할 건데 글씨와 이미지가 너무 작다"). */
+    if(grade != null) items.forEach(it => { if(it.grade == null) it.grade = grade; });
     return { wsId, session, items, cover, units, k, cad, title };
   },
 
