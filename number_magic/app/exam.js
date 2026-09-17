@@ -1923,6 +1923,8 @@ function divPictureHtml(p, opts){
     }
     cap = lk(`${b}개씩 묶으면 → ${q}묶음`, `groups of ${b} → ${q} groups`, `每${b}个一组→${q}组`);
   }
+  /* 생성기가 틀에 맞는 설명을 줬으면 그것을(필통·명·며칠… 틀마다 다르다) */
+  if(p.picCap) cap = pickL(p.picCap) || cap;
   const label = share ? lk('똑같이 나누기','Sharing equally','平均分') : lk('묶어서 나누기','Grouping','分组');
   return `<div class="nm-divpic-wrap"><svg class="nm-divpic" viewBox="0 0 ${W} ${H}" style="width:${Math.min(78, Math.round(W * scale))}mm" role="img" aria-label="${esc(label)}">${body}</svg><div class="nm-divpic-cap">${esc(cap)}</div></div>`;
 }
@@ -2644,6 +2646,8 @@ function classifyRoundLayout(problems, threadId){
      들어가므로 2문항만(firstRows:1). */
   if(getSolveMode()) return {type:'solve', cols:2, rows:2, perPage:4, flow:'row', firstRows:1, pitch:120};
   const nonWord = problems.filter(p => !p.word);
+  /* 등분제·포함제 구분(DV16)은 이야기 아래 보기가 두 줄이라 한 칸이 크다 — 5문항/쪽(2026-09-17) */
+  if(!nonWord.length && problems.some(p => p.kindOf)) return {type:'word', cols:1, rows:5, perPage:5, flow:'row', firstRows:2, pitch:56};
   if(!nonWord.length) return {type:'word', cols:1, rows:6, perPage:6, flow:'row', firstRows:3, pitch:42};
   const withTex = nonWord.filter(p => p.tex);
   if(nonWord.length === problems.length && !withTex.length){
@@ -2723,8 +2727,9 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
        가는 자리를 먼저 주고, 단위(p.wordUnit, wordifyProblem)가 있으면 답 뒤에 붙인다.
        클래스 .nm-print-word-blank 는 check-print.js 가 "풀 수 있는 문장제" 판정에 쓰므로 유지. */
     const unit = p.wordUnit ? pickL(p.wordUnit) : '';
+    /* 보기 고르기 문항(WP1·DV16)은 식을 세우는 문제가 아니다 — "식:" 칸을 빼고 답 칸만(2026-09-17) */
     const blankLine = getSolveMode() ? '' : `<div class="nm-print-word-blank">`
-      + `<span>${esc(lk('식','Equation','算式'))}: <span class="nm-w2-blank" style="width:42mm"></span></span>`
+      + (wc ? '' : `<span>${esc(lk('식','Equation','算式'))}: <span class="nm-w2-blank" style="width:42mm"></span></span>`)
       + `<span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-blank" style="width:22mm"></span>${unit ? ' ' + esc(unit) : ''}</span>`
       + `</div>`;
     inner = `<div class="nm-print-word">${wordHtml(pickL(p.word), 'nm-w2-tex')}</div>`
@@ -3117,6 +3122,18 @@ function w2ExampleHtml(threadId, level, code, exclude){
    먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
    회차(w2WordExampleHtml)도 생성기 자체 이야기가 있으면 이 본체를 그대로 쓴다. */
 function w2ExampleBodyHtml(p, threadId){
+  /* 보기 고르기 문항(DV16 등분제·포함제 구분처럼 식이 없는 것) — 이야기·보기·답 번호와 그 문장.
+     식 자리에 " = 2"가 찍히는 것을 막는다(2026-09-17). */
+  if(p.word && p.choices && !p.tex){
+    const ch = pickChoices(p) || [];
+    const note = p.answerNote ? pickL(p.answerNote) : '';
+    return `<div class="nm-w2-example">
+  <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
+  <div class="nm-w2-ex-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>
+  <ul class="nm-print-choices">${ch.map((c, i) => `<li>${i + 1}) ${esc(c)}</li>`).join('')}</ul>
+  <div class="nm-w2-ex-line"><span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(String(p.answer))}${note ? ') ' + esc(note) : ''}</span></span></div>
+</div>`;
+  }
   /* steps(드릴 위젯용) 또는 solution(예시 전용 풀이 — 중·고등 생성기가 2026-09-04부터 제공,
      위젯·인쇄 채점에는 쓰이지 않는다) 둘 중 있는 것을 풀이 줄로 쓴다. */
   const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
@@ -3198,6 +3215,8 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels)
     const chainHtml = (stepSrc && stepSrc.length)
       ? stepSrc.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
           .join('<span class="nm-w2-guide-arrow">→</span>')
+      : (p.word && p.choices && !p.tex)
+      ? `<ul class="nm-print-choices" style="flex-basis:100%;margin:0">${(pickChoices(p) || []).map((c, j) => `<li>${j + 1}) ${esc(c)}</li>`).join('')}</ul><span class="nm-w2-guide-blank">${esc(lk('답','Answer','答'))}: ____</span>`
       : `<span class="nm-w2-guide-blank">= ____</span>`;
     /* 이야기가 있는 문항(DV12·13 등)은 식 앞에 이야기, 사슬 앞에 뜻 그림(2026-09-17) */
     const storyHtml = p.word
@@ -3352,7 +3371,9 @@ function renderRoundPages(item, opts){
   /* 이야기·뜻 그림이 붙는 머리(DV12·13: 예시와 따라풀기에 이야기 한 줄과 점 그림)는 한 줄 더 먹는다
      — 그대로 두면 첫 장이 넘쳐 개념 패널이 눌린다(2026-09-17). */
   const tallHead = !(wordOnly || noTeach) && problems.some(p => p.word && p.array && p.meaning);
-  const baseFirst = (conceptLen > 330) ? Math.max(1, Math.ceil(layout.rows / 2))
+  /* 긴 개념 패널의 옛 규칙(ceil(rows/2))이 판정별 firstRows보다 커지면 안 된다 — 5행 배치에서
+     3행이 되어 첫 장이 넘쳤다(2026-09-17, DV16). 둘 중 작은 쪽. */
+  const baseFirst = (conceptLen > 330) ? Math.max(1, Math.min(layout.firstRows || layout.rows, Math.ceil(layout.rows / 2)))
     : Math.max(1, Math.min(layout.rows, layout.firstRows || Math.ceil(layout.rows / 2)));
   const firstRows = (wordOnly || noTeach) ? layout.rows
     : tallHead ? Math.max(1, baseFirst - 1) : baseFirst;

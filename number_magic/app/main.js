@@ -2848,7 +2848,7 @@ function screenCheckup(){
   const wantHint=!!item.pv && !!PV;
   const texForShow=wantHint?PV.tint(cur.tex):cur.tex;
   /* 문장제는 이야기·물음·보기를 따로 그린다(말풍선 한 덩어리 대신) */
-  const wpHtml=(item.kind==='wp')?wpBlockHtml(cur, S.lang):null;
+  const wpHtml=(item.kind==='wp'||(cur.word&&cur.choices))?wpBlockHtml(cur, S.lang):null;   // 보기 고르기(DV16)도 이야기·보기를 따로
   scr.innerHTML=`<div class="nm-unit-bar">
     <button class="nm-back" id="cuBack">${t('back')}</button>
     <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>

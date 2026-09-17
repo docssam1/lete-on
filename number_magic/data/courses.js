@@ -108,7 +108,7 @@ const COURSE_SPEC = [
    /* 나눗셈의 뜻 셋(DV12 등분·DV13 포함·DV14 반복 뺄셈)을 ÷2·2d÷1d 앞에 둔다(2026-09-17,
       원장 "직접 나누기·같은 수 빼기·묶어서 나누기 … 좀 제대로 생각을 할 수 있도록").
       마법 B-24(나눗셈의 세 얼굴)가 첫 세션, 창의 회차에 반복 뺄셈(나머지) 한 벌. */
-   drills:['DV12','DV13','DV14','ML5','DV1','DV2'],
+   drills:['DV12','DV13','DV16','DV14','ML5','DV1','DV2'],
    magic:[['B-24'],['B-16','B-17'],['B-18','B-19','B-20'],['A-30','A-31','A-32'],['A-33','A-34'],['C-02']],
    creative:['ML12@1','DV14@2'], maxSessions:6},
  {id:9, tier:'level1', title:{ko:'두 자리 곱셈 암산과 나머지',en:'2-digit Mental Multiplication & Remainders',zh:'两位数心算乘法与余数'},
