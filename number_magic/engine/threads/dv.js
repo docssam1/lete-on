@@ -707,7 +707,7 @@
     const skip = [];
     for (let i = 1; i <= q; i++) skip.push(String(i * b));
     return [
-      { tex: `${skip.join(',\;')} \\Rightarrow \\square`, blank: q },
+      { tex: `${skip.join(',\\;')} \\Rightarrow \\square`, blank: q },
       { tex: `${b} \\times \\square = ${a}`, blank: q },
       { tex: `${a} \\div ${b} = \\square`,   blank: q }
     ];
