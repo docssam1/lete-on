@@ -644,20 +644,46 @@
      · 이야기가 있는 셋은 p.word/wordAsk/wordUnit을 함께 내서 인쇄(exam.js 문장제
        분기)에서도 이야기가 찍힌다. tex만 찍히면 뜻이 사라지고 DV2와 같아진다.
      ══════════════════════════════════════════════════════════════ */
-  /* 소재 — box: 담는 그릇(등분 S3·포함 G3의 "필통 3개에" 틀), food: 먹는 틀(S2·G4)을 쓸 수 있는가 */
+  /* ══ 문장제 소재(2026-09-17, 원장 "문장제 소재를 다양히 하라는 거지") ══
+     같은 a÷b라도 사탕·봉지 이야기만 나오면 아이는 숫자만 뽑아 나눈다. 소재가 바뀌어야
+     "무엇을 몇 개씩, 무엇이 몇 개"를 문장에서 다시 읽는다. 소재마다 그것을 담는 자리(holder)가
+     다르다 — 봉지·접시·상자·필통(담다), 꽃병(꽂다), 줄(놓다), 모둠(나누다), 버스(타다).
+       unit   물건 단위(개·장·자루·권·송이·명)
+       food   먹는 틀(똑같이 나누어 먹기 · 하루에 b개씩이면 며칠)을 쓸 수 있는가
+       person 사람(학생)이라 "친구에게 나눠 주기" 틀은 안 쓰고 모둠·버스 틀만
+       holders 담는 자리 목록 — {type, ko, en(복수), enOne, zh}. type은 HOLDER_FRAMES의 키 */
   const DV_ITEMS = [
-    { ko:'사탕',   unit:'개',  en:'candies',         one:'candy',          zh:'糖',   zhU:'颗', food:true,
-      box:{ ko:'봉지', en:'bags', enOne:'bag', zh:'袋子' } },
-    { ko:'쿠키',   unit:'개',  en:'cookies',         one:'cookie',         zh:'饼干', zhU:'块', food:true,
-      box:{ ko:'접시', en:'plates', enOne:'plate', zh:'盘子' } },
-    { ko:'구슬',   unit:'개',  en:'marbles',         one:'marble',         zh:'弹珠', zhU:'颗', food:false,
-      box:{ ko:'주머니', en:'pouches', enOne:'pouch', zh:'袋子' } },
-    { ko:'색종이', unit:'장',  en:'sheets of paper', one:'sheet of paper', zh:'彩纸', zhU:'张', food:false,
-      box:{ ko:'상자', en:'boxes', enOne:'box', zh:'盒子' } },
-    { ko:'스티커', unit:'장',  en:'stickers',        one:'sticker',        zh:'贴纸', zhU:'张', food:false,
-      box:{ ko:'봉투', en:'envelopes', enOne:'envelope', zh:'信封' } },
-    { ko:'연필',   unit:'자루', en:'pencils',        one:'pencil',         zh:'铅笔', zhU:'支', food:false,
-      box:{ ko:'필통', en:'pencil cases', enOne:'pencil case', zh:'文具盒' } }
+    { ko:'사탕',   unit:'개',  en:'candies',  zh:'糖',   zhU:'颗', food:true,
+      holders:[{ type:'box', ko:'봉지', en:'bags', enOne:'bag', zh:'袋子' }] },
+    { ko:'쿠키',   unit:'개',  en:'cookies',  zh:'饼干', zhU:'块', food:true,
+      holders:[{ type:'box', ko:'접시', en:'plates', enOne:'plate', zh:'盘子' }] },
+    { ko:'사과',   unit:'개',  en:'apples',   zh:'苹果', zhU:'个', food:true,
+      holders:[{ type:'box', ko:'바구니', en:'baskets', enOne:'basket', zh:'篮子' }] },
+    { ko:'귤',     unit:'개',  en:'tangerines', zh:'橘子', zhU:'个', food:true,
+      holders:[{ type:'box', ko:'상자', en:'boxes', enOne:'box', zh:'盒子' }] },
+    { ko:'딸기',   unit:'개',  en:'strawberries', zh:'草莓', zhU:'个', food:true,
+      holders:[{ type:'box', ko:'접시', en:'plates', enOne:'plate', zh:'盘子' }] },
+    { ko:'초콜릿', unit:'개',  en:'chocolates', zh:'巧克力', zhU:'块', food:true,
+      holders:[{ type:'box', ko:'상자', en:'boxes', enOne:'box', zh:'盒子' }] },
+    { ko:'구슬',   unit:'개',  en:'marbles',  zh:'弹珠', zhU:'颗',
+      holders:[{ type:'box', ko:'주머니', en:'pouches', enOne:'pouch', zh:'袋子' }] },
+    { ko:'풍선',   unit:'개',  en:'balloons', zh:'气球', zhU:'个',
+      holders:[{ type:'box', ko:'봉지', en:'bags', enOne:'bag', zh:'袋子' }] },
+    { ko:'색종이', unit:'장',  en:'sheets of paper', zh:'彩纸', zhU:'张',
+      holders:[{ type:'box', ko:'상자', en:'boxes', enOne:'box', zh:'盒子' }] },
+    { ko:'스티커', unit:'장',  en:'stickers', zh:'贴纸', zhU:'张',
+      holders:[{ type:'box', ko:'봉투', en:'envelopes', enOne:'envelope', zh:'信封' }] },
+    { ko:'연필',   unit:'자루', en:'pencils', zh:'铅笔', zhU:'支',
+      holders:[{ type:'box', ko:'필통', en:'pencil cases', enOne:'pencil case', zh:'文具盒' }] },
+    { ko:'공책',   unit:'권',  en:'notebooks', zh:'本子', zhU:'本',
+      holders:[{ type:'box', ko:'상자', en:'boxes', enOne:'box', zh:'盒子' }] },
+    { ko:'꽃',     unit:'송이', en:'flowers', zh:'花',   zhU:'朵',
+      holders:[{ type:'vase', ko:'꽃병', en:'vases', enOne:'vase', zh:'花瓶' }] },
+    { ko:'의자',   unit:'개',  en:'chairs',   zh:'椅子', zhU:'把', noGive:true,
+      holders:[{ type:'row', ko:'줄', en:'rows', enOne:'row', zh:'排' }] },
+    { ko:'학생',   unit:'명',  en:'students', zh:'学生', zhU:'名', person:true,
+      holders:[{ type:'team', ko:'모둠', en:'teams', enOne:'team', zh:'小组' },
+               { type:'bus',  ko:'버스', en:'buses', enOne:'bus', zh:'公交车' }] }
   ];
   const DV_NAMES = [
     { ko:'지우', en:'Jiwoo',  zh:'智友' }, { ko:'하준', en:'Hajun',  zh:'河俊' },
@@ -687,14 +713,12 @@
     ];
   }
 
-  /* ══ 문장 틀 — 등분(share) 4가지 · 포함(group) 4가지 (2026-09-17, 원장) ══
-     "몇 개씩 먹어야 7명이 먹을 수 있을까요?", "연필 24자루가 필통 3개에 있습니다. 필통 한 개에는…"
-     처럼 같은 등분제도 말이 달라야 하고, 포함제("한 명에 3개씩 주면 몇 명?", "필통 하나에
-     3자루씩 넣으면 필통이 몇 개?", "하루에 3개씩 먹으면 며칠?")와 **구분**해야 한다.
-     틀마다 답의 단위(wordUnit)와 그림 설명(picCap)이 달라진다 — 그게 구분의 근거다.
-       share: {word, ask, unit=물건 단위, rowLabel=줄이 뜻하는 것("3명"·"필통 3개"…)}
-       group: {word, ask, unit=답 단위(묶음·명·개·일)} */
-  const SHARE_FRAMES = [
+  /* ══ 문장 틀 ══ 등분(share)은 "한 명(한 자리)의 몫", 포함(group)은 "몇 명·몇 자리·며칠".
+     같은 소재라도 틀이 바뀌고, 같은 틀이라도 소재가 바뀐다 — 아이가 문장을 다시 읽게.
+       share 틀 → {word, ask, rowLabel(줄이 뜻하는 것: "3명"·"필통 3개"·"3줄")}
+       group 틀 → {word, ask, unit(답 단위: 묶음·명·개·일·줄·모둠·대)}
+     사람 틀(give·eat·friends·each·days)은 물건에만, holder 틀은 소재의 담는 자리에 맞춰. */
+  const PEOPLE_SHARE = [
     { id:'give', build:(a,b,q,it,who)=>({
         word:{ ko:`${dvJosa(who.ko,'은','는')} ${it.ko} ${a}${dvJosa(it.unit,'을','를')} ${b}명이 똑같이 나누어 가지도록 나눠 줘요.`,
                en:`${who.en} shares ${a} ${it.en} equally among ${b} children.`,
@@ -709,14 +733,6 @@
               en:`How many should each one eat so that all ${b} get the same?`,
               zh:`每人吃几${it.zhU}，${b}个人才能正好分完？` },
         rowLabel:{ ko:`${b}명`, en:`${b} children`, zh:`${b}人` } }) },
-    { id:'box', build:(a,b,q,it,who)=>({
-        word:{ ko:`${it.ko} ${a}${dvJosa(it.unit,'이','가')} ${it.box.ko} ${b}개에 똑같이 들어 있어요.`,
-               en:`${a} ${it.en} are packed equally into ${b} ${it.box.en}.`,
-               zh:`${a}${it.zhU}${it.zh}平均装在${b}个${it.box.zh}里。` },
-        ask:{ ko:`${it.box.ko} 한 개에는 몇 ${it.unit}씩 들어 있을까요?`,
-              en:`How many are in each ${it.box.enOne}?`,
-              zh:`每个${it.box.zh}里有几${it.zhU}？` },
-        rowLabel:{ ko:`${it.box.ko} ${b}개`, en:`${b} ${it.box.en}`, zh:`${b}个${it.box.zh}` } }) },
     { id:'friends', build:(a,b,q,it,who)=>({
         word:{ ko:`${dvJosa(who.ko,'은','는')} ${it.ko} ${a}${dvJosa(it.unit,'을','를')} 친구 ${b}명에게 똑같이 나누어 주었어요.`,
                en:`${who.en} gave ${a} ${it.en} equally to ${b} friends.`,
@@ -726,7 +742,7 @@
               zh:`每个朋友得到几${it.zhU}？` },
         rowLabel:{ ko:`친구 ${b}명`, en:`${b} friends`, zh:`${b}个朋友` } }) }
   ];
-  const GROUP_FRAMES = [
+  const PEOPLE_GROUP = [
     { id:'bundle', build:(a,b,q,it,who)=>({
         word:{ ko:`${dvJosa(who.ko,'은','는')} ${it.ko} ${a}${dvJosa(it.unit,'을','를')} ${b}${it.unit}씩 한 묶음으로 묶어요.`,
                en:`${who.en} bundles ${a} ${it.en} into groups of ${b}.`,
@@ -739,12 +755,6 @@
                zh:`${who.zh}要把${a}${it.zhU}${it.zh}每人分${b}${it.zhU}。` },
         ask:{ ko:`몇 명에게 줄 수 있을까요?`, en:`How many children can get some?`, zh:`可以分给几个人？` },
         unit:{ ko:'명', en:'children', zh:'人' } }) },
-    { id:'box', build:(a,b,q,it,who)=>({
-        word:{ ko:`${it.ko} ${a}${dvJosa(it.unit,'을','를')} ${it.box.ko} 한 개에 ${b}${it.unit}씩 담으려고 해요.`,
-               en:`We pack ${a} ${it.en}, ${b} to a ${it.box.enOne}.`,
-               zh:`把${a}${it.zhU}${it.zh}每${b}${it.zhU}装一个${it.box.zh}。` },
-        ask:{ ko:`${dvJosa(it.box.ko,'은','는')} 몇 개 필요할까요?`, en:`How many ${it.box.en} do we need?`, zh:`需要几个${it.box.zh}？` },
-        unit:{ ko:'개', en:it.box.en, zh:'个' } }) },
     { id:'days', food:true, build:(a,b,q,it,who)=>({
         word:{ ko:`${dvJosa(who.ko,'은','는')} ${it.ko} ${a}${dvJosa(it.unit,'을','를')} 하루에 ${b}${it.unit}씩 먹어요.`,
                en:`${who.en} eats ${b} ${it.en} a day and has ${a} ${it.en}.`,
@@ -752,9 +762,87 @@
         ask:{ ko:`며칠 동안 먹을 수 있을까요?`, en:`How many days will they last?`, zh:`可以吃几天？` },
         unit:{ ko:'일', en:'days', zh:'天' } }) }
   ];
-  function dvFrame(rng, frames, item){
-    const ok = frames.filter(f => !f.food || item.food);
-    return pick(rng, ok);
+  /* 담는 자리 틀 — type마다 동사가 다르다(담다·꽂다·놓다·나누다·타다). h = holder */
+  const HOLDER_FRAMES = {
+    box: {
+      share:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}${dvJosa(it.unit,'이','가')} ${h.ko} ${b}개에 똑같이 들어 있어요.`,
+               en:`${a} ${it.en} are packed equally into ${b} ${h.en}.`,
+               zh:`${a}${it.zhU}${it.zh}平均装在${b}个${h.zh}里。` },
+        ask:{ ko:`${h.ko} 한 개에는 몇 ${it.unit}씩 들어 있을까요?`, en:`How many are in each ${h.enOne}?`, zh:`每个${h.zh}里有几${it.zhU}？` },
+        rowLabel:{ ko:`${h.ko} ${b}개`, en:`${b} ${h.en}`, zh:`${b}个${h.zh}` } }),
+      group:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}${dvJosa(it.unit,'을','를')} ${h.ko} 한 개에 ${b}${it.unit}씩 담으려고 해요.`,
+               en:`We pack ${a} ${it.en}, ${b} to a ${h.enOne}.`,
+               zh:`把${a}${it.zhU}${it.zh}每${b}${it.zhU}装一个${h.zh}。` },
+        ask:{ ko:`${dvJosa(h.ko,'은','는')} 몇 개 필요할까요?`, en:`How many ${h.en} do we need?`, zh:`需要几个${h.zh}？` },
+        unit:{ ko:'개', en:h.en, zh:'个' } })
+    },
+    vase: {
+      share:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}${dvJosa(it.unit,'을','를')} ${h.ko} ${b}개에 똑같이 나누어 꽂아요.`,
+               en:`${a} ${it.en} are put equally into ${b} ${h.en}.`,
+               zh:`把${a}${it.zhU}${it.zh}平均插在${b}个${h.zh}里。` },
+        ask:{ ko:`${h.ko} 한 개에 몇 ${it.unit}씩 꽂을까요?`, en:`How many go in each ${h.enOne}?`, zh:`每个${h.zh}插几${it.zhU}？` },
+        rowLabel:{ ko:`${h.ko} ${b}개`, en:`${b} ${h.en}`, zh:`${b}个${h.zh}` } }),
+      group:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}${dvJosa(it.unit,'을','를')} ${h.ko} 한 개에 ${b}${it.unit}씩 꽂으려고 해요.`,
+               en:`We put ${b} ${it.en} in each ${h.enOne}, using ${a} ${it.en}.`,
+               zh:`把${a}${it.zhU}${it.zh}每${b}${it.zhU}插一个${h.zh}。` },
+        ask:{ ko:`${dvJosa(h.ko,'은','는')} 몇 개 필요할까요?`, en:`How many ${h.en} do we need?`, zh:`需要几个${h.zh}？` },
+        unit:{ ko:'개', en:h.en, zh:'个' } })
+    },
+    row: {
+      share:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}${dvJosa(it.unit,'을','를')} ${b}줄로 똑같이 놓으려고 해요.`,
+               en:`${a} ${it.en} are set out in ${b} equal rows.`,
+               zh:`把${a}${it.zhU}${it.zh}平均摆成${b}排。` },
+        ask:{ ko:`한 줄에 몇 ${it.unit}씩 놓을까요?`, en:`How many are in each row?`, zh:`每排摆几${it.zhU}？` },
+        rowLabel:{ ko:`${b}줄`, en:`${b} rows`, zh:`${b}排` } }),
+      group:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}${dvJosa(it.unit,'을','를')} 한 줄에 ${b}${it.unit}씩 놓으려고 해요.`,
+               en:`${a} ${it.en} are set out with ${b} in each row.`,
+               zh:`把${a}${it.zhU}${it.zh}每排摆${b}${it.zhU}。` },
+        ask:{ ko:`몇 줄이 될까요?`, en:`How many rows are there?`, zh:`能摆几排？` },
+        unit:{ ko:'줄', en:'rows', zh:'排' } })
+    },
+    team: {
+      share:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}명을 ${b}모둠으로 똑같이 나누려고 해요.`,
+               en:`${a} ${it.en} are divided equally into ${b} teams.`,
+               zh:`把${a}名${it.zh}平均分成${b}个小组。` },
+        ask:{ ko:`한 모둠은 몇 명일까요?`, en:`How many are in each team?`, zh:`每个小组有几名？` },
+        rowLabel:{ ko:`${b}모둠`, en:`${b} teams`, zh:`${b}个小组` } }),
+      group:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}명을 ${b}명씩 한 모둠으로 만들려고 해요.`,
+               en:`${a} ${it.en} are put into teams of ${b}.`,
+               zh:`把${a}名${it.zh}每${b}名分成一个小组。` },
+        ask:{ ko:`모둠이 몇 개 될까요?`, en:`How many teams are there?`, zh:`能分成几个小组？` },
+        unit:{ ko:'모둠', en:'teams', zh:'个小组' } })
+    },
+    bus: {
+      share:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}명이 버스 ${b}대에 똑같이 나누어 타요.`,
+               en:`${a} ${it.en} ride in ${b} buses, the same number in each.`,
+               zh:`${a}名${it.zh}平均坐${b}辆公交车。` },
+        ask:{ ko:`버스 한 대에 몇 명씩 탈까요?`, en:`How many ride in each bus?`, zh:`每辆车坐几名？` },
+        rowLabel:{ ko:`버스 ${b}대`, en:`${b} buses`, zh:`${b}辆车` } }),
+      group:(a,b,q,it,h)=>({
+        word:{ ko:`${it.ko} ${a}명이 버스 한 대에 ${b}명씩 타려고 해요.`,
+               en:`${a} ${it.en} ride buses, ${b} to a bus.`,
+               zh:`${a}名${it.zh}每${b}名坐一辆公交车。` },
+        ask:{ ko:`버스는 몇 대 필요할까요?`, en:`How many buses are needed?`, zh:`需要几辆车？` },
+        unit:{ ko:'대', en:'buses', zh:'辆' } })
+    }
+  };
+  /* 틀 고르기 — 사람 틀(물건만, 먹는 틀은 food만)과 담는 자리 틀을 한 통에 넣고 하나를 뽑는다.
+     학생(person)은 담는 자리 틀만, 의자(noGive)는 나눠 주기·묶기 틀을 뺀다(의자를 묶지는 않는다). */
+  function dvBuild(rng, kind, a, b, q, it, who){
+    const cands = [];
+    const people = kind === 'share' ? PEOPLE_SHARE : PEOPLE_GROUP;
+    if(!it.person) people.forEach(f => { if((!f.food || it.food) && !(it.noGive && (f.id==='give'||f.id==='friends'||f.id==='each'||f.id==='bundle'))) cands.push(() => f.build(a, b, q, it, who)); });
+    (it.holders || []).forEach(h => { const fr = HOLDER_FRAMES[h.type]; if(fr) cands.push(() => fr[kind](a, b, q, it, h)); });
+    return pick(rng, cands)();
   }
   function dvPrompt(word, ask){
     return { ko: word.ko + ' ' + ask.ko, en: word.en + ' ' + ask.en, zh: word.zh + ask.zh };
@@ -763,14 +851,14 @@
   /* ── DV12 — 똑같이 나누기(등분) ──────────────────────────── */
   function dvShareProblem(rng, b, q, item, who){
     const a = b * q;
-    const f = dvFrame(rng, SHARE_FRAMES, item).build(a, b, q, item, who);
+    const f = dvBuild(rng, 'share', a, b, q, item, who);
     return {
       prompt: dvPrompt(f.word, f.ask),
       word: f.word, wordAsk: f.ask,
       wordUnit: { ko: item.unit, en: item.en, zh: item.zhU },
       tex: `${a} \\div ${b} = \\square`,
       answer: q, answerType: 'number',
-      widget: 'array', array: { n: a, rows: b },   /* b명(b개 그릇) = b줄 → 한 줄이 한 몫 */
+      widget: 'array', array: { n: a, rows: b },   /* b명(b개 자리) = b줄 → 한 줄이 한 몫 */
       meaning: 'share',
       picCap: { ko: `${f.rowLabel.ko} → ${b}줄 · 한 줄이 한 몫(${q}${item.unit})`,
                 en: `${f.rowLabel.en} → ${b} rows · one row = one share (${q})`,
@@ -793,7 +881,7 @@
   /* ── DV13 — 묶어서 나누기(포함) ──────────────────────────── */
   function dvGroupProblem(rng, b, q, item, who){
     const a = b * q;
-    const f = dvFrame(rng, GROUP_FRAMES, item).build(a, b, q, item, who);
+    const f = dvBuild(rng, 'group', a, b, q, item, who);
     return {
       prompt: dvPrompt(f.word, f.ask),
       word: f.word, wordAsk: f.ask,
@@ -817,52 +905,6 @@
        배열의 줄 수(사람 수 vs 묶음 수)가 달라지므로 문장을 읽지 않으면 틀린다. */
     if (mix && R(rng, 0, 1) === 0) return dvShareProblem(rng, b, q, item, who);
     return dvGroupProblem(rng, b, q, item, who);
-  };
-
-  /* ── DV16 — 등분제·포함제 구분(2026-09-17, 원장 "등분제와 포함제 문제를 구분해야지") ──
-     같은 a÷b 이야기라도 "한 명(한 그릇)의 몫"을 묻는지, "몇 명·몇 묶음·며칠"을 묻는지 가려낸다.
-       kind(L1): 어떤 나눗셈인가 — 보기 2개(순서 고정: ① 똑같이 나누기 ② 묶어서 나누기)
-       unit(L2): 답이 무엇을 나타내는가 — 보기 3개(섞음)
-     계산은 시키지 않는다 — 구분 자체가 문항이다. 보기는 wp.js 문장제와 같은 {ko,en,zh} 묶음. */
-  NM_TGEN['dv16_kind'] = function (params, rng) {
-    const mode = (params && params.mode) || 'kind';
-    const item = pick(rng, DV_ITEMS), who = pick(rng, DV_NAMES);
-    const b = R(rng, 2, 9), q = R(rng, 2, 9), a = b * q;
-    const share = R(rng, 0, 1) === 0;
-    const f = dvFrame(rng, share ? SHARE_FRAMES : GROUP_FRAMES, item).build(a, b, q, item, who);
-    let ask, choices, answer, note;
-    if (mode === 'unit') {
-      const opts = [
-        { ko:`한 명(한 ${item.box.ko})이 가지는 ${item.ko}의 개수`, en:`how many ${item.en} one child (one ${item.box.enOne}) gets`, zh:`一个人（一个${item.box.zh}）分到几${item.zhU}${item.zh}`, ok: share },
-        { ko:`몇 명(몇 묶음·며칠)인지`, en:`how many children (groups, days)`, zh:`几个人（几组、几天）`, ok: !share },
-        { ko:`${item.ko} 전체의 개수`, en:`the total number of ${item.en}`, zh:`${item.zh}的总数`, ok: false }
-      ];
-      const order = shuffle(rng, [0, 1, 2]);
-      choices = { ko: order.map(i => opts[i].ko), en: order.map(i => opts[i].en), zh: order.map(i => opts[i].zh) };
-      answer = order.findIndex(i => opts[i].ok) + 1;
-      ask = { ko:`이 문제의 답은 무엇을 나타낼까요?`, en:`What does the answer to this problem tell us?`, zh:`这道题的答案表示什么？` };
-    } else {
-      choices = {
-        ko:[`똑같이 나누기 — 한 명(한 ${item.box.ko})의 몫을 구해요`, `묶어서 나누기 — 몇 명(몇 묶음·며칠)인지 구해요`],
-        en:[`Sharing equally — find one child's (one ${item.box.enOne}'s) share`, `Grouping — find how many children (groups, days)`],
-        zh:[`平均分——求一个人（一个${item.box.zh}）的份`, `分组——求几个人（几组、几天）`]
-      };
-      answer = share ? 1 : 2;
-      ask = { ko:`이 문제는 어떤 나눗셈일까요?`, en:`Which kind of division is this?`, zh:`这是哪一种除法？` };
-    }
-    note = { ko: choices.ko[answer - 1], en: choices.en[answer - 1], zh: choices.zh[answer - 1] };
-    const pr = {};
-    ['ko','en','zh'].forEach(lang => {
-      const opts = ' ' + choices[lang].map((c, i) => `${i + 1}) ${c}`).join('  ');
-      pr[lang] = f.word[lang] + (lang === 'zh' ? '' : ' ') + ask[lang] + opts;
-    });
-    return {
-      prompt: pr,
-      word: f.word, wordAsk: ask, choices,
-      answer, answerType: 'number', widget: 'numpad',
-      answerNote: note,
-      meaning: share ? 'share' : 'group', kindOf: share ? 'share' : 'group'
-    };
   };
 
   /* ── DV14 — 같은 수를 빼서 나누기(반복 뺄셈) ─────────────── */

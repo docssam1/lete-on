@@ -2646,8 +2646,6 @@ function classifyRoundLayout(problems, threadId){
      들어가므로 2문항만(firstRows:1). */
   if(getSolveMode()) return {type:'solve', cols:2, rows:2, perPage:4, flow:'row', firstRows:1, pitch:120};
   const nonWord = problems.filter(p => !p.word);
-  /* 등분제·포함제 구분(DV16)은 이야기 아래 보기가 두 줄이라 한 칸이 크다 — 5문항/쪽(2026-09-17) */
-  if(!nonWord.length && problems.some(p => p.kindOf)) return {type:'word', cols:1, rows:5, perPage:5, flow:'row', firstRows:2, pitch:56};
   if(!nonWord.length) return {type:'word', cols:1, rows:6, perPage:6, flow:'row', firstRows:3, pitch:42};
   const withTex = nonWord.filter(p => p.tex);
   if(nonWord.length === problems.length && !withTex.length){
@@ -2727,7 +2725,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp){
        가는 자리를 먼저 주고, 단위(p.wordUnit, wordifyProblem)가 있으면 답 뒤에 붙인다.
        클래스 .nm-print-word-blank 는 check-print.js 가 "풀 수 있는 문장제" 판정에 쓰므로 유지. */
     const unit = p.wordUnit ? pickL(p.wordUnit) : '';
-    /* 보기 고르기 문항(WP1·DV16)은 식을 세우는 문제가 아니다 — "식:" 칸을 빼고 답 칸만(2026-09-17) */
+    /* 보기 고르기 문항(WP1 등)은 식을 세우는 문제가 아니다 — "식:" 칸을 빼고 답 칸만(2026-09-17) */
     const blankLine = getSolveMode() ? '' : `<div class="nm-print-word-blank">`
       + (wc ? '' : `<span>${esc(lk('식','Equation','算式'))}: <span class="nm-w2-blank" style="width:42mm"></span></span>`)
       + `<span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-blank" style="width:22mm"></span>${unit ? ' ' + esc(unit) : ''}</span>`
@@ -3122,7 +3120,7 @@ function w2ExampleHtml(threadId, level, code, exclude){
    먼저, 나눗셈 뜻 그림(divPictureHtml)이 있으면 사슬 앞에 붙인다(2026-09-17). 문장제만인
    회차(w2WordExampleHtml)도 생성기 자체 이야기가 있으면 이 본체를 그대로 쓴다. */
 function w2ExampleBodyHtml(p, threadId){
-  /* 보기 고르기 문항(DV16 등분제·포함제 구분처럼 식이 없는 것) — 이야기·보기·답 번호와 그 문장.
+  /* 보기 고르기 문항(WP1처럼 식이 없는 것) — 이야기·보기·답 번호와 그 문장.
      식 자리에 " = 2"가 찍히는 것을 막는다(2026-09-17). */
   if(p.word && p.choices && !p.tex){
     const ch = pickChoices(p) || [];
@@ -3372,7 +3370,7 @@ function renderRoundPages(item, opts){
      — 그대로 두면 첫 장이 넘쳐 개념 패널이 눌린다(2026-09-17). */
   const tallHead = !(wordOnly || noTeach) && problems.some(p => p.word && p.array && p.meaning);
   /* 긴 개념 패널의 옛 규칙(ceil(rows/2))이 판정별 firstRows보다 커지면 안 된다 — 5행 배치에서
-     3행이 되어 첫 장이 넘쳤다(2026-09-17, DV16). 둘 중 작은 쪽. */
+     3행이 되어 첫 장이 넘쳤다(2026-09-17). 둘 중 작은 쪽. */
   const baseFirst = (conceptLen > 330) ? Math.max(1, Math.min(layout.firstRows || layout.rows, Math.ceil(layout.rows / 2)))
     : Math.max(1, Math.min(layout.rows, layout.firstRows || Math.ceil(layout.rows / 2)));
   const firstRows = (wordOnly || noTeach) ? layout.rows
