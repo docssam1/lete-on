@@ -52,7 +52,7 @@ window.NM_STAGES = [
     name:{ko:'계산의 새싹',en:'Sprout',zh:'计算的新芽'},
     band:{ko:'6~7세 · 초등 1학년',en:'Ages 6–7 · Grade 1',zh:'6~7岁 · 小学一年级'},
     chapters:['R0','R1','G0','G1','R2','R3','R4','T4','R5','R6','R7','R8'],
-    tiers:['level1'], courses:{from:1,to:10}, weeks:54,
+    tiers:['level1'], courses:{from:1,to:10}, weeks:55,
     learn:{
       ko:'자릿값과 모으기·가르기, 보수 5와 10, 받아올림·받아내림, 두 자리에서 네 자리 덧뺄셈, 구구단 2~9단, 나눗셈의 시작.',
       en:'Place value, gathering and splitting, complements of 5 and 10, carrying and borrowing, two- to four-digit addition and subtraction, times tables 2–9, the start of division.',
@@ -69,7 +69,7 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.',
       en:'The plan runs ahead of school, so times tables already sit in this stage.',
       zh:'编排比学校进度提前，所以乘法口诀已经在这一阶段。'},
-    meta:{ko:'과정 1~10 · 주 1회 기준 54주',en:'Courses 1–10 · 54 weeks at one sheet a week',zh:'课程1~10 · 每周1次约54周'}
+    meta:{ko:'과정 1~10 · 주 1회 기준 55주',en:'Courses 1–10 · 55 weeks at one sheet a week',zh:'课程1~10 · 每周1次约55周'}
   },
   {
     key:'leap', icon:'🚀', accent:'#16417C', status:'live',

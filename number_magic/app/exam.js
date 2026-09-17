@@ -2506,6 +2506,9 @@ function applyWordProblems(problems, wordType, numericSeed){
   if(!wordType || wordType==='none') return problems;
   const used = { names: new Set(), items: new Set() };
   problems.forEach((p,i)=>{
+    /* 생성기가 직접 이야기를 실은 문항(DV12~14)은 건드리지 않는다 — 여기서 일반 문장으로
+       덮어쓰면 "3개씩 묶으면"이 "3명이 똑같이"로 바뀌어 뜻이 사라진다(2026-09-17). */
+    if(p.word) return;
     if(wordType==='mix' && i%3!==1) return;
     const rng = NM_RNG.mulberry32((((numericSeed>>>0) ^ 0x5f3759df) ^ Math.imul(i + 1, 0x9e3779b1))>>>0);
     const w = wordifyProblem(p, rng, used);
@@ -2599,7 +2602,10 @@ function classifyRoundLayout(problems, threadId){
      음수 피연산자 검사는 parseVert 가 이미 한다(`^[\d.]+ op [\d.]+ = \square$`만 받으므로
      음수·괄호가 있으면 애초에 통과 못 함). 전에 따로 두었던 /-\s*[\d(]/ 검사는 "58 - 57"의
      뺄셈 기호 자체에 걸려 뺄셈 회차가 한 번도 세로셈이 되지 못했다(2026-09-06 제거). */
-  const excludedPrefix = /^(MD|CH|EL|MX)/.test(threadId||'');
+  /* noVertical(threads.js) — 뜻을 묻는 나눗셈(DV12~15)은 `12 ÷ 3 = □`라도 세로셈 상자로
+     찍으면 필산 문항이 된다(2026-09-17). 스레드가 스스로 빼 달라고 표시한다. */
+  const thDef = (window.NM_THREADS||{})[threadId||''];
+  const excludedPrefix = /^(MD|CH|EL|MX)/.test(threadId||'') || !!(thDef && thDef.noVertical);
   if(withTex.length && !excludedPrefix && withTex.every(p => parseVert(p.tex))){
     return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:4, pitch:44};
   }

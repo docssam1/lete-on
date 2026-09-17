@@ -624,4 +624,201 @@
     };
   };
 
+  /* ══════════════════════════════════════════════════════════════
+     DV12~DV15 — 나눗셈의 뜻 (2026-09-17, 원장 지시)
+     "나누기 전략이 직접 나누기가 있고, 같은 수를 빼서 나누기가 있고, 묶어서
+      나누기도 있잖아. 양이 적고 너무 단순해. 좀 제대로 생각을 할 수 있도록."
+     ── 왜 따로 만드는가 ──
+     기존 DV1(÷2)·DV2(2d÷1d)는 `12 ÷ 3 = □` 한 줄을 배열로 보여 주고 답만 받는다.
+     교과서(3-1)가 나눗셈을 도입하는 세 가지 뜻 — 똑같이 나누기(등분) · 묶어 세기
+     (포함) · 같은 수를 빼기(반복 뺄셈) — 는 어디에도 없었다. 스토리 브리지 유닛
+     T-DV1의 노트에는 세 얼굴이 적혀 있었지만 연습은 여전히 DV2였다.
+     ── 설계 ──
+     · DV12 등분: "12개를 3명이 똑같이" → 배열 위젯의 줄 수를 **사람 수**로 맞춰야 한다.
+     · DV13 포함: "12개를 3개씩 묶으면" → 줄 수를 **묶음 수**로. 같은 12÷3인데 줄 수가
+       다르다 — 문장을 읽어야 맞는다. level mix는 두 뜻을 섞어 낸다.
+     · DV14 반복 뺄셈: 12−3=9, 9−3=6, 6−3=3, 3−3=0 을 단계 위젯으로 **직접 빼 가며**
+       몇 번 뺐는지 센다. 나머지 레벨은 더 못 빼는 데서 멈추고 남는 수를 본다.
+     · DV15 곱셈↔나눗셈: a×b=c에서 나눗셈 둘, 그리고 □÷b=q(나누어지는 수를 찾기),
+       c÷□=q(나누는 수를 찾기) — 역연산으로 생각하게 한다.
+     · 이야기가 있는 셋은 p.word/wordAsk/wordUnit을 함께 내서 인쇄(exam.js 문장제
+       분기)에서도 이야기가 찍힌다. tex만 찍히면 뜻이 사라지고 DV2와 같아진다.
+     ══════════════════════════════════════════════════════════════ */
+  const DV_ITEMS = [
+    { ko:'사탕',   unit:'개',  en:'candies',          zh:'糖',   zhU:'颗' },
+    { ko:'쿠키',   unit:'개',  en:'cookies',          zh:'饼干', zhU:'块' },
+    { ko:'구슬',   unit:'개',  en:'marbles',          zh:'弹珠', zhU:'颗' },
+    { ko:'색종이', unit:'장',  en:'sheets of paper',  zh:'彩纸', zhU:'张' },
+    { ko:'스티커', unit:'장',  en:'stickers',         zh:'贴纸', zhU:'张' },
+    { ko:'연필',   unit:'자루', en:'pencils',         zh:'铅笔', zhU:'支' }
+  ];
+  const DV_NAMES = [
+    { ko:'지우', en:'Jiwoo',  zh:'智友' }, { ko:'하준', en:'Hajun',  zh:'河俊' },
+    { ko:'소율', en:'Soyul',  zh:'素律' }, { ko:'도윤', en:'Doyun',  zh:'道允' },
+    { ko:'서연', en:'Seoyeon',zh:'瑞妍' }, { ko:'유나', en:'Yuna',   zh:'由娜' }
+  ];
+  /* 받침 유무로 조사 고르기 — "개를"·"장을"·"자루를" */
+  function dvBatchim(w){ const c = w.charCodeAt(w.length-1); return c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0; }
+  function dvJosa(w, withB, noB){ return w + (dvBatchim(w) ? withB : noB); }
+  /* 숫자 읽기의 받침: 2·4·5·9 → 받침 없음(를), 3·6·7·8·10 → 있음(을) */
+  function dvNumJosa(n, withB, noB){ return String(n) + ([2,4,5,9].indexOf(n % 10) >= 0 && n % 10 !== 0 ? noB : withB); }
+
+  /* ── DV12 — 똑같이 나누기(등분) ──────────────────────────── */
+  function dvShareProblem(rng, b, q, item, who){
+    const a = b * q;
+    const word = {
+      ko: `${dvJosa(who.ko,'은','는')} ${item.ko} ${a}${dvJosa(item.unit,'을','를')} ${b}명이 똑같이 나누어 가지도록 나눠 줘요.`,
+      en: `${who.en} shares ${a} ${item.en} equally among ${b} children.`,
+      zh: `${who.zh}把${a}${item.zhU}${item.zh}平均分给${b}个小朋友。`
+    };
+    const ask = {
+      ko: `한 명이 몇 ${item.unit}씩 가질까요?`,
+      en: `How many does each child get?`,
+      zh: `每人分到几${item.zhU}？`
+    };
+    return {
+      prompt: { ko: word.ko + ' ' + ask.ko, en: word.en + ' ' + ask.en, zh: word.zh + ask.zh },
+      word, wordAsk: ask,
+      wordUnit: { ko: item.unit, en: item.en, zh: item.zhU },
+      tex: `${a} \\div ${b} = \\square`,
+      answer: q, answerType: 'number',
+      widget: 'array', array: { n: a, rows: b },   /* b명 = b줄 → 한 줄이 한 사람 몫 */
+      meaning: 'share',
+      solution: [
+        { tex: `${b} \\times \\square = ${a}`, blank: q },
+        { tex: `${a} \\div ${b} = \\square`,   blank: q }
+      ]
+    };
+  }
+  NM_TGEN['dv12_share'] = function (params, rng) {
+    const hi  = !!(params && params.hi);
+    const big = !!(params && params.big);
+    const item = pick(rng, DV_ITEMS), who = pick(rng, DV_NAMES);
+    if (big) {                       /* 몫이 두 자리 — 배열 위젯이 60칸까지라 b·q ≤ 60 */
+      const b = R(rng, 2, 4), q = R(rng, 10, 15);
+      return dvShareProblem(rng, b, q, item, who);
+    }
+    const b = R(rng, 2, hi ? 9 : 5), q = R(rng, 2, 9);
+    return dvShareProblem(rng, b, q, item, who);
+  };
+
+  /* ── DV13 — 묶어서 나누기(포함) ──────────────────────────── */
+  function dvGroupProblem(rng, b, q, item, who){
+    const a = b * q;
+    const word = {
+      ko: `${dvJosa(who.ko,'은','는')} ${item.ko} ${a}${dvJosa(item.unit,'을','를')} ${b}${item.unit}씩 한 묶음으로 묶어요.`,
+      en: `${who.en} bundles ${a} ${item.en} into groups of ${b}.`,
+      zh: `${who.zh}把${a}${item.zhU}${item.zh}每${b}${item.zhU}捆成一组。`
+    };
+    const ask = {
+      ko: `몇 묶음이 될까요?`,
+      en: `How many groups are there?`,
+      zh: `能分成几组？`
+    };
+    return {
+      prompt: { ko: word.ko + ' ' + ask.ko, en: word.en + ' ' + ask.en, zh: word.zh + ask.zh },
+      word, wordAsk: ask,
+      wordUnit: { ko: '묶음', en: 'groups', zh: '组' },
+      tex: `${a} \\div ${b} = \\square`,
+      answer: q, answerType: 'number',
+      widget: 'array', array: { n: a, rows: q },   /* q줄 = q묶음 → 한 줄이 한 묶음(b개) */
+      meaning: 'group',
+      solution: [
+        { tex: `\\square \\times ${b} = ${a}`, blank: q },
+        { tex: `${a} \\div ${b} = \\square`,   blank: q }
+      ]
+    };
+  }
+  NM_TGEN['dv13_group'] = function (params, rng) {
+    const hi  = !!(params && params.hi);
+    const mix = !!(params && params.mix);
+    const item = pick(rng, DV_ITEMS), who = pick(rng, DV_NAMES);
+    const b = R(rng, 2, (hi || mix) ? 9 : 5), q = R(rng, 2, 9);
+    /* mix — 같은 a÷b인데 어떤 때는 "몇 명에게 몇 개씩"이고 어떤 때는 "몇 개씩 몇 묶음"이다.
+       배열의 줄 수(사람 수 vs 묶음 수)가 달라지므로 문장을 읽지 않으면 틀린다. */
+    if (mix && R(rng, 0, 1) === 0) return dvShareProblem(rng, b, q, item, who);
+    return dvGroupProblem(rng, b, q, item, who);
+  };
+
+  /* ── DV14 — 같은 수를 빼서 나누기(반복 뺄셈) ─────────────── */
+  NM_TGEN['dv14_repsub'] = function (params, rng) {
+    const rem = !!(params && params.rem);
+    const b = R(rng, 2, 9);
+    const q = R(rng, 2, 5);                 /* 단계가 여섯을 넘지 않게 */
+    const r = rem ? R(rng, 1, b - 1) : 0;
+    const a = b * q + r;
+    const steps = [];
+    let cur = a;
+    for (let i = 0; i < q; i++) { steps.push({ tex: `${cur} - ${b} = \\square`, blank: cur - b }); cur -= b; }
+    steps.push({ tex: rem ? `${a} \\div ${b} = \\square \\cdots ${r}` : `${a} \\div ${b} = \\square`, blank: q });
+    const word = {
+      ko: rem ? `${a}에서 ${dvNumJosa(b,'을','를')} 계속 빼요. 더 뺄 수 없을 때까지 빼요.`
+              : `${a}에서 ${dvNumJosa(b,'을','를')} 0이 될 때까지 계속 빼요.`,
+      en: rem ? `Keep subtracting ${b} from ${a} until you can't subtract any more.`
+              : `Keep subtracting ${b} from ${a} until you reach 0.`,
+      zh: rem ? `从${a}里一直减${b}，减到不能再减为止。` : `从${a}里一直减${b}，直到变成0。`
+    };
+    const ask = {
+      ko: rem ? `몇 번 뺄 수 있고, 몇이 남을까요? 뺄셈을 차례로 써 보세요.`
+              : `몇 번 빼면 0이 될까요? 뺄셈을 차례로 써 보세요.`,
+      en: rem ? `How many times can you subtract, and what is left? Write each subtraction.`
+              : `How many times until 0? Write each subtraction.`,
+      zh: rem ? `能减几次？还剩几？把每一步减法写出来。` : `减几次会变成0？把每一步减法写出来。`
+    };
+    return {
+      prompt: { ko: word.ko + ' ' + ask.ko, en: word.en + ' ' + ask.en, zh: word.zh + ask.zh },
+      word, wordAsk: ask,
+      wordUnit: { ko: '번', en: 'times', zh: '次' },
+      tex: rem ? `${a} \\div ${b} = \\square \\cdots ${r}` : `${a} \\div ${b} = \\square`,
+      answer: q, answerType: 'steps',
+      widget: 'steps', steps,
+      meaning: 'repsub'
+    };
+  };
+
+  /* ── DV15 — 곱셈으로 나눗셈(곱셈↔나눗셈의 관계) ──────────── */
+  NM_TGEN['dv15_family'] = function (params, rng) {
+    const mode = (params && params.mode) || 'facts';
+    const a = R(rng, 2, 9), b = R(rng, 2, 9), c = a * b;
+    if (mode === 'dividend') {
+      /* □ ÷ b = a — 나누어지는 수를 찾는다: b×a로 되돌린다 */
+      return {
+        prompt: { ko: `□ ÷ ${b} = ${a}의 □는 얼마일까요? 곱셈으로 되돌려 봐요.`,
+                  en: `□ ÷ ${b} = ${a}. Find □ by multiplying back.`,
+                  zh: `□÷${b}=${a}，□是几？用乘法倒推。` },
+        tex: `\\square \\div ${b} = ${a}`,
+        answer: c, answerType: 'steps', widget: 'steps',
+        steps: [ { tex: `${b} \\times ${a} = \\square`, blank: c } ],
+        solution: [ { tex: `${b} \\times ${a} = \\square`, blank: c } ]
+      };
+    }
+    if (mode === 'divisor') {
+      return {
+        prompt: { ko: `${c} ÷ □ = ${a}의 □는 얼마일까요? □×${a}=${c}로 생각해요.`,
+                  en: `${c} ÷ □ = ${a}. Think □ × ${a} = ${c}.`,
+                  zh: `${c}÷□=${a}，□是几？想成□×${a}=${c}。` },
+        tex: `${c} \\div \\square = ${a}`,
+        answer: b, answerType: 'steps', widget: 'steps',
+        steps: [ { tex: `\\square \\times ${a} = ${c}`, blank: b } ],
+        solution: [ { tex: `\\square \\times ${a} = ${c}`, blank: b } ]
+      };
+    }
+    /* facts — 곱셈 하나에서 나눗셈 두 개 */
+    return {
+      prompt: { ko: `${a} × ${b} = ${c}에서 나눗셈 식 두 개를 만들어요.`,
+                en: `From ${a} × ${b} = ${c}, write the two division facts.`,
+                zh: `由${a}×${b}=${c}写出两个除法算式。` },
+      tex: `${a} \\times ${b} = ${c} \;\\Rightarrow\; ${c} \\div ${b} = \\square`,
+      answer: a, answerType: 'steps', widget: 'steps',
+      steps: [
+        { tex: `${c} \\div ${a} = \\square`, blank: b },
+        { tex: `${c} \\div ${b} = \\square`, blank: a }
+      ],
+      solution: [
+        { tex: `${c} \\div ${a} = \\square`, blank: b },
+        { tex: `${c} \\div ${b} = \\square`, blank: a }
+      ]
+    };
+  };
+
 })();

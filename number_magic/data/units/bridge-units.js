@@ -159,11 +159,13 @@ window.NM_UNITS['T-NS1'] = {
 ───────────────────────────────────────────── */
 window.NM_UNITS['T-DV1'] = {
   id:'T-DV1', tier:'bridge', level:'T', order:103,
-  generator:'dv2_div2d1d', edu:'3-1',
+  generator:'dv13_group', edu:'3-1',
   title:{ ko:'나눗셈 첫걸음', en:'First Steps in Division', zh:'除法第一步' },
   subtitle:{ ko:'똑같이 나누기 = 구구단 거꾸로!', en:'Sharing equally = times tables in reverse!', zh:'平均分＝乘法口诀倒着用！' },
   icon:'🍪',
-  practice:{ generator:'dv2_div2d1d', level:'practice', count:5, params:{},
+  /* 노트가 나눠주기·묶어세기 두 얼굴을 말하는데 연습은 `12÷3=□`뿐이었다(2026-09-17).
+     연습을 두 뜻이 섞인 이야기 문제로 — 줄 수(사람 수/묶음 수)가 달라 읽어야 맞는다. */
+  practice:{ generator:'dv13_group', level:'practice', count:5, params:{mix:true},
     intro:{ ko:'쿠키를 친구들과 똑같이 나눠보자! 구구단을 거꾸로 떠올리면 돼.',
       en:"Let's share cookies equally! Just think of the times tables backwards.",
       zh:'和朋友们平均分饼干吧！把乘法口诀倒过来想就行。' } },
@@ -213,7 +215,7 @@ window.NM_UNITS['T-DV1'] = {
       en:'e.g. 20 candies shared by 4 friends — how many each? Or: bag 20 candies 4 at a time — how many bags?',
       zh:'例）20颗糖4个人平均分，每人几颗？或：20颗糖每袋装4颗，能装几袋？' }
   },
-  lab:{ generator:'dv2_div2d1d', level:'main', count:4, params:{},
+  lab:{ generator:'dv13_group', level:'main', count:4, params:{mix:true},
     intro:{ ko:'그림(배열)을 보면서 나눗셈을 눈으로 확인해 보자!',
       en:'Use the array picture to SEE the division!',
       zh:'看着点阵图，用眼睛确认除法！' } },

@@ -172,7 +172,7 @@ window.NM_ROADMAP = {
       id:'T8', icon:'🍕', grade:'초3',
       edu:{ko:'초3-1 나눗셈·분수 첫걸음',en:'G3-1 Division & Fraction Intro',zh:'小3-1除法与分数入门'},
       theme:{ko:'나눗셈과 분수 첫걸음 — 묶음 나누기·똑같이 나누기',en:'Division & Fraction Intro — Groups & Equal Shares',zh:'除法与分数入门——分组与平均分'},
-      units:['T-DV1','T-FR1'],
+      units:['B-24','T-DV1','T-FR1'],
       tip:{ko:'12÷3=4 (묶음 나누기), 그리고 케이크를 4등분하면 1/4! 나눗셈과 분수는 사촌이에요.',en:'12÷3=4 (grouping), and cut cake into 4 = 1/4! Division and fractions are cousins.',zh:'12÷3=4（分组），蛋糕切4份=1/4！除法和分数是近亲。'}
     },
 

@@ -123,6 +123,9 @@ window.NM_CURRICULUM = {
         { id:'구구H', available:true,
           title:{ko:'구구 H · 두 자리×한 자리',en:'Times H · 2-Digit × 1-Digit',zh:'口诀H · 两位乘一位'},
           units:['B-21','B-22','B-23'] },
+        { id:'구구I', available:true,
+          title:{ko:'구구 I · 나눗셈의 세 얼굴',en:'Times I · Three Faces of Division',zh:'口诀I · 除法的三副面孔'},
+          units:['B-24'] },
         /* ── 창의 전략 8단계 (난이도순 재설계 · 2026-08-23) ── */
         { id:'1', available:true,
           title:{ko:'1단계 · 곱셈의 문',en:'Stage 1 · Gateway to Multiplication',zh:'第1阶 · 乘法之门'},
