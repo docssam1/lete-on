@@ -3,7 +3,8 @@
   const generatorApi = window.HSE_GENERATORS;
   const mathNotation = window.HSE_MATH_NOTATION;
   const identityApi = window.HSE_IDENTITY;
-  if (!curriculum || !generatorApi || !mathNotation || !identityApi) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
+  const geometryLayout = window.GFieldGeometryLayout;
+  if (!curriculum || !generatorApi || !mathNotation || !identityApi || !geometryLayout) throw new Error("초등 문제은행 데이터를 불러오지 못했습니다.");
 
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
@@ -283,6 +284,7 @@
     }
     placeTypePreview(anchor, popover);
     popover.hidden = false;
+    geometryLayout.apply(popover);
     document.body.classList.add("is-type-preview-open");
   }
 
@@ -508,6 +510,18 @@
     renderSummary();
   }
 
+  function withGrade4AngleAnswerVisual(type, generated) {
+    if (generated.answerVisual || type.grade !== 4 || type.term !== 1 || type.unitNumber !== 2) return generated;
+    const diagrams = [...String(generated.prompt || "").matchAll(/<svg\b[\s\S]*?<\/svg>/gi)]
+      .map(match => match[0])
+      .filter(svg => /class="[^"]*\bsource41-[^"]*"/i.test(svg));
+    if (!diagrams.length) return generated;
+    return {
+      ...generated,
+      answerVisual: `<div class="source41-angle-answer-figure" data-source-item-id="${escapeHtml(type.sourceItemId || "")}">${diagrams.join("")}<div class="solution-answer-caption">같은 그림에서 확인한 정답 ${escapeHtml(generated.answer)}</div></div>`
+    };
+  }
+
   function bindSegment(containerId, dataKey, stateKey, transform = value => value) {
     $(containerId).addEventListener("click", event => {
       const button = event.target.closest(`button[data-${dataKey}]`);
@@ -559,6 +573,7 @@
         }
       }
       generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, variationDifficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
+      generated = withGrade4AngleAnswerVisual(type, generated);
       if (generated.generationMode === "fixed-verified-pool") {
         if (!Number.isInteger(generated.verifiedPoolIndex) || typePoolIndices.has(generated.verifiedPoolIndex)) {
           throw new Error(`${typeDisplayName(type)}의 검증 문항 묶음이 중복되었습니다.`);
@@ -741,7 +756,7 @@
     if (solutionPage.length) solutionPages.push(solutionPage);
     $("solutionView").innerHTML = renderClassificationPages() + solutionPages.map((page, pageIndex) => `<section class="print-page answer-page">
       <div class="page-label">정답·풀이 ${pageIndex + 1}</div>
-      <div class="solution-list">${page.map(question => `<article class="solution-item">
+      <div class="solution-list">${page.map(question => `<article class="solution-item" data-type-id="${escapeHtml(question.type.id)}" data-source-item-id="${escapeHtml(question.type.sourceItemId || "")}">
         <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${renderMathNotation(escapeHtml(question.answer))}</strong></header>
         ${question.answerVisual ? `<div class="solution-answer-visual" aria-label="정답 그림">${renderMathNotation(question.answerVisual)}</div>` : ""}
         <p>${renderMathNotation(question.solution)}</p>
@@ -770,6 +785,7 @@
     ).join("");
     renderProblems();
     renderSolutions();
+    geometryLayout.apply($(state.view === "problem" ? "problemView" : "solutionView"));
   }
 
   bindSegment("gradeFilter", "grade", "grade", Number);

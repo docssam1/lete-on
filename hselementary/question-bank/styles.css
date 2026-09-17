@@ -1008,6 +1008,7 @@ button{
 .solution-list{position:relative;z-index:2;display:grid;gap:10px;margin-top:18px}.solution-item{border:1px solid var(--line)}.solution-item header{display:grid;grid-template-columns:36px minmax(170px,1fr) minmax(0,2fr);align-items:center;background:#f3f7fa}.solution-item header b{display:grid;place-items:center;align-self:stretch;background:var(--ink);color:#fff}.solution-item header span{min-width:0;padding:10px 12px;font-size:12px;font-weight:850;overflow-wrap:anywhere}.solution-item header strong{min-width:0;padding:10px 14px;color:#126a5a;font-size:15px;line-height:1.45;text-align:right;overflow-wrap:anywhere}.solution-item p{margin:0;padding:12px 14px;color:#435a72;font-size:12px;line-height:1.65}
 .classification-page{position:relative}.classification-meta{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:15px 0 10px;color:#526b7d;font-size:11px}.classification-meta strong{color:#173b58;font-size:14px}.classification-table-wrap{position:relative;z-index:2;max-width:100%;margin-top:14px;overflow:auto}.classification-table{width:100%;border-collapse:collapse;background:#fff;color:#173b58;font-size:10px;line-height:1.4}.classification-table caption{padding:8px 10px;border:1px solid #93a9b8;border-bottom:0;background:#edf4f7;color:#173b58;font-size:12px;font-weight:950;text-align:left}.classification-table th,.classification-table td{padding:7px 8px;border:1px solid #b8c8d3;text-align:center;vertical-align:middle}.classification-table thead th{background:#f5f8fa;font-weight:950}.classification-table tbody th{background:#fbfcfd;font-weight:900}.classification-matrix td{font-variant-numeric:tabular-nums}.classification-difficulty th:first-child{width:126px}.classification-difficulty td:last-child{width:72px;font-weight:950}.classification-detail{min-width:780px;table-layout:fixed}.classification-detail th:nth-child(1){width:42px}.classification-detail th:nth-child(2){width:48px}.classification-detail th:nth-child(3){width:150px}.classification-detail th:nth-child(4){width:auto}.classification-detail th:nth-child(5){width:82px}.classification-detail th:nth-child(6){width:66px}.classification-detail th:nth-child(7){width:82px}.classification-detail td:nth-child(3),.classification-detail td:nth-child(4){text-align:left}.classification-detail td b,.classification-detail td small{display:block}.classification-detail td small{margin-top:2px;color:#657b8d;font-size:9px}
 .solution-answer-visual{padding:10px 14px;border-bottom:1px solid var(--line);background:#fbfdff}.solution-answer-visual .geometry-diagram,.solution-answer-visual .problem-svg,.solution-answer-visual>svg{display:block;width:min(340px,100%);height:auto;max-height:220px;margin:0 auto}.solution-answer-visual .diagram-pair{margin:0}.solution-answer-caption{margin:5px 0 0;color:#126a5a;font-size:11px;font-weight:900;text-align:center}
+.source41-angle-answer-figure{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));align-items:center;gap:8px 14px;max-width:720px;margin:0 auto}.source41-angle-answer-figure .geometry-diagram{width:min(300px,100%);max-height:190px;margin:0 auto}.source41-angle-answer-figure .solution-answer-caption{grid-column:1/-1;margin-top:0;padding-top:7px;border-top:1px solid #d8e0e6;color:#111;font-family:"Batang","Times New Roman",serif;font-size:12px;font-weight:400}
 .watermark{position:absolute;inset:0;pointer-events:none;overflow:hidden}.watermark span{position:absolute;left:50%;z-index:1;width:120%;transform:translate(-50%,-50%) rotate(-30deg);text-align:center;color:rgba(24,50,79,.09);font-size:34px;font-weight:950}.watermark span:nth-child(1){top:24%}.watermark span:nth-child(2){top:50%}.watermark span:nth-child(3){top:76%}
 
 @media (max-width:1180px){
@@ -1158,6 +1159,33 @@ button{
 .print-page .question-item header b{background:#fff;color:#111;border:1px solid #333;font-weight:600}
 .print-page .watermark span{color:rgba(0,0,0,.035);font-weight:500}
 
+/* 4-1 각도 도식은 문제집 인쇄선과 같은 검정 선·검정 수치로 표시한다. */
+.question-item[data-type-id^="4-1-u2"] .geometry-diagram line,
+.question-item[data-type-id^="4-1-u2"] .geometry-diagram path,
+.question-item[data-type-id^="4-1-u2"] .geometry-diagram polygon,
+.solution-item[data-type-id^="4-1-u2"] .geometry-diagram line,
+.solution-item[data-type-id^="4-1-u2"] .geometry-diagram path,
+.solution-item[data-type-id^="4-1-u2"] .geometry-diagram polygon{
+  stroke:#222!important;
+  stroke-width:1.55!important;
+}
+.question-item[data-type-id^="4-1-u2"] .source41-given-label,
+.question-item[data-type-id^="4-1-u2"] .source41-target-label,
+.solution-item[data-type-id^="4-1-u2"] .source41-given-label,
+.solution-item[data-type-id^="4-1-u2"] .source41-target-label{
+  fill:#111!important;
+  stroke:none!important;
+  paint-order:normal;
+  font-family:"Batang","Noto Serif KR",serif;
+  font-weight:600;
+}
+.source41-four-triangle-cross .source41-exterior-angle-mark{
+  fill:none;
+  stroke:#222;
+  stroke-width:1.7;
+  stroke-linecap:round;
+}
+
 @page{size:A4;margin:0}
 @page source61GraphsE4Answer{size:A4;margin:6mm 0}
 
@@ -1301,7 +1329,7 @@ button{
   .source41-condition-list{gap:3px;margin-top:8px;padding:7px 8px 7px 26px}.source41-condition-list li{font-size:10px;line-height:1.45}
   .source41-masked-number{margin-top:8px;font-size:18px}
   .source41-card-row,.source41-piece-row{gap:4px;margin-top:8px}.source41-number-card{width:27px;height:34px;border-width:1px;font-size:16px}.source41-piece-row span{min-width:34px;min-height:29px;padding:2px 6px;font-size:13px}
-  .geometry-diagram.source41-angle-rays,.geometry-diagram.source41-angle-location,.geometry-diagram.source41-angle-web,.geometry-diagram.source41-triangle-pair,.geometry-diagram.source41-equilateral-fan,.geometry-diagram.source41-polygon-collection,.geometry-diagram.source41-triangle-bisectors,.geometry-diagram.source41-altitude-bisector,.geometry-diagram.source41-concave-octagon,.geometry-diagram.source41-trisected-triangle,.geometry-diagram.source41-exterior-polygon,.geometry-diagram.source41-five-target,.geometry-diagram.source41-two-turn-octagon,.geometry-diagram.source41-four-triangle-cross,.geometry-diagram.source41-three-apex,.geometry-diagram.source41-overlap-triangles,.geometry-diagram.source41-exterior-sum,.geometry-diagram.source41-rotated-triangle,.geometry-diagram.source41-star-polygon,.geometry-diagram.source41-concave-quadrilateral,.geometry-diagram.source41-bisected-apex,.geometry-diagram.source41-star-relation,.geometry-diagram.source41-angle-five{width:min(280px,100%);margin-top:6px}.source41-angle-statements{gap:2px 8px;margin-top:7px}.source41-angle-statements li{grid-template-columns:18px minmax(0,1fr);padding:3px 4px;font-size:9px}.source41-angle-statements b{font-size:10px}.source41-given-label{font-size:9px!important}.source41-target-label{font-size:11px!important}.source41-angle-five .source41-angle-five-note{font-size:7px}
+  .geometry-diagram.source41-angle-rays,.geometry-diagram.source41-angle-location,.geometry-diagram.source41-angle-web,.geometry-diagram.source41-triangle-pair,.geometry-diagram.source41-equilateral-fan,.geometry-diagram.source41-polygon-collection,.geometry-diagram.source41-triangle-bisectors,.geometry-diagram.source41-altitude-bisector,.geometry-diagram.source41-concave-octagon,.geometry-diagram.source41-trisected-triangle,.geometry-diagram.source41-exterior-polygon,.geometry-diagram.source41-five-target,.geometry-diagram.source41-two-turn-octagon,.geometry-diagram.source41-four-triangle-cross,.geometry-diagram.source41-three-apex,.geometry-diagram.source41-overlap-triangles,.geometry-diagram.source41-exterior-sum,.geometry-diagram.source41-rotated-triangle,.geometry-diagram.source41-star-polygon,.geometry-diagram.source41-concave-quadrilateral,.geometry-diagram.source41-bisected-apex,.geometry-diagram.source41-star-relation,.geometry-diagram.source41-angle-five{width:min(300px,100%);margin-top:6px}.source41-angle-statements{gap:2px 8px;margin-top:7px}.source41-angle-statements li{grid-template-columns:18px minmax(0,1fr);padding:3px 4px;font-size:9px}.source41-angle-statements b{font-size:10px}.source41-given-label{font-size:10.5px!important}.source41-target-label{font-size:12px!important}.source41-angle-five .source41-angle-five-note{font-size:8px}
   .source41-clock-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px;margin-top:7px}.source41-clock-grid:has(figure:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}.source41-clock-grid:has(figure:nth-child(3):last-child) figure:last-child{grid-column:auto;width:auto}.geometry-diagram.source41-clock{width:min(125px,100%)}.source41-clock-grid figcaption{min-height:0;font-size:8px}.source41-clock-questions{gap:2px;margin-top:6px;padding-left:17px}.source41-clock-questions li{font-size:9px;line-height:1.35}.source41-clock-time-list{gap:3px 8px;margin-top:7px;padding:5px 7px;font-size:9px}
   .print-page:has(.source41-money-table) .question-item{min-height:0;padding:14px 0}
   .print-page:has(.source41-money-table) .question-prompt{margin-top:12px;font-size:15px;line-height:1.65}

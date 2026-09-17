@@ -659,9 +659,15 @@
       const arcRadius = arc.radius || 25 + index * 7;
       const start = source41PointAtAngle(cx, cy, arcRadius, arc.from);
       const end = source41PointAtAngle(cx, cy, arcRadius, arc.from + span);
-      const labelPoint = source41PointAtAngle(cx, cy, arc.labelRadius || arcRadius + (arc.labelOffset || 10), arc.from + span / 2);
+      const minimumLabelGap = 28;
+      const estimatedLabelWidth = [...String(arc.label)].reduce((width, character) => width + (/\d/.test(character) ? 8 : character === "°" ? 7 : character === " " ? 5 : 14), 0);
+      const angularClearanceRadius = span < 150
+        ? (estimatedLabelWidth / 2 + 5) / Math.max(0.16, Math.sin(span * Math.PI / 360))
+        : 0;
+      const labelRadius = Math.max(arc.labelRadius || 0, arcRadius + Math.max(minimumLabelGap, arc.labelOffset || 0), Math.min(88, angularClearanceRadius));
+      const labelPoint = source41PointAtAngle(cx, cy, labelRadius, arc.from + span / 2);
       const largeArc = span > 180 ? 1 : 0;
-      return `<g class="source41-angle-arc ${arc.target ? "is-target" : "is-given"}" data-arc-index="${index}" data-arc-from="${source41NormalizeAngle(arc.from)}" data-arc-span="${span}"><path d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${arcRadius} ${arcRadius} 0 ${largeArc} 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/><text x="${(labelPoint[0] + (arc.labelDx || 0)).toFixed(1)}" y="${(labelPoint[1] + (arc.labelDy || 0)).toFixed(1)}">${arc.label}</text></g>`;
+      return `<g class="source41-angle-arc ${arc.target ? "is-target" : "is-given"}" data-arc-index="${index}" data-arc-from="${source41NormalizeAngle(arc.from)}" data-arc-span="${span}"><path d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${arcRadius} ${arcRadius} 0 ${largeArc} 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/><text class="${arc.target ? "source41-target-label" : "source41-given-label"}" data-layout-role="${arc.target ? "target-angle" : "given-angle"}" x="${(labelPoint[0] + (arc.labelDx || 0)).toFixed(1)}" y="${(labelPoint[1] + (arc.labelDy || 0)).toFixed(1)}">${arc.label}</text></g>`;
     }).join("");
     const rightMarks = rightPairs.map(([first, second]) => {
       const firstPoint = source41PointAtAngle(cx, cy, 13, first);
@@ -710,9 +716,9 @@
       const arcRadius = 21 + index * 8;
       const start = source41PointAtAngle(cx, cy, arcRadius, from);
       const end = source41PointAtAngle(cx, cy, arcRadius, to);
-      const label = source41PointAtAngle(cx, cy, arcRadius + 11, (from + to) / 2);
+      const label = source41PointAtAngle(cx, cy, arcRadius + 18, (from + to) / 2);
       const marker = index === 0
-        ? `<text x="${label[0].toFixed(1)}" y="${label[1].toFixed(1)}">${shift}°</text>`
+        ? `<text data-layout-role="given-angle" x="${(label[0] - 34).toFixed(1)}" y="${(label[1] - 26).toFixed(1)}">${shift}°</text>`
         : `<circle class="source41-fan-equal-mark" cx="${label[0].toFixed(1)}" cy="${label[1].toFixed(1)}" r="2.2"/>`;
       return `<g class="source41-fan-shift"><path d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${arcRadius} ${arcRadius} 0 0 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/>${marker}</g>`;
     }).join("");
@@ -739,6 +745,21 @@
     return [firstA[0] + distanceA * directionA[0], firstA[1] + distanceA * directionA[1]];
   };
   const source41Distance = (first, second) => Math.hypot(first[0] - second[0], first[1] - second[1]);
+  const source41DirectionFrom = (origin, point) => source41NormalizeAngle(Math.atan2(origin[1] - point[1], point[0] - origin[0]) * 180 / Math.PI);
+  const source41SmallerSector = (vertex, firstPoint, secondPoint) => {
+    const firstDirection = source41DirectionFrom(vertex, firstPoint);
+    const secondDirection = source41DirectionFrom(vertex, secondPoint);
+    const forwardSpan = source41PositiveAngleSpan(firstDirection, secondDirection);
+    return forwardSpan <= 180
+      ? { start: firstDirection, span: forwardSpan }
+      : { start: secondDirection, span: 360 - forwardSpan };
+  };
+  const source41SectorPoint = (vertex, sector, radius) => source41PointAtAngle(vertex[0], vertex[1], radius, sector.start + sector.span / 2);
+  const source41SectorArcMarkup = (vertex, sector, radius, className, attributes = "") => {
+    const start = source41PointAtAngle(vertex[0], vertex[1], radius, sector.start);
+    const end = source41PointAtAngle(vertex[0], vertex[1], radius, sector.start + sector.span);
+    return `<path class="${className}" ${attributes} d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${radius} ${radius} 0 ${sector.span > 180 ? 1 : 0} 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/>`;
+  };
   const source41FitPoints = (points, width = 360, height = 240, padding = 28) => {
     const minimumX = Math.min(...points.map(point => point[0]));
     const maximumX = Math.max(...points.map(point => point[0]));
@@ -815,7 +836,10 @@
     const [pointA, pointB, pointC, center] = source41FitPoints([raw.pointA, raw.pointB, raw.pointC, rawCenter], 360, 240, 32);
     const bisectors = `<line data-bisector="B" x1="${pointB[0].toFixed(1)}" y1="${pointB[1].toFixed(1)}" x2="${center[0].toFixed(1)}" y2="${center[1].toFixed(1)}"/><line data-bisector="C" x1="${pointC[0].toFixed(1)}" y1="${pointC[1].toFixed(1)}" x2="${center[0].toFixed(1)}" y2="${center[1].toFixed(1)}"/>${threeBisectors ? `<line data-bisector="A" x1="${pointA[0].toFixed(1)}" y1="${pointA[1].toFixed(1)}" x2="${center[0].toFixed(1)}" y2="${center[1].toFixed(1)}"/>` : ""}`;
     const marks = `${source41BisectorMarks(pointB, pointA, center, pointC, "B")}${source41BisectorMarks(pointC, pointB, center, pointA, "C")}${threeBisectors ? source41BisectorMarks(pointA, pointC, center, pointB, "A") : ""}`;
-    return `<svg class="geometry-diagram source41-triangle-bisectors" viewBox="0 0 360 240" data-angle-a="${angleA}" data-angle-b="${angleB}" data-angle-c="${angleC}" data-bisector-count="${threeBisectors ? 3 : 2}" aria-label="삼각형의 ${threeBisectors ? "세" : "두"} 각을 반으로 나눈 선"><polygon points="${source41PointsText([pointA, pointB, pointC])}"/>${bisectors}${marks}<circle class="source41-angle-center" cx="${center[0].toFixed(1)}" cy="${center[1].toFixed(1)}" r="3"/><text class="source41-given-label" x="${pointA[0].toFixed(1)}" y="${(pointA[1] + 22).toFixed(1)}">${angleA}°</text><text class="source41-target-label" x="${center[0].toFixed(1)}" y="${(center[1] + 22).toFixed(1)}">㉠</text><text class="source41-point-label" x="${pointB[0].toFixed(1)}" y="${(pointB[1] + 15).toFixed(1)}">B</text><text class="source41-point-label" x="${pointC[0].toFixed(1)}" y="${(pointC[1] + 15).toFixed(1)}">C</text></svg>`;
+    const targetSector = source41SmallerSector(center, pointB, pointC);
+    const targetLabel = source41SectorPoint(center, targetSector, 45);
+    const targetArc = source41SectorArcMarkup(center, targetSector, 22, "source41-bisector-target-angle", 'data-target-index="1"');
+    return `<svg class="geometry-diagram source41-triangle-bisectors" viewBox="0 0 360 240" data-angle-a="${angleA}" data-angle-b="${angleB}" data-angle-c="${angleC}" data-bisector-count="${threeBisectors ? 3 : 2}" aria-label="삼각형의 ${threeBisectors ? "세" : "두"} 각을 반으로 나눈 선"><polygon points="${source41PointsText([pointA, pointB, pointC])}"/>${bisectors}${marks}${targetArc}<circle class="source41-angle-center" cx="${center[0].toFixed(1)}" cy="${center[1].toFixed(1)}" r="3"/><text class="source41-given-label" x="${pointA[0].toFixed(1)}" y="${(pointA[1] + 30).toFixed(1)}">${angleA}°</text><text class="source41-target-label" data-layout-role="target-angle" x="${targetLabel[0].toFixed(1)}" y="${targetLabel[1].toFixed(1)}">㉠</text><text class="source41-point-label" x="${pointB[0].toFixed(1)}" y="${(pointB[1] + 15).toFixed(1)}">B</text><text class="source41-point-label" x="${pointC[0].toFixed(1)}" y="${(pointC[1] + 15).toFixed(1)}">C</text></svg>`;
   };
   const source41AltitudeBisectorSvg = ({ angleA, angleB, angleC }) => {
     const raw = source41TriangleGeometry(angleB, angleC);
@@ -826,7 +850,15 @@
     const [pointA, pointB, pointC, foot, center, sidePoint] = source41FitPoints([raw.pointA, raw.pointB, raw.pointC, rawFoot, rawCenter, rawSidePoint], 360, 240, 30);
     const square = `<path class="source41-right-angle-mark" d="M${(foot[0] - 11).toFixed(1)} ${foot[1].toFixed(1)}L${(foot[0] - 11).toFixed(1)} ${(foot[1] - 11).toFixed(1)}L${foot[0].toFixed(1)} ${(foot[1] - 11).toFixed(1)}"/>`;
     const marks = source41BisectorMarks(pointB, pointA, center, pointC, "B");
-    return `<svg class="geometry-diagram source41-altitude-bisector" viewBox="0 0 360 240" data-angle-a="${angleA}" data-angle-b="${angleB}" data-angle-c="${angleC}" aria-label="이등분선과 높이가 만나는 삼각형"><polygon points="${source41PointsText([pointA, pointB, pointC])}"/><line data-altitude="1" x1="${pointA[0].toFixed(1)}" y1="${pointA[1].toFixed(1)}" x2="${foot[0].toFixed(1)}" y2="${foot[1].toFixed(1)}"/><line data-bisector="B" x1="${pointB[0].toFixed(1)}" y1="${pointB[1].toFixed(1)}" x2="${sidePoint[0].toFixed(1)}" y2="${sidePoint[1].toFixed(1)}"/>${square}${marks}<circle class="source41-angle-center" cx="${center[0].toFixed(1)}" cy="${center[1].toFixed(1)}" r="3"/><text class="source41-given-label" x="${(pointA[0] - 13).toFixed(1)}" y="${(pointA[1] + 20).toFixed(1)}">${angleA}°</text><text class="source41-given-label" x="${(pointB[0] + 27).toFixed(1)}" y="${(pointB[1] - 5).toFixed(1)}">${angleB}°</text><text class="source41-target-label" x="${(pointA[0] + 24).toFixed(1)}" y="${(pointA[1] + 35).toFixed(1)}">㉠</text><text class="source41-target-label" x="${(center[0] - 20).toFixed(1)}" y="${(center[1] + 9).toFixed(1)}">㉡</text></svg>`;
+    const apexSector = source41SmallerSector(pointA, foot, pointC);
+    const centerSector = source41SmallerSector(center, foot, pointB);
+    const pointBSector = source41SmallerSector(pointB, pointA, pointC);
+    const pointBLabelRadius = Math.max(44, 18 / Math.max(0.2, Math.sin(pointBSector.span * Math.PI / 360)));
+    const pointBLabel = source41SectorPoint(pointB, pointBSector, pointBLabelRadius);
+    const apexTarget = [Math.min(338, pointA[0] + 34), Math.max(18, pointA[1] + 18)];
+    const centerTarget = source41SectorPoint(center, centerSector, 34);
+    const targetArcs = `${source41SectorArcMarkup(pointA, apexSector, 18, "source41-altitude-target-angle", 'data-target-index="1"')}${source41SectorArcMarkup(center, centerSector, 18, "source41-altitude-target-angle", 'data-target-index="2"')}`;
+    return `<svg class="geometry-diagram source41-altitude-bisector" viewBox="0 0 360 240" data-angle-a="${angleA}" data-angle-b="${angleB}" data-angle-c="${angleC}" aria-label="이등분선과 높이가 만나는 삼각형"><polygon points="${source41PointsText([pointA, pointB, pointC])}"/><line data-altitude="1" x1="${pointA[0].toFixed(1)}" y1="${pointA[1].toFixed(1)}" x2="${foot[0].toFixed(1)}" y2="${foot[1].toFixed(1)}"/><line data-bisector="B" x1="${pointB[0].toFixed(1)}" y1="${pointB[1].toFixed(1)}" x2="${sidePoint[0].toFixed(1)}" y2="${sidePoint[1].toFixed(1)}"/>${square}${marks}${targetArcs}<circle class="source41-angle-center" cx="${center[0].toFixed(1)}" cy="${center[1].toFixed(1)}" r="3"/><text class="source41-given-label" x="${(pointA[0] - 13).toFixed(1)}" y="${(pointA[1] + 20).toFixed(1)}">${angleA}°</text><text class="source41-given-label" data-layout-role="given-angle" x="${pointBLabel[0].toFixed(1)}" y="${pointBLabel[1].toFixed(1)}">${angleB}°</text><text class="source41-target-label" data-layout-role="target-angle" x="${apexTarget[0].toFixed(1)}" y="${apexTarget[1].toFixed(1)}">㉠</text><text class="source41-target-label" data-layout-role="target-angle" x="${centerTarget[0].toFixed(1)}" y="${centerTarget[1].toFixed(1)}">㉡</text></svg>`;
   };
   const source41ConcaveOctagonSvg = (givens, targetLabels = ["㉠", "㉡"], singleTarget = false) => {
     const points = [[40, 172], [34, 78], [105, 25], [250, 32], [320, 92], [294, 205], [207, 112], [126, 108]];
@@ -859,7 +891,13 @@
     }).join("");
     const extensionDirection = source41Direction(left, outer);
     const extension = [outer[0] + extensionDirection[0] * 27, outer[1] + extensionDirection[1] * 27];
-    return `<svg class="geometry-diagram source41-trisected-triangle" viewBox="0 0 360 250" data-left-part="${leftPart}" data-right-part="${rightPart}" data-lower-angle="${lowerAngle}" aria-label="두 밑각을 각각 세 부분으로 똑같이 나눈 삼각형"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${outer[0].toFixed(1)}" y2="${outer[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${outer[0].toFixed(1)}" y2="${outer[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${upper[0].toFixed(1)}" y2="${upper[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${upper[0].toFixed(1)}" y2="${upper[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${lower[0].toFixed(1)}" y2="${lower[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${lower[0].toFixed(1)}" y2="${lower[1].toFixed(1)}"/><line class="source41-extension-line" x1="${outer[0].toFixed(1)}" y1="${outer[1].toFixed(1)}" x2="${extension[0].toFixed(1)}" y2="${extension[1].toFixed(1)}"/>${leftMarks}${rightMarks}<text class="source41-given-label" x="${lower[0].toFixed(1)}" y="${(lower[1] + 19).toFixed(1)}">${lowerAngle}°</text><text class="source41-target-label" x="${(outer[0] + 23).toFixed(1)}" y="${(outer[1] - 4).toFixed(1)}">㉠</text><text class="source41-target-label" x="${upper[0].toFixed(1)}" y="${(upper[1] + 18).toFixed(1)}">㉡</text></svg>`;
+    const outerSector = source41SmallerSector(outer, extension, right);
+    const outerTarget = source41SectorPoint(outer, outerSector, 34);
+    const outerTargetArc = source41SectorArcMarkup(outer, outerSector, 18, "source41-trisected-target-angle", 'data-target-index="1"');
+    const upperSector = source41SmallerSector(upper, left, right);
+    const upperTarget = source41SectorPoint(upper, upperSector, 32);
+    const upperTargetArc = source41SectorArcMarkup(upper, upperSector, 17, "source41-trisected-target-angle", 'data-target-index="2"');
+    return `<svg class="geometry-diagram source41-trisected-triangle" viewBox="0 0 360 250" data-left-part="${leftPart}" data-right-part="${rightPart}" data-lower-angle="${lowerAngle}" aria-label="두 밑각을 각각 세 부분으로 똑같이 나눈 삼각형"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${outer[0].toFixed(1)}" y2="${outer[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${outer[0].toFixed(1)}" y2="${outer[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${upper[0].toFixed(1)}" y2="${upper[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${upper[0].toFixed(1)}" y2="${upper[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${lower[0].toFixed(1)}" y2="${lower[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${lower[0].toFixed(1)}" y2="${lower[1].toFixed(1)}"/><line class="source41-extension-line" x1="${outer[0].toFixed(1)}" y1="${outer[1].toFixed(1)}" x2="${extension[0].toFixed(1)}" y2="${extension[1].toFixed(1)}"/>${leftMarks}${rightMarks}${outerTargetArc}${upperTargetArc}<text class="source41-given-label" x="${lower[0].toFixed(1)}" y="${(lower[1] + 19).toFixed(1)}">${lowerAngle}°</text><text class="source41-target-label" data-layout-role="target-angle" x="${outerTarget[0].toFixed(1)}" y="${outerTarget[1].toFixed(1)}">㉠</text><text class="source41-target-label" data-layout-role="target-angle" x="${upperTarget[0].toFixed(1)}" y="${upperTarget[1].toFixed(1)}">㉡</text></svg>`;
   };
   const source41TangentialPolygonPoints = exteriorAngles => {
     const normals = [0];
@@ -878,22 +916,56 @@
   };
   const source41ExteriorPolygonSvg = exteriorAngles => {
     const points = source41TangentialPolygonPoints(exteriorAngles);
-    const center = [points.reduce((sum, point) => sum + point[0], 0) / points.length, points.reduce((sum, point) => sum + point[1], 0) / points.length];
-    const extensions = points.map((point, index) => {
+    const extensionEnds = points.map((point, index) => {
       const previous = points[(index + points.length - 1) % points.length];
       const direction = source41Direction(previous, point);
-      const end = [point[0] + direction[0] * 22, point[1] + direction[1] * 22];
+      return [point[0] + direction[0] * 30, point[1] + direction[1] * 30];
+    });
+    const extensions = points.map((point, index) => {
+      const end = extensionEnds[index];
       return `<line class="source41-extension-line" data-exterior-index="${index}" x1="${point[0].toFixed(1)}" y1="${point[1].toFixed(1)}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}"/>`;
     }).join("");
     const labels = points.map((point, index) => {
-      const direction = source41Direction(center, point);
-      return `<text class="${index === 0 ? "source41-target-label" : "source41-given-label"}" data-exterior-label="${index}" x="${(point[0] + direction[0] * 24).toFixed(1)}" y="${(point[1] + direction[1] * 24).toFixed(1)}">${index === 0 ? "㉠" : `${exteriorAngles[index]}°`}</text>`;
+      const next = points[(index + 1) % points.length];
+      const sector = source41SmallerSector(point, extensionEnds[index], next);
+      const text = index === 0 ? "㉠" : `${exteriorAngles[index]}°`;
+      const estimatedWidth = index === 0 ? 14 : 24;
+      const neededRadius = (estimatedWidth / 2 + 5) / Math.max(0.2, Math.sin(sector.span * Math.PI / 360));
+      const labelPoint = source41SectorPoint(point, sector, Math.min(58, Math.max(34, neededRadius)));
+      return `${source41SectorArcMarkup(point, sector, 15, "source41-exterior-angle-mark", `data-exterior-angle-index="${index}" data-angle-span="${sector.span.toFixed(2)}"`)}<text class="${index === 0 ? "source41-target-label" : "source41-given-label"}" data-layout-role="${index === 0 ? "target-angle" : "given-angle"}" data-exterior-label="${index}" x="${labelPoint[0].toFixed(1)}" y="${labelPoint[1].toFixed(1)}">${text}</text>`;
     }).join("");
     return `<svg class="geometry-diagram source41-exterior-polygon" viewBox="0 0 360 240" data-exterior-angles="${exteriorAngles.join(",")}" aria-label="다섯 바깥각이 표시된 오각형"><polygon points="${source41PointsText(points)}"/>${extensions}${labels}</svg>`;
   };
   const source41FiveTargetSvg = ({ apex, leftGiven, bottomGiven, rightGiven }) => `<svg class="geometry-diagram source41-five-target" viewBox="0 0 360 240" data-givens="${apex},${leftGiven},${bottomGiven},${rightGiven}" aria-label="세 직선과 삼각형 안팎의 다섯 표시각"><polygon points="180,42 70,188 292,188"/><line class="source41-extension-line" x1="92" y1="42" x2="270" y2="42"/><line class="source41-extension-line" x1="24" y1="148" x2="124" y2="220"/><line class="source41-extension-line" x1="238" y1="220" x2="338" y2="148"/><line x1="70" y1="188" x2="292" y2="188"/><line x1="211" y1="188" x2="292" y2="151"/><text class="source41-given-label" x="180" y="68">${apex}°</text><text class="source41-given-label" x="46" y="154">${leftGiven}°</text><text class="source41-given-label" x="77" y="216">${bottomGiven}°</text><text class="source41-given-label" x="316" y="158">${rightGiven}°</text><text class="source41-target-label" data-target-index="1" x="143" y="35">㉠</text><text class="source41-target-label" data-target-index="2" x="219" y="35">㉡</text><text class="source41-target-label" data-target-index="3" x="91" y="177">㉢</text><text class="source41-target-label" data-target-index="4" x="267" y="179">㉣</text><text class="source41-target-label" data-target-index="5" x="278" y="207">㉤</text></svg>`;
   const source41TwoTurnOctagonSvg = (knownAngles, targetLabel = "㉠") => `<svg class="geometry-diagram source41-two-turn-octagon" viewBox="0 0 360 240" data-known-angles="${knownAngles.join(",")}" aria-label="안으로 두 번 꺾이고 선이 교차하는 팔각형"><polygon points="46,158 62,70 137,25 270,40 318,105 280,205 177,94 125,126"/><line x1="177" y1="94" x2="280" y2="205"/><line x1="125" y1="126" x2="270" y2="40"/>${knownAngles.map((angle, index) => { const positions = [[44,176],[47,62],[137,16],[278,35],[328,105],[289,218],[195,82]]; return `<text class="source41-given-label" data-known-index="${index}" x="${positions[index][0]}" y="${positions[index][1]}">${angle}°</text>`; }).join("")}<text class="source41-target-label" x="124" y="145">${targetLabel}</text></svg>`;
-  const source41FourTriangleCrossSvg = givenAngle => `<svg class="geometry-diagram source41-four-triangle-cross" viewBox="0 0 360 250" data-given-angle="${givenAngle}" data-target-count="8" aria-label="가운데에서 선이 교차하는 네 삼각형과 바깥쪽 표시각 여덟 개"><polygon data-triangle="1" points="151,116 38,53 42,177"/><polygon data-triangle="2" points="177,91 112,20 260,28"/><polygon data-triangle="3" points="215,121 322,62 326,184"/><polygon data-triangle="4" points="181,158 103,226 263,230"/><line x1="151" y1="116" x2="215" y2="121"/><line x1="177" y1="91" x2="181" y2="158"/><text class="source41-given-label" x="183" y="128">${givenAngle}°</text>${[[50,67],[51,160],[126,31],[243,38],[310,78],[311,167],[120,214],[247,217]].map((point, index) => `<text class="source41-target-label" data-target-index="${index + 1}" x="${point[0]}" y="${point[1]}">•</text>`).join("")}</svg>`;
+  const source41DirectionAngle = (origin, target) => source41NormalizeAngle(Math.atan2(origin[1] - target[1], target[0] - origin[0]) * 180 / Math.PI);
+  const source41ExteriorAngleArc = (vertex, inward, neighbor, index) => {
+    let from = source41DirectionAngle(vertex, inward);
+    let to = source41NormalizeAngle(source41DirectionAngle(vertex, neighbor) + 180);
+    let span = source41PositiveAngleSpan(from, to);
+    if (span > 180) {
+      [from, to] = [to, from];
+      span = 360 - span;
+    }
+    const radius = 13;
+    const start = source41PointAtAngle(vertex[0], vertex[1], radius, from);
+    const end = source41PointAtAngle(vertex[0], vertex[1], radius, from + span);
+    return `<path class="source41-exterior-angle-mark" data-target-index="${index}" data-angle-vertex="${vertex.join(",")}" data-angle-span="${span.toFixed(2)}" d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${radius} ${radius} 0 0 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/>`;
+  };
+  const source41FourTriangleCrossSvg = givenAngle => {
+    const triangles = [
+      [[151, 116], [38, 53], [42, 177]],
+      [[177, 91], [112, 20], [260, 28]],
+      [[215, 121], [322, 62], [326, 184]],
+      [[181, 158], [103, 226], [263, 230]]
+    ];
+    const polygons = triangles.map((points, index) => `<polygon data-triangle="${index + 1}" points="${points.map(point => point.join(",")).join(" ")}"/>`).join("");
+    const exteriorMarks = triangles.flatMap((points, triangleIndex) => [
+      source41ExteriorAngleArc(points[1], points[0], points[2], triangleIndex * 2 + 1),
+      source41ExteriorAngleArc(points[2], points[0], points[1], triangleIndex * 2 + 2)
+    ]).join("");
+    return `<svg class="geometry-diagram source41-four-triangle-cross" viewBox="0 0 360 250" data-given-angle="${givenAngle}" data-target-count="8" aria-label="가운데에서 선이 교차하는 네 삼각형과 바깥쪽에 호로 표시한 각 여덟 개">${polygons}<line x1="151" y1="116" x2="215" y2="121"/><line x1="177" y1="91" x2="181" y2="158"/><text class="source41-given-label" x="183" y="128">${givenAngle}°</text>${exteriorMarks}</svg>`;
+  };
   const source41ThreeApexBisectorsSvg = data => {
     const rawLeft = [0, 0];
     const rawRight = [280, 0];
@@ -905,7 +977,15 @@
     if (!rawFirst || !rawMiddle || !rawThird) throw new Error("세 삼각형의 꼭짓점을 만들지 못했습니다.");
     const [left, right, first, middle, third] = source41FitPoints([rawLeft, rawRight, rawFirst, rawMiddle, rawThird], 360, 250, 34);
     const marks = `${source41BisectorMarks(left, first, middle, third, "left")}${source41BisectorMarks(right, first, middle, third, "right")}`;
-    return `<svg class="geometry-diagram source41-three-apex" viewBox="0 0 360 250" data-apex-angles="${data.firstApex},${data.thirdApex}" data-left-base-angles="${data.firstLeft},${middleLeft},${data.thirdLeft}" data-right-base-angles="${data.firstRight},${middleRight},${data.thirdRight}" aria-label="두 밑 꼭짓점의 각을 반으로 나눈 세 삼각형"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/>${[first, middle, third].map((point, index) => `<g data-triangle-index="${index}"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${point[0].toFixed(1)}" y2="${point[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${point[0].toFixed(1)}" y2="${point[1].toFixed(1)}"/></g>`).join("")}${marks}<text class="source41-given-label" x="${first[0].toFixed(1)}" y="${(first[1] + 18).toFixed(1)}">${data.firstApex}°</text><text class="source41-target-label" x="${middle[0].toFixed(1)}" y="${(middle[1] + 19).toFixed(1)}">㉠</text><text class="source41-given-label" x="${third[0].toFixed(1)}" y="${(third[1] + 18).toFixed(1)}">${data.thirdApex}°</text></svg>`;
+    const firstSector = source41SmallerSector(first, left, right);
+    const middleSector = source41SmallerSector(middle, left, right);
+    const thirdSector = source41SmallerSector(third, left, right);
+    const readableRadius = (sector, minimum) => Math.min(76, Math.max(minimum, 18 / Math.max(0.2, Math.sin(sector.span * Math.PI / 360))));
+    const firstLabel = source41SectorPoint(first, firstSector, readableRadius(firstSector, 52));
+    const middleLabel = source41SectorPoint(middle, middleSector, readableRadius(middleSector, 42));
+    const thirdLabel = source41SectorPoint(third, thirdSector, readableRadius(thirdSector, 52));
+    const apexArcs = `${source41SectorArcMarkup(first, firstSector, 18, "source41-three-apex-angle is-given", 'data-angle-role="first"')}${source41SectorArcMarkup(middle, middleSector, 16, "source41-three-apex-angle is-target", 'data-angle-role="middle"')}${source41SectorArcMarkup(third, thirdSector, 18, "source41-three-apex-angle is-given", 'data-angle-role="third"')}`;
+    return `<svg class="geometry-diagram source41-three-apex" viewBox="0 0 360 250" data-apex-angles="${data.firstApex},${data.thirdApex}" data-left-base-angles="${data.firstLeft},${middleLeft},${data.thirdLeft}" data-right-base-angles="${data.firstRight},${middleRight},${data.thirdRight}" aria-label="두 밑 꼭짓점의 각을 반으로 나눈 세 삼각형"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/>${[first, middle, third].map((point, index) => `<g data-triangle-index="${index}"><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${point[0].toFixed(1)}" y2="${point[1].toFixed(1)}"/><line x1="${right[0].toFixed(1)}" y1="${right[1].toFixed(1)}" x2="${point[0].toFixed(1)}" y2="${point[1].toFixed(1)}"/></g>`).join("")}${marks}${apexArcs}<text class="source41-given-label" data-layout-role="given-angle" x="${firstLabel[0].toFixed(1)}" y="${firstLabel[1].toFixed(1)}">${data.firstApex}°</text><text class="source41-target-label" data-layout-role="target-angle" x="${middleLabel[0].toFixed(1)}" y="${middleLabel[1].toFixed(1)}">㉠</text><text class="source41-given-label" data-layout-role="given-angle" x="${thirdLabel[0].toFixed(1)}" y="${thirdLabel[1].toFixed(1)}">${data.thirdApex}°</text></svg>`;
   };
   const source41OverlappingTrianglesSvg = (data, layout = "example") => {
     const rawLeft = [0, 0];
@@ -915,7 +995,22 @@
     const rawTopLeft = source41LineIntersection(rawRight, 180 - data.rightBase, rawCenter, 180 - data.topLeft - data.rightBase);
     if (!rawTopRight || !rawTopLeft) throw new Error("겹친 두 삼각형의 꼭짓점을 만들지 못했습니다.");
     const [left, center, right, topRight, topLeft] = source41FitPoints([rawLeft, rawCenter, rawRight, rawTopRight, rawTopLeft], 360, 250, 34);
-    return `<svg class="geometry-diagram source41-overlap-triangles is-${layout}" viewBox="0 0 360 250" data-given-angles="${data.leftBase},${data.topRight},${data.topLeft},${data.rightBase}" data-target-angle="${data.answerNumber}" aria-label="밑변의 한 점에서 겹친 두 삼각형"><polygon data-triangle="1" points="${source41PointsText([left, topRight, center])}"/><polygon data-triangle="2" points="${source41PointsText([center, topLeft, right])}"/><text class="source41-given-label" x="${(left[0] + 18).toFixed(1)}" y="${(left[1] - 10).toFixed(1)}">${data.leftBase}°</text><text class="source41-given-label" x="${topRight[0].toFixed(1)}" y="${(topRight[1] + 18).toFixed(1)}">${data.topRight}°</text><text class="source41-given-label" x="${topLeft[0].toFixed(1)}" y="${(topLeft[1] + 18).toFixed(1)}">${data.topLeft}°</text><text class="source41-given-label" x="${(right[0] - 18).toFixed(1)}" y="${(right[1] - 10).toFixed(1)}">${data.rightBase}°</text><text class="source41-target-label" x="${center[0].toFixed(1)}" y="${(center[1] - 22).toFixed(1)}">㉠</text></svg>`;
+    const firstCenter = [(left[0] + topRight[0] + center[0]) / 3, (left[1] + topRight[1] + center[1]) / 3];
+    const secondCenter = [(center[0] + topLeft[0] + right[0]) / 3, (center[1] + topLeft[1] + right[1]) / 3];
+    const outsideLabel = (vertex, triangleCenter, radius = 28) => {
+      const dx = vertex[0] - triangleCenter[0];
+      const dy = vertex[1] - triangleCenter[1];
+      const length = Math.hypot(dx, dy) || 1;
+      return [vertex[0] + dx / length * radius, vertex[1] + dy / length * radius];
+    };
+    const leftLabel = outsideLabel(left, firstCenter);
+    const topRightLabel = outsideLabel(topRight, firstCenter);
+    const topLeftLabel = outsideLabel(topLeft, secondCenter);
+    const rightLabel = outsideLabel(right, secondCenter);
+    const targetSector = source41SmallerSector(center, topRight, topLeft);
+    const targetLabel = source41SectorPoint(center, targetSector, 34);
+    const angleArcs = `${source41SectorArcMarkup(left, source41SmallerSector(left, topRight, center), 16, "source41-overlap-angle is-given")}${source41SectorArcMarkup(topRight, source41SmallerSector(topRight, left, center), 16, "source41-overlap-angle is-given")}${source41SectorArcMarkup(topLeft, source41SmallerSector(topLeft, center, right), 16, "source41-overlap-angle is-given")}${source41SectorArcMarkup(right, source41SmallerSector(right, center, topLeft), 16, "source41-overlap-angle is-given")}${source41SectorArcMarkup(center, targetSector, 18, "source41-overlap-angle is-target")}`;
+    return `<svg class="geometry-diagram source41-overlap-triangles is-${layout}" viewBox="0 0 360 250" data-given-angles="${data.leftBase},${data.topRight},${data.topLeft},${data.rightBase}" data-target-angle="${data.answerNumber}" aria-label="밑변의 한 점에서 겹친 두 삼각형"><polygon data-triangle="1" points="${source41PointsText([left, topRight, center])}"/><polygon data-triangle="2" points="${source41PointsText([center, topLeft, right])}"/>${angleArcs}<text class="source41-given-label" data-layout-role="given-angle" x="${leftLabel[0].toFixed(1)}" y="${leftLabel[1].toFixed(1)}">${data.leftBase}°</text><text class="source41-given-label" data-layout-role="given-angle" x="${topRightLabel[0].toFixed(1)}" y="${topRightLabel[1].toFixed(1)}">${data.topRight}°</text><text class="source41-given-label" data-layout-role="given-angle" x="${topLeftLabel[0].toFixed(1)}" y="${topLeftLabel[1].toFixed(1)}">${data.topLeft}°</text><text class="source41-given-label" data-layout-role="given-angle" x="${rightLabel[0].toFixed(1)}" y="${rightLabel[1].toFixed(1)}">${data.rightBase}°</text><text class="source41-target-label" data-layout-role="target-angle" x="${targetLabel[0].toFixed(1)}" y="${targetLabel[1].toFixed(1)}">㉠</text></svg>`;
   };
   const source41ExteriorSumSvg = (sideCount, rotation = 90) => {
     const center = [180, 125];
@@ -996,7 +1091,25 @@
     const { rawLeft, rawBase, rawRight, rawApex, rawTarget, rawUpper } = geometry;
     const [left, base, right, apex, target, upper] = source41FitPoints([rawLeft, rawBase, rawRight, rawApex, rawTarget, rawUpper], 380, 260, 34);
     const marks = `${source41BisectorMarks(apex, base, target, right, "apex")}${source41BisectorMarks(left, right, target, upper, "left")}`;
-    return `<svg class="geometry-diagram source41-bisected-apex" viewBox="0 0 380 260" data-right-base="${data.rightBase}" data-left-small="${data.leftSmall}" data-half-apex="${data.halfApex}" data-first-target="${data.firstTarget}" data-second-target="${data.secondTarget}" data-difference="${data.answerNumber}" data-bisector-positions="${geometry.targetPosition.toFixed(3)},${geometry.upperPosition.toFixed(3)}" aria-label="꼭짓각을 반으로 나눈 선과 왼쪽 두 보조선"><polygon points="${source41PointsText([base, apex, right])}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/><line x1="${apex[0].toFixed(1)}" y1="${apex[1].toFixed(1)}" x2="${target[0].toFixed(1)}" y2="${target[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${target[0].toFixed(1)}" y2="${target[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${upper[0].toFixed(1)}" y2="${upper[1].toFixed(1)}"/>${marks}<text class="source41-given-label" x="${(left[0] + 30).toFixed(1)}" y="${(left[1] - 7).toFixed(1)}">${data.leftSmall}°</text><text class="source41-given-label" x="${(left[0] + 40).toFixed(1)}" y="${(left[1] - 25).toFixed(1)}">${data.leftSmall}°</text><text class="source41-given-label" x="${(right[0] - 22).toFixed(1)}" y="${(right[1] - 12).toFixed(1)}">${data.rightBase}°</text><text class="source41-target-label" x="${(target[0] - 20).toFixed(1)}" y="${(target[1] - 4).toFixed(1)}">㉠</text><text class="source41-target-label" x="${(apex[0] + 20).toFixed(1)}" y="${(apex[1] + 18).toFixed(1)}">㉡</text></svg>`;
+    const lowerLeftSector = source41SmallerSector(left, right, target);
+    const upperLeftSector = source41SmallerSector(left, target, upper);
+    const rightSector = source41SmallerSector(right, base, apex);
+    const firstTargetSector = source41SmallerSector(target, left, apex);
+    const secondTargetSector = source41SmallerSector(apex, base, target);
+    const lowerRayDirection = source41DirectionFrom(left, right);
+    const upperRayDirection = source41DirectionFrom(left, upper);
+    const lowerLabelBase = source41PointAtAngle(left[0], left[1], 68, lowerRayDirection);
+    const upperLabelBase = source41PointAtAngle(left[0], left[1], 72, upperRayDirection);
+    const lowerLeftLabel = source41PointAtAngle(lowerLabelBase[0], lowerLabelBase[1], 18, lowerRayDirection - 90);
+    const upperLeftLabel = source41PointAtAngle(upperLabelBase[0], upperLabelBase[1], 18, upperRayDirection + 90);
+    const rightLabel = source41SectorPoint(right, rightSector, 40);
+    const firstTargetLabel = source41SectorPoint(target, firstTargetSector, 36);
+    const triangleCenter = [(base[0] + apex[0] + right[0]) / 3, (base[1] + apex[1] + right[1]) / 3];
+    const outsideApexVector = [apex[0] - triangleCenter[0], apex[1] - triangleCenter[1]];
+    const outsideApexLength = Math.hypot(outsideApexVector[0], outsideApexVector[1]) || 1;
+    const secondTargetLabel = [apex[0] + outsideApexVector[0] / outsideApexLength * 27, apex[1] + outsideApexVector[1] / outsideApexLength * 27];
+    const angleArcs = `${source41SectorArcMarkup(left, lowerLeftSector, 20, "source41-bisected-apex-angle is-given", 'data-angle-role="left-lower"')}${source41SectorArcMarkup(left, upperLeftSector, 28, "source41-bisected-apex-angle is-given", 'data-angle-role="left-upper"')}${source41SectorArcMarkup(right, rightSector, 18, "source41-bisected-apex-angle is-given", 'data-angle-role="right-base"')}${source41SectorArcMarkup(target, firstTargetSector, 18, "source41-bisected-apex-angle is-target", 'data-angle-role="first-target"')}${source41SectorArcMarkup(apex, secondTargetSector, 17, "source41-bisected-apex-angle is-target", 'data-angle-role="second-target"')}`;
+    return `<svg class="geometry-diagram source41-bisected-apex" viewBox="0 0 380 260" data-right-base="${data.rightBase}" data-left-small="${data.leftSmall}" data-half-apex="${data.halfApex}" data-first-target="${data.firstTarget}" data-second-target="${data.secondTarget}" data-difference="${data.answerNumber}" data-bisector-positions="${geometry.targetPosition.toFixed(3)},${geometry.upperPosition.toFixed(3)}" aria-label="꼭짓각을 반으로 나눈 선과 왼쪽 두 보조선"><polygon points="${source41PointsText([base, apex, right])}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/><line x1="${apex[0].toFixed(1)}" y1="${apex[1].toFixed(1)}" x2="${target[0].toFixed(1)}" y2="${target[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${target[0].toFixed(1)}" y2="${target[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${upper[0].toFixed(1)}" y2="${upper[1].toFixed(1)}"/>${marks}${angleArcs}<text class="source41-given-label" data-layout-role="given-angle" x="${lowerLeftLabel[0].toFixed(1)}" y="${lowerLeftLabel[1].toFixed(1)}">${data.leftSmall}°</text><text class="source41-given-label" data-layout-role="given-angle" x="${upperLeftLabel[0].toFixed(1)}" y="${upperLeftLabel[1].toFixed(1)}">${data.leftSmall}°</text><text class="source41-given-label" data-layout-role="given-angle" x="${rightLabel[0].toFixed(1)}" y="${rightLabel[1].toFixed(1)}">${data.rightBase}°</text><text class="source41-target-label" data-layout-role="target-angle" x="${firstTargetLabel[0].toFixed(1)}" y="${firstTargetLabel[1].toFixed(1)}">㉠</text><text class="source41-target-label" data-layout-role="target-angle" x="${secondTargetLabel[0].toFixed(1)}" y="${secondTargetLabel[1].toFixed(1)}">㉡</text></svg>`;
   };
   const source41ClosedStarPath = tipAngles => {
     const directions = [0];
@@ -1055,13 +1168,44 @@
     const [first, second, third, fourth, fifth, cross] = source41FitPoints([...canonicalPoints, canonicalCross], 380, 260, 38);
     const points = [first, second, third, fourth, fifth];
     const center = [points.reduce((sum, point) => sum + point[0], 0) / 5, points.reduce((sum, point) => sum + point[1], 0) / 5];
-    const labelPoint = (index, amount = 0.17) => [points[index][0] * (1 - amount) + center[0] * amount, points[index][1] * (1 - amount) + center[1] * amount];
-    const targetOne = labelPoint(0);
-    const targetTwo = labelPoint(4);
+    const labelPoint = (index, amount) => [points[index][0] * (1 - amount) + center[0] * amount, points[index][1] * (1 - amount) + center[1] * amount];
+    const tipSector = index => {
+      const vertex = points[index];
+      const previous = points[(index + points.length - 1) % points.length];
+      const next = points[(index + 1) % points.length];
+      const previousDirection = source41DirectionFrom(vertex, previous);
+      const nextDirection = source41DirectionFrom(vertex, next);
+      const forwardSpan = source41PositiveAngleSpan(previousDirection, nextDirection);
+      return forwardSpan <= 180
+        ? { start: previousDirection, span: forwardSpan }
+        : { start: nextDirection, span: 360 - forwardSpan };
+    };
+    const arcMarkup = (origin, sector, radius, className, attributes) => {
+      const start = source41PointAtAngle(origin[0], origin[1], radius, sector.start);
+      const end = source41PointAtAngle(origin[0], origin[1], radius, sector.start + sector.span);
+      return `<path class="${className}" ${attributes} d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${radius} ${radius} 0 ${sector.span > 180 ? 1 : 0} 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/>`;
+    };
+    const targetOneSector = tipSector(0);
+    const targetTwoSector = tipSector(4);
+    const targetOne = source41PointAtAngle(points[0][0], points[0][1], 36, targetOneSector.start + targetOneSector.span / 2);
+    const targetTwo = source41PointAtAngle(points[4][0], points[4][1], 36, targetTwoSector.start + targetTwoSector.span / 2);
     const given = labelPoint(3, -0.11);
-    const crossLabel = [cross[0], cross[1] + 25];
+    const crossDirections = [points[0], points[1], points[2], points[3]]
+      .map(point => source41DirectionFrom(cross, point))
+      .sort((left, right) => left - right);
+    const crossSectors = crossDirections.map((start, index) => ({
+      start,
+      span: source41PositiveAngleSpan(start, crossDirections[(index + 1) % crossDirections.length])
+    }));
+    const outsideSectors = crossSectors.filter(sector => Math.abs(sector.span - data.outsideAngle) < 0.5);
+    const outsideSector = (outsideSectors.length ? outsideSectors : crossSectors)
+      .map(sector => ({ sector, point: source41PointAtAngle(cross[0], cross[1], 40, sector.start + sector.span / 2) }))
+      .sort((left, right) => right.point[1] - left.point[1])[0];
+    const crossLabel = outsideSector.point;
     const labelGap = source41Distance(given, crossLabel);
-    return `<svg class="geometry-diagram source41-star-relation" viewBox="0 0 380 260" data-tip-angles="${data.tipAngles.join(",")}" data-outside-angle="${data.outsideAngle}" data-target-sum="${data.answerNumber}" data-label-gap="${labelGap.toFixed(1)}" aria-label="교차각과 꼭짓각이 표시된 오각별"><polygon points="${source41PointsText(points)}"/><text class="source41-target-label" data-target-index="1" x="${targetOne[0].toFixed(1)}" y="${targetOne[1].toFixed(1)}">㉠</text><text class="source41-target-label" data-target-index="2" x="${targetTwo[0].toFixed(1)}" y="${targetTwo[1].toFixed(1)}">㉡</text><text class="source41-given-label source41-star-tip-given" x="${given[0].toFixed(1)}" y="${given[1].toFixed(1)}">${data.givenTip}°</text><text class="source41-given-label source41-star-cross-given" x="${crossLabel[0].toFixed(1)}" y="${crossLabel[1].toFixed(1)}">${data.outsideAngle}°</text></svg>`;
+    const targetArcs = `${arcMarkup(points[0], targetOneSector, 18, "source41-star-angle-arc is-target", 'data-target-index="1"')}${arcMarkup(points[4], targetTwoSector, 18, "source41-star-angle-arc is-target", 'data-target-index="2"')}`;
+    const crossArc = arcMarkup(cross, outsideSector.sector, 19, "source41-star-angle-arc is-given", 'data-angle-role="outside"');
+    return `<svg class="geometry-diagram source41-star-relation" viewBox="0 0 380 260" data-tip-angles="${data.tipAngles.join(",")}" data-outside-angle="${data.outsideAngle}" data-target-sum="${data.answerNumber}" data-label-gap="${labelGap.toFixed(1)}" aria-label="교차각과 꼭짓각이 표시된 오각별"><polygon points="${source41PointsText(points)}"/>${targetArcs}${crossArc}<text class="source41-target-label" data-target-index="1" data-layout-role="target-angle" x="${targetOne[0].toFixed(1)}" y="${targetOne[1].toFixed(1)}">㉠</text><text class="source41-target-label" data-target-index="2" data-layout-role="target-angle" x="${targetTwo[0].toFixed(1)}" y="${targetTwo[1].toFixed(1)}">㉡</text><text class="source41-given-label source41-star-tip-given" x="${given[0].toFixed(1)}" y="${given[1].toFixed(1)}">${data.givenTip}°</text><text class="source41-given-label source41-star-cross-given" data-layout-role="given-angle" x="${crossLabel[0].toFixed(1)}" y="${crossLabel[1].toFixed(1)}">${data.outsideAngle}°</text></svg>`;
   };
   const source41AngleFiveNormalize = angle => ((angle % 360) + 360) % 360;
   const source41AngleFivePoint = (origin, angle, radius) => source41PointAtAngle(origin[0], origin[1], radius, source41AngleFiveNormalize(angle));
@@ -1177,14 +1321,17 @@
     const turnedBase = source41AngleFivePoint(origin, data.rotation, baseLength);
     const turnedTop = source41AngleFivePoint(origin, data.pivotAngle + data.rotation, hypotenuse);
     const rays = [0, data.rotation, data.pivotAngle, data.pivotAngle + data.rotation];
+    const topLabelAngle = source41AngleFiveNormalize(70 - data.a / 2);
+    const topLabelRadius = 42;
     const labels = [
-      source41AngleFiveLabel({ origin: originalTop, start: 180 + data.pivotAngle, sector: data.a, radius: 26, text: `${data.a}°`, role: "top-acute" }),
-      source41AngleFiveLabel({ origin, start: 0, sector: data.rotation, radius: 42, text: `${data.rotation}°`, role: "rotation" }),
+      { point: source41AngleFivePoint(originalTop, topLabelAngle, topLabelRadius), text: `${data.a}°`, className: "source41-given-label", role: "top-acute", angle: topLabelAngle, radius: topLabelRadius, attributes: 'data-label-placement="outside-apex"' },
+      source41AngleFiveLabel({ origin, start: 0, sector: data.rotation, radius: 126, text: `${data.rotation}°`, role: "rotation", attributes: 'data-label-placement="outside-rotation"' }),
       source41AngleFiveLabel({ origin, start: 0, sector: data.answerNumber, radius: 118, text: "㉠", className: "source41-target-label", role: "target" })
     ];
-    const arcEnd = source41AngleFivePoint(origin, data.rotation, 54);
-    const arcStart = source41AngleFivePoint(origin, 0, 54);
-    const body = `${source41AngleFiveArrowDefinition()}<polygon data-shape="before" points="${source41PointsText([origin, originalBase, originalTop])}"/><polygon class="source41-turned-shape" data-shape="after" points="${source41PointsText([origin, turnedBase, turnedTop])}"/>${source41AngleFiveRay(origin, 0, baseLength, "original-base", "", 0)}${source41AngleFiveRay(origin, data.pivotAngle, hypotenuse, "original-hypotenuse", "", 2)}${source41AngleFiveRay(origin, data.rotation, baseLength, "turned-base", "source41-reflected-line", 1)}${source41AngleFiveRay(origin, data.pivotAngle + data.rotation, hypotenuse, "turned-hypotenuse", "source41-reflected-line", 3)}${source41AngleFiveRightMark(originalBase, 180, 90)}${source41AngleFiveSectorArc(originalTop, 180 + data.pivotAngle, data.a, 20, "top-acute")}${source41AngleFiveSectorArc(origin, 0, data.rotation, 32, "rotation")}${source41AngleFiveSectorArc(origin, 0, data.answerNumber, 70, "target", true)}<path class="source41-rotation-arrow" data-rotation-arrow="true" d="M${source41AngleFivePointText(arcStart)} A54 54 0 0 0 ${source41AngleFivePointText(arcEnd)}"/>`;
+    const rotationArrowRadius = 92;
+    const arcEnd = source41AngleFivePoint(origin, data.rotation, rotationArrowRadius);
+    const arcStart = source41AngleFivePoint(origin, 0, rotationArrowRadius);
+    const body = `${source41AngleFiveArrowDefinition()}<polygon data-shape="before" points="${source41PointsText([origin, originalBase, originalTop])}"/><polygon class="source41-turned-shape" data-shape="after" points="${source41PointsText([origin, turnedBase, turnedTop])}"/>${source41AngleFiveRay(origin, 0, baseLength, "original-base", "", 0)}${source41AngleFiveRay(origin, data.pivotAngle, hypotenuse, "original-hypotenuse", "", 2)}${source41AngleFiveRay(origin, data.rotation, baseLength, "turned-base", "source41-reflected-line", 1)}${source41AngleFiveRay(origin, data.pivotAngle + data.rotation, hypotenuse, "turned-hypotenuse", "source41-reflected-line", 3)}${source41AngleFiveRightMark(originalBase, 180, 90)}${source41AngleFiveSectorArc(originalTop, 180 + data.pivotAngle, data.a, 20, "top-acute")}${source41AngleFiveSectorArc(origin, 0, data.rotation, 32, "rotation")}${source41AngleFiveSectorArc(origin, 0, data.answerNumber, 70, "target", true)}<path class="source41-rotation-arrow" data-rotation-arrow="true" data-rotation-radius="${rotationArrowRadius}" d="M${source41AngleFivePointText(arcStart)} A${rotationArrowRadius} ${rotationArrowRadius} 0 0 0 ${source41AngleFivePointText(arcEnd)}"/>`;
     return source41AngleFiveRoot({ variant: 2, origin, rays, sectors: [data.a, data.rotation, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-top-acute="${data.a}" data-rotation="${data.rotation}" data-pivot-angle="${data.pivotAngle}"`, body, aria: "직각삼각형을 실제 각만큼 돌린 그림" });
   };
   const source41AngleFiveFoldedTriangleSvg = data => {
@@ -1211,7 +1358,7 @@
     const labels = [
       source41AngleFiveLabel({ origin: pOrigin, start: 360 - data.first, sector: data.p, radius: pArcRadius + 12, text: `${data.p}°`, role: "p-given", attributes: 'data-label-origin="p"' }),
       source41AngleFiveLabel({ origin: cOrigin, start: 0, sector: data.c, radius: 23, text: `${data.c}°`, role: "c-given", attributes: 'data-label-origin="c"' }),
-      source41AngleFiveLabel({ origin, start: triangleRay, sector: data.first, radius: 38, text: "㉠", className: "source41-target-label", role: "first" }),
+      source41AngleFiveLabel({ origin, start: triangleRay, sector: data.first, radius: 185, text: "㉠", className: "source41-target-label", role: "first", attributes: 'data-label-placement="outside-reflected-piece"' }),
       source41AngleFiveLabel({ origin, start: triangleRay, sector: data.second, radius: 64, text: "㉡", className: "source41-target-label", role: "second" })
     ];
     const body = `<polygon data-source-shape="original-fold-triangle" points="${source41PointsText([origin, cOrigin, pOrigin])}"/><polygon class="source41-turned-shape" data-source-shape="reflected-fold-triangle" points="${source41PointsText([origin, reflectedC, reflectedP])}"/>${source41AngleFiveRay(origin, 0, baseLength, "original-base", "", 0)}${source41AngleFiveRay(origin, triangleRay, sideLength, "original-triangle-side", "", 1, "main", 'data-reflection-pair="one" data-reflection-role="original"')}${source41AngleFiveRay(origin, creaseAngle, 174, "fold-axis", "source41-fold-line", 2, "main", 'data-fold-axis="vertical" data-reflection-axis="90" data-reflection-pair="one" data-reflection-role="crease"')}${source41AngleFiveRay(origin, reflectedRay, sideLength, "reflected-triangle-side", "source41-reflected-line", 3, "main", 'data-reflection-pair="one" data-reflection-role="reflected"')}${source41AngleFiveRay(origin, 180, baseLength, "base-extension", "source41-extension-line", 4)}${source41AngleFiveRay(cOrigin, 0, exteriorLength, "c-angle-extension", "source41-extension-line", 5, "helper")}${source41AngleFiveSectorArc(pOrigin, 360 - data.first, data.p, pArcRadius, "p-given")}${source41AngleFiveSectorArc(cOrigin, 0, data.c, 18, "c-given")}${source41AngleFiveSectorArc(origin, triangleRay, data.first, 31, "first", true)}${source41AngleFiveSectorArc(origin, triangleRay, data.second, 56, "second", true)}${source41AngleFiveEqualMark(origin, triangleRay, halfSecond, 44, 1)}${source41AngleFiveEqualMark(origin, creaseAngle, halfSecond, 44, 2)}${source41AngleFiveFoldTick(origin, creaseAngle, 68, 1)}`;
@@ -1258,10 +1405,11 @@
     const targetPoint = source41AngleFivePoint(origin, targetRay, 100);
     const topFoot = [topPoint[0], origin[1]];
     const targetFoot = [targetPoint[0], origin[1]];
+    const narrowLabelRadius = 142;
     const labels = [
-      source41AngleFiveLabel({ origin, start: data.e, sector: data.a, radius: 68, text: `${data.a}°`, role: "a" }),
-      source41AngleFiveLabel({ origin, start: targetRay, sector: data.b, radius: 42, text: `${data.b}°`, role: "b" }),
-      source41AngleFiveLabel({ origin, start: 0, sector: data.e, radius: 32, text: `${data.e}°`, role: "exterior" }),
+      source41AngleFiveLabel({ origin, start: data.e, sector: data.a, radius: 112, text: `${data.a}°`, role: "a" }),
+      source41AngleFiveLabel({ origin, start: targetRay, sector: data.b, radius: narrowLabelRadius, text: `${data.b}°`, role: "b", attributes: 'data-label-placement="outside-narrow-sector"' }),
+      source41AngleFiveLabel({ origin, start: 0, sector: data.e, radius: 45, text: `${data.e}°`, role: "exterior" }),
       source41AngleFiveLabel({ origin, start: 0, sector: targetRay, radius: 97, text: "㉠", className: "source41-target-label", role: "target" })
     ];
     const body = `<polygon data-triangle="one" data-source-shape="top-right-triangle" points="${source41PointsText([origin, topFoot, topPoint])}"/><polygon data-triangle="two" data-source-shape="target-right-triangle" points="${source41PointsText([origin, targetFoot, targetPoint])}"/>${source41AngleFiveRay(origin, 0, 132, "baseline", "", 0)}${source41AngleFiveRay(origin, data.e, 102, "exterior-ray", "", 1)}${source41AngleFiveRay(origin, targetRay, 100, "target-ray", "source41-reflected-line", 2)}${source41AngleFiveRay(origin, topRay, 118, "upper-ray", "", 3)}${source41AngleFiveRay(origin, 180, 132, "straight-extension", "source41-extension-line", 4)}${source41AngleFiveSectorArc(origin, 0, data.e, 28, "exterior")}${source41AngleFiveSectorArc(origin, data.e, data.a, 57, "a")}${source41AngleFiveSectorArc(origin, targetRay, data.b, 34, "b")}${source41AngleFiveSectorArc(origin, topRay, data.intermediate, 48, "intermediate")}${source41AngleFiveSectorArc(origin, 0, targetRay, 85, "target", true)}${source41AngleFiveRightMark(topFoot, 0, 90)}${source41AngleFiveRightMark(targetFoot, 0, 90)}<line data-triangle-connection="top" x1="${topFoot[0].toFixed(1)}" y1="${topFoot[1]}" x2="${topPoint[0].toFixed(1)}" y2="${topPoint[1].toFixed(1)}"/><line data-triangle-connection="target" x1="${targetFoot[0].toFixed(1)}" y1="${targetFoot[1]}" x2="${targetPoint[0].toFixed(1)}" y2="${targetPoint[1].toFixed(1)}"/>`;
@@ -1274,10 +1422,12 @@
     const leftBase = [origin[0] - rise / Math.tan(data.outer * Math.PI / 180), baselineY];
     const rightBase = [origin[0] - rise / Math.tan(data.inner * Math.PI / 180), baselineY];
     const rays = [data.outer, 180 + data.outer, 180 + data.inner];
+    const targetLabelAngle = source41AngleFiveNormalize(180 + data.inner + data.answerNumber * 0.68);
+    const targetLabelRadius = 90;
     const labels = [
-      source41AngleFiveLabel({ origin: leftBase, start: 0, sector: data.outer, radius: 21, text: `${data.outer}°`, role: "outer" }),
+      { point: [Math.max(28, leftBase[0] - 30), baselineY - 15], text: `${data.outer}°`, className: "source41-given-label", role: "outer", angle: 180, radius: 34, attributes: 'data-label-placement="outside-left"' },
       source41AngleFiveLabel({ origin: rightBase, start: 0, sector: data.inner, radius: 57, text: `${data.inner}°`, role: "inner" }),
-      source41AngleFiveLabel({ origin, start: 180 + data.inner, sector: data.answerNumber, radius: 78, text: "㉠", className: "source41-target-label", role: "target" })
+      { point: source41AngleFivePoint(origin, targetLabelAngle, targetLabelRadius), text: "㉠", className: "source41-target-label", role: "target", angle: targetLabelAngle, radius: targetLabelRadius, attributes: 'data-label-placement="outer-sector"' }
     ];
     const body = `<polygon data-source-shape="left-slope-triangle" data-vertex-group="left" points="${source41PointsText([leftBase, [leftBase[0] + 42, baselineY], origin])}"/><polygon data-source-shape="right-slope-triangle" data-vertex-group="right" points="${source41PointsText([rightBase, [rightBase[0] + 36, baselineY], origin])}"/><line data-vertex-group="left" x1="${leftBase[0].toFixed(1)}" y1="${baselineY}" x2="${origin[0]}" y2="${origin[1]}"/><line data-vertex-group="right" x1="${rightBase[0].toFixed(1)}" y1="${baselineY}" x2="${origin[0]}" y2="${origin[1]}"/>${source41AngleFiveRay(origin, data.outer, 82, "left-slope-extension", "source41-extension-line", 0, "main", 'data-vertex-group="left"')}${source41AngleFiveRay(origin, 180 + data.outer, Math.hypot(origin[0] - leftBase[0], rise), "left-sloped-side", "", 1, "main", 'data-vertex-group="left"')}${source41AngleFiveRay(origin, 180 + data.inner, Math.hypot(origin[0] - rightBase[0], rise), "right-sloped-side", "", 2, "main", 'data-vertex-group="right"')}${source41AngleFiveSectorArc(leftBase, 0, data.outer, 22, "outer-given")}${source41AngleFiveSectorArc(rightBase, 0, data.inner, 22, "inner-given")}${source41AngleFiveSectorArc(origin, 180 + data.outer, data.gap, 38, "small-gap")}${source41AngleFiveSectorArc(origin, 180 + data.inner, data.answerNumber, 68, "target", true)}`;
     return source41AngleFiveRoot({ variant: 6, origin, rays, sectors: [data.outer, data.inner, data.gap, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-outer-angle="${data.outer}" data-inner-angle="${data.inner}" data-small-gap="${data.gap}"`, body, aria: "서로 다른 두 삼각형의 비스듬한 변과 연장선의 큰 바깥각" });
@@ -1290,7 +1440,7 @@
     const turned = source41AngleFivePoint(origin, data.answerNumber, 112);
     const labels = [
       source41AngleFiveLabel({ origin, start: data.answerNumber, sector: data.shown, radius: 49, text: `${data.shown}°`, role: "shown" }),
-      source41AngleFiveLabel({ origin, start: 0, sector: data.answerNumber, radius: 80, text: "㉠", className: "source41-target-label", role: "target" })
+      source41AngleFiveLabel({ origin, start: 0, sector: data.answerNumber, radius: 96, text: "㉠", className: "source41-target-label", role: "target" })
     ];
     const body = `${source41AngleFiveArrowDefinition()}<polygon data-shape="right-triangle" points="${source41PointsText([origin, base, top])}"/><line class="source41-reflected-line" data-ray-role="turned-side" data-ray-group="main" data-ray-index="1" data-ray-angle="${data.answerNumber.toFixed(3)}" x1="${origin[0]}" y1="${origin[1]}" x2="${turned[0].toFixed(1)}" y2="${turned[1].toFixed(1)}"/>${source41AngleFiveRay(origin, 0, 112, "base", "", 0)}${source41AngleFiveRay(origin, 90, 112, "upright", "", 2)}${source41AngleFiveSectorArc(origin, 0, data.answerNumber, 68, "target", true)}${source41AngleFiveSectorArc(origin, data.answerNumber, data.shown, 38, "shown")}${source41AngleFiveRightMark(origin, 0, 90)}<path class="source41-rotation-arrow" data-rotation-arrow="true" d="M${source41AngleFivePointText(source41AngleFivePoint(origin, 0, 102))} A102 102 0 0 0 ${source41AngleFivePointText(source41AngleFivePoint(origin, data.answerNumber, 102))}"/>`;
     return source41AngleFiveRoot({ variant: 7, origin, rays, sectors: [data.answerNumber, data.shown], targetAngle: data.answerNumber, labels, attributes: `data-shown-angle="${data.shown}" data-right-angle="90"`, body, aria: "직각삼각형 안에서 실제로 돌린 변" });
@@ -1366,18 +1516,20 @@
   const source41AngleSixClockSvg = ({ hour = 0, minute = 0, rotation = 0, numerals = true, showHour = true, showMinute = true, angleLabel = null, labelDirection = "hour-to-minute", state = "time" }) => {
     const data = source41AngleSixTimeData(hour, minute);
     const center = [110, 110];
-    const hourTip = source41AngleSixPoint(data.hourAngle, 48, rotation, center);
-    const minuteTip = source41AngleSixPoint(data.minuteAngle, 72, rotation, center);
+    const hourHandLength = 40;
+    const minuteHandLength = 49;
+    const hourTip = source41AngleSixPoint(data.hourAngle, hourHandLength, rotation, center);
+    const minuteTip = source41AngleSixPoint(data.minuteAngle, minuteHandLength, rotation, center);
     const ticks = Array.from({ length: 60 }, (_, index) => {
       const major = index % 5 === 0;
-      const outer = source41AngleSixPoint(index * 6, 87, 0, center);
-      const inner = source41AngleSixPoint(index * 6, major ? 77 : 82, 0, center);
+      const outer = source41AngleSixPoint(index * 6, 88, 0, center);
+      const inner = source41AngleSixPoint(index * 6, major ? 80 : 84, 0, center);
       return `<line class="source41-clock-tick${major ? " is-major" : ""}" data-tick-index="${index}" x1="${inner[0].toFixed(1)}" y1="${inner[1].toFixed(1)}" x2="${outer[0].toFixed(1)}" y2="${outer[1].toFixed(1)}"/>`;
     }).join("");
     const numbers = numerals ? Array.from({ length: 12 }, (_, index) => {
       const value = index + 1;
-      const point = source41AngleSixPoint(value * 30, 66, 0, center);
-      return `<text class="source41-clock-number" data-clock-number="${value}" x="${point[0].toFixed(1)}" y="${point[1].toFixed(1)}">${value}</text>`;
+      const point = source41AngleSixPoint(value * 30, 64, 0, center);
+      return `<text class="source41-clock-number" data-layout-role="clock-number" data-clock-number="${value}" x="${point[0].toFixed(1)}" y="${point[1].toFixed(1)}">${value}</text>`;
     }).join("") : "";
     const directed = labelDirection === "minute-to-hour" ? source41AngleSixNormalize(data.hourAngle - data.minuteAngle) : data.directedAngle;
     const arcStart = labelDirection === "minute-to-hour" ? data.minuteAngle : data.hourAngle;
@@ -1385,9 +1537,9 @@
     const arcRadius = 31;
     const startPoint = source41AngleSixPoint(arcStart, arcRadius, rotation, center);
     const endPoint = source41AngleSixPoint(arcEnd, arcRadius, rotation, center);
-    const labelPoint = source41AngleSixPoint(arcStart + directed / 2, 43, rotation, center);
-    const angleMarkup = angleLabel === null ? "" : `<path class="source41-clock-angle" data-angle-direction="${labelDirection}" data-angle-value="${directed}" d="M${startPoint[0].toFixed(1)},${startPoint[1].toFixed(1)} A${arcRadius},${arcRadius} 0 ${directed > 180 ? 1 : 0} 1 ${endPoint[0].toFixed(1)},${endPoint[1].toFixed(1)}"/><text class="source41-clock-angle-label" data-angle-label="${angleLabel}" x="${labelPoint[0].toFixed(1)}" y="${labelPoint[1].toFixed(1)}">${angleLabel}°</text>`;
-    const hands = `${showHour ? `<line class="hour-hand" data-hand="hour" data-clock-angle="${data.hourAngle}" data-hand-length="48" x1="${center[0]}" y1="${center[1]}" x2="${hourTip[0].toFixed(1)}" y2="${hourTip[1].toFixed(1)}"/>` : ""}${showMinute ? `<line class="minute-hand" data-hand="minute" data-clock-angle="${data.minuteAngle}" data-hand-length="72" x1="${center[0]}" y1="${center[1]}" x2="${minuteTip[0].toFixed(1)}" y2="${minuteTip[1].toFixed(1)}"/>` : ""}`;
+    const labelPoint = source41AngleSixPoint(arcStart + directed / 2, 56, rotation, center);
+    const angleMarkup = angleLabel === null ? "" : `<path class="source41-clock-angle" data-layout-role="angle-arc" data-angle-direction="${labelDirection}" data-angle-value="${directed}" d="M${startPoint[0].toFixed(1)},${startPoint[1].toFixed(1)} A${arcRadius},${arcRadius} 0 ${directed > 180 ? 1 : 0} 1 ${endPoint[0].toFixed(1)},${endPoint[1].toFixed(1)}"/><text class="source41-clock-angle-label" data-layout-role="angle-label" data-angle-label="${angleLabel}" x="${labelPoint[0].toFixed(1)}" y="${labelPoint[1].toFixed(1)}">${angleLabel}°</text>`;
+    const hands = `${showHour ? `<line class="hour-hand" data-layout-role="clock-hand" data-hand="hour" data-clock-angle="${data.hourAngle}" data-hand-length="${hourHandLength}" x1="${center[0]}" y1="${center[1]}" x2="${hourTip[0].toFixed(1)}" y2="${hourTip[1].toFixed(1)}"/>` : ""}${showMinute ? `<line class="minute-hand" data-layout-role="clock-hand" data-hand="minute" data-clock-angle="${data.minuteAngle}" data-hand-length="${minuteHandLength}" x1="${center[0]}" y1="${center[1]}" x2="${minuteTip[0].toFixed(1)}" y2="${minuteTip[1].toFixed(1)}"/>` : ""}`;
     return `<svg class="geometry-diagram source41-clock${numerals ? " is-numbered" : " is-numberless"}" viewBox="0 0 220 220" data-clock-state="${state}" data-hour="${data.hour}" data-minute="${minute}" data-hour-angle="${data.hourAngle}" data-minute-angle="${data.minuteAngle}" data-small-angle="${data.smallAngle}" data-directed-angle="${data.directedAngle}" data-clock-rotation="${rotation}" data-numerals="${numerals}" aria-label="${numerals ? "숫자와 눈금이 있는" : "숫자와 12의 위치를 알 수 없는"} 시계"><circle class="source41-clock-face" cx="110" cy="110" r="90"/>${ticks}${numbers}${angleMarkup}${hands}<circle class="source41-clock-center" cx="110" cy="110" r="4"/></svg>`;
   };
   const source41AngleSixClockGrid = items => `<div class="source41-clock-grid">${items.map((item, index) => `<figure data-clock-item="${index + 1}">${source41AngleSixClockSvg(item)}<figcaption>${item.caption || source41AngleSixFormatTime(item.hour, item.minute)}</figcaption></figure>`).join("")}</div>`;
@@ -7178,7 +7330,7 @@
           rightPairs: [[0, 90]],
           arcs: [
             { from: upLeft, to: 180, label: `${leftGiven}°`, radius: 17 },
-            { from: upRight, to: 90, label: `${rightGiven}°`, radius: 17 },
+            { from: upRight, to: 90, label: `${rightGiven}°`, radius: 17, labelDx: 18, labelDy: -10 },
             { from: upRight, to: upLeft, label: "㉠", radius: 34, target: true },
             { from: 0, to: upLeft, label: "㉡", radius: 52, target: true },
             { from: 180, to: upRight + 360, label: "㉢", radius: 73, target: true, labelOffset: 7 }
@@ -7218,14 +7370,14 @@
           arcs: [
             { from: firstRay, to: 90, label: "㉠", radius: 19, labelRadius: 42, labelDx: -16, labelDy: -5, target: true },
             { from: secondRay, to: firstRay, label: "㉡", radius: 29, labelRadius: 56, labelDx: 17, labelDy: 7, target: true },
-            { from: secondRay, to: 90, label: "구할 각", radius: 58, labelRadius: 78, target: true }
+            { from: secondRay, to: 90, label: "㉢", radius: 58, labelRadius: 78, target: true }
           ],
           ariaLabel: "직각 안에 두 빗선이 있고 작은 두 각이 표시된 그림"
         });
         const payload = { variant, level, ...selected, firstRay, secondRay, answerAngle, complexity: (level + 1) * 1000 + selected.product };
         const evidence = source41Evidence("right-angle-multiple-chain", payload, answer);
-        const prompt = `가로선과 세로선은 서로 수직입니다. 왼쪽 가로선부터 첫째 빗선까지의 각은 ㉠의 ${selected.firstMultiple}배이고, 첫째 빗선부터 오른쪽 가로선까지의 각은 ㉡의 ${selected.secondMultiple}배입니다. 세로선부터 둘째 빗선까지의 각은 몇 도인가요?${svg}${evidence}`;
-        const solution = `㉠을 한 묶음으로 보면 90°와 ㉠을 합한 각이 ${selected.firstMultiple}묶음이므로 ㉠=90÷${selected.firstMultiple - 1}=${selected.firstPart}°입니다. 첫째 빗선부터 오른쪽 가로선까지는 90-${selected.firstPart}=${90 - selected.firstPart}°이므로 ㉡=${90 - selected.firstPart}÷${selected.secondMultiple}=${selected.secondPart}°입니다. 구할 각은 ${selected.firstPart}+${selected.secondPart}=${answer}°입니다.`;
+        const prompt = `가로선과 세로선은 서로 수직입니다. 왼쪽 가로선부터 첫째 빗선까지의 각은 ㉠의 ${selected.firstMultiple}배이고, 첫째 빗선부터 오른쪽 가로선까지의 각은 ㉡의 ${selected.secondMultiple}배입니다. 그림에서 ㉢의 크기는 몇 도인가요?${svg}${evidence}`;
+        const solution = `㉠을 한 묶음으로 보면 90°와 ㉠을 합한 각이 ${selected.firstMultiple}묶음이므로 ㉠=90÷${selected.firstMultiple - 1}=${selected.firstPart}°입니다. 첫째 빗선부터 오른쪽 가로선까지는 90-${selected.firstPart}=${90 - selected.firstPart}°이므로 ㉡=${90 - selected.firstPart}÷${selected.secondMultiple}=${selected.secondPart}°입니다. 따라서 ㉢=${selected.firstPart}+${selected.secondPart}=${answer}°입니다.`;
         return result(prompt, answer, solution);
       }
 
@@ -7313,9 +7465,9 @@
           linePairs: [[0, 180]],
           arcs: [
             { from: 0, to: secondSmall, label: "㉡", radius: 20, target: true },
-            { from: 0, to: boundary, label: "각 나", radius: 48 },
+            { from: 0, to: boundary, label: "나", radius: 48 },
             { from: boundary, to: boundary + firstSmall, label: "㉠", radius: 22, target: true },
-            { from: boundary, to: 180, label: "각 가", radius: 60 }
+            { from: boundary, to: 180, label: "가", radius: 60 }
           ],
           ariaLabel: "평각을 두 큰 각과 두 작은 각으로 나눈 그림"
         });
@@ -7346,7 +7498,7 @@
           arcs: [
             { from: selected.lowerRay, to: 180, label: `${selected.leftGiven}°`, radius: 50 },
             { from: 0, to: selected.upperRay, label: `${selected.upperGiven}°`, radius: 68 },
-            { from: selected.lowerRay + 180, to: splitRay, label: `${selected.split}°`, radius: 24 },
+            { from: selected.lowerRay + 180, to: splitRay, label: `${selected.split}°`, radius: 24, labelRadius: 88, labelDx: -15, labelDy: 8 },
             { from: splitRay, to: selected.upperRay + 180, label: "가", radius: 34, target: true }
           ],
           ariaLabel: "세 직선과 아래쪽에서 나뉜 각"
@@ -7446,9 +7598,9 @@
         angles: [firstRay, 90, oppositeSecond, oppositeFirst, secondRay],
         linePairs: [[firstRay, oppositeFirst], [oppositeSecond, secondRay]],
         arcs: [
-          { from: firstRay, to: 90, label: "㉠", radius: 24, target: true },
+          { from: firstRay, to: 90, label: "㉠", radius: 24, labelRadius: 80, target: true },
           { from: secondRay, to: 450, label: `${selected.largeGiven}°`, radius: 54 },
-          { from: oppositeFirst, to: secondRay, label: "㉡", radius: 31, target: true }
+          { from: oppositeFirst, to: secondRay, label: "㉡", radius: 31, labelRadius: 70, target: true }
         ],
         ariaLabel: "교차한 두 직선과 세로선이 만드는 큰 각과 두 작은 각"
       });

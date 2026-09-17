@@ -169,7 +169,7 @@ function auditClockSvg(svg, variant) {
     const end = [Number(attribute(hand, "x2")), Number(attribute(hand, "y2"))];
     const radians = (90 - normalize(clockAngle + rotation)) * Math.PI / 180;
     const expectedEnd = [110 + length * Math.cos(radians), 110 - length * Math.sin(radians)];
-    assert(role === "hour" ? length === 48 : length === 72, `분기 ${variant}: 시침·분침 길이가 뒤바뀌었습니다.`);
+    assert(role === "hour" ? length === 40 : length === 49, `분기 ${variant}: 시침·분침 길이가 뒤바뀌었습니다.`);
     assert(Math.abs(pointDistance(start, end) - length) < 0.15, `분기 ${variant}: ${role} 바늘 길이가 자료와 다릅니다.`);
     assert(pointDistance(end, expectedEnd) < 0.2, `분기 ${variant}: ${role} 바늘이 회전값과 다른 방향입니다.`);
   }
@@ -178,7 +178,7 @@ function auditClockSvg(svg, variant) {
     assert(!svg.includes("source41-clock-number"), `분기 ${variant}: 숫자 없는 시계에 숫자가 표시됐습니다.`);
     assert(hands.length === 2, `분기 ${variant}: 숫자 없는 시계는 길이가 다른 두 바늘이 모두 보여야 합니다.`);
     const lengths = hands.map(hand => Number(attribute(hand, "data-hand-length"))).sort((a, b) => a - b);
-    assert(JSON.stringify(lengths) === JSON.stringify([48, 72]), `분기 ${variant}: 숫자 없는 시계에서 시침과 분침을 구별할 수 없습니다.`);
+    assert(JSON.stringify(lengths) === JSON.stringify([40, 49]), `분기 ${variant}: 숫자 없는 시계에서 시침과 분침을 구별할 수 없습니다.`);
   } else {
     assert(tags(svg, "text").filter(text => attribute(text, "data-clock-number")).length === 12, `분기 ${variant}: 숫자 있는 시계의 12개 숫자가 완전하지 않습니다.`);
   }
