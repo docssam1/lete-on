@@ -479,7 +479,7 @@ function auditPromptStructure(variant, prompt) {
     ["한 번씩만", "두 번째로 가까운", "source41-card-row"],
     ["수 조각", "세 번째로 큰 수", "source41-piece-row"],
     ["한 번씩 모두", "세 번째로 큰 수", "세 번째로 작은 수", "source41-card-row"],
-    ["180°", "두 번째로 작은", "바르게 계산", "source41-card-row"],
+    ["디지털 수 카드", "180°", "두 번째로 작은", "바르게 계산", "source41-digital-card-row"],
     ["0부터 9까지", "모두 한 번씩", "보다 큰 수"],
     ["각각 두 번까지", "세 번째로 큰 수", "세 번째로 작은 수"],
     ["각각 두 번씩", "가장 큰 수", "가장 작은 수", "source41-condition-list"],
@@ -523,6 +523,13 @@ for (let variant = 0; variant < 11; variant += 1) {
         assert(evidence.declared === independent, `숨은 검산 정답 ${evidence.declared}과 독립 계산 ${independent}이 다릅니다.`);
         assert(generated.solution.includes(independent) || generated.solution.includes(independent.replace(/,/g, "")), "풀이에 최종 정답이 없습니다.");
         auditPromptStructure(variant, generated.prompt);
+        if (variant === 4) {
+          const promptDigitalCards = (generated.prompt.match(/source41-number-card is-digital/g) || []).length;
+          const solutionDigitalCards = (generated.solution.match(/source41-number-card is-digital/g) || []).length;
+          assert(promptDigitalCards === evidence.payload.cards.length, `문제의 디지털 수 카드가 ${promptDigitalCards}장입니다.`);
+          assert(solutionDigitalCards === evidence.payload.chooseCount * 2, `풀이의 회전 전후 디지털 수 카드가 ${solutionDigitalCards}장입니다.`);
+          assert(generated.solution.includes("source41-digital-turn-proof") && generated.solution.includes("카드 순서가 거꾸로") && generated.solution.includes("6과 9가 서로 바뀌어"), "풀이에 디지털 수의 180도 회전 근거가 없습니다.");
+        }
         promptSets[variant][difficultyIndex].add(generated.prompt.replace(/<span hidden[^>]*><\/span>/, ""));
         complexitySums[variant][difficultyIndex] += Number(evidence.payload.complexity);
         generatedCount += 1;

@@ -8,8 +8,22 @@
   const $ = (id) => document.getElementById(id);
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
   const hash = (value) => [...value].reduce((sum, character) => Math.imul(sum ^ character.charCodeAt(0), 16777619), 2166136261) >>> 0;
+  const MAX_QUESTION_COUNT = 120;
+  const DIFFICULTY_LEVELS = [-1, 0, 1];
   const typeDisplayName = type => type.label && type.label !== "핵심 유형" ? type.label : type.name;
   const difficultyBandLabel = type => ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(type.difficultyBand)] || "심화 기준";
+  const difficultyLevelLabel = value => ({ "-1": "조금 쉬운", "0": "같은 난이도", "1": "조금 어려운" })[String(value)] || "같은 난이도";
+  const contentDomainBySemester = {
+    "4-1": ["", "수와 연산", "도형과 측정", "수와 연산", "도형과 측정", "자료와 가능성", "변화와 관계"],
+    "4-2": ["", "수와 연산", "도형과 측정", "수와 연산", "도형과 측정", "자료와 가능성", "도형과 측정"],
+    "5-1": ["", "수와 연산", "수와 연산", "변화와 관계", "수와 연산", "수와 연산", "도형과 측정"],
+    "5-2": ["", "수와 연산", "수와 연산", "도형과 측정", "수와 연산", "도형과 측정", "자료와 가능성"],
+    "6-1": ["", "수와 연산", "도형과 측정", "수와 연산", "변화와 관계", "자료와 가능성", "도형과 측정"],
+    "6-2": ["", "수와 연산", "수와 연산", "도형과 측정", "변화와 관계", "도형과 측정", "도형과 측정"]
+  };
+  const contentDomainLabel = type => contentDomainBySemester[type.semesterId]?.[Number(type.unitNumber)] || "확인 필요";
+  const reasoningStageLabel = type => ({ exploration: "이해", example: "적용", mission: "추론" })[type.sourceSection]
+    || (Number(type.difficultyBand) < 0 ? "이해" : Number(type.difficultyBand) > 0 ? "추론" : "적용");
 
   function renderMathNotation(markup) {
     const template = document.createElement("template");
@@ -113,6 +127,9 @@
     unitId: "",
     search: "",
     difficulty: 0,
+    difficultyMode: "count",
+    difficultyMix: { "-1": 0, "0": 12, "1": 0 },
+    difficultyRatios: { "-1": 20, "0": 60, "1": 20 },
     selected: new Set(),
     collapsedUnits: new Set(),
     count: 12,
@@ -130,7 +147,8 @@
   }
 
   function currentDifficultyLabel() {
-    return ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(state.difficulty)] || "심화 기준";
+    const active = DIFFICULTY_LEVELS.filter(value => Number(state.difficultyMix[String(value)] || 0) > 0);
+    return active.length === 1 ? difficultyLevelLabel(active[0]) : "난이도 혼합";
   }
 
   function visibleTypes() {
@@ -176,24 +194,31 @@
     hideTypePreview(true);
     const visible = visibleTypes();
     const semester = currentSemester();
-    const markup = (semester?.units || []).map(unit => {
+    const semesterReady = semester ? readyTypesForScope("semester", semester.id) : [];
+    const semesterScope = semester ? `<section class="tree-semester-scope">${scopeCheckboxMarkup("semester", semester.id, `${semester.grade}학년 ${semester.term}학기`, semesterReady)}<span><strong>${semester.grade}학년 ${semester.term}학기 전체</strong><small>${semesterReady.length}개 공개 유형에서 단원별로 고르게 구성</small></span><em>최대 120문제</em></section>` : "";
+    const unitMarkup = (semester?.units || []).map(unit => {
       const unitTypes = visible.filter(type => type.unitId === unit.id);
       if (!unitTypes.length) return "";
       const isOpen = !state.collapsedUnits.has(unit.id);
-      const readyCount = unitTypes.filter(type => type.generator && !type.reviewLocked).length;
+      const unitReady = readyTypesForScope("unit", unit.id);
+      const readyCount = unitReady.length;
       return '<section class="tree-unit ' + (isOpen ? "is-open" : "") + '">' +
-        '<button class="tree-unit-toggle" type="button" data-tree-unit="' + unit.id + '" aria-expanded="' + isOpen + '">' +
-          '<span class="tree-chevron" aria-hidden="true">›</span><span class="tree-unit-number">' + unit.number + '</span>' +
-          '<span class="tree-unit-copy"><strong>' + escapeHtml(unit.name) + '</strong><small>' + readyCount + '개 유형 생성 가능</small></span>' +
-        '</button>' +
+        '<div class="tree-unit-head">' + scopeCheckboxMarkup("unit", unit.id, `${unit.number}단원 ${unit.name}`, unitReady) +
+          '<button class="tree-unit-toggle" type="button" data-tree-unit="' + unit.id + '" aria-expanded="' + isOpen + '">' +
+            '<span class="tree-chevron" aria-hidden="true">›</span><span class="tree-unit-number">' + unit.number + '</span>' +
+            '<span class="tree-unit-copy"><strong>' + escapeHtml(unit.name) + '</strong><small>' + readyCount + '개 유형 생성 가능</small></span>' +
+          '</button>' +
+        '</div>' +
         '<div class="tree-branch" ' + (isOpen ? "" : "hidden") + '>' + (unit.subunits || []).map(subunit => {
           const subunitTypes = unitTypes.filter(type => type.subunitId === subunit.id);
           if (!subunitTypes.length) return "";
-          return '<section class="tree-subunit"><div class="tree-subunit-head"><span>소단원 ' + String(subunit.number).padStart(2, "0") + '</span><strong>' + escapeHtml(subunit.name) + '</strong></div>' + subunitTypes.map(typeTreeRow).join("") + '</section>';
+          const subunitReady = readyTypesForScope("subunit", subunit.id);
+          return '<section class="tree-subunit"><div class="tree-subunit-head">' + scopeCheckboxMarkup("subunit", subunit.id, `소단원 ${subunit.number} ${subunit.name}`, subunitReady) + '<span>소단원 ' + String(subunit.number).padStart(2, "0") + '</span><strong>' + escapeHtml(subunit.name) + '</strong><small>' + subunitReady.length + '개</small></div>' + subunitTypes.map(typeTreeRow).join("") + '</section>';
         }).join("") + '</div>' +
       '</section>';
     }).join("");
-    $("typeList").innerHTML = markup;
+    $("typeList").innerHTML = semesterScope + unitMarkup;
+    $("typeList").querySelectorAll('input[data-select-scope][data-partial="true"]').forEach(input => { input.indeterminate = true; });
     $("catalogEmpty").hidden = visible.length > 0;
     renderSummary();
   }
@@ -254,7 +279,7 @@
     } else {
       const generated = generatorApi.generate(type, currentLevel().rank, state.difficulty, hash(`preview:${type.id}`), type.variant ?? 0);
       if (!generated) return;
-      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(currentDifficultyLabel())} · 고정된 유형 예시</footer>`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)} · ${difficultyBandLabel(type)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer>${escapeHtml(difficultyLevelLabel(state.difficulty))} · 고정된 유형 예시</footer>`;
     }
     placeTypePreview(anchor, popover);
     popover.hidden = false;
@@ -271,8 +296,70 @@
     document.body.classList.remove("is-type-preview-open");
   }
 
+  function readyTypesForScope(scope, id) {
+    const semester = currentSemester();
+    if (!semester) return [];
+    return types.filter(type => {
+      if (type.semesterId !== semester.id || !type.generator || type.reviewLocked) return false;
+      if (scope === "unit") return type.unitId === id;
+      if (scope === "subunit") return type.subunitId === id;
+      return scope === "semester";
+    });
+  }
+
+  function scopeSelectionState(candidates) {
+    const selectedCount = candidates.filter(type => state.selected.has(type.id)).length;
+    return {
+      checked: Boolean(candidates.length) && selectedCount === candidates.length,
+      partial: selectedCount > 0 && selectedCount < candidates.length
+    };
+  }
+
+  function scopeCheckboxMarkup(scope, id, label, candidates) {
+    const selection = scopeSelectionState(candidates);
+    return `<label class="tree-scope-control"><input type="checkbox" data-select-scope="${scope}" data-scope-id="${id}" data-partial="${selection.partial}" ${selection.checked ? "checked" : ""}><span class="sr-only">${escapeHtml(label)} 전체 선택</span></label>`;
+  }
+
+  function interleaveTypeGroups(values, key, batchSize = 1) {
+    const groups = [];
+    const groupByKey = new Map();
+    values.forEach(value => {
+      const groupKey = key(value);
+      if (!groupByKey.has(groupKey)) {
+        const group = [];
+        groupByKey.set(groupKey, group);
+        groups.push(group);
+      }
+      groupByKey.get(groupKey).push(value);
+    });
+    const output = [];
+    while (groups.some(group => group.length)) groups.forEach(group => {
+      for (let index = 0; index < batchSize && group.length; index += 1) output.push(group.shift());
+    });
+    return output;
+  }
+
+  function balancedTypeOrder(values) {
+    const units = [];
+    const unitGroups = new Map();
+    values.forEach(type => {
+      if (!unitGroups.has(type.unitId)) {
+        const group = [];
+        unitGroups.set(type.unitId, group);
+        units.push(group);
+      }
+      unitGroups.get(type.unitId).push(type);
+    });
+    const balancedUnits = units.map(unitTypes => interleaveTypeGroups(unitTypes, type => type.subunitId, 2));
+    const output = [];
+    while (balancedUnits.some(group => group.length)) balancedUnits.forEach(group => {
+      if (group.length) output.push(group.shift());
+    });
+    return output;
+  }
+
   function plannedQuestionTypes(selected, requestedCount = state.count) {
-    const ready = selected.filter(type => type?.generator && !type.reviewLocked);
+    const ready = balancedTypeOrder(selected.filter(type => type?.generator && !type.reviewLocked));
     const remaining = new Map(ready.map(type => [
       type.id,
       type.generationMode === "fixed-verified-pool"
@@ -295,6 +382,107 @@
     return planned;
   }
 
+  function difficultyMixTotal() {
+    return DIFFICULTY_LEVELS.reduce((total, value) => total + Number(state.difficultyMix[String(value)] || 0), 0);
+  }
+
+  function difficultyRatioTotal() {
+    return DIFFICULTY_LEVELS.reduce((total, value) => total + Number(state.difficultyRatios[String(value)] || 0), 0);
+  }
+
+  function ratioDifficultyMix(count = state.count) {
+    const priority = new Map([[0, 0], [-1, 1], [1, 2]]);
+    const portions = DIFFICULTY_LEVELS.map(value => {
+      const exact = count * Number(state.difficultyRatios[String(value)] || 0) / 100;
+      return { value, count: Math.floor(exact), remainder: exact - Math.floor(exact) };
+    });
+    let remaining = count - portions.reduce((total, portion) => total + portion.count, 0);
+    [...portions].sort((a, b) => b.remainder - a.remainder || priority.get(a.value) - priority.get(b.value)).forEach(portion => {
+      if (remaining > 0) {
+        portion.count += 1;
+        remaining -= 1;
+      }
+    });
+    return Object.fromEntries(portions.map(portion => [String(portion.value), portion.count]));
+  }
+
+  function difficultyRatioIsValid() {
+    return difficultyRatioTotal() === 100;
+  }
+
+  function syncDifficultyMixControls() {
+    document.querySelectorAll("input[data-difficulty-count]").forEach(input => {
+      input.value = String(state.difficultyMix[input.dataset.difficultyCount] || 0);
+    });
+    document.querySelectorAll("input[data-difficulty-ratio]").forEach(input => {
+      input.value = String(state.difficultyRatios[input.dataset.difficultyRatio] || 0);
+      input.setAttribute("aria-invalid", difficultyRatioIsValid() ? "false" : "true");
+    });
+    $("difficultyCountTotal").textContent = `${difficultyMixTotal()}문제`;
+    $("difficultyRatioTotal").textContent = `${difficultyRatioTotal()}%`;
+    $("difficultyRatioTotal").classList.toggle("is-invalid", !difficultyRatioIsValid());
+    $("difficultyRatioError").hidden = state.difficultyMode !== "ratio" || difficultyRatioIsValid();
+    $("difficultyRatioResult").hidden = state.difficultyMode !== "ratio" || !difficultyRatioIsValid();
+    if (difficultyRatioIsValid()) {
+      const mix = ratioDifficultyMix();
+      $("difficultyRatioResult").textContent = `${state.count}문제 기준 · 조금 쉬운 ${mix["-1"]} · 같은 난이도 ${mix["0"]} · 조금 어려운 ${mix["1"]}`;
+    }
+  }
+
+  function syncDifficultyModeControls() {
+    document.querySelectorAll("[data-difficulty-mode]").forEach(button => {
+      const active = button.dataset.difficultyMode === state.difficultyMode;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    document.querySelectorAll("[data-difficulty-panel]").forEach(panel => {
+      panel.hidden = panel.dataset.difficultyPanel !== state.difficultyMode;
+    });
+  }
+
+  function applyDifficultyRatios() {
+    if (!difficultyRatioIsValid()) return false;
+    state.difficultyMix = ratioDifficultyMix();
+    syncDifficultyMixControls();
+    return true;
+  }
+
+  function resetDifficultyMix(count = state.count, difficulty = state.difficulty) {
+    state.difficultyMix = { "-1": 0, "0": 0, "1": 0 };
+    state.difficultyMix[String(difficulty)] = count;
+    syncDifficultyMixControls();
+  }
+
+  function difficultyPlan() {
+    return DIFFICULTY_LEVELS.flatMap(value => Array.from({ length: Number(state.difficultyMix[String(value)] || 0) }, () => value));
+  }
+
+  function setDifficultyCount(difficulty, value) {
+    const key = String(difficulty);
+    const otherTotal = DIFFICULTY_LEVELS.filter(item => String(item) !== key).reduce((total, item) => total + Number(state.difficultyMix[String(item)] || 0), 0);
+    state.difficultyMix[key] = Math.max(0, Math.min(MAX_QUESTION_COUNT - otherTotal, Number.isFinite(value) ? Math.floor(value) : 0));
+    state.count = difficultyMixTotal();
+    $("questionCountInput").value = String(state.count);
+    document.querySelectorAll("[data-count]").forEach(button => {
+      button.classList.toggle("is-active", Number(button.dataset.count) === state.count);
+    });
+    syncDifficultyMixControls();
+    renderSummary();
+  }
+
+  function setDifficultyRatio(difficulty, value) {
+    state.difficultyRatios[String(difficulty)] = Math.max(0, Math.min(100, Number.isFinite(value) ? Math.floor(value) : 0));
+    if (difficultyRatioIsValid()) applyDifficultyRatios(); else syncDifficultyMixControls();
+    renderSummary();
+  }
+
+  function setDifficultyMode(mode) {
+    state.difficultyMode = mode === "ratio" ? "ratio" : "count";
+    syncDifficultyModeControls();
+    if (state.difficultyMode === "ratio" && difficultyRatioIsValid()) applyDifficultyRatios(); else syncDifficultyMixControls();
+    renderSummary();
+  }
+
   function renderSummary() {
     const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
     const plannedCount = plannedQuestionTypes(selected).length;
@@ -302,7 +490,8 @@
     $("selectedQuestionCount").textContent = plannedCount;
     $("selectedTypeSummary").textContent = `${selected.length}개`;
     $("selectedQuestionSummary").textContent = `${plannedCount}문항`;
-    $("generateButton").disabled = plannedCount === 0;
+    $("difficultyCountTotal").textContent = `${difficultyMixTotal()}문제`;
+    $("generateButton").disabled = plannedCount === 0 || (state.difficultyMode === "ratio" && !difficultyRatioIsValid());
     $("selectedTypeList").innerHTML = selected.length ? selected.map(type =>
       '<div><span><b>' + escapeHtml(type.subunitName) + ' · ' + escapeHtml(typeDisplayName(type)) + '</b><small>' + type.grade + '학년 ' + type.term + '학기 · ' + type.unitNumber + '단원 ' + escapeHtml(type.unitName) + ' · ' + difficultyBandLabel(type) + (type.generationMode === "fixed-verified-pool" ? ' · 검증 문항 ' + type.verifiedVariantCount + '개' : '') + '</small></span>' +
       '<button type="button" data-remove-type="' + type.id + '" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 선택 해제">×</button></div>'
@@ -310,7 +499,8 @@
   }
 
   function setQuestionCount(value) {
-    state.count = Math.max(1, Math.min(40, Number.isFinite(value) ? value : 12));
+    state.count = Math.max(1, Math.min(MAX_QUESTION_COUNT, Number.isFinite(value) ? Math.floor(value) : 12));
+    if (state.difficultyMode === "ratio") applyDifficultyRatios(); else resetDifficultyMix(state.count, state.difficulty);
     $("questionCountInput").value = String(state.count);
     document.querySelectorAll("[data-count]").forEach(button => {
       button.classList.toggle("is-active", Number(button.dataset.count) === state.count);
@@ -330,6 +520,11 @@
         renderCatalog();
       } else if (stateKey === "level") {
         renderCatalog();
+      } else if (stateKey === "difficulty") {
+        state.difficultyMode = "count";
+        syncDifficultyModeControls();
+        resetDifficultyMix(state.count || 12, state.difficulty);
+        renderSummary();
       }
     });
   }
@@ -341,18 +536,20 @@
     if (!plannedTypes.length) return;
     state.generation += 1;
     const level = currentLevel();
+    const plannedDifficulties = difficultyPlan();
     const baseSeed = (Date.now() + state.generation * 1000003) >>> 0;
     const seenPrompts = new Set();
     const seenAnswersByType = new Map();
     const seenPoolIndicesByType = new Map();
     state.questions = plannedTypes.map((type, index) => {
+      const variationDifficulty = plannedDifficulties[index] ?? state.difficulty;
       const typeAnswers = seenAnswersByType.get(type.id) || new Set();
       const typePoolIndices = seenPoolIndicesByType.get(type.id) || new Set();
       let generated;
       let uniquePromptFallback;
       for (let attempt = 0; attempt < 32; attempt += 1) {
         const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
-        const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
+        const candidate = generatorApi.generate(type, level.rank, variationDifficulty, seed, index);
         if (!candidate || seenPrompts.has(candidate.prompt)) continue;
         if (candidate.generationMode === "fixed-verified-pool" && typePoolIndices.has(candidate.verifiedPoolIndex)) continue;
         uniquePromptFallback ||= candidate;
@@ -361,7 +558,7 @@
           break;
         }
       }
-      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
+      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, variationDifficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
       if (generated.generationMode === "fixed-verified-pool") {
         if (!Number.isInteger(generated.verifiedPoolIndex) || typePoolIndices.has(generated.verifiedPoolIndex)) {
           throw new Error(`${typeDisplayName(type)}의 검증 문항 묶음이 중복되었습니다.`);
@@ -375,7 +572,7 @@
       seenPrompts.add(generated.prompt);
       typeAnswers.add(String(generated.answer));
       seenAnswersByType.set(type.id, typeAnswers);
-      return { number: index + 1, type, level, difficulty: currentDifficultyLabel(), ...generated };
+      return { number: index + 1, type, level, difficulty: difficultyLevelLabel(variationDifficulty), difficultyLevel: variationDifficulty, ...generated };
     });
     state.view = "problem";
     renderWorksheet();
@@ -482,12 +679,44 @@
   function renderProblems() {
     $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
-      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item">
+      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}" data-source-item-id="${escapeHtml(question.type.sourceItemId || "")}">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${renderMathNotation(question.prompt)}</div>
         <div class="answer-line">답</div>
       </article>`).join("")}</div>${watermark()}
     </section>`).join("");
+  }
+
+  function classificationNumberList(questions) {
+    return questions.length ? questions.map(question => question.number).join(", ") : "-";
+  }
+
+  function renderClassificationPages() {
+    const domains = ["수와 연산", "변화와 관계", "도형과 측정", "자료와 가능성"];
+    const stages = ["이해", "적용", "추론"];
+    const difficultyRows = [-1, 0, 1].map(level => {
+      const matching = state.questions.filter(question => Number(question.difficultyLevel) === level);
+      return `<tr><th scope="row">${difficultyLevelLabel(level)}</th><td>${classificationNumberList(matching)}</td><td>${matching.length}</td></tr>`;
+    }).join("");
+    const matrixRows = domains.map(domain => {
+      const domainQuestions = state.questions.filter(question => contentDomainLabel(question.type) === domain);
+      const stageCells = stages.map(stage => `<td>${classificationNumberList(domainQuestions.filter(question => reasoningStageLabel(question.type) === stage))}</td>`).join("");
+      return `<tr><th scope="row">${domain}</th>${stageCells}<td>${domainQuestions.length}</td></tr>`;
+    }).join("");
+    const semesters = [...new Set(state.questions.map(question => question.type.semesterLabel || `${question.type.grade}-${question.type.term}`))].join(" · ");
+    const summaryPage = `<section class="print-page answer-page classification-page">
+      <div class="page-label">이원목적분류표</div>
+      <div class="classification-meta"><strong>${escapeHtml(semesters)}</strong><span>${state.questions.length}문항 · 변형 단계 ${escapeHtml(currentDifficultyLabel())}</span></div>
+      <div class="classification-table-wrap"><table class="classification-table classification-matrix"><caption>내용 영역과 생각 단계 · 원문 개념탐구/예제/Mission 기준</caption><thead><tr><th scope="col">내용 영역</th>${stages.map(stage => `<th scope="col">${stage}</th>`).join("")}<th scope="col">합계</th></tr></thead><tbody>${matrixRows}</tbody></table></div>
+      <div class="classification-table-wrap"><table class="classification-table classification-difficulty"><caption>선택한 변형 난이도</caption><thead><tr><th scope="col">난이도</th><th scope="col">문항 번호</th><th scope="col">문항 수</th></tr></thead><tbody>${difficultyRows}</tbody></table></div>
+      ${watermark()}
+    </section>`;
+    const detailPages = chunk(state.questions, 18).map((questions, pageIndex, pages) => `<section class="print-page answer-page classification-page classification-detail-page">
+      <div class="page-label">문항별 분류 ${pageIndex + 1}/${pages.length}</div>
+      <div class="classification-table-wrap"><table class="classification-table classification-detail"><caption>문항별 단원·유형·난이도</caption><thead><tr><th scope="col">번호</th><th scope="col">학기</th><th scope="col">단원·소단원</th><th scope="col">유형</th><th scope="col">내용 영역</th><th scope="col">생각 단계</th><th scope="col">난이도</th></tr></thead><tbody>${questions.map(question => `<tr><td data-label="번호">${question.number}</td><td data-label="학기">${question.type.grade}-${question.type.term}</td><td data-label="단원·소단원"><b>${question.type.unitNumber}. ${escapeHtml(question.type.unitName)}</b><small>${escapeHtml(question.type.subunitName)}</small></td><td data-label="유형">${escapeHtml(typeDisplayName(question.type))}</td><td data-label="내용 영역">${contentDomainLabel(question.type)}</td><td data-label="생각 단계">${reasoningStageLabel(question.type)}</td><td data-label="난이도"><b>${escapeHtml(question.difficulty)}</b><small>원문 ${difficultyBandLabel(question.type)}</small></td></tr>`).join("")}</tbody></table></div>
+      ${watermark()}
+    </section>`).join("");
+    return summaryPage + detailPages;
   }
 
   function renderSolutions() {
@@ -510,7 +739,7 @@
       solutionWeight += weight;
     });
     if (solutionPage.length) solutionPages.push(solutionPage);
-    $("solutionView").innerHTML = solutionPages.map((page, pageIndex) => `<section class="print-page answer-page">
+    $("solutionView").innerHTML = renderClassificationPages() + solutionPages.map((page, pageIndex) => `<section class="print-page answer-page">
       <div class="page-label">정답·풀이 ${pageIndex + 1}</div>
       <div class="solution-list">${page.map(question => `<article class="solution-item">
         <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${renderMathNotation(escapeHtml(question.answer))}</strong></header>
@@ -552,6 +781,21 @@
   $("questionCountInput").addEventListener("input", event => {
     setQuestionCount(Number(event.target.value));
   });
+  $("difficultyCountMix").addEventListener("input", event => {
+    const input = event.target.closest("input[data-difficulty-count]");
+    if (!input) return;
+    setDifficultyCount(Number(input.dataset.difficultyCount), Number(input.value));
+  });
+  $("difficultyRatioMix").addEventListener("input", event => {
+    const input = event.target.closest("input[data-difficulty-ratio]");
+    if (!input) return;
+    setDifficultyRatio(Number(input.dataset.difficultyRatio), Number(input.value));
+  });
+  $("difficultyMode").addEventListener("click", event => {
+    const button = event.target.closest("button[data-difficulty-mode]");
+    if (!button) return;
+    setDifficultyMode(button.dataset.difficultyMode);
+  });
   document.querySelector(".count-presets").addEventListener("click", event => {
     const button = event.target.closest("button[data-count]");
     if (!button) return;
@@ -579,6 +823,16 @@
     showTypePreview(row.dataset.previewTypeId, row);
   });
   $("typeList").addEventListener("change", event => {
+    const scopeInput = event.target.closest("input[data-select-scope]");
+    if (scopeInput) {
+      const candidates = readyTypesForScope(scopeInput.dataset.selectScope, scopeInput.dataset.scopeId);
+      if (scopeInput.checked && scopeInput.dataset.selectScope === "semester") state.selected.clear();
+      candidates.forEach(type => {
+        if (scopeInput.checked) state.selected.add(type.id); else state.selected.delete(type.id);
+      });
+      renderCatalog();
+      return;
+    }
     const input = event.target.closest("input[data-type-id]");
     if (!input) return;
     if (input.checked) state.selected.add(input.dataset.typeId); else state.selected.delete(input.dataset.typeId);
@@ -609,7 +863,10 @@
 
   const params = new URLSearchParams(location.search);
   const requestedDifficulty = Number(params.get("difficulty"));
-  if ([-1, 0, 1].includes(requestedDifficulty)) state.difficulty = requestedDifficulty;
+  if ([-1, 0, 1].includes(requestedDifficulty)) {
+    state.difficulty = requestedDifficulty;
+    resetDifficultyMix(state.count, state.difficulty);
+  }
   const identity = identityApi.resolve({
     session: window.HSELEMENTARY_SESSION || window.GFIELD_SESSION,
     access: window.HSELEMENTARY_ACCESS,
@@ -632,12 +889,15 @@
     state.unitId = reviewType.unitId;
     state.selected.add(reviewType.id);
     state.count = 3;
+    resetDifficultyMix(3, state.difficulty);
     $("questionCountInput").value = "3";
     refreshSegments("gradeFilter", "grade", state.grade);
     refreshSegments("termFilter", "term", state.term);
     refreshSegments("difficultyFilter", "difficulty", state.difficulty);
   }
   ensurePreviewPopover();
+  syncDifficultyModeControls();
+  syncDifficultyMixControls();
   renderUnitOptions();
   renderCatalog();
   if (reviewType?.generator && !reviewType.reviewLocked && params.get("review") === "1") buildQuestions();

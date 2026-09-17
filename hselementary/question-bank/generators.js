@@ -194,6 +194,10 @@
     ...(options.sourceItemId ? { sourceItemId: options.sourceItemId } : {})
   });
   const numberSequenceMarkup = values => `<div class="sequence number-sequence" role="list" aria-label="수 목록">${values.map(value => `<span role="listitem">${Number(value).toLocaleString()}</span>`).join("")}</div>`;
+  const arrowRuleSequenceMarkup = (values, ariaLabel = "화살표로 이어진 수의 순서") => {
+    const items = values.map(value => String(value));
+    return `<div class="arrow-rule-sequence arrow-rule-sequence--count-${items.length}" style="--sequence-count:${items.length}" role="list" aria-label="${ariaLabel}: ${items.join(", ")}">${items.map((value, index) => `<span class="arrow-rule-step arrow-rule-step--${index + 1}" role="listitem"><b>${value}</b>${index < items.length - 1 ? `<i aria-hidden="true"></i>` : ""}</span>`).join("")}</div>`;
+  };
   const source41DigitWords = ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
   const source41SmallUnits = ["", "십", "백", "천"];
   const source41LargeUnits = ["", "만", "억", "조", "경", "해"];
@@ -6469,10 +6473,11 @@
       const format = source41FormatInteger;
       const conditionList = items => `<ul class="source41-condition-list">${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
       const cardRow = (cards, ariaLabel) => `<div class="source41-card-row" role="img" aria-label="${ariaLabel}">${cards.map(card => `<span class="source41-number-card${card === "?" || card === "□" ? " is-blank" : ""}">${card}</span>`).join("")}</div>`;
-      const digitalCardRow = cards => {
+      const digitalCardRow = (cards, ariaLabel = `180도 돌릴 수 있는 디지털 수 카드 ${cards.join(", ")}`) => {
         const segments = { 0: "abcdef", 1: "bc", 2: "abdeg", 5: "acdfg", 6: "acdefg", 8: "abcdefg", 9: "abcdfg" };
-        return `<div class="source41-card-row source41-digital-card-row" role="img" aria-label="180도 돌릴 수 있는 전자 숫자 카드 ${cards.join(", ")}">${cards.map(card => `<span class="source41-number-card is-digital" role="img" aria-label="숫자 ${card}">${[...(segments[card] || "")].map(segment => `<i class="source41-digital-segment is-${segment}"></i>`).join("")}</span>`).join("")}</div>`;
+        return `<div class="source41-card-row source41-digital-card-row" role="img" aria-label="${ariaLabel}">${cards.map(card => `<span class="source41-number-card is-digital" role="img" aria-label="숫자 ${card}">${[...(segments[card] || "")].map(segment => `<i class="source41-digital-segment is-${segment}"></i>`).join("")}</span>`).join("")}</div>`;
       };
+      const digitalTurnProof = (original, rotated) => `<div class="source41-digital-turn-proof" role="img" aria-label="처음 만든 디지털 수 ${original}을 180도 돌리면 ${rotated}"><div><strong>처음 만든 수</strong>${digitalCardRow([...original], `처음 만든 디지털 수 ${original}`)}</div><span class="source41-digital-turn-arrow" aria-hidden="true">180° 돌리기</span><div><strong>돌린 뒤</strong>${digitalCardRow([...rotated], `180도 돌린 뒤 디지털 수 ${rotated}`)}</div></div>`;
       const pieceRow = pieces => `<div class="source41-piece-row" role="img" aria-label="수 조각 ${pieces.join(", ")}">${pieces.map(piece => `<span>${piece}</span>`).join("")}</div>`;
       const nextPermutation = values => {
         const output = values.slice();
@@ -6776,8 +6781,8 @@
         const answer = format(answerValue);
         const payload = { variant, level, cards: selected.cards, chooseCount, candidateCount: selected.values.length, numberText: selected.numberText, rotatedText: selected.rotatedText, target: String(selected.target), mistakenAddend: String(selected.mistakenAddend), answerValue: String(answerValue), complexity: chooseCount * 1000 + selected.values.length };
         const evidence = source41Evidence("rotated-card-calculation", payload, answer);
-        const prompt = `다음 수 카드 중 ${chooseCount}장을 골라 이어 붙여 두 번째로 작은 ${chooseCount}자리 자연수를 만들었습니다. 이 수에 어떤 수를 더해야 할 것을 잘못하여, 만든 수를 시계 반대 방향으로 180° 돌려서 생긴 수에 그 수를 더했더니 ${format(selected.target)}이 되었습니다. 바르게 계산한 값을 구하세요.${digitalCardRow(selected.cards)}${evidence}`;
-        const solution = `두 번째로 작은 수는 ${format(selected.numberText)}이고 180° 돌리면 ${format(selected.rotatedText)}입니다. 잘못 더한 수는 ${format(selected.target)} - ${format(selected.rotatedText)} = ${format(selected.mistakenAddend)}이므로, 바른 값은 ${format(selected.numberText)} + ${format(selected.mistakenAddend)} = ${answer}입니다.`;
+        const prompt = `다음 디지털 수 카드 중 ${chooseCount}장을 골라 이어 붙여 두 번째로 작은 ${chooseCount}자리 자연수를 만들었습니다. 이 수에 어떤 수를 더해야 할 것을 잘못하여, 만든 수를 시계 반대 방향으로 180° 돌려서 생긴 수에 그 수를 더했더니 ${format(selected.target)}이 되었습니다. 바르게 계산한 값을 구하세요.${digitalCardRow(selected.cards)}${evidence}`;
+        const solution = `두 번째로 작은 수는 ${format(selected.numberText)}이고, 디지털 수 카드를 180° 돌리면 카드 순서가 거꾸로 되면서 6과 9가 서로 바뀌어 ${format(selected.rotatedText)}이 됩니다.${digitalTurnProof(selected.numberText, selected.rotatedText)}잘못 더한 수는 ${format(selected.target)} - ${format(selected.rotatedText)} = ${format(selected.mistakenAddend)}이므로, 바른 값은 ${format(selected.numberText)} + ${format(selected.mistakenAddend)} = ${answer}입니다.`;
         return result(prompt, answer, solution);
       }
 
@@ -6791,7 +6796,7 @@
         const answer = format(greaterCount);
         const payload = { variant, level, digits, thresholdText, greaterCount, complexity: greaterCount };
         const evidence = source41Evidence("count-permutations-above-threshold", payload, answer);
-        const prompt = `수 카드 0부터 9까지를 모두 한 번씩 사용하여 만들 수 있는 10자리 자연수 중에서 ${format(thresholdText)}보다 큰 수는 모두 몇 개인지 구하세요.${cardRow(digits, "수 카드 0부터 9까지")}${evidence}`;
+        const prompt = `수 카드 0부터 9까지를 모두 한 번씩 사용하여 만들 수 있는 10자리 자연수 중에서 ${format(thresholdText)}보다 큰 수는 모두 몇 개인지 구하세요.${evidence}`;
         const solution = `가장 큰 수 ${format("9876543210")}부터 차례로 내려오며 ${format(thresholdText)}보다 큰 수만 세면 ${answer}개입니다. 높은 자리부터 기준 수보다 큰 숫자를 놓을 수 있는 경우를 차례로 세어도 같습니다.`;
         return result(prompt, answer, solution);
       }
@@ -9454,8 +9459,8 @@
       const missing = int(rng, 1, 3);
       const values = Array.from({ length: 5 }, (_, i) => start + i * step);
       const answer = values[missing];
-      const display = values.map((value, index) => index === missing ? "□" : value.toLocaleString()).join(" → ");
-      return result(`수의 배열에서 규칙을 찾아 □에 알맞은 수를 쓰세요.<div class="sequence">${display}</div>`, answer, `이웃한 수끼리 ${step.toLocaleString()}씩 커지므로 □는 ${answer.toLocaleString()}입니다.`);
+      const display = values.map((value, index) => index === missing ? "□" : value.toLocaleString());
+      return result(`수의 배열에서 규칙을 찾아 □에 알맞은 수를 쓰세요.${arrowRuleSequenceMarkup(display)}`, answer, `이웃한 수끼리 ${step.toLocaleString()}씩 커지므로 □는 ${answer.toLocaleString()}입니다.`);
     },
     digitCards({ rng, level }) {
       const count = 4 + Math.min(level, 1);
@@ -13556,7 +13561,8 @@
         const values = Array.from({ length: 4 }, (_, index) => start + step * index);
         const answer = plainDecimal(values[missingIndex], 2);
         const evidence = decimal42Evidence("decimal-sequence", [start, step, missingIndex], answer);
-        return result(`일정한 규칙으로 나열한 수에서 □에 알맞은 수를 구하세요.<div class="sequence">${values.map((value, index) => index === missingIndex ? "□" : fixedDecimal(value, 2)).join(" → ")}</div>${evidence}`, answer, `이웃한 두 수의 차는 ${fixedDecimal(step, 2)}이므로 □=${answer}입니다.`);
+        const displayedValues = values.map((value, index) => index === missingIndex ? "□" : fixedDecimal(value, 2));
+        return result(`일정한 규칙으로 나열한 수에서 □에 알맞은 수를 구하세요.${arrowRuleSequenceMarkup(displayedValues)}${evidence}`, answer, `이웃한 두 수의 차는 ${fixedDecimal(step, 2)}이므로 □=${answer}입니다.`);
       }
       if (kind === 1) {
         const addends = [int(rng, 310, 520), int(rng, 330, 560), int(rng, 340, 590), int(rng, 350, 620)];

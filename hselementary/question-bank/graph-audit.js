@@ -8,13 +8,13 @@ require("./generators.js");
 const api = window.HSE_GENERATORS;
 const semester41 = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-1");
 const barGraphUnit = semester41.units.find(unit => unit.id === "4-1-u5");
-const barGraphTypes = barGraphUnit.subunits.flatMap(subunit => subunit.types.map(type => ({
+const barGraphTypes = barGraphUnit.subunits.flatMap(subunit => subunit.types.filter(type => !type.reviewLocked).map(type => ({
   ...type,
   semesterId: semester41.id,
   unitId: barGraphUnit.id,
   unitName: barGraphUnit.name,
   subunitName: subunit.name
-})));
+}))).filter(type => ["barGraphUnderstanding", "barGraphApplication"].includes(api.generatorKey(type)));
 const semester42 = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "4-2");
 const lineGraphUnit = semester42.units.find(unit => unit.id === "4-2-u5");
 const lineGraphTypes = lineGraphUnit.subunits.flatMap(subunit => subunit.types.filter(type => !type.reviewLocked).map(type => ({
