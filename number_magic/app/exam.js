@@ -440,12 +440,14 @@
   .nm-w2-wm { display:none; }
   /* 급별 색(2026-09-18, 참고 학습지) — 시트 클래스 .nm-print-school-* 가 준다. 기본은 네이비. */
   .nm-print-sheet { --w2-accent:#0E2C57; --w2-accent-fg:#fff; --w2-strong:#0E2C57; --w2-soft:#F5F3EE; }
-  .nm-print-school-elem { --w2-accent:#F7C11B; --w2-accent-fg:#2B2300; --w2-strong:#E8590C; --w2-soft:#FFF6D6; }
-  .nm-print-school-mid  { --w2-accent:#4E8FD8; --w2-accent-fg:#fff;    --w2-strong:#2F6FB5; --w2-soft:#EAF2FB; }
-  .nm-print-school-high { --w2-accent:#86B24A; --w2-accent-fg:#fff;    --w2-strong:#5E8A25; --w2-soft:#EEF5E3; }
-  /* 초등은 참고 학습지처럼 노란 틀 안에 */
-  .nm-print-school-elem .nm-w2-page { border:4px solid var(--w2-accent); border-radius:12px; padding:5mm 6mm 6mm;
-    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  /* 우리 색(2026-09-18, 원장 "노란 테두리는 너무 따라하는 것 같다, 우리만의 색을 넣자") — 표지와 같은
+     짙은 보석색 + 골드: 초등 네이비 · 중등 자주 · 고등 청록. 글자는 골드(#F5D98B), 틀·밑줄은 골드(#C9A063). */
+  .nm-print-school-elem { --w2-accent:#16417C; --w2-accent-fg:#F5D98B; --w2-strong:#16417C; --w2-soft:#EEF3FB; --w2-gold:#C9A063; }
+  .nm-print-school-mid  { --w2-accent:#4A1F63; --w2-accent-fg:#F5D98B; --w2-strong:#4A1F63; --w2-soft:#F2ECF7; --w2-gold:#C9A063; }
+  .nm-print-school-high { --w2-accent:#175E63; --w2-accent-fg:#F5D98B; --w2-strong:#175E63; --w2-soft:#E8F3F2; --w2-gold:#C9A063; }
+  /* 초등은 골드 둥근 틀 안에(표지의 골드 테) — 얇게, 파스텔이 아니라 금테 */
+  .nm-print-school-elem .nm-w2-page { border:2.5px solid #C9A063; outline:1px solid #EAC996; outline-offset:-6px;
+    border-radius:12px; padding:5mm 6mm 6mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-w2-head { flex:0 0 auto; padding-bottom:5px; margin-bottom:7px; }
   /* 이름·날짜·점수 줄 — 9px/3mm 였던 것을 손으로 쓸 수 있는 크기로(2026-09-06): 11px, 빈칸 6mm. */
   .nm-w2-head-top { display:flex; align-items:flex-end; gap:16px; font-size:11px; color:#333; margin-bottom:4px; }
@@ -457,7 +459,7 @@
     letter-spacing:1px; color:#333; border:1.6px solid var(--w2-accent); border-radius:16px; padding:2px 10px 2px 3px;
     white-space:nowrap; background:#fff; }
   .nm-w2-head-tier { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px;
-    border-radius:50%; background:var(--w2-accent); color:var(--w2-accent-fg); font-style:normal; font-size:10px;
+    border-radius:50%; background:var(--w2-gold, #C9A063); color:#0E2C57; font-style:normal; font-size:10px;
     font-weight:900; letter-spacing:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-w2-head-link { display:inline-block; width:10px; height:2px; background:var(--w2-accent); border-radius:2px;
     flex:0 0 auto; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -481,13 +483,13 @@
   /* Training Course(창의 회차) */
   .nm-w2-train-banner { flex:0 0 auto; display:flex; align-items:center; gap:8px; margin:2px 0 6px; }
   .nm-w2-train-banner img { height:15mm; width:auto; }
-  .nm-w2-train-banner span { flex:1; background:#2F73C4; color:#fff; font-weight:900; font-size:15px; text-align:center;
+  .nm-w2-train-banner span { flex:1; background:var(--w2-accent); color:var(--w2-accent-fg); font-weight:900; font-size:15px; text-align:center;
     border-radius:14px; padding:4px 12px; position:relative; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-w2-item-train.nm-print-item { justify-content:flex-start; padding:2px 6px 4px; }
-  .nm-w2-train-expr { font-size:calc(21px * var(--ws-fs, 1)); padding:2px 0 3px; border-bottom:2px solid #F0A020; margin-bottom:2px; }
-  .nm-w2-train-step { font-size:calc(17px * var(--ws-fs, 1)); padding:3px 0 2px; border-bottom:1px dotted #F0A020; }
+  .nm-w2-train-expr { font-size:calc(21px * var(--ws-fs, 1)); padding:2px 0 3px; border-bottom:2px solid #C9A063; margin-bottom:2px; }
+  .nm-w2-train-step { font-size:calc(17px * var(--ws-fs, 1)); padding:3px 0 2px; border-bottom:1px dotted #C9A063; }
   .nm-w2-train-step .nm-w2-tex { font-size:calc(17px * var(--ws-fs, 1)); }
-  .nm-w2-train-dots i { display:block; height:7mm; border-bottom:1px dotted #F0A020; }
+  .nm-w2-train-dots i { display:block; height:7mm; border-bottom:1px dotted #C9A063; }
   /* 저학년 문장제 카드 — 번호는 빨간 동그라미(STORY), 풀이 점선 */
   .nm-w2-story-work { display:none; }
   .nm-print-age-young .nm-w2-story-work { display:block; width:100%; margin-top:6px; }
@@ -495,7 +497,7 @@
     font-weight:800; border-radius:8px; padding:1px 9px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-print-age-young .nm-w2-story-work i { display:block; height:7mm; border-bottom:1px dotted #C9C2B0; }
   .nm-print-age-young .nm-w2-item-word .nm-w2-num { display:inline-flex; align-items:center; justify-content:center;
-    width:7mm; height:7mm; border-radius:50%; background:#E03131; color:#fff; font-size:11px; margin-right:6px;
+    width:7mm; height:7mm; border-radius:50%; background:var(--w2-gold, #C9A063); color:#0E2C57; font-size:11px; margin-right:6px;
     -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 
   .nm-w2-instr { flex:0 0 auto; font-weight:700; font-size:calc(12px * var(--ws-fs, 1)); margin-bottom:6px; }
@@ -689,15 +691,15 @@
    공유한다(학습지-v2-설계.md §3 "탭마다 개념 패널 + ★예시"). 미디어 쿼리로
    가두지 않고 항상 켜 둔다. */
 .nm-w2-concept { flex:0 0 auto; margin-bottom:8px; }
-/* 칠판(2026-09-18) — 초록 판·흰 글씨·왼쪽 마스코트. 흑백 프린터에선 진회색 판이 된다. */
-.nm-w2-board { display:flex; align-items:flex-end; gap:8px; background:#2F5D3A; border:3px solid #7A4E2A; border-radius:10px;
-  padding:8px 12px 8px 6px; color:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+/* 마법 판(2026-09-18) — 표지의 네이비 판에 골드 테, 흰 글씨, 왼쪽 마스코트. 흑백 프린터에선 진회색 판이 된다. */
+.nm-w2-board { display:flex; align-items:flex-end; gap:8px; background:linear-gradient(135deg,#16417C,#0E2C57); border:2.5px solid #C9A063;
+  border-radius:10px; padding:8px 12px 8px 6px; color:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 .nm-w2-board-mascot { height:26mm; width:auto; flex:0 0 auto; margin-bottom:-8px; }
 .nm-w2-board-body { flex:1; min-width:0; }
-.nm-w2-concept-badge { display:block; font-size:calc(15px * var(--ws-fs, 1)); font-weight:900; color:#fff; letter-spacing:.5px;
-  border-bottom:1px dotted rgba(255,255,255,.6); padding-bottom:3px; margin-bottom:5px; }
+.nm-w2-concept-badge { display:block; font-size:calc(15px * var(--ws-fs, 1)); font-weight:900; color:#F5D98B; letter-spacing:.5px;
+  border-bottom:1px dotted rgba(245,217,139,.7); padding-bottom:3px; margin-bottom:5px; }
 .nm-w2-concept-sentence { margin:0 0 4px; font-size:calc(12.5px * var(--ws-fs, 1)); line-height:1.6; color:#fff; }
-.nm-w2-concept-stage { margin:0 0 3px; font-size:calc(11.5px * var(--ws-fs, 1)); line-height:1.5; color:#E8F0E4; }
+.nm-w2-concept-stage { margin:0 0 3px; font-size:calc(11.5px * var(--ws-fs, 1)); line-height:1.5; color:#E3EAF5; }
 .nm-w2-note { display:flex; align-items:flex-start; gap:8px; margin-top:7px; padding:6px 8px 5px 0; border-top:2px solid #E03131; }
 .nm-w2-note-bang { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px;
   background:#E03131; color:#fff; border-radius:5px; font-style:normal; font-weight:900; font-size:15px;
@@ -706,11 +708,11 @@
 .nm-w2-concept-rule { margin:0; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; color:#2a2a2a; }
 .nm-w2-concept-ramp { margin:4px 0 0; font-size:calc(12px * var(--ws-fs, 1)); font-weight:800; color:#b8321f; }
 /* 메모장(참고 학습지 '수연이의 메모장') — 초록 테두리 카드에 머리표 */
-.nm-w2-concept-tip { margin:7px 0 0; padding:7px 10px 6px; border:2px solid #8BBF4F; background:#F1F8E6; border-radius:10px; position:relative; }
-.nm-w2-concept-tip::before { content:'Tip'; display:inline-block; background:#3E8A2E; color:#fff; font-weight:900; font-size:10.5px;
+.nm-w2-concept-tip { margin:7px 0 0; padding:7px 10px 6px; border:2px solid #D8C79B; background:#F6EEDB; border-radius:10px; position:relative; }
+.nm-w2-concept-tip::before { content:'Tip'; display:inline-block; background:#0E2C57; color:#F5D98B; font-weight:900; font-size:10.5px;
   border-radius:8px; padding:1px 9px; margin-bottom:3px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 .nm-w2-concept-tip p { margin:0 0 2px; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; color:#2a2a2a; }
-.nm-w2-concept-tip p b { color:#2F5D3A; margin-right:4px; }
+.nm-w2-concept-tip p b { color:#0E2C57; margin-right:4px; }
 .nm-w2-tip-brief { margin:0 0 6px; background:#F7F6F2; }
 .nm-w2-example { border:1.5px solid var(--w2-accent); border-left-width:6px; border-radius:10px; padding:7px 12px; margin-bottom:8px; background:#fff; }
 .nm-w2-ex-badge { display:inline-block; font-size:calc(10.5px * var(--ws-fs, 1)); color:var(--w2-accent-fg); background:var(--w2-accent);
