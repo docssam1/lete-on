@@ -19,6 +19,13 @@ function token(value, options = {}) {
 }
 
 function expressionMarkup(expression) {
+  if (Array.isArray(expression)) {
+    return expression.map((piece) => {
+      if (piece == null || piece === "?") return token(null);
+      if (piece === "cross" || Object.hasOwn(SHAPES, piece)) return token(piece);
+      return `<span class="b2-expression-text">${esc(piece)}</span>`;
+    }).join("");
+  }
   const pieces = String(expression).split(/(○|●|□|■|△|▲|◇|◆|☆|★|♡|♥|\?)/u);
   return pieces.map((piece) => {
     if (piece === "?") return token(null);
@@ -68,7 +75,60 @@ function balanceMarkup(visual) {
 }
 
 function sequenceMarkup(visual) {
-  return `<div class="b2-sequence" role="img" aria-label="규칙에 따라 이어지는 수와 모양"><div>${(visual.values || []).map((value, index) => `<span><b>${value == null ? "?" : esc(SHAPES[value] || value)}</b><i>${index + 1}</i></span>`).join("")}</div>${visual.target ? `<strong>${esc(visual.target)}</strong>` : ""}</div>`;
+  const rows = visual.rows || [{ label: visual.label || "", values: visual.values || [] }];
+  return `<div class="b2-sequence${visual.showOrdinals === false ? " no-ordinals" : ""}" role="img" aria-label="규칙에 따라 이어지는 수와 모양">${rows.map((row) => `<section>${row.label ? `<strong>${esc(row.label)}</strong>` : ""}<div>${(row.values || []).map((value, index) => `<span><b>${value == null ? "?" : esc(SHAPES[value] || value)}</b>${visual.showOrdinals === false ? "" : `<i>${index + 1}</i>`}</span>`).join("")}</div></section>`).join("")}${visual.target ? `<strong>${esc(visual.target)}</strong>` : ""}</div>`;
+}
+
+function houseGrowthMarkup(visual) {
+  const house = (stage) => {
+    const width = 20 + stage * 32;
+    const walls = Array.from({ length: stage + 1 }, (_, index) => {
+      const x = 10 + index * 32;
+      return `<path d="M${x} 34V66"/>`;
+    }).join("");
+    const roofs = Array.from({ length: stage }, (_, index) => {
+      const left = 10 + index * 32;
+      return `<path d="M${left} 34L${left + 16} 10L${left + 32} 34"/>`;
+    }).join("");
+    return `<figure><svg viewBox="0 0 ${width} 72" aria-hidden="true">${walls}${roofs}<path d="M10 66H${10 + stage * 32}"/></svg><figcaption>${stage}번째</figcaption></figure>`;
+  };
+  return `<div class="b2-house-growth" role="img" aria-label="한 변을 함께 쓰며 늘어나는 성냥개비 집">${(visual.stages || []).map(house).join("")}<strong>${esc(visual.target)}번째는?</strong></div>`;
+}
+
+function triangleGrowthMarkup(visual) {
+  const stage = (size) => `<figure><div class="b2-triangle-stage">${Array.from({ length: size }, (_, row) => `<span>${Array.from({ length: row * 2 + 1 }, (_, index) => `<i class="${index % 2 ? "dark" : "light"}"></i>`).join("")}</span>`).join("")}</div><figcaption>${size}번째</figcaption></figure>`;
+  return `<div class="b2-triangle-growth" role="img" aria-label="흰 삼각형과 검은 삼각형이 한 줄씩 늘어나는 규칙">${(visual.stages || []).map(stage).join("")}<strong>${esc(visual.target)}번째의 차는?</strong></div>`;
+}
+
+function foldGrowthMarkup(visual) {
+  const stage = (folds) => {
+    const pieces = 2 ** Number(folds);
+    const diagram = folds === 1
+      ? '<rect x="15" y="8" width="70" height="58"/><path class="crease" d="M15 8L85 66"/><path class="fold-arrow" d="M30 54Q52 28 73 20"/>'
+      : folds === 2
+        ? '<path d="M18 66L50 8L82 66Z"/><path class="crease" d="M50 8V66"/><path class="fold-arrow" d="M27 55Q39 38 48 30"/>'
+        : '<path d="M24 66L50 8L76 66Z"/><path class="crease" d="M37 37L63 37"/><path class="fold-arrow" d="M66 55Q54 45 49 38"/>';
+    return `<figure><svg viewBox="0 0 100 74" aria-hidden="true">${diagram}</svg><figcaption>${folds}번 접기 · ${pieces}조각</figcaption></figure>`;
+  };
+  return `<div class="b2-fold-growth" role="img" aria-label="반으로 접을 때마다 조각 수가 두 배가 되는 과정">${(visual.stages || []).map(stage).join("")}<strong>${esc(visual.pieces)}조각은 몇 번?</strong></div>`;
+}
+
+function numberRuleMarkup(visual) {
+  const operators = visual.operators || [];
+  const target = visual.target || {};
+  const rows = (visual.rows || []).map((row, rowIndex) => `<div>${row.map((value, columnIndex) => {
+    const marked = target.row === rowIndex && target.column === columnIndex;
+    const valueMarkup = token(value == null ? null : value);
+    const operator = columnIndex < operators.length ? `<i>${esc(operators[columnIndex])}</i>` : "";
+    return `<span class="${marked ? "target" : ""}">${valueMarkup}</span>${operator}`;
+  }).join("")}</div>`).join("");
+  return `<div class="b2-number-rule-rows ${visual.mode === "table" ? "table" : "equation"}" role="img" aria-label="각 줄에 같은 계산 규칙이 있는 수 표">${rows}</div>`;
+}
+
+function promiseSetMarkup(visual) {
+  const layout = visual.layout === "diamond" ? "diamond" : "triangle";
+  const figures = (visual.items || []).map((item) => `<figure><span class="top">${esc(item.top)}</span><span class="left">${esc(item.left)}</span><strong>${item.center == null ? "?" : esc(item.center)}</strong><span class="right">${esc(item.right)}</span>${layout === "diamond" ? `<span class="bottom">${esc(item.bottom)}</span>` : ""}</figure>`).join("");
+  return `<div class="b2-promise-set ${layout}" role="img" aria-label="바깥 수의 같은 규칙으로 가운데 수를 찾는 문제">${figures}</div>`;
 }
 
 function stoneGrowthMarkup(visual) {
@@ -164,6 +224,11 @@ export function book02Markup(visual) {
   if (visual.subtype === "equation") return equationBoardMarkup(visual);
   if (visual.subtype === "balance") return balanceMarkup(visual);
   if (visual.subtype === "sequence") return sequenceMarkup(visual);
+  if (visual.subtype === "house-growth") return houseGrowthMarkup(visual);
+  if (visual.subtype === "triangle-growth") return triangleGrowthMarkup(visual);
+  if (visual.subtype === "fold-growth") return foldGrowthMarkup(visual);
+  if (visual.subtype === "number-rule") return numberRuleMarkup(visual);
+  if (visual.subtype === "promise-set") return promiseSetMarkup(visual);
   if (visual.subtype === "stone-growth") return stoneGrowthMarkup(visual);
   if (visual.subtype === "growth") return growthMarkup(visual);
   if (visual.subtype === "promise") return promiseMarkup(visual);

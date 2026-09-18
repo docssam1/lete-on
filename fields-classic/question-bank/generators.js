@@ -10,7 +10,7 @@ import { BOOK08_GENERATORS, BOOK08_UNIT_TEST_GENERATORS } from "./book08-generat
 import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generators.js?v=20260826h";
 import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20260826h";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
-import { book02UnitTestShapeMatrix } from "./book02-unit-test-generators.js?v=20260907a";
+import { book02UnitTestProblem } from "./book02-unit-test-generators.js?v=20260918b";
 
 const COLORS = ["흰색", "검은색"];
 const SHAPES = ["동그라미", "세모", "네모"];
@@ -1810,7 +1810,7 @@ function discNumberRule({ difficulty = 2 }) {
 }
 
 function shapeSumTable({ difficulty = 2, sourceCase = null }) {
-  const sourceVariant = book02UnitTestShapeMatrix({ difficulty, sourceCase });
+  const sourceVariant = book02UnitTestProblem({ difficulty, sourceCase });
   if (sourceVariant) return sourceVariant;
   const max = difficulty === 1 ? 5 : difficulty === 2 ? 9 : 15;
   const diamond = randomInt(1, max);
@@ -6498,6 +6498,10 @@ function cubeHiddenCountWalled({ difficulty = 2 }) {
   };
 }
 
+function withBook02UnitTest(fallback) {
+  return (options = {}) => book02UnitTestProblem(options) || fallback(options);
+}
+
 
 export const GENERATORS = {
   ...MOCK06_GENERATORS,
@@ -6582,10 +6586,10 @@ export const GENERATORS = {
   reverseOperationLadder,
   plusMinusMultiTarget,
   twoCustomOperations,
-  balanceGivenUnitWeight,
-  distinctShapeValueEquation,
+  balanceGivenUnitWeight: withBook02UnitTest(balanceGivenUnitWeight),
+  distinctShapeValueEquation: withBook02UnitTest(distinctShapeValueEquation),
   constantStepNumberSequence,
-  bookInterleavedNumberSequence,
+  bookInterleavedNumberSequence: withBook02UnitTest(bookInterleavedNumberSequence),
   practiceInterleavedPairSequence,
   practiceCalendarWeekdaySum,
   practiceHeightExtremes,
@@ -6603,25 +6607,25 @@ export const GENERATORS = {
   practiceAlternatingLineTotal,
   previousTwoSumSequence,
   repeatingNumberSequence,
-  repeatingSymbolSequence,
+  repeatingSymbolSequence: withBook02UnitTest(repeatingSymbolSequence),
   progressiveNumberTable,
-  matchstickSharedPolygonGrowth,
-  triangularStoneGrowth,
+  matchstickSharedPolygonGrowth: withBook02UnitTest(matchstickSharedPolygonGrowth),
+  triangularStoneGrowth: withBook02UnitTest(triangularStoneGrowth),
   squareBorderStoneGrowth,
   staircaseTileGrowth,
-  repeatedFoldCutCount,
-  coloredTriangleGrowth,
+  repeatedFoldCutCount: withBook02UnitTest(repeatedFoldCutCount),
+  coloredTriangleGrowth: withBook02UnitTest(coloredTriangleGrowth),
   nestedCircleCount,
   cubeSquareLayerGrowth,
   growingSegmentCount,
   foldPunchDoubling,
-  fourNumberCenterRule,
-  numberGridRowRule,
+  fourNumberCenterRule: withBook02UnitTest(fourNumberCenterRule),
+  numberGridRowRule: withBook02UnitTest(numberGridRowRule),
   twoDigitComposeRule,
   sudokuThreeRowColumn,
-  sudokuThreeRegion,
-  sudokuFourSquareRegion,
-  sudokuFourIrregularRegion,
+  sudokuThreeRegion: withBook02UnitTest(sudokuThreeRegion),
+  sudokuFourSquareRegion: withBook02UnitTest(sudokuFourSquareRegion),
+  sudokuFourIrregularRegion: withBook02UnitTest(sudokuFourIrregularRegion),
   symbolChainArithmetic,
   shapeMatrixThreeFeatures,
   trianglePositionCycle,
@@ -6683,7 +6687,7 @@ export const GENERATORS = {
   edgeSumCycle,
   gridNumberPlacementFive,
   equalizeTransfer,
-  totalDifference,
+  totalDifference: withBook02UnitTest(totalDifference),
   totalDifferenceShare,
   totalDifferenceCandyShare,
   fiveCardSumPyramid,

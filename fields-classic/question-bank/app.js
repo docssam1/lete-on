@@ -1,8 +1,8 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20260918a";
-import { GENERATORS } from "./generators.js?v=20260908a";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20260918b";
+import { GENERATORS } from "./generators.js?v=20260918b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260829f";
-import { book02Markup } from "./book02-renderers.js?v=20260907a";
+import { book02Markup } from "./book02-renderers.js?v=20260918b";
 import { book03Markup } from "./book03-renderers.js?v=20260827b";
 import { book04Markup } from "./book04-renderers.js?v=20260911a";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
@@ -1190,7 +1190,7 @@ function replaceQuestion(index) {
   const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
   let replacement = null;
   for (let attempt = 0; attempt < 120; attempt += 1) {
-    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty, current.classification);
+    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty, current.classification, current.generationCase);
     if (candidate && problemSignature(candidate) !== currentSignature && !otherSignatures.has(problemSignature(candidate))) {
       replacement = candidate;
       break;

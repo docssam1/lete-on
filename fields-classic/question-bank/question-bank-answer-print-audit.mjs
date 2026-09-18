@@ -11,7 +11,9 @@ const { chromium } = await import(pathToFileURL(path.join(modules, "playwright/i
 const { PDFDocument } = createRequire(import.meta.url)(path.join(modules, "pdf-lib"));
 
 const base = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
-const url = `${base}/fields-classic/question-bank/?student=DEMO&mode=type`;
+const answerBookId = process.env.FIELDS_ANSWER_BOOK_ID || "";
+const mode = answerBookId ? "curriculum" : "type";
+const url = `${base}/fields-classic/question-bank/?student=DEMO&mode=${mode}`;
 const output = process.env.FIELDS_CAPTURE_DIR || path.join(os.tmpdir(), "fields-answer-print-audit");
 await fs.mkdir(output, { recursive: true });
 
@@ -22,32 +24,48 @@ try {
   page.on("pageerror", (error) => pageErrors.push(error.message));
   await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
 
-  await page.locator('#builderTabs button[data-mode="type"]').click();
-  const candidates = process.env.FIELDS_ANSWER_TYPES
-    ? process.env.FIELDS_ANSWER_TYPES.split(",").map((value) => value.trim()).filter(Boolean)
-    : ["fold-number-grid-one", "shape-quarter-half-turn", "gakuro-grid-nine-sum"];
-  const selected = await page.evaluate((typeIds) => {
-    const found = [];
-    for (const typeId of typeIds) {
-      const input = document.querySelector(`#bankTypeTree input[data-type-id="${typeId}"]:not([disabled])`);
-      if (!input) continue;
+  let selected;
+  if (answerBookId) {
+    await page.locator('#builderTabs button[data-mode="curriculum"]').click();
+    await page.locator(`[data-curriculum-book="${answerBookId}"]`).click();
+    selected = await page.locator("input[data-unit-test-key]:not([disabled])").evaluateAll((inputs) => inputs.map((input) => {
       input.checked = true;
       input.dispatchEvent(new Event("change", { bubbles: true }));
-      found.push(typeId);
-    }
-    return found;
-  }, candidates);
-  assert.ok(selected.length >= 2, `Not enough print stress types were selectable: ${selected.join(", ")}`);
+      return input.dataset.unitTestKey;
+    }));
+  } else {
+    await page.locator('#builderTabs button[data-mode="type"]').click();
+    const candidates = process.env.FIELDS_ANSWER_TYPES
+      ? process.env.FIELDS_ANSWER_TYPES.split(",").map((value) => value.trim()).filter(Boolean)
+      : ["fold-number-grid-one", "shape-quarter-half-turn", "gakuro-grid-nine-sum"];
+    selected = await page.evaluate((typeIds) => {
+      const found = [];
+      for (const typeId of typeIds) {
+        const input = document.querySelector(`#bankTypeTree input[data-type-id="${typeId}"]:not([disabled])`);
+        if (!input) continue;
+        input.checked = true;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        found.push(typeId);
+      }
+      return found;
+    }, candidates);
+  }
+  assert.ok(selected.length >= 2, `Not enough print stress questions were selectable: ${selected.join(", ")}`);
 
-  await page.locator("#questionCount").fill("20");
+  const requestedCount = answerBookId ? selected.length : 20;
+  await page.locator("#questionCount").fill(String(requestedCount));
   await page.locator("#questionCount").dispatchEvent("change");
   await page.locator("#buildButton").click();
   await page.locator("#worksheetSection").waitFor({ state: "visible", timeout: 30000 });
-  assert.equal(await page.locator(".question-card").count(), 20, "The stress worksheet must contain 20 questions");
+  assert.equal(await page.locator(".question-card").count(), requestedCount, "The stress worksheet must contain every requested question");
 
   await page.locator("#answerButton").click();
   await page.locator("#answerDialog[open]").waitFor({ state: "visible" });
-  assert.equal(await page.locator("#answerBody tr").count(), 20, "The answer sheet must contain all 20 answers");
+  assert.equal(await page.locator("#answerBody tr").count(), requestedCount, "The answer sheet must contain every answer");
+  if (answerBookId === "book-02") {
+    assert.equal(await page.locator("#answerDialog .b2-sudoku").count(), 2, "Both full Sudoku answers must be drawn");
+    assert.ok(await page.locator("#answerDialog .answer-part-visuals").count() >= 1, "Multipart drawing answers must be drawn");
+  }
 
   await page.evaluate(() => document.body.classList.add("printing-answers"));
   await page.emulateMedia({ media: "print" });
@@ -64,7 +82,7 @@ try {
       const cell = node.closest("td").getBoundingClientRect();
       return media.left < cell.left - 1 || media.right > cell.right + 1;
     });
-    const escapedVisuals = [...dialog.querySelectorAll("tbody .b4-circle-seats")].filter((node) => {
+    const escapedVisuals = [...dialog.querySelectorAll("tbody .b4-circle-seats, tbody .b2-promise-set")].filter((node) => {
       const visual = node.getBoundingClientRect();
       const cell = node.closest("td").getBoundingClientRect();
       return visual.left < cell.left - 1 || visual.right > cell.right + 1;
@@ -90,7 +108,7 @@ try {
   assert.equal(layout.scrollOverflow, false, "The printed answer sheet must not overflow horizontally");
 
   const pdfBytes = await page.pdf({ format: "A4", printBackground: true, preferCSSPageSize: true });
-  const pdfPath = path.join(output, "answer-sheet-20.pdf");
+  const pdfPath = path.join(output, answerBookId ? `${answerBookId}-answer-sheet.pdf` : "answer-sheet-20.pdf");
   await fs.writeFile(pdfPath, pdfBytes);
   const pdf = await PDFDocument.load(pdfBytes);
   const maximumPages = Number(process.env.FIELDS_ANSWER_MAX_PAGES || 20);
@@ -100,7 +118,7 @@ try {
     assert.ok(Math.abs(width - 595.28) < 2 && Math.abs(height - 841.89) < 2, `Non-A4 page: ${width}x${height}`);
   }
   assert.deepEqual(pageErrors, [], `Browser errors: ${pageErrors.join(" | ")}`);
-  console.log(`QUESTION_BANK_ANSWER_PRINT_OK questions=20 pages=${pdf.getPageCount()} columns=${layout.visibleColumns.join(",")} tallestRow=${Math.round(layout.tallestRow)} pdf=${pdfPath}`);
+  console.log(`QUESTION_BANK_ANSWER_PRINT_OK questions=${requestedCount} pages=${pdf.getPageCount()} columns=${layout.visibleColumns.join(",")} tallestRow=${Math.round(layout.tallestRow)} pdf=${pdfPath}`);
 } finally {
   await browser.close();
 }
