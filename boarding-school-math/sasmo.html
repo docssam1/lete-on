@@ -3,11 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="GFIELD SASMO 준비 프로그램: 학생의 풀이를 영역별로 분석하고 강사의 다음 수업과 맞춤 연습으로 연결하는 학습 프로그램">
+  <meta name="description" content="GFIELD SASMO 준비 프로그램: 학생의 풀이를 영역별로 분석하고 교사의 다음 수업과 맞춤 연습으로 연결하는 학습 프로그램">
   <title>GFIELD SASMO 준비 프로그램</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./sasmo.css?v=20260918-1">
   <link rel="stylesheet" href="./academy-ui.css">
+  <link rel="stylesheet" href="./shared/gmap-local-question-coach.css?v=20260918-1">
+  <link rel="stylesheet" href="./sasmo-showcase.css?v=20260918-1">
 </head>
 <body class="academy-page page-sasmo">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -15,10 +17,10 @@
   <header class="site-header shell">
     <a class="brand" href="./index.html" aria-label="GFIELD Math 홈으로 이동"><span class="brand-mark" aria-hidden="true">G</span><span>GFIELD <strong>MATH</strong></span></a>
     <nav aria-label="주요 탐색">
-      <a href="#roles">학생·강사 체험</a>
+      <a href="#mini-experience">3분 미니 체험</a>
+      <a href="#roles">학생·교사 화면</a>
       <a href="#control-heading">학년·목표</a>
       <a href="#past-papers">연도별 기출</a>
-      <a href="./catalog.html">교과·문제은행</a>
     </nav>
     <a class="home-link" href="./index.html">전체 프로그램</a>
   </header>
@@ -27,45 +29,134 @@
     <section class="hero shell" id="start" aria-labelledby="page-title">
       <div class="hero-copy">
         <p class="eyebrow">GFIELD BOARDING SCHOOL MATH · SASMO</p>
-        <h1 id="page-title"><span class="program-name">GFIELD SASMO 준비 프로그램</span><strong>문제 풀이가<br>다음 수업이<br>됩니다.</strong></h1>
-        <p class="lede">학생은 틀린 문제에서 멈추지 않고 오늘 배울 개념과 연습을 받습니다. 강사는 문항별 근거와 오류 유형을 보고 다음 수업, 과제, 재확인을 한 흐름으로 설계합니다.</p>
-        <a class="hero-mobile-start" href="./competition-practice.html?program=sasmo&audience=student&locale=ko">Grade 6 학생 체험 시작 <span aria-hidden="true">→</span></a>
+        <h1 id="page-title"><span class="program-name">GFIELD SASMO 준비 프로그램</span><strong>문제를 푸는 순간,<br>다음 수업이<br>보입니다.</strong></h1>
+        <p class="lede">SASMO형 사고 문제를 풀고 끝내지 않습니다. 첫 응답에서 강점과 막힌 유형을 읽고, 개념 클리닉·맞춤 워크북·재확인까지 한 경로로 연결합니다.</p>
+        <div class="hero-cta-row">
+          <a class="hero-mobile-start hero-main-cta" href="#mini-experience">3분 미니 체험 시작 <span aria-hidden="true">↓</span></a>
+          <a class="hero-text-link" href="./competition-practice.html?program=sasmo&audience=student&locale=ko">Grade 6 전체 10유형 <span aria-hidden="true">↗</span></a>
+        </div>
         <div class="truth-strip" aria-label="공식 정보와 GFIELD 준비 프로그램의 구분">
-          <span><b>학생</b> 무엇을 배우고 다시 풀지 확인</span>
-          <span><b>강사</b> 근거를 보고 수업과 과제를 배정</span>
-          <span><b>근거</b> 공식 정보와 GFIELD 자료를 분리</span>
+          <span><b>10개</b> 검수된 Grade 6 유형</span>
+          <span><b>6개</b> 사고 영역 분석</span>
+          <span><b>3개 언어</b> 한국어·영어·중국어</span>
         </div>
       </div>
-      <aside class="hero-action" aria-label="SASMO 준비 시작 안내">
-        <p class="micro-label">MEETING DEMO · GRADE 6</p>
-        <strong>학생과 강사의<br>같은 학습 흐름</strong>
-        <span class="hero-format" id="hero-format">공식 형식 · 25문항 · 90분</span>
-        <p id="hero-action-text"><span id="hero-level-label">G6</span> 첫 도전 목표에 맞춰 준비 진단의 첫 단계를 정리합니다.</p>
-        <div class="hero-action-links">
-          <a class="primary-link academy-foil" href="#roles" data-role-jump="student">학생 학습 화면 보기 <span aria-hidden="true">→</span></a>
-          <a class="hero-secondary-link" href="#roles" data-role-jump="teacher">강사 운영 화면 보기 <span aria-hidden="true">→</span></a>
-          <a class="hero-secondary-link" href="#past-papers">연도별 기출 근거 보기 <span aria-hidden="true">↓</span></a>
+      <aside class="hero-action hero-product" aria-label="SASMO 진단과 클리닉 화면 미리보기">
+        <div class="hero-product-head">
+          <div><p class="micro-label">LIVE LEARNING SIGNAL</p><strong>SASMO LAB</strong></div>
+          <span class="hero-format" id="hero-format">공식 형식 · 25문항 · 90분</span>
         </div>
-        <small>현재 직접 체험은 검수된 GFIELD Grade 6 유형 10개를 사용합니다.</small>
+        <div class="hero-product-visual">
+          <div class="hero-question-label"><span>GEOMETRY · SPATIAL</span><b>Q 03</b></div>
+          <div class="hero-demo-visual" id="hero-demo-visual" aria-label="검수된 SASMO형 공간 감각 문제 그림"></div>
+          <div class="hero-signal-board" aria-label="분석 결과 미리보기">
+            <div><span>첫 응답</span><strong>근거 저장</strong></div>
+            <div class="hero-signal-row"><span>공간 감각</span><i style="--signal:86%"></i><b>강점 신호</b></div>
+            <div class="hero-signal-row"><span>조건 해석</span><i style="--signal:52%"></i><b>보완 후보</b></div>
+          </div>
+        </div>
+        <p id="hero-action-text" class="hero-product-copy"><span id="hero-level-label">G6</span> 첫 도전 목표에 맞춰 문제 → 분석 → 클리닉의 첫 단계를 보여 줍니다.</p>
+        <div class="hero-action-links">
+          <a class="primary-link academy-foil" href="#mini-experience">실제 3문제 체험하기 <span aria-hidden="true">↓</span></a>
+          <div class="hero-role-links">
+            <a class="hero-secondary-link" href="#roles" data-role-jump="student">학생 화면 <span aria-hidden="true">→</span></a>
+            <a class="hero-secondary-link" href="#roles" data-role-jump="teacher">교사 화면 <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <small>미니 체험은 검수된 GFIELD 자체 제작 유형을 사용하며 공식 SASMO 점수·수상 예측이 아닙니다.</small>
       </aside>
+    </section>
+
+    <section class="sasmo-showcase" id="mini-experience" aria-labelledby="showcase-heading">
+      <div class="shell">
+        <div class="section-heading showcase-heading">
+          <div>
+            <p class="eyebrow">01 · TRY THE LEARNING LOOP</p>
+            <h2 id="showcase-heading">설명보다 먼저,<br>세 문제를 풀어 보세요.</h2>
+          </div>
+          <p>수 규칙·논리·공간 감각을 한 문제씩 체험합니다. 첫 응답은 바꾸지 않고 근거로 남으며, 오답이어도 정답 대신 한 단계 힌트와 다음 학습 방향을 제공합니다.</p>
+        </div>
+        <div class="showcase-frame" data-showcase-state="ready">
+          <header class="showcase-toolbar">
+            <div><span class="micro-label">MINI DIAGNOSTIC · G6</span><strong id="showcase-progress-label">0 / 3 응답</strong></div>
+            <div class="showcase-tabs" id="showcase-tabs" role="tablist" aria-label="미니 체험 문제 선택"></div>
+          </header>
+          <div class="showcase-stage">
+            <div class="showcase-question-slot" id="showcase-question-slot"></div>
+            <aside class="showcase-insight" id="showcase-insight" aria-live="polite"></aside>
+          </div>
+        </div>
+        <p class="showcase-boundary"><span aria-hidden="true">ⓘ</span> 이 체험은 제품 흐름을 보여 주는 3문항 예시입니다. 공식 성적·수상 등급·학교 배치 결과로 사용하지 않습니다.</p>
+      </div>
+    </section>
+
+    <section class="workbook-showcase" id="workbook-preview" aria-labelledby="workbook-heading">
+      <div class="shell">
+        <div class="section-heading workbook-heading">
+          <div>
+            <p class="eyebrow">02 · CLINIC WORKBOOK</p>
+            <h2 id="workbook-heading">진단은 보고서로 끝나지 않고,<br>풀어야 할 워크북이 됩니다.</h2>
+          </div>
+          <p>기초가 비어 있으면 미국 교과 클리닉으로 돌아가고, 개념은 알지만 낯선 문제에 막히면 SASMO형 전이 연습으로 넘어갑니다. 학생용 문제와 교사용 해설은 분리합니다.</p>
+        </div>
+        <div class="workbook-demo-grid">
+          <figure class="workbook-paper" aria-labelledby="workbook-paper-title">
+            <div class="workbook-paper-brand"><span>G·MAP</span><b>CLINIC WORKBOOK</b><small>GRADE 6 · SASMO TYPES</small></div>
+            <figcaption><span>개념 → 유형 → 연습 → 재확인</span><strong id="workbook-paper-title">칠한 면과 정육면체</strong></figcaption>
+            <div class="workbook-paper-concept"><span>CORE IDEA</span><p>꼭짓점·모서리·면의 가운데를 나누어 관찰합니다.</p></div>
+            <div class="workbook-paper-example">
+              <div id="workbook-demo-visual" aria-label="칠한 정육면체 워크북 그림"></div>
+              <ol><li><span>꼭짓점</span><b>칠한 면 3개</b></li><li><span>모서리 가운데</span><b>칠한 면 2개</b></li><li><span>면의 가운데</span><b>칠한 면 1개</b></li></ol>
+            </div>
+            <div class="workbook-practice-lines"><span>연습 01</span><i></i><span>연습 02</span><i></i><span>재확인</span><i></i></div>
+            <small class="workbook-watermark">GFIELD MATH</small>
+          </figure>
+          <div class="workbook-program-copy">
+            <p class="micro-label">FROM DIAGNOSIS TO PRINT</p>
+            <h3>학생에게는 문제집,<br>교사에게는 수업 설계안.</h3>
+            <ol class="workbook-steps">
+              <li><span>01</span><div><strong>개념 한 장</strong><p>학년에 맞는 수학 언어와 핵심 그림으로 다시 설명합니다.</p></div></li>
+              <li><span>02</span><div><strong>풀이 예제</strong><p>같은 모델로 읽기·식 세우기·검산 순서를 보여 줍니다.</p></div></li>
+              <li><span>03</span><div><strong>맞춤 연습</strong><p>오류 유형과 추론 단계에 맞춰 분량과 난이도를 조절합니다.</p></div></li>
+              <li><span>04</span><div><strong>재확인 퀴즈</strong><p>숫자만 바꾼 문제가 아니라 낯선 상황으로 전이를 확인합니다.</p></div></li>
+            </ol>
+            <div class="workbook-status-grid">
+              <article class="is-live is-sasmo"><span>지금 풀기·인쇄 가능</span><strong>SASMO Grade 6 · 10유형 워크북</strong><p>검수된 GFIELD 자체 문항 10개를 학생용 문제집과 교사용 정답·풀이로 분리했습니다. 브라우저에서 바로 인쇄하거나 PDF로 저장할 수 있습니다.</p></article>
+              <article class="is-live"><span>교과 보완 연결</span><strong>Grade 6 · 6.G.A 교과 클리닉</strong><p>기하 기초가 비어 있으면 36문항 워크북과 8문항 재확인으로 돌아갑니다.</p></article>
+              <article class="is-review"><span>검수 진행 중</span><strong>진단별 자동 처방 팩</strong><p>첫 응답에서 잡힌 보완 유형에 따라 문항을 자동 편성하는 단계는 단일 정답 검수 후 개방합니다.</p></article>
+            </div>
+            <div class="workbook-actions">
+              <a class="showcase-primary" href="./competition-practice.html?program=sasmo&amp;audience=student&amp;locale=ko">SASMO 학생용 워크북 <span aria-hidden="true">→</span></a>
+              <a class="workbook-secondary" href="./competition-practice.html?program=sasmo&amp;audience=teacher&amp;locale=ko">SASMO 교사용 정답·풀이 <span aria-hidden="true">→</span></a>
+              <a class="workbook-course-link" href="./unit-workbook.html?audience=student&amp;mode=workbook&amp;locale=ko&amp;paper=A4&amp;cluster=6.G.A">기초 결손용 6.G.A 교과 워크북 36+8 <span aria-hidden="true">↗</span></a>
+            </div>
+            <nav class="workbook-language-links" aria-label="SASMO 워크북 언어 버전">
+              <a href="./competition-practice.html?program=sasmo&amp;audience=student&amp;locale=en" lang="en">English workbook</a>
+              <a href="./competition-practice.html?program=sasmo&amp;audience=student&amp;locale=en-SG" lang="en-SG">Singapore · Primary 6</a>
+              <a href="./competition-practice.html?program=sasmo&amp;audience=student&amp;locale=zh-Hans" lang="zh-Hans">简体中文</a>
+              <span>페이지 안에서 Student / Teacher를 전환할 수 있습니다.</span>
+            </nav>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="shell roles-section" id="roles" aria-labelledby="roles-heading">
       <div class="section-heading experience-heading">
         <div>
-          <p class="eyebrow">01 · STUDENT &amp; INSTRUCTOR EXPERIENCE</p>
-          <h2 id="roles-heading">학생에게는 다음 학습을,<br>강사에게는 다음 수업을.</h2>
+          <p class="eyebrow">03 · STUDENT &amp; TEACHER EXPERIENCE</p>
+          <h2 id="roles-heading">학생에게는 다음 학습을,<br>교사에게는 다음 수업을.</h2>
         </div>
-        <p>같은 풀이 기록을 서로 다른 화면으로 보여 줍니다. 아래 전환 버튼으로 실제 공개된 Grade 6 유형 학습과 강사용 풀이 화면을 바로 확인할 수 있습니다.</p>
+        <p>같은 풀이 기록을 서로 다른 화면으로 보여 줍니다. 아래 전환 버튼으로 실제 공개된 Grade 6 유형 학습과 교사용 풀이 화면을 바로 확인할 수 있습니다.</p>
       </div>
       <div class="experience-proof" aria-label="현재 체험 가능한 기능">
         <div><strong>10개</strong><span>Grade 6 검수 유형</span></div>
         <div><strong>3개 언어</strong><span>한국어·영어·중국어</span></div>
-        <div><strong>2개 화면</strong><span>학생 학습·강사 지도</span></div>
+        <div><strong>2개 화면</strong><span>학생 학습·교사 지도</span></div>
       </div>
       <div class="role-tabs" role="tablist" aria-label="SASMO 역할별 프로그램 화면">
         <button type="button" role="tab" id="role-student" data-role="student" aria-controls="role-panel" aria-selected="true" tabindex="0">학생용</button>
-        <button type="button" role="tab" id="role-teacher" data-role="teacher" aria-controls="role-panel" aria-selected="false" tabindex="-1">강사용</button>
+        <button type="button" role="tab" id="role-teacher" data-role="teacher" aria-controls="role-panel" aria-selected="false" tabindex="-1">교사용</button>
       </div>
       <article class="role-panel" id="role-panel" role="tabpanel" aria-labelledby="role-student" tabindex="0" aria-live="polite">
         <div class="role-panel-copy">
@@ -87,7 +178,7 @@
       <div class="shell">
         <div class="section-heading control-heading">
           <div>
-            <p class="eyebrow">02 · LEVEL &amp; GOAL</p>
+            <p class="eyebrow">04 · LEVEL &amp; GOAL</p>
             <h2 id="control-heading">학년과 준비 목표를<br>먼저 선택하세요.</h2>
           </div>
           <p>학년은 공식 시험지 확인의 기준이고, 목표는 GFIELD 수업 설계의 기준입니다. 둘을 섞어 점수나 수상 가능성을 약속하지 않습니다.</p>
@@ -125,7 +216,7 @@
       <div class="shell">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">03 · YEAR-PAPER DIAGNOSTIC</p>
+            <p class="eyebrow">05 · YEAR-PAPER DIAGNOSTIC</p>
             <h2 id="diagnostic-evidence-heading">기출을 풀었다면,<br>이제 진단과 처방으로 갑니다.</h2>
           </div>
           <p>2019·2020 공식 SIMCC 안내에서 G2–G10의 문제·답·해설 접근 경로를 확인했습니다. 원문을 복제하지 않고, 교사가 문항별 근거를 대조한 뒤 분석에 넣습니다.</p>
@@ -155,7 +246,7 @@
     <section class="shell domains-section" aria-labelledby="domains-heading">
       <div class="section-heading">
         <div>
-            <p class="eyebrow">04 · SIX-DOMAIN MAP</p>
+            <p class="eyebrow">06 · SIX-DOMAIN MAP</p>
             <h2 id="domains-heading">여섯 영역에서<br>준비 상태를 확인합니다.</h2>
         </div>
         <p>아래는 GFIELD가 설계한 준비 지도입니다. 공식 SASMO의 출제 범위표를 복제한 것이 아니며, 진단 결과가 쌓이면 학년·목표에 맞게 수업 우선순위를 정합니다.</p>
@@ -168,7 +259,7 @@
       <div class="shell">
         <div class="section-heading journey-heading">
           <div>
-            <p class="eyebrow">05 · LEARNING SEQUENCE</p>
+            <p class="eyebrow">07 · LEARNING SEQUENCE</p>
             <h2 id="journey-heading">진단 결과가 여섯 단계의<br>학습으로 이어집니다.</h2>
           </div>
           <p>이는 GFIELD의 프로그램 설계입니다. 공식 원문 문제는 외부 공식 출처에서 확인하며, GFIELD 진단 문항과 맞춤 워크북은 독립 검수가 끝날 때까지 공개하지 않습니다.</p>
@@ -185,7 +276,7 @@
       <div class="shell">
         <div class="section-heading archive-heading">
           <div>
-            <p class="eyebrow">06 · YEARLY PAST PAPERS</p>
+            <p class="eyebrow">08 · YEARLY PAST PAPERS</p>
             <h2 id="past-papers-heading">학년을 고르면<br>연도별 기출이 바로 열립니다.</h2>
           </div>
           <p>K12 Math Contests에 공개된 SASMO 원문 링크를 2014–2024 연도와 G1–G10 학년으로 정리했습니다. GFIELD가 PDF를 복제하지 않고 원 출처의 파일을 엽니다.</p>
@@ -216,7 +307,7 @@
       <div class="shell">
         <div class="section-heading source-heading">
           <div>
-            <p class="eyebrow">07 · SOURCES &amp; RIGHTS</p>
+            <p class="eyebrow">09 · SOURCES &amp; RIGHTS</p>
             <h2 id="sources-heading">공식 시험 정보와 GFIELD<br>수업 자료를 따로 관리합니다.</h2>
           </div>
           <p>연도별 자료실은 K12 Math Contests의 원본 파일 주소를 그대로 열고, GFIELD는 PDF를 재호스팅하지 않습니다. Edugain은 학년→주제→활동 흐름만 비교했으며 콘텐츠는 복제하지 않았습니다.</p>
@@ -266,6 +357,10 @@
   <script src="./competition/sasmo-program-architecture.js"></script>
   <script src="./competition/sasmo-diagnostic-foundation.js"></script>
   <script src="./competition/sasmo-source-inventory.js"></script>
+  <script src="./shared/geometry-worksheet-render.js?v=20260918-1"></script>
+  <script src="./competition/grade6-competition-type-bank.js?v=20260918-3"></script>
   <script src="./sasmo.js?v=20260918-1"></script>
+  <script src="./sasmo-showcase.js?v=20260918-1"></script>
+  <script src="./shared/gmap-local-question-coach.js?v=20260918-1"></script>
 </body>
 </html>

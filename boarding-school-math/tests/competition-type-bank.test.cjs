@@ -24,6 +24,16 @@ test("all answers match an independent fixed ledger and exactly one choice",func
   bank.items.forEach(function(item){assert.equal(bank.solve(item.model),expected[item.id],item.id);const answer=item.choices.filter(function(choice){return choice.value===expected[item.id];});assert.equal(answer.length,1,item.id);assert.equal(bank.answerId(item),answer[0].id,item.id);});
 });
 
+test("pattern-discovery prompt hides the operation rule until the solution",function(){
+  const item=byId("sasmo-g6-pattern-01");
+  [item.typeTitle.ko,item.prompt.ko,item.typeTitle.en,item.prompt.en,item.typeTitle["zh-Hans"],item.prompt["zh-Hans"]].forEach(function(text){
+    assert.doesNotMatch(text,/×3|−1|번갈아|alternat|交替/i);
+  });
+  assert.match(item.solution.ko,/×3/);
+  assert.match(item.solution.ko,/−1/);
+  assert.equal(bank.solve(item.model),"41");
+});
+
 test("bounded number and counting cases are independently enumerated",function(){
   assert.deepEqual(Array.from({length:10},function(_,digit){return digit;}).filter(function(digit){return(420+digit)%9===0;}),[3]);
   const subset=byId("mk56-weights-01").model,matches=[];for(let mask=0;mask<(1<<subset.weights.length);mask+=1){const chosen=subset.weights.filter(function(_,index){return mask&(1<<index);});if(chosen.reduce(function(sum,value){return sum+value;},0)===subset.target)matches.push(chosen.length);}assert.equal(Math.min.apply(null,matches),5);
@@ -45,6 +55,7 @@ test("geometry models agree with independent coordinate, folding, and distance c
   assert.equal(shoelace([[0,0],[9,0],[9,4],[12,4],[12,8],[0,8]]),84);assert.equal(Math.hypot(6,8),10);assert.equal(shoelace([[-2,1],[4,1],[4,5],[-2,5]]),24);
   const foldedNormals={A:"-1,0,0",B:"0,0,1",C:"1,0,0",D:"0,0,-1",E:"0,1,0",F:"0,-1,0"};assert.equal(foldedNormals.D,"0,0,-1");assert.equal(bank.solve(byId("mk56-cube-net-01").model),"D");
   ["sasmo-g6-geometry-01","sasmo-g6-grid-01","sasmo-g6-cube-01","mk56-cube-net-01","mk56-overlap-01","amc8-pythagorean-01","amc8-coordinate-01"].forEach(function(id){const visual=bank.renderVisual(byId(id),"ko");assert.match(visual,/competition-geometry/,id);assert.match(visual,/role="img"/,id);});
+  const cubeVisual=bank.renderVisual(byId("sasmo-g6-cube-01"),"en");assert.match(cubeVisual,/data-layout-role="painted-cube"/);assert.match(cubeVisual,/data-cube-size="3"/);
 });
 
 test("learner-fit, locale, source, and publication gates are explicit",function(){

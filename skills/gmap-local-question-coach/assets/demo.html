@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>G·MAP Local Question Coach Demo</title>
+  <link rel="stylesheet" href="./gmap-local-question-coach.css">
+  <style>
+    *{box-sizing:border-box}body{margin:0;padding:32px;background:#f5f6f8;color:#182230;font:16px/1.6 Arial,sans-serif}main{max-width:920px;margin:auto}.demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.demo-question{padding:22px;border:1px solid #d8dee8;background:#fff}.demo-question h2{font-size:18px}.feedback.wrong{color:#b42332}@media(max-width:640px){body{padding:16px}.demo-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body data-audience="student">
+  <main>
+    <p>TRANSFERABLE DEMO · NO API</p>
+    <h1>Verified local question guidance</h1>
+    <div class="demo-grid">
+      <article class="demo-question" data-item-id="ratio-01" data-coach-group="unit-rate" data-coach-hint="Find the cost of one notebook first." data-coach-misconception="Do not multiply before finding one unit.">
+        <h2>Unit rate</h2>
+        <p class="problem-prompt">Four notebooks cost twelve dollars. What is the cost of one notebook?</p>
+        <p class="feedback wrong">Try again.</p>
+      </article>
+      <article class="demo-question" data-item-id="ratio-02" data-coach-group="unit-rate" data-coach-hint="Divide the total cost by the number of notebooks.">
+        <h2>Unit rate</h2>
+        <p class="problem-prompt">Six notebooks cost eighteen dollars. What is the cost of one notebook?</p>
+      </article>
+    </div>
+  </main>
+  <script>window.GMAPQuestionCoachConfig={cardSelector:".demo-question"};</script>
+  <script src="./gmap-local-question-coach.js"></script>
+</body>
+</html>
