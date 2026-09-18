@@ -189,15 +189,23 @@ function targetExperience(item, model) {
 }
 
 function experience(item, family, model, beats) {
+  const conceptExample = item.conceptExample === true && item.id.startsWith("concept-example-");
+  const experienceBeats = conceptExample ? [
+    beat("given", "given", "주어진 두 기록을 그대로 살펴봅니다."),
+    beat("target", "target", "두 기록에서 비교할 같은 부분을 표시합니다."),
+    beat("transform", "transform", "같은 부분을 묶거나 지우고 남은 차를 계산합니다."),
+    beat("verify", "verify", "구한 값을 두 기록에 다시 넣어 확인합니다.")
+  ] : beats;
   return {
     kind: "source-animation",
     family,
     sourceItemId: item.id,
+    conceptExample,
     title: item.typeLabel || "원래 조건으로 풀이하기",
     problem: item.prompt,
     visual: item.visual,
-    beats,
-    printSteps: beats.map((_, index) => index),
+    beats: experienceBeats,
+    printSteps: experienceBeats.map((_, index) => index),
     model
   };
 }
@@ -299,9 +307,56 @@ function targetCalculation(model, phase, animate) {
   return targetVerify(model, phase === "verify-first" ? 0 : 1);
 }
 
+function conceptFinalAnswer(model, items, checks) {
+  const values = items.map((item, index) => `<span class="source-animation-b10__answer-token ${esc(item.className || `value-${index + 1}`)}"><b aria-hidden="true">${esc(item.token || (index === 0 ? "●" : "○"))}</b><small>${esc(item.label)}</small><strong>${model.values[index]}</strong></span>`).join("");
+  return `<div class="source-animation-b10__calculation source-animation-final-answer" data-answer-values="${model.values.join(",")}"><div class="source-animation-b10__answer-values">${values}</div>${checks.map((check) => `<span>${check}</span>`).join("")}</div>`;
+}
+
+function conceptQuantityCalculation(experience, phase, animate) {
+  const model = experience.model;
+  if (phase === "given") return "";
+  if (phase === "target") {
+    const highlighted = experience.family === "book10-sum-difference-combine-divide" ? [1, 1] : model.cancellation;
+    return `<div class="source-animation-b10__work is-matching">${model.rows.map((row) => quantityRow(model, row, { highlighted })).join("")}</div>`;
+  }
+  if (phase === "transform" && experience.family === "book10-sum-difference-combine-divide") {
+    const [first, second] = model.rows;
+    return `<div class="source-animation-b10__work is-combine">${quantityRow(model, first, { animate })}<i class="source-animation-b10__combine-sign">+</i>${quantityRow(model, second, { animate })}</div><div class="source-animation-b10__groups">${Array.from({ length: model.pairCoefficient }, () => `<div>${symbol(model, 0, animate ? "is-moving" : "")}${symbol(model, 1, animate ? "is-moving" : "")}</div>`).join("")}</div><div class="source-animation-b10__calculation"><strong>${first.total} + ${second.total} = ${model.combinedTotal}</strong><span>${model.combinedTotal} ÷ ${model.pairCoefficient} = ${model.pairValue} (한 쌍의 합)</span></div>`;
+  }
+  if (phase === "transform") {
+    const larger = model.rows[model.largerIndex];
+    const smaller = model.rows[model.smallerIndex];
+    const state = animate ? "has-cancellation is-animated" : "has-cancellation";
+    return `<div class="source-animation-b10__work ${state}">${model.rows.map((row) => quantityRow(model, row, { cancelled: model.cancellation, animate })).join("")}</div><div class="source-animation-b10__calculation"><strong>${larger.total} - ${smaller.total} = ${model.deltaTotal}</strong><span>${model.deltaTotal} ÷ ${model.delta[model.isolatedIndex]} = ?</span></div>`;
+  }
+  const checks = model.rows.map((row) => `${row.terms.map((count, index) => `${count} × ${model.values[index]}`).join(" + ")} = ${row.total}`);
+  return conceptFinalAnswer(model, model.symbols, checks);
+}
+
+function conceptTargetCalculation(experience, phase, animate) {
+  const model = experience.model;
+  if (phase === "given") return "";
+  if (phase === "target") return `<div class="source-animation-b10__records is-matching">${model.attempts.map((attempt) => targetHits(model, attempt, { highlighted: model.cancellation })).join("")}</div>`;
+  if (phase === "transform") {
+    const larger = model.attempts[model.largerIndex];
+    const smaller = model.attempts[model.smallerIndex];
+    const state = animate ? "has-cancellation is-animated" : "has-cancellation";
+    return `<div class="source-animation-b10__records ${state}">${model.attempts.map((attempt) => targetHits(model, attempt, { cancelled: model.cancellation, animate })).join("")}</div><div class="source-animation-b10__calculation"><strong>${larger.total} - ${smaller.total} = ${model.deltaTotal}</strong><span>${model.deltaTotal} ÷ ${model.delta[model.isolatedIndex]} = ?</span></div>`;
+  }
+  const checks = model.attempts.map((attempt) => `${attempt.hits.map((count, index) => `${count} × ${model.values[index]}`).join(" + ")} = ${attempt.total}`);
+  return conceptFinalAnswer(model, model.zones, checks);
+}
+
+function conceptCalculation(experience, phase, animate) {
+  return experience.family === "book10-target-score-difference"
+    ? conceptTargetCalculation(experience, phase, animate)
+    : conceptQuantityCalculation(experience, phase, animate);
+}
+
 function conditionMarkup(experience, step) {
+  if (experience.conceptExample && experience.beats[step]?.phase !== "given") return "";
   let conditions = book10Markup(experience.visual);
-  if (experience.family === "book10-sum-difference-combine-divide") {
+  if (!experience.conceptExample && experience.family === "book10-sum-difference-combine-divide") {
     const reached = (phase) => {
       const index = experience.beats.findIndex((frame) => frame.phase === phase);
       return index >= 0 && step >= index;
@@ -328,8 +383,10 @@ export function renderBook10SourceFrame(experience, step, { animate = false } = 
   const current = experience.beats[safeStep];
   const model = experience.model;
   let calculation = "";
-  if (experience.family === "book10-sum-difference-combine-divide") calculation = symmetricCalculation(model, current.phase, animate);
-  if (experience.family === "book10-common-term-elimination") calculation = eliminationCalculation(model, current.phase, animate);
-  if (experience.family === "book10-target-score-difference") calculation = targetCalculation(model, current.phase, animate);
-  return `<div class="book10-visual source-animation-b10 source-animation-b10--${esc(experience.family)}" data-source-item-id="${esc(experience.sourceItemId)}" data-source-animation-step="${safeStep}" data-source-animation-phase="${esc(current.phase)}">${conditionMarkup(experience, safeStep)}<div class="source-animation-b10__calculation-area">${calculation}</div></div>`;
+  if (experience.conceptExample) calculation = conceptCalculation(experience, current.phase, animate);
+  else if (experience.family === "book10-sum-difference-combine-divide") calculation = symmetricCalculation(model, current.phase, animate);
+  else if (experience.family === "book10-common-term-elimination") calculation = eliminationCalculation(model, current.phase, animate);
+  else if (experience.family === "book10-target-score-difference") calculation = targetCalculation(model, current.phase, animate);
+  const conceptAttributes = experience.conceptExample ? ` data-concept-example="${esc(experience.sourceItemId)}" data-concept-stage="${esc(current.phase)}"` : "";
+  return `<div class="book10-visual source-animation-b10 source-animation-b10--${esc(experience.family)}" data-source-item-id="${esc(experience.sourceItemId)}" data-source-animation-step="${safeStep}" data-source-animation-phase="${esc(current.phase)}"${conceptAttributes}>${conditionMarkup(experience, safeStep)}<div class="source-animation-b10__calculation-area">${calculation}</div></div>`;
 }

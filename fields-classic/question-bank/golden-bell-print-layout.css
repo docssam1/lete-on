@@ -1,5 +1,53 @@
 @media print {
   .gold-print-root { width: 188mm; max-width: none; }
+  .gold-print-cover { display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto; gap: 7mm; color: #182230; }
+  .gold-print-cover-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 4mm; border-bottom: 1.2mm solid #2456c4; }
+  .gold-print-cover-head span { color: #2456c4; font-size: 9pt; font-weight: 900; }
+  .gold-print-cover-head strong { color: #16734b; font-size: 11pt; }
+  .gold-print-cover-title { padding: 3mm 0 2mm; }
+  .gold-print-cover-title small { color: #16734b; font-size: 10pt; font-weight: 900; }
+  .gold-print-cover-title h1 { margin: 2mm 0 2mm; font-size: 27pt; line-height: 1.2; letter-spacing: 0; }
+  .gold-print-cover-title p { margin: 0; color: #566274; font-size: 11pt; font-weight: 700; line-height: 1.55; }
+  .gold-print-cover-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8mm; width: 92mm; margin: 4mm 0 0 auto; }
+  .gold-print-cover-meta div { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: end; gap: 2mm; }
+  .gold-print-cover-meta dt { color: #566274; font-size: 8pt; font-weight: 800; }
+  .gold-print-cover-meta dd { min-height: 5mm; margin: 0; padding: 0 1mm 1mm; border-bottom: .3mm solid #617184; font-size: 9pt; font-weight: 800; text-align: center; }
+  .gold-print-cover-path { padding: 4mm 0; border-top: .35mm solid #cbd7da; border-bottom: .35mm solid #cbd7da; }
+  .gold-print-cover-path h2,.gold-print-cover-concepts h2 { margin: 0 0 3mm; font-size: 11pt; }
+  .gold-print-cover-path ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3mm; margin: 0; padding: 0; list-style: none; }
+  .gold-print-cover-path li { display: grid; grid-template-columns: 8mm minmax(0, 1fr); align-items: center; gap: 2mm; min-height: 12mm; padding: 2mm; border-left: 1.2mm solid #2456c4; background: #eaf0ff; }
+  .gold-print-cover-path li:nth-child(2) { border-color: #16734b; background: #eaf6ef; }
+  .gold-print-cover-path li:nth-child(3) { border-color: #a56600; background: #fff7df; }
+  .gold-print-cover-path li:nth-child(4) { border-color: #8b4f9f; background: #f5edf8; }
+  .gold-print-cover-path b { display: grid; place-items: center; width: 7mm; height: 7mm; border: .4mm solid currentColor; font-size: 9pt; }
+  .gold-print-cover-path span { font-size: 9pt; font-weight: 850; }
+  .gold-print-cover-concepts { min-height: 0; }
+  .gold-print-cover-concepts > ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 6mm; margin: 0; padding: 0; list-style: none; }
+  .gold-print-cover-concepts li { display: grid; grid-template-columns: 9mm minmax(0, 1fr); gap: 2mm; min-height: 24mm; padding: 3mm 0; border-top: .3mm solid #dce4e6; break-inside: avoid; }
+  .gold-print-cover-concepts li > span { display: grid; place-items: center; width: 8mm; height: 8mm; background: #183b56; color: #fff; font-size: 8pt; font-weight: 900; }
+  .gold-print-cover-concepts li div { min-width: 0; }
+  .gold-print-cover-concepts small { display: block; color: #16734b; font-size: 7.5pt; font-weight: 900; }
+  .gold-print-cover-concepts strong { display: block; margin-top: .5mm; font-size: 10pt; line-height: 1.3; }
+  .gold-print-cover-concepts p { margin: 1mm 0 0; color: #566274; font-size: 8.5pt; font-weight: 650; line-height: 1.4; }
+  .gold-print-cover.is-dense { gap: 5mm; }
+  .gold-print-cover.is-dense .gold-print-cover-title { padding: 1mm 0; }
+  .gold-print-cover.is-dense .gold-print-cover-title h1 { font-size: 23pt; }
+  .gold-print-cover.is-dense .gold-print-cover-meta { margin-top: 2mm; }
+  .gold-print-cover.is-dense .gold-print-cover-concepts li { min-height: 17mm; padding: 2mm 0; }
+  .gold-print-cover.is-dense .gold-print-cover-concepts strong { font-size: 9pt; }
+  .gold-print-cover.is-dense .gold-print-cover-concepts p { font-size: 7.5pt; line-height: 1.3; }
+  .gold-print-cover.is-crowded { gap: 3.5mm; }
+  .gold-print-cover.is-crowded .gold-print-cover-title h1 { font-size: 21pt; }
+  .gold-print-cover.is-crowded .gold-print-cover-path { padding: 2.5mm 0; }
+  .gold-print-cover.is-crowded .gold-print-cover-concepts > ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 4mm; }
+  .gold-print-cover.is-crowded .gold-print-cover-concepts li { grid-template-columns: 7mm minmax(0, 1fr); gap: 1.5mm; min-height: 18mm; padding: 1.5mm 0; }
+  .gold-print-cover.is-crowded .gold-print-cover-concepts li > span { width: 6.5mm; height: 6.5mm; font-size: 7pt; }
+  .gold-print-cover.is-crowded .gold-print-cover-concepts small { font-size: 6.7pt; }
+  .gold-print-cover.is-crowded .gold-print-cover-concepts strong { font-size: 8pt; line-height: 1.2; }
+  .gold-print-cover.is-crowded .gold-print-cover-concepts p { margin-top: .6mm; font-size: 6.6pt; line-height: 1.22; }
+  .gold-print-duplex-blank { background: #fff; }
+  .gold-print-duplex-blank::before { display: none; }
+  .gold-print-duplex-blank .gold-print-footer { color: #a4adb8; text-align: center; }
   .gold-print-exercise-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

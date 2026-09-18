@@ -2,6 +2,104 @@ import { book02Markup } from "./book02-renderers.js?v=20260904b";
 import { book03Markup } from "./book03-renderers.js?v=20260905a";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
+import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20260905e";
+import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20260918a";
+import { renderBook07Guided } from "./golden-bell-book07-guided.js?v=20260918a";
+import { renderBook08Guided } from "./golden-bell-book08-guided.js?v=20260918a";
+
+const BOOK_FOUR_GUIDED_FAMILIES = new Set([
+  "book4-circle-logic-source",
+  "book4-cube-box-fill",
+  "book4-fold-hole-count",
+  "book4-multiplication-matrix",
+  "book4-row-logic-source",
+  "book4-table-logic-source"
+]);
+const BOOK_SEVEN_PHASES = ["given", "organize", "calculate", "verify"];
+const BOOK_SEVEN_GUIDED_FAMILIES = new Set([
+  "arithmetic-sequence",
+  "assumption-score",
+  "calendar-weekday",
+  "clock-reading",
+  "closed-loop",
+  "multiplication-equation",
+  "reverse-digits",
+  "reverse-growth",
+  "shape-sequence",
+  "venn-diagram"
+]);
+const BOOK_SEVEN_CAPTIONS = {
+  "shape-sequence": ["처음 도형의 변을 셉니다.", "맞닿아 함께 쓰는 한 변을 표시합니다.", "새 도형마다 늘어나는 성냥개비 수를 계산합니다.", "완성한 모양의 바깥선과 공통 변을 다시 셉니다."],
+  "closed-loop": ["닫힌 둘레의 나무와 간격을 봅니다.", "마지막 나무와 첫 나무 사이에도 간격이 있음을 표시합니다.", "나무 수와 간격의 길이를 곱합니다.", "간격 수가 나무 수와 같은지 다시 확인합니다."],
+  "venn-diagram": ["전체 수와 두 조건의 수를 봅니다.", "두 원이 겹치는 자리를 표시합니다.", "두 조건의 합에서 전체를 뺍니다.", "세 구역을 더해 전체 수가 되는지 확인합니다."],
+  "calendar-weekday": ["출발 요일과 옮길 날짜 수를 봅니다.", "7일씩 한 주로 묶고 남는 날을 찾습니다.", "출발 요일에서 남은 칸만 옮깁니다.", "7일 전과 같은 요일인지 달력 줄에서 확인합니다."],
+  "clock-reading": ["긴바늘과 짧은바늘의 위치를 봅니다.", "긴바늘 숫자 한 칸을 5분으로 바꿉니다.", "긴바늘 숫자에 5를 곱합니다.", "구한 분에서 짧은바늘이 두 시 사이에 있는지 확인합니다."],
+  "multiplication-equation": ["전체 수와 묶음 수를 봅니다.", "전체를 같은 수의 묶음으로 나눕니다.", "전체를 묶음 수로 나누어 빈칸을 찾습니다.", "찾은 수를 다시 곱해 전체가 되는지 확인합니다."],
+  "arithmetic-sequence": ["앞에 나온 수들을 차례로 봅니다.", "이웃한 수 사이의 같은 차를 찾습니다.", "목표 순서까지 같은 수를 더합니다.", "구한 수에서 공차를 빼 앞 수가 되는지 확인합니다."],
+  "assumption-score": ["두 점수와 문제 수, 전체 점수를 봅니다.", "모든 문제를 낮은 점수라고 가정합니다.", "실제 점수와의 차를 한 문제의 점수 차로 나눕니다.", "두 종류의 점수를 다시 더해 전체 점수를 확인합니다."],
+  "reverse-growth": ["가득 찬 날과 찾을 날을 봅니다.", "하루 전으로 갈 때 같은 배수로 나눕니다.", "날짜 차만큼 거꾸로 나눕니다.", "찾은 양을 다시 늘려 가득 차는지 확인합니다."],
+  "reverse-digits": ["십의 자리와 일의 자리를 바꾼 두 수를 봅니다.", "두 수의 차가 자리 차의 9배임을 표시합니다.", "두 수의 차를 9로 나눕니다.", "자리 차에 9를 곱해 처음 차가 되는지 확인합니다."]
+};
+const BOOK_EIGHT_GUIDED_FAMILIES = new Set([
+  "book08-picture-division",
+  "book08-pyramid-cryptarithm",
+  "book08-shape-equation-targets"
+]);
+const BOOK_NINE_PHASES = ["problem", "organize", "calculate", "verify"];
+const BOOK_NINE_GUIDED_FAMILIES = new Set(["book09-area", "book09-cube", "book09-magic", "book09-consecutive"]);
+const SEQUENCED_PRINT_FAMILIES = new Set([
+  ...BOOK_FOUR_GUIDED_FAMILIES,
+  ...BOOK_SEVEN_GUIDED_FAMILIES,
+  ...BOOK_EIGHT_GUIDED_FAMILIES,
+  ...BOOK_NINE_GUIDED_FAMILIES
+]);
+const BOOK_NINE_CAPTIONS = {
+  "book09-area": ["주어진 도형과 모눈만 봅니다.", "단위 칸으로 나누어 표시합니다.", "단위 넓이를 식으로 모읍니다.", "넓이와 단위 칸의 합을 확인합니다."],
+  "book09-cube": ["주어진 쌓기 모양만 봅니다.", "바닥 자리마다 기둥 높이를 표시합니다.", "기둥별 개수를 덧셈식으로 모읍니다.", "전체 개수와 높이의 합을 확인합니다."],
+  "book09-magic": ["빈칸이 있는 수 배열만 봅니다.", "빈칸이 든 한 줄을 골라 표시합니다.", "한 줄의 합에서 아는 수를 뺍니다.", "빈칸을 넣어 가로와 세로를 확인합니다."],
+  "book09-consecutive": ["주어진 연속수만 봅니다.", "양끝의 수끼리 짝을 만듭니다.", "같은 합의 짝을 식으로 모읍니다.", "짝의 합과 전체 합을 확인합니다."]
+};
+
+function normalizeBookNineGuidedBeats() {
+  for (const book of COURSE_ONE_BOOKS) {
+    for (const lesson of book.lessons || []) {
+      const experience = lesson.experience;
+      if (experience?.kind !== "guided-concept" || !BOOK_NINE_GUIDED_FAMILIES.has(experience.family)) continue;
+      const existing = Array.isArray(experience.beats) ? experience.beats : [];
+      if (existing.length === 4 && existing.every((beat, index) => beat.phase === BOOK_NINE_PHASES[index])) continue;
+      const captions = BOOK_NINE_CAPTIONS[experience.family];
+      experience.beats = BOOK_NINE_PHASES.map((phase, index) => ({
+        ...(phase === "problem" ? existing[0] : phase === "organize" ? existing[1] : phase === "verify" ? existing.at(-1) : {}),
+        id: `${experience.family}-${phase}`,
+        action: phase === "problem" ? "draw" : phase === "organize" ? "transform" : phase,
+        phase,
+        caption: captions[index]
+      }));
+    }
+  }
+}
+
+function normalizeBookSevenGuidedBeats() {
+  for (const book of COURSE_ONE_BOOKS) {
+    for (const lesson of book.lessons || []) {
+      const experience = lesson.experience;
+      if (experience?.kind !== "guided-concept" || !BOOK_SEVEN_GUIDED_FAMILIES.has(experience.family)) continue;
+      const existing = Array.isArray(experience.beats) ? experience.beats : [];
+      if (existing.length === 4 && existing.every((beat, index) => beat.phase === BOOK_SEVEN_PHASES[index])) continue;
+      const captions = BOOK_SEVEN_CAPTIONS[experience.family];
+      experience.beats = BOOK_SEVEN_PHASES.map((phase, index) => ({
+        ...(phase === "given" ? existing[0] : phase === "organize" ? existing[1] : phase === "verify" ? existing.at(-1) : {}),
+        id: `${experience.family}-${phase}`,
+        action: phase === "given" ? "draw" : phase === "organize" ? "transform" : phase,
+        phase,
+        caption: captions[index]
+      }));
+    }
+  }
+}
+
+normalizeBookSevenGuidedBeats();
+normalizeBookNineGuidedBeats();
 
 function foldVisual(phase) {
   const folded = ["folded", "cut"].includes(phase);
@@ -151,13 +249,28 @@ function sumGridPlacementVisual(phase) {
 }
 
 function numberConditionFilterVisual(phase, model) {
+  const candidates = Array.isArray(model?.candidates) ? model.candidates : [];
+  const remaining = Array.isArray(model?.answer)
+    ? model.answer
+    : candidates.filter((value) => Number.isInteger(value) && Math.abs(value) % 2 === 1);
   const firstDone = ["first", "second", "verify"].includes(phase);
   const secondDone = ["second", "verify"].includes(phase);
-  return `<div class="guided-number-filter ${phase}" role="img" aria-label="후보 수에 조건을 하나씩 적용하는 과정"><div>${model.candidates.map((value) => `<span class="${secondDone && !model.answer.includes(value) ? "removed" : firstDone ? "kept" : ""}">${value}</span>`).join("")}</div><ol><li class="${firstDone ? "done" : ""}">각 자리의 합이 4</li><li class="${secondDone ? "done" : ""}">홀수</li></ol><p>${phase === "candidates" ? "먼저 빠짐없이 후보를 적습니다." : phase === "first" ? "13, 22, 31, 40은 첫 조건을 모두 만족합니다." : phase === "second" ? "짝수인 22와 40을 지우면 13과 31이 남습니다." : "13과 31의 자리 합과 홀짝을 다시 확인합니다."}</p></div>`;
+  return `<div class="guided-number-filter ${phase}" role="img" aria-label="후보 수에 조건을 하나씩 적용하는 과정"><div>${candidates.map((value) => `<span class="${secondDone && !remaining.includes(value) ? "removed" : firstDone ? "kept" : ""}">${value}</span>`).join("")}</div><ol><li class="${firstDone ? "done" : ""}">각 자리의 합이 4</li><li class="${secondDone ? "done" : ""}">홀수</li></ol><p>${phase === "candidates" ? "먼저 빠짐없이 후보를 적습니다." : phase === "first" ? "13, 22, 31, 40은 첫 조건을 모두 만족합니다." : phase === "second" ? "짝수인 22와 40을 지우면 13과 31이 남습니다." : "13과 31의 자리 합과 홀짝을 다시 확인합니다."}</p></div>`;
 }
 
 function relativeOrderVisual(phase, model) {
-  const shown = phase === "empty" ? ["?", "?", "?", "?"] : phase === "last" ? ["?", "?", "?", "A"] : phase === "pair" ? ["?", "?", "C", "A"] : model.answer;
+  const people = Array.isArray(model?.people) && model.people.length === 4 ? model.people : ["A", "B", "C", "D"];
+  const [last, first, beforeLast, between] = people;
+  const completed = Array.isArray(model?.answer) && model.answer.length === 4
+    ? model.answer
+    : [first, between, beforeLast, last];
+  const shown = phase === "empty"
+    ? ["?", "?", "?", "?"]
+    : phase === "last"
+      ? ["?", "?", "?", last]
+      : phase === "pair"
+        ? ["?", "?", beforeLast, last]
+        : completed;
   return `<div class="guided-relative-order ${phase}" role="img" aria-label="조건을 읽어 앞뒤 순서를 정하는 과정"><div><b>앞</b>${shown.map((person) => `<span>${person}</span>`).join("")}<b>뒤</b></div><p>${phase === "empty" ? "왼쪽을 앞, 오른쪽을 뒤로 정합니다." : phase === "last" ? "A를 가장 뒤에 고정합니다." : phase === "pair" ? "C를 A의 바로 앞에 붙입니다." : "D를 B와 C 사이에 놓으면 B-D-C-A입니다."}</p></div>`;
 }
 
@@ -184,17 +297,201 @@ function bookSixSourceVisual(experience, beat, step) {
   return `<div class="book06-visual guided-book6-source" data-book6-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book06Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
 }
 
-function bookNineSourceVisual(experience) {
+const BOOK_NINE_COLOR = Object.freeze({
+  given: "#187fa9",
+  action: "#d39b20",
+  verify: "#16734b",
+  ink: "#233746",
+  muted: "#b9c5cc",
+  paper: "#ffffff",
+  wash: "#f5f6f8"
+});
+
+function bookNineEscape(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function bookNineNumber(value) {
+  return Number.isInteger(value) ? String(value) : String(Math.round(value * 100) / 100);
+}
+
+function bookNinePhaseShell(family, phase, content) {
+  const labels = { problem: "문제", organize: "정리", calculate: "계산", verify: "검산" };
+  const activeIndex = BOOK_NINE_PHASES.indexOf(phase);
+  const colorRole = phase === "problem" ? "given" : phase === "verify" ? "verify" : "action";
+  const rail = BOOK_NINE_PHASES.map((name, index) => {
+    const active = index === activeIndex;
+    const complete = index < activeIndex;
+    const color = name === "problem" ? BOOK_NINE_COLOR.given : name === "verify" ? BOOK_NINE_COLOR.verify : BOOK_NINE_COLOR.action;
+    return `<span style="display:grid;place-items:center;min-height:28px;border-bottom:3px solid ${active || complete ? color : BOOK_NINE_COLOR.muted};color:${active ? color : BOOK_NINE_COLOR.ink};font-size:12px;font-weight:900">${labels[name]}</span>`;
+  }).join("");
+  return `<div class="book09-visual guided-book09-source" data-book09-family="${bookNineEscape(family)}" data-book09-phase="${phase}" data-color-role="${colorRole}" role="img" aria-label="${labels[phase]} 단계의 수학 그림" style="display:grid;gap:12px;width:100%;min-height:220px;padding:10px;background:${BOOK_NINE_COLOR.paper};overflow:hidden"><div aria-hidden="true" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:min(100%,430px)">${rail}</div><div style="display:grid;gap:12px;place-items:center;width:100%">${content}</div></div>`;
+}
+
+function polygonArea(points) {
+  return Math.abs(points.reduce((sum, [x, y], index) => {
+    const [nextX, nextY] = points[(index + 1) % points.length];
+    return sum + x * nextY - nextX * y;
+  }, 0)) / 2;
+}
+
+function pointInPolygon([x, y], points) {
+  let inside = false;
+  for (let index = 0, previous = points.length - 1; index < points.length; previous = index, index += 1) {
+    const [x1, y1] = points[index];
+    const [x2, y2] = points[previous];
+    const crosses = (y1 > y) !== (y2 > y) && x < ((x2 - x1) * (y - y1)) / (y2 - y1) + x1;
+    if (crosses) inside = !inside;
+  }
+  return inside;
+}
+
+function bookNineAreaFrame(visual, phase) {
+  const width = Number(visual.gridWidth);
+  const height = Number(visual.gridHeight);
+  const points = (visual.points || []).map(([x, y]) => [Number(x), Number(y)]);
+  if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || points.length < 3) {
+    throw new Error("Book 9 area model is incomplete.");
+  }
+  const area = polygonArea(points);
+  const unit = 48;
+  const wholeCells = [];
+  for (let row = 0; row < height; row += 1) {
+    for (let column = 0; column < width; column += 1) {
+      if (pointInPolygon([column + 0.5, row + 0.5], points)) wholeCells.push([column, row]);
+    }
+  }
+  const highlight = phase === "verify" ? BOOK_NINE_COLOR.verify : BOOK_NINE_COLOR.action;
+  const highlightedCells = phase === "problem" ? "" : wholeCells.map(([column, row]) => `<rect x="${column * unit + 3}" y="${row * unit + 3}" width="${unit - 6}" height="${unit - 6}" rx="3" fill="${highlight}" fill-opacity=".16" stroke="${highlight}" stroke-width="2"/><text x="${column * unit + unit / 2}" y="${row * unit + unit / 2 + 5}" fill="${highlight}" font-size="14" font-weight="900" text-anchor="middle">${phase === "verify" ? "✓" : "1"}</text>`).join("");
+  const grid = `${Array.from({ length: width + 1 }, (_, index) => `<line x1="${index * unit}" y1="0" x2="${index * unit}" y2="${height * unit}"/>`).join("")}${Array.from({ length: height + 1 }, (_, index) => `<line x1="0" y1="${index * unit}" x2="${width * unit}" y2="${index * unit}"/>`).join("")}`;
+  const polygon = points.map(([x, y]) => `${x * unit},${y * unit}`).join(" ");
+  const svg = `<svg viewBox="-4 -4 ${width * unit + 8} ${height * unit + 8}" aria-label="모눈 위 주어진 도형" style="display:block;width:min(100%,360px);height:auto"><polygon points="${polygon}" fill="${phase === "verify" ? BOOK_NINE_COLOR.verify : BOOK_NINE_COLOR.given}" fill-opacity=".13" stroke="${phase === "verify" ? BOOK_NINE_COLOR.verify : BOOK_NINE_COLOR.given}" stroke-width="3"/>${highlightedCells}<g stroke="${BOOK_NINE_COLOR.muted}" stroke-width="1">${grid}</g></svg>`;
+  if (phase === "problem" || phase === "organize") return svg;
+  const fullCellTotal = wholeCells.length;
+  const remainder = Math.max(0, area - fullCellTotal);
+  const terms = [...Array.from({ length: fullCellTotal }, () => "1"), ...(remainder ? [bookNineNumber(remainder)] : [])];
+  const expression = terms.length ? terms.join(" + ") : `${width} × ${height}`;
+  if (phase === "calculate") {
+    return `${svg}<div data-book09-expression style="padding:9px 14px;border-left:4px solid ${BOOK_NINE_COLOR.action};background:#fff8e4;color:${BOOK_NINE_COLOR.ink};font-size:20px;font-weight:900">${expression} = ?</div>`;
+  }
+  return `${svg}<div data-book09-answer="${bookNineNumber(area)}" style="display:grid;gap:5px;justify-items:center;color:${BOOK_NINE_COLOR.verify};font-size:20px;font-weight:900"><strong style="font-size:25px">넓이 ${bookNineNumber(area)}</strong><span data-book09-check="${bookNineEscape(`${expression} = ${bookNineNumber(area)}`)}">${expression} = ${bookNineNumber(area)}</span></div>`;
+}
+
+function bookNineCubeFrame(visual, phase) {
+  const map = Array.isArray(visual.map) ? visual.map.map((row) => row.map(Number)) : [];
+  const width = Math.max(0, ...map.map((row) => row.length));
+  if (!map.length || !width || map.some((row) => row.length !== width || row.some((height) => !Number.isInteger(height) || height < 0))) {
+    throw new Error("Book 9 cube height map is incomplete.");
+  }
+  const heights = map.flat();
+  const total = heights.reduce((sum, height) => sum + height, 0);
+  const source = book09Markup(visual).replace(/\sdata-total="[^"]*"/g, "");
+  if (phase === "problem") return source;
+  const cellColor = phase === "verify" ? BOOK_NINE_COLOR.verify : phase === "calculate" ? BOOK_NINE_COLOR.action : BOOK_NINE_COLOR.given;
+  const columns = `<div aria-label="바닥 자리별 쌓기 높이" style="display:grid;grid-template-columns:repeat(${width},minmax(48px,62px));gap:7px">${heights.map((height, index) => `<span aria-label="${index + 1}번 자리 높이 ${height}" style="display:flex;flex-direction:column-reverse;align-items:center;justify-content:flex-start;gap:2px;min-height:66px;padding:6px;border:2px solid ${phase === "organize" ? BOOK_NINE_COLOR.action : cellColor};background:${BOOK_NINE_COLOR.wash}">${Array.from({ length: height }, () => `<i aria-hidden="true" style="display:block;width:24px;height:18px;border:1px solid ${cellColor};background:${cellColor};opacity:.78"></i>`).join("")}</span>`).join("")}</div>`;
+  if (phase === "organize") return columns;
+  const expression = heights.join(" + ");
+  if (phase === "calculate") {
+    return `${columns}<div data-book09-expression style="padding:9px 14px;border-left:4px solid ${BOOK_NINE_COLOR.action};background:#fff8e4;color:${BOOK_NINE_COLOR.ink};font-size:20px;font-weight:900">${expression} = ?</div>`;
+  }
+  return `${source}<div data-book09-answer="${total}" style="display:grid;gap:5px;justify-items:center;color:${BOOK_NINE_COLOR.verify};font-size:19px;font-weight:900"><strong style="font-size:25px">전체 ${total}개</strong><span data-book09-check="${bookNineEscape(`${expression} = ${total}`)}">${expression} = ${total}</span></div>`;
+}
+
+function magicSquareLines(size) {
+  const rows = Array.from({ length: size }, (_, row) => Array.from({ length: size }, (_, column) => row * size + column));
+  const columns = Array.from({ length: size }, (_, column) => Array.from({ length: size }, (_, row) => row * size + column));
+  const diagonals = [
+    Array.from({ length: size }, (_, index) => index * size + index),
+    Array.from({ length: size }, (_, index) => index * size + (size - index - 1))
+  ];
+  return [...rows, ...columns, ...diagonals];
+}
+
+function bookNineMagicFrame(visual, phase) {
+  const size = Number(visual.size);
+  const lineSum = Number(visual.lineSum);
+  const shown = Array.isArray(visual.shown) ? visual.shown.slice() : [];
+  if (!Number.isInteger(size) || size < 2 || shown.length !== size * size || !Number.isFinite(lineSum)) {
+    throw new Error("Book 9 magic-square model is incomplete.");
+  }
+  const blankIndexes = shown.map((value, index) => Number.isFinite(Number(value)) ? -1 : index).filter((index) => index >= 0);
+  if (blankIndexes.length !== 1) throw new Error("Book 9 magic-square model must have one blank.");
+  const blankIndex = blankIndexes[0];
+  const relatedLines = magicSquareLines(size).filter((line) => line.includes(blankIndex));
+  const candidates = relatedLines.map((line) => lineSum - line.reduce((sum, index) => index === blankIndex ? sum : sum + Number(shown[index]), 0));
+  if (!candidates.length || new Set(candidates).size !== 1) throw new Error("Book 9 magic-square blank is not uniquely determined.");
+  const target = candidates[0];
+  const primaryLine = relatedLines[0];
+  const filled = shown.map((value, index) => index === blankIndex ? target : Number(value));
+  const reveal = phase === "verify";
+  const grid = `<div aria-label="빈칸이 있는 ${size} 곱하기 ${size} 수 배열" style="display:grid;grid-template-columns:repeat(${size},48px);border:2px solid ${BOOK_NINE_COLOR.given}">${shown.map((value, index) => {
+    const active = primaryLine.includes(index) && phase !== "problem";
+    const targetCell = index === blankIndex;
+    const color = reveal && targetCell ? BOOK_NINE_COLOR.verify : active ? BOOK_NINE_COLOR.action : BOOK_NINE_COLOR.ink;
+    const background = reveal && targetCell ? "#e8f5ee" : active ? "#fff8e4" : BOOK_NINE_COLOR.paper;
+    return `<span style="display:grid;place-items:center;width:48px;height:48px;border:1px solid ${active ? color : BOOK_NINE_COLOR.muted};background:${background};color:${color};font-size:17px;font-weight:900">${targetCell ? reveal ? target : "?" : bookNineEscape(value)}</span>`;
+  }).join("")}</div><strong style="color:${BOOK_NINE_COLOR.given};font-size:13px">한 줄의 합 ${lineSum}</strong>`;
+  if (phase === "problem" || phase === "organize") return grid;
+  const known = primaryLine.filter((index) => index !== blankIndex).map((index) => Number(shown[index]));
+  const calculation = `${lineSum} - ${known.join(" - ")}`;
+  if (phase === "calculate") {
+    return `${grid}<div data-book09-expression style="padding:9px 14px;border-left:4px solid ${BOOK_NINE_COLOR.action};background:#fff8e4;color:${BOOK_NINE_COLOR.ink};font-size:20px;font-weight:900">${calculation} = ?</div>`;
+  }
+  const checks = relatedLines.slice(0, 2).map((line) => `${line.map((index) => filled[index]).join(" + ")} = ${lineSum}`);
+  return `${grid}<div data-book09-answer="${target}" style="display:grid;gap:4px;justify-items:center;color:${BOOK_NINE_COLOR.verify};font-size:17px;font-weight:900"><strong style="font-size:25px">빈칸 ${target}</strong><span data-book09-check="${bookNineEscape(checks.join(" / "))}">${checks.join("　")}</span></div>`;
+}
+
+function bookNineConsecutiveFrame(visual, phase) {
+  const from = Number(visual.from);
+  const to = Number(visual.to);
+  if (!Number.isInteger(from) || !Number.isInteger(to) || to < from || to - from > 30) {
+    throw new Error("Book 9 consecutive-number model is incomplete.");
+  }
+  const values = Array.from({ length: to - from + 1 }, (_, index) => from + index);
+  const pairs = Array.from({ length: Math.floor(values.length / 2) }, (_, index) => [values[index], values[values.length - index - 1]]);
+  const middle = values.length % 2 ? values[Math.floor(values.length / 2)] : null;
+  const pairSum = pairs[0]?.reduce((sum, value) => sum + value, 0) || 0;
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const card = (value, color) => `<span style="display:grid;place-items:center;min-width:42px;height:42px;padding:0 7px;border:2px solid ${color};background:${BOOK_NINE_COLOR.paper};color:${BOOK_NINE_COLOR.ink};font-size:17px;font-weight:900">${value}</span>`;
+  if (phase === "problem") {
+    return `<div aria-label="${from}부터 ${to}까지의 연속수" style="display:flex;flex-wrap:wrap;justify-content:center;gap:7px">${values.map((value) => card(value, BOOK_NINE_COLOR.given)).join("")}</div>`;
+  }
+  const pairMarkup = `<div aria-label="양끝 수로 만든 짝" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">${pairs.map(([left, right]) => `<span style="display:flex;align-items:center;gap:4px;padding:5px;border-bottom:3px solid ${phase === "verify" ? BOOK_NINE_COLOR.verify : BOOK_NINE_COLOR.action}">${card(left, BOOK_NINE_COLOR.given)}<i aria-hidden="true" style="color:${BOOK_NINE_COLOR.action};font-style:normal;font-weight:900">+</i>${card(right, BOOK_NINE_COLOR.given)}</span>`).join("")}${middle === null ? "" : `<span style="padding:5px;border-bottom:3px solid ${BOOK_NINE_COLOR.action}">${card(middle, BOOK_NINE_COLOR.given)}</span>`}</div>`;
+  if (phase === "organize") return pairMarkup;
+  const expression = middle === null ? `${pairs.length} × ${pairSum}` : `${pairs.length} × ${pairSum} + ${middle}`;
+  if (phase === "calculate") {
+    return `${pairMarkup}<div data-book09-expression style="padding:9px 14px;border-left:4px solid ${BOOK_NINE_COLOR.action};background:#fff8e4;color:${BOOK_NINE_COLOR.ink};font-size:20px;font-weight:900">${expression} = ?</div>`;
+  }
+  const check = `${values.join(" + ")} = ${total}`;
+  return `${pairMarkup}<div data-book09-answer="${total}" style="display:grid;gap:4px;justify-items:center;color:${BOOK_NINE_COLOR.verify};font-size:17px;font-weight:900"><strong style="font-size:25px">합 ${total}</strong><span data-book09-check="${bookNineEscape(check)}">${expression} = ${total}　${check}</span></div>`;
+}
+
+function bookNineSourceVisual(experience, beat, step) {
   const visual = experience.model?.visual;
-  return visual ? `<div class="book09-visual guided-book09-source">${book09Markup(visual)}</div>` : "";
+  if (!visual) return "";
+  const phase = beat?.phase || (beat?.action === "verify" ? "verify" : BOOK_NINE_PHASES[Math.min(step, BOOK_NINE_PHASES.length - 1)]);
+  let content = "";
+  if (experience.family === "book09-area") content = bookNineAreaFrame(visual, phase);
+  else if (experience.family === "book09-cube") content = bookNineCubeFrame(visual, phase);
+  else if (experience.family === "book09-magic") content = bookNineMagicFrame(visual, phase);
+  else if (experience.family === "book09-consecutive") content = bookNineConsecutiveFrame(visual, phase);
+  else content = book09Markup(visual);
+  return bookNinePhaseShell(experience.family, phase, content);
 }
 
 export function guidedConceptVisual(experience, step) {
   const beat = experience.beats[Math.max(0, Math.min(step, experience.beats.length - 1))];
   if (experience.family?.startsWith("book2-")) return bookTwoSourceVisual(experience, beat, step);
   if (experience.family?.startsWith("book3-")) return bookThreeSourceVisual(experience, beat, step);
+  if (BOOK_FOUR_GUIDED_FAMILIES.has(experience.family)) return renderBook04Guided(experience, beat, step);
   if (experience.family === "book06-source") return bookSixSourceVisual(experience, beat, step);
-  if (experience.family?.startsWith("book09-")) return bookNineSourceVisual(experience);
+  if (BOOK_SEVEN_GUIDED_FAMILIES.has(experience.family)) return renderBook07Guided(experience, beat, step);
+  if (experience.family?.startsWith("book08-")) return renderBook08Guided(experience, beat, step);
+  if (experience.family?.startsWith("book09-")) return bookNineSourceVisual(experience, beat, step);
   if (experience.family === "fold-symmetry") return foldVisual(beat.phase);
   if (experience.family === "double-fold-symmetry") return doubleFoldVisual(beat.phase);
   if (experience.family === "equal-line") return equalLineVisual(beat.phase, experience.model);
@@ -217,6 +514,23 @@ export function guidedConceptVisual(experience, step) {
   return "";
 }
 
+function guidedPrintPhase(beat, index, total) {
+  const phase = String(beat?.phase || "").toLowerCase();
+  if (["problem", "given", "organize", "calculate", "verify"].includes(phase)) return phase;
+  if (index === 0) return "given";
+  if (index === total - 1) return "verify";
+  return total >= 4 && index === total - 2 ? "calculate" : "organize";
+}
+
 export function guidedConceptPrintSummary(experience) {
+  if (SEQUENCED_PRINT_FAMILIES.has(experience.family)) {
+    const phaseLabels = { problem: "문제 보기", given: "주어진 조건", organize: "구조 정리", calculate: "계산·추론", verify: "검산" };
+    const total = experience.beats.length;
+    const frames = experience.beats.map((beat, index) => {
+      const phase = guidedPrintPhase(beat, index, total);
+      return `<section class="guided-print-step" data-print-phase="${phase}"><header><span>${index + 1}</span><strong>${phaseLabels[phase]}</strong></header>${guidedConceptVisual(experience, index)}<p>${bookNineEscape(beat.caption)}</p></section>`;
+    }).join("");
+    return `<div class="gold-print-experience guided-print-summary is-sequenced" data-print-guided-family="${bookNineEscape(experience.family)}"><h2>개념을 ${total}단계로 확인해요</h2><div class="guided-print-step-grid">${frames}</div></div>`;
+  }
   return `<div class="gold-print-experience guided-print-summary"><p><strong>개념 순서</strong> ${experience.beats.map((beat) => beat.caption).join(" → ")}</p>${guidedConceptVisual(experience, experience.beats.length - 1)}</div>`;
 }

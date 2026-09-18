@@ -12,7 +12,7 @@ import { course03ComplexFractionConceptMarkup } from "./golden-bell-course03-com
 import { course23A2ConceptMarkup } from "./golden-bell-course23-a2-lessons.js";
 import { course23A3ConceptMarkup } from "./golden-bell-course23-a3-lessons.js";
 import { course02A4ConceptMarkup } from "./golden-bell-course02-a4-lessons.js";
-import { course02G4ConceptMarkup } from "./golden-bell-course02-g4-lessons.js";
+import { course02G4ConceptMarkup } from "./golden-bell-course02-g4-lessons.js?v=20260918a";
 
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 const names = { triangle: "세모", square: "네모", circle: "동그라미", star: "별" };
@@ -112,13 +112,60 @@ export function courseConceptPrintPages(lesson, book, student) {
 }
 
 export function courseAnswerPrintPages(lesson, book, student, { quick = false } = {}) {
-  const items = [...lesson.original.items.map((item, index) => ({ item, label: `연습 ${index + 1}` })),
-    ...[lesson.extension, ...(lesson.similarPractice || [])].map((item, index) => ({ item, label: `추가 학습 ${index + 1}` }))];
+  const courseLabels = { "course-01": "1과정", "course-02": "2과정", "course-03": "3과정" };
+  if (!Object.hasOwn(courseLabels, book.courseId)) throw new Error("A supported courseId is required for answer printing");
+
+  const hasText = (value) => typeof value === "string" && value.trim() !== "";
+  const validAnswer = (value) => Array.isArray(value)
+    ? value.length > 0 && value.every((entry) => !Array.isArray(entry) && validAnswer(entry))
+    : typeof value === "number" ? Number.isFinite(value) : hasText(value);
+  const answerText = (value) => Array.isArray(value) ? value.map(String).join(" / ") : String(value);
+  const printableText = (value) => esc(value).replace(/\r?\n/g, "<br>");
+  const partLabel = (part, index) => hasText(part?.label) ? part.label.trim() : `(${index + 1})`;
+  const combineParts = (item, field) => {
+    if (!Array.isArray(item.parts) || item.parts.length === 0) return null;
+    const complete = field === "answer"
+      ? item.parts.every((part) => validAnswer(part?.answer))
+      : item.parts.every((part) => hasText(part?.solution));
+    if (!complete) return null;
+    return item.parts.map((part, index) => {
+      const value = field === "answer" ? answerText(part.answer) : part.solution.trim();
+      const unit = field === "answer" && hasText(part.unit) ? part.unit.trim() : "";
+      return `${partLabel(part, index)} ${value}${unit}`;
+    }).join("\n");
+  };
+  const protectedContent = (item) => {
+    const answer = validAnswer(item?.answer) ? answerText(item.answer) : combineParts(item || {}, "answer");
+    const solution = hasText(item?.solution) ? item.solution.trim() : combineParts(item || {}, "solution");
+    if (!answer || !solution) throw new Error(`Protected worked answers are required for printing (${item?.id || "unknown item"})`);
+    const verificationCandidates = [item.verification, item.check, item.explanation]
+      .filter((value) => hasText(value) && value.trim() !== solution);
+    const partVerification = Array.isArray(item.parts) ? item.parts.map((part, index) => {
+      const value = [part?.verification, part?.check, part?.explanation]
+        .find((candidate) => hasText(candidate) && candidate.trim() !== part?.solution?.trim());
+      return value ? `${partLabel(part, index)} ${value.trim()}` : "";
+    }).filter(Boolean).join("\n") : "";
+    return { answer, solution, verification: verificationCandidates[0]?.trim() || partVerification };
+  };
+  const conditionText = (item) => [item?.prompt, ...(Array.isArray(item?.conditions) ? item.conditions : [])]
+    .filter(hasText).map((value) => value.trim()).join("\n");
+  const verifyVisual = (item) => {
+    if (!item?.visual || typeof item.visual !== "object" || Array.isArray(item.visual)) return "";
+    const markup = courseConceptMarkup({ ...item.visual, phase: "verify" });
+    return hasText(markup) ? `<div class="course-solution-visual">${markup}</div>` : "";
+  };
+
+  const items = [
+    ...(lesson.original?.items || []).map((item, index) => ({ item, label: `연습 ${index + 1}` })),
+    ...[lesson.extension, ...(lesson.similarPractice || [])].filter(Boolean)
+      .map((item, index) => ({ item, label: `추가 학습 ${index + 1}` }))
+  ];
   return items.map(({ item, label }, index) => {
-    if (item.answer === undefined || !item.solution?.trim()) throw new Error("Protected worked answers are required for printing");
-    const answer = Array.isArray(item.answer) ? item.answer.join(" / ") : item.answer;
-    // The solution table supplies the independent division checks after the first four steps.
-    const explanation = item.visual.kind === "course-division" ? item.solution.split("\n").slice(0, 4).join("\n") : item.solution;
-    return `<article class="gold-print-page course-answer-page" data-print-book="${esc(book.id)}" data-print-lesson="${esc(lesson.id)}" data-print-part="answers-${index + 1}" data-watermark="${esc(student)} · GFIELD"><header class="gold-print-head"><div><span>${esc(book.courseId === "course-02" ? "2과정" : "3과정")} · ${quick ? "빠른 정답" : "답안과 풀이"}</span><h1>${esc(book.label)} · ${esc(lesson.title)}</h1></div></header><section class="gold-print-block"><section class="gold-print-source-item course-answer-item" data-answer-item="${esc(item.id)}"><h2>${label} · 답 ${esc(answer)}</h2>${quick ? "" : `<p>${esc(explanation)}</p><div class="course-solution-visual">${courseConceptMarkup({ ...item.visual, phase: "verify" })}</div>`}</section></section><footer class="gold-print-footer">${esc(book.label)} · ${esc(lesson.unit)}</footer></article>`;
+    const content = protectedContent(item);
+    const number = index + 1;
+    const body = quick
+      ? `<h2><span>${number}</span>답 ${printableText(content.answer)}</h2>`
+      : `<h2><span>${number}</span>${esc(label)}</h2>${conditionText(item) ? `<p class="course-answer-condition"><strong>조건</strong><br>${printableText(conditionText(item))}</p>` : ""}<p class="course-answer-working"><strong>실제 수를 사용한 풀이</strong><br>${printableText(content.solution)}</p><p class="course-answer-result"><strong>답과 확인</strong><br>답 ${printableText(content.answer)}${content.verification ? `<br>${printableText(content.verification)}` : ""}</p>${verifyVisual(item)}`;
+    return `<article class="gold-print-page course-answer-page" data-print-book="${esc(book.id)}" data-print-lesson="${esc(lesson.id)}" data-print-part="answers-${number}" data-watermark="${esc(student)} · GFIELD"><header class="gold-print-head"><div><span>${esc(courseLabels[book.courseId])} · ${quick ? "빠른 정답" : "답안과 풀이"}</span><h1>${esc(book.label)} · ${esc(lesson.title)}</h1></div></header><section class="gold-print-block"><section class="gold-print-source-item course-answer-item" data-answer-item="${esc(item.id || `answer-${number}`)}">${body}</section></section><footer class="gold-print-footer">${esc(book.label)} · ${esc(lesson.unit)}</footer></article>`;
   }).join("");
 }
