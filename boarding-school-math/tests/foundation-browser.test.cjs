@@ -208,6 +208,32 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   assert.equal(await page.locator('[data-level="G6"]').getAttribute("aria-selected"), "true");
   assert.equal(await page.locator("#role-primary-link").getAttribute("href"), "./competition-practice.html?program=sasmo&audience=student&locale=ko");
   assert.match(await page.locator("#role-availability").innerText(), /지금 체험 가능[\s\S]*10개/);
+  assert.equal(await page.locator("#mini-experience").getAttribute("data-showcase-state"), null);
+  assert.equal(await page.locator("#showcase-tabs .showcase-tab").count(), 3);
+  assert.equal(await page.locator("#showcase-question-slot .showcase-question").count(), 1);
+  assert.equal(await page.locator("#hero-demo-visual svg").count(), 1);
+  assert.equal(await page.locator("#workbook-demo-visual svg").count(), 1);
+  assert.match(await page.locator("#workbook-preview").innerText(), /SASMO Grade 6 · 10유형 워크북[\s\S]*36문항 워크북과 8문항 재확인[\s\S]*진단별 자동 처방 팩[\s\S]*검수/);
+  assert.equal(await page.locator('.workbook-actions a[href*="competition-practice"][href*="audience=student"]').getAttribute("href"), "./competition-practice.html?program=sasmo&audience=student&locale=ko");
+  assert.equal(await page.locator('.workbook-actions a[href*="competition-practice"][href*="audience=teacher"]').getAttribute("href"), "./competition-practice.html?program=sasmo&audience=teacher&locale=ko");
+  assert.equal(await page.locator(".workbook-course-link").getAttribute("href"), "./unit-workbook.html?audience=student&mode=workbook&locale=ko&paper=A4&cluster=6.G.A");
+
+  await page.locator('[data-demo-answer="A"]').click();
+  assert.match(await page.locator("#showcase-question .feedback").innerText(), /정답은 표시하지 않/);
+  assert.doesNotMatch(await page.locator("#showcase-question .feedback").innerText(), /41/);
+  await page.locator("#showcase-question .gmap-ai-launch").waitFor();
+  await page.locator("#showcase-question .gmap-ai-launch").click();
+  await page.locator(".gmap-ai-preset").first().click();
+  assert.match(await page.locator(".gmap-ai-log").innerText(), /이웃한 두 수 사이의 변화/);
+  assert.doesNotMatch(await page.locator(".gmap-ai-log").innerText(), /정답.*41|42.?−.?1.?=.?41/);
+  await page.locator(".gmap-ai-close").click();
+  await page.locator('[data-showcase-index="1"]').click();
+  await page.locator('[data-demo-answer="A"]').click();
+  await page.locator('[data-showcase-index="2"]').click();
+  await page.locator('[data-demo-answer="A"]').click();
+  assert.equal(await page.locator("#mini-experience").getAttribute("data-showcase-complete"), "true");
+  assert.match(await page.locator("#showcase-insight").innerText(), /미니 진단이 완성[\s\S]*관찰된 강점[\s\S]*먼저 보완/);
+  assert.equal(await page.locator('.showcase-workbook-link[href="#workbook-preview"]').count(), 1);
   assert.equal(await page.locator("#k12-record-count").textContent(), "88");
   assert.equal(await page.locator("#k12-asset-count").textContent(), "144");
   assert.equal(await page.locator("#edugain-topic-count").textContent(), "158");
@@ -327,7 +353,7 @@ test("dedicated SASMO page stays usable at mobile and tablet widths", async func
     });
     assert.equal(allLevelsVisible, true, `not all K2-G12 controls visible at ${width}px`);
     assert.equal(await page.locator('[data-level="G12"]').isVisible(), true);
-    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], [data-role-jump], .role-primary-link, .primary-link, .hero-secondary-link, .outline-link, #archive-grade-filter, #diagnostic-year, .evidence-source-link, .archive-file-link, .archive-record-source, .brand, .site-footer a").evaluateAll(function (controls) {
+    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], [data-role-jump], .role-primary-link, .primary-link, .hero-secondary-link, .outline-link, #archive-grade-filter, #diagnostic-year, .evidence-source-link, .archive-file-link, .archive-record-source, .brand, .site-footer a, .showcase-tab, .showcase-choice, .showcase-next, .showcase-primary, .showcase-workbook-link, .showcase-reset, .workbook-secondary, .workbook-course-link, .gmap-ai-launch").evaluateAll(function (controls) {
       return controls.map(function (control) {
         const rect = control.getBoundingClientRect();
         return { width: rect.width, height: rect.height };
@@ -341,6 +367,14 @@ test("dedicated SASMO page stays usable at mobile and tablet widths", async func
       const mobileStart = await page.locator(".hero-mobile-start").boundingBox();
       assert.ok(mobileStart.width >= 44 && mobileStart.height >= 44, `SASMO mobile start target at ${width}px`);
     }
+    const containedVisuals = await page.locator("#hero-demo-visual svg, .showcase-question-visual svg, #workbook-demo-visual svg").evaluateAll(function (visuals) {
+      return visuals.every(function (visual) {
+        const parent = visual.parentElement.getBoundingClientRect();
+        const box = visual.getBoundingClientRect();
+        return box.left >= parent.left - 1 && box.right <= parent.right + 1 && box.top >= parent.top - 1 && box.bottom <= parent.bottom + 1;
+      });
+    });
+    assert.equal(containedVisuals, true, `SASMO visual clipping at ${width}px`);
     assert.deepEqual(errors, []);
     await page.close();
   }

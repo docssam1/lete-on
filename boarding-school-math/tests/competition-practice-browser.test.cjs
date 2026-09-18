@@ -1,7 +1,12 @@
 "use strict";
 const test=require("node:test");const assert=require("node:assert/strict");const fs=require("node:fs");const http=require("node:http");const path=require("node:path");const{chromium}=require("playwright");
+const bank=require("../competition/grade6-competition-type-bank.js");
 const root=path.resolve(__dirname,"..","..");let server,browser,url;
 function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";if(file.endsWith(".css"))return"text/css; charset=utf-8";return"text/javascript; charset=utf-8";}
+async function assertGeometryInsideViewBox(page,label){
+  const reports=await page.locator("svg.competition-geometry").evaluateAll(function(nodes){return nodes.map(function(svg){const drawing=svg.getBBox(),view=svg.viewBox.baseVal,card=svg.closest(".problem-card");return{id:card?card.dataset.itemId:"unknown",left:drawing.x-view.x,top:drawing.y-view.y,right:view.x+view.width-drawing.x-drawing.width,bottom:view.y+view.height-drawing.y-drawing.height};});});
+  reports.forEach(function(report){["left","top","right","bottom"].forEach(function(side){assert.ok(report[side]>=4,label+" "+report.id+" "+side+" clearance "+report[side]);});});
+}
 test.before(async function(){server=http.createServer(function(req,res){const file=path.resolve(root,"."+decodeURIComponent(new URL(req.url,"http://127.0.0.1").pathname));if(!file.startsWith(root)||!fs.existsSync(file)||!fs.statSync(file).isFile()){res.writeHead(404);res.end();return;}res.writeHead(200,{"content-type":type(file)});fs.createReadStream(file).pipe(res);});await new Promise(function(resolve){server.listen(0,"127.0.0.1",resolve);});url=`http://127.0.0.1:${server.address().port}/boarding-school-math/competition-practice.html`;browser=await chromium.launch({headless:true});});
 test.after(async function(){await browser.close();await new Promise(function(resolve){server.close(resolve);});});
 
@@ -16,11 +21,23 @@ test("student solves actual SASMO, Math Kangaroo, and AMC bridge types without t
   assert.equal(await page.locator(".problem-card").count(),10);
   assert.equal(await page.locator(".choice").count(),50);
   assert.equal(await page.locator(".teacher-solution").count(),0);
+  assert.equal(await page.locator(".gmap-ai-launch").count(),10);
+  assert.equal(await page.locator(".diagnostic-empty").count(),1);
+  assert.equal(await page.locator("#results-jump-count").innerText(),"0 / 10");
+  const patternCard=page.locator('[data-item-id="sasmo-g6-pattern-01"]');
+  assert.doesNotMatch(await patternCard.innerText(),/×3|−1|번갈아/);
+  assert.match(await patternCard.innerText(),/2, 6, 5, 15, 14, 42/);
+  await assertGeometryInsideViewBox(page,"SASMO desktop");
   assert.equal(await page.locator("#problem-list").getAttribute("role"),"tabpanel");
   assert.equal(await page.locator("#practice-next-link").getAttribute("href"),"#problem-sasmo-g6-model-01");
   const first=page.locator('[data-item-id="sasmo-g6-model-01"]');
   await first.locator('[data-answer-id="A"]').click();
   assert.equal(await first.locator(".feedback.wrong").count(),1);
+  assert.equal(await page.locator(".diagnostic-overview article").first().locator("strong").innerText(),"0%");
+  await first.locator(".gmap-ai-launch").click();
+  await page.locator(".gmap-ai-preset").first().click();
+  assert.match(await page.locator('.gmap-ai-message[data-role="assistant"]').nth(1).innerText(),/차이.*먼저/);
+  await page.locator(".gmap-ai-close").click();
   await first.locator('[data-answer-id="C"]').click();
   assert.equal(await first.locator(".feedback.correct").count(),1);
   assert.equal(await first.locator(".choice:disabled").count(),5);
@@ -33,14 +50,40 @@ test("student solves actual SASMO, Math Kangaroo, and AMC bridge types without t
   await selectedTab.press("ArrowRight");
   assert.equal(await page.locator('.program-tab[aria-selected="true"]').getAttribute("data-program-id"),"math-kangaroo-g5-6");
   assert.equal(await page.locator('[data-item-id^="mk56-"]').count(),10);
+  await assertGeometryInsideViewBox(page,"Math Kangaroo desktop");
   await page.locator('.program-tab[aria-selected="true"]').press("End");
   assert.equal(await page.locator('.program-tab[aria-selected="true"]').getAttribute("data-program-id"),"amc-8-bridge");
   assert.equal(await page.locator('[data-item-id^="amc8-"]').count(),10);
+  await assertGeometryInsideViewBox(page,"AMC 8 desktop");
   await page.locator('.program-tab[aria-selected="true"]').press("Home");
   assert.equal(await page.locator('.program-tab[aria-selected="true"]').getAttribute("data-program-id"),"sasmo-g6");
   assert.equal(await page.locator('[data-item-id="sasmo-g6-model-01"]').evaluate(function(node){return node.classList.contains("solved");}),true);
   assert.equal(await page.locator("#progress-label").innerText(),"1 / 10");
   assert.deepEqual(errors,[]);
+  await page.close();
+});
+
+test("first-attempt evidence produces a provisional diagnosis and teacher audit trail",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});
+  const external=[];
+  page.on("request",function(request){const target=new URL(request.url());if(target.hostname!=="127.0.0.1")external.push(request.url());});
+  await page.goto(`${url}?program=sasmo&audience=student&locale=en`,{waitUntil:"networkidle"});
+  const rows=bank.items.filter(function(item){return item.programId==="sasmo-g6";});
+  const first=page.locator('[data-item-id="'+rows[0].id+'"]');
+  await first.locator('[data-answer-id="A"]').click();
+  await first.locator('[data-answer-id="'+bank.answerId(rows[0])+'"]').click();
+  for(const item of rows.slice(1))await page.locator('[data-item-id="'+item.id+'"] [data-answer-id="'+bank.answerId(item)+'"]').click();
+  assert.equal(await page.locator("#results-jump-count").innerText(),"10 / 10");
+  assert.equal(await page.locator("#diagnostic-state").innerText(),"Preliminary analysis ready");
+  assert.equal(await page.locator(".diagnostic-overview article").first().locator("strong").innerText(),"90%");
+  assert.equal(await page.locator(".diagnostic-overview article").nth(2).locator("strong").innerText(),"Sample strong");
+  assert.equal(await page.locator('[data-axis="data-probability"] .domain-value b').innerText(),"Not measured");
+  assert.match(await page.locator(".diagnostic-prescription").innerText(),/halving the total/i);
+  await page.locator('[data-audience="teacher"]').click();
+  assert.equal(await page.locator(".teacher-evidence tbody tr").count(),10);
+  assert.equal(await page.locator(".teacher-solution").count(),10);
+  assert.equal(await page.locator(".gmap-ai-launch").count(),10);
+  assert.deepEqual(external,[]);
   await page.close();
 });
 
@@ -53,8 +96,8 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
   assert.equal(await page.locator('[data-audience="student"]').innerText(),"Student");
   assert.equal(await page.locator('[data-audience="teacher"]').innerText(),"Teacher");
   assert.equal(await page.locator("#release-title").innerText(),"GFIELD-original problems");
-  assert.equal(await page.locator("#practice-next-kicker").innerText(),"PUBLIC INSTRUCTOR PREVIEW");
-  assert.match(await page.locator("#audience-disclosure").innerText(),/Public instructor preview/);
+  assert.equal(await page.locator("#practice-next-kicker").innerText(),"PUBLIC TEACHER PREVIEW");
+  assert.match(await page.locator("#audience-disclosure").innerText(),/Public teacher preview/);
   assert.match(await page.locator("#audience-disclosure").innerText(),/no account, learner record, or assignment tools/i);
   assert.match(await page.locator("#source-use").innerText(),/^MAA AMC 8/);
   await page.locator('[data-audience="teacher"]').focus();
@@ -68,6 +111,17 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
   assert.equal(await page.locator("html").getAttribute("lang"),"zh-Hans");
   assert.equal(await page.locator('[data-audience="student"]').innerText(),"学生版");
   assert.equal(await page.locator("#workspace-title").innerText(),"真实题型");
+  await page.locator("#locale-select").selectOption("en-SG");
+  assert.equal(await page.locator("html").getAttribute("lang"),"en-SG");
+  assert.match(await page.title(),/SASMO Primary 6 practice/);
+  assert.equal(await page.locator("#page-kicker").innerText(),"SASMO SINGAPORE · PRIMARY 6 (GRADE 6)");
+  assert.equal(await page.locator('[data-audience="student"]').innerText(),"Student");
+  assert.equal(await page.locator('[data-audience="teacher"]').innerText(),"Teacher");
+  assert.equal(await page.locator('.program-tab[data-program-id="sasmo-g6"] span').innerText(),"Primary 6 (Grade 6) · 10 types");
+  await page.locator('.program-tab[data-program-id="sasmo-g6"]').click();
+  assert.equal(await page.locator("#program-format").innerText(),"GFIELD practice · five-choice format");
+  assert.match(await page.locator("#diagnostic-boundary").innerText(),/not an official SASMO score, award, DSA outcome, or school placement result/i);
+  assert.equal(await page.locator(".teacher-solution").count(),10);
   await page.emulateMedia({media:"print"});
   assert.equal(await page.locator(".skip-link,.site-header,.bank-toolbar,.program-browser").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).length;}),0);
   await page.close();
@@ -77,5 +131,46 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
   assert.equal(await mobile.locator(".problem-card").count(),10);
   assert.equal(await mobile.locator(".math-fraction").count(),7);
   assert.equal(await mobile.locator(".competition-geometry").count(),4);
+  await assertGeometryInsideViewBox(mobile,"Math Kangaroo mobile");
+  await mobile.goto(`${url}?program=sasmo&audience=student&locale=en-SG`,{waitUntil:"networkidle"});
+  assert.equal(await mobile.locator("html").getAttribute("lang"),"en-SG");
+  assert.equal(await mobile.locator("#page-kicker").innerText(),"SASMO SINGAPORE · PRIMARY 6 (GRADE 6)");
+  assert.equal(await mobile.locator(".teacher-solution").count(),0);
+  assert.doesNotMatch(await mobile.locator('[data-item-id="sasmo-g6-pattern-01"]').innerText(),/×3|−1|alternat/i);
+  assert.equal(await mobile.locator(".gmap-ai-launch").count(),10);
+  await mobile.locator(".gmap-ai-launch").first().click();
+  const dialogBox=await mobile.locator(".gmap-ai-dialog").boundingBox();
+  assert.ok(dialogBox.x>=-0.5&&dialogBox.x+dialogBox.width<=390.5);
+  assert.ok(dialogBox.y>=0&&dialogBox.y+dialogBox.height<=844.5);
+  await mobile.locator(".gmap-ai-close").click();
+  assert.deepEqual(await mobile.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];}),[390,390]);
+  await assertGeometryInsideViewBox(mobile,"SASMO mobile");
   await mobile.close();
+});
+
+test("SASMO ten-type workbook stays answer-separated and within an A4 print page",async function(){
+  const page=await browser.newPage({viewport:{width:794,height:1123}});
+  await page.goto(`${url}?program=sasmo&audience=student&locale=ko`,{waitUntil:"networkidle"});
+  await page.emulateMedia({media:"print"});
+  assert.equal(await page.locator(".problem-page").count(),5);
+  assert.equal(await page.locator(".teacher-solution").count(),0);
+  assert.equal(await page.locator(".gmap-ai-launch").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).length;}),0);
+  let pageHeights=await page.locator(".problem-page").evaluateAll(function(nodes){return nodes.map(function(node){return node.getBoundingClientRect().height;});});
+  pageHeights.forEach(function(height){assert.ok(height<1000,"student print page height "+height);});
+
+  await page.goto(`${url}?program=sasmo&audience=teacher&locale=ko`,{waitUntil:"networkidle"});
+  await page.emulateMedia({media:"print"});
+  assert.equal(await page.locator(".problem-page").count(),5);
+  assert.equal(await page.locator(".teacher-solution").count(),10);
+  assert.equal(await page.locator(".choice.correct").count(),10);
+  pageHeights=await page.locator(".problem-page").evaluateAll(function(nodes){return nodes.map(function(node){return node.getBoundingClientRect().height;});});
+  pageHeights.forEach(function(height){assert.ok(height<1000,"teacher print page height "+height);});
+
+  await page.goto(`${url}?program=sasmo&audience=student&locale=en-SG`,{waitUntil:"networkidle"});
+  await page.emulateMedia({media:"print"});
+  assert.equal(await page.locator(".problem-page").count(),5);
+  assert.equal(await page.locator(".teacher-solution").count(),0);
+  pageHeights=await page.locator(".problem-page").evaluateAll(function(nodes){return nodes.map(function(node){return node.getBoundingClientRect().height;});});
+  pageHeights.forEach(function(height){assert.ok(height<1000,"Singapore English student print page height "+height);});
+  await page.close();
 });
