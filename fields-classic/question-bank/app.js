@@ -1,4 +1,4 @@
-import { AGE_STAGES, DOMAINS, ACADEMY_STYLES, TYPES, EXAMS, PRACTICE_EXAM_TYPES, DIAGNOSTIC_EXAM_TYPES, FINAL_EXAM_TYPES, CURRICULUM, SOURCE_QUESTION_INDEX, TEXTBOOK_STAGES, questionClassificationForType, representativeConceptForType, textbookGuideForType, typeById } from "./source-data.js?v=20260906a";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20260918a";
 import { GENERATORS } from "./generators.js?v=20260908a";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260829f";
@@ -12,6 +12,24 @@ import { book08Markup } from "./book08-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20260911a";
 import { book10Markup } from "./book10-renderers.js?v=20260822k";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
+
+const {
+  ageStages: AGE_STAGES,
+  domains: DOMAINS,
+  academyStyles: ACADEMY_STYLES,
+  exams: EXAMS,
+  practiceExamTypes: PRACTICE_EXAM_TYPES,
+  diagnosticExamTypes: DIAGNOSTIC_EXAM_TYPES,
+  finalExamTypes: FINAL_EXAM_TYPES,
+  curriculum: CURRICULUM,
+  textbookStages: TEXTBOOK_STAGES
+} = FIELDS_QUESTION_BANK_ADAPTER.catalog;
+const { types: TYPES, sourceItems: SOURCE_QUESTION_INDEX, typeById } = FIELDS_QUESTION_BANK_ADAPTER;
+const {
+  questionClassificationForType,
+  representativeConceptForType,
+  textbookGuideForType
+} = FIELDS_QUESTION_BANK_ADAPTER.services;
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
