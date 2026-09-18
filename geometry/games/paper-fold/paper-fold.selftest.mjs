@@ -1,97 +1,45 @@
 import assert from "node:assert/strict";
-import { levels, validateLevels } from "./levels.js";
+import { levels, validateLevels, reflectPoint, unfoldedPolygon } from "./levels.js";
 
 validateLevels();
 
-const reflect = (region, axis) => {
-  const match = /^r([1-4])c([1-4])(?:-(ne|nw|se|sw))?$/.exec(region);
-  assert.ok(match, `invalid region ${region}`);
-  const row = Number(match[1]);
-  const col = Number(match[2]);
-  const part = match[3];
-  const next = {
-    vertical: [row, 5 - col],
-    horizontal: [5 - row, col],
-    "diag-main": [col, row],
-    "diag-anti": [5 - col, 5 - row]
-  }[axis];
-  const corner = {
-    vertical: { nw: "ne", ne: "nw", sw: "se", se: "sw" },
-    horizontal: { nw: "sw", sw: "nw", ne: "se", se: "ne" },
-    "diag-main": { nw: "nw", ne: "sw", sw: "ne", se: "se" },
-    "diag-anti": { nw: "se", ne: "ne", sw: "sw", se: "nw" }
-  };
-  return `r${next[0]}c${next[1]}${part ? `-${corner[axis][part]}` : ""}`;
-};
-
-const unfold = (regions, folds) => folds.reduce(
-  (current, step) => [...new Set(current.flatMap((region) => [region, reflect(region, step.axis)]))],
-  [...regions]
-);
-
-function stackTop(values, folds) {
-  let board = values.map((row) => row.map((value) => [value]));
-  for (const step of folds) {
-    const rows = board.length;
-    const cols = board[0].length;
-    if (step.axis === "vertical") {
-      const half = cols / 2;
-      board = board.map((row) => Array.from({ length: half }, (_, col) => {
-        const target = step.side === "left" ? row[half + col] : row[col];
-        const moving = step.side === "left" ? row[half - 1 - col] : row[cols - 1 - col];
-        return target.concat(moving.slice().reverse());
-      }));
-    } else {
-      const half = rows / 2;
-      board = Array.from({ length: half }, (_, row) => Array.from({ length: cols }, (_, col) => {
-        const target = step.side === "top" ? board[half + row][col] : board[row][col];
-        const moving = step.side === "top" ? board[half - 1 - row][col] : board[rows - 1 - row][col];
-        return target.concat(moving.slice().reverse());
-      }));
-    }
-  }
-  assert.equal(board.length, 1);
-  assert.equal(board[0].length, 1);
-  return board[0][0].at(-1);
-}
-
-assert.deepEqual(levels.map((level) => level.difficulty), ["입문", "입문", "초급", "초급", "중급"]);
-assert.deepEqual(levels.map((level) => level.problems.length), [10, 10, 10, 10, 10]);
+assert.equal(levels.length, 2);
+assert.deepEqual(levels.map((level) => level.title.ko), ["색종이 접어 자르기", "대각선으로 접어 자르기"]);
+assert.ok(levels.every((level) => level.problems.length === 36));
 
 const ids = new Set();
 for (const level of levels) {
+  const counts = { "result-choice": 0, "connect-match": 0 };
   for (const problem of level.problems) {
     assert.ok(!ids.has(problem.id), `duplicate id ${problem.id}`);
     ids.add(problem.id);
-    assert.ok(problem.sourceRef, `missing sourceRef ${problem.id}`);
+    assert.equal(problem.folds.length, 1, `multiple folds found in ${problem.id}`);
+    assert.equal(problem.fold, problem.folds[0]);
+    assert.ok(problem.sourceRef.startsWith("user-reference.kinderfacto.single-fold"));
+    counts[problem.interaction] += 1;
 
-    if (["result-choice", "backtrack-choice"].includes(problem.interaction)) {
-      assert.deepEqual(new Set(problem.targetRegions), new Set(unfold(problem.sourceRegions, problem.folds)), `unfold mismatch ${problem.id}`);
-      assert.equal(problem.choices.length, 2, `choice count mismatch ${problem.id}`);
-      const answerChoice = problem.choices.find((choice) => choice.key === problem.answer);
-      assert.ok(answerChoice, `answer choice missing ${problem.id}`);
-      const expected = problem.interaction === "backtrack-choice" ? problem.sourceRegions : problem.targetRegions;
-      assert.deepEqual(new Set(answerChoice.regions), new Set(expected), `visual answer mismatch ${problem.id}`);
-    }
+    const first = problem.interaction === "connect-match" ? problem.pairs[0] : problem;
+    const polygon = unfoldedPolygon(first.cut, first.fold);
+    assert.ok(polygon.length >= first.cut.length + 1, `unfolded polygon is incomplete: ${problem.id}`);
+    assert.deepEqual(reflectPoint(reflectPoint(first.cut[1], first.fold.axis), first.fold.axis), first.cut[1]);
+    const specimens = problem.interaction === "connect-match" ? problem.pairs : [problem, ...problem.choices];
+    specimens.forEach((specimen) => specimen.cut.forEach(({ x, y }) => {
+      assert.ok(x >= 0 && x <= 1 && y >= 0 && y <= 1, `cut leaves paper in ${problem.id}: ${x},${y}`);
+    }));
 
-    if (problem.interaction === "cut-number-sum") {
-      const cells = problem.answer.cells;
-      assert.deepEqual(new Set(cells), new Set(unfold(problem.cutRegions, problem.folds)), `number cells mismatch ${problem.id}`);
-      const values = cells.map((region) => {
-        const match = /^r([1-4])c([1-4])/.exec(region);
-        return problem.grid.values[Number(match[1]) - 1][Number(match[2]) - 1];
-      });
-      assert.deepEqual(problem.answer.values, values, `number values mismatch ${problem.id}`);
-      assert.equal(problem.answer.sum, values.reduce((sum, value) => sum + value, 0), `number sum mismatch ${problem.id}`);
-    }
-
-    if (problem.interaction === "top-choice") {
-      assert.equal(problem.answer, String(stackTop(problem.topGrid, problem.folds)), `top layer mismatch ${problem.id}`);
-      assert.equal(problem.condition, "same-number-on-both-sides");
-      assert.match(problem.sourceAdaptation, /top-color adapted/);
+    if (problem.interaction === "result-choice") {
+      assert.equal(problem.choices.length, 3);
+      const correct = problem.choices.find((choice) => choice.key === problem.answer);
+      assert.equal(correct.profileId, problem.profileId);
+    } else {
+      assert.equal(problem.pairs.length, 3);
+      assert.equal(problem.results.length, 3);
+      assert.deepEqual(new Set(problem.results.map((item) => item.key)), new Set(problem.pairs.map((item) => item.key)));
     }
   }
+  assert.ok(counts["result-choice"] >= 20);
+  assert.ok(counts["connect-match"] >= 10);
 }
 
-assert.equal(ids.size, 50);
-console.log("Paper Fold self-test passed: 5 distinct strands, 50 verified problems.");
+assert.equal(ids.size, 72);
+console.log("Paper Fold self-test passed: 2 single-fold types, 72 generated problems, choice and line matching verified.");

@@ -41,3 +41,5 @@ body{background:#f4f5ef}
 }
 @media(prefers-reduced-motion:reduce){.studio-intro img{animation:none}}
 .level-copy .level-stage{display:block;min-height:16px;margin-bottom:5px;color:#876126;font-size:10px;font-weight:950}
+#foldLevelGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:850px){#foldLevelGrid .level-card:last-child{grid-column:auto;display:grid;grid-template-columns:none;grid-template-rows:126px auto;min-height:270px}}

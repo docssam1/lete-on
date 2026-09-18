@@ -1,778 +1,413 @@
-import { levels, validateLevels } from "./levels.js?v=paper-fold-7";
-import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
+import { levels, validateLevels, foldedPolygon, unfoldedPolygon } from "./levels.js?v=paper-fold-8";
+import { saveGameProgress } from "../../shared/profile-storage.js";
 
 validateLevels();
 
 const $ = (selector) => document.querySelector(selector);
-const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const params = new URLSearchParams(location.search);
-const saved = readGameProgress("paperFold");
-const requestedLevel = Math.max(1, Math.min(5, Number(params.get("level")) || Number(saved.level) || 1));
-const storedLanguage = localStorage.getItem("gfield-language") || "ko";
-const language = ["ko", "zh", "ja", "en"].includes(storedLanguage) ? storedLanguage : "ko";
-const SESSION_SIZE = 5;
-const recentKey = "gfield-paper-fold-recent";
+const lang = localStorage.getItem("gfield-language") || "ko";
+const CHUNK_SIZE = 10;
+const MAX_SESSION_SIZE = 20;
+const requestedCount = Number(params.get("count")) === 20 ? 20 : CHUNK_SIZE;
+const requestedLevel = Math.max(1, Math.min(2, Number(params.get("level")) || 1));
+const progressKey = "gfield-paper-fold-progress-v4";
+const recentKey = "gfield-paper-fold-recent-v4";
 
-function shuffled(items) {
-  const copy = [...items];
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const swap = Math.floor(Math.random() * (index + 1));
-    [copy[index], copy[swap]] = [copy[swap], copy[index]];
-  }
-  return copy;
-}
-
-function sessionFromIds(levelIndex, ids) {
-  if (!Array.isArray(ids) || ids.length !== SESSION_SIZE) return null;
-  const byId = new Map(levels[levelIndex].problems.map((item) => [item.id, item]));
-  const session = ids.map((id) => byId.get(id)).filter(Boolean);
-  return session.length === SESSION_SIZE && new Set(session).size === SESSION_SIZE ? session : null;
-}
-
-function createSession(levelIndex) {
-  let recent = {};
-  try { recent = JSON.parse(localStorage.getItem(recentKey) || "{}"); } catch { recent = {}; }
-  const excluded = new Set(Array.isArray(recent[levelIndex + 1]) ? recent[levelIndex + 1] : []);
-  let candidates = levels[levelIndex].problems.filter((item) => !excluded.has(item.id));
-  if (candidates.length < SESSION_SIZE) candidates = levels[levelIndex].problems;
-  const session = shuffled(candidates).slice(0, SESSION_SIZE);
-  recent[levelIndex + 1] = session.map((item) => item.id);
-  localStorage.setItem(recentKey, JSON.stringify(recent));
-  return session;
-}
-
-const restoredSession = !params.has("level") && Number(saved.level) === requestedLevel ? sessionFromIds(requestedLevel - 1, saved.queue) : null;
-const initialSession = restoredSession || createSession(requestedLevel - 1);
-const state = {
-  level: requestedLevel - 1,
-  problem: params.has("level") || !restoredSession ? 0 : Math.max(0, Math.min(SESSION_SIZE - 1, Number(saved.problemIndex) || 0)),
-  queue: initialSession,
-  folded: false,
-  foldStep: 0,
-  busy: false,
-  solved: false,
-  wrong: 0,
-  hints: 0,
-  selections: new Set(),
-  placements: [],
-  selectedPlacement: null,
-  stage: 1,
-  audio: localStorage.getItem("gfield-audio-muted") !== "true",
-  lang: language
-};
-state.folded = state.queue[state.problem]?.interaction === "result-choice";
-state.foldStep = state.folded ? (state.queue[state.problem]?.folds?.length || 1) : 0;
-
-const I18N = {
+const text = {
   ko: {
-    back: "색종이 접기 마을로 나가기", levels: "레벨", hint: "힌트", retry: "다시", worksheet: "학습지",
-    rotate: "돌리기", flip: "뒤집기", next: "다음 문제", level: "레벨", chooseLevel: "레벨 선택", close: "닫기",
-    levelComplete: "레벨 {level} 완료!", completeText: "차근차근 접고 펼치며 정확하게 해결했어요.", nextLevel: "다음 레벨", studio: "색종이 접기 마을", practice: "같은 레벨 더 풀기",
-    openPaper: "펼친 색종이", foldedPaper: "접은 색종이", openResult: "펼친 결과", foldAria: "{axis} 접기선을 눌러 접기",
-    vertical: "세로", horizontal: "가로", "diag-main": "오른쪽 아래 대각선", "diag-anti": "왼쪽 아래 대각선",
-    foldFirst: "먼저 빛나는 {axis} 접기선을 눌러 보세요.", choiceMatch: "접은 색종이와 펼친 결과를 알맞게 연결해 보세요.", choiceResult: "색종이를 펼치면 어떤 모양이 될까요?",
-    gridCut: "잘려 나간 위치를 모두 눌러 보세요.", gridPunch: "구멍이 생기는 위치를 모두 눌러 보세요.", gridTriangleCut: "대각선으로 잘려 나간 삼각형 칸을 모두 눌러 보세요.", gridTrianglePunch: "대각선으로 접었을 때 구멍이 생기는 삼각형 칸을 모두 눌러 보세요.",
-    shapePlace: "같은 종류의 도형을 색종이 위로 끌어 대칭 위치에 놓으세요. 필요하면 돌리거나 뒤집을 수 있어요.", shapeTray: "도형 보관함", dragShape: "{shape} 끌기", moveShape: "{shape} 옮기기",
-    checkLocations: "위치 확인", checkPlacement: "놓은 자리 확인", cutPattern: "잘린 부분 보기", numberPaper: "펼친 숫자판에서 누르기", stage1: "1단계: 왼쪽 잘린 부분을 보고, 오른쪽 숫자판에서 펼치면 잘릴 위치를 모두 누르세요.", checkSelected: "선택 확인", stage2: "2단계: 선택한 수를 더하세요. {expression} = ?", sumAria: "잘려 나간 수의 합", checkSum: "합 확인", chooseAgain: "위치 다시 고르기",
-    afterFold: "이제 접힌 부분을 거꾸로 펼친다고 생각해 보세요.", correct: "정확해요! 색종이가 거꾸로 펼쳐지는 모습을 볼까요?", wrong: "조금 달라요. 접기선을 거울처럼 생각해 보세요.", sumPlacesCorrect: "잘려 나간 위치를 모두 찾았어요. 표시된 수만 더해 볼까요?", allPieces: "보관함의 도형을 모두 사용했어요.",
-    solvedPrompt: "색종이가 펼쳐지며 대칭인 답을 보여 줍니다.", foldedPrompt: "{axis}로 접었어요. 아래 문제를 해결하세요.", readyPrompt: "빛나는 {axis} 접기선을 눌러 한 번 접으세요.", folding: "접는 중...", unfolded: "펼친 결과", foldComplete: "접기 완료", tapCrease: "접기선 누르기",
-    hintFolded: "{axis} 접기선을 거울이라고 생각해 보세요.", hintReady: "밝게 빛나는 선이 접기선이에요.", tutorial1: "안녕! 나는 폴디야. 색종이를 한 단계씩 직접 접고 펼쳐 볼 거야.", tutorial2: "빛나는 접기선을 누르면 종이 면이 실제처럼 뒤집혀 접혀.", tutorial3: "정답을 맞히면 색종이가 거꾸로 펼쳐지는 모습을 확인할 수 있어. 시작할까?", start: "시작", tutorialNext: "다음", startGuide: "빛나는 접기선부터 눌러 보세요.",
-    soundOn: "소리 끄기", soundOff: "소리 켜기", resultChoice: "결과 {choice} 선택", rowCol: "{row}행 {col}열{part}"
+    back: "색종이 생각 놀이터로 나가기", type: "유형", hint: "힌트", retry: "다시", worksheet: "학습지",
+    next: "다음 문제", chooseType: "유형 선택", close: "닫기", finish: "마치기",
+    choicePrompt: "접은 색종이를 펼쳤을 때 나타나는 모양을 고르세요.",
+    connectPrompt: "접어 자른 모습과 펼친 결과를 알맞게 선으로 이으세요.",
+    selectFolded: "왼쪽의 접어 자른 색종이를 먼저 고르세요.",
+    selectResult: "이제 알맞은 펼친 결과를 고르세요.",
+    check: "확인", correct: "맞았어요. 접은 선을 기준으로 양쪽 모양이 서로 대칭이에요.",
+    wrong: "접은 선을 거울처럼 생각해 다시 살펴보세요.",
+    hintChoice: "자른 선을 접은 선 반대쪽에도 똑같이 비춰 보세요.",
+    hintConnect: "접은 선의 방향과 잘린 선의 꺾인 모양을 함께 비교하세요.",
+    complete10: "10문제를 해결했어요!", complete20: "20문제를 모두 해결했어요!",
+    continue10: "10문제 더 풀기", new10: "새 10문제 풀기", otherType: "다른 유형",
+    completeText10: "같은 유형을 10문제 더 이어서 풀 수 있어요.",
+    completeText20: "선 잇기와 선택 문제를 모두 차근차근 해결했어요.",
+    openPaper: "펼친 색종이", foldedPaper: "한 번 접은 색종이", cutPaper: "선을 따라 자르기",
+    result: "펼친 결과", question: "어떤 모양일까요?", problemCount: "{current} / {total}",
+    choiceLabel: "보기 {label}", foldedLabel: "접어 자른 색종이 {label}", resultLabel: "펼친 결과 {label}",
+    soundOn: "소리 켜기", soundOff: "소리 끄기"
   },
   zh: {
-    back: "返回折纸村", levels: "关卡", hint: "提示", retry: "重来", worksheet: "学习单", rotate: "旋转", flip: "翻转", next: "下一题", level: "关卡", chooseLevel: "选择关卡", close: "关闭",
-    levelComplete: "第 {level} 关完成！", completeText: "你一步一步折叠并准确解决了问题。", nextLevel: "下一关", studio: "折纸村", practice: "再练同一关",
-    openPaper: "展开的纸", foldedPaper: "折叠的纸", openResult: "展开结果", foldAria: "沿{axis}折痕折叠", vertical: "竖直", horizontal: "水平", "diag-main": "右下对角线", "diag-anti": "左下对角线",
-    foldFirst: "先点击发光的{axis}折痕。", choiceMatch: "把折叠的纸和展开结果配对。", choiceResult: "纸展开后会是什么图形？", gridCut: "点击所有被剪掉的位置。", gridPunch: "点击所有出现孔的位置。", gridTriangleCut: "点击所有沿对角线剪掉的三角格。", gridTrianglePunch: "点击所有出现孔的三角格。",
-    shapePlace: "把同类图形拖到纸上的对称位置。需要时可旋转或翻转。", shapeTray: "图形托盘", dragShape: "拖动{shape}", moveShape: "移动{shape}", checkLocations: "检查位置", checkPlacement: "检查摆放", cutPattern: "查看剪切部分", numberPaper: "在展开数字板上选择", stage1: "第1步：看左边的剪切部分，在右边数字板上选择展开后所有被剪掉的位置。", checkSelected: "检查选择", stage2: "第2步：把选中的数字相加。{expression} = ?", sumAria: "被剪掉数字的和", checkSum: "检查总和", chooseAgain: "重新选择位置",
-    afterFold: "想象把折叠部分反向展开。", correct: "正确！看看纸反向展开。", wrong: "再想一想，把折痕当作镜子。", sumPlacesCorrect: "所有位置都找到了。现在只加高亮数字。", allPieces: "托盘里的图形都用完了。", solvedPrompt: "纸展开并显示对称答案。", foldedPrompt: "已沿{axis}折叠。完成下面的任务。", readyPrompt: "点击发光的{axis}折痕折一次。", folding: "折叠中...", unfolded: "展开结果", foldComplete: "折叠完成", tapCrease: "点击折痕", hintFolded: "把{axis}折痕想成镜子。", hintReady: "发光的线就是折痕。",
-    tutorial1: "你好，我是Foldy。我们会一步一步折叠并展开纸张。", tutorial2: "点击发光的折痕，纸面会像真的一样翻过去。", tutorial3: "答对后，可以看到纸反向展开。开始吧？", start: "开始", tutorialNext: "下一步", startGuide: "先点击发光的折痕。", soundOn: "关闭声音", soundOff: "打开声音", resultChoice: "选择结果{choice}", rowCol: "第{row}行第{col}列{part}"
+    back: "返回折纸思维乐园", type: "类型", hint: "提示", retry: "重来", worksheet: "学习单", next: "下一题", chooseType: "选择类型", close: "关闭", finish: "完成",
+    choicePrompt: "选择彩纸展开后出现的图形。", connectPrompt: "把折剪后的彩纸和展开结果连起来。", selectFolded: "先选择左边折剪后的彩纸。", selectResult: "再选择对应的展开结果。", check: "确认", correct: "答对了。两边图形关于折痕对称。", wrong: "把折痕想成镜子，再看一看。", hintChoice: "把剪线映到折痕的另一边。", hintConnect: "比较折痕方向和剪线的转折。", complete10: "完成10题！", complete20: "完成全部20题！", continue10: "再做10题", new10: "新的10题", otherType: "其他类型", completeText10: "还可以继续完成同类型的10题。", completeText20: "你完成了连线和选择题。", openPaper: "展开的彩纸", foldedPaper: "对折一次", cutPaper: "沿线剪开", result: "展开结果", question: "会是什么图形？", problemCount: "{current} / {total}", choiceLabel: "选项{label}", foldedLabel: "折剪彩纸{label}", resultLabel: "展开结果{label}", soundOn: "开启声音", soundOff: "关闭声音"
   },
   ja: {
-    back: "おりがみ村へ戻る", levels: "レベル", hint: "ヒント", retry: "やり直す", worksheet: "プリント", rotate: "回す", flip: "反転", next: "次の問題", level: "レベル", chooseLevel: "レベルを選ぶ", close: "閉じる",
-    levelComplete: "レベル {level} クリア！", completeText: "順番に折って開き、正しく解けました。", nextLevel: "次のレベル", studio: "おりがみ村", practice: "同じレベルを練習",
-    openPaper: "開いた紙", foldedPaper: "折った紙", openResult: "開いた結果", foldAria: "{axis}の折り線で折る", vertical: "たて", horizontal: "よこ", "diag-main": "右下への斜め", "diag-anti": "左下への斜め",
-    foldFirst: "まず光る{axis}の折り線を押しましょう。", choiceMatch: "折った紙と開いた結果をつなぎましょう。", choiceResult: "紙を開くとどの形になりますか？", gridCut: "切り取られる場所を全部押しましょう。", gridPunch: "穴ができる場所を全部押しましょう。", gridTriangleCut: "斜めに切り取られる三角のマスを全部押しましょう。", gridTrianglePunch: "穴ができる三角のマスを全部押しましょう。",
-    shapePlace: "同じ種類の形を紙の対称な位置へドラッグします。必要なら回転・反転できます。", shapeTray: "形のトレイ", dragShape: "{shape}をドラッグ", moveShape: "{shape}を動かす", checkLocations: "場所を確認", checkPlacement: "置き方を確認", cutPattern: "切った部分を見る", numberPaper: "開いた数字表で選ぶ", stage1: "1段階：左の切った部分を見て、開くと切り取られる場所を右の数字表ですべて選びます。", checkSelected: "選択を確認", stage2: "2段階：選んだ数を足します。{expression} = ?", sumAria: "切り取られる数の合計", checkSum: "合計を確認", chooseAgain: "場所を選び直す",
-    afterFold: "折った部分を逆に開くと考えましょう。", correct: "正解！紙が逆に開く様子を見ましょう。", wrong: "もう一度。折り線を鏡だと考えましょう。", sumPlacesCorrect: "切り取られる場所を全部見つけました。色の付いた数だけ足しましょう。", allPieces: "トレイの形を全部使いました。", solvedPrompt: "紙が開いて対称な答えを見せます。", foldedPrompt: "{axis}に折りました。下の問題を解きましょう。", readyPrompt: "光る{axis}の折り線を押して一回折ります。", folding: "折っています...", unfolded: "開いた結果", foldComplete: "折り終わり", tapCrease: "折り線を押す", hintFolded: "{axis}の折り線を鏡だと考えましょう。", hintReady: "光っている線が折り線です。",
-    tutorial1: "こんにちは、Foldyです。紙を一段階ずつ折って開きます。", tutorial2: "光る折り線を押すと、紙の面が本物のように裏返ります。", tutorial3: "正解すると、紙が逆に開く様子を確認できます。始めますか？", start: "スタート", tutorialNext: "次へ", startGuide: "光る折り線から押しましょう。", soundOn: "音を消す", soundOff: "音を出す", resultChoice: "結果{choice}を選ぶ", rowCol: "{row}行{col}列{part}"
+    back: "色紙思考ひろばへ戻る", type: "種類", hint: "ヒント", retry: "もう一度", worksheet: "プリント", next: "次の問題", chooseType: "種類を選ぶ", close: "閉じる", finish: "終わる",
+    choicePrompt: "折った色紙を開いたときの形を選びましょう。", connectPrompt: "折って切った形と開いた結果を線で結びましょう。", selectFolded: "左の折って切った色紙を先に選びます。", selectResult: "対応する開いた結果を選びます。", check: "確かめる", correct: "正解です。折り線をはさんで対称です。", wrong: "折り線を鏡だと考えて見直しましょう。", hintChoice: "切った線を折り線の反対側に映します。", hintConnect: "折り線の向きと切った線の曲がり方を比べます。", complete10: "10問できました！", complete20: "20問すべてできました！", continue10: "あと10問", new10: "新しい10問", otherType: "別の種類", completeText10: "同じ種類をあと10問続けられます。", completeText20: "線結びと選択問題を解きました。", openPaper: "開いた色紙", foldedPaper: "一回折った色紙", cutPaper: "線にそって切る", result: "開いた結果", question: "どんな形？", problemCount: "{current} / {total}", choiceLabel: "選択肢{label}", foldedLabel: "折って切った色紙{label}", resultLabel: "開いた結果{label}", soundOn: "音を出す", soundOff: "音を消す"
   },
   en: {
-    back: "Back to Origami Studio", levels: "Levels", hint: "Hint", retry: "Restart", worksheet: "Worksheet", rotate: "Rotate", flip: "Flip", next: "Next", level: "Level", chooseLevel: "Choose a level", close: "Close",
-    levelComplete: "Level {level} complete!", completeText: "You folded and unfolded each step carefully.", nextLevel: "Next level", studio: "Origami Studio", practice: "Practice again",
-    openPaper: "OPEN PAPER", foldedPaper: "FOLDED PAPER", openResult: "OPEN RESULT", foldAria: "Fold along the {axis} crease", vertical: "vertical", horizontal: "horizontal", "diag-main": "down-right diagonal", "diag-anti": "down-left diagonal",
-    foldFirst: "Fold along the glowing {axis} crease first.", choiceMatch: "Match the folded paper to the result.", choiceResult: "Which result appears when the paper opens?", gridCut: "Tap every cut-away place.", gridPunch: "Tap every place where a hole appears.", gridTriangleCut: "Tap every triangular region cut along the diagonal.", gridTrianglePunch: "Tap every triangular region where a hole appears.",
-    shapePlace: "Drag each matching shape to its reflected place. Rotate or flip it when needed.", shapeTray: "Shape tray", dragShape: "Drag {shape}", moveShape: "Move {shape}", checkLocations: "Check locations", checkPlacement: "Check placement", cutPattern: "Look at the cuts", numberPaper: "Tap on the open number grid", stage1: "Stage 1: look at the cuts on the left, then tap every place they reach when opened on the right.", checkSelected: "Check selected places", stage2: "Stage 2: add the selected numbers. {expression} = ?", sumAria: "Sum of the cut-away numbers", checkSum: "Check sum", chooseAgain: "Choose places again",
-    afterFold: "Now imagine opening the folded part in reverse.", correct: "Correct. Watch the reflected result open out.", wrong: "Almost. Check the crease and its reflection.", sumPlacesCorrect: "You found every cut-away place. Add only the highlighted numbers.", allPieces: "All tray pieces are already on the paper.", solvedPrompt: "The paper unfolds to show the reflected answer.", foldedPrompt: "The crease was {axis}. Solve the mission below.", readyPrompt: "Tap the glowing {axis} crease to make one fold.", folding: "Folding...", unfolded: "Unfolded result", foldComplete: "Fold complete", tapCrease: "Tap the crease", hintFolded: "Think of the {axis} crease as a mirror.", hintReady: "The bright line is the fold line.",
-    tutorial1: "Hi, I am Foldy. We will fold real paper surfaces one step at a time.", tutorial2: "Tap the glowing crease. The flap turns over just like real paper.", tutorial3: "After a correct answer, watch it unfold in reverse. Ready?", start: "Start", tutorialNext: "Next", startGuide: "Start with the glowing crease.", soundOn: "Mute sound", soundOff: "Turn sound on", resultChoice: "Choose result {choice}", rowCol: "Row {row}, column {col}{part}"
+    back: "Back to Paper Thinking Studio", type: "Type", hint: "Hint", retry: "Restart", worksheet: "Worksheet", next: "Next", chooseType: "Choose a type", close: "Close", finish: "Finish",
+    choicePrompt: "Choose the shape that appears when the folded paper opens.", connectPrompt: "Connect each folded cut to its open result.", selectFolded: "Choose a folded cut on the left first.", selectResult: "Now choose its open result.", check: "Check", correct: "Correct. The two sides mirror across the crease.", wrong: "Treat the crease like a mirror and look again.", hintChoice: "Reflect the cut line across the crease.", hintConnect: "Compare both the crease direction and the turns in the cut.", complete10: "10 problems complete!", complete20: "All 20 problems complete!", continue10: "Do 10 more", new10: "New set of 10", otherType: "Other type", completeText10: "You can continue with 10 more problems of this type.", completeText20: "You completed both matching and choice problems.", openPaper: "Open paper", foldedPaper: "Paper folded once", cutPaper: "Cut along the line", result: "Open result", question: "What will appear?", problemCount: "{current} / {total}", choiceLabel: "Choice {label}", foldedLabel: "Folded cut {label}", resultLabel: "Open result {label}", soundOn: "Turn sound on", soundOff: "Mute sound"
   }
 };
 
-Object.assign(I18N.ko, {
-  foldStepPrompt: "{total}번 중 {step}번째 접기입니다. {axis} 접기선을 누르세요.",
-  nextFold: "좋아요. 다음 {axis} 접기선을 이어서 눌러 보세요.",
-  foldSequence: "접기 순서",
-  completedFold: "완료",
-  topCondition: "각 칸의 앞뒤에는 같은 수가 적혀 있어요.",
-  topQuestion: "모두 접었을 때 맨 위에 오는 수를 고르세요.",
-  topChoice: "맨 위 수 {value}",
-  topFolded: "모든 종이가 한 칸에 포개졌어요. 층의 순서를 생각해 보세요.",
-  topSolved: "맞아요. 맨 위에 오는 수는 {value}입니다.",
-  topResult: "맨 위 수 확인",
-  visualResultPrompt: "접힌 색종이를 거꾸로 펼쳤을 때 나타날 그림을 고르세요.",
-  visualBacktrackPrompt: "펼친 결과를 보고 접기 전 잘린 위치가 맞는 그림을 고르세요.",
-  visualHolePrompt: "구멍을 뚫은 색종이를 거꾸로 펼쳤을 때 나타날 그림을 고르세요.",
-  foldedExample: "접혀 있는 색종이",
-  beforeFoldResult: "접기 전 위치",
-  movingFace: "움직이는 색종이 면을 눌러 접어 보세요.",
-  visualHint: "접힌 부분을 접기선을 기준으로 한 장씩 거꾸로 펼쳐 보세요.",
-  backtrackHint: "펼친 자국을 접기선을 따라 포개면 마지막 자른 위치가 남아요."
-});
-Object.assign(I18N.zh, {
-  foldStepPrompt: "共{total}次折叠，现在是第{step}次。请点击{axis}折痕。",
-  nextFold: "很好。继续点击下一条{axis}折痕。", foldSequence: "折叠顺序", completedFold: "完成",
-  topCondition: "每个格子的正反面都写着相同的数字。", topQuestion: "全部折好后，选择最上面的数字。",
-  topChoice: "最上面的数字 {value}", topFolded: "所有纸层都叠在一个格子上。想一想层的顺序。", topSolved: "正确，最上面是 {value}。", topResult: "查看最上面的数字",
-  visualResultPrompt: "选择折纸反向展开后的图案。", visualBacktrackPrompt: "观察展开结果，选择折叠前正确的剪切位置。", visualHolePrompt: "选择打孔折纸反向展开后的图案。", foldedExample: "折叠的纸", beforeFoldResult: "折叠前的位置", movingFace: "点击移动的纸面完成折叠。", visualHint: "以折痕为轴，一层一层反向展开。", backtrackHint: "沿折痕把展开的痕迹重叠，最后留下的就是剪切位置。"
-});
-Object.assign(I18N.ja, {
-  foldStepPrompt: "{total}回のうち{step}回目。{axis}の折り線を押してください。",
-  nextFold: "その調子。次の{axis}の折り線を押しましょう。", foldSequence: "折る順番", completedFold: "完了",
-  topCondition: "それぞれのますの表と裏には同じ数が書かれています。", topQuestion: "全部折ったとき、一番上にくる数を選びましょう。",
-  topChoice: "一番上の数 {value}", topFolded: "すべての紙が一つのますに重なりました。重なり順を考えましょう。", topSolved: "正解です。一番上は {value} です。", topResult: "一番上の数",
-  visualResultPrompt: "折った紙を逆に開いたときの絵を選びましょう。", visualBacktrackPrompt: "開いた結果を見て、折る前の切る位置を選びましょう。", visualHolePrompt: "穴をあけた紙を逆に開いたときの絵を選びましょう。", foldedExample: "折った紙", beforeFoldResult: "折る前の位置", movingFace: "動く紙の面を押して折りましょう。", visualHint: "折り線を軸にして、一枚ずつ逆に開きましょう。", backtrackHint: "折り線に沿って跡を重ねると、最後の切る位置が残ります。"
-});
-Object.assign(I18N.en, {
-  foldStepPrompt: "Fold {step} of {total}: tap the {axis} crease.",
-  nextFold: "Good. Continue with the next {axis} crease.", foldSequence: "Fold order", completedFold: "Done",
-  topCondition: "Each cell has the same number on its front and back.", topQuestion: "Choose the number on top after every fold.",
-  topChoice: "Top number {value}", topFolded: "Every layer is now in one stack. Think about their order.", topSolved: "Correct. {value} is on top.", topResult: "Top number",
-  visualResultPrompt: "Choose the picture made by unfolding the folded paper in reverse.", visualBacktrackPrompt: "Use the open result to choose the cut position before folding.", visualHolePrompt: "Choose the picture made by unfolding the punched paper in reverse.", foldedExample: "Folded paper", beforeFoldResult: "Position before folding", movingFace: "Tap the moving paper face to fold it.", visualHint: "Open one layer at a time around each crease.", backtrackHint: "Stack the open marks along each crease. The last mark is the cut position."
-});
+const t = (key, values = {}) => {
+  let value = text[lang]?.[key] || text.ko[key] || key;
+  Object.entries(values).forEach(([name, replacement]) => { value = value.replace(`{${name}}`, replacement); });
+  return value;
+};
+const local = (value) => value?.[lang] || value?.ko || "";
+const shuffled = (items) => [...items].sort(() => Math.random() - .5);
 
-const t = (key, vars = {}) => {
-  const source = I18N[state.lang]?.[key] ?? I18N.ko[key] ?? key;
-  return Object.entries(vars).reduce((text, [name, value]) => text.replaceAll(`{${name}}`, value), source);
+function readJson(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key) || "") || fallback; } catch { return fallback; }
+}
+
+function idsToProblems(levelIndex, ids = []) {
+  const byId = new Map(levels[levelIndex].problems.map((item) => [item.id, item]));
+  const problems = ids.map((id) => byId.get(id)).filter(Boolean);
+  return problems.length === ids.length ? problems : [];
+}
+
+function createChunk(levelIndex, count, excluded = new Set()) {
+  const pool = levels[levelIndex].problems;
+  const available = pool.filter((problem) => !excluded.has(problem.id));
+  const source = available.length >= count ? available : pool;
+  const groups = {
+    "result-choice": shuffled(source.filter((problem) => problem.interaction === "result-choice")),
+    "connect-match": shuffled(source.filter((problem) => problem.interaction === "connect-match"))
+  };
+  const pattern = ["result-choice", "connect-match", "result-choice", "result-choice", "connect-match", "result-choice", "result-choice", "connect-match", "result-choice", "connect-match"];
+  return Array.from({ length: count }, (_, index) => {
+    const kind = pattern[index % pattern.length];
+    return groups[kind].shift() || groups[kind === "result-choice" ? "connect-match" : "result-choice"].shift();
+  }).filter(Boolean);
+}
+
+const saved = readJson(progressKey, {});
+const canRestore = !params.has("level") && Number(saved.level) === requestedLevel && Array.isArray(saved.queue);
+const restored = canRestore ? idsToProblems(requestedLevel - 1, saved.queue) : [];
+const initialQueue = restored.length >= CHUNK_SIZE
+  ? restored
+  : createChunk(requestedLevel - 1, requestedCount);
+
+const state = {
+  level: requestedLevel - 1,
+  queue: initialQueue,
+  index: canRestore ? Math.max(0, Math.min(initialQueue.length - 1, Number(saved.index) || 0)) : 0,
+  solved: false,
+  busy: false,
+  selectedLeft: null,
+  connections: new Map(),
+  muted: localStorage.getItem("gfield-audio-muted") === "true"
 };
 
 const ui = {
-  paper: $("#paper"), status: $("#foldStatus"), prompt: $("#prompt"), answerPrompt: $("#answerPrompt"), interaction: $("#interaction"), next: $("#nextButton"),
-  rotate: $("#rotateButton"), flip: $("#flipButton"), guide: $("#foldyGuide"), bubble: $("#guideBubble"), toast: $("#toast"), success: $("#success"),
-  tutorial: $("#tutorial"), tutorialText: $("#tutorialText"), tutorialDots: $("#tutorialDots"), tutorialNext: $("#tutorialNext"), levelDialog: $("#levelDialog"), levelList: $("#levelList"), complete: $("#completeDialog")
+  paper: $("#paper"), status: $("#foldStatus"), prompt: $("#prompt"), answerPrompt: $("#answerPrompt"),
+  interaction: $("#interaction"), next: $("#nextButton"), levelDialog: $("#levelDialog"), levelList: $("#levelList"),
+  complete: $("#completeDialog"), success: $("#success"), toast: $("#toast")
 };
 
-const problem = () => state.queue[state.problem];
-const title = (level) => level.title[state.lang] || level.title.ko;
-const description = (level) => level.description[state.lang] || level.description.ko;
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, reducedMotion ? 0 : ms));
-const axisText = (axis) => t(axis);
-const problemFolds = (p = problem()) => p.folds || [p.fold];
-const activeFold = (p = problem()) => problemFolds(p)[Math.min(state.foldStep, problemFolds(p).length - 1)];
-const normalizedRotation = (rotation) => ((rotation % 360) + 360) % 360;
-const equalSets = (left, right) => left.size === right.length && right.every((item) => left.has(item));
+const problem = () => state.queue[state.index];
+const level = () => levels[state.level];
+const points = (items, size = 160, offset = 20) => items.map((item) => `${offset + item.x * size},${offset + item.y * size}`).join(" ");
+const path = (items, size = 160, offset = 20) => items.map((item, index) => `${index ? "L" : "M"}${offset + item.x * size} ${offset + item.y * size}`).join(" ");
+
+function creaseLine(foldSpec) {
+  if (foldSpec.axis === "vertical") return [100, 20, 100, 180];
+  if (foldSpec.axis === "horizontal") return [20, 100, 180, 100];
+  if (foldSpec.axis === "diag-main") return [20, 20, 180, 180];
+  return [180, 20, 20, 180];
+}
+
+function arrowPath(foldSpec) {
+  const paths = {
+    "vertical-left": "M48 154 Q80 125 126 154", "vertical-right": "M152 154 Q120 125 74 154",
+    "horizontal-top": "M154 48 Q125 80 154 126", "horizontal-bottom": "M154 152 Q125 120 154 74",
+    "diag-main-upper": "M130 42 Q112 78 72 110", "diag-main-lower": "M70 158 Q88 122 128 90",
+    "diag-anti-upper": "M70 42 Q88 78 128 110", "diag-anti-lower": "M130 158 Q112 122 72 90"
+  };
+  return paths[`${foldSpec.axis}-${foldSpec.side}`];
+}
+
+function paperSvg({ fold, cut = [], view = "open", label = "", marker = "arrow", solved = false }) {
+  const [x1, y1, x2, y2] = creaseLine(fold);
+  const folded = foldedPolygon(fold);
+  const hole = cut.length ? unfoldedPolygon(cut, fold) : [];
+  const paperShape = view === "folded"
+    ? `<polygon class="paper-fill folded-sheet" points="${points(folded)}"/><polygon class="paper-layer" points="${points(folded.map((item) => ({ x: item.x + .025, y: item.y + .025 })))}"/>`
+    : `<rect class="paper-fill" x="20" y="20" width="160" height="160"/>`;
+  const crease = view === "folded" ? "" : `<line class="paper-crease" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+  const foldArrow = view === "open" ? `<path class="paper-fold-arrow" d="${arrowPath(fold)}" marker-end="url(#${marker})"/>` : "";
+  const cutLine = view === "folded" && cut.length ? `<path class="paper-cut-line" d="${path(cut)}"/><text class="scissors" x="${20 + cut[0].x * 160 - 8}" y="${20 + cut[0].y * 160 - 6}">✂</text>` : "";
+  const resultHole = view === "result" && hole.length ? `<polygon class="result-hole${solved ? " solved-hole" : ""}" points="${points(hole)}"/>` : "";
+  return `<svg class="paper-diagram view-${view}" viewBox="0 0 200 200" role="img" aria-label="${label}">
+    <defs><marker id="${marker}" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z"/></marker></defs>
+    ${paperShape}${crease}${foldArrow}${cutLine}${resultHole}
+  </svg>`;
+}
+
+function sequenceHtml(p, reveal = false) {
+  const suffix = p.id.replace(/[^a-z0-9]/gi, "");
+  return `<div class="fold-sequence-view${reveal ? " revealing" : ""}">
+    <figure>${paperSvg({ fold: p.fold, view: "open", label: t("openPaper"), marker: `fold-${suffix}` })}<figcaption>${t("openPaper")}</figcaption></figure>
+    <span class="step-arrow" aria-hidden="true">→</span>
+    <figure>${paperSvg({ fold: p.fold, cut: p.cut, view: "folded", label: t("cutPaper"), marker: `cut-${suffix}` })}<figcaption>${t("cutPaper")}</figcaption></figure>
+    <span class="step-arrow" aria-hidden="true">→</span>
+    <figure class="result-step">${reveal ? paperSvg({ fold: p.fold, cut: p.cut, view: "result", label: t("result"), marker: `result-${suffix}`, solved: true }) : `<div class="result-question" aria-label="${t("question")}">?</div>`}<figcaption>${reveal ? t("result") : t("question")}</figcaption></figure>
+  </div>`;
+}
+
+function selectionChoicesHtml(p) {
+  return `<div class="result-choices">${p.choices.map((choice, index) => `<button class="result-choice" type="button" data-choice="${choice.key}" aria-label="${t("choiceLabel", { label: index + 1 })}"><b>${index + 1}</b>${paperSvg({ fold: choice.fold, cut: choice.cut, view: "result", label: t("choiceLabel", { label: index + 1 }), marker: `choice-${p.id}-${index}` })}</button>`).join("")}</div>`;
+}
+
+function connectBoardHtml(p) {
+  return `<div class="connect-board" id="connectBoard">
+    <svg class="connection-lines" id="connectionLines" aria-hidden="true"></svg>
+    <div class="connect-column folded-column">${p.pairs.map((item, index) => `<button type="button" class="connect-card folded-card" data-left="${item.key}" aria-label="${t("foldedLabel", { label: index + 1 })}"><b>${index + 1}</b>${paperSvg({ fold: item.fold, cut: item.cut, view: "folded", label: t("foldedLabel", { label: index + 1 }), marker: `left-${p.id}-${index}` })}</button>`).join("")}</div>
+    <div class="connect-column result-column">${p.results.map((item, index) => `<button type="button" class="connect-card result-card" data-right="${item.key}" aria-label="${t("resultLabel", { label: index + 1 })}"><b>${String.fromCharCode(65 + index)}</b>${paperSvg({ fold: item.fold, cut: item.cut, view: "result", label: t("resultLabel", { label: index + 1 }), marker: `right-${p.id}-${index}` })}</button>`).join("")}</div>
+  </div>`;
+}
+
+function renderConnections() {
+  const board = $("#connectBoard");
+  const svg = $("#connectionLines");
+  if (!board || !svg) return;
+  const box = board.getBoundingClientRect();
+  svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+  svg.innerHTML = [...state.connections].map(([leftKey, rightKey]) => {
+    const leftBox = board.querySelector(`[data-left="${leftKey}"]`).getBoundingClientRect();
+    const rightBox = board.querySelector(`[data-right="${rightKey}"]`).getBoundingClientRect();
+    const x1 = leftBox.right - box.left;
+    const y1 = leftBox.top + leftBox.height / 2 - box.top;
+    const x2 = rightBox.left - box.left;
+    const y2 = rightBox.top + rightBox.height / 2 - box.top;
+    return `<path data-line-left="${leftKey}" d="M${x1} ${y1} C${x1 + 45} ${y1},${x2 - 45} ${y2},${x2} ${y2}"/>`;
+  }).join("");
+  board.querySelectorAll("[data-left]").forEach((button) => button.classList.toggle("connected", state.connections.has(button.dataset.left)));
+  board.querySelectorAll("[data-right]").forEach((button) => button.classList.toggle("connected", [...state.connections.values()].includes(button.dataset.right)));
+}
 
 function setGuide(message) {
-  ui.bubble.textContent = message;
-  ui.guide.classList.add("show");
+  $("#guideBubble").textContent = message;
+  $("#foldyGuide").classList.add("show");
   clearTimeout(setGuide.timer);
-  setGuide.timer = setTimeout(() => ui.guide.classList.remove("show"), 2600);
+  setGuide.timer = setTimeout(() => $("#foldyGuide").classList.remove("show"), 2400);
 }
 
-function showToast(message) {
+function toast(message) {
   ui.toast.textContent = message;
   ui.toast.classList.add("show");
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => ui.toast.classList.remove("show"), 1800);
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => ui.toast.classList.remove("show"), 1900);
 }
 
-function playTone(kind) {
-  if (!state.audio || reducedMotion || !window.AudioContext) return;
-  try {
-    const context = playTone.context ||= new AudioContext();
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.frequency.value = kind === "success" ? 740 : kind === "wrong" ? 180 : 460;
-    gain.gain.setValueAtTime(.0001, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(.035, context.currentTime + .02);
-    gain.gain.exponentialRampToValueAtTime(.0001, context.currentTime + .16);
-    oscillator.connect(gain).connect(context.destination);
-    oscillator.start(); oscillator.stop(context.currentTime + .17);
-  } catch { /* Audio is optional. */ }
-}
-
-function markHtml(marks, type = "punch") {
-  return marks.map(([x, y]) => `<i class="${type === "cut" ? "mini-cut" : "mini-hole"}" style="left:${x * 100}%;top:${y * 100}%"></i>`).join("");
-}
-
-const isVisualChoice = (p = problem()) => ["result-choice", "backtrack-choice"].includes(p.interaction);
-
-function regionGridHtml(regions = [], type = "cut", className = "", rows = 4, columns = 4) {
-  const byCell = new Map();
-  regions.forEach((region) => {
-    const match = /^r([1-4])c([1-4])(?:-(ne|nw|se|sw))?$/.exec(region);
-    if (!match) return;
-    const key = `r${match[1]}c${match[2]}`;
-    const entries = byCell.get(key) || [];
-    entries.push(match[3] || "full");
-    byCell.set(key, entries);
-  });
-  const cells = [];
-  for (let row = 1; row <= rows; row += 1) {
-    for (let col = 1; col <= columns; col += 1) {
-      const parts = byCell.get(`r${row}c${col}`) || [];
-      cells.push(`<span class="visual-cell">${parts.map((part) => `<i class="visual-mark ${type} ${part === "full" ? "" : `triangle-${part}`}"></i>`).join("")}</span>`);
-    }
-  }
-  return `<span class="visual-paper-grid ${className}" style="--grid-rows:${rows};--grid-cols:${columns}" aria-hidden="true">${cells.join("")}</span>`;
-}
-
-function foldedRegionGridHtml(regions, p, className = "") {
-  let visibleRows = [1, 2, 3, 4];
-  let visibleColumns = [1, 2, 3, 4];
-  let diagonalClass = "";
-  problemFolds(p).forEach((step) => {
-    if (step.axis === "vertical") visibleColumns = step.side === "left" ? visibleColumns.slice(-2) : visibleColumns.slice(0, 2);
-    else if (step.axis === "horizontal") visibleRows = step.side === "top" ? visibleRows.slice(-2) : visibleRows.slice(0, 2);
-    else diagonalClass = ` folded-${step.axis} folded-side-${step.side}`;
-  });
-  const remapped = regions.map((region) => {
-    const match = /^r([1-4])c([1-4])(?:-(ne|nw|se|sw))?$/.exec(region);
-    if (!match) return null;
-    const row = visibleRows.indexOf(Number(match[1])) + 1;
-    const column = visibleColumns.indexOf(Number(match[2])) + 1;
-    return row && column ? `r${row}c${column}${match[3] ? `-${match[3]}` : ""}` : null;
-  }).filter(Boolean);
-  const dimensions = ` folded-r${visibleRows.length}-c${visibleColumns.length}`;
-  return regionGridHtml(remapped, p.action.type, `${className} folded-paper${dimensions}${diagonalClass}`, visibleRows.length, visibleColumns.length);
-}
-
-function visualFoldGuideHtml(p) {
-  return problemFolds(p).map((step, index) => `<span class="visual-fold-cue axis-${step.axis} side-${step.side} cue-step-${index + 1}" aria-hidden="true"><i class="visual-crease-line"></i><i class="visual-direction-arrow"><b>${index + 1}</b></i></span>`).join("");
-}
-
-function resultChoiceHtml(item, p) {
-  if (item.regions) {
-    const folded = p.interaction === "backtrack-choice" ? " folded-preview" : "";
-    const picture = p.interaction === "backtrack-choice"
-      ? foldedRegionGridHtml(item.regions, p, "choice-paper")
-      : regionGridHtml(item.regions, p.action.type, "choice-paper");
-    return `<button class="result-choice visual-result-choice${folded}" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span>${picture}</button>`;
-  }
-  return `<button class="result-choice" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span><span class="mini-paper"><span class="mini-crease ${activeFold(p).axis}"></span>${markHtml(item.result.marks, p.action.type)}</span></button>`;
-}
-
-function foldStepPaperHtml(step) {
-  return `<i class="fold-step-paper axis-${step.axis} side-${step.side}" aria-hidden="true"><span></span><b></b></i>`;
-}
-
-function foldSequenceHtml(p) {
-  const folds = problemFolds(p);
-  if (folds.length < 2) return "";
-  return `<div class="fold-sequence" aria-label="${t("foldSequence")}">${folds.map((step, index) => `<span class="fold-chip${index < state.foldStep ? " complete" : index === state.foldStep && !state.folded ? " active" : ""}"><strong>${index + 1}</strong>${foldStepPaperHtml(step)}<em>${axisText(step.axis)}</em></span>`).join("")}</div>`;
-}
-
-function topGridHtml(p) {
-  const visibleGrid = p.topStates?.[Math.min(state.foldStep, p.topStates.length - 1)] || p.topGrid;
-  const rows = visibleGrid.length;
-  const columns = visibleGrid[0].length;
-  const cells = visibleGrid.flat().map((value) => `<span>${value}</span>`).join("");
-  return state.folded
-    ? `<div class="top-stack${state.solved ? " solved" : ""}" aria-hidden="true"><i></i><i></i><strong>${state.solved ? p.answer : "?"}</strong></div>`
-    : `<div class="top-number-grid" style="--top-cols:${columns};--top-rows:${rows}">${cells}</div>`;
-}
-
-function renderPaper() {
-  const p = problem();
-  const currentFold = activeFold(p);
-  const showGrid = ["grid-select", "punch-select", "cut-number-sum"].includes(p.interaction) && state.folded;
-  const showShapes = p.interaction === "shape-place" && state.folded;
-  const sumProblem = p.interaction === "cut-number-sum";
-  const topProblem = p.interaction === "top-choice";
-  const visualChoice = isVisualChoice(p);
-  const showSum = sumProblem && state.folded;
-  const actionPoint = p.action?.point || [.62, .38];
-  const backtracked = p.interaction === "backtrack-choice" && state.solved;
-  const visualRegions = visualChoice
-    ? (state.solved ? (backtracked ? p.sourceRegions : p.targetRegions) : (p.interaction === "backtrack-choice" ? p.targetRegions : p.sourceRegions))
-    : [];
-  const showFoldedPicture = visualChoice && ((p.interaction === "result-choice" && !state.solved) || backtracked);
-  const visualPicture = !visualChoice
-    ? ""
-    : showFoldedPicture
-      ? foldedRegionGridHtml(visualRegions, p, "main-paper")
-      : regionGridHtml(visualRegions, p.action.type, "main-paper");
-  const paperState = backtracked ? "is-folded is-backtracked" : state.solved ? "is-unfolded" : state.folded ? "is-folded" : "ready";
-  ui.paper.className = `paper axis-${currentFold.axis} side-${currentFold.side}${sumProblem ? " is-sum" : ""}${topProblem ? " is-top-problem" : ""}${visualChoice ? " is-visual-choice" : ""} ${paperState}${state.busy ? " is-busy" : ""}`;
-  ui.paper.innerHTML = `
-    <div class="sheet-base"><span class="paper-label">${topProblem ? (state.solved ? t("topResult") : state.folded ? t("foldedPaper") : t("openPaper")) : state.solved ? t("openResult") : state.folded ? t("foldedPaper") : t("openPaper")}</span></div>
-    <div class="fold-flap"></div>
-    ${visualChoice ? "" : `<span class="crease-guide" aria-hidden="true"></span><button class="crease-control" type="button" data-fold aria-label="${t("foldAria", { axis: axisText(currentFold.axis) })}"><span></span></button>`}
-    ${foldSequenceHtml(p)}
-    ${topProblem ? `<div class="top-problem-board"><p>${t("topCondition")}</p>${topGridHtml(p)}</div>` : ""}
-    ${visualChoice ? visualFoldGuideHtml(p) : ""}
-    ${visualChoice ? visualPicture : ""}
-    ${state.folded && !visualChoice && !showGrid && !showShapes && !topProblem ? `<span class="folded-action ${p.action.type}" style="left:${actionPoint[0] * 100}%;top:${actionPoint[1] * 100}%"></span>` : ""}
-    ${state.solved && p.interaction === "match" ? `<span class="unfolded-marks">${markHtml(p.choices.find((item) => item.key === p.answer).result.marks, p.action.type)}</span>` : ""}
-    ${showSum ? `<div class="sum-board"><div class="fold-preview"><span><b>1</b>${t("cutPattern")}</span><div class="fold-preview-grid"></div></div><div class="sum-flow-arrow" aria-hidden="true">→</div><div class="number-side"><span><b>2</b>${t("numberPaper")}</span><div class="board-grid number-board"></div></div></div>` : showGrid ? `<div class="board-grid"></div>` : ""}
-    ${showShapes ? `<div class="shape-givens"></div><div class="shape-board"></div>` : ""}`;
-  if (showGrid) {
-    renderGrid(ui.paper.querySelector(".board-grid"));
-    if (showSum) renderReferenceGrid(ui.paper.querySelector(".fold-preview-grid"), p.cutRegions, p.action?.type || "cut");
-  }
-  if (showShapes) renderPlacements();
-}
-
-function needsTriangles(p = problem()) {
-  const source = p.interaction === "cut-number-sum" ? p.answer.cells : p.targetRegions;
-  return source?.some((region) => region.includes("-"));
-}
-
-function renderGrid(gridEl) {
-  const p = problem();
-  const values = p.grid?.values;
-  const triangles = needsTriangles(p);
-  for (let row = 1; row <= 4; row += 1) {
-    for (let col = 1; col <= 4; col += 1) {
-      const base = `r${row}c${col}`;
-      const cell = document.createElement("div");
-      cell.className = "grid-cell";
-      if (values) cell.innerHTML = `<b>${values[row - 1][col - 1]}</b>`;
-      const regions = triangles ? ["nw", "ne", "sw", "se"].map((part) => `${base}-${part}`) : [base];
-      regions.forEach((region) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.dataset.region = region;
-        button.className = `grid-region${triangles ? ` triangle-${region.slice(-2)}` : ""}`;
-        button.classList.toggle("selected", state.selections.has(region));
-        button.classList.toggle("source-region", p.interaction !== "cut-number-sum" && p.sourceRegions?.includes(region));
-        button.classList.toggle("answer-highlight", p.interaction === "cut-number-sum" && state.stage === 2 && p.answer.cells.includes(region));
-        button.disabled = state.busy || state.solved || (p.interaction === "cut-number-sum" && state.stage === 2);
-        button.setAttribute("aria-label", t("rowCol", { row, col, part: triangles ? `, ${region.slice(-2)}` : "" }));
-        cell.append(button);
-      });
-      gridEl.append(cell);
-    }
-  }
-}
-
-function renderReferenceGrid(gridEl, regions, type) {
-  const triangles = regions.some((region) => region.includes("-"));
-  for (let row = 1; row <= 4; row += 1) {
-    for (let col = 1; col <= 4; col += 1) {
-      const base = `r${row}c${col}`;
-      const cell = document.createElement("div");
-      cell.className = "grid-cell preview-cell";
-      const parts = triangles ? ["nw", "ne", "sw", "se"] : [""];
-      parts.forEach((part) => {
-        const region = part ? `${base}-${part}` : base;
-        if (!regions.includes(region)) return;
-        const mark = document.createElement("span");
-        mark.className = `preview-region ${type}${part ? ` triangle-${part}` : ""}`;
-        cell.append(mark);
-      });
-      gridEl.append(cell);
-    }
-  }
-}
-
-function shapeHtml(shape, placement, index, tray = false) {
-  const styles = tray ? "" : `style="left:${placement.x * 100}%;top:${placement.y * 100}%;--rotation:${placement.rotation}deg;--flip:${placement.flipped ? -1 : 1}"`;
-  return `<button type="button" class="shape-piece shape-${shape}${state.selectedPlacement === index ? " selected" : ""}${tray ? " tray-shape" : ""}" ${styles} data-placement="${index}" data-shape="${shape}" aria-label="${t(tray ? "dragShape" : "moveShape", { shape })}"><span></span></button>`;
-}
-
-function givenShapeHtml(placement) {
-  return `<span class="shape-piece given-piece shape-${placement.shape}" style="left:${placement.x * 100}%;top:${placement.y * 100}%;--rotation:${placement.rotation}deg;--flip:${placement.flipped ? -1 : 1}" aria-hidden="true"><span></span></span>`;
-}
-
-function renderPlacements() {
-  const givens = ui.paper.querySelector(".shape-givens");
-  const board = ui.paper.querySelector(".shape-board");
-  problem().givens.forEach((placement) => givens.insertAdjacentHTML("beforeend", givenShapeHtml(placement)));
-  state.placements.forEach((placement, index) => board.insertAdjacentHTML("beforeend", shapeHtml(placement.shape, placement, index)));
-}
-
-function renderInteraction() {
-  const p = problem();
-  const foldedOnly = state.folded && !state.busy;
-  ui.interaction.replaceChildren();
-  ui.rotate.hidden = p.interaction !== "shape-place" || !state.folded;
-  ui.flip.hidden = p.interaction !== "shape-place" || !state.folded;
-  ui.next.hidden = !state.solved;
-
-  if (isVisualChoice(p)) {
-    ui.answerPrompt.textContent = t(p.interaction === "backtrack-choice" ? "visualBacktrackPrompt" : p.action.type === "punch" ? "visualHolePrompt" : "visualResultPrompt");
-    ui.interaction.innerHTML = `<div class="result-choices">${p.choices.map((item) => resultChoiceHtml(item, p)).join("")}</div>`;
-    ui.interaction.querySelectorAll("[data-choice]").forEach((button) => {
-      button.disabled = state.busy || state.solved;
-      button.addEventListener("click", () => checkChoice(button.dataset.choice, button));
-    });
-    return;
-  }
-  if (!state.folded) {
-    const folds = problemFolds(p);
-    ui.answerPrompt.textContent = folds.length > 1
-      ? t("foldStepPrompt", { step: state.foldStep + 1, total: folds.length, axis: axisText(activeFold(p).axis) })
-      : t("foldFirst", { axis: axisText(activeFold(p).axis) });
-    return;
-  }
-  if (p.interaction === "top-choice") {
-    ui.answerPrompt.textContent = t("topQuestion");
-    ui.interaction.innerHTML = `<div class="top-choices">${p.choices.map((value) => `<button class="top-choice" type="button" data-choice="${value}" aria-label="${t("topChoice", { value })}">${value}</button>`).join("")}</div>`;
-    ui.interaction.querySelectorAll("[data-choice]").forEach((button) => {
-      button.disabled = !foldedOnly || state.solved;
-      button.addEventListener("click", () => checkChoice(button.dataset.choice, button));
-    });
-    return;
-  }
-  if (["result-choice", "match"].includes(p.interaction)) {
-    ui.answerPrompt.textContent = t(p.interaction === "match" ? "choiceMatch" : "choiceResult");
-    ui.interaction.innerHTML = `<div class="result-choices">${p.choices.map((item) => resultChoiceHtml(item, p)).join("")}</div>`;
-    ui.interaction.querySelectorAll("[data-choice]").forEach((button) => {
-      button.disabled = !foldedOnly || state.solved;
-      button.addEventListener("click", () => checkChoice(button.dataset.choice, button));
-    });
-    return;
-  }
-  if (["grid-select", "punch-select"].includes(p.interaction)) {
-    const triangle = needsTriangles(p);
-    const promptKey = p.action.type === "punch" ? (triangle ? "gridTrianglePunch" : "gridPunch") : (triangle ? "gridTriangleCut" : "gridCut");
-    ui.answerPrompt.textContent = t(promptKey);
-    ui.interaction.innerHTML = `<button class="check-button" type="button" ${foldedOnly ? "" : "disabled"}>${t("checkLocations")}</button>`;
-    ui.interaction.querySelector("button").addEventListener("click", checkGrid);
-    return;
-  }
-  if (p.interaction === "shape-place") {
-    ui.answerPrompt.textContent = t("shapePlace");
-    ui.interaction.innerHTML = `<div class="shape-tray" aria-label="${t("shapeTray")}">${p.tray.map((shape, index) => shapeHtml(shape, null, index, true)).join("")}</div><button class="check-button" type="button" ${foldedOnly ? "" : "disabled"}>${t("checkPlacement")}</button>`;
-    ui.interaction.querySelectorAll(".tray-shape").forEach((button) => button.addEventListener("pointerdown", startTrayDrag));
-    ui.interaction.querySelector(".check-button").addEventListener("click", checkPlacement);
-    return;
-  }
-  if (p.interaction === "cut-number-sum") {
-    renderSumInteraction(p, foldedOnly);
-  }
-}
-
-function renderSumInteraction(p, foldedOnly) {
-  if (state.stage === 1) {
-    ui.answerPrompt.textContent = t("stage1");
-    ui.interaction.innerHTML = `<button class="check-button" type="button" ${foldedOnly ? "" : "disabled"}>${t("checkSelected")}</button>`;
-    ui.interaction.querySelector("button").addEventListener("click", checkSumRegions);
-    return;
-  }
-  ui.answerPrompt.textContent = t("stage2", { expression: p.answer.expression });
-  ui.interaction.innerHTML = `<div class="sum-entry"><span>${p.answer.values.join(" + ")} =</span><input id="sumInput" inputmode="numeric" pattern="[0-9]*" aria-label="${t("sumAria")}" autofocus><button class="check-button" type="button">${t("checkSum")}</button><button class="change-regions" type="button">${t("chooseAgain")}</button></div>`;
-  ui.interaction.querySelector(".check-button").addEventListener("click", checkSum);
-  ui.interaction.querySelector("#sumInput").addEventListener("keydown", (event) => { if (event.key === "Enter") checkSum(); });
-  ui.interaction.querySelector(".change-regions").addEventListener("click", () => { state.stage = 1; renderAll(); });
-}
-
-async function foldPaper() {
-  if (state.busy || state.solved || state.folded) return;
-  const folds = problemFolds();
-  state.busy = true;
-  ui.paper.classList.add("folding");
-  playTone("fold");
-  await wait(520);
-  state.foldStep += 1;
-  state.folded = state.foldStep >= folds.length;
-  state.busy = false;
-  renderAll();
-  setGuide(state.folded ? (problem().interaction === "top-choice" ? t("topFolded") : t("afterFold")) : t("nextFold", { axis: axisText(activeFold().axis) }));
-}
-
-async function reverseUnfold() {
-  state.busy = true;
-  ui.paper.classList.add("unfolding");
-  await wait(560);
-  state.busy = false;
-}
-
-async function foldBack() {
-  state.busy = true;
-  ui.paper.classList.add("folding-back");
-  await wait(560);
-  state.busy = false;
-}
-
-async function resolveCorrect() {
-  if (state.busy || state.solved) return;
-  if (problem().interaction === "backtrack-choice") await foldBack();
-  else if (problem().interaction !== "top-choice") await reverseUnfold();
-  state.solved = true;
-  rewardProblem();
-  playTone("success");
-  showSuccess();
-  setGuide(problem().interaction === "top-choice" ? t("topSolved", { value: problem().answer }) : t("correct"));
-  renderAll();
-}
-
-function markWrong(button) {
-  state.wrong += 1;
-  playTone("wrong");
-  button?.classList.add("wrong");
-  setTimeout(() => button?.classList.remove("wrong"), 420);
-  setGuide(t("wrong"));
-}
-
-function checkChoice(value, button) {
-  if (state.busy || state.solved) return;
-  if (value === problem().answer) resolveCorrect(); else markWrong(button);
-}
-
-function checkGrid(event) {
-  if (state.busy || state.solved) return;
-  if (equalSets(state.selections, problem().targetRegions)) resolveCorrect(); else { flashWrongRegions(problem().targetRegions); markWrong(event.currentTarget); }
-}
-
-function flashWrongRegions(expected) {
-  const expectedSet = new Set(expected);
-  const incorrect = [...state.selections].filter((region) => !expectedSet.has(region));
-  const targets = incorrect.length ? incorrect.map((region) => ui.paper.querySelector(`[data-region="${region}"]`)).filter(Boolean) : [ui.paper.querySelector(".board-grid")].filter(Boolean);
-  targets.forEach((element) => element.classList.add("wrong-region"));
-  setTimeout(() => targets.forEach((element) => element.classList.remove("wrong-region")), 520);
-}
-
-function checkSumRegions(event) {
-  const p = problem();
-  if (state.busy || state.solved) return;
-  if (!equalSets(state.selections, p.answer.cells)) { flashWrongRegions(p.answer.cells); return markWrong(event.currentTarget); }
-  state.stage = 2;
-  renderAll();
-  setGuide(t("sumPlacesCorrect"));
-}
-
-function checkSum() {
-  if (state.busy || state.solved || state.stage !== 2) return;
-  const input = $("#sumInput");
-  if (Number(input.value) === problem().answer.sum) resolveCorrect(); else markWrong(input);
-}
-
-function placementIsCorrect() {
-  const p = problem();
-  if (state.placements.length !== p.targets.length) return false;
-  const unused = new Set(state.placements.map((_, index) => index));
-  return p.targets.every((target) => {
-    const match = [...unused].find((index) => {
-      const item = state.placements[index];
-      const orientationMatches = ["circle", "square"].includes(item.shape) || (normalizedRotation(item.rotation) === target.rotation && item.flipped === target.flipped);
-      return item.shape === target.shape && Math.abs(item.x - target.x) < .075 && Math.abs(item.y - target.y) < .075 && orientationMatches;
-    });
-    if (match === undefined) return false;
-    unused.delete(match);
-    return true;
-  });
-}
-
-function checkPlacement(event) {
-  if (state.busy || state.solved) return;
-  if (placementIsCorrect()) resolveCorrect(); else markWrong(event.currentTarget);
-}
-
-function updatePlacementElement(index) {
-  const item = state.placements[index];
-  const el = ui.paper.querySelector(`[data-placement="${index}"]`);
-  if (!el || !item) return;
-  el.style.left = `${item.x * 100}%`;
-  el.style.top = `${item.y * 100}%`;
-}
-
-function bindDrag(index, event) {
-  const move = (pointer) => {
-    const rect = ui.paper.getBoundingClientRect();
-    const item = state.placements[index];
-    item.x = Math.max(.06, Math.min(.94, (pointer.clientX - rect.left) / rect.width));
-    item.y = Math.max(.06, Math.min(.94, (pointer.clientY - rect.top) / rect.height));
-    updatePlacementElement(index);
-  };
-  const end = () => {
-    const item = state.placements[index];
-    const near = problem().targets.find((target) => Math.abs(item.x - target.x) < .06 && Math.abs(item.y - target.y) < .06);
-    if (near) { item.x = near.x; item.y = near.y; updatePlacementElement(index); }
-    window.removeEventListener("pointermove", move);
-    window.removeEventListener("pointerup", end);
-  };
-  window.addEventListener("pointermove", move);
-  window.addEventListener("pointerup", end, { once: true });
-  move(event);
-}
-
-function startTrayDrag(event) {
-  if (state.busy || state.solved) return;
-  event.preventDefault();
-  const p = problem();
-  if (state.placements.length >= p.tray.length) return showToast(t("allPieces"));
-  const placement = { shape: event.currentTarget.dataset.shape, x: .5, y: .5, rotation: 0, flipped: false };
-  state.placements.push(placement);
-  state.selectedPlacement = state.placements.length - 1;
-  renderPaper();
-  bindDrag(state.selectedPlacement, event);
-}
-
-function startPlacedDrag(event) {
-  const button = event.target.closest("[data-placement]");
-  if (!button || state.busy || state.solved) return;
-  event.preventDefault();
-  state.selectedPlacement = Number(button.dataset.placement);
-  ui.paper.querySelectorAll(".shape-piece").forEach((piece) => piece.classList.remove("selected"));
-  button.classList.add("selected");
-  bindDrag(state.selectedPlacement, event);
-}
-
-function rotateSelected() {
-  const item = state.placements[state.selectedPlacement];
-  if (!item || state.busy || state.solved) return;
-  item.rotation = normalizedRotation(item.rotation + 90);
-  renderPaper();
-}
-
-function flipSelected() {
-  const item = state.placements[state.selectedPlacement];
-  if (!item || state.busy || state.solved) return;
-  item.flipped = !item.flipped;
-  renderPaper();
-}
-
-function toggleRegion(region) {
-  const p = problem();
-  if (state.busy || state.solved || !state.folded || (p.interaction === "cut-number-sum" && state.stage !== 1)) return;
-  if (state.selections.has(region)) state.selections.delete(region); else state.selections.add(region);
-  renderPaper();
-}
-
-function rewardProblem() {
-  const id = `paper-fold:${problem().id}`;
-  let rewards = [];
-  try { rewards = JSON.parse(localStorage.getItem("gfield-rewarded-games") || "[]"); } catch { rewards = []; }
-  if (!Array.isArray(rewards)) rewards = [];
-  if (!rewards.includes(id)) {
-    rewards.push(id);
-    localStorage.setItem("gfield-rewarded-games", JSON.stringify(rewards));
-    if (!state.hints && state.wrong === 0) localStorage.setItem("gfield-points", String(Number(localStorage.getItem("gfield-points") || 120) + 10));
-  }
-  saveGameProgress("paperFold", { level: state.level + 1, problemIndex: state.problem, queue: state.queue.map((item) => item.id), completedProblem: problem().id });
-}
-
-function showSuccess() {
-  ui.success.querySelector("strong").textContent = ["GOOD JOB!", "GREAT JOB!", "SUCCESS!"][state.problem % 3];
-  ui.success.classList.remove("show");
-  void ui.success.offsetWidth;
-  ui.success.classList.add("show");
+function save() {
+  localStorage.setItem(progressKey, JSON.stringify({ level: state.level + 1, index: state.index, queue: state.queue.map((item) => item.id) }));
+  saveGameProgress("paperFold", { level: state.level + 1, problemIndex: state.index, queue: state.queue.map((item) => item.id) });
 }
 
 function resetProblem() {
-  const p = problem();
-  state.folded = p.interaction === "result-choice"; state.foldStep = state.folded ? problemFolds(p).length : 0; state.busy = false; state.solved = false; state.wrong = 0; state.hints = 0; state.selections = new Set(); state.placements = []; state.selectedPlacement = null; state.stage = 1;
-  renderAll();
+  state.solved = false;
+  state.busy = false;
+  state.selectedLeft = null;
+  state.connections = new Map();
 }
 
-function nextProblem() {
-  if (!state.solved) return;
-  if (state.problem < state.queue.length - 1) {
-    state.problem += 1;
-    saveGameProgress("paperFold", { level: state.level + 1, problemIndex: state.problem, queue: state.queue.map((item) => item.id) });
-    resetProblem();
-  } else showComplete();
+function renderProblem() {
+  const p = problem();
+  resetProblem();
+  ui.success.classList.remove("show");
+  const guide = $("#foldyGuide");
+  guide.classList.add("reset");
+  guide.classList.remove("show");
+  requestAnimationFrame(() => guide.classList.remove("reset"));
+  clearTimeout(setGuide.timer);
+  document.documentElement.lang = lang;
+  document.title = `GFIELD ${local(level().title)}`;
+  $("#levelLabel").textContent = local(level().title);
+  $("#problemLabel").textContent = t("problemCount", { current: state.index + 1, total: state.queue.length });
+  $("#missionTitle").textContent = local(level().title);
+  $("#stars").textContent = p.interaction === "connect-match" ? "●—●" : "○  ○  ○";
+  ui.prompt.textContent = t(p.interaction === "connect-match" ? "connectPrompt" : "choicePrompt");
+  ui.status.textContent = p.interaction === "connect-match" ? t("connectPrompt") : t("foldedPaper");
+  ui.paper.className = `paper activity-${p.interaction}`;
+  ui.next.hidden = true;
+  ui.next.textContent = t("next");
+  ui.interaction.replaceChildren();
+  if (p.interaction === "result-choice") {
+    ui.paper.innerHTML = sequenceHtml(p);
+    ui.answerPrompt.textContent = t("choicePrompt");
+    ui.interaction.innerHTML = selectionChoicesHtml(p);
+    ui.interaction.querySelectorAll("[data-choice]").forEach((button) => button.addEventListener("click", () => checkChoice(button)));
+  } else {
+    ui.paper.innerHTML = connectBoardHtml(p);
+    ui.answerPrompt.textContent = t("selectFolded");
+    ui.interaction.innerHTML = `<button class="check-button" type="button" disabled>${t("check")}</button>`;
+    ui.paper.querySelectorAll("[data-left]").forEach((button) => button.addEventListener("click", () => selectLeft(button)));
+    ui.paper.querySelectorAll("[data-right]").forEach((button) => button.addEventListener("click", () => selectRight(button)));
+    ui.interaction.querySelector("button").addEventListener("click", checkConnections);
+    requestAnimationFrame(renderConnections);
+  }
+  save();
+}
+
+async function solve() {
+  state.solved = true;
+  state.busy = true;
+  ui.next.hidden = false;
+  ui.paper.classList.add("is-solved");
+  if (problem().interaction === "result-choice") ui.paper.innerHTML = sequenceHtml(problem(), true);
+  ui.success.classList.remove("show");
+  requestAnimationFrame(() => ui.success.classList.add("show"));
+  setGuide(t("correct"));
+  ui.status.textContent = t("correct");
+  await new Promise((resolve) => setTimeout(resolve, 620));
+  state.busy = false;
+  ui.next.focus();
+}
+
+function checkChoice(button) {
+  if (state.solved || state.busy) return;
+  if (button.dataset.choice === problem().answer) {
+    button.classList.add("correct");
+    ui.interaction.querySelectorAll("button").forEach((item) => { item.disabled = true; });
+    solve();
+  } else {
+    button.classList.add("wrong");
+    toast(t("wrong"));
+    setTimeout(() => button.classList.remove("wrong"), 480);
+  }
+}
+
+function selectLeft(button) {
+  if (state.solved) return;
+  state.selectedLeft = button.dataset.left;
+  ui.paper.querySelectorAll("[data-left]").forEach((item) => item.classList.toggle("selected", item === button));
+  ui.answerPrompt.textContent = t("selectResult");
+}
+
+function selectRight(button) {
+  if (state.solved || !state.selectedLeft) {
+    if (!state.solved) setGuide(t("selectFolded"));
+    return;
+  }
+  const rightKey = button.dataset.right;
+  [...state.connections].forEach(([left, right]) => { if (right === rightKey) state.connections.delete(left); });
+  state.connections.set(state.selectedLeft, rightKey);
+  state.selectedLeft = null;
+  ui.paper.querySelectorAll("[data-left]").forEach((item) => item.classList.remove("selected"));
+  ui.answerPrompt.textContent = state.connections.size === 3 ? t("check") : t("selectFolded");
+  ui.interaction.querySelector("button").disabled = state.connections.size !== 3;
+  renderConnections();
+}
+
+function checkConnections() {
+  if (state.solved || state.connections.size !== 3) return;
+  const wrong = [...state.connections].filter(([left, right]) => problem().answer[left] !== right);
+  if (!wrong.length) {
+    ui.paper.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+    solve();
+    return;
+  }
+  wrong.forEach(([left]) => {
+    ui.paper.querySelector(`[data-left="${left}"]`)?.classList.add("wrong");
+    ui.paper.querySelector(`[data-line-left="${left}"]`)?.classList.add("wrong");
+    state.connections.delete(left);
+  });
+  toast(t("wrong"));
+  setTimeout(() => {
+    ui.paper.querySelectorAll(".wrong").forEach((item) => item.classList.remove("wrong"));
+    renderConnections();
+  }, 520);
+  ui.interaction.querySelector("button").disabled = true;
+}
+
+function rememberQueue() {
+  const recent = readJson(recentKey, {});
+  recent[state.level + 1] = state.queue.map((item) => item.id).slice(-MAX_SESSION_SIZE);
+  localStorage.setItem(recentKey, JSON.stringify(recent));
 }
 
 function showComplete() {
-  $("#completeTitle").textContent = t("levelComplete", { level: state.level + 1 });
-  $("#completeText").textContent = t("completeText");
-  $("#nextLevelButton").textContent = state.level < 4 ? t("nextLevel") : t("studio");
+  rememberQueue();
+  const canContinue = state.queue.length < MAX_SESSION_SIZE;
+  $("#completeTitle").textContent = t(canContinue ? "complete10" : "complete20");
+  $("#completeText").textContent = t(canContinue ? "completeText10" : "completeText20");
+  $("#nextLevelButton").textContent = t(canContinue ? "continue10" : "otherType");
+  $("#practiceButton").textContent = t("new10");
+  ui.complete.querySelector("a").textContent = t("finish");
   ui.complete.hidden = false;
 }
 
+function nextProblem() {
+  if (!state.solved || state.busy) return;
+  if (state.index < state.queue.length - 1) {
+    state.index += 1;
+    renderProblem();
+  } else showComplete();
+}
+
+function continueTen() {
+  if (state.queue.length >= MAX_SESSION_SIZE) {
+    selectLevel(state.level === 0 ? 1 : 0);
+    return;
+  }
+  const excluded = new Set(state.queue.map((item) => item.id));
+  state.queue.push(...createChunk(state.level, CHUNK_SIZE, excluded));
+  state.index += 1;
+  ui.complete.hidden = true;
+  renderProblem();
+}
+
+function newTen() {
+  state.queue = createChunk(state.level, CHUNK_SIZE, new Set(state.queue.map((item) => item.id)));
+  state.index = 0;
+  ui.complete.hidden = true;
+  renderProblem();
+}
+
 function selectLevel(index) {
-  state.level = Math.max(0, Math.min(4, index)); state.problem = 0; state.queue = createSession(state.level); ui.levelDialog.hidden = true; ui.complete.hidden = true;
-  saveGameProgress("paperFold", { level: state.level + 1, problemIndex: 0, queue: state.queue.map((item) => item.id) });
-  resetProblem();
+  state.level = Math.max(0, Math.min(1, index));
+  state.queue = createChunk(state.level, requestedCount);
+  state.index = 0;
+  ui.levelDialog.hidden = true;
+  ui.complete.hidden = true;
+  history.replaceState({}, "", `?level=${state.level + 1}`);
+  renderProblem();
 }
 
-function renderLevelList() {
-  ui.levelList.replaceChildren();
-  levels.forEach((level, index) => {
-    const button = document.createElement("button");
-    button.type = "button"; button.className = "level-card";
-    button.innerHTML = `<span>${level.id}</span><strong>${title(level)}</strong><small>${description(level)}</small>`;
-    button.addEventListener("click", () => selectLevel(index));
-    ui.levelList.append(button);
-  });
+function renderLevelDialog() {
+  $("#dialogTitle").textContent = t("chooseType");
+  $("#closeLevels").textContent = "×";
+  $("#closeLevels").setAttribute("aria-label", t("close"));
+  ui.levelList.innerHTML = levels.map((item, index) => `<button type="button" class="level-card" data-level="${index}"><span>${index + 1}</span><strong>${local(item.title)}</strong><small>${local(item.description)}</small></button>`).join("");
+  ui.levelList.querySelectorAll("[data-level]").forEach((button) => button.addEventListener("click", () => selectLevel(Number(button.dataset.level))));
 }
 
-function renderAll() {
-  const p = problem();
-  const level = levels[state.level];
-  const folds = problemFolds(p);
-  const currentFold = activeFold(p);
-  $("#levelLabel").textContent = `LEVEL ${level.id}`;
-  $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
-  $("#missionTitle").textContent = title(level);
-  $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
-  const visualPrompt = p.interaction === "backtrack-choice" ? t("visualBacktrackPrompt") : p.action?.type === "punch" ? t("visualHolePrompt") : t("visualResultPrompt");
-  ui.prompt.textContent = state.solved
-    ? (p.interaction === "top-choice" ? t("topSolved", { value: p.answer }) : t("solvedPrompt"))
-    : isVisualChoice(p)
-      ? visualPrompt
-    : state.folded
-      ? (p.interaction === "top-choice" ? t("topFolded") : t("foldedPrompt", { axis: axisText(folds[folds.length - 1].axis) }))
-      : folds.length > 1
-        ? t("foldStepPrompt", { step: state.foldStep + 1, total: folds.length, axis: axisText(currentFold.axis) })
-        : t("movingFace");
-  ui.status.textContent = state.busy ? t("folding") : state.solved ? (p.interaction === "top-choice" ? t("topResult") : p.interaction === "backtrack-choice" ? t("beforeFoldResult") : t("unfolded")) : isVisualChoice(p) ? (p.interaction === "backtrack-choice" ? t("openResult") : t("foldedExample")) : state.folded ? t("foldComplete") : `${state.foldStep + 1} / ${folds.length}`;
-  renderPaper(); renderInteraction();
-}
-
-const tutorialKey = "gfield-paper-fold-tutorial-v2";
-const tutorial = ["tutorial1", "tutorial2", "tutorial3"];
-let tutorialStep = 0;
-function openTutorial() {
-  if (state.level || state.problem || localStorage.getItem(tutorialKey) === "done") return;
-  ui.tutorial.hidden = false; renderTutorial();
-}
-function renderTutorial() {
-  ui.tutorialText.textContent = t(tutorial[tutorialStep]);
-  ui.tutorialDots.innerHTML = tutorial.map((_, index) => `<i class="${index === tutorialStep ? "active" : ""}"></i>`).join("");
-  ui.tutorialNext.textContent = t(tutorialStep === tutorial.length - 1 ? "start" : "tutorialNext");
-}
-
-function applyLanguage() {
-  document.documentElement.lang = state.lang === "zh" ? "zh-CN" : state.lang;
-  document.title = `GFIELD ${title(levels[state.level])}`;
+function applyLabels() {
   $(".exit").setAttribute("aria-label", t("back"));
-  $("#levelButton").textContent = t("levels");
-  ui.rotate.textContent = t("rotate");
-  ui.flip.textContent = t("flip");
+  $("#levelButton").textContent = t("type");
   $("#hintButton").textContent = t("hint");
   $("#retryButton").textContent = t("retry");
   $(".tool-panel a").textContent = t("worksheet");
-  ui.next.textContent = t("next");
-  $("#dialogTitle").textContent = t("chooseLevel");
-  $("#closeLevels").setAttribute("aria-label", t("close"));
-  $("#practiceButton").textContent = t("practice");
-  $(".complete-actions a").textContent = t("studio");
-  $("#soundButton").textContent = state.audio ? "🔊" : "🔇";
-  $("#soundButton").setAttribute("aria-label", t(state.audio ? "soundOn" : "soundOff"));
+  $("#soundButton").textContent = state.muted ? "🔇" : "🔊";
+  $("#soundButton").setAttribute("aria-label", t(state.muted ? "soundOn" : "soundOff"));
 }
 
-ui.paper.addEventListener("click", (event) => {
-  const region = event.target.closest("[data-region]");
-  if (region) return toggleRegion(region.dataset.region);
-  if (event.target.closest("[data-fold]")) return foldPaper();
-});
-ui.paper.addEventListener("pointerdown", startPlacedDrag);
-$("#hintButton").addEventListener("click", () => { state.hints += 1; const p = problem(); setGuide(isVisualChoice(p) ? t(p.interaction === "backtrack-choice" ? "backtrackHint" : "visualHint") : state.folded ? t("hintFolded", { axis: axisText(problemFolds().at(-1).axis) }) : t("movingFace")); });
-$("#retryButton").addEventListener("click", resetProblem);
-ui.rotate.addEventListener("click", rotateSelected); ui.flip.addEventListener("click", flipSelected);
 ui.next.addEventListener("click", nextProblem);
+$("#retryButton").addEventListener("click", renderProblem);
+$("#hintButton").addEventListener("click", () => setGuide(t(problem().interaction === "connect-match" ? "hintConnect" : "hintChoice")));
+$("#soundButton").addEventListener("click", () => {
+  state.muted = !state.muted;
+  localStorage.setItem("gfield-audio-muted", String(state.muted));
+  applyLabels();
+});
 $("#levelButton").addEventListener("click", () => { ui.levelDialog.hidden = false; });
 $("#closeLevels").addEventListener("click", () => { ui.levelDialog.hidden = true; });
 ui.levelDialog.addEventListener("click", (event) => { if (event.target === ui.levelDialog) ui.levelDialog.hidden = true; });
-ui.tutorialNext.addEventListener("click", () => { if (tutorialStep < tutorial.length - 1) { tutorialStep += 1; renderTutorial(); } else { localStorage.setItem(tutorialKey, "done"); ui.tutorial.hidden = true; setGuide(t("startGuide")); } });
-$("#nextLevelButton").addEventListener("click", () => state.level < 4 ? selectLevel(state.level + 1) : location.assign("../../origami-studio/"));
-$("#practiceButton").addEventListener("click", () => selectLevel(state.level));
-$("#soundButton").addEventListener("click", (event) => { state.audio = !state.audio; localStorage.setItem("gfield-audio-muted", String(!state.audio)); event.currentTarget.classList.toggle("muted", !state.audio); applyLanguage(); });
+$("#nextLevelButton").addEventListener("click", continueTen);
+$("#practiceButton").addEventListener("click", newTen);
+addEventListener("resize", () => { if (problem()?.interaction === "connect-match") renderConnections(); });
 
-applyLanguage();
-renderLevelList();
-renderAll();
-setTimeout(openTutorial, 200);
+renderLevelDialog();
+applyLabels();
+renderProblem();

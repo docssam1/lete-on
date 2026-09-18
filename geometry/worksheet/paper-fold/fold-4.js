@@ -84,11 +84,9 @@ function solutionText(problem){
   }
   if(problem.kind==='game-level'){
     const p=problem.source;
-    const folds=(p.folds||[p.fold]).map(step=>sharedAxisLabel[step.axis]).join(' → ');
-    if(problem.gameLevel===2) return `펼친 자국을 ${folds} 접기 순서의 반대로 포개면 접기 전 잘린 위치는 ${problem.answer}입니다. (${p.id})`;
-    if(problem.gameLevel<=3) return `${folds} 순서를 거꾸로 펼치며 자른 자국을 옮기면 알맞은 결과는 ${problem.answer}입니다. (${p.id})`;
-    if(problem.gameLevel===4) return `${folds} 순서를 거꾸로 펼쳐 잘려 나간 칸을 찾으면 ${p.answer.cells.map(sharedRegionLabel).join(', ')}입니다. ${p.answer.expression} = ${p.answer.sum}입니다. (${p.id})`;
-    return `${folds} 순서로 움직이는 종이 층을 뒤집어 포개면 맨 위의 수는 ${p.answer}입니다. (${p.id})`;
+    const foldName=sharedAxisLabel[p.fold.axis];
+    if(p.interaction==='connect-match') return `${foldName}로 한 번 접은 종이의 자른 선을 접은 선 반대쪽에 대칭으로 옮겨 각각의 펼친 결과와 연결합니다. (${p.id})`;
+    return `${foldName}로 한 번 접은 종이를 펼치면 자른 선이 접은 선을 기준으로 대칭이 됩니다. 알맞은 결과는 ${problem.answer}입니다. (${p.id})`;
   }
   if(problem.kind==='hole'){
     const counts=[problem.nHoles];

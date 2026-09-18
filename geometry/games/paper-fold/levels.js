@@ -2,276 +2,214 @@ const translations = (ko, zh, ja, en) => ({ ko, zh, ja, en });
 
 export const levelMeta = [
   {
-    id: 1, stage: "Pre", difficulty: "입문", color: "mint", strand: "cut-open-one",
-    title: translations("한 번 접어 자르기", "折一次再剪", "一回折って切る", "One Fold and Cut"),
-    description: translations("가로·세로로 한 번 접어 자른 뒤 펼친 자리를 찾아요.", "横向或竖向折一次，找出展开后的剪切位置。", "たて・よこに一回折り、開いた切りあとを探します。", "Fold once across or down, then find every cut when it opens.")
+    id: 1,
+    stage: "기초",
+    difficulty: "기초",
+    color: "coral",
+    strand: "single-fold-cut",
+    title: translations("색종이 접어 자르기", "对折剪纸", "半分に折って切る", "Fold Once and Cut"),
+    description: translations(
+      "색종이를 가로 또는 세로로 한 번 접어 자른 뒤 펼친 모양을 알아봐요.",
+      "把彩纸横向或纵向对折一次，剪开后判断展开的图形。",
+      "色紙をたて・よこに一回だけ折って切り、開いた形を考えます。",
+      "Fold the paper once across or down, cut it, and predict the open shape."
+    )
   },
   {
-    id: 2, stage: "입문", difficulty: "입문", color: "sky", strand: "cut-open-two",
-    title: translations("펼친 결과 되짚기", "根据展开结果倒推", "開いた結果からたどる", "Trace Back the Open Result"),
-    description: translations("펼친 자국을 접기 순서의 반대로 포개어 접기 전 자른 위치를 찾아요.", "把展开的痕迹按折叠顺序反向重叠，找出折叠前的剪切位置。", "開いた跡を折る順番と逆に重ね、折る前の切る位置を探します。", "Stack the open marks in reverse fold order to find the cut before folding.")
-  },
-  {
-    id: 3, stage: "입문", difficulty: "초급", color: "violet", strand: "punch-holes",
-    title: translations("접고 구멍 뚫기", "折叠打孔", "折って穴をあける", "Fold and Punch"),
-    description: translations("한 번·두 번·대각선 접기를 구분해 구멍 수와 자리를 찾아요.", "区分一次、两次和对角折叠，找出孔的位置。", "一回・二回・ななめ折りを分けて、穴の場所を探します。", "Distinguish one, two, and diagonal folds to place every hole.")
-  },
-  {
-    id: 4, stage: "초급", difficulty: "초급", color: "coral", strand: "number-paper",
-    title: translations("숫자 색종이", "数字折纸", "数字おりがみ", "Number Paper"),
-    description: translations("접힌 횟수와 방향을 보고 잘린 수를 모두 찾아 더해요.", "根据折叠次数和方向，找出并相加所有被剪掉的数字。", "折った回数と向きを見て、切られた数を全部たします。", "Use every fold direction to find and add all cut-away numbers.")
-  },
-  {
-    id: 5, stage: "중급", difficulty: "중급", color: "gold", strand: "top-layer",
-    title: translations("맨 위에 오는 수", "最上面的数字", "いちばん上の数", "Number on Top"),
-    description: translations("여러 번 접을 때 종이 층의 순서를 따라 맨 위 수를 찾아요.", "多次折叠时追踪纸层顺序，找出最上面的数字。", "何回も折った紙の重なりをたどり、一番上の数を探します。", "Track the paper layers through several folds and find the top number.")
+    id: 2,
+    stage: "응용",
+    difficulty: "응용",
+    color: "sky",
+    strand: "diagonal-fold-cut",
+    title: translations("대각선으로 접어 자르기", "沿对角线折叠剪纸", "対角線で折って切る", "Diagonal Fold and Cut"),
+    description: translations(
+      "색종이를 대각선으로 한 번 접어 자른 뒤 펼친 모양을 알아봐요.",
+      "把彩纸沿对角线对折一次，剪开后判断展开的图形。",
+      "色紙を対角線で一回だけ折って切り、開いた形を考えます。",
+      "Fold the paper once along a diagonal, cut it, and predict the open shape."
+    )
   }
 ];
 
-const id = (level, index) => `paper-l${level}-${String(index).padStart(2, "0")}`;
-const fold = (axis, side) => ({ axis, side, target: ({ left: "right", right: "left", top: "bottom", bottom: "top", upper: "lower", lower: "upper" })[side] });
-const regionPattern = /^r[1-4]c[1-4](?:-(?:ne|nw|se|sw))?$/;
-const baseCellId = (region) => region.replace(/-(?:ne|nw|se|sw)$/, "");
-const numberGrid = (values) => ({ size: 4, values });
-const gridCells = (values) => values.flatMap((row, r) => row.map((value, c) => ({ id: `r${r + 1}c${c + 1}`, value })));
-const visualChoice = (key, regions) => ({ key, regions });
+const fold = (axis, side) => ({ axis, side, target: ({
+  left: "right", right: "left", top: "bottom", bottom: "top", upper: "lower", lower: "upper"
+})[side] });
 
-const triangleReflection = {
-  vertical: { nw: "ne", ne: "nw", sw: "se", se: "sw" },
-  horizontal: { nw: "sw", sw: "nw", ne: "se", se: "ne" },
-  "diag-main": { nw: "nw", ne: "sw", sw: "ne", se: "se" },
-  "diag-anti": { nw: "se", ne: "ne", sw: "sw", se: "nw" }
-};
+const ORTHOGONAL_FOLDS = [
+  fold("vertical", "left"),
+  fold("horizontal", "top"),
+  fold("vertical", "right"),
+  fold("horizontal", "bottom")
+];
 
-const reflectRegion = (region, axis) => {
-  const [, rowText, colText, part] = /^r([1-4])c([1-4])(?:-(ne|nw|se|sw))?$/.exec(region) || [];
-  if (!rowText) return region;
-  const row = Number(rowText);
-  const col = Number(colText);
-  const [nextRow, nextCol] = ({
-    vertical: [row, 5 - col], horizontal: [5 - row, col],
-    "diag-main": [col, row], "diag-anti": [5 - col, 5 - row]
-  })[axis];
-  return `r${nextRow}c${nextCol}${part ? `-${triangleReflection[axis][part]}` : ""}`;
-};
+const DIAGONAL_FOLDS = [
+  fold("diag-main", "upper"),
+  fold("diag-anti", "upper"),
+  fold("diag-main", "lower"),
+  fold("diag-anti", "lower")
+];
 
-const expandRegions = (sourceRegions, folds) => folds.reduce(
-  (regions, step) => [...new Set(regions.flatMap((region) => [region, reflectRegion(region, step.axis)]))],
-  [...sourceRegions]
-);
+const PROFILES = [
+  { id: "triangle", points: [[.20, 0], [.50, .29], [.80, 0]] },
+  { id: "rectangle", points: [[.22, 0], [.22, .23], [.76, .23], [.76, 0]] },
+  { id: "step", points: [[.18, 0], [.18, .18], [.44, .18], [.44, .29], [.78, .29], [.78, 0]] },
+  { id: "notch", points: [[.18, 0], [.34, .21], [.50, .12], [.68, .25], [.82, 0]] },
+  { id: "trapezoid", points: [[.18, 0], [.30, .25], [.68, .25], [.82, 0]] },
+  { id: "kite", points: [[.16, 0], [.38, .16], [.50, .30], [.64, .16], [.84, 0]] },
+  { id: "round", points: Array.from({ length: 9 }, (_, index) => {
+    const t = index / 8;
+    return [.18 + t * .64, Math.sin(Math.PI * t) * .25];
+  }) },
+  { id: "double-round", points: Array.from({ length: 13 }, (_, index) => {
+    const t = index / 12;
+    return [.16 + t * .68, Math.abs(Math.sin(Math.PI * t * 2)) * .18 + Math.sin(Math.PI * t) * .07];
+  }) }
+];
 
-function sourceFitsFoldedArea(region, folds) {
-  const match = /^r([1-4])c([1-4])/.exec(region);
-  if (!match) return false;
-  const row = Number(match[1]);
-  const col = Number(match[2]);
-  return folds.every((step) => {
-    if (step.axis === "vertical") return step.side === "left" ? col >= 3 : col <= 2;
-    if (step.axis === "horizontal") return step.side === "top" ? row >= 3 : row <= 2;
-    return true;
+const round = (value) => Math.round(value * 10000) / 10000;
+const point = (x, y) => ({ x: round(x), y: round(y) });
+
+export function cutPoints(foldSpec, profileId, depthScale = 1) {
+  const profile = PROFILES.find((item) => item.id === profileId);
+  if (!profile) throw new Error(`Unknown cut profile: ${profileId}`);
+  const normal = foldSpec.side === "left" || foldSpec.side === "top" || foldSpec.side === "upper" ? 1 : -1;
+  return profile.points.map(([along, rawDepth]) => {
+    const depth = rawDepth * depthScale;
+    if (foldSpec.axis === "vertical") return point(.5 + normal * depth, along);
+    if (foldSpec.axis === "horizontal") return point(along, .5 + normal * depth);
+    const offset = normal * depth / Math.SQRT2;
+    if (foldSpec.axis === "diag-main") return point(along - offset, along + offset);
+    return point(along + offset, 1 - along + offset);
   });
 }
 
-const canonicalRegions = (regions) => [...regions].sort().join("|");
+export function reflectPoint(source, axis) {
+  if (axis === "vertical") return point(1 - source.x, source.y);
+  if (axis === "horizontal") return point(source.x, 1 - source.y);
+  if (axis === "diag-main") return point(source.y, source.x);
+  return point(1 - source.y, 1 - source.x);
+}
 
-function alternativeSourceRegions(sourceRegions, folds, offset) {
-  const used = new Set(sourceRegions);
-  return sourceRegions.map((region, sourceIndex) => {
-    const part = /-(ne|nw|se|sw)$/.exec(region)?.[1];
-    const suffix = part ? `-${part}` : "";
-    const candidates = [];
-    for (let row = 1; row <= 4; row += 1) {
-      for (let col = 1; col <= 4; col += 1) {
-        const candidate = `r${row}c${col}${suffix}`;
-        if (!used.has(candidate) && sourceFitsFoldedArea(candidate, folds)) candidates.push(candidate);
-      }
-    }
-    const choice = candidates[(offset + sourceIndex) % candidates.length];
-    used.add(choice);
-    return choice;
+export function unfoldedPolygon(cut, foldSpec) {
+  const reflectedInterior = cut.slice(1, -1).map((item) => reflectPoint(item, foldSpec.axis)).reverse();
+  return [...cut, ...reflectedInterior];
+}
+
+export function foldedPolygon(foldSpec) {
+  const polygons = {
+    "vertical-left": [[.5, 0], [1, 0], [1, 1], [.5, 1]],
+    "vertical-right": [[0, 0], [.5, 0], [.5, 1], [0, 1]],
+    "horizontal-top": [[0, .5], [1, .5], [1, 1], [0, 1]],
+    "horizontal-bottom": [[0, 0], [1, 0], [1, .5], [0, .5]],
+    "diag-main-upper": [[0, 0], [1, 1], [0, 1]],
+    "diag-main-lower": [[0, 0], [1, 0], [1, 1]],
+    "diag-anti-upper": [[1, 0], [1, 1], [0, 1]],
+    "diag-anti-lower": [[0, 0], [1, 0], [0, 1]]
+  };
+  return polygons[`${foldSpec.axis}-${foldSpec.side}`].map(([x, y]) => point(x, y));
+}
+
+const cutSignature = (cut) => cut.map(({ x, y }) => `${x},${y}`).join("|");
+const resultChoice = (key, foldSpec, profileId, depthScale) => ({
+  key,
+  fold: foldSpec,
+  profileId,
+  cut: cutPoints(foldSpec, profileId, depthScale)
+});
+
+function selectionProblem(level, index, foldSpec, profileIndex) {
+  const profile = PROFILES[profileIndex % PROFILES.length];
+  const depthScale = .86 + (index % 4) * .07;
+  const answerIndex = index % 3;
+  const optionProfiles = [
+    profile,
+    PROFILES[(profileIndex + 2) % PROFILES.length],
+    PROFILES[(profileIndex + 5) % PROFILES.length]
+  ];
+  const choices = optionProfiles.map((item, choiceIndex) => resultChoice(
+    String.fromCharCode(97 + choiceIndex), foldSpec, item.id, item.id === profile.id ? depthScale : 1
+  ));
+  if (answerIndex !== 0) [choices[0], choices[answerIndex]] = [choices[answerIndex], choices[0]];
+  choices.forEach((choice, choiceIndex) => { choice.key = String.fromCharCode(97 + choiceIndex); });
+  return {
+    id: `paper-${level === 1 ? "straight" : "diagonal"}-${String(index + 1).padStart(2, "0")}`,
+    level,
+    interaction: "result-choice",
+    fold: foldSpec,
+    folds: [foldSpec],
+    profileId: profile.id,
+    cut: cutPoints(foldSpec, profile.id, depthScale),
+    choices,
+    answer: choices.find((choice) => choice.profileId === profile.id).key,
+    sourceRef: "user-reference.kinderfacto.single-fold-cut"
+  };
+}
+
+function connectProblem(level, index, folds, profileIndex) {
+  const pairs = Array.from({ length: 3 }, (_, pairIndex) => {
+    const foldSpec = folds[(index + pairIndex) % folds.length];
+    const profile = PROFILES[(profileIndex + pairIndex * 2) % PROFILES.length];
+    const depthScale = .88 + ((index + pairIndex) % 3) * .06;
+    const key = String.fromCharCode(97 + pairIndex);
+    return { key, fold: foldSpec, profileId: profile.id, cut: cutPoints(foldSpec, profile.id, depthScale) };
+  });
+  const shift = index % 3;
+  const copied = pairs.map((item) => ({ ...item }));
+  const results = copied.slice(shift).concat(copied.slice(0, shift));
+  return {
+    id: `paper-${level === 1 ? "straight" : "diagonal"}-connect-${String(index + 1).padStart(2, "0")}`,
+    level,
+    interaction: "connect-match",
+    fold: pairs[0].fold,
+    folds: [pairs[0].fold],
+    pairs,
+    results,
+    answer: Object.fromEntries(pairs.map((item) => [item.key, item.key])),
+    sourceRef: "user-reference.kinderfacto.single-fold-match"
+  };
+}
+
+function problemPool(level, folds) {
+  return Array.from({ length: 36 }, (_, index) => {
+    const foldSpec = folds[index % folds.length];
+    const profileIndex = (index * 3 + level) % PROFILES.length;
+    return index % 3 === 1
+      ? connectProblem(level, index, folds, profileIndex)
+      : selectionProblem(level, index, foldSpec, profileIndex);
   });
 }
 
-function regionProblem(level, index, interaction, folds, sourceRegions, sourceRef) {
-  const targetRegions = expandRegions(sourceRegions, folds);
-  let wrongSource = alternativeSourceRegions(sourceRegions, folds, index);
-  for (let offset = 1; offset <= 16 && canonicalRegions(expandRegions(wrongSource, folds)) === canonicalRegions(targetRegions); offset += 1) {
-    wrongSource = alternativeSourceRegions(sourceRegions, folds, index + offset);
-  }
-  const correctRegions = interaction === "backtrack-choice" ? sourceRegions : targetRegions;
-  const wrongRegions = interaction === "backtrack-choice" ? wrongSource : expandRegions(wrongSource, folds);
-  const correctKey = index % 2 === 0 ? "b" : "a";
-  const choices = correctKey === "a"
-    ? [visualChoice("a", correctRegions), visualChoice("b", wrongRegions)]
-    : [visualChoice("a", wrongRegions), visualChoice("b", correctRegions)];
-  return {
-    id: id(level, index), level, interaction, fold: folds[0], folds,
-    action: { type: level === 3 ? "punch" : "cut" },
-    sourceRegions, targetRegions, choices, answer: correctKey, sourceRef
-  };
-}
+export const levels = levelMeta.map((meta, index) => ({
+  ...meta,
+  problems: problemPool(meta.id, index === 0 ? ORTHOGONAL_FOLDS : DIAGONAL_FOLDS)
+}));
 
-const oneFoldSpecs = [
-  [fold("vertical", "left"), ["r1c4"]], [fold("horizontal", "bottom"), ["r2c2"]],
-  [fold("vertical", "right"), ["r3c1"]], [fold("horizontal", "top"), ["r4c3"]],
-  [fold("vertical", "left"), ["r2c3", "r4c4"]], [fold("horizontal", "bottom"), ["r1c1", "r2c4"]],
-  [fold("vertical", "right"), ["r1c2", "r3c1"]], [fold("horizontal", "top"), ["r3c2", "r4c4"]],
-  [fold("vertical", "left"), ["r1c3", "r3c4"]], [fold("horizontal", "bottom"), ["r1c2", "r2c3"]]
-];
-
-const twoFoldSpecs = [
-  [[fold("vertical", "left"), fold("horizontal", "top")], ["r4c4"]],
-  [[fold("horizontal", "bottom"), fold("vertical", "right")], ["r1c1"]],
-  [[fold("vertical", "right"), fold("horizontal", "bottom")], ["r2c2"]],
-  [[fold("horizontal", "top"), fold("vertical", "left")], ["r3c3"]],
-  [[fold("vertical", "left"), fold("horizontal", "bottom")], ["r1c3"]],
-  [[fold("horizontal", "bottom"), fold("vertical", "left")], ["r2c4"]],
-  [[fold("vertical", "right"), fold("horizontal", "top")], ["r3c1"]],
-  [[fold("horizontal", "top"), fold("vertical", "right")], ["r4c2"]],
-  [[fold("diag-main", "upper"), fold("vertical", "right")], ["r4c1-sw"]],
-  [[fold("diag-anti", "upper"), fold("horizontal", "bottom")], ["r1c1-sw"]]
-];
-
-const punchSpecs = [
-  [[fold("vertical", "left")], ["r2c4"]], [[fold("horizontal", "top")], ["r4c2"]],
-  [[fold("diag-main", "upper")], ["r1c3-se"]], [[fold("diag-anti", "lower")], ["r4c2-ne"]],
-  [[fold("vertical", "right"), fold("horizontal", "bottom")], ["r1c1"]],
-  [[fold("horizontal", "top"), fold("vertical", "left")], ["r4c4"]],
-  [[fold("vertical", "left"), fold("horizontal", "top")], ["r3c4"]],
-  [[fold("diag-main", "lower"), fold("horizontal", "bottom")], ["r1c4-sw"]],
-  [[fold("diag-anti", "upper"), fold("vertical", "right")], ["r1c1-se"]],
-  [[fold("vertical", "right"), fold("horizontal", "top")], ["r4c1", "r3c2"]]
-];
-
-const numberValues = [
-  [[1,3,4,2],[8,6,7,5],[4,1,2,3],[6,5,7,8]], [[2,5,1,4],[7,3,8,6],[1,4,2,9],[5,6,3,7]],
-  [[3,7,2,6],[4,1,5,8],[9,2,4,3],[6,8,1,7]], [[1,8,3,4],[2,6,7,5],[9,3,2,1],[4,5,6,8]],
-  [[8,2,4,1],[3,7,5,6],[2,4,9,3],[5,1,6,8]], [[4,1,7,2],[6,3,5,8],[2,9,4,1],[7,5,6,3]],
-  [[7,2,6,3],[1,8,4,5],[9,3,2,7],[4,6,5,1]], [[5,9,1,4],[2,7,6,3],[8,4,5,1],[3,6,2,7]],
-  [[2,6,8,1],[5,3,7,4],[9,1,6,2],[4,8,3,5]], [[6,4,2,9],[1,8,5,3],[7,2,6,4],[3,5,1,8]]
-];
-
-const numberFoldSpecs = [
-  [[fold("vertical", "left")], ["r1c4", "r3c4"]], [[fold("horizontal", "bottom")], ["r1c2", "r2c4"]],
-  [[fold("diag-main", "upper")], ["r1c3", "r2c4"]], [[fold("diag-anti", "lower")], ["r3c1", "r4c2"]],
-  [[fold("vertical", "right"), fold("horizontal", "bottom")], ["r1c1"]],
-  [[fold("horizontal", "top"), fold("vertical", "left")], ["r4c4"]],
-  [[fold("vertical", "left"), fold("horizontal", "top")], ["r3c4"]],
-  [[fold("horizontal", "bottom"), fold("vertical", "right")], ["r1c1"]],
-  [[fold("diag-main", "upper"), fold("vertical", "right")], ["r4c1"]],
-  [[fold("diag-anti", "upper"), fold("horizontal", "bottom")], ["r1c1"]]
-];
-
-function numberProblem(index) {
-  const [folds, cutRegions] = numberFoldSpecs[index];
-  const values = numberValues[index];
-  const answerCells = expandRegions(cutRegions, folds);
-  const available = gridCells(values);
-  const answerValues = answerCells.map((region) => available.find((cell) => cell.id === baseCellId(region)).value);
-  return {
-    id: id(4, index + 1), level: 4, interaction: "cut-number-sum", fold: folds[0], folds,
-    action: { type: "cut" }, grid: numberGrid(values), cutRegions,
-    answer: { cells: answerCells, values: answerValues, expression: answerValues.join(" + "), sum: answerValues.reduce((sum, value) => sum + value, 0) },
-    sourceRef: folds.length === 1 ? "fields.classic.fold-number-grid-one" : folds.some((step) => step.axis.startsWith("diag")) ? "fields.classic.fold-number-grid-two-diagonal" : "fields.classic.fold-number-grid-two-orthogonal"
-  };
-}
-
-function foldStacks(values, folds) {
-  let board = values.map((row) => row.map((value) => [value]));
-  const states = [board.map((row) => row.map((stack) => stack.at(-1)))];
-  folds.forEach((step) => {
-    const rows = board.length;
-    const cols = board[0].length;
-    if (step.axis === "vertical") {
-      const half = cols / 2;
-      board = board.map((row) => Array.from({ length: half }, (_, col) => {
-        const target = step.side === "left" ? row[half + col] : row[col];
-        const moving = step.side === "left" ? row[half - 1 - col] : row[cols - 1 - col];
-        return [...target, ...moving.slice().reverse()];
-      }));
-      return;
-    }
-    const half = rows / 2;
-    board = Array.from({ length: half }, (_, row) => Array.from({ length: cols }, (_, col) => {
-      const target = step.side === "top" ? board[half + row][col] : board[row][col];
-      const moving = step.side === "top" ? board[half - 1 - row][col] : board[rows - 1 - row][col];
-      return [...target, ...moving.slice().reverse()];
-    }));
-    states.push(board.map((row) => row.map((stack) => stack.at(-1))));
-  });
-  if (board.length !== 1 || board[0].length !== 1) throw new Error("Top-layer folds must finish as one stack.");
-  return { stack: board[0][0], states };
-}
-
-const topSpecs = [
-  { values:[[1,2],[3,4]], folds:[fold("vertical","left"),fold("horizontal","top")] },
-  { values:[[2,4],[1,3]], folds:[fold("horizontal","bottom"),fold("vertical","right")] },
-  { values:[[3,1],[4,2]], folds:[fold("vertical","right"),fold("horizontal","bottom")] },
-  { values:[[4,3],[2,1]], folds:[fold("horizontal","top"),fold("vertical","left")] },
-  { values:[[1,2,3,4],[5,6,7,8]], folds:[fold("vertical","right"),fold("vertical","left"),fold("horizontal","top")] },
-  { values:[[8,7,6,5],[4,3,2,1]], folds:[fold("horizontal","bottom"),fold("vertical","left"),fold("vertical","right")] },
-  { values:[[2,5,8,1],[7,4,3,6]], folds:[fold("vertical","left"),fold("horizontal","top"),fold("vertical","right")] },
-  { values:[[6,3,4,7],[1,8,5,2]], folds:[fold("vertical","right"),fold("horizontal","bottom"),fold("vertical","left")] },
-  { values:[[1,4],[2,5],[3,6],[7,8]], folds:[fold("horizontal","top"),fold("horizontal","bottom"),fold("vertical","left")] },
-  { values:[[8,3],[6,1],[4,7],[2,5]], folds:[fold("horizontal","bottom"),fold("horizontal","top"),fold("vertical","right")] }
-];
-
-function topProblem(index) {
-  const spec = topSpecs[index];
-  const folded = foldStacks(spec.values, spec.folds);
-  const stack = folded.stack;
-  const answer = stack[stack.length - 1];
-  const allValues = [...new Set(spec.values.flat())];
-  const distractors = allValues.filter((value) => value !== answer);
-  const choices = [answer, distractors[index % distractors.length], distractors[(index + 2) % distractors.length]];
-  if (new Set(choices).size < 3) choices[2] = distractors.find((value) => !choices.includes(value));
-  return {
-    id: id(5, index + 1), level: 5, interaction: "top-choice", fold: spec.folds[0], folds: spec.folds,
-    topGrid: spec.values, topStates: folded.states, choices: choices.map(String), answer: String(answer), stack,
-    condition: "same-number-on-both-sides", sourceRef: "fields.classic.fold-surface-top-trace",
-    sourceAdaptation: "top-color adapted to same-number-on-both-sides paper"
-  };
-}
-
-export const levels = [
-  { ...levelMeta[0], problems: oneFoldSpecs.map(([step, regions], index) => regionProblem(1, index + 1, "result-choice", [step], regions, "fields.classic.fold-cut-unfold-one-draw")) },
-  { ...levelMeta[1], problems: twoFoldSpecs.map(([folds, regions], index) => regionProblem(2, index + 1, "backtrack-choice", folds, regions, "fields.classic.fold-cut-unfold-two-draw")) },
-  { ...levelMeta[2], problems: punchSpecs.map(([folds, regions], index) => regionProblem(3, index + 1, "result-choice", folds, regions, folds.some((step) => step.axis.startsWith("diag")) ? "fields.classic.fold-diagonal-hole-count" : folds.length > 1 ? "fields.classic.practice-three-fold-hole-count" : "fields.classic.fold-hole-count")) },
-  { ...levelMeta[3], problems: numberValues.map((_, index) => numberProblem(index)) },
-  { ...levelMeta[4], problems: topSpecs.map((_, index) => topProblem(index)) }
-];
-
-const isUniqueRegionList = (regions) => Array.isArray(regions) && regions.length > 0 && new Set(regions).size === regions.length && regions.every((region) => regionPattern.test(region));
-const equalRegionSets = (actual, expected) => actual.length === expected.length && expected.every((region) => actual.includes(region));
 export function validateLevels() {
+  if (levels.length !== 2) throw new Error("Paper fold must have exactly two content types.");
   const ids = new Set();
-  if (levels.length !== 5) throw new Error("Paper-fold must contain five distinct strands.");
-  levels.forEach((level, index) => {
-    if (level.id !== index + 1 || level.problems.length !== 10) throw new Error(`Invalid paper-fold level ${level.id}`);
+  levels.forEach((level) => {
+    if (level.problems.length < 30) throw new Error(`Not enough generated problems for ${level.id}`);
+    let consecutive = 0;
+    let previousInteraction = "";
     level.problems.forEach((problem) => {
-      if (ids.has(problem.id)) throw new Error(`Duplicate paper-fold problem ${problem.id}`);
+      if (ids.has(problem.id)) throw new Error(`Duplicate paper-fold id: ${problem.id}`);
       ids.add(problem.id);
-      if (!Array.isArray(problem.folds) || !problem.folds.length || problem.fold !== problem.folds[0]) throw new Error(`Missing fold sequence: ${problem.id}`);
-      if (["result-choice", "backtrack-choice"].includes(problem.interaction)) {
-        const expected = expandRegions(problem.sourceRegions, problem.folds);
-        const answerChoice = problem.choices.find((choice) => choice.key === problem.answer);
-        const expectedChoice = problem.interaction === "backtrack-choice" ? problem.sourceRegions : expected;
-        const wrongChoice = problem.choices.find((choice) => choice.key !== problem.answer);
-        const wrongSourceFits = problem.interaction !== "backtrack-choice" || wrongChoice.regions.every((region) => sourceFitsFoldedArea(region, problem.folds));
-        if (!isUniqueRegionList(problem.sourceRegions) || !problem.sourceRegions.every((region) => sourceFitsFoldedArea(region, problem.folds)) || !isUniqueRegionList(problem.targetRegions) || !equalRegionSets(problem.targetRegions, expected) || problem.choices.length !== 2 || !answerChoice || !wrongChoice || !equalRegionSets(answerChoice.regions, expectedChoice) || canonicalRegions(answerChoice.regions) === canonicalRegions(wrongChoice.regions) || !wrongSourceFits) throw new Error(`Invalid visual choices: ${problem.id}`);
-      }
-      if (problem.interaction === "cut-number-sum") {
-        const available = gridCells(problem.grid.values);
-        const expectedCells = expandRegions(problem.cutRegions, problem.folds);
-        const expectedValues = expectedCells.map((region) => available.find((cell) => cell.id === baseCellId(region))?.value);
-        if (!problem.cutRegions.every((region) => sourceFitsFoldedArea(region, problem.folds)) || !equalRegionSets(problem.answer.cells, expectedCells) || problem.answer.values.join(",") !== expectedValues.join(",") || problem.answer.expression !== expectedValues.join(" + ") || problem.answer.sum !== expectedValues.reduce((sum, value) => sum + value, 0)) throw new Error(`Invalid number-paper answer: ${problem.id}`);
-      }
-      if (problem.interaction === "top-choice") {
-        const folded = foldStacks(problem.topGrid, problem.folds);
-        const answer = String(folded.stack[folded.stack.length - 1]);
-        if (problem.answer !== answer || JSON.stringify(problem.topStates) !== JSON.stringify(folded.states) || problem.choices.length !== 3 || new Set(problem.choices).size !== 3 || !problem.choices.includes(answer)) throw new Error(`Invalid top-layer answer: ${problem.id}`);
-      }
+      if (problem.folds.length !== 1 || problem.fold !== problem.folds[0]) throw new Error(`Paper must fold exactly once: ${problem.id}`);
+      const diagonal = problem.fold.axis.startsWith("diag");
+      if ((level.id === 1 && diagonal) || (level.id === 2 && !diagonal)) throw new Error(`Fold type mismatch: ${problem.id}`);
+      consecutive = problem.interaction === previousInteraction ? consecutive + 1 : 1;
+      previousInteraction = problem.interaction;
+      if (consecutive > 2) throw new Error(`Interaction repeats too often: ${problem.id}`);
+      if (problem.interaction === "result-choice") {
+        if (problem.choices.length !== 3 || !problem.choices.some((choice) => choice.key === problem.answer)) throw new Error(`Invalid choices: ${problem.id}`);
+        const signatures = new Set(problem.choices.map((choice) => cutSignature(choice.cut)));
+        if (signatures.size !== 3) throw new Error(`Duplicate choices: ${problem.id}`);
+      } else if (problem.interaction === "connect-match") {
+        if (problem.pairs.length !== 3 || problem.results.length !== 3 || Object.keys(problem.answer).length !== 3) throw new Error(`Invalid matching problem: ${problem.id}`);
+      } else throw new Error(`Unknown interaction: ${problem.id}`);
     });
   });
   return true;
 }
+
+validateLevels();
