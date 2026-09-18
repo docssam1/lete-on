@@ -31,6 +31,9 @@ for (const level of levels) {
       assert.equal(problem.choices.length, 3);
       const correct = problem.choices.find((choice) => choice.key === problem.answer);
       assert.equal(correct.profileId, problem.profileId);
+      assert.equal(correct.variant, "correct");
+      assert.deepEqual(new Set(problem.choices.map((choice) => choice.profileId)), new Set([problem.profileId]));
+      assert.deepEqual(new Set(problem.choices.map((choice) => choice.variant)), new Set(["correct", "shallow", "shifted"]));
     } else {
       assert.equal(problem.pairs.length, 3);
       assert.equal(problem.results.length, 3);

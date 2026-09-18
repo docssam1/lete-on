@@ -35,8 +35,13 @@ async function solveCurrent(page) {
   const problem = await currentProblem(page);
   assert.equal(problem.folds.length, 1, `${problem.id} must fold exactly once`);
   if (problem.interaction === "result-choice") {
+    assert.deepEqual(new Set(problem.choices.map((choice) => choice.profileId)), new Set([problem.profileId]));
+    assert.deepEqual(new Set(problem.choices.map((choice) => choice.variant)), new Set(["correct", "shallow", "shifted"]));
     assert.equal(await page.locator(".fold-sequence-view figure").count(), 3);
     assert.equal(await page.locator(".paper-fold-arrow").count(), 1);
+    const marker = page.locator(".fold-sequence-view marker").first();
+    assert.equal(await marker.getAttribute("markerUnits"), "userSpaceOnUse");
+    assert.ok(Number(await marker.getAttribute("markerWidth")) <= 9, "fold arrow head is too large");
     assert.equal(await page.locator(".paper-cut-line").count(), 1);
     assert.equal(await page.locator(".result-choice").count(), 3);
     await page.locator(`[data-choice="${problem.answer}"]`).click();

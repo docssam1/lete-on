@@ -110,25 +110,42 @@ export function foldedPolygon(foldSpec) {
 }
 
 const cutSignature = (cut) => cut.map(({ x, y }) => `${x},${y}`).join("|");
-const resultChoice = (key, foldSpec, profileId, depthScale) => ({
+const resultChoice = (key, foldSpec, profileId, cut, variant) => ({
   key,
   fold: foldSpec,
   profileId,
-  cut: cutPoints(foldSpec, profileId, depthScale)
+  cut,
+  variant
 });
+
+function shiftCutAlongCrease(cut, foldSpec, amount) {
+  return cut.map(({ x, y }) => {
+    if (foldSpec.axis === "vertical") return point(x, y + amount);
+    if (foldSpec.axis === "horizontal") return point(x + amount, y);
+    if (foldSpec.axis === "diag-main") return point(x + amount, y + amount);
+    return point(x + amount, y - amount);
+  });
+}
+
+function plausibleShift(cut, foldSpec, preferredAmount) {
+  const candidates = [preferredAmount, -preferredAmount, preferredAmount * .72, preferredAmount * -.72];
+  return candidates.map((amount) => shiftCutAlongCrease(cut, foldSpec, amount)).find((shifted) => (
+    shifted.every(({ x, y }) => x >= 0 && x <= 1 && y >= 0 && y <= 1)
+  ));
+}
 
 function selectionProblem(level, index, foldSpec, profileIndex) {
   const profile = PROFILES[profileIndex % PROFILES.length];
   const depthScale = .86 + (index % 4) * .07;
   const answerIndex = index % 3;
-  const optionProfiles = [
-    profile,
-    PROFILES[(profileIndex + 2) % PROFILES.length],
-    PROFILES[(profileIndex + 5) % PROFILES.length]
+  const correctCut = cutPoints(foldSpec, profile.id, depthScale);
+  const shiftedCut = plausibleShift(correctCut, foldSpec, index % 2 === 0 ? .055 : -.055);
+  if (!shiftedCut) throw new Error(`Unable to place shifted distractor for ${level}-${index}`);
+  const choices = [
+    resultChoice("a", foldSpec, profile.id, correctCut, "correct"),
+    resultChoice("b", foldSpec, profile.id, cutPoints(foldSpec, profile.id, depthScale * .72), "shallow"),
+    resultChoice("c", foldSpec, profile.id, shiftedCut, "shifted")
   ];
-  const choices = optionProfiles.map((item, choiceIndex) => resultChoice(
-    String.fromCharCode(97 + choiceIndex), foldSpec, item.id, item.id === profile.id ? depthScale : 1
-  ));
   if (answerIndex !== 0) [choices[0], choices[answerIndex]] = [choices[answerIndex], choices[0]];
   choices.forEach((choice, choiceIndex) => { choice.key = String.fromCharCode(97 + choiceIndex); });
   return {
@@ -138,9 +155,9 @@ function selectionProblem(level, index, foldSpec, profileIndex) {
     fold: foldSpec,
     folds: [foldSpec],
     profileId: profile.id,
-    cut: cutPoints(foldSpec, profile.id, depthScale),
+    cut: correctCut,
     choices,
-    answer: choices.find((choice) => choice.profileId === profile.id).key,
+    answer: choices.find((choice) => choice.variant === "correct").key,
     sourceRef: "user-reference.kinderfacto.single-fold-cut"
   };
 }
@@ -202,6 +219,8 @@ export function validateLevels() {
       if (consecutive > 2) throw new Error(`Interaction repeats too often: ${problem.id}`);
       if (problem.interaction === "result-choice") {
         if (problem.choices.length !== 3 || !problem.choices.some((choice) => choice.key === problem.answer)) throw new Error(`Invalid choices: ${problem.id}`);
+        if (new Set(problem.choices.map((choice) => choice.profileId)).size !== 1) throw new Error(`Distractors must preserve the cut shape: ${problem.id}`);
+        if (new Set(problem.choices.map((choice) => choice.variant)).size !== 3) throw new Error(`Distractors must represent distinct misconceptions: ${problem.id}`);
         const signatures = new Set(problem.choices.map((choice) => cutSignature(choice.cut)));
         if (signatures.size !== 3) throw new Error(`Duplicate choices: ${problem.id}`);
       } else if (problem.interaction === "connect-match") {

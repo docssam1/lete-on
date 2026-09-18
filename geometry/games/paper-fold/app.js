@@ -139,7 +139,7 @@ function paperSvg({ fold, cut = [], view = "open", label = "", marker = "arrow",
   const cutLine = view === "folded" && cut.length ? `<path class="paper-cut-line" d="${path(cut)}"/><text class="scissors" x="${20 + cut[0].x * 160 - 8}" y="${20 + cut[0].y * 160 - 6}">✂</text>` : "";
   const resultHole = view === "result" && hole.length ? `<polygon class="result-hole${solved ? " solved-hole" : ""}" points="${points(hole)}"/>` : "";
   return `<svg class="paper-diagram view-${view}" viewBox="0 0 200 200" role="img" aria-label="${label}">
-    <defs><marker id="${marker}" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z"/></marker></defs>
+    <defs><marker id="${marker}" markerWidth="9" markerHeight="9" refX="8.2" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L9 4.5 L0 9 Z"/></marker></defs>
     ${paperShape}${crease}${foldArrow}${cutLine}${resultHole}
   </svg>`;
 }
