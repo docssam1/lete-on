@@ -74,7 +74,7 @@
      .nm-q-tex가 1.9em이라 문장 두 줄이 한 페이지를 잡아먹는다(수식 한 줄을
      전제로 잡힌 크기다). 문장은 읽는 글이므로 따로 크기를 준다. */
   .nm-print-word { font-size: 1.02em; line-height: 1.6; margin-top: 4px; word-break: keep-all; }
-  .nm-print-wordask { font-size: 0.95em; line-height: 1.55; margin-top: 6px; font-weight: 700;
+  .nm-print-wordask { font-size: 1.08em; line-height: 1.55; margin-top: 6px; font-weight: 800; color: var(--w2-strong, #0E2C57);
     word-break: keep-all; }
   /* 보기 — 번호를 붙여 한 줄씩. 답이 보기 번호라 번호가 곧 답이다. */
   .nm-print-choices { margin: 5px 0 0; padding: 0; list-style: none;
@@ -489,20 +489,22 @@
   .nm-mn-board { flex:0 0 auto; margin-bottom:7px; }
   .nm-mn-kicker { font-size:calc(10px * var(--ws-fs, 1)); color:#EAC996; font-weight:800; letter-spacing:2.5px; margin-bottom:3px; }
   .nm-mn-board .nm-w2-concept-badge { font-size:calc(23px * var(--ws-fs, 1)); }
-  .nm-mn-stages { flex:0 1 auto; min-height:0; overflow:hidden; display:flex; flex-direction:column; gap:6px; }
-  .nm-mn-stage { display:flex; gap:10px; border:1.5px solid var(--w2-gold, #C9A063); border-radius:10px; padding:6px 10px; background:#fff; }
+  .nm-mn-stages { flex:0 0 auto; display:flex; flex-direction:column; gap:7px; }
+  /* 남는 자리는 카드를 늘리지 않고(속이 비어 보인다) 아래 풀이·메모 여백이 받는다; 넘치면 여백이 먼저 줄어든다 */
+  .nm-w2-page-magic .nm-w2-scratch { flex:1 1 0; min-height:0; }
+  .nm-mn-stage { flex:0 0 auto; display:flex; gap:12px; border:1.5px solid var(--w2-gold, #C9A063); border-radius:10px; padding:9px 12px; background:#fff; }
   .nm-mn-tag { flex:0 0 auto; align-self:flex-start; background:var(--w2-accent); color:var(--w2-accent-fg); border-radius:10px; padding:2px 10px;
-    font-size:calc(11px * var(--ws-fs, 1)); font-weight:800; white-space:nowrap; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    font-size:calc(12px * var(--ws-fs, 1)); font-weight:800; white-space:nowrap; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mn-body { flex:1; min-width:0; }
-  .nm-mn-head { font-size:calc(14.5px * var(--ws-fs, 1)); font-weight:800; color:var(--w2-strong, #0E2C57); margin-bottom:3px; letter-spacing:-.2px; }
-  .nm-mn-desc { margin:0 0 4px; font-size:calc(11.5px * var(--ws-fs, 1)); line-height:1.55; color:#2a2a2a; }
-  .nm-mn-desc b { color:#16417C; }
+  .nm-mn-head { font-size:calc(16.5px * var(--ws-fs, 1)); font-weight:900; color:var(--w2-strong, #0E2C57); margin-bottom:4px; letter-spacing:-.3px; line-height:1.3; }
+  .nm-mn-desc { margin:0 0 5px; font-size:calc(12.5px * var(--ws-fs, 1)); line-height:1.6; color:#333; }
+  .nm-mn-desc b { color:var(--w2-strong, #16417C); font-size:1.1em; font-weight:900; }
   .nm-mn-steps { display:inline-block; background:var(--w2-soft, #F5F3EE); border-left:3px solid var(--w2-gold, #C9A063); border-radius:0 8px 8px 0;
     padding:4px 12px 4px 10px; margin:2px 0 4px; }
-  .nm-mn-line { font-size:calc(13px * var(--ws-fs, 1)); line-height:1.5; }
-  .nm-mn-line .nm-w2-tex { font-size:calc(13px * var(--ws-fs, 1)); }
+  .nm-mn-line { font-size:calc(15px * var(--ws-fs, 1)); line-height:1.5; }
+  .nm-mn-line .nm-w2-tex { font-size:calc(15px * var(--ws-fs, 1)); }
   .nm-mn-plain { font-family:'Fredoka','Jua',Pretendard,sans-serif; letter-spacing:.5px; color:#1A2233; }
-  .nm-mn-result { font-size:calc(11.5px * var(--ws-fs, 1)); font-weight:800; color:#2E9E6B; }
+  .nm-mn-result { font-size:calc(13px * var(--ws-fs, 1)); font-weight:900; color:#1F8A5A; }
   .nm-mn-check { flex:0 0 auto; margin-top:8px; border:1.5px solid #d8d3c5; border-radius:10px; padding:6px 12px; background:var(--w2-soft, #fff); }
   .nm-mn-fills { display:flex; flex-wrap:wrap; gap:6px 28px; }
   .nm-mn-fill { display:flex; align-items:center; gap:8px; font-size:calc(15px * var(--ws-fs, 1)); }
@@ -728,21 +730,24 @@
 .nm-w2-concept-badge { display:block; font-size:calc(18px * var(--ws-fs, 1)); font-weight:900; color:#F5D98B; letter-spacing:-.2px;
   border-bottom:1px dotted rgba(245,217,139,.7); padding-bottom:4px; margin-bottom:6px; }
 .nm-print-age-young .nm-w2-concept-badge { font-family:'Jua',Pretendard,sans-serif; font-weight:400; }
-.nm-w2-concept-sentence { margin:0 0 5px; font-size:calc(13.5px * var(--ws-fs, 1)); line-height:1.6; color:#fff; font-weight:600; }
-.nm-w2-concept-stage { margin:0 0 3px; font-size:calc(11.5px * var(--ws-fs, 1)); line-height:1.5; color:#E3EAF5; }
+.nm-w2-concept-sentence { margin:0 0 6px; font-size:calc(15.5px * var(--ws-fs, 1)); line-height:1.55; color:#fff; font-weight:800; letter-spacing:-.2px; }
+.nm-w2-concept-stage { margin:0 0 3px; font-size:calc(11px * var(--ws-fs, 1)); line-height:1.5; color:#D6E0F0; }
+.nm-w2-concept-stage b { color:#F5D98B; font-size:1.12em; }
 .nm-w2-note { display:flex; align-items:flex-start; gap:8px; margin-top:7px; padding:6px 8px 5px 0; border-top:2px solid #E03131; }
 .nm-w2-note-bang { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px;
   background:#E03131; color:#fff; border-radius:5px; font-style:normal; font-weight:900; font-size:15px;
   -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-.nm-w2-note b { display:block; font-size:calc(12.5px * var(--ws-fs, 1)); color:#8a2a2a; margin-bottom:2px; letter-spacing:.5px; }
-.nm-w2-concept-rule { margin:0; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; color:#2a2a2a; }
+.nm-w2-note b { display:block; font-size:calc(14px * var(--ws-fs, 1)); color:#B42323; margin-bottom:3px; letter-spacing:.5px; }
+.nm-w2-concept-rule { margin:0 0 1px; font-size:calc(13.5px * var(--ws-fs, 1)); line-height:1.5; color:#1A2233; font-weight:700; }
+.nm-w2-concept-rule::first-letter { color:#E03131; font-size:1.15em; }
 .nm-w2-concept-ramp { margin:4px 0 0; font-size:calc(12px * var(--ws-fs, 1)); font-weight:800; color:#b8321f; }
 /* 메모장(참고 학습지 '수연이의 메모장') — 초록 테두리 카드에 머리표 */
 .nm-w2-concept-tip { margin:7px 0 0; padding:7px 10px 6px; border:2px solid #D8C79B; background:#F6EEDB; border-radius:10px; position:relative; }
 .nm-w2-concept-tip::before { content:'Tip'; display:inline-block; background:#0E2C57; color:#F5D98B; font-weight:900; font-size:10.5px;
   border-radius:8px; padding:1px 9px; margin-bottom:3px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 .nm-w2-concept-tip p { margin:0 0 2px; font-size:calc(12px * var(--ws-fs, 1)); line-height:1.55; color:#2a2a2a; }
-.nm-w2-concept-tip p b { color:#0E2C57; margin-right:4px; }
+.nm-w2-concept-tip p b { color:#0E2C57; margin-right:6px; font-size:1.08em; }
+.nm-w2-concept-tip p { font-size:calc(12.5px * var(--ws-fs, 1)); }
 .nm-w2-tip-brief { margin:0 0 6px; background:#F7F6F2; }
 .nm-w2-example { border:1px solid var(--w2-gold, #C9A063); border-left:5px solid var(--w2-accent); border-radius:6px; padding:7px 12px; margin-bottom:8px; background:#fff; }
 .nm-w2-ex-badge { display:block; font-size:calc(10px * var(--ws-fs, 1)); color:var(--w2-strong, #0E2C57); letter-spacing:2px;
@@ -760,6 +765,7 @@
 .nm-divpic text { font-family:sans-serif; font-size:9px; font-weight:800; fill:#fff; }
 .nm-divpic-cap { font-size:calc(11px * var(--ws-fs, 1)); color:#5a5346; margin-top:3px; }
 .nm-w2-ex-story, .nm-w2-guide-story { font-size:calc(12.5px * var(--ws-fs, 1)); line-height:1.55; color:#000; word-break:keep-all; margin-bottom:2px; }
+.nm-w2-ex-story b, .nm-w2-guide-story b { color:var(--w2-strong, #0E2C57); font-size:1.06em; }
 .nm-w2-guide-story { font-size:calc(12px * var(--ws-fs, 1)); }
 .nm-w2-ex-vp-line { border-top:1.5px solid #000; margin:2px 0; }
 .nm-w2-ex-vp-ans { text-align:right; color:#c33; font-weight:700; }
@@ -3599,6 +3605,7 @@ function renderMagicNotePage(item, opts){
   ${boardHtml}
   <div class="nm-mn-stages">${(two ? stageParts.slice(0, 2) : stageParts).join('')}</div>
   ${two ? '' : ruleHtml + fillsHtml + openHtml}
+  <div class="nm-w2-scratch"><div class="nm-w2-scratch-t">${esc(lk('풀이 · 메모','Work · Notes','演算 · 笔记'))}</div><div class="nm-w2-scratch-body"></div></div>
   ${foot}
 </div>`;
   const p2 = two ? `<div class="nm-w2-page nm-w2-page-magic">
@@ -3606,6 +3613,7 @@ function renderMagicNotePage(item, opts){
   ${w2HeadHtml(headItem, code, '2/2', null, {roundNo: opts.roundNo, name: opts.name, first: false})}
   <div class="nm-mn-stages">${stageParts.slice(2).join('')}</div>
   ${ruleHtml}${fillsHtml}${openHtml}
+  <div class="nm-w2-scratch"><div class="nm-w2-scratch-t">${esc(lk('풀이 · 메모','Work · Notes','演算 · 笔记'))}</div><div class="nm-w2-scratch-body"></div></div>
   ${foot}
 </div>` : '';
   const html = p1 + p2;
