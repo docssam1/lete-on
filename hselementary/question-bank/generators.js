@@ -90,6 +90,13 @@
     if (!whole) return fractionMarkup(remainder, denominator);
     return `<span class="math-mixed-number" role="img" aria-label="${whole}와 ${denominator}분의 ${remainder}"><span>${whole}</span>${fractionMarkup(remainder, denominator)}</span>`;
   };
+  const unreducedMixedFractionMarkup = (n, d) => {
+    const whole = Math.floor(n / d);
+    const remainder = n % d;
+    if (!remainder) return String(whole);
+    if (!whole) return symbolicFractionMarkup(remainder, d);
+    return `<span class="math-mixed-number" role="img" aria-label="${whole}와 ${d}분의 ${remainder}"><span>${whole}</span>${symbolicFractionMarkup(remainder, d)}</span>`;
+  };
   const rationalValue = (numerator, denominator = 1) => {
     if (!denominator) return null;
     const sign = denominator < 0 ? -1 : 1;
@@ -755,10 +762,14 @@
       : { start: secondDirection, span: 360 - forwardSpan };
   };
   const source41SectorPoint = (vertex, sector, radius) => source41PointAtAngle(vertex[0], vertex[1], radius, sector.start + sector.span / 2);
+  const source41ReadableSectorRadius = (sector, preferred, maximum = 64, minimumChord = 10) => {
+    const halfSpan = Math.max(0.5, Math.min(179.5, sector.span / 2)) * Math.PI / 180;
+    return Math.min(maximum, Math.max(preferred, minimumChord / (2 * Math.sin(halfSpan))));
+  };
   const source41SectorArcMarkup = (vertex, sector, radius, className, attributes = "") => {
     const start = source41PointAtAngle(vertex[0], vertex[1], radius, sector.start);
     const end = source41PointAtAngle(vertex[0], vertex[1], radius, sector.start + sector.span);
-    return `<path class="${className}" ${attributes} d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${radius} ${radius} 0 ${sector.span > 180 ? 1 : 0} 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/>`;
+    return `<path class="${className}" data-sector-angle="${sector.span.toFixed(3)}" ${attributes} d="M${start[0].toFixed(1)} ${start[1].toFixed(1)}A${radius.toFixed(2)} ${radius.toFixed(2)} 0 ${sector.span > 180 ? 1 : 0} 0 ${end[0].toFixed(1)} ${end[1].toFixed(1)}"/>`;
   };
   const source41FitPoints = (points, width = 360, height = 240, padding = 28) => {
     const minimumX = Math.min(...points.map(point => point[0]));
@@ -1104,11 +1115,11 @@
     const upperLeftLabel = source41PointAtAngle(upperLabelBase[0], upperLabelBase[1], 18, upperRayDirection + 90);
     const rightLabel = source41SectorPoint(right, rightSector, 40);
     const firstTargetLabel = source41SectorPoint(target, firstTargetSector, 36);
-    const triangleCenter = [(base[0] + apex[0] + right[0]) / 3, (base[1] + apex[1] + right[1]) / 3];
-    const outsideApexVector = [apex[0] - triangleCenter[0], apex[1] - triangleCenter[1]];
-    const outsideApexLength = Math.hypot(outsideApexVector[0], outsideApexVector[1]) || 1;
-    const secondTargetLabel = [apex[0] + outsideApexVector[0] / outsideApexLength * 27, apex[1] + outsideApexVector[1] / outsideApexLength * 27];
-    const angleArcs = `${source41SectorArcMarkup(left, lowerLeftSector, 20, "source41-bisected-apex-angle is-given", 'data-angle-role="left-lower"')}${source41SectorArcMarkup(left, upperLeftSector, 28, "source41-bisected-apex-angle is-given", 'data-angle-role="left-upper"')}${source41SectorArcMarkup(right, rightSector, 18, "source41-bisected-apex-angle is-given", 'data-angle-role="right-base"')}${source41SectorArcMarkup(target, firstTargetSector, 18, "source41-bisected-apex-angle is-target", 'data-angle-role="first-target"')}${source41SectorArcMarkup(apex, secondTargetSector, 17, "source41-bisected-apex-angle is-target", 'data-angle-role="second-target"')}`;
+    const secondTargetLabel = source41SectorPoint(apex, secondTargetSector, 72);
+    const lowerLeftRadius = source41ReadableSectorRadius(lowerLeftSector, 34, 64, 11);
+    const upperLeftRadius = source41ReadableSectorRadius(upperLeftSector, 46, 68, 11);
+    const secondTargetRadius = source41ReadableSectorRadius(secondTargetSector, 32, 62, 11);
+    const angleArcs = `${source41SectorArcMarkup(left, lowerLeftSector, lowerLeftRadius, "source41-bisected-apex-angle is-given", 'data-angle-role="left-lower"')}${source41SectorArcMarkup(left, upperLeftSector, upperLeftRadius, "source41-bisected-apex-angle is-given", 'data-angle-role="left-upper"')}${source41SectorArcMarkup(right, rightSector, 18, "source41-bisected-apex-angle is-given", 'data-angle-role="right-base"')}${source41SectorArcMarkup(target, firstTargetSector, 18, "source41-bisected-apex-angle is-target", 'data-angle-role="first-target"')}${source41SectorArcMarkup(apex, secondTargetSector, secondTargetRadius, "source41-bisected-apex-angle is-target", 'data-angle-role="second-target"')}`;
     return `<svg class="geometry-diagram source41-bisected-apex" viewBox="0 0 380 260" data-right-base="${data.rightBase}" data-left-small="${data.leftSmall}" data-half-apex="${data.halfApex}" data-first-target="${data.firstTarget}" data-second-target="${data.secondTarget}" data-difference="${data.answerNumber}" data-bisector-positions="${geometry.targetPosition.toFixed(3)},${geometry.upperPosition.toFixed(3)}" aria-label="꼭짓각을 반으로 나눈 선과 왼쪽 두 보조선"><polygon points="${source41PointsText([base, apex, right])}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${right[0].toFixed(1)}" y2="${right[1].toFixed(1)}"/><line x1="${apex[0].toFixed(1)}" y1="${apex[1].toFixed(1)}" x2="${target[0].toFixed(1)}" y2="${target[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${target[0].toFixed(1)}" y2="${target[1].toFixed(1)}"/><line x1="${left[0].toFixed(1)}" y1="${left[1].toFixed(1)}" x2="${upper[0].toFixed(1)}" y2="${upper[1].toFixed(1)}"/>${marks}${angleArcs}<text class="source41-given-label" data-layout-role="given-angle" x="${lowerLeftLabel[0].toFixed(1)}" y="${lowerLeftLabel[1].toFixed(1)}">${data.leftSmall}°</text><text class="source41-given-label" data-layout-role="given-angle" x="${upperLeftLabel[0].toFixed(1)}" y="${upperLeftLabel[1].toFixed(1)}">${data.leftSmall}°</text><text class="source41-given-label" data-layout-role="given-angle" x="${rightLabel[0].toFixed(1)}" y="${rightLabel[1].toFixed(1)}">${data.rightBase}°</text><text class="source41-target-label" data-layout-role="target-angle" x="${firstTargetLabel[0].toFixed(1)}" y="${firstTargetLabel[1].toFixed(1)}">㉠</text><text class="source41-target-label" data-layout-role="target-angle" x="${secondTargetLabel[0].toFixed(1)}" y="${secondTargetLabel[1].toFixed(1)}">㉡</text></svg>`;
   };
   const source41ClosedStarPath = tipAngles => {
@@ -1416,21 +1427,28 @@
     return source41AngleFiveRoot({ variant: 5, origin, rays, sectors: [data.e, data.a, data.b, data.intermediate, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-a="${data.a}" data-b="${data.b}" data-exterior="${data.e}" data-intermediate="${data.intermediate}"`, body, aria: "겹친 두 실제 직각삼각형과 위쪽 각" });
   };
   const source41AngleFiveSlopeExteriorSvg = data => {
-    const origin = [250, 156];
-    const baselineY = 212;
-    const rise = baselineY - origin[1];
-    const leftBase = [origin[0] - rise / Math.tan(data.outer * Math.PI / 180), baselineY];
-    const rightBase = [origin[0] - rise / Math.tan(data.inner * Math.PI / 180), baselineY];
+    const rawLeftBase = [0, 0];
+    const rawFoot = [260, 0];
+    const rawOrigin = [260, -260 * Math.tan(data.outer * Math.PI / 180)];
+    const rawInnerBase = [260 - (rawFoot[1] - rawOrigin[1]) / Math.tan(data.inner * Math.PI / 180), 0];
+    const [leftBase, foot, origin, rightBase] = source41FitPoints([rawLeftBase, rawFoot, rawOrigin, rawInnerBase], 360, 250, 70);
     const rays = [data.outer, 180 + data.outer, 180 + data.inner];
-    const targetLabelAngle = source41AngleFiveNormalize(180 + data.inner + data.answerNumber * 0.68);
-    const targetLabelRadius = 90;
+    const outerSector = { start: 0, span: data.outer };
+    const innerSector = { start: 0, span: data.inner };
+    const targetSector = { start: 180 + data.inner, span: data.answerNumber };
+    const outerRadius = source41ReadableSectorRadius(outerSector, 28, 58, 11);
+    const innerRadius = source41ReadableSectorRadius(innerSector, 28, 48, 11);
+    const targetLabel = source41SectorPoint(origin, targetSector, 38);
+    const outerLabel = source41SectorPoint(leftBase, outerSector, outerRadius + 18);
+    const innerLabel = source41SectorPoint(rightBase, innerSector, innerRadius + 18);
     const labels = [
-      { point: [Math.max(28, leftBase[0] - 30), baselineY - 15], text: `${data.outer}°`, className: "source41-given-label", role: "outer", angle: 180, radius: 34, attributes: 'data-label-placement="outside-left"' },
-      source41AngleFiveLabel({ origin: rightBase, start: 0, sector: data.inner, radius: 57, text: `${data.inner}°`, role: "inner" }),
-      { point: source41AngleFivePoint(origin, targetLabelAngle, targetLabelRadius), text: "㉠", className: "source41-target-label", role: "target", angle: targetLabelAngle, radius: targetLabelRadius, attributes: 'data-label-placement="outer-sector"' }
+      { point: outerLabel, text: `${data.outer}°`, className: "source41-given-label", role: "outer", angle: data.outer / 2, radius: outerRadius + 18, attributes: 'data-label-placement="outer-base-sector"' },
+      { point: innerLabel, text: `${data.inner}°`, className: "source41-given-label", role: "inner", angle: data.inner / 2, radius: innerRadius + 18, attributes: 'data-label-placement="inner-base-sector"' },
+      { point: targetLabel, text: "㉠", className: "source41-target-label", role: "target", angle: source41AngleFiveNormalize(targetSector.start + targetSector.span / 2), radius: 38, attributes: 'data-label-placement="outer-sector"' }
     ];
-    const body = `<polygon data-source-shape="left-slope-triangle" data-vertex-group="left" points="${source41PointsText([leftBase, [leftBase[0] + 42, baselineY], origin])}"/><polygon data-source-shape="right-slope-triangle" data-vertex-group="right" points="${source41PointsText([rightBase, [rightBase[0] + 36, baselineY], origin])}"/><line data-vertex-group="left" x1="${leftBase[0].toFixed(1)}" y1="${baselineY}" x2="${origin[0]}" y2="${origin[1]}"/><line data-vertex-group="right" x1="${rightBase[0].toFixed(1)}" y1="${baselineY}" x2="${origin[0]}" y2="${origin[1]}"/>${source41AngleFiveRay(origin, data.outer, 82, "left-slope-extension", "source41-extension-line", 0, "main", 'data-vertex-group="left"')}${source41AngleFiveRay(origin, 180 + data.outer, Math.hypot(origin[0] - leftBase[0], rise), "left-sloped-side", "", 1, "main", 'data-vertex-group="left"')}${source41AngleFiveRay(origin, 180 + data.inner, Math.hypot(origin[0] - rightBase[0], rise), "right-sloped-side", "", 2, "main", 'data-vertex-group="right"')}${source41AngleFiveSectorArc(leftBase, 0, data.outer, 22, "outer-given")}${source41AngleFiveSectorArc(rightBase, 0, data.inner, 22, "inner-given")}${source41AngleFiveSectorArc(origin, 180 + data.outer, data.gap, 38, "small-gap")}${source41AngleFiveSectorArc(origin, 180 + data.inner, data.answerNumber, 68, "target", true)}`;
-    return source41AngleFiveRoot({ variant: 6, origin, rays, sectors: [data.outer, data.inner, data.gap, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-outer-angle="${data.outer}" data-inner-angle="${data.inner}" data-small-gap="${data.gap}"`, body, aria: "서로 다른 두 삼각형의 비스듬한 변과 연장선의 큰 바깥각" });
+    const extensionLength = Math.min(40, source41Distance(origin, leftBase) * 0.24);
+    const body = `<polygon data-source-shape="outer-right-triangle" data-vertex-group="left" points="${source41PointsText([leftBase, foot, origin])}"/><polygon data-source-shape="inner-right-triangle" data-vertex-group="right" points="${source41PointsText([rightBase, foot, origin])}"/><line data-ray-role="baseline" x1="${leftBase[0].toFixed(1)}" y1="${leftBase[1].toFixed(1)}" x2="${foot[0].toFixed(1)}" y2="${foot[1].toFixed(1)}"/><line data-ray-role="shared-upright" x1="${foot[0].toFixed(1)}" y1="${foot[1].toFixed(1)}" x2="${origin[0].toFixed(1)}" y2="${origin[1].toFixed(1)}"/>${source41AngleFiveRay(origin, data.outer, extensionLength, "outer-slope-extension", "source41-extension-line", 0, "main", 'data-vertex-group="left"')}${source41AngleFiveRay(origin, 180 + data.outer, source41Distance(origin, leftBase), "outer-sloped-side", "", 1, "main", 'data-vertex-group="left"')}${source41AngleFiveRay(origin, 180 + data.inner, source41Distance(origin, rightBase), "inner-sloped-side", "", 2, "main", 'data-vertex-group="right"')}${source41AngleFiveSectorArc(leftBase, 0, data.outer, outerRadius, "outer-given")}${source41AngleFiveSectorArc(rightBase, 0, data.inner, innerRadius, "inner-given")}${source41AngleFiveSectorArc(origin, 180 + data.outer, data.gap, 38, "small-gap")}${source41AngleFiveSectorArc(origin, 180 + data.inner, data.answerNumber, 48, "target", true)}${source41AngleFiveRightMark(foot, 90, 180)}`;
+    return source41AngleFiveRoot({ variant: 6, origin, rays, sectors: [data.outer, data.inner, data.gap, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-outer-angle="${data.outer}" data-inner-angle="${data.inner}" data-small-gap="${data.gap}" data-source-layout="shared-right-side"`, body, aria: "같은 세로변을 공유하는 두 직각삼각형의 빗변과 연장선 사이의 큰 바깥각" });
   };
   const source41AngleFiveRightTurnSvg = data => {
     const origin = [142, 195];
@@ -1488,7 +1506,7 @@
       source41AngleFiveLabel({ origin, start: 0, sector: data.gap, radius: 43, text: `${data.gap}°`, role: "shown-sector" }),
       source41AngleFiveLabel({ origin, start: 4 * data.gap, sector: data.answerNumber, radius: 84, text: "㉠", className: "source41-target-label", role: "target" })
     ];
-    const body = `<rect data-source-shape="rectangle" data-fold-role="original" x="38" y="34" width="164" height="174"/><line class="source41-fold-line" data-fold-role="crease" data-fold-stage="one" x1="94" y1="34" x2="94" y2="208"/><line class="source41-fold-line" data-fold-role="crease" data-fold-stage="two" x1="150" y1="34" x2="150" y2="208"/><polygon class="source41-turned-shape" data-source-shape="folded-piece" data-fold-role="folded-piece" data-fold-stage="one" points="${source41PointsText(firstPiecePoints)}"/><polygon class="source41-turned-shape" data-source-shape="folded-piece" data-fold-role="folded-piece" data-fold-stage="two" points="${source41PointsText(secondPiecePoints)}"/><line class="source41-extension-line" data-fold-role="original-outline" x1="${firstPiecePoints[1][0].toFixed(1)}" y1="${firstPiecePoints[1][1].toFixed(1)}" x2="${firstPiecePoints[3][0].toFixed(1)}" y2="${firstPiecePoints[3][1].toFixed(1)}"/><line class="source41-extension-line" data-fold-role="original-outline" x1="${secondPiecePoints[2][0].toFixed(1)}" y1="${secondPiecePoints[2][1].toFixed(1)}" x2="${secondPiecePoints[3][0].toFixed(1)}" y2="${secondPiecePoints[3][1].toFixed(1)}"/>${rays.slice(0, 5).map((angle, index) => source41AngleFiveRay(origin, angle, 84, `fold-${index + 1}`, "source41-fold-line", index, "main", `data-fold-role="folded-angle" data-fold-stage="${index + 1}"`)).join("")}${source41AngleFiveRay(origin, 180, 98, "straight-end", "", 5)}${[0, 1, 2, 3].map(index => source41AngleFiveSectorArc(origin, rays[index], data.gap, 24 + index * 8, `equal-${index + 1}`)).join("")}${source41AngleFiveSectorArc(origin, 4 * data.gap, data.answerNumber, 66, "target", true)}${[0, 1, 2, 3].map(index => source41AngleFiveEqualMark(origin, rays[index], data.gap, 17 + index * 6, index + 1)).join("")}${source41AngleFiveFoldTick(origin, rays[1], 58, 1)}${source41AngleFiveFoldTick(origin, rays[3], 58, 2)}`;
+    const body = `<rect data-source-shape="rectangle" data-fold-role="original" x="38" y="34" width="164" height="174"/><line class="source41-fold-line" data-fold-role="crease" data-fold-stage="one" x1="94" y1="34" x2="94" y2="208"/><line class="source41-fold-line" data-fold-role="crease" data-fold-stage="two" x1="150" y1="34" x2="150" y2="208"/><polygon class="source41-turned-shape" data-source-shape="folded-piece" data-fold-role="folded-piece" data-fold-stage="one" points="${source41PointsText(firstPiecePoints)}"/><polygon class="source41-turned-shape" data-source-shape="folded-piece" data-fold-role="folded-piece" data-fold-stage="two" points="${source41PointsText(secondPiecePoints)}"/><line class="source41-extension-line" data-fold-role="original-outline" x1="${firstPiecePoints[1][0].toFixed(1)}" y1="${firstPiecePoints[1][1].toFixed(1)}" x2="${firstPiecePoints[3][0].toFixed(1)}" y2="${firstPiecePoints[3][1].toFixed(1)}"/><line class="source41-extension-line" data-fold-role="original-outline" x1="${secondPiecePoints[2][0].toFixed(1)}" y1="${secondPiecePoints[2][1].toFixed(1)}" x2="${secondPiecePoints[3][0].toFixed(1)}" y2="${secondPiecePoints[3][1].toFixed(1)}"/>${rays.slice(0, 5).map((angle, index) => source41AngleFiveRay(origin, angle, 84, `fold-${index + 1}`, "source41-fold-line", index, "main", `data-fold-role="folded-angle" data-fold-stage="${index + 1}"`)).join("")}${source41AngleFiveRay(origin, 180, 98, "straight-end", "", 5)}${[0, 1, 2, 3].map(index => source41AngleFiveSectorArc(origin, rays[index], data.gap, 30 + index * 8, `equal-${index + 1}`)).join("")}${source41AngleFiveSectorArc(origin, 4 * data.gap, data.answerNumber, 66, "target", true)}${[0, 1, 2, 3].map(index => source41AngleFiveEqualMark(origin, rays[index], data.gap, 17 + index * 6, index + 1)).join("")}${source41AngleFiveFoldTick(origin, rays[1], 58, 1)}${source41AngleFiveFoldTick(origin, rays[3], 58, 2)}`;
     return source41AngleFiveRoot({ variant: 10, origin, rays, sectors: [data.gap, data.gap, data.gap, data.gap, data.answerNumber], targetAngle: data.answerNumber, labels, attributes: `data-shown-sector="${data.gap}" data-equal-sector-count="4" data-fold-role="twice-folded-rectangle"`, body, aria: "직사각형을 두 번 접은 전후 조각과 점선에서 가운데 각을 구하는 그림" });
   };
   const source41AngleSixNormalize = angle => ((angle % 360) + 360) % 360;
@@ -1674,8 +1692,68 @@
     9: { lower: 100, upper: 999, divisor: 11, remainder: 9, answer: 82 },
     10: { start: 32, end: 134, step: 2, divisor: 15, answer: 371 }
   };
+  const source41ShapeFivePentagonSourceAnchor = {
+    shownStages: [1, 2, 3],
+    shownCounts: [5, 12, 22],
+    targetStage: 7,
+    answer: 92
+  };
+  const source41ShapeFiveHexagonSourceAnchor = {
+    shownStages: [1, 2, 3, 4],
+    shownCounts: [1, 7, 19, 37],
+    targetStage: 6,
+    answer: 91
+  };
+  const source41ShapeFiveAlternatingTilesSourceAnchor = {
+    shownStages: [1, 2, 3, 4],
+    sideLengths: [2, 4, 6, 8],
+    targetStage: 16,
+    black: 480,
+    white: 544
+  };
+  const source41DivisionFiveCardCases = [
+    { cards: [1, 3, 5, 6, 8], quotient: 7, remainder: 68 },
+    { cards: [1, 2, 3, 4, 5], quotient: 7, remainder: 50 },
+    { cards: [1, 2, 3, 4, 6], quotient: 6, remainder: 59 },
+    { cards: [1, 2, 3, 4, 8], quotient: 5, remainder: 27 },
+    { cards: [1, 2, 3, 5, 6], quotient: 8, remainder: 44 },
+    { cards: [1, 2, 3, 5, 8], quotient: 6, remainder: 46 },
+    { cards: [1, 2, 3, 7, 8], quotient: 8, remainder: 48 },
+    { cards: [1, 2, 3, 8, 9], quotient: 9, remainder: 13 },
+    { cards: [1, 2, 4, 5, 6], quotient: 8, remainder: 54 },
+    { cards: [1, 2, 4, 6, 8], quotient: 7, remainder: 75 },
+    { cards: [1, 2, 4, 7, 9], quotient: 8, remainder: 14 },
+    { cards: [1, 2, 5, 6, 7], quotient: 8, remainder: 57 },
+    { cards: [1, 2, 5, 6, 9], quotient: 7, remainder: 15 },
+    { cards: [1, 2, 5, 7, 9], quotient: 7, remainder: 88 }
+  ];
+  const source41DivisionFiveBlankConfigs = [0, 1, 2].map(level => {
+    const configurations = [];
+    for (let divisor = 53; divisor <= 89; divisor += 1) {
+      for (let fixed = level === 0 ? 10 : 1; fixed <= (level === 0 ? 99 : 9); fixed += 1) {
+        const base = level === 0 ? fixed * 10 : fixed * 100;
+        const remainders = [];
+        if (level === 0) {
+          for (let digit = 0; digit <= 9; digit += 1) remainders.push((base + digit) % divisor);
+        } else {
+          for (let first = 0; first <= 9; first += 1) for (let second = 0; second <= 9; second += 1) {
+            if (level === 2 && first === second) continue;
+            remainders.push((base + first * 10 + second) % divisor);
+          }
+        }
+        const maximum = Math.max(...remainders);
+        if (maximum === divisor - 1 && remainders.filter(value => value === maximum).length === 1) configurations.push({ divisor, fixed, base });
+      }
+    }
+    if (!configurations.length) throw new Error("나머지가 가장 큰 빈칸 유형의 생성 조건이 없습니다.");
+    return configurations;
+  });
   const source41DigitSum = value => [...String(value).replace(/\D/g, "")].reduce((sum, digit) => sum + Number(digit), 0);
   const source41CardRow = cards => `<div class="source41-card-row" role="img" aria-label="수 카드 ${cards.join(", ")}">${cards.map(card => `<span class="source41-number-card">${card}</span>`).join("")}</div>`;
+  const source41DivisionCardEquation = ({ dividend, divisor, quotient, remainder, prefilledDigit = null, solved = false }) => {
+    const slots = (text, revealFirst = false) => [...String(text)].map((digit, index) => `<span class="source41-division-card-slot${solved || revealFirst && index === 0 ? " is-filled" : ""}">${solved || revealFirst && index === 0 ? digit : ""}</span>`).join("");
+    return `<div class="source41-card-division-equation${solved ? " is-solved" : ""}">${slots(dividend, prefilledDigit !== null)}<b>÷</b>${slots(divisor)}<b>=</b><strong>${quotient}</strong><b>…</b><strong>${remainder}</strong></div>`;
+  };
   const source41CardProductExtremes = (cards, leftLength) => {
     const arrangements = operatorPermutations(cards);
     const byExpression = new Map();
@@ -3169,6 +3247,87 @@
     }
     return totals;
   };
+  const triangleSegmentGraphRightTriangles = ({ points, segments }) => {
+    const epsilon = 1e-7;
+    const cross = (first, second, third) => (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
+    const within = (point, first, second) => point[0] >= Math.min(first[0], second[0]) - epsilon && point[0] <= Math.max(first[0], second[0]) + epsilon && point[1] >= Math.min(first[1], second[1]) - epsilon && point[1] <= Math.max(first[1], second[1]) + epsilon;
+    const vertices = points.map(point => [...point]);
+    const addVertex = point => {
+      const existing = vertices.findIndex(candidate => Math.hypot(candidate[0] - point[0], candidate[1] - point[1]) < epsilon);
+      if (existing >= 0) return existing;
+      vertices.push(point);
+      return vertices.length - 1;
+    };
+    for (let first = 0; first < segments.length - 1; first += 1) for (let second = first + 1; second < segments.length; second += 1) {
+      const [a, b] = segments[first].map(index => points[index]);
+      const [c, d] = segments[second].map(index => points[index]);
+      const denominator = (a[0] - b[0]) * (c[1] - d[1]) - (a[1] - b[1]) * (c[0] - d[0]);
+      if (Math.abs(denominator) < epsilon) continue;
+      const ab = a[0] * b[1] - a[1] * b[0];
+      const cd = c[0] * d[1] - c[1] * d[0];
+      const point = [(ab * (c[0] - d[0]) - (a[0] - b[0]) * cd) / denominator, (ab * (c[1] - d[1]) - (a[1] - b[1]) * cd) / denominator];
+      if (within(point, a, b) && within(point, c, d)) addVertex(point);
+    }
+    const liesOnSegment = (point, [first, second]) => Math.abs(cross(points[first], points[second], point)) < epsilon && within(point, points[first], points[second]);
+    const connected = (first, second) => segments.some(segment => liesOnSegment(first, segment) && liesOnSegment(second, segment));
+    const triangles = [];
+    for (let first = 0; first < vertices.length - 2; first += 1) for (let second = first + 1; second < vertices.length - 1; second += 1) for (let third = second + 1; third < vertices.length; third += 1) {
+      const indices = [first, second, third];
+      if (Math.abs(cross(vertices[first], vertices[second], vertices[third])) < epsilon || !connected(vertices[first], vertices[second]) || !connected(vertices[second], vertices[third]) || !connected(vertices[third], vertices[first])) continue;
+      const rightVertex = indices.find(index => {
+        const others = indices.filter(candidate => candidate !== index);
+        const left = [vertices[others[0]][0] - vertices[index][0], vertices[others[0]][1] - vertices[index][1]];
+        const right = [vertices[others[1]][0] - vertices[index][0], vertices[others[1]][1] - vertices[index][1]];
+        return Math.abs(left[0] * right[0] + left[1] * right[1]) < epsilon;
+      });
+      if (rightVertex !== undefined) triangles.push({ points: indices.map(index => vertices[index]), rightVertex: vertices[rightVertex] });
+    }
+    return triangles.sort((first, second) => first.rightVertex[1] - second.rightVertex[1] || first.rightVertex[0] - second.rightVertex[0] || first.points.flat().join(",").localeCompare(second.points.flat().join(","), undefined, { numeric: true }));
+  };
+  const triangleMarkedRightSourceModel = () => {
+    const apex = [150, 14];
+    const left = [30, 188];
+    const right = [290, 188];
+    const foot = [150, 188];
+    const sidePointAtY = (end, y) => {
+      const ratio = (y - apex[1]) / (end[1] - apex[1]);
+      return [apex[0] + (end[0] - apex[0]) * ratio, y];
+    };
+    const upperY = 66;
+    const middleY = 118;
+    return {
+      points: [apex, left, right, foot, sidePointAtY(left, upperY), sidePointAtY(right, upperY), sidePointAtY(left, middleY), sidePointAtY(right, middleY), [218, 188]],
+      segments: [[0, 1], [0, 2], [0, 3], [4, 5], [6, 7], [1, 2], [0, 8], [3, 5], [3, 7]],
+      rightMarks: [[150, upperY], [150, middleY], foot]
+    };
+  };
+  const triangleMarkedRightSourceSvg = (model, { triangle = null, index = 0, compact = false } = {}) => {
+    const sourceLines = model.segments.map(([first, second]) => `<line class="source42-marked-right-line" x1="${model.points[first][0]}" y1="${model.points[first][1]}" x2="${model.points[second][0]}" y2="${model.points[second][1]}"/>`).join("");
+    const sourceMarks = model.rightMarks.map(([x, y]) => `<path class="source42-marked-right-mark" d="M ${x} ${y - 10} L ${x - 10} ${y - 10} L ${x - 10} ${y}"/>`).join("");
+    let highlight = "";
+    if (triangle) {
+      const right = triangle.rightVertex;
+      const others = triangle.points.filter(point => Math.hypot(point[0] - right[0], point[1] - right[1]) > 1e-7);
+      const unit = point => {
+        const dx = point[0] - right[0];
+        const dy = point[1] - right[1];
+        const length = Math.hypot(dx, dy);
+        return [dx / length, dy / length];
+      };
+      const first = unit(others[0]);
+      const second = unit(others[1]);
+      const size = compact ? 9 : 11;
+      const q1 = [right[0] + first[0] * size, right[1] + first[1] * size];
+      const q2 = [q1[0] + second[0] * size, q1[1] + second[1] * size];
+      const q3 = [right[0] + second[0] * size, right[1] + second[1] * size];
+      highlight = `<polygon class="source42-marked-right-highlight" points="${triangle.points.map(point => point.map(value => value.toFixed(2)).join(",")).join(" ")}"/><path class="source42-marked-right-answer-mark" d="M ${q1.map(value => value.toFixed(2)).join(" ")} L ${q2.map(value => value.toFixed(2)).join(" ")} L ${q3.map(value => value.toFixed(2)).join(" ")}"/>`;
+    }
+    const number = compact ? `<text class="source42-marked-right-number" x="160" y="211">${index + 1}</text>` : "";
+    const triangleValue = triangle ? triangle.points.map(point => point.map(value => value.toFixed(2)).join(",")).join(";") : "";
+    const rightValue = triangle ? triangle.rightVertex.map(value => value.toFixed(2)).join(",") : "";
+    return `<svg class="geometry-diagram triangle-marked-right-source${compact ? " is-compact" : ""}" viewBox="0 0 320 ${compact ? 218 : 204}" data-points="${model.points.map(point => point.join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" data-right-marks="${model.rightMarks.map(point => point.join(",")).join(";")}" data-right-triangle="${triangleValue}" data-right-vertex="${rightValue}" role="img" aria-label="${triangle ? `${index + 1}번째 직각삼각형` : "직각 표시가 세 곳에 있는 큰 삼각형 도형"}"><g>${sourceLines}${sourceMarks}${highlight}${number}</g></svg>`;
+  };
+  const triangleMarkedRightAnswerVisual = (model, triangles) => `<div class="triangle-marked-right-solutions" role="group" aria-label="원본 선을 따라 찾은 직각삼각형 ${triangles.length}개">${triangles.map((triangle, index) => triangleMarkedRightSourceSvg(model, { triangle, index, compact: true })).join("")}</div>`;
   const trianglePentagramSvg = model => `<svg class="geometry-diagram triangle-pentagram-source" viewBox="0 0 240 196" data-points="${model.points.map(point => point.map(value => value.toFixed(2)).join(",")).join(";")}" data-segments="${model.segments.map(segment => segment.join("-")).join(",")}" aria-label="다섯 선분이 서로 교차하는 별 모양"><g>${model.segments.map(([first, second]) => `<line x1="${model.points[first][0].toFixed(2)}" y1="${model.points[first][1].toFixed(2)}" x2="${model.points[second][0].toFixed(2)}" y2="${model.points[second][1].toFixed(2)}"/>`).join("")}</g></svg>`;
   const triangleSourceGridObtuseSvg = model => {
     const project = ([x, y]) => [20 + x * 25, 14 + y * 25];
@@ -3255,6 +3414,408 @@
     const top = 76 - height / 2;
     const dots = Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => `<circle class="diagram-dot" cx="${left + column * spacing}" cy="${top + row * spacing}" r="4"/>`).join("")).join("");
     return `<svg class="geometry-diagram triangle-plain-dot-board" viewBox="0 0 240 152" data-columns="${columns}" data-rows="${rows}" data-spacing="${spacing}" aria-label="가로 ${columns}개, 세로 ${rows}개 점이 같은 간격으로 놓인 점판">${dots}</svg>`;
+  };
+  const fixedSideRightTriangleCandidates = (columns, rows, pointA, pointB) => {
+    const dot = (origin, first, second) =>
+      (first[0] - origin[0]) * (second[0] - origin[0]) +
+      (first[1] - origin[1]) * (second[1] - origin[1]);
+    const samePoint = (first, second) => first[0] === second[0] && first[1] === second[1];
+    const candidates = [];
+    for (let y = 0; y < rows; y += 1) for (let x = 0; x < columns; x += 1) {
+      const point = [x, y];
+      if (samePoint(point, pointA) || samePoint(point, pointB)) continue;
+      const area2 = (pointB[0] - pointA[0]) * (point[1] - pointA[1]) - (pointB[1] - pointA[1]) * (point[0] - pointA[0]);
+      if (area2 === 0) continue;
+      const rightAtA = dot(pointA, pointB, point) === 0;
+      const rightAtB = dot(pointB, pointA, point) === 0;
+      const rightAtPoint = dot(point, pointA, pointB) === 0;
+      if (rightAtA || rightAtB || rightAtPoint) {
+        candidates.push({ point, rightVertex: rightAtA ? pointA : rightAtB ? pointB : point });
+      }
+    }
+    return candidates;
+  };
+  const fixedSideRightTriangleBoardSvg = ({ columns = 5, rows = 5, pointA = [2, 4], pointB = [4, 3], candidate = null, rightVertex = null, index = 0, compact = false } = {}) => {
+    const spacing = compact ? 20 : 34;
+    const padding = compact ? 14 : 28;
+    const labelSpace = compact ? 13 : 20;
+    const width = padding * 2 + (columns - 1) * spacing;
+    const height = padding * 2 + (rows - 1) * spacing + labelSpace;
+    const project = ([x, y]) => [padding + x * spacing, padding + y * spacing];
+    const a = project(pointA);
+    const b = project(pointB);
+    const line = (first, second, className) => `<line class="${className}" x1="${first[0]}" y1="${first[1]}" x2="${second[0]}" y2="${second[1]}"/>`;
+    let triangle = line(a, b, "source42-fixed-side-base");
+    let rightMark = "";
+    if (candidate) {
+      const p = project(candidate);
+      triangle += line(a, p, "source42-fixed-side-solution") + line(b, p, "source42-fixed-side-solution");
+      const right = rightVertex || candidate;
+      const rightProjected = project(right);
+      const others = [pointA, pointB, candidate].filter(point => point[0] !== right[0] || point[1] !== right[1]).map(project);
+      const unit = point => {
+        const dx = point[0] - rightProjected[0];
+        const dy = point[1] - rightProjected[1];
+        const length = Math.hypot(dx, dy);
+        return [dx / length, dy / length];
+      };
+      const first = unit(others[0]);
+      const second = unit(others[1]);
+      const size = compact ? 7 : 10;
+      const q1 = [rightProjected[0] + first[0] * size, rightProjected[1] + first[1] * size];
+      const q2 = [q1[0] + second[0] * size, q1[1] + second[1] * size];
+      const q3 = [rightProjected[0] + second[0] * size, rightProjected[1] + second[1] * size];
+      rightMark = `<path class="source42-fixed-side-right-mark" d="M ${q1.join(" ")} L ${q2.join(" ")} L ${q3.join(" ")}"/>`;
+    }
+    const dots = Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => {
+      const [x, y] = project([column, row]);
+      return `<circle class="source42-fixed-side-dot" cx="${x}" cy="${y}" r="${compact ? 2.4 : 3.4}"/>`;
+    }).join("")).join("");
+    const labels = `<text class="source42-fixed-side-label label-a" x="${a[0] - (compact ? 8 : 11)}" y="${a[1] + (compact ? 11 : 16)}">ㄱ</text><text class="source42-fixed-side-label label-b" x="${b[0] + (compact ? 8 : 12)}" y="${b[1] - (compact ? 8 : 12)}">ㄴ</text>`;
+    const number = compact ? `<text class="source42-fixed-side-number" x="${width / 2}" y="${height - 4}">${index + 1}</text>` : "";
+    const candidateValue = candidate ? candidate.join(",") : "";
+    const rightValue = rightVertex ? rightVertex.join(",") : "";
+    return `<svg class="geometry-diagram triangle-fixed-side-right-board${compact ? " is-compact" : ""}" viewBox="0 0 ${width} ${height}" data-columns="${columns}" data-rows="${rows}" data-point-a="${pointA.join(",")}" data-point-b="${pointB.join(",")}" data-candidate="${candidateValue}" data-right-vertex="${rightValue}" role="img" aria-label="${candidate ? `${index + 1}번째 직각삼각형` : "선분 ㄱㄴ이 표시된 5 곱하기 5 점판"}">${triangle}${rightMark}${dots}${labels}${number}</svg>`;
+  };
+  const fixedSideRightTriangleAnswerVisual = (candidates, options) => `<div class="triangle-fixed-side-right-solutions" role="group" aria-label="선분 ㄱㄴ을 한 변으로 하는 직각삼각형 ${candidates.length}개">${candidates.map(({ point, rightVertex }, index) => fixedSideRightTriangleBoardSvg({ ...options, candidate: point, rightVertex, index, compact: true })).join("")}</div>`;
+  const equilateralThreePartModels = () => {
+    const height = Math.sqrt(3) / 2;
+    const A = [0.5, height];
+    const B = [0, 0];
+    const C = [1, 0];
+    const lerpPoint = (first, second, ratio) => [first[0] + (second[0] - first[0]) * ratio, first[1] + (second[1] - first[1]) * ratio];
+    const sidePartition = (leftRatio, rightRatio, target) => {
+      const D = lerpPoint(A, B, leftRatio);
+      const E = lerpPoint(A, C, rightRatio);
+      return {
+        target,
+        points: [A, B, C, D, E],
+        internalSegments: [[3, 4], [3, 2]],
+        triangles: [[0, 3, 4], [3, 2, 4], [1, 3, 2]]
+      };
+    };
+    const center = [(A[0] + B[0] + C[0]) / 3, (A[1] + B[1] + C[1]) / 3];
+    return [
+      sidePartition(0.5, 0.25, 0),
+      sidePartition(0.4, 0.35, 1),
+      sidePartition(0.7, 0.25, 2),
+      { target: 3, points: [A, B, C, center], internalSegments: [[3, 0], [3, 1], [3, 2]], triangles: [[0, 1, 3], [1, 2, 3], [2, 0, 3]] }
+    ];
+  };
+  const equilateralThreePartSvg = (model, { solved = false } = {}) => {
+    const height = Math.sqrt(3) / 2;
+    const project = ([x, y]) => [24 + x * 152, 18 + (height - y) * 152];
+    const outer = [model.points[0], model.points[1], model.points[2]].map(point => project(point).join(",")).join(" ");
+    const internal = solved ? model.internalSegments.map(([first, second]) => {
+      const start = project(model.points[first]);
+      const end = project(model.points[second]);
+      return `<line class="source42-equilateral-partition-line" x1="${start[0].toFixed(2)}" y1="${start[1].toFixed(2)}" x2="${end[0].toFixed(2)}" y2="${end[1].toFixed(2)}"/>`;
+    }).join("") : "";
+    return `<svg class="geometry-diagram triangle-equilateral-three-part${solved ? " is-solved" : ""}" viewBox="0 0 200 178" data-obtuse-target="${model.target}" data-obtuse-count="${solved ? model.target : ""}" data-points="${model.points.map(point => point.map(value => value.toFixed(6)).join(",")).join(";")}" data-triangles="${model.triangles.map(triangle => triangle.join(",")).join(";")}" role="img" aria-label="둔각삼각형 ${model.target}개가 되도록 세 조각으로 나누는 정삼각형"><polygon class="source42-equilateral-partition-outline" points="${outer}"/>${internal}<text class="source42-equilateral-partition-caption" x="100" y="168">둔각삼각형 ${model.target}개</text></svg>`;
+  };
+  const equilateralThreePartVisual = (models, solved) => `<div class="triangle-equilateral-three-part-grid" role="group" aria-label="둔각삼각형이 0개부터 3개가 되도록 나누는 정삼각형">${models.map(model => equilateralThreePartSvg(model, { solved })).join("")}</div>`;
+  const isoscelesDotBoardShapeClasses = (columns, rows) => {
+    const points = Array.from({ length: rows }, (_, y) => Array.from({ length: columns }, (_, x) => [x, y])).flat();
+    const squaredDistance = (first, second) => (first[0] - second[0]) ** 2 + (first[1] - second[1]) ** 2;
+    const classes = new Map();
+    for (let first = 0; first < points.length - 2; first += 1) for (let second = first + 1; second < points.length - 1; second += 1) for (let third = second + 1; third < points.length; third += 1) {
+      const triangle = [points[first], points[second], points[third]];
+      const area2 = (triangle[1][0] - triangle[0][0]) * (triangle[2][1] - triangle[0][1]) - (triangle[1][1] - triangle[0][1]) * (triangle[2][0] - triangle[0][0]);
+      if (area2 === 0) continue;
+      const sides = [
+        squaredDistance(triangle[0], triangle[1]),
+        squaredDistance(triangle[1], triangle[2]),
+        squaredDistance(triangle[2], triangle[0])
+      ].sort((a, b) => a - b);
+      if (sides[0] !== sides[1] && sides[1] !== sides[2]) continue;
+      const signature = sides.join("-");
+      if (!classes.has(signature)) classes.set(signature, triangle);
+    }
+    return [...classes.entries()]
+      .map(([signature, points]) => ({ signature, points }))
+      .sort((first, second) => first.signature.localeCompare(second.signature, undefined, { numeric: true }));
+  };
+  const isoscelesDotBoardSvg = ({ columns = 4, rows = 4, triangle = null, index = 0, compact = false } = {}) => {
+    const spacing = compact ? 18 : 31;
+    const padding = compact ? 9 : 18;
+    const width = padding * 2 + (columns - 1) * spacing;
+    const height = padding * 2 + (rows - 1) * spacing;
+    const project = ([x, y]) => [padding + x * spacing, padding + y * spacing];
+    const lines = triangle ? `<polygon class="triangle-dot-shape" points="${triangle.map(point => project(point).join(",")).join(" ")}"/>` : "";
+    const dots = Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => {
+      const [x, y] = project([column, row]);
+      return `<circle class="diagram-dot" cx="${x}" cy="${y}" r="${compact ? 2.3 : 3.2}"/>`;
+    }).join("")).join("");
+    const label = compact ? `<text class="triangle-dot-shape-number" x="${width / 2}" y="${height + 11}">${index + 1}</text>` : "";
+    return `<svg class="geometry-diagram triangle-isosceles-dot-board${compact ? " is-compact" : ""}" viewBox="0 0 ${width} ${height + (compact ? 15 : 0)}" data-columns="${columns}" data-rows="${rows}"${triangle ? ` data-triangle="${triangle.map(point => point.join(",")).join(";")}"` : ""} aria-label="${triangle ? `${index + 1}번째 이등변삼각형` : `가로 ${columns}개, 세로 ${rows}개 점판`}">${lines}${dots}${label}</svg>`;
+  };
+  const isoscelesDotBoardAnswerVisual = classes => `<div class="triangle-isosceles-dot-solutions" role="group" aria-label="서로 다른 이등변삼각형 ${classes.length}가지">${classes.map((shape, index) => isoscelesDotBoardSvg({ triangle: shape.points, index, compact: true })).join("")}</div>`;
+  const isoscelesEqualSegmentsAngleSvg = ({ givenAngle = 20, solved = false } = {}) => {
+    const radians = degrees => degrees * Math.PI / 180;
+    const length = 84;
+    const baselineY = 170;
+    const pointB = [270, baselineY];
+    const pointD = [pointB[0] + length, baselineY];
+    const pointA = [
+      pointB[0] + length * Math.cos(radians(180 - 2 * givenAngle)),
+      pointB[1] - length * Math.sin(radians(180 - 2 * givenAngle))
+    ];
+    const pointM = [pointB[0] - length, baselineY];
+    const am = Math.hypot(pointA[0] - pointM[0], pointA[1] - pointM[1]);
+    const pointN = [pointM[0] - am, baselineY];
+    const targetAngle = 45 - givenAngle / 2;
+    const point = value => value.map(coordinate => coordinate.toFixed(2)).join(",");
+    const line = (first, second, className = "source42-isosceles-edge") => `<line class="${className}" x1="${first[0].toFixed(2)}" y1="${first[1].toFixed(2)}" x2="${second[0].toFixed(2)}" y2="${second[1].toFixed(2)}"/>`;
+    const marks = (first, second, count, group) => {
+      const dx = second[0] - first[0];
+      const dy = second[1] - first[1];
+      const segmentLength = Math.hypot(dx, dy);
+      const ux = dx / segmentLength;
+      const uy = dy / segmentLength;
+      const px = -uy;
+      const py = ux;
+      const offsets = count === 1 ? [0] : [-4, 4];
+      return offsets.map(offset => {
+        const cx = (first[0] + second[0]) / 2 + ux * offset;
+        const cy = (first[1] + second[1]) / 2 + uy * offset;
+        return `<line class="source42-isosceles-equal-mark group-${group}" data-equal-group="${group}" x1="${(cx - px * 5).toFixed(2)}" y1="${(cy - py * 5).toFixed(2)}" x2="${(cx + px * 5).toFixed(2)}" y2="${(cy + py * 5).toFixed(2)}"/>`;
+      }).join("");
+    };
+    const polar = (center, radius, angle) => [center[0] + radius * Math.cos(radians(angle)), center[1] - radius * Math.sin(radians(angle))];
+    const arc = (center, radius, start, end, role, label, labelRadius) => {
+      const steps = Math.max(5, Math.ceil(Math.abs(end - start) / 4));
+      const points = Array.from({ length: steps + 1 }, (_, index) => polar(center, radius, start + (end - start) * index / steps));
+      const labelPoint = polar(center, labelRadius, (start + end) / 2);
+      return `<g class="source42-isosceles-angle-mark ${role}" data-angle-role="${role}" data-sector-angle="${Math.abs(end - start)}"><path d="M ${points.map(point).join(" L ")}"/><text x="${labelPoint[0].toFixed(2)}" y="${labelPoint[1].toFixed(2)}">${label}</text></g>`;
+    };
+    const givenArc = arc(pointD, 22, 180 - givenAngle, 180, "given", `${givenAngle}°`, 37);
+    const targetArc = arc(pointN, 24, 0, targetAngle, "target", solved ? `${targetAngle}°` : "㉠", 40);
+    const labels = [
+      [pointA, "ㄱ", 0, -14], [pointN, "ㄴ", -10, 15], [pointM, "ㅁ", 0, 17],
+      [pointB, "ㅂ", 0, 17], [pointD, "ㄷ", 10, 15]
+    ].map(([position, label, dx, dy]) => `<text class="source42-isosceles-point-label" x="${(position[0] + dx).toFixed(2)}" y="${(position[1] + dy).toFixed(2)}">${label}</text>`).join("");
+    return `<svg class="geometry-diagram triangle-isosceles-equal-angle${solved ? " is-solved" : ""}" viewBox="95 88 285 112" role="img" aria-label="같은 길이 선분 다섯 개로 이어진 이등변삼각형 각도 문제" data-given-angle="${givenAngle}" data-target-angle="${targetAngle}" data-points="ㄱ:${point(pointA)};ㄴ:${point(pointN)};ㅁ:${point(pointM)};ㅂ:${point(pointB)};ㄷ:${point(pointD)}"><g>${line(pointN, pointD)}${line(pointN, pointA)}${line(pointA, pointD)}${line(pointA, pointM)}${line(pointA, pointB)}${marks(pointA, pointB, 1, "one")}${marks(pointM, pointB, 1, "one")}${marks(pointB, pointD, 1, "one")}${marks(pointA, pointM, 2, "two")}${marks(pointN, pointM, 2, "two")}${givenArc}${targetArc}${labels}</g></svg>`;
+  };
+  const isoscelesRotatedCopyAngleSvg = ({ rotationAngle = 40, solved = false } = {}) => {
+    const radians = degrees => degrees * Math.PI / 180;
+    const length = 110;
+    const baseAngle = 45 + rotationAngle / 4;
+    const apexAngle = 180 - baseAngle * 2;
+    const targetAngle = 180 - rotationAngle - baseAngle;
+    const pointN = [105, 140];
+    const pointA = [pointN[0] + length * Math.cos(radians(baseAngle)), pointN[1] - length * Math.sin(radians(baseAngle))];
+    const baseLength = 2 * length * Math.cos(radians(baseAngle));
+    const pointD = [pointN[0] + baseLength, pointN[1]];
+    const pointR = [pointN[0] + length * Math.cos(radians(baseAngle - rotationAngle)), pointN[1] - length * Math.sin(radians(baseAngle - rotationAngle))];
+    const pointB = [pointN[0] + baseLength * Math.cos(radians(rotationAngle)), pointN[1] + baseLength * Math.sin(radians(rotationAngle))];
+    const intersectionRatio = (pointN[1] - pointR[1]) / (pointB[1] - pointR[1]);
+    const pointM = [pointR[0] + (pointB[0] - pointR[0]) * intersectionRatio, pointN[1]];
+    const point = value => value.map(coordinate => coordinate.toFixed(2)).join(",");
+    const line = (first, second, className = "source42-isosceles-rotation-edge") => `<line class="${className}" x1="${first[0].toFixed(2)}" y1="${first[1].toFixed(2)}" x2="${second[0].toFixed(2)}" y2="${second[1].toFixed(2)}"/>`;
+    const marks = (first, second, count, group) => {
+      const dx = second[0] - first[0];
+      const dy = second[1] - first[1];
+      const segmentLength = Math.hypot(dx, dy);
+      const ux = dx / segmentLength;
+      const uy = dy / segmentLength;
+      const px = -uy;
+      const py = ux;
+      return (count === 1 ? [0] : [-4, 4]).map(offset => {
+        const cx = (first[0] + second[0]) / 2 + ux * offset;
+        const cy = (first[1] + second[1]) / 2 + uy * offset;
+        return `<line class="source42-isosceles-rotation-mark group-${group}" data-equal-group="${group}" x1="${(cx - px * 5).toFixed(2)}" y1="${(cy - py * 5).toFixed(2)}" x2="${(cx + px * 5).toFixed(2)}" y2="${(cy + py * 5).toFixed(2)}"/>`;
+      }).join("");
+    };
+    const polar = (center, radius, angle) => [center[0] + radius * Math.cos(radians(angle)), center[1] - radius * Math.sin(radians(angle))];
+    const arc = (center, radius, start, end, role, label, labelRadius) => {
+      const steps = Math.max(6, Math.ceil(Math.abs(end - start) / 5));
+      const points = Array.from({ length: steps + 1 }, (_, index) => polar(center, radius, start + (end - start) * index / steps));
+      const labelPoint = polar(center, labelRadius, (start + end) / 2);
+      return `<g class="source42-isosceles-rotation-angle ${role}" data-angle-role="${role}" data-sector-angle="${Math.abs(end - start)}"><path d="M ${points.map(point).join(" L ")}"/><text x="${labelPoint[0].toFixed(2)}" y="${labelPoint[1].toFixed(2)}">${label}</text></g>`;
+    };
+    const givenArc = arc(pointN, 22, baseAngle - rotationAngle, baseAngle, "given", `${rotationAngle}°`, 38);
+    const targetArc = arc(pointM, 20, 180, 180 + targetAngle, "target", solved ? `${targetAngle}°` : "㉠", 36);
+    const labels = [
+      [pointA, "ㄱ", 0, -13], [pointN, "ㄴ", -12, 3], [pointR, "ㄹ", 10, -8],
+      [pointD, "ㄷ", 12, 4], [pointM, "ㅁ", 12, 15], [pointB, "ㅂ", 9, 14]
+    ].map(([position, label, dx, dy]) => `<text class="source42-isosceles-rotation-label" x="${(position[0] + dx).toFixed(2)}" y="${(position[1] + dy).toFixed(2)}">${label}</text>`).join("");
+    return `<svg class="geometry-diagram triangle-isosceles-rotation-angle${solved ? " is-solved" : ""}" viewBox="70 20 235 225" role="img" aria-label="꼭짓점 ㄴ을 중심으로 ${rotationAngle}도 움직인 이등변삼각형" data-rotation-angle="${rotationAngle}" data-original-apex-angle="${apexAngle}" data-original-base-angle="${baseAngle}" data-target-angle="${targetAngle}" data-points="ㄱ:${point(pointA)};ㄴ:${point(pointN)};ㄷ:${point(pointD)};ㄹ:${point(pointR)};ㅁ:${point(pointM)};ㅂ:${point(pointB)}"><g>${line(pointN, pointA)}${line(pointA, pointD)}${line(pointN, pointD)}${line(pointN, pointR)}${line(pointR, pointB)}${line(pointN, pointB)}${marks(pointN, pointA, 2, "two")}${marks(pointA, pointD, 2, "two")}${marks(pointN, pointR, 2, "two")}${marks(pointR, pointB, 2, "two")}${marks(pointN, pointD, 1, "one")}${marks(pointN, pointB, 1, "one")}${givenArc}${targetArc}${labels}</g></svg>`;
+  };
+  const isoscelesTwoFoldAngleSvg = ({ solved = false } = {}) => {
+    const radians = degrees => degrees * Math.PI / 180;
+    const baseAngle = 50;
+    const apexAngle = 180 - baseAngle * 2;
+    const height = Math.tan(radians(baseAngle));
+    const pointA = [1, height];
+    const pointN = [0, 0];
+    const pointD = [2, 0];
+    const pointR = [0.5, height / 2];
+    const pointM = [1, 0];
+    const pointB = [1.5, height / 2];
+    const pointO = [(2 * Math.sqrt(3) + 4 * height) / (Math.sqrt(3) + 3 * height), 0];
+    const foldedDistance = pointD[0] - pointO[0];
+    const pointS = [pointO[0] + foldedDistance * Math.cos(radians(120)), foldedDistance * Math.sin(radians(120))];
+    const creaseDistance = height * (pointD[0] - pointO[0]) / (Math.sin(radians(60)) + height * Math.cos(radians(60)));
+    const pointJ = [pointO[0] + creaseDistance * Math.cos(radians(60)), creaseDistance * Math.sin(radians(60))];
+    const project = ([x, y]) => [60 + x * 160, 210 - y * 145];
+    const svgPoints = Object.fromEntries(Object.entries({ A: pointA, N: pointN, D: pointD, R: pointR, M: pointM, B: pointB, S: pointS, O: pointO, J: pointJ }).map(([key, value]) => [key, project(value)]));
+    const point = value => value.map(coordinate => coordinate.toFixed(2)).join(",");
+    const line = (firstKey, secondKey, className = "source42-isosceles-fold-edge") => {
+      const first = svgPoints[firstKey];
+      const second = svgPoints[secondKey];
+      return `<line class="${className}" data-owner-id="${firstKey}-${secondKey}" x1="${first[0].toFixed(2)}" y1="${first[1].toFixed(2)}" x2="${second[0].toFixed(2)}" y2="${second[1].toFixed(2)}"/>`;
+    };
+    const polygon = (keys, className) => `<polygon class="${className}" points="${keys.map(key => point(svgPoints[key])).join(" ")}"/>`;
+    const polar = (center, radius, angle) => [center[0] + radius * Math.cos(radians(angle)), center[1] - radius * Math.sin(radians(angle))];
+    const arc = (centerKey, radius, start, end, role, label, labelRadius) => {
+      const center = svgPoints[centerKey];
+      const steps = Math.max(7, Math.ceil(Math.abs(end - start) / 5));
+      const points = Array.from({ length: steps + 1 }, (_, index) => polar(center, radius, start + (end - start) * index / steps));
+      const labelPoint = polar(center, labelRadius, (start + end) / 2);
+      return `<g class="source42-isosceles-fold-angle ${role}" data-layout-role="angle" data-owner-id="${centerKey}" data-angle-start="${start}" data-angle-end="${end}" data-sector-angle="${Math.abs(end - start)}"><path d="M ${points.map(point).join(" L ")}"/><text x="${labelPoint[0].toFixed(2)}" y="${labelPoint[1].toFixed(2)}">${label}</text></g>`;
+    };
+    const targetArc = arc("M", 23, 50, 130, "target", solved ? `${apexAngle}°` : "", 43);
+    const givenSixtyArc = arc("O", 20, 120, 180, "given", "60°", 37);
+    const angleFrom = (center, target) => {
+      const degrees = Math.atan2(target[1] - center[1], target[0] - center[0]) * 180 / Math.PI;
+      return degrees < 0 ? degrees + 360 : degrees;
+    };
+    const givenSeventyArc = arc("J", 18, angleFrom(pointJ, pointS), angleFrom(pointJ, pointO), "given", "70°", 35);
+    const labels = [
+      ["A", "ㄱ", 0, -14], ["N", "ㄴ", -13, 11], ["D", "ㄷ", 13, 11],
+      ["R", "ㄹ", -13, -4], ["M", "ㅁ", 0, 18], ["B", "ㅂ", 11, -7],
+      ["S", "ㅅ", -12, -10], ["O", "ㅇ", 0, 18], ["J", "ㅈ", 14, -5]
+    ].map(([key, label, dx, dy]) => {
+      const position = svgPoints[key];
+      return `<text class="source42-isosceles-fold-label" data-layout-role="point-label" data-label-for="${key}" x="${(position[0] + dx).toFixed(2)}" y="${(position[1] + dy).toFixed(2)}">${label}</text>`;
+    }).join("");
+    const fills = `${polygon(["N", "R", "M"], "source42-isosceles-fold-fill base-paper")}${polygon(["R", "B", "M"], "source42-isosceles-fold-fill first-fold")}${polygon(["M", "B", "J", "O"], "source42-isosceles-fold-fill base-paper")}${polygon(["S", "J", "O"], "source42-isosceles-fold-fill second-fold")}`;
+    const edges = `${line("A", "R", "source42-isosceles-fold-edge is-original")}${line("A", "B", "source42-isosceles-fold-edge is-original")}${line("J", "D", "source42-isosceles-fold-edge is-original")}${line("O", "D", "source42-isosceles-fold-edge is-original")}${line("N", "R")}${line("R", "B", "source42-isosceles-fold-edge is-crease")}${line("B", "J")}${line("N", "M")}${line("M", "O")}${line("R", "M")}${line("M", "B")}${line("J", "O", "source42-isosceles-fold-edge is-crease")}${line("S", "J")}${line("S", "O")}`;
+    const pointsData = [
+      ["ㄱ", pointA], ["ㄴ", pointN], ["ㄷ", pointD], ["ㄹ", pointR], ["ㅁ", pointM],
+      ["ㅂ", pointB], ["ㅅ", pointS], ["ㅇ", pointO], ["ㅈ", pointJ]
+    ].map(([label, value]) => `${label}:${point(value)}`).join(";");
+    return `<svg class="geometry-diagram triangle-isosceles-fold-angle${solved ? " is-solved" : ""}" viewBox="36 20 368 220" role="img" aria-label="꼭짓점 ㄱ을 점 ㅁ에 접고 꼭짓점 ㄷ을 점 ㅅ에 접은 이등변삼각형" data-fold-map="ㄱ:ㅁ;ㄷ:ㅅ" data-given-angles="60,70" data-original-base-angle="${baseAngle}" data-target-angle="${apexAngle}" data-points="${pointsData}"><g>${fills}${edges}${givenSixtyArc}${givenSeventyArc}${targetArc}${labels}</g></svg>`;
+  };
+  const isoscelesLinkedChainAngleSvg = ({ givenAngle = 40, solved = false } = {}) => {
+    const radians = degrees => degrees * Math.PI / 180;
+    const targetAngle = 45 - givenAngle / 2;
+    const unit = angle => [Math.cos(radians(angle)), Math.sin(radians(angle))];
+    const add = (first, second) => [first[0] + second[0], first[1] + second[1]];
+    const pointA = [0, 0];
+    const pointD = add(pointA, unit(-targetAngle));
+    const pointN = add(pointD, unit(-(targetAngle + givenAngle * 2)));
+    const pointR = add(pointD, unit(-180 + targetAngle + givenAngle * 2));
+    const pointM = add(pointR, unit(targetAngle));
+    const pointB = add(pointM, unit(-targetAngle));
+    const project = ([x, y]) => [45 + x * 95, 35 - y * 95];
+    const svgPoints = Object.fromEntries(Object.entries({ A: pointA, N: pointN, D: pointD, R: pointR, M: pointM, B: pointB }).map(([key, value]) => [key, project(value)]));
+    const point = value => value.map(coordinate => coordinate.toFixed(2)).join(",");
+    const line = (firstKey, secondKey) => {
+      const first = svgPoints[firstKey];
+      const second = svgPoints[secondKey];
+      return `<line class="source42-isosceles-chain-edge" data-owner-id="${firstKey}-${secondKey}" x1="${first[0].toFixed(2)}" y1="${first[1].toFixed(2)}" x2="${second[0].toFixed(2)}" y2="${second[1].toFixed(2)}"/>`;
+    };
+    const equalMarks = (firstKey, secondKey, index) => {
+      const first = svgPoints[firstKey];
+      const second = svgPoints[secondKey];
+      const dx = second[0] - first[0];
+      const dy = second[1] - first[1];
+      const length = Math.hypot(dx, dy);
+      const ux = dx / length;
+      const uy = dy / length;
+      const px = -uy;
+      const py = ux;
+      return [-3.5, 3.5].map(offset => {
+        const cx = (first[0] + second[0]) / 2 + ux * offset;
+        const cy = (first[1] + second[1]) / 2 + uy * offset;
+        return `<line class="source42-isosceles-chain-equal" data-equal-group="chain" data-equal-segment="${index}" x1="${(cx - px * 4.5).toFixed(2)}" y1="${(cy - py * 4.5).toFixed(2)}" x2="${(cx + px * 4.5).toFixed(2)}" y2="${(cy + py * 4.5).toFixed(2)}"/>`;
+      }).join("");
+    };
+    const polar = (center, radius, angle) => [center[0] + radius * Math.cos(radians(angle)), center[1] - radius * Math.sin(radians(angle))];
+    const arc = (centerKey, radius, start, end, role, label, labelRadius) => {
+      const center = svgPoints[centerKey];
+      const steps = Math.max(6, Math.ceil(Math.abs(end - start) / 5));
+      const points = Array.from({ length: steps + 1 }, (_, index) => polar(center, radius, start + (end - start) * index / steps));
+      const labelPoint = polar(center, labelRadius, (start + end) / 2);
+      return `<g class="source42-isosceles-chain-angle ${role}" data-layout-role="angle" data-owner-id="${centerKey}" data-angle-start="${start}" data-angle-end="${end}" data-sector-angle="${Math.abs(end - start)}"><path d="M ${points.map(point).join(" L ")}"/><text x="${labelPoint[0].toFixed(2)}" y="${labelPoint[1].toFixed(2)}">${label}</text></g>`;
+    };
+    const givenArc = arc("A", 18, 360 - targetAngle - givenAngle, 360 - targetAngle, "given", `${givenAngle}°`, 35);
+    const targetArc = arc("B", 18, 180 - targetAngle, 180, "target", solved ? `${targetAngle}°` : "", 34);
+    const labels = [
+      ["A", "ㄱ", -10, -12], ["N", "ㄴ", -11, 15], ["D", "ㄷ", 0, -13],
+      ["R", "ㄹ", 0, 16], ["M", "ㅁ", 0, -13], ["B", "ㅂ", 13, 7]
+    ].map(([key, label, dx, dy]) => {
+      const position = svgPoints[key];
+      return `<text class="source42-isosceles-chain-label" data-layout-role="point-label" data-label-for="${key}" x="${(position[0] + dx).toFixed(2)}" y="${(position[1] + dy).toFixed(2)}">${label}</text>`;
+    }).join("");
+    const edges = `${line("A", "N")}${line("A", "D")}${line("N", "D")}${line("N", "R")}${line("D", "R")}${line("D", "M")}${line("R", "M")}${line("R", "B")}${line("M", "B")}`;
+    const marks = `${equalMarks("A", "D", 1)}${equalMarks("N", "D", 2)}${equalMarks("D", "R", 3)}${equalMarks("R", "M", 4)}${equalMarks("M", "B", 5)}`;
+    const pointsData = [["ㄱ", pointA], ["ㄴ", pointN], ["ㄷ", pointD], ["ㄹ", pointR], ["ㅁ", pointM], ["ㅂ", pointB]].map(([label, value]) => `${label}:${point(value)}`).join(";");
+    return `<svg class="geometry-diagram triangle-isosceles-chain-angle${solved ? " is-solved" : ""}" viewBox="20 15 340 185" role="img" aria-label="같은 길이의 선분 다섯 개로 이어진 네 이등변삼각형" data-equal-segments="ㄱㄷ,ㄴㄷ,ㄷㄹ,ㄹㅁ,ㅁㅂ" data-collinear-groups="ㄱㄷㅁㅂ;ㄴㄹㅂ" data-given-angle="${givenAngle}" data-target-angle="${targetAngle}" data-points="${pointsData}"><g>${edges}${marks}${givenArc}${targetArc}${labels}</g></svg>`;
+  };
+  const isoscelesFoldEqualAngleSvg = ({ givenAngle = 40, solved = false } = {}) => {
+    const radians = degrees => degrees * Math.PI / 180;
+    const targetAngle = 90 + givenAngle / 2;
+    const foldLength = 82;
+    const pointR = [150, 132];
+    const polar = (center, radius, angle) => [center[0] + radius * Math.cos(radians(angle)), center[1] - radius * Math.sin(radians(angle))];
+    const pointA = polar(pointR, foldLength, 180 - targetAngle);
+    const pointN = polar(pointR, foldLength, 180);
+    const pointB = polar(pointR, foldLength, 180 - targetAngle * 2);
+    const pointD = [pointA[0] * 2 - pointN[0], pointR[1]];
+    const crossingRatio = (pointR[1] - pointA[1]) / (pointB[1] - pointA[1]);
+    const pointM = [pointA[0] + (pointB[0] - pointA[0]) * crossingRatio, pointR[1]];
+    const points = { A: pointA, N: pointN, D: pointD, R: pointR, M: pointM, B: pointB };
+    const pointText = point => point.map(value => value.toFixed(2)).join(",");
+    const line = (firstKey, secondKey, className = "source42-isosceles-fold-equal-edge", attributes = "") => {
+      const first = points[firstKey];
+      const second = points[secondKey];
+      return `<line class="${className}" data-owner-id="${firstKey}-${secondKey}" ${attributes} x1="${first[0].toFixed(2)}" y1="${first[1].toFixed(2)}" x2="${second[0].toFixed(2)}" y2="${second[1].toFixed(2)}"/>`;
+    };
+    const equalMarks = (firstKey, secondKey, segment) => {
+      const first = points[firstKey];
+      const second = points[secondKey];
+      const dx = second[0] - first[0];
+      const dy = second[1] - first[1];
+      const length = Math.hypot(dx, dy);
+      const ux = dx / length;
+      const uy = dy / length;
+      const px = -uy;
+      const py = ux;
+      return [-3.3, 3.3].map(offset => {
+        const cx = (first[0] + second[0]) / 2 + ux * offset;
+        const cy = (first[1] + second[1]) / 2 + uy * offset;
+        return `<line class="source42-isosceles-fold-equal-mark" data-equal-group="fold-condition" data-equal-segment="${segment}" x1="${(cx - px * 4.2).toFixed(2)}" y1="${(cy - py * 4.2).toFixed(2)}" x2="${(cx + px * 4.2).toFixed(2)}" y2="${(cy + py * 4.2).toFixed(2)}"/>`;
+      }).join("");
+    };
+    const mathAngle = (center, endpoint) => {
+      const value = Math.atan2(center[1] - endpoint[1], endpoint[0] - center[0]) * 180 / Math.PI;
+      return value < 0 ? value + 360 : value;
+    };
+    const arc = (centerKey, firstKey, secondKey, radius, role, label, labelRadius) => {
+      const center = points[centerKey];
+      let start = mathAngle(center, points[firstKey]);
+      let end = mathAngle(center, points[secondKey]);
+      while (end < start) end += 360;
+      if (end - start > 180) [start, end] = [end, start + 360];
+      const sector = end - start;
+      const steps = Math.max(7, Math.ceil(sector / 6));
+      const arcPoints = Array.from({ length: steps + 1 }, (_, index) => polar(center, radius, start + sector * index / steps));
+      const labelPoint = polar(center, labelRadius, start + sector / 2);
+      return `<g class="source42-isosceles-fold-equal-angle ${role}" data-layout-role="angle" data-owner-id="${centerKey}" data-sector-angle="${sector.toFixed(2)}"><path d="M ${arcPoints.map(pointText).join(" L ")}"/><text x="${labelPoint[0].toFixed(2)}" y="${labelPoint[1].toFixed(2)}">${label}</text></g>`;
+    };
+    const givenArc = arc("A", "B", "D", 18, "given", `${givenAngle}°`, 34);
+    const targetArc = arc("R", "B", "A", 19, "target", solved ? `${targetAngle}°` : "", 37);
+    const fills = `<polygon class="source42-isosceles-fold-equal-fill base-paper" points="${pointText(pointA)} ${pointText(pointR)} ${pointText(pointD)}"/><polygon class="source42-isosceles-fold-equal-fill folded-paper" points="${pointText(pointA)} ${pointText(pointR)} ${pointText(pointB)}"/>`;
+    const edges = `${line("A", "N", "source42-isosceles-fold-equal-edge is-original", 'data-fold-role="original-edge"')}${line("N", "R", "source42-isosceles-fold-equal-edge is-original", 'data-fold-role="original-edge"')}${line("A", "D")}${line("R", "D")}${line("A", "R", "source42-isosceles-fold-equal-edge is-crease", 'data-fold-role="crease"')}${line("A", "B", "source42-isosceles-fold-equal-edge is-folded", 'data-fold-role="folded-edge"')}${line("R", "B", "source42-isosceles-fold-equal-edge is-folded", 'data-fold-role="folded-edge"')}`;
+    const marks = `${equalMarks("A", "R", "ㄱㄹ")}${equalMarks("R", "B", "ㄹㅂ")}`;
+    const labels = [
+      ["A", "ㄱ", 0, -14], ["N", "ㄴ", -11, 8], ["D", "ㄷ", 12, 8],
+      ["R", "ㄹ", -12, 15], ["M", "ㅁ", 12, 15], ["B", "ㅂ", 0, 17]
+    ].map(([key, label, dx, dy]) => `<text class="source42-isosceles-fold-equal-label" data-layout-role="point-label" data-label-for="${key}" x="${(points[key][0] + dx).toFixed(2)}" y="${(points[key][1] + dy).toFixed(2)}">${label}</text>`).join("");
+    const pointsData = [["ㄱ", pointA], ["ㄴ", pointN], ["ㄷ", pointD], ["ㄹ", pointR], ["ㅁ", pointM], ["ㅂ", pointB]].map(([label, point]) => `${label}:${pointText(point)}`).join(";");
+    return `<svg class="geometry-diagram triangle-isosceles-fold-equal-angle${solved ? " is-solved" : ""}" viewBox="45 30 275 195" role="img" aria-label="이등변삼각형의 왼쪽 꼭짓점을 접어 선분 ㄱㄹ과 선분 ㄹㅂ의 길이를 같게 한 그림" data-fold-map="ㄴ:ㅂ" data-equal-segments="ㄱㄹ,ㄹㅂ" data-original-isosceles="ㄱㄴ,ㄱㄷ" data-collinear-groups="ㄴㄹㅁㄷ;ㄱㅁㅂ" data-given-angle="${givenAngle}" data-target-angle="${targetAngle}" data-points="${pointsData}"><g>${fills}${edges}${marks}${givenArc}${targetArc}${labels}</g></svg>`;
   };
   const circleIsoscelesShapeSignatures = pointCount => {
     const signatures = new Set();
@@ -3347,6 +3908,28 @@
       return `<line x1="${x.toFixed(1)}" y1="${y - 7}" x2="${x.toFixed(1)}" y2="${y + 7}"/>${label ? `<text x="${x.toFixed(1)}" y="${y + 25}">${label}</text>` : ""}`;
     }).join("");
     return `<svg class="geometry-diagram decimal42-number-line" viewBox="0 0 280 94" data-start="${start}" data-step="${step}" data-count="${count}" aria-label="같은 간격으로 나눈 소수 수직선"><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/>${ticks}</svg>`;
+  };
+  const rollingSquareDecimalLineSvg = ({ sideScaled, quarterTurns, minorStepScaled, solved = false }) => {
+    const left = 34;
+    const right = 506;
+    const baselineY = 122;
+    const finalScaled = sideScaled * quarterTurns;
+    const maxScaled = Math.ceil((finalScaled + sideScaled * 2) / (minorStepScaled * 5)) * minorStepScaled * 5;
+    const xFor = value => left + (right - left) * value / maxScaled;
+    const sidePx = xFor(sideScaled) - xFor(0);
+    const tickCount = maxScaled / minorStepScaled;
+    const markerId = `source42-roll-arrow-${sideScaled}-${quarterTurns}-${solved ? "answer" : "problem"}`;
+    const ticks = Array.from({ length: tickCount + 1 }, (_, index) => {
+      const value = index * minorStepScaled;
+      const x = xFor(value);
+      const major = index % 5 === 0;
+      return `<line class="source42-roll-tick${major ? " is-major" : ""}" x1="${x.toFixed(2)}" y1="${baselineY - (major ? 7 : 4)}" x2="${x.toFixed(2)}" y2="${baselineY + (major ? 7 : 4)}"/>${major ? `<text class="source42-roll-number" x="${x.toFixed(2)}" y="${baselineY + 24}">${plainDecimal(value, 3)}</text>` : ""}`;
+    }).join("");
+    const squareRight = xFor(sideScaled);
+    const squareTop = baselineY - sidePx;
+    const finalX = xFor(finalScaled);
+    const answerMark = solved ? `<path class="source42-roll-answer-guide" d="M ${squareRight.toFixed(2)} ${baselineY - 3} H ${finalX.toFixed(2)}"/><circle class="source42-roll-answer-point" cx="${finalX.toFixed(2)}" cy="${baselineY}" r="5"/><text class="source42-roll-answer-label" x="${finalX.toFixed(2)}" y="${baselineY - 17}">㉠=${plainDecimal(finalScaled, 3)}</text>` : "";
+    return `<svg class="geometry-diagram source42-rolling-square${solved ? " is-solved" : ""}" viewBox="0 0 540 170" role="img" aria-label="수직선 위의 정사각형을 시계 방향으로 굴리는 그림" data-side="${plainDecimal(sideScaled, 3)}" data-quarter-turns="${quarterTurns}" data-final="${plainDecimal(finalScaled, 3)}"><defs><marker id="${markerId}" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7Z"/></marker></defs><line class="source42-roll-axis" x1="${left}" y1="${baselineY}" x2="${right + 7}" y2="${baselineY}"/><path class="source42-roll-axis-arrow" d="M ${right + 7} ${baselineY}l-9-5v10z"/>${ticks}<rect class="source42-roll-square" x="${left}" y="${squareTop.toFixed(2)}" width="${sidePx.toFixed(2)}" height="${sidePx.toFixed(2)}"/><circle class="source42-roll-start-point" cx="${squareRight.toFixed(2)}" cy="${squareTop.toFixed(2)}" r="4"/><text class="source42-roll-point-label" x="${(squareRight - 7).toFixed(2)}" y="${(squareTop - 8).toFixed(2)}">㉠</text><path class="source42-roll-direction" marker-end="url(#${markerId})" d="M ${(squareRight - sidePx * .90).toFixed(2)} ${(squareTop - 10).toFixed(2)} Q ${(squareRight + sidePx * .08).toFixed(2)} ${(squareTop - 36).toFixed(2)} ${(squareRight + sidePx * .70).toFixed(2)} ${(squareTop + 5).toFixed(2)}"/>${answerMark}</svg>`;
   };
   const overlapSegmentSvg = ({ first, second, total }) => `<svg class="geometry-diagram decimal42-overlap" viewBox="0 0 280 112" data-lengths="${first},${second},${total}" aria-label="일직선 위에서 일부가 겹친 두 선분"><line x1="24" y1="62" x2="256" y2="62"/><circle cx="24" cy="62" r="3"/><circle cx="104" cy="62" r="3"/><circle cx="184" cy="62" r="3"/><circle cx="256" cy="62" r="3"/><text x="24" y="88">가</text><text x="104" y="88">나</text><text x="184" y="88">다</text><text x="256" y="88">라</text><path class="dimension-line" d="M24 42V31H184V42 M104 24V13H256V24 M24 100V106H256V100"/></svg>`;
   const decimalVennSvg = ({ leftOnly, rightOnly, topLeft, topRight, leftRight, center }) => `<svg class="geometry-diagram decimal42-venn" viewBox="0 0 260 190" aria-label="세 원이 겹친 영역의 소수"><circle cx="130" cy="69" r="58"/><circle cx="87" cy="120" r="58"/><circle cx="173" cy="120" r="58"/><text x="126" y="39">□</text><text x="70" y="139">${fixedDecimal(leftOnly, 2)}</text><text x="183" y="139">${fixedDecimal(rightOnly, 2)}</text><text x="94" y="79">${fixedDecimal(topLeft, 2)}</text><text x="159" y="79">${fixedDecimal(topRight, 2)}</text><text x="128" y="151">${fixedDecimal(leftRight, 2)}</text><text x="126" y="108">${fixedDecimal(center, 2)}</text></svg>`;
@@ -3504,6 +4087,58 @@
       return { x: column, y: row, kind: low ? "coin-low" : "coin-high", label: low ? "50" : "100" };
     })
   });
+  const pentagonalPebbleCount = stage => {
+    let count = 5;
+    for (let ring = 2; ring <= stage; ring += 1) count += ring * 3 + 1;
+    return count;
+  };
+  const pentagonalPebbleModel = stage => {
+    const pointsByCoordinate = new Map();
+    const edges = [];
+    const sharedVertexAngle = 158 * Math.PI / 180;
+    const baseVertices = Array.from({ length: 5 }, (_, index) => {
+      const angle = sharedVertexAngle + index * Math.PI * 2 / 5;
+      const anchorX = Math.cos(sharedVertexAngle);
+      const anchorY = Math.sin(sharedVertexAngle);
+      return [Math.cos(angle) - anchorX, Math.sin(angle) - anchorY];
+    });
+    for (let ring = 1; ring <= stage; ring += 1) {
+      const vertices = baseVertices.map(([x, y]) => [x * ring, y * ring]);
+      const outlinePoints = vertices.flatMap((start, side) => {
+        const end = vertices[(side + 1) % vertices.length];
+        return Array.from({ length: ring }, (_, step) => [
+          start[0] + (end[0] - start[0]) * step / ring,
+          start[1] + (end[1] - start[1]) * step / ring
+        ]);
+      });
+      outlinePoints.forEach((point, index) => {
+        const key = patternPointKey(point);
+        const current = pointsByCoordinate.get(key);
+        if (current) current.rings.push(ring);
+        else pointsByCoordinate.set(key, {
+          x: point[0],
+          y: point[1],
+          kind: "stone",
+          rings: [ring],
+          sharedAnchor: key === patternPointKey([0, 0])
+        });
+        edges.push([point, outlinePoints[(index + 1) % outlinePoints.length]]);
+      });
+    }
+    const points = [...pointsByCoordinate.values()].map(point => ({
+      ...point,
+      ring: point.rings[0],
+      sharedCount: point.rings.length
+    }));
+    if (points.length !== pentagonalPebbleCount(stage)) throw new Error("오각형 바둑돌 모델의 점 수가 계산값과 다릅니다.");
+    return {
+      edges: uniquePatternEdges(edges),
+      points,
+      outlinePointCounts: Array.from({ length: stage }, (_, index) => (index + 1) * 5),
+      sharedAnchorCount: points.filter(point => point.sharedAnchor).length,
+      sharedAnchorRings: stage
+    };
+  };
   const shapePatternSvg = (kind, stageValues, modelAt, ariaLabel, attributes = {}) => {
     const panelWidth = 112;
     const stageGroups = stageValues.map((stage, index) => {
@@ -3531,14 +4166,87 @@
         const [cx, cy] = coordinate([point.x, point.y]);
         const isCoin = point.kind === "coin-low" || point.kind === "coin-high";
         const radius = isCoin ? Math.max(4.2, Math.min(7, scale * 0.28)) : point.kind === "stone" ? 3 : 2.7;
-        const circle = `<circle class="pattern-point pattern-${point.kind}" data-stage="${stage}" data-point="${pointIndex + 1}" data-point-kind="${point.kind}" cx="${cx}" cy="${cy}" r="${patternNumber(radius)}"/>`;
+        const ring = Number.isInteger(point.ring) ? ` data-ring="${point.ring}"` : "";
+        const shared = point.sharedAnchor ? ` data-shared-anchor="true" data-shared-rings="${point.sharedCount}"` : "";
+        const circle = `<circle class="pattern-point pattern-${point.kind}" data-stage="${stage}" data-point="${pointIndex + 1}" data-point-kind="${point.kind}"${ring}${shared} cx="${cx}" cy="${cy}" r="${patternNumber(radius)}"/>`;
         const label = point.label ? `<text class="pattern-coin-label" x="${cx}" y="${patternNumber(cy + 1.7)}">${point.label}</text>` : "";
         return circle + label;
       }).join("");
-      return `<g class="pattern-stage" data-stage="${stage}" data-expected-lines="${model.edges.length}" data-expected-points="${model.points.length}">${edges}${points}<text class="pattern-stage-label" x="${index * panelWidth + panelWidth / 2}" y="102">${stage}번째</text></g>`;
+      const outlineMetadata = model.outlinePointCounts
+        ? ` data-outline-point-counts="${model.outlinePointCounts.join(",")}" data-shared-anchor-count="${model.sharedAnchorCount}" data-shared-anchor-rings="${model.sharedAnchorRings}"`
+        : "";
+      return `<g class="pattern-stage" data-stage="${stage}" data-expected-lines="${model.edges.length}" data-expected-points="${model.points.length}"${outlineMetadata}>${edges}${points}<text class="pattern-stage-label" x="${index * panelWidth + panelWidth / 2}" y="102">${stage}번째</text></g>`;
     }).join("");
     const metadata = Object.entries(attributes).map(([name, value]) => ` ${name}="${value}"`).join("");
     return `<svg class="pattern-diagram pattern-source" viewBox="0 0 ${panelWidth * stageValues.length} 112" role="img" aria-label="${ariaLabel}" data-pattern-kind="${kind}" data-stage-values="${stageValues.join(",")}" data-source-verified="true"${metadata}>${stageGroups}</svg>`;
+  };
+  const source41PentagonalPebbleDiagram = (solved = false) => {
+    const diagram = shapePatternSvg(
+      "pentagonal-pebbles",
+      [1, 2, 3],
+      pentagonalPebbleModel,
+      "오각형 둘레를 따라 바둑돌이 5개, 12개, 22개로 늘어나는 첫 번째부터 세 번째 모양",
+      { "data-source-item": "4-1-u6-e5-example-5-2", "data-solved": String(solved) }
+    )
+      .replace(">1번째<", ">첫 번째<")
+      .replace(">2번째<", ">두 번째<")
+      .replace(">3번째<", ">세 번째<");
+    const counts = solved
+      ? `<div class="source41-pentagonal-counts" aria-label="첫 번째 5개, 두 번째 12개, 세 번째 22개"><span>5개</span><span>12개</span><span>22개</span></div>`
+      : "";
+    return `<div class="source41-pentagonal-pebbles${solved ? " is-solved" : ""}">${diagram}${counts}</div>`;
+  };
+  const source41HexagonalPebbleDiagram = (solved = false) => {
+    const diagram = shapePatternSvg(
+      "hexagonal-pebbles",
+      [1, 2, 3, 4],
+      hexClusterModel,
+      "육각형 모양으로 바둑돌이 1개, 7개, 19개, 37개로 늘어나는 첫 번째부터 네 번째 모양",
+      { "data-source-item": "4-1-u6-e5-example-5-3", "data-solved": String(solved) }
+    )
+      .replace(">1번째<", ">첫 번째<")
+      .replace(">2번째<", ">두 번째<")
+      .replace(">3번째<", ">세 번째<")
+      .replace(">4번째<", ">네 번째<");
+    const counts = solved
+      ? `<div class="source41-hexagonal-counts" aria-label="첫 번째 1개, 두 번째 7개, 세 번째 19개, 네 번째 37개"><span>1개</span><span>7개</span><span>19개</span><span>37개</span></div>`
+      : "";
+    return `<div class="source41-hexagonal-pebbles${solved ? " is-solved" : ""}">${diagram}${counts}</div>`;
+  };
+  const source41AlternatingTileCounts = stage => {
+    let black = 0;
+    let white = 0;
+    for (let ring = 1; ring <= stage; ring += 1) {
+      const count = ring * 8 - 4;
+      if (ring % 2) black += count;
+      else white += count;
+    }
+    return { black, white, total: (stage * 2) ** 2 };
+  };
+  const source41AlternatingTileDiagram = (solved = false) => {
+    const panelWidth = 108;
+    const stages = [1, 2, 3, 4];
+    const cells = stages.map((stage, stageIndex) => {
+      const size = stage * 2;
+      const cell = 10;
+      const gridSize = size * cell;
+      const left = stageIndex * panelWidth + (panelWidth - gridSize) / 2;
+      const top = 8 + (82 - gridSize) / 2;
+      const rects = [];
+      for (let row = 0; row < size; row += 1) for (let column = 0; column < size; column += 1) {
+        const layerFromOutside = Math.min(row, column, size - 1 - row, size - 1 - column);
+        const ring = stage - layerFromOutside;
+        const color = ring % 2 ? "black" : "white";
+        rects.push(`<rect class="source41-alternating-tile is-${color}" data-stage="${stage}" data-ring="${ring}" data-color="${color}" x="${patternNumber(left + column * cell)}" y="${patternNumber(top + row * cell)}" width="${cell}" height="${cell}"/>`);
+      }
+      const label = ["첫 번째", "두 번째", "세 번째", "네 번째"][stageIndex];
+      return `<g class="source41-alternating-stage" data-stage="${stage}" data-side="${size}" data-cell-count="${size * size}">${rects.join("")}<text class="source41-alternating-label" x="${stageIndex * panelWidth + panelWidth / 2}" y="105">${label}</text></g>`;
+    }).join("");
+    const countLabels = solved ? `<div class="source41-alternating-counts">${stages.map(stage => {
+      const counts = source41AlternatingTileCounts(stage);
+      return `<span>검 ${counts.black} · 흰 ${counts.white}</span>`;
+    }).join("")}</div>` : "";
+    return `<div class="source41-alternating-tiles${solved ? " is-solved" : ""}"><svg viewBox="0 0 ${panelWidth * stages.length} 112" role="img" aria-label="검은색과 흰색 테두리가 번갈아 늘어나는 첫 번째부터 네 번째 타일 모양" data-source-item="4-1-u6-e5-example-5-4" data-solved="${solved}">${cells}</svg>${countLabels}</div>`;
   };
   const digitPlaceCounts = (values, digit) => {
     const counts = [];
@@ -8111,7 +8819,7 @@
 
       if (variant === 6) {
         const outer = gridPick([22, 18, 14][level], [40, 46, 52][level], 2);
-        const gap = gridPick([10, 8, 6][level], [26, 30, 34][level], 2);
+        const gap = gridPick(12, [26, 30, 34][level], 2);
         const inner = outer + gap;
         const answerNumber = 180 - gap;
         const payload = { variant, level, outer, inner, gap, answerNumber, sourceAnchor: source41AngleFiveSourceAnchors[6], complexity: (level + 1) * 1000 + inner * 3 + gap };
@@ -10027,8 +10735,11 @@
         return cycle[(position - 1) % cycle.length];
       };
       const arrayGrid = size => {
-        const rows = Array.from({ length: size }, (_, row) => `<tr>${Array.from({ length: size }, (_, column) => `<td>${squareValue(row + 1, column + 1)}</td>`).join("")}</tr>`).join("");
-        return `<table class="number-grid" aria-label="정사각 테두리 수 배열"><tbody>${rows}</tbody></table>`;
+        const cells = Array.from({ length: size }, (_, row) => Array.from(
+          { length: size },
+          (_, column) => `<span>${squareValue(row + 1, column + 1)}</span>`
+        ).join("")).join("");
+        return `<div class="number-grid" style="--grid-columns:${size}" role="img" aria-label="정사각 테두리 수 배열">${cells}</div>`;
       };
       if (variant === 0) {
         const size = int(rng, 7 + level * 2, 11 + level * 4);
@@ -10720,12 +11431,10 @@
       };
 
       if (variant === 0) {
-        const configs = [
-          { quotient: 12, remainder: 17, divisorLower: 18, divisorUpper: 18 },
-          { quotient: 20, remainder: 29, divisorLower: 30, divisorUpper: 99 },
-          { quotient: 28, remainder: 37, divisorLower: 38, divisorUpper: 50 }
-        ];
-        const { quotient, remainder, divisorLower, divisorUpper } = configs[level];
+        const quotient = int(rng, 11 + level * 5, 20 + level * 8);
+        const remainder = int(rng, 11 + level * 7, 22 + level * 10);
+        const divisorLower = level === 0 ? remainder + int(rng, 1, 8) : remainder + 1;
+        const divisorUpper = level < 2 ? (level === 0 ? divisorLower : 99) : divisorLower + int(rng, 8, Math.min(24, 99 - divisorLower));
         const divisors = allInRange(divisorLower, divisorUpper, divisor => divisor > remainder);
         const candidates = divisors.map(divisor => ({ divisor, dividend: quotient * divisor + remainder }));
         const minimum = candidates[0];
@@ -10749,12 +11458,36 @@
       }
 
       if (variant === 1) {
-        const divisor = [13, 17, 23][level];
-        const quotientCandidates = level === 0 ? [8, 9, 10, 11, 12] : allInRange(0, divisor - 1, () => true);
+        let divisor;
+        let digitSum = null;
+        let grouped = null;
+        if (level === 2) {
+          const options = [];
+          for (let candidateDivisor = 14; candidateDivisor <= 38; candidateDivisor += 1) {
+            const candidateValues = allInRange(0, candidateDivisor - 1, () => true)
+              .map(quotient => ({ quotient, value: (candidateDivisor + 1) * quotient }))
+              .filter(item => item.value >= 100 && item.value <= 999 && Math.floor(item.value / candidateDivisor) === item.value % candidateDivisor);
+            const groups = new Map();
+            candidateValues.forEach(item => {
+              const sum = source41DigitSum(item.value);
+              if (!groups.has(sum)) groups.set(sum, []);
+              groups.get(sum).push(item);
+            });
+            for (const [sum, values] of groups) if (values.length >= 2) options.push({ divisor: candidateDivisor, digitSum: sum, values });
+          }
+          const selected = pick(rng, options);
+          divisor = selected.divisor;
+          digitSum = selected.digitSum;
+          grouped = selected.values;
+        } else {
+          divisor = int(rng, level === 0 ? 13 : 16, level === 0 ? 19 : 29);
+        }
+        const minimumQuotient = Math.ceil(100 / (divisor + 1));
+        const guidedStart = int(rng, minimumQuotient, Math.max(minimumQuotient, divisor - 5));
+        const quotientCandidates = level === 0 ? Array.from({ length: 5 }, (_, index) => guidedStart + index) : allInRange(0, divisor - 1, () => true);
         const baseValues = quotientCandidates.map(quotient => ({ quotient, value: (divisor + 1) * quotient }))
           .filter(item => item.value >= 100 && item.value <= 999 && Math.floor(item.value / divisor) === item.value % divisor);
-        const digitSum = level === 2 ? 9 : null;
-        const candidates = level === 2 ? baseValues.filter(item => source41DigitSum(item.value) === digitSum) : baseValues;
+        const candidates = level === 2 ? grouped : baseValues;
         const values = candidates.map(item => item.value);
         if (values.length < 2) throw new Error("조건을 만족하는 세 자리 수가 두 개 이상이어야 합니다.");
         const answer = values.at(-1) - values[0];
@@ -10772,9 +11505,10 @@
       }
 
       if (variant === 2) {
-        const cards = shuffle(rng, sourceAnchor.cards);
-        const quotient = sourceAnchor.quotient;
-        const remainder = sourceAnchor.remainder;
+        const selectedCase = pick(rng, source41DivisionFiveCardCases);
+        const cards = shuffle(rng, selectedCase.cards);
+        const quotient = selectedCase.quotient;
+        const remainder = selectedCase.remainder;
         const arrangements = operatorPermutations(cards);
         const matches = arrangements.map(order => ({ dividend: Number(order.slice(0, 3).join("")), divisor: Number(order.slice(3).join("")) }))
           .filter(item => item.divisor >= 10 && Math.floor(item.dividend / item.divisor) === quotient && item.dividend % item.divisor === remainder);
@@ -10788,21 +11522,28 @@
         const answer = level === 2 ? `${expression}, 차=${difference}` : expression;
         const payload = { cards, quotient, remainder, arrangementsChecked: arrangements.length, matches, candidates: eligibleMatches, prefilledDigit: level === 0 ? prefilledDigit : null, expression, difference, complexity: arrangements.length + (level === 2 ? 200 : level === 1 ? 100 : 20) };
         const remainingCards = cards.filter(card => card !== prefilledDigit);
+        const blankEquation = source41DivisionCardEquation({ dividend: match.dividend, divisor: match.divisor, quotient, remainder, prefilledDigit: level === 0 ? prefilledDigit : null });
+        const solvedEquation = source41DivisionCardEquation({ dividend: match.dividend, divisor: match.divisor, quotient, remainder, solved: true });
         let prompt;
         if (level === 0) {
-          prompt = `세 자리 수의 백의 자리에는 ${format(prefilledDigit)}을 놓았습니다. 남은 수 카드${source41CardRow(remainingCards)}를 모두 한 번씩 써서 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}인 ${format(prefilledDigit)}□□÷□□를 완성하세요.${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
+          prompt = `수 카드를 한 번씩만 써서 □를 채우세요.${source41CardRow(remainingCards)}${blankEquation}${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
         } else if (level === 1) {
-          prompt = `수 카드${source41CardRow(cards)}를 모두 한 번씩 써서 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}인 (세 자리 수)÷(두 자리 수)를 완성하세요.${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
+          prompt = `수 카드를 한 번씩만 써서 □를 채우세요.${source41CardRow(cards)}${blankEquation}${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
         } else {
-          prompt = `수 카드${source41CardRow(cards)}를 모두 한 번씩 써서 몫이 ${format(quotient)}, 나머지가 ${format(remainder)}인 (세 자리 수)÷(두 자리 수)를 완성한 뒤, 나누어지는 수와 나누는 수의 차를 구하세요.${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
+          prompt = `수 카드를 한 번씩만 써서 □를 채운 뒤, 나누어지는 수와 나누는 수의 차를 구하세요.${source41CardRow(cards)}${blankEquation}${evidence("card-division-fixed-quotient-remainder", payload, answer)}`;
         }
-        const solution = `수 카드를 놓는 ${format(arrangements.length)}가지 방법을 모두 확인하면 ${expression} 한 가지가 됩니다.${level === 2 ? ` 두 수의 차는 ${format(match.dividend)}-${format(match.divisor)}=${format(difference)}입니다.` : ""} 나머지 ${format(remainder)}는 나누는 수 ${format(match.divisor)}보다 작습니다.`;
+        const solution = `${solvedEquation}<p>${format(match.dividend)}=${format(match.divisor)}×${format(quotient)}+${format(remainder)}입니다.${level === 2 ? ` 두 수의 차는 ${format(match.dividend)}-${format(match.divisor)}=${format(difference)}입니다.` : ""}</p>`;
         return result(prompt, answer, solution);
       }
 
       if (variant === 3) {
-        const configs = [[17, 24], [23, 32], [24, 40]];
-        const [correctDivisor, wrongDivisor] = configs[level];
+        const divisorPairs = [];
+        for (let correct = 14 + level * 4; correct <= 28 + level * 8; correct += 1) {
+          for (let wrong = correct + 5; wrong <= correct + 18; wrong += 1) {
+            if (gcd(correct - 1, wrong - 1) === 1) divisorPairs.push([correct, wrong]);
+          }
+        }
+        const [correctDivisor, wrongDivisor] = pick(rng, divisorPairs);
         const candidates = [];
         for (let quotient = 0; quotient < wrongDivisor; quotient += 1) {
           for (let remainder = 0; remainder < correctDivisor; remainder += 1) {
@@ -10829,12 +11570,16 @@
       }
 
       if (variant === 4) {
-        const configs = [
-          { added: 47, divisor: 30, afterRemainder: 18, afterQuotient: 12 },
-          { added: 95, divisor: 50, afterRemainder: 44, afterQuotient: null },
-          { added: 136, divisor: 72, afterRemainder: 51, afterQuotient: null }
-        ];
-        const { added, divisor, afterRemainder, afterQuotient } = configs[level];
+        const divisor = int(rng, 28 + level * 10, 44 + level * 18);
+        const added = int(rng, 25 + level * 25, 80 + level * 45);
+        const originalRemainder = int(rng, 1, divisor - 1);
+        const afterRemainder = (originalRemainder + added) % divisor;
+        let afterQuotient = null;
+        if (level === 0) {
+          const minimumQuotient = Math.max(10, Math.ceil((100 + added - afterRemainder) / divisor));
+          const maximumQuotient = Math.min(99, Math.floor((999 + added - afterRemainder) / divisor));
+          afterQuotient = int(rng, minimumQuotient, maximumQuotient);
+        }
         const candidates = allInRange(100, 999, number => {
           const after = number + added;
           const quotient = Math.floor(after / divisor);
@@ -10860,8 +11605,12 @@
       }
 
       if (variant === 5) {
-        const configs = [[270, 299, 60], [251, 299, 60], [300, 420, 56]];
-        const [lower, upper, divisor] = configs[level];
+        const divisor = int(rng, 32 + level * 8, 58 + level * 12);
+        const firstMaximum = divisor * int(rng, 5, 9) - 1;
+        const lower = firstMaximum - int(rng, level === 0 ? 4 : 12, Math.max(level === 0 ? 5 : 13, divisor - 2));
+        const upper = level < 2
+          ? firstMaximum + int(rng, 0, Math.min(divisor - 2, level === 0 ? 8 : 20))
+          : firstMaximum + divisor + int(rng, 0, divisor - 2);
         const values = allInRange(lower, upper, value => value % divisor === divisor - 1);
         if ((level < 2 && values.length !== 1) || (level === 2 && values.length < 2)) throw new Error("범위와 난이도에 맞는 최대 나머지 수를 만들지 못했습니다.");
         const selection = level === 2 ? "larger" : "only";
@@ -10875,12 +11624,13 @@
       }
 
       if (variant === 6) {
-        const divisor = level < 2 ? 35 : 47;
-        const target = level < 2 ? 500 : 640;
+        const divisor = level < 2 ? int(rng, 29, 49) : pick(rng, [35, 39, 43, 47, 51, 55, 59]);
         const searchLower = level === 2 ? 300 : 100;
         const searchUpper = level === 2 ? 900 : 999;
         const allCandidates = allInRange(searchLower, searchUpper, value => value % divisor === divisor - 1);
         const filteredCandidates = level === 2 ? allCandidates.filter(value => value % 2 === 0) : allCandidates;
+        const targetCandidate = pick(rng, filteredCandidates.slice(2, -2));
+        const target = targetCandidate + int(rng, 1, Math.max(2, Math.floor((level === 2 ? divisor : divisor / 2) - 2)));
         const lowerShown = filteredCandidates.filter(value => value < target).at(-1);
         const upperShown = filteredCandidates.find(value => value > target);
         const candidates = level === 0 ? [lowerShown, upperShown] : filteredCandidates;
@@ -10903,20 +11653,15 @@
       }
 
       if (variant === 7) {
-        const divisor = level < 2 ? 73 : 67;
+        const { divisor, fixed, base } = pick(rng, source41DivisionFiveBlankConfigs[level]);
         const assignments = [];
         if (level === 0) {
-          for (let digit = 0; digit <= 9; digit += 1) {
-            const number = 940 + digit;
-            assignments.push({ digits: [digit], number, remainder: number % divisor });
-          }
+          for (let digit = 0; digit <= 9; digit += 1) assignments.push({ digits: [digit], number: base + digit, remainder: (base + digit) % divisor });
         } else {
-          for (let first = 0; first <= 9; first += 1) {
-            for (let second = 0; second <= 9; second += 1) {
-              if (level === 2 && first === second) continue;
-              const number = 900 + first * 10 + second;
-              assignments.push({ digits: [first, second], number, remainder: number % divisor });
-            }
+          for (let first = 0; first <= 9; first += 1) for (let second = 0; second <= 9; second += 1) {
+            if (level === 2 && first === second) continue;
+            const number = base + first * 10 + second;
+            assignments.push({ digits: [first, second], number, remainder: number % divisor });
           }
         }
         const largestRemainder = Math.max(...assignments.map(item => item.remainder));
@@ -10924,58 +11669,85 @@
         if (winning.length !== 1 || largestRemainder !== divisor - 1) throw new Error("빈칸을 채운 답과 가장 큰 나머지가 하나로 정해지지 않습니다.");
         const winner = winning[0];
         const answer = level === 0 ? winner.digits[0] : level === 1 ? `㉠=${winner.digits[0]}, ㉡=${winner.digits[1]}` : winner.digits[0] + winner.digits[1];
-        const payload = { divisor, assignments, winning, candidates: winning.map(item => item.number), number: winner.number, digits: winner.digits, largestRemainder, distinctDigits: level === 2, complexity: assignments.length * 10 + (level === 2 ? 300 : 0) };
+        const payload = { divisor, fixed, base, assignments, winning, candidates: winning.map(item => item.number), number: winner.number, digits: winner.digits, largestRemainder, distinctDigits: level === 2, complexity: assignments.length * 10 + (level === 2 ? 300 : 0) };
         let prompt;
         if (level === 0) {
-          prompt = `세 자리 수 94□를 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 □에 알맞은 숫자를 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
+          prompt = `세 자리 수 ${format(fixed)}□를 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 □에 알맞은 숫자를 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
         } else if (level === 1) {
-          prompt = `세 자리 수 9㉠㉡을 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 ㉠, ㉡에 알맞은 숫자를 차례로 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
+          prompt = `세 자리 수 ${format(fixed)}㉠㉡을 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 ㉠, ㉡에 알맞은 숫자를 차례로 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
         } else {
-          prompt = `세 자리 수 9㉠㉡에서 ㉠과 ㉡은 서로 다른 숫자입니다. 이 수를 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 두 빈칸을 채운 뒤, ㉠과 ㉡의 합을 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
+          prompt = `세 자리 수 ${format(fixed)}㉠㉡에서 ㉠과 ㉡은 서로 다른 숫자입니다. 이 수를 ${format(divisor)}으로 나누었을 때 나머지가 가장 크도록 두 빈칸을 채운 뒤, ㉠과 ㉡의 합을 구하세요.${evidence("two-digit-blank-largest-remainder", payload, answer)}`;
         }
         const solution = `빈칸에 넣을 수 있는 숫자를 모두 확인하면 나머지가 가장 큰 수는 ${format(winner.number)}이고, 나머지는 ${format(largestRemainder)}입니다.${level === 0 ? ` 따라서 □는 ${format(answer)}입니다.` : level === 1 ? ` 따라서 ${answer}입니다.` : ` 두 숫자의 합은 ${format(winner.digits[0])}+${format(winner.digits[1])}=${format(answer)}입니다.`}`;
         return result(prompt, answer, solution);
       }
 
       if (variant === 8) {
-        const divisor = 46;
-        const remainder = 31;
-        const assignments = [];
+        let divisor;
+        let remainder;
+        let fixed;
+        let base;
+        let digitSum = null;
+        let assignments = [];
         if (level < 2) {
+          divisor = int(rng, 31, 67);
+          fixed = int(rng, 20, 98);
+          base = fixed * 10;
+          const chosenDigit = int(rng, 0, 9);
+          remainder = (base + chosenDigit) % divisor;
           for (let digit = 0; digit <= 9; digit += 1) {
-            const number = 950 + digit;
+            const number = base + digit;
             assignments.push({ digits: [digit], number, quotient: Math.floor(number / divisor), remainder: number % divisor });
           }
         } else {
-          for (let first = 0; first <= 9; first += 1) {
-            for (let second = 0; second <= 9; second += 1) {
-              const number = 900 + first * 10 + second;
-              assignments.push({ digits: [first, second], number, quotient: Math.floor(number / divisor), remainder: number % divisor, digitSum: first + second });
+          let candidatesForConfig = [];
+          let attempts = 0;
+          do {
+            divisor = int(rng, 37, 83);
+            fixed = int(rng, 2, 9);
+            base = fixed * 100;
+            const first = int(rng, 0, 9);
+            const second = int(rng, 0, 9);
+            digitSum = first + second;
+            remainder = (base + first * 10 + second) % divisor;
+            assignments = [];
+            for (let left = 0; left <= 9; left += 1) for (let right = 0; right <= 9; right += 1) {
+              const number = base + left * 10 + right;
+              assignments.push({ digits: [left, right], number, quotient: Math.floor(number / divisor), remainder: number % divisor, digitSum: left + right });
             }
-          }
+            candidatesForConfig = assignments.filter(item => item.remainder === remainder && item.digitSum === digitSum);
+            attempts += 1;
+          } while (candidatesForConfig.length !== 1 && attempts < 200);
+          if (candidatesForConfig.length !== 1) throw new Error("두 빈칸과 숫자 합 조건으로 나눗셈이 하나가 되지 않습니다.");
         }
-        const shownQuotient = level === 0 ? 20 : null;
-        const candidates = assignments.filter(item => item.remainder === remainder && (shownQuotient === null || item.quotient === shownQuotient) && (level < 2 || item.digitSum === 6));
+        const shownQuotient = level === 0 ? assignments.find(item => item.remainder === remainder).quotient : null;
+        const candidates = assignments.filter(item => item.remainder === remainder && (shownQuotient === null || item.quotient === shownQuotient) && (level < 2 || item.digitSum === digitSum));
         if (candidates.length !== 1) throw new Error("나누어지는 수와 몫의 빈칸이 하나로 정해지지 않습니다.");
         const candidate = candidates[0];
         const expression = `${candidate.number}÷${divisor}=${candidate.quotient}…${remainder}`;
         const answer = level === 0 ? candidate.digits[0] : expression;
-        const payload = { divisor, remainder, assignments, candidates, dividend: candidate.number, quotient: candidate.quotient, shownQuotient, digitSum: level === 2 ? 6 : null, expression, complexity: assignments.length * 10 + (level === 2 ? 300 : 0) };
+        const payload = { divisor, remainder, fixed, base, assignments, candidates, dividend: candidate.number, quotient: candidate.quotient, shownQuotient, digitSum, expression, complexity: assignments.length * 10 + (level === 2 ? 300 : 0) };
         let prompt;
         if (level === 0) {
-          prompt = `다음 나눗셈의 나누어지는 수에 있는 빈칸을 채우세요.<div class="equation expanded">95□ ÷ ${format(divisor)} = ${format(shownQuotient)} … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
+          prompt = `다음 나눗셈의 나누어지는 수에 있는 빈칸을 채우세요.<div class="equation expanded">${format(fixed)}□ ÷ ${format(divisor)} = ${format(shownQuotient)} … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
         } else if (level === 1) {
-          prompt = `다음 나눗셈이 되도록 나누어지는 수의 한 자리와 두 자리 몫을 함께 채우세요.<div class="equation expanded">95□ ÷ ${format(divisor)} = □□ … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
+          prompt = `다음 나눗셈이 되도록 나누어지는 수의 한 자리와 몫을 함께 채우세요.<div class="equation expanded">${format(fixed)}□ ÷ ${format(divisor)} = □□ … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
         } else {
-          prompt = `세 자리 수 9㉠㉡에서 ㉠과 ㉡의 합은 ${format(6)}입니다. 다음 나눗셈이 되도록 나누어지는 수의 두 빈칸과 두 자리 몫을 함께 채우세요.<div class="equation expanded">9㉠㉡ ÷ ${format(divisor)} = □□ … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
+          prompt = `세 자리 수 ${format(fixed)}㉠㉡에서 ㉠과 ㉡의 합은 ${format(digitSum)}입니다. 다음 나눗셈이 되도록 나누어지는 수의 두 빈칸과 몫을 함께 채우세요.<div class="equation expanded">${format(fixed)}㉠㉡ ÷ ${format(divisor)} = □□ … ${format(remainder)}</div>${evidence("dividend-and-quotient-blank", payload, answer)}`;
         }
         const solution = `빈칸에 넣을 수 있는 숫자를 모두 확인하면 ${expression} 한 가지입니다.${level === 0 ? ` 따라서 □는 ${format(answer)}입니다.` : ""}`;
         return result(prompt, answer, solution);
       }
 
       if (variant === 9) {
-        const configs = [[20, 99, 11, 9], [100, 999, 11, 9], [215, 987, 17, 12]];
-        const [lower, upper, divisor, remainder] = configs[level];
+        const divisor = int(rng, 9 + level * 4, 15 + level * 9);
+        const remainder = int(rng, 1, divisor - 1);
+        let lower = level === 0 ? int(rng, 10, 30) : level === 1 ? 100 : int(rng, 180, 320);
+        let upper = level === 0 ? int(rng, 75, 99) : level === 1 ? 999 : int(rng, 820, 980);
+        if (level === 2) {
+          while (lower % divisor === remainder) lower += 1;
+          while (upper % divisor === remainder) upper -= 1;
+        }
         const values = allInRange(lower, upper, value => value % divisor === remainder);
         if (!values.length) throw new Error("특정 나머지를 갖는 수가 없습니다.");
         const first = values[0];
@@ -10989,8 +11761,25 @@
         return result(prompt, answer, solution);
       }
 
-      const configs = [[32, 60, 2, 15], [32, 134, 2, 15], [59, 235, 4, 17]];
-      const [start, end, step, divisor] = configs[level];
+      const step = pick(rng, level === 0 ? [2, 3, 4] : [2, 4, 5, 7]);
+      let divisor = int(rng, 13 + level * 2, 23 + level * 4);
+      while (gcd(step, divisor) === divisor) divisor += 1;
+      const periodForConfig = divisor / gcd(step, divisor);
+      let start;
+      let count;
+      if (level === 0) {
+        start = int(rng, 20, 80);
+        count = periodForConfig;
+      } else if (level === 1) {
+        start = int(rng, 20, 80);
+        count = periodForConfig * int(rng, 2, 4) + int(rng, 1, Math.max(1, periodForConfig - 1));
+      } else {
+        const boundarySteps = int(rng, 2, Math.max(2, periodForConfig - 2));
+        const boundary = divisor * int(rng, 6, 12);
+        start = boundary - step * boundarySteps;
+        count = boundarySteps + periodForConfig * int(rng, 2, 3) + int(rng, 1, Math.max(1, periodForConfig - 1));
+      }
+      const end = start + step * (count - 1);
       const values = [];
       for (let value = start; value <= end; value += step) values.push(value);
       const directSum = values.reduce((sum, value) => sum + value % divisor, 0);
@@ -12395,6 +13184,96 @@
       const diagram = shapePatternSvg("zigzag-hexagon-chain", [1, 2, 3, 4], zigzagHexagonChainModel, "지그재그로 이어 붙인 육각형의 성냥개비 규칙", { "data-source-verified": "true" });
       return result(`성냥개비로 그림과 같이 육각형 모양을 지그재그로 이어 붙입니다. 성냥개비 ${matchsticks}개로 만들 수 있는 육각형은 모두 몇 개인지 구하세요.${diagram}`, hexagonCount, `첫 육각형에는 성냥개비 6개가 필요하고, 하나를 더 붙일 때마다 한 변을 함께 쓰므로 5개씩 늘어납니다. (${matchsticks} - 6) ÷ 5 + 1 = ${hexagonCount}개입니다.`);
     },
+    source41PentagonalPebbles({ rng, level }) {
+      const sourceItemId = "4-1-u6-e5-example-5-2";
+      const target = pick(rng, [[5, 6], [7, 8], [9, 10]][level]);
+      const increments = Array.from({ length: target - 1 }, (_, index) => (index + 2) * 3 + 1);
+      const answer = pentagonalPebbleCount(target);
+      const answerBySum = 5 + increments.reduce((sum, value) => sum + value, 0);
+      if (answer !== answerBySum) throw new Error("오각형 바둑돌의 두 계산 결과가 다릅니다.");
+      const payload = {
+        level,
+        target,
+        shownStages: [1, 2, 3],
+        shownCounts: [1, 2, 3].map(pentagonalPebbleCount),
+        increments,
+        answer,
+        sourceAnchor: source41ShapeFivePentagonSourceAnchor,
+        complexity: (level + 1) * 1000 + target * 10
+      };
+      const evidence = source41Evidence("pentagonal-pebble-growth", payload, answer);
+      const diagram = source41PentagonalPebbleDiagram(false);
+      const answerDiagram = source41PentagonalPebbleDiagram(true);
+      const sumText = [5, ...increments].join(" + ");
+      return result(
+        `오각형 모양으로 바둑돌을 늘어놓았습니다. ${target}번째 모양의 바둑돌은 몇 개인가요?${diagram}${evidence}`,
+        answer,
+        `늘어나는 바둑돌 수는 7개, 10개, 13개처럼 3개씩 커집니다. ${sumText} = ${answer}이므로 ${answer}개입니다.`,
+        { answerVisual: answerDiagram, generationMode: "source-verified", sourceItemId }
+      );
+    },
+    source41HexagonalPebbles({ rng, level }) {
+      const sourceItemId = "4-1-u6-e5-example-5-3";
+      const target = pick(rng, [[5, 6], [6, 7, 8], [9, 10]][level]);
+      const answer = 3 * target * (target - 1) + 1;
+      let answerByRings = 1;
+      const rings = [];
+      for (let ring = 1; ring < target; ring += 1) {
+        rings.push(ring * 6);
+        answerByRings += ring * 6;
+      }
+      if (answer !== answerByRings) throw new Error("육각형 바둑돌의 두 계산 결과가 다릅니다.");
+      const payload = {
+        level,
+        target,
+        shownStages: [1, 2, 3, 4],
+        shownCounts: [1, 2, 3, 4].map(stage => 3 * stage * (stage - 1) + 1),
+        rings,
+        answer,
+        sourceAnchor: source41ShapeFiveHexagonSourceAnchor,
+        complexity: (level + 1) * 1000 + target * 10
+      };
+      const evidence = source41Evidence("hexagonal-pebble-growth", payload, answer);
+      const diagram = source41HexagonalPebbleDiagram(false);
+      const answerDiagram = source41HexagonalPebbleDiagram(true);
+      const sumText = [1, ...rings].join(" + ");
+      return result(
+        `그림과 같은 규칙으로 바둑돌을 늘어놓았습니다. ${target}번째 모양에는 바둑돌이 몇 개인가요?${diagram}${evidence}`,
+        answer,
+        `가운데 1개에서 시작해 한 겹마다 6개, 12개, 18개처럼 늘어납니다. ${sumText} = ${answer}이므로 ${answer}개입니다.`,
+        { answerVisual: answerDiagram, generationMode: "source-verified", sourceItemId }
+      );
+    },
+    source41AlternatingTiles({ rng, level }) {
+      const sourceItemId = "4-1-u6-e5-example-5-4";
+      const target = pick(rng, [[8, 10], [14, 15, 16], [18, 20]][level]);
+      const counts = source41AlternatingTileCounts(target);
+      if (counts.black + counts.white !== counts.total) throw new Error("검은색과 흰색 타일 수의 합이 전체와 다릅니다.");
+      const payload = {
+        level,
+        target,
+        side: target * 2,
+        black: counts.black,
+        white: counts.white,
+        total: counts.total,
+        shownStages: [1, 2, 3, 4],
+        shownCounts: [1, 2, 3, 4].map(stage => source41AlternatingTileCounts(stage)),
+        sourceAnchor: source41ShapeFiveAlternatingTilesSourceAnchor,
+        complexity: (level + 1) * 1000 + target * 10
+      };
+      const answer = `검은색 ${counts.black}개, 흰색 ${counts.white}개`;
+      const evidence = source41Evidence("alternating-square-tile-rings", payload, answer);
+      const diagram = source41AlternatingTileDiagram(false);
+      const answerDiagram = `${source41AlternatingTileDiagram(true)}<div class="source41-alternating-result">${target}번째: <b>${answer}</b></div>`;
+      const blackRings = Array.from({ length: Math.ceil(target / 2) }, (_, index) => (index * 2 + 1) * 8 - 4);
+      const whiteRings = Array.from({ length: Math.floor(target / 2) }, (_, index) => (index * 2 + 2) * 8 - 4);
+      return result(
+        `검은색과 흰색 타일을 그림처럼 붙였습니다. ${target}번째 모양에서 검은색과 흰색 타일은 각각 몇 개인가요?${diagram}${evidence}`,
+        answer,
+        `<span class="source41-alternating-sums"><span><b>검은색</b>${blackRings.join(" + ")} = ${counts.black}개</span><span><b>흰색</b>${whiteRings.join(" + ")} = ${counts.white}개</span></span>`,
+        { answerVisual: answerDiagram, generationMode: "source-verified", sourceItemId }
+      );
+    },
     conditionedNumberCount({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const cardsByLevel = [[0, 1, 2, 3], [0, 1, 2, 4, 5], [0, 1, 2, 4, 8]];
@@ -12685,7 +13564,7 @@
         ];
         const answers = expressions.map(([left, denominator, sign, right]) => mixedFraction(sign === "+" ? left + right : left - right, denominator));
         const evidence = fraction42Evidence("fraction-3-exploration", expressions.flatMap(([left, denominator, sign, right]) => [left, denominator, sign === "+" ? 1 : -1, right]), answers.join(", "));
-        const body = expressions.map(([left, denominator, sign, right], index) => `${index + 1}. ${mixedFractionMarkup(left, denominator)} ${sign} ${fractionMarkup(right, denominator)}`).join("<br>");
+        const body = expressions.map(([left, denominator, sign, right], index) => `<div class="expression-line"><span>${index + 1}.</span><span>${unreducedMixedFractionMarkup(left, denominator)} ${sign} ${symbolicFractionMarkup(right, denominator)}</span></div>`).join("");
         return result(`다음 계산을 하세요.<div class="expression-stack">${body}</div>${evidence}`, answers.join(", "), `같은 분모끼리 분자를 더하거나 뺀 뒤 기약분수 또는 대분수로 나타냅니다. 답은 차례로 ${answers.map(answer => answer.replace("/", " 분의 ")).join(", ")}입니다.`);
       }
       if (kind === 1) {
@@ -13141,7 +14020,7 @@
         const innerRight = right + blank - outer + innerLeft;
         const answer = mixedFraction(blank, denominator);
         const evidence = fraction42Evidence("fraction-6-example-1", [denominator, outer, innerLeft, innerRight, right], answer);
-        return result(`<div class="equation">${mixedFractionMarkup(outer, denominator)} - { ${mixedFractionMarkup(innerLeft, denominator)} - ( ${mixedFractionMarkup(innerRight, denominator)} - □ ) } = ${mixedFractionMarkup(right, denominator)}</div>괄호의 위치를 그대로 지켜 □ 안에 알맞은 분수를 구하세요.${evidence}`, answer, `바깥 괄호부터 거꾸로 계산하거나 식을 풀면 □=${mixedFractionMarkup(outer - innerLeft + innerRight - right, denominator)}입니다. 이 값을 원래 괄호 안에 넣으면 왼쪽과 오른쪽이 같습니다.`);
+        return result(`<div class="equation fraction-nested-equation">${mixedFractionMarkup(outer, denominator)} - { ${mixedFractionMarkup(innerLeft, denominator)} - ( ${mixedFractionMarkup(innerRight, denominator)} - □ ) } = ${mixedFractionMarkup(right, denominator)}</div>괄호의 위치를 그대로 지켜 □ 안에 알맞은 분수를 구하세요.${evidence}`, answer, `바깥 괄호부터 거꾸로 계산하거나 식을 풀면 □=${mixedFractionMarkup(outer - innerLeft + innerRight - right, denominator)}입니다. 이 값을 원래 괄호 안에 넣으면 왼쪽과 오른쪽이 같습니다.`);
       }
       if (kind === 2) {
         const denominator = pick(rng, [[7, 9], [7, 9, 11], [11, 13, 15]][tier]);
@@ -13405,10 +14284,20 @@
         return result(`다음 직사각형 도형에서 선을 따라 찾을 수 있는 크고 작은 예각삼각형과 둔각삼각형의 수의 차를 구하세요.${triangleSourceStripSvg(model)}${evidence}`, answer, `선이 만나는 점도 꼭짓점으로 보고 세 변이 실제 선 위에 있는 삼각형을 찾습니다. 예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개이므로 개수의 차는 ${answer}개입니다.`);
       }
       if (kind === 5) {
-        const requiredIndex = int(rng, 0, points.length - 1);
-        const totals = trianglePointCounts(points, requiredIndex);
-        const evidence = triangle42Evidence("required-point-obtuse", [points, requiredIndex, "obtuse"], totals.obtuse);
-        return result(`●로 표시한 점을 꼭짓점으로 포함하여 만들 수 있는 둔각삼각형은 모두 몇 개입니까?${trianglePointBoardSvg(points, requiredIndex)}${evidence}`, totals.obtuse, `●과 다른 두 점을 고른 뒤 가장 긴 변을 기준으로 각의 종류를 확인하면 둔각삼각형은 ${totals.obtuse}개입니다.`);
+        const columns = 5;
+        const rows = 5;
+        const pointA = [2, 4];
+        const pointB = [4, 3];
+        const candidates = fixedSideRightTriangleCandidates(columns, rows, pointA, pointB);
+        const answer = candidates.length;
+        const evidence = triangle42Evidence("fixed-side-right-dot-count", [columns, rows, pointA, pointB], answer);
+        return result(`다음 그림과 같이 간격을 일정하게 가로와 세로에 각각 5개씩 25개의 점을 찍었습니다. 이 점들을 이용하여 선분 ㄱㄴ을 한 변으로 하는 직각삼각형은 모두 몇 개나 그릴 수 있습니까?${fixedSideRightTriangleBoardSvg({ columns, rows, pointA, pointB })}${evidence}`, answer, `선분 ㄱㄴ과 나머지 점을 하나씩 이어 봅니다. 세 각 중 한 각이 직각이 되는 경우만 남기면 그림과 같이 모두 ${answer}개입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram" data-answer-source="4-2-triangle-2-mission-6" data-verified-pool-index="0">${fixedSideRightTriangleAnswerVisual(candidates, { columns, rows, pointA, pointB })}<div class="solution-answer-caption">직각 표시가 있는 다섯 경우</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-2-mission-6"
+        });
       }
       if (kind === 6) {
         const columns = int(rng, 0, 1) ? 4 : 3;
@@ -13427,12 +14316,39 @@
         const evidence = triangle42Evidence("obtuse-dot-shape-classes", [columns, rows], answer);
         return result(`가로 ${columns}개, 세로 ${rows}개로 같은 간격으로 놓인 점 중 세 점을 이어 둔각삼각형을 만듭니다. 돌리거나 뒤집어서 같아지는 모양은 하나로 셀 때, 서로 다른 둔각삼각형은 모두 몇 가지입니까?${trianglePlainDotBoardSvg(columns, rows, spacing)}${evidence}`, answer, `점 세 개를 이은 뒤, 세 변의 길이가 같은 모양끼리 하나로 묶습니다. 직각삼각형과 예각삼각형을 빼고 남는 서로 다른 둔각삼각형은 모두 ${answer}가지입니다.`);
       }
+      if (kind === 7) {
+        const models = equilateralThreePartModels();
+        const counts = models.map(model => model.triangles.filter(triangle => triangleKindFromPoints(...triangle.map(index => model.points[index])) === "obtuse").length);
+        const answer = counts.map(count => `${count}개`).join(", ");
+        const evidenceValues = models.map(model => [model.points, model.triangles, model.target]);
+        const evidence = triangle42Evidence("equilateral-three-part-obtuse-counts", evidenceValues, answer);
+        return result(`정삼각형 네 개에 선을 그어 각각 세 개의 삼각형으로 나누려고 합니다. 만들어지는 둔각삼각형이 0개, 1개, 2개, 3개가 되도록 각각 한 가지 방법을 그리세요.${equilateralThreePartVisual(models, false)}${evidence}`, answer, `각 그림의 세 삼각형을 각의 크기에 따라 나누면 둔각삼각형이 차례로 ${answer}가 됩니다.`, {
+          answerVisual: `<div class="verified-answer-diagram" data-answer-source="4-2-triangle-2-example-1" data-verified-pool-index="0">${equilateralThreePartVisual(models, true)}<div class="solution-answer-caption">조건을 만족하는 한 가지 그리기 방법</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-2-example-1"
+        });
+      }
       if (kind === 8) {
         const model = trianglePentagramModel(int(rng, -12, 12));
         const totals = triangleSegmentGraphAngleCounts(model);
         const answer = `${totals.acute}, ${totals.obtuse}`;
         const evidence = triangle42Evidence("pentagram-angle-count", [5], answer);
         return result(`다음 별 모양의 선을 따라 만들 수 있는 크고 작은 삼각형을 모두 찾습니다. 예각삼각형과 둔각삼각형의 개수를 차례로 쓰세요.${trianglePentagramSvg(model)}${evidence}`, answer, `선이 만나는 점도 꼭짓점으로 보고 작은 삼각형과 큰 삼각형을 분류하면 예각삼각형은 ${totals.acute}개, 둔각삼각형은 ${totals.obtuse}개입니다.`);
+      }
+      if (kind === 9) {
+        const model = triangleMarkedRightSourceModel();
+        const triangles = triangleSegmentGraphRightTriangles(model);
+        const answer = triangles.length;
+        const evidence = triangle42Evidence("marked-right-triangle-count", [model.points, model.segments], answer);
+        return result(`오른쪽 도형에서 찾을 수 있는 크고 작은 직각삼각형은 모두 몇 개인가요?${triangleMarkedRightSourceSvg(model)}${evidence}`, answer, `직각 표시가 있는 위쪽 점을 꼭짓점으로 하는 직각삼각형은 4개, 가운데 점을 꼭짓점으로 하는 직각삼각형은 5개, 밑변 위의 점을 꼭짓점으로 하는 직각삼각형은 3개입니다. 따라서 4+5+3=${answer}개입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram" data-answer-source="4-2-triangle-2-example-3" data-verified-pool-index="0">${triangleMarkedRightAnswerVisual(model, triangles)}<div class="solution-answer-caption">위 4개 + 가운데 5개 + 아래 3개 = ${answer}개</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-2-example-3"
+        });
       }
       if (kind === 10) {
         const templates = [
@@ -13461,6 +14377,18 @@
         const evidence = triangle42Evidence("isosceles-concave-perimeter", [outerPerimeter, innerPerimeter, base], answer);
         return result(`밑변의 길이가 ${base}cm인 두 이등변삼각형이 같은 밑변을 사용합니다. 큰 이등변삼각형의 둘레는 ${outerPerimeter}cm이고 안쪽 이등변삼각형의 둘레는 ${innerPerimeter}cm일 때, 색칠한 오목한 도형의 둘레를 구하세요.${isoscelesConcavePerimeterSvg(base)}${evidence}`, answer, `큰 이등변삼각형의 같은 두 변의 합은 ${outerPerimeter}-${base}=${outerPerimeter - base}cm이고, 안쪽 이등변삼각형의 같은 두 변의 합은 ${innerPerimeter}-${base}=${innerPerimeter - base}cm입니다. 색칠한 도형의 둘레는 ${outerPerimeter - base}+${innerPerimeter - base}=${answer}cm입니다.`);
       }
+      if (kind === 1) {
+        const givenAngle = 20;
+        const answer = 45 - givenAngle / 2;
+        const evidence = triangle42Evidence("isosceles-nested-equal-segments-angle", [givenAngle], answer);
+        return result(`그림에서 선분 ㅂㄱ, 선분 ㅂㄷ, 선분 ㅂㅁ의 길이는 서로 같고, 선분 ㅁㄱ과 선분 ㅁㄴ의 길이는 같습니다. 각 ㄱㄷㄴ이 ${givenAngle}°일 때, 각 ㄱㄴㄷ의 크기를 구하세요.${isoscelesEqualSegmentsAngleSvg({ givenAngle })}${evidence}`, answer, `삼각형 ㄱㅂㄷ에서 각 ㄱㄷㅂ과 각 ㅂㄱㄷ은 각각 ${givenAngle}°이므로 각 ㄱㅂㄷ은 ${180 - givenAngle * 2}°입니다. 점 ㅁ, ㅂ, ㄷ이 한 직선 위에 있으므로 각 ㄱㅂㅁ은 ${givenAngle * 2}°입니다. 삼각형 ㄱㅂㅁ의 두 밑각은 각각 ${90 - givenAngle}°이고, 각 ㄱㅁㄴ은 ${90 + givenAngle}°입니다. 삼각형 ㄱㅁㄴ에서 선분 ㅁㄱ과 선분 ㅁㄴ의 길이가 같으므로 각 ㄱㄴㅁ은 (180-${90 + givenAngle})÷2=${answer}°입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram" data-answer-source="4-2-triangle-3-mission-2" data-verified-pool-index="0">${isoscelesEqualSegmentsAngleSvg({ givenAngle, solved: true })}<div class="solution-answer-caption">같은 길이 표시와 한 직선 위의 각으로 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-3-mission-2"
+        });
+      }
       if (kind === 2) {
         const count = int(rng, 15 + level * 15, 25 + level * 20);
         const base = int(rng, 4 + level, 6 + level);
@@ -13469,6 +14397,36 @@
         const evidence = triangle42Evidence("isosceles-strip-perimeter", [count, equalSide, base], answer);
         return result(`같은 이등변삼각형 ${count}개를 겹치지 않게 이어 붙였습니다. 짧은 변은 ${base}cm이고 같은 두 변은 각각 ${equalSide}cm일 때, 만든 도형의 둘레를 구하세요.${isoscelesStripSvg({ count, equalSide, base })}${evidence}`, answer, `위쪽과 아래쪽의 짧은 변은 모두 ${count}개이므로 길이의 합은 ${count}×${base}=${count * base}cm입니다. 양 끝의 같은 변 두 개를 더하면 둘레는 ${count * base}+${equalSide}×2=${answer}cm입니다.`);
       }
+      if (kind === 3) {
+        const rotationAngle = 40;
+        const baseAngle = 45 + rotationAngle / 4;
+        const apexAngle = 180 - baseAngle * 2;
+        const answer = 180 - rotationAngle - baseAngle;
+        const evidence = triangle42Evidence("isosceles-rotated-copy-crossing-angle", [rotationAngle], answer);
+        return result(`그림에서 삼각형 ㄱㄴㄷ은 선분 ㄱㄴ과 선분 ㄱㄷ의 길이가 같은 이등변삼각형입니다. 삼각형 ㄱㄴㄷ을 꼭짓점 ㄴ을 중심으로 움직여 삼각형 ㄴㄹㅂ을 만들었고, 각 ㄱㄴㄹ은 ${rotationAngle}°입니다. 각 ㉠의 크기를 구하세요.${isoscelesRotatedCopyAngleSvg({ rotationAngle })}${evidence}`, answer, `삼각형 ㄱㄴㄹ에서 선분 ㄱㄴ과 선분 ㄴㄹ의 길이가 같으므로 두 밑각은 (180-${rotationAngle})÷2=${apexAngle}°입니다. 점 ㄱ, ㄹ, ㄷ이 한 직선 위에 있으므로 원래 이등변삼각형의 꼭지각은 ${apexAngle}°이고 두 밑각은 (180-${apexAngle})÷2=${baseAngle}°입니다. 점 ㄹ에서 두 삼각형 사이의 각은 ${rotationAngle}°이므로 교차점에서 마주 보는 ㉠은 180-${rotationAngle}-${baseAngle}=${answer}°입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram" data-answer-source="4-2-triangle-3-mission-4" data-verified-pool-index="0">${isoscelesRotatedCopyAngleSvg({ rotationAngle, solved: true })}<div class="solution-answer-caption">회전 전후 대응 선분과 마주 보는 각으로 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-3-mission-4"
+        });
+      }
+      if (kind === 4) {
+        const straightAngle = 180;
+        const givenAtO = 60;
+        const givenAtJ = 70;
+        const creaseAngle = (straightAngle - givenAtO) / 2;
+        const baseAngle = straightAngle - creaseAngle - givenAtJ;
+        const answer = straightAngle - baseAngle * 2;
+        const evidence = triangle42Evidence("isosceles-two-fold-angle", [straightAngle, givenAtO, givenAtJ], answer);
+        return result(`그림과 같이 이등변삼각형 모양의 종이를 점 ㄱ이 점 ㅁ에, 점 ㄷ이 점 ㅅ에 겹치도록 차례로 두 번 접었습니다. 각 ㄹㅁㅂ의 크기를 구하세요.${isoscelesTwoFoldAngleSvg()}${evidence}`, answer, `두 번째 접기에서 각 ㅅㅇㅈ과 각 ㅈㅇㄷ의 크기는 같습니다. 점 ㅁ, ㅇ, ㄷ이 한 직선 위에 있으므로 두 각은 각각 (180-60)÷2=${creaseAngle}°입니다. 삼각형 ㅅㅇㅈ에서 각 ㅈㅅㅇ은 180-${creaseAngle}-${givenAtJ}=${baseAngle}°이고, 접기 전 이등변삼각형의 오른쪽 밑각과 같습니다. 두 밑각이 각각 ${baseAngle}°이므로 처음 꼭지각과 포개진 각 ㄹㅁㅂ은 180-${baseAngle}×2=${answer}°입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram" data-answer-source="4-2-triangle-3-mission-5" data-verified-pool-index="0">${isoscelesTwoFoldAngleSvg({ solved: true })}<div class="solution-answer-caption">두 번 접은 대응각과 이등변삼각형의 두 밑각으로 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-3-mission-5"
+        });
+      }
       if (kind === 5) {
         const pointCount = pick(rng, [[7, 8], [8, 10, 11], [10, 11, 13]][level]);
         const signatures = circleIsoscelesShapeSignatures(pointCount);
@@ -13476,6 +14434,20 @@
         const evidence = triangle42Evidence("circle-isosceles-shapes", [pointCount], answer);
         const shapeList = signatures.map(signature => `(${signature.split("-").join(", ")})`).join(", ");
         return result(`원 위에 점 ${pointCount}개가 같은 간격으로 놓여 있습니다. 이 중 세 점을 이어 만들 수 있는 서로 다른 이등변삼각형은 모두 몇 가지입니까? 돌리거나 뒤집어서 같아지는 모양은 한 가지로 셉니다.${triangleCirclePointBoardSvg(pointCount, int(rng, 0, pointCount - 1))}${evidence}`, answer, `두 꼭짓점 사이의 짧은 쪽 칸 수를 세 변마다 적고 작은 수부터 놓습니다. 같은 모양을 하나로 묶으면 ${shapeList}만 남으므로 모두 ${answer}가지입니다.`);
+      }
+      if (kind === 7) {
+        const columns = 4;
+        const rows = 4;
+        const classes = isoscelesDotBoardShapeClasses(columns, rows);
+        const answer = classes.length;
+        const evidence = triangle42Evidence("isosceles-dot-board-shape-classes", [columns, rows], answer);
+        return result(`같은 간격으로 점 16개가 찍힌 다음 점판에서 세 점을 이어 만들 수 있는 서로 다른 이등변삼각형은 모두 몇 가지입니까? 돌리거나 뒤집어서 모양과 크기가 같아지는 것은 한 가지로 셉니다.${isoscelesDotBoardSvg({ columns, rows })}${evidence}`, answer, `세 점을 고른 모든 경우에서 일직선인 경우를 빼고, 세 변 중 두 변의 길이가 같은 삼각형만 남깁니다. 세 변 길이가 같은 것끼리 묶으면 ${answer}가지입니다.`, {
+          answerVisual: isoscelesDotBoardAnswerVisual(classes),
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-3-example-1"
+        });
       }
       if (kind === 8) {
         const count = 8 + level * 2;
@@ -13486,6 +14458,30 @@
         const answer = shortSide;
         const evidence = triangle42Evidence("isosceles-strip-short-side", [count, sideSum, perimeter], answer);
         return result(`세 변의 길이의 합이 ${sideSum}cm인 같은 이등변삼각형 ${count}개를 겹치지 않게 이어 붙였습니다. 만든 도형의 둘레가 ${perimeter}cm이고 세 변의 길이가 모두 자연수일 때, 이등변삼각형의 짧은 변의 길이를 구하세요.${isoscelesStripSvg({ count, equalSide, base: shortSide, unknown: true })}${evidence}`, answer, `짧은 변을 □cm라 하면 양 끝에 남는 같은 변 두 개의 길이 합은 ${sideSum}-□cm입니다. 따라서 ${count}×□+(${sideSum}-□)=${perimeter}이므로 ${count - 1}×□=${perimeter - sideSum}, □=${answer}cm입니다.`);
+      }
+      if (kind === 9) {
+        const givenAngle = 40;
+        const answer = 45 - givenAngle / 2;
+        const evidence = triangle42Evidence("isosceles-linked-chain-angle", [givenAngle], answer);
+        return result(`그림에서 삼각형 ㄱㄴㄷ, ㄷㄴㄹ, ㄷㄹㅁ, ㅁㄹㅂ은 모두 이등변삼각형입니다. 각 ㄷㄱㄴ이 ${givenAngle}°일 때, 각 ㅁㅂㄹ의 크기를 구하세요.${isoscelesLinkedChainAngleSvg({ givenAngle })}${evidence}`, answer, `각 ㅁㅂㄹ을 □라 하겠습니다. 삼각형 ㅁㄹㅂ에서 각 ㄹㅁㅂ은 180-□×2이고, 한 직선 위의 각에서 삼각형 ㄷㄹㅁ의 두 밑각은 □×2가 됩니다. 같은 방법으로 삼각형 ㄷㄴㄹ의 두 밑각은 □×3입니다. 삼각형 ㄱㄴㄷ의 꼭지각은 180-${givenAngle}×2=100°이므로 점 ㄷ의 한 직선 위 각을 더하면 100+(180-□×6)+□×2=180입니다. 따라서 □×4=100, □=${answer}°입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram" data-answer-source="4-2-triangle-3-example-3" data-verified-pool-index="0">${isoscelesLinkedChainAngleSvg({ givenAngle, solved: true })}<div class="solution-answer-caption">다섯 같은 선분과 두 직선 위의 각으로 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-3-example-3"
+        });
+      }
+      if (kind === 10) {
+        const givenAngle = 40;
+        const answer = 90 + givenAngle / 2;
+        const evidence = triangle42Evidence("isosceles-fold-equal-angle", [givenAngle], answer);
+        return result(`이등변삼각형 ㄱㄴㄷ을 그림과 같이 선분 ㄱㄹ과 선분 ㄹㅂ의 길이가 같아지도록 접었습니다. 각 ㄱㄹㅂ의 크기를 구하세요.${isoscelesFoldEqualAngleSvg({ givenAngle })}${evidence}`, answer, `각 ㄱㄹㅂ을 □라 하겠습니다. 접으면 점 ㄴ이 점 ㅂ으로 옮겨지므로 각 ㄴㄹㄱ도 □이고, 선분 ㄹㄴ과 선분 ㄹㅂ의 길이가 같습니다. 선분 ㄱㄹ과 선분 ㄹㅂ의 길이도 같으므로 삼각형 ㄱㄴㄹ의 두 밑각은 (180-□)÷2입니다. 원래 이등변삼각형의 꼭지각은 □이고, 접힌 두 각의 크기가 같으므로 □=(180-□)+${givenAngle}입니다. 따라서 □×2=${180 + givenAngle}, □=${answer}°입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram" data-answer-source="4-2-triangle-3-example-4" data-verified-pool-index="0">${isoscelesFoldEqualAngleSvg({ givenAngle, solved: true })}<div class="solution-answer-caption">접기 대응과 이등변삼각형의 두 밑각으로 확인한 답</div></div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: 0,
+          verifiedVariantCount: 1,
+          sourceItemId: "4-2-triangle-3-example-4"
+        });
       }
       throw new Error("원본 그림과 독립 검산이 끝나지 않은 이등변삼각형 유형입니다.");
     },
@@ -13574,7 +14570,7 @@
         const labels = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"].slice(0, values.length);
         const answer = labels.map((label, index) => ({ label, distance: Math.abs(values[index] - target) })).sort((a, b) => a.distance - b.distance).map(item => item.label).join(", ");
         const evidence = decimal42Evidence("nearest-order", [target, ...values], answer);
-        return result(`다음 소수들을 ${fixedDecimal(target, 2)}에 가까운 수부터 차례로 기호를 쓰세요.<div class="sequence">${values.map((value, index) => `${labels[index]} ${fixedDecimal(value, 3)}`).join("　")}</div>${evidence}`, answer, `각 수와 ${fixedDecimal(target, 2)}의 차를 구해 작은 차부터 정리하면 ${answer}입니다.`);
+        return result(`다음 소수들을 ${fixedDecimal(target, 3)}에 가까운 수부터 차례로 기호를 쓰세요.<div class="sequence">${values.map((value, index) => `${labels[index]} ${fixedDecimal(value, 3)}`).join("　")}</div>${evidence}`, answer, `각 수와 ${fixedDecimal(target, 3)}의 차를 구해 작은 차부터 정리하면 ${answer}입니다.`);
       }
       if (kind === 1) {
         const start = int(rng, 0, 12);
@@ -13632,10 +14628,106 @@
         const evidence = decimal42Evidence("tenfold-weight-reverse", [objectWeightGrams, bonusGrams], answer);
         return result(`아버지 몸무게의 ${fractionMarkup(1, 10)}보다 ${bonusGrams}g 무거운 물건의 무게는 ${plainDecimal(objectWeightGrams, 3)}kg입니다. 아버지 몸무게의 10배는 몇 kg입니까?${evidence}`, answer, `물건의 무게는 ${objectWeightGrams}g입니다. 아버지 몸무게의 ${fractionMarkup(1, 10)}은 ${objectWeightGrams}-${bonusGrams}=${objectWeightGrams - bonusGrams}g입니다. 아버지의 몸무게는 ${(objectWeightGrams - bonusGrams) * 10}g=${plainDecimal(fatherWeightGrams, 3)}kg이고, 그 10배는 ${answer}kg입니다.`);
       }
+      if (kind === 7) {
+        const sourceItemId = "4-2-decimal-1-example-1";
+        const pools = [
+          { kg: 5, g: 640, km: 4, m: 78, hours: 4, minutes: 45 },
+          { kg: 3, g: 250, km: 7, m: 45, hours: 2, minutes: 30 },
+          { kg: 8, g: 75, km: 6, m: 420, hours: 3, minutes: 12 }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        const kgAnswer = plainDecimal(data.kg * 1000 + data.g, 3);
+        const kmAnswer = plainDecimal(data.km * 1000 + data.m, 3);
+        const hourHundredths = data.hours * 100 + data.minutes * 100 / 60;
+        if (!Number.isInteger(hourHundredths)) throw new Error("시간 단위 환산이 유한소수로 끝나지 않습니다.");
+        const hourAnswer = plainDecimal(hourHundredths, 2);
+        const values = [data.kg, data.g, data.km, data.m, data.hours, data.minutes];
+        const answer = `${kgAnswer}kg, ${kmAnswer}km, ${hourAnswer}시간`;
+        const row = (number, compound, value, unit, solved) => `<div class="source42-unit-conversion-row"><span>(${number})</span><b>${compound}</b><i>=</i><em class="${solved ? "is-answer" : "is-blank"}">${solved ? value : "□"}</em><small>${unit}</small></div>`;
+        const board = solved => `<div class="source42-unit-conversion-board${solved ? " is-solved" : ""}" data-source-item="${sourceItemId}" data-verified-pool-index="${poolIndex}">${row(1, `${data.kg}kg ${data.g}g`, kgAnswer, "kg", solved)}${row(2, `${data.km}km ${data.m}m`, kmAnswer, "km", solved)}${row(3, `${data.hours}시간 ${data.minutes}분`, hourAnswer, "시간", solved)}</div>`;
+        const evidence = decimal42Evidence("compound-unit-conversion", values, answer);
+        return result(`다음 □ 안에 알맞은 수를 넣으세요.${board(false)}${evidence}`, answer, `1kg=1000g, 1km=1000m, 1시간=60분입니다. 따라서 ${data.g}g=${plainDecimal(data.g, 3)}kg, ${data.m}m=${plainDecimal(data.m, 3)}km, ${data.minutes}분=${plainDecimal(data.minutes * 100 / 60, 2)}시간입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram source42-unit-conversion-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${board(true)}</div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: poolIndex,
+          verifiedVariantCount: pools.length,
+          sourceItemId
+        });
+      }
+      if (kind === 8) {
+        const sourceItemId = "4-2-decimal-1-example-2";
+        const pools = [
+          { lower: 32500, upper: 32700, intervals: 100 },
+          { lower: 18400, upper: 18700, intervals: 100 },
+          { lower: 7250, upper: 7450, intervals: 100 }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        const difference = data.upper - data.lower;
+        if (difference % data.intervals !== 0) throw new Error("수직선 한 눈금의 크기가 정확히 정해지지 않습니다.");
+        const step = difference / data.intervals;
+        const smallest = data.lower + step;
+        const largest = data.upper - step;
+        const answer = `${plainDecimal(smallest, 3)}, ${plainDecimal(largest, 3)}`;
+        const evidence = decimal42Evidence("interior-tick-extremes", [data.lower, data.upper, data.intervals], answer);
+        return result(`두 수 ${plainDecimal(data.lower, 3)}와 ${plainDecimal(data.upper, 3)}를 수직선에 나타내고 두 수 사이를 ${data.intervals}등분했습니다. 두 수 사이의 눈금이 나타내는 소수 중 가장 작은 수와 가장 큰 수를 차례로 구하세요.${evidence}`, answer, `한 눈금은 (${plainDecimal(data.upper, 3)}-${plainDecimal(data.lower, 3)})÷${data.intervals}=${plainDecimal(step, 3)}입니다. 가장 작은 수는 ${plainDecimal(data.lower, 3)}+${plainDecimal(step, 3)}=${plainDecimal(smallest, 3)}, 가장 큰 수는 ${plainDecimal(data.upper, 3)}-${plainDecimal(step, 3)}=${plainDecimal(largest, 3)}입니다.`, {
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: poolIndex,
+          verifiedVariantCount: pools.length,
+          sourceItemId
+        });
+      }
+      if (kind === 9) {
+        const sourceItemId = "4-2-decimal-1-example-3";
+        const pools = [
+          { side: 120, wholeTurns: 2, quarterTurns: 10, minorStep: 30 },
+          { side: 160, wholeTurns: 1, quarterTurns: 6, minorStep: 40 },
+          { side: 90, wholeTurns: 3, quarterTurns: 14, minorStep: 30 }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        const answerScaled = data.side * data.quarterTurns;
+        const answer = plainDecimal(answerScaled, 3);
+        const turnText = `${data.wholeTurns}바퀴 반`;
+        const evidence = decimal42Evidence("rolling-square-point", [data.side, data.quarterTurns], answer);
+        return result(`수직선 위에 한 변이 ${plainDecimal(data.side, 3)}인 정사각형을 올려놓고 수직선을 따라 시계 방향으로 굴렸습니다. 정사각형을 ${turnText} 굴렸을 때 점 ㉠이 위치한 곳의 수를 구하세요.${rollingSquareDecimalLineSvg({ sideScaled: data.side, quarterTurns: data.quarterTurns, minorStepScaled: data.minorStep })}${evidence}`, answer, `정사각형 한 바퀴는 한 변 길이의 4배만큼 나아갑니다. ${turnText}는 한 변 길이 ${data.quarterTurns}개만큼이므로 ${plainDecimal(data.side, 3)}×${data.quarterTurns}=${answer}입니다.`, {
+          answerVisual: `<div class="verified-answer-diagram source42-rolling-square-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${rollingSquareDecimalLineSvg({ sideScaled: data.side, quarterTurns: data.quarterTurns, minorStepScaled: data.minorStep, solved: true })}</div>`,
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: poolIndex,
+          verifiedVariantCount: pools.length,
+          sourceItemId
+        });
+      }
+      if (kind === 10) {
+        const sourceItemId = "4-2-decimal-1-example-4";
+        const pools = [
+          { initial: 2420, remaining: 1980, elapsed: 20 },
+          { initial: 1800, remaining: 1500, elapsed: 15 },
+          { initial: 3000, remaining: 2520, elapsed: 20 }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        const burned = data.initial - data.remaining;
+        if (burned <= 0 || burned % data.elapsed !== 0) throw new Error("1분에 타는 양초 길이가 정확히 정해지지 않습니다.");
+        const burnPerMinute = burned / data.elapsed;
+        if (data.initial % burnPerMinute !== 0) throw new Error("양초가 모두 타는 시간이 자연수 분으로 끝나지 않습니다.");
+        const totalMinutes = data.initial / burnPerMinute;
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        const answer = `${hours}시간${minutes ? ` ${minutes}분` : ""}`;
+        const evidence = decimal42Evidence("candle-total-time", [data.initial, data.remaining, data.elapsed], answer);
+        return result(`길이가 ${plainDecimal(data.initial, 2)}cm인 양초에 불을 붙이고 ${data.elapsed}분 후 양초의 길이를 재었더니 ${plainDecimal(data.remaining, 2)}cm가 되었습니다. 이 양초 하나가 모두 타는 데 걸리는 시간을 구하세요.${evidence}`, answer, `${data.elapsed}분 동안 탄 길이는 ${plainDecimal(data.initial, 2)}-${plainDecimal(data.remaining, 2)}=${plainDecimal(burned, 2)}cm이므로 1분에 ${plainDecimal(burnPerMinute, 2)}cm씩 탑니다. 따라서 모두 타는 데 ${plainDecimal(data.initial, 2)}÷${plainDecimal(burnPerMinute, 2)}=${totalMinutes}분, 즉 ${answer}이 걸립니다.`, {
+          generationMode: "fixed-verified-pool",
+          verifiedPoolIndex: poolIndex,
+          verifiedVariantCount: pools.length,
+          sourceItemId
+        });
+      }
       throw new Error("원본 조건과 독립 검산이 끝나지 않은 소수의 이해 유형입니다.");
     },
     decimalAddSubAdvanced({ rng, level, variant = 0 }) {
-      const kind = variant % 6;
+      const kind = variant % 11;
       if (kind === 0) {
         const overlap = int(rng, 1800, 3600 + level * 700);
         const leftOnly = int(rng, 2300, 4600);
@@ -13692,17 +14784,114 @@
         const evidence = decimal42Evidence("common-hundredths", [lowerA, upperA, lowerB, upperB], answer);
         return result(`소수 두 자리 수 □가 다음 두 식을 모두 만족합니다. □에 들어갈 수 있는 수는 모두 몇 개입니까?<div class="equation">${fixedDecimal(lowerA, 2)} &lt; □ &lt; ${fixedDecimal(upperA, 2)}<br>${fixedDecimal(lowerB, 2)} &lt; □ &lt; ${fixedDecimal(upperB, 2)}</div>${evidence}`, answer, `두 범위가 겹치는 부분에서 0.01씩 커지는 수를 세면 ${answer}개입니다.`);
       }
-      const topLeft = int(rng, 90, 180);
-      const topRight = int(rng, 80, 170);
-      const leftRight = int(rng, 70, 150);
-      const center = int(rng, 60, 130);
-      const topOnly = int(rng, 120, 240);
-      const total = topOnly + topLeft + topRight + center;
-      const leftOnly = total - topLeft - leftRight - center;
-      const rightOnly = total - topRight - leftRight - center;
-      const answer = fixedDecimal(topOnly, 2);
-      const evidence = decimal42Evidence("venn-circle-sum", [total, topLeft, topRight, center], answer);
-      return result(`세 원 각각에 들어 있는 네 소수의 합은 모두 ${fixedDecimal(total, 2)}입니다. 위쪽 원의 □에 알맞은 소수를 구하세요.${decimalVennSvg({ leftOnly, rightOnly, topLeft, topRight, leftRight, center })}${evidence}`, answer, `위쪽 원에서 알려진 세 수의 합을 전체 합에서 빼면 □=${fixedDecimal(total, 2)}-${fixedDecimal(topLeft, 2)}-${fixedDecimal(topRight, 2)}-${fixedDecimal(center, 2)}=${answer}입니다.`);
+      if (kind === 5) {
+        const topLeft = int(rng, 90, 180);
+        const topRight = int(rng, 80, 170);
+        const leftRight = int(rng, 70, 150);
+        const center = int(rng, 60, 130);
+        const topOnly = int(rng, 120, 240);
+        const total = topOnly + topLeft + topRight + center;
+        const leftOnly = total - topLeft - leftRight - center;
+        const rightOnly = total - topRight - leftRight - center;
+        const answer = fixedDecimal(topOnly, 2);
+        const evidence = decimal42Evidence("venn-circle-sum", [total, topLeft, topRight, center], answer);
+        return result(`세 원 각각에 들어 있는 네 소수의 합은 모두 ${fixedDecimal(total, 2)}입니다. 위쪽 원의 □에 알맞은 소수를 구하세요.${decimalVennSvg({ leftOnly, rightOnly, topLeft, topRight, leftRight, center })}${evidence}`, answer, `위쪽 원에서 알려진 세 수의 합을 전체 합에서 빼면 □=${fixedDecimal(total, 2)}-${fixedDecimal(topLeft, 2)}-${fixedDecimal(topRight, 2)}-${fixedDecimal(center, 2)}=${answer}입니다.`);
+      }
+      if (kind === 6) {
+        const sourceItemId = "4-2-decimal-2-exploration";
+        const pools = [
+          { firstDistance: 100, firstTime: 1608, secondDistance: 50, secondTime: 848, targetDistance: 200 },
+          { firstDistance: 80, firstTime: 1264, secondDistance: 60, secondTime: 980, targetDistance: 240 },
+          { firstDistance: 120, firstTime: 1854, secondDistance: 90, secondTime: 1438, targetDistance: 360 }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        if (data.targetDistance % data.firstDistance !== 0 || data.targetDistance % data.secondDistance !== 0) throw new Error("목표 거리의 달리기 시간을 정확히 환산할 수 없습니다.");
+        const firstTargetTime = data.firstTime * data.targetDistance / data.firstDistance;
+        const secondTargetTime = data.secondTime * data.targetDistance / data.secondDistance;
+        const difference = Math.abs(firstTargetTime - secondTargetTime);
+        const answer = plainDecimal(difference, 2);
+        const evidence = decimal42Evidence("race-time-difference", [data.firstDistance, data.firstTime, data.secondDistance, data.secondTime, data.targetDistance], answer);
+        return result(`경희는 ${data.firstDistance}m를 ${plainDecimal(data.firstTime, 2)}초에 달리고 영진이는 ${data.secondDistance}m를 ${plainDecimal(data.secondTime, 2)}초에 달립니다. 두 사람이 각각 이와 같은 빠르기로 ${data.targetDistance}m를 달리면 경희는 영진이보다 몇 초 더 빨리 도착합니까?${evidence}`, answer, `경희의 기록은 ${plainDecimal(data.firstTime, 2)}×${data.targetDistance / data.firstDistance}=${plainDecimal(firstTargetTime, 2)}초이고, 영진이의 기록은 ${plainDecimal(data.secondTime, 2)}×${data.targetDistance / data.secondDistance}=${plainDecimal(secondTargetTime, 2)}초입니다. 따라서 차는 ${answer}초입니다.`, {
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, sourceItemId
+        });
+      }
+      if (kind === 7) {
+        const sourceItemId = "4-2-decimal-2-example-1";
+        const pools = [
+          { first: [700, -560, 173], second: [180, 475, -279] },
+          { first: [800, -645, 168], second: [240, 435, -302] },
+          { first: [620, -485, 204], second: [175, 486, -271] }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        const firstValue = data.first.reduce((sum, value) => sum + value, 0);
+        const secondValue = data.second.reduce((sum, value) => sum + value, 0);
+        const lower = Math.min(firstValue, secondValue);
+        const upper = Math.max(firstValue, secondValue);
+        const candidates = [];
+        for (let value = 0; value <= 10000; value += 10) if (lower < value && value < upper) candidates.push(value);
+        const answer = candidates.length;
+        const expression = values => values.map((value, index) => `${index ? value < 0 ? " - " : " + " : value < 0 ? "-" : ""}${plainDecimal(Math.abs(value), 2)}`).join("");
+        const evidence = decimal42Evidence("tenths-between-results", [data.first, data.second], answer);
+        return result(`㉠보다 크고 ㉡보다 작은 소수 한 자리 수는 모두 몇 개인가요?<div class="source42-decimal-expression-board"><span>㉠ = ${expression(data.first)}</span><span>㉡ = ${expression(data.second)}</span></div>${evidence}`, answer, `㉠=${plainDecimal(firstValue, 2)}, ㉡=${plainDecimal(secondValue, 2)}입니다. 그 사이의 소수 한 자리 수는 ${candidates.map(value => plainDecimal(value, 2)).join(", ")}이므로 모두 ${answer}개입니다.`, {
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, sourceItemId
+        });
+      }
+      if (kind === 8) {
+        const sourceItemId = "4-2-decimal-2-example-2";
+        const pools = [
+          { leftA: 943, leftB: 519, rightBase: 1766 },
+          { leftA: 875, leftB: 468, rightBase: 1610 },
+          { leftA: 796, leftB: 638, rightBase: 1802 }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        const left = data.leftA + data.leftB;
+        let minimum = null;
+        for (let value = 1; value < 10000; value += 1) if (left > data.rightBase - value) { minimum = value; break; }
+        if (minimum === null) throw new Error("가려진 수의 최솟값을 찾을 수 없습니다.");
+        const answer = fixedDecimal(minimum, 2);
+        const evidence = decimal42Evidence("covered-inequality-min", [data.leftA, data.leftB, data.rightBase], answer);
+        return result(`종이에 물감이 묻어 계산식의 일부가 보이지 않습니다. 보이지 않는 부분에 들어갈 수 있는 가장 작은 소수 두 자리 수를 구하세요.<div class="source42-covered-equation"><span>${plainDecimal(data.leftA, 2)} + ${plainDecimal(data.leftB, 2)}</span><b>&gt;</b><span>${plainDecimal(data.rightBase, 2)} - <i aria-label="가려진 수"></i></span></div>${evidence}`, answer, `왼쪽은 ${plainDecimal(data.leftA, 2)}+${plainDecimal(data.leftB, 2)}=${plainDecimal(left, 2)}입니다. ${plainDecimal(left, 2)}&gt;${plainDecimal(data.rightBase, 2)}-□이므로 □는 ${plainDecimal(data.rightBase - left, 2)}보다 커야 합니다. 가장 작은 소수 두 자리 수는 ${answer}입니다.`, {
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, sourceItemId
+        });
+      }
+      if (kind === 9) {
+        const sourceItemId = "4-2-decimal-2-example-3";
+        const pools = [
+          { taejunAhead: 523, minhaAheadOfHyeju: 312, hyejuBehind: 270 },
+          { taejunAhead: 610, minhaAheadOfHyeju: 380, hyejuBehind: 240 },
+          { taejunAhead: 475, minhaAheadOfHyeju: 365, hyejuBehind: 185 }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        const minhaPosition = data.minhaAheadOfHyeju - data.hyejuBehind;
+        const distance = Math.abs(data.taejunAhead - minhaPosition);
+        const answer = plainDecimal(distance, 3);
+        const evidence = decimal42Evidence("four-people-distance", [data.taejunAhead, data.minhaAheadOfHyeju, data.hyejuBehind], answer);
+        return result(`민성, 태준, 민아, 혜주 네 명이 직선으로 된 길 위에서 같은 방향을 보고 서 있습니다. 다음 조건에서 태준이와 민아 사이의 거리는 몇 km인가요?<ul class="source42-decimal-condition-board"><li>태준이는 민성이보다 ${plainDecimal(data.taejunAhead, 3)}km 앞에 있습니다.</li><li>민아는 혜주보다 ${data.minhaAheadOfHyeju}m 앞에 있습니다.</li><li>혜주는 민성이보다 ${plainDecimal(data.hyejuBehind, 3)}km 뒤에 있습니다.</li></ul>${evidence}`, answer, `민성의 위치를 0km라 하면 혜주는 -${plainDecimal(data.hyejuBehind, 3)}km, 민아는 -${plainDecimal(data.hyejuBehind, 3)}+${plainDecimal(data.minhaAheadOfHyeju, 3)}=${plainDecimal(minhaPosition, 3)}km입니다. 따라서 태준이와 민아 사이의 거리는 ${plainDecimal(data.taejunAhead, 3)}-${plainDecimal(minhaPosition, 3)}=${answer}km입니다.`, {
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, sourceItemId
+        });
+      }
+      if (kind === 10) {
+        const sourceItemId = "4-2-decimal-2-example-4";
+        const pools = [
+          { unit: 111, count: 9 },
+          { unit: 124, count: 8 },
+          { unit: 77, count: 12 }
+        ];
+        const poolIndex = int(rng, 0, pools.length - 1);
+        const data = pools[poolIndex];
+        const total = data.unit * data.count * (data.count + 1) / 2;
+        const answer = fixedDecimal(total, 2);
+        const shown = Array.from({ length: Math.min(4, data.count) }, (_, index) => fixedDecimal(data.unit * (index + 1), 2));
+        const evidence = decimal42Evidence("arithmetic-decimal-sum", [data.unit, data.count], answer);
+        return result(`다음과 같은 규칙에 따라 소수를 ${data.count}개 늘어놓았습니다. 늘어놓은 소수의 합을 구하세요.<div class="source42-decimal-sequence-board">${shown.map(value => `<span>${value}</span>`).join("")}<b>…</b></div>${evidence}`, answer, `각 수는 ${fixedDecimal(data.unit, 2)}에 1부터 ${data.count}까지를 차례로 곱한 수입니다. 따라서 합은 ${fixedDecimal(data.unit, 2)}×(1+2+⋯+${data.count})=${answer}입니다.`, {
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: pools.length, sourceItemId
+        });
+      }
+      throw new Error("원본 조건과 독립 검산이 끝나지 않은 소수의 덧셈과 뺄셈 유형입니다.");
     },
     decimalApplication({ rng, level, variant = 0 }) {
       const kind = variant % 6;
@@ -28756,7 +29945,11 @@
     if (!key) return null;
     const level = Math.max(0, Math.min(2, 1 + difficultyOffset));
     const resolvedVariant = Number.isInteger(type?.variant) ? type.variant : variant;
-    return { ...generators[key]({ rng: mulberry32(seed), level, variant: resolvedVariant }), generator: key };
+    const generated = generators[key]({ rng: mulberry32(seed), level, variant: resolvedVariant });
+    if (key === "source41PlaneTransformThree") {
+      return { ...generated, generator: key, generationMode: "fixed-verified-pool", verifiedPoolIndex: 0, verifiedVariantCount: 1 };
+    }
+    return { ...generated, generator: key };
   }
 
   window.HSE_GENERATORS = { generatorKey, generate, names: Object.keys(generators) };

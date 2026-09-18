@@ -19,7 +19,7 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "evidence": "PDF 46쪽에는 예제 6-1, 6-2, 6-3만 있고 다음 PDF 47쪽은 Mission 1~6이다."
     }
   ],
-  "verifiedMappings": 309,
+  "verifiedMappings": 305,
   "items": [
     {
       "unit": 1,
@@ -3416,11 +3416,11 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "typeLabel": "수 카드로 몫과 나머지가 정해진 나눗셈 완성하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41DivisionFive",
+      "variant": 2,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
+      "reviewLocked": false
     },
     {
       "unit": 3,
@@ -4220,7 +4220,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -4239,7 +4241,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 1,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -4278,7 +4282,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 3,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -4297,7 +4303,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 4,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -4316,7 +4324,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 5,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -4335,7 +4345,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 6,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -4354,7 +4366,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 7,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -4393,7 +4407,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 9,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -4412,7 +4428,9 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "variant": 10,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": false,
+      "generationMode": "fixed-verified-pool",
+      "verifiedVariantCount": 1
     },
     {
       "unit": 4,
@@ -5900,16 +5918,16 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemId": "4-1-u6-e5-exploration",
       "sourceSection": "exploration",
       "sourceItemLabel": "개념탐구 5 본문",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "일렬 상자 모양을 늘일 때 필요한 성냥개비 수",
+      "typeLabel": "계단 모양 상자를 8열까지 만들 때 필요한 성냥개비 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
-      "generatorKey": "advancedShapePattern",
-      "variant": 2,
+      "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": true
     },
     {
       "unit": 6,
@@ -5919,16 +5937,16 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemId": "4-1-u6-e5-example-5-1",
       "sourceSection": "example",
       "sourceItemLabel": "예제 5-1",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "50원과 100원 동전을 놓은 규칙에서 전체 금액 구하기",
+      "typeLabel": "정사각형을 이어 그릴 때 10번째 정사각형 한 변의 길이",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
-      "generatorKey": "advancedShapePattern",
-      "variant": 7,
+      "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": true
     },
     {
       "unit": 6,
@@ -5938,16 +5956,17 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemId": "4-1-u6-e5-example-5-2",
       "sourceSection": "example",
       "sourceItemLabel": "예제 5-2",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "마름모 테두리로 늘어나는 바둑돌 수",
+      "typeLabel": "오각형 모양으로 늘어나는 바둑돌의 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "source41PentagonalPebbles",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
+      "reviewLocked": false
     },
     {
       "unit": 6,
@@ -5957,13 +5976,14 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemId": "4-1-u6-e5-example-5-3",
       "sourceSection": "example",
       "sourceItemLabel": "예제 5-3",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "대각선이 있는 정사각형의 점 수",
+      "typeLabel": "육각형 모양으로 늘어나는 바둑돌의 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
-      "generatorKey": "advancedShapePattern",
-      "variant": 3,
+      "generatorKey": "source41HexagonalPebbles",
+      "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
       "reviewLocked": false
@@ -5976,50 +5996,13 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemId": "4-1-u6-e5-example-5-4",
       "sourceSection": "example",
       "sourceItemLabel": "예제 5-4",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "점 배열로 만든 작은 정사각형 수와 점 수",
+      "typeLabel": "검은색과 흰색 타일이 번갈아 늘어나는 규칙",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
-      "generatorKey": "",
-      "difficultyBand": 0,
-      "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
-    },
-    {
-      "unit": 6,
-      "unitName": "규칙 찾기",
-      "exploration": 5,
-      "groupTitle": "나열한 도형에서의 규칙",
-      "sourceItemId": "4-1-u6-e5-mission-1",
-      "sourceSection": "mission",
-      "sourceItemLabel": "Mission 1",
-      "sourcePdfPage": 71,
-      "sourcePrintedPage": 71,
-      "typeLabel": "점으로 만든 계단 모양 정사각형의 점 수",
-      "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "advancedShapePattern",
-      "variant": 4,
-      "difficultyBand": 0,
-      "sourceTier": "advanced",
-      "reviewLocked": false
-    },
-    {
-      "unit": 6,
-      "unitName": "규칙 찾기",
-      "exploration": 5,
-      "groupTitle": "나열한 도형에서의 규칙",
-      "sourceItemId": "4-1-u6-e5-mission-2",
-      "sourceSection": "mission",
-      "sourceItemLabel": "Mission 2",
-      "sourcePdfPage": 71,
-      "sourcePrintedPage": 71,
-      "typeLabel": "지그재그 육각형 모양의 성냥개비 수로 도형 수 찾기",
-      "sourceVerified": true,
-      "typeLanguageVerified": true,
-      "generatorKey": "source41ShapeFive",
+      "generatorKey": "source41AlternatingTiles",
       "variant": 0,
       "difficultyBand": 0,
       "sourceTier": "advanced",
@@ -6030,19 +6013,57 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "unitName": "규칙 찾기",
       "exploration": 5,
       "groupTitle": "나열한 도형에서의 규칙",
-      "sourceItemId": "4-1-u6-e5-mission-3",
+      "sourceItemId": "4-1-u6-e5-mission-1",
       "sourceSection": "mission",
-      "sourceItemLabel": "Mission 3",
-      "sourcePdfPage": 71,
+      "sourceItemLabel": "Mission 1",
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "ㄱ자 점 배열로 만든 작은 정사각형 수와 점 수",
+      "typeLabel": "오각형 모양으로 늘어나는 점의 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
       "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문 구조와 정답을 더 확인해야 합니다."
+      "reviewLocked": true
+    },
+    {
+      "unit": 6,
+      "unitName": "규칙 찾기",
+      "exploration": 5,
+      "groupTitle": "나열한 도형에서의 규칙",
+      "sourceItemId": "4-1-u6-e5-mission-2",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 2",
+      "sourcePdfPage": 75,
+      "sourcePrintedPage": 71,
+      "typeLabel": "검은색과 흰색 바둑돌이 번갈아 늘어나는 규칙",
+      "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
+      "typeLanguageVerified": true,
+      "generatorKey": "",
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": true
+    },
+    {
+      "unit": 6,
+      "unitName": "규칙 찾기",
+      "exploration": 5,
+      "groupTitle": "나열한 도형에서의 규칙",
+      "sourceItemId": "4-1-u6-e5-mission-3",
+      "sourceSection": "mission",
+      "sourceItemLabel": "Mission 3",
+      "sourcePdfPage": 75,
+      "sourcePrintedPage": 71,
+      "typeLabel": "계단 모양 상자를 10층까지 만들 때 필요한 성냥개비 수",
+      "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
+      "typeLanguageVerified": true,
+      "generatorKey": "",
+      "difficultyBand": 0,
+      "sourceTier": "advanced",
+      "reviewLocked": true
     },
     {
       "unit": 6,
@@ -6052,16 +6073,16 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemId": "4-1-u6-e5-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "줄마다 늘어나는 마름모 바둑돌 수",
+      "typeLabel": "성냥개비 개구리 모양의 수 규칙",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
-      "generatorKey": "advancedShapePattern",
-      "variant": 5,
+      "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": true
     },
     {
       "unit": 6,
@@ -6071,16 +6092,16 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemId": "4-1-u6-e5-mission-5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "같은 상자 모양을 여러 개 만들 때 필요한 성냥개비 수",
+      "typeLabel": "반복 무늬에서 전체 바둑돌 수로 검은 바둑돌 수 구하기",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
-      "generatorKey": "advancedShapePattern",
-      "variant": 2,
+      "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": true
     },
     {
       "unit": 6,
@@ -6090,16 +6111,16 @@ window.HSE_SOURCE_INVENTORY_41 = {
       "sourceItemId": "4-1-u6-e5-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "가로로 이어 붙인 정사각형의 점 수로 정사각형 수 찾기",
+      "typeLabel": "육각형을 겹쳐 만든 모양에서 작은 육각형 수 구하기",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true,
-      "generatorKey": "advancedShapePattern",
-      "variant": 6,
+      "generatorKey": "",
       "difficultyBand": 0,
       "sourceTier": "advanced",
-      "reviewLocked": false
+      "reviewLocked": true
     },
     {
       "unit": 6,

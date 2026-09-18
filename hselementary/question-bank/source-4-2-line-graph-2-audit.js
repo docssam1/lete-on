@@ -41,8 +41,8 @@ for (const item of sourceItems.filter(item => item.implementationStatus !== "exc
 
 for (const type of locked) {
   try {
-    api.generate(type, 0, 0, 810000 + type.typeNumber, type.variant);
-    failures.push(`${type.sourceItemId}: 검수 대기 유형이 생성되었습니다.`);
+    const generated = api.generate(type, 0, 0, 810000 + type.typeNumber, type.variant);
+    check(generated === null, `${type.sourceItemId}: 검수 대기 유형이 생성되었습니다.`);
   } catch (error) {
     check(/검수 대기/.test(error.message), `${type.sourceItemId}: 잠금 오류 문구가 분명하지 않습니다.`);
   }

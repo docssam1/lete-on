@@ -3,15 +3,52 @@
 ## Current State
 
 - Branch: `agent/hsmiddle-question-bank`
-- Local audit page: `http://127.0.0.1:8893/hselementary/question-bank/`
+- Local audit page: `http://127.0.0.1:8878/hselementary/question-bank/`
 - Total runtime types: 2,044 across 6 semesters, 36 major units, and 184 subunits
-- Runtime-available types: 1,132 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 912
+- Runtime-available types: 1,146 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 898
 - Source-linked runtime entries: 1,664 currently carry a source item ID (4-1: 329, 4-2: 239, 5-1: 357, 5-2: 106, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog contains all 75 directly classified source items, and 5-2 Units 1-2 now contain 106 individually indexed source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `196/263`, 5-1 `272/357`, 5-2 `68/206`, 6-1 `239/412`, and 6-2 `48/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `305/329`, 4-2 `214/263`, 5-1 `272/357`, 5-2 `68/206`, 6-1 `239/412`, and 6-2 `48/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-09-18 4-2 Decimal Examples 1-1 Through 1-4 Reconstruction
+
+- Reopened `4-2-decimal-1-example-1` through `4-2-decimal-1-example-4` only after reading the exact advanced-source page. Example 1-1 keeps three conversions in one item: kilograms and grams to kilograms, kilometres and metres to kilometres, and hours and minutes to hours.
+- The original numerical case independently recomputes to `5.64kg`, `4.078km`, and `4.75 hours` from `1000g=1kg`, `1000m=1km`, and `60 minutes=1 hour`; learner handwriting is not used as answer evidence.
+- The generator uses three finite verified variants at the same source difficulty. Problems and answers share the same data, blank boxes stay on the equation baseline, and the answer view repeats the three completed equations rather than adding a decorative figure.
+- Example 1-2 divides only the interval between the two printed endpoint decimals and independently derives the first and last interior ticks. Example 1-3 uses one integer-scaled coordinate model for the square side, number-line ticks, clockwise rolling direction, initial marked point, and final answer point; the `㉠` label and direction arrow were separated after human visual review.
+- Example 1-4 preserves the printed `24.2cm`, `20 minutes`, and `19.8cm` conditions. The unique answer is `110 minutes = 1 hour 50 minutes`; the learner handwriting `1 hour 40 minutes` conflicts with the printed conditions and is not used. No decorative candle picture was added because the source item has none.
+- The decimal gate now publishes 30 of 44 source items and keeps 14 locked. The independent audit passed 36,000 generated items across all three difficulty offsets and all 30 checker kinds.
+- Focused desktop, 390px, and A4 problem/solution review passed for all four reopened examples after the A4 equation widths and rolling-point label clearance were corrected. The full grade-4 sweep passed all 514 public types across 2,056 desktop/mobile problem-and-solution states, 456 visual states, and A4 output.
+- Whole-bank checks after Example 1-4: 68,460 runtime generations, 171,150 math-notation generations plus real-DOM fraction centering at 1440px and 390px, and 342,300 numeric-display generations.
+
+## 2026-09-18 4-2 Decimal Exploration 2 And Examples 2-1 Through 2-4
+
+- Rebuilt the five previously locked items from the exact advanced-source page: different running-rate times, tenths between two calculation results, the smallest hundredth satisfying a covered strict inequality, four people on one directed line, and the sum of a decimal multiple sequence.
+- The running source recomputes the two 200m times independently and gives a 1.76-second difference. The learner note on the page conflicts with the printed distances and times, so it is not used as answer evidence.
+- The covered inequality uses the strict `>` sign. Exhaustive testing in 0.01 steps confirms the first valid hundredth; the learner note does not satisfy the printed inequality and is rejected.
+- Each type uses three finite, source-structured variants. The distance item converts metres to kilometres before assigning signed positions, and the sequence item is checked both by direct term summation and by the arithmetic-sum formula.
+- Human desktop and 390px review confirmed all equation, cover, condition-list, and sequence boards. The focused A4 sweep initially found the two side-by-side expressions overflowing a print column; print now stacks those two expressions without shrinking the mathematical text, and the repeated focused sweep passes.
+- The decimal gate now publishes 35 of 44 source items and keeps 9 locked. Its independent audit passes 42,000 generations and 35 separate checker kinds.
+- Whole-bank checks now pass 68,760 runtime generations, 171,900 math-notation generations plus real-DOM fraction centering, and 343,800 numeric-display generations. The full grade-4 sweep passes 519 public types across 2,076 desktop/mobile problem-and-solution states, 456 visual states, and A4 output.
+
+## 2026-09-18 4-2 Triangle Locked-Item Review
+
+- Reopened nine source-faithful fixed items from the advanced 4-2 triangle source: `4-2-triangle-2-mission-6`, `4-2-triangle-2-example-1`, `4-2-triangle-2-example-3`, `4-2-triangle-3-example-1`, `4-2-triangle-3-example-3`, `4-2-triangle-3-example-4`, `4-2-triangle-3-mission-2`, `4-2-triangle-3-mission-4`, and `4-2-triangle-3-mission-5`.
+- The 4-by-4 dot-board item exhaustively checks all triples of points, rejects collinear triples, groups rotations and reflections by the same three squared side lengths, and confirms 11 distinct isosceles triangles. The answer page redraws all 11 shapes.
+- Mission 2 models every point and equal segment, then independently derives `20° -> 140° -> 40° -> 70° -> 110° -> 35°`. Mission 4 fixes the rotation correspondence `ㄱ->ㄹ`, `ㄷ->ㅂ` and independently derives `40° -> 70° -> 55° -> 85°`.
+- Mission 5 reconstructs the two folds as reflections `ㄱ->ㅁ` and `ㄷ->ㅅ`. The straight angle at `ㅇ` gives the two fold angles as `(180-60)/2=60°`; the folded triangle then gives the original base angle `180-60-70=50°`, so the isosceles apex and target angle are `180-50×2=80°`. Problem and answer diagrams share the same point/segment model; only the answer view writes `80°` in the target sector.
+- Example 3-3 reconstructs the five equal consecutive segments and the two collinear point groups from one coordinate model. Its angle chain independently gives `45-40/2=25°`; the problem follows the source wording and leaves the five equal lengths to the diagram marks, while only the answer view writes `25°` in the target sector.
+- Example 3-4 reflects point `ㄴ` to point `ㅂ` across fold line `ㄱㄹ`, preserves the original isosceles sides, and enforces `ㄱㄹ=ㄹㅂ`. The coordinate model reverses the printed 40-degree condition and independently gives `90+40/2=110°`; the handwritten 100-degree note is rejected because it would make the shown angle 20 degrees.
+- Mission 2-6 restores only the printed 5-by-5 dot board and fixed segment `ㄱ(2,4)-ㄴ(4,3)`, excluding learner pencil lines. Exhaustive testing of all 23 possible third points finds exactly five right triangles; the answer page redraws all five and marks the right angle in each.
+- Example 2-1 remains a drawing activity rather than being converted into a number-only item. The problem shows four blank equilateral triangles; the answer shows one three-part construction for each target count 0, 1, 2, and 3. Every resulting small triangle is independently classified from coordinates, and the visible partitions were widened after browser review so no sliver-shaped answer is used.
+- Example 2-3 reconstructs the printed outer triangle, vertical height, two horizontal segments, and three internal diagonals as one exact point-and-segment model. The separate graph checker enumerates 12 right triangles, grouped by the three marked right-angle vertices as 4, 5, and 3; the learner pencil note is not used as answer evidence. The answer view redraws all 12 cases separately.
+- Exploration 3 remains locked: the printed prompt does not define whether the rectangle ratio is fixed or what endpoints the three added lines may use, so a maximum cannot yet be bounded independently from the source.
+- The triangle gate now publishes 41 of 44 source items and keeps 3 locked. Remaining locked IDs: `4-2-triangle-1-example-4`, `4-2-triangle-2-mission-1`, and `4-2-triangle-3-exploration`.
+- Verification passed after opening Example 2-3: 49,200 triangle generations across three difficulty offsets, all 41 triangle types on 82 desktop/mobile screens, whole-bank runtime 68,220 generations, math notation 170,550 generations, numeric display 341,100 generations, and all 510 public grade-4 types across 2,040 desktop/mobile problem/solution states, 454 visual states, plus A4 problem and solution rendering.
+- The full grade-4 visual sweep also caught a pre-existing undersized first equal-angle arc in `4-1-u2-t5-11`. Its radius was increased without changing the angle or fold model; the dedicated 13,500-case angle audit, focused PC/mobile/A4 audit, and the repeated 505-type sweep all pass.
 
 ## 2026-09-13 Parallel-Angle Repair And Release Gates
 
@@ -38,7 +75,7 @@
 
 ## 2026-09-16 Whole-Public-Bank Layout Sweep
 
-- The browser sweep covers every currently public type: Grade 4 has 505 types and 2,020 desktop/mobile problem-and-solution states, Grade 5 has 272 types and 1,088 states, and Grade 6 has 287 types and 1,148 states. Each grade also receives substantive A4 output checks.
+- The browser sweep covers every currently public type: Grade 4 has 509 types and 2,036 desktop/mobile problem-and-solution states, Grade 5 has 272 types and 1,088 states, and Grade 6 has 287 types and 1,148 states. Each grade also receives substantive A4 output checks.
 - The sweep loads the same Grade 6 source-specific modules as the real page and respects each type's verified fixed-pool count. It rejects SVG text or line overflow, text-to-text collisions, missing answer visuals, invalid values, and clipped page content.
 - Direct visual review repaired four failures found by the sweep: the pentagonal-prism spiral label collision, the tree-spacing perimeter-label collision, the decimal digit-pair table clipping, and the long strip-graph solution calculation. Targeted independent math audits and desktop, 390px, and A4 reruns pass after the repairs.
 - This is a layout and runtime release check, not a claim that every locked type or every source-book figure has been rebuilt. A public figure must still be based on its individual source item, use a dedicated point/line/data model, include a matching answer figure when required, and pass human visual comparison before release.
@@ -88,8 +125,8 @@
 - Grade 4-1 unit 5: 22 source items, 18 ready and 4 review-locked; bar-graph exploration group 1 has all 11 source-native variants, and group 2 publishes 7 source-native variants
 - Grade 4-1 unit 6: 66 source items, 63 ready and 3 review-locked; the public types use child-readable names and independent generators
 - Grade 4-2 unit 1: fraction addition and subtraction, 66 source-backed types covering every exploration prompt, example, and Mission
-- Grade 4-2 unit 2: triangles, all 44 source items mapped; 32 directly source-matched types ready and 12 locked for source-faithful rebuilding
-- Grade 4-2 unit 3: decimal addition and subtraction, 26 source-matched types ready and 18 locked source items
+- Grade 4-2 unit 2: triangles, all 44 source items mapped; 38 directly source-matched types ready and 6 locked for source-faithful rebuilding
+- Grade 4-2 unit 3: decimal addition and subtraction, 35 source-matched types ready and 9 locked source items
 - Grade 4-2 unit 4: quadrilaterals, 10 source-backed types
 - Grade 4-2 unit 5: line graphs, all 22 source items mapped; 18 ready, 2 review-locked, and 2 duplicate items excluded
 - Grade 4-2 unit 6: polygons, 4 types
@@ -115,14 +152,14 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Runtime availability policy: `runtime-availability-audit.js` checks all 1,132 public types across 20 seeds per difficulty
+- Runtime availability policy: `runtime-availability-audit.js` checks all 1,146 public types across 20 seeds per difficulty
 - 4-1 source policy: `source-inventory-audit.js`, `source-crosswalk-audit.js`, and `source-runtime-taxonomy-audit.js`
 - 4-1 type-language policy: `source-type-language-audit.js` requires 329 unique child-readable Korean type names. Source labels such as `예제 1-1` remain provenance only; they must never replace the explanatory type name.
 - Elementary explanation policy: `elementary-language-audit.js` checks the public runtime types across 100 seeds per difficulty, including the source-mapped public types
 - Numeric display policy: `numeric-display-audit.js` checks the public runtime types across 100 seeds per difficulty; the runtime sweep separately checks availability
 - 4-2 fraction source routing and independent answer check: `fraction-add-sub-4-2-audit.js` covers 66 types and 66 distinct source structures; `source-4-2-fraction-browser-audit.js` covers all 132 PC/mobile states
-- 4-2 triangle source routing, publication gate, and independent answer check: `triangle-4-2-audit.js` maps all 44 source items and permits only the 31 directly source-matched types to run
-- 4-2 decimal source routing, integer-scaled calculation, exhaustive candidate checks, and independent answer check: `decimal-add-sub-4-2-audit.js` covers 24 types and 24 distinct source structures
+- 4-2 triangle source routing, publication gate, and independent answer check: `triangle-4-2-audit.js` maps all 44 source items and permits only the 38 directly source-matched types to run
+- 4-2 decimal source routing, integer-scaled calculation, exhaustive candidate checks, and independent answer check: `decimal-add-sub-4-2-audit.js` covers 35 types and 35 distinct source structures
 - Graph regression check: `graph-audit.js`
 - Graph readability and answer contract: `GRAPH_READABILITY_VALIDATION.md`
 - Plane-transformation detail routing, composite-shape diversity, grid bounds, and point-coordinate check: `movement-audit.js`

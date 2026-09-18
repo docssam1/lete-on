@@ -9,12 +9,19 @@ require("./curriculum.js");
 
 const api = window.HSE_GENERATORS;
 const runtime = window.HSE_SOURCE_INVENTORY_41;
+const sourceInventory = require("./source-inventory/4-1-source-items.json").items;
 const nativeMappings = require("./source-inventory/4-1-native-generators.json").mappings;
 const generatorKey = "source41PlaneTransformThree";
 const publicItems = [["4-1-u4-e3-exploration", 0], ["4-1-u4-e3-example-3-1", 1], ["4-1-u4-e3-example-3-3", 3], ["4-1-u4-e3-example-3-4", 4], ["4-1-u4-e3-mission-1", 5], ["4-1-u4-e3-mission-2", 6], ["4-1-u4-e3-mission-3", 7], ["4-1-u4-e3-mission-5", 9], ["4-1-u4-e3-mission-6", 10]];
 const lockedItems = new Map([
-  ["4-1-u4-e3-example-3-2", "보기의 대칭 곡선만으로 돌리기와 뒤집기 규칙을 하나로 정할 수 없습니다."],
-  ["4-1-u4-e3-mission-4", "마름모가 28개일 때 58개와 60개 타일이 모두 가능해 답이 하나가 아닙니다."]
+  ["4-1-u4-e3-example-3-2", {
+    runtimeReason: "보기의 대칭 곡선만으로 돌리기와 뒤집기 규칙을 하나로 정할 수 없습니다.",
+    sourceReason: "보기의 대칭 곡선만으로 돌리기와 뒤집기 규칙을 하나로 정할 수 없습니다."
+  }],
+  ["4-1-u4-e3-mission-4", {
+    runtimeReason: "원문 답과 독립 검산이 일치하지 않아 검수 중입니다.",
+    sourceReason: "마름모가 28개일 때 58개와 60개 타일이 모두 가능해 답이 하나가 아닙니다."
+  }]
 ]);
 const failures = [];
 let generatedCount = 0;
@@ -101,21 +108,24 @@ for (const [sourceItemId, variant] of publicItems) {
   const item = runtime.items.find(entry => entry.sourceItemId === sourceItemId);
   const mapping = nativeMappings.find(entry => entry.sourceItemId === sourceItemId);
   check(mapping?.generatorKey === generatorKey && mapping.variant === variant, `${sourceItemId}: 전용 생성기 매핑이 다릅니다.`);
-  check(item?.generatorKey === generatorKey && item.variant === variant && item.reviewLocked === false, `${sourceItemId}: 공개 상태가 다릅니다.`);
+  check(item?.generatorKey === generatorKey && item.variant === variant && item.reviewLocked === false && item.generationMode === "fixed-verified-pool" && item.verifiedVariantCount === 1, `${sourceItemId}: 단일 검증 문항 공개 상태가 다릅니다.`);
   for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 500; seed += 1) {
     try {
       const generated = api.generate(item, 0, difficulty, seed, variant);
       generatedCount += 1;
       assert(generated?.prompt && generated?.solution && generated?.answer !== undefined, "문제·정답·풀이가 비었습니다.");
+      assert(generated.generationMode === "fixed-verified-pool" && generated.verifiedPoolIndex === 0 && generated.verifiedVariantCount === 1, "고정 원본형의 문항 수 제한 정보가 다릅니다.");
       assert(!/undefined|null|NaN|Infinity/.test(`${generated.prompt}${generated.solution}${generated.answer}`), "깨진 값이 보입니다.");
       audit(variant, generated, evidence(generated));
     } catch (error) { failures.push(`${sourceItemId} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`); break; }
   }
 }
 
-for (const [sourceItemId, reason] of lockedItems) {
+for (const [sourceItemId, reasons] of lockedItems) {
   const item = runtime.items.find(entry => entry.sourceItemId === sourceItemId);
-  check(item?.reviewLocked === true && item?.generatorKey === "" && item?.reviewReason === reason, `${sourceItemId}: 잠금 사유나 공개 상태가 다릅니다.`);
+  const sourceItem = sourceInventory.find(entry => entry.sourceItemId === sourceItemId);
+  check(item?.reviewLocked === true && item?.generatorKey === "" && item?.reviewReason === reasons.runtimeReason, `${sourceItemId}: 공개 잠금 사유나 상태가 다릅니다.`);
+  check(sourceItem?.implementationStatus === "review-locked" && sourceItem?.reviewReason === reasons.sourceReason, `${sourceItemId}: 비공개 원장의 상세 잠금 근거가 다릅니다.`);
   check(!nativeMappings.some(entry => entry.sourceItemId === sourceItemId), `${sourceItemId}: 잠긴 항목에 생성기 매핑이 남아 있습니다.`);
 }
 

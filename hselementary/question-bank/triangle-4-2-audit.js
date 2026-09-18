@@ -26,12 +26,21 @@ const publicSourceIds = new Set([
   "4-2-triangle-2-mission-3",
   "4-2-triangle-2-mission-4",
   "4-2-triangle-2-mission-5",
+  "4-2-triangle-2-mission-6",
+  "4-2-triangle-2-example-1",
   "4-2-triangle-2-example-2",
+  "4-2-triangle-2-example-3",
   "4-2-triangle-2-example-4",
   "4-2-triangle-3-mission-1",
+  "4-2-triangle-3-mission-2",
   "4-2-triangle-3-mission-3",
+  "4-2-triangle-3-mission-4",
+  "4-2-triangle-3-mission-5",
   "4-2-triangle-3-mission-6",
+  "4-2-triangle-3-example-1",
   "4-2-triangle-3-example-2",
+  "4-2-triangle-3-example-3",
+  "4-2-triangle-3-example-4",
   "4-2-triangle-4-mission-1",
   "4-2-triangle-4-mission-2",
   "4-2-triangle-4-mission-3",
@@ -48,11 +57,26 @@ const failures = [];
 const seenKinds = new Set();
 const check = (condition, message) => { if (!condition) failures.push(message); };
 const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
+const parsePointAttribute = value => Object.fromEntries(String(value || "").split(";").filter(Boolean).map(entry => {
+  const [label, coordinates] = entry.split(":");
+  return [label, coordinates.split(",").map(Number)];
+}));
+const distance = (first, second) => Math.hypot(first[0] - second[0], first[1] - second[1]);
+const angleAt = (center, first, second) => {
+  const left = [first[0] - center[0], first[1] - center[1]];
+  const right = [second[0] - center[0], second[1] - center[1]];
+  const cosine = (left[0] * right[0] + left[1] * right[1]) / (Math.hypot(...left) * Math.hypot(...right));
+  return Math.acos(Math.max(-1, Math.min(1, cosine))) * 180 / Math.PI;
+};
+const collinear = (first, second, third) => {
+  const twiceArea = Math.abs((second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]));
+  return twiceArea / Math.max(distance(first, second), 1) < 0.02;
+};
 const pointKind = (first, second, third) => {
   const cross = (second[0] - first[0]) * (third[1] - first[1]) - (second[1] - first[1]) * (third[0] - first[0]);
-  if (cross === 0) return "line";
+  if (Math.abs(cross) < 1e-9) return "line";
   const squared = [[first, second], [second, third], [third, first]].map(([a, b]) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2).sort((a, b) => a - b);
-  if (squared[0] + squared[1] === squared[2]) return "right";
+  if (Math.abs(squared[0] + squared[1] - squared[2]) < 1e-9) return "right";
   return squared[0] + squared[1] > squared[2] ? "acute" : "obtuse";
 };
 const pointCounts = (points, requiredIndex = -1) => {
@@ -63,6 +87,23 @@ const pointCounts = (points, requiredIndex = -1) => {
     if (kind !== "line") totals[kind] += 1;
   }
   return totals;
+};
+const isoscelesDotBoardShapeClassCount = (columns, rows) => {
+  const points = Array.from({ length: rows }, (_, y) => Array.from({ length: columns }, (_, x) => [x, y])).flat();
+  const squaredDistance = (first, second) => (first[0] - second[0]) ** 2 + (first[1] - second[1]) ** 2;
+  const signatures = new Set();
+  for (let first = 0; first < points.length - 2; first += 1) for (let second = first + 1; second < points.length - 1; second += 1) for (let third = second + 1; third < points.length; third += 1) {
+    const triangle = [points[first], points[second], points[third]];
+    const area2 = (triangle[1][0] - triangle[0][0]) * (triangle[2][1] - triangle[0][1]) - (triangle[1][1] - triangle[0][1]) * (triangle[2][0] - triangle[0][0]);
+    if (area2 === 0) continue;
+    const sides = [
+      squaredDistance(triangle[0], triangle[1]),
+      squaredDistance(triangle[1], triangle[2]),
+      squaredDistance(triangle[2], triangle[0])
+    ].sort((a, b) => a - b);
+    if (sides[0] === sides[1] || sides[1] === sides[2]) signatures.add(sides.join("-"));
+  }
+  return signatures.size;
 };
 const matchstickPointKey = point => point.join(",");
 const matchstickParsePoint = value => value.split(",").map(Number);
@@ -586,6 +627,25 @@ const answerFor = (kind, values) => {
     return String(obtuseAnglePairCount(values));
   }
   if (kind === "obtuse-dot-shape-classes") return String(obtuseDotShapeClassCount(values[0], values[1]));
+  if (kind === "fixed-side-right-dot-count") {
+    const [columns, rows, pointA, pointB] = values;
+    const dot = (origin, first, second) =>
+      (first[0] - origin[0]) * (second[0] - origin[0]) +
+      (first[1] - origin[1]) * (second[1] - origin[1]);
+    let count = 0;
+    for (let y = 0; y < rows; y += 1) for (let x = 0; x < columns; x += 1) {
+      const point = [x, y];
+      if ((x === pointA[0] && y === pointA[1]) || (x === pointB[0] && y === pointB[1])) continue;
+      const area2 = (pointB[0] - pointA[0]) * (y - pointA[1]) - (pointB[1] - pointA[1]) * (x - pointA[0]);
+      if (area2 === 0) continue;
+      if (dot(pointA, pointB, point) === 0 || dot(pointB, pointA, point) === 0 || dot(point, pointA, pointB) === 0) count += 1;
+    }
+    return String(count);
+  }
+  if (kind === "equilateral-three-part-obtuse-counts") {
+    const counts = values.map(([points, triangles]) => triangles.filter(triangle => pointKind(...triangle.map(index => points[index])) === "obtuse").length);
+    return counts.map(count => `${count}개`).join(", ");
+  }
   if (kind === "pentagram-angle-count") {
     const totals = pentagramAngleCounts();
     return `${totals.acute}, ${totals.obtuse}`;
@@ -594,6 +654,10 @@ const answerFor = (kind, values) => {
     const [points, segments, mode] = values;
     const totals = segmentGraphAngleCounts(points, segments);
     return mode === "acute-obtuse-difference" ? String(Math.abs(totals.acute - totals.obtuse)) : String(totals[mode]);
+  }
+  if (kind === "marked-right-triangle-count") {
+    const [points, segments] = values;
+    return String(segmentGraphAngleCounts(points, segments).right);
   }
   if (kind === "isosceles-concave-perimeter") return String(values[0] + values[1] - values[2] * 2);
   if (kind === "isosceles-strip-perimeter") return String(values[0] * values[2] + values[1] * 2);
@@ -606,6 +670,20 @@ const answerFor = (kind, values) => {
   if (kind === "circle-isosceles-shapes") {
     return String(circleIsoscelesShapeSignatures(values[0]).length);
   }
+  if (kind === "isosceles-dot-board-shape-classes") return String(isoscelesDotBoardShapeClassCount(values[0], values[1]));
+  if (kind === "isosceles-nested-equal-segments-angle") return String(45 - values[0] / 2);
+  if (kind === "isosceles-rotated-copy-crossing-angle") {
+    const baseAngle = 45 + values[0] / 4;
+    return String(180 - values[0] - baseAngle);
+  }
+  if (kind === "isosceles-two-fold-angle") {
+    const [straightAngle, givenAtO, givenAtJ] = values;
+    const creaseAngle = (straightAngle - givenAtO) / 2;
+    const baseAngle = straightAngle - creaseAngle - givenAtJ;
+    return String(straightAngle - baseAngle * 2);
+  }
+  if (kind === "isosceles-linked-chain-angle") return String(45 - values[0] / 2);
+  if (kind === "isosceles-fold-equal-angle") return String(90 + values[0] / 2);
   if (kind === "equilateral-chain-perimeter") return String((values[1] + 2) * values[0]);
   if (kind === "equilateral-three-equal-angle") {
     const [givenAngle, equilateralAngle] = values;
@@ -692,14 +770,69 @@ for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1
   check(independent !== null, `${context}: 알 수 없는 검산 유형 ${kind}입니다.`);
   check(String(independent) === declared, `${context}: 선언 정답 ${declared}과 독립 계산 ${independent}이 다릅니다.`);
   check(String(generated.answer) === declared, `${context}: 표시 정답 ${generated.answer}과 선언 정답 ${declared}이 다릅니다.`);
+  if (kind === "isosceles-linked-chain-angle") {
+    check(/data-equal-segments="ㄱㄷ,ㄴㄷ,ㄷㄹ,ㄹㅁ,ㅁㅂ"/.test(generated.prompt), `${context}: 원문의 다섯 같은 선분 연결이 없습니다.`);
+    check(/data-collinear-groups="ㄱㄷㅁㅂ;ㄴㄹㅂ"/.test(generated.prompt), `${context}: 원문의 두 일직선 관계가 없습니다.`);
+    check((generated.prompt.match(/data-equal-segment=/g) || []).length === 10, `${context}: 다섯 선분의 이중 같은 길이 표시가 완전하지 않습니다.`);
+    check(/triangle-isosceles-chain-angle is-solved/.test(generated.answerVisual || ""), `${context}: 정답 각이 표시된 답 그림이 없습니다.`);
+  }
+  if (kind === "isosceles-fold-equal-angle") {
+    const svgTag = generated.prompt.match(/<svg class="geometry-diagram triangle-isosceles-fold-equal-angle[^"]*"[^>]*>/)?.[0] || "";
+    const points = parsePointAttribute(attribute(svgTag, "data-points"));
+    check(attribute(svgTag, "data-fold-map") === "ㄴ:ㅂ", `${context}: 원문의 접기 대응 ㄴ→ㅂ이 없습니다.`);
+    check(attribute(svgTag, "data-equal-segments") === "ㄱㄹ,ㄹㅂ", `${context}: 원문의 ㄱㄹ=ㄹㅂ 조건이 없습니다.`);
+    check(Object.keys(points).length === 6, `${context}: 접기 그림의 여섯 점 좌표가 없습니다.`);
+    if (Object.keys(points).length === 6) {
+      const near = (first, second) => Math.abs(first - second) < 0.08;
+      check(near(distance(points["ㄱ"], points["ㄹ"]), distance(points["ㄹ"], points["ㅂ"])), `${context}: ㄱㄹ과 ㄹㅂ의 길이가 다릅니다.`);
+      check(near(distance(points["ㄴ"], points["ㄹ"]), distance(points["ㄹ"], points["ㅂ"])), `${context}: 접기 전후 ㄹㄴ과 ㄹㅂ의 길이가 다릅니다.`);
+      check(near(distance(points["ㄱ"], points["ㄴ"]), distance(points["ㄱ"], points["ㄷ"])), `${context}: 원래 삼각형이 이등변삼각형이 아닙니다.`);
+      check(collinear(points["ㄴ"], points["ㄹ"], points["ㅁ"]) && collinear(points["ㄹ"], points["ㅁ"], points["ㄷ"]), `${context}: 원래 밑변의 네 점이 한 직선 위에 있지 않습니다.`);
+      check(collinear(points["ㄱ"], points["ㅁ"], points["ㅂ"]), `${context}: 접힌 변 ㄱㅂ과 점 ㅁ이 한 직선 위에 있지 않습니다.`);
+      check(near(angleAt(points["ㄱ"], points["ㅂ"], points["ㄷ"]), values[0]), `${context}: 그림의 주어진 각이 ${values[0]}°가 아닙니다.`);
+      check(near(angleAt(points["ㄹ"], points["ㄱ"], points["ㅂ"]), Number(declared)), `${context}: 그림의 목표각이 ${declared}°가 아닙니다.`);
+      check(near(angleAt(points["ㄱ"], points["ㄴ"], points["ㄹ"]), angleAt(points["ㄱ"], points["ㄹ"], points["ㅂ"])), `${context}: 접는 선이 대응 각을 이등분하지 않습니다.`);
+    }
+    check((generated.prompt.match(/data-equal-segment=/g) || []).length === 4, `${context}: ㄱㄹ과 ㄹㅂ의 같은 길이 표시가 완전하지 않습니다.`);
+    check(/triangle-isosceles-fold-equal-angle is-solved/.test(generated.answerVisual || ""), `${context}: 정답 각이 표시된 답 그림이 없습니다.`);
+  }
+  if (kind === "fixed-side-right-dot-count") {
+    const boardTag = generated.prompt.match(/<svg class="geometry-diagram triangle-fixed-side-right-board[^"]*"[^>]*>/)?.[0] || "";
+    check(attribute(boardTag, "data-columns") === "5" && attribute(boardTag, "data-rows") === "5", `${context}: 원문의 5×5 점판이 아닙니다.`);
+    check(attribute(boardTag, "data-point-a") === "2,4" && attribute(boardTag, "data-point-b") === "4,3", `${context}: 원문의 선분 ㄱㄴ 위치가 다릅니다.`);
+    check(attribute(boardTag, "data-candidate") === "", `${context}: 문제 그림에 풀이용 세 번째 점이 노출되었습니다.`);
+    const candidates = [...(generated.answerVisual || "").matchAll(/data-candidate="([^"]+)" data-right-vertex="([^"]+)"/g)];
+    const actual = candidates.map(match => match[1]).sort().join(";");
+    const expected = ["0,0", "1,2", "2,3", "3,1", "4,4"].sort().join(";");
+    check(candidates.length === 5, `${context}: 답 그림의 직각삼각형이 ${candidates.length}개입니다.`);
+    check(actual === expected, `${context}: 답 그림의 제3의 점이 독립 전수 결과와 다릅니다: ${actual}`);
+    check((generated.answerVisual || "").match(/source42-fixed-side-right-mark/g)?.length === 5, `${context}: 다섯 답 그림의 직각 표시가 완전하지 않습니다.`);
+  }
+  if (kind === "equilateral-three-part-obtuse-counts") {
+    const problemBoards = [...generated.prompt.matchAll(/<svg class="geometry-diagram triangle-equilateral-three-part([^"]*)"[^>]*data-obtuse-target="(\d+)"[^>]*data-obtuse-count="([^"]*)"/g)];
+    const answerBoards = [...(generated.answerVisual || "").matchAll(/<svg class="geometry-diagram triangle-equilateral-three-part([^"]*)"[^>]*data-obtuse-target="(\d+)"[^>]*data-obtuse-count="([^"]*)"/g)];
+    check(problemBoards.length === 4 && problemBoards.every(match => !match[1].includes("is-solved") && match[3] === ""), `${context}: 문제의 네 정삼각형에 답선이 노출되었습니다.`);
+    check(answerBoards.length === 4 && answerBoards.every((match, index) => match[1].includes("is-solved") && Number(match[2]) === index && Number(match[3]) === index), `${context}: 답의 0·1·2·3개 나누기 그림이 완전하지 않습니다.`);
+    check((generated.answerVisual || "").match(/source42-equilateral-partition-line/g)?.length === 9, `${context}: 답 그림의 분할선 수가 9개가 아닙니다.`);
+  }
+  if (kind === "marked-right-triangle-count") {
+    const problemSvg = generated.prompt.match(/<svg class="geometry-diagram triangle-marked-right-source[^\"]*"[^>]*>/)?.[0] || "";
+    check((generated.prompt.match(/source42-marked-right-line/g) || []).length === 9, `${context}: 원본의 아홉 연속선이 완전하지 않습니다.`);
+    check((generated.prompt.match(/source42-marked-right-mark/g) || []).length === 3, `${context}: 원본의 세 직각 표시가 완전하지 않습니다.`);
+    check(attribute(problemSvg, "data-right-triangle") === "", `${context}: 문제 그림에 답 삼각형이 노출되었습니다.`);
+    const answerTriangles = [...(generated.answerVisual || "").matchAll(/data-right-triangle="([^"]+)" data-right-vertex="([^"]+)"/g)];
+    check(answerTriangles.length === 12, `${context}: 답 그림의 직각삼각형이 ${answerTriangles.length}개입니다.`);
+    check(new Set(answerTriangles.map(match => match[1].split(";").sort().join(";"))).size === 12, `${context}: 답 그림에 같은 직각삼각형이 중복되었습니다.`);
+    check((generated.answerVisual || "").match(/source42-marked-right-answer-mark/g)?.length === 12, `${context}: 답 그림의 직각 표시가 12개가 아닙니다.`);
+  }
   if (/count|point|circle|diamond|split|chain|angle|length|segment/.test(kind)) check(/<svg\b/.test(generated.prompt) || kind === "angle-card-count" || kind === "obtuse-angle-pairs", `${context}: 도형 정보가 필요한데 SVG가 없습니다.`);
   generatedCount += 1;
 }
 
 check(sourceTypes.length === 44, `원문 문항 연결 수가 44개가 아닙니다: ${sourceTypes.length}`);
-check(types.length === 32, `원문 일치 공개 유형 수가 32개가 아닙니다: ${types.length}`);
-check(locked.length === 12, `검수 대기 유형 수가 12개가 아닙니다: ${locked.length}`);
-check(seenKinds.size === 29, `공개 검산 구조 수가 29개가 아닙니다: ${seenKinds.size}`);
+check(types.length === 41, `원문 일치 공개 유형 수가 41개가 아닙니다: ${types.length}`);
+check(locked.length === 3, `검수 대기 유형 수가 3개가 아닙니다: ${locked.length}`);
+check(seenKinds.size === 38, `공개 검산 구조 수가 38개가 아닙니다: ${seenKinds.size}`);
 check(types.every(type => publicSourceIds.has(type.sourceItemId)), "공개 허용 목록에 없는 삼각형 유형이 열려 있습니다.");
 check([...publicSourceIds].every(sourceItemId => types.some(type => type.sourceItemId === sourceItemId)), "원문 일치 공개 유형이 빠졌습니다.");
 if (failures.length) {

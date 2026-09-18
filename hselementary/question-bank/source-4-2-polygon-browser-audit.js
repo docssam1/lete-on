@@ -5,7 +5,9 @@ const path = require("node:path");
 
 let chromium;
 try {
-  ({ chromium } = require("playwright"));
+  const playwrightPath = process.env.HSE_PLAYWRIGHT_PATH
+    || path.join(process.env.USERPROFILE || "", ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "node", "node_modules", "playwright");
+  ({ chromium } = require(playwrightPath));
 } catch (error) {
   console.error(`4-2 다각형 브라우저 감사: Playwright를 사용할 수 없습니다. ${error.message}`);
   process.exit(2);

@@ -608,49 +608,68 @@
     return result;
   }
 
-  function needsWidePrint(question) {
+  function typographicPrintWeight(question) {
     const prompt = String(question?.prompt || "");
     const fractionCount = (prompt.match(/class="math-fraction"/g) || []).length;
     const equations = [...prompt.matchAll(/class="[^"]*equation[^"]*"[^>]*>([\s\S]*?)<\/div>/g)]
       .map(match => match[1].replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/\s+/g, " ").trim());
-    return fractionCount >= 3 || equations.some(equation => {
-      const operatorCount = (equation.match(/[+\-×÷=<>]/g) || []).length;
-      return equation.length >= 72 || operatorCount >= 5 || equation.includes("↔");
-    });
+    const equationLoad = equations.reduce((maximum, equation) => Math.max(maximum, equation.length + (equation.match(/[+\-×÷=<>]/g) || []).length * 8), 0);
+    if (fractionCount >= 7 || equationLoad >= 118 || equations.some(equation => equation.includes("↔"))) return 3;
+    if (fractionCount >= 3 || equationLoad >= 72) return 2;
+    return 1;
+  }
+
+  function usesFullPrintRow(question) {
+    const prompt = String(question?.prompt || "");
+    return /class="[^"]*(?:source41-bar-pair|source41-bar-table-wrap|source41-horizontal-bar-graph)[^"]*"/.test(prompt)
+      || /class="[^"]*\bequation\b[^"]*\bexpanded\b[^"]*"/.test(prompt);
   }
 
   function problemWeight(question) {
-    const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
-    const hasSource61VolumeE4 = question.prompt.includes("source61-volume-e4-diagram");
-    const hasSource61E2Example2 = question.prompt.includes("source61-e2ex2-diagram");
-    const hasSource61E2Example4 = question.prompt.includes("source61-e2ex4-diagram");
-    const hasSource61E2Mission6 = question.prompt.includes("source61-e2m6-diagram");
-    const hasSource61E4Example1 = question.prompt.includes("source61-e4ex1-diagram");
-    const hasSource42ParallelAngle = question.prompt.includes("source42-pa");
-    return needsWidePrint(question) || hasSource61VolumeE4 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1
+    const prompt = String(question?.prompt || "");
+    const graphCount = (prompt.match(/class="graph-figure"/g) || []).length;
+    const hasWorksheetVisual = /<svg\b|class="[^"]*(?:geometry-diagram|bar-chart|line-chart|diagram-pair)[^"]*"/.test(prompt);
+    const hasSource61VolumeE4 = prompt.includes("source61-volume-e4-diagram");
+    const hasSource61E2Example2 = prompt.includes("source61-e2ex2-diagram");
+    const hasSource61E2Example4 = prompt.includes("source61-e2ex4-diagram");
+    const hasSource61E2Mission6 = prompt.includes("source61-e2m6-diagram");
+    const hasSource61E4Example1 = prompt.includes("source61-e4ex1-diagram");
+    const hasSource42ParallelAngle = prompt.includes("source42-pa");
+    return hasSource61VolumeE4 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 || graphCount > 1
       ? 6
-      : hasSource42ParallelAngle || graphCount === 1
+      : hasSource42ParallelAngle || graphCount === 1 || hasWorksheetVisual
         ? 3
-        : graphCount > 1
-          ? 6
-          : 1;
+        : typographicPrintWeight(question);
   }
 
   function paginateWeightedProblems(questions) {
     const pages = [];
     let page = [];
-    let weight = 0;
-    questions.forEach(question => {
+    let pageHeight = 0;
+    const flushPage = () => {
+      if (page.length) pages.push(page);
+      page = [];
+      pageHeight = 0;
+    };
+    for (let index = 0; index < questions.length;) {
+      const question = questions[index];
       const questionWeight = problemWeight(question);
-      if (page.length && weight + questionWeight > 6) {
-        pages.push(page);
-        page = [];
-        weight = 0;
+      if (questionWeight >= 6) {
+        flushPage();
+        pages.push([question]);
+        index += 1;
+        continue;
       }
-      page.push(question);
-      weight += questionWeight;
-    });
-    if (page.length) pages.push(page);
+      const row = [question];
+      const next = questions[index + 1];
+      if (!usesFullPrintRow(question) && next && problemWeight(next) < 6 && !usesFullPrintRow(next)) row.push(next);
+      const rowHeight = Math.max(...row.map(problemWeight));
+      if (page.length && pageHeight + rowHeight > 3) flushPage();
+      page.push(...row);
+      pageHeight += rowHeight;
+      index += row.length;
+    }
+    flushPage();
     return pages;
   }
 
@@ -692,9 +711,9 @@
   }
 
   function renderProblems() {
-    $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}">
+    $("problemView").innerHTML = paginateProblems(state.questions).map(({ questions: page, paired }, pageIndex) => `<section class="print-page${paired ? " print-page--paired" : page.length === 1 ? " print-page--single" : ""}" data-question-count="${page.length}">
       <div class="page-label">문제 ${pageIndex + 1}</div>
-      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}" data-source-item-id="${escapeHtml(question.type.sourceItemId || "")}">
+      <div class="question-grid">${page.map(question => `<article id="question-${question.number}" class="question-item" data-type-id="${escapeHtml(question.type.id)}" data-source-item-id="${escapeHtml(question.type.sourceItemId || "")}" data-print-weight="${problemWeight(question)}">
         <header><b>${question.number}</b><span>${question.type.grade}학년 ${question.type.term}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></header>
         <div class="question-prompt">${renderMathNotation(question.prompt)}</div>
         <div class="answer-line">답</div>

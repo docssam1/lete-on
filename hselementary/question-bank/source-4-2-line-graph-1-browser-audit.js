@@ -3,7 +3,9 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
-const { chromium } = require("playwright");
+const playwrightPath = process.env.HSE_PLAYWRIGHT_PATH
+  || path.join(process.env.USERPROFILE || "", ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "node", "node_modules", "playwright");
+const { chromium } = require(playwrightPath);
 
 const baseUrl = process.env.HSE_URL || "http://127.0.0.1:8878/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(process.cwd(), "tmp", "4-2-line-graph-1-browser-audit");

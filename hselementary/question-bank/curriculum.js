@@ -928,25 +928,25 @@
           sourceItem42("두 각을 골라 둔각삼각형 만드는 방법", 1, "4-2-triangle-2-mission-3", 18, 23),
           sourceItem42("모눈 도형의 둔각삼각형 세기", 1, "4-2-triangle-2-mission-4", 18, 23),
           sourceItem42("예각과 둔각삼각형 수의 차", 1, "4-2-triangle-2-mission-5", 18, 23),
-          sourceItem42("점판에서 직각삼각형 세기", 1, "4-2-triangle-2-mission-6", 18, 23, true),
+          { ...sourceItem42("정해진 선분을 한 변으로 하는 직각삼각형 세기", 1, "4-2-triangle-2-mission-6", 18, 23), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "원문의 5×5 점판과 선분 ㄱㄴ을 좌표로 복원하고, 나머지 23개 점을 전수 검사하여 직각삼각형 5개를 독립 확인했습니다." },
           sourceItem42("점판에 서로 다른 둔각삼각형 그리기", 0, "4-2-triangle-2-exploration", 17, 22),
-          sourceItem42("정삼각형을 나누어 둔각삼각형 만들기", 0, "4-2-triangle-2-example-1", 17, 22, true),
+          { ...sourceItem42("정삼각형을 세 조각으로 나누어 둔각삼각형 만들기", 0, "4-2-triangle-2-example-1", 17, 22), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "원본의 0개·1개·2개·3개 그리기 활동을 네 좌표 모델로 구성하고, 각 그림의 세 조각을 독립 분류해 조건을 확인했습니다." },
           sourceItem42("선분 도형의 예각·둔각삼각형 세기", 0, "4-2-triangle-2-example-2", 17, 22),
-          sourceItem42("직각 표시 도형의 직각삼각형 세기", 0, "4-2-triangle-2-example-3", 17, 22, true),
+          { ...sourceItem42("직각 표시 도형의 직각삼각형 세기", 0, "4-2-triangle-2-example-3", 17, 22), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "원본의 큰 삼각형, 세 직각 표시, 두 가로선, 세 내부 사선을 하나의 점·선분 모델로 복원하고 모든 교점을 전수 열거하여 직각삼각형 12개를 독립 확인했습니다." },
           sourceItem42("각 두 개를 골라 둔각삼각형 만드는 방법", 1, "4-2-triangle-2-example-4", 17, 22)
         ]),
         detailed("이등변삼각형", "isoscelesTriangle", [
           sourceItem42("맞붙인 이등변삼각형의 둘레", 0, "4-2-triangle-3-mission-1", 20, 25),
-          sourceItem42("같은 길이 선분이 있는 각 구하기", 0, "4-2-triangle-3-mission-2", 20, 25, true),
+          { ...sourceItem42("같은 길이 선분이 있는 각 구하기", 0, "4-2-triangle-3-mission-2", 20, 25), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "원문의 두 묶음 같은 길이와 일직선 조건을 점·선분 모델로 재구성하고 각을 독립 계산해 35°로 확인했습니다." },
           sourceItem42("여러 이등변삼각형을 이은 둘레", 0, "4-2-triangle-3-mission-3", 20, 25),
-          sourceItem42("이등변삼각형을 이어 만든 각", 1, "4-2-triangle-3-mission-4", 20, 25, true),
-          sourceItem42("접은 이등변삼각형의 각", 1, "4-2-triangle-3-mission-5", 20, 25, true),
+          { ...sourceItem42("이등변삼각형을 움직여 만든 각", 1, "4-2-triangle-3-mission-4", 20, 25), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "회전 전후 대응점과 같은 길이를 좌표 모델로 고정하고 교차각을 독립 계산해 85°로 확인했습니다." },
+          { ...sourceItem42("두 번 접은 이등변삼각형의 각", 1, "4-2-triangle-3-mission-5", 20, 25), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "점 ㄱ→ㅁ, 점 ㄷ→ㅅ의 두 접기 대응과 60°·70°의 소유 각을 원본에서 확인하고 독립 계산해 80°로 검산했습니다." },
           sourceItem42("원 위 점으로 이등변삼각형 만들기", 1, "4-2-triangle-3-mission-6", 20, 25),
           sourceItem42("직선을 추가해 이등변삼각형 최대로 만들기", 1, "4-2-triangle-3-exploration", 19, 24, true),
-          sourceItem42("점판에서 서로 다른 이등변삼각형 세기", 1, "4-2-triangle-3-example-1", 19, 24, true),
+          { ...sourceItem42("점판에서 서로 다른 이등변삼각형 세기", 1, "4-2-triangle-3-example-1", 19, 24), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "4×4 점판의 모든 세 점을 전수 검사하고 회전·뒤집기 중복을 변 길이로 묶어 확인했습니다." },
           sourceItem42("이등변삼각형 띠의 짧은 변 구하기", 0, "4-2-triangle-3-example-2", 19, 24),
-          sourceItem42("연속한 이등변삼각형의 각 구하기", 1, "4-2-triangle-3-example-3", 19, 24, true),
-          sourceItem42("접은 이등변삼각형의 각 구하기", 1, "4-2-triangle-3-example-4", 19, 24, true)
+          { ...sourceItem42("같은 길이로 이어진 이등변삼각형의 끝 각", 1, "4-2-triangle-3-example-3", 19, 24), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "원문의 다섯 같은 선분과 두 일직선 관계를 좌표로 닫고 각의 연쇄를 독립 계산해 25°로 확인했습니다." },
+          { ...sourceItem42("접어 같은 길이를 만든 이등변삼각형의 각", 1, "4-2-triangle-3-example-4", 19, 24), generationMode: "fixed-verified-pool", verifiedVariantCount: 1, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "점 ㄴ→ㅂ의 접기 대응, ㄱㄹ=ㄹㅂ, 원래 이등변삼각형의 두 밑각을 독립 계산하고 좌표로 역산해 110°로 확인했습니다." }
         ]),
         detailed("정삼각형", "equilateralTriangle", [
           sourceItem42("정삼각형을 이어 만든 도형의 둘레", 0, "4-2-triangle-4-mission-1", 22, 27),
@@ -971,10 +971,10 @@
           sourceItem42("일정하게 타는 양초의 남은 시간", 0, "4-2-decimal-1-mission-5", 26, 31),
           sourceItem42("원형 길에서 두 사람이 걸은 거리 차", 1, "4-2-decimal-1-mission-6", 26, 31),
           sourceItem42("기준 무게에서 10배의 몸무게 거꾸로 구하기", 0, "4-2-decimal-1-exploration", 25, 30),
-          sourceItem42("복명수와 소수의 단위 환산", -1, "4-2-decimal-1-example-1", 25, 30, true),
-          sourceItem42("두 소수 사이의 가장 작은·큰 소수", 0, "4-2-decimal-1-example-2", 25, 30, true),
-          sourceItem42("도형을 움직인 수직선의 위치", 0, "4-2-decimal-1-example-3", 25, 30, true),
-          sourceItem42("일정하게 타는 양초의 전체 시간", 0, "4-2-decimal-1-example-4", 25, 30, true)
+          { ...sourceItem42("복명수와 소수의 단위 환산", -1, "4-2-decimal-1-example-1", 25, 30), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "원문의 무게·거리·시간 세 단위 환산을 한 묶음으로 유지하고, 1000g=1kg, 1000m=1km, 60분=1시간을 이용해 세 답을 각각 독립 계산했습니다." },
+          { ...sourceItem42("두 소수 사이 눈금의 가장 작은 수와 큰 수", 0, "4-2-decimal-1-example-2", 25, 30), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, reviewReason: "두 끝 수 사이를 똑같이 나눈 수직선의 안쪽 눈금만 대상으로 고정하고, 한 눈금의 크기와 양끝에서 한 칸 안쪽의 값을 각각 독립 계산했습니다." },
+          { ...sourceItem42("정사각형을 굴린 뒤 점의 위치", 0, "4-2-decimal-1-example-3", 25, 30), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, answerVisualRequired: true, answerVisualStatus: "verified", reviewReason: "정사각형의 한 변, 수직선 눈금, 시계 방향 회전, 표시점의 처음·마지막 좌표를 같은 모델에서 계산하고 반 바퀴 단위의 마지막 위치를 독립 확인했습니다." },
+          { ...sourceItem42("일정하게 타는 양초의 전체 시간", 0, "4-2-decimal-1-example-4", 25, 30), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, reviewReason: "원문의 처음 길이, 지난 시간, 남은 길이 조건을 그대로 보존하고, 탄 길이와 1분당 길이를 정수 눈금으로 독립 계산했습니다. 원본의 손글씨는 인쇄 조건과 맞지 않아 답 근거로 사용하지 않았습니다." }
         ]),
         detailed("소수의 덧셈과 뺄셈", "decimalAddSubAdvanced", [
           sourceItem42("겹친 두 선분의 길이", 0, "4-2-decimal-2-mission-1", 28, 33),
@@ -983,11 +983,11 @@
           sourceItem42("직선 위 네 사람의 거리 관계", 0, "4-2-decimal-2-mission-4", 28, 33),
           sourceItem42("공통 부등식을 만족하는 소수 세기", 1, "4-2-decimal-2-mission-5", 28, 33),
           sourceItem42("겹친 원의 영역별 소수 추론", 1, "4-2-decimal-2-mission-6", 28, 33),
-          sourceItem42("서로 다른 빠르기의 달리기 시간 차", 0, "4-2-decimal-2-exploration", 27, 32, true),
-          sourceItem42("두 계산식 사이의 소수 한 자리 수", 0, "4-2-decimal-2-example-1", 27, 32, true),
-          sourceItem42("가려진 계산식의 가장 작은 소수", 1, "4-2-decimal-2-example-2", 27, 32, true),
-          sourceItem42("직선 위 네 사람 사이의 거리", 0, "4-2-decimal-2-example-3", 27, 32, true),
-          sourceItem42("규칙에 따라 늘어놓은 소수의 합", 0, "4-2-decimal-2-example-4", 27, 32, true)
+          { ...sourceItem42("서로 다른 빠르기의 달리기 시간 차", 0, "4-2-decimal-2-exploration", 27, 32), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, reviewReason: "각 사람의 짧은 거리 기록을 목표 거리 기록으로 정확히 환산한 뒤 두 시간을 독립 계산합니다. 원본의 손글씨는 인쇄 조건과 맞지 않아 사용하지 않았습니다." },
+          { ...sourceItem42("두 계산식 사이의 소수 한 자리 수", 0, "4-2-decimal-2-example-1", 27, 32), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, reviewReason: "두 계산값을 각각 구하고 그 사이를 0.1 간격으로 전수 열거하여 정답 개수가 하나로 정해지는 경우만 사용합니다." },
+          { ...sourceItem42("가려진 계산식의 가장 작은 소수", 1, "4-2-decimal-2-example-2", 27, 32), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, reviewReason: "엄격한 부등호를 유지하고 0.01 간격의 소수 두 자리 수를 작은 수부터 전수 검사하여 처음 성립하는 수를 정답으로 사용합니다. 원본의 손글씨는 답 근거로 사용하지 않았습니다." },
+          { ...sourceItem42("직선 위 네 사람 사이의 거리", 0, "4-2-decimal-2-example-3", 27, 32), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, reviewReason: "민성의 위치를 기준으로 앞과 뒤를 부호 있는 위치로 바꾸고, 미터 조건을 킬로미터로 환산해 두 사람의 거리를 독립 계산합니다." },
+          { ...sourceItem42("규칙에 따라 늘어놓은 소수의 합", 0, "4-2-decimal-2-example-4", 27, 32), generationMode: "fixed-verified-pool", verifiedVariantCount: 3, reviewReason: "첫 소수의 자연수배로 이어지는 원문 규칙을 유지하고 모든 항을 직접 더한 값과 등차 합 계산을 서로 대조합니다." }
         ]),
         detailed("소수의 덧셈과 뺄셈 활용", "decimalApplication", [
           sourceItem42("일정한 규칙의 소수 수열", 0, "4-2-decimal-3-mission-1", 30, 35),
@@ -1376,7 +1376,9 @@
         sourcePdfPage: item.sourcePdfPage,
         sourcePrintedPage: item.sourcePrintedPage,
         reviewLocked: item.reviewLocked,
-        reviewReason: item.reviewReason || item.reviewLockReason || ""
+        reviewReason: item.reviewReason || item.reviewLockReason || "",
+        generationMode: item.generationMode,
+        verifiedVariantCount: item.verifiedVariantCount
       });
     }
 

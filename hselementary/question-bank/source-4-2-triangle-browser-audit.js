@@ -2,14 +2,16 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { chromium } = require("playwright");
+const playwrightPath = process.env.HSE_PLAYWRIGHT_PATH
+  || path.join(process.env.USERPROFILE || "", ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "node", "node_modules", "playwright");
+const { chromium } = require(playwrightPath);
 
 global.window = {};
 require("./curriculum.js");
 
 const baseUrl = process.env.HSE_URL || "http://127.0.0.1:8878/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(process.cwd(), "tmp", "4-2-triangle-browser-audit");
-const expectedSourceTypes = Number(process.env.HSE_EXPECTED_SOURCE_TYPES || 32);
+const expectedSourceTypes = Number(process.env.HSE_EXPECTED_SOURCE_TYPES || 41);
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
 const unit = semester.units.find(item => item.id === "4-2-u2");
 const sourceTypes = unit.subunits
@@ -19,6 +21,9 @@ const sourceTypes = unit.subunits
 fs.mkdirSync(outputDir, { recursive: true });
 
 async function inspectQuestion(browser, type, viewport, label, failures) {
+  const expectedQuestionCount = type.generationMode === "fixed-verified-pool"
+    ? Math.min(3, Math.max(1, Number(type.verifiedVariantCount) || 1))
+    : 3;
   const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
   page.setDefaultTimeout(60000);
   page.on("pageerror", error => failures.push(`${label} ${type.id}: 브라우저 오류 ${error.message}`));
@@ -88,8 +93,8 @@ async function inspectQuestion(browser, type, viewport, label, failures) {
   });
 
   if (state.documentOverflow) failures.push(`${label} ${type.id}: 문서에 가로 넘침이 있습니다.`);
-  if (state.questionCount !== 3) failures.push(`${label} ${type.id}: 생성된 문제 수가 ${state.questionCount}개입니다. 3개여야 합니다.`);
-  if (state.uniquePromptCount < 2) failures.push(`${label} ${type.id}: 세 문제의 문구가 충분히 달라지지 않았습니다.`);
+  if (state.questionCount !== expectedQuestionCount) failures.push(`${label} ${type.id}: 생성된 문제 수가 ${state.questionCount}개입니다. ${expectedQuestionCount}개여야 합니다.`);
+  if (state.uniquePromptCount < Math.min(2, expectedQuestionCount)) failures.push(`${label} ${type.id}: 생성된 문제의 문구가 충분히 구분되지 않았습니다.`);
   state.questions.forEach((question, index) => {
     const number = index + 1;
     if (!question.promptText) failures.push(`${label} ${type.id} ${number}번: 문제 내용이 비었습니다.`);
@@ -123,18 +128,35 @@ async function inspectQuestion(browser, type, viewport, label, failures) {
       text: solution.textContent?.replace(/\s+/g, " ").trim() || "",
       answer: solution.querySelector("header strong")?.textContent?.replace(/\s+/g, " ").trim() || "",
       overflow: clipped(solution),
-      fractionOverlap: fractionOverlap(solution)
+      fractionOverlap: fractionOverlap(solution),
+      dotShapeCount: solution.querySelectorAll(".triangle-isosceles-dot-solutions .triangle-isosceles-dot-board[data-triangle]").length,
+      foldAnswerCount: solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-3-mission-5"] .triangle-isosceles-fold-angle.is-solved[data-target-angle="80"]').length,
+      chainAnswerCount: solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-3-example-3"] .triangle-isosceles-chain-angle.is-solved[data-target-angle="25"]').length,
+      foldEqualAnswerCount: solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-3-example-4"] .triangle-isosceles-fold-equal-angle.is-solved[data-target-angle="110"]').length,
+      fixedSideRightCount: solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-2-mission-6"] .triangle-fixed-side-right-board[data-candidate]:not([data-candidate=""])').length,
+      fixedSideRightMarks: solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-2-mission-6"] .source42-fixed-side-right-mark').length,
+      equilateralPartitionCount: solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-2-example-1"] .triangle-equilateral-three-part.is-solved').length,
+      equilateralPartitionTargets: [...solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-2-example-1"] .triangle-equilateral-three-part.is-solved')].map(svg => `${svg.dataset.obtuseTarget}:${svg.dataset.obtuseCount}`).join(","),
+      markedRightCount: solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-2-example-3"] .triangle-marked-right-source[data-right-triangle]:not([data-right-triangle=""])').length,
+      markedRightMarks: solution.querySelectorAll('.verified-answer-diagram[data-answer-source="4-2-triangle-2-example-3"] .source42-marked-right-answer-mark').length
     }));
   });
-  if (solutionState.length !== 3) failures.push(`${label} ${type.id}: 정답·풀이가 ${solutionState.length}개입니다. 3개여야 합니다.`);
+  if (solutionState.length !== expectedQuestionCount) failures.push(`${label} ${type.id}: 정답·풀이가 ${solutionState.length}개입니다. ${expectedQuestionCount}개여야 합니다.`);
   solutionState.forEach((solution, index) => {
     const number = index + 1;
     if (!solution.text || !solution.answer) failures.push(`${label} ${type.id} ${number}번: 정답·풀이 또는 답안 표시가 비었습니다.`);
     if (solution.overflow) failures.push(`${label} ${type.id} ${number}번: 정답·풀이 상자가 잘립니다.`);
     if (solution.fractionOverlap) failures.push(`${label} ${type.id} ${number}번: 풀이의 세로 분수가 겹칩니다.`);
+    if (type.sourceItemId === "4-2-triangle-3-example-1" && solution.dotShapeCount !== 11) failures.push(`${label} ${type.id} ${number}번: 답안 이등변삼각형 그림이 ${solution.dotShapeCount}개입니다. 11개여야 합니다.`);
+    if (type.sourceItemId === "4-2-triangle-3-mission-5" && solution.foldAnswerCount !== 1) failures.push(`${label} ${type.id} ${number}번: 두 번 접은 답 그림 또는 80° 표기가 없습니다.`);
+    if (type.sourceItemId === "4-2-triangle-3-example-3" && solution.chainAnswerCount !== 1) failures.push(`${label} ${type.id} ${number}번: 이어진 이등변삼각형 답 그림 또는 25° 표기가 없습니다.`);
+    if (type.sourceItemId === "4-2-triangle-3-example-4" && solution.foldEqualAnswerCount !== 1) failures.push(`${label} ${type.id} ${number}번: 접어 같은 길이를 만든 답 그림 또는 110° 표기가 없습니다.`);
+    if (type.sourceItemId === "4-2-triangle-2-mission-6" && (solution.fixedSideRightCount !== 5 || solution.fixedSideRightMarks !== 5)) failures.push(`${label} ${type.id} ${number}번: 답안의 다섯 직각삼각형 또는 직각 표시가 완전하지 않습니다.`);
+    if (type.sourceItemId === "4-2-triangle-2-example-1" && (solution.equilateralPartitionCount !== 4 || solution.equilateralPartitionTargets !== "0:0,1:1,2:2,3:3")) failures.push(`${label} ${type.id} ${number}번: 답안의 0·1·2·3개 정삼각형 나누기 그림이 완전하지 않습니다.`);
+    if (type.sourceItemId === "4-2-triangle-2-example-3" && (solution.markedRightCount !== 12 || solution.markedRightMarks !== 12)) failures.push(`${label} ${type.id} ${number}번: 답안의 열두 직각삼각형 또는 직각 표시가 완전하지 않습니다.`);
   });
 
-  if (type === sourceTypes[0] || type === sourceTypes[sourceTypes.length - 1]) {
+  if (type === sourceTypes[0] || type === sourceTypes[sourceTypes.length - 1] || ["4-2-triangle-2-mission-6", "4-2-triangle-2-example-1", "4-2-triangle-2-example-3", "4-2-triangle-3-example-1", "4-2-triangle-3-example-3", "4-2-triangle-3-example-4", "4-2-triangle-3-mission-2", "4-2-triangle-3-mission-4", "4-2-triangle-3-mission-5"].includes(type.sourceItemId)) {
     await page.screenshot({ path: path.join(outputDir, `${type.sourceItemId}-${label}.png`), fullPage: true });
   }
   await page.close();
@@ -158,7 +180,7 @@ async function inspectQuestion(browser, type, viewport, label, failures) {
     console.error(failures.join("\n"));
     process.exit(1);
   }
-  console.log(`4-2 삼각형 브라우저 감사 통과: 원문 ${sourceTypes.length}유형 · PC/모바일 ${sourceTypes.length * 2}화면 · 세 문제·도형 SVG·수학 표기·답안 표시 확인 · ${outputDir}`);
+  console.log(`4-2 삼각형 브라우저 감사 통과: 원문 ${sourceTypes.length}유형 · PC/모바일 ${sourceTypes.length * 2}화면 · 유형별 검증 문항·도형 SVG·수학 표기·답안 표시 확인 · ${outputDir}`);
 })().catch(error => {
   console.error(error);
   process.exit(1);

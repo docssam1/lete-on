@@ -51,8 +51,8 @@ function auditCommonOutput(type, generated, seed) {
 
 function auditLocked(type) {
   try {
-    api.generate(type, 0, 0, 910000 + type.typeNumber, type.variant);
-    fail(`${type.id}: 검수 대기 유형이 직접 생성되었습니다.`);
+    const generated = api.generate(type, 0, 0, 910000 + type.typeNumber, type.variant);
+    if (generated !== null) fail(`${type.id}: 검수 대기 유형이 직접 생성되었습니다.`);
   } catch (error) {
     if (!/검수 대기/.test(String(error?.message || error))) {
       fail(`${type.id}: 잠금 오류 문구에 '검수 대기'가 없습니다.`);

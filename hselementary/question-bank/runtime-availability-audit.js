@@ -42,8 +42,8 @@ const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.te
 const source52 = types.filter(type => /^5-2-/.test(type.sourceItemId || ""));
 
 if (types.length !== 2044) failures.push(`런타임 유형은 2044개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1132) failures.push(`생성 가능 유형은 1132개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 912) failures.push(`검수 대기 유형은 912개여야 하나 ${locked.length}개입니다.`);
+if (ready.length !== 1146) failures.push(`생성 가능 유형은 1146개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 898) failures.push(`검수 대기 유형은 898개여야 하나 ${locked.length}개입니다.`);
 if (ready.some(type => !type.sourceItemId)) failures.push("원문 문항 ID가 없는 유형이 생성 가능 상태입니다.");
 if (source52.length !== 106 || source52.filter(type => !type.reviewLocked).length !== 68 || source52.filter(type => type.reviewLocked).length !== 38) failures.push("5-2 1·2단원 원문 유형의 전체·공개·잠금 수가 다릅니다.");
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);

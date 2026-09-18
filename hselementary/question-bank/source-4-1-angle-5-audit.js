@@ -320,7 +320,13 @@ function auditSourceGeometry(fullSvg, variant) {
   } else if (variant === 5) {
     assert(polygons.filter(tag => /right-triangle/.test(attribute(tag, "data-source-shape") || "")).length === 2, "겹친 두 직각삼각형이 각각 그려지지 않았습니다.");
   } else if (variant === 6) {
-    assert(polygons.length >= 2, "서로 다른 위치의 두 삼각형이 그려지지 않았습니다.");
+    const outerTriangle = polygons.find(tag => attribute(tag, "data-source-shape") === "outer-right-triangle");
+    const innerTriangle = polygons.find(tag => attribute(tag, "data-source-shape") === "inner-right-triangle");
+    assert(outerTriangle && innerTriangle, "원문 구조의 큰 직각삼각형과 안쪽 직각삼각형이 없습니다.");
+    const outerPoints = pointsAttribute(outerTriangle);
+    const innerPoints = pointsAttribute(innerTriangle);
+    assert(outerPoints.length === 3 && innerPoints.length === 3, "두 직각삼각형의 꼭짓점 수가 다릅니다.");
+    assert(pointDistance(outerPoints[1], innerPoints[1]) < 0.2 && pointDistance(outerPoints[2], innerPoints[2]) < 0.2, "두 직각삼각형이 원문처럼 같은 세로변을 공유하지 않습니다.");
     const vertexGroups = [...tags(fullSvg, "line"), ...polygons].map(tag => attribute(tag, "data-vertex-group")).filter(Boolean);
     assert(new Set(vertexGroups).size >= 2, "두 삼각형의 서로 다른 꼭짓점 구조를 확인할 수 없습니다.");
   } else if (variant === 9) {
@@ -427,7 +433,9 @@ function auditSvg(prompt, variant, payload) {
   } else if (variant === 5) {
     assert(rightMarks >= 2 && (fullSvg.match(/data-triangle=/g) || []).length === 2, "겹친 두 직각삼각형의 삼각형·직각 표시가 부족합니다.");
   } else if (variant === 6) {
+    assert(attribute(root, "data-source-layout") === "shared-right-side", "원문과 같은 공통 세로변 구조가 표시되지 않았습니다.");
     assert(tags(fullSvg, "line").length >= 3 && fullSvg.includes("data-small-gap"), "두 비스듬한 선의 작은 각 근거가 없습니다.");
+    assert(rightMarks >= 1, "두 직각삼각형이 공유하는 직각 표시가 없습니다.");
   } else if (variant === 7) {
     assert(rightMarks >= 1 && rotationArrows >= 1 && tags(fullSvg, "polygon").length === 1 && (fullSvg.match(/class="[^"]*source41-reflected-line/g) || []).length >= 1, "돌린 직각삼각형의 직각·회전 표시가 부족합니다.");
   } else if (variant === 9) {

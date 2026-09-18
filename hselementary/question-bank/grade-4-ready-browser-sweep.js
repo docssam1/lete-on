@@ -40,7 +40,7 @@ require("./source-grade6-surface-e1.js");
 const api = window.HSE_GENERATORS;
 const requestedTypeIds = new Set(String(process.env.HSE_TYPE_IDS || "").split(",").map(value => value.trim()).filter(Boolean));
 const requestedSemesters = new Set(String(process.env.HSE_SEMESTERS || "4-1,4-2").split(",").map(value => value.trim()).filter(Boolean));
-const expectedReadyCount = Number(process.env.HSE_EXPECTED_READY || 505);
+const expectedReadyCount = Number(process.env.HSE_EXPECTED_READY || 519);
 const auditLabel = String(process.env.HSE_AUDIT_LABEL || "4학년");
 const allReadyTypes = window.HSE_CURRICULUM.semesters
   .filter(semester => requestedSemesters.has(semester.id))
@@ -255,7 +255,7 @@ async function saveSample(page, type, label, suffix) {
   if (sampledUnits.has(key)) return;
   sampledUnits.add(key);
   const filename = `${type.unitId}-${label}-${suffix}`;
-  if (suffix === "a4") await page.pdf({ path: path.join(outputDir, `${filename}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+  if (suffix.startsWith("a4")) await page.pdf({ path: path.join(outputDir, `${filename}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
   else await page.screenshot({ path: path.join(outputDir, `${filename}.png`), fullPage: true, timeout: 120000 });
   sampleFiles += 1;
 }
@@ -292,7 +292,19 @@ async function inspectType(page, baseUrl, type, viewport, label) {
   const solution = await collectState(page, "#solutionView", ".solution-item");
   assertState(solution, type, `${label} 풀이`);
   visitedStates += 1;
-  if (solution.entries.some(entry => entry.visualReports.length)) await saveSample(page, type, label, "solution");
+  if (solution.entries.some(entry => entry.visualReports.length) || requestedTypeIds.size) await saveSample(page, type, label, "solution");
+
+  if (label === "desktop") {
+    await page.setViewportSize({ width: 794, height: 1123 });
+    await page.emulateMedia({ media: "print" });
+    const printSolution = await collectState(page, "#solutionView", ".solution-item");
+    assertState(printSolution, type, "A4 풀이");
+    if (printSolution.entries.some(entry => entry.visualReports.length) || requestedTypeIds.size) {
+      await saveSample(page, type, "desktop", "a4-solution");
+    }
+    await page.emulateMedia({ media: "screen" });
+    await page.setViewportSize(viewport);
+  }
 
   if (failures.length > before && failures.length <= 12) {
     await page.screenshot({ path: path.join(outputDir, `${type.id}-${label}-failure.png`), fullPage: true, timeout: 120000 }).catch(() => {});

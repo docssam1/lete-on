@@ -29,6 +29,7 @@ const payload = {
   verifiedMappings: mappingBySourceId.size,
   items: inventory.items.map(item => {
     const mapping = mappingBySourceId.get(item.sourceItemId);
+    const isSingleVerifiedMovementItem = mapping?.generatorKey === "source41PlaneTransformThree";
     return {
       ...item,
       generatorKey: mapping?.generatorKey || "",
@@ -36,7 +37,8 @@ const payload = {
       difficultyBand: mapping?.difficultyBand ?? 0,
       sourceTier: mapping?.sourceTier || "advanced",
       reviewLocked: !mapping,
-      reviewReason: !mapping ? publicReviewReason(item.reviewReason) : item.reviewReason
+      reviewReason: !mapping ? publicReviewReason(item.reviewReason) : item.reviewReason,
+      ...(isSingleVerifiedMovementItem ? { generationMode: "fixed-verified-pool", verifiedVariantCount: 1 } : {})
     };
   })
 };

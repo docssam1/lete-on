@@ -130,7 +130,9 @@ function auditPayload(variant, payload, generated) {
     assert(payload.level !== 1 || payload.divisorLower === payload.remainder + 1, "중간은 나머지로 가장 작은 나누는 수를 찾아야 합니다.");
     assert(payload.level !== 2 || payload.divisorUpper > payload.divisorLower, "어려움은 나누는 수의 범위에서 두 끝값을 비교해야 합니다.");
   } else if (variant === 1) {
-    const quotients = payload.level === 0 ? [8, 9, 10, 11, 12] : allInRange(0, payload.divisor - 1, () => true);
+    const quotients = payload.level === 0
+      ? Array.from({ length: 5 }, (_, index) => payload.quotientCandidates[0] + index)
+      : allInRange(0, payload.divisor - 1, () => true);
     const baseValues = quotients.map(quotient => ({ quotient, value: (payload.divisor + 1) * quotient }))
       .filter(item => item.value >= 100 && item.value <= 999 && Math.floor(item.value / payload.divisor) === item.value % payload.divisor);
     const candidates = payload.level === 2 ? baseValues.filter(item => [...String(item.value)].reduce((sum, digit) => sum + Number(digit), 0) === payload.digitSum) : baseValues;
@@ -138,7 +140,8 @@ function auditPayload(variant, payload, generated) {
     assert(same(quotients, payload.quotientCandidates) && same(baseValues, payload.baseValues), "몫 범위에서 만든 세 자리 수 목록이 다릅니다.");
     assert(same(candidates, payload.candidates) && same(values, payload.values), "추가 자리 숫자 조건을 적용한 수 목록이 다릅니다.");
     assert(Number(generated.answer) === values.at(-1) - values[0], "가장 큰 수와 작은 수의 차가 다릅니다.");
-    assert(payload.level !== 2 || payload.digitSum === 9, "어려움의 자리 숫자 합 조건이 빠졌습니다.");
+    assert(payload.level !== 0 || quotients.length === 5 && quotients.at(-1) < payload.divisor, "쉬움의 몫 다섯 개가 나머지 조건에 맞지 않습니다.");
+    assert(payload.level !== 2 || Number.isInteger(payload.digitSum) && candidates.length >= 2, "어려움의 자리 숫자 합 조건이 빠졌습니다.");
   } else if (variant === 2) {
     const matches = cardMatches(payload.cards, payload.quotient, payload.remainder);
     assert(new Set(payload.cards).size === 5 && payload.cards.length === 5, "수 카드가 서로 다른 다섯 장이 아닙니다.");
@@ -200,13 +203,13 @@ function auditPayload(variant, payload, generated) {
     const assignments = [];
     if (payload.level === 0) {
       for (let digit = 0; digit <= 9; digit += 1) {
-        const number = 940 + digit;
+        const number = payload.base + digit;
         assignments.push({ digits: [digit], number, remainder: number % payload.divisor });
       }
     } else {
       for (let first = 0; first <= 9; first += 1) for (let second = 0; second <= 9; second += 1) {
         if (payload.level === 2 && first === second) continue;
-        const number = 900 + first * 10 + second;
+        const number = payload.base + first * 10 + second;
         assignments.push({ digits: [first, second], number, remainder: number % payload.divisor });
       }
     }
@@ -221,12 +224,12 @@ function auditPayload(variant, payload, generated) {
     const assignments = [];
     if (payload.level < 2) {
       for (let digit = 0; digit <= 9; digit += 1) {
-        const number = 950 + digit;
+        const number = payload.base + digit;
         assignments.push({ digits: [digit], number, quotient: Math.floor(number / payload.divisor), remainder: number % payload.divisor });
       }
     } else {
       for (let first = 0; first <= 9; first += 1) for (let second = 0; second <= 9; second += 1) {
-        const number = 900 + first * 10 + second;
+        const number = payload.base + first * 10 + second;
         assignments.push({ digits: [first, second], number, quotient: Math.floor(number / payload.divisor), remainder: number % payload.divisor, digitSum: first + second });
       }
     }
@@ -237,7 +240,7 @@ function auditPayload(variant, payload, generated) {
     const expected = payload.level === 0 ? String(candidates[0].digits[0]) : expression;
     assert(generated.answer === expected && payload.expression === expression, "난이도별 빈칸 나눗셈 답이 다릅니다.");
     assert(payload.level !== 0 || payload.shownQuotient === candidates[0].quotient, "쉬움은 몫을 직접 보여 주어야 합니다.");
-    assert(payload.level !== 2 || payload.digitSum === 6 && candidates[0].digits.length === 2, "어려움은 두 빈칸과 숫자 합 조건을 사용해야 합니다.");
+    assert(payload.level !== 2 || Number.isInteger(payload.digitSum) && candidates[0].digits.length === 2, "어려움은 두 빈칸과 숫자 합 조건을 사용해야 합니다.");
   } else if (variant === 9) {
     const values = allInRange(payload.lower, payload.upper, value => value % payload.divisor === payload.remainder);
     const expected = payload.level === 2 ? `첫 수=${values[0]}, 끝 수=${values.at(-1)}, 개수=${values.length}` : String(values.length);
@@ -285,12 +288,8 @@ for (const [sourceItemId, variant, label] of sourceItems) {
   check(Boolean(sourceItem), `${sourceItemId}: 원문 항목이 없습니다.`);
   check(sourceItem?.typeLabel === label, `${sourceItemId}: 원문 유형명이 정확히 일치하지 않습니다.`);
   check(runtimeItem?.typeLabel === label, `${sourceItemId}: 브라우저 유형명이 원문 유형명과 일치하지 않습니다.`);
-  if (variant === 2) {
-    check(!mapping && runtimeItem?.reviewLocked && !runtimeItem?.generatorKey, `${sourceItemId}: 공식 숫자 답이 없는 수 카드 문항은 잠금이어야 합니다.`);
-  } else {
-    check(mapping?.generatorKey === generatorKey && mapping?.variant === variant, `${sourceItemId}: 전용 생성기 연결이 다릅니다.`);
-    check(runtimeItem?.generatorKey === generatorKey && runtimeItem?.variant === variant && !runtimeItem?.reviewLocked, `${sourceItemId}: 브라우저에서 생성 가능 상태가 아닙니다.`);
-  }
+  check(mapping?.generatorKey === generatorKey && mapping?.variant === variant, `${sourceItemId}: 전용 생성기 연결이 다릅니다.`);
+  check(runtimeItem?.generatorKey === generatorKey && runtimeItem?.variant === variant && !runtimeItem?.reviewLocked, `${sourceItemId}: 브라우저에서 생성 가능 상태가 아닙니다.`);
 }
 
 check(20 * 30 + 29 === 629, "원문 본문 답이 다릅니다.");
@@ -319,6 +318,7 @@ for (const [, variant] of sourceItems) {
   const conditionCountsSeen = new Set();
   for (const difficulty of difficulties) {
     complexities.set(`${variant}:${difficulty}`, []);
+    const visiblePrompts = new Set();
     for (let seed = 1; seed <= seedsPerDifficulty; seed += 1) {
       try {
         const generated = api.generate({ generatorKey, variant }, 0, difficulty, seed, variant);
@@ -336,12 +336,14 @@ for (const [, variant] of sourceItems) {
         tasksSeen.add(extracted.payload.task);
         conditionCountsSeen.add(extracted.payload.conditionCount);
         complexities.get(`${variant}:${difficulty}`).push(extracted.payload.complexity);
+        visiblePrompts.add(visibleText(generated.prompt).replace(/\s+/g, " ").trim());
         generatedCount += 1;
       } catch (error) {
         failures.push(`분기 ${variant} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`);
         break;
       }
     }
+    check(visiblePrompts.size >= 3, `분기 ${variant} / 난이도 ${difficulty}: 500회 생성에서 서로 다른 문제 본문이 3개 미만입니다.`);
   }
   check(modesSeen.size === 3, `분기 ${variant}: 하·중·상의 문제 방식이 세 가지로 나뉘지 않습니다.`);
   check(tasksSeen.size === 3, `분기 ${variant}: 하·중·상의 풀이 작업이 세 가지로 나뉘지 않습니다.`);
@@ -361,4 +363,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-1 나눗셈의 나머지 전용 감사 통과: 원문 11항목 · 공개 10 · 잠금 1 · ${generatedCount.toLocaleString()}회 독립 계산 · 수 카드 120배치와 모든 정답 후보 전수검사`);
+console.log(`4-1 나눗셈의 나머지 전용 감사 통과: 원문 11항목 · 공개 11 · 잠금 0 · ${generatedCount.toLocaleString()}회 독립 계산 · 수 카드 120배치와 모든 정답 후보 전수검사`);

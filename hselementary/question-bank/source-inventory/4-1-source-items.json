@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "status": "verified-source-inventory",
   "source": {
-    "title": "생각하는 황소 4-1 실력",
-    "fileName": "4-1 실력.pdf",
+    "title": "생각하는 황소 4-1 심화",
+    "fileName": "생각하는 황소 4-1 심화.pdf",
     "reviewMethod": "rendered page direct visual inspection",
     "ocrAcceptedAsEvidence": false
   },
@@ -4493,10 +4493,11 @@
       "sourceItemId": "4-1-u6-e5-exploration",
       "sourceSection": "exploration",
       "sourceItemLabel": "개념탐구 5 본문",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "일렬 상자 모양을 늘일 때 필요한 성냥개비 수",
+      "typeLabel": "계단 모양 상자를 8열까지 만들 때 필요한 성냥개비 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4507,10 +4508,11 @@
       "sourceItemId": "4-1-u6-e5-example-5-1",
       "sourceSection": "example",
       "sourceItemLabel": "예제 5-1",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "50원과 100원 동전을 놓은 규칙에서 전체 금액 구하기",
+      "typeLabel": "정사각형을 이어 그릴 때 10번째 정사각형 한 변의 길이",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4521,10 +4523,11 @@
       "sourceItemId": "4-1-u6-e5-example-5-2",
       "sourceSection": "example",
       "sourceItemLabel": "예제 5-2",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "마름모 테두리로 늘어나는 바둑돌 수",
+      "typeLabel": "오각형 모양으로 늘어나는 바둑돌의 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4535,10 +4538,11 @@
       "sourceItemId": "4-1-u6-e5-example-5-3",
       "sourceSection": "example",
       "sourceItemLabel": "예제 5-3",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "대각선이 있는 정사각형의 점 수",
+      "typeLabel": "육각형 모양으로 늘어나는 바둑돌의 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4549,10 +4553,11 @@
       "sourceItemId": "4-1-u6-e5-example-5-4",
       "sourceSection": "example",
       "sourceItemLabel": "예제 5-4",
-      "sourcePdfPage": 70,
+      "sourcePdfPage": 74,
       "sourcePrintedPage": 70,
-      "typeLabel": "점 배열로 만든 작은 정사각형 수와 점 수",
+      "typeLabel": "검은색과 흰색 타일이 번갈아 늘어나는 규칙",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4563,10 +4568,11 @@
       "sourceItemId": "4-1-u6-e5-mission-1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "점으로 만든 계단 모양 정사각형의 점 수",
+      "typeLabel": "오각형 모양으로 늘어나는 점의 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4577,10 +4583,11 @@
       "sourceItemId": "4-1-u6-e5-mission-2",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 2",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "지그재그 육각형 모양의 성냥개비 수로 도형 수 찾기",
+      "typeLabel": "검은색과 흰색 바둑돌이 번갈아 늘어나는 규칙",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4591,10 +4598,11 @@
       "sourceItemId": "4-1-u6-e5-mission-3",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "ㄱ자 점 배열로 만든 작은 정사각형 수와 점 수",
+      "typeLabel": "계단 모양 상자를 10층까지 만들 때 필요한 성냥개비 수",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4605,10 +4613,11 @@
       "sourceItemId": "4-1-u6-e5-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "줄마다 늘어나는 마름모 바둑돌 수",
+      "typeLabel": "성냥개비 개구리 모양의 수 규칙",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4619,10 +4628,11 @@
       "sourceItemId": "4-1-u6-e5-mission-5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "같은 상자 모양을 여러 개 만들 때 필요한 성냥개비 수",
+      "typeLabel": "반복 무늬에서 전체 바둑돌 수로 검은 바둑돌 수 구하기",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {
@@ -4633,10 +4643,11 @@
       "sourceItemId": "4-1-u6-e5-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "sourcePdfPage": 71,
+      "sourcePdfPage": 75,
       "sourcePrintedPage": 71,
-      "typeLabel": "가로로 이어 붙인 정사각형의 점 수로 정사각형 수 찾기",
+      "typeLabel": "육각형을 겹쳐 만든 모양에서 작은 육각형 수 구하기",
       "sourceVerified": true,
+      "reviewReason": "현재 생성기가 원본 그림 구조와 달라 다시 설계해야 합니다.",
       "typeLanguageVerified": true
     },
     {

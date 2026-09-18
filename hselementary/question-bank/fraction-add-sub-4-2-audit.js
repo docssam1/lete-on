@@ -774,6 +774,14 @@ for (const type of types) {
       check(independentlyCalculated !== null, `${context}: 알 수 없는 검산 유형 ${kind}입니다.`);
       check(String(independentlyCalculated) === declared, `${context}: 내부 정답 ${declared}과 독립 계산 ${independentlyCalculated}이 다릅니다.`);
       check(String(generated.answer) === declared, `${context}: 표시 정답 ${generated.answer}과 검산 정답 ${declared}이 다릅니다.`);
+      if (kind === "fraction-3-exploration") {
+        const expressionLines = generated.prompt.match(/<div class="expression-line">.*?<\/div>/g) || [];
+        check(expressionLines.length === 6, `${context}: 여섯 계산식이 각각 독립된 행으로 표시되지 않습니다.`);
+        expressionLines.forEach((line, lineIndex) => {
+          const denominators = [...line.matchAll(/aria-label="(\d+)분의 [^"]+"/g)].map(match => Number(match[1]));
+          check(denominators.length >= 2 && new Set(denominators).size === 1, `${context}: ${lineIndex + 1}번 식의 분모 표시가 서로 다릅니다.`);
+        });
+      }
       if (kind === "fraction-2-mission-5") {
         const [denominator, firstStep, secondStep, first] = values;
         const candidates = [];
