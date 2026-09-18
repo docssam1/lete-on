@@ -84,9 +84,11 @@ function solutionText(problem){
   }
   if(problem.kind==='game-level'){
     const p=problem.source;
-    const foldName=sharedAxisLabel[p.fold.axis];
-    if(p.interaction==='connect-match') return `${foldName}로 한 번 접은 종이의 자른 선을 접은 선 반대쪽에 대칭으로 옮겨 각각의 펼친 결과와 연결합니다. (${p.id})`;
-    return `${foldName}로 한 번 접은 종이를 펼치면 자른 선이 접은 선을 기준으로 대칭이 됩니다. 알맞은 결과는 ${problem.answer}입니다. (${p.id})`;
+    const foldNames=p.folds.map(step=>sharedAxisLabel[step.axis]).join(' → ');
+    if(p.interaction==='connect-match') return `${foldNames} 순서로 접은 종이를 반대 순서로 펼쳐 구멍 위치를 옮긴 뒤, 각각의 펼친 결과와 연결합니다. (${p.id})`;
+    if(p.interaction==='piece-count') return `${foldNames}로 접은 뒤 자른 선을 접은 선 반대쪽에 대칭으로 옮겨 모두 펼칩니다. 나누어진 영역은 ${p.pieceCount}개입니다. (${p.id})`;
+    if(p.interaction==='hole-count') return `${foldNames}로 접은 종이를 펼치면 구멍이 접은 선 반대쪽에도 생깁니다. 구멍은 모두 ${p.unfoldedPoints.length}개입니다. (${p.id})`;
+    return `${foldNames} 순서의 반대로 펼치며 구멍을 대칭 이동합니다. 알맞은 결과는 ${problem.answer}입니다. (${p.id})`;
   }
   if(problem.kind==='hole'){
     const counts=[problem.nHoles];
@@ -201,15 +203,20 @@ window.hfRenderVariation = hfRenderVariation;
 document.querySelectorAll('input[name="difficulty"]').forEach(input=>input.addEventListener('change',generateSheet));
 document.getElementById('count').addEventListener('change',generateSheet);
 document.getElementById('answers').addEventListener('change',generateSheet);
-/* 지오메트리 랩의 딥링크(?mode=&difficulty=&count=)를 화면 상태로 옮긴다.
+/* 지오메트리 랩의 딥링크(?mode=&modes=&difficulty=&count=)를 화면 상태로 옮긴다.
    값은 모두 이 페이지에 실제로 있는 선택지로만 좁혀 받는다 — 주소창에서 손으로
    고친 값이 화면에 없는 상태를 만들면, 보이는 설정과 뽑히는 문제가 어긋난다.
    엔진에는 손대지 않고 컨트롤만 미리 맞춰 두는 배선이다. */
 function applyLabParams(){
   let params;
   try{ params=new URLSearchParams(window.location.search); }catch(e){ return; }
+  const modes=(params.get('modes')||'').split(',').map(value=>value.trim()).filter((value,index,values)=>value && values.indexOf(value)===index && modeOptions.some(option=>option.value===value));
   const mode=params.get('mode');
-  if(mode && modeOptions.some(option=>option.value===mode)){
+  if(modes.length){
+    selectedModes=modes;
+    previewMode=modes[0];
+    modeSelect.value=previewMode;
+  }else if(mode && modeOptions.some(option=>option.value===mode)){
     selectedModes=[mode];
     previewMode=mode;
     modeSelect.value=mode;

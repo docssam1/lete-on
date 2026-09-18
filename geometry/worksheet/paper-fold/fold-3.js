@@ -196,7 +196,7 @@ const sharedAxisLabel={vertical:'세로',horizontal:'가로','diag-main':'왼쪽
 
 async function loadSharedGameLevels(){
   try{
-    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-8');
+    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-9');
     module.validateLevels();
     sharedGameLevels=module.levels;
   }catch(error){
@@ -282,16 +282,15 @@ function buildSharedProblem(mode){
   if(!level) return null;
   const source=level.problems[questionNumber%level.problems.length];
   const prompts={
-    1:['색종이를 가로나 세로로 한 번 접어 선을 따라 잘랐습니다.','접은 모습과 펼친 결과의 관계를 살펴보세요.'],
-    2:['색종이를 대각선으로 한 번 접어 선을 따라 잘랐습니다.','접은 모습과 펼친 결과의 관계를 살펴보세요.']
+    1:['색종이를 한 번 또는 두 번 접어 선을 따라 잘랐습니다.','접은 순서의 반대로 펼쳐 절단선을 완성하고 조각 수를 구하세요.'],
+    2:['색종이를 한 번 또는 두 번 접어 구멍을 뚫었습니다.','접은 순서의 반대로 펼쳐 구멍의 위치와 개수를 알아보세요.']
   };
   let answer='선 잇기';
-  if(source.interaction==='result-choice'){
-    const correct=source.choices.find(choice=>choice.key===source.answer);
-    answer=`${source.choices.indexOf(correct)+1}번`;
-  }
+  if(source.interaction==='piece-count') answer=`${source.pieceCount}조각`;
+  if(source.interaction==='hole-count') answer=`${source.unfoldedPoints.length}개`;
+  if(source.interaction==='hole-result') answer=`${source.choices.findIndex(choice=>choice.key===source.answer)+1}번`;
   const foldNames=(source.folds||[source.fold]).map(step=>sharedAxisLabel[step.axis]).join(' → ');
-  return {kind:'game-level',gameLevel:levelNumber,source,answer,text:prompts[levelNumber],info:`${source.id} · ${foldNames}`,src:'게임과 동일한 한 번 접기 문항'};
+  return {kind:'game-level',gameLevel:levelNumber,source,answer,text:prompts[levelNumber],info:`${source.id} · ${foldNames}`,src:'게임과 동일한 확정 문항'};
 }
 
 function sharedRegionPath(ctx,x,y,size,region){
@@ -374,44 +373,89 @@ function sharedFoldedPolygon(fold){
   return shapes[`${fold.axis}-${fold.side}`].map(([x,y])=>({x,y}));
 }
 
-function drawSharedSinglePaper(ctx,x,y,size,item,view,{answer=false}={}){
-  const fold=item.fold,cut=item.cut||[],toCanvas=point=>({x:x+point.x*size,y:y+point.y*size});
-  const trace=points=>{ctx.beginPath();points.forEach((point,index)=>{const p=toCanvas(point);index?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});};
+function sharedTracePolygon(ctx,x,y,size,polygon){
+  ctx.beginPath();
+  polygon.forEach((point,index)=>index?ctx.lineTo(x+point.x*size,y+point.y*size):ctx.moveTo(x+point.x*size,y+point.y*size));
+  ctx.closePath();
+}
+
+function drawSharedPaper(ctx,x,y,size,{polygon=null,folds=[],segments=[],holes=[],answer=false}={}){
+  const shape=polygon||[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
   ctx.save();
-  if(view==='folded'){
-    const folded=sharedFoldedPolygon(fold);trace(folded);ctx.closePath();ctx.fillStyle='#f9dc72';ctx.fill();ctx.strokeStyle='#d19935';ctx.lineWidth=2.5;ctx.stroke();
-    trace(folded.map(point=>({x:point.x+.018,y:point.y+.018})));ctx.closePath();ctx.strokeStyle='#e2b349';ctx.lineWidth=2;ctx.stroke();
-    trace(cut);ctx.strokeStyle='#b03a5b';ctx.lineWidth=4;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+  sharedTracePolygon(ctx,x,y,size,shape);
+  ctx.fillStyle='#f9dc72';ctx.fill();ctx.strokeStyle='#d19935';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.save();sharedTracePolygon(ctx,x,y,size,shape);ctx.clip();
+  folds.forEach(step=>drawSharedCrease(ctx,x,y,size,step.axis));
+  ctx.strokeStyle=answer?'#27835d':'#b03a5b';ctx.lineWidth=4;ctx.lineCap='round';ctx.lineJoin='round';
+  segments.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(x+a.x*size,y+a.y*size);ctx.lineTo(x+b.x*size,y+b.y*size);ctx.stroke();});
+  holes.forEach(point=>{ctx.beginPath();ctx.arc(x+point.x*size,y+point.y*size,Math.max(5,size*.045),0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.stroke();});
+  ctx.restore();ctx.restore();
+}
+
+function sharedFinalPolygon(item){
+  if(item.stagePolygons?.length) return item.stagePolygons[item.stagePolygons.length-1];
+  return sharedFoldedPolygon(item.fold);
+}
+
+function sharedPlacementText(problem){
+  const names={left:'왼쪽',right:'오른쪽',top:'위쪽',bottom:'아래쪽',upper:'대각선 위쪽',lower:'대각선 아래쪽'};
+  return problem.placementSteps.map((step,index)=>`${index+1}번째: ${names[step.answer]||step.answer}`).join('  ·  ');
+}
+
+function drawSharedFoldSequence(ctx,item,{startX=55,y=145,size=150,gap=195}={}){
+  const stages=item.stagePolygons||[[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}],sharedFinalPolygon(item)];
+  stages.forEach((polygon,index)=>{
+    const last=index===stages.length-1;
+    drawSharedPaper(ctx,startX+index*gap,y,size,{polygon,folds:index<item.folds.length?[item.folds[index]]:[],segments:last?(item.cutSegments||[]):[],holes:last?(item.punches||[]):[]});
+    if(index<stages.length-1) drawStepArrow(ctx,startX+index*gap+size+12,y+size/2);
+  });
+}
+
+function renderSharedSolo(ctx,p,showAnswer){
+  const isDouble=p.interaction==='hole-result';
+  if(isDouble){
+    drawSharedFoldSequence(ctx,p,{startX:45,y:150,size:130,gap:185});
+    p.choices.forEach((choice,index)=>{
+      const x=670+index*205,size=150,isCorrect=choice.key===p.answer;
+      drawSharedPaper(ctx,x,155,size,{folds:p.folds,holes:choice.points,answer:showAnswer&&isCorrect});
+      ctx.fillStyle=showAnswer&&isCorrect?'#27835d':'#17345f';ctx.beginPath();ctx.arc(x+size/2,335,17,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='900 15px sans-serif';ctx.fillText(String(index+1),x+size/2,341);
+      if(showAnswer&&isCorrect){ctx.strokeStyle='#27835d';ctx.lineWidth=5;ctx.strokeRect(x-6,149,size+12,size+12);}
+    });
+    ctx.textAlign='left';
   }else{
-    ctx.fillStyle='#f9dc72';ctx.fillRect(x,y,size,size);ctx.strokeStyle='#d19935';ctx.lineWidth=2.5;ctx.strokeRect(x,y,size,size);drawSharedCrease(ctx,x,y,size,fold.axis);
-    const polygon=cut.concat(cut.slice(1,-1).map(point=>sharedReflectPoint(point,fold.axis)).reverse());
-    trace(polygon);ctx.closePath();ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle=answer?'#27835d':'#b03a5b';ctx.lineWidth=3;ctx.stroke();
+    const firstPolygon=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}],folded=sharedFinalPolygon(p);
+    drawSharedPaper(ctx,75,150,190,{polygon:firstPolygon,folds:p.folds});drawStepArrow(ctx,285,245);
+    drawSharedPaper(ctx,355,150,190,{polygon:folded,segments:p.cutSegments||[],holes:p.punches||[]});drawStepArrow(ctx,565,245);
+    drawSharedPaper(ctx,635,150,190,{folds:p.folds,segments:showAnswer?(p.unfoldedSegments||[]):[],holes:showAnswer?(p.unfoldedPoints||[]):[],answer:showAnswer});
+    ctx.fillStyle='#52616b';ctx.font='700 15px sans-serif';ctx.fillText(showAnswer?'펼친 결과':'펼친 결과를 생각해 보세요.',635,375);
+    ctx.fillStyle='#17345f';ctx.font='800 18px sans-serif';
+    const result=p.interaction==='piece-count'?`조각 수: ${showAnswer?p.pieceCount:'____'}조각`:`구멍 수: ${showAnswer?p.unfoldedPoints.length:'____'}개`;
+    ctx.fillText(result,900,235);
   }
-  ctx.restore();
+  ctx.fillStyle='#52616b';ctx.font='700 16px sans-serif';ctx.fillText(`종이가 놓이는 쪽  ${showAnswer?sharedPlacementText(p):'____________________________'}`,55,455);
+}
+
+function drawSharedMatchItem(ctx,x,y,size,item,view,answer=false){
+  if(view==='folded') drawSharedPaper(ctx,x,y,size,{polygon:sharedFinalPolygon(item),segments:item.cutSegments||[],holes:item.punches||[]});
+  else drawSharedPaper(ctx,x,y,size,{folds:item.folds,segments:item.unfoldedSegments||[],holes:item.unfoldedPoints||[],answer});
+}
+
+function renderSharedConnections(ctx,p,showAnswer){
+  const leftX=95,rightX=1050,itemSize=102,startY=130,gap=125;
+  p.pairs.forEach((item,index)=>{drawSharedMatchItem(ctx,leftX,startY+index*gap,itemSize,item,'folded');ctx.fillStyle='#17345f';ctx.font='900 15px sans-serif';ctx.fillText(String(index+1),leftX-28,startY+index*gap+58);});
+  p.results.forEach((item,index)=>{drawSharedMatchItem(ctx,rightX,startY+index*gap,itemSize,item,'result',showAnswer);ctx.fillStyle='#17345f';ctx.font='900 15px sans-serif';ctx.fillText(String.fromCharCode(65+index),rightX+itemSize+14,startY+index*gap+58);});
+  if(showAnswer){
+    ctx.strokeStyle='#27835d';ctx.lineWidth=4;
+    p.pairs.forEach((item,leftIndex)=>{const rightIndex=p.results.findIndex(result=>result.key===item.key);ctx.beginPath();ctx.moveTo(leftX+itemSize+6,startY+leftIndex*gap+itemSize/2);ctx.bezierCurveTo(430,startY+leftIndex*gap+itemSize/2,730,startY+rightIndex*gap+itemSize/2,rightX-6,startY+rightIndex*gap+itemSize/2);ctx.stroke();});
+  }
 }
 
 function renderSharedGame(ctx,d,showAnswer=false){
   header(ctx,d.text);
-  const p=d.source,foldName=sharedAxisLabel[p.fold.axis];
-  ctx.fillStyle='#52616b';ctx.font='700 16px sans-serif';ctx.fillText(`${p.id} · ${foldName}로 한 번 접기`,54,112);
-  if(p.interaction==='result-choice'){
-    drawSharedSinglePaper(ctx,75,150,235,p,'folded');
-    ctx.fillStyle='#25313b';ctx.font='800 15px sans-serif';ctx.textAlign='center';ctx.fillText('접어 자른 색종이',192,410);drawStepArrow(ctx,350,268);
-    p.choices.forEach((choice,index)=>{
-      const x=455+index*270,size=205,isCorrect=choice.key===p.answer;
-      drawSharedSinglePaper(ctx,x,165,size,choice,'result',{answer:showAnswer&&isCorrect});
-      ctx.beginPath();ctx.arc(x+size/2,405,18,0,Math.PI*2);ctx.fillStyle=showAnswer&&isCorrect?'#27835d':'#17345f';ctx.fill();ctx.fillStyle='#fff';ctx.font='900 16px sans-serif';ctx.fillText(String(index+1),x+size/2,411);
-      if(showAnswer&&isCorrect){ctx.strokeStyle='#27835d';ctx.lineWidth=5;ctx.strokeRect(x-6,159,size+12,size+12);}
-    });
-    ctx.textAlign='left';
-    return;
-  }
-  const leftX=95,rightX=900,itemSize=105,startY=135,gap=122;
-  p.pairs.forEach((item,index)=>{drawSharedSinglePaper(ctx,leftX,startY+index*gap,itemSize,item,'folded');ctx.fillStyle='#17345f';ctx.font='900 15px sans-serif';ctx.fillText(String(index+1),leftX-28,startY+index*gap+58);});
-  p.results.forEach((item,index)=>{drawSharedSinglePaper(ctx,rightX,startY+index*gap,itemSize,item,'result',{answer:showAnswer});ctx.fillStyle='#17345f';ctx.font='900 15px sans-serif';ctx.fillText(String.fromCharCode(65+index),rightX+itemSize+14,startY+index*gap+58);});
-  if(showAnswer){
-    ctx.strokeStyle='#27835d';ctx.lineWidth=4;
-    p.pairs.forEach((item,leftIndex)=>{const rightIndex=p.results.findIndex(result=>result.key===item.key);ctx.beginPath();ctx.moveTo(leftX+itemSize+6,startY+leftIndex*gap+itemSize/2);ctx.bezierCurveTo(430,startY+leftIndex*gap+itemSize/2,670,startY+rightIndex*gap+itemSize/2,rightX-6,startY+rightIndex*gap+itemSize/2);ctx.stroke();});
-  }
+  const p=d.source,foldNames=p.folds.map(step=>sharedAxisLabel[step.axis]).join(' → ');
+  ctx.fillStyle='#52616b';ctx.font='700 16px sans-serif';ctx.fillText(`${p.id} · ${foldNames}`,54,112);
+  if(p.interaction==='connect-match') renderSharedConnections(ctx,p,showAnswer);
+  else renderSharedSolo(ctx,p,showAnswer);
 }
 
