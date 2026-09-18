@@ -8,8 +8,8 @@ export const levelMeta = [
   },
   {
     id: 2, stage: "입문", difficulty: "입문", color: "sky", strand: "cut-open-two",
-    title: translations("두 번 접어 자르기", "折两次再剪", "二回折って切る", "Two Folds and Cut"),
-    description: translations("접기 순서 두 단계를 따라 펼친 네 자리를 찾아요.", "按顺序折两次，找出展开后的四个位置。", "二つの折り順をたどり、開いた四つの場所を探します。", "Follow two folds in order and find the four opened positions.")
+    title: translations("펼친 결과 되짚기", "根据展开结果倒推", "開いた結果からたどる", "Trace Back the Open Result"),
+    description: translations("펼친 자국을 접기 순서의 반대로 포개어 접기 전 자른 위치를 찾아요.", "把展开的痕迹按折叠顺序反向重叠，找出折叠前的剪切位置。", "開いた跡を折る順番と逆に重ね、折る前の切る位置を探します。", "Stack the open marks in reverse fold order to find the cut before folding.")
   },
   {
     id: 3, stage: "입문", difficulty: "초급", color: "violet", strand: "punch-holes",
@@ -34,6 +34,7 @@ const regionPattern = /^r[1-4]c[1-4](?:-(?:ne|nw|se|sw))?$/;
 const baseCellId = (region) => region.replace(/-(?:ne|nw|se|sw)$/, "");
 const numberGrid = (values) => ({ size: 4, values });
 const gridCells = (values) => values.flatMap((row, r) => row.map((value, c) => ({ id: `r${r + 1}c${c + 1}`, value })));
+const visualChoice = (key, regions) => ({ key, regions });
 
 const triangleReflection = {
   vertical: { nw: "ne", ne: "nw", sw: "se", se: "sw" },
@@ -59,11 +60,54 @@ const expandRegions = (sourceRegions, folds) => folds.reduce(
   [...sourceRegions]
 );
 
+function sourceFitsFoldedArea(region, folds) {
+  const match = /^r([1-4])c([1-4])/.exec(region);
+  if (!match) return false;
+  const row = Number(match[1]);
+  const col = Number(match[2]);
+  return folds.every((step) => {
+    if (step.axis === "vertical") return step.side === "left" ? col >= 3 : col <= 2;
+    if (step.axis === "horizontal") return step.side === "top" ? row >= 3 : row <= 2;
+    return true;
+  });
+}
+
+const canonicalRegions = (regions) => [...regions].sort().join("|");
+
+function alternativeSourceRegions(sourceRegions, folds, offset) {
+  const used = new Set(sourceRegions);
+  return sourceRegions.map((region, sourceIndex) => {
+    const part = /-(ne|nw|se|sw)$/.exec(region)?.[1];
+    const suffix = part ? `-${part}` : "";
+    const candidates = [];
+    for (let row = 1; row <= 4; row += 1) {
+      for (let col = 1; col <= 4; col += 1) {
+        const candidate = `r${row}c${col}${suffix}`;
+        if (!used.has(candidate) && sourceFitsFoldedArea(candidate, folds)) candidates.push(candidate);
+      }
+    }
+    const choice = candidates[(offset + sourceIndex) % candidates.length];
+    used.add(choice);
+    return choice;
+  });
+}
+
 function regionProblem(level, index, interaction, folds, sourceRegions, sourceRef) {
+  const targetRegions = expandRegions(sourceRegions, folds);
+  let wrongSource = alternativeSourceRegions(sourceRegions, folds, index);
+  for (let offset = 1; offset <= 16 && canonicalRegions(expandRegions(wrongSource, folds)) === canonicalRegions(targetRegions); offset += 1) {
+    wrongSource = alternativeSourceRegions(sourceRegions, folds, index + offset);
+  }
+  const correctRegions = interaction === "backtrack-choice" ? sourceRegions : targetRegions;
+  const wrongRegions = interaction === "backtrack-choice" ? wrongSource : expandRegions(wrongSource, folds);
+  const correctKey = index % 2 === 0 ? "b" : "a";
+  const choices = correctKey === "a"
+    ? [visualChoice("a", correctRegions), visualChoice("b", wrongRegions)]
+    : [visualChoice("a", wrongRegions), visualChoice("b", correctRegions)];
   return {
     id: id(level, index), level, interaction, fold: folds[0], folds,
-    action: { type: interaction === "punch-select" ? "punch" : "cut" },
-    sourceRegions, targetRegions: expandRegions(sourceRegions, folds), sourceRef
+    action: { type: level === 3 ? "punch" : "cut" },
+    sourceRegions, targetRegions, choices, answer: correctKey, sourceRef
   };
 }
 
@@ -190,27 +234,15 @@ function topProblem(index) {
 }
 
 export const levels = [
-  { ...levelMeta[0], problems: oneFoldSpecs.map(([step, regions], index) => regionProblem(1, index + 1, "grid-select", [step], regions, "fields.classic.fold-cut-unfold-one-draw")) },
-  { ...levelMeta[1], problems: twoFoldSpecs.map(([folds, regions], index) => regionProblem(2, index + 1, "grid-select", folds, regions, "fields.classic.fold-cut-unfold-two-draw")) },
-  { ...levelMeta[2], problems: punchSpecs.map(([folds, regions], index) => regionProblem(3, index + 1, "punch-select", folds, regions, folds.some((step) => step.axis.startsWith("diag")) ? "fields.classic.fold-diagonal-hole-count" : folds.length > 1 ? "fields.classic.practice-three-fold-hole-count" : "fields.classic.fold-hole-count")) },
+  { ...levelMeta[0], problems: oneFoldSpecs.map(([step, regions], index) => regionProblem(1, index + 1, "result-choice", [step], regions, "fields.classic.fold-cut-unfold-one-draw")) },
+  { ...levelMeta[1], problems: twoFoldSpecs.map(([folds, regions], index) => regionProblem(2, index + 1, "backtrack-choice", folds, regions, "fields.classic.fold-cut-unfold-two-draw")) },
+  { ...levelMeta[2], problems: punchSpecs.map(([folds, regions], index) => regionProblem(3, index + 1, "result-choice", folds, regions, folds.some((step) => step.axis.startsWith("diag")) ? "fields.classic.fold-diagonal-hole-count" : folds.length > 1 ? "fields.classic.practice-three-fold-hole-count" : "fields.classic.fold-hole-count")) },
   { ...levelMeta[3], problems: numberValues.map((_, index) => numberProblem(index)) },
   { ...levelMeta[4], problems: topSpecs.map((_, index) => topProblem(index)) }
 ];
 
 const isUniqueRegionList = (regions) => Array.isArray(regions) && regions.length > 0 && new Set(regions).size === regions.length && regions.every((region) => regionPattern.test(region));
 const equalRegionSets = (actual, expected) => actual.length === expected.length && expected.every((region) => actual.includes(region));
-const sourceFitsFoldedArea = (region, folds) => {
-  const match = /^r([1-4])c([1-4])/.exec(region);
-  if (!match) return false;
-  const row = Number(match[1]);
-  const col = Number(match[2]);
-  return folds.every((step) => {
-    if (step.axis === "vertical") return step.side === "left" ? col >= 3 : col <= 2;
-    if (step.axis === "horizontal") return step.side === "top" ? row >= 3 : row <= 2;
-    return true;
-  });
-};
-
 export function validateLevels() {
   const ids = new Set();
   if (levels.length !== 5) throw new Error("Paper-fold must contain five distinct strands.");
@@ -220,9 +252,13 @@ export function validateLevels() {
       if (ids.has(problem.id)) throw new Error(`Duplicate paper-fold problem ${problem.id}`);
       ids.add(problem.id);
       if (!Array.isArray(problem.folds) || !problem.folds.length || problem.fold !== problem.folds[0]) throw new Error(`Missing fold sequence: ${problem.id}`);
-      if (["grid-select", "punch-select"].includes(problem.interaction)) {
+      if (["result-choice", "backtrack-choice"].includes(problem.interaction)) {
         const expected = expandRegions(problem.sourceRegions, problem.folds);
-        if (!isUniqueRegionList(problem.sourceRegions) || !problem.sourceRegions.every((region) => sourceFitsFoldedArea(region, problem.folds)) || !isUniqueRegionList(problem.targetRegions) || !equalRegionSets(problem.targetRegions, expected)) throw new Error(`Invalid unfolded regions: ${problem.id}`);
+        const answerChoice = problem.choices.find((choice) => choice.key === problem.answer);
+        const expectedChoice = problem.interaction === "backtrack-choice" ? problem.sourceRegions : expected;
+        const wrongChoice = problem.choices.find((choice) => choice.key !== problem.answer);
+        const wrongSourceFits = problem.interaction !== "backtrack-choice" || wrongChoice.regions.every((region) => sourceFitsFoldedArea(region, problem.folds));
+        if (!isUniqueRegionList(problem.sourceRegions) || !problem.sourceRegions.every((region) => sourceFitsFoldedArea(region, problem.folds)) || !isUniqueRegionList(problem.targetRegions) || !equalRegionSets(problem.targetRegions, expected) || problem.choices.length !== 2 || !answerChoice || !wrongChoice || !equalRegionSets(answerChoice.regions, expectedChoice) || canonicalRegions(answerChoice.regions) === canonicalRegions(wrongChoice.regions) || !wrongSourceFits) throw new Error(`Invalid visual choices: ${problem.id}`);
       }
       if (problem.interaction === "cut-number-sum") {
         const available = gridCells(problem.grid.values);

@@ -85,7 +85,8 @@ function solutionText(problem){
   if(problem.kind==='game-level'){
     const p=problem.source;
     const folds=(p.folds||[p.fold]).map(step=>sharedAxisLabel[step.axis]).join(' → ');
-    if(problem.gameLevel<=3) return `${folds} 순서를 거꾸로 펼치며 표시를 대칭 이동합니다. 정답 위치는 ${problem.answer}입니다. (${p.id})`;
+    if(problem.gameLevel===2) return `펼친 자국을 ${folds} 접기 순서의 반대로 포개면 접기 전 잘린 위치는 ${problem.answer}입니다. (${p.id})`;
+    if(problem.gameLevel<=3) return `${folds} 순서를 거꾸로 펼치며 자른 자국을 옮기면 알맞은 결과는 ${problem.answer}입니다. (${p.id})`;
     if(problem.gameLevel===4) return `${folds} 순서를 거꾸로 펼쳐 잘려 나간 칸을 찾으면 ${p.answer.cells.map(sharedRegionLabel).join(', ')}입니다. ${p.answer.expression} = ${p.answer.sum}입니다. (${p.id})`;
     return `${folds} 순서로 움직이는 종이 층을 뒤집어 포개면 맨 위의 수는 ${p.answer}입니다. (${p.id})`;
   }
@@ -227,7 +228,7 @@ function applyLabParams(){
 }
 applyLabParams();
 syncModeButtons();
-previewProblem();
-generateSheet();
-loadSharedGameLevels();
-loadTurnGameLevels();
+Promise.all([loadSharedGameLevels(),loadTurnGameLevels()]).then(()=>{
+  previewProblem();
+  generateSheet();
+});
