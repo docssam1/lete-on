@@ -811,6 +811,7 @@ function texToPlain(tex){
   let s = String(tex==null?'':tex);
   /* 학습지 v2 예시(w2ExampleHtml)가 붙이는 \displaystyle·\color{#d33}{…} —
      KaTeX 미로딩 폴백에서도 안쪽 값만 남기고 명령은 지운다(2026-09-04). */
+  s = s.replace(/\\boxed\{\\rule\[[^\]]*\]\{0pt\}\{[^}]*\}(?:\\kern\{[^}]*\})?\\phantom\{00\}(?:\\kern\{[^}]*\})?\}/g, '□');   /* WRITE_BOX */
   s = s.replace(/\\displaystyle\s*/g, '');
   s = s.replace(/\\color\{[^{}]*\}\{([^{}]*)\}/g, '$1');
   /* 행렬(\begin{pmatrix}...\end{pmatrix}, MD30) — 다른 치환보다 먼저 처리해야
@@ -2790,8 +2791,13 @@ function wrapHangul(tex){
 /* 분수·근호·거듭제곱은 인라인이면 콩알만 해진다 — KaTeX \displaystyle로
    키운다(2026-09-04 재작업 지시). 한글 보정도 여기서 항상 같이 한다(호출부
    전부—문항 tex·단계·예시—가 이 함수 하나만 거치면 되게). */
+/* 답을 손으로 쓸 수 있는 크기의 빈칸(2026-09-18, 원장 "□에 답을 쓸 수 있을 정도로 커야지") —
+   KaTeX 의 \square 는 글자 한 자 크기라 쓸 자리가 없다. 인쇄에서는 \square 를 두 자리 수가 들어가는
+   높은 상자로 바꾼다. em 단위라 저학년 배율(--ws-fs)을 그대로 따라간다. 정답지는 답이 대입된 뒤라
+   \square 가 남지 않는다. */
+const WRITE_BOX = '\\boxed{\\rule[-0.55em]{0pt}{1.75em}\\kern{0.45em}\\phantom{00}\\kern{0.45em}}';
 function texDisplay(tex){
-  const t = wrapHangul(tex);
+  const t = wrapHangul(tex).replace(/\\square/g, WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 
@@ -2883,7 +2889,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
     const raw = String(p.tex||'').replace(/=\s*\\square\s*$/,'').trim();
     const bare = cellTotal > 1 && cellIdx >= Math.ceil(cellTotal * 0.75);
     const st = bare ? [] : (Array.isArray(p.steps) ? p.steps.filter(x => x && x.tex) : []);
-    const box = '\\boxed{\\phantom{00}}';
+    const box = '\\square';   /* texDisplay 가 쓰기 상자(WRITE_BOX)로 바꾼다 */
     const stepLines = st.map(x => {
       const t = String(x.tex).replace(/\\square/g, box);
       return `<div class="nm-w2-train-step">= <span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span></div>`;
