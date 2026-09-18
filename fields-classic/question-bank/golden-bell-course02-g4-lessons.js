@@ -424,6 +424,140 @@ const lineStyle = "stroke:#245d73;stroke-width:3;fill:none;stroke-linecap:round;
 const helperStyle = "stroke:#b42332;stroke-width:2.5;stroke-dasharray:7 5;fill:none";
 const textStyle = "font:600 15px sans-serif;fill:#18323d";
 
+const semanticColors = Object.freeze({
+  given: "#18323d",
+  action: "#b7791f",
+  move: "#2456c4",
+  verify: "#16734b",
+  givenFill: "#f5f6f8",
+  actionFill: "#fff4cc",
+  moveFill: "#eaf0ff",
+  verifyFill: "#eef8f3"
+});
+
+const svgPoint = ({ x, y }) => `${x.toFixed(2)},${y.toFixed(2)}`;
+const svgPoints = (points) => points.map(svgPoint).join(" ");
+const shiftedPoints = (points, dx, dy) => points.map(({ x, y }) => ({ x: x + dx, y: y + dy }));
+
+function pointFromVertical(cx, cy, radius, degrees, downward = false) {
+  const radians = degrees * Math.PI / 180;
+  return {
+    x: cx + Math.sin(radians) * radius,
+    y: cy + (downward ? 1 : -1) * Math.cos(radians) * radius
+  };
+}
+
+function angleArcPath(cx, cy, radius, startDegrees, endDegrees, downward = false) {
+  const start = pointFromVertical(cx, cy, radius, startDegrees, downward);
+  const end = pointFromVertical(cx, cy, radius, endDegrees, downward);
+  const increasing = endDegrees >= startDegrees;
+  const sweep = downward ? (increasing ? 0 : 1) : (increasing ? 1 : 0);
+  const largeArc = Math.abs(endDegrees - startDegrees) > 180 ? 1 : 0;
+  return `M${svgPoint(start)}A${radius} ${radius} 0 ${largeArc} ${sweep} ${svgPoint(end)}`;
+}
+
+function semanticArrowDefs() {
+  return `<defs><marker id="g4-action-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="${semanticColors.action}"/></marker><marker id="g4-move-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="${semanticColors.move}"/></marker></defs>`;
+}
+
+function foldBisectorMarkup(data) {
+  const phase = data.phase || "problem";
+  const center = { x: 180, y: 170 };
+  const radius = 116;
+  const axis = pointFromVertical(center.x, center.y, radius, 0);
+  const givenRay = pointFromVertical(center.x, center.y, radius, data.halfAngle);
+  const restoredRay = pointFromVertical(center.x, center.y, radius, -data.halfAngle);
+  const movingDegrees = phase === "organize" ? data.halfAngle * 0.35 : -data.halfAngle;
+  const movingRay = pointFromVertical(center.x, center.y, radius, movingDegrees);
+  const labelPoint = pointFromVertical(center.x, center.y, 67, data.halfAngle / 2);
+  const creaseColor = phase === "organize" ? semanticColors.action : semanticColors.given;
+  const movingColor = phase === "organize" ? semanticColors.action : semanticColors.move;
+  const moving = phase === "problem" ? "" : `<line data-object-id="folded-ray" data-layout-role="moving-ray" data-owner-id="fold-axis" x1="${center.x}" y1="${center.y}" x2="${movingRay.x.toFixed(2)}" y2="${movingRay.y.toFixed(2)}" stroke="${movingColor}" stroke-width="4" stroke-linecap="round"/>`;
+  const actionArc = phase === "organize" ? `<path data-layout-role="motion-path" d="${angleArcPath(center.x, center.y, 90, data.halfAngle, movingDegrees)}" fill="none" stroke="${semanticColors.action}" stroke-width="3" marker-end="url(#g4-action-arrow)"/>` : "";
+  const calculation = phase === "calculate" ? `<text x="180" y="214" text-anchor="middle" style="font:700 17px sans-serif;fill:${semanticColors.action}">${data.halfAngle}° + ${data.halfAngle}°</text>` : "";
+  const verification = phase === "verify" ? `<g class="answer-construction" data-layout-role="verification" fill="none" stroke-width="3" style="stroke:${semanticColors.verify}"><path d="${angleArcPath(center.x, center.y, 39, -data.halfAngle, 0)}"/><path d="${angleArcPath(center.x, center.y, 39, 0, data.halfAngle)}"/><path d="${angleArcPath(center.x, center.y, 53, -data.halfAngle, data.halfAngle)}" stroke-dasharray="5 4"/></g>` : "";
+  return svgFrame("접은 선을 대칭축으로 펼쳐 복원하는 각", `${semanticArrowDefs()}<path data-layout-role="folded-paper" d="M${svgPoint(center)}L${svgPoint(axis)}L${svgPoint(givenRay)}Z" fill="${semanticColors.givenFill}" stroke="${semanticColors.given}" stroke-width="2"/><line data-object-id="fold-axis" data-layout-role="symmetry-axis" x1="${center.x}" y1="${center.y}" x2="${axis.x.toFixed(2)}" y2="${axis.y.toFixed(2)}" stroke="${creaseColor}" stroke-width="3" stroke-dasharray="7 5"/><line data-object-id="given-ray" data-layout-role="given-ray" x1="${center.x}" y1="${center.y}" x2="${givenRay.x.toFixed(2)}" y2="${givenRay.y.toFixed(2)}" stroke="${semanticColors.given}" stroke-width="4" stroke-linecap="round"/>${moving}${actionArc}<path data-layout-role="given-angle" d="${angleArcPath(center.x, center.y, 45, 0, data.halfAngle)}" fill="none" stroke="${semanticColors.given}" stroke-width="2"/><text data-label-for="given-angle" x="${labelPoint.x.toFixed(2)}" y="${(labelPoint.y + 5).toFixed(2)}" text-anchor="middle" style="font:700 16px sans-serif;fill:${semanticColors.given}">${data.halfAngle}°</text>${calculation}${verification}`, 360, 230);
+}
+
+function foldParallelMarkup(data) {
+  const phase = data.phase || "problem";
+  const center = { x: 260, y: 42 };
+  const halfAngle = data.openedAngle / 2;
+  const tangent = Math.tan(halfAngle * Math.PI / 180);
+  const drop = Math.min(105, 205 / tangent);
+  const radius = drop / Math.cos(halfAngle * Math.PI / 180);
+  const leftRay = pointFromVertical(center.x, center.y, radius, -halfAngle, true);
+  const rightRay = pointFromVertical(center.x, center.y, radius, halfAngle, true);
+  const foldPoint = { x: center.x, y: center.y + drop };
+  const movingDegrees = phase === "organize" ? 0 : halfAngle;
+  const movingRay = phase === "organize" ? foldPoint : pointFromVertical(center.x, center.y, radius, movingDegrees, true);
+  const movingColor = phase === "organize" ? semanticColors.action : semanticColors.move;
+  const upperY = center.y;
+  const lowerY = center.y + drop;
+  const moving = phase === "problem" ? "" : `<line data-object-id="parallel-fold-ray" data-layout-role="moving-ray" data-owner-id="parallel-fold-axis" x1="${center.x}" y1="${center.y}" x2="${movingRay.x.toFixed(2)}" y2="${movingRay.y.toFixed(2)}" stroke="${movingColor}" stroke-width="4" stroke-linecap="round"/>`;
+  const actionArc = phase === "organize" ? `<path data-layout-role="motion-path" d="${angleArcPath(center.x, center.y, Math.max(48, radius * 0.58), -halfAngle, 0, true)}" fill="none" stroke="${semanticColors.action}" stroke-width="3" marker-end="url(#g4-action-arrow)"/>` : "";
+  const calculation = phase === "calculate" ? `<text x="260" y="${Math.min(206, lowerY + 54).toFixed(2)}" text-anchor="middle" style="font:700 17px sans-serif;fill:${semanticColors.action}">${data.openedAngle}° ÷ 2</text>` : "";
+  const verification = phase === "verify" ? `<g class="answer-construction" data-layout-role="verification" fill="none" stroke-width="3" style="stroke:${semanticColors.verify}"><path d="${angleArcPath(center.x, center.y, 38, -halfAngle, 0, true)}"/><path d="${angleArcPath(center.x, center.y, 38, 0, halfAngle, true)}"/></g>` : "";
+  return svgFrame("평행한 띠에서 접은 선을 펼쳐 같은 두 각을 복원", `${semanticArrowDefs()}<g data-layout-role="parallel-lines" stroke="${semanticColors.given}" stroke-width="3" fill="none"><line x1="35" y1="${upperY.toFixed(2)}" x2="485" y2="${upperY.toFixed(2)}"/><line x1="35" y1="${lowerY.toFixed(2)}" x2="485" y2="${lowerY.toFixed(2)}"/><path d="M70 ${(upperY - 6).toFixed(2)}l10 6-10 6M70 ${(lowerY - 6).toFixed(2)}l10 6-10 6"/></g><line data-object-id="parallel-given-ray" data-layout-role="given-ray" x1="${center.x}" y1="${center.y}" x2="${leftRay.x.toFixed(2)}" y2="${leftRay.y.toFixed(2)}" stroke="${semanticColors.given}" stroke-width="4" stroke-linecap="round"/><line data-layout-role="target-guide" x1="${center.x}" y1="${center.y}" x2="${rightRay.x.toFixed(2)}" y2="${rightRay.y.toFixed(2)}" stroke="${semanticColors.given}" stroke-width="2" stroke-dasharray="7 5"/><line data-object-id="parallel-fold-axis" data-layout-role="symmetry-axis" x1="${center.x}" y1="${center.y}" x2="${foldPoint.x.toFixed(2)}" y2="${foldPoint.y.toFixed(2)}" stroke="${phase === "organize" ? semanticColors.action : semanticColors.given}" stroke-width="3" stroke-dasharray="6 5"/>${moving}${actionArc}<path data-layout-role="given-angle" d="${angleArcPath(center.x, center.y, Math.max(55, radius * 0.68), -halfAngle, halfAngle, true)}" fill="none" stroke="${semanticColors.given}" stroke-width="2"/><text data-label-for="given-angle" x="260" y="${Math.min(188, lowerY + 30).toFixed(2)}" text-anchor="middle" style="font:700 16px sans-serif;fill:${semanticColors.given}">${data.openedAngle}°</text>${calculation}${verification}`, 520, 220);
+}
+
+function rearrangedAreaMarkup(data) {
+  const phase = data.phase || "problem";
+  const full = [{ x: 105, y: 45 }, { x: 335, y: 45 }, { x: 280, y: 165 }, { x: 50, y: 165 }];
+  const remaining = [{ x: 105, y: 45 }, { x: 335, y: 45 }, { x: 280, y: 165 }, { x: 105, y: 165 }];
+  const cutPiece = [{ x: 50, y: 165 }, { x: 105, y: 45 }, { x: 105, y: 165 }];
+  const move = phase === "calculate" ? { x: 145, y: -18 } : phase === "verify" ? { x: 230, y: 0 } : { x: 0, y: 0 };
+  const movedPiece = shiftedPoints(cutPiece, move.x, move.y);
+  const pieceColor = phase === "organize" ? semanticColors.action : semanticColors.move;
+  const pieceFill = phase === "organize" ? semanticColors.actionFill : semanticColors.moveFill;
+  const base = `<line data-owner-id="area-base" x1="50" y1="165" x2="280" y2="165" stroke="${semanticColors.given}" stroke-width="3"/><text data-label-for="area-base" x="165" y="194" text-anchor="middle" style="font:700 15px sans-serif;fill:${semanticColors.given}">${data.base}cm</text>`;
+  const height = `<line data-owner-id="area-height" x1="360" y1="45" x2="360" y2="165" stroke="${semanticColors.given}" stroke-width="2" stroke-dasharray="6 4"/><path d="M348 153H360V165" fill="none" stroke="${semanticColors.given}" stroke-width="2"/><text data-label-for="area-height" x="370" y="111" style="font:700 15px sans-serif;fill:${semanticColors.given}">${data.height}cm</text>`;
+  if (phase === "problem") return svgFrame("평행사변형의 주어진 밑변과 높이", `<polygon data-object-id="area-source" data-layout-role="given-shape" points="${svgPoints(full)}" fill="${semanticColors.givenFill}" stroke="${semanticColors.given}" stroke-width="3"/>${base}${height}`, 420, 220);
+  const motion = phase === "organize" ? `<path data-layout-role="motion-path" d="M82 119C142 75 229 76 310 112" fill="none" stroke="${semanticColors.action}" stroke-width="3" stroke-dasharray="7 5" marker-end="url(#g4-action-arrow)"/>` : phase === "calculate" ? `<path data-layout-role="motion-path" d="M238 100C276 78 307 79 329 103" fill="none" stroke="${semanticColors.move}" stroke-width="3" stroke-dasharray="7 5" marker-end="url(#g4-move-arrow)"/>` : "";
+  const target = ["calculate", "verify"].includes(phase) ? `<rect data-layout-role="target-outline" x="105" y="45" width="230" height="120" fill="none" stroke="${phase === "verify" ? semanticColors.verify : semanticColors.move}" stroke-width="3" ${phase === "calculate" ? 'stroke-dasharray="7 5"' : ""}/>` : "";
+  const formula = phase === "calculate" ? `<text x="210" y="215" text-anchor="middle" style="font:700 17px sans-serif;fill:${semanticColors.action}">${data.base} × ${data.height}</text>` : "";
+  const verify = phase === "verify" ? `<path class="answer-construction" data-layout-role="verification" d="M105 45H335V165H105Z" fill="${semanticColors.verifyFill}" fill-opacity=".22" stroke-width="4" style="stroke:${semanticColors.verify}"/>` : "";
+  return svgFrame("잘라 낸 삼각형을 옮겨 직사각형으로 만드는 평행사변형", `${semanticArrowDefs()}<polygon data-object-id="area-remainder" data-layout-role="given-shape" points="${svgPoints(remaining)}" fill="${semanticColors.givenFill}" stroke="${semanticColors.given}" stroke-width="3"/><polygon data-object-id="area-moving-piece" data-layout-role="moving-piece" points="${svgPoints(movedPiece)}" fill="${pieceFill}" stroke="${pieceColor}" stroke-width="3"/>${motion}${target}${base}${height}${formula}${verify}`, 420, 230);
+}
+
+function trapezoidAreaMarkup(data) {
+  const phase = data.phase || "problem";
+  const topY = 48;
+  const bottomY = 158;
+  const topLeft = 100;
+  const bottomLeft = 55;
+  const bottomWidth = 210;
+  const topWidth = bottomWidth * data.top / data.bottom;
+  const original = [
+    { x: topLeft, y: topY },
+    { x: topLeft + topWidth, y: topY },
+    { x: bottomLeft + bottomWidth, y: bottomY },
+    { x: bottomLeft, y: bottomY }
+  ];
+  const [a, b, c, d] = original;
+  const duplicateTarget = [
+    { x: b.x + c.x - a.x, y: b.y + c.y - a.y },
+    { ...c },
+    { ...b },
+    { x: b.x + c.x - d.x, y: b.y + c.y - d.y }
+  ];
+  const duplicate = phase === "organize"
+    ? shiftedPoints(original, 245, -18)
+    : phase === "calculate"
+      ? shiftedPoints(duplicateTarget, 42, -24)
+      : duplicateTarget;
+  const outer = [a, duplicateTarget[3], duplicateTarget[0], d];
+  const labels = `<text x="${((a.x + b.x) / 2).toFixed(2)}" y="34" text-anchor="middle" style="font:700 15px sans-serif;fill:${semanticColors.given}">${data.top}cm</text><text x="${((c.x + d.x) / 2).toFixed(2)}" y="184" text-anchor="middle" style="font:700 15px sans-serif;fill:${semanticColors.given}">${data.bottom}cm</text><line x1="38" y1="${topY}" x2="38" y2="${bottomY}" stroke="${semanticColors.given}" stroke-width="2" stroke-dasharray="6 4"/><path d="M38 ${bottomY - 12}H50V${bottomY}" fill="none" stroke="${semanticColors.given}" stroke-width="2"/><text x="18" y="108" text-anchor="middle" style="font:700 15px sans-serif;fill:${semanticColors.given}">${data.height}cm</text>`;
+  const source = `<polygon data-object-id="trapezoid-source" data-layout-role="given-shape" points="${svgPoints(original)}" fill="${semanticColors.givenFill}" stroke="${semanticColors.given}" stroke-width="3"/>`;
+  if (phase === "problem") return svgFrame("윗변 아랫변 높이가 주어진 사다리꼴", `${source}${labels}`, 520, 215);
+  const duplicateColor = phase === "organize" ? semanticColors.action : semanticColors.move;
+  const duplicateFill = phase === "organize" ? semanticColors.actionFill : semanticColors.moveFill;
+  const arrow = phase === "organize" ? `<path data-layout-role="motion-path" d="M320 45C350 82 344 123 302 145" fill="none" stroke="${semanticColors.action}" stroke-width="3" marker-end="url(#g4-action-arrow)"/>` : phase === "calculate" ? `<path data-layout-role="motion-path" d="M405 86C383 104 364 112 344 116" fill="none" stroke="${semanticColors.move}" stroke-width="3" marker-end="url(#g4-move-arrow)"/>` : "";
+  const formula = phase === "calculate" ? `<text x="260" y="218" text-anchor="middle" style="font:700 17px sans-serif;fill:${semanticColors.action}">(${data.top} + ${data.bottom}) × ${data.height} ÷ 2</text>` : "";
+  const verify = phase === "verify" ? `<polygon class="answer-construction" data-layout-role="verification" points="${svgPoints(outer)}" fill="${semanticColors.verifyFill}" fill-opacity=".2" stroke-width="4" style="stroke:${semanticColors.verify}"/>` : "";
+  return svgFrame("같은 사다리꼴을 뒤집어 붙여 평행사변형 만들기", `${semanticArrowDefs()}${source}<polygon data-object-id="trapezoid-copy" data-layout-role="moving-piece" points="${svgPoints(duplicate)}" fill="${duplicateFill}" stroke="${duplicateColor}" stroke-width="3"/>${arrow}${labels}${formula}${verify}`, 520, 230);
+}
+
 function angleMarkup(data, solved) {
   if (data.task === "folded-corner") {
     const radians = data.fixedAngle * Math.PI / 180;
@@ -432,11 +566,7 @@ function angleMarkup(data, solved) {
     return svgFrame("접힌 선이 나눈 특수각", `<path d="M75 45V165H215" style="${lineStyle}"/><path d="M75 165L${x.toFixed(2)} ${y.toFixed(2)}" style="${lineStyle}"/><path d="M75 151H89V165" style="${lineStyle}"/><text x="145" y="181" style="${textStyle}">${data.fixedAngle}°</text><text x="91" y="91" style="${textStyle}">?</text>${solved ? `<path class="answer-construction" d="M103 165A28 28 0 0 0 75 137" style="${helperStyle}"/><text class="answer-construction" x="98" y="124" style="${textStyle}">${course02G4Model(data).answer}°</text>` : ""}`);
   }
   if (data.task === "fold-bisector") {
-    const radians = (90 - data.halfAngle) * Math.PI / 180;
-    const rightX = 160 + Math.cos(radians) * 108;
-    const rightY = 165 - Math.sin(radians) * 108;
-    const leftX = 320 - rightX;
-    return svgFrame("접은 선을 펼쳐 복원하는 각", `<path d="M35 175H285" style="${lineStyle}"/><path d="M160 165V42M160 165L${rightX.toFixed(2)} ${rightY.toFixed(2)}" style="${lineStyle}"/><path d="M160 165L${rightX.toFixed(2)} ${rightY.toFixed(2)}L160 42Z" fill="#eaf0ff" stroke="#245d73" stroke-width="2"/><text x="174" y="112" style="${textStyle}">${data.halfAngle}°</text>${solved ? `<path class="answer-construction" d="M160 165L${leftX.toFixed(2)} ${rightY.toFixed(2)}" style="${helperStyle}"/><path class="answer-construction" d="M132 128A47 47 0 0 0 188 128" style="${helperStyle}"/>` : ""}`);
+    return foldBisectorMarkup(data);
   }
   if (data.task === "isosceles-apex") {
     const baseHalf = 95;
@@ -476,10 +606,7 @@ function parallelMarkup(data, solved) {
     return svgFrame("두 평행선 사이의 번개각", `${parallels}<path d="M${topX.toFixed(2)} 55L${kinkX} ${kinkY}L${bottomX.toFixed(2)} 165" style="${lineStyle}"/><text x="${(topX + 9).toFixed(2)}" y="78" style="${textStyle}">${data.topAngle}°</text><text x="${(bottomX - 39).toFixed(2)}" y="153" style="${textStyle}">${data.bottomAngle}°</text><text x="174" y="103" style="${textStyle}">?</text>${solved ? `<path class="answer-construction" d="M35 ${kinkY}H285" style="${helperStyle}"/>` : ""}`);
   }
   if (data.task === "fold-parallel") {
-    const half = data.openedAngle / 2 * Math.PI / 180;
-    const offset = 80 * Math.tan(half);
-    const apexX = 260;
-    return svgFrame("평행선 사이의 접은 각", `<path d="M25 55H495M25 135H495" style="${lineStyle}"/><path d="M55 49l10 6-10 6M55 129l10 6-10 6" style="${lineStyle}"/><path d="M${(apexX - offset).toFixed(2)} 135L${apexX} 55L${(apexX + offset).toFixed(2)} 135" style="${lineStyle}"/><path d="M${apexX} 55V135" stroke="#8aa6b2" stroke-width="2" stroke-dasharray="5 5"/><text x="230" y="104" style="${textStyle}">${data.openedAngle}°</text>${solved ? `<path class="answer-construction" d="M${apexX} 55V135" style="${helperStyle}"/><path class="answer-construction" d="M225 91A48 48 0 0 0 295 91" style="${helperStyle}"/>` : ""}`, 520, 190);
+    return foldParallelMarkup(data);
   }
   const center = { x: 160, y: 108 };
   const radius = 76;
@@ -505,12 +632,13 @@ function areaMarkup(data, solved) {
     return svgFrame("한 모서리를 잘라 낸 직사각형", `<path d="M55 35H265V${cutY.toFixed(2)}H${cutX.toFixed(2)}V175H55Z" fill="#eaf0ff" stroke="#245d73" stroke-width="3"/><text x="145" y="198" style="${textStyle}">${data.width}cm</text><text x="16" y="109" style="${textStyle}">${data.height}cm</text><text x="${cutX + 8}" y="${cutY - 8}" style="${textStyle}">${data.cutWidth}×${data.cutHeight}</text>${solved ? `<path class="answer-construction" d="M${cutX.toFixed(2)} 35V${cutY.toFixed(2)}H265" style="${helperStyle}"/>` : ""}`);
   }
   if (["parallelogram-area", "rearranged-area"].includes(data.task)) {
+    if (data.task === "rearranged-area") return rearrangedAreaMarkup(data);
     return svgFrame("평행사변형의 밑변과 높이", `<polygon points="80,45 255,45 220,170 45,170" fill="#eaf0ff" stroke="#245d73" stroke-width="3"/><path d="M80 45V170" stroke="#8aa6b2" stroke-width="2" stroke-dasharray="5 5"/><path d="M80 158H92V170" style="${lineStyle}"/><text x="124" y="194" style="${textStyle}">밑변 ${data.base}cm</text><text x="84" y="111" style="${textStyle}">높이 ${data.height}cm</text>${solved ? `<path class="answer-construction" d="M45 170L80 45M220 170L255 45" style="${helperStyle}"/><path class="answer-construction" d="M45 170H220" style="${helperStyle}"/>` : ""}`);
   }
   if (data.task === "triangle-area") {
     return svgFrame("삼각형의 밑변과 높이", `<path d="M45 170H275L185 35Z" fill="#eaf0ff" stroke="#245d73" stroke-width="3"/><path d="M185 35V170" stroke="#8aa6b2" stroke-width="2" stroke-dasharray="5 5"/><path d="M185 158H197V170" style="${lineStyle}"/><text x="124" y="195" style="${textStyle}">밑변 ${data.base}cm</text><text x="190" y="104" style="${textStyle}">높이 ${data.height}cm</text>${solved ? `<path class="answer-construction" d="M45 35H275V170" style="${helperStyle}"/>` : ""}`);
   }
-  return svgFrame("사다리꼴의 윗변 아랫변과 높이", `<path d="M95 45H220L275 170H45Z" fill="#eaf0ff" stroke="#245d73" stroke-width="3"/><path d="M95 45V170" stroke="#8aa6b2" stroke-width="2" stroke-dasharray="5 5"/><text x="133" y="36" style="${textStyle}">${data.top}cm</text><text x="124" y="195" style="${textStyle}">${data.bottom}cm</text><text x="101" y="112" style="${textStyle}">${data.height}cm</text>${solved ? `<path class="answer-construction" d="M220 45L325 45L275 170" style="${helperStyle}"/>` : ""}`, 360, 210);
+  return trapezoidAreaMarkup(data);
 }
 
 function perimeterMarkup(data, solved) {

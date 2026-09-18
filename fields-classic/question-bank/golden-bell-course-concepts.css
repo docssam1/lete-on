@@ -444,7 +444,12 @@ body[data-course-pilot="true"] .quiz-visual {min-height:0;overflow:visible}
   .gold-print-page .windmill-equation {gap:1mm;margin:2mm 0;font-size:8pt}.gold-print-page .windmill-equation strong {padding:.5mm 1mm;font-size:7pt}
   .gold-print-page .windmill-answer {margin-top:1mm}.gold-print-page .windmill-answer>.windmill-figure {width:18mm}.gold-print-page .windmill-answer>.windmill-figure figcaption {font-size:7pt}
   .gold-print-page .windmill-target {min-width:28mm;min-height:13mm;padding:1mm}.gold-print-page .windmill-target span {font-size:7pt}
+  .course-answer-item {grid-template-areas:"title" "condition" "working" "result" "visual"}
   .course-answer-item>p {white-space:pre-line;font-size:10pt;line-height:1.5}
+  .course-answer-item>.course-answer-condition {grid-area:condition}
+  .course-answer-item>.course-answer-working {grid-area:working}
+  .course-answer-item>.course-answer-result {grid-area:result}
+  .course-answer-item>.course-solution-visual {grid-area:visual}
   .gold-print-root .compact-exercise-page .course-answer-item>p {margin:0;font-size:8.5pt;line-height:1.25}
   .course-answer-item .course-solution-visual {margin-top:3mm}
   .gold-print-page[data-print-book^="course-"] .gold-print-visual {min-height:0;max-height:none;padding:1mm;overflow:visible}
