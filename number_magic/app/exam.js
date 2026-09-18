@@ -483,7 +483,7 @@
   .nm-w2-grid-big .nm-w2-item.nm-print-item { flex-direction:row; align-items:center; justify-content:flex-start; gap:12px; }
   .nm-w2-big { font-family:'Fredoka','Jua',Pretendard,'Noto Sans KR',sans-serif; font-weight:600;
     font-size:calc(26px * var(--ws-fs, 1)); letter-spacing:2px; color:#111; white-space:nowrap; }
-  .nm-w2-abox-big { width:15mm; height:11mm; border:1.3px solid #333; border-radius:3px; display:inline-block; }
+  .nm-w2-abox-big { width:14mm; height:11mm; border:1.3px solid #333; border-radius:3px; display:inline-block; vertical-align:middle; margin:0 4px; }
   /* 마법 노트 지면 */
   .nm-w2-page-magic { gap:0; }
   .nm-mn-board { flex:0 0 auto; margin-bottom:7px; }
@@ -548,9 +548,9 @@
   .nm-w2-ramp-pill { display:inline-block; font-size:9px; font-weight:700; color:#0E2C57;
     background:none; border:1px solid #0E2C57; border-radius:7px; padding:0 5px; line-height:1.3;
     white-space:nowrap; }
-  .nm-w2-item .nm-w2-tex { font-size:15px; }
-  .nm-w2-grid-medium .nm-w2-item .nm-w2-tex { font-size:16px; }
-  .nm-w2-grid-long .nm-w2-item .nm-w2-tex { font-size:13.5px; }
+  .nm-w2-item .nm-w2-tex { font-size:19px; }
+  .nm-w2-grid-medium .nm-w2-item .nm-w2-tex { font-size:19px; }
+  .nm-w2-grid-long .nm-w2-item .nm-w2-tex { font-size:16px; }
   /* 세로셈(회차 레이아웃 vertical = 초등 덧뺄셈뿐, classifyRoundLayout 이 MD/CH/EL/MX 를 뺀다):
      14px 이던 숫자를 22px 로, 올림/내림을 쓸 줄(.nm-print-vp-carry)을 위에, 답 줄을 1.6em 으로
      (2026-09-06, 1~2학년이 손으로 쓰는 칸). 나이 밴드(.nm-print-age-*)와 무관하게 이 레이아웃만. */
@@ -620,9 +620,10 @@
 .nm-print-fs-m  { --ws-fs: 1; }
 .nm-print-fs-l  { --ws-fs: 1.16; }
 .nm-print-fs-xl { --ws-fs: 1.34; }
-.nm-print-sheet .nm-w2-tex      { font-size: calc(15px * var(--ws-fs)); }
-.nm-print-sheet .nm-w2-grid-medium .nm-w2-tex { font-size: calc(16px * var(--ws-fs)); }
-.nm-print-sheet .nm-w2-grid-long .nm-w2-tex   { font-size: calc(13.5px * var(--ws-fs)); }
+/* 숫자를 쓰기 상자 높이에 맞춰 키웠다(2026-09-18, 원장 "수도 상자 크기와 맞춰") */
+.nm-print-sheet .nm-w2-tex      { font-size: calc(19px * var(--ws-fs)); }
+.nm-print-sheet .nm-w2-grid-medium .nm-w2-tex { font-size: calc(19px * var(--ws-fs)); }
+.nm-print-sheet .nm-w2-grid-long .nm-w2-tex   { font-size: calc(16px * var(--ws-fs)); }
 .nm-print-sheet .nm-print-word  { font-size: calc(13px * var(--ws-fs)); }
 .nm-print-sheet .nm-print-wordask { font-size: calc(13px * var(--ws-fs)); }
 .nm-print-sheet .nm-print-choices { font-size: calc(12.5px * var(--ws-fs)); }
@@ -2795,7 +2796,7 @@ function wrapHangul(tex){
    KaTeX 의 \square 는 글자 한 자 크기라 쓸 자리가 없다. 인쇄에서는 \square 를 두 자리 수가 들어가는
    높은 상자로 바꾼다. em 단위라 저학년 배율(--ws-fs)을 그대로 따라간다. 정답지는 답이 대입된 뒤라
    \square 가 남지 않는다. */
-const WRITE_BOX = '\\boxed{\\rule[-0.55em]{0pt}{1.75em}\\kern{0.45em}\\phantom{00}\\kern{0.45em}}';
+const WRITE_BOX = '\\boxed{\\rule[-0.45em]{0pt}{1.5em}\\kern{0.4em}\\phantom{00}\\kern{0.4em}}';
 function texDisplay(tex){
   const t = wrapHangul(tex).replace(/\\square/g, WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
@@ -2958,21 +2959,23 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       /* 끝이 "= \square"면 \square만 지우고 "=" 뒤 여백으로 둔다. \square가
          식 안(계수 빈칸·분자 빈칸)에 있으면 그게 곧 채울 자리라 그대로 둔다
          (2026-09-04 재작업 지시 §2). */
-      const texStr = raw.replace(/=\s*\\square\s*$/,'=');
-      /* 답 쓰는 작은 네모 칸은 NL(수의 나라, 유아) 스레드에만 — 나이 추정
-         (printAgeBand)으로 켜면 MD 같은 중고등 스레드도 숫자가 작다는 이유로
-         "young"으로 잘못 판정돼 박스가 붙는다(2026-09-04 버그, MD4/C30). */
-      const abox = /^NL/i.test(threadId||'') ? '<span class="nm-w2-abox"></span>' : '';
+      /* 끝의 "= □"도 상자로 남긴다(2026-09-18, 원장 "뒤에도 넣고") — 전엔 □만 지우고 "=" 뒤 여백이었다.
+         texDisplay 가 모든 \square 를 쓰기 상자로 바꾼다. */
+      const texStr = raw;
+      /* NL(수의 나라, 유아) 스레드는 □ 없이 "= "로 끝나는 식이 있어 작은 네모 칸을 따로 붙인다. */
+      const abox = (/^NL/i.test(threadId||'') && !/\\square/.test(raw)) ? '<span class="nm-w2-abox"></span>' : '';
       /* 자릿값 색 힌트 — 칠할 수 있는 식이고 차례가 되면(2026-09-16) */
       const PVm = window.NM_PLACE_COLOR;
       const wantTint = pvTake(!!PVm && PVm.eligible(texStr));
       if(layoutType === 'big'){
         /* 저학년 큰 숫자(참고 학습지 B03) — KaTeX 대신 둥근 글꼴(Fredoka)의 글자로, 첫 문항엔 답 상자 */
         const plain = texToPlain(texStr).replace(/\s+/g, ' ').trim();
-        const bigHtml = wantTint
-          ? plain.split(/(\d+)/).map(seg => /^\d+$/.test(seg) ? PVm.spanDigits(seg) : esc(seg)).join('')
-          : esc(plain);
-        inner = `<span class="nm-w2-big">${bigHtml}</span>${num === 1 ? '<span class="nm-w2-abox nm-w2-abox-big"></span>' : ''}`;
+        const seg2 = seg => wantTint
+          ? seg.split(/(\d+)/).map(x => /^\d+$/.test(x) ? PVm.spanDigits(x) : esc(x)).join('')
+          : esc(seg);
+        /* □ 자리마다 큰 답 상자(끝이든 가운데든) */
+        const bigHtml = plain.split('□').map(seg2).join('<span class="nm-w2-abox nm-w2-abox-big"></span>');
+        inner = `<span class="nm-w2-big">${bigHtml}</span>`;
       } else {
         const tinted = wantTint ? PVm.tint(texStr) : texStr;
         inner = `<span class="nm-w2-tex" data-tex="${esc(texDisplay(tinted))}"></span>${abox}`;
@@ -3422,7 +3425,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     problems.push(p);
     const stepSrc = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : null);
     const raw = String(p.tex || '');
-    const qTex = raw.replace(/=\s*\\square\s*$/, '=');
+    const qTex = raw;   /* 끝의 □도 쓰기 상자로(2026-09-18) */
     const qHtml = `<span class="nm-w2-tex" data-tex="${esc(texDisplay(qTex))}"></span>`;
     const chainHtml = (stepSrc && stepSrc.length)
       ? stepSrc.map(s => `<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(s.tex || '')))}"></span>`)
@@ -3633,6 +3636,29 @@ function renderMagicNotePage(item, opts){
     magic: true, akHtml, guidedProblems: [], pageSizes: [] };
 }
 
+/* 부분 빈칸(2026-09-18, 원장 "일부는 빈칸 넣기도 부분부분") — 계산 회차의 네 문항에 하나꼴(3·7·11…번째)을
+   `a ○ b = □` 대신 `a ○ □ = c` 로 바꾼다. 답은 가려진 b. 뺄셈·나눗셈도 b 가 답이라 항상 정수.
+   세로셈 회차·문장제·창의(Training Course)·풀이형·점검 회차는 건드리지 않는다. 단계(steps)는
+   원래 식의 풀이라 지운다(정답지·따라풀기 카드가 틀린 단계를 싣지 않게). 처음 두 문항은 제 꼴로. */
+function applyPartialBlanks(problems, layoutType, item){
+  if(!problems || !problems.length) return;
+  if(layoutType === 'vertical' || layoutType === 'word' || layoutType === 'train' || layoutType === 'solve' || layoutType === 'visual') return;
+  if(item && (item.creative || item.noTeach || item.wordType === 'all')) return;
+  problems.forEach((p, i) => {
+    if(i < 2 || (i % 4) !== 2) return;
+    if(p.word || p.__ramp || Array.isArray(p.answer) || typeof p.answer !== 'number') return;
+    const v = parseVert(p.tex || '');
+    if(!v) return;
+    const a = v.a, b = v.b, c = fmtAns(p.answer);
+    if(!/^\d+$/.test(b) || String(c).indexOf('.') >= 0) return;
+    const opTex = v.op === '×' ? '\\times' : v.op === '÷' ? '\\div' : v.op === '−' ? '-' : '+';
+    p.tex = `${a} ${opTex} \\square = ${c}`;
+    p.answer = +b;
+    delete p.steps; delete p.solution; delete p.answerNote;
+    p.__missing = true;
+  });
+}
+
 function renderRoundPages(item, opts){
   opts = opts || {};
   /* 풀이형은 한 문항이 한 쪽의 1/4을 먹는다 — 요청한 문항 수를 그대로 쓰면
@@ -3658,6 +3684,7 @@ function renderRoundPages(item, opts){
   const young = printAgeBand(item, problems) === 'young';
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
   problems = sortRoundProblems(problems, layout.type);
+  applyPartialBlanks(problems, layout.type, item);
 
   /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
      예시가 실제로 보여 주도록. */
