@@ -809,3 +809,22 @@ Drive 다운로드가 base64로 대화 문맥에 실려 오는 구조라 100MB�
 다음 레벨 조건과 남은 문항 수 · 주1회/주2회 2시간 계획표 · 가정 과제 · 문항별 표 · 약점 처방(옵션).
 **분석지 언어는 학습지와 별개**(영문/한글 토글). 배치 컷은 Placement Book 기준
 (B~H: 6 미만 하향·11 이상 상향 / A: 5 미만 하향·7 이상 상향 / P·AA: 6개 만점 상향).
+
+---
+
+## 과학 탐구 랩 (`/science-lab/`) ✅ 1차 구축 (2026-09-18)
+
+**개념 → 3D 애니메이션 실험 → 탐구 활동 → 토론 → 확인** 순서의 초등 과학 학습 사이트.
+교과 순서는 Drive 『2009 초등학교 과학탐구토론 지도자료』(서울특별시과학전시관, `과학관련/과학 탐구` 폴더)의 **차례 그대로**:
+A(1부 1~3 탐구 과정, 1유닛) · B(1부 4~7 탐구 활동, 4유닛) · C(3부 탐구 주제 10유닛) = **15유닛**.
+
+- `index.html` · `app.js`(해시 라우터, localStorage 진도 `sciLab.v1`) · `styles.css` · `engine.js`(Three.js 무대 + 비트 플레이어)
+- `data/curriculum.js` — 유닛 데이터(개념·용어·활동·변인표·토론·퀴즈 3문항). 퀴즈 정답 분포 A11/B13/C11/D10.
+- `scenes/*.js` — 유닛당 1개, `{view, build(kit, world), beats:[{text, show, hide, dur, anim}]}`. `scenes/_kit.js`가 공용 도형·라벨·차트.
+- **Three.js는 새로 넣지 않고** `world-explorer/vendor/three.module.js`(r184)를 `geometry/world-map`과 같은 방식으로 상대 경로 import.
+- 레슨 규약은 `skills/concept-whiteboard-lesson` 을 따름: 자막이 원본, 음성은 Web Speech 토글(ko-KR), 비트는 시간/조작으로만 전진, `prefers-reduced-motion`이면 즉시 최종 상태.
+- **비트 타이밍은 벽시계(raw dt)** 로 진행 — 프레임이 느린 기기에서 자막이 늘어지지 않게. 장면 idle 애니메이션만 dt 0.25 캡.
+- 검증: Playwright(`/opt/node22/lib/node_modules/playwright`, swiftshader) 로 15유닛 × PC/모바일 로드·재생·이동·퀴즈 통과, 콘솔 에러 0. 스크립트는 세션 scratchpad에 있었음(저장소 미포함).
+- **C-10 터널 등 유닛은 원문 미확보**(PDF 텍스트가 278쪽에서 잘림) — 제목 기준 일반 원리로 작성, 유닛에 `note`로 표기.
+- **미착수**: USB `과학교재/실험2`·`이론편` 자료 → Drive 폴더(`교재/과학교재/실험2`, `이론편`)는 2026-09-18 현재 **비어 있음**. 올라오면 `PARTS`에 D부 추가 + 같은 형식으로 유닛·장면 작성.
+- 외부 체험형 시뮬레이션 후보(조사 완료, 미연동): PhET(CC-BY 4.0, iframe 임베드 허용, 한국어 번역 다수) · Concord Consortium Lab(MIT/BSD) · rudra496/sciencelab3d(MIT, Next.js라 iframe 배포본 링크 방식) · 3D 에셋 Poly Haven/Kenney(CC0). 에듀넷 영상은 **자료마다 공공누리 유형이 달라** 건별 확인 필요.
