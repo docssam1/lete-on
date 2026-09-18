@@ -46,9 +46,9 @@
   function misconceptionText(id){const row=misconceptionCopy[id];return row?(row[state.locale]||row.ko):id;}
   function updateUrl(){const next=new URL(location.href);next.searchParams.set("program",state.programId);next.searchParams.set("audience",state.audience);next.searchParams.set("locale",state.locale);history.replaceState(null,"",next);}
   function copy(){
-    if(state.locale==="en")return{title:"Prepare by real problem type.",lede:"Solve original GFIELD items aligned to the official scope of SASMO Grade 6, Math Kangaroo Grades 5-6, and AMC 8 preparation.",student:"Student",teacher:"Teacher",print:"Print",solved:"Solved",correct:"Correct. Explain why the other choices fail.",wrong:"Not yet. Check the conditions and try again.",answer:"Answer",misconception:"Watch for",slogan:"From concepts to competitions",home:"Home",curriculum:"US curriculum",pastPapers:"Official papers",language:"Language",releaseTitle:"GFIELD-original problems",releaseCopy:"We use only the official scope and format as references. These are not copied contest questions or official score predictions.",choose:"Choose a contest",chooseCopy:"Grade 6 mathematics is presented differently in each contest.",sourceTitle:"Official scope reference",sourceLink:"Open official source ↗",workspace:"Problem types",returnHome:"Return to the full learning path",typeCount:"10 types"};
-    if(state.locale==="zh-Hans")return{title:"按真实题型备赛。",lede:"练习依据SASMO六年级、Math Kangaroo五至六年级和AMC 8官方范围独立编写的GFIELD题目。",student:"学生版",teacher:"教师版",print:"打印",solved:"已完成",correct:"正确。再说明其他选项为什么不成立。",wrong:"还不对。重新检查条件后再试。",answer:"答案",misconception:"常见错误",slogan:"从概念到竞赛",home:"首页",curriculum:"美国课程",pastPapers:"官方真题",language:"语言",releaseTitle:"GFIELD原创题目",releaseCopy:"仅参考官方考查范围与试卷形式。这些题目并非复制的竞赛真题，也不提供官方成绩预测。",choose:"选择竞赛",chooseCopy:"同为六年级数学，不同竞赛的设问方式各有侧重。",sourceTitle:"官方范围依据",sourceLink:"打开官方来源 ↗",workspace:"真实题型",returnHome:"返回完整学习路径",typeCount:"10种题型"};
-    return{title:"실제 문제 유형으로 준비합니다.",lede:"SASMO G6, Math Kangaroo G5–6, AMC 8 공식 범위에 맞춰 자체 제작한 문항을 직접 풉니다.",student:"학생용",teacher:"교사용",print:"인쇄",solved:"푼 문제",correct:"맞았습니다. 다른 보기가 왜 틀렸는지도 설명해 보세요.",wrong:"아직 아닙니다. 조건을 다시 확인해 보세요.",answer:"정답",misconception:"관찰할 오류",slogan:"개념부터 경시까지",home:"홈",curriculum:"미국 교육과정",pastPapers:"공식 기출",language:"언어",releaseTitle:"GFIELD 자체 제작 문제",releaseCopy:"공식 출제 범위와 형식만 참고했습니다. 기출 문항을 복제하거나 공식 예상 점수로 표시하지 않습니다.",choose:"대회 선택",chooseCopy:"같은 Grade 6 수학도 대회마다 문제를 묻는 방식이 다릅니다.",sourceTitle:"공식 범위 근거",sourceLink:"공식 출처 열기 ↗",workspace:"문제 유형",returnHome:"전체 학습 경로로 돌아가기",typeCount:"10개 유형"};
+    if(state.locale==="en")return{title:"Prepare by real problem type.",lede:"Solve original GFIELD items aligned to the official scope of SASMO Grade 6, Math Kangaroo Grades 5-6, and AMC 8 preparation.",student:"Student",teacher:"Teacher",print:"Print",solved:"Solved",correct:"Correct. Explain why the other choices fail.",wrong:"Not yet. Check the conditions and try again.",answer:"Answer",misconception:"Watch for",slogan:"From concepts to competitions",home:"Home",curriculum:"US curriculum",pastPapers:"Past papers",language:"Language",releaseTitle:"GFIELD-original problems",releaseCopy:"We use only the official scope and format as references. These are not copied contest questions or official score predictions.",choose:"Choose a contest",chooseCopy:"Grade 6 mathematics is presented differently in each contest.",sourceTitle:"Official scope reference",sourceLink:"Open official source ↗",workspace:"Problem types",returnHome:"Return to the full learning path",typeCount:"10 types"};
+    if(state.locale==="zh-Hans")return{title:"按真实题型备赛。",lede:"练习依据SASMO六年级、Math Kangaroo五至六年级和AMC 8官方范围独立编写的GFIELD题目。",student:"学生版",teacher:"教师版",print:"打印",solved:"已完成",correct:"正确。再说明其他选项为什么不成立。",wrong:"还不对。重新检查条件后再试。",answer:"答案",misconception:"常见错误",slogan:"从概念到竞赛",home:"首页",curriculum:"美国课程",pastPapers:"历年试题",language:"语言",releaseTitle:"GFIELD原创题目",releaseCopy:"仅参考官方考查范围与试卷形式。这些题目并非复制的竞赛真题，也不提供官方成绩预测。",choose:"选择竞赛",chooseCopy:"同为六年级数学，不同竞赛的设问方式各有侧重。",sourceTitle:"官方范围依据",sourceLink:"打开官方来源 ↗",workspace:"真实题型",returnHome:"返回完整学习路径",typeCount:"10种题型"};
+    return{title:"실제 문제 유형으로 준비합니다.",lede:"SASMO G6, Math Kangaroo G5–6, AMC 8 공식 범위에 맞춰 자체 제작한 문항을 직접 풉니다.",student:"학생용",teacher:"교사용",print:"인쇄",solved:"푼 문제",correct:"맞았습니다. 다른 보기가 왜 틀렸는지도 설명해 보세요.",wrong:"아직 아닙니다. 조건을 다시 확인해 보세요.",answer:"정답",misconception:"관찰할 오류",slogan:"개념부터 경시까지",home:"홈",curriculum:"미국 교육과정",pastPapers:"연도별 기출",language:"언어",releaseTitle:"GFIELD 자체 제작 문제",releaseCopy:"공식 출제 범위와 형식만 참고했습니다. 기출 문항을 복제하거나 공식 예상 점수로 표시하지 않습니다.",choose:"대회 선택",chooseCopy:"같은 Grade 6 수학도 대회마다 문제를 묻는 방식이 다릅니다.",sourceTitle:"공식 범위 근거",sourceLink:"공식 출처 열기 ↗",workspace:"문제 유형",returnHome:"전체 학습 경로로 돌아가기",typeCount:"10개 유형"};
   }
   function programCopy(program){
     const rows={
@@ -63,14 +63,221 @@
     return rows[tier]?(rows[tier][state.locale]||rows[tier].ko):tier;
   }
   function typeCountLabel(count){if(state.locale==="en")return count+" types";if(state.locale==="zh-Hans")return count+"种题型";return count+"개 유형";}
-  function renderPrograms(){const target=document.getElementById("program-list");target.innerHTML="";bank.programs.forEach(function(program){const local=programCopy(program),count=bank.items.filter(function(row){return row.programId===program.id;}).length,button=document.createElement("button");button.type="button";button.className="program-tab";button.setAttribute("role","tab");button.setAttribute("aria-selected",String(program.id===state.programId));button.style.setProperty("--program-accent",program.accent);button.innerHTML="<strong>"+escapeHtml(program.title)+"</strong><span>"+escapeHtml(local.stage[state.locale]||local.stage.ko)+" · "+escapeHtml(typeCountLabel(count))+"</span>";button.addEventListener("click",function(){state.programId=program.id;render();});target.append(button);});}
-  function renderProblems(){const c=copy(),program=bank.programs.find(function(row){return row.id===state.programId;}),source=bank.sources.find(function(row){return row.id===program.sourceId;}),local=programCopy(program),rows=bank.items.filter(function(row){return row.programId===state.programId;}),target=document.getElementById("problem-list");document.getElementById("program-title").textContent=program.title;document.getElementById("program-format").textContent=local.format[state.locale]||local.format.ko;document.getElementById("source-use").textContent=local.source[state.locale]||local.source.ko;document.getElementById("source-link").href=source.url;target.innerHTML="";
-    let pageGroup=null;rows.forEach(function(candidate,index){if(index%2===0){pageGroup=document.createElement("div");pageGroup.className="problem-page";target.append(pageGroup);}const card=document.createElement("article");card.className="problem-card";card.dataset.itemId=candidate.id;const visual=bank.renderVisual(candidate,state.locale);card.innerHTML='<div class="problem-meta"><b>'+(index+1).toString().padStart(2,"0")+'</b><span>'+escapeHtml(tierText(candidate.tier))+'</span></div><h3>'+escapeHtml(text(candidate.typeTitle))+'</h3><p class="problem-prompt">'+mathHtml(text(candidate.prompt))+'</p><div class="problem-visual">'+visual+'</div><div class="choices"></div><p class="feedback" aria-live="polite"></p>';
-      const choices=card.querySelector(".choices"),feedback=card.querySelector(".feedback"),answerId=bank.answerId(candidate);candidate.choices.forEach(function(row){const button=document.createElement("button");button.type="button";button.className="choice";button.dataset.answerId=row.id;button.setAttribute("aria-pressed","false");button.innerHTML='<span class="choice-mark">'+row.id+'</span><span class="choice-value">'+mathHtml(text(row.label))+'</span>';button.addEventListener("click",function(){if(state.audience!=="student")return;card.querySelectorAll(".choice").forEach(function(node){node.setAttribute("aria-pressed","false");node.classList.remove("correct","wrong");});button.setAttribute("aria-pressed","true");const correct=row.id===answerId;button.classList.add(correct?"correct":"wrong");feedback.className="feedback "+(correct?"correct":"wrong");feedback.textContent=correct?c.correct:c.wrong;if(correct){state.correct.add(candidate.id);updateProgress();}});choices.append(button);});
-      if(state.audience==="teacher"){choices.querySelectorAll("button").forEach(function(button){button.disabled=true;if(button.dataset.answerId===answerId)button.classList.add("correct");});const answer=candidate.choices.find(function(row){return row.id===answerId;});const solution=document.createElement("div");solution.className="teacher-solution";solution.innerHTML='<strong>'+c.answer+' · '+answerId+' · '+mathHtml(text(answer.label))+'</strong><p>'+mathHtml(text(candidate.solution))+'</p><small>'+c.misconception+' · '+escapeHtml(misconceptionText(candidate.misconception))+'</small>';card.append(solution);}
-      pageGroup.append(card);});
+  function experienceCopy(){
+    const rows={
+      ko:{studentDisclosure:"학생 연습 화면 · 공식 성적이나 학생 기록으로 저장하지 않습니다.",teacherDisclosure:"강사용 공개 미리보기 · 계정, 학생 기록, 실제 배정 기능은 없습니다.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC INSTRUCTOR PREVIEW",studentStart:"첫 유형부터 차례로 풀어 보세요.",studentStartCopy:"정답을 확인하면 다음에 풀 유형을 안내합니다.",teacherTitle:"정답·풀이·예상 오류를 함께 봅니다.",teacherCopy:"수업 설계 예시이며 인증된 강사 대시보드가 아닙니다.",first:"첫 유형으로 이동",next:"다음 유형으로 이동",teacherLink:"첫 풀이로 이동",complete:"이 대회의 10개 유형을 모두 확인했습니다.",completeCopy:"공식 점수나 수상 예측이 아닌 자체 연습 완료입니다.",review:"처음부터 다시 보기",nextPrefix:"다음 유형"},
+      en:{studentDisclosure:"Student practice preview · no official score or learner record is saved.",teacherDisclosure:"Public instructor preview · no account, learner record, or assignment tools.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC INSTRUCTOR PREVIEW",studentStart:"Start with the first problem type.",studentStartCopy:"After a correct response, the next type is shown here.",teacherTitle:"Review answers, solutions, and likely errors together.",teacherCopy:"This is a lesson-design preview, not an authenticated instructor dashboard.",first:"Go to the first type",next:"Go to the next type",teacherLink:"Go to the first solution",complete:"You reviewed all 10 problem types.",completeCopy:"This is GFIELD practice completion, not an official score or award prediction.",review:"Review from the first type",nextPrefix:"Next type"},
+      "zh-Hans":{studentDisclosure:"学生练习预览 · 不保存官方成绩或学生记录。",teacherDisclosure:"教师公开预览 · 不含账号、学生记录或实际布置功能。",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC INSTRUCTOR PREVIEW",studentStart:"从第一种题型开始练习。",studentStartCopy:"答对后，这里会提示下一种题型。",teacherTitle:"同时查看答案、解法和常见错误。",teacherCopy:"这是教学设计预览，并非已认证的教师后台。",first:"前往第一种题型",next:"前往下一种题型",teacherLink:"前往第一个解答",complete:"已完成本竞赛的10种题型。",completeCopy:"这是GFIELD练习完成状态，并非官方成绩或获奖预测。",review:"从第一种题型重新查看",nextPrefix:"下一种题型"}
+    };
+    return rows[state.locale]||rows.ko;
   }
-  function updateProgress(){const rows=bank.items.filter(function(row){return row.programId===state.programId;}),count=rows.filter(function(row){return state.correct.has(row.id);}).length,c=copy();document.getElementById("progress-label").textContent=count+" / "+rows.length;document.getElementById("progress-copy").textContent=c.solved;}
-  function render(){const c=copy();document.documentElement.lang=state.locale==="zh-Hans"?"zh-Hans":state.locale;document.title=(state.locale==="ko"?"경시 문제 유형":"Competition problem types")+" · G·MAP";document.getElementById("locale-select").value=state.locale;document.querySelectorAll("[data-audience]").forEach(function(button){button.setAttribute("aria-selected",String(button.dataset.audience===state.audience));button.textContent=button.dataset.audience==="student"?c.student:c.teacher;});document.getElementById("page-title").innerHTML=state.locale==="ko"?'대회 이름이 아니라,<br><span>'+c.title+'</span>':'<span>'+c.title+'</span>';document.getElementById("page-lede").textContent=c.lede;document.getElementById("brand-slogan").textContent=c.slogan;document.getElementById("print-button").textContent=c.print;document.getElementById("nav-home").textContent=c.home;document.getElementById("nav-curriculum").textContent=c.curriculum;document.getElementById("nav-past-papers").textContent=c.pastPapers;document.getElementById("locale-label").textContent=c.language;document.getElementById("release-title").textContent=c.releaseTitle;document.getElementById("release-copy").textContent=c.releaseCopy;document.getElementById("program-heading").textContent=c.choose;document.getElementById("program-intro").textContent=c.chooseCopy;document.getElementById("source-title").textContent=c.sourceTitle;document.getElementById("source-link").textContent=c.sourceLink;document.getElementById("workspace-title").textContent=c.workspace;document.getElementById("footer-return").textContent=c.returnHome;renderPrograms();renderProblems();updateProgress();updateUrl();}
-  document.querySelectorAll("[data-audience]").forEach(function(button){button.addEventListener("click",function(){state.audience=button.dataset.audience;render();});});document.getElementById("locale-select").addEventListener("change",function(event){state.locale=event.target.value;render();});document.getElementById("print-button").addEventListener("click",function(){window.print();});render();
+  function currentRows(){return bank.items.filter(function(row){return row.programId===state.programId;});}
+  function selectProgram(programId){
+    if(!bank.programs.some(function(row){return row.id===programId;}))return;
+    state.programId=programId;
+    render();
+  }
+  function renderPrograms(){
+    const target=document.getElementById("program-list");
+    target.innerHTML="";
+    bank.programs.forEach(function(program){
+      const local=programCopy(program);
+      const count=bank.items.filter(function(row){return row.programId===program.id;}).length;
+      const button=document.createElement("button");
+      const selected=program.id===state.programId;
+      button.type="button";
+      button.id="program-tab-"+program.id;
+      button.className="program-tab";
+      button.dataset.programId=program.id;
+      button.setAttribute("role","tab");
+      button.setAttribute("aria-controls","problem-list");
+      button.setAttribute("aria-selected",String(selected));
+      button.tabIndex=selected?0:-1;
+      button.style.setProperty("--program-accent",program.accent);
+      button.innerHTML="<strong>"+escapeHtml(program.title)+"</strong><span>"+escapeHtml(local.stage[state.locale]||local.stage.ko)+" · "+escapeHtml(typeCountLabel(count))+"</span>";
+      button.addEventListener("click",function(){selectProgram(program.id);});
+      target.append(button);
+    });
+  }
+  function renderProblems(){
+    const c=copy();
+    const program=bank.programs.find(function(row){return row.id===state.programId;});
+    const source=bank.sources.find(function(row){return row.id===program.sourceId;});
+    const local=programCopy(program);
+    const rows=currentRows();
+    const target=document.getElementById("problem-list");
+    target.setAttribute("role","tabpanel");
+    target.setAttribute("aria-labelledby","program-tab-"+program.id);
+    document.getElementById("program-title").textContent=program.title;
+    document.getElementById("program-format").textContent=local.format[state.locale]||local.format.ko;
+    document.getElementById("source-use").textContent=local.source[state.locale]||local.source.ko;
+    document.getElementById("source-link").href=source.url;
+    target.innerHTML="";
+    let pageGroup=null;
+    rows.forEach(function(candidate,index){
+      if(index%2===0){pageGroup=document.createElement("div");pageGroup.className="problem-page";target.append(pageGroup);}
+      const card=document.createElement("article");
+      card.id="problem-"+candidate.id;
+      card.className="problem-card";
+      card.dataset.itemId=candidate.id;
+      const visual=bank.renderVisual(candidate,state.locale);
+      card.innerHTML='<div class="problem-meta"><b>'+(index+1).toString().padStart(2,"0")+'</b><span>'+escapeHtml(tierText(candidate.tier))+'</span></div><h3>'+escapeHtml(text(candidate.typeTitle))+'</h3><p class="problem-prompt">'+mathHtml(text(candidate.prompt))+'</p><div class="problem-visual">'+visual+'</div><div class="choices"></div><p class="feedback" aria-live="polite"></p>';
+      const choices=card.querySelector(".choices");
+      const feedback=card.querySelector(".feedback");
+      const answerId=bank.answerId(candidate);
+      candidate.choices.forEach(function(row){
+        const button=document.createElement("button");
+        button.type="button";
+        button.className="choice";
+        button.dataset.answerId=row.id;
+        button.setAttribute("aria-pressed","false");
+        button.innerHTML='<span class="choice-mark">'+row.id+'</span><span class="choice-value">'+mathHtml(text(row.label))+'</span>';
+        button.addEventListener("click",function(){
+          if(state.audience!=="student"||state.correct.has(candidate.id))return;
+          card.querySelectorAll(".choice").forEach(function(node){node.setAttribute("aria-pressed","false");node.classList.remove("correct","wrong");});
+          button.setAttribute("aria-pressed","true");
+          const correct=row.id===answerId;
+          button.classList.add(correct?"correct":"wrong");
+          feedback.className="feedback "+(correct?"correct":"wrong");
+          feedback.textContent=correct?c.correct:c.wrong;
+          if(correct){
+            state.correct.add(candidate.id);
+            card.classList.add("solved");
+            card.querySelectorAll(".choice").forEach(function(node){node.disabled=true;});
+            updateProgress();
+          }
+        });
+        choices.append(button);
+      });
+      if(state.audience==="student"&&state.correct.has(candidate.id)){
+        card.classList.add("solved");
+        choices.querySelectorAll("button").forEach(function(button){
+          button.disabled=true;
+          if(button.dataset.answerId===answerId){button.classList.add("correct");button.setAttribute("aria-pressed","true");}
+        });
+        feedback.className="feedback correct";
+        feedback.textContent=c.correct;
+      }
+      if(state.audience==="teacher"){
+        choices.querySelectorAll("button").forEach(function(button){button.disabled=true;if(button.dataset.answerId===answerId)button.classList.add("correct");});
+        const answer=candidate.choices.find(function(row){return row.id===answerId;});
+        const solution=document.createElement("div");
+        solution.className="teacher-solution";
+        solution.innerHTML='<strong>'+c.answer+' · '+answerId+' · '+mathHtml(text(answer.label))+'</strong><p>'+mathHtml(text(candidate.solution))+'</p><small>'+c.misconception+' · '+escapeHtml(misconceptionText(candidate.misconception))+'</small>';
+        card.append(solution);
+      }
+      pageGroup.append(card);
+    });
+  }
+  function renderGuidance(){
+    const c=experienceCopy();
+    const rows=currentRows();
+    const solved=rows.filter(function(row){return state.correct.has(row.id);});
+    const first=rows[0];
+    const next=rows.find(function(row){return !state.correct.has(row.id);});
+    const kicker=document.getElementById("practice-next-kicker");
+    const title=document.getElementById("practice-next-title");
+    const detail=document.getElementById("practice-next-copy");
+    const link=document.getElementById("practice-next-link");
+    const disclosure=document.getElementById("audience-disclosure");
+    disclosure.textContent=state.audience==="teacher"?c.teacherDisclosure:c.studentDisclosure;
+    if(state.audience==="teacher"){
+      kicker.textContent=c.teacherKicker;
+      title.textContent=c.teacherTitle;
+      detail.textContent=c.teacherCopy;
+      link.href="#problem-"+first.id;
+      link.innerHTML=escapeHtml(c.teacherLink)+' <span aria-hidden="true">↓</span>';
+      return;
+    }
+    kicker.textContent=c.studentKicker;
+    if(solved.length===rows.length){
+      title.textContent=c.complete;
+      detail.textContent=c.completeCopy;
+      link.href="#problem-"+first.id;
+      link.innerHTML=escapeHtml(c.review)+' <span aria-hidden="true">↑</span>';
+      return;
+    }
+    title.textContent=solved.length?c.nextPrefix+" · "+text(next.typeTitle):c.studentStart;
+    detail.textContent=c.studentStartCopy;
+    link.href="#problem-"+next.id;
+    link.innerHTML=escapeHtml(solved.length?c.next:c.first)+' <span aria-hidden="true">↓</span>';
+  }
+  function updateProgress(){
+    const rows=currentRows();
+    const count=rows.filter(function(row){return state.correct.has(row.id);}).length;
+    const c=copy();
+    document.getElementById("progress-label").textContent=count+" / "+rows.length;
+    document.getElementById("progress-copy").textContent=c.solved;
+    renderGuidance();
+  }
+  function render(){
+    const c=copy();
+    document.documentElement.lang=state.locale==="zh-Hans"?"zh-Hans":state.locale;
+    document.title=(state.locale==="ko"?"경시 문제 유형":"Competition problem types")+" · G·MAP";
+    document.getElementById("locale-select").value=state.locale;
+    document.querySelectorAll("[data-audience]").forEach(function(button){
+      const selected=button.dataset.audience===state.audience;
+      button.setAttribute("aria-selected",String(selected));
+      button.setAttribute("aria-controls","problem-list");
+      button.tabIndex=selected?0:-1;
+      button.textContent=button.dataset.audience==="student"?c.student:c.teacher;
+    });
+    document.getElementById("page-title").innerHTML=state.locale==="ko"?'대회 이름이 아니라,<br><span>'+c.title+'</span>':'<span>'+c.title+'</span>';
+    document.getElementById("page-lede").textContent=c.lede;
+    document.getElementById("brand-slogan").textContent=c.slogan;
+    document.getElementById("print-button").textContent=c.print;
+    document.getElementById("nav-home").textContent=c.home;
+    document.getElementById("nav-curriculum").textContent=c.curriculum;
+    document.getElementById("nav-past-papers").textContent=c.pastPapers;
+    document.getElementById("locale-label").textContent=c.language;
+    document.getElementById("release-title").textContent=c.releaseTitle;
+    document.getElementById("release-copy").textContent=c.releaseCopy;
+    document.getElementById("program-heading").textContent=c.choose;
+    document.getElementById("program-intro").textContent=c.chooseCopy;
+    document.getElementById("source-title").textContent=c.sourceTitle;
+    document.getElementById("source-link").textContent=c.sourceLink;
+    document.getElementById("workspace-title").textContent=c.workspace;
+    document.getElementById("footer-return").textContent=c.returnHome;
+    renderPrograms();
+    renderProblems();
+    updateProgress();
+    updateUrl();
+  }
+  function moveProgramTab(event){
+    const keys=["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End"];
+    if(!keys.includes(event.key))return;
+    const buttons=Array.from(document.querySelectorAll(".program-tab"));
+    const current=buttons.indexOf(event.target);
+    if(current<0)return;
+    event.preventDefault();
+    let next=current;
+    if(event.key==="Home")next=0;
+    else if(event.key==="End")next=buttons.length-1;
+    else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(current-1+buttons.length)%buttons.length;
+    else next=(current+1)%buttons.length;
+    selectProgram(buttons[next].dataset.programId);
+    document.getElementById("program-tab-"+state.programId).focus();
+  }
+  function moveAudienceTab(event){
+    const keys=["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End"];
+    if(!keys.includes(event.key))return;
+    const buttons=Array.from(document.querySelectorAll("[data-audience]"));
+    const current=buttons.indexOf(event.target);
+    if(current<0)return;
+    event.preventDefault();
+    let next=current;
+    if(event.key==="Home")next=0;
+    else if(event.key==="End")next=buttons.length-1;
+    else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(current-1+buttons.length)%buttons.length;
+    else next=(current+1)%buttons.length;
+    state.audience=buttons[next].dataset.audience;
+    render();
+    document.querySelector('[data-audience="'+state.audience+'"]').focus();
+  }
+  document.querySelectorAll("[data-audience]").forEach(function(button){button.addEventListener("click",function(){state.audience=button.dataset.audience;render();});});
+  document.querySelector(".role-tabs").addEventListener("keydown",moveAudienceTab);
+  document.getElementById("program-list").addEventListener("keydown",moveProgramTab);
+  document.getElementById("locale-select").addEventListener("change",function(event){state.locale=event.target.value;render();});
+  document.getElementById("print-button").addEventListener("click",function(){window.print();});
+  render();
 })();

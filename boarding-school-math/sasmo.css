@@ -387,3 +387,241 @@ h1 span { color: var(--blue); }
   .archive-file-link { flex: 1 1 88px; }
   .archive-record-source { width: 100%; justify-content: flex-start; }
 }
+
+/* 2026-09-18 student and instructor meeting experience */
+.page-sasmo {
+  --academy-ink: #182230;
+  --academy-muted: #566274;
+  --academy-rule: #d8dee8;
+  --academy-sheet: #ffffff;
+  --academy-burgundy: #2456c4;
+  --academy-green: #16734b;
+  --academy-green-soft: #eef8f3;
+  --academy-brass: #78a0ff;
+  color: #182230;
+  background: #ffffff;
+}
+body.page-sasmo.academy-page {
+  background-color: #f5f6f8;
+  background-image: none;
+}
+body.page-sasmo .site-header {
+  border-bottom-color: #d8dee8;
+  background: rgba(255, 255, 255, .96);
+}
+.page-sasmo .hero {
+  min-height: 600px;
+  background: #ffffff;
+}
+.page-sasmo h1 .program-name {
+  margin-bottom: 18px;
+  display: block;
+  color: #2456c4;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: clamp(.78rem, 1.3vw, 1rem);
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.page-sasmo h1 strong {
+  display: block;
+  color: #182230;
+  font-size: clamp(3.4rem, 5vw, 5rem);
+  font-weight: 560;
+}
+.page-sasmo .hero-mobile-start { display: none; }
+.page-sasmo .truth-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-color: #d8dee8;
+  background: #f5f6f8;
+}
+.page-sasmo .truth-strip span {
+  min-width: 0;
+  color: #566274;
+  background: transparent;
+}
+.page-sasmo .truth-strip b { color: #182230; }
+.page-sasmo .hero-action {
+  min-height: 390px;
+  border-color: #2d3a4d;
+  border-top-color: #78a0ff;
+  background: #182230;
+  box-shadow: 0 22px 48px rgba(24, 34, 48, .18);
+}
+.page-sasmo .hero-action .micro-label,
+.page-sasmo .hero-action .hero-secondary-link { color: #bcd0ff; }
+.page-sasmo .hero-action .hero-format { color: #ffffff; }
+.page-sasmo .hero-action-links { display: grid; gap: 4px; }
+.page-sasmo .hero-action .primary-link {
+  border: 1px solid #ffffff;
+  color: #182230;
+  background: #ffffff;
+}
+.page-sasmo .hero-action .primary-link:hover { background: #eaf0ff; }
+.page-sasmo .roles-section { padding-top: 72px; padding-bottom: 80px; }
+.page-sasmo .experience-heading { margin-bottom: 22px; }
+.page-sasmo .experience-proof {
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid #d8dee8;
+  background: #f5f6f8;
+}
+.page-sasmo .experience-proof div {
+  min-width: 0;
+  padding: 17px 20px;
+  display: grid;
+  gap: 2px;
+  border-right: 1px solid #d8dee8;
+}
+.page-sasmo .experience-proof div:last-child { border-right: 0; }
+.page-sasmo .experience-proof strong { color: #182230; font-size: 1.08rem; }
+.page-sasmo .experience-proof span { color: #566274; font-size: .72rem; }
+.page-sasmo .role-tabs { margin: 0; }
+.page-sasmo .role-tabs button {
+  min-width: 116px;
+  border-radius: 4px 4px 0 0;
+  border-bottom: 0;
+  color: #566274;
+}
+.page-sasmo .role-tabs button[aria-selected="true"] {
+  border-color: #182230;
+  color: #ffffff;
+  background: #182230;
+}
+.page-sasmo .role-panel {
+  min-height: 420px;
+  padding: clamp(26px, 4vw, 46px);
+  grid-template-columns: minmax(0, .86fr) minmax(360px, 1.14fr);
+  gap: clamp(28px, 5vw, 64px);
+  border-radius: 0 6px 6px 6px;
+  border-color: #c7d2e4;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(31, 54, 90, .08);
+}
+.page-sasmo .role-panel-copy { align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+.page-sasmo .role-panel h3 { max-width: 520px; font-size: clamp(2rem, 3.5vw, 3.35rem); line-height: 1.02; }
+.page-sasmo .role-panel-copy > p:not(.micro-label) { max-width: 520px; color: #566274; font-size: .92rem; line-height: 1.7; }
+.page-sasmo .role-primary-link {
+  min-height: 50px;
+  margin-top: 24px;
+  padding: 12px 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #2456c4;
+  border-radius: 5px;
+  color: #ffffff;
+  background: #2456c4;
+  text-decoration: none;
+  font-size: .82rem;
+  font-weight: 900;
+}
+.page-sasmo .role-primary-link:hover { background: #1e47a4; }
+.page-sasmo .role-panel .role-availability {
+  margin-top: 10px;
+  color: #566274;
+  font-size: .69rem;
+  line-height: 1.5;
+}
+.page-sasmo .role-preview {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #d8dee8;
+  border-top: 5px solid #2456c4;
+  background: #f5f6f8;
+}
+.page-sasmo .role-preview-heading { margin-bottom: 13px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.page-sasmo .role-preview-heading span { color: #2456c4; font-size: .64rem; font-weight: 900; letter-spacing: .1em; }
+.page-sasmo .role-preview-heading strong { color: #182230; font-size: .78rem; }
+.page-sasmo .role-features { counter-reset: role-step; }
+.page-sasmo .role-features li {
+  min-height: 68px;
+  padding: 12px 13px;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 11px;
+  align-items: center;
+  counter-increment: role-step;
+  border-radius: 4px;
+  border-color: #d8dee8;
+  color: #182230;
+  background: #ffffff;
+}
+.page-sasmo .role-features li::before {
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #2456c4;
+  background: #eaf0ff;
+  content: counter(role-step);
+  font-size: .7rem;
+  font-weight: 900;
+}
+.page-sasmo .role-features li strong { align-self: end; font-size: .76rem; }
+.page-sasmo .role-features li span { align-self: start; color: #566274; font-size: .69rem; font-weight: 500; line-height: 1.45; }
+.page-sasmo .role-panel .role-preview-note { margin-top: 12px; color: #566274; font-size: .68rem; line-height: 1.5; }
+.page-sasmo .control-section,
+.page-sasmo .journey-section,
+.page-sasmo .source-section,
+.page-sasmo .past-papers-section { background: #f5f6f8; }
+.page-sasmo .diagnostic-evidence-section,
+.page-sasmo .domains-section { background: #ffffff; }
+.page-sasmo .selector-card,
+.page-sasmo .domain-card,
+.page-sasmo .source-card,
+.page-sasmo .archive-year-card,
+.page-sasmo .archive-unavailable,
+.page-sasmo .diagnostic-callout { background: #ffffff; }
+.page-sasmo .goal-detail,
+.page-sasmo .journey-list li:last-child { background: #eef8f3; }
+.page-sasmo .archive-source-note { border-color: #d8dee8; background: #eaf0ff; }
+
+@media (max-width: 920px) {
+  .page-sasmo .role-panel { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .page-sasmo .hero { min-height: 0; }
+  .page-sasmo h1 strong { font-size: clamp(2.5rem, 11.2vw, 3.35rem); }
+  .page-sasmo .hero-mobile-start {
+    min-height: 50px;
+    margin: -3px 0 18px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid #2456c4;
+    border-radius: 5px;
+    color: #ffffff;
+    background: #2456c4;
+    text-decoration: none;
+    font-size: .8rem;
+    font-weight: 900;
+  }
+  .page-sasmo .truth-strip,
+  .page-sasmo .experience-proof { grid-template-columns: 1fr; }
+  .page-sasmo .experience-proof div { border-right: 0; border-bottom: 1px solid #d8dee8; }
+  .page-sasmo .experience-proof div:last-child { border-bottom: 0; }
+  .page-sasmo .role-tabs { overflow: visible; }
+  .page-sasmo .role-tabs button { min-width: 0; flex: 1 1 50%; }
+  .page-sasmo .role-panel { min-height: 0; padding: 22px; gap: 24px; }
+  .page-sasmo .role-panel h3 { font-size: 2.2rem; }
+  .page-sasmo .role-preview { padding: 15px; }
+  .page-sasmo .role-preview-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
+}
+
+@media print {
+  .page-sasmo .role-primary-link,
+  .page-sasmo .hero-action-links { display: none; }
+  .page-sasmo .role-panel { min-height: 0; box-shadow: none; }
+}

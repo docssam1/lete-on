@@ -5,7 +5,44 @@ function type(file){if(file.endsWith(".html"))return"text/html; charset=utf-8";i
 test.before(async function(){server=http.createServer(function(req,res){const file=path.resolve(root,"."+decodeURIComponent(new URL(req.url,"http://127.0.0.1").pathname));if(!file.startsWith(root)||!fs.existsSync(file)||!fs.statSync(file).isFile()){res.writeHead(404);res.end();return;}res.writeHead(200,{"content-type":type(file)});fs.createReadStream(file).pipe(res);});await new Promise(function(resolve){server.listen(0,"127.0.0.1",resolve);});url=`http://127.0.0.1:${server.address().port}/boarding-school-math/competition-practice.html`;browser=await chromium.launch({headless:true});});
 test.after(async function(){await browser.close();await new Promise(function(resolve){server.close(resolve);});});
 
-test("student solves actual SASMO, Math Kangaroo, and AMC bridge types without teacher answers",async function(){const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=[];page.on("pageerror",function(error){errors.push(error.message);});await page.goto(`${url}?program=sasmo&audience=student&locale=ko`,{waitUntil:"networkidle"});assert.equal(await page.locator(".program-tab").count(),3);assert.deepEqual(await page.locator(".program-tab span").allInnerTexts(),["Grade 6 · 10개 유형","Grades 5–6 · 10개 유형","Grade 6 기초 연결 · 10개 유형"]);assert.equal(await page.locator(".problem-page").count(),5);assert.equal(await page.locator(".problem-card").count(),10);assert.equal(await page.locator(".choice").count(),50);assert.equal(await page.locator(".teacher-solution").count(),0);const first=page.locator('[data-item-id="sasmo-g6-model-01"]');await first.locator('[data-answer-id="A"]').click();assert.equal(await first.locator(".feedback.wrong").count(),1);await first.locator('[data-answer-id="C"]').click();assert.equal(await first.locator(".feedback.correct").count(),1);assert.equal(await page.locator("#progress-label").innerText(),"1 / 10");await page.locator(".program-tab").nth(1).click();assert.equal(await page.locator('[data-item-id^="mk56-"]').count(),10);await page.locator(".program-tab").nth(2).click();assert.equal(await page.locator('[data-item-id^="amc8-"]').count(),10);assert.deepEqual(errors,[]);await page.close();});
+test("student solves actual SASMO, Math Kangaroo, and AMC bridge types without teacher answers",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});
+  const errors=[];
+  page.on("pageerror",function(error){errors.push(error.message);});
+  await page.goto(`${url}?program=sasmo&audience=student&locale=ko`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator(".program-tab").count(),3);
+  assert.deepEqual(await page.locator(".program-tab span").allInnerTexts(),["Grade 6 · 10개 유형","Grades 5–6 · 10개 유형","Grade 6 기초 연결 · 10개 유형"]);
+  assert.equal(await page.locator(".problem-page").count(),5);
+  assert.equal(await page.locator(".problem-card").count(),10);
+  assert.equal(await page.locator(".choice").count(),50);
+  assert.equal(await page.locator(".teacher-solution").count(),0);
+  assert.equal(await page.locator("#problem-list").getAttribute("role"),"tabpanel");
+  assert.equal(await page.locator("#practice-next-link").getAttribute("href"),"#problem-sasmo-g6-model-01");
+  const first=page.locator('[data-item-id="sasmo-g6-model-01"]');
+  await first.locator('[data-answer-id="A"]').click();
+  assert.equal(await first.locator(".feedback.wrong").count(),1);
+  await first.locator('[data-answer-id="C"]').click();
+  assert.equal(await first.locator(".feedback.correct").count(),1);
+  assert.equal(await first.locator(".choice:disabled").count(),5);
+  assert.equal(await first.evaluate(function(node){return node.classList.contains("solved");}),true);
+  assert.equal(await page.locator("#progress-label").innerText(),"1 / 10");
+  assert.equal(await page.locator("#practice-next-link").getAttribute("href"),"#problem-sasmo-g6-pattern-01");
+
+  const selectedTab=page.locator('.program-tab[aria-selected="true"]');
+  await selectedTab.focus();
+  await selectedTab.press("ArrowRight");
+  assert.equal(await page.locator('.program-tab[aria-selected="true"]').getAttribute("data-program-id"),"math-kangaroo-g5-6");
+  assert.equal(await page.locator('[data-item-id^="mk56-"]').count(),10);
+  await page.locator('.program-tab[aria-selected="true"]').press("End");
+  assert.equal(await page.locator('.program-tab[aria-selected="true"]').getAttribute("data-program-id"),"amc-8-bridge");
+  assert.equal(await page.locator('[data-item-id^="amc8-"]').count(),10);
+  await page.locator('.program-tab[aria-selected="true"]').press("Home");
+  assert.equal(await page.locator('.program-tab[aria-selected="true"]').getAttribute("data-program-id"),"sasmo-g6");
+  assert.equal(await page.locator('[data-item-id="sasmo-g6-model-01"]').evaluate(function(node){return node.classList.contains("solved");}),true);
+  assert.equal(await page.locator("#progress-label").innerText(),"1 / 10");
+  assert.deepEqual(errors,[]);
+  await page.close();
+});
 
 test("teacher, localization, print, keyboard, and 390px boundaries remain distinct",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});
@@ -16,7 +53,17 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
   assert.equal(await page.locator('[data-audience="student"]').innerText(),"Student");
   assert.equal(await page.locator('[data-audience="teacher"]').innerText(),"Teacher");
   assert.equal(await page.locator("#release-title").innerText(),"GFIELD-original problems");
+  assert.equal(await page.locator("#practice-next-kicker").innerText(),"PUBLIC INSTRUCTOR PREVIEW");
+  assert.match(await page.locator("#audience-disclosure").innerText(),/Public instructor preview/);
+  assert.match(await page.locator("#audience-disclosure").innerText(),/no account, learner record, or assignment tools/i);
   assert.match(await page.locator("#source-use").innerText(),/^MAA AMC 8/);
+  await page.locator('[data-audience="teacher"]').focus();
+  await page.locator('[data-audience="teacher"]').press("ArrowLeft");
+  assert.equal(await page.locator('[data-audience="student"]').getAttribute("aria-selected"),"true");
+  assert.equal(await page.locator(".teacher-solution").count(),0);
+  await page.locator('[data-audience="student"]').press("ArrowRight");
+  assert.equal(await page.locator('[data-audience="teacher"]').getAttribute("aria-selected"),"true");
+  assert.equal(await page.locator(".teacher-solution").count(),10);
   await page.locator("#locale-select").selectOption("zh-Hans");
   assert.equal(await page.locator("html").getAttribute("lang"),"zh-Hans");
   assert.equal(await page.locator('[data-audience="student"]').innerText(),"学生版");

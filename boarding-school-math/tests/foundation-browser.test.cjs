@@ -203,6 +203,11 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   assert.equal(await page.locator("[data-goal]").count(), 4);
   assert.equal(await page.locator("#domain-grid .domain-card").count(), 6);
   assert.equal(await page.locator("[data-role]").count(), 2);
+  assert.equal(await page.locator("[data-role-jump]").count(), 2);
+  assert.equal(await page.locator(".experience-proof > div").count(), 3);
+  assert.equal(await page.locator('[data-level="G6"]').getAttribute("aria-selected"), "true");
+  assert.equal(await page.locator("#role-primary-link").getAttribute("href"), "./competition-practice.html?program=sasmo&audience=student&locale=ko");
+  assert.match(await page.locator("#role-availability").innerText(), /지금 체험 가능[\s\S]*10개/);
   assert.equal(await page.locator("#k12-record-count").textContent(), "88");
   assert.equal(await page.locator("#k12-asset-count").textContent(), "144");
   assert.equal(await page.locator("#edugain-topic-count").textContent(), "158");
@@ -229,8 +234,6 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   }), true);
   assert.equal(await page.locator("#diagnostic-year").inputValue(), "2020");
   assert.equal(await page.locator("#diagnostic-workflow li").count(), 5);
-  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /K2[\s\S]*잠금/);
-  await page.locator('[data-level="G6"]').click();
   assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /2020[\s\S]*G6[\s\S]*준비 가능/);
   assert.match(await page.locator("#diagnostic-readiness").innerText(), /문항별 페이지[\s\S]*답안 근거[\s\S]*영역 태그/);
   await page.locator("#diagnostic-year").selectOption("2019");
@@ -239,6 +242,18 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   assert.match(await page.locator("#diagnostic-source-link").getAttribute("rel"), /noopener/);
   assert.match(await page.locator(".evidence-rules").innerText(), /독립된 2회 풀이/);
 
+  await page.locator('[data-role-jump="teacher"]').click();
+  assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-selected"), "true");
+  assert.match(await page.locator("#role-title").textContent(), /다음 수업/);
+  assert.equal(await page.locator("#role-primary-link").getAttribute("href"), "./competition-practice.html?program=sasmo&audience=teacher&locale=ko");
+  assert.match(await page.locator("#role-availability").textContent(), /공개 미리보기[\s\S]*학생 기록/);
+  assert.equal(await page.locator("#role-features li").count(), 4);
+
+  await page.locator('[data-level="K2"]').click();
+  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /K2[\s\S]*잠금/);
+  assert.equal(await page.locator("#role-primary-link").getAttribute("href"), "#past-papers");
+  assert.match(await page.locator("#role-availability").textContent(), /K2 직접 체험 문항은 검수 중/);
+
   await page.locator('[data-level="K2"]').focus();
   await page.keyboard.press("ArrowRight");
   assert.equal(await page.locator('[data-level="G1"]').getAttribute("aria-selected"), "true");
@@ -246,10 +261,10 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   assert.equal(await page.locator("#official-sasmo-link").getAttribute("href"), "https://sasmo.simcc.org/courses/sasmo-past-papers-year-2025/");
   await page.locator('[data-goal="amc-bridge"]').click();
   assert.match(await page.locator("#goal-title").textContent(), /AMC 연결/);
-  await page.locator('[data-role="student"]').focus();
-  await page.keyboard.press("ArrowRight");
-  assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#role-title").textContent(), /수업 그룹/);
+  await page.locator('[data-role="teacher"]').focus();
+  await page.keyboard.press("ArrowLeft");
+  assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
+  assert.match(await page.locator("#role-title").textContent(), /오늘 무엇을 공부/);
   assert.equal((await page.locator("body").innerText()).includes("학부모"), false);
   await page.locator("#archive-grade-filter").selectOption("1");
   assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 3);
@@ -312,7 +327,7 @@ test("dedicated SASMO page stays usable at mobile and tablet widths", async func
     });
     assert.equal(allLevelsVisible, true, `not all K2-G12 controls visible at ${width}px`);
     assert.equal(await page.locator('[data-level="G12"]').isVisible(), true);
-    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], .primary-link, .hero-secondary-link, .outline-link, #archive-grade-filter, #diagnostic-year, .evidence-source-link, .archive-file-link, .archive-record-source, .brand, .site-footer a").evaluateAll(function (controls) {
+    const targetSizes = await page.locator("[data-level], [data-goal], [data-role], [data-role-jump], .role-primary-link, .primary-link, .hero-secondary-link, .outline-link, #archive-grade-filter, #diagnostic-year, .evidence-source-link, .archive-file-link, .archive-record-source, .brand, .site-footer a").evaluateAll(function (controls) {
       return controls.map(function (control) {
         const rect = control.getBoundingClientRect();
         return { width: rect.width, height: rect.height };
@@ -322,6 +337,10 @@ test("dedicated SASMO page stays usable at mobile and tablet widths", async func
       assert.ok(size.width >= 44, `SASMO touch width ${size.width} at ${width}px`);
       assert.ok(size.height >= 44, `SASMO touch height ${size.height} at ${width}px`);
     });
+    if (width < 620) {
+      const mobileStart = await page.locator(".hero-mobile-start").boundingBox();
+      assert.ok(mobileStart.width >= 44 && mobileStart.height >= 44, `SASMO mobile start target at ${width}px`);
+    }
     assert.deepEqual(errors, []);
     await page.close();
   }

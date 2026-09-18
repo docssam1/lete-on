@@ -81,15 +81,35 @@
   const roles = Object.freeze({
     student: Object.freeze({
       kicker: "학생용 · 오늘의 학습",
-      title: "오늘의 다음 학습을 한눈에",
-      description: "학년·목표·진단 근거를 바탕으로 개념 확인, 짧은 연습, 오류 복습을 순서대로 봅니다.",
-      features: ["오늘의 20~35분 학습 흐름", "영역별 준비 지도", "틀린 이유를 고르는 복습", "교사 확인 전의 다음 행동"]
+      title: "오늘 무엇을 공부할지 바로 압니다.",
+      description: "문제를 풀고, 틀린 이유를 확인하고, 필요한 개념과 다음 연습으로 바로 이동합니다.",
+      previewKicker: "DEMO LEARNER",
+      cta: "Grade 6 학생 체험 시작",
+      href: "./competition-practice.html?program=sasmo&audience=student&locale=ko",
+      liveNote: "지금 체험 가능 · GFIELD 자체 제작 유형 10개",
+      previewNote: "공식 점수나 수상 확률이 아닌 GFIELD 학습 준비 흐름입니다.",
+      features: Object.freeze([
+        Object.freeze({ title: "문제 풀기", detail: "검수된 실제 유형을 학생 화면에서 풉니다." }),
+        Object.freeze({ title: "틀린 이유 확인", detail: "계산, 조건 해석, 전략 선택 오류를 구분합니다." }),
+        Object.freeze({ title: "개념과 연습 연결", detail: "먼저 배울 개념과 같은 사고 유형을 이어 봅니다." }),
+        Object.freeze({ title: "다시 확인", detail: "짧은 재확인으로 학습이 남았는지 살핍니다." })
+      ])
     }),
     teacher: Object.freeze({
-      kicker: "교사용 · 근거와 배정",
-      title: "진단 근거를 수업 그룹과 배정으로 연결합니다.",
-      description: "교사는 영역·오류 유형·시간 근거를 보고 보정, 핵심, 심화 그룹을 구성하고 과제를 검토합니다.",
-      features: ["학년·목표별 진단 설계", "오류 유형과 선수개념 근거", "수업 그룹·과제 배정 검토", "유지 확인 후 다음 단계 승인"]
+      kicker: "강사용 · 근거와 수업 설계",
+      title: "풀이 결과를 다음 수업으로 바꿉니다.",
+      description: "강사는 정답만 보지 않고 영역, 오류 유형, 풀이 전략을 확인해 수업과 과제를 조정합니다.",
+      previewKicker: "PUBLIC INSTRUCTOR PREVIEW",
+      cta: "Grade 6 강사용 풀이 보기",
+      href: "./competition-practice.html?program=sasmo&audience=teacher&locale=ko",
+      liveNote: "공개 미리보기 · 계정, 학생 기록, 실제 배정 기능 없음",
+      previewNote: "강사용 공개 미리보기이며 인증된 강사 대시보드나 실제 학생 기록 화면이 아닙니다.",
+      features: Object.freeze([
+        Object.freeze({ title: "근거 확인", detail: "문항의 정답, 풀이, 예상 오류를 함께 봅니다." }),
+        Object.freeze({ title: "수업 우선순위", detail: "선수개념 보정, 핵심, 심화 순서를 정합니다." }),
+        Object.freeze({ title: "자료 배정 설계", detail: "개념 학습, 유형 연습, 재확인을 연결합니다." }),
+        Object.freeze({ title: "변화 관찰", detail: "한 번의 점수보다 오류가 줄었는지 확인합니다." })
+      ])
     })
   });
 
@@ -97,12 +117,13 @@
   const requestedArchiveGrade = String(query.get("grade") || "").toLowerCase();
   const requestedGrade = Number(requestedArchiveGrade);
   const requestedK2 = requestedArchiveGrade === "k2" || requestedArchiveGrade === "0";
+  const requestedRole = query.get("audience") === "teacher" ? "teacher" : "student";
   const state = {
-    level: Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? `G${requestedGrade}` : "K2",
+    level: requestedK2 ? "K2" : Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? `G${requestedGrade}` : "G6",
     archiveGrade: requestedArchiveGrade === "all" ? "all" : requestedK2 ? "K2" : Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? String(requestedGrade) : "6",
     goal: "first-attempt",
     diagnosticYear: 2020,
-    role: "student"
+    role: requestedRole
   };
   const levels = Object.freeze(["K2", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"]);
   const archiveAssetLabels = Object.freeze({
@@ -218,8 +239,20 @@
     document.getElementById("diagnostic-description").textContent = goal.diagnosticDescription;
     const heroLevel = document.getElementById("hero-level-label");
     const heroAction = document.getElementById("hero-action-text");
+    const roleContext = document.getElementById("role-preview-context");
+    const diagnosticLink = document.getElementById("diagnostic-link");
     if (heroLevel) heroLevel.textContent = levelLabel(state.level);
     if (heroAction) heroAction.textContent = `${levelLabel(state.level)} ${goal.title.split(" · ")[0]} 목표에 맞춰 준비 진단의 첫 단계를 정리합니다.`;
+    if (roleContext) roleContext.textContent = `${levelLabel(state.level)} · ${goal.title.split(" · ")[0]}`;
+    if (diagnosticLink) {
+      const liveGradeSix = state.level === "G6";
+      diagnosticLink.href = liveGradeSix
+        ? `./competition-practice.html?program=sasmo&audience=${state.role}&locale=ko`
+        : "#past-papers";
+      diagnosticLink.innerHTML = liveGradeSix
+        ? `${state.role === "teacher" ? "강사용 풀이" : "학생 유형 학습"} 체험 <span aria-hidden="true">→</span>`
+        : `${levelLabel(state.level)} 기출 근거 보기 <span aria-hidden="true">→</span>`;
+    }
   }
   function renderSourceInventory() {
     const api = window.GFIELDSASMOSourceInventory;
@@ -484,8 +517,8 @@
     state.level = String(level);
     renderLevels();
     updateOfficialLink();
-    renderJourney();
     renderDiagnosticEvidence();
+    updateRole(state.role);
   }
   function updateRole(roleId) {
     if (!roles[roleId]) return;
@@ -501,13 +534,30 @@
     document.getElementById("role-kicker").textContent = role.kicker;
     document.getElementById("role-title").textContent = role.title;
     document.getElementById("role-description").textContent = role.description;
+    document.getElementById("role-preview-kicker").textContent = role.previewKicker;
+    document.getElementById("role-preview-note").textContent = role.previewNote;
+    const primaryLink = document.getElementById("role-primary-link");
+    const availability = document.getElementById("role-availability");
+    const liveGradeSix = state.level === "G6";
+    primaryLink.href = liveGradeSix ? role.href : "#past-papers";
+    primaryLink.innerHTML = liveGradeSix
+      ? `${role.cta} <span aria-hidden="true">→</span>`
+      : `${levelLabel(state.level)} 기출 자료 확인 <span aria-hidden="true">→</span>`;
+    availability.textContent = liveGradeSix
+      ? role.liveNote
+      : `${levelLabel(state.level)} 직접 체험 문항은 검수 중 · 확인된 외부 기출 링크부터 제공합니다.`;
     const features = document.getElementById("role-features");
     features.replaceChildren();
     role.features.forEach(function (feature) {
       const item = document.createElement("li");
-      item.textContent = feature;
+      const title = document.createElement("strong");
+      const detail = document.createElement("span");
+      title.textContent = feature.title;
+      detail.textContent = feature.detail;
+      item.append(title, detail);
       features.append(item);
     });
+    renderJourney();
   }
   function moveTab(event, selector, updater, dataName) {
     const keys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
@@ -529,9 +579,11 @@
       const level = event.target.closest("[data-level]");
       const goal = event.target.closest("[data-goal]");
       const role = event.target.closest("[data-role]");
+      const roleJump = event.target.closest("[data-role-jump]");
       if (level) updateLevel(level.dataset.level);
       if (goal) updateGoal(goal.dataset.goal);
       if (role) updateRole(role.dataset.role);
+      if (roleJump) updateRole(roleJump.dataset.roleJump);
     });
     document.getElementById("archive-grade-filter").addEventListener("change", function (event) {
       state.archiveGrade = event.target.value;
