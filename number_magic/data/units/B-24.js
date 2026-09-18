@@ -80,7 +80,7 @@ window.NM_UNITS['B-24'] = {
     fills:[
       { tex:'18 \\div 3 = \\square', answer:6,
         hint:{ ko:'18에서 3을 몇 번 빼면 0이 될까요? 18,15,12,9,6,3,0 — 6번! 또는 3×6=18.', en:'How many 3s do you subtract from 18 to reach 0? 18,15,12,9,6,3,0 — six! Or 3×6=18.', zh:'从18里减几次3变成0？18,15,12,9,6,3,0——6次！或者3×6=18。' } },
-      { tex:'20 - 5 - 5 - 5 - 5 = 0 \;\\Rightarrow\; 20 \\div 5 = \\square', answer:4,
+      { tex:'20 - 5 - 5 - 5 - 5 = 0 \\;\\Rightarrow\\; 20 \\div 5 = \\square', answer:4,
         hint:{ ko:'5를 몇 번 뺐는지 세어 봐요. 뺀 횟수가 바로 몫이에요.', en:'Count how many times 5 was subtracted. That count is the quotient.', zh:'数一数减了几次5。减的次数就是商。' } }
     ],
     open:{ ko:'"사탕 15개를 5명이 똑같이 나눠요"와 "사탕 15개를 5개씩 봉지에 담아요"는 둘 다 15÷5예요. 답은 같은데 무엇이 다른지 말해 봐요.',
