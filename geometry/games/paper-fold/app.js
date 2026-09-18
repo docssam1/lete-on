@@ -206,7 +206,7 @@ function markHtml(marks, type = "punch") {
 
 const isVisualChoice = (p = problem()) => ["result-choice", "backtrack-choice"].includes(p.interaction);
 
-function regionGridHtml(regions = [], type = "cut", className = "") {
+function regionGridHtml(regions = [], type = "cut", className = "", rows = 4, columns = 4) {
   const byCell = new Map();
   regions.forEach((region) => {
     const match = /^r([1-4])c([1-4])(?:-(ne|nw|se|sw))?$/.exec(region);
@@ -217,19 +217,46 @@ function regionGridHtml(regions = [], type = "cut", className = "") {
     byCell.set(key, entries);
   });
   const cells = [];
-  for (let row = 1; row <= 4; row += 1) {
-    for (let col = 1; col <= 4; col += 1) {
+  for (let row = 1; row <= rows; row += 1) {
+    for (let col = 1; col <= columns; col += 1) {
       const parts = byCell.get(`r${row}c${col}`) || [];
       cells.push(`<span class="visual-cell">${parts.map((part) => `<i class="visual-mark ${type} ${part === "full" ? "" : `triangle-${part}`}"></i>`).join("")}</span>`);
     }
   }
-  return `<span class="visual-paper-grid ${className}" aria-hidden="true">${cells.join("")}</span>`;
+  return `<span class="visual-paper-grid ${className}" style="--grid-rows:${rows};--grid-cols:${columns}" aria-hidden="true">${cells.join("")}</span>`;
+}
+
+function foldedRegionGridHtml(regions, p, className = "") {
+  let visibleRows = [1, 2, 3, 4];
+  let visibleColumns = [1, 2, 3, 4];
+  let diagonalClass = "";
+  problemFolds(p).forEach((step) => {
+    if (step.axis === "vertical") visibleColumns = step.side === "left" ? visibleColumns.slice(-2) : visibleColumns.slice(0, 2);
+    else if (step.axis === "horizontal") visibleRows = step.side === "top" ? visibleRows.slice(-2) : visibleRows.slice(0, 2);
+    else diagonalClass = ` folded-${step.axis} folded-side-${step.side}`;
+  });
+  const remapped = regions.map((region) => {
+    const match = /^r([1-4])c([1-4])(?:-(ne|nw|se|sw))?$/.exec(region);
+    if (!match) return null;
+    const row = visibleRows.indexOf(Number(match[1])) + 1;
+    const column = visibleColumns.indexOf(Number(match[2])) + 1;
+    return row && column ? `r${row}c${column}${match[3] ? `-${match[3]}` : ""}` : null;
+  }).filter(Boolean);
+  const dimensions = ` folded-r${visibleRows.length}-c${visibleColumns.length}`;
+  return regionGridHtml(remapped, p.action.type, `${className} folded-paper${dimensions}${diagonalClass}`, visibleRows.length, visibleColumns.length);
+}
+
+function visualFoldGuideHtml(p) {
+  return problemFolds(p).map((step, index) => `<span class="visual-fold-cue axis-${step.axis} side-${step.side} cue-step-${index + 1}" aria-hidden="true"><i class="visual-crease-line"></i><i class="visual-direction-arrow"><b>${index + 1}</b></i></span>`).join("");
 }
 
 function resultChoiceHtml(item, p) {
   if (item.regions) {
     const folded = p.interaction === "backtrack-choice" ? " folded-preview" : "";
-    return `<button class="result-choice visual-result-choice${folded}" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span>${regionGridHtml(item.regions, p.action.type, "choice-paper")}</button>`;
+    const picture = p.interaction === "backtrack-choice"
+      ? foldedRegionGridHtml(item.regions, p, "choice-paper")
+      : regionGridHtml(item.regions, p.action.type, "choice-paper");
+    return `<button class="result-choice visual-result-choice${folded}" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span>${picture}</button>`;
   }
   return `<button class="result-choice" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span><span class="mini-paper"><span class="mini-crease ${activeFold(p).axis}"></span>${markHtml(item.result.marks, p.action.type)}</span></button>`;
 }
@@ -268,6 +295,12 @@ function renderPaper() {
   const visualRegions = visualChoice
     ? (state.solved ? (backtracked ? p.sourceRegions : p.targetRegions) : (p.interaction === "backtrack-choice" ? p.targetRegions : p.sourceRegions))
     : [];
+  const showFoldedPicture = visualChoice && ((p.interaction === "result-choice" && !state.solved) || backtracked);
+  const visualPicture = !visualChoice
+    ? ""
+    : showFoldedPicture
+      ? foldedRegionGridHtml(visualRegions, p, "main-paper")
+      : regionGridHtml(visualRegions, p.action.type, "main-paper");
   const paperState = backtracked ? "is-folded is-backtracked" : state.solved ? "is-unfolded" : state.folded ? "is-folded" : "ready";
   ui.paper.className = `paper axis-${currentFold.axis} side-${currentFold.side}${sumProblem ? " is-sum" : ""}${topProblem ? " is-top-problem" : ""}${visualChoice ? " is-visual-choice" : ""} ${paperState}${state.busy ? " is-busy" : ""}`;
   ui.paper.innerHTML = `
@@ -276,7 +309,8 @@ function renderPaper() {
     ${visualChoice ? "" : `<span class="crease-guide" aria-hidden="true"></span><button class="crease-control" type="button" data-fold aria-label="${t("foldAria", { axis: axisText(currentFold.axis) })}"><span></span></button>`}
     ${foldSequenceHtml(p)}
     ${topProblem ? `<div class="top-problem-board"><p>${t("topCondition")}</p>${topGridHtml(p)}</div>` : ""}
-    ${visualChoice ? regionGridHtml(visualRegions, p.action.type, "main-paper") : ""}
+    ${visualChoice ? visualFoldGuideHtml(p) : ""}
+    ${visualChoice ? visualPicture : ""}
     ${state.folded && !visualChoice && !showGrid && !showShapes && !topProblem ? `<span class="folded-action ${p.action.type}" style="left:${actionPoint[0] * 100}%;top:${actionPoint[1] * 100}%"></span>` : ""}
     ${state.solved && p.interaction === "match" ? `<span class="unfolded-marks">${markHtml(p.choices.find((item) => item.key === p.answer).result.marks, p.action.type)}</span>` : ""}
     ${showSum ? `<div class="sum-board"><div class="fold-preview"><span><b>1</b>${t("cutPattern")}</span><div class="fold-preview-grid"></div></div><div class="sum-flow-arrow" aria-hidden="true">→</div><div class="number-side"><span><b>2</b>${t("numberPaper")}</span><div class="board-grid number-board"></div></div></div>` : showGrid ? `<div class="board-grid"></div>` : ""}

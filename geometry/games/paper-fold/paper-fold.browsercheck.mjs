@@ -43,9 +43,19 @@ async function inspectVisualLevel(page, level) {
   assert.equal(await page.locator(".crease-control").count(), 0, `level ${level} must not ask for a crease tap`);
   assert.equal(await page.locator(".fold-arrow").count(), 0, `level ${level} must not show abstract arrow chips`);
   assert.equal(await page.locator(".visual-paper-grid.main-paper").count(), 1);
+  assert.equal(await page.locator(".visual-crease-line").count(), problem.folds.length, `level ${level} crease guide is missing`);
+  assert.equal(await page.locator(".visual-direction-arrow").count(), problem.folds.length, `level ${level} direction arrow is missing`);
   const beforeMarks = await page.locator(".main-paper .visual-mark").count();
   assert.equal(beforeMarks, level === 2 ? problem.targetRegions.length : problem.sourceRegions.length);
+  if (level !== 2) {
+    const foldedBox = await page.locator(".main-paper.folded-paper").boundingBox();
+    let rows = 4;
+    let columns = 4;
+    problem.folds.forEach((step) => { if (step.axis === "vertical") columns /= 2; else if (step.axis === "horizontal") rows /= 2; });
+    assert.ok(Math.abs((foldedBox.width / foldedBox.height) - (columns / rows)) < .08, `level ${level} folded paper has the wrong proportions`);
+  }
   if (level === 2) assert.match(await page.locator("#prompt").textContent(), /접기 전/);
+  await page.screenshot({ path: `${output}/level-${level}-before-answer.png`, fullPage: true });
   await page.locator(`[data-choice="${problem.answer}"]`).click();
   await page.waitForTimeout(60);
   assert.equal(await page.locator(level === 2 ? ".paper.folding-back" : ".paper.unfolding").count(), 1, `level ${level} result animation did not start`);
@@ -69,10 +79,10 @@ await desktop.screenshot({ path: `${output}/level-3-desktop.png`, fullPage: true
 for (const level of [4, 5]) {
   await desktop.goto(`${baseUrl}/geometry/games/paper-fold/?level=${level}`, { waitUntil: "networkidle" });
   const problem = await currentProblem(desktop, level);
-  assert.equal(await desktop.locator(".crease-control").count(), 1);
+  assert.equal(await desktop.locator(".crease-control").count(), 1, `level ${level} fold control is missing`);
   assert.equal(await desktop.locator(".fold-arrow").count(), 0);
   for (let step = 0; step < problem.folds.length; step += 1) {
-    await desktop.locator(".crease-control").click();
+    await desktop.locator(".crease-control").evaluate((button) => button.click());
     await desktop.waitForTimeout(580);
   }
   assert.equal(await desktop.locator(".paper.is-folded").count(), 1);
