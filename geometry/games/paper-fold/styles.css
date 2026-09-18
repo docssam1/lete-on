@@ -56,3 +56,61 @@
 .top-problem-board{position:absolute;z-index:9;inset:12% 10% 10%;display:grid;place-items:center;align-content:center;gap:13px;pointer-events:none}.top-problem-board p{max-width:82%;margin:0;padding:5px 8px;border-radius:4px;background:#fffdf2e8;color:#254349;font-size:11px;font-weight:900;text-align:center}.top-number-grid{--top-cols:2;--top-rows:2;display:grid;grid-template-columns:repeat(var(--top-cols),1fr);width:min(72%,290px);max-height:66%;aspect-ratio:var(--top-cols)/var(--top-rows);border:2px solid #f8ffff;background:#fff;box-shadow:0 8px 18px #143f4740;transition:width .24s ease,aspect-ratio .24s ease}.top-number-grid span{display:grid;place-items:center;min-width:0;border:1px solid #ffffffb8;background:#f2bd49;color:#17343b;font-size:clamp(20px,5vh,38px);font-weight:950;text-shadow:0 1px #fff}.top-number-grid span:nth-child(4n+2),.top-number-grid span:nth-child(4n+3){background:#ec7c70}.top-number-grid span:nth-child(4n){background:#68b8ab}.top-stack{position:relative;width:112px;height:112px;display:grid;place-items:center;border:2px solid #fff;background:#e9b84a;box-shadow:-9px 9px 0 #e77b6e,-18px 18px 0 #5cae9f,0 16px 24px #17343b42}.top-stack i{position:absolute;inset:8px;border:1px dashed #ffffff9c}.top-stack i+i{inset:18px}.top-stack strong{z-index:2;font-size:48px;color:#17343b}.top-stack.solved{background:#8bd1ad;box-shadow:-9px 9px 0 #5cae9f,-18px 18px 0 #357f6f,0 16px 24px #17343b42}.top-choices{display:grid;grid-template-columns:repeat(3,minmax(64px,1fr));gap:9px}.top-choice{min-height:58px;border:2px solid #c5b58e;border-radius:6px;background:#fff;color:#17343b;font-size:24px;font-weight:950;box-shadow:0 3px #af9870}.top-choice:hover:not(:disabled),.top-choice:focus-visible{border-color:#1d7a72;background:#eefaf4}.top-choice.wrong{border-color:#d34d46;background:#fff0ed;animation:wrong .32s ease}.top-choice:disabled{opacity:.58}
 @media(orientation:landscape) and (max-height:560px){.fold-sequence{top:4px;gap:3px}.fold-chip{min-width:50px;padding:2px 3px}.top-problem-board{inset:14% 8% 7%;gap:6px}.top-problem-board p{font-size:9px}.top-stack{width:82px;height:82px}.top-stack strong{font-size:36px}.top-choice{min-height:42px;font-size:20px}}
 @media(orientation:portrait) and (max-width:600px){.fold-sequence{top:5px}.fold-chip{min-width:52px}.top-problem-board{inset:14% 8% 8%}.top-problem-board p{font-size:10px}.top-number-grid{width:min(76%,250px)}.top-choices{gap:6px}.top-choice{min-height:48px}.foldy-guide .guide-bubble{position:fixed;top:134px;left:14px;right:14px;bottom:auto;width:auto}}
+
+/* Worksheet-like picture choices for Levels 1-3. */
+.paper.is-visual-choice{width:min(45vh,45vw,360px)}
+.visual-paper-grid{display:grid;grid-template:repeat(4,1fr)/repeat(4,1fr);overflow:hidden;border:2px solid #4f91a5;background:#eff9fb;box-shadow:0 5px 12px #17345f24}
+.visual-paper-grid.main-paper{position:absolute;z-index:7;inset:8%}
+.visual-cell{position:relative;min-width:0;min-height:0;border-right:1px solid #83b7c5;border-bottom:1px solid #83b7c5;background:linear-gradient(135deg,#f9fdfe,#e5f5f7)}
+.visual-cell:nth-child(4n){border-right:0}.visual-cell:nth-last-child(-n+4){border-bottom:0}
+.visual-mark{position:absolute;inset:12%;display:block}
+.visual-mark.cut{border:2px solid #bd5160;background:repeating-linear-gradient(135deg,#f7d9dc 0 5px,#fff 5px 9px);box-shadow:inset 0 0 0 2px #fff8}
+.visual-mark.punch{inset:24%;border:3px solid #b9435a;border-radius:50%;background:#fff;box-shadow:0 1px 3px #17345f35}
+.visual-mark.triangle-nw{inset:0;clip-path:polygon(0 0,100% 0,0 100%)}
+.visual-mark.triangle-ne{inset:0;clip-path:polygon(0 0,100% 0,100% 100%)}
+.visual-mark.triangle-sw{inset:0;clip-path:polygon(0 0,0 100%,100% 100%)}
+.visual-mark.triangle-se{inset:0;clip-path:polygon(100% 0,0 100%,100% 100%)}
+.visual-result-choice{display:grid;place-items:center;min-height:92px;padding:8px 12px}
+.visual-result-choice .choice-paper{width:76px;aspect-ratio:1}
+.visual-result-choice.folded-preview .choice-paper{width:66px;transform:rotate(-1deg);box-shadow:5px 5px 0 #c5e0e5,9px 9px 0 #a9cdd5,0 6px 12px #17345f24}
+.paper.is-visual-choice.is-folded .main-paper{inset:auto;top:21%;left:21%;width:58%;aspect-ratio:1;box-shadow:-7px 7px 0 #b3d6dc,-12px 12px 0 #8fbfc9,0 14px 22px #17345f35;transform:none}
+.paper.is-visual-choice.is-backtracked .main-paper{inset:auto;top:21%;left:21%;width:58%;aspect-ratio:1;transform:none}
+
+/* Fold order uses miniature paper diagrams instead of abstract arrows. */
+.fold-chip{grid-template-columns:18px 27px;grid-template-rows:25px 13px;column-gap:4px}
+.fold-chip>strong{grid-row:1/-1;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#d9e3df;font-size:10px}
+.fold-chip.complete>strong{background:#3c9469;color:#fff}.fold-chip.active>strong{background:#efb832;color:#fff}
+.fold-step-paper{position:relative;display:block;width:25px;height:22px;border:1px solid #4f91a5;background:#eaf7f8;overflow:hidden;box-shadow:1px 2px 0 #b4cfd4}
+.fold-step-paper>span{position:absolute;background:#5a9caf}.fold-step-paper>b{position:absolute;background:#9ed3d7;opacity:.8}
+.fold-step-paper.axis-vertical>span{top:0;bottom:0;left:50%;width:1px}.fold-step-paper.axis-horizontal>span{left:0;right:0;top:50%;height:1px}
+.fold-step-paper.axis-vertical.side-left>b{inset:0 50% 0 0}.fold-step-paper.axis-vertical.side-right>b{inset:0 0 0 50%}
+.fold-step-paper.axis-horizontal.side-top>b{inset:0 0 50%}.fold-step-paper.axis-horizontal.side-bottom>b{inset:50% 0 0}
+.fold-step-paper.axis-diag-main>span,.fold-step-paper.axis-diag-anti>span{left:-3px;top:50%;width:31px;height:1px;transform:rotate(41deg)}
+.fold-step-paper.axis-diag-anti>span{transform:rotate(-41deg)}
+.fold-step-paper.axis-diag-main>b{inset:0;clip-path:polygon(0 0,100% 0,0 100%)}.fold-step-paper.axis-diag-anti>b{inset:0;clip-path:polygon(100% 0,100% 100%,0 100%)}
+.fold-chip em{grid-column:2;font-size:8px;text-align:center}
+
+/* The fold action follows the moving paper face; the crease stays a guide. */
+.crease-guide{position:absolute;z-index:4;pointer-events:none;border-color:#fff;border-style:dashed;filter:drop-shadow(0 1px 1px #14506e)}
+.axis-vertical .crease-guide{top:2%;bottom:2%;left:50%;border-left-width:2px}.axis-horizontal .crease-guide{left:2%;right:2%;top:50%;border-top-width:2px}
+.axis-diag-main .crease-guide,.axis-diag-anti .crease-guide{left:0;top:50%;width:100%;border-top-width:2px;transform:rotate(45deg)}.axis-diag-anti .crease-guide{transform:rotate(-45deg)}
+.crease-control{inset:auto;filter:none;background:rgba(255,255,255,.05)}
+.crease-control span{border-radius:0;background:rgba(255,255,255,.08);transition:background .18s ease}
+.crease-control:hover span,.crease-control:focus-visible span{background:rgba(255,240,155,.25);outline:3px solid #fff4a7;outline-offset:-5px}
+.axis-vertical.side-left .crease-control{top:0;bottom:0;left:0;right:auto;width:50%;height:auto}.axis-vertical.side-right .crease-control{top:0;bottom:0;left:50%;right:0;width:auto;height:auto}
+.axis-horizontal.side-top .crease-control{top:0;bottom:auto;left:0;right:0;width:auto;height:50%}.axis-horizontal.side-bottom .crease-control{top:50%;bottom:0;left:0;right:0;width:auto;height:auto}
+.axis-diag-main .crease-control,.axis-diag-anti .crease-control{inset:0;width:auto;height:auto;transform:none}
+.axis-diag-main.side-upper .crease-control{clip-path:polygon(0 0,100% 0,0 100%)}.axis-diag-main.side-lower .crease-control{clip-path:polygon(100% 0,100% 100%,0 100%)}
+.axis-diag-anti.side-upper .crease-control{clip-path:polygon(0 0,100% 0,100% 100%)}.axis-diag-anti.side-lower .crease-control{clip-path:polygon(0 0,0 100%,100% 100%)}
+
+.folding-back.axis-vertical.side-left .fold-flap{transform:rotateY(180deg)}.folding-back.axis-vertical.side-right .fold-flap{transform:rotateY(-180deg)}
+.folding-back.axis-horizontal.side-top .fold-flap{transform:rotateX(-180deg)}.folding-back.axis-horizontal.side-bottom .fold-flap{transform:rotateX(180deg)}
+.folding-back.axis-diag-main .fold-flap{transform:rotateZ(180deg) rotateY(180deg)}.folding-back.axis-diag-anti .fold-flap{transform:rotateZ(-180deg) rotateY(180deg)}
+
+@media(max-width:700px){.paper.is-visual-choice{width:min(43vh,72vw,310px)}.visual-result-choice{min-height:78px;padding:6px}.visual-result-choice .choice-paper{width:62px}.visual-result-choice.folded-preview .choice-paper{width:56px}.fold-chip{min-width:54px;padding:3px}.fold-chip em{font-size:7px}}
+
+/* Keep celebration feedback visible without covering the learning result. */
+.success{inset:78px 24px auto auto;width:250px;height:78px;place-items:center}
+.success span{width:120px}.success strong{font-size:28px;text-shadow:0 3px #d34e2a,0 6px #8e2d22,0 9px 14px #0004}
+@media(max-width:600px){.success{inset:92px 8px auto auto;width:190px;height:64px}.success span{width:90px}.success strong{font-size:22px}}
+@media(orientation:landscape) and (max-height:560px){.foldy-guide{display:none}.answer-dock{padding-right:8px}}

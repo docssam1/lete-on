@@ -196,7 +196,7 @@ const sharedAxisLabel={vertical:'세로',horizontal:'가로','diag-main':'왼쪽
 
 async function loadSharedGameLevels(){
   try{
-    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-6');
+    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-7');
     module.validateLevels();
     sharedGameLevels=module.levels;
   }catch(error){
@@ -282,14 +282,17 @@ function buildSharedProblem(mode){
   if(!level) return null;
   const source=level.problems[questionNumber%level.problems.length];
   const prompts={
-    1:['색종이를 한 번 접은 뒤 진한 부분을 잘랐습니다.','펼쳤을 때 잘린 위치를 모두 표시하세요.'],
-    2:['접기 순서에 따라 색종이를 두 번 접은 뒤 진한 부분을 잘랐습니다.','두 번 모두 펼쳤을 때 잘린 위치를 모두 표시하세요.'],
-    3:['색종이를 주어진 순서로 접은 뒤 표시된 곳에 구멍을 뚫었습니다.','펼쳤을 때 생기는 구멍의 위치를 모두 표시하세요.'],
+    1:['색종이를 한 번 접은 뒤 진한 부분을 잘랐습니다.','거꾸로 펼쳤을 때 나타나는 그림을 고르세요.'],
+    2:['색종이를 접어 자른 뒤 다시 펼친 결과입니다.','접기 전 잘린 위치가 맞는 그림을 고르세요.'],
+    3:['색종이를 주어진 순서로 접은 뒤 표시된 곳에 구멍을 뚫었습니다.','거꾸로 펼쳤을 때 나타나는 그림을 고르세요.'],
     4:['수가 쓰인 색종이를 접은 뒤 진한 부분을 잘랐습니다.','펼쳤을 때 잘려 나간 칸의 수를 모두 더하세요.'],
     5:['각 칸의 앞뒤에 같은 수가 쓰인 색종이를 순서대로 접습니다.','모두 접었을 때 맨 위에 오는 수를 쓰세요.']
   };
   let answer;
-  if(levelNumber<=3) answer=source.targetRegions.map(sharedRegionLabel).join(', ');
+  if(levelNumber<=3){
+    const correct=source.choices.find(choice=>choice.key===source.answer);
+    answer=`${source.choices.indexOf(correct)+1}번`;
+  }
   else if(levelNumber===4) answer=source.answer.sum;
   else answer=source.answer;
   const foldNames=(source.folds||[source.fold]).map(step=>sharedAxisLabel[step.axis]).join(' → ');
@@ -322,12 +325,16 @@ function drawSharedCrease(ctx,x,y,size,axis){
   ctx.stroke();ctx.restore();
 }
 
-function drawSharedGrid(ctx,x,y,size,{values=null,regions=[],axis=null,answer=false}={}){
+function drawSharedGrid(ctx,x,y,size,{values=null,regions=[],axis=null,answer=false,markType='cut'}={}){
   const cell=size/4;
   ctx.save();ctx.fillStyle='#edf8fb';ctx.fillRect(x,y,size,size);
   regions.forEach(region=>{
-    if(sharedRegionPath(ctx,x,y,size,region)){
-      ctx.fillStyle=answer?'rgba(63,164,118,.5)':'rgba(31,125,151,.82)';ctx.fill();
+    if(!sharedRegionPath(ctx,x,y,size,region)) return;
+    if(markType==='punch'){
+      const match=/^r(\d)c(\d)/.exec(region),cx=x+(Number(match[2])-.5)*cell,cy=y+(Number(match[1])-.5)*cell;
+      ctx.save();ctx.clip();ctx.beginPath();ctx.arc(cx,cy,cell*.3,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle=answer?'#27835d':'#c4475d';ctx.lineWidth=4;ctx.stroke();ctx.restore();
+    }else{
+      ctx.fillStyle=answer?'rgba(63,164,118,.5)':'rgba(223,117,117,.28)';ctx.fill();ctx.strokeStyle=answer?'#27835d':'#c4475d';ctx.lineWidth=3;ctx.stroke();
     }
   });
   ctx.strokeStyle='#63a6c4';ctx.lineWidth=1.5;
@@ -361,7 +368,18 @@ function renderSharedGame(ctx,d,showAnswer=false){
   const foldNames=(p.folds||[p.fold]).map((step,index)=>`${index+1}. ${sharedAxisLabel[step.axis]}`).join('   ');
   ctx.fillStyle='#52616b';ctx.font='700 16px sans-serif';ctx.fillText(`${p.id} · ${foldNames}`,54,112);
   if(level<=3){
-    drawSharedGrid(ctx,175,155,235,{regions:p.sourceRegions,axis:p.fold.axis});drawStepArrow(ctx,500,272);drawSharedGrid(ctx,710,135,275,{regions:showAnswer?p.targetRegions:[],answer:showAnswer});
+    const mainRegions=level===2?p.targetRegions:p.sourceRegions;
+    drawSharedGrid(ctx,95,155,235,{regions:mainRegions,axis:level===2?null:p.fold.axis,markType:p.action.type});
+    ctx.fillStyle='#25313b';ctx.font='800 15px sans-serif';ctx.textAlign='center';ctx.fillText(level===2?'펼친 결과':'접힌 색종이',212,415);
+    drawStepArrow(ctx,385,272);
+    p.choices.forEach((choice,index)=>{
+      const x=500+index*330,size=235,isCorrect=choice.key===p.answer;
+      drawSharedGrid(ctx,x,155,size,{regions:choice.regions,answer:showAnswer&&isCorrect,markType:p.action.type});
+      ctx.beginPath();ctx.arc(x+size/2,425,19,0,Math.PI*2);ctx.fillStyle=showAnswer&&isCorrect?'#27835d':'#17345f';ctx.fill();
+      ctx.fillStyle='#fff';ctx.font='900 16px sans-serif';ctx.fillText(String(index+1),x+size/2,431);
+      if(showAnswer&&isCorrect){ctx.strokeStyle='#27835d';ctx.lineWidth=5;ctx.strokeRect(x-6,149,size+12,size+12);}
+    });
+    ctx.textAlign='left';
   }else if(level===4){
     drawSharedGrid(ctx,130,150,235,{regions:p.cutRegions,axis:p.fold.axis});drawStepArrow(ctx,430,268);drawSharedGrid(ctx,615,125,285,{values:p.grid.values,regions:showAnswer?p.answer.cells:[],axis:p.fold.axis,answer:showAnswer});
     ctx.fillStyle='#25313b';ctx.font='800 24px sans-serif';ctx.fillText(showAnswer?`${p.answer.expression} = ${p.answer.sum}`:'합: __________',950,285);

@@ -65,8 +65,13 @@ for (const level of levels) {
     ids.add(problem.id);
     assert.ok(problem.sourceRef, `missing sourceRef ${problem.id}`);
 
-    if (["grid-select", "punch-select"].includes(problem.interaction)) {
+    if (["result-choice", "backtrack-choice"].includes(problem.interaction)) {
       assert.deepEqual(new Set(problem.targetRegions), new Set(unfold(problem.sourceRegions, problem.folds)), `unfold mismatch ${problem.id}`);
+      assert.equal(problem.choices.length, 2, `choice count mismatch ${problem.id}`);
+      const answerChoice = problem.choices.find((choice) => choice.key === problem.answer);
+      assert.ok(answerChoice, `answer choice missing ${problem.id}`);
+      const expected = problem.interaction === "backtrack-choice" ? problem.sourceRegions : problem.targetRegions;
+      assert.deepEqual(new Set(answerChoice.regions), new Set(expected), `visual answer mismatch ${problem.id}`);
     }
 
     if (problem.interaction === "cut-number-sum") {

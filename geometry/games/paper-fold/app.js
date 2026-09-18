@@ -1,4 +1,4 @@
-import { levels, validateLevels } from "./levels.js?v=paper-fold-6";
+import { levels, validateLevels } from "./levels.js?v=paper-fold-7";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 
 validateLevels();
@@ -60,6 +60,8 @@ const state = {
   audio: localStorage.getItem("gfield-audio-muted") !== "true",
   lang: language
 };
+state.folded = state.queue[state.problem]?.interaction === "result-choice";
+state.foldStep = state.folded ? (state.queue[state.problem]?.folds?.length || 1) : 0;
 
 const I18N = {
   ko: {
@@ -116,25 +118,36 @@ Object.assign(I18N.ko, {
   topChoice: "맨 위 수 {value}",
   topFolded: "모든 종이가 한 칸에 포개졌어요. 층의 순서를 생각해 보세요.",
   topSolved: "맞아요. 맨 위에 오는 수는 {value}입니다.",
-  topResult: "맨 위 수 확인"
+  topResult: "맨 위 수 확인",
+  visualResultPrompt: "접힌 색종이를 거꾸로 펼쳤을 때 나타날 그림을 고르세요.",
+  visualBacktrackPrompt: "펼친 결과를 보고 접기 전 잘린 위치가 맞는 그림을 고르세요.",
+  visualHolePrompt: "구멍을 뚫은 색종이를 거꾸로 펼쳤을 때 나타날 그림을 고르세요.",
+  foldedExample: "접혀 있는 색종이",
+  beforeFoldResult: "접기 전 위치",
+  movingFace: "움직이는 색종이 면을 눌러 접어 보세요.",
+  visualHint: "접힌 부분을 접기선을 기준으로 한 장씩 거꾸로 펼쳐 보세요.",
+  backtrackHint: "펼친 자국을 접기선을 따라 포개면 마지막 자른 위치가 남아요."
 });
 Object.assign(I18N.zh, {
   foldStepPrompt: "共{total}次折叠，现在是第{step}次。请点击{axis}折痕。",
   nextFold: "很好。继续点击下一条{axis}折痕。", foldSequence: "折叠顺序", completedFold: "完成",
   topCondition: "每个格子的正反面都写着相同的数字。", topQuestion: "全部折好后，选择最上面的数字。",
-  topChoice: "最上面的数字 {value}", topFolded: "所有纸层都叠在一个格子上。想一想层的顺序。", topSolved: "正确，最上面是 {value}。", topResult: "查看最上面的数字"
+  topChoice: "最上面的数字 {value}", topFolded: "所有纸层都叠在一个格子上。想一想层的顺序。", topSolved: "正确，最上面是 {value}。", topResult: "查看最上面的数字",
+  visualResultPrompt: "选择折纸反向展开后的图案。", visualBacktrackPrompt: "观察展开结果，选择折叠前正确的剪切位置。", visualHolePrompt: "选择打孔折纸反向展开后的图案。", foldedExample: "折叠的纸", beforeFoldResult: "折叠前的位置", movingFace: "点击移动的纸面完成折叠。", visualHint: "以折痕为轴，一层一层反向展开。", backtrackHint: "沿折痕把展开的痕迹重叠，最后留下的就是剪切位置。"
 });
 Object.assign(I18N.ja, {
   foldStepPrompt: "{total}回のうち{step}回目。{axis}の折り線を押してください。",
   nextFold: "その調子。次の{axis}の折り線を押しましょう。", foldSequence: "折る順番", completedFold: "完了",
   topCondition: "それぞれのますの表と裏には同じ数が書かれています。", topQuestion: "全部折ったとき、一番上にくる数を選びましょう。",
-  topChoice: "一番上の数 {value}", topFolded: "すべての紙が一つのますに重なりました。重なり順を考えましょう。", topSolved: "正解です。一番上は {value} です。", topResult: "一番上の数"
+  topChoice: "一番上の数 {value}", topFolded: "すべての紙が一つのますに重なりました。重なり順を考えましょう。", topSolved: "正解です。一番上は {value} です。", topResult: "一番上の数",
+  visualResultPrompt: "折った紙を逆に開いたときの絵を選びましょう。", visualBacktrackPrompt: "開いた結果を見て、折る前の切る位置を選びましょう。", visualHolePrompt: "穴をあけた紙を逆に開いたときの絵を選びましょう。", foldedExample: "折った紙", beforeFoldResult: "折る前の位置", movingFace: "動く紙の面を押して折りましょう。", visualHint: "折り線を軸にして、一枚ずつ逆に開きましょう。", backtrackHint: "折り線に沿って跡を重ねると、最後の切る位置が残ります。"
 });
 Object.assign(I18N.en, {
   foldStepPrompt: "Fold {step} of {total}: tap the {axis} crease.",
   nextFold: "Good. Continue with the next {axis} crease.", foldSequence: "Fold order", completedFold: "Done",
   topCondition: "Each cell has the same number on its front and back.", topQuestion: "Choose the number on top after every fold.",
-  topChoice: "Top number {value}", topFolded: "Every layer is now in one stack. Think about their order.", topSolved: "Correct. {value} is on top.", topResult: "Top number"
+  topChoice: "Top number {value}", topFolded: "Every layer is now in one stack. Think about their order.", topSolved: "Correct. {value} is on top.", topResult: "Top number",
+  visualResultPrompt: "Choose the picture made by unfolding the folded paper in reverse.", visualBacktrackPrompt: "Use the open result to choose the cut position before folding.", visualHolePrompt: "Choose the picture made by unfolding the punched paper in reverse.", foldedExample: "Folded paper", beforeFoldResult: "Position before folding", movingFace: "Tap the moving paper face to fold it.", visualHint: "Open one layer at a time around each crease.", backtrackHint: "Stack the open marks along each crease. The last mark is the cut position."
 });
 
 const t = (key, vars = {}) => {
@@ -191,14 +204,44 @@ function markHtml(marks, type = "punch") {
   return marks.map(([x, y]) => `<i class="${type === "cut" ? "mini-cut" : "mini-hole"}" style="left:${x * 100}%;top:${y * 100}%"></i>`).join("");
 }
 
+const isVisualChoice = (p = problem()) => ["result-choice", "backtrack-choice"].includes(p.interaction);
+
+function regionGridHtml(regions = [], type = "cut", className = "") {
+  const byCell = new Map();
+  regions.forEach((region) => {
+    const match = /^r([1-4])c([1-4])(?:-(ne|nw|se|sw))?$/.exec(region);
+    if (!match) return;
+    const key = `r${match[1]}c${match[2]}`;
+    const entries = byCell.get(key) || [];
+    entries.push(match[3] || "full");
+    byCell.set(key, entries);
+  });
+  const cells = [];
+  for (let row = 1; row <= 4; row += 1) {
+    for (let col = 1; col <= 4; col += 1) {
+      const parts = byCell.get(`r${row}c${col}`) || [];
+      cells.push(`<span class="visual-cell">${parts.map((part) => `<i class="visual-mark ${type} ${part === "full" ? "" : `triangle-${part}`}"></i>`).join("")}</span>`);
+    }
+  }
+  return `<span class="visual-paper-grid ${className}" aria-hidden="true">${cells.join("")}</span>`;
+}
+
 function resultChoiceHtml(item, p) {
+  if (item.regions) {
+    const folded = p.interaction === "backtrack-choice" ? " folded-preview" : "";
+    return `<button class="result-choice visual-result-choice${folded}" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span>${regionGridHtml(item.regions, p.action.type, "choice-paper")}</button>`;
+  }
   return `<button class="result-choice" type="button" data-choice="${item.key}" aria-label="${t("resultChoice", { choice: item.key.toUpperCase() })}"><span class="result-letter">${item.key.toUpperCase()}</span><span class="mini-paper"><span class="mini-crease ${activeFold(p).axis}"></span>${markHtml(item.result.marks, p.action.type)}</span></button>`;
+}
+
+function foldStepPaperHtml(step) {
+  return `<i class="fold-step-paper axis-${step.axis} side-${step.side}" aria-hidden="true"><span></span><b></b></i>`;
 }
 
 function foldSequenceHtml(p) {
   const folds = problemFolds(p);
   if (folds.length < 2) return "";
-  return `<div class="fold-sequence" aria-label="${t("foldSequence")}">${folds.map((step, index) => `<span class="fold-chip${index < state.foldStep ? " complete" : index === state.foldStep && !state.folded ? " active" : ""}"><b>${index + 1}</b><i class="fold-arrow fold-${step.axis} fold-${step.side}" aria-hidden="true"></i><em>${index < state.foldStep ? t("completedFold") : axisText(step.axis)}</em></span>`).join("")}</div>`;
+  return `<div class="fold-sequence" aria-label="${t("foldSequence")}">${folds.map((step, index) => `<span class="fold-chip${index < state.foldStep ? " complete" : index === state.foldStep && !state.folded ? " active" : ""}"><strong>${index + 1}</strong>${foldStepPaperHtml(step)}<em>${axisText(step.axis)}</em></span>`).join("")}</div>`;
 }
 
 function topGridHtml(p) {
@@ -218,17 +261,24 @@ function renderPaper() {
   const showShapes = p.interaction === "shape-place" && state.folded;
   const sumProblem = p.interaction === "cut-number-sum";
   const topProblem = p.interaction === "top-choice";
+  const visualChoice = isVisualChoice(p);
   const showSum = sumProblem && state.folded;
   const actionPoint = p.action?.point || [.62, .38];
-  ui.paper.className = `paper axis-${currentFold.axis} side-${currentFold.side}${sumProblem ? " is-sum" : ""}${topProblem ? " is-top-problem" : ""}${state.solved ? " is-unfolded" : state.folded ? " is-folded" : " ready"}${state.busy ? " is-busy" : ""}`;
+  const backtracked = p.interaction === "backtrack-choice" && state.solved;
+  const visualRegions = visualChoice
+    ? (state.solved ? (backtracked ? p.sourceRegions : p.targetRegions) : (p.interaction === "backtrack-choice" ? p.targetRegions : p.sourceRegions))
+    : [];
+  const paperState = backtracked ? "is-folded is-backtracked" : state.solved ? "is-unfolded" : state.folded ? "is-folded" : "ready";
+  ui.paper.className = `paper axis-${currentFold.axis} side-${currentFold.side}${sumProblem ? " is-sum" : ""}${topProblem ? " is-top-problem" : ""}${visualChoice ? " is-visual-choice" : ""} ${paperState}${state.busy ? " is-busy" : ""}`;
   ui.paper.innerHTML = `
     <div class="sheet-base"><span class="paper-label">${topProblem ? (state.solved ? t("topResult") : state.folded ? t("foldedPaper") : t("openPaper")) : state.solved ? t("openResult") : state.folded ? t("foldedPaper") : t("openPaper")}</span></div>
     <div class="fold-flap"></div>
-    <button class="crease-control" type="button" data-fold aria-label="${t("foldAria", { axis: axisText(currentFold.axis) })}"><span></span></button>
+    ${visualChoice ? "" : `<span class="crease-guide" aria-hidden="true"></span><button class="crease-control" type="button" data-fold aria-label="${t("foldAria", { axis: axisText(currentFold.axis) })}"><span></span></button>`}
     ${foldSequenceHtml(p)}
     ${topProblem ? `<div class="top-problem-board"><p>${t("topCondition")}</p>${topGridHtml(p)}</div>` : ""}
-    ${state.folded && !showGrid && !showShapes && !topProblem ? `<span class="folded-action ${p.action.type}" style="left:${actionPoint[0] * 100}%;top:${actionPoint[1] * 100}%"></span>` : ""}
-    ${state.solved && ["result-choice", "match"].includes(p.interaction) ? `<span class="unfolded-marks">${markHtml(p.choices.find((item) => item.key === p.answer).result.marks, p.action.type)}</span>` : ""}
+    ${visualChoice ? regionGridHtml(visualRegions, p.action.type, "main-paper") : ""}
+    ${state.folded && !visualChoice && !showGrid && !showShapes && !topProblem ? `<span class="folded-action ${p.action.type}" style="left:${actionPoint[0] * 100}%;top:${actionPoint[1] * 100}%"></span>` : ""}
+    ${state.solved && p.interaction === "match" ? `<span class="unfolded-marks">${markHtml(p.choices.find((item) => item.key === p.answer).result.marks, p.action.type)}</span>` : ""}
     ${showSum ? `<div class="sum-board"><div class="fold-preview"><span><b>1</b>${t("cutPattern")}</span><div class="fold-preview-grid"></div></div><div class="sum-flow-arrow" aria-hidden="true">→</div><div class="number-side"><span><b>2</b>${t("numberPaper")}</span><div class="board-grid number-board"></div></div></div>` : showGrid ? `<div class="board-grid"></div>` : ""}
     ${showShapes ? `<div class="shape-givens"></div><div class="shape-board"></div>` : ""}`;
   if (showGrid) {
@@ -315,6 +365,15 @@ function renderInteraction() {
   ui.flip.hidden = p.interaction !== "shape-place" || !state.folded;
   ui.next.hidden = !state.solved;
 
+  if (isVisualChoice(p)) {
+    ui.answerPrompt.textContent = t(p.interaction === "backtrack-choice" ? "visualBacktrackPrompt" : p.action.type === "punch" ? "visualHolePrompt" : "visualResultPrompt");
+    ui.interaction.innerHTML = `<div class="result-choices">${p.choices.map((item) => resultChoiceHtml(item, p)).join("")}</div>`;
+    ui.interaction.querySelectorAll("[data-choice]").forEach((button) => {
+      button.disabled = state.busy || state.solved;
+      button.addEventListener("click", () => checkChoice(button.dataset.choice, button));
+    });
+    return;
+  }
   if (!state.folded) {
     const folds = problemFolds(p);
     ui.answerPrompt.textContent = folds.length > 1
@@ -395,9 +454,17 @@ async function reverseUnfold() {
   state.busy = false;
 }
 
+async function foldBack() {
+  state.busy = true;
+  ui.paper.classList.add("folding-back");
+  await wait(560);
+  state.busy = false;
+}
+
 async function resolveCorrect() {
   if (state.busy || state.solved) return;
-  if (problem().interaction !== "top-choice") await reverseUnfold();
+  if (problem().interaction === "backtrack-choice") await foldBack();
+  else if (problem().interaction !== "top-choice") await reverseUnfold();
   state.solved = true;
   rewardProblem();
   playTone("success");
@@ -560,7 +627,8 @@ function showSuccess() {
 }
 
 function resetProblem() {
-  state.folded = false; state.foldStep = 0; state.busy = false; state.solved = false; state.wrong = 0; state.hints = 0; state.selections = new Set(); state.placements = []; state.selectedPlacement = null; state.stage = 1;
+  const p = problem();
+  state.folded = p.interaction === "result-choice"; state.foldStep = state.folded ? problemFolds(p).length : 0; state.busy = false; state.solved = false; state.wrong = 0; state.hints = 0; state.selections = new Set(); state.placements = []; state.selectedPlacement = null; state.stage = 1;
   renderAll();
 }
 
@@ -606,14 +674,17 @@ function renderAll() {
   $("#problemLabel").textContent = `${state.problem + 1} / ${state.queue.length}`;
   $("#missionTitle").textContent = title(level);
   $("#stars").textContent = "*".repeat(level.id) + "-".repeat(5 - level.id);
+  const visualPrompt = p.interaction === "backtrack-choice" ? t("visualBacktrackPrompt") : p.action?.type === "punch" ? t("visualHolePrompt") : t("visualResultPrompt");
   ui.prompt.textContent = state.solved
     ? (p.interaction === "top-choice" ? t("topSolved", { value: p.answer }) : t("solvedPrompt"))
+    : isVisualChoice(p)
+      ? visualPrompt
     : state.folded
       ? (p.interaction === "top-choice" ? t("topFolded") : t("foldedPrompt", { axis: axisText(folds[folds.length - 1].axis) }))
       : folds.length > 1
         ? t("foldStepPrompt", { step: state.foldStep + 1, total: folds.length, axis: axisText(currentFold.axis) })
-        : t("readyPrompt", { axis: axisText(currentFold.axis) });
-  ui.status.textContent = state.busy ? t("folding") : state.solved ? (p.interaction === "top-choice" ? t("topResult") : t("unfolded")) : state.folded ? t("foldComplete") : `${state.foldStep + 1} / ${folds.length}`;
+        : t("movingFace");
+  ui.status.textContent = state.busy ? t("folding") : state.solved ? (p.interaction === "top-choice" ? t("topResult") : p.interaction === "backtrack-choice" ? t("beforeFoldResult") : t("unfolded")) : isVisualChoice(p) ? (p.interaction === "backtrack-choice" ? t("openResult") : t("foldedExample")) : state.folded ? t("foldComplete") : `${state.foldStep + 1} / ${folds.length}`;
   renderPaper(); renderInteraction();
 }
 
@@ -655,7 +726,7 @@ ui.paper.addEventListener("click", (event) => {
   if (event.target.closest("[data-fold]")) return foldPaper();
 });
 ui.paper.addEventListener("pointerdown", startPlacedDrag);
-$("#hintButton").addEventListener("click", () => { state.hints += 1; setGuide(state.folded ? t("hintFolded", { axis: axisText(problemFolds().at(-1).axis) }) : t("foldStepPrompt", { step: state.foldStep + 1, total: problemFolds().length, axis: axisText(activeFold().axis) })); });
+$("#hintButton").addEventListener("click", () => { state.hints += 1; const p = problem(); setGuide(isVisualChoice(p) ? t(p.interaction === "backtrack-choice" ? "backtrackHint" : "visualHint") : state.folded ? t("hintFolded", { axis: axisText(problemFolds().at(-1).axis) }) : t("movingFace")); });
 $("#retryButton").addEventListener("click", resetProblem);
 ui.rotate.addEventListener("click", rotateSelected); ui.flip.addEventListener("click", flipSelected);
 ui.next.addEventListener("click", nextProblem);
