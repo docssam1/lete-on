@@ -24,6 +24,7 @@ create table if not exists public.hsm_access_sessions (
 );
 alter table public.hsm_access_sessions enable row level security;
 create index if not exists hsm_access_sessions_expiry_idx on public.hsm_access_sessions(expires_at);
+create index if not exists hsm_access_sessions_student_idx on public.hsm_access_sessions(student_name);
 
 alter table public.hsm_attempts add column if not exists client_id text;
 create unique index if not exists hsm_attempts_client_id_uidx
@@ -75,7 +76,7 @@ begin
     true,
     now()
   )
-  on conflict (student_name) do update set
+  on conflict on constraint hsm_access_accounts_pkey do update set
     code_hash = excluded.code_hash,
     permissions = excluded.permissions,
     is_admin = case when account.is_admin then true else excluded.is_admin end,

@@ -13,6 +13,7 @@ const data = read("data.js");
 const cloud = read("hsm-cloud.js");
 const auth = read("shared-auth.js");
 const migration = read("../supabase/migrations/20260919170000_secure_hsmiddle_records.sql");
+const fixMigration = read("../supabase/migrations/20260920100000_fix_hsmiddle_account_upsert.sql");
 const closeMigration = read("../supabase/migrations/20260919173000_close_direct_hsmiddle_records_access.sql");
 const edge = read("../supabase/functions/hsmiddle-records/index.ts");
 const pages = ["login.html", "diagnostic.html", "report.html", "exam.html", "admin.html"].map(file => [file, read(file)]);
@@ -38,6 +39,9 @@ assert(!/'[a-f0-9]{64}'/.test(migration), "migration contains reusable approval 
 assert(!/HS-[0-9]{4}/u.test(migration) && !/\b[0-9]{11}\b/u.test(migration), "migration contains plaintext approval code");
 assert(migration.includes("extensions.crypt") && migration.includes("extensions.gen_salt('bf', 12)"), "slow password hashing missing");
 assert(migration.includes("hsm_authenticate") && migration.includes("hsm_upsert_access_account"), "server-only account RPC missing");
+assert(migration.includes("on conflict on constraint hsm_access_accounts_pkey"), "fresh-install upsert conflict target is ambiguous");
+assert(fixMigration.includes("on conflict on constraint hsm_access_accounts_pkey"), "production upsert repair missing");
+assert(!/HS-[0-9]{4}/u.test(fixMigration) && !/\b[0-9]{11}\b/u.test(fixMigration), "repair migration contains plaintext approval code");
 
 for (const marker of ["requireSession", "consumeLoginLimit", "validAttemptRecord", "admin_required", "attempt_limit"]) {
   assert(edge.includes(marker), `edge security contract missing: ${marker}`);
