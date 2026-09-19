@@ -375,11 +375,33 @@ NM_TGEN['ml6_mul2d1dMental'] = function(params, rng) {
 };
 
 /* ── ML7 — 세 자리×한 자리 ───────────────────────────────── */
+/* (세 자리)×(한 자리)도 올림 횟수로 단계를 가른다 — 교재 초등연산 C09가 "올림이 2회
+   있는 (세 자리)×(한 자리)"를 따로 한 단원으로 쓴다(2026-09-19).
+   일·십 두 자리에서 각각 올림이 나는지를 센다(백→천 올림은 자릿수가 늘 뿐이라 안 센다). */
+function _ml7Carries(a, b){
+  const o = a % 10, t = Math.floor(a / 10) % 10;
+  const oC = Math.floor((o * b) / 10);
+  const tC = Math.floor((t * b + oC) / 10);
+  return (oC ? 1 : 0) + (tC ? 1 : 0);
+}
 NM_TGEN['ml7_mul3d1d'] = function(params, rng) {
   const vertical = params.vertical === true;
   const lv       = params.level || 'main';
-  const a        = R(rng, lv === 'practice' ? 101 : 100, lv === 'practice' ? 399 : 999);
-  const b        = R(rng, 2, lv === 'practice' ? 4 : 9);
+  const cMode    = params.carry || '';        /* 'none' | 'one' | 'two' */
+  let a, b, tries = 0;
+  do {
+    a = R(rng, lv === 'practice' ? 101 : 100, lv === 'practice' ? 399 : 999);
+    b = R(rng, 2, lv === 'practice' ? 4 : 9);
+    if (!cMode) break;
+    /* 일·십의 자리가 0이면 단계가 "0 × 7 = 0"으로 비어 버린다(210×8 · 909×7 꼴) */
+    if (a % 10 === 0 || Math.floor(a / 10) % 10 === 0) continue;
+    const n = _ml7Carries(a, b);
+    /* 올림 없음 레벨은 백의 자리도 넘지 않게 — 답이 세 자리로 끝나야 123×3=369 꼴이 된다.
+       안 그러면 210×8=1680 처럼 천의 자리가 생겨 이름과 어긋난다(2026-09-19). */
+    if (cMode === 'none' && n === 0 && Math.floor(a / 100) * b <= 9) break;
+    if (cMode === 'one'  && n === 1) break;
+    if (cMode === 'two'  && n === 2) break;
+  } while (tries++ < 500);
   const h        = Math.floor(a / 100);
   const t        = Math.floor((a % 100) / 10);
   const o        = a % 10;

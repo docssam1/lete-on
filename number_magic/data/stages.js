@@ -31,7 +31,7 @@ window.NM_STAGES = [
     name:{ko:'수의 나라',en:'Number Land',zh:'数字之国'},
     band:{ko:'유아 5~7세',en:'Ages 5–7',zh:'幼儿5~7岁'},
     chapters:['N0','N1','N2','N3','N4'],
-    tiers:[], courses:null, weeks:null,
+    tiers:['level0'], courses:{from:0,to:0}, weeks:15,
     learn:{
       ko:'수 세기와 개수, 순서와 뛰어세기, 몇째와 크기 비교, 수의 여러 표현. 손으로 모으고 가릅니다.',
       en:'Counting and quantity, order and skip-counting, ordinals and comparing, many ways to show a number. Gathering and splitting by hand.',
@@ -45,7 +45,7 @@ window.NM_STAGES = [
     symbolNote:{ko:'연산 기호는 아직 없습니다. + 는 다음 단계 과정 1에서 처음 만납니다.',
       en:'No operation symbols yet. The + sign is first met in Course 1 of the next stage.',
       zh:'还没有运算符号。＋在下一阶段的第1课程首次出现。'},
-    meta:{ko:'로드맵 5칸 · 유닛 15 · 과정 번호 없는 프롤로그',en:'5 map stops · 15 units · a prologue with no course numbers',zh:'地图5站 · 15个单元 · 没有课程编号的序章'}
+    meta:{ko:'과정 0 · 주 1회 기준 15주 · 유닛 15',en:'Course 0 · 15 weeks at one sheet a week · 15 units',zh:'课程0 · 每周1次约15周 · 15个单元'}
   },
   {
     key:'sprout', icon:'🌱', accent:'#16417C', status:'live',
@@ -76,7 +76,7 @@ window.NM_STAGES = [
     name:{ko:'계산의 도약',en:'Leap',zh:'计算的跃进'},
     band:{ko:'초등 1학년 말 ~ 2학년',en:'End of Grade 1 – Grade 2',zh:'小学一年级末~二年级'},
     chapters:['T8','R9','T9','R10','R11','R12','R13','R14'],
-    tiers:['level2'], courses:{from:11,to:16}, weeks:29,
+    tiers:['level2'], courses:{from:11,to:16}, weeks:30,
     learn:{
       ko:'두 자리×두 자리, 나눗셈과 역연산, 분수의 첫걸음, 세 자리×두 자리, 두 자리로 나누기, 혼합계산.',
       en:'Two-digit × two-digit, division and inverse operations, first steps in fractions, three-digit × two-digit, dividing by two digits, mixed operations.',
@@ -89,7 +89,7 @@ window.NM_STAGES = [
     symbols:[
       {sym:'a/b', tr:{ko:'b로 나눈 것 중 a — 분수 막대 그림이 기호보다 먼저입니다',en:'a of b equal parts — the fraction bar picture comes before the symbol',zh:'分成b份中的a份——分数条的图先于符号'}},
       {sym:'( )', tr:{ko:'먼저 계산할 묶음',en:'the bundle to compute first',zh:'先算的那一组'}}],
-    meta:{ko:'과정 11~16 · 주 1회 기준 29주',en:'Courses 11–16 · 29 weeks at one sheet a week',zh:'课程11~16 · 每周1次约29周'}
+    meta:{ko:'과정 11~16 · 주 1회 기준 30주',en:'Courses 11–16 · 30 weeks at one sheet a week',zh:'课程11~16 · 每周1次约30周'}
   },
   {
     key:'mastery', icon:'👑', accent:'#0E2C57', status:'live',
@@ -190,7 +190,7 @@ window.NM_STAGE_OF_CHAPTER = function(id){
 /* 과정 번호(1~45) 또는 'C20' 같은 키. */
 window.NM_STAGE_OF_COURSE = function(n){
   var num = (typeof n === 'string') ? parseInt(String(n).replace(/^C/i,''),10) : n;
-  if(!(num >= 1)) return null;
+  if(!(num >= 0)) return null;   // 과정 0(수의 나라)도 단계가 있다(2026-09-19)
   for(var i=0;i<window.NM_STAGES.length;i++){
     var c = window.NM_STAGES[i].courses;
     if(c && num >= c.from && num <= c.to) return window.NM_STAGES[i];

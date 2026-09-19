@@ -90,6 +90,35 @@
 'use strict';
 
 const COURSE_SPEC = [
+ /* 과정 0 — 레벨 0(2026-09-19, 원장 "G드라이브 창의수연 폴더의 연산드릴(유아) = 우리 게임에서
+    레벨 0", "수와 문장제와 친해지는 단계야", "의미 있는 것을 넣어").
+    원본 유아 연산드릴 G1-1~G1-15(15권, Drive `창의수연/연산드릴(유아)`)는 N-01~N-15로 이미
+    1:1 옮겨져 있었지만 과정이 없어 학습지 로드맵에 안 실렸다("과정 번호 없는 프롤로그").
+    한 주 = 원본 한 권(magic) + 그 권을 손으로 다지는 드릴 둘(perSessionDrills — 순환 배정이
+    아니라 권마다 지정) + 문장제 한 벌(creative: 줄서기 이야기·이야기 셈·분류하고 세기 순환).
+    시간을 재지 않는 단계라 시험 회차가 없고(noTest), 여기서 쓴 드릴은 뒤 과정의 복습 풀에
+    섞이지 않는다(buildCourses 참조). 뒤에 다시 나오는 스레드는 @2 로 한 단계 올린다. */
+ {id:0, tier:'level0', title:{ko:'수와 문장제와 친해지기',en:'Befriending Numbers & Word Problems',zh:'与数和应用题交朋友'},
+   drills:['NL1','NL2','NL3','NL4','NL5','NL6','NL7','NL8','NL10','NL11','NL12','NL14','NL16'],
+   magic:[['N-01'],['N-02'],['N-03'],['N-04'],['N-05'],['N-06'],['N-07'],['N-08'],['N-09'],['N-10'],['N-11'],['N-12'],['N-13'],['N-14'],['N-15']],
+   perSessionDrills:[
+     ['NL1','NL7'],        // N-01 수 세기        — 수 세기와 개수 · 이어 세기와 점 매칭
+     ['NL4','NL7'],        // N-02 수의 순서       — 수의 순서 · 이어 세기
+     ['NL8','NL10'],       // N-03 몇째와 크기 비교  — 몇째와 칸 세기 · 양팔저울 비교
+     ['NL14','NL16'],      // N-04 기수법 놀이     — 탤리로 수 만들기 · 탤리 읽기와 규칙
+     ['NL8','NL1@2'],      // N-05 생활 서수 문장제 — 몇째와 칸 세기 · 수 세기(한 단계 위)
+     ['NL2','NL3'],        // N-06 모으기와 가르기   — 모으기와 가르기 · 무당벌레 가르기
+     ['NL6','NL5'],        // N-07 수 이웃과 10 짝꿍 — 10까지의 수 관계 · 이웃 수 더하기
+     ['NL11','NL12'],      // N-08 수 기계와 매직 퍼즐 — 수 기계 규칙 · 길 잇기와 십자 퍼즐
+     ['NL5','NL2@2'],      // N-09 수 피라미드와 동전 — 이웃 수 더하기 · 모으기와 가르기(위)
+     ['NL16','NL4@2'],     // N-10 자료 분류와 표    — 탤리 읽기와 규칙 · 수의 순서(위)
+     ['NL7@2','NL1@3'],    // N-11 수 배열·이어 세기 — 이어 세기(위) · 수 세기(위)
+     ['NL3@2','NL10@2'],   // N-12 무당벌레와 저울   — 무당벌레 가르기(위) · 양팔저울(위)
+     ['NL12@2','NL11@2'],  // N-13 수 퍼즐과 추론    — 길 잇기와 십자 퍼즐(위) · 수 기계(위)
+     ['NL14@2','NL16@2'],  // N-14 산가지와 규칙     — 탤리로 수 만들기(위) · 탤리 읽기(위)
+     ['NL6@2','NL8@2']     // N-15 문장제와 논리     — 10까지의 수 관계(위) · 몇째(위)
+   ],
+   creative:['NL9@1','NL13@1','NL15@1'], maxSessions:15, noTest:true},
  {id:1, tier:'level1', title:{ko:'자릿값과 첫 덧셈',en:'Place Value & First Addition',zh:'位值与加法入门'},
    drills:['NS1','NS2','NS3','AD1'], magic:[['N-06','N-07']], creative:['NL11@1','NL12@2','NL5@1']},
  {id:2, tier:'level1', title:{ko:'받아올림과 두 배 수',en:'Carrying & Doubles',zh:'进位与翻倍数'},
@@ -116,9 +145,16 @@ const COURSE_SPEC = [
  {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
    drills:['ML7','EL2'], magic:[['A-28'],['A-35'],['C-06']], creative:['ML13@1']},
 
+ /* 원본 중급 C-7 묶음(몇 자리 수·풀풀·폭포수·엑스맨 기초·×11·창살·격자)을 진도 자리에
+    붙인다(2026-09-19, 원장 "원본의 필요 내용을 우리 로드맵 과정에 붙여야지"). C-12 엑스맨은
+    중급 유닛(연습·랩·아레나가 전부 두 자리×두 자리)인데 과정 26(125주)에만 있어 짝인
+    풀풀(C-10)과 67주 떨어져 있었다 — 유닛 안의 "풀풀 4조각 → 엑스맨 3조각" 비교가 그만큼
+    늦게 나왔다. 원본 순서 풀풀 → 폭포수 → 엑스맨 → ×11 로 끼운다. ML21 몇 자리 수(어림)도
+    원본은 이 묶음 맨 앞이라 창의 회차에 넣는다. 창살(C-14)·격자(C-30)는 세 자리×두 자리
+    (과정 14)에 그대로 둔다 — 그쪽이 그 방법이 빛나는 자리다. 회차 +1(maxSessions 7). */
  {id:11, tier:'level2', title:{ko:'두 자리×두 자리 곱셈',en:'2-digit × 2-digit Multiplication',zh:'两位数乘两位数'},
-   drills:['ML8'], magic:[['C-26'],['C-15'],['C-10'],['C-11'],['C-13'],['C-23']],
-   creative:['ML23@1','ML15@1'], maxSessions:6},
+   drills:['ML8'], magic:[['C-26'],['C-15'],['C-10'],['C-11'],['C-12'],['C-13'],['C-23']],
+   creative:['ML21@1','ML23@1','ML15@1'], maxSessions:7},
  {id:12, tier:'level2', title:{ko:'나눗셈과 역연산',en:'Division & Inverse Operations',zh:'除法与逆运算'},
    drills:['DV3','DV15','DV4','EL1'], magic:[['C-18']], creative:['DV9@1']},
  {id:13, tier:'level2', title:{ko:'분수의 첫걸음',en:'Fractions Begin',zh:'分数入门'},
@@ -306,11 +342,21 @@ function buildCourses(NM_THREADS){
       }
     }
 
+    /* perSessionDrills(과정 0, 2026-09-19) — 회차마다 드릴을 지정한다. 순환 배정은 "그 주의
+       유닛"과 무관한 드릴을 붙이는데, 유아 단계는 한 주 한 권이라 권과 드릴이 맞아야 의미가
+       있다. '@n' 은 그 회차만의 고정 레벨(maxLevel 로 자른다). */
+    const perSession = Array.isArray(spec.perSessionDrills) ? spec.perSessionDrills : null;
     const sessions = segments.map((seg, i) => {
-      const ownA = ownDrills[(i*2) % ownDrills.length];
-      const ownB = ownDrills.length > 1 ? ownDrills[(i*2+1) % ownDrills.length] : null;
-      const picked = (ownB && ownB !== ownA) ? [ownA, ownB] : [ownA];
-      const drills = picked.map(d => ({t:d.t, lv:d.lv, n:6}));
+      let drills;
+      if(perSession && perSession[i]){
+        drills = perSession[i].map(parsePin).filter(d => NM_THREADS[d.t])
+          .map(d => ({t:d.t, lv:Math.min(d.pin || 1, maxLevel(d.t)), n:6}));
+      } else {
+        const ownA = ownDrills[(i*2) % ownDrills.length];
+        const ownB = ownDrills.length > 1 ? ownDrills[(i*2+1) % ownDrills.length] : null;
+        const picked = (ownB && ownB !== ownA) ? [ownA, ownB] : [ownA];
+        drills = picked.map(d => ({t:d.t, lv:d.lv, n:6}));
+      }
       if(spec.id > 1 && priorPool.length){
         const pt = priorPool[globalSessionIdx % priorPool.length];
         drills.push({t:pt, lv:homeLevel[pt], n:4});
@@ -331,7 +377,8 @@ function buildCourses(NM_THREADS){
       poolThreads = tierOwned.concat(poolThreads).filter((t,i,a)=>a.indexOf(t)===i);
     }
     const pool = poolThreads.map(t => ({t, lv:homeLevel[t], n: spec.boss ? 6 : 8}));
-    sessions.push({ test:true, pool, passRate:0.8 });
+    /* noTest — 수의 나라(과정 0)는 "시간을 재지 않는" 단계(stages.js)라 시험 회차가 없다. */
+    if(!spec.noTest) sessions.push({ test:true, pool, passRate:0.8 });
 
     OUT['C'+spec.id] = {
       tier: spec.tier, order: spec.id,
@@ -341,7 +388,10 @@ function buildCourses(NM_THREADS){
       sessions
     };
 
-    ownDrills.forEach(d => { if(!seenPool[d.t]){ seenPool[d.t]=true; priorPool.push(d.t); } });
+    /* 유아 드릴(level0)은 복습 풀에 넣지 않는다 — 풀은 끝까지 순환하므로 넣으면 중등 과정
+       학습지에도 '수 세기'가 복습으로 따라붙는다. */
+    if(spec.tier !== 'level0')
+      ownDrills.forEach(d => { if(!seenPool[d.t]){ seenPool[d.t]=true; priorPool.push(d.t); } });
   });
 
   return OUT;
