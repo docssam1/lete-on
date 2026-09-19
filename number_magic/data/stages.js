@@ -76,7 +76,7 @@ window.NM_STAGES = [
     name:{ko:'계산의 도약',en:'Leap',zh:'计算的跃进'},
     band:{ko:'초등 1학년 말 ~ 2학년',en:'End of Grade 1 – Grade 2',zh:'小学一年级末~二年级'},
     chapters:['T8','R9','T9','R10','R11','R12','R13','R14'],
-    tiers:['level2'], courses:{from:11,to:16}, weeks:29,
+    tiers:['level2'], courses:{from:11,to:16}, weeks:30,
     learn:{
       ko:'두 자리×두 자리, 나눗셈과 역연산, 분수의 첫걸음, 세 자리×두 자리, 두 자리로 나누기, 혼합계산.',
       en:'Two-digit × two-digit, division and inverse operations, first steps in fractions, three-digit × two-digit, dividing by two digits, mixed operations.',
@@ -89,7 +89,7 @@ window.NM_STAGES = [
     symbols:[
       {sym:'a/b', tr:{ko:'b로 나눈 것 중 a — 분수 막대 그림이 기호보다 먼저입니다',en:'a of b equal parts — the fraction bar picture comes before the symbol',zh:'分成b份中的a份——分数条的图先于符号'}},
       {sym:'( )', tr:{ko:'먼저 계산할 묶음',en:'the bundle to compute first',zh:'先算的那一组'}}],
-    meta:{ko:'과정 11~16 · 주 1회 기준 29주',en:'Courses 11–16 · 29 weeks at one sheet a week',zh:'课程11~16 · 每周1次约29周'}
+    meta:{ko:'과정 11~16 · 주 1회 기준 30주',en:'Courses 11–16 · 30 weeks at one sheet a week',zh:'课程11~16 · 每周1次约30周'}
   },
   {
     key:'mastery', icon:'👑', accent:'#0E2C57', status:'live',

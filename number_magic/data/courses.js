@@ -116,9 +116,16 @@ const COURSE_SPEC = [
  {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
    drills:['ML7','EL2'], magic:[['A-28'],['A-35'],['C-06']], creative:['ML13@1']},
 
+ /* 원본 중급 C-7 묶음(몇 자리 수·풀풀·폭포수·엑스맨 기초·×11·창살·격자)을 진도 자리에
+    붙인다(2026-09-19, 원장 "원본의 필요 내용을 우리 로드맵 과정에 붙여야지"). C-12 엑스맨은
+    중급 유닛(연습·랩·아레나가 전부 두 자리×두 자리)인데 과정 26(125주)에만 있어 짝인
+    풀풀(C-10)과 67주 떨어져 있었다 — 유닛 안의 "풀풀 4조각 → 엑스맨 3조각" 비교가 그만큼
+    늦게 나왔다. 원본 순서 풀풀 → 폭포수 → 엑스맨 → ×11 로 끼운다. ML21 몇 자리 수(어림)도
+    원본은 이 묶음 맨 앞이라 창의 회차에 넣는다. 창살(C-14)·격자(C-30)는 세 자리×두 자리
+    (과정 14)에 그대로 둔다 — 그쪽이 그 방법이 빛나는 자리다. 회차 +1(maxSessions 7). */
  {id:11, tier:'level2', title:{ko:'두 자리×두 자리 곱셈',en:'2-digit × 2-digit Multiplication',zh:'两位数乘两位数'},
-   drills:['ML8'], magic:[['C-26'],['C-15'],['C-10'],['C-11'],['C-13'],['C-23']],
-   creative:['ML23@1','ML15@1'], maxSessions:6},
+   drills:['ML8'], magic:[['C-26'],['C-15'],['C-10'],['C-11'],['C-12'],['C-13'],['C-23']],
+   creative:['ML21@1','ML23@1','ML15@1'], maxSessions:7},
  {id:12, tier:'level2', title:{ko:'나눗셈과 역연산',en:'Division & Inverse Operations',zh:'除法与逆运算'},
    drills:['DV3','DV15','DV4','EL1'], magic:[['C-18']], creative:['DV9@1']},
  {id:13, tier:'level2', title:{ko:'분수의 첫걸음',en:'Fractions Begin',zh:'分数入门'},
