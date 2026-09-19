@@ -112,7 +112,7 @@ const COURSE_SPEC = [
    magic:[['B-24'],['B-16','B-17'],['B-18','B-19','B-20'],['A-30','A-31','A-32'],['A-33','A-34'],['C-02']],
    creative:['ML12@1','DV14@2'], maxSessions:6},
  {id:9, tier:'level1', title:{ko:'두 자리 곱셈 암산과 나머지',en:'2-digit Mental Multiplication & Remainders',zh:'两位数心算乘法与余数'},
-   drills:['ML6','ML22','DV18','DV3'], magic:[['B-21','B-22','B-23'],['A-26'],['A-27'],['A-29'],['C-07','C-08']], creative:['ML14@1']},
+   drills:['ML6','ML22','DV18','DV19','DV3'], magic:[['B-21','B-22','B-23'],['A-26'],['A-27'],['A-29'],['C-07','C-08']], creative:['ML14@1']},
  {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
    drills:['ML7','EL2'], magic:[['A-28'],['A-35'],['C-06']], creative:['ML13@1']},
 
@@ -138,7 +138,7 @@ const COURSE_SPEC = [
    drills:['DC2','ML11'], magic:[['C-25'],['C-24'],['C-27'],['ML10'],['H-11']],
    creative:['DC4@1','ML20@3','CH11@1']},
  {id:19, tier:'level3', title:{ko:'약수와 배수, 그리고 배수 판별법',en:'Factors, Multiples & Divisibility Rules',zh:'因数、倍数与整除判别'},
-   drills:['DV7','DV6@1','DV6@2'], magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3']},
+   drills:['DV20','DV7','DV6@1','DV6@2'], magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3']},
  {id:20, tier:'level3', title:{ko:'이분모 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
    drills:['FR4','FR5','MX4'], magic:[['C-22']], creative:['FR10@1']},
  {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},

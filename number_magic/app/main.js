@@ -4170,7 +4170,11 @@ function boostProblem(threadId, level, weekKey, i){
   const th = (window.NM_THREADS||{})[threadId];
   const params = (th && th.levels[level-1] && th.levels[level-1].params) || {};
   const gen = (window.NM_TGEN||{})[th && th.gen];
-  return gen ? gen(params, rng) : {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
+  if(!gen) return {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
+  const pr=gen(params, rng);
+  /* 레벨이 세로셈으로 지정한 유형은 앱에서도 세로 위젯으로(2026-09-19) */
+  if(pr && params && params.orient){ pr.orient=params.orient; if(params.orient==='v' && !pr.widget) pr.widget='vertical'; }
+  return pr;
 }
 function screenBoost(){
   if(townCleanup){townCleanup();townCleanup=null;}

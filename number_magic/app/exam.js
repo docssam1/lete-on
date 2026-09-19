@@ -484,6 +484,19 @@
   .nm-w2-big { font-family:'Fredoka','Jua',Pretendard,'Noto Sans KR',sans-serif; font-weight:600;
     font-size:calc(26px * var(--ws-fs, 1)); letter-spacing:2px; color:#111; white-space:nowrap; }
   .nm-w2-abox-big { width:14mm; height:11mm; border:1.3px solid #333; border-radius:3px; display:inline-block; vertical-align:middle; margin:0 4px; }
+  /* 세로 나눗셈 상자 */
+  .nm-divbox { display:inline-block; font-family:'Fredoka',Pretendard,monospace; font-size:calc(22px * var(--ws-fs, 1)); line-height:1.3; }
+  .nm-dv-q { display:flex; justify-content:flex-start; margin-left:calc(2em + 10px); }
+  .nm-dv-cell, .nm-dv-d { display:inline-block; width:1.15em; height:1.5em; margin-right:3px; text-align:center; }
+  .nm-dv-cell { border:1px dashed #c3c9d6; border-radius:4px; background:#fbfcfe; }
+  .nm-dv-row { display:flex; align-items:stretch; }
+  .nm-dv-b { display:inline-block; min-width:1.8em; text-align:right; padding-right:5px; }
+  .nm-dv-bracket { border-left:2px solid #111; border-top:2px solid #111; border-top-left-radius:7px; padding:2px 3px 2px 7px; }
+  .nm-dv-work { margin-left:calc(2em + 15px); }
+  .nm-dv-sub { height:1.5em; }
+  .nm-dv-line { border-bottom:1.2px solid #8d93a1; width:3.6em; margin:2px 0 3px 0; }
+  .nm-dv-rem { height:1.5em; }
+  .nm-w2-item-vis .nm-divbox { margin:4px auto 0; }
   /* 마법 노트 지면 */
   .nm-w2-page-magic { gap:0; }
   .nm-mn-board { flex:0 0 auto; margin-bottom:7px; }
@@ -554,10 +567,13 @@
   /* 세로셈(회차 레이아웃 vertical = 초등 덧뺄셈뿐, classifyRoundLayout 이 MD/CH/EL/MX 를 뺀다):
      14px 이던 숫자를 22px 로, 올림/내림을 쓸 줄(.nm-print-vp-carry)을 위에, 답 줄을 1.6em 으로
      (2026-09-06, 1~2학년이 손으로 쓰는 칸). 나이 밴드(.nm-print-age-*)와 무관하게 이 레이아웃만. */
-  .nm-w2-grid-vertical .nm-print-vp { font-size:22px; min-width:3.4em; margin:0 auto; }
+  .nm-w2-grid-vertical .nm-print-vp { font-size:21px; min-width:3.4em; margin:0 auto; }
+  /* 부분 장(첫 쪽)의 세로셈 칸은 내용이 행보다 8px 높아 문항 번호가 반쯤 잘렸다 —
+     칸 안쪽 여백을 걷어 높이를 맞춘다(2026-09-19). */
+  .nm-w2-grid-vertical .nm-w2-item.nm-print-item { padding-top:0; padding-bottom:0; }
   .nm-w2-grid-vertical .nm-print-vp-carry { min-height:.8em; font-size:.7em; color:#999;
     border-bottom:1px dotted #bbb; margin-bottom:2px; }
-  .nm-w2-grid-vertical .nm-print-vp-bot { min-height:1.6em; border-bottom:1px solid #ddd; }
+  .nm-w2-grid-vertical .nm-print-vp-bot { min-height:1.3em; border-bottom:1px solid #ddd; }
   .nm-w2-item-vis.nm-print-item { align-items:center; text-align:center; }
   .nm-w2-item-word.nm-print-item { align-items:flex-start; }
   /* 문장제 답 줄 "식: ______  답: ______ 개"(2026-09-06) — 식을 먼저 쓰는 자리와 단위. */
@@ -596,6 +612,8 @@
   .nm-ak-pg { font-size:9px; color:#8A8F99; font-family:monospace; margin:0 0 2px; }
   .nm-print-answer-key .nm-ak-page .nm-ak-grid { grid-template-columns:repeat(10,1fr); gap:5px 4px; }
   .nm-print-answer-key .nm-ak-page .nm-ak-item { font-size:0.85em; white-space:nowrap; }
+  .nm-print-answer-key .nm-ak-page .nm-ak-item-w2 { grid-column:span 2; }
+  .nm-print-answer-key .nm-ak-page .nm-ak-item-w3 { grid-column:span 3; }
 }
 @media print {
   .nm-w2-wm { display:block; position:absolute; top:46%; left:0; right:0; text-align:center;
@@ -2028,6 +2046,31 @@ function bondSvg(whole, known){
 </svg>`;
 }
 
+/* ── 세로 나눗셈 상자(2026-09-19, 교과서 "(두 자리)÷(한 자리)" 지면) ──
+   3)17 꼴로 나누는 수·나누어지는 수를 놓고, 위에 몫 쓸 자리를, 아래에 빼는 줄과 나머지 자리를 둔다.
+   학생이 직접 쓰는 자리라 숫자는 넣지 않는다(정답지는 따로 낸다). */
+function divBoxHtml(d){
+  if(!d || !(d.a > 0) || !(d.b > 0)) return '';
+  /* 몫 칸은 "몫이 설 수 있는 자리"만 — 35÷3이면 두 칸, 17÷3이면 한 칸.
+     나누어지는 수의 자리 수에서 첫 몫이 서기 전 건너뛰는 자리를 뺀다. */
+  const digits  = String(d.a).length;
+  const qDigits = Math.max(1, String(d.q).length);
+  const lead    = Math.max(0, digits - qDigits);         /* 몫이 서지 않는 앞자리 */
+  const qCells  = new Array(digits).fill('').map((_, i) =>
+    i < lead ? '<span class="nm-dv-cell" style="visibility:hidden"></span>'
+             : '<span class="nm-dv-cell"></span>').join('');
+  let body = '';
+  for(let i = 0; i < qDigits; i++){                      /* 자리마다 곱해 빼는 줄 한 쌍 */
+    body += '<div class="nm-dv-sub"></div><div class="nm-dv-line"></div>';
+  }
+  body += '<div class="nm-dv-rem"></div>';               /* 나머지 쓰는 자리 */
+  return `<div class="nm-divbox" role="img" aria-label="${esc(lk('세로 나눗셈','Long division','竖式除法'))} ${esc(String(d.a))} ÷ ${esc(String(d.b))}">
+  <div class="nm-dv-q">${qCells}</div>
+  <div class="nm-dv-row"><span class="nm-dv-b">${esc(String(d.b))}</span><span class="nm-dv-bracket">${String(d.a).split('').map(c => `<span class="nm-dv-d">${esc(c)}</span>`).join('')}</span></div>
+  <div class="nm-dv-work">${body}</div>
+</div>`;
+}
+
 /* ── 나눗셈 뜻 그림(2026-09-17) — DV12 등분·DV13 포함 ──────────────
    생성기가 주는 p.array{n,rows}·p.meaning만 읽는다(dv.js). 등분은 "사람 수만큼 줄"이라
    b줄×q개, 포함은 "b개씩 묶음"이라 q상자×b개. 예시·따라풀기에 붙어 풀이 사슬
@@ -2823,6 +2866,15 @@ function classifyRoundLayout(problems, threadId, young, creative){
   /* 저학년(young)은 글씨가 1.28배라 6문항이면 줄이 겹친다 — 4문항/쪽(2026-09-17) */
   if(!nonWord.length && young) return {type:'word', cols:1, rows:4, perPage:4, flow:'row', firstRows:2, pitch:62};
   if(!nonWord.length) return {type:'word', cols:1, rows:6, perPage:6, flow:'row', firstRows:3, pitch:42};
+  /* 세로 나눗셈 상자는 칸이 크다 — 2열 4행(2026-09-19) */
+  if(problems.some(p => p.divBox)){
+    /* 필산 줄은 몫의 자릿수만큼 는다 — 상자 키에 맞춰 한 쪽에 담는 수를 줄인다(2026-09-19) */
+    let qd = 1;
+    problems.forEach(p => { if(p.divBox) qd = Math.max(qd, String(p.divBox.q).length); });
+    if(qd >= 3) return {type:'visual', cols:3, rows:3, perPage:9,  flow:'row', firstRows:1, pitch:76};
+    if(qd === 2) return {type:'visual', cols:3, rows:4, perPage:12, flow:'row', firstRows:2, pitch:60};
+    return              {type:'visual', cols:3, rows:5, perPage:15, flow:'row', firstRows:2, pitch:46};
+  }
   const withTex = nonWord.filter(p => p.tex);
   if(nonWord.length === problems.length && !withTex.length){
     return {type:'visual', cols:2, rows:4, perPage:8, flow:'row', firstRows:2, pitch:55};
@@ -2838,8 +2890,13 @@ function classifyRoundLayout(problems, threadId, young, creative){
      찍으면 필산 문항이 된다(2026-09-17). 스레드가 스스로 빼 달라고 표시한다. */
   const thDef = (window.NM_THREADS||{})[threadId||''];
   const excludedPrefix = /^(MD|CH|EL|MX)/.test(threadId||'') || !!(thDef && thDef.noVertical);
-  if(withTex.length && !excludedPrefix && withTex.every(p => parseVert(p.tex))){
-    return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:4, pitch:44};
+  /* 레벨이 정한 가로·세로가 판정보다 앞선다(2026-09-19) */
+  const orient = problems[0] && problems[0].orient;
+  if(orient === 'v' && withTex.every(p => parseVert(p.tex))){
+    return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:3, pitch:52};
+  }
+  if(orient !== 'h' && withTex.length && !excludedPrefix && withTex.every(p => parseVert(p.tex))){
+    return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:3, pitch:52};
   }
   if(nonWord.length < problems.length){
     /* 섞인 경우(문장제 일부 + 숫자식 일부, wordType='mix') — 문장제가 있으면
@@ -2848,8 +2905,14 @@ function classifyRoundLayout(problems, threadId, young, creative){
   }
   /* §2-5 판정은 "보이는" 길이로만 한다 — steps 단계 수로 강제로 "긴 식"으로
      미는 규칙은 폐기(2026-09-04, MD4·MD21·FR1이 전부 잘못 판정되던 원인). */
-  let maxLen = 0;
-  withTex.forEach(p => { maxLen = Math.max(maxLen, texVisibleLength(p.tex)); });
+  let maxLen = 0, maxBlanks = 0;
+  withTex.forEach(p => {
+    maxLen = Math.max(maxLen, texVisibleLength(p.tex));
+    maxBlanks = Math.max(maxBlanks, (String(p.tex).match(/\\square/g) || []).length);
+  });
+  /* 쓰기 상자가 다섯 개를 넘으면 2열 칸에서 줄을 넘어간다(2026-09-19, 약수·배수 나열
+     문항). texVisibleLength는 □를 한 글자로 세기 때문에 길이만으로는 못 잡는다. */
+  if(maxBlanks >= 5) return {type:'long', cols:1, rows:9, perPage:9, flow:'row', firstRows:4, pitch:26};
   /* 저학년 계산은 한 줄에 하나, 큰 숫자(참고 학습지 B03: 19 + 2 =). 첫 문항엔 답 상자를 보여 준다. */
   if(young && maxLen <= 16) return {type:'big', cols:1, rows:10, perPage:10, flow:'row', firstRows:5, pitch:25};
   /* pitch(부분 장의 행 높이)는 쓰기 상자(1.5em)와 큰 숫자가 들어간 뒤 넓혔다(2026-09-19, 원장 "너무 붙어 있어") */
@@ -2907,7 +2970,10 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
   }
   const ask = printAskText(p);
   const askHtml = ask ? `<div class="nm-print-ask">${esc(ask)}</div>` : '';
-  if(p.__bond && p.cubes && typeof p.cubes.moveTo === 'number' && typeof p.answer === 'number'){
+  if(p.divBox){
+    cls += ' nm-w2-item-vis';
+    inner = divBoxHtml(p.divBox);
+  } else if(p.__bond && p.cubes && typeof p.cubes.moveTo === 'number' && typeof p.answer === 'number'){
     cls += ' nm-w2-item-vis';
     inner = bondSvg(p.cubes.moveTo, p.cubes.moveTo - p.answer);
   } else if(p.base10 || p.numline){
@@ -3039,12 +3105,20 @@ function w2AnswerValueHtml(p){
    numStart: 학습지 쪽별 격자로 나눠 부를 때의 시작 번호(0-base, 기본 0). */
 function w2AnswerKeyItemsHtml(problems, numStart){
   const base = numStart || 0;
+  /* 답이 여러 개인 문항(약수·배수 나열)은 10열 한 칸에 안 들어간다 — nowrap 이라
+     그대로 종이 밖으로 나갔다(2026-09-19). 긴 답은 여러 칸을 쓰게 한다. */
+  function cell(n, inner, len){
+    const wide = len > 22 ? ' nm-ak-item-w3' : (len > 11 ? ' nm-ak-item-w2' : '');
+    return `<div class="nm-ak-item${wide}">(${n}) ${inner}</div>`;
+  }
   return problems.map((p,i) => {
     const steps = printSteps(p);
     if(steps){
-      return `<div class="nm-ak-item">(${base+i+1}) ${esc(steps.map(s => fmtAns(s.blank)).join(' , '))}</div>`;
+      const txt = steps.map(s => fmtAns(s.blank)).join(' , ');
+      return cell(base+i+1, esc(txt), txt.length);
     }
-    return `<div class="nm-ak-item">(${base+i+1}) ${w2AnswerValueHtml(p)}</div>`;
+    const html = w2AnswerValueHtml(p);
+    return cell(base+i+1, html, String(html).replace(/<[^>]+>/g,'').length);
   }).join('');
 }
 /* ── 정답 및 해설 (풀이형, 2026-09-16) ──
@@ -4003,13 +4077,23 @@ function getLevelParams(threadId, lv){
 }
 
 /* 생성기 호출: NM_TGEN[genKey](params, rng) → problem */
+/* 가로셈·세로셈 나누기(2026-09-19, 원장 "덧셈뺄셈과 세로 가로 세분화해야 돼") —
+   레벨 params 의 orient('h'|'v')를 문항에 실어 배치를 고정한다. 'v' 면 회차 전체가 세로셈 칸으로,
+   'h' 면 같은 식이라도 가로로 인쇄된다(전에는 판정이 자동이라 학생이 고를 수 없었다). */
+function applyOrient(p, params){
+  const o = params && params.orient;
+  if(!p || !o) return p;
+  p.orient = o;
+  if(o === 'v' && !p.widget) p.widget = 'vertical';
+  return p;
+}
 function generateProblem(threadId, lv, rng){
   const th = (window.NM_THREADS || {})[threadId];
   if(!th){ return {tex:`[${threadId} ?]`, answer:0, prompt:{ko:'',en:'',zh:''}}; }
   const genKey = th.gen;
   const params = getLevelParams(threadId, lv);
   const gen = (window.NM_TGEN || {})[genKey];
-  if(gen){ return gen(params, rng); }
+  if(gen){ return applyOrient(gen(params, rng), params); }
   const a = Math.floor(rng()*90)+10, b = Math.floor(rng()*9)+1;
   return { tex:`${a} + ${b} = \\square`, answer:a+b, prompt:{ko:`${a}+${b}=?`,en:`${a}+${b}=?`,zh:`${a}+${b}=?`} };
 }
