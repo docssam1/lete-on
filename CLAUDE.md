@@ -827,4 +827,6 @@ A(1부 1~3 탐구 과정, 1유닛) · B(1부 4~7 탐구 활동, 4유닛) · C(3�
 - 검증: Playwright(`/opt/node22/lib/node_modules/playwright`, swiftshader) 로 15유닛 × PC/모바일 로드·재생·이동·퀴즈 통과, 콘솔 에러 0. 스크립트는 세션 scratchpad에 있었음(저장소 미포함).
 - **C-10 터널 등 유닛은 원문 미확보**(PDF 텍스트가 278쪽에서 잘림) — 제목 기준 일반 원리로 작성, 유닛에 `note`로 표기.
 - **미착수**: USB `과학교재/실험2`·`이론편` 자료 → Drive 폴더(`교재/과학교재/실험2`, `이론편`)는 2026-09-18 현재 **비어 있음**. 올라오면 `PARTS`에 D부 추가 + 같은 형식으로 유닛·장면 작성.
+- **재설계 진행 중 (2026-09-19, 승인 전)** — `science-lab/HANDOFF.md`부터 읽을 것. 결정: ①5E 탐구 순환(궁금→실험→개념→확장→점검) ②캐릭터 **docssam**(그림 확인, 파일은 미반입) ③**단원 축 = Drive `과학 단원평가` 폴더**(3-1~6-2 × Ⅰ~Ⅴ + 중간·기말) ④**단원 파일 = 문제은행 DB**, 문항 계약은 스킬 `gfield-science-question-bank`(브랜치 `codex/golden-bell-semantic-workbook`) + `fields-classic/question-bank/question-bank-adapter.js` 재사용 ⑤지필드 이론편(30권)·실험2(31권) 차례 추출 완료 → `science-lab/data/source-toc.md`(단원 매핑) + `data/toc/*.md`(전문). **라이선스 없음**(사용자 확인)이라 원문 사용 가능. 단원평가 PDF는 스캔본이라 원문·정답은 OCR 후 Supabase에만.
+- 1차 프로토타입 권장 단원: **4-1 Ⅰ 자석의 이용**(이론 3-1-1 Ⅳ·3-1-2 Ⅰ~Ⅱ + 실험 3-A-4·3-B-1·3-B-2).
 - 외부 체험형 시뮬레이션 후보(조사 완료, 미연동): PhET(CC-BY 4.0, iframe 임베드 허용, 한국어 번역 다수) · Concord Consortium Lab(MIT/BSD) · rudra496/sciencelab3d(MIT, Next.js라 iframe 배포본 링크 방식) · 3D 에셋 Poly Haven/Kenney(CC0). 에듀넷 영상은 **자료마다 공공누리 유형이 달라** 건별 확인 필요.

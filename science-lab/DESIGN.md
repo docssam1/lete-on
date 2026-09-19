@@ -2,7 +2,8 @@
 
 > 작업 순서는 gajae-code 방식(인터뷰 → 계획 → 승인 → 구현)을 따른다. 이 문서가 "계획"이다.
 > 규격 형식은 MengTo `design-first-ui-prompting`(GOAL → FORMAT → LAYOUT → TYPE → COLOR → IMAGERY → COPY → CONSTRAINTS → NEGATIVE).
-> 캐릭터 그림(`docssam science.png`)을 아직 못 봤으므로 COLOR·IMAGERY는 그림을 본 뒤 확정한다.
+> 캐릭터 그림은 2026-09-19 대화에 첨부돼 확인함(아래 COLOR·IMAGERY 확정). **파일은 아직 저장소에 없다** — 대화에 붙여 넣은 이미지는 디스크에 남지 않아 로컬 세션에서 `science-lab/assets/docssam.png`로 넣어야 한다.
+> 참고 자료(사용자 제공): 지필드 강의 슬라이드 `NEW STUDY Ⅰ 고체·액체·기체`(pptx 50장) · Drive `과학 단원평가` 폴더(단원 축) · 저장소 스킬 `gfield-science-question-bank`(문항 계약).
 
 ## GOAL
 - 콘셉트(사용자 지시 2026-09-19): **"공부하고, 실험하고, 영재원까지."** 개념 학습 → 3D·실제 실험 → 영재원(교육청·대학부설 영재교육원) 대비까지 한 길로 잇는다. docssam이 그 길의 선생님이다.
@@ -25,6 +26,20 @@
 | 실험으로 탐구 | ① 궁금 ② 실험 | scenes/ 15개(해설 모드) → **조작 모드** 추가 필요 / (대기) Drive `실험2` |
 | 개념으로 이해 | ③ 개념 | curriculum.js concept / (대기) Drive `이론편` |
 | 영재원으로 확장 | ④ 확장 ⑤ 점검 | 문제은행 신설(아래) |
+
+### 단원 축 = Drive `과학 단원평가` 폴더 (사용자 지시 2026-09-19 "이게 현재 단원이야")
+- 8학기(3-1~6-2) × 단원 Ⅰ~Ⅴ + 중간·기말평가. 전체 표는 `data/source-toc.md` §1. 단원 id `s41-u01`.
+- 지금의 15유닛(지도자료 차례)은 **이 단원 축의 "탐구" 단원(3-2 Ⅰ·5-1 Ⅰ·5-2 Ⅰ·6-1 Ⅰ)과 소재 단원에 재배치**한다. 홈의 정거장은 지도자료가 아니라 단원이 된다.
+- 지필드 이론편·실험2가 단원마다 개념·실험 소스로 붙는다(`source-toc.md` §2 매핑). 라이선스 제약 없음(사용자 확인) → 원문 인용 가능.
+
+### 강의 슬라이드(NEW STUDY pptx)에서 가져올 것
+지필드가 실제로 수업하는 순서라 5E 안의 **③ 개념 화면의 상호작용**을 이걸로 정한다.
+- **빈칸 개념 카드**: 문장 속 핵심어가 빈칸(`(       )`). 아이가 탭하면 열린다. 카드당 빈칸 1~3개. 슬라이드의 "클릭하면 정답" 애니메이션과 같은 리듬.
+- **정리표 채우기**: 개념 3~4개 × 속성 4~5개 표를 셀마다 고르기(예: 고체/액체/기체 × 모양·부피·압축·흐름·운동). 개념 단계의 마지막 카드.
+- **비유 한 줄**을 카드 맨 위에 인용문으로("고체는 접착제로 붙인 구슬, 액체는 통에 넣은 구슬, 기체는 날아가는 구슬").
+- **Mini Test**는 강마다 1~2문항 → ⑤ 점검이 아니라 ③ 개념 카드 사이에 끼운다. ①~⑤ 5지선다·서술("'액화'·'기화'를 넣어 문장으로") 형식을 문제은행 answerContract로 지원.
+- **더 알아보기**(아이오딘 독성·갑상선 등 실생활 확장)는 ④ 확장의 읽을거리 카드.
+- Laboratory 흐름(관찰 Q1·Q2 → 재료 → 가설 빈칸 → 관찰 → 결과 → **그림으로 표현**)은 ② 실험 화면의 순서 그대로. "그림으로 표현"은 캔버스 낙서 칸(저장은 PNG dataURL, 선택).
 
 ### 홈 = 탐구 지도
 - 세로로 구불한 길 위에 정거장 15개(A 1 → B 4 → C 10). 끝낸 정거장은 깃발, 다음 정거장은 docssam이 서서 가리킨다.
@@ -51,15 +66,19 @@
 - 라벨(단계명·변인 태그): 12px 700, 자간 +0.06em, 대문자 아님(한글).
 - 수치(온도·시간): `tabular-nums`.
 
-## COLOR + MATERIAL — 캐릭터를 본 뒤 확정
-- 원칙: 캐릭터에서 주색 1개를 뽑아 **악센트 하나만**. 바탕은 그 색의 아주 옅은 톤(순백 아님). 글자는 차콜(순검정 아님).
-- 지금 팔레트(크림 #f7f2e8 + 초록 #2f7d6d)는 리딩타운을 따른 것이라 캐릭터와 안 맞으면 버린다.
-- 재질: 평평한 면 + 아주 약한 그림자 1단계. 유리·그라데이션·네온 없음.
-- 다크 모드: 토큰만 바꿔 동일 구조. 3D 바탕은 밝게 유지.
+## COLOR + MATERIAL — 캐릭터에서 확정 (2026-09-19)
+docssam: 검은 머리 남자아이, 흰 가운, 하늘색 셔츠, **남색 넥타이**, 원자 배지, 왼손 태블릿(SCIENCE), 오른팔 PHYSICS 책. 표정 1장(웃음). 3D 렌더 질감(반광택).
+- 악센트 하나: **navy `#1E3A78`**(넥타이·책). 버튼·진행 점·선택 상태.
+- 바탕: **`#F3F6FB`**(셔츠 하늘색의 5% 틴트). 순백 아님. 카드 면 `#FFFFFF`, 카드 테두리 `#DCE4F0`.
+- 글자: 차콜 **`#262B36`**, 보조 `#5B6577`.
+- 포인트(1회만): **`#E23B2E`**(원자 핵 빨강) — 정답 공개·강조어. 초록·노랑 등 다른 채색 금지.
+- 리딩타운의 크림+초록 팔레트는 **버린다**(캐릭터와 안 맞음).
+- 재질: 평평한 면 + 그림자 1단계(`0 2px 8px rgba(30,58,120,.08)`). 캐릭터가 반광택이라 UI는 더 평평하게 두어 캐릭터만 튀게 한다.
+- 다크 모드: 바탕 `#141A28`, 카드 `#1C2436`, 글자 `#E8EDF6`, navy는 `#8FB0F0`으로 밝힘. 3D 바탕은 밝게 유지.
 
 ## IMAGERY / UI STYLE
 - 스타일 레인: **playful, character-led** (교과서형 아님, 게임 UI도 아님). 캐릭터가 "선생님"이지 마스코트 장식이 아니다.
-- docssam 등장 규칙: 화면당 1회, 말풍선은 항상 캐릭터 입 쪽에서 나온다. 표정 그림이 여러 장이면 인사·설명·질문·칭찬·놀람에 배정, 한 장이면 말풍선 모양(둥근/뾰족/구름)과 크기로 감정을 대신한다.
+- docssam 등장 규칙: 화면당 1회, 말풍선은 항상 캐릭터 입 쪽에서 나온다. **그림이 한 장(웃음)뿐**이므로 말풍선 모양(둥근=설명/뾰족=질문/구름=생각)과 크기로 감정을 대신한다. 태블릿을 든 왼쪽이 비어 있으니 캐릭터는 **화면 오른쪽**, 말풍선·칠판은 왼쪽. 배경 제거된 PNG를 그대로 쓰고 그림자는 바닥 타원 하나.
 - 3D: 지금 엔진 유지(원본 도형만). MengTo `build-mobile-threejs-games` 기준을 적용 — 터치 타깃 44px 이상, 세로/가로 회전 시 상태 유지, 저사양 기기는 그림자·입자 수 자동 축소, 감소된 동작 설정이면 즉시 최종 프레임.
 
 ## COPY (원칙)
@@ -77,29 +96,50 @@
 - 캐릭터 외 외부 일러스트·스톡 이미지 없음.
 - 자동 재생 음성 없음(항상 토글).
 
-## 문제은행 (신설, 사용자 지시 2026-09-19)
-### 문항 형식 — CARS 창작 문항 규칙을 그대로 잇는다
-- 데이터: `data/bank/<unitId>.js` → `[{ id, unit, type, level, stem, choices[4] | answerText, a, why, tags[] }]`
-- `type` 5종: **개념 확인** · **자료 해석**(표·그래프 읽기) · **변인 통제**(설계 오류 찾기) · **창의적 문제해결**(영재원 지필 유형: 조건 주고 방법 여러 개 쓰기) · **서술형**(탐구 보고서 문장 쓰기, 자기 채점 기준 제공)
-- 객관식은 **정답 위치를 쓰기 전에 배분**(A/B/C/D 균등), 오답은 정답과 같은 구체성(보기 길이 신호 0%). CARS에서 배운 규칙 그대로.
-- `level` 1~3. 3 = 영재원 지필 수준.
-- 기출 원문(교육청·대학부설 영재원 문제, Drive `영재원기출`·`영재원 모의고사`)은 **git 금지 → Supabase** `question_bank` 테이블. 창작 변형 문항만 git.
+## 문제은행 (신설) — 단원 데이터가 곧 문제은행 DB
+사용자 지시(2026-09-19): "이걸(단원) 문제은행 DB로도 되야돼". 따라서 **단원 파일 하나가 학습 콘텐츠와 문항 저장소를 겸한다.** 별도 DB 스키마를 새로 만들지 않고 저장소에 이미 있는 계약 두 개를 그대로 쓴다.
 
-### 학습 흐름
-- ④ 확장 단계에서 유닛당 2문항 + 서술형 1, ⑤ 점검에서 3문항. 관문 통과 = 점검 2/3.
-- **약점 추적**: 틀린 `type`·`tags`를 `profile.bank.weak`에 누적 → 다음 관문에서 같은 태그 문항을 우선 출제(스킬 코치와 같은 원리).
-- **영재원 모의 평가**: 길 끝. 25문항 40분 타이머, 유형별 정답률 리포트(부모용), 서술형은 채점 기준표로 자기 채점.
-- 오답 노트: 틀린 문항 + 왜 + 관련 유닛 링크. 인쇄 가능(티처 콘솔 패턴 재사용).
+### 계약 (저장소 기존 것 재사용)
+1. **스킬 `.claude/skills/gfield-science-question-bank/SKILL.md`**(브랜치 `codex/golden-bell-semantic-workbook`) — 문항 계약 `{id, status, sourceRef, taxonomy, prompt, givens, visualModel, responseContract, answerContract, explanation, variantRules, evidence}`, 과학 사고 조작 분류(관찰/추론, 변인, 대조군, 자료 해석, 안전 …), 릴리스 게이트 8개(출처·과학·정답·그림·변형·제품·렌더·프라이버시).
+2. **어댑터 `fields-classic/question-bank/question-bank-adapter.js` + `QUESTION-BANK-SOURCE-ADAPTER-CONTRACT.md`**(같은 브랜치) — `defineQuestionBankAdapter({id, label, types, sourceItems, getGenerator, getRenderer})`. 수학용이지만 저장 방식과 무관한 얇은 계약이라 과학 어댑터를 같은 함수로 등록한다.
+
+### 파일 구조
+```
+science-lab/data/units/s41-u01.js      # 단원 = 5E 콘텐츠 + 문항 (한 파일)
+  export const unit = { id:'s41-u01', course:'4-1', no:1, title:'자석의 이용', domain:'운동과 에너지',
+    sources:{ theory:['3-1-1:Ⅳ','3-1-2:Ⅰ','3-1-2:Ⅱ'], lab:['3-A-4','3-B-1','3-B-2'] },
+    engage:{…}, explore:{ scene:'magnet-field', controls:[…] }, explain:{ cards:[…빈칸 카드…], table:{…} },
+    elaborate:{ reading:[…] }, evaluate:{…} }
+  export const items = [ …스킬 계약 그대로… ]        # 문항. taxonomy.unit = 'u01', taxonomy.course='4-1'
+science-lab/bank/science-bank-adapter.js   # defineQuestionBankAdapter({ id:'gfield-science', types: SCIENCE_TYPES, sourceItems: 모든 unit.items })
+science-lab/bank/types.js                  # itemType 목록(스킬의 사고 조작 분류를 typeId로)
+```
+- `items[].sourceRef` — 지필드 이론편/실험편은 `{sourceId:'gfield-theory', edition:'2012', course:'3-1-1', unit:'Ⅳ', page, originalNo}` (라이선스 없음 → 원문 인용 가능, `status:'verified'`까지 갈 수 있음). 단원평가 PDF는 `{sourceId:'unit-test', course:'4-1', unit:'u01', set:1, originalNo}` — **스캔본이라 텍스트 없음 → 전부 `needs-source`로 시작**, 원문·정답 풀이는 Supabase `science_bank_source`(git 금지). git에는 `authored` 변형만.
+- `sourceKey` = `gfield-science:{edition}:{course}:{unit}:{set|section}:q{no}`. 판이 바뀌면 새 키.
+- `answerContract`: `single-choice`(4지·5지 모두) · `short-text` · `number-with-unit` · `ordered-sequence` · `multi-select` · `cloze`(빈칸 카드도 문항이다) · `table-fill` · `written-explanation`(필수 키워드·자기 채점 기준). 
+- 객관식은 **정답 위치를 쓰기 전에 배분**, 오답은 정답과 같은 구체성(보기 길이 신호 0%). CARS에서 배운 규칙 그대로 + `check-choice-length.js`를 과학 파일에도 돌린다.
+- 검색 색인 노출 필드: course·unit·topic·concept·inquirySkill·itemType·stem 낱말. 생성기 상태는 학생에게 안 보임.
+
+### 학습 흐름에서의 쓰임
+- ③ 개념: `cloze`·`table-fill` 문항이 곧 개념 카드. ③ 사이 Mini Test = `single-choice` 1~2개.
+- ④ 확장: `level 3` 2문항(창의적 문제해결·자료 해석) + `written-explanation` 1개(탐구 보고서 문장, 채점 기준표).
+- ⑤ 점검: `level 1~2` 3문항. 관문 = 2/3. 다시 풀기는 보기 섞기(정답 letter 재계산).
+- 약점 추적: 틀린 `taxonomy.inquirySkill`·`itemType`을 `profile.bank.weak`에 누적 → 다음 관문에서 같은 태그 우선(스킬 코치 원리).
+- 영재원 모의 평가(길 끝): 25문항 40분, 유형별 정답률 리포트, 서술형 자기 채점.
+- 티처 콘솔 인쇄: 문제만 / 정답·해설 / 둘 다 — 같은 데이터 인스턴스에서 번호 일치(스킬의 print 규칙).
 
 ### 1차 범위
-- 15유닛 × 5문항 = 75문항 창작(정답 분포 검사기 통과) + 모의 평가 1세트(25문항). 기출 연동은 원문 확보 뒤.
+- **s41-u01 자석의 이용** 1단원: 5E 콘텐츠 + 문항 20개(cloze 6·table-fill 1·single-choice 10·written 3) `authored`로 작성, 검사기 통과. 단원평가 세트1 원문은 OCR/전사되면 `needs-source → verified`로.
+- 어댑터 등록 + `question-bank-adapter-audit.mjs`와 같은 감사 스크립트(중복 sourceKey 0·없는 typeId 0·정답 분포).
 
 ## 인터뷰 — 확정에 필요한 답
-1. 캐릭터 그림을 대화에 첨부(모양·색 확인용) + 저장소 업로드(github 웹 → `science-lab/assets/`).
-2. 표정 그림이 여러 장인가, 한 장인가.
+1. ~~캐릭터 그림 확인~~ ✅ 첨부로 확인. **저장소 업로드는 아직**(로컬 세션 또는 github 웹 → `science-lab/assets/docssam.png`).
+2. ~~표정 그림~~ ✅ 한 장(웃음)으로 확인 → 말풍선 모양으로 감정 대신.
 3. 스타일 레인 확인: playful character-led 로 갈지, 더 차분한 교과서형으로 갈지.
 4. 홈을 "지도"로 바꾸는 것에 동의하는지(리딩타운과 같은 결).
-5. 1차 범위: 15유닛 전부를 새 구조로 옮길지, 1유닛(뚝배기)만 먼저 만들어 보고 정할지. → 권장: **1유닛 먼저**.
+5. 1차 범위: 단원 축이 `과학 단원평가` 폴더로 바뀌었으므로 → 권장: **4-1 Ⅰ 자석의 이용 1단원 먼저**(이론 3-1-1·3-1-2 + 실험 3-A-4·3-B-1·3-B-2 소스가 가장 풍부). 뚝배기는 5-1 Ⅱ 온도와 열의 실험으로 흡수.
+8. 단원평가 PDF(스캔본) 원문 전사 방법: 로컬 OCR 후 Supabase 업로드 / 사용자가 텍스트로 제공 / 우선 `authored`만으로 진행 중 택일.
+9. `최다빈출 단원평가`의 출처(출판사·권리) — git에 넣을 수 있는지 판단 근거.
 6. 영재원 대상: 교육청 영재원 / 대학부설 영재원 중 어느 쪽 지필 유형을 기준으로 할지. 기출 원문을 Supabase에 넣을지(사용자가 보유한 `영재원기출` 폴더).
 7. 서술형 채점: 자기 채점(기준표)으로 갈지, 선생님 채점 화면을 둘지.
 
