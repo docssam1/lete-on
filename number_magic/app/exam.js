@@ -3282,7 +3282,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
      · 단일 답이고 \square가 하나면 그 자리에 대입.
      · 그 외(개수가 안 맞는 예외)엔 마지막 \square만 채우고 나머지는 그대로 둔다
        — 깨진 표시보다는 절반만 맞는 표시가 낫다. */
-function texSubstituteAnswer(tex, answer){
+function texSubstituteAnswer(tex, answer, fillAll){
   /* 반환값은 아직 "tex 문자열"이다 — HTML 이스케이프는 호출부가 data-tex
      속성에 넣을 때 한 번만 한다(여기서 하면 이중 이스케이프가 된다). */
   const raw = String(tex||'');
@@ -3292,7 +3292,8 @@ function texSubstituteAnswer(tex, answer){
     let i = 0;
     return raw.replace(/\\square/g, () => '\\color{#d33}{' + String(answer[i++]) + '}');
   }
-  if(!Array.isArray(answer) && squareCount === 1){
+  if(!Array.isArray(answer) && (squareCount === 1 || fillAll)){
+    /* fillAll — 빈칸 여럿이 같은 수인 문항(DV17 `a×□=c ⇔ c÷a=□`). 아니면 하나짜리만. */
     return raw.replace(/\\square/g, '\\color{#d33}{' + String(answer) + '}');
   }
   let seen = 0;
@@ -3365,7 +3366,7 @@ function w2ExampleBodyHtml(p, threadId, young){
     bodyHtml = bondSvg(p.cubes.moveTo, p.cubes.moveTo - p.answer)
       + `<div class="nm-w2-ex-ans">= ${esc(String(p.answer))}</div>`;
   } else if(hasSteps){
-    const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer));
+    const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank));
     const completedHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
     const stepParts = stepSrc.map(s => {
       /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */
@@ -3388,7 +3389,7 @@ function w2ExampleBodyHtml(p, threadId, young){
   <div class="nm-w2-ex-vp-ans">${esc(String(fmtAns(p.answer)))}</div>
 </div>`;
     } else {
-      const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer));
+      const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank));
       bodyHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
     }
     /* steps가 없을 때만 — concept "예)" 문장은 이미 있는 단계별 대입을
@@ -4028,6 +4029,12 @@ function rampLevelFor(threadId, lv){
   const bk = Object.keys(base.params || {}).sort(), nk = Object.keys(next.params || {}).sort();
   if(!bk.length || bk.join() !== nk.join()) return null;
   if(bk.some(k => k === 'mode' || k === 'level' || k === 'digits')) return null;
+  /* 연산 자체가 바뀌면 램프가 아니다(2026-09-19, 원장 "34도 두 자리 가르기에서 연습한 거지?") —
+     ML1 은 L1 ×2 · L2 ÷2 라 키 이름이 같아 램프로 통과했고, ×2 회차 끝에 `34 ÷ 2` 가 "여기부터
+     도전"으로 붙었다. ÷2 는 아직 배우지 않은 과정이었다(반으로 나누기 = B-02, 과정 5 4회차).
+     AD7 `+`→`±`(뺄셈 섞임)·CH3 진법 변환 방향도 같은 부류. 난이도 값(자릿수 b·범위 range)은 그대로 램프. */
+  const OP_KEYS = ['op', 'dir', 'kind', 'type'];
+  if(OP_KEYS.some(k => k in (base.params||{}) && String(base.params[k]) !== String(next.params[k]))) return null;
   return next.id;
 }
 function rampCount(threadId, lv, count){

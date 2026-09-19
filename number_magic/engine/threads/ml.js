@@ -68,6 +68,33 @@ NM_TGEN['ml1_double'] = function(params, rng) {
 };
 
 /* ── ML2 — 곱셈구구 2~5단 ─────────────────────────────────── */
+/* ── 수직선 뛰어 세기로 곱셈구구(2026-09-19, 원장이 준 교과서 지면 "6, 7의 단 곱셈구구") ──
+   0에서 t씩 n번 뛰면 t×n. 같은 수를 여러 번 더하는 것이 곱셈이라는 것을 수직선으로 보여 주고,
+   식은 `6+6+6=6×□=18` 처럼 덧셈–곱셈을 한 줄에 잇는다(빈칸은 뛴 횟수). */
+NM_TGEN['ml_jumpTT'] = function(params, rng) {
+  const tables = params.tables || [6, 7];
+  const t = pick(rng, tables);
+  const n = R(rng, 2, 5);                     /* 수직선에 담기는 점프 수 */
+  const seq = [0];
+  for(let i = 1; i <= n; i++) seq.push(t * i);
+  const sum = new Array(n).fill(t).join(' + ');
+  return {
+    prompt: {
+      ko: `${t}씩 ${n}번 뛰면 얼마일까요? 몇 번 뛰었는지 □에 써요.`,
+      en: `Hop ${n} times by ${t} — write how many hops in the □.`,
+      zh: `每次跳${t}，跳${n}次是多少？在□里写跳了几次。`
+    },
+    tex: `${sum} = ${t} \\times \\square = ${t * n}`,
+    answer: n, answerType: 'number',
+    widget: 'numline',
+    numline: { start: 0, step: t, seq, blank: -1 },        /* blank -1 = 빈 마디 없음(전부 보여 준다) */
+    solution: [
+      { tex: `${sum} = \\square`, blank: t * n },
+      { tex: `${t} \\times \\square = ${t * n}`, blank: n }
+    ]
+  };
+};
+
 NM_TGEN['ml2_tt25'] = function(params, rng) {
   const tables = params.tables || [2, 3];
   const t      = pick(rng, tables);

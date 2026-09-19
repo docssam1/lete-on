@@ -907,6 +907,79 @@
     return dvGroupProblem(rng, b, q, item, who);
   };
 
+  /* ── DV17 — 곱셈식에서 나눗셈의 몫 찾기(2026-09-19, 원장이 준 교과서 지면) ──
+     `2 × □ = 10 ⇔ 10 ÷ 2 = □`(곱하는 수 찾기) · `□ × 5 = 15 ⇔ 15 ÷ 5 = □`(곱해지는 수 찾기).
+     같은 답을 두 식으로 보여 주는 것이 문항의 전부라, 두 식을 나란히 쓰고 빈칸은 하나로 잇는다. */
+  NM_TGEN['dv17_quotFromMul'] = function (params, rng) {
+    const mode = (params && params.mode) || 'times';      /* times = 곱하는 수, timesed = 곱해지는 수 */
+    const hi   = !!(params && params.hi);
+    const a = R(rng, 2, hi ? 9 : 5), q = R(rng, 2, 9), c = a * q;
+    const mulTex = mode === 'times' ? `${a} \\times \\square = ${c}` : `\\square \\times ${a} = ${c}`;
+    const divTex = `${c} \\div ${a} = \\square`;
+    const what = mode === 'times'
+      ? { ko: '곱하는 수', en: 'the number being multiplied by', zh: '乘数' }
+      : { ko: '곱해지는 수', en: 'the number being multiplied', zh: '被乘数' };
+    return {
+      prompt: {
+        ko: `곱셈식에서 ${what.ko}를 찾아 나눗셈의 몫을 구해요. ${mode === 'times' ? `${a} × □ = ${c}` : `□ × ${a} = ${c}`}`,
+        en: `Find ${what.en} in the multiplication, and you have the quotient. ${mode === 'times' ? `${a} × □ = ${c}` : `□ × ${a} = ${c}`}`,
+        zh: `在乘法算式里找${what.zh}，就是除法的商。${mode === 'times' ? `${a}×□=${c}` : `□×${a}=${c}`}`
+      },
+      tex: `${mulTex} \\;\\Leftrightarrow\\; ${divTex}`,
+      answer: q, answerType: 'number', widget: 'numpad',
+      sameBlank: true,              /* 두 식의 빈칸이 같은 수 — 예시에서 둘 다 채운다 */
+      solution: [
+        { tex: mulTex, blank: q },
+        { tex: divTex, blank: q }
+      ]
+    };
+  };
+
+  /* ── DV18 — 나머지가 있는 나눗셈, 나머지 크기별(교과서 "나머지가 1인/3인/2인 나눗셈") ──
+     묶음 그림(배열)으로 "11개를 2개씩 묶으면 5묶음 1개가 남아요"를 눈으로 보게 하고,
+     답은 몫과 나머지 두 칸. r 값을 고정해 한 회차가 한 가지 나머지만 다루게 한다. */
+  NM_TGEN['dv18_remFixed'] = function (params, rng) {
+    const want = (params && params.r) || 0;               /* 0 = 아무 나머지 */
+    const twoDigitQ = !!(params && params.q2);            /* 몫이 두 자리 */
+    let b, q, r;
+    if (want) {
+      b = R(rng, want + 1, 9);                            /* 나머지는 나누는 수보다 작아야 한다 */
+      r = want;
+    } else {
+      b = R(rng, 2, 9);
+      r = R(rng, 1, b - 1);
+    }
+    q = twoDigitQ ? R(rng, 10, 19) : R(rng, 2, 9);
+    if (!twoDigitQ && b * q + r > 60) q = Math.max(2, Math.floor((60 - r) / b));   /* 그림으로 보여 줄 만한 크기로 */
+    const a = b * q + r;
+    const item = pick(rng, DV_ITEMS.filter(function(it){ return !it.person; }));   /* 사람을 "묶지"는 않는다 */
+    const word = {
+      ko: `${item.ko} ${a}${dvJosa(item.unit,'을','를')} ${b}${item.unit}씩 묶어요.`,
+      en: `We bundle ${a} ${item.en} into groups of ${b}.`,
+      zh: `把${a}${item.zhU}${item.zh}每${b}${item.zhU}分成一组。`
+    };
+    const ask = {
+      ko: `몇 묶음이 되고 몇 ${dvJosa(item.unit,'이','가')} 남을까요?`,
+      en: `How many groups, and how many are left over?`,
+      zh: `能分成几组？还剩几${item.zhU}？`
+    };
+    return {
+      prompt: { ko: word.ko + ' ' + ask.ko, en: word.en + ' ' + ask.en, zh: word.zh + ask.zh },
+      word, wordAsk: ask,
+      tex: `${a} \\div ${b} = \\square \\cdots \\square`,
+      answer: [q, r], answerType: 'number',
+      /* 배열 위젯은 60칸까지 — 그보다 크면(몫이 두 자리) 숫자판으로 */
+      widget: a <= 60 ? 'array' : 'numpad',
+      array: a <= 60 ? { n: a, rows: q } : undefined,
+      answerNote: { ko: `몫 ${q}, 나머지 ${r}`, en: `quotient ${q}, remainder ${r}`, zh: `商${q}，余${r}` },
+      solution: [
+        { tex: `${b} \\times \\square = ${b * q}`, blank: q },
+        { tex: `${a} - ${b * q} = \\square`, blank: r },
+        { tex: `${a} \\div ${b} = \\square \\cdots \\square`, blank: [q, r] }
+      ]
+    };
+  };
+
   /* ── DV14 — 같은 수를 빼서 나누기(반복 뺄셈) ─────────────── */
   NM_TGEN['dv14_repsub'] = function (params, rng) {
     const rem = !!(params && params.rem);
