@@ -44,7 +44,8 @@ window.HSMIDDLE_DATA = {
     "docssam"
   ],
   "exams": {
-    "diagnostic": "중등 성취도 진단 + 클리닉",
+    "diagnostic": "중등 성취도 진단",
+    "question-bank": "중등 심화 문제은행",
     "mock-1": "실전 모의고사 1회",
     "mock-2": "실전 모의고사 2회",
     "mock-3": "실전 모의고사 3회",
