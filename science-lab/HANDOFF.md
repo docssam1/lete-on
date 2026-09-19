@@ -15,6 +15,14 @@
 8. **작업 방식**: 인터뷰 → 계획(DESIGN.md) → 사용자 승인 → 구현. 1차 범위 **4-1 Ⅰ 자석의 이용** 1단원. 디자인 규격은 MengTo design-first-ui-prompting 형식, 타이포 Gaegu(개구) 700 + Pretendard.
 9. **제외**: 화올 최종교재. 자기 낭독 녹음. 자동 재생 음성. 이모지 아이콘. 외부 스톡 일러스트.
 
+## 진행 기록 — 2026-09-19 4차: 자석 단원 v2 (화면 + 교재)
+- 주소: `/science-lab/v2/#/s41-u01/1` (v1 15유닛 사이트는 그대로). 파일: `v2/index.html · v2.js · v2.css · lab-ring-tower.js`, 장면 `scenes/ring-tower.js`, 5E 구성 `data/units/s41-u01.lesson.js`(문항은 `s41-u01.js` items를 id로 참조), QR `assets/qr-s41-u01-kit.svg`.
+- 흐름: ①궁금(3D 고리 자석 탑 자동 재생 + 예상 3지) ②실험(가상 실험실: 고리 눌러 뒤집기 → 떠 있는 층·탑 높이 → 표에 적기 / 3D로 보기 / 집에서 실험: 준비물·쿠팡 검색 링크·QR·순서·안전) ③개념(내 예상 vs 결과, 내 기록 최고 탑, 비유, 빈칸 카드 4·표 채우기·잠깐 확인) ④확장(읽을거리 + 영재성 3 + 탐구보고서) ⑤점검(3문항, 2/3 통과, 실패 시 "다시 풀기"가 주 버튼·보기 섞기).
+- 탐구보고서 `#/s41-u01/report`: 9칸, 궁금한 점·가설·준비물·과정·결과(실험실 표)는 자동 채움, 기기에 저장, A4 인쇄. 준비물 페이지 `#/s41-u01/kit` = QR 도착지.
+- 교재 `#/s41-u01/print/student|teacher|answers`: 개념 정리 → 실험(QR·순서·안전·결과표) → 탐구보고서 1쪽 → 교과 문제 → 영재성 문제 → 정답·해설. 교사용 A4 11쪽.
+- 진도 저장 localStorage `sciLab.v2`. 검증: Playwright 390·320px × 12경로 콘솔 에러 0·가로 넘침 0, 실험실 기록·빈칸·관문·재도전·인쇄 PDF 확인. `bank/audit.mjs`는 `*.lesson.js`를 건너뜀.
+- 남은 것: 쿠팡 로켓배송 대표 상품 URL(`coupangUrl` 지금 null → 검색 링크), 홈 탐구 지도(v2 "지도로"는 아직 v1 홈), 원본 그림 업로드, 다음 단원.
+
 ## 진행 기록 — 2026-09-19 3차 (Cowork 세션)
 - 단원평가 4-1 Ⅰ 세트1 + 정답 및 풀이: **스캔본 확정**(텍스트 층 0, PyMuPDF). 페이지를 렌더해 Claude가 직접 전사 → 20문항 공식 정답과 20/20 일치.
 - 원문·정답 → Supabase `public.science_bank_source`(프로젝트 fgahqumaldheqettmvqg) 20행. `source_key = gfield-science:cats-set1:4-1:u01:set1:q{n}`. RLS on·정책 없음(서비스 키 전용, `golden_bell_answer_books`와 같은 패턴). 원본 그림은 `figures` 비어 있음(`visualModel.figure:'pending-upload'`) — MCP로는 이미지 업로드 불가.
