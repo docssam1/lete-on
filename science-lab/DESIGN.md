@@ -61,7 +61,7 @@
 - 위계: docssam 말풍선(H1급) → 카드 제목 → 본문 → 보조 캡션.
 
 ## TYPE SYSTEM
-- 제목·말풍선: **Jua**(Google Fonts, 둥근 고딕, 아이 대상 친근함) 400. 대체: "Nanum Square Round", sans-serif.
+- 제목·말풍선·버튼: **Gaegu(개구)** 700 (Google Fonts, 손글씨체 — 사용자 선택 2026-09-19, 주아·고운돋움·도현과 비교 후). 대체: "Jua", sans-serif.
 - 본문: **Pretendard** 400/600, 대체 Noto Sans KR. 본문 16px(폰)·17px(태블릿+), 행간 1.6, `word-break: keep-all`.
 - 라벨(단계명·변인 태그): 12px 700, 자간 +0.06em, 대문자 아님(한글).
 - 수치(온도·시간): `tabular-nums`.
@@ -86,7 +86,7 @@ docssam: 검은 머리 남자아이, 흰 가운, 하늘색 셔츠, **남색 넥�
 - 버튼: "다음", "실험 보기", "지도로", "다시". 설명형 버튼 금지.
 
 ## CONSTRAINTS
-- FONT: Jua + Pretendard
+- FONT: Gaegu 700 + Pretendard
 - STYLE: playful character-led, flat
 - MODE: light 기본, dark 지원
 

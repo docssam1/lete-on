@@ -12,7 +12,7 @@
 5. **홈 = 탐구 지도**: 구불한 길 위 정거장, 끝낸 곳 깃발, 다음 정거장에 docssam. 정거장마다 실험·개념·확장 3칸 진도. "이어서 하기" 고정 버튼.
 6. **3D 엔진**: 지금 `engine.js`(Three.js r184, 비트 재생)를 유지하고 `controls/readout` 조작 모드를 추가. 원본 도형만. 모바일 규칙(터치 44px, 가로 모드 오버레이, 저사양 축소, 감소된 동작). 외부 시뮬레이션(PhET 등)은 후보만 조사, 미연동.
 7. **품질 규칙**: 사용성 점검(`UX-TEST-2026-09-19.md`의 심각 4건 해소 필수), 320px 가로 넘침 0, 콘솔 에러 0, 정답 분포·보기 길이 검사기 통과, 스킬의 릴리스 게이트 8개.
-8. **작업 방식**: 인터뷰 → 계획(DESIGN.md) → 사용자 승인 → 구현. 1차 범위 **4-1 Ⅰ 자석의 이용** 1단원. 디자인 규격은 MengTo design-first-ui-prompting 형식, 타이포 Jua + Pretendard.
+8. **작업 방식**: 인터뷰 → 계획(DESIGN.md) → 사용자 승인 → 구현. 1차 범위 **4-1 Ⅰ 자석의 이용** 1단원. 디자인 규격은 MengTo design-first-ui-prompting 형식, 타이포 Gaegu(개구) 700 + Pretendard.
 9. **제외**: 화올 최종교재. 자기 낭독 녹음. 자동 재생 음성. 이모지 아이콘. 외부 스톡 일러스트.
 
 ## 진행 기록 — 2026-09-19 3차 (Cowork 세션)
@@ -20,6 +20,8 @@
 - 원문·정답 → Supabase `public.science_bank_source`(프로젝트 fgahqumaldheqettmvqg) 20행. `source_key = gfield-science:cats-set1:4-1:u01:set1:q{n}`. RLS on·정책 없음(서비스 키 전용, `golden_bell_answer_books`와 같은 패턴). 원본 그림은 `figures` 비어 있음(`visualModel.figure:'pending-upload'`) — MCP로는 이미지 업로드 불가.
 - git → `data/units/s41-u01.js`: **authored 20문항**(cloze 6·table-fill 1·single-choice 10·written 3). 객관식 정답 위치 ③①⑤②④②⑤①③④(각 2회), 정답이 유일 최장 보기인 문항 0. 창작 그림 2개(SVG, 초기 상태만).
 - `assets/docssam.png` **미반입**: 이 세션은 git 프록시 권한이 없고 GitHub MCP는 텍스트만 올림 → GitHub 웹 업로드 또는 저장소 권한 있는 세션에서.
+- docssam 표정 9장 반입(GPT 생성, 사용자 G드라이브 `docssam 표정/`): A1 몸 고정 + A2~A5 얼굴 조각(말하기 3·깜빡임 1, SIFT 정렬 오차 <1px), B1~B4 반응. 웹용 webp는 `docssam 표정/web/` 9개(≈560KB). 말하기 = 음절 모음(ㅏㅓ→크게, ㅗㅜ→동그랗게, 그 밖→반쯤). 저장소 반입은 GitHub 웹 로그인 후 업로드 대기.
+- 폰트 확정: 말풍선·제목·버튼 **Gaegu 700**, 본문 Pretendard.
 - 남은 것: 어댑터 등록(`bank/science-bank-adapter.js`), 감사 스크립트, 5E 콘텐츠(`unit.engage~evaluate`), 인터뷰 3~9.
 
 ## 지금 상태
