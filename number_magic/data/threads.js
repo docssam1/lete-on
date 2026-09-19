@@ -17,7 +17,12 @@
 window.NM_THREADS = {
 
 /* ── NS 수 감각 ───────────────────────────── */
-NS1:{ name:{ko:'자릿값 읽기',en:'Place Value',zh:'位值'}, gen:'ns1_placeValue', prereq:[],
+/* 유아(수의 나라)와 초등의 이음매(2026-09-19) — NS1·NS2 의 선수가 비어 있어, 데이터상
+   과정 0(유아)과 과정 1(초등)이 아무 연결고리 없이 따로 서 있었다. 유아 과정을 끝내고
+   무엇으로 이어지는지가 어디에도 안 적혀 있던 것이다. prereq 는 잠그는 장치가 아니라
+   사다리의 순서를 적어 두는 자리다(앱은 이 값으로 아무것도 막지 않는다 — 책·레벨은 자유
+   선택 원칙 그대로). check-ladder.js 가 이 순서를 지킨다. */
+NS1:{ name:{ko:'자릿값 읽기',en:'Place Value',zh:'位值'}, gen:'ns1_placeValue', prereq:['NL1','NL4'],
   concept:{ko:'수는 서 있는 자리에 따라 크기가 달라져요. 472에서 4는 백의 자리라 400을, 7은 십의 자리라 70을 뜻해요.',
     en:'A digit means a different amount depending on its place. In 472 the 4 sits in the hundreds place, so it means 400.',
     zh:'数字所在的位置决定它的大小。472中的4在百位，表示400；7在十位，表示70。'},
@@ -28,7 +33,7 @@ NS1:{ name:{ko:'자릿값 읽기',en:'Place Value',zh:'位值'}, gen:'ns1_placeV
           /* 과정-로드맵.md §4 다함식 위젯 — 십진블록(백판·십막대·낱개)으로 수 읽기.
              2026-08-27 Phase 3 신규. */
           {id:4,label:{ko:'십진블록 읽기',en:'Read base-10 blocks',zh:'读十进制方块'},params:{mode:'base10'}}] },
-NS2:{ name:{ko:'모으기·가르기',en:'Compose & Split',zh:'合与分'}, gen:'ns2_split', prereq:[],
+NS2:{ name:{ko:'모으기·가르기',en:'Compose & Split',zh:'合与分'}, gen:'ns2_split', prereq:['NL2'],
   concept:{ko:'두 수를 모으면 하나가 되고, 한 수를 둘로 가를 수 있어요. 3과 4를 모으면 7, 7은 3과 4로 갈라져요.',
     en:'Two numbers join into one, and one number splits into two. 3 and 4 make 7, and 7 splits into 3 and 4.',
     zh:'两个数合起来成为一个数，一个数也能分成两个。3和4合成7，7可以分成3和4。'},
