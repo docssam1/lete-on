@@ -196,7 +196,7 @@ const COURSE_SPEC = [
     "1단계 확장 레벨들도 드릴 재료로"(작업지시)에 따라 drills로 재사용한다 — 새 id를
     지어내지 않고 threads.js에 이미 있는 스레드만 쓴다는 기존 규칙을 그대로 지켰다. */
  {id:26, tier:'challenge', title:{ko:'곱셈의 정점',en:'Peak of Multiplication',zh:'乘法之巅'},
-   drills:['ML8','ML18','ML8@3','ML18@3'], magic:[['H-01'],['H-02'],['C-12'],['C-15']],
+   drills:['ML8','ML18','ML8@6','ML18@3'], magic:[['H-01'],['H-02'],['C-12'],['C-15']],
    creative:['CH1@1','CH2@1']},
  {id:27, tier:'challenge', title:{ko:'수의 비밀',en:'Secrets of Numbers',zh:'数的秘密'},
    drills:['DV7','DV8','MX2','DV6@3','DV6@4'], magic:[['H-03'],['H-04'],['H-05'],['H-06']],

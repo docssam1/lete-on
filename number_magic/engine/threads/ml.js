@@ -470,6 +470,22 @@ NM_TGEN['ml7_mul3d1d'] = function(params, rng) {
 };
 
 /* ── ML8 — 두 자리×두 자리 ───────────────────────────────── */
+/* (두 자리)×(두 자리)도 올림 횟수로 단계를 가른다 — 창의수연 C11이 "올림 없는 (두)×(두)",
+   D권이 올림 1~4회를 네 단원으로 쓴다(2026-09-19). 세로셈은 부분곱이 둘이라 올림 자리가
+   넷이다: 곱하는 수의 일의 자리로 두 번(일·십), 십의 자리로 또 두 번.
+   부분곱을 더할 때 나는 올림은 세지 않는다 — 그건 덧셈이지 곱셈의 올림이 아니고,
+   교재의 단원 이름도 곱하는 과정의 올림만 센다(12×34도 48+360에서 자리가 넘는다). */
+function _ml8Carries(a, b){
+  const ao = a % 10, at = Math.floor(a / 10);
+  const bo = b % 10, bt = Math.floor(b / 10);
+  const n = (x, y) => {            /* (두 자리)×(한 자리) 한 번에 나는 올림 수 */
+    if (!y) return 0;              /* 몇십을 곱할 땐 그 부분곱이 통째로 0 */
+    const oC = Math.floor((x % 10) * y / 10);
+    const tC = Math.floor((Math.floor(x / 10) * y + oC) / 10);
+    return (oC ? 1 : 0) + (tC ? 1 : 0);
+  };
+  return n(a, bo) + n(a, bt);
+}
 NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
   /* ── 고급 C-1 확장: 엑스맨 곱셈 (세 자리 이상) ─────────────────
      원본(고급 C '엑스맨 곱셈')은 3자리×2자리 · 3자리×3자리만 실제
@@ -540,10 +556,49 @@ NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
     };
   }
 
-  const easy = params.easy !== false;
+  /* ── (두 자리)×(몇십) — 교재의 앞 단원. ×(십의 자리) 한 번 하고 끝에 0 하나를 붙인다 ── */
+  if (params.tens === true) {
+    const lv = params.level || 'main';
+    let aT = R(rng, lv === 'practice' ? 11 : 12, lv === 'practice' ? 49 : 99);
+    if (aT % 10 === 0) aT += R(rng, 1, 9);   /* 몇십×몇십은 이 단원이 아니다(50×90) */
+    const bT = R(rng, 2, 9);
+    const bb = bT * 10;
+    const half = aT * bT;
+    return {
+      prompt: {
+        ko: `${aT} × ${bb}은 ${aT} × ${bT}을 하고 끝에 0을 하나 붙여요`,
+        en: `For ${aT} × ${bb}, do ${aT} × ${bT} and put one zero at the end`,
+        zh: `${aT} × ${bb}先算${aT} × ${bT}，再在末尾添一个0`
+      },
+      tex: `${aT} \\times ${bb} = \\square`,
+      answer: aT * bb,
+      answerType: 'steps',
+      widget: 'vertical',
+      steps: [
+        { tex: `${aT} \\times ${bT} = \\square`,   blank: half },
+        { tex: `${half} \\times 10 = \\square`,    blank: aT * bb }
+      ]
+    };
+  }
+
+  const cMode = params.carry || '';      /* 'none' | 'one' | 'two' | 'many'(3~4회) */
+  const easy = !cMode && params.easy !== false;
   let a, b;
 
-  if (easy) {
+  if (cMode) {
+    let tries = 0;
+    do {
+      a = R(rng, 11, 99);
+      b = R(rng, 11, 99);
+      /* 몇십은 부분곱 하나가 통째로 비어 올림 수를 세는 뜻이 없어진다(30×24 꼴) */
+      if (a % 10 === 0 || b % 10 === 0) continue;
+      const n = _ml8Carries(a, b);
+      if (cMode === 'none' && n === 0) break;
+      if (cMode === 'one'  && n === 1) break;
+      if (cMode === 'two'  && n === 2) break;
+      if (cMode === 'many' && n >= 3) break;
+    } while (tries++ < 600);
+  } else if (easy) {
     a = R(rng, 11, 99);
     /* easy b: 몇십(×1d급) 또는 십의 자리=1(11~19) */
     const easyBs = [10,20,30,40,50,60,70,80,90,
@@ -560,6 +615,27 @@ NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
   const part1  = a * bTens * 10;
   const part2  = a * bOnes;
   const answer = a * b;
+
+  /* 곱하는 수가 몇십이면 둘째 부분곱이 통째로 0이라 "83 × 0 = 0" 이라는 빈 단계가 생긴다
+     (easy 레벨과 C-12 연습에서 실제로 그렇게 나갔다, 2026-09-19). 그럴 땐 몇십 곱하기와
+     같은 두 단계로 — ×(십의 자리) 한 번, 끝에 0 하나. */
+  if (bOnes === 0) {
+    return {
+      prompt: {
+        ko: `${a} × ${b}은 ${a} × ${bTens}을 하고 끝에 0을 하나 붙여요`,
+        en: `For ${a} × ${b}, do ${a} × ${bTens} and put one zero at the end`,
+        zh: `${a} × ${b}先算${a} × ${bTens}，再在末尾添一个0`
+      },
+      tex: `${a} \\times ${b} = \\square`,
+      answer,
+      answerType: 'steps',
+      widget: 'vertical',
+      steps: [
+        { tex: `${a} \\times ${bTens} = \\square`,      blank: a * bTens },
+        { tex: `${a * bTens} \\times 10 = \\square`,    blank: answer }
+      ]
+    };
+  }
 
   return {
     prompt: {
