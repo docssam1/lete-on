@@ -15,6 +15,11 @@
 8. **작업 방식**: 인터뷰 → 계획(DESIGN.md) → 사용자 승인 → 구현. 1차 범위 **4-1 Ⅰ 자석의 이용** 1단원. 디자인 규격은 MengTo design-first-ui-prompting 형식, 타이포 Gaegu(개구) 700 + Pretendard.
 9. **제외**: 화올 최종교재. 자기 낭독 녹음. 자동 재생 음성. 이모지 아이콘. 외부 스톡 일러스트.
 
+## ⚠ 새 세션은 여기부터 (2026-09-20)
+- **이미 끝난 것 — 다시 만들지 말 것**: 자석 단원 파일(창작 26문항 + 5E 구성 `s41-u01.lesson.js`) · 5E 5단계 화면 v2 · 조작형 가상 실험실(고리 자석 탑) · 3D 장면 `ring-tower` · 준비물 QR · 탐구보고서 · 교재 인쇄 · `bank/audit.mjs` · docssam 표정 9장(assets/) · **홈 탐구 지도**(`v2/home.js`·`home.css`·`units-index.js`, 입체 정거장) · 재도전(보기 섞기) · 진도 저장(localStorage `sciLab.v2`).
+- **Claude Code가 할 일은 `TASK-bank-taxonomy.md` 하나뿐**(개정 분류 · 원본 그림 번호 지우기 → `science-src` 브랜치 · 유사문항 80 · 교재 유형별). 그 밖의 파일(`v2/home.*`, `units-index.js`)은 Cowork 세션이 맡는다.
+- DESIGN.md는 v2 구현으로 사실상 승인됨.
+
 ## 진행 기록 — 2026-09-19 4차: 자석 단원 v2 (화면 + 교재)
 - 주소: `/science-lab/v2/#/s41-u01/1` (v1 15유닛 사이트는 그대로). 파일: `v2/index.html · v2.js · v2.css · lab-ring-tower.js`, 장면 `scenes/ring-tower.js`, 5E 구성 `data/units/s41-u01.lesson.js`(문항은 `s41-u01.js` items를 id로 참조), QR `assets/qr-s41-u01-kit.svg`.
 - 흐름: ①궁금(3D 고리 자석 탑 자동 재생 + 예상 3지) ②실험(가상 실험실: 고리 눌러 뒤집기 → 떠 있는 층·탑 높이 → 표에 적기 / 3D로 보기 / 집에서 실험: 준비물·쿠팡 검색 링크·QR·순서·안전) ③개념(내 예상 vs 결과, 내 기록 최고 탑, 비유, 빈칸 카드 4·표 채우기·잠깐 확인) ④확장(읽을거리 + 영재성 3 + 탐구보고서) ⑤점검(3문항, 2/3 통과, 실패 시 "다시 풀기"가 주 버튼·보기 섞기).
