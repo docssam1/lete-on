@@ -5,7 +5,8 @@ window.HSMIDDLE_DATA = {
     "오지민",
     "엄한빈",
     "이주원",
-    "임도형"
+    "임도형",
+    "김하연"
   ],
   "studentCode": {
     "DEMO": "HS-DEMO",
@@ -13,7 +14,8 @@ window.HSMIDDLE_DATA = {
     "오지민": "HS-1329",
     "엄한빈": "HS-4303",
     "이주원": "HS-2342",
-    "임도형": "HS-7887"
+    "임도형": "HS-7887",
+    "김하연": "HS-2670"
   },
   "access": {
     "DEMO": [
@@ -43,6 +45,13 @@ window.HSMIDDLE_DATA = {
     ],
     "임도형": [
       "diagnostic"
+    ],
+    "김하연": [
+      "diagnostic",
+      "mock-1",
+      "mock-2",
+      "mock-3",
+      "final"
     ]
   },
   "admins": [
