@@ -1,0 +1,12 @@
+{
+  "seesaw1": {
+    "left": "cat",
+    "right": "dog",
+    "left_heavier": true
+  },
+  "seesaw2": {
+    "left": "dog",
+    "right": "rabbit",
+    "left_heavier": true
+  }
+}
