@@ -19,13 +19,15 @@ const assert = (value, message) => { if (!value) throw new Error(message); };
 const url = target => base + "/" + target;
 const seed = () => {
   localStorage.setItem("hs-student", "DEMO");
-  localStorage.setItem("hs-code", "HS-DEMO");
+  localStorage.setItem("hsm-session-token-v2", "a".repeat(64));
+  localStorage.setItem("hsm-session-profile-v2", JSON.stringify({ name: "DEMO", access: ["diagnostic"], admin: false, expiresAt: new Date(Date.now() + 3600000).toISOString() }));
   localStorage.setItem("hsm-mark-mode", "ox");
   for (let i = 1; i <= 40; i++) localStorage.setItem("hsm-ox-" + i, i % 5 === 0 ? "x" : "o");
 };
 const adminSeed = () => {
   localStorage.setItem("hs-student", "docssam");
-  localStorage.setItem("hs-code", "01020837265");
+  localStorage.setItem("hsm-session-token-v2", "b".repeat(64));
+  localStorage.setItem("hsm-session-profile-v2", JSON.stringify({ name: "docssam", access: ["diagnostic", "mock-1", "mock-2", "mock-3", "final"], admin: true, expiresAt: new Date(Date.now() + 3600000).toISOString() }));
   localStorage.setItem("hsm-mark-mode", "ox");
   for (let i = 1; i <= 40; i++) localStorage.setItem("hsm-ox-" + i, i % 5 === 0 ? "x" : "o");
   window.__printCalls = 0;

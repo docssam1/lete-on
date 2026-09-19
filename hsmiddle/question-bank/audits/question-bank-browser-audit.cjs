@@ -32,7 +32,13 @@ async function enter(page, destination) {
   await page.goto(destination || url, { waitUntil: "domcontentloaded" });
   await page.evaluate(function () {
     localStorage.setItem("hs-student", "DEMO");
-    localStorage.setItem("hs-code", "HS-DEMO");
+    localStorage.setItem("hsm-session-token-v2", "a".repeat(64));
+    localStorage.setItem("hsm-session-profile-v2", JSON.stringify({
+      name: "DEMO",
+      access: ["question-bank"],
+      admin: false,
+      expiresAt: new Date(Date.now() + 3600000).toISOString()
+    }));
   });
   await page.reload({ waitUntil: "networkidle" });
   await page.locator("#app:not([hidden])").waitFor({ state: "visible" });
@@ -41,9 +47,15 @@ async function enter(page, destination) {
 async function enterAsAdmin(page, destination) {
   await page.goto(destination || url, { waitUntil: "domcontentloaded" });
   await page.evaluate(function () {
-    const name = window.HSMIDDLE_DATA.admins[0];
+    const name = "docssam";
     localStorage.setItem("hs-student", name);
-    localStorage.setItem("hs-code", window.HSMIDDLE_DATA.studentCode[name]);
+    localStorage.setItem("hsm-session-token-v2", "b".repeat(64));
+    localStorage.setItem("hsm-session-profile-v2", JSON.stringify({
+      name,
+      access: ["diagnostic", "mock-1", "mock-2", "mock-3", "final"],
+      admin: true,
+      expiresAt: new Date(Date.now() + 3600000).toISOString()
+    }));
   });
   await page.reload({ waitUntil: "networkidle" });
   await page.locator("#app:not([hidden])").waitFor({ state: "visible" });
