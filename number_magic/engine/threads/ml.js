@@ -300,11 +300,41 @@ NM_TGEN['ml5_tensMul'] = function(params, rng) {
 };
 
 /* ── ML6 — 두 자리×한 자리 (분배 암산) ──────────────────────── */
+/* (두 자리)×(한 자리)는 "올림이 어디서 나는가"로 단계가 갈린다 — 교재 초등연산 C05~C08이
+   네 단원으로 나눠 가르치는 자리다(2026-09-19 확인).
+     'tens'  십의 자리에서만 올림    51 × 2 = 102  (일의 자리는 그대로, 백의 자리가 생김)
+     'ones'  일의 자리에서만 올림    15 × 2 = 30   (올린 1을 십의 자리에 더함)
+     'over'  일의 자리 올림이 번져 100 이상   34 × 3 = 102
+     'both'  올림 2회               45 × 3 = 135
+   carry 를 안 주면 예전처럼 easy 로 뽑는다. */
+function _ml6Carry(a, b){
+  const o    = (a % 10) * b;                      /* 일의 자리 곱 */
+  const oC   = o >= 10 ? Math.floor(o / 10) : 0;  /* 일 → 십 올림 */
+  const tRaw = Math.floor(a / 10) * b;            /* 십의 자리 곱(올림 더하기 전) */
+  const tC   = (tRaw + oC) >= 10 ? 1 : 0;         /* 십 → 백 올림 */
+  return { oC: oC, tC: tC, tRaw: tRaw };
+}
 NM_TGEN['ml6_mul2d1dMental'] = function(params, rng) {
-  const easy = params.easy !== false;
+  const easy  = params.easy !== false;
+  const cMode = params.carry || '';
   let a, b;
 
-  if (easy) {
+  if (cMode) {
+    let tries = 0;
+    do {
+      a = R(rng, 11, 99);
+      b = R(rng, 2, 9);
+      if (a % 10 === 0) continue;                 /* 일의 자리 0은 올림 이야기가 안 된다 */
+      const c = _ml6Carry(a, b);
+      if (cMode === 'tens' && !c.oC &&  c.tC) break;
+      if (cMode === 'ones' &&  c.oC && !c.tC) break;
+      /* 'over' 는 십의 자리 곱 자체는 10을 안 넘는데 올린 1 때문에 넘는 경우(34×3),
+         'both' 는 십의 자리 곱이 이미 10을 넘는 경우(45×3)다 — 교재가 나눠 가르치는 지점. */
+      if (cMode === 'over' &&  c.oC && c.tC && c.tRaw < 10) break;
+      if (cMode === 'both' &&  c.oC && c.tC && c.tRaw >= 10) break;
+      if (cMode === 'none' && !c.oC && !c.tC) break;
+    } while (tries++ < 500);
+  } else if (easy) {
     /* easy: a가 몇십이거나 b가 2~3 */
     if (R(rng, 0, 1) === 0) {
       a = R(rng, 1, 9) * 10;   /* 10·20…90 */
