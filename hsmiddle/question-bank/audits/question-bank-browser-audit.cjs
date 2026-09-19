@@ -140,7 +140,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
   try {
     const desktop = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
     watch(desktop, "desktop");
-    await enter(desktop);
+    await enterAsAdmin(desktop);
     await noOverflow(desktop, "desktop catalog");
 
     const bodyText = await desktop.locator("body").innerText();
@@ -314,7 +314,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
 
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     watch(mobile, "mobile");
-    await enter(mobile);
+    await enterAsAdmin(mobile);
     await noOverflow(mobile, "mobile catalog");
     const mobileQ02 = card(mobile, 2);
     const cardBox = await mobileQ02.boundingBox();
@@ -356,7 +356,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
 
     const directLink = await browser.newPage({ viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1 });
     watch(directLink, "direct-link");
-    await enter(directLink, `${url}?qs=${Array.from({ length: 40 }, function (_, index) { return index + 1; }).join(",")}`);
+    await enterAsAdmin(directLink, `${url}?qs=${Array.from({ length: 40 }, function (_, index) { return index + 1; }).join(",")}`);
     const directSelected = await directLink.locator('.type-card input[type="checkbox"]:checked').evaluateAll(function (inputs) {
       return inputs.map(function (input) {
         return Number(input.closest(".type-card").querySelector(".q-number").textContent);
