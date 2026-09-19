@@ -85,6 +85,8 @@ For every new or modified generator:
 
 ## 6. Important Files
 
+Do not assume another project has `source-data.js`. For cross-project or commercial-textbook integration, discover that project's actual storage first and follow `QUESTION-BANK-SOURCE-ADAPTER-CONTRACT.md`. The file below is only the current Fields implementation of that contract.
+
 - `fields-classic/question-bank/index.html`: selection UI and worksheet shell.
 - `fields-classic/question-bank/app.js`: selection state, routing, worksheet/answer rendering.
 - `fields-classic/question-bank/source-data.js`: curriculum, exams, source-question index, detailed classifications.
@@ -95,6 +97,7 @@ For every new or modified generator:
 - `fields-classic/question-bank/golden-bell.html` / `golden-bell.js` / `golden-bell-data.js`: concept learning mode.
 - `fields-classic/program/index.html`: learning shelf and product navigation.
 - `fields-classic/question-bank/QUESTION-AUTHORING-GUIDE.md`: authoring rules.
+- `fields-classic/question-bank/QUESTION-BANK-SOURCE-ADAPTER-CONTRACT.md`: filename-independent contract for connecting other textbook banks without copying the current data file.
 - `fields-classic/question-bank/BOOK01-SOURCE-AUDIT.md`: Book 1 source evidence and audit notes.
 - `fields-classic/question-bank/SOURCE-QUESTION-DB-AUDIT.md`: source DB audit record.
 - `fields-classic/question-bank/HANDOVER.md` and `HANDOVER-GPT.md`: older handovers; this file is the current Codex-to-Claude checkpoint.
