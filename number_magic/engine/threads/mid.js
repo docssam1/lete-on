@@ -262,9 +262,9 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
     const [n, den] = normFrac(conv1 + conv2, LCD);
     return {
       prompt: {
-        ko: `분모가 다르면 분모의 최소공배수로 통분한 뒤 더해요 (LCM=${LCD})`,
+        ko: `분모가 다르면 분모의 최소공배수로 통분한 뒤 더해요 (최소공배수=${LCD})`,
         en: `Different denominators — convert to the LCM first, then add (LCM=${LCD})`,
-        zh: `分母不同——先通分到最小公倍数再相加(LCM=${LCD})`
+        zh: `分母不同——先通分到最小公倍数再相加(最小公倍数=${LCD})`
       },
       tex: `\\dfrac{${a1}}{${d1}} + \\dfrac{${a2}}{${d2}} = \\square`,
       answer: [n, den], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
@@ -286,9 +286,9 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
   const exprTex = terms.map((a, i) => (i === 0 ? `\\dfrac{${a}}{${ds[i]}}` : ` + \\dfrac{${a}}{${ds[i]}}`)).join('');
   return {
     prompt: {
-      ko: `세 유리수의 덧뺄셈 혼합이에요. 분모의 최소공배수로 통분한 뒤 앞에서부터 계산해요 (LCM=${LCD})`,
+      ko: `세 유리수의 덧뺄셈 혼합이에요. 분모의 최소공배수로 통분한 뒤 앞에서부터 계산해요 (최소공배수=${LCD})`,
       en: `Mixed addition of three rational numbers — convert to the LCM, then combine left to right (LCM=${LCD})`,
-      zh: `三个有理数的混合加减——先通分到最小公倍数，再从左到右计算(LCM=${LCD})`
+      zh: `三个有理数的混合加减——先通分到最小公倍数，再从左到右计算(最小公倍数=${LCD})`
     },
     tex: `${exprTex} = \\square`,
     answer: [n, den], answerShape: 'fraction', answerType: 'number', widget: 'numpad',

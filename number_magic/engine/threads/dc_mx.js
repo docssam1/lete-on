@@ -869,7 +869,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
     answerType: 'steps',
     widget:     'steps',
     steps: [
-      { tex: `\\gcd(${a},\\,${d}) = \\square`,                                   blank: g  },
+      { tex: `\\text{최대공약수}(${a},\\,${d}) = \\square`,                                   blank: g  },
       { tex: `\\dfrac{${a} \\div ${g}}{${d} \\div ${g}} = \\dfrac{\\square}{${sd}}`, blank: sn }
     ]
   };

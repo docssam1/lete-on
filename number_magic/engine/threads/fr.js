@@ -219,9 +219,9 @@ NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
 
     return {
       prompt: {
-        ko: '분모를 통분해요! 최소공배수(LCM) = ' + LCD,
+        ko: '분모를 통분해요! 최소공배수 = ' + LCD,
         en: 'Find a common denominator first! LCM = ' + LCD,
-        zh: '先通分！最小公倍数(LCM) = ' + LCD
+        zh: '先通分！最小公倍数 = ' + LCD
       },
       tex: '\\frac{' + a_n + '}{' + d1 + '} ' + op + ' \\frac{' + b_n + '}{' + d2 + '}',
       answer: resN,   // 통분 후 분자
@@ -262,15 +262,15 @@ NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
 
     return {
       prompt: {
-        ko: '대분수 이분모! 분수 부분만 통분해요. LCM = ' + LCD,
+        ko: '대분수 이분모! 분수 부분만 통분해요. 최소공배수 = ' + LCD,
         en: 'Mixed number with unlike denominators — convert the fraction parts. LCM = ' + LCD,
-        zh: '带分数异分母——只通分分数部分。LCM = ' + LCD
+        zh: '带分数异分母——只通分分数部分。最小公倍数 = ' + LCD
       },
       tex: a_w + '\\frac{' + a_n + '}{' + d1 + '} ' + op + ' ' + b_w + '\\frac{' + b_n + '}{' + d2 + '}',
       answer: rw,
       answerType: 'steps',
       steps: [
-        { tex: '\\text{LCM: } \\square', blank: LCD },
+        { tex: '\\text{최소공배수}: \\square', blank: LCD },
         { tex: '\\text{분수: } \\frac{' + conv_a + '}{' + LCD + '} ' + op + ' \\frac{' + conv_b + '}{' + LCD + '} = \\frac{\\square}{' + LCD + '}', blank: Math.abs(conv_a - conv_b) },
         { tex: '\\text{정수: } \\square', blank: rw }
       ],

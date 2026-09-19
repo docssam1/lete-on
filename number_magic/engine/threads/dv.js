@@ -427,7 +427,9 @@
       };
     }
 
-    /* ---- 최대공약수(GCD) — 유클리드 호제법 스텝 ----
+    /* ---- 최대공약수 — 유클리드 호제법 스텝 ----
+       한국어 화면·인쇄물에 GCD·LCM 약어를 쓰지 않는다(2026-09-19 원장 "최소공배수가 맞지") —
+       초·중 교과는 최대공약수·최소공배수로 부른다. 영어 지문(en)만 GCD/LCM 을 쓴다. ----
        고정 목록 대신 a,b를 직접 뽑아 유클리드 호제법을 돌려 본다.
        g<2(재미없는 서로소)나 단계가 너무 많은(3단계 초과) 조합은 다시 뽑아,
        "2~3단계로 끝나는 쌍"이라는 원래 설계 의도는 유지하면서 조합 수를 크게 늘린다. */
@@ -459,15 +461,15 @@
           { tex: `12 = 6 \\times 2 + \\square`,  blank: 0 }
         ];
       }
-      steps.push({ tex: `\\gcd(${a},\\,${b}) = \\square`, blank: g });
+      steps.push({ tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`, blank: g });
 
       return {
         prompt: {
-          ko: `${a}와 ${b}의 최대공약수(GCD)를 구해요`,
+          ko: `${a}와 ${b}의 최대공약수를 구해요`,
           en: `Find the GCD of ${a} and ${b}`,
           zh: `求${a}和${b}的最大公因数`
         },
-        tex:        `\\gcd(${a},\\,${b}) = \\square`,
+        tex:        `\\text{최대공약수}(${a},\\,${b}) = \\square`,
         answer:     g,
         answerType: 'steps',
         widget:     'steps',
@@ -476,7 +478,7 @@
       };
     }
 
-    /* ---- 최소공배수(LCM) — GCD → 공식 ---- */
+    /* ---- 최소공배수 — 최대공약수 → 공식 ---- */
     /* mode === 'lcm' */
     let a, b, g, l;
     let tries = 0;
@@ -492,21 +494,21 @@
 
     return {
       prompt: {
-        ko: `${a}와 ${b}의 최소공배수(LCM)를 구해요`,
+        ko: `${a}와 ${b}의 최소공배수를 구해요`,
         en: `Find the LCM of ${a} and ${b}`,
         zh: `求${a}和${b}的最小公倍数`
       },
-      tex:        `\\text{lcm}(${a},\\,${b}) = \\square`,
+      tex:        `\\text{최소공배수}(${a},\\,${b}) = \\square`,
       answer:     l,
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `\\gcd(${a},\\,${b}) = \\square`,                              blank: g },
-        { tex: `\\text{lcm} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
+        { tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`,                              blank: g },
+        { tex: `\\text{최소공배수} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
       ],
       solution: [
-        { tex: `\\gcd(${a},\\,${b}) = \\square`,                              blank: g },
-        { tex: `\\text{lcm} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
+        { tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`,                              blank: g },
+        { tex: `\\text{최소공배수} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
       ]
     };
   };
@@ -1085,7 +1087,7 @@
     if (mode === 'gcd') {
       return {
         prompt: { ko: `${a}${dvNumWa(a)} ${b}의 최대공약수는?`, en: `What is the greatest common factor of ${a} and ${b}?`, zh: `${a}和${b}的最大公因数是多少？` },
-        tex: `\\gcd(${a},\\, ${b}) = \\square`,
+        tex: `\\text{최대공약수}(${a},\\, ${b}) = \\square`,
         answer: g, answerType: 'number', widget: 'numpad',
         solution: [{ tex: `${a}: ${dvFactorsOf(a).join(',\\,')}` },
                    { tex: `${b}: ${dvFactorsOf(b).join(',\\,')}` },
@@ -1105,7 +1107,7 @@
       prompt: { ko: `${a}${dvNumWa(a)} ${b}의 최소공배수는?`, en: `What is the least common multiple of ${a} and ${b}?`, zh: `${a}和${b}的最小公倍数是多少？` },
       tex: `\\text{lcm}(${a},\\, ${b}) = \\square`,
       answer: l, answerType: 'number', widget: 'numpad',
-      solution: [{ tex: `\\gcd(${a},${b}) = ${g}` },
+      solution: [{ tex: `\\text{최대공약수}(${a},${b}) = ${g}` },
                  { tex: `${a} \\times ${b} \\div ${g} = \\square`, blank: l }]
     };
   };

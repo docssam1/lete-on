@@ -102,7 +102,7 @@ NM_TGEN['md36_rationalExponent'] = function (params, rng) {
     answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
     solution: [
       { tex: `\\dfrac{${m}}{${n}}` },
-      { tex: `\\gcd(${m},${n})=${k}` },
+      { tex: `\\text{최대공약수}(${m},${n})=${k}` },
       { tex: `\\dfrac{${m}}{${n}} = \\dfrac{\\square}{\\square}`, blank: [p, q] }
     ]
   };

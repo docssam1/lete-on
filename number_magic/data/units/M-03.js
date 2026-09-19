@@ -42,18 +42,18 @@ window.NM_UNITS['M-03'] = {
 
       { tag:{ko:'② 분모가 다르면 통분부터',en:'2) Different denominators — convert first',zh:'② 分母不同先通分'},
         head:{ko:'\\dfrac{1}{2} + \\dfrac{-1}{3} = \\dfrac{1}{6}',en:'\\dfrac{1}{2} + \\dfrac{-1}{3} = \\dfrac{1}{6}',zh:'\\dfrac{1}{2} + \\dfrac{-1}{3} = \\dfrac{1}{6}'},
-        desc:{ko:'분모가 다르면 <b>최소공배수(LCM)</b>로 통분해서 분모를 맞춰요. 2와 3의 LCM은 6이니까 1/2 = 3/6, −1/3 = −2/6 — 이제 분모가 같아졌으니 분자만 계산: 3+(−2)=1.',
+        desc:{ko:'분모가 다르면 <b>최소공배수</b>로 통분해서 분모를 맞춰요. 2와 3의 최소공배수는 6이니까 1/2 = 3/6, −1/3 = −2/6 — 이제 분모가 같아졌으니 분자만 계산: 3+(−2)=1.',
               en:'Different denominators? Convert to the <b>LCM</b> (least common multiple) first. LCM of 2 and 3 is 6, so \\dfrac{1}{2}=\\dfrac{3}{6} and \\dfrac{-1}{3}=\\dfrac{-2}{6} — now the denominators match, so just combine numerators: 3+(−2)=1.',
-              zh:'分母不同就先通分到<b>最小公倍数(LCM)</b>。2和3的LCM是6，所以\\dfrac{1}{2}=\\dfrac{3}{6}，\\dfrac{-1}{3}=\\dfrac{-2}{6}——现在分母一样了，只算分子：3+(−2)=1。'},
+              zh:'分母不同就先通分到<b>最小公倍数</b>。2和3的最小公倍数是6，所以\\dfrac{1}{2}=\\dfrac{3}{6}，\\dfrac{-1}{3}=\\dfrac{-2}{6}——现在分母一样了，只算分子：3+(−2)=1。'},
         mathSteps:['\\text{LCM}(2,3)=6', '\\dfrac{3}{6} + \\dfrac{-2}{6}', '\\dfrac{1}{6}'],
         result:{ko:'통분만 마치면 그다음은 이미 아는 규칙이에요!',en:'Once converted, the rest is a rule you already know!',zh:'通分完成之后，剩下的就是已经会的规则了！'},
         book:{ko:'계산 결과가 약분이 되면 기약분수로 나타내는 게 원칙이에요.',
               en:'When the result can be simplified, it should be written as a fraction in lowest terms.',
               zh:'如果结果能约分，就应该化成最简分数。'} }
     ],
-    rule:{ ko:'① 분모가 같으면 분자만 정수 규칙으로  ② 분모가 다르면 LCM으로 통분  ③ 통분한 뒤엔 같은 규칙 그대로',
+    rule:{ ko:'① 분모가 같으면 분자만 정수 규칙으로  ② 분모가 다르면 최소공배수로 통분  ③ 통분한 뒤엔 같은 규칙 그대로',
       en:'① Same denominator: just the numerators, integer rules  ② Different: convert to the LCM  ③ After converting, the same rules apply',
-      zh:'① 分母相同：分子按整数规则  ② 分母不同：通分到LCM  ③ 通分后同样的规则照用' }
+      zh:'① 分母相同：分子按整数规则  ② 分母不同：通分到最小公倍数  ③ 通分后同样的规则照用' }
   },
 
   check:{
@@ -66,9 +66,9 @@ window.NM_UNITS['M-03'] = {
     open:{ ko:'\\dfrac{1}{4} + \\dfrac{-1}{6}를 통분부터 해서 계산해봐요.',
       en:'Compute 1/4 + (−1/6) by converting to a common denominator first.',
       zh:'先通分，再计算1/4 + (−1/6)。' },
-    openHint:{ ko:'LCM(4,6)=12. \\dfrac{3}{12}+\\dfrac{-2}{12}=\\dfrac{1}{12}.',
+    openHint:{ ko:'4와 6의 최소공배수는 12. \\dfrac{3}{12}+\\dfrac{-2}{12}=\\dfrac{1}{12}.',
       en:'LCM(4,6)=12. 3/12 + (−2/12) = 1/12.',
-      zh:'LCM(4,6)=12。3/12 + (−2/12) = 1/12。' }
+      zh:'4和6的最小公倍数是12。3/12 + (−2/12) = 1/12。' }
   },
 
   lab:{

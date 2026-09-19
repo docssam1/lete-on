@@ -274,7 +274,7 @@ window.NM_ROADMAP = {
       edu:{ko:'초5-1 약수·배수',en:'G5-1 Factors & Multiples',zh:'小5-1因数与倍数'},
       theme:{ko:'약수와 배수 — 공약수·공배수·배수 판정법',en:'Factors & Multiples — GCD, LCM & Divisibility Rules',zh:'因数与倍数——公因数·公倍数·整除规律'},
       units:['T-DV4','T-DV5'],
-      tip:{ko:'GCD로 피자를 공평하게 나누고, LCM으로 두 버스가 다시 만나는 시간을 계산해요!',en:'Use GCD to share pizza fairly, LCM to find when two buses next meet!',zh:'用最大公因数公平分披萨，用最小公倍数计算两路公交何时再次相遇！'}
+      tip:{ko:'최대공약수로 피자를 공평하게 나누고, 최소공배수로 두 버스가 다시 만나는 시간을 계산해요!',en:'Use GCD to share pizza fairly, LCM to find when two buses next meet!',zh:'用最大公因数公平分披萨，用最小公倍数计算两路公交何时再次相遇！'}
     },
 
     /* ─────── CR9~CR11 + CRB : 경시의 탑 (과정 26~28 + Level 3 보강, 2026-08-25 Phase 2) ─────────
