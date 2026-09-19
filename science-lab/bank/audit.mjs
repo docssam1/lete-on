@@ -18,7 +18,7 @@ const TRACKS = new Set(['교과', '영재성']);
 
 let fail = 0;
 const err = (m) => { fail++; console.log('  ✗ ' + m); };
-for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !x.endsWith('.lesson.js'))) {
+for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !/\.(lesson|similar|taxonomy)\.js$/.test(x))) {
   const { unit, items } = await import(pathToFileURL(join(unitsDir, f)).href);
   console.log(`${unit.id} ${unit.title}: ${items.length}문항`);
   const ids = new Set();
@@ -45,6 +45,36 @@ for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !x.ends
   if (sc >= 5 && Math.max(...pos) - Math.min(...pos) > 2) err('정답 위치 쏠림');
   const cnt = (k) => items.reduce((m, i) => ((m[i.taxonomy[k]] = (m[i.taxonomy[k]] || 0) + 1), m), {});
   console.log('  수준', JSON.stringify(cnt('level')), '갈래', JSON.stringify(cnt('track')));
+}
+// 유사문항: <단원>.similar.js + <단원>.taxonomy.js
+for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.similar.js'))) {
+  const u = f.replace('.similar.js', '');
+  const { similar } = await import(pathToFileURL(join(unitsDir, f)).href);
+  const { taxonomy: tx } = await import(pathToFileURL(join(unitsDir, `${u}.taxonomy.js`)).href);
+  const types = new Set(tx.types.map((t) => t.id)), els = new Set(tx.elements.map((e) => e.id));
+  console.log(`${u} 유사문항: ${similar.length}개`);
+  const seen = new Set(), pos = [0, 0, 0, 0, 0], perType = {};
+  for (const it of similar) {
+    const t = it.taxonomy;
+    if (seen.has(it.id)) err(`${it.id} id 중복`); seen.add(it.id);
+    if (it.status !== 'authored') err(`${it.id} authored 아님`);
+    if (!types.has(t.type) || !els.has(t.element)) err(`${it.id} 분류 없음 ${t.element}/${t.type}`);
+    const key = `${it.sourceRef.of.set}-${it.sourceRef.of.no}`;
+    if (!tx.sources[key] || tx.sources[key][0] !== t.type) err(`${it.id} 원문 ${key}와 유형 불일치`);
+    perType[t.type] = (perType[t.type] || 0) + 1;
+    const body = JSON.stringify([it.prompt, it.givens, it.choices, it.explanation, it.answerContract]);
+    for (const w of EARLY_TERMS[t.grade] ?? []) if (body.includes(w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);
+    if (it.answerContract.type === 'single-choice') {
+      const a = it.answerContract.answer, L = it.choices.map((c) => c.length), so = [...L].sort((x, y) => y - x);
+      pos[a]++; if (L[a] === so[0] && so[0] - so[1] >= 3) err(`${it.id} 정답이 눈에 띄게 가장 긴 보기`);
+    }
+  }
+  const missing = Object.keys(tx.sources).filter((k) => !similar.some((it) => `${it.sourceRef.of.set}-${it.sourceRef.of.no}` === k));
+  if (missing.length) err(`유사문항 없는 원문: ${missing.join(', ')}`);
+  console.log(`  단일 선택 정답 위치 ①~⑤ = ${pos.join('·')}`);
+  if (Math.max(...pos) - Math.min(...pos) > 2) err('유사문항 정답 위치 쏠림');
+  console.log('  유형별', JSON.stringify(perType));
+  for (const [id, ty] of Object.entries(tx.authored || {})) if (!types.has(ty)) err(`창작 ${id} 유형 ${ty} 없음`);
 }
 console.log(fail ? `실패 ${fail}건` : '통과');
 process.exit(fail ? 1 : 0);
