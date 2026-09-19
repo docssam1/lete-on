@@ -17,13 +17,14 @@ function stateOf(store, id) {
 // 이어서 할 곳: 진행 중인 단원 → 아직 안 끝낸 열린 단원 → 첫 열린 단원
 function nextUnit(store) {
   const all = SEMS.flatMap((s) => s.units).filter((u) => READY[u.id]);
-  return all.find((u) => stateOf(store, u.id).kind === 'doing') || all.find((u) => stateOf(store, u.id).kind === 'open') || all[0];
+  return all.find((u) => stateOf(store, u.id).kind === 'doing') || all.find((u) => stateOf(store, u.id).kind === 'open') || null;
 }
 const hrefOf = (store, id) => { const st = store.get(id); return `#/${id}/${!st.passed && st.step != null ? st.step + 1 : 1}`; };
 
 export function pageHome($app, store, teacher) {
   const nx = nextUnit(store), nxs = nx && stateOf(store, nx.id);
-  const cta = nxs?.kind === 'doing' ? '이어서 하기' : '탐구 시작하기';
+  const go = nx || SEMS.flatMap((s) => s.units).find((u) => READY[u.id]);
+  const cta = !nx ? '다시 보기' : nxs.kind === 'doing' ? '이어서 하기' : '탐구 시작하기';
   $app.innerHTML = `<header class="top"><div class="wrap"><h1>docssam 과학 탐구 랩</h1></div></header>
     <main class="wrap home">
       <div id="t"></div>
@@ -34,7 +35,7 @@ export function pageHome($app, store, teacher) {
         return `<section class="sem" aria-label="${g}학년 ${h}학기">
           <h2 class="sem-title">${g}학년 ${h}학기</h2>
           <div class="path" style="height:${s.units.length * ROW}px">
-            <svg class="road" viewBox="0 0 100 ${s.units.length * ROW}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" /></svg>
+            <svg class="road" viewBox="0 0 100 ${s.units.length * ROW}" preserveAspectRatio="none" aria-hidden="true"><path class="edge" d="${d}" /><path class="lane" d="${d}" /><path class="mid" d="${d}" /></svg>
             ${s.units.map((u, i) => {
               const k = stateOf(store, u.id), [x, y] = pts[i], isNext = nx && u.id === nx.id;
               const done = new Set(k.st?.done || []);
@@ -48,7 +49,7 @@ export function pageHome($app, store, teacher) {
       }).join('')}
       <p class="lead home-foot">정거장을 끝내면 깃발이 꽂혀요. 준비 중인 정거장은 곧 열려요.</p>
     </main>
-    ${nx ? `<div class="bottom"><div class="wrap"><a class="btn primary" href="${hrefOf(store, nx.id)}" style="display:flex;align-items:center;justify-content:center;text-decoration:none">${cta} · ${esc(nx.title)}</a></div></div>` : ''}
+    ${go ? `<div class="bottom"><div class="wrap"><a class="btn primary" href="${hrefOf(store, go.id)}" style="display:flex;align-items:center;justify-content:center;text-decoration:none">${cta} · ${esc(go.title)}</a></div></div>` : ''}
     <div class="toast" role="status" aria-live="polite" hidden></div>`;
   const passedN = SEMS.flatMap((s) => s.units).filter((u) => stateOf(store, u.id).kind === 'passed').length;
   teacher(document.getElementById('t'), [passedN
