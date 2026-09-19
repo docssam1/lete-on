@@ -140,22 +140,21 @@ form.addEventListener("submit", async event => {
   event.preventDefault();
   const name = nameInput.value.trim();
   const code = codeInput.value.trim();
-  const access = (HSMIDDLE_DATA.access && HSMIDDLE_DATA.access[name]) || [];
-  if (!HSMIDDLE_AUTH.isValidStudent(name, code) || !access.length) {
+  const button = form.querySelector("button[type=submit]");
+  button.disabled = true;
+  button.textContent = "확인 중";
+  setStatus("서버에서 승인 정보를 확인하고 있습니다.");
+  const signed = await HSMIDDLE_AUTH.login(name, code);
+  if (!signed || !signed.access.length) {
     setStatus("이름 또는 승인번호를 확인해 주세요.", "error");
+    button.disabled = false;
+    button.textContent = "입장하기";
     codeInput.focus();
     codeInput.select();
     return;
   }
-  HSMIDDLE_AUTH.writeSession(name, code);
-  const admin = HSMIDDLE_AUTH.isAdmin(name);
-  if (!admin) {
-    HSMIDDLE_AUTH.markStart(name);
-    try {
-      if (window.HSMIDDLE_CLOUD) await HSMIDDLE_CLOUD.markStart(name);
-    } catch (e) {}
-  }
-  const go = destination(name);
+  const admin = signed.admin;
+  const go = destination(signed.name);
   setStatus(admin ? "관리자로 확인되었습니다. 이동합니다." : "확인되었습니다. 서재로 이동합니다.", "ok");
   location.href = go;
 });
