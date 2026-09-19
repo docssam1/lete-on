@@ -656,16 +656,70 @@ NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
 };
 
 /* ── ML9 — 세 자리×두 자리 ───────────────────────────────── */
+/* 여기도 올림 횟수로 가른다 — 교재 D07이 "올림이 4회 있는 (세 자리)×(두 자리)",
+   E01이 "올림이 6회"를 각각 한 회차로 쓴다(2026-09-19).
+   ⚠️ 세는 방법이 ML7과 다르다. (세 자리)×(한 자리)의 C09는 백→천 올림을 안 세지만
+   (그래서 최대 2회), (세)×(두)의 E01은 6회 = 한 줄에 3회씩이라 백→천도 센다
+   (432×6: 2×6=12 · 3×6+1=19 · 4×6+1=25 — 세 번). D07의 예(164×5)는 백의 자리에서
+   올림이 없어 한 줄에 2회씩 4회다 — 두 회차가 같은 규칙을 쓰고 있다. */
+function _ml9Carries(a, b){
+  const row = (x, y) => {
+    if (!y) return 0;
+    let carry = 0, n = 0;
+    for (let p = 1; p <= 100; p *= 10) {
+      const prod = (Math.floor(x / p) % 10) * y + carry;
+      carry = Math.floor(prod / 10);
+      if (carry) n++;
+    }
+    return n;
+  };
+  return row(a, b % 10) + row(a, Math.floor(b / 10));
+}
 NM_TGEN['ml9_mul3d2d'] = function(params, rng) {
-  const a      = R(rng, 100, 999);
-  const b      = R(rng, 11, 99);
-  const answer = a * b;
+  const cMode = params.carry || '';      /* 'none' | 'few'(1~2) | 'mid'(3~4) | 'many'(5~6) */
 
-  /* b를 십의 자리·일의 자리로 나눠 두 번 곱하고 더한다 */
-  const bTens = Math.floor(b / 10) * 10;
-  const bOnes = b % 10;
-  const p1    = a * bOnes;
-  const p2    = a * bTens;
+  /* (세 자리)×(몇십) — 교재가 (세)×(두) 앞에 두는 자리. ×(십의 자리) 한 번 하고 0 하나. */
+  if (params.tens === true) {
+    const aT = R(rng, 102, 999);
+    const bT = R(rng, 2, 9);
+    const bb = bT * 10;
+    const half = aT * bT;
+    return {
+      prompt: {
+        ko: `${aT} × ${bb}은 ${aT} × ${bT}을 하고 끝에 0을 하나 붙여요`,
+        en: `For ${aT} × ${bb}, do ${aT} × ${bT} and put one zero at the end`,
+        zh: `${aT} × ${bb}先算${aT} × ${bT}，再在末尾添一个0`
+      },
+      tex: `${aT} \\times ${bb} = \\square`,
+      answer: aT * bb,
+      answerType: 'steps',
+      widget: 'vertical',
+      steps: [
+        { tex: `${aT} \\times ${bT} = \\square`,   blank: half },
+        { tex: `${half} \\times 10 = \\square`,    blank: aT * bb }
+      ]
+    };
+  }
+
+  let a, b, tries = 0;
+  do {
+    a = R(rng, 100, 999);
+    b = R(rng, 11, 99);
+    if (!cMode) break;
+    /* 몇십은 부분곱 한 줄이 통째로 비어 올림 수를 세는 뜻이 없어진다 */
+    if (b % 10 === 0) continue;
+    const n = _ml9Carries(a, b);
+    if (cMode === 'none' && n === 0) break;
+    if (cMode === 'few'  && n >= 1 && n <= 2) break;
+    if (cMode === 'mid'  && n >= 3 && n <= 4) break;
+    if (cMode === 'many' && n >= 5) break;
+  } while (tries++ < 800);
+
+  const answer = a * b;
+  const bTens  = Math.floor(b / 10) * 10;
+  const bOnes  = b % 10;
+  const p1     = a * bOnes;
+  const p2     = a * bTens;
 
   return {
     prompt: {
@@ -675,13 +729,18 @@ NM_TGEN['ml9_mul3d2d'] = function(params, rng) {
     },
     tex: `${a} \\times ${b} = \\square`,
     answer,
-    answerType: 'number',
+    answerType: 'steps',
     widget: 'vertical',
+    steps: [
+      { tex: `${a} \\times ${bOnes} = \\square`,  blank: p1 },
+      { tex: `${a} \\times ${bTens} = \\square`,  blank: p2 },
+      { tex: `${p1} + ${p2} = \\square`,          blank: answer }
+    ],
     solution: [
       { tex: `${b} = ${bTens} + ${bOnes}` },
-      { tex: `${a} \\times ${bOnes} = \\square`, blank: p1 },
-      { tex: `${a} \\times ${bTens} = \\square`, blank: p2 },
-      { tex: `${p1} + ${p2} = \\square`, blank: answer }
+      { tex: `${a} \\times ${bOnes} = \\square`,  blank: p1 },
+      { tex: `${a} \\times ${bTens} = \\square`,  blank: p2 },
+      { tex: `${p1} + ${p2} = \\square`,          blank: answer }
     ]
   };
 };

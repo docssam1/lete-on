@@ -599,6 +599,12 @@
   .nm-w2-grid-vertical .nm-print-vp-carry { min-height:.8em; font-size:.7em; color:#999;
     border-bottom:1px dotted #bbb; margin-bottom:2px; }
   .nm-w2-grid-vertical .nm-print-vp-bot { min-height:1.3em; border-bottom:1px solid #ddd; }
+  /* 부분곱 두 줄짜리(곱하는 수가 두 자리) — 줄이 둘 더 붙으므로 줄 높이를 줄인다.
+     ⚠️ 선택자에 .nm-print-sheet 를 붙여야 한다 — 아래 전역 크기 절의
+     .nm-print-sheet .nm-print-vp (15px * --ws-fs) 가 같은 무게(0,2,0)에 더 뒤라,
+     그냥 쓰면 이 규칙이 조용히 덮인다(2026-09-19, 두 번 헛디딤). */
+  .nm-print-sheet .nm-w2-grid-vertical .nm-print-vp-2row .nm-print-vp-bot {
+    min-height:.95em; line-height:1.15; }
   .nm-w2-item-vis.nm-print-item { align-items:center; text-align:center; }
   .nm-w2-item-word.nm-print-item { align-items:flex-start; }
   /* 문장제 답 줄 "식: ______  답: ______ 개"(2026-09-06) — 식을 먼저 쓰는 자리와 단위. */
@@ -3052,14 +3058,16 @@ function classifyRoundLayout(problems, threadId, young, creative){
      찍으면 필산 문항이 된다(2026-09-17). 스레드가 스스로 빼 달라고 표시한다. */
   const thDef = (window.NM_THREADS||{})[threadId||''];
   const excludedPrefix = /^(MD|CH|EL|MX)/.test(threadId||'') || !!(thDef && thDef.noVertical);
+  /* 곱하는 수가 두 자리인 세로셈은 부분곱이 두 줄이라 칸이 더 높다(2026-09-19, ML8·ML9).
+     5행 52mm 에 그대로 두면 칸마다 10px 씩 넘쳤다 — 4행 64mm 로 낮춘다. */
+  const twoRowVert = p => { const v = parseVert(p.tex); return !!v && v.op === '×' && String(v.b).replace(/\D/g,'').length >= 2; };
+  const vertLayout = () => withTex.length && withTex.every(twoRowVert)
+    ? {type:'vertical', cols:4, rows:4, perPage:16, flow:'row', firstRows:2, pitch:64}
+    : {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:3, pitch:52};
   /* 레벨이 정한 가로·세로가 판정보다 앞선다(2026-09-19) */
   const orient = problems[0] && problems[0].orient;
-  if(orient === 'v' && withTex.every(p => parseVert(p.tex))){
-    return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:3, pitch:52};
-  }
-  if(orient !== 'h' && withTex.length && !excludedPrefix && withTex.every(p => parseVert(p.tex))){
-    return {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:3, pitch:52};
-  }
+  if(orient === 'v' && withTex.every(p => parseVert(p.tex))) return vertLayout();
+  if(orient !== 'h' && withTex.length && !excludedPrefix && withTex.every(p => parseVert(p.tex))) return vertLayout();
   if(nonWord.length < problems.length){
     /* 섞인 경우(문장제 일부 + 숫자식 일부, wordType='mix') — 문장제가 있으면
        칸을 넓게 줘야 하므로 "긴 식"과 같은 1열로 간다. */
@@ -3177,12 +3185,22 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       const vTint = pvTake(pvVertOk(v.a, v.b));
       const vA = vTint ? window.NM_PLACE_COLOR.spanDigits(v.a) : esc(v.a);
       const vB = vTint ? window.NM_PLACE_COLOR.spanDigits(v.b) : esc(v.b);
-      inner = `<div class="nm-print-vp">
-  <div class="nm-print-vp-carry">&nbsp;</div>
+      /* 곱하는 수가 두 자리면 부분곱이 두 줄이다 — 줄이 하나뿐이면 답만 겨우 쓰고
+         부분곱은 여백에 흘려 쓰게 된다(ML8·ML9 학습지에서 실제로 그랬다, 2026-09-19).
+         두 줄 + 합 줄을 그려 세로셈의 모양 그대로 쓰게 한다. */
+      const twoRow = v.op === '×' && String(v.b).replace(/\D/g,'').length >= 2;
+      const rows = twoRow
+        ? `<div class="nm-print-vp-bot">&nbsp;</div>
+  <div class="nm-print-vp-bot">&nbsp;</div>
+  <div class="nm-print-vp-line"></div>
+  <div class="nm-print-vp-bot">&nbsp;</div>`
+        : `<div class="nm-print-vp-bot">&nbsp;</div>`;
+      inner = `<div class="nm-print-vp${twoRow ? ' nm-print-vp-2row' : ''}">
+  ${twoRow ? '' : '<div class="nm-print-vp-carry">&nbsp;</div>'}
   <div class="nm-print-vp-top">${vA}</div>
   <div class="nm-print-vp-mid"><span class="nm-print-vp-op">${esc(v.op)}</span><span>${vB}</span></div>
   <div class="nm-print-vp-line"></div>
-  <div class="nm-print-vp-bot">&nbsp;</div>
+  ${rows}
 </div>`;
     } else {
       const raw = String(p.tex||'');
@@ -4573,8 +4591,10 @@ const NM_EXAM = {
           concept:'끝이 7·8·9인 수를 뺄 때는 몇십·몇백으로 올려 빼고 돌려받아요.\n예) 234−98 = 234−100+2 = 136'},
       ]},
       '4A':{label:'4학년 1학기',emoji:'🌺',subs:[
-        {label:'(세)×(두)',thread:'ML9',level:1,desc:'세 자리×두 자리',
-          concept:'세 자리 수와 두 자리 수의 곱셈이에요.\n예) 234 × 56 = 13104'},
+        {label:'(세)×(몇십)',thread:'ML9',level:1,desc:'몇십 곱하기',
+          concept:'몇십을 곱할 땐 십의 자리만 곱하고 끝에 0을 하나 붙여요.\n예) 164 × 50 = (164×5) 뒤에 0 → 8200'},
+        {label:'(세)×(두)',thread:'ML9',level:4,desc:'세 자리×두 자리',
+          concept:'세 자리 수와 두 자리 수의 곱셈이에요. 두 줄로 나눠 곱한 뒤 더해요.\n예) 234 × 56 = (234×6) + (234×50) = 1404 + 11700 = 13104'},
         {label:'(두)÷(두)',thread:'DV5',level:1,desc:'두 자리로 나누기',
           concept:'두 자리 수로 나누는 나눗셈이에요. 몫을 어림해서 찾아요.\n예) 78 ÷ 13 = 6'},
         {label:'(세)÷(두)',thread:'DV5',level:2,desc:'세 자리÷두 자리',
