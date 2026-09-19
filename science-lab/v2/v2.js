@@ -1,6 +1,7 @@
 // docssam 과학 탐구 랩 v2 — 단원 = 5E 한 단계 한 화면 + 준비물(QR) + 탐구보고서 + 교재 인쇄.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { mountRingTower, towerModel } from './lab-ring-tower.js';
+import { pageHome } from './home.js';
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')) }) };
 const STEPS = [
@@ -114,7 +115,7 @@ function wireItem(card, it, onDone) {
 function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
   const st = store.get(u);
   $app.innerHTML = `<header class="top"><div class="wrap">
-      <a class="back" href="../#/">‹ 지도로</a><h1>${esc(lesson.title)}</h1>
+      <a class="back" href="#/">‹ 지도로</a><h1>${esc(lesson.title)}</h1>
       ${stepIdx != null ? `<nav class="dots" aria-label="단계">${STEPS.map((s, i) => `<a href="#/${u}/${i + 1}" class="${i === stepIdx ? 'on' : (st.done || []).includes(i) ? 'done' : ''}" aria-label="${s.label}"></a>`).join('')}</nav>` : ''}
       <button class="icon-btn" id="voice" aria-pressed="${voiceOn}" title="읽어 주기">${voiceOn ? '소리 켬' : '소리'}</button>
     </div></header>
@@ -215,7 +216,7 @@ function stepEvaluate(u, L, items, retry = false) {
       const pass = right >= x.pass; store.set(u, { passed: pass || store.get(u).passed, best: Math.max(right, store.get(u).best || 0) });
       document.getElementById('res').innerHTML = `<div class="card result"><p class="score">${right} / ${list.length}</p>
         <p>${pass ? '관문 통과! 깃발을 받았어요.' : `${x.pass}문제 이상 맞으면 통과예요.`}</p>
-        <div class="print-bar" style="justify-content:center">${pass ? `<button class="btn" id="again">다시 풀기</button><a class="btn primary" href="../#/" style="display:inline-flex;align-items:center;text-decoration:none">다음 정거장</a>` : `<a class="btn" href="#/${u}/3" style="display:inline-flex;align-items:center;text-decoration:none">개념 다시 보기</a><button class="btn primary" id="again">다시 풀기</button>`}</div></div>`;
+        <div class="print-bar" style="justify-content:center">${pass ? `<button class="btn" id="again">다시 풀기</button><a class="btn primary" href="#/" style="display:inline-flex;align-items:center;text-decoration:none">다음 정거장</a>` : `<a class="btn" href="#/${u}/3" style="display:inline-flex;align-items:center;text-decoration:none">개념 다시 보기</a><button class="btn primary" id="again">다시 풀기</button>`}</div></div>`;
       teacher(document.getElementById('t'), [{ mood: pass ? 'praise' : 'encourage', text: pass ? '정말 잘했어요!' : '괜찮아요, 한 번 더 해 볼까요?' }]);
       document.getElementById('again').addEventListener('click', () => stepEvaluate(u, L, items, true));
     }
@@ -308,7 +309,8 @@ async function mount3D(el, sceneName, { autoplay }) {
 
 // ── 라우터 ──
 async function route() {
-  const [u = 's41-u01', a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  if (!u) return pageHome($app, store, teacher);
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); const L = mod.lesson, items = mod.items; FIG = mod.figures || {};
   if (a === 'kit') return pageKit(u, L);
