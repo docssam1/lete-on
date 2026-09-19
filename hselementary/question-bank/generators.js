@@ -6498,7 +6498,9 @@
       const rows = values.map((value, index) => ({
         label: labels[index],
         value,
-        shown: index % 2 === 0 ? source41ReadKorean(value) : source41FormatInteger(value)
+        shown: index % 2 === 0
+          ? `<span class="source41-korean-number">${source41ReadKorean(value)}</span>`
+          : source41FormatInteger(value)
       }));
       const answer = rows.slice().sort((left, right) => left.value < right.value ? -1 : 1).map(row => row.label).join(", ");
       const payload = { variant, level, values: values.map(String), labels, complexity: length };
