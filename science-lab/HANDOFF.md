@@ -7,7 +7,7 @@
 
 1. **단원 축**: Drive `과학 단원평가` 폴더의 8학기 × 단원(Ⅰ~Ⅴ + 중간·기말) = 홈의 정거장. 지도자료 15유닛(현재 v1)은 탐구 단원과 소재 단원으로 흡수. (`data/source-toc.md` §1)
 2. **단원 화면 = 5E 순환 5단계**, 한 단계 한 화면: ①궁금(3D 현상 10초 + 예상 고르기) ②실험(아이가 슬라이더로 변인 바꾸는 **조작형 3D**, 관찰값 표에 기록, 지필드 실험편 Step1~4) ③개념(docssam 크게 등장, **빈칸 개념 카드**·정리표·Mini Test — NEW STUDY 슬라이드 방식, 이론편 소스) ④확장(영재원 문제 2 + 서술형 1, 읽을거리) ⑤점검(3문항, 관문 2/3, 재도전·다음 정거장). 실험값이 ③·④에 다시 등장하는 것이 연결 장치. (`DESIGN.md`)
-3. **docssam**: 이론 화면에 크게, 말풍선은 입 쪽에서. 그림은 한 장(웃음, 3D 렌더). **표정·입 움직임**은 ⓐ표정 세트를 추가로 받아 교체(권장) ⓑ지금 그림의 입·눈 부위를 덮고 SVG로 그려 넣기(리딩타운 아바타 표정 코드 재사용, 즉시 가능) 중 사용자 선택 대기. 립싱크는 음성 합성의 낱말 경계 이벤트로 입 여닫기, 음성 꺼지면 자막 속도에 맞춤. 팔레트는 캐릭터에서 확정(navy 악센트). 파일 `assets/docssam.png` 미반입.
+3. **docssam**: 이론 화면에 크게, 말풍선은 입 쪽에서. 그림은 한 장(웃음, 3D 렌더). **표정·입 움직임**은 ⓐ표정 세트를 추가로 받아 교체(권장) ⓑ지금 그림의 입·눈 부위를 덮고 SVG로 그려 넣기(리딩타운 아바타 표정 코드 재사용, 즉시 가능) 중 사용자 선택 대기. 립싱크는 음성 합성의 낱말 경계 이벤트로 입 여닫기, 음성 꺼지면 자막 속도에 맞춤. 팔레트는 캐릭터에서 확정(navy 악센트). **표정 세트 반입 완료**(아래 3차 기록).
 4. **문제은행 = 단원 파일**: `data/units/<단원id>.js` 하나에 5E 콘텐츠와 문항(`items`)을 함께 둔다. 문항 계약은 스킬 `gfield-science-question-bank`, 등록은 `fields-classic/question-bank/question-bank-adapter.js`. 유형: cloze·table-fill·single-choice(4·5지)·short-text·number-with-unit·ordered-sequence·multi-select·written-explanation. 정답 위치 사전 배분·오답 구체성(CARS 규칙). 소스: 이론편 개념 확인/응용/창의사고력 + 실험편 영재성 기르기(라이선스 없음, 원문 사용 가능) + 단원평가 PDF(출처 미확인 → 원문·정답은 Supabase `science_bank_source`, git엔 authored 변형) + 영재원 기출(Supabase만). 약점 태그 누적 → 다음 관문 우선 출제. 길 끝 **영재원 모의 평가**(25문항 40분, 유형별 리포트). 티처 콘솔 인쇄(문제/정답·해설/둘 다).
 5. **홈 = 탐구 지도**: 구불한 길 위 정거장, 끝낸 곳 깃발, 다음 정거장에 docssam. 정거장마다 실험·개념·확장 3칸 진도. "이어서 하기" 고정 버튼.
 6. **3D 엔진**: 지금 `engine.js`(Three.js r184, 비트 재생)를 유지하고 `controls/readout` 조작 모드를 추가. 원본 도형만. 모바일 규칙(터치 44px, 가로 모드 오버레이, 저사양 축소, 감소된 동작). 외부 시뮬레이션(PhET 등)은 후보만 조사, 미연동.
@@ -19,8 +19,8 @@
 - 단원평가 4-1 Ⅰ 세트1 + 정답 및 풀이: **스캔본 확정**(텍스트 층 0, PyMuPDF). 페이지를 렌더해 Claude가 직접 전사 → 20문항 공식 정답과 20/20 일치.
 - 원문·정답 → Supabase `public.science_bank_source`(프로젝트 fgahqumaldheqettmvqg) 20행. `source_key = gfield-science:cats-set1:4-1:u01:set1:q{n}`. RLS on·정책 없음(서비스 키 전용, `golden_bell_answer_books`와 같은 패턴). 원본 그림은 `figures` 비어 있음(`visualModel.figure:'pending-upload'`) — MCP로는 이미지 업로드 불가.
 - git → `data/units/s41-u01.js`: **authored 20문항**(cloze 6·table-fill 1·single-choice 10·written 3). 객관식 정답 위치 ③①⑤②④②⑤①③④(각 2회), 정답이 유일 최장 보기인 문항 0. 창작 그림 2개(SVG, 초기 상태만).
-- `assets/docssam.png` **미반입**: 이 세션은 git 프록시 권한이 없고 GitHub MCP는 텍스트만 올림 → GitHub 웹 업로드 또는 저장소 권한 있는 세션에서.
-- docssam 표정 9장 반입(GPT 생성, 사용자 G드라이브 `docssam 표정/`): A1 몸 고정 + A2~A5 얼굴 조각(말하기 3·깜빡임 1, SIFT 정렬 오차 <1px), B1~B4 반응. 웹용 webp는 `docssam 표정/web/` 9개(≈560KB). 말하기 = 음절 모음(ㅏㅓ→크게, ㅗㅜ→동그랗게, 그 밖→반쯤). 저장소 반입은 GitHub 웹 로그인 후 업로드 대기.
+- `assets/` **반입 완료**(커밋 85760c6, GitHub 웹 업로드): `docssam.png`(원본) + 표정 webp 9개. 말하기 = 몸 `docssam-A1-mouth-closed.webp` 위에 `face-A2~A5-*.webp`를 left 31.25%·top 13.021%·width 33.203%로 겹침. 반응 = `docssam-B1~B4-*.webp`로 몸 전체 교체.
+- docssam 표정 9장 반입(GPT 생성, 사용자 G드라이브 `docssam 표정/`): A1 몸 고정 + A2~A5 얼굴 조각(말하기 3·깜빡임 1, SIFT 정렬 오차 <1px), B1~B4 반응. 웹용 webp는 `docssam 표정/web/` 9개(≈560KB). 말하기 = 음절 모음(ㅏㅓ→크게, ㅗㅜ→동그랗게, 그 밖→반쯤).
 - 폰트 확정: 말풍선·제목·버튼 **Gaegu 700**, 본문 Pretendard.
 - 남은 것: 어댑터 등록(`bank/science-bank-adapter.js`), 감사 스크립트, 5E 콘텐츠(`unit.engage~evaluate`), 인터뷰 3~9.
 
