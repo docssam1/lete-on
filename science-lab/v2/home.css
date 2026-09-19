@@ -1,0 +1,29 @@
+/* 탐구 지도 (홈) */
+.home .sem { margin: 8px 0 28px; }
+.sem-title { font-family: var(--disp); font-size: 26px; margin: 16px 0 4px; }
+.path { position: relative; }
+.road { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.road path { fill: none; stroke: var(--line); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.stop { position: absolute; transform: translate(-50%, -32px); display: flex; flex-direction: column; align-items: center; gap: 4px;
+  width: 132px; text-decoration: none; color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }
+.stop .dot { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--card); border: 3px solid var(--navy);
+  font-family: var(--disp); font-size: 26px; color: var(--navy); box-shadow: var(--shadow); }
+.stop .dot svg { width: 30px; height: 30px; fill: var(--point); }
+.stop .name { font-family: var(--disp); font-size: 18px; line-height: 1.15; text-align: center; background: var(--bg); padding: 0 4px; border-radius: 6px; }
+.stop .bars { display: flex; gap: 3px; }
+.stop .bars i { width: 16px; height: 5px; border-radius: 3px; background: var(--line); }
+.stop .bars i.on { background: var(--navy); }
+.stop .soon { font-size: 12px; font-weight: 700; color: var(--sub); }
+.stop.locked .dot { border-color: var(--line); color: var(--sub); background: var(--soft); box-shadow: none; }
+.stop.locked .name { color: var(--sub); }
+.stop.passed .dot { background: var(--soft); }
+.stop.next .dot { background: var(--navy); color: var(--on-navy); box-shadow: 0 0 0 6px color-mix(in srgb, var(--navy) 22%, transparent); }
+.stop:focus-visible .dot { outline: 3px solid var(--navy); outline-offset: 3px; }
+.stop .guide { position: absolute; top: -18px; width: 58px; height: auto; pointer-events: none; }
+.stop .guide.r { left: calc(50% + 34px); }
+.stop .guide.l { right: calc(50% + 34px); }
+.home-foot { text-align: center; }
+.toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; z-index: 10; max-width: calc(100% - 32px); }
+@media (prefers-reduced-motion: no-preference) { .stop.next .dot { animation: pulse 1.6s ease-in-out infinite; } }
+@keyframes pulse { 50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--navy) 12%, transparent); } }
+@media (max-width: 380px) { .stop { width: 112px; } .stop .name { font-size: 16px; } }

@@ -1,0 +1,65 @@
+// 홈 = 탐구 지도: 학기별로 구불한 길 위에 단원 정거장. 끝낸 곳 깃발, 다음 정거장에 docssam, "이어서 하기".
+import { SEMS, READY } from './units-index.js';
+
+const ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ'];
+const XS = [24, 50, 76, 50];      // 정거장 가로 위치(%) — 지그재그
+const ROW = 118;                   // 정거장 간격(px)
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function stateOf(store, id) {
+  if (!READY[id]) return { kind: 'locked' };
+  const st = store.get(id);
+  if (st.passed) return { kind: 'passed', st };
+  if ((st.done || []).length) return { kind: 'doing', st };
+  return { kind: 'open', st };
+}
+
+// 이어서 할 곳: 진행 중인 단원 → 아직 안 끝낸 열린 단원 → 첫 열린 단원
+function nextUnit(store) {
+  const all = SEMS.flatMap((s) => s.units).filter((u) => READY[u.id]);
+  return all.find((u) => stateOf(store, u.id).kind === 'doing') || all.find((u) => stateOf(store, u.id).kind === 'open') || all[0];
+}
+const hrefOf = (store, id) => { const st = store.get(id); return `#/${id}/${!st.passed && st.step != null ? st.step + 1 : 1}`; };
+
+export function pageHome($app, store, teacher) {
+  const nx = nextUnit(store), nxs = nx && stateOf(store, nx.id);
+  const cta = nxs?.kind === 'doing' ? '이어서 하기' : '탐구 시작하기';
+  $app.innerHTML = `<header class="top"><div class="wrap"><h1>docssam 과학 탐구 랩</h1></div></header>
+    <main class="wrap home">
+      <div id="t"></div>
+      ${SEMS.map((s) => {
+        const [g, h] = s.sem.split('-');
+        const pts = s.units.map((u, i) => [XS[i % 4], i * ROW + 56]);
+        const d = pts.map(([x, y], i) => (i ? 'L' : 'M') + x + ' ' + y).join(' ');
+        return `<section class="sem" aria-label="${g}학년 ${h}학기">
+          <h2 class="sem-title">${g}학년 ${h}학기</h2>
+          <div class="path" style="height:${s.units.length * ROW}px">
+            <svg class="road" viewBox="0 0 100 ${s.units.length * ROW}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" /></svg>
+            ${s.units.map((u, i) => {
+              const k = stateOf(store, u.id), [x, y] = pts[i], isNext = nx && u.id === nx.id;
+              const done = new Set(k.st?.done || []);
+              const body = `<span class="dot">${k.kind === 'passed' ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4h10l-2 3.5L16 11H8v10z"/></svg>' : ROMAN[u.no - 1]}</span>
+                <span class="name">${esc(u.title)}</span>
+                ${READY[u.id] ? `<span class="bars" aria-hidden="true">${['실험', '개념', '확장'].map((b, j) => `<i class="${done.has(j + 1) ? 'on' : ''}" title="${b}"></i>`).join('')}</span>` : '<span class="soon">준비 중</span>'}`;
+              const label = `${g}학년 ${h}학기 ${ROMAN[u.no - 1]}. ${u.title}${k.kind === 'passed' ? ', 끝냄' : k.kind === 'locked' ? ', 준비 중' : ''}`;
+              return `<${READY[u.id] ? `a href="${hrefOf(store, u.id)}"` : 'button type="button"'} class="stop ${k.kind}${isNext ? ' next' : ''}" style="left:${x}%;top:${y}px" aria-label="${esc(label)}">${body}${isNext ? `<img class="guide ${x > 50 ? 'l' : 'r'}" src="../assets/docssam-B4-encourage.webp" alt="">` : ''}</${READY[u.id] ? 'a' : 'button'}>`;
+            }).join('')}
+          </div></section>`;
+      }).join('')}
+      <p class="lead home-foot">정거장을 끝내면 깃발이 꽂혀요. 준비 중인 정거장은 곧 열려요.</p>
+    </main>
+    ${nx ? `<div class="bottom"><div class="wrap"><a class="btn primary" href="${hrefOf(store, nx.id)}" style="display:flex;align-items:center;justify-content:center;text-decoration:none">${cta} · ${esc(nx.title)}</a></div></div>` : ''}
+    <div class="toast" role="status" aria-live="polite" hidden></div>`;
+  const passedN = SEMS.flatMap((s) => s.units).filter((u) => stateOf(store, u.id).kind === 'passed').length;
+  teacher(document.getElementById('t'), [passedN
+    ? { mood: 'praise', text: `깃발을 ${passedN}개 모았어요! 다음 정거장으로 가 볼까요?` }
+    : { mood: 'talk', text: `안녕하세요! 오늘은 ${nx ? nx.title : '과학'} 정거장부터 탐구해요.` }]);
+  const $toast = $app.querySelector('.toast'); let tm;
+  $app.querySelectorAll('button.stop').forEach((b) => b.addEventListener('click', () => {
+    $toast.textContent = '이 정거장은 준비 중이에요. 열리면 알려 줄게요.'; $toast.hidden = false;
+    clearTimeout(tm); tm = setTimeout(() => { $toast.hidden = true; }, 2200);
+  }));
+  // 다음 정거장이 화면에 오도록
+  const $n = $app.querySelector('.stop.next');
+  if ($n) requestAnimationFrame(() => $n.scrollIntoView({ block: 'center' }));
+}
