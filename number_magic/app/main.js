@@ -2870,7 +2870,7 @@ function screenCheckup(){
     ${wpHtml||`<div class="nm-bubble">${esc(L(cur.prompt))}</div>`}
     ${useWidget?`<div id="cuWidget" class="nm-lab-widget"></div>`:`
     ${hasTex?`<div class="nm-lab-expr">${labExprHtml(texForShow)}</div>`:''}
-    ${wantHint?PV.legendHtml(S.lang, PV.placesUsed(cur.tex)):''}
+    ${(wantHint&&PV.kind(cur.tex)==='place')?PV.legendHtml(S.lang, PV.placesUsed(cur.tex)):''}
     ${isMulti?`<p class="nm-dg-multihint">${lk('답이 여러 개면 쉼표(,)로 나눠 써요','Separate multiple answers with commas','多个答案用逗号分开')}</p>`:''}
     <div class="nm-numpad-screen" id="cuScreen">&nbsp;</div>
     <div class="nm-numpad" id="cuPad"></div>`}

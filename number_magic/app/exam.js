@@ -533,7 +533,7 @@
 
   .nm-w2-instr { flex:0 0 auto; font-weight:800; font-size:calc(13px * var(--ws-fs, 1)); color:var(--w2-strong, #0E2C57); margin-bottom:6px; }
 
-  .nm-w2-grid { flex:1; display:grid; gap:3px 16px; grid-auto-rows:1fr; align-content:stretch;
+  .nm-w2-grid { flex:1; display:grid; gap:6px 16px; grid-auto-rows:1fr; align-content:stretch;
     min-height:0; }
   .nm-w2-item.nm-print-item { border:0; background:none; padding:2px 4px; min-height:0;
     border-radius:0; display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
@@ -1921,6 +1921,7 @@ function pvOn(){
 }
 /* 이 문항에 색을 줄 차례인가 — 줄 차례면 true를 돌려주고 카운터를 올린다.
    eligible이 아니면 카운터를 올리지 않는다(세는 대상이 아니다). */
+let pvPlaceOnPage = false;
 function pvTake(canTint){
   if(!pvOn() || !canTint) return false;
   const take = (pvSeen % 3) === 0;
@@ -2843,17 +2844,18 @@ function classifyRoundLayout(problems, threadId, young, creative){
   if(nonWord.length < problems.length){
     /* 섞인 경우(문장제 일부 + 숫자식 일부, wordType='mix') — 문장제가 있으면
        칸을 넓게 줘야 하므로 "긴 식"과 같은 1열로 간다. */
-    return {type:'long', cols:1, rows:8, perPage:8, flow:'row', firstRows:4, pitch:28};
+    return {type:'long', cols:1, rows:8, perPage:8, flow:'row', firstRows:4, pitch:30};
   }
   /* §2-5 판정은 "보이는" 길이로만 한다 — steps 단계 수로 강제로 "긴 식"으로
      미는 규칙은 폐기(2026-09-04, MD4·MD21·FR1이 전부 잘못 판정되던 원인). */
   let maxLen = 0;
   withTex.forEach(p => { maxLen = Math.max(maxLen, texVisibleLength(p.tex)); });
   /* 저학년 계산은 한 줄에 하나, 큰 숫자(참고 학습지 B03: 19 + 2 =). 첫 문항엔 답 상자를 보여 준다. */
-  if(young && maxLen <= 16) return {type:'big', cols:1, rows:10, perPage:10, flow:'row', firstRows:5, pitch:22};
-  if(maxLen <= 16) return {type:'short', cols:2, rows:10, perPage:20, flow:'col', firstRows:10, pitch:14};
-  if(maxLen <= 44) return {type:'medium', cols:2, rows:8, perPage:16, flow:'col', firstRows:6, pitch:18};
-  return {type:'long', cols:1, rows:8, perPage:8, flow:'row', firstRows:4, pitch:28};
+  if(young && maxLen <= 16) return {type:'big', cols:1, rows:10, perPage:10, flow:'row', firstRows:5, pitch:25};
+  /* pitch(부분 장의 행 높이)는 쓰기 상자(1.5em)와 큰 숫자가 들어간 뒤 넓혔다(2026-09-19, 원장 "너무 붙어 있어") */
+  if(maxLen <= 16) return {type:'short', cols:2, rows:10, perPage:20, flow:'col', firstRows:10, pitch:23};
+  if(maxLen <= 44) return {type:'medium', cols:2, rows:8, perPage:16, flow:'col', firstRows:6, pitch:26};
+  return {type:'long', cols:1, rows:8, perPage:8, flow:'row', firstRows:4, pitch:30};
 }
 
 /* 난이도 정렬 §2-6: 피연산자 자릿수 합 → |answer| → tex 길이. 문장제·그림형은
@@ -2966,13 +2968,16 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       const abox = (/^NL/i.test(threadId||'') && !/\\square/.test(raw)) ? '<span class="nm-w2-abox"></span>' : '';
       /* 자릿값 색 힌트 — 칠할 수 있는 식이고 차례가 되면(2026-09-16) */
       const PVm = window.NM_PLACE_COLOR;
-      const wantTint = pvTake(!!PVm && PVm.eligible(texStr));
+      const pvKind = PVm ? PVm.kind(texStr) : null;
+      const wantTint = pvTake(!!pvKind);
+      /* 범례("같은 자리는 같은 색")는 자리 색을 쓴 쪽에만 — 곱셈·나눗셈의 빨간 강조엔 범례가 없다 */
+      if(wantTint && pvKind === 'place') pvPlaceOnPage = true;
       if(layoutType === 'big'){
         /* 저학년 큰 숫자(참고 학습지 B03) — KaTeX 대신 둥근 글꼴(Fredoka)의 글자로, 첫 문항엔 답 상자 */
         const plain = texToPlain(texStr).replace(/\s+/g, ' ').trim();
-        const seg2 = seg => wantTint
-          ? seg.split(/(\d+)/).map(x => /^\d+$/.test(x) ? PVm.spanDigits(x) : esc(x)).join('')
-          : esc(seg);
+        const seg2 = seg => !wantTint ? esc(seg)
+          : pvKind === 'key' ? PVm.spanKey(esc(seg), texStr)
+          : seg.split(/(\d+)/).map(x => /^\d+$/.test(x) ? PVm.spanDigits(x) : esc(x)).join('');
         /* □ 자리마다 큰 답 상자(끝이든 가운데든) */
         const bigHtml = plain.split('□').map(seg2).join('<span class="nm-w2-abox nm-w2-abox-big"></span>');
         inner = `<span class="nm-w2-big">${bigHtml}</span>`;
@@ -3775,7 +3780,7 @@ function renderRoundPages(item, opts){
        세로로 늘어선다(2026-09-06 확인). 열 수만큼 나눠 위에서부터 채우도록 자리를 직접 지정한다. */
     const partialCol = partial && layout.flow === 'col';
     const rowsPerCol = partialCol ? rowsCount : 0;
-    pvOnPage = false;   /* 이 쪽에 색을 쓴 문항이 있으면 아래에서 범례를 붙인다 */
+    pvOnPage = false; pvPlaceOnPage = false;   /* 이 쪽에 자리 색을 쓴 문항이 있으면 아래에서 범례를 붙인다 */
     const cellsHtml = pageItems.map((p, i) => {
       const isFirstRamp = !!p.__ramp && !rampTagged;
       if(isFirstRamp) rampTagged = true;
@@ -3789,12 +3794,12 @@ function renderRoundPages(item, opts){
     /* 범례는 색을 실제로 쓴 쪽에만 — 안 쓴 쪽에 붙으면 무슨 색 얘긴지 알 수 없다.
        쪽에 나온 가장 큰 자리 수까지만 그린다(두 자리 문제에 '천의 자리'를 설명하지 않는다). */
     let pvPlaces = 0;
-    if(pvOnPage && window.NM_PLACE_COLOR){
+    if(pvPlaceOnPage && window.NM_PLACE_COLOR){
       pageItems.forEach(p => {
         pvPlaces = Math.max(pvPlaces, window.NM_PLACE_COLOR.placesUsed(String(p.tex||'')));
       });
     }
-    const pvLegend = pvOnPage ? pvLegendHtml(pvPlaces || 2) : '';
+    const pvLegend = pvPlaceOnPage ? pvLegendHtml(pvPlaces || 2) : '';
     /* 워터마크는 문항 페이지 안에 한 장씩(.nm-w2-wm, 화면에선 숨김) — 시트 전체 fixed 오버레이 대신 */
     return `<div class="nm-w2-page">
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
