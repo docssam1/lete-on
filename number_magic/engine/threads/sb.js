@@ -302,17 +302,37 @@ NM_TGEN['sb5_subAdjust'] = function(params, rng) {
 };
 
 /* ── SB6 — 큰 수 뺄셈 (3·4자리) ────────────────────────────── */
+/* 큰 수 뺄셈도 "내림이 있느냐·몇 번이냐·0에서 빌리느냐"로 단계가 완전히 갈린다
+   (2026-09-19, 원장 "받아올림이 있는경우 없는 경우 다 단계가 달라").
+     'none' 내림 없음      768 - 342
+     'one'  내림 한 번      742 - 328
+     'all'  연속 내림       723 - 489
+     'zero' 0에서 빌리기    302 - 147  ← 십의 자리가 0이라 백의 자리까지 건너 빌린다 */
+function _sbBorrowCount(a, b, d){
+  let n = 0, borrow = 0, zero = false;
+  for (let i = 0; i < d; i++) {
+    const da = Math.floor(a / Math.pow(10, i)) % 10;
+    const db = Math.floor(b / Math.pow(10, i)) % 10;
+    if (da - borrow < db) { n++; if (da === 0) zero = true; borrow = 1; }
+    else borrow = 0;
+  }
+  return { n: n, zero: zero };
+}
 NM_TGEN['sb6_subBig'] = function(params, rng) {
   const d = (params && params.d) || 3;
-  let a, b;
+  const mode = (params && params.borrow) || '';
+  let a, b, tries = 0;
 
-  if (d === 3) {
-    a = R(rng, 201, 999);
-    b = R(rng, 100, a - 1);
-  } else {
-    a = R(rng, 2001, 9999);
-    b = R(rng, 1000, a - 1);
-  }
+  do {
+    if (d === 3) { a = R(rng, 201, 999); b = R(rng, 100, a - 1); }
+    else         { a = R(rng, 2001, 9999); b = R(rng, 1000, a - 1); }
+    if (!mode) break;
+    const st = _sbBorrowCount(a, b, d);
+    if (mode === 'none' && st.n === 0) break;
+    if (mode === 'one'  && st.n === 1 && !st.zero) break;
+    if (mode === 'all'  && st.n >= 2 && !st.zero) break;   /* 0에서 빌리기는 따로 한 레벨(zero) */
+    if (mode === 'zero' && st.zero) break;
+  } while (tries++ < 600);
 
   const ans = a - b;
 

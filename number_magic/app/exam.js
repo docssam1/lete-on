@@ -4117,7 +4117,7 @@ function rampLevelFor(threadId, lv){
      ML1 은 L1 ×2 · L2 ÷2 라 키 이름이 같아 램프로 통과했고, ×2 회차 끝에 `34 ÷ 2` 가 "여기부터
      도전"으로 붙었다. ÷2 는 아직 배우지 않은 과정이었다(반으로 나누기 = B-02, 과정 5 4회차).
      AD7 `+`→`±`(뺄셈 섞임)·CH3 진법 변환 방향도 같은 부류. 난이도 값(자릿수 b·범위 range)은 그대로 램프. */
-  const OP_KEYS = ['op', 'dir', 'kind', 'type'];
+  const OP_KEYS = ['op', 'dir', 'kind', 'type', 'orient'];   /* orient: 가로↔세로는 난이도가 아니다(2026-09-19) */
   if(OP_KEYS.some(k => k in (base.params||{}) && String(base.params[k]) !== String(next.params[k]))) return null;
   return next.id;
 }
@@ -4331,10 +4331,12 @@ const NM_EXAM = {
       '2A':{label:'2학년 1학기',emoji:'🌷',subs:[
         {label:'(두)+(한) 받아올림',thread:'AD3',level:2,desc:'몇십몇+몇',
           concept:'일의 자리 합이 10 이상이면 십의 자리로 올려요.\n예) 37 + 5 = 42  (7+5=12, 1 올림)'},
-        {label:'(두)+(두) 올림 1회',thread:'AD5',level:1,desc:'몇십몇+몇십몇',
-          concept:'두 자리 수끼리 더해요. 일의 자리에서 한 번 받아올림해요.\n예) 24 + 38 = 62'},
-        {label:'(두)+(두) 올림 자유',thread:'AD5',level:2,desc:'올림 1~2회',
-          concept:'받아올림이 한 번 또는 두 번 있을 수 있어요.\n예) 78 + 65 = 143'},
+        {label:'(두)+(두) 올림 없음',thread:'AD5',level:1,desc:'몇십몇+몇십몇',
+          concept:'자리끼리 그냥 더하면 끝이에요. 윗자리로 보낼 것이 없어요.\n예) 23 + 45 = 68'},
+        {label:'(두)+(두) 올림 1회',thread:'AD5',level:2,desc:'일의 자리 올림',
+          concept:'일의 자리 합이 10을 넘으면 10을 묶어 십의 자리로 1을 올려요.\n예) 47 + 38 = 85  (7+8=15, 1 올림)'},
+        {label:'(두)+(두) 올림 두 번',thread:'AD5',level:4,desc:'연속 올림',
+          concept:'올린 1을 더한 십의 자리가 또 10을 넘어요.\n예) 47 + 68 = 115  (두 번 올림)'},
         {label:'(두)−(한) 받아내림',thread:'SB3',level:2,desc:'몇십몇−몇',
           concept:'일의 자리가 모자라면 십의 자리에서 10을 빌려요.\n예) 43 − 7 = 36'},
         {label:'(두)−(두) 받아내림',thread:'SB4',level:2,desc:'몇십몇−몇십몇',
@@ -4361,10 +4363,16 @@ const NM_EXAM = {
           concept:'곱셈식의 빈칸을 구구단으로 거꾸로 찾아요.\n예) 3×□=18 → 3단에서 18 찾기 → □=6\n3학년 나눗셈을 미리 준비하는 마법!'},
       ]},
       '3A':{label:'3학년 1학기',emoji:'🌼',subs:[
-        {label:'세 자리 덧셈',thread:'AD6',level:2,desc:'3자리+3자리',
-          concept:'일→십→백 자리 순서로 더해요. 받아올림이 연속될 수 있어요.\n예) 357 + 486 = 843'},
-        {label:'세 자리 뺄셈',thread:'SB6',level:1,desc:'3자리−3자리',
-          concept:'일→십→백 자리 순서로 빼요. 모자라면 윗 자리에서 빌려요.\n예) 623 − 358 = 265'},
+        {label:'세 자리 덧셈(올림 없음)',thread:'AD6',level:3,desc:'3자리+3자리',
+          concept:'일→십→백 순서로 더해요. 올릴 것이 없으면 자리마다 따로 더하면 끝이에요.\n예) 324 + 153 = 477'},
+        {label:'세 자리 덧셈(연속 올림)',thread:'AD6',level:5,desc:'올림이 연달아',
+          concept:'일의 자리에서 올리고 십의 자리에서 또 올려요.\n예) 478 + 365 = 843'},
+        {label:'세 자리 뺄셈(내림 없음)',thread:'SB6',level:1,desc:'3자리−3자리',
+          concept:'윗수의 각 자리가 더 크면 그냥 빼면 돼요.\n예) 768 − 342 = 426'},
+        {label:'세 자리 뺄셈(연속 내림)',thread:'SB6',level:3,desc:'빌리고 또 빌리기',
+          concept:'빌린 자리가 또 모자라면 그 윗자리에서 다시 빌려요.\n예) 723 − 489 = 234'},
+        {label:'0에서 빌리기',thread:'SB6',level:4,desc:'302−147 꼴',magic:true,
+          concept:'빌리려는 자리가 0이면 그 윗자리에서 먼저 빌려 와야 해요.\n예) 302 − 147 → 십의 자리 0이 백에서 빌려 10이 된 뒤 일의 자리에 빌려 줘요 = 155'},
         {label:'나눗셈의 기초',thread:'DV2',level:1,desc:'구구단 안에서',
           concept:'같은 수씩 나누는 것이 나눗셈이에요.\n예) 12 ÷ 4 = 3  →  4씩 3묶음\n곱셈의 반대로 생각해요: 4 × □ = 12'},
         {label:'(두)×(한)',thread:'ML6',level:2,desc:'두 자리 곱셈',
