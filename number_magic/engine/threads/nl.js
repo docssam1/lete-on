@@ -9,6 +9,14 @@
 
   const { R, pick, shuffle } = NM_RNG;
 
+  /* 받침 유무로 조사 고르기 — "꽃은·풍선은 / 딸기는·거북이는" (2026-09-19, 과정 0 학습지에서
+     "꽃는·풍선는"이 찍혀 잡음). 한글 완성형 마지막 글자의 종성이 있으면 withB, 없으면 noB. */
+  function josa(w, withB, noB){
+    const c = String(w).charCodeAt(String(w).length - 1);
+    const b = c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0;
+    return w + (b ? withB : noB);
+  }
+
   /* ── 창작 이모지 풀: [이모지, ko, en, zh] ──────────────────── */
   const THINGS = [
     ['🍎', '사과',   'apples',      '苹果'],
@@ -63,7 +71,7 @@
 
     return {
       prompt: {
-        ko: `${ko}는 모두 몇 개일까요? ${ko}만 톡톡 세어 보세요`,
+        ko: `${josa(ko,'은','는')} 모두 몇 개일까요? ${ko}만 톡톡 세어 보세요`,
         en: `How many ${en}? Tap and count only the ${en}`,
         zh: `一共有几个${zh}？只点${zh}数一数`
       },
@@ -711,11 +719,11 @@
 
     return {
       prompt: isAdd ? {
-        ko: `${ko}이(가) ${start}개 있었어요! 친구에게 ${change}개를 더 받았어요. 이제 모두 몇 개일까요?`,
+        ko: `${josa(ko,'이','가')} ${start}개 있었어요! 친구에게 ${change}개를 더 받았어요. 이제 모두 몇 개일까요?`,
         en: `There were ${start} ${en}! Got ${change} more from a friend. How many now?`,
         zh: `有${start}个${zh}！又从朋友那里得到${change}个。现在一共几个？`
       } : {
-        ko: `${ko}이(가) ${start}개 있었어요! ${change}개를 친구에게 줬어요. 이제 몇 개가 남았을까요?`,
+        ko: `${josa(ko,'이','가')} ${start}개 있었어요! ${change}개를 친구에게 줬어요. 이제 몇 개가 남았을까요?`,
         en: `There were ${start} ${en}! Gave ${change} to a friend. How many are left?`,
         zh: `有${start}个${zh}！送给了朋友${change}个。现在还剩几个？`
       },

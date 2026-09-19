@@ -31,7 +31,7 @@ window.NM_STAGES = [
     name:{ko:'수의 나라',en:'Number Land',zh:'数字之国'},
     band:{ko:'유아 5~7세',en:'Ages 5–7',zh:'幼儿5~7岁'},
     chapters:['N0','N1','N2','N3','N4'],
-    tiers:[], courses:null, weeks:null,
+    tiers:['level0'], courses:{from:0,to:0}, weeks:15,
     learn:{
       ko:'수 세기와 개수, 순서와 뛰어세기, 몇째와 크기 비교, 수의 여러 표현. 손으로 모으고 가릅니다.',
       en:'Counting and quantity, order and skip-counting, ordinals and comparing, many ways to show a number. Gathering and splitting by hand.',
@@ -45,7 +45,7 @@ window.NM_STAGES = [
     symbolNote:{ko:'연산 기호는 아직 없습니다. + 는 다음 단계 과정 1에서 처음 만납니다.',
       en:'No operation symbols yet. The + sign is first met in Course 1 of the next stage.',
       zh:'还没有运算符号。＋在下一阶段的第1课程首次出现。'},
-    meta:{ko:'로드맵 5칸 · 유닛 15 · 과정 번호 없는 프롤로그',en:'5 map stops · 15 units · a prologue with no course numbers',zh:'地图5站 · 15个单元 · 没有课程编号的序章'}
+    meta:{ko:'과정 0 · 주 1회 기준 15주 · 유닛 15',en:'Course 0 · 15 weeks at one sheet a week · 15 units',zh:'课程0 · 每周1次约15周 · 15个单元'}
   },
   {
     key:'sprout', icon:'🌱', accent:'#16417C', status:'live',
@@ -190,7 +190,7 @@ window.NM_STAGE_OF_CHAPTER = function(id){
 /* 과정 번호(1~45) 또는 'C20' 같은 키. */
 window.NM_STAGE_OF_COURSE = function(n){
   var num = (typeof n === 'string') ? parseInt(String(n).replace(/^C/i,''),10) : n;
-  if(!(num >= 1)) return null;
+  if(!(num >= 0)) return null;   // 과정 0(수의 나라)도 단계가 있다(2026-09-19)
   for(var i=0;i<window.NM_STAGES.length;i++){
     var c = window.NM_STAGES[i].courses;
     if(c && num >= c.from && num <= c.to) return window.NM_STAGES[i];

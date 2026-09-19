@@ -179,38 +179,63 @@
   .nm-bond .nm-bond-blank { stroke-dasharray: 4 3; }
   .nm-bond text { font-family: sans-serif; font-weight: 700; font-size: 20px; fill: #000; }
 
-  /* NL(수의 나라, 유아) 그림 — 위 nlVisualHtml() 참조. 흑백 프린터 전제, 선/글자만. */
-  .nm-nl-scene { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; font-size: 1.3em; margin-top: 4px; }
-  .nm-nl-seqstrip { display: flex; gap: 4px; justify-content: center; margin-top: 6px; }
-  .nm-nl-seqbox { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
-    border: 1px solid #000; border-radius: 3px; font-size: .85em; }
-  .nm-nl-seqbox-blank { background: repeating-linear-gradient(45deg, #fff, #fff 3px, #eee 3px, #eee 6px); }
-  .nm-nl-dots { width: 100%; max-width: 32mm; margin: 6px auto 0; display: block; }
-  .nm-nl-dots circle, .nm-nl-dots text { fill: #000; }
-  .nm-nl-pyramid { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 6px; }
-  .nm-nl-pyr-row { display: flex; gap: 4px; }
-  .nm-nl-pyr-cell { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
-    border: 1px solid #000; border-radius: 50%; font-size: .8em; }
-  .nm-nl-pyr-blank { background: #eee; }
-  .nm-nl-strip { display: flex; gap: 3px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
-  .nm-nl-box { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px;
-    border: 1px solid #000; font-size: .75em; }
-  .nm-nl-stairs { display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 2px; margin: 6px auto 0; width: max-content; }
-  .nm-nl-stair { border: 1px solid #000; padding: 1px 6px; font-size: .75em; }
-  .nm-nl-stair-mark { margin-left: 6px; }
-  .nm-nl-scale { display: flex; gap: 10px; justify-content: center; margin-top: 6px; }
-  .nm-nl-pan { border: 1px solid #000; border-radius: 4px; padding: 3px 6px; text-align: center; min-width: 36px; }
-  .nm-nl-pan-items { font-size: 1em; letter-spacing: 1px; }
-  .nm-nl-pan-idx { font-size: .7em; color: #555; border-top: 1px dashed #999; margin-top: 2px; }
-  .nm-nl-machine { font-size: .85em; text-align: center; margin-top: 6px; }
-  .nm-nl-cross { display: grid; grid-template-columns: repeat(3, 20px); grid-template-rows: repeat(3, 20px);
-    justify-content: center; margin: 6px auto 0; font-size: .8em; text-align: center; }
-  .nm-nl-cross-top { grid-column: 2; grid-row: 1; }
-  .nm-nl-cross-mid { grid-column: 1 / 4; grid-row: 2; display: flex; justify-content: space-between; }
-  .nm-nl-cross-bot { grid-column: 2; grid-row: 3; }
-  .nm-nl-tally { width: 100%; max-width: 24mm; margin: 6px auto 0; display: block; }
-  .nm-nl-tally line { stroke: #000; stroke-width: 1.4; }
-  .nm-nl-legend { font-size: .7em; text-align: center; margin-top: 3px; color: #555; }
+  /* NL(수의 나라, 유아) 그림 — nlVisualHtml() 참조(2026-09-19 재작성). 무대(.nm-nl-stage) 안에
+     30px 이모지, 답 칸(.nm-nl-ans)은 카드 안. 흑백 레이저에서도 선·칸이 남게 진한 선만 쓴다. */
+  .nm-nl { display:flex; flex-direction:column; align-items:center; gap:2.5mm; margin:1.5mm auto 0; width:100%; max-width:80mm; }
+  .nm-nl-stage { border:1.3px solid #1F2A3A; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fff; min-width:40mm; max-width:100%;
+    display:flex; flex-direction:column; align-items:center; gap:1.5mm; box-sizing:border-box; }
+  .nm-nl-stage-bond { border:0; padding:0; }
+  .nm-nl-stage .nm-bond { width:38mm; }
+  .nm-nl-row { display:flex; justify-content:center; align-items:center; gap:2mm; font-size:30px; line-height:1.15; }
+  .nm-nl-g { display:inline-block; }
+  .nm-nl-cell { display:inline-flex; align-items:center; justify-content:center; width:9.5mm; height:9.5mm; box-sizing:border-box;
+    border:1.3px solid #1F2A3A; border-radius:2mm; font-size:18px; font-weight:700; line-height:1; background:#fff; }
+  .nm-nl-cell-round { border-radius:50%; }
+  .nm-nl-cell-blank { border-style:dashed; border-width:1.6px; }
+  .nm-nl-cell-empty { border-style:dashed; border-color:#8A8F99; }
+  .nm-nl-num { font-family:inherit; font-variant-numeric:tabular-nums; }
+  .nm-nl-arrow { font-size:16px; font-weight:700; color:#1F2A3A; padding:0 .5mm; }
+  .nm-nl-seq { font-size:18px; }
+  .nm-nl-ends { display:flex; justify-content:space-between; width:100%; font-size:9.5px; font-weight:700; color:#555; letter-spacing:.3px; }
+  .nm-nl-ans { display:flex; align-items:center; gap:2mm; font-size:14px; font-weight:800; color:#1F2A3A; }
+  .nm-nl-ansbox { display:inline-block; width:12mm; height:9.5mm; border:1.5px solid #1F2A3A; border-radius:2mm; background:#fff; box-sizing:border-box; }
+  .nm-nl-unit { font-size:13px; font-weight:700; }
+  .nm-nl-dots { width:28mm; height:28mm; display:block; }
+  .nm-nl-dots circle, .nm-nl-dots text { fill:#1F2A3A; }
+  .nm-nl-pyramid { display:flex; flex-direction:column; align-items:center; gap:1.5mm; }
+  .nm-nl-pyramid .nm-nl-row { gap:2.5mm; }
+  .nm-nl-stairs { height:30mm; max-width:100%; display:block; }
+  .nm-nl-stairs rect { fill:#fff; stroke:#1F2A3A; stroke-width:1.4; }
+  .nm-nl-stairs line { stroke:#1F2A3A; }
+  .nm-nl-scale { width:60mm; display:block; }
+  .nm-nl-scale line, .nm-nl-scale path { stroke:#1F2A3A; stroke-width:1.4; fill:#fff; stroke-linecap:round; }
+  .nm-nl-scale circle { fill:#1F2A3A; }
+  .nm-nl-scale text { fill:#1F2A3A; }
+  .nm-nl-mrow { font-size:18px; gap:1.5mm; }
+  .nm-nl-mach { display:inline-flex; align-items:center; justify-content:center; min-width:13mm; height:9.5mm; padding:0 2mm;
+    border:1.6px solid #1F2A3A; border-radius:2mm; background:#EEF1F6; font-size:15px; font-weight:800; box-sizing:border-box; }
+  .nm-nl-cross { display:flex; flex-direction:column; align-items:center; gap:1.5mm; }
+  .nm-nl-plus { font-size:14px; padding:0 1.5mm; color:#1F2A3A; }
+  .nm-nl-tenframe { display:grid; grid-template-columns:repeat(5, 10mm); grid-auto-rows:10mm; border:1.6px solid #1F2A3A; }
+  .nm-nl-tf { border:.8px solid #1F2A3A; display:flex; align-items:center; justify-content:center; box-sizing:border-box; }
+  .nm-nl-tf-on::after { content:''; width:6.5mm; height:6.5mm; border-radius:50%; background:#1F2A3A; }
+  .nm-nl-tally { height:9mm; width:auto; max-width:60mm; display:block; }
+  .nm-nl-tally line { stroke:#1F2A3A; stroke-width:1.6; stroke-linecap:round; }
+  .nm-nl-tallyboard { width:52mm; height:14mm; border:1.3px dashed #8A8F99; border-radius:2mm; }
+  .nm-nl-match { display:flex; align-items:stretch; gap:0; }
+  .nm-nl-mcol { display:flex; flex-direction:column; gap:2mm; }
+  .nm-nl-mgap { width:18mm; }
+  .nm-nl-mcard { position:relative; display:flex; align-items:center; justify-content:center; min-width:16mm; height:11mm; padding:0 2mm;
+    border:1.3px solid #1F2A3A; border-radius:2mm; font-size:19px; font-weight:800; box-sizing:border-box; }
+  .nm-nl-mcard .nm-nl-tally { height:7mm; }
+  .nm-nl-tag { position:absolute; right:-6mm; top:50%; transform:translateY(-50%); font-size:12px; color:#555; }
+  .nm-nl-dice { display:inline-flex; flex-wrap:wrap; gap:1.2mm; max-width:14mm; justify-content:center; }
+  .nm-nl-dice i { width:3mm; height:3mm; border-radius:50%; background:#1F2A3A; display:block; }
+  .nm-nl-baskets { display:flex; gap:8mm; justify-content:center; margin-top:1mm; }
+  .nm-nl-basket { display:flex; align-items:center; gap:1.5mm; font-size:14px; font-weight:700; }
+  .nm-nl-bk { font-size:26px; }
+  .nm-nl-bk-tag { font-size:16px; }
+  .nm-nl-basket .nm-nl-ansbox { width:10mm; height:8.5mm; }
 
   /* ── 연령별 조판 ──────────────────────────────────────────
      6세와 중학생에게 같은 크기로 뽑아 주지 않는다(2026-08-28 원장 지시).
@@ -223,7 +248,7 @@
   .nm-print-age-young .nm-print-vp { font-size: 1.8em; }
   .nm-print-age-young .nm-bond { width: 40mm; }
   .nm-print-age-young .nm-b10 { --u: 1.9mm; --g: 1.3mm; }
-  .nm-print-age-young .nm-nl { width: 70mm; }
+  .nm-print-age-young .nm-nl { max-width: 80mm; }
   .nm-print-age-young .nm-print-answer-key .nm-ak-item,
   .nm-print-age-young .nm-print-answer-key .nm-ak-guide-item { font-size: 1em; }
 
@@ -2138,22 +2163,39 @@ function divPictureHtml(p, opts){
   return `<div class="nm-divpic-wrap"><svg class="nm-divpic" viewBox="0 0 ${W} ${H}" style="width:calc(${Math.min(100, Math.round(W * scale))}mm * var(--ws-fs, 1))" role="img" aria-label="${esc(label)}">${body}</svg><div class="nm-divpic-cap">${esc(cap)}</div></div>`;
 }
 
-/* ── NL(유아 5~7세) 인쇄 시각화 (2026-08-29) ──────────────────
-   engine/threads/nl.js의 16개 생성기는 다른 158개 스레드와 달리 tex를 전혀 주지
-   않는다 — 화면은 widget이 그리고(town-game 실습 화면), 문제 자체는 prompt 문장
-   + items/seq/rows/cells 같은 원본 데이터로만 존재한다. 그대로 두면 인쇄 카드가
-   비어 나간다("화면은 위젯···" 절과 같은 부류의 결함, 여기선 위젯이 아예 하나도
-   없다는 점만 다르다). prompt 문장에 답에 필요한 숫자가 이미 다 있는 것(예: 모으기
-   "4개와 2개를 모으면?", 수 기계 "3을 넣어요! 규칙은 +2")은 아래 printAskText
-   폴백만으로 충분해 손대지 않는다 — 그림이 실제로 있어야 풀리는 것만 그린다.
-   전부 생성기가 이미 돌려주는 필드만 읽는다(nl.js는 건드리지 않았다). widget
-   이름은 nl.js만 쓰므로(grep 확인됨) 다른 158개 스레드엔 영향 없다. */
+/* ── NL(수의 나라, 유아) 인쇄 그림 — 2026-09-19 전면 재작성 ──
+   과정 0(수와 문장제와 친해지기)이 학습지 로드맵에 들어오면서 "그림이 곧 문제"인 유아 카드가
+   처음으로 종이에 나갔다. 전엔 1.3em 이모지 한 줄이 95×55mm 칸 한가운데 떠 있었고 답 쓸 자리도
+   없었으며 위젯 16종 중 절반은 문장만 나갔다. 규칙:
+     ① 그림은 무대(.nm-nl-stage) 안에 30px, 한 줄 5개까지 — 유아가 손가락으로 짚으며 셀 크기
+     ② 답 쓰는 자리(.nm-nl-ans)를 카드 안에 둔다
+     ③ 고르는 문항(몇째·저울·바구니·잇기)은 ○표/선 잇기 — 정답지엔 0/1 인덱스 대신 말(nlAnswerLabel)
+     ④ 화면용 문구(톡톡·콕 짚어요)는 인쇄용으로 바꿔 싣는다(nlPrintAsk) — nl.js는 손대지 않는다
+   전부 생성기가 이미 돌려주는 필드만 읽는다. 이모지는 창작 콘텐츠(라이선스 없음). */
 const ANIMAL_GLYPH = {
   'animal:turtle':'🐢', 'animal:squirrel':'🐿️', 'animal:rabbit':'🐰',
   'animal:bear':'🐻', 'animal:fox':'🦊', 'animal:deer':'🦌', 'animal:duck':'🦆'
 };
 function nlGlyph(tok){ return ANIMAL_GLYPH[tok] || tok || '●'; }
-
+function nlChunk(arr, n){ const out = []; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i, i+n)); return out; }
+function nlStage(inner, extraCls){ return `<div class="nm-nl-stage${extraCls ? ' ' + extraCls : ''}">${inner}</div>`; }
+function nlCard(stage, ans){ return `<div class="nm-nl">${stage}${ans || ''}</div>`; }
+function nlUnitEa(){ return lk('개', '', '个'); }
+function nlAnsBox(unit){
+  const u = unit ? `<span class="nm-nl-unit">${esc(unit)}</span>` : '';
+  return `<div class="nm-nl-ans"><span class="nm-nl-anslab">${esc(lk('답','Answer','答'))}</span><span class="nm-nl-ansbox"></span>${u}</div>`;
+}
+/* 이모지 줄 — 한 줄 perRow(기본 5)개씩 끊어 두 줄이면 5+n 으로 읽히게(다섯 묶음 세기). */
+function nlGlyphRows(glyphs, perRow, sizePx){
+  const st = sizePx ? ` style="font-size:${sizePx}px"` : '';
+  return nlChunk(glyphs, perRow || 5).map(r =>
+    `<div class="nm-nl-row"${st}>${r.map(g => `<span class="nm-nl-g">${esc(nlGlyph(g))}</span>`).join('')}</div>`).join('');
+}
+/* 빈 판 — 만들기(tapMake)·색칠(gridPaint count)·탤리 그리기: 아이가 직접 그려 넣는 칸. */
+function nlBoardHtml(n, perRow){
+  const cells = []; for(let i=0;i<n;i++) cells.push('<span class="nm-nl-cell nm-nl-cell-empty"></span>');
+  return nlChunk(cells, perRow || 5).map(r => `<div class="nm-nl-row">${r.join('')}</div>`).join('');
+}
 /* 모으기(join) — bondSvg와 짝. bondSvg는 "전체가 이미 보임" 모양(위 원=값,
    아래 오른쪽=빈칸)이라 가르기(split)에만 맞는다. 모으기는 반대로 아래 두 원이
    보이고 위 원(전체)이 빈칸이라 별도 모양이 필요하다. */
@@ -2169,76 +2211,106 @@ function bondSvgTop(a, b){
 /* 섞인 장면(세기·분류) — items는 {e,t} 또는 {e,type} 어느 쪽이든 .e만 읽는다. */
 function nlSceneHtml(items){
   if(!Array.isArray(items) || !items.length) return '';
-  const chips = items.map(it => `<span class="nm-nl-chip">${esc(nlGlyph(it.e))}</span>`).join('');
-  return `<div class="nm-nl-scene">${chips}</div>`;
+  return nlStage(nlGlyphRows(items.map(it => it.e)));
 }
 function nlSeqStripHtml(seq, blank){
   if(!Array.isArray(seq)) return '';
   const cells = seq.map((v,i) => i===blank
-    ? `<span class="nm-nl-seqbox nm-nl-seqbox-blank"></span>`
-    : `<span class="nm-nl-seqbox">${esc(String(v))}</span>`).join('');
-  return `<div class="nm-nl-seqstrip">${cells}</div>`;
+    ? `<span class="nm-nl-cell nm-nl-cell-blank"></span>`
+    : `<span class="nm-nl-cell nm-nl-num">${esc(String(v))}</span>`);
+  return nlStage(`<div class="nm-nl-row nm-nl-seq">${cells.join('<span class="nm-nl-arrow">→</span>')}</div>`);
 }
 /* 점 잇기 — nl.js의 좌표는 이미 0~100 뷰박스 기준(오리지널 도형, 라이선스 없음).
    번호를 그대로 찍어 인쇄해도 "점이 모두 몇 개?"(생성기의 실제 답)가 바로 풀린다. */
 function nlDotsSvg(pts){
   if(!Array.isArray(pts) || !pts.length) return '';
   const dots = pts.map(([x,y],i) =>
-    `<circle cx="${x}" cy="${y}" r="2.6"/><text x="${x}" y="${y-4}" text-anchor="middle" font-size="6">${i+1}</text>`
+    `<circle cx="${x}" cy="${y}" r="2.4"/><text x="${x}" y="${y-4.5}" text-anchor="middle" font-size="7.5" font-weight="700">${i+1}</text>`
   ).join('');
-  return `<svg class="nm-nl-dots" viewBox="0 0 100 100" role="img" aria-label="${esc(lk('점 잇기','Connect the dots','连点成图'))}">${dots}</svg>`;
+  return `<svg class="nm-nl-dots" viewBox="-6 -8 112 112" role="img" aria-label="${esc(lk('점 잇기','Connect the dots','连点成图'))}">${dots}</svg>`;
 }
 function nlPyramidHtml(rows){
   if(!Array.isArray(rows)) return '';
   const rowsHtml = rows.map(row => {
     const cells = row.map(v => v===null
-      ? `<span class="nm-nl-pyr-cell nm-nl-pyr-blank"></span>`
-      : `<span class="nm-nl-pyr-cell">${esc(String(v))}</span>`).join('');
-    return `<div class="nm-nl-pyr-row">${cells}</div>`;
+      ? `<span class="nm-nl-cell nm-nl-cell-round nm-nl-cell-blank"></span>`
+      : `<span class="nm-nl-cell nm-nl-cell-round nm-nl-num">${esc(String(v))}</span>`).join('');
+    return `<div class="nm-nl-row">${cells}</div>`;
   }).join('');
-  return `<div class="nm-nl-pyramid">${rowsHtml}</div>`;
+  return nlStage(`<div class="nm-nl-pyramid">${rowsHtml}</div>`);
 }
-/* 몇째 찾기(gridPaint 'single'·storyCard 'lineup') — 생성기의 targetIndex가
-   0부터 세는 배열 인덱스라(왼쪽에서 몇째든 오른쪽에서 몇째든), 칸 번호도 그대로
-   0부터 매겨야 "그 칸 밑에 적힌 번호"가 곧 정답이 된다. */
-function nlOrderStripHtml(total){
+/* 몇째 찾기(gridPaint 'single'·storyCard 'lineup') — 줄 양 끝에 왼쪽/오른쪽 표시를 두고
+   아이가 ○표 한다. 정답지엔 nlAnswerLabel이 "왼쪽에서 n째"로 적는다(0부터 세는 인덱스 대신). */
+function nlOrderStripHtml(total, glyphs){
   if(!total) return '';
-  let s = '';
-  for(let i=0;i<total;i++) s += `<span class="nm-nl-box">${i}</span>`;
-  return `<div class="nm-nl-strip">${s}</div>`;
+  const g = Array.isArray(glyphs) ? glyphs : [];
+  const list = []; for(let i=0;i<total;i++) list.push(g[i] || g[0] || '●');
+  const size = total > 7 ? 24 : (total > 5 ? 27 : 30);
+  return nlStage(
+    `<div class="nm-nl-ends"><span>◀ ${esc(lk('왼쪽','left','左'))}</span><span>${esc(lk('오른쪽','right','右'))} ▶</span></div>`
+    + nlGlyphRows(list, total, size));
 }
-/* 계단(storyCard 'stairs') — 정답 k는 "아래에서부터 센 계단 번호"(1부터)라
-   칸 번호도 아래부터 1로 매긴다. mark(0-based)가 있는 칸에 친구 아이콘을 얹는다. */
+/* 계단(storyCard 'stairs') — 아래에서 몇째인지 세어 답한다. 번호를 찍으면 세기가 없어지므로 번호 없이. */
 function nlStairsHtml(total, mark, tok){
   if(!total) return '';
+  const sw = 14, sh = 9, W = total*sw + 8, H = total*sh + 16;
   let s = '';
-  for(let i=total-1;i>=0;i--){
-    s += `<div class="nm-nl-stair">${i+1}${i===mark ? `<span class="nm-nl-stair-mark">${esc(nlGlyph(tok))}</span>` : ''}</div>`;
+  for(let i=0;i<total;i++){
+    const x = 4 + i*sw, y = H - 4 - (i+1)*sh;
+    s += `<rect x="${x}" y="${y}" width="${sw}" height="${(i+1)*sh}"/>`;
+    if(i===mark) s += `<text x="${x + sw/2}" y="${y - 1.5}" text-anchor="middle" font-size="10">${esc(nlGlyph(tok))}</text>`;
   }
-  return `<div class="nm-nl-stairs">${s}</div>`;
+  s += `<line x1="0" y1="${H-4}" x2="${W}" y2="${H-4}" stroke-width="1.6"/>`;
+  return nlStage(`<svg class="nm-nl-stairs" viewBox="0 0 ${W} ${H}" role="img">${s}</svg>`);
 }
-/* 양팔저울 — 정답이 0(왼쪽)/1(오른쪽) 인덱스라 접시 밑에 그 번호를 그대로 적어
-   범례 문장 없이도 답 형식이 그림만 보고 분명해지게 한다. */
+/* 양팔저울 — 접시 위에 이모지를 쌓고 접시 아래(받침대 바깥)에 왼쪽·오른쪽을 적는다.
+   기울기는 그리지 않는다 — 기울여 그리면 세어 보지 않아도 답이 보인다. */
 function nlScaleHtml(left, right, emoji){
-  const side = (n, idx) => {
-    let g=''; for(let i=0;i<n;i++) g += esc(nlGlyph(emoji));
-    return `<div class="nm-nl-pan"><div class="nm-nl-pan-items">${g}</div><div class="nm-nl-pan-idx">${idx}</div></div>`;
+  const g = nlGlyph(emoji);
+  const pan = (n, cx) => {
+    let t = '';
+    /* 한 줄 3개까지 — 4개를 넣으면 접시 밖으로 흘러나왔다(2026-09-19 실측). */
+    nlChunk(new Array(Math.max(0, n|0)).fill(g), 3).forEach((r, ri) => {
+      const y = 56 - ri*8.5;
+      r.forEach((e, ci) => { const x = cx + (ci - (r.length-1)/2)*8; t += `<text x="${x}" y="${y}" text-anchor="middle" font-size="7.5">${esc(e)}</text>`; });
+    });
+    return `<line x1="${cx}" y1="20" x2="${cx-19}" y2="59"/><line x1="${cx}" y1="20" x2="${cx+19}" y2="59"/>`
+      + `<path d="M${cx-21} 59 L${cx+21} 59 L${cx+15} 68 L${cx-15} 68 Z"/>${t}`;
   };
-  return `<div class="nm-nl-scale">${side(left,0)}${side(right,1)}</div>`;
+  return nlStage(`<svg class="nm-nl-scale" viewBox="0 0 176 98" role="img" aria-label="${esc(lk('양팔저울','Balance scale','天平'))}">`
+    + `<line x1="22" y1="20" x2="154" y2="20" stroke-width="2.6"/><line x1="88" y1="20" x2="88" y2="80"/>`
+    + `<line x1="62" y1="80" x2="114" y2="80" stroke-width="2.6"/><circle cx="88" cy="20" r="2.6"/>`
+    + pan(left, 46) + pan(right, 130)
+    + `<text x="46" y="93" text-anchor="middle" font-size="9" font-weight="700">${esc(lk('왼쪽','left','左'))}</text>`
+    + `<text x="130" y="93" text-anchor="middle" font-size="9" font-weight="700">${esc(lk('오른쪽','right','右'))}</text></svg>`);
 }
-function nlMachineHtml(examples, target){
-  if(!Array.isArray(examples)) return '';
-  const parts = examples.map(ex => `${ex[0]} → ${ex[1]}`);
-  parts.push(`${target} → ?`);
-  return `<div class="nm-nl-machine">${esc(parts.join('    '))}</div>`;
+/* 수 기계 — 넣는 수 → [규칙] → 나오는 수. guess는 예시 두 줄 + 물음 줄, apply는 규칙이 보이는 한 줄. */
+function nlMachineHtml(p){
+  const cell = v => `<span class="nm-nl-cell nm-nl-num">${esc(String(v))}</span>`;
+  const blank = '<span class="nm-nl-cell nm-nl-cell-blank"></span>';
+  const arrow = '<span class="nm-nl-arrow">→</span>';
+  const mach = label => `<span class="nm-nl-mach">${esc(label)}</span>`;
+  if(p.mmode === 'guess'){
+    const rows = (Array.isArray(p.examples) ? p.examples : []).map(ex =>
+      `<div class="nm-nl-row nm-nl-mrow">${cell(ex[0])}${arrow}${mach('?')}${arrow}${cell(ex[1])}</div>`).join('');
+    return nlStage(rows + `<div class="nm-nl-row nm-nl-mrow">${cell(p.target)}${arrow}${mach('?')}${arrow}${blank}</div>`);
+  }
+  return nlStage(`<div class="nm-nl-row nm-nl-mrow">${cell(p.input)}${arrow}${mach(p.rule || '')}${arrow}${blank}</div>`);
 }
 function nlCrossHtml(cells){
-  const c = k => (cells[k]===null || cells[k]===undefined) ? '' : esc(String(cells[k]));
-  return `<div class="nm-nl-cross">
-    <div class="nm-nl-cross-top">${c('top')}</div>
-    <div class="nm-nl-cross-mid"><span>${c('left')}</span><span>${c('right')}</span></div>
-    <div class="nm-nl-cross-bot">${c('bottom')}</div>
-  </div>`;
+  const c = k => (cells[k]===null || cells[k]===undefined)
+    ? '<span class="nm-nl-cell nm-nl-cell-blank"></span>'
+    : `<span class="nm-nl-cell nm-nl-num">${esc(String(cells[k]))}</span>`;
+  return nlStage(`<div class="nm-nl-cross">
+    <div class="nm-nl-row">${c('top')}</div>
+    <div class="nm-nl-row">${c('left')}<span class="nm-nl-plus">✚</span>${c('right')}</div>
+    <div class="nm-nl-row">${c('bottom')}</div>
+  </div>`);
+}
+/* 텐프레임 — 5×2 칸에 n개가 차 있고 나머지는 비어 있다(10의 짝꿍). */
+function nlTenframeHtml(n){
+  const cells = []; for(let i=0;i<10;i++) cells.push(`<span class="nm-nl-tf${i < n ? ' nm-nl-tf-on' : ''}"></span>`);
+  return nlStage(`<div class="nm-nl-tenframe">${cells.join('')}</div>`);
 }
 /* 탤리(산가지) 읽기 — 5개씩 4작대기+대각선 하나로 묶어 그린다(전통 tally 표기). */
 function nlTallySvg(n){
@@ -2254,37 +2326,122 @@ function nlTallySvg(n){
   if(!groups.length) x = 6;
   return `<svg class="nm-nl-tally" viewBox="0 0 ${x+2} 18" role="img" aria-label="${esc(lk('탤리','Tally marks','正字计数'))} ${esc(String(n))}">${s}</svg>`;
 }
+/* 점 카드(주사위식) — 수↔점 잇기의 오른쪽 카드. */
+function nlDiceHtml(n){ let s = ''; for(let i=0;i<n;i++) s += '<i></i>'; return `<span class="nm-nl-dice">${s}</span>`; }
+const NL_CIRC = ['①','②','③','④','⑤','⑥'];
+/* 잇기(matchLine) — 왼쪽 수 카드, 오른쪽 점/탤리 카드(①②… 꼬리표). 아이는 선으로 잇고,
+   정답지는 nlAnswerLabel이 "3→①"식으로 적는다. */
+function nlMatchHtml(p){
+  const L = (Array.isArray(p.left) ? p.left : []).map(n => `<div class="nm-nl-mcard nm-nl-num">${esc(String(n))}</div>`).join('');
+  const R = (Array.isArray(p.right) ? p.right : []).map((n, i) =>
+    `<div class="nm-nl-mcard">${p.rightType === 'tally' ? nlTallySvg(n) : nlDiceHtml(n)}<span class="nm-nl-tag">${NL_CIRC[i] || (i+1)}</span></div>`).join('');
+  return nlStage(`<div class="nm-nl-match"><div class="nm-nl-mcol">${L}</div><div class="nm-nl-mgap"></div><div class="nm-nl-mcol">${R}</div></div>`);
+}
+/* 바구니 두 개 — 세기 모드는 묻는 바구니에만 답 칸, 비교 모드는 ○표(칸 없음). */
+function nlBasketsHtml(p){
+  const one = (bk, key) => {
+    if(!bk) return '';
+    const asked = p.askMode !== 'compare' && p.askType === key;
+    return `<div class="nm-nl-basket"><span class="nm-nl-bk">🧺</span><span class="nm-nl-bk-tag">${esc(nlGlyph(bk.emoji))}</span>`
+      + (asked ? `<span class="nm-nl-ansbox"></span><span class="nm-nl-unit">${esc(nlUnitEa())}</span>` : '') + `</div>`;
+  };
+  return `<div class="nm-nl-baskets">${one(p.basketA, 'A')}${one(p.basketB, 'B')}</div>`;
+}
 
 /* widget별 분기 — nl.js가 실제로 채우는 필드만 읽는다(값 검산·형 확인 없이
    생성기 계약을 그대로 신뢰). 값이 없으면 빈 문자열을 돌려 폴백(ask 텍스트만)한다. */
 function nlVisualHtml(p){
   const w = p.widget;
+  if(!w) return '';
+  const EA = nlUnitEa();
   if(w==='numberBond'){
-    if(p.dir==='join' && typeof p.a==='number' && typeof p.b==='number') return bondSvgTop(p.a, p.b);
-    if(typeof p.whole==='number' && typeof p.a==='number') return bondSvg(p.whole, p.a);
-    return '';
+    const svg = (p.dir==='join' && typeof p.a==='number' && typeof p.b==='number') ? bondSvgTop(p.a, p.b)
+      : (typeof p.whole==='number' && typeof p.a==='number') ? bondSvg(p.whole, p.a) : '';
+    return svg ? nlCard(nlStage(svg, 'nm-nl-stage-bond')) : '';
   }
-  if(w==='tapCount' && Array.isArray(p.items)) return nlSceneHtml(p.items);
-  if(w==='seqFill' && Array.isArray(p.seq)) return nlSeqStripHtml(p.seq, p.blank);
-  if(w==='dotToDot' && Array.isArray(p.pts)) return nlDotsSvg(p.pts);
-  if(w==='pyramid' && Array.isArray(p.rows)) return nlPyramidHtml(p.rows);
-  if(w==='gridPaint' && p.gridMode==='single') return nlOrderStripHtml(p.total);
-  if(w==='storyCard' && p.layout==='row' && p.interaction==='tap') return nlOrderStripHtml(p.total);
-  if(w==='storyCard' && p.layout==='stairs') return nlStairsHtml(p.total, p.mark, p.emoji);
-  if(w==='balanceScale') return nlScaleHtml(p.left, p.right, p.emoji);
-  if(w==='numberMachine' && p.mmode==='guess') return nlMachineHtml(p.examples, p.target);
-  if(w==='crossSum' && p.cells) return nlCrossHtml(p.cells);
-  if(w==='sortBasket' && Array.isArray(p.items)){
-    let html = nlSceneHtml(p.items);
-    /* 비교(compare) 모드는 정답이 0/1 인덱스라 어느 바구니가 0인지 범례가 필요 —
-       count 모드는 askKo가 이미 "무엇을 세라"고 말해 주므로 범례 없이도 충분. */
-    if(html && p.askMode==='compare' && p.basketA && p.basketB){
-      html += `<div class="nm-nl-legend">${esc(nlGlyph(p.basketA.emoji))}=0 · ${esc(nlGlyph(p.basketB.emoji))}=1</div>`;
-    }
-    return html;
+  if(w==='tapCount') return Array.isArray(p.items) ? nlCard(nlSceneHtml(p.items), nlAnsBox(p.step === 10 ? lk('원','','元') : EA)) : '';
+  if(w==='tapMake') return nlCard(nlStage(nlBoardHtml(10)));
+  if(w==='seqFill') return Array.isArray(p.seq) ? nlCard(nlSeqStripHtml(p.seq, p.blank)) : '';
+  if(w==='dotToDot') return Array.isArray(p.pts) ? nlCard(nlStage(nlDotsSvg(p.pts)), nlAnsBox(EA)) : '';
+  if(w==='pyramid') return Array.isArray(p.rows) ? nlCard(nlPyramidHtml(p.rows)) : '';
+  if(w==='tenframe'){
+    const n = (p.cubes && Array.isArray(p.cubes.piles)) ? p.cubes.piles[0] : null;
+    return typeof n==='number' ? nlCard(nlTenframeHtml(n), nlAnsBox(EA)) : '';
   }
-  if(w==='tallyBuild' && p.interaction==='read' && typeof p.target==='number') return nlTallySvg(p.target);
+  if(w==='matchLine') return nlCard(nlMatchHtml(p));
+  if(w==='gridPaint') return p.gridMode==='single' ? nlCard(nlOrderStripHtml(p.total, [p.emoji])) : nlCard(nlStage(nlBoardHtml(p.total)));
+  if(w==='storyCard'){
+    if(p.layout==='stairs') return nlCard(nlStairsHtml(p.total, p.mark, p.emoji), nlAnsBox(lk('째 계단','th step','级')));
+    if(p.interaction==='tap') return nlCard(nlOrderStripHtml(p.total, p.chars));
+    return nlCard(nlStage(nlGlyphRows(Array.isArray(p.chars) ? p.chars : [])), nlAnsBox(EA));
+  }
+  if(w==='balanceScale') return nlCard(nlScaleHtml(p.left, p.right, p.emoji));
+  if(w==='numberMachine') return nlCard(nlMachineHtml(p));
+  if(w==='crossSum') return p.cells ? nlCard(nlCrossHtml(p.cells)) : '';
+  if(w==='sortBasket') return Array.isArray(p.items) ? nlCard(nlStage(nlGlyphRows(p.items.map(it => it.e)) + nlBasketsHtml(p))) : '';
+  if(w==='tallyBuild') return p.interaction==='read' && typeof p.target==='number'
+    ? nlCard(nlStage(nlTallySvg(p.target)), nlAnsBox(EA))
+    : nlCard(nlStage('<div class="nm-nl-tallyboard"></div>'));
   return '';
+}
+/* 정답지 표기 — 고르는 문항은 인덱스(0/1) 대신 말로. 없으면 null(숫자 그대로). */
+function nlAnswerLabel(p){
+  const w = p.widget; if(!w) return null;
+  /* 우리말 서수는 "2째"가 아니라 "둘째"다 — 문항 문장(nl.js ORDINAL)과 같은 말로 적는다. */
+  const ORD_KO = ['', '첫째', '둘째', '셋째', '넷째', '다섯째', '여섯째', '일곱째', '여덟째', '아홉째'];
+  const ord = i => lk(`왼쪽에서 ${ORD_KO[i] || i + '째'}`,
+    `${i}${i===1?'st':i===2?'nd':i===3?'rd':'th'} from left`, `从左数第${i}个`);
+  if((w==='gridPaint' && p.gridMode==='single') || (w==='storyCard' && p.interaction==='tap'))
+    return typeof p.targetIndex==='number' ? ord(p.targetIndex + 1) : null;
+  if(w==='balanceScale') return p.answer===0 ? lk('왼쪽','left','左') : lk('오른쪽','right','右');
+  if(w==='sortBasket' && p.askMode==='compare'){
+    const bk = p.answer===0 ? p.basketA : p.basketB;
+    return bk ? `${nlGlyph(bk.emoji)} ${lk('바구니','basket','篮子')}` : null;
+  }
+  if(w==='matchLine' && Array.isArray(p.left) && Array.isArray(p.right))
+    return p.left.map(n => `${n}→${NL_CIRC[p.right.indexOf(n)] || '?'}`).join(' ');
+  return null;
+}
+/* 화면 문구 → 인쇄 문구. 톡톡·콕·골라요(화면 탭 동작)를 세어요·○표·써요로. 세 언어 표를 순서대로
+   전부 적용한다(각 언어 문구는 서로 겹치지 않아 안전). */
+const NL_PRINT_WORDS = [
+  ['만 톡톡 세어 보세요', '만 세어 보세요'], ['톡톡 세어 보세요', '세어 보세요'],
+  ['친구를 콕! 짚어요', '친구에게 ○표 하세요'], ['를 콕! 짚어요', '에 ○표 하세요'],
+  ['쪽 접시를 콕 짚어요', '쪽 접시에 ○표 하세요'], ['더 많은지 콕 짚어요', '더 많은지 ○표 하세요'],
+  ['판을 톡톡 눌러 보세요', '판에 그려 보세요'], ['판을 톡톡 눌러 막대를 더해요', '판에 막대를 그려요'],
+  ['칸을 정확히', '칸을 정확히'], ['콕콕 칠해요', '색칠해요'],
+  ['빈 칸을 골라요', '빈 칸을 채워요'], ['빈 칸에 올 수를 골라요', '빈 칸에 올 수를 써요'],
+  ['빈 돌에 올 수를 골라요', '빈 돌에 올 수를 써요'],
+  ['위쪽 원을 톡톡 채워요', '위쪽 원을 채워요'], ['빈 원을 톡톡!', '빈 원을 채워요!'],
+  ['빈 칸을 눌러 10을 가득 채워 봐요', '빈 칸을 색칠해 10을 가득 채워요'],
+  ['왼쪽 수 톡 → 오른쪽 점 그림 톡!', '선으로 이어요'], ['숫자 톡 → 탤리 그림 톡!', '선으로 이어요'],
+  ['숫자로 답해요', '숫자로 써요'], ['톡톡 눌러서 바구니에 담고, ', ''],
+  ['뛰어세며 톡톡 — 모두 얼마인지 골라요', '뛰어세어 모두 얼마인지 써요'],
+  ['1 큰 수를 골라요', '1 큰 수를 써요'], ['1 작은 수를 골라요', '1 작은 수를 써요'],
+  ['Tap and count only the', 'Count only the'], ['Tap the board', 'Draw on the board'],
+  ['Tap the board to add strokes', 'Draw strokes on the board'],
+  ['Tap to fill the top circle', 'Fill the top circle'], ['Tap the empty circle!', 'Fill the empty circle!'],
+  ['Tap the empty squares to fill', 'Color the empty squares to fill'],
+  ['Tap a number, then tap its dots!', 'Draw lines to match!'], ['Tap a number, then tap its tally!', 'Draw lines to match!'],
+  ['Tap to put them in baskets, then count', 'Count'], ['then tap the one with more!', 'then circle the one with more!'],
+  ['Tap the heavier pan', 'Circle the heavier pan'], ['Tap the lighter pan', 'Circle the lighter pan'],
+  ['Tap along — 10, 20, 30… then pick the total', 'Skip-count 10, 20, 30… and write the total'],
+  ['Tap the', 'Circle the'], ['Pick the', 'Write the'], ['Paint exactly', 'Color exactly'],
+  ['只点', '数一数'], ['数一数数一数', '数一数'],
+  ['个朋友，点一点！', '个朋友，圈出来！'], ['点一点从左边数', '圈出从左边数'], ['点一点从右边数', '圈出从右边数'],
+  ['点一点更重的那边', '圈出更重的那边'], ['点一点更轻的那边', '圈出更轻的那边'], ['点一点数量更多的那个', '圈出数量更多的那个'],
+  ['点一点板子加一笔', '在板上画一笔'], ['点一点板子', '在板上画一画'],
+  ['点空格把10填满', '涂满空格凑成10'], ['点一点填满上面的圆', '填满上面的圆'], ['点一点空圆', '填上空圆'],
+  ['先点左边的数，再点右边的点图！', '用线连一连！'], ['先点数字，再点它的计数符号！', '用线连一连！'],
+  ['点一点放进篮子，再', ''], ['跳着数，选出', '跳着数，写出'], ['选出', '写出'], ['点一点，', '']
+];
+function nlPrintAsk(p){
+  let s = String(pickL(p.prompt) || '');
+  NL_PRINT_WORDS.forEach(([a, b]) => { if(a && s.indexOf(a) >= 0) s = s.split(a).join(b); });
+  /* 점 잇기·길 잇기의 답은 "점이 모두 몇 개"다(생성기 계약) — 화면에선 다 이으면 끝이라 물음이
+     프롬프트에 없다. 인쇄물엔 답 칸이 있으니 무엇을 쓰는지 한 줄 덧붙인다(2026-09-19). */
+  if(p.widget === 'dotToDot') s += ' ' + lk('점은 모두 몇 개일까요?', 'How many dots are there?', '一共有几个点？');
+  return s;
 }
 
 /* 인쇄는 tex만 쓰고 prompt는 버린다 — 대부분은 `3 + 1 = □`처럼 tex만으로 문항이
@@ -2322,7 +2479,7 @@ function printAskText(p){
   /* tex가 아예 없는 유형 — nl.js(수의 나라, 유아) 16개 생성기가 이 경우다. 다른
      158개 스레드는 전부 tex를 주므로(가장 짧아도 "3+2=□") 이 분기를 타지 않는다.
      문항 전체가 prompt 문장에만 있으므로 그걸 그대로 질문 줄로 싣는다. */
-  if(!tex) return pickL(p.prompt);
+  if(!tex) return p.widget ? nlPrintAsk(p) : pickL(p.prompt);
   if(!/\\square|\\bigcirc/.test(tex)) return '';
   if(/=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(tex)) return '';
   return pickL(p.prompt);
@@ -2857,7 +3014,10 @@ function classifyRoundLayout(problems, threadId, young, creative){
   if(!problems || !problems.length) return {type:'short', cols:2, rows:10, perPage:20, flow:'col', firstRows:10, pitch:14};
   /* 창의 회차(2026-09-18, 참고 학습지 'Training Course') — 식 한 줄 + 주황 밑줄 + 단계마다 빈칸 상자 +
      점선 풀이 줄. 한 쪽 3문항, 첫 장은 개념 아래 1문항. */
-  if(creative && !getSolveMode()) return {type:'train', cols:1, rows:3, perPage:3, flow:'row', firstRows:1, pitch:78};
+  /* 그림이 곧 문제인 유아 창의 회차(NL9·13·15)는 Training Course 식 줄이 아니라 그림형 칸으로 —
+     식(tex)이 없어 "= □"만 찍혔다(2026-09-19, 과정 0 p08). */
+  const pictureOnly = problems.every(p => !p.tex && !p.word);
+  if(creative && !getSolveMode() && !pictureOnly) return {type:'train', cols:1, rows:3, perPage:3, flow:'row', firstRows:1, pitch:78};
   /* 풀이형(2026-09-16) — 판정보다 먼저다. 켜져 있으면 문항 종류와 상관없이 한 쪽에
      4문항(2열×2행), 칸마다 풀이 줄과 "▶ 답:"을 준다. 첫 장은 개념·예시가 위에
      들어가므로 2문항만(firstRows:1). */
@@ -2877,7 +3037,9 @@ function classifyRoundLayout(problems, threadId, young, creative){
   }
   const withTex = nonWord.filter(p => p.tex);
   if(nonWord.length === problems.length && !withTex.length){
-    return {type:'visual', cols:2, rows:4, perPage:8, flow:'row', firstRows:2, pitch:55};
+    /* 그림형(유아 NL) — 머리에 예시·따라풀기가 없어(pictureOnly) 첫 장에 3행이 들어간다.
+       2행이던 때는 첫 장 아래 60mm가 통째로 비었다(2026-09-19 실측). */
+    return {type:'visual', cols:2, rows:4, perPage:8, flow:'row', firstRows:3, pitch:60};
   }
   /* 세로셈 판정은 회차 전체를 보고 "한 번만" — 칸마다 다시 parseVert를 걸면
      우연히 둘 다 양수인 문항(예: MD4가 부호 없는 5×2를 낼 때)만 세로 박스로
@@ -3097,6 +3259,8 @@ function w2AnswerValueHtml(p){
     const [c, r] = p.answer;
     return `<span class="nm-w2-tex" data-tex="${esc(`${c === 1 ? '' : c}\\sqrt{${r}}`)}"></span>`;
   }
+  const nlLab = nlAnswerLabel(p);
+  if(nlLab) return esc(nlLab);
   const note = pickL(p.answerNote);
   const unit = (!note && p.word && p.wordUnit) ? pickL(p.wordUnit) : '';
   return esc(String(fmtAns(p.answer)) + (unit ? unit : '') + (note ? ` (${note})` : ''));
@@ -3777,6 +3941,10 @@ function renderRoundPages(item, opts){
   /* 점검 회차는 가르치지 않는다(2026-09-16) — 개념 설명·★예시·따라풀기를 얹으면
      푸는 법을 옆에 펴 놓고 실력을 재는 꼴이 된다. 문항만 낸다. */
   const noTeach = !!item.noTeach;
+  /* 그림·조작 문항만인 회차(수의 나라 NL — tex도 이야기도 없다)는 예시·따라풀기를 뺀다(2026-09-19).
+     두 틀은 "완성된 식 + 풀이 사슬"을 전제해서, 식이 없으면 예시가 " = 4", 따라풀기가
+     "(가) = ____"로 빈 채 찍혔다(과정 0 첫 학습지에서 발견). 개념 패널은 그대로 둔다. */
+  const pictureOnly = !noTeach && problems.length > 0 && problems.every(p => !p.tex && !p.word);
   /* 개념·예시·따라풀기는 첫 장 필수(토글 없음, v2.1 build 1). exclude 집합: 채점 문항 → 예시 → (가)(나)(다)
      순으로 더해 가며 서로 겹치지 않게. 램프가 있으면 (다)만 램프 레벨로(예시와 같은 기술). */
   /* 풀이형에서는 참고 학습지처럼 맨 위에 한 줄짜리 공부 전략 띠를 올린다.
@@ -3784,10 +3952,10 @@ function renderRoundPages(item, opts){
   const strategyHtml = getSolveMode() ? w2StrategyBandHtml(item.thread, item.level) : '';
   const conceptHtml = (wordOnly || noTeach) ? ''
     : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml});
-  const exampleHtml = noTeach ? ''
+  const exampleHtml = (noTeach || pictureOnly) ? ''
     : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude, young)
     : w2ExampleHtml(item.thread, exLevel, baseCode, exclude, young);
-  const guided = (wordOnly || noTeach) ? {html:'', problems:[]}
+  const guided = (wordOnly || noTeach || pictureOnly) ? {html:'', problems:[]}
     : w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed, exclude,
         rampN ? [item.level, item.level, exLevel] : null, young);
 

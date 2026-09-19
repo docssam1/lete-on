@@ -20,7 +20,7 @@ const html = fs.readFileSync(path.join(ROOT, 'landing.html'), 'utf8');
 
 const fail = [];
 const w2 = n => Math.ceil(n * 2 / 3);
-const courseNum = c => c.order || c.id;
+const courseNum = c => (c.order != null ? c.order : c.id);   // 과정 0 의 order 0 은 값이다(falsy 함정)
 
 let totalSessions = 0, totalW1 = 0, opW1 = 0, opW2 = 0;
 const seenCourses = new Set();
@@ -50,10 +50,10 @@ for (const st of STAGES) {
   /* 광고 카드의 메타 줄 — "과정 A~B" 와 "N주" 가 실제와 같아야 한다 */
   const meta = st.meta && st.meta.ko;
   if (meta) {
-    const mc = /과정 (\d+)~(\d+)/.exec(meta);
+    const mc = /과정 (\d+)(?:~(\d+))?/.exec(meta);   // "과정 0" 처럼 한 과정짜리 단계도 있다
     if (!mc) fail.push(`${st.key} meta: 과정 범위 표기가 없다 — "${meta}"`);
-    else if (+mc[1] !== st.courses.from || +mc[2] !== st.courses.to)
-      fail.push(`${st.key} meta: 과정 ${mc[1]}~${mc[2]} ≠ ${st.courses.from}~${st.courses.to}`);
+    else if (+mc[1] !== st.courses.from || +(mc[2] || mc[1]) !== st.courses.to)
+      fail.push(`${st.key} meta: 과정 ${mc[1]}~${mc[2] || mc[1]} ≠ ${st.courses.from}~${st.courses.to}`);
     const mw = /(\d+)주/.exec(meta);
     if (mw && +mw[1] !== sessions) fail.push(`${st.key} meta: ${mw[1]}주 ≠ ${sessions}주`);
     if (!html.includes(meta)) fail.push(`${st.key} meta 문구가 landing.html 에 없다 — "${meta}"`);

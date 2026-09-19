@@ -74,6 +74,7 @@ function computeBand(){
     if(recent&&/^N-/.test(recent))return 'young';       // 유아 유닛 진행 중
     const c=(window.NM_COURSES||{})[currentCourseKey()];
     if(c){
+      if(c.tier==='level0')return 'young';              // 수의 나라(과정 0)
       if(c.tier==='level2')return 'mid';
       if(c.tier&&c.tier!=='level1')return 'senior';     // level3·경시의 탑
     }
@@ -2063,7 +2064,7 @@ function tierIdForUnit(unitId){
 /* 학습 무대 배경(학습무대-작화지시서.md) — 등급 → 배경 키 4종.
    미확인 등급은 'prime'으로 폴백(가장 낮은 학습 등급이라 안전). */
 function stageKeyForTier(tierId){
-  if(tierId==='numberland') return 'numberland';
+  if(tierId==='numberland' || tierId==='level0') return 'numberland';
   if(tierId==='level1' || tierId==='level2' || tierId==='beginner') return 'prime';
   if(tierId==='level3' || tierId==='intermediate') return 'advance';
   if(tierId==='challenge' || tierId==='advanced' || /^middle/.test(tierId||'') ||
@@ -2178,6 +2179,9 @@ const ROAD_OP_LAST=25;
 
 /* 등급(티어) 표시 정보 — 이름·학년대는 사람이 읽는 말로만 쓴다. */
 const ROAD_TIERS=[
+ {key:'level0',accent:'#6FA85B',
+  name:{ko:'수의 나라',en:'Number Land',zh:'数字之国'},
+  band:{ko:'유아 5~7세 · 수와 문장제와 친해지기',en:'Ages 5–7 · Befriending numbers & word problems',zh:'幼儿5~7岁 · 与数和应用题交朋友'}},
  {key:'level1',accent:'var(--gold-deep)',
   name:{ko:'계산의 새싹',en:'Sprouts of Calculation',zh:'计算的新芽'},
   band:{ko:'6~7세 · 초등 1학년',en:'Ages 6–7 · Grade 1',zh:'6~7岁 · 小学一年级'}},
@@ -3059,8 +3063,8 @@ function screenCourseRoad(){
     const cad=S.roadCadence;
     const pace=roadPaceDef(S.roadPace).key;
     const mult=roadPaceMult(pace);
-    const opTotals=roadTotals(1,ROAD_OP_LAST,cad,mult);
-    const allTotals=roadTotals(1,lastNum,cad,mult);
+    const opTotals=roadTotals(0,ROAD_OP_LAST,cad,mult);
+    const allTotals=roadTotals(0,lastNum,cad,mult);
     /* 콘텐츠 준비 현황은 매번 데이터에서 센다 — 숫자를 박아 두지 않는다. */
     const builtCount=list.filter(x=>courseBuilt(x.c)).length;
 
@@ -3113,7 +3117,7 @@ function screenCourseRoad(){
         <div class="nm-cr-cad-h">${lk('목표 기준','Target pace','目标标准')}</div>
         <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 기준','Target pace','目标标准')}">
           ${ROAD_PACES.map(p=>{
-            const mo=roadTotals(1,ROAD_OP_LAST,cad,roadPaceMult(p.key)).months;
+            const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)).months;
             return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
               <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} ${mo}${lk('개월','mo','个月')}</small></button>`;
           }).join('')}
@@ -3376,7 +3380,7 @@ function placementLadder(){
    entry(사다리 칸)는 course 키로 매 렌더 때 사다리에서 찾는다(하드코딩 인덱스
    없음) — placementAgeEntry() 참고. */
 const PLACEMENT_AGES=[
-  {key:'pre', emoji:'🌱', tier:null,        course:null},
+  {key:'pre', emoji:'🌱', tier:'level0',    course:'C0'},
   {key:'g1',  emoji:'🌿', tier:'level1',    course:'C1'},
   {key:'g2',  emoji:'🌳', tier:'level2',    course:'C11'},
   {key:'g3',  emoji:'⛰️', tier:'level3',    course:'C17'},
