@@ -3,7 +3,8 @@
 import { mountRingTower, towerModel } from './lab-ring-tower.js';
 import { pageHome } from './home.js';
 
-const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')) }) };
+const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
+  ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')) }) };
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },
@@ -71,12 +72,20 @@ function blanksHtml(text, blanks, { print, show }) {
 function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const ac = it.answerContract, lv = `<span class="level">${esc(it.taxonomy.track)} · ${esc(it.taxonomy.level)}</span>`;
   const fig = it.visualModel?.kind === 'authored-svg' ? `<div class="fig">${FIG[it.visualModel.figure] || ''}</div>` : '';
-  const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => `<p class="lead"><b>${esc(k)}</b> ${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`).join('') : '';
+  const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => v && typeof v === 'object' && !Array.isArray(v)
+    ? `<table class="tbl"><thead><tr>${Object.keys(v).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody><tr>${Object.values(v).map((c) => `<td>${esc([].concat(c).join(', '))}</td>`).join('')}</tr></tbody></table>`
+    : `<p class="lead"><b>${esc(k)}</b> ${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`).join('') : '';
   const head = `<p>${no ? `<span class="no">${no}.</span>` : ''}${ac.type === 'cloze' ? blanksHtml(it.prompt, ac.blanks, { print, show }) : esc(it.prompt)}</p>`;
   let body = '';
   if (ac.type === 'single-choice') {
     body = print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${show && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${esc(c)}</div>`).join('')}</div>`
       : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${esc(c)}</button>`).join('')}</div><p class="why" hidden></p>`;
+  } else if (ac.type === 'multi-choice') {
+    body = print ? `<div>${it.choices.map((c, i) => `<div${show && ac.answers.includes(i) ? ' class="ans"' : ''}>${CIRC[i]} ${esc(c)}</div>`).join('')}</div>`
+      : `<p class="lead">${ac.answers.length}개를 고르세요.</p><div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}" aria-pressed="false">${CIRC[i]} ${esc(c)}</button>`).join('')}</div><p class="why" hidden></p>`;
+  } else if (ac.type === 'short-text') {
+    body = print ? (show ? `<p class="ans">${esc(ac.answer)}</p>` : '<div class="ans-line"></div>')
+      : `<div class="short"><input type="text" aria-label="내 답" autocomplete="off"><button type="button" class="btn" data-act="check-short">확인</button></div><p class="why" hidden></p>`;
   } else if (ac.type === 'table-fill') {
     const cols = ac.columns;
     body = `<table class="tbl tfill"><thead><tr><th>물체</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${ac.rows.map((r, ri) => `<tr><td>${esc(r.label)}</td>${cols.map((c, ci) => print
@@ -90,9 +99,9 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
     if (rb.preview) body += `<p class="preview"><b>미리보기</b> ${esc(rb.preview)}</p>`;
   }
   const expl = print && show ? `<p class="why">${esc(it.explanation)}</p>` : '';
-  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${fig}${giv}${head}${body}${expl}</div>`;
+  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${head}${fig}${giv}${body}${expl}</div>`;
 }
-let FIG = {};
+let FIG = {}, BOOKX = {};
 function wireItem(card, it, onDone) {
   const ac = it.answerContract;
   card.querySelectorAll('.blank').forEach((b) => b.addEventListener('click', () => { b.textContent = ac.blanks[+b.dataset.k].answer; b.classList.add('open'); if ([...card.querySelectorAll('.blank')].every((x) => x.classList.contains('open'))) onDone?.(true); }));
@@ -104,6 +113,26 @@ function wireItem(card, it, onDone) {
       btn.classList.add(ok ? 'right' : 'wrong'); card.querySelector(`.choice[data-i="${ac.answer}"]`).classList.add('right');
       $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : '<b>다시 생각해 봐요.</b>'} ${esc(it.explanation)}`; onDone?.(ok);
     }));
+  }
+  if (ac.type === 'multi-choice') {
+    const $why = card.querySelector('.why'), picked = new Set();
+    card.querySelectorAll('.choice').forEach((btn) => btn.addEventListener('click', () => {
+      if (card.dataset.done) return; const i = +btn.dataset.i;
+      picked.has(i) ? picked.delete(i) : picked.add(i); btn.classList.toggle('sel', picked.has(i)); btn.setAttribute('aria-pressed', picked.has(i));
+      if (picked.size < ac.answers.length) return;
+      card.dataset.done = 1; const ok = ac.answers.every((a) => picked.has(a));
+      card.querySelectorAll('.choice').forEach((b) => { const k = +b.dataset.i; if (ac.answers.includes(k)) b.classList.add('right'); else if (picked.has(k)) b.classList.add('wrong'); });
+      $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : '<b>다시 생각해 봐요.</b>'} ${esc(it.explanation)}`; onDone?.(ok);
+    }));
+  }
+  if (ac.type === 'short-text') {
+    const $in = card.querySelector('input'), $why = card.querySelector('.why');
+    const norm = (x) => String(x).replace(/[\s()·.,/:\-]/g, '').replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣').replace(/[oO]/g, '○').replace(/[xX]/g, '×').toUpperCase();
+    const check = () => { if (card.dataset.done || !$in.value.trim()) return; card.dataset.done = 1;
+      const ok = ac.accepted.some((a) => norm(a) === norm($in.value)); $in.readOnly = true; $in.classList.add(ok ? 'right' : 'wrong');
+      $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : `<b>다시 생각해 봐요.</b> 정답: ${esc(ac.answer)}.`} ${esc(it.explanation)}`; onDone?.(ok); };
+    card.querySelector('[data-act=check-short]').addEventListener('click', check);
+    $in.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
   }
   card.querySelector('[data-act=check-table]')?.addEventListener('click', () => {
     let right = 0, total = 0; card.querySelectorAll('select').forEach((s) => { total++; if (s.value === ac.rows[+s.dataset.r].answer[+s.dataset.c]) right++; });
@@ -223,6 +252,18 @@ function stepEvaluate(u, L, items, retry = false) {
   }));
 }
 
+// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
+function pageSub(u, L, eid) {
+  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], e = tx?.elements.find((x) => x.id === eid);
+  if (!e) { location.replace('#/'); return; }
+  const types = tx.types.filter((t) => t.element === e.id);
+  frame(u, L, null, `<p class="step-label">소단원 ${tx.elements.indexOf(e) + 1}</p><h2>${esc(e.name)}</h2>
+    <div class="print-bar"><a class="btn primary" href="#/${u}/1" style="display:inline-flex;align-items:center;text-decoration:none">5단계 탐구로 배우기</a></div>
+    ${types.map((t) => `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${sim.filter((s) => s.taxonomy.type === t.id).map((s) => itemHtml(s)).join('')}`).join('')}`);
+  const I = Object.fromEntries(sim.map((s) => [s.id, s]));
+  $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id]));
+}
+
 // 준비물 페이지 (QR 도착지)
 function pageKit(u, L) {
   frame(u, L, null, `<p class="step-label">준비물</p><h2>${esc(L.explore.home.title)}</h2>${kitHtml(u, L.explore.home)}
@@ -276,13 +317,19 @@ function pageBook(u, L, items, mode) {
     <section class="page page-break rep-print"><h2>탐구보고서</h2>${L.report.sections.map((s) => `<h3>${esc(s.label)}</h3><div class="ans-line"></div><div class="ans-line"></div>`).join('')}</section>
     <section class="page page-break"><h2>문제 — 교과</h2>${qs(kyo)}</section>
     <section class="page page-break"><h2>문제 — 영재성</h2>${qs(yeong)}</section>`;
-  const tail = mode === 'student' ? '' : `<section class="page page-break"><h2>정답·해설</h2>${answers()}</section>`;
+  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [];
+  const typed = mode !== 'answers' && tx && sim.length ? tx.elements.map((e) => `<section class="page page-break"><h2>유형별 문제 — ${esc(e.name)}</h2>
+      ${tx.types.filter((t) => t.element === e.id).map((t) => `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${sim.filter((s) => s.taxonomy.type === t.id).map((s) => itemHtml(s, { print: true, show, no: ++n })).join('')}`).join('')}</section>`).join('') : '';
+  const simAns = () => { let k = kyo.length + yeong.length; return sim.map((it) => { k++; const ac = it.answerContract;
+    const a = ac.type === 'single-choice' ? CIRC[ac.answer] : ac.type === 'multi-choice' ? ac.answers.map((i) => CIRC[i]).join(', ') : ac.type === 'short-text' ? ac.answer : ac.sample;
+    return `<div class="q"><span class="no">${k}.</span> <b class="ans">${esc(a)}</b> — ${esc(it.explanation)}</div>`; }).join(''); };
+  const tail = mode === 'student' ? '' : `<section class="page page-break"><h2>정답·해설</h2>${answers()}${simAns()}</section>`;
   $app.innerHTML = `<div class="book"><div class="wrap no-print print-bar">
       <a class="btn" href="#/${u}/print/student" style="display:inline-flex;align-items:center;text-decoration:none">학생용</a>
       <a class="btn" href="#/${u}/print/teacher" style="display:inline-flex;align-items:center;text-decoration:none">교사용</a>
       <a class="btn" href="#/${u}/print/answers" style="display:inline-flex;align-items:center;text-decoration:none">정답·해설만</a>
       <button class="btn primary" onclick="print()">인쇄</button></div>
-    <div class="wrap">${chapter}${tail}</div></div>`;
+    <div class="wrap">${chapter}${typed}${tail}</div></div>`;
 }
 
 // 3D (기존 engine.js 재사용)
@@ -312,7 +359,8 @@ async function route() {
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
-  const mod = await load(); const L = mod.lesson, items = mod.items; FIG = mod.figures || {};
+  const mod = await load(); const L = mod.lesson, items = mod.items; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar };
+  if (a === 'sub') return pageSub(u, L, b);
   if (a === 'kit') return pageKit(u, L);
   if (a === 'report') return pageReport(u, L);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
