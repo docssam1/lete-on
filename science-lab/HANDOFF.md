@@ -22,7 +22,11 @@
 - `assets/` **반입 완료**(커밋 85760c6, GitHub 웹 업로드): `docssam.png`(원본) + 표정 webp 9개. 말하기 = 몸 `docssam-A1-mouth-closed.webp` 위에 `face-A2~A5-*.webp`를 left 31.25%·top 13.021%·width 33.203%로 겹침. 반응 = `docssam-B1~B4-*.webp`로 몸 전체 교체.
 - docssam 표정 9장 반입(GPT 생성, 사용자 G드라이브 `docssam 표정/`): A1 몸 고정 + A2~A5 얼굴 조각(말하기 3·깜빡임 1, SIFT 정렬 오차 <1px), B1~B4 반응. 웹용 webp는 `docssam 표정/web/` 9개(≈560KB). 말하기 = 음절 모음(ㅏㅓ→크게, ㅗㅜ→동그랗게, 그 밖→반쯤).
 - 폰트 확정: 말풍선·제목·버튼 **Gaegu 700**, 본문 Pretendard.
-- 남은 것: 어댑터 등록(`bank/science-bank-adapter.js`), 감사 스크립트, 5E 콘텐츠(`unit.engage~evaluate`), 인터뷰 3~9.
+- **자석 단원 문제은행 완성(원문)**: Supabase `science_bank_source` s41-u01 세트1~4 = 80행, 전부 공식 정답 대조, `taxonomy.grade=4·level=기본·track=교과`. 원본 그림은 아직 `pending-upload`.
+- **자석 단원 창작 문항 26**(git): 기본 10·심화 10·영재 6 / 교과 20·영재성 6. a10(자석 자르기)은 단원평가 세트2 해설 범위라 심화. a21~26 추가(철가루 무늬·자기부상·아이디어 발산·극 찾기·나침반 지도·나침반 오차). `bank/audit.mjs` 통과.
+- 실험 주제 목록 `data/experiments.md`(사용자 제공 키트 목록표 → 과학 원리 있는 379개를 단원별로, 주제만).
+- 사용자 결정: 영재성은 과학·창의성만(수학 제외) · 학년·나이에 맞게(`DESIGN.md` 학년·수준 규칙) · 교재 출력 · 전 단원 문제은행.
+- 남은 것: 어댑터 등록(`bank/science-bank-adapter.js`), 원본 그림 업로드, 5E 콘텐츠(`unit.engage~evaluate`), 인터뷰 3~9.
 
 ## 지금 상태
 - 브랜치 `claude/jolly-allen-w57yqh` (main 미병합). `/science-lab/` 1차 버전: 지도자료 차례 15유닛, 개념→3D→탐구→토론→확인, Playwright 검증 통과.
