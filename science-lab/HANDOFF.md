@@ -17,14 +17,15 @@
 - 참고: 지필드 강의 슬라이드 `NEW STUDY Ⅰ 고체·액체·기체`(pptx) → 빈칸 개념 카드·정리표·Mini Test 패턴 채택(DESIGN.md).
 - 작업 방식: 인터뷰 → 계획 → 승인 → 구현(gajae-code). 디자인 규격은 MengTo design-first-ui-prompting 형식.
 
-## 로컬 세션에서 바로 할 일 (C:·E:·F:·G: 접근 가능)
-1. `docssam science.png` → `science-lab/assets/docssam.png`(배경 투명 유지, 1000px 폭). 대화 첨부 이미지는 디스크에 안 남아 클라우드에서 못 넣었다.
-2. `과학 단원평가` PDF는 **스캔본**(텍스트 레이어 없음). 4-1 Ⅰ 자석의 이용 세트1 + 정답 풀이를 OCR 또는 전사해 Supabase `science_bank_source`에 넣거나(원문·정답은 git 금지), 우선 `authored` 문항만으로 진행할지 사용자에게 확인(DESIGN.md 인터뷰 8·9).
-3. `DESIGN.md` 인터뷰 항목 3~9 답을 채우고 "승인"으로 바꾼 뒤 구현. 1차 범위 권장: **4-1 Ⅰ 자석의 이용** 1단원(5E + 문항 20개 + 어댑터).
+## 클라우드 세션에서 진행하는 방법 (2026-09-19 확인 — 로컬 세션 불필요)
+- **파일 반입은 채팅 첨부로**: 클립 아이콘으로 파일을 붙이면 `/root/.claude/uploads/<세션>/`에 그대로 저장된다(pptx가 이렇게 들어왔다). 이미지는 **붙여넣기 말고 파일 첨부**(붙여넣은 이미지는 디스크에 안 남는다). Drive 직접 다운로드는 프록시 차단(403)이라 안 된다.
+- **PDF 도구는 이 환경에서 설치된다**: `pip install pymupdf`(텍스트 PDF 추출·페이지 렌더), `apt-get install -y tesseract-ocr tesseract-ocr-kor`(스캔본 OCR). 둘 다 pypi·apt가 열려 있어 바로 된다. 정확도가 중요한 문항은 페이지를 PNG로 렌더해 Claude가 직접 읽고 전사한다.
+- 매 세션 다시 깔지 않으려면 claude.ai/code → 환경 → 설정 스크립트에 위 두 줄을 넣는다.
+- 순서: ① `docssam science.png` 첨부 → `assets/docssam.png` ② 4-1 Ⅰ 자석의 이용 `세트1.pdf` + `정답 및 풀이.pdf` 첨부 → 추출·전사 → Supabase `science_bank_source`(원문·정답) / git엔 `authored` 문항 ③ `DESIGN.md` 인터뷰 3~9 답 확정 → 구현.
 
 ## 클라우드 세션에서 못 한 것과 이유
-- 캐릭터 파일 저장소 반입(위 1).
-- 단원평가 PDF 원문 읽기: Drive 텍스트 추출이 빈 문자열(스캔본). 이 환경엔 OCR 도구(tesseract·PyMuPDF)도 없음.
+- 캐릭터 파일 저장소 반입: 붙여넣기 이미지는 디스크에 안 남음 → 파일 첨부로 해결.
+- 단원평가 PDF: Drive 텍스트 추출이 낱글자 몇 개뿐(폰트 인코딩 문제 또는 스캔본, 미확정). 파일을 첨부하면 PyMuPDF·Tesseract(kor)로 처리 가능(설치 확인됨).
 - pptx 슬라이드 렌더링: soffice가 30MB pptx 로드 실패, pdftoppm 없음 → 텍스트와 미디어 파일로만 파악(충분했음).
 - 실험편 PDF 텍스트가 모두 32쪽(4번 실험)에서 끝남 — 단계당 4실험이 실제 구성으로 보이나, Drive 변환이 32쪽에서 잘렸을 가능성은 실물로 확인 요망.
 - 이론편 3-2-2단계는 원본 앞부분 삭제(파일명대로) → Ⅰ·Ⅱ 단원명 미확보.
