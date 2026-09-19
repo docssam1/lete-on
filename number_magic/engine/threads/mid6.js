@@ -98,7 +98,8 @@ NM_TGEN['md36_rationalExponent'] = function (params, rng) {
       zh: `aᵐ的n次方根等于a的m/n次方(约分后)——根指数(n)作分母，幂指数(m)作分子`
     },
     tex: `\\sqrt[${n}]{${a}^{${m}}} = ${a}^{\\frac{\\square}{\\square}}`,
-    answer, answerType: 'number', widget: 'numpad', negative: false,
+    /* 두 빈칸은 지수의 분자·분모다 — answerShape 가 없으면 정답지가 "7, 2" 로 찍힌다(2026-09-19). */
+    answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
     solution: [
       { tex: `\\dfrac{${m}}{${n}}` },
       { tex: `\\gcd(${m},${n})=${k}` },

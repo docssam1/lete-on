@@ -42,7 +42,7 @@ window.NM_UNITS['M-03'] = {
 
       { tag:{ko:'② 분모가 다르면 통분부터',en:'2) Different denominators — convert first',zh:'② 分母不同先通分'},
         head:{ko:'\\dfrac{1}{2} + \\dfrac{-1}{3} = \\dfrac{1}{6}',en:'\\dfrac{1}{2} + \\dfrac{-1}{3} = \\dfrac{1}{6}',zh:'\\dfrac{1}{2} + \\dfrac{-1}{3} = \\dfrac{1}{6}'},
-        desc:{ko:'분모가 다르면 <b>최소공배수(LCM)</b>로 통분해서 분모를 맞춰요. 2와 3의 LCM은 6이니까 \\dfrac{1}{2}=\\dfrac{3}{6}, \\dfrac{-1}{3}=\\dfrac{-2}{6} — 이제 분모가 같아졌으니 분자만 계산: 3+(−2)=1.',
+        desc:{ko:'분모가 다르면 <b>최소공배수(LCM)</b>로 통분해서 분모를 맞춰요. 2와 3의 LCM은 6이니까 1/2 = 3/6, −1/3 = −2/6 — 이제 분모가 같아졌으니 분자만 계산: 3+(−2)=1.',
               en:'Different denominators? Convert to the <b>LCM</b> (least common multiple) first. LCM of 2 and 3 is 6, so \\dfrac{1}{2}=\\dfrac{3}{6} and \\dfrac{-1}{3}=\\dfrac{-2}{6} — now the denominators match, so just combine numerators: 3+(−2)=1.',
               zh:'分母不同就先通分到<b>最小公倍数(LCM)</b>。2和3的LCM是6，所以\\dfrac{1}{2}=\\dfrac{3}{6}，\\dfrac{-1}{3}=\\dfrac{-2}{6}——现在分母一样了，只算分子：3+(−2)=1。'},
         mathSteps:['\\text{LCM}(2,3)=6', '\\dfrac{3}{6} + \\dfrac{-2}{6}', '\\dfrac{1}{6}'],

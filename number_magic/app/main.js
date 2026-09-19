@@ -2557,6 +2557,15 @@ function checkupKeyFor(num){ return 'C'+num; }
 function isCheckupPoint(num){ return num>0 && num%CHECKUP_EVERY===0; }
 function checkupRecord(num){ return (S.checkups||{})[checkupKeyFor(num)]||null; }
 /* 점검이 볼 과정 세 개(과정 3이면 1·2·3) */
+/* 점검 화면의 셋째 칸 이름(2026-09-19) — 초등은 '창의 연산', 중·고는 '적용'이다.
+   중·고에 창의연산이라는 범주가 없어서다(courses.js 과정 29 위 주석 참조).
+   과정 번호로 가른다 — 중등이 과정 29부터다(stages.js). */
+const CHECKUP_CRE_FROM_MIDDLE = 29;
+function checkupCreLabel(num){
+  return num >= CHECKUP_CRE_FROM_MIDDLE
+    ? lk('적용','Applying','应用')
+    : lk('창의 연산','Creative moves','创意运算');
+}
 function checkupCourseNums(num){
   const out=[];
   for(let n=num-CHECKUP_EVERY+1;n<=num;n++) if(n>=1) out.push(n);
@@ -2735,7 +2744,7 @@ function screenCheckup(){
         'Only what you have already learned. Nothing new here.','只问学过的内容，不会出新东西。')}</p>
       <div class="nm-cu-parts three">
         <div class="nm-cu-part"><b>🔢 ${lk('계산','Calculating','计算')}</b><span>${k.calcTotal}${lk('문제','questions','题')}</span></div>
-        <div class="nm-cu-part cre"><b>✨ ${lk('창의 연산','Creative moves','创意运算')}</b><span>${k.creTotal||0}${lk('문제','questions','题')}</span></div>
+        <div class="nm-cu-part cre"><b>✨ ${esc(checkupCreLabel(k.num))}</b><span>${k.creTotal||0}${lk('문제','questions','题')}</span></div>
         <div class="nm-cu-part wp"><b>📖 ${lk('문장제 이해','Reading','应用题理解')}</b><span>${k.wpTotal}${lk('문제','questions','题')}</span></div>
       </div>
       <p class="nm-cu-count">${lk(`모두 ${k.items.length}문제예요. 중간에 나가도 풀던 자리에서 이어서 할 수 있어요.`,
@@ -2779,9 +2788,13 @@ function screenCheckup(){
     /* 창의(푸는 과정)만 따로 처진 경우는 위 네 갈래로는 안 보인다 — 계산도 문장제도
        되는데 길을 세우는 데서 막히는 아이가 있다. 한 줄을 덧붙여 그 자리를 짚는다. */
     const creNote = (k.creTotal && !creGood)
-      ? lk('창의 연산(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
+      ? (k.num >= CHECKUP_CRE_FROM_MIDDLE
+      ? lk('적용(배운 것을 문제에 쓰는 자리)이 따로 처져요. 계산은 되는데 적용에서 멈춘다면, 문제를 더 푸는 것보다 <b>이 문제가 어느 개념을 부르는지</b>를 먼저 말해 보는 연습이 필요해요.',
+           'Applying what was learned lags on its own. If the computing works but applying stalls, practise naming <b>which idea the problem is calling for</b> before solving more of them.',
+           '应用（把学过的用到题目上）单独落后。如果计算没问题却卡在应用，比起多做题，先练习说出<b>这道题在叫哪个概念</b>。')
+      : lk('창의 연산(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
            'The creative part — building a route — lags on its own. If the answer comes but the step blanks stall, practise saying <b>why</b> the steps go in that order, not more answer drills.',
-           '创意运算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。')
+           '创意运算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。'))
       : (k.creTotal && creGood && !calcGood)
       ? lk('푸는 길은 잘 세워요. 그 길 위에서 손이 느릴 뿐이에요.',
            'You build the route well — the hand on that route is just still slow.',

@@ -805,6 +805,10 @@
 .nm-w2-ex-steps { display:flex; flex-wrap:wrap; align-items:center; gap:5px; color:#c33; font-size:calc(14px * var(--ws-fs, 1)); }
 .nm-w2-ex-arrow { color:#c33; }
 .nm-w2-ex-line { display:flex; align-items:center; gap:8px; font-size:calc(14px * var(--ws-fs, 1)); flex-wrap:wrap; }
+/* 답이 분수면 KaTeX 줄이 위아래로 커져 아랫줄(풀이 사슬)과 겹친다(2026-09-19, 중등 유리수
+   예시에서 8/7 의 분모가 아랫줄 분자에 닿았다) — 줄 사이를 열고 행간을 준다. */
+.nm-w2-example > * + * { margin-top:4px; }
+.nm-w2-example .nm-w2-ex-line, .nm-w2-example .nm-w2-ex-steps { line-height:1.45; }
 .nm-w2-ex-ans, .nm-w2-ex-ans-tex { color:#c33; font-weight:700; }
 .nm-w2-ex-note { color:#c33; font-size:calc(11.5px * var(--ws-fs, 1)); margin-top:3px; }
 .nm-w2-ex-vp { display:inline-flex; flex-direction:column; font-family:monospace; font-size:14px; color:#000; }
@@ -3016,6 +3020,16 @@ function texDisplay(tex){
      문장제 3행 · 그림형 2행. 문항이 한 장에 다 안 들어가면 둘째 장은 perPage 그대로.
    pitch: 부분 페이지에서 행 하나의 높이(mm) — 전체 장과 같은 간격으로 위에서부터 채우고 남는
    아래는 풀이 여백(.nm-w2-scratch)으로 둔다. */
+/* 네 번째 회차의 이름(2026-09-19) — 초등은 '창의 연산', 중·고는 '적용'이다.
+   중·고에 창의연산이라는 범주가 없어서다(암산법·풀풀·엑스맨은 초등 연산 교재의 갈래).
+   그렇다고 그 자리를 비우면 학습지 모양이 중등부터 달라져 한 진도로 안 읽히므로,
+   그 과정의 마무리 개념을 최고 레벨로 한 벌 더 싣고 이름만 바꾼다(courses.js 주석 참조). */
+const ELEM_TIERS = { level0:1, level1:1, level2:1, level3:1, challenge:1 };
+function creTag(tier){
+  return ELEM_TIERS[tier]
+    ? lk('창의 연산 · ', 'Creative · ', '创意运算 · ')
+    : lk('적용 · ', 'Applying · ', '应用 · ');
+}
 function classifyRoundLayout(problems, threadId, young, creative){
   if(!problems || !problems.length) return {type:'short', cols:2, rows:10, perPage:20, flow:'col', firstRows:10, pitch:14};
   /* 창의 회차(2026-09-18, 참고 학습지 'Training Course') — 식 한 줄 + 주황 밑줄 + 단계마다 빈칸 상자 +
@@ -3538,12 +3552,16 @@ function w2ConceptPanelHtml(threadId, level, extra){
      · 단일 답이고 \square가 하나면 그 자리에 대입.
      · 그 외(개수가 안 맞는 예외)엔 마지막 \square만 채우고 나머지는 그대로 둔다
        — 깨진 표시보다는 절반만 맞는 표시가 낫다. */
-function texSubstituteAnswer(tex, answer, fillAll){
+/* shaped(선택) — answerShape 로 정해진 답의 tex 표기(ansTex). 빈칸이 하나인데 답이
+   [분자, 분모] 같은 배열이면 예시 줄이 "= 29, 18" 로 찍혔다(2026-09-19, 중등 유리수
+   회차에서 발견). 정답지는 ansTex 를 쓰므로 8/7 로 맞게 나가는데 예시만 어긋나 있었다. */
+function texSubstituteAnswer(tex, answer, fillAll, shaped){
   /* 반환값은 아직 "tex 문자열"이다 — HTML 이스케이프는 호출부가 data-tex
      속성에 넣을 때 한 번만 한다(여기서 하면 이중 이스케이프가 된다). */
   const raw = String(tex||'');
   const squareCount = (raw.match(/\\square/g) || []).length;
-  if(!squareCount) return raw + ' = \\color{#d33}{' + String(fmtAns(answer)) + '}';
+  const ansStr = shaped || String(fmtAns(answer));
+  if(!squareCount) return raw + ' = \\color{#d33}{' + ansStr + '}';
   if(Array.isArray(answer) && answer.length === squareCount){
     let i = 0;
     return raw.replace(/\\square/g, () => '\\color{#d33}{' + String(answer[i++]) + '}');
@@ -3554,7 +3572,7 @@ function texSubstituteAnswer(tex, answer, fillAll){
   }
   let seen = 0;
   return raw.replace(/\\square/g, () =>
-    (++seen === squareCount) ? ('\\color{#d33}{' + String(fmtAns(answer)) + '}') : '\\square');
+    (++seen === squareCount) ? ('\\color{#d33}{' + ansStr + '}') : '\\square');
 }
 
 /* "+ \color{#d33}{-11}" 같은 이중 부호 정리 — 대입한 값이 음수면 앞의 +/-를
@@ -3622,7 +3640,7 @@ function w2ExampleBodyHtml(p, threadId, young){
     bodyHtml = bondSvg(p.cubes.moveTo, p.cubes.moveTo - p.answer)
       + `<div class="nm-w2-ex-ans">= ${esc(String(p.answer))}</div>`;
   } else if(hasSteps){
-    const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank));
+    const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p)));
     const completedHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
     const stepParts = stepSrc.map(s => {
       /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */
@@ -3645,7 +3663,7 @@ function w2ExampleBodyHtml(p, threadId, young){
   <div class="nm-w2-ex-vp-ans">${esc(String(fmtAns(p.answer)))}</div>
 </div>`;
     } else {
-      const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank));
+      const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p)));
       bodyHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
     }
     /* steps가 없을 때만 — concept "예)" 문장은 이미 있는 단계별 대입을
@@ -5086,7 +5104,7 @@ ${printWatermarkHtml()}
           (session.creative || []).forEach(d => {
             if(!(window.NM_THREADS||{})[d.t]) return;
             items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4,
-              topicName:'창의 연산 · ' + thNm(d.t), seed: NM_RNG.newCode() });
+              topicName:creTag(course.tier) + thNm(d.t), seed: NM_RNG.newCode() });
           });
           /* 단계 점검 — 과정 3개마다, 그 과정의 **마지막 세션**에만. 매 세션마다
              붙이면 한 과정에서 점검이 다섯 번 나온다. */
@@ -5747,7 +5765,7 @@ ${round.html}
     });
     (session.creative || []).forEach((d, ci) => {
       items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4, creative:true,
-        topicName:'창의 연산 · ' + thName(d.t), seed:seedOf(seedWeek + 'cr', ci) });
+        topicName:creTag(course.tier) + thName(d.t), seed:seedOf(seedWeek + 'cr', ci) });
     });
     /* 문장제 회차는 초등 구간(레벨 1~3·경시의 탑)에만(2026-09-08, 원장 "중등·고등은 문장제보다는
        적용이지"). 중고등 과정에도 복습 풀의 초등 드릴이 있어 문장제가 만들어지긴 했지만 그 학년의

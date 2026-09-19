@@ -34,7 +34,7 @@ window.NM_UNITS['M-07'] = {
 
       { tag:{ko:'② 나눗셈은 역수를 곱해요',en:'2) Division multiplies by the reciprocal',zh:'② 除法要乘以倒数'},
         head:{ko:'\\dfrac{3}{4} \\div \\dfrac{-2}{5} = \\dfrac{-15}{8}',en:'\\dfrac{3}{4} \\div \\dfrac{-2}{5} = \\dfrac{-15}{8}',zh:'\\dfrac{3}{4} \\div \\dfrac{-2}{5} = \\dfrac{-15}{8}'},
-        desc:{ko:'두 수의 곱이 1이 되게 하는 수를 <b>역수</b>라고 해요 — \\dfrac{-2}{5}의 역수는 \\dfrac{5}{-2}. 나눗셈은 나누는 수의 역수를 <b>곱셈</b>으로 바꿔서 계산해요: \\dfrac{3}{4}\\times\\dfrac{5}{-2}=\\dfrac{15}{-8}=<b>−15/8</b>.',
+        desc:{ko:'두 수의 곱이 1이 되게 하는 수를 <b>역수</b>라고 해요 — −2/5의 역수는 5/−2. 나눗셈은 나누는 수의 역수를 <b>곱셈</b>으로 바꿔서 계산해요: 3/4 × 5/(−2) = 15/(−8) = <b>−15/8</b>.',
               en:'A <b>reciprocal</b> is the number that makes the product 1 — the reciprocal of −2/5 is 5/−2. Division turns into <b>multiplication</b> by the reciprocal of the divisor: 3/4 × 5/(−2) = 15/(−8) = <b>−15/8</b>.',
               zh:'两数相乘等于1，这两个数互为<b>倒数</b>——−2/5的倒数是5/(−2)。除法要换成乘以除数的<b>倒数</b>：3/4×5/(−2)=15/(−8)=<b>−15/8</b>。'},
         mathSteps:['\\dfrac{3}{4}\\div\\dfrac{-2}{5}', '\\dfrac{3}{4}\\times\\dfrac{5}{-2}', '\\dfrac{-15}{8}'],
