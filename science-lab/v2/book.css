@@ -139,3 +139,11 @@
 @media (max-width: 700px) { .bk-road { flex-direction: column; align-items: stretch; } .bk-road-steps { grid-template-columns: repeat(2, 1fr); } .bk-flow { flex-direction: column; } .bk-flow i { transform: rotate(90deg); } }
 .bk-t .bk-item .bk-ans { font-size: 8.4pt; line-height: 1.45; font-weight: 500; } .bk-t .bk-item { margin-bottom: 2.5mm; }
 .bk-t .bk-item { font-size: 9.1pt; line-height: 1.5; } .bk-t .bk-choices li { font-size: 8.9pt; } .bk-t .bk-given { font-size: 8.6pt; padding: .8mm 2mm; }
+/* 실제 사진(위키미디어 공용 등) — 출처를 사진 아래에 작게 */
+.bk-photo { margin: 0; } .bk-photo img { width: 100%; display: block; border-radius: 2.5mm; object-fit: cover; }
+.bk-photo figcaption { font-size: 8pt; color: #5B6577; margin-top: .8mm; line-height: 1.35; } .bk-photo figcaption small { display: block; font-size: 7pt; opacity: .85; }
+.bk-photo2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.bk-art.wide .bk-photo img { max-height: 62mm; }
+.bk-two.art-l .bk-art .bk-photo2 img { height: 34mm; }
+.bk-two.art-r .bk-art .bk-photo2 { grid-template-columns: 1fr; gap: 1.5mm; } .bk-two.art-r .bk-art .bk-photo2 img { height: 24mm; }
+@media (max-width: 700px) { .bk-photo2 { grid-template-columns: 1fr 1fr; } }
