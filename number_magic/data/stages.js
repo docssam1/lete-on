@@ -98,7 +98,7 @@ window.NM_STAGES = [
     chapters:['T14','R15','T15','R16','CR8','R17'],
     tiers:['level3'], courses:{from:17,to:25}, weeks:38,
     learn:{
-      ko:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수·소인수분해, 이분모 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
+      ko:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수·소인수분해, 분모가 다른 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
       en:'Decimal addition, subtraction and multiplication, square numbers, factors and multiples, fractions with unlike denominators, multiplying and dividing fractions, sequences, percentages and ratios.',
       zh:'小数加减与乘法、平方数、约数与倍数与质因数分解、异分母分数、分数乘除、数列、百分数与比。'},
     how:{

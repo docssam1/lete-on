@@ -181,7 +181,7 @@ const COURSE_SPEC = [
    creative:['DC4@1','ML20@3','CH11@1']},
  {id:19, tier:'level3', title:{ko:'약수와 배수, 그리고 배수 판별법',en:'Factors, Multiples & Divisibility Rules',zh:'因数、倍数与整除判别'},
    drills:['DV20','DV7','DV6@1','DV6@2'], magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3']},
- {id:20, tier:'level3', title:{ko:'이분모 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
+ {id:20, tier:'level3', title:{ko:'분모가 다른 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
    drills:['FR4','FR5','MX4'], magic:[['C-22']], creative:['FR10@1']},
  {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
    drills:['FR6'], magic:[['C-31']], creative:['FR11@1']},

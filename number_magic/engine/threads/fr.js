@@ -262,7 +262,7 @@ NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
 
     return {
       prompt: {
-        ko: '대분수 이분모! 분수 부분만 통분해요. 최소공배수 = ' + LCD,
+        ko: '분모가 다른 대분수! 분수 부분만 통분해요. 최소공배수 = ' + LCD,
         en: 'Mixed number with unlike denominators — convert the fraction parts. LCM = ' + LCD,
         zh: '带分数异分母——只通分分数部分。最小公倍数 = ' + LCD
       },

@@ -761,7 +761,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
     const sum = a + b;                       /* 합 분자 (가분수 가능) */
     return {
       prompt: {
-        ko: `동분모 분수 덧셈: \\dfrac{${a}}{${d}} + \\dfrac{${b}}{${d}}`,
+        ko: `분모가 같은 분수의 덧셈: \\dfrac{${a}}{${d}} + \\dfrac{${b}}{${d}}`,
         en: `Same-denominator fraction addition: \\dfrac{${a}}{${d}} + \\dfrac{${b}}{${d}}`,
         zh: `同分母分数加法：\\dfrac{${a}}{${d}} + \\dfrac{${b}}{${d}}`
       },
@@ -784,7 +784,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
     const diff = a - b;
     return {
       prompt: {
-        ko: `동분모 분수 뺄셈: \\dfrac{${a}}{${d}} - \\dfrac{${b}}{${d}}`,
+        ko: `분모가 같은 분수의 뺄셈: \\dfrac{${a}}{${d}} - \\dfrac{${b}}{${d}}`,
         en: `Same-denominator fraction subtraction: \\dfrac{${a}}{${d}} - \\dfrac{${b}}{${d}}`,
         zh: `同分母分数减法：\\dfrac{${a}}{${d}} - \\dfrac{${b}}{${d}}`
       },
@@ -841,7 +841,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
     const fsum = fa + fb;
     return {
       prompt: {
-        ko: `동분모 분수 덧셈: \\dfrac{${fa}}{${fd}} + \\dfrac{${fb}}{${fd}}`,
+        ko: `분모가 같은 분수의 덧셈: \\dfrac{${fa}}{${fd}} + \\dfrac{${fb}}{${fd}}`,
         en: `Same-denominator fraction addition: \\dfrac{${fa}}{${fd}} + \\dfrac{${fb}}{${fd}}`,
         zh: `同分母分数加法：\\dfrac{${fa}}{${fd}} + \\dfrac{${fb}}{${fd}}`
       },

@@ -54,6 +54,7 @@ const clean = t => String(t)
 /* 변수 항이 있는 식에서만 본다 — 자릿값 분해(`100 + 30 + 0`)는 0 을 일부러 보여 준다. */
 const hasVar   = t => /[xy]/.test(t);
 const COEF_ONE  = /(^|[\s({+\-=])1(?=[xy])/;      /* `1x`, `-1x^2` */
+const EXP_ONE   = /\^\{?1\}?(?![\d}])/;           /* `x^1`, `x^{1}` — 지수 1 은 안 쓴다 */
 const COEF_ZERO = /[+\-]\s*0(?=[xy])/;            /* `+ 0x^2` */
 const ZERO_TERM = /[+\-]\s*0(?![.\dxy])/;         /* `x^2 - 8x + 0`, `2^{x + 0}` */
 /* 이중부호 — \color 안(정답 대입)은 fixNegSigns 가 따로 처리하므로 원문만 */
@@ -73,7 +74,7 @@ for (const id of Object.keys(TH)) {
       for (const t0 of texesOf(p)) {
         const t = tidy(t0);
         const c = clean(t);
-        const coefBad = COEF_ONE.test(c) || COEF_ZERO.test(c) || (hasVar(c) && ZERO_TERM.test(c));
+        const coefBad = COEF_ONE.test(c) || COEF_ZERO.test(c) || EXP_ONE.test(c) || (hasVar(c) && ZERO_TERM.test(c));
         if (coefBad)          { hit.coef++; if (!hit.exCoef) hit.exCoef = t.slice(0, 54); }
         if (DBL_SIGN.test(c)) { hit.sign++; if (!hit.exSign) hit.exSign = t.slice(0, 54); }
       }
@@ -88,8 +89,8 @@ for (const id of Object.keys(TH)) {
 console.log(`검사한 유형·레벨: ${checked} (각 ${N}문항 · 문항식 + 단계 + 풀이)`);
 const fails = bad.coef.length + bad.sign.length;
 if (fails) {
-  if (bad.coef.length) { console.error(`\n[계수 1·0 이 그대로] ${bad.coef.length}건`); bad.coef.forEach(x => console.error('  ✗ ' + x)); }
+  if (bad.coef.length) { console.error(`\n[계수 1·0 · 지수 1 이 그대로] ${bad.coef.length}건`); bad.coef.forEach(x => console.error('  ✗ ' + x)); }
   if (bad.sign.length) { console.error(`\n[이중부호] ${bad.sign.length}건`);          bad.sign.forEach(x => console.error('  ✗ ' + x)); }
   process.exit(1);
 }
-console.log('\n통과 — 계수 1·0 이 드러난 곳도, 이중부호도 없다.');
+console.log('\n통과 — 계수 1·0 · 지수 1 이 드러난 곳도, 이중부호도 없다.');

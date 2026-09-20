@@ -983,6 +983,12 @@ function ansTex(p){
   }
   /* 2×2 행렬(MD30) — 생성기가 answerShape:'matrix2' 를 다는데 분기가 없어 정답지가
      "9, -2, 13, 7" 로 찍혔다(2026-09-20). 화면 위젯(widgets.js)에는 처리가 있었다. */
+  /* 근의 공식(MD28) — 답 [p,q,r] 은 x=(p±√q)/r 이다(2026-09-20 원장 "그렇게 묶어도 되고").
+     전에는 정답지가 "5, 69, 2" 라 선생님이 머리로 조립해야 했다. */
+  if(p.answerShape==='quadRoot' && p.answer.length===3){
+    const [pp,qq,rr]=p.answer;
+    return `\\dfrac{${pp} \\pm \\sqrt{${qq}}}{${rr}}`;
+  }
   if(p.answerShape==='matrix2' && p.answer.length===4){
     const [a,b,c,d]=p.answer;
     return `\\begin{pmatrix} ${a} & ${b} \\\\ ${c} & ${d} \\end{pmatrix}`;
@@ -4657,11 +4663,11 @@ const NM_EXAM = {
       '4B':{label:'4학년 2학기',emoji:'🍁',subs:[
         {label:'가분수 ↔ 대분수',thread:'FR2',level:1,desc:'서로 바꾸기',
           concept:'가분수는 나눗셈으로 대분수로!\n예) 7/3 = 2와1/3 (7÷3 = 2 … 1)'},
-        {label:'동분모 분수 덧·뺄',thread:'FR1',level:1,desc:'진분수',
+        {label:'분모가 같은 분수 덧·뺄',thread:'FR1',level:1,desc:'진분수',
           concept:'분모가 같으면 분자끼리만 더하거나 빼요. 분모는 그대로!\n예) 3/7 + 2/7 = 5/7'},
-        {label:'대분수의 덧셈',thread:'FR3',level:1,desc:'동분모, 올림 없음',
+        {label:'대분수의 덧셈',thread:'FR3',level:1,desc:'분모가 같음, 올림 없음',
           concept:'정수끼리, 분수끼리 따로 더해요!\n예) 1과2/6 + 2와3/6 = 3과5/6'},
-        {label:'대분수의 뺄셈',thread:'FR3',level:2,desc:'동분모, 받아내림',
+        {label:'대분수의 뺄셈',thread:'FR3',level:2,desc:'분모가 같음, 받아내림',
           concept:'분수 부분이 부족하면 정수에서 1을 빌려요!\n예) 3과1/4 − 1과3/4 = 1과2/4'},
         {label:'소수 덧·뺄',thread:'DC1',level:1,desc:'소수 한 자리',
           concept:'소수점 아래 한 자리 수의 덧뺄셈.\n소수점끼리 자리를 맞춰 계산해요.\n예) 2.5 + 1.3 = 3.8'},
@@ -4681,7 +4687,7 @@ const NM_EXAM = {
           concept:'두 수의 공통 배수 중 가장 작은 수예요.\n예) 4와 6의 최소공배수 = 12'},
         {label:'약분',thread:'FR5',level:1,desc:'기약분수',
           concept:'분자와 분모를 공약수로 나눠 더 간단한 분수로 만들어요.\n예) 6/8 = 3/4 (2로 약분)'},
-        {label:'이분모 분수 덧·뺄',thread:'FR4',level:1,desc:'통분',
+        {label:'분모가 다른 분수 덧·뺄',thread:'FR4',level:1,desc:'통분',
           concept:'분모가 다르면 통분(공통분모 만들기)을 먼저 해요.\n예) 1/2 + 1/3 = 3/6 + 2/6 = 5/6'},
         {label:'배수 판별 마법',thread:'DV6',level:2,desc:'3·6·9 배수 찾기',magic:true,
           concept:'자릿수의 합이 3의 배수면 그 수도 3의 배수!\n예) 234 → 2+3+4=9 → 3의 배수\n약분할 공약수가 눈에 보이는 마법이에요.'},
@@ -5211,7 +5217,7 @@ ${printWatermarkHtml()}
       {key:'SB', emoji:'➖', label:'뺄셈',        desc:'받아내림·빼기 전략'},
       {key:'ML', emoji:'✖️', label:'곱셈',        desc:'구구단부터 거듭제곱까지'},
       {key:'DV', emoji:'➗', label:'나눗셈',      desc:'나머지·약수·소인수분해'},
-      {key:'FR', emoji:'🍕', label:'분수',        desc:'동분모부터 곱나눗셈까지'},
+      {key:'FR', emoji:'🍕', label:'분수',        desc:'분모가 같은 분수부터 곱나눗셈까지'},
       {key:'DC', emoji:'🔢', label:'소수',        desc:'덧뺄셈·곱나눗셈'},
       {key:'NS', emoji:'🎲', label:'수 감각',     desc:'모으기·가르기·보수'},
       {key:'MX', emoji:'🧩', label:'혼합·중등 준비', desc:'혼합계산·제곱근·비율'},

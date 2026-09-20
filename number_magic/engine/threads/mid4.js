@@ -528,7 +528,8 @@ NM_TGEN['md28_quadraticFormula'] = function (params, rng) {
       zh: `直接代入求根公式x=(-b±√(b²-4ac))/(2a)——不用化简，代入后的形式就是答案`
     },
     tex: `${eqTex} \\;\\Rightarrow\\; x = \\dfrac{\\square \\pm \\sqrt{\\square}}{\\square}`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    /* 정답지가 "5, 69, 2" 가 아니라 (5±√69)/2 로 찍히게(2026-09-20) — exam.js ansTex 참조 */
+    answer, answerShape: 'quadRoot', answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
     solution: [
       { tex: `D = (${b})^2-4(${a})(${c}) = \\square`, blank: D },
       { tex: `x = \\dfrac{-b\\pm\\sqrt{D}}{2a}` },
