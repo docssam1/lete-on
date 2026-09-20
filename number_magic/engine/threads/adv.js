@@ -286,9 +286,15 @@ NM_TGEN['adv_1001'] = function (params, rng) {
       },
       tex: `${dividend} \\div ${mult} = \\square`,
       answer: N, answerType: 'steps', widget: 'steps',
-      steps: [{ tex: `${dividend} \\div ${mult} = \\square`, blank: N }],
+      /* 2026-09-20: 풀이 첫 줄이 `599599599 = 599 × 1001001` 이라 답이 이미 적혀 있었고,
+         steps 는 문항식 한 줄 복사였다. 반복 마디를 찾아 곱셈으로 되돌리는 것이 이 유형의
+         할 일이므로, 그 자리를 빈칸으로 둔다(EL1·DV15 가 쓰는 역연산 모양). */
+      steps: [
+        { tex: `${dividend} = \\square \\times ${mult}`, blank: N },
+        { tex: `${dividend} \\div ${mult} = \\square`, blank: N }
+      ],
       solution: [
-        { tex: `${dividend} = ${N} \\times ${mult}` },
+        { tex: `${dividend} = \\square \\times ${mult}`, blank: N },
         { tex: `${dividend} \\div ${mult} = \\square`, blank: N }
       ]
     };
@@ -424,8 +430,9 @@ NM_TGEN['adv_divNear'] = function (params, rng) {
     steps.push({ tex: `${r.before} \\div ${anchor} = \\square \\;(\\text{어림 몫})`, blank: r.q1 });
     steps.push({ tex: `(${anchor}-${d}) \\times ${r.q1} = \\square \\;(\\text{보정})`, blank: r.bump });
   });
-  steps.push({ tex: `${n} \\div ${d} = \\square \\cdots \\square`, blank: q });
-  steps.push({ tex: `\\text{나머지}: \\square`, blank: rem });
+  /* 2026-09-20: 마지막 줄이 `= □ ⋯ □` 인데 blank 는 몫 하나뿐이었고, 나머지는 문항식에
+     이미 찍혀 있는데 다음 줄에서 또 물었다(베껴 쓰기). 나머지를 식에 그대로 싣는다. */
+  steps.push({ tex: `${n} \\div ${d} = \\square \\cdots ${rem}`, blank: q });
 
   return {
     prompt: {
@@ -436,12 +443,9 @@ NM_TGEN['adv_divNear'] = function (params, rng) {
     tex: `${n} \\div ${d} = \\square \\cdots ${rem}`,
     answer: q, answerType: 'steps', widget: 'steps',
     steps,
-    solution: [
-      { tex: `${rounds[0].before} \\div ${anchor} = \\square \\;(\\text{어림 몫})`, blank: rounds[0].q1 },
-      { tex: `(${anchor}-${d}) \\times ${rounds[0].q1} = \\square \\;(\\text{보정값})`, blank: rounds[0].bump },
-      { tex: `\\text{보정한 나머지를 계속 더해가며 반복}` },
-      { tex: `${n} \\div ${d} = \\square \\cdots ${rem}`, blank: q }
-    ]
+    /* 전에는 가운데가 `보정한 나머지를 계속 더해가며 반복` 한 줄이었다 — 빈칸도 수식도 없는
+       말줄임이라 어림 몫이 왜 그 값이 되는지 따라갈 길이 없었다. 라운드를 전부 편다. */
+    solution: steps.slice()
   };
 };
 

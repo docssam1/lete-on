@@ -735,9 +735,11 @@ NM_TGEN['mx4_sqrt'] = function(params, rng) {
     answerType: 'number',
     widget:     'array',
     array:      { n: sq, rows: n },
+    /* 2026-09-20: 첫 줄에 답이 숫자로 박혀 있었다 — 제곱근을 찾는 것이 이 유형의 할 일인데
+       그 수를 미리 알려 주고 있었다. 같은 관계를 빈칸으로 물어 탐색이 되게 한다. */
     solution: [
-      { tex: `${n} \\times ${n} = \\square`, blank: sq },
-      { tex: `\\sqrt{${sq}} = \\square`,      blank: n }
+      { tex: `\\square \\times \\square = ${sq}`, blank: [n, n] },
+      { tex: `\\sqrt{${sq}} = \\square`,            blank: n }
     ]
   };
 };

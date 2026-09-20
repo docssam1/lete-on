@@ -524,10 +524,11 @@ NM_TGEN['md54_expLogInequality'] = function (params, rng) {
         zh: `底数(${a})大于1时log是增函数——求出等号成立的边界值(a^k=真数)` },
       tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) ${cmp} ${k} \\;\\Rightarrow\\; x ${cmp} \\square`,
       answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0,
-      solution: [
-        { tex: `${N} - (${q}) = \\square`, blank: N - q },
-        { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x0 }
-      ]
+      /* p=1 이면 둘째 줄이 `÷1` 이라 답을 옮겨 적는 것뿐이다 — 그럴 땐 한 줄로 끝낸다. */
+      solution: p === 1
+        ? [ { tex: `${N} - (${q}) = \\square`, blank: x0 } ]
+        : [ { tex: `${N} - (${q}) = \\square`, blank: N - q },
+            { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x0 } ]
     };
   }
 
@@ -540,9 +541,10 @@ NM_TGEN['md54_expLogInequality'] = function (params, rng) {
       zh: `底数(${a})大于1时指数函数是增函数——求出等号成立的边界值` },
     tex: `${a}^{${p===1?'':p}x ${wrapPlus(q)}} ${cmp} ${a}^{${k}} \\;\\Rightarrow\\; x ${cmp} \\square`,
     answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0,
-    solution: [
-      { tex: `${k} - (${q}) = \\square`, blank: k - q },
-      { tex: `\\dfrac{${k - q}}{${p}} = \\square`, blank: x0 }
+    solution: p === 1
+      ? [ { tex: `${k} - (${q}) = \\square`, blank: x0 } ]
+      : [ { tex: `${k} - (${q}) = \\square`, blank: k - q },
+          { tex: `\\dfrac{${k - q}}{${p}} = \\square`, blank: x0 }
     ]
   };
 };
@@ -805,7 +807,11 @@ NM_TGEN['md58_limitRationalize'] = function (params, rng) {
         zh: `要去掉分母的根号，就把分子分母都乘以共轭式(√(x+p)+${m})——这样(x-a)就能约掉` },
       tex: `\\lim_{x\\to ${a}} \\dfrac{x ${wrapPlus(-a)}}{\\sqrt{x ${wrapPlus(p)}} - ${m}} = \\square`,
       answer, answerType: 'number', widget: 'numpad', negative: false,
+      /* 2026-09-20: 이름이 rationalize 인데 켤레를 곱하는 줄이 없어서, 마지막 `m + m` 이
+         어디서 왔는지 설명이 한 글자도 없었다. 약분되는 과정을 두 줄로 편다. */
       solution: [
+        { tex: `(\\sqrt{x ${wrapPlus(p)}} - ${m})(\\sqrt{x ${wrapPlus(p)}} + ${m}) = x ${wrapPlus(-a)}` },
+        { tex: `\\dfrac{x ${wrapPlus(-a)}}{\\sqrt{x ${wrapPlus(p)}} - ${m}} = \\sqrt{x ${wrapPlus(p)}} + ${m}` },
         { tex: `\\sqrt{${a} ${wrapPlus(p)}} = \\sqrt{${m * m}} = ${m}` },
         { tex: `${m} + ${m} = \\square`, blank: answer }
       ]
@@ -820,6 +826,8 @@ NM_TGEN['md58_limitRationalize'] = function (params, rng) {
       tex: `\\lim_{x\\to ${a}} \\dfrac{\\sqrt{x ${wrapPlus(p)}} - ${m}}{x ${wrapPlus(-a)}} = \\dfrac{\\square}{\\square}`,
       answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
       solution: [
+        { tex: `(\\sqrt{x ${wrapPlus(p)}} - ${m})(\\sqrt{x ${wrapPlus(p)}} + ${m}) = x ${wrapPlus(-a)}` },
+        { tex: `\\dfrac{\\sqrt{x ${wrapPlus(p)}} - ${m}}{x ${wrapPlus(-a)}} = \\dfrac{1}{\\sqrt{x ${wrapPlus(p)}} + ${m}}` },
         { tex: `\\sqrt{${a} ${wrapPlus(p)}} = \\sqrt{${m * m}} = ${m}` },
         { tex: `\\dfrac{1}{${m}+${m}} = \\dfrac{\\square}{\\square}`, blank: answer }
       ]
@@ -976,7 +984,10 @@ NM_TGEN['md61_areaUnderCurve'] = function (params, rng) {
       zh: `曲线与x轴之间的面积，就是以两个交点为区间的定积分——求出原函数后计算F(q)-F(p)` },
     tex: `f(x) = ${coefLead(A)}x^2 ${wrapPlusCoef(B)}x ${wrapPlus(C)} \\;\\Rightarrow\\; \\int_{${p}}^{${q}} f(x)\\,dx = \\square`,
     answer, answerType: 'number', widget: 'numpad', negative: false,
+    /* 2026-09-20: 원시함수를 한 번도 안 보여 주고 F(q) 부터 물었다 — 정의되지도 않은 F 에
+       수를 대입하라는 요구였다. 같은 교재군의 MD46 은 F(x) 를 먼저 띄우고 시작한다. */
     solution: [
+      { tex: `F(x) = ${coefLead(-2 * k)}x^3 ${wrapPlusCoef(3 * k * (p + q))}x^2 ${wrapPlusCoef(-6 * k * p * q)}x` },
       { tex: `F(${q}) = \\square`, blank: F(q) },
       { tex: `F(${p}) = \\square`, blank: F(p) },
       { tex: `${F(q)} - ${F(p)} = \\square`, blank: answer }

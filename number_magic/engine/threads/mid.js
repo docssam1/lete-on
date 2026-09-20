@@ -103,8 +103,10 @@ NM_TGEN['md1_intConcept'] = function (params, rng) {
     },
     tex: `|${a} - (${b})| = \\square`,
     answer: dist, answerType: 'number', widget: 'numpad',
+    /* 2026-09-20: 첫 줄이 `|-10 - (-49)| = |39|` 라 답이 이미 적혀 있었다. 빼기를 먼저
+       시키고, 그 결과에 절댓값을 씌우는 두 걸음으로 나눈다(음수가 나올 수도 있어야 한다). */
     solution: [
-      { tex: `|${a} - (${b})| = |${a - b}|` },
+      { tex: `${a} - (${b}) = \\square`, blank: a - b },
       { tex: `|${a - b}| = \\square`, blank: dist }
     ]
   };
@@ -293,8 +295,12 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
     tex: `${exprTex} = \\square`,
     answer: [n, den], answerShape: 'fraction', answerType: 'number', widget: 'numpad',
     negative: sumNum < 0,
+    /* 2026-09-20: 통분한 모습을 통째로 건너뛰고 합만 보여 줬었다 — 정작 어려운 부분(최소공배수
+       찾기·세 분수 고치기)이 한 줄에 감춰지고, 유일하게 채우는 칸은 윗줄 숫자를 옮겨 적는
+       것뿐이었다. 같은 생성기의 diffDenom(두 항)은 이미 통분 줄을 보여 준다. */
     solution: [
-      { tex: `${exprTex} = \\dfrac{${sumNum}}{${LCD}}` },
+      { tex: `${exprTex} = ${convs.map((c, i) => (i === 0 ? '' : ' + ') + `\\dfrac{${c}}{${LCD}}`).join('')}` },
+      { tex: `${convs.map((c, i) => (i === 0 ? '' : ' + ') + `\\dfrac{${c}}{${LCD}}`).join('')} = \\dfrac{\\square}{${LCD}}`, blank: sumNum },
       { tex: `\\dfrac{${sumNum}}{${LCD}} = \\dfrac{\\square}{\\square}`, blank: [n, den] }
     ]
   };

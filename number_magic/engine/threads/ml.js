@@ -59,8 +59,9 @@ NM_TGEN['ml1_double'] = function(params, rng) {
       answerType: 'number',
       widget: 'array',
       array: { n, rows: 2 },
+      /* 2026-09-20: 첫 줄이 `12 = 6 + 6` 이라 답이 이미 적혀 있었다(DV1 도 같은 결함). */
       solution: [
-        { tex: `${n} = ${answer} + ${answer}` },
+        { tex: `${n} = \\square + \\square`, blank: [answer, answer] },
         { tex: `${n} \\div 2 = \\square`, blank: answer }
       ]
     };
@@ -1528,19 +1529,26 @@ NM_TGEN['ml_div_decomp'] = function(params, rng) {
 /* ── ML_DIV_SIMPLIFY — 약분 나눗셈 ─────────────────────────── */
 NM_TGEN['ml_div_simplify'] = function(params, rng) {
   const lv = params.level || 'main';
-  /* 고정 (a,b) 목록 대신 나누는 수 b와 몫 q를 직접 뽑아 a=b×q를 만든다.
-     gcd(b×q, b) = b 이므로 항상 약분→정수 나눗셈으로 이어진다.
-     교재 사례(5427÷9, 3668÷28)처럼 main은 두 자리 나누는 수·큰 몫까지 확대 */
-  const bRange = lv === 'practice' ? [4, 12] : [4, 60];
+  /* 2026-09-20 재작성. 전에는 b와 몫 q를 뽑아 a=b×q 로 만들었는데, 그러면 gcd(a,b)=b 라
+     첫 단계 `a ÷ b`(=약분할 공약수로 나누기)가 **문제 전체와 같은 식**이 됐다. 아이는 답을
+     먼저 치고 `b ÷ b = 1`, `q ÷ 1 = q` 라는 껍데기 두 줄을 더 채웠다 — 순서가 거꾸로였다.
+     이제 약분할 공약수 g와 **약분 뒤의 나누는 수** n을 먼저 뽑는다(둘 다 2 이상).
+       b = g × n,  a = b × q  →  a ÷ g = n×q,  b ÷ g = n,  (n×q) ÷ n = q
+     첫 줄이 문제보다 확실히 쉬워지고(나누는 수가 b 에서 n 으로 줄어든다), 마지막 줄에서야
+     답이 나온다. 교재 사례(5427÷9, 3668÷28)의 수 크기는 그대로 유지한다. */
+  const bMax = lv === 'practice' ? 12 : 60;
   const qRange = lv === 'practice' ? [3, 20] : [10, 400];
-  const b      = R(rng, bRange[0], bRange[1]);
+  let g, n, b, tries = 0;
+  do {
+    g = R(rng, 2, lv === 'practice' ? 3 : 9);
+    n = R(rng, 2, lv === 'practice' ? 4 : 9);
+    b = g * n;
+  } while (b > bMax && ++tries < 40);
+  if (b > bMax) { g = 2; n = 2; b = 4; }
   const q      = R(rng, qRange[0], qRange[1]);
   const a      = b * q;
-  const gcd    = (x, y) => y === 0 ? x : gcd(y, x % y);
-  const g      = gcd(a, b);
-  const sa     = a / g;
-  const sb     = b / g;
-  const answer = a / b;
+  const sa     = a / g;          /* 약분한 나누어지는 수 = n × q */
+  const answer = q;
 
   return {
     prompt:{ ko:`${a} ÷ ${b}를 약분해서 계산해요`,
@@ -1550,8 +1558,8 @@ NM_TGEN['ml_div_simplify'] = function(params, rng) {
     answer, answerType:'steps', widget:'steps',
     steps:[
       { tex:`${a} \\div ${g} = \\square`, blank:sa },
-      { tex:`${b} \\div ${g} = \\square`, blank:sb },
-      { tex:`${sa} \\div ${sb} = \\square`, blank:answer }
+      { tex:`${b} \\div ${g} = \\square`, blank:n },
+      { tex:`${sa} \\div ${n} = \\square`, blank:answer }
     ]
   };
 };

@@ -62,8 +62,10 @@
         answerType: 'number',
         widget:     'array',
         array:      { n, rows: 2 },
+        /* 2026-09-20: 첫 줄이 `48 = 24 + 24` 라 답이 이미 적혀 있었다 — 아이는 베껴 썼다.
+           같은 관계를 빈칸으로 물으면 "똑같이 둘로 가르기"가 실제 할 일이 된다. */
         solution: [
-          { tex: `${n} = ${half} + ${half}` },
+          { tex: `${n} = \\square + \\square`, blank: [half, half] },
           { tex: `${n} \\div 2 = \\square`, blank: half }
         ]
       };
@@ -153,6 +155,7 @@
     const q    = R(rng, qMin, qMax);
     const r    = rem ? R(rng, 1, b - 1) : 0;
     const dv   = b * q + r;                // 피제수
+    const qTens = Math.floor(q / 10), qOnes = q % 10;
 
     if (!rem) {
       return {
@@ -165,12 +168,21 @@
         answer:     q,
         answerType: 'steps',
         widget:     'steps',
-        steps: [
-          { tex: `${dv} \\div ${b} = \\square`, blank: q }
-        ],
-        solution: [
-          { tex: `${dv} \\div ${b} = \\square`, blank: q }
-        ]
+        /* 나누어떨어지는 쪽은 풀이가 문항식 한 줄 복사였다 — 발판이 없었다(2026-09-20).
+           몫을 십의 자리와 일의 자리로 갈라 나눈다(교재의 (세)÷(한) 자리별 셈).
+           몫이 10의 배수여서 가를 것이 없으면 곱셈으로 되돌려 확인한다. */
+        steps: qOnes
+          ? [ { tex: `${b * qTens * 10} \\div ${b} = \\square`, blank: qTens * 10 },
+              { tex: `${b * qOnes} \\div ${b} = \\square`,      blank: qOnes },
+              { tex: `${qTens * 10} + ${qOnes} = \\square`,      blank: q } ]
+          : [ { tex: `${b} \\times \\square = ${dv}`, blank: q },
+              { tex: `${dv} \\div ${b} = \\square`,   blank: q } ],
+        solution: qOnes
+          ? [ { tex: `${b * qTens * 10} \\div ${b} = \\square`, blank: qTens * 10 },
+              { tex: `${b * qOnes} \\div ${b} = \\square`,      blank: qOnes },
+              { tex: `${qTens * 10} + ${qOnes} = \\square`,      blank: q } ]
+          : [ { tex: `${b} \\times \\square = ${dv}`, blank: q },
+              { tex: `${dv} \\div ${b} = \\square`,   blank: q } ]
       };
     }
 
@@ -1065,8 +1077,11 @@
         prompt: { ko: `${n}의 약수를 모두 쓰세요.`, en: `Write every factor of ${n}.`, zh: `写出${n}的所有因数。` },
         tex: `${n}\\text{의 약수} = ${f.map(function(){ return '\\square'; }).join(',\\,')}`,
         answer: f, answerType: 'number', widget: 'numpad',
+        /* 2026-09-20: 마지막 줄이 `1,\,3,\,5,\,15` 처럼 답을 그냥 늘어놓고 blank 가 없었다.
+           다칸 넘패드로 받는 답과 모양이 어긋나고, 해설로서도 답을 보여 주기만 했다.
+           문항식과 같은 빈칸 모양으로 되돌려 놓는다. */
         solution: [{ tex: `1 \\times ${n} = ${n}${f.length>2?',\\;'+f[1]+' \\times '+(n/f[1])+' = '+n:''}` },
-                   { tex: `${n}\\text{의 약수}: ${f.join(',\\,')}` }]
+                   { tex: `${n}\\text{의 약수} = ${f.map(function(){ return '\\square'; }).join(',\\,')}`, blank: f }]
       };
     }
     if (mode === 'multiples') {                      /* 배수를 차례로 */
@@ -1078,7 +1093,7 @@
         tex: `${n}\\text{의 배수} = ${ms.map(function(){ return '\\square'; }).join(',\\,')}`,
         answer: ms, answerType: 'number', widget: 'numpad',
         solution: [{ tex: `${n} \\times 1,\\, ${n} \\times 2,\\, \\ldots` },
-                   { tex: `${ms.join(',\\,')}` }]
+                   { tex: `${n}\\text{의 배수} = ${ms.map(function(){ return '\\square'; }).join(',\\,')}`, blank: ms }]
       };
     }
     /* 공약수·최대공약수·공배수·최소공배수 */
@@ -1096,7 +1111,7 @@
         answer: cf, answerType: 'number', widget: 'numpad',
         solution: [{ tex: `${a}: ${dvFactorsOf(a).join(',\\,')}` },
                    { tex: `${b}: ${dvFactorsOf(b).join(',\\,')}` },
-                   { tex: `\\text{공약수}: ${cf.join(',\\,')}` }]
+                   { tex: `\\text{공약수} = ${cf.map(function(){ return '\\square'; }).join(',\\,')}`, blank: cf }]
       };
     }
     if (mode === 'gcd') {
@@ -1115,7 +1130,8 @@
         prompt: { ko: `${a}${dvNumWa(a)} ${b}의 공배수를 작은 것부터 3개 쓰세요.`, en: `Write the first three common multiples of ${a} and ${b}.`, zh: `从小到大写出${a}和${b}的前三个公倍数。` },
         tex: `${a},\\, ${b}\\text{의 공배수} = ${cm.map(function(){ return '\\square'; }).join(',\\,')}`,
         answer: cm, answerType: 'number', widget: 'numpad',
-        solution: [{ tex: `\\text{최소공배수} = ${l}` }, { tex: `${cm.join(',\\,')}` }]
+        solution: [{ tex: `\\text{최소공배수} = ${l}` },
+                   { tex: `\\text{공배수} = ${cm.map(function(){ return '\\square'; }).join(',\\,')}`, blank: cm }]
       };
     }
     return {                                          /* lcm */

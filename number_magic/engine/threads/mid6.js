@@ -472,18 +472,22 @@ NM_TGEN['md41_geometricSeq'] = function (params, rng) {
   if (mode === 'findRule') {
     const r = pickR(wide);
     const a1 = nzInt(rng, 1, wide ? 8 : 5);
-    const p = R(rng, 1, 3), q = p + R(rng, 1, 2);
+    /* 2026-09-20 두 곳을 고쳤다.
+       ① 두 항의 간격이 2였던 경우(a₂, a₄) **답이 하나로 정해지지 않았다** — Y÷X = r² 라서
+          r = ±2 가 둘 다 성립하고 a₁ 도 따라 둘이다. 그런데 채점은 한쪽만 맞다고 했다.
+          이웃한 두 항으로 주면 Y÷X 가 곧 r 이라 부호까지 정해진다.
+       ② p=1 이면 X 가 곧 a₁ 이라, 묻는 값이 문제 지문에 이미 적혀 있었다. p는 2부터. */
+    const p = R(rng, 2, wide ? 4 : 3), q = p + 1;
     const X = a1 * Math.pow(r, p - 1), Y = a1 * Math.pow(r, q - 1);
     const answer = [a1, r];
     return {
-      prompt: { ko: `두 항의 비로 공비 r을 먼저 구하고, a₁=X÷r^(p-1)로 구해요`,
-        en: `Find the common ratio r from the ratio of two terms, then a₁ = X ÷ r^(p-1)`,
-        zh: `先由两项之比求出公比r，再求a₁=X÷r^(p-1)` },
+      prompt: { ko: `이웃한 두 항의 비가 곧 공비 r이에요. r을 구한 뒤 a₁=X÷r^(p-1)로 구해요`,
+        en: `The ratio of two neighbouring terms is the common ratio r — find r, then a₁ = X ÷ r^(p-1)`,
+        zh: `相邻两项之比就是公比r——先求r，再求a₁=X÷r^(p-1)` },
       tex: `a_{${p}}=${X},\\;a_{${q}}=${Y} \\;\\Rightarrow\\; a_1=\\square,\\;r=\\square`,
       answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
       solution: [
-        { tex: `Y\\div X = ${Y}\\div ${X} = \\square`, blank: Y / X },
-        { tex: `r = \\square`, blank: r },
+        { tex: `r = Y\\div X = ${Y}\\div ${X} = \\square`, blank: r },
         { tex: `a_1 = X\\div r^{${p - 1}} = ${X}\\div ${Math.pow(r, p - 1)} = \\square`, blank: a1 },
         { tex: `a_1=\\square,\\;r=\\square`, blank: [a1, r] }
       ]
