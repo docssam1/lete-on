@@ -17,7 +17,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-// ── Config ─────────────────────────────────────────────────────────────────────────────
+// ── Config ────────────────────────────────────────────────────────────────────
 const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
 const VOICE_NAME = 'en-US-Neural2-F';   // Natural female Neural2 voice — CARS textbook passages
 // Storybook narrator for the Library eBook reader, picked after an A/B/C/D sample
@@ -37,7 +37,7 @@ if (!SUPABASE_KEY) {
   process.exit(1);
 }
 
-// ── Load lesson data ─────────────────────────────────────────────────────────────────────────
+// ── Load lesson data ───────────────────────────────────────────────────────────
 const window = { LESSONS: {} };
 const LESSON1 = {};
 const dataDir = path.join(__dirname, '../reading-world/data');
@@ -95,7 +95,7 @@ var LESSON1_ZH = {};
   }
 }
 
-// ── Build task list ──────────────────────────────────────────────────────────────────────────
+// ── Build task list ────────────────────────────────────────────────────────────
 const tasks = [];
 
 // 지필드 사이언스 랩 광고 페이지 — docssam(밝은 남자 목소리) 나레이션. 파일 이름에 (목소리+문장) 해시를
@@ -177,7 +177,7 @@ console.log('');
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 
-// ── Helpers ──────────────────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 function httpRequest(options, body) {
   return new Promise((resolve, reject) => {
     const req = https.request(options, res => {
@@ -262,7 +262,7 @@ async function uploadToSupabase(mp3Buffer, storagePath) {
   return `${SUPABASE_URL}/storage/v1/object/public/audio/${storagePath}`;
 }
 
-// ── Main ────────────────────────────────────────────────────────────────────────────────
+// ── Main ───────────────────────────────────────────────────────────────────────
 async function main() {
   // Add original passages from Supabase
   console.log('📥  Fetching original passages from Supabase...');
