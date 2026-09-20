@@ -1,32 +1,27 @@
-# science-src — 단원평가 원본 전용 브랜치
+# science-src — 단원평가 원본 그림 전용 브랜치
 
 **이 브랜치는 `main`에 병합하지 않는다.** GitHub Pages로 공개되면 안 되는 원본(스캔 그림)을 담는다.
-저장소를 비공개로 잠그기 전까지는 여기에 원문 **문장**을 두지 않는다 — 문장·정답은 Supabase
-`public.science_bank_source`에만 있다.
+원문 **문장·정답**은 여기 두지 않는다 — Supabase `public.science_bank_source`에만 있다.
+(저장소는 나중에 비공개로 잠근다.)
 
 ## 지금 상태 (2026-09-20)
 
-- `4-1/자석의 이용/index.json` — 원문 80문항의 **대응표**. `<원문 source_key> → {file, stem?, element, type, format, source:{set,no}}`.
-- 분류 폴더 13개(E1~E4 × T01~T13)는 만들어 두었으나 **PNG는 아직 없다.**
+| 단원 | 폴더 | 그림 | Supabase |
+|---|---|---|---|
+| 4-1 Ⅰ 자석의 이용 (`s41-u01`) | `4-1/자석의 이용/` | 87 + `index.json` | 80행 `figures.status = ok` |
+| 4-1 Ⅱ 물의 상태 변화 (`s41-u02`) | `4-1/물의 상태 변화/` | 97 + `index.json` | 80행 `figures.status = ok` |
 
-### PNG가 없는 이유
-`bank/tools/crop_blocks.py`는 원본 PDF를 디스크에서 읽는다. 이 작업을 한 세션은
-클라우드 컨테이너였고, 네트워크 정책이 `drive.google.com`·`docs.google.com`을 막아
-(CONNECT 403) PDF를 내려받을 수 없었다. Drive MCP의 `download_file_content`는 파일을
-base64 문자열로 대화 문맥에 싣는 방식이라 2.4MB PDF에는 쓸 수 없다.
-또한 Drive 폴더에 **세트4 PDF가 없다**(세트1~3과 정답·풀이만 있음).
+## 파일 이름 규칙 (단원마다 폴더 하나, 분류는 이름에)
 
-### 이어서 할 일
-1. `최다빈출 단원평가 세트1~4.pdf`를 세션에 **파일 첨부**하거나 로컬에서 작업한다.
-2. `pip install pymupdf opencv-python numpy`
-3. `python science-lab/bank/tools/crop_blocks.py <PDF폴더> /tmp/blocks`
-4. `/tmp/blocks/s{세트}-q{번호}.png` → `index.json`의 `file` 경로로, `s{세트}-g{번호}.png` → `stem` 경로로 옮긴다.
-5. 눈으로 전수 확인(번호 흔적·잘림·다른 문항 섞임). 확인되면 Supabase `figures.status`를
-   `pending-crop` → `ok`로 바꾼다.
+- `E{소단원}-T{유형}-o-{nn}.png` — 문항 한 개(발문+보기+그림). **문항 번호는 지웠다.**
+- `E{소단원}-T{유형}-stem-{nn}.png` — 여러 문항이 함께 쓰는 공통 그림/제시문.
+- `index.json` — `<원문 source_key> → {file, stem?, element, type, format, source:{set,no}}` 대응표.
+- `E`·`T`의 이름은 공개 브랜치 `science-lab/data/units/<단원>.taxonomy.js`(= `bank/taxonomy/<단원>.json`)가 기준이다.
 
-경로는 이미 Supabase `figures.block`·`figures.stem`·`item.visualModel.figure`와 일치하므로,
-파일만 제자리에 놓으면 더 고칠 것이 없다.
+Supabase `figures.block`·`figures.stem`은 이 경로(`science-src/4-1/<단원>/<파일>`)와 일치한다.
 
-## 분류 기준
-`science-lab/bank/taxonomy/s41-u01.json`(공개 브랜치)가 유일한 기준이다. 내용 요소 4개(E1~E4) ·
-유형 13개(T01~T13) · 형식 3종(선택형·단답형·서술형).
+## 새 단원 추가 순서
+1. 단원평가 PDF 첨부 → `science-lab/bank/tools/crop_blocks.py`로 문항 잘라내기(번호 지움).
+2. 분류(E·T) 확정 후 위 규칙으로 이름 붙여 폴더 하나에 모은다.
+3. GitHub 웹 업로드: `https://github.com/docssam1/lete-on/upload/science-src/science-src/<학기>/<단원>` 에 파일 끌어 넣기(주소가 폴더를 만든다).
+4. `git ls-tree`로 개수·바이트 대조 → Supabase `figures.status`를 `ok`로.
