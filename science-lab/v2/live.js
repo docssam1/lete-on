@@ -7,7 +7,10 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 export function wireLive(root, { scene, lab, title = '' } = {}) {
   root.querySelectorAll('.bk-video').forEach((v) => v.querySelector('.bk-play')?.addEventListener('click', (e) => {
     e.stopPropagation();
-    v.innerHTML = `<video controls autoplay playsinline><source src="${v.dataset.src}" type="video/webm"><source src="${v.dataset.full}" type="video/webm"></video>`;
+    v.innerHTML = `<video controls autoplay playsinline><source src="${v.dataset.src}" type="video/webm">${v.dataset.mp4 ? `<source src="${v.dataset.mp4}" type="video/mp4">` : ''}<source src="${v.dataset.full}" type="video/webm"></video>`;
+    const vid = v.querySelector('video');
+    vid.addEventListener('error', () => { v.innerHTML = `<div class="bk-video-fail"><p>이 브라우저에서는 영상이 열리지 않아요.</p><a href="${v.dataset.page}" target="_blank" rel="noopener">새 창에서 영상 보기</a></div>`; }, true);
+    vid.play?.().catch(() => { /* 자동 재생이 막히면 재생 버튼으로 */ });
   }));
   root.querySelectorAll('[data-pop]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();

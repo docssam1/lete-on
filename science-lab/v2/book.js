@@ -44,7 +44,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
 
   // 1. 장 첫 쪽
   out.push(page(`
-    ${live && media?.engage ? `${web(`<div class="bk-video" data-src="${media.engage.src}" data-full="${media.engage.full}"><img src="${media.engage.poster || ''}" alt=""><button type="button" class="bk-play">▶ 실제 영상 보기</button><small>${esc(media.engage.credit)}</small></div>`)}<div class="bk-art wide bk-print">${art.opener}</div>` : `<div class="bk-art wide">${art.opener}</div>`}
+    ${live && media?.engage ? `${web(`<div class="bk-video" data-src="${media.engage.src}" data-mp4="${media.engage.mp4 || ''}" data-full="${media.engage.full}" data-page="${media.engage.page}"><img src="${media.engage.poster || ''}" alt=""><button type="button" class="bk-play">▶ 실제 영상 보기</button><small>${esc(media.engage.credit)}</small></div>`)}<div class="bk-art wide bk-print">${art.opener}</div>` : `<div class="bk-art wide">${art.opener}</div>`}
     ${ch.intro.map((p) => `<p class="bk-p">${esc(p)}</p>`).join('')}
     <div class="bk-box think"><h4>미리 생각하기</h4><ol>${ch.think.map((t) => `<li>${esc(t.q)}${ans(t.a, 2)}</li>`).join('')}</ol></div>
     <div class="bk-road"><div class="bk-road-steps">${['가설', '설계', '실험', '결과·결론', '개념 정리', '창의·토의', '영재성', '확인 문제'].map((t, i) => `<span><b>${i + 1}</b>${t}</span>`).join('')}</div>${qr(ch.qr.scene, '3D로 먼저 보기', 'scene')}</div>`, { cls: 'first', band: `

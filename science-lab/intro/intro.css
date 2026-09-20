@@ -186,3 +186,20 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .it-zoom-inner .bk-page { width: 210mm; height: 297mm; box-shadow: 0 20px 60px rgba(0, 0, 0, .6); }
 .inapp-bar { background: linear-gradient(180deg, #3a1b12, #1c0d08); border-top: 1px solid rgba(226, 182, 89, .4); font-family: var(--serif); }
 .inapp-bar button { background: linear-gradient(180deg, #f3d48a, #c9953a); color: #2a170b; }
+/* 집에서도 할 수 있어요 · FAQ */
+.ad-kit { display: grid; grid-template-columns: 1fr 46mm; gap: 6mm; align-items: start; margin-top: 4mm; }
+.ad-kit h3 { margin: 0; font: 800 17pt var(--serif); color: #8b1e1e; }
+.ad-kit-meta { margin: 1mm 0 3mm; color: #6b5537; font-size: 11pt; }
+.ad-kit-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 2mm; }
+.ad-kit-list li { display: flex; align-items: baseline; gap: 2mm; border-bottom: 1px dotted rgba(139, 94, 40, .45); padding-bottom: 1.6mm; font-size: 12pt; }
+.ad-kit-list b { font-weight: 800; } .ad-kit-list small { color: #6b5537; }
+.ad-kit-list i { margin-left: auto; font-style: normal; font-size: 9.5pt; color: #6b5537; }
+.ad-kit-list li.buy i { color: #fff; background: #8b1e1e; border-radius: 999px; padding: .6mm 3mm; font-weight: 700; }
+.ad-qr { margin: 0; text-align: center; } .ad-qr img { width: 40mm; height: 40mm; background: #fff; padding: 2mm; box-shadow: 0 1mm 3mm rgba(60, 30, 10, .3); }
+.ad-qr figcaption { font-size: 9.5pt; color: #6b5537; margin-top: 2mm; line-height: 1.4; }
+.ad-faq { margin: 2mm 0 0; } .ad-faq dt { font: 800 13pt var(--serif); color: #8b1e1e; margin-top: 5mm; }
+.ad-faq dt::before { content: 'Q. '; } .ad-faq dd { margin: 1.5mm 0 0; font-size: 12pt; line-height: 1.6; } .ad-faq dd::before { content: 'A. '; font-weight: 800; color: #b8872b; }
+.ad-p { font-size: 12.5pt; line-height: 1.75; margin: 0 0 5mm; text-align: justify; }
+.ad-use { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin-top: 7mm; }
+.ad-use div { border: 1px solid rgba(139, 94, 40, .45); background: rgba(255, 250, 235, .5); padding: 3.5mm; text-align: center; }
+.ad-use b { display: block; font: 800 13pt var(--serif); color: #8b1e1e; margin-bottom: 1.5mm; } .ad-use span { font-size: 11pt; line-height: 1.45; }

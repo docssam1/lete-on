@@ -168,8 +168,8 @@ function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
 const byId = (items) => Object.fromEntries(items.map((i) => [i.id, i]));
 // 실제 사진·영상(위키미디어 공용 등 자유 이용 자료). 출처는 항상 화면에 같이 보인다.
 const videoHtml = (v) => v ? `<figure class="card media video"><h3>${esc(v.title)}</h3>
-    <video controls playsinline preload="metadata" ${v.poster ? `poster="${v.poster}"` : ''}><source src="${v.src}" type="video/webm"><source src="${v.full}" type="video/webm">이 기기에서는 영상을 재생할 수 없어요.</video>
-    <figcaption>실제 영상 · <a href="${v.page}" target="_blank" rel="noopener">${esc(v.credit)}</a></figcaption></figure>` : '';
+    <video controls playsinline preload="metadata" ${v.poster ? `poster="${v.poster}"` : ''}><source src="${v.src}" type="video/webm">${v.mp4 ? `<source src="${v.mp4}" type="video/mp4">` : ''}<source src="${v.full}" type="video/webm"></video>
+    <figcaption>실제 영상 · <a href="${v.page}" target="_blank" rel="noopener">${esc(v.credit)}</a> · 안 보이면 <a href="${v.page}" target="_blank" rel="noopener">여기서 보기</a></figcaption></figure>` : '';
 const galleryHtml = (g, title = '실제로 보기') => g?.length ? `<section class="card media"><h3>${esc(title)}</h3><div class="gallery">${g.map((m) => `<figure class="${m.tall ? 'tall' : ''}"><img src="${m.src}" alt="${esc(m.cap)}" loading="lazy"><figcaption>${esc(m.cap)}<small><a href="${m.page}" target="_blank" rel="noopener">${esc(m.credit)}</a></small></figcaption></figure>`).join('')}</div></section>` : '';
 
 // ① 궁금
