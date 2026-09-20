@@ -315,6 +315,23 @@ function buildCourses(NM_THREADS){
     if(at < 0) return { t:String(raw), pin:null };
     return { t:String(raw).slice(0,at), pin:parseInt(String(raw).slice(at+1),10) || null };
   };
+  /* 레벨을 한 칸 올려도 되는가 — 다음 레벨이 **같은 갈래**여야 한다.
+     params.mode 가 바뀌면 난이도 계단이 아니라 다른 주제이므로 올리지 않는다
+     (MD4 mul2→div2, DV20 factors→multiples, MX3 toPct→hpl). */
+  function sameBranch(t, lv){
+    const L = (NM_THREADS[t] && NM_THREADS[t].levels) || [];
+    const a = L.filter(x => x.id === lv)[0], b = L.filter(x => x.id === lv + 1)[0];
+    if(!a || !b) return false;
+    return (a.params || {}).mode === (b.params || {}).mode;
+  }
+  function climbLevel(t, base, steps){
+    let lv = base, cap = maxLevel(t);
+    for(let i = 0; i < steps; i++){
+      if(lv >= cap || !sameBranch(t, lv)) break;
+      lv++;
+    }
+    return lv;
+  }
   const homeLevel = {};   // thread -> level assigned when it's OWN material (escalates on reuse, capped)
   const priorPool = [];   // ordered list of distinct threads introduced as OWN material by earlier courses
   const seenPool = {};
@@ -359,6 +376,7 @@ function buildCourses(NM_THREADS){
        유닛"과 무관한 드릴을 붙이는데, 유아 단계는 한 주 한 권이라 권과 드릴이 맞아야 의미가
        있다. '@n' 은 그 회차만의 고정 레벨(maxLevel 로 자른다). */
     const perSession = Array.isArray(spec.perSessionDrills) ? spec.perSessionDrills : null;
+    const emitted = {};   /* 이 과정에서 그 스레드를 이미 몇 회차에 실었나 — 레벨을 올리는 근거 */
     const sessions = segments.map((seg, i) => {
       let drills;
       if(perSession && perSession[i]){
@@ -368,7 +386,20 @@ function buildCourses(NM_THREADS){
         const ownA = ownDrills[(i*2) % ownDrills.length];
         const ownB = ownDrills.length > 1 ? ownDrills[(i*2+1) % ownDrills.length] : null;
         const picked = (ownB && ownB !== ownA) ? [ownA, ownB] : [ownA];
-        drills = picked.map(d => ({t:d.t, lv:d.lv, n:6}));
+        /* 회차마다 한 칸씩(2026-09-20, 원장 "계단형 자동 + 갈래형 수동").
+           전에는 한 과정에 한 번 실린 스레드가 그 과정 내내 레벨 1에 머물렀다 — 그래서
+           **190개 중 127개가 만들어 둔 상위 레벨에 학습지로는 영영 안 닿았다**
+           (AD5 두 자리 덧셈은 7레벨 중 '올림 없음'만, DV19 세로 나눗셈은 5레벨 중 1만).
+           같은 과정 안에서 그 스레드가 다시 나오는 회차마다 한 칸 올린다. 단, 레벨이
+           난이도 계단이 아니라 **갈래**인 스레드(params.mode 로 갈리는 것 — MD4 곱셈↔나눗셈,
+           DV20 약수↔배수↔공배수)는 올리지 않는다. 주마다 주제가 바뀌어 그 주 개념과
+           어긋나기 때문이다. 갈래형은 과정별로 '@n' 을 손으로 박아 싣는다.
+           고정 레벨('AD5@3')은 지은이가 정한 값이므로 그대로 둔다. */
+        drills = picked.map(d => {
+          const lv = d.pin != null ? d.lv : climbLevel(d.t, d.lv, emitted[d.t] || 0);
+          emitted[d.t] = (emitted[d.t] || 0) + 1;
+          return {t:d.t, lv, n:6};
+        });
       }
       if(spec.id > 1 && priorPool.length){
         const pt = priorPool[globalSessionIdx % priorPool.length];
@@ -379,6 +410,12 @@ function buildCourses(NM_THREADS){
       const cre = creative.length ? [creative[i % creative.length]] : [];
       return { magic: seg, drills, creative: cre };
     });
+
+    /* 회차마다 올라간 레벨을 homeLevel 에 반영한다 — 그래야 이 과정의 시험(pool)과
+       뒤 과정의 복습(priorPool)이 **실제로 배운 마지막 레벨**로 나온다. */
+    sessions.forEach(ss => (ss.drills || []).forEach(d => {
+      if(ownDrills.some(o => o.t === d.t)) homeLevel[d.t] = Math.max(homeLevel[d.t] || 0, d.lv);
+    }));
 
     let poolThreads = ownDrills.map(d => d.t).filter((t,i,a)=>a.indexOf(t)===i);
     if(spec.boss){
