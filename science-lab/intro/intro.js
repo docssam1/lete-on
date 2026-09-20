@@ -71,7 +71,7 @@ const GOLD = `<defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop of
   <animate attributeName="x1" values="-1;1;-1" dur="7s" repeatCount="indefinite"/><animate attributeName="x2" values="0;2;0" dur="7s" repeatCount="indefinite"/></linearGradient>
   <radialGradient id="glow"><stop offset="0" stop-color="#ffcf73" stop-opacity=".95"/><stop offset=".4" stop-color="#ff8a3d" stop-opacity=".45"/><stop offset="1" stop-color="#ff8a3d" stop-opacity="0"/></radialGradient>
   <filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
-// 모서리 덩쿽 장식(왼쪽 위 기준, 돌려서 네 모서리에)
+// 모서리 덩굴 장식(왼쪽 위 기준, 돌려서 네 모서리에)
 const CORNER = '<path d="M0 0 C18 2 26 10 28 28 M0 0 C2 18 10 26 28 28 M6 6 C14 7 20 12 21 21 M6 6 C7 14 12 20 21 21 M28 28 c4 -6 10 -6 12 -2 c2 4 -2 8 -6 6 M28 28 c-6 4 -6 10 -2 12 c4 2 8 -2 6 -6" fill="none" stroke="url(#gd)" stroke-width="1"/><circle cx="28" cy="28" r="1.8" fill="url(#gd)"/>';
 const corners = (w, h, m) => [[m, m, 0], [w - m, m, 90], [w - m, h - m, 180], [m, h - m, 270]].map(([x, y, r]) => `<g transform="translate(${x} ${y}) rotate(${r}) scale(.78)">${CORNER}</g>`).join('');
 function coverPage() {
@@ -183,7 +183,7 @@ function paint(anim = true, dir = 1) {
     leaf.querySelectorAll('.face').forEach((f) => f.setAttribute('aria-hidden', 'true'));
   });
   if (anim) { const t = state.leaves[dir > 0 ? s - 1 : s]; if (t) { t.style.zIndex = n + 2; setTimeout(() => { t.style.zIndex = t.classList.contains('flipped') ? state.leaves.indexOf(t) + 1 : n - state.leaves.indexOf(t); }, 900); } }
-  // 표지만 보일 땀 책을 가운데로, 마지막(뒤표지 왼쪽만)도 가운데로
+  // 표지만 보일 땐 책을 가운데로, 마지막(뒤표지 왼쪽만)도 가운데로
   const shift = state.single ? 0 : s === 0 ? -0.5 : s === n ? 0.5 : 0;
   book.style.transform = s === 0 ? '' : `translateX(calc(var(--pw) * ${shift}))`;
   book.classList.toggle('closed', s === 0);
@@ -194,7 +194,7 @@ function paint(anim = true, dir = 1) {
   $('.it-arrow.prev').disabled = s === 0; $('.it-arrow.next').disabled = s >= n - (state.single ? 1 : 0);
   narrate();
 }
-// 두꺼운 마법서 책장 소리(WebAudio로 합성: 종이 스치는 소리 + 표지는 뭵직한 울림)
+// 두꺼운 마법서 책장 소리(WebAudio로 합성: 종이 스치는 소리 + 표지는 묵직한 울림)
 let AC = null;
 function turnSound(heavy) {
   if (!soundOn) return;
@@ -285,7 +285,7 @@ document.querySelectorAll('[data-t]').forEach((b) => b.addEventListener('click',
   $('.it-print').href = `../v2/#/${state.ch}/lab-book/${t ? 'teacher' : 'student'}`; await build();
 }));
 
-// ── 살아 있는 표지: 닫혀 있을 땀 마우스를 따라 책이 살짝 기울고, 배경에는 불씨가 떠오른다 ──
+// ── 살아 있는 표지: 닫혀 있을 땐 마우스를 따라 책이 살짝 기울고, 배경에는 불씨가 떠오른다 ──
 const tilt = (e) => {
   if (state.spread !== 0 || REDUCED) { book.style.removeProperty('--rx'); book.style.removeProperty('--ry'); return; }
   const r = wrapEl.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
