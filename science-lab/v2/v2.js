@@ -4,7 +4,8 @@ import { mountRingTower, towerModel } from './lab-ring-tower.js';
 import { pageHome } from './home.js';
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
-  ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')) }) };
+  ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')) }),
+  's41-u02': async () => ({ ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }) };
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },
@@ -258,7 +259,8 @@ function pageSub(u, L, eid) {
   if (!e) { location.replace('#/'); return; }
   const types = tx.types.filter((t) => t.element === e.id);
   frame(u, L, null, `<p class="step-label">소단원 ${tx.elements.indexOf(e) + 1}</p><h2>${esc(e.name)}</h2>
-    <div class="print-bar"><a class="btn primary" href="#/${u}/1" style="display:inline-flex;align-items:center;text-decoration:none">5단계 탐구로 배우기</a></div>
+    ${L.engage ? `<div class="print-bar"><a class="btn primary" href="#/${u}/1" style="display:inline-flex;align-items:center;text-decoration:none">5단계 탐구로 배우기</a></div>` : ''}
+    <nav class="modes" aria-label="소단원">${tx.elements.map((x, i) => `<a href="#/${u}/sub/${x.id}" class="btn" style="display:inline-flex;align-items:center;text-decoration:none;min-height:44px;font-size:17px${x.id === e.id ? ';background:var(--navy);color:var(--on-navy)' : ''}">${i + 1}</a>`).join('')}</nav>
     ${types.map((t) => `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${sim.filter((s) => s.taxonomy.type === t.id).map((s) => itemHtml(s)).join('')}`).join('')}`);
   const I = Object.fromEntries(sim.map((s) => [s.id, s]));
   $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id]));
@@ -297,12 +299,12 @@ function pageReport(u, L) {
 function pageBook(u, L, items, mode) {
   const I = byId(items), show = mode === 'teacher';
   const kyo = items.filter((i) => i.taxonomy.track === '교과'), yeong = items.filter((i) => i.taxonomy.track === '영재성');
-  const h = L.explore.home; let n = 0;
+  const h = L.explore?.home; let n = 0;
   const qs = (list) => list.map((it) => itemHtml(it, { print: true, show, no: ++n })).join('');
   const answers = () => { let k = 0; return [...kyo, ...yeong].map((it) => { k++; const ac = it.answerContract;
     const a = ac.type === 'single-choice' ? CIRC[ac.answer] : ac.type === 'cloze' ? ac.blanks.map((b) => b.answer).join(', ') : ac.type === 'table-fill' ? ac.rows.map((r) => `${r.label}: ${r.answer.join('·')}`).join(' / ') : ac.sample;
     return `<div class="q"><span class="no">${k}.</span> <b class="ans">${esc(a)}</b> — ${esc(it.explanation)}</div>`; }).join(''); };
-  const chapter = mode === 'answers' ? '' : `
+  const chapter = mode === 'answers' || !L.explain ? '' : `
     <section class="page"><h2>${esc(L.title)} — 개념 정리</h2>
       <p class="analogy">${esc(L.explain.analogy)}</p>
       ${L.explain.cards.map((id) => itemHtml(I[id], { print: true, show })).join('')}
@@ -359,8 +361,9 @@ async function route() {
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
-  const mod = await load(); const L = mod.lesson, items = mod.items; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar };
+  const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar };
   if (a === 'sub') return pageSub(u, L, b);
+  if (!mod.lesson && a !== 'print') { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
   if (a === 'kit') return pageKit(u, L);
   if (a === 'report') return pageReport(u, L);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
