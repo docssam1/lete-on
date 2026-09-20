@@ -559,12 +559,20 @@
     })
   });
 
-  const lockedPerimeterAreaGroup51 = (name, exploration, firstPdfPage, items) => detailed(
-    name,
-    "",
-    items.map(([suffix, label, sourceItemLabel]) => {
+  const perimeterAreaGenerator51 = new Map([
+    ["5-1-u6-e2-example-2-1", "source51RectangleTriangleAreaE2"],
+    ["5-1-u6-e3-exploration-3", "source51TriangleAreaInteriorE3"],
+    ["5-1-u6-e3-exploration-4", "source51TriangleAreaExteriorE3"],
+    ["5-1-u6-e4-exploration-trapezoid", "source51TrapezoidAreaE4"],
+    ["5-1-u6-e4-exploration-rhombus", "source51RhombusAreaE4"]
+  ]);
+  const perimeterAreaReadyIds51 = new Set(perimeterAreaGenerator51.keys());
+
+  const lockedPerimeterAreaGroup51 = (name, exploration, firstPdfPage, items) => {
+    const group = detailed(name, "", items.map(([suffix, label, sourceItemLabel]) => {
       const sourceItemId = `5-1-u6-e${exploration}-${suffix}`;
       const isMission = suffix.startsWith("mission-");
+      const isReady = perimeterAreaReadyIds51.has(sourceItemId);
       return {
         ...sourceItem51(
           label,
@@ -572,13 +580,25 @@
           sourceItemId,
           firstPdfPage + (isMission ? 1 : 0),
           firstPdfPage + 1 + (isMission ? 1 : 0),
-          true,
-          "원문 문항과 유형은 확인했지만, 같은 구조의 문제·정답 그림과 독립 검산기가 모두 갖춰질 때까지 출제하지 않습니다."
+          !isReady,
+          isReady
+            ? "원문 그림 구조와 넓이 관계를 독립 계산으로 확인했습니다."
+            : "원문 문항과 유형은 확인했지만, 같은 구조의 문제·정답 그림과 독립 검산기가 모두 갖춰질 때까지 출제하지 않습니다."
         ),
-        ...(sourceItemLabel ? { sourceItemLabel } : {})
+        ...(sourceItemLabel ? { sourceItemLabel } : {}),
+        ...(isReady ? {
+          generationMode: "fixed-verified-pool",
+          verifiedVariantCount: 3,
+          answerVisualRequired: true,
+          answerVisualStatus: "verified"
+        } : {})
       };
-    })
-  );
+    }));
+    group.types.forEach(type => {
+      if (perimeterAreaReadyIds51.has(type.sourceItemId)) type.generatorKey = perimeterAreaGenerator51.get(type.sourceItemId);
+    });
+    return group;
+  };
 
   const perimeterAreaPendingGroups51 = [
     lockedPerimeterAreaGroup51("직사각형과 직각삼각형의 넓이", 2, 63, [

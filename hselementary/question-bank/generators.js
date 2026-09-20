@@ -28100,6 +28100,288 @@
       const answer = maximumSquareSequencePerimeter(count);
       return result(`한 변의 길이가 각각 1cm, 2cm, …, ${count}cm인 정사각형 ${count}개를 밑변이 한 직선 위에 놓이도록 빈틈없이 이어 붙입니다. 붙이는 순서를 바꿀 수 있을 때, 만들 수 있는 도형의 둘레 중 가장 긴 것은 몇 cm입니까?${squareSequenceSvg({ count, expected: answer })}`, answer, `모든 순서를 조사합니다. 한 순서 a₁,…,aₙ의 둘레는 위아래 변 2×(1+…+${count})에 양 끝 높이와 이웃한 높이 차를 더한 값입니다. 가능한 순서 중 최댓값은 ${answer}cm입니다.`);
     },
+    source51RectangleTriangleAreaE2({ rng, level, variant = 0 }) {
+      const sourceItemId = "5-1-u6-e2-example-2-1";
+      if (variant !== 5) throw new Error("개념탐구 2 예제 2-1만 원본 대조와 검산이 완료되었습니다.");
+
+      const verifiedPool = [
+        { width: 50, height: 80, lowerWidth: 40 },
+        { width: 60, height: 90, lowerWidth: 45 },
+        { width: 48, height: 72, lowerWidth: 36 }
+      ];
+      const poolIndex = int(rng, 0, verifiedPool.length - 1);
+      const { width, height, lowerWidth } = verifiedPool[poolIndex];
+      const isEasy = level === 0;
+      const isHard = level === 2;
+      const difficultyDesign = isEasy ? "given-half-area" : isHard ? "derive-height-from-perimeter" : "source";
+      const totalArea = width * height;
+      const perimeter = 2 * (width + height);
+      const partArea = totalArea / 2;
+      const lowerHeight = partArea / lowerWidth;
+      const targetHeight = height - lowerHeight;
+      const candidates = Array.from({ length: height - 1 }, (_, index) => index + 1)
+        .filter(candidate => lowerWidth * (height - candidate) === partArea);
+      if (!Number.isInteger(targetHeight) || targetHeight <= 0 || candidates.length !== 1 || candidates[0] !== targetHeight) {
+        throw new Error(`${sourceItemId}: 답이 하나로 정해지는 정수 길이가 아닙니다.`);
+      }
+
+      const diagram = solved => {
+        const x0 = 126;
+        const y0 = 52;
+        const drawHeight = 224;
+        const drawWidth = drawHeight * width / height;
+        const x1 = x0 + drawWidth;
+        const y1 = y0 + drawHeight;
+        const cutX = x0 + drawWidth * (width - lowerWidth) / width;
+        const cutY = y0 + drawHeight * targetHeight / height;
+        const upperPath = `M ${x0} ${y0} H ${x1} V ${cutY} H ${cutX} V ${y1} H ${x0} Z`;
+        const commonData = `data-source-item="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}" data-outer-width="${width}" data-outer-height="${height}" data-lower-width="${lowerWidth}" data-upper-area="${partArea}" data-lower-area="${lowerWidth * lowerHeight}" data-answer-candidate-count="${candidates.length}"`;
+        const solvedData = solved ? ` data-target-height="${targetHeight}" data-result-highlight="${targetHeight}cm"` : "";
+        return `<svg class="geometry-diagram rectangle-triangle-area-e2${solved ? " is-solved" : ""}" viewBox="0 0 420 350" role="img" aria-label="넓이가 같은 ㄱ자 부분과 직사각형 부분" ${commonData}${solvedData}>
+          <path class="area-e2-upper" d="${upperPath}"/>
+          <rect class="area-e2-lower" x="${cutX}" y="${cutY}" width="${x1 - cutX}" height="${y1 - cutY}"/>
+          <rect class="area-e2-outline" x="${x0}" y="${y0}" width="${drawWidth}" height="${drawHeight}"/>
+          <path class="area-e2-cut" d="M ${x1} ${cutY} H ${cutX} V ${y1}"/>
+          <path class="area-e2-dimension" d="M ${x0} ${y0 - 9} V ${y0 - 22} M ${x1} ${y0 - 9} V ${y0 - 22} M ${x0} ${y0 - 17} H ${x1}"/>
+          <path class="area-e2-dimension" d="M ${x0 - 9} ${y0} H ${x0 - 22} M ${x0 - 9} ${y1} H ${x0 - 22} M ${x0 - 17} ${y0} V ${y1}"/>
+          <path class="area-e2-dimension" d="M ${cutX} ${y1 + 8} V ${y1 + 21} M ${x1} ${y1 + 8} V ${y1 + 21} M ${cutX} ${y1 + 16} H ${x1}"/>
+          <path class="area-e2-target-line${solved ? " is-solved" : ""}" d="M ${x1 + 9} ${y0} H ${x1 + 22} M ${x1 + 9} ${cutY} H ${x1 + 22} M ${x1 + 17} ${y0} V ${cutY}"/>
+          <text class="area-e2-measure" x="${(x0 + x1) / 2}" y="${y0 - 27}">${width} cm</text>
+          <text class="area-e2-measure" x="${x0 - 49}" y="${(y0 + y1) / 2}">${solved || !isHard ? `${height} cm` : "세로"}</text>
+          <text class="area-e2-measure" x="${(cutX + x1) / 2}" y="${y1 + 31}">${lowerWidth} cm</text>
+          <text class="area-e2-target" x="${x1 + 48}" y="${(y0 + cutY) / 2}">${solved ? `${targetHeight} cm` : "㉢"}</text>
+          <text class="area-e2-region" x="${(x0 + x1) / 2}" y="${y0 + (cutY - y0) * 0.48}">㉠</text>
+          <text class="area-e2-region" x="${(cutX + x1) / 2}" y="${(cutY + y1) / 2}">㉡</text>
+        </svg>`;
+      };
+
+      const answer = `${targetHeight}cm`;
+      const prompt = isEasy
+        ? `가로가 ${width}cm, 세로가 ${height}cm인 직사각형 종이를 그림처럼 ㉠, ㉡ 두 부분으로 잘랐습니다. ㉡의 넓이가 ${partArea}cm²일 때 ㉢의 길이를 구하세요.${diagram(false)}`
+        : isHard
+          ? `가로가 ${width}cm이고 둘레가 ${perimeter}cm인 직사각형 종이를 그림처럼 ㉠, ㉡ 두 부분으로 잘랐습니다. 두 부분의 넓이가 같을 때 ㉢의 길이를 구하세요.${diagram(false)}`
+          : `가로가 ${width}cm, 세로가 ${height}cm인 직사각형 종이를 그림처럼 ㉠, ㉡ 두 부분으로 잘랐습니다. 두 부분의 넓이가 같을 때 ㉢의 길이를 구하세요.${diagram(false)}`;
+      const firstStep = isEasy
+        ? `㉡의 넓이는 ${partArea}cm²입니다.`
+        : isHard
+          ? `직사각형의 세로는 ${perimeter}÷2-${width}=${height}cm이고, 전체 넓이는 ${width}×${height}=${totalArea}cm²이므로 ㉡의 넓이는 ${totalArea}÷2=${partArea}cm²입니다.`
+          : `직사각형의 넓이는 ${width}×${height}=${totalArea}cm²이므로 ㉡의 넓이는 ${totalArea}÷2=${partArea}cm²입니다.`;
+      const solution = `${firstStep} ㉡의 세로는 ${partArea}÷${lowerWidth}=${lowerHeight}cm이고, ㉢은 ${height}-${lowerHeight}=${targetHeight}cm입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="verified-answer-diagram area-e2-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}<div class="solution-answer-caption">㉢ = ${answer}</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: verifiedPool.length,
+        sourceItemId
+      });
+    },
+    source51TriangleAreaInteriorE3({ rng, level, variant = 0 }) {
+      const sourceItemId = "5-1-u6-e3-exploration-3";
+      if (variant !== 2) throw new Error("개념탐구 3 안내 (3)만 원본 대조와 검산이 완료되었습니다.");
+      const verifiedPool = [
+        { base: 16, height: 15, split: [9, 6] },
+        { base: 18, height: 14, split: [8, 6] },
+        { base: 20, height: 12, split: [7, 5] }
+      ];
+      const poolIndex = int(rng, 0, verifiedPool.length - 1);
+      const { base, height, split } = verifiedPool[poolIndex];
+      const answer = base * height / 2;
+      const isEasy = level === 0;
+      const isHard = level === 2;
+      const difficultyDesign = isEasy ? "formula-cue" : isHard ? "split-height" : "source";
+      const modelApexX = Math.round(base * 0.55 * 100) / 100;
+      const modelPoints = `0,0;${base},0;${modelApexX},${height};${modelApexX},0`;
+      const screenBaseLeft = 82;
+      const screenBaseRight = 378;
+      const screenBaseY = 238;
+      const screenApexY = 48;
+      const screenApexX = screenBaseLeft + modelApexX * (screenBaseRight - screenBaseLeft) / base;
+      const screenSplitY = screenApexY + (screenBaseY - screenApexY) * split[0] / height;
+      const altitudeMarkup = isHard
+        ? `<line class="source51-triangle-area-altitude source51-triangle-area-altitude-top" x1="${screenApexX}" y1="${screenApexY}" x2="${screenApexX}" y2="${screenSplitY}"/><line class="source51-triangle-area-altitude source51-triangle-area-altitude-bottom" x1="${screenApexX}" y1="${screenSplitY}" x2="${screenApexX}" y2="${screenBaseY}"/><circle class="source51-triangle-area-split-point" cx="${screenApexX}" cy="${screenSplitY}" r="3"/><text class="source51-triangle-area-measure" x="${screenApexX + 39}" y="${(screenApexY + screenSplitY) / 2}">${split[0]} cm</text><text class="source51-triangle-area-measure" x="${screenApexX + 39}" y="${(screenSplitY + screenBaseY) / 2}">${split[1]} cm</text>`
+        : `<line class="source51-triangle-area-altitude" x1="${screenApexX}" y1="${screenApexY}" x2="${screenApexX}" y2="${screenBaseY}"/><text class="source51-triangle-area-measure" x="${screenApexX + 41}" y="143">${height} cm</text>`;
+      const diagram = solved => `<svg class="geometry-diagram source51-triangle-area-e3 source51-triangle-area-interior${solved ? " is-solved" : ""}" viewBox="0 0 460 310" role="img" aria-label="밑변 안쪽에 높이가 있는 삼각형" data-source-item="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}" data-base="${base}" data-height="${height}" data-model-points="${modelPoints}" data-altitude-foot-state="inside" data-answer-candidate-count="1"${solved ? ` data-result-highlight="${answer}cm²"` : ""}>
+        <polygon class="source51-triangle-area-shape" points="${screenBaseLeft},${screenBaseY} ${screenBaseRight},${screenBaseY} ${screenApexX},${screenApexY}"/>
+        ${altitudeMarkup}
+        <path class="source51-triangle-area-right-angle" d="M ${screenApexX} ${screenBaseY - 13} H ${screenApexX + 13} V ${screenBaseY}"/>
+        <path class="source51-triangle-area-dimension" d="M ${screenBaseLeft} 251 V 266 M ${screenBaseRight} 251 V 266 M ${screenBaseLeft} 260 H ${screenBaseRight}"/>
+        <text class="source51-triangle-area-measure" x="230" y="284">${base} cm</text>
+      </svg>`;
+      const promptLead = isEasy
+        ? "밑변과 높이를 이용하여 다음 삼각형의 넓이를 구하세요."
+        : isHard
+          ? "점선으로 나타낸 두 길이를 더해 높이를 구한 뒤 삼각형의 넓이를 구하세요."
+          : "다음 삼각형의 넓이를 구하세요.";
+      const solution = `${isHard ? `높이는 ${split[0]}+${split[1]}=${height}cm입니다. ` : ""}삼각형의 넓이는 ${base}×${height}÷2=${answer}cm²입니다.`;
+      return result(`${promptLead}${diagram(false)}`, `${answer}cm²`, solution, {
+        answerVisual: `<div class="verified-answer-diagram source51-triangle-area-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}<div class="solution-answer-caption">넓이 = ${answer}cm²</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: verifiedPool.length,
+        sourceItemId
+      });
+    },
+    source51TriangleAreaExteriorE3({ rng, level, variant = 0 }) {
+      const sourceItemId = "5-1-u6-e3-exploration-4";
+      if (variant !== 3) throw new Error("개념탐구 3 안내 (4)만 원본 대조와 검산이 완료되었습니다.");
+      const verifiedPool = [
+        { base: 18, height: 11, split: [5, 6] },
+        { base: 20, height: 12, split: [7, 5] },
+        { base: 24, height: 15, split: [8, 7] }
+      ];
+      const poolIndex = int(rng, 0, verifiedPool.length - 1);
+      const { base, height, split } = verifiedPool[poolIndex];
+      const answer = base * height / 2;
+      const isEasy = level === 0;
+      const isHard = level === 2;
+      const difficultyDesign = isEasy ? "extension-cue" : isHard ? "split-exterior-height" : "source";
+      const modelApexX = -base / 2;
+      const modelPoints = `0,0;${base},0;${modelApexX},${height};${modelApexX},0`;
+      const screenBaseLeft = 205;
+      const screenBaseRight = 426;
+      const screenBaseY = 238;
+      const screenApexY = 48;
+      const screenFootX = screenBaseLeft + modelApexX * (screenBaseRight - screenBaseLeft) / base;
+      const screenSplitY = screenApexY + (screenBaseY - screenApexY) * split[0] / height;
+      const altitudeMarkup = isHard
+        ? `<line class="source51-triangle-area-altitude source51-triangle-area-altitude-top" x1="${screenFootX}" y1="${screenApexY}" x2="${screenFootX}" y2="${screenSplitY}"/><line class="source51-triangle-area-altitude source51-triangle-area-altitude-bottom" x1="${screenFootX}" y1="${screenSplitY}" x2="${screenFootX}" y2="${screenBaseY}"/><circle class="source51-triangle-area-split-point" cx="${screenFootX}" cy="${screenSplitY}" r="3"/><text class="source51-triangle-area-measure" x="${screenFootX - 39}" y="${(screenApexY + screenSplitY) / 2}">${split[0]} cm</text><text class="source51-triangle-area-measure" x="${screenFootX - 39}" y="${(screenSplitY + screenBaseY) / 2}">${split[1]} cm</text>`
+        : `<line class="source51-triangle-area-altitude" x1="${screenFootX}" y1="${screenApexY}" x2="${screenFootX}" y2="${screenBaseY}"/><text class="source51-triangle-area-measure" x="${screenFootX - 41}" y="143">${height} cm</text>`;
+      const diagram = solved => `<svg class="geometry-diagram source51-triangle-area-e3 source51-triangle-area-exterior${solved ? " is-solved" : ""}" viewBox="-20 0 520 310" role="img" aria-label="밑변의 연장선 밖에 높이가 있는 둔각삼각형" data-source-item="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}" data-base="${base}" data-height="${height}" data-model-points="${modelPoints}" data-altitude-foot-state="outside" data-answer-candidate-count="1"${solved ? ` data-result-highlight="${answer}cm²"` : ""}>
+        <polygon class="source51-triangle-area-shape" points="${screenFootX},${screenApexY} ${screenBaseLeft},${screenBaseY} ${screenBaseRight},${screenBaseY}"/>
+        <line class="source51-triangle-area-extension" x1="${screenFootX}" y1="${screenBaseY}" x2="${screenBaseLeft}" y2="${screenBaseY}"/>
+        ${altitudeMarkup}
+        <path class="source51-triangle-area-right-angle" d="M ${screenFootX} ${screenBaseY - 13} H ${screenFootX + 13} V ${screenBaseY}"/>
+        <path class="source51-triangle-area-dimension" d="M ${screenBaseLeft} 251 V 266 M ${screenBaseRight} 251 V 266 M ${screenBaseLeft} 260 H ${screenBaseRight}"/>
+        <text class="source51-triangle-area-measure" x="316" y="284">${base} cm</text>
+        ${isEasy && !solved ? `<text class="source51-triangle-area-cue" x="${(screenFootX + screenBaseLeft) / 2}" y="220">밑변의 연장선</text>` : ""}
+      </svg>`;
+      const promptLead = isEasy
+        ? "밑변을 왼쪽으로 늘인 선에 내린 높이를 이용하여 다음 삼각형의 넓이를 구하세요."
+        : isHard
+          ? "밑변의 연장선에 표시된 두 길이를 더해 높이를 구한 뒤 삼각형의 넓이를 구하세요."
+          : "다음 삼각형의 넓이를 구하세요.";
+      const solution = `${isHard ? `높이는 ${split[0]}+${split[1]}=${height}cm입니다. ` : ""}높이가 삼각형 밖에 있어도 밑변과 그 연장선에 수직인 높이를 사용하므로 넓이는 ${base}×${height}÷2=${answer}cm²입니다.`;
+      return result(`${promptLead}${diagram(false)}`, `${answer}cm²`, solution, {
+        answerVisual: `<div class="verified-answer-diagram source51-triangle-area-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}<div class="solution-answer-caption">넓이 = ${answer}cm²</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: verifiedPool.length,
+        sourceItemId
+      });
+    },
+    source51TrapezoidAreaE4({ rng, level, variant = 0 }) {
+      const sourceItemId = "5-1-u6-e4-exploration-trapezoid";
+      if (variant !== 0) throw new Error("개념탐구 4 안내 사다리꼴만 원본 대조와 검산이 완료되었습니다.");
+      const verifiedPool = [
+        { top: 16, bottom: 20, height: 12 },
+        { top: 18, bottom: 24, height: 14 },
+        { top: 20, bottom: 28, height: 15 }
+      ];
+      const poolIndex = int(rng, 0, verifiedPool.length - 1);
+      const { top, bottom, height } = verifiedPool[poolIndex];
+      const answer = (top + bottom) * height / 2;
+      const rectangleArea = top * height;
+      const triangleBase = bottom - top;
+      const triangleArea = triangleBase * height / 2;
+      const isEasy = level === 0;
+      const isHard = level === 2;
+      const difficultyDesign = isEasy ? "formula-cue" : isHard ? "split-into-rectangle-and-triangle" : "source";
+      const drawScale = 12;
+      const drawBottom = bottom * drawScale;
+      const xLeft = (480 - drawBottom) / 2;
+      const xRight = xLeft + drawBottom;
+      const yTop = 54;
+      const yBottom = yTop + height * drawScale;
+      const drawTop = top * drawScale;
+      const topLeft = xLeft + (drawBottom - drawTop) * 0.28;
+      const topRight = topLeft + drawTop;
+      const heightX = topRight;
+      const splitMarkup = isHard
+        ? `<line class="source51-e4-trapezoid-split source51-e4-trapezoid-split-left" x1="${topLeft}" y1="${yTop}" x2="${topLeft}" y2="${yBottom}"/><line class="source51-e4-trapezoid-split source51-e4-trapezoid-split-right" x1="${topRight}" y1="${yTop}" x2="${topRight}" y2="${yBottom}"/>`
+        : "";
+      const diagram = solved => `<svg class="geometry-diagram source51-e4-area source51-e4-trapezoid${solved ? " is-solved" : ""}" viewBox="0 0 480 310" role="img" aria-label="평행한 두 밑변과 수직 높이가 표시된 사다리꼴" data-source-item="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}" data-model-points="${topLeft},${yTop};${topRight},${yTop};${xRight},${yBottom};${xLeft},${yBottom}" data-top-base="${top}" data-bottom-base="${bottom}" data-height="${height}" data-answer-candidate-count="1"${solved ? ` data-result-highlight="${answer}cm²"` : ""}>
+        <polygon class="source51-e4-shape" points="${topLeft},${yTop} ${topRight},${yTop} ${xRight},${yBottom} ${xLeft},${yBottom}"/>
+        ${splitMarkup}
+        <line class="source51-e4-height" x1="${heightX}" y1="${yTop}" x2="${heightX}" y2="${yBottom}"/>
+        <path class="source51-e4-right-angle" d="M ${heightX} ${yBottom - 14} H ${heightX - 14} V ${yBottom}"/>
+        <path class="source51-e4-dimension" d="M ${topLeft} ${yTop - 8} V ${yTop - 22} M ${topRight} ${yTop - 8} V ${yTop - 22} M ${topLeft} ${yTop - 16} H ${topRight}"/>
+        <path class="source51-e4-dimension" d="M ${xLeft} ${yBottom + 8} V ${yBottom + 22} M ${xRight} ${yBottom + 8} V ${yBottom + 22} M ${xLeft} ${yBottom + 16} H ${xRight}"/>
+        <text class="source51-e4-measure" x="${(topLeft + topRight) / 2}" y="${yTop - 31}">${top} cm</text>
+        <text class="source51-e4-measure" x="${(xLeft + xRight) / 2}" y="${yBottom + 35}">${bottom} cm</text>
+        <text class="source51-e4-measure" x="${heightX - 39}" y="${(yTop + yBottom) / 2}">${height} cm</text>
+      </svg>`;
+      const promptLead = isEasy
+        ? "두 밑변의 길이를 더한 뒤 2로 나누어 한 밑변의 길이처럼 생각해 다음 사다리꼴의 넓이를 구하세요."
+        : isHard
+          ? "점선으로 나눈 직사각형과 두 삼각형의 넓이를 더하여 다음 사다리꼴의 넓이를 구하세요."
+          : "다음 사다리꼴의 넓이를 서로 다른 두 가지 방법으로 구하세요.";
+      const solution = isHard
+        ? `가운데 직사각형의 넓이는 ${top}×${height}=${rectangleArea}cm²이고, 양쪽 삼각형의 넓이의 합은 (${bottom}-${top})×${height}÷2=${triangleArea}cm²입니다. ${rectangleArea}+${triangleArea}=${answer}cm²입니다.`
+        : isEasy
+          ? `두 밑변의 길이를 더해 2로 나눈 값은 (${top}+${bottom})÷2=${(top + bottom) / 2}cm입니다. 넓이는 (${top}+${bottom})×${height}÷2=${answer}cm²입니다.`
+          : `방법 1: (${top}+${bottom})×${height}÷2=${answer}cm²입니다. 방법 2: ${top}×${height}+(${bottom}-${top})×${height}÷2=${rectangleArea}+${triangleArea}=${answer}cm²입니다.`;
+      return result(`${promptLead}${diagram(false)}`, `${answer}cm²`, solution, {
+        answerVisual: `<div class="verified-answer-diagram source51-e4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}<div class="solution-answer-caption">넓이 = ${answer}cm²</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: verifiedPool.length,
+        sourceItemId
+      });
+    },
+    source51RhombusAreaE4({ rng, level, variant = 0 }) {
+      const sourceItemId = "5-1-u6-e4-exploration-rhombus";
+      if (variant !== 1) throw new Error("개념탐구 4 안내 마름모만 원본 대조와 검산이 완료되었습니다.");
+      const verifiedPool = [
+        { horizontal: 18, vertical: 12 },
+        { horizontal: 20, vertical: 14 },
+        { horizontal: 24, vertical: 16 }
+      ];
+      const poolIndex = int(rng, 0, verifiedPool.length - 1);
+      const { horizontal, vertical } = verifiedPool[poolIndex];
+      const answer = horizontal * vertical / 2;
+      const halfHorizontal = horizontal / 2;
+      const halfVertical = vertical / 2;
+      const smallTriangleArea = halfHorizontal * halfVertical / 2;
+      const isEasy = level === 0;
+      const isHard = level === 2;
+      const difficultyDesign = isEasy ? "formula-cue" : isHard ? "four-right-triangles" : "source";
+      const cx = 240;
+      const cy = 151;
+      const scale = 14;
+      const halfWidth = horizontal * scale / 2;
+      const halfHeight = vertical * scale / 2;
+      const left = [cx - halfWidth, cy];
+      const topPoint = [cx, cy - halfHeight];
+      const right = [cx + halfWidth, cy];
+      const bottom = [cx, cy + halfHeight];
+      const hardLabels = isHard
+        ? `<text class="source51-e4-measure" x="${cx - halfWidth / 2}" y="${cy - 20}">${halfHorizontal} cm</text><text class="source51-e4-measure" x="${cx + halfWidth / 2}" y="${cy - 20}">${halfHorizontal} cm</text><text class="source51-e4-measure" x="${cx + 37}" y="${cy - halfHeight * 0.72}">${halfVertical} cm</text><text class="source51-e4-measure" x="${cx + 37}" y="${cy + halfHeight * 0.72}">${halfVertical} cm</text>`
+        : `<text class="source51-e4-measure" x="${cx - halfWidth / 2}" y="${cy - 20}">${horizontal} cm</text><text class="source51-e4-measure" x="${cx + 38}" y="${cy - halfHeight / 2}">${vertical} cm</text>`;
+      const diagram = solved => `<svg class="geometry-diagram source51-e4-area source51-e4-rhombus${solved ? " is-solved" : ""}" viewBox="0 0 480 310" role="img" aria-label="서로 수직인 두 대각선이 표시된 마름모" data-source-item="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}" data-model-points="${left.join(",")};${topPoint.join(",")};${right.join(",")};${bottom.join(",")};${cx},${cy}" data-horizontal-diagonal="${horizontal}" data-vertical-diagonal="${vertical}" data-answer-candidate-count="1"${solved ? ` data-result-highlight="${answer}cm²"` : ""}>
+        <polygon class="source51-e4-shape" points="${left.join(",")} ${topPoint.join(",")} ${right.join(",")} ${bottom.join(",")}"/>
+        <line class="source51-e4-diagonal source51-e4-horizontal-diagonal" x1="${left[0]}" y1="${left[1]}" x2="${right[0]}" y2="${right[1]}"/>
+        <line class="source51-e4-diagonal source51-e4-vertical-diagonal" x1="${topPoint[0]}" y1="${topPoint[1]}" x2="${bottom[0]}" y2="${bottom[1]}"/>
+        <path class="source51-e4-right-angle" d="M ${cx} ${cy - 13} H ${cx + 13} V ${cy}"/>
+        ${hardLabels}
+      </svg>`;
+      const promptLead = isEasy
+        ? "두 대각선의 길이를 곱한 뒤 2로 나누어 다음 마름모의 넓이를 구하세요."
+        : isHard
+          ? "대각선이 나눈 네 직각삼각형의 넓이를 더하여 다음 마름모의 넓이를 구하세요."
+          : "다음 마름모의 넓이를 서로 다른 두 가지 방법으로 구하세요.";
+      const solution = isHard
+        ? `작은 직각삼각형 하나의 넓이는 ${halfHorizontal}×${halfVertical}÷2=${smallTriangleArea}cm²입니다. ${smallTriangleArea}×4=${answer}cm²입니다.`
+        : isEasy
+          ? `두 대각선의 길이를 곱한 뒤 2로 나누면 ${horizontal}×${vertical}÷2=${answer}cm²입니다.`
+          : `방법 1: ${horizontal}×${vertical}÷2=${answer}cm²입니다. 방법 2: (${horizontal}÷2)×(${vertical}÷2)÷2×4=${halfHorizontal}×${halfVertical}÷2×4=${answer}cm²입니다.`;
+      return result(`${promptLead}${diagram(false)}`, `${answer}cm²`, solution, {
+        answerVisual: `<div class="verified-answer-diagram source51-e4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}<div class="solution-answer-caption">넓이 = ${answer}cm²</div></div>`,
+        generationMode: "fixed-verified-pool",
+        verifiedPoolIndex: poolIndex,
+        verifiedVariantCount: verifiedPool.length,
+        sourceItemId
+      });
+    },
     rectangleRightTriangleAreaAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
         const x1 = int(rng, 3 + level, 7 + level * 2);

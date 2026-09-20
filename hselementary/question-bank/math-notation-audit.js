@@ -24,7 +24,7 @@ require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
-const EXPECTED_PUBLIC_TYPE_COUNT = 1064;
+const EXPECTED_PUBLIC_TYPE_COUNT = 1069;
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,
