@@ -1,7 +1,6 @@
 // 과학 문제은행 감사: node science-lab/bank/audit.mjs
-// 검사: id 중복 · 필수 태그(grade·level·track·element·type·format) · 분류 체계 존재 여부
-//      · 유사문항 1:1 대응과 유형별 개수 · 객관식 정답 위치 분포 · 정답이 유일한 최장 보기 · 학년에 이른 용어
-import { readdirSync, readFileSync, existsSync } from 'node:fs';
+// 검사: id 중복 · 필수 태그(grade·level·track) · 객관식 정답 위치 분포 · 정답이 유일한 최장 보기 · 학년에 이른 용어
+import { readdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -17,26 +16,11 @@ const EARLY_TERMS = {
 const LEVELS = new Set(['기본', '심화', '영재']);
 const TRACKS = new Set(['교과', '영재성']);
 
-// 단원별 분류 체계(git, 원문 없음). 파일이 있으면 element·type·format을 대조한다.
-const taxDir = join(here, 'taxonomy');
-const taxOf = (unitId) => {
-  const f = join(taxDir, `${unitId}.json`);
-  return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null;
-};
-
 let fail = 0;
 const err = (m) => { fail++; console.log('  ✗ ' + m); };
-for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !x.endsWith('.lesson.js'))) {
+for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !/\.(lesson|similar|taxonomy)\.js$/.test(x))) {
   const { unit, items } = await import(pathToFileURL(join(unitsDir, f)).href);
   console.log(`${unit.id} ${unit.title}: ${items.length}문항`);
-  const tax = taxOf(unit.id);
-  if (!tax) console.log('  · 분류 체계 파일 없음 — element·type 검사 건너뜀');
-  const elIds = tax ? new Set(tax.elements.map((e) => e.id)) : null;
-  const tyIds = tax ? new Set(tax.types.map((t) => t.id)) : null;
-  const tyEl = tax ? Object.fromEntries(tax.types.map((t) => [t.id, t.element])) : {};
-  const tyName = tax ? Object.fromEntries(tax.types.map((t) => [t.id, t.name])) : {};
-  const fmts = tax ? new Set(tax.formats) : null;
-  const simByType = {}, simOf = new Set();
   const ids = new Set();
   const pos = [0, 0, 0, 0, 0];
   for (const it of items) {
@@ -46,20 +30,6 @@ for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !x.ends
     if (!t.grade) err(`${it.id} grade 없음`);
     if (!LEVELS.has(t.level)) err(`${it.id} level=${t.level}`);
     if (!TRACKS.has(t.track)) err(`${it.id} track=${t.track}`);
-    if (tax) {
-      if (!elIds.has(t.element)) err(`${it.id} element=${t.element} — 분류 체계에 없음`);
-      if (!tyIds.has(t.type)) err(`${it.id} type=${t.type} — 분류 체계에 없음`);
-      else if (tyEl[t.type] !== t.element) err(`${it.id} type ${t.type}은 ${tyEl[t.type]} 소속인데 element=${t.element}`);
-      if (!fmts.has(t.format)) err(`${it.id} format=${t.format} — 분류 체계에 없음`);
-    }
-    if (it.sourceRef?.type === 'similar') {
-      if (!it.sourceRef.of) err(`${it.id} 유사문항인데 sourceRef.of 없음`);
-      else if (simOf.has(it.sourceRef.of)) err(`${it.id} sourceRef.of 중복 — ${it.sourceRef.of}`);
-      else simOf.add(it.sourceRef.of);
-      simByType[t.type] = (simByType[t.type] || 0) + 1;
-      const body2 = [it.prompt, JSON.stringify(it.choices ?? ''), it.explanation].join(' ');
-      if (/\b\d+\s*번\s*문항|앞의\s*\d+번|위\s*\d+번/.test(body2)) err(`${it.id} 원래 문항 번호가 드러남`);
-    }
     const body = [it.prompt, JSON.stringify(it.givens ?? ''), JSON.stringify(it.choices ?? ''), it.explanation,
       it.answerContract?.sample ?? '', JSON.stringify(it.answerContract?.blanks ?? '')].join(' ');
     for (const w of EARLY_TERMS[t.grade] ?? []) if (body.includes(w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);
@@ -75,15 +45,47 @@ for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !x.ends
   if (sc >= 5 && Math.max(...pos) - Math.min(...pos) > 2) err('정답 위치 쏠림');
   const cnt = (k) => items.reduce((m, i) => ((m[i.taxonomy[k]] = (m[i.taxonomy[k]] || 0) + 1), m), {});
   console.log('  수준', JSON.stringify(cnt('level')), '갈래', JSON.stringify(cnt('track')));
-  if (tax) {
-    const total = Object.values(simByType).reduce((a, b) => a + b, 0);
-    console.log(`  유사문항 ${total}개 — 유형별(원문 수 → 유사문항 수)`);
-    for (const t of tax.types) {
-      const got = simByType[t.id] || 0;
-      const mark = got === t.sourceCount ? ' ' : '!';
-      console.log(`   ${mark} ${t.id} ${tyName[t.id]}: ${t.sourceCount} → ${got}`);
-      if (got !== t.sourceCount) err(`${t.id} 유사문항 수가 원문 수와 다름 (${t.sourceCount} → ${got})`);
+}
+// 유사문항: <단원>.similar.js + <단원>.taxonomy.js
+for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.similar.js'))) {
+  const u = f.replace('.similar.js', '');
+  const { similar } = await import(pathToFileURL(join(unitsDir, f)).href);
+  const { taxonomy: tx } = await import(pathToFileURL(join(unitsDir, `${u}.taxonomy.js`)).href);
+  const types = new Set(tx.types.map((t) => t.id)), els = new Set(tx.elements.map((e) => e.id));
+  console.log(`${u} 유사문항: ${similar.length}개`);
+  const seen = new Set(), pos = [0, 0, 0, 0, 0], perType = {};
+  for (const it of similar) {
+    const t = it.taxonomy;
+    if (seen.has(it.id)) err(`${it.id} id 중복`); seen.add(it.id);
+    if (it.status !== 'authored') err(`${it.id} authored 아님`);
+    if (!types.has(t.type) || !els.has(t.element)) err(`${it.id} 분류 없음 ${t.element}/${t.type}`);
+    const key = `${it.sourceRef.of.set}-${it.sourceRef.of.no}`;
+    if (!tx.sources[key] || tx.sources[key][0] !== t.type) err(`${it.id} 원문 ${key}와 유형 불일치`);
+    perType[t.type] = (perType[t.type] || 0) + 1;
+    const body = JSON.stringify([it.prompt, it.givens, it.choices, it.explanation, it.answerContract]);
+    for (const w of EARLY_TERMS[t.grade] ?? []) if (body.includes(w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);
+    if (it.answerContract.type === 'single-choice') {
+      const a = it.answerContract.answer, L = it.choices.map((c) => c.length), so = [...L].sort((x, y) => y - x);
+      pos[a]++; if (L[a] === so[0] && so[0] - so[1] >= 3) err(`${it.id} 정답이 눈에 띄게 가장 긴 보기`);
     }
+  }
+  const missing = Object.keys(tx.sources).filter((k) => !similar.some((it) => `${it.sourceRef.of.set}-${it.sourceRef.of.no}` === k));
+  if (missing.length) err(`유사문항 없는 원문: ${missing.join(', ')}`);
+  console.log(`  단일 선택 정답 위치 ①~⑤ = ${pos.join('·')}`);
+  if (Math.max(...pos) - Math.min(...pos) > 2) err('유사문항 정답 위치 쏠림');
+  console.log('  유형별', JSON.stringify(perType));
+  for (const [id, ty] of Object.entries(tx.authored || {})) if (!types.has(ty)) err(`창작 ${id} 유형 ${ty} 없음`);
+}
+// 공개 산출물(bank/taxonomy/*.json)이 앱이 쓰는 *.taxonomy.js와 어긋나지 않는지.
+// 어긋나면 교재 차례와 문항 태그가 조용히 갈라진다.
+{
+  const { execFileSync } = await import('node:child_process');
+  try {
+    const out = execFileSync(process.execPath, [join(here, 'taxonomy', 'build.mjs'), '--check'], { encoding: 'utf8' });
+    process.stdout.write(out);
+  } catch (e) {
+    process.stdout.write(e.stdout || '');
+    err('분류 체계 JSON이 원본과 다름 — node bank/taxonomy/build.mjs 로 다시 만들 것');
   }
 }
 console.log(fail ? `실패 ${fail}건` : '통과');

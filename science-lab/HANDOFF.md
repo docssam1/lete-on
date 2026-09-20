@@ -15,73 +15,59 @@
 8. **작업 방식**: 인터뷰 → 계획(DESIGN.md) → 사용자 승인 → 구현. 1차 범위 **4-1 Ⅰ 자석의 이용** 1단원. 디자인 규격은 MengTo design-first-ui-prompting 형식, 타이포 Gaegu(개구) 700 + Pretendard.
 9. **제외**: 화올 최종교재. 자기 낭독 녹음. 자동 재생 음성. 이모지 아이콘. 외부 스톡 일러스트.
 
-## 진행 기록 — 2026-09-20 5차: 자석 단원 분류 체계 · 유사문항 80 · 유형별 교재
+## ⚠ 새 세션은 여기부터 (2026-09-20)
+- **이미 끝난 것 — 다시 만들지 말 것**: 자석 단원 파일(창작 26문항 + 5E 구성 `s41-u01.lesson.js`) · 5E 5단계 화면 v2 · 조작형 가상 실험실(고리 자석 탑) · 3D 장면 `ring-tower` · 준비물 QR · 탐구보고서 · 교재 인쇄 · `bank/audit.mjs` · docssam 표정 9장(assets/) · **홈 탐구 지도**(`v2/home.js`·`home.css`·`units-index.js`, 입체 정거장) · 재도전(보기 섞기) · 진도 저장(localStorage `sciLab.v2`).
+- **문제은행 개정 분류·유사문항 완료(2026-09-20, Cowork — Claude Code 안 씀)**: 분류 `data/units/s41-u01.taxonomy.js`(2022 개정 · 운동과 에너지 · [4과09-01]·[4과09-02] · 내용 요소 E1~E4 = 소단원 · 유형 T01~T13 · 원문 80문항 대응) · 유사문항 80 `s41-u01.similar.js`(선택형 39·단답형 35·서술형 6, 단일 선택 정답 ①~⑤ 7·6·6·6·6) · `bank/audit.mjs` 통과 · Supabase 원문 80행에 element·type·format 태그와 새 그림 경로(`science-src/4-1/자석의 이용/<E코드 이름>/<T코드 이름>/o-NN.png`, 묶음 지문 7개는 `figures.stem`, `figures.status:'pending-crop'`). 공개 산출물 `bank/taxonomy/s41-u01.json`은 `bank/taxonomy/build.mjs`가 `s41-u01.taxonomy.js`에서 만든다(직접 고치지 말 것). 화면: 지도에서 정거장 누르면 소단원 시트 → `#/s41-u01/sub/E1~E4`(유형별 유사문항 풀기, 단답형·두 개 고르기 지원). 교재에 "유형별 문제" 4쪽 추가. 지도 배경 = 직접 그린 실험실 선화 `v2/lab-bg.svg`.
+- **남은 것**: 원본 그림(번호 지움)을 `science-src` 브랜치의 `index.json` 경로로 업로드 · 성취기준 문장(고시 원문 대조) · 소단원 이름을 교과서 출판사 표기로 바꿀지 결정 · 어댑터 등록(`bank/science-bank-adapter.js`).
+- **⚠ 시작할 때 `git log --oneline -5 origin/<브랜치>`부터 볼 것.** 이 세션이 컨테이너 재시작 뒤 같은 작업 지시서를 두 번 돌려 유사문항 80개를 중복 작성했다(6차 기록 참조).
+- DESIGN.md는 v2 구현으로 사실상 승인됨.
 
-`TASK-bank-taxonomy.md` 1~4단계. **3·4단계는 끝, 1단계는 성취기준 문장만 미확인, 2단계는 그림 자르기만 막힘.**
+## 진행 기록 — 2026-09-20 6차 (Claude Code): 중복 작업 정리 · JSON 일원화 · Supabase/science-src 정렬
 
-### 1단계 — 분류 체계 (완료, 단 성취기준 문장 미대조)
-- `bank/taxonomy/s41-u01.json` 신설. Supabase 원문 80문항을 **실제로 읽어** 분류했다.
-  내용 요소 4개(E1~E4) · **유형 14개(T01~T14)** · 형식 4종(선택형 38 · 단답형 35 · 표 1 · 서술형 6).
-- 유형별 원문 수: T01 5 · T02 3 · T03 4 · T04 9 · T05 2 · T06 5 · T07 3 · T08 5 · T09 4 ·
-  T10 4 · T11 4 · T12 9 · T13 14 · T14 9 = 80.
-- 각 유형의 `source`에는 **세트·번호만** 적었다(원문 문장 없음 → git 공개 가능).
-- ⚠️ **성취기준 문장은 못 채웠다.** 교육부 고시 2022-33호 [별책 9] 원문과 대조하려 했으나
-  이 컨테이너의 이그레스 정책이 `ncic.re.kr`·`moe.go.kr`·`steam.kosac.re.kr`·`koreascience.kr`·
-  `namu.wiki` 등 **국내 도메인을 전부 CONNECT 403으로 막는다.** 지시대로 추측하지 않고
-  `{code, text: null, verified: false}`로 두었다. 코드(`4과09-01`·`4과09-02`)는 작업 지시서 값 그대로다.
-  → 다음 세션에서 원문을 첨부하거나 로컬에서 열어 `text`를 채우고 `verified: true`로 바꿀 것.
+**이 세션은 컨테이너가 여러 번 재시작(worker epoch 6)되면서 `TASK-bank-taxonomy.md` 1~4단계를 두 번 했다.**
+앞 차례가 만든 것(`s41-u01.taxonomy.js` 13유형 + `s41-u01.similar.js` 80문항 + 소단원 화면 + 교재 유형별 섹션)이
+이미 푸시돼 있었는데, 뒤 차례는 그것을 모르고 같은 일을 다시 했다(14유형 JSON + `s41-u01.js` 안의 `v001~v080`
++ 별도 교재 섹션 + 창작 그림 4개).
 
-### 2단계 — 원본 정리 (그림 자르기만 막힘)
-- **Supabase 갱신 완료(80/80).** `item.taxonomy`에 `area·standard·curriculum·element·type·format`
-  추가(기존 topic·concept·inquirySkill·level·track은 보존), `figures.block`·`figures.stem`·
-  `item.visualModel.figure`를 분류 경로로 교체. 묶음 공통 지문은 **7개**(문항 15개가 공유).
-  `figures.status: 'pending-crop'`로 아직 파일이 없음을 표시했다.
-- **`science-src` 브랜치 푸시 완료**(커밋 `e5c386c`): `science-src/4-1/자석의 이용/index.json`
-  (원문 80개 대응표) + 분류 폴더 14개 + `science-src/README.md`(이어서 할 일).
-- ⚠️ **PNG는 못 만들었다.** `crop_blocks.py`는 원본 PDF를 **디스크에서** 읽는데,
-  이 세션은 `drive.google.com`·`docs.google.com`이 막혀 있고(403) Drive MCP의
-  `download_file_content`는 파일을 base64로 **대화 문맥에 실어** 주는 방식이라 2.4MB PDF에 못 쓴다.
-  **Drive 폴더에 세트4 PDF도 없다**(세트1~3 + 정답·풀이 3개뿐 — 폴더 id `1rftc95Gl6E3Z735g2-Oulez490kPWA4m`).
-  경로는 이미 Supabase와 `index.json`이 일치하므로 **파일만 제자리에 놓으면 더 고칠 것이 없다.**
+**합칠 때 앞 차례 것을 남겼다.** 이미 앱에 물려 있었기 때문이다 — 소단원 화면 `#/<단원>/sub/<E>`,
+`units-index.js`의 READY, 교재 섹션이 전부 `taxonomy`·`similar` export를 쓴다. 갈아 끼우면 재검증할 것이
+너무 많았다. 뒤 차례의 유사문항 80개와 창작 그림 4개는 버렸다.
 
-### 3단계 — 유사문항 80 (완료)
-- `data/units/s41-u01.js`에 `v001`~`v080`. 원문 1:1 대응(`sourceRef:{type:'similar', of:…}`),
-  같은 유형·형식·난이도를 지키되 상황·물체·보기는 전부 바꿨다. **원문 문장 0줄, 원래 번호 노출 0건.**
-- 정답 위치는 **쓰기 전에 배분**했다. `vchoice(…, correct, distractors, at, …)`가 정답을 지정한
-  자리에 꽂아 넣으므로 보기를 고쳐도 위치가 흔들리지 않는다. 객관식 51문항 ①~⑤ = **10·10·11·10·10**.
-- 창작 그림 4개 신설(`east-s-approach`·`east-of-n`·`north-n-approach`·`ring-tower-3`).
-  전부 원본 도형. **렌더링해 눈으로 보고 2개를 고쳤다** — 세로 막대자석을 `bar()`를 90도 돌려
-  만들었더니 160:32 비율이 그대로 서서 체온계처럼 보였고, 고리 자석 탑은 붙어 있어야 할 두 층이
-  떠 있는 층과 구분이 안 됐다(이제 점선 + "떠 있음" 표시).
-- 기존 창작 26문항(a01~a26)에도 element·type·format을 붙였다.
-- **`bank/audit.mjs` 확장** — element·type이 분류 체계에 있는지, type이 맞는 element 소속인지,
-  format이 목록에 있는지, `sourceRef.of`가 1:1인지, **유형별 유사문항 수가 원문 수와 같은지**.
-  이 검사가 실제로 2건을 잡았다(`v049` 정답이 유일한 최장 보기, 정답 위치 12·9 쏠림). 지금은 통과.
+### 그래서 뒤 차례에서 남긴 것 셋
+1. **`bank/taxonomy/s41-u01.json`** — 작업 지시서가 지정한 경로·형식의 공개 산출물. 내용은 14유형에서
+   **앞 차례의 13유형으로 다시 만들었다.** 진짜 원본은 `data/units/s41-u01.taxonomy.js` 하나이고, JSON은
+   **`bank/taxonomy/build.mjs`가 거기서 생성**한다(유형별 원문 수·유사문항 수·형식 집계·원문 세트번호 목록을
+   얹어서). 직접 고치지 말 것.
+2. **`bank/audit.mjs`에 동기화 검사** — `build.mjs --check`로 JSON이 `.taxonomy.js`와 어긋나면 실패시킨다.
+   둘이 갈라지면 교재 차례와 문항 태그가 조용히 달라진다.
+3. **Supabase·`science-src` 정렬**(아래).
 
-### 4단계 — 교재 「유형별 문제」 (완료)
-- `v2/v2.js` `pageBook`에 섹션 추가. **내용 요소 → 유형 차례**(분류 체계의 순서가 곧 교재 차례)로
-  E 머리글 + 유형 코드·이름·문항 수 + 유형 설명 + 유사문항. 학생용은 빈칸, 교사용은 정답 표시.
-- `pageBook`이 `async`가 됐다 — `bank/taxonomy/<단원>.json`을 `fetch`해서 이름·설명·차례를 얻는다.
-  **파일을 못 읽으면 유형 코드만으로 묶어 계속 낸다**(교재가 통째로 비지 않게).
-- **번호는 세 묶음(교과·영재성·유형별)을 통틀어 한 번만 매긴다.** 문제지와 정답지가 같은 목록
-  (`printed`)에서 나오므로 어긋날 수 없다. 교과 1~20 · 영재성 21~26 · **유형별 27~106**.
-- 기존 「문제 — 교과/영재성」은 창작 26문항만 싣도록 했다(유사문항은 유형별 섹션으로).
-- 원본 그림은 공개 사이트에 싣지 않는다 — 유형별 섹션은 **창작 문항·창작 그림만** 쓴다.
+### Supabase (80/80)
+`item.taxonomy`에 `area·standard·curriculum·semester·element·type·format` 추가(기존 `topic`·`concept`·
+`inquirySkill`·`level`·`track` 보존). `figures.block`·`figures.stem`·`item.visualModel.figure`를 분류 경로로 교체.
+묶음 공통 지문 **7개**(문항 15개가 공유). `figures.status:'pending-crop'`.
+
+### `science-src` 브랜치 (푸시 완료)
+`science-src/4-1/자석의 이용/index.json` — 원문 80개 대응표(`<source_key> → {file, stem?, element, type,
+format, source:{set,no}}`, **원문 문장 없음**) + 분류 폴더 13개 + `README.md`(막힌 이유·이어서 할 일).
+
+### 막힌 것 두 가지
+1. **성취기준 문장 미대조.** 교육부 고시 제2022-33호 [별책 9] 원문을 보려 했으나 이 컨테이너의 이그레스
+   정책이 `ncic.re.kr`·`moe.go.kr`·`steam.kosac.re.kr`·`koreascience.kr`·`namu.wiki`를 **전부 CONNECT 403으로
+   막는다.** 추측하지 않고 `{code, text:null, verified:false}`로 뒀다.
+2. **원본 그림 PNG 없음.** `crop_blocks.py`는 PDF를 **디스크에서** 읽는데 `drive.google.com`이 막혀 있고(403),
+   Drive MCP의 `download_file_content`는 파일을 base64로 **대화 문맥에 실어** 주는 방식이라 2.4MB PDF에 못 쓴다.
+   **Drive 폴더에 세트4 PDF도 없다**(세트1~3 + 정답·풀이뿐, 폴더 id `1rftc95Gl6E3Z735g2-Oulez490kPWA4m`).
+   경로는 Supabase와 `index.json`이 이미 일치하므로 **파일만 제자리에 놓으면 더 고칠 것이 없다.**
 
 ### 검증
-- `node bank/audit.mjs` **통과**. 유형별 원문 수 = 유사문항 수 **14/14 일치**, 미대응 원문 0,
-  `sourceRef` 중복 0, 태그 누락 0, 번호 노출 0.
-- Playwright 390px·320px × 10경로(인쇄 3종 + 5E 5단계 + 보고서 + 준비물):
-  **콘솔 에러 0 · 가로 넘침 0**. 인쇄 PDF 3종 생성 확인.
-- 문항 번호: 학생용·정답만 106개(중복 0, 오름차순), **교사용은 문제 번호와 정답 번호가 1~106 완전 일치**.
-- ※ 폰트 CDN 2건(`cdn.jsdelivr.net`·`fonts.googleapis.com`)은 **이 컨테이너의 이그레스 차단**이라
-  콘솔 에러 집계에서 뺐다. 실제 GitHub Pages에서는 정상이고, 이 세션이 만든 코드와 무관하다.
-
-### 남은 것
-1. **성취기준 문장 대조** — 고시 원문을 첨부하거나 로컬에서 열어 `standards[].text` 채우기.
-2. **원본 그림 자르기** — PDF를 첨부/로컬에서 `crop_blocks.py` 실행 → `index.json` 경로로 이동 →
-   전수 확인 → Supabase `figures.status`를 `ok`로. **세트4 PDF는 Drive에 없으니 먼저 확보할 것.**
-3. 어댑터 등록(`bank/science-bank-adapter.js`)은 여전히 미착수.
+- `node bank/audit.mjs` **통과** — 창작 26 + 유사 80, 유형별 원문 수 = 유사문항 수 **13/13 일치**,
+  JSON ↔ `.taxonomy.js` 동기화 확인.
+- Playwright 390px·320px × **13경로**(인쇄 3종 · 5E 5단계 · 보고서 · 준비물 · 홈 지도 · 소단원 2):
+  **콘솔 에러 0 · 가로 넘침 0.** 인쇄 PDF 3종 생성.
+- 문항 번호: 학생용·정답만 106개(중복 0·오름차순), **교사용은 문제 번호와 정답 번호가 1~106 완전 일치.**
+- ※ 폰트 CDN 2건(`cdn.jsdelivr.net`·`fonts.googleapis.com`)은 이 컨테이너의 이그레스 차단이라 집계에서 뺐다.
+  실제 GitHub Pages에서는 정상이고 이 세션의 코드와 무관하다.
 
 ## 진행 기록 — 2026-09-19 4차: 자석 단원 v2 (화면 + 교재)
 - 주소: `/science-lab/v2/#/s41-u01/1` (v1 15유닛 사이트는 그대로). 파일: `v2/index.html · v2.js · v2.css · lab-ring-tower.js`, 장면 `scenes/ring-tower.js`, 5E 구성 `data/units/s41-u01.lesson.js`(문항은 `s41-u01.js` items를 id로 참조), QR `assets/qr-s41-u01-kit.svg`.

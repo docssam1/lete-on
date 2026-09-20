@@ -1,8 +1,10 @@
 // docssam 과학 탐구 랩 v2 — 단원 = 5E 한 단계 한 화면 + 준비물(QR) + 탐구보고서 + 교재 인쇄.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { mountRingTower, towerModel } from './lab-ring-tower.js';
+import { pageHome } from './home.js';
 
-const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')) }) };
+const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
+  ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')) }) };
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },
@@ -70,12 +72,20 @@ function blanksHtml(text, blanks, { print, show }) {
 function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const ac = it.answerContract, lv = `<span class="level">${esc(it.taxonomy.track)} · ${esc(it.taxonomy.level)}</span>`;
   const fig = it.visualModel?.kind === 'authored-svg' ? `<div class="fig">${FIG[it.visualModel.figure] || ''}</div>` : '';
-  const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => `<p class="lead"><b>${esc(k)}</b> ${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`).join('') : '';
+  const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => v && typeof v === 'object' && !Array.isArray(v)
+    ? `<table class="tbl"><thead><tr>${Object.keys(v).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody><tr>${Object.values(v).map((c) => `<td>${esc([].concat(c).join(', '))}</td>`).join('')}</tr></tbody></table>`
+    : `<p class="lead"><b>${esc(k)}</b> ${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`).join('') : '';
   const head = `<p>${no ? `<span class="no">${no}.</span>` : ''}${ac.type === 'cloze' ? blanksHtml(it.prompt, ac.blanks, { print, show }) : esc(it.prompt)}</p>`;
   let body = '';
   if (ac.type === 'single-choice') {
     body = print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${show && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${esc(c)}</div>`).join('')}</div>`
       : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${esc(c)}</button>`).join('')}</div><p class="why" hidden></p>`;
+  } else if (ac.type === 'multi-choice') {
+    body = print ? `<div>${it.choices.map((c, i) => `<div${show && ac.answers.includes(i) ? ' class="ans"' : ''}>${CIRC[i]} ${esc(c)}</div>`).join('')}</div>`
+      : `<p class="lead">${ac.answers.length}개를 고르세요.</p><div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}" aria-pressed="false">${CIRC[i]} ${esc(c)}</button>`).join('')}</div><p class="why" hidden></p>`;
+  } else if (ac.type === 'short-text') {
+    body = print ? (show ? `<p class="ans">${esc(ac.answer)}</p>` : '<div class="ans-line"></div>')
+      : `<div class="short"><input type="text" aria-label="내 답" autocomplete="off"><button type="button" class="btn" data-act="check-short">확인</button></div><p class="why" hidden></p>`;
   } else if (ac.type === 'table-fill') {
     const cols = ac.columns;
     body = `<table class="tbl tfill"><thead><tr><th>물체</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${ac.rows.map((r, ri) => `<tr><td>${esc(r.label)}</td>${cols.map((c, ci) => print
@@ -89,9 +99,9 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
     if (rb.preview) body += `<p class="preview"><b>미리보기</b> ${esc(rb.preview)}</p>`;
   }
   const expl = print && show ? `<p class="why">${esc(it.explanation)}</p>` : '';
-  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${fig}${giv}${head}${body}${expl}</div>`;
+  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${head}${fig}${giv}${body}${expl}</div>`;
 }
-let FIG = {};
+let FIG = {}, BOOKX = {};
 function wireItem(card, it, onDone) {
   const ac = it.answerContract;
   card.querySelectorAll('.blank').forEach((b) => b.addEventListener('click', () => { b.textContent = ac.blanks[+b.dataset.k].answer; b.classList.add('open'); if ([...card.querySelectorAll('.blank')].every((x) => x.classList.contains('open'))) onDone?.(true); }));
@@ -104,6 +114,26 @@ function wireItem(card, it, onDone) {
       $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : '<b>다시 생각해 봐요.</b>'} ${esc(it.explanation)}`; onDone?.(ok);
     }));
   }
+  if (ac.type === 'multi-choice') {
+    const $why = card.querySelector('.why'), picked = new Set();
+    card.querySelectorAll('.choice').forEach((btn) => btn.addEventListener('click', () => {
+      if (card.dataset.done) return; const i = +btn.dataset.i;
+      picked.has(i) ? picked.delete(i) : picked.add(i); btn.classList.toggle('sel', picked.has(i)); btn.setAttribute('aria-pressed', picked.has(i));
+      if (picked.size < ac.answers.length) return;
+      card.dataset.done = 1; const ok = ac.answers.every((a) => picked.has(a));
+      card.querySelectorAll('.choice').forEach((b) => { const k = +b.dataset.i; if (ac.answers.includes(k)) b.classList.add('right'); else if (picked.has(k)) b.classList.add('wrong'); });
+      $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : '<b>다시 생각해 봐요.</b>'} ${esc(it.explanation)}`; onDone?.(ok);
+    }));
+  }
+  if (ac.type === 'short-text') {
+    const $in = card.querySelector('input'), $why = card.querySelector('.why');
+    const norm = (x) => String(x).replace(/[\s()·.,/:\-]/g, '').replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣').replace(/[oO]/g, '○').replace(/[xX]/g, '×').toUpperCase();
+    const check = () => { if (card.dataset.done || !$in.value.trim()) return; card.dataset.done = 1;
+      const ok = ac.accepted.some((a) => norm(a) === norm($in.value)); $in.readOnly = true; $in.classList.add(ok ? 'right' : 'wrong');
+      $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : `<b>다시 생각해 봐요.</b> 정답: ${esc(ac.answer)}.`} ${esc(it.explanation)}`; onDone?.(ok); };
+    card.querySelector('[data-act=check-short]').addEventListener('click', check);
+    $in.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+  }
   card.querySelector('[data-act=check-table]')?.addEventListener('click', () => {
     let right = 0, total = 0; card.querySelectorAll('select').forEach((s) => { total++; if (s.value === ac.rows[+s.dataset.r].answer[+s.dataset.c]) right++; });
     const $why = card.querySelector('.why'); $why.hidden = false; $why.textContent = `${total}칸 중 ${right}칸 맞았어요. ${it.explanation}`; onDone?.(right === total);
@@ -114,7 +144,7 @@ function wireItem(card, it, onDone) {
 function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
   const st = store.get(u);
   $app.innerHTML = `<header class="top"><div class="wrap">
-      <a class="back" href="../#/">‹ 지도로</a><h1>${esc(lesson.title)}</h1>
+      <a class="back" href="#/">‹ 지도로</a><h1>${esc(lesson.title)}</h1>
       ${stepIdx != null ? `<nav class="dots" aria-label="단계">${STEPS.map((s, i) => `<a href="#/${u}/${i + 1}" class="${i === stepIdx ? 'on' : (st.done || []).includes(i) ? 'done' : ''}" aria-label="${s.label}"></a>`).join('')}</nav>` : ''}
       <button class="icon-btn" id="voice" aria-pressed="${voiceOn}" title="읽어 주기">${voiceOn ? '소리 켬' : '소리'}</button>
     </div></header>
@@ -215,11 +245,23 @@ function stepEvaluate(u, L, items, retry = false) {
       const pass = right >= x.pass; store.set(u, { passed: pass || store.get(u).passed, best: Math.max(right, store.get(u).best || 0) });
       document.getElementById('res').innerHTML = `<div class="card result"><p class="score">${right} / ${list.length}</p>
         <p>${pass ? '관문 통과! 깃발을 받았어요.' : `${x.pass}문제 이상 맞으면 통과예요.`}</p>
-        <div class="print-bar" style="justify-content:center">${pass ? `<button class="btn" id="again">다시 풀기</button><a class="btn primary" href="../#/" style="display:inline-flex;align-items:center;text-decoration:none">다음 정거장</a>` : `<a class="btn" href="#/${u}/3" style="display:inline-flex;align-items:center;text-decoration:none">개념 다시 보기</a><button class="btn primary" id="again">다시 풀기</button>`}</div></div>`;
+        <div class="print-bar" style="justify-content:center">${pass ? `<button class="btn" id="again">다시 풀기</button><a class="btn primary" href="#/" style="display:inline-flex;align-items:center;text-decoration:none">다음 정거장</a>` : `<a class="btn" href="#/${u}/3" style="display:inline-flex;align-items:center;text-decoration:none">개념 다시 보기</a><button class="btn primary" id="again">다시 풀기</button>`}</div></div>`;
       teacher(document.getElementById('t'), [{ mood: pass ? 'praise' : 'encourage', text: pass ? '정말 잘했어요!' : '괜찮아요, 한 번 더 해 볼까요?' }]);
       document.getElementById('again').addEventListener('click', () => stepEvaluate(u, L, items, true));
     }
   }));
+}
+
+// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
+function pageSub(u, L, eid) {
+  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], e = tx?.elements.find((x) => x.id === eid);
+  if (!e) { location.replace('#/'); return; }
+  const types = tx.types.filter((t) => t.element === e.id);
+  frame(u, L, null, `<p class="step-label">소단원 ${tx.elements.indexOf(e) + 1}</p><h2>${esc(e.name)}</h2>
+    <div class="print-bar"><a class="btn primary" href="#/${u}/1" style="display:inline-flex;align-items:center;text-decoration:none">5단계 탐구로 배우기</a></div>
+    ${types.map((t) => `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${sim.filter((s) => s.taxonomy.type === t.id).map((s) => itemHtml(s)).join('')}`).join('')}`);
+  const I = Object.fromEntries(sim.map((s) => [s.id, s]));
+  $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id]));
 }
 
 // 준비물 페이지 (QR 도착지)
@@ -251,57 +293,13 @@ function pageReport(u, L) {
   $app.querySelectorAll('textarea[data-k]').forEach((t) => t.addEventListener('input', () => { const r = store.get(u).report || {}; r[t.dataset.k] = t.value; store.set(u, { report: r }); }));
 }
 
-// 분류 체계(bank/taxonomy/<단원>.json)는 유형별 문제 차례·이름·설명에만 쓴다.
-// 없으면 유형 코드만으로 묶고 넘어간다 — 교재가 통째로 비지는 않게.
-const TAXO = {};
-async function taxonomyFor(u) {
-  if (!(u in TAXO)) {
-    TAXO[u] = await fetch(new URL(`../bank/taxonomy/${u}.json`, import.meta.url)).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  }
-  return TAXO[u];
-}
-// 유사문항을 내용 요소 → 유형 차례로 줄 세운다. 분류 체계의 순서가 곧 교재의 차례다.
-function orderByType(tax, sims) {
-  if (!tax) return [...sims].sort((a, b) => (a.taxonomy.type || '').localeCompare(b.taxonomy.type || '') || a.id.localeCompare(b.id));
-  const rank = Object.fromEntries(tax.types.map((t, i) => [t.id, i]));
-  return [...sims].sort((a, b) => (rank[a.taxonomy.type] ?? 99) - (rank[b.taxonomy.type] ?? 99) || a.id.localeCompare(b.id));
-}
-function typeSectionHtml(tax, ordered, show, numOf) {
-  if (!ordered.length) return '';
-  const byType = {};
-  for (const it of ordered) (byType[it.taxonomy.type] ||= []).push(it);
-  const els = tax ? tax.elements : [...new Set(ordered.map((i) => i.taxonomy.element))].map((id) => ({ id, name: '', desc: '' }));
-  const types = tax ? tax.types : Object.keys(byType).map((id) => ({ id, element: byType[id][0].taxonomy.element, name: '', desc: '' }));
-  return els.map((el, ei) => {
-    const mine = types.filter((t) => t.element === el.id && byType[t.id]?.length);
-    if (!mine.length) return '';
-    return `<section class="page ${ei === 0 ? 'page-break' : 'page-break'}">
-      ${ei === 0 ? '<h2>유형별 문제</h2><p class="type-intro">단원평가에 나오는 유형을 내용 요소 차례로 모았어요. 유형마다 무엇을 묻는지 먼저 읽고 풀어 보세요.</p>' : ''}
-      <h3 class="el-head"><span class="el-code">${esc(el.id)}</span> ${esc(el.name)}</h3>
-      ${mine.map((t) => `<div class="type-block">
-        <p class="type-head"><span class="type-code">${esc(t.id)}</span> ${esc(t.name)} <span class="type-n">${byType[t.id].length}문항</span></p>
-        ${t.desc ? `<p class="type-desc">${esc(t.desc)}</p>` : ''}
-        ${byType[t.id].map((it) => itemHtml(it, { print: true, show, no: numOf(it) })).join('')}
-      </div>`).join('')}
-    </section>`;
-  }).join('');
-}
-
 // 교재 인쇄: student(빈칸) · teacher(정답 포함) · answers(정답·해설만)
-async function pageBook(u, L, items, mode) {
+function pageBook(u, L, items, mode) {
   const I = byId(items), show = mode === 'teacher';
-  const tax = await taxonomyFor(u);
-  const isSim = (i) => i.sourceRef?.type === 'similar';
-  const own = items.filter((i) => !isSim(i));
-  const kyo = own.filter((i) => i.taxonomy.track === '교과'), yeong = own.filter((i) => i.taxonomy.track === '영재성');
-  const typed = orderByType(tax, items.filter(isSim));
-  // 번호는 세 묶음을 통틀어 한 번만 매긴다 — 문제지와 정답지가 같은 목록에서 나오므로 어긋날 수 없다.
-  const printed = [...kyo, ...yeong, ...typed];
-  const numAt = new Map(printed.map((it, i) => [it.id, i + 1]));
-  const numOf = (it) => numAt.get(it.id);
-  const h = L.explore.home;
-  const qs = (list) => list.map((it) => itemHtml(it, { print: true, show, no: numOf(it) })).join('');
-  const answers = () => { let k = 0; return printed.map((it) => { k++; const ac = it.answerContract;
+  const kyo = items.filter((i) => i.taxonomy.track === '교과'), yeong = items.filter((i) => i.taxonomy.track === '영재성');
+  const h = L.explore.home; let n = 0;
+  const qs = (list) => list.map((it) => itemHtml(it, { print: true, show, no: ++n })).join('');
+  const answers = () => { let k = 0; return [...kyo, ...yeong].map((it) => { k++; const ac = it.answerContract;
     const a = ac.type === 'single-choice' ? CIRC[ac.answer] : ac.type === 'cloze' ? ac.blanks.map((b) => b.answer).join(', ') : ac.type === 'table-fill' ? ac.rows.map((r) => `${r.label}: ${r.answer.join('·')}`).join(' / ') : ac.sample;
     return `<div class="q"><span class="no">${k}.</span> <b class="ans">${esc(a)}</b> — ${esc(it.explanation)}</div>`; }).join(''); };
   const chapter = mode === 'answers' ? '' : `
@@ -318,15 +316,20 @@ async function pageBook(u, L, items, mode) {
       <h3>결과 기록</h3><table class="tbl"><thead><tr>${L.explore.lab.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${[1, 2, 3, 4].map(() => '<tr><td>&nbsp;</td><td></td><td></td></tr>').join('')}</tbody></table></section>
     <section class="page page-break rep-print"><h2>탐구보고서</h2>${L.report.sections.map((s) => `<h3>${esc(s.label)}</h3><div class="ans-line"></div><div class="ans-line"></div>`).join('')}</section>
     <section class="page page-break"><h2>문제 — 교과</h2>${qs(kyo)}</section>
-    <section class="page page-break"><h2>문제 — 영재성</h2>${qs(yeong)}</section>
-    ${typeSectionHtml(tax, typed, show, numOf)}`;
-  const tail = mode === 'student' ? '' : `<section class="page page-break"><h2>정답·해설</h2>${answers()}</section>`;
+    <section class="page page-break"><h2>문제 — 영재성</h2>${qs(yeong)}</section>`;
+  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [];
+  const typed = mode !== 'answers' && tx && sim.length ? tx.elements.map((e) => `<section class="page page-break"><h2>유형별 문제 — ${esc(e.name)}</h2>
+      ${tx.types.filter((t) => t.element === e.id).map((t) => `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${sim.filter((s) => s.taxonomy.type === t.id).map((s) => itemHtml(s, { print: true, show, no: ++n })).join('')}`).join('')}</section>`).join('') : '';
+  const simAns = () => { let k = kyo.length + yeong.length; return sim.map((it) => { k++; const ac = it.answerContract;
+    const a = ac.type === 'single-choice' ? CIRC[ac.answer] : ac.type === 'multi-choice' ? ac.answers.map((i) => CIRC[i]).join(', ') : ac.type === 'short-text' ? ac.answer : ac.sample;
+    return `<div class="q"><span class="no">${k}.</span> <b class="ans">${esc(a)}</b> — ${esc(it.explanation)}</div>`; }).join(''); };
+  const tail = mode === 'student' ? '' : `<section class="page page-break"><h2>정답·해설</h2>${answers()}${simAns()}</section>`;
   $app.innerHTML = `<div class="book"><div class="wrap no-print print-bar">
       <a class="btn" href="#/${u}/print/student" style="display:inline-flex;align-items:center;text-decoration:none">학생용</a>
       <a class="btn" href="#/${u}/print/teacher" style="display:inline-flex;align-items:center;text-decoration:none">교사용</a>
       <a class="btn" href="#/${u}/print/answers" style="display:inline-flex;align-items:center;text-decoration:none">정답·해설만</a>
       <button class="btn primary" onclick="print()">인쇄</button></div>
-    <div class="wrap">${chapter}${tail}</div></div>`;
+    <div class="wrap">${chapter}${typed}${tail}</div></div>`;
 }
 
 // 3D (기존 engine.js 재사용)
@@ -353,9 +356,11 @@ async function mount3D(el, sceneName, { autoplay }) {
 
 // ── 라우터 ──
 async function route() {
-  const [u = 's41-u01', a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  if (!u) return pageHome($app, store, teacher);
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
-  const mod = await load(); const L = mod.lesson, items = mod.items; FIG = mod.figures || {};
+  const mod = await load(); const L = mod.lesson, items = mod.items; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar };
+  if (a === 'sub') return pageSub(u, L, b);
   if (a === 'kit') return pageKit(u, L);
   if (a === 'report') return pageReport(u, L);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
