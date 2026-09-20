@@ -44,6 +44,87 @@ const box = (x,y,w,h,f,s) => '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+
   +'" stroke="'+(s||C.gold)+'" stroke-width="2.5"/>';
 const dot = (x,y,r,c) => '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+c+'"/>';
 
+/* ── 깎은 정이십면체 ───────────────────────────────────────────────────────
+   축구공 기사의 그림은 **진짜 그 입체를 계산해서** 그린다. 처음엔 원 하나에 오각형을
+   대충 얹어 그렸는데 원장이 바로 "축구공 넘 대충"이라고 했다 — 정오각형 12·정육각형 20이
+   기사의 본문인데 그림이 그걸 안 보여 주면 글과 그림이 따로 논다.
+
+   ① 정이십면체 꼭짓점 = (0, ±1, ±φ) 의 순환치환 12개, 모서리는 거리 2 인 쌍 30개
+   ② 각 모서리를 1/3 지점에서 끊으면 점 60개 — 원래 꼭짓점마다 오각형 12개,
+      원래 삼각형마다 육각형 20개가 생긴다(= 깎은 정이십면체)
+   ③ 정사영해서 앞면만 그린다(면 중심의 z 로 자르고 z 순으로 쌓는다)
+   그래서 본문의 60·90·32 와 그림이 같은 물체를 말한다. */
+const PHI=(1+Math.sqrt(5))/2;
+function solid(){
+  if(solid._c) return solid._c;
+  const v=[];
+  [[0,1,PHI],[0,1,-PHI],[0,-1,PHI],[0,-1,-PHI]].forEach(p=>{
+    v.push([p[0],p[1],p[2]],[p[1],p[2],p[0]],[p[2],p[0],p[1]]);
+  });
+  const E=[], adj=v.map(()=>[]);
+  for(let i=0;i<12;i++) for(let j=i+1;j<12;j++){
+    const d=Math.hypot(v[i][0]-v[j][0],v[i][1]-v[j][1],v[i][2]-v[j][2]);
+    if(Math.abs(d-2)<1e-6){ E.push([i,j]); adj[i].push(j); adj[j].push(i); }
+  }
+  const F=[];
+  for(let a=0;a<12;a++) for(const b of adj[a]) for(const c of adj[b])
+    if(c>b && b>a && adj[a].indexOf(c)>=0) F.push([a,b,c]);
+  const key=(a,b)=>a+'_'+b, P={}, pts=[];
+  const cut=(a,b)=>{ P[key(a,b)]=pts.length; pts.push([0,1,2].map(k=>v[a][k]+(v[b][k]-v[a][k])/3)); };
+  E.forEach(([a,b])=>{ cut(a,b); cut(b,a); });
+  const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+  const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const crs=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  const nrm=a=>{const L=Math.hypot(a[0],a[1],a[2]);return [a[0]/L,a[1]/L,a[2]/L];};
+  const pent=[];
+  for(let a=0;a<12;a++){
+    const ns=adj[a].slice(), n=nrm(v[a]), u=nrm(sub(v[ns[0]],v[a])), w=crs(n,u);
+    ns.sort((x,y)=>Math.atan2(dot(sub(v[x],v[a]),w),dot(sub(v[x],v[a]),u))
+                  -Math.atan2(dot(sub(v[y],v[a]),w),dot(sub(v[y],v[a]),u)));
+    pent.push(ns.map(b=>P[key(a,b)]));
+  }
+  const hex=F.map(([a,b,c])=>[P[key(a,b)],P[key(b,a)],P[key(b,c)],P[key(c,b)],P[key(c,a)],P[key(a,c)]]);
+  return (solid._c={icoV:v, icoF:F, pts, pent, hex});
+}
+function spin(p,ax,ay){
+  let x=p[0],y=p[1],z=p[2],c=Math.cos(ay),s=Math.sin(ay);
+  const x2=x*c+z*s, z2=-x*s+z*c; c=Math.cos(ax); s=Math.sin(ax);
+  return [x2, y*c-z2*s, y*s+z2*c];
+}
+const AX=0.36, AY=0.30;
+function poly(pts,fill,stroke,w,dash){
+  return '<polygon points="'+pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')
+    +'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+w+'" stroke-linejoin="round"'
+    +(dash?' stroke-dasharray="'+dash+'"':'')+'/>';
+}
+/* 축구공 — hi 를 주면 그 번호의 오각형만 빨강(어느 꼭짓점이 잘렸는지 가리킬 때) */
+function ballArt(cx,cy,R,hi){
+  const S=solid(), rad=Math.hypot(S.pts[0][0],S.pts[0][1],S.pts[0][2]);
+  const P=S.pts.map(p=>spin([p[0]/rad,p[1]/rad,p[2]/rad],AX,AY));
+  const out=[];
+  const put=(idx,fill)=>{
+    let z=0; idx.forEach(i=>{ z+=P[i][2]; }); z/=idx.length;
+    if(z<=-0.04) return;
+    out.push({z:z, fill:fill, pts:idx.map(i=>[cx+P[i][0]*R, cy-P[i][1]*R])});
+  };
+  S.hex.forEach(f=>put(f,C.paper));
+  S.pent.forEach((f,i)=>put(f, hi===i ? C.red : C.ink));
+  out.sort((a,b)=>a.z-b.z);
+  return '<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="'+C.paper+'" stroke="'+C.ink+'" stroke-width="2.5"/>'
+    +out.map(f=>poly(f.pts,f.fill,C.ink,1.6)).join('');
+}
+/* 정이십면체 — 앞면은 채우고 뒷면은 점선으로(입체가 보이게). mark 를 주면 그 꼭짓점에 빨간 점 */
+function icoArt(cx,cy,R,mark){
+  const S=solid(), rad=Math.hypot(S.icoV[0][0],S.icoV[0][1],S.icoV[0][2]);
+  const V=S.icoV.map(p=>spin([p[0]/rad,p[1]/rad,p[2]/rad],AX,AY));
+  const f=S.icoF.map(idx=>{
+    let z=0; idx.forEach(i=>{ z+=V[i][2]; }); z/=3;
+    return {z:z, pts:idx.map(i=>[cx+V[i][0]*R, cy-V[i][1]*R])};
+  }).sort((a,b)=>a.z-b.z);
+  return f.map(x=>x.z>0 ? poly(x.pts,C.mist,C.blue,2) : poly(x.pts,'none',C.grey,1.4,'4 3')).join('')
+    + (mark===undefined ? '' : dot(cx+V[mark][0]*R, cy-V[mark][1]*R, 5.5, C.red));
+}
+
 /* 강 단면 — 바닥 곡선 + 물. depth(0~1) 배열을 받아 가운데가 깊은 강을 그린다 */
 function riverBed(pts, top, bottom){
   let d = 'M 20 '+top;
@@ -127,47 +208,27 @@ window.NM_MAGAZINE = {
          en:'It looks round, but a football is not a sphere. It is a polyhedron stitched from pentagons and hexagons.',
          zh:'看着是圆的，足球却不是球。它是用正五边形和正六边形缝起来的多面体。' },
   art: head(
-    '<circle cx="160" cy="86" r="66" fill="'+C.cream+'" stroke="'+C.ink+'" stroke-width="3"/>'
-    +'<polygon points="160,50 188,70 177,103 143,103 132,70" fill="'+C.ink+'"/>'
-    +'<polygon points="160,20 192,34 188,70 160,50 132,70 128,34" fill="none" stroke="'+C.ink+'" stroke-width="2"/>'
-    +'<polygon points="96,62 128,34 132,70 110,96 94,88" fill="none" stroke="'+C.ink+'" stroke-width="2"/>'
-    +'<polygon points="224,62 192,34 188,70 210,96 226,88" fill="none" stroke="'+C.ink+'" stroke-width="2"/>'
-    +'<polygon points="143,103 177,103 190,130 160,146 130,130" fill="none" stroke="'+C.ink+'" stroke-width="2"/>'
-    +T(58,150,15,C.blue,'12')+T(262,150,15,C.gold,'20')),
+    ballArt(160,84,68)
+    +T(44,150,16,C.ink,'12')+T(276,150,16,C.gold,'20')),
   body:[
     { h:{ ko:'출발은 삼각형 스무 개', en:'It starts with twenty triangles', zh:'起点是二十个三角形' },
       p:{ ko:'정이십면체는 정삼각형 20개로 이루어진 입체예요. 꼭짓점은 12개, 모서리는 30개. 정다면체 중에서 면이 가장 많은 도형이랍니다.',
          en:'An icosahedron is built from twenty equilateral triangles. It has twelve vertices and thirty edges — the regular solid with the most faces.',
          zh:'正二十面体由二十个正三角形组成，有十二个顶点、三十条棱——是面数最多的正多面体。' },
       art: fig(
-        (function(){
-          /* 정삼각형 20개를 그대로 펼친 띠 — 위로 선 10개, 아래로 선 10개 */
-          let g='',x0=26,w=27,h=44,y=40;
-          for(let i=0;i<10;i++){
-            const x=x0+i*w;
-            g+='<polygon points="'+x+','+(y+h)+' '+(x+w)+','+(y+h)+' '+(x+w/2)+','+y+'" fill="'+C.mist+'" stroke="'+C.blue+'" stroke-width="2"/>';
-            g+='<polygon points="'+(x+w/2)+','+y+' '+(x+w*1.5)+','+y+' '+(x+w)+','+(y+h)+'" fill="'+C.cream+'" stroke="'+C.blue+'" stroke-width="2"/>';
-          }
-          return g;
-        })()
-        +T(160,112,17,C.blue,'20')) },
+        icoArt(160,57,56)
+        +T(160,124,17,C.blue,'20')) },
     { h:{ ko:'꼭짓점 열두 개를 잘라 낸다', en:'Slice off the twelve corners', zh:'把十二个角削掉' },
       p:{ ko:'뾰족한 꼭짓점 12개를 하나씩 싹둑 자르면, 잘린 자리마다 정오각형이 생겨요. 오각형 12개! 그리고 원래 삼각형 20개는 모서리가 깎여 정육각형 20개가 됩니다.',
          en:'Cut each of the twelve sharp corners straight off and a regular pentagon appears at every cut — twelve of them. Meanwhile the twenty triangles lose their tips and become twenty hexagons.',
          zh:'把十二个尖角一个个削平，每削一处就露出一个正五边形——一共十二个。原来的二十个三角形被削去尖端，正好变成二十个正六边形。' },
       art: fig(
-        /* 왼쪽 — 정삼각형의 세 모서리를 자르면 정육각형이 남는다 */
-        '<polygon points="82,18 130,102 34,102" fill="none" stroke="'+C.grey+'" stroke-width="2" stroke-dasharray="5 4"/>'
-        +'<polygon points="66,46 98,46 114,74 98,102 66,102 50,74" fill="'+C.mist+'" stroke="'+C.gold+'" stroke-width="2.5"/>'
-        +line(66,46,98,46,C.red,3)+line(114,74,98,102,C.red,3)+line(66,102,50,74,C.red,3)
-        +T(82,122,14,C.gold,'6')
-        /* 오른쪽 — 삼각형 다섯이 모인 뾰족한 꼭짓점을 자르면 정오각형이 남는다 */
-        +[0,1,2,3,4].map(function(i){
-           const a=(i*72-90)*Math.PI/180;
-           return line(238,66,238+Math.cos(a)*44,66+Math.sin(a)*44,C.grey,2,'5 4');
-         }).join('')
-        +'<polygon points="238,44 259,59 251,84 225,84 217,59" fill="'+C.mist+'" stroke="'+C.red+'" stroke-width="2.5"/>'
-        +T(238,122,14,C.red,'5')) },
+        /* 같은 각도로 놓은 두 입체 — 왼쪽 꼭짓점 하나가 오른쪽에서 오각형이 된다 */
+        icoArt(74,58,42,0)
+        +'<path d="M 142 58 L 176 58" stroke="'+C.gold+'" stroke-width="3.5" stroke-linecap="round"/>'
+        +'<polygon points="184,58 172,51 172,65" fill="'+C.gold+'"/>'
+        +ballArt(246,58,44,0)
+        +T(74,120,15,C.red,'1')+T(246,120,15,C.red,'5')) },
     { h:{ ko:'세어 보면 딱 맞는다', en:'Count them and it works out', zh:'数一数正好对上' },
       p:{ ko:'면은 12 + 20 = 32개, 꼭짓점은 60개, 모서리는 90개예요. 입체도형에는 늘 성립하는 규칙이 하나 있어요. (꼭짓점) − (모서리) + (면) = 2. 60 − 90 + 32 = 2, 정확히 맞습니다!',
          en:'That makes 12 + 20 = 32 faces, 60 vertices and 90 edges. Solids obey one unbreakable rule: vertices minus edges plus faces equals two. 60 − 90 + 32 = 2. It fits exactly.',
