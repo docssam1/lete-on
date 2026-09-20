@@ -199,6 +199,7 @@ function hsmPlayClick(e,videoId,start,title,subtitle){
   HSMIDDLE_PLAYER.open({videoId,start,title,subtitle});
 }
 function hsmAttr(s){return String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
+function hsmHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 
 /* ---- diagnostic.html에서 그대로 재사용하는 데이터/로직 ---- */
 const units={1:'1단원 큰수',2:'6단원 규칙찾기',3:'3단원 곱셈과 나눗셈',4:'3단원 곱셈과 나눗셈',5:'2단원 각도',6:'2단원 각도',7:'2단원 분수의 곱셈',8:'3단원 소수의 덧셈과 뺄셈',9:'4단원 소수의 곱셈',10:'4단원 사각형',11:'4단원 사각형',12:'2단원 약수와 배수',13:'2단원 약수와 배수',14:'3단원 규칙과 대응',15:'3단원 규칙과 대응',16:'3단원 곱셈과 나눗셈',17:'2단원 약수와 배수',18:'2단원 약수와 배수',19:'5단원 직육면체',20:'4단원 약분과 통분',21:'4단원 약분과 통분',22:'5단원 분수의 덧셈과 뺄셈',23:'5단원 분수의 덧셈과 뺄셈',24:'2단원 분수의 곱셈',25:'6단원 다각형의 둘레와 넓이',26:'6단원 다각형의 둘레와 넓이',27:'2단원 분수의 곱셈',28:'2단원 분수의 곱셈',29:'2단원 소수의 나눗셈',30:'3단원 합동과 대칭',31:'4단원 비와 비율',32:'2단원 소수의 나눗셈',33:'2단원 소수의 나눗셈',34:'4단원 비와 비율',35:'5단원 원의 넓이',36:'6단원 직육면체의 겉넓이와 부피',37:'2단원 각기둥과 각뿔',38:'4단원 비례식과 비례배분',39:'4단원 소수의 곱셈',40:'3단원 합동과 대칭'};
@@ -247,9 +248,11 @@ const solutionNotes=[
 const videoStarts=[60,138,208,315,384,465,507,574,679,750,809,856,931,1107,1198,1252,1297,1359,1420,1531,1578,1649,1711,1780,1930,1983,2105,2187,2305,2400,2595,2705,2821,3067,3152,3260,3336,3454,3548,3654];
 
 const norm=s=>String(s||'').replaceAll(' ','').replaceAll(',','').toLowerCase();
+let adminPreview=null;
 
 /* 리포트 전용: 답안 입력/O·X 두 모드를 모두 읽어 O/X를 우선한다 */
 function state(q){
+  if(adminPreview){const value=adminPreview.states[q[0]];return value==='o'?true:value==='x'?false:null}
   const oxVal=localStorage.getItem(`hsm-ox-${q[0]}`);
   if(oxVal==='o')return true;
   if(oxVal==='x')return false;
@@ -280,6 +283,44 @@ const EXAM_KEYS=['mock-1','mock-2','mock-3','final'];
 const urlExamParam=new URLSearchParams(location.search).get('exam');
 const examKey=(urlExamParam&&urlExamParam!=='diagnostic'&&EXAM_KEYS.includes(urlExamParam)&&window.HSMIDDLE_EXAMS&&HSMIDDLE_EXAMS[urlExamParam])?urlExamParam:null;
 const accessKey=examKey||'diagnostic';
+const ADMIN_PREVIEW_KEY='hsm-admin-report-preview-v1';
+
+function readAdminPreview(session,records){
+  if(!session||!session.admin||!Array.isArray(records)||new URLSearchParams(location.search).get('adminPreview')!=='1')return null;
+  let selector=null;
+  try{selector=JSON.parse(sessionStorage.getItem(ADMIN_PREVIEW_KEY)||'null')}catch(e){return null}
+  if(!selector||typeof selector!=='object'||String(selector.round)!==accessKey)return null;
+  const selectedStudent=String(selector.student||'').normalize('NFKC').trim(),selectedAttempt=Number(selector.attempt),selectedDate=String(selector.created_at||'');
+  if(!selectedStudent||selectedStudent.length>80||/[\u0000-\u001f\u007f]/u.test(selectedStudent)||!Number.isInteger(selectedAttempt)||selectedAttempt<1||selectedAttempt>3||!Number.isFinite(new Date(selectedDate).getTime()))return null;
+  const value=records.find(record=>String(record.student||'').normalize('NFKC').trim()===selectedStudent&&String(record.round)===accessKey&&Number(record.attempt)===selectedAttempt&&String(record.created_at||'')===selectedDate);
+  if(!value)return null;
+  const student=String(value.student||'').normalize('NFKC').trim(),attempt=Number(value.attempt),score=Number(value.score),correct=Number(value.correct),answered=Number(value.answered),states=value.states,createdAt=String(value.created_at||'');
+  if(!student||student.length>80||/[\u0000-\u001f\u007f]/u.test(student)||!Number.isInteger(attempt)||attempt<1||attempt>3||!Number.isFinite(score)||score<0||score>100||!Number.isInteger(correct)||!Number.isInteger(answered)||correct<0||answered<0||correct>answered||answered>40||!Number.isFinite(new Date(createdAt).getTime())||!states||typeof states!=='object'||Array.isArray(states))return null;
+  const entries=Object.entries(states);
+  if(entries.length>40||entries.some(([key,item])=>!/^([1-9]|[1-3][0-9]|40)$/u.test(key)||!['o','x',null].includes(item)))return null;
+  const countedAnswered=entries.filter(([,item])=>item==='o'||item==='x').length,countedCorrect=entries.filter(([,item])=>item==='o').length;
+  if(answered!==countedAnswered||correct!==countedCorrect||Math.abs(score-correct*2.5)>.001)return null;
+  return {student,round:accessKey,attempt,score,correct,answered,states,created_at:createdAt};
+}
+
+function showAdminPreviewError(){
+  sessionStorage.removeItem(ADMIN_PREVIEW_KEY);
+  byId('app').classList.add('hidden');
+  const login=byId('login');
+  login.classList.remove('hidden');
+  login.innerHTML='<h2 id="previewError">성적 기록을 열 수 없습니다</h2><p>관리자 권한이 만료되었거나 저장 기록이 변경되었습니다. 성적 기록 목록에서 다시 열어 주세요.</p><p><a href="./admin.html">성적 기록으로 돌아가기</a></p>';
+}
+
+async function loadAdminPreview(savedSession){
+  if(new URLSearchParams(location.search).get('adminPreview')!=='1')return false;
+  if(!savedSession.valid){showAdminPreviewError();return true}
+  const serverSession=await HSMIDDLE_AUTH.refreshSession();
+  const records=serverSession&&serverSession.admin?await HSMIDDLE_CLOUD.allAttempts():null;
+  adminPreview=readAdminPreview(serverSession,records);
+  if(!adminPreview){showAdminPreviewError();return true}
+  await enter(adminPreview.student);
+  return true;
+}
 
 async function signIn(){
   const name=byId('name').value.trim(),code=byId('code').value.trim().toUpperCase();
@@ -288,8 +329,9 @@ async function signIn(){
   enter(session.name);
 }
 /* 자동 로그인은 스크립트 전체 선언이 끝난 뒤 실행해야 한다 (TDZ 방지) */
-window.addEventListener('DOMContentLoaded',()=>{
+window.addEventListener('DOMContentLoaded',async()=>{
   const savedSession=HSMIDDLE_AUTH.readSession();
+  if(await loadAdminPreview(savedSession))return;
   if(savedSession.valid&&HSMIDDLE_AUTH.canAccess(savedSession.name,accessKey)){enter(savedSession.name)}
 });
 
@@ -305,17 +347,18 @@ function showExpired(){
 }
 async function enter(name){
   student=name;
-  if(HSMIDDLE_AUTH.isExpired(student)){showExpired();return}
+  if(!adminPreview&&HSMIDDLE_AUTH.isExpired(student)){showExpired();return}
   byId('login').classList.add('hidden');
   byId('app').classList.remove('hidden');
   byId('whoName').textContent=`${student} 학생`;
-  const today=new Date();
-  byId('whoDate').textContent=`발행일 ${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+  const today=adminPreview&&adminPreview.created_at?new Date(adminPreview.created_at):new Date(),dateLabel=adminPreview?'응시일':'발행일';
+  byId('whoDate').textContent=`${dateLabel} ${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}${adminPreview?` · ${adminPreview.attempt}회차`:''}`;
   if(examKey){
     byId('reportTitle').textContent=`${HSMIDDLE_EXAMS[examKey].title} 분석지`;
     const back=document.querySelector('.topbar a');
     if(back)back.href=`./exam.html?exam=${examKey}`;
   }
+  if(adminPreview){const back=document.querySelector('.topbar a');if(back){back.href='./admin.html';back.textContent='← 성적 기록으로 돌아가기'}byId('recordBtn').classList.add('hidden');byId('recordHint').textContent='관리자 조회용';render();return}
   await refreshCloudAttempts();
   render();
 }
@@ -355,6 +398,7 @@ function render(){
 /* 회차당 최대 응시(기록 저장) 3회 제한에 맞춰 상단 저장 버튼 상태를 갱신한다.
    서버 기록을 기준으로 삼되, 오프라인 때 로컬에만 저장된 서로 다른 결과는 함께 보여 준다. */
 function currentHistoryList(){
+  if(adminPreview)return [{date:formatCloudDate(adminPreview.created_at),score:adminPreview.score,correct:adminPreview.correct,answered:adminPreview.answered,states:adminPreview.states}];
   const local=examKey ? loadHistoryExam() : loadHistory();
   if(cloudAttempts!==null){
     const remote=cloudAttempts.map(a=>({
@@ -375,6 +419,7 @@ function currentHistoryList(){
 function updateRecordButton(){
   const btn=byId('recordBtn'),hint=byId('recordHint');
   if(!btn)return;
+  if(adminPreview){btn.classList.add('hidden');if(hint)hint.textContent='관리자 조회용';return}
   const count=currentHistoryList().length;
   if(count>=3){
     btn.disabled=true;
@@ -626,10 +671,7 @@ function historyPanelDiagnostic(){
     <h3 style="margin:0 0 4px;font-size:16px">응시 기록 · 회차 비교</h3>
     ${scoreTrendPanel(list)}
     ${roundComparePanelDiagnostic(list)}
-    <div class="history-actions">
-      <button class="ghost no-print" onclick="clearHistory()">화면 기록 지우기</button>
-      <span class="hint">응시 기록은 서버와 이 브라우저에 함께 저장됩니다.</span>
-    </div>
+    <div class="history-actions">${adminPreview?'<span class="hint">선택한 저장 기록을 읽기 전용으로 표시합니다.</span>':'<button class="ghost no-print" onclick="clearHistory()">화면 기록 지우기</button><span class="hint">응시 기록은 서버와 이 브라우저에 함께 저장됩니다.</span>'}</div>
     ${cloudNoticeHtml()}
   </section>`;
 }
@@ -739,7 +781,7 @@ function renderDiagnostic(){
         정답·풀이와 오답 재시험으로 약점을 보완한 뒤 실전 모의고사로 이어가세요. 문제은행은 별도 상품입니다.<br>
         입학 후 승급 기준은 퀵테스트 평균 3.4점 · 단원평가 평균 83점입니다.
       </div>
-      <div class="watermark">${student} 학생 · GFIELD</div>
+      <div class="watermark">${hsmHtml(student)} 학생 · GFIELD</div>
     </section>
 
     ${historyPanelDiagnostic()}
@@ -760,6 +802,7 @@ function examMatches(given,expected){
 /* 문항별 상태 산출: states[n] = 'o' | 'x' | 'manual' | null(미입력) */
 function examAnalyze(){
   const exam=HSMIDDLE_EXAMS[examKey];
+  if(adminPreview){const states={};for(let n=1;n<=exam.questions;n++)states[n]=adminPreview.states[n]||null;return {checked:adminPreview.answered,correct:adminPreview.correct,manual:0,states,questions:exam.questions}}
   let checked=0,correct=0,manual=0;
   const states={};
   for(let n=1;n<=exam.questions;n++){
@@ -841,7 +884,7 @@ function examErrorTable(analysis){
   };
   const rows=wrongNums.map(n=>{
     const fields=exam.answerFields&&exam.answerFields[n];
-    const mine=fields?fields.map((f,i)=>localStorage.getItem(`hs-${examKey}-${n}-${i}`)||'').join(' / '):(localStorage.getItem(`hs-${examKey}-${n}`)||'');
+    const mine=adminPreview?'X':fields?fields.map((f,i)=>localStorage.getItem(`hs-${examKey}-${n}-${i}`)||'').join(' / '):(localStorage.getItem(`hs-${examKey}-${n}`)||'');
     const note=exam.answerNotes&&exam.answerNotes[n];
     const img=exam.answerImages&&exam.answerImages[n];
     const noteHtml=note?`<details><summary>풀이 보기</summary><pre style="white-space:pre-wrap;margin:6px 0 0;font:700 12px/1.6 Pretendard,sans-serif">${note}</pre></details>`:'';
@@ -851,7 +894,7 @@ function examErrorTable(analysis){
     return `<tr><td class="num">${n}</td><td>${mine}</td><td>${exam.answers[n-1]}</td>${tipTd}<td>${jumpHtml}${noteHtml}${imgHtml}${!note&&!img&&!jumpHtml?'-':''}</td></tr>`;
   }).join('');
   const tipTh=hasTips?'<th>처방</th>':'';
-  return `${manualNote}<table class="errtable"><thead><tr><th>번호</th><th>내 답안</th><th>정답</th>${tipTh}<th>비고</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `${manualNote}<table class="errtable"><thead><tr><th>번호</th><th>${adminPreview?'저장 상태':'내 답안'}</th><th>정답</th>${tipTh}<th>비고</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 /* ---- 2e. 응시 기록 · 회차 비교 (모의고사) ---- */
@@ -917,10 +960,7 @@ function examHistoryPanel(analysis){
     <h3 style="margin:0 0 4px;font-size:16px">응시 기록 · 회차 비교</h3>
     ${scoreTrendPanel(list)}
     ${examRoundComparePanel(list,analysis.questions,meta)}
-    <div class="history-actions">
-      <button class="ghost no-print" onclick="clearHistory()">화면 기록 지우기</button>
-      <span class="hint">응시 기록은 서버와 이 브라우저에 함께 저장됩니다.</span>
-    </div>
+    <div class="history-actions">${adminPreview?'<span class="hint">선택한 저장 기록을 읽기 전용으로 표시합니다.</span>':'<button class="ghost no-print" onclick="clearHistory()">화면 기록 지우기</button><span class="hint">응시 기록은 서버와 이 브라우저에 함께 저장됩니다.</span>'}</div>
     ${cloudNoticeHtml()}
   </section>`;
 }
@@ -994,7 +1034,7 @@ function renderExam(){
     </section>
 
     <section class="panel">
-      <div class="watermark">${student} 학생 · GFIELD</div>
+      <div class="watermark">${hsmHtml(student)} 학생 · GFIELD</div>
     </section>
 
     ${examHistoryPanel(analysis)}

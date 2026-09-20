@@ -17,7 +17,8 @@ const fixMigration = read("../supabase/migrations/20260920100000_fix_hsmiddle_ac
 const closeMigration = read("../supabase/migrations/20260919173000_close_direct_hsmiddle_records_access.sql");
 const edge = read("../supabase/functions/hsmiddle-records/index.ts");
 const admin = read("admin.html");
-const pages = ["login.html", "diagnostic.html", "report.html", "exam.html", "admin.html"].map(file => [file, read(file)]);
+const report = read("report.html");
+const pages = [["login.html", read("login.html")], ["diagnostic.html", read("diagnostic.html")], ["report.html", report], ["exam.html", read("exam.html")], ["admin.html", admin]];
 
 for (const forbidden of ["studentCode", "studentCodes", "approvalCodes"]) {
   assert(!data.includes(forbidden), `public data leaks credential marker: ${forbidden}`);
@@ -53,6 +54,13 @@ assert(edge.includes('action === "allAttempts"') && edge.includes('if (!session.
 assert(edge.includes('student,round,attempt,score,correct,answered,states,created_at'), "admin attempt detail fields are incomplete");
 assert(admin.includes("HSMIDDLE_CLOUD.allAttempts()") && admin.includes('class="ox-grid"'), "admin score dashboard missing");
 assert(!admin.includes('onclick="deactivate(') && admin.includes("data-deactivate-index"), "student name must not be interpolated into an inline event handler");
+assert(admin.includes("sessionStorage.setItem(ADMIN_PREVIEW_KEY") && admin.includes("data-report-index"), "admin report preview handoff missing");
+assert(report.includes("function readAdminPreview(session,records)") && report.includes("serverSession&&serverSession.admin") && report.includes("HSMIDDLE_AUTH.refreshSession()") && report.includes("HSMIDDLE_CLOUD.allAttempts()"), "admin report preview must revalidate admin access and refetch the selected record");
+assert(report.includes("Math.abs(score-correct*2.5)"), "admin report preview consistency validation missing");
+assert(report.includes("correct>answered") && report.includes("answered>40") && report.includes("new Date(createdAt).getTime()"), "admin report preview bounds or date validation missing");
+assert(report.includes("byId('recordBtn').classList.add('hidden')"), "admin report preview must remain read-only");
+assert(report.includes("${hsmHtml(student)} 학생 · GFIELD"), "admin report watermark must escape stored student names");
+assert(report.includes("showAdminPreviewError()") && report.includes("if(await loadAdminPreview(savedSession))return"), "invalid admin preview must stop instead of falling back to another report");
 
 for (const [file, source] of pages) {
   assert(!source.includes("isValidStudent("), `${file} still uses public credential validation`);
