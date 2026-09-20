@@ -54,19 +54,35 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--ref", default="", help="목소리 복제용 참조 음성(3~10초)")
     ap.add_argument("--ref-text", default="", help="참조 음성의 대사(비우면 자동 전사)")
-    ap.add_argument("--device", default="cpu")
+    ap.add_argument("--device", default="auto",
+                    help="auto(기본) · cuda:0 · cpu — auto 는 GPU 가 보이면 GPU 를 쓴다")
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
 
     import torch, soundfile as sf
+
+    # 장치 고르기 — 원장 PC 에는 GPU 가 있고 이 세션(클라우드)에는 없다. 손으로 고르게
+    # 하면 틀리기 쉬우니 기본은 auto 로 두고, 무엇을 쓰는지 반드시 찍어 준다.
+    dev = a.device
+    if dev == "auto":
+        if torch.cuda.is_available(): dev = "cuda:0"
+        elif getattr(torch.backends, "mps", None) and torch.backends.mps.is_available(): dev = "mps"
+        else: dev = "cpu"
+    if dev.startswith("cuda"):
+        i = int(dev.split(":")[1]) if ":" in dev else 0
+        p = torch.cuda.get_device_properties(i)
+        print(f"🎮 GPU: {p.name} · VRAM {p.total_memory/1024**3:.1f} GB", flush=True)
+    else:
+        print(f"🖥  장치: {dev} (GPU 를 못 찾았습니다 — CPU 로 돌면 느립니다)", flush=True)
+
     from omnivoice import OmniVoice
 
     # CPU 에서는 float16 이 느리거나 지원되지 않는다 — 장치에 맞춰 고른다.
-    dtype = torch.float16 if a.device.startswith("cuda") else torch.float32
+    dtype = torch.float16 if dev.startswith("cuda") else torch.float32
     t0 = time.time()
-    print(f"모델 내려받는 중… ({a.model}, {a.device})", flush=True)
-    model = OmniVoice.from_pretrained(a.model, device_map=a.device, dtype=dtype)
+    print(f"모델 내려받는 중… ({a.model}) — 처음 한 번만 오래 걸립니다", flush=True)
+    model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=dtype)
     print(f"준비 {time.time()-t0:.0f}초", flush=True)
 
     jobs = []
@@ -101,8 +117,9 @@ def main():
             print(f"  ✓ {vname}/{lid}  {secs:.1f}초 음성 / {took:.0f}초 걸림 (RTF {took/max(secs,0.01):.1f})",
                   flush=True)
 
-    print(f"\n합계 음성 {total_audio:.0f}초 · 전체 {time.time()-t0:.0f}초")
-    print("RTF 가 1 보다 크면 CPU 로는 실시간보다 느리다는 뜻 — 운영에 쓰려면 GPU 가 필요하다.")
+    print(f"\n합계 음성 {total_audio:.0f}초 · 전체 {time.time()-t0:.0f}초 · 장치 {dev}")
+    print(f"결과 폴더: {os.path.abspath(a.out)}")
+    print("RTF 는 '음성 1초를 만드는 데 몇 초 걸렸나'다. 1 보다 작으면 실시간보다 빠르다.")
 
 if __name__ == "__main__":
     sys.exit(main())
