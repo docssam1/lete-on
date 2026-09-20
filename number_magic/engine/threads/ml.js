@@ -1495,14 +1495,20 @@ NM_TGEN['ml_x25'] = function(params, rng) {
 
 /* ── ML_DIV_DECOMP — 분해 나눗셈 ────────────────────────────── */
 NM_TGEN['ml_div_decomp'] = function(params, rng) {
+  /* ⚠️ 분해한 두 조각이 **각각** 나누어떨어져야 한다(2026-09-20 점검).
+     전에는 a 를 먼저 만들고 `Math.floor(a/100)*100` 으로 잘라, 앞 조각이 b 의 배수가
+     아닌 경우가 대부분이었다 — 단계 정답이 `166.66666666666666` 같은 소수로 나가
+     engine/rng.js 의 "steps 의 blank 는 항상 정수" 계약을 깼고 예시 줄에 그대로 찍혔다.
+     이제 거꾸로 만든다: 앞 조각은 100 과 b 의 공배수(백의 자리로 끝나면서 b 로 나눠짐),
+     뒤 조각은 100 미만의 b 의 배수. 교재의 115÷5 = 100÷5 + 15÷5 와 같은 모양이다. */
   const lv = params.level || 'main';
   const bMax = lv === 'practice' ? 5 : 9;
   const b      = R(rng, 2, bMax);
-  const q1     = R(rng, 10, 99);  /* 백의 몫 */
-  const q2     = R(rng, 1,  9);   /* 십의 몫 */
-  const a      = (q1 * 10 + q2) * b;  /* a = (q1×10+q2)×b, 항상 딱 나눔 */
-  const hPart  = Math.floor(a / 100) * 100;    /* 내림백자리 */
-  const rest   = a - hPart;
+  const gcdN   = (x, y) => y === 0 ? x : gcdN(y, x % y);
+  const unit   = 100 * b / gcdN(100, b);        /* lcm(100, b) — 앞 조각의 최소 단위 */
+  const hPart  = unit * R(rng, 1, lv === 'practice' ? 2 : 3);
+  const rest   = b * R(rng, 1, Math.floor(99 / b));   /* 100 미만, b 의 배수 */
+  const a      = hPart + rest;
   const answer = a / b;
 
   return {

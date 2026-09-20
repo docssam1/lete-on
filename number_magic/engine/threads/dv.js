@@ -1016,8 +1016,13 @@
       cur = cur * 10 + +as[i];
       if (cur < b && steps.length === 0) continue;     /* 아직 몫이 서지 않는 자리는 건너뛴다 */
       const qi = Math.floor(cur / b);
-      steps.push({ tex: `${cur} \\div ${b} = \\square`, blank: qi });
-      cur -= qi * b;
+      /* 자리별 단계는 "몫을 몇 세우나"를 묻는 것이지 나눗셈의 답이 아니다 — 전에는
+         `9 \div 6 = \square`(답 1) 이라 **등식으로 읽으면 거짓**이었다(2026-09-20 점검).
+         나머지를 함께 적어 참인 식으로 만든다: `9 \div 6 = 1 \cdots 3`. */
+      const ri = cur - qi * b;
+      steps.push({ tex: ri ? `${cur} \\div ${b} = \\square \\cdots ${ri}`
+                           : `${cur} \\div ${b} = \\square`, blank: qi });
+      cur = ri;
     }
     /* 몫이 한 자리면 자리별 단계가 하나뿐이라 마지막 줄과 똑같아진다(2026-09-19) —
        그 자리는 "몇 배 하면 되는가"를 묻는 곱셈 줄로 바꿔 준다. */
