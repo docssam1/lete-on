@@ -891,7 +891,8 @@ function examAnalyze(){
       const v=localStorage.getItem(`hs-${examKey}-${n}`);
       if(v==null||v===''){states[n]=null;continue}
       checked++;
-      const ok=v==='o';
+      const expected=examNorm(exam.answers[n-1]);
+      const ok=expected==='o'||expected==='x'?v===expected:v==='o';
       states[n]=ok?'o':'x';
       if(ok)correct++;
       continue;
