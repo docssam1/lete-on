@@ -3,6 +3,8 @@
 import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
 import { pageHome } from './home.js';
+import { escapeInApp } from './inapp.js';
+escapeInApp();
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
   ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')) }),
