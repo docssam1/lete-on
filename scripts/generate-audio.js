@@ -17,7 +17,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-// ── Config ────────────────────────────────────────────────────────────────────
+// ── Config ─────────────────────────────────────────────────────────────────────────────
 const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
 const VOICE_NAME = 'en-US-Neural2-F';   // Natural female Neural2 voice — CARS textbook passages
 // Storybook narrator for the Library eBook reader, picked after an A/B/C/D sample
@@ -37,7 +37,7 @@ if (!SUPABASE_KEY) {
   process.exit(1);
 }
 
-// ── Load lesson data ───────────────────────────────────────────────────────────
+// ── Load lesson data ─────────────────────────────────────────────────────────────────────────
 const window = { LESSONS: {} };
 const LESSON1 = {};
 const dataDir = path.join(__dirname, '../reading-world/data');
@@ -95,8 +95,22 @@ var LESSON1_ZH = {};
   }
 }
 
-// ── Build task list ────────────────────────────────────────────────────────────
+// ── Build task list ──────────────────────────────────────────────────────────────────────────
 const tasks = [];
+
+// 지필드 사이언스 랩 광고 페이지 — docssam(밝은 남자 목소리) 나레이션. 파일 이름에 (목소리+문장) 해시를
+// 넣어, 문장을 고치면 새 파일이 생기고 그대로면 건너뛴다(type 'sci'). 광고 페이지가 같은 해시로 주소를 만든다.
+const SCI_NARRATION = path.join(__dirname, '../science-lab/intro/narration.json');
+let SCI_VOICE = null, SCI_FALLBACK = null;
+if (fs.existsSync(SCI_NARRATION)) {
+  const crypto = require('crypto');
+  const nar = JSON.parse(fs.readFileSync(SCI_NARRATION, 'utf8'));
+  SCI_VOICE = nar.voice; SCI_FALLBACK = nar.fallbackVoice || null;
+  for (const l of nar.lines || []) {
+    const h = crypto.createHash('sha1').update(`${nar.voice}|${l.text}`).digest('hex').slice(0, 10);
+    tasks.push({ lessonId: `sci-${l.id}`, bookId: 'science-lab', type: 'sci', text: l.text, storagePath: `science-lab/${l.id}-${h}.mp3` });
+  }
+}
 
 // Writing Village — native-English MP3s for the STATIC listening content so it
 // sounds right on every device (esp. Windows PCs with no English TTS voice).
@@ -163,7 +177,7 @@ console.log('');
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────────────────
 function httpRequest(options, body) {
   return new Promise((resolve, reject) => {
     const req = https.request(options, res => {
@@ -185,7 +199,7 @@ async function generateMp3(text, voiceName) {
   if (!/Chirp3-HD/.test(voiceName)) audioConfig.speakingRate = 0.95;
   const payload = JSON.stringify({
     input: { text },
-    voice: { languageCode: 'en-US', name: voiceName },
+    voice: { languageCode: voiceName.split('-').slice(0, 2).join('-'), name: voiceName },
     audioConfig,
   });
   const res = await httpRequest({
@@ -248,7 +262,7 @@ async function uploadToSupabase(mp3Buffer, storagePath) {
   return `${SUPABASE_URL}/storage/v1/object/public/audio/${storagePath}`;
 }
 
-// ── Main ───────────────────────────────────────────────────────────────────────
+// ── Main ────────────────────────────────────────────────────────────────────────────────
 async function main() {
   // Add original passages from Supabase
   console.log('📥  Fetching original passages from Supabase...');
@@ -304,7 +318,7 @@ async function main() {
       // so rewritten extraLearning / newPassage passages get fresh audio instead of
       // keeping a stale MP3 that no longer matches the on-screen text. Upload uses
       // x-upsert:true, so regenerated files overwrite in place.
-      if (task.type === 'original') {
+      if (task.type === 'original' || task.type === 'sci') {
         const checkRes = await httpRequest({
           hostname: new URL(SUPABASE_URL).hostname,
           path: `/storage/v1/object/info/public/audio/${task.storagePath}`,
@@ -313,13 +327,17 @@ async function main() {
         });
         if (checkRes.status === 200) {
           const url = `${SUPABASE_URL}/storage/v1/object/public/audio/${task.storagePath}`;
-          console.log(`skip (original already exists)`);
+          console.log(`skip (already exists)`);
           results[label] = url;
           continue;
         }
       }
 
-      const mp3 = await generateMp3(task.text, (task.type === 'libpage' || task.type === 'wv') ? LIBRARY_VOICE_NAME : VOICE_NAME);
+      let mp3;
+      if (task.type === 'sci') {
+        try { mp3 = await generateMp3(task.text, SCI_VOICE); }
+        catch (e) { if (!SCI_FALLBACK) throw e; process.stdout.write(`(${SCI_VOICE} 실패 → ${SCI_FALLBACK}) `); mp3 = await generateMp3(task.text, SCI_FALLBACK); }
+      } else mp3 = await generateMp3(task.text, (task.type === 'libpage' || task.type === 'wv') ? LIBRARY_VOICE_NAME : VOICE_NAME);
 
       // Save locally as backup
       const localPath = path.join(OUT_DIR, task.storagePath.replace('/', '-'));
