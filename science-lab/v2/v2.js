@@ -153,7 +153,7 @@ function wireItem(card, it, onDone) {
   });
 }
 
-// ── 화면 뱀대 ──
+// ── 화면 뼈대 ──
 function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
   const st = store.get(u);
   $app.innerHTML = `<header class="top"><div class="wrap">
@@ -272,7 +272,7 @@ function stepEvaluate(u, L, items, retry = false) {
   }));
 }
 
-// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푸는다.
+// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
 function pageSub(u, L, eid) {
   const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], e = tx?.elements.find((x) => x.id === eid);
   if (!e) { location.replace('#/'); return; }
