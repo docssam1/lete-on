@@ -294,7 +294,9 @@ Deno.serve(async (req: Request) => {
     if (action === "addAttempt") return json(req, await addAttempt(session, validRound(body.round), body.record));
     if (action === "allAttempts") {
       if (!session.account.is_admin) throw new HttpError(403, "admin_required");
-      const { data, error } = await service.from("hsm_attempts").select("student,round,attempt,score,created_at").order("student").order("round").order("attempt");
+      const { data, error } = await service.from("hsm_attempts")
+        .select("student,round,attempt,score,correct,answered,states,created_at")
+        .order("created_at", { ascending: false });
       if (error) throw new HttpError(503, "attempt_lookup_failed");
       return json(req, { attempts: data || [] });
     }
