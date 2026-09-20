@@ -155,3 +155,20 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .book .rep-print h3 { font-size: 17px; margin: 10px 0 2px; }
 .book .rep-print .ans-line { height: 22px; }
 @media print { .book .rep-print { break-after: page; } .book .rep-print h3 { margin: 6px 0 0; } }
+
+/* 유형별 문제 — 내용 요소(E) 아래 유형(T)마다 이름·설명을 얹고 유사문항을 붙인다 */
+.book .type-intro { color: #5B6577; margin: 4px 0 14px; }
+.book .el-head { display: flex; align-items: baseline; gap: 8px; font-size: 20px; margin: 18px 0 8px;
+  border-left: 5px solid #1E3A78; padding-left: 8px; }
+.book .el-code { font-size: 13px; font-weight: 800; letter-spacing: .06em; color: #fff;
+  background: #1E3A78; border-radius: 4px; padding: 2px 6px; }
+.book .type-block { break-inside: avoid; margin: 0 0 16px; padding: 8px 0 0; border-top: 1px dashed #DCE4F0; }
+.book .type-head { display: flex; align-items: baseline; gap: 8px; font-weight: 700; margin: 0 0 2px; }
+.book .type-code { font-size: 12px; font-weight: 800; letter-spacing: .06em; color: #1E3A78;
+  border: 1.5px solid #1E3A78; border-radius: 4px; padding: 1px 5px; }
+.book .type-n { margin-left: auto; font-size: 12px; font-weight: 600; color: #5B6577; }
+.book .type-desc { color: #5B6577; font-size: 13px; margin: 0 0 8px; }
+@media print {
+  .book .type-desc, .book .type-intro { font-size: 9pt; }
+  .book .el-code, .book .type-code { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

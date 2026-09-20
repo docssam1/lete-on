@@ -251,13 +251,57 @@ function pageReport(u, L) {
   $app.querySelectorAll('textarea[data-k]').forEach((t) => t.addEventListener('input', () => { const r = store.get(u).report || {}; r[t.dataset.k] = t.value; store.set(u, { report: r }); }));
 }
 
+// 분류 체계(bank/taxonomy/<단원>.json)는 유형별 문제 차례·이름·설명에만 쓴다.
+// 없으면 유형 코드만으로 묶고 넘어간다 — 교재가 통째로 비지는 않게.
+const TAXO = {};
+async function taxonomyFor(u) {
+  if (!(u in TAXO)) {
+    TAXO[u] = await fetch(new URL(`../bank/taxonomy/${u}.json`, import.meta.url)).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  }
+  return TAXO[u];
+}
+// 유사문항을 내용 요소 → 유형 차례로 줄 세운다. 분류 체계의 순서가 곧 교재의 차례다.
+function orderByType(tax, sims) {
+  if (!tax) return [...sims].sort((a, b) => (a.taxonomy.type || '').localeCompare(b.taxonomy.type || '') || a.id.localeCompare(b.id));
+  const rank = Object.fromEntries(tax.types.map((t, i) => [t.id, i]));
+  return [...sims].sort((a, b) => (rank[a.taxonomy.type] ?? 99) - (rank[b.taxonomy.type] ?? 99) || a.id.localeCompare(b.id));
+}
+function typeSectionHtml(tax, ordered, show, numOf) {
+  if (!ordered.length) return '';
+  const byType = {};
+  for (const it of ordered) (byType[it.taxonomy.type] ||= []).push(it);
+  const els = tax ? tax.elements : [...new Set(ordered.map((i) => i.taxonomy.element))].map((id) => ({ id, name: '', desc: '' }));
+  const types = tax ? tax.types : Object.keys(byType).map((id) => ({ id, element: byType[id][0].taxonomy.element, name: '', desc: '' }));
+  return els.map((el, ei) => {
+    const mine = types.filter((t) => t.element === el.id && byType[t.id]?.length);
+    if (!mine.length) return '';
+    return `<section class="page ${ei === 0 ? 'page-break' : 'page-break'}">
+      ${ei === 0 ? '<h2>유형별 문제</h2><p class="type-intro">단원평가에 나오는 유형을 내용 요소 차례로 모았어요. 유형마다 무엇을 묻는지 먼저 읽고 풀어 보세요.</p>' : ''}
+      <h3 class="el-head"><span class="el-code">${esc(el.id)}</span> ${esc(el.name)}</h3>
+      ${mine.map((t) => `<div class="type-block">
+        <p class="type-head"><span class="type-code">${esc(t.id)}</span> ${esc(t.name)} <span class="type-n">${byType[t.id].length}문항</span></p>
+        ${t.desc ? `<p class="type-desc">${esc(t.desc)}</p>` : ''}
+        ${byType[t.id].map((it) => itemHtml(it, { print: true, show, no: numOf(it) })).join('')}
+      </div>`).join('')}
+    </section>`;
+  }).join('');
+}
+
 // 교재 인쇄: student(빈칸) · teacher(정답 포함) · answers(정답·해설만)
-function pageBook(u, L, items, mode) {
+async function pageBook(u, L, items, mode) {
   const I = byId(items), show = mode === 'teacher';
-  const kyo = items.filter((i) => i.taxonomy.track === '교과'), yeong = items.filter((i) => i.taxonomy.track === '영재성');
-  const h = L.explore.home; let n = 0;
-  const qs = (list) => list.map((it) => itemHtml(it, { print: true, show, no: ++n })).join('');
-  const answers = () => { let k = 0; return [...kyo, ...yeong].map((it) => { k++; const ac = it.answerContract;
+  const tax = await taxonomyFor(u);
+  const isSim = (i) => i.sourceRef?.type === 'similar';
+  const own = items.filter((i) => !isSim(i));
+  const kyo = own.filter((i) => i.taxonomy.track === '교과'), yeong = own.filter((i) => i.taxonomy.track === '영재성');
+  const typed = orderByType(tax, items.filter(isSim));
+  // 번호는 세 묶음을 통틀어 한 번만 매긴다 — 문제지와 정답지가 같은 목록에서 나오므로 어긋날 수 없다.
+  const printed = [...kyo, ...yeong, ...typed];
+  const numAt = new Map(printed.map((it, i) => [it.id, i + 1]));
+  const numOf = (it) => numAt.get(it.id);
+  const h = L.explore.home;
+  const qs = (list) => list.map((it) => itemHtml(it, { print: true, show, no: numOf(it) })).join('');
+  const answers = () => { let k = 0; return printed.map((it) => { k++; const ac = it.answerContract;
     const a = ac.type === 'single-choice' ? CIRC[ac.answer] : ac.type === 'cloze' ? ac.blanks.map((b) => b.answer).join(', ') : ac.type === 'table-fill' ? ac.rows.map((r) => `${r.label}: ${r.answer.join('·')}`).join(' / ') : ac.sample;
     return `<div class="q"><span class="no">${k}.</span> <b class="ans">${esc(a)}</b> — ${esc(it.explanation)}</div>`; }).join(''); };
   const chapter = mode === 'answers' ? '' : `
@@ -274,7 +318,8 @@ function pageBook(u, L, items, mode) {
       <h3>결과 기록</h3><table class="tbl"><thead><tr>${L.explore.lab.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${[1, 2, 3, 4].map(() => '<tr><td>&nbsp;</td><td></td><td></td></tr>').join('')}</tbody></table></section>
     <section class="page page-break rep-print"><h2>탐구보고서</h2>${L.report.sections.map((s) => `<h3>${esc(s.label)}</h3><div class="ans-line"></div><div class="ans-line"></div>`).join('')}</section>
     <section class="page page-break"><h2>문제 — 교과</h2>${qs(kyo)}</section>
-    <section class="page page-break"><h2>문제 — 영재성</h2>${qs(yeong)}</section>`;
+    <section class="page page-break"><h2>문제 — 영재성</h2>${qs(yeong)}</section>
+    ${typeSectionHtml(tax, typed, show, numOf)}`;
   const tail = mode === 'student' ? '' : `<section class="page page-break"><h2>정답·해설</h2>${answers()}</section>`;
   $app.innerHTML = `<div class="book"><div class="wrap no-print print-bar">
       <a class="btn" href="#/${u}/print/student" style="display:inline-flex;align-items:center;text-decoration:none">학생용</a>
