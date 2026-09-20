@@ -372,6 +372,16 @@ window.NM_ROADMAP = {
       units:['M-13','M-14'],
       tip:{ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱해요 — 절대 빠뜨리지 마요!',en:'The one outside the brackets visits every term inside, one by one — never skip one!',zh:'括号外的那个乘遍括号里每一项——千万别漏掉！'}
     },
+    {
+      /* W9-3 신설(2026-09-20, 중등 교과 연산 3차) — 중2 교과 연산의 기둥 셋이
+         로드맵에 아예 없었다(연립방정식·일차부등식·일차함수). 원장 지시
+         "교과연산과 창의연산이 같이 되어야 한다"의 중2 쪽 답이다. */
+      id:'W9-3', icon:'🔗', grade:'중2',
+      edu:{ko:'중2 연립방정식과 일차함수',en:'G8 Systems, Inequalities & Lines',zh:'初二方程组与一次函数'},
+      theme:{ko:'W9-3 · 연립방정식과 일차함수 — 미지수 둘·부등호 뒤집기·기울기',en:'W9-3 · Systems & Lines — Two Unknowns, Flipping Signs, Slope',zh:'W9-3·方程组与一次函数——两个未知数·不等号反转·斜率'},
+      units:['M-63','M-64','M-65'],
+      tip:{ko:'미지수가 둘이면 식도 둘 — 한 문자를 없애면 이미 아는 일차방정식으로 돌아와요!',en:'Two unknowns need two equations — remove one letter and you are back to a linear equation you already know!',zh:'两个未知数就要两个方程——消去一个字母，就回到你已经会的一元一次方程！'}
+    },
 
     /* ─────── W10 : 근호의 산맥 — 중3 제곱근과 실수 · 다항식의 곱셈과
        인수분해 (2026-08-25) ───────────────────────────────────
@@ -399,6 +409,15 @@ window.NM_ROADMAP = {
       theme:{ko:'W10-2 · 곱셈공식과 인수분해 — 전개와 거꾸로 읽기',en:'W10-2 · Formulas & Factoring — Expanding & Reading Backward',zh:'W10-2·乘法公式与因式分解——展开与反着读'},
       units:['M-18','M-19','M-20'],
       tip:{ko:'무지개 덧셈법에서 시작된 여정의 마지막 걸음 — 곱셈공식을 거꾸로 읽으면 인수분해가 돼요!',en:'The final step of a journey that began with rainbow addition — read the multiplication formula backward and you get factoring!',zh:'从彩虹加法法出发的旅程终点——把乘法公式反着读就是因式分解！'}
+    },
+    {
+      /* W10-3 신설(2026-09-20, 중등 교과 연산 3차) — 인수분해까지 와 놓고
+         "그 식을 =0으로 놓는" 한 걸음이 없었다. 중3 교과 연산의 마지막 두 기둥. */
+      id:'W10-3', icon:'🎯', grade:'중3',
+      edu:{ko:'중3 이차방정식과 이차함수',en:'G9 Quadratic Equations & Parabolas',zh:'初三二次方程与二次函数'},
+      theme:{ko:'W10-3 · 이차방정식과 이차함수 — 근을 읽고 꼭짓점을 찾기',en:'W10-3 · Quadratics — Reading the Roots, Finding the Vertex',zh:'W10-3·二次方程与二次函数——读出根·找出顶点'},
+      units:['M-66','M-67'],
+      tip:{ko:'곱해서 0이면 둘 중 하나가 0 — 인수분해한 식을 =0으로 놓는 순간 근이 그냥 보여요!',en:'A product of zero means one factor is zero — set the factored form to zero and the roots are simply there to read!',zh:'乘积为0就有一个因式为0——把分解好的式子令为0，根就直接看出来了！'}
     },
 
     /* ─────── W11 : 다항식의 탑 — 공통수학1 (2026-08-25) ─────────

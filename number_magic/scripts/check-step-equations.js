@@ -26,7 +26,7 @@ const FILES = ['engine/generators.js','engine/rng.js','engine/scene-model.js',
   'engine/threads/fr.js','engine/threads/dc_mx.js','engine/threads/el.js','engine/threads/nl.js',
   'engine/threads/wp.js','engine/threads/adv.js','engine/threads/mid.js','engine/threads/mid2.js',
   'engine/threads/mid3.js','engine/threads/mid4.js','engine/threads/mid5.js','engine/threads/mid6.js',
-  'engine/threads/mid7.js','engine/threads/mid8.js','data/threads.js'];
+  'engine/threads/mid7.js','engine/threads/mid8.js','engine/threads/mid9.js','data/threads.js'];
 
 const w = { document: {}, console, Math, JSON, Object, Array, String, Number, RegExp, Date, parseInt, parseFloat, isNaN, isFinite };
 w.window = w; w.global = w;
