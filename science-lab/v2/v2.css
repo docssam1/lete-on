@@ -162,3 +162,4 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .short input.wrong { border-color: var(--point); }
 .book .tbl { margin: 4px 0 8px; }
 .modes button[aria-pressed="true"] { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
+.lab-lbl { align-self: center; font-size: 13px; font-weight: 700; color: var(--sub); min-width: 52px; }
