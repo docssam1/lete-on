@@ -101,7 +101,7 @@ function coverPage() {
 }
 const orn = '<div class="orn"><svg viewBox="0 0 120 10"><path d="M0 5 H48 M72 5 H120" stroke="#b8872b" stroke-width=".8"/><path d="M60 0 l6 5 l-6 5 l-6 -5z M50 5 a2 2 0 1 0 0 .01 M70 5 a2 2 0 1 0 0 .01" fill="#b8872b"/></svg></div>';
 const chap = (k, h) => `<p class="ad-k">${k}</p><h2>${h}</h2>${orn}`;
-const ads = () => [
+const ads = (home) => [
   adPage('ad a1', `${chap('PROLOGUE · 이 책에 대하여', '이런 과학책,<br>본 적 있나요?')}
     <p class="drop">과학은 외우는 것이 아니라 직접 해 보는 것입니다. 이 책은 교과서 단원마다 실험 한 장을 담고, 화면에서 펼치면 그 실험이 깨어나 아이의 손끝에서 다시 일어납니다.</p>
     <ol class="ad-3"><li><b>읽고</b><span>교과서 단원에 딱 맞춘 개념과 실험 설계</span></li><li><b>보고</b><span>실제 화산·용암 영상과 사진, 땅속까지 보이는 3D</span></li><li><b>해 보고</b><span>불을 켜고, 가열하고, 식혀 보는 3D 체험 실험실</span></li></ol>`),
@@ -113,7 +113,21 @@ const ads = () => [
   adPage('ad a4', `${chap('CHAPTER Ⅲ · 네 개의 열쇠', '한 권으로 네 가지 수업')}
     <div class="ad-4"><div><b>학생용 교재</b><span>빈칸과 쓰는 줄. A4 그대로 인쇄</span></div><div><b>강사용 교재</b><span>같은 자리에 붉은 예시 답과 채점 기준</span></div><div><b>가르치기 화면</b><span>누를 때마다 답이 열리는 90분 교안</span></div><div><b>스스로 공부</b><span>써 보고 예시 답 확인, 문제는 바로 채점</span></div></div>
     <figure class="ad-photo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Augustine_volcano_Jan_24_2006_-_Cyrus_Read.jpg/1280px-Augustine_volcano_Jan_24_2006_-_Cyrus_Read.jpg" alt="화산 분출 사진"><figcaption>책 속의 실제 기록 · Cyrus Read, USGS (Public domain)</figcaption></figure>`),
-  adPage('ad a5', `${chap('UNSEAL · 봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
+  adPage('ad a5', `${chap('CHAPTER Ⅳ · 집에서도', '준비물만 있으면<br>집에서도 그대로')}
+    <p class="ad-p">교재의 실험은 학원에서도, 집에서도 할 수 있습니다. 쪽마다 준비물 QR이 있어 필요한 것을 바로 살 수 있고, 집에 있는 것과 사야 할 것을 나눠 적어 두었습니다. 불을 쓰는 과정은 3D 실험실로 대신할 수 있어 안전합니다.</p>
+    <div class="ad-kit"><div>
+      <h3>${esc(home?.title || '집에서 하는 실험')}</h3>
+      <p class="ad-kit-meta">${home ? `${home.minutes}분 · ${home.guardian ? '보호자와 함께' : '혼자 해도 돼요'}` : ''}</p>
+      <ul class="ad-kit-list">${(home?.materials || []).map((m) => `<li class="${m.have === 'buy' ? 'buy' : ''}"><b>${esc(m.name)}</b> <small>${esc(m.qty || '')}</small><i>${m.have === 'buy' ? 'QR로 구매' : '집에 있음'}</i></li>`).join('')}</ul>
+    </div><figure class="ad-qr"><img src="${esc(home?.qr || '')}" alt="준비물 QR"><figcaption>QR을 찍으면 준비물 목록과<br>구매 링크가 열립니다</figcaption></figure></div>
+    <p class="ad-note">안전이 필요한 과정은 “보호자와 함께”라고 표시해 두었습니다</p>
+    <div class="ad-use"><div><b>수업 전</b><span>3D로 먼저 보고 예상 써 오기</span></div><div><b>수업</b><span>실험하고 보고서 쓰기</span></div><div><b>수업 후</b><span>형성평가·영재 도전 풀기</span></div></div>`),
+  adPage('ad a6', `${chap('FAQ · 자주 묻는 질문', '궁금한 것들')}
+    <dl class="ad-faq"><dt>몇 학년이 보나요?</dt><dd>초등 3~6학년. 교과서 단원 순서를 그대로 따라가고, 영재원 대비 문제를 더했습니다.</dd>
+      <dt>집에서도 할 수 있나요?</dt><dd>네. 준비물 QR로 바로 사서 집에서 그대로 할 수 있고, 위험한 과정은 3D 실험실로 대신할 수 있습니다.</dd>
+      <dt>3D 실험은 따로 설치하나요?</dt><dd>아니요. 휴대폰·태블릿·PC 브라우저에서 바로 열립니다.</dd>
+      <dt>종이 교재로도 쓰나요?</dt><dd>A4로 그대로 인쇄됩니다. 학생용·강사용 두 가지이고, 탐구보고서와 형성평가까지 한 장씩 들어 있습니다.</dd></dl>`),
+  adPage('ad a7', `${chap('UNSEAL · 봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
     <ul class="ad-how"><li><i>▶</i><span>그림 속 <b>영상</b> — 실제 화산이 책 안에서 타오릅니다</span></li><li><i>✦</i><span>주황 인장 — <b>3D 실험실</b>이 책 밖으로 솟아오릅니다</span></li><li><i>ⓐ</i><span><b>빈칸</b>을 누르면 답이 드러납니다</span></li><li><i>Ⅰ</i><span>확인 문제는 누르면 <b>바로 채점</b></span></li><li><i>⤢</i><span>사진을 누르면 <b>크게</b></span></li></ul>
     <svg class="seal" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#8b1e1e"/><circle cx="50" cy="50" r="33" fill="none" stroke="#c9463a" stroke-width="2"/><text x="50" y="47" text-anchor="middle" fill="#f3d48a" font-size="11" font-weight="800">GFIELD</text><text x="50" y="62" text-anchor="middle" fill="#f3d48a" font-size="9">SCIENCE LAB</text></svg>`),
 ];
@@ -135,11 +149,11 @@ async function build() {
   const host = document.createElement('div'); host.className = 'it-measure'; host.innerHTML = html; document.body.appendChild(host);
   const bk = host.querySelector('.bk'); bk.classList.add('a4');
   const adHost = document.createElement('div'); adHost.className = bk.className; adHost.setAttribute('style', bk.getAttribute('style'));
-  adHost.innerHTML = coverPage() + ads().join('') + backPage(); host.appendChild(adHost);
+  adHost.innerHTML = coverPage() + ads(lm.lesson.explore.home).join('') + backPage(); host.appendChild(adHost);
   await document.fonts?.ready; fitPages(bk);
   const wrapPage = (sec, from) => { const w = document.createElement('div'); w.className = from.className; w.setAttribute('style', from.getAttribute('style')); w.appendChild(sec); return w; };
   const adSecs = [...adHost.children], chSecs = [...bk.children];
-  state.pages = [adSecs[0], ...adSecs.slice(1, 6), ...chSecs, adSecs[6]].map((s, i) => wrapPage(s, i < 6 || i === 6 + chSecs.length ? adHost : bk));
+  state.pages = [adSecs[0], ...adSecs.slice(1, 8), ...chSecs, adSecs[8]].map((s, i) => wrapPage(s, i < 8 || i === 8 + chSecs.length ? adHost : bk));
   state.chCount = chSecs.length; host.remove();
   state.L = lm.lesson; state.rows = [];
   layout(true);
@@ -211,11 +225,11 @@ function turnSound(heavy) {
 // 지금 보이는 쪽에 맞춰 docssam이 말한다
 function visiblePages() { const s = state.spread; return state.single ? [s] : [2 * s - 1, 2 * s].filter((i) => i >= 0); }
 function narrate() {
-  const vis = visiblePages(), c0 = 6, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
+  const vis = visiblePages(), c0 = 8, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
   const ids = [];
   for (const i of vis) {
     if (i === 0) ids.push('cover'); else if (i === 1) ids.push('ad1'); else if (i === 2) ids.push('ad2'); else if (i === 3 || i === 4) { if (!ids.includes('ad3')) ids.push('ad3'); }
-    else if (i === 5) ids.push('live');
+    else if (i === 5) ids.push('home'); else if (i === 6) ids.push('faq'); else if (i === 7) ids.push('live');
     else if (i >= c0 && i < c0 + cn) { const r = rel(i); const k = r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : r === 9 ? 'report' : r === 10 ? 'formative' : 'check'; if (!ids.includes(k)) ids.push(k); }
     else ids.push('print', 'cta');
   }
