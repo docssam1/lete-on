@@ -292,10 +292,11 @@ function validate(problem, id, difficulty) {
     case "unit-join-pair":
       assert(meta.patterns.length === 2 && meta.patterns.every((pattern, index) => evaluateJoinedExpression(meta.digits, pattern) === meta.targets[index]), id, difficulty, "두 이어 붙이기 식 오류"); return;
     case "unit-balance-chain":
+      assert(meta.shapes.circle === "●" && meta.shapes.square === "■" && meta.shapes.diamond === "◆" && meta.shapes.star === "★", id, difficulty, "저울 도형 이름 불일치");
       assert(meta.answer === 6 && numeric === 6, id, difficulty, "세 저울 등가 오류"); return;
     case "unit-fold-cut-open":
       assert(meta.openedPerimeter === meta.openedSide * 4, id, difficulty, "펼친 정사각형 둘레 오류");
-      assert(meta.foldedWidth === meta.openedSide + meta.cut && meta.originalWidth === meta.foldedWidth * 2 && meta.originalHeight === meta.openedSide * 2, id, difficulty, "접기 전 길이 오류");
+      assert(meta.originalWidth === meta.openedSide + meta.cut && meta.originalHeight === meta.openedSide, id, difficulty, "처음 직사각형 길이 오류");
       assert(meta.answer === 2 * (meta.originalWidth + meta.originalHeight) && numeric === meta.answer, id, difficulty, "처음 색종이 둘레 오류"); return;
     default:
       fail(id, difficulty, `검산 분기 없음: ${meta.family}`);

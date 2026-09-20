@@ -281,6 +281,49 @@ function unitTestNumberLine(part, index) {
   return `<svg viewBox="0 0 ${width} 92" role="img" aria-label="${index + 1}번 수직선"><text x="8" y="17">(${index + 1})</text><line x1="${left}" y1="${y}" x2="${right}" y2="${y}"/><circle cx="${left}" cy="${y}" r="4"/><circle cx="${right}" cy="${y}" r="4"/><circle class="target" cx="${(left + right) / 2}" cy="${y}" r="6"/><text x="${left}" y="80">${part.left}</text><text x="${right}" y="80">${part.right}</text><text class="target-label" x="${(left + right) / 2}" y="38">?</text></svg>`;
 }
 
+function unitTestBalanceToken(value) {
+  const tone = value === "●" ? "circle" : value === "■" ? "square" : value === "◆" ? "diamond" : "star";
+  return `<b class="pan-token ${tone}">${escapeHtml(value)}</b>`;
+}
+
+function unitTestBalanceChain(visual) {
+  const rows = visual.equations.map((equation, index) => {
+    const [left, right] = equation.split(/\s*=\s*/);
+    const tokens = (value) => [...value.trim()].filter((token) => !/\s/.test(token)).map(unitTestBalanceToken).join("");
+    return `<div class="b6-ut-scale" role="img" aria-label="${index + 1}번째 양팔저울: ${escapeHtml(equation)}"><span class="pan left">${tokens(left)}</span><i class="balance-stand"></i><span class="pan right">${tokens(right)}</span></div>`;
+  }).join("");
+  return `<div class="b6-ut b6-ut-balance-chain">${rows}<strong>${escapeHtml(visual.target)}</strong></div>`;
+}
+
+function unitTestFoldCutOpen(visual) {
+  const initialHeight = 78;
+  const initialWidth = Math.min(160, initialHeight * visual.originalWidth / visual.originalHeight);
+  const square = 92;
+  const strip = Math.max(18, square * visual.cut / visual.openedSide);
+  const firstX = 28;
+  const firstY = 48;
+  const foldedX = 270;
+  const foldedY = 42;
+  const openedX = 570;
+  const openedY = 42;
+  const mobileInitialX = (340 - initialWidth) / 2;
+  const mobileFoldedX = (340 - square - strip) / 2;
+  const mobileOpenedX = (340 - square) / 2;
+  return `<div class="b6-ut b6-ut-fold"><svg class="b6-ut-fold-svg b6-ut-fold-desktop" viewBox="0 0 700 180" role="img" aria-label="직사각형을 대각선으로 접어 남는 부분을 자른 뒤 정사각형으로 펼치는 과정">
+    <g class="fold-stage initial"><rect x="${firstX}" y="${firstY}" width="${initialWidth}" height="${initialHeight}"/><text x="${firstX + initialWidth / 2}" y="${firstY - 12}">가로 ?cm</text><text transform="rotate(-90 ${firstX - 10} ${firstY + initialHeight / 2})" x="${firstX - 10}" y="${firstY + initialHeight / 2}">세로 ?cm</text><text x="${firstX + initialWidth / 2}" y="${firstY + initialHeight + 20}">처음 둘레 ?cm</text></g>
+    <text class="stage-arrow" x="225" y="92">→</text>
+    <g class="fold-stage cut"><rect x="${foldedX}" y="${foldedY}" width="${square + strip}" height="${square}"/><polygon class="fold-shade" points="${foldedX},${foldedY + square} ${foldedX + square},${foldedY} ${foldedX + square},${foldedY + square}"/><line class="fold-line" x1="${foldedX}" y1="${foldedY + square}" x2="${foldedX + square}" y2="${foldedY}"/><line class="cut-line" x1="${foldedX + square}" y1="${foldedY - 7}" x2="${foldedX + square}" y2="${foldedY + square + 7}"/><text x="${foldedX + square + strip / 2}" y="${foldedY - 12}">${visual.cut}cm</text><text class="cut-label" x="${foldedX + square}" y="${foldedY + square + 24}">잘라내기</text></g>
+    <text class="stage-arrow" x="515" y="92">→</text>
+    <g class="fold-stage opened"><rect class="opened-square" x="${openedX}" y="${openedY}" width="${square}" height="${square}"/><line class="fold-line" x1="${openedX}" y1="${openedY + square}" x2="${openedX + square}" y2="${openedY}"/><text x="${openedX + square / 2}" y="${openedY - 12}">펼친 정사각형</text><text x="${openedX + square / 2}" y="${openedY + square + 20}">네 변의 합 ${visual.openedPerimeter}cm</text></g>
+  </svg><svg class="b6-ut-fold-svg b6-ut-fold-mobile" viewBox="0 0 340 490" role="img" aria-label="직사각형을 대각선으로 접어 남는 부분을 자른 뒤 정사각형으로 펼치는 과정">
+    <g class="fold-stage initial"><rect x="${mobileInitialX}" y="35" width="${initialWidth}" height="${initialHeight}"/><text x="170" y="20">가로 ?cm</text><text transform="rotate(-90 ${mobileInitialX - 12} 74)" x="${mobileInitialX - 12}" y="74">세로 ?cm</text><text x="170" y="136">처음 둘레 ?cm</text></g>
+    <text class="stage-arrow" x="170" y="174">↓</text>
+    <g class="fold-stage cut"><rect x="${mobileFoldedX}" y="195" width="${square + strip}" height="${square}"/><polygon class="fold-shade" points="${mobileFoldedX},287 ${mobileFoldedX + square},195 ${mobileFoldedX + square},287"/><line class="fold-line" x1="${mobileFoldedX}" y1="287" x2="${mobileFoldedX + square}" y2="195"/><line class="cut-line" x1="${mobileFoldedX + square}" y1="188" x2="${mobileFoldedX + square}" y2="294"/><text x="${mobileFoldedX + square + strip / 2}" y="181">${visual.cut}cm</text><text class="cut-label" x="170" y="312">남은 부분 잘라내기</text></g>
+    <text class="stage-arrow" x="170" y="350">↓</text>
+    <g class="fold-stage opened"><rect class="opened-square" x="${mobileOpenedX}" y="370" width="${square}" height="${square}"/><line class="fold-line" x1="${mobileOpenedX}" y1="462" x2="${mobileOpenedX + square}" y2="370"/><text x="170" y="358">펼친 정사각형</text><text x="170" y="484">네 변의 합 ${visual.openedPerimeter}cm</text></g>
+  </svg></div>`;
+}
+
 function unitTestVisual(visual) {
   const row = (values) => `<div class="ut-row">${values.map((value) => `<span>${escapeHtml(value)}</span>`).join("")}</div>`;
   switch (visual.layout) {
@@ -337,9 +380,9 @@ function unitTestVisual(visual) {
     case "join-pair":
       return `<div class="b6-ut b6-ut-signs">${visual.targets.map((target, index) => `<p><b>(${index + 1})</b>${visual.digits.map((value, valueIndex) => `${valueIndex ? "<i></i>" : ""}<span>${value}</span>`).join("")}<strong>= ${target}</strong></p>`).join("")}</div>`;
     case "balance-chain":
-      return `<div class="b6-ut b6-ut-balance-chain">${visual.equations.map((equation) => `<p>${escapeHtml(equation)}</p>`).join("")}<strong>${escapeHtml(visual.target)}</strong></div>`;
+      return unitTestBalanceChain(visual);
     case "fold-cut-open":
-      return `<div class="b6-ut b6-ut-fold"><span class="original"><i></i><b>처음</b></span><em>→</em><span class="folded"><i></i><b>${visual.cut}cm 잘라내기</b></span><em>→</em><span class="opened"><i></i><b>네 변 합 ${visual.openedPerimeter}cm</b></span></div>`;
+      return unitTestFoldCutOpen(visual);
     default:
       return row(["단원 테스트 그림"]);
   }

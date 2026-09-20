@@ -631,7 +631,7 @@ export const TYPES = [
   type("sign-insertion-triple-unit-test-book6", "number", "연산 기호 넣기", "같은 네 수로 세 가지 목표값 만들기", { generator: "unitTestSignTripleBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 19번" }),
   type("plus-concatenation-pair-unit-test-book6", "number", "수 이어 붙이기", "같은 다섯 수로 이어 붙인 두 식 만들기", { generator: "unitTestPlusConcatenationPairBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 21번" }),
   type("balance-chain-equivalence-unit-test-book6", "logic", "비와 양팔저울", "세 저울의 관계로 같은 무게 개수 구하기", { generator: "unitTestBalanceChainBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 22번" }),
-  type("fold-cut-open-perimeter-unit-test-book6", "geometry", "접기와 둘레", "두 번 접어 자른 뒤 처음 직사각형 둘레 찾기", { generator: "unitTestFoldCutOpenPerimeterBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 23번" }),
+  type("fold-cut-open-perimeter-unit-test-book6", "geometry", "접기와 둘레", "대각선으로 접어 자른 뒤 처음 직사각형 둘레 찾기", { generator: "unitTestFoldCutOpenPerimeterBook6", sourceMatched: true, textbookSource: "더클래식 1과정 6권 단원 테스트 23번" }),
 
   // 더클래식 1과정 7권: 180문항을 네 단계와 인쇄 문제 번호로 직접 대조했다.
   // 달력·시계, 우기기, 가로수, 팔린드롬·벤다이어그램을 풀이 구조별로 나눈다.
@@ -3982,7 +3982,7 @@ const CURRICULUM_UNIT_TEST_QUESTIONS = Object.freeze({
     { number: 20, typeId: "consecutive-sign-insertion", label: "이어진 수 사이에 더하기·빼기 넣기", verified: true, difficulty: 2 },
     { number: 21, typeId: "plus-concatenation-pair-unit-test-book6", label: "이어 붙이기로 두 식 만들기", verified: true, difficulty: 2 },
     { number: 22, typeId: "balance-chain-equivalence-unit-test-book6", label: "세 저울의 무게 관계", verified: true, difficulty: 3 },
-    { number: 23, typeId: "fold-cut-open-perimeter-unit-test-book6", label: "접어 자른 뒤 처음 둘레", verified: true, difficulty: 3 },
+    { number: 23, typeId: "fold-cut-open-perimeter-unit-test-book6", label: "대각선으로 접어 자른 뒤 처음 둘레", verified: true, difficulty: 3 },
     { number: 24, typeId: "last-number-from-digit-total", label: "쓴 숫자의 개수로 마지막 수 찾기", verified: true, difficulty: 2 },
     { number: 25, typeId: "rod-difference-ratio-unit-test-book6", label: "두 끈의 차이로 재는 횟수", verified: true, difficulty: 2 }
   ]),

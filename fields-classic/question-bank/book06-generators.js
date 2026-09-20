@@ -1341,8 +1341,10 @@ function unitTestPlusConcatenationPairBook6({ difficulty = 2 }) {
 }
 
 function unitTestBalanceChainBook6() {
-  const shapes = shuffle(["●", "■", "◆", "★"]);
-  const [circle, square, diamond, star] = shapes;
+  const circle = "●";
+  const square = "■";
+  const diamond = "◆";
+  const star = "★";
   const equations = [`${circle}${circle} = ${square}${square}${square}`, `${diamond} = ${circle}${square}`, `${star} = ${square}${diamond}${diamond}`];
   return {
     prompt: "세 양팔저울이 모두 평형입니다. 별 한 개는 네모 몇 개와 같은 무게인지 구하세요.",
@@ -1357,16 +1359,15 @@ function unitTestFoldCutOpenPerimeterBook6({ difficulty = 2 }) {
   const openedSide = randomInt(6, difficulty === 3 ? 16 : 11);
   const cut = randomInt(1, Math.max(2, Math.floor(openedSide / 3)));
   const openedPerimeter = openedSide * 4;
-  const foldedWidth = openedSide + cut;
-  const originalWidth = foldedWidth * 2;
-  const originalHeight = openedSide * 2;
+  const originalWidth = openedSide + cut;
+  const originalHeight = openedSide;
   const answer = 2 * (originalWidth + originalHeight);
   return {
-    prompt: `직사각형 색종이를 가로와 세로로 반씩 접고 ${cut}cm만큼 잘라 펼쳤습니다. 펼친 정사각형의 네 변의 합이 ${openedPerimeter}cm일 때 처음 직사각형의 둘레를 구하세요.`,
-    visual: { kind: "book6", subtype: "unit-test", layout: "fold-cut-open", cut, openedPerimeter, openedSide },
+    prompt: `직사각형 색종이를 그림처럼 대각선으로 접었더니 ${cut}cm가 남았습니다. 남은 부분을 잘라 펼친 정사각형의 둘레가 ${openedPerimeter}cm일 때 처음 직사각형의 둘레를 구하세요.`,
+    visual: { kind: "book6", subtype: "unit-test", layout: "fold-cut-open", cut, openedPerimeter, openedSide, originalWidth, originalHeight },
     answer: `${answer}cm`,
-    solution: `펼친 정사각형 한 변은 ${openedPerimeter}÷4=${openedSide}cm입니다. 자르기 전 접힌 크기는 ${foldedWidth}cm와 ${openedSide}cm이고, 처음 종이는 각각 두 배인 ${originalWidth}cm와 ${originalHeight}cm입니다. 둘레는 ${answer}cm입니다.`,
-    meta: { family: "unit-fold-cut-open", cut, openedPerimeter, openedSide, foldedWidth, originalWidth, originalHeight, answer }
+    solution: `펼친 정사각형 한 변은 ${openedPerimeter}÷4=${openedSide}cm입니다. 처음 직사각형의 세로는 ${openedSide}cm이고 가로는 ${openedSide}+${cut}=${originalWidth}cm입니다. 둘레는 (${originalWidth}+${originalHeight})×2=${answer}cm입니다.`,
+    meta: { family: "unit-fold-cut-open", cut, openedPerimeter, openedSide, originalWidth, originalHeight, answer }
   };
 }
 
