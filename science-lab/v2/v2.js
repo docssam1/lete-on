@@ -4,7 +4,8 @@ import { mountRingTower, towerModel } from './lab-ring-tower.js';
 import { mountFreeze } from './lab-freeze.js';
 import { mountHill3D } from './lab-hill3d.js';
 import { mountPond3D } from './lab-pond3d.js';
-const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D, pond: mountPond3D };
+import { mountVolcano3D } from './lab-volcano3d.js';
+const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D, pond: mountPond3D, volcano: mountVolcano3D };
 import { pageHome } from './home.js';
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
@@ -13,6 +14,8 @@ const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u0
   ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }),
   's41-u03': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03.lesson.js')),
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')) }),
+  's41-u03b': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03b.lesson.js')),
+  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')) }),
   's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),
   ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')) }) };
 const STEPS = [
@@ -150,7 +153,7 @@ function wireItem(card, it, onDone) {
   });
 }
 
-// ── 화면 뼈대 ──
+// ── 화면 뱀대 ──
 function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
   const st = store.get(u);
   $app.innerHTML = `<header class="top"><div class="wrap">
@@ -165,12 +168,17 @@ function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
   scrollTo(0, 0);
 }
 const byId = (items) => Object.fromEntries(items.map((i) => [i.id, i]));
+// 실제 사진·영상(위키미디어 공용 등 자유 이용 자료). 출처는 항상 화면에 같이 보인다.
+const videoHtml = (v) => v ? `<figure class="card media video"><h3>${esc(v.title)}</h3>
+    <video controls playsinline preload="metadata" ${v.poster ? `poster="${v.poster}"` : ''}><source src="${v.src}" type="video/webm"><source src="${v.full}" type="video/webm">이 기기에서는 영상을 재생할 수 없어요.</video>
+    <figcaption>실제 영상 · <a href="${v.page}" target="_blank" rel="noopener">${esc(v.credit)}</a></figcaption></figure>` : '';
+const galleryHtml = (g, title = '실제로 보기') => g?.length ? `<section class="card media"><h3>${esc(title)}</h3><div class="gallery">${g.map((m) => `<figure class="${m.tall ? 'tall' : ''}"><img src="${m.src}" alt="${esc(m.cap)}" loading="lazy"><figcaption>${esc(m.cap)}<small><a href="${m.page}" target="_blank" rel="noopener">${esc(m.credit)}</a></small></figcaption></figure>`).join('')}</div></section>` : '';
 
 // ① 궁금
 function stepEngage(u, L) {
   const e = L.engage, st = store.get(u);
   frame(u, L, 0, `<p class="step-label">${STEPS[0].label}</p><div id="t"></div>
-    <div id="s3d"></div>
+    <div id="s3d"></div>${videoHtml(L.media?.engage)}
     <div class="card"><h3>${esc(e.question)}</h3><div class="choices">${e.predictions.map((p) => `<button type="button" class="choice ${st.prediction === p.id ? 'sel' : ''}" data-p="${p.id}">${esc(p.text)}</button>`).join('')}</div>
     <p class="why">정답은 실험을 해 본 뒤에 알려 줄게요.</p></div>`, { next: `#/${u}/2`, nextLabel: '실험하러 가기' });
   teacher(document.getElementById('t'), e.say);
@@ -193,6 +201,7 @@ function stepExplore(u, L, mode) {
     (LABS[x.lab.kind] || mountRingTower)(document.getElementById('lab'), { ...x.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) });
   } else if (mode === 'scene') {
     mount3D(pane, L.engage.scene, { autoplay: false });
+    if (L.media?.explore) pane.insertAdjacentHTML('beforeend', videoHtml(L.media.explore));
   } else {
     pane.innerHTML = kitHtml(u, x.home);
   }
@@ -217,6 +226,7 @@ function stepExplain(u, L, items) {
     ${pred ? `<div class="card from-data">네 예상: <b>${esc(pred.text)}</b> — ${st.prediction === L.engage.answer ? '실험 결과와 같았어요!' : (L.engage.wrongNote || '실험 결과는 달랐어요. 마주 보는 면의 극이 까닭이었어요.')}</div>` : ''}
     ${(() => { const fd = typeof x.fromData === 'function' ? x.fromData(rows) : best ? `${x.fromData.replace('{floating}', best.floating)} (탑 높이 ${best.height}칸)` : ''; return fd ? `<div class="card from-data">${esc(fd)}</div>` : ''; })()}
     <p class="analogy">${esc(x.analogy)}</p>
+    ${galleryHtml(L.media?.gallery)}
     ${x.cards.map((id) => itemHtml(I[id])).join('')}
     ${itemHtml(I[x.table])}
     <h3>잠깐 확인</h3>${x.miniTest.map((id) => itemHtml(I[id])).join('')}`, { next: `#/${u}/4`, nextLabel: '영재원 문제로 넓히기' });
@@ -228,7 +238,7 @@ function stepExplain(u, L, items) {
 function stepElaborate(u, L, items) {
   const x = L.elaborate, I = byId(items);
   frame(u, L, 3, `<p class="step-label">${STEPS[3].label}</p><div id="t"></div>
-    <div class="card"><h3>${esc(x.reading.title)}</h3><p>${esc(x.reading.text)}</p></div>
+    <div class="card reading"><h3>${esc(x.reading.title)}</h3>${L.media?.reading ? `<figure class="side"><img src="${L.media.reading.src}" alt="${esc(L.media.reading.cap)}" loading="lazy"><figcaption>${esc(L.media.reading.cap)}<small>${esc(L.media.reading.credit)}</small></figcaption></figure>` : ''}<p>${esc(x.reading.text)}</p></div>
     ${x.items.map((id) => itemHtml(I[id])).join('')}
     ${x.report ? `<div class="card"><h3>탐구보고서</h3><p class="lead">실험 기록이 보고서에 자동으로 들어가 있어요. 빈칸만 내 말로 채워요.</p><a class="btn" href="#/${u}/report" style="display:inline-flex;align-items:center;text-decoration:none">보고서 쓰기</a></div>` : ''}`,
   { next: `#/${u}/5`, nextLabel: '마지막 점검' });
@@ -262,7 +272,7 @@ function stepEvaluate(u, L, items, retry = false) {
   }));
 }
 
-// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
+// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푸는다.
 function pageSub(u, L, eid) {
   const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], e = tx?.elements.find((x) => x.id === eid);
   if (!e) { location.replace('#/'); return; }
@@ -366,7 +376,7 @@ async function mount3D(el, sceneName, { autoplay }) {
 }
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
-const BOOKS = { 's41-u03': () => import('../data/book/s41-u03.book.js') };
+const BOOKS = { 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js') };
 function labBar(u, cur) {
   const b = (href, t, k) => `<a class="btn${cur === k ? ' primary' : ''}" href="${href}">${t}</a>`;
   return `<div class="bk-bar no-print">${b(`#/${u}/lab-book/student`, '교재 · 학생용', 'student')}${b(`#/${u}/lab-book/teacher`, '교재 · 강사용', 'teacher')}
@@ -395,7 +405,7 @@ async function route() {
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
-  const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar };
+  const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar };
   if (a === 'sub') return pageSub(u, L, b);
   if (!mod.lesson && !['print', 'lab-book', 'lab-class'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
   if (a === 'kit') return pageKit(u, L);
