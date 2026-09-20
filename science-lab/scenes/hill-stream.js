@@ -50,33 +50,56 @@ function terrain() {
   return m;
 }
 
-// 물: 물길을 따라가는 얇은 물띠 + 흘러내리는 물방울
-const PATH_N = 60, px = (k) => lerp(0.02, 2.5, k);
+// 물: 물길을 따라 흐르는 물띠(밝은 물결 무늬가 아래로 흘러감) + 물방울 + 흙탕물 웅덩이 + 컵에서 떨어지는 물줄기
+const PATH_N = 80, px = (k) => lerp(0.02, 2.55, k);
+const CLEAR = new THREE.Color(0x4f9fdc), MUD = new THREE.Color(0x8a7458), FOAM = new THREE.Color(0xe6f4ff);
 function water(hill) {
   const g = new THREE.Group();
-  const W = 0.1, geo = new THREE.BufferGeometry(), v = new Float32Array((PATH_N + 1) * 2 * 3), idx = [];
+  const W = 0.1, geo = new THREE.BufferGeometry(), NV = (PATH_N + 1) * 2, v = new Float32Array(NV * 3), vc = new Float32Array(NV * 3), idx = [];
   for (let k = 0; k < PATH_N; k++) { const a = k * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
-  geo.setAttribute('position', new THREE.BufferAttribute(v, 3)); geo.setIndex(idx);
-  const ribbon = new THREE.Mesh(geo, mat(0x5fa8e0, { opacity: 0.62, roughness: 0.12, side: THREE.DoubleSide }));
+  geo.setAttribute('position', new THREE.BufferAttribute(v, 3)); geo.setAttribute('color', new THREE.BufferAttribute(vc, 3)); geo.setIndex(idx);
+  const ribbon = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, transparent: true, opacity: 0.8, roughness: 0.08, metalness: 0.1, side: THREE.DoubleSide }));
   g.add(ribbon);
-  const drops = new THREE.InstancedMesh(new THREE.SphereGeometry(0.028, 8, 6), mat(0xbfe3ff, { opacity: 0.9, roughness: 0.1 }), 48);
-  const grains = new THREE.InstancedMesh(new THREE.SphereGeometry(0.022, 6, 4), mat(0x2ec4b6, { roughness: 0.8 }), 24);
-  g.add(drops, grains); g.position.y = BASE;
-  const at = (s, off = 0) => { const x = px(s), z = zc(x) + off; return [x, height(x, z, hill.userData.e, hill.userData.d) + 0.018, z]; };
-  g.userData.refresh = () => {
-    for (let k = 0; k <= PATH_N; k++) { const s = k / PATH_N, w = W * (0.7 + 0.9 * s);
-      const [x1, y1, z1] = at(s, -w), [x2, y2, z2] = at(s, w); v.set([x1, y1, z1, x2, y2, z2], k * 6); }
+  const ND = 90, drops = new THREE.InstancedMesh(new THREE.SphereGeometry(0.022, 8, 6), mat(0xd8eeff, { opacity: 0.7, roughness: 0.05 }), ND);
+  const NG = 30, grains = new THREE.InstancedMesh(new THREE.SphereGeometry(0.024, 6, 4), mat(0x2ec4b6, { roughness: 0.8 }), NG);
+  const NF = 14, fall = new THREE.InstancedMesh(new THREE.SphereGeometry(0.035, 8, 6), mat(0x9fd0f5, { opacity: 0.8, roughness: 0.05 }), NF);
+  const pool = new THREE.Mesh(new THREE.CircleGeometry(1, 40), mat(0x6f8fa8, { opacity: 0.6, roughness: 0.05 }));
+  pool.rotation.x = -Math.PI / 2; pool.scale.set(0.01, 0.01, 1);
+  g.add(drops, grains, fall, pool); g.position.y = BASE;
+  const at = (s, off = 0) => { const x = px(s), z = zc(x) + off; return [x, height(x, z, hill.userData.e, hill.userData.d) + 0.02, z]; };
+  const U = g.userData; U.front = 0; U.carry = 0; U.t = 0;
+  U.refresh = () => {
+    for (let k = 0; k <= PATH_N; k++) {
+      const s = Math.min(k / PATH_N, U.front), w = W * (0.7 + 1.0 * s) * (k / PATH_N > U.front ? 0.2 : 1);
+      const [x1, y1, z1] = at(s, -w), [x2, y2, z2] = at(s, w); v.set([x1, y1, z1, x2, y2, z2], k * 6);
+    }
     geo.attributes.position.needsUpdate = true; geo.computeVertexNormals();
+    const [fx, fy, fz] = at(0.96); pool.position.set(fx, fy - 0.008, fz);
+    const r = Math.max(0.01, (U.front - 0.92) / 0.08) * (0.2 + 0.1 * U.carry); pool.scale.set(r * 1.4, r, 1);
+    pool.material.color.copy(CLEAR).lerp(MUD, U.carry * 0.8);
   };
-  const M = new THREE.Matrix4(), seeds = Array.from({ length: 72 }, (_, i) => [hash(i, 1), (hash(i, 2) - 0.5) * 0.12]);
-  g.userData.tick = (t, carry) => {
-    for (let i = 0; i < 48; i++) { const [s0, o] = seeds[i], s = (s0 + t * 0.32) % 1; const [x, y, z] = at(s, o); M.makeTranslation(x, y + 0.01, z); drops.setMatrixAt(i, M); }
+  const M = new THREE.Matrix4(), S = new THREE.Vector3(), c = new THREE.Color(), seeds = Array.from({ length: ND + NG }, (_, i) => [hash(i, 1), (hash(i, 2) - 0.5) * 0.14]);
+  const LIP = new THREE.Vector3(-0.05, HH + 0.5, 0), PEAK = new THREE.Vector3(0.02, HH + 0.02, 0);
+  U.tick = (dt) => {
+    U.t += dt; const t = U.t;
+    // 물결 무늬: 밝은 줄이 위에서 아래로 흘러간다. 흙을 깎는 동안은 흙탕물 색.
+    const base = c.copy(CLEAR).lerp(MUD, U.carry * 0.75), foam = FOAM.clone().lerp(MUD, U.carry * 0.4);
+    for (let k = 0; k <= PATH_N; k++) {
+      const s = k / PATH_N, wave = Math.max(0, Math.sin(s * 46 - t * 9)) ** 3 * 0.7 + Math.max(0, Math.sin(s * 23 - t * 6 + 1.3)) ** 4 * 0.3;
+      const col = base.clone().lerp(foam, wave);
+      for (const j of [0, 1]) vc.set([col.r, col.g, col.b], (k * 2 + j) * 3);
+    }
+    geo.attributes.color.needsUpdate = true;
+    for (let i = 0; i < ND; i++) { const [s0, o] = seeds[i], s = (s0 + t * 0.55) % 1;
+      if (s > U.front) { M.makeScale(0, 0, 0); } else { const [x, y, z] = at(s, o * (0.6 + s)); M.makeTranslation(x, y + 0.012, z); }
+      drops.setMatrixAt(i, M); }
     drops.instanceMatrix.needsUpdate = true;
-    for (let i = 0; i < 24; i++) { const [s0, o] = seeds[48 + i], s = (s0 + t * 0.18) % 1; const [x, y, z] = at(s, o * 0.8);
-      M.makeTranslation(x, y + 0.012, z).scale(new THREE.Vector3(carry, carry, carry)); grains.setMatrixAt(i, M); }
+    for (let i = 0; i < NG; i++) { const [s0, o] = seeds[ND + i], s = (s0 + t * 0.3) % 1;
+      const k = s > U.front ? 0 : U.carry; const [x, y, z] = at(s, o * 0.8); M.makeTranslation(x, y + 0.014, z).scale(S.set(k, k, k)); grains.setMatrixAt(i, M); }
     grains.instanceMatrix.needsUpdate = true;
+    for (let i = 0; i < NF; i++) { const q = (i / NF + t * 1.6) % 1; const p = LIP.clone().lerp(PEAK, q); p.y -= q * q * 0.1; M.makeTranslation(p.x, p.y, p.z); fall.setMatrixAt(i, M); }
+    fall.instanceMatrix.needsUpdate = true;
   };
-  g.userData.carry = 0;
   return g;
 }
 
@@ -94,24 +117,23 @@ export default {
     const wall = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.2, 0.46, 32, 1, true), mat(0xf2f2ee, { roughness: 0.6, side: THREE.DoubleSide }));
     const inside = new THREE.Mesh(new THREE.CircleGeometry(0.2, 24), mat(0x5fa8e0, { opacity: 0.8 })); inside.rotation.x = -Math.PI / 2; inside.position.y = 0.02;
     cup.add(wall, inside); cup.rotation.z = -0.75; cup.position.set(-0.28, BASE + HH + 0.62, 0); cup.traverse((o) => { o.castShadow = true; }); world.add('cup', cup);
-    const pour = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.04, 0.5, 10), mat(0x7fbde8, { opacity: 0.7, roughness: 0.1 })); pour.position.set(-0.02, BASE + HH + 0.25, 0); world.add('pour', pour);
     const lbQ = label('색 모래는 어디로 갈까?', { size: 0.3 }); lbQ.position.set(0.5, 2.55, 0); world.add('lbQ', lbQ);
     const lbCut = label('위쪽은 깎여요 — 침식', { size: 0.28 }); lbCut.position.set(0.1, 2.35, 0); world.add('lbCut', lbCut);
     const lbMove = label('흙이 물을 따라 옮겨져요 — 운반', { size: 0.26 }); lbMove.position.set(1.2, 1.75, 0); world.add('lbMove', lbMove);
     const lbPile = label('아래쪽에 쌓여요 — 퇴적', { size: 0.28 }); lbPile.position.set(2.1, 0.95, 0); world.add('lbPile', lbPile);
     const down = arrow([0.35, BASE + 1.55, 0.55], [1.9, BASE + 0.45, 0.55], P.red, 0.035); world.add('down', down);
-    let t = 0;
-    return { update(dt) { if (!wat.visible) return; t += dt; wat.userData.tick(t, wat.userData.carry); } };
+    return { update(dt) { if (wat.visible) wat.userData.tick(dt); } };
   },
   beats: [
     { text: '쟁반에 흙 언덕을 만들고, 꼭대기에 색 모래를 뿌려요.', show: ['tray', 'hill', 'lbQ'], dur: 4,
-      reset(o) { o.hill.userData.set(0, 0); o.water.userData.carry = 0; o.water.userData.refresh(); } },
-    { text: '컵으로 언덕 위쪽에서 물을 천천히 흘려보내요.', show: ['cup', 'pour', 'water'], dur: 4 },
+      reset(o) { o.hill.userData.set(0, 0); Object.assign(o.water.userData, { carry: 0, front: 0 }); o.water.userData.refresh(); } },
+    { text: '컵으로 언덕 위쪽에서 물을 천천히 흘려보내요. 물이 언덕을 타고 흘러내려요.', show: ['cup', 'water'], dur: 5,
+      anim(p, o) { o.water.userData.front = p; o.water.userData.refresh(); } },
     { text: '물이 흐르면서 위쪽의 흙과 색 모래를 깎아 내요.', show: ['lbCut'], hide: ['lbQ'], dur: 5,
-      anim(p, o) { o.hill.userData.set(p, 0); o.water.userData.carry = p; o.water.userData.refresh(); } },
+      anim(p, o) { o.hill.userData.set(p, 0); Object.assign(o.water.userData, { carry: p, front: 1 }); o.water.userData.refresh(); } },
     { text: '깎인 흙은 흐르는 물을 따라 아래로 옮겨져요.', show: ['down', 'lbMove'], hide: ['lbCut'], dur: 5,
-      anim(p, o) { o.hill.userData.set(1, 0.35 * p); o.water.userData.carry = 1; o.water.userData.refresh(); } },
-    { text: '물이 느려지는 아래쪽에 흙과 색 모래가 쌓여요.', show: ['lbPile'], hide: ['lbMove', 'cup', 'pour', 'water', 'down'], dur: 6,
-      anim(p, o) { o.hill.userData.set(1, lerp(0.35, 1, p)); } },
+      anim(p, o) { o.hill.userData.set(1, 0.35 * p); Object.assign(o.water.userData, { carry: 1, front: 1 }); o.water.userData.refresh(); } },
+    { text: '물이 느려지는 아래쪽에 흙과 색 모래가 쌓여요.', show: ['lbPile'], hide: ['lbMove', 'down'], dur: 6,
+      anim(p, o) { o.hill.userData.set(1, lerp(0.35, 1, p)); o.water.userData.refresh(); } },
   ],
 };
