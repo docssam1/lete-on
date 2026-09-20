@@ -151,7 +151,7 @@ function wireItem(card, it, onDone) {
   });
 }
 
-// ── 화면 돼대 ──
+// ── 화면 뼈대 ──
 function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
   const st = store.get(u);
   $app.innerHTML = `<header class="top"><div class="wrap">
@@ -209,7 +209,7 @@ function kitHtml(u, h) {
   const link = (m) => m.buy.coupangUrl || `https://www.coupang.com/np/search?q=${encodeURIComponent(m.buy.query)}`;
   return `<div class="card"><h3>${esc(h.title)} <span class="level">${h.minutes}분 · ${h.guardian ? '보호자와 함께' : '혼자 해도 돼요'}</span></h3>
     <div class="kit-qr"><img src="${h.qr}" alt="준비물 페이지로 가는 QR"><p class="lead">부모님 휴대폰으로 QR을 찍으면 준비물을 바로 살 수 있어요. 결제는 부모님이 해요.</p></div></div>
-    <div class="card"><h3>준비물</h3>${h.materials.map((m) => `<div class="mat"><span class="name">${esc(m.name)} <small class="lead">${esc(m.qty)}</small></span>${m.have === 'home' ? '<span class="tag">집에 있음</span>' : `<a class="buy" href="${esc(link(m))}" target="_blank" rel="noopener">쿰팡에서 찾기</a>`}</div>`).join('')}
+    <div class="card"><h3>준비물</h3>${h.materials.map((m) => `<div class="mat"><span class="name">${esc(m.name)} <small class="lead">${esc(m.qty)}</small></span>${m.have === 'home' ? '<span class="tag">집에 있음</span>' : `<a class="buy" href="${esc(link(m))}" target="_blank" rel="noopener">쿠팡에서 찾기</a>`}</div>`).join('')}
     ${buy.length ? '<p class="lead" style="margin-top:8px">로켓배송 표시가 있는 상품을 고르면 배송비 부담이 적어요.</p>' : ''}</div>
     <div class="card"><h3>순서</h3><ol class="steps">${h.steps.map((s) => `<li>${esc(s)}</li>`).join('')}</ol></div>
     <div class="card safety"><h3>안전</h3><ul>${h.safety.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>`;
@@ -244,7 +244,7 @@ function stepElaborate(u, L, items) {
   $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id]));
 }
 
-// ⑤ 점검 — 관문 2/3, 다시 풀기는 보기 섮기
+// ⑤ 점검 — 관문 2/3, 다시 풀기는 보기 섞기
 function shuffleItem(it) {
   if (it.answerContract.type !== 'single-choice') return it;
   const order = it.choices.map((_, i) => i).sort(() => Math.random() - 0.5);
@@ -270,7 +270,7 @@ function stepEvaluate(u, L, items, retry = false) {
   }));
 }
 
-// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푸다.
+// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
 function pageSub(u, L, eid) {
   const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], e = tx?.elements.find((x) => x.id === eid);
   if (!e) { location.replace('#/'); return; }
