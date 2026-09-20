@@ -950,10 +950,12 @@ function texToPlain(tex){
 }
 
 function renderKaTeX(tex, el){
+  /* 표기 다듬기 — texDisplay 를 거치지 않고 바로 그리는 자리(정답지·예시 등)도 있다. */
+  const t = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
   if(window.katex){
-    try{ katex.render(tex, el, {throwOnError:false}); return; }catch(_){}
+    try{ katex.render(t, el, {throwOnError:false}); return; }catch(_){}
   }
-  el.textContent = texToPlain(tex);
+  el.textContent = texToPlain(t);
 }
 
 function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -3015,7 +3017,10 @@ function wrapHangul(tex){
    \square 가 남지 않는다. */
 const WRITE_BOX = '\\boxed{\\rule[-0.45em]{0pt}{1.5em}\\kern{0.4em}\\phantom{00}\\kern{0.4em}}';
 function texDisplay(tex){
-  const t = wrapHangul(tex).replace(/\\square/g, WRITE_BOX);
+  /* 표기 다듬기(2026-09-20) — `1x`·`+ 0x^2`·`x--59` 를 그리기 직전에 정리한다.
+     생성기 191개를 따로 고치는 대신 여기 한 곳에서(engine/tex-tidy.js 주석 참조). */
+  const tidy = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
+  const t = wrapHangul(tidy).replace(/\\square/g, WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 

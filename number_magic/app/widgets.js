@@ -22,11 +22,13 @@ function art(e){
 }
 
 function renderKaTeX(tex){
+  /* 표기 다듬기(engine/tex-tidy.js) — 화면 위젯도 인쇄와 같은 식을 보여 준다. */
+  const t = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
   if(window.katex){
-    try{ return katex.renderToString(tex,{throwOnError:false,displayMode:false}); }
+    try{ return katex.renderToString(t,{throwOnError:false,displayMode:false}); }
     catch(e){}
   }
-  return '<span>'+esc(tex)+'</span>';
+  return '<span>'+esc(t)+'</span>';
 }
 
 function buildNumpad(container, cb, opts){

@@ -615,7 +615,7 @@ function showLineageBadgeOverlay(key){
 /* ---------- 유틸 ---------- */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function math(tex,el){try{katex.render(tex,el,{throwOnError:false,displayMode:false});}catch(e){el.textContent=tex;}}
+function math(tex,el){const t=(window.NM_TEX&&window.NM_TEX.tidy)?window.NM_TEX.tidy(tex):tex;try{katex.render(t,el,{throwOnError:false,displayMode:false});}catch(e){el.textContent=t;}}
 function renderMath(root){(root||document).querySelectorAll('[data-tex]').forEach(el=>{if(el.dataset.done)return;math(el.getAttribute('data-tex'),el);el.dataset.done='1';});}
 /* □ 자리에 입력값을 바로 써 넣기(2026-09-09, 원장 "?에 수를 쓰면 실제 답의 위치에 답이
    써져야지"). 그동안 타이핑한 값은 수식 밑 별도 화면(.nm-numpad-screen)에만 떴고, 수식의

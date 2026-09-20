@@ -27,6 +27,9 @@ ctx.NM_RNG = ctx.window.NM_RNG; ctx.NM_TGEN = ctx.window.NM_TGEN = {};
 fs.readdirSync(path.join(ROOT, 'engine/threads')).filter(f => f.endsWith('.js'))
   .forEach(f => { try { vm.runInContext(fs.readFileSync(path.join(ROOT, 'engine/threads', f), 'utf8'), ctx); } catch (e) { console.error('load', f, e.message); } });
 vm.runInContext(fs.readFileSync(path.join(ROOT, 'data/threads.js'), 'utf8'), ctx);
+/* 다듬기(engine/tex-tidy.js)를 거친 뒤의 식을 본다 — 인쇄·화면이 그리는 것과 같은 문자열이다. */
+vm.runInContext(fs.readFileSync(path.join(ROOT, 'engine/tex-tidy.js'), 'utf8'), ctx);
+const tidy = ctx.window.NM_TEX.tidy;
 const TH = ctx.window.NM_THREADS, GEN = ctx.NM_TGEN;
 
 /* 0 을 일부러 보여 주는 유형 — 자릿값 분해·자리합 판정 */
@@ -67,7 +70,8 @@ for (const id of Object.keys(TH)) {
     const hit = { coef: 0, sign: 0, exCoef: '', exSign: '' };
     for (let i = 0; i < N; i++) {
       let p; try { p = g(Object.assign({}, lv.params || {}), rng); } catch (e) { break; }
-      for (const t of texesOf(p)) {
+      for (const t0 of texesOf(p)) {
+        const t = tidy(t0);
         const c = clean(t);
         const coefBad = COEF_ONE.test(c) || COEF_ZERO.test(c) || (hasVar(c) && ZERO_TERM.test(c));
         if (coefBad)          { hit.coef++; if (!hit.exCoef) hit.exCoef = t.slice(0, 54); }
