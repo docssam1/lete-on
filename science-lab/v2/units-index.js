@@ -1,4 +1,5 @@
 import { taxonomy as tx41u01 } from '../data/units/s41-u01.taxonomy.js';
+import { taxonomy as tx41u02 } from '../data/units/s41-u02.taxonomy.js';
 
 // 탐구 지도의 정거장 = Drive `과학 단원평가` 폴더의 단원(data/source-toc.md §1). 중간·기말평가는 제외.
 // ready: 5E 화면이 있는 단원. 새 단원을 만들면 v2.js UNITS와 여기 ready 둘 다 등록한다.
@@ -14,4 +15,9 @@ export const SEMS = [
 ].map((s) => ({ ...s, units: s.units.map((title, i) => ({ id: `s${s.sem.replace('-', '')}-u${String(i + 1).padStart(2, '0')}`, no: i + 1, title })) }));
 
 // subs = 소단원(교육과정 내용 요소). 소단원 화면 #/<단원>/sub/<E>
-export const READY = { 's41-u01': { hero: '고리 자석 탑', subs: tx41u01.elements.map((e) => ({ ...e, types: tx41u01.types.filter((t) => t.element === e.id).length })) } };
+const subsOf = (tx) => tx.elements.map((e) => ({ ...e, types: tx.types.filter((t) => t.element === e.id).length }));
+// lesson:false = 5단계 화면 준비 전(소단원 유형별 문제만 열림)
+export const READY = {
+  's41-u01': { hero: '고리 자석 탑', subs: subsOf(tx41u01) },
+  's41-u02': { subs: subsOf(tx41u02), lesson: false },
+};
