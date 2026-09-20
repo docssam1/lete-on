@@ -119,7 +119,7 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .ad-how i { flex: none; width: 12mm; height: 12mm; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 800; color: #f3d48a; background: radial-gradient(circle at 35% 30%, #c9463a, #7a1414); }
 .ad-how li:nth-child(2) i { background: radial-gradient(circle at 35% 30%, #ffae5c, #d45f12); color: #fff; }
 .seal { display: block; width: 36mm; margin: 4mm auto 0; filter: drop-shadow(0 1.5mm 2mm rgba(60, 10, 10, .45)); transform: rotate(-8deg); }
-/* 뒷표지 */
+/* 뒤표지 */
 .bc-in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 22mm; }
 .bc-k { font: 700 11pt "Cinzel", serif; letter-spacing: .3em; color: var(--gold); margin: 0; }
 .ad-page.back h2 { font: 800 27pt/1.35 var(--serif); margin: 8mm 0 6mm; background: linear-gradient(100deg, #c9953a, #fff2c4, #d9a441); -webkit-background-clip: text; background-clip: text; color: transparent; }
