@@ -1,11 +1,14 @@
 // docssam 과학 탐구 랩 v2 — 단원 = 5E 한 단계 한 화면 + 준비물(QR) + 탐구보고서 + 교재 인쇄.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { mountRingTower, towerModel } from './lab-ring-tower.js';
+import { mountFreeze } from './lab-freeze.js';
+const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze };
 import { pageHome } from './home.js';
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
   ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')) }),
-  's41-u02': async () => ({ ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }) };
+  's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
+  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }) };
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },
@@ -89,7 +92,7 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
       : `<div class="short"><input type="text" aria-label="내 답" autocomplete="off"><button type="button" class="btn" data-act="check-short">확인</button></div><p class="why" hidden></p>`;
   } else if (ac.type === 'table-fill') {
     const cols = ac.columns;
-    body = `<table class="tbl tfill"><thead><tr><th>물체</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${ac.rows.map((r, ri) => `<tr><td>${esc(r.label)}</td>${cols.map((c, ci) => print
+    body = `<table class="tbl tfill"><thead><tr><th>${esc(ac.rowHead || '물체')}</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${ac.rows.map((r, ri) => `<tr><td>${esc(r.label)}</td>${cols.map((c, ci) => print
       ? `<td>${show ? `<span class="ans">${esc(r.answer[ci])}</span>` : ''}</td>`
       : `<td><select data-r="${ri}" data-c="${ci}" aria-label="${esc(r.label)} ${esc(c)}"><option value="">고르기</option>${ac.options[c].map((o) => `<option>${esc(o)}</option>`).join('')}</select></td>`).join('')}</tr>`).join('')}</tbody></table>
       ${print ? '' : '<button type="button" class="btn" data-act="check-table">맞았는지 보기</button><p class="why" hidden></p>'}`;
@@ -181,9 +184,9 @@ function stepExplore(u, L, mode) {
   const pane = document.getElementById('pane');
   if (mode === 'lab') {
     pane.innerHTML = `<div class="card"><p><b>${esc(x.lab.goal)}</b></p><div id="lab"></div></div>`;
-    mountRingTower(document.getElementById('lab'), { rings: x.lab.rings, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) });
+    (LABS[x.lab.kind] || mountRingTower)(document.getElementById('lab'), { ...x.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) });
   } else if (mode === 'scene') {
-    mount3D(pane, 'ring-tower', { autoplay: false });
+    mount3D(pane, L.engage.scene, { autoplay: false });
   } else {
     pane.innerHTML = kitHtml(u, x.home);
   }
@@ -205,8 +208,8 @@ function stepExplain(u, L, items) {
   const best = rows.reduce((a, r) => (!a || r.height > a.height ? r : a), null);
   const pred = L.engage.predictions.find((p) => p.id === st.prediction);
   frame(u, L, 2, `<p class="step-label">${STEPS[2].label}</p><div id="t"></div>
-    ${pred ? `<div class="card from-data">네 예상: <b>${esc(pred.text)}</b> — ${st.prediction === L.engage.answer ? '실험 결과와 같았어요!' : '실험 결과는 달랐어요. 마주 보는 면의 극이 까닭이었어요.'}</div>` : ''}
-    ${best ? `<div class="card from-data">${esc(x.fromData.replace('{floating}', best.floating))} (탑 높이 ${best.height}칸)</div>` : ''}
+    ${pred ? `<div class="card from-data">네 예상: <b>${esc(pred.text)}</b> — ${st.prediction === L.engage.answer ? '실험 결과와 같았어요!' : (L.engage.wrongNote || '실험 결과는 달랐어요. 마주 보는 면의 극이 까닭이었어요.')}</div>` : ''}
+    ${(() => { const fd = typeof x.fromData === 'function' ? x.fromData(rows) : best ? `${x.fromData.replace('{floating}', best.floating)} (탑 높이 ${best.height}칸)` : ''; return fd ? `<div class="card from-data">${esc(fd)}</div>` : ''; })()}
     <p class="analogy">${esc(x.analogy)}</p>
     ${x.cards.map((id) => itemHtml(I[id])).join('')}
     ${itemHtml(I[x.table])}
@@ -281,7 +284,7 @@ function reportAuto(u, L) {
     'engage.prediction': pred ? `${pred.text}(이)라고 예상했어요.` : '',
     'explore.home.materials': h.materials.map((m) => `${m.name} ${m.qty}`).join(', '),
     'explore.home.steps': h.steps.map((s, i) => `${i + 1}. ${s}`).join('\n'),
-    'explore.lab.table': rows.length ? rows.map((r) => `${r.shape} → 떠 있는 층 ${r.floating}, 높이 ${r.height}칸`).join('\n') : '',
+    'explore.lab.table': rows.length ? rows.map((r) => (L.explore.lab.rowText ? L.explore.lab.rowText(r) : `${r.shape} → 떠 있는 층 ${r.floating}, 높이 ${r.height}칸`)).join('\n') : '',
   };
 }
 function pageReport(u, L) {
@@ -311,11 +314,11 @@ function pageBook(u, L, items, mode) {
       ${itemHtml(I[L.explain.table], { print: true, show })}</section>
     <section class="page page-break"><h2>실험 — ${esc(h.title)}</h2>
       <p><b>알아볼 것</b> ${esc(L.engage.question)}</p>
-      <p><b>원리</b> 같은 극끼리는 밀어 내고 다른 극끼리는 끌어당겨요(개념 정리 쪽).</p>
+      <p><b>원리</b> ${esc(L.explain.principle || '같은 극끼리는 밀어 내고 다른 극끼리는 끌어당겨요(개념 정리 쪽).')}</p>
       <div class="kit-qr"><img src="${h.qr}" alt="준비물 QR" style="width:30mm;height:30mm"><div><b>준비물</b><ul>${h.materials.map((m) => `<li>${esc(m.name)} ${esc(m.qty)}${m.have === 'buy' ? ' (QR로 구매)' : ''}</li>`).join('')}</ul></div></div>
       <h3>순서</h3><ol class="steps">${h.steps.map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
       <h3>안전</h3><ul>${h.safety.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
-      <h3>결과 기록</h3><table class="tbl"><thead><tr>${L.explore.lab.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${[1, 2, 3, 4].map(() => '<tr><td>&nbsp;</td><td></td><td></td></tr>').join('')}</tbody></table></section>
+      <h3>결과 기록</h3><table class="tbl"><thead><tr>${L.explore.lab.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${[1, 2, 3, 4].map(() => `<tr>${L.explore.lab.columns.map(() => '<td>&nbsp;</td>').join('')}</tr>`).join('')}</tbody></table></section>
     <section class="page page-break rep-print"><h2>탐구보고서</h2>${L.report.sections.map((s) => `<h3>${esc(s.label)}</h3><div class="ans-line"></div><div class="ans-line"></div>`).join('')}</section>
     <section class="page page-break"><h2>문제 — 교과</h2>${qs(kyo)}</section>
     <section class="page page-break"><h2>문제 — 영재성</h2>${qs(yeong)}</section>`;
