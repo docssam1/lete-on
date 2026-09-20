@@ -191,3 +191,8 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .card.reading figure.side img { width: 100%; border-radius: 10px; display: block; }
 .card.reading::after { content: ''; display: block; clear: both; }
 @media (max-width: 480px) { .card.reading figure.side { float: none; width: 100%; margin: 0 0 8px; } .gallery { grid-template-columns: 1fr 1fr; } }
+/* 앱 안 브라우저 안내 띄 */
+.inapp-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; display: flex; align-items: center; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: #1E3A78; color: #fff; font-size: 14px; box-shadow: 0 -6px 20px rgba(0, 0, 0, .35); }
+.inapp-bar p { margin: 0; flex: 1; line-height: 1.35; }
+.inapp-bar button { border: 0; border-radius: 999px; background: #ffb24a; color: #201202; font-weight: 800; padding: 10px 14px; min-height: 44px; cursor: pointer; }
+.inapp-bar button.ghost { background: rgba(255, 255, 255, .15); color: #fff; min-width: 44px; padding: 10px; }
