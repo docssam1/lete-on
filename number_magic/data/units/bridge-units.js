@@ -455,7 +455,7 @@ window.NM_UNITS['T-FR2'] = {
           zh:'一个蛋糕切4块。有<b>7块</b>是几个蛋糕？4块拼成<b>一整个</b>，还剩3块→<b>1又3/4</b>！像7/4这样分子≥分母的叫<b>假分数</b>，写成"1又3/4"的叫<b>带分数</b>。'},
         mathSteps:['\\dfrac{7}{4}',{ko:'4조각 = 1판, 3조각 남음',en:'\\text{4 slices = 1 pizza, 3 left}',zh:'4块 = 1个，剩3块'},'= 1\\dfrac{3}{4}'],
         result:{ko:'같은 양이에요! 옷만 갈아입은 것.',en:'The same amount — just a change of clothes!',zh:'同一个量——只是换了衣服！'},
-        book:{ko:'가분수→대분수는 나눗셈: 7÷4=1…3 → 몫이 정수, 나머지가 분자!',en:'Improper→mixed is division: 7÷4=1 r3 → quotient is the whole, remainder the numerator!',zh:'假分数→带分数用除法：7÷4=1……3→商是整数部分，余数是分子！'} },
+        book:{ko:'가분수→대분수는 나눗셈: 7÷4=1…3 → 몫이 자연수, 나머지가 분자!',en:'Improper→mixed is division: 7÷4=1 r3 → quotient is the whole, remainder the numerator!',zh:'假分数→带分数用除法：7÷4=1……3→商是整数部分，余数是分子！'} },
       { tag:{ko:'② 나눗셈으로 변신',en:'2) Transform by division',zh:'② 用除法变身'},
         head:{ko:'가분수→대분수: 분자÷분모!',en:'Improper→mixed: top ÷ bottom!',zh:'假分数→带分数：分子÷分母！'},
         desc:{ko:'몫과 나머지를 배웠으니 이제 써먹을 시간! <b>분자÷분모</b>를 하면 몫이 "몇 판", 나머지가 "남은 조각". 9/4라면 9÷4=2…1이니 <b>2와 1/4</b>. 나머지 나눗셈이 분수 나라에서 이렇게 다시 만나요!',
@@ -465,15 +465,15 @@ window.NM_UNITS['T-FR2'] = {
         result:{ko:'배운 마법은 꼭 다시 쓰여요 — 나머지 나눗셈처럼!',en:'Old magic always returns — like remainder division!',zh:'学过的魔法总会再用上——就像余数除法！'},
         book:null },
       { tag:{ko:'③ 반대로 변신',en:'3) Transform back',zh:'③ 反向变身'},
-        head:{ko:'대분수→가분수: 정수×분모+분자!',en:'Mixed→improper: whole×bottom+top!',zh:'带分数→假分数：整数×分母+分子！'},
-        desc:{ko:'2와 1/4을 가분수로 되돌리려면? 판 2개는 조각 <b>2×4=8개</b>, 더하기 낱조각 1개 = <b>9조각</b> → 9/4! 공식: <b>정수×분모+분자</b>가 새 분자. 계산할 땐 가분수가, 크기를 느낄 땐 대분수가 편해요.',
+        head:{ko:'대분수→가분수: 자연수×분모+분자!',en:'Mixed→improper: whole×bottom+top!',zh:'带分数→假分数：整数×分母+分子！'},
+        desc:{ko:'2와 1/4을 가분수로 되돌리려면? 판 2개는 조각 <b>2×4=8개</b>, 더하기 낱조각 1개 = <b>9조각</b> → 9/4! 공식: <b>자연수×분모+분자</b>가 새 분자. 계산할 땐 가분수가, 크기를 느낄 땐 대분수가 편해요.',
           en:'Turn 2¼ back: 2 cakes are <b>2×4=8 pieces</b>, plus 1 loose piece = <b>9</b> → 9/4! Formula: <b>whole×bottom+top</b> gives the new numerator. Improper is handy for computing; mixed for sensing size.',
           zh:'把2又1/4变回去：2个蛋糕是<b>2×4=8块</b>，加1块散的＝<b>9块</b>→9/4！公式：<b>整数×分母+分子</b>＝新分子。计算用假分数方便，感受大小用带分数直观。'},
         mathSteps:['2\\dfrac{1}{4}','2 \\times 4 + 1 = 9','= \\dfrac{9}{4}'],
         result:{ko:'두 방향 다 자유자재로 — 분수 변신술 완성!',en:'Both directions mastered — transformation complete!',zh:'两个方向都熟练——分数变身术完成！'},
         book:null }
     ],
-    rule:{ ko:'① 가분수(분자≥분모) ↔ 대분수(정수+진분수) ② 가→대: 분자÷분모(몫…나머지) ③ 대→가: 정수×분모+분자',
+    rule:{ ko:'① 가분수(분자≥분모) ↔ 대분수(자연수+진분수) ② 가→대: 분자÷분모(몫…나머지) ③ 대→가: 자연수×분모+분자',
       en:'① Improper (top≥bottom) ↔ mixed (whole+proper) ② Improper→mixed: divide top by bottom ③ Mixed→improper: whole×bottom+top',
       zh:'① 假分数(分子≥分母)↔带分数(整数+真分数) ② 假→带：分子÷分母 ③ 带→假：整数×分母+分子' }
   },
@@ -668,7 +668,7 @@ window.NM_UNITS['T-DV4'] = {
         desc:{ko:'48과 36의 최대공약수는? 직접 약수 찾기엔 오래 걸려요. <b>유클리드 호제법</b>: ①큰 수 ÷ 작은 수의 나머지를 구하고 ②나머지가 0이 될 때까지 반복! <b>48 = 36×1 + 12 → 36 = 12×3 + 0</b> → 최대공약수 = <b>12</b>!',
           en:'GCD of 48 and 36? Finding all factors takes too long. <b>Euclidean algorithm</b>: ① find the remainder of big÷small, ② repeat until remainder=0! <b>48 = 36×1+12 → 36 = 12×3+0</b> → GCD = <b>12</b>!',
           zh:'48和36的最大公因数？直接找因数太慢。<b>辗转相除法</b>：①求大数÷小数的余数，②余数为0时停止！<b>48=36×1+12→36=12×3+0</b>→最大公因数=<b>12</b>！'},
-        mathSteps:['48 ÷ 36 = 1 ··· 12','36 ÷ 12 = 3 ··· 0','GCD(48, 36) = 12'],
+        mathSteps:['48 ÷ 36 = 1 ··· 12','36 ÷ 12 = 3 ··· 0',{ko:'최대공약수(48, 36) = 12',en:'\\gcd(48, 36) = 12',zh:'最大公因数(48, 36) = 12'}],
         result:{ko:'나머지가 0이 될 때 마지막 나누는 수 = 최대공약수!',en:'The last divisor before remainder=0 is the GCD!',zh:'余数变为0时的最后除数＝最大公因数！'},
         book:null },
       { tag:{ko:'③ 최소공배수',en:'3) LCM',zh:'③ 最小公倍数'},
@@ -676,7 +676,7 @@ window.NM_UNITS['T-DV4'] = {
         desc:{ko:'공배수는 두 수 모두의 배수. 4의 배수: 4,8,12,16,20,<b>24</b>… 6의 배수: 6,12,18,<b>24</b>… 공배수: 12, 24, 36… 그 중 가장 작은 <b>12 = 최소공배수</b>! 공식: <b>최소공배수 = a × b ÷ 최대공약수</b>. 4×6÷2 = <b>12</b>!',
           en:'Common multiples appear in both lists. Multiples of 4: 4,8,12… Multiples of 6: 6,12,18… First shared: <b>12 = LCM</b>! Formula: <b>LCM = a × b ÷ GCD</b>. 4×6÷2 = <b>12</b>!',
           zh:'公倍数是两个数共同的倍数。4的倍数：4、8、12……6的倍数：6、12、18……最小公倍数：<b>12</b>！公式：<b>最小公倍数 = a × b ÷ 最大公因数</b>。4×6÷2 = <b>12</b>！'},
-        mathSteps:['GCD(4, 6) = 2','LCM = 4 × 6 ÷ 2','= 12'],
+        mathSteps:[{ko:'최대공약수(4, 6) = 2',en:'\\gcd(4, 6) = 2',zh:'最大公因数(4, 6) = 2'},{ko:'최소공배수 = 4 × 6 ÷ 2',en:'\\text{lcm} = 4 \\times 6 \\div 2',zh:'最小公倍数 = 4 × 6 ÷ 2'},'= 12'],
         result:{ko:'최소공배수 = 두 수의 곱 ÷ 최대공약수!',en:'LCM = product of two numbers ÷ GCD!',zh:'最小公倍数＝两数之积÷最大公因数！'},
         book:null }
     ],
@@ -686,9 +686,9 @@ window.NM_UNITS['T-DV4'] = {
   },
   check:{
     fills:[
-      { tex:'\\gcd(12,\\,18) = \\square', answer:6,
+      { tex:{ko:'\\text{최대공약수}(12,\\,18) = \\square',en:'\\gcd(12,\\,18) = \\square',zh:'\\text{最大公因数}(12,\\,18) = \\square'}, answer:6,
         hint:{ ko:'12의 약수: 1,2,3,4,6,12 / 18의 약수: 1,2,3,6,9,18 → 공약수 1,2,3,6', en:'Factors of 12: 1,2,3,4,6,12 / Factors of 18: 1,2,3,6,9,18 → common: 1,2,3,6', zh:'12的因数：1,2,3,4,6,12 / 18的因数：1,2,3,6,9,18 → 公因数：1,2,3,6' } },
-      { tex:'\\text{lcm}(4,\\,6) = \\square', answer:12,
+      { tex:{ko:'\\text{최소공배수}(4,\\,6) = \\square',en:'\\text{lcm}(4,\\,6) = \\square',zh:'\\text{最小公倍数}(4,\\,6) = \\square'}, answer:12,
         hint:{ ko:'4와 6의 최대공약수=2, 최소공배수=4×6÷2=12', en:'GCD(4,6)=2, LCM=4×6÷2=12', zh:'4和6的最大公因数=2，最小公倍数=4×6÷2=12' } }
     ],
     open:{ ko:'24와 36의 최대공약수를 유클리드 호제법으로 구해 보세요.',

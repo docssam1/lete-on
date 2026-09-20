@@ -47,7 +47,7 @@ window.NM_UNITS['M-36'] = {
         desc:{ko:'⁶√(2⁴)을 그대로 옮기면 2^(4/6)인데, 4/6은 아직 기약분수가 아니에요. 분자·분모를 2로 나누면 2/3 — 방금 본 것과 <b>똑같은 수</b>예요. 분수처럼 지수도 항상 끝까지 약분해서 답해야 해요.',
               en:'Directly rewriting ⁶√(2⁴) gives 2^(4/6), but 4/6 isn\'t fully reduced. Dividing numerator and denominator by 2 gives 2/3 — the <b>exact same number</b> as before. Just like fractions, exponents must always be reduced all the way.',
               zh:'把⁶√(2⁴)直接改写得到2^(4/6)，但4/6还没约到最简。分子分母都除以2得到2/3——和刚才是<b>完全相同的数</b>。和分数一样，指数也必须一直约到最简。'},
-        mathSteps:['\\sqrt[6]{2^4} = 2^{\\frac{4}{6}}', '\\gcd(4,6)=2', '=2^{\\frac{2}{3}}'],
+        mathSteps:['\\sqrt[6]{2^4} = 2^{\\frac{4}{6}}', {ko:'\\text{최대공약수}(4,6)=2',en:'\\gcd(4,6)=2',zh:'\\text{最大公因数}(4,6)=2'}, '=2^{\\frac{2}{3}}'],
         result:{ko:'지수 분수도 기약분수로 끝까지 줄여요!',en:'Reduce the exponent fraction all the way, just like any fraction!',zh:'指数分数也要约到最简为止！'},
         book:{ko:'m,n의 공약수로 먼저 나누면 항상 같은 기약분수 지수가 나와요 — 나누는 순서는 결과에 영향이 없어요.',
               en:'Dividing out a common factor of m and n first always leads to the same reduced exponent — the order doesn\'t change the result.',

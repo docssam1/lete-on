@@ -43,16 +43,16 @@ window.NM_UNITS['C-33'] = {
         result:{ko:'7.35÷0.15=49! 소수 두 자리면 100배로 옮겨요.',en:'7.35÷0.15=49! Two decimal places means scale by 100.',zh:'7.35÷0.15=49！两位小数就放大100倍。'},
         book:null },
 
-      { tag:{ko:'③ 몫이 정수가 되기도 해요',en:'3) The quotient can be whole, too',zh:'③ 商也可能是整数'},
+      { tag:{ko:'③ 몫이 자연수가 되기도 해요',en:'3) The quotient can be whole, too',zh:'③ 商也可能是整数'},
         head:{ko:'6.4÷0.8 = 8: 딱 떨어질 수도!',en:'6.4÷0.8 = 8: it can divide evenly too!',zh:'6.4÷0.8 = 8：也可能整除！'},
-        desc:{ko:'항상 소수 답이 나오는 건 아니에요. 6.4÷0.8: 0.8×10=8, 6.4×10=64, 64÷8=<b>8</b> — 딱 떨어지는 정수예요! 방법은 똑같아요: 나누는 수를 자연수로 만들고, 나누어지는 수도 같은 만큼 옮기고, 계산하기. 답이 정수든 소수든 이 세 단계는 변하지 않아요.',
+        desc:{ko:'항상 소수 답이 나오는 건 아니에요. 6.4÷0.8: 0.8×10=8, 6.4×10=64, 64÷8=<b>8</b> — 딱 떨어지는 자연수예요! 방법은 똑같아요: 나누는 수를 자연수로 만들고, 나누어지는 수도 같은 만큼 옮기고, 계산하기. 답이 자연수든 소수든 이 세 단계는 변하지 않아요.',
               en:'The answer isn\'t always a decimal. 6.4÷0.8: 0.8×10=8, 6.4×10=64, 64÷8=<b>8</b> — a clean whole number! The method is identical: make the divisor whole, scale the dividend the same way, then divide. Whether the answer is whole or decimal, these three steps never change.',
               zh:'答案不一定都是小数。6.4÷0.8：0.8×10=8，6.4×10=64，64÷8=<b>8</b>——正好整除！方法一样：把除数变整数，被除数同步放大，再计算。不管答案是整数还是小数，这三步都不变。'},
         mathSteps:['0.8 × 10 = 8','6.4 × 10 = 64','64 ÷ 8 = 8'],
-        result:{ko:'6.4÷0.8=8! 몫이 정수여도 방법은 똑같아요.',en:'6.4÷0.8=8! Same method, even when the quotient is whole.',zh:'6.4÷0.8=8！商是整数，方法照样一样。'},
+        result:{ko:'6.4÷0.8=8! 몫이 자연수여도 방법은 똑같아요.',en:'6.4÷0.8=8! Same method, even when the quotient is whole.',zh:'6.4÷0.8=8！商是整数，方法照样一样。'},
         book:null }
     ],
-    rule:{ ko:'① 나누는 수를 자연수로 만들 배수 정하기(소수점 자리 수만큼)  ② 나누어지는 수도 같은 배수로 옮기기  ③ 자연수끼리 나누기 — 답은 정수일 수도 소수일 수도',
+    rule:{ ko:'① 나누는 수를 자연수로 만들 배수 정하기(소수점 자리 수만큼)  ② 나누어지는 수도 같은 배수로 옮기기  ③ 자연수끼리 나누기 — 답은 자연수일 수도 소수일 수도',
       en:'① Pick the scale factor (by decimal places) to make the divisor whole  ② Scale the dividend the same way  ③ Divide the whole numbers — the answer may be whole or decimal',
       zh:'① 按小数位数定放大倍数，让除数变整数  ② 被除数同步放大  ③ 整数相除——答案可能是整数也可能是小数' }
   },

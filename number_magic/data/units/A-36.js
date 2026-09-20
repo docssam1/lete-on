@@ -18,23 +18,23 @@ window.NM_UNITS['A-36'] = {
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ ko:'① 소수점 아래를 먼저 더해요', en:'1) Add the decimal part first', zh:'① 先加小数部分' },
-        head:{ ko:'소수점 아래끼리, 정수끼리 나눠 더해요', en:'Add decimal parts together, integer parts together', zh:'小数部分与小数部分相加，整数部分与整数部分相加' },
-        desc:{ ko:'2.3+1.4=? 소수: 0.3+0.4=0.7, 정수: 2+1=3. 합: 3+0.7=3.7!',
+        head:{ ko:'소수점 아래끼리, 자연수끼리 나눠 더해요', en:'Add decimal parts together, integer parts together', zh:'小数部分与小数部分相加，整数部分与整数部分相加' },
+        desc:{ ko:'2.3+1.4=? 소수: 0.3+0.4=0.7, 자연수: 2+1=3. 합: 3+0.7=3.7!',
                en:'2.3+1.4=? Decimal: 0.3+0.4=0.7, Integer: 2+1=3. Sum: 3+0.7=3.7!',
                zh:'2.3+1.4=？小数：0.3+0.4=0.7，整数：2+1=3。和：3+0.7=3.7！' },
-        mathSteps:['2.3 + 1.4 = □',{ko:'소수: 0.3 + 0.4 = 0.7',en:'\\text{decimal parts: } 0.3 + 0.4 = 0.7',zh:'小数部分：0.3 + 0.4 = 0.7'},{ko:'정수: 2 + 1 = 3',en:'\\text{whole parts: } 2 + 1 = 3',zh:'整数部分：2 + 1 = 3'},'3 + 0.7 = 3.7'],
+        mathSteps:['2.3 + 1.4 = □',{ko:'소수: 0.3 + 0.4 = 0.7',en:'\\text{decimal parts: } 0.3 + 0.4 = 0.7',zh:'小数部分：0.3 + 0.4 = 0.7'},{ko:'자연수: 2 + 1 = 3',en:'\\text{whole parts: } 2 + 1 = 3',zh:'整数部分：2 + 1 = 3'},'3 + 0.7 = 3.7'],
         result:{ ko:'2.3+1.4=3.7 ✓', en:'2.3+1.4=3.7 ✓', zh:'2.3+1.4=3.7 ✓' },
-        book:{ ko:'소수점을 기준으로 왼쪽은 정수 부분, 오른쪽은 소수 부분. 같은 자리끼리 더해요!', en:'Left of decimal = integers, right = decimal fractions. Add like places together!', zh:'小数点左边是整数部分，右边是小数部分。同位相加！' } },
+        book:{ ko:'소수점을 기준으로 왼쪽은 자연수 부분, 오른쪽은 소수 부분. 같은 자리끼리 더해요!', en:'Left of decimal = integers, right = decimal fractions. Add like places together!', zh:'小数点左边是整数部分，右边是小数部分。同位相加！' } },
       { tag:{ ko:'② 올림(받아올림)이 있을 때', en:'2) When there\'s carrying', zh:'② 有进位时' },
         head:{ ko:'소수 부분 합이 1 이상이면 올려요', en:'If the decimal sum is 1 or more, carry over', zh:'小数部分之和≥1时需要进位' },
-        desc:{ ko:'1.7+2.5=? 소수: 0.7+0.5=1.2 → <b>1을 올려서</b> 정수부: 1+2+1=4. 답: 4.2!',
+        desc:{ ko:'1.7+2.5=? 소수: 0.7+0.5=1.2 → <b>1을 올려서</b> 자연수 부분: 1+2+1=4. 답: 4.2!',
                en:'1.7+2.5=? Decimal: 0.7+0.5=1.2 → <b>carry 1 to integers</b>: 1+2+1=4. Answer: 4.2!',
                zh:'1.7+2.5=？小数：0.7+0.5=1.2→<b>进1到整数</b>：1+2+1=4。答案：4.2！' },
-        mathSteps:['1.7 + 2.5 = □',{ko:'소수: 0.7 + 0.5 = 1.2',en:'\\text{decimal parts: } 0.7 + 0.5 = 1.2',zh:'小数部分：0.7 + 0.5 = 1.2'},{ko:'올림 1 → 정수: 1+2+1=4',en:'\\text{carry 1 → wholes: } 1+2+1=4',zh:'进1 → 整数部分：1+2+1=4'},'4 + 0.2 = 4.2'],
+        mathSteps:['1.7 + 2.5 = □',{ko:'소수: 0.7 + 0.5 = 1.2',en:'\\text{decimal parts: } 0.7 + 0.5 = 1.2',zh:'小数部分：0.7 + 0.5 = 1.2'},{ko:'올림 1 → 자연수: 1+2+1=4',en:'\\text{carry 1 → wholes: } 1+2+1=4',zh:'进1 → 整数部分：1+2+1=4'},'4 + 0.2 = 4.2'],
         result:{ ko:'1.7+2.5=4.2 ✓', en:'1.7+2.5=4.2 ✓', zh:'1.7+2.5=4.2 ✓' },
         book:null }
     ],
-    rule:{ ko:'① 소수 부분(십분의 자리)끼리 더한다  ② 합이 10 이상이면 정수 자리로 올린다  ③ 정수 부분끼리 더하고 올림 수를 더한다',
+    rule:{ ko:'① 소수 부분(십분의 자리)끼리 더한다  ② 합이 10 이상이면 자연수 자리로 올린다  ③ 자연수 부분끼리 더하고 올림 수를 더한다',
       en:'① Add decimal (tenths) parts  ② If ≥10 (i.e. ≥1.0), carry to the integer  ③ Add integers and the carry',
       zh:'①小数（十分位）部分相加 ②若≥10（即≥1.0）则进位到整数位 ③整数部分相加再加进位数' }
   },
@@ -59,7 +59,7 @@ window.NM_UNITS['A-36'] = {
 
   voice:{
     correct:[ {ko:'소수 덧셈 성공! 🔵✨',en:'Decimal addition!',zh:'小数加法成功！✨'}, {ko:'소수점 딱 맞췄어!',en:'Decimal aligned!',zh:'小数点对准了！'} ],
-    wrong:[ {ko:'소수 부분끼리, 정수 부분끼리 더해봐!',en:'Add decimals with decimals, integers with integers!',zh:'小数加小数，整数加整数！'}, {ko:'소수점 자리를 맞춰야 해!',en:'Align the decimal points!',zh:'要对齐小数点！'} ],
+    wrong:[ {ko:'소수 부분끼리, 자연수 부분끼리 더해봐!',en:'Add decimals with decimals, integers with integers!',zh:'小数加小数，整数加整数！'}, {ko:'소수점 자리를 맞춰야 해!',en:'Align the decimal points!',zh:'要对齐小数点！'} ],
     finish:{ ko:'완벽해! 소수 덧셈 마법사야! 🔵✨', en:"Perfect! You're a decimal adder!", zh:'完美！你是小数加法魔法师！' }
   }
 };

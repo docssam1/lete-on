@@ -86,7 +86,7 @@ NM_TGEN['fr2_improperMixed'] = function(params, rng){
     // 대분수 → 가분수: 빈칸 = 분자(impN)
     return {
       prompt: {
-        ko: whole + ' ' + rem + '/' + d + ' 를 가분수로 나타내요 (정수×분모+분자)',
+        ko: whole + ' ' + rem + '/' + d + ' 를 가분수로 나타내요 (자연수×분모+분자)',
         en: 'Convert the mixed number ' + whole + ' ' + rem + '/' + d + ' to an improper fraction',
         zh: '把带分数 ' + whole + ' ' + rem + '/' + d + ' 化为假分数'
       },
@@ -123,7 +123,7 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
 
     return {
       prompt: {
-        ko: '정수끼리, 분수끼리 따로 더해요!',
+        ko: '자연수끼리, 분수끼리 따로 더해요!',
         en: 'Add the whole numbers and the fractions separately!',
         zh: '整数和分数分别相加！'
       },
@@ -131,13 +131,13 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
       answer: res_w,
       answerType: 'steps',
       steps: [
-        { tex: '\\text{정수: } ' + a_w + ' + ' + b_w + ' = \\square', blank: res_w },
+        { tex: '\\text{자연수: } ' + a_w + ' + ' + b_w + ' = \\square', blank: res_w },
         { tex: '\\text{분자: } ' + a_n + ' + ' + b_n + ' = \\square', blank: res_n }
       ],
       widget: 'steps',
       solution: [
         { tex: '\\text{분자: } ' + a_n + ' + ' + b_n + ' = \\square', blank: res_n },
-        { tex: '\\text{정수: } ' + a_w + ' + ' + b_w + ' = \\square', blank: res_w }
+        { tex: '\\text{자연수: } ' + a_w + ' + ' + b_w + ' = \\square', blank: res_w }
       ]
     };
   } else {
@@ -155,7 +155,7 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
 
     return {
       prompt: {
-        ko: '분수 부분이 부족하면 정수에서 1을 빌려요!',
+        ko: '분수 부분이 부족하면 자연수에서 1을 빌려요!',
         en: 'When the fraction part is too small, borrow 1 from the whole number!',
         zh: '分数部分不够减时，从整数借1！'
       },
@@ -164,12 +164,12 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
       answerType: 'steps',
       steps: [
         { tex: '\\text{분수: } \\frac{' + (d+a_n) + '}{' + d + '} - \\frac{' + b_n + '}{' + d + '} = \\frac{\\square}{' + d + '} \\quad(1\\text{을 빌림})', blank: fracPart },
-        { tex: '\\text{정수: } ' + (a_w-1) + ' - ' + b_w + ' = \\square', blank: wholePart }
+        { tex: '\\text{자연수: } ' + (a_w-1) + ' - ' + b_w + ' = \\square', blank: wholePart }
       ],
       widget: 'steps',
       solution: [
         { tex: '\\text{분수: } \\frac{' + (d+a_n) + '}{' + d + '} - \\frac{' + b_n + '}{' + d + '} = \\frac{\\square}{' + d + '} \\quad(1\\text{을 빌림})', blank: fracPart },
-        { tex: '\\text{정수: } ' + (a_w-1) + ' - ' + b_w + ' = \\square', blank: wholePart }
+        { tex: '\\text{자연수: } ' + (a_w-1) + ' - ' + b_w + ' = \\square', blank: wholePart }
       ]
     };
   }
@@ -272,7 +272,7 @@ NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
       steps: [
         { tex: '\\text{최소공배수}: \\square', blank: LCD },
         { tex: '\\text{분수: } \\frac{' + conv_a + '}{' + LCD + '} ' + op + ' \\frac{' + conv_b + '}{' + LCD + '} = \\frac{\\square}{' + LCD + '}', blank: Math.abs(conv_a - conv_b) },
-        { tex: '\\text{정수: } \\square', blank: rw }
+        { tex: '\\text{자연수: } \\square', blank: rw }
       ],
       widget: 'steps'
     };

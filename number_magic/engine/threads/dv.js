@@ -197,53 +197,60 @@
   };
 
   /* ── DV5 — 두 자리로 나누기 (÷2d) ───────────────────────── */
+  /* 교재 D12(나머지 없는 (세)÷(두)) · D13(나머지 있는 (세)÷(두)) · D14·D15(네 자리)가
+     이 자리다(2026-09-20). 고치기 전 두 가지가 어긋나 있었다:
+       ① **나머지를 문항에 미리 적어 줬다** — `856 ÷ 17 = □ ⋯ 5` 꼴이라 몫만 물었다.
+          나머지를 알면 856−5를 17로 나누면 끝이라 "나머지가 나누는 수보다 작아야 한다"는
+          이 단원의 핵심이 사라진다. 이제 DV19와 같이 `= □ ⋯ □`(answer [q, r])로 묻는다.
+       ② **나누는 수가 11~19뿐이었다** — 두 자리로 나누는 단원인데 20~99가 한 번도 안 나왔다.
+          교재 예시가 21·22·23인 이유는 "앞 두 자리와 견줘 몫을 어림"하는 연습이라, 나누는
+          수가 십몇이면 어림할 것이 없다.
+     자릿수만 늘어나는 D14·D15는 한 레벨로 합쳤다(C10 네 자리 곱셈을 뺀 것과 같은 기준). */
   NM_TGEN['dv5_div2d'] = function (params, rng) {
-    const d = (params && params.d) || 2;
-    let b, q, r, dv;
-
-    if (d === 2) {
-      /* 2d÷2d: 피제수 2~3자리 */
-      b  = R(rng, 11, 19);
-      q  = R(rng, 2, 5);
-      r  = R(rng, 0, b - 1);
+    const d    = (params && params.d) || 3;        /* 나누어지는 수의 자릿수 */
+    const rem  = params && params.rem;             /* true=나머지 있음 · false=없음 · undefined=섞기 */
+    let b, q, r, dv, tries = 0;
+    do {
+      /* 나누는 수: 두 자리 전체. 몫 어림이 되도록 L1(두 자리÷두 자리)만 11~49로 둔다. */
+      b = d === 2 ? R(rng, 11, 49) : R(rng, 11, 99);
+      const lo = d === 2 ? 10 : (d === 3 ? 100 : 1000);
+      const hi = d === 2 ? 99 : (d === 3 ? 999 : 9999);
+      const qMin = Math.max(2, Math.ceil((lo + 1) / b));
+      const qMax = Math.floor(hi / b);
+      if (qMax < qMin) continue;
+      q = R(rng, qMin, qMax);
+      const want = (rem === undefined) ? pick(rng, [true, false]) : rem;
+      r = want ? R(rng, 1, b - 1) : 0;
       dv = b * q + r;
-    } else {
-      /* 3d÷2d: 피제수 3자리 */
-      b  = R(rng, 11, 19);
-      const qMin = Math.ceil(100 / b);
-      const qMax = Math.min(50, Math.floor(999 / b));
-      q  = R(rng, qMin, qMax);
-      r  = R(rng, 0, b - 1);
-      dv = b * q + r;
-    }
+    } while ((dv > (d === 2 ? 99 : d === 3 ? 999 : 9999) || dv < (d === 2 ? 10 : d === 3 ? 100 : 1000)) && tries++ < 200);
+    if (tries >= 200) { b = 21; q = 12; r = 5; dv = 257; }
 
-    const steps = r === 0
-      ? [{ tex: `${dv} = ${b} \\times \\square`,            blank: q }]
-      : [
-          { tex: `${dv} = ${b} \\times \\square + ${r}`,   blank: q },
-          { tex: `\\text{나머지}: \\square`,                blank: r }
-        ];
-
-    const solution = r === 0
-      ? [{ tex: `${dv} = ${b} \\times \\square`, blank: q }]
-      : [
-          { tex: `${b} \\times ${q} = ${b * q}` },
-          { tex: `${dv} - ${b * q} = \\square`, blank: r },
-          { tex: `${dv} \\div ${b} = \\square \\cdots ${r}`, blank: q }
-        ];
+    const hasR = r > 0;
+    /* 몫을 어림하는 자리 — 교재의 "앞에서 두 자리만큼 견줘 몫의 자릿수를 예상한다".
+       앞 두 자리가 나누는 수보다 작으면 세 자리를 봐야 한다는 것 자체가 이 단원의 내용이다. */
+    const head2 = +String(dv).slice(0, 2);
+    const digits = String(q).length;
+    const steps = [
+      { tex: `${head2} \\div ${b} \\;\\Rightarrow\\; \\text{몫은 } \\square \\text{자리}`, blank: digits },
+      { tex: `${b} \\times \\square = ${dv - r}`, blank: q }
+    ];
+    if (hasR) steps.push({ tex: `${dv} - ${dv - r} = \\square`, blank: r });
+    steps.push({ tex: hasR ? `${dv} \\div ${b} = \\square \\cdots \\square` : `${dv} \\div ${b} = \\square`,
+                 blank: hasR ? [q, r] : q });
 
     return {
       prompt: {
-        ko: `${dv} ÷ ${b}의 몫과 나머지를 구해요`,
-        en: `Find the quotient and remainder: ${dv} ÷ ${b}`,
-        zh: `求${dv}÷${b}的商和余数`
+        ko: hasR ? `${dv} ÷ ${b}의 몫과 나머지를 구해요` : `${dv} ÷ ${b}을 계산해요`,
+        en: hasR ? `Find the quotient and remainder: ${dv} ÷ ${b}` : `Work out ${dv} ÷ ${b}`,
+        zh: hasR ? `求${dv}÷${b}的商和余数` : `计算${dv}÷${b}`
       },
-      tex:        `${dv} \\div ${b} = \\square \\cdots ${r}`,
-      answer:     q,
+      tex:        hasR ? `${dv} \\div ${b} = \\square \\cdots \\square` : `${dv} \\div ${b} = \\square`,
+      answer:     hasR ? [q, r] : q,
       answerType: 'steps',
       widget:     'steps',
+      divBox:     { a: dv, b, q, r },     /* 인쇄용 세로 나눗셈 상자 — DV19와 같은 계약 */
       steps,
-      solution
+      solution:   steps
     };
   };
 
@@ -331,7 +338,7 @@
         answerType: 'number',
         widget:     'numpad',
         solution: [
-          { tex: `\\text{odd}=${d[0]}+${d[2]}=${odd}\\;,\\;\\text{even}=${d[1]}+${d[3]}=${even}` },
+          { tex: `\\text{홀수째 자리}=${d[0]}+${d[2]}=${odd}\\;,\\;\\text{짝수째 자리}=${d[1]}+${d[3]}=${even}` },
           { tex: `${odd} - ${even} = \\square`, blank: diff }
         ]
       };
@@ -382,7 +389,7 @@
     } else {
       const psum = String(prefix).split('').reduce((s, ch) => s + Number(ch), 0);
       solution = [
-        { tex: `${psum} + \\text{끝자리} \\equiv 0\\ (\\text{mod}\\ ${r}) \\Rightarrow \\{${cands.join(',\\,')}\\}` },
+        { tex: `${psum} + \\text{끝자리가 } ${r}\\text{의 배수} \\Rightarrow \\{${cands.join(',\\,')}\\}` },
         { tex: `\\text{가장 큰 숫자} = \\square`, blank: d }
       ];
     }
@@ -1105,7 +1112,7 @@
     }
     return {                                          /* lcm */
       prompt: { ko: `${a}${dvNumWa(a)} ${b}의 최소공배수는?`, en: `What is the least common multiple of ${a} and ${b}?`, zh: `${a}和${b}的最小公倍数是多少？` },
-      tex: `\\text{lcm}(${a},\\, ${b}) = \\square`,
+      tex: `\\text{최소공배수}(${a},\\, ${b}) = \\square`,
       answer: l, answerType: 'number', widget: 'numpad',
       solution: [{ tex: `\\text{최대공약수}(${a},${b}) = ${g}` },
                  { tex: `${a} \\times ${b} \\div ${g} = \\square`, blank: l }]

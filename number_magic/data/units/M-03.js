@@ -45,7 +45,7 @@ window.NM_UNITS['M-03'] = {
         desc:{ko:'분모가 다르면 <b>최소공배수</b>로 통분해서 분모를 맞춰요. 2와 3의 최소공배수는 6이니까 1/2 = 3/6, −1/3 = −2/6 — 이제 분모가 같아졌으니 분자만 계산: 3+(−2)=1.',
               en:'Different denominators? Convert to the <b>LCM</b> (least common multiple) first. LCM of 2 and 3 is 6, so \\dfrac{1}{2}=\\dfrac{3}{6} and \\dfrac{-1}{3}=\\dfrac{-2}{6} — now the denominators match, so just combine numerators: 3+(−2)=1.',
               zh:'分母不同就先通分到<b>最小公倍数</b>。2和3的最小公倍数是6，所以\\dfrac{1}{2}=\\dfrac{3}{6}，\\dfrac{-1}{3}=\\dfrac{-2}{6}——现在分母一样了，只算分子：3+(−2)=1。'},
-        mathSteps:['\\text{LCM}(2,3)=6', '\\dfrac{3}{6} + \\dfrac{-2}{6}', '\\dfrac{1}{6}'],
+        mathSteps:[{ko:'\\text{최소공배수}(2,3)=6',en:'\\text{lcm}(2,3)=6',zh:'\\text{最小公倍数}(2,3)=6'}, '\\dfrac{3}{6} + \\dfrac{-2}{6}', '\\dfrac{1}{6}'],
         result:{ko:'통분만 마치면 그다음은 이미 아는 규칙이에요!',en:'Once converted, the rest is a rule you already know!',zh:'通分完成之后，剩下的就是已经会的规则了！'},
         book:{ko:'계산 결과가 약분이 되면 기약분수로 나타내는 게 원칙이에요.',
               en:'When the result can be simplified, it should be written as a fraction in lowest terms.',
@@ -60,7 +60,7 @@ window.NM_UNITS['M-03'] = {
     fills:[
       { tex:'\\dfrac{3}{7} + \\dfrac{-5}{7} = \\dfrac{\\square}{7}', answer:-2,
         hint:{ ko:'분모는 그대로, 3+(-5)=?', en:'Denominator stays, 3+(-5)=?', zh:'分母不变，3+(-5)=？' } },
-      { tex:'\\text{LCM}(4,\\,6) = \\square', answer:12,
+      { tex:{ko:'\\text{최소공배수}(4,\\,6) = \\square',en:'\\text{lcm}(4,\\,6) = \\square',zh:'\\text{最小公倍数}(4,\\,6) = \\square'}, answer:12,
         hint:{ ko:'4와 6의 최소공배수', en:'The least common multiple of 4 and 6', zh:'4和6的最小公倍数' } }
     ],
     open:{ ko:'\\dfrac{1}{4} + \\dfrac{-1}{6}를 통분부터 해서 계산해봐요.',
