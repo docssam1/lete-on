@@ -27,7 +27,11 @@ if errorlevel 1 (
 )
 
 echo.
-echo  완료. 두 폴더를 엽니다 - clone-ref(원본)와 clone(복제)을 번갈아 들어 보세요.
-start "" "%cd%\clone-ref"
+echo  완료. 듣기 페이지를 엽니다 - 원본과 복제를 번갈아 눌러 비교하세요.
+echo.
+echo  [원격이라 소리가 안 들리면] clone\듣기.html 한 장에 소리가 전부 들어 있습니다.
+echo  메일이나 메신저로 그 파일만 옮기면 휴대폰에서도 그냥 열립니다.
+echo.
+start "" "%cd%\clone\듣기.html"
 start "" "%cd%\clone"
 pause

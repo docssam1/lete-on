@@ -34,6 +34,7 @@ TTS_MAP = os.path.join(ROOT, "number_magic", "data", "tts-map.js")
 
 # 지금 쓰는 목소리 — 참조를 뽑을 때 무엇을 복제하는지 로그에 남기려고 적어 둔다.
 VOICE_OF = {"ko": "ko-KR-Neural2-C", "en": "en-US-Neural2-F", "zh": "cmn-CN-Wavenet-A"}
+LANG_NAME = {"ko": "한국어", "en": "English", "zh": "中文"}
 
 # 시청용 대사. 앱에 실제로 있는 것만 쓴다 — 지어낸 문장으로는 지금 음성과 비교가 안 된다.
 LINES = [
@@ -105,6 +106,64 @@ def build_refs(langs, ref_dir):
         print(f"  ✓ {lang}: {dur:.1f}초 · \"{text[:30]}…\"", flush=True)
     return refs
 
+
+def write_listen_page(out_dir, rows, path):
+    """듣기 페이지 한 장 — 원격 데스크톱으로는 소리가 안 넘어오는 일이 많다(2026-09-21,
+       원장: "원격이라 소리를 어떻게 들어"). 원격 프로그램의 오디오 전송 설정이 막혀
+       있으면 PC 에서 아무리 만들어도 들을 수가 없다.
+
+       그래서 **파일 하나에 소리를 다 넣는다.** wav 를 base64 로 박아 넣으므로 이 html
+       한 장만 메일·메신저·USB 무엇으로든 옮기면 휴대폰에서도 그냥 열려서 재생된다.
+       서버도, 인터넷도, 같은 폴더의 다른 파일도 필요 없다."""
+    import base64
+    def b64(f):
+        return base64.b64encode(open(f, "rb").read()).decode("ascii")
+    cards = []
+    for lang, voice, ref_wav, ref_text, clips in rows:
+        items = "".join(
+            f'<div class="clip"><b>{lid}</b><audio controls preload="none" '
+            f'src="data:audio/wav;base64,{b64(f)}"></audio><p>{txt}</p></div>'
+            for lid, txt, f in clips)
+        cards.append(f"""<section>
+  <h2>{LANG_NAME.get(lang, lang)} <small>복제 대상: {voice}</small></h2>
+  <div class="row">
+    <div class="clip orig"><b>원본(지금 쓰는 목소리)</b>
+      <audio controls preload="none" src="data:audio/wav;base64,{b64(ref_wav)}"></audio>
+      <p>{ref_text}</p></div>
+  </div>
+  <div class="row">{items}</div>
+</section>""")
+    html = """<!doctype html><html lang="ko"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>목소리 복제 듣기</title>
+<style>
+ body{font:15px/1.7 system-ui,-apple-system,"Malgun Gothic",sans-serif;
+   background:#fdfaf3;color:#1A2233;margin:0;padding:20px 16px;max-width:760px;margin:0 auto}
+ h1{font-size:20px;color:#0E2C57;margin:0 0 4px}
+ .lede{color:#4a5468;font-size:13.5px;margin:0 0 20px}
+ section{border:1px solid #e0d6bd;border-radius:14px;background:#fff;padding:14px 16px;margin-bottom:16px}
+ h2{font-size:16px;color:#0E2C57;margin:0 0 10px}
+ h2 small{font-weight:400;color:#8a6d46;font-size:12px;margin-left:6px}
+ .row{display:grid;gap:10px;margin-bottom:10px}
+ @media(min-width:620px){.row{grid-template-columns:1fr 1fr}}
+ .clip{border:1px solid #eee7d8;border-radius:10px;padding:10px 12px;background:#fdfaf3}
+ .clip.orig{background:#FBF6E8;border-color:#E4D9BC}
+ .clip b{display:block;font-size:13px;color:#0E2C57;margin-bottom:6px}
+ audio{width:100%}
+ .clip p{margin:7px 0 0;font-size:12.5px;color:#4a5468;word-break:keep-all}
+ .tip{font-size:12.5px;color:#4a5468;background:#fff;border:1px dashed #e0d6bd;
+   border-radius:10px;padding:12px 14px}
+</style>
+<h1>목소리 복제 — 들어 보기</h1>
+<p class="lede">위가 <b>원본</b>(지금 아이들이 듣는 목소리), 아래가 <b>복제본</b>입니다.
+번갈아 눌러서 같은 사람 목소리로 들리면 성공입니다.</p>
+""" + "\n".join(cards) + """
+<p class="tip">이 파일 한 장에 소리가 전부 들어 있습니다. 메일·메신저·USB 무엇으로든
+옮기면 휴대폰에서도 그냥 열립니다 — 인터넷도, 다른 파일도 필요 없습니다.</p>
+</html>"""
+    open(path, "w", encoding="utf-8").write(html)
+    return path
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="clone")
@@ -143,6 +202,7 @@ def main():
 
     os.makedirs(a.out, exist_ok=True)
     total = 0.0
+    made = {}
     for lang, lid, text in LINES:
         if lang not in refs:
             continue
@@ -156,14 +216,29 @@ def main():
         y = audio[0]
         secs = len(y) / 24000.0
         total += secs
-        sf.write(os.path.join(a.out, f"clone-{lid}.wav"), y, 24000)
+        f = os.path.join(a.out, f"clone-{lid}.wav")
+        sf.write(f, y, 24000)
+        made.setdefault(lang, []).append((lid, text, f))
         took = time.time() - t
         print(f"  ✓ {lid} ({lang})  {secs:.1f}초 음성 / {took:.0f}초 걸림 · RTF {took/max(secs,0.01):.2f}",
               flush=True)
 
+    # 듣기 페이지 — 원격 데스크톱으로 소리가 안 넘어와도 이 파일 하나만 옮기면 들린다
+    page = ""
+    if made:
+        rows = [(lang, VOICE_OF.get(lang, "?"), refs[lang][0], refs[lang][1], made[lang])
+                for lang in sorted(made)]
+        page = write_listen_page(a.out, rows, os.path.join(a.out, "듣기.html"))
+
     print(f"\n합계 음성 {total:.0f}초 · 전체 {time.time()-t0:.0f}초 · 장치 {dev}")
     print(f"결과: {os.path.abspath(a.out)}")
-    print(f"참조: {os.path.abspath(a.ref_dir)}  ← 이 소리와 얼마나 같은지가 판단 기준입니다")
+    if page:
+        print("")
+        print("  ┌─ 원격이라 소리가 안 들릴 때 ─────────────────────────────")
+        print(f"  │  {os.path.abspath(page)}")
+        print("  │  이 파일 한 장에 소리가 전부 들어 있습니다.")
+        print("  │  메일·메신저·USB 무엇으로든 옮기면 휴대폰에서도 그냥 열립니다.")
+        print("  └──────────────────────────────────────────────────────────")
     print("RTF 는 '음성 1초를 만드는 데 몇 초 걸렸나'. 1 보다 작으면 실시간보다 빠릅니다.")
 
 if __name__ == "__main__":
