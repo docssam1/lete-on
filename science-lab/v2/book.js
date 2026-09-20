@@ -101,16 +101,35 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
     ${teacher ? `<div class="bk-rubric"><b>채점 기준</b><ul>${g.rubric.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>` : ''}
     <div class="bk-box self"><h4>나의 탐구 돌아보기</h4><table class="bk-tbl chk"><tbody>${self.map((s) => `<tr><td>${esc(s)}</td><td class="st">☆ ☆ ☆</td></tr>`).join('')}</tbody></table></div>`));
 
-  // 9. 교과 확인 문제
-  const pick = ch.check.map((k) => similar.find((s) => `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k)).filter(Boolean);
   const itemHtml = (it, i) => {
     const ac = it.answerContract, gv = it.givens;
-    const givens = gv ? Object.entries(gv).map(([k, v]) => `<div class="bk-given">${k === '설명' ? '' : k === '보기' ? '<b>〈보기〉</b><br>' : `<b>${esc(k)}</b> `}${Array.isArray(v) ? v.map(esc).join('<br>') : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</div>`).join('') : '';
+    const givens = gv ? Object.entries(gv).map(([k, v]) => `<div class="bk-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b><br>' : `<b>${esc(k)}</b> `}${Array.isArray(v) ? v.map(esc).join('<br>') : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</div>`).join('') : '';
     const kk = ac.type === 'single-choice' ? [ac.answer] : ac.type === 'multi-choice' ? ac.answers : [];
     const choices = it.choices ? `<ol class="bk-choices" data-key="${kk.join(',')}">${it.choices.map((c, j) => `<li data-j="${j}"><span>${NUM[j]}</span>${esc(c)}</li>`).join('')}</ol>` : '';
     const key = ac.type === 'single-choice' ? NUM[ac.answer] : ac.type === 'multi-choice' ? ac.answers.map((a) => NUM[a]).join(', ') : ac.type === 'short-text' ? ac.answer : ac.sample;
     return `<li class="bk-item"><span class="bk-qn">${String(i + 1).padStart(2, '0')}</span><p>${esc(it.prompt)}</p>${givens}${choices}${it.choices ? (teacher ? `<div class="bk-ans">정답 ${esc(key)} — ${esc(it.explanation)}</div>` : '') : ans(`${key} — ${it.explanation}`, ac.type === 'written-explanation' ? 3 : 1)}</li>`;
   };
+  // 9. 탐구보고서(학생이 채워 제출하는 한 장)
+  if (ch.report) {
+    const R = ch.report;
+    out.push(page(`${banner('탐구보고서', 'report')}
+      <table class="bk-tbl rep"><tbody><tr><th>단원</th><td>${esc(ch.link.unit)}</td><th>실험</th><td>${esc(ch.title)}</td></tr>
+        <tr><th>이름</th><td></td><th>날짜</th><td></td></tr></tbody></table>
+      <ol class="bk-rep">${R.sections.map((r) => `<li><b>${esc(r.label)}</b>${r.hint ? `<span class="bk-hint">${esc(r.hint)}</span>` : ''}${teacher && r.a ? `<div class="bk-ans">${esc(r.a)}</div>` : `<div class="bk-lines">${'<i></i>'.repeat(r.lines || 2)}</div>`}</li>`).join('')}</ol>
+      <div class="bk-box self tight"><h4>스스로 점검</h4><table class="bk-tbl chk"><tbody>${R.checks.map((c) => `<tr><td>${esc(c)}</td><td class="st">☆ ☆ ☆</td></tr>`).join('')}</tbody></table></div>`));
+  }
+
+  // 10. 형성평가(수업 끝 5분 · 성취기준 확인)
+  if (ch.formative) {
+    const F = ch.formative, pickF = F.items.map((k) => similar.find((s) => `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k)).filter(Boolean);
+    out.push(page(`${banner('형성평가', 'check')}<p class="bk-hint">수업을 마치며 5분 동안 풀어요. 맞은 개수로 다음 공부를 정해요.</p>
+      <ol class="bk-items">${pickF.map(itemHtml).join('')}</ol>
+      <div class="bk-box self"><h4>성취기준 확인</h4><table class="bk-tbl chk"><tbody>${F.standards.map((c) => `<tr><td>${esc(c)}</td><td class="st">○ △ ✕</td></tr>`).join('')}</tbody></table>
+        <p class="bk-hint">○ 잘 안다 · △ 조금 더 · ✕ 다시 배우기 — △·✕는 개념 정리 쪽으로 돌아가 다시 읽어요.</p></div>`, { cls: 'check' }));
+  }
+
+  // 11. 교과 확인 문제
+  const pick = ch.check.map((k) => similar.find((s) => `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k)).filter(Boolean);
   out.push(page(`${banner('교과 확인 문제', 'check')}<ol class="bk-items">${pick.map(itemHtml).join('')}</ol>`, { cls: 'check' }));
 
   return `<div class="bk ${teacher ? 'bk-t' : ''} ${live ? 'live' : ''}" style="--bk-theme:${ch.theme || '#2F7D4F'};--bk-thumb-top:${60 + (ch.no - 1) * 22}mm">${out.join('')}</div>`;
