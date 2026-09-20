@@ -1,4 +1,4 @@
-/* 지필드 사이언스 랩 — 광고용 체험 페이지: 촛불 켠 서재 위의 두꺼운 과학 마법서 */
+/* 지필드 사이언스 랩 — 광고용 체험 페이지: 촛불 켜 서재 위의 두꺼운 과학 마법서 */
 body.intro { --gold: #e2b659; --gold2: #f3d48a; --ember: #ff8a3d; --leather: #4a1712; --ink2: #3b2414; --serif: "Nanum Myeongjo", "Noto Serif KR", serif;
   background: radial-gradient(ellipse at 50% 38%, #3a2416 0%, #1c110b 45%, #0b0705 100%) fixed; color: #efe3c8; overflow-x: hidden; }
 .it-embers { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
@@ -9,19 +9,21 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .it-brand b { color: #fff; font-weight: 800; }
 .it-nav { display: flex; gap: 18px; margin-left: auto; } .it-nav a { color: #d9c8a2; text-decoration: none; font: 700 15px var(--serif); }
 .it-cta-s { background: linear-gradient(180deg, #f3d48a, #c9953a); color: #2a170b; font-weight: 800; text-decoration: none; border-radius: 999px; padding: 7px 16px; font-size: 15px; box-shadow: 0 0 14px rgba(255, 190, 90, .35); }
-.it-hero { padding: 12px 0 8px; }
-.it-head { text-align: center; padding: 0 16px 6px; }
+.it-hero { min-height: calc(100dvh - 52px); display: flex; flex-direction: column; padding: 6px 0 4px; }
+.it-hero:fullscreen { min-height: 100dvh; background: radial-gradient(ellipse at 50% 38%, #3a2416 0%, #1c110b 45%, #0b0705 100%); }
+.it-stage { flex: 1; min-height: 0; }
+.it-head { text-align: center; padding: 0 16px 2px; flex: none; }
 .it-kick { margin: 0; color: var(--gold); font: 700 13px var(--serif); letter-spacing: .12em; }
-.it-head h1 { margin: 4px 0 0; font: 800 clamp(24px, 3.8vw, 42px)/1.2 var(--serif); color: #f7ecd2; text-shadow: 0 2px 20px rgba(255, 140, 60, .25); }
+.it-head h1 { margin: 2px 0 0; font: 800 clamp(20px, 2.9vw, 34px)/1.2 var(--serif); color: #f7ecd2; text-shadow: 0 2px 20px rgba(255, 140, 60, .25); }
 .it-head h1 em { font-style: normal; background: linear-gradient(100deg, #c9953a 0%, #fff2c4 40%, #ff8a3d 60%, #c9953a 100%); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s linear infinite; }
 @keyframes shine { to { background-position: -250% 0; } }
-.it-stage { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.it-stage { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .it-arrow { flex: none; width: 54px; height: 54px; border-radius: 50%; border: 1px solid rgba(226, 182, 89, .5); background: radial-gradient(circle at 40% 35%, #4a2c18, #1a0f09); color: var(--gold2); font: 32px/1 var(--serif); cursor: pointer; box-shadow: 0 0 16px rgba(255, 160, 70, .15); }
 .it-arrow:hover:not(:disabled) { box-shadow: 0 0 22px rgba(255, 160, 70, .6); color: #fff; } .it-arrow:disabled { opacity: .2; cursor: default; }
-.it-book-wrap { position: relative; perspective: 2600px; padding: 18px 0 22px; }
+.it-book-wrap { position: relative; perspective: 2600px; padding: 10px 0 14px; }
 .it-loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--gold); font-family: var(--serif); }
 .it-loading[hidden] { display: none; }
-/* 책: 가죽 판(보드) + 책장 두께 + 책등 그림자. 닫혀 있을 땐 마우스를 따라 기울어진다 */
+/* 책: 가죽 판(보드) + 책장 두께 + 책등 그림자. 닫혀 있을 땀 마우스를 따라 기울어진다 */
 .it-book { position: relative; width: calc(var(--pw, 400px) * 2); height: var(--ph, 560px); transform-style: preserve-3d;
   transition: transform 1.1s cubic-bezier(.3, .1, .2, 1); }
 .it-book.closed { transform: translateX(calc(var(--pw) * -0.5)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important; transition: transform .25s ease-out; }
@@ -54,7 +56,7 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .it-book.single .leaf { left: 0; transition: transform .9s cubic-bezier(.45, .05, .2, 1), visibility 0s .9s; }
 .it-book.single .leaf.flipped { visibility: hidden; }
 .it-book.single .leaf:not(.flipped) { transition: transform .9s cubic-bezier(.45, .05, .2, 1), visibility 0s 0s; }
-.it-ctl { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 4px 12px; }
+.it-ctl { flex: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; padding: 2px 12px 6px; }
 .it-seg { display: inline-flex; background: rgba(226, 182, 89, .1); border: 1px solid rgba(226, 182, 89, .3); border-radius: 999px; padding: 3px; }
 .it-seg button { border: 0; background: transparent; color: #d9c8a2; border-radius: 999px; padding: 6px 14px; cursor: pointer; font: 700 14px var(--serif); min-height: 36px; }
 .it-seg button[aria-pressed="true"] { background: linear-gradient(180deg, #f3d48a, #c9953a); color: #2a170b; }
@@ -170,3 +172,17 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
   .it-final { flex-direction: column; text-align: center; } .it-final h2 { text-align: center; } .it-final-btns { justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) { .leaf, .it-book { transition: none !important; } .cv *, .ad-page.cover::after, .cv-tap, .it-head h1 em { animation: none !important; } }
+
+/* 도구 버튼(크게 보기·전체 화면) */
+.it-tool { border: 1px solid rgba(226, 182, 89, .45); background: rgba(226, 182, 89, .1); color: var(--gold2); border-radius: 999px; padding: 7px 14px; font: 700 14px var(--serif); cursor: pointer; min-height: 38px; }
+.it-tool:hover { background: rgba(226, 182, 89, .25); color: #fff; }
+/* 크게 보기 화면 */
+.it-zoom { position: fixed; inset: 0; z-index: 70; background: rgba(8, 5, 3, .96); display: flex; flex-direction: column; }
+.it-zoom-bar { flex: none; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px; background: rgba(0, 0, 0, .5); }
+.it-zoom-bar button { border: 1px solid rgba(226, 182, 89, .5); background: rgba(226, 182, 89, .12); color: var(--gold2); border-radius: 999px; min-width: 46px; min-height: 40px; font: 700 18px var(--serif); cursor: pointer; }
+.it-zoom-bar span { color: var(--gold2); font: 700 15px var(--serif); min-width: 64px; text-align: center; }
+.it-zoom-view { flex: 1; overflow: auto; display: grid; place-items: center; padding: 12px; overscroll-behavior: contain; }
+.it-zoom-inner { display: flex; gap: 10px; transform: scale(var(--z, 1)); transform-origin: center center; }
+.it-zoom-inner .bk-page { width: 210mm; height: 297mm; box-shadow: 0 20px 60px rgba(0, 0, 0, .6); }
+.inapp-bar { background: linear-gradient(180deg, #3a1b12, #1c0d08); border-top: 1px solid rgba(226, 182, 89, .4); font-family: var(--serif); }
+.inapp-bar button { background: linear-gradient(180deg, #f3d48a, #c9953a); color: #2a170b; }
