@@ -83,12 +83,21 @@
     localStorage.setItem(PENDING_KEY, JSON.stringify(queue.slice(-20)));
   }
 
+  function completeExamRecord(round, record) {
+    if (round === "diagnostic") return true;
+    const states = record && record.states;
+    if (!states || typeof states !== "object" || Array.isArray(states)) return false;
+    const entries = Object.entries(states);
+    return entries.length === 40 && entries.every(([key, value]) => /^([1-9]|[1-3][0-9]|40)$/.test(key) && ["o", "x", "manual"].includes(value));
+  }
+
   async function flushPending() {
     if (!token()) return { sent: 0, pending: pendingAttempts().length };
     const queue = pendingAttempts();
     const remaining = [];
     let sent = 0;
     for (const item of queue) {
+      if (!completeExamRecord(item.round, item.record)) continue;
       const result = await request("addAttempt", { round: item.round, record: item.record });
       if (result && result.ok) sent += 1;
       else if (result && result.status === 409) sent += 1;
@@ -99,6 +108,7 @@
   }
 
   async function addAttempt(_name, round, record) {
+    if (!completeExamRecord(round, record)) return { ok: false, reason: "invalid" };
     const result = await request("addAttempt", { round, record });
     if (!result) { queueAttempt(round, record); return { ok: false, reason: "pending" }; }
     if (result.ok) return { ok: true, attempt: result.data && result.data.attempt };
