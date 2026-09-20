@@ -1,8 +1,10 @@
-(() => {
+(async () => {
   const $ = id => document.getElementById(id);
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[character]);
   const params = new URLSearchParams(location.search);
-  const session = window.HSMIDDLE_AUTH.readSession();
-  const isAdmin = window.HSMIDDLE_AUTH.isAdmin(session.name);
+  const savedSession = window.HSMIDDLE_AUTH.readSession();
+  const session = savedSession.valid ? await window.HSMIDDLE_AUTH.refreshSession() : null;
+  const isAdmin = Boolean(session && session.admin);
   const catalog = window.HSMIDDLE_BANK.createCatalog().filter(item => item.available);
   const byNumber = new Map(catalog.map(item => [item.number, item]));
   const state = {
@@ -12,13 +14,14 @@
     student: ""
   };
 
-  const hasAccess = session.valid && (isAdmin || session.access.includes("question-bank")) && !window.HSMIDDLE_AUTH.isExpired(session.name);
+  const hasAccess = Boolean(session && session.valid && (isAdmin || session.access.includes("question-bank")) && !window.HSMIDDLE_AUTH.isExpired(session.name));
   if (!hasAccess) {
     $("accessGate").hidden = false;
     return;
   }
 
-  state.student = session.name;
+  const requestedStudent = window.HSMIDDLE_AUTH.normalizeName(params.get("student") || "").slice(0, 80);
+  state.student = isAdmin && requestedStudent ? requestedStudent : session.name;
   const canSelect = item => item.releaseStatus !== "locked";
   $("app").hidden = false;
   $("studentName").textContent = `${state.student} 학생`;
@@ -109,7 +112,8 @@
 
   function watermarkMarkup() {
     if (!$("watermarkToggle").checked) return "";
-    return `<div class="watermark" aria-hidden="true"><span>${state.student} · LETE-ON</span><span>${state.student} · LETE-ON</span><span>${state.student} · LETE-ON</span></div>`;
+    const studentName = escapeHtml(state.student);
+    return `<div class="watermark" aria-hidden="true"><span>${studentName} · LETE-ON</span><span>${studentName} · LETE-ON</span><span>${studentName} · LETE-ON</span></div>`;
   }
 
   function selectedItems() {

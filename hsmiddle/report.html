@@ -249,6 +249,7 @@ const videoStarts=[60,138,208,315,384,465,507,574,679,750,809,856,931,1107,1198,
 
 const norm=s=>String(s||'').replaceAll(' ','').replaceAll(',','').toLowerCase();
 let adminPreview=null;
+let verifiedSession=null;
 
 /* 리포트 전용: 답안 입력/O·X 두 모드를 모두 읽어 O/X를 우선한다 */
 function state(q){
@@ -315,6 +316,7 @@ async function loadAdminPreview(savedSession){
   if(new URLSearchParams(location.search).get('adminPreview')!=='1')return false;
   if(!savedSession.valid){showAdminPreviewError();return true}
   const serverSession=await HSMIDDLE_AUTH.refreshSession();
+  verifiedSession=serverSession;
   const records=serverSession&&serverSession.admin?await HSMIDDLE_CLOUD.allAttempts():null;
   adminPreview=readAdminPreview(serverSession,records);
   if(!adminPreview){showAdminPreviewError();return true}
@@ -326,13 +328,16 @@ async function signIn(){
   const name=byId('name').value.trim(),code=byId('code').value.trim().toUpperCase();
   const session=await HSMIDDLE_AUTH.login(name,code);
   if(!session||!session.access.includes(accessKey)){byId('error').classList.remove('hidden');return}
+  verifiedSession=session;
   enter(session.name);
 }
 /* 자동 로그인은 스크립트 전체 선언이 끝난 뒤 실행해야 한다 (TDZ 방지) */
 window.addEventListener('DOMContentLoaded',async()=>{
   const savedSession=HSMIDDLE_AUTH.readSession();
   if(await loadAdminPreview(savedSession))return;
-  if(savedSession.valid&&HSMIDDLE_AUTH.canAccess(savedSession.name,accessKey)){enter(savedSession.name)}
+  verifiedSession=savedSession.valid?await HSMIDDLE_AUTH.refreshSession():null;
+  if(verifiedSession&&verifiedSession.access.includes(accessKey)){enter(verifiedSession.name);return}
+  if(!verifiedSession&&savedSession.valid&&savedSession.access.includes(accessKey))enter(savedSession.name)
 });
 
 /* 이용 기간(6개월) 만료 시 본문을 안내로 교체하고 진행을 중단한다.
@@ -486,8 +491,8 @@ function selectedWrongNumbers(){return [...document.querySelectorAll('[data-wron
 function openWrongPrint(numbers){const clean=cleanPrintNumbers(numbers);if(!clean.length){alert('인쇄할 오답 번호를 선택해 주세요.');return}open(`./viewer.html?doc=diagnostic-review&qs=${clean.join(',')}&mode=${wrongPrintMode}&student=${encodeURIComponent(student)}`,'_blank','noopener')}
 function printSelectedWrong(){openWrongPrint(selectedWrongNumbers())}
 function printAllWrong(){openWrongPrint(D.questions.filter(q=>state(q)===false).map(q=>q[0]))}
-function hasQuestionBankAccess(){return HSMIDDLE_AUTH.isAdmin(student)||HSMIDDLE_AUTH.canAccess(student,'question-bank')}
-function openSimilarPrint(numbers){const clean=cleanPrintNumbers(numbers);if(!clean.length){alert('인쇄할 오답 번호를 선택해 주세요.');return}if(!hasQuestionBankAccess()){alert('유사문제 인쇄는 중등 심화 문제은행 상품 이용 계정에서 사용할 수 있습니다.');return}open(`./question-bank/?qs=${clean.join(',')}&mode=${wrongPrintMode}&autoprint=1`,'_blank','noopener')}
+function hasQuestionBankAccess(){return Boolean(verifiedSession&&verifiedSession.valid&&(verifiedSession.admin||verifiedSession.name===student&&verifiedSession.access.includes('question-bank')))}
+function openSimilarPrint(numbers){const clean=cleanPrintNumbers(numbers);if(!clean.length){alert('인쇄할 오답 번호를 선택해 주세요.');return}if(!hasQuestionBankAccess()){alert('유사문제 인쇄는 중등 심화 문제은행 상품 이용 계정에서 사용할 수 있습니다.');return}open(`./question-bank/?qs=${clean.join(',')}&mode=${wrongPrintMode}&autoprint=1&student=${encodeURIComponent(student)}`,'_blank','noopener')}
 function printSelectedSimilar(){openSimilarPrint(selectedWrongNumbers())}
 function printAllSimilar(){openSimilarPrint(D.questions.filter(q=>state(q)===false).map(q=>q[0]))}
 function toggleWrongPicks(checked){document.querySelectorAll('[data-wrong-pick]').forEach(input=>{input.checked=checked})}
@@ -547,7 +552,7 @@ function errorTable(errors){
   if(!errors.length)return '<p class="hint">오답 문항이 없습니다. 현재 입력 기준으로 채점된 문항은 모두 정답입니다.</p>';
   const rates=window.HSMIDDLE_STATS&&window.HSMIDDLE_STATS.rates;
   const rateTh=rates?'<th>정답률</th>':'';
-  const similarControls=hasQuestionBankAccess()?`<div class="print-group"><b>연계 유사문제</b><button type="button" class="secondary" onclick="printSelectedSimilar()">선택 유사문제 인쇄</button><button type="button" onclick="printAllSimilar()">오답 유사문제 전체 인쇄</button></div>`:`<div class="print-group"><b>연계 유사문제</b><span class="product-note">별도 문제은행 이용 계정에서 인쇄할 수 있습니다.</span></div>`;
+  const similarControls=hasQuestionBankAccess()?`<div class="print-group"><b>연계 유사문제</b><button type="button" class="secondary" onclick="printSelectedSimilar()">선택 유사문제 인쇄</button><button type="button" onclick="printAllSimilar()">오답 유사문제 전체 인쇄</button></div>`:'';
   return `<div class="print-tools no-print"><div class="print-mode" role="group" aria-label="오답 인쇄 내용"><button type="button" class="active" data-print-mode="problem" onclick="setWrongPrintMode('problem')">문제만</button><button type="button" data-print-mode="answer" onclick="setWrongPrintMode('answer')">문제 + 정답</button></div><div class="print-groups"><div class="print-group"><b>진단 원본</b><button type="button" class="secondary" onclick="printSelectedWrong()">선택 번호 인쇄</button><button type="button" onclick="printAllWrong()">오답 전체 인쇄</button></div>${similarControls}</div></div><table class="errtable"><thead><tr><th class="pick-cell no-print"><input type="checkbox" aria-label="오답 전체 선택" checked onchange="toggleWrongPicks(this.checked)"></th><th>번호</th><th>단원</th><th>유형</th><th>난이도</th>${rateTh}<th>처방</th><th class="no-print">인쇄</th><th>풀이 영상</th></tr></thead><tbody>
     ${errors.map(q=>{
       const start=videoStarts[q[0]-1];
@@ -778,7 +783,7 @@ function renderDiagnostic(){
         이 진단분석지는 200명 이상의 누적 성취도 분석을 바탕으로 구성한 40문항 진단 결과입니다. 집계 기간은 본 프로그램 운영 시작일부터 분석지 발행일까지이며, 운영자 테스트를 제외한 온라인 응답에서 빈칸을 오답으로 포함해 계산합니다.
         70점 이상이면서 4·5·6학년 과정 수행이 안정적이면 심화 유형 학습을 권합니다.
         특정 개념이나 4학년 유형에서 공백이 보이면 한 단계 위 교재의 개념 탐구와 미션을 먼저 정리한 뒤,
-        정답·풀이와 오답 재시험으로 약점을 보완한 뒤 실전 모의고사로 이어가세요. 문제은행은 별도 상품입니다.<br>
+        정답·풀이와 오답 재시험으로 약점을 보완한 뒤 실전 모의고사로 이어가세요.<br>
         입학 후 승급 기준은 퀵테스트 평균 3.4점 · 단원평가 평균 83점입니다.
       </div>
       <div class="watermark">${hsmHtml(student)} 학생 · GFIELD</div>
