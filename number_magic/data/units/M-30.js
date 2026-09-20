@@ -65,9 +65,9 @@ window.NM_UNITS['M-30'] = {
       { tex:'\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix} \\times \\begin{pmatrix}3&2\\\\5&7\\end{pmatrix} = \\begin{pmatrix}\\square&\\square\\\\\\square&\\square\\end{pmatrix}', answer:[3,2,5,7],
         hint:{ ko:'단위행렬을 곱하면 원래 그대로 나와요', en:'multiplying by the identity matrix leaves it unchanged', zh:'乘以单位矩阵结果不变' } }
     ],
-    open:{ ko:'\\(\\begin{pmatrix}2&0\\\\1&3\\end{pmatrix}\\times\\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}\\)을 계산하는 과정을 설명해봐요.',
-      en:'Explain how to compute \\(\\begin{pmatrix}2&0\\\\1&3\\end{pmatrix}\\times\\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}\\).',
-      zh:'说说计算\\(\\begin{pmatrix}2&0\\\\1&3\\end{pmatrix}\\times\\begin{pmatrix}1&2\\\\0&1\\end{pmatrix}\\)的过程。' },
+    open:{ ko:'첫째 줄이 (2 0), 둘째 줄이 (1 3)인 행렬에 첫째 줄이 (1 2), 둘째 줄이 (0 1)인 행렬을 곱하는 과정을 설명해봐요.',
+      en:'Explain how to multiply the matrix with rows (2 0) and (1 3) by the matrix with rows (1 2) and (0 1).',
+      zh:'说说第一行是(2 0)、第二行是(1 3)的矩阵乘以第一行是(1 2)、第二行是(0 1)的矩阵的过程。' },
     openHint:{ ko:'2×1+0×0=2, 2×2+0×1=4, 1×1+3×0=1, 1×2+3×1=5 → [[2,4],[1,5]]',
       en:'2×1+0×0=2, 2×2+0×1=4, 1×1+3×0=1, 1×2+3×1=5 → [[2,4],[1,5]]',
       zh:'2×1+0×0=2，2×2+0×1=4，1×1+3×0=1，1×2+3×1=5 → [[2,4],[1,5]]' }

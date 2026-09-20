@@ -44,9 +44,9 @@ window.NM_UNITS['M-29'] = {
 
       { tag:{ko:'② 전개된 식은 먼저 인수분해',en:'2) Factor an expanded expression first',zh:'② 展开式先因式分解'},
         head:{ko:'x^2-7x+10<0 \\;\\Rightarrow\\; (x-2)(x-5)<0',en:'x^2-7x+10<0 \\;\\Rightarrow\\; (x-2)(x-5)<0',zh:'x^2-7x+10<0 \\;\\Rightarrow\\; (x-2)(x-5)<0'},
-        desc:{ko:'더해서 7, 곱해서 10인 두 수는 2와 5 — <b>(x-2)(x-5)<0</b>으로 인수분해되고, 앞서 배운 대로 해는 2<x<5예요.',
-              en:'Two numbers that add to 7 and multiply to 10 are 2 and 5 — this factors as <b>(x-2)(x-5)<0</b>, and as before, the solution is 2<x<5.',
-              zh:'相加得7、相乘得10的两个数是2和5——因式分解为<b>(x-2)(x-5)<0</b>，和前面一样，解是2<x<5。'},
+        desc:{ko:'더해서 7, 곱해서 10인 두 수는 2와 5 — <b>(x−2)(x−5) &lt; 0</b>으로 인수분해되고, 앞서 배운 대로 해는 2 &lt; x &lt; 5예요.',
+              en:'Two numbers that add to 7 and multiply to 10 are 2 and 5 — this factors as <b>(x−2)(x−5) &lt; 0</b>, and as before, the solution is 2 &lt; x &lt; 5.',
+              zh:'相加得7、相乘得10的两个数是2和5——因式分解为<b>(x−2)(x−5) &lt; 0</b>，和前面一样，解是2 &lt; x &lt; 5。'},
         mathSteps:['x^2-7x+10=(x-2)(x-5)', '(x-2)(x-5)<0', '2<x<5'],
         result:{ko:'전개된 식은 먼저 인수분해해서 두 근을 찾아요!',en:'For an expanded expression, factor first to find the two roots!',zh:'展开式先因式分解，找出两根！'},
         book:{ko:'x²의 계수가 1이 아니면 먼저 그 수로 나눠(양수일 때 부등호 방향 유지) 인수분해해요.',
@@ -60,9 +60,9 @@ window.NM_UNITS['M-29'] = {
 
   check:{
     fills:[
-      { tex:'(x-1)(x-4) < 0', answer:[1,4],
+      { tex:'(x-1)(x-4) < 0 \\;\\Rightarrow\\; \\square < x < \\square', answer:[1,4],
         hint:{ ko:'두 근 사이가 해', en:'the solution lies between the roots', zh:'解在两根之间' } },
-      { tex:'x^2 - 3x - 10 < 0', answer:[-2,5],
+      { tex:'x^2 - 3x - 10 < 0 \\;\\Rightarrow\\; \\square < x < \\square', answer:[-2,5],
         hint:{ ko:'인수분해: (x+2)(x-5)<0', en:'factor: (x+2)(x-5)<0', zh:'因式分解：(x+2)(x-5)<0' } }
     ],
     open:{ ko:'2x²-2x-24<0의 해를 구하는 과정을 설명해봐요.',

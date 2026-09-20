@@ -60,9 +60,9 @@ window.NM_UNITS['M-23'] = {
 
   check:{
     fills:[
-      { tex:'ax+b \\equiv -2x+9', answer:[-2,9],
+      { tex:'ax+b \\equiv -2x+9 \\;\\Rightarrow\\; a=\\square,\\; b=\\square', answer:[-2,9],
         hint:{ ko:'x계수끼리, 상수항끼리', en:'match x-coefficients and constants', zh:'x系数对应，常数项对应' } },
-      { tex:'a(x-1) + b(x+1) \\equiv 4x + 2', answer:[1,3],
+      { tex:'a(x-1) + b(x+1) \\equiv 4x + 2 \\;\\Rightarrow\\; a=\\square,\\; b=\\square', answer:[1,3],
         hint:{ ko:'전개: (a+b)x + (-a+b) ≡ 4x+2', en:'expand: (a+b)x + (-a+b) ≡ 4x+2', zh:'展开：(a+b)x + (-a+b) ≡ 4x+2' } }
     ],
     open:{ ko:'a(x+2)+b(x-3)≡5x+5일 때 a,b를 구하는 과정을 설명해봐요.',

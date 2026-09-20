@@ -55,10 +55,10 @@ window.NM_UNITS['M-07'] = {
       { tex:{ko:'\\text{역수: } \\dfrac{2}{-7} \\rightarrow \\dfrac{-7}{\\square}',en:'\\text{reciprocal: } \\dfrac{2}{-7} \\rightarrow \\dfrac{-7}{\\square}',zh:'\\text{倒数：} \\dfrac{2}{-7} \\rightarrow \\dfrac{-7}{\\square}'}, answer:2,
         hint:{ ko:'분자·분모를 뒤집어요', en:'Flip numerator and denominator', zh:'分子分母互换' } }
     ],
-    open:{ ko:'\\dfrac{-2}{3} \\div \\dfrac{4}{-9}를 역수를 이용해 계산해봐요.',
+    open:{ ko:'(−2/3) ÷ (4/−9)를 역수를 이용해 계산해봐요.',
       en:'Compute (−2/3) ÷ (4/−9) using the reciprocal.',
       zh:'用倒数计算(−2/3) ÷ (4/−9)。' },
-    openHint:{ ko:'역수는 -9/4. \\dfrac{-2}{3}\\times\\dfrac{-9}{4}=\\dfrac{18}{12} (음수 2개→+).',
+    openHint:{ ko:'역수는 -9/4. -2/3×-9/4=18/12 (음수 2개→+).',
       en:'Reciprocal is −9/4. (−2/3)×(−9/4)=18/12 (2 negatives→+).',
       zh:'倒数是−9/4。(−2/3)×(−9/4)=18/12(2个负数→+)。' }
   },

@@ -979,6 +979,12 @@ function ansTex(p){
     const [n,d]=p.answer;
     return `\\dfrac{${n}}{${d}}`;
   }
+  /* 2×2 행렬(MD30) — 생성기가 answerShape:'matrix2' 를 다는데 분기가 없어 정답지가
+     "9, -2, 13, 7" 로 찍혔다(2026-09-20). 화면 위젯(widgets.js)에는 처리가 있었다. */
+  if(p.answerShape==='matrix2' && p.answer.length===4){
+    const [a,b,c,d]=p.answer;
+    return `\\begin{pmatrix} ${a} & ${b} \\\\ ${c} & ${d} \\end{pmatrix}`;
+  }
   if(p.answerShape==='mixed'){
     const [w,n,d]=p.answer;
     return `${w}\\dfrac{${n}}{${d}}`;
@@ -3427,7 +3433,10 @@ function w2AnswerKeyHeadHtml(code){
 /* 개념 패널의 단계 요약 줄용 — desc는 자체 저작 HTML(<b> 등)을 담고 있어서
    (conceptBlockHtml과 같은 데이터), 한 줄 요약에는 태그를 벗겨 순수 텍스트로
    합친다. 90자 넘으면 잘라 "…"만 붙인다(§2-3 "~90자로 줄여"). */
-function stripConceptTags(s){ return String(s||'').replace(/<[^>]+>/g,''); }
+/* 산문 필드에 들어간 인라인 SVG(그림)는 통째로 걷어낸다 — 태그만 벗기면 그림 속 글자가
+   남아 문장 앞에 "93" 같은 부스러기가 붙는다(2026-09-20, M-15 나무 그림). */
+function stripInlineSvg(s){ return String(s||'').replace(/<svg[\s\S]*?<\/svg>/gi, ''); }
+function stripConceptTags(s){ return stripInlineSvg(s).replace(/<[^>]+>/g,''); }
 function truncateConceptLine(s, max){
   const t = String(s||'').trim();
   return t.length > max ? t.slice(0, max - 1).trimEnd() + '…' : t;
@@ -3843,7 +3852,8 @@ function renderMagicNotePage(item, opts){
     const tag = pickL(st.tag) || '';
     const headRaw = pickL(st.head) || '';
     const headHtml = /\\/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>` : esc(headRaw);
-    const descHtml = String(pickL(st.desc) || '').replace(/<(?!\/?b>)[^>]*>/g, '');   /* <b>만 남기고 다른 태그는 뗀다 */
+    /* <b>만 남기고 다른 태그는 뗀다. SVG 는 stripInlineSvg 가 먼저 통째로 걷어낸다. */
+    const descHtml = stripInlineSvg(pickL(st.desc) || '').replace(/<(?!\/?b>)[^>]*>/g, '');
     const steps = Array.isArray(st.mathSteps) ? st.mathSteps.map(magicStepHtml).join('') : '';
     const result = pickL(st.result) || '';
     return `<div class="nm-mn-stage">
@@ -3907,10 +3917,25 @@ function renderMagicNotePage(item, opts){
 </div>` : '';
   const html = p1 + p2;
   /* 정답지: 핵심 체크의 답만 (가)(나)(다)로 */
+  /* 핵심 체크 정답지(2026-09-20) — 전에는 무조건 answer.join(', ') 이라 분수 답이
+     "1, 2", 근호 답이 "3, 2" 로 찍혔다(정답 1/2 · 3√2). 문항 식의 빈칸 모양을 보고
+     사람이 읽는 꼴로 적는다. 유닛 fills 에는 answerShape 필드가 없어 식으로 가른다. */
+  const fillAnsText = f => {
+    const a = f.answer;
+    if(!Array.isArray(a)) return String(fmtAns(a));
+    const t = String(f.tex || '');
+    if(a.length === 2){
+      if(/\\(?:d?frac)\{\\square\}\{\\square\}/.test(t))      return `${a[0]}/${a[1]}`;
+      if(/\\square\\sqrt\{\\square\}/.test(t))                   return `${a[0]}√${a[1]}`;
+      if(/\\(?:d?frac)\{\\sqrt\{\\square\}\}\{\\square\}/.test(t)) return `√${a[0]}/${a[1]}`;
+      if(/\\cdots/.test(t))                                       return `${a[0]} … ${a[1]}`;
+    }
+    return a.join(', ');
+  };
   const akHtml = fills.length ? `
 <div class="nm-ak-section">
   <h4 class="nm-ak-subhead">${esc(lk('마법 노트 · ','Magic Note · ','魔法笔记 · ') + title)} <span class="nm-ak-subcode">${esc(code)}</span></h4>
-  <div class="nm-ak-guide">${fills.map((f, i) => `<div class="nm-ak-guide-item">(${esc(labs[i] || (i+1))}) ${esc(Array.isArray(f.answer) ? f.answer.join(', ') : String(fmtAns(f.answer)))}</div>`).join('')}</div>
+  <div class="nm-ak-guide">${fills.map((f, i) => `<div class="nm-ak-guide-item">(${esc(labs[i] || (i+1))}) ${esc(fillAnsText(f))}</div>`).join('')}</div>
 </div>` : '';
   return { html, problems: [], thName: lk('마법 노트 · ','Magic Note · ','魔法笔记 · ') + title, code, thread: null, level: null,
     magic: true, akHtml, guidedProblems: [], pageSizes: [] };
