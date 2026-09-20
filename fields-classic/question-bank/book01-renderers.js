@@ -190,6 +190,10 @@ const LINE_BOARD_LAYOUTS = Object.freeze({
   flower: {
     points: [[160,108],[160,20],[222,46],[248,108],[222,170],[160,196],[98,170],[72,108],[98,46]],
     lines: [[1,0],[0,5],[2,0],[0,6],[3,0],[0,7],[4,0],[0,8]]
+  },
+  "source-flower": {
+    points: [[160,108],[160,20],[235,64],[235,152],[160,196],[85,152],[85,64]],
+    lines: [[1,0],[0,4],[2,0],[0,5],[3,0],[0,6]]
   }
 });
 
@@ -197,8 +201,8 @@ function lineCardBoardMarkup(visual) {
   const layout = LINE_BOARD_LAYOUTS[visual.layout] || LINE_BOARD_LAYOUTS.cross;
   const shown = layout.points.map((_, index) => visual.shown?.[index] ?? null);
   const lines = layout.lines.map(([from, to]) => `<line x1="${layout.points[from][0]}" y1="${layout.points[from][1]}" x2="${layout.points[to][0]}" y2="${layout.points[to][1]}"/>`).join("");
-  const nodes = layout.points.map(([x,y], index) => `<g class="${shown[index] == null ? "blank" : "known"}"><circle cx="${x}" cy="${y}" r="23"/><text x="${x}" y="${y + 1}">${shown[index] == null ? index + 1 : shown[index]}</text></g>`).join("");
-  const cards = `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>`;
+  const nodes = layout.points.map(([x,y], index) => `<g class="${shown[index] == null ? "blank" : "known"}"><circle cx="${x}" cy="${y}" r="23"/><text x="${x}" y="${y + 1}">${shown[index] == null ? visual.blankLabels === false ? "" : index + 1 : shown[index]}</text></g>`).join("");
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
   const footer = visual.lineSum == null ? "모든 줄의 합을 같게" : `한 줄의 합 ${visual.lineSum}`;
   return `<div class="b1-line-card-board">${cards}<svg viewBox="0 0 320 225" role="img" aria-label="숫자 카드를 놓아 모든 줄의 합을 같게 하는 ${visual.layout} 모양">${lines}${nodes}<text class="sum" x="160" y="220">${footer}</text></svg></div>`;
 }
@@ -281,7 +285,8 @@ function cardEquationMarkup(visual) {
 }
 
 function conditionCardMarkup(visual) {
-  return `<div class="b1-condition-card"><strong>${esc(visual.title)}</strong><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol></div>`;
+  const places = visual.places?.length ? `<div class="b1-place-condition">${visual.places.map((place) => `<span><b>${esc(place)}</b><i></i></span>`).join("")}</div>` : "";
+  return `<div class="b1-condition-card"><strong>${esc(visual.title)}</strong><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol>${places}</div>`;
 }
 
 function placeValueBlocksMarkup(visual) {
@@ -318,14 +323,137 @@ function logicCluesMarkup(visual) {
   return `<div class="b1-logic-clues">${header}<ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol><strong>${esc(visual.question)}</strong></div>`;
 }
 
+function unitSetMarkup(visual) {
+  const sharedCards = visual.sharedCards?.length ? `<div class="b1-number-cards b1-shared-cards">${visual.sharedCards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  const items = visual.items.map((item) => `<section><b>${esc(item.label || "")}</b>${book01Markup(item.visual)}</section>`).join("");
+  return `${sharedCards}<div class="b1-unit-set" style="--columns:${Math.min(visual.items.length, 3)}">${items}</div>`;
+}
+
+function digitalDirectSetMarkup(visual) {
+  const items = visual.items.map((item, index) => {
+    if (visual.mode === "addition") {
+      const transformed = visual.reveal ? digitalNumber(item.result) : blankNumber(2, "transformed");
+      const sum = visual.reveal ? `<strong>${item.sum}</strong>` : blankNumber(3, "sum");
+      return `<section><b>(${index + 1})</b><div class="b1-direct-calculation"><span>${digitalNumber(item.source)}</span><span><i>+</i>${transformed}</span><em></em><span>${sum}</span></div></section>`;
+    }
+    const result = visual.reveal ? digitalNumber(item.result) : blankNumber(2, "result");
+    return `<section><b>(${index + 1})</b><span>${digitalNumber(item.source)}</span><i>⇄</i><span>${result}</span></section>`;
+  }).join("");
+  const caption = visual.mode === "addition" ? "반 바퀴 돌린 수를 쓰고 더하세요." : "숫자판 전체와 자리 순서를 함께 뒤집으세요.";
+  return `<div class="b1-digital-direct-set">${items}<strong>${caption}</strong></div>`;
+}
+
+function twoStepNumberBoardMarkup(visual) {
+  const cells = visual.cells.map((cell) => `<span><b style="--turn:${cell.orientation}deg">${cell.value}<i></i></b></span>`).join("");
+  return `<div class="b1-two-step-board"><div>${cells}</div><section>${visual.steps.map((step, index) => `<span><b>${index + 1}</b>${esc(step)}</span>`).join("<i>→</i>")}</section><strong>마지막에 똑바로 놓이는 수의 합</strong></div>`;
+}
+
+function diagonalFoldPaper(item) {
+  const row = Math.floor(item.cutIndex / 4);
+  const column = item.cutIndex % 4;
+  const x = 14 + column * 18;
+  const y = 14 + row * 18;
+  const crease = item.diagonal === "main" ? "M10 10L90 90" : "M10 90L90 10";
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="대각선으로 접고 색칠한 부분을 자르는 색종이"><rect class="paper" x="10" y="10" width="80" height="80"/><path class="crease" d="${crease}"/><rect class="cut" x="${x}" y="${y}" width="12" height="12"/><path class="fold-arrow" d="M28 76Q50 55 70 31"/></svg>`;
+}
+
+function diagonalFoldSetMarkup(visual) {
+  const items = visual.items.map((item, itemIndex) => {
+    const selected = new Set(visual.reveal ? item.selected : []);
+    const cells = item.numbers.flat().map((value, index) => `<span class="${selected.has(index) ? "selected" : ""}">${value}</span>`).join("");
+    const inline = visual.compact ? "" : `<label class="b1-inline-answer">합 <i>${visual.reveal ? item.answer : ""}</i></label>`;
+    return `<section><b>${visual.items.length > 1 ? `(${itemIndex + 1})` : ""}</b><div class="b1-diagonal-fold-row">${diagonalFoldPaper(item)}<em>→</em><div class="b1-diagonal-grid ${item.diagonal}">${cells}<i></i></div></div>${inline}</section>`;
+  }).join("");
+  return `<div class="b1-diagonal-fold-set">${items}</div>`;
+}
+
+function foldUnfoldDrawMarkup(visual) {
+  const cuts = visual.reveal ? `
+    <polygon points="80,12 98,42 62,42"/><polygon points="148,80 118,98 118,62"/>
+    <polygon points="80,148 62,118 98,118"/><polygon points="12,80 42,62 42,98"/>` : "";
+  return `<div class="b1-fold-unfold-draw" style="--turn:${visual.rotation}deg">
+    <div class="folds"><span>처음</span><i>→</i><span>반으로 접기</span><i>→</i><span class="packet">다시 반으로 접고 자르기</span></div>
+    <div class="folded-packet"><span></span><span><svg viewBox="0 0 32 32"><polygon points="32,0 32,18 15,0"/></svg></span><span></span><span></span></div><strong>접은 모양</strong>
+    <svg class="unfold-target" viewBox="0 0 160 160" role="img" aria-label="두 번 접은 색종이를 펼친 모양"><rect x="12" y="12" width="136" height="136"/><path d="M80 12V148M12 80H148"/>${cuts}</svg>
+    <strong>${visual.reveal ? "완성된 펼친 모양" : "빈 그림에 펼친 모양을 그리세요"}</strong>
+  </div>`;
+}
+
+function foldPieceTypesMarkup(visual) {
+  const counts = visual.reveal
+    ? `<div class="counts"><b>△ ${visual.triangleCount}개</b><b>◇ ${visual.diamondCount}개</b></div>`
+    : '<div class="counts blanks"><b>△ <i></i>개</b><b>◇ <i></i>개</b></div>';
+  return `<div class="b1-fold-piece-types"><svg viewBox="0 0 440 150" role="img" aria-label="색종이를 두 번 접어 대각선 두 줄로 자르는 과정"><rect class="paper" x="10" y="25" width="105" height="105"/><path class="crease" d="M10 77H115"/><path class="arrow" d="M125 77H165M154 66L165 77L154 88"/><rect class="paper" x="175" y="50" width="105" height="55"/><path class="crease" d="M227 50V105"/><path class="arrow" d="M290 77H330M319 66L330 77L319 88"/><rect class="paper" x="340" y="50" width="88" height="55"/><path class="cut" d="M340 50L428 105M428 50L340 105"/></svg>${counts}<strong>펼친 뒤 생긴 두 종류의 조각을 따로 셉니다.</strong></div>`;
+}
+
+function foldPunchTotalMarkup(visual) {
+  return `<div class="b1-fold-punch-total"><svg viewBox="0 0 460 150" role="img" aria-label="대각선으로 두 번 접고 원과 반원 구멍을 뚫는 과정"><rect class="paper" x="10" y="22" width="105" height="105"/><path class="crease" d="M10 127L115 22"/><path class="arrow" d="M125 76H165M154 65L165 76L154 87"/><path class="paper" d="M175 127L280 127L280 22Z"/><path class="crease" d="M175 127L280 75"/><path class="arrow" d="M290 76H330M319 65L330 76L319 87"/><path class="paper" d="M340 127L445 127L392 75Z"/><circle class="cut" cx="386" cy="111" r="9"/><path class="cut" d="M414 103A10 10 0 0 1 424 113H414Z"/></svg><strong>전체 구멍 수 = ${visual.reveal ? visual.total : "?"}</strong></div>`;
+}
+
+function borderMagicMarkup(visual) {
+  const positions = [0, 1, 2, 7, null, 3, 6, 5, 4];
+  const cells = positions.map((position) => position == null ? '<span class="center"></span>' : `<span class="${visual.shown[position] == null ? "blank" : ""}">${visual.shown[position] ?? ""}</span>`).join("");
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  return `<div class="b1-border-magic">${cards}<div class="grid">${cells}</div><strong>각 줄의 합 ${visual.lineSum}</strong></div>`;
+}
+
+function triangleMagicMarkup(visual) {
+  const points = [[140,20],[78,92],[202,92],[25,175],[140,175],[255,175]];
+  const lines = [[0,1],[1,3],[0,2],[2,5],[3,4],[4,5]].map(([from,to]) => `<line x1="${points[from][0]}" y1="${points[from][1]}" x2="${points[to][0]}" y2="${points[to][1]}"/>`).join("");
+  const nodes = points.map(([x,y], index) => `<circle cx="${x}" cy="${y}" r="21"/><text x="${x}" y="${y}">${visual.shown[index] ?? ""}</text>`).join("");
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  return `<div class="b1-triangle-magic">${cards}<svg viewBox="0 0 280 205" role="img" aria-label="세 변의 합이 같은 여섯 수 삼각형">${lines}${nodes}<text class="sum" x="140" y="200">한 줄의 합 ${visual.lineSum}</text></svg></div>`;
+}
+
+function irregularGakuroMarkup(visual) {
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  const cells = visual.mask.map((active, index) => {
+    if (!active) return "";
+    const row = Math.floor(index / 3) + 1;
+    const column = index % 3 + 1;
+    return `<span class="${visual.shown[index] == null ? "blank" : ""}" style="--row:${row};--column:${column}">${visual.shown[index] ?? ""}</span>`;
+  }).join("");
+  const rows = visual.rowSums.map((sum, index) => `<b style="--row:${index + 1}">${sum}</b>`).join("");
+  const columns = visual.columnSums.map((sum, index) => `<i style="--column:${index + 1}">${sum}</i>`).join("");
+  return `<div class="b1-irregular-gakuro">${cards}<div class="puzzle">${cells}${rows}${columns}</div></div>`;
+}
+
+function ellipseMagicMarkup(visual) {
+  const points = [[160,24],[55,105],[160,105],[265,105],[160,186]];
+  const lines = '<line x1="160" y1="24" x2="160" y2="186"/><line x1="55" y1="105" x2="265" y2="105"/>';
+  const nodes = points.map(([x,y], index) => `<circle cx="${x}" cy="${y}" r="21"/><text x="${x}" y="${y}">${visual.shown[index] ?? ""}</text>`).join("");
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  return `<div class="b1-ellipse-magic">${cards}<svg viewBox="0 0 320 210" role="img" aria-label="타원 둘레와 두 직선의 합이 같은 수 배열"><ellipse cx="160" cy="105" rx="105" ry="81"/>${lines}${nodes}</svg></div>`;
+}
+
+function polygonRingMarkup(visual) {
+  const vertices = circlePoints(5, 160, 125, 92);
+  const points = vertices.flatMap((point, index) => {
+    const next = vertices[(index + 1) % vertices.length];
+    return [point, [(point[0] + next[0]) / 2, (point[1] + next[1]) / 2]];
+  });
+  const path = vertices.map(([x,y]) => `${x},${y}`).join(" ");
+  const nodes = points.map(([x,y], index) => `<circle cx="${x}" cy="${y}" r="18"/><text x="${x}" y="${y}">${visual.shown[index] ?? ""}</text>`).join("");
+  const cards = visual.cards?.length ? `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>` : "";
+  return `<div class="b1-polygon-ring">${cards}<svg viewBox="0 0 320 255" role="img" aria-label="오각형 다섯 줄의 합이 같은 수 배열"><polygon points="${path}"/>${nodes}<text class="sum" x="160" y="128">합 ${visual.lineSum}</text></svg></div>`;
+}
+
+function heightOrderMarkup(visual) {
+  const order = visual.order || [];
+  return `<div class="b1-height-order"><ol>${visual.clues.map((clue) => `<li>${esc(clue)}</li>`).join("")}</ol><div><b>크다</b>${Array.from({ length: 4 }, (_, index) => `<span>${order[index] ? `${order[index]}<i>${index + 1}</i>` : `<i>${index + 1}</i>`}</span>`).join("")}<b>작다</b></div></div>`;
+}
+
 export function book01Markup(visual) {
   if (!visual || visual.kind !== "book1") return "";
+  if (visual.subtype === "unit-set") return unitSetMarkup(visual);
   if (visual.subtype === "shape-transform") return shapeTransformMarkup(visual);
   if (visual.subtype === "partition-draw") return partitionDrawMarkup(visual);
   if (visual.subtype === "digital-transform") return digitalTransformMarkup(visual);
   if (visual.subtype === "digital-rule-board") return digitalRuleBoardMarkup(visual);
   if (visual.subtype === "digital-orientation-board") return digitalOrientationBoardMarkup(visual);
   if (visual.subtype === "digital-related-addition") return digitalRelatedAdditionMarkup(visual);
+  if (visual.subtype === "digital-direct-set") return digitalDirectSetMarkup(visual);
+  if (visual.subtype === "two-step-number-board") return twoStepNumberBoardMarkup(visual);
   if (visual.subtype === "mirror-compass") return mirrorCompassMarkup(visual);
   if (visual.subtype === "arithmetic-list") return arithmeticListMarkup(visual);
   if (visual.subtype === "circle-magic") return circleMagicMarkup(visual);
@@ -333,9 +461,18 @@ export function book01Markup(visual) {
   if (visual.subtype === "sum-grid") return sumGridMarkup(visual);
   if (visual.subtype === "ring-lines") return ringLinesMarkup(visual);
   if (visual.subtype === "line-card-board") return lineCardBoardMarkup(visual);
+  if (visual.subtype === "border-magic") return borderMagicMarkup(visual);
+  if (visual.subtype === "triangle-magic") return triangleMagicMarkup(visual);
+  if (visual.subtype === "irregular-gakuro") return irregularGakuroMarkup(visual);
+  if (visual.subtype === "ellipse-magic") return ellipseMagicMarkup(visual);
+  if (visual.subtype === "polygon-ring") return polygonRingMarkup(visual);
   if (visual.subtype === "digit-sum-table") return digitSumTableMarkup(visual);
   if (visual.subtype === "fold-choice-board") return foldChoiceBoardMarkup(visual);
   if (visual.subtype === "fold-number-sum") return foldNumberSumMarkup(visual);
+  if (visual.subtype === "diagonal-fold-set") return diagonalFoldSetMarkup(visual);
+  if (visual.subtype === "fold-unfold-draw") return foldUnfoldDrawMarkup(visual);
+  if (visual.subtype === "fold-piece-types") return foldPieceTypesMarkup(visual);
+  if (visual.subtype === "fold-punch-total") return foldPunchTotalMarkup(visual);
   if (visual.subtype === "fold-landing") return foldLandingMarkup(visual);
   if (visual.subtype === "card-equation") return cardEquationMarkup(visual);
   if (visual.subtype === "condition-card") return conditionCardMarkup(visual);
@@ -344,6 +481,7 @@ export function book01Markup(visual) {
   if (visual.subtype === "number-sequence") return numberSequenceMarkup(visual);
   if (visual.subtype === "logic-clues") return logicCluesMarkup(visual);
   if (visual.subtype === "order-line") return orderLineMarkup(visual);
+  if (visual.subtype === "height-order") return heightOrderMarkup(visual);
   if (visual.subtype === "equalize-transfer") return equalizeTransferMarkup(visual);
   return "";
 }

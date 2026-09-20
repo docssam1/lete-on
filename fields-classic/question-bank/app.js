@@ -1,7 +1,7 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20260918b";
-import { GENERATORS } from "./generators.js?v=20260918b";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20260919a";
+import { GENERATORS } from "./generators.js?v=20260919a";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
-import { book01Markup } from "./book01-renderers.js?v=20260829f";
+import { book01Markup } from "./book01-renderers.js?v=20260919a";
 import { book02Markup } from "./book02-renderers.js?v=20260918b";
 import { book03Markup } from "./book03-renderers.js?v=20260827b";
 import { book04Markup } from "./book04-renderers.js?v=20260911a";
@@ -78,6 +78,7 @@ const state = {
   order: "exam",
   includeSolution: true,
   watermark: true,
+  printMode: "questions",
   questions: []
 };
 
@@ -333,6 +334,7 @@ function showTypePreview(anchor) {
     ${!isConceptStage && problem.conceptGuide ? `<div class="concept-guide"><strong>개념 발판</strong><span>${problem.conceptGuide}</span></div>` : ""}
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
     ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
+  panel.classList.toggle("touch-open", Boolean(anchor.dataset.touchPreview));
   panel.hidden = false;
   typePreviewAnchor?.removeAttribute("aria-describedby");
   typePreviewAnchor = anchor;
@@ -343,6 +345,7 @@ function showTypePreview(anchor) {
 function hideTypePreview() {
   if (!typePreviewPanel) return;
   typePreviewPanel.hidden = true;
+  typePreviewPanel.classList.remove("touch-open");
   typePreviewAnchor?.removeAttribute("aria-describedby");
   typePreviewAnchor = null;
 }
@@ -1158,6 +1161,9 @@ function buildQuestions() {
     return;
   }
   state.questions = questions;
+  state.printMode = questions.every((question) => question.generationCase?.sourceKind === "unit-test")
+    ? "questions-with-compact"
+    : "questions";
   renderWorksheet();
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
@@ -3670,6 +3676,116 @@ function answerVisualMarkup(question) {
   return visualMarkup(question.answerVisual);
 }
 
+function isUnitTestWorksheet() {
+  return state.questions.length > 0
+    && state.questions.every((question) => question.generationCase?.sourceKind === "unit-test");
+}
+
+function compactAnswerTitle() {
+  if (isUnitTestWorksheet()) {
+    const sourceIds = [...new Set(state.questions.map((question) => question.generationCase.sourceId))];
+    const book = sourceIds.length === 1 ? CURRICULUM.find((item) => item.id === sourceIds[0]) : null;
+    return `${book?.label || "권별"} 테스트 빠른 정답`;
+  }
+  return "맞춤 문제 빠른 정답";
+}
+
+function quickAnswerNeedsPicture(question) {
+  return question.responseKind === "drawing" && Boolean(question.answerVisual || question.answerVisuals);
+}
+
+function compactAnswerItemMarkup(question, index) {
+  const picture = quickAnswerNeedsPicture(question) ? answerVisualMarkup(question) : "";
+  const answer = String(question.answer || "").replaceAll("\n", "<br>");
+  return `<article class="compact-answer-item${picture ? " has-visual" : ""}" data-compact-answer-number="${index + 1}" data-answer-type="${escapeAttribute(question.type.id)}"><b>${index + 1}</b><div class="compact-answer-content">${picture}<p>${answer}</p></div></article>`;
+}
+
+function balancedPageGroups(items, pageCount) {
+  const groups = [];
+  let offset = 0;
+  for (let pageIndex = 0; pageIndex < pageCount; pageIndex += 1) {
+    const remainingPages = pageCount - pageIndex;
+    const size = Math.ceil((items.length - offset) / remainingPages);
+    groups.push(items.slice(offset, offset + size));
+    offset += size;
+  }
+  return groups;
+}
+
+function renderCompactAnswers() {
+  const sheets = $("compactAnswerSheets");
+  if (!sheets) return;
+  if (!state.questions.length) {
+    sheets.innerHTML = "";
+    return;
+  }
+  const items = state.questions.map(compactAnswerItemMarkup);
+  const pageCount = Math.max(1, Math.ceil(items.length / 14));
+  const pages = balancedPageGroups(items, pageCount);
+  const title = compactAnswerTitle();
+  sheets.innerHTML = pages.map((pageItems, pageIndex) => {
+    const columnBreak = Math.ceil(pageItems.length / 2);
+    const columns = [pageItems.slice(0, columnBreak), pageItems.slice(columnBreak)];
+    return `<article class="compact-answer-page" data-compact-answer-page="${pageIndex + 1}"><header><h2>${title}</h2><span>${student} · ${pageIndex + 1} / ${pages.length}</span></header><div class="compact-answer-columns">${columns.map((column) => `<div class="compact-answer-column">${column.join("")}</div>`).join("")}</div>${state.watermark ? `<div class="compact-answer-watermark">${escapeAttribute(student)} · GFIELD</div>` : ""}</article>`;
+  }).join("");
+}
+
+const worksheetPrintClasses = ["printing-compact", "printing-with-compact"];
+
+function clearWorksheetPrintClasses() {
+  document.body.classList.remove(...worksheetPrintClasses);
+}
+
+async function waitForPrintResources(selector) {
+  if (document.fonts?.ready) await document.fonts.ready;
+  const images = [...document.querySelectorAll(`${selector} img`)];
+  await Promise.all(images.map(async (image) => {
+    if (!image.complete && image.decode) await image.decode();
+    if (!image.complete || image.naturalWidth === 0) throw new Error("print-image-not-ready");
+  }));
+}
+
+async function prepareCompactAnswers() {
+  renderCompactAnswers();
+  const sheets = $("compactAnswerSheets");
+  sheets.classList.add("measuring");
+  try {
+    await waitForPrintResources("#compactAnswerSheets");
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const overflow = [...sheets.querySelectorAll(".compact-answer-column")].some((column) => column.scrollHeight > column.clientHeight + 2)
+      || [...sheets.querySelectorAll(".compact-answer-item")].some((item) => item.scrollWidth > item.clientWidth + 2);
+    if (overflow) throw new Error("compact-answer-overflow");
+  } finally {
+    sheets.classList.remove("measuring");
+  }
+}
+
+async function printWorksheet() {
+  const button = $("printButton");
+  const status = $("printStatus");
+  const mode = $("worksheetPrintMode")?.value || state.printMode;
+  button.disabled = true;
+  status.textContent = "인쇄 자료를 준비하고 있습니다.";
+  clearWorksheetPrintClasses();
+  try {
+    if (mode !== "compact") await waitForPrintResources("#worksheetSection");
+    if (mode !== "questions") await prepareCompactAnswers();
+    if (mode === "compact") document.body.classList.add("printing-compact");
+    if (mode === "questions-with-compact") document.body.classList.add("printing-with-compact");
+    window.scrollTo({ top: 0, behavior: "auto" });
+    status.textContent = "";
+    window.addEventListener("afterprint", clearWorksheetPrintClasses, { once: true });
+    window.print();
+    setTimeout(clearWorksheetPrintClasses, 1000);
+  } catch (error) {
+    clearWorksheetPrintClasses();
+    status.textContent = "자료를 불러오지 못했습니다. 다시 불러오세요.";
+    console.error("Worksheet print preparation failed", error);
+  } finally {
+    button.disabled = false;
+  }
+}
+
 function watermarkMarkup() {
   return Array.from({ length: 3 }, () => `<span>${student} · GFIELD · ${student} · GFIELD · ${student}</span>`).join("");
 }
@@ -3715,6 +3831,8 @@ function renderWorksheet() {
   $("questionGrid").innerHTML = pages.join("");
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   $("answerWatermark").innerHTML = state.watermark ? watermarkMarkup() : "";
+  if ($("worksheetPrintMode")) $("worksheetPrintMode").value = state.printMode;
+  renderCompactAnswers();
   document.querySelectorAll(".b4-paper-toggle").forEach((button) => {
     button.addEventListener("click", () => {
       const steps = button.nextElementSibling;
@@ -3800,10 +3918,8 @@ function initControls() {
   $("backToBuilder").addEventListener("click", () => { $("worksheetSection").hidden = true; $("builderPanel").hidden = false; });
   $("regenerateButton").addEventListener("click", buildQuestions);
   $("answerButton").addEventListener("click", openAnswers);
-  $("printButton").addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "auto" });
-    window.print();
-  });
+  $("worksheetPrintMode").addEventListener("change", (event) => { state.printMode = event.target.value; });
+  $("printButton").addEventListener("click", printWorksheet);
   $("closeAnswer").addEventListener("click", () => $("answerDialog").close());
   $("closeAnswerBottom").addEventListener("click", () => $("answerDialog").close());
   $("printAnswerButton").addEventListener("click", () => {

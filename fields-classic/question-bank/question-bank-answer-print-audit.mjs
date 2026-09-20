@@ -79,6 +79,7 @@ try {
     const rows = [...dialog.querySelectorAll("tbody tr")];
     const escapedMedia = [...dialog.querySelectorAll("tbody svg, tbody img")].filter((node) => {
       const media = node.getBoundingClientRect();
+      if (media.width < 1 || media.height < 1) return false;
       const cell = node.closest("td").getBoundingClientRect();
       return media.left < cell.left - 1 || media.right > cell.right + 1;
     });
@@ -95,6 +96,11 @@ try {
       rowBreaks: [...new Set(rows.map((row) => getComputedStyle(row).breakInside))],
       tallestRow: Math.max(...rows.map((row) => row.getBoundingClientRect().height)),
       escapedMedia: escapedMedia.length,
+      escapedMediaDetails: escapedMedia.map((node) => ({
+        tag: node.tagName,
+        typeId: node.closest("tr")?.querySelector("[data-answer-type]")?.dataset.answerType || node.closest("tr")?.querySelector("td")?.textContent?.trim().slice(0, 80) || "unknown",
+        className: node.getAttribute("class") || ""
+      })),
       escapedVisuals: escapedVisuals.length,
       scrollOverflow: dialog.scrollWidth > dialog.clientWidth + 1
     };
@@ -103,7 +109,7 @@ try {
   assert.equal(layout.tableInsideDialog, true, "The printed answer table must stay inside A4 width");
   assert.ok(layout.rowBreaks.every((value) => value === "avoid"), `Answer rows may split across pages: ${layout.rowBreaks.join(", ")}`);
   assert.ok(layout.tallestRow < 900, `An answer row is taller than a printable page: ${layout.tallestRow}`);
-  assert.equal(layout.escapedMedia, 0, "Answer figures must stay inside their cells");
+  assert.equal(layout.escapedMedia, 0, `Answer figures must stay inside their cells: ${JSON.stringify(layout.escapedMediaDetails)}`);
   assert.equal(layout.escapedVisuals, 0, "Answer layout visuals must stay inside their cells");
   assert.equal(layout.scrollOverflow, false, "The printed answer sheet must not overflow horizontally");
 

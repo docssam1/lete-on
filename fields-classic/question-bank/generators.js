@@ -10,6 +10,7 @@ import { BOOK08_GENERATORS, BOOK08_UNIT_TEST_GENERATORS } from "./book08-generat
 import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generators.js?v=20260826h";
 import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20260826h";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
+import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20260919a";
 import { book02UnitTestProblem } from "./book02-unit-test-generators.js?v=20260918b";
 
 const COLORS = ["흰색", "검은색"];
@@ -6502,6 +6503,10 @@ function withBook02UnitTest(fallback) {
   return (options = {}) => book02UnitTestProblem(options) || fallback(options);
 }
 
+function withBook01UnitTest(fallback) {
+  return (options = {}) => book01UnitTestProblem(options) || fallback(options);
+}
+
 
 export const GENERATORS = {
   ...MOCK06_GENERATORS,
@@ -6763,5 +6768,30 @@ export const GENERATORS = {
   goStoneTriangle,
   lineOrder,
   paperFoldHoleCount,
-  practiceThreeFoldHoleCount
+  practiceThreeFoldHoleCount,
+
+  // The Book 1 unit test has multi-part response contracts that differ from
+  // the reusable curriculum generators. Use its source-shaped variant only
+  // when the caller supplies the matching unit-test source case.
+  symbolBalancedCongruentPartition: withBook01UnitTest(BOOK01_GENERATORS.symbolBalancedCongruentPartition),
+  digitalTwoDigitTransform: withBook01UnitTest(BOOK01_GENERATORS.digitalTwoDigitTransform),
+  digitalTransformAddition: withBook01UnitTest(BOOK01_GENERATORS.digitalTransformAddition),
+  digitalTransformBoardSum: withBook01UnitTest(BOOK01_GENERATORS.digitalTransformBoardSum),
+  foldNumberCutSumTextbook: withBook01UnitTest(foldNumberCutSumTextbook),
+  foldDiagonalNumberSum: withBook01UnitTest(foldDiagonalNumberSum),
+  foldCutUnfoldTwoDraw: withBook01UnitTest(foldCutUnfoldTwoDraw),
+  foldCutPieceCount: withBook01UnitTest(foldCutPieceCount),
+  foldPunchShapeCount: withBook01UnitTest(foldPunchShapeCount),
+  crossShapeMagicSum: withBook01UnitTest(BOOK01_GENERATORS.crossShapeMagicSum),
+  circularMagicSevenLineSum: withBook01UnitTest(BOOK01_GENERATORS.circularMagicSevenLineSum),
+  equalLineSumEightCards: withBook01UnitTest(equalLineSumEightCards),
+  triangleEdgeSumSix: withBook01UnitTest(BOOK03_GENERATORS.triangleEdgeSumSix),
+  gakuroGridIrregularSum: withBook01UnitTest(BOOK01_GENERATORS.gakuroGridIrregularSum),
+  polygonRingEqualSum: withBook01UnitTest(BOOK03_GENERATORS.polygonRingEqualSum),
+  circleLineRingEqualSum: withBook01UnitTest(BOOK01_GENERATORS.circleLineRingEqualSum),
+  sourceTwoDigitSumDifference: withBook01UnitTest(sourceTwoDigitSumDifference),
+  twoDigitEvenOnesGreaterGap: withBook01UnitTest(twoDigitEvenOnesGreaterGap),
+  threeDigitStepSequence: withBook01UnitTest(BOOK01_GENERATORS.threeDigitStepSequence),
+  personItemLogicBook1: withBook01UnitTest(BOOK01_GENERATORS.personItemLogicBook1),
+  relativeOrderLogicBook1: withBook01UnitTest(BOOK01_GENERATORS.relativeOrderLogicBook1)
 };

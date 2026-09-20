@@ -1,5 +1,5 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
-import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20260918a";
+import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20260919a";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
 // id는 URL 파라미터와 EXAMS의 stage 참조에 쓰이므로 바꾸지 않는다.
@@ -132,7 +132,7 @@ export const TYPES = [
   type("shape-equation-add-subtract", "number", "복면산과 식", "더하기와 빼기로 도형 수 구하기", { generator: "shapeEquationAddSubtract", sourceMatched: true }),
   type("two-digit-condition", "number", "조건에 맞는 수", "조건에 맞는 두 자리 수", { generator: "sourceTwoDigitSumDifference", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("two-digit-parity-gap", "number", "조건에 맞는 수", "짝수와 자릿수 차 조건의 두 자리 수", { generator: "twoDigitParityGap", sourceMatched: true }),
-  type("two-digit-even-ones-greater-gap", "number", "조건에 맞는 수", "일의 자리 숫자가 더 큰 짝수 찾기", { generator: "twoDigitEvenOnesGreaterGap", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("two-digit-even-ones-greater-gap", "number", "조건에 맞는 수", "짝수의 두 자리 숫자 차 조건", { generator: "twoDigitEvenOnesGreaterGap", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("two-digit-odd-gap", "number", "조건에 맞는 수", "홀수와 자릿수 차 조건의 두 자리 수", { generator: "twoDigitOddGap", sourceMatched: true }),
   type("two-digit-odd-bounded-gap", "number", "조건에 맞는 수", "범위와 자릿수 차로 홀수 찾기", { generator: "twoDigitOddBoundedGap", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("growing-shape-count", "pattern", "도형 규칙", "구슬 배열의 개수 규칙", { generator: "sourceGrowingDotSquare", sourceMatched: true }),
@@ -253,7 +253,7 @@ export const TYPES = [
   type("triangle-count", "geometry", "도형 세기", "크고 작은 삼각형 세기", { generator: "triangleFanCount", sourceMatched: true, textbookSource: "실전 모의고사 3회 12번" }),
   type("square-count", "geometry", "도형 세기", "크고 작은 사각형 세기", { generator: "squareCountShape", sourceMatched: true }),
   type("calendar-weekday-sum", "pattern", "달력과 시간", "달력에서 같은 요일 날짜의 합"),
-  type("person-item-logic", "logic", "조건 연결", "사람과 동물·음식 조건 연결", { generator: "personItemLogicBook1", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("person-item-logic", "logic", "조건 연결", "사람과 대상의 조건 연결", { generator: "personItemLogicBook1", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("set-union-count", "logic", "집합과 포함", "두 종류를 선택한 전체 사람 수", { generator: "setUnionCount", sourceMatched: true }),
   type("custom-operation", "number", "연산 약속", "새 기호의 계산 약속"),
   type("operator-insertion", "number", "수 카드와 식", "+와 -를 넣어 식 완성하기"),
@@ -376,7 +376,7 @@ export const TYPES = [
   type("symbol-balanced-congruent-partition", "geometry", "도형 분할", "기호를 똑같이 가진 합동 도형으로 나누기", { generator: "symbolBalancedCongruentPartition", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-digit-transform", "pattern", "디지털 숫자", "디지털 숫자를 뒤집거나 돌린 결과", { generator: "digitalDigitTransform", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-two-digit-transform", "pattern", "디지털 숫자", "두 자리 디지털 수를 움직인 결과", { generator: "digitalTwoDigitTransform", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("digital-transform-board-sum", "number", "디지털 숫자", "숫자판을 반의 반 바퀴 돌려 바로 선 수의 합", { generator: "digitalTransformBoardSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("digital-transform-board-sum", "number", "디지털 숫자", "숫자판을 움직여 바로 선 수의 합", { generator: "digitalTransformBoardSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-board-half-turn-sum", "number", "디지털 숫자", "숫자판을 반 바퀴 돌려 바로 선 수의 합", { generator: "digitalBoardHalfTurnSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-flip-addition-horizontal", "number", "디지털 숫자", "원래 수와 오른쪽으로 뒤집은 수의 가로 덧셈", { generator: "digitalFlipAdditionHorizontal", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digital-transform-addition", "number", "디지털 숫자", "원래 수와 반 바퀴 돌린 수의 세로 덧셈", { generator: "digitalTransformAddition", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
@@ -393,7 +393,7 @@ export const TYPES = [
   type("gakuro-grid-irregular-sum", "number", "가쿠로", "서로 다른 수로 계단 모양 가쿠로 채우기", { generator: "gakuroGridIrregularSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("circle-line-ring-equal-sum", "number", "수 배열과 합", "원 둘레와 지름의 수 합 같게 만들기", { generator: "circleLineRingEqualSum", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("digit-sum-enumeration", "number", "조건에 맞는 수", "각 자리 숫자의 합이 같은 수 모두 찾기", { generator: "digitSumEnumeration", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
-  type("three-digit-step-sequence", "pattern", "수 추리", "같은 수만큼 변하는 세 자리 수열", { generator: "threeDigitStepSequence", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
+  type("three-digit-step-sequence", "pattern", "수 추리", "규칙에 맞는 세 자리 수 찾기", { generator: "threeDigitStepSequence", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("place-value-condition-three", "number", "조건에 맞는 수", "자릿값 조건으로 세 자리 수 찾기", { generator: "placeValueConditionThree", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("place-value-condition-four", "number", "조건에 맞는 수", "자릿값 조건으로 네 자리 수 찾기", { generator: "placeValueConditionFour", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),
   type("relative-order-logic", "logic", "순서와 비교", "여러 사람의 앞뒤·크기 순서 추리", { generator: "relativeOrderLogicBook1", sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 문제 번호별 대조" }),

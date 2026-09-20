@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f3f7fa" />
   <title>필즈 더 클래식 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=20260918b" />
+  <link rel="stylesheet" href="./styles.css?v=20260919c" />
 </head>
 <body>
   <header class="app-header">
@@ -104,12 +104,15 @@
     </section>
 
     <section id="worksheetSection" class="worksheet-section" hidden>
-      <div class="worksheet-actions"><button id="backToBuilder" type="button">범위 다시 선택</button><div><button id="regenerateButton" type="button">새 문제</button><button id="answerButton" type="button">답안 보기</button><button id="printButton" class="primary" type="button">문제 인쇄</button></div></div>
+      <div class="worksheet-actions"><button id="backToBuilder" type="button">범위 다시 선택</button><div><button id="regenerateButton" type="button">새 문제</button><button id="answerButton" type="button">답안 보기</button><label id="worksheetPrintOptions" for="worksheetPrintMode"><span>인쇄 범위</span><select id="worksheetPrintMode"><option value="questions">문제만</option><option value="questions-with-compact">문제와 빠른 정답</option><option value="compact">빠른 정답만</option></select></label><button id="printButton" class="primary" type="button">인쇄</button></div></div>
+      <p id="printStatus" role="status" aria-live="polite"></p>
       <div class="worksheet-head"><div><span>GFIELD QUESTION BANK</span><h1 id="worksheetTitle">맞춤 모의고사</h1></div><dl><div><dt>이름</dt><dd id="worksheetStudent">DEMO</dd></div><div><dt>점수</dt><dd></dd></div></dl></div>
       <div id="watermark" class="watermark" aria-hidden="true"></div>
       <div id="questionGrid" class="question-grid"></div>
     </section>
   </main>
+
+  <section id="compactAnswerSheets" class="compact-answer-sheets" aria-label="빠른 정답"></section>
 
   <dialog id="answerDialog" class="answer-dialog">
     <div class="dialog-head"><div><span>정답과 풀이</span><h2>맞춤 문제 답안지</h2></div><button id="closeAnswer" type="button" aria-label="닫기">×</button></div>
@@ -122,6 +125,6 @@
   <script src="../../geometry/worksheet/generators.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/render.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/card.js?v=20260829g"></script>
-  <script type="module" src="./app.js?v=20260918c"></script>
+  <script type="module" src="./app.js?v=20260919c"></script>
 </body>
 </html>

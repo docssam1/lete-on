@@ -29,26 +29,26 @@ const contract = (responseKind, answerShape, visualShape, conditionSignature = n
 const SOURCE_CONTRACTS = Object.freeze({
   "book-01": Object.freeze({
     1: contract("drawing", "draw-partition-multi", "symbol-balanced-partition", "two-source-boards"),
-    2: contract("text", "multi-direct-write", "two-digit-horizontal-flip", "two-subproblems"),
-    3: contract("text", "multi-direct-write", "two-digit-related-addition", "two-subproblems"),
+    2: contract("visual-fill", "fill-two-direct-write", "two-digit-horizontal-flip", "two-subproblems"),
+    3: contract("visual-fill", "fill-two-transform-and-sums", "two-digit-related-addition", "two-subproblems"),
     4: contract("text", "single-target", "board-two-step-flip-sum", "right-then-down-flip"),
     5: contract("drawing", "draw-symbol-balanced-partition", "four-congruent-regions", "equal-symbol-count"),
-    6: contract("text", "multi-target", "diagonal-fold-number-grid", "two-subproblems"),
+    6: contract("visual-fill", "two-inline-sums", "diagonal-fold-number-grid", "two-subproblems"),
     7: contract("text", "single-target", "orthogonal-two-fold-number-grid", "two-fold-cut-sum"),
     8: contract("drawing", "draw-unfolded-shape", "two-fold-cut-unfold", "two-fold"),
     9: contract("text", "single-target", "diagonal-fold-number-grid", "diagonal-fold"),
-    10: contract("text", "multi-target", "fold-piece-two-shapes", "triangle-and-diamond"),
-    11: contract("drawing", "draw-unfolded-punch-shapes", "fold-punch", "two-fold"),
-    12: contract("drawing-plus-text", "fill-three-diagrams-and-three-targets", "cross-magic", "three-subproblems"),
-    13: contract("drawing-plus-text", "fill-three-diagrams-and-three-targets", "seven-card-magic", "three-subproblems"),
-    14: contract("drawing", "fill-all-grid", "eight-card-sum-grid", "all-blanks"),
-    15: contract("drawing", "fill-two-triangles", "triangle-edge-sum", "two-subproblems"),
-    16: contract("drawing", "fill-all-irregular-gakuro", "irregular-gakuro", "seven-source-cards"),
-    17: contract("drawing", "fill-all-ring", "polygon-ring", "ten-cards-line-sum-14"),
-    18: contract("text", "multi-target", "ellipse-four-lines", "two-targets"),
+    10: contract("visual-fill", "two-piece-counts", "fold-piece-two-shapes", "triangle-and-diamond"),
+    11: contract("text", "single-target", "fold-punch-total", "two-fold-circle-and-edge-punch"),
+    12: contract("visual-fill", "three-centers-and-three-line-sums", "cross-magic", "three-subproblems"),
+    13: contract("visual-fill", "three-centers-and-three-line-sums", "seven-card-magic", "three-subproblems"),
+    14: contract("visual-fill", "fill-all-grid", "eight-card-sum-grid", "all-blanks"),
+    15: contract("visual-fill", "fill-two-triangles", "triangle-edge-sum", "two-subproblems"),
+    16: contract("visual-fill", "fill-all-irregular-gakuro", "irregular-gakuro", "seven-source-cards"),
+    17: contract("visual-fill", "fill-all-ring", "polygon-ring", "ten-cards-line-sum-14"),
+    18: contract("text", "single-target", "ellipse-four-lines", "center-only"),
     19: contract("text", "single-target", "two-digit-range-and-digit-sum", "range-50-70-sum-8"),
     20: contract("text", "single-target", "even-two-digit-tens-minus-ones", "above-70-tens-minus-ones-4"),
-    21: contract("text", "single-target", "fixed-three-digit-condition", "place-conditions-single-answer"),
+    21: contract("text", "single-target", "fixed-three-digit-condition", "descending-and-odd-sum"),
     22: contract("text", "single-target", "three-person-three-fruit", "three-people"),
     23: contract("text", "single-target", "four-child-four-color", "four-children"),
     24: contract("text", "single-target", "three-job-three-place", "three-people"),
@@ -123,6 +123,29 @@ const GENERATOR_CONTRACTS = Object.freeze({
 });
 
 const SOURCE_GENERATOR_CONTRACTS = Object.freeze({
+  "book-01:1": contract("drawing", "draw-partition-multi", "symbol-balanced-partition", "two-source-boards"),
+  "book-01:2": contract("visual-fill", "fill-two-direct-write", "two-digit-horizontal-flip", "two-subproblems"),
+  "book-01:3": contract("visual-fill", "fill-two-transform-and-sums", "two-digit-related-addition", "two-subproblems"),
+  "book-01:4": contract("text", "single-target", "board-two-step-flip-sum", "right-then-down-flip"),
+  "book-01:5": contract("drawing", "draw-symbol-balanced-partition", "four-congruent-regions", "equal-symbol-count"),
+  "book-01:6": contract("visual-fill", "two-inline-sums", "diagonal-fold-number-grid", "two-subproblems"),
+  "book-01:8": contract("drawing", "draw-unfolded-shape", "two-fold-cut-unfold", "two-fold"),
+  "book-01:9": contract("text", "single-target", "diagonal-fold-number-grid", "diagonal-fold"),
+  "book-01:10": contract("visual-fill", "two-piece-counts", "fold-piece-two-shapes", "triangle-and-diamond"),
+  "book-01:11": contract("text", "single-target", "fold-punch-total", "two-fold-circle-and-edge-punch"),
+  "book-01:12": contract("visual-fill", "three-centers-and-three-line-sums", "cross-magic", "three-subproblems"),
+  "book-01:13": contract("visual-fill", "three-centers-and-three-line-sums", "seven-card-magic", "three-subproblems"),
+  "book-01:14": contract("visual-fill", "fill-all-grid", "eight-card-sum-grid", "all-blanks"),
+  "book-01:15": contract("visual-fill", "fill-two-triangles", "triangle-edge-sum", "two-subproblems"),
+  "book-01:16": contract("visual-fill", "fill-all-irregular-gakuro", "irregular-gakuro", "seven-source-cards"),
+  "book-01:17": contract("visual-fill", "fill-all-ring", "polygon-ring", "ten-cards-line-sum-14"),
+  "book-01:18": contract("text", "single-target", "ellipse-four-lines", "center-only"),
+  "book-01:19": contract("text", "single-target", "two-digit-range-and-digit-sum", "range-50-70-sum-8"),
+  "book-01:20": contract("text", "single-target", "even-two-digit-tens-minus-ones", "above-70-tens-minus-ones-4"),
+  "book-01:21": contract("text", "single-target", "fixed-three-digit-condition", "descending-and-odd-sum"),
+  "book-01:22": contract("text", "single-target", "three-person-three-fruit", "three-people"),
+  "book-01:24": contract("text", "single-target", "three-job-three-place", "three-people"),
+  "book-01:25": contract("text", "single-target", "four-person-height-third", "four-people-third-tallest"),
   "book-02:1": contract("text", "single-target", "shape-matrix-3x3", "last-column-target"),
   "book-02:2": contract("text", "single-target", "shape-matrix-4x4", "first-row-target"),
   "book-02:3": contract("list", "multi-target", "total-difference-two-counts", "sum-and-difference"),
@@ -148,41 +171,45 @@ const SOURCE_GENERATOR_CONTRACTS = Object.freeze({
   "book-02:25": contract("text", "single-target", "first-white-exceeds-black-stage", "first-stage-white-exceeds-black")
 });
 
-const withContracts = (bookId, links) => links.map((entry) => Object.freeze({
-  ...entry,
-  sourceContract: SOURCE_CONTRACTS[bookId][entry.number],
-  generatorContract: entry.typeId ? SOURCE_GENERATOR_CONTRACTS[`${bookId}:${entry.number}`] || GENERATOR_CONTRACTS[entry.typeId] || null : null,
-  generationCaseMode: entry.sourceFidelity === "exact-generator" ? "source" : "variant-from-source"
-}));
+const withContracts = (bookId, links) => links.map((entry) => {
+  const sourceFidelity = bookId === "book-01" && entry.verified ? "exact-generator" : entry.sourceFidelity;
+  return Object.freeze({
+    ...entry,
+    sourceFidelity,
+    sourceContract: SOURCE_CONTRACTS[bookId][entry.number],
+    generatorContract: entry.typeId ? SOURCE_GENERATOR_CONTRACTS[`${bookId}:${entry.number}`] || GENERATOR_CONTRACTS[entry.typeId] || null : null,
+    generationCaseMode: sourceFidelity === "exact-generator" ? "source" : "variant-from-source"
+  });
+});
 
 export const LEARNER_STAGE = "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정";
 
 export const BOOK01_UNIT_TEST_LINKS = Object.freeze(withContracts("book-01", [
-  link({ number: 1, typeId: "symbol-balanced-congruent-partition", label: "1·2·3·4가 한 개씩 들어가게 네 조각으로 나누기", sourceLocator: "book01-unit-test:q01", sourceVisualSignature: "4x4-grid-four-symbols-congruent-four-way-partition", verified: false, reason: "원본은 두 문제를 모두 그리는 응답인데 현재 generator는 한 문제만 생성합니다." }),
-  link({ number: 2, typeId: "digital-two-digit-transform", label: "두 자리 수 오른쪽 뒤집기 두 칸 쓰기", sourceLocator: "book01-unit-test:q02", sourceVisualSignature: "two-digit-right-flip-two-direct-write-blanks", verified: false, reason: "원본은 오른쪽으로 뒤집은 결과를 두 칸에 직접 쓰지만 현재 generator는 반 바퀴 결과를 고르는 단일 choice 계약입니다." }),
-  link({ number: 3, typeId: "digital-transform-addition", label: "두 자리 수 반 바퀴와 덧셈 두 문항", sourceLocator: "book01-unit-test:q03", sourceVisualSignature: "two-digit-half-turn-related-addition-two-subproblems", verified: false, reason: "원본은 두 개의 덧셈식을 직접 완성하지만 현재 generator는 한 개의 단일 target만 반환합니다." }),
-  link({ number: 4, typeId: "digital-transform-board-sum", label: "숫자판 두 단계 뒤집기와 합", sourceLocator: "book01-unit-test:q04", sourceVisualSignature: "three-by-three-board-right-then-down-flip-sum", verified: false, reason: "원본은 오른쪽·아래 두 단계 뒤집기인데 현재 generator는 오른쪽 반의 반 바퀴 한 단계만 지원합니다." }),
-  link({ number: 5, typeId: "rotational-partition-four", label: "기호 개수 조건 네 조각 분할", sourceLocator: "book01-unit-test:q05", sourceVisualSignature: "symbol-count-balanced-four-congruent-regions", verified: false, reason: "원본은 각 영역의 기호 개수 조건을 포함하지만 현재 generator는 기호 균형 조건 없이 네 합동 영역만 생성합니다." }),
-  link({ number: 6, label: "대각선 접기 숫자 합", sourceLocator: "book01-unit-test:q06", sourceVisualSignature: "diagonal-fold-number-grid-cut-sum", verified: false, reason: "원본은 대각선 한 번 접기 숫자판 합 구조이며 현재 CURRICULUM[0]에 동일 응답 계약의 typeId가 없습니다." }),
+  link({ number: 1, typeId: "symbol-balanced-congruent-partition", label: "1·2·3·4가 한 개씩 들어가게 네 조각으로 나누기", sourceLocator: "book01-unit-test:q01", sourceVisualSignature: "4x4-grid-four-symbols-congruent-four-way-partition", verified: true }),
+  link({ number: 2, typeId: "digital-two-digit-transform", label: "두 자리 수 오른쪽 뒤집기 두 칸 쓰기", sourceLocator: "book01-unit-test:q02", sourceVisualSignature: "two-digit-right-flip-two-direct-write-blanks", verified: true }),
+  link({ number: 3, typeId: "digital-transform-addition", label: "두 자리 수 반 바퀴와 덧셈 두 문항", sourceLocator: "book01-unit-test:q03", sourceVisualSignature: "two-digit-half-turn-related-addition-two-subproblems", verified: true }),
+  link({ number: 4, typeId: "digital-transform-board-sum", label: "숫자판 두 단계 뒤집기와 합", sourceLocator: "book01-unit-test:q04", sourceVisualSignature: "three-by-three-board-right-then-down-flip-sum", verified: true }),
+  link({ number: 5, typeId: "symbol-balanced-congruent-partition", label: "개구리 수가 같은 네 조각으로 나누기", sourceLocator: "book01-unit-test:q05", sourceVisualSignature: "symbol-count-balanced-four-congruent-regions", verified: true }),
+  link({ number: 6, typeId: "fold-diagonal-number-sum", label: "대각선 접기 숫자 합 두 문항", sourceLocator: "book01-unit-test:q06", sourceVisualSignature: "diagonal-fold-number-grid-cut-sum", verified: true }),
   link({ number: 7, typeId: "fold-number-cut-sum-textbook", label: "두 번 접은 수의 합", sourceLocator: "book01-unit-test:q07", sourceVisualSignature: "orthogonal-two-fold-number-grid-cut-sum", verified: true }),
-  link({ number: 8, label: "두 번 접은 모양 펼쳐 그리기", sourceLocator: "book01-unit-test:q08", sourceVisualSignature: "two-fold-cut-unfold-drawing", verified: false, reason: "원본은 펼친 모양을 그리는 drawing 응답인데 현재 CURRICULUM[0]의 유사 후보 fold-cut-shape-choice는 객관식 선택 응답이라 연결하지 않았습니다." }),
-  link({ number: 9, label: "대각선 접기 숫자 합", sourceLocator: "book01-unit-test:q09", sourceVisualSignature: "diagonal-fold-number-grid-cut-sum", verified: false, reason: "원본은 대각선 한 번 접기 숫자판 합 구조이며 현재 CURRICULUM[0]에 동일 응답 계약의 typeId가 없습니다." }),
-  link({ number: 10, typeId: "fold-cut-piece-count", label: "접어 자른 두 종류 조각 수", sourceLocator: "book01-unit-test:q10", sourceVisualSignature: "two-fold-cut-triangle-and-diamond-piece-count", verified: false, reason: "원본은 삼각형과 마름모 두 종류의 개수를 모두 쓰지만 현재 generator는 전체 조각 수 한 값만 반환합니다." }),
-  link({ number: 11, typeId: "fold-punch-shape-count", label: "펀치 후 펼친 모양 그리기", sourceLocator: "book01-unit-test:q11", sourceVisualSignature: "two-fold-punch-unfolded-shape-drawing", verified: false, reason: "원본은 펼친 구멍 모양을 그리는 drawing 응답인데 현재 generator는 반원·원 개수를 텍스트로 반환합니다." }),
-  link({ number: 12, typeId: "cross-shape-magic-sum", label: "세 개의 십자 수 퍼즐 채우기", sourceLocator: "book01-unit-test:q12", sourceVisualSignature: "three-cross-diagrams-and-three-line-sums", verified: false, reason: "원본은 세 도형과 세 합을 채우지만 현재 generator는 한 십자 도형과 한 합만 생성합니다." }),
-  link({ number: 13, typeId: "circular-magic-seven-line-sum", label: "세 개의 일곱 수 퍼즐 채우기", sourceLocator: "book01-unit-test:q13", sourceVisualSignature: "three-seven-card-magic-diagrams-and-three-sums", verified: false, reason: "원본은 세 도형과 세 합을 채우지만 현재 generator는 한 도형과 한 합만 생성합니다." }),
-  link({ number: 14, typeId: "equal-line-sum-eight-cards", label: "8장 수 배열 전체 채우기", sourceLocator: "book01-unit-test:q14", sourceVisualSignature: "eight-card-three-by-three-fill-all-blanks", verified: false, reason: "원본은 여러 빈칸을 전부 채우는 drawing/grid 응답인데 현재 generator는 한 target 수만 반환합니다." }),
-  link({ number: 15, typeId: "triangle-edge-sum-six", label: "두 삼각형 전체 채우기", sourceLocator: "book01-unit-test:q15", sourceVisualSignature: "two-six-card-triangle-fill-all-blanks", verified: false, reason: "원본은 두 삼각형을 모두 채우지만 현재 generator는 한 삼각형만 생성합니다." }),
-  link({ number: 16, typeId: "gakuro-grid-irregular-sum", label: "불규칙한 수 퍼즐 전체 채우기", sourceLocator: "book01-unit-test:q16", sourceVisualSignature: "seven-card-irregular-gakuro-fill-all", verified: false, reason: "원본은 일곱 원본 카드를 쓰는 전체 채우기인데 현재 generator는 다른 카드 범위의 여섯 카드 변형을 생성합니다." }),
+  link({ number: 8, typeId: "fold-cut-unfold-two-draw", label: "두 번 접은 모양 펼쳐 그리기", sourceLocator: "book01-unit-test:q08", sourceVisualSignature: "two-fold-cut-unfold-drawing", verified: true }),
+  link({ number: 9, typeId: "fold-diagonal-number-sum", label: "대각선 접기 숫자 합", sourceLocator: "book01-unit-test:q09", sourceVisualSignature: "diagonal-fold-number-grid-cut-sum", verified: true }),
+  link({ number: 10, typeId: "fold-cut-piece-count", label: "접어 자른 두 종류 조각 수", sourceLocator: "book01-unit-test:q10", sourceVisualSignature: "two-fold-cut-triangle-and-diamond-piece-count", verified: true }),
+  link({ number: 11, typeId: "fold-punch-shape-count", label: "접고 뚫은 뒤 생기는 구멍 수", sourceLocator: "book01-unit-test:q11", sourceVisualSignature: "two-fold-punch-unfolded-hole-count", verified: true }),
+  link({ number: 12, typeId: "cross-shape-magic-sum", label: "세 십자 수 퍼즐의 가운데 수와 줄의 합", sourceLocator: "book01-unit-test:q12", sourceVisualSignature: "three-cross-diagrams-and-three-line-sums", verified: true }),
+  link({ number: 13, typeId: "circular-magic-seven-line-sum", label: "세 일곱 수 퍼즐의 가운데 수와 줄의 합", sourceLocator: "book01-unit-test:q13", sourceVisualSignature: "three-seven-card-magic-diagrams-and-three-sums", verified: true }),
+  link({ number: 14, typeId: "equal-line-sum-eight-cards", label: "8장 수 배열 전체 채우기", sourceLocator: "book01-unit-test:q14", sourceVisualSignature: "eight-card-three-by-three-fill-all-blanks", verified: true }),
+  link({ number: 15, typeId: "triangle-edge-sum-six", label: "두 삼각형 전체 채우기", sourceLocator: "book01-unit-test:q15", sourceVisualSignature: "two-six-card-triangle-fill-all-blanks", verified: true }),
+  link({ number: 16, typeId: "gakuro-grid-irregular-sum", label: "일곱 수 카드로 불규칙 수 퍼즐 채우기", sourceLocator: "book01-unit-test:q16", sourceVisualSignature: "seven-card-irregular-gakuro-fill-all", verified: true }),
   link({ number: 17, typeId: "polygon-ring-equal-sum", label: "오각형 둘레의 수 채우기", sourceLocator: "book01-unit-test:q17", sourceVisualSignature: "ten-card-polygon-ring-three-number-line-sum", verified: true }),
-  link({ number: 18, typeId: "circle-line-ring-equal-sum", label: "타원 직선 네 줄 합 두 답", sourceLocator: "book01-unit-test:q18", sourceVisualSignature: "five-card-ellipse-four-line-two-targets", verified: false, reason: "원본은 두 개의 합을 답하지만 현재 generator는 한 target만 반환합니다." }),
-  link({ number: 19, typeId: "two-digit-condition", label: "50~70 범위와 자리 합 조건", sourceLocator: "book01-unit-test:q19", sourceVisualSignature: "two-digit-range-50-70-digit-sum-8", verified: false, reason: "원본은 50~70 범위와 자리 합 조건인데 현재 generator는 자리 합과 자리 차 조건입니다." }),
-  link({ number: 20, typeId: "two-digit-even-ones-greater-gap", label: "짝수·십의 자리 큰 차 조건", sourceLocator: "book01-unit-test:q20", sourceVisualSignature: "even-two-digit-tens-minus-ones-4", verified: false, reason: "원본은 십의 자리가 일의 자리보다 4 큰 조건인데 현재 generator는 반대 방향인 일의 자리 큰 차를 생성합니다." }),
-  link({ number: 21, typeId: "three-digit-step-sequence", label: "자리 조건에 맞는 세 자리 수", sourceLocator: "book01-unit-test:q21", sourceVisualSignature: "fixed-three-digit-place-conditions", verified: false, reason: "원본은 자리 조건을 만족하는 한 수를 찾지만 현재 generator는 연속 수열의 빈칸 여러 개를 반환합니다." }),
-  link({ number: 22, typeId: "person-item-logic", label: "세 사람과 과일 조건", sourceLocator: "book01-unit-test:q22", sourceVisualSignature: "three-person-three-fruit-logic-clues", verified: false, reason: "원본은 세 사람·세 과일인데 현재 generator는 네 사람·네 과일 조건표입니다." }),
-  link({ number: 23, typeId: "person-item-logic", label: "네 아이와 색 조건", sourceLocator: "book01-unit-test:q23", sourceVisualSignature: "four-child-four-color-logic-clues", verified: false, reason: "원본은 네 아이·네 색인데 현재 generator는 네 사람·네 과일 조건표입니다." }),
-  link({ number: 24, typeId: "person-item-logic", label: "직업과 장소 조건", sourceLocator: "book01-unit-test:q24", sourceVisualSignature: "three-job-three-place-logic-clues", verified: false, reason: "원본은 세 직업·세 장소인데 현재 generator는 네 사람·네 과일 조건표입니다." }),
-  link({ number: 25, typeId: "relative-order-logic", label: "네 사람 키 순서로 셋째 찾기", sourceLocator: "book01-unit-test:q25", sourceVisualSignature: "four-person-height-third-tallest", verified: false, reason: "원본은 네 사람의 키에서 셋째를 찾지만 현재 generator는 다섯 사람의 줄 순서를 묻습니다." })
+  link({ number: 18, typeId: "circle-line-ring-equal-sum", label: "타원 직선 네 줄의 가운데 수", sourceLocator: "book01-unit-test:q18", sourceVisualSignature: "five-card-ellipse-four-lines-center-target", verified: true }),
+  link({ number: 19, typeId: "two-digit-condition", label: "범위와 자리 합 조건에 맞는 두 자리 수", sourceLocator: "book01-unit-test:q19", sourceVisualSignature: "two-digit-range-and-digit-sum", verified: true }),
+  link({ number: 20, typeId: "two-digit-even-ones-greater-gap", label: "짝수와 자리 차 조건에 맞는 두 자리 수", sourceLocator: "book01-unit-test:q20", sourceVisualSignature: "even-two-digit-tens-minus-ones", verified: true }),
+  link({ number: 21, typeId: "three-digit-step-sequence", label: "자리 조건에 맞는 세 자리 수", sourceLocator: "book01-unit-test:q21", sourceVisualSignature: "descending-consecutive-three-digit-condition", verified: true }),
+  link({ number: 22, typeId: "person-item-logic", label: "세 사람과 과일 조건", sourceLocator: "book01-unit-test:q22", sourceVisualSignature: "three-person-three-fruit-logic-clues", verified: true }),
+  link({ number: 23, typeId: "person-item-logic", label: "네 아이와 색 조건", sourceLocator: "book01-unit-test:q23", sourceVisualSignature: "four-child-four-color-logic-clues", verified: false, reason: "현재 확인한 원본의 보이는 조건만으로는 한 사람의 색이 하나로 정해지지 않습니다. 빠진 조건이 확인될 때까지 잠급니다." }),
+  link({ number: 24, typeId: "person-item-logic", label: "직업과 장소 조건", sourceLocator: "book01-unit-test:q24", sourceVisualSignature: "three-job-three-place-logic-clues", verified: true }),
+  link({ number: 25, typeId: "relative-order-logic", label: "네 사람 키 순서로 셋째 찾기", sourceLocator: "book01-unit-test:q25", sourceVisualSignature: "four-person-height-third-tallest", verified: true })
 ]));
 
 export const BOOK02_UNIT_TEST_LINKS = Object.freeze(withContracts("book-02", [
