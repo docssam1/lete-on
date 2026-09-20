@@ -60,7 +60,7 @@ export function buildSlides(ch, art, plan, similar, mode) {
   const pick = ch.check.map((k) => similar.find((s) => `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k)).filter(Boolean);
   pick.forEach((it, i) => {
     const ac = it.answerContract, gv = it.givens;
-    const givens = gv ? Object.entries(gv).map(([k, v]) => `<div class="dk-given">${k === '설명' ? '' : k === '보기' ? '<b>〈보기〉</b><br>' : `<b>${esc(k)}</b> `}${Array.isArray(v) ? v.map(esc).join('<br>') : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</div>`).join('') : '';
+    const givens = gv ? Object.entries(gv).map(([k, v]) => `<div class="dk-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b><br>' : `<b>${esc(k)}</b> `}${Array.isArray(v) ? v.map(esc).join('<br>') : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</div>`).join('') : '';
     const key = ac.type === 'single-choice' ? [ac.answer] : ac.type === 'multi-choice' ? ac.answers : null;
     const text = key ? key.map((a) => NUM[a]).join(', ') : ac.type === 'short-text' ? ac.answer : ac.sample;
     const choices = it.choices ? `<ol class="dk-choices" data-key="${key ? key.join(',') : ''}" data-multi="${ac.type === 'multi-choice'}">${it.choices.map((c, j) => `<li><button type="button" data-j="${j}"><span>${NUM[j]}</span>${esc(c)}</button></li>`).join('')}</ol>` : '';
