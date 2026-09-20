@@ -18,41 +18,9 @@ REM  비용 0: 구글·Supabase 키를 하나도 쓰지 않고, 아무것도 올
 REM  모델 가중치(HuggingFace)는 처음 한 번만 내려받고 그다음부터는 캐시를 씁니다.
 REM ============================================================
 setlocal
-cd /d "%~dp0..\.."
+call "%~dp0_setup-omnivoice.cmd" || (echo  [!] 준비 단계 실패 & pause & exit /b 1)
 
-where python >nul 2>&1
-if errorlevel 1 (
-  echo.
-  echo  [!] 파이썬이 없습니다. https://www.python.org/downloads/ 에서 3.11 을 설치하고
-  echo      설치 화면의 "Add python.exe to PATH" 를 꼭 체크한 뒤 다시 실행하세요.
-  echo.
-  pause & exit /b 1
-)
-
-set VENV=.venv-omnivoice
-if not exist "%VENV%" (
-  echo  [1/4] 가상환경 만드는 중...
-  python -m venv "%VENV%" || (echo  [!] 가상환경 생성 실패 & pause & exit /b 1)
-)
-call "%VENV%\Scripts\activate.bat"
-
-if not exist "%VENV%\.installed" (
-  echo  [2/4] torch^(CUDA^) 와 OmniVoice 설치 중... 처음 한 번만, 몇 분 걸립니다.
-  python -m pip install --upgrade pip --quiet
-  REM CUDA 빌드를 먼저 시도하고, 안 되면 기본 wheel 로 물러선다(그래도 돌아는 간다)
-  python -m pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu128
-  if errorlevel 1 (
-    echo  [!] CUDA 빌드 설치 실패 - 기본 wheel 로 다시 시도합니다.
-    python -m pip install torch torchaudio || (echo  [!] torch 설치 실패 & pause & exit /b 1)
-  )
-  python -m pip install omnivoice soundfile || (echo  [!] omnivoice 설치 실패 & pause & exit /b 1)
-  echo done> "%VENV%\.installed"
-)
-
-echo  [3/4] GPU 확인...
-python -c "import torch;print('  CUDA:',torch.cuda.is_available(),'|',(torch.cuda.get_device_name(0) if torch.cuda.is_available() else '없음'))"
-
-echo  [4/4] 시청용 음성 만드는 중... 모델을 처음 받을 땐 오래 걸립니다.
+echo  [실행] 시청용 음성 만드는 중... 모델을 처음 받을 땐 오래 걸립니다.
 python scripts\omnivoice-audition.py --out audition --device auto
 if errorlevel 1 (
   echo.

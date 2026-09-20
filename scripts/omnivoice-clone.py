@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""
+OmniVoice 목소리 복제 — 지금 쓰는 우리 목소리를 그대로 이어 간다
+
+원장 지시(2026-09-21): **"그냥 우리 나온 목소리 복제해."**
+이유가 분명하다 — 아이들이 이미 아는 누미 목소리가 바뀌면 안 된다. 목소리 설계
+(instruct)는 공식 문서가 "중국어·영어로만 학습됐다"고 못 박아 한국어에서 불안정하고,
+설령 잘 나와도 **지금과 다른 목소리**가 된다. 복제는 그 둘을 한 번에 푼다.
+
+⚠ 짚고 넘어간 것: TTS 업체가 만들어 준 음성을 복제해 자체 음성을 만드는 것은 일반적으로
+   약관이 다루는 영역이고, 그 목소리들은 실제 성우를 계약해 만든 것이다. 구글 약관의 해당
+   조항은 이 세션에서 확인하지 못했다(약관 페이지가 자바스크립트로 그려진다). 원장이
+   위험을 알고 진행하기로 했다.
+
+하는 일
+---------------------------------------------------------------------------
+1) `number_magic/data/tts-map.js` 에서 **언어마다 참조로 쓸 대사 한 줄**을 고른다.
+   문서 권장이 3~10초라 그 길이에 맞는 줄을 고르고, 실제로 받아서 길이를 재 확인한다.
+2) 그 MP3 를 공개 URL 에서 받아 24 kHz 모노 wav 로 만든다(참조 음성).
+   **전사(ref_text)는 지어내지 않는다** — 우리가 합성에 쓴 바로 그 문장을 그대로 쓴다.
+   자동 전사(Whisper)를 쓰면 여기서 오차가 생긴다.
+3) 그 참조로 앱 대사를 다시 읽혀 `clone/` 에 담는다. 언어마다 제 목소리를 쓴다.
+
+ffmpeg 이 없어도 된다 — omnivoice 가 이미 의존하는 librosa 로 mp3 를 읽는다.
+
+쓰는 법 (원장 PC: scripts\\local\\omnivoice-clone.cmd 더블클릭)
+  python scripts/omnivoice-clone.py --out clone
+  python scripts/omnivoice-clone.py --out clone --refs-only     # 참조 음성만 뽑아 보기
+"""
+import argparse, json, os, re, sys, time, urllib.request
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TTS_MAP = os.path.join(ROOT, "number_magic", "data", "tts-map.js")
+
+# 지금 쓰는 목소리 — 참조를 뽑을 때 무엇을 복제하는지 로그에 남기려고 적어 둔다.
+VOICE_OF = {"ko": "ko-KR-Neural2-C", "en": "en-US-Neural2-F", "zh": "cmn-CN-Wavenet-A"}
+
+# 시청용 대사. 앱에 실제로 있는 것만 쓴다 — 지어낸 문장으로는 지금 음성과 비교가 안 된다.
+LINES = [
+    ("ko", "numi-01", "누미랑 같이 세어 보자! 톡톡 누르면서 하나, 둘, 셋!"),
+    ("ko", "numi-02", "자, 더해서 10이 되는 수를 말할 거야. 내가 3 하면, 짝꿍 7을 눌러줘. 준비됐지?"),
+    ("ko", "numi-03", "완벽해! 이제 넌 10 묶기 마법사야"),
+    ("en", "en-01",   "Now let's practise halving! I'll show a number — tap its half. Ready?"),
+    ("zh", "zh-01",   "现在来练习减半！我给你看一个数，你按出它的一半。准备好了吗？"),
+]
+
+def load_map():
+    """tts-map.js 는 `window.NM_TTS_MAP = { … };` 한 줄짜리 대입문이라 JSON 으로 읽힌다."""
+    src = open(TTS_MAP, encoding="utf-8").read()
+    m = re.search(r"window\.NM_TTS_MAP\s*=\s*(\{.*\})\s*;", src, re.S)
+    if not m:
+        sys.exit(f"tts-map.js 를 읽지 못했습니다: {TTS_MAP}")
+    return json.loads(m.group(1))
+
+def pick_ref(entries, lang, want=(3.0, 10.0)):
+    """길이가 맞는 줄을 고른다. 글자 수로 후보를 추린 뒤 **실제로 받아서 재 본다** —
+       한국어·중국어·영어는 글자당 길이가 달라 글자 수만으로는 맞출 수 없다."""
+    import librosa
+    # 글자 수 기준 후보(한/중은 글자당 ~0.18초, 영문은 ~0.06초로 어림)
+    per = 0.18 if lang in ("ko", "zh") else 0.06
+    cands = sorted(entries.items(), key=lambda kv: abs(len(kv[0]) * per - 6.5))
+    for text, url in cands[:8]:
+        try:
+            raw = urllib.request.urlopen(url, timeout=60).read()
+        except Exception as e:
+            print(f"    받기 실패({e}) — 다음 후보", flush=True)
+            continue
+        tmp = os.path.join(ROOT, f".ref-tmp-{lang}.mp3")
+        open(tmp, "wb").write(raw)
+        try:
+            y, sr = librosa.load(tmp, sr=24000, mono=True)
+        finally:
+            os.remove(tmp)
+        dur = len(y) / sr
+        if want[0] <= dur <= want[1]:
+            return text, url, y, sr, dur
+        print(f"    {dur:.1f}초 — 3~10초가 아니라 건너뜀", flush=True)
+    return None
+
+def build_refs(langs, ref_dir):
+    import soundfile as sf
+    os.makedirs(ref_dir, exist_ok=True)
+    M = load_map()
+    refs = {}
+    for lang in langs:
+        wav = os.path.join(ref_dir, f"{lang}.wav")
+        txt = os.path.join(ref_dir, f"{lang}.txt")
+        if os.path.exists(wav) and os.path.exists(txt):
+            refs[lang] = (wav, open(txt, encoding="utf-8").read().strip())
+            print(f"  · {lang}: 이미 있는 참조를 씁니다 ({wav})", flush=True)
+            continue
+        entries = M.get(lang) or {}
+        if not entries:
+            print(f"  · {lang}: tts-map 에 없음 — 건너뜁니다", flush=True)
+            continue
+        print(f"  · {lang}: 참조 고르는 중 (복제 대상 {VOICE_OF.get(lang,'?')})", flush=True)
+        got = pick_ref(entries, lang)
+        if not got:
+            print(f"  · {lang}: 3~10초짜리를 못 찾았습니다 — 건너뜁니다", flush=True)
+            continue
+        text, url, y, sr, dur = got
+        sf.write(wav, y, sr)
+        open(txt, "w", encoding="utf-8").write(text)
+        refs[lang] = (wav, text)
+        print(f"  ✓ {lang}: {dur:.1f}초 · \"{text[:30]}…\"", flush=True)
+    return refs
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default="clone")
+    ap.add_argument("--ref-dir", default="clone-ref")
+    ap.add_argument("--refs-only", action="store_true", help="참조 음성만 뽑고 끝낸다")
+    ap.add_argument("--device", default="auto")
+    ap.add_argument("--model", default="k2-fsa/OmniVoice")
+    a = ap.parse_args()
+
+    langs = sorted({l for l, _, _ in LINES})
+    print("참조 음성 준비 — 지금 쓰는 우리 목소리에서 뽑습니다")
+    refs = build_refs(langs, a.ref_dir)
+    if not refs:
+        sys.exit("참조 음성을 하나도 못 만들었습니다. 인터넷 연결과 tts-map.js 를 확인하세요.")
+    if a.refs_only:
+        print(f"\n참조만 만들었습니다: {os.path.abspath(a.ref_dir)}")
+        return
+
+    import torch
+    dev = a.device
+    if dev == "auto":
+        dev = "cuda:0" if torch.cuda.is_available() else "cpu"
+    if dev.startswith("cuda"):
+        p = torch.cuda.get_device_properties(0)
+        print(f"\n🎮 GPU: {p.name} · VRAM {p.total_memory/1024**3:.1f} GB", flush=True)
+    else:
+        print("\n🖥  GPU 를 못 찾았습니다 — CPU 로 돌면 많이 느립니다", flush=True)
+
+    from omnivoice import OmniVoice
+    import soundfile as sf
+    dtype = torch.float16 if dev.startswith("cuda") else torch.float32
+    t0 = time.time()
+    print(f"모델 준비 중… ({a.model})", flush=True)
+    model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=dtype)
+    print(f"준비 {time.time()-t0:.0f}초\n", flush=True)
+
+    os.makedirs(a.out, exist_ok=True)
+    total = 0.0
+    for lang, lid, text in LINES:
+        if lang not in refs:
+            continue
+        ref_wav, ref_text = refs[lang]
+        t = time.time()
+        try:
+            audio = model.generate(text=text, ref_audio=ref_wav, ref_text=ref_text)
+        except Exception as e:      # 한 줄이 실패해도 나머지는 들어 봐야 한다
+            print(f"  ✗ {lid}: {e}", flush=True)
+            continue
+        y = audio[0]
+        secs = len(y) / 24000.0
+        total += secs
+        sf.write(os.path.join(a.out, f"clone-{lid}.wav"), y, 24000)
+        took = time.time() - t
+        print(f"  ✓ {lid} ({lang})  {secs:.1f}초 음성 / {took:.0f}초 걸림 · RTF {took/max(secs,0.01):.2f}",
+              flush=True)
+
+    print(f"\n합계 음성 {total:.0f}초 · 전체 {time.time()-t0:.0f}초 · 장치 {dev}")
+    print(f"결과: {os.path.abspath(a.out)}")
+    print(f"참조: {os.path.abspath(a.ref_dir)}  ← 이 소리와 얼마나 같은지가 판단 기준입니다")
+    print("RTF 는 '음성 1초를 만드는 데 몇 초 걸렸나'. 1 보다 작으면 실시간보다 빠릅니다.")
+
+if __name__ == "__main__":
+    sys.exit(main())

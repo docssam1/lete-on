@@ -52,3 +52,5 @@ out/
 .venv-omnivoice/
 audition/
 audition-clone/
+clone/
+clone-ref/
