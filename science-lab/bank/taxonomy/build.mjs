@@ -1,12 +1,14 @@
 // data/units/<단원>.taxonomy.js(앱이 쓰는 원본) → bank/taxonomy/<단원>.json(공개 산출물)
 // 두 파일이 어긋나면 교재 차례와 문항 태그가 조용히 갈라지므로, 여기서 한 번에 만든다.
 // 쓰기: node bank/taxonomy/build.mjs [--check]
-import { writeFileSync, readFileSync, existsSync } from 'node:fs';
+import { writeFileSync, readFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const UNITS = ['s41-u01'];
+// data/units/*.taxonomy.js가 있는 단원 전부 — 단원이 늘어도 고칠 것이 없게.
+const unitsDir = join(here, '..', '..', 'data', 'units');
+const UNITS = readdirSync(unitsDir).filter((f) => f.endsWith('.taxonomy.js')).map((f) => f.replace('.taxonomy.js', '')).sort();
 const NOTE = '성취기준 문장은 교육부 고시 제2022-33호 [별책 9] 과학과 원문과 아직 대조하지 못했다. '
   + '코드만 두고 text는 null·verified:false로 남긴다(추측 금지). 원문을 확인하면 text를 채우고 verified를 true로 바꾼다.';
 
