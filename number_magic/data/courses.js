@@ -116,40 +116,51 @@ const COURSE_SPEC = [
      ['NL3@2','NL10@2'],   // N-12 무당벌레와 저울   — 무당벌레 가르기(위) · 양팔저울(위)
      ['NL12@2','NL11@2'],  // N-13 수 퍼즐과 추론    — 길 잇기와 십자 퍼즐(위) · 수 기계(위)
      ['NL14@2','NL16@2'],  // N-14 산가지와 규칙     — 탤리로 수 만들기(위) · 탤리 읽기(위)
-     ['NL6@2','NL8@2']     // N-15 문장제와 논리     — 10까지의 수 관계(위) · 몇째(위)
+     ['NL6@2','NL8@2'],    // N-15 문장제와 논리     — 10까지의 수 관계(위) · 몇째(위)
+     /* 16~19주(2026-09-20) — 원본 15권을 한 권씩 따라간 뒤, **레벨 3만 남은 갈래**를 모아
+        네 주로 다진다. 이 주들엔 마법(원본 권)이 없다 — 새 개념을 얹는 자리가 아니라
+        이미 편 개념의 마지막 갈래(가르기·거꾸로 세기·동전 뛰어세기·수-점 매칭 …)를
+        손으로 해 보는 자리다. 15권 1:1 대응은 앞 15주에서 그대로 지킨다. */
+     ['NL2@3','NL4@3'],    // 가르기(0 포함) · 수열 빈칸(거꾸로·뛰어세기)
+     ['NL5@3','NL7@3'],    // 동전 뛰어세기 · 수-점 매칭
+     ['NL8@3','NL11@3'],   // 몇째 찾기(어려움) · 숨은 규칙 추리
+     ['NL14@3','NL16@3']   // 수-탤리 매칭 · 탤리 읽기(어려움)
    ],
-   creative:['NL9@1','NL13@1','NL15@1'], maxSessions:15, noTest:true},
+   /* 적용(문장제 놀이)도 레벨 3까지 — 줄서기는 계단 몇째, 이야기 셈은 분류하기,
+      분류하고 세기는 더 많은 쪽 비교로 갈래가 바뀐다(2026-09-20). */
+   creative:['NL9@1','NL13@1','NL15@1','NL9@2','NL13@2','NL15@2','NL9@3','NL13@3','NL15@3'],
+   minSessions:19, maxSessions:19, noTest:true},
  /* 과정 1~12 사다리 정리(2026-09-19) — 스레드의 prereq 순서와 과정 순서를 맞춘 것.
     SB1(한 자리 뺄셈)은 어느 과정에도 없었다. 덧셈은 AD1(과정 1)로 시작하는데 뺄셈은
     SB3(두 자리−한 자리, 과정 3)에서 시작해, 한 자리 뺄셈과 몇십−한 자리(SB2)를
     건너뛰고 있었다. AD10·WP1이 SB1을 선수로 요구하는데 그 선수가 로드맵에 없었다. */
  {id:1, tier:'level1', title:{ko:'자릿값과 첫 덧셈·뺄셈',en:'Place Value, First Addition & Subtraction',zh:'位值与加减法入门'},
-   drills:['NS1','NS2','NS3','AD1','SB1','NS1','NS2','NS3','NS1','NS1@4'], magic:[['N-06','N-07']], creative:['NL11@1','NL12@2','NL5@1']},
+   drills:['NS1','NS2','NS3','AD1','SB1','NS1','NS2','NS3','NS1','NS1@4'], minSessions:5, magic:[['N-06','N-07']], creative:['NL11@1','NL12@2','NL5@1']},
  {id:2, tier:'level1', title:{ko:'받아올림과 두 배 수',en:'Carrying & Doubles',zh:'进位与翻倍数'},
    /* 창의 AD9(10 이용 덧셈)는 선수 AD3가 과정 3이라 한 과정 앞서 있었다 → 과정 3으로.
       대신 문장제 사슬(WP1→WP3→WP4→WP5)의 첫 칸을 여기서 연다 — 선수 AD1·SB1이 과정 1. */
-   drills:['AD2','NS5','NS4','AD2','NS5','NS4','NS4'], magic:[['A-01'],['A-02']], creative:['WP1@1']},
+   drills:['AD2','NS5','NS4','AD2','NS5','NS4','NS4'], minSessions:4, magic:[['A-01'],['A-02']], creative:['WP1@1','WP1@2']},
  {id:3, tier:'level1', title:{ko:'두 자리 덧뺄셈 시작',en:'Two-digit ± Begins',zh:'两位数加减开始'},
-   drills:['AD3','SB2','SB3','AD3','SB2@2','SB3','AD3','SB3','AD3@4','SB3','AD3@5','AD3'], minSessions:6, magic:[['A-03'],['A-04']], creative:['AD4','AD9@1']},
+   drills:['AD3','SB2','SB3','AD3','SB2@2','SB3','AD3','SB3','AD3@4','SB3','AD3@5','AD3'], minSessions:7, magic:[['A-03'],['A-04']], creative:['AD4@1','AD9@1','AD4@2','AD9@2','AD4@3','AD4@4','AD4@5']},
  {id:4, tier:'level1', title:{ko:'두 자리 올림 덧뺄셈',en:'Two-digit ± with Carrying',zh:'两位数进位加减'},
    drills:['AD5','SB4','AD6','AD5','SB4','AD6','AD5','SB4','AD6','AD5','SB4','AD6','AD5','AD6','AD5','AD6','AD5','AD6'], minSessions:9, magic:[['A-05'],['A-06'],['A-07'],['A-08'],['A-09']], creative:['AD8']},
  {id:5, tier:'level1', title:{ko:'뺄셈 마법과 구구단 첫걸음',en:'Subtraction Magic & Times Tables Begin',zh:'减法魔法与乘法口诀入门'},
    drills:['SB5','ML1','ML25','ML2','SB5','ML1','ML25','ML2','ML1','ML25','ML2','ML25','ML2','ML2'], minSessions:7, magic:[['A-10'],['A-11'],['A-12'],['B-01','B-02','B-03'],['B-04','B-05','B-06']], creative:['WP3@1']},
  {id:6, tier:'level1', title:{ko:'세 자리 뺄셈과 구구단 완성',en:'3-digit Subtraction & Full Times Tables',zh:'三位数减法与完整口诀'},
-   drills:['SB6','SB7','ML3','SB6','SB7@2','ML3','SB6','ML3','SB6','ML3','SB6','ML3','SB6','SB6'], magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']], creative:['AD10'], maxSessions:6},
+   drills:['SB6','SB7','ML3','SB6','SB7@2','ML3','SB6','ML3','SB6','ML3','SB6','ML3','SB6','SB6'], minSessions:7, magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']], creative:['AD10'], maxSessions:6},
  {id:7, tier:'level1', title:{ko:'구구단 종합과 네 자리 연산',en:'Times Tables Mix & 4-digit ±',zh:'乘法口诀综合与四位数运算'},
-   drills:['ML4','AD7','ML4','AD7','AD7'], magic:[['B-13','B-14','B-15'],['A-18','A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']], creative:['EL3@1'], maxSessions:6},
+   drills:['ML4','AD7','ML4','AD7','AD7'], magic:[['B-13','B-14','B-15'],['A-18','A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']], creative:['EL3@1','EL3@2','EL3@3'], maxSessions:6},
  {id:8, tier:'level1', title:{ko:'몇십 곱과 나눗셈의 시작',en:'Multiplying Tens & Division Begins',zh:'整十乘法与除法开始'},
    /* 나눗셈의 뜻 셋(DV12 등분·DV13 포함·DV14 반복 뺄셈)을 ÷2·2d÷1d 앞에 둔다(2026-09-17,
       원장 "직접 나누기·같은 수 빼기·묶어서 나누기 … 좀 제대로 생각을 할 수 있도록").
       마법 B-24(나눗셈의 세 얼굴)가 첫 세션, 창의 회차에 반복 뺄셈(나머지) 한 벌. */
-   drills:['DV12','DV13','DV14','DV17','ML5','DV1','DV2','DV12','DV13','DV14','DV17@2','ML5@2','DV1','DV12','DV13','DV17@3'],
+   drills:['DV12','DV13','DV14','DV17','ML5','DV1','DV2','DV12','DV13','DV14','DV17@2','ML5@2','DV1','DV12','DV13','DV17@3'], minSessions:8,
    magic:[['B-24'],['B-16','B-17'],['B-18','B-19','B-20'],['A-30','A-31','A-32'],['A-33','A-34'],['C-02']],
    creative:['ML12@1','DV14@2'], maxSessions:6},
  {id:9, tier:'level1', title:{ko:'두 자리 곱셈 암산과 나머지',en:'2-digit Mental Multiplication & Remainders',zh:'两位数心算乘法与余数'},
    drills:['ML6','ML22','DV18','DV19','DV3','ML6','ML22','DV18','DV19','ML6','DV18','DV19','ML6','DV18','DV19','ML6','DV18','DV19','ML6','ML6'], minSessions:10, magic:[['B-21','B-22','B-23'],['A-26'],['A-27'],['A-29'],['C-07','C-08']], creative:['ML13@1','WP4@1']},
  {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
-   drills:['ML7','EL2','ML7','EL2@2','ML7','EL2@3','ML7','ML7'], magic:[['A-28'],['A-35'],['C-06']], creative:['ML14@1','ML24@1']},
+   drills:['ML7','EL2','ML7','EL2@2','ML7','EL2@3','ML7','ML7','ML7@5'], minSessions:5, magic:[['A-28'],['A-35'],['C-06']], creative:['ML14@1','ML24@1']},
 
  /* 원본 중급 C-7 묶음(몇 자리 수·풀풀·폭포수·엑스맨 기초·×11·창살·격자)을 진도 자리에
     붙인다(2026-09-19, 원장 "원본의 필요 내용을 우리 로드맵 과정에 붙여야지"). C-12 엑스맨은
@@ -160,37 +171,37 @@ const COURSE_SPEC = [
     (과정 14)에 그대로 둔다 — 그쪽이 그 방법이 빛나는 자리다. 회차 +1(maxSessions 7). */
  {id:11, tier:'level2', title:{ko:'두 자리×두 자리 곱셈',en:'2-digit × 2-digit Multiplication',zh:'两位数乘两位数'},
    drills:['ML8','ML8','ML8','ML8','ML8','ML8','ML8'], magic:[['C-26'],['C-15'],['C-10'],['C-11'],['C-12'],['C-13'],['C-23']],
-   creative:['ML21@1','ML23@1','ML15@1'], maxSessions:7},
+   creative:['ML21@1','ML23@1','ML15@1','ML10@1','ML10@2','ML10@3'], maxSessions:7},
  {id:12, tier:'level2', title:{ko:'나눗셈과 역연산',en:'Division & Inverse Operations',zh:'除法与逆运算'},
    drills:['DV3','DV15','DV4','EL1','DV15@2','DV4','EL1@2','DV15@3','EL1@3'], minSessions:5, magic:[['C-18']], creative:['DV9@1','WP5@1']},
  {id:13, tier:'level2', title:{ko:'분수의 첫걸음',en:'Fractions Begin',zh:'分数入门'},
    drills:['FR1','FR2'], magic:[['C-21']], creative:['FR9@1']},
  {id:14, tier:'level2', title:{ko:'대분수와 세 자리×두 자리',en:'Mixed Numbers & 3d×2d',zh:'带分数与三位乘两位'},
-   drills:['FR3','ML9','FR3','ML9','ML9','ML9','ML9'], magic:[['C-14'],['C-30'],['C-16'],['C-17']], creative:['ML16@1','ML17@1']},
+   drills:['FR3','ML9','FR3','ML9','ML9','ML9','ML9'], magic:[['C-14'],['C-30'],['C-16'],['C-17']], creative:['ML16@1','ML17@1','ML16@2','ML17@2']},
  {id:15, tier:'level2', title:{ko:'두 자리로 나누기와 분수',en:'Dividing by 2 Digits & Fractions',zh:'除以两位数与分数'},
-   drills:['DV5','DV5','DV5','DV5'], magic:[['C-19'],['C-20'],['C-28'],['C-29']], creative:['DV10@1','DV11@1']},
+   drills:['DV5','DV5','DV5','DV5'], magic:[['C-19'],['C-20'],['C-28'],['C-29']], creative:['DV10@1','DV11@1','WP3@2']},
  {id:16, tier:'level2', title:{ko:'혼합계산과 역연산',en:'Mixed Operations & Inverse',zh:'混合运算与逆运算'},
-   drills:['MX1','EL1','MX1','MX1'], magic:[['C-09']], creative:['ML21@1']},
+   drills:['MX1','EL1','MX1','MX1'], magic:[['C-09']], creative:['ML21@1','WP4@2']},
 
  {id:17, tier:'level3', title:{ko:'소수의 시작',en:'Decimals Begin',zh:'小数入门'},
    /* 창의 회차 — 이 과정의 마법(A-36~38)은 세로셈 절차라 필산 DC1과 같은 것이어서 짝이
       없었다. 보수를 소수로 이은 DC6(0.3의 1 짝꿍은 0.7)을 쓴다(2026-09-09). */
-   drills:['DC1','DC1'], magic:[['A-36'],['A-37'],['A-38']], creative:['DC6@1','DC6@2','DC6@3']},
+   drills:['DC1','DC1'], minSessions:4, magic:[['A-36'],['A-37'],['A-38']], creative:['DC6@1','WP5@2','DC6@2','DC6@3']},
  {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
-   drills:['DC2','ML11','ML11','ML11','ML11@4','ML11@5'], magic:[['C-25'],['C-24'],['C-27'],['ML10'],['H-11']],
-   creative:['DC4@1','ML20@3','CH11@1']},
+   drills:['DC2','ML11','ML11','ML11','ML11@4','ML11@5'], minSessions:7, magic:[['C-25'],['C-24'],['C-27'],['ML10'],['H-11']],
+   creative:['DC4@1','ML20@3','CH11@1','DC4@2','CH11@2','CH11@3','CH11@4']},
  {id:19, tier:'level3', title:{ko:'약수와 배수, 그리고 배수 판별법',en:'Factors, Multiples & Divisibility Rules',zh:'因数、倍数与整除判别'},
    drills:['DV20','DV7','DV6','DV20@2','DV7@2','DV6','DV20@3','DV7@3','DV6@3','DV20@4','DV6@4','DV20@5','DV20@6'], minSessions:7, magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3']},
  {id:20, tier:'level3', title:{ko:'분모가 다른 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
-   drills:['FR4','FR5','MX4','FR4','FR5@2','MX4'], magic:[['C-22']], creative:['FR10@1']},
+   drills:['FR4','FR5','MX4','FR4','FR5@2','MX4'], magic:[['C-22']], creative:['FR10@1','WP1@3']},
  {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
-   drills:['FR6','FR6@2','FR6@3'], magic:[['C-31']], creative:['FR11@1']},
+   drills:['FR6','FR6@2','FR6@3'], magic:[['C-31']], creative:['FR11@1','WP3@3']},
  {id:22, tier:'level3', title:{ko:'분수 나눗셈',en:'Fraction Division',zh:'分数除法'},
-   drills:['FR7'], magic:[['C-32']], creative:['FR12@1']},
+   drills:['FR7'], magic:[['C-32']], creative:['FR12@1','WP5@3']},
  {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
-   drills:['MX2','FR8','DC3','MX2@2','DC3@2'], magic:[['C-05'],['C-35'],['C-33']], creative:['MX6@1','DC5@1']},
+   drills:['MX2','FR8','DC3','MX2@2','DC3@2'], minSessions:7, magic:[['C-05'],['C-35'],['C-33']], creative:['MX6@1','DC5@1','WP4@3','MX6@2','DC5@2','MX6@3','MX6@4']},
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
-   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','MX3@3','DV8@3','EL4@3','MX3@4','MX3@5'], minSessions:6, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1']},
+   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','MX3@3','DV8@3','EL4@3','MX3@4','MX3@5'], minSessions:6, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1','CH12@2','EL5@2','EL5@3']},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
    drills:['MX5'], magic:[], /* 레벨 보스는 세션이 3개로 고정이라 창의도 3종만 실린다(4개를 적으면 마지막이 안 나온다).
       레벨 3을 대표하는 셋 — 분수 · 소수 · 수열(가우스). */
@@ -202,13 +213,13 @@ const COURSE_SPEC = [
     "1단계 확장 레벨들도 드릴 재료로"(작업지시)에 따라 drills로 재사용한다 — 새 id를
     지어내지 않고 threads.js에 이미 있는 스레드만 쓴다는 기존 규칙을 그대로 지켰다. */
  {id:26, tier:'challenge', title:{ko:'곱셈의 정점',en:'Peak of Multiplication',zh:'乘法之巅'},
-   drills:['ML8','ML18','ML19','ML18','ML19','ML18@3','ML18'], magic:[['H-01'],['H-02'],['C-12'],['C-15']],
+   drills:['ML8','ML18','ML19','ML18','ML19','ML18@3','ML18','CH1@1','CH2@1','CH1@2','CH2@2','CH2@3','CH2@4'], minSessions:7, magic:[['H-01'],['H-02'],['C-12'],['C-15']],
    creative:['CH1@1','CH2@1']},
  {id:27, tier:'challenge', title:{ko:'수의 비밀',en:'Secrets of Numbers',zh:'数的秘密'},
-   drills:['DV7','DV8','MX2','DV6'], magic:[['H-03'],['H-04'],['H-05'],['H-06']],
+   drills:['DV7','DV8','MX2','DV6','CH3@1','CH4@1','CH5@1','CH6@1','CH3@2','CH4@2','CH5@2','CH6@2','CH3@3','CH4@3','CH5@3','CH6@3','CH3@4','CH4@4','CH5@4','CH6@4','CH3@5'], minSessions:11, magic:[['H-03'],['H-04'],['H-05'],['H-06']],
    creative:['CH3@1','CH4@1','CH5@1','CH6@1']},
  {id:28, tier:'challenge', title:{ko:'제곱의 산',en:'Mountain of Squares',zh:'平方之山'},
-   drills:['ML11','ML20','MX4','ML11@5','ML20','ML20@3','ML20','ML20@5','ML20','ML20@7','ML20@8','ML20@9'], minSessions:6, magic:[['H-07'],['H-08'],['H-09'],['H-10']],
+   drills:['ML11','ML20','MX4','ML11@5','ML20@2','ML20@3','ML20@4','ML20@5','ML20@6','ML20@7','ML20@8','ML20@9','CH7@1','CH8@1','CH9@1','CH10@1','CH7@2','CH8@2','CH9@2','CH10@2','CH7@3','CH9@3'], minSessions:11, magic:[['H-07'],['H-08'],['H-09'],['H-10']],
    creative:['CH7@1','CH8@1','CH9@1','CH10@1']},
 
  /* 29~31 실배치(2026-08-25, 중등 W8 · 중1 정수와 유리수): MASTER-ROADMAP.md
@@ -233,7 +244,7 @@ const COURSE_SPEC = [
  {id:30, tier:'middle1', title:{ko:'부호의 규칙',en:'Rules of Sign',zh:'符号的规则'},
    drills:['MD4','MD5','MD6','MD49','MD50','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD4@4'], minSessions:8, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50']], creative:['MD50@3','MD6@3','MD4@4']},
  {id:31, tier:'middle1', title:{ko:'유리수 정복',en:'Conquering Rationals',zh:'征服有理数'},
-   drills:['MD7','MD8','MD9','MD51','MD7@2','MD8','MD9','MD51@2','MD7@3','MD9','MD51@3','MD9'], magic:[['M-07'],['M-08'],['M-09'],['M-51']], creative:['MD51@3','MD9@4','MD7@3']},
+   drills:['MD7','MD8','MD9','MD51','MD7@2','MD8','MD9','MD51@2','MD7@3','MD9','MD51@3','MD9'], minSessions:6, magic:[['M-07'],['M-08'],['M-09'],['M-51']], creative:['MD51@3','MD9@4','MD7@3']},
 
  /* 32~35 실배치(2026-08-25, 중등 W9·W10): MASTER-ROADMAP.md §8 Phase 4.
     drills는 그 과정의 자기 재료 + "누적 혼합에 W8 재료 포함"(작업 지시)
@@ -247,7 +258,7 @@ const COURSE_SPEC = [
  {id:34, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
    drills:['MD15','MD16','MD17','MD14','MD15@2','MD16@2','MD17@2','MD15@3','MD16@3','MD17@3'], minSessions:5, magic:[['M-15'],['M-16'],['M-17']], creative:['MD17@3','MD16@3','MD15@3']},
  {id:35, tier:'middle3', title:{ko:'곱셈공식과 인수분해',en:'Formulas & Factoring',zh:'乘法公式与因式分解'},
-   drills:['MD18','MD19','MD20','MD18','MD19@2','MD20','MD18','MD19@3'], magic:[['M-18'],['M-19'],['M-20']], creative:['MD20@2','MD19@3','MD18@3']},
+   drills:['MD18','MD19','MD20','MD18','MD19@2','MD20','MD18','MD19@3'], minSessions:4, magic:[['M-18'],['M-19'],['M-20']], creative:['MD20@2','MD19@3','MD18@3']},
 
  /* 36~39 실배치(2026-08-25, 고등 W11·W12): MASTER-ROADMAP.md §6.
     course36은 W10 마지막 재료 MD20을, course38(공통수학2 진입부)은
@@ -272,9 +283,9 @@ const COURSE_SPEC = [
  {id:40, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
    drills:['MD36','MD37','MD38','MD35','MD36@2','MD37@2','MD38@2','MD36@3','MD37@3','MD38@3'], minSessions:5, magic:[['M-36'],['M-37'],['M-38']], creative:['MD38@3','MD37@3','MD36@3']},
  {id:41, tier:'algebra', title:{ko:'삼각함수와 수열',en:'Trigonometry & Sequences',zh:'三角函数与数列'},
-   drills:['MD39','MD40','MD41','MD42','MD39@2','MD40@2','MD41@2','MD42@2','MD39@3','MD40@3','MD41@3','MD42@3'], magic:[['M-39'],['M-40'],['M-41'],['M-42']], creative:['MD42@3','MD41@3','MD39@3']},
+   drills:['MD39','MD40','MD41','MD42','MD39@2','MD40@2','MD41@2','MD42@2','MD39@3','MD40@3','MD41@3','MD42@3'], minSessions:6, magic:[['M-39'],['M-40'],['M-41'],['M-42']], creative:['MD42@3','MD41@3','MD39@3']},
  {id:42, tier:'calculus1', title:{ko:'극한과 미분',en:'Limits & Derivatives',zh:'极限与导数'},
-   drills:['MD43','MD44','MD42','MD43@2','MD44','MD43','MD44@3'], magic:[['M-43'],['M-44']], creative:['MD44@3','MD43@3']},
+   drills:['MD43','MD44','MD42','MD43@2','MD44','MD43','MD44@3'], minSessions:4, magic:[['M-43'],['M-44']], creative:['MD44@3','MD43@3']},
  {id:43, tier:'calculus1', title:{ko:'접선과 적분',en:'Tangent Lines & Integration',zh:'切线与积分'},
    drills:['MD45','MD46','MD45@2','MD46','MD45','MD46@3'], magic:[['M-45'],['M-46']], creative:['MD46@3','MD45@3']},
 
@@ -393,26 +404,32 @@ function buildCourses(NM_THREADS){
        있다. '@n' 은 그 회차만의 고정 레벨(maxLevel 로 자른다). */
     const perSession = Array.isArray(spec.perSessionDrills) ? spec.perSessionDrills : null;
     const emitted = {};   /* 이 과정에서 그 스레드를 이미 몇 회차에 실었나 — 레벨을 올리는 근거 */
-    let cursor = 0;       /* 드릴 배열을 차례로 훑는 자리 — 항목이 빠짐없이 한 번씩 나오게 */
+    let queue = [];       /* 아직 안 쓴 드릴 항목 대기줄 — 비면 배열을 다시 채운다 */
     const sessions = segments.map((seg, i) => {
       let drills;
       if(perSession && perSession[i]){
         drills = perSession[i].map(parsePin).filter(d => NM_THREADS[d.t])
           .map(d => ({t:d.t, lv:Math.min(d.pin || 1, maxLevel(d.t)), n:6}));
       } else {
-        /* 배열을 **커서로 차례차례** 훑는다(2026-09-20). 전에는 `(i*2) % 길이` 로 자리를
-           계산해서, 같은 스레드를 건너뛰면 그 항목을 영영 안 쓰거나 같은 항목을 두 번
-           쓰는 일이 생겼다. 커서는 한 바퀴를 다 돌고 나서야 처음으로 돌아가므로,
-           **배열에 실은 항목은 모두 한 번씩 나온다**(레벨 계단이 빠지지 않는다).
-           짝이 되는 둘째 항목은 다른 스레드여야 한다 — 같은 주에 같은 유형이 두 벌
-           찍히지 않게. */
-        const ownA = ownDrills[cursor % ownDrills.length];
-        cursor++;
+        /* 배열을 **줄 세워 꺼낸다**(2026-09-20). 처음엔 커서 한 개로 훑었는데, 짝이 될
+           다른 스레드를 찾다가 배열 끝을 넘어 되감기면 커서가 **뒤로 밀려** 뒷쪽 항목이
+           영영 안 나왔다 — 과정 28 에서 ML20@5·@7·@8·@9 가 그렇게 묻혔다.
+           이제 남은 항목을 대기줄로 들고, 앞에서부터 하나(A)를 꺼낸 뒤 그 뒤에서 짝(B)을
+           꺼낸다. 둘 다 줄에서 빠지므로 **배열에 실은 항목이 모두 한 번씩** 나온다.
+           짝은 다른 스레드를 먼저 찾고, 없으면 같은 스레드라도 **레벨이 다른** 항목을 쓴다 —
+           한 과정이 한 스레드의 긴 계단으로 이뤄지면(과정 28 의 ML20 은 9레벨) 다른 스레드가
+           모자라 주마다 드릴이 하나로 줄었다. 막아야 하는 것은 "같은 유형이 같은 레벨로 두 벌"
+           찍히는 것이지, 한 주에 한 단계씩 오르는 것이 아니다. */
+        if(!queue.length) queue = ownDrills.slice();
+        const ownA = queue.shift();
         let ownB = null;
-        for(let k = 0; k < ownDrills.length - 1; k++){
-          const idx = (cursor + k) % ownDrills.length;
-          const cand = ownDrills[idx];
-          if(cand !== ownA && cand.t !== ownA.t){ ownB = cand; cursor = idx + 1; break; }
+        for(let k = 0; k < queue.length; k++){
+          if(queue[k].t !== ownA.t){ ownB = queue.splice(k, 1)[0]; break; }
+        }
+        if(!ownB){
+          for(let k = 0; k < queue.length; k++){
+            if(queue[k].lv !== ownA.lv){ ownB = queue.splice(k, 1)[0]; break; }
+          }
         }
         const picked = ownB ? [ownA, ownB] : [ownA];
         /* 회차마다 한 칸씩(2026-09-20, 원장 "계단형 자동 + 갈래형 수동").
@@ -449,11 +466,27 @@ function buildCourses(NM_THREADS){
          창의 레벨은 여전히 필산 사다리(homeLevel·priorPool)와 섞지 않는다. */
       let cre = [];
       if(creative.length){
-        const pickCre = creative[i % creative.length];
-        const lv = pickCre.pin != null ? pickCre.lv
-          : climbLevel(pickCre.t, pickCre.lv, creEmitted[pickCre.t] || 0);
-        creEmitted[pickCre.t] = (creEmitted[pickCre.t] || 0) + 1;
-        cre = [{ t:pickCre.t, lv, n:pickCre.n }];
+        /* 그 주 드릴과 **같은 유형·같은 레벨**이면 다음 적용 항목으로 넘어간다(2026-09-20).
+           중·고 과정은 적용을 그 과정의 마지막 레벨로 박아 두는데, 드릴 계단도 끝에서
+           같은 레벨에 닿으므로 한 학습지에 같은 것이 두 벌 실렸다. */
+        for(let k = 0; k < creative.length; k++){
+          const cand = creative[(i + k) % creative.length];
+          const lv = cand.pin != null ? cand.lv
+            : climbLevel(cand.t, cand.lv, creEmitted[cand.t] || 0);
+          let useLv = lv;
+          if(drills.some(d => d.t === cand.t && d.lv === useLv)){
+            if(k < creative.length - 1) continue;
+            /* 적용 항목이 하나뿐이라 넘어갈 데가 없으면, 그 유형의 **다른 레벨**로 바꾼다.
+               그것도 없으면 이 주는 적용 회차를 비운다 — 같은 것을 두 벌 내는 것보다 낫다. */
+            const alt = (NM_THREADS[cand.t].levels || []).map(l => l.id)
+              .filter(id => !drills.some(d => d.t === cand.t && d.lv === id)).pop();
+            if(alt == null) break;
+            useLv = alt;
+          }
+          creEmitted[cand.t] = (creEmitted[cand.t] || 0) + 1;
+          cre = [{ t:cand.t, lv:useLv, n:cand.n }];
+          break;
+        }
       }
       return { magic: seg, drills, creative: cre };
     });
