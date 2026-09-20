@@ -16,6 +16,9 @@ const { R, pick, shuffle } = NM_RNG;
    (정독 주의점) — 그래서 b를 완전히 1이 될 때까지 인수분해해 매 단계를
    스텝으로 남긴다. 수치 범위(정독): 2d×2d(48×12)~3d×2d(226×14, 149×14),
    곱하는 수는 12~24의 합성수 위주. */
+/* 음수를 거듭제곱의 밑으로 쓸 때 — `-8^2` 는 TeX·수학 관례 모두 −(8²) 다. (−8)² 를
+   뜻한다면 반드시 괄호로 묶어야 한다(2026-09-20: CH7·MD26·MD35 가 안 묶고 있었다). */
+function par(n){ return n < 0 ? `(${n})` : `${n}`; }
 NM_TGEN['adv_gather'] = function (params, rng) {
   const lv = params.level || 'main';
   const B_LIST = [12, 14, 15, 16, 18, 20, 21, 22, 24];
@@ -473,12 +476,12 @@ NM_TGEN['adv_nearSquare'] = function (params, rng) {
     answer, answerType: 'steps', widget: 'steps',
     steps: [
       { tex: `${base} ${a >= 0 ? '+' : '-'} ${mult} \\times ${Math.abs(a)} = \\square`, blank: front },
-      { tex: `${a}^2 = \\square`, blank: aSq },
+      { tex: `${par(a)}^2 = \\square`, blank: aSq },
       { tex: `${front} \\times ${P} + ${aSq} = \\square`, blank: answer }
     ],
     solution: [
       { tex: `${base} ${a >= 0 ? '+' : '-'} ${mult} \\times ${Math.abs(a)} = \\square`, blank: front },
-      { tex: `${a}^2 = \\square`, blank: aSq },
+      { tex: `${par(a)}^2 = \\square`, blank: aSq },
       { tex: `${front} \\times ${P} + ${aSq} = \\square`, blank: answer }
     ]
   };

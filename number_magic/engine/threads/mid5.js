@@ -27,6 +27,9 @@ const { R, pick } = NM_RNG;
 
 /* ── 공용 헬퍼(mid3.js·mid4.js와 동일 계열, 파일별 독립 정의 관례) ── */
 function nzInt(rng, lo, hi){ return R(rng, lo, hi) * pick(rng, [1, -1]); }
+/* 음수를 거듭제곱의 밑으로 쓸 때 — `-8^2` 는 TeX·수학 관례 모두 −(8²) 다. (−8)² 를
+   뜻한다면 반드시 괄호로 묶어야 한다(2026-09-20: CH7·MD26·MD35 가 안 묶고 있었다). */
+function par(n){ return n < 0 ? `(${n})` : `${n}`; }
 function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }
 function hasNeg(v){ return Array.isArray(v) ? v.some(x => x < 0) : v < 0; }
 /* N=coeff²×rad(rad는 제곱인수 없음) 꼴로 정리 — MD16(mid3.js)과 동일
@@ -276,7 +279,7 @@ NM_TGEN['md35_circleEquation'] = function (params, rng) {
       solution: [
         { tex: `x^2+y^2 ${wrapPlus(A)}x ${wrapPlus(B)}y ${wrapPlus(C)} = 0` },
         { tex: `a=-\\dfrac{${A}}{2}=\\square,\\;\\;b=-\\dfrac{${B}}{2}=\\square`, blank: [a, b] },
-        { tex: `r=\\sqrt{${a}^2+${b}^2-(${C})}=\\square`, blank: r },
+        { tex: `r=\\sqrt{${par(a)}^2+${par(b)}^2-(${C})}=\\square`, blank: r },
         { tex: `(x-\\square)^2+(y-\\square)^2=\\square^2`, blank: [a, b, r] }
       ]
     };
@@ -292,7 +295,7 @@ NM_TGEN['md35_circleEquation'] = function (params, rng) {
     answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
     solution: [
       { tex: `a=-\\dfrac{${A}}{2}=\\square,\\;\\;b=-\\dfrac{${B}}{2}=\\square`, blank: [a, b] },
-      { tex: `r=\\sqrt{${a}^2+${b}^2-(${C})}=\\square`, blank: r },
+      { tex: `r=\\sqrt{${par(a)}^2+${par(b)}^2-(${C})}=\\square`, blank: r },
       { tex: `(x-\\square)^2+(y-\\square)^2=\\square^2`, blank: [a, b, r] }
     ]
   };

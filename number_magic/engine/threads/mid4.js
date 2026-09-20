@@ -30,6 +30,9 @@ const { R, pick } = NM_RNG;
 
 /* ── 공용 헬퍼 ── */
 function nzInt(rng, lo, hi){ return R(rng, lo, hi) * pick(rng, [1, -1]); }
+/* 음수를 거듭제곱의 밑으로 쓸 때 — `-8^2` 는 TeX·수학 관례 모두 −(8²) 다. (−8)² 를
+   뜻한다면 반드시 괄호로 묶어야 한다(2026-09-20: CH7·MD26·MD35 가 안 묶고 있었다). */
+function par(n){ return n < 0 ? `(${n})` : `${n}`; }
 function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }
 /* 근 r의 일차 인수 표기 — (x - -9) 같은 이중부호를 (x + 9)로 낸다.
    2026-08-28 인쇄 점검에서 MD29가 실제로 `(x - -9)(x - -8)`로 나오고 있었다. */
@@ -371,7 +374,7 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
       tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; D = \\square`,
       answer: D, answerType: 'number', widget: 'numpad', negative: D < 0,
       solution: [
-        { tex: `D = ${b}^2 - 4(${a})(${c})` },
+        { tex: `D = ${par(b)}^2 - 4(${a})(${c})` },
         { tex: `= \\square`, blank: D }
       ]
     };
@@ -403,7 +406,7 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
       tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\text{실근의 개수} = \\square`,
       answer: count, answerType: 'number', widget: 'numpad',
       solution: [
-        { tex: `D = ${b}^2-4(${a})(${c}) = ${D}` },
+        { tex: `D = ${par(b)}^2-4(${a})(${c}) = ${D}` },
         { tex: `D ${D > 0 ? '>0' : D === 0 ? '=0' : '<0'} \\;\\Rightarrow\\; \\square`, blank: count }
       ]
     };

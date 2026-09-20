@@ -174,9 +174,13 @@ NM_TGEN['sb3_sub2d1d'] = function(params, rng) {
     answer: ans,
     answerType: 'steps',
     widget: 'steps',
-    steps: [
-      { tex: `10 + ${onesA} - ${b} = \\square`,              blank: newOnes },
-      { tex: `${tensDigit - 1}0 + ${newOnes} = \\square`,    blank: ans }
+    /* 십몇에서 빼면 남는 십의 자리가 0이라 `00 + 9` 가 찍혔다(자릿수를 글자로 이어 붙인
+       탓이다). 남는 십의 자리가 없으면 그 줄 자체가 할 일이 없으므로 한 줄로 끝낸다. */
+    steps: (tensDigit - 1) ? [
+      { tex: `10 + ${onesA} - ${b} = \\square`,                 blank: newOnes },
+      { tex: `${(tensDigit - 1) * 10} + ${newOnes} = \\square`, blank: ans }
+    ] : [
+      { tex: `10 + ${onesA} - ${b} = \\square`,                 blank: newOnes }
     ]
   };
 };
