@@ -398,7 +398,9 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
         en: `D>0 means two distinct real roots, D=0 means a repeated root (1), D<0 means no real roots`,
         zh: `D>0是两个不同实根，D=0是重根(1个)，D<0则没有实根`
       },
-      tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\square`,
+      /* □ 에 무엇을 쓰는지 식에 없어 빈 상자만 인쇄됐다 — 같은 생성기 L1 은 `D = □` 라고
+         라벨이 붙어 있는데 이쪽만 빠져 있었다(2026-09-20 점검). */
+      tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\text{실근의 개수} = \\square`,
       answer: count, answerType: 'number', widget: 'numpad',
       solution: [
         { tex: `D = ${b}^2-4(${a})(${c}) = ${D}` },

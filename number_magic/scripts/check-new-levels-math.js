@@ -148,9 +148,11 @@ sweep('MX3', 5, p => {
 });
 
 /* ── EL5L3 비례배분 ─────────────────────────────────────────
-   tex: □ + ○ = T , □ : ○ = a : b */
+   tex: 가 + 나 = T , 가 : 나 = a : b ⇒ 가 = □ , 나 = □
+   (2026-09-20: 미지수를 □·○ 에서 글자로 바꿨다 — 같은 미지수가 두 번 나오는데 예시 줄이
+    \square 를 독립된 빈칸으로 보고 차례로 채워 비례식이 깨졌다. 자세한 것은 el.js 주석.) */
 sweep('EL5', 3, p => {
-  const m = p.tex.match(/^\\square \+ \\bigcirc = (\d+) \\;,\\;\\; \\square : \\bigcirc = (\d+) : (\d+)$/);
+  const m = p.tex.match(/^\\text\{가\} \+ \\text\{나\} = (\d+) \\;,\\;\\; \\text\{가\} : \\text\{나\} = (\d+) : (\d+) /);
   if (!m) return 'tex 형식이 다름';
   const T = Number(m[1]), a = Number(m[2]), b = Number(m[3]);
   const [p1, p2] = p.answer;

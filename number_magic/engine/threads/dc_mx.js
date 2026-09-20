@@ -691,7 +691,9 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       zh: `将${decStr}用割·分·厘表示`
     },
     tex:        `${decStr} = \\square\\,\\text{할}\\;\\square\\,\\text{푼}\\;\\square\\,\\text{리}`,
-    answer:     hal,                         /* 할(가장 큰 자리) */
+    /* 빈칸은 셋(할·푼·리)인데 답이 할 하나였다 — 예시 줄이 마지막 칸(리)에만 할을 채워
+       "0.215 는 2리" 로 읽혔고, 정답지도 푼·리를 채점할 수 없었다(2026-09-20 점검). */
+    answer:     [hal, pun, ri],
     answerType: 'steps',
     widget:     'steps',
     steps: [
@@ -699,12 +701,10 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       { tex: `\\text{푼 (0.01 단위)} = \\square`, blank: pun },
       { tex: `\\text{리 (0.001 단위)} = \\square`, blank: ri  }
     ],
-    /* answer는 가장 큰 자리(할)이므로 solution의 마지막 줄도 할로 끝낸다
-       (steps 필드는 자리 순서 그대로 두고, solution만 답 순서에 맞춘다) */
     solution: [
+      { tex: `\\text{할 (0.1 단위)} = \\square`, blank: hal },
       { tex: `\\text{푼 (0.01 단위)} = \\square`, blank: pun },
-      { tex: `\\text{리 (0.001 단위)} = \\square`, blank: ri  },
-      { tex: `\\text{할 (0.1 단위)} = \\square`, blank: hal }
+      { tex: `\\text{리 (0.001 단위)} = \\square`, blank: ri  }
     ]
   };
 };

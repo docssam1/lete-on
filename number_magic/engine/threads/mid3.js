@@ -195,7 +195,8 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
         zh: `√a × √b = √(ab)——先把根号内的数相乘，再化简`
       },
       tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\sqrt{\\square} = \\square`,
-      answer: k, answerType: 'steps', widget: 'steps',
+      /* 빈칸 둘(근호 안·값)인데 답이 뒷칸 하나였다 — 정답지에 근호 안 수가 없었다(2026-09-20). */
+      answer: [N, k], answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\sqrt{\\square}`, blank: N },
         { tex: `\\sqrt{${N}} = \\square`, blank: k }
@@ -218,7 +219,7 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
         zh: `√a ÷ √b = √(a÷b)——先把根号内的数相除，再化简`
       },
       tex: `\\sqrt{${a}} \\div \\sqrt{${b}} = \\sqrt{\\square} = \\square`,
-      answer: k, answerType: 'steps', widget: 'steps',
+      answer: [k * k, k], answerType: 'steps', widget: 'steps',
       steps: [
         { tex: `\\sqrt{${a}} \\div \\sqrt{${b}} = \\sqrt{\\square}`, blank: k * k },
         { tex: `\\sqrt{${k * k}} = \\square`, blank: k }

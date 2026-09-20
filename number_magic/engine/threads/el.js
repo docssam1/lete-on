@@ -186,14 +186,18 @@ NM_TGEN['el_compare'] = function(params, rng){
   const bigger = Math.max(L.val, R2.val);
   const smaller = Math.min(L.val, R2.val);
   const diff = bigger - smaller;
-  const tex = `${L.tex} \\;\\bigcirc\\; ${R2.tex}`;
+  /* ○ 는 쓰기 상자로 바뀌지 않아(texDisplay 는 \square 만 키운다) **답 쓸 칸이 없었다**.
+     ○ 로 견주게 하되 뒤에 답 칸을 잇는다(2026-09-20 점검). 이러면 "○에 부등호냐 값이냐"가
+     식만 보고도 분명해져, 프롬프트를 질문 줄로 싣는 특례(exam.js printAskText)도 필요 없다. */
+  const tex = `${L.tex} \\;\\bigcirc\\; ${R2.tex} \\;\\Rightarrow\\; \\text{큰 값} = \\square`;
+  const texDiff = `${L.tex} \\;\\bigcirc\\; ${R2.tex} \\;\\Rightarrow\\; \\text{큰 값} = \\square \\,,\\; \\text{차} = \\square`;
 
   if(mode === 'diff'){
     return {
       prompt:{ ko:`두 식의 값을 비교해요: ${L.tex.replace(/\\times/,'×')} 와 ${R2.tex.replace(/\\times/,'×')} 중 더 큰 값과, 그 차를 순서대로 입력해요`,
                en:`Compare the two expressions and enter [bigger value, difference]`,
                zh:`比较两个算式的值，依次填入[较大值, 差]` },
-      tex, answer:[bigger, diff], answerType:'number', widget:'numpad',
+      tex: texDiff, answer:[bigger, diff], answerType:'number', widget:'numpad',
       solution: [
         { tex: `${L.tex} = ${L.val}\\, ,\\; ${R2.tex} = ${R2.val}` },
         { tex: `\\max(${L.val}, ${R2.val}) = \\square \\, ,\\; ${bigger} - ${smaller} = \\square`, blank: [bigger, diff] }
@@ -293,11 +297,15 @@ NM_TGEN['el_ratio'] = function(params, rng){
 
     return {
       prompt: {
-        ko: `${total}을(를) ${a} : ${b}로 비례배분해요 (□, ○ 차례로)`,
-        en: `Split ${total} in the ratio ${a} : ${b} — give □ then ○`,
-        zh: `把${total}按${a} : ${b}的比例分配（依次填□、○）`
+        ko: `${total}을(를) ${a} : ${b}로 비례배분해요 (가, 나 차례로)`,
+        en: `Split ${total} in the ratio ${a} : ${b} — give the first part, then the second`,
+        zh: `把${total}按${a} : ${b}的比例分配（依次填甲、乙）`
       },
-      tex: `\\square + \\bigcirc = ${total} \\;,\\;\\; \\square : \\bigcirc = ${a} : ${b}`,
+      /* 전에는 `□ + ○ = total , □ : ○ = a : b` 였는데, 같은 미지수가 두 번 나오는데도
+         예시 줄이 \square 를 **독립된 빈칸**으로 보고 차례로 채워 비례식이 깨졌다
+         (`29 + ○ = 261 , 232 : ○ = 1 : 8`). 미지수는 글자로 두고 답 칸을 따로 준다(2026-09-20). */
+      tex: `\\text{가} + \\text{나} = ${total} \\;,\\;\\; \\text{가} : \\text{나} = ${a} : ${b}`
+         + ` \\;\\Rightarrow\\; \\text{가} = \\square \\,,\\; \\text{나} = \\square`,
       answer:     [p1, p2],
       answerType: 'number',
       widget:     'numpad',

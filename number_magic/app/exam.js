@@ -3660,7 +3660,13 @@ function w2ExampleBodyHtml(p, threadId, young){
     bodyHtml = bondSvg(p.cubes.moveTo, p.cubes.moveTo - p.answer)
       + `<div class="nm-w2-ex-ans">= ${esc(String(p.answer))}</div>`;
   } else if(hasSteps){
-    const completedTex = fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p)));
+    /* 빈칸이 없는 맨 식은 뒤에 "= 답"을 붙이지 않는다(2026-09-20 점검).
+       답이 값의 일부만 가리키는 유형(FR4 L1 은 통분한 뒤의 분자, EL3 은 두 식 중 큰 값)에서
+       `1/5 − 1/6 = 1` 같은 **틀린 등식**이 예시 줄에 찍혔다. 그런 문항은 아래 풀이 사슬이
+       과정을 그대로 보여 주므로 완성식 줄만 생략한다. */
+    const bare = !/\\square|\\bigcirc/.test(String(p.tex || ''));
+    const completedTex = bare ? String(p.tex || '')
+      : fixNegSigns(texSubstituteAnswer(p.tex, p.answer, p.sameBlank, ansTex(p)));
     const completedHtml = `<div class="nm-w2-ex-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(completedTex))}"></span></div>`;
     const stepParts = stepSrc.map(s => {
       /* blank가 없는 줄은 그대로(변형만 보여주는 줄), 배열 blank는 \square 개수만큼 차례로 채운다 */

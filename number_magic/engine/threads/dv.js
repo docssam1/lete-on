@@ -579,8 +579,11 @@
           en: `Prime-factorize ${n}`,
           zh: `对${n}进行质因数分解`
         },
-        tex:        `${n} = ${pf.join(' \\times ')}`,
-        answer:     largestPrime,
+        /* 전에는 `112 = 2×2×2×2×7` 을 그대로 찍고 답이 "가장 큰 소인수" 하나였다 —
+           **문제에 답이 이미 다 적혀 있고 쓸 칸이 없었다**(2026-09-20 점검).
+           이제 소인수 자리를 빈칸으로 두고 소인수 전부를 답으로 받는다. */
+        tex:        `${n} = ${pf.map(() => '\\square').join(' \\times ')}`,
+        answer:     pf.slice(),
         answerType: 'steps',
         widget:     'steps',
         steps,
