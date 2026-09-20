@@ -9,6 +9,9 @@ const base = process.env.HSMIDDLE_BASE_URL || 'http://127.0.0.1:8894/hsmiddle';
 const token = 'a'.repeat(64);
 const expiresAt = new Date(Date.now() + 3600000).toISOString();
 const access = ['diagnostic', 'mock-1', 'mock-2', 'mock-3', 'final'];
+let addAttemptCalls = 0;
+let savedAttempt = null;
+let rejectForLimit = false;
 
 assert.equal((source.match(/function grade\s*\(/g) || []).length, 1, 'grade must have one implementation');
 assert.equal((source.match(/function showAnswers\s*\(/g) || []).length, 1, 'showAnswers must have one implementation');
@@ -19,10 +22,21 @@ assert.match(source, /await HSMIDDLE_AUTH\.refreshSession\(\)/, 'saved sessions 
   try {
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const page = await context.newPage();
-    await page.route('**/functions/v1/hsmiddle-records', async route => {
+    await context.route('**/functions/v1/hsmiddle-records', async route => {
       const body = JSON.parse(route.request().postData() || '{}');
       if (body.action === 'session') {
         return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, name: '시험학생', access, admin: false, expiresAt, startedAt: '2026-09-01T00:00:00.000Z' }) });
+      }
+      if (body.action === 'listAttempts') {
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, attempts: savedAttempt ? [savedAttempt] : [] }) });
+      }
+      if (body.action === 'addAttempt') {
+        addAttemptCalls += 1;
+        if (rejectForLimit) {
+          return route.fulfill({ status: 409, contentType: 'application/json', body: JSON.stringify({ error: 'attempt_limit' }) });
+        }
+        savedAttempt = { ...body.record, attempt: 1, created_at: new Date().toISOString() };
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, attempt: 1 }) });
       }
       return route.fulfill({ status: 400, contentType: 'application/json', body: JSON.stringify({ error: 'unexpected_action' }) });
     });
@@ -59,10 +73,54 @@ assert.match(source, /await HSMIDDLE_AUTH\.refreshSession\(\)/, 'saved sessions 
     const report = await popupPromise;
     await report.waitForLoadState('domcontentloaded');
     assert.match(report.url(), /report\.html\?exam=mock-1$/, 'grading must link to the matching report');
+    await report.waitForFunction(() => document.querySelector('#whoName')?.textContent.includes('시험학생'));
     await report.waitForFunction(() => typeof examAnalyze === 'function');
     const reportAnalysis = await report.evaluate(() => examAnalyze());
     assert.equal(reportAnalysis.states[2], 'o', 'report and exam must agree on an ordinary answer');
     assert.equal(reportAnalysis.states[23], 'x', 'report and exam must agree on self-marked X');
+    const directIncomplete = await report.evaluate(() => HSMIDDLE_CLOUD.addAttempt('시험학생', 'mock-1', { score: 0, correct: 0, answered: 0, states: {} }));
+    assert.equal(directIncomplete.reason, 'invalid', 'direct incomplete saves must be blocked before network access');
+    assert.equal(addAttemptCalls, 0, 'direct incomplete saves must not reach the server');
+    let incompleteMessage = '';
+    report.once('dialog', async dialog => { incompleteMessage = dialog.message(); await dialog.dismiss(); });
+    await report.locator('#recordBtn').click();
+    assert.match(incompleteMessage, /40문항을 모두 입력/);
+    assert.equal(addAttemptCalls, 0, 'an incomplete exam must not be saved');
+
+    await report.evaluate(() => {
+      const exam = HSMIDDLE_EXAMS['mock-1'];
+      for (let n = 1; n <= exam.questions; n += 1) {
+        if (exam.oxQuestions && exam.oxQuestions.includes(n)) {
+          localStorage.setItem(`hs-mock-1-${n}`, 'o');
+        } else if (exam.answerFields && exam.answerFields[n]) {
+          exam.answerFields[n].forEach((field, index) => localStorage.setItem(`hs-mock-1-${n}-${index}`, field.answer));
+        } else {
+          const expected = String(exam.answers[n - 1] || '직접 확인').split('또는')[0].trim();
+          localStorage.setItem(`hs-mock-1-${n}`, expected === '수동' || expected === '복수·수동' ? '직접 확인' : expected);
+        }
+      }
+    });
+    await report.reload({ waitUntil: 'networkidle' });
+    await report.waitForFunction(() => document.querySelector('#whoName')?.textContent.includes('시험학생'));
+    assert.equal((await report.evaluate(() => examAnalyze())).checked, 40, 'all forty responses must be recognized');
+    await report.locator('#recordBtn').click();
+    await report.waitForTimeout(1000);
+    assert.equal(addAttemptCalls, 1, 'a complete exam must be saved once');
+    assert.match(await report.locator('#recordBtn').textContent(), /\(1\/3\)/, 'saved attempt count must refresh');
+    assert.equal(savedAttempt.answered, 39, 'manual-only answers must stay outside the confirmed score');
+    assert.equal(savedAttempt.states['1'], 'manual', 'manual answers must remain visible after reopening a saved report');
+    await report.locator('[data-saved-attempt="0"]').click();
+    const reopenedAnalysis = await report.evaluate(() => examAnalyze());
+    assert.equal(reopenedAnalysis.checked, 40, 'reopened reports must count manual responses as entered');
+    assert.equal(reopenedAnalysis.manual, 1, 'reopened reports must restore the manual response count');
+    assert.equal(reopenedAnalysis.states[1], 'manual', 'reopened reports must show the manual state');
+    rejectForLimit = true;
+    const limitResult = await report.evaluate(() => {
+      const states = Object.fromEntries(Array.from({ length: 40 }, (_, index) => [index + 1, 'x']));
+      return HSMIDDLE_CLOUD.addAttempt('시험학생', 'mock-1', { score: 0, correct: 0, answered: 40, states });
+    });
+    assert.equal(limitResult.reason, 'full', 'server attempt limits must remain visible to the client');
+    assert.equal(addAttemptCalls, 2, 'the limit response must come from the server');
     await report.close();
     await page.emulateMedia({ media: 'print' });
     assert.equal(await page.locator('.top').evaluate(element => getComputedStyle(element).display), 'none', 'print must hide the toolbar');

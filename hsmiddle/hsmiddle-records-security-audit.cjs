@@ -51,6 +51,8 @@ for (const marker of ["requireSession", "consumeLoginLimit", "validAttemptRecord
 }
 assert(edge.includes('req.headers.get("x-hsm-session")'), "edge does not authenticate custom session");
 assert(edge.includes("correct * 2.5") && edge.includes("states_mismatch"), "score consistency check missing");
+assert(edge.includes('round !== "diagnostic"') && edge.includes('"attempt_incomplete"'), "server must reject incomplete mock-exam records");
+assert(edge.includes('"manual"') && cloud.includes('function completeExamRecord'), "manual answer preservation or browser completeness check missing");
 assert(edge.includes('action === "allAttempts"') && edge.includes('if (!session.account.is_admin) throw new HttpError(403, "admin_required")'), "admin attempt listing is not protected");
 assert(edge.includes('student,round,attempt,score,correct,answered,states,created_at'), "admin attempt detail fields are incomplete");
 assert(admin.includes("HSMIDDLE_CLOUD.allAttempts()") && admin.includes('class="ox-grid"'), "admin score dashboard missing");

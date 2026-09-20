@@ -86,7 +86,7 @@ function validRound(value: unknown) {
   return round;
 }
 
-function validAttemptRecord(value: unknown) {
+function validAttemptRecord(value: unknown, round: string) {
   const record = (value && typeof value === "object" ? value : {}) as Record<string, unknown>;
   const score = Number(record.score);
   const correct = Number(record.correct);
@@ -99,8 +99,11 @@ function validAttemptRecord(value: unknown) {
   if (Math.abs(score - correct * 2.5) > 0.001) throw new HttpError(400, "score_mismatch");
   if (!states || typeof states !== "object" || Array.isArray(states)) throw new HttpError(400, "states_invalid");
   const entries = Object.entries(states as Record<string, unknown>);
-  if (entries.length > 40 || entries.some(([key, item]) => !/^([1-9]|[1-3][0-9]|40)$/u.test(key) || !["o", "x", null].includes(item as string | null))) {
+  if (entries.length > 40 || entries.some(([key, item]) => !/^([1-9]|[1-3][0-9]|40)$/u.test(key) || !["o", "x", "manual", null].includes(item as string | null))) {
     throw new HttpError(400, "states_invalid");
+  }
+  if (round !== "diagnostic" && (entries.length !== 40 || entries.some(([, item]) => item === null))) {
+    throw new HttpError(400, "attempt_incomplete");
   }
   const countedAnswered = entries.filter(([, item]) => item === "o" || item === "x").length;
   const countedCorrect = entries.filter(([, item]) => item === "o").length;
@@ -202,7 +205,7 @@ async function listAttempts(session: Awaited<ReturnType<typeof requireSession>>,
 
 async function addAttempt(session: Awaited<ReturnType<typeof requireSession>>, round: string, rawRecord: unknown) {
   requirePermission(session, round);
-  const record = validAttemptRecord(rawRecord);
+  const record = validAttemptRecord(rawRecord, round);
   const sortedStates = Object.fromEntries(Object.entries(record.states as Record<string, unknown>).sort((left, right) => Number(left[0]) - Number(right[0])));
   const clientId = await sha256(JSON.stringify({ round, score: record.score, correct: record.correct, answered: record.answered, states: sortedStates }));
   const { data: duplicate, error: duplicateError } = await service.from("hsm_attempts")
