@@ -21,7 +21,7 @@ const FACE = { half: 'face-A2-mouth-half.webp', open: 'face-A3-mouth-open.webp',
 const mouthFor = (ch) => { const c = ch.charCodeAt(0) - 0xac00; if (c < 0 || c > 11171) return null; const j = Math.floor(c / 28) % 21; return [0, 2, 4, 6, 9, 14].includes(j) ? 'open' : [8, 12, 13, 17].includes(j) ? 'o' : 'half'; };
 let NAR = { voice: '', lines: [] }, soundOn = true, sayToken = 0, audio = null;
 const guide = $('.it-guide'), $p = guide.querySelector('.it-bubble p');
-guide.insertAdjacentHTML('afterbegin', '<div class="it-char"><img class="b" src="' + A + 'docssam-A1-mouth-closed.webp" alt="독쌤"><img class="f" alt=""></div>');
+guide.insertAdjacentHTML('afterbegin', '<div class="it-char"><img class="b" src="' + A + 'docssam-A1-mouth-closed.webp" alt="독쌀"><img class="f" alt=""></div>');
 guide.querySelector('.it-guide-img').remove();
 const $face = guide.querySelector('.it-char .f');
 async function urlOf(line) {
@@ -55,7 +55,7 @@ async function say(ids) {
     await new Promise((r) => setTimeout(r, 900));
   }
 }
-guide.querySelector('.it-sound').addEventListener('click', (e) => { soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', soundOn); e.currentTarget.textContent = soundOn ? '소리 켬' : '소리 끔'; if (!soundOn) { try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ } } });
+guide.querySelector('.it-sound').addEventListener('click', (e) => { soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', soundOn); e.currentTarget.textContent = soundOn ? '소리 켬' : '소리 끕'; if (!soundOn) { try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ } } });
 guide.querySelector('.it-hide').addEventListener('click', () => guide.classList.toggle('min'));
 guide.querySelector('.it-char').addEventListener('click', () => guide.classList.remove('min'));
 
@@ -69,22 +69,23 @@ const GOLD = `<defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop of
   <animate attributeName="x1" values="-1;1;-1" dur="7s" repeatCount="indefinite"/><animate attributeName="x2" values="0;2;0" dur="7s" repeatCount="indefinite"/></linearGradient>
   <radialGradient id="glow"><stop offset="0" stop-color="#ffcf73" stop-opacity=".95"/><stop offset=".4" stop-color="#ff8a3d" stop-opacity=".45"/><stop offset="1" stop-color="#ff8a3d" stop-opacity="0"/></radialGradient>
   <filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
-// 모서리 덩굴 장식(왼쪽 위 기준, 돌려서 네 모서리에)
+// 모서리 덩쿽 장식(왼쪽 위 기준, 돌려서 네 모서리에)
 const CORNER = '<path d="M0 0 C18 2 26 10 28 28 M0 0 C2 18 10 26 28 28 M6 6 C14 7 20 12 21 21 M6 6 C7 14 12 20 21 21 M28 28 c4 -6 10 -6 12 -2 c2 4 -2 8 -6 6 M28 28 c-6 4 -6 10 -2 12 c4 2 8 -2 6 -6" fill="none" stroke="url(#gd)" stroke-width="1"/><circle cx="28" cy="28" r="1.8" fill="url(#gd)"/>';
 const corners = (w, h, m) => [[m, m, 0], [w - m, m, 90], [w - m, h - m, 180], [m, h - m, 270]].map(([x, y, r]) => `<g transform="translate(${x} ${y}) rotate(${r}) scale(.78)">${CORNER}</g>`).join('');
 function coverPage() {
   // 로드맵 = 별자리: 3-1 → 6-2 여덟 학기가 원 안에서 별로 이어진다(체험 가능한 학기는 불이 켜짐)
-  const cx = 105, cy = 180, R = 49;
+  const cx = 105, cy = 184, R = 48;
   const pts = SEMS.map((_, i) => { const a = -Math.PI / 2 + (i / SEMS.length) * Math.PI * 2 + 0.25; const r = R * (i % 2 ? 0.62 : 0.86); return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; });
   const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
   const stars = SEMS.map((s, i) => { const [x, y] = pts[i], on = readySems.has(s.sem); return `<g class="st ${on ? 'on' : ''}" style="animation-delay:${(i * 0.37).toFixed(2)}s">${on ? `<circle cx="${x}" cy="${y}" r="7" fill="url(#glow)"/>` : ''}<path d="M${x} ${y - 3.2} L${x + .9} ${y - .9} L${x + 3.2} ${y} L${x + .9} ${y + .9} L${x} ${y + 3.2} L${x - .9} ${y + .9} L${x - 3.2} ${y} L${x - .9} ${y - .9}Z" fill="${on ? '#ffe7a8' : 'url(#gd)'}"/><text x="${x}" y="${y + (y < cy ? -5 : 8)}" text-anchor="middle">${s.sem}</text></g>`; }).join('');
   const ring = (r, txt, cls) => `<path id="rg${r}" d="M${cx} ${cy - r} a${r} ${r} 0 1 1 -0.01 0" fill="none"/><g class="${cls}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#gd)" stroke-width=".5"/><text class="rune"><textPath href="#rg${r}">${txt}</textPath></text></g>`;
   return adPage('cover', `<svg class="cv" viewBox="0 0 210 297" aria-label="GFIELD 실험 과학 영재 표지">${GOLD}
     <rect x="9" y="9" width="192" height="279" rx="3" fill="none" stroke="url(#gd)" stroke-width="1.2"/><rect x="13" y="13" width="184" height="271" rx="2" fill="none" stroke="url(#gd)" stroke-width=".4"/>${corners(210, 297, 13)}
-    <text class="cv-en" x="105" y="46" text-anchor="middle">GFIELD SCIENCE LAB</text>
+    <text class="cv-en" x="105" y="40" text-anchor="middle">GFIELD GIFTED EDUCATION</text>
     <path d="M66 51 H144" stroke="url(#gd)" stroke-width=".5"/><path d="M98 51 l7 -3 l7 3 l-7 3z" fill="url(#gd)"/>
-    <text class="cv-t1" x="105" y="72" text-anchor="middle">실험 과학</text><text class="cv-t2" x="105" y="96" text-anchor="middle">영재</text>
-    <text class="cv-sub" x="105" y="108" text-anchor="middle">읽고 · 보고 · 직접 해 보는 교과 실험서</text>
+    <text class="cv-t1" x="105" y="74" text-anchor="middle">SCIENCE</text><text class="cv-t2" x="105" y="99" text-anchor="middle">LAB</text>
+    <text class="cv-motto" x="105" y="110" text-anchor="middle">EXPERIMENT · DISCOVER · MASTER</text>
+    <text class="cv-sub" x="105" y="119" text-anchor="middle">실험 과학 영재 · 읽고 보고 직접 해 보는 교과 실험서</text>
     <g class="cv-emblem" filter="url(#gl)">
       <circle cx="${cx}" cy="${cy}" r="${R + 14}" fill="url(#glow)" opacity=".18" class="cv-halo"/>
       ${ring(R + 10, 'OBSERVE · PREDICT · EXPERIMENT · RECORD · CONCLUDE · DISCOVER · OBSERVE · PREDICT ·', 'r1')}
@@ -92,30 +93,30 @@ function coverPage() {
       <path class="cv-line" d="${line}" fill="none" stroke="#ffd98a" stroke-width=".7" stroke-dasharray="2 1.5"/>${stars}
       <g class="cv-flask" transform="translate(${cx} ${cy})"><path d="M-4 -12 h8 M-3 -12 v8 l-8 13 a3 3 0 0 0 3 4 h16 a3 3 0 0 0 3 -4 l-8 -13 v-8" fill="none" stroke="url(#gd)" stroke-width="1.1"/><path d="M-7.5 3 h15 l3.4 5.6 a2 2 0 0 1 -1.8 3 h-18.2 a2 2 0 0 1 -1.8 -3z" fill="#ff8a3d" opacity=".75"/><circle cx="-2" cy="6" r="1" fill="#fff3c4"/><circle cx="2.5" cy="8" r=".7" fill="#fff3c4"/></g>
     </g>
-    <text class="cv-road" x="105" y="${cy + R + 24}" text-anchor="middle">3학년에서 6학년까지 · 여덟 학기의 탐구 여정</text>
-    <text class="cv-brand" x="105" y="268" text-anchor="middle">지필드 사이언스 랩</text>
+    <text class="cv-road" x="105" y="252" text-anchor="middle">3학년에서 6학년까지 · 여덟 학기의 탐구 여정</text>
+    <text class="cv-brand" x="105" y="272" text-anchor="middle">GFIELD SCIENCE LAB</text>
   </svg><div class="cv-tap">책장을 넘겨 보세요</div>`);
 }
 const orn = '<div class="orn"><svg viewBox="0 0 120 10"><path d="M0 5 H48 M72 5 H120" stroke="#b8872b" stroke-width=".8"/><path d="M60 0 l6 5 l-6 5 l-6 -5z M50 5 a2 2 0 1 0 0 .01 M70 5 a2 2 0 1 0 0 .01" fill="#b8872b"/></svg></div>';
 const chap = (k, h) => `<p class="ad-k">${k}</p><h2>${h}</h2>${orn}`;
 const ads = () => [
-  adPage('ad a1', `${chap('서장 · 이 책에 대하여', '이런 과학책,<br>본 적 있나요?')}
-    <p class="drop">과학은 외우는 것이 아니라 직접 해 보는 것입니다. 이 책은 교과서 단원마다 실험 한 장을 담고, 화면에서 펼치면 그 실험이 깨어나 아이의 손끝에서 다시 일어납니다.</p>
+  adPage('ad a1', `${chap('PROLOGUE · 이 책에 대하여', '이런 과학책,<br>본 적 있나요?')}
+    <p class="drop">과학은 외우는 것이 아니라 직접 해 보는 것입니다. 이 책은 교과서 단원마다 실험 한 장을 담고, 화면에서 펼치면 그 실험이 깨어나 아이의 손끕에서 다시 일어납니다.</p>
     <ol class="ad-3"><li><b>읽고</b><span>교과서 단원에 딱 맞춘 개념과 실험 설계</span></li><li><b>보고</b><span>실제 화산·용암 영상과 사진, 땅속까지 보이는 3D</span></li><li><b>해 보고</b><span>불을 켜고, 가열하고, 식혀 보는 3D 체험 실험실</span></li></ol>`),
-  adPage('ad a2', `${chap('제1장 · 탐구의 지도', '여덟 학기, 단원마다<br>실험 한 장')}
+  adPage('ad a2', `${chap('CHAPTER Ⅰ · 탐구의 지도', '여덟 학기, 단원마다<br>실험 한 장')}
     <div class="ad-road">${road().map((s) => `<div class="ad-sem ${readySems.has(s.sem) ? 'on' : ''}"><b>${s.sem}</b><ul>${s.units.map((u) => `<li class="${u.ready ? 'on' : ''}">${esc(u.title)}${u.ready ? `<small>✦ ${esc(u.hero)}</small>` : ''}</li>`).join('')}</ul></div>`).join('')}</div>
     <p class="ad-note">✦ 표시된 단원은 지금 바로 펼쳐 볼 수 있습니다</p>`),
-  adPage('ad a3', `${chap('제2장 · 한 장의 비밀', '영재원 탐구 방식,<br>그대로 한 장에')}
+  adPage('ad a3', `${chap('CHAPTER Ⅱ · 한 장의 비밀', '영재원 탐구 방식,<br>그대로 한 장에')}
     <ol class="ad-flow">${['생각 열기 — 경험에서 질문을 찾는다', '예상하기 — “~할수록 ~할 것이다”', '계획하기 — 바꿀 조건은 오직 하나', '실험하기 — 단계별 그림과 3D 실험실', '기록과 결론 — 표에 적고 내 말로', '개념 한눈에 — 빈칸으로 정리한다', '상상 실험실 · 토론 — 생각을 넓힌다', '영재 도전 — 유창성 · 융통성 · 독창성', '교과서 점검 — 단원평가 유형으로'].map((t, i) => `<li><span>${'ⅠⅡⅢⅣⅤⅥⅦⅧⅨ'[i]}</span>${esc(t)}</li>`).join('')}</ol>`),
-  adPage('ad a4', `${chap('제3장 · 네 개의 열쇠', '한 권으로 네 가지 수업')}
+  adPage('ad a4', `${chap('CHAPTER Ⅲ · 네 개의 열쇠', '한 권으로 네 가지 수업')}
     <div class="ad-4"><div><b>학생용 교재</b><span>빈칸과 쓰는 줄. A4 그대로 인쇄</span></div><div><b>강사용 교재</b><span>같은 자리에 붉은 예시 답과 채점 기준</span></div><div><b>가르치기 화면</b><span>누를 때마다 답이 열리는 90분 교안</span></div><div><b>스스로 공부</b><span>써 보고 예시 답 확인, 문제는 바로 채점</span></div></div>
     <figure class="ad-photo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Augustine_volcano_Jan_24_2006_-_Cyrus_Read.jpg/1280px-Augustine_volcano_Jan_24_2006_-_Cyrus_Read.jpg" alt="화산 분출 사진"><figcaption>책 속의 실제 기록 · Cyrus Read, USGS (Public domain)</figcaption></figure>`),
-  adPage('ad a5', `${chap('봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
+  adPage('ad a5', `${chap('UNSEAL · 봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
     <ul class="ad-how"><li><i>▶</i><span>그림 속 <b>영상</b> — 실제 화산이 책 안에서 타오릅니다</span></li><li><i>✦</i><span>주황 인장 — <b>3D 실험실</b>이 책 밖으로 솟아오릅니다</span></li><li><i>ⓐ</i><span><b>빈칸</b>을 누르면 답이 드러납니다</span></li><li><i>Ⅰ</i><span>확인 문제는 누르면 <b>바로 채점</b></span></li><li><i>⤢</i><span>사진을 누르면 <b>크게</b></span></li></ul>
     <svg class="seal" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#8b1e1e"/><circle cx="50" cy="50" r="33" fill="none" stroke="#c9463a" stroke-width="2"/><text x="50" y="47" text-anchor="middle" fill="#f3d48a" font-size="11" font-weight="800">GFIELD</text><text x="50" y="62" text-anchor="middle" fill="#f3d48a" font-size="9">SCIENCE LAB</text></svg>`),
 ];
 const backPage = () => adPage('back', `<svg class="cv" viewBox="0 0 210 297" aria-hidden="true">${GOLD}<rect x="9" y="9" width="192" height="279" rx="3" fill="none" stroke="url(#gd)" stroke-width="1.2"/>${corners(210, 297, 13)}</svg>
-  <div class="bc-in"><p class="bc-k">GFIELD · SCIENCE LAB</p><h2>우리 아이 과학,<br>읽고 보고 직접 해 보는 책으로</h2>
+  <div class="bc-in"><p class="bc-k">GFIELD SCIENCE LAB</p><h2>우리 아이 과학,<br>읽고 보고 직접 해 보는 책으로</h2>
   <p>교과서 단원마다 실험 한 장 · 실제 영상과 3D 체험 실험실<br>A4 인쇄 교재 · 수업 화면까지 한 권에</p>
   <div class="bc-btns"><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">카카오톡 상담</a><a class="ghost" href="tel:02-3453-7772">02-3453-7772</a></div>
   <p class="bc-addr">지필드 영재교육 · 서울시 강남구 역삼로 460-2 4층</p></div>`);
@@ -183,7 +184,7 @@ function paint(anim = true, dir = 1) {
   const shift = state.single ? 0 : s === 0 ? -0.5 : s === n ? 0.5 : 0;
   book.style.transform = s === 0 ? '' : `translateX(calc(var(--pw) * ${shift}))`;
   book.classList.toggle('closed', s === 0);
-  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두꺼워진다
+  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두껍어진다
   book.style.setProperty('--tl', `${(4 + 16 * done).toFixed(1)}px`); book.style.setProperty('--tr', `${(4 + 16 * (1 - done)).toFixed(1)}px`);
   const P = state.pages.length, first = state.single ? s + 1 : s * 2, lastI = state.single ? s + 1 : Math.min(P, s * 2 + 1);
   $('.it-count').textContent = s === 0 ? '표지' : state.single || first === lastI ? `${first} / ${P}` : `${first}–${lastI} / ${P}`;
