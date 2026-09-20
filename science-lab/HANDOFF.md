@@ -25,6 +25,17 @@
 - **⚠ 시작할 때 `git log --oneline -5 origin/<브랜치>`부터 볼 것.** 이 세션이 컨테이너 재시작 뒤 같은 작업 지시서를 두 번 돌려 유사문항 80개를 중복 작성했다(6차 기록 참조).
 - DESIGN.md는 v2 구현으로 사실상 승인됨.
 
+## 진행 기록 — 2026-09-20 12차 (Cowork): 살아 있는 교재 + 광고용 체험 페이지 「지필드 사이언스 랩」
+- 사용자 결정: 교재는 **화면에서는 살아 움직이고(영상·3D·실험실이 책 안에서), 인쇄하면 종이 교재**인 신개념 교재. 광고 페이지는 책 넘김 효과 → 교재 소개 장 → "다음 장부터 살아 움직이는" 실제 교재. 캐릭터 docssam이 넘길 때마다 설명. 브랜드명 **지필드 사이언스 랩**.
+- `v2/book.js` `renderChapter(..., { live, media })`: live면 첫 쪽 그림 자리에 실제 영상(누르면 쪽 안에서 재생), QR·실험 순서 그림에 주황 `[data-pop]` 버튼, 빈칸 `data-a`(누르면 답), 확인 문제 `data-key`(누르면 채점). 인쇄 CSS는 `.bk-web`·버튼을 숨기고 `.bk-print`(원래 그림)·QR만 남긴다. 웹 교재 `#/<u>/lab-book/*`는 live로 연다.
+- `v2/live.js`: `wireLive(root, {scene, lab})` + `openPop(from, title, mount)` — 누른 자리에서 커지며 튀어나오는 창, 닫으면 그 창이 만든 3D 무대만 정리(`engine.js`에 `Stage.live` 레지스트리 추가).
+- `v2/mounts.js`: `mount3D`·`LABS`·`mountLabOf`를 v2.js에서 떼어 냄(광고 페이지도 같이 씀).
+- `v2/book.css` 휴대폰 규칙은 `.bk:not(.a4)`로 한정 — 책장 속 쪽(`.a4`)은 휴대폰에서도 A4 틀을 유지하고 축소만 된다. `fitPages`도 `.a4`면 휴대폰에서도 맞춤.
+- **광고 페이지 `/science-lab/intro/`** (`index.html · intro.js · intro.css · narration.json`): 표지(3-1~6-2 로드맵 길이 그려진 책) → 소개 5쪽(이런 과학책 / 로드맵 / 한 장의 구성 / 네 가지 판 / 다음 장부터 살아 움직여요) → 교재 04장 9쪽(live) → 뒤표지 상담(카카오 `open.kakao.com/me/gfield`, 02-3453-7772 — 저장소의 기존 페이지에서 가져옴). 넓은 화면은 두 쪽 펼침 3D 책장(오른쪽 반 겹친 장이 rotateY로 넘어감), 좁은 화면은 한 쪽씩. 04/03 장·학생용/강사용 전환, 화살표·키보드·밀기·모서리 누르기.
+- **나레이션**: `intro/narration.json`(docssam 12줄, 목소리 `ko-KR-Chirp3-HD-Puck`, 실패 시 `ko-KR-Neural2-C`). `scripts/generate-audio.js`가 읽어 `audio/science-lab/<id>-<sha1(voice|text) 앞10자>.mp3`로 올린다(있으면 건너뜀). 페이지는 같은 해시로 주소를 만들어 재생, 없으면 기기 음성. **generate-audio.js를 고치면 main 푸시 때 Generate Audio 워크플로가 돈다** — narration.json만 고친 경우는 워크플로를 수동 실행(Actions → Generate Audio → Run workflow).
+- 지도 화면 머리에 "교재 소개 ›" 링크.
+- **디자인(사용자 요구: 만화책 말고 판타지 고서, 두꺼운 마법서 넘기는 느낌, 표지도 살아 있게)**: 촛불 켠 서재 배경 + 떠오르는 불씨(canvas), 가죽 장정 보드·금박 이중 테두리·모서리 덩굴, 제목 금박 반짝임(SVG gradient animate), 표지 가운데 로드맵 = 8학기 별자리(체험 가능한 학기 빛남)·회전하는 룬 고리 2겹(영문/한글 탐구 단계)·플라스크 문장, 빛줄기 훑기, 닫힌 책은 마우스 따라 3D 기울기. 넘길 때 책장 두께가 좌우로 옮겨 가고(--tl/--tr), 넘기는 장에 그림자, WebAudio로 합성한 종이 넘김 소리(표지는 묵직한 울림). 소개 장은 양피지·명조(Nanum Myeongjo)·붉은 밀랍 인장. 테스트 스크립트는 넘김 애니메이션(1.25s)이 끝난 뒤 조작해야 한다.
+
 ## 진행 기록 — 2026-09-20 11차 (Cowork): 화산 실험실(땅의 변화 2번째 5단계 수업) · 실제 사진·영상 · main 반영
 - **main 병합**: PR #239로 `science-lab/` 전체를 main에 넣었다(원문·정답은 Supabase에만, science-src 그림 브랜치는 미병합). **GitHub Pages는 아직 404** —
   `.github/workflows/deploy-pages.yml`의 올릴 폴더 목록에 `science-lab`이 없어서. GitHub App에 workflow 권한이 없어 파일을 못 올렸다 → 사용자가 GitHub 웹에서 직접 커밋해야 함(전달한 deploy-pages.yml). 그 전까지 미리보기는 raw.githack.com 커밋 주소.
