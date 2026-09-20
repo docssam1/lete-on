@@ -1,11 +1,7 @@
 // docssam 과학 탐구 랩 v2 — 단원 = 5E 한 단계 한 화면 + 준비물(QR) + 탐구보고서 + 교재 인쇄.
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
-import { mountRingTower, towerModel } from './lab-ring-tower.js';
-import { mountFreeze } from './lab-freeze.js';
-import { mountHill3D } from './lab-hill3d.js';
-import { mountPond3D } from './lab-pond3d.js';
-import { mountVolcano3D } from './lab-volcano3d.js';
-const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D, pond: mountPond3D, volcano: mountVolcano3D };
+import { towerModel } from './lab-ring-tower.js';
+import { mount3D, LABS, mountLabOf } from './mounts.js';
 import { pageHome } from './home.js';
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
@@ -198,7 +194,7 @@ function stepExplore(u, L, mode) {
   const pane = document.getElementById('pane');
   if (mode === 'lab') {
     pane.innerHTML = `<div class="card"><p><b>${esc(x.lab.goal)}</b></p><div id="lab"></div></div>`;
-    (LABS[x.lab.kind] || mountRingTower)(document.getElementById('lab'), { ...x.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) });
+    mountLabOf(x.lab.kind)(document.getElementById('lab'), { ...x.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) });
   } else if (mode === 'scene') {
     mount3D(pane, L.engage.scene, { autoplay: false });
     if (L.media?.explore) pane.insertAdjacentHTML('beforeend', videoHtml(L.media.explore));
@@ -353,28 +349,6 @@ function pageBook(u, L, items, mode) {
     <div class="wrap">${chapter}${typed}${tail}</div></div>`;
 }
 
-// 3D (기존 engine.js 재사용)
-async function mount3D(el, sceneName, { autoplay }) {
-  el.innerHTML = `<div class="stage3d"><canvas aria-label="3D 실험 장면. 끌어서 돌려 볼 수 있어요."></canvas><p class="cap">장면을 준비하고 있어요…</p>
-    <div class="ctl"><button class="btn primary" data-a="play">재생</button><button class="btn" data-a="prev">이전</button><button class="btn" data-a="next">다음</button></div></div>`;
-  try {
-    const [{ Stage, Player }, mod] = await Promise.all([import('../engine.js'), import(`../scenes/${sceneName}.js`)]);
-    if (!el.isConnected) return;
-    const stage = new Stage(el.querySelector('canvas')), player = new Player(stage);
-    const $cap = el.querySelector('.cap'), $play = el.querySelector('[data-a=play]');
-    player.onChange = () => { $cap.textContent = player.beats[player.index]?.text || ''; $play.textContent = player.playing ? '멈춤' : '재생'; };
-    await player.load(mod.default); player.onChange();
-    el.querySelector('[data-a=play]').onclick = () => player.toggle();
-    el.querySelector('[data-a=prev]').onclick = () => player.prev();
-    el.querySelector('[data-a=next]').onclick = () => player.next();
-    if (autoplay && !REDUCED) player.play();
-    const off = () => { if (!el.isConnected) { player.stop(); stage.dispose(); removeEventListener('hashchange', off); } };
-    addEventListener('hashchange', () => setTimeout(off));
-  } catch (e) {
-    el.querySelector('.cap').textContent = '이 기기에서는 3D를 보여 줄 수 없어요. 가상 실험실로 해 봐요.';
-  }
-}
-
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
 const BOOKS = { 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js') };
 function labBar(u, cur) {
@@ -385,19 +359,21 @@ function labBar(u, cur) {
 }
 async function pageLabBook(u, mod, mode) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art }, { renderChapter, fitPages }] = await Promise.all([BOOKS[u](), import('./book.js')]);
+  const [{ chapter, art, media }, { renderChapter, fitPages }, { wireLive }] = await Promise.all([BOOKS[u](), import('./book.js'), import('./live.js')]);
   $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(chapter.book)} · ${esc(chapter.title)}</h1></div></header>
-    <main class="wrap">${labBar(u, mode)}</main>${renderChapter(chapter, art, mod.similar || [], { teacher: mode === 'teacher' })}`;
+    <main class="wrap">${labBar(u, mode)}</main>${renderChapter(chapter, art, mod.similar || [], { teacher: mode === 'teacher', live: true, media })}`;
   scrollTo(0, 0);
-  const bk = $app.querySelector('.bk'), fit = () => bk.isConnected && fitPages(bk);
+  const bk = $app.querySelector('.bk'), fit = () => bk.isConnected && fitPages(bk), L = mod.lesson;
   fit(); document.fonts?.ready.then(fit);
+  if (L) wireLive(bk, { scene: (el) => mount3D(el, L.engage.scene, { autoplay: true }),
+    lab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }) });
 }
 async function pageLabClass(u, mod, L, mode, idx) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
   const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([BOOKS[u](), import('./deck.js')]);
   renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx,
     mount3D: (el) => mount3D(el, L.engage.scene, { autoplay: false }),
-    mountLab: (el) => (LABS[L.explore.lab.kind] || mountRingTower)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }) });
+    mountLab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }) });
 }
 
 // ── 라우터 ──
