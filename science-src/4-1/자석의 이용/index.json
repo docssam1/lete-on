@@ -1,0 +1,904 @@
+{
+ "unit": "s41-u01",
+ "course": "4-1",
+ "title": "자석의 이용",
+ "taxonomy": "science-lab/bank/taxonomy/s41-u01.json",
+ "note": "원문 문장은 담지 않는다. file/stem은 분류 경로이며, PNG 자체는 아직 없다(이 세션에서 원본 PDF를 디스크로 못 받음 — HANDOFF 참조).",
+ "items": {
+  "gfield-science:cats-set1:4-1:u01:set1:q1": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T01 자석에 붙는 물체 고르기/o-01.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 1
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q1"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q2": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T03 여러 물질로 된 물체에서 붙는 부분 찾기/o-01.png",
+   "element": "E1",
+   "type": "T03",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 2
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q2"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q3": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T02 재료별 분류표·분류 오류 찾기/o-01.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 3
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q3"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q4": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-01.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 4
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q4",
+   "stem": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q5": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-02.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 5
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q5",
+   "stem": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q6": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-03.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 6
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q6",
+   "stem": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q7": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/o-01.png",
+   "element": "E2",
+   "type": "T06",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 7
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q7"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q8": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T07 극의 정의와 성질/o-01.png",
+   "element": "E2",
+   "type": "T07",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 8
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q8"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q9": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T07 극의 정의와 성질/o-02.png",
+   "element": "E2",
+   "type": "T07",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 9
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q9"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q10": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T09 같은 극·다른 극 사이의 힘/o-01.png",
+   "element": "E3",
+   "type": "T09",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 10
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q10"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q11": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T10 고리 자석 탑/o-01.png",
+   "element": "E3",
+   "type": "T10",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 11
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q11"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q12": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T11 감춰진 자석의 극 추리/o-01.png",
+   "element": "E3",
+   "type": "T11",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 12
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q12"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q13": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-01.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 13
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q13",
+   "stem": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q14": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-02.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 14
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q14",
+   "stem": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q15": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-01.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 15
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q15"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q16": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-02.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 16
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q16",
+   "stem": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q17": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-03.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "서술형",
+   "source": {
+    "set": 1,
+    "no": 17
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q17",
+   "stem": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q18": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-04.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 18
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q18"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q19": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-01.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 19
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q19"
+  },
+  "gfield-science:cats-set1:4-1:u01:set1:q20": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-02.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 20
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set1:q20"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q1": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T01 자석에 붙는 물체 고르기/o-02.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 1
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q1"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q2": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T02 재료별 분류표·분류 오류 찾기/o-02.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 2
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q2"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q3": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T03 여러 물질로 된 물체에서 붙는 부분 찾기/o-02.png",
+   "element": "E1",
+   "type": "T03",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 3
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q3"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q4": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-04.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "서술형",
+   "source": {
+    "set": 2,
+    "no": 4
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q4"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q5": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-05.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 5
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q5"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q6": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T05 자석의 성질로 문제 해결하기/o-01.png",
+   "element": "E1",
+   "type": "T05",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 6
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q6"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q7": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/o-02.png",
+   "element": "E2",
+   "type": "T06",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 7
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q7",
+   "stem": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q8": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T08 여러 모양 자석의 극/o-01.png",
+   "element": "E2",
+   "type": "T08",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 8
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q8",
+   "stem": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q9": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T08 여러 모양 자석의 극/o-02.png",
+   "element": "E2",
+   "type": "T08",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 9
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q9"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q10": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T09 같은 극·다른 극 사이의 힘/o-02.png",
+   "element": "E3",
+   "type": "T09",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 10
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q10"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q11": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T11 감춰진 자석의 극 추리/o-02.png",
+   "element": "E3",
+   "type": "T11",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 11
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q11"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q12": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T10 고리 자석 탑/o-02.png",
+   "element": "E3",
+   "type": "T10",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 12
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q12"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q13": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-03.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 13
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q13"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q14": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-04.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 14
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q14"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q15": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-05.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 15
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q15"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q16": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-06.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 16
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q16"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q17": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-07.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 17
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q17"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q18": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-08.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 18
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q18"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q19": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-03.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 19
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q19"
+  },
+  "gfield-science:cats-set1:4-1:u01:set2:q20": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-04.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 20
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set2:q20"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q1": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T01 자석에 붙는 물체 고르기/o-03.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 1
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q1",
+   "stem": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T01 자석에 붙는 물체 고르기/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q2": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T01 자석에 붙는 물체 고르기/o-04.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 2
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q2",
+   "stem": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T01 자석에 붙는 물체 고르기/stem-01.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q3": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T03 여러 물질로 된 물체에서 붙는 부분 찾기/o-03.png",
+   "element": "E1",
+   "type": "T03",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 3
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q3"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q4": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-06.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 4
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q4"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q5": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-07.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 5
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q5"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q6": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-08.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "표",
+   "source": {
+    "set": 3,
+    "no": 6
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q6"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q7": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/o-03.png",
+   "element": "E2",
+   "type": "T06",
+   "format": "서술형",
+   "source": {
+    "set": 3,
+    "no": 7
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q7"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q8": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T08 여러 모양 자석의 극/o-03.png",
+   "element": "E2",
+   "type": "T08",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 8
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q8"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q9": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T08 여러 모양 자석의 극/o-04.png",
+   "element": "E2",
+   "type": "T08",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 9
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q9"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q10": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T09 같은 극·다른 극 사이의 힘/o-03.png",
+   "element": "E3",
+   "type": "T09",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 10
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q10"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q11": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T11 감춰진 자석의 극 추리/o-03.png",
+   "element": "E3",
+   "type": "T11",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 11
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q11"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q12": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T10 고리 자석 탑/o-03.png",
+   "element": "E3",
+   "type": "T10",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 12
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q12"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q13": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-05.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 13
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q13",
+   "stem": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/stem-02.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q14": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-06.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 14
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q14",
+   "stem": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/stem-02.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q15": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-09.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 15
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q15"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q16": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-10.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 16
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q16"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q17": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-11.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "서술형",
+   "source": {
+    "set": 3,
+    "no": 17
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q17"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q18": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-05.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 18
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q18"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q19": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-06.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 19
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q19"
+  },
+  "gfield-science:cats-set1:4-1:u01:set3:q20": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-07.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 20
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set3:q20"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q1": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T02 재료별 분류표·분류 오류 찾기/o-03.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 1
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q1"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q2": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T01 자석에 붙는 물체 고르기/o-05.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 2
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q2"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q3": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T03 여러 물질로 된 물체에서 붙는 부분 찾기/o-04.png",
+   "element": "E1",
+   "type": "T03",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 3
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q3"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q4": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T04 자석과 철 물체 사이의 힘(거리·투과)/o-09.png",
+   "element": "E1",
+   "type": "T04",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 4
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q4"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q5": {
+   "file": "science-src/4-1/자석의 이용/E1 자석과 물체 사이의 힘/T05 자석의 성질로 문제 해결하기/o-02.png",
+   "element": "E1",
+   "type": "T05",
+   "format": "서술형",
+   "source": {
+    "set": 4,
+    "no": 5
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q5"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q6": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/o-04.png",
+   "element": "E2",
+   "type": "T06",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 6
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q6",
+   "stem": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/stem-02.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q7": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/o-05.png",
+   "element": "E2",
+   "type": "T06",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 7
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q7",
+   "stem": "science-src/4-1/자석의 이용/E2 자석의 극/T06 극의 위치 찾기(많이 붙는 곳)/stem-02.png"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q8": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T07 극의 정의와 성질/o-03.png",
+   "element": "E2",
+   "type": "T07",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 8
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q8"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q9": {
+   "file": "science-src/4-1/자석의 이용/E2 자석의 극/T08 여러 모양 자석의 극/o-05.png",
+   "element": "E2",
+   "type": "T08",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 9
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q9"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q10": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T09 같은 극·다른 극 사이의 힘/o-04.png",
+   "element": "E3",
+   "type": "T09",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 10
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q10"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q11": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T11 감춰진 자석의 극 추리/o-04.png",
+   "element": "E3",
+   "type": "T11",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 11
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q11"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q12": {
+   "file": "science-src/4-1/자석의 이용/E3 자석과 자석 사이의 힘/T10 고리 자석 탑/o-04.png",
+   "element": "E3",
+   "type": "T10",
+   "format": "서술형",
+   "source": {
+    "set": 4,
+    "no": 12
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q12"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q13": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-07.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 13
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q13"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q14": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-08.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 14
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q14"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q15": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T12 자유롭게 움직이는 자석이 가리키는 방향/o-09.png",
+   "element": "E4",
+   "type": "T12",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 15
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q15"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q16": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-12.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 16
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q16"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q17": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-13.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 17
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q17"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q18": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T13 나침반과 자석/o-14.png",
+   "element": "E4",
+   "type": "T13",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 18
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q18"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q19": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-08.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 19
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q19"
+  },
+  "gfield-science:cats-set1:4-1:u01:set4:q20": {
+   "file": "science-src/4-1/자석의 이용/E4 자석의 이용(나침반·생활)/T14 생활 속 자석의 이용/o-09.png",
+   "element": "E4",
+   "type": "T14",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 20
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u01:set4:q20"
+  }
+ }
+}
