@@ -32,6 +32,11 @@ window.NM_UNITS['T-AD1'] = {
       en:'Bigger numbers, same method! Add place by place. Warm up with addition!',
       zh:'数字变大方法不变！按数位相加。先热身做加法！' } },
   discover:{
+    story:{
+      hook:{ ko:'비밀번호를 수첩에 적어 두면 위험하죠. 그런데 적어 두고도 안전한 방법이 있어요. 무엇일까요?', en:'Writing your PIN in a notebook is risky. Yet there is a way to write it down and still be safe. What is it?', zh:'把密码写在本子上很危险。但有一种办法，写下来也依然安全。是什么呢？' },
+      history:{ ko:'자리마다 <b>열쇠 수</b>를 더해서 적는 거예요. 비밀번호가 2001이고 열쇠가 2345라면 천의 자리끼리 2+2=4, 백의 자리끼리 0+3=3, 십의 자리끼리 0+4=4, 일의 자리끼리 1+5=6 — 수첩에는 <b>4346</b>이라고 적습니다. 열쇠만 머릿속에 있으면 자리끼리 다시 빼서 2001을 되찾을 수 있고, 남이 4346을 봐도 알 길이 없어요. 네 자리 덧셈과 뺄셈이 그대로 암호가 되는 거예요.', en:'You add a <b>key number</b> place by place. If the PIN is 2001 and the key is 2345, then thousands 2+2=4, hundreds 0+3=3, tens 0+4=4, ones 1+5=6 — and you write <b>4346</b> in your notebook. Keep only the key in your head and you can subtract place by place to get 2001 back, while anyone reading 4346 learns nothing. Four-digit adding and subtracting becomes a code.', zh:'办法是按数位加上一个<b>钥匙数</b>。密码是2001，钥匙是2345，那么千位2+2=4，百位0+3=3，十位0+4=4，个位1+5=6——本子上写的是<b>4346</b>。钥匙只记在脑子里，按数位减回去就得到2001；别人看见4346也毫无头绪。四位数的加减法就这样变成了密码。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 저금통 이야기',en:'1) Piggy bank story',zh:'① 存钱罐的故事'},
@@ -99,6 +104,11 @@ window.NM_UNITS['T-NS1'] = {
       en:'First review place names: ones, tens, hundreds, thousands. Find the digit at each place!',
       zh:'先复习数位名称：个·十·百·千。找出每个数位上的数字！' } },
   discover:{
+    story:{
+      hook:{ ko:'선거권자가 3천5백만 명이에요. 누가 이길지 알아보려면 몇 명에게 물어봐야 할까요?', en:'Thirty-five million people can vote. To predict who wins, how many of them do you have to ask?', zh:'有三千五百万人拥有选票。要预测谁会赢，需要问多少人？' },
+      history:{ ko:'1천5백 명이면 됩니다. 3천5백만을 1천5백으로 나누면 약 2만 3천 — <b>2만 3천 명 중 한 명</b>에게만 물어보는 셈이에요. 대신 조사 기관은 답을 말할 때 오차도 함께 말합니다. "지지도 40.3%, 표본오차 ±2.0%"는 진짜 값이 <b>38.3%와 42.3% 사이</b>라는 뜻이에요. 그래서 40.3%와 39.9%처럼 차이가 작으면 결과가 뒤집힐 수도 있습니다. 큰 수는 전부 세지 않고도 다룰 수 있지만, 그때는 오차를 같이 말해야 해요.', en:'Fifteen hundred is enough. Thirty-five million divided by fifteen hundred is about twenty-three thousand — so <b>one person in 23,000</b> is asked. In return, pollsters always report the margin with the answer. "40.3% support, margin of error ±2.0%" means the true figure sits <b>between 38.3% and 42.3%</b>. That is why 40.3% against 39.9% can still flip. Big numbers can be handled without counting every one — but then the error has to be said out loud too.', zh:'一千五百人就够了。三千五百万除以一千五百约等于两万三千——也就是<b>每两万三千人里只问一个</b>。作为代价，调查机构公布结果时一定会附上误差：“支持率40.3%，抽样误差±2.0%”意思是真实数值落在<b>38.3%到42.3%之间</b>。所以40.3%对39.9%仍可能反转。大数不必一个个数也能把握，但必须把误差一起说清楚。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 조회수 이야기',en:'1) View-count story',zh:'① 播放量的故事'},
@@ -377,6 +387,11 @@ window.NM_UNITS['T-FR1'] = {
       en:"Let's learn fractions with pizza! Just count total pieces and eaten pieces.",
       zh:'用比萨学分数！数一数总块数和吃掉的块数就行。' } },
   discover:{
+    story:{
+      hook:{ ko:'기타 줄의 한가운데를 누르고 튕기면 어떤 소리가 날까요?', en:'Press a guitar string exactly in the middle and pluck it. What note comes out?', zh:'按住吉他弦的正中间再拨动，会发出什么音？' },
+      history:{ ko:'같은 <b>도</b>인데, 한 옥타브 높은 도가 납니다. 줄의 길이를 <b>1/2</b>로 줄이면 떨리는 횟수가 두 배가 되기 때문이에요. 1 m짜리 줄에서 도가 났다면, 0.5 m 지점을 눌러 한 옥타브 위 도를, <b>2/3</b>인 약 0.67 m 지점을 눌러 솔을 얻습니다. 음계의 이름은 사실 <b>분수의 이름</b>이었던 거예요.', en:'The same note <b>do</b> — but an octave higher. Halving the string to <b>1/2</b> doubles how fast it vibrates. If a 1 m string sounds do, press at 0.5 m for the do an octave up, and at <b>2/3</b> of the string, about 0.67 m, for sol. The names of the scale are really the names of <b>fractions</b>.', zh:'是同一个<b>do</b>，但高了一个八度。弦长缩成<b>1/2</b>，振动次数就翻倍。1米的弦发出do，按在0.5米处得到高八度的do，按在弦长<b>2/3</b>约0.67米处得到sol。音阶的名字，其实就是<b>分数的名字</b>。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 피자 한 조각',en:'1) One pizza slice',zh:'① 一块比萨'},
@@ -584,6 +599,11 @@ window.NM_UNITS['T-DV3'] = {
       en:'Find every number that divides 12 — hunt in pairs so you miss none!',
       zh:'找出所有能整除12的数——成对找就不会漏！' } },
   discover:{
+    story:{
+      hook:{ ko:'1부터 50까지 죽 써 놓고 배수를 차례로 지워 나가면, 마지막에 무엇이 남을까요?', en:'Write 1 to 50 in a row and cross out the multiples one family at a time. What is left at the end?', zh:'把1到50依次写下来，再一组一组划掉倍数，最后会剩下什么？' },
+      history:{ ko:'먼저 1을 지우고, 2는 남긴 뒤 2의 배수를 전부 지웁니다. 다음에 살아남은 3을 남기고 3의 배수를 지우고, 그 다음 5, 그 다음 7… 이렇게 하면 <b>약수가 1과 자기 자신뿐인 수</b>만 남아요. 소수입니다. 이 방법을 만든 사람은 그림자로 지구 둘레를 잰 <b>에라토스테네스</b>고, 촘촘한 구멍으로 걸러 낸다고 해서 <b>체</b>라고 부릅니다. 소수는 몇 개까지 있을까요? 유클리드가 2300년 전에 답했어요 — 끝이 없습니다.', en:'Cross out 1, keep 2 and delete every multiple of 2. Keep the next survivor, 3, and delete its multiples; then 5, then 7… What remains are the numbers <b>whose only divisors are 1 and themselves</b> — the primes. The method comes from <b>Eratosthenes</b>, the man who measured the Earth with a shadow, and it is called a <b>sieve</b> because it strains the numbers through. How many primes are there? Euclid answered 2,300 years ago — they never run out.', zh:'先划掉1，留下2并划掉所有2的倍数；再留下幸存的3，划掉3的倍数；然后是5、7……最后剩下的，就是<b>约数只有1和自己</b>的数——质数。这个方法出自用影子量出地球周长的<b>埃拉托色尼</b>，因为像筛子一样把数滤过去，所以叫作<b>筛法</b>。质数有多少个？欧几里得在2300年前就回答了——没有尽头。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 타일 직사각형',en:'1) Tile rectangles',zh:'① 瓷砖长方形'},
@@ -653,6 +673,11 @@ window.NM_UNITS['T-DV4'] = {
       en:'A factor of both numbers = common factor! The largest one = GCD.',
       zh:'两个数共同的因数=公因数！其中最大的=最大公因数。' } },
   discover:{
+    story:{
+      hook:{ ko:'올해가 갑진년이라면, 다음 갑진년은 몇 년 뒤에 올까요?', en:'If this year is called gapjin, how many years until the next gapjin?', zh:'如果今年叫甲辰年，下一个甲辰年要等多少年？' },
+      history:{ ko:'60년 뒤입니다. 해 이름의 앞 글자는 <b>십간</b> 열 개(갑·을·병·정·무·기·경·신·임·계), 뒷 글자는 <b>십이지</b> 열두 개(자·축·인·묘…)가 한 칸씩 같이 돌아가요. 두 바퀴가 다시 겹치는 때가 <b>10과 12의 최소공배수인 60</b>이라 60년마다 같은 이름이 돌아옵니다. 태어난 해 이름이 다시 오는 예순 살을 <b>환갑</b>이라고 하는 이유예요. 앞 글자가 갑인 해는 늘 끝자리가 4 — 갑신정변은 1884년, 갑오년은 1894년이었습니다.', en:'Sixty years. The first syllable of a year name cycles through <b>ten</b> heavenly stems, the second through <b>twelve</b> earthly branches, both stepping one place at a time. The two wheels line up again after <b>the least common multiple of 10 and 12, which is 60</b> — so the same name returns every sixty years. That is why turning sixty, when your birth-year name comes back, has its own name in Korean: <b>hwangap</b>. Years starting with gap always end in 4 — the Gapsin coup was 1884, the gapo year was 1894.', zh:'六十年后。年份名称的第一个字在<b>十天干</b>（甲乙丙丁戊己庚辛壬癸）中轮转，第二个字在<b>十二地支</b>（子丑寅卯……）中轮转，两者各走一格。两个轮子重新对上，正是<b>10和12的最小公倍数60</b>，所以同名的年份每六十年回来一次。六十岁时出生那年的名字重现，因此叫作<b>花甲</b>。以甲开头的年份末位总是4——甲申政变在1884年，甲午年是1894年。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 공약수',en:'1) Common factors',zh:'① 公因数'},
@@ -860,6 +885,11 @@ window.NM_UNITS['T-MX1'] = {
       en:'Addition and multiplication in one line — who goes first? Learn the rule!',
       zh:'加法和乘法在一个算式里——谁先算？来学规则！' } },
   discover:{
+    story:{
+      hook:{ ko:'"3에 5를 더한 다음 2를 곱해"와 "3에, 5에 2를 곱한 것을 더해". 말은 비슷한데 답은 같을까요?', en:'"Add 5 to 3, then multiply by 2" and "To 3, add 5 multiplied by 2." The words look alike — do the answers match?', zh:'“3加5，再乘2”和“3加上5乘2”。说法差不多，答案一样吗？' },
+      history:{ ko:'다릅니다. 앞은 (3+5)×2 = <b>16</b>, 뒤는 3+(5×2) = <b>13</b>이에요. 말로 하면 길어지고, 길어지면 이렇게 헷갈립니다. 그래서 수학은 <b>기호</b>를 씁니다 — 괄호를 치고, "곱셈과 나눗셈을 먼저"라는 약속을 정해 두면 한 줄로 쓰고도 뜻이 단 하나로 정해져요. 혼합 계산의 규칙은 외워야 할 잔소리가 아니라, <b>모호함을 없애려고 사람들이 정한 약속</b>입니다.', en:'They differ: the first is (3+5)×2 = <b>16</b>, the second is 3+(5×2) = <b>13</b>. Said in words it gets long, and long sentences get confusing. That is why mathematics uses <b>symbols</b> — put in brackets, agree that multiplication and division come first, and one short line has exactly one meaning. The rules of mixed calculation are not nagging to memorise; they are <b>an agreement people made to remove the ambiguity</b>.', zh:'不一样：前者是(3+5)×2 = <b>16</b>，后者是3+(5×2) = <b>13</b>。用话说会变长，一长就容易混。所以数学要用<b>符号</b>——加上括号，再约定“先乘除后加减”，一行字就只有一种意思。混合运算的规则不是要死记的唠叨，而是<b>人们为了消除歧义而定下的约定</b>。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 문방구 이야기',en:'1) Stationery story',zh:'① 文具店的故事'},
