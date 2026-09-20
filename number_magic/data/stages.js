@@ -52,7 +52,7 @@ window.NM_STAGES = [
     name:{ko:'계산의 새싹',en:'Sprout',zh:'计算的新芽'},
     band:{ko:'6~7세 · 초등 1학년',en:'Ages 6–7 · Grade 1',zh:'6~7岁 · 小学一年级'},
     chapters:['R0','R1','G0','G1','R2','R3','R4','T4','R5','R6','R7','R8'],
-    tiers:['level1'], courses:{from:1,to:10}, weeks:55,
+    tiers:['level1'], courses:{from:1,to:10}, weeks:69,
     learn:{
       ko:'자릿값과 모으기·가르기, 보수 5와 10, 받아올림·받아내림, 두 자리에서 네 자리 덧뺄셈, 구구단 2~9단, 나눗셈의 시작.',
       en:'Place value, gathering and splitting, complements of 5 and 10, carrying and borrowing, two- to four-digit addition and subtraction, times tables 2–9, the start of division.',
@@ -69,14 +69,14 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.',
       en:'The plan runs ahead of school, so times tables already sit in this stage.',
       zh:'编排比学校进度提前，所以乘法口诀已经在这一阶段。'},
-    meta:{ko:'과정 1~10 · 주 1회 기준 55주',en:'Courses 1–10 · 55 weeks at one sheet a week',zh:'课程1~10 · 每周1次约55周'}
+    meta:{ko:'과정 1~10 · 주 1회 기준 69주',en:'Courses 1–10 · 69 weeks at one sheet a week',zh:'课程1~10 · 每周1次约69周'}
   },
   {
     key:'leap', icon:'🚀', accent:'#16417C', status:'live',
     name:{ko:'계산의 도약',en:'Leap',zh:'计算的跃进'},
     band:{ko:'초등 1학년 말 ~ 2학년',en:'End of Grade 1 – Grade 2',zh:'小学一年级末~二年级'},
     chapters:['T8','R9','T9','R10','R11','R12','R13','R14'],
-    tiers:['level2'], courses:{from:11,to:16}, weeks:30,
+    tiers:['level2'], courses:{from:11,to:16}, weeks:32,
     learn:{
       ko:'두 자리×두 자리, 나눗셈과 역연산, 분수의 첫걸음, 세 자리×두 자리, 두 자리로 나누기, 혼합계산.',
       en:'Two-digit × two-digit, division and inverse operations, first steps in fractions, three-digit × two-digit, dividing by two digits, mixed operations.',
@@ -89,14 +89,14 @@ window.NM_STAGES = [
     symbols:[
       {sym:'a/b', tr:{ko:'b로 나눈 것 중 a — 분수 막대 그림이 기호보다 먼저입니다',en:'a of b equal parts — the fraction bar picture comes before the symbol',zh:'分成b份中的a份——分数条的图先于符号'}},
       {sym:'( )', tr:{ko:'먼저 계산할 묶음',en:'the bundle to compute first',zh:'先算的那一组'}}],
-    meta:{ko:'과정 11~16 · 주 1회 기준 30주',en:'Courses 11–16 · 30 weeks at one sheet a week',zh:'课程11~16 · 每周1次约30周'}
+    meta:{ko:'과정 11~16 · 주 1회 기준 32주',en:'Courses 11–16 · 32 weeks at one sheet a week',zh:'课程11~16 · 每周1次约32周'}
   },
   {
     key:'mastery', icon:'👑', accent:'#0E2C57', status:'live',
     name:{ko:'계산의 정복',en:'Mastery',zh:'计算的征服'},
     band:{ko:'초등 2학년 말 ~ 3학년',en:'End of Grade 2 – Grade 3',zh:'小学二年级末~三年级'},
     chapters:['T14','R15','T15','R16','CR8','R17'],
-    tiers:['level3'], courses:{from:17,to:25}, weeks:38,
+    tiers:['level3'], courses:{from:17,to:25}, weeks:45,
     learn:{
       ko:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수·소인수분해, 분모가 다른 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
       en:'Decimal addition, subtraction and multiplication, square numbers, factors and multiples, fractions with unlike denominators, multiplying and dividing fractions, sequences, percentages and ratios.',
@@ -113,14 +113,14 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도로는 초4~5에 나오는 내용을 여기서 만납니다.',
       en:'In school terms this covers Grade 4–5 material.',
       zh:'按学校进度，这里学的是小学四~五年级的内容。'},
-    meta:{ko:'과정 17~25 · 주 1회 기준 38주 · 학교로는 초4~5 내용',en:'Courses 17–25 · 38 weeks · the end of the arithmetic track',zh:'课程17~25 · 约38周 · 运算段的终点'}
+    meta:{ko:'과정 17~25 · 주 1회 기준 45주 · 학교로는 초4~5 내용',en:'Courses 17–25 · 45 weeks · the end of the arithmetic track',zh:'课程17~25 · 约45周 · 运算段的终点'}
   },
   {
     key:'tower', icon:'🗼', accent:'#C9A063', status:'live',
     name:{ko:'경시의 탑',en:'The Tower',zh:'竞赛之塔'},
     band:{ko:'초등 심화 · 중등 준비',en:'Elementary deep-dive · bridge to middle school',zh:'小学进阶 · 初中衔接'},
     chapters:['CR9','CR10','CR11','CRB'],
-    tiers:['challenge'], courses:{from:26,to:28}, weeks:15,
+    tiers:['challenge'], courses:{from:26,to:28}, weeks:17,
     learn:{
       ko:'한쪽으로 모으기와 100 보수 곱, 피라미드 곱셈, 진법과 1001의 법칙, 순환소수, 50·100·1000 근처의 제곱.',
       en:'Shifting to one side, complement multiplication near 100, pyramid multiplication, number bases and the 1001 rule, repeating decimals, squares near 50, 100 and 1000.',
@@ -134,14 +134,14 @@ window.NM_STAGES = [
     freeNote:{ko:'권유일 뿐 잠금이 아닙니다. 건너뛰고 중학교로 가도 되고, 나중에 돌아와도 됩니다.',
       en:'A suggestion, never a lock. Skip to middle school and come back later if you like.',
       zh:'只是建议，不是锁。可以跳到初中，以后再回来。'},
-    meta:{ko:'과정 26~28 · 주 1회 기준 15주',en:'Courses 26–28 · 15 weeks',zh:'课程26~28 · 约15周'}
+    meta:{ko:'과정 26~28 · 주 1회 기준 17주',en:'Courses 26–28 · 17 weeks',zh:'课程26~28 · 约17周'}
   },
   {
     key:'middle', icon:'🔤', accent:'#0E2C57', status:'live',
     name:{ko:'중학교 — 기호가 바뀌는 자리',en:'Middle School — where the symbols change',zh:'初中——符号改变的地方'},
     band:{ko:'중학교 1~3학년',en:'Grades 7–9',zh:'初中一~三年级'},
     chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W9-1','W9-2','W10-1','LAB-NUMLINE','W10-2'],
-    tiers:['middle1','middle2','middle3'], courses:{from:29,to:35}, weeks:33,
+    tiers:['middle1','middle2','middle3'], courses:{from:29,to:35}, weeks:47,
     learn:{
       ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 제곱근의 세계, 곱셈공식과 인수분해.',
       en:'Integers and rationals, the rules of sign, letters and expressions, equations and proportion, exponents and monomials, polynomials, square roots, product formulas and factorisation.',
@@ -155,14 +155,14 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~35 · 주 1회 기준 33주 · 실험실 2',en:'Courses 29–35 · 33 weeks · 2 labs',zh:'课程29~35 · 约33周 · 2个实验室'}
+    meta:{ko:'과정 29~35 · 주 1회 기준 47주 · 실험실 2',en:'Courses 29–35 · 47 weeks · 2 labs',zh:'课程29~35 · 约47周 · 2个实验室'}
   },
   {
     key:'high', icon:'∫', accent:'#0E2C57', status:'partial',
     name:{ko:'고등 — 새 기호는 아는 마법의 새 이름표',en:'High School — a new symbol is a new label on a magic you know',zh:'高中——新符号只是熟悉魔法的新标签'},
     band:{ko:'공통수학1·2 · 대수 · 미적분Ⅰ',en:'Common Math 1·2 · Algebra · Calculus I',zh:'共同数学1·2 · 代数 · 微积分Ⅰ'},
     chapters:['W11-1','W11-2','W12-1','W12-2','W13-1','W13-2','W13-3','W13-4','W13-5','W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:36,to:45}, weeks:49,
+    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:36,to:45}, weeks:67,
     learn:{
       ko:'다항식과 나머지정리, 이차방정식, 점과 직선·원, 지수와 로그, 삼각함수, 수열과 Σ, 극한과 미분, 접선과 적분.',
       en:'Polynomials and the remainder theorem, quadratic equations, points, lines and circles, exponents and logarithms, trigonometric functions, sequences and Σ, limits and differentiation, tangents and integration.',
@@ -176,7 +176,7 @@ window.NM_STAGES = [
       {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}},
       {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 36~45 · 주 1회 기준 49주 · 실험실 2',en:'Courses 36–45 · 49 weeks · 2 labs',zh:'课程36~45 · 约49周 · 2个实验室'}
+    meta:{ko:'과정 36~45 · 주 1회 기준 67주 · 실험실 2',en:'Courses 36–45 · 67 weeks · 2 labs',zh:'课程36~45 · 约67周 · 2个实验室'}
   }
 ];
 

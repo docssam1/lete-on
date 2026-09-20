@@ -3054,7 +3054,12 @@ function classifyRoundLayout(problems, threadId, young, creative){
   /* 그림이 곧 문제인 유아 창의 회차(NL9·13·15)는 Training Course 식 줄이 아니라 그림형 칸으로 —
      식(tex)이 없어 "= □"만 찍혔다(2026-09-19, 과정 0 p08). */
   const pictureOnly = problems.every(p => !p.tex && !p.word);
-  if(creative && !getSolveMode() && !pictureOnly) return {type:'train', cols:1, rows:3, perPage:3, flow:'row', firstRows:1, pitch:78};
+  /* 말이 곧 문제인 창의 회차(WP1·3·4·5 문장제)도 Training Course 식 줄로 보내면 안 된다
+     (2026-09-20). train 칸은 `p.tex` 만 그리므로 문장이 통째로 빠지고 `(1) = □` 만
+     찍혔다 — 읽을 글이 없는 문장제가 나갔다. 문장제는 아래 word 배치가 문장·보기·답 칸을
+     제대로 그린다. */
+  const wordRound = problems.every(p => p.word);
+  if(creative && !getSolveMode() && !pictureOnly && !wordRound) return {type:'train', cols:1, rows:3, perPage:3, flow:'row', firstRows:1, pitch:78};
   /* 풀이형(2026-09-16) — 판정보다 먼저다. 켜져 있으면 문항 종류와 상관없이 한 쪽에
      4문항(2열×2행), 칸마다 풀이 줄과 "▶ 답:"을 준다. 첫 장은 개념·예시가 위에
      들어가므로 2문항만(firstRows:1). */
