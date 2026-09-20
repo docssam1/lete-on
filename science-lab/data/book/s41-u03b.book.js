@@ -2,6 +2,7 @@
 // 교과서 화산 활동 모형 실험(마시멜로·알루미늄 포일)과 백반 결정 실험을 합쳐 우리 흐름으로 새로 썼다. 그림은 직접 그리고,
 // 실제 사진·영상은 위키미디어 공용의 자유 이용 자료를 출처와 함께 쓴다(data/media/s41-u03b.media.js).
 import { media } from '../media/s41-u03b.media.js';
+export { media };
 
 const S = (w, h, body) => `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" role="img" font-family="Pretendard, 'Noto Sans KR', sans-serif">${body}</svg>`;
 const photo = (m, h = 'auto') => `<figure class="bk-photo"><img src="${m.src}" alt="${m.cap}" style="${h === 'auto' ? '' : `height:${h};object-fit:cover`}"><figcaption>${m.cap} <small>${m.credit}</small></figcaption></figure>`;
