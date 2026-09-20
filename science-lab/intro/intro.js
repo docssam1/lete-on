@@ -183,7 +183,7 @@ function paint(anim = true, dir = 1) {
   const shift = state.single ? 0 : s === 0 ? -0.5 : s === n ? 0.5 : 0;
   book.style.transform = s === 0 ? '' : `translateX(calc(var(--pw) * ${shift}))`;
   book.classList.toggle('closed', s === 0);
-  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두껍게 된다
+  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두꺼워진다
   book.style.setProperty('--tl', `${(4 + 16 * done).toFixed(1)}px`); book.style.setProperty('--tr', `${(4 + 16 * (1 - done)).toFixed(1)}px`);
   const P = state.pages.length, first = state.single ? s + 1 : s * 2, lastI = state.single ? s + 1 : Math.min(P, s * 2 + 1);
   $('.it-count').textContent = s === 0 ? '표지' : state.single || first === lastI ? `${first} / ${P}` : `${first}–${lastI} / ${P}`;
