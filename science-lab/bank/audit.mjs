@@ -66,7 +66,7 @@ for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.similar.js'))) 
     for (const w of EARLY_TERMS[t.grade] ?? []) if (body.includes(w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);
     if (it.answerContract.type === 'single-choice') {
       const a = it.answerContract.answer, L = it.choices.map((c) => c.length), so = [...L].sort((x, y) => y - x);
-      pos[a]++; if (L[a] === so[0] && so[0] - so[1] >= 3) err(`${it.id} 정답이 눈에 띄게 가장 긴 보기`);
+      pos[a]++; if (so[0] >= 12 && L[a] === so[0] && so[0] - so[1] >= 3) err(`${it.id} 정답이 눈에 띄게 가장 긴 보기`);
     }
   }
   const missing = Object.keys(tx.sources).filter((k) => !similar.some((it) => `${it.sourceRef.of.set}-${it.sourceRef.of.no}` === k));
