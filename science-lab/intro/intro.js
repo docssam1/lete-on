@@ -5,6 +5,8 @@ import { renderChapter, fitPages } from '../v2/book.js';
 import { wireLive } from '../v2/live.js';
 import { mount3D, mountLabOf } from '../v2/mounts.js';
 import { SEMS, READY } from '../v2/units-index.js';
+import { escapeInApp } from '../v2/inapp.js';
+escapeInApp();
 
 const A = '../assets/';
 const SUPA = 'https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio/science-lab/';
@@ -69,7 +71,7 @@ const GOLD = `<defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop of
   <animate attributeName="x1" values="-1;1;-1" dur="7s" repeatCount="indefinite"/><animate attributeName="x2" values="0;2;0" dur="7s" repeatCount="indefinite"/></linearGradient>
   <radialGradient id="glow"><stop offset="0" stop-color="#ffcf73" stop-opacity=".95"/><stop offset=".4" stop-color="#ff8a3d" stop-opacity=".45"/><stop offset="1" stop-color="#ff8a3d" stop-opacity="0"/></radialGradient>
   <filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
-// 모서리 덩굴 장식(왼쪽 위 기준, 돌려서 네 모서리에)
+// 모서리 덩쿽 장식(왼쪽 위 기준, 돌려서 네 모서리에)
 const CORNER = '<path d="M0 0 C18 2 26 10 28 28 M0 0 C2 18 10 26 28 28 M6 6 C14 7 20 12 21 21 M6 6 C7 14 12 20 21 21 M28 28 c4 -6 10 -6 12 -2 c2 4 -2 8 -6 6 M28 28 c-6 4 -6 10 -2 12 c4 2 8 -2 6 -6" fill="none" stroke="url(#gd)" stroke-width="1"/><circle cx="28" cy="28" r="1.8" fill="url(#gd)"/>';
 const corners = (w, h, m) => [[m, m, 0], [w - m, m, 90], [w - m, h - m, 180], [m, h - m, 270]].map(([x, y, r]) => `<g transform="translate(${x} ${y}) rotate(${r}) scale(.78)">${CORNER}</g>`).join('');
 function coverPage() {
@@ -151,7 +153,8 @@ async function build() {
 // 책장: 넓은 화면은 두 쪽 펼침(오른쪽 반에 겹친 장이 왼쪽으로 넘어감), 좁은 화면은 한 쪽씩
 function layout(rebuild = false) {
   const single = innerWidth < 760;
-  const availH = Math.max(320, innerHeight - (single ? 260 : 240)), availW = innerWidth - (single ? 24 : 150);
+  const stageBox = wrapEl.parentElement.getBoundingClientRect();
+  const availH = Math.max(300, Math.round(stageBox.height - 16)), availW = innerWidth - (single ? 16 : 130);
   const pw = Math.floor(Math.min(single ? availW : availW / 2, availH * 210 / 297)), ph = Math.round(pw * 297 / 210);
   book.style.setProperty('--pw', pw + 'px'); book.style.setProperty('--ph', ph + 'px'); book.style.setProperty('--k', (pw / 793.7).toFixed(4));
   if (rebuild || single !== state.single) {
@@ -180,7 +183,7 @@ function paint(anim = true, dir = 1) {
     leaf.querySelectorAll('.face').forEach((f) => f.setAttribute('aria-hidden', 'true'));
   });
   if (anim) { const t = state.leaves[dir > 0 ? s - 1 : s]; if (t) { t.style.zIndex = n + 2; setTimeout(() => { t.style.zIndex = t.classList.contains('flipped') ? state.leaves.indexOf(t) + 1 : n - state.leaves.indexOf(t); }, 900); } }
-  // 표지만 보일 땐 책을 가운데로, 마지막(뒤표지 왼쪽만)도 가운데로
+  // 표지만 보일 땀 책을 가운데로, 마지막(뒤표지 왼쪽만)도 가운데로
   const shift = state.single ? 0 : s === 0 ? -0.5 : s === n ? 0.5 : 0;
   book.style.transform = s === 0 ? '' : `translateX(calc(var(--pw) * ${shift}))`;
   book.classList.toggle('closed', s === 0);
@@ -191,7 +194,7 @@ function paint(anim = true, dir = 1) {
   $('.it-arrow.prev').disabled = s === 0; $('.it-arrow.next').disabled = s >= n - (state.single ? 1 : 0);
   narrate();
 }
-// 두꺼운 마법서 책장 소리(WebAudio로 합성: 종이 스치는 소리 + 표지는 묵직한 울림)
+// 두꺼운 마법서 책장 소리(WebAudio로 합성: 종이 스치는 소리 + 표지는 뭵직한 울림)
 let AC = null;
 function turnSound(heavy) {
   if (!soundOn) return;
@@ -213,13 +216,48 @@ function narrate() {
   for (const i of vis) {
     if (i === 0) ids.push('cover'); else if (i === 1) ids.push('ad1'); else if (i === 2) ids.push('ad2'); else if (i === 3 || i === 4) { if (!ids.includes('ad3')) ids.push('ad3'); }
     else if (i === 5) ids.push('live');
-    else if (i >= c0 && i < c0 + cn) { const r = rel(i); const k = r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : 'check'; if (!ids.includes(k)) ids.push(k); }
+    else if (i >= c0 && i < c0 + cn) { const r = rel(i); const k = r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : r === 9 ? 'report' : r === 10 ? 'formative' : 'check'; if (!ids.includes(k)) ids.push(k); }
     else ids.push('print', 'cta');
   }
   const key = ids.join(','); if (key === state.said) return; state.said = key; say(ids);
 }
+// 크게 보기: 실제 쪽 요소를 잠깐 옮겨 와 크게 띄운다(복제하지 않으므로 영상·3D·채점이 그대로 동작)
+let zoomBack = null;
+function zoomOpen() {
+  if (zoomBack) return;
+  const vis = visiblePages().filter((i) => i >= 0 && i < state.pages.length);
+  if (!vis.length) return;
+  const wrap = document.createElement('div'); wrap.className = 'it-zoom';
+  wrap.innerHTML = `<div class="it-zoom-bar"><button type="button" data-z="out">−</button><span data-z="pct">100%</span><button type="button" data-z="in">+</button><button type="button" data-z="x" aria-label="닫기">✕ 닫기</button></div><div class="it-zoom-view"><div class="it-zoom-inner"></div></div>`;
+  document.body.appendChild(wrap);
+  const inner = wrap.querySelector('.it-zoom-inner'), view = wrap.querySelector('.it-zoom-view');
+  const moved = vis.map((i) => ({ el: state.pages[i], home: state.pages[i].parentElement }));
+  moved.forEach((m) => inner.appendChild(m.el));
+  const fit = () => Math.min((view.clientWidth - 24) / (793.7 * moved.length), (view.clientHeight - 24) / 1122.5);
+  let z = fit();
+  const apply = () => { inner.style.setProperty('--z', z.toFixed(3)); wrap.querySelector('[data-z=pct]').textContent = `${Math.round(z / fit() * 100)}%`; };
+  apply();
+  const step = (k) => { z = Math.max(fit() * 0.6, Math.min(fit() * 4, z * k)); apply(); };
+  wrap.querySelector('[data-z=in]').onclick = () => step(1.25);
+  wrap.querySelector('[data-z=out]').onclick = () => step(0.8);
+  view.addEventListener('wheel', (e) => { if (!e.ctrlKey && Math.abs(e.deltaY) < 4) return; e.preventDefault(); step(e.deltaY < 0 ? 1.12 : 0.9); }, { passive: false });
+  const close = () => { moved.forEach((m) => m.home.appendChild(m.el)); wrap.remove(); zoomBack = null; removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  wrap.querySelector('[data-z=x]').onclick = close; addEventListener('keydown', onKey);
+  zoomBack = close;
+  addEventListener('resize', apply, { once: true });
+}
+$('[data-a=zoom]').addEventListener('click', zoomOpen);
+$('[data-a=full]').addEventListener('click', () => {
+  const el = document.querySelector('.it-hero');
+  try { document.fullscreenElement ? document.exitFullscreen() : el.requestFullscreen(); } catch { /* 지원 안 함 */ }
+});
+addEventListener('fullscreenchange', () => setTimeout(() => layout(false), 120));
+wrapEl.addEventListener('dblclick', (e) => { if (!e.target.closest('button,a,video,input,textarea')) zoomOpen(); });
+
 function go(d) {
   const n = state.leaves.length, max = state.single ? n - 1 : n, s = Math.max(0, Math.min(max, state.spread + d));
+  if (zoomBack) zoomBack();
   if (s === state.spread) return; const heavy = (d > 0 && state.spread === 0) || (d < 0 && s === 0);
   state.spread = s; paint(true, d); turnSound(heavy);
   const t = state.leaves[d > 0 ? s - 1 : s]; if (t) { t.classList.add('turning'); setTimeout(() => t.classList.remove('turning'), 1300); }
@@ -247,7 +285,7 @@ document.querySelectorAll('[data-t]').forEach((b) => b.addEventListener('click',
   $('.it-print').href = `../v2/#/${state.ch}/lab-book/${t ? 'teacher' : 'student'}`; await build();
 }));
 
-// ── 살아 있는 표지: 닫혀 있을 땐 마우스를 따라 책이 살짝 기울고, 배경에는 불씨가 떠오른다 ──
+// ── 살아 있는 표지: 닫혀 있을 땀 마우스를 따라 책이 살짝 기울고, 배경에는 불씨가 떠오른다 ──
 const tilt = (e) => {
   if (state.spread !== 0 || REDUCED) { book.style.removeProperty('--rx'); book.style.removeProperty('--ry'); return; }
   const r = wrapEl.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
