@@ -16,6 +16,7 @@ const migration = read("../supabase/migrations/20260919170000_secure_hsmiddle_re
 const fixMigration = read("../supabase/migrations/20260920100000_fix_hsmiddle_account_upsert.sql");
 const closeMigration = read("../supabase/migrations/20260919173000_close_direct_hsmiddle_records_access.sql");
 const edge = read("../supabase/functions/hsmiddle-records/index.ts");
+const admin = read("admin.html");
 const pages = ["login.html", "diagnostic.html", "report.html", "exam.html", "admin.html"].map(file => [file, read(file)]);
 
 for (const forbidden of ["studentCode", "studentCodes", "approvalCodes"]) {
@@ -48,6 +49,10 @@ for (const marker of ["requireSession", "consumeLoginLimit", "validAttemptRecord
 }
 assert(edge.includes('req.headers.get("x-hsm-session")'), "edge does not authenticate custom session");
 assert(edge.includes("correct * 2.5") && edge.includes("states_mismatch"), "score consistency check missing");
+assert(edge.includes('action === "allAttempts"') && edge.includes('if (!session.account.is_admin) throw new HttpError(403, "admin_required")'), "admin attempt listing is not protected");
+assert(edge.includes('student,round,attempt,score,correct,answered,states,created_at'), "admin attempt detail fields are incomplete");
+assert(admin.includes("HSMIDDLE_CLOUD.allAttempts()") && admin.includes('class="ox-grid"'), "admin score dashboard missing");
+assert(!admin.includes('onclick="deactivate(') && admin.includes("data-deactivate-index"), "student name must not be interpolated into an inline event handler");
 
 for (const [file, source] of pages) {
   assert(!source.includes("isValidStudent("), `${file} still uses public credential validation`);

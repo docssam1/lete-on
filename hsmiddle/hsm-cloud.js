@@ -110,7 +110,7 @@
 
   async function allAttempts() {
     const result = await request("allAttempts");
-    return result && result.ok && result.data && Array.isArray(result.data.attempts) ? result.data.attempts : [];
+    return result && result.ok && result.data && Array.isArray(result.data.attempts) ? result.data.attempts : null;
   }
 
   async function adminList() {
