@@ -409,6 +409,33 @@
   .nm-hist-art { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; }
   .nm-hist-art svg { width:100%; height:100%; max-height:55mm; }
   .nm-hist-panel figcaption { font-size:12.5px; line-height:1.65; color:#1A2233; word-break:keep-all; }
+  /* 매거진 지면 (w2MagazinePageHtml, 2026-09-20) — 원장: "도형이 여기 있을 리 없어, 매거진인 거야".
+     유닛에 안 붙는 읽을거리(평균·도형·확률)를 한 장짜리 기사로 싣는다. 만화 지면과 같은 머리띠를
+     쓰되(한 학습지 안에서 두 지면이 따로 놀지 않게) 본문은 글+그림이 번갈아 흐르는 2단 배치다. */
+  .nm-mz-page { gap:0; }
+  /* 매거진 머리띠 — 수학사 지면과 같은 틀을 쓰되 꼭지(kicker)는 한글 두 글자가 많아
+     자간 2px 을 그대로 두면 낱자가 흩어져 얼룩처럼 보인다. 알약 모양으로 따로 잡는다. */
+  .nm-mz-kicker { font-size:10px; font-weight:900; letter-spacing:0; color:#fff; background:#C9A063;
+    border-radius:99px; padding:1mm 3mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mz-lede { flex:0 0 auto; font-size:13px; line-height:1.7; color:#0E2C57; font-weight:700;
+    word-break:keep-all; margin:0 0 4mm; }
+  .nm-mz-hero { flex:0 0 auto; display:flex; justify-content:center; margin-bottom:5mm; }
+  .nm-mz-hero svg { width:100%; max-width:158mm; height:auto; max-height:60mm; }
+  /* 지면을 고르게 채운다 — 기사 길이가 들쭉날쭉해 그냥 쌓으면 아래쪽에 한 뼘씩 빈 칸이 남는다
+     (실제로 A4 한 장의 3분의 1이 비었다). 남는 높이를 절 사이로 나눈다. */
+  .nm-mz-body { flex:1; min-height:0; display:flex; flex-direction:column;
+    justify-content:space-evenly; gap:4mm; }
+  .nm-mz-sec { display:grid; grid-template-columns:1fr 62mm; gap:6mm; align-items:center;
+    border-top:1px solid #E4E2DC; padding-top:4mm; }
+  .nm-mz-sec h4 { margin:0 0 1.5mm; font-size:12.5px; color:#0E2C57; }
+  .nm-mz-sec p { margin:0; font-size:12px; line-height:1.65; color:#1A2233; word-break:keep-all; }
+  .nm-mz-fig { display:flex; align-items:center; justify-content:center; }
+  .nm-mz-fig svg { width:100%; height:auto; max-height:40mm; }
+  .nm-mz-close { flex:0 0 auto; margin-top:4mm; padding:3.5mm 5mm; border-radius:3mm;
+    background:#FBF6E8; border:1px solid #E4D9BC; font-size:12px; font-weight:800; color:#0E2C57;
+    word-break:keep-all; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mz-src { flex:0 0 auto; margin-top:3mm; font-size:9.5px; line-height:1.6; color:#777;
+    word-break:keep-all; }
   .nm-hist-labs { flex:0 0 auto; margin-top:6mm; padding-top:5mm; border-top:1px solid #E4E2DC; }
   .nm-hist-labs-t { font-size:11px; font-weight:800; color:#0E2C57; margin-bottom:4mm; }
   /* 실험실 두 개를 나란히(2026-09-06) — 세로로 쌓으면 오른쪽 90mm가 비었다. 1개·3개여도 grid라 문제없다. */
@@ -1693,6 +1720,73 @@ function w2PaperToolPageHtml(courseNum, code){
 </div>`;
 }
 
+/* ── 매거진 지면 (2026-09-20) ────────────────────────────────────────────────
+   원장: "도형이 여기 있을 리는 없어 — 매거진인 거야."
+   「수의 마법」은 연산 앱이라 평균·도형·확률 이야기는 붙일 유닛이 없다. 그래서 그 읽을거리는
+   유닛이 아니라 **매거진 기사**로 싣고, 학습지에는 회차 **상황**에 맞는 한 편을 넣는다.
+
+   고르는 순서 — **과정 번호(주차)는 쓰지 않는다**(원장 지시: "주차별 코스보다는 상황에 맞게"):
+     ① 그 회차의 스레드·유닛에 fit 이 닿는 기사
+     ② 없으면 나이대(age)가 맞는 기사 중에서, **봉투 코드**로 돌린다
+   봉투 코드로 돌리는 이유: 같은 학습지를 다시 뽑으면 같은 기사가 나와야 하고(재인쇄),
+   다른 학습지끼리는 달라야 한다. 주차를 쓰면 반이 달라도 같은 호가 나간다.
+
+   만화 지면과 함께 실린다 — 만화는 그 유닛의 이야기이고, 매거진은 유닛 밖의 읽을거리다.
+   한 학습지에 읽을거리는 이 둘까지다(넷을 넣으면 문제보다 읽을거리가 많아진다). */
+/* 봉투 코드 → 고른 수. **31 배수 해시에 %4 를 쓰면 안 된다** — 31 ≡ 3 (mod 4) 라 낮은 두 비트가
+   마지막 글자에 끌려간다. 실제로 C13·C30·C36 이 전부 같은 기사를 받았다(코드 끝이 두 자리 숫자).
+   FNV-1a 에 섞기 단계를 붙여 낮은 비트까지 고르게 만든다. */
+function mzHash(str){
+  const t = String(str || '');
+  let h = 2166136261 >>> 0;
+  for(let i = 0; i < t.length; i++){ h ^= t.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+  h ^= h >>> 15; h = Math.imul(h, 2246822507) >>> 0;
+  h ^= h >>> 13; h = Math.imul(h, 3266489909) >>> 0;
+  return (h ^ (h >>> 16)) >>> 0;
+}
+function w2MagazinePick(items, band, code){
+  const M = window.NM_MAGAZINE;
+  const list = (M && M.articles) || [];
+  if(!list.length) return null;
+  /* ① 상황 — 이 회차가 실제로 건드리는 스레드·유닛 */
+  const threads = {}, units = {};
+  (items || []).forEach(it => {
+    if(it && it.thread) threads[it.thread] = 1;
+    const info = resolveConceptUnit(it.thread, it.level);
+    if(info && info.unitId) units[info.unitId] = 1;
+  });
+  const hit = list.filter(a => {
+    const f = a.fit || {};
+    return (f.threads || []).some(t => threads[t]) || (f.units || []).some(u => units[u]);
+  });
+  if(hit.length) return hit[mzHash(code) % hit.length];
+  /* ② 나이대가 맞는 것 중에서 봉투 코드로 돌린다 */
+  const pool = list.filter(a => (a.age || []).indexOf(band) >= 0);
+  const use = pool.length ? pool : list;
+  return use[mzHash(code) % use.length];
+}
+function w2MagazinePageHtml(items, code, band){
+  const art = w2MagazinePick(items, band, code);
+  if(!art) return '';
+  const secs = (art.body || []).map(b => `
+    <div class="nm-mz-sec">
+      <div><h4>${esc(pickL(b.h) || '')}</h4><p>${esc(pickL(b.p) || '')}</p></div>
+      <div class="nm-mz-fig">${b.art || ''}</div>
+    </div>`).join('');
+  return `<div class="nm-w2-page nm-mz-page">
+  <div class="nm-hist-head">
+    <span class="nm-mz-kicker">${esc(pickL(art.kicker) || '')}</span>
+    <b>${esc(pickL(art.title) || '')}</b>
+  </div>
+  <p class="nm-mz-lede">${esc(pickL(art.lede) || '')}</p>
+  <div class="nm-mz-hero">${art.art || ''}</div>
+  <div class="nm-mz-body">${secs}</div>
+  <div class="nm-mz-close">${esc(pickL(art.close) || '')}</div>
+  <p class="nm-mz-src">${esc(pickL(art.source) || '')}</p>
+  <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
+</div>`;
+}
+
 function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
   const comics = window.NM_COMICS || {};
   const labData = (window.NM_LABS && window.NM_LABS.byUnit) || {};
@@ -1798,6 +1892,10 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   /* 수학사·정답지는 번호·완료 칸 없이 — 푸는 지면이 아니라서 */
   if(extra.history){
     rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('수학사 이야기','Math history','数学史小故事'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    page++;
+  }
+  if(extra.magazine){
+    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('매거진 읽을거리','Magazine read','杂志阅读'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
   }
   if(extra.paper){
@@ -4290,9 +4388,14 @@ function renderMixedSheet(items, envelopeCode, opts){
   const historyHtml = w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle);
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
   const paperHtml = w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
-  const extraPages = (historyHtml ? 1 : 0) + (paperHtml ? 1 : 0);
+  /* 매거진 지면 — 만화 다음, 종이 교구 앞(2026-09-20). 회차 상황과 나이대로 고르고 봉투 코드로
+     돌린다(과정 번호는 안 쓴다). 주간 학습지(표지가 있는 것)에만 싣는다 — 편지함 편집기가 한 회차만
+     뽑을 때까지 읽을거리를 딸려 보내면 문제보다 읽을거리가 많아진다. */
+  const magazineHtml = opts.cover
+    ? w2MagazinePageHtml(items, envelopeCode, printAgeBand(items[0], allProblems)) : '';
+  const extraPages = (historyHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
   const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
-  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!historyHtml, paper: !!paperHtml, answerKey: true })
+  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!historyHtml, magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
      회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
@@ -4300,6 +4403,7 @@ function renderMixedSheet(items, envelopeCode, opts){
   const stampPg = html => html.replace(/<div class="nm-w2-foot">/g, () => `<div class="nm-w2-foot"><span class="nm-w2-pg">${pg++} / ${totalPages}</span>`);
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
   const historyStamped = historyHtml ? stampPg(historyHtml) : '';
+  const magazineStamped = magazineHtml ? stampPg(magazineHtml) : '';
   const paperStamped = paperHtml ? stampPg(paperHtml) : '';
 
   const akSections = rounds.map(r => r.magic ? (r.akHtml || '') : `
@@ -4313,6 +4417,7 @@ function renderMixedSheet(items, envelopeCode, opts){
 ${coverHtml}
 ${roundsHtml}
 ${historyStamped}
+${magazineStamped}
 ${paperStamped}
 <div class="nm-print-answer-key">
   ${w2AnswerKeyHeadHtml(envelopeCode)}

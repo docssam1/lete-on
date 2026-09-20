@@ -2919,3 +2919,49 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   .nm-title-char{transform:scale(.82);margin:0 0 6px}
   .nm-title-logo-kr{font-size:26px}
 }
+
+/* ============================================================
+   매거진(읽을거리) — 마을 가판대 · 목록 · 기사 화면 (2026-09-20)
+   원장: "도형이 여기 있을 리는 없어 — 매거진인 거야."
+   연산 유닛에 붙지 않는 읽을거리(평균·도형·확률)를 기사로 읽는 화면.
+   데이터는 data/magazine.js 하나이고 학습지(app/exam.js)도 같은 글을 쓴다.
+   ============================================================ */
+.nm-mzl-sub{font-size:12.5px;color:var(--sub);margin-bottom:14px;line-height:1.55}
+.nm-mzl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.nm-mzl-card{display:block;width:100%;text-align:left;border:1px solid var(--line,#e0d6bd);
+  border-radius:14px;background:#fff;padding:0;overflow:hidden;cursor:pointer;
+  transition:transform .15s ease,box-shadow .15s ease}
+.nm-mzl-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,34,51,.10)}
+.nm-mzl-art{background:var(--cream,#fdfaf3);border-bottom:1px solid var(--line,#e0d6bd);padding:6px}
+.nm-mzl-art svg{width:100%;height:auto;display:block}
+.nm-mzl-txt{padding:11px 13px 14px}
+.nm-mzl-kicker{display:inline-block;font-size:10px;font-weight:900;letter-spacing:1.5px;
+  color:var(--gold-deep,#8a6d46);margin-bottom:5px}
+.nm-mzl-title{font-size:15px;font-weight:900;color:var(--blue-deep,#0E2C57);line-height:1.35;
+  word-break:keep-all;margin-bottom:5px}
+.nm-mzl-lede{font-size:12px;color:var(--sub);line-height:1.55;word-break:keep-all}
+.nm-mzl-read{display:inline-block;margin-top:8px;font-size:11px;font-weight:800;color:var(--ok,#2E9E6B)}
+
+.nm-mza{max-width:720px;margin:0 auto}
+.nm-mza-kicker{font-size:11px;font-weight:900;letter-spacing:2px;color:var(--gold-deep,#8a6d46)}
+.nm-mza-title{font-size:23px;font-weight:900;color:var(--blue-deep,#0E2C57);line-height:1.3;
+  margin:5px 0 9px;word-break:keep-all}
+.nm-mza-lede{font-size:14.5px;font-weight:700;color:var(--blue,#16417C);line-height:1.7;
+  word-break:keep-all;margin-bottom:14px}
+.nm-mza-hero{background:var(--cream,#fdfaf3);border:1px solid var(--line,#e0d6bd);
+  border-radius:14px;padding:10px;margin-bottom:18px}
+.nm-mza-hero svg,.nm-mza-fig svg{width:100%;height:auto;display:block}
+.nm-mza-sec{border-top:1px solid var(--line,#e0d6bd);padding-top:15px;margin-top:15px}
+.nm-mza-sec h4{margin:0 0 7px;font-size:16px;color:var(--blue-deep,#0E2C57);word-break:keep-all}
+.nm-mza-sec p{margin:0 0 11px;font-size:14px;line-height:1.8;color:var(--ink,#1A2233);word-break:keep-all}
+.nm-mza-fig{background:#fff;border:1px solid var(--line,#e0d6bd);border-radius:12px;padding:8px}
+.nm-mza-close{margin-top:20px;padding:14px 16px;border-radius:12px;background:#FBF6E8;
+  border:1px solid #E4D9BC;font-size:14px;font-weight:800;color:var(--blue-deep,#0E2C57);
+  line-height:1.7;word-break:keep-all}
+.nm-mza-src{margin-top:12px;font-size:11.5px;line-height:1.7;color:var(--sub);word-break:keep-all}
+.nm-mza-nav{display:flex;gap:10px;margin-top:22px}
+.nm-mza-nav button{flex:1}
+@media (max-width:520px){
+  .nm-mzl-grid{grid-template-columns:1fr}
+  .nm-mza-title{font-size:20px}
+}

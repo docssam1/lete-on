@@ -951,6 +951,7 @@ function render(){
   else if(S.view==='exam')screenExam();
   else if(S.view==='closet')screenCloset();
   else if(S.view==='symboldex')screenSymbolDex();
+  else if(S.view==='magazine')screenMagazine();
   else if(S.view==='histquiz')screenHistQuiz();
   else if(S.view==='report')screenReport();
   else screenTown();
@@ -1328,6 +1329,7 @@ function screenTown(){
       <a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a>
       <button class="nm-iconbtn nm-roadbtn" id="townCourseRoad" title="${S.lang==='ko'?'연산 로드맵':S.lang==='en'?'Course Road':'运算路线图'}">🛤️</button>
       <button class="nm-iconbtn nm-dexbtn" id="townDex" title="${S.lang==='ko'?'기호 도감':S.lang==='en'?'Symbol Dex':'符号图鉴'}">📖</button>
+      <button class="nm-iconbtn nm-mzbtn" id="townMagazine" title="${S.lang==='ko'?'매거진':S.lang==='en'?'Magazine':'杂志'}">📰</button>
       <button class="nm-iconbtn nm-mailbtn" id="townMail" title="${S.lang==='ko'?'편지함':S.lang==='en'?'Mailbox':'信箱'}">📬${mailboxUnreadCount()>0?`<span class="nm-mb-dot">${mailboxUnreadCount()}</span>`:''}</button>
       <button class="nm-iconbtn nm-rpbtn" id="townReport" title="${S.lang==='ko'?'리포트':S.lang==='en'?'Report':'学习报告'}">📊</button>
     </div>
@@ -1350,6 +1352,7 @@ function screenTown(){
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
   const cr=$('#townCourseRoad');if(cr)cr.onclick=()=>{S._roadFocus=null;S.view='courseroad';save();render();};
   const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
+  const mz=$('#townMagazine');if(mz)mz.onclick=()=>{S._mzOpen=null;S.view='magazine';save();render();};
   const rp=$('#townReport');if(rp)rp.onclick=()=>{S.view='report';save();render();};
   maybeShowR0Banner(scr);
   if(S.onboarded && !S.avatar){
@@ -3973,6 +3976,7 @@ function screenTitle(){
           <button class="nm-title-pill" id="ttStory">🗺 ${lk('스토리 모드','Story Mode','故事模式')}</button>
           <button class="nm-title-pill" id="ttDex">📖 ${lk('기호 도감','Symbol Dex','符号图鉴')}</button>
           <button class="nm-title-pill" id="ttHist">🏛️ ${lk('수학사 퀴즈','Math History Quiz','数学史问答')}</button>
+          <button class="nm-title-pill" id="ttMz">📰 ${lk('매거진','Magazine','杂志')}</button>
         </div>
       </div>
     </div>
@@ -3985,6 +3989,7 @@ function screenTitle(){
   $('#ttStory').onclick=()=>{ S.view='roadmap'; save(); render(); };
   $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
   $('#ttHist').onclick=()=>{ S.view='histquiz'; save(); render(); };
+  $('#ttMz').onclick=()=>{ S._mzOpen=null; S.view='magazine'; save(); render(); };
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
 function lineageBadgeRowHtml(){
@@ -5290,6 +5295,91 @@ function screenSymbolDex(){
   </div>`;
   $('#dexBack').onclick=()=>{const back=S._dexFrom||'town';S._dexFrom=null;S.view=back;save();render();};
   bindDexCards(scr);
+}
+
+/* ============================================================
+   매거진(읽을거리) — 마을 가판대 (2026-09-20)
+   원장: "도형이 여기 있을 리는 없어 — 매거진인 거야." / "이 파트도 마을에 있어야지."
+
+   「수의 마법」은 연산 앱이라 평균·도형·확률 이야기는 붙일 유닛이 없다. 억지로 유닛에
+   넣으면 유닛이 망가지므로 **유닛 밖 읽을거리는 매거진 기사**로 싣는다. 데이터는
+   data/magazine.js 하나이고, 같은 글이 학습지(app/exam.js w2MagazinePageHtml)에도 나간다 —
+   한 벌을 두 군데서 쓴다. 읽은 기사는 S.magazine.read 에 남겨 목록에 표시한다.
+   상태: S._mzOpen(지금 펼친 기사 id, 저장 안 함) · S.magazine.read(영구)
+   ============================================================ */
+function mzArticles(){ return (window.NM_MAGAZINE && window.NM_MAGAZINE.articles) || []; }
+function mzRead(id){ return !!((S.magazine||{}).read||{})[id]; }
+function mzMarkRead(id){
+  if(!S.magazine) S.magazine={read:{}};
+  if(!S.magazine.read) S.magazine.read={};
+  S.magazine.read[id]=true;
+}
+function screenMagazine(){
+  const scr=$('#screen'), ko=S.lang==='ko', en=S.lang==='en';
+  const list=mzArticles();
+  const open=S._mzOpen ? list.find(a=>a.id===S._mzOpen) : null;
+  const M=window.NM_MAGAZINE||{};
+  const head=(title,backId)=>`<div class="nm-gc-header">
+      <button class="nm-back" id="${backId}">${t('back')}</button>
+      <div class="nm-gc-title">📰 ${esc(title)}</div>
+    </div>`;
+
+  if(!open){
+    const cards=list.map(a=>`
+      <button class="nm-mzl-card" data-mz="${esc(a.id)}">
+        <div class="nm-mzl-art">${a.art||''}</div>
+        <div class="nm-mzl-txt">
+          <span class="nm-mzl-kicker">${esc(L(a.kicker))}</span>
+          <div class="nm-mzl-title">${esc(L(a.title))}</div>
+          <div class="nm-mzl-lede">${esc(L(a.lede))}</div>
+          ${mzRead(a.id)?`<span class="nm-mzl-read">${ko?'✓ 읽었어요':en?'✓ Read':'✓ 已读'}</span>`:''}
+        </div>
+      </button>`).join('');
+    scr.innerHTML=`<div class="nm-gc-wrap">
+      ${head(L(M.name)||(ko?'매거진':en?'Magazine':'杂志'),'mzBack')}
+      <div class="nm-gc-body">
+        <p class="nm-mzl-sub">${esc(L(M.tagline)||'')}</p>
+        <div class="nm-mzl-grid">${cards}</div>
+      </div>
+    </div>`;
+    $('#mzBack').onclick=()=>{S.view='town';save();render();};
+    scr.querySelectorAll('[data-mz]').forEach(b=>{
+      b.onclick=()=>{S._mzOpen=b.getAttribute('data-mz');render();};
+    });
+    return;
+  }
+
+  /* 기사 — 읽으러 들어온 순간 읽음으로 남긴다(끝까지 내렸는지는 묻지 않는다) */
+  mzMarkRead(open.id); save();
+  const idx=list.indexOf(open), next=list[(idx+1)%list.length];
+  const secs=(open.body||[]).map(b=>`
+    <div class="nm-mza-sec">
+      <h4>${esc(L(b.h))}</h4>
+      <p>${esc(L(b.p))}</p>
+      <div class="nm-mza-fig">${b.art||''}</div>
+    </div>`).join('');
+  scr.innerHTML=`<div class="nm-gc-wrap">
+    ${head(L(M.name)||(ko?'매거진':en?'Magazine':'杂志'),'mzBack')}
+    <div class="nm-gc-body">
+      <article class="nm-mza">
+        <div class="nm-mza-kicker">${esc(L(open.kicker))}</div>
+        <h3 class="nm-mza-title">${esc(L(open.title))}</h3>
+        <p class="nm-mza-lede">${esc(L(open.lede))}</p>
+        <div class="nm-mza-hero">${open.art||''}</div>
+        ${secs}
+        <div class="nm-mza-close">${esc(L(open.close))}</div>
+        <p class="nm-mza-src">${esc(L(open.source))}</p>
+        <div class="nm-mza-nav">
+          <button class="nm-btn ghost" id="mzList">${ko?'목록으로':en?'All articles':'回到目录'}</button>
+          ${list.length>1?`<button class="nm-btn" id="mzNext">${ko?'다음 기사':en?'Next article':'下一篇'} →</button>`:''}
+        </div>
+      </article>
+    </div>
+  </div>`;
+  $('#mzBack').onclick=()=>{S._mzOpen=null;S.view='town';save();render();};
+  $('#mzList').onclick=()=>{S._mzOpen=null;render();};
+  const nx=$('#mzNext');
+  if(nx)nx.onclick=()=>{S._mzOpen=next.id;scr.scrollTop=0;window.scrollTo(0,0);render();};
 }
 
 /* ============================================================

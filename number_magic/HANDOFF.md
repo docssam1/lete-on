@@ -1889,3 +1889,33 @@ check-print·check-answerable 통과.
   `scripts/check-solution-steps.js`는 HEAD와 비교하므로 AD5·SB4에서 "solution 외 출력이 HEAD와 다름"이 뜨는데 이번엔 의도한 변경
   (다음 커밋부턴 사라짐). check-print(24레벨)·check-print-lang(492×3)·check-answerable(492)·check-wp-word-problems 전부 통과.
 - 검토 스냅샷은 세션 스크래치(`wsreview/base` → `after3`)에만 있음. 재현: `DRY=1 node scripts/nm-weekly-worksheets.cjs --name 김도윤 --course C34`.
+
+## 매거진(읽을거리) — 유닛에 안 붙는 수학의 자리 (2026-09-20)
+
+> 원장: **"도형이 여기 있을 리는 없어 — 매거진인 거야."**
+> 상세·창간호 목록은 `수학이야기-목차.md` §15.
+
+「수의 마법」은 연산 앱이라 평균·도형·확률 이야기는 붙일 유닛이 **앞으로도** 없다. 억지로 유닛에
+넣으면 유닛이 망가지므로, 그런 읽을거리는 **기사**로 싣는다.
+
+- **데이터 한 벌** `data/magazine.js` = `window.NM_MAGAZINE.articles`.
+  기사 하나 = `{id, kicker, title, lede, art, body:[{h,p,art}], close, source, fit, age}`.
+  세 언어(ko/en/zh) 전부 필수. `index.html`·`ws.html` 둘 다 스크립트로 싣는다.
+- **마을** — 빌리지 툴바 📰 · 타이틀 화면 알약 📰 → `S.view='magazine'`
+  (`screenMagazine()`, CSS `.nm-mzl-*`/`.nm-mza-*`). 읽은 기사는 `S.magazine.read`.
+- **학습지** — 주간 학습지(표지가 있는 것)에만 한 장. `w2MagazinePageHtml`, CSS `.nm-mz-*`.
+  만화 지면 다음·종이 교구 앞. 한 학습지의 읽을거리는 만화 + 매거진 **둘까지**다.
+- **고르는 규칙** — ①회차 스레드·유닛에 `fit` 이 닿는 기사 ②없으면 `age` 맞는 것 중 **봉투 코드**로
+  회전. **과정 번호(주차)로 고르지 않는다**(원장 지시). 봉투 코드라야 재인쇄가 같은 기사를 준다.
+- **검사기** `node scripts/check-magazine.js` — 12칸 3언어·영중 한글 혼입·**절마다 그림이 있는지**·
+  viewBox·팔레트·태그 균형·그림 속 한글·id 중복.
+
+### 기사를 새로 쓸 때 지킬 것
+1. **글만 있으면 안 된다** — 표제 그림 1장 + 절마다 그림 1장(검사기가 막는다).
+2. 그림 속 글자는 **숫자·기호·단위만.** 세 언어가 그림 한 벌을 공유한다.
+3. viewBox 고정: 표제 `0 0 320 170` · 본문 `0 0 320 130`. 색은 파일 맨 위 `C` 팔레트만.
+4. `source` 에 출처와 **전해지는 이야기인지**를 밝힌다. 수치는 지어내지 말고 계산해서 적는다.
+
+### 함정 (실제로 밟았음)
+봉투 코드를 `h*31+c` 해시의 `%4` 로 돌렸더니 **C13·C30·C36 이 전부 같은 기사**를 받았다.
+31 ≡ 3 (mod 4) 라 낮은 두 비트가 마지막 글자에 끌려간다. FNV-1a + 섞기 단계로 교체했다.
