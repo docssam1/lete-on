@@ -135,8 +135,8 @@
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `${dividend} = ${b} \\times \\square + ${r}`, blank: q },
-        { tex: `${dividend} \\div ${b} = \\square`,          blank: q }
+        { tex: `${dividend} = ${b} \\times \\square + ${r}`,        blank: q },
+        { tex: `${dividend} \\div ${b} = \\square \\cdots ${r}`,    blank: q }
       ],
       array: { n: b * q, rows: b }   /* 몫 부분만 배열로 시각화 */
     };
@@ -185,8 +185,8 @@
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `${dv} \\div ${b} = \\square`,      blank: q },
-        { tex: `\\text{나머지}: \\square`,          blank: r }
+        { tex: `${dv} = ${b} \\times \\square + ${r}`,       blank: q },
+        { tex: `${dv} \\div ${b} = \\square \\cdots ${r}`,   blank: q }
       ],
       solution: [
         { tex: `${b} \\times ${q} = ${b * q}` },

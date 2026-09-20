@@ -113,7 +113,10 @@ function serve(){
 
       for(let s = 0; s < 20; s++){
         let ps; try { ps = NM_EXAM.buildProblems(id, lv, 10, s * 613 + 11); } catch(e){ break; }
-        ps.forEach(p => res.answers.push(JSON.stringify(p.answer)));
+        /* 잇기(matchLine)의 `answer`는 고를 값이 아니라 **이어야 할 줄 수**다(늘 3 또는 4).
+           인쇄물에서 아이는 선을 긋고, 정답지에는 짝(`3→②`)이 찍힌다 — 4를 안다고
+           풀리는 문항이 아니므로 쏠림 검사에서 뺀다. 안 빼면 NL7L3·NL14L3이 영영 경고다. */
+        ps.forEach(p => { if(p.widget !== 'matchLine') res.answers.push(JSON.stringify(p.answer)); });
       }
 
       /* 2) 표기 검사 */
