@@ -163,3 +163,12 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .book .tbl { margin: 4px 0 8px; }
 .modes button[aria-pressed="true"] { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
 .lab-lbl { align-self: center; font-size: 13px; font-weight: 700; color: var(--sub); min-width: 52px; }
+.lab3d { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.lab3d canvas { width: 100%; height: 300px; display: block; touch-action: pan-y; }
+.lab3d-read { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 10px 12px 0; }
+.lab3d-read .lab-read b { font-size: 28px; }
+.lab3d-tip { margin: 6px 12px; font-size: 15px; color: var(--sub); min-height: 2.6em; }
+.lab3d-btns { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 12px; }
+.lab3d-btns .pour { flex: 1 1 100%; min-height: 52px; font-size: 18px; user-select: none; -webkit-user-select: none; touch-action: none; }
+.lab3d-btns .pour.on { filter: brightness(1.15); box-shadow: inset 0 0 0 3px #7cc4ff; }
+.lab3d-btns .btn:not(.pour) { flex: 1 1 0; min-height: 44px; }

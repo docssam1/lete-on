@@ -19,7 +19,7 @@ export const lesson = {
     modes: ['lab', 'scene', 'home'],
     lab: {
       kind: 'hill',
-      goal: '경사와 물의 양을 고르고 물을 흘려보낸 뒤, 깎인 흙과 쌓인 흙을 표에 적어 보세요.',
+      goal: '경사와 물의 양을 고르고, 언덕 위쪽을 눌러 컵 자리를 정한 뒤 물 붓기를 누르고 있어요. 컵이 비면 깎인 흙과 쌓인 흙을 표에 적어요.',
       columns: ['경사', '물의 양', '깎인 흙(칸)', '쌓인 흙(칸)'],
       rowText: (r) => `경사 ${r.slope}, 물 ${r.water} → 깎인 흙 ${r.cut}칸, 쌓인 흙 ${r.pile}칸`,
     },

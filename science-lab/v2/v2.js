@@ -2,8 +2,8 @@
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { mountRingTower, towerModel } from './lab-ring-tower.js';
 import { mountFreeze } from './lab-freeze.js';
-import { mountHill } from './lab-hill.js';
-const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill };
+import { mountHill3D } from './lab-hill3d.js';
+const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D };
 import { pageHome } from './home.js';
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
