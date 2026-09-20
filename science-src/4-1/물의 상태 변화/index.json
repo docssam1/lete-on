@@ -1,0 +1,923 @@
+{
+ "unit": "s41-u02",
+ "course": "4-1",
+ "title": "물의 상태 변화",
+ "taxonomy": "science-lab/bank/taxonomy/s41-u02.json",
+ "note": "원문 문장은 담지 않는다. 문항 번호는 그림에서 지웠다. 파일 이름 = <내용요소>-<유형>-o-NN.png, 묶음 공통 지문 = <내용요소>-<유형>-stem-NN.png",
+ "items": {
+  "gfield-science:cats-set1:4-1:u02:set1:q2": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T01-o-01.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 2
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q2"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q1": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T01-o-02.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 1
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q1"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q2": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T01-o-03.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 2
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q2"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q1": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T01-o-04.png",
+   "stem": "science-src/4-1/물의 상태 변화/E1-T01-stem-01.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 1
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q1"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q2": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T01-o-05.png",
+   "stem": "science-src/4-1/물의 상태 변화/E1-T01-stem-01.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 2
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q2"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q1": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T01-o-06.png",
+   "stem": "science-src/4-1/물의 상태 변화/E1-T01-stem-02.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 1
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q1"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q2": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T01-o-07.png",
+   "stem": "science-src/4-1/물의 상태 변화/E1-T01-stem-02.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 2
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q2"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q3": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T01-o-08.png",
+   "element": "E1",
+   "type": "T01",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 3
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q3"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q3": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T02-o-01.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 3
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q3"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q6": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T02-o-02.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 6
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q6"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q4": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T02-o-03.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 4
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q4"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q6": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T02-o-04.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 6
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q6"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q3": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T02-o-05.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 3
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q3"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q4": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T02-o-06.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 4
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q4"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q5": {
+   "file": "science-src/4-1/물의 상태 변화/E1-T02-o-07.png",
+   "element": "E1",
+   "type": "T02",
+   "format": "서술형",
+   "source": {
+    "set": 4,
+    "no": 5
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q5"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q1": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-01.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 1
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q1"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q7": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-02.png",
+   "stem": "science-src/4-1/물의 상태 변화/E2-T03-stem-01.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 7
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q7"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q8": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-03.png",
+   "stem": "science-src/4-1/물의 상태 변화/E2-T03-stem-01.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 8
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q8"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q7": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-04.png",
+   "stem": "science-src/4-1/물의 상태 변화/E2-T03-stem-02.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 7
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q7"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q8": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-05.png",
+   "stem": "science-src/4-1/물의 상태 변화/E2-T03-stem-02.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 8
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q8"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q6": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-06.png",
+   "stem": "science-src/4-1/물의 상태 변화/E2-T03-stem-03.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 6
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q6"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q7": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-07.png",
+   "stem": "science-src/4-1/물의 상태 변화/E2-T03-stem-03.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 7
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q7"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q6": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-08.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 6
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q6"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q7": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T03-o-09.png",
+   "element": "E2",
+   "type": "T03",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 7
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q7"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q9": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T04-o-01.png",
+   "stem": "science-src/4-1/물의 상태 변화/E2-T04-stem-01.png",
+   "element": "E2",
+   "type": "T04",
+   "format": "서술형",
+   "source": {
+    "set": 1,
+    "no": 9
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q9"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q10": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T04-o-02.png",
+   "stem": "science-src/4-1/물의 상태 변화/E2-T04-stem-01.png",
+   "element": "E2",
+   "type": "T04",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 10
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q10"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q9": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T04-o-03.png",
+   "element": "E2",
+   "type": "T04",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 9
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q9"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q8": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T04-o-04.png",
+   "element": "E2",
+   "type": "T04",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 8
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q8"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q9": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T04-o-05.png",
+   "element": "E2",
+   "type": "T04",
+   "format": "서술형",
+   "source": {
+    "set": 3,
+    "no": 9
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q9"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q8": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T04-o-06.png",
+   "element": "E2",
+   "type": "T04",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 8
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q8"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q10": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T05-o-01.png",
+   "element": "E2",
+   "type": "T05",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 10
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q10"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q9": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T05-o-02.png",
+   "element": "E2",
+   "type": "T05",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 9
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q9"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q10": {
+   "file": "science-src/4-1/물의 상태 변화/E2-T05-o-03.png",
+   "element": "E2",
+   "type": "T05",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 10
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q10"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q4": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-01.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-01.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 4
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q4"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q11": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-02.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-02.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 11
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q11"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q12": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-03.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-02.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 12
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q12"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q13": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-04.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 13
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q13"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q3": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-05.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "서술형",
+   "source": {
+    "set": 2,
+    "no": 3
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q3"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q11": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-06.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-03.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 11
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q11"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q12": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-07.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-03.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 12
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q12"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q10": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-08.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-04.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 10
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q10"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q11": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-09.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-04.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 11
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q11"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q11": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T06-o-10.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-05.png",
+   "element": "E3",
+   "type": "T06",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 11
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q11"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q5": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T07-o-01.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-01.png",
+   "element": "E3",
+   "type": "T07",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 5
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q5"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q14": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T07-o-02.png",
+   "element": "E3",
+   "type": "T07",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 14
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q14"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q13": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T07-o-03.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T07-stem-01.png",
+   "element": "E3",
+   "type": "T07",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 13
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q13"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q4": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T07-o-04.png",
+   "element": "E3",
+   "type": "T07",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 4
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q4"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q12": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T07-o-05.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T06-stem-05.png",
+   "element": "E3",
+   "type": "T07",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 12
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q12"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q15": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T08-o-01.png",
+   "element": "E3",
+   "type": "T08",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 15
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q15"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q14": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T08-o-02.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T07-stem-01.png",
+   "element": "E3",
+   "type": "T08",
+   "format": "선택형",
+   "source": {
+    "set": 2,
+    "no": 14
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q14"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q12": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T08-o-03.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T08-stem-01.png",
+   "element": "E3",
+   "type": "T08",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 12
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q12"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q13": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T08-o-04.png",
+   "stem": "science-src/4-1/물의 상태 변화/E3-T08-stem-01.png",
+   "element": "E3",
+   "type": "T08",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 13
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q13"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q14": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T08-o-05.png",
+   "element": "E3",
+   "type": "T08",
+   "format": "서술형",
+   "source": {
+    "set": 3,
+    "no": 14
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q14"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q13": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T08-o-06.png",
+   "element": "E3",
+   "type": "T08",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 13
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q13"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q14": {
+   "file": "science-src/4-1/물의 상태 변화/E3-T08-o-07.png",
+   "element": "E3",
+   "type": "T08",
+   "format": "단답형",
+   "source": {
+    "set": 4,
+    "no": 14
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q14"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q16": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T09-o-01.png",
+   "stem": "science-src/4-1/물의 상태 변화/E4-T09-stem-01.png",
+   "element": "E4",
+   "type": "T09",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 16
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q16"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q17": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T09-o-02.png",
+   "stem": "science-src/4-1/물의 상태 변화/E4-T09-stem-01.png",
+   "element": "E4",
+   "type": "T09",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 17
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q17"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q15": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T09-o-03.png",
+   "stem": "science-src/4-1/물의 상태 변화/E4-T09-stem-02.png",
+   "element": "E4",
+   "type": "T09",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 15
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q15"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q16": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T09-o-04.png",
+   "stem": "science-src/4-1/물의 상태 변화/E4-T09-stem-02.png",
+   "element": "E4",
+   "type": "T09",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 16
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q16"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q15": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T09-o-05.png",
+   "stem": "science-src/4-1/물의 상태 변화/E4-T09-stem-03.png",
+   "element": "E4",
+   "type": "T09",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 15
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q15"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q16": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T09-o-06.png",
+   "stem": "science-src/4-1/물의 상태 변화/E4-T09-stem-03.png",
+   "element": "E4",
+   "type": "T09",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 16
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q16"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q15": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T09-o-07.png",
+   "stem": "science-src/4-1/물의 상태 변화/E4-T09-stem-04.png",
+   "element": "E4",
+   "type": "T09",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 15
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q15"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q18": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T10-o-01.png",
+   "element": "E4",
+   "type": "T10",
+   "format": "서술형",
+   "source": {
+    "set": 1,
+    "no": 18
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q18"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q5": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T10-o-02.png",
+   "element": "E4",
+   "type": "T10",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 5
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q5"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q17": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T10-o-03.png",
+   "element": "E4",
+   "type": "T10",
+   "format": "서술형",
+   "source": {
+    "set": 2,
+    "no": 17
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q17"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q5": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T10-o-04.png",
+   "element": "E4",
+   "type": "T10",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 5
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q5"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q17": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T10-o-05.png",
+   "element": "E4",
+   "type": "T10",
+   "format": "단답형",
+   "source": {
+    "set": 3,
+    "no": 17
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q17"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q16": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T10-o-06.png",
+   "stem": "science-src/4-1/물의 상태 변화/E4-T09-stem-04.png",
+   "element": "E4",
+   "type": "T10",
+   "format": "서술형",
+   "source": {
+    "set": 4,
+    "no": 16
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q16"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q17": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T10-o-07.png",
+   "element": "E4",
+   "type": "T10",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 17
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q17"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q18": {
+   "file": "science-src/4-1/물의 상태 변화/E4-T10-o-08.png",
+   "element": "E4",
+   "type": "T10",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 18
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q18"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q19": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T11-o-01.png",
+   "element": "E5",
+   "type": "T11",
+   "format": "선택형",
+   "source": {
+    "set": 1,
+    "no": 19
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q19"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q18": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T11-o-02.png",
+   "element": "E5",
+   "type": "T11",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 18
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q18"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q18": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T11-o-03.png",
+   "element": "E5",
+   "type": "T11",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 18
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q18"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q19": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T11-o-04.png",
+   "element": "E5",
+   "type": "T11",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 19
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q19"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q19": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T11-o-05.png",
+   "element": "E5",
+   "type": "T11",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 19
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q19"
+  },
+  "gfield-science:cats-set1:4-1:u02:set1:q20": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T12-o-01.png",
+   "element": "E5",
+   "type": "T12",
+   "format": "단답형",
+   "source": {
+    "set": 1,
+    "no": 20
+   },
+   "sourceKey": "gfield-science:cats-set1:4-1:u02:set1:q20"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q19": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T12-o-02.png",
+   "element": "E5",
+   "type": "T12",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 19
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q19"
+  },
+  "gfield-science:cats-set2:4-1:u02:set2:q20": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T12-o-03.png",
+   "element": "E5",
+   "type": "T12",
+   "format": "단답형",
+   "source": {
+    "set": 2,
+    "no": 20
+   },
+   "sourceKey": "gfield-science:cats-set2:4-1:u02:set2:q20"
+  },
+  "gfield-science:cats-set3:4-1:u02:set3:q20": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T12-o-04.png",
+   "element": "E5",
+   "type": "T12",
+   "format": "선택형",
+   "source": {
+    "set": 3,
+    "no": 20
+   },
+   "sourceKey": "gfield-science:cats-set3:4-1:u02:set3:q20"
+  },
+  "gfield-science:cats-set4:4-1:u02:set4:q20": {
+   "file": "science-src/4-1/물의 상태 변화/E5-T12-o-05.png",
+   "element": "E5",
+   "type": "T12",
+   "format": "선택형",
+   "source": {
+    "set": 4,
+    "no": 20
+   },
+   "sourceKey": "gfield-science:cats-set4:4-1:u02:set4:q20"
+  }
+ }
+}
