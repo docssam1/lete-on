@@ -365,6 +365,31 @@ async function mount3D(el, sceneName, { autoplay }) {
   }
 }
 
+// GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
+const BOOKS = { 's41-u03': () => import('../data/book/s41-u03.book.js') };
+function labBar(u, cur) {
+  const b = (href, t, k) => `<a class="btn${cur === k ? ' primary' : ''}" href="${href}">${t}</a>`;
+  return `<div class="bk-bar no-print">${b(`#/${u}/lab-book/student`, '교재 · 학생용', 'student')}${b(`#/${u}/lab-book/teacher`, '교재 · 강사용', 'teacher')}
+    <button class="btn" onclick="print()">A4 인쇄</button><span class="sep"></span>
+    ${b(`#/${u}/lab-class/self`, '스스로 공부하기', 'self')}${b(`#/${u}/lab-class/teach`, '가르치기 (수업 화면)', 'teach')}</div>`;
+}
+async function pageLabBook(u, mod, mode) {
+  if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
+  const [{ chapter, art }, { renderChapter, fitPages }] = await Promise.all([BOOKS[u](), import('./book.js')]);
+  $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(chapter.book)} · ${esc(chapter.title)}</h1></div></header>
+    <main class="wrap">${labBar(u, mode)}</main>${renderChapter(chapter, art, mod.similar || [], { teacher: mode === 'teacher' })}`;
+  scrollTo(0, 0);
+  const bk = $app.querySelector('.bk'), fit = () => bk.isConnected && fitPages(bk);
+  fit(); document.fonts?.ready.then(fit);
+}
+async function pageLabClass(u, mod, L, mode, idx) {
+  if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
+  const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([BOOKS[u](), import('./deck.js')]);
+  renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx,
+    mount3D: (el) => mount3D(el, L.engage.scene, { autoplay: false }),
+    mountLab: (el) => (LABS[L.explore.lab.kind] || mountRingTower)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }) });
+}
+
 // ── 라우터 ──
 async function route() {
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
@@ -372,10 +397,12 @@ async function route() {
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar };
   if (a === 'sub') return pageSub(u, L, b);
-  if (!mod.lesson && a !== 'print') { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
+  if (!mod.lesson && !['print', 'lab-book', 'lab-class'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
   if (a === 'kit') return pageKit(u, L);
   if (a === 'report') return pageReport(u, L);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
+  if (a === 'lab-book') return pageLabBook(u, mod, b || 'student');
+  if (a === 'lab-class') return pageLabClass(u, mod, L, b || 'teach', +location.hash.split('/')[4] || 1);
   const step = Math.min(5, Math.max(1, +a || (store.get(u).step ?? 0) + 1));
   if (!a) { location.replace(`#/${u}/${step}`); return; }
   [stepEngage, (u2, L2) => stepExplore(u2, L2, b), stepExplain, stepElaborate, stepEvaluate][step - 1](u, L, items);
