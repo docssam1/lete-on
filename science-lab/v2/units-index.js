@@ -19,5 +19,5 @@ const subsOf = (tx) => tx.elements.map((e) => ({ ...e, types: tx.types.filter((t
 // lesson:false = 5단계 화면 준비 전(소단원 유형별 문제만 열림)
 export const READY = {
   's41-u01': { hero: '고리 자석 탑', subs: subsOf(tx41u01) },
-  's41-u02': { subs: subsOf(tx41u02), lesson: false },
+  's41-u02': { hero: '얼음 병 저울', subs: subsOf(tx41u02) },
 };
