@@ -7,8 +7,9 @@ import { PALETTE, ease } from './scenes/_kit.js';
 const REDUCED = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export class Stage {
+  static live = new Set();   // 살아 있는 무대(책 속 팝업을 닫을 때 정리하려고)
   constructor(canvas) {
-    this.canvas = canvas;
+    this.canvas = canvas; Stage.live.add(this);
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -67,7 +68,7 @@ export class Stage {
     if (this.canvas.width !== Math.floor(this.canvas.clientWidth * this.renderer.getPixelRatio())) this._resize();
     this.renderer.render(this.scene, this.camera);
   }
-  dispose() { this.running = false; this.clear(); this.renderer.dispose(); }
+  dispose() { if (!this.running && !Stage.live.has(this)) return; Stage.live.delete(this); this.running = false; this.clear(); this.renderer.dispose(); }
 }
 
 // 장면 모듈 규약:
