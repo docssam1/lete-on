@@ -110,3 +110,8 @@
   .dk-stage.dense .dk-q { font-size: 17px; } .dk-stage.dense .dk-choices { gap: 6px; } .dk-stage.dense .dk-choices button { padding: 10px 12px; }
   .dk-stage.media .stage3d .cap { font-size: 16px; }
 }
+.dk-art img { width: 100%; display: block; border-radius: .8cqw; object-fit: cover; max-height: 34cqw; }
+.dk-art .bk-photo figcaption { font-size: 1.2cqw; color: #5B6577; margin-top: .4cqw; } .dk-art .bk-photo figcaption small { display: block; opacity: .8; }
+.dk-art .bk-photo2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1cqw; } .dk-art .bk-photo2 img { max-height: 22cqw; }
+.dk-stage.cover .dk-art.cover img { max-height: 40cqw; }
+@media (max-width: 760px) { .dk-art .bk-photo figcaption { font-size: 12px; } }

@@ -78,7 +78,7 @@ export function renderChapter(ch, art, similar, { teacher = false } = {}) {
   const cp = ch.concept.map((c) => `<section class="bk-cs"><h3><span class="bk-letter">${c.tag}</span>${esc(c.title)}</h3>
     ${c.lines ? `<ol class="bk-cl">${c.lines.map(([k, v]) => `<li><b>${esc(k)}</b> : ${blank(v)}</li>`).join('')}</ol>` : ''}
     ${c.table ? `<div class="bk-two art-l"><div class="bk-art">${art[ch.note.art]}</div><table class="bk-tbl note"><thead><tr>${c.table.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${c.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${blank(x)}</td>` : `<th>${esc(x)}</th>`)).join('')}</tr>`).join('')}</tbody></table></div>` : ''}</section>`).join('');
-  const flow = `<div class="bk-flow">${[['침식', '깎는다', '물이 빠른 곳'], ['운반', '옮긴다', '흐르는 동안'], ['퇴적', '쌓는다', '물이 느린 곳']].map(([a, b, c]) => `<div><b>${a}</b><span>${b}</span><small>${c}</small></div>`).join('<i>➜</i>')}</div>`;
+  const flow = ch.flow ? `<div class="bk-flow">${ch.flow.map(([a, b, c]) => `<div><b>${esc(a)}</b><span>${esc(b)}</span><small>${esc(c)}</small></div>`).join('<i>➜</i>')}</div>` : '';
   out.push(page(`${banner('개념 정리', 'concept')}${cp.replace('</ol>', `</ol>${flow}`)}
     <div class="bk-more"><h4>${esc(ch.more.title)}</h4><p>${esc(ch.more.text)}</p></div>`));
 
