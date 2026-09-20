@@ -21,7 +21,7 @@ const FACE = { half: 'face-A2-mouth-half.webp', open: 'face-A3-mouth-open.webp',
 const mouthFor = (ch) => { const c = ch.charCodeAt(0) - 0xac00; if (c < 0 || c > 11171) return null; const j = Math.floor(c / 28) % 21; return [0, 2, 4, 6, 9, 14].includes(j) ? 'open' : [8, 12, 13, 17].includes(j) ? 'o' : 'half'; };
 let NAR = { voice: '', lines: [] }, soundOn = true, sayToken = 0, audio = null;
 const guide = $('.it-guide'), $p = guide.querySelector('.it-bubble p');
-guide.insertAdjacentHTML('afterbegin', '<div class="it-char"><img class="b" src="' + A + 'docssam-A1-mouth-closed.webp" alt="독쌀"><img class="f" alt=""></div>');
+guide.insertAdjacentHTML('afterbegin', '<div class="it-char"><img class="b" src="' + A + 'docssam-A1-mouth-closed.webp" alt="독쌤"><img class="f" alt=""></div>');
 guide.querySelector('.it-guide-img').remove();
 const $face = guide.querySelector('.it-char .f');
 async function urlOf(line) {
@@ -55,7 +55,7 @@ async function say(ids) {
     await new Promise((r) => setTimeout(r, 900));
   }
 }
-guide.querySelector('.it-sound').addEventListener('click', (e) => { soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', soundOn); e.currentTarget.textContent = soundOn ? '소리 켬' : '소리 끕'; if (!soundOn) { try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ } } });
+guide.querySelector('.it-sound').addEventListener('click', (e) => { soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', soundOn); e.currentTarget.textContent = soundOn ? '소리 켬' : '소리 끔'; if (!soundOn) { try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ } } });
 guide.querySelector('.it-hide').addEventListener('click', () => guide.classList.toggle('min'));
 guide.querySelector('.it-char').addEventListener('click', () => guide.classList.remove('min'));
 
@@ -69,7 +69,7 @@ const GOLD = `<defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop of
   <animate attributeName="x1" values="-1;1;-1" dur="7s" repeatCount="indefinite"/><animate attributeName="x2" values="0;2;0" dur="7s" repeatCount="indefinite"/></linearGradient>
   <radialGradient id="glow"><stop offset="0" stop-color="#ffcf73" stop-opacity=".95"/><stop offset=".4" stop-color="#ff8a3d" stop-opacity=".45"/><stop offset="1" stop-color="#ff8a3d" stop-opacity="0"/></radialGradient>
   <filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
-// 모서리 덩쿽 장식(왼쪽 위 기준, 돌려서 네 모서리에)
+// 모서리 덩굴 장식(왼쪽 위 기준, 돌려서 네 모서리에)
 const CORNER = '<path d="M0 0 C18 2 26 10 28 28 M0 0 C2 18 10 26 28 28 M6 6 C14 7 20 12 21 21 M6 6 C7 14 12 20 21 21 M28 28 c4 -6 10 -6 12 -2 c2 4 -2 8 -6 6 M28 28 c-6 4 -6 10 -2 12 c4 2 8 -2 6 -6" fill="none" stroke="url(#gd)" stroke-width="1"/><circle cx="28" cy="28" r="1.8" fill="url(#gd)"/>';
 const corners = (w, h, m) => [[m, m, 0], [w - m, m, 90], [w - m, h - m, 180], [m, h - m, 270]].map(([x, y, r]) => `<g transform="translate(${x} ${y}) rotate(${r}) scale(.78)">${CORNER}</g>`).join('');
 function coverPage() {
@@ -101,7 +101,7 @@ const orn = '<div class="orn"><svg viewBox="0 0 120 10"><path d="M0 5 H48 M72 5 
 const chap = (k, h) => `<p class="ad-k">${k}</p><h2>${h}</h2>${orn}`;
 const ads = () => [
   adPage('ad a1', `${chap('PROLOGUE · 이 책에 대하여', '이런 과학책,<br>본 적 있나요?')}
-    <p class="drop">과학은 외우는 것이 아니라 직접 해 보는 것입니다. 이 책은 교과서 단원마다 실험 한 장을 담고, 화면에서 펼치면 그 실험이 깨어나 아이의 손끕에서 다시 일어납니다.</p>
+    <p class="drop">과학은 외우는 것이 아니라 직접 해 보는 것입니다. 이 책은 교과서 단원마다 실험 한 장을 담고, 화면에서 펼치면 그 실험이 깨어나 아이의 손끝에서 다시 일어납니다.</p>
     <ol class="ad-3"><li><b>읽고</b><span>교과서 단원에 딱 맞춘 개념과 실험 설계</span></li><li><b>보고</b><span>실제 화산·용암 영상과 사진, 땅속까지 보이는 3D</span></li><li><b>해 보고</b><span>불을 켜고, 가열하고, 식혀 보는 3D 체험 실험실</span></li></ol>`),
   adPage('ad a2', `${chap('CHAPTER Ⅰ · 탐구의 지도', '여덟 학기, 단원마다<br>실험 한 장')}
     <div class="ad-road">${road().map((s) => `<div class="ad-sem ${readySems.has(s.sem) ? 'on' : ''}"><b>${s.sem}</b><ul>${s.units.map((u) => `<li class="${u.ready ? 'on' : ''}">${esc(u.title)}${u.ready ? `<small>✦ ${esc(u.hero)}</small>` : ''}</li>`).join('')}</ul></div>`).join('')}</div>
@@ -184,7 +184,7 @@ function paint(anim = true, dir = 1) {
   const shift = state.single ? 0 : s === 0 ? -0.5 : s === n ? 0.5 : 0;
   book.style.transform = s === 0 ? '' : `translateX(calc(var(--pw) * ${shift}))`;
   book.classList.toggle('closed', s === 0);
-  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두껍어진다
+  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두꺼워진다
   book.style.setProperty('--tl', `${(4 + 16 * done).toFixed(1)}px`); book.style.setProperty('--tr', `${(4 + 16 * (1 - done)).toFixed(1)}px`);
   const P = state.pages.length, first = state.single ? s + 1 : s * 2, lastI = state.single ? s + 1 : Math.min(P, s * 2 + 1);
   $('.it-count').textContent = s === 0 ? '표지' : state.single || first === lastI ? `${first} / ${P}` : `${first}–${lastI} / ${P}`;
