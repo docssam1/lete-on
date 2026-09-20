@@ -107,6 +107,41 @@ def build_refs(langs, ref_dir):
     return refs
 
 
+
+def upload_results(files, tag):
+    """결과를 Supabase 공개 버킷에 올리고 **바로 눌러 들을 수 있는 주소**를 찍는다.
+
+    왜 필요한가 (2026-09-21, 원장: "2번을 네가 여기 올려줘"):
+      Claude 세션은 huggingface·supabase 가 게이트웨이에서 막혀 있고 GPU 도 없어
+      **복제 음성을 만들 수가 없다.** 반면 GitHub Actions 러너는 막히지 않는다.
+      그래서 러너가 만들고, 여기서 올려, 원장은 **휴대폰에서 주소만 누르면** 된다.
+      원격 데스크톱의 소리 설정도, 파일 옮기기도 필요 없어진다.
+
+    올리는 자리는 `_audition/<시각>/` — 앱이 쓰는 경로와 완전히 분리된 임시 자리다.
+    듣고 나면 지워도 앱에 아무 영향이 없다.
+    """
+    import urllib.request
+    base = os.environ.get("SUPABASE_URL", "https://fgahqumaldheqettmvqg.supabase.co")
+    key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+    if not key:
+        print("  (SUPABASE_SERVICE_ROLE_KEY 가 없어 올리지 않습니다 — 파일로만 받으세요)")
+        return []
+    urls = []
+    for f in files:
+        name = os.path.basename(f)
+        path = f"_audition/{tag}/{name}"
+        req = urllib.request.Request(
+            f"{base}/storage/v1/object/audio/{path}", data=open(f, "rb").read(), method="POST",
+            headers={"Authorization": f"Bearer {key}", "apikey": key,
+                     "Content-Type": "audio/wav", "x-upsert": "true"})
+        try:
+            urllib.request.urlopen(req, timeout=120).read()
+        except Exception as e:
+            print(f"  ✗ 올리기 실패 {name}: {e}", flush=True)
+            continue
+        urls.append(f"{base}/storage/v1/object/public/audio/{path}")
+    return urls
+
 def write_listen_page(out_dir, rows, path):
     """듣기 페이지 한 장 — 원격 데스크톱으로는 소리가 안 넘어오는 일이 많다(2026-09-21,
        원장: "원격이라 소리를 어떻게 들어"). 원격 프로그램의 오디오 전송 설정이 막혀
@@ -171,6 +206,9 @@ def main():
     ap.add_argument("--refs-only", action="store_true", help="참조 음성만 뽑고 끝낸다")
     ap.add_argument("--device", default="auto")
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
+    ap.add_argument("--upload", action="store_true",
+                    help="결과를 Supabase 공개 버킷 _audition/ 에 올리고 주소를 찍는다")
+    ap.add_argument("--tag", default="", help="올릴 폴더 이름(비우면 시각)")
     a = ap.parse_args()
 
     langs = sorted({l for l, _, _ in LINES})
@@ -240,6 +278,19 @@ def main():
         print("  │  메일·메신저·USB 무엇으로든 옮기면 휴대폰에서도 그냥 열립니다.")
         print("  └──────────────────────────────────────────────────────────")
     print("RTF 는 '음성 1초를 만드는 데 몇 초 걸렸나'. 1 보다 작으면 실시간보다 빠릅니다.")
+
+    if a.upload and made:
+        tag = a.tag or time.strftime("%Y%m%d-%H%M")
+        # 원본(참조)도 같이 올린다 — 복제본만 들으면 같은지 아닌지 판단할 수가 없다
+        files = [refs[l][0] for l in sorted(made)] + [f for l in sorted(made) for _, _, f in made[l]]
+        print("\n올리는 중…", flush=True)
+        urls = upload_results(files, tag)
+        if urls:
+            print("\n===== 들어 보실 주소 (휴대폰에서 그냥 눌러도 재생됩니다) =====")
+            for u in urls:
+                print("  " + u)
+            print("============================================================")
+            print(f"다 들으신 뒤에는 audio/_audition/{tag}/ 를 지우셔도 앱에 아무 영향이 없습니다.")
 
 if __name__ == "__main__":
     sys.exit(main())
