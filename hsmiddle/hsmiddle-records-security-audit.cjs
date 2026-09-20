@@ -18,6 +18,7 @@ const closeMigration = read("../supabase/migrations/20260919173000_close_direct_
 const edge = read("../supabase/functions/hsmiddle-records/index.ts");
 const admin = read("admin.html");
 const report = read("report.html");
+const questionBank = read("question-bank/app.js");
 const pages = [["login.html", read("login.html")], ["diagnostic.html", read("diagnostic.html")], ["report.html", report], ["exam.html", read("exam.html")], ["admin.html", admin]];
 
 for (const forbidden of ["studentCode", "studentCodes", "approvalCodes"]) {
@@ -61,6 +62,14 @@ assert(report.includes("correct>answered") && report.includes("answered>40") && 
 assert(report.includes("byId('recordBtn').classList.add('hidden')"), "admin report preview must remain read-only");
 assert(report.includes("${hsmHtml(student)} 학생 · GFIELD"), "admin report watermark must escape stored student names");
 assert(report.includes("showAdminPreviewError()") && report.includes("if(await loadAdminPreview(savedSession))return"), "invalid admin preview must stop instead of falling back to another report");
+assert(report.includes("verifiedSession=savedSession.valid?await HSMIDDLE_AUTH.refreshSession():null"), "report access must refresh the server session");
+assert(report.includes("if(!verifiedSession&&savedSession.valid&&savedSession.access.includes(accessKey))enter(savedSession.name)"), "offline report fallback must not override server-revoked access");
+assert(report.includes("verifiedSession.admin||verifiedSession.name===student&&verifiedSession.access.includes('question-bank')"), "report question-bank controls must use verified access");
+assert(report.includes("student=${encodeURIComponent(student)}"), "admin similar-problem print must carry the selected student watermark name");
+assert(!report.includes("별도 문제은행 이용 계정") && !report.includes("문제은행은 별도 상품"), "diagnostic-only report must not promote the separate question-bank product");
+assert(questionBank.includes("await window.HSMIDDLE_AUTH.refreshSession()"), "question bank must refresh the server session before opening assets");
+assert(questionBank.includes("isAdmin && requestedStudent ? requestedStudent : session.name"), "admin question-bank print must use the selected student name only for validated admins");
+assert(questionBank.includes("escapeHtml(state.student)"), "question-bank watermark must escape the selected student name");
 
 for (const [file, source] of pages) {
   assert(!source.includes("isValidStudent("), `${file} still uses public credential validation`);

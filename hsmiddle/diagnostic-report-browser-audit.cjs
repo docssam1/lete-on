@@ -41,6 +41,21 @@ const adminSeed = () => {
     const context = await browser.newContext({ viewport: { width, height: Math.min(height, 1200) }, deviceScaleFactor: 1 });
     await context.addInitScript(initializer);
     const page = await context.newPage();
+    await page.route("**/functions/v1/hsmiddle-records", async route => {
+      const request = route.request();
+      const body = JSON.parse(request.postData() || "{}");
+      const admin = request.headers()["x-hsm-session"] === "b".repeat(64);
+      const access = admin ? ["diagnostic", "mock-1", "mock-2", "mock-3", "final", "question-bank"] : ["diagnostic"];
+      if (body.action === "session") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, name: admin ? "docssam" : "DEMO", access, admin, expiresAt: new Date(Date.now() + 3600000).toISOString(), startedAt: "2026-09-01T00:00:00.000Z" }) });
+        return;
+      }
+      if (body.action === "listAttempts") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ attempts: [] }) });
+        return;
+      }
+      await route.fulfill({ status: 400, contentType: "application/json", body: JSON.stringify({ error: "unexpected_action" }) });
+    });
     await page.goto(url(target), { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts && document.fonts.ready);
     await page.waitForTimeout(250);
@@ -109,7 +124,7 @@ const adminSeed = () => {
       assert(body.includes("꼭 맞아야 할 문항") && body.includes("정답률 60% 이상"), "must-correct section or criterion missing");
       assert(body.includes("5번, 10번, 20번을 틀렸습니다"), "must-correct wrong-number analysis missing");
       assert(body.includes("선택 번호 인쇄") && body.includes("오답 전체 인쇄"), "wrong-answer print controls missing");
-      assert(body.includes("별도 문제은행 이용 계정"), "diagnostic-only account must see the separate-product notice");
+      assert(!body.includes("연계 유사문제") && !body.includes("별도 문제은행"), "diagnostic-only account must not see the separate question-bank product");
     });
     await shot("report.html", "1440,900", "report-desktop.png");
     await withPage("report.html", "390,844", async page => {

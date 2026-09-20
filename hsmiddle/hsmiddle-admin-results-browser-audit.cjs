@@ -35,18 +35,23 @@ function assert(condition, message) {
 async function prepare(page, options = {}) {
   const localAdmin = options.localAdmin !== false;
   const localName = localAdmin ? "관리자" : "일반학생";
-  const access = ["diagnostic", "mock-1", "mock-2", "mock-3", "final"];
-  await page.addInitScript(({ token, expiresAt, localAdmin, localName, access, previewSelector }) => {
+  const serverAccess = options.serverAccess || ["diagnostic", "mock-1", "mock-2", "mock-3", "final"];
+  const localAccess = options.localAccess || serverAccess;
+  await page.addInitScript(({ token, expiresAt, localAdmin, localName, localAccess, previewSelector }) => {
     localStorage.setItem("hs-student", localName);
     localStorage.setItem("hsm-session-token-v2", token);
-    localStorage.setItem("hsm-session-profile-v2", JSON.stringify({ name: localName, access, admin: localAdmin, expiresAt }));
+    localStorage.setItem("hsm-session-profile-v2", JSON.stringify({ name: localName, access: localAccess, admin: localAdmin, expiresAt }));
     if (previewSelector) sessionStorage.setItem("hsm-admin-report-preview-v1", JSON.stringify(previewSelector));
-  }, { token, expiresAt, localAdmin, localName, access, previewSelector: options.previewSelector || null });
+  }, { token, expiresAt, localAdmin, localName, localAccess, previewSelector: options.previewSelector || null });
   await page.route("**/functions/v1/hsmiddle-records", async route => {
     const body = JSON.parse(route.request().postData() || "{}");
     if (body.action === "session") {
+      if (options.sessionFailure) {
+        await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "offline" }) });
+        return;
+      }
       const admin = options.serverAdmin !== false;
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, name: admin ? "관리자" : "일반학생", access, admin, expiresAt, startedAt: "2026-09-01T00:00:00.000Z" }) });
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, name: admin ? "관리자" : "일반학생", access: serverAccess, admin, expiresAt, startedAt: "2026-09-01T00:00:00.000Z" }) });
       return;
     }
     if (body.action === "adminList") {
@@ -119,6 +124,29 @@ async function prepare(page, options = {}) {
     assert(await report.locator(".plan-step").count() === 3, "admin report learning plan missing");
     assert(await report.locator("#recordBtn.hidden").count() === 1, "admin report must be read-only");
     assert((await report.locator(".topbar a").innerText()).includes("성적 기록으로 돌아가기"), "admin return link missing");
+    const printLabels = await report.locator(".print-group button").allTextContents();
+    assert(printLabels.includes("선택 번호 인쇄") && printLabels.includes("오답 전체 인쇄"), "admin preview wrong-answer print controls missing");
+    assert(printLabels.includes("선택 유사문제 인쇄") && printLabels.includes("오답 유사문제 전체 인쇄"), "admin preview similar-problem print controls missing");
+    const printTargets = await report.evaluate(() => {
+      const opened = [];
+      window.open = target => { opened.push(String(target)); };
+      toggleWrongPicks(false);
+      for (const input of document.querySelectorAll("[data-wrong-pick]")) input.checked = input.value === "34" || input.value === "35";
+      setWrongPrintMode("answer");
+      printSelectedWrong();
+      printAllWrong();
+      printSelectedSimilar();
+      printAllSimilar();
+      setWrongPrintMode("problem");
+      printSelectedSimilar();
+      return opened;
+    });
+    assert(printTargets[0].includes("viewer.html?doc=diagnostic-review&qs=34,35&mode=answer") && printTargets[0].includes("student="), "admin preview selected wrong-answer print URL is incorrect");
+    assert(printTargets[1].includes("qs=34,35,36,37,38,39,40") && printTargets[1].includes("mode=answer"), "admin preview all-wrong print URL is incorrect");
+    assert(printTargets[2].includes("question-bank/?qs=34,35&mode=answer&autoprint=1&student=%ED%95%99%EC%83%9D%EA%B0%80"), "admin preview selected similar-problem print URL is incorrect");
+    assert(printTargets[3].includes("question-bank/?qs=34,35,36,37,38,39,40&mode=answer&autoprint=1&student=%ED%95%99%EC%83%9D%EA%B0%80"), "admin preview all-similar print URL is incorrect");
+    assert(printTargets[4].includes("question-bank/?qs=34,35&mode=problem&autoprint=1&student=%ED%95%99%EC%83%9D%EA%B0%80"), "admin preview problem-only similar print URL is incorrect");
+    await report.locator(".print-tools").screenshot({ path: path.join(outputDir, "admin-report-print-actions.png") });
     await report.screenshot({ path: path.join(outputDir, "admin-report-desktop.png"), fullPage: true });
     await report.emulateMedia({ media: "print" });
     const pdfPath = path.join(outputDir, "admin-report-a4.pdf");
@@ -132,8 +160,62 @@ async function prepare(page, options = {}) {
     await reportMobile.locator(".report-button").first().click();
     await reportMobile.waitForURL(/report\.html\?adminPreview=1/);
     await reportMobile.locator(".score b").waitFor();
+    assert(await reportMobile.locator(".print-group button").count() === 4, "mobile admin report print actions missing");
     assert(await reportMobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "mobile admin report overflows horizontally");
+    await reportMobile.locator(".print-tools").screenshot({ path: path.join(outputDir, "admin-report-print-actions-mobile.png") });
     await reportMobile.screenshot({ path: path.join(outputDir, "admin-report-mobile.png"), fullPage: true });
+
+    const bankPrint = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    await prepare(bankPrint);
+    await bankPrint.goto(`${base}/question-bank/?qs=34,35&mode=answer&student=${encodeURIComponent("학생가")}`, { waitUntil: "networkidle" });
+    await bankPrint.locator("#app:not([hidden]), #accessGate:not([hidden])").first().waitFor();
+    const bankState = await bankPrint.evaluate(() => ({
+      gateHidden: document.getElementById("accessGate").hidden,
+      appHidden: document.getElementById("app").hidden,
+      worksheetHidden: document.getElementById("worksheetView").hidden,
+      selectedTypes: document.querySelectorAll(".selected-item").length,
+      notice: document.getElementById("linkedNotice").textContent,
+    }));
+    assert(!bankState.appHidden && bankState.worksheetHidden === false, `admin question-bank print did not open: ${JSON.stringify(bankState)}`);
+    assert((await bankPrint.locator("#studentName").innerText()).trim() === "학생가 학생", "admin question-bank print student heading mismatch");
+    assert((await bankPrint.locator(".watermark").first().innerText()).includes("학생가 · LETE-ON"), "admin question-bank print watermark mismatch");
+
+    const bankXss = await browser.newPage({ viewport: { width: 1000, height: 800 } });
+    await prepare(bankXss);
+    await bankXss.addInitScript(() => { window.__bankXss = false; });
+    const maliciousWatermark = '<img src=x onerror="window.__bankXss=true">';
+    await bankXss.goto(`${base}/question-bank/?qs=34&student=${encodeURIComponent(maliciousWatermark)}`, { waitUntil: "networkidle" });
+    await bankXss.locator("#worksheetView:not([hidden])").waitFor();
+    assert(await bankXss.evaluate(() => window.__bankXss !== true), "admin-selected student name executed script in the question-bank watermark");
+    assert((await bankXss.locator(".watermark").first().innerText()).includes(maliciousWatermark), "escaped question-bank watermark text mismatch");
+
+    const forgedBank = await browser.newPage({ viewport: { width: 1000, height: 800 } });
+    await prepare(forgedBank, { localAdmin: false, serverAdmin: false, localAccess: ["diagnostic", "question-bank"] });
+    await forgedBank.goto(`${base}/question-bank/?qs=34,35`, { waitUntil: "networkidle" });
+    assert(await forgedBank.locator("#accessGate:not([hidden])").count() === 1, "forged local question-bank permission bypassed the access gate");
+    assert(await forgedBank.locator("#app[hidden]").count() === 1, "forged local question-bank permission exposed the app");
+
+    const forgedReport = await browser.newPage({ viewport: { width: 1000, height: 800 } });
+    await prepare(forgedReport, { localAdmin: false, serverAdmin: false, localAccess: ["diagnostic", "question-bank"] });
+    await forgedReport.addInitScript(() => { for (let number = 1; number <= 40; number += 1) localStorage.setItem(`hsm-ox-${number}`, number <= 33 ? "o" : "x"); });
+    await forgedReport.goto(`${base}/report.html`, { waitUntil: "networkidle" });
+    await forgedReport.locator(".score b").waitFor();
+    assert(await forgedReport.locator(".print-group", { hasText: "연계 유사문제" }).count() === 0, "diagnostic-only student saw question-bank print controls");
+    assert(!(await forgedReport.locator("body").innerText()).includes("별도 문제은행"), "diagnostic-only student saw separate product promotion in the report");
+
+    const offlineReport = await browser.newPage({ viewport: { width: 1000, height: 800 } });
+    await prepare(offlineReport, { localAdmin: false, serverAdmin: false, sessionFailure: true });
+    await offlineReport.addInitScript(() => { for (let number = 1; number <= 40; number += 1) localStorage.setItem(`hsm-ox-${number}`, number <= 33 ? "o" : "x"); });
+    await offlineReport.goto(`${base}/report.html`, { waitUntil: "networkidle" });
+    await offlineReport.locator(".score b").waitFor();
+    assert((await offlineReport.locator(".score b").innerText()).trim() === "82.5", "offline diagnostic report did not preserve the local result");
+    assert(await offlineReport.locator(".print-group", { hasText: "연계 유사문제" }).count() === 0, "offline report exposed unverified question-bank controls");
+
+    const revokedReport = await browser.newPage({ viewport: { width: 1000, height: 800 } });
+    await prepare(revokedReport, { localAdmin: false, serverAdmin: false, serverAccess: [] });
+    await revokedReport.addInitScript(() => { for (let number = 1; number <= 40; number += 1) localStorage.setItem(`hsm-ox-${number}`, number <= 33 ? "o" : "x"); });
+    await revokedReport.goto(`${base}/report.html`, { waitUntil: "networkidle" });
+    assert(await revokedReport.locator("#app.hidden").count() === 1, "server-revoked diagnostic permission fell back to stale local access");
 
     for (const [round, expected] of Object.entries(roundExpectations)) {
       const mockReport = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
@@ -196,7 +278,7 @@ async function prepare(page, options = {}) {
     await failed.locator("#resultsTab").click();
     await failed.locator("#resultStatus").filter({ hasText: "불러오지 못했습니다" }).waitFor();
     assert((await failed.locator("#resultCount").innerText()).trim() === "-", "failed load must not be shown as zero records");
-    console.log(`HSMIDDLE_ADMIN_RESULTS_BROWSER_AUDIT_OK records=7 students=3 ox=40 reports=5 a4=5 mobile=390 xss=blocked forged_admin=blocked stale=blocked output=${outputDir}`);
+    console.log(`HSMIDDLE_ADMIN_RESULTS_BROWSER_AUDIT_OK records=7 students=3 ox=40 reports=5 print_actions=5 a4=5 mobile=390 xss=blocked forged_admin=blocked forged_question_bank=blocked offline_report=preserved revoked_access=blocked student_watermark=verified watermark_xss=blocked stale=blocked output=${outputDir}`);
   } finally {
     await browser.close();
   }

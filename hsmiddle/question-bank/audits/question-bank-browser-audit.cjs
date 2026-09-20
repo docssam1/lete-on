@@ -28,7 +28,30 @@ function watch(page, label) {
   });
 }
 
+async function mockServerSession(page, admin) {
+  await page.route("**/functions/v1/hsmiddle-records", async route => {
+    const body = JSON.parse(route.request().postData() || "{}");
+    if (body.action !== "session") {
+      await route.fulfill({ status: 400, contentType: "application/json", body: JSON.stringify({ error: "unexpected_action" }) });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: true,
+        name: admin ? "docssam" : "DEMO",
+        access: admin ? ["diagnostic", "mock-1", "mock-2", "mock-3", "final"] : ["question-bank"],
+        admin,
+        expiresAt: new Date(Date.now() + 3600000).toISOString(),
+        startedAt: "2026-09-01T00:00:00.000Z"
+      })
+    });
+  });
+}
+
 async function enter(page, destination) {
+  await mockServerSession(page, false);
   await page.goto(destination || url, { waitUntil: "domcontentloaded" });
   await page.evaluate(function () {
     localStorage.setItem("hs-student", "DEMO");
@@ -45,6 +68,7 @@ async function enter(page, destination) {
 }
 
 async function enterAsAdmin(page, destination) {
+  await mockServerSession(page, true);
   await page.goto(destination || url, { waitUntil: "domcontentloaded" });
   await page.evaluate(function () {
     const name = "docssam";
