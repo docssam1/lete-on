@@ -2,13 +2,16 @@
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { mountRingTower, towerModel } from './lab-ring-tower.js';
 import { mountFreeze } from './lab-freeze.js';
-const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze };
+import { mountHill } from './lab-hill.js';
+const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill };
 import { pageHome } from './home.js';
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
   ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')) }),
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
-  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }) };
+  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }),
+  's41-u03': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03.lesson.js')),
+  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')) }) };
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },
