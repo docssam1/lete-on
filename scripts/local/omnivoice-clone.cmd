@@ -17,9 +17,20 @@ REM ============================================================
 setlocal
 call "%~dp0_setup-omnivoice.cmd" || (echo  [!] 준비 단계 실패 & pause & exit /b 1)
 
+REM 원격 데스크톱이라 소리가 안 넘어올 때를 위해, 키가 있으면 결과를 "누르면 들리는
+REM 주소"로도 올린다. 키가 없으면 조용히 건너뛰고 듣기.html 만 만든다(둘 다 방법이 된다).
+set UP=
+if defined SUPABASE_SERVICE_ROLE_KEY (
+  set UP=--upload
+  echo  [옵션] SUPABASE_SERVICE_ROLE_KEY 가 있어 결과 주소도 만들어 드립니다.
+) else (
+  echo  [옵션] SUPABASE_SERVICE_ROLE_KEY 가 없습니다 - clone\듣기.html 로만 받습니다.
+  echo         ^(주소로 받고 싶으면 이 창에서 먼저: set SUPABASE_SERVICE_ROLE_KEY=키^)
+)
+
 echo.
 echo  [실행] 참조 음성 뽑고 복제하는 중... 모델을 처음 받을 땐 오래 걸립니다.
-python scripts\omnivoice-clone.py --out clone --ref-dir clone-ref --device auto
+python scripts\omnivoice-clone.py --out clone --ref-dir clone-ref --device auto %UP%
 if errorlevel 1 (
   echo.
   echo  [!] 실패했습니다. 위 메시지를 그대로 복사해 Claude 에게 주세요.
