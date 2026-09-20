@@ -4,6 +4,15 @@ REM 가상환경을 저장소 루트에 하나만 두고 같이 쓴다(설치가
 chcp 65001 >nul
 cd /d "%~dp0..\.."
 
+REM 최신 코드로 맞춘다(2026-09-21, 원장: "이걸 어디에서 하라고") — git pull 을 따로
+REM 치게 하면 한 단계가 늘고, 안 치면 스크립트가 없어서 실패한다. 여기서 알아서 한다.
+REM --ff-only 라 PC 에 손댄 게 있으면 덮지 않고 그냥 하던 대로 진행한다.
+where git >nul 2>&1
+if not errorlevel 1 (
+  echo  [준비] 최신 코드 받는 중...
+  git pull --ff-only 2>nul || echo   ^(받지 못했습니다 - 지금 폴더에 있는 것으로 진행합니다^)
+)
+
 where python >nul 2>&1
 if errorlevel 1 (
   echo.
