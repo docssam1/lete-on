@@ -161,3 +161,4 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .short input.right { border-color: var(--navy); box-shadow: inset 0 0 0 2px var(--navy); }
 .short input.wrong { border-color: var(--point); }
 .book .tbl { margin: 4px 0 8px; }
+.modes button[aria-pressed="true"] { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
