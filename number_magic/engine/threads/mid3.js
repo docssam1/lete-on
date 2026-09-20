@@ -203,7 +203,10 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
       ],
       solution: [
         { tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\sqrt{\\square}`, blank: N },
-        { tex: `\\sqrt{${N}} = \\square`, blank: k }
+        { tex: `\\sqrt{${N}} = \\square`, blank: k },
+        /* 마지막 줄은 문항식과 같은 꼴 — 답 [근호 안, 값] 두 칸을 함께 보여 준다
+           (check-solution-steps 는 마지막 blank 가 answer 와 같기를 요구한다). */
+        { tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\sqrt{\\square} = \\square`, blank: [N, k] }
       ]
     };
   }
@@ -226,7 +229,8 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
       ],
       solution: [
         { tex: `\\sqrt{${a}} \\div \\sqrt{${b}} = \\sqrt{\\square}`, blank: k * k },
-        { tex: `\\sqrt{${k * k}} = \\square`, blank: k }
+        { tex: `\\sqrt{${k * k}} = \\square`, blank: k },
+        { tex: `\\sqrt{${a}} \\div \\sqrt{${b}} = \\sqrt{\\square} = \\square`, blank: [k * k, k] }
       ]
     };
   }

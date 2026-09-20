@@ -159,11 +159,13 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
         en: 'When the fraction part is too small, borrow 1 from the whole number!',
         zh: '分数部分不够减时，从整数借1！'
       },
-      tex: a_w + '\\frac{' + a_n + '}{' + d + '} - ' + b_w + '\\frac{' + b_n + '}{' + d + '} = \\square\\frac{\\square}{' + d + '}',
+      /* 분수 부분이 0이면 `□ 0/6` 이 아니라 자연수 한 칸으로 묻는다(2026-09-20) */
+      tex: a_w + '\\frac{' + a_n + '}{' + d + '} - ' + b_w + '\\frac{' + b_n + '}{' + d + '} = '
+           + (fracPart === 0 ? '\\square' : '\\square\\frac{\\square}{' + d + '}'),
       /* 답은 대분수 통째로(2026-09-20) — 자연수 부분만 주면 예시 줄이
          `5 1/6 − 4 4/6 = 0` 이라는 틀린 등식으로 인쇄됐다. */
-      answer: [wholePart, fracPart, d],
-      answerShape: 'mixed',
+      answer: fracPart === 0 ? wholePart : [wholePart, fracPart, d],
+      answerShape: fracPart === 0 ? undefined : 'mixed',
       answerType: 'steps',
       steps: [
         { tex: '\\text{분수: } \\frac{' + (d+a_n) + '}{' + d + '} - \\frac{' + b_n + '}{' + d + '} = \\frac{\\square}{' + d + '} \\quad(1\\text{을 빌림})', blank: fracPart },
@@ -269,11 +271,12 @@ NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
         en: 'Mixed number with unlike denominators — convert the fraction parts. LCM = ' + LCD,
         zh: '带分数异分母——只通分分数部分。最小公倍数 = ' + LCD
       },
-      tex: a_w + '\\frac{' + a_n + '}{' + d1 + '} ' + op + ' ' + b_w + '\\frac{' + b_n + '}{' + d2 + '} = \\square\\frac{\\square}{' + LCD + '}',
+      tex: a_w + '\\frac{' + a_n + '}{' + d1 + '} ' + op + ' ' + b_w + '\\frac{' + b_n + '}{' + d2 + '} = '
+           + (rn === 0 ? '\\square' : '\\square\\frac{\\square}{' + LCD + '}'),
       /* 답은 대분수 통째로 — 자연수 부분만 주면 `2½ − 2⅓ = 0` 이라는 틀린 등식이 예시 줄에
          인쇄되고 정답지도 조각만 찍힌다(2026-09-20 점검). answerShape 로 한 칸에 묶는다. */
-      answer: [rw, rn, LCD],
-      answerShape: 'mixed',
+      answer: rn === 0 ? rw : [rw, rn, LCD],
+      answerShape: rn === 0 ? undefined : 'mixed',
       answerType: 'steps',
       steps: [
         { tex: '\\text{최소공배수}: \\square', blank: LCD },

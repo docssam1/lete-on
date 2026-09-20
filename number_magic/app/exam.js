@@ -3582,6 +3582,13 @@ function texSubstituteAnswer(tex, answer, fillAll, shaped){
   const squareCount = (raw.match(/\\square/g) || []).length;
   const ansStr = shaped || String(fmtAns(answer));
   if(!squareCount) return raw + ' = \\color{#d33}{' + ansStr + '}';
+  /* 대분수 답 [자연수, 분자, 분모] 인데 빈칸은 둘(자연수·분자) — 분모는 식에 이미 찍혀 있다.
+     이 경우 앞의 두 값만 차례로 채운다(2026-09-20). 안 그러면 마지막 칸에 `0\dfrac{0}{4}` 가
+     통째로 들어가고 앞 칸은 빈 상자로 남았다. */
+  if(Array.isArray(answer) && answer.length === 3 && squareCount === 2 && fillAll !== true && shaped && /dfrac/.test(String(shaped))){
+    let j = 0;
+    return raw.replace(/\\square/g, () => '\\color{#d33}{' + String(answer[j++]) + '}');
+  }
   if(Array.isArray(answer) && answer.length === squareCount){
     let i = 0;
     return raw.replace(/\\square/g, () => '\\color{#d33}{' + String(answer[i++]) + '}');
