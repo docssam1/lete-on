@@ -3,7 +3,8 @@
 import { mountRingTower, towerModel } from './lab-ring-tower.js';
 import { mountFreeze } from './lab-freeze.js';
 import { mountHill3D } from './lab-hill3d.js';
-const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D };
+import { mountPond3D } from './lab-pond3d.js';
+const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D, pond: mountPond3D };
 import { pageHome } from './home.js';
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
@@ -11,7 +12,9 @@ const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u0
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
   ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }),
   's41-u03': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03.lesson.js')),
-  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')) }) };
+  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')) }),
+  's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),
+  ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')) }) };
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },

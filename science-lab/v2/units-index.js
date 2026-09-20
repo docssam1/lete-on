@@ -1,6 +1,7 @@
 import { taxonomy as tx41u01 } from '../data/units/s41-u01.taxonomy.js';
 import { taxonomy as tx41u02 } from '../data/units/s41-u02.taxonomy.js';
 import { taxonomy as tx41u03 } from '../data/units/s41-u03.taxonomy.js';
+import { taxonomy as tx42u01 } from '../data/units/s42-u01.taxonomy.js';
 
 // 탐구 지도의 정거장 = Drive `과학 단원평가` 폴더의 단원(data/source-toc.md §1). 중간·기말평가는 제외.
 // ready: 5E 화면이 있는 단원. 새 단원을 만들면 v2.js UNITS와 여기 ready 둘 다 등록한다.
@@ -22,4 +23,5 @@ export const READY = {
   's41-u01': { hero: '고리 자석 탑', subs: subsOf(tx41u01) },
   's41-u02': { hero: '얼음 병 저울', subs: subsOf(tx41u02) },
   's41-u03': { hero: '흙 언덕 물길', subs: subsOf(tx41u03) },
+  's42-u01': { hero: '부레옥잠 연못', subs: subsOf(tx42u01) },
 };
