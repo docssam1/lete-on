@@ -18,9 +18,22 @@
 ## ⚠ 새 세션은 여기부터 (2026-09-20)
 - **이미 끝난 것 — 다시 만들지 말 것**: 자석 단원 파일(창작 26문항 + 5E 구성 `s41-u01.lesson.js`) · 5E 5단계 화면 v2 · 조작형 가상 실험실(고리 자석 탑) · 3D 장면 `ring-tower` · 준비물 QR · 탐구보고서 · 교재 인쇄 · `bank/audit.mjs` · docssam 표정 9장(assets/) · **홈 탐구 지도**(`v2/home.js`·`home.css`·`units-index.js`, 입체 정거장) · 재도전(보기 섞기) · 진도 저장(localStorage `sciLab.v2`).
 - **문제은행 개정 분류·유사문항 완료(2026-09-20, Cowork — Claude Code 안 씀)**: 분류 `data/units/s41-u01.taxonomy.js`(2022 개정 · 운동과 에너지 · [4과09-01]·[4과09-02] · 내용 요소 E1~E4 = 소단원 · 유형 T01~T13 · 원문 80문항 대응) · 유사문항 80 `s41-u01.similar.js`(선택형 39·단답형 35·서술형 6, 단일 선택 정답 ①~⑤ 7·6·6·6·6) · `bank/audit.mjs` 통과 · Supabase 원문 80행에 element·type·format 태그와 새 그림 경로(`science-src/4-1/자석의 이용/<E코드 이름>/<T코드 이름>/o-NN.png`, 묶음 지문 7개는 `figures.stem`, `figures.status:'pending-crop'`). 공개 산출물 `bank/taxonomy/s41-u01.json`은 `bank/taxonomy/build.mjs`가 `s41-u01.taxonomy.js`에서 만든다(직접 고치지 말 것). 화면: 지도에서 정거장 누르면 소단원 시트 → `#/s41-u01/sub/E1~E4`(유형별 유사문항 풀기, 단답형·두 개 고르기 지원). 교재에 "유형별 문제" 4쪽 추가. 지도 배경 = 직접 그린 실험실 선화 `v2/lab-bg.svg`.
-- **남은 것**: 원본 그림(번호 지움)을 `science-src` 브랜치의 `index.json` 경로로 업로드 · 성취기준 문장(고시 원문 대조) · 소단원 이름을 교과서 출판사 표기로 바꿀지 결정 · 어댑터 등록(`bank/science-bank-adapter.js`).
+- **4-1 Ⅱ 물의 상태 변화도 끝남(7차)** — 아래 7차 기록. 원본 그림 두 단원 모두 `science-src`에 올라감(`figures.status=ok`).
+- **남은 것**: 성취기준 문장(고시 원문 대조) · 소단원 이름을 교과서 출판사 표기로 바꿀지 결정 · 어댑터 등록(`bank/science-bank-adapter.js`).
 - **⚠ 시작할 때 `git log --oneline -5 origin/<브랜치>`부터 볼 것.** 이 세션이 컨테이너 재시작 뒤 같은 작업 지시서를 두 번 돌려 유사문항 80개를 중복 작성했다(6차 기록 참조).
 - DESIGN.md는 v2 구현으로 사실상 승인됨.
+
+## 진행 기록 — 2026-09-20 7차 (Cowork): 4-1 Ⅱ 물의 상태 변화 · 원본 그림 업로드
+
+- **문제은행**: Supabase `science_bank_source` `s41-u02` 세트1~4 = 80행(원문·정답, 분류 태그). git엔 원문 없음.
+- **분류** `data/units/s41-u02.taxonomy.js`: 영역 물질 · 소단원 E1~E5(물의 세 가지 상태 / 물이 얼 때와 얼음이 녹을 때 / 증발과 끓음 / 응결 / 물의 이용과 물 부족) · 유형 T01~T12. 성취기준 문장은 비어 있음.
+- **유사문항** `data/units/s41-u02.similar.js` 80개(선택41·단답28·서술8·복수선택3, 정답 위치 9·8·8·8·8). `bank/audit.mjs` 통과.
+- **창작 문항** `data/units/s41-u02.js` b01~b12(빈칸 카드 4 · 표 채우기 · 미니테스트 · 영재성 3 · 점검 3).
+- **5E** `data/units/s41-u02.lesson.js`: 궁금 = 3D `scenes/freeze-bottle.js`(병을 얼리면 높이↑·무게 같음) · 실험 = 조작형 `v2/lab-freeze.js`(물 양 고르고 얼리기/녹이기, 높이·무게 기록) · 집 실험 = 주방 저울 키트(`assets/qr-s41-u02-kit.svg`) · 보고서.
+- **v2 일반화**: `LABS` 등록표, `lesson` 없는 단원은 `/sub/E1`로, 소단원 화면 번호 이동, 복수선택·단답 문항, 표 보기 렌더. 홈 `units-index.js` `READY`에 u02(얼음 병 저울).
+- **원본 그림**: 폴더 한 단원 하나 + 분류는 파일 이름(`E1-T01-o-01.png`, `…-stem-01.png`) — 6차의 E/T 하위 폴더 방식은 폐기(웹 업로드가 폴더를 못 넣음). 사용자가 GitHub 웹 업로드로 올림(자석 88·물 98, 원본과 바이트 대조 일치). Supabase `figures.block/stem`을 새 경로로 바꾸고 `status=ok`. 규칙은 `science-src/README.md`.
+- **바이너리 반입 방법**: 클라우드에선 PNG 푸시 불가 → 파일을 사용자 PC 연결 폴더에 풀어 두고, 사용자가 `…/upload/science-src/<경로>` 주소에 끌어 넣기. zip은 윈도우에서 한글 폴더가 비어 보일 수 있으니 폴더째 주거나 zip 루트에 파일만.
+- **다음**: 4-1 Ⅲ 땅의 변화.
 
 ## 진행 기록 — 2026-09-20 6차 (Claude Code): 중복 작업 정리 · JSON 일원화 · Supabase/science-src 정렬
 
