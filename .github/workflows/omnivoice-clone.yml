@@ -37,6 +37,8 @@ jobs:
       # CPU 전용 torch — 기본 wheel 은 CUDA 까지 받아 2 GB 가 넘는다.
       - name: torch(CPU) · OmniVoice 설치
         run: |
+          # ffmpeg — 올릴 때 wav 를 mp3 로 바꾸는 데 쓴다(버킷이 wav 를 안 받는다)
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           python -m pip install --upgrade pip
           pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
           pip install omnivoice soundfile librosa

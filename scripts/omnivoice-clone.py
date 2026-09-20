@@ -120,24 +120,45 @@ def upload_results(files, tag):
     올리는 자리는 `_audition/<시각>/` — 앱이 쓰는 경로와 완전히 분리된 임시 자리다.
     듣고 나면 지워도 앱에 아무 영향이 없다.
     """
-    import urllib.request
+    import urllib.request, subprocess, shutil
     base = os.environ.get("SUPABASE_URL", "https://fgahqumaldheqettmvqg.supabase.co")
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
     if not key:
         print("  (SUPABASE_SERVICE_ROLE_KEY 가 없어 올리지 않습니다 — 파일로만 받으세요)")
         return []
+
     urls = []
     for f in files:
         name = os.path.basename(f)
-        path = f"_audition/{tag}/{name}"
+        # wav 는 이 버킷이 안 받는다(2026-09-21 실측: 8개 전부 400). 기존 스크립트가 전부
+        # audio/mpeg 를 쓰고 share-reader 는 JSON 조차 mpeg 로 올린다는 주석이 단서였다.
+        # 그래서 mp3 로 바꿔 올린다. ffmpeg 가 없으면 그 파일만 건너뛴다(다른 건 올라간다).
+        send, ctype = f, "audio/mpeg"
+        if f.lower().endswith(".wav"):
+            mp3 = f[:-4] + ".mp3"
+            if shutil.which("ffmpeg"):
+                try:
+                    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", f,
+                                    "-codec:a", "libmp3lame", "-b:a", "96k", mp3], check=True)
+                    send = mp3
+                except Exception as e:
+                    print(f"  ✗ mp3 변환 실패 {name}: {e}", flush=True); continue
+            else:
+                print(f"  ✗ ffmpeg 가 없어 {name} 을 올리지 못합니다", flush=True); continue
+        sname = os.path.basename(send)
+        path = f"_audition/{tag}/{sname}"
         req = urllib.request.Request(
-            f"{base}/storage/v1/object/audio/{path}", data=open(f, "rb").read(), method="POST",
+            f"{base}/storage/v1/object/audio/{path}", data=open(send, "rb").read(), method="POST",
             headers={"Authorization": f"Bearer {key}", "apikey": key,
-                     "Content-Type": "audio/wav", "x-upsert": "true"})
+                     "Content-Type": ctype, "x-upsert": "true"})
         try:
-            urllib.request.urlopen(req, timeout=120).read()
+            urllib.request.urlopen(req, timeout=180).read()
         except Exception as e:
-            print(f"  ✗ 올리기 실패 {name}: {e}", flush=True)
+            # 본문을 같이 찍는다 — 지난번엔 "400 Bad Request" 만 나와서 원인을 추측해야 했다
+            body = ""
+            try: body = " · " + e.read().decode("utf-8", "replace")[:200]
+            except Exception: pass
+            print(f"  ✗ 올리기 실패 {sname}: {e}{body}", flush=True)
             continue
         urls.append(f"{base}/storage/v1/object/public/audio/{path}")
     return urls
