@@ -1,1 +1,61 @@
-# Numbers of Magic 🪄\n\n창의수연 기반 프리미엄 수학 학습 플랫폼\n\n**대상**: 똑똑한 6세~초등  \n**배포**: lete-on.gfieldacademy.net/number_magic\n\n## 구조\n- `index.html` — 리빙맵 허브(마을, 움직이는 캐릭터)\n- `book.html` — 권(A~I) 선택 화면\n- `chapter.html` — 4단계 학습: 프랙티스(선택) → 누미의 마법노트(개념) → 핵심체크 → 매직 랩(게임) → 아레나(테스트)\n- `print.html` — A4 시험지 생성\n- `data/curriculum.json` — 급·권·챕터 트리\n- `data/chapters/A-01.json` — A권 1장 데이터(문항풀)\n\n## 핵심 특징\n✨ **리빙맵**: 산책하는 누미·포코·모모, 구름·연기·분수 애니메이션, 신비로운 BGM  \n🗣️ **선생님처럼**: 음성싱크 타이밍, 단계별 설명, 답할 시간  \n🎮 **4단계**: 프랙티스(스킵가능) → 개념 → 확인 → 게임 → 테스트  \n🏆 **보상**: 누미 코인 + 매직 스탬프(도장판) + 도장 쾅  \n\n## 설계서\n**GFIELD_MEMORY/NM_SPEC.md v1.2** — 전체 아키텍처, JSON 스키마, 음성(TTS), 디자인 규칙\n\n## 협업 분담\n- **Fable5**: 설계·검수\n- **Opus**: chapter.html 엔진·물리·애니메이션·UI\n- **Sonnet**: 데이터 입력·자산·배포\n"
+# 수의 마법 (Numbers of Magic) 🪄
+
+유아 5세부터 미적분Ⅰ까지, **48과정 383회차**의 연산 학습 시스템.
+문항은 사람이 쓰지 않고 **생성기가 매번 새로 만든다** — 같은 유형을 몇 번이든 다시 낼 수 있다.
+
+**배포** https://lete-on.gfieldacademy.net/number_magic/ (`main` 푸시 시 GitHub Actions 자동 배포)
+**빌드 도구 없음** — 순수 HTML·JS·CSS. `index.html`이 스크립트를 순서대로 읽는다.
+
+---
+
+## 먼저 읽을 것
+
+| 문서 | 무엇 |
+|---|---|
+| **`인수인계서.md`** | 프로젝트 전체 지도 · 새 유형 추가 절차 여덟 걸음 · 절대 규칙 · 데인 곳 |
+| **`앞으로-진행할-것.md`** | 우선순위 붙인 할 일 |
+| `MASTER-ROADMAP.md` | 설계 원칙 · W1~W14 월드 대응 · 답 환원 원칙 |
+| `HANDOFF.md` | 작업 이력 전문 (최신이 맨 뒤) |
+
+---
+
+## 구조
+
+| 경로 | 무엇 |
+|---|---|
+| `index.html` | 앱 본체 (유닛 파일마다 `<script>` 태그가 나열돼 있다) |
+| `landing.html` · `about.html` | 광고 페이지 · 철학·통계 |
+| `app/main.js` | 앱 렌더링·상태·라우팅 |
+| `app/exam.js` | 학습지 인쇄 |
+| `engine/threads/*.js` | 유형별 문제 생성기 (`NM_TGEN`) |
+| `engine/rng.js` | 시드 난수 — **`Math.random()` 금지** |
+| `data/threads.js` | 211유형 657레벨 |
+| `data/units/*.js` | 유닛 카드 221개 |
+| `data/courses.js` | 48과정 편성 (학습지) |
+| `data/roadmap.js` | 66챕터 (앱 「마법 학습 여행」) |
+| `data/stages.js` | 7단계 (광고 로드맵) |
+| `scripts/check-*.js` | 검사기 20종 |
+
+---
+
+## 일하는 법
+
+```bash
+cd number_magic
+
+# 데이터를 고쳤으면 매번 (각 수 초)
+node scripts/check-ladder.js
+node scripts/check-stages.js
+node scripts/check-answerable.js
+node scripts/check-step-equations.js
+node scripts/check-tone.js
+
+# 커밋 전 (수 분)
+node scripts/check-print.js
+node scripts/check-solution-steps.js
+node scripts/check-new-levels-math.js
+```
+
+**새 유형·유닛을 추가할 때는 `인수인계서.md` §4의 여덟 걸음을 그대로 따를 것.**
+네 번째(`index.html` 태그)와 여섯 번째(`data/roadmap.js` 챕터)를 빠뜨리면
+**검사기는 전부 통과하는데 화면에서만 안 보인다.** 실제로 두 번 났던 사고다.
