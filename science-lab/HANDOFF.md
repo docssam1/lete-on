@@ -18,7 +18,7 @@
 ## ⚠ 새 세션은 여기부터 (2026-09-20)
 - **이미 끝난 것 — 다시 만들지 말 것**: 자석 단원 파일(창작 26문항 + 5E 구성 `s41-u01.lesson.js`) · 5E 5단계 화면 v2 · 조작형 가상 실험실(고리 자석 탑) · 3D 장면 `ring-tower` · 준비물 QR · 탐구보고서 · 교재 인쇄 · `bank/audit.mjs` · docssam 표정 9장(assets/) · **홈 탐구 지도**(`v2/home.js`·`home.css`·`units-index.js`, 입체 정거장) · 재도전(보기 섞기) · 진도 저장(localStorage `sciLab.v2`).
 - **문제은행 개정 분류·유사문항 완료(2026-09-20, Cowork — Claude Code 안 씀)**: 분류 `data/units/s41-u01.taxonomy.js`(2022 개정 · 운동과 에너지 · [4과09-01]·[4과09-02] · 내용 요소 E1~E4 = 소단원 · 유형 T01~T13 · 원문 80문항 대응) · 유사문항 80 `s41-u01.similar.js`(선택형 39·단답형 35·서술형 6, 단일 선택 정답 ①~⑤ 7·6·6·6·6) · `bank/audit.mjs` 통과 · Supabase 원문 80행에 element·type·format 태그와 새 그림 경로(`science-src/4-1/자석의 이용/<E코드 이름>/<T코드 이름>/o-NN.png`, 묶음 지문 7개는 `figures.stem`, `figures.status:'pending-crop'`). 공개 산출물 `bank/taxonomy/s41-u01.json`은 `bank/taxonomy/build.mjs`가 `s41-u01.taxonomy.js`에서 만든다(직접 고치지 말 것). 화면: 지도에서 정거장 누르면 소단원 시트 → `#/s41-u01/sub/E1~E4`(유형별 유사문항 풀기, 단답형·두 개 고르기 지원). 교재에 "유형별 문제" 4쪽 추가. 지도 배경 = 직접 그린 실험실 선화 `v2/lab-bg.svg`.
-- **4-2 Ⅰ 식물의 생활도 끝남(9차)** — 아래 9차 기록. 원본 그림은 USB `science-src 그림\식물의 생활`(72개)에 있고 GitHub 업로드 대기.
+- **4-2 Ⅰ 식물의 생활도 끝남(9차)** — 아래 9차 기록. 원본 그림은 USB `science-src 그림\\식물의 생활`(72개)에 있고 GitHub 업로드 대기.
 - **4-1 Ⅲ 땅의 변화도 끝남(8차)** — 아래 8차 기록. 원본 그림 세 단원 모두 `science-src`에 올라감.
 - **4-1 Ⅱ 물의 상태 변화도 끝남(7차)** — 아래 7차 기록. 원본 그림 두 단원 모두 `science-src`에 올라감(`figures.status=ok`).
 - **남은 것**: 성취기준 문장(고시 원문 대조) · 소단원 이름을 교과서 출판사 표기로 바꿀지 결정 · 어댑터 등록(`bank/science-bank-adapter.js`).
@@ -33,6 +33,8 @@
 - 살아 있는 교재(`v2/live.js`·`v2/book.js`): 개념 정리 빈칸을 누르면 `bookChips`의 낱말 칩이 뜨고 고른 결과를 기록(`book-concept`); 확인 문제·형성평가 보기(`.bk-choices[data-id]`)를 누르면 기록(`book`)하고 오답이면 아래에 `.bk-fix` 교정 상자. 인쇄엔 안 나온다.
 - CSS: 오답 빨강(`--bad-bg`)·의심 노랑(`--warn`)·해소/정답 초록(`--good`)·핵심어 남색 굵게+연한 밑칠(`.fix b`). `.choice`가 `min-width:0; white-space:normal`. `.bk`·`.dk`·`body.intro`에 `word-break: keep-all; overflow-wrap: anywhere` 추가. **휴대폰 교재의 표가 화면을 넘던 것**(`.bk-tbl` 362px > 339px) → `.bk:not(.a4) .bk-tbl { table-layout: fixed }` + th 줄바꿈 허용으로 해결. 진단 막대 라벨은 휴대폰에서 한 줄 위로.
 - 검증(Playwright): 개념 칩 오답 → 점검 오답 → 한 판 더 → 진단(확정 1·의심 2) → 처방 2문항 정답 → **해소**로 바뀜 확인. 교재 칩·확인 문제 기록 확인. 360/390/768/1280 × 11 라우트 가로 넘침 0(장식 `::after`만 제외), A4 11쪽 넘침 0 유지, 페이지 오류 0.
+- **광고 페이지 재구성(같은 차수)**: `intro/intro.js`에 CHAPTER Ⅴ `틀린 까닭을 읽는 책`(기록→교정→진단→처방 흐름 + b10 예시와 교정 상자) · CHAPTER Ⅵ `진단 리포트`(2/5 요약·소단원 막대·확정/의심/해소 카드 견본, misc 데이터에서 생성) 2쪽 추가 → 광고 9쪽 + 교재 11 + 표지 2 = **22쪽, c0 = 10**. `ad3`(한 장의 비밀) 목록 Ⅹ 진단·처방, FAQ 1문답, 봉인 해제 목록 문구, 아래 소개 카드 ⑥ 추가. 광고 책의 교재 쪽도 `misc`를 넘겨 개념 정리 칩·교정 상자가 그대로 나온다(`wireLive`가 `misc` 옵션으로 칩·`.bk-fix`를 직접 처리하도록 옮김 — v2·intro 공용).
+- 나레이션 `intro/narration.json` 18줄: `diag`·`diag2` 추가, `concept`·`check` 문장 수정 → MP3 4개 새로 필요(약 310자). `scripts/generate-audio.js` 주석을 건드려 Generate Audio를 돌렸다(워크플로 paths에 narration.json이 없어서 — 다음에 문장을 고칠 때도 같은 방법, 또는 사용자가 워크플로 paths에 `science-lab/intro/narration.json` 한 줄 추가).
 - 아직: 다른 단원(u01·u02·s42-u01)엔 misc 파일이 없어 진단 버튼이 안 뜬다(같은 형식으로 만들면 자동). 기록은 기기(localStorage)에만 — 강사가 여러 학생을 보려면 Supabase 테이블 필요(별도 제안). 서술형은 기록하지 않는다(사용자 지시).
 
 ## 진행 기록 — 2026-09-21 15차 (Cowork): docssam 소리 나오게
@@ -106,7 +108,7 @@
 
 ## 진행 기록 — 2026-09-20 8차 (Cowork): 4-1 Ⅲ 땅의 변화
 
-- **원본 PDF는 사용자 PC의 G드라이브(`G:\내 드라이브\과학 단원평가`, 3-1~6-2 전 학기)에 다 있다** — 연결된 컴퓨터에서 `device_stage_files`로 바로 가져온다. 이론편(30권)·실험2(31권)도 같은 드라이브에 있음(4-A 실험은 hwp만).
+- **원본 PDF는 사용자 PC의 G드라이브(`G:\\내 드라이브\\과학 단원평가`, 3-1~6-2 전 학기)에 다 있다** — 연결된 컴퓨터에서 `device_stage_files`로 바로 가져온다. 이론편(30권)·실험2(31권)도 같은 드라이브에 있음(4-A 실험은 hwp만).
 - **문제은행**: Supabase `s41-u03` 80행(원문·정답, 전사 후 검수 에이전트가 PDF와 재대조 — 수정 0). 텍스트는 Supabase 유지(단원당 ~0.4MB, 사용자 승인), 그림만 GitHub.
 - **분류** `s41-u03.taxonomy.js`: 영역 지구와 우주 · E1~E6(흐르는 물에 의한 땅의 변화 / 강 주변 지형 / 화산과 화산 분출물 / 화강암과 현무암 / 화산 활동과 지진의 영향 / 대처 방법) · T01~T11.
 - **유사문항** 80(`s41-u03.similar.js`) · **창작** b01~b12 · audit 통과.
