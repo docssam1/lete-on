@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-55'] = {
-  id:'M-55', tier:'algebra', level:'44', order:4,
+  id:'M-55', tier:'algebra', level:'46', order:4,
   generator:'md55_lawOfSines',
   title:{ ko:'사인법칙', en:'Law of Sines', zh:'正弦定理' },
   subtitle:{ ko:'변과 대각을 외접원의 지름으로 이어요', en:'A side and its opposite angle connect to the circumscribed circle', zh:'边与对角连接着外接圆的直径' },

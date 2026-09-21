@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-61'] = {
-  id:'M-61', tier:'calculus1', level:'45', order:4,
+  id:'M-61', tier:'calculus1', level:'47', order:4,
   generator:'md61_areaUnderCurve',
   title:{ ko:'곡선과 x축 사이의 넓이', en:'Area Between a Curve & the x-axis', zh:'曲线与x轴之间的面积' },
   subtitle:{ ko:'두 교점을 구간 삼아 정적분해요', en:'Take the two intersection points as the interval and integrate', zh:'以两个交点为区间求定积分' },

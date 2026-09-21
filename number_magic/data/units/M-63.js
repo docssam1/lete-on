@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-63'] = {
-  id:'M-63', tier:'middle2', level:'33', order:15,
+  id:'M-63', tier:'middle2', level:'33', order:8,
   generator:'md63_simultaneous',
   title:{ ko:'연립방정식 풀이', en:'Solving Systems of Equations', zh:'二元一次方程组的解法' },
   subtitle:{ ko:'한 문자를 없애면 아는 문제로 돌아와요', en:'Get rid of one letter and it becomes a problem you already know', zh:'消去一个字母，就回到已经会的问题' },

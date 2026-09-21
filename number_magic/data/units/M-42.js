@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-42'] = {
-  id:'M-42', tier:'algebra', level:'41', order:4,
+  id:'M-42', tier:'algebra', level:'43', order:4,
   lineage:['rainbow-sum'],
   generator:'md42_sigmaSum',
   title:{ ko:'Σ(시그마) 계산', en:'Sigma Notation', zh:'Σ(求和符号)计算' },

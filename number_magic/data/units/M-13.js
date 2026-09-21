@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-13'] = {
-  id:'M-13', tier:'middle2', level:'33', order:13,
+  id:'M-13', tier:'middle2', level:'32', order:4,
   lineage:['place-magic'],
   generator:'md13_monoTimesPoly',
   title:{ ko:'(단항식)×(다항식)의 전개', en:'Expanding Monomial × Polynomial', zh:'单项式乘多项式的展开' },

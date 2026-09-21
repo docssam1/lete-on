@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-17'] = {
-  id:'M-17', tier:'middle3', level:'35', order:17,
+  id:'M-17', tier:'middle3', level:'35', order:3,
   generator:'md17_sqrtMulDiv',
   title:{ ko:'제곱근의 곱셈과 나눗셈', en:'Multiplying & Dividing Square Roots', zh:'平方根的乘除法' },
   subtitle:{ ko:'근호끼리는 안에 있는 수를 먼저 곱하거나 나눠요', en:'Between two roots, combine what\'s inside first', zh:'两个根号之间，先把里面的数相乘或相除' },

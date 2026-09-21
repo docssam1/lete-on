@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-38'] = {
-  id:'M-38', tier:'algebra', level:'40', order:3,
+  id:'M-38', tier:'algebra', level:'42', order:3,
   generator:'md38_logProperties',
   title:{ ko:'로그의 성질', en:'Properties of Logarithms', zh:'对数的性质' },
   subtitle:{ ko:'로그의 덧뺄셈은 진수의 곱나눗이 돼요', en:'Adding/subtracting logs multiplies/divides the arguments', zh:'对数的加减对应真数的乘除' },

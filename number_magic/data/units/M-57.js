@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-57'] = {
-  id:'M-57', tier:'algebra', level:'44', order:6,
+  id:'M-57', tier:'algebra', level:'46', order:6,
   generator:'md57_trigMaxMinPeriod',
   title:{ ko:'삼각함수의 최대·최소와 주기', en:'Trig Max/Min & Period', zh:'三角函数的最大值·最小值与周期' },
   subtitle:{ ko:'진폭은 위아래로, 주기는 되풀이하는 간격', en:'Amplitude swings up and down; period is the repeating interval', zh:'振幅上下摆动，周期是重复的间隔' },

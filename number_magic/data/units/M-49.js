@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-49'] = {
-  id:'M-49', tier:'middle1', level:'30', order:12,
+  id:'M-49', tier:'middle1', level:'30', order:9,
   generator:'md49_linearExprOps',
   title:{ ko:'일차식의 계산', en:'Linear Expression Operations', zh:'一次式的运算' },
   subtitle:{ ko:'괄호를 풀고, 동류항끼리 더해요', en:'Expand the parentheses, then combine like terms', zh:'展开括号，合并同类项' },

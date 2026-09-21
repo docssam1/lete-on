@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-60'] = {
-  id:'M-60', tier:'calculus1', level:'45', order:3,
+  id:'M-60', tier:'calculus1', level:'47', order:3,
   generator:'md60_extrema',
   title:{ ko:'극값(극대·극소)', en:'Extrema (Local Max & Min)', zh:'极值(极大值·极小值)' },
   subtitle:{ ko:"f'(x)=0인 자리가 산꼭대기와 골짜기예요", en:"Where f'(x)=0 are the hilltops and valleys", zh:"f'(x)=0的位置就是山顶和谷底" },

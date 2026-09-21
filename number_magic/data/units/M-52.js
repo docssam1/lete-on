@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-52'] = {
-  id:'M-52', tier:'algebra', level:'44', order:1,
+  id:'M-52', tier:'algebra', level:'46', order:1,
   generator:'md52_expEquation',
   title:{ ko:'지수방정식', en:'Exponential Equations', zh:'指数方程' },
   subtitle:{ ko:'밑을 통일하면 지수끼리 등식이 돼요', en:'Unify the base, and the exponents form an equation', zh:'统一底数，指数就构成等式' },

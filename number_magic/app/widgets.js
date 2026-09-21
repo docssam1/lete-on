@@ -2104,21 +2104,14 @@ function graphPlaneSvgInner(g, W, H, pad){
   s += `<text class="nm-gp-axname" x="${(X(0)+6).toFixed(1)}" y="${pad+4}">y</text>`;
   s += `<text class="nm-gp-tick" x="${(X(0)-6).toFixed(1)}" y="${(Y(0)+13).toFixed(1)}">O</text>`;
   /* 곡선 — 화면 밖으로 나가는 부분은 clip 으로 자른다(직선이 상자를 뚫고 나가도 됨) */
-  const clipId = 'gpclip'+Math.abs((g.m||0)*97+(g.b||0)*31+(g.p||0)*7+(g.q||0));
-  let d='';
-  if(g.kind==='parabola'){
-    const a=g.a, p=g.p, q=g.q;
-    for(let t=0; t<=120; t++){
-      const x = xr[0] + (xr[1]-xr[0])*t/120;
-      const y = a*(x-p)*(x-p)+q;
-      d += (t?'L':'M') + X(x).toFixed(1) + ' ' + Y(y).toFixed(1);
-    }
-  } else {
-    const m=g.m, b=g.b;
-    d = `M${X(xr[0]).toFixed(1)} ${Y(m*xr[0]+b).toFixed(1)}L${X(xr[1]).toFixed(1)} ${Y(m*xr[1]+b).toFixed(1)}`;
-  }
+  const clipId = 'gpclip'+Math.abs((g.m||0)*97+(g.b||0)*31+(g.p||0)*7+(g.q||0)+(g.a||0)*13+(g.k||0)*5);
+  /* 곡선 식은 exam.js 한 곳에만 둔다 — drill.html·ws.html 은 widgets.js 를 안 싣고
+     exam.js 만 싣기 때문이다(반대로 두면 학습지에서 곡선이 통째로 빠진다). */
+  const cp = (window.NM_EXAM && window.NM_EXAM.curvePath) || null;
+  const d = cp ? cp(g, xr, v => X(v).toFixed(1), v => Y(v).toFixed(1)) : '';
   s = `<defs><clipPath id="${clipId}"><rect x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/></clipPath></defs>` + s;
-  s += `<path class="nm-gp-curve" clip-path="url(#${clipId})" d="${d}"/>`;
+  /* kind:'points' 는 곡선 없이 점만 찍는다(좌표·사분면 문항) */
+  if(d) s += `<path class="nm-gp-curve" clip-path="url(#${clipId})" d="${d}"/>`;
   (g.pts||[]).forEach(pt=>{
     if(pt[0]<xr[0]||pt[0]>xr[1]||pt[1]<yr[0]||pt[1]>yr[1]) return;
     s += `<circle class="nm-gp-pt" cx="${X(pt[0]).toFixed(1)}" cy="${Y(pt[1]).toFixed(1)}" r="4"/>`;

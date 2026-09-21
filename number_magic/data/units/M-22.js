@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-22'] = {
-  id:'M-22', tier:'highmath1', level:'36', order:22,
+  id:'M-22', tier:'highmath1', level:'38', order:22,
   lineage:['place-magic'],
   generator:'md22_cubeFormula',
   title:{ ko:'곱셈공식의 확장', en:'Expanding Multiplication Formulas', zh:'乘法公式的展开' },

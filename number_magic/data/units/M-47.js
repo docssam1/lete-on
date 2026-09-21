@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-47'] = {
-  id:'M-47', tier:'middle1', level:'29', order:10,
+  id:'M-47', tier:'middle1', level:'29', order:4,
   generator:'md47_expressionNotation',
   title:{ ko:'문자식 표현', en:'Algebraic Expression Notation', zh:'代数式的表示' },
   subtitle:{ ko:'곱셈 기호를 지우고, 나눗셈을 분수로 바꿔요', en:'Drop the multiplication sign, turn division into a fraction', zh:'省略乘号，把除法变成分数' },

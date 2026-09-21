@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-33'] = {
-  id:'M-33', tier:'highmath2', level:'38', order:33,
+  id:'M-33', tier:'highmath2', level:'40', order:33,
   generator:'md33_lineEquation',
   title:{ ko:'직선의 방정식', en:'The Equation of a Line', zh:'直线的方程' },
   subtitle:{ ko:'기울기는 y변화÷x변화, y절편은 한 점을 대입해 찾아요', en:'Slope is Δy÷Δx; find the y-intercept by substituting one point', zh:'斜率是Δy÷Δx，代入一点求y轴截距' },

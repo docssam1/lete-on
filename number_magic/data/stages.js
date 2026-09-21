@@ -140,8 +140,8 @@ window.NM_STAGES = [
     key:'middle', icon:'🔤', accent:'#0E2C57', status:'live',
     name:{ko:'중학교 — 기호가 바뀌는 자리',en:'Middle School — where the symbols change',zh:'初中——符号改变的地方'},
     band:{ko:'중학교 1~3학년',en:'Grades 7–9',zh:'初中一~三年级'},
-    chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W9-1','W9-2','W9-3','W10-1','LAB-NUMLINE','W10-2','W10-3'],
-    tiers:['middle1','middle2','middle3'], courses:{from:29,to:35}, weeks:60,
+    chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W8-6','W8-7','W9-1','W9-2','W9-3','W9-4','W10-1','LAB-NUMLINE','W10-2','W10-3','W10-4'],
+    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:89,
     learn:{
       ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 연립방정식과 일차부등식, 일차함수, 제곱근의 세계, 인수분해와 이차방정식, 이차함수의 꼭짓점.',
       en:'Integers and rationals, the rules of sign, letters and expressions, equations and proportion, exponents and monomials, polynomials, systems and linear inequalities, linear functions, square roots, factorisation and quadratic equations, the vertex of a parabola.',
@@ -155,14 +155,14 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~35 · 주 1회 기준 60주 · 실험실 2',en:'Courses 29–35 · 60 weeks · 2 labs',zh:'课程29~35 · 约60周 · 2个实验室'}
+    meta:{ko:'과정 29~37 · 주 1회 기준 89주 · 실험실 2',en:'Courses 29–37 · 89 weeks · 2 labs',zh:'课程29~37 · 约89周 · 2个实验室'}
   },
   {
     key:'high', icon:'∫', accent:'#0E2C57', status:'partial',
     name:{ko:'고등 — 새 기호는 아는 마법의 새 이름표',en:'High School — a new symbol is a new label on a magic you know',zh:'高中——新符号只是熟悉魔法的新标签'},
     band:{ko:'공통수학1·2 · 대수 · 미적분Ⅰ',en:'Common Math 1·2 · Algebra · Calculus I',zh:'共同数学1·2 · 代数 · 微积分Ⅰ'},
     chapters:['W11-1','W11-2','W12-1','W12-2','W13-1','W13-2','W13-3','W13-4','W13-5','W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:36,to:45}, weeks:70,
+    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:38,to:47}, weeks:70,
     learn:{
       ko:'다항식과 나머지정리, 이차방정식, 점과 직선·원, 지수와 로그, 삼각함수, 수열과 Σ, 극한과 미분, 접선과 적분.',
       en:'Polynomials and the remainder theorem, quadratic equations, points, lines and circles, exponents and logarithms, trigonometric functions, sequences and Σ, limits and differentiation, tangents and integration.',
@@ -176,7 +176,7 @@ window.NM_STAGES = [
       {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}},
       {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 36~45 · 주 1회 기준 70주 · 실험실 2',en:'Courses 36–45 · 70 weeks · 2 labs',zh:'课程36~45 · 约70周 · 2个实验室'}
+    meta:{ko:'과정 38~47 · 주 1회 기준 70주 · 실험실 2',en:'Courses 38–47 · 70 weeks · 2 labs',zh:'课程38~47 · 约70周 · 2个实验室'}
   }
 ];
 

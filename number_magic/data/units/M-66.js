@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-66'] = {
-  id:'M-66', tier:'middle3', level:'35', order:21,
+  id:'M-66', tier:'middle3', level:'36', order:7,
   generator:'md66_quadEquation',
   title:{ ko:'이차방정식 풀이', en:'Solving Quadratic Equations', zh:'一元二次方程的解法' },
   subtitle:{ ko:'곱해서 0이 되려면 둘 중 하나는 0이어야 해요', en:'For a product to be zero, one of the factors must be zero', zh:'乘积要等于0，两个因式中必有一个是0' },

@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-65'] = {
-  id:'M-65', tier:'middle2', level:'33', order:17,
+  id:'M-65', tier:'middle2', level:'34', order:12,
   generator:'md65_linearFunction',
   title:{ ko:'일차함수의 기울기와 절편', en:'Slope & Intercept of a Linear Function', zh:'一次函数的斜率与截距' },
   subtitle:{ ko:'두 점만 있으면 직선 하나가 정해져요', en:'Two points are enough to pin down one straight line', zh:'只要两个点，就能确定一条直线' },

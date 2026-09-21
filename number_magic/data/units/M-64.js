@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-64'] = {
-  id:'M-64', tier:'middle2', level:'33', order:16,
+  id:'M-64', tier:'middle2', level:'33', order:6,
   generator:'md64_linearInequality',
   title:{ ko:'일차부등식', en:'Linear Inequalities', zh:'一元一次不等式' },
   subtitle:{ ko:'방정식과 똑같이 풀되, 음수로 나눌 때만 방향을 뒤집어요', en:'Solve it just like an equation — flip the sign only when you divide by a negative', zh:'解法和方程一样，只在除以负数时把方向反过来' },

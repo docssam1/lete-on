@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-08'] = {
-  id:'M-08', tier:'middle1', level:'31', order:8,
+  id:'M-08', tier:'middle1', level:'31', order:13,
   lineage:['ten-friends'],
   generator:'md8_terminating',
   title:{ ko:'유한소수 판별', en:'Terminating or Repeating?', zh:'判断有限小数' },

@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-27'] = {
-  id:'M-27', tier:'highmath1', level:'37', order:27,
+  id:'M-27', tier:'highmath1', level:'39', order:27,
   lineage:['rainbow-sum'],
   generator:'md27_rootsSumProduct',
   title:{ ko:'근과 계수의 관계', en:'Sum & Product of Roots', zh:'根与系数的关系' },

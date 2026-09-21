@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-67'] = {
-  id:'M-67', tier:'middle3', level:'35', order:22,
+  id:'M-67', tier:'middle3', level:'37', order:11,
   generator:'md67_quadVertex',
   title:{ ko:'이차함수의 꼭짓점', en:'The Vertex of a Quadratic', zh:'二次函数的顶点' },
   subtitle:{ ko:'제곱은 음수가 될 수 없어서 꺾이는 자리가 생겨요', en:'A square can never be negative — that is where the curve turns', zh:'平方不可能为负，所以才有转折的地方' },

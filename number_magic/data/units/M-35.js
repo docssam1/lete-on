@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-35'] = {
-  id:'M-35', tier:'highmath2', level:'39', order:35,
+  id:'M-35', tier:'highmath2', level:'41', order:35,
   generator:'md35_circleEquation',
   title:{ ko:'원의 방정식', en:'The Equation of a Circle', zh:'圆的方程' },
   subtitle:{ ko:'x항·y항을 완전제곱으로 묶으면 중심과 반지름이 보여요', en:'Complete the square on x and y to reveal the center and radius', zh:'把x、y项配成完全平方，中心和半径就显现出来' },

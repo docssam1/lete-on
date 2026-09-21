@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-43'] = {
-  id:'M-43', tier:'calculus1', level:'42', order:1,
+  id:'M-43', tier:'calculus1', level:'44', order:1,
   generator:'md43_limit',
   title:{ ko:'함수의 극한값 계산', en:'Evaluating Limits', zh:'函数极限值的计算' },
   subtitle:{ ko:'x가 다가갈 때 식이 어디로 향하는지 알아봐요', en:'Find where an expression heads as x approaches a value', zh:'看看当x靠近某个值时式子会趋向哪里' },

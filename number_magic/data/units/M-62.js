@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-62'] = {
-  id:'M-62', tier:'calculus1', level:'45', order:5,
+  id:'M-62', tier:'calculus1', level:'47', order:5,
   generator:'md62_velocityDistance',
   title:{ ko:'속도와 거리 활용', en:'Velocity & Distance Applications', zh:'速度与距离应用' },
   subtitle:{ ko:'위치를 미분하면 속도, 속도를 적분하면 거리', en:'Differentiate position to get velocity; integrate velocity to get distance', zh:'位置求导得速度，速度积分得距离' },

@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-34'] = {
-  id:'M-34', tier:'highmath2', level:'39', order:34,
+  id:'M-34', tier:'highmath2', level:'41', order:34,
   generator:'md34_parallelPerp',
   title:{ ko:'두 직선의 평행과 수직', en:'Parallel & Perpendicular Lines', zh:'两直线的平行与垂直' },
   subtitle:{ ko:'평행은 계수 비율이 같고, 수직은 기울기의 곱이 -1이에요', en:'Parallel lines share a coefficient ratio; perpendicular slopes multiply to -1', zh:'平行时系数比相同，垂直时斜率之积为-1' },

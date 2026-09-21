@@ -6,7 +6,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-16'] = {
-  id:'M-16', tier:'middle3', level:'34', order:16,
+  id:'M-16', tier:'middle3', level:'35', order:2,
   generator:'md16_simplifyRadical',
   title:{ ko:'근호의 정리', en:'Simplifying Radicals', zh:'根号的化简' },
   subtitle:{ ko:'같은 소인수가 두 번 만나면(짝) 근호 밖으로 나올 수 있어요', en:'When the same prime factor appears twice (a pair), it can step outside the root', zh:'同一个质因数出现两次(配对)，就能走出根号' },

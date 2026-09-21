@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-46'] = {
-  id:'M-46', tier:'calculus1', level:'43', order:2,
+  id:'M-46', tier:'calculus1', level:'45', order:2,
   generator:'md46_polyIntegral',
   title:{ ko:'다항함수의 적분', en:'Integrating Polynomials', zh:'多项式函数的积分' },
   subtitle:{ ko:'미분을 거꾸로 되돌리는 새 기호, ∫', en:'∫ — the symbol that undoes differentiation', zh:'把求导反过来的新符号——∫' },

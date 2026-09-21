@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-19'] = {
-  id:'M-19', tier:'middle3', level:'35', order:19,
+  id:'M-19', tier:'middle3', level:'36', order:5,
   lineage:['rainbow-sum'],
   generator:'md19_expandFormula',
   title:{ ko:'곱셈공식의 전개', en:'Expanding Multiplication Formulas', zh:'乘法公式的展开' },

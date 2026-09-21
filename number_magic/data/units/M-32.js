@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-32'] = {
-  id:'M-32', tier:'highmath2', level:'38', order:32,
+  id:'M-32', tier:'highmath2', level:'40', order:32,
   generator:'md32_midSection',
   title:{ ko:'중점과 내분점·외분점', en:'Midpoints & Division Points', zh:'中点与内分点·外分点' },
   subtitle:{ ko:'두 점을 정해진 비율로 나누는 점의 좌표를 찾아요', en:'Find the coordinates of a point that splits two points in a given ratio', zh:'求按指定比例分割两点的点的坐标' },

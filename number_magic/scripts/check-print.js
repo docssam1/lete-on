@@ -173,7 +173,9 @@ function serve(){
         const tx = String(p.tex || '');
         const hasRel   = /=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(tx);
         if(hasRel) return;
-        const hasVisual = !!c.querySelector('.nm-bond, .nm-b10, .nm-nl');
+        /* .nm-gp — 좌표평면(2026-09-21). 그림이 곧 문제인 유형이라 물음 줄이 없어도
+           인쇄물로 풀 수 있다(수 묶음·십진블록·수직선과 같은 부류). */
+        const hasVisual = !!c.querySelector('.nm-bond, .nm-b10, .nm-nl, .nm-gp');
         const hasAsk    = !!c.querySelector('.nm-print-ask');
         const hasSteps  = !!c.querySelector('.nm-print-steps');
         /* 문장제는 답 줄(답: ____) 아니면 식 틀(□ ○ □ = □) 중 하나를 그린다 —

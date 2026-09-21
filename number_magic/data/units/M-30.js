@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-30'] = {
-  id:'M-30', tier:'highmath1', level:'37', order:30,
+  id:'M-30', tier:'highmath1', level:'39', order:30,
   generator:'md30_matrix2x2',
   title:{ ko:'행렬의 덧셈·뺄셈·곱셈', en:'Matrix Addition, Subtraction & Multiplication', zh:'矩阵的加减乘法' },
   subtitle:{ ko:'같은 자리끼리 더하고, 행과 열을 짝지어 곱해요', en:'Add matching positions, multiply by pairing rows with columns', zh:'相同位置相加，行与列配对相乘' },

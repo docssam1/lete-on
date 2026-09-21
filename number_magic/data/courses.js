@@ -241,61 +241,59 @@ const COURSE_SPEC = [
     나온다). 라벨은 exam.js 가 단계에 따라 '창의 연산 ·' / '적용 ·' 으로 붙인다. */
  {id:29, tier:'middle1', title:{ko:'정수의 세계',en:'World of Integers',zh:'整数的世界'},
    drills:['MD1','MD2','MD3','CH5','MD47','MD48','MD1','MD2@2','MD3@2','CH5@2','MD47@2','MD48@2','MD1@3','MD2@3','MD3@3','CH5','MD47@3','MD48@3','MD1@4','MD2@4','CH5@4'], minSessions:11, magic:[['M-01'],['M-02'],['M-03'],['M-47'],['M-48']], creative:['MD3@3','MD2@4','MD48@3']},
- {id:30, tier:'middle1', title:{ko:'부호의 규칙',en:'Rules of Sign',zh:'符号的规则'},
-   drills:['MD4','MD5','MD6','MD49','MD50','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD4@4'], minSessions:8, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50']], creative:['MD50@3','MD6@3','MD4@4']},
- {id:31, tier:'middle1', title:{ko:'유리수 정복',en:'Conquering Rationals',zh:'征服有理数'},
-   drills:['MD7','MD8','MD9','MD51','MD7@2','MD8','MD9','MD51@2','MD7@3','MD9','MD51@3','MD9'], minSessions:6, magic:[['M-07'],['M-08'],['M-09'],['M-51']], creative:['MD51@3','MD9@4','MD7@3']},
+ /* 30 — 일차방정식은 **푸는 법 다음에 쓰는 법**이 와야 한다(2026-09-21, 원장 "일차방정식의
+    활용도 거리·속력·시간, 원가·정가 등 놓치지 마"). MD70 을 MD50 바로 뒤에 붙인다. */
+ {id:30, tier:'middle1', title:{ko:'부호의 규칙과 방정식',en:'Rules of Sign & Equations',zh:'符号的规则与方程'},
+   drills:['MD4','MD5','MD6','MD49','MD50','MD70','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD70@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD70@3','MD4@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50'],['M-70']], creative:['MD70@3','MD50@3','MD6@3']},
+ /* 31 — 좌표평면(MD68)과 정비례·반비례 그래프(MD69)를 여기서 연다. 원장 "정비례 반비례는".
+    MD51 은 값만 다뤘고 그래프가 없었다 — 이 둘이 뒤의 일차함수·이차함수 그래프의 바닥이다. */
+ {id:31, tier:'middle1', title:{ko:'유리수와 좌표평면',en:'Rationals & the Coordinate Plane',zh:'有理数与坐标平面'},
+   drills:['MD7','MD8','MD9','MD51','MD68','MD69','MD7@2','MD8','MD9@2','MD51@2','MD68@2','MD69@2','MD7@3','MD9@3','MD51@3','MD68@3','MD69@3'], minSessions:9, magic:[['M-07'],['M-08'],['M-09'],['M-51'],['M-68'],['M-69']], creative:['MD69@3','MD68@3','MD51@3']},
 
- /* 32~35 실배치(2026-08-25, 중등 W9·W10): MASTER-ROADMAP.md §8 Phase 4.
-    drills는 그 과정의 자기 재료 + "누적 혼합에 W8 재료 포함"(작업 지시)
-    — course32는 W8 마지막 재료 MD9를, course34(중3 진입부)는 중2 재료
-    MD14를 복습 풀에 얹는다(다른 과정들처럼 spec.drills에 얹으면 자기
-    재료로도 잡히고 이후 과정의 priorPool 순환에도 자동으로 실린다). */
- {id:32, tier:'middle2', title:{ko:'지수와 단항식',en:'Exponents & Monomials',zh:'指数与单项式'},
-   drills:['MD10','MD11','MD12','MD9','MD10@2','MD11@2','MD12@2','MD9','MD10@3','MD11@3','MD12@3','MD10@4'], minSessions:6, magic:[['M-10'],['M-11'],['M-12']], creative:['MD12@3','MD10@4','MD11@3']},
- /* 33 확장(2026-09-20, 중등 교과 연산 3차) — 원장 "교과연산과 창의연산이 같이 되어야
-    한다". 이 과정은 유형이 MD13·MD14 둘뿐이라 세션이 3회차였다. 중2 교과 연산의 기둥
-    셋(연립방정식 MD63·일차부등식 MD64·일차함수 MD65)이 아예 없어서였지 압축한 게
-    아니다. 셋을 넣으며 제목도 내용에 맞게 바꾼다. */
- {id:33, tier:'middle2', title:{ko:'연립방정식과 일차함수',en:'Systems, Inequalities & Lines',zh:'方程组与一次函数'},
-   drills:['MD13','MD14','MD63','MD64','MD65','MD13@2','MD63@2','MD64@2','MD65@2','MD14@2','MD63@3','MD64@3','MD65@3','MD65@4','MD65@5','MD13@3','MD14@3'], minSessions:9,
-   magic:[['M-13'],['M-14'],['M-63'],['M-64'],['M-65']], creative:['MD63@3','MD65@5','MD64@3']},
- {id:34, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
+ /* 32~37 중등 재편(2026-09-21) — 원장 "한 단원씩이 아니잖아". 한 과정에 한 단원씩 서도록
+    7과정 → 9과정으로 늘렸다. 중2 일차함수(34)와 중3 이차함수(37)가 새로 선 과정이고,
+    부등식·연립의 활용(33)과 이차방정식의 활용(36)은 각 풀이 과정 뒤에 붙였다.
+    이 두 과정을 끼우느라 고등 36~45 가 38~47 로 밀렸다(stages.js 범위도 함께 고침). */
+ {id:32, tier:'middle2', title:{ko:'지수와 식의 계산',en:'Exponents & Algebraic Expressions',zh:'指数与式的运算'},
+   drills:['MD10','MD11','MD12','MD13','MD9','MD10@2','MD11@2','MD12@2','MD13@2','MD10@3','MD11@3','MD12@3','MD13@3','MD10@4'], minSessions:7, magic:[['M-10'],['M-11'],['M-12'],['M-13']], creative:['MD13@3','MD10@4','MD11@3']},
+ {id:33, tier:'middle2', title:{ko:'부등식과 연립방정식',en:'Inequalities & Systems',zh:'不等式与方程组'},
+   drills:['MD14','MD64','MD71','MD63','MD72','MD14@2','MD64@2','MD71@2','MD63@2','MD72@2','MD14@3','MD64@3','MD71@3','MD63@3','MD72@3'], minSessions:9, magic:[['M-14'],['M-64'],['M-71'],['M-63'],['M-72']], creative:['MD72@3','MD71@3','MD63@3']},
+ {id:34, tier:'middle2', title:{ko:'일차함수',en:'Linear Functions',zh:'一次函数'},
+   drills:['MD73','MD74','MD65','MD75','MD76','MD73@2','MD74@2','MD65@2','MD75@2','MD76@2','MD73@3','MD74@3','MD65@3','MD75@3','MD76@3','MD65@4','MD65@5'], minSessions:10, magic:[['M-73'],['M-74'],['M-65'],['M-75'],['M-76']], creative:['MD76@3','MD65@5','MD75@3']},
+ {id:35, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
    drills:['MD15','MD16','MD17','MD14','MD15@2','MD16@2','MD17@2','MD15@3','MD16@3','MD17@3'], minSessions:5, magic:[['M-15'],['M-16'],['M-17']], creative:['MD17@3','MD16@3','MD15@3']},
- /* 35 확장(2026-09-20) — 인수분해(MD20)까지 와 놓고 **그 식을 =0으로 놓는 한 걸음**이
-    없었다. 중3 교과 연산의 마지막 두 기둥(이차방정식 풀이 MD66·이차함수 꼭짓점 MD67)을
-    넣어 인수분해 → 근 → 꼭짓점으로 이어지게 한다. */
- {id:35, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratics',zh:'因式分解与二次方程'},
-   drills:['MD18','MD19','MD20','MD66','MD67','MD18@2','MD19@2','MD20@2','MD66@2','MD67@2','MD19@3','MD66@3','MD67@3','MD67@4','MD18@3'], minSessions:8,
-   magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-67']], creative:['MD66@3','MD67@3','MD20@2']},
+ {id:36, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratic Equations',zh:'因式分解与二次方程'},
+   drills:['MD18','MD19','MD20','MD66','MD77','MD18@2','MD19@2','MD20@2','MD66@2','MD77@2','MD19@3','MD66@3','MD77@3','MD18@3'], minSessions:9, magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-77']], creative:['MD77@3','MD66@3','MD20@2']},
+ {id:37, tier:'middle3', title:{ko:'이차함수',en:'Quadratic Functions',zh:'二次函数'},
+   drills:['MD78','MD79','MD67','MD80','MD81','MD78@2','MD79@2','MD67@2','MD80@2','MD81@2','MD78@3','MD79@3','MD67@3','MD80@3','MD81@3','MD67@4'], minSessions:10, magic:[['M-78'],['M-79'],['M-67'],['M-80'],['M-81']], creative:['MD81@3','MD67@4','MD80@3']},
 
- /* 36~39 실배치(2026-08-25, 고등 W11·W12): MASTER-ROADMAP.md §6.
-    course36은 W10 마지막 재료 MD20을, course38(공통수학2 진입부)은
+ /* 38~41 실배치(2026-08-25, 고등 W11·W12; 2026-09-21 중등 두 과정을 끼우며 36~39 → 38~41): MASTER-ROADMAP.md §6.
+    course38은 W10 마지막 재료 MD20을, course40(공통수학2 진입부)은
     W11 마지막 재료 MD30을 복습 풀에 얹는다(32~35와 같은 관례 —
     spec.drills에 얹으면 자기 재료로도 잡히고 이후 과정의 priorPool
     순환에도 자동으로 실린다). 2022 개정 과목명 준수 — "고1" 표기
     없음(전부 "공통수학1"·"공통수학2"). */
- {id:36, tier:'highmath1', title:{ko:'다항식과 나머지정리',en:'Polynomials & the Remainder Theorem',zh:'多项式与余数定理'},
+ {id:38, tier:'highmath1', title:{ko:'다항식과 나머지정리',en:'Polynomials & the Remainder Theorem',zh:'多项式与余数定理'},
    drills:['MD21','MD22','MD23','MD24','MD25','MD20','MD21@2','MD22@2','MD23@2','MD24@2','MD25@2','MD21@3','MD22@3','MD23@3','MD24@3','MD25@3'], minSessions:8, magic:[['M-21'],['M-22'],['M-23'],['M-24'],['M-25']], creative:['MD25@3','MD24@3','MD23@3']},
- {id:37, tier:'highmath1', title:{ko:'이차방정식과 행렬',en:'Quadratics & Matrices',zh:'二次方程与矩阵'},
+ {id:39, tier:'highmath1', title:{ko:'이차방정식과 행렬',en:'Quadratics & Matrices',zh:'二次方程与矩阵'},
    drills:['MD26','MD27','MD28','MD29','MD30','MD26@2','MD27@2','MD28@2','MD29@2','MD30@2','MD26@3','MD27@3','MD28@3','MD29@3','MD30@3'], minSessions:8, magic:[['M-26'],['M-27'],['M-28'],['M-29'],['M-30']], creative:['MD30@3','MD29@3','MD27@3']},
- {id:38, tier:'highmath2', title:{ko:'점과 직선',en:'Points & Lines',zh:'点与直线'},
+ {id:40, tier:'highmath2', title:{ko:'점과 직선',en:'Points & Lines',zh:'点与直线'},
    drills:['MD31','MD32','MD33','MD30','MD31@2','MD32@2','MD33@2','MD31@3','MD32@3','MD33@3'], minSessions:5, magic:[['M-31'],['M-32'],['M-33']], creative:['MD33@3','MD32@3','MD31@3']},
- {id:39, tier:'highmath2', title:{ko:'직선의 관계와 원',en:'Relations Between Lines & Circles',zh:'直线的关系与圆'},
+ {id:41, tier:'highmath2', title:{ko:'직선의 관계와 원',en:'Relations Between Lines & Circles',zh:'直线的关系与圆'},
    drills:['MD34','MD35','MD34@2','MD35@2','MD34@3','MD35@3'], magic:[['M-34'],['M-35']], creative:['MD35@3','MD34@3']},
 
- /* 40~43 실배치(2026-08-25, 고등 W13·W14): MASTER-ROADMAP.md §6.
-    course40(대수 진입부)은 W12 마지막 재료 MD35를, course42(미적분Ⅰ
-    진입부)는 W13 마지막 재료 MD42를 복습 풀에 얹는다(36·38과 같은
+ /* 42~45 실배치(2026-08-25, 고등 W13·W14; 2026-09-21 재번호): MASTER-ROADMAP.md §6.
+    course42(대수 진입부)은 W12 마지막 재료 MD35를, course44(미적분Ⅰ
+    진입부)는 W13 마지막 재료 MD42를 복습 풀에 얹는다(38·40과 같은
     관례). 2022 개정 과목명 준수 — "고3" 표기 없음(전부 "대수"·
     "미적분Ⅰ"). */
- {id:40, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
+ {id:42, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
    drills:['MD36','MD37','MD38','MD35','MD36@2','MD37@2','MD38@2','MD36@3','MD37@3','MD38@3'], minSessions:5, magic:[['M-36'],['M-37'],['M-38']], creative:['MD38@3','MD37@3','MD36@3']},
- {id:41, tier:'algebra', title:{ko:'삼각함수와 수열',en:'Trigonometry & Sequences',zh:'三角函数与数列'},
+ {id:43, tier:'algebra', title:{ko:'삼각함수와 수열',en:'Trigonometry & Sequences',zh:'三角函数与数列'},
    drills:['MD39','MD40','MD41','MD42','MD39@2','MD40@2','MD41@2','MD42@2','MD39@3','MD40@3','MD41@3','MD42@3'], minSessions:6, magic:[['M-39'],['M-40'],['M-41'],['M-42']], creative:['MD42@3','MD41@3','MD39@3']},
- {id:42, tier:'calculus1', title:{ko:'극한과 미분',en:'Limits & Derivatives',zh:'极限与导数'},
+ {id:44, tier:'calculus1', title:{ko:'극한과 미분',en:'Limits & Derivatives',zh:'极限与导数'},
    drills:['MD43','MD44','MD42','MD43@2','MD44','MD43','MD44@3'], minSessions:4, magic:[['M-43'],['M-44']], creative:['MD44@3','MD43@3']},
- {id:43, tier:'calculus1', title:{ko:'접선과 적분',en:'Tangent Lines & Integration',zh:'切线与积分'},
+ {id:45, tier:'calculus1', title:{ko:'접선과 적분',en:'Tangent Lines & Integration',zh:'切线与积分'},
    drills:['MD45','MD46','MD45@2','MD46','MD45','MD46@3'], magic:[['M-45'],['M-46']], creative:['MD46@3','MD45@3']},
 
  /* 44~45 신설(2026-08-27, 심화 유형 2차 작업지시 "대수·미적분Ⅰ 심화는
@@ -308,10 +306,10 @@ const COURSE_SPEC = [
     한 세션에 의도적으로 묶음. 45는 5→5, 병합 없음). course44
     drills에 직전 재료 MD42(Σ)를, course45엔 MD46(적분)을 복습 풀에
     얹는다(40·42가 앞 과정 마지막 재료를 얹던 것과 같은 관례). */
- {id:44, tier:'algebra', title:{ko:'지수·로그방정식과 삼각법',en:'Exponential/Log Equations & Trigonometry',zh:'指数·对数方程与三角法'},
+ {id:46, tier:'algebra', title:{ko:'지수·로그방정식과 삼각법',en:'Exponential/Log Equations & Trigonometry',zh:'指数·对数方程与三角法'},
    drills:['MD52','MD53','MD54','MD55','MD56','MD57','MD42','MD52@2','MD53@2','MD54@2','MD55@2','MD56@2','MD57@2','MD52@3','MD53@3','MD54@3','MD55@3','MD56@3','MD57@3'], minSessions:10,
    magic:[['M-52'],['M-53'],['M-54'],['M-55','M-56'],['M-57']], creative:['MD57@3','MD54@3','MD56@3']},
- {id:45, tier:'calculus1', title:{ko:'극한·미분·적분 심화',en:'Advanced Limits, Derivatives & Integrals',zh:'极限·导数·积分进阶'},
+ {id:47, tier:'calculus1', title:{ko:'극한·미분·적분 심화',en:'Advanced Limits, Derivatives & Integrals',zh:'极限·导数·积分进阶'},
    drills:['MD58','MD59','MD60','MD61','MD62','MD46','MD58@2','MD59@2','MD60@2','MD61@2','MD62@2','MD58@3','MD59@3','MD60@3','MD61@3','MD62@3'], minSessions:8,
    magic:[['M-58'],['M-59'],['M-60'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD60@3']},
 ];

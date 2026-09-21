@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-18'] = {
-  id:'M-18', tier:'middle3', level:'35', order:18,
+  id:'M-18', tier:'middle3', level:'36', order:4,
   generator:'md18_rationalize',
   title:{ ko:'분모의 유리화', en:'Rationalizing the Denominator', zh:'分母有理化' },
   subtitle:{ ko:'분모에서 근호를 쫓아내요 — 분자·분모에 같은 근호를 곱해서', en:'Chase the root out of the denominator — multiply top and bottom by the same root', zh:'把根号从分母赶出去——分子分母同乘一个相同的根号' },

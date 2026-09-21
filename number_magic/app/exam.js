@@ -169,7 +169,8 @@
   /* flex 칸(.nm-w2-item 은 flex-column) 안에서 height:auto 만으로는 SVG 가 납작하게
      눌린다(실측 174×0 · 174×84). 비율을 명시하고 줄어들지 않게 못 박는다.
      (이 블록은 JS 템플릿 문자열 안이라 역따옴표를 쓰면 안 된다 — 한 번 깨뜨렸다.) */
-  .nm-gp { width: 42mm; aspect-ratio: 190 / 168; height: auto; flex: 0 0 auto;
+  /* 38mm — 42mm 이면 아래에 붙는 분수식(y=□/x)의 x 가 칸 밖으로 잘렸다(실측). */
+  .nm-gp { width: 38mm; aspect-ratio: 190 / 168; height: auto; flex: 0 0 auto;
     margin: 3px auto 2px; display: block; }
   .nm-gp .nm-gp-grid { fill: none; stroke: #9a9a9a; stroke-width: .5; }
   .nm-gp .nm-gp-axis { stroke: #000; stroke-width: 1.1; }
@@ -2196,6 +2197,39 @@ function numlineSvg(nl){
   return `<svg class="nm-nl" viewBox="0 0 260 96" role="img" aria-label="${esc(lk('수직선 점프','Number line jumps','数轴跳跃'))}">${s}</svg>`;
 }
 
+/* 곡선 path — **화면 위젯(widgets.js)과 인쇄(graphSvg)가 같이 쓰는 한 벌**.
+   kind: 'line'(y=mx+b) · 'parabola'(y=a(x-p)²+q) · 'hyperbola'(y=k/x, 두 가지) ·
+   'points'(곡선 없이 점만 — 좌표·사분면 문항).
+   여기에 두는 이유: drill.html·ws.html 은 widgets.js 를 싣지 않고 exam.js 만 싣는다.
+   반대로 두면 학습지에서 곡선이 통째로 빠진다. X·Y 는 좌표→화면 변환 함수. */
+function curvePath(g, xr, X, Y){
+  if(!g || g.kind === 'points') return '';
+  if(g.kind === 'parabola'){
+    let d = '';
+    for(let t = 0; t <= 120; t++){
+      const x = xr[0] + (xr[1]-xr[0]) * t / 120;
+      d += (t ? 'L' : 'M') + X(x) + ' ' + Y(g.a*(x-g.p)*(x-g.p) + g.q);
+    }
+    return d;
+  }
+  if(g.kind === 'hyperbola'){
+    /* y=k/x 는 x=0 에서 끊긴다 — 두 가지를 따로 그린다(이어 그리면 원점을 가로지르는
+       가짜 선이 생긴다). 0 에 너무 붙으면 세로로 치솟아 상자를 벗어나므로
+       |x| ≥ |k|/yMax 부터 그린다. */
+    const yMax = Math.max(1, Math.abs((g.yr || [-8,8])[1]));
+    const lim = Math.max(0.4, Math.abs(g.k) / yMax);
+    let d = '';
+    [[xr[0], -lim], [lim, xr[1]]].forEach(([x0, x1]) => {
+      for(let t = 0; t <= 60; t++){
+        const x = x0 + (x1-x0) * t / 60;
+        d += (t ? 'L' : 'M') + X(x) + ' ' + Y(g.k / x);
+      }
+    });
+    return d;
+  }
+  return 'M' + X(xr[0]) + ' ' + Y(g.m*xr[0] + g.b) + 'L' + X(xr[1]) + ' ' + Y(g.m*xr[1] + g.b);
+}
+
 /* ── 좌표평면(graph) 인쇄 그림 (2026-09-21) ────────────────────────
    원장 "일차함수 그래프는". 화면 위젯(widgets.js renderGraphPlane)과 **같은 규약**으로
    그린다 — 격자 한 칸 = 정수 1, 원점은 (0,0) 자리, 눈금 숫자는 2칸마다.
@@ -2228,18 +2262,12 @@ function graphSvg(g){
   s += `<text class="nm-gp-tick" x="${(+X(0)-5).toFixed(1)}" y="${(+Y(0)+9).toFixed(1)}" text-anchor="end">O</text>`;
   /* 곡선은 상자 밖으로 나가므로 잘라 낸다. clipPath id 는 한 지면에 여러 개가
      들어가도 안 부딪히게 그래프의 값에서 만든다(난수 금지 — 같은 문항은 같은 그림). */
-  const cid = 'pgc' + [g.kind, g.m, g.b, g.a, g.p, g.q, xr[0], yr[0]].join('_').replace(/[^A-Za-z0-9]/g,'');
-  let d = '';
-  if(g.kind === 'parabola'){
-    for(let t=0; t<=120; t++){
-      const x = xr[0] + (xr[1]-xr[0])*t/120;
-      d += (t?'L':'M') + X(x) + ' ' + Y(g.a*(x-g.p)*(x-g.p)+g.q);
-    }
-  } else {
-    d = `M${X(xr[0])} ${Y(g.m*xr[0]+g.b)}L${X(xr[1])} ${Y(g.m*xr[1]+g.b)}`;
-  }
+  const cid = 'pgc' + [g.kind, g.m, g.b, g.a, g.p, g.q, g.k, xr[0], yr[0]].join('_').replace(/[^A-Za-z0-9]/g,'');
+  /* 곡선 식은 화면 위젯(widgets.js curvePath)과 **한 곳**에서 온다 — 두 벌로 두면
+     언젠가 한쪽만 고쳐져 학습지와 화면의 그림이 갈린다(2026-09-21). */
+  const d = curvePath(g, xr, X, Y);
   s = `<defs><clipPath id="${cid}"><rect x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/></clipPath></defs>` + s
-    + `<path class="nm-gp-curve" clip-path="url(#${cid})" d="${d}"/>`;
+    + (d ? `<path class="nm-gp-curve" clip-path="url(#${cid})" d="${d}"/>` : '');
   (g.pts||[]).forEach(pt => {
     if(pt[0]<xr[0]||pt[0]>xr[1]||pt[1]<yr[0]||pt[1]>yr[1]) return;
     s += `<circle class="nm-gp-pt" cx="${X(pt[0])}" cy="${Y(pt[1])}" r="3"/>`;
@@ -3708,6 +3736,14 @@ function w2StrategyBandHtml(threadId, level){
   </div>`;
 }
 
+/* 개념 문장의 **강조** — 데이터가 마크다운 굵게 표기를 쓰는데 인쇄는 esc() 만 해서
+   별표 두 개가 그대로 찍히고 있었다(2026-09-21, 학습지 렌더로 발견 — MD69 "x와 y를
+   **곱하면**"). 스레드 데이터 수십 곳이 이 표기를 쓰므로 데이터가 아니라 여기서 푼다.
+   esc() 로 먼저 막은 뒤 별표만 태그로 바꾼다 — 그래야 데이터의 <b> 가 살아나지 않는다. */
+function escEmph(t){
+  return esc(String(t == null ? '' : t)).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+}
+
 function w2ConceptPanelHtml(threadId, level, extra){
   extra = extra || {};
   const info = resolveConceptUnit(threadId, level);
@@ -3730,7 +3766,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
       : `<b>${esc(headRaw)}</b>`;
     const descTrunc = truncateConceptLine(stripConceptTags(pickL(s.desc) || ''), 90);
     if(!headRaw && !descTrunc) return '';
-    return `<p class="nm-w2-concept-stage">${esc(CONCEPT_STAGE_MARKS[i])} ${headHtml}${headRaw && descTrunc ? ' — ' : ''}${esc(descTrunc)}</p>`;
+    return `<p class="nm-w2-concept-stage">${esc(CONCEPT_STAGE_MARKS[i])} ${headHtml}${headRaw && descTrunc ? ' — ' : ''}${escEmph(descTrunc)}</p>`;
   }).join('');
   const rule = (info.unit && info.unit.discover && info.unit.discover.rule)
     ? pickL(info.unit.discover.rule) : '';
@@ -3744,7 +3780,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
     <img class="nm-w2-board-mascot" src="assets/characters/docssam.png" alt="">
     <div class="nm-w2-board-body">
       <div class="nm-mn-kicker">${esc(lk('개념','CONCEPT','概念'))} · ${esc(nm)}</div>
-      ${sentence ? `<p class="nm-w2-concept-sentence">${esc(sentence)}</p>` : ''}
+      ${sentence ? `<p class="nm-w2-concept-sentence">${escEmph(sentence)}</p>` : ''}
       ${stageLines}
     </div>
   </div>
@@ -4699,6 +4735,9 @@ const NM_EXAM = {
   texToPlain,
   /* answerShape 정답 → \dfrac tex(테스트/검증용 노출). */
   ansTex,
+
+  /* 좌표평면 곡선 path — app/widgets.js(화면 위젯)가 렌더 시점에 불러 쓴다. */
+  curvePath,
 
   /* 학습지 코드 생성 */
   worksheetCode(config){

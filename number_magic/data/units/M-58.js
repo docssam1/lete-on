@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-58'] = {
-  id:'M-58', tier:'calculus1', level:'45', order:1,
+  id:'M-58', tier:'calculus1', level:'47', order:1,
   generator:'md58_limitRationalize',
   title:{ ko:'0/0 유리화형 극한', en:'Limits via Rationalization', zh:'0/0型有理化极限' },
   subtitle:{ ko:'켤레를 곱해 근호를 없애요', en:'Multiply by the conjugate to clear the root', zh:'乘以共轭式去掉根号' },
