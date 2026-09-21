@@ -7,6 +7,8 @@ import { mount3D, mountLabOf } from '../v2/mounts.js';
 import { SEMS, READY } from '../v2/units-index.js';
 import { escapeInApp } from '../v2/inapp.js';
 import * as misc from '../data/units/s41-u03.misc.js';
+import { record, analyze, remedyItems } from '../v2/progress.js';
+const LOGU = 's41-u03';   // 이 책의 확인 문제·개념 빈칸 기록이 쌓이는 단원 id(v2 화면과 같은 곳)
 escapeInApp();
 
 const A = '../assets/';
@@ -64,12 +66,14 @@ async function say(ids) {
       // 독쌤 음성 파일이 있으면 그것으로, 없으면 기기 음성으로 읽는다
       let fell = false;
       const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
-      audio = new Audio(await urlOf(line)); audio.preload = 'auto';
+      const src = await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
+      audio = new Audio(src); audio.preload = 'auto';
       audio.addEventListener('error', fall, { once: true });
       audio.addEventListener('playing', () => { voiceMode('독쌤 음성'); }, { once: true });
       audio.play().then(() => { setTimeout(() => { if (!audio || audio.paused) fall(); }, 400); }).catch(fall);
       if (fell || !audio) voiceMode('기기 음성');
     }
+    if (my !== sayToken) return;
     guide.classList.add('talk'); $p.textContent = '';
     for (const ch of line.text) {
       if (my !== sayToken) return;
@@ -177,6 +181,34 @@ const ads = (home) => [
     <ul class="ad-how"><li><i>▶</i><span>그림 속 <b>영상</b> — 실제 화산이 책 안에서 타오릅니다</span></li><li><i>✦</i><span>주황 인장 — <b>3D 실험실</b>이 책 밖으로 솟아오릅니다</span></li><li><i>ⓐ</i><span><b>빈칸</b>을 누르면 답이 드러납니다</span></li><li><i>Ⅰ</i><span>확인 문제는 누르면 <b>바로 채점</b>, 틀리면 <b>왜 틀렸는지</b>가 뜹니다</span></li><li><i>⤢</i><span>사진을 누르면 <b>크게</b></span></li></ul>
     <svg class="seal" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#8b1e1e"/><circle cx="50" cy="50" r="33" fill="none" stroke="#c9463a" stroke-width="2"/><text x="50" y="47" text-anchor="middle" fill="#f3d48a" font-size="11" font-weight="800">GFIELD</text><text x="50" y="62" text-anchor="middle" fill="#f3d48a" font-size="9">SCIENCE LAB</text></svg>`),
 ];
+const NUM = ['①', '②', '③', '④', '⑤', '⑥'];
+const STAGE = { concept: '개념', mini: '잠깐 확인', elaborate: '확장', evaluate: '점검', sub: '유형별', remedy: '한 판 더', book: '교재', 'book-concept': '교재 개념' };
+const diagCard = (k, lab, m, ev, rx) => `<section class="ad-card ${k}"><p><span class="ad-st">${lab}</span><b>${esc(misc.misconceptions[m].label)}</b></p><p class="ad-card-fix">${misc.misconceptions[m].fix}</p><ul>${ev.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>${rx ? `<p class="ad-rx">처방 · ${esc(rx)}</p>` : ''}</section>`;
+const SAMPLE_CARDS = [['c', '확정', 'M01', ['점검 · 운반 작용 설명 → ① 깎아 내는 것', '개념 · 빈칸 ①에 ‘운반’'], '개념 화면 다시 보기 → 확인 문제 3개'], ['s', '의심', 'M10', ['교재 · 백반 결정 실험 → ② 빨리 식힌 컵 — 큰 결정'], '확인 문제 2개'], ['r', '해소', 'M14', ['확장 · 승강기로 내려간다 → 그 뒤 2번 연속 맞힘'], '']];
+// 책 끝: 이 책에서 푼 확인 문제·형성평가·개념 빈칸이 쌓인 실제 진단 보고서(없으면 견본) + 처방 유사문제 샘플(바로 풀림)
+function reportPageHtml(I) {
+  const A = analyze(LOGU, misc), ST = { confirmed: ['c', '확정'], suspected: ['s', '의심'], resolved: ['r', '해소'] };
+  const sample = !A.total;
+  const pick = (e) => { const it = I[e.id]; if (e.chip) return `'${e.chip}' 자리를 틀림`; if (!it) return ''; if (e.picked != null && it.choices) return [].concat(e.picked).map((i) => `${NUM[i]} ${it.choices[i]}`).join(' / '); if (e.typed) return `"${e.typed}"`; return '빈칸·표를 틀림'; };
+  const cards = sample ? SAMPLE_CARDS.map((c) => diagCard(...c)).join('')
+    : A.order.slice(0, 4).map((m) => { const r = A.mis[m], [k, lab] = ST[r.status]; return diagCard(k, lab, m, r.wrong.slice(0, 2).map((e) => `${STAGE[e.stage] || e.stage} · ${(e.id.startsWith('book:') ? '개념 정리 빈칸' : (I[e.id]?.prompt || '').slice(0, 28) + '…')} → ${pick(e)}`), r.status === 'resolved' ? '' : `${['', '궁금', '실험', '개념', '확장', '점검'][misc.remedy?.[m]?.step || 3]} 화면 다시 보기 → 다음 쪽 처방 문제`); }).join('');
+  const elems = [['E1', '흙 언덕 실험'], ['E2', '흐르는 물의 작용'], ['E3', '강 주변 지형'], ['E4', '화산과 분출물'], ['E5', '화성암·화산 영향'], ['E6', '지진과 대처']];
+  const bars = elems.map(([id, n]) => { const o = A.byElement[id]; const p = o?.tot ? Math.round((o.ok / o.tot) * 100) : null; return `<div><span>${n}</span><i><b style="width:${p ?? 0}%" class="${p == null ? '' : p < 60 ? 'w' : p < 80 ? 'm' : 'g'}"></b></i><em>${p == null ? '—' : `${p}%`}</em></div>`; }).join('');
+  const verdict = sample ? '아직 이 책에서 푼 문제가 없어요. <b>확인 문제·형성평가</b>를 풀고 <b>개념 정리 빈칸</b>을 고르면 여기에 진짜 진단이 쌓여요. 아래는 견본이에요.'
+    : A.order.filter((m) => A.mis[m].status === 'confirmed').length ? `되풀이되는 오개념이 <em>${A.order.filter((m) => A.mis[m].status === 'confirmed').length}개</em> 있어요. 빨간 카드부터 다음 쪽 처방 문제를 풀어요.`
+    : A.order.length ? '한 번씩 헷갈린 것이 있어요. 노란 카드의 처방 문제로 확인해요.' : '오개념 없이 잘 이해하고 있어요!';
+  return `<div class="bk-banner report"><span>나의 진단 보고서</span></div><p class="bk-hint">${sample ? '견본 · ' : ''}이 책에서 고른 답을 오개념표로 읽은 결과예요. 학원 화면(진단 버튼)에서도 같은 내용을 볼 수 있어요.</p>
+    <div class="ad-rep"><div class="ad-rep-sum"><b>${A.right} / ${A.total}</b><span>${verdict}</span></div><div class="ad-bars">${bars}</div>${cards}</div>`;
+}
+function samplePageHtml(pool) {
+  const A = analyze(LOGU, misc), ms = A.order.filter((m) => A.mis[m].status !== 'resolved').slice(0, 2);
+  const want = ms.length ? ms : ['M01', 'M07', 'M10', 'M14'];
+  const seen = new Set(), items = [];
+  for (const m of want) for (const it of remedyItems(LOGU, m, misc, pool.filter((x) => x.answerContract.type === 'single-choice' && !seen.has(x.id)), ms.length ? 2 : 1)) { seen.add(it.id); items.push([m, it]); }
+  const gv = (it) => it.givens ? Object.entries(it.givens).map(([k, v]) => `<div class="bk-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b><br>' : `<b>${esc(k)}</b> `}${Array.isArray(v) ? v.map(esc).join('<br>') : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</div>`).join('') : '';
+  return `<div class="bk-banner check"><span>처방 문제 샘플</span></div><p class="bk-hint">${ms.length ? '진단 보고서의 오개념이 숨어 있는 문제만 골랐어요' : '견본 · 오개념 네 가지가 하나씩 숨어 있는 문제예요'}. 보기를 누르면 바로 채점되고, 틀리면 까닭이 뜹니다. 두 번 연속 맞히면 <b>해소</b>!</p>
+    <ol class="bk-items">${items.slice(0, 4).map(([m, it], i) => `<li class="bk-item"><span class="bk-qn">${String(i + 1).padStart(2, '0')}</span><p><span class="rx-tag">${esc(misc.misconceptions[m].label)}</span>${esc(it.prompt)}</p>${gv(it)}<ol class="bk-choices" data-key="${it.answerContract.answer}" data-id="${it.id}">${it.choices.map((c, j) => `<li data-j="${j}"><span>${NUM[j]}</span>${esc(c)}</li>`).join('')}</ol></li>`).join('')}</ol>`;
+}
 const backPage = () => adPage('back', `<svg class="cv" viewBox="0 0 210 297" aria-hidden="true">${GOLD}<rect x="9" y="9" width="192" height="279" rx="3" fill="none" stroke="url(#gd)" stroke-width="1.2"/>${corners(210, 297, 13)}</svg>
   <div class="bc-in"><p class="bc-k">GFIELD SCIENCE LAB</p><h2>우리 아이 과학,<br>읽고 보고 직접 해 보는 책으로</h2>
   <p>교과서 단원마다 실험 한 장 · 실제 영상과 3D 체험 실험실<br>A4 인쇄 교재 · 수업 화면까지 한 권에</p>
@@ -189,7 +221,8 @@ const book = $('.it-book'), wrapEl = $('.it-book-wrap');
 async function build() {
   $('.it-loading').hidden = false;
   const [bm, lm] = await Promise.all([CH[state.ch].book(), CH[state.ch].lesson()]);
-  const simMod = await import('../data/units/s41-u03.similar.js');
+  const [simMod, itMod] = await Promise.all([import('../data/units/s41-u03.similar.js'), import('../data/units/s41-u03.js')]);
+  const pool = [...simMod.similar, ...itMod.items]; state.I = Object.fromEntries(pool.map((i) => [i.id, i]));
   const html = renderChapter(bm.chapter, bm.art, simMod.similar, { teacher: state.teacher, live: true, media: bm.media });
   // 쪽 맞춤은 실제 A4 크기에서 한 번 하고, 쪽마다 따로 떼어 책장에 붙인다.
   const host = document.createElement('div'); host.className = 'it-measure'; host.innerHTML = html; document.body.appendChild(host);
@@ -199,7 +232,10 @@ async function build() {
   await document.fonts?.ready; fitPages(bk);
   const wrapPage = (sec, from) => { const w = document.createElement('div'); w.className = from.className; w.setAttribute('style', from.getAttribute('style')); w.appendChild(sec); return w; };
   const adSecs = [...adHost.children], chSecs = [...bk.children];
-  state.pages = [adSecs[0], ...adSecs.slice(1, 10), ...chSecs, adSecs[10]].map((s, i) => wrapPage(s, i < 10 || i === 10 + chSecs.length ? adHost : bk));
+  const endSec = (cls, inner) => { const d = document.createElement('section'); d.className = `bk-page end ${cls}`; d.innerHTML = inner; return d; };
+  const repSec = endSec('rep-live', reportPageHtml(state.I)), rxSec = endSec('rx-live', samplePageHtml(pool));
+  state.repSec = repSec;
+  state.pages = [adSecs[0], ...adSecs.slice(1, 10), ...chSecs, repSec, rxSec, adSecs[10]].map((s, i) => wrapPage(s, i < 10 || i === 12 + chSecs.length ? adHost : bk));
   state.chCount = chSecs.length; host.remove();
   state.L = lm.lesson; state.rows = [];
   layout(true);
@@ -207,6 +243,11 @@ async function build() {
     scene: (el) => mount3D(el, state.L.engage.scene, { autoplay: true }),
     lab: (el) => mountLabOf(state.L.explore.lab.kind)(el, { ...state.L.explore.lab, rows: state.rows, onRecord: (rows) => { state.rows = rows; } }),
     misc,
+    onAnswer: (kind, p) => {   // 이 책에서 고른 답도 기록 → 끝 쪽 진단 보고서에 바로 반영
+      if (kind === 'item' && state.I[p.id]) record(LOGU, state.I[p.id], 'book', p.ok, { picked: p.picked }, misc);
+      if (kind === 'blank') record(LOGU, { id: `book:${p.chip}`, taxonomy: { element: misc.misconceptions[misc.bookChips?.[p.chip]?.[1]]?.element } }, 'book-concept', p.ok, { chip: p.ok ? null : p.chip, revealed: p.revealed }, misc);
+      state.repSec.innerHTML = reportPageHtml(state.I);
+    },
   });
   $('.it-loading').hidden = true;
 }
@@ -277,6 +318,7 @@ function narrate() {
   for (const i of vis) {
     if (i === 0) ids.push('cover'); else if (i === 1) ids.push('ad1'); else if (i === 2) ids.push('ad2'); else if (i === 3 || i === 4) { if (!ids.includes('ad3')) ids.push('ad3'); }
     else if (i === 5) ids.push('home'); else if (i === 6) ids.push('diag'); else if (i === 7) ids.push('diag2'); else if (i === 8) ids.push('faq'); else if (i === 9) ids.push('live');
+    else if (i === c0 + cn) ids.push('myreport'); else if (i === c0 + cn + 1) ids.push('sample');
     else if (i >= c0 && i < c0 + cn) { const r = rel(i); const k = r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : r === 9 ? 'report' : r === 10 ? 'formative' : 'check'; if (!ids.includes(k)) ids.push(k); }
     else ids.push('print', 'cta');
   }
