@@ -105,7 +105,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
     const ac = it.answerContract, gv = it.givens;
     const givens = gv ? Object.entries(gv).map(([k, v]) => `<div class="bk-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b><br>' : `<b>${esc(k)}</b> `}${Array.isArray(v) ? v.map(esc).join('<br>') : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</div>`).join('') : '';
     const kk = ac.type === 'single-choice' ? [ac.answer] : ac.type === 'multi-choice' ? ac.answers : [];
-    const choices = it.choices ? `<ol class="bk-choices" data-key="${kk.join(',')}">${it.choices.map((c, j) => `<li data-j="${j}"><span>${NUM[j]}</span>${esc(c)}</li>`).join('')}</ol>` : '';
+    const choices = it.choices ? `<ol class="bk-choices" data-key="${kk.join(',')}" data-id="${it.id}">${it.choices.map((c, j) => `<li data-j="${j}"><span>${NUM[j]}</span>${esc(c)}</li>`).join('')}</ol>` : '';
     const key = ac.type === 'single-choice' ? NUM[ac.answer] : ac.type === 'multi-choice' ? ac.answers.map((a) => NUM[a]).join(', ') : ac.type === 'short-text' ? ac.answer : ac.sample;
     return `<li class="bk-item"><span class="bk-qn">${String(i + 1).padStart(2, '0')}</span><p>${esc(it.prompt)}</p>${givens}${choices}${it.choices ? (teacher ? `<div class="bk-ans">정답 ${esc(key)} — ${esc(it.explanation)}</div>` : '') : ans(`${key} — ${it.explanation}`, ac.type === 'written-explanation' ? 3 : 1)}</li>`;
   };

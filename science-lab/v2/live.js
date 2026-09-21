@@ -4,7 +4,8 @@
 //  · 사진 누르면 크게 · 빈칸 누르면 답 · 확인 문제 누르면 바로 채점
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-export function wireLive(root, { scene, lab, title = '' } = {}) {
+// chips: { 답낱말: [[보기들], 오개념] } — 개념 정리 빈칸을 고르게 한다. onAnswer(kind, payload) 로 결과를 알린다.
+export function wireLive(root, { scene, lab, title = '', chips = null, onAnswer = null } = {}) {
   root.querySelectorAll('.bk-video').forEach((v) => v.querySelector('.bk-play')?.addEventListener('click', (e) => {
     e.stopPropagation();
     v.innerHTML = `<video controls autoplay playsinline><source src="${v.dataset.src}" type="video/webm">${v.dataset.mp4 ? `<source src="${v.dataset.mp4}" type="video/mp4">` : ''}<source src="${v.dataset.full}" type="video/webm"></video>`;
@@ -21,14 +22,27 @@ export function wireLive(root, { scene, lab, title = '' } = {}) {
     e.stopPropagation(); const cap = img.closest('figure')?.querySelector('figcaption')?.innerHTML || '';
     openPop(img, '실제 사진', (el) => { el.innerHTML = `<figure class="pop-photo"><img src="${img.src}" alt=""><figcaption>${cap}</figcaption></figure>`; });
   }); });
-  root.querySelectorAll('.bk-blank[data-a]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); b.classList.toggle('open'); b.querySelector('i').textContent = b.classList.contains('open') ? b.dataset.a : b.dataset.m || (b.dataset.m = b.querySelector('i').textContent, b.dataset.m); }));
   root.querySelectorAll('.bk-blank[data-a] i').forEach((i) => { i.parentElement.dataset.m = i.textContent; });
+  root.querySelectorAll('.bk-blank[data-a]').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation(); const a = b.dataset.a, C = chips?.[a];
+    if (b.dataset.done) return;
+    if (!C) { b.classList.toggle('open'); b.querySelector('i').textContent = b.classList.contains('open') ? a : b.dataset.m; if (b.classList.contains('open')) onAnswer?.('blank', { chip: a, ok: true, revealed: true }); return; }
+    root.querySelector('.bk-chips')?.remove();
+    const pop = document.createElement('span'); pop.className = 'bk-chips';
+    pop.innerHTML = C[0].map((o) => `<button type="button" data-v="${esc(o)}">${esc(o)}</button>`).join('');
+    b.after(pop);
+    pop.querySelectorAll('button').forEach((bt) => bt.addEventListener('click', (ev) => {
+      ev.stopPropagation(); const ok = bt.dataset.v === a; b.dataset.done = '1'; b.classList.add('open', ok ? 'ok' : 'no'); b.querySelector('i').textContent = a;
+      pop.remove(); onAnswer?.('blank', { chip: a, ok, picked: bt.dataset.v });
+    }));
+  }));
   root.querySelectorAll('.bk-choices[data-key]').forEach((ol) => {
     const key = ol.dataset.key.split(',').filter(Boolean).map(Number); if (!key.length) return;
     ol.querySelectorAll('li').forEach((li) => li.addEventListener('click', (e) => {
       e.stopPropagation(); if (ol.dataset.done) return; ol.dataset.done = '1';
       const j = +li.dataset.j; ol.querySelectorAll('li').forEach((x) => { if (key.includes(+x.dataset.j)) x.classList.add('ok'); });
       if (!key.includes(j)) li.classList.add('no');
+      onAnswer?.('item', { id: ol.dataset.id, ok: key.includes(j), picked: j, el: ol });
     }));
   });
 }

@@ -4,6 +4,7 @@ import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
 import { pageHome } from './home.js';
 import { escapeInApp } from './inapp.js';
+import { record, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
 escapeInApp();
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
@@ -11,11 +12,12 @@ const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u0
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
   ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }),
   's41-u03': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03.lesson.js')),
-  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')) }),
+  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's41-u03b': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03b.lesson.js')),
-  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')) }),
+  ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),
   ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')) }) };
+const DATA_UNIT = { 's41-u03b': 's41-u03' }; const du = (u) => DATA_UNIT[u] || u; // 기록은 문항을 가진 단원 id로
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },
@@ -85,9 +87,11 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const fig = it.visualModel?.kind === 'authored-svg' ? `<div class="fig">${FIG[it.visualModel.figure] || ''}</div>` : '';
   const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => v && typeof v === 'object' && !Array.isArray(v)
     ? `<table class="tbl"><thead><tr>${Object.keys(v).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody><tr>${Object.values(v).map((c) => `<td>${esc([].concat(c).join(', '))}</td>`).join('')}</tr></tbody></table>`
-    : `<p class="lead"><b>${esc(k)}</b> ${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`).join('') : '';
+    : `<p class="lead">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b> ' : `<b>${esc(k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`).join('') : '';
   const head = `<p>${no ? `<span class="no">${no}.</span>` : ''}${ac.type === 'cloze' ? blanksHtml(it.prompt, ac.blanks, { print, show }) : esc(it.prompt)}</p>`;
   let body = '';
+  const CZ = !print && ac.type === 'cloze' && MISC?.cloze?.[it.id];
+  if (CZ) body = `<div class="chips">${CZ.options.map((opts, k) => `<div class="chip-row" data-k="${k}"><span class="chip-no">${CIRC[k]}</span>${opts.map((o) => `<button type="button" class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>`).join('')}</div><p class="why" hidden></p>`;
   if (ac.type === 'single-choice') {
     body = print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${show && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${esc(c)}</div>`).join('')}</div>`
       : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${esc(c)}</button>`).join('')}</div><p class="why" hidden></p>`;
@@ -112,17 +116,40 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const expl = print && show ? `<p class="why">${esc(it.explanation)}</p>` : '';
   return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${head}${fig}${giv}${body}${expl}</div>`;
 }
-let FIG = {}, BOOKX = {};
-function wireItem(card, it, onDone) {
+let FIG = {}, BOOKX = {}, MISC = null;
+// 오답 → 오개념 교정 문장. 연결된 오개념이 없으면 해설만.
+function whyHtml(it, ok, detail) {
+  if (ok) return `<b class="ok">맞았어요!</b> ${esc(it.explanation)}`;
+  const D = MISC?.distractors?.[it.id], T = MISC?.typed?.[it.id], ms = new Set();
+  if (D && detail.picked != null) for (const i of [].concat(detail.picked)) if (D[i]) ms.add(D[i]);
+  if (T && detail.typed) { let hit = false; for (const [re, m] of T.pats || []) if (re.test(detail.typed)) { ms.add(m); hit = true; } if (!hit && T.any) ms.add(T.any); }
+  if (detail.m) ms.add(detail.m);
+  const fixes = [...ms].map((m) => MISC.misconceptions[m]).filter(Boolean);
+  return fixes.length ? fixes.map((f) => `<span class="mis-tag">${esc(f.label)}</span><span class="fix">${f.fix}</span>`).join('') : `<b class="no">다시 생각해 봐요.</b> ${esc(it.explanation)}`;
+}
+// ctx = { u, stage } 가 있으면 결과를 기록한다. onDone(ok, detail)
+function wireItem(card, it, onDone, ctx) {
   const ac = it.answerContract;
-  card.querySelectorAll('.blank').forEach((b) => b.addEventListener('click', () => { b.textContent = ac.blanks[+b.dataset.k].answer; b.classList.add('open'); if ([...card.querySelectorAll('.blank')].every((x) => x.classList.contains('open'))) onDone?.(true); }));
+  const done = (ok, detail = {}) => { if (ctx) record(du(ctx.u), it, ctx.stage, ok, detail, MISC); onDone?.(ok, detail); };
+  const CZ = ac.type === 'cloze' && MISC?.cloze?.[it.id];
+  if (CZ) {
+    const $why = card.querySelector('.why'), got = {};
+    card.querySelectorAll('.chip-row').forEach((row) => row.querySelectorAll('.chip').forEach((ch) => ch.addEventListener('click', () => {
+      if (row.dataset.done) return; row.dataset.done = 1;
+      const k = +row.dataset.k, v = ch.dataset.v, ok = ac.blanks[k].accepted.includes(v) || ac.blanks[k].answer === v; got[k] = ok;
+      const b = card.querySelector(`.blank[data-k="${k}"]`); b.innerHTML = ok ? esc(v) : `<s>${esc(v)}</s> ${esc(ac.blanks[k].answer)}`; b.classList.add('open', ok ? 'right' : 'wrong');
+      ch.classList.add(ok ? 'right' : 'wrong'); if (!ok) row.querySelector(`.chip[data-v="${CSS.escape(ac.blanks[k].answer)}"]`)?.classList.add('right');
+      if (Object.keys(got).length === ac.blanks.length) { const wrong = Object.entries(got).filter(([, o]) => !o).map(([i]) => +i), all = !wrong.length;
+        $why.hidden = false; $why.innerHTML = whyHtml(it, all, { m: all ? null : CZ.wrong }); done(all, { wrongBlanks: wrong, picked: null }); }
+    })));
+  } else card.querySelectorAll('.blank').forEach((b) => b.addEventListener('click', () => { b.textContent = ac.blanks[+b.dataset.k].answer; b.classList.add('open'); if ([...card.querySelectorAll('.blank')].every((x) => x.classList.contains('open'))) done(true, { revealed: true }); }));
   if (ac.type === 'single-choice') {
     const $why = card.querySelector('.why');
     card.querySelectorAll('.choice').forEach((btn) => btn.addEventListener('click', () => {
       if (card.dataset.done) return; card.dataset.done = 1;
       const i = +btn.dataset.i, ok = i === ac.answer;
       btn.classList.add(ok ? 'right' : 'wrong'); card.querySelector(`.choice[data-i="${ac.answer}"]`).classList.add('right');
-      $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : '<b>다시 생각해 봐요.</b>'} ${esc(it.explanation)}`; onDone?.(ok);
+      $why.hidden = false; $why.innerHTML = whyHtml(it, ok, { picked: i }); done(ok, { picked: i });
     }));
   }
   if (ac.type === 'multi-choice') {
@@ -133,7 +160,8 @@ function wireItem(card, it, onDone) {
       if (picked.size < ac.answers.length) return;
       card.dataset.done = 1; const ok = ac.answers.every((a) => picked.has(a));
       card.querySelectorAll('.choice').forEach((b) => { const k = +b.dataset.i; if (ac.answers.includes(k)) b.classList.add('right'); else if (picked.has(k)) b.classList.add('wrong'); });
-      $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : '<b>다시 생각해 봐요.</b>'} ${esc(it.explanation)}`; onDone?.(ok);
+      const pk = [...picked].filter((k) => !ac.answers.includes(k));
+      $why.hidden = false; $why.innerHTML = whyHtml(it, ok, { picked: pk }); done(ok, { picked: pk });
     }));
   }
   if (ac.type === 'short-text') {
@@ -141,13 +169,18 @@ function wireItem(card, it, onDone) {
     const norm = (x) => String(x).replace(/[\s()·.,/:\-]/g, '').replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣').replace(/[oO]/g, '○').replace(/[xX]/g, '×').toUpperCase();
     const check = () => { if (card.dataset.done || !$in.value.trim()) return; card.dataset.done = 1;
       const ok = ac.accepted.some((a) => norm(a) === norm($in.value)); $in.readOnly = true; $in.classList.add(ok ? 'right' : 'wrong');
-      $why.hidden = false; $why.innerHTML = `${ok ? '맞았어요!' : `<b>다시 생각해 봐요.</b> 정답: ${esc(ac.answer)}.`} ${esc(it.explanation)}`; onDone?.(ok); };
+      $why.hidden = false; $why.innerHTML = `${ok ? '' : `<b class="no">정답: ${esc(ac.answer)}</b> `}${whyHtml(it, ok, { typed: $in.value })}`; done(ok, { typed: $in.value }); };
     card.querySelector('[data-act=check-short]').addEventListener('click', check);
     $in.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
   }
   card.querySelector('[data-act=check-table]')?.addEventListener('click', () => {
-    let right = 0, total = 0; card.querySelectorAll('select').forEach((s) => { total++; if (s.value === ac.rows[+s.dataset.r].answer[+s.dataset.c]) right++; });
-    const $why = card.querySelector('.why'); $why.hidden = false; $why.textContent = `${total}칸 중 ${right}칸 맞았어요. ${it.explanation}`; onDone?.(right === total);
+    if (card.dataset.done) return; const sels = [...card.querySelectorAll('select')];
+    if (sels.some((s) => !s.value)) { sels.find((s) => !s.value).focus(); return; }
+    let right = 0, total = 0;
+    sels.forEach((s) => { total++; const ok = s.value === ac.rows[+s.dataset.r].answer[+s.dataset.c]; if (ok) right++; s.classList.add(ok ? 'right' : 'wrong'); s.disabled = true; });
+    card.dataset.done = 1;
+    const all = right === total, $why = card.querySelector('.why'); $why.hidden = false;
+    $why.innerHTML = `<b class="${all ? 'ok' : 'no'}">${total}칸 중 ${right}칸 맞았어요.</b> ${whyHtml(it, all, { m: all ? null : MISC?.cells?.[it.id] })}`; done(all, { wrongCells: !all });
   });
 }
 
@@ -157,7 +190,7 @@ function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
   $app.innerHTML = `<header class="top"><div class="wrap">
       <a class="back" href="#/">‹ 지도로</a><h1>${esc(lesson.title)}</h1>
       ${stepIdx != null ? `<nav class="dots" aria-label="단계">${STEPS.map((s, i) => `<a href="#/${u}/${i + 1}" class="${i === stepIdx ? 'on' : (st.done || []).includes(i) ? 'done' : ''}" aria-label="${s.label}"></a>`).join('')}</nav>` : ''}
-      <button class="icon-btn" id="voice" aria-pressed="${voiceOn}" title="읽어 주기">${voiceOn ? '소리 켬' : '소리'}</button>
+      ${MISC ? `<a class="icon-btn diag-link" href="#/${u}/diagnose" title="진단·처방">진단</a>` : ''}<button class="icon-btn" id="voice" aria-pressed="${voiceOn}" title="읽어 주기">${voiceOn ? '소리 켬' : '소리'}</button>
     </div></header>
     <main class="wrap">${inner}</main>
     ${next ? `<div class="bottom"><div class="wrap"><a class="btn primary" href="${next}" style="display:flex;align-items:center;justify-content:center;text-decoration:none">${nextLabel}</a></div></div>` : ''}`;
@@ -229,7 +262,7 @@ function stepExplain(u, L, items) {
     ${itemHtml(I[x.table])}
     <h3>잠깐 확인</h3>${x.miniTest.map((id) => itemHtml(I[id])).join('')}`, { next: `#/${u}/4`, nextLabel: '영재원 문제로 넓히기' });
   teacher(document.getElementById('t'), x.say, { big: true });
-  $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id]));
+  $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id], null, { u, stage: x.miniTest.includes(c.dataset.id) ? 'mini' : 'concept' }));
 }
 
 // ④ 확장
@@ -241,7 +274,7 @@ function stepElaborate(u, L, items) {
     ${x.report ? `<div class="card"><h3>탐구보고서</h3><p class="lead">실험 기록이 보고서에 자동으로 들어가 있어요. 빈칸만 내 말로 채워요.</p><a class="btn" href="#/${u}/report" style="display:inline-flex;align-items:center;text-decoration:none">보고서 쓰기</a></div>` : ''}`,
   { next: `#/${u}/5`, nextLabel: '마지막 점검' });
   teacher(document.getElementById('t'), x.say);
-  $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id]));
+  $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id], null, { u, stage: 'elaborate' }));
 }
 
 // ⑤ 점검 — 관문 2/3, 다시 풀기는 보기 섞기
@@ -256,18 +289,65 @@ function stepEvaluate(u, L, items, retry = false) {
   frame(u, L, 4, `<p class="step-label">${STEPS[4].label}</p><div id="t"></div>
     ${list.map((it, k) => itemHtml(it, { no: k + 1 })).join('')}<div id="res"></div>`);
   teacher(document.getElementById('t'), x.say);
-  let answered = 0, right = 0;
+  let answered = 0, right = 0; const wrongIds = [];
   $app.querySelectorAll('.item').forEach((c, k) => wireItem(c, list[k], (ok) => {
-    answered++; if (ok) right++;
+    answered++; if (ok) right++; else wrongIds.push(list[k].id);
     if (answered === list.length) {
       const pass = right >= x.pass; store.set(u, { passed: pass || store.get(u).passed, best: Math.max(right, store.get(u).best || 0) });
+      const diag = MISC ? `<a class="btn" href="#/${u}/diagnose" style="display:inline-flex;align-items:center;text-decoration:none">진단 보기</a>` : '';
       document.getElementById('res').innerHTML = `<div class="card result"><p class="score">${right} / ${list.length}</p>
         <p>${pass ? '관문 통과! 깃발을 받았어요.' : `${x.pass}문제 이상 맞으면 통과예요.`}</p>
-        <div class="print-bar" style="justify-content:center">${pass ? `<button class="btn" id="again">다시 풀기</button><a class="btn primary" href="#/" style="display:inline-flex;align-items:center;text-decoration:none">다음 정거장</a>` : `<a class="btn" href="#/${u}/3" style="display:inline-flex;align-items:center;text-decoration:none">개념 다시 보기</a><button class="btn primary" id="again">다시 풀기</button>`}</div></div>`;
+        <div class="print-bar" style="justify-content:center">${pass ? `<button class="btn" id="again">다시 풀기</button>${diag}<a class="btn primary" href="#/" style="display:inline-flex;align-items:center;text-decoration:none">다음 정거장</a>` : `<a class="btn" href="#/${u}/3" style="display:inline-flex;align-items:center;text-decoration:none">개념 다시 보기</a>${diag}<button class="btn primary" id="again">다시 풀기</button>`}</div></div>
+        ${MISC && wrongIds.length ? `<div id="drill"></div>` : ''}`;
       teacher(document.getElementById('t'), [{ mood: pass ? 'praise' : 'encourage', text: pass ? '정말 잘했어요!' : '괜찮아요, 한 번 더 해 볼까요?' }]);
       document.getElementById('again').addEventListener('click', () => stepEvaluate(u, L, items, true));
+      if (MISC && wrongIds.length) drillFor(u, wrongIds, document.getElementById('drill'));
     }
-  }));
+  }, { u, stage: 'evaluate' }));
+}
+
+// 틀린 문항의 오개념마다 유사문항 한 판 더(같은 오개념이 오답 보기로 들어 있는 문항, 안 푼 것 먼저)
+function drillFor(u, wrongIds, el) {
+  const pool = [...(BOOKX.similar || []), ...(BOOKX.items || [])];
+  const L = readLog(du(u)), ms = new Set();
+  for (const id of wrongIds) { const e = [...L].reverse().find((x) => x.id === id); for (const m of e?.m || []) ms.add(m); }
+  if (!ms.size) return;
+  el.innerHTML = `<h3 class="h-drill">틀린 까닭으로 한 판 더</h3>` + [...ms].map((m) => { const M = MISC.misconceptions[m], its = remedyItems(du(u), m, MISC, pool, 2).filter((i) => !wrongIds.includes(i.id));
+    return its.length ? `<div class="card drill"><p class="mis-tag">${esc(M.label)}</p><p class="fix">${M.fix}</p></div>${its.map((it) => itemHtml(it)).join('')}` : ''; }).join('');
+  const I = Object.fromEntries(pool.map((i) => [i.id, i]));
+  el.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id], null, { u, stage: 'remedy' }));
+}
+
+// 진단·분석·처방 — 학습 중 고른 오답을 오개념표로 읽어 정리한다(학생용/강사용, 인쇄)
+function pageDiagnose(u, L, items, mode = 'student') {
+  const A = analyze(du(u), MISC), tx = BOOKX.taxonomy, pool = [...(BOOKX.similar || []), ...items];
+  const I = Object.fromEntries(pool.map((i) => [i.id, i])), T = mode === 'teacher';
+  const STAGE = { concept: '개념', mini: '잠깐 확인', elaborate: '확장', evaluate: '점검', sub: '유형별', remedy: '한 판 더', book: '교재', 'book-concept': '교재 개념' };
+  const ST = { confirmed: ['확정', 'st-c'], suspected: ['의심', 'st-s'], resolved: ['해소', 'st-r'] };
+  const pct = (o) => (o.tot ? Math.round((o.ok / o.tot) * 100) : null);
+  const bar = (name, o) => { const p = pct(o); return `<div class="bar"><span>${esc(name)}</span><i><b style="width:${p ?? 0}%" class="${p == null ? '' : p < 60 ? 'weak' : p < 80 ? 'mid' : 'good'}"></b></i><em>${p == null ? '—' : `${p}%`}<small> ${o.ok}/${o.tot}</small></em></div>`; };
+  const elems = (tx?.elements || []).map((e) => bar(e.name, A.byElement[e.id] || { ok: 0, tot: 0 })).join('');
+  const pickText = (e) => { const it = I[e.id]; if (e.chip) return `'${e.chip}' 자리를 틀림`; if (!it) return ''; if (e.picked != null && it.choices) return [].concat(e.picked).map((i) => `${CIRC[i]} ${it.choices[i]}`).join(' / '); if (e.typed) return `"${e.typed}"`; return '빈칸·표를 틀림'; };
+  const evText = (e) => (e.id.startsWith('book:') ? '개념 정리 빈칸' : `${I[e.id]?.prompt?.slice(0, 40) || e.id}…`);
+  const cards = A.order.map((m, ci) => { const M = MISC.misconceptions[m], r = A.mis[m], [lab, cls] = ST[r.status];
+    const rem = remedyItems(du(u), m, MISC, pool, 3);
+    return `<section class="card mis ${cls}"><div class="mis-head"><span class="st">${lab}</span><h3>${esc(M.label)}</h3></div>
+      <p class="fix">${M.fix}</p>
+      <details ${T ? 'open' : ''}><summary>근거 ${r.wrong.length}건${r.streak ? ` · 그 뒤 ${r.streak}번 연속 맞힘` : ''}</summary><ul class="ev">${r.wrong.map((e) => `<li><b>${esc(STAGE[e.stage] || e.stage)}</b> ${esc(evText(e))} → <span class="picked">${esc(pickText(e))}</span></li>`).join('')}</ul></details>
+      ${r.status === 'resolved' ? '' : `<div class="rx"><b>처방</b> <a href="#/${u}/${MISC.remedy?.[m]?.step || 3}">${['', '궁금', '실험', '개념', '확장', '점검'][MISC.remedy?.[m]?.step || 3]} 화면 다시 보기</a> · 아래 ${rem.length}문제로 확인</div>
+      <details class="rx-d" ${ci === 0 ? 'open' : ''}><summary>처방 문제 ${rem.length}개 풀기</summary><div class="rx-items">${rem.map((it) => itemHtml(it)).join('')}</div></details>`}</section>`; }).join('');
+  const verdict = !A.total ? '아직 푼 문제가 없어요. 5단계 탐구나 유형별 문제를 풀면 여기에 진단이 쌓여요.'
+    : A.order.filter((m) => A.mis[m].status === 'confirmed').length ? `되풀이되는 오개념이 <b>${A.order.filter((m) => A.mis[m].status === 'confirmed').length}개</b> 있어요. 빨간 카드부터 처방 문제를 풀어요.`
+    : A.order.filter((m) => A.mis[m].status === 'suspected').length ? '한 번씩 헷갈린 것이 있어요. 노란 카드의 문제로 확인해요.' : '오개념 없이 잘 이해하고 있어요!';
+  frame(u, L, null, `<p class="step-label">진단 · 분석 · 처방</p><h2>${esc(L.title)}</h2>
+    <div class="print-bar no-print"><a class="btn${T ? '' : ' primary'}" href="#/${u}/diagnose">학생용</a><a class="btn${T ? ' primary' : ''}" href="#/${u}/diagnose/teacher">강사용</a><button class="btn" onclick="print()">인쇄</button>${T ? '<button class="btn" id="reset">기록 지우기</button>' : ''}</div>
+    <div class="card sum"><p class="score">${A.right} / ${A.total}</p><p class="verdict">${verdict}</p>
+      <p class="legend"><span class="st st-c">확정</span> 서로 다른 문제 2개 이상에서 같은 오개념 <span class="st st-s">의심</span> 1번 <span class="st st-r">해소</span> 그 뒤 2번 연속 맞힘${A.slips ? ` · 단순 실수 ${A.slips}` : ''}${A.reveals ? ` · 답 열어 봄 ${A.reveals}` : ''}</p></div>
+    <div class="card"><h3>소단원별 정답률</h3>${elems}</div>
+    ${cards || ''}
+    ${T ? `<div class="card"><h3>유형별 정답률</h3>${(tx?.types || []).filter((t) => A.byType[t.id]).map((t) => bar(t.name, A.byType[t.id])).join('') || '<p class="lead">아직 없음</p>'}</div>` : ''}`);
+  $app.querySelectorAll('.rx-items .item').forEach((c) => wireItem(c, I[c.dataset.id], () => setTimeout(() => pageDiagnose(u, L, items, mode), 1400), { u, stage: 'remedy' }));
+  $app.querySelector('#reset')?.addEventListener('click', () => { if (confirm('이 단원의 학습 기록을 지울까요?')) { clearLog(du(u)); pageDiagnose(u, L, items, mode); } });
 }
 
 // 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
@@ -280,7 +360,7 @@ function pageSub(u, L, eid) {
     <nav class="modes" aria-label="소단원">${tx.elements.map((x, i) => `<a href="#/${u}/sub/${x.id}" class="btn" style="display:inline-flex;align-items:center;text-decoration:none;min-height:44px;font-size:17px${x.id === e.id ? ';background:var(--navy);color:var(--on-navy)' : ''}">${i + 1}</a>`).join('')}</nav>
     ${types.map((t) => `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${sim.filter((s) => s.taxonomy.type === t.id).map((s) => itemHtml(s)).join('')}`).join('')}`);
   const I = Object.fromEntries(sim.map((s) => [s.id, s]));
-  $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id]));
+  $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id], null, { u, stage: 'sub' }));
 }
 
 // 준비물 페이지 (QR 도착지)
@@ -367,8 +447,16 @@ async function pageLabBook(u, mod, mode) {
   scrollTo(0, 0);
   const bk = $app.querySelector('.bk'), fit = () => bk.isConnected && fitPages(bk), L = mod.lesson;
   fit(); document.fonts?.ready.then(fit);
+  const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));
+  const onAnswer = (kind, p) => {
+    if (kind === 'item' && I[p.id]) { const it = I[p.id]; record(du(u), it, 'book', p.ok, { picked: p.picked }, MISC);
+      if (!p.ok && MISC) { const m = MISC.distractors?.[it.id]?.[p.picked], M = m && MISC.misconceptions[m]; if (M) { const d = document.createElement('div'); d.className = 'bk-fix'; d.innerHTML = `<span class="mis-tag">${esc(M.label)}</span> ${M.fix}`; p.el.after(d); } } }
+    if (kind === 'blank' && MISC) { const pseudo = { id: `book:${p.chip}`, taxonomy: { element: MISC.misconceptions[MISC.bookChips?.[p.chip]?.[1]]?.element } };
+      record(du(u), pseudo, 'book-concept', p.ok, { chip: p.ok ? null : p.chip, revealed: p.revealed }, MISC); }
+  };
   if (L) wireLive(bk, { scene: (el) => mount3D(el, L.engage.scene, { autoplay: true }),
-    lab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }) });
+    lab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }),
+    chips: MISC?.bookChips || null, onAnswer });
 }
 async function pageLabClass(u, mod, L, mode, idx) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
@@ -383,10 +471,11 @@ async function route() {
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
-  const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar };
+  const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, items }; MISC = mod.misc || null;
   if (a === 'sub') return pageSub(u, L, b);
   if (!mod.lesson && !['print', 'lab-book', 'lab-class'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
   if (a === 'kit') return pageKit(u, L);
+  if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
   if (a === 'report') return pageReport(u, L);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
   if (a === 'lab-book') return pageLabBook(u, mod, b || 'student');
