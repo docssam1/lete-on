@@ -57,7 +57,7 @@ NM_TGEN['md1_intConcept'] = function (params, rng) {
     const a = signOf(rng) * mag;
     return {
       prompt: {
-        ko: `|${a}|의 값을 구해요 — 절댓값은 원점(0)에서 그 수까지의 거리예요`,
+        ko: `|${a}|의 값을 구합니다 — 절댓값은 원점(0)에서 그 수까지의 거리입니다`,
         en: `Find |${a}| — absolute value is the distance from 0 to that number`,
         zh: `求|${a}|——绝对值是这个数到原点(0)的距离`
       },
@@ -130,7 +130,7 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
     const wa = wrapSigned(a), wb = wrapSigned(b);
     return {
       prompt: {
-        ko: `${wa} + ${wb}: 부호가 같은 두 수의 덧셈이에요 — 절댓값끼리 더하고 공통 부호를 붙여요`,
+        ko: `${wa} + ${wb}: 부호가 같은 두 수의 덧셈입니다 — 절댓값끼리 더하고 공통 부호를 붙입니다`,
         en: `${wa} + ${wb}: same-sign addition — add the absolute values, keep the shared sign`,
         zh: `${wa} + ${wb}：同号相加——先加绝对值，再带上共同的符号`
       },
@@ -156,7 +156,7 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
     const wa = wrapSigned(a), wb = wrapSigned(b);
     return {
       prompt: {
-        ko: `${wa} + ${wb}: 부호가 다른 두 수의 덧셈이에요 — 절댓값의 차에 절댓값이 큰 쪽 부호를 붙여요`,
+        ko: `${wa} + ${wb}: 부호가 다른 두 수의 덧셈입니다 — 절댓값의 차에 절댓값이 큰 쪽 부호를 붙입니다`,
         en: `${wa} + ${wb}: different-sign addition — subtract the absolute values, keep the sign of the larger one`,
         zh: `${wa} + ${wb}：异号相加——用绝对值的差，符号跟绝对值大的那个数一致`
       },
@@ -183,7 +183,7 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
     const answer = x + flipped;
     return {
       prompt: {
-        ko: `${x} ${op} (${y}): 괄호를 풀어서 덧셈으로 바꿔 계산해요`,
+        ko: `${x} ${op} (${y}): 괄호를 풀어서 덧셈으로 바꿔 계산합니다`,
         en: `${x} ${op} (${y}): open the brackets and turn it into addition`,
         zh: `${x} ${op} (${y})：把括号打开，变成加法来算`
       },
@@ -208,7 +208,7 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
   const answer = op2 === '+' ? step1 + m3 : step1 - m3;
   return {
     prompt: {
-      ko: `${m1} ${op1} ${m2} ${op2} ${m3}: 세 수의 덧뺄셈은 앞에서부터 차례로 계산해요`,
+      ko: `${m1} ${op1} ${m2} ${op2} ${m3}: 세 수의 덧뺄셈은 앞에서부터 차례로 계산합니다`,
       en: `${m1} ${op1} ${m2} ${op2} ${m3}: solve three-number ± left to right`,
       zh: `${m1} ${op1} ${m2} ${op2} ${m3}：三个数的加减法从左往右依次计算`
     },
@@ -239,7 +239,7 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
     const [n, den] = normFrac(a1 + a2, d);
     return {
       prompt: {
-        ko: `분모가 같으면 정수처럼 분자끼리만 계산해요`,
+        ko: `분모가 같으면 정수처럼 분자끼리만 계산합니다`,
         en: `Same denominator — just combine the numerators, like integers`,
         zh: `分母相同——像整数一样只算分子'`
       },
@@ -264,7 +264,7 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
     const [n, den] = normFrac(conv1 + conv2, LCD);
     return {
       prompt: {
-        ko: `분모가 다르면 분모의 최소공배수로 통분한 뒤 더해요 (최소공배수=${LCD})`,
+        ko: `분모가 다르면 분모의 최소공배수로 통분한 뒤 더합니다 (최소공배수=${LCD})`,
         en: `Different denominators — convert to the LCM first, then add (LCM=${LCD})`,
         zh: `分母不同——先通分到最小公倍数再相加(最小公倍数=${LCD})`
       },
@@ -288,7 +288,7 @@ NM_TGEN['md3_ratAddSub'] = function (params, rng) {
   const exprTex = terms.map((a, i) => (i === 0 ? `\\dfrac{${a}}{${ds[i]}}` : ` + \\dfrac{${a}}{${ds[i]}}`)).join('');
   return {
     prompt: {
-      ko: `세 유리수의 덧뺄셈 혼합이에요. 분모의 최소공배수로 통분한 뒤 앞에서부터 계산해요 (최소공배수=${LCD})`,
+      ko: `세 유리수의 덧뺄셈 혼합입니다. 분모의 최소공배수로 통분한 뒤 앞에서부터 계산합니다 (최소공배수=${LCD})`,
       en: `Mixed addition of three rational numbers — convert to the LCM, then combine left to right (LCM=${LCD})`,
       zh: `三个有理数的混合加减——先通分到最小公倍数，再从左到右计算(最小公倍数=${LCD})`
     },
@@ -322,7 +322,7 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const product = a * b;
     return {
       prompt: {
-        ko: `${a} × ${wrapSigned(b)}: 곱의 부호를 먼저 정하고 절댓값끼리 곱해요`,
+        ko: `${a} × ${wrapSigned(b)}: 곱의 부호를 먼저 정하고 절댓값끼리 곱합니다`,
         en: `${a} × ${b}: decide the sign of the product first, then multiply the absolute values`,
         zh: `${a} × ${b}：先确定积的符号，再把绝对值相乘`
       },
@@ -348,7 +348,7 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const negCount = (a < 0 ? 1 : 0) + (b < 0 ? 1 : 0);
     return {
       prompt: {
-        ko: `${a} ÷ ${wrapSigned(b)}: 몫의 부호를 먼저 정하고 절댓값끼리 나눠요`,
+        ko: `${a} ÷ ${wrapSigned(b)}: 몫의 부호를 먼저 정하고 절댓값끼리 나눕니다`,
         en: `${a} ÷ ${b}: decide the sign of the quotient first, then divide the absolute values`,
         zh: `${a} ÷ ${b}：先确定商的符号，再把绝对值相除`
       },
@@ -378,7 +378,7 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const absTex = factors.map(f => `|${f}|`).join(' \\times ');
     return {
       prompt: {
-        ko: `세 개 이상의 정수의 곱셈 — 음수가 짝수 개면 +, 홀수 개면 -예요`,
+        ko: `세 개 이상의 정수의 곱셈 — 음수가 짝수 개면 +, 홀수 개면 -입니다`,
         en: `Multiplying three or more integers — an even count of negatives gives +, odd gives -`,
         zh: `三个以上整数相乘——负数个数为偶数得正，为奇数得负`
       },
@@ -407,7 +407,7 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     const answer = q1 * c;
     return {
       prompt: {
-        ko: `${a} \\div ${b} \\times ${c}: 곱셈·나눗셈 혼합은 앞에서부터 차례로 계산해요`,
+        ko: `${a} \\div ${b} \\times ${c}: 곱셈·나눗셈 혼합은 앞에서부터 차례로 계산합니다`,
         en: `${a} ÷ ${b} × ${c}: mixed × and ÷ — work left to right`,
         zh: `${a} ÷ ${b} × ${c}：乘除混合运算从左到右依次计算`
       },
@@ -431,7 +431,7 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
   const answer = interim / c;
   return {
     prompt: {
-      ko: `${a} \\times ${b} \\div ${c}: 곱셈·나눗셈 혼합은 앞에서부터 차례로 계산해요`,
+      ko: `${a} \\times ${b} \\div ${c}: 곱셈·나눗셈 혼합은 앞에서부터 차례로 계산합니다`,
       en: `${a} × ${b} ÷ ${c}: mixed × and ÷ — work left to right`,
       zh: `${a} × ${b} ÷ ${c}：乘除混合运算从左到右依次计算`
     },
@@ -471,7 +471,7 @@ NM_TGEN['md5_signedPower'] = function (params, rng) {
     const repeated = Array(n).fill(`(${-a})`).join(' \\times ');
     return {
       prompt: {
-        ko: `(-${a})^{${n}}: 밑이 통째로 괄호 안에 있어요 — (-${a})를 ${n}번 곱해요`,
+        ko: `(-${a})^{${n}}: 밑이 통째로 괄호 안에 있습니다 — (-${a})를 ${n}번 곱합니다`,
         en: `(-${a})^${n}: the base itself is negative — multiply (-${a}) by itself ${n} times`,
         zh: `(-${a})^{${n}}：整个底数都在括号里——把(-${a})连乘${n}次`
       },
@@ -489,7 +489,7 @@ NM_TGEN['md5_signedPower'] = function (params, rng) {
   const answer = -pw;
   return {
     prompt: {
-      ko: `-${a}^{${n}}: 지수는 ${a}에만 걸려요 — ${a}^{${n}}을 먼저 구하고 마지막에 -를 붙여요`,
+      ko: `-${a}^{${n}}: 지수는 ${a}에만 걸립니다 — ${a}^{${n}}을 먼저 구하고 마지막에 -를 붙입니다`,
       en: `-${a}^${n}: the exponent applies only to ${a} — find ${a}^${n} first, then attach the minus sign`,
       zh: `-${a}^{${n}}：指数只作用于${a}——先求${a}^{${n}}，最后再加负号`
     },
@@ -523,7 +523,7 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
     const answer = a + bc;
     return {
       prompt: {
-        ko: `${a} + ${b} \\times ${c}: 괄호가 없으면 곱셈을 먼저 계산해요`,
+        ko: `${a} + ${b} \\times ${c}: 괄호가 없으면 곱셈을 먼저 계산합니다`,
         en: `${a} + ${b} × ${c}: no brackets — multiply first`,
         zh: `${a} + ${b} × ${c}：没有括号先算乘法`
       },
@@ -615,7 +615,7 @@ NM_TGEN['md7_ratMulDiv'] = function (params, rng) {
     const [n, den] = normFrac(a1 * a2, d1 * d2);
     return {
       prompt: {
-        ko: `유리수의 곱셈은 곱의 부호를 먼저 정한 뒤, 분자는 분자끼리 분모는 분모끼리 곱해요`,
+        ko: `유리수의 곱셈은 곱의 부호를 먼저 정한 뒤, 분자는 분자끼리 분모는 분모끼리 곱합니다`,
         en: `Multiplying rationals: decide the sign first, then multiply numerators and denominators separately`,
         zh: `有理数乘法：先确定积的符号，再分子乘分子、分母乘分母`
       },
@@ -664,7 +664,7 @@ NM_TGEN['md7_ratMulDiv'] = function (params, rng) {
   const [n, dd] = normFrac(num, den);
   return {
     prompt: {
-      ko: `세 유리수의 곱셈·나눗셈 혼합 — 음수 개수로 부호를 먼저 정하고, 나눗셈은 역수의 곱셈으로 바꿔요`,
+      ko: `세 유리수의 곱셈·나눗셈 혼합 — 음수 개수로 부호를 먼저 정하고, 나눗셈은 역수의 곱셈으로 바꿉니다`,
       en: `Mixed × and ÷ of three rationals — count negatives for the sign first, turn ÷ into × by the reciprocal`,
       zh: `三个有理数的乘除混合——先用负数个数定符号，除法换成乘倒数'`
     },
@@ -713,7 +713,7 @@ NM_TGEN['md8_terminating'] = function (params, rng) {
   while (remaining % 5 === 0) remaining /= 5;
   return {
     prompt: {
-      ko: `\\dfrac{${dispNum}}{${dispDen}}를 소수로 나타내면 유한소수일까요? 유한소수면 1, 순환소수(무한소수)면 0을 눌러요`,
+      ko: `\\dfrac{${dispNum}}{${dispDen}}를 소수로 나타내면 유한소수일까요? 유한소수면 1, 순환소수(무한소수)면 0을 누릅니다`,
       en: `Does ${dispNum}/${dispDen} become a terminating decimal? Press 1 if terminating, 0 if repeating`,
       zh: `${dispNum}/${dispDen}化成小数是有限小数吗？有限小数按1，循环小数按0`
     },
@@ -749,7 +749,7 @@ NM_TGEN['md9_repeatToFrac'] = function (params, rng) {
 
   return {
     prompt: {
-      ko: `순환소수를 분수로! 반복 전 자리(${Ppad})까지 포함해 이어붙인 수에서 반복 전 자리 수를 빼고, 분모는 10^{${k}}×(10^{${m}}-1)이에요 — 마지막엔 기약분수로 줄여요`,
+      ko: `순환소수를 분수로! 반복 전 자리(${Ppad})까지 포함해 이어붙인 수에서 반복 전 자리 수를 빼고, 분모는 10^{${k}}×(10^{${m}}-1)입니다 — 마지막엔 기약분수로 줄입니다`,
       en: `Turn the repeating decimal into a fraction: subtract the non-repeating prefix from the concatenated number, and the denominator is 10^${k}×(10^${m}-1)`,
       zh: `把循环小数化成分数：用"前缀+循环节"连成的数减去前缀，分母是10^{${k}}×(10^{${m}}-1)`
     },

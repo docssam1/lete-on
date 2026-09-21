@@ -64,7 +64,7 @@ NM_TGEN['md43_limit'] = function (params, rng) {
     const a = nzInt(rng, 1, 9);
     const p = R(rng, 1, 4);
     return {
-      prompt: { ko: `lim은 "x가 어떤 값에 한없이 가까워질 때"를 뜻해요 — 화살표(→) 오른쪽 수를 그대로 읽어요(계산 없이!)`,
+      prompt: { ko: `lim은 "x가 어떤 값에 한없이 가까워질 때"를 뜻합니다 — 화살표(→) 오른쪽 수를 그대로 읽습니다(계산 없이!)`,
         en: `lim means "as x approaches..." — just read the number to the right of the arrow(→), no calculation`,
         zh: `lim的意思是"当x无限接近……时"——直接读出箭头(→)右边的数字(不用计算)` },
       tex: `\\lim_{x\\to ${a}} (${coefLead(p)}x^2+1)`,
@@ -79,7 +79,7 @@ NM_TGEN['md43_limit'] = function (params, rng) {
     const q = nzInt(rng, 1, wide ? 10 : 6);
     const answer = p * a + q;
     return {
-      prompt: { ko: `다항함수는 x=a를 그대로 대입하면 극한값이 나와요(연속이니까 극한값=함숫값)`,
+      prompt: { ko: `다항함수는 x=a를 그대로 대입하면 극한값이 나옵니다(연속이니까 극한값=함숫값)`,
         en: `For polynomial functions, just substitute x=a directly to get the limit (continuous, so the limit equals the function value)`,
         zh: `多项式函数直接代入x=a就是极限值(连续函数的极限值=函数值)` },
       tex: `\\lim_{x\\to ${a}} (${coefLead(p)}x ${wrapPlus(q)}) = \\square`,
@@ -100,7 +100,7 @@ NM_TGEN['md43_limit'] = function (params, rng) {
   const b1 = -(a + c), b0 = a * c; /* x^2+b1x+b0 = (x-a)(x-c) */
   const answer = a - c;
   return {
-    prompt: { ko: `0/0 꼴이면 분자를 인수분해해서 분모와 같은 인수 (x-a)를 약분해요`,
+    prompt: { ko: `0/0 꼴이면 분자를 인수분해해서 분모와 같은 인수 (x-a)를 약분합니다`,
       en: `For a 0/0 form, factor the numerator and cancel the factor (x-a) that matches the denominator`,
       zh: `遇到0/0型，先把分子因式分解，再约去和分母相同的因式(x-a)` },
     tex: `\\lim_{x\\to ${a}} \\dfrac{x^2 ${wrapPlusCoef(b1)}x ${wrapPlus(b0)}}{x ${wrapPlus(-a)}} = \\square`,
@@ -124,7 +124,7 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
   if (mode === 'decode') {
     const a = nzInt(rng, 1, 9);
     return {
-      prompt: { ko: `f'(a)는 "x=a에서 순간의 기울기를 구하라"는 뜻이에요 — 괄호 안의 수를 그대로 읽어요(계산 없이!)`,
+      prompt: { ko: `f'(a)는 "x=a에서 순간의 기울기를 구하라"는 뜻입니다 — 괄호 안의 수를 그대로 읽습니다(계산 없이!)`,
         en: `f'(a) means "find the instantaneous slope at x=a" — just read the number inside the parentheses, no calculation`,
         zh: `f'(a)的意思是"求x=a处的瞬时斜率"——直接读出括号里的数(不用计算)` },
       tex: `f'(${a})`,
@@ -138,7 +138,7 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
       const a3 = nzInt(rng, 1, 6), a2 = nzInt(rng, 1, 9), a1 = nzInt(rng, 1, 9);
       const answer = [3 * a3, 2 * a2, a1];
       return {
-        prompt: { ko: `axⁿ의 도함수는 naxⁿ⁻¹ — 지수를 앞으로 곱해 내리고 1 줄여요. 항마다 따로 적용해요`,
+        prompt: { ko: `axⁿ의 도함수는 naxⁿ⁻¹ — 지수를 앞으로 곱해 내리고 1 줄입니다. 항마다 따로 적용합니다`,
           en: `The derivative of ax^n is n·a·x^(n-1) — bring the exponent down as a multiplier and reduce it by 1, term by term`,
           zh: `ax^n的导数是n·a·x^(n-1)——把指数乘到前面再减1，逐项进行` },
         tex: `f(x)=${coefLead(a3)}x^3 ${wrapPlusCoef(a2)}x^2 ${wrapPlusCoef(a1)}x \\;\\Rightarrow\\; f'(x)=\\square x^2 + \\square x + \\square`,
@@ -152,7 +152,7 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
     const a2 = nzInt(rng, 1, 9), a1 = nzInt(rng, 1, 12);
     const answer = [2 * a2, a1];
     return {
-      prompt: { ko: `axⁿ의 도함수는 naxⁿ⁻¹ — 지수를 앞으로 곱해 내리고 1 줄여요`,
+      prompt: { ko: `axⁿ의 도함수는 naxⁿ⁻¹ — 지수를 앞으로 곱해 내리고 1 줄입니다`,
         en: `The derivative of ax^n is n·a·x^(n-1) — bring the exponent down as a multiplier and reduce it by 1`,
         zh: `ax^n的导数是n·a·x^(n-1)——把指数乘到前面再减1` },
       tex: `f(x)=${coefLead(a2)}x^2 ${wrapPlusCoef(a1)}x \\;\\Rightarrow\\; f'(x)=\\square x + \\square`,
@@ -169,7 +169,7 @@ NM_TGEN['md44_derivative'] = function (params, rng) {
   const x0 = nzInt(rng, 1, wide ? 6 : 4);
   const answer = 2 * a2 * x0 + a1;
   return {
-    prompt: { ko: `f'(x)=2ax+b를 먼저 구한 뒤 x=x₀를 대입해요`,
+    prompt: { ko: `f'(x)=2ax+b를 먼저 구한 뒤 x=x₀를 대입합니다`,
       en: `First find f'(x)=2ax+b, then substitute x=x₀`,
       zh: `先求出f'(x)=2ax+b，再代入x=x₀` },
     tex: `f(x)=${coefLead(a2)}x^2 ${wrapPlusCoef(a1)}x \\;\\Rightarrow\\; f'(${x0}) = \\square`,
@@ -194,7 +194,7 @@ NM_TGEN['md45_tangentLine'] = function (params, rng) {
 
   if (mode === 'slope') {
     return {
-      prompt: { ko: `접선의 기울기는 그 점에서의 미분계수 f'(x₀)와 같아요`,
+      prompt: { ko: `접선의 기울기는 그 점에서의 미분계수 f'(x₀)와 같습니다`,
         en: `The slope of the tangent line equals the derivative f'(x₀) at that point`,
         zh: `切线的斜率就等于该点的导数f'(x₀)` },
       tex: `f(x)=${coefLead(a2)}x^2 ${wrapPlusCoef(a1)}x ${wrapPlus(a0)} \\;\\Rightarrow\\; x=${x0}\\text{에서 접선의 기울기} = \\square`,
@@ -239,13 +239,13 @@ NM_TGEN['md46_polyIntegral'] = function (params, rng) {
     const which = pick(rng, ['start', 'end', 'width']);
     const answer = which === 'start' ? p : which === 'end' ? q : (q - p);
     const promptMap = {
-      start: { ko: `∫ 아래의 수는 적분이 시작하는 값(구간의 처음)이에요 — 그대로 읽어요`,
+      start: { ko: `∫ 아래의 수는 적분이 시작하는 값(구간의 처음)입니다 — 그대로 읽습니다`,
         en: `The number below ∫ is where the integral starts (the beginning of the interval) — just read it off`,
         zh: `∫下方的数是积分开始的值(区间的起点)——直接读出来` },
-      end: { ko: `∫ 위의 수는 적분이 끝나는 값(구간의 끝)이에요 — 그대로 읽어요`,
+      end: { ko: `∫ 위의 수는 적분이 끝나는 값(구간의 끝)입니다 — 그대로 읽습니다`,
         en: `The number above ∫ is where the integral ends (the end of the interval) — just read it off`,
         zh: `∫上方的数是积分结束的值(区间的终点)——直接读出来` },
-      width: { ko: `∫는 그 구간을 잘게 쪼개 다 더하라는 뜻이에요 — 구간의 폭(끝-처음)을 계산 없이 구해봐요(뺄셈만!)`,
+      width: { ko: `∫는 그 구간을 잘게 쪼개 다 더하라는 뜻입니다 — 구간의 폭(끝-처음)을 계산 없이 구해봅니다(뺄셈만!)`,
         en: `∫ means slice the interval finely and add it all up — find the interval's width (end minus start), just one subtraction!`,
         zh: `∫的意思是把区间切碎再全部相加——求出区间的宽度(终点减起点)，只需一次减法！` }
     };
@@ -267,7 +267,7 @@ NM_TGEN['md46_polyIntegral'] = function (params, rng) {
       const c = nzInt(rng, 1, wide ? 9 : 6);
       const answer = [k, j, c];
       return {
-        prompt: { ko: `∫axⁿdx = (a÷(n+1))xⁿ⁺¹ — 계수를 (n+1)로 나누고 지수를 하나 늘려요. 적분상수는 +C로 둬요`,
+        prompt: { ko: `∫axⁿdx = (a÷(n+1))xⁿ⁺¹ — 계수를 (n+1)로 나누고 지수를 하나 늘립니다. 적분상수는 +C로 둡니다`,
           en: `∫ax^n dx = (a÷(n+1))x^(n+1) — divide the coefficient by (n+1) and raise the exponent by one. Keep the constant of integration as +C`,
           zh: `∫ax^n dx = (a÷(n+1))x^(n+1)——系数除以(n+1)，指数加1。积分常数记为+C` },
         tex: `f(x)=${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} \\;\\Rightarrow\\; \\int f(x)\\,dx = \\square x^3 + \\square x^2 + \\square x + C`,
@@ -285,7 +285,7 @@ NM_TGEN['md46_polyIntegral'] = function (params, rng) {
     const b = nzInt(rng, 1, wide ? 9 : 6);
     const answer = [k, b];
     return {
-      prompt: { ko: `∫axdx = (a÷2)x² — 계수를 2로 나누고 지수를 하나 늘려요. 적분상수는 +C로 둬요`,
+      prompt: { ko: `∫axdx = (a÷2)x² — 계수를 2로 나누고 지수를 하나 늘립니다. 적분상수는 +C로 둡니다`,
         en: `∫ax dx = (a÷2)x² — divide the coefficient by 2 and raise the exponent by one. Keep the constant of integration as +C`,
         zh: `∫ax dx = (a÷2)x²——系数除以2，指数加1。积分常数记为+C` },
       tex: `f(x)=${coefLead(a)}x ${wrapPlus(b)} \\;\\Rightarrow\\; \\int f(x)\\,dx = \\square x^2 + \\square x + C`,
@@ -309,7 +309,7 @@ NM_TGEN['md46_polyIntegral'] = function (params, rng) {
   const F = x => k * x * x * x + j * x * x + c * x;
   const answer = F(q) - F(p);
   return {
-    prompt: { ko: `정적분은 원시함수 F(x)를 구한 뒤 F(끝값)-F(처음값)을 계산해요`,
+    prompt: { ko: `정적분은 원시함수 F(x)를 구한 뒤 F(끝값)-F(처음값)을 계산합니다`,
       en: `A definite integral is F(end) − F(start), where F is the antiderivative`,
       zh: `定积分是先求出原函数F(x)，再算F(终点)-F(起点)` },
     tex: `f(x)=${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} \\;\\Rightarrow\\; \\int_{${p}}^{${q}} f(x)\\,dx = \\square`,

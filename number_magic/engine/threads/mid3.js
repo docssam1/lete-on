@@ -67,7 +67,7 @@ NM_TGEN['md15_sqrtValue'] = function (params, rng) {
     const N = k * k;
     return {
       prompt: {
-        ko: `${N}가 어떤 수의 제곱인지 찾아요 — 제곱해서 ${N}이 되는 수`,
+        ko: `${N}가 어떤 수의 제곱인지 찾습니다 — 제곱해서 ${N}이 되는 수`,
         en: `Find the number whose square is ${N}`,
         zh: `找出平方等于${N}的数`
       },
@@ -86,7 +86,7 @@ NM_TGEN['md15_sqrtValue'] = function (params, rng) {
     const a = R(rng, 2, 200);
     return {
       prompt: {
-        ko: `제곱근을 다시 제곱하면 근호가 사라지고 원래 수로 돌아가요`,
+        ko: `제곱근을 다시 제곱하면 근호가 사라지고 원래 수로 돌아갑니다`,
         en: `Squaring a square root cancels the root and returns the original number`,
         zh: `平方根再平方，根号消失，回到原来的数`
       },
@@ -103,7 +103,7 @@ NM_TGEN['md15_sqrtValue'] = function (params, rng) {
   const a = nzInt(rng, 2, 40);
   return {
     prompt: {
-      ko: `${a}의 제곱을 다시 제곱근으로 풀면 절댓값 |${a}|이 나와요 — 결과는 항상 0 이상이에요`,
+      ko: `${a}의 제곱을 다시 제곱근으로 풀면 절댓값 |${a}|이 나옵니다 — 결과는 항상 0 이상입니다`,
       en: `The square root of ${a}² gives the absolute value |${a}| — the result is always nonnegative`,
       zh: `${a}的平方再开方，结果是绝对值|${a}|——结果永远不小于0`
     },
@@ -132,7 +132,7 @@ NM_TGEN['md16_simplifyRadical'] = function (params, rng) {
     const N = a * a * b;
     return {
       prompt: {
-        ko: `근호 안의 수에서 완전제곱수를 찾아 밖으로 꺼내요`,
+        ko: `근호 안의 수에서 완전제곱수를 찾아 밖으로 꺼냅니다`,
         en: `Find the perfect-square factor inside the root and pull it out`,
         zh: `在根号内找出完全平方因数，把它提到根号外`
       },
@@ -151,7 +151,7 @@ NM_TGEN['md16_simplifyRadical'] = function (params, rng) {
     const N = a * a * b;
     return {
       prompt: {
-        ko: `근호 앞에 이미 계수가 있어도 방법은 같아요 — 밖으로 꺼낸 수를 원래 계수와 곱해요`,
+        ko: `근호 앞에 이미 계수가 있어도 방법은 같습니다 — 밖으로 꺼낸 수를 원래 계수와 곱합니다`,
         en: `Even with a coefficient already outside, the method is the same — multiply it by what you pull out`,
         zh: `根号前已有系数也一样——把提出来的数和原来的系数相乘`
       },
@@ -169,7 +169,7 @@ NM_TGEN['md16_simplifyRadical'] = function (params, rng) {
   const N = a * a * b;
   return {
     prompt: {
-      ko: `48 = 16×3처럼, 근호 안에서 같은 소인수가 두 번 만나면(짝) 밖으로 나올 수 있어요 — 2와 5가 만나 10이 되던 것과 같은 이치예요`,
+      ko: `48 = 16×3처럼, 근호 안에서 같은 소인수가 두 번 만나면(짝) 밖으로 나올 수 있습니다 — 2와 5가 만나 10이 되던 것과 같은 이치입니다`,
       en: `Like 48 = 16×3, when the same prime factor appears twice (a pair) inside the root, it can step outside — the same idea as 2 and 5 meeting to make 10`,
       zh: `就像48=16×3，根号内同一个质因数出现两次(配对)就能提到根号外——和2与5相遇变成10是同一个道理`
     },
@@ -196,7 +196,7 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
     const b = N / a;
     return {
       prompt: {
-        ko: `√a × √b = √(ab) — 근호 안을 먼저 곱한 뒤 정리해요`,
+        ko: `√a × √b = √(ab) — 근호 안을 먼저 곱한 뒤 정리합니다`,
         en: `√a × √b = √(ab) — multiply what's under the roots first, then simplify`,
         zh: `√a × √b = √(ab)——先把根号内的数相乘，再化简`
       },
@@ -223,7 +223,7 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
     const a = k * k * b;
     return {
       prompt: {
-        ko: `√a ÷ √b = √(a÷b) — 근호 안을 먼저 나눈 뒤 정리해요`,
+        ko: `√a ÷ √b = √(a÷b) — 근호 안을 먼저 나눈 뒤 정리합니다`,
         en: `√a ÷ √b = √(a÷b) — divide what's under the roots first, then simplify`,
         zh: `√a ÷ √b = √(a÷b)——先把根号内的数相除，再化简`
       },
@@ -252,7 +252,7 @@ NM_TGEN['md17_sqrtMulDiv'] = function (params, rng) {
   } while ((simp.rad === 1 || simp.coeff === 1) && tries < 200);
   return {
     prompt: {
-      ko: `곱해도 완전제곱수가 안 되면, 곱한 뒤 근호를 정리해요`,
+      ko: `곱해도 완전제곱수가 안 되면, 곱한 뒤 근호를 정리합니다`,
       en: `If the product isn't a perfect square, multiply first, then simplify the radical`,
       zh: `相乘后若不是完全平方数，就先相乘再化简根号`
     },
@@ -277,7 +277,7 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
     const n = pick(rng, SQFREE_WIDE);
     return {
       prompt: {
-        ko: `분모의 근호를 없애려면 분자·분모에 같은 근호를 곱해요`,
+        ko: `분모의 근호를 없애려면 분자·분모에 같은 근호를 곱합니다`,
         en: `To remove the root from the denominator, multiply top and bottom by the same root`,
         zh: `要去掉分母的根号，就把分子分母同乘一个相同的根号`
       },
@@ -295,7 +295,7 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
     let c; do { c = R(rng, 2, 12); } while (gcd(c, n) !== 1);
     return {
       prompt: {
-        ko: `분자에 계수가 있어도 방법은 같아요 — 분모의 근호를 분자·분모에 곱해요`,
+        ko: `분자에 계수가 있어도 방법은 같습니다 — 분모의 근호를 분자·분모에 곱합니다`,
         en: `Even with a numerator coefficient, the method is the same — multiply by the denominator's root`,
         zh: `分子有系数也一样——把分母的根号乘到分子分母上`
       },
@@ -313,7 +313,7 @@ NM_TGEN['md18_rationalize'] = function (params, rng) {
   do { a = R(rng, 2, 11); b = pick(rng, SQFREE_SMALL); N = a * a * b; } while (N > 500);
   return {
     prompt: {
-      ko: `먼저 분모의 근호부터 정리(√${N}=${a}√${b})하고, 그다음 분자·분모에 √${b}를 곱해 유리화해요`,
+      ko: `먼저 분모의 근호부터 정리(√${N}=${a}√${b})하고, 그다음 분자·분모에 √${b}를 곱해 유리화합니다`,
       en: `First simplify the denominator's root (√${N}=${a}√${b}), then multiply top and bottom by √${b} to rationalize`,
       zh: `先化简分母的根号(√${N}=${a}√${b})，再用√${b}乘分子分母进行有理化`
     },
@@ -340,7 +340,7 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
     const a = nzInt(rng, 1, 9), b = nzInt(rng, 1, 9);
     return {
       prompt: {
-        ko: `(x+a)(x+b) = x² + (a+b)x + ab — 두 수를 더하고, 곱해요`,
+        ko: `(x+a)(x+b) = x² + (a+b)x + ab — 두 수를 더하고, 곱합니다`,
         en: `(x+a)(x+b) = x² + (a+b)x + ab — add the two numbers, then multiply them`,
         zh: `(x+a)(x+b) = x² + (a+b)x + ab——先把两数相加，再相乘`
       },
@@ -357,7 +357,7 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
     const a = nzInt(rng, 1, 45);
     return {
       prompt: {
-        ko: `(x+a)² = x² + 2ax + a² — 가운데 항은 2배, 마지막 항은 제곱이에요`,
+        ko: `(x+a)² = x² + 2ax + a² — 가운데 항은 2배, 마지막 항은 제곱입니다`,
         en: `(x+a)² = x² + 2ax + a² — double it for the middle term, square it for the last`,
         zh: `(x+a)² = x² + 2ax + a²——中间项翻倍，最后一项平方`
       },
@@ -374,7 +374,7 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
   const a = R(rng, 1, 70);
   return {
     prompt: {
-      ko: `(x+a)(x-a) = x² - a² — 가운데 항끼리 사라지고 제곱의 차만 남아요`,
+      ko: `(x+a)(x-a) = x² - a² — 가운데 항끼리 사라지고 제곱의 차만 남습니다`,
       en: `(x+a)(x-a) = x² - a² — the middle terms cancel out, leaving only the difference of squares`,
       zh: `(x+a)(x-a) = x² - a²——中间项互相抵消，只剩平方差`
     },
@@ -410,7 +410,7 @@ NM_TGEN['md20_factorBasic'] = function (params, rng) {
     const a = nzInt(rng, 1, 20);
     return {
       prompt: {
-        ko: `가운데 항이 마지막 항의 제곱근의 2배면 완전제곱식이에요 — (x+□)² 의 □를 찾아요`,
+        ko: `가운데 항이 마지막 항의 제곱근의 2배면 완전제곱식입니다 — (x+□)² 의 □를 찾습니다`,
         en: `If the middle term is twice the square root of the last, it is a perfect square — find □ in (x+□)²`,
         zh: `中间项是最后一项平方根的2倍时就是完全平方式——找出(x+□)²中的□`
       },
@@ -428,7 +428,7 @@ NM_TGEN['md20_factorBasic'] = function (params, rng) {
     const a = R(rng, 2, 30);
     return {
       prompt: {
-        ko: `가운데 항이 없고 제곱의 차만 남았으면 합차로 갈라져요 — 두 칸에 같은 수가 들어가요`,
+        ko: `가운데 항이 없고 제곱의 차만 남았으면 합차로 갈라집니다 — 두 칸에 같은 수가 들어갑니다`,
         en: `No middle term and only a difference of squares — it splits into a sum and a difference. The same number goes in both boxes`,
         zh: `没有中间项、只剩平方差时就拆成和与差——两个空填同一个数`
       },
@@ -451,7 +451,7 @@ NM_TGEN['md20_factorBasic'] = function (params, rng) {
     const A = g, B = g * (p + q), C = g * p * q;
     return {
       prompt: {
-        ko: `세 항에 공통인수가 있으면 먼저 묶어내요 — 묶어낸 수, 그다음 두 수를 작은 수부터 입력해요`,
+        ko: `세 항에 공통인수가 있으면 먼저 묶어냅니다 — 묶어낸 수, 그다음 두 수를 작은 수부터 입력합니다`,
         en: `Pull out the common factor first, then enter it, followed by the two numbers, smaller one first`,
         zh: `三项有公因数时先提取——先填提取的数，再按从小到大填两个数`
       },
@@ -478,7 +478,7 @@ NM_TGEN['md20_factorBasic'] = function (params, rng) {
     const A = m, B = m * q + p, C = p * q;
     return {
       prompt: {
-        ko: `공통인수가 없으면 대각선으로 곱해 더해요 — 앞 괄호의 계수와 상수, 그다음 뒤 괄호의 상수를 입력해요`,
+        ko: `공통인수가 없으면 대각선으로 곱해 더합니다 — 앞 괄호의 계수와 상수, 그다음 뒤 괄호의 상수를 입력합니다`,
         en: `With no common factor, cross-multiply and add — enter the first bracket's coefficient and constant, then the second bracket's constant`,
         zh: `没有公因数时就交叉相乘再相加——先填前括号的系数和常数，再填后括号的常数`
       },
@@ -501,7 +501,7 @@ NM_TGEN['md20_factorBasic'] = function (params, rng) {
   const b = p + q, c = p * q;
   return {
     prompt: {
-      ko: `x² + bx + c = (x+p)(x+q)일 때, 더하면 b, 곱하면 c가 되는 두 수를 찾아요 — 작은 수부터 순서대로 입력해요`,
+      ko: `x² + bx + c = (x+p)(x+q)일 때, 더하면 b, 곱하면 c가 되는 두 수를 찾습니다 — 작은 수부터 순서대로 입력합니다`,
       en: `For x² + bx + c = (x+p)(x+q), find two numbers that add to b and multiply to c — enter the smaller one first`,
       zh: `x² + bx + c = (x+p)(x+q)时，找相加得b、相乘得c的两个数——先输入较小的那个`
     },

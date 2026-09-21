@@ -8,14 +8,14 @@ window.NM_UNITS['M-13'] = {
   lineage:['place-magic'],
   generator:'md13_monoTimesPoly',
   title:{ ko:'(단항식)×(다항식)의 전개', en:'Expanding Monomial × Polynomial', zh:'单项式乘多项式的展开' },
-  subtitle:{ ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱해요', en:'The one outside the brackets visits every term inside, one by one', zh:'括号外的那一个，会一个个找到括号里的每一项相乘' },
+  subtitle:{ ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱합니다', en:'The one outside the brackets visits every term inside, one by one', zh:'括号外的那一个，会一个个找到括号里的每一项相乘' },
   icon:'🎁',
 
   practice:{
     generator:'md13_monoTimesPoly', level:'practice', count:5,
     params:{mode:'binomial'},
     intro:{
-      ko:'3(2x+5)는 "2x+5를 3번 더한 것"과 같아요. 괄호를 풀면 3×2x + 3×5!',
+      ko:'3(2x+5)는 "2x+5를 3번 더한 것"과 같습니다. 괄호를 풀면 3×2x + 3×5!',
       en:'3(2x+5) is the same as "adding 2x+5 three times." Open the brackets: 3×2x + 3×5!',
       zh:'3(2x+5)就相当于"把2x+5加3次"。打开括号就是3×2x + 3×5！'
     }
@@ -26,23 +26,23 @@ window.NM_UNITS['M-13'] = {
     stages:[
       { tag:{ko:'① 분배법칙 — 밖의 하나가 안의 전부에게',en:'1) The distributive law — the outside term visits every inside term',zh:'① 分配律——括号外的乘遍括号内每一项'},
         head:{ko:'3(2x + 5) = 6x + 15',en:'3(2x + 5) = 6x + 15',zh:'3(2x + 5) = 6x + 15'},
-        desc:{ko:'괄호 안에 여러 항이 있으면, 괄호 앞의 수가 <b>각 항에 하나씩 골고루</b> 곱해져요. 3이 2x에 한 번, 5에 한 번 — 절대 하나만 곱하고 빠뜨리면 안 돼요.',
+        desc:{ko:'괄호 안에 여러 항이 있으면, 괄호 앞의 수가 <b>각 항에 하나씩 골고루</b> 곱해집니다. 3이 2x에 한 번, 5에 한 번 — 절대 하나만 곱하고 빠뜨리면 안 됩니다.',
               en:'When there are multiple terms inside the brackets, the number outside multiplies <b>each term one by one</b>. 3 multiplies 2x once, then 5 once — never skip one and only multiply the other.',
               zh:'括号里有多项时，括号外的数会<b>依次分别乘每一项</b>。3先乘2x一次，再乘5一次——绝不能只乘一项漏掉另一项。'},
         mathSteps:['3(2x+5)', '=3\\times2x+3\\times5', '=6x+15'],
-        result:{ko:'괄호 안 모든 항에 빠짐없이 곱해요!',en:'Multiply every single term inside — none skipped!',zh:'括号内每一项都要乘到，一个都不能漏！'},
-        book:{ko:'분배법칙: a(b+c) = ab + ac. 괄호 안 항이 몇 개든 원칙은 같아요.',
+        result:{ko:'괄호 안 모든 항에 빠짐없이 곱합니다!',en:'Multiply every single term inside — none skipped!',zh:'括号内每一项都要乘到，一个都不能漏！'},
+        book:{ko:'분배법칙: a(b+c) = ab + ac. 괄호 안 항이 몇 개든 원칙은 같습니다.',
               en:'The distributive law: a(b+c) = ab + ac. No matter how many terms are inside, the principle stays the same.',
               zh:'分配律：a(b+c) = ab + ac。不管括号里有几项，原理都一样。'} },
 
       { tag:{ko:'② 곱하는 것이 x를 가지면 차수가 올라감',en:'2) When the multiplier has x, the power goes up',zh:'② 乘的那个带x时，次数就会升高'},
         head:{ko:'2x(3x + 4) = 6x^2 + 8x',en:'2x(3x + 4) = 6x^2 + 8x',zh:'2x(3x + 4) = 6x^2 + 8x'},
-        desc:{ko:'이번엔 괄호 앞이 그냥 숫자가 아니라 2x예요. x×3x = 3x²(지수법칙, x¹×x¹=x²)처럼 <b>차수가 하나 올라가요</b>. 계수는 여전히 계수끼리(2×3=6).',
+        desc:{ko:'이번엔 괄호 앞이 그냥 숫자가 아니라 2x입니다. x×3x = 3x²(지수법칙, x¹×x¹=x²)처럼 <b>차수가 하나 올라갑니다</b>. 계수는 여전히 계수끼리(2×3=6).',
               en:'This time the multiplier outside isn\'t just a number but 2x. Since x×3x = 3x² (exponent law, x¹×x¹=x²), <b>the power goes up by one</b>. Coefficients still multiply on their own (2×3=6).',
               zh:'这次括号外不只是数字，而是2x。因为x×3x = 3x²(指数法则，x¹×x¹=x²)，<b>次数会升高一级</b>。系数照样系数相乘(2×3=6)。'},
         mathSteps:['2x(3x+4)', '=2x\\times3x+2x\\times4', '=6x^2+8x'],
-        result:{ko:'곱하는 게 x를 가지면 지수법칙이 함께 작동해요!',en:'When the multiplier has x, the exponent law kicks in too!',zh:'乘数带x时，指数法则也一起起作用！'},
-        book:{ko:'단항식×다항식은 분배법칙 + 지수법칙(문자끼리 곱할 때)을 함께 써요. 항이 세 개(삼항식)여도 방법은 같아요.',
+        result:{ko:'곱하는 게 x를 가지면 지수법칙이 함께 작동합니다!',en:'When the multiplier has x, the exponent law kicks in too!',zh:'乘数带x时，指数法则也一起起作用！'},
+        book:{ko:'단항식×다항식은 분배법칙 + 지수법칙(문자끼리 곱할 때)을 함께 씁니다. 항이 세 개(삼항식)여도 방법은 같습니다.',
               en:'Monomial × polynomial uses the distributive law together with the exponent law (when letters multiply). Even with three terms (a trinomial), the method is the same.',
               zh:'单项式乘多项式要同时用分配律和指数法则(字母相乘时)。就算是三项(三项式)，方法也一样。'} }
     ],
@@ -79,7 +79,7 @@ window.NM_UNITS['M-13'] = {
   arena:{
     generator:'md13_monoTimesPoly', level:'main', count:8, timeLimit:300,
     params:{mode:'trinomial'},
-    rule:{ ko:'5분 안에 삼항식 전개를 모두 풀어요!', en:'Solve all the trinomial expansions in 5 minutes!', zh:'5分钟内解答所有三项式展开题！' }
+    rule:{ ko:'5분 안에 삼항식 전개를 모두 풉니다!', en:'Solve all the trinomial expansions in 5 minutes!', zh:'5分钟内解答所有三项式展开题！' }
   },
 
   stamp:{ label:{ ko:'분배법칙 요정', en:'Distributive Fairy', zh:'分配律精灵' }, coins:43 },

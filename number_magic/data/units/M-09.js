@@ -8,7 +8,7 @@ window.NM_UNITS['M-09'] = {
   lineage:['nine-next-door'],
   generator:'md9_repeatToFrac',
   title:{ ko:'순환소수를 분수로', en:'Repeating Decimal to Fraction', zh:'循环小数化分数' },
-  subtitle:{ ko:'반복 전 자리가 있어도 걱정 마 — 이어붙이고 빼면 분수가 나와요', en:'Even with digits before the repeat, concatenate and subtract to get a fraction', zh:'就算前面有不循环的部分，连起来再相减就能得到分数' },
+  subtitle:{ ko:'반복 전 자리가 있어도 걱정 마 — 이어붙이고 빼면 분수가 나옵니다', en:'Even with digits before the repeat, concatenate and subtract to get a fraction', zh:'就算前面有不循环的部分，连起来再相减就能得到分数' },
   icon:'🔁',
 
   practice:{
@@ -23,10 +23,10 @@ window.NM_UNITS['M-09'] = {
 
   discover:{
     story:{
-      hook:{ ko:'0.333…을 분수로 되돌릴 수 있을까요? 끝나지 않는 소수인데요.',
+      hook:{ ko:'0.333…을 분수로 되돌릴 수 있을까요? 끝나지 않는 소수입니다.',
         en:'Can 0.333… be turned back into a fraction, even though it never ends?',
         zh:'0.333……写不完，还能变回分数吗？' },
-      history:{ ko:'분수를 소수로 바꾸면 끝나거나 되풀이되는 두 가지뿐이에요. 거꾸로도 참이라서, 끝나지 않고 되풀이되는 소수는 반드시 어떤 분수로 되돌아가요. 되풀이되지도 않고 끝나지도 않는 소수는 분수로 돌아갈 수 없고, 그런 수를 무리수라고 불러요.',
+      history:{ ko:'분수를 소수로 바꾸면 끝나거나 되풀이되는 두 가지뿐입니다. 거꾸로도 참이라서, 끝나지 않고 되풀이되는 소수는 반드시 어떤 분수로 되돌아갑니다. 되풀이되지도 않고 끝나지도 않는 소수는 분수로 돌아갈 수 없고, 그런 수를 무리수라고 부릅니다.',
         en:'A fraction becomes a decimal that either stops or repeats — only those two. The converse holds too: any repeating decimal must come back to some fraction. A decimal that neither stops nor repeats can never return to a fraction, and those numbers are called irrational.',
         zh:'分数化成小数，只有终止和循环两种。反过来也成立：任何循环小数都一定能还原成某个分数。既不终止也不循环的小数无法还原成分数，这样的数叫无理数。' }
     },
@@ -34,21 +34,21 @@ window.NM_UNITS['M-09'] = {
     stages:[
       { tag:{ko:'① 이어붙이고 빼면 분자',en:'1) Concatenate and subtract for the numerator',zh:'① 连起来相减就是分子'},
         head:{ko:'0.4\\overline{6} = \\dfrac{42}{90} = \\dfrac{7}{15}',en:'0.4\\overline{6} = \\dfrac{42}{90} = \\dfrac{7}{15}',zh:'0.4\\overline{6} = \\dfrac{42}{90} = \\dfrac{7}{15}'},
-        desc:{ko:'"4"까지는 반복이 안 되고 "6"만 반복돼요. <b>"4"와 "6"을 이어붙인 46에서, 반복 전 자리 "4"를 빼면</b> 46−4=42 — 이게 분자예요! CH5에서 배운 0.666…=6/9(처음부터 반복)의 일반화예요.',
+        desc:{ko:'"4"까지는 반복이 안 되고 "6"만 반복됩니다. <b>"4"와 "6"을 이어붙인 46에서, 반복 전 자리 "4"를 빼면</b> 46−4=42 — 이게 분자입니다! CH5에서 배운 0.666…=6/9(처음부터 반복)의 일반화입니다.',
               en:'The "4" does not repeat, only "6" repeats. <b>Concatenate "4" and "6" to get 46, then subtract the non-repeating "4"</b>: 46−4=42 — that\'s the numerator! This generalizes what CH5 taught for 0.666…=6/9 (repeating from the very start).',
               zh:'"4"不循环，只有"6"循环。<b>把"4"和"6"连成46，再减去不循环的"4"</b>：46−4=42——这就是分子！这是CH5学过的0.666…=6/9(从头就循环)的推广。'},
         mathSteps:['0.4\\overline{6}', '\\text{46}-\\text{4}=42', '\\dfrac{42}{90}'],
-        result:{ko:'반복 전 자리를 빼주는 게 핵심이에요!',en:'Subtracting the non-repeating prefix is the key move!',zh:'关键就是减去不循环的前缀！'},
+        result:{ko:'반복 전 자리를 빼주는 게 핵심입니다!',en:'Subtracting the non-repeating prefix is the key move!',zh:'关键就是减去不循环的前缀！'},
         book:null },
 
       { tag:{ko:'② 분모는 9와 0의 조합',en:'2) The denominator mixes 9s and 0s',zh:'② 分母是9和0的组合'},
         head:{ko:'분모 = 10^{비순환 자리수} \\times (10^{순환 자리수}-1)',en:'denominator = 10^{prefix digits} \\times (10^{repeat digits}-1)',zh:'分母＝10^{不循环位数} \\times (10^{循环位数}-1)'},
-        desc:{ko:'0.4666…은 비순환 1자리(10¹), 순환 1자리(10¹−1=9)니까 분모는 <b>10×9=90</b>. 반복마디가 2자리면 99, 3자리면 999가 되고, 비순환 자리 수만큼 뒤에 0이 붙어요 — 규칙만 알면 몇 자리든 바로 분모를 만들 수 있어요.',
+        desc:{ko:'0.4666…은 비순환 1자리(10¹), 순환 1자리(10¹−1=9)니까 분모는 <b>10×9=90</b>. 반복마디가 2자리면 99, 3자리면 999가 되고, 비순환 자리 수만큼 뒤에 0이 붙습니다 — 규칙만 알면 몇 자리든 바로 분모를 만들 수 있습니다.',
               en:'0.4666… has 1 prefix digit (10¹) and 1 repeating digit (10¹−1=9), so the denominator is <b>10×9=90</b>. Two repeating digits give 99, three give 999, and the prefix length adds that many trailing zeros — knowing the rule lets you build the denominator for any length instantly.',
               zh:'0.4666…前缀1位(10¹)，循环1位(10¹−1=9)，所以分母是<b>10×9=90</b>。循环2位就是99，3位就是999，前缀位数决定后面加几个0——掌握规律，几位数都能立刻算出分母。'},
         mathSteps:['10^1=10,\\;\\;10^1-1=9', '10\\times9=90', '\\dfrac{42}{90}=\\dfrac{7}{15}'],
-        result:{ko:'분모는 9(순환 자리)와 0(비순환 자리)이 규칙적으로 섞여요!',en:'The denominator regularly mixes 9s (repeat) and 0s (prefix)!',zh:'分母规律地混合着9(循环位)和0(不循环位)！'},
-        book:{ko:'약분이 되면 기약분수로 나타내요 — 42/90은 6으로 약분해서 7/15가 돼요.',
+        result:{ko:'분모는 9(순환 자리)와 0(비순환 자리)이 규칙적으로 섞입니다!',en:'The denominator regularly mixes 9s (repeat) and 0s (prefix)!',zh:'分母规律地混合着9(循环位)和0(不循环位)！'},
+        book:{ko:'약분이 되면 기약분수로 나타냅니다 — 42/90은 6으로 약분해서 7/15가 됩니다.',
               en:'If it can be simplified, write it in lowest terms — 42/90 simplifies to 7/15.',
               zh:'如果能约分就化成最简分数——42/90约分后是7/15。'} }
     ],
@@ -64,7 +64,7 @@ window.NM_UNITS['M-09'] = {
       { tex:'10^2 - 1 = \\square', answer:99,
         hint:{ ko:'순환 2자리의 분모 재료', en:'the denominator piece for a 2-digit repeat', zh:'循环2位的分母材料' } }
     ],
-    open:{ ko:'0.2555…를 분수로 나타내는 과정을 설명해봐요.',
+    open:{ ko:'0.2555…를 분수로 나타내는 과정을 설명해봅니다.',
       en:'Explain the process of writing 0.2555… as a fraction.',
       zh:'说说把0.2555…化成分数的过程。' },
     openHint:{ ko:'25-2=23, 분모=10×9=90 → 23/90 (더 못 약분됨).',
@@ -85,7 +85,7 @@ window.NM_UNITS['M-09'] = {
   arena:{
     generator:'md9_repeatToFrac', level:'main', count:8, timeLimit:300,
     params:{k:1,m:2},
-    rule:{ ko:'5분 안에 순환마디 두 자리 문제를 모두 풀어요!', en:'Solve all two-digit repeating-block problems in 5 minutes!', zh:'5分钟内解答所有循环节两位的题目！' }
+    rule:{ ko:'5분 안에 순환마디 두 자리 문제를 모두 풉니다!', en:'Solve all two-digit repeating-block problems in 5 minutes!', zh:'5分钟内解答所有循环节两位的题目！' }
   },
 
   stamp:{ label:{ ko:'순환소수 해독가', en:'Repeating-Decimal Decoder', zh:'循环小数解码员' }, coins:38 },

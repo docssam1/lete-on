@@ -84,7 +84,7 @@ NM_TGEN['md63_simultaneous'] = function (params, rng) {
     if (a + b * m === 0) a = a + 1;
     const e = a * x + b * yy;
     return {
-      prompt: { ko: `이미 y=…로 풀려 있는 식을 다른 식의 y 자리에 그대로 넣어요(대입법) — x를 먼저 구하고, 그 x를 다시 넣어 y를 구해요`,
+      prompt: { ko: `이미 y=…로 풀려 있는 식을 다른 식의 y 자리에 그대로 넣습니다(대입법) — x를 먼저 구하고, 그 x를 다시 넣어 y를 구합니다`,
         en: `One equation is already solved for y — substitute it into the other (substitution method): find x first, then put x back to get y`,
         zh: `已经解出y的式子直接代入另一个式子(代入法)——先求x，再把x代回求y` },
       tex: `\\begin{cases} y = ${coefLead(m)}x ${wrapPlus(n)} \\\\ ${linTwoVar(a, b, e)} \\end{cases} \\quad\\Rightarrow\\quad x = \\square,\\quad y = \\square`,
@@ -113,7 +113,7 @@ NM_TGEN['md63_simultaneous'] = function (params, rng) {
     const k1 = b2 / g, k2 = b1 / g;                          /* y를 없애는 배수 */
     const A = a1 * k1 - a2 * k2, E = e1 * k1 - e2 * k2;
     return {
-      prompt: { ko: `한 문자의 계수를 같게 만든 뒤 두 식을 빼면 그 문자가 사라져요(가감법)`,
+      prompt: { ko: `한 문자의 계수를 같게 만든 뒤 두 식을 빼면 그 문자가 사라집니다(가감법)`,
         en: `Make one letter's coefficients match, then subtract the equations to eliminate it (elimination method)`,
         zh: `把一个字母的系数变成相同，再把两式相减消去它(加减法)` },
       tex: `\\begin{cases} ${linTwoVar(a1, b1, e1)} \\\\ ${linTwoVar(a2, b2, e2)} \\end{cases} \\quad\\Rightarrow\\quad x = \\square,\\quad y = \\square`,
@@ -138,7 +138,7 @@ NM_TGEN['md63_simultaneous'] = function (params, rng) {
   const e1 = a1 * x + b1 * y, e2 = a2 * x + b2 * y;
   const D = a1 * b2 - a2 * b1;
   return {
-    prompt: { ko: `계수를 보고 대입법과 가감법 중 편한 쪽을 골라요 — 한 문자를 없애는 게 목표예요`,
+    prompt: { ko: `계수를 보고 대입법과 가감법 중 편한 쪽을 고릅니다 — 한 문자를 없애는 게 목표입니다`,
       en: `Look at the coefficients and pick whichever is easier, substitution or elimination — the goal is to eliminate one letter`,
       zh: `看系数选择代入法或加减法中较方便的一种——目标是消去一个字母` },
     tex: `\\begin{cases} ${linTwoVar(a1, b1, e1)} \\\\ ${linTwoVar(a2, b2, e2)} \\end{cases} \\quad\\Rightarrow\\quad x = \\square,\\quad y = \\square`,
@@ -172,7 +172,7 @@ NM_TGEN['md64_linearInequality'] = function (params, rng) {
     const c = a * x0 + b;
     const sym = pick(rng, ['>', '<', '\\ge', '\\le']);
     return {
-      prompt: { ko: `음수로 나누면 부등호의 방향이 뒤집혀요 — 경계가 되는 수를 구해요`,
+      prompt: { ko: `음수로 나누면 부등호의 방향이 뒤집힙니다 — 경계가 되는 수를 구합니다`,
         en: `Dividing by a negative flips the inequality sign — find the boundary value`,
         zh: `除以负数时不等号方向要反过来——求出边界的数` },
       tex: `${coefLead(a)}x ${wrapPlus(b)} ${sym} ${c} \\quad\\Rightarrow\\quad x ${FLIP[sym]} \\square`,
@@ -203,7 +203,7 @@ NM_TGEN['md64_linearInequality'] = function (params, rng) {
     const shown = strict ? '<' : '\\le';
     const want = strict ? x0 - 1 : x0;
     return {
-      prompt: { ko: `정리하면 x ${strict ? '<' : '≤'} (어떤 수)가 돼요 — 이를 만족하는 가장 큰 정수를 답해요`,
+      prompt: { ko: `정리하면 x ${strict ? '<' : '≤'} (어떤 수)가 됩니다 — 이를 만족하는 가장 큰 정수를 답합니다`,
         en: `Rearranged it becomes x ${strict ? '<' : '≤'} (some number) — answer the largest integer that satisfies it`,
         zh: `整理后变成x ${strict ? '<' : '≤'}(某个数)——回答满足它的最大整数` },
       tex: `${coefLead(a)}x ${wrapPlus(b)} ${sym} ${coefLead(c)}x ${wrapPlus(d)} \\quad\\Rightarrow\\quad \\text{가장 큰 정수 } x = \\square`,
@@ -223,7 +223,7 @@ NM_TGEN['md64_linearInequality'] = function (params, rng) {
   const c = a * x0 + b;
   const sym = pick(rng, ['>', '<', '\\ge', '\\le']);
   return {
-    prompt: { ko: `부등식도 방정식처럼 풀어요 — 양수로 나눌 때는 부등호 방향이 그대로예요`,
+    prompt: { ko: `부등식도 방정식처럼 풉니다 — 양수로 나눌 때는 부등호 방향이 그대로입니다`,
       en: `Solve an inequality just like an equation — dividing by a positive keeps the sign the same`,
       zh: `不等式和方程一样解——除以正数时不等号方向不变` },
     tex: `${a}x ${wrapPlus(b)} ${sym} ${c} \\quad\\Rightarrow\\quad x ${sym} \\square`,
@@ -262,7 +262,7 @@ NM_TGEN['md65_linearFunction'] = function (params, rng) {
 
     if (mode === 'readSlope') {
       return {
-        prompt: { ko: `그래프에서 오른쪽으로 1칸 갈 때 위아래로 몇 칸 움직이는지 세어요 — 그게 기울기예요`,
+        prompt: { ko: `그래프에서 오른쪽으로 1칸 갈 때 위아래로 몇 칸 움직이는지 셉니다 — 그게 기울기입니다`,
           en: `On the graph, count how many squares up or down you move for one square to the right — that is the slope`,
           zh: `在图象上数一数：向右走1格时上下走了几格——那就是斜率` },
         tex: `\\text{기울기} = \\square`,
@@ -274,7 +274,7 @@ NM_TGEN['md65_linearFunction'] = function (params, rng) {
       };
     }
     return {
-      prompt: { ko: `그래프가 y축과 만나는 높이가 b, 오른쪽 1칸당 오르내리는 칸 수가 a예요 — y=ax+b로 적어요`,
+      prompt: { ko: `그래프가 y축과 만나는 높이가 b, 오른쪽 1칸당 오르내리는 칸 수가 a입니다 — y=ax+b로 적습니다`,
         en: `Where the graph meets the y-axis is b, and the squares it rises per square right is a — write it as y=ax+b`,
         zh: `图象与y轴相交的高度是b，向右1格上下走的格数是a——写成y=ax+b` },
       tex: `y = \\square x + \\square`,
@@ -298,7 +298,7 @@ NM_TGEN['md65_linearFunction'] = function (params, rng) {
 
   if (mode === 'intercept') {
     return {
-      prompt: { ko: `y절편은 그래프가 y축과 만나는 높이예요 — y=ax+b에 점의 좌표를 넣고 b를 구해요`,
+      prompt: { ko: `y절편은 그래프가 y축과 만나는 높이입니다 — y=ax+b에 점의 좌표를 넣고 b를 구합니다`,
         en: `The y-intercept is where the graph meets the y-axis — put the point into y=ax+b and solve for b`,
         zh: `y截距是图象与y轴相交的高度——把点的坐标代入y=ax+b求出b` },
       tex: `\\text{기울기 } ${m}, \\quad (${x1},\\, ${y1}) \\quad\\Rightarrow\\quad y = ${coefLead(m)}x + \\square`,
@@ -313,7 +313,7 @@ NM_TGEN['md65_linearFunction'] = function (params, rng) {
 
   if (mode === 'fromPoints') {
     return {
-      prompt: { ko: `두 점으로 기울기를 먼저 구하고, 그 기울기와 한 점으로 y절편을 구해요`,
+      prompt: { ko: `두 점으로 기울기를 먼저 구하고, 그 기울기와 한 점으로 y절편을 구합니다`,
         en: `Find the slope from the two points first, then use the slope and one point to find the y-intercept`,
         zh: `先用两点求出斜率，再用斜率和其中一点求出y截距` },
       tex: `(${x1},\\, ${y1}), \\quad (${x2},\\, ${y2}) \\quad\\Rightarrow\\quad y = \\square x + \\square`,
@@ -329,7 +329,7 @@ NM_TGEN['md65_linearFunction'] = function (params, rng) {
 
   /* slope(기본) — 두 점에서 기울기 */
   return {
-    prompt: { ko: `기울기는 (y의 증가량)÷(x의 증가량)이에요 — 오른쪽으로 1칸 갈 때 위로 몇 칸인지예요`,
+    prompt: { ko: `기울기는 (y의 증가량)÷(x의 증가량)입니다 — 오른쪽으로 1칸 갈 때 위로 몇 칸인지입니다`,
       en: `Slope is (change in y) divided by (change in x) — how far up you go for each step right`,
       zh: `斜率是(y的增量)÷(x的增量)——向右走1格时向上走几格` },
     tex: `(${x1},\\, ${y1}), \\quad (${x2},\\, ${y2}) \\quad\\Rightarrow\\quad \\text{기울기} = \\square`,
@@ -361,7 +361,7 @@ NM_TGEN['md66_quadEquation'] = function (params, rng) {
     const c = nzInt(rng, 1, params.wide ? 20 : 12);
     const b = 2 * p, rhs = p * p - c;
     return {
-      prompt: { ko: `x의 계수의 절반을 제곱해 더하고 빼면 완전제곱식이 돼요 — (x+□)² = □ 꼴로 고쳐요`,
+      prompt: { ko: `x의 계수의 절반을 제곱해 더하고 빼면 완전제곱식이 됩니다 — (x+□)² = □ 꼴로 고칩니다`,
         en: `Halve the coefficient of x, square it, add and subtract it — rewrite as (x+□)² = □`,
         zh: `把x的系数取一半再平方，加上又减去，就能配成完全平方——改写成(x+□)²=□的形式` },
       tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\quad\\Rightarrow\\quad (x ${wrapPlus(p)})^2 = \\square`,
@@ -384,7 +384,7 @@ NM_TGEN['md66_quadEquation'] = function (params, rng) {
     const a = pick(rng, [2, 3, 2, 3, 4]);
     const B = -a * (p + q), C = a * p * q;
     return {
-      prompt: { ko: `공통인수를 먼저 묶어내고 인수분해해요 — 근은 각 인수를 0으로 만드는 값이에요. 작은 수부터 입력해요`,
+      prompt: { ko: `공통인수를 먼저 묶어내고 인수분해합니다 — 근은 각 인수를 0으로 만드는 값입니다. 작은 수부터 입력합니다`,
         en: `Pull out the common factor first, then factor — each root makes one factor zero. Enter the smaller one first`,
         zh: `先提取公因数再因式分解——每个因式为0的值就是根。先输入较小的那个` },
       tex: `${a}x^2 ${wrapPlus(B)}x ${wrapPlus(C)} = 0 \\quad\\Rightarrow\\quad x = \\square \\quad\\text{또는}\\quad \\square`,
@@ -418,7 +418,7 @@ NM_TGEN['md66_quadEquation'] = function (params, rng) {
     if (D <= 0 || Number.isInteger(Math.sqrt(D))) { a = 1; b = 3; c = -1; D = 13; }  /* 마지막 안전망 */
     const den = 2 * a;
     return {
-      prompt: { ko: `인수분해가 안 되면 근의 공식이에요 — 판별식 D=b²−4ac 와 분모 2a를 차례로 입력해요`,
+      prompt: { ko: `인수분해가 안 되면 근의 공식입니다 — 판별식 D=b²−4ac 와 분모 2a를 차례로 입력합니다`,
         en: `When it will not factor, use the quadratic formula — enter the discriminant D=b²−4ac, then the denominator 2a`,
         zh: `不能因式分解时就用求根公式——依次填入判别式D=b²−4ac和分母2a` },
       tex: `${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} = 0 \\quad\\Rightarrow\\quad x = \\dfrac{${-b} \\pm \\sqrt{\\square}}{\\square}`,
@@ -439,7 +439,7 @@ NM_TGEN['md66_quadEquation'] = function (params, rng) {
   if (p > q) { const t = p; p = q; q = t; }
   const b = -(p + q), c = p * q;
   return {
-    prompt: { ko: `AB=0이면 A=0 또는 B=0이에요 — 인수분해한 뒤 각 괄호를 0으로 만드는 x를 찾아요. 작은 수부터 입력해요`,
+    prompt: { ko: `AB=0이면 A=0 또는 B=0입니다 — 인수분해한 뒤 각 괄호를 0으로 만드는 x를 찾습니다. 작은 수부터 입력합니다`,
       en: `If AB=0 then A=0 or B=0 — factor it, then find the x that makes each bracket zero. Enter the smaller one first`,
       zh: `若AB=0则A=0或B=0——先因式分解，再找出使每个括号为0的x。先输入较小的那个` },
     tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\quad\\Rightarrow\\quad x = \\square \\quad\\text{또는}\\quad \\square`,
@@ -467,7 +467,7 @@ NM_TGEN['md67_quadVertex'] = function (params, rng) {
     const ga = pick(rng, [1, -1]);
     const gp = R(rng, -3, 3), gq = R(rng, -4, 4);
     return {
-      prompt: { ko: `포물선이 꺾이는 한 점이 꼭짓점이에요 — 그래프에서 좌표를 읽어요`,
+      prompt: { ko: `포물선이 꺾이는 한 점이 꼭짓점입니다 — 그래프에서 좌표를 읽습니다`,
         en: `The single point where the parabola turns is the vertex — read its coordinates off the graph`,
         zh: `抛物线转折的那一点就是顶点——从图象上读出它的坐标` },
       tex: `\\text{꼭짓점} \\left(\\square,\\, \\square\\right)`,
@@ -491,7 +491,7 @@ NM_TGEN['md67_quadVertex'] = function (params, rng) {
     if (p * p + q === 0) q = q + 1;                      /* 상수항 0 은 식에 안 쓴다 */
     const b = -2 * p, c = p * p + q;
     return {
-      prompt: { ko: `x의 계수의 절반을 제곱해 더하고 빼면 y=(x-p)²+q 꼴이 돼요 — 꼭짓점은 (p, q)예요`,
+      prompt: { ko: `x의 계수의 절반을 제곱해 더하고 빼면 y=(x-p)²+q 꼴이 됩니다 — 꼭짓점은 (p, q)입니다`,
         en: `Halve the coefficient of x and square it to reach y=(x-p)²+q — the vertex is (p, q)`,
         zh: `把x的系数取一半再平方，配成y=(x-p)²+q的形式——顶点就是(p, q)` },
       tex: `y = x^2 ${wrapPlus(b)}x ${wrapPlus(c)} \\quad\\Rightarrow\\quad \\text{꼭짓점} \\left(\\square,\\, \\square\\right)`,
@@ -512,7 +512,7 @@ NM_TGEN['md67_quadVertex'] = function (params, rng) {
     if (a * p * p + q === 0) q = q + 1;                  /* 상수항 0 은 식에 안 쓴다 */
     const b = -2 * a * p, c = a * p * p + q;
     return {
-      prompt: { ko: `x²의 계수를 먼저 묶어낸 뒤 완전제곱을 만들어요 — 위로 볼록·아래로 볼록은 그 계수의 부호가 정해요`,
+      prompt: { ko: `x²의 계수를 먼저 묶어낸 뒤 완전제곱을 만듭니다 — 위로 볼록·아래로 볼록은 그 계수의 부호가 정합니다`,
         en: `Factor out the coefficient of x² first, then complete the square — its sign decides whether the parabola opens up or down`,
         zh: `先提取x²的系数再配方——开口向上还是向下由这个系数的符号决定` },
       tex: `y = ${coefLead(a)}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} \\quad\\Rightarrow\\quad \\text{꼭짓점} \\left(\\square,\\, \\square\\right)`,
@@ -528,7 +528,7 @@ NM_TGEN['md67_quadVertex'] = function (params, rng) {
   /* vertexForm(기본) — 표준형에서 그대로 읽기. 부호 함정이 핵심이다 */
   const a = pick(rng, [1, 1, 2, -1, -2]);
   return {
-    prompt: { ko: `y=a(x-p)²+q의 꼭짓점은 (p, q)예요 — 괄호 안의 부호는 반대로 읽어요`,
+    prompt: { ko: `y=a(x-p)²+q의 꼭짓점은 (p, q)입니다 — 괄호 안의 부호는 반대로 읽습니다`,
       en: `For y=a(x-p)²+q the vertex is (p, q) — read the sign inside the brackets the opposite way`,
       zh: `y=a(x-p)²+q的顶点是(p, q)——括号里的符号要反过来读` },
     tex: `y = ${coefLead(a)}(x ${wrapPlus(-p)})^2 ${wrapPlus(q)} \\quad\\Rightarrow\\quad \\text{꼭짓점} \\left(\\square,\\, \\square\\right)`,

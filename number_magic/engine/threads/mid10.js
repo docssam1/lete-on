@@ -73,7 +73,7 @@ NM_TGEN['md68_coordinate'] = function (params, rng) {
     const x = nzInt(rng, 1, 6), y = nzInt(rng, 1, 6);
     const q = x > 0 ? (y > 0 ? 1 : 4) : (y > 0 ? 2 : 3);
     return {
-      prompt: { ko: `x가 양수면 오른쪽, y가 양수면 위쪽이에요 — 오른위부터 시계 반대로 1·2·3·4사분면이에요`,
+      prompt: { ko: `x가 양수면 오른쪽, y가 양수면 위쪽입니다 — 오른위부터 시계 반대로 1·2·3·4사분면입니다`,
         en: `Positive x is right, positive y is up — starting top-right and going counter-clockwise gives quadrants 1, 2, 3, 4`,
         zh: `x为正在右、y为正在上——从右上开始逆时针依次是第1、2、3、4象限` },
       tex: `(${x},\\, ${y}) \\quad\\Rightarrow\\quad \\text{제} \\square \\text{사분면}`,
@@ -93,7 +93,7 @@ NM_TGEN['md68_coordinate'] = function (params, rng) {
     const name = kind === 'xaxis' ? 'x축' : kind === 'yaxis' ? 'y축' : '원점';
     const why = kind === 'xaxis' ? 'y의 부호만' : kind === 'yaxis' ? 'x의 부호만' : '두 부호 모두';
     return {
-      prompt: { ko: `x축 대칭은 y의 부호만, y축 대칭은 x의 부호만, 원점 대칭은 둘 다 바뀌어요`,
+      prompt: { ko: `x축 대칭은 y의 부호만, y축 대칭은 x의 부호만, 원점 대칭은 둘 다 바뀝니다`,
         en: `Reflecting in the x-axis flips only y, in the y-axis only x, and through the origin flips both`,
         zh: `关于x轴对称只变y的符号，关于y轴对称只变x的符号，关于原点对称两个都变` },
       tex: `(${x},\\, ${y}) \\quad\\Rightarrow\\quad \\text{${name} 대칭} \\left(\\square,\\, \\square\\right)`,
@@ -108,7 +108,7 @@ NM_TGEN['md68_coordinate'] = function (params, rng) {
   /* readPoint(기본) — 그래프에 찍힌 점의 좌표를 읽는다 */
   const x = nzInt(rng, 1, 5), y = nzInt(rng, 1, 5);
   return {
-    prompt: { ko: `점에서 x축으로 내려 가로 좌표를, y축으로 옮겨 세로 좌표를 읽어요`,
+    prompt: { ko: `점에서 x축으로 내려 가로 좌표를, y축으로 옮겨 세로 좌표를 읽습니다`,
       en: `Drop down to the x-axis for the first number, across to the y-axis for the second`,
       zh: `从点往下看x轴读出横坐标，往旁看y轴读出纵坐标` },
     tex: `\\text{점 P의 좌표} \\left(\\square,\\, \\square\\right)`,
@@ -137,7 +137,7 @@ NM_TGEN['md69_proportionGraph'] = function (params, rng) {
     const ds = divisorsOf(k).filter(d => d <= 6 && Math.abs(k / d) <= 8);
     const px = ds.length ? ds[ds.length - 1] : 1;
     return {
-      prompt: { ko: `반비례 y=a/x는 두 가지로 갈라진 곡선이에요 — 지나는 점 하나에서 x와 y를 곱하면 a가 나와요`,
+      prompt: { ko: `반비례 y=a/x는 두 가지로 갈라진 곡선입니다 — 지나는 점 하나에서 x와 y를 곱하면 a가 나옵니다`,
         en: `Inverse proportion y=a/x is a curve in two branches — multiply x by y at any point on it to get a`,
         zh: `反比例y=a/x是分成两支的曲线——在曲线上任取一点，x乘以y就得到a` },
       tex: `y = \\dfrac{\\square}{x}`,
@@ -159,7 +159,7 @@ NM_TGEN['md69_proportionGraph'] = function (params, rng) {
       const x0 = pick(rng, [2, 3, -2, -3].filter(v => Math.abs(a * v) <= 8));
       const y0 = a * x0;
       return {
-        prompt: { ko: `그래프에서 x가 주어진 값일 때 세로로 올라가 y를 읽어요`,
+        prompt: { ko: `그래프에서 x가 주어진 값일 때 세로로 올라가 y를 읽습니다`,
           en: `Find the given x on the graph, go up or down to the line, and read y`,
           zh: `在图象上找到给定的x，竖直走到直线上读出y` },
         tex: `x = ${x0} \\quad\\Rightarrow\\quad y = \\square`,
@@ -176,7 +176,7 @@ NM_TGEN['md69_proportionGraph'] = function (params, rng) {
     const x0 = ds.length ? pick(rng, ds) : 2;
     const y0 = k / x0;
     return {
-      prompt: { ko: `반비례 그래프에서도 같아요 — x를 찾아 곡선까지 올라가 y를 읽어요`,
+      prompt: { ko: `반비례 그래프에서도 같습니다 — x를 찾아 곡선까지 올라가 y를 읽습니다`,
         en: `Same on an inverse-proportion graph — find x, go to the curve, and read y`,
         zh: `反比例图象也一样——找到x，走到曲线上读出y` },
       tex: `x = ${x0} \\quad\\Rightarrow\\quad y = \\square`,
@@ -193,7 +193,7 @@ NM_TGEN['md69_proportionGraph'] = function (params, rng) {
   const a = pick(rng, [1, 2, 3, 4, -1, -2, -3, -4]);
   const px = Math.abs(a) >= 3 ? 2 : 3;
   return {
-    prompt: { ko: `정비례 y=ax의 그래프는 원점을 지나는 직선이에요 — 지나는 점에서 y를 x로 나누면 a가 나와요`,
+    prompt: { ko: `정비례 y=ax의 그래프는 원점을 지나는 직선입니다 — 지나는 점에서 y를 x로 나누면 a가 나옵니다`,
       en: `The graph of a direct proportion y=ax is a straight line through the origin — divide y by x at any point to get a`,
       zh: `正比例y=ax的图象是过原点的直线——在图象上任取一点，y除以x就得到a` },
     tex: `y = \\square x`,
@@ -483,7 +483,7 @@ NM_TGEN['md73_functionValue'] = function (params, rng) {
     const k = nzInt(rng, 1, 7);
     const m = a * k + b;
     return {
-      prompt: { ko: `f(x)의 값이 정해져 있을 때 x를 찾는 건 일차방정식을 푸는 것과 같아요`,
+      prompt: { ko: `f(x)의 값이 정해져 있을 때 x를 찾는 건 일차방정식을 푸는 것과 같습니다`,
         en: `Finding x when f(x) is given is the same as solving a linear equation`,
         zh: `已知f(x)的值求x，和解一元一次方程是一回事` },
       tex: `f(x) = ${coefLead(a)}x ${wrapPlus(b)}, \\quad f(x) = ${m} \\quad\\Rightarrow\\quad x = \\square`,
@@ -498,7 +498,7 @@ NM_TGEN['md73_functionValue'] = function (params, rng) {
   if (mode === 'findCoef') {
     const f1 = a + b, f2 = 2 * a + b;
     return {
-      prompt: { ko: `두 함숫값을 빼면 a가, 그 a를 되넣으면 b가 나와요 — 작은 순서대로 a, b를 입력해요`,
+      prompt: { ko: `두 함숫값을 빼면 a가, 그 a를 되넣으면 b가 나옵니다 — 작은 순서대로 a, b를 입력합니다`,
         en: `Subtracting the two values gives a; putting a back gives b — enter a first, then b`,
         zh: `两个函数值相减得a，把a代回去得b——先输入a，再输入b` },
       tex: `f(1) = ${f1}, \\quad f(2) = ${f2} \\quad\\Rightarrow\\quad f(x) = \\square x + \\square`,
@@ -515,7 +515,7 @@ NM_TGEN['md73_functionValue'] = function (params, rng) {
   const k = nzInt(rng, 1, 7);
   const v = a * k + b;
   return {
-    prompt: { ko: `f(x)의 x 자리에 수를 그대로 넣어 계산해요 — 음수를 넣을 땐 괄호로 감싸요`,
+    prompt: { ko: `f(x)의 x 자리에 수를 그대로 넣어 계산합니다 — 음수를 넣을 땐 괄호로 감쌉니다`,
       en: `Put the number straight into the x slot of f(x) — wrap a negative in brackets`,
       zh: `把数直接代入f(x)的x的位置——代入负数时要加括号` },
     tex: `f(x) = ${coefLead(a)}x ${wrapPlus(b)} \\quad\\Rightarrow\\quad f(${k}) = \\square`,
@@ -555,7 +555,7 @@ NM_TGEN['md74_lineGraph'] = function (params, rng) {
     if (x2 === x1) x2 = x1 + 1;
     const y1 = a * x1 + b, y2 = a * x2 + b;
     return {
-      prompt: { ko: `그래프를 그리려면 먼저 두 점을 찾아요 — x에 ${x1}과 ${x2}를 차례로 넣어 y를 구해요`,
+      prompt: { ko: `그래프를 그리려면 먼저 두 점을 찾습니다 — x에 ${x1}과 ${x2}를 차례로 넣어 y를 구합니다`,
         en: `To draw the graph, first find two points — put x = ${x1} and x = ${x2} into the equation and work out y`,
         zh: `要画图象，先找两个点——把x=${x1}和x=${x2}依次代入求出y` },
       tex: `y = ${a}x ${wrapPlus(b)} \\quad\\Rightarrow\\quad (${x1},\\, \\square), \\quad (${x2},\\, \\square)`,
@@ -574,7 +574,7 @@ NM_TGEN['md74_lineGraph'] = function (params, rng) {
     const xi = nzInt(rng, 1, 5);          /* 답: x절편 */
     const b = -a * xi;                    /* y절편 */
     return {
-      prompt: { ko: `y=0을 넣어 x절편을, x=0을 넣어 y절편을 구해요 — 이 두 점으로도 그래프를 그릴 수 있어요. x절편부터 입력해요`,
+      prompt: { ko: `y=0을 넣어 x절편을, x=0을 넣어 y절편을 구합니다 — 이 두 점으로도 그래프를 그릴 수 있습니다. x절편부터 입력합니다`,
         en: `Put y=0 for the x-intercept and x=0 for the y-intercept — these two points also draw the graph. Enter the x-intercept first`,
         zh: `令y=0求x截距，令x=0求y截距——用这两个点也能画出图象。先输入x截距` },
       tex: `y = ${coefLead(a)}x ${wrapPlus(b)} \\quad\\Rightarrow\\quad \\text{x절편} \\square, \\quad \\text{y절편} \\square`,
@@ -594,7 +594,7 @@ NM_TGEN['md74_lineGraph'] = function (params, rng) {
     const b = nzInt(rng, 1, 5);
     const y1 = a + b;
     return {
-      prompt: { ko: `y절편 (0, b)를 먼저 찍고, 오른쪽으로 1칸 가면서 위아래로 a칸 움직인 곳이 두 번째 점이에요`,
+      prompt: { ko: `y절편 (0, b)를 먼저 찍고, 오른쪽으로 1칸 가면서 위아래로 a칸 움직인 곳이 두 번째 점입니다`,
         en: `Mark the y-intercept (0, b) first, then move 1 to the right and a up or down — that is the second point`,
         zh: `先标出y截距(0,b)，再向右走1格、上下走a格，就是第二个点` },
       tex: `y = ${coefLead(a)}x ${wrapPlus(b)} \\quad\\Rightarrow\\quad (0,\\, \\square), \\quad (1,\\, \\square)`,
@@ -616,7 +616,7 @@ NM_TGEN['md74_lineGraph'] = function (params, rng) {
     const xi = R(rng, 1, Math.min(4, lim)) * pick(rng, [1, -1]);
     const b = -a * xi;
     return {
-      prompt: { ko: `그래프가 x축을 지나는 자리가 x절편, y축을 지나는 자리가 y절편이에요`,
+      prompt: { ko: `그래프가 x축을 지나는 자리가 x절편, y축을 지나는 자리가 y절편입니다`,
         en: `Where the graph crosses the x-axis is the x-intercept; where it crosses the y-axis is the y-intercept`,
         zh: `图象与x轴相交处是x截距，与y轴相交处是y截距` },
       tex: `\\text{x절편} \\square, \\quad \\text{y절편} \\square`,
@@ -634,7 +634,7 @@ NM_TGEN['md74_lineGraph'] = function (params, rng) {
   const a = nzInt(rng, 1, 5);
   const q = nzInt(rng, 1, 8);
   return {
-    prompt: { ko: `y=ax+b의 그래프는 y=ax의 그래프를 y축의 방향으로 b만큼 평행이동한 거예요 — 기울기는 그대로고 y절편만 b가 돼요`,
+    prompt: { ko: `y=ax+b의 그래프는 y=ax의 그래프를 y축의 방향으로 b만큼 평행이동한 거입니다 — 기울기는 그대로고 y절편만 b가 됩니다`,
       en: `The graph of y=ax+b is the graph of y=ax translated b along the y-axis — the slope stays and only the y-intercept becomes b`,
       zh: `y=ax+b的图象是把y=ax的图象沿y轴方向平移b得到的——斜率不变，只有y截距变成b` },
     tex: `y = ${coefLead(a)}x \\quad\\text{를 } ${q > 0 ? `${q}\\text{만큼 위로}` : `${Math.abs(q)}\\text{만큼 아래로}`} \\quad\\Rightarrow\\quad y = ${coefLead(a)}x + \\square`,
@@ -668,7 +668,7 @@ NM_TGEN['md75_lineEquation'] = function (params, rng) {
     while ((yy - m1 * x === 0 || yy - m2 * x === 0) && g2++ < 12) yy = yy + 1;
     const b1 = yy - m1 * x, b2 = yy - m2 * x;
     return {
-      prompt: { ko: `두 직선이 만나는 점은 두 식을 모두 만족해요 — 연립방정식의 해와 같아요`,
+      prompt: { ko: `두 직선이 만나는 점은 두 식을 모두 만족합니다 — 연립방정식의 해와 같습니다`,
         en: `The point where two lines meet satisfies both equations — it is the solution of the system`,
         zh: `两直线的交点同时满足两个式子——就是方程组的解` },
       tex: `y = ${coefLead(m1)}x ${wrapPlus(b1)}, \\quad y = ${coefLead(m2)}x ${wrapPlus(b2)} \\quad\\Rightarrow\\quad \\left(\\square,\\, \\square\\right)`,
@@ -690,7 +690,7 @@ NM_TGEN['md75_lineEquation'] = function (params, rng) {
     const k = a * d;                      /* 답: kx - dy + c = 0 이 기울기 a 가 되는 k */
     const c = nzInt(rng, 1, 9);
     return {
-      prompt: { ko: `두 직선이 평행하려면 기울기가 같아야 해요 — 일반형을 y=ax+b 꼴로 고쳐 기울기를 비교해요`,
+      prompt: { ko: `두 직선이 평행하려면 기울기가 같아야 합니다 — 일반형을 y=ax+b 꼴로 고쳐 기울기를 비교합니다`,
         en: `Two lines are parallel when their slopes match — rewrite the general form as y=ax+b and compare`,
         zh: `两直线平行就是斜率相同——把一般式改写成y=ax+b再比较斜率` },
       tex: `\\square x - ${d}y ${wrapPlus(c)} = 0 \\quad\\text{가} \\quad y = ${coefLead(a)}x \\quad\\text{와 평행}`,
@@ -708,7 +708,7 @@ NM_TGEN['md75_lineEquation'] = function (params, rng) {
   const d = pick(rng, [1, 2, 3]);
   const A = -m * d, B = d, C = -n * d;    /* Ax + By + C = 0 ⟺ y = mx + n */
   return {
-    prompt: { ko: `y의 항만 왼쪽에 남기고 나머지를 옮긴 뒤, y의 계수로 나눠요`,
+    prompt: { ko: `y의 항만 왼쪽에 남기고 나머지를 옮긴 뒤, y의 계수로 나눕니다`,
       en: `Keep only the y term on one side, move the rest across, then divide by the coefficient of y`,
       zh: `只把y的项留在一边，其余移过去，再除以y的系数` },
     tex: `${coefLead(A)}x + ${coefLead(B)}y ${wrapPlus(C)} = 0 \\quad\\Rightarrow\\quad y = \\square x + \\square`,
@@ -872,7 +872,7 @@ NM_TGEN['md78_quadBasic'] = function (params, rng) {
     const x = pick(rng, [1, 2, 3]);
     const y = a * x * x;
     return {
-      prompt: { ko: `점의 좌표를 y=ax²에 넣으면 a만 남아요 — x를 제곱한 값으로 y를 나눠요`,
+      prompt: { ko: `점의 좌표를 y=ax²에 넣으면 a만 남습니다 — x를 제곱한 값으로 y를 나눕니다`,
         en: `Substituting the point into y=ax² leaves only a — divide y by x squared`,
         zh: `把点的坐标代入y=ax²只剩下a——用y除以x的平方` },
       tex: `y = ax^2 \\text{가 } \\left(${x},\\, ${y}\\right) \\text{를 지남} \\quad\\Rightarrow\\quad a = \\square`,
@@ -888,7 +888,7 @@ NM_TGEN['md78_quadBasic'] = function (params, rng) {
     const a = pick(rng, [1, 2, -1, -2]);
     const px = Math.abs(a) === 1 ? 2 : 2;
     return {
-      prompt: { ko: `y=ax²의 그래프는 원점이 꼭짓점이에요 — 지나는 점 하나로 a를 구해요`,
+      prompt: { ko: `y=ax²의 그래프는 원점이 꼭짓점입니다 — 지나는 점 하나로 a를 구합니다`,
         en: `The graph of y=ax² has its vertex at the origin — one point on it gives a`,
         zh: `y=ax²的图象顶点在原点——用图象上的一个点求出a` },
       tex: `y = \\square x^2`,
@@ -907,7 +907,7 @@ NM_TGEN['md78_quadBasic'] = function (params, rng) {
   const x = nzInt(rng, 2, 5);        /* x=±1 이면 단계가 `a × 1` 이 되어 보여 줄 것이 없다 */
   const y = a * x * x;
   return {
-    prompt: { ko: `x를 제곱한 다음 a를 곱해요 — 제곱하면 음수도 양수가 돼요`,
+    prompt: { ko: `x를 제곱한 다음 a를 곱합니다 — 제곱하면 음수도 양수가 됩니다`,
       en: `Square x first, then multiply by a — squaring turns a negative into a positive`,
       zh: `先把x平方，再乘以a——平方后负数也变成正数` },
     tex: `y = ${coefLead(a)}x^2 \\quad\\Rightarrow\\quad x = ${x} \\text{일 때 } y = \\square`,
@@ -930,7 +930,7 @@ NM_TGEN['md79_quadShift'] = function (params, rng) {
   if (mode === 'leftRight') {
     const p = nzInt(rng, 1, 5);
     return {
-      prompt: { ko: `좌우로 옮기면 괄호 안에 들어가요 — 오른쪽으로 p만큼이면 (x−p)²예요`,
+      prompt: { ko: `좌우로 옮기면 괄호 안에 들어갑니다 — 오른쪽으로 p만큼이면 (x−p)²입니다`,
         en: `A left-right shift goes inside the bracket — p to the right gives (x−p)²`,
         zh: `左右平移进到括号里——向右平移p就是(x−p)²` },
       tex: `y = ${coefLead(a)}x^2 \\text{을 } x \\text{축 방향으로 } ${p} \\text{만큼} \\quad\\Rightarrow\\quad \\text{꼭짓점의 } x = \\square`,
@@ -945,7 +945,7 @@ NM_TGEN['md79_quadShift'] = function (params, rng) {
   if (mode === 'both') {
     const p = nzInt(rng, 1, 4), q = nzInt(rng, 1, 5);
     return {
-      prompt: { ko: `좌우는 괄호 안에, 위아래는 괄호 밖에 붙어요 — 꼭짓점을 차례로 입력해요`,
+      prompt: { ko: `좌우는 괄호 안에, 위아래는 괄호 밖에 붙습니다 — 꼭짓점을 차례로 입력합니다`,
         en: `Left-right goes inside the bracket, up-down outside — enter the vertex in order`,
         zh: `左右在括号里，上下在括号外——按顺序输入顶点` },
       tex: `y = ${coefLead(a)}x^2 \\text{을 } x \\text{축으로 } ${p}, \\; y \\text{축으로 } ${q} \\quad\\Rightarrow\\quad \\left(\\square,\\, \\square\\right)`,
@@ -961,7 +961,7 @@ NM_TGEN['md79_quadShift'] = function (params, rng) {
   /* upDown(기본) — y=ax²+q */
   const q = nzInt(rng, 1, 6);
   return {
-    prompt: { ko: `위아래로 옮기면 뒤에 더해져요 — 위로 q만큼이면 +q예요`,
+    prompt: { ko: `위아래로 옮기면 뒤에 더해집니다 — 위로 q만큼이면 +q입니다`,
       en: `An up-down shift is added at the end — q upward gives +q`,
       zh: `上下平移加在后面——向上平移q就是+q` },
     tex: `y = ${coefLead(a)}x^2 \\text{을 } y \\text{축 방향으로 } ${q} \\text{만큼} \\quad\\Rightarrow\\quad \\text{꼭짓점의 } y = \\square`,
@@ -988,7 +988,7 @@ NM_TGEN['md80_quadExtrema'] = function (params, rng) {
     if (r1 > r2) { const t = r1; r1 = r2; r2 = t; }
     const b = -(r1 + r2), c = r1 * r2;
     return {
-      prompt: { ko: `x축과 만나는 곳은 y=0인 자리예요 — 이차방정식을 풀면 나와요. 작은 수부터 입력해요`,
+      prompt: { ko: `x축과 만나는 곳은 y=0인 자리입니다 — 이차방정식을 풀면 나옵니다. 작은 수부터 입력합니다`,
         en: `The graph meets the x-axis where y=0 — solve the quadratic. Enter the smaller root first`,
         zh: `图象与x轴相交处就是y=0的地方——解二次方程即可。先输入较小的根` },
       tex: `y = x^2 ${wrapPlus(b)}x ${wrapPlus(c)} \\quad\\Rightarrow\\quad \\text{x축과의 교점 } \\square, \\; \\square`,
@@ -1006,7 +1006,7 @@ NM_TGEN['md80_quadExtrema'] = function (params, rng) {
     const b = nzInt(rng, 1, 6);
     const c = nzInt(rng, 1, 9);
     return {
-      prompt: { ko: `y축과 만나는 곳은 x=0인 자리예요 — 상수항이 그대로 답이에요`,
+      prompt: { ko: `y축과 만나는 곳은 x=0인 자리입니다 — 상수항이 그대로 답입니다`,
         en: `The graph meets the y-axis where x=0 — the constant term is the answer`,
         zh: `图象与y轴相交处就是x=0的地方——常数项就是答案` },
       tex: `y = ${coefLead(a)}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} \\quad\\Rightarrow\\quad \\text{y축과의 교점 } \\square`,
@@ -1022,7 +1022,7 @@ NM_TGEN['md80_quadExtrema'] = function (params, rng) {
   const a = pick(rng, [1, 2, 3, -1, -2, -3]);
   const p = nzInt(rng, 1, 5), q = nzInt(rng, 1, 8);
   return {
-    prompt: { ko: `(x−p)²은 절대 음수가 못 돼요 — a가 양수면 q가 최솟값, 음수면 q가 최댓값이에요`,
+    prompt: { ko: `(x−p)²은 절대 음수가 못 됩니다 — a가 양수면 q가 최솟값, 음수면 q가 최댓값입니다`,
       en: `(x−p)² can never be negative — when a is positive q is the minimum, when negative q is the maximum`,
       zh: `(x−p)²不可能为负——a为正时q是最小值，a为负时q是最大值` },
     tex: `y = ${coefLead(a)}(x ${wrapPlus(-p)})^2 ${wrapPlus(q)} \\quad\\Rightarrow\\quad \\text{${a > 0 ? '최솟값' : '최댓값'}} = \\square`,
@@ -1050,7 +1050,7 @@ NM_TGEN['md81_quadFind'] = function (params, rng) {
     const x0 = r2 + 1;
     const y0 = a * (x0 - r1) * (x0 - r2);
     return {
-      prompt: { ko: `x축과 만나는 두 점을 알면 y=a(x−p)(x−q) 꼴로 쓸 수 있어요 — 나머지 한 점으로 a를 구해요`,
+      prompt: { ko: `x축과 만나는 두 점을 알면 y=a(x−p)(x−q) 꼴로 쓸 수 있습니다 — 나머지 한 점으로 a를 구합니다`,
         en: `Knowing the two x-intercepts lets you write y=a(x−p)(x−q) — the remaining point gives a`,
         zh: `知道与x轴的两个交点就能写成y=a(x−p)(x−q)——再用另一个点求出a` },
       tex: `\\text{x축과 } \\left(${r1},\\, 0\\right), \\left(${r2},\\, 0\\right), \\quad \\left(${x0},\\, ${y0}\\right) \\text{를 지남} \\quad\\Rightarrow\\quad a = \\square`,
@@ -1072,7 +1072,7 @@ NM_TGEN['md81_quadFind'] = function (params, rng) {
     if (p * p + q === 0) q = q + 1;
     const b = -2 * p, c = p * p + q;
     return {
-      prompt: { ko: `꼭짓점이 (p, q)면 y=(x−p)²+q예요 — 전개해서 y=x²+bx+c 꼴의 b와 c를 차례로 입력해요`,
+      prompt: { ko: `꼭짓점이 (p, q)면 y=(x−p)²+q입니다 — 전개해서 y=x²+bx+c 꼴의 b와 c를 차례로 입력합니다`,
         en: `A vertex at (p, q) means y=(x−p)²+q — expand it and enter b then c for y=x²+bx+c`,
         zh: `顶点是(p, q)时y=(x−p)²+q——展开后依次输入y=x²+bx+c的b和c` },
       tex: `\\text{꼭짓점} \\left(${p},\\, ${q}\\right), \\; x^2 \\text{의 계수 } 1 \\quad\\Rightarrow\\quad y = x^2 + \\square x + \\square`,
@@ -1091,7 +1091,7 @@ NM_TGEN['md81_quadFind'] = function (params, rng) {
   const x0 = p + pick(rng, [1, 2]);
   const y0 = a * (x0 - p) * (x0 - p) + q;
   return {
-    prompt: { ko: `꼭짓점을 알면 y=a(x−p)²+q까지 쓸 수 있어요 — 남은 a는 지나는 점 하나로 구해요`,
+    prompt: { ko: `꼭짓점을 알면 y=a(x−p)²+q까지 쓸 수 있습니다 — 남은 a는 지나는 점 하나로 구합니다`,
       en: `Knowing the vertex gets you as far as y=a(x−p)²+q — one more point gives a`,
       zh: `知道顶点就能写到y=a(x−p)²+q——剩下的a用图象上的一点求出` },
     tex: `\\text{꼭짓점} \\left(${p},\\, ${q}\\right), \\; \\left(${x0},\\, ${y0}\\right) \\text{를 지남} \\quad\\Rightarrow\\quad a = \\square`,
@@ -1131,7 +1131,7 @@ NM_TGEN['md82_numberLine'] = function (params, rng) {
     while (num % den === 0 && guard++ < 30) num = R(rng, -2 * den + 1, 2 * den - 1);
     if (num % den === 0) num = num + 1;                 /* 정수 자리는 이 레벨의 목적이 아니다 */
     return {
-      prompt: { ko: `한 칸을 ${den}등분한 수직선이에요 — 0에서 작은 눈금 몇 칸인지 세어 분수로 적어요`,
+      prompt: { ko: `한 칸을 ${den}등분한 수직선입니다 — 0에서 작은 눈금 몇 칸인지 세어 분수로 적습니다`,
         en: `Each unit is cut into ${den} — count the small marks from 0 and write it as a fraction`,
         zh: `每一格被${den}等分——从0数小刻度有几格，写成分数` },
       tex: `\\text{점 P가 나타내는 수} = \\dfrac{\\square}{\\square}`,
@@ -1151,7 +1151,7 @@ NM_TGEN['md82_numberLine'] = function (params, rng) {
        찍어 두고 왼쪽(작은 수)을 묻는다 — 절댓값을 계산이 아니라 자리로 읽게 한다. */
     const k = R(rng, 2, 6);
     return {
-      prompt: { ko: `절댓값이 같은 수는 원점에서 같은 거리에 있는 두 개예요 — 왼쪽 수를 답해요`,
+      prompt: { ko: `절댓값이 같은 수는 원점에서 같은 거리에 있는 두 개입니다 — 왼쪽 수를 답합니다`,
         en: `Two numbers share an absolute value, one on each side of zero — give the one on the left`,
         zh: `绝对值相同的数有两个，分别在0的两侧——回答左边那个` },
       tex: `|x| = ${k} \\quad\\Rightarrow\\quad \\text{작은 수} = \\square`,
@@ -1170,7 +1170,7 @@ NM_TGEN['md82_numberLine'] = function (params, rng) {
   let v = R(rng, lo + 1, hi - 1);
   if (v === 0) v = 1;
   return {
-    prompt: { ko: `0에서 오른쪽은 양수, 왼쪽은 음수예요 — 눈금을 세어 점이 나타내는 수를 읽어요`,
+    prompt: { ko: `0에서 오른쪽은 양수, 왼쪽은 음수입니다 — 눈금을 세어 점이 나타내는 수를 읽습니다`,
       en: `Right of zero is positive and left is negative — count the marks and read the number at the dot`,
       zh: `0的右边是正数、左边是负数——数刻度读出点表示的数` },
     tex: `\\text{점 P가 나타내는 수} = \\square`,

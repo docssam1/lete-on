@@ -59,7 +59,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const m = R(rng, 2, 9), n = R(rng, 2, 9);
     return {
       prompt: {
-        ko: `밑이 같은 거듭제곱끼리 곱할 땐 지수를 더해요`,
+        ko: `밑이 같은 거듭제곱끼리 곱할 땐 지수를 더합니다`,
         en: `Multiplying powers with the same base — add the exponents`,
         zh: `同底数幂相乘——指数相加`
       },
@@ -76,7 +76,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const m = R(rng, 2, 5), n = R(rng, 2, 4);
     return {
       prompt: {
-        ko: `거듭제곱을 다시 거듭제곱하면 지수끼리 곱해요`,
+        ko: `거듭제곱을 다시 거듭제곱하면 지수끼리 곱합니다`,
         en: `A power raised to another power — multiply the exponents`,
         zh: `幂的乘方——指数相乘`
       },
@@ -93,7 +93,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const n = R(rng, 1, 8), m = R(rng, n + 1, n + 8);
     return {
       prompt: {
-        ko: `밑이 같은 거듭제곱끼리 나누면 지수를 빼요(큰 지수 − 작은 지수)`,
+        ko: `밑이 같은 거듭제곱끼리 나누면 지수를 뺍니다(큰 지수 − 작은 지수)`,
         en: `Dividing powers with the same base — subtract the exponents (bigger minus smaller)`,
         zh: `同底数幂相除——指数相减(大指数减小指数)`
       },
@@ -115,7 +115,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const answer = mid + k;
     return {
       prompt: {
-        ko: `(${base}^{${m}})^{${n}}을 먼저 하나의 거듭제곱으로 합치고, 곱셈 법칙을 적용해요`,
+        ko: `(${base}^{${m}})^{${n}}을 먼저 하나의 거듭제곱으로 합치고, 곱셈 법칙을 적용합니다`,
         en: `First collapse (${base}^${m})^${n} into one power, then apply the multiplication law`,
         zh: `先把(${base}^{${m}})^{${n}}合成一个幂，再用乘法法则`
       },
@@ -139,7 +139,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const answer = sum - k;
     return {
       prompt: {
-        ko: `곱셈으로 지수를 먼저 더한 뒤, 나눗셈으로 지수를 빼요`,
+        ko: `곱셈으로 지수를 먼저 더한 뒤, 나눗셈으로 지수를 뺍니다`,
         en: `Add exponents for the multiplication first, then subtract for the division`,
         zh: `先用乘法把指数相加，再用除法把指数相减`
       },
@@ -162,7 +162,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
   const answer = inner * p;
   return {
     prompt: {
-      ko: `괄호 안을 먼저 하나의 거듭제곱으로 합치고, 바깥 지수를 곱해요`,
+      ko: `괄호 안을 먼저 하나의 거듭제곱으로 합치고, 바깥 지수를 곱합니다`,
       en: `Combine inside the brackets into one power first, then multiply by the outer exponent`,
       zh: `先把括号内合成一个幂，再乘以外面的指数`
     },
@@ -192,7 +192,7 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
     const coeff = c1 * c2, exp = m + n;
     return {
       prompt: {
-        ko: `단항식끼리 곱할 땐 계수는 계수끼리 곱하고, 문자는 지수법칙으로 합쳐요`,
+        ko: `단항식끼리 곱할 땐 계수는 계수끼리 곱하고, 문자는 지수법칙으로 합칩니다`,
         en: `Multiply monomials: multiply the coefficients, combine the letter parts with the exponent law`,
         zh: `单项式相乘：系数乘系数，字母部分用指数法则合并`
       },
@@ -218,7 +218,7 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
     const coeff = k, exp = m - n;
     return {
       prompt: {
-        ko: `단항식끼리 나눌 땐 계수는 계수끼리 나누고, 문자는 지수법칙으로 빼요`,
+        ko: `단항식끼리 나눌 땐 계수는 계수끼리 나누고, 문자는 지수법칙으로 뺍니다`,
         en: `Divide monomials: divide the coefficients, subtract exponents for the letter parts`,
         zh: `单项式相除：系数除以系数，字母部分用指数法则相减`
       },
@@ -263,7 +263,7 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
   const expChainTex = terms.map((t, i) => i === 0 ? String(t.m) : ` ${t.op === '\\times' ? '+' : '-'} ${t.m}`).join('');
   return {
     prompt: {
-      ko: `세 단항식의 곱셈·나눗셈 혼합이에요. 앞에서부터 차례로 계산해요`,
+      ko: `세 단항식의 곱셈·나눗셈 혼합입니다. 앞에서부터 차례로 계산합니다`,
       en: `Mixed × and ÷ of three monomials — work left to right`,
       zh: `三个单项式的乘除混合——从左到右依次计算`
     },
@@ -292,7 +292,7 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
     const cc = op === '+' ? b1 + b2 : b1 - b2;
     return {
       prompt: {
-        ko: `동류항끼리(문자와 차수가 같은 항끼리)만 더하거나 빼요`,
+        ko: `동류항끼리(문자와 차수가 같은 항끼리)만 더하거나 뺍니다`,
         en: `Combine like terms — same letter, same power — only`,
         zh: `只把同类项(字母和次数都相同)相加或相减`
       },
@@ -315,7 +315,7 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
     const cc = op === '+' ? c1 + c2 : c1 - c2;
     return {
       prompt: {
-        ko: `x², x, 상수 — 차수가 같은 항끼리 각각 정리해요`,
+        ko: `x², x, 상수 — 차수가 같은 항끼리 각각 정리합니다`,
         en: `Sort by degree — x² terms, x terms, and constants each combine separately`,
         zh: `按次数分类——x²项、x项、常数项分别合并`
       },
@@ -336,7 +336,7 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
   const xc = a1 - a2, cc = b1 - b2;
   return {
     prompt: {
-      ko: `괄호 앞이 −이면 괄호 안 모든 항의 부호를 바꿔서 풀어요`,
+      ko: `괄호 앞이 −이면 괄호 안 모든 항의 부호를 바꿔서 풉니다`,
       en: `A minus sign in front of the brackets flips the sign of every term inside`,
       zh: `括号前是−号，就要把括号里每一项的符号都变号`
     },
@@ -364,7 +364,7 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
     const a = nzInt(rng, 1, 9), b = nzInt(rng, 1, 20);
     return {
       prompt: {
-        ko: `분배법칙으로 괄호 안의 두 항에 각각 곱해요`,
+        ko: `분배법칙으로 괄호 안의 두 항에 각각 곱합니다`,
         en: `Distribute — multiply each term inside the brackets`,
         zh: `用分配律——分别乘括号里的每一项`
       },
@@ -383,7 +383,7 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
     const a = nzInt(rng, 1, 9), b = nzInt(rng, 1, 20);
     return {
       prompt: {
-        ko: `${k}x를 괄호 안 두 항에 각각 곱해요 — 차수가 하나씩 올라가요`,
+        ko: `${k}x를 괄호 안 두 항에 각각 곱합니다 — 차수가 하나씩 올라갑니다`,
         en: `Multiply ${k}x by each term inside — the power of x goes up by one each time`,
         zh: `把${k}x分别乘括号里的每一项——x的次数各加1`
       },
@@ -402,7 +402,7 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
   const a = nzInt(rng, 1, 6), b = nzInt(rng, 1, 9), c = nzInt(rng, 1, 15);
   return {
     prompt: {
-      ko: `분배법칙으로 괄호 안 세 항 모두에 곱해요`,
+      ko: `분배법칙으로 괄호 안 세 항 모두에 곱합니다`,
       en: `Distribute across all three terms inside the brackets`,
       zh: `用分配律乘括号里的三项`
     },
@@ -431,7 +431,7 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
     const b = x + a;
     return {
       prompt: {
-        ko: `x + ${a} = ${b}: 좌변의 +${a}를 우변으로 넘기면 부호가 바뀌어요`,
+        ko: `x + ${a} = ${b}: 좌변의 +${a}를 우변으로 넘기면 부호가 바뀝니다`,
         en: `x + ${a} = ${b}: move +${a} to the other side — the sign flips`,
         zh: `x + ${a} = ${b}：把左边的+${a}移到右边，符号要变`
       },
@@ -449,7 +449,7 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
     const b = x - a;
     return {
       prompt: {
-        ko: `x - ${a} = ${b}: 좌변의 -${a}를 우변으로 넘기면 부호가 바뀌어요`,
+        ko: `x - ${a} = ${b}: 좌변의 -${a}를 우변으로 넘기면 부호가 바뀝니다`,
         en: `x - ${a} = ${b}: move -${a} to the other side — the sign flips`,
         zh: `x - ${a} = ${b}：把左边的-${a}移到右边，符号要变`
       },
@@ -469,7 +469,7 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
   const c = aC * x0 + b;
   return {
     prompt: {
-      ko: `상수항을 이항한 뒤, 양변을 x의 계수로 나눠요`,
+      ko: `상수항을 이항한 뒤, 양변을 x의 계수로 나눕니다`,
       en: `Move the constant term across, then divide both sides by the coefficient of x`,
       zh: `先把常数项移项，再用x的系数除以两边`
     },

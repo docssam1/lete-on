@@ -93,7 +93,7 @@ NM_TGEN['md36_rationalExponent'] = function (params, rng) {
   const answer = [p, q];
   return {
     prompt: {
-      ko: `ⁿ√(aᵐ)은 지수 m/n을 기약분수로 줄인 a^(p/q)와 같아요 — 근호의 지수(n)는 분모로, 거듭제곱의 지수(m)는 분자로 가요`,
+      ko: `ⁿ√(aᵐ)은 지수 m/n을 기약분수로 줄인 a^(p/q)와 같습니다 — 근호의 지수(n)는 분모로, 거듭제곱의 지수(m)는 분자로 갑니다`,
       en: `The nth root of aᵐ equals a raised to the reduced fraction m/n — the root's index (n) becomes the denominator, the power's exponent (m) becomes the numerator`,
       zh: `aᵐ的n次方根等于a的m/n次方(约分后)——根指数(n)作分母，幂指数(m)作分子`
     },
@@ -125,13 +125,13 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
     const which = pick(rng, ['base', 'arg', 'exp']);
     const answer = which === 'base' ? a : which === 'arg' ? N : x;
     const promptMap = {
-      base: { ko: `이 로그식에서 "밑"(log 아래 작은 수)을 그대로 읽어 입력해요 — 계산은 필요 없어요`,
+      base: { ko: `이 로그식에서 "밑"(log 아래 작은 수)을 그대로 읽어 입력합니다 — 계산은 필요 없습니다`,
         en: `Just read off the "base" (the small number under log) in this equation — no calculation needed`,
         zh: `直接读出这个对数式中的"底数"(log下方的小数字)——不用计算` },
-      arg: { ko: `이 로그식에서 "진수"(log 오른쪽의 수)를 그대로 읽어 입력해요 — 계산은 필요 없어요`,
+      arg: { ko: `이 로그식에서 "진수"(log 오른쪽의 수)를 그대로 읽어 입력합니다 — 계산은 필요 없습니다`,
         en: `Just read off the "argument" (the number to the right of log) in this equation — no calculation needed`,
         zh: `直接读出这个对数式中的"真数"(log右边的数)——不用计算` },
-      exp: { ko: `이 로그식에서 등호 오른쪽 값(지수 사다리의 몇 번째 칸인지)을 그대로 읽어 입력해요 — 계산은 필요 없어요`,
+      exp: { ko: `이 로그식에서 등호 오른쪽 값(지수 사다리의 몇 번째 칸인지)을 그대로 읽어 입력합니다 — 계산은 필요 없습니다`,
         en: `Just read off the value on the right of the equals sign (which rung of the exponent ladder) — no calculation needed`,
         zh: `直接读出等号右边的值(是指数梯子的第几级)——不用计算` }
     };
@@ -154,7 +154,7 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
     const { a, x, N } = pickLogPair(rng, params.wide ? 5 : 4, params.wide ? 70 : 40, params.wide ? 60000 : 20000);
     return {
       prompt: {
-        ko: `log_a N = x는 "a를 x번 곱하면 N"이라는 뜻이에요 — aˣ를 계산하면 N이 나와요`,
+        ko: `log_a N = x는 "a를 x번 곱하면 N"이라는 뜻입니다 — aˣ를 계산하면 N이 나옵니다`,
         en: `log_a N = x means "a multiplied by itself x times gives N" — compute aˣ to get N`,
         zh: `log_a N = x的意思是"a自乘x次得到N"——算出aˣ就是N`
       },
@@ -173,7 +173,7 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
     const N = Math.pow(a, x);
     return {
       prompt: {
-        ko: `log_a N = x에서 밑 a를 구하려면, x번 거듭제곱해서 N이 되는 수를 찾아요(N=aˣ의 반대 방향)`,
+        ko: `log_a N = x에서 밑 a를 구하려면, x번 거듭제곱해서 N이 되는 수를 찾습니다(N=aˣ의 반대 방향)`,
         en: `To find the base a in log_a N = x, find the number that gives N when raised to the x power`,
         zh: `求log_a N=x中的底数a，需要找到自乘x次后等于N的那个数`
       },
@@ -192,7 +192,7 @@ NM_TGEN['md37_logDefinition'] = function (params, rng) {
   const { a, x, N } = pickLogPair(rng, wide ? 6 : 4, wide ? 80 : 40, wide ? 100000 : 20000);
   return {
     prompt: {
-      ko: `log_a N = x는 "a를 몇 번 곱해야 N이 되는가"를 묻는 거예요 — 지수 사다리를 오르며 확인해요: a¹,a²,a³…`,
+      ko: `log_a N = x는 "a를 몇 번 곱해야 N이 되는가"를 묻는 거입니다 — 지수 사다리를 오르며 확인해요: a¹,a²,a³…`,
       en: `log_a N = x asks "how many times must a be multiplied to reach N" — climb the exponent ladder: a¹,a²,a³…`,
       zh: `log_a N = x问的是"a要乘几次才能得到N"——沿着指数梯子往上爬确认：a¹,a²,a³…`
     },
@@ -224,7 +224,7 @@ NM_TGEN['md38_logProperties'] = function (params, rng) {
     const answer = X * Y;
     return {
       prompt: {
-        ko: `log_a X + log_a Y = log_a(XY) — 두 로그의 합은 안의 수를 곱한 로그와 같아요`,
+        ko: `log_a X + log_a Y = log_a(XY) — 두 로그의 합은 안의 수를 곱한 로그와 같습니다`,
         en: `log_a X + log_a Y = log_a(XY) — the sum of two logs equals the log of their product`,
         zh: `log_a X + log_a Y = log_a(XY)——两个对数之和等于真数相乘后的对数`
       },
@@ -248,7 +248,7 @@ NM_TGEN['md38_logProperties'] = function (params, rng) {
     const answer = X / Y;
     return {
       prompt: {
-        ko: `log_a X - log_a Y = log_a(X÷Y) — 두 로그의 차는 안의 수를 나눈 로그와 같아요`,
+        ko: `log_a X - log_a Y = log_a(X÷Y) — 두 로그의 차는 안의 수를 나눈 로그와 같습니다`,
         en: `log_a X - log_a Y = log_a(X÷Y) — the difference of two logs equals the log of their quotient`,
         zh: `log_a X - log_a Y = log_a(X÷Y)——两个对数之差等于真数相除后的对数`
       },
@@ -271,7 +271,7 @@ NM_TGEN['md38_logProperties'] = function (params, rng) {
   const { a: b, x: r, N } = pickLogPair(rng, 6, 50, 1000000);
   return {
     prompt: {
-      ko: `log_b N을 구할 때 b 자신이 어떤 수의 거듭제곱이면, b를 한 단위로 삼아 몇 번 곱해야 N이 되는지 세면 돼요(밑변환이 정수로 떨어지는 경우)`,
+      ko: `log_b N을 구할 때 b 자신이 어떤 수의 거듭제곱이면, b를 한 단위로 삼아 몇 번 곱해야 N이 되는지 세면 됩니다(밑변환이 정수로 떨어지는 경우)`,
       en: `To find log_b N, when b itself is already a clean power, just count how many times b must be multiplied to reach N (a change-of-base case that lands on an integer)`,
       zh: `求log_b N时，如果b本身就是某数的整数次幂，只需数b要乘几次得到N(换底后恰为整数的情形)`
     },
@@ -309,16 +309,16 @@ const TRIG_ENTRIES = [
 window.NM_TRIG_ENTRIES = TRIG_ENTRIES; /* 검증 하네스가 같은 표를 대조용으로 재사용 */
 
 const TRIG_PROMPT = {
-  int: { ko: `0°·90°는 좌표축 위의 값이에요 — sin0°·cos90°는 0, sin90°·cos0°는 1, 45°의 tan은 밑변과 높이가 같아 1`,
+  int: { ko: `0°·90°는 좌표축 위의 값입니다 — sin0°·cos90°는 0, sin90°·cos0°는 1, 45°의 tan은 밑변과 높이가 같아 1`,
     en: `0° and 90° sit right on the axes — sin0°/cos90°=0, sin90°/cos0°=1, and tan45°=1 because base and height are equal`,
     zh: `0°和90°正好在坐标轴上——sin0°/cos90°=0，sin90°/cos0°=1，tan45°=1是因为底和高相等` },
-  fracSimple: { ko: `30°·60°는 정삼각형을 반으로 자른 직각삼각형의 변의 비에서 나와요 — sin30°=cos60°=1/2`,
+  fracSimple: { ko: `30°·60°는 정삼각형을 반으로 자른 직각삼각형의 변의 비에서 나옵니다 — sin30°=cos60°=1/2`,
     en: `30° and 60° come from the side ratios of a right triangle formed by bisecting an equilateral triangle — sin30°=cos60°=1/2`,
     zh: `30°和60°来自把等边三角形对半切开得到的直角三角形边比——sin30°=cos60°=1/2` },
-  fracRoot: { ko: `특수각 삼각형의 변의 비를 그대로 분수로 옮겨요 — 근호가 있는 값은 분자에 √를 그대로 둬요`,
+  fracRoot: { ko: `특수각 삼각형의 변의 비를 그대로 분수로 옮깁니다 — 근호가 있는 값은 분자에 √를 그대로 둡니다`,
     en: `Carry the special-triangle side ratio straight into a fraction — keep the √ in the numerator as-is`,
     zh: `把特殊角三角形的边比直接写成分数——根号留在分子里` },
-  rootOnly: { ko: `tan60°=sin60°÷cos60°=(√3/2)÷(1/2)=√3 — 분모가 사라지고 근호만 남아요`,
+  rootOnly: { ko: `tan60°=sin60°÷cos60°=(√3/2)÷(1/2)=√3 — 분모가 사라지고 근호만 남습니다`,
     en: `tan60°=sin60°÷cos60°=(√3/2)÷(1/2)=√3 — the denominators cancel, leaving only the root`,
     zh: `tan60°=sin60°÷cos60°=(√3/2)÷(1/2)=√3——分母互相抵消，只剩下根号` }
 };
@@ -392,7 +392,7 @@ NM_TGEN['md40_arithmeticSeq'] = function (params, rng) {
     const n = R(rng, 3, wide ? 14 : 10);
     const answer = a1 + (n - 1) * d;
     return {
-      prompt: { ko: `등차수열의 일반항 aₙ=a₁+(n-1)d에 그대로 대입해요`,
+      prompt: { ko: `등차수열의 일반항 aₙ=a₁+(n-1)d에 그대로 대입합니다`,
         en: `Substitute directly into the general term formula aₙ=a₁+(n-1)d`,
         zh: `直接代入等差数列通项公式aₙ=a₁+(n-1)d` },
       tex: `a_1=${a1},\\;d=${d} \\;\\Rightarrow\\; a_{${n}} = \\square`,
@@ -411,7 +411,7 @@ NM_TGEN['md40_arithmeticSeq'] = function (params, rng) {
     const X = a1 + (p - 1) * d, Y = a1 + (q - 1) * d;
     const answer = [a1, d];
     return {
-      prompt: { ko: `d=(뒤 항-앞 항)÷(항번호 차), a₁=X-(p-1)d 순서로 구해요`,
+      prompt: { ko: `d=(뒤 항-앞 항)÷(항번호 차), a₁=X-(p-1)d 순서로 구합니다`,
         en: `Find d = (later term − earlier term) ÷ (index difference), then a₁ = X − (p−1)d`,
         zh: `先求d=(后项-前项)÷(项数之差)，再求a₁=X-(p-1)d` },
       tex: `a_{${p}}=${X},\\;a_{${q}}=${Y} \\;\\Rightarrow\\; a_1=\\square,\\;d=\\square`,
@@ -430,7 +430,7 @@ NM_TGEN['md40_arithmeticSeq'] = function (params, rng) {
   const n = R(rng, 3, wide ? 12 : 8);
   const Sn = n * (2 * a1 + (n - 1) * d) / 2;
   return {
-    prompt: { ko: `등차수열의 합 Sₙ=n(2a₁+(n-1)d)÷2에 대입해요`,
+    prompt: { ko: `등차수열의 합 Sₙ=n(2a₁+(n-1)d)÷2에 대입합니다`,
       en: `Substitute into the arithmetic series sum Sₙ=n(2a₁+(n-1)d)÷2`,
       zh: `代入等差数列求和公式Sₙ=n(2a₁+(n-1)d)÷2` },
     tex: `a_1=${a1},\\;d=${d} \\;\\Rightarrow\\; S_{${n}} = \\square`,
@@ -457,7 +457,7 @@ NM_TGEN['md41_geometricSeq'] = function (params, rng) {
     const n = R(rng, 2, wide ? 6 : 4);
     const answer = a1 * Math.pow(r, n - 1);
     return {
-      prompt: { ko: `등비수열의 일반항 aₙ=a₁×r^(n-1)에 대입해요`,
+      prompt: { ko: `등비수열의 일반항 aₙ=a₁×r^(n-1)에 대입합니다`,
         en: `Substitute into the geometric general term aₙ=a₁×r^(n-1)`,
         zh: `代入等比数列通项公式aₙ=a₁×r^(n-1)` },
       tex: `a_1=${a1},\\;r=${r} \\;\\Rightarrow\\; a_{${n}} = \\square`,
@@ -481,7 +481,7 @@ NM_TGEN['md41_geometricSeq'] = function (params, rng) {
     const X = a1 * Math.pow(r, p - 1), Y = a1 * Math.pow(r, q - 1);
     const answer = [a1, r];
     return {
-      prompt: { ko: `이웃한 두 항의 비가 곧 공비 r이에요. r을 구한 뒤 a₁=X÷r^(p-1)로 구해요`,
+      prompt: { ko: `이웃한 두 항의 비가 곧 공비 r입니다. r을 구한 뒤 a₁=X÷r^(p-1)로 구합니다`,
         en: `The ratio of two neighbouring terms is the common ratio r — find r, then a₁ = X ÷ r^(p-1)`,
         zh: `相邻两项之比就是公比r——先求r，再求a₁=X÷r^(p-1)` },
       tex: `a_{${p}}=${X},\\;a_{${q}}=${Y} \\;\\Rightarrow\\; a_1=\\square,\\;r=\\square`,
@@ -502,7 +502,7 @@ NM_TGEN['md41_geometricSeq'] = function (params, rng) {
   for (let i = 0; i < n; i++) { terms.push(term); Sn += term; term *= r; }
   const sumExpr = terms.map((t, i) => i === 0 ? String(t) : wrapPlus(t)).join(' ');
   return {
-    prompt: { ko: `등비수열의 합은 각 항을 직접 나열해 더한 것과 같아요 — a₁+a₁r+a₁r²+…`,
+    prompt: { ko: `등비수열의 합은 각 항을 직접 나열해 더한 것과 같습니다 — a₁+a₁r+a₁r²+…`,
       en: `The sum of a geometric series is just adding each term one by one — a₁+a₁r+a₁r²+…`,
       zh: `等比数列的和就是把每一项依次相加——a₁+a₁r+a₁r²+…` },
     tex: `a_1=${a1},\\;r=${r} \\;\\Rightarrow\\; S_{${n}} = \\square`,
@@ -530,13 +530,13 @@ NM_TGEN['md42_sigmaSum'] = function (params, rng) {
     const which = pick(rng, ['start', 'end', 'count']);
     const answer = which === 'start' ? a : which === 'end' ? b : (b - a + 1);
     const promptMap = {
-      start: { ko: `Σ 아래의 작은 글자가 "몇 번째 k부터 시작하는지"를 알려줘요 — 그대로 읽어요`,
+      start: { ko: `Σ 아래의 작은 글자가 "몇 번째 k부터 시작하는지"를 알려줍니다 — 그대로 읽습니다`,
         en: `The small text below Σ tells you which k to start from — just read it off`,
         zh: `Σ下方的小字告诉你k从几开始——直接读出来` },
-      end: { ko: `Σ 위의 숫자가 "어디서 끝나는지"를 알려줘요 — 그대로 읽어요`,
+      end: { ko: `Σ 위의 숫자가 "어디서 끝나는지"를 알려줍니다 — 그대로 읽습니다`,
         en: `The number above Σ tells you where k ends — just read it off`,
         zh: `Σ上方的数字告诉你k到哪里结束——直接读出来` },
-      count: { ko: `Σ는 k=시작부터 끝까지 하나씩 대입해서 다 더하라는 뜻이에요 — 몇 번 더하는지(항의 개수)만 세어봐요(계산 없이 개수만!)`,
+      count: { ko: `Σ는 k=시작부터 끝까지 하나씩 대입해서 다 더하라는 뜻입니다 — 몇 번 더하는지(항의 개수)만 세어봅니다(계산 없이 개수만!)`,
         en: `Σ means substitute k one by one from start to end and add them all — just count how many terms that is (no summing, just counting!)`,
         zh: `Σ的意思是把k从起点到终点依次代入并全部相加——数一数要加几项就好(不用求和，只数个数)` }
     };
@@ -558,7 +558,7 @@ NM_TGEN['md42_sigmaSum'] = function (params, rng) {
     const n = R(rng, 3, wide ? 150 : 100);
     const answer = n * (n + 1) / 2;
     return {
-      prompt: { ko: `Σk(k=1~n)는 무지개 덧셈법 그대로예요 — n(n+1)÷2`,
+      prompt: { ko: `Σk(k=1~n)는 무지개 덧셈법 그대로입니다 — n(n+1)÷2`,
         en: `Σk from 1 to n is exactly the rainbow-sum trick — n(n+1)÷2`,
         zh: `Σk(k=1~n)就是彩虹加法法——n(n+1)÷2` },
       tex: `\\sum_{k=1}^{${n}} k = \\square`,
@@ -574,7 +574,7 @@ NM_TGEN['md42_sigmaSum'] = function (params, rng) {
     const n = R(rng, 3, wide ? 120 : 80);
     const answer = n * (n + 1) * (2 * n + 1) / 6;
     return {
-      prompt: { ko: `Σk²(k=1~n)는 제곱수의 합 공식 그대로예요 — n(n+1)(2n+1)÷6`,
+      prompt: { ko: `Σk²(k=1~n)는 제곱수의 합 공식 그대로입니다 — n(n+1)(2n+1)÷6`,
         en: `Σk² from 1 to n is exactly the sum-of-squares formula — n(n+1)(2n+1)÷6`,
         zh: `Σk²(k=1~n)就是平方数之和公式——n(n+1)(2n+1)÷6` },
       tex: `\\sum_{k=1}^{${n}} k^2 = \\square`,
@@ -592,7 +592,7 @@ NM_TGEN['md42_sigmaSum'] = function (params, rng) {
   const q = nzInt(rng, 1, 9);
   const answer = p * n * (n + 1) / 2 + q * n;
   return {
-    prompt: { ko: `Σ(pk+q)는 pΣk + qΣ1로 쪼개요 — 앞은 무지개 덧셈법, 뒤는 q를 n번 더한 것`,
+    prompt: { ko: `Σ(pk+q)는 pΣk + qΣ1로 쪼갭니다 — 앞은 무지개 덧셈법, 뒤는 q를 n번 더한 것`,
       en: `Σ(pk+q) splits into p·Σk + q·Σ1 — the first part is the rainbow sum, the second is q added n times`,
       zh: `Σ(pk+q)拆成p·Σk + q·Σ1——前面是彩虹求和，后面是q加n次` },
     tex: `\\sum_{k=1}^{${n}} (${p}k ${wrapPlus(q)}) = \\square`,

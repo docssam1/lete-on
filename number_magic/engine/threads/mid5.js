@@ -60,7 +60,7 @@ NM_TGEN['md31_distance'] = function (params, rng) {
   const answer = [coeff, rad];
   return {
     prompt: {
-      ko: `두 점 사이의 거리는 가로·세로 차를 각각 제곱해 더한 뒤 제곱근을 씌워요(피타고라스 정리)`,
+      ko: `두 점 사이의 거리는 가로·세로 차를 각각 제곱해 더한 뒤 제곱근을 씌웁니다(피타고라스 정리)`,
       en: `The distance between two points: square the horizontal and vertical differences, add them, then take the square root (Pythagorean theorem)`,
       zh: `两点间距离：把横、纵坐标差分别平方后相加，再开平方(勾股定理)`
     },
@@ -88,7 +88,7 @@ NM_TGEN['md32_midSection'] = function (params, rng) {
     const answer = [mx, my];
     return {
       prompt: {
-        ko: `중점은 두 좌표를 각각 더해 2로 나눠요`,
+        ko: `중점은 두 좌표를 각각 더해 2로 나눕니다`,
         en: `The midpoint: add each pair of coordinates and divide by 2`,
         zh: `中点：把两个坐标分别相加再除以2`
       },
@@ -113,7 +113,7 @@ NM_TGEN['md32_midSection'] = function (params, rng) {
     const answer = [px, py];
     return {
       prompt: {
-        ko: `m:n으로 내분하는 점은 A쪽에 n, B쪽에 m을 곱해 더한 뒤 (m+n)으로 나눠요`,
+        ko: `m:n으로 내분하는 점은 A쪽에 n, B쪽에 m을 곱해 더한 뒤 (m+n)으로 나눕니다`,
         en: `The point dividing AB internally in ratio m:n weights A by n and B by m, sums them, and divides by (m+n)`,
         zh: `按m:n内分的点，A乘n、B乘m后相加，再除以(m+n)`
       },
@@ -138,7 +138,7 @@ NM_TGEN['md32_midSection'] = function (params, rng) {
   const answer = [px, py];
   return {
     prompt: {
-      ko: `외분점은 내분과 같은 모양이지만 분모가 (m-n)이에요 — m=n이면 정할 수 없어요`,
+      ko: `외분점은 내분과 같은 모양이지만 분모가 (m-n)입니다 — m=n이면 정할 수 없습니다`,
       en: `The external division point uses the same shape but with denominator (m-n) — undefined when m=n`,
       zh: `外分点结构和内分一样，但分母是(m-n)——m=n时无法确定`
     },
@@ -167,7 +167,7 @@ NM_TGEN['md33_lineEquation'] = function (params, rng) {
     const answer = [a, b];
     return {
       prompt: {
-        ko: `기울기는 y의 변화량÷x의 변화량, y절편은 기울기를 구한 뒤 한 점을 대입해 찾아요`,
+        ko: `기울기는 y의 변화량÷x의 변화량, y절편은 기울기를 구한 뒤 한 점을 대입해 찾습니다`,
         en: `Slope is the change in y over the change in x; find the y-intercept by substituting one point once you know the slope`,
         zh: `斜率是y的变化量除以x的变化量，求出斜率后代入一点即可求y轴截距`
       },
@@ -189,7 +189,7 @@ NM_TGEN['md33_lineEquation'] = function (params, rng) {
   const answer = [a, b];
   return {
     prompt: {
-      ko: `Ax+By=C를 y=  꼴로 바꾸려면 y항만 남기고 나머지를 이항한 뒤 B로 나눠요`,
+      ko: `Ax+By=C를 y=  꼴로 바꾸려면 y항만 남기고 나머지를 이항한 뒤 B로 나눕니다`,
       en: `To rewrite Ax+By=C as y=..., isolate the y term, transpose the rest, then divide by B`,
       zh: `把Ax+By=C改写成y=...的形式，先把y项单独留下，其余移项后再除以B`
     },
@@ -233,11 +233,11 @@ NM_TGEN['md34_parallelPerp'] = function (params, rng) {
 
   return {
     prompt: which === 'parallel' ? {
-      ko: `두 직선이 평행하려면 x,y의 계수 비율이 같아야 해요(A:B = k:D)`,
+      ko: `두 직선이 평행하려면 x,y의 계수 비율이 같아야 합니다(A:B = k:D)`,
       en: `Two lines are parallel when their x,y coefficient ratios match (A:B = k:D)`,
       zh: `两直线平行时x、y的系数比相同(A:B = k:D)`
     } : {
-      ko: `두 직선이 수직이려면 Ak+BD=0이 성립해야 해요(기울기의 곱이 -1)`,
+      ko: `두 직선이 수직이려면 Ak+BD=0이 성립해야 합니다(기울기의 곱이 -1)`,
       en: `Two lines are perpendicular when Ak+BD=0 holds (the product of slopes is -1)`,
       zh: `两直线垂直时Ak+BD=0成立(斜率之积为-1)`
     },
@@ -270,7 +270,7 @@ NM_TGEN['md35_circleEquation'] = function (params, rng) {
     const m = R(rng, 2, 4);
     return {
       prompt: {
-        ko: `x²,y² 앞에 공통 계수가 있으면 먼저 그 수로 전체를 나눈 뒤 완전제곱으로 묶어요`,
+        ko: `x²,y² 앞에 공통 계수가 있으면 먼저 그 수로 전체를 나눈 뒤 완전제곱으로 묶습니다`,
         en: `If x² and y² share a common coefficient, divide the whole equation by it first, then complete the square`,
         zh: `x²、y²前有公共系数时，先用它除全式，再配方成完全平方`
       },
@@ -287,7 +287,7 @@ NM_TGEN['md35_circleEquation'] = function (params, rng) {
 
   return {
     prompt: {
-      ko: `x항끼리, y항끼리 완전제곱식으로 묶으면 중심과 반지름이 바로 보여요`,
+      ko: `x항끼리, y항끼리 완전제곱식으로 묶으면 중심과 반지름이 바로 보입니다`,
       en: `Group the x-terms and y-terms into perfect squares to reveal the center and radius directly`,
       zh: `把x项、y项分别配成完全平方式，中心和半径就一目了然`
     },
