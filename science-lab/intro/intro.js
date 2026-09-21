@@ -181,6 +181,27 @@ function remedyMock() {
     <ol class="ad-rxs-items">${items.map((it, i) => `<li><p><b>${i + 1}</b>${esc(it.prompt.replace(/^\[[^\]]*\]\s*/, '').slice(0, 56))}${it.prompt.length > 56 ? '…' : ''}</p><ol>${it.choices.slice(0, 5).map((c, j) => `<li><span>${NUM[j]}</span>${esc(c.length > 26 ? c.slice(0, 26) + '…' : c)}</li>`).join('')}</ol></li>`).join('')}</ol>
     <div class="ad-rxs-f"><div class="ad-paper-qr">${fakeQr(2027)}</div><span>풀고 나서 다시 찍으면 → 두 번 연속 맞히면 <b>해소</b></span></div></div>`;
 }
+// 자유형(주제 글쓰기) 견본: 정답 대신 루브릭. 원고지 여러 장은 QR의 '몇 번째 장'으로 한 편으로 묶는다.
+const FREE = { topic: '화산이 우리에게 주는 것', text: '화산은 무섭기만 한 것이 아니다. 화산이 터지면 뜨거운 용암이 흘러 나와 집을 부셔요. 하지만 화산재가 쌓인 땅은 농사가 잘 되고 온천도 생긴다. 그래서 화산은 좋은 점도 있다.', cols: 20, rows: 5,
+  rubric: [['내용', 4, '좋은 점·나쁜 점을 모두 씀'], ['구성', 3, '좋은 점 예가 하나뿐'], ['표현', 3, '끝말 -다/-요가 섞임'], ['맞춤법', 4, '부셔요 → 부순다']], words: ['화산재', '기름진', '온천', '지열'], rewrite: '화산재가 쌓인 땅은 기름져서 농사가 잘 된다.' };
+function freeMock() {
+  const { text, cols, rows } = FREE, at = (w) => { const i = text.indexOf(w); return { r: Math.floor(i / cols), c: i % cols, n: [...w].length }; };
+  const red = (x, y, t, r = -3, cls = '') => `<i class="rp ${cls}" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)">${t}</i>`;
+  // 고칠 말은 칸 위가 아니라 오른쪽 여백에(칸 사이에 쓰면 학생 글씨를 가린다)
+  const bad = at('부셔요'), good = at('농사가 잘 되고'), last = at('그래서 화산은 좋은 점도 있다.');
+  const W = cols * 10, H = rows * 10, sum = FREE.rubric.reduce((a, [, v]) => a + v, 0);
+  return `<div class="ad-paper ad-free"><div class="ad-paper-q"><b>✎</b>주제 글쓰기 · <strong>${esc(FREE.topic)}</strong> <small>(원고지 2장 중 1장)</small></div>
+    <div class="ad-paper-score"><b>${sum}</b><span>/20</span></div>
+    <div class="ms-wrap">${manuscript(text, cols, rows, 'pencil')}
+      <svg class="rp-strike" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path d="M${bad.c * 10 + 1} ${bad.r * 10 + 4.4} L${(bad.c + bad.n) * 10 - 1} ${bad.r * 10 + 5.2} M${bad.c * 10 + 1} ${bad.r * 10 + 6.4} L${(bad.c + bad.n) * 10 - 1} ${bad.r * 10 + 7}" />
+        <path class="o" d="M${last.c * 10} ${last.r * 10 + 9.4} q2.5 -1.6 5 0 ${'t5 0 '.repeat(last.n * 2 - 1)}" />
+        <path d="M${good.c * 10} ${good.r * 10 + 9.6} C${good.c * 10 + 30} ${good.r * 10 + 9} ${good.c * 10 + 60} ${good.r * 10 + 10} ${(good.c + good.n) * 10} ${good.r * 10 + 9.4}" /></svg>
+      ${red(102, bad.r / rows * 100 + 1, '← 부순다', -4)}${red(102, good.r / rows * 100 + 2, '✓ 좋아!', -3, 'sm')}</div>
+    <p class="rp-note fr">끝말을 ‘-다’로 맞추자. 좋은 점 예를 <b>하나 더</b> 들어 볼까? <small>(지열 발전은 어때?)</small></p>
+    <div class="ad-rub"><table><tbody>${FREE.rubric.map(([k, v, why]) => `<tr><th>${k}</th><td class="d">${'●'.repeat(v)}<span>${'○'.repeat(5 - v)}</span></td><td class="v"><em class="rs">${v}</em></td><td class="w">${esc(why)}</td></tr>`).join('')}</tbody></table>
+      <div class="ad-rub-r"><p class="k">고쳐 쓸 문장</p><p class="rw">${esc(FREE.rewrite)}</p><p class="k">4학년 낱말</p><p class="ad-ph-w">${FREE.words.map((w) => `<i>${esc(w)}</i>`).join('')}</p></div></div>
+    <div class="ad-paper-foot"><div class="ad-paper-qr">${fakeQr(2028)}</div><div><b>${esc(PAPER.student)}</b><span>주제 글쓰기 · 1/2장</span><small>QR = 누구의 · 어느 글 · 몇 번째 장</small></div><div class="ad-paper-mark">2장을 찍어도 한 편으로</div></div></div>`;
+}
 const ads = (home) => [
   adPage('ad a1', `${chap('PROLOGUE · 이 책에 대하여', '이런 과학책,<br>본 적 있나요?')}
     <p class="drop">과학은 외우는 것이 아니라 직접 해 보는 것입니다. 이 책은 교과서 단원마다 실험 한 장을 담고, 화면에서 펼치면 그 실험이 깨어나 아이의 손끝에서 다시 일어납니다.</p>
@@ -225,6 +246,10 @@ const ads = (home) => [
     <p class="ad-p">첨삭이 끝나면 그 학생이 헷갈린 <b>오개념</b>이 남습니다. 책은 그 오개념이 숨어 있는 문제만 골라 <b>그 학생용 처방 한 장</b>을 만듭니다. 강사는 다음 수업 전에 인쇄만 하면 되고, 아이는 다시 종이에 풀고 다시 찍습니다.</p>
     ${remedyMock()}
     <div class="ad-use ad-in3"><div><b>0회</b><span>AI 호출 없이 오개념표에서 바로</span></div><div><b>2번 연속</b><span>맞히면 <b>해소</b></span></div><div><b>아이마다</b><span>같은 반, 다른 처방 장</span></div></div>`),
+  adPage('ad a12', `${chap('CHAPTER Ⅸ · 긴 글도 빨간 펜으로', '정답 없는 글도<br>기준표로 첨삭')}
+    <p class="drop">주제 글쓰기는 정답이 없습니다. 그래서 <b>내용 · 구성 · 표현 · 맞춤법</b> 네 칸 기준표로 읽고, 틀린 말은 고쳐 주고 좋은 문장에는 동그라미를 칩니다. 원고지가 두 장이 넘어도 QR이 <b>몇 번째 장</b>인지 알아서 한 편으로 묶습니다.</p>
+    ${freeMock()}
+    <p class="ad-note">서술형은 정답과 비교하고, 주제 글쓰기는 기준표로 · 같은 사진 한 장, 같은 빨간 펜</p>`),
   adPage('ad a10', `${chap('FAQ · 자주 묻는 질문', '궁금한 것들')}
     <dl class="ad-faq"><dt>몇 학년이 보나요?</dt><dd>초등 3~6학년. 교과서 단원 순서를 그대로 따라가고, 영재원 대비 문제를 더했습니다.</dd>
       <dt>집에서도 할 수 있나요?</dt><dd>네. 준비물 QR로 바로 사서 집에서 그대로 할 수 있고, 위험한 과정은 3D 실험실로 대신할 수 있습니다.</dd>
@@ -289,7 +314,8 @@ async function build() {
   const endSec = (cls, inner) => { const d = document.createElement('section'); d.className = `bk-page end ${cls}`; d.innerHTML = inner; return d; };
   const repSec = endSec('rep-live', reportPageHtml(state.I)), rxSec = endSec('rx-live', samplePageHtml(pool));
   state.repSec = repSec;
-  state.pages = [adSecs[0], ...adSecs.slice(1, 12), ...chSecs, repSec, rxSec, adSecs[12]].map((s, i) => wrapPage(s, i < 12 || i === 14 + chSecs.length ? adHost : bk));   // 표지 1 + 광고 11 + 교재 + 보고서 2 + 뒤표지
+  const nAd = adSecs.length - 1;   // 표지 + 광고 쪽들(마지막은 뒤표지)
+  state.pages = [...adSecs.slice(0, nAd), ...chSecs, repSec, rxSec, adSecs[nAd]].map((s, i) => wrapPage(s, i < nAd || i === nAd + 2 + chSecs.length ? adHost : bk));   // 표지 + 광고 + 교재 + 보고서 2 + 뒤표지
   state.chCount = chSecs.length; host.remove();
   state.L = lm.lesson; state.rows = [];
   layout(true);
@@ -364,14 +390,14 @@ function turnSound(heavy) {
     if (heavy) { const o = AC.createOscillator(), og = AC.createGain(); o.frequency.setValueAtTime(90, t + 0.55); o.frequency.exponentialRampToValueAtTime(40, t + 0.9); og.gain.setValueAtTime(0.0001, t + 0.5); og.gain.exponentialRampToValueAtTime(0.5, t + 0.58); og.gain.exponentialRampToValueAtTime(0.0001, t + 1.1); o.connect(og).connect(AC.destination); o.start(t + 0.5); o.stop(t + 1.2); }
   } catch { /* 소리 없음 */ }
 }
-// 지금 보이는 쪽에 맞춰 docssam이 말한다
+// 지금 보이는 쪽에 맞춰 docssam이 말한다(광고 쪽 순서 = ads() 순서, 표지 포함. 쪽을 더하면 여기에 한 칸)
+const AD_SAY = ['cover', 'ad1', 'ad2', 'ad3', 'ad3', 'home', 'diag', 'diag2', 'photo', 'remedy', 'free', 'faq', 'live'];
 function visiblePages() { const s = state.spread; return state.single ? [s] : [2 * s - 1, 2 * s].filter((i) => i >= 0); }
 function narrate() {
-  const vis = visiblePages(), c0 = 12, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
+  const vis = visiblePages(), c0 = AD_SAY.length, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
   const ids = [];
   for (const i of vis) {
-    if (i === 0) ids.push('cover'); else if (i === 1) ids.push('ad1'); else if (i === 2) ids.push('ad2'); else if (i === 3 || i === 4) { if (!ids.includes('ad3')) ids.push('ad3'); }
-    else if (i === 5) ids.push('home'); else if (i === 6) ids.push('diag'); else if (i === 7) ids.push('diag2'); else if (i === 8) ids.push('photo'); else if (i === 9) ids.push('remedy'); else if (i === 10) ids.push('faq'); else if (i === 11) ids.push('live');
+    if (i < c0) { if (!ids.includes(AD_SAY[i])) ids.push(AD_SAY[i]); }
     else if (i === c0 + cn) ids.push('myreport'); else if (i === c0 + cn + 1) ids.push('sample');
     else if (i >= c0 && i < c0 + cn) { const r = rel(i); const k = r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : r === 9 ? 'report' : r === 10 ? 'formative' : 'check'; if (!ids.includes(k)) ids.push(k); }
     else ids.push('print', 'cta');
