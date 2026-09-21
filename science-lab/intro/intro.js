@@ -194,7 +194,7 @@ const ads = (home) => [
     </div><figure class="ad-qr"><img src="${esc(home?.qr || '')}" alt="준비물 QR"><figcaption>QR을 찍으면 준비물 목록과<br>구매 링크가 열립니다</figcaption></figure></div>
     <p class="ad-note">안전이 필요한 과정은 “보호자와 함께”라고 표시해 두었습니다</p>
     <div class="ad-use"><div><b>수업 전</b><span>3D로 먼저 보고 예상 써 오기</span></div><div><b>수업</b><span>실험하고 보고서 쓰기</span></div><div><b>수업 후</b><span>형성평가·영재 도전 풀기</span></div></div>`),
-  adPage('ad a6', `${chap('CHAPTER Ⅴ · 틀린 까닭을 읽는 책', '틀린 보기가<br>곷 진단입니다')}
+  adPage('ad a6', `${chap('CHAPTER Ⅴ · 틀린 까닭을 읽는 책', '틀린 보기가<br>곧 진단입니다')}
     <p class="drop">채점만 하는 책은 많습니다. 이 책은 아이가 <b>어떤 보기를 골랐는지</b>를 기억합니다. 운반 작용을 묻는 문제에서 “깎아 내는 것”을 고르면, 그건 실수가 아니라 침식과 운반을 바꿔 알고 있다는 신호입니다.</p>
     <ol class="ad-flow tight"><li><span>기록</span>개념 카드 · 잠깐 확인 · 점검 · 교재 확인 문제에서 고른 답을 전부 남깁니다</li><li><span>교정</span>틀리는 순간, “다시 생각해 봐요” 대신 <b>왜 틀렸는지</b> 한 문장으로 알려 줍니다</li><li><span>진단</span>같은 오개념이 다른 문제에서 또 나오면 <b>확정</b>, 한 번이면 <b>의심</b></li><li><span>처방</span>그 오개념이 숨어 있는 문제만 골라 다시 풀고, 두 번 연속 맞히면 <b>해소</b></li></ol>
     <div class="ad-ex"><p class="ad-ex-q">흐르는 물의 작용 중 <b>운반 작용</b>을 바르게 설명한 것은?</p>
