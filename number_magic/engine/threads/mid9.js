@@ -431,6 +431,91 @@ NM_TGEN['md66_quadEquation'] = function (params, rng) {
     };
   }
 
+  /* ── doubleRoot(2026-09-21) — 중근 ──
+     디딤돌 개념연산 중3-1B(p.9) 대조: "이차방정식의 두 해가 중복되어 서로 같을 때,
+     이 해를 중근이라 한다 — (완전제곱식)=0 꼴이면 그 해가 중근". p를 먼저 고르고
+     (x-p)²=0을 펼쳐 b=-2p, c=p² 로 역산하면 b는 항상 짝수. 답은 p 하나뿐(두 해가
+     같으므로 두 칸이 아니라 한 칸 — factor 모드와 다른 점을 프롬프트에 명시한다). */
+  if (mode === 'doubleRoot') {
+    const p = nzInt(rng, 1, params.wide ? 12 : 8);
+    const b = -2 * p, c = p * p;
+    return {
+      prompt: { ko: `두 해가 서로 같을 때 이 해를 중근이라 합니다 — (완전제곱식)=0 꼴이면 그 해가 중근입니다. 칸은 하나입니다`,
+        en: `When both roots are equal, that root is called a double root — if it factors to (perfect square)=0, that root is the double root. Only one slot`,
+        zh: `两个根相同时，这个根叫做重根——若能因式分解成(完全平方式)=0，那个根就是重根。只填一格` },
+      tex: `x^2 ${wrapPlus(b)}x + ${c} = 0 \\quad\\Rightarrow\\quad (x ${wrapPlus(-p)})^2 = 0 \\quad\\Rightarrow\\quad x = \\square`,
+      answer: p, answerType: 'number', widget: 'numpad', negative: p < 0,
+      solution: [
+        { tex: `\\dfrac{${b}}{2} = ${p}, \\quad ${par(p)}^2 = ${c}` },
+        { tex: `(x ${wrapPlus(-p)})^2 = 0` },
+        { tex: `x = \\square`, blank: p }
+      ]
+    };
+  }
+
+  /* ── discriminantCount(2026-09-21) — 근의 개수 ──
+     디딤돌 개념연산 중3-1B(p.42) 대조: D=b²-4ac 의 부호로 근이 2개·1개(중근)·0개인지
+     판정한다. 실제로 풀 필요는 없어서 세 갈래로 D의 부호를 강제로 맞춘다 —
+     'pos'는 서로 다른 p,q(factor 모드와 같은 역산)라 D=(p-q)²>0이 자동으로 보장되고,
+     'zero'는 완전제곱 그대로, 'neg'는 4ac가 b²보다 크도록 c를 b²/4 위로 밀어 올린다.
+     답은 [D, 근의 개수] 두 칸 — D 계산과 판정을 모두 확인한다. */
+  if (mode === 'discriminantCount') {
+    const cat = pick(rng, ['pos', 'pos', 'zero', 'neg']);
+    let a, b, c, D, count;
+    if (cat === 'zero') {
+      a = 1;
+      const p = nzInt(rng, 1, 9);
+      b = 2 * p; c = p * p; D = 0; count = 1;
+    } else if (cat === 'neg') {
+      a = 1;
+      b = nzInt(rng, 1, 6);
+      c = Math.ceil((b * b) / 4) + R(rng, 1, 5);
+      D = b * b - 4 * a * c; count = 0;
+    } else {
+      a = pick(rng, [1, 2, 3]);
+      let p = nzInt(rng, 1, 7), q = nzInt(rng, 1, 7), guard = 0;
+      while (p === q && guard++ < 20) q = nzInt(rng, 1, 7);
+      if (p === q) q = q + 1;
+      b = -a * (p + q); c = a * p * q;
+      D = b * b - 4 * a * c; count = 2;
+    }
+    return {
+      prompt: { ko: `D=b²−4ac의 부호로 근의 개수를 압니다 — D>0이면 2개, D=0이면 1개(중근), D<0이면 0개입니다`,
+        en: `The sign of D=b²−4ac tells the number of roots — 2 if D>0, 1 (double) if D=0, 0 if D<0`,
+        zh: `D=b²−4ac的符号决定根的个数——D>0则2个，D=0则1个(重根)，D<0则0个` },
+      tex: `${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} = 0 \\quad\\Rightarrow\\quad D = \\square, \\quad \\text{근의 개수} = \\square`,
+      answer: [D, count], answerType: 'number', widget: 'numpad', negative: D < 0,
+      solution: [
+        { tex: `D = ${par(b)}^2 - 4(${a})(${c}) = ${b * b} - ${par(4 * a * c)} = ${D}` },
+        { tex: `x = \\square, \\quad \\text{근의 개수} = \\square`, blank: [D, count] }
+      ]
+    };
+  }
+
+  /* ── fromRoots(2026-09-21) — 이차방정식 구하기 ──
+     디딤돌 개념연산 중3-1B(p.46) 대조: 두 근 α,β와 x²의 계수 a를 알 때
+     a(x-α)(x-β)=0 을 펼쳐 거꾸로 방정식을 만든다. factor 모드와 정반대 방향
+     (근 → 방정식)이라 답은 전개한 계수 [B, C] 두 칸. */
+  if (mode === 'fromRoots') {
+    let p = nzInt(rng, 1, 9), q = nzInt(rng, 1, 9), guard = 0;
+    while (p === q && guard++ < 20) q = nzInt(rng, 1, 9);
+    if (p === q) q = q + 1;
+    const a = params.wide ? pick(rng, [1, 2, 3]) : 1;
+    const B = -a * (p + q), C = a * p * q;
+    return {
+      prompt: { ko: `두 근을 알 때는 a(x−p)(x−q)=0 을 펼쳐 방정식을 거꾸로 만듭니다`,
+        en: `Given two roots, expand a(x−p)(x−q)=0 to build the equation backward`,
+        zh: `已知两根时，展开a(x−p)(x−q)=0就能反过来求出方程` },
+      tex: `\\text{두 근이 } ${p}, ${q}\\text{이고 } x^2\\text{의 계수가 } ${a} \\quad\\Rightarrow\\quad ${coefLead(a)}x^2 + \\square x + \\square = 0`,
+      answer: [B, C], answerType: 'number', widget: 'numpad', negative: hasNeg([B, C]),
+      solution: [
+        { tex: `${a}(x ${wrapPlus(-p)})(x ${wrapPlus(-q)}) = 0` },
+        { tex: `${a}(x^2 ${wrapPlus(-(p + q))}x ${wrapPlus(p * q)}) = 0` },
+        { tex: `${coefLead(a)}x^2 + \\square x + \\square = 0`, blank: [B, C] }
+      ]
+    };
+  }
+
   /* factor(기본) — x²+bx+c=0 */
   let p = nzInt(rng, 1, params.wide ? 12 : 9), q = nzInt(rng, 1, params.wide ? 12 : 9);
   let guard = 0;

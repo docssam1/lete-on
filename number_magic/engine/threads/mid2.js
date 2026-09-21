@@ -106,6 +106,33 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     };
   }
 
+  /* ── distribute(2026-09-21) — 지수의 분배 ──
+     디딤돌 개념연산 중2-1A 대조(p.66): (ab)ⁿ=aⁿbⁿ. 이 파일이 문자를 늘 하나만
+     쓰는 관례(주석 참조)라 두 번째 문자 대신 **계수**로 분배를 가르친다 —
+     (c·base^m)^n = c^n · base^(mn). 교재가 짚는 실수("(2xy)³을 2x³y³로
+     잘못 계산")와 같은 자리: 계수도 반드시 거듭제곱해야 한다는 것. */
+  if (mode === 'distribute') {
+    const c = nzInt(rng, 2, 5);
+    const m = R(rng, 2, 4), n = R(rng, 2, 4);
+    let cn = 1; for (let i = 0; i < n; i++) cn *= c;
+    const exp = m * n;
+    const body = `${c}${base}^{${m}}`;
+    return {
+      prompt: {
+        ko: `괄호 전체를 거듭제곱할 땐 계수와 문자 둘 다에 지수를 나눠 곱합니다 — 계수는 그 자체를 거듭제곱하고, 문자는 지수끼리 곱합니다`,
+        en: `Raising the whole bracket to a power distributes the exponent to both the coefficient and the letter — the coefficient is raised to that power, the letter's exponent is multiplied`,
+        zh: `括号整体乘方时，指数要分别分配给系数和字母——系数本身要乘方，字母的指数相乘`
+      },
+      tex: `(${body})^{${n}} = \\square ${base}^{\\square}`,
+      answer: [cn, exp], answerType: 'number', widget: 'numpad', negative: cn < 0,
+      solution: [
+        { tex: `(${body})^{${n}} = ${c}^{${n}} \\times (${base}^{${m}})^{${n}}` },
+        { tex: `${c}^{${n}} = ${cn}, \\quad ${base}^{${m}\\times${n}} = ${base}^{${exp}}` },
+        { tex: `\\square ${base}^{\\square}`, blank: [cn, exp] }
+      ]
+    };
+  }
+
   /* combo — 두 법칙이 한 식에 섞인다 (밑 혼합 — 지수법칙 4번째 유형) */
   const shape = pick(rng, ['powThenMul', 'mulThenDiv', 'productPow']);
 
@@ -326,6 +353,72 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
         { tex: `${b1} ${op} ${b2} = ${xc}` },
         { tex: `${c1} ${op} ${c2} = ${cc}` },
         { tex: `\\square x^2 + \\square x + \\square`, blank: [x2c, xc, cc] }
+      ]
+    };
+  }
+
+  /* ── fracCoef(2026-09-21) — 계수가 분수 꼴인 다항식의 덧셈과 뺄셈 ──
+     디딤돌 개념연산 중2-1A 대조(p.88): "(i) 통분 (ii) 분자의 괄호를 풀기
+     (iii) 동류항끼리 계산". 두 일차식을 각각 정수 분모로 나눈 분수 꼴로
+     내고, 공통분모(d1×d2)로 통분한 뒤 하나의 분수로 합친 결과의 분자
+     [x계수, 상수] 두 칸을 받는다(분모는 tex에 그대로 보여 계산 대상에서
+     뺀다 — §7 답 환원 원칙, 분모까지 답으로 받으면 세 칸이라 번거롭다). */
+  if (mode === 'fracCoef') {
+    const a1 = nzInt(rng, 1, 4), b1 = nzInt(rng, 1, 9);
+    const a2 = nzInt(rng, 1, 4), b2 = nzInt(rng, 1, 9);
+    const d1 = pick(rng, [2, 3, 4]);
+    let d2 = pick(rng, [2, 3, 4, 5]);
+    if (d2 === d1) d2 = d2 === 5 ? 4 : d2 + 1;
+    const D = d1 * d2;
+    const op = pick(rng, ['+', '-']);
+    const k1 = D / d1, k2 = D / d2;
+    const A = op === '+' ? a1 * k1 + a2 * k2 : a1 * k1 - a2 * k2;
+    const B = op === '+' ? b1 * k1 + b2 * k2 : b1 * k1 - b2 * k2;
+    return {
+      prompt: {
+        ko: `분모의 최소공배수로 통분하고, 분자의 괄호를 푼 뒤, 동류항끼리 계산합니다`,
+        en: `Find a common denominator, expand the numerators, then combine like terms`,
+        zh: `先通分，再展开分子的括号，最后合并同类项`
+      },
+      tex: `\\dfrac{${a1}x ${wrapPlus(b1)}}{${d1}} ${op} \\dfrac{${a2}x ${wrapPlus(b2)}}{${d2}} = \\dfrac{\\square x + \\square}{${D}}`,
+      answer: [A, B], answerType: 'number', widget: 'numpad', negative: A < 0 || B < 0,
+      solution: [
+        { tex: `\\dfrac{${k1}(${a1}x ${wrapPlus(b1)})}{${D}} ${op} \\dfrac{${k2}(${a2}x ${wrapPlus(b2)})}{${D}}` },
+        { tex: `\\dfrac{${a1 * k1}x ${wrapPlus(b1 * k1)}}{${D}} ${op} \\dfrac{${a2 * k2}x ${wrapPlus(b2 * k2)}}{${D}}` },
+        { tex: `\\dfrac{\\square x + \\square}{${D}}`, blank: [A, B] }
+      ]
+    };
+  }
+
+  /* ── nestedBrackets(2026-09-21) — 여러 가지 괄호가 있는 식 ──
+     디딤돌 개념연산 중2-1A 대조(p.94): "소괄호 → 중괄호 → 대괄호 순서로
+     괄호를 풀며 동류항끼리 정리". x·y 두 문자로 낸다(교재 예시가 그렇다 —
+     MD12의 다른 모드처럼 x 하나만으로는 "안의 항이 겉으로 나오며 부호가
+     바뀐다"는 감각이 잘 안 보인다). 안쪽부터 부호를 미리 계산해 답은
+     [x계수, y계수] 두 칸. */
+  if (mode === 'nestedBrackets') {
+    const p = nzInt(rng, 2, 6), q = nzInt(rng, 2, 6);           /* 소괄호 안: px + qy */
+    let a = nzInt(rng, 2, 6);                                    /* 중괄호의 앞항: ay */
+    const signMid = pick(rng, ['+', '-']);                       /* ay ± (px+qy) */
+    if (signMid === '-' && a === q) a += 1;                      /* y계수가 0으로 사라지지 않게 */
+    const mx = signMid === '+' ? p : -p;
+    const my = signMid === '+' ? a + q : a - q;
+    let b = nzInt(rng, 2, 6);                                    /* 대괄호의 앞항: bx */
+    const signOuter = pick(rng, ['+', '-']);                     /* bx ± {ay±(...)} */
+    if (signOuter === '-' && b === mx) b += 1;                   /* x계수가 0으로 사라지지 않게 */
+    const X = signOuter === '+' ? b + mx : b - mx;
+    const Y = signOuter === '+' ? my : -my;
+    return {
+      prompt: {
+        ko: `소괄호 → 중괄호의 순서로 안쪽부터 괄호를 풀면서, 앞의 부호에 따라 안의 모든 항의 부호를 바꿉니다`,
+        en: `Remove brackets from the inside out — parentheses first, then braces — flipping every inner sign when the sign in front is minus`,
+        zh: `从内到外拆括号——先小括号再大括号——括号前是负号就把里面所有项的符号都改变`
+      },
+      tex: `${b}x ${signOuter} \\{ ${a}y ${signMid} (${p}x ${wrapPlus(q)}y) \\} = \\square x + \\square y`,
+      answer: [X, Y], answerType: 'number', widget: 'numpad', negative: X < 0 || Y < 0,
+      solution: [
+        { tex: `${a}y ${signMid} (${p}x ${wrapPlus(q)}y) = ${mx}x ${wrapPlus(my)}y` },
+        { tex: `${b}x ${signOuter} (${mx}x ${wrapPlus(my)}y) = \\square x + \\square y`, blank: [X, Y] }
       ]
     };
   }

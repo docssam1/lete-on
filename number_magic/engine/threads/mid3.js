@@ -370,6 +370,133 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
     };
   }
 
+  /* ── 2026-09-21 추가 — 곱셈공식의 활용(디딤돌 개념연산 중3-1A 대조, p.104~114) ──
+     여기까지 세 레벨은 전부 "문자식을 전개하는 법"이었다. 원문 비교로 찾은 것은
+     **공식을 도구로 쓰는 자리**가 하나도 없었다는 것 — 큰 수 계산·근호식 계산·
+     분모의 유리화(켤레)·식의 변형·치환. 다섯 개를 순서대로 더한다. */
+
+  /* numApplication — 곱셈 공식을 이용한 수의 계산: 99×101, 101²처럼 어림수
+     기준(n)에서 ±k만큼 떨어진 두 수를 공식으로 계산한다. */
+  if (mode === 'numApplication') {
+    const n = pick(rng, [10, 20, 50, 100]);
+    const k = R(rng, 1, 9);
+    if (pick(rng, ['square', 'diff']) === 'square') {
+      const v = pick(rng, [n - k, n + k]);
+      const ans = v * v;
+      return {
+        prompt: { ko: `어림수 기준으로 (n±k)² = n²±2nk+k² 를 씁니다 — ${v}는 ${n}에서 ${Math.abs(v - n)}만큼 떨어져 있습니다`,
+          en: `Use a round base: (n±k)² = n²±2nk+k² — ${v} is ${Math.abs(v - n)} away from ${n}`,
+          zh: `用整数基准：(n±k)² = n²±2nk+k²——${v}离${n}差${Math.abs(v - n)}` },
+        tex: `${v}^2 = \\square`,
+        answer: ans, answerType: 'number', widget: 'numpad',
+        solution: [
+          { tex: `${v} = ${n} ${wrapPlus(v - n)}` },
+          { tex: `(${n} ${wrapPlus(v - n)})^2 = ${n}^2 ${wrapPlus(2 * n * (v - n))} + ${(v - n) * (v - n)}` },
+          { tex: `= \\square`, blank: ans }
+        ]
+      };
+    }
+    const lo = n - k, hi = n + k;
+    const ans = lo * hi;
+    return {
+      prompt: { ko: `(n-k)(n+k) = n²-k² — 두 수를 어림수 기준의 ±k로 봅니다`,
+        en: `(n-k)(n+k) = n²-k² — see both numbers as a round base ±k`,
+        zh: `(n-k)(n+k) = n²-k²——把两数看成整数基准±k` },
+      tex: `${lo} \\times ${hi} = \\square`,
+      answer: ans, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `${lo} = ${n} - ${k}, \\quad ${hi} = ${n} + ${k}` },
+        { tex: `(${n})^2 - (${k})^2 = ${n * n} - ${k * k}` },
+        { tex: `= \\square`, blank: ans }
+      ]
+    };
+  }
+
+  /* radicalApplication — 곱셈 공식을 이용한 근호를 포함한 식의 계산.
+     (√a+√b)(√a-√b)=a-b 만 다룬다(첫 판): (√a+√b)² 같은 전개는 결과가
+     "정수+근호" 두 갈래라 지금 있는 answerShape(coeffRadical 등)로는
+     정수 부분을 얹을 자리가 없다 — 억지로 끼워 맞추지 않고 다음 판 과제로
+     남긴다(주석에 남겨 둔다: 정수+계수근호 두 부분 답 모양이 새로 필요). */
+  if (mode === 'radicalApplication') {
+    const idx1 = R(rng, 0, SQFREE_NARROW.length - 2);
+    const a = SQFREE_NARROW[idx1 + 1], b = SQFREE_NARROW[idx1];   /* a > b, 서로 다름 */
+    const ans = a - b;
+    return {
+      prompt: { ko: `(√a+√b)(√a-√b) = a-b — 합차공식과 같은 자리에서 근호가 사라집니다`,
+        en: `(√a+√b)(√a-√b) = a-b — the roots vanish in the same spot as the difference of squares`,
+        zh: `(√a+√b)(√a-√b) = a-b——和平方差公式同一个位置，根号消失` },
+      tex: `(\\sqrt{${a}} + \\sqrt{${b}})(\\sqrt{${a}} - \\sqrt{${b}}) = \\square`,
+      answer: ans, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `(\\sqrt{${a}})^2 - (\\sqrt{${b}})^2 = ${a} - ${b}` },
+        { tex: `= \\square`, blank: ans }
+      ]
+    };
+  }
+
+  /* rationalizeConjugate — 곱셈 공식을 이용한 분모의 유리화: 분모가 두 근호의
+     합/차일 때 켤레(부호만 반대인 식)를 분자·분모에 곱해 (a-b)를 만든다.
+     MD18은 분모가 근호 하나뿐이라 이 켤레 유형이 없었다. */
+  if (mode === 'rationalizeConjugate') {
+    const idx1 = R(rng, 0, SQFREE_NARROW.length - 2);
+    const a = SQFREE_NARROW[idx1 + 1], b = SQFREE_NARROW[idx1];
+    const denom = a - b;
+    const op1 = pick(rng, ['+', '-']);
+    const op2 = op1 === '+' ? '-' : '+';
+    return {
+      prompt: { ko: `분모가 두 근호의 합(또는 차)이면 부호만 반대인 켤레를 분자·분모에 곱합니다 — (a+b)(a-b)=a²-b² 이 분모의 근호를 없앱니다`,
+        en: `When the denominator is a sum (or difference) of two roots, multiply by the conjugate (opposite sign) — (a+b)(a-b)=a²-b² clears the root`,
+        zh: `分母是两个根号的和(或差)时，就乘以符号相反的共轭式——(a+b)(a-b)=a²-b²能去掉分母的根号` },
+      /* 분수 안 \square 가 하나뿐이면(분모만) 인쇄 폭 계산이 분수선에 붙는다
+         (2026-09-21 check-print 로 발견) — MD18과 같이 분자의 근호 안 수도
+         함께 물어 늘 2칸 이상으로 맞춘다(어차피 문제에 이미 나온 수라 답은
+         베끼는 것과 같지만, 렌더링 규약을 지키는 쪽이 우선이다). */
+      tex: `\\dfrac{1}{\\sqrt{${a}} ${op1} \\sqrt{${b}}} = \\dfrac{\\sqrt{\\square} ${op2} \\sqrt{\\square}}{\\square}`,
+      answer: [a, b, Math.abs(denom)], answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `\\dfrac{1}{\\sqrt{${a}} ${op1} \\sqrt{${b}}} \\times \\dfrac{\\sqrt{${a}} ${op2} \\sqrt{${b}}}{\\sqrt{${a}} ${op2} \\sqrt{${b}}}` },
+        { tex: `= \\dfrac{\\sqrt{${a}} ${op2} \\sqrt{${b}}}{(${a}) - (${b})}` },
+        { tex: `= \\dfrac{\\sqrt{\\square} ${op2} \\sqrt{\\square}}{\\square}`, blank: [a, b, Math.abs(denom)] }
+      ]
+    };
+  }
+
+  /* formulaVariant — 곱셈 공식의 변형: a+b, ab를 알 때 a²+b² = (a+b)²-2ab.
+     실제 a,b를 먼저 고르고 합·곱을 역산하므로 항상 정수로 맞아떨어진다. */
+  if (mode === 'formulaVariant') {
+    const av = nzInt(rng, 1, 9), bv = nzInt(rng, 1, 9);
+    const S = av + bv, P = av * bv;
+    const ans = av * av + bv * bv;
+    return {
+      prompt: { ko: `a²+b² 는 (a+b)²-2ab 로 바꿔 구합니다 — 곱셈공식을 이항해서 만든 변형식입니다`,
+        en: `a²+b² becomes (a+b)²-2ab — a variant made by rearranging the multiplication formula`,
+        zh: `a²+b²可以改写成(a+b)²-2ab——把乘法公式移项得到的变形式` },
+      tex: `a + b = ${S}, \\quad ab = ${P} \\quad\\Rightarrow\\quad a^2 + b^2 = \\square`,
+      answer: ans, answerType: 'number', widget: 'numpad',
+      solution: [
+        { tex: `a^2+b^2 = (a+b)^2 - 2ab = ${par(S)}^2 - 2(${P})` },
+        { tex: `= ${S * S} - ${2 * P} = \\square`, blank: ans }
+      ]
+    };
+  }
+
+  /* substitutionExpand — 복잡한 식의 전개(치환): 공통부분 x+y를 A로 치환하면
+     지금까지 배운 (A+a)(A+b)=A²+(a+b)A+ab 와 똑같은 손동작이 된다. */
+  if (mode === 'substitutionExpand') {
+    const a = nzInt(rng, 1, 9), b = nzInt(rng, 1, 9);
+    return {
+      prompt: { ko: `공통부분 x+y를 한 문자 A로 치환하면 (A+a)(A+b) 꼴이 됩니다 — 지금까지 하던 방법 그대로 두 수를 더하고 곱합니다`,
+        en: `Substitute the common part x+y with a single letter A, giving (A+a)(A+b) — the same add-then-multiply move as before`,
+        zh: `把公共部分x+y换成一个字母A，就成了(A+a)(A+b)——还是先前学过的先加后乘` },
+      tex: `(x+y ${wrapPlus(a)})(x+y ${wrapPlus(b)}) = (x+y)^2 + \\square (x+y) + \\square`,
+      answer: [a + b, a * b], answerType: 'number', widget: 'numpad', negative: (a + b < 0) || (a * b < 0),
+      solution: [
+        { tex: `A = x+y \\quad\\Rightarrow\\quad (A ${wrapPlus(a)})(A ${wrapPlus(b)}) = A^2 + (${a}+${b})A + (${a})(${b})` },
+        { tex: `= (x+y)^2 + \\square (x+y) + \\square`, blank: [a + b, a * b] }
+      ]
+    };
+  }
+
   /* diffSquares — 합차공식(계보4 종착): (x+a)(x-a)=x²-a² */
   const a = R(rng, 1, 70);
   return {
@@ -510,6 +637,136 @@ NM_TGEN['md20_factorBasic'] = function (params, rng) {
     solution: [
       { tex: `${p} + ${q} = ${b}, \\;\\; ${p} \\times ${q} = ${c}` },
       { tex: `x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = (x + \\square)(x + \\square)`, blank: [p, q] }
+    ]
+  };
+};
+
+/* ── MD83 — 제곱근의 덧셈과 뺄셈 ──
+   2026-09-21 추가. 디딤돌 개념연산 중3-1A 대조(p.68~78)로 찾은 것: 중3-1 제곱근
+   단원의 정확히 절반(덧셈·뺄셈)이 스레드 자체가 없었다 — 지금까지 MD15~18은
+   "정리하는 법"만 가르치고 "더하거나 빼는 법"이 어디에도 없어 3√2+√2 같은 식이
+   한 번도 안 나왔다. MD20 뒤에 번호를 잇지 않고 83을 쓰는 건 창의연산 새 계보
+   번호와 안 겹치려는 것(MASTER-ROADMAP §5 — 중등 MD는 1~82로 이미 다 찼다).
+   radicand는 대부분 서로 다른 소수만 골라 곱해서 안전하게 근호가 안 겹치도록
+   한다(제곱인수가 우연히 생기면 "정리 전"인데 이미 정리된 것처럼 보인다).
+   mode: 'sameRadicand'(기본, 근호 안이 같음) · 'simplifyThenCombine'(정리 후
+   결합, ⑵ 핵심) · 'distribute'(분배법칙) · 'rationalizeMixed'(유리화 혼합) ·
+   'threeTerm'(세 항 결합) · 'intFracPart'(무리수의 정수 부분·소수 부분). */
+NM_TGEN['md83_radicalAddSub'] = function (params, rng) {
+  const mode = params.mode || 'sameRadicand';
+  const PRIMES = [2, 3, 5, 7, 11, 13];
+  function distinctPrimes(n){
+    const idxs = [];
+    while (idxs.length < n) { const i = R(rng, 0, PRIMES.length - 1); if (!idxs.includes(i)) idxs.push(i); }
+    return idxs.map(i => PRIMES[i]);
+  }
+
+  if (mode === 'sameRadicand') {
+    const a = pick(rng, SQFREE_NARROW);
+    const op = pick(rng, ['+', '-']);
+    let m = R(rng, 3, 9), n = op === '-' ? R(rng, 1, m - 1) : R(rng, 1, 8);
+    const coeff = op === '+' ? m + n : m - n;
+    return {
+      prompt: { ko: `근호 안의 수가 같으면 계수끼리만 더하거나 뺍니다 — 동류항을 정리하는 것과 같은 손동작입니다`,
+        en: `When the number under the root is the same, only the coefficients add or subtract — the same move as combining like terms`,
+        zh: `根号内的数相同时，只把系数相加或相减——和合并同类项是同一个动作` },
+      tex: `${m}\\sqrt{${a}} ${op} ${n}\\sqrt{${a}} = \\square\\sqrt{${a}}`,
+      answer: coeff, answerType: 'number', widget: 'numpad', negative: coeff < 0,
+      solution: [
+        { tex: `${m} ${op} ${n} = ${coeff}` },
+        { tex: `\\square\\sqrt{${a}}`, blank: coeff }
+      ]
+    };
+  }
+
+  if (mode === 'simplifyThenCombine') {
+    const b = pick(rng, SQFREE_NARROW.filter(x => x <= 12));
+    const op = pick(rng, ['+', '-']);
+    const p = R(rng, 2, 6), q = op === '-' ? R(rng, 1, p - 1) : R(rng, 2, 6);
+    const N1 = p * p * b, N2 = q * q * b;
+    const coeff = op === '+' ? p + q : p - q;
+    return {
+      prompt: { ko: `근호 안이 달라 보여도 먼저 정리하면 같아질 수 있습니다 — 정리부터 하고 그다음 더하거나 뺍니다`,
+        en: `Even if they look different, simplifying first can reveal the same root — simplify, then add or subtract`,
+        zh: `根号内看起来不同也可能化简后相同——先化简，再相加或相减` },
+      tex: `\\sqrt{${N1}} ${op} \\sqrt{${N2}} = \\square\\sqrt{${b}}`,
+      answer: coeff, answerType: 'number', widget: 'numpad', negative: coeff < 0,
+      solution: [
+        { tex: `\\sqrt{${N1}} = ${p}\\sqrt{${b}}, \\quad \\sqrt{${N2}} = ${q}\\sqrt{${b}}` },
+        { tex: `${p} ${op} ${q} = ${coeff}` },
+        { tex: `\\square\\sqrt{${b}}`, blank: coeff }
+      ]
+    };
+  }
+
+  if (mode === 'distribute') {
+    const [a, b, c] = distinctPrimes(3);
+    const op = pick(rng, ['+', '-']);
+    const ab = a * b, ac = a * c;
+    return {
+      prompt: { ko: `√a(√b±√c) = √ab±√ac — 다항식의 분배법칙과 같은 자리입니다`,
+        en: `√a(√b±√c) = √ab±√ac — the same spot as the distributive law for polynomials`,
+        zh: `√a(√b±√c) = √ab±√ac——和多项式的分配律是同一个位置` },
+      tex: `\\sqrt{${a}}(\\sqrt{${b}} ${op} \\sqrt{${c}}) = \\sqrt{\\square} ${op} \\sqrt{\\square}`,
+      answer: [ab, ac], answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\sqrt{${a}} \\times \\sqrt{${b}} = \\sqrt{${ab}}, \\quad \\sqrt{${a}} \\times \\sqrt{${c}} = \\sqrt{${ac}}` },
+        { tex: `\\sqrt{\\square} ${op} \\sqrt{\\square}`, blank: [ab, ac] }
+      ]
+    };
+  }
+
+  if (mode === 'rationalizeMixed') {
+    const [a, b, c] = distinctPrimes(3);
+    const op = pick(rng, ['+', '-']);
+    const ac = a * c, bc = b * c;
+    return {
+      prompt: { ko: `분모에 근호가 있으면 먼저 유리화합니다 — 분자·분모에 분모의 근호를 곱한 뒤 정리합니다`,
+        en: `If the denominator has a root, rationalize first — multiply top and bottom by that root, then simplify`,
+        zh: `分母有根号时先有理化——分子分母同乘分母的根号，再化简` },
+      tex: `\\dfrac{\\sqrt{${a}} ${op} \\sqrt{${b}}}{\\sqrt{${c}}} = \\dfrac{\\sqrt{\\square} ${op} \\sqrt{\\square}}{\\square}`,
+      answer: [ac, bc, c], answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `\\dfrac{(\\sqrt{${a}} ${op} \\sqrt{${b}}) \\times \\sqrt{${c}}}{\\sqrt{${c}} \\times \\sqrt{${c}}}` },
+        { tex: `= \\dfrac{\\sqrt{${ac}} ${op} \\sqrt{${bc}}}{${c}}` },
+        { tex: `\\dfrac{\\sqrt{\\square} ${op} \\sqrt{\\square}}{\\square}`, blank: [ac, bc, c] }
+      ]
+    };
+  }
+
+  if (mode === 'threeTerm') {
+    const a = pick(rng, SQFREE_NARROW);
+    const m = R(rng, 4, 9), n = R(rng, 1, 6), l = R(rng, 1, 6);
+    const op1 = pick(rng, ['+', '-']), op2 = pick(rng, ['+', '-']);
+    const coeff = (op1 === '+' ? m + n : m - n) + (op2 === '+' ? l : -l);
+    return {
+      prompt: { ko: `근호 안의 수가 모두 같으면, 세 항이어도 계수끼리 순서대로 더하거나 뺍니다`,
+        en: `When all three terms share the same root, combine the coefficients left to right, just as with two`,
+        zh: `根号内的数都相同时，三项也一样从左到右把系数相加或相减` },
+      tex: `${m}\\sqrt{${a}} ${op1} ${n}\\sqrt{${a}} ${op2} ${l}\\sqrt{${a}} = \\square\\sqrt{${a}}`,
+      answer: coeff, answerType: 'number', widget: 'numpad', negative: coeff < 0,
+      solution: [
+        { tex: `${m} ${op1} ${n} ${op2} ${l} = ${coeff}` },
+        { tex: `\\square\\sqrt{${a}}`, blank: coeff }
+      ]
+    };
+  }
+
+  /* intFracPart — 무리수의 정수 부분과 소수 부분. N을 완전제곱수 사이(k²<N<(k+1)²)로
+     골라 √N이 항상 무리수가 되게 하고, 정수 부분(k, 즉 ⌊√N⌋)만 묻는다 — 소수 부분은
+     "√N−k" 꼴로 답이 무리수라 숫자 칸에 못 받는다(§7 답 환원 원칙 그대로 적용). */
+  const k = R(rng, 1, 9);
+  const N = R(rng, k * k + 1, (k + 1) * (k + 1) - 1);
+  return {
+    prompt: { ko: `무리수는 정수 부분과 소수 부분으로 나뉩니다 — √${N}은 어느 두 정수 사이에 있는지부터 찾습니다`,
+      en: `An irrational number splits into an integer part and a decimal part — first find which two integers √${N} sits between`,
+      zh: `无理数可分为整数部分和小数部分——先找√${N}在哪两个整数之间` },
+    tex: `\\sqrt{${N}}\\text{의 정수 부분} = \\square`,
+    answer: k, answerType: 'number', widget: 'numpad',
+    solution: [
+      { tex: `${k}^2 = ${k * k} < ${N} < ${(k + 1) * (k + 1)} = (${k + 1})^2` },
+      { tex: `${k} < \\sqrt{${N}} < ${k + 1}` },
+      { tex: `\\square`, blank: k }
     ]
   };
 };

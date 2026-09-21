@@ -1618,7 +1618,14 @@ MD10:{ name:{ko:'지수법칙',en:'Laws of Exponents',zh:'指数法则'}, gen:'m
           {id:4,label:{ko:'밑 혼합(실전)',en:'mixed rules (main)',zh:'混合法则(实战)'},params:{mode:'combo'},
            concept:{ko:'한 식에 곱셈·나눗셈·거듭제곱이 섞여도 앞에서부터 지수만 더하고 빼고 곱하면 됩니다 — (a⁴)²×a⁸은 8+8=16이라 a¹⁶입니다.',
              en:'When one expression mixes multiplying, dividing and powers, just add, subtract and multiply the exponents in order: (a⁴)²×a⁸ is 8+8=16, so a¹⁶.',
-             zh:'一个式子里乘、除、乘方混在一起时，按顺序对指数加减乘即可：(a⁴)²×a⁸是8+8=16，所以是a¹⁶。'}}] },
+             zh:'一个式子里乘、除、乘方混在一起时，按顺序对指数加减乘即可：(a⁴)²×a⁸是8+8=16，所以是a¹⁶。'}},
+          /* 2026-09-21 — 디딤돌 개념연산 중2-1A 대조(p.66)로 찾은 구멍: (ab)ⁿ=aⁿbⁿ.
+             이 스레드가 문자를 하나만 쓰는 관례라 두 번째 문자 대신 계수로 분배를
+             가르친다 — (c·x^m)^n = cⁿ·x^(mn). */
+          {id:5,label:{ko:'지수의 분배',en:'distributing an exponent',zh:'指数的分配'},params:{mode:'distribute'},
+           concept:{ko:'괄호 전체를 거듭제곱하면 지수가 계수와 문자 둘 다에 나뉘어 곱해집니다 — 계수는 그 자체를 거듭제곱하고, 문자는 지수끼리 곱합니다. (2x²)³을 2x⁶으로 잘못 계산하지 않도록 주의합니다(계수도 반드시 세제곱).',
+             en:'Raising the whole bracket to a power distributes it to both the coefficient and the letter — the coefficient is itself raised to the power, the letter multiplies exponents. Watch not to miscompute (2x²)³ as 2x⁶ — the coefficient must be cubed too.',
+             zh:'括号整体乘方时，指数会分别分配给系数和字母——系数本身要乘方，字母的指数相乘。注意别把(2x²)³算成2x⁶——系数也必须立方。'}}] },
 
 MD11:{ name:{ko:'단항식의 곱셈과 나눗셈',en:'Multiplying & Dividing Monomials',zh:'单项式的乘除法'}, gen:'md11_monoMulDiv', prereq:['MD10','MD4'],
   unit:'M-11',
@@ -1650,7 +1657,16 @@ MD12:{ name:{ko:'다항식의 덧셈과 뺄셈',en:'Adding & Subtracting Polynom
           {id:3,label:{ko:'괄호 앞 부호 바꾸기(실전)',en:'sign flip before brackets (main)',zh:'括号前变号(实战)'},params:{mode:'brackets'},
            concept:{ko:'괄호 앞에 −가 있으면 괄호 안 **모든 항**의 부호가 바뀝니다 — −(−6x−13)은 +6x+13입니다.',
              en:'A minus in front of a bracket flips the sign of every term inside: −(−6x−13) becomes +6x+13.',
-             zh:'括号前是减号时，括号里每一项都要变号：−(−6x−13)变成+6x+13。'}}] },
+             zh:'括号前是减号时，括号里每一项都要变号：−(−6x−13)变成+6x+13。'}},
+          /* 2026-09-21 — 디딤돌 개념연산 중2-1A 대조(p.88·94)로 찾은 두 구멍. */
+          {id:4,label:{ko:'계수가 분수 꼴인 다항식',en:'polynomials with fraction coefficients',zh:'系数为分数的多项式'},params:{mode:'fracCoef'},
+           concept:{ko:'분모의 최소공배수로 통분하고, 분자의 괄호를 푼 뒤, 동류항끼리 계산합니다 — 정수식과 순서는 같고 통분이 한 단계 앞에 붙을 뿐입니다.',
+             en:'Find a common denominator, expand the numerators, then combine like terms — the same order as with integer coefficients, just with one extra step up front.',
+             zh:'先通分，再展开分子的括号，最后合并同类项——步骤和整数系数相同，只是前面多了通分这一步。'}},
+          {id:5,label:{ko:'여러 가지 괄호가 있는 식',en:'expressions with several kinds of brackets',zh:'含多种括号的式子'},params:{mode:'nestedBrackets'},
+           concept:{ko:'소괄호(  ) → 중괄호{ } → 대괄호[ ]의 순서로 안쪽부터 괄호를 풀며 동류항끼리 정리합니다. 부호가 −이면 여는 순간 안의 모든 항의 부호가 바뀝니다.',
+             en:'Remove brackets from the inside out — parentheses, then braces, then square brackets — combining like terms as you go. A minus sign flips every term inside the moment you open it.',
+             zh:'按小括号→大括号(中括号)→方括号的顺序从内到外拆括号，边拆边合并同类项。前面是负号，打开的瞬间里面每一项都要变号。'}}] },
 
 MD13:{ name:{ko:'(단항식)×(다항식)의 전개',en:'Expanding Monomial × Polynomial',zh:'单项式乘多项式的展开'}, gen:'md13_monoTimesPoly', prereq:['MD11','MD12'],
   unit:'M-13',
@@ -1759,7 +1775,30 @@ MD19:{ name:{ko:'곱셈공식의 전개',en:'Expanding Multiplication Formulas',
           {id:3,label:{ko:'합차공식(실전)',en:'difference of squares (main)',zh:'平方差公式(实战)'},params:{mode:'diffSquares'},
            concept:{ko:'부호가 반대인 두 수를 곱하면 가운데 항이 서로 지워집니다 — (x+36)(x−36)은 x²−1296입니다.',
              en:'With opposite signs the middle terms cancel: (x+36)(x−36) is x²−1296.',
-             zh:'两个数符号相反时中间项互相抵消：(x+36)(x−36)是x²−1296。'}}] },
+             zh:'两个数符号相反时中间项互相抵消：(x+36)(x−36)是x²−1296。'}},
+          /* 2026-09-21 — 디딤돌 개념연산 중3-1A 대조(p.104~114). 앞의 세 레벨은
+             전부 "전개하는 법"이었고, 실제 교재는 그다음에 공식을 "쓰는 법"
+             (활용)을 다섯 유형으로 가르친다. */
+          {id:4,label:{ko:'수의 계산에 활용',en:'apply to arithmetic',zh:'用于数的计算'},params:{mode:'numApplication'},
+           concept:{ko:'99×101이나 101²처럼 어림수(n) 기준으로 ±k만큼 떨어진 수는 공식으로 계산합니다. 101²=(100+1)²=10000+200+1=10201, 101×99=(100+1)(100−1)=10000−1=9999입니다.',
+             en:'Numbers like 99×101 or 101² sit ±k from a round base n, so the formula computes them: 101²=(100+1)²=10000+200+1=10201, 101×99=(100+1)(100−1)=10000−1=9999.',
+             zh:'99×101或101²这样的数离整数基准n差±k，用公式计算：101²=(100+1)²=10000+200+1=10201，101×99=(100+1)(100−1)=10000−1=9999。'}},
+          {id:5,label:{ko:'근호를 포함한 식의 계산',en:'apply to radical expressions',zh:'用于含根号的式子'},params:{mode:'radicalApplication'},
+           concept:{ko:'(√a+√b)(√a−√b)=a−b — 합차공식과 같은 자리에서 근호가 사라집니다. (√3+√2)(√3−√2)=3−2=1입니다.',
+             en:'(√a+√b)(√a−√b)=a−b — the roots vanish in the same spot as the difference of squares: (√3+√2)(√3−√2)=3−2=1.',
+             zh:'(√a+√b)(√a−√b)=a−b——和平方差公式同一个位置，根号消失：(√3+√2)(√3−√2)=3−2=1。'}},
+          {id:6,label:{ko:'분모의 유리화(켤레)',en:'rationalize with a conjugate',zh:'用共轭式分母有理化'},params:{mode:'rationalizeConjugate'},
+           concept:{ko:'분모가 두 근호의 합 또는 차로 되어 있으면, 부호만 반대인 켤레를 분자·분모에 곱해 유리화합니다 — (a+b)(a−b)=a²−b²이 분모의 근호를 없앱니다.',
+             en:'When the denominator is a sum or difference of two roots, multiply top and bottom by the conjugate (opposite sign) to rationalize — (a+b)(a−b)=a²−b² clears the root.',
+             zh:'分母是两个根号的和或差时，用符号相反的共轭式乘分子分母来有理化——(a+b)(a−b)=a²−b²能去掉分母的根号。'}},
+          {id:7,label:{ko:'곱셈공식의 변형',en:'rearranging the formula',zh:'乘法公式的变形'},params:{mode:'formulaVariant'},
+           concept:{ko:'등식의 성질로 곱셈공식을 이항하면 새 식을 만들 수 있습니다 — a²+b²=(a+b)²−2ab처럼, 외우지 말고 그때그때 이항해서 씁니다.',
+             en:'Rearranging a multiplication formula by moving terms across the equals sign creates a new identity — a²+b²=(a+b)²−2ab. Do not memorize it; derive it each time.',
+             zh:'利用等式的性质把乘法公式移项就能造出新的式子——比如a²+b²=(a+b)²−2ab，不必死记，每次现场移项即可。'}},
+          {id:8,label:{ko:'복잡한 식의 전개(치환)',en:'expand complex expressions by substitution',zh:'用换元展开复杂的式子'},params:{mode:'substitutionExpand'},
+           concept:{ko:'항이 여러 개인 두 다항식의 공통부분을 한 문자로 치환하면 지금까지 하던 곱셈공식과 같은 손동작이 됩니다 — 전개한 뒤엔 치환한 문자를 원래 식으로 되돌립니다.',
+             en:'Substituting the common part of two multi-term polynomials with one letter turns it into the same multiplication-formula move as before — after expanding, substitute the original expression back in.',
+             zh:'把两个多项多项式的公共部分换成一个字母，就变成之前学过的同一种乘法公式动作——展开后再把字母换回原来的式子。'}}] },
 
 MD20:{ name:{ko:'인수분해 기초',en:'Basic Factoring',zh:'因式分解基础'}, gen:'md20_factorBasic', prereq:['MD19'],
   unit:'M-20',
@@ -1788,6 +1827,37 @@ MD20:{ name:{ko:'인수분해 기초',en:'Basic Factoring',zh:'因式分解基�
            concept:{ko:'묶어낼 공통인수가 없으면 대각선으로 곱해 더합니다. 2x²+5x+3은 앞이 2x와 x, 뒤가 3과 1이고 2×1+3=5라 (2x+3)(x+1)입니다.',
              en:'With no common factor to pull out, cross-multiply and add: for 2x²+5x+3 the fronts are 2x and x, the backs are 3 and 1, and 2×1+3=5, so it is (2x+3)(x+1).',
              zh:'没有公因数可提取时就交叉相乘再相加：2x²+5x+3的前项是2x和x、后项是3和1，2×1+3=5，所以是(2x+3)(x+1)。'}}] },
+
+/* ── MD83 — 제곱근의 덧셈과 뺄셈 ── 2026-09-21 추가. 디딤돌 개념연산 중3-1A
+   대조(p.68~78)로 찾은 구멍 — MD15~18이 "정리하는 법"만 가르치고 "더하거나
+   빼는 법"이 없었다. 번호가 82 다음이 아니라 83인 이유는 M-83 주석 참조. */
+MD83:{ name:{ko:'제곱근의 덧셈과 뺄셈',en:'Adding & Subtracting Square Roots',zh:'平方根的加减法'}, gen:'md83_radicalAddSub', prereq:['MD16','MD17'],
+  unit:'M-83',
+  concept:{ko:'근호 안의 수가 같으면 계수끼리만 더하거나 뺍니다 — 다항식의 동류항 정리와 같은 규칙입니다. 달라 보여도 먼저 근호를 정리하면 같아지는 경우가 많습니다.',
+    en:'When the number under the root matches, only the coefficients add or subtract — the same rule as combining like terms. Even when the roots look different, simplifying first often reveals a match.',
+    zh:'根号内的数相同时，只把系数相加或相减——和多项式合并同类项是同一条规则。看起来不同的根号，先化简往往也会相同。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'근호 안이 같을 때(기본)',en:'same root (practice)',zh:'根号内相同(练习)'},params:{mode:'sameRadicand'}},
+          {id:2,label:{ko:'정리한 뒤 결합(실전)',en:'simplify, then combine (main)',zh:'先化简再合并(实战)'},params:{mode:'simplifyThenCombine'},
+           concept:{ko:'근호 안이 달라 보여도 먼저 정리하면 같아질 수 있습니다 — √12+√3은 √12=2√3으로 정리해야 2√3+√3=3√3이 됩니다.',
+             en:'Roots that look different can match after simplifying — √12+√3 needs √12=2√3 first, then 2√3+√3=3√3.',
+             zh:'看起来不同的根号，化简后可能相同——√12+√3要先把√12化简成2√3，才能得到2√3+√3=3√3。'}},
+          {id:3,label:{ko:'세 항 결합',en:'combining three terms',zh:'三项合并'},params:{mode:'threeTerm'},
+           concept:{ko:'근호 안의 수가 모두 같으면, 세 항이어도 계수끼리 순서대로 더하거나 뺍니다 — m√a+n√a−l√a=(m+n−l)√a입니다.',
+             en:'When all three terms share the same root, combine the coefficients left to right just as with two — m√a+n√a−l√a=(m+n−l)√a.',
+             zh:'根号内的数都相同时，三项也从左到右把系数相加或相减——m√a+n√a−l√a=(m+n−l)√a。'}},
+          {id:4,label:{ko:'분배법칙',en:'the distributive law',zh:'分配律'},params:{mode:'distribute'},
+           concept:{ko:'√a(√b±√c)=√ab±√ac — 다항식의 분배법칙과 같은 자리입니다. √2(√3+√5)는 √6+√10입니다.',
+             en:'√a(√b±√c)=√ab±√ac — the same spot as the distributive law for polynomials: √2(√3+√5) is √6+√10.',
+             zh:'√a(√b±√c)=√ab±√ac——和多项式的分配律是同一个位置：√2(√3+√5)是√6+√10。'}},
+          {id:5,label:{ko:'분모의 유리화가 포함된 혼합 계산',en:'mixed calculation with rationalizing',zh:'含分母有理化的混合运算'},params:{mode:'rationalizeMixed'},
+           concept:{ko:'분모에 근호가 있으면 먼저 유리화합니다 — 분자·분모에 분모의 근호를 곱한 뒤 정리합니다. (√2+√3)/√5는 (√10+√15)/5가 됩니다.',
+             en:'If the denominator has a root, rationalize first — multiply top and bottom by that root, then simplify: (√2+√3)/√5 becomes (√10+√15)/5.',
+             zh:'分母有根号时先有理化——分子分母同乘分母的根号，再化简：(√2+√3)/√5变成(√10+√15)/5。'}},
+          {id:6,label:{ko:'무리수의 정수 부분과 소수 부분',en:'the integer and decimal parts of an irrational',zh:'无理数的整数部分与小数部分'},params:{mode:'intFracPart'},
+           concept:{ko:'무리수는 정수 부분과 소수 부분으로 나뉩니다. √2=1.414…는 두 제곱수 1과 4 사이에 있으니(1<2<4), 정수 부분은 1이고 소수 부분은 √2−1입니다.',
+             en:'An irrational number splits into an integer part and a decimal part. √2=1.414… sits between the squares 1 and 4 (1<2<4), so the integer part is 1 and the decimal part is √2−1.',
+             zh:'无理数可分为整数部分和小数部分。√2=1.414…在两个平方数1和4之间(1<2<4)，所以整数部分是1，小数部分是√2−1。'}}] },
 
 /* ── MD 고등 W11(공통수학1) 신규 10종 (2026-08-25) ── 근거:
    MASTER-ROADMAP.md §6(W11 공통수학1) — 2022 개정 교육과정 공통수학1
@@ -2812,7 +2882,22 @@ MD66:{ name:{ko:'이차방정식 풀이',en:'Solving Quadratic Equations',zh:'�
           {id:4,label:{ko:'근의 공식(D와 분모)',en:'the quadratic formula (D and denominator)',zh:'求根公式(D与分母)'},params:{mode:'formula',wide:true},
            concept:{ko:'인수분해도 안 되고 완전제곱도 번거로우면 근의 공식을 씁니다. x=(−b±√D)/2a 이고 D=b²−4ac입니다 — 2x²+3x−4=0은 D=9+32=41, 분모는 2×2=4입니다.',
              en:'When it will not factor and completing the square is awkward, use the formula x=(−b±√D)/2a with D=b²−4ac — for 2x²+3x−4=0, D=9+32=41 and the denominator is 2×2=4.',
-             zh:'既不能因式分解、配方又麻烦时就用求根公式x=(−b±√D)/2a，其中D=b²−4ac——2x²+3x−4=0的D=9+32=41，分母是2×2=4。'}}] },
+             zh:'既不能因式分解、配方又麻烦时就用求根公式x=(−b±√D)/2a，其中D=b²−4ac——2x²+3x−4=0的D=9+32=41，分母是2×2=4。'}},
+          /* 2026-09-21 — 디딤돌 개념연산 중3-1B 대조(p.9·42·46)로 찾은 세 구멍. 앞의
+             네 레벨은 전부 "어떻게 푸느냐"였고, 중근·근의 개수·거꾸로 방정식 만들기는
+             근의 공식 자체가 아니라 **근을 둘러싼 개념**이라 따로 필요하다. */
+          {id:5,label:{ko:'중근',en:'double root',zh:'重根'},params:{mode:'doubleRoot',wide:true},
+           concept:{ko:'이차방정식의 두 해가 중복되어 서로 같을 때, 이 해를 중근이라고 합니다. (완전제곱식)=0 꼴로 인수분해되면 그 해가 중근입니다 — x²−2x+1=0은 (x−1)²=0이니 중근은 1입니다.',
+             en:'When both roots of a quadratic are the same, that root is called a double root. If it factors to (perfect square)=0, that root is the double root — x²−2x+1=0 is (x−1)²=0, so the double root is 1.',
+             zh:'一元二次方程的两个根相同时，这个根叫做重根。若能因式分解成(完全平方式)=0，那个根就是重根——x²−2x+1=0是(x−1)²=0，重根是1。'}},
+          {id:6,label:{ko:'근의 개수(판별식)',en:'number of roots (discriminant)',zh:'根的个数(判别式)'},params:{mode:'discriminantCount'},
+           concept:{ko:'이차방정식 ax²+bx+c=0의 근의 개수는 판별식 D=b²−4ac의 부호로 압니다. D>0이면 서로 다른 두 근, D=0이면 한 개의 근(중근), D<0이면 근이 없습니다.',
+             en:'The number of roots of ax²+bx+c=0 is found from the sign of the discriminant D=b²−4ac. D>0 gives two different roots, D=0 gives one (double) root, D<0 gives no roots.',
+             zh:'一元二次方程ax²+bx+c=0的根的个数由判别式D=b²−4ac的符号决定。D>0是两个不同的根，D=0是一个根(重根)，D<0则无根。'}},
+          {id:7,label:{ko:'이차방정식 구하기',en:'building the equation from its roots',zh:'求作一元二次方程'},params:{mode:'fromRoots',wide:true},
+           concept:{ko:'두 근이 p, q이고 x²의 계수가 a인 이차방정식은 a(x−p)(x−q)=0을 펼쳐서 구합니다 — 두 근이 1, 2이면 (x−1)(x−2)=0이니 x²−3x+2=0입니다.',
+             en:'For two roots p, q with leading coefficient a, the equation is found by expanding a(x−p)(x−q)=0 — roots 1 and 2 give (x−1)(x−2)=0, that is x²−3x+2=0.',
+             zh:'已知两根p、q和x²系数a，展开a(x−p)(x−q)=0就能求出方程——两根为1、2时是(x−1)(x−2)=0，即x²−3x+2=0。'}}] },
 
 MD67:{ name:{ko:'이차함수의 꼭짓점',en:'The Vertex of a Quadratic',zh:'二次函数的顶点'}, gen:'md67_quadVertex', prereq:['MD66'],
   unit:'M-67',
