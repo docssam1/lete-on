@@ -205,3 +205,32 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .ad-use b { display: block; font: 800 13pt var(--serif); color: #8b1e1e; margin-bottom: 1.5mm; } .ad-use span { font-size: 11pt; line-height: 1.45; }
 .it-guide-btns .it-sound { background: linear-gradient(180deg, #f3d48a, #c9953a); color: #2a170b; font-weight: 800; padding: 5px 12px; }
 .it-guide-btns .it-sound.off { background: rgba(139, 94, 40, .15); color: #6b5537; font-weight: 600; }
+
+/* CHAPTER Ⅴ·Ⅵ 진단·처방 (16차) — 빨강 = 틀림·확정, 노랑 = 의심, 초록 = 해소 */
+.ad-flow.tight { gap: 2.4mm; } .ad-flow.tight li { font-size: 12.5pt; padding-bottom: 2mm; line-height: 1.4; }
+.ad-flow.tight span { width: auto; min-width: 11mm; height: 9mm; border-radius: 5mm; padding: 0 3mm; font-size: 10pt; }
+.ad-ex { margin-top: 5mm; padding: 4mm 5mm; border: 1px solid rgba(139, 94, 40, .45); background: rgba(255, 250, 235, .55); }
+.ad-ex-q { margin: 0 0 2.5mm; font-size: 12.5pt; font-weight: 700; } .ad-ex-q b { color: #8b1e1e; }
+.ad-ex-c { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.6mm; font-size: 11.5pt; }
+.ad-ex-c li { padding: 1.6mm 3mm; border: 1px solid rgba(139, 94, 40, .35); border-radius: 2mm; background: #fff; }
+.ad-ex-c li.no { border-color: #c8321f; background: #fdecea; color: #c8321f; font-weight: 700; }
+.ad-ex-c li.ok { border-color: #1f7a4d; background: #e6f4ec; font-weight: 700; }
+.ad-fix { margin-top: 2.5mm; padding: 2.4mm 3.5mm; border-left: 1.2mm solid #c8321f; background: #fdecea; font-size: 11pt; line-height: 1.5; }
+.ad-fix b { color: #1e3a78; font-weight: 800; }
+.ad-mis { display: inline-block; margin: 0 2mm 1mm 0; padding: .3mm 2.6mm; border-radius: 99mm; background: #c8321f; color: #fff; font-weight: 800; font-size: 9.5pt; }
+.ad-rep { display: grid; gap: 3mm; margin-top: 2mm; }
+.ad-rep-sum { display: flex; align-items: center; gap: 5mm; padding: 3mm 5mm; border: 1px solid rgba(139, 94, 40, .45); background: rgba(255, 250, 235, .55); }
+.ad-rep-sum b { font: 800 26pt/1 var(--serif); color: #1e3a78; } .ad-rep-sum span { font-size: 11.5pt; font-weight: 700; line-height: 1.4; } .ad-rep-sum em { font-style: normal; color: #c8321f; }
+.ad-bars { display: grid; gap: 1.6mm; padding: 2mm 4mm; border: 1px solid rgba(139, 94, 40, .3); }
+.ad-bars div { display: grid; grid-template-columns: 40mm 1fr 12mm; align-items: center; gap: 3mm; font-size: 10pt; }
+.ad-bars span { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ad-bars i { display: block; height: 3.2mm; border-radius: 99mm; background: #e6dcc6; overflow: hidden; } .ad-bars b { display: block; height: 100%; border-radius: 99mm; }
+.ad-bars b.w { background: #c8321f; } .ad-bars b.m { background: #c98b1a; } .ad-bars b.g { background: #1f7a4d; }
+.ad-bars em { font-style: normal; font-weight: 800; text-align: right; }
+.ad-card { padding: 2.6mm 4mm; border-left: 1.6mm solid #c8321f; background: #fdecea; font-size: 10.5pt; line-height: 1.45; }
+.ad-card.s { border-left-color: #c98b1a; background: #fff4de; } .ad-card.r { border-left-color: #1f7a4d; background: #e6f4ec; }
+.ad-card p { margin: 0; } .ad-card p b { color: #c8321f; font-size: 11.5pt; } .ad-card.s p b { color: #a86d00; } .ad-card.r p b { color: #1f7a4d; }
+.ad-st { display: inline-block; margin-right: 2mm; padding: 0 2.4mm; border-radius: 99mm; background: #fff; font-weight: 800; font-size: 9.5pt; }
+.ad-card-fix { margin-top: 1.2mm !important; } .ad-card-fix b { color: #1e3a78 !important; font-size: inherit !important; }
+.ad-card ul { margin: 1.4mm 0 0; padding-left: 5mm; color: #6b5537; font-size: 9.8pt; } .ad-card ul li { margin: .4mm 0; }
+.ad-rx { margin-top: 1.4mm !important; font-weight: 700; color: #1e3a78; }
