@@ -203,3 +203,5 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .ad-use { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin-top: 7mm; }
 .ad-use div { border: 1px solid rgba(139, 94, 40, .45); background: rgba(255, 250, 235, .5); padding: 3.5mm; text-align: center; }
 .ad-use b { display: block; font: 800 13pt var(--serif); color: #8b1e1e; margin-bottom: 1.5mm; } .ad-use span { font-size: 11pt; line-height: 1.45; }
+.it-guide-btns .it-sound { background: linear-gradient(180deg, #f3d48a, #c9953a); color: #2a170b; font-weight: 800; padding: 5px 12px; }
+.it-guide-btns .it-sound.off { background: rgba(139, 94, 40, .15); color: #6b5537; font-weight: 600; }
