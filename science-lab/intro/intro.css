@@ -157,7 +157,7 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .it-guide.talk .it-char .b { animation: bob .45s ease-in-out infinite alternate; }
 @keyframes bob { to { transform: translateY(-1.5%); } }
 .it-bubble { background: radial-gradient(ellipse at 50% 40%, #fbf3de, #ecdcb4); color: #2a170b; border-radius: 10px; padding: 12px 14px 8px; box-shadow: 0 12px 30px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(139, 94, 40, .45); margin-bottom: 40px; font-family: var(--serif); }
-.it-bubble p { margin: 0; font-size: 16px; line-height: 1.55; min-height: 1.5em; font-weight: 700; }
+.it-bubble p { margin: 0; font-family: "Gaegu", "Jua", sans-serif; font-size: 21px; line-height: 1.4; min-height: 1.5em; font-weight: 700; }   /* v2 화면의 독쌤 말풍선과 같은 글씨체 */
 .it-guide-btns { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
 .it-guide-btns button { border: 0; background: rgba(139, 94, 40, .15); border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; color: #2a170b; }
 .it-guide.min .it-bubble { display: none; }
@@ -168,7 +168,7 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
   .it-arrow.prev { left: 4px; } .it-arrow.next { right: 4px; } .it-stage { position: relative; }
   .it-book::before { left: -6px; right: -6px; top: -6px; bottom: -8px; } .it-book::after { display: none; }
   .it-char { width: 56px; } .it-guide { left: 8px; bottom: 8px; max-width: calc(100vw - 16px); }
-  .it-bubble { padding: 8px 10px 6px; margin-bottom: 18px; } .it-bubble p { font-size: 13.5px; }
+  .it-bubble { padding: 8px 10px 6px; margin-bottom: 18px; } .it-bubble p { font-size: 17px; }
   .it-final { flex-direction: column; text-align: center; } .it-final h2 { text-align: center; } .it-final-btns { justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) { .leaf, .it-book { transition: none !important; } .cv *, .ad-page.cover::after, .cv-tap, .it-head h1 em { animation: none !important; } }

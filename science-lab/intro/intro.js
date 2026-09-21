@@ -64,12 +64,14 @@ async function say(ids) {
       // 독쌤 음성 파일이 있으면 그것으로, 없으면 기기 음성으로 읽는다
       let fell = false;
       const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
-      audio = new Audio(await urlOf(line)); audio.preload = 'auto';
+      const src = await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
+      audio = new Audio(src); audio.preload = 'auto';
       audio.addEventListener('error', fall, { once: true });
       audio.addEventListener('playing', () => { voiceMode('독쌤 음성'); }, { once: true });
       audio.play().then(() => { setTimeout(() => { if (!audio || audio.paused) fall(); }, 400); }).catch(fall);
       if (fell || !audio) voiceMode('기기 음성');
     }
+    if (my !== sayToken) return;
     guide.classList.add('talk'); $p.textContent = '';
     for (const ch of line.text) {
       if (my !== sayToken) return;
