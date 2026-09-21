@@ -415,8 +415,11 @@ window.NM_ROADMAP = {
     {
       id:'W10-1', icon:'🔓', grade:'중3',
       edu:{ko:'중3 제곱근의 세계',en:'G9 World of Square Roots',zh:'初三平方根的世界'},
-      theme:{ko:'W10-1 · 제곱근의 세계 — 값·근호 정리·곱나눗',en:'W10-1 · World of Square Roots — Values, Simplifying, × ÷',zh:'W10-1·平方根的世界——值·化简·乘除'},
-      units:['M-15','M-16','M-17'],
+      theme:{ko:'W10-1 · 제곱근의 세계 — 값·근호 정리·곱나눗·덧뺄',en:'W10-1 · World of Square Roots — Values, Simplifying, × ÷, + −',zh:'W10-1·平方根的世界——值·化简·乘除·加减'},
+      /* M-83(2026-09-21) — 학습지 과정 35에는 넣었는데 학습모드 로드맵에는 빠져 있었다.
+         유닛이 두 곳(courses.js 의 magic · roadmap.js 의 chapters)에 각각 실리는 구조라
+         한 쪽만 넣으면 조용히 절반만 보인다. */
+      units:['M-15','M-16','M-17','M-83'],
       tip:{ko:'같은 소인수가 두 번 만나면(짝) 근호 밖으로 나올 수 있어요 — 2와 5가 만나 10이 되던 것과 같은 이치!',en:'When the same prime factor appears twice (a pair), it can step outside the root — the same idea as 2 and 5 meeting to make 10!',zh:'同一质因数出现两次(配对)就能走出根号——和2与5相遇变成10是同样的道理！'}
     },
     {
