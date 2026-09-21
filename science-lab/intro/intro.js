@@ -6,6 +6,7 @@ import { wireLive } from '../v2/live.js';
 import { mount3D, mountLabOf } from '../v2/mounts.js';
 import { SEMS, READY } from '../v2/units-index.js';
 import { escapeInApp } from '../v2/inapp.js';
+import * as misc from '../data/units/s41-u03.misc.js';
 escapeInApp();
 
 const A = '../assets/';
@@ -140,7 +141,7 @@ const ads = (home) => [
     <div class="ad-road">${road().map((s) => `<div class="ad-sem ${readySems.has(s.sem) ? 'on' : ''}"><b>${s.sem}</b><ul>${s.units.map((u) => `<li class="${u.ready ? 'on' : ''}">${esc(u.title)}${u.ready ? `<small>✦ ${esc(u.hero)}</small>` : ''}</li>`).join('')}</ul></div>`).join('')}</div>
     <p class="ad-note">✦ 표시된 단원은 지금 바로 펼쳐 볼 수 있습니다</p>`),
   adPage('ad a3', `${chap('CHAPTER Ⅱ · 한 장의 비밀', '영재원 탐구 방식,<br>그대로 한 장에')}
-    <ol class="ad-flow">${['생각 열기 — 경험에서 질문을 찾는다', '예상하기 — “~할수록 ~할 것이다”', '계획하기 — 바꿀 조건은 오직 하나', '실험하기 — 단계별 그림과 3D 실험실', '기록과 결론 — 표에 적고 내 말로', '개념 한눈에 — 빈칸으로 정리한다', '상상 실험실 · 토론 — 생각을 넓힌다', '영재 도전 — 유창성 · 융통성 · 독창성', '교과서 점검 — 단원평가 유형으로'].map((t, i) => `<li><span>${'ⅠⅡⅢⅣⅤⅥⅦⅧⅨ'[i]}</span>${esc(t)}</li>`).join('')}</ol>`),
+    <ol class="ad-flow">${['생각 열기 — 경험에서 질문을 찾는다', '예상하기 — “~할수록 ~할 것이다”', '계획하기 — 바꿀 조건은 오직 하나', '실험하기 — 단계별 그림과 3D 실험실', '기록과 결론 — 표에 적고 내 말로', '개념 한눈에 — 빈칸으로 정리한다', '상상 실험실 · 토론 — 생각을 넓힌다', '영재 도전 — 유창성 · 융통성 · 독창성', '교과서 점검 — 단원평가 유형으로', '진단 · 처방 — 틀린 까닭을 읽고 다시 배운다'].map((t, i) => `<li><span>${'ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ'[i]}</span>${esc(t)}</li>`).join('')}</ol>`),
   adPage('ad a4', `${chap('CHAPTER Ⅲ · 네 개의 열쇠', '한 권으로 네 가지 수업')}
     <div class="ad-4"><div><b>학생용 교재</b><span>빈칸과 쓰는 줄. A4 그대로 인쇄</span></div><div><b>강사용 교재</b><span>같은 자리에 붉은 예시 답과 채점 기준</span></div><div><b>가르치기 화면</b><span>누를 때마다 답이 열리는 90분 교안</span></div><div><b>스스로 공부</b><span>써 보고 예시 답 확인, 문제는 바로 채점</span></div></div>
     <figure class="ad-photo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Augustine_volcano_Jan_24_2006_-_Cyrus_Read.jpg/1280px-Augustine_volcano_Jan_24_2006_-_Cyrus_Read.jpg" alt="화산 분출 사진"><figcaption>책 속의 실제 기록 · Cyrus Read, USGS (Public domain)</figcaption></figure>`),
@@ -153,13 +154,27 @@ const ads = (home) => [
     </div><figure class="ad-qr"><img src="${esc(home?.qr || '')}" alt="준비물 QR"><figcaption>QR을 찍으면 준비물 목록과<br>구매 링크가 열립니다</figcaption></figure></div>
     <p class="ad-note">안전이 필요한 과정은 “보호자와 함께”라고 표시해 두었습니다</p>
     <div class="ad-use"><div><b>수업 전</b><span>3D로 먼저 보고 예상 써 오기</span></div><div><b>수업</b><span>실험하고 보고서 쓰기</span></div><div><b>수업 후</b><span>형성평가·영재 도전 풀기</span></div></div>`),
-  adPage('ad a6', `${chap('FAQ · 자주 묻는 질문', '궁금한 것들')}
+  adPage('ad a6', `${chap('CHAPTER Ⅴ · 틀린 까닭을 읽는 책', '틀린 보기가<br>곧 진단입니다')}
+    <p class="drop">채점만 하는 책은 많습니다. 이 책은 아이가 <b>어떤 보기를 골랐는지</b>를 기억합니다. 운반 작용을 묻는 문제에서 “깎아 내는 것”을 고르면, 그건 실수가 아니라 침식과 운반을 바꿔 알고 있다는 신호입니다.</p>
+    <ol class="ad-flow tight"><li><span>기록</span>개념 카드 · 잠깐 확인 · 점검 · 교재 확인 문제에서 고른 답을 전부 남깁니다</li><li><span>교정</span>틀리는 순간, “다시 생각해 봐요” 대신 <b>왜 틀렸는지</b> 한 문장으로 알려 줍니다</li><li><span>진단</span>같은 오개념이 다른 문제에서 또 나오면 <b>확정</b>, 한 번이면 <b>의심</b></li><li><span>처방</span>그 오개념이 숨어 있는 문제만 골라 다시 풀고, 두 번 연속 맞히면 <b>해소</b></li></ol>
+    <div class="ad-ex"><p class="ad-ex-q">흐르는 물의 작용 중 <b>운반 작용</b>을 바르게 설명한 것은?</p>
+      <ol class="ad-ex-c"><li class="no">① 흐르는 물이 바위나 돌을 깎아 내는 것</li><li>② 옮겨 온 흙이 낮은 곳에 쌓이는 것</li><li class="ok">④ 깎인 돌이나 흙을 다른 곳으로 옮기는 것</li></ol>
+      <div class="ad-fix"><span class="ad-mis">${esc(misc.misconceptions.M01.label)}</span>${misc.misconceptions.M01.fix}</div></div>`),
+  adPage('ad a7', `${chap('CHAPTER Ⅵ · 진단 리포트', '어디서 막혔는지<br>한 장에')}
+    <div class="ad-rep">
+      <div class="ad-rep-sum"><b>2 / 5</b><span>되풀이되는 오개념이 <em>1개</em> 있어요. 빨간 카드부터 처방 문제를 풀어요.</span></div>
+      <div class="ad-bars">${[['흐르는 물에 의한 땅의 변화', 0, 2], ['강 주변 지형', 50, 2], ['화산과 화산 분출물', 100, 1], ['지진과 대처', 100, 1]].map(([n, p, t]) => `<div><span>${n}</span><i><b style="width:${p}%" class="${p < 60 ? 'w' : p < 80 ? 'm' : 'g'}"></b></i><em>${p}%</em></div>`).join('')}</div>
+      ${[['c', '확정', 'M01', ['점검 · 운반 작용 설명 → ① 깎아 내는 것', '개념 · 빈칸 ①에 ‘운반’']], ['s', '의심', 'M10', ['교재 · 백반 결정 실험 → ② 빨리 식힌 컵 — 큰 결정']], ['r', '해소', 'M14', ['확장 · 승강기로 내려간다 → 그 뒤 2번 연속 맞힘']]].map(([k, lab, m, ev]) => `<section class="ad-card ${k}"><p><span class="ad-st">${lab}</span><b>${esc(misc.misconceptions[m].label)}</b></p><p class="ad-card-fix">${misc.misconceptions[m].fix}</p><ul>${ev.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>${k === 'r' ? '' : `<p class="ad-rx">처방 · ${k === 'c' ? '개념 화면 다시 보기 → 확인 문제 3개' : '확인 문제 2개'}</p>`}</section>`).join('')}
+    </div>
+    <p class="ad-note">학생용은 카드와 처방 문제, 강사용은 근거·유형별 정답률까지 · A4 인쇄</p>`),
+  adPage('ad a8', `${chap('FAQ · 자주 묻는 질문', '궁금한 것들')}
     <dl class="ad-faq"><dt>몇 학년이 보나요?</dt><dd>초등 3~6학년. 교과서 단원 순서를 그대로 따라가고, 영재원 대비 문제를 더했습니다.</dd>
       <dt>집에서도 할 수 있나요?</dt><dd>네. 준비물 QR로 바로 사서 집에서 그대로 할 수 있고, 위험한 과정은 3D 실험실로 대신할 수 있습니다.</dd>
       <dt>3D 실험은 따로 설치하나요?</dt><dd>아니요. 휴대폰·태블릿·PC 브라우저에서 바로 열립니다.</dd>
-      <dt>종이 교재로도 쓰나요?</dt><dd>A4로 그대로 인쇄됩니다. 학생용·강사용 두 가지이고, 탐구보고서와 형성평가까지 한 장씩 들어 있습니다.</dd></dl>`),
-  adPage('ad a7', `${chap('UNSEAL · 봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
-    <ul class="ad-how"><li><i>▶</i><span>그림 속 <b>영상</b> — 실제 화산이 책 안에서 타오릅니다</span></li><li><i>✦</i><span>주황 인장 — <b>3D 실험실</b>이 책 밖으로 솟아오릅니다</span></li><li><i>ⓐ</i><span><b>빈칸</b>을 누르면 답이 드러납니다</span></li><li><i>Ⅰ</i><span>확인 문제는 누르면 <b>바로 채점</b></span></li><li><i>⤢</i><span>사진을 누르면 <b>크게</b></span></li></ul>
+      <dt>종이 교재로도 쓰나요?</dt><dd>A4로 그대로 인쇄됩니다. 학생용·강사용 두 가지이고, 탐구보고서와 형성평가까지 한 장씩 들어 있습니다.</dd>
+      <dt>틀린 문제는 어떻게 되나요?</dt><dd>어떤 보기를 골랐는지로 오개념을 찾아 바로 교정하고, 진단 화면에서 처방 문제를 다시 풀게 합니다.</dd></dl>`),
+  adPage('ad a9', `${chap('UNSEAL · 봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
+    <ul class="ad-how"><li><i>▶</i><span>그림 속 <b>영상</b> — 실제 화산이 책 안에서 타오릅니다</span></li><li><i>✦</i><span>주황 인장 — <b>3D 실험실</b>이 책 밖으로 솟아오릅니다</span></li><li><i>ⓐ</i><span><b>빈칸</b>을 누르면 답이 드러납니다</span></li><li><i>Ⅰ</i><span>확인 문제는 누르면 <b>바로 채점</b>, 틀리면 <b>왜 틀렸는지</b>가 뜹니다</span></li><li><i>⤢</i><span>사진을 누르면 <b>크게</b></span></li></ul>
     <svg class="seal" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#8b1e1e"/><circle cx="50" cy="50" r="33" fill="none" stroke="#c9463a" stroke-width="2"/><text x="50" y="47" text-anchor="middle" fill="#f3d48a" font-size="11" font-weight="800">GFIELD</text><text x="50" y="62" text-anchor="middle" fill="#f3d48a" font-size="9">SCIENCE LAB</text></svg>`),
 ];
 const backPage = () => adPage('back', `<svg class="cv" viewBox="0 0 210 297" aria-hidden="true">${GOLD}<rect x="9" y="9" width="192" height="279" rx="3" fill="none" stroke="url(#gd)" stroke-width="1.2"/>${corners(210, 297, 13)}</svg>
@@ -184,13 +199,14 @@ async function build() {
   await document.fonts?.ready; fitPages(bk);
   const wrapPage = (sec, from) => { const w = document.createElement('div'); w.className = from.className; w.setAttribute('style', from.getAttribute('style')); w.appendChild(sec); return w; };
   const adSecs = [...adHost.children], chSecs = [...bk.children];
-  state.pages = [adSecs[0], ...adSecs.slice(1, 8), ...chSecs, adSecs[8]].map((s, i) => wrapPage(s, i < 8 || i === 8 + chSecs.length ? adHost : bk));
+  state.pages = [adSecs[0], ...adSecs.slice(1, 10), ...chSecs, adSecs[10]].map((s, i) => wrapPage(s, i < 10 || i === 10 + chSecs.length ? adHost : bk));
   state.chCount = chSecs.length; host.remove();
   state.L = lm.lesson; state.rows = [];
   layout(true);
   wireLive(book, {
     scene: (el) => mount3D(el, state.L.engage.scene, { autoplay: true }),
     lab: (el) => mountLabOf(state.L.explore.lab.kind)(el, { ...state.L.explore.lab, rows: state.rows, onRecord: (rows) => { state.rows = rows; } }),
+    misc,
   });
   $('.it-loading').hidden = true;
 }
@@ -256,11 +272,11 @@ function turnSound(heavy) {
 // 지금 보이는 쪽에 맞춰 docssam이 말한다
 function visiblePages() { const s = state.spread; return state.single ? [s] : [2 * s - 1, 2 * s].filter((i) => i >= 0); }
 function narrate() {
-  const vis = visiblePages(), c0 = 8, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
+  const vis = visiblePages(), c0 = 10, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
   const ids = [];
   for (const i of vis) {
     if (i === 0) ids.push('cover'); else if (i === 1) ids.push('ad1'); else if (i === 2) ids.push('ad2'); else if (i === 3 || i === 4) { if (!ids.includes('ad3')) ids.push('ad3'); }
-    else if (i === 5) ids.push('home'); else if (i === 6) ids.push('faq'); else if (i === 7) ids.push('live');
+    else if (i === 5) ids.push('home'); else if (i === 6) ids.push('diag'); else if (i === 7) ids.push('diag2'); else if (i === 8) ids.push('faq'); else if (i === 9) ids.push('live');
     else if (i >= c0 && i < c0 + cn) { const r = rel(i); const k = r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : r === 9 ? 'report' : r === 10 ? 'formative' : 'check'; if (!ids.includes(k)) ids.push(k); }
     else ids.push('print', 'cta');
   }

@@ -4,8 +4,9 @@
 //  · 사진 누르면 크게 · 빈칸 누르면 답 · 확인 문제 누르면 바로 채점
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-// chips: { 답낱말: [[보기들], 오개념] } — 개념 정리 빈칸을 고르게 한다. onAnswer(kind, payload) 로 결과를 알린다.
-export function wireLive(root, { scene, lab, title = '', chips = null, onAnswer = null } = {}) {
+// misc: 오개념표(data/units/<u>.misc.js) — 있으면 개념 정리 빈칸이 낱말 칩이 되고, 확인 문제를 틀리면 교정 상자(.bk-fix)가 붙는다. onAnswer(kind, payload)는 기록용.
+export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer = null } = {}) {
+  const chips = misc?.bookChips || null;
   root.querySelectorAll('.bk-video').forEach((v) => v.querySelector('.bk-play')?.addEventListener('click', (e) => {
     e.stopPropagation();
     v.innerHTML = `<video controls autoplay playsinline><source src="${v.dataset.src}" type="video/webm">${v.dataset.mp4 ? `<source src="${v.dataset.mp4}" type="video/mp4">` : ''}<source src="${v.dataset.full}" type="video/webm"></video>`;
@@ -41,7 +42,8 @@ export function wireLive(root, { scene, lab, title = '', chips = null, onAnswer 
     ol.querySelectorAll('li').forEach((li) => li.addEventListener('click', (e) => {
       e.stopPropagation(); if (ol.dataset.done) return; ol.dataset.done = '1';
       const j = +li.dataset.j; ol.querySelectorAll('li').forEach((x) => { if (key.includes(+x.dataset.j)) x.classList.add('ok'); });
-      if (!key.includes(j)) li.classList.add('no');
+      if (!key.includes(j)) { li.classList.add('no'); const m = misc?.distractors?.[ol.dataset.id]?.[j], M = m && misc.misconceptions[m];
+        if (M) { const d = document.createElement('div'); d.className = 'bk-fix'; d.innerHTML = `<span class="mis-tag">${esc(M.label)}</span> ${M.fix}`; ol.after(d); } }
       onAnswer?.('item', { id: ol.dataset.id, ok: key.includes(j), picked: j, el: ol });
     }));
   });

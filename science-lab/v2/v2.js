@@ -449,14 +449,13 @@ async function pageLabBook(u, mod, mode) {
   fit(); document.fonts?.ready.then(fit);
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));
   const onAnswer = (kind, p) => {
-    if (kind === 'item' && I[p.id]) { const it = I[p.id]; record(du(u), it, 'book', p.ok, { picked: p.picked }, MISC);
-      if (!p.ok && MISC) { const m = MISC.distractors?.[it.id]?.[p.picked], M = m && MISC.misconceptions[m]; if (M) { const d = document.createElement('div'); d.className = 'bk-fix'; d.innerHTML = `<span class="mis-tag">${esc(M.label)}</span> ${M.fix}`; p.el.after(d); } } }
+    if (kind === 'item' && I[p.id]) record(du(u), I[p.id], 'book', p.ok, { picked: p.picked }, MISC);
     if (kind === 'blank' && MISC) { const pseudo = { id: `book:${p.chip}`, taxonomy: { element: MISC.misconceptions[MISC.bookChips?.[p.chip]?.[1]]?.element } };
       record(du(u), pseudo, 'book-concept', p.ok, { chip: p.ok ? null : p.chip, revealed: p.revealed }, MISC); }
   };
   if (L) wireLive(bk, { scene: (el) => mount3D(el, L.engage.scene, { autoplay: true }),
     lab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }),
-    chips: MISC?.bookChips || null, onAnswer });
+    misc: MISC, onAnswer });
 }
 async function pageLabClass(u, mod, L, mode, idx) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }

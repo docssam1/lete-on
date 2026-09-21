@@ -33,6 +33,8 @@
 - 살아 있는 교재(`v2/live.js`·`v2/book.js`): 개념 정리 빈칸을 누르면 `bookChips`의 낱말 칩이 뜨고 고른 결과를 기록(`book-concept`); 확인 문제·형성평가 보기(`.bk-choices[data-id]`)를 누르면 기록(`book`)하고 오답이면 아래에 `.bk-fix` 교정 상자. 인쇄엔 안 나온다.
 - CSS: 오답 빨강(`--bad-bg`)·의심 노랑(`--warn`)·해소/정답 초록(`--good`)·핵심어 남색 굵게+연한 밑칠(`.fix b`). `.choice`가 `min-width:0; white-space:normal`. `.bk`·`.dk`·`body.intro`에 `word-break: keep-all; overflow-wrap: anywhere` 추가. **휴대폰 교재의 표가 화면을 넘던 것**(`.bk-tbl` 362px > 339px) → `.bk:not(.a4) .bk-tbl { table-layout: fixed }` + th 줄바꿈 허용으로 해결. 진단 막대 라벨은 휴대폰에서 한 줄 위로.
 - 검증(Playwright): 개념 칩 오답 → 점검 오답 → 한 판 더 → 진단(확정 1·의심 2) → 처방 2문항 정답 → **해소**로 바뀜 확인. 교재 칩·확인 문제 기록 확인. 360/390/768/1280 × 11 라우트 가로 넘침 0(장식 `::after`만 제외), A4 11쪽 넘침 0 유지, 페이지 오류 0.
+- **광고 페이지 재구성(같은 차수)**: `intro/intro.js`에 CHAPTER Ⅴ `틀린 까닭을 읽는 책`(기록→교정→진단→처방 흐름 + b10 예시와 교정 상자) · CHAPTER Ⅵ `진단 리포트`(2/5 요약·소단원 막대·확정/의심/해소 카드 견본, misc 데이터에서 생성) 2쪽 추가 → 광고 9쪽 + 교재 11 + 표지 2 = **22쪽, c0 = 10**. `ad3`(한 장의 비밀) 목록 Ⅹ 진단·처방, FAQ 1문답, 봉인 해제 목록 문구, 아래 소개 카드 ⑥ 추가. 광고 책의 교재 쪽도 `misc`를 넘겨 개념 정리 칩·교정 상자가 그대로 나온다(`wireLive`가 `misc` 옵션으로 칩·`.bk-fix`를 직접 처리하도록 옮김 — v2·intro 공용).
+- 나레이션 `intro/narration.json` 18줄: `diag`·`diag2` 추가, `concept`·`check` 문장 수정 → MP3 4개 새로 필요(약 310자). `scripts/generate-audio.js` 주석을 건드려 Generate Audio를 돌렸다(워크플로 paths에 narration.json이 없어서 — 다음에 문장을 고칠 때도 같은 방법, 또는 사용자가 워크플로 paths에 `science-lab/intro/narration.json` 한 줄 추가).
 - 아직: 다른 단원(u01·u02·s42-u01)엔 misc 파일이 없어 진단 버튼이 안 뜬다(같은 형식으로 만들면 자동). 기록은 기기(localStorage)에만 — 강사가 여러 학생을 보려면 Supabase 테이블 필요(별도 제안). 서술형은 기록하지 않는다(사용자 지시).
 
 ## 진행 기록 — 2026-09-21 15차 (Cowork): docssam 소리 나오게
