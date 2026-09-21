@@ -25,3 +25,15 @@
 .ad-ph-sc { display: inline-block; font: 400 15pt/1 "Nanum Brush Script", cursive; color: #d3261a; border: 1.4px solid #d3261a; border-radius: 50%; padding: .6mm 1.4mm; margin-left: 1mm; transform: rotate(-6deg); }
 .ad-ph-w { margin: 1.4mm 0 0; font-size: 7.6pt; color: #1e3a78; font-weight: 700; } .ad-ph-w i { font-style: normal; display: inline-block; margin: .5mm .8mm 0 0; padding: 0 1.6mm; border-radius: 99mm; background: #eef2fa; border: 1px solid #c9d6ee; }
 .ad.a8 .ad-note { margin-top: 3mm; } .ad.a8 .ad-in3 { margin-top: 2.5mm; } .ad.a8 .ad-phones { margin-top: 3mm; }
+/* 자유형(주제 글쓰기) 견본 — 루브릭 첨삭 */
+.ad-free .ad-paper-q strong { color: #1e3a78; } .ad-free .ad-paper-q small { color: #8a7a5c; font-size: 8pt; }
+.ad-free .ms-wrap { margin-top: 5mm; width: 84%; } .ad-free .ms span { font-size: 15pt; }
+.rp.sm { font-size: 14pt; }
+.rp-note.fr { margin-left: 0; font-size: 15pt; }
+.ad-rub { display: grid; grid-template-columns: 1.35fr 1fr; gap: 3mm; margin-top: 2.4mm; align-items: start; }
+.ad-rub table { width: 100%; border-collapse: collapse; font-size: 8.4pt; }
+.ad-rub th, .ad-rub td { border-bottom: 1px dashed #d8c9a6; padding: .9mm 1mm; text-align: left; vertical-align: middle; }
+.ad-rub th { width: 11mm; color: #1e3a78; font-weight: 800; } .ad-rub td.d { color: #d3261a; letter-spacing: -.5px; white-space: nowrap; } .ad-rub td.d span { color: #d8c9a6; }
+.ad-rub td.v { width: 7mm; } .ad-rub td.v .rs { font-size: 15pt; } .ad-rub td.w { color: #6b5537; font-size: 7.8pt; }
+.ad-rub-r { border-left: 1px dashed #d8c9a6; padding-left: 3mm; } .ad-rub-r .k { margin: 0; font-size: 7.6pt; font-weight: 800; color: #8b1e1e; }
+.ad-rub-r .rw { margin: .6mm 0 1.8mm; font: 400 13pt/1.2 "Nanum Brush Script", cursive; color: #d3261a; } .ad-rub-r .ad-ph-w { margin-top: .4mm; }
