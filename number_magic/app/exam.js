@@ -631,6 +631,23 @@
   .nm-w2-ramp-pill { display:inline-block; font-size:9px; font-weight:700; color:#0E2C57;
     background:none; border:1px solid #0E2C57; border-radius:7px; padding:0 5px; line-height:1.3;
     white-space:nowrap; }
+  /* 분수 빈칸의 순번 ①②③ (2026-09-21) — texDisplay 가 \htmlClass 로 붙인다.
+     ::before 라 KaTeX 가 잡아 둔 칸 크기를 건드리지 않는다(절대 위치 + 부모는 inline-block).
+     상자 왼쪽 위 모서리에 걸치고, 종이 흰 바탕을 깔아 상자 선과 겹쳐도 읽힌다.
+     흑백 레이저에서도 남게 색은 네이비 하나, print-color-adjust:exact. */
+  .katex .nm-wb { position:relative; }
+  /* 상자 **안쪽** 왼쪽 위에 앉힌다 — 바깥 모서리에 두면 근호(√)의 빗금과 겹치고,
+     겹침을 피하려 흰 바탕을 깔면 따라풀기 카드(민트색 배경)에 흰 얼룩으로 찍힌다.
+     안쪽이면 바탕도 테두리도 건드리지 않는다. 아이는 상자 가운데에 쓴다. */
+  .katex .nm-wb::before { position:absolute; left:.14em; top:.10em; z-index:2;
+    font-size:.44em; line-height:1; font-weight:700; color:#0E2C57; pointer-events:none;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .katex .nm-wb1::before { content:'\\2460'; }
+  .katex .nm-wb2::before { content:'\\2461'; }
+  .katex .nm-wb3::before { content:'\\2462'; }
+  .katex .nm-wb4::before { content:'\\2463'; }
+  .katex .nm-wb5::before { content:'\\2464'; }
+  .katex .nm-wb6::before { content:'\\2465'; }
   .nm-w2-item .nm-w2-tex { font-size:19px; }
   .nm-w2-grid-medium .nm-w2-item .nm-w2-tex { font-size:19px; }
   .nm-w2-grid-long .nm-w2-item .nm-w2-tex { font-size:16px; }
@@ -910,7 +927,19 @@ function texToPlain(tex){
   let s = String(tex==null?'':tex);
   /* 학습지 v2 예시(w2ExampleHtml)가 붙이는 \displaystyle·\color{#d33}{…} —
      KaTeX 미로딩 폴백에서도 안쪽 값만 남기고 명령은 지운다(2026-09-04). */
+  s = s.replace(/\\htmlClass\{nm-wb[^{}]*\}/g, '');                    /* 빈칸 순번 클래스(2026-09-21) */
+  s = s.replace(/\\vphantom\{\\rule\[[^\]]*\]\{0pt\}\{[^}]*\}\}/g, '');  /* 분수 안 빈칸의 자리 확보 */
   s = s.replace(/\\boxed\{\\rule\[[^\]]*\]\{0pt\}\{[^}]*\}(?:\\kern\{[^}]*\})?\\phantom\{00\}(?:\\kern\{[^}]*\})?\}/g, '□');   /* WRITE_BOX */
+  /* 분수 안 빈칸은 \htmlClass{…}{{…\boxed{…}}} 라 껍데기 중괄호가 남는다. 그대로 두면
+     아래 \dfrac{}{} 치환의 [^{}]* 가 안 맞아 `\dfrac{{□}}{{□}}` 가 "dfrac□□" 로 찍힌다
+     (KaTeX 가 안 뜨는 폴백에서만 보이던 자리 — 2026-09-21). 벗겨서 □ 하나로 만든다. */
+  /* 한 겹씩만 벗긴다. `\}+` 처럼 한 번에 여러 겹을 먹으면 탐욕 매칭이 \sqrt·\dfrac 의
+     괄호까지 가져가 `\dfrac{-7 ± √□{□}` 가 된다(실제로 그렇게 깨졌다). */
+  for(let g = 0; g < 4; g++){
+    const before = s;
+    s = s.replace(/\{\{\s*□\s*\}\}/g, '{□}');
+    if(s === before) break;
+  }
   s = s.replace(/\\displaystyle\s*/g, '');
   s = s.replace(/\\color\{[^{}]*\}\{([^{}]*)\}/g, '$1');
   /* 행렬(\begin{pmatrix}...\end{pmatrix}, MD30) — 다른 치환보다 먼저 처리해야
@@ -998,7 +1027,9 @@ function renderKaTeX(tex, el){
   /* 표기 다듬기 — texDisplay 를 거치지 않고 바로 그리는 자리(정답지·예시 등)도 있다. */
   const t = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
   if(window.katex){
-    try{ katex.render(t, el, {throwOnError:false}); return; }catch(_){}
+    /* trust — texDisplay 가 빈칸에 붙이는 \htmlClass(순번 ①②③)를 살리기 위한 것이다.
+       그리는 tex 는 전부 우리 생성기가 만든 것이고 학생 입력이 들어오는 자리가 아니다. */
+    try{ katex.render(t, el, {throwOnError:false, trust:true, strict:false}); return; }catch(_){}
   }
   el.textContent = texToPlain(t);
 }
@@ -3284,11 +3315,41 @@ function wrapHangul(tex){
    높은 상자로 바꾼다. em 단위라 저학년 배율(--ws-fs)을 그대로 따라간다. 정답지는 답이 대입된 뒤라
    \square 가 남지 않는다. */
 const WRITE_BOX = '\\boxed{\\rule[-0.45em]{0pt}{1.5em}\\kern{0.4em}\\phantom{00}\\kern{0.4em}}';
+/* ── 분수 안의 빈칸 (2026-09-21, 원장 "단 분수인 경우 정확히 어디부터 쓰는지 가이드 선이
+   있어야 돼 해당 박스를 표시하던지") ──
+   근의 공식 `x = (−b ± √□)/□` 을 인쇄해 보니 **상자가 분수선에 닿아** 있었다. 위 상자의
+   아래 변과 아래 상자의 위 변이 분수선과 붙어 세 줄이 한 덩어리로 보이니, 어느 칸이
+   분자이고 어느 칸이 분모인지 종이만 보고는 알 수 없다. 원인은 WRITE_BOX 가 \boxed 라
+   글자보다 높은데 \dfrac 의 분자·분모 간격은 보통 글자 기준으로 잡히기 때문이다.
+   고치는 법 두 가지를 같이 쓴다:
+     ① \vphantom 으로 상자 위아래에 자리를 더 잡아 **분수선(= 가이드 선)이 드러나게** 한다.
+     ② 상자마다 ①②③ 순번을 붙여 **어느 칸부터 쓰는지**를 못 박는다. 순번은 tex 의
+        \square 순서 = 생성기의 answer 배열 순서이므로, 앱 숫자판 입력 순서와 늘 같다.
+   ②를 DOM 위치로 매기지 않는 이유: KaTeX 는 분수를 **분모 먼저** 내보내고, 인쇄 시트는
+   화면에서 display:none 이라 getBoundingClientRect 가 전부 0 이다. 둘 다 순서를 못 준다.
+   그래서 순번을 tex 에 직접 실어 보낸다(\htmlClass — renderKaTeX 의 trust:true 필요.
+   우리가 만든 tex 만 그리므로 안전하고, trust 가 없으면 클래스만 조용히 빠진다). */
+const WRITE_BOX_ROOM = '{\\vphantom{\\rule[-0.9em]{0pt}{2.9em}}' + WRITE_BOX + '}';
+const WB_ORDER = ['①','②','③','④','⑤','⑥'];   /* 이 글자는 CSS(.nm-wb*::before)에도 같은 순서로 있다 */
+function writeBoxFrac(i){
+  return i < WB_ORDER.length ? `\\htmlClass{nm-wb nm-wb${i + 1}}{${WRITE_BOX_ROOM}}` : WRITE_BOX_ROOM;
+}
+/* 이 문항의 빈칸에 순번이 붙는가 — texDisplay 와 정답지가 **같은 판정**을 써야 둘이 어긋나지
+   않는다. 조건: 분수이고 빈칸이 둘 이상(가로로 늘어선 빈칸은 읽는 순서가 이미 분명하다). */
+function hasNumberedBlanks(p){
+  const tx = String((p && p.tex) || '');
+  return /\\[dt]?frac/.test(tx) && (tx.match(/\\square/g) || []).length >= 2;
+}
 function texDisplay(tex){
   /* 표기 다듬기(2026-09-20) — `1x`·`+ 0x^2`·`x--59` 를 그리기 직전에 정리한다.
      생성기 191개를 따로 고치는 대신 여기 한 곳에서(engine/tex-tidy.js 주석 참조). */
   const tidy = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
-  const t = wrapHangul(tidy).replace(/\\square/g, WRITE_BOX);
+  const src = wrapHangul(tidy);
+  /* 분수이면서 빈칸이 둘 이상일 때만 손댄다 — 가로로 늘어선 빈칸은 읽는 순서가
+     이미 분명하고, 상자를 키우면 줄 높이만 늘어 인쇄 배치가 흔들린다. */
+  const isFrac = hasNumberedBlanks({ tex: src });
+  let k = 0;
+  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 
@@ -3593,6 +3654,12 @@ function w2AnswerValueHtml(p){
     const [c, r] = p.answer;
     return `<span class="nm-w2-tex" data-tex="${esc(`${c === 1 ? '' : c}\\sqrt{${r}}`)}"></span>`;
   }
+  /* 분수 빈칸에 순번을 붙인 문항(2026-09-21)은 정답지도 같은 말을 해야 한다 — 학습지에
+     ①② 가 찍혀 있는데 정답지가 "61, 6" 이면 어느 쪽이 분모인지 채점하는 사람이 다시
+     맞춰 봐야 한다. answerShape 가 있는 것은 이미 √71/71 처럼 조립돼 나오므로 건드리지
+     않는다(순번이 필요한 것은 그냥 나열되는 이 경우뿐 — FR5L2·MD55L2·MD66L4). */
+  if(!p.answerShape && Array.isArray(p.answer) && p.answer.length >= 2 && hasNumberedBlanks(p))
+    return esc(p.answer.map((v, i) => (WB_ORDER[i] || `(${i + 1})`) + String(v)).join(' '));
   const nlLab = nlAnswerLabel(p);
   if(nlLab) return esc(nlLab);
   const note = pickL(p.answerNote);

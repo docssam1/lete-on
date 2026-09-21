@@ -103,7 +103,7 @@ function serve(){
     const r = await page.evaluate(async ({ id, lv }) => {
       const COUNT = 12;
       const res = { gen: null, cards: 0, keys: 0, overflow: 0, dblNeg: [], noAsk: [],
-                    bareNoSteps: [], impMixed: [], blankMismatch: [], answers: [] };
+                    bareNoSteps: [], impMixed: [], blankMismatch: [], fracHit: [], answers: [] };
 
       /* 1) 생성 — 정답 쏠림 검사를 위해 여러 시드로 넉넉히 */
       let probs;
@@ -152,7 +152,16 @@ function serve(){
           res.bareNoSteps.push(tx.slice(0, 60));
       });
 
-      /* 3) 인쇄 — 실제로 렌더해야 칸 넘침을 알 수 있다 */
+      /* 3) 인쇄 — 실제로 렌더해야 칸 넘침을 알 수 있다.
+         ⚠ 인쇄 시트는 화면에서 `display:none` 이다(@media print 로만 보인다). 그대로 재면
+         getBoundingClientRect·scrollWidth·clientWidth 가 **전부 0** 이라 `0 > 0+2` 가 늘
+         거짓 — "브라우저에서 실제로 렌더해 봐야 안다"던 칸 넘침 검사가 사실은 한 번도
+         돌지 않고 있었다(2026-09-21 발견). 재기 전에 화면에 띄운다. */
+      if(!document.getElementById('nm-chk-show')){
+        const st = document.createElement('style'); st.id = 'nm-chk-show';
+        st.textContent = '.nm-print-sheet{display:block !important}';
+        document.head.appendChild(st);
+      }
       document.querySelectorAll('.nm-print-sheet').forEach(e => e.remove());
       NM_EXAM.renderPrint({ thread: id, level: lv, count: COUNT, seed: 'chk1' });
       await new Promise(r => setTimeout(r, 60));
@@ -165,6 +174,23 @@ function serve(){
 
       cards.forEach((c, i) => {
         if(c.scrollWidth > c.clientWidth + 2) res.overflow++;
+        /* 분수 안의 빈칸이 분수선에 닿는가 (2026-09-21) — 근의 공식을 인쇄해 보니 위 상자의
+           아랫변과 아래 상자의 윗변이 분수선에 붙어 세 줄이 한 덩어리로 보였다. 종이만
+           보고는 어느 칸이 분자이고 어느 칸이 분모인지 알 수 없다. 기존 검사기는 칸 넘침만
+           보고 **칸 안에서 겹치는 것**은 전혀 안 봤다. 여백 3px 미만이면 붙은 것으로 센다. */
+        c.querySelectorAll('.katex .mfrac').forEach(fr => {
+          const line = fr.querySelector('.frac-line'); if(!line) return;
+          const lr = line.getBoundingClientRect();
+          if(!lr.height && !lr.top) return;                 /* 레이아웃이 없으면 판정 불가 */
+          fr.querySelectorAll('.boxpad').forEach(bx => {
+            const br = bx.getBoundingClientRect();
+            if(!br.height) return;
+            const above = br.bottom <= lr.top + 0.5, below = br.top >= lr.bottom - 0.5;
+            if(!above && !below){ res.fracHit.push('분수선과 겹침'); return; }
+            const gap = above ? (lr.top - br.bottom) : (br.top - lr.bottom);
+            if(gap < 3) res.fracHit.push(`분수선 여백 ${gap.toFixed(1)}px`);
+          });
+        });
         /* 4) 인쇄물만 보고 풀 수 있는가 — 렌더 결과로 판정한다(데이터가 아니라).
               관계식이 없는 문항은 그림·질문 줄·단계 줄 중 하나는 있어야 한다.
               빈칸만 덜렁 있는 것(`21□`)도, 맨 식(`2/3 - 1/2`)도 마찬가지다 —
@@ -192,6 +218,7 @@ function serve(){
       if(r.cards !== 12) fails.push(`${tag} — 인쇄 문항 ${r.cards}/12`);
       if(r.keys !== 12)  fails.push(`${tag} — 정답 ${r.keys}/12`);
       if(r.overflow)     fails.push(`${tag} — 칸 넘침 ${r.overflow}건`);
+      if(r.fracHit.length) fails.push(`${tag} — 분수 빈칸이 분수선에 붙음(${r.fracHit.length}건): ${r.fracHit[0]}`);
       if(r.dblNeg.length) fails.push(`${tag} — 이중부호: ${r.dblNeg[0]}`);
       if(r.noAsk.length)  fails.push(`${tag} — 질문 유실(인쇄물로 풀 수 없음): ${r.noAsk[0]}`);
       if(r.impMixed.length) fails.push(`${tag} — 대분수 분수부가 진분수가 아님: ${r.impMixed[0]}`);
