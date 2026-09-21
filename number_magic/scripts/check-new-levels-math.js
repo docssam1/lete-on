@@ -297,6 +297,42 @@ sweep('MD66', 4, p => {                       /* 근의 공식 — 답은 [D, 2a
   return null;
 });
 
+
+/* ── 2026-09-21 추가 — 일차함수 그래프의 두 점(MD74 L1·L3) ──
+   tex 의 y=ax+b 를 읽어 답 [y1,y2] 가 실제로 그 직선 위의 점인지 되대입해 본다. */
+function readLine(tex) {
+  const head = tex.split('\\Rightarrow')[0];
+  const m = /y = (-?\d*)x ([+-]) (\d+)/.exec(head.replace(/\s+/g, ' '));
+  if (!m) return null;
+  const a = m[1] === '' ? 1 : m[1] === '-' ? -1 : parseInt(m[1], 10);
+  const b = (m[2] === '-' ? -1 : 1) * parseInt(m[3], 10);
+  return [a, b];
+}
+sweep('MD74', 1, p => {
+  const L = readLine(p.tex); if (!L) return 'tex 를 못 읽음';
+  const xs = [...p.tex.matchAll(/\((-?\d+),\\, \\square\)/g)].map(m => parseInt(m[1], 10));
+  if (xs.length !== 2) return `x 값이 ${xs.length}개`;
+  if (xs[0] === xs[1]) return `두 x 가 같다: ${xs[0]}`;
+  const [y1, y2] = p.answer;
+  if (y1 !== L[0] * xs[0] + L[1]) return `(${xs[0]}, ${y1}) 이 직선 위에 없다`;
+  if (y2 !== L[0] * xs[1] + L[1]) return `(${xs[1]}, ${y2}) 이 직선 위에 없다`;
+  return null;
+});
+sweep('MD74', 3, p => {
+  const L = readLine(p.tex); if (!L) return 'tex 를 못 읽음';
+  const [b, y1] = p.answer;
+  if (b !== L[1]) return `y절편 ${b} ≠ ${L[1]}`;
+  if (y1 !== L[0] + L[1]) return `(1, ${y1}) 이 직선 위에 없다`;
+  return null;
+});
+sweep('MD74', 2, p => {
+  const L = readLine(p.tex); if (!L) return 'tex 를 못 읽음';
+  const [xi, b] = p.answer;
+  if (b !== L[1]) return `y절편 ${b} ≠ ${L[1]}`;
+  if (L[0] * xi + L[1] !== 0) return `x절편 ${xi} 에서 y ≠ 0`;
+  return null;
+});
+
 console.log(`\n검산한 문항: ${checks}건`);
 if (fails.length) {
   console.log(`\n[FAIL] ${fails.length}건`);

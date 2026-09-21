@@ -304,8 +304,9 @@ NM_TGEN['md65_linearFunction'] = function (params, rng) {
       tex: `\\text{기울기 } ${m}, \\quad (${x1},\\, ${y1}) \\quad\\Rightarrow\\quad y = ${coefLead(m)}x + \\square`,
       answer: b, answerType: 'number', widget: 'numpad', negative: b < 0,
       solution: [
-        { tex: `${y1} = ${coefLead(m)}(${x1}) + b` },
-        { tex: `b = ${y1} - (${m * x1}) = \\square`, blank: b }
+        { tex: `(${x1},\\, ${y1}) \\quad\\Rightarrow\\quad ${y1} = ${coefLead(m)}(${x1}) + b` },
+        { tex: `${y1} = ${m * x1} + b` },
+        { tex: `b = ${y1} - ${m * x1 < 0 ? `(${m * x1})` : m * x1} = \\square`, blank: b }
       ]
     };
   }
@@ -318,8 +319,9 @@ NM_TGEN['md65_linearFunction'] = function (params, rng) {
       tex: `(${x1},\\, ${y1}), \\quad (${x2},\\, ${y2}) \\quad\\Rightarrow\\quad y = \\square x + \\square`,
       answer: [m, b], answerType: 'number', widget: 'numpad', negative: hasNeg([m, b]),
       solution: [
-        { tex: `\\dfrac{${y2} - (${y1})}{${x2} - (${x1})} = \\dfrac{${y2 - y1}}{${x2 - x1}} = \\square`, blank: m },
-        { tex: `b = ${y1} - ${coefLead(m)}(${x1}) = \\square`, blank: b },
+        { tex: `a = \\dfrac{${y2} - (${y1})}{${x2} - (${x1})} = \\dfrac{${y2 - y1}}{${x2 - x1}} = \\square`, blank: m },
+        { tex: `y = ${coefLead(m)}x + b \\quad\\Rightarrow\\quad (${x1},\\, ${y1}) : \\quad ${y1} = ${m * x1} + b` },
+        { tex: `b = ${y1} - ${m * x1 < 0 ? `(${m * x1})` : m * x1} = \\square`, blank: b },
         { tex: `y = \\square x + \\square`, blank: [m, b] }
       ]
     };

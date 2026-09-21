@@ -528,12 +528,45 @@ NM_TGEN['md73_functionValue'] = function (params, rng) {
 };
 
 /* ── MD74 — 일차함수의 그래프와 절편 ──
-   MD65 가 기울기·절편·식·그래프를 다 안고 있었다. 그 앞 단계 — **y=ax 를
-   위아래로 옮기면 y=ax+b 가 된다**는 평행이동과, x절편·y절편 — 을 떼어 낸다.
-   mode: 'translate'(평행이동한 식) · 'intercepts'(x절편·y절편 2칸) ·
-   'readIntercepts'(그래프에서 두 절편 읽기, 2칸). */
+   2026-09-21 다시 짬. 원장 "개념도 없이 그리고 이동한다고 어떻게 풀이를 해. 일차함수
+   그래프 그리려면 두 점을 찾는 것부터 하고 대입하거나 기울기를 구하고 대입하기 이렇게
+   해야지". 전에는 첫 레벨이 '평행이동'(y=ax 를 b 만큼 옮긴다)뿐이라 **그래프를 어떻게
+   그리는지가 없었다**. 평행이동은 그리는 방법이 아니라 그린 뒤에 보이는 성질이다.
+   교과서·단원테스트 해설의 절차 그대로 — 두 점을 찾아 잇는다:
+     twoPoints   x 에 두 값을 대입해 두 점          (x₁, a·x₁+b), (x₂, a·x₂+b)
+     intercepts  y=0 으로 x절편, x=0 으로 y절편     (x절편, 0), (0, y절편)
+     slopePoint  y절편에서 기울기만큼 가서 둘째 점   (0, b), (1, a+b)
+     readIntercepts  그래프에서 두 절편 읽기(좌표평면 위젯)
+     translate   평행이동 — 마지막에, 성질로만
+   풀이 줄은 "x=1 대입 → y=… → 점" 처럼 한 줄도 건너뛰지 않는다(원장 "단계도 건너뛰고").
+   답 환원: 계수·상수·x 값이 전부 정수라 대입 결과도 정수. 절편은 b 를 a 의 배수로. */
 NM_TGEN['md74_lineGraph'] = function (params, rng) {
-  const mode = params.mode || 'translate';
+  const mode = params.mode || 'twoPoints';
+  const P = n => n < 0 ? `(${n})` : `${n}`;            /* 음수만 괄호 */
+
+  if (mode === 'twoPoints') {
+    /* a 에 ±1 을 안 쓰는 이유: 풀이 줄 `1 × 2 + 3` 이 어색하고 검사기도 `× 1` 을 잡는다 */
+    const a = pick(rng, [2, 3, 4, -2, -3, -4]);
+    const b = nzInt(rng, 1, 6);
+    const x1 = pick(rng, [1, 2, -1, -2]);
+    let x2 = pick(rng, [1, 2, 3, -1, -2, -3]);
+    let guard = 0;
+    while (x2 === x1 && guard++ < 20) x2 = pick(rng, [1, 2, 3, -1, -2, -3]);
+    if (x2 === x1) x2 = x1 + 1;
+    const y1 = a * x1 + b, y2 = a * x2 + b;
+    return {
+      prompt: { ko: `그래프를 그리려면 먼저 두 점을 찾아요 — x에 ${x1}과 ${x2}를 차례로 넣어 y를 구해요`,
+        en: `To draw the graph, first find two points — put x = ${x1} and x = ${x2} into the equation and work out y`,
+        zh: `要画图象，先找两个点——把x=${x1}和x=${x2}依次代入求出y` },
+      tex: `y = ${a}x ${wrapPlus(b)} \\quad\\Rightarrow\\quad (${x1},\\, \\square), \\quad (${x2},\\, \\square)`,
+      answer: [y1, y2], answerType: 'number', widget: 'numpad', negative: hasNeg([y1, y2]),
+      solution: [
+        { tex: `x = ${x1} \\quad\\Rightarrow\\quad y = ${a} \\times ${P(x1)} ${wrapPlus(b)} = ${a * x1} ${wrapPlus(b)} = \\square`, blank: y1 },
+        { tex: `x = ${x2} \\quad\\Rightarrow\\quad y = ${a} \\times ${P(x2)} ${wrapPlus(b)} = ${a * x2} ${wrapPlus(b)} = \\square`, blank: y2 },
+        { tex: `(${x1},\\, \\square), \\quad (${x2},\\, \\square)`, blank: [y1, y2] }
+      ]
+    };
+  }
 
   if (mode === 'intercepts') {
     /* x절편이 정수로 떨어지도록 b 를 a 의 배수로 잡는다 */
@@ -541,16 +574,36 @@ NM_TGEN['md74_lineGraph'] = function (params, rng) {
     const xi = nzInt(rng, 1, 5);          /* 답: x절편 */
     const b = -a * xi;                    /* y절편 */
     return {
-      prompt: { ko: `x절편은 y=0일 때의 x, y절편은 x=0일 때의 y예요 — x절편부터 차례로 입력해요`,
-        en: `The x-intercept is x when y=0, the y-intercept is y when x=0 — enter the x-intercept first`,
-        zh: `x截距是y=0时的x，y截距是x=0时的y——先输入x截距` },
+      prompt: { ko: `y=0을 넣어 x절편을, x=0을 넣어 y절편을 구해요 — 이 두 점으로도 그래프를 그릴 수 있어요. x절편부터 입력해요`,
+        en: `Put y=0 for the x-intercept and x=0 for the y-intercept — these two points also draw the graph. Enter the x-intercept first`,
+        zh: `令y=0求x截距，令x=0求y截距——用这两个点也能画出图象。先输入x截距` },
       tex: `y = ${coefLead(a)}x ${wrapPlus(b)} \\quad\\Rightarrow\\quad \\text{x절편} \\square, \\quad \\text{y절편} \\square`,
       answer: [xi, b], answerType: 'number', widget: 'numpad', negative: hasNeg([xi, b]),
       solution: [
         { tex: `y = 0 \\quad\\Rightarrow\\quad ${coefLead(a)}x ${wrapPlus(b)} = 0` },
-        { tex: `x = \\square`, blank: xi },
+        { tex: `${coefLead(a)}x = ${-b} \\quad\\Rightarrow\\quad x = \\square`, blank: xi },
+        { tex: `x = 0 \\quad\\Rightarrow\\quad y = 0 ${wrapPlus(b)} = \\square`, blank: b },
+        { tex: `(\\square,\\, 0), \\quad (0,\\, \\square)`, blank: [xi, b] }
+      ]
+    };
+  }
+
+  if (mode === 'slopePoint') {
+    /* (0, b) 에서 오른쪽 1칸, 세로 a칸 → (1, a+b). a=±1 도 허용(칸 세기라 곱셈 줄이 없다) */
+    const a = pick(rng, [1, 2, 3, 4, -1, -2, -3, -4]);
+    const b = nzInt(rng, 1, 5);
+    const y1 = a + b;
+    return {
+      prompt: { ko: `y절편 (0, b)를 먼저 찍고, 오른쪽으로 1칸 가면서 위아래로 a칸 움직인 곳이 두 번째 점이에요`,
+        en: `Mark the y-intercept (0, b) first, then move 1 to the right and a up or down — that is the second point`,
+        zh: `先标出y截距(0,b)，再向右走1格、上下走a格，就是第二个点` },
+      tex: `y = ${coefLead(a)}x ${wrapPlus(b)} \\quad\\Rightarrow\\quad (0,\\, \\square), \\quad (1,\\, \\square)`,
+      answer: [b, y1], answerType: 'number', widget: 'numpad', negative: hasNeg([b, y1]),
+      solution: [
         { tex: `x = 0 \\quad\\Rightarrow\\quad y = \\square`, blank: b },
-        { tex: `\\text{x절편} \\square, \\quad \\text{y절편} \\square`, blank: [xi, b] }
+        { tex: `\\text{기울기 } ${a} \\quad\\Rightarrow\\quad \\text{오른쪽 1칸에 세로 } ${a}\\text{칸}` },
+        { tex: `x = 1 \\quad\\Rightarrow\\quad y = ${b} ${wrapPlus(a)} = \\square`, blank: y1 },
+        { tex: `(0,\\, \\square), \\quad (1,\\, \\square)`, blank: [b, y1] }
       ]
     };
   }
@@ -570,25 +623,25 @@ NM_TGEN['md74_lineGraph'] = function (params, rng) {
       answer: [xi, b], answerType: 'number', widget: 'graphPlane', negative: hasNeg([xi, b]),
       graph: { kind: 'line', m: a, b: b, pts: [[xi, 0], [0, b]], xr: [-6, 6], yr: [-8, 8] },
       solution: [
-        { tex: `\\text{x축과 만나는 곳} \\quad\\Rightarrow\\quad \\square`, blank: xi },
-        { tex: `\\text{y축과 만나는 곳} \\quad\\Rightarrow\\quad \\square`, blank: b },
+        { tex: `\\text{x축과 만나는 곳} \\quad\\Rightarrow\\quad (\\square,\\, 0)`, blank: xi },
+        { tex: `\\text{y축과 만나는 곳} \\quad\\Rightarrow\\quad (0,\\, \\square)`, blank: b },
         { tex: `\\text{x절편} \\square, \\quad \\text{y절편} \\square`, blank: [xi, b] }
       ]
     };
   }
 
-  /* translate(기본) — y=ax 를 q 만큼 평행이동 */
+  /* translate — y=ax 의 그래프를 y축 방향으로 q 만큼 평행이동. 성질로만(마지막 레벨). */
   const a = nzInt(rng, 1, 5);
   const q = nzInt(rng, 1, 8);
   return {
-    prompt: { ko: `y=ax의 그래프를 위아래로 옮겨도 기울기는 그대로예요 — y절편만 그만큼 움직여요`,
-      en: `Sliding the graph of y=ax up or down leaves the slope unchanged — only the y-intercept moves`,
-      zh: `把y=ax的图象上下平移，斜率不变——只有y截距移动` },
+    prompt: { ko: `y=ax+b의 그래프는 y=ax의 그래프를 y축의 방향으로 b만큼 평행이동한 거예요 — 기울기는 그대로고 y절편만 b가 돼요`,
+      en: `The graph of y=ax+b is the graph of y=ax translated b along the y-axis — the slope stays and only the y-intercept becomes b`,
+      zh: `y=ax+b的图象是把y=ax的图象沿y轴方向平移b得到的——斜率不变，只有y截距变成b` },
     tex: `y = ${coefLead(a)}x \\quad\\text{를 } ${q > 0 ? `${q}\\text{만큼 위로}` : `${Math.abs(q)}\\text{만큼 아래로}`} \\quad\\Rightarrow\\quad y = ${coefLead(a)}x + \\square`,
     answer: q, answerType: 'number', widget: 'numpad', negative: q < 0,
     solution: [
       { tex: `\\text{기울기} = ${a} \\quad (\\text{그대로})` },
-      { tex: `\\text{y절편} = \\square`, blank: q }
+      { tex: `\\text{y절편} = 0 ${wrapPlus(q)} = \\square`, blank: q }
     ]
   };
 };

@@ -262,7 +262,9 @@ const COURSE_SPEC = [
  {id:33, tier:'middle2', title:{ko:'부등식과 연립방정식',en:'Inequalities & Systems',zh:'不等式与方程组'},
    drills:['MD14','MD64','MD71','MD63','MD72','MD14@2','MD64@2','MD71@2','MD63@2','MD72@2','MD14@3','MD64@3','MD71@3','MD63@3','MD72@3'], minSessions:9, magic:[['M-14'],['M-64'],['M-71'],['M-63'],['M-72']], creative:['MD72@3','MD71@3','MD63@3']},
  {id:34, tier:'middle2', title:{ko:'일차함수',en:'Linear Functions',zh:'一次函数'},
-   drills:['MD73','MD74','MD65','MD75','MD76','MD73@2','MD74@2','MD65@2','MD75@2','MD76@2','MD73@3','MD74@3','MD65@3','MD75@3','MD76@3','MD65@4','MD65@5'], minSessions:10, magic:[['M-73'],['M-74'],['M-65'],['M-75'],['M-76']], creative:['MD76@3','MD65@5','MD75@3']},
+   /* 2026-09-21 — MD74 가 5레벨(두 점 대입·절편·기울기로 둘째 점·그래프 읽기·평행이동)이 됐다.
+      10회차 20슬롯에 19항목이라 회차는 안 늘린다. */
+   drills:['MD73','MD74','MD65','MD75','MD76','MD73@2','MD74@2','MD65@2','MD75@2','MD76@2','MD73@3','MD74@3','MD65@3','MD75@3','MD76@3','MD74@4','MD65@4','MD74@5','MD65@5'], minSessions:10, magic:[['M-73'],['M-74'],['M-65'],['M-75'],['M-76']], creative:['MD76@3','MD65@5','MD75@3']},
  {id:35, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
    drills:['MD15','MD16','MD17','MD14','MD15@2','MD16@2','MD17@2','MD15@3','MD16@3','MD17@3'], minSessions:5, magic:[['M-15'],['M-16'],['M-17']], creative:['MD17@3','MD16@3','MD15@3']},
  {id:36, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratic Equations',zh:'因式分解与二次方程'},
