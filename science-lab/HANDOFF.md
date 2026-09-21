@@ -25,6 +25,16 @@
 - **⚠ 시작할 때 `git log --oneline -5 origin/<브랜치>`부터 볼 것.** 이 세션이 컨테이너 재시작 뒤 같은 작업 지시서를 두 번 돌려 유사문항 80개를 중복 작성했다(6차 기록 참조).
 - DESIGN.md는 v2 구현으로 사실상 승인됨.
 
+## 진행 기록 — 2026-09-21 16차 (Cowork, Fable): 오개념 진단·분석·처방 (s41-u03 시범)
+- 사용자 요구: 영재원식 서술 채점이 아니라 **개념 이해 단계에서 잘못 고른 것을 기록**해 두었다가 진단·분석·처방. 형성평가 오답 → 유사 유형 학습. 필즈대비(`fields-classic`) 방식 참고. 글 넘침·줄바꿈 정리, 중요한 것에 색·굵기.
+- **오개념표** `data/units/s41-u03.misc.js`: 오개념 16개(M01~M16, `label`·`fix`(HTML, 핵심어 `<b>`)·`element`·`terms`) + `distractors`(문항 보기 번호→M, 선택형 49문항 전부) + `typed`(단답형 36문항: `pats` 정규식 → M, 없으면 `any`) + `cloze`(개념 카드 b01~b04를 **낱말 칩**으로) + `cells`(표 채우기) + `bookChips`(교재 개념 정리 빈칸 25개 → 칩 보기·오개념) + `remedy`(오개념별 다시 볼 5E 단계). 정답 보기는 적지 않는다. 검증 스크립트로 정답=오답 매핑·누락 0 확인.
+- **기록 모듈** `v2/progress.js`: `record()`가 문항·단계(`concept/mini/elaborate/evaluate/sub/remedy/book/book-concept`)·고른 답·오개념 코드를 `localStorage sciLab.log`에 쌓는다(단원당 600줄 상한). 키는 **문항을 가진 단원 id**(`DATA_UNIT`: s41-u03b → s41-u03). `analyze()` 판정: **확정** = 서로 다른 문항 2개 이상에서 같은 M, **의심** = 1번, **해소** = 마지막 오답 뒤 그 M을 확인하는 문항 2번 연속 정답. 답 열어 보기(`revealed`)·연결 없는 오답(`slip`)은 따로 센다. `remedyItems()` = 그 M이 오답 보기로 들어 있는 문항 중 안 푼 것 → 틀린 것 → 맞힌 것 순.
+- `v2/v2.js`: `wireItem(card, it, onDone, ctx)` — 4번째 인자 `{u, stage}`가 있으면 기록. `whyHtml()`이 오답이면 "다시 생각해 봐요" 대신 **오개념 라벨(빨간 태그) + 교정 문장**을 보여 준다. 개념 카드(cloze)는 misc에 `options`가 있으면 칩 선택(틀리면 `<s>고른 말</s> 정답`). ⑤점검 뒤 `drillFor()`가 틀린 까닭(M)마다 유사문항 2개를 "한 판 더"로 붙인다. 새 라우트 `#/<u>/diagnose`(학생용) · `#/<u>/diagnose/teacher`(강사용: 근거 펼침·유형별 정답률·기록 지우기), 인쇄 가능. 상단 바에 빨간 `진단` 버튼(misc가 있는 단원만).
+- 살아 있는 교재(`v2/live.js`·`v2/book.js`): 개념 정리 빈칸을 누르면 `bookChips`의 낱말 칩이 뜨고 고른 결과를 기록(`book-concept`); 확인 문제·형성평가 보기(`.bk-choices[data-id]`)를 누르면 기록(`book`)하고 오답이면 아래에 `.bk-fix` 교정 상자. 인쇄엔 안 나온다.
+- CSS: 오답 빨강(`--bad-bg`)·의심 노랑(`--warn`)·해소/정답 초록(`--good`)·핵심어 남색 굵게+연한 밑칠(`.fix b`). `.choice`가 `min-width:0; white-space:normal`. `.bk`·`.dk`·`body.intro`에 `word-break: keep-all; overflow-wrap: anywhere` 추가. **휴대폰 교재의 표가 화면을 넘던 것**(`.bk-tbl` 362px > 339px) → `.bk:not(.a4) .bk-tbl { table-layout: fixed }` + th 줄바꿈 허용으로 해결. 진단 막대 라벨은 휴대폰에서 한 줄 위로.
+- 검증(Playwright): 개념 칩 오답 → 점검 오답 → 한 판 더 → 진단(확정 1·의심 2) → 처방 2문항 정답 → **해소**로 바뀜 확인. 교재 칩·확인 문제 기록 확인. 360/390/768/1280 × 11 라우트 가로 넘침 0(장식 `::after`만 제외), A4 11쪽 넘침 0 유지, 페이지 오류 0.
+- 아직: 다른 단원(u01·u02·s42-u01)엔 misc 파일이 없어 진단 버튼이 안 뜬다(같은 형식으로 만들면 자동). 기록은 기기(localStorage)에만 — 강사가 여러 학생을 보려면 Supabase 테이블 필요(별도 제안). 서술형은 기록하지 않는다(사용자 지시).
+
 ## 진행 기록 — 2026-09-21 15차 (Cowork): docssam 소리 나오게
 - 사용자: 음성은 **기존 구글 TTS 그대로**, OmniVoice 복제는 안 함. 다만 지금 당장 소리가 나야 함.
 - `intro/intro.js`: 음성 파일(Supabase `audio/science-lab/...`)이 없거나 막히면 **기기 음성(Web Speech, ko-KR 남자 목소리 우선)** 으로 바로 읽는다. 목소리 목록이 늦게 오는 브라우저를 위해 `voiceschanged`를 한 번 기다린다.
