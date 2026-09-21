@@ -138,7 +138,7 @@ function coverPage() {
 const orn = '<div class="orn"><svg viewBox="0 0 120 10"><path d="M0 5 H48 M72 5 H120" stroke="#b8872b" stroke-width=".8"/><path d="M60 0 l6 5 l-6 5 l-6 -5z M50 5 a2 2 0 1 0 0 .01 M70 5 a2 2 0 1 0 0 .01" fill="#b8872b"/></svg></div>';
 const chap = (k, h) => `<p class="ad-k">${k}</p><h2>${h}</h2>${orn}`;
 // ── CHAPTER Ⅶ·Ⅷ 견본: 종이 첨삭(원고지 칸 + 학생 QR + 흐린 연필 글씨) → 폰 3컷 → 처방 한 장. 전부 그림(API 호출 없음) ──
-const PAPER = { item: 's41-u03-v014', student: '너구리', page: '4-1 Ⅲ 땅의 변화 · 10쪽 · 문항 14', wrong: '화강암은 땅 위에서 빨리 식어서 알갱이가 큽니다.', fixed: '마그마가 땅속 깊은 곳에서 천천히 식어서 알갱이가 큽니다.', mis: 'M10', remedy: ['s41-u03-b15', 's41-u03-v013', 's41-u03-v053'] };
+const PAPER = { item: 's41-u03-v014', student: '유준', page: '4-1 Ⅲ 땅의 변화 · 10쪽 · 문항 14', wrong: '화강암은 땅 위에서 빨리 식어서 알갱이가 큽니다.', fixed: '마그마가 땅속 깊은 곳에서 천천히 식어 알갱이가 큽니다.', words: ['마그마', '땅속', '천천히', '알갱이', '결정'], mis: 'M10', remedy: ['s41-u03-b15', 's41-u03-v013', 's41-u03-v053'] };
 function fakeQr(seed, n = 21) {   // 결정적 가짜 QR(찾기 패턴 3개 + 난수 모듈). 진짜 주소는 인쇄 라우트가 만든다.
   let s = seed; const rnd = () => (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
   const finder = (x, y) => (i, j) => i >= x && i < x + 7 && j >= y && j < y + 7 && (i === x || i === x + 6 || j === y || j === y + 6 || (i >= x + 2 && i <= x + 4 && j >= y + 2 && j <= y + 4));
@@ -151,9 +151,17 @@ function fakeQr(seed, n = 21) {   // 결정적 가짜 QR(찾기 패턴 3개 + �
 const manuscript = (text, cols, rows, ink) => { const cells = []; const chars = [...text.replace(/ /g, ' ')]; for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const ch = chars[r * cols + c] ?? ''; const t = ch && ch !== ' ' ? `<i style="transform:rotate(${((r * 7 + c * 13) % 9) - 4}deg) translate(${((c * 5) % 3) - 1}px,${((r * 3 + c) % 3) - 1}px);opacity:${ink === 'pencil' ? .58 + ((c * 7) % 5) / 25 : .74 + ((c * 3) % 4) / 25}">${esc(ch)}</i>` : ''; cells.push(`<span class="${c === cols - 1 ? 'e' : ''}${r === rows - 1 ? ' b' : ''}">${t}</span>`); } return `<div class="ms ${ink}" style="--cols:${cols}">${cells.join('')}</div>`; };
 function paperMock() {
   const it = state.I?.[PAPER.item];
+  // 빨간 펜 첨삭: 틀린 부분(1줄 5~12칸 '땅 위에서 빨리')에 두 줄 긋고 위에 고칠 말, 칸 옆에 점수, 의심 도장, 학년 낱말 추천
+  const red = (x, y, w, t, r = -3, cls = '') => `<i class="rp ${cls}" style="left:${x}%;top:${y}%;${w ? `width:${w}%;` : ''}transform:rotate(${r}deg)">${t}</i>`;
   return `<div class="ad-paper"><div class="ad-paper-q"><b>14</b>${esc(it?.prompt || '')}</div>
-    <div class="ad-paper-a"><span class="ad-paper-l">1차 답</span>${manuscript(PAPER.wrong, 16, 2, 'pencil')}</div>
-    <div class="ad-paper-a"><span class="ad-paper-l">고쳐 쓰기</span>${manuscript(PAPER.fixed, 16, 2, 'pencil2')}</div>
+    <div class="ad-paper-score"><b>5</b><span>/5</span></div>
+    <div class="ad-paper-a"><span class="ad-paper-l">1차 답<em class="rs">2/5</em></span><div class="ms-wrap">${manuscript(PAPER.wrong, 16, 2, 'pencil')}
+      <svg class="rp-strike" viewBox="0 0 160 20" preserveAspectRatio="none"><path d="M51 4.4 L128 5.4 M51 6.6 L129 7.2" /></svg>
+      ${red(36, -34, 0, '땅속 깊은 곳 · 천천히', -3)}${red(84, 52, 0, '의심', 8, 'stamp')}</div></div>
+    <div class="ad-paper-a"><span class="ad-paper-l">고쳐 쓰기<em class="rs ok">5/5</em></span><div class="ms-wrap">${manuscript(PAPER.fixed, 16, 2, 'pencil2')}
+      <svg class="rp-strike" viewBox="0 0 160 20" preserveAspectRatio="none"><path d="M0 19.3 C20 18.6 40 19.8 60 19 M100 9.6 C104 9.3 113 9.5 118 9.4" /></svg>
+      ${red(98.5, -30, 0, '✓', 0, 'big')}</div></div>
+    <p class="rp-note">참 잘했어요! <b>‘결정’</b>이라는 낱말도 넣어 볼까? <small>— 4학년 낱말</small></p>
     <div class="ad-paper-foot"><div class="ad-paper-qr">${fakeQr(2026)}</div><div><b>${esc(PAPER.student)}</b><span>${esc(PAPER.page)}</span><small>QR = 누구의 · 어느 쪽 · 어느 문항</small></div><div class="ad-paper-mark">✂ 이 부분만 찍어도 돼요</div></div></div>`;
 }
 function phoneMock() {
@@ -162,7 +170,7 @@ function phoneMock() {
   return `<div class="ad-phones">
     ${cut('① 찍기', `<div class="ad-ph-cam"><div class="ad-ph-cam-p">${manuscript(PAPER.wrong, 16, 2, 'pencil')}<div class="ad-ph-cam-qr">${fakeQr(2026)}</div></div><div class="ad-ph-cam-f"></div><p>QR 인식 · <b>${esc(PAPER.student)}</b> · 10쪽 문항 14</p></div>`)}
     ${cut('② 읽은 글 확인', `<p class="ad-ph-h">내가 쓴 글이 맞아?</p><p class="ad-ph-t">화강암은 땅 위에서 <mark>빨리</mark> 식어서 알갱이가 큽니다.</p><p class="ad-ph-s">흐린 글자 1개는 노란색이에요. 틀리면 눌러서 고쳐요.</p><div class="ad-ph-btn">맞아, 이대로 채점</div>`)}
-    ${cut('③ 첨삭 · 진단', `<p class="ad-ph-h"><span class="no">1차 확인 · 다시</span></p><p class="ad-ph-t small">‘빨리 식어서 알갱이가 크다’는 부분을 다시 생각해 봐. 알갱이가 <b>커지려면</b> 시간이 어떻게 필요할까?</p><p class="ad-ph-mis"><span class="ad-mis">${esc(m.label)}</span></p><p class="ad-ph-s ok">✓ 진단 보고서에 <b>의심</b>으로 기록 · 처방 문제 3개 준비됨</p>`)}
+    ${cut('③ 첨삭 · 진단', `<p class="ad-ph-h"><span class="no">1차 확인 · 다시</span> <span class="ad-ph-sc">2/5</span></p><p class="ad-ph-t small">‘빨리 식어서 알갱이가 크다’는 부분을 다시 생각해 봐. 알갱이가 <b>커지려면</b> 시간이 어떻게 필요할까?</p><p class="ad-ph-mis"><span class="ad-mis">${esc(m.label)}</span></p><p class="ad-ph-w">4학년 낱말로 써 봐: ${PAPER.words.slice(0, 4).map((w) => `<i>${esc(w)}</i>`).join('')}</p><p class="ad-ph-s ok">✓ 진단 보고서에 <b>의심</b>으로 기록 · 처방 문제 3개 준비됨</p>`)}
   </div>`;
 }
 function remedyMock() {
