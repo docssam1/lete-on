@@ -2,7 +2,8 @@
 // 출처 표기가 필요한 것(CC BY·CC BY-SA)은 credit을 화면에 그대로 보여 준다. PD·CC0는 출처만 적는다.
 const C = 'https://upload.wikimedia.org/wikipedia/commons';
 const T = 'https://upload.wikimedia.org/wikipedia/commons/thumb';
-const V = (path, name) => ({ src: `${C}/transcoded/${path}/${name}/${name}.480p.vp9.webm`, full: `${C}/${path}/${name}`, page: `https://commons.wikimedia.org/wiki/File:${name}` });
+// 영상은 세 갈래로 준비한다: webm 480p(가벼움) → mp4(mov, 사파리·아이폰용) → 원본. 하나가 막혀도 다른 것이 재생된다.
+const V = (path, name) => ({ src: `${C}/transcoded/${path}/${name}/${name}.480p.vp9.webm`, mp4: `${C}/transcoded/${path}/${name}/${name}.360p.mpeg4.mov`, full: `${C}/${path}/${name}`, page: `https://commons.wikimedia.org/wiki/File:${name}` });
 export const media = {
   // ① 궁금: 3D 아래에 실제 분출 영상
   engage: { kind: 'video', title: '진짜 화산이 분출하는 모습 (하와이 킬라우에아, 2018)', ...V('a/ab', 'Fissure_fountains_feed_lava_flows%2C_as_shown_in_this_overflight_video_of_the_F....webm'),

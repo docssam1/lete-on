@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-37'] = {
-  id:'M-37', tier:'algebra', level:'40', order:2,
+  id:'M-37', tier:'algebra', level:'42', order:2,
   generator:'md37_logDefinition',
   title:{ ko:'로그의 정의', en:'The Definition of Logarithms', zh:'对数的定义' },
   subtitle:{ ko:'지수 사다리를 반대 방향으로 오르는 새 기호, log', en:'log — climbing the exponent ladder in reverse', zh:'log——反向攀爬指数梯子的新符号' },

@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-53'] = {
-  id:'M-53', tier:'algebra', level:'44', order:2,
+  id:'M-53', tier:'algebra', level:'46', order:2,
   generator:'md53_logEquation',
   title:{ ko:'로그방정식', en:'Logarithmic Equations', zh:'对数方程' },
   subtitle:{ ko:'log의 정의와 성질로 x를 찾아요', en:'Find x using the definition and properties of log', zh:'用log的定义和性质求x' },

@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-25'] = {
-  id:'M-25', tier:'highmath1', level:'37', order:25,
+  id:'M-25', tier:'highmath1', level:'39', order:25,
   lineage:['place-magic'],
   generator:'md25_factorAdvanced',
   title:{ ko:'인수분해 심화', en:'Advanced Factoring', zh:'因式分解进阶' },

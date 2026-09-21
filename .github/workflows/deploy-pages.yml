@@ -15,6 +15,7 @@ on:
       - 'premier/**'
       - 'reading-world/**'
       - 'roadmap/**'
+      - 'science-lab/**'
       - 'vocab-quiz/**'
       - 'world-explorer/**'
       - 'yubin-yujun-store/**'
@@ -55,6 +56,7 @@ jobs:
           mkdir -p _site/premier
           mkdir -p _site/reading-world
           mkdir -p _site/roadmap
+          mkdir -p _site/science-lab
           mkdir -p _site/vocab-quiz
           mkdir -p _site/world-explorer
           mkdir -p _site/yubin-yujun-store
@@ -81,6 +83,10 @@ jobs:
           test ! -e _site/premier/qa
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
+          cp -R science-lab/. _site/science-lab/
+          rm -rf _site/science-lab/bank/tools _site/science-lab/bank/audit.mjs _site/science-lab/bank/taxonomy/build.mjs
+          find _site/science-lab -type f -name '*.md' -delete
+          test ! -e _site/science-lab/bank/tools
           cp -R vocab-quiz/. _site/vocab-quiz/
           cp -R world-explorer/. _site/world-explorer/
           cp -R yubin-yujun-store/. _site/yubin-yujun-store/

@@ -16,6 +16,7 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const ttsCache = require('./tts-cache.js');
 
 // ── Config ────────────────────────────────────────────────────────────────────
 const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
@@ -97,6 +98,22 @@ var LESSON1_ZH = {};
 
 // ── Build task list ────────────────────────────────────────────────────────────
 const tasks = [];
+
+// 지필드 사이언스 랩 광고 페이지 — docssam(밝은 남자 목소리) 나레이션. 파일 이름에 (목소리+문장) 해시를
+// 넣어, 문장을 고치면 새 파일이 생기고 그대로면 건너뛴다(type 'sci'). 광고 페이지가 같은 해시로 주소를 만든다.
+// 주의: generate-audio.yml의 paths에 narration.json이 없다. 나레이션 문장만 고쳐 올리면 워크플로가 돌지
+// 않으니, 문장을 바꿀 때는 이 파일도 함께 커밋해서 Generate Audio가 실행되게 한다. (나레이션 개정: 2026-09-21 16차, 20줄)
+const SCI_NARRATION = path.join(__dirname, '../science-lab/intro/narration.json');
+let SCI_VOICE = null, SCI_FALLBACK = null;
+if (fs.existsSync(SCI_NARRATION)) {
+  const crypto = require('crypto');
+  const nar = JSON.parse(fs.readFileSync(SCI_NARRATION, 'utf8'));
+  SCI_VOICE = nar.voice; SCI_FALLBACK = nar.fallbackVoice || null;
+  for (const l of nar.lines || []) {
+    const h = crypto.createHash('sha1').update(`${nar.voice}|${l.text}`).digest('hex').slice(0, 10);
+    tasks.push({ lessonId: `sci-${l.id}`, bookId: 'science-lab', type: 'sci', text: l.text, storagePath: `science-lab/${l.id}-${h}.mp3` });
+  }
+}
 
 // Writing Village — native-English MP3s for the STATIC listening content so it
 // sounds right on every device (esp. Windows PCs with no English TTS voice).
@@ -185,7 +202,7 @@ async function generateMp3(text, voiceName) {
   if (!/Chirp3-HD/.test(voiceName)) audioConfig.speakingRate = 0.95;
   const payload = JSON.stringify({
     input: { text },
-    voice: { languageCode: 'en-US', name: voiceName },
+    voice: { languageCode: voiceName.split('-').slice(0, 2).join('-'), name: voiceName },
     audioConfig,
   });
   const res = await httpRequest({
@@ -233,14 +250,14 @@ async function fetchLibraryBooks() {
   return JSON.parse(res.body.toString());
 }
 
-async function uploadToSupabase(mp3Buffer, storagePath) {
+async function uploadToSupabase(mp3Buffer, storagePath, contentType) {
   const res = await httpRequest({
     hostname: new URL(SUPABASE_URL).hostname,
     path: `/storage/v1/object/audio/${storagePath}`,
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'audio/mpeg',
+      'Content-Type': contentType || 'audio/mpeg',
       'x-upsert': 'true',
     },
   }, mp3Buffer);
@@ -291,11 +308,38 @@ async function main() {
   console.log(`📋  ${tasks.length} total passages (incl. ${originals.length} originals, ${libPageCount} library pages)`);
   console.log('');
 
-  let done = 0, failed = 0, totalUsed = 0;
+  /* 재합성 캐시(2026-09-21) — 글과 목소리가 그대로면 사지 않는다. 자세한 사정은
+     scripts/tts-cache.js 머리말. 전엔 original 만 건너뛰어 한 번에 20만 자가 나갔다. */
+  const cache = await ttsCache.load(httpRequest, SUPABASE_URL, SUPABASE_KEY, 'reading-world');
+  const voiceOf = t => t.type === 'sci' ? SCI_VOICE
+    : (t.type === 'libpage' || t.type === 'wv') ? LIBRARY_VOICE_NAME : VOICE_NAME;
+  console.log(`🗂  TTS 캐시: 기록 ${Object.keys(cache).length}건${ttsCache.SEED ? ' · 씨앗 모드(합성 없이 해시만 기록)' : ''}`);
+
+  let done = 0, failed = 0, totalUsed = 0, cached = 0, savedChars = 0;
   const results = {};
 
   for (const task of tasks) {
     const label = `${task.lessonId}-${task.type}`;
+    const hash = ttsCache.hashOf(task.text, voiceOf(task));
+    const url = `${SUPABASE_URL}/storage/v1/object/public/audio/${task.storagePath}`;
+
+    /* 지난번에 올린 것과 글·목소리가 같으면 건너뛴다 — 구글을 부르지 않으므로 과금 0 */
+    if (cache[task.storagePath] === hash) {
+      cached++; savedChars += task.text.length;
+      results[label] = url;
+      continue;
+    }
+    /* 씨앗 모드 — 합성하지 않고, 스토리지에 파일이 이미 있는 것만 해시로 기록한다 */
+    if (ttsCache.SEED) {
+      const info = await httpRequest({
+        hostname: new URL(SUPABASE_URL).hostname,
+        path: `/storage/v1/object/info/public/audio/${task.storagePath}`,
+        method: 'GET', headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      });
+      if (info.status === 200) { cache[task.storagePath] = hash; results[label] = url; cached++; savedChars += task.text.length; }
+      continue;
+    }
+
     process.stdout.write(`  🎙  ${label} (${task.text.length} chars)... `);
 
     try {
@@ -304,7 +348,7 @@ async function main() {
       // so rewritten extraLearning / newPassage passages get fresh audio instead of
       // keeping a stale MP3 that no longer matches the on-screen text. Upload uses
       // x-upsert:true, so regenerated files overwrite in place.
-      if (task.type === 'original') {
+      if (task.type === 'original' || task.type === 'sci') {
         const checkRes = await httpRequest({
           hostname: new URL(SUPABASE_URL).hostname,
           path: `/storage/v1/object/info/public/audio/${task.storagePath}`,
@@ -312,21 +356,32 @@ async function main() {
           headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
         });
         if (checkRes.status === 200) {
-          const url = `${SUPABASE_URL}/storage/v1/object/public/audio/${task.storagePath}`;
-          console.log(`skip (original already exists)`);
+          console.log(`skip (already exists)`);
+          cache[task.storagePath] = hash;      /* 다음 실행부터는 조회조차 않는다 */
           results[label] = url;
           continue;
         }
       }
 
-      const mp3 = await generateMp3(task.text, (task.type === 'libpage' || task.type === 'wv') ? LIBRARY_VOICE_NAME : VOICE_NAME);
+      let mp3, usedVoice = voiceOf(task);
+      if (task.type === 'sci') {
+        try { mp3 = await generateMp3(task.text, SCI_VOICE); }
+        catch (e) {
+          if (!SCI_FALLBACK) throw e;
+          process.stdout.write(`(${SCI_VOICE} 실패 → ${SCI_FALLBACK}) `);
+          mp3 = await generateMp3(task.text, SCI_FALLBACK);
+          usedVoice = SCI_FALLBACK;   /* 폴백으로 만들었으면 그 목소리로 기록해야 한다 —
+                                         안 그러면 다음 실행이 원래 목소리라 믿고 건너뛴다 */
+        }
+      } else mp3 = await generateMp3(task.text, usedVoice);
 
       // Save locally as backup
       const localPath = path.join(OUT_DIR, task.storagePath.replace('/', '-'));
       fs.writeFileSync(localPath, mp3);
 
-      const url = await uploadToSupabase(mp3, task.storagePath);
-      results[label] = url;
+      const uploaded = await uploadToSupabase(mp3, task.storagePath);
+      results[label] = uploaded;
+      cache[task.storagePath] = ttsCache.hashOf(task.text, usedVoice);  /* 실제로 쓴 목소리로 기록 */
       totalUsed += task.text.length;
       done++;
       console.log(`✓  (${mp3.length.toLocaleString()} bytes)`);
@@ -338,9 +393,13 @@ async function main() {
     await new Promise(r => setTimeout(r, 200));
   }
 
+  /* 명세를 올린다 — 실패해도 이번 음성은 이미 올라갔고, 다음 실행이 다시 만들 뿐이다 */
+  await ttsCache.save(uploadToSupabase, cache, 'reading-world');
+
   console.log('');
-  console.log(`✅  Done: ${done} generated, ${failed} failed`);
+  console.log(`✅  Done: ${done} generated, ${cached} cached(skip), ${failed} failed`);
   console.log(`📊  Characters used this run: ~${totalUsed.toLocaleString()}`);
+  console.log(`💰  Characters saved by cache: ~${savedChars.toLocaleString()}`);
   console.log('');
   console.log('Generated URLs:');
   for (const [k, v] of Object.entries(results)) console.log(`  ${k}: ${v}`);

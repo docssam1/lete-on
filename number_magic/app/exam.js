@@ -164,6 +164,24 @@
   .nm-b10-blank { display: inline-block; width: 16mm; height: 8mm; border: 1px dashed #000; align-self: center; }
 
   /* 수직선 점프 */
+  /* 좌표평면(graphSvg) — 흑백 레이저에서도 격자·축·곡선이 서로 구분되게 굵기로만 나눈다.
+     격자 한 칸이 정수 1이므로 칸이 뭉개지면 문제가 성립하지 않는다(폭을 넉넉히 준다). */
+  /* 좌표평면 — 폭(mm)과 비율은 SVG 가 인라인 style 로 직접 준다(graphSvg). 한 칸이 늘
+     같은 크기여야 모눈이 모눈으로 보이기 때문이다. flex 칸 안에서 눌리지 않게 flex:0 0 auto.
+     (이 블록은 JS 템플릿 문자열 안이라 역따옴표를 쓰면 안 된다 — 한 번 깨뜨렸다.) */
+  .nm-gp { height: auto; flex: 0 0 auto; margin: 3px auto 2px; display: block; max-width: 100%; }
+  .nm-gp .nm-gp-frame { fill: #fff; stroke: #555; stroke-width: .7; }
+  .nm-gp .nm-gp-grid { fill: none; stroke: #707070; stroke-width: .45; }
+  .nm-gp .nm-gp-axis { stroke: #000; stroke-width: 1.2; stroke-linecap: square; }
+  .nm-gp .nm-gp-arrow { fill: #000; }
+  .nm-gp .nm-gp-tickbig { stroke: #000; stroke-width: 1.2; }
+  .nm-gp .nm-gp-ticksm { stroke: #000; stroke-width: .7; }
+  .nm-gp .nm-gp-curve { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .nm-gp .nm-gp-pt { fill: #fff; stroke: #000; stroke-width: 1.6; }
+  .nm-gp text { font-family: sans-serif; fill: #000; }
+  .nm-gp .nm-gp-tick { font-size: 8px; font-weight: 600; }
+  .nm-gp .nm-gp-ax { font-size: 9px; font-weight: 700; }
+  .nm-gp .nm-gp-ptlabel { font-size: 10px; font-weight: 800; }
   .nm-nl { width: 62mm; height: auto; margin: 6px auto 0; display: block; }
   .nm-nl line, .nm-nl path { fill: none; stroke: #000; stroke-width: 1.4; }
   .nm-nl .nm-nl-hop { stroke-dasharray: 3 2; }
@@ -613,6 +631,23 @@
   .nm-w2-ramp-pill { display:inline-block; font-size:9px; font-weight:700; color:#0E2C57;
     background:none; border:1px solid #0E2C57; border-radius:7px; padding:0 5px; line-height:1.3;
     white-space:nowrap; }
+  /* 분수 빈칸의 순번 ①②③ (2026-09-21) — texDisplay 가 \htmlClass 로 붙인다.
+     ::before 라 KaTeX 가 잡아 둔 칸 크기를 건드리지 않는다(절대 위치 + 부모는 inline-block).
+     상자 왼쪽 위 모서리에 걸치고, 종이 흰 바탕을 깔아 상자 선과 겹쳐도 읽힌다.
+     흑백 레이저에서도 남게 색은 네이비 하나, print-color-adjust:exact. */
+  .katex .nm-wb { position:relative; }
+  /* 상자 **안쪽** 왼쪽 위에 앉힌다 — 바깥 모서리에 두면 근호(√)의 빗금과 겹치고,
+     겹침을 피하려 흰 바탕을 깔면 따라풀기 카드(민트색 배경)에 흰 얼룩으로 찍힌다.
+     안쪽이면 바탕도 테두리도 건드리지 않는다. 아이는 상자 가운데에 쓴다. */
+  .katex .nm-wb::before { position:absolute; left:.14em; top:.10em; z-index:2;
+    font-size:.44em; line-height:1; font-weight:700; color:#0E2C57; pointer-events:none;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .katex .nm-wb1::before { content:'\\2460'; }
+  .katex .nm-wb2::before { content:'\\2461'; }
+  .katex .nm-wb3::before { content:'\\2462'; }
+  .katex .nm-wb4::before { content:'\\2463'; }
+  .katex .nm-wb5::before { content:'\\2464'; }
+  .katex .nm-wb6::before { content:'\\2465'; }
   .nm-w2-item .nm-w2-tex { font-size:19px; }
   .nm-w2-grid-medium .nm-w2-item .nm-w2-tex { font-size:19px; }
   .nm-w2-grid-long .nm-w2-item .nm-w2-tex { font-size:16px; }
@@ -892,7 +927,19 @@ function texToPlain(tex){
   let s = String(tex==null?'':tex);
   /* 학습지 v2 예시(w2ExampleHtml)가 붙이는 \displaystyle·\color{#d33}{…} —
      KaTeX 미로딩 폴백에서도 안쪽 값만 남기고 명령은 지운다(2026-09-04). */
+  s = s.replace(/\\htmlClass\{nm-wb[^{}]*\}/g, '');                    /* 빈칸 순번 클래스(2026-09-21) */
+  s = s.replace(/\\vphantom\{\\rule\[[^\]]*\]\{0pt\}\{[^}]*\}\}/g, '');  /* 분수 안 빈칸의 자리 확보 */
   s = s.replace(/\\boxed\{\\rule\[[^\]]*\]\{0pt\}\{[^}]*\}(?:\\kern\{[^}]*\})?\\phantom\{00\}(?:\\kern\{[^}]*\})?\}/g, '□');   /* WRITE_BOX */
+  /* 분수 안 빈칸은 \htmlClass{…}{{…\boxed{…}}} 라 껍데기 중괄호가 남는다. 그대로 두면
+     아래 \dfrac{}{} 치환의 [^{}]* 가 안 맞아 `\dfrac{{□}}{{□}}` 가 "dfrac□□" 로 찍힌다
+     (KaTeX 가 안 뜨는 폴백에서만 보이던 자리 — 2026-09-21). 벗겨서 □ 하나로 만든다. */
+  /* 한 겹씩만 벗긴다. `\}+` 처럼 한 번에 여러 겹을 먹으면 탐욕 매칭이 \sqrt·\dfrac 의
+     괄호까지 가져가 `\dfrac{-7 ± √□{□}` 가 된다(실제로 그렇게 깨졌다). */
+  for(let g = 0; g < 4; g++){
+    const before = s;
+    s = s.replace(/\{\{\s*□\s*\}\}/g, '{□}');
+    if(s === before) break;
+  }
   s = s.replace(/\\displaystyle\s*/g, '');
   s = s.replace(/\\color\{[^{}]*\}\{([^{}]*)\}/g, '$1');
   /* 행렬(\begin{pmatrix}...\end{pmatrix}, MD30) — 다른 치환보다 먼저 처리해야
@@ -980,7 +1027,9 @@ function renderKaTeX(tex, el){
   /* 표기 다듬기 — texDisplay 를 거치지 않고 바로 그리는 자리(정답지·예시 등)도 있다. */
   const t = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
   if(window.katex){
-    try{ katex.render(t, el, {throwOnError:false}); return; }catch(_){}
+    /* trust — texDisplay 가 빈칸에 붙이는 \htmlClass(순번 ①②③)를 살리기 위한 것이다.
+       그리는 tex 는 전부 우리 생성기가 만든 것이고 학생 입력이 들어오는 자리가 아니다. */
+    try{ katex.render(t, el, {throwOnError:false, trust:true, strict:false}); return; }catch(_){}
   }
   el.textContent = texToPlain(t);
 }
@@ -2182,6 +2231,143 @@ function numlineSvg(nl){
   return `<svg class="nm-nl" viewBox="0 0 260 96" role="img" aria-label="${esc(lk('수직선 점프','Number line jumps','数轴跳跃'))}">${s}</svg>`;
 }
 
+/* ── 좌표평면(graph) 인쇄 그림 (2026-09-21) ────────────────────────
+   원장 "그래프는 정확히 모눈에 좌표평면 그려줘". 처음 판은 상자 크기를 고정하고 범위를
+   거기 욱여넣어서 **한 칸이 정사각형이 아니었다** — 가로 13.2px · 세로 8.5px(1.55:1).
+   기울기는 "오른쪽 한 칸에 위로 몇 칸"인데 칸이 옆으로 길쭉하면 그 감각 자체가 어긋난다.
+   그래서 이제 **한 칸의 크기를 고정하고 상자가 범위를 따라 자란다**(진짜 모눈종이처럼).
+   화면 위젯(widgets.js)도 같은 geometry 를 쓴다 — 함수 하나를 둘이 나눠 쓴다.
+   p.graph = {kind, m,b | a,p,q | k, pts, xr, yr} — 생성기가 주는 그대로. */
+const GP_CELL_MM = 2.8;     /* 인쇄 한 칸의 실제 크기(mm) — 모눈종이 감각의 기준 */
+function graphGeom(g, cell, pad){
+  const xr = (g && g.xr) || [-6,6], yr = (g && g.yr) || [-6,6];
+  const xs = xr[1]-xr[0], ys = yr[1]-yr[0];
+  const W = xs*cell + pad*2, H = ys*cell + pad*2;
+  return {
+    xr, yr, xs, ys, W, H, pad, cell,
+    X: v => (pad + (v-xr[0])*cell).toFixed(1),
+    Y: v => (H-pad - (v-yr[0])*cell).toFixed(1)
+  };
+}
+/* 모눈·축·눈금 — 화면과 인쇄가 같은 그림을 그리도록 한 함수에서 낸다.
+   shape-rendering:crispEdges — 격자선이 픽셀 경계에 딱 붙어야 '모눈'으로 보인다. */
+function graphPaperSvg(gm, cls){
+  const { xr, yr, W, H, pad, X, Y } = gm;
+  let gd = '';
+  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++) gd += `M${X(v)} ${pad}V${H-pad}`;
+  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++) gd += `M${pad} ${Y(v)}H${W-pad}`;
+  let s = `<rect class="${cls}-frame" x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/>`;
+  s += `<path class="${cls}-grid" shape-rendering="crispEdges" d="${gd}"/>`;
+  s += `<line class="${cls}-axis" x1="${pad}" y1="${Y(0)}" x2="${W-pad}" y2="${Y(0)}"/>`;
+  s += `<line class="${cls}-axis" x1="${X(0)}" y1="${pad}" x2="${X(0)}" y2="${H-pad}"/>`;
+  /* 눈금 숫자는 두 칸마다 — 한 칸마다 적으면 작은 지면에서 숫자끼리 붙는다. */
+  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++){
+    if(v===0 || v%2) continue;
+    s += `<text class="${cls}-tick" x="${X(v)}" y="${(+Y(0)+gm.cell*0.95).toFixed(1)}" text-anchor="middle">${v}</text>`;
+  }
+  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++){
+    if(v===0 || v%2) continue;
+    s += `<text class="${cls}-tick" x="${(+X(0)-gm.cell*0.35).toFixed(1)}" y="${(+Y(v)+gm.cell*0.33).toFixed(1)}" text-anchor="end">${v}</text>`;
+  }
+  s += `<text class="${cls}-ax" x="${W-pad*0.35}" y="${(+Y(0)-gm.cell*0.4).toFixed(1)}" text-anchor="middle">x</text>`;
+  s += `<text class="${cls}-ax" x="${(+X(0)+gm.cell*0.5).toFixed(1)}" y="${pad*0.75}" text-anchor="middle">y</text>`;
+  s += `<text class="${cls}-tick" x="${(+X(0)-gm.cell*0.4).toFixed(1)}" y="${(+Y(0)+gm.cell*0.95).toFixed(1)}" text-anchor="end">O</text>`;
+  return s;
+}
+
+/* 곡선 path — **화면 위젯(widgets.js)과 인쇄(graphSvg)가 같이 쓰는 한 벌**.
+   kind: 'line'(y=mx+b) · 'parabola'(y=a(x-p)²+q) · 'hyperbola'(y=k/x, 두 가지) ·
+   'points'(곡선 없이 점만 — 좌표·사분면 문항) · 'numberline'(1차원, 곡선 없음).
+   여기에 두는 이유: drill.html·ws.html 은 widgets.js 를 싣지 않고 exam.js 만 싣는다.
+   반대로 두면 학습지에서 곡선이 통째로 빠진다. X·Y 는 좌표→화면 변환 함수. */
+function curvePath(g, xr, X, Y){
+  if(!g || g.kind === 'points' || g.kind === 'numberline') return '';
+  if(g.kind === 'parabola'){
+    let d = '';
+    for(let t = 0; t <= 120; t++){
+      const x = xr[0] + (xr[1]-xr[0]) * t / 120;
+      d += (t ? 'L' : 'M') + X(x) + ' ' + Y(g.a*(x-g.p)*(x-g.p) + g.q);
+    }
+    return d;
+  }
+  if(g.kind === 'hyperbola'){
+    /* y=k/x 는 x=0 에서 끊긴다 — 두 가지를 따로 그린다(이어 그리면 원점을 가로지르는
+       가짜 선이 생긴다). 0 에 너무 붙으면 세로로 치솟아 상자를 벗어나므로
+       |x| ≥ |k|/yMax 부터 그린다. */
+    const yMax = Math.max(1, Math.abs((g.yr || [-6,6])[1]));
+    const lim = Math.max(0.4, Math.abs(g.k) / yMax);
+    let d = '';
+    [[xr[0], -lim], [lim, xr[1]]].forEach(([x0, x1]) => {
+      for(let t = 0; t <= 60; t++){
+        const x = x0 + (x1-x0) * t / 60;
+        d += (t ? 'L' : 'M') + X(x) + ' ' + Y(g.k / x);
+      }
+    });
+    return d;
+  }
+  return 'M' + X(xr[0]) + ' ' + Y(g.m*xr[0] + g.b) + 'L' + X(xr[1]) + ' ' + Y(g.m*xr[1] + g.b);
+}
+
+/* ── 수직선 위의 위치(kind:'numberline') ──────────────────────────
+   원장 "정수 또는 유리수도 위치 찾기 연습도 있어야 하고 절댓값도 위치 찾기가 되어야지".
+   g = {kind:'numberline', lo, hi, den(눈금 쪼갬, 1이면 정수 눈금), pts:[{v,label}] }
+   den 이 2·4·5 면 칸 사이를 그만큼 잘라 작은 눈금을 그린다 — 유리수의 자리를 보여 준다. */
+function numberLineSvg(g, cellMm){
+  const lo = g.lo, hi = g.hi, den = g.den || 1;
+  const CELL = 22, pad = 16, H = 58;
+  const W = (hi-lo)*CELL + pad*2;
+  const X = v => (pad + (v-lo)*CELL).toFixed(1);
+  const Y = 34;
+  let s = `<line class="nm-gp-axis" x1="${pad-8}" y1="${Y}" x2="${W-pad+8}" y2="${Y}"/>`;
+  s += `<path class="nm-gp-arrow" d="M${W-pad+8} ${Y}l-6 -3.2v6.4z"/>`;
+  s += `<path class="nm-gp-arrow" d="M${pad-8} ${Y}l6 -3.2v6.4z"/>`;
+  for(let i=0; i<=(hi-lo)*den; i++){
+    const v = lo + i/den;
+    const big = Number.isInteger(v);
+    s += `<line class="nm-gp-${big?'tickbig':'ticksm'}" x1="${X(v)}" y1="${Y-(big?7:4)}" x2="${X(v)}" y2="${Y+(big?7:4)}"/>`;
+    if(big) s += `<text class="nm-gp-tick" x="${X(v)}" y="${Y+19}" text-anchor="middle">${v}</text>`;
+  }
+  (g.pts||[]).forEach(pt => {
+    if(pt.v < lo || pt.v > hi) return;
+    s += `<circle class="nm-gp-pt" cx="${X(pt.v)}" cy="${Y}" r="4"/>`;
+    if(pt.label) s += `<text class="nm-gp-ptlabel" x="${X(pt.v)}" y="${Y-13}" text-anchor="middle">${esc(pt.label)}</text>`;
+  });
+  /* 인쇄 폭 — 정수 한 칸을 **11mm** 로 잡는다(2026-09-21 실측). 처음엔 좌표평면과 같은
+     2.8mm 를 썼는데 수직선은 가로로만 길어 전체가 20mm 로 쪼그라들었고, 5등분 눈금이
+     붙어 버려 셀 수가 없었다 — 모눈과 달리 수직선은 **한 줄에 넓게** 펴야 한다.
+     cellMm 이 없으면(화면) 폭을 CSS 에 맡긴다. */
+  const style = cellMm
+    ? `width:${((hi-lo) * 11 + 14).toFixed(1)}mm;aspect-ratio:${W}/${H}`
+    : `aspect-ratio:${W}/${H}`;
+  const cls = cellMm ? 'nm-gp nm-gp-nl' : 'nm-gp-svg nm-gp-nl';
+  return `<svg class="${cls}" viewBox="0 0 ${W} ${H}" style="${style}"
+    role="img" aria-label="${esc(lk('수직선','Number line','数轴'))}">${s}</svg>`;
+}
+
+function graphSvg(g){
+  if(!g) return '';
+  if(g.kind === 'numberline') return numberLineSvg(g, GP_CELL_MM);
+  const CELL = 10, pad = 14;
+  const gm = graphGeom(g, CELL, pad);
+  const { xr, W, H, pad: pd, X, Y } = gm;
+  let s = graphPaperSvg(gm, 'nm-gp');
+  /* 곡선은 상자 밖으로 나가므로 잘라 낸다. clipPath id 는 한 지면에 여러 개가
+     들어가도 안 부딪히게 그래프의 값에서 만든다(난수 금지 — 같은 문항은 같은 그림). */
+  const cid = 'pgc' + [g.kind, g.m, g.b, g.a, g.p, g.q, g.k, xr[0], gm.yr[0]].join('_').replace(/[^A-Za-z0-9]/g,'');
+  const d = curvePath(g, xr, X, Y);
+  s = `<defs><clipPath id="${cid}"><rect x="${pd}" y="${pd}" width="${W-pd*2}" height="${H-pd*2}"/></clipPath></defs>` + s
+    + (d ? `<path class="nm-gp-curve" clip-path="url(#${cid})" d="${d}"/>` : '');
+  (g.pts||[]).forEach(pt => {
+    if(pt[0]<xr[0]||pt[0]>xr[1]||pt[1]<gm.yr[0]||pt[1]>gm.yr[1]) return;
+    s += `<circle class="nm-gp-pt" cx="${X(pt[0])}" cy="${Y(pt[1])}" r="3"/>`;
+  });
+  /* 폭을 mm 로 직접 준다 — 한 칸이 늘 같은 크기(GP_CELL_MM)여야 모눈이 모눈으로 보인다.
+     높이는 aspect-ratio 가 따라온다(flex 칸 안에서 height:auto 만으로는 눌린다). */
+  const wMm = (gm.xs * GP_CELL_MM + 2 * pd * GP_CELL_MM / CELL).toFixed(1);
+  return `<svg class="nm-gp" viewBox="0 0 ${W} ${H}" style="width:${wMm}mm;aspect-ratio:${W}/${H}"
+    role="img" aria-label="${esc(lk('좌표평면 그래프','Graph on a coordinate plane','坐标平面上的图象'))}">${s}</svg>`;
+}
+
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
 function bondSvg(whole, known){
   const t = (x, y, v) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${esc(String(v))}</text>`;
@@ -2597,6 +2783,9 @@ function printAskText(p){
      prompt를 또 실으면 같은 문장이 카드에 두 번 찍힌다 — WP 스레드를 붙이며
      실제로 그렇게 나왔다(2026-08-29). */
   if(p.word) return '';
+  /* 좌표평면 문항(2026-09-21) — 그림이 곧 문제라 물음 줄이 없어도 뜻이 통하고, 개념 패널이
+     읽는 법을 이미 말한다. 안 막으면 같은 문장이 한 쪽에 6번 찍힌다(MD67 실측). */
+  if(p.graph) return '';
   const tex = String(p.tex||'');
   /* tex가 아예 없는 유형 — nl.js(수의 나라, 유아) 16개 생성기가 이 경우다. 다른
      158개 스레드는 전부 tex를 주므로(가장 짧아도 "3+2=□") 이 분기를 타지 않는다.
@@ -2637,7 +2826,7 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
     const longest = problems.reduce((m, p) =>
       /* 십진블록·수직선·NL 그림(prompt-only, 늘 tex 없음)은 넓어서 좁은 칸에 못
          들어간다 — 문장제와 같이 취급 */
-      Math.max(m, (p.word || p.base10 || p.numline || !p.tex) ? Infinity : String(p.tex||'').length), 0);
+      Math.max(m, (p.word || p.base10 || p.numline || p.graph || !p.tex) ? Infinity : String(p.tex||'').length), 0);
     problemGrid.classList.add('nm-print-grid');
     problemGrid.classList.toggle('nm-print-grid-dense', longest <= 26);
   } else {
@@ -2657,7 +2846,7 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
     /* nl.js(수의 나라)는 tex를 아예 안 주므로 tex가 없을 때만 계산한다 — 다른
        158개 스레드는 항상 tex가 있어 이 분기를 타지 않는다(위 nlVisualHtml 설명 참조). */
     const nlHtml = (bw === null && !p.tex) ? nlVisualHtml(p) : '';
-    const v = (p.word || bw !== null || nlHtml) ? null : parseVert(p.tex);
+    const v = (p.word || bw !== null || nlHtml || p.graph) ? null : parseVert(p.tex);
     const card = document.createElement('div');
     card.className = 'nm-print-item'
       + (v ? ' nm-print-item-vp' : '')
@@ -2665,7 +2854,7 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
       /* 문장제 칸 — 장 경계에서 갈라지지 않게 한다(위 CSS). `word`를 내는 생성기는
          문장제(wp.js)뿐이라 이 표시는 다른 스레드에 붙지 않는다. */
       + (p.word ? ' nm-print-item-word' : '')
-      + ((p.base10 || p.numline || nlHtml) ? ' nm-print-item-vis' : '');
+      + ((p.base10 || p.numline || p.graph || nlHtml) ? ' nm-print-item-vis' : '');
     const numEl = document.createElement('span');
     numEl.className = 'nm-q-num';
     numEl.textContent = circled(numStart+i+1);
@@ -2683,6 +2872,12 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
       const holder = document.createElement('div');
       holder.innerHTML = bondSvg(bw, bw - p.answer);
       card.appendChild(holder.firstChild);
+    } else if(p.graph){
+      const holder = document.createElement('div');
+      holder.innerHTML = graphSvg(p.graph);
+      if(holder.firstChild) card.appendChild(holder.firstChild);
+      const t = document.createElement('div'); t.className = 'nm-q-tex';
+      renderKaTeX(p.tex || '', t); card.appendChild(t);
     } else if(p.base10 || p.numline){
       const holder = document.createElement('div');
       holder.innerHTML = p.base10 ? base10Html(p.base10) : numlineSvg(p.numline);
@@ -3120,11 +3315,41 @@ function wrapHangul(tex){
    높은 상자로 바꾼다. em 단위라 저학년 배율(--ws-fs)을 그대로 따라간다. 정답지는 답이 대입된 뒤라
    \square 가 남지 않는다. */
 const WRITE_BOX = '\\boxed{\\rule[-0.45em]{0pt}{1.5em}\\kern{0.4em}\\phantom{00}\\kern{0.4em}}';
+/* ── 분수 안의 빈칸 (2026-09-21, 원장 "단 분수인 경우 정확히 어디부터 쓰는지 가이드 선이
+   있어야 돼 해당 박스를 표시하던지") ──
+   근의 공식 `x = (−b ± √□)/□` 을 인쇄해 보니 **상자가 분수선에 닿아** 있었다. 위 상자의
+   아래 변과 아래 상자의 위 변이 분수선과 붙어 세 줄이 한 덩어리로 보이니, 어느 칸이
+   분자이고 어느 칸이 분모인지 종이만 보고는 알 수 없다. 원인은 WRITE_BOX 가 \boxed 라
+   글자보다 높은데 \dfrac 의 분자·분모 간격은 보통 글자 기준으로 잡히기 때문이다.
+   고치는 법 두 가지를 같이 쓴다:
+     ① \vphantom 으로 상자 위아래에 자리를 더 잡아 **분수선(= 가이드 선)이 드러나게** 한다.
+     ② 상자마다 ①②③ 순번을 붙여 **어느 칸부터 쓰는지**를 못 박는다. 순번은 tex 의
+        \square 순서 = 생성기의 answer 배열 순서이므로, 앱 숫자판 입력 순서와 늘 같다.
+   ②를 DOM 위치로 매기지 않는 이유: KaTeX 는 분수를 **분모 먼저** 내보내고, 인쇄 시트는
+   화면에서 display:none 이라 getBoundingClientRect 가 전부 0 이다. 둘 다 순서를 못 준다.
+   그래서 순번을 tex 에 직접 실어 보낸다(\htmlClass — renderKaTeX 의 trust:true 필요.
+   우리가 만든 tex 만 그리므로 안전하고, trust 가 없으면 클래스만 조용히 빠진다). */
+const WRITE_BOX_ROOM = '{\\vphantom{\\rule[-0.9em]{0pt}{2.9em}}' + WRITE_BOX + '}';
+const WB_ORDER = ['①','②','③','④','⑤','⑥'];   /* 이 글자는 CSS(.nm-wb*::before)에도 같은 순서로 있다 */
+function writeBoxFrac(i){
+  return i < WB_ORDER.length ? `\\htmlClass{nm-wb nm-wb${i + 1}}{${WRITE_BOX_ROOM}}` : WRITE_BOX_ROOM;
+}
+/* 이 문항의 빈칸에 순번이 붙는가 — texDisplay 와 정답지가 **같은 판정**을 써야 둘이 어긋나지
+   않는다. 조건: 분수이고 빈칸이 둘 이상(가로로 늘어선 빈칸은 읽는 순서가 이미 분명하다). */
+function hasNumberedBlanks(p){
+  const tx = String((p && p.tex) || '');
+  return /\\[dt]?frac/.test(tx) && (tx.match(/\\square/g) || []).length >= 2;
+}
 function texDisplay(tex){
   /* 표기 다듬기(2026-09-20) — `1x`·`+ 0x^2`·`x--59` 를 그리기 직전에 정리한다.
      생성기 191개를 따로 고치는 대신 여기 한 곳에서(engine/tex-tidy.js 주석 참조). */
   const tidy = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
-  const t = wrapHangul(tidy).replace(/\\square/g, WRITE_BOX);
+  const src = wrapHangul(tidy);
+  /* 분수이면서 빈칸이 둘 이상일 때만 손댄다 — 가로로 늘어선 빈칸은 읽는 순서가
+     이미 분명하고, 상자를 키우면 줄 높이만 늘어 인쇄 배치가 흔들린다. */
+  const isFrac = hasNumberedBlanks({ tex: src });
+  let k = 0;
+  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 
@@ -3157,7 +3382,19 @@ function classifyRoundLayout(problems, threadId, young, creative){
      찍혔다 — 읽을 글이 없는 문장제가 나갔다. 문장제는 아래 word 배치가 문장·보기·답 칸을
      제대로 그린다. */
   const wordRound = problems.every(p => p.word);
-  if(creative && !getSolveMode() && !pictureOnly && !wordRound) return {type:'train', cols:1, rows:3, perPage:3, flow:'row', firstRows:1, pitch:78};
+  /* 그림이 곧 문제인 또 하나 — 좌표평면(2026-09-21, 원장 "일차함수 그래프는").
+     train 칸도, 아래의 식 길이 판정도 `p.tex` 만 보므로 `y = □x + □` 가 **짧은 식**으로
+     분류돼 한 줄짜리 큰 글씨 칸(nm-w2-grid-big, 칸 높이 16px)에 들어갔다 — 그래프가
+     통째로 잘렸다(실측). 그래프는 칸이 커야 하므로 여기서 먼저 빼낸다. */
+  const graphRound = problems.some(p => p.graph);
+  if(creative && !getSolveMode() && !pictureOnly && !wordRound && !graphRound) return {type:'train', cols:1, rows:3, perPage:3, flow:'row', firstRows:1, pitch:78};
+  /* 수직선은 **한 열**로 — 가로로 길고 세로로 납작해서, 2열에 넣으면 폭이 반으로 줄어
+     작은 눈금이 붙어 버린다(2026-09-21 실측). 칸 높이는 낮아도 된다. */
+  const nlRound = problems.some(p => p.graph && p.graph.kind === 'numberline');
+  if(nlRound) return {type:'visual', cols:1, rows:4, perPage:4, flow:'row', firstRows:3, pitch:44};
+  /* 좌표평면은 한 쪽에 **넷**(2026-09-21) — 모눈을 제대로 그리자 상자가 커져 여섯이면
+     답 칸이 잘렸다(실측). 그래프 문항은 세는 데 시간이 걸리므로 넷이 분량으로도 맞다. */
+  if(graphRound) return {type:'visual', cols:2, rows:2, perPage:4, flow:'row', firstRows:2, pitch:88};
   /* 풀이형(2026-09-16) — 판정보다 먼저다. 켜져 있으면 문항 종류와 상관없이 한 쪽에
      4문항(2열×2행), 칸마다 풀이 줄과 "▶ 답:"을 준다. 첫 장은 개념·예시가 위에
      들어가므로 2문항만(firstRows:1). */
@@ -3254,8 +3491,11 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
   let cls = 'nm-w2-item nm-print-item';
   let inner;
   /* Training Course(창의 회차, 2026-09-18) — 식 · 주황 밑줄 · "= …" 단계 줄(빈칸은 상자) · 점선 풀이 줄.
-     뒤 1/4 문항은 단계 없이 점선만 — 앞에서 따라 한 것을 스스로 해 보는 자리(참고 학습지의 배치). */
-  if(layoutType === 'train'){
+     뒤 1/4 문항은 단계 없이 점선만 — 앞에서 따라 한 것을 스스로 해 보는 자리(참고 학습지의 배치).
+     ⚠ 그림이 곧 문제인 유형(p.graph)은 이 배치를 타면 안 된다(2026-09-21) — train 은 p.tex 만
+     쓰므로 좌표평면이 통째로 빠지고 `y = □x + □` 만 남아 **종이로는 풀 수가 없다**.
+     적용(창의) 회차에도 MD65@5 같은 그래프 레벨이 실리므로 여기서 먼저 걸러 낸다. */
+  if(layoutType === 'train' && !p.graph){
     const raw = String(p.tex||'').replace(/=\s*\\square\s*$/,'').trim();
     const bare = cellTotal > 1 && cellIdx >= Math.ceil(cellTotal * 0.75);
     const st = bare ? [] : (Array.isArray(p.steps) ? p.steps.filter(x => x && x.tex) : []);
@@ -3280,6 +3520,9 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
   } else if(p.__bond && p.cubes && typeof p.cubes.moveTo === 'number' && typeof p.answer === 'number'){
     cls += ' nm-w2-item-vis';
     inner = bondSvg(p.cubes.moveTo, p.cubes.moveTo - p.answer);
+  } else if(p.graph){
+    cls += ' nm-w2-item-vis';
+    inner = graphSvg(p.graph) + `<div class="nm-w2-tex" data-tex="${esc(texDisplay(String(p.tex||'')))}"></div>`;
   } else if(p.base10 || p.numline){
     cls += ' nm-w2-item-vis';
     inner = p.base10 ? base10Html(p.base10) : numlineSvg(p.numline);
@@ -3411,6 +3654,12 @@ function w2AnswerValueHtml(p){
     const [c, r] = p.answer;
     return `<span class="nm-w2-tex" data-tex="${esc(`${c === 1 ? '' : c}\\sqrt{${r}}`)}"></span>`;
   }
+  /* 분수 빈칸에 순번을 붙인 문항(2026-09-21)은 정답지도 같은 말을 해야 한다 — 학습지에
+     ①② 가 찍혀 있는데 정답지가 "61, 6" 이면 어느 쪽이 분모인지 채점하는 사람이 다시
+     맞춰 봐야 한다. answerShape 가 있는 것은 이미 √71/71 처럼 조립돼 나오므로 건드리지
+     않는다(순번이 필요한 것은 그냥 나열되는 이 경우뿐 — FR5L2·MD55L2·MD66L4). */
+  if(!p.answerShape && Array.isArray(p.answer) && p.answer.length >= 2 && hasNumberedBlanks(p))
+    return esc(p.answer.map((v, i) => (WB_ORDER[i] || `(${i + 1})`) + String(v)).join(' '));
   const nlLab = nlAnswerLabel(p);
   if(nlLab) return esc(nlLab);
   const note = pickL(p.answerNote);
@@ -3622,6 +3871,14 @@ function w2StrategyBandHtml(threadId, level){
   </div>`;
 }
 
+/* 개념 문장의 **강조** — 데이터가 마크다운 굵게 표기를 쓰는데 인쇄는 esc() 만 해서
+   별표 두 개가 그대로 찍히고 있었다(2026-09-21, 학습지 렌더로 발견 — MD69 "x와 y를
+   **곱하면**"). 스레드 데이터 수십 곳이 이 표기를 쓰므로 데이터가 아니라 여기서 푼다.
+   esc() 로 먼저 막은 뒤 별표만 태그로 바꾼다 — 그래야 데이터의 <b> 가 살아나지 않는다. */
+function escEmph(t){
+  return esc(String(t == null ? '' : t)).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+}
+
 function w2ConceptPanelHtml(threadId, level, extra){
   extra = extra || {};
   const info = resolveConceptUnit(threadId, level);
@@ -3644,7 +3901,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
       : `<b>${esc(headRaw)}</b>`;
     const descTrunc = truncateConceptLine(stripConceptTags(pickL(s.desc) || ''), 90);
     if(!headRaw && !descTrunc) return '';
-    return `<p class="nm-w2-concept-stage">${esc(CONCEPT_STAGE_MARKS[i])} ${headHtml}${headRaw && descTrunc ? ' — ' : ''}${esc(descTrunc)}</p>`;
+    return `<p class="nm-w2-concept-stage">${esc(CONCEPT_STAGE_MARKS[i])} ${headHtml}${headRaw && descTrunc ? ' — ' : ''}${escEmph(descTrunc)}</p>`;
   }).join('');
   const rule = (info.unit && info.unit.discover && info.unit.discover.rule)
     ? pickL(info.unit.discover.rule) : '';
@@ -3658,7 +3915,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
     <img class="nm-w2-board-mascot" src="assets/characters/docssam.png" alt="">
     <div class="nm-w2-board-body">
       <div class="nm-mn-kicker">${esc(lk('개념','CONCEPT','概念'))} · ${esc(nm)}</div>
-      ${sentence ? `<p class="nm-w2-concept-sentence">${esc(sentence)}</p>` : ''}
+      ${sentence ? `<p class="nm-w2-concept-sentence">${escEmph(sentence)}</p>` : ''}
       ${stageLines}
     </div>
   </div>
@@ -4133,6 +4390,10 @@ function renderRoundPages(item, opts){
      두 틀은 "완성된 식 + 풀이 사슬"을 전제해서, 식이 없으면 예시가 " = 4", 따라풀기가
      "(가) = ____"로 빈 채 찍혔다(과정 0 첫 학습지에서 발견). 개념 패널은 그대로 둔다. */
   const pictureOnly = !noTeach && problems.length > 0 && problems.every(p => !p.tex && !p.word);
+  /* 좌표평면 회차도 같은 이유로 예시·따라풀기를 뺀다(2026-09-21, 원장 "일차함수 그래프는").
+     두 틀은 p.tex 와 풀이 사슬만 그리므로 그래프가 통째로 빠져 "(가) y = □x + □" 처럼
+     **그림 없는 문제**가 찍혔다(실측). 개념 패널은 격자 읽는 법을 말로 설명하므로 그대로 둔다. */
+  const graphRound = !noTeach && problems.length > 0 && problems.some(p => p.graph);
   /* 개념·예시·따라풀기는 첫 장 필수(토글 없음, v2.1 build 1). exclude 집합: 채점 문항 → 예시 → (가)(나)(다)
      순으로 더해 가며 서로 겹치지 않게. 램프가 있으면 (다)만 램프 레벨로(예시와 같은 기술). */
   /* 풀이형에서는 참고 학습지처럼 맨 위에 한 줄짜리 공부 전략 띠를 올린다.
@@ -4140,10 +4401,10 @@ function renderRoundPages(item, opts){
   const strategyHtml = getSolveMode() ? w2StrategyBandHtml(item.thread, item.level) : '';
   const conceptHtml = (wordOnly || noTeach) ? ''
     : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml});
-  const exampleHtml = (noTeach || pictureOnly) ? ''
+  const exampleHtml = (noTeach || pictureOnly || graphRound) ? ''
     : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude, young)
     : w2ExampleHtml(item.thread, exLevel, baseCode, exclude, young);
-  const guided = (wordOnly || noTeach || pictureOnly) ? {html:'', problems:[]}
+  const guided = (wordOnly || noTeach || pictureOnly || graphRound) ? {html:'', problems:[]}
     : w2GuidedHtml(item.thread, item.level, baseCode, item.guideSeed, exclude,
         rampN ? [item.level, item.level, exLevel] : null, young);
 
@@ -4609,6 +4870,10 @@ const NM_EXAM = {
   texToPlain,
   /* answerShape 정답 → \dfrac tex(테스트/검증용 노출). */
   ansTex,
+
+  /* 좌표평면 — app/widgets.js(화면 위젯)가 렌더 시점에 불러 쓴다.
+     모눈·축·곡선을 두 벌로 두면 언젠가 한쪽만 고쳐져 학습지와 화면이 갈린다. */
+  curvePath, graphGeom, graphPaperSvg, numberLineSvg,
 
   /* 학습지 코드 생성 */
   worksheetCode(config){

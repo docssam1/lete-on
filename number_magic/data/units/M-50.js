@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-50'] = {
-  id:'M-50', tier:'middle1', level:'30', order:13,
+  id:'M-50', tier:'middle1', level:'30', order:11,
   generator:'md50_linearEquation',
   title:{ ko:'일차방정식 풀이', en:'Solving Linear Equations', zh:'一元一次方程的解法' },
   subtitle:{ ko:'저울처럼 양변에 같은 조작을 해서 x를 찾아요', en:'Like a balance scale, do the same thing to both sides to find x', zh:'像天平一样对两边做相同的操作来找出x' },

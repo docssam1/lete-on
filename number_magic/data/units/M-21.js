@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-21'] = {
-  id:'M-21', tier:'highmath1', level:'36', order:21,
+  id:'M-21', tier:'highmath1', level:'38', order:21,
   generator:'md21_polyMulDiv',
   title:{ ko:'다항식의 곱셈과 나눗셈', en:'Multiplying & Dividing Polynomials', zh:'多项式的乘除法' },
   subtitle:{ ko:'괄호를 분배해서 곱하고, 조립제법으로 나눠요', en:'Distribute to multiply, use synthetic division to divide', zh:'分配展开来相乘，用综合除法来相除' },

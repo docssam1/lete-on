@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-28'] = {
-  id:'M-28', tier:'highmath1', level:'37', order:28,
+  id:'M-28', tier:'highmath1', level:'39', order:28,
   generator:'md28_quadraticFormula',
   title:{ ko:'근의 공식', en:'The Quadratic Formula', zh:'求根公式' },
   subtitle:{ ko:'인수분해가 안 될 때도 항상 통하는 만능 공식', en:'The universal formula that always works, even when factoring fails', zh:'即使不能因式分解也总能用的万能公式' },

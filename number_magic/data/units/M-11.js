@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-11'] = {
-  id:'M-11', tier:'middle2', level:'32', order:11,
+  id:'M-11', tier:'middle2', level:'32', order:2,
   generator:'md11_monoMulDiv',
   title:{ ko:'단항식의 곱셈과 나눗셈', en:'Multiplying & Dividing Monomials', zh:'单项式的乘除法' },
   subtitle:{ ko:'숫자는 숫자끼리, 문자는 문자끼리 — 두 개의 계산을 한 번에', en:'Numbers with numbers, letters with letters — two calculations at once', zh:'数字归数字，字母归字母——一次做两个计算' },

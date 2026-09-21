@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-31'] = {
-  id:'M-31', tier:'highmath2', level:'38', order:31,
+  id:'M-31', tier:'highmath2', level:'40', order:31,
   generator:'md31_distance',
   title:{ ko:'두 점 사이의 거리', en:'Distance Between Two Points', zh:'两点间的距离' },
   subtitle:{ ko:'가로·세로 차를 제곱해 더하고 제곱근을 씌워요(피타고라스 정리)', en:'Square the horizontal and vertical differences, add, then take the root (Pythagorean theorem)', zh:'横纵坐标差平方后相加再开方(勾股定理)' },

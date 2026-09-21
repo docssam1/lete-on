@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-56'] = {
-  id:'M-56', tier:'algebra', level:'44', order:5,
+  id:'M-56', tier:'algebra', level:'46', order:5,
   generator:'md56_lawOfCosines',
   title:{ ko:'코사인법칙', en:'Law of Cosines', zh:'余弦定理' },
   subtitle:{ ko:'두 변과 낀각으로 나머지 한 변을 구해요', en:'Find the third side from two sides and the included angle', zh:'用两边及夹角求第三边' },

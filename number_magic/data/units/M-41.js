@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-41'] = {
-  id:'M-41', tier:'algebra', level:'41', order:3,
+  id:'M-41', tier:'algebra', level:'43', order:3,
   generator:'md41_geometricSeq',
   title:{ ko:'등비수열', en:'Geometric Sequences', zh:'等比数列' },
   subtitle:{ ko:'같은 수를 계속 곱해가는 수열이에요', en:'A sequence made by multiplying by the same number again and again', zh:'不断乘以同一个数得到的数列' },

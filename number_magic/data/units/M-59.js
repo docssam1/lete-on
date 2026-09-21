@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-59'] = {
-  id:'M-59', tier:'calculus1', level:'45', order:2,
+  id:'M-59', tier:'calculus1', level:'47', order:2,
   generator:'md59_continuityConstant',
   title:{ ko:'연속조건 상수 결정', en:'Continuity — Determining Constants', zh:'连续条件·确定常数' },
   subtitle:{ ko:'끊어지지 않으려면 극한값과 함숫값이 같아야 해요', en:'To avoid a break, the limit must equal the function value', zh:'不断开，就要极限值等于函数值' },

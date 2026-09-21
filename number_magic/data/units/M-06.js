@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-06'] = {
-  id:'M-06', tier:'middle1', level:'30', order:6,
+  id:'M-06', tier:'middle1', level:'30', order:9,
   generator:'md6_intMixed',
   title:{ ko:'정수의 사칙 혼합 계산', en:'Mixed Integer Operations', zh:'整数四则混合运算' },
   subtitle:{ ko:'괄호 → 곱셈·나눗셈 → 덧셈·뺄셈, 순서는 부호가 있어도 그대로', en:'Brackets → × ÷ → + − , the order never changes even with signs', zh:'括号→乘除→加减，顺序不因符号而改变' },

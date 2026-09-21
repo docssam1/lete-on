@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-40'] = {
-  id:'M-40', tier:'algebra', level:'41', order:2,
+  id:'M-40', tier:'algebra', level:'43', order:2,
   lineage:['rainbow-sum'],
   generator:'md40_arithmeticSeq',
   title:{ ko:'등차수열', en:'Arithmetic Sequences', zh:'等差数列' },

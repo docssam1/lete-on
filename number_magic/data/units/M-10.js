@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-10'] = {
-  id:'M-10', tier:'middle2', level:'32', order:10,
+  id:'M-10', tier:'middle2', level:'32', order:1,
   lineage:['place-magic'],
   generator:'md10_expLaw',
   title:{ ko:'지수법칙', en:'Laws of Exponents', zh:'指数法则' },

@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-20'] = {
-  id:'M-20', tier:'middle3', level:'35', order:20,
+  id:'M-20', tier:'middle3', level:'36', order:6,
   generator:'md20_factorBasic',
   title:{ ko:'인수분해 기초', en:'Basic Factoring', zh:'因式分解基础' },
   subtitle:{ ko:'곱셈공식을 거꾸로 — 더해서 b, 곱해서 c가 되는 두 수를 찾아요', en:'Multiplication formulas in reverse — find two numbers that add to b and multiply to c', zh:'把乘法公式反过来——找相加得b、相乘得c的两个数' },

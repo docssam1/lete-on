@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-12'] = {
-  id:'M-12', tier:'middle2', level:'32', order:12,
+  id:'M-12', tier:'middle2', level:'32', order:3,
   generator:'md12_polyAddSub',
   title:{ ko:'다항식의 덧셈과 뺄셈', en:'Adding & Subtracting Polynomials', zh:'多项式的加减法' },
   subtitle:{ ko:'같은 종류끼리만 모아요 — 사과는 사과끼리, x는 x끼리', en:'Only combine what matches — apples with apples, x with x', zh:'只把同类合在一起——苹果归苹果，x归x' },

@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-39'] = {
-  id:'M-39', tier:'algebra', level:'41', order:1,
+  id:'M-39', tier:'algebra', level:'43', order:1,
   generator:'md39_trigSpecialAngle',
   title:{ ko:'삼각함수의 값(특수각)', en:'Trig Values of Special Angles', zh:'特殊角三角函数值' },
   subtitle:{ ko:'0°·30°·45°·60°·90° 다섯 각의 sin·cos·tan을 외워요', en:'Memorize sin·cos·tan at five special angles', zh:'记住五个特殊角的sin·cos·tan' },

@@ -20,6 +20,10 @@ const { R, pick } = NM_RNG;
 /* ── 공용 헬퍼 ── */
 function nzInt(rng, lo, hi){ return R(rng, lo, hi) * pick(rng, [1, -1]); }
 function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }
+/* 계수 ±1 은 감춘다 — `+ 1x` 가 아니라 `+ x` (mid9.js 와 같은 규약) */
+function wrapPlusCoef(n){ return n === 1 ? '+ ' : n === -1 ? '- ' : (n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`); }
+/* 음수만 괄호로 — 풀이 줄의 `-4 + -2` 를 `(-4) + (-2)` 로 */
+function par(n){ return n < 0 ? `(${n})` : `${n}`; }
 function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a || 1; }
 function divisorsOf(n){
   n = Math.abs(n);
@@ -392,6 +396,100 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
    음수 섞임). */
 NM_TGEN['md20_factorBasic'] = function (params, rng) {
   const lv = params.level || 'positive';
+  const mode = params.mode || null;
+
+  /* ── 2026-09-21 추가: 곱셈공식 세 꼴의 나머지 두 개와, 계수가 1이 아닌 식 ──
+     바로 앞 MD19(전개)는 (x+a)(x+b)·(x+a)²·합차 **세 꼴**을 가르치는데 그 역방향인
+     이 생성기는 (x+p)(x+q) **한 꼴만** 만들고 있었다. 거꾸로 읽기를 가르쳐 놓고
+     거꾸로 읽을 거리를 하나만 준 셈이다. 기적의 중학연산이 `07 인수분해` /
+     `08 복잡한 식의 인수분해` 두 단원으로 나누는 자리이기도 하다. */
+
+  /* 완전제곱식 — x²+2ax+a²=(x+a)². 마지막 항은 a²이라 늘 양수이므로 부호로 못 맞힌다:
+     가운데 항이 마지막 항의 제곱근의 2배인지 **확인해야** 풀린다. */
+  if (mode === 'square') {
+    const a = nzInt(rng, 1, 20);
+    return {
+      prompt: {
+        ko: `가운데 항이 마지막 항의 제곱근의 2배면 완전제곱식이에요 — (x+□)² 의 □를 찾아요`,
+        en: `If the middle term is twice the square root of the last, it is a perfect square — find □ in (x+□)²`,
+        zh: `中间项是最后一项平方根的2倍时就是完全平方式——找出(x+□)²中的□`
+      },
+      tex: `x^2 ${wrapPlus(2 * a)}x + ${a * a} = (x + \\square)^2`,
+      answer: a, answerType: 'number', widget: 'numpad', negative: a < 0,
+      solution: [
+        { tex: `${par(a)}^2 = ${a * a}, \\quad 2 \\times ${par(a)} = ${2 * a}` },
+        { tex: `x^2 ${wrapPlus(2 * a)}x + ${a * a} = (x + \\square)^2`, blank: a }
+      ]
+    };
+  }
+
+  /* 합차 — x²−a²=(x+a)(x−a). 두 칸에 같은 수가 들어간다(프롬프트에 명시). */
+  if (mode === 'diff') {
+    const a = R(rng, 2, 30);
+    return {
+      prompt: {
+        ko: `가운데 항이 없고 제곱의 차만 남았으면 합차로 갈라져요 — 두 칸에 같은 수가 들어가요`,
+        en: `No middle term and only a difference of squares — it splits into a sum and a difference. The same number goes in both boxes`,
+        zh: `没有中间项、只剩平方差时就拆成和与差——两个空填同一个数`
+      },
+      tex: `x^2 - ${a * a} = (x + \\square)(x - \\square)`,
+      answer: [a, a], answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `${a * a} = ${a}^2` },
+        { tex: `x^2 - ${a * a} = (x + \\square)(x - \\square)`, blank: [a, a] }
+      ]
+    };
+  }
+
+  /* 공통인수 묶기 — ax²+a(p+q)x+apq = a(x+p)(x+q). 묶어낸 뒤는 레벨 1·2와 같은 손동작. */
+  if (mode === 'common') {
+    const g = pick(rng, [2, 3, 4, 5]);
+    let p = nzInt(rng, 1, 7), q = nzInt(rng, 1, 7), guard = 0;
+    while (p + q === 0 && guard++ < 20) q = nzInt(rng, 1, 7);
+    if (p + q === 0) q = q + 1;                       /* x항 계수 0 은 식에 안 쓴다 */
+    if (p > q) { const t = p; p = q; q = t; }
+    const A = g, B = g * (p + q), C = g * p * q;
+    return {
+      prompt: {
+        ko: `세 항에 공통인수가 있으면 먼저 묶어내요 — 묶어낸 수, 그다음 두 수를 작은 수부터 입력해요`,
+        en: `Pull out the common factor first, then enter it, followed by the two numbers, smaller one first`,
+        zh: `三项有公因数时先提取——先填提取的数，再按从小到大填两个数`
+      },
+      tex: `${A}x^2 ${wrapPlusCoef(B)}x ${wrapPlus(C)} = \\square(x + \\square)(x + \\square)`,
+      answer: [g, p, q], answerType: 'number', widget: 'numpad', negative: (p < 0) || (q < 0),
+      solution: [
+        { tex: `${A}x^2 ${wrapPlusCoef(B)}x ${wrapPlus(C)} = ${g}(x^2 ${wrapPlusCoef(p + q)}x ${wrapPlus(p * q)})` },
+        { tex: `${par(p)} + ${par(q)} = ${p + q}, \\quad ${par(p)} \\times ${par(q)} = ${p * q}` },
+        { tex: `${A}x^2 ${wrapPlusCoef(B)}x ${wrapPlus(C)} = \\square(x + \\square)(x + \\square)`, blank: [g, p, q] }
+      ]
+    };
+  }
+
+  /* 십자곱셈 — (mx+p)(x+q) = mx² + (mq+p)x + pq. 공통인수가 없으므로 묶어낼 수 없고,
+     대각선으로 곱해 더해야 풀린다. m과 p가 서로소여야 첫 괄호가 더 쪼개지지 않는다. */
+  if (mode === 'cross') {
+    let m = 2, p = 1, q = 1, guard = 0;
+    do {
+      m = pick(rng, [2, 3, 5]);
+      p = nzInt(rng, 1, 7);
+      q = nzInt(rng, 1, 7);
+    } while ((gcd(m, p) !== 1 || m * q + p === 0) && guard++ < 200);
+    if (gcd(m, p) !== 1 || m * q + p === 0) { m = 2; p = 3; q = 1; }   /* 안전망: 2x²+5x+3 */
+    const A = m, B = m * q + p, C = p * q;
+    return {
+      prompt: {
+        ko: `공통인수가 없으면 대각선으로 곱해 더해요 — 앞 괄호의 계수와 상수, 그다음 뒤 괄호의 상수를 입력해요`,
+        en: `With no common factor, cross-multiply and add — enter the first bracket's coefficient and constant, then the second bracket's constant`,
+        zh: `没有公因数时就交叉相乘再相加——先填前括号的系数和常数，再填后括号的常数`
+      },
+      tex: `${A}x^2 ${wrapPlusCoef(B)}x ${wrapPlus(C)} = (\\square x + \\square)(x + \\square)`,
+      answer: [m, p, q], answerType: 'number', widget: 'numpad', negative: (p < 0) || (q < 0),
+      solution: [
+        { tex: `${m} \\times ${par(q)} + ${par(p)} = ${B}, \\quad ${par(p)} \\times ${par(q)} = ${C}` },
+        { tex: `${A}x^2 ${wrapPlusCoef(B)}x ${wrapPlus(C)} = (\\square x + \\square)(x + \\square)`, blank: [m, p, q] }
+      ]
+    };
+  }
 
   let p, q;
   if (lv === 'positive') {

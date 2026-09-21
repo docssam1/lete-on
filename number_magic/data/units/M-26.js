@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-26'] = {
-  id:'M-26', tier:'highmath1', level:'37', order:26,
+  id:'M-26', tier:'highmath1', level:'39', order:26,
   generator:'md26_discriminant',
   title:{ ko:'이차방정식의 판별식', en:'The Discriminant', zh:'二次方程的判别式' },
   subtitle:{ ko:'근을 구하기 전에 몇 개인지 미리 아는 정찰병', en:'The scout that tells you the root count before you find them', zh:'求根之前先知道有几个根的侦察兵' },

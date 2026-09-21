@@ -45,7 +45,7 @@ window.NM_STAGES = [
     symbolNote:{ko:'연산 기호는 아직 없습니다. + 는 다음 단계 과정 1에서 처음 만납니다.',
       en:'No operation symbols yet. The + sign is first met in Course 1 of the next stage.',
       zh:'还没有运算符号。＋在下一阶段的第1课程首次出现。'},
-    meta:{ko:'과정 0 · 주 1회 기준 19주 · 유닛 15',en:'Course 0 · 19 weeks at one sheet a week · 15 units',zh:'课程0 · 每周1次约19周 · 15个单元'}
+    meta:{ko:'과정 0 · 주 2회 기준 13주(주 1회 19주) · 유닛 15',en:'Course 0 · 13 weeks at two sheets a week (19 at one) · 15 units',zh:'课程0 · 每周2次约13周(每周1次19周) · 15个单元'}
   },
   {
     key:'sprout', icon:'🌱', accent:'#16417C', status:'live',
@@ -69,7 +69,7 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.',
       en:'The plan runs ahead of school, so times tables already sit in this stage.',
       zh:'编排比学校进度提前，所以乘法口诀已经在这一阶段。'},
-    meta:{ko:'과정 1~10 · 주 1회 기준 78주',en:'Courses 1–10 · 78 weeks at one sheet a week',zh:'课程1~10 · 每周1次约78周'}
+    meta:{ko:'과정 1~10 · 주 2회 기준 56주(주 1회 78주)',en:'Courses 1–10 · 56 weeks at two sheets a week (78 at one)',zh:'课程1~10 · 每周2次约56周(每周1次78周)'}
   },
   {
     key:'leap', icon:'🚀', accent:'#16417C', status:'live',
@@ -89,7 +89,7 @@ window.NM_STAGES = [
     symbols:[
       {sym:'a/b', tr:{ko:'b로 나눈 것 중 a — 분수 막대 그림이 기호보다 먼저입니다',en:'a of b equal parts — the fraction bar picture comes before the symbol',zh:'分成b份中的a份——分数条的图先于符号'}},
       {sym:'( )', tr:{ko:'먼저 계산할 묶음',en:'the bundle to compute first',zh:'先算的那一组'}}],
-    meta:{ko:'과정 11~16 · 주 1회 기준 32주',en:'Courses 11–16 · 32 weeks at one sheet a week',zh:'课程11~16 · 每周1次约32周'}
+    meta:{ko:'과정 11~16 · 주 2회 기준 24주(주 1회 32주)',en:'Courses 11–16 · 24 weeks at two sheets a week (32 at one)',zh:'课程11~16 · 每周2次约24周(每周1次32周)'}
   },
   {
     key:'mastery', icon:'👑', accent:'#0E2C57', status:'live',
@@ -113,7 +113,7 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도로는 초4~5에 나오는 내용을 여기서 만납니다.',
       en:'In school terms this covers Grade 4–5 material.',
       zh:'按学校进度，这里学的是小学四~五年级的内容。'},
-    meta:{ko:'과정 17~25 · 주 1회 기준 52주 · 학교로는 초4~5 내용',en:'Courses 17–25 · 52 weeks · the end of the arithmetic track',zh:'课程17~25 · 约52周 · 运算段的终点'}
+    meta:{ko:'과정 17~25 · 주 2회 기준 39주(주 1회 52주) · 학교로는 초4~5 내용',en:'Courses 17–25 · 39 weeks at two sheets a week (52 at one) · the end of the arithmetic track',zh:'课程17~25 · 每周2次约39周(每周1次52周) · 运算段的终点'}
   },
   {
     key:'tower', icon:'🗼', accent:'#C9A063', status:'live',
@@ -134,18 +134,18 @@ window.NM_STAGES = [
     freeNote:{ko:'권유일 뿐 잠금이 아닙니다. 건너뛰고 중학교로 가도 되고, 나중에 돌아와도 됩니다.',
       en:'A suggestion, never a lock. Skip to middle school and come back later if you like.',
       zh:'只是建议，不是锁。可以跳到初中，以后再回来。'},
-    meta:{ko:'과정 26~28 · 주 1회 기준 32주',en:'Courses 26–28 · 32 weeks',zh:'课程26~28 · 约32周'}
+    meta:{ko:'과정 26~28 · 주 2회 기준 22주(주 1회 32주)',en:'Courses 26–28 · 22 weeks at two sheets a week (32 at one)',zh:'课程26~28 · 每周2次约22周(每周1次32周)'}
   },
   {
     key:'middle', icon:'🔤', accent:'#0E2C57', status:'live',
     name:{ko:'중학교 — 기호가 바뀌는 자리',en:'Middle School — where the symbols change',zh:'初中——符号改变的地方'},
     band:{ko:'중학교 1~3학년',en:'Grades 7–9',zh:'初中一~三年级'},
-    chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W9-1','W9-2','W10-1','LAB-NUMLINE','W10-2'],
-    tiers:['middle1','middle2','middle3'], courses:{from:29,to:35}, weeks:50,
+    chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W8-6','W8-7','W9-1','W9-2','W9-3','W9-4','W10-1','LAB-NUMLINE','W10-2','W10-3','W10-4'],
+    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:92,
     learn:{
-      ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 제곱근의 세계, 곱셈공식과 인수분해.',
-      en:'Integers and rationals, the rules of sign, letters and expressions, equations and proportion, exponents and monomials, polynomials, square roots, product formulas and factorisation.',
-      zh:'整数与有理数、符号法则、字母与式、方程与比例、指数与单项式、多项式、平方根、乘法公式与因式分解。'},
+      ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 연립방정식과 일차부등식, 일차함수, 제곱근의 세계, 인수분해와 이차방정식, 이차함수의 꼭짓점.',
+      en:'Integers and rationals, the rules of sign, letters and expressions, equations and proportion, exponents and monomials, polynomials, systems and linear inequalities, linear functions, square roots, factorisation and quadratic equations, the vertex of a parabola.',
+      zh:'整数与有理数、符号法则、字母与式、方程与比例、指数与单项式、多项式、方程组与一次不等式、一次函数、平方根、因式分解与二次方程、抛物线的顶点。'},
     how:{
       ko:'기호가 바뀌는 순간이 진짜 고비라, 순서를 말 → 그림 → 내 표기 → 표준 기호로 고정합니다. 음수는 해발과 해저로, √는 땅 위의 9와 뿌리의 3 그림으로 먼저 만납니다. 초등에서 수로 하던 쪼개기가 여기서 문자로 옮겨 갑니다.',
       en:'The real hurdle is the moment the symbols change, so the order is fixed: words → picture → my own notation → the standard symbol. Negatives arrive as altitude and depth, √ as the 9 above ground and the 3 in the root. The splitting done with numbers now moves into letters.',
@@ -155,14 +155,14 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~35 · 주 1회 기준 50주 · 실험실 2',en:'Courses 29–35 · 50 weeks · 2 labs',zh:'课程29~35 · 约50周 · 2个实验室'}
+    meta:{ko:'과정 29~37 · 주 2회 기준 65주(주 1회 92주) · 실험실 2',en:'Courses 29–37 · 65 weeks at two sheets a week (92 at one) · 2 labs',zh:'课程29~37 · 每周2次约65周(每周1次92周) · 2个实验室'}
   },
   {
     key:'high', icon:'∫', accent:'#0E2C57', status:'partial',
     name:{ko:'고등 — 새 기호는 아는 마법의 새 이름표',en:'High School — a new symbol is a new label on a magic you know',zh:'高中——新符号只是熟悉魔法的新标签'},
     band:{ko:'공통수학1·2 · 대수 · 미적분Ⅰ',en:'Common Math 1·2 · Algebra · Calculus I',zh:'共同数学1·2 · 代数 · 微积分Ⅰ'},
     chapters:['W11-1','W11-2','W12-1','W12-2','W13-1','W13-2','W13-3','W13-4','W13-5','W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:36,to:45}, weeks:70,
+    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:38,to:47}, weeks:70,
     learn:{
       ko:'다항식과 나머지정리, 이차방정식, 점과 직선·원, 지수와 로그, 삼각함수, 수열과 Σ, 극한과 미분, 접선과 적분.',
       en:'Polynomials and the remainder theorem, quadratic equations, points, lines and circles, exponents and logarithms, trigonometric functions, sequences and Σ, limits and differentiation, tangents and integration.',
@@ -176,7 +176,7 @@ window.NM_STAGES = [
       {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}},
       {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 36~45 · 주 1회 기준 70주 · 실험실 2',en:'Courses 36–45 · 70 weeks · 2 labs',zh:'课程36~45 · 约70周 · 2个实验室'}
+    meta:{ko:'과정 38~47 · 주 2회 기준 49주(주 1회 70주) · 실험실 2',en:'Courses 38–47 · 49 weeks at two sheets a week (70 at one) · 2 labs',zh:'课程38~47 · 每周2次约49周(每周1次70周) · 2个实验室'}
   }
 ];
 

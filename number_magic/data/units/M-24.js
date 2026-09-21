@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-24'] = {
-  id:'M-24', tier:'highmath1', level:'37', order:24,
+  id:'M-24', tier:'highmath1', level:'39', order:24,
   generator:'md24_remainderTheorem',
   title:{ ko:'나머지정리', en:'The Remainder Theorem', zh:'余数定理' },
   subtitle:{ ko:'나눗셈을 다 하지 않아도 대입 한 번으로 나머지를 알아요', en:'One substitution finds the remainder — no long division needed', zh:'不用做完整除法，代入一次就知道余数' },

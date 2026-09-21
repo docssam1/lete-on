@@ -25,7 +25,7 @@ export function pageHome($app, store, teacher) {
   const nx = nextUnit(store), nxs = nx && stateOf(store, nx.id);
   const go = nx || SEMS.flatMap((s) => s.units).find((u) => READY[u.id]);
   const cta = !nx ? '다시 보기' : nxs.kind === 'doing' ? '이어서 하기' : '탐구 시작하기';
-  $app.innerHTML = `<div class="lab-bg" aria-hidden="true"></div><header class="top"><div class="wrap"><h1>docssam 과학 탐구 랩</h1></div></header>
+  $app.innerHTML = `<div class="lab-bg" aria-hidden="true"></div><header class="top"><div class="wrap"><h1>docssam 과학 탐구 랩</h1><a class="intro-link" href="../intro/">교재 소개 ›</a></div></header>
     <main class="wrap home">
       <div id="t"></div>
       ${SEMS.map((s) => {

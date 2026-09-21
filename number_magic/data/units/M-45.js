@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-45'] = {
-  id:'M-45', tier:'calculus1', level:'43', order:1,
+  id:'M-45', tier:'calculus1', level:'45', order:1,
   generator:'md45_tangentLine',
   title:{ ko:'접선의 기울기와 방정식', en:'Tangent Line Slope & Equation', zh:'切线的斜率与方程' },
   subtitle:{ ko:'곡선에 살짝 닿는 직선의 기울기는 도함수예요', en:'The slope of a line just touching a curve is its derivative', zh:'轻轻碰到曲线的直线，其斜率就是导数' },

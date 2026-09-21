@@ -219,6 +219,120 @@ sweep('AD10', 1, chainVerify(10, false, 3));
 sweep('AD10', 2, chainVerify(20, true, 3));
 sweep('AD10', 3, chainVerify(20, true, 4));
 
+
+/* ── 2026-09-21 추가 — 인수분해 4꼴(MD20 L3~L6)과 근의 공식(MD66 L4) ──
+   tex 에 적힌 식을 **되곱해서** 원래 식이 나오는지 본다. 인수분해는 눈으로는
+   맞아 보여도 부호 하나로 무너지고, 근의 공식은 D 를 한 번만 잘못 빼도
+   4000건이 전부 틀린다 — 손으로 몇 개 보는 것으로는 안 된다. */
+
+/* `x^2 + 14x + 49` 꼴 tex 에서 [a,b,c] 를 읽는다(a 생략 = 1). */
+function readQuad(tex) {
+  const head = tex.split('=')[0].replace(/\\s+/g, ' ').trim();
+  const mA = /^(-?\d*)x\^2/.exec(head);
+  if (!mA) return null;
+  const a = mA[1] === '' ? 1 : mA[1] === '-' ? -1 : parseInt(mA[1], 10);
+  const mB = /x\^2 ([+-]) (\d*)x/.exec(head);
+  const b = mB ? (mB[1] === '-' ? -1 : 1) * (mB[2] === '' ? 1 : parseInt(mB[2], 10)) : 0;
+  const mC = /([+-]) (\d+)\s*$/.exec(head);
+  const c = mC ? (mC[1] === '-' ? -1 : 1) * parseInt(mC[2], 10) : 0;
+  return [a, b, c];
+}
+
+sweep('MD20', 3, p => {                       /* 완전제곱식 x²+2ax+a² = (x+a)² */
+  const q = readQuad(p.tex); if (!q) return 'tex 를 못 읽음';
+  const a = p.answer;
+  if (typeof a !== 'number') return '답이 한 칸이 아님';
+  if (q[0] !== 1) return `x² 계수가 ${q[0]}`;
+  if (2 * a !== q[1]) return `2×(${a})=${2 * a} ≠ ${q[1]}`;
+  if (a * a !== q[2]) return `(${a})²=${a * a} ≠ ${q[2]}`;
+  return null;
+});
+
+sweep('MD20', 4, p => {                       /* 합차 x²−a² = (x+a)(x−a) */
+  const q = readQuad(p.tex); if (!q) return 'tex 를 못 읽음';
+  const [a1, a2] = p.answer;
+  if (a1 !== a2) return `두 칸이 달라야 할 이유가 없다: ${a1}, ${a2}`;
+  if (q[1] !== 0) return `가운데 항이 남아 있다: ${q[1]}`;
+  if (q[2] !== -a1 * a1) return `−(${a1})²=${-a1 * a1} ≠ ${q[2]}`;
+  if (a1 < 2) return `a=${a1} 은 너무 작다`;
+  return null;
+});
+
+sweep('MD20', 5, p => {                       /* 공통인수 g(x+p)(x+q) */
+  const q = readQuad(p.tex); if (!q) return 'tex 를 못 읽음';
+  const [g, P, Q] = p.answer;
+  if (g < 2) return `묶어낸 수가 ${g}`;
+  if (P > Q) return `작은 수부터가 아님: ${P}, ${Q}`;
+  if (q[0] !== g) return `x² 계수 ${q[0]} ≠ ${g}`;
+  if (q[1] !== g * (P + Q)) return `x 계수 ${q[1]} ≠ ${g * (P + Q)}`;
+  if (q[2] !== g * P * Q) return `상수항 ${q[2]} ≠ ${g * P * Q}`;
+  return null;
+});
+
+sweep('MD20', 6, p => {                       /* 십자곱셈 (mx+P)(x+Q) */
+  const q = readQuad(p.tex); if (!q) return 'tex 를 못 읽음';
+  const [m, P, Q] = p.answer;
+  if (m < 2) return `앞 계수가 ${m}`;
+  if (q[0] !== m) return `x² 계수 ${q[0]} ≠ ${m}`;
+  if (q[1] !== m * Q + P) return `x 계수 ${q[1]} ≠ ${m * Q + P}`;
+  if (q[2] !== P * Q) return `상수항 ${q[2]} ≠ ${P * Q}`;
+  if (gcd(gcd(q[0], q[1]), q[2]) !== 1) return `세 항에 공통인수가 있다 — 묶어내면 풀리므로 십자곱셈이 아니다`;
+  if (gcd(m, P) !== 1) return `앞 괄호가 더 쪼개진다: gcd(${m},${P})`;
+  return null;
+});
+
+sweep('MD66', 4, p => {                       /* 근의 공식 — 답은 [D, 2a] */
+  const q = readQuad(p.tex); if (!q) return 'tex 를 못 읽음';
+  const [a, b, c] = q;
+  const [D, den] = p.answer;
+  if (b === 0 || c === 0) return `빠진 항이 있다: b=${b}, c=${c}`;
+  if (D !== b * b - 4 * a * c) return `b²−4ac=${b * b - 4 * a * c} ≠ ${D}`;
+  if (den !== 2 * a) return `2a=${2 * a} ≠ ${den}`;
+  if (D <= 0) return `D=${D} — 실근이 없어 ±√D 를 물을 수 없다`;
+  if (Number.isInteger(Math.sqrt(D))) return `D=${D} 가 제곱수 — 인수분해로 풀리는 식이라 공식을 쓸 이유가 없다`;
+  /* 분자에 적힌 −b 가 실제로 −b 인가 */
+  const mNum = /dfrac\{(-?\d+) \\pm/.exec(p.tex);
+  if (!mNum) return '분자를 못 읽음';
+  if (parseInt(mNum[1], 10) !== -b) return `분자 ${mNum[1]} ≠ −b(${-b})`;
+  return null;
+});
+
+
+/* ── 2026-09-21 추가 — 일차함수 그래프의 두 점(MD74 L1·L3) ──
+   tex 의 y=ax+b 를 읽어 답 [y1,y2] 가 실제로 그 직선 위의 점인지 되대입해 본다. */
+function readLine(tex) {
+  const head = tex.split('\\Rightarrow')[0];
+  const m = /y = (-?\d*)x ([+-]) (\d+)/.exec(head.replace(/\s+/g, ' '));
+  if (!m) return null;
+  const a = m[1] === '' ? 1 : m[1] === '-' ? -1 : parseInt(m[1], 10);
+  const b = (m[2] === '-' ? -1 : 1) * parseInt(m[3], 10);
+  return [a, b];
+}
+sweep('MD74', 1, p => {
+  const L = readLine(p.tex); if (!L) return 'tex 를 못 읽음';
+  const xs = [...p.tex.matchAll(/\((-?\d+),\\, \\square\)/g)].map(m => parseInt(m[1], 10));
+  if (xs.length !== 2) return `x 값이 ${xs.length}개`;
+  if (xs[0] === xs[1]) return `두 x 가 같다: ${xs[0]}`;
+  const [y1, y2] = p.answer;
+  if (y1 !== L[0] * xs[0] + L[1]) return `(${xs[0]}, ${y1}) 이 직선 위에 없다`;
+  if (y2 !== L[0] * xs[1] + L[1]) return `(${xs[1]}, ${y2}) 이 직선 위에 없다`;
+  return null;
+});
+sweep('MD74', 3, p => {
+  const L = readLine(p.tex); if (!L) return 'tex 를 못 읽음';
+  const [b, y1] = p.answer;
+  if (b !== L[1]) return `y절편 ${b} ≠ ${L[1]}`;
+  if (y1 !== L[0] + L[1]) return `(1, ${y1}) 이 직선 위에 없다`;
+  return null;
+});
+sweep('MD74', 2, p => {
+  const L = readLine(p.tex); if (!L) return 'tex 를 못 읽음';
+  const [xi, b] = p.answer;
+  if (b !== L[1]) return `y절편 ${b} ≠ ${L[1]}`;
+  if (L[0] * xi + L[1] !== 0) return `x절편 ${xi} 에서 y ≠ 0`;
+  return null;
+});
+
 console.log(`\n검산한 문항: ${checks}건`);
 if (fails.length) {
   console.log(`\n[FAIL] ${fails.length}건`);

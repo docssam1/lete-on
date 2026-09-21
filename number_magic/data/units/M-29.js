@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-29'] = {
-  id:'M-29', tier:'highmath1', level:'37', order:29,
+  id:'M-29', tier:'highmath1', level:'39', order:29,
   generator:'md29_quadIneq',
   title:{ ko:'이차부등식', en:'Quadratic Inequalities', zh:'二次不等式' },
   subtitle:{ ko:'두 인수의 부호가 다를 때만 곱이 음수가 돼요', en:'The product is negative only when the two factors disagree in sign', zh:'只有两因式符号相反时乘积才是负' },

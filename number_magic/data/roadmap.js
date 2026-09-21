@@ -316,9 +316,9 @@ window.NM_ROADMAP = {
     {
       id:'W8-1', icon:'🌋', grade:'중1',
       edu:{ko:'중1 정수의 세계',en:'G7 World of Integers',zh:'初一整数的世界'},
-      theme:{ko:'W8-1 · 정수의 세계 — 개념·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept & ± ',zh:'W8-1·整数的世界——概念与加减法'},
-      units:['M-01','M-02','M-03'],
-      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요!',en:'Above and below sea level, points scored and lost — naming the two directions from 0!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字！'}
+      theme:{ko:'W8-1 · 정수의 세계 — 개념·수직선 위의 자리·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept, Places on the Line, ±',zh:'W8-1·整数的世界——概念·数轴上的位置·加减法'},
+      units:['M-01','M-82','M-02','M-03'],
+      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요! 그 이름들이 수직선 위에 제 자리를 얻어요.',en:'Above and below sea level, points scored and lost — naming the two directions from 0, and giving each name a place on the line!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字，再让每个名字在数轴上有自己的位置！'}
     },
     {
       id:'W8-2', icon:'🎲', grade:'중1',
@@ -354,6 +354,23 @@ window.NM_ROADMAP = {
       units:['M-50','M-51'],
       tip:{ko:'등식의 성질은 저울과 같아요 — 양쪽에 같은 걸 더하거나 빼거나 곱하거나 나눠도 저울은 그대로 균형을 유지해요!',en:'The properties of equality are like a balance scale — add, subtract, multiply, or divide both sides by the same thing and it stays balanced!',zh:'等式的性质就像天平——两边同时加、减、乘或除以相同的数，天平依然平衡！'}
     },
+    {
+      /* W8-6·W8-7 신설(2026-09-21, 원장 "일차방정식의 활용도 거리·속력·시간, 원가·정가 등
+         놓치지 마", "정비례 반비례는") — 푸는 법(M-50) 다음에 쓰는 법이, 값(M-51) 다음에
+         그래프가 와야 한다. 둘 다 통째로 비어 있던 자리다. */
+      id:'W8-6', icon:'🗺️', grade:'중1',
+      edu:{ko:'중1 일차방정식의 활용',en:'G7 Linear Equations in Use',zh:'初一一元一次方程的应用'},
+      theme:{ko:'W8-6 · 일차방정식의 활용 — 수·나이·거리속력시간·원가정가',en:'W8-6 · Linear Equations in Use — Numbers, Ages, Speed, Price',zh:'W8-6·一元一次方程的应用——数·年龄·路程速度时间·成本定价'},
+      units:['M-70'],
+      tip:{ko:'구하려는 것을 x로 놓고 문장을 그대로 식으로 옮겨요 — 거리=속력×시간, 정가=원가×(1+이익률)!',en:'Let x be what you want and turn the sentences into an equation - distance = speed x time, price = cost x (1 + markup)!',zh:'把要求的量设为x，把句子直接写成算式——路程=速度×时间，定价=成本×(1+利润率)！'}
+    },
+    {
+      id:'W8-7', icon:'📍', grade:'중1',
+      edu:{ko:'중1 좌표평면과 비례 그래프',en:'G7 Coordinates & Proportion Graphs',zh:'初一坐标平面与比例图象'},
+      theme:{ko:'W8-7 · 좌표평면 — 사분면·대칭점·정비례와 반비례의 그래프',en:'W8-7 · The Coordinate Plane — Quadrants, Reflections, Graphs of Proportion',zh:'W8-7·坐标平面——象限·对称点·正比例与反比例的图象'},
+      units:['M-68','M-69'],
+      tip:{ko:'가로 먼저 세로 나중 — 정비례는 원점을 지나는 직선, 반비례는 두 가지로 갈라진 곡선이에요!',en:'Across first, up second - direct proportion draws a line through the origin, inverse a curve in two branches!',zh:'先横后纵——正比例是过原点的直线，反比例是分成两支的曲线！'}
+    },
 
     /* ─────── W9 : 식의 탑 — 중2 식의 계산 (2026-08-25) ─────────
        MASTER-ROADMAP.md §3 "W9 식의 탑(중2)" 스토리 스테이지. W8(음수의
@@ -371,6 +388,25 @@ window.NM_ROADMAP = {
       theme:{ko:'W9-2 · 다항식과 등식 — 전개·이항 감각',en:'W9-2 · Polynomials & Equations — Expanding & Transposing',zh:'W9-2·多项式与等式——展开·移项感'},
       units:['M-13','M-14'],
       tip:{ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱해요 — 절대 빠뜨리지 마요!',en:'The one outside the brackets visits every term inside, one by one — never skip one!',zh:'括号外的那个乘遍括号里每一项——千万别漏掉！'}
+    },
+    {
+      /* W9-3 신설(2026-09-20, 중등 교과 연산 3차) — 중2 교과 연산의 기둥 셋이
+         로드맵에 아예 없었다(연립방정식·일차부등식·일차함수). 원장 지시
+         "교과연산과 창의연산이 같이 되어야 한다"의 중2 쪽 답이다. */
+      id:'W9-3', icon:'🔗', grade:'중2',
+      edu:{ko:'중2 부등식과 연립방정식',en:'G8 Inequalities & Systems',zh:'初二不等式与方程组'},
+      theme:{ko:'W9-3 · 부등식과 연립방정식 — 범위·미지수 둘·활용',en:'W9-3 · Inequalities & Systems — Ranges, Two Unknowns, Applications',zh:'W9-3·不等式与方程组——范围·两个未知数·应用'},
+      units:['M-64','M-71','M-63','M-72'],
+      tip:{ko:'미지수가 둘이면 식도 둘 — 한 문자를 없애면 이미 아는 일차방정식으로 돌아와요!',en:'Two unknowns need two equations — remove one letter and you are back to a linear equation you already know!',zh:'两个未知数就要两个方程——消去一个字母，就回到你已经会的一元一次方程！'}
+    },
+    {
+      /* W9-4 신설(2026-09-21, 원장 "어떻게 일차함수 그래프를 한 번에 배워") — 일차함수를
+         한 마디에 뭉쳐 두었던 것을 교과 차시대로 다섯으로 편다. */
+      id:'W9-4', icon:'📈', grade:'중2',
+      edu:{ko:'중2 일차함수',en:'G8 Linear Functions',zh:'初二一次函数'},
+      theme:{ko:'W9-4 · 일차함수 — 함숫값·평행이동·절편·교점·활용',en:'W9-4 · Linear Functions — Values, Translation, Intercepts, Crossings, Uses',zh:'W9-4·一次函数——函数值·平移·截距·交点·应用'},
+      units:['M-73','M-74','M-65','M-75','M-76'],
+      tip:{ko:'f(x)는 x를 넣으면 나오는 값 — 처음 값이 y절편, 한 칸마다 변하는 양이 기울기예요!',en:'f(x) is what comes out when x goes in - the starting value is the y-intercept and the change per step is the slope!',zh:'f(x)是代入x得到的值——起始值是y截距，每一步的变化量是斜率！'}
     },
 
     /* ─────── W10 : 근호의 산맥 — 중3 제곱근과 실수 · 다항식의 곱셈과
@@ -399,6 +435,24 @@ window.NM_ROADMAP = {
       theme:{ko:'W10-2 · 곱셈공식과 인수분해 — 전개와 거꾸로 읽기',en:'W10-2 · Formulas & Factoring — Expanding & Reading Backward',zh:'W10-2·乘法公式与因式分解——展开与反着读'},
       units:['M-18','M-19','M-20'],
       tip:{ko:'무지개 덧셈법에서 시작된 여정의 마지막 걸음 — 곱셈공식을 거꾸로 읽으면 인수분해가 돼요!',en:'The final step of a journey that began with rainbow addition — read the multiplication formula backward and you get factoring!',zh:'从彩虹加法法出发的旅程终点——把乘法公式反着读就是因式分解！'}
+    },
+    {
+      /* W10-3 신설(2026-09-20, 중등 교과 연산 3차) — 인수분해까지 와 놓고
+         "그 식을 =0으로 놓는" 한 걸음이 없었다. 중3 교과 연산의 마지막 두 기둥. */
+      id:'W10-3', icon:'🎯', grade:'중3',
+      edu:{ko:'중3 이차방정식과 활용',en:'G9 Quadratic Equations & Their Uses',zh:'初三二次方程与应用'},
+      theme:{ko:'W10-3 · 이차방정식 — 근을 읽고 활용하기',en:'W10-3 · Quadratic Equations — Reading the Roots and Using Them',zh:'W10-3·二次方程——读出根并应用'},
+      units:['M-66','M-77'],
+      tip:{ko:'곱해서 0이면 둘 중 하나가 0 — 인수분해한 식을 =0으로 놓는 순간 근이 그냥 보여요!',en:'A product of zero means one factor is zero — set the factored form to zero and the roots are simply there to read!',zh:'乘积为0就有一个因式为0——把分解好的式子令为0，根就直接看出来了！'}
+    },
+    {
+      /* W10-4 신설(2026-09-21, 원장 "이차함수도 세부화해야지") — 꼭짓점 하나로 뭉쳐 있던
+         것을 y=ax² → 평행이동 → 꼭짓점 → 최대최소·교점 → 식 구하기 다섯으로 편다. */
+      id:'W10-4', icon:'🥣', grade:'중3',
+      edu:{ko:'중3 이차함수',en:'G9 Quadratic Functions',zh:'初三二次函数'},
+      theme:{ko:'W10-4 · 이차함수 — y=ax²·평행이동·최대최소·축과의 교점·식 구하기',en:'W10-4 · Quadratic Functions — y=ax2, Translation, Extremes, Crossings, Building the Formula',zh:'W10-4·二次函数——y=ax²·平移·最值·轴交点·求解析式'},
+      units:['M-78','M-79','M-67','M-80','M-81'],
+      tip:{ko:'위아래는 뒤에 그대로, 좌우는 괄호 안에 반대 부호로 — 꼭짓점의 y가 최댓값·최솟값이에요!',en:'Up and down at the end as they read, sideways inside the bracket with the sign flipped - and the y at the vertex is the extreme!',zh:'上下照原样加在后面，左右进括号并反号——顶点的y就是最值！'}
     },
 
     /* ─────── W11 : 다항식의 탑 — 공통수학1 (2026-08-25) ─────────

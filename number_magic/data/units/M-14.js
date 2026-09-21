@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-14'] = {
-  id:'M-14', tier:'middle2', level:'33', order:14,
+  id:'M-14', tier:'middle2', level:'33', order:5,
   generator:'md14_isolateX',
   title:{ ko:'등식의 변형', en:'Transforming Equations', zh:'等式的变形' },
   subtitle:{ ko:'등호를 건너가면 부호가 옷을 갈아입어요', en:'Cross the equals sign and the sign changes its coat', zh:'跨过等号，符号就要换件衣服' },

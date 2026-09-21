@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-36'] = {
-  id:'M-36', tier:'algebra', level:'40', order:1,
+  id:'M-36', tier:'algebra', level:'42', order:1,
   generator:'md36_rationalExponent',
   title:{ ko:'거듭제곱근과 유리수 지수', en:'Radicals & Rational Exponents', zh:'方根与有理数指数' },
   subtitle:{ ko:'근호 속 지수를 분수 지수로 옮겨 적어요', en:'Rewrite a radical\'s exponent as a fraction', zh:'把根号里的指数写成分数指数' },

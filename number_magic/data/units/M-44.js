@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-44'] = {
-  id:'M-44', tier:'calculus1', level:'42', order:2,
+  id:'M-44', tier:'calculus1', level:'44', order:2,
   generator:'md44_derivative',
   title:{ ko:'미분계수와 도함수', en:'Derivatives', zh:'导数与导函数' },
   subtitle:{ ko:'순간의 기울기를 구하는 새 기호, f′과 d/dx', en:'f′ and d/dx — new symbols for the instantaneous slope', zh:'求瞬时斜率的新符号——f′和d/dx' },

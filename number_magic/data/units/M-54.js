@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-54'] = {
-  id:'M-54', tier:'algebra', level:'44', order:3,
+  id:'M-54', tier:'algebra', level:'46', order:3,
   generator:'md54_expLogInequality',
   title:{ ko:'지수·로그 부등식', en:'Exponential & Log Inequalities', zh:'指数·对数不等式' },
   subtitle:{ ko:'증가함수는 부등호 방향을 그대로 넘겨줘요', en:'An increasing function passes the inequality direction straight through', zh:'增函数会原样传递不等号方向' },

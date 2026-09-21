@@ -21,7 +21,7 @@ const M=w.NM_MAGAZINE;
 if(!M||!Array.isArray(M.articles)){console.error('NM_MAGAZINE.articles 를 읽지 못했습니다.');process.exit(2);}
 
 const PALETTE=new Set(['#1a2233','#16417c','#0e2c57','#c9a063','#f5d98b','#d9534f','#2e9e6b',
-  '#8b6bc7','#fdf6e3','#f1f0ec','#8a6d46','#4a5468','#b0b7c3','#fdfaf3','#7ea4d6','#5b8dd9','#fff','#ffffff']);
+  '#8b6bc7','#fdf6e3','#f1f0ec','#8a6d46','#4a5468','#b0b7c3','#fdfaf3','#7ea4d6','#5b8dd9','#dfe7db','#fff','#ffffff']);
 const HANGUL=/[가-힣]/;
 const AGES=['young','mid','senior'];
 let fails=0, warns=0;

@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-15'] = {
-  id:'M-15', tier:'middle3', level:'34', order:15,
+  id:'M-15', tier:'middle3', level:'35', order:1,
   generator:'md15_sqrtValue',
   title:{ ko:'제곱근의 값', en:'Values of Square Roots', zh:'平方根的值' },
   subtitle:{ ko:'제곱해서 그 수가 되는 수를 거꾸로 찾아요', en:'Work backward to find the number whose square gives that value', zh:'反过来找出平方后等于那个数的数' },

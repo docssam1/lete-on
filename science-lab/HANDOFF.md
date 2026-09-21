@@ -25,6 +25,53 @@
 - **⚠ 시작할 때 `git log --oneline -5 origin/<브랜치>`부터 볼 것.** 이 세션이 컨테이너 재시작 뒤 같은 작업 지시서를 두 번 돌려 유사문항 80개를 중복 작성했다(6차 기록 참조).
 - DESIGN.md는 v2 구현으로 사실상 승인됨.
 
+## 진행 기록 — 2026-09-21 16차 (Cowork, Fable): 오개념 진단·분석·처방 (s41-u03 시범)
+- 사용자 요구: 영재원식 서술 채점이 아니라 **개념 이해 단계에서 잘못 고른 것을 기록**해 두었다가 진단·분석·처방. 형성평가 오답 → 유사 유형 학습. 필즈대비(`fields-classic`) 방식 참고. 글 넘침·줄바꿈 정리, 중요한 것에 색·굵기.
+- **오개념표** `data/units/s41-u03.misc.js`: 오개념 16개(M01~M16, `label`·`fix`(HTML, 핵심어 `<b>`)·`element`·`terms`) + `distractors`(문항 보기 번호→M, 선택형 49문항 전부) + `typed`(단답형 36문항: `pats` 정규식 → M, 없으면 `any`) + `cloze`(개념 카드 b01~b04를 **낱말 칩**으로) + `cells`(표 채우기) + `bookChips`(교재 개념 정리 빈칸 25개 → 칩 보기·오개념) + `remedy`(오개념별 다시 볼 5E 단계). 정답 보기는 적지 않는다. 검증 스크립트로 정답=오답 매핑·누락 0 확인.
+- **기록 모듈** `v2/progress.js`: `record()`가 문항·단계(`concept/mini/elaborate/evaluate/sub/remedy/book/book-concept`)·고른 답·오개념 코드를 `localStorage sciLab.log`에 쌓는다(단원당 600줄 상한). 키는 **문항을 가진 단원 id**(`DATA_UNIT`: s41-u03b → s41-u03). `analyze()` 판정: **확정** = 서로 다른 문항 2개 이상에서 같은 M, **의심** = 1번, **해소** = 마지막 오답 뒤 그 M을 확인하는 문항 2번 연속 정답. 답 열어 보기(`revealed`)·연결 없는 오답(`slip`)은 따로 센다. `remedyItems()` = 그 M이 오답 보기로 들어 있는 문항 중 안 푼 것 → 틀린 것 → 맞힌 것 순.
+- `v2/v2.js`: `wireItem(card, it, onDone, ctx)` — 4번째 인자 `{u, stage}`가 있으면 기록. `whyHtml()`이 오답이면 "다시 생각해 봐요" 대신 **오개념 라벨(빨간 태그) + 교정 문장**을 보여 준다. 개념 카드(cloze)는 misc에 `options`가 있으면 칩 선택(틀리면 `<s>고른 말</s> 정답`). ⑤점검 뒤 `drillFor()`가 틀린 까닭(M)마다 유사문항 2개를 "한 판 더"로 붙인다. 새 라우트 `#/<u>/diagnose`(학생용) · `#/<u>/diagnose/teacher`(강사용: 근거 펼침·유형별 정답률·기록 지우기), 인쇄 가능. 상단 바에 빨간 `진단` 버튼(misc가 있는 단원만).
+- 살아 있는 교재(`v2/live.js`·`v2/book.js`): 개념 정리 빈칸을 누르면 `bookChips`의 낱말 칩이 뜨고 고른 결과를 기록(`book-concept`); 확인 문제·형성평가 보기(`.bk-choices[data-id]`)를 누르면 기록(`book`)하고 오답이면 아래에 `.bk-fix` 교정 상자. 인쇄엔 안 나온다.
+- CSS: 오답 빨강(`--bad-bg`)·의심 노랑(`--warn`)·해소/정답 초록(`--good`)·핵심어 남색 굵게+연한 밑칠(`.fix b`). `.choice`가 `min-width:0; white-space:normal`. `.bk`·`.dk`·`body.intro`에 `word-break: keep-all; overflow-wrap: anywhere` 추가. **휴대폰 교재의 표가 화면을 넘던 것**(`.bk-tbl` 362px > 339px) → `.bk:not(.a4) .bk-tbl { table-layout: fixed }` + th 줄바꿈 허용으로 해결. 진단 막대 라벨은 휴대폰에서 한 줄 위로.
+- 검증(Playwright): 개념 칩 오답 → 점검 오답 → 한 판 더 → 진단(확정 1·의심 2) → 처방 2문항 정답 → **해소**로 바뀜 확인. 교재 칩·확인 문제 기록 확인. 360/390/768/1280 × 11 라우트 가로 넘침 0(장식 `::after`만 제외), A4 11쪽 넘침 0 유지, 페이지 오류 0.
+- **광고 페이지 재구성(같은 차수)**: `intro/intro.js`에 CHAPTER Ⅴ `틀린 까닭을 읽는 책`(기록→교정→진단→처방 흐름 + b10 예시와 교정 상자) · CHAPTER Ⅵ `진단 리포트`(2/5 요약·소단원 막대·확정/의심/해소 카드 견본, misc 데이터에서 생성) 2쪽 추가 → 광고 9쪽 + 교재 11 + 표지 2 = **22쪽, c0 = 10**. `ad3`(한 장의 비밀) 목록 Ⅹ 진단·처방, FAQ 1문답, 봉인 해제 목록 문구, 아래 소개 카드 ⑥ 추가. 광고 책의 교재 쪽도 `misc`를 넘겨 개념 정리 칩·교정 상자가 그대로 나온다(`wireLive`가 `misc` 옵션으로 칩·`.bk-fix`를 직접 처리하도록 옮김 — v2·intro 공용).
+- 나레이션 `intro/narration.json` 18줄: `diag`·`diag2` 추가, `concept`·`check` 문장 수정 → MP3 4개 새로 필요(약 310자). `scripts/generate-audio.js` 주석을 건드려 Generate Audio를 돌렸다(워크플로 paths에 narration.json이 없어서 — 다음에 문장을 고칠 때도 같은 방법, 또는 사용자가 워크플로 paths에 `science-lab/intro/narration.json` 한 줄 추가).
+- **첫 글자 '안'이 가끔 사라지던 버그**: 시작 때 `layout()`의 `narrate()`(소리 켬)와 시작 코드의 조용한 `narrate()`가 겹치는데, 앞엣것이 `await urlOf()`(SHA-1 해시) 뒤에 토큰 검사 없이 `$p.textContent = ''`를 해서 뒤엣것이 이미 찍은 '안'을 지웠다. 해시가 느린 기기에서만 나타나 "가끔"이었다. `say()`의 두 await 뒤에 `if (my !== sayToken) return` 추가. digest를 60ms 늦춘 Playwright로 재현·수정 확인. 말풍선 글씨체를 v2 화면과 같은 Gaegu 21px(휴대폰 17px)로 통일.
+- **책 끝 살아 있는 2쪽**(24쪽, 뒤표지 앞): `나의 진단 보고서`(`reportPageHtml` — 이 책의 확인 문제·형성평가·개념 빈칸 기록 `sciLab.log['s41-u03']`을 `analyze()`로 읽어 카드·막대, 기록이 없으면 견본) + `처방 문제 샘플`(`samplePageHtml` — 진단된 오개념이 숨은 선택형 문항 4개, 없으면 M01·M07·M10·M14 하나씩; `.bk-choices[data-key][data-id]`라 `wireLive`가 채점·교정 상자 처리). 광고 책의 답도 `onAnswer`로 기록되어 보고서 쪽이 즉시 갱신된다(`state.repSec.innerHTML`). 나레이션 `myreport`·`sample` 추가 → 20줄.
+- **광고 쪽 글씨체**: 본문을 Nanum Myeongjo(세리프)에서 **Noto Sans KR 500/700/900**(`--sans`)으로 바꿨다 — 축소된 책에서 명조 가는 획이 뭉개지고 `<b>`가 옅게 보이던 문제. 제목·챕터 표기·드롭캡은 세리프 유지. `.ad-page b`는 900·진한 갈색, 교정 문장의 핵심어는 남색.
+- 아직: 다른 단원(u01·u02·s42-u01)엔 misc 파일이 없어 진단 버튼이 안 뜬다(같은 형식으로 만들면 자동). 기록은 기기(localStorage)에만 — 강사가 여러 학생을 보려면 Supabase 테이블 필요(별도 제안). 서술형은 기록하지 않는다(사용자 지시).
+
+## 진행 기록 — 2026-09-21 15차 (Cowork): docssam 소리 나오게
+- 사용자: 음성은 **기존 구글 TTS 그대로**, OmniVoice 복제는 안 함. 다만 지금 당장 소리가 나야 함.
+- `intro/intro.js`: 음성 파일(Supabase `audio/science-lab/...`)이 없거나 막히면 **기기 음성(Web Speech, ko-KR 남자 목소리 우선)** 으로 바로 읽는다. 목소리 목록이 늦게 오는 브라우저를 위해 `voiceschanged`를 한 번 기다린다.
+- 소리 버튼이 상태를 보여 준다: `🔊 소리 켜기` → 재생되면 `🔊 독쌤 음성`(MP3) 또는 `🔊 기기 음성`, 끄면 `🔇 소리 꺼짐`.
+- 브라우저 자동 재생 정책 때문에 첫 인사는 글만 나오고, **화면을 한 번 누르거나 장을 넘기면** 그때부터 말한다.
+- MP3가 생기면(Actions → Generate Audio 수동 실행) 자동으로 독쌤 음성이 우선된다. 이 컨테이너에는 GOOGLE_TTS_KEY가 없어 여기서는 생성 불가.
+
+## 진행 기록 — 2026-09-21 14차 (Cowork): 영상 재생 보강 · 집에서 실험(구매) 강조 · FAQ
+- 영상이 안 나온다는 지적 → 위키미디어 자료를 **webm 480p → mp4(360p mov, 사파리·아이폰) → 원본** 3단으로 주고, 재생 실패 시 "새 창에서 영상 보기" 링크로 바뀐다(`v2/live.js`, `v2/v2.js`, `data/media/*.media.js`의 `V()`에 `mp4` 추가).
+- 광고 책에 **CHAPTER Ⅳ 집에서도**(준비물 목록·집에 있음/QR로 구매·준비물 QR·수업 전/수업/수업 후 활용) + **FAQ** 쪽 추가 → 광고 7쪽(표지 포함 8) + 교재 11쪽 + 뒤표지 = 20쪽. 교재 첫 쪽이 오른쪽에 오도록 광고 쪽 수를 짝수로 맞춘 것임(쪽 수를 바꿀 땐 `state.pages` 슬라이스와 `narrate()`의 `c0`도 같이 고쳐야 한다).
+- 나레이션 2줄 추가(home·faq) → 총 16줄.
+- 아래 소개 카드에 "집에서 하는 실험"(준비물 QR) 추가.
+
+## 진행 기록 — 2026-09-21 13차 (Cowork): 한 화면 가득·크게 보기·카카오 인앱 탈출·탐구보고서·형성평가
+- 광고 페이지: 책이 **한 화면을 가득** 채우도록(히어로 100dvh, 남는 높이를 전부 책에) + **크게 보기**(지금 펼친 쪽을 화면 가득, 휠·＋−·핀치로 확대, 실제 쪽 요소를 옮겨 오므로 영상·3D·채점이 그대로 살아 있음) + **전체 화면** 버튼. 두 번 누르면(더블클릭) 바로 크게 보기.
+- **주황 버튼이 잘 안 보인다** → 크기·글자 키우고 흰 테두리 + 주황 글로우 + 맥박 애니메이션(`.bk.live .bk-pop-btn`).
+- **카카오톡 인앱 브라우저 탈출** `v2/inapp.js`: KAKAOTALK·FB·인스타·라인·네이버 인앱을 감지해 `kakaotalk://web/openExternal`(안드로이드는 intent://, iOS는 googlechrome://·x-safari-https://)로 바깥 브라우저에서 다시 연다. 자동 전환이 막히면 아래 띠에 "브라우저에서 열기" 버튼. v2 앱과 광고 페이지 둘 다 적용.
+- 휴대폰·인앱에서 **튀어나온 실험실 창이 화면에 꽉 맞게**(100dvh, 캔버스 40dvh, 안전 영역 패딩).
+- 교재에 **탐구보고서(9쪽)**·**형성평가(10쪽)** 추가 → 장당 11쪽. 데이터는 각 book 파일의 `report`(9칸 + 스스로 점검)·`formative`(유사문항 4 + 성취기준 ○△✕). 형성평가·확인 문제의 givens 키 중 일반 낱말(설명·내용·text·문항…)은 라벨을 숨긴다.
+- 나레이션 2줄 추가(report·formative). **narration.json만 고치면 Actions의 Generate Audio를 수동 실행**해야 새 음성이 생긴다.
+
+## 진행 기록 — 2026-09-20 12차 (Cowork): 살아 있는 교재 + 광고용 체험 페이지 「지필드 사이언스 랩」
+- 사용자 결정: 교재는 **화면에서는 살아 움직이고(영상·3D·실험실이 책 안에서), 인쇄하면 종이 교재**인 신개념 교재. 광고 페이지는 책 넘김 효과 → 교재 소개 장 → "다음 장부터 살아 움직이는" 실제 교재. 캐릭터 docssam이 넘길 때마다 설명. 브랜드명 **지필드 사이언스 랩**.
+- `v2/book.js` `renderChapter(..., { live, media })`: live면 첫 쪽 그림 자리에 실제 영상(누르면 쪽 안에서 재생), QR·실험 순서 그림에 주황 `[data-pop]` 버튼, 빈칸 `data-a`(누르면 답), 확인 문제 `data-key`(누르면 채점). 인쇄 CSS는 `.bk-web`·버튼을 숨기고 `.bk-print`(원래 그림)·QR만 남긴다. 웹 교재 `#/<u>/lab-book/*`는 live로 연다.
+- `v2/live.js`: `wireLive(root, {scene, lab})` + `openPop(from, title, mount)` — 누른 자리에서 커지며 튀어나오는 창, 닫으면 그 창이 만든 3D 무대만 정리(`engine.js`에 `Stage.live` 레지스트리 추가).
+- `v2/mounts.js`: `mount3D`·`LABS`·`mountLabOf`를 v2.js에서 떼어 냄(광고 페이지도 같이 씀).
+- `v2/book.css` 휴대폰 규칙은 `.bk:not(.a4)`로 한정 — 책장 속 쪽(`.a4`)은 휴대폰에서도 A4 틀을 유지하고 축소만 된다. `fitPages`도 `.a4`면 휴대폰에서도 맞춤.
+- **광고 페이지 `/science-lab/intro/`** (`index.html · intro.js · intro.css · narration.json`): 표지(3-1~6-2 로드맵 길이 그려진 책) → 소개 5쪽(이런 과학책 / 로드맵 / 한 장의 구성 / 네 가지 판 / 다음 장부터 살아 움직여요) → 교재 04장 9쪽(live) → 뒤표지 상담(카카오 `open.kakao.com/me/gfield`, 02-3453-7772 — 저장소의 기존 페이지에서 가져옴). 넓은 화면은 두 쪽 펼침 3D 책장(오른쪽 반 겹친 장이 rotateY로 넘어감), 좁은 화면은 한 쪽씩. 04/03 장·학생용/강사용 전환, 화살표·키보드·밀기·모서리 누르기.
+- **나레이션**: `intro/narration.json`(docssam 12줄, 목소리 `ko-KR-Chirp3-HD-Puck`, 실패 시 `ko-KR-Neural2-C`). `scripts/generate-audio.js`가 읽어 `audio/science-lab/<id>-<sha1(voice|text) 앞10자>.mp3`로 올린다(있으면 건너뜀). 페이지는 같은 해시로 주소를 만들어 재생, 없으면 기기 음성. **generate-audio.js를 고치면 main 푸시 때 Generate Audio 워크플로가 돈다** — narration.json만 고친 경우는 워크플로를 수동 실행(Actions → Generate Audio → Run workflow).
+- 지도 화면 머리에 "교재 소개 ›" 링크.
+- **디자인(사용자 요구: 만화책 말고 판타지 고서, 두꺼운 마법서 넘기는 느낌, 표지도 살아 있게)**: 촛불 켠 서재 배경 + 떠오르는 불씨(canvas), 가죽 장정 보드·금박 이중 테두리·모서리 덩굴, 제목 금박 반짝임(SVG gradient animate), 표지 가운데 로드맵 = 8학기 별자리(체험 가능한 학기 빛남)·회전하는 룬 고리 2겹(영문/한글 탐구 단계)·플라스크 문장, 빛줄기 훑기, 닫힌 책은 마우스 따라 3D 기울기. 넘길 때 책장 두께가 좌우로 옮겨 가고(--tl/--tr), 넘기는 장에 그림자, WebAudio로 합성한 종이 넘김 소리(표지는 묵직한 울림). 소개 장은 양피지·명조(Nanum Myeongjo)·붉은 밀랍 인장. 테스트 스크립트는 넘김 애니메이션(1.25s)이 끝난 뒤 조작해야 한다.
+
 ## 진행 기록 — 2026-09-20 11차 (Cowork): 화산 실험실(땅의 변화 2번째 5단계 수업) · 실제 사진·영상 · main 반영
 - **main 병합**: PR #239로 `science-lab/` 전체를 main에 넣었다(원문·정답은 Supabase에만, science-src 그림 브랜치는 미병합). **GitHub Pages는 아직 404** —
   `.github/workflows/deploy-pages.yml`의 올릴 폴더 목록에 `science-lab`이 없어서. GitHub App에 workflow 권한이 없어 파일을 못 올렸다 → 사용자가 GitHub 웹에서 직접 커밋해야 함(전달한 deploy-pages.yml). 그 전까지 미리보기는 raw.githack.com 커밋 주소.

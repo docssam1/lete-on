@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-23'] = {
-  id:'M-23', tier:'highmath1', level:'36', order:23,
+  id:'M-23', tier:'highmath1', level:'38', order:23,
   generator:'md23_identity',
   title:{ ko:'항등식과 미정계수법', en:'Identities & Undetermined Coefficients', zh:'恒等式与待定系数法' },
   subtitle:{ ko:'모든 x에서 성립하려면 양변의 계수가 같아야 해요', en:'To hold for every x, the coefficients on both sides must match', zh:'要对任意x都成立，两边的系数必须相等' },

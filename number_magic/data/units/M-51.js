@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-51'] = {
-  id:'M-51', tier:'middle1', level:'31', order:14,
+  id:'M-51', tier:'middle1', level:'31', order:16,
   generator:'md51_proportion',
   title:{ ko:'정비례와 반비례 값', en:'Direct & Inverse Proportion', zh:'正比例与反比例的值' },
   subtitle:{ ko:'비율이 일정한가, 곱이 일정한가', en:'Is the ratio constant, or is the product constant?', zh:'是比值恒定，还是乘积恒定？' },

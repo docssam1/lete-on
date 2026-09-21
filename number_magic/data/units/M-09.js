@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-09'] = {
-  id:'M-09', tier:'middle1', level:'31', order:9,
+  id:'M-09', tier:'middle1', level:'31', order:15,
   lineage:['nine-next-door'],
   generator:'md9_repeatToFrac',
   title:{ ko:'순환소수를 분수로', en:'Repeating Decimal to Fraction', zh:'循环小数化分数' },
