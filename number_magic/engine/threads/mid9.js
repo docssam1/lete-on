@@ -46,6 +46,7 @@ function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }
 function coefLead(n){ return n===1?'':n===-1?'-':String(n); }
 function wrapPlusCoef(n){ return n===1?'+ ':n===-1?'- ':(n<0?`- ${Math.abs(n)}`:`+ ${n}`); }
 function hasNeg(v){ return Array.isArray(v) ? v.some(x => x < 0) : v < 0; }
+function par(n){ return n < 0 ? `(${n})` : `${n}`; }   /* 음수만 괄호로 */
 function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while (b) { const t = b; b = a % b; a = t; } return a || 1; }
 
 /* 두 일차식을 "ax + by = e" 꼴로 — 계수 ±1을 감추고 부호를 정리한다 */
@@ -390,6 +391,40 @@ NM_TGEN['md66_quadEquation'] = function (params, rng) {
         { tex: `${a}(x^2 ${wrapPlus(-(p + q))}x ${wrapPlus(p * q)}) = 0` },
         { tex: `${a}(x ${wrapPlus(-p)})(x ${wrapPlus(-q)}) = 0` },
         { tex: `x = \\square \\quad\\text{또는}\\quad \\square`, blank: [p, q] }
+      ]
+    };
+  }
+
+  /* ── formula(2026-09-21) — 근의 공식 ──
+     여기가 비어 있었다: 인수분해·완전제곱·공통인수 묶기 셋뿐이라, **인수분해가 안 되는
+     이차방정식**은 어느 레벨에서도 나오지 않았다(기적의 중학연산 3B Ⅴ가 통째로 이 자리다).
+     막고 있던 것은 답 형식이다 — 근이 (−b±√D)/2a 라 무리수이고 answerType:'number'가
+     못 받는다. 원장 지시(2026-09-21) "D와 분모"로 **두 정수만** 받는다: 근의 모양은
+     tex가 보여 주고, 아이는 **판별식 D=b²−4ac 와 분모 2a** 를 채운다. 근호 답을
+     [계수,근호안] 두 정수로 받는 mid3.js(MD16·MD18)와 같은 환원이다.
+     D가 제곱수면 인수분해로 풀리는 식이라 공식을 쓸 이유가 없다 → **D>0이고 제곱수가
+     아닌 것만** 내보낸다(공식이 실제로 필요한 자리에서만 공식을 묻는다). */
+  if (mode === 'formula') {
+    const lim = params.wide ? 9 : 7;
+    let a = 1, b = 1, c = 1, D = 0, guard = 0;
+    do {
+      a = pick(rng, [1, 2, 3]);
+      b = nzInt(rng, 1, lim);
+      c = nzInt(rng, 1, lim);
+      D = b * b - 4 * a * c;
+    } while ((D <= 0 || Number.isInteger(Math.sqrt(D))) && guard++ < 200);
+    if (D <= 0 || Number.isInteger(Math.sqrt(D))) { a = 1; b = 3; c = -1; D = 13; }  /* 마지막 안전망 */
+    const den = 2 * a;
+    return {
+      prompt: { ko: `인수분해가 안 되면 근의 공식이에요 — 판별식 D=b²−4ac 와 분모 2a를 차례로 입력해요`,
+        en: `When it will not factor, use the quadratic formula — enter the discriminant D=b²−4ac, then the denominator 2a`,
+        zh: `不能因式分解时就用求根公式——依次填入判别式D=b²−4ac和分母2a` },
+      tex: `${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} = 0 \\quad\\Rightarrow\\quad x = \\dfrac{${-b} \\pm \\sqrt{\\square}}{\\square}`,
+      answer: [D, den], answerType: 'number', widget: 'numpad', negative: false,
+      solution: [
+        { tex: `D = ${par(b)}^2 - 4(${a})(${c}) = ${b * b} - ${par(4 * a * c)} = ${D}` },
+        { tex: `x = \\dfrac{-${par(b)} \\pm \\sqrt{${D}}}{2(${a})}` },
+        { tex: `x = \\dfrac{${-b} \\pm \\sqrt{\\square}}{\\square}`, blank: [D, den] }
       ]
     };
   }

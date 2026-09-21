@@ -48,13 +48,21 @@ let fails = 0, checked = 0, withSol = 0;
 for(const k of targets){
   const t = T[k], gen = G[t.gen]; if(!gen){ console.log(`FAIL ${k}: 생성기 없음`); fails++; continue; }
   const hgen = head && head.NM_TGEN[head.NM_THREADS[k] && head.NM_THREADS[k].gen];
+  /* HEAD 대조는 **HEAD에도 있던 레벨**만 한다 (2026-09-21). 새로 만든 레벨의 params 를
+     HEAD 생성기에 넣으면 그 모드를 모르니 기본 갈래로 떨어져 당연히 다른 값이 나온다 —
+     "안 건드린 것이 안 바뀌었나"를 보려던 검사가 **레벨을 새로 만들 때마다 무조건 실패**했다
+     (MD20 4개·MD66 1개를 더하자 100건). 같은 id·같은 params 인 레벨만 비교한다. */
+  const hLevels = {};
+  for(const hl of ((head && head.NM_THREADS[k] && head.NM_THREADS[k].levels) || []))
+    hLevels[hl.id] = JSON.stringify(hl.params || {});
   for(const lv of (t.levels || [])){
     const params = lv.params || {};
+    const sameAsHead = hLevels[lv.id] === JSON.stringify(params);
     for(let i = 0; i < 20; i++){
       const seed = R.hashSeed(`sol-${k}-${lv.id}-${i}`);
       let p; try { p = gen(params, R.mulberry32(seed)); } catch(e){ console.log(`FAIL ${k} L${lv.id} #${i}: 생성기 예외 ${e.message}`); fails++; continue; }
       checked++;
-      if(hgen){ let hp = null; try { hp = hgen(params, head.NM_RNG.mulberry32(seed)); } catch(e){}
+      if(hgen && sameAsHead){ let hp = null; try { hp = hgen(params, head.NM_RNG.mulberry32(seed)); } catch(e){}
         if(hp && strip(hp) !== strip(p)){ console.log(`FAIL ${k} L${lv.id} #${i}: solution 외 출력이 HEAD와 다름`); fails++; } }
       const sol = (Array.isArray(p.solution) && p.solution.length) ? p.solution : ((Array.isArray(p.steps) && p.steps.length) ? p.steps : null);
       if(!sol){ if(i===0) console.log(`MISS ${k} L${lv.id}: solution/steps 없음`); fails++; continue; }

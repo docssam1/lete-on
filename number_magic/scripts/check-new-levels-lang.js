@@ -8,7 +8,9 @@ eval(fs.readFileSync(path.join(ROOT, 'data/threads.js'), 'utf8'));
 
 const HANGUL = /[가-힣㄰-㆏]/;
 const HANJA  = /[一-鿿]/;
-const TARGETS = [['FR5',[1,2]], ['MX3',[1,2,3,4,5]], ['DC3',[1,2]], ['EL5',[1,2,3]], ['AD10',[1,2,3]]];
+const TARGETS = [['FR5',[1,2]], ['MX3',[1,2,3,4,5]], ['DC3',[1,2]], ['EL5',[1,2,3]], ['AD10',[1,2,3]],
+  /* 2026-09-21 신규 — 인수분해 4꼴·근의 공식 */
+  ['MD20',[3,4,5,6]], ['MD66',[4]]];
 const bad = [];
 let n = 0;
 

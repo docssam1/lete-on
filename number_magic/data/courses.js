@@ -266,7 +266,10 @@ const COURSE_SPEC = [
  {id:35, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
    drills:['MD15','MD16','MD17','MD14','MD15@2','MD16@2','MD17@2','MD15@3','MD16@3','MD17@3'], minSessions:5, magic:[['M-15'],['M-16'],['M-17']], creative:['MD17@3','MD16@3','MD15@3']},
  {id:36, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratic Equations',zh:'因式分解与二次方程'},
-   drills:['MD18','MD19','MD20','MD66','MD77','MD18@2','MD19@2','MD20@2','MD66@2','MD77@2','MD19@3','MD66@3','MD77@3','MD18@3'], minSessions:9, magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-77']], creative:['MD77@3','MD66@3','MD20@2']},
+   /* 2026-09-21 — MD20 이 4레벨(완전제곱·합차·공통인수·십자곱셈), MD66 이 1레벨(근의 공식)
+      늘었다. 드릴 슬롯은 회차마다 2개뿐이라 9회차(18슬롯)로는 19개 항목이 안 들어간다 →
+      minSessions 11. 늘어난 두 주는 마법 없이 이 두 스레드의 새 계단만 밟는다. */
+   drills:['MD18','MD19','MD20','MD66','MD77','MD18@2','MD19@2','MD20@2','MD66@2','MD77@2','MD19@3','MD20@3','MD66@3','MD77@3','MD18@3','MD20@4','MD66@4','MD20@5','MD20@6'], minSessions:11, magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-77']], creative:['MD77@3','MD66@3','MD20@2']},
  {id:37, tier:'middle3', title:{ko:'이차함수',en:'Quadratic Functions',zh:'二次函数'},
    drills:['MD78','MD79','MD67','MD80','MD81','MD78@2','MD79@2','MD67@2','MD80@2','MD81@2','MD78@3','MD79@3','MD67@3','MD80@3','MD81@3','MD67@4'], minSessions:10, magic:[['M-78'],['M-79'],['M-67'],['M-80'],['M-81']], creative:['MD81@3','MD67@4','MD80@3']},
 

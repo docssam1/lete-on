@@ -1768,7 +1768,26 @@ MD20:{ name:{ko:'인수분해 기초',en:'Basic Factoring',zh:'因式分解基�
     zh:'在x²+bx+c=(x+p)(x+q)中，找相加得b、相乘得c的两个数p、q——就是把乘法公式反着读。乘积为负就找符号相反的两个数。'},
   widgets:['numpad'],
   levels:[{id:1,label:{ko:'모두 양수(연습)',en:'all positive (practice)',zh:'全为正数(练习)'},params:{level:'positive'}},
-          {id:2,label:{ko:'부호 섞임(실전)',en:'mixed signs (main)',zh:'符号混合(实战)'},params:{level:'mixed'}}] },
+          {id:2,label:{ko:'부호 섞임(실전)',en:'mixed signs (main)',zh:'符号混合(实战)'},params:{level:'mixed'}},
+          /* 2026-09-21 — MD19가 전개를 세 꼴로 가르치는데 역방향이 한 꼴뿐이었다.
+             완전제곱·합차는 같은 손동작(공식 거꾸로 읽기)이라 레벨로 붙이고,
+             공통인수·십자곱셈은 묶어내거나 대각선으로 곱하는 다른 손동작이라 뒤에 둔다. */
+          {id:3,label:{ko:'완전제곱식',en:'perfect square',zh:'完全平方式'},params:{mode:'square'},
+           concept:{ko:'마지막 항이 제곱수이고 가운데 항이 그 제곱근의 2배면 완전제곱식이에요 — x²+14x+49는 √49=7이고 2×7=14이니 (x+7)²이에요.',
+             en:'When the last term is a square and the middle term is twice its square root, it is a perfect square: x²+14x+49 has √49=7 and 2×7=14, so it is (x+7)².',
+             zh:'最后一项是平方数、中间项是它平方根的2倍时就是完全平方式：x²+14x+49中√49=7、2×7=14，所以是(x+7)²。'}},
+          {id:4,label:{ko:'합차 인수분해',en:'difference of squares',zh:'平方差因式分解'},params:{mode:'diff'},
+           concept:{ko:'가운데 항이 없고 제곱의 차만 남았으면 합과 차로 갈라져요 — x²−144는 144=12²이니 (x+12)(x−12)예요.',
+             en:'No middle term and only a difference of squares means it splits into a sum and a difference: x²−144 has 144=12², so it is (x+12)(x−12).',
+             zh:'没有中间项、只剩平方差时就拆成和与差：x²−144中144=12²，所以是(x+12)(x−12)。'}},
+          {id:5,label:{ko:'공통인수 묶어내기',en:'pull out the common factor',zh:'提取公因数'},params:{mode:'common'},
+           concept:{ko:'세 항에 공통인수가 있으면 먼저 묶어내요. 묶어내고 나면 안쪽은 지금까지 하던 x²+bx+c예요 — 3x²+15x+18은 3(x²+5x+6)이고 3(x+2)(x+3)이에요.',
+             en:'If all three terms share a factor, pull it out first; what is left inside is the same x²+bx+c as before — 3x²+15x+18 is 3(x²+5x+6), which is 3(x+2)(x+3).',
+             zh:'三项有公因数就先提取，剩下的括号里还是原来的x²+bx+c——3x²+15x+18是3(x²+5x+6)，即3(x+2)(x+3)。'}},
+          {id:6,label:{ko:'x²의 계수가 1이 아닐 때(십자곱셈)',en:'leading coefficient ≠ 1 (cross method)',zh:'x²系数不为1时(十字相乘)'},params:{mode:'cross'},
+           concept:{ko:'묶어낼 공통인수가 없으면 대각선으로 곱해 더해요. 2x²+5x+3은 앞이 2x와 x, 뒤가 3과 1이고 2×1+3=5라 (2x+3)(x+1)이에요.',
+             en:'With no common factor to pull out, cross-multiply and add: for 2x²+5x+3 the fronts are 2x and x, the backs are 3 and 1, and 2×1+3=5, so it is (2x+3)(x+1).',
+             zh:'没有公因数可提取时就交叉相乘再相加：2x²+5x+3的前项是2x和x、后项是3和1，2×1+3=5，所以是(2x+3)(x+1)。'}}] },
 
 /* ── MD 고등 W11(공통수학1) 신규 10종 (2026-08-25) ── 근거:
    MASTER-ROADMAP.md §6(W11 공통수학1) — 2022 개정 교육과정 공통수학1
@@ -2786,7 +2805,14 @@ MD66:{ name:{ko:'이차방정식 풀이',en:'Solving Quadratic Equations',zh:'�
           {id:3,label:{ko:'x²의 계수가 1이 아닐 때(실전)',en:'leading coefficient ≠ 1 (main)',zh:'x²系数不为1时(实战)'},params:{mode:'leadCoef',wide:true},
            concept:{ko:'세 항에 공통인수가 있으면 먼저 묶어내요. 2x²−10x+12=0은 2(x²−5x+6)=0이고, 2는 0이 아니니 x²−5x+6=0만 풀면 돼요.',
              en:'Pull out a common factor first: 2x²−10x+12=0 is 2(x²−5x+6)=0, and since 2 is not zero you only need to solve x²−5x+6=0.',
-             zh:'三项有公因数时先提取：2x²−10x+12=0就是2(x²−5x+6)=0，因为2不为0，只需解x²−5x+6=0。'}}] },
+             zh:'三项有公因数时先提取：2x²−10x+12=0就是2(x²−5x+6)=0，因为2不为0，只需解x²−5x+6=0。'}},
+          /* 2026-09-21 — 앞의 세 레벨은 전부 "어떻게든 인수분해되는 식"이라, 인수분해가
+             안 되는 이차방정식이 한 번도 안 나왔다. 근은 무리수라 숫자 칸으로 못 받으므로
+             원장 지시대로 **D와 분모 두 정수**만 받는다(근의 모양은 문제 tex가 보여 준다). */
+          {id:4,label:{ko:'근의 공식(D와 분모)',en:'the quadratic formula (D and denominator)',zh:'求根公式(D与分母)'},params:{mode:'formula',wide:true},
+           concept:{ko:'인수분해도 안 되고 완전제곱도 번거로우면 근의 공식을 써요. x=(−b±√D)/2a 이고 D=b²−4ac예요 — 2x²+3x−4=0은 D=9+32=41, 분모는 2×2=4예요.',
+             en:'When it will not factor and completing the square is awkward, use the formula x=(−b±√D)/2a with D=b²−4ac — for 2x²+3x−4=0, D=9+32=41 and the denominator is 2×2=4.',
+             zh:'既不能因式分解、配方又麻烦时就用求根公式x=(−b±√D)/2a，其中D=b²−4ac——2x²+3x−4=0的D=9+32=41，分母是2×2=4。'}}] },
 
 MD67:{ name:{ko:'이차함수의 꼭짓점',en:'The Vertex of a Quadratic',zh:'二次函数的顶点'}, gen:'md67_quadVertex', prereq:['MD66'],
   unit:'M-67',
