@@ -30,11 +30,28 @@ async function urlOf(line) {
   const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(`${NAR.voice}|${line.text}`));
   return `${SUPA}${line.id}-${[...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 10)}.mp3`;
 }
+// 기기 음성: 목소리 목록이 늦게 오는 브라우저가 있어 한 번 기다렸다 읽는다(한국어 남자 목소리 우선)
+let voicesReady = null;
+function koVoices() {
+  const all = speechSynthesis.getVoices() || [];
+  const ko = all.filter((v) => /^ko/i.test(v.lang));
+  return ko.sort((a, b) => (/InJoon|Male|남/i.test(b.name) ? 1 : 0) - (/InJoon|Male|남/i.test(a.name) ? 1 : 0));
+}
 function speakDevice(text) {
-  if (!('speechSynthesis' in window)) return 0;
-  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'ko-KR'; u.rate = 1.05; u.pitch = 1.1;
-    const v = speechSynthesis.getVoices().filter((x) => /^ko/i.test(x.lang)); u.voice = v.find((x) => /InJoon|Male|남/i.test(x.name)) || v[0] || null; speechSynthesis.speak(u); } catch { /* 음성 없음 */ }
-  return 1;
+  if (!('speechSynthesis' in window)) return false;
+  const run = () => {
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ko-KR'; u.rate = 1.04; u.pitch = 1.12; u.volume = 1;
+      const v = koVoices(); if (v[0]) u.voice = v[0];
+      speechSynthesis.speak(u);
+    } catch { /* 음성 없음 */ }
+  };
+  if (koVoices().length) { run(); return true; }
+  voicesReady = voicesReady || new Promise((r) => { const t = setTimeout(r, 700); speechSynthesis.addEventListener('voiceschanged', () => { clearTimeout(t); r(); }, { once: true }); });
+  voicesReady.then(run);
+  return true;
 }
 async function say(ids) {
   const my = ++sayToken; guide.classList.remove('min');
@@ -43,8 +60,14 @@ async function say(ids) {
     if (my !== sayToken) return;
     try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ }
     if (soundOn) {
+      // 독쌤 음성 파일이 있으면 그것으로, 없으면 기기 음성으로 읽는다
+      let fell = false;
+      const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
       audio = new Audio(await urlOf(line)); audio.preload = 'auto';
-      audio.play().catch(() => { if (my === sayToken && soundOn) speakDevice(line.text); });
+      audio.addEventListener('error', fall, { once: true });
+      audio.addEventListener('playing', () => { voiceMode('독쌤 음성'); }, { once: true });
+      audio.play().then(() => { setTimeout(() => { if (!audio || audio.paused) fall(); }, 400); }).catch(fall);
+      if (fell || !audio) voiceMode('기기 음성');
     }
     guide.classList.add('talk'); $p.textContent = '';
     for (const ch of line.text) {
@@ -57,7 +80,15 @@ async function say(ids) {
     await new Promise((r) => setTimeout(r, 900));
   }
 }
-guide.querySelector('.it-sound').addEventListener('click', (e) => { soundOn = !soundOn; e.currentTarget.setAttribute('aria-pressed', soundOn); e.currentTarget.textContent = soundOn ? '소리 켬' : '소리 끔'; if (!soundOn) { try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ } } });
+const $sound = guide.querySelector('.it-sound');
+let mode = '';
+function voiceMode(m) { if (m === mode) return; mode = m; if (soundOn) $sound.textContent = `🔊 ${m}`; }
+function setSound(on) {
+  soundOn = on; $sound.setAttribute('aria-pressed', on); $sound.classList.toggle('off', !on);
+  $sound.textContent = on ? `🔊 ${mode || '소리 켬'}` : '🔇 소리 꺼짐';
+  if (!on) { try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ } }
+}
+$sound.addEventListener('click', () => { const on = !soundOn; setSound(on); if (on) { state.said = ''; narrate(); } });
 guide.querySelector('.it-hide').addEventListener('click', () => guide.classList.toggle('min'));
 guide.querySelector('.it-char').addEventListener('click', () => guide.classList.remove('min'));
 
@@ -331,6 +362,9 @@ $('.it-road').innerHTML = road().map((s) => `<div class="rd-sem ${readySems.has(
 (async () => {
   try { NAR = await (await fetch('./narration.json')).json(); } catch { /* 나레이션 없음 */ }
   await build();
-  // 첫 인사는 소리 없이 글만(브라우저 자동 재생 정책) — 첫 조작부터 소리
+  // 첫 인사는 글만(브라우저가 자동 재생을 막는다). 화면을 한 번 누르거나 장을 넘기면 그때부터 독쌤이 말한다.
   const quiet = soundOn; soundOn = false; state.said = ''; narrate(); soundOn = quiet;
+  setSound(true); $sound.textContent = '🔊 소리 켜기';
+  const kick = () => { state.said = ''; narrate(); removeEventListener('pointerdown', kick); removeEventListener('keydown', kick); };
+  addEventListener('pointerdown', kick, { once: true }); addEventListener('keydown', kick, { once: true });
 })();
