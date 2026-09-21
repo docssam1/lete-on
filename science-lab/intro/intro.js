@@ -154,7 +154,7 @@ const ads = (home) => [
     </div><figure class="ad-qr"><img src="${esc(home?.qr || '')}" alt="준비물 QR"><figcaption>QR을 찍으면 준비물 목록과<br>구매 링크가 열립니다</figcaption></figure></div>
     <p class="ad-note">안전이 필요한 과정은 “보호자와 함께”라고 표시해 두었습니다</p>
     <div class="ad-use"><div><b>수업 전</b><span>3D로 먼저 보고 예상 써 오기</span></div><div><b>수업</b><span>실험하고 보고서 쓰기</span></div><div><b>수업 후</b><span>형성평가·영재 도전 풀기</span></div></div>`),
-  adPage('ad a6', `${chap('CHAPTER Ⅴ · 틀린 까닭을 읽는 책', '틀린 보기가<br>곱 진단입니다')}
+  adPage('ad a6', `${chap('CHAPTER Ⅴ · 틀린 까닭을 읽는 책', '틀린 보기가<br>곧 진단입니다')}
     <p class="drop">채점만 하는 책은 많습니다. 이 책은 아이가 <b>어떤 보기를 골랐는지</b>를 기억합니다. 운반 작용을 묻는 문제에서 “깎아 내는 것”을 고르면, 그건 실수가 아니라 침식과 운반을 바꿔 알고 있다는 신호입니다.</p>
     <ol class="ad-flow tight"><li><span>기록</span>개념 카드 · 잠깐 확인 · 점검 · 교재 확인 문제에서 고른 답을 전부 남깁니다</li><li><span>교정</span>틀리는 순간, “다시 생각해 봐요” 대신 <b>왜 틀렸는지</b> 한 문장으로 알려 줍니다</li><li><span>진단</span>같은 오개념이 다른 문제에서 또 나오면 <b>확정</b>, 한 번이면 <b>의심</b></li><li><span>처방</span>그 오개념이 숨어 있는 문제만 골라 다시 풀고, 두 번 연속 맞히면 <b>해소</b></li></ol>
     <div class="ad-ex"><p class="ad-ex-q">흐르는 물의 작용 중 <b>운반 작용</b>을 바르게 설명한 것은?</p>
@@ -174,7 +174,7 @@ const ads = (home) => [
       <dt>종이 교재로도 쓰나요?</dt><dd>A4로 그대로 인쇄됩니다. 학생용·강사용 두 가지이고, 탐구보고서와 형성평가까지 한 장씩 들어 있습니다.</dd>
       <dt>틀린 문제는 어떻게 되나요?</dt><dd>어떤 보기를 골랐는지로 오개념을 찾아 바로 교정하고, 진단 화면에서 처방 문제를 다시 풀게 합니다.</dd></dl>`),
   adPage('ad a9', `${chap('UNSEAL · 봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
-    <ul class="ad-how"><li><i>▶</i><span>그림 속 <b>영상</b> — 실제 화산이 책 안에서 타오릅니다</span></li><li><i>✦</i><span>주황 인장 — <b>3D 실험실</b>이 책 밖으로 솟아오릅니다</span></li><li><i>ⓐ</i><span><b>빈칸</b>을 누르면 답이 드러납니다</span></li><li><i>Ⅰ</i><span>확인 문제는 누르면 <b>바로 채점</b>, 틀리면 <b>왜 틀렸는지</b>가 뜸니다</span></li><li><i>⤢</i><span>사진을 누르면 <b>크게</b></span></li></ul>
+    <ul class="ad-how"><li><i>▶</i><span>그림 속 <b>영상</b> — 실제 화산이 책 안에서 타오릅니다</span></li><li><i>✦</i><span>주황 인장 — <b>3D 실험실</b>이 책 밖으로 솟아오릅니다</span></li><li><i>ⓐ</i><span><b>빈칸</b>을 누르면 답이 드러납니다</span></li><li><i>Ⅰ</i><span>확인 문제는 누르면 <b>바로 채점</b>, 틀리면 <b>왜 틀렸는지</b>가 뜹니다</span></li><li><i>⤢</i><span>사진을 누르면 <b>크게</b></span></li></ul>
     <svg class="seal" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#8b1e1e"/><circle cx="50" cy="50" r="33" fill="none" stroke="#c9463a" stroke-width="2"/><text x="50" y="47" text-anchor="middle" fill="#f3d48a" font-size="11" font-weight="800">GFIELD</text><text x="50" y="62" text-anchor="middle" fill="#f3d48a" font-size="9">SCIENCE LAB</text></svg>`),
 ];
 const backPage = () => adPage('back', `<svg class="cv" viewBox="0 0 210 297" aria-hidden="true">${GOLD}<rect x="9" y="9" width="192" height="279" rx="3" fill="none" stroke="url(#gd)" stroke-width="1.2"/>${corners(210, 297, 13)}</svg>
@@ -248,7 +248,7 @@ function paint(anim = true, dir = 1) {
   const shift = state.single ? 0 : s === 0 ? -0.5 : s === n ? 0.5 : 0;
   book.style.transform = s === 0 ? '' : `translateX(calc(var(--pw) * ${shift}))`;
   book.classList.toggle('closed', s === 0);
-  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두껍어진다
+  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두꺼워진다
   book.style.setProperty('--tl', `${(4 + 16 * done).toFixed(1)}px`); book.style.setProperty('--tr', `${(4 + 16 * (1 - done)).toFixed(1)}px`);
   const P = state.pages.length, first = state.single ? s + 1 : s * 2, lastI = state.single ? s + 1 : Math.min(P, s * 2 + 1);
   $('.it-count').textContent = s === 0 ? '표지' : state.single || first === lastI ? `${first} / ${P}` : `${first}–${lastI} / ${P}`;
