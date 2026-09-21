@@ -2750,7 +2750,7 @@ MD65:{ name:{ko:'일차함수의 기울기와 절편',en:'Slope & Intercept of a
   concept:{ko:'y=ax+b에서 a는 기울기(오른쪽으로 1칸 갈 때 위아래로 몇 칸인지), b는 y절편(x=0일 때의 높이)이에요. 기울기는 두 점만 있으면 (y의 증가량)÷(x의 증가량)으로 구해요.',
     en:'In y=ax+b, a is the slope (how far up or down you go for each step right) and b is the y-intercept (the height when x=0). Two points are enough for the slope: (change in y) ÷ (change in x).',
     zh:'y=ax+b中，a是斜率(向右走1格时上下走几格)，b是y截距(x=0时的高度)。只要有两个点就能求斜率：(y的增量)÷(x的增量)。'},
-  widgets:['numpad'],
+  widgets:['numpad','graphPlane'],
   levels:[{id:1,label:{ko:'두 점에서 기울기(연습)',en:'slope from two points (practice)',zh:'由两点求斜率(练习)'},params:{mode:'slope'}},
           {id:2,label:{ko:'기울기와 한 점 → y절편',en:'slope and a point → y-intercept',zh:'斜率和一点→y截距'},params:{mode:'intercept',wide:true},
            concept:{ko:'점이 그래프 위에 있다는 건 그 좌표를 식에 넣으면 등식이 성립한다는 뜻이에요. y=3x+b에 (2,5)를 넣으면 5=6+b, b=−1이에요.',
@@ -2759,7 +2759,18 @@ MD65:{ name:{ko:'일차함수의 기울기와 절편',en:'Slope & Intercept of a
           {id:3,label:{ko:'두 점 → 식 세우기(실전, 2다칸)',en:'two points → the equation (main, 2 slots)',zh:'两点→列出式子(实战，2格)'},params:{mode:'fromPoints',wide:true},
            concept:{ko:'기울기를 먼저 구하고, 그 기울기와 두 점 중 아무 점이나 하나를 써서 y절편을 구해요 — 어느 점을 써도 b는 같아요.',
              en:'Find the slope first, then use it with either of the two points to get the y-intercept — both points give the same b.',
-             zh:'先求斜率，再用斜率和两点中任意一点求y截距——用哪个点求出的b都一样。'}}] },
+             zh:'先求斜率，再用斜率和两点中任意一点求y截距——用哪个点求出的b都一样。'}},
+          /* 레벨 4·5(2026-09-21, 원장 "일차함수 그래프는") — 위 셋은 좌표를 숫자로만
+             줬다. 기울기가 "오른쪽 1칸에 위로 몇 칸"이라는 건 격자 위에서만 보인다.
+             widget:'graphPlane' 이 화면에, exam.js graphSvg 가 학습지에 같은 그림을 그린다. */
+          {id:4,label:{ko:'그래프에서 기울기 읽기',en:'read the slope off the graph',zh:'从图象读出斜率'},params:{mode:'readSlope'},
+           concept:{ko:'격자 한 칸이 1이에요. 직선을 따라 오른쪽으로 한 칸 간 뒤, 위나 아래로 몇 칸 움직였는지 세면 그게 기울기예요. 내려가면 음수예요.',
+             en:'One square of the grid is 1. Follow the line one square to the right and count how many squares you moved up or down — that is the slope, and it is negative when the line goes down.',
+             zh:'格子一格就是1。沿直线向右走一格，数一数上下移动了几格，那就是斜率；向下走就是负数。'}},
+          {id:5,label:{ko:'그래프에서 식 읽기(2다칸)',en:'read the equation off the graph (2 slots)',zh:'从图象读出式子(2格)'},params:{mode:'readEquation'},
+           concept:{ko:'그래프가 y축을 지나는 높이가 b예요. 거기서 오른쪽으로 한 칸 가서 세로로 몇 칸인지 세면 a가 나와요 — 두 수를 y=ax+b에 그대로 넣어요.',
+             en:'The height where the graph crosses the y-axis is b. From there, move one square right and count the vertical squares to get a — then put both numbers into y=ax+b.',
+             zh:'图象穿过y轴的高度就是b。从那里向右走一格，数出竖直的格数就是a——把两个数填进y=ax+b。'}}] },
 
 MD66:{ name:{ko:'이차방정식 풀이',en:'Solving Quadratic Equations',zh:'一元二次方程的解法'}, gen:'md66_quadEquation', prereq:['MD20'],
   unit:'M-66',
@@ -2782,7 +2793,7 @@ MD67:{ name:{ko:'이차함수의 꼭짓점',en:'The Vertex of a Quadratic',zh:'�
   concept:{ko:'y=a(x−p)²+q의 그래프는 꼭짓점이 (p, q)인 포물선이에요. (x−p)²는 절대 음수가 될 수 없어서 x=p일 때 0으로 가장 작아지고, 그때 y가 q가 돼요. 괄호 안의 부호는 반대로 읽어요.',
     en:'The graph of y=a(x−p)²+q is a parabola with vertex (p, q). Since (x−p)² can never be negative, it is smallest (zero) at x=p, and y is q there. Read the sign inside the brackets the opposite way.',
     zh:'y=a(x−p)²+q的图象是顶点为(p, q)的抛物线。因为(x−p)²不可能为负，所以在x=p时取最小值0，此时y就是q。括号里的符号要反过来读。'},
-  widgets:['numpad'],
+  widgets:['numpad','graphPlane'],
   levels:[{id:1,label:{ko:'표준형에서 읽기(연습, 2다칸)',en:'read it off the vertex form (practice, 2 slots)',zh:'从标准式读出(练习，2格)'},params:{mode:'vertexForm'}},
           {id:2,label:{ko:'y=x²+bx+c 완전제곱',en:'complete the square for y=x²+bx+c',zh:'y=x²+bx+c配方'},params:{mode:'complete',wide:true},
            concept:{ko:'x의 계수의 절반이 p예요(부호는 반대). y=x²−6x+11은 y=(x−3)²+2이니 꼭짓점은 (3, 2)예요.',
@@ -2791,7 +2802,13 @@ MD67:{ name:{ko:'이차함수의 꼭짓점',en:'The Vertex of a Quadratic',zh:'�
           {id:3,label:{ko:'x²의 계수가 있을 때(실전)',en:'with a leading coefficient (main)',zh:'带x²系数时(实战)'},params:{mode:'withCoef',wide:true},
            concept:{ko:'x²의 계수를 먼저 묶어낸 다음 괄호 안에서 완전제곱을 만들어요. 그 계수가 양수면 아래로 볼록해 꼭짓점이 최솟값, 음수면 위로 볼록해 최댓값이에요.',
              en:'Factor out the coefficient of x² first, then complete the square inside the brackets. A positive coefficient opens upward so the vertex is the minimum; a negative one opens downward so it is the maximum.',
-             zh:'先提取x²的系数，再在括号内配方。系数为正时开口向上，顶点是最小值；为负时开口向下，顶点是最大值。'}}] },
+             zh:'先提取x²的系数，再在括号内配方。系数为正时开口向上，顶点是最小值；为负时开口向下，顶点是最大值。'}},
+          /* 레벨 4(2026-09-21) — MD65 와 같은 좌표평면 위젯. 꼭짓점은 그림 하나로
+             끝나는 개념이라 식만 주고 끝내면 절반만 가르친 셈이다. */
+          {id:4,label:{ko:'그래프에서 꼭짓점 읽기',en:'read the vertex off the graph',zh:'从图象读出顶点'},params:{mode:'readVertex'},
+           concept:{ko:'포물선이 방향을 바꾸는 단 한 점이 꼭짓점이에요. 아래로 볼록하면 가장 낮은 점, 위로 볼록하면 가장 높은 점이고, 거기서 가로·세로 좌표를 읽어요.',
+             en:'The one point where the parabola changes direction is the vertex — the lowest point when it opens upward, the highest when it opens downward. Read its x and y off the grid.',
+             zh:'抛物线改变方向的那唯一一点就是顶点——开口向上时是最低点，向下时是最高点，从格子上读出它的横纵坐标。'}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

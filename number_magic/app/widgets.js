@@ -222,6 +222,7 @@ function render(problem, container, onAnswer){
     case 'numline':      return renderNumline(problem,container,onAnswer);
     case 'base10':       return renderBase10(problem,container,onAnswer);
     case 'compareSteps': return renderCompareSteps(problem,container,onAnswer);
+    case 'graphPlane':   return renderGraphPlane(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -2062,6 +2063,119 @@ function renderFallback(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   GRAPHPLANE  widget:'graphPlane'  (2026-09-21)
+   원장 "일차함수 그래프는" — 일차함수를 넣어 놓고 좌표를 **숫자로만** 주고
+   있었다. 기울기가 "오른쪽 1칸에 위로 몇 칸"이라는 건 격자 위에서만 보인다.
+   problem.graph = {
+     kind:'line'|'parabola',
+     m,b            — 직선 y=mx+b
+     a,p,q          — 포물선 y=a(x-p)²+q
+     pts:[[x,y],…]  — 격자점 표시(선택)
+     xr:[min,max], yr:[min,max]
+   }
+   답은 숫자 하나(기울기)일 수도, 배열([m,b]·[p,q])일 수도 있어 둘 다 받는다.
+   화면·인쇄가 **같은 그림**이어야 하므로 좌표 계산 규약을 exam.js graphSvg 와
+   맞춰 둔다(축 눈금 1칸 = 정수 1, 원점은 0,0 자리).
+───────────────────────────────────────── */
+function graphPlaneSvgInner(g, W, H, pad){
+  const xr = g.xr || [-6,6], yr = g.yr || [-8,8];
+  const sx = (W-pad*2)/(xr[1]-xr[0]), sy = (H-pad*2)/(yr[1]-yr[0]);
+  const X = v => pad + (v-xr[0])*sx;
+  const Y = v => H-pad - (v-yr[0])*sy;
+  let s='';
+  /* 격자 — 1칸이 정수 1. 이 칸을 세는 것이 기울기를 읽는 방법이다. */
+  let gd='';
+  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++) gd += `M${X(v).toFixed(1)} ${pad}V${H-pad}`;
+  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++) gd += `M${pad} ${Y(v).toFixed(1)}H${W-pad}`;
+  s += `<path class="nm-gp-grid" d="${gd}"/>`;
+  /* 축 */
+  s += `<line class="nm-gp-axis" x1="${pad}" y1="${Y(0).toFixed(1)}" x2="${W-pad}" y2="${Y(0).toFixed(1)}"/>`;
+  s += `<line class="nm-gp-axis" x1="${X(0).toFixed(1)}" y1="${pad}" x2="${X(0).toFixed(1)}" y2="${H-pad}"/>`;
+  /* 축 이름과 눈금 숫자 — 2칸마다(다 적으면 뭉개진다) */
+  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++){
+    if(v===0 || v%2) continue;
+    s += `<text class="nm-gp-tick" x="${X(v).toFixed(1)}" y="${(Y(0)+13).toFixed(1)}">${v}</text>`;
+  }
+  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++){
+    if(v===0 || v%2) continue;
+    s += `<text class="nm-gp-tick nm-gp-ticky" x="${(X(0)-5).toFixed(1)}" y="${(Y(v)+4).toFixed(1)}">${v}</text>`;
+  }
+  s += `<text class="nm-gp-axname" x="${W-pad+2}" y="${(Y(0)-6).toFixed(1)}">x</text>`;
+  s += `<text class="nm-gp-axname" x="${(X(0)+6).toFixed(1)}" y="${pad+4}">y</text>`;
+  s += `<text class="nm-gp-tick" x="${(X(0)-6).toFixed(1)}" y="${(Y(0)+13).toFixed(1)}">O</text>`;
+  /* 곡선 — 화면 밖으로 나가는 부분은 clip 으로 자른다(직선이 상자를 뚫고 나가도 됨) */
+  const clipId = 'gpclip'+Math.abs((g.m||0)*97+(g.b||0)*31+(g.p||0)*7+(g.q||0));
+  let d='';
+  if(g.kind==='parabola'){
+    const a=g.a, p=g.p, q=g.q;
+    for(let t=0; t<=120; t++){
+      const x = xr[0] + (xr[1]-xr[0])*t/120;
+      const y = a*(x-p)*(x-p)+q;
+      d += (t?'L':'M') + X(x).toFixed(1) + ' ' + Y(y).toFixed(1);
+    }
+  } else {
+    const m=g.m, b=g.b;
+    d = `M${X(xr[0]).toFixed(1)} ${Y(m*xr[0]+b).toFixed(1)}L${X(xr[1]).toFixed(1)} ${Y(m*xr[1]+b).toFixed(1)}`;
+  }
+  s = `<defs><clipPath id="${clipId}"><rect x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/></clipPath></defs>` + s;
+  s += `<path class="nm-gp-curve" clip-path="url(#${clipId})" d="${d}"/>`;
+  (g.pts||[]).forEach(pt=>{
+    if(pt[0]<xr[0]||pt[0]>xr[1]||pt[1]<yr[0]||pt[1]>yr[1]) return;
+    s += `<circle class="nm-gp-pt" cx="${X(pt[0]).toFixed(1)}" cy="${Y(pt[1]).toFixed(1)}" r="4"/>`;
+  });
+  return s;
+}
+
+function renderGraphPlane(problem, container, onAnswer){
+  const g = problem.graph || {};
+  const W=290, H=250, pad=22;
+  const lang0=(window.S&&window.S.lang)||'ko';
+  const hint0 = lang0==='en' ? 'Count the squares on the grid!'
+              : lang0==='zh' ? '数一数格子！' : '격자의 칸을 세어 봐요!';
+  const root=document.createElement('div');
+  root.className='nm-w-graph';
+  root.innerHTML=`
+    <div class="nm-gp-hint">${esc(hint0)}</div>
+    <svg class="nm-gp-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${graphPlaneSvgInner(g,W,H,pad)}</svg>
+    <div class="nm-gp-tex" id="gpTex"></div>
+    <div class="nm-numpad-screen" id="gpScreen">&nbsp;</div>
+    <div class="nm-numpad" id="gpPad"></div>
+  `;
+  container.appendChild(root);
+  const texEl=root.querySelector('#gpTex');
+  if(problem.tex) texEl.innerHTML=renderKaTeX(problem.tex); else texEl.remove();
+
+  const screen=root.querySelector('#gpScreen');
+  let submitted=false;
+  if(Array.isArray(problem.answer)){
+    const mp=multiPadState(screen,problem.answer,problem.answerShape);
+    buildNumpad(root.querySelector('#gpPad'),val=>{
+      if(submitted)return;
+      if(val==='ok'){
+        if(!mp.isFull())return;
+        submitted=true;
+        onAnswer(mp.values().map(Number));
+        return;
+      }
+      mp.handle(val);
+    },{decimal:false,negative:true});
+    return;
+  }
+  const ns=numpadState(screen,4);
+  buildNumpad(root.querySelector('#gpPad'),val=>{
+    if(submitted)return;
+    if(val==='ok'){
+      const inp=ns.get();
+      if(!inp||inp==='-')return;
+      submitted=true;
+      onAnswer(parseFloat(inp));
+      return;
+    }
+    ns.handle(val);
+  },{decimal:false,negative:true});
+}
+
+/* ─────────────────────────────────────────
    EXPORT
 ───────────────────────────────────────── */
 window.NM_WIDGETS={
@@ -2088,6 +2202,7 @@ window.NM_WIDGETS={
   renderSortBasket,
   renderTallyBuild,
   renderNumline,
+  renderGraphPlane,
   renderBase10,
   renderCompareSteps,
   // 다칸 답 화면 HTML — main.js의 multiScreenHtml()이 재사용(분수 모양 렌더 공유)

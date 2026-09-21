@@ -258,15 +258,15 @@ const COURSE_SPEC = [
     셋(연립방정식 MD63·일차부등식 MD64·일차함수 MD65)이 아예 없어서였지 압축한 게
     아니다. 셋을 넣으며 제목도 내용에 맞게 바꾼다. */
  {id:33, tier:'middle2', title:{ko:'연립방정식과 일차함수',en:'Systems, Inequalities & Lines',zh:'方程组与一次函数'},
-   drills:['MD13','MD14','MD63','MD64','MD65','MD13@2','MD63@2','MD64@2','MD65@2','MD14@2','MD63@3','MD64@3','MD65@3','MD13@3','MD14@3'], minSessions:9,
-   magic:[['M-13'],['M-14'],['M-63'],['M-64'],['M-65']], creative:['MD63@3','MD65@3','MD64@3']},
+   drills:['MD13','MD14','MD63','MD64','MD65','MD13@2','MD63@2','MD64@2','MD65@2','MD14@2','MD63@3','MD64@3','MD65@3','MD65@4','MD65@5','MD13@3','MD14@3'], minSessions:9,
+   magic:[['M-13'],['M-14'],['M-63'],['M-64'],['M-65']], creative:['MD63@3','MD65@5','MD64@3']},
  {id:34, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
    drills:['MD15','MD16','MD17','MD14','MD15@2','MD16@2','MD17@2','MD15@3','MD16@3','MD17@3'], minSessions:5, magic:[['M-15'],['M-16'],['M-17']], creative:['MD17@3','MD16@3','MD15@3']},
  /* 35 확장(2026-09-20) — 인수분해(MD20)까지 와 놓고 **그 식을 =0으로 놓는 한 걸음**이
     없었다. 중3 교과 연산의 마지막 두 기둥(이차방정식 풀이 MD66·이차함수 꼭짓점 MD67)을
     넣어 인수분해 → 근 → 꼭짓점으로 이어지게 한다. */
  {id:35, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratics',zh:'因式分解与二次方程'},
-   drills:['MD18','MD19','MD20','MD66','MD67','MD18@2','MD19@2','MD20@2','MD66@2','MD67@2','MD19@3','MD66@3','MD67@3','MD18@3'], minSessions:8,
+   drills:['MD18','MD19','MD20','MD66','MD67','MD18@2','MD19@2','MD20@2','MD66@2','MD67@2','MD19@3','MD66@3','MD67@3','MD67@4','MD18@3'], minSessions:8,
    magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-67']], creative:['MD66@3','MD67@3','MD20@2']},
 
  /* 36~39 실배치(2026-08-25, 고등 W11·W12): MASTER-ROADMAP.md §6.

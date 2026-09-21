@@ -11,13 +11,15 @@ window.NM_UNITS['M-65'] = {
   subtitle:{ ko:'두 점만 있으면 직선 하나가 정해져요', en:'Two points are enough to pin down one straight line', zh:'只要两个点，就能确定一条直线' },
   icon:'📈',
 
+  /* practice 를 그래프 모드로 연 이유(2026-09-21, 원장 "일차함수 그래프는") —
+     기울기는 원래 격자에서 눈으로 세는 것이다. 좌표를 숫자로만 주면 공식만 남는다. */
   practice:{
     generator:'md65_linearFunction', level:'practice', count:5,
-    params:{mode:'slope'},
+    params:{mode:'readSlope'},
     intro:{
-      ko:'오른쪽으로 갈 때 위로 몇 칸 올라가는지 세어 보세요 — 그게 기울기예요!',
-      en:'Count how many steps up you take for the steps you take right — that is the slope!',
-      zh:'数一数向右走时向上走了几格——那就是斜率！'
+      ko:'직선을 따라 오른쪽으로 한 칸 간 뒤, 위나 아래로 몇 칸 움직였는지 세어 보세요 — 그게 기울기예요!',
+      en:'Follow the line one square to the right, then count how many squares you moved up or down — that is the slope!',
+      zh:'沿直线向右走一格，再数一数上下移动了几格——那就是斜率！'
     }
   },
 
@@ -52,7 +54,18 @@ window.NM_UNITS['M-65'] = {
         result:{ko:'기울기와 점 하나면 직선의 식이 완성돼요!',en:'One slope plus one point completes the equation of the line!',zh:'有了斜率和一个点，直线的式子就完成了！'},
         book:{ko:'y절편 b는 <b>x=0일 때의 y값</b>, 즉 그래프가 y축과 만나는 높이예요. 두 점 중 아무 점을 넣어도 b는 같게 나와요 — 다르게 나왔다면 기울기를 잘못 구한 거예요.',
               en:'The y-intercept is <b>the y value when x is zero</b> — the height at which the graph meets the y-axis. Either of the two points gives the same value; if they disagree, the slope was wrong.',
-              zh:'y截距b就是<b>x=0时的y值</b>，也就是图象与y轴相交的高度。用两点中哪一个代入，b都一样；若不一样，说明斜率算错了。'} }
+              zh:'y截距b就是<b>x=0时的y值</b>，也就是图象与y轴相交的高度。用两点中哪一个代入，b都一样；若不一样，说明斜率算错了。'} },
+
+      { tag:{ko:'③ 그래프에서 식을 거꾸로 읽기',en:'3) Read the equation backward off the graph',zh:'③ 从图象反过来读出式子'},
+        head:{ko:'\\text{y축 } 2, \\quad \\text{오른쪽 1칸에 위로 3칸} \\quad\\Rightarrow\\quad y = 3x + 2',en:'\\text{y-axis } 2, \\quad \\text{up 3 per 1 right} \\quad\\Rightarrow\\quad y = 3x + 2',zh:'\\text{y轴 } 2, \\quad \\text{右1格上3格} \\quad\\Rightarrow\\quad y = 3x + 2'},
+        desc:{ko:'그림만 있어도 식이 나와요. 그래프가 y축을 지나는 높이가 <b>b</b>, 거기서 오른쪽으로 한 칸 갔을 때 오르내린 칸 수가 <b>a</b>예요. 내려가면 a가 음수예요 — 그래서 오른쪽으로 갈수록 낮아지는 직선은 기울기가 음수예요.',
+              en:'The picture alone gives you the equation. The height where the graph crosses the y-axis is <b>b</b>, and the squares it rises or falls for one square to the right is <b>a</b>. Falling means a is negative — that is why a line heading down to the right has a negative slope.',
+              zh:'只看图也能写出式子。图象穿过y轴的高度就是<b>b</b>，从那里向右一格上下走的格数就是<b>a</b>。向下就是负数——所以向右下降的直线斜率为负。'},
+        mathSteps:['b = 2', 'a = 3 \\div 1 = 3', 'y = 3x + 2'],
+        result:{ko:'격자 한 칸이 1이라 눈으로 셀 수 있어요!',en:'One square of the grid is 1, so you can simply count!',zh:'格子一格就是1，所以可以直接数出来！'},
+        book:{ko:'기울기가 <b>클수록 가파르고</b>, 0에 가까울수록 눕습니다. a가 같고 b만 다른 두 직선은 <b>서로 평행</b>해요 — 기울기가 그 직선의 방향을 통째로 정하기 때문이에요.',
+              en:'A bigger slope means a steeper line, and one closer to zero means a flatter one. Two lines with the same a but different b are <b>parallel</b> — the slope alone decides the direction.',
+              zh:'斜率越<b>大越陡</b>，越接近0越平。a相同而只有b不同的两条直线<b>互相平行</b>——因为方向完全由斜率决定。'} }
     ],
     rule:{ ko:'기울기는 (y의 증가량)÷(x의 증가량), y절편은 x=0일 때의 높이 — 이 둘이면 직선 하나가 정해져요!',
       en:'Slope is the change in y divided by the change in x, and the y-intercept is the height at x=0 — those two pin down one line!',

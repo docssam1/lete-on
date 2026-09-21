@@ -1973,3 +1973,45 @@ check-print·check-answerable 통과.
 `check-print` · `check-print-lang` · `check-stages` · `check-ladder` · `check-about-stats`
 전부 통과. 검사기 두 개(`check-solution-steps`·`check-step-equations`)는 로드 파일 목록이
 하드코딩이라 `mid9.js` 를 **직접 추가**해야 했다 — 새 스레드 파일을 만들 때마다 잊기 쉽다.
+
+---
+
+## 좌표평면 위젯 — "일차함수 그래프는" (2026-09-21)
+
+원장 한마디: **"일차함수 그래프는"**. 바로 앞 세션에서 일차함수(MD65)를 넣었는데,
+**좌표를 숫자로만 주고 그림이 없었다** — `(1, 5), (3, 11) ⟹ y = □x + □`. 기울기가
+"오른쪽 1칸에 위로 몇 칸"이라는 건 격자 위에서만 보이므로, 그림이 없으면 공식만 남는다.
+
+### 넣은 것
+- **`widget:'graphPlane'`**(`app/widgets.js` `renderGraphPlane`) — 격자 한 칸 = 정수 1인
+  좌표평면. `problem.graph = {kind:'line'|'parabola', m,b | a,p,q, pts, xr, yr}`.
+  답이 숫자 하나든 배열이든 둘 다 받는다(기울기 1칸 · 식 2칸 · 꼭짓점 2칸).
+- **인쇄 `graphSvg(g)`**(`app/exam.js`) — 화면과 **같은 좌표 규약**으로 다시 그린다.
+  흑백 프린터 전제라 색 없이 굵기로만 나눈다(격자 .5 · 축 1.1 · 곡선 2).
+- **새 레벨 셋** — MD65 L4 `readSlope`(그래프 → 기울기) · MD65 L5 `readEquation`
+  (그래프 → y=ax+b) · MD67 L4 `readVertex`(포물선 → 꼭짓점).
+  M-65·M-67 의 `practice` 를 이 그래프 모드로 바꿨다 — **그림이 먼저고 식이 나중**이다.
+  과정 33 에 `MD65@4`·`MD65@5`, 과정 35 에 `MD67@4` 편성(적용 회차도 MD65@5).
+
+### 학습지 쪽에서 세 군데가 걸렸다 (전부 실측으로 발견)
+1. **`classifyRoundLayout` 이 식 길이로만 판정** — `y = □x + □` 가 **짧은 식**이라
+   한 줄짜리 큰 글씨 칸(`nm-w2-grid-big`, 칸 높이 **16px**)에 들어가 그래프가 통째로
+   잘렸다. `graphRound` 판정을 먼저 두고 `visual` 2열×3행으로 보낸다.
+2. **창의(적용) 회차의 `train` 배치와 `예시`·`따라풀기` 는 `p.tex` 만 그린다** —
+   그래프가 빠지고 `(가) y = □x + □` 만 찍혀 **종이로는 풀 수가 없었다**.
+   이미 있던 `pictureOnly`(유아 NL) 와 같은 이유라 같은 자리에서 함께 막았다.
+3. **flex 칸 안에서 `height:auto` 만으로는 SVG 가 눌린다** — 실측 174×0·174×84
+   (viewBox 비 190:168 이면 174×154 여야 한다). `aspect-ratio` + `flex:0 0 auto` 로 고정.
+
+그 밖에: 그래프 문항은 `printAskText` 가 prompt 를 물음 줄로 실어 **같은 문장이 한 쪽에
+6번** 찍혔다(MD67) → 그래프 문항은 물음 줄을 빼고 개념 패널이 설명을 맡는다.
+`\text{꼭짓점} (□, □)` 의 괄호가 답 상자 높이를 못 따라가 잘려 보여 `\left(`·`\right)` 로
+바꿨다(MD67 전 모드 — 문제·정답은 그대로, 괄호 크기만).
+
+### 검증
+`check-answerable`(MD63·65·67 12레벨 전부 화면으로 풀림) · `check-print`(588 유형·레벨) ·
+`check-print-lang`(ko/en/zh 588) · `check-tex-hygiene` · `check-unit-lang` ·
+`check-level-concept/coverage` · `check-ladder` · `check-stages` · `check-about-stats` 통과.
+A4 지면을 실제로 렌더해 **눈으로** 확인했다(그래프 6개가 한 쪽에, 정답지 값 일치) —
+위 세 결함은 전부 검사기가 아니라 그 그림에서 나왔다. 검사기는 "칸 안에 들어갔나"는 보지만
+"칸이 그림을 자르고 있나"는 못 본다.

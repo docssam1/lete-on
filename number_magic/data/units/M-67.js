@@ -11,13 +11,15 @@ window.NM_UNITS['M-67'] = {
   subtitle:{ ko:'제곱은 음수가 될 수 없어서 꺾이는 자리가 생겨요', en:'A square can never be negative — that is where the curve turns', zh:'平方不可能为负，所以才有转折的地方' },
   icon:'⛰️',
 
+  /* practice 를 그래프 모드로 연 이유(2026-09-21) — 꼭짓점은 "포물선이 꺾이는 한 점"이다.
+     식에서 부호를 뒤집어 읽는 요령보다 그림이 먼저다(M-65 와 같은 좌표평면 위젯). */
   practice:{
     generator:'md67_quadVertex', level:'practice', count:5,
-    params:{mode:'vertexForm'},
+    params:{mode:'readVertex'},
     intro:{
-      ko:'y=a(x−p)²+q의 꼭짓점은 (p, q)예요 — 괄호 안의 부호는 반대로 읽어요!',
-      en:'For y=a(x−p)²+q the vertex is (p, q) — read the sign inside the brackets the opposite way!',
-      zh:'y=a(x−p)²+q的顶点是(p, q)——括号里的符号要反过来读！'
+      ko:'포물선이 방향을 바꾸는 단 한 점을 찾아, 그 자리의 가로·세로 좌표를 읽어 보세요!',
+      en:'Find the one point where the parabola turns around, and read its x and y off the grid!',
+      zh:'找出抛物线改变方向的那唯一一点，读出它的横纵坐标！'
     }
   },
 

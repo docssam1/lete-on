@@ -93,7 +93,7 @@ NM_TGEN['md63_simultaneous'] = function (params, rng) {
         { tex: `${coefLead(a + b * m)}x = \\square`, blank: e - b * n },
         { tex: `x = \\square`, blank: x },
         { tex: `y = ${coefLead(m)}(${x}) ${wrapPlus(n)} = \\square`, blank: yy },
-        { tex: `(x,\\, y) = (\\square,\\, \\square)`, blank: [x, yy] }
+        { tex: `(x,\\, y) = \\left(\\square,\\, \\square\\right)`, blank: [x, yy] }
       ]
     };
   }
@@ -122,7 +122,7 @@ NM_TGEN['md63_simultaneous'] = function (params, rng) {
         { tex: `x = \\square`, blank: x },
         { tex: `${coefLead(b1)}y = ${e1} - ${a1}\\times(${x}) = \\square`, blank: e1 - a1 * x },
         { tex: `y = \\square`, blank: y },
-        { tex: `(x,\\, y) = (\\square,\\, \\square)`, blank: [x, y] }
+        { tex: `(x,\\, y) = \\left(\\square,\\, \\square\\right)`, blank: [x, y] }
       ]
     };
   }
@@ -147,7 +147,7 @@ NM_TGEN['md63_simultaneous'] = function (params, rng) {
       { tex: `x = \\square`, blank: x },
       { tex: `${a1} \\times (\\text{②}) - ${a2} \\times (\\text{①}) : ${coefLead(D)}y = ${a1 * e2 - a2 * e1}` },
       { tex: `y = \\square`, blank: y },
-      { tex: `(x,\\, y) = (\\square,\\, \\square)`, blank: [x, y] }
+      { tex: `(x,\\, y) = \\left(\\square,\\, \\square\\right)`, blank: [x, y] }
     ]
   };
 };
@@ -241,6 +241,51 @@ NM_TGEN['md64_linearInequality'] = function (params, rng) {
    y절편 1칸) · 'fromPoints'(두 점 → y=□x+□ 2칸, 실전). */
 NM_TGEN['md65_linearFunction'] = function (params, rng) {
   const mode = params.mode || 'slope';
+
+  /* ── 그래프 모드(2026-09-21) ── 원장 "일차함수 그래프는".
+     기울기가 "오른쪽 1칸에 위로 몇 칸"이라는 건 격자 위에서만 보인다. 좌표를
+     숫자로만 주던 위 세 모드에 그래프를 읽는 두 모드를 더한다. 계수 범위는
+     **상자 안에서 읽히도록** 정한다 — |m|≤3, |b|≤5, x∈[-6,6], y∈[-8,8].
+     격자에 실제로 찍히는 점(정수 좌표)만 표시해야 칸을 세어 읽을 수 있다. */
+  if (mode === 'readSlope' || mode === 'readEquation') {
+    const gm = pick(rng, [1, 2, 3, -1, -2, -3]);
+    const gb = R(rng, -5, 5);
+    const xr = [-6, 6], yr = [-8, 8];
+    /* 표시할 격자점 두 개 — y절편과, 상자 안에 남는 가까운 정수점 하나 */
+    const pts = [[0, gb]];
+    for (const k of [1, -1, 2, -2, 3, -3]) {
+      const y = gm * k + gb;
+      if (y >= yr[0] && y <= yr[1]) { pts.push([k, y]); break; }
+    }
+    const graph = { kind: 'line', m: gm, b: gb, pts: pts, xr: xr, yr: yr };
+
+    if (mode === 'readSlope') {
+      return {
+        prompt: { ko: `그래프에서 오른쪽으로 1칸 갈 때 위아래로 몇 칸 움직이는지 세어요 — 그게 기울기예요`,
+          en: `On the graph, count how many squares up or down you move for one square to the right — that is the slope`,
+          zh: `在图象上数一数：向右走1格时上下走了几格——那就是斜率` },
+        tex: `\\text{기울기} = \\square`,
+        answer: gm, answerType: 'number', widget: 'graphPlane', graph: graph, negative: gm < 0,
+        solution: [
+          { tex: `\\text{오른쪽 1칸} \\quad\\Rightarrow\\quad \\text{세로 } \\square \\text{칸}`, blank: gm },
+          { tex: `\\text{기울기} = \\square`, blank: gm }
+        ]
+      };
+    }
+    return {
+      prompt: { ko: `그래프가 y축과 만나는 높이가 b, 오른쪽 1칸당 오르내리는 칸 수가 a예요 — y=ax+b로 적어요`,
+        en: `Where the graph meets the y-axis is b, and the squares it rises per square right is a — write it as y=ax+b`,
+        zh: `图象与y轴相交的高度是b，向右1格上下走的格数是a——写成y=ax+b` },
+      tex: `y = \\square x + \\square`,
+      answer: [gm, gb], answerType: 'number', widget: 'graphPlane', graph: graph, negative: hasNeg([gm, gb]),
+      solution: [
+        { tex: `\\text{y축과 만나는 높이} = \\square`, blank: gb },
+        { tex: `\\text{오른쪽 1칸당 세로} = \\square`, blank: gm },
+        { tex: `y = \\square x + \\square`, blank: [gm, gb] }
+      ]
+    };
+  }
+
   const m = nzInt(rng, 1, params.wide ? 6 : 4);
   const b = nzInt(rng, 1, params.wide ? 12 : 8);
   const x1 = nzInt(rng, 1, 6);
@@ -377,6 +422,28 @@ NM_TGEN['md66_quadEquation'] = function (params, rng) {
    b 짝수) · 'withCoef'(a≠1, 실전). 답은 [p, q] 2칸. */
 NM_TGEN['md67_quadVertex'] = function (params, rng) {
   const mode = params.mode || 'vertexForm';
+
+  /* ── 그래프 모드(2026-09-21) ── MD65 와 같은 좌표평면 위젯. 포물선은 "꼭짓점이
+     어디냐"가 그림 하나로 끝나는 개념이라, 식만 주고 끝내면 절반만 가르친 셈이다.
+     상자 안에서 꼭짓점과 양팔이 다 보이도록 a=±1, |p|≤3, |q|≤4 로 묶는다. */
+  if (mode === 'readVertex') {
+    const ga = pick(rng, [1, -1]);
+    const gp = R(rng, -3, 3), gq = R(rng, -4, 4);
+    return {
+      prompt: { ko: `포물선이 꺾이는 한 점이 꼭짓점이에요 — 그래프에서 좌표를 읽어요`,
+        en: `The single point where the parabola turns is the vertex — read its coordinates off the graph`,
+        zh: `抛物线转折的那一点就是顶点——从图象上读出它的坐标` },
+      tex: `\\text{꼭짓점} \\left(\\square,\\, \\square\\right)`,
+      answer: [gp, gq], answerType: 'number', widget: 'graphPlane', negative: hasNeg([gp, gq]),
+      graph: { kind: 'parabola', a: ga, p: gp, q: gq, pts: [[gp, gq]], xr: [-6, 6], yr: [-8, 8] },
+      solution: [
+        { tex: `\\text{가장 } ${ga > 0 ? '낮은' : '높은'} \\text{ 점의 } x = \\square`, blank: gp },
+        { tex: `\\text{그때의 } y = \\square`, blank: gq },
+        { tex: `\\text{꼭짓점} \\left(\\square,\\, \\square\\right)`, blank: [gp, gq] }
+      ]
+    };
+  }
+
   const p = nzInt(rng, 1, params.wide ? 8 : 5);
   let q = nzInt(rng, 1, params.wide ? 14 : 9);
 
@@ -390,7 +457,7 @@ NM_TGEN['md67_quadVertex'] = function (params, rng) {
       prompt: { ko: `x의 계수의 절반을 제곱해 더하고 빼면 y=(x-p)²+q 꼴이 돼요 — 꼭짓점은 (p, q)예요`,
         en: `Halve the coefficient of x and square it to reach y=(x-p)²+q — the vertex is (p, q)`,
         zh: `把x的系数取一半再平方，配成y=(x-p)²+q的形式——顶点就是(p, q)` },
-      tex: `y = x^2 ${wrapPlus(b)}x ${wrapPlus(c)} \\quad\\Rightarrow\\quad \\text{꼭짓점} (\\square,\\, \\square)`,
+      tex: `y = x^2 ${wrapPlus(b)}x ${wrapPlus(c)} \\quad\\Rightarrow\\quad \\text{꼭짓점} \\left(\\square,\\, \\square\\right)`,
       answer: [p, q], answerType: 'number', widget: 'numpad', negative: hasNeg([p, q]),
       solution: [
         { tex: `-\\dfrac{${b}}{2} = \\square`, blank: p },
@@ -411,7 +478,7 @@ NM_TGEN['md67_quadVertex'] = function (params, rng) {
       prompt: { ko: `x²의 계수를 먼저 묶어낸 뒤 완전제곱을 만들어요 — 위로 볼록·아래로 볼록은 그 계수의 부호가 정해요`,
         en: `Factor out the coefficient of x² first, then complete the square — its sign decides whether the parabola opens up or down`,
         zh: `先提取x²的系数再配方——开口向上还是向下由这个系数的符号决定` },
-      tex: `y = ${coefLead(a)}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} \\quad\\Rightarrow\\quad \\text{꼭짓점} (\\square,\\, \\square)`,
+      tex: `y = ${coefLead(a)}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} \\quad\\Rightarrow\\quad \\text{꼭짓점} \\left(\\square,\\, \\square\\right)`,
       answer: [p, q], answerType: 'number', widget: 'numpad', negative: hasNeg([p, q]),
       solution: [
         { tex: `-\\dfrac{${b}}{2 \\times (${a})} = \\square`, blank: p },
@@ -427,12 +494,12 @@ NM_TGEN['md67_quadVertex'] = function (params, rng) {
     prompt: { ko: `y=a(x-p)²+q의 꼭짓점은 (p, q)예요 — 괄호 안의 부호는 반대로 읽어요`,
       en: `For y=a(x-p)²+q the vertex is (p, q) — read the sign inside the brackets the opposite way`,
       zh: `y=a(x-p)²+q的顶点是(p, q)——括号里的符号要反过来读` },
-    tex: `y = ${coefLead(a)}(x ${wrapPlus(-p)})^2 ${wrapPlus(q)} \\quad\\Rightarrow\\quad \\text{꼭짓점} (\\square,\\, \\square)`,
+    tex: `y = ${coefLead(a)}(x ${wrapPlus(-p)})^2 ${wrapPlus(q)} \\quad\\Rightarrow\\quad \\text{꼭짓점} \\left(\\square,\\, \\square\\right)`,
     answer: [p, q], answerType: 'number', widget: 'numpad', negative: hasNeg([p, q]),
     solution: [
       { tex: `(x ${wrapPlus(-p)})^2 = 0 \\quad\\Rightarrow\\quad x = \\square`, blank: p },
       { tex: `\\text{그때 } y = ${coefLead(a)}\\times 0 ${wrapPlus(q)} = \\square`, blank: q },
-      { tex: `\\text{꼭짓점} (\\square,\\, \\square)`, blank: [p, q] }
+      { tex: `\\text{꼭짓점} \\left(\\square,\\, \\square\\right)`, blank: [p, q] }
     ]
   };
 };
