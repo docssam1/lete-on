@@ -27,7 +27,6 @@
 | Supabase | https://fgahqumaldheqettmvqg.supabase.co (원문 테이블 `science_bank_source`, 음성 Storage `audio/science-lab/`) |
 | 원본 그림 | lete-on 저장소의 `science-src` 브랜치 (`science-src/4-1/<단원>/<E코드>/<T코드>/o-NN.png`) |
 | 최근 PR | #251(17차 오개념 u01) · #252(18차 광고 책 Ⅶ·Ⅷ) · 이번 19차 PR(Ⅸ 자유형 견본 + 이 문서) |
-| 분석한 경쟁 서비스 | 글잇 https://gliit-2-0-proto.vercel.app (교사 계정 `너구리1`. 비밀번호는 원장에게 받을 것. 클래스 ㅈㄴ에 **"테스트 수업"이 남아 있으니 정리할 것**) |
 | 상담 링크(책 뒤표지) | https://open.kakao.com/me/gfield · 02-3453-7772 |
 
 ## 2. 읽는 순서 (저장소 안)
@@ -47,7 +46,7 @@
 - **B2B가 중요하다.** 강사가 답안지 더미를 연속 촬영하면 학생별로 자동 분류되고, 성적이 전송되고, 처방 PDF가 인쇄된다. B2C(학부모)도 같은 파이프라인을 쓴다.
 - 입구는 세 개(웹 = 타자, 종이 = 원고지 사진, 앱 = 폰 사진)지만 **채점 파이프라인은 하나**다.
 - **AI 채점은 제미나이(또는 무료 API) 우선이고, 어댑터로 교체할 수 있게** 만든다. Claude API는 비용 때문에 쓰지 않는다. **Report3**(텔레그램 → GCS → 제미나이 비전, 저장소 `docssam1/gfield-report`)를 재사용하고, QR 해독과 판정 JSON 스키마 프롬프트만 추가한다.
-- 서술형은 **정답과 비교**한다(판정 JSON: `verdict / matched / missing / explanation / spelling`, 글잇 방식 참고). 자유형(주제 글쓰기)은 **루브릭**(내용·구성·표현·맞춤법 각 5점)으로 채점한다.
+- 서술형은 **정답과 비교**한다(판정 JSON: `verdict / matched / missing / explanation / spelling`). 자유형(주제 글쓰기)은 **루브릭**(내용·구성·표현·맞춤법 각 5점)으로 채점한다.
 - 첨삭 표현: 학생 글씨는 흐린 연필 손글씨, 첨삭은 그 위에 빨간 펜 손글씨(두 줄 긋기, 고칠 말, 점수, `의심` 도장, **학년 맞춤 낱말 추천**).
 - 독쌤 목소리: 밝은 남자 목소리. 현재 Google TTS(`ko-KR-Chirp3-HD-Puck`)를 쓴다. 원장은 **OmniVoice 복제**로 바꾸고 싶어 한다(루트 `CLAUDE.md` "OmniVoice 검토" 절, `scripts/local/omnivoice-clone.cmd`).
 - 디자인: 판타지 마법서(만화책 느낌 아님), 폰트는 Gaegu 700 + Pretendard, 이모지 아이콘은 쓰지 않는다.
@@ -71,29 +70,28 @@
   - `manuscript()`: 원고지 칸
   - `fakeQr()`: 가짜 QR. 진짜 QR은 인쇄 라우트가 만들어야 한다.
 - `intro.css`: 기본 스타일. `intro-paper.css`: 손글씨·빨간 펜·루브릭 스타일(덮어쓰기용).
-- `narration.json`: 독쌤 대사. 문장을 고치면 해시가 바뀌어 새 MP3가 필요하다. **`generate-audio.yml`의 paths에 이 파일이 없어서** 나레이션만 고쳐 올리면 음성이 자동으로 만들어지지 않는다. Actions의 **Generate Audio를 수동 실행**해야 하고, 그전까지는 기기 음성이 나온다. 현재 `photo`·`remedy`·`free` 세 줄이 MP3 없이 대기 중이다.
+- `narration.json`: 독쌤 대사. 문장을 고치면 해시가 바뀌어 새 MP3가 필요하다. **`generate-audio.yml`의 paths에 이 파일이 없어서** 나레이션만 고쳐 올리면 음성이 자동으로 만들어지지 않는다. Actions의 **Generate Audio를 수동 실행**해야 하고, 그전까지는 기기 음성이 나온다. (`photo`·`remedy`·`free` 세 줄은 2026-09-22에 수동 실행으로 생성 완료.)
 
 ## 6. 앞으로 할 일 (우선순위 순. 하나씩 원장 승인을 받고 진행)
-1. **[바로] Generate Audio 수동 실행**: 새 나레이션 3줄(photo·remedy·free)의 MP3를 만든다.
-2. **[바로] HANDOFF-18.md를 HANDOFF.md 17차 위로 합치고** 파일을 지운다. 이 문서의 19차 내용도 같이 옮긴다.
-3. **[바로] 글잇 교사 계정 클래스 ㅈㄴ의 "테스트 수업"을 정리**한다.
-4. **오개념 진단을 나머지 두 단원으로 확장**한다: `s41-u02.misc.js`, `s42-u01.misc.js`. 17차 패턴을 그대로 반복한다(오개념 정의 → distractors/typed/cloze/cells → remedy → 검증 스크립트 → `v2/v2.js` 로더에 `misc` 한 줄 추가 → 화면 확인). 주의: "틀린 것 고르기" 부정 발문 문항은 오답 인덱스 방향이 반대다.
-5. **실구현 설계서를 먼저 쓰고 승인을 받는다.** 서술형과 자유형이 같이 쓰는 채점 계약을 정한다:
+1. **[바로] HANDOFF-18.md를 HANDOFF.md 17차 위로 합치고** 파일을 지운다. 이 문서의 19차 내용도 같이 옮긴다.
+2. **오개념 진단을 나머지 두 단원으로 확장**한다: `s41-u02.misc.js`, `s42-u01.misc.js`. 17차 패턴을 그대로 반복한다(오개념 정의 → distractors/typed/cloze/cells → remedy → 검증 스크립트 → `v2/v2.js` 로더에 `misc` 한 줄 추가 → 화면 확인). 주의: "틀린 것 고르기" 부정 발문 문항은 오답 인덱스 방향이 반대다.
+3. **실구현 설계서를 먼저 쓰고 승인을 받는다.** 서술형과 자유형이 같이 쓰는 채점 계약을 정한다:
    - 입력: `{student, unit, item|prompt, type: 'written'|'free', images[], typed?}`
    - 서술형 출력: `verdict/matched/missing/explanation/spelling/score`
    - 자유형 출력: `rubric[{k, score, why}], rewrite, words[], spelling[]`
    - 어댑터 인터페이스: `grade(input) → output`, 제미나이 구현을 기본으로 한다.
-6. 실구현 1단계: **학생별 QR 인쇄 라우트**(QR = 학생 id · 단원 · 쪽 · 문항 · 장 번호). 인쇄 교재의 서술형 칸에 원고지 칸을 만든다.
-7. 실구현 2단계: **처방지 인쇄 라우트** `#/<단원>/remedy/print` (진단 결과 → 처방 문제 한 장, AI 호출 없음).
-8. 실구현 3단계: **사진 → 전사 → 채점** 워크플로(n8n 또는 Report3 확장, 제미나이 비전). 전사 결과는 학생이 확인하는 단계를 반드시 거친다.
-9. 남은 정리:
+4. 실구현 1단계: **학생별 QR 인쇄 라우트**(QR = 학생 id · 단원 · 쪽 · 문항 · 장 번호). 인쇄 교재의 서술형 칸에 원고지 칸을 만든다.
+5. 실구현 2단계: **처방지 인쇄 라우트** `#/<단원>/remedy/print` (진단 결과 → 처방 문제 한 장, AI 호출 없음).
+6. 실구현 3단계: **사진 → 전사 → 채점** 워크플로(n8n 또는 Report3 확장, 제미나이 비전). 전사 결과는 학생이 확인하는 단계를 반드시 거친다.
+7. 남은 정리:
+   - `.github/workflows/generate-audio.yml`의 `paths:`에 `- 'science-lab/intro/narration.json'` 한 줄 추가(대사를 고치면 독쌤 음성 자동 생성). Claude 연동은 워크플로 파일 수정 권한이 없어 못 했다
    - 성취기준 문장을 고시 원문과 대조
    - 소단원 이름을 출판사 표기로 바꿀지 결정
    - 문제은행 어댑터 등록(`bank/science-bank-adapter.js`)
    - 원본 그림 중 `pending-crop`·`pending-upload` 처리
    - docssam 말풍선 `.bubble`이 모바일 320px에서 가로로 넘치는 문제(기존 버그)
    - `science-lab/assets/docssam.png` 1.2MB는 어디서도 쓰지 않는다. 삭제할지 원장에게 확인.
-10. 다음 단원: 같은 방식으로 단원 파일, 5E, 유사문항, misc, 교재를 만든다. 원천 자료는 Drive `과학 단원평가`, 지필드 이론편·실험2(라이선스 없음, 원문 사용 가능).
+8. 다음 단원: 같은 방식으로 단원 파일, 5E, 유사문항, misc, 교재를 만든다. 원천 자료는 Drive `과학 단원평가`, 지필드 이론편·실험2(라이선스 없음, 원문 사용 가능).
 
 ## 7. 검증 방법 (작업 후 매번)
 - 로컬 서버: 저장소 루트에서 `python3 -m http.server 8765` → `http://localhost:8765/science-lab/intro/`
