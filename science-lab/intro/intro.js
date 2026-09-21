@@ -137,6 +137,42 @@ function coverPage() {
 }
 const orn = '<div class="orn"><svg viewBox="0 0 120 10"><path d="M0 5 H48 M72 5 H120" stroke="#b8872b" stroke-width=".8"/><path d="M60 0 l6 5 l-6 5 l-6 -5z M50 5 a2 2 0 1 0 0 .01 M70 5 a2 2 0 1 0 0 .01" fill="#b8872b"/></svg></div>';
 const chap = (k, h) => `<p class="ad-k">${k}</p><h2>${h}</h2>${orn}`;
+// ── CHAPTER Ⅶ·Ⅷ 견본: 종이 첨삭(원고지 칸 + 학생 QR + 흐린 연필 글씨) → 폰 3컷 → 처방 한 장. 전부 그림(API 호출 없음) ──
+const PAPER = { item: 's41-u03-v014', student: '너구리', page: '4-1 Ⅲ 땅의 변화 · 10쪽 · 문항 14', wrong: '화강암은 땅 위에서 빨리 식어서 알갱이가 큽니다.', fixed: '마그마가 땅속 깊은 곳에서 천천히 식어서 알갱이가 큽니다.', mis: 'M10', remedy: ['s41-u03-b15', 's41-u03-v013', 's41-u03-v053'] };
+function fakeQr(seed, n = 21) {   // 결정적 가짜 QR(찾기 패턴 3개 + 난수 모듈). 진짜 주소는 인쇄 라우트가 만든다.
+  let s = seed; const rnd = () => (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  const finder = (x, y) => (i, j) => i >= x && i < x + 7 && j >= y && j < y + 7 && (i === x || i === x + 6 || j === y || j === y + 6 || (i >= x + 2 && i <= x + 4 && j >= y + 2 && j <= y + 4));
+  const F = [finder(0, 0), finder(n - 7, 0), finder(0, n - 7)];
+  let d = '';
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const inF = F.some((f) => f(i, j)); const near = (i < 8 && j < 8) || (i >= n - 8 && j < 8) || (i < 8 && j >= n - 8); if (inF || (!near && rnd() < .45)) d += `M${j} ${i}h1v1h-1z`; }
+  return `<svg viewBox="-1 -1 ${n + 2} ${n + 2}" shape-rendering="crispEdges"><rect x="-1" y="-1" width="${n + 2}" height="${n + 2}" fill="#fff"/><path d="${d}" fill="#111"/></svg>`;
+}
+// 원고지: cols칸 × rows줄. 글자마다 조금씩 기울고 흐리게(연필). ink: 'pencil' | 'pencil2'(2차, 조금 진하게)
+const manuscript = (text, cols, rows, ink) => { const cells = []; const chars = [...text.replace(/ /g, ' ')]; for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const ch = chars[r * cols + c] ?? ''; const t = ch && ch !== ' ' ? `<i style="transform:rotate(${((r * 7 + c * 13) % 9) - 4}deg) translate(${((c * 5) % 3) - 1}px,${((r * 3 + c) % 3) - 1}px);opacity:${ink === 'pencil' ? .58 + ((c * 7) % 5) / 25 : .74 + ((c * 3) % 4) / 25}">${esc(ch)}</i>` : ''; cells.push(`<span class="${c === cols - 1 ? 'e' : ''}${r === rows - 1 ? ' b' : ''}">${t}</span>`); } return `<div class="ms ${ink}" style="--cols:${cols}">${cells.join('')}</div>`; };
+function paperMock() {
+  const it = state.I?.[PAPER.item];
+  return `<div class="ad-paper"><div class="ad-paper-q"><b>14</b>${esc(it?.prompt || '')}</div>
+    <div class="ad-paper-a"><span class="ad-paper-l">1차 답</span>${manuscript(PAPER.wrong, 16, 2, 'pencil')}</div>
+    <div class="ad-paper-a"><span class="ad-paper-l">고쳐 쓰기</span>${manuscript(PAPER.fixed, 16, 2, 'pencil2')}</div>
+    <div class="ad-paper-foot"><div class="ad-paper-qr">${fakeQr(2026)}</div><div><b>${esc(PAPER.student)}</b><span>${esc(PAPER.page)}</span><small>QR = 누구의 · 어느 쪽 · 어느 문항</small></div><div class="ad-paper-mark">✂ 이 부분만 찍어도 돼요</div></div></div>`;
+}
+function phoneMock() {
+  const m = misc.misconceptions[PAPER.mis];
+  const cut = (n, body) => `<div class="ad-ph"><div class="ad-ph-bar"><i></i></div>${body}<div class="ad-ph-n">${n}</div></div>`;
+  return `<div class="ad-phones">
+    ${cut('① 찍기', `<div class="ad-ph-cam"><div class="ad-ph-cam-p">${manuscript(PAPER.wrong, 16, 2, 'pencil')}<div class="ad-ph-cam-qr">${fakeQr(2026)}</div></div><div class="ad-ph-cam-f"></div><p>QR 인식 · <b>${esc(PAPER.student)}</b> · 10쪽 문항 14</p></div>`)}
+    ${cut('② 읽은 글 확인', `<p class="ad-ph-h">내가 쓴 글이 맞아?</p><p class="ad-ph-t">화강암은 땅 위에서 <mark>빨리</mark> 식어서 알갱이가 큽니다.</p><p class="ad-ph-s">흐린 글자 1개는 노란색이에요. 틀리면 눌러서 고쳐요.</p><div class="ad-ph-btn">맞아, 이대로 채점</div>`)}
+    ${cut('③ 첨삭 · 진단', `<p class="ad-ph-h"><span class="no">1차 확인 · 다시</span></p><p class="ad-ph-t small">‘빨리 식어서 알갱이가 크다’는 부분을 다시 생각해 봐. 알갱이가 <b>커지려면</b> 시간이 어떻게 필요할까?</p><p class="ad-ph-mis"><span class="ad-mis">${esc(m.label)}</span></p><p class="ad-ph-s ok">✓ 진단 보고서에 <b>의심</b>으로 기록 · 처방 문제 3개 준비됨</p>`)}
+  </div>`;
+}
+function remedyMock() {
+  const m = misc.misconceptions[PAPER.mis];
+  const items = PAPER.remedy.map((id) => state.I?.[id]).filter(Boolean);
+  return `<div class="ad-rxs"><div class="ad-rxs-h"><div><b>처방 문제</b><span>${esc(PAPER.student)} · 4-1 Ⅲ 땅의 변화</span></div><span class="ad-mis">${esc(m.label)}</span></div>
+    <p class="ad-rxs-fix">${m.fix}</p>
+    <ol class="ad-rxs-items">${items.map((it, i) => `<li><p><b>${i + 1}</b>${esc(it.prompt.replace(/^\[[^\]]*\]\s*/, '').slice(0, 56))}${it.prompt.length > 56 ? '…' : ''}</p><ol>${it.choices.slice(0, 5).map((c, j) => `<li><span>${NUM[j]}</span>${esc(c.length > 26 ? c.slice(0, 26) + '…' : c)}</li>`).join('')}</ol></li>`).join('')}</ol>
+    <div class="ad-rxs-f"><div class="ad-paper-qr">${fakeQr(2027)}</div><span>풀고 나서 다시 찍으면 → 두 번 연속 맞히면 <b>해소</b></span></div></div>`;
+}
 const ads = (home) => [
   adPage('ad a1', `${chap('PROLOGUE · 이 책에 대하여', '이런 과학책,<br>본 적 있나요?')}
     <p class="drop">과학은 외우는 것이 아니라 직접 해 보는 것입니다. 이 책은 교과서 단원마다 실험 한 장을 담고, 화면에서 펼치면 그 실험이 깨어나 아이의 손끝에서 다시 일어납니다.</p>
@@ -158,7 +194,7 @@ const ads = (home) => [
     </div><figure class="ad-qr"><img src="${esc(home?.qr || '')}" alt="준비물 QR"><figcaption>QR을 찍으면 준비물 목록과<br>구매 링크가 열립니다</figcaption></figure></div>
     <p class="ad-note">안전이 필요한 과정은 “보호자와 함께”라고 표시해 두었습니다</p>
     <div class="ad-use"><div><b>수업 전</b><span>3D로 먼저 보고 예상 써 오기</span></div><div><b>수업</b><span>실험하고 보고서 쓰기</span></div><div><b>수업 후</b><span>형성평가·영재 도전 풀기</span></div></div>`),
-  adPage('ad a6', `${chap('CHAPTER Ⅴ · 틀린 까닭을 읽는 책', '틀린 보기가<br>곧 진단입니다')}
+  adPage('ad a6', `${chap('CHAPTER Ⅴ · 틀린 까닭을 읽는 책', '틀린 보기가<br>곷 진단입니다')}
     <p class="drop">채점만 하는 책은 많습니다. 이 책은 아이가 <b>어떤 보기를 골랐는지</b>를 기억합니다. 운반 작용을 묻는 문제에서 “깎아 내는 것”을 고르면, 그건 실수가 아니라 침식과 운반을 바꿔 알고 있다는 신호입니다.</p>
     <ol class="ad-flow tight"><li><span>기록</span>개념 카드 · 잠깐 확인 · 점검 · 교재 확인 문제에서 고른 답을 전부 남깁니다</li><li><span>교정</span>틀리는 순간, “다시 생각해 봐요” 대신 <b>왜 틀렸는지</b> 한 문장으로 알려 줍니다</li><li><span>진단</span>같은 오개념이 다른 문제에서 또 나오면 <b>확정</b>, 한 번이면 <b>의심</b></li><li><span>처방</span>그 오개념이 숨어 있는 문제만 골라 다시 풀고, 두 번 연속 맞히면 <b>해소</b></li></ol>
     <div class="ad-ex"><p class="ad-ex-q">흐르는 물의 작용 중 <b>운반 작용</b>을 바르게 설명한 것은?</p>
@@ -171,13 +207,23 @@ const ads = (home) => [
       ${[['c', '확정', 'M01', ['점검 · 운반 작용 설명 → ① 깎아 내는 것', '개념 · 빈칸 ①에 ‘운반’']], ['s', '의심', 'M10', ['교재 · 백반 결정 실험 → ② 빨리 식힌 컵 — 큰 결정']], ['r', '해소', 'M14', ['확장 · 승강기로 내려간다 → 그 뒤 2번 연속 맞힘']]].map(([k, lab, m, ev]) => `<section class="ad-card ${k}"><p><span class="ad-st">${lab}</span><b>${esc(misc.misconceptions[m].label)}</b></p><p class="ad-card-fix">${misc.misconceptions[m].fix}</p><ul>${ev.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>${k === 'r' ? '' : `<p class="ad-rx">처방 · ${k === 'c' ? '개념 화면 다시 보기 → 확인 문제 3개' : '확인 문제 2개'}</p>`}</section>`).join('')}
     </div>
     <p class="ad-note">학생용은 카드와 처방 문제, 강사용은 근거·유형별 정답률까지 · A4 인쇄</p>`),
-  adPage('ad a8', `${chap('FAQ · 자주 묻는 질문', '궁금한 것들')}
+  adPage('ad a8', `${chap('CHAPTER Ⅶ · 사진 한 장이면', '종이에 쓰고,<br>찍으면 첨삭')}
+    <p class="drop">아이의 공부는 책에서 합니다. 인쇄한 교재의 서술형 답 칸은 <b>원고지</b>처럼 한 글자씩 쓰게 되어 있고, 쪽마다 <b>학생 QR</b>이 있습니다. 강사나 부모가 답안지를 찍기만 하면 누구의 몇 쪽인지 알아서 읽고, 첨삭과 진단이 그 자리에서 돌아옵니다.</p>
+    ${paperMock()}
+    ${phoneMock()}
+    <div class="ad-use ad-in3"><div><b>웹</b><span>화면에서 타자로 씀</span></div><div><b>종이</b><span>인쇄해서 손으로 씀 → 사진</span></div><div><b>앱</b><span>휴대폰으로 찍어 보냄</span></div></div>
+    <p class="ad-note">어느 입구로 들어와도 같은 첨삭 · 같은 진단 · 같은 처방</p>`),
+  adPage('ad a9', `${chap('CHAPTER Ⅷ · 다음 장은 학생마다', '틀린 개념의<br>문제만 골라서')}
+    <p class="ad-p">첨삭이 끝나면 그 학생이 헷갈린 <b>오개념</b>이 남습니다. 책은 그 오개념이 숨어 있는 문제만 골라 <b>그 학생용 처방 한 장</b>을 만듭니다. 강사는 다음 수업 전에 인쇄만 하면 되고, 아이는 다시 종이에 풀고 다시 찍습니다.</p>
+    ${remedyMock()}
+    <div class="ad-use ad-in3"><div><b>0회</b><span>AI 호출 없이 오개념표에서 바로</span></div><div><b>2번 연속</b><span>맞히면 <b>해소</b></span></div><div><b>아이마다</b><span>같은 반, 다른 처방 장</span></div></div>`),
+  adPage('ad a10', `${chap('FAQ · 자주 묻는 질문', '궁금한 것들')}
     <dl class="ad-faq"><dt>몇 학년이 보나요?</dt><dd>초등 3~6학년. 교과서 단원 순서를 그대로 따라가고, 영재원 대비 문제를 더했습니다.</dd>
       <dt>집에서도 할 수 있나요?</dt><dd>네. 준비물 QR로 바로 사서 집에서 그대로 할 수 있고, 위험한 과정은 3D 실험실로 대신할 수 있습니다.</dd>
       <dt>3D 실험은 따로 설치하나요?</dt><dd>아니요. 휴대폰·태블릿·PC 브라우저에서 바로 열립니다.</dd>
       <dt>종이 교재로도 쓰나요?</dt><dd>A4로 그대로 인쇄됩니다. 학생용·강사용 두 가지이고, 탐구보고서와 형성평가까지 한 장씩 들어 있습니다.</dd>
       <dt>틀린 문제는 어떻게 되나요?</dt><dd>어떤 보기를 골랐는지로 오개념을 찾아 바로 교정하고, 진단 화면에서 처방 문제를 다시 풀게 합니다.</dd></dl>`),
-  adPage('ad a9', `${chap('UNSEAL · 봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
+  adPage('ad a11', `${chap('UNSEAL · 봉인 해제', '다음 장부터<br><em>책이 깨어납니다</em>')}
     <ul class="ad-how"><li><i>▶</i><span>그림 속 <b>영상</b> — 실제 화산이 책 안에서 타오릅니다</span></li><li><i>✦</i><span>주황 인장 — <b>3D 실험실</b>이 책 밖으로 솟아오릅니다</span></li><li><i>ⓐ</i><span><b>빈칸</b>을 누르면 답이 드러납니다</span></li><li><i>Ⅰ</i><span>확인 문제는 누르면 <b>바로 채점</b>, 틀리면 <b>왜 틀렸는지</b>가 뜹니다</span></li><li><i>⤢</i><span>사진을 누르면 <b>크게</b></span></li></ul>
     <svg class="seal" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#8b1e1e"/><circle cx="50" cy="50" r="33" fill="none" stroke="#c9463a" stroke-width="2"/><text x="50" y="47" text-anchor="middle" fill="#f3d48a" font-size="11" font-weight="800">GFIELD</text><text x="50" y="62" text-anchor="middle" fill="#f3d48a" font-size="9">SCIENCE LAB</text></svg>`),
 ];
@@ -235,7 +281,7 @@ async function build() {
   const endSec = (cls, inner) => { const d = document.createElement('section'); d.className = `bk-page end ${cls}`; d.innerHTML = inner; return d; };
   const repSec = endSec('rep-live', reportPageHtml(state.I)), rxSec = endSec('rx-live', samplePageHtml(pool));
   state.repSec = repSec;
-  state.pages = [adSecs[0], ...adSecs.slice(1, 10), ...chSecs, repSec, rxSec, adSecs[10]].map((s, i) => wrapPage(s, i < 10 || i === 12 + chSecs.length ? adHost : bk));
+  state.pages = [adSecs[0], ...adSecs.slice(1, 12), ...chSecs, repSec, rxSec, adSecs[12]].map((s, i) => wrapPage(s, i < 12 || i === 14 + chSecs.length ? adHost : bk));   // 표지 1 + 광고 11 + 교재 + 보고서 2 + 뒤표지
   state.chCount = chSecs.length; host.remove();
   state.L = lm.lesson; state.rows = [];
   layout(true);
@@ -289,7 +335,7 @@ function paint(anim = true, dir = 1) {
   const shift = state.single ? 0 : s === 0 ? -0.5 : s === n ? 0.5 : 0;
   book.style.transform = s === 0 ? '' : `translateX(calc(var(--pw) * ${shift}))`;
   book.classList.toggle('closed', s === 0);
-  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두꺼워진다
+  const done = state.single ? 0 : s / n;   // 넘긴 만큼 왼쪽 책장 두께가 두껍어진다
   book.style.setProperty('--tl', `${(4 + 16 * done).toFixed(1)}px`); book.style.setProperty('--tr', `${(4 + 16 * (1 - done)).toFixed(1)}px`);
   const P = state.pages.length, first = state.single ? s + 1 : s * 2, lastI = state.single ? s + 1 : Math.min(P, s * 2 + 1);
   $('.it-count').textContent = s === 0 ? '표지' : state.single || first === lastI ? `${first} / ${P}` : `${first}–${lastI} / ${P}`;
@@ -313,11 +359,11 @@ function turnSound(heavy) {
 // 지금 보이는 쪽에 맞춰 docssam이 말한다
 function visiblePages() { const s = state.spread; return state.single ? [s] : [2 * s - 1, 2 * s].filter((i) => i >= 0); }
 function narrate() {
-  const vis = visiblePages(), c0 = 10, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
+  const vis = visiblePages(), c0 = 12, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
   const ids = [];
   for (const i of vis) {
     if (i === 0) ids.push('cover'); else if (i === 1) ids.push('ad1'); else if (i === 2) ids.push('ad2'); else if (i === 3 || i === 4) { if (!ids.includes('ad3')) ids.push('ad3'); }
-    else if (i === 5) ids.push('home'); else if (i === 6) ids.push('diag'); else if (i === 7) ids.push('diag2'); else if (i === 8) ids.push('faq'); else if (i === 9) ids.push('live');
+    else if (i === 5) ids.push('home'); else if (i === 6) ids.push('diag'); else if (i === 7) ids.push('diag2'); else if (i === 8) ids.push('photo'); else if (i === 9) ids.push('remedy'); else if (i === 10) ids.push('faq'); else if (i === 11) ids.push('live');
     else if (i === c0 + cn) ids.push('myreport'); else if (i === c0 + cn + 1) ids.push('sample');
     else if (i >= c0 && i < c0 + cn) { const r = rel(i); const k = r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : r === 9 ? 'report' : r === 10 ? 'formative' : 'check'; if (!ids.includes(k)) ids.push(k); }
     else ids.push('print', 'cta');
