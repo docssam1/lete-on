@@ -1,6 +1,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const vm = require("vm");
 
 const base = process.argv[2] || "http://127.0.0.1:8894/hsmiddle";
 const output = path.resolve(process.argv[3] || path.join(os.tmpdir(), "hsmiddle-report-audit"));
@@ -33,13 +34,50 @@ const adminSeed = () => {
   window.__printCalls = 0;
   window.print = () => { window.__printCalls += 1; };
 };
+const linkedPrintSeed = token => ({
+  initializer: ({ token }) => {
+    localStorage.setItem("hs-student", "DEMO");
+    localStorage.setItem("hsm-session-token-v2", "a".repeat(64));
+    localStorage.setItem("hsm-session-profile-v2", JSON.stringify({ name: "DEMO", access: ["diagnostic"], admin: false, expiresAt: new Date(Date.now() + 3600000).toISOString() }));
+    localStorage.setItem("hsm-mark-mode", "ox");
+    for (let i = 1; i <= 40; i++) localStorage.setItem("hsm-ox-" + i, i % 5 === 0 ? "x" : "o");
+    localStorage.setItem("hsm-linked-print-v1:" + token, JSON.stringify({
+      student: "DEMO",
+      numbers: [1, 2],
+      issuedAt: Date.now(),
+      expiresAt: Date.now() + 15 * 60 * 1000,
+      access: "diagnostic"
+    }));
+  },
+  arg: { token }
+});
+
+function loadSourcePageIndex() {
+  const context = {};
+  context.window = context;
+  vm.createContext(context);
+  for (const source of [
+    "question-bank/data/schema.js",
+    "question-bank/data/source-page-index.js"
+  ]) vm.runInContext(fs.readFileSync(path.join(__dirname, source), "utf8"), context, { filename: source });
+  return context.HSMIDDLE_SOURCE_PAGE_INDEX.pages;
+}
+
+const linkedPageCount = (numbers, mode) => {
+  const roles = mode === "problem" ? ["problem"]
+    : mode === "answer" ? ["quick-answer", "answer-solution"]
+      : mode === "solution" ? ["quick-answer", "solution", "answer-solution"]
+        : ["problem", "quick-answer", "solution", "answer-solution"];
+  return loadSourcePageIndex().filter(entry => numbers.includes(entry.diagnosticNumber) && roles.includes(entry.role)).length;
+};
 
 (async () => {
   const browser = await chromium.launch({ channel: "chrome", headless: true, args: ["--disable-gpu"] });
   async function withPage(target, size, callback, initializer = seed) {
     const [width, height] = size.split(",").map(Number);
     const context = await browser.newContext({ viewport: { width, height: Math.min(height, 1200) }, deviceScaleFactor: 1 });
-    await context.addInitScript(initializer);
+    if (typeof initializer === "function") await context.addInitScript(initializer);
+    else await context.addInitScript(initializer.initializer, initializer.arg);
     const page = await context.newPage();
     await page.route("**/functions/v1/hsmiddle-records", async route => {
       const request = route.request();
@@ -57,6 +95,10 @@ const adminSeed = () => {
       await route.fulfill({ status: 400, contentType: "application/json", body: JSON.stringify({ error: "unexpected_action" }) });
     });
     await page.goto(url(target), { waitUntil: "networkidle" });
+    if (target.startsWith("report.html")) {
+      await page.waitForFunction(() => Boolean(document.querySelector("#whoName")?.textContent.trim()));
+      await page.waitForFunction(() => Boolean(document.querySelector(".errtable")));
+    }
     await page.evaluate(() => document.fonts && document.fonts.ready);
     await page.waitForTimeout(250);
     try { return await callback(page); } finally { await context.close(); }
@@ -124,7 +166,8 @@ const adminSeed = () => {
       assert(body.includes("꼭 맞아야 할 문항") && body.includes("정답률 60% 이상"), "must-correct section or criterion missing");
       assert(body.includes("5번, 10번, 20번을 틀렸습니다"), "must-correct wrong-number analysis missing");
       assert(body.includes("선택 번호 인쇄") && body.includes("오답 전체 인쇄"), "wrong-answer print controls missing");
-      assert(!body.includes("연계 유사문제") && !body.includes("별도 문제은행"), "diagnostic-only account must not see the separate question-bank product");
+      assert(body.includes("연계 유사문제") && body.includes("선택 유사문제 인쇄"), "diagnostic account must see linked similar-print controls");
+      assert(!body.includes("별도 학습 상품"), "diagnostic report must not expose the separate question-bank catalog");
     });
     await shot("report.html", "1440,900", "report-desktop.png");
     await withPage("report.html", "390,844", async page => {
@@ -142,18 +185,23 @@ const adminSeed = () => {
     await withPage("report.html", "1440,900", async page => {
       const labels = await page.locator(".print-group button").allTextContents();
       assert(labels.includes("선택 유사문제 인쇄") && labels.includes("오답 유사문제 전체 인쇄"), "similar-problem print controls missing for entitled account");
-      const targets = await page.evaluate(() => {
+      const opened = await page.evaluate(() => {
         const opened = [];
         window.open = target => { opened.push(String(target)); };
         toggleWrongPicks(false);
         for (const input of document.querySelectorAll("[data-wrong-pick]")) input.checked = input.value === "5" || input.value === "10";
         setWrongPrintMode("answer");
+        setLinkedPrintMode("solution");
         printSelectedSimilar();
         printAllSimilar();
-        return opened;
+        return opened.map(target => {
+          const token = new URL(target, location.href).searchParams.get("ticket");
+          return { target, ticket: JSON.parse(localStorage.getItem("hsm-linked-print-v1:" + token) || "null") };
+        });
       });
-      assert(targets[0].includes("qs=5,10") && targets[0].includes("mode=answer") && targets[0].includes("autoprint=1"), "selected similar-problem print URL is incorrect");
-      assert(targets[1].includes("qs=5,10,15,20,25,30,35,40"), "all-wrong similar-problem print URL is incorrect");
+      assert(opened[0].target.includes("viewer.html?doc=linked-similar") && opened[0].target.includes("mode=solution"), "selected linked-print URL is incorrect");
+      assert(JSON.stringify(opened[0].ticket.numbers) === JSON.stringify([5, 10]), "selected linked-print ticket is incorrect");
+      assert(JSON.stringify(opened[1].ticket.numbers) === JSON.stringify([5, 10, 15, 20, 25, 30, 35, 40]), "all-wrong linked-print ticket is incorrect");
       const file = path.join(output, "report-similar-print-controls.png");
       await page.locator(".print-tools").screenshot({ path: file });
       assert(fs.statSync(file).size > 3000, "similar-problem print controls screenshot missing");
@@ -161,16 +209,24 @@ const adminSeed = () => {
 
     const problemTarget = "viewer.html?doc=diagnostic-review&qs=1,2,3,4,5,6,7,8&mode=problem&student=DEMO";
     await withPage(problemTarget, "1100,900", async page => {
-      assert(await page.locator(".page.review-page").count() === 8, "selected-number print must render eight pages");
-      assert(await page.locator(".page.answer-sheet").count() === 0, "problem-only print leaked answer sheet");
+      assert(await page.locator(".print-sheet").count() === 2, "eight selected questions must render as two A4 sheets");
+      assert(await page.locator(".review-card").count() === 8, "selected-number print must render eight review cards");
+      assert(await page.locator(".answer-sheet").count() === 0, "problem-only print leaked answer sheet");
       const canvases = await page.locator("canvas").evaluateAll(nodes => nodes.map(node => [node.width, node.height]));
       assert(canvases.length === 8 && canvases.every(([width, height]) => width > 0 && height > 0), "question crops did not render");
     });
     await shot(problemTarget, "1100,900", "wrong-print-problem-only.png");
+    await withPage(problemTarget, "1100,900", async page => {
+      await page.emulateMedia({ media: "print" });
+      const pdfPath = path.join(output, "wrong-print-problem-only-a4.pdf");
+      await page.pdf({ path: pdfPath, format: "A4", printBackground: true, preferCSSPageSize: true });
+      const count = (fs.readFileSync(pdfPath).toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
+      assert(count === 2, "eight selected diagnostic questions must print on exactly two A4 pages");
+    });
 
     const answerTarget = "viewer.html?doc=diagnostic-review&qs=1,2,3,4,5,6,7,8&mode=answer&student=DEMO";
     await withPage(answerTarget, "1100,900", async page => {
-      assert(await page.locator(".page.answer-sheet").count() === 1, "problem+answer print must append an answer sheet");
+      assert(await page.locator(".answer-sheet").count() === 1, "problem+answer print must append an answer sheet");
       assert((await page.locator(".answer-sheet").innerText()).includes("2527869999999999"), "official answer missing from answer sheet");
     });
     await shot(answerTarget, "1100,900", "wrong-print-problem-answer.png");
@@ -178,6 +234,28 @@ const adminSeed = () => {
       await page.emulateMedia({ media: "print" });
       await page.pdf({ path: path.join(output, "wrong-print-problem-answer.pdf"), format: "A4", printBackground: true, preferCSSPageSize: true });
     });
+
+    for (const linkedMode of ["problem", "answer", "solution", "combined"]) {
+      const expectedPages = linkedPageCount([1, 2], linkedMode);
+      const token = "linked-" + linkedMode;
+      const target = `viewer.html?doc=linked-similar&ticket=${token}&mode=${linkedMode}`;
+      await withPage(target, "1440,900", async page => {
+      assert(await page.locator(".linked-page").count() === expectedPages, `${linkedMode} linked-print page count is wrong`);
+        assert(await page.locator(".linked-page img").evaluateAll(images => images.every(image => image.complete && image.naturalWidth > 0)), `${linkedMode} linked print has a broken source image`);
+        assert(await page.locator(".linked-page .mark").count() === expectedPages, `${linkedMode} linked print watermark is missing`);
+        assert(await page.evaluate(key => localStorage.getItem("hsm-linked-print-v1:" + key) === null, token), "linked print ticket must be one-use");
+      }, linkedPrintSeed(token));
+    }
+    await withPage("viewer.html?doc=linked-similar&qs=1,2&mode=combined", "1440,900", async page => {
+      assert(await page.locator(".linked-page").count() === 0, "URL numbers must not open linked source pages without a ticket");
+      assert((await page.locator(".denied").innerText()).includes("승인 세션"), "missing-ticket message must explain the approved-session requirement");
+    });
+    await withPage("viewer.html?doc=linked-similar&ticket=linked-mobile&mode=combined", "390,844", async page => {
+      assert(await page.locator(".linked-page").count() === linkedPageCount([1, 2], "combined"), "mobile linked print lost source pages");
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "mobile linked print has horizontal overflow");
+      const file = path.join(output, "linked-print-mobile.png");
+      await page.screenshot({ path: file, fullPage: true });
+    }, linkedPrintSeed("linked-mobile"));
 
     const library = await dom("library.html", "1440,900");
     assert(/중등 심화 문제은행[\s\S]{0,2000}잠김/.test(library), "question bank must be a separately locked product for DEMO");
