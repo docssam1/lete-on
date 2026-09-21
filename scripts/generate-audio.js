@@ -101,6 +101,8 @@ const tasks = [];
 
 // 지필드 사이언스 랩 광고 페이지 — docssam(밝은 남자 목소리) 나레이션. 파일 이름에 (목소리+문장) 해시를
 // 넣어, 문장을 고치면 새 파일이 생기고 그대로면 건너뛴다(type 'sci'). 광고 페이지가 같은 해시로 주소를 만든다.
+// 주의: generate-audio.yml의 paths에 narration.json이 없다. 나레이션 문장만 고쳐 올리면 워크플로가 돌지
+// 않으니, 문장을 바꿀 때는 이 파일도 함께 커밋해서 Generate Audio가 실행되게 한다.
 const SCI_NARRATION = path.join(__dirname, '../science-lab/intro/narration.json');
 let SCI_VOICE = null, SCI_FALLBACK = null;
 if (fs.existsSync(SCI_NARRATION)) {
