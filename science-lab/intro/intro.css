@@ -255,3 +255,49 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .bk-page.end .bk-choices li.ok { border-color: #1f7a4d; background: #e6f4ec; font-weight: 700; }
 .bk-page.end .bk-choices li.no { border-color: #c8321f; background: #fdecea; color: #c8321f; font-weight: 700; }
 .bk-page.end .bk-given { margin: 0 0 1.4mm; font-size: 9.8pt; color: #444; }
+
+/* CHAPTER Ⅶ 종이 첨삭 견본: 원고지 칸 + 흐린 연필 글씨 + 학생 QR */
+.ad-page .drop { font-size: 12pt; }
+.ad-paper { margin-top: 3mm; padding: 3.5mm 4mm 3mm; background: #fffdf7; border: 1px solid #cdbf9f; box-shadow: 2px 3px 0 rgba(139, 94, 40, .18); transform: rotate(-.6deg); }
+.ad-paper-q { display: flex; gap: 2.5mm; align-items: flex-start; margin-bottom: 2.4mm; font-size: 9.6pt; line-height: 1.4; color: #333; font-weight: 500; }
+.ad-paper-q b { flex: none; width: 6.5mm; height: 6.5mm; border-radius: 50%; background: #1e3a78; color: #fff; display: grid; place-items: center; font-size: 8.5pt; }
+.ad-paper-a { display: grid; grid-template-columns: 15mm 1fr; gap: 2mm; align-items: start; margin-top: 1.8mm; }
+.ad-paper-l { font-size: 8.5pt; font-weight: 800; color: #8b1e1e; padding-top: 1mm; }
+.ms { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 0; border: 1px solid #b7c9a8; background: #fff; }
+.ms span { aspect-ratio: 1; border-right: 1px solid #d7e3cb; border-bottom: 1px solid #d7e3cb; display: grid; place-items: center; font: 400 10.2pt "Gaegu", "Jua", sans-serif; overflow: hidden; }
+.ms span.e { border-right: 0; } .ms span.b { border-bottom: 0; }
+.ms i { display: block; font-style: normal; color: #4a4a4a; filter: blur(.18px); text-shadow: 0 0 .35px rgba(0, 0, 0, .35); }
+.ms.pencil2 i { color: #2f2f2f; filter: blur(.1px); }
+.ad-paper-foot { display: grid; grid-template-columns: 17mm 1fr auto; gap: 3mm; align-items: center; margin-top: 3mm; padding-top: 2.4mm; border-top: 1px dashed #cdbf9f; }
+.ad-paper-qr { width: 17mm; height: 17mm; } .ad-paper-qr svg { width: 100%; height: 100%; display: block; }
+.ad-paper-foot div:nth-child(2) { display: grid; gap: .6mm; font-size: 9pt; color: #6b5537; } .ad-paper-foot b { font-size: 11pt; color: #1e3a78; } .ad-paper-foot small { font-size: 8pt; }
+.ad-paper-mark { align-self: end; font-size: 8.5pt; color: #8b1e1e; font-weight: 700; border: 1px dashed #8b1e1e; padding: 1mm 2.4mm; border-radius: 2mm; }
+/* 폰 3컷 */
+.ad-phones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; margin-top: 4mm; }
+.ad-ph { position: relative; border: 1.4mm solid #2a2a2a; border-radius: 5mm; background: #fff; padding: 4mm 3mm 6mm; min-height: 56mm; font-size: 8.8pt; line-height: 1.4; color: #222; box-shadow: 0 2px 4px rgba(0, 0, 0, .25); }
+.ad-ph-bar { height: 2.4mm; display: grid; place-items: center; margin: -1.5mm 0 1.5mm; } .ad-ph-bar i { width: 10mm; height: 1.3mm; border-radius: 99mm; background: #2a2a2a; }
+.ad-ph-n { position: absolute; left: 50%; bottom: 1.6mm; transform: translateX(-50%); font-size: 8pt; font-weight: 800; color: #8b1e1e; white-space: nowrap; }
+.ad-ph-h { margin: 0 0 1.6mm; font-weight: 800; font-size: 10pt; color: #1e3a78; } .ad-ph-h .no { display: inline-block; padding: 0 2.2mm; border-radius: 99mm; background: #fdecea; color: #c8321f; font-size: 8.8pt; }
+.ad-ph-t { margin: 0; padding: 2mm 2.4mm; border: 1px solid #DCE4F0; border-radius: 2mm; background: #f7f9fc; font: 400 9.6pt "Gaegu", "Jua", sans-serif; }
+.ad-ph-t.small { font-family: var(--sans); font-size: 8.6pt; font-weight: 500; background: #fff; }
+.ad-ph-t mark { background: #ffe58a; padding: 0 .6mm; border-radius: 1mm; }
+.ad-ph-s { margin: 1.6mm 0 0; font-size: 7.8pt; color: #6b5537; } .ad-ph-s.ok { color: #1f7a4d; font-weight: 700; }
+.ad-ph-btn { margin-top: 2mm; padding: 1.8mm; border-radius: 2mm; background: #1e3a78; color: #fff; text-align: center; font-weight: 800; font-size: 8.8pt; }
+.ad-ph-mis { margin: 1.6mm 0 0; } .ad-ph .ad-mis { font-size: 7.6pt; margin: 0; white-space: normal; line-height: 1.3; }
+.ad-ph-cam { position: relative; } .ad-ph-cam p { margin: 1.6mm 0 0; font-size: 8pt; color: #6b5537; }
+.ad-ph-cam-p { position: relative; padding: 2mm; background: #fffdf7; border: 1px solid #cdbf9f; transform: rotate(2deg); } .ad-ph-cam-p .ms span { font-size: 6.4pt; }
+.ad-ph-cam-qr { position: absolute; right: 1mm; top: -2.5mm; width: 8mm; height: 8mm; background: #fff; padding: .4mm; } .ad-ph-cam-qr svg { width: 100%; height: 100%; display: block; }
+.ad-ph-cam-f { position: absolute; inset: -1.5mm -1.5mm 6mm; border: 1.5px solid #ffb000; border-radius: 1.5mm; pointer-events: none; }
+.ad-in3 { margin-top: 3.5mm; } .ad-in3 div { padding: 2.2mm; } .ad-in3 b { font-size: 12pt; margin-bottom: 1mm; } .ad-in3 span { font-size: 9.6pt; }
+/* CHAPTER Ⅷ 처방 한 장 */
+.ad-rxs { margin-top: 3mm; padding: 3.5mm 4mm 3mm; background: #fff; border: 1px solid #cdbf9f; box-shadow: 2px 3px 0 rgba(139, 94, 40, .18); transform: rotate(.5deg); font-family: var(--sans); }
+.ad-rxs-h { display: flex; justify-content: space-between; align-items: center; gap: 3mm; padding-bottom: 2mm; border-bottom: 2px solid #1e3a78; }
+.ad-rxs-h b { font-size: 13pt; color: #1e3a78; display: block; } .ad-rxs-h div span { font-size: 9pt; color: #6b5537; }
+.ad-rxs-h .ad-mis { margin: 0; font-size: 8.6pt; }
+.ad-rxs-fix { margin: 2mm 0; padding: 1.6mm 3mm; border-left: 1.2mm solid #1e3a78; background: #eef2fa; font-size: 9.6pt; line-height: 1.45; } .ad-rxs-fix b { color: #1e3a78 !important; }
+.ad-rxs-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.8mm; }
+.ad-rxs-items > li > p { margin: 0 0 1.2mm; font-size: 9.6pt; font-weight: 700; line-height: 1.4; display: flex; gap: 2mm; align-items: flex-start; }
+.ad-rxs-items > li > p b { flex: none; width: 6mm; height: 6mm; border-radius: 50%; background: #1e3a78; color: #fff; display: grid; place-items: center; font-size: 8pt; }
+.ad-rxs-items ol { list-style: none; margin: 0 0 0 8mm; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .7mm 3mm; font-size: 8.2pt; line-height: 1.3; }
+.ad-rxs-items ol li { display: flex; gap: 1.2mm; padding: .8mm 1.6mm; border: 1px solid #DCE4F0; border-radius: 1.6mm; } .ad-rxs-items ol li span { color: #1e3a78; font-weight: 800; }
+.ad-rxs-f { display: flex; align-items: center; gap: 3mm; margin-top: 3mm; padding-top: 2.4mm; border-top: 1px dashed #cdbf9f; font-size: 9.2pt; color: #6b5537; } .ad-rxs-f .ad-paper-qr { width: 13mm; height: 13mm; } .ad-rxs-f b { color: #1f7a4d; }
