@@ -38,7 +38,7 @@ const store = {
   set(u, patch) { try { const a = this.all(); a[u] = { ...(a[u] || {}), ...patch }; localStorage.setItem(KEY, JSON.stringify(a)); } catch { /* 저장 불가 기기 */ } },
 };
 
-// ── docssam: 말하기(모음에 따라 입 모양) · 깜밥임 · 표정 ──
+// ── docssam: 말하기(모음에 따라 입 모양) · 깜빡임 · 표정 ──
 function mouthFor(ch) {
   const c = ch.charCodeAt(0) - 0xac00; if (c < 0 || c > 11171) return null;
   const j = Math.floor(c / 28) % 21;
@@ -350,7 +350,7 @@ function pageDiagnose(u, L, items, mode = 'student') {
   $app.querySelector('#reset')?.addEventListener('click', () => { if (confirm('이 단원의 학습 기록을 지울까요?')) { clearLog(du(u)); pageDiagnose(u, L, items, mode); } });
 }
 
-// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푸다.
+// 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
 function pageSub(u, L, eid) {
   const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], e = tx?.elements.find((x) => x.id === eid);
   if (!e) { location.replace('#/'); return; }
