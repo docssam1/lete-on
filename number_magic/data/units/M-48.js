@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-48'] = {
-  id:'M-48', tier:'middle1', level:'29', order:5,
+  id:'M-48', tier:'middle1', level:'29', order:6,
   generator:'md48_expressionValue',
   title:{ ko:'식의 값', en:'Evaluating Expressions', zh:'代数式的值' },
   subtitle:{ ko:'문자 자리에 수를 넣어 계산해요', en:'Substitute a number for the letter and calculate', zh:'把数代入字母的位置计算' },

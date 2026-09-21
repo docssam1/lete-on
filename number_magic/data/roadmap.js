@@ -316,9 +316,9 @@ window.NM_ROADMAP = {
     {
       id:'W8-1', icon:'🌋', grade:'중1',
       edu:{ko:'중1 정수의 세계',en:'G7 World of Integers',zh:'初一整数的世界'},
-      theme:{ko:'W8-1 · 정수의 세계 — 개념·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept & ± ',zh:'W8-1·整数的世界——概念与加减法'},
-      units:['M-01','M-02','M-03'],
-      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요!',en:'Above and below sea level, points scored and lost — naming the two directions from 0!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字！'}
+      theme:{ko:'W8-1 · 정수의 세계 — 개념·수직선 위의 자리·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept, Places on the Line, ±',zh:'W8-1·整数的世界——概念·数轴上的位置·加减法'},
+      units:['M-01','M-82','M-02','M-03'],
+      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요! 그 이름들이 수직선 위에 제 자리를 얻어요.',en:'Above and below sea level, points scored and lost — naming the two directions from 0, and giving each name a place on the line!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字，再让每个名字在数轴上有自己的位置！'}
     },
     {
       id:'W8-2', icon:'🎲', grade:'중1',

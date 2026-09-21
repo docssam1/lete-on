@@ -757,7 +757,7 @@
    눈으로 셀 수 있어야 한다 — 격자선을 곡선보다 확실히 연하게, 축은 그 중간으로. */
 .nm-w-graph{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 4px 2px;}
 .nm-gp-hint{font-size:14px;font-weight:800;color:var(--blue-deep);text-align:center;}
-.nm-gp-svg{width:100%;max-width:290px;height:auto;}
+.nm-gp-svg{width:100%;max-width:300px;height:auto;}
 .nm-gp-grid{stroke:var(--line);stroke-width:.6;opacity:.42;fill:none;}
 .nm-gp-axis{stroke:var(--ink);stroke-width:1.6;opacity:.75;}
 .nm-gp-curve{stroke:var(--blue);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;}
@@ -766,3 +766,16 @@
 .nm-gp-ticky{text-anchor:end;}
 .nm-gp-axname{font-size:11px;font-weight:800;fill:var(--ink);opacity:.7;text-anchor:middle;}
 .nm-gp-tex{font-size:17px;font-weight:800;color:var(--blue-deep);text-align:center;}
+
+/* 좌표평면 — 모눈이 정사각형(2026-09-21). 인쇄(exam.js .nm-gp)와 같은 규약. */
+.nm-gp-svg .nm-gp-frame{fill:#fff;stroke:var(--line);stroke-width:1;}
+.nm-gp-svg .nm-gp-grid{fill:none;stroke:var(--line);stroke-width:.9;opacity:.85;}
+.nm-gp-svg .nm-gp-axis{stroke:var(--ink);stroke-width:1.8;opacity:.8;stroke-linecap:square;}
+.nm-gp-svg .nm-gp-arrow{fill:var(--ink);opacity:.8;}
+.nm-gp-svg .nm-gp-tickbig{stroke:var(--ink);stroke-width:1.8;opacity:.8;}
+.nm-gp-svg .nm-gp-ticksm{stroke:var(--ink);stroke-width:1;opacity:.55;}
+.nm-gp-svg .nm-gp-curve{stroke:var(--blue);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.nm-gp-svg .nm-gp-pt{fill:#fff;stroke:var(--gold-deep);stroke-width:2.5;}
+.nm-gp-svg .nm-gp-tick{font-size:9px;font-weight:700;fill:var(--ink);opacity:.62;}
+.nm-gp-svg .nm-gp-ax{font-size:11px;font-weight:800;fill:var(--ink);opacity:.72;}
+.nm-gp-svg .nm-gp-ptlabel{font-size:12px;font-weight:900;fill:var(--gold-deep);}

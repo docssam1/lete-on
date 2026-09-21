@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-02'] = {
-  id:'M-02', tier:'middle1', level:'29', order:2,
+  id:'M-02', tier:'middle1', level:'29', order:3,
   generator:'md2_intAddSub',
   title:{ ko:'정수의 덧셈과 뺄셈', en:'Adding & Subtracting Integers', zh:'整数的加减法' },
   subtitle:{ ko:'같은 부호는 더하고, 다른 부호는 빼고 — 큰 쪽 부호를 따라가요', en:'Same sign: add. Different sign: subtract and follow the bigger one', zh:'同号相加，异号相减——跟着绝对值大的那个符号走' },

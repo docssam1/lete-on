@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-69'] = {
-  id:'M-69', tier:'middle1', level:'31', order:17,
+  id:'M-69', tier:'middle1', level:'31', order:18,
   generator:'md69_proportionGraph',
   title:{ ko:'정비례·반비례의 그래프', en:'Graphs of Direct & Inverse Proportion', zh:'正比例·反比例的图象' },
   subtitle:{ ko:'곧은 직선과 갈라진 곡선, 모양이 관계를 말해줘요', en:'A straight line or a split curve - the shape tells you the relation', zh:'一条直线、一条分支曲线——形状就说明了关系' },

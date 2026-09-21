@@ -166,19 +166,22 @@
   /* 수직선 점프 */
   /* 좌표평면(graphSvg) — 흑백 레이저에서도 격자·축·곡선이 서로 구분되게 굵기로만 나눈다.
      격자 한 칸이 정수 1이므로 칸이 뭉개지면 문제가 성립하지 않는다(폭을 넉넉히 준다). */
-  /* flex 칸(.nm-w2-item 은 flex-column) 안에서 height:auto 만으로는 SVG 가 납작하게
-     눌린다(실측 174×0 · 174×84). 비율을 명시하고 줄어들지 않게 못 박는다.
+  /* 좌표평면 — 폭(mm)과 비율은 SVG 가 인라인 style 로 직접 준다(graphSvg). 한 칸이 늘
+     같은 크기여야 모눈이 모눈으로 보이기 때문이다. flex 칸 안에서 눌리지 않게 flex:0 0 auto.
      (이 블록은 JS 템플릿 문자열 안이라 역따옴표를 쓰면 안 된다 — 한 번 깨뜨렸다.) */
-  /* 38mm — 42mm 이면 아래에 붙는 분수식(y=□/x)의 x 가 칸 밖으로 잘렸다(실측). */
-  .nm-gp { width: 38mm; aspect-ratio: 190 / 168; height: auto; flex: 0 0 auto;
-    margin: 3px auto 2px; display: block; }
-  .nm-gp .nm-gp-grid { fill: none; stroke: #9a9a9a; stroke-width: .5; }
-  .nm-gp .nm-gp-axis { stroke: #000; stroke-width: 1.1; }
+  .nm-gp { height: auto; flex: 0 0 auto; margin: 3px auto 2px; display: block; max-width: 100%; }
+  .nm-gp .nm-gp-frame { fill: #fff; stroke: #555; stroke-width: .7; }
+  .nm-gp .nm-gp-grid { fill: none; stroke: #707070; stroke-width: .45; }
+  .nm-gp .nm-gp-axis { stroke: #000; stroke-width: 1.2; stroke-linecap: square; }
+  .nm-gp .nm-gp-arrow { fill: #000; }
+  .nm-gp .nm-gp-tickbig { stroke: #000; stroke-width: 1.2; }
+  .nm-gp .nm-gp-ticksm { stroke: #000; stroke-width: .7; }
   .nm-gp .nm-gp-curve { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .nm-gp .nm-gp-pt { fill: #fff; stroke: #000; stroke-width: 1.6; }
   .nm-gp text { font-family: sans-serif; fill: #000; }
   .nm-gp .nm-gp-tick { font-size: 8px; font-weight: 600; }
   .nm-gp .nm-gp-ax { font-size: 9px; font-weight: 700; }
+  .nm-gp .nm-gp-ptlabel { font-size: 10px; font-weight: 800; }
   .nm-nl { width: 62mm; height: auto; margin: 6px auto 0; display: block; }
   .nm-nl line, .nm-nl path { fill: none; stroke: #000; stroke-width: 1.4; }
   .nm-nl .nm-nl-hop { stroke-dasharray: 3 2; }
@@ -2197,13 +2200,57 @@ function numlineSvg(nl){
   return `<svg class="nm-nl" viewBox="0 0 260 96" role="img" aria-label="${esc(lk('수직선 점프','Number line jumps','数轴跳跃'))}">${s}</svg>`;
 }
 
+/* ── 좌표평면(graph) 인쇄 그림 (2026-09-21) ────────────────────────
+   원장 "그래프는 정확히 모눈에 좌표평면 그려줘". 처음 판은 상자 크기를 고정하고 범위를
+   거기 욱여넣어서 **한 칸이 정사각형이 아니었다** — 가로 13.2px · 세로 8.5px(1.55:1).
+   기울기는 "오른쪽 한 칸에 위로 몇 칸"인데 칸이 옆으로 길쭉하면 그 감각 자체가 어긋난다.
+   그래서 이제 **한 칸의 크기를 고정하고 상자가 범위를 따라 자란다**(진짜 모눈종이처럼).
+   화면 위젯(widgets.js)도 같은 geometry 를 쓴다 — 함수 하나를 둘이 나눠 쓴다.
+   p.graph = {kind, m,b | a,p,q | k, pts, xr, yr} — 생성기가 주는 그대로. */
+const GP_CELL_MM = 2.8;     /* 인쇄 한 칸의 실제 크기(mm) — 모눈종이 감각의 기준 */
+function graphGeom(g, cell, pad){
+  const xr = (g && g.xr) || [-6,6], yr = (g && g.yr) || [-6,6];
+  const xs = xr[1]-xr[0], ys = yr[1]-yr[0];
+  const W = xs*cell + pad*2, H = ys*cell + pad*2;
+  return {
+    xr, yr, xs, ys, W, H, pad, cell,
+    X: v => (pad + (v-xr[0])*cell).toFixed(1),
+    Y: v => (H-pad - (v-yr[0])*cell).toFixed(1)
+  };
+}
+/* 모눈·축·눈금 — 화면과 인쇄가 같은 그림을 그리도록 한 함수에서 낸다.
+   shape-rendering:crispEdges — 격자선이 픽셀 경계에 딱 붙어야 '모눈'으로 보인다. */
+function graphPaperSvg(gm, cls){
+  const { xr, yr, W, H, pad, X, Y } = gm;
+  let gd = '';
+  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++) gd += `M${X(v)} ${pad}V${H-pad}`;
+  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++) gd += `M${pad} ${Y(v)}H${W-pad}`;
+  let s = `<rect class="${cls}-frame" x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/>`;
+  s += `<path class="${cls}-grid" shape-rendering="crispEdges" d="${gd}"/>`;
+  s += `<line class="${cls}-axis" x1="${pad}" y1="${Y(0)}" x2="${W-pad}" y2="${Y(0)}"/>`;
+  s += `<line class="${cls}-axis" x1="${X(0)}" y1="${pad}" x2="${X(0)}" y2="${H-pad}"/>`;
+  /* 눈금 숫자는 두 칸마다 — 한 칸마다 적으면 작은 지면에서 숫자끼리 붙는다. */
+  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++){
+    if(v===0 || v%2) continue;
+    s += `<text class="${cls}-tick" x="${X(v)}" y="${(+Y(0)+gm.cell*0.95).toFixed(1)}" text-anchor="middle">${v}</text>`;
+  }
+  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++){
+    if(v===0 || v%2) continue;
+    s += `<text class="${cls}-tick" x="${(+X(0)-gm.cell*0.35).toFixed(1)}" y="${(+Y(v)+gm.cell*0.33).toFixed(1)}" text-anchor="end">${v}</text>`;
+  }
+  s += `<text class="${cls}-ax" x="${W-pad*0.35}" y="${(+Y(0)-gm.cell*0.4).toFixed(1)}" text-anchor="middle">x</text>`;
+  s += `<text class="${cls}-ax" x="${(+X(0)+gm.cell*0.5).toFixed(1)}" y="${pad*0.75}" text-anchor="middle">y</text>`;
+  s += `<text class="${cls}-tick" x="${(+X(0)-gm.cell*0.4).toFixed(1)}" y="${(+Y(0)+gm.cell*0.95).toFixed(1)}" text-anchor="end">O</text>`;
+  return s;
+}
+
 /* 곡선 path — **화면 위젯(widgets.js)과 인쇄(graphSvg)가 같이 쓰는 한 벌**.
    kind: 'line'(y=mx+b) · 'parabola'(y=a(x-p)²+q) · 'hyperbola'(y=k/x, 두 가지) ·
-   'points'(곡선 없이 점만 — 좌표·사분면 문항).
+   'points'(곡선 없이 점만 — 좌표·사분면 문항) · 'numberline'(1차원, 곡선 없음).
    여기에 두는 이유: drill.html·ws.html 은 widgets.js 를 싣지 않고 exam.js 만 싣는다.
    반대로 두면 학습지에서 곡선이 통째로 빠진다. X·Y 는 좌표→화면 변환 함수. */
 function curvePath(g, xr, X, Y){
-  if(!g || g.kind === 'points') return '';
+  if(!g || g.kind === 'points' || g.kind === 'numberline') return '';
   if(g.kind === 'parabola'){
     let d = '';
     for(let t = 0; t <= 120; t++){
@@ -2216,7 +2263,7 @@ function curvePath(g, xr, X, Y){
     /* y=k/x 는 x=0 에서 끊긴다 — 두 가지를 따로 그린다(이어 그리면 원점을 가로지르는
        가짜 선이 생긴다). 0 에 너무 붙으면 세로로 치솟아 상자를 벗어나므로
        |x| ≥ |k|/yMax 부터 그린다. */
-    const yMax = Math.max(1, Math.abs((g.yr || [-8,8])[1]));
+    const yMax = Math.max(1, Math.abs((g.yr || [-6,6])[1]));
     const lim = Math.max(0.4, Math.abs(g.k) / yMax);
     let d = '';
     [[xr[0], -lim], [lim, xr[1]]].forEach(([x0, x1]) => {
@@ -2230,49 +2277,64 @@ function curvePath(g, xr, X, Y){
   return 'M' + X(xr[0]) + ' ' + Y(g.m*xr[0] + g.b) + 'L' + X(xr[1]) + ' ' + Y(g.m*xr[1] + g.b);
 }
 
-/* ── 좌표평면(graph) 인쇄 그림 (2026-09-21) ────────────────────────
-   원장 "일차함수 그래프는". 화면 위젯(widgets.js renderGraphPlane)과 **같은 규약**으로
-   그린다 — 격자 한 칸 = 정수 1, 원점은 (0,0) 자리, 눈금 숫자는 2칸마다.
-   이 한 칸이 곧 "오른쪽 1칸에 위로 몇 칸"이라 칸을 셀 수 있어야 문제가 성립한다.
-   흑백 프린터를 전제로 색 없이 선 굵기로만 구분한다(격자 가늘게 · 축 중간 · 곡선 굵게).
-   p.graph = {kind:'line'|'parabola', m,b | a,p,q, pts, xr, yr} — 생성기가 주는 그대로. */
+/* ── 수직선 위의 위치(kind:'numberline') ──────────────────────────
+   원장 "정수 또는 유리수도 위치 찾기 연습도 있어야 하고 절댓값도 위치 찾기가 되어야지".
+   g = {kind:'numberline', lo, hi, den(눈금 쪼갬, 1이면 정수 눈금), pts:[{v,label}] }
+   den 이 2·4·5 면 칸 사이를 그만큼 잘라 작은 눈금을 그린다 — 유리수의 자리를 보여 준다. */
+function numberLineSvg(g, cellMm){
+  const lo = g.lo, hi = g.hi, den = g.den || 1;
+  const CELL = 22, pad = 16, H = 58;
+  const W = (hi-lo)*CELL + pad*2;
+  const X = v => (pad + (v-lo)*CELL).toFixed(1);
+  const Y = 34;
+  let s = `<line class="nm-gp-axis" x1="${pad-8}" y1="${Y}" x2="${W-pad+8}" y2="${Y}"/>`;
+  s += `<path class="nm-gp-arrow" d="M${W-pad+8} ${Y}l-6 -3.2v6.4z"/>`;
+  s += `<path class="nm-gp-arrow" d="M${pad-8} ${Y}l6 -3.2v6.4z"/>`;
+  for(let i=0; i<=(hi-lo)*den; i++){
+    const v = lo + i/den;
+    const big = Number.isInteger(v);
+    s += `<line class="nm-gp-${big?'tickbig':'ticksm'}" x1="${X(v)}" y1="${Y-(big?7:4)}" x2="${X(v)}" y2="${Y+(big?7:4)}"/>`;
+    if(big) s += `<text class="nm-gp-tick" x="${X(v)}" y="${Y+19}" text-anchor="middle">${v}</text>`;
+  }
+  (g.pts||[]).forEach(pt => {
+    if(pt.v < lo || pt.v > hi) return;
+    s += `<circle class="nm-gp-pt" cx="${X(pt.v)}" cy="${Y}" r="4"/>`;
+    if(pt.label) s += `<text class="nm-gp-ptlabel" x="${X(pt.v)}" y="${Y-13}" text-anchor="middle">${esc(pt.label)}</text>`;
+  });
+  /* 인쇄 폭 — 정수 한 칸을 **11mm** 로 잡는다(2026-09-21 실측). 처음엔 좌표평면과 같은
+     2.8mm 를 썼는데 수직선은 가로로만 길어 전체가 20mm 로 쪼그라들었고, 5등분 눈금이
+     붙어 버려 셀 수가 없었다 — 모눈과 달리 수직선은 **한 줄에 넓게** 펴야 한다.
+     cellMm 이 없으면(화면) 폭을 CSS 에 맡긴다. */
+  const style = cellMm
+    ? `width:${((hi-lo) * 11 + 14).toFixed(1)}mm;aspect-ratio:${W}/${H}`
+    : `aspect-ratio:${W}/${H}`;
+  const cls = cellMm ? 'nm-gp nm-gp-nl' : 'nm-gp-svg nm-gp-nl';
+  return `<svg class="${cls}" viewBox="0 0 ${W} ${H}" style="${style}"
+    role="img" aria-label="${esc(lk('수직선','Number line','数轴'))}">${s}</svg>`;
+}
+
 function graphSvg(g){
   if(!g) return '';
-  const W = 190, H = 168, pad = 16;
-  const xr = g.xr || [-6,6], yr = g.yr || [-8,8];
-  const sx = (W-pad*2)/(xr[1]-xr[0]), sy = (H-pad*2)/(yr[1]-yr[0]);
-  const X = v => (pad + (v-xr[0])*sx).toFixed(1);
-  const Y = v => (H-pad - (v-yr[0])*sy).toFixed(1);
-  let gd = '';
-  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++) gd += `M${X(v)} ${pad}V${H-pad}`;
-  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++) gd += `M${pad} ${Y(v)}H${W-pad}`;
-  let s = `<path class="nm-gp-grid" d="${gd}"/>`;
-  s += `<line class="nm-gp-axis" x1="${pad}" y1="${Y(0)}" x2="${W-pad}" y2="${Y(0)}"/>`;
-  s += `<line class="nm-gp-axis" x1="${X(0)}" y1="${pad}" x2="${X(0)}" y2="${H-pad}"/>`;
-  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++){
-    if(v===0 || v%2) continue;
-    s += `<text class="nm-gp-tick" x="${X(v)}" y="${(+Y(0)+9).toFixed(1)}" text-anchor="middle">${v}</text>`;
-  }
-  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++){
-    if(v===0 || v%2) continue;
-    s += `<text class="nm-gp-tick" x="${(+X(0)-4).toFixed(1)}" y="${(+Y(v)+3).toFixed(1)}" text-anchor="end">${v}</text>`;
-  }
-  s += `<text class="nm-gp-ax" x="${W-pad+1}" y="${(+Y(0)-4).toFixed(1)}" text-anchor="middle">x</text>`;
-  s += `<text class="nm-gp-ax" x="${(+X(0)+5).toFixed(1)}" y="${pad+3}" text-anchor="middle">y</text>`;
-  s += `<text class="nm-gp-tick" x="${(+X(0)-5).toFixed(1)}" y="${(+Y(0)+9).toFixed(1)}" text-anchor="end">O</text>`;
+  if(g.kind === 'numberline') return numberLineSvg(g, GP_CELL_MM);
+  const CELL = 10, pad = 14;
+  const gm = graphGeom(g, CELL, pad);
+  const { xr, W, H, pad: pd, X, Y } = gm;
+  let s = graphPaperSvg(gm, 'nm-gp');
   /* 곡선은 상자 밖으로 나가므로 잘라 낸다. clipPath id 는 한 지면에 여러 개가
      들어가도 안 부딪히게 그래프의 값에서 만든다(난수 금지 — 같은 문항은 같은 그림). */
-  const cid = 'pgc' + [g.kind, g.m, g.b, g.a, g.p, g.q, g.k, xr[0], yr[0]].join('_').replace(/[^A-Za-z0-9]/g,'');
-  /* 곡선 식은 화면 위젯(widgets.js curvePath)과 **한 곳**에서 온다 — 두 벌로 두면
-     언젠가 한쪽만 고쳐져 학습지와 화면의 그림이 갈린다(2026-09-21). */
+  const cid = 'pgc' + [g.kind, g.m, g.b, g.a, g.p, g.q, g.k, xr[0], gm.yr[0]].join('_').replace(/[^A-Za-z0-9]/g,'');
   const d = curvePath(g, xr, X, Y);
-  s = `<defs><clipPath id="${cid}"><rect x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/></clipPath></defs>` + s
+  s = `<defs><clipPath id="${cid}"><rect x="${pd}" y="${pd}" width="${W-pd*2}" height="${H-pd*2}"/></clipPath></defs>` + s
     + (d ? `<path class="nm-gp-curve" clip-path="url(#${cid})" d="${d}"/>` : '');
   (g.pts||[]).forEach(pt => {
-    if(pt[0]<xr[0]||pt[0]>xr[1]||pt[1]<yr[0]||pt[1]>yr[1]) return;
+    if(pt[0]<xr[0]||pt[0]>xr[1]||pt[1]<gm.yr[0]||pt[1]>gm.yr[1]) return;
     s += `<circle class="nm-gp-pt" cx="${X(pt[0])}" cy="${Y(pt[1])}" r="3"/>`;
   });
-  return `<svg class="nm-gp" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(lk('좌표평면 그래프','Graph on a coordinate plane','坐标平面上的图象'))}">${s}</svg>`;
+  /* 폭을 mm 로 직접 준다 — 한 칸이 늘 같은 크기(GP_CELL_MM)여야 모눈이 모눈으로 보인다.
+     높이는 aspect-ratio 가 따라온다(flex 칸 안에서 height:auto 만으로는 눌린다). */
+  const wMm = (gm.xs * GP_CELL_MM + 2 * pd * GP_CELL_MM / CELL).toFixed(1);
+  return `<svg class="nm-gp" viewBox="0 0 ${W} ${H}" style="width:${wMm}mm;aspect-ratio:${W}/${H}"
+    role="img" aria-label="${esc(lk('좌표평면 그래프','Graph on a coordinate plane','坐标平面上的图象'))}">${s}</svg>`;
 }
 
 /* 전체(whole)와 아는 부분(known)으로 수 묶음 그림. 빈 동그라미가 답 자리. */
@@ -3265,7 +3327,13 @@ function classifyRoundLayout(problems, threadId, young, creative){
      통째로 잘렸다(실측). 그래프는 칸이 커야 하므로 여기서 먼저 빼낸다. */
   const graphRound = problems.some(p => p.graph);
   if(creative && !getSolveMode() && !pictureOnly && !wordRound && !graphRound) return {type:'train', cols:1, rows:3, perPage:3, flow:'row', firstRows:1, pitch:78};
-  if(graphRound) return {type:'visual', cols:2, rows:3, perPage:6, flow:'row', firstRows:3, pitch:62};
+  /* 수직선은 **한 열**로 — 가로로 길고 세로로 납작해서, 2열에 넣으면 폭이 반으로 줄어
+     작은 눈금이 붙어 버린다(2026-09-21 실측). 칸 높이는 낮아도 된다. */
+  const nlRound = problems.some(p => p.graph && p.graph.kind === 'numberline');
+  if(nlRound) return {type:'visual', cols:1, rows:4, perPage:4, flow:'row', firstRows:3, pitch:44};
+  /* 좌표평면은 한 쪽에 **넷**(2026-09-21) — 모눈을 제대로 그리자 상자가 커져 여섯이면
+     답 칸이 잘렸다(실측). 그래프 문항은 세는 데 시간이 걸리므로 넷이 분량으로도 맞다. */
+  if(graphRound) return {type:'visual', cols:2, rows:2, perPage:4, flow:'row', firstRows:2, pitch:88};
   /* 풀이형(2026-09-16) — 판정보다 먼저다. 켜져 있으면 문항 종류와 상관없이 한 쪽에
      4문항(2열×2행), 칸마다 풀이 줄과 "▶ 답:"을 준다. 첫 장은 개념·예시가 위에
      들어가므로 2문항만(firstRows:1). */
@@ -4736,8 +4804,9 @@ const NM_EXAM = {
   /* answerShape 정답 → \dfrac tex(테스트/검증용 노출). */
   ansTex,
 
-  /* 좌표평면 곡선 path — app/widgets.js(화면 위젯)가 렌더 시점에 불러 쓴다. */
-  curvePath,
+  /* 좌표평면 — app/widgets.js(화면 위젯)가 렌더 시점에 불러 쓴다.
+     모눈·축·곡선을 두 벌로 두면 언젠가 한쪽만 고쳐져 학습지와 화면이 갈린다. */
+  curvePath, graphGeom, graphPaperSvg, numberLineSvg,
 
   /* 학습지 코드 생성 */
   worksheetCode(config){

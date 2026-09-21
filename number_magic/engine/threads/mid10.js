@@ -1051,5 +1051,84 @@ NM_TGEN['md81_quadFind'] = function (params, rng) {
   };
 };
 
+
+/* ============================================================
+   D. 중1 — 수직선 위의 위치 (원장 지시 2026-09-21)
+   ============================================================ */
+
+/* ── MD82 — 수직선 위의 위치 ──
+   원장: "정수 또는 유리수도 위치 찾기 연습도 있어야 하고 절댓값도 위치 찾기가
+   되어야지". MD1 은 절댓값을 **계산**만 시켰다 — 수직선 위 어디인지를 묻는 자리가
+   없었다. 좌표평면(MD68)의 바로 앞 단계이기도 하다: 1차원에서 자리를 읽을 줄
+   알아야 2차원에서 (x, y) 를 읽는다.
+   mode: 'integer'(정수 위치 읽기) · 'rational'(눈금을 쪼갠 수직선에서 분수 읽기,
+   답 [분자,분모]) · 'absolute'(|x|=k 인 두 수의 자리 찾기).
+   그림은 graph 페이로드의 kind:'numberline' — 화면·인쇄가 같은 한 벌을 쓴다. */
+NM_TGEN['md82_numberLine'] = function (params, rng) {
+  const mode = params.mode || 'integer';
+
+  if (mode === 'rational') {
+    /* 눈금을 den 등분한 수직선. 답은 [분자, 분모] — 약분하지 않는다(MD3 와 같은 관례,
+       "눈금 몇 칸째인가"를 그대로 읽는 것이 이 문항의 목적이기 때문). */
+    const den = pick(rng, [2, 4, 5]);
+    /* 범위는 −2~2 — 5등분에서 −3~3 이면 작은 눈금이 30개라 인쇄에서 붙어 버린다(실측). */
+    const lo = -2, hi = 2;
+    let num = R(rng, -2 * den + 1, 2 * den - 1);
+    let guard = 0;
+    while (num % den === 0 && guard++ < 30) num = R(rng, -2 * den + 1, 2 * den - 1);
+    if (num % den === 0) num = num + 1;                 /* 정수 자리는 이 레벨의 목적이 아니다 */
+    return {
+      prompt: { ko: `한 칸을 ${den}등분한 수직선이에요 — 0에서 작은 눈금 몇 칸인지 세어 분수로 적어요`,
+        en: `Each unit is cut into ${den} — count the small marks from 0 and write it as a fraction`,
+        zh: `每一格被${den}等分——从0数小刻度有几格，写成分数` },
+      tex: `\\text{점 P가 나타내는 수} = \\dfrac{\\square}{\\square}`,
+      answer: [num, den], answerShape: 'fraction', answerType: 'number',
+      widget: 'graphPlane', negative: num < 0,
+      graph: { kind: 'numberline', lo: lo, hi: hi, den: den, pts: [{ v: num / den, label: 'P' }] },
+      solution: [
+        { tex: `\\text{한 칸을 } ${den} \\text{등분}` },
+        { tex: `\\text{0에서 } \\square \\text{칸}`, blank: num },
+        { tex: `\\dfrac{\\square}{\\square}`, blank: [num, den] }
+      ]
+    };
+  }
+
+  if (mode === 'absolute') {
+    /* |x| = k 를 만족하는 수는 원점에서 같은 거리에 있는 **둘**이다. 수직선에 그 두 점을
+       찍어 두고 왼쪽(작은 수)을 묻는다 — 절댓값을 계산이 아니라 자리로 읽게 한다. */
+    const k = R(rng, 2, 6);
+    return {
+      prompt: { ko: `절댓값이 같은 수는 원점에서 같은 거리에 있는 두 개예요 — 왼쪽 수를 답해요`,
+        en: `Two numbers share an absolute value, one on each side of zero — give the one on the left`,
+        zh: `绝对值相同的数有两个，分别在0的两侧——回答左边那个` },
+      tex: `|x| = ${k} \\quad\\Rightarrow\\quad \\text{작은 수} = \\square`,
+      answer: -k, answerType: 'number', widget: 'graphPlane', negative: true,
+      graph: { kind: 'numberline', lo: -7, hi: 7, den: 1,
+        pts: [{ v: -k, label: 'A' }, { v: k, label: 'B' }] },
+      solution: [
+        { tex: `\\text{원점에서 거리 } ${k}` },
+        { tex: `\\text{오른쪽} = ${k}, \\quad \\text{왼쪽} = \\square`, blank: -k }
+      ]
+    };
+  }
+
+  /* integer(기본) — 수직선 위 점의 정수 읽기 */
+  const lo = -7, hi = 7;
+  let v = R(rng, lo + 1, hi - 1);
+  if (v === 0) v = 1;
+  return {
+    prompt: { ko: `0에서 오른쪽은 양수, 왼쪽은 음수예요 — 눈금을 세어 점이 나타내는 수를 읽어요`,
+      en: `Right of zero is positive and left is negative — count the marks and read the number at the dot`,
+      zh: `0的右边是正数、左边是负数——数刻度读出点表示的数` },
+    tex: `\\text{점 P가 나타내는 수} = \\square`,
+    answer: v, answerType: 'number', widget: 'graphPlane', negative: v < 0,
+    graph: { kind: 'numberline', lo: lo, hi: hi, den: 1, pts: [{ v: v, label: 'P' }] },
+    solution: [
+      { tex: `\\text{0에서 } ${v < 0 ? '왼쪽' : '오른쪽'} \\text{으로 } \\square \\text{칸}`, blank: Math.abs(v) },
+      { tex: `\\text{점 P} = \\square`, blank: v }
+    ]
+  };
+};
+
 if (typeof module !== 'undefined' && module.exports) module.exports = NM_TGEN;
 })();

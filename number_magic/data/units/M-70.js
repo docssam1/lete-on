@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-70'] = {
-  id:'M-70', tier:'middle1', level:'30', order:11,
+  id:'M-70', tier:'middle1', level:'30', order:12,
   generator:'md70_linearApply',
   title:{ ko:'일차방정식의 활용', en:'Linear Equations in Use', zh:'一元一次方程的应用' },
   subtitle:{ ko:'말을 식으로 옮기면 나머지는 이미 아는 일이에요', en:'Turn the words into an equation and the rest is work you already know', zh:'把话translate成算式，剩下的就是你已经会的' },

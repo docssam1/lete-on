@@ -2955,6 +2955,26 @@ MD81:{ name:{ko:'이차함수의 식 구하기',en:'Building the Formula of a Pa
            concept:{ko:'x축과 만나는 두 점을 알면 y=a(x−p)(x−q) 꼴이 바로 나와요. 이 꼴은 인수분해된 모습 그대로라, 근을 알 때 가장 편해요.',en:'Two x-intercepts hand you y=a(x-p)(x-q) straight away. That form is already factored, which makes it the easiest one to use when you know the roots.',zh:'知道与x轴的两个交点就直接得到y=a(x−p)(x−q)。这个形式本身就是因式分解好的，已知根时最方便。'}},
           {id:3,label:{ko:'꼭짓점 → 일반형(실전, 2다칸)',en:'vertex form to general form (main, 2 slots)',zh:'顶点式→一般式(实战，2格)'},params:{mode:'general'},
            concept:{ko:'표준형을 전개하면 일반형이 돼요. (x−p)²을 펴면 x²−2px+p²이니 b는 −2p, c는 p²+q예요 — 완전제곱을 만들던 과정을 거꾸로 밟는 것이에요.',en:'Expanding the vertex form gives the general form: (x-p)2 opens out to x2-2px+p2, so b is -2p and c is p2+q. It is completing the square, walked backwards.',zh:'把顶点式展开就是一般式：(x−p)²展开为x²−2px+p²，所以b是−2p，c是p²+q——这正是配方过程倒着走一遍。'}}] },
+
+/* ── 수직선 위의 위치(2026-09-21) ── 원장 "정수 또는 유리수도 위치 찾기 연습도 있어야
+   하고 절댓값도 위치 찾기가 되어야지". MD1 은 절댓값을 **계산**만 시켰고, 수직선 위
+   어디인지를 묻는 자리가 없었다. 좌표평면(MD68)의 바로 앞 단계이기도 하다 —
+   1차원에서 자리를 읽을 줄 알아야 2차원에서 (x, y) 를 읽는다. gen: mid10.js. */
+MD82:{ name:{ko:'수직선 위의 위치',en:'Positions on the Number Line',zh:'数轴上的位置'}, gen:'md82_numberLine', prereq:['MD1'],
+  unit:'M-82',
+  concept:{ko:'수직선은 0을 가운데 두고 오른쪽이 양수, 왼쪽이 음수예요. 한 칸을 더 잘게 나누면 정수 사이의 유리수도 자리를 가질 수 있어요. 절댓값은 그 수가 0에서 얼마나 떨어져 있느냐이고, 같은 절댓값을 가진 수는 0의 양쪽에 하나씩 둘이에요.',
+    en:'A number line puts zero in the middle, with positives to the right and negatives to the left. Cut each unit into smaller pieces and the rationals between the integers get places too. An absolute value is how far a number sits from zero, so two numbers share it - one on each side.',
+    zh:'数轴把0放在中间，右边是正数、左边是负数。把每一格再细分，整数之间的有理数也就有了位置。绝对值是这个数离0有多远，所以绝对值相同的数有两个，0的两侧各一个。'},
+  widgets:['numpad','graphPlane'],
+  levels:[{id:1,label:{ko:'정수의 위치 읽기(연습)',en:'read an integer off the line (practice)',zh:'读出整数的位置(练习)'},params:{mode:'integer'}},
+          {id:2,label:{ko:'유리수의 위치(분수, 2다칸)',en:'a rational on the line (fraction, 2 slots)',zh:'有理数的位置(分数，2格)'},params:{mode:'rational'},
+           concept:{ko:'한 칸을 등분한 작은 눈금을 0에서부터 세어요. 세 칸을 4등분한 눈금에서 7칸이면 7/4이에요 — 약분하지 않고 "몇 등분한 것 중 몇 칸"을 그대로 적어요.',
+             en:'Count the small marks from zero. Seven marks on a line cut into quarters is 7/4 - write it as "how many of how many", without reducing.',
+             zh:'从0开始数细分的小刻度。把一格四等分后数到7格就是7/4——不约分，照"几等分中的几格"写出来。'}},
+          {id:3,label:{ko:'절댓값이 같은 두 수 찾기(실전)',en:'the two numbers with a given absolute value (main)',zh:'找绝对值相同的两个数(实战)'},params:{mode:'absolute'},
+           concept:{ko:'|x|=5라면 0에서 5칸 떨어진 자리 둘 — 오른쪽 5와 왼쪽 −5예요. 절댓값은 거리라 언제나 0 이상이고, 0의 절댓값만 0이에요.',
+             en:'If |x|=5 there are two places five steps from zero: 5 on the right and -5 on the left. An absolute value is a distance, so it is never negative, and only zero has an absolute value of zero.',
+             zh:'若|x|=5，离0有5格的位置有两个：右边的5和左边的−5。绝对值是距离，所以从不为负；只有0的绝对值是0。'}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

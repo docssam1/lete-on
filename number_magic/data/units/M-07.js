@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-07'] = {
-  id:'M-07', tier:'middle1', level:'31', order:12,
+  id:'M-07', tier:'middle1', level:'31', order:13,
   generator:'md7_ratMulDiv',
   title:{ ko:'유리수의 곱셈과 나눗셈', en:'Multiplying & Dividing Rational Numbers', zh:'有理数的乘除法' },
   subtitle:{ ko:'나눗셈은 역수를 곱하는 것 — 뒤집으면 곱셈이 돼요', en:'Division = multiply by the reciprocal — flip it and it becomes multiplication', zh:'除法＝乘以倒数——翻过来就变成乘法' },

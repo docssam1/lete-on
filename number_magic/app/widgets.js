@@ -2077,51 +2077,31 @@ function renderFallback(problem, container, onAnswer){
    화면·인쇄가 **같은 그림**이어야 하므로 좌표 계산 규약을 exam.js graphSvg 와
    맞춰 둔다(축 눈금 1칸 = 정수 1, 원점은 0,0 자리).
 ───────────────────────────────────────── */
-function graphPlaneSvgInner(g, W, H, pad){
-  const xr = g.xr || [-6,6], yr = g.yr || [-8,8];
-  const sx = (W-pad*2)/(xr[1]-xr[0]), sy = (H-pad*2)/(yr[1]-yr[0]);
-  const X = v => pad + (v-xr[0])*sx;
-  const Y = v => H-pad - (v-yr[0])*sy;
-  let s='';
-  /* 격자 — 1칸이 정수 1. 이 칸을 세는 것이 기울기를 읽는 방법이다. */
-  let gd='';
-  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++) gd += `M${X(v).toFixed(1)} ${pad}V${H-pad}`;
-  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++) gd += `M${pad} ${Y(v).toFixed(1)}H${W-pad}`;
-  s += `<path class="nm-gp-grid" d="${gd}"/>`;
-  /* 축 */
-  s += `<line class="nm-gp-axis" x1="${pad}" y1="${Y(0).toFixed(1)}" x2="${W-pad}" y2="${Y(0).toFixed(1)}"/>`;
-  s += `<line class="nm-gp-axis" x1="${X(0).toFixed(1)}" y1="${pad}" x2="${X(0).toFixed(1)}" y2="${H-pad}"/>`;
-  /* 축 이름과 눈금 숫자 — 2칸마다(다 적으면 뭉개진다) */
-  for(let v=Math.ceil(xr[0]); v<=xr[1]; v++){
-    if(v===0 || v%2) continue;
-    s += `<text class="nm-gp-tick" x="${X(v).toFixed(1)}" y="${(Y(0)+13).toFixed(1)}">${v}</text>`;
-  }
-  for(let v=Math.ceil(yr[0]); v<=yr[1]; v++){
-    if(v===0 || v%2) continue;
-    s += `<text class="nm-gp-tick nm-gp-ticky" x="${(X(0)-5).toFixed(1)}" y="${(Y(v)+4).toFixed(1)}">${v}</text>`;
-  }
-  s += `<text class="nm-gp-axname" x="${W-pad+2}" y="${(Y(0)-6).toFixed(1)}">x</text>`;
-  s += `<text class="nm-gp-axname" x="${(X(0)+6).toFixed(1)}" y="${pad+4}">y</text>`;
-  s += `<text class="nm-gp-tick" x="${(X(0)-6).toFixed(1)}" y="${(Y(0)+13).toFixed(1)}">O</text>`;
-  /* 곡선 — 화면 밖으로 나가는 부분은 clip 으로 자른다(직선이 상자를 뚫고 나가도 됨) */
-  const clipId = 'gpclip'+Math.abs((g.m||0)*97+(g.b||0)*31+(g.p||0)*7+(g.q||0)+(g.a||0)*13+(g.k||0)*5);
-  /* 곡선 식은 exam.js 한 곳에만 둔다 — drill.html·ws.html 은 widgets.js 를 안 싣고
-     exam.js 만 싣기 때문이다(반대로 두면 학습지에서 곡선이 통째로 빠진다). */
-  const cp = (window.NM_EXAM && window.NM_EXAM.curvePath) || null;
-  const d = cp ? cp(g, xr, v => X(v).toFixed(1), v => Y(v).toFixed(1)) : '';
-  s = `<defs><clipPath id="${clipId}"><rect x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/></clipPath></defs>` + s;
-  /* kind:'points' 는 곡선 없이 점만 찍는다(좌표·사분면 문항) */
-  if(d) s += `<path class="nm-gp-curve" clip-path="url(#${clipId})" d="${d}"/>`;
-  (g.pts||[]).forEach(pt=>{
+/* 화면 좌표평면 — **geometry 와 모눈·곡선 그리기는 exam.js 한 벌**을 쓴다.
+   (2026-09-21, 원장 "그래프는 정확히 모눈에 좌표평면 그려줘" — 한 칸이 정사각형이
+   아니었던 것을 고치면서, 두 벌로 두면 또 갈라지므로 아예 공유로 바꿨다.) */
+function graphPlaneSvg(g){
+  const E = window.NM_EXAM || {};
+  if(!E.graphGeom || !E.graphPaperSvg) return '';
+  if(g.kind === 'numberline') return E.numberLineSvg ? E.numberLineSvg(g, null) : '';
+  const CELL = 16, pad = 20;
+  const gm = E.graphGeom(g, CELL, pad);
+  const { xr, yr, W, H, X, Y } = gm;
+  let s = E.graphPaperSvg(gm, 'nm-gp');
+  const cid = 'gpw' + [g.kind, g.m, g.b, g.a, g.p, g.q, g.k].join('_').replace(/[^A-Za-z0-9]/g,'');
+  const d = E.curvePath ? E.curvePath(g, xr, X, Y) : '';
+  s = `<defs><clipPath id="${cid}"><rect x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/></clipPath></defs>` + s
+    + (d ? `<path class="nm-gp-curve" clip-path="url(#${cid})" d="${d}"/>` : '');
+  (g.pts||[]).forEach(pt => {
     if(pt[0]<xr[0]||pt[0]>xr[1]||pt[1]<yr[0]||pt[1]>yr[1]) return;
-    s += `<circle class="nm-gp-pt" cx="${X(pt[0]).toFixed(1)}" cy="${Y(pt[1]).toFixed(1)}" r="4"/>`;
+    s += `<circle class="nm-gp-pt" cx="${X(pt[0])}" cy="${Y(pt[1])}" r="5"/>`;
   });
-  return s;
+  return `<svg class="nm-gp-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    style="aspect-ratio:${W}/${H}">${s}</svg>`;
 }
 
 function renderGraphPlane(problem, container, onAnswer){
   const g = problem.graph || {};
-  const W=290, H=250, pad=22;
   const lang0=(window.S&&window.S.lang)||'ko';
   const hint0 = lang0==='en' ? 'Count the squares on the grid!'
               : lang0==='zh' ? '数一数格子！' : '격자의 칸을 세어 봐요!';
@@ -2129,7 +2109,7 @@ function renderGraphPlane(problem, container, onAnswer){
   root.className='nm-w-graph';
   root.innerHTML=`
     <div class="nm-gp-hint">${esc(hint0)}</div>
-    <svg class="nm-gp-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${graphPlaneSvgInner(g,W,H,pad)}</svg>
+    ${graphPlaneSvg(g)}
     <div class="nm-gp-tex" id="gpTex"></div>
     <div class="nm-numpad-screen" id="gpScreen">&nbsp;</div>
     <div class="nm-numpad" id="gpPad"></div>

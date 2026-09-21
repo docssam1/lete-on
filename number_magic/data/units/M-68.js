@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-68'] = {
-  id:'M-68', tier:'middle1', level:'31', order:16,
+  id:'M-68', tier:'middle1', level:'31', order:17,
   generator:'md68_coordinate',
   title:{ ko:'좌표와 사분면', en:'Coordinates & Quadrants', zh:'坐标与象限' },
   subtitle:{ ko:'두 수로 평면 위의 한 자리를 꼭 집어요', en:'Two numbers pin down one spot on the plane', zh:'用两个数就能确定平面上的一个位置' },

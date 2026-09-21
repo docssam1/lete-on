@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-04'] = {
-  id:'M-04', tier:'middle1', level:'30', order:6,
+  id:'M-04', tier:'middle1', level:'30', order:7,
   generator:'md4_intMulDiv',
   title:{ ko:'정수의 곱셈과 나눗셈', en:'Multiplying & Dividing Integers', zh:'整数的乘除法' },
   subtitle:{ ko:'음수 개수가 짝이면 +, 홀이면 − — 부호부터 정하고 시작해요', en:'Even count of negatives = +, odd = − : decide the sign first', zh:'负数个数为偶得正，为奇得负——先定符号' },

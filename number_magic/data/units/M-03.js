@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-03'] = {
-  id:'M-03', tier:'middle1', level:'29', order:3,
+  id:'M-03', tier:'middle1', level:'29', order:4,
   generator:'md3_ratAddSub',
   title:{ ko:'유리수의 덧셈과 뺄셈', en:'Adding & Subtracting Rational Numbers', zh:'有理数的加减法' },
   subtitle:{ ko:'분모만 맞추면 정수와 똑같은 규칙이 그대로 통해요', en:'Match the denominators, and the integer rules work exactly the same', zh:'只要分母对齐，整数的规则原封不动地适用' },

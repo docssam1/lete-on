@@ -4,7 +4,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-05'] = {
-  id:'M-05', tier:'middle1', level:'30', order:7,
+  id:'M-05', tier:'middle1', level:'30', order:8,
   generator:'md5_signedPower',
   title:{ ko:'거듭제곱과 부호', en:'Powers & Signs', zh:'乘方与符号' },
   subtitle:{ ko:'(−2)³과 −2³, 괄호 하나가 답을 완전히 바꿔놓기도 해요', en:'(−2)³ vs −2³ — one pair of parentheses can change everything', zh:'(−2)³和−2³，一个括号可能改变一切' },
