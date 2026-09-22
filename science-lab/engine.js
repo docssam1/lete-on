@@ -10,23 +10,33 @@ export class Stage {
   static live = new Set();   // 살아 있는 무대(책 속 팝업을 닫을 때 정리하려고)
   constructor(canvas) {
     this.canvas = canvas; Stage.live.add(this);
+    this._cleanups = []; this._raf = 0; this._inView = true; this._pageVisible = document.visibilityState !== 'hidden';
+    const lowPower = matchMedia?.('(max-width: 760px)').matches || (navigator.deviceMemory && navigator.deviceMemory <= 4);
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, lowPower ? 1.5 : 2));
     this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.scene = new THREE.Scene(); this.scene.background = new THREE.Color(PALETTE.paper);
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
     this.root = new THREE.Group(); this.scene.add(this.root);
     this.orbit = { theta: 0.55, phi: 1.12, dist: 9, target: new THREE.Vector3(0, 0.8, 0), home: null };
+    this._shadowSize = lowPower ? 1024 : 2048;
     this._setupLights(); this._setupGround(); this._setupInput();
     this.clock = new THREE.Clock(); this.update = null; this.running = true;
-    this._resize(); addEventListener('resize', () => this._resize());
-    this._loop = this._loop.bind(this); requestAnimationFrame(this._loop);
+    this._resizeHandler = () => this._resize(); this._on(window, 'resize', this._resizeHandler);
+    this._visibilityHandler = () => { this._pageVisible = document.visibilityState !== 'hidden'; this._updateActivity(); };
+    this._on(document, 'visibilitychange', this._visibilityHandler);
+    if ('IntersectionObserver' in window) {
+      this._observer = new IntersectionObserver(([entry]) => { this._inView = !!entry?.isIntersecting; this._updateActivity(); }, { threshold: 0.01 });
+      this._observer.observe(canvas);
+    }
+    this._loop = this._loop.bind(this); this._resize(); this._updateActivity();
   }
+  _on(target, type, handler, options) { target.addEventListener(type, handler, options); this._cleanups.push(() => target.removeEventListener(type, handler, options)); }
   _setupLights() {
     const hemi = new THREE.HemisphereLight(0xffffff, 0xcbbfa9, 0.9); this.scene.add(hemi);
     const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(4, 8, 5); key.castShadow = true;
-    key.shadow.mapSize.set(2048, 2048); const s = 7; Object.assign(key.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 1, far: 30 });
+    key.shadow.mapSize.set(this._shadowSize, this._shadowSize); const s = 7; Object.assign(key.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 1, far: 30 });
     key.shadow.bias = -0.0005; this.scene.add(key);
     const fill = new THREE.DirectionalLight(0xdfe9ff, 0.5); fill.position.set(-5, 3, -4); this.scene.add(fill);
   }
@@ -39,13 +49,14 @@ export class Stage {
     const c = this.canvas; let drag = null, pinch = null;
     const down = (x, y) => { drag = { x, y, th: this.orbit.theta, ph: this.orbit.phi }; };
     const move = (x, y) => { if (!drag) return; const dx = (x - drag.x) / c.clientWidth, dy = (y - drag.y) / c.clientHeight; this.orbit.theta = drag.th - dx * 3.2; this.orbit.phi = Math.max(0.35, Math.min(1.5, drag.ph - dy * 2.4)); };
-    c.addEventListener('pointerdown', (e) => { if (e.isPrimary) { down(e.clientX, e.clientY); c.setPointerCapture(e.pointerId); } });
-    c.addEventListener('pointermove', (e) => { if (e.isPrimary) move(e.clientX, e.clientY); });
-    c.addEventListener('pointerup', () => { drag = null; }); c.addEventListener('pointercancel', () => { drag = null; });
-    c.addEventListener('wheel', (e) => { e.preventDefault(); this.orbit.dist = Math.max(3, Math.min(20, this.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
-    c.addEventListener('touchstart', (e) => { if (e.touches.length === 2) pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); }, { passive: true });
-    c.addEventListener('touchmove', (e) => { if (e.touches.length === 2 && pinch) { const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); this.orbit.dist = Math.max(3, Math.min(20, this.orbit.dist * pinch / d)); pinch = d; } }, { passive: true });
-    c.addEventListener('touchend', () => { pinch = null; });
+    this._on(c, 'pointerdown', (e) => { if (e.isPrimary) { down(e.clientX, e.clientY); c.setPointerCapture(e.pointerId); } });
+    this._on(c, 'pointermove', (e) => { if (e.isPrimary) move(e.clientX, e.clientY); });
+    this._on(c, 'pointerup', () => { drag = null; }); this._on(c, 'pointercancel', () => { drag = null; });
+    // 보통 휠은 팝업/페이지를 스크롤한다. 확대는 Ctrl+휠, 폰은 두 손가락만 사용한다.
+    this._on(c, 'wheel', (e) => { if (!e.ctrlKey) return; e.preventDefault(); this.orbit.dist = Math.max(3, Math.min(20, this.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
+    this._on(c, 'touchstart', (e) => { if (e.touches.length === 2) pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); }, { passive: true });
+    this._on(c, 'touchmove', (e) => { if (e.touches.length === 2 && pinch) { const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); this.orbit.dist = Math.max(3, Math.min(20, this.orbit.dist * pinch / d)); pinch = d; } }, { passive: true });
+    this._on(c, 'touchend', () => { pinch = null; });
   }
   _resize() {
     const w = this.canvas.clientWidth || 640, h = this.canvas.clientHeight || 400;
@@ -58,17 +69,52 @@ export class Stage {
     o.home = { theta: o.theta, phi: o.phi, dist: o.dist, target: o.target.clone() };
   }
   resetView() { const h = this.orbit.home; if (h) { this.orbit.theta = h.theta; this.orbit.phi = h.phi; this.orbit.dist = h.dist; this.orbit.target.copy(h.target); } }
-  clear() { while (this.root.children.length) { const c = this.root.children.pop(); c.traverse((n) => { if (n.geometry) n.geometry.dispose(); }); } this.update = null; }
+  _disposeObjects(objects) {
+    const geometries = new Set(), materials = new Set();
+    objects.forEach((object) => object?.traverse((n) => {
+      if (n.geometry) geometries.add(n.geometry);
+      const mm = Array.isArray(n.material) ? n.material : n.material ? [n.material] : [];
+      mm.forEach((m) => materials.add(m));
+    }));
+    geometries.forEach((g) => g.dispose()); materials.forEach((m) => m.dispose());
+  }
+  clear() { const children = [...this.root.children]; children.forEach((c) => this.root.remove(c)); this._disposeObjects(children); this.update = null; }
+  _requestFrame() { if (this.running && this.active && !this._raf) this._raf = requestAnimationFrame(this._loop); }
+  _updateActivity() {
+    const active = !!(this.running && this._pageVisible && this._inView);
+    if (active === this.active) return;
+    this.active = active; this.canvas.dataset.animationActive = active ? 'true' : 'false';
+    if (active) { this.clock?.getDelta(); this._requestFrame(); }
+    else if (this._raf) { cancelAnimationFrame(this._raf); this._raf = 0; }
+  }
   _loop() {
-    if (!this.running) return; requestAnimationFrame(this._loop);
+    this._raf = 0; if (!this.running || !this.active) return;
     const raw = this.clock.getDelta(), dt = Math.min(0.25, raw), t = this.clock.elapsedTime; const o = this.orbit;
     const x = o.target.x + o.dist * Math.sin(o.phi) * Math.sin(o.theta), y = o.target.y + o.dist * Math.cos(o.phi), z = o.target.z + o.dist * Math.sin(o.phi) * Math.cos(o.theta);
     this.camera.position.set(x, y, z); this.camera.lookAt(o.target);
     if (this.update) this.update(dt, t, raw);
     if (this.canvas.width !== Math.floor(this.canvas.clientWidth * this.renderer.getPixelRatio())) this._resize();
     this.renderer.render(this.scene, this.camera);
+    this._requestFrame();
   }
-  dispose() { if (!this.running && !Stage.live.has(this)) return; Stage.live.delete(this); this.running = false; this.clear(); this.renderer.dispose(); }
+  dispose() {
+    if (!this.running && !Stage.live.has(this)) return;
+    Stage.live.delete(this); this.running = false; this.active = false;
+    if (this._raf) cancelAnimationFrame(this._raf); this._raf = 0;
+    this._observer?.disconnect(); this._cleanups.splice(0).forEach((off) => off());
+    this.clear(); this._disposeObjects([this.scene]); this.renderer.renderLists?.dispose(); this.renderer.dispose();
+    this.canvas.dataset.animationActive = 'false';
+  }
+}
+
+// 해시가 바뀌지 않아도(책 팝업 닫기) 떨어진 무대를 즉시 정리한다.
+export function watchDetached(host, cleanup) {
+  let done = false;
+  const finish = () => { if (done) return; done = true; observer.disconnect(); removeEventListener('hashchange', check); cleanup(); };
+  const check = () => setTimeout(() => { if (!host.isConnected) finish(); });
+  const observer = new MutationObserver(check); observer.observe(document.body, { childList: true, subtree: true });
+  addEventListener('hashchange', check);
+  return finish;
 }
 
 // 장면 모듈 규약:

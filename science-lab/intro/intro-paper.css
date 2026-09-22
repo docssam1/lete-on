@@ -37,5 +37,3 @@
 .ad-rub td.v { width: 7mm; } .ad-rub td.v .rs { font-size: 15pt; } .ad-rub td.w { color: #6b5537; font-size: 7.8pt; }
 .ad-rub-r { border-left: 1px dashed #d8c9a6; padding-left: 3mm; } .ad-rub-r .k { margin: 0; font-size: 7.6pt; font-weight: 800; color: #8b1e1e; }
 .ad-rub-r .rw { margin: .6mm 0 1.8mm; font: 400 13pt/1.2 "Nanum Brush Script", cursive; color: #d3261a; } .ad-rub-r .ad-ph-w { margin-top: .4mm; }
-/* 독쌤이 말할 때 글자가 늘어나도 뒤쪽 책·3D 실험실을 다시 그리지 않게 따로 그린다(폰 깜빡임 방지) */
-.it-guide { contain: layout style; will-change: transform; } .it-bubble { contain: layout style; }

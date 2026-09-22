@@ -153,6 +153,13 @@
 .bk-video img, .bk-video video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .bk-video .bk-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border: 0; border-radius: 999px; background: rgba(226, 59, 46, .92); color: #fff; font: 700 13pt/1 var(--disp, sans-serif); padding: 4mm 7mm; cursor: pointer; box-shadow: 0 2mm 6mm rgba(0, 0, 0, .35); }
 .bk-video small { position: absolute; right: 2mm; bottom: 1.5mm; color: #fff; font-size: 7pt; opacity: .85; text-shadow: 0 0 3px #000; }
+.bk-video-compare { display: flex; align-items: center; justify-content: space-between; gap: 2mm; margin: 2mm 0; padding: 2mm 3mm; border: 1px solid #f0b16f; border-radius: 2mm; background: #fff3e5; font-size: 9.5pt; }
+.bk-video-link { min-height: 8mm; border: 0; border-radius: 99mm; padding: 1.4mm 3.5mm; background: #1E3A78; color: #fff; font-weight: 800; cursor: pointer; }
+.bk-video-pop video { display: block; width: 100%; max-height: 68vh; border-radius: 10px; background: #111; }
+.bk-video-prompt { display: flex; gap: 8px; margin: 10px 0 0; padding: 10px 12px; border-left: 4px solid #E23B2E; background: #f3f6fb; line-height: 1.5; }
+.bk-video-prompt b { flex: none; color: #1E3A78; }
+.bk-video-credit { margin: 8px 2px 0; color: #5B6577; font-size: 13px; }
+.bk-video-credit a { color: inherit; }
 .bk-pop-btn { display: none; }
 .bk.live .bk-pop-btn { display: inline-flex; align-items: center; gap: 1.2mm; border: 0; background: linear-gradient(180deg, #ff9d3d, #e2560f); color: #fff; font-weight: 800; font-size: 11pt; letter-spacing: -.01em; border-radius: 999px; padding: 2.2mm 5mm; cursor: pointer;
   box-shadow: 0 0 0 1.2mm rgba(255, 255, 255, .92), 0 1.2mm 3mm rgba(120, 40, 0, .45), 0 0 6mm rgba(255, 140, 50, .75); animation: bkGlow 1.8s ease-in-out infinite; }
@@ -171,7 +178,7 @@
 .bk-pop-x { border: 0; background: rgba(255, 255, 255, .15); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer; }
 .bk-pop-body { padding: 12px; }
 .pop-photo { margin: 0; } .pop-photo img { width: 100%; max-height: 70vh; object-fit: contain; display: block; background: #111; border-radius: 10px; } .pop-photo figcaption { font-size: 14px; color: #445; margin-top: 8px; }
-@media print { .bk .bk-web, .bk-pop-btn, .bk-pop-wrap { display: none !important; } .bk.live .bk-print { display: block !important; } }
+@media print { .bk .bk-web, .bk-pop-btn, .bk-video-link, .bk-pop-wrap { display: none !important; } .bk.live .bk-print { display: block !important; } }
 /* 작은 화면·앱 안 브라우저: 튀어나온 실험실 창을 화면에 꽉 맞춘다 */
 .bk-pop { max-height: calc(100dvh - 24px); }
 @media (max-width: 760px) {
@@ -185,6 +192,9 @@
   .bk:not(.a4) .bk-tbl th { white-space: normal; }
   .bk:not(.a4) .bk-tbl th, .bk:not(.a4) .bk-tbl td { padding: 1.2mm 1.4mm; overflow-wrap: anywhere; }
   .bk:not(.a4) .bk-tbl.chk .st { width: 16mm; }
+}
+@media (max-width: 360px) {
+  .bk-pop .lab3d canvas, .bk-pop .stage3d canvas { height: 30dvh; min-height: 190px; }
 }
 /* 탐구보고서 · 형성평가 */
 .bk-banner.report span { background: #1E6B8F; box-shadow: 1mm 1mm 0 #0d3d53; } .bk-banner.report::after { border-color: #9ecbe0; }

@@ -19,6 +19,7 @@ const CH = {
   's41-u03': { book: () => import('../data/book/s41-u03.book.js'), lesson: () => import('../data/units/s41-u03.lesson.js') },
 };
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NARROW = matchMedia('(max-width: 760px)');
 const $ = (s) => document.querySelector(s);
 
 // ── docssam 안내 ──
@@ -28,6 +29,7 @@ let NAR = { voice: '', lines: [] }, soundOn = true, sayToken = 0, audio = null;
 const guide = $('.it-guide'), $p = guide.querySelector('.it-bubble p');
 guide.insertAdjacentHTML('afterbegin', '<div class="it-char"><img class="b" src="' + A + 'docssam-A1-mouth-closed.webp" alt="독쌤"><img class="f" alt=""></div>');
 guide.querySelector('.it-guide-img').remove();
+guide.querySelector('.it-guide-btns')?.insertAdjacentHTML('afterbegin', '<button type="button" class="it-demo" data-a="demo">바로 체험</button>');
 const $face = guide.querySelector('.it-char .f');
 async function urlOf(line) {
   const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(`${NAR.voice}|${line.text}`));
@@ -74,10 +76,12 @@ async function say(ids) {
       if (fell || !audio) voiceMode('기기 음성');
     }
     if (my !== sayToken) return;
-    guide.classList.add('talk'); $p.textContent = '';
+    // 문장은 처음부터 한 번에 놓는다. 글자마다 DOM 폭을 바꾸면 고정 안내창 뒤의 3D 책까지
+    // 매번 다시 합성되어 모바일에서 책장이 깜빡였다.
+    guide.classList.add('talk'); $p.textContent = line.text;
     for (const ch of line.text) {
       if (my !== sayToken) return;
-      $p.textContent += ch; const m = REDUCED ? null : mouthFor(ch);
+      const m = REDUCED || NARROW.matches ? null : mouthFor(ch);
       if (m) { $face.src = A + FACE[m]; $face.style.display = 'block'; } else $face.style.display = 'none';
       await new Promise((r) => setTimeout(r, m ? 70 : 110));
     }
@@ -131,9 +135,9 @@ function coverPage() {
       <path class="cv-line" d="${line}" fill="none" stroke="#ffd98a" stroke-width=".7" stroke-dasharray="2 1.5"/>${stars}
       <g class="cv-flask" transform="translate(${cx} ${cy})"><path d="M-4 -12 h8 M-3 -12 v8 l-8 13 a3 3 0 0 0 3 4 h16 a3 3 0 0 0 3 -4 l-8 -13 v-8" fill="none" stroke="url(#gd)" stroke-width="1.1"/><path d="M-7.5 3 h15 l3.4 5.6 a2 2 0 0 1 -1.8 3 h-18.2 a2 2 0 0 1 -1.8 -3z" fill="#ff8a3d" opacity=".75"/><circle cx="-2" cy="6" r="1" fill="#fff3c4"/><circle cx="2.5" cy="8" r=".7" fill="#fff3c4"/></g>
     </g>
-    <text class="cv-road" x="105" y="252" text-anchor="middle">3학년에서 6학년까지 · 여덟 학기의 탐구 여정</text>
-    <text class="cv-brand" x="105" y="272" text-anchor="middle">GFIELD SCIENCE LAB</text>
-  </svg><div class="cv-tap">책장을 넘겨 보세요</div>`);
+    <text class="cv-road" x="105" y="248" text-anchor="middle">3학년에서 6학년까지 · 여덟 학기의 탐구 여정</text>
+    <text class="cv-brand" x="105" y="262" text-anchor="middle">GFIELD SCIENCE LAB</text>
+  </svg><button type="button" class="cv-demo" data-a="demo">바로 체험 · 영상과 3D</button><div class="cv-tap">또는 책장을 넘겨 보세요</div>`);
 }
 const orn = '<div class="orn"><svg viewBox="0 0 120 10"><path d="M0 5 H48 M72 5 H120" stroke="#b8872b" stroke-width=".8"/><path d="M60 0 l6 5 l-6 5 l-6 -5z M50 5 a2 2 0 1 0 0 .01 M70 5 a2 2 0 1 0 0 .01" fill="#b8872b"/></svg></div>';
 const chap = (k, h) => `<p class="ad-k">${k}</p><h2>${h}</h2>${orn}`;
@@ -315,12 +319,13 @@ async function build() {
   const repSec = endSec('rep-live', reportPageHtml(state.I)), rxSec = endSec('rx-live', samplePageHtml(pool));
   state.repSec = repSec;
   const nAd = adSecs.length - 1;   // 표지 + 광고 쪽들(마지막은 뒤표지)
+  state.liveStart = nAd;
   state.pages = [...adSecs.slice(0, nAd), ...chSecs, repSec, rxSec, adSecs[nAd]].map((s, i) => wrapPage(s, i < nAd || i === nAd + 2 + chSecs.length ? adHost : bk));   // 표지 + 광고 + 교재 + 보고서 2 + 뒤표지
   state.chCount = chSecs.length; host.remove();
   state.L = lm.lesson; state.rows = [];
   layout(true);
   wireLive(book, {
-    scene: (el) => mount3D(el, state.L.engage.scene, { autoplay: true }),
+    scene: (el) => mount3D(el, state.L.engage.scene, { autoplay: true, preview: true }),
     lab: (el) => mountLabOf(state.L.explore.lab.kind)(el, { ...state.L.explore.lab, rows: state.rows, onRecord: (rows) => { state.rows = rows; } }),
     misc,
     onAnswer: (kind, p) => {   // 이 책에서 고른 답도 기록 → 끝 쪽 진단 보고서에 바로 반영
@@ -362,8 +367,13 @@ function paint(anim = true, dir = 1) {
     leaf.classList.toggle('flipped', flipped);
     leaf.style.zIndex = flipped ? i + 1 : n - i;
     leaf.style.transition = anim && !REDUCED ? '' : 'none';
-    leaf.querySelectorAll('.face').forEach((f) => f.setAttribute('aria-hidden', 'true'));
+    leaf.querySelectorAll('.face').forEach((f) => { f.setAttribute('aria-hidden', 'true'); f.inert = true; });
   });
+  // 화면에 놓인 면만 읽고 조작하게 한다. 겹쳐 둔 26쪽의 버튼이 탭 순서에 섞이지 않게 한다.
+  const showFace = (face) => { if (face) { face.setAttribute('aria-hidden', 'false'); face.inert = false; } };
+  if (state.single) showFace(state.leaves[s]?.querySelector('.front'));
+  else if (s === 0) showFace(state.leaves[0]?.querySelector('.front'));
+  else { showFace(state.leaves[s - 1]?.querySelector('.back')); showFace(state.leaves[s]?.querySelector('.front')); }
   if (anim) { const t = state.leaves[dir > 0 ? s - 1 : s]; if (t) { t.style.zIndex = n + 2; setTimeout(() => { t.style.zIndex = t.classList.contains('flipped') ? state.leaves.indexOf(t) + 1 : n - state.leaves.indexOf(t); }, 900); } }
   // 표지만 보일 땐 책을 가운데로, 마지막(뒤표지 왼쪽만)도 가운데로
   const shift = state.single ? 0 : s === 0 ? -0.5 : s === n ? 0.5 : 0;
@@ -446,6 +456,18 @@ function go(d) {
   const t = state.leaves[d > 0 ? s - 1 : s]; if (t) { t.classList.add('turning'); setTimeout(() => t.classList.remove('turning'), 1300); }
   document.querySelector('.bk-pop-wrap')?.__close?.();
 }
+function jumpToPage(pageIndex) {
+  const n = state.leaves.length, wanted = state.single ? pageIndex : Math.ceil(pageIndex / 2);
+  const next = Math.max(0, Math.min(state.single ? n - 1 : n, wanted));
+  if (next === state.spread) return;
+  if (zoomBack) zoomBack();
+  state.spread = next; state.said = ''; paint(false); turnSound(true);
+  document.querySelector('.bk-pop-wrap')?.__close?.();
+}
+document.addEventListener('click', (e) => {
+  const demo = e.target.closest('[data-a="demo"]'); if (!demo) return;
+  e.preventDefault(); e.stopPropagation(); jumpToPage(state.liveStart || 0);
+});
 $('.it-arrow.next').addEventListener('click', () => go(1));
 $('.it-arrow.prev').addEventListener('click', () => go(-1));
 addEventListener('keydown', (e) => { if (document.querySelector('.bk-pop-wrap') || /INPUT|TEXTAREA/.test(e.target.tagName)) return; if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); });

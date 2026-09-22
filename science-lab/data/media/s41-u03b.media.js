@@ -36,7 +36,7 @@ export const media = {
   ],
   // ② 실험 3D 보기 아래: 용암이 흐르고 굳는 영상
   explore: { kind: 'video', title: '용암이 길 위로 흘러와 굳는 모습 (하와이, 2018)', ...V('2/25', 'Fissure_21_p%C4%81hoehoe_lava_flows_ooze_onto_Kaupili_Street%2C_in_the_Leilani_Estat....webm'),
-    credit: 'USGS Volcanoes · Public domain' },
+    credit: 'USGS Volcanoes · Public domain', prompt: '흐르는 안쪽은 밝고, 먼저 식은 겉은 어둡게 굳는 모습을 찾아봐요.' },
   // ④ 확장 읽기 옆 사진
   reading: { src: `${T}/b/b4/Dol_Hareubang_in_Spirited_Garden_01.jpg/960px-Dol_Hareubang_in_Spirited_Garden_01.jpg`, cap: '돌하르방 (제주)', credit: 'Bernard Gagnon · CC0' },
 };

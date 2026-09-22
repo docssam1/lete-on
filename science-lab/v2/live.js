@@ -19,6 +19,15 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
     const k = b.dataset.pop;
     openPop(b, k === 'scene' ? '3D로 보기' : '3D 체험 실험실', (el) => (k === 'scene' ? scene?.(el) : lab?.(el)), { wide: k === 'lab' });
   }));
+  root.querySelectorAll('[data-video]').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openPop(b, b.dataset.title || '실제 영상', (el) => {
+      el.innerHTML = `<div class="bk-video-pop"><video controls autoplay playsinline preload="metadata"><source src="${esc(b.dataset.src)}" type="video/webm">${b.dataset.mp4 ? `<source src="${esc(b.dataset.mp4)}" type="video/mp4">` : ''}<source src="${esc(b.dataset.full)}" type="video/webm"></video>${b.dataset.prompt ? `<p class="bk-video-prompt"><b>관찰할 점</b>${esc(b.dataset.prompt)}</p>` : ''}<p class="bk-video-credit">${esc(b.dataset.credit || '')} · <a href="${esc(b.dataset.page)}" target="_blank" rel="noopener">원본 보기</a></p></div>`;
+      const vid = el.querySelector('video');
+      vid.addEventListener('error', () => { el.innerHTML = `<div class="bk-video-fail"><p>이 브라우저에서는 영상이 열리지 않아요.</p><a href="${esc(b.dataset.page)}" target="_blank" rel="noopener">새 창에서 영상 보기</a></div>`; }, true);
+      vid.play?.().catch(() => { /* 자동 재생이 막히면 기본 재생 버튼 사용 */ });
+    }, { wide: true });
+  }));
   root.querySelectorAll('.bk-photo img, .bk-art img').forEach((img) => { img.style.cursor = 'zoom-in'; img.addEventListener('click', (e) => {
     e.stopPropagation(); const cap = img.closest('figure')?.querySelector('figcaption')?.innerHTML || '';
     openPop(img, '실제 사진', (el) => { el.innerHTML = `<figure class="pop-photo"><img src="${img.src}" alt=""><figcaption>${cap}</figcaption></figure>`; });

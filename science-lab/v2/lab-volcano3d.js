@@ -17,9 +17,9 @@ const GUIDE = {
 const hash = (i) => { const s = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return s - Math.floor(s); };
 
 export async function mountVolcano3D(el, opts = {}) {
-  let THREE, Stage;
+  let THREE, Stage, watchDetached;
   try {
-    [{ Stage }, THREE] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js')]);
+    [{ Stage, watchDetached }, THREE] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js')]);
     const t = document.createElement('canvas'); if (!(t.getContext('webgl2') || t.getContext('webgl'))) throw new Error('no webgl');
   } catch (_) { return mountVolcano2D(el, opts); }
   const rows = opts.rows || [], onRecord = opts.onRecord;
@@ -220,7 +220,7 @@ export async function mountVolcano3D(el, opts = {}) {
   }
   $('[data-act=record]').addEventListener('click', record);
   renderRows(); resetAll(); applyExp();
-  const chk = () => setTimeout(() => { if (!el.isConnected) { stage.dispose(); removeEventListener('hashchange', chk); } }); addEventListener('hashchange', chk);
+  watchDetached(el, () => stage.dispose());
   return { rows };
 }
 

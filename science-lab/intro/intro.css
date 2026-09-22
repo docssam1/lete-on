@@ -92,7 +92,9 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .cv .st text { font: 700 4.2px var(--serif); fill: #f3d48a; }
 @keyframes twinkle { 50% { opacity: .55; } } @keyframes pulseStar { 50% { transform: scale(1.25); } }
 .cv-flask path:last-of-type { animation: brew 2.4s ease-in-out infinite; } @keyframes brew { 50% { opacity: .35; } }
-.cv-tap { position: absolute; left: 50%; bottom: 3.5mm; transform: translateX(-50%); color: #fff2c4; font: 700 10.5pt var(--serif); letter-spacing: .1em; text-shadow: 0 0 8px rgba(255, 180, 90, .9); animation: breathe 2.4s ease-in-out infinite; white-space: nowrap; }
+.cv-demo { position: absolute; z-index: 2; left: 50%; bottom: 13mm; transform: translateX(-50%); min-height: 11mm; padding: 2mm 6mm; border: 1px solid #ffe3a0; border-radius: 99mm; background: linear-gradient(180deg, #fff0bd, #d9a441); color: #32160c; box-shadow: 0 1.5mm 5mm rgba(0, 0, 0, .45), 0 0 5mm rgba(255, 177, 76, .35); font: 800 10.5pt var(--serif); white-space: nowrap; cursor: pointer; }
+.cv-demo:hover, .cv-demo:focus-visible { filter: brightness(1.08); box-shadow: 0 1.5mm 5mm rgba(0, 0, 0, .45), 0 0 8mm rgba(255, 190, 90, .65); }
+.cv-tap { position: absolute; left: 50%; bottom: 3.5mm; transform: translateX(-50%); color: #fff2c4; font: 700 8.5pt var(--serif); letter-spacing: .06em; text-shadow: 0 0 8px rgba(255, 180, 90, .9); animation: breathe 2.4s ease-in-out infinite; white-space: nowrap; }
 @keyframes breathe { 50% { opacity: .35; } }
 /* ── 양피지 소개 장 ── */
 .ad { padding: 20mm 17mm; background: radial-gradient(ellipse at 20% 15%, rgba(160, 110, 40, .12), transparent 40%), radial-gradient(ellipse at 85% 90%, rgba(120, 70, 20, .16), transparent 45%), radial-gradient(ellipse at 50% 50%, #f7eed8 0%, #efe1bf 68%, #d7bd8a 100%); }
@@ -150,17 +152,18 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
 .it-final-btns { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 .it-cta { background: linear-gradient(180deg, #f3d48a, #c9953a); color: #2a170b; font: 800 17px var(--serif); text-decoration: none; border-radius: 999px; padding: 12px 22px; } .it-cta.ghost { background: transparent; color: var(--gold2); outline: 1.5px solid var(--gold); }
 /* ── docssam 안내(양피지 두루마리 말풍선) ── */
-.it-guide { position: fixed; left: 14px; bottom: 14px; z-index: 50; display: flex; align-items: flex-end; gap: 6px; max-width: min(540px, calc(100vw - 28px)); pointer-events: none; }
+.it-guide { position: fixed; left: 14px; bottom: 14px; z-index: 50; display: flex; align-items: flex-end; gap: 6px; max-width: min(540px, calc(100vw - 28px)); pointer-events: none; contain: layout paint style; isolation: isolate; }
 .it-guide > * { pointer-events: auto; }
 .it-char { position: relative; width: 96px; aspect-ratio: 2 / 3; flex: none; cursor: pointer; filter: drop-shadow(0 0 14px rgba(255, 170, 80, .35)); }
 .it-char img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .it-char .f { inset: auto; left: 31.25%; top: 13.021%; width: 33.203%; height: auto; display: none; }
 .it-guide.talk .it-char .b { animation: bob .45s ease-in-out infinite alternate; }
 @keyframes bob { to { transform: translateY(-1.5%); } }
-.it-bubble { background: radial-gradient(ellipse at 50% 40%, #fbf3de, #ecdcb4); color: #2a170b; border-radius: 10px; padding: 12px 14px 8px; box-shadow: 0 12px 30px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(139, 94, 40, .45); margin-bottom: 40px; font-family: var(--serif); }
-.it-bubble p { margin: 0; font-family: "Gaegu", "Jua", sans-serif; font-size: 21px; line-height: 1.4; min-height: 1.5em; font-weight: 700; }   /* v2 화면의 독쌤 말풍선과 같은 글씨체 */
+.it-bubble { flex: 0 1 410px; width: min(410px, calc(100vw - 132px)); background: radial-gradient(ellipse at 50% 40%, #fbf3de, #ecdcb4); color: #2a170b; border-radius: 10px; padding: 12px 14px 8px; box-shadow: 0 12px 30px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(139, 94, 40, .45); margin-bottom: 40px; font-family: var(--serif); contain: layout paint style; }
+.it-bubble p { margin: 0; display: flex; align-items: center; font-family: "Gaegu", "Jua", sans-serif; font-size: 21px; line-height: 1.4; min-height: 4.2em; font-weight: 700; }   /* v2 화면의 독쌤 말풍선과 같은 글씨체 */
 .it-guide-btns { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
 .it-guide-btns button { border: 0; background: rgba(139, 94, 40, .15); border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; color: #2a170b; }
+.it-guide-btns .it-demo { display: none; background: #8b1e1e; color: #fff8e8; font-weight: 800; }
 .it-guide.min .it-bubble { display: none; }
 .bk-pop { color: #262B36; }
 @media (max-width: 760px) {
@@ -169,10 +172,13 @@ body.intro main, .it-top, .it-guide { position: relative; z-index: 1; }
   .it-arrow.prev { left: 4px; } .it-arrow.next { right: 4px; } .it-stage { position: relative; }
   .it-book::before { left: -6px; right: -6px; top: -6px; bottom: -8px; } .it-book::after { display: none; }
   .it-char { width: 56px; } .it-guide { left: 8px; bottom: 8px; max-width: calc(100vw - 16px); }
-  .it-bubble { padding: 8px 10px 6px; margin-bottom: 18px; } .it-bubble p { font-size: 17px; }
+  .it-guide.talk .it-char .b { animation: none; }
+  .it-bubble { width: calc(100vw - 80px); padding: 8px 10px 6px; margin-bottom: 18px; } .it-bubble p { min-height: 4.2em; font-size: 17px; }
+  .cv-demo { display: none; }
+  .it-guide-btns .it-demo { display: inline-flex; align-items: center; }
   .it-final { flex-direction: column; text-align: center; } .it-final h2 { text-align: center; } .it-final-btns { justify-content: center; }
 }
-@media (prefers-reduced-motion: reduce) { .leaf, .it-book { transition: none !important; } .cv *, .ad-page.cover::after, .cv-tap, .it-head h1 em { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .leaf, .it-book { transition: none !important; } .cv *, .ad-page.cover::after, .cv-tap, .it-head h1 em, .it-guide.talk .it-char .b { animation: none !important; } }
 
 /* 도구 버튼(크게 보기·전체 화면) */
 .it-tool { border: 1px solid rgba(226, 182, 89, .45); background: rgba(226, 182, 89, .1); color: var(--gold2); border-radius: 999px; padding: 7px 14px; font: 700 14px var(--serif); cursor: pointer; min-height: 38px; }
