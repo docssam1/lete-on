@@ -4,17 +4,20 @@ const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),challenge=path.join(root,'challenge');
 const browserPath=process.env.HF_PLAYWRIGHT_EXECUTABLE_PATH;
 const variants=require('../challenge/variant-provider.js'),diagnosis=require('../challenge/diagnosis-core.js');
-const contentVersion='challenge-'+new Date().toISOString().replace(/[^0-9]/g,''),out=path.join(root,'output/private-challenge',contentVersion),publicOut=path.join(out,'public/hyper-focus/challenge'),privateOut=path.join(out,'private');
+const contentVersion=process.env.HF_CHALLENGE_CONTENT_VERSION||'challenge-'+new Date().toISOString().replace(/[^0-9]/g,'');
+if(!/^challenge-[0-9]{17}$/.test(contentVersion))throw Error('Invalid challenge content version');
+const out=path.join(root,'output/private-challenge',contentVersion),publicOut=path.join(out,'public/hyper-focus/challenge'),privateOut=path.join(out,'private');
 const manifest={schemaVersion:1,contentVersion,documents:{},bank:{},sources:{}};
 const digest=x=>crypto.createHash('sha256').update(x).digest('hex');
+const compactSpriteTypes=new Set(['extra-congruent-partition','r2-three-balance-order','r2-fruit-equations','replace-fruit-pair-cancel']);
 function save(relative,obj){const bytes=Buffer.from(JSON.stringify(obj)),dest=path.join(privateOut,relative);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,bytes);return {path:relative,sha256:digest(bytes)};}
-function inlineImages(html){const defined=new Map();return String(html||'').replace(/(<(?:img|image)\b[^>]*\b(?:src|href|xlink:href)=["'])([^"']+)(["'])/gi,(whole,prefix,src,suffix)=>{if(src==='assets/gfield-logo.png'||src.startsWith('data:image/'))return whole;const decoded=decodeURIComponent(src.split('?')[0]),file=path.resolve(challenge,decoded);if(!file.startsWith(root+path.sep)||!fs.existsSync(file))throw Error('Private image missing: '+src);const mime={'.png':'png','.jpg':'jpeg','.jpeg':'jpeg','.webp':'webp'}[path.extname(file).toLowerCase()];if(!mime)throw Error('Unexpected private image type');if(/^<image\b/i.test(prefix)){const id='private-raster-'+digest(src).slice(0,12);if(defined.has(src))return prefix.replace(/^<image/i,'<use')+'#'+id+suffix;defined.set(src,id);prefix=prefix.replace(/^<image/i,'<image id="'+id+'"');}return prefix+'data:image/'+mime+';base64,'+fs.readFileSync(file).toString('base64')+suffix;});}
-const question=(q,id)=>({id,prompt:q.prompt,problemHtml:inlineImages(q.problemHtml||'')});
-function answer(q,id){
+function inlineImages(html,compactSprite=false){const defined=new Map();return String(html||'').replace(/(<(?:img|image)\b[^>]*\b(?:src|href|xlink:href)=["'])([^"']+)(["'])/gi,(whole,prefix,src,suffix)=>{if(src==='assets/gfield-logo.png'||src.startsWith('data:image/'))return whole;const decoded=decodeURIComponent(src.split('?')[0]),file=compactSprite&&decoded==='assets/exam-objects-illustration.png'?path.join(challenge,'assets/exam-objects-illustration-compact.webp'):path.resolve(challenge,decoded);if(!file.startsWith(root+path.sep)||!fs.existsSync(file))throw Error('Private image missing: '+src);const mime={'.png':'png','.jpg':'jpeg','.jpeg':'jpeg','.webp':'webp'}[path.extname(file).toLowerCase()];if(!mime)throw Error('Unexpected private image type');if(/^<image\b/i.test(prefix)){const id='private-raster-'+digest(src).slice(0,12);if(defined.has(src))return prefix.replace(/^<image/i,'<use')+'#'+id+suffix;defined.set(src,id);prefix=prefix.replace(/^<image/i,'<image id="'+id+'"');}return prefix+'data:image/'+mime+';base64,'+fs.readFileSync(file).toString('base64')+suffix;});}
+const question=(q,id,compactSprite=false)=>({id,prompt:q.prompt,problemHtml:inlineImages(q.problemHtml||'',compactSprite)});
+function answer(q,id,compactSprite=false){
  const answerHtml=String(q.answerHtml??(Array.isArray(q.answer)?JSON.stringify(q.answer):q.answer)),solution=String(q.solution||'').trim();
  const normalized=s=>s.replace(/<[^>]*>/g,'').replace(/[\s.。]/g,'').replace(/[−–]/g,'-');
  if(!solution||/풀이 확인 필요|undefined|NaN/.test(solution)||normalized(solution)===normalized(answerHtml))throw Error('Detailed solution missing: '+id);
- return {id,answerHtml,solution,...(q.solutionDiagram?{solutionDiagram:inlineImages(q.solutionDiagram)}:{})};
+ return {id,answerHtml,solution,...(q.solutionDiagram?{solutionDiagram:inlineImages(q.solutionDiagram,compactSprite)}:{})};
 }
 const server=http.createServer((req,res)=>{const pathname=decodeURIComponent(new URL(req.url,'http://local').pathname),file=path.resolve(root,'.'+pathname);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{if(err)return res.writeHead(404).end();res.setHeader('Content-Type',({'.js':'text/javascript','.html':'text/html','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'})[path.extname(file)]||'application/octet-stream');res.end(data);});});
 (async()=>{
@@ -38,7 +41,7 @@ const server=http.createServer((req,res)=>{const pathname=decodeURIComponent(new
   for(const difficulty of ['easy','same','hard']){
    if(!row.eligibility[difficulty])continue;
    const questions=[],answers=[],seen=new Set();
-   for(let seed=10;seed<180&&questions.length<24;seed++){const result=variants.generate({...row,difficulty,seed});if(result.status!=='verified')continue;const q=result.question,key=digest(JSON.stringify([q.prompt,q.problemHtml]));if(seen.has(key))continue;seen.add(key);questions.push(question(q,q.id));answers.push(answer(q,q.id));}
+   for(let seed=10;seed<180&&questions.length<24;seed++){const result=variants.generate({...row,difficulty,seed});if(result.status!=='verified')continue;const q=result.question,key=digest(JSON.stringify([q.prompt,q.problemHtml]));if(seen.has(key))continue;seen.add(key);const compactSprite=compactSpriteTypes.has(row.typeId);questions.push(question(q,q.id,compactSprite));answers.push(answer(q,q.id,compactSprite));}
    if(!questions.length)throw Error('Eligible type has no generated pool: '+row.key+' '+difficulty);
    manifest.bank[row.typeId]??={};const pool={shards:[],totalCount:questions.length};manifest.bank[row.typeId][difficulty]=pool;poolCounts[row.typeId+':'+difficulty]=questions.length;
    let from=0;while(from<questions.length){let to=from+1;while(to<questions.length&&to-from<8&&Math.max(Buffer.byteLength(JSON.stringify(questions.slice(from,to+1))),Buffer.byteLength(JSON.stringify(answers.slice(from,to+1))))<5800000)to++;const shardIndex=pool.shards.length,shard={count:to-from};for(const part of ['questions','answers'])shard[part]=save(`v1/bank/${row.typeId}/${difficulty}.${part}.${shardIndex}.json`,{schemaVersion:1,contentVersion,typeId:row.typeId,difficulty,part,shardIndex,items:(part==='questions'?questions:answers).slice(from,to)});pool.shards.push(shard);from=to;}
