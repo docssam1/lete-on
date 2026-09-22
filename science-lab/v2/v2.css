@@ -87,8 +87,11 @@ h3 { font-family: var(--disp); font-size: 22px; margin: 20px 0 8px; }
 
 /* 3D */
 .stage3d { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.stage3d-view { position: relative; }
 .stage3d canvas { width: 100%; height: 320px; display: block; touch-action: pan-y; }
-.stage3d .cap { min-height: 4.6em; padding: 10px 12px; border-top: 1px solid var(--line); }
+.stage3d-hint { position: absolute; right: 10px; bottom: 10px; padding: 5px 9px; border-radius: 999px; background: rgba(30, 58, 120, .86); color: #fff; font-size: 11px; font-weight: 700; pointer-events: none; }
+.stage3d .cap { min-height: 4.6em; margin: 0; padding: 10px 12px; border-top: 1px solid var(--line); }
+.stage3d-step { display: inline-grid; place-items: center; min-width: 42px; min-height: 25px; margin-right: 7px; border-radius: 999px; background: var(--navy); color: var(--on-navy); font: 700 13px var(--disp); vertical-align: middle; }
 .stage3d .ctl { display: flex; gap: 6px; padding: 0 12px 12px; }
 .stage3d .ctl .btn { min-height: 44px; font-size: 18px; }
 

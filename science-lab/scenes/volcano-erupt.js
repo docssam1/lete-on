@@ -23,21 +23,23 @@ function terrain() {
   }
   geo.computeVertexNormals();
   const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, transparent: true, opacity: 1 }));
-  m.castShadow = true; m.receiveShadow = false; m.userData.xray = (t) => { m.material.opacity = lerp(1, 0.28, t); m.castShadow = t < 0.5; };
+  m.castShadow = true; m.receiveShadow = false; m.userData.xray = (t) => { m.material.opacity = lerp(1, 0.18, t); m.material.depthWrite = t < 0.05; m.castShadow = t < 0.5; };
   return m;
 }
 // 땅속: 잘라 놓은 흙층(카메라 쪽 면) — X-ray 때만 보임
 function underground() {
   const g = new THREE.Group(), mats = [];
-  for (let i = 0; i < 5; i++) { const m = new THREE.MeshStandardMaterial({ color: i % 2 ? 0x5a4636 : 0x46362a, roughness: 1, transparent: true, opacity: 1 }); mats.push(m);
-    const b = new THREE.Mesh(new THREE.BoxGeometry(9, Y0 / 5, 9), m); b.position.y = Y0 - (i + 0.5) * (Y0 / 5); g.add(b); }
+  // 카메라 쪽 절반을 잘라 낸 지층 단면. 투명 상자 다섯 겹보다 마그마 방과 통로가 또렷하다.
+  const layerColors = [0x6f5540, 0x57402f, 0x3f3026];
+  for (let i = 0; i < 3; i++) { const m = new THREE.MeshStandardMaterial({ color: layerColors[i], roughness: 1, transparent: true, opacity: 0.98 }); mats.push(m);
+    const b = new THREE.Mesh(new THREE.BoxGeometry(9, Y0 / 3, 4.7), m); b.position.set(0, Y0 - (i + 0.5) * (Y0 / 3), -2.25); g.add(b); }
   const ch = sphere(1, 0xff5a1f, { emissive: 0xff3d00, emissiveIntensity: 1, roughness: 0.4 }); ch.scale.set(1.9, 0.85, 1.4); ch.position.y = 0.95; g.add(ch);
   const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.3, H + Y0 - 0.9, 20), mat(0xff6a2a, { emissive: 0xff3d00, emissiveIntensity: 0.9 })); pipe.position.y = 0.95 + (H + Y0 - 0.9) / 2; g.add(pipe);
   const gran = new THREE.Group(); const body = sphere(1, 0xd9cfc2, { roughness: 0.9 }); body.scale.copy(ch.scale); gran.add(body);
   const cols = [0xf2e9dc, 0xe5b5a0, 0x2b2b2b, 0xc9c1b5], gg = new THREE.SphereGeometry(0.09, 6, 5);
   for (let i = 0; i < 90; i++) { const s = new THREE.Mesh(gg, mat(cols[i % 4], { roughness: 0.8 })); const a = hash(i) * Math.PI * 2, b = (hash(i + 90) - 0.5) * Math.PI; s.position.set(Math.cos(a) * Math.cos(b) * 1.9, Math.sin(b) * 0.85, Math.sin(a) * Math.cos(b) * 1.4); gran.add(s); }
   gran.position.copy(ch.position); gran.visible = false; g.add(gran);
-  g.userData = { ch, pipe, gran, xray: (t) => { const o = lerp(1, 0.22, t); mats.forEach((m) => { m.opacity = o; }); ch.visible = ch.visible && true; [ch, pipe, gran].forEach((x) => { x.traverse((n) => { if (n.material) { n.material.transparent = true; n.material.opacity = 0.15 + 0.85 * t; } }); }); } };
+  g.userData = { ch, pipe, gran, xray: (t) => { const o = lerp(0.98, 0.78, t); mats.forEach((m) => { m.opacity = o; }); ch.visible = ch.visible && true; [ch, pipe, gran].forEach((x) => { x.traverse((n) => { if (n.material) { n.material.transparent = true; n.material.opacity = 0.15 + 0.85 * t; } }); }); } };
   return g;
 }
 // 화산재 기둥: 인스턴스 구름. 시간에 따라 계속 솟고 위에서 우산처럼 퍼진다
@@ -122,17 +124,17 @@ export default {
     const bombs = fountain(26, 0.13, 0x4a3f38, { roughness: 1 }); world.add('bombs', bombs);
     const flows = lavaFlows(); world.add('flows', flows);
     const glow = new THREE.PointLight(0xff6a00, 0, 9, 2); glow.position.set(0, H + 0.6, 0); world.add('glow', glow);
-    const lbM = label('땅속 마그마 방', { size: 0.3 }); lbM.position.set(0, 0.95, 4.7); world.add('lbM', lbM);
-    const lbQ = label('화산에서는 무엇이 나올까?', { size: 0.32 }); lbQ.position.set(0, H + 1.2, 0); world.add('lbQ', lbQ);
-    const lbG = label('화산 가스 — 기체', { size: 0.3, bg: 'rgba(230,240,255,0.92)' }); lbG.position.set(-3.2, H + 4.2, 0); world.add('lbG', lbG);
-    const lbA = label('화산재·암석 조각 — 고체', { size: 0.3, bg: 'rgba(235,235,235,0.94)' }); lbA.position.set(3.3, H + 2.6, 0); world.add('lbA', lbA);
-    const lbL = label('용암 — 액체', { size: 0.3, bg: 'rgba(255,225,200,0.94)' }); lbL.position.set(2.9, 1.1, 1.6); world.add('lbL', lbL);
+    const lbM = label('땅속 마그마 방', { size: 0.48, color: '#7f1d0f', bg: 'rgba(255,238,218,0.96)' }); lbM.position.set(0, 1.05, 2.7); world.add('lbM', lbM);
+    const lbQ = label('화산에서는 무엇이 나올까?', { size: 0.48, color: '#1E3A78' }); lbQ.position.set(0, H + 1.2, 0); world.add('lbQ', lbQ);
+    const lbG = label('화산 가스 — 기체', { size: 0.46, color: '#1E3A78', bg: 'rgba(230,240,255,0.96)' }); lbG.position.set(-3.2, H + 4.2, 0); world.add('lbG', lbG);
+    const lbA = label('화산재·암석 조각 — 고체', { size: 0.46, bg: 'rgba(245,245,245,0.97)' }); lbA.position.set(3.3, H + 2.6, 0); world.add('lbA', lbA);
+    const lbL = label('용암 — 액체', { size: 0.46, color: '#8b1e1e', bg: 'rgba(255,225,200,0.97)' }); lbL.position.set(2.9, 1.1, 1.6); world.add('lbL', lbL);
     const bas = rock('basalt'); bas.position.set(3.6, 0.3, 2.6); world.add('basalt', bas);
-    const lbB = label('땅 위에서 빨리 식음 → 현무암 (알갱이 작음)', { size: 0.26 }); lbB.position.set(3.6, 1.25, 2.6); world.add('lbB', lbB);
+    const lbB = label('땅 위에서 빨리 식음 → 현무암 (알갱이 작음)', { size: 0.4 }); lbB.position.set(3.6, 1.25, 2.6); world.add('lbB', lbB);
     const gra = rock('granite'); gra.position.set(-3.6, 0.3, 2.6); world.add('granite', gra);
-    const lbGr = label('땅속에서 천천히 식음 → 화강암 (알갱이 큼)', { size: 0.26 }); lbGr.position.set(-3.6, 1.25, 2.6); world.add('lbGr', lbGr);
-    for (const o of [ter, ash, fire, bombs, flows, glow, lbM, lbQ, lbG, lbA, lbL, bas, lbB, gra, lbGr]) o.position.y += Y0;
-    lbM.position.y -= Y0;
+    const lbGr = label('땅속에서 천천히 식음 → 화강암 (알갱이 큼)', { size: 0.4 }); lbGr.position.set(-3.6, 1.25, 2.6); world.add('lbGr', lbGr);
+    // 지표와 분출물은 Y0 위, 마그마 방과 지층은 Y0 아래에 둔다.
+    for (const o of [ter, ash, fire, bombs, flows, glow, lbQ, lbG, lbA, lbL, bas, lbB, gra, lbGr]) o.position.y += Y0;
     const st = ST; Object.assign(st, { xray: 0, erupt: 0, cool: 0, t: 0 });
     return { update(dt, t) {
       st.t = t; ter.userData.xray(st.xray); ug.userData.xray(st.xray);

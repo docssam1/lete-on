@@ -11,6 +11,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
   // live: 웹 화면용 — 영상이 쪽 안에서 재생되고, 누르면 3D·실험실이 책 밖으로 튀어나온다. 인쇄에는 늘 그림·QR만 남는다.
   const web = (h) => (live ? `<div class="bk-web">${h}</div>` : '');
   const pop = (kind, label) => (live ? `<button type="button" class="bk-pop-btn" data-pop="${kind}">▶ ${esc(label)}</button>` : '');
+  const videoPop = (v, label) => (live && v ? `<button type="button" class="bk-video-link" data-video data-src="${esc(v.src)}" data-mp4="${esc(v.mp4 || '')}" data-full="${esc(v.full)}" data-page="${esc(v.page)}" data-title="${esc(v.title)}" data-credit="${esc(v.credit)}" data-prompt="${esc(v.prompt || '')}">▶ ${esc(label)}</button>` : '');
   const G = Object.fromEntries((ch.glossary || []).map((g) => [g[0], g]));
   const ans = (a, lines = 2) => (teacher ? `<div class="bk-ans">${esc(a)}</div>` : `<div class="bk-lines">${'<i></i>'.repeat(lines)}</div>`);
   // 빈칸: {{답}} → 학생 ⓐ____ / 교사 빨간 답. 이 쪽의 빈칸 답은 옆날개 아래에 모은다.
@@ -65,6 +66,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
   const stepCard = (s, i) => `<div class="bk-stepcard"><div class="bk-art">${art[s.art]}${pop('lab', '3D 실험실에서 해 보기')}</div><div><span class="bk-n">${i + 1}</span><p>${esc(s.text)}</p><p class="bk-tip">${esc(s.tip)}</p></div></div>`;
   out.push(page(`${banner('탐구력 기르기', 'lab')}${step(3, '실험하기')}${ch.steps.slice(0, 3).map(stepCard).join('')}`));
   out.push(page(`${ch.steps.slice(3).map((s, i) => stepCard(s, i + 3)).join('')}
+    ${media?.explore ? web(`<div class="bk-video-compare"><b>실제 용암과 비교해요</b>${videoPop(media.explore, '용암이 흐르고 굳는 영상')}</div>`) : ''}
     <div class="bk-box q"><h4>Q. 이런 경우는?</h4><p>${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 2)}</div>
     <div class="bk-box caution"><h4>주의하세요!</h4><ul>${ch.caution.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>
     <div class="bk-qrs">${qr(ch.qr.lab, '3D 실험실에서 해 보기', 'lab')}${qr(ch.qr.kit, '집에서 하는 준비물')}</div>`));
