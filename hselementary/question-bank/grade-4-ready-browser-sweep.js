@@ -27,6 +27,7 @@ require("./generators.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
+require("./source-4-2-parallel-angle-chain-two-mission3.js");
 require("./source-grade6-decimal-e1-mission4.js");
 require("./source-grade6-decimal-e1-mission3.js");
 require("./source-grade6-decimal-e2-example2.js");
@@ -42,7 +43,7 @@ require("./source-grade6-surface-e1.js");
 const api = window.HSE_GENERATORS;
 const requestedTypeIds = new Set(String(process.env.HSE_TYPE_IDS || "").split(",").map(value => value.trim()).filter(Boolean));
 const requestedSemesters = new Set(String(process.env.HSE_SEMESTERS || "4-1,4-2").split(",").map(value => value.trim()).filter(Boolean));
-const expectedReadyCount = Number(process.env.HSE_EXPECTED_READY || 516);
+const expectedReadyCount = Number(process.env.HSE_EXPECTED_READY || 517);
 const auditLabel = String(process.env.HSE_AUDIT_LABEL || "4학년");
 const allReadyTypes = window.HSE_CURRICULUM.semesters
   .filter(semester => requestedSemesters.has(semester.id))

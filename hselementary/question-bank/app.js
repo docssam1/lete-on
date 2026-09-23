@@ -476,7 +476,8 @@
       const row = [question];
       const next = questions[index + 1];
       if (next && problemWeight(next) < 6) row.push(next);
-      const rowHeight = row.some(item => problemWeight(item) >= 3) ? 2 : 1;
+      const rowHeight = row.every(item => item.prompt.includes("source42-pac2m3")) ? 1.5
+        : row.some(item => problemWeight(item) >= 3) ? 2 : 1;
       if (page.length && height + rowHeight > 3) flushPage();
       page.push(...row);
       height += rowHeight;

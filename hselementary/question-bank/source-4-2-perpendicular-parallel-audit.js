@@ -106,8 +106,8 @@ const verifyIndependent = (kind, facts, sourceItemId, poolIndex) => {
 check(sourceTypes.length === 10 && sourceTypes.every(Boolean), "수선과 평행선 공개 대상 10유형이 런타임에 모두 없습니다.");
 check(inventory.items.filter(item => item.exploration === 1 && item.implementationStatus === "ready").length === 10,
   "개념탐구 1의 공개 10유형 계약이 다릅니다.");
-check(inventory.totals.ready === 30 && inventory.totals.locked === 58,
-  "사각형 원장의 공개 30·잠금 58 계약이 다릅니다.");
+check(inventory.totals.ready === 31 && inventory.totals.locked === 57,
+  "사각형 원장의 공개 31·잠금 57 계약이 다릅니다.");
 
 for (const [sourceIndex, sourceItemId] of moduleApi.SOURCE_IDS.entries()) {
   const type = sourceTypes[sourceIndex];

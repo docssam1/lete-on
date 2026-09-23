@@ -182,7 +182,8 @@
     "4-2-u4-e2-mission-4": "sourceGrade4AdvancedParallelAngle",
     "4-2-u4-e2-mission-5": "sourceGrade4AdvancedParallelAngle",
     "4-2-u4-e2-mission-6": "sourceGrade4AdvancedParallelAngle",
-    ...Object.fromEntries(["exploration", "example-3-1", "example-3-2", "example-3-3", "example-3-4", "mission-1", "mission-2", "mission-3", "mission-4", "mission-5", "mission-6"].map(kind => [`4-2-u4-e3-${kind}`, "sourceGrade4AdvancedParallelAngleChainOne"]))
+    ...Object.fromEntries(["exploration", "example-3-1", "example-3-2", "example-3-3", "example-3-4", "mission-1", "mission-2", "mission-3", "mission-4", "mission-5", "mission-6"].map(kind => [`4-2-u4-e3-${kind}`, "sourceGrade4AdvancedParallelAngleChainOne"])),
+    "4-2-u4-e4-mission-3": "sourceGrade4AdvancedParallelAngleChainTwoMission3"
   });
   const READY_IDS = new Set(Object.keys(READY_GENERATOR_BY_ID));
 
@@ -249,7 +250,7 @@
   }));
 
   return Object.freeze({
-    version: "2026-09-22",
+    version: "2026-09-24",
     schemaVersion: 1,
     status: "visually-reviewed-source-inventory",
     semester: "4-2",
@@ -257,7 +258,7 @@
     unitName: "사각형",
     source: "4-2 심화 PDF p.35-50 / 교재 p.40-55",
     sourceItemPolicy: "개념탐구 본문, 예제 4문제, Mission 6문제를 각각 하나의 유형으로 기록합니다. 실력 교재 유형은 이 심화 원장에 섞지 않습니다.",
-    totals: Object.freeze({ groups: 8, items: 88, exploration: 8, example: 32, mission: 48, ready: 30, locked: 58 }),
+    totals: Object.freeze({ groups: 8, items: 88, exploration: 8, example: 32, mission: 48, ready: 31, locked: 57 }),
     groups: GROUPS,
     items: Object.freeze(items)
   });

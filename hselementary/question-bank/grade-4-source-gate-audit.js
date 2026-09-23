@@ -8,6 +8,7 @@ require("./generators.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
+require("./source-4-2-parallel-angle-chain-two-mission3.js");
 
 const api = window.HSE_GENERATORS;
 const failures = [];
@@ -21,10 +22,10 @@ const expected = {
   },
   "4-2": {
     total: 306,
-    ready: 207,
-    locked: 99,
+    ready: 208,
+    locked: 98,
     sourceLinked: 306,
-    units: [[66, 66, 0, 66], [44, 32, 12, 44], [44, 26, 18, 44], [88, 30, 58, 88], [20, 18, 2, 20], [44, 35, 9, 44]]
+    units: [[66, 66, 0, 66], [44, 32, 12, 44], [44, 26, 18, 44], [88, 31, 57, 88], [20, 18, 2, 20], [44, 35, 9, 44]]
   }
 };
 
@@ -107,4 +108,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4학년 원본 공개 문턱 감사 통과: 635유형 · 공개 516 · 검수 대기 119 · 원본 연결 635 · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`4학년 원본 공개 문턱 감사 통과: 635유형 · 공개 517 · 검수 대기 118 · 원본 연결 635 · ${generatedCount.toLocaleString()}회 생성`);

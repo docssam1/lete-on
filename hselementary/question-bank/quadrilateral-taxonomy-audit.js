@@ -7,6 +7,7 @@ require("./generators.js");
 const perpendicularParallel = require("./source-4-2-perpendicular-parallel.js");
 const parallelAngle = require("./source-4-2-parallel-angle.js");
 const parallelChainOne = require("./source-4-2-parallel-angle-chain-one.js");
+const parallelChainTwoMission3 = require("./source-4-2-parallel-angle-chain-two-mission3.js");
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
@@ -22,7 +23,7 @@ const check = (condition, message) => {
 check(inventory.totals.groups === 8, `원본 개념탐구는 8개여야 하나 ${inventory.totals.groups}개입니다.`);
 check(inventory.items.length === 88, `원본 세부 유형은 88개여야 하나 ${inventory.items.length}개입니다.`);
 check(inventory.totals.exploration === 8 && inventory.totals.example === 32 && inventory.totals.mission === 48, "개념탐구 8 + 예제 32 + Mission 48 수가 다릅니다.");
-check(inventory.totals.ready === 30 && inventory.totals.locked === 58, "원장 공개·잠금 기준 수가 다릅니다.");
+check(inventory.totals.ready === 31 && inventory.totals.locked === 57, "원장 공개·잠금 기준 수가 다릅니다.");
 check(unit?.subunits.length === 8, `런타임 개념탐구 묶음은 8개여야 하나 ${unit?.subunits.length || 0}개입니다.`);
 check(types.length === 88, `런타임 사각형 유형은 88개여야 하나 ${types.length}개입니다.`);
 
@@ -70,7 +71,8 @@ for (const [groupIndex, subunit] of (unit?.subunits || []).entries()) {
     const sourceModule = perpendicularParallel.SOURCE_IDS.includes(type.sourceItemId) ? perpendicularParallel
       : parallelAngle.SOURCE_IDS.includes(type.sourceItemId) ? parallelAngle
         : parallelChainOne.SOURCE_IDS.includes(type.sourceItemId) ? parallelChainOne
-        : null;
+          : parallelChainTwoMission3.SOURCE_IDS.includes(type.sourceItemId) ? parallelChainTwoMission3
+            : null;
     check(Boolean(sourceModule), `${type.sourceItemId}: 검증 생성기 허용 목록에 없습니다.`);
     check(type.generatorKey === sourceModule?.GENERATOR_KEY, `${type.sourceItemId}: 검증 생성기가 연결되지 않았습니다.`);
     check(type.generationMode === "fixed-verified-pool" && type.verifiedVariantCount === 3 && type.answerVisualStatus === "verified", `${type.sourceItemId}: 공개 유형의 고정 검증 계약이 다릅니다.`);
@@ -97,8 +99,8 @@ for (const [groupIndex, subunit] of (unit?.subunits || []).entries()) {
 
 check(sourceIds.size === 88, `고유 원문 ID는 88개여야 하나 ${sourceIds.size}개입니다.`);
 check(sectionCounts.exploration === 8 && sectionCounts.example === 32 && sectionCounts.mission === 48, "런타임 개념탐구·예제·Mission 수가 8·32·48이 아닙니다.");
-check(types.filter(type => !type.reviewLocked).length === 30, "검증 공개 유형은 30개여야 합니다.");
-check(types.filter(type => type.reviewLocked).length === 58, "검수 대기 유형은 58개여야 합니다.");
+check(types.filter(type => !type.reviewLocked).length === 31, "검증 공개 유형은 31개여야 합니다.");
+check(types.filter(type => type.reviewLocked).length === 57, "검수 대기 유형은 57개여야 합니다.");
 check(types.every(type => type.sourceTier === "advanced"), "실력 교재 유형이 심화 사각형 원장에 섞였습니다.");
 check(types.find(type => type.sourceItemId === "4-2-u4-e2-mission-1")?.id === "4-2-u4-t2-7", "기존 평행선 Mission 1 직접 링크가 바뀌었습니다.");
 check(!types.some(type => /^4-2-quad-/.test(type.sourceItemId)), "기존 실력 교재 원문 ID가 심화 원장에 남았습니다.");
@@ -109,4 +111,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-2 사각형 원본 88유형 확정 · 공개 30 · 검수 대기 58 · ${generatedCount.toLocaleString()}회 단일 정답·정답 그림 계약 통과`);
+console.log(`4-2 사각형 원본 88유형 확정 · 공개 31 · 검수 대기 57 · ${generatedCount.toLocaleString()}회 단일 정답·정답 그림 계약 통과`);

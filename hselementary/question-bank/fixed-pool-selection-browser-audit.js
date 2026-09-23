@@ -53,7 +53,8 @@ function staticPreflight() {
     "./curriculum.js",
     "./generators.js",
     "./source-4-2-parallel-angle.js",
-    "./source-4-2-parallel-angle-chain-one.js"
+    "./source-4-2-parallel-angle-chain-one.js",
+    "./source-4-2-parallel-angle-chain-two-mission3.js"
   ];
   let previousIndex = -1;
   for (const script of requiredScripts) {
@@ -163,6 +164,7 @@ async function inspectViewport(browser, baseUrl, viewport, label) {
   require("./generators.js");
   require("./source-4-2-parallel-angle.js");
   require("./source-4-2-parallel-angle-chain-one.js");
+  require("./source-4-2-parallel-angle-chain-two-mission3.js");
   const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => (semester.units || []).flatMap(unit => (unit.subunits || []).flatMap(subunit => subunit.types || [])));
   const targetTypes = targetTypeIds.map(id => allTypes.find(type => type.id === id));
   if (targetTypes.some(type => !type || type.generationMode !== "fixed-verified-pool" || type.reviewLocked)) fail("브라우저 회귀 대상 3유형이 모두 공개 fixed-verified-pool이 아닙니다.");

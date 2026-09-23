@@ -8,6 +8,7 @@ require("./generators.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
+require("./source-4-2-parallel-angle-chain-two-mission3.js");
 require("./source-grade6-decimal-e1-mission4.js");
 require("./source-grade6-decimal-e1-mission3.js");
 require("./source-grade6-decimal-e2-example2.js");
@@ -38,8 +39,8 @@ const locked = types.filter(type => !generatorApi.generatorKey(type) || type.rev
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
 
 if (types.length !== 2005) failures.push(`런타임 유형은 2005개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1085) failures.push(`생성 가능 유형은 1085개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 920) failures.push(`검수 대기 유형은 920개여야 하나 ${locked.length}개입니다.`);
+if (ready.length !== 1086) failures.push(`생성 가능 유형은 1086개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 919) failures.push(`검수 대기 유형은 919개여야 하나 ${locked.length}개입니다.`);
 if (ready.some(type => !type.sourceItemId)) failures.push("원문 문항 ID가 없는 유형이 생성 가능 상태입니다.");
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
 if (sourceGrade6.filter(type => !type.reviewLocked).length !== 287 || sourceGrade6.filter(type => type.reviewLocked).length !== 346) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
