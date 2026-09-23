@@ -76,10 +76,10 @@ const t = (key, values = {}) => {
 };
 const local = (value) => value?.[lang] || value?.ko || "";
 const flowText = {
-  ko: { fold: "화살표가 시작하는 면을 눌러 접어 보세요.", side: "삼각형은 어느 쪽에 더 생길까요?", pattern: "펼쳤을 때 남는 모양을 고르세요.", holes: "펼쳤을 때 구멍의 모양을 고르세요.", cut: "색칠한 부분 잘라내기", together: "함께하기", battle: "배틀", shortage: "새 문제를 더 준비해야 해요.", foldLabel: "접기", sideLabel: "위치", answerLabel: "모양", success: "잘했어요!" },
-  en: { fold: "Tap where the arrow starts to fold the paper.", side: "Which side gets the other triangle?", pattern: "Choose the paper shape left after opening.", holes: "Choose the hole pattern after opening.", cut: "Cut the colored area", together: "Together", battle: "Battle", shortage: "More new problems are needed.", foldLabel: "Fold", sideLabel: "Position", answerLabel: "Shape", success: "Well done!" },
-  zh: { fold: "点击箭头起点所在的一面，把纸折起来。", side: "另一个三角形会出现在哪一边？", pattern: "选择展开后剩下的形状。", holes: "选择展开后的孔洞图案。", cut: "剪去涂色部分", together: "一起玩", battle: "对战", shortage: "需要准备更多新题。", foldLabel: "折叠", sideLabel: "位置", answerLabel: "形状", success: "做得好！" },
-  ja: { fold: "矢印の始まる面をタップして折りましょう。", side: "もう一つの三角形はどちら側に現れますか？", pattern: "開いたときに残る形を選びましょう。", holes: "開いたときの穴の形を選びましょう。", cut: "色の部分を切り取る", together: "いっしょに", battle: "対戦", shortage: "新しい問題を追加する必要があります。", foldLabel: "折る", sideLabel: "位置", answerLabel: "形", success: "よくできました！" }
+  ko: { fold: "접을 쪽을 눌러 보세요.", foldWrong: "화살표가 시작하는 쪽을 눌러 보세요.", side: "삼각형은 어느 쪽에 더 생길까요?", pattern: "펼쳤을 때 남는 모양을 고르세요.", holes: "펼쳤을 때 구멍의 모양을 고르세요.", cut: "색칠한 부분 잘라내기", together: "함께하기", battle: "배틀", shortage: "새 문제를 더 준비해야 해요.", foldLabel: "접기", sideLabel: "위치", answerLabel: "모양", success: "잘했어요!" },
+  en: { fold: "Tap the side to fold.", foldWrong: "Tap the side where the arrow starts.", side: "Which side gets the other triangle?", pattern: "Choose the paper shape left after opening.", holes: "Choose the hole pattern after opening.", cut: "Cut the colored area", together: "Together", battle: "Battle", shortage: "More new problems are needed.", foldLabel: "Fold", sideLabel: "Position", answerLabel: "Shape", success: "Well done!" },
+  zh: { fold: "点击要折起来的那一边。", foldWrong: "点击箭头起点所在的一边。", side: "另一个三角形会出现在哪一边？", pattern: "选择展开后剩下的形状。", holes: "选择展开后的孔洞图案。", cut: "剪去涂色部分", together: "一起玩", battle: "对战", shortage: "需要准备更多新题。", foldLabel: "折叠", sideLabel: "位置", answerLabel: "形状", success: "做得好！" },
+  ja: { fold: "折るほうをタップしましょう。", foldWrong: "矢印が始まる側をタップしましょう。", side: "もう一つの三角形はどちら側に現れますか？", pattern: "開いたときに残る形を選びましょう。", holes: "開いたときの穴の形を選びましょう。", cut: "色の部分を切り取る", together: "いっしょに", battle: "対戦", shortage: "新しい問題を追加する必要があります。", foldLabel: "折る", sideLabel: "位置", answerLabel: "形", success: "よくできました！" }
 };
 const ft = (key) => (flowText[lang] || flowText.ko)[key];
 const notifyHost = (type, extra = {}) => {
@@ -581,7 +581,7 @@ function checkSide(zone) {
     state.mistakes += 1;
     zone.classList.add("wrong");
     figure?.classList.add("touch-wrong");
-    toast(t("wrong"));
+    toast(folding ? ft("foldWrong") : t("wrong"));
     setTimeout(() => {
       zone.classList.remove("wrong");
       figure?.classList.remove("touch-wrong");
