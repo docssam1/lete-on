@@ -1,255 +1,112 @@
 "use strict";
 
 global.window = {};
+const inventory = require("./source-inventory-4-2-quadrilateral.js");
 require("./curriculum.js");
 require("./generators.js");
-require("./source-4-2-parallel-angle.js");
+const perpendicularParallel = require("./source-4-2-perpendicular-parallel.js");
+const parallelAngle = require("./source-4-2-parallel-angle.js");
+const parallelChainOne = require("./source-4-2-parallel-angle-chain-one.js");
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2");
-const unit = semester.units.find(item => item.id === "4-2-u4");
-const targetSubunits = unit.subunits;
+const unit = semester?.units.find(item => item.id === "4-2-u4");
+const types = unit?.subunits.flatMap(subunit => subunit.types) || [];
 const failures = [];
 let generatedCount = 0;
 
-const sourceRobotAnswer = (3 + 3) * 20 + 90 / 10 * 2;
-if (sourceRobotAnswer !== 138) failures.push(`Mission 6 원문 고정값은 138초여야 하나 ${sourceRobotAnswer}초입니다.`);
-const sourceTrapezoidAnswer = (39 - 13) / 2;
-if (sourceTrapezoidAnswer !== 13) failures.push(`예제 1-2 원문 고정값은 13cm여야 하나 ${sourceTrapezoidAnswer}cm입니다.`);
-const sourceGrowingAnswer = Math.abs(2 - 4 + 6);
-if (sourceGrowingAnswer !== 4) failures.push(`Mission 3 원문 고정값은 4cm여야 하나 ${sourceGrowingAnswer}cm입니다.`);
-const sourceMissionOneAnswer = `㉠ ${90 - 68}°, ㉡ ${90 - 40}°`;
-if (sourceMissionOneAnswer !== "㉠ 22°, ㉡ 50°") failures.push(`Mission 1 원문 고정값은 ㉠ 22°, ㉡ 50°여야 하나 ${sourceMissionOneAnswer}입니다.`);
-const sourceMissionFourAnswer = "왼쪽 위 마, 가운데 위 나, 오른쪽 위 라, 왼쪽 아래 다";
-if (sourceMissionFourAnswer !== "왼쪽 위 마, 가운데 위 나, 오른쪽 위 라, 왼쪽 아래 다") failures.push(`Mission 4 원문 직선 이름 배치가 맞지 않습니다.`);
-const sourceExampleTwoOneAnswer = 65 + 67;
-if (sourceExampleTwoOneAnswer !== 132) failures.push(`예제 2-1 원문 고정값은 132°여야 하나 ${sourceExampleTwoOneAnswer}°입니다.`);
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+};
 
-const attr = (html, name) => html.match(new RegExp(`${name}="([^"]+)"`))?.[1] || "";
-const chooseTwo = value => value * (value - 1) / 2;
-const exactConcernType = targetSubunits.flatMap(subunit => subunit.types).find(type => type.id === "4-2-u4-t2-4");
-const exactConcern = api.generate(exactConcernType, 0, 0, 297, exactConcernType.variant);
-if (attr(exactConcern.prompt, "data-parallel-v-angles") !== "54,58,68,112" || exactConcern.answer !== "112") failures.push("사용자 지적 사례 54°, 58°의 그림 자료 또는 정답 112°가 달라졌습니다.");
+check(inventory.totals.groups === 8, `원본 개념탐구는 8개여야 하나 ${inventory.totals.groups}개입니다.`);
+check(inventory.items.length === 88, `원본 세부 유형은 88개여야 하나 ${inventory.items.length}개입니다.`);
+check(inventory.totals.exploration === 8 && inventory.totals.example === 32 && inventory.totals.mission === 48, "개념탐구 8 + 예제 32 + Mission 48 수가 다릅니다.");
+check(inventory.totals.ready === 30 && inventory.totals.locked === 58, "원장 공개·잠금 기준 수가 다릅니다.");
+check(unit?.subunits.length === 8, `런타임 개념탐구 묶음은 8개여야 하나 ${unit?.subunits.length || 0}개입니다.`);
+check(types.length === 88, `런타임 사각형 유형은 88개여야 하나 ${types.length}개입니다.`);
 
-const allTypes = targetSubunits.flatMap(subunit => subunit.types);
-const sourceTypes = allTypes.filter(type => type.sourceItemId);
-const genericTypes = allTypes.filter(type => !type.sourceItemId);
-const publicSourceTypes = sourceTypes.filter(type => !type.reviewLocked);
-const lockedSourceTypes = sourceTypes.filter(type => type.reviewLocked);
-const expectedLockedSourceIds = [
-  "4-2-advanced-quad-2-example-2-1",
-  "4-2-advanced-quad-2-example-2-2"
-];
-if (allTypes.length !== 45 || sourceTypes.length !== 21 || genericTypes.length !== 24) failures.push(`사각형 유형 원장 수가 다릅니다: 전체 ${allTypes.length}, 원본 ${sourceTypes.length}, 미연결 ${genericTypes.length}`);
-if (!genericTypes.every(type => !type.sourceVerified && type.reviewLocked && type.reviewReason && type.generationMode === "review-locked" && type.verifiedVariantCount === 0 && type.answerVisualStatus === "locked")) failures.push("원본 미연결 사각형 유형이 모두 검수 대기로 잠기지 않았습니다.");
-if (publicSourceTypes.length !== 19) failures.push(`원본 연결 공개 유형은 19개여야 하나 ${publicSourceTypes.length}개입니다.`);
-if (JSON.stringify(lockedSourceTypes.map(type => type.sourceItemId).sort()) !== JSON.stringify(expectedLockedSourceIds)) failures.push(`원본 연결 잠금 유형이 다릅니다: ${lockedSourceTypes.map(type => type.sourceItemId).join(", ")}`);
-if (!lockedSourceTypes.every(type => type.sourceVerified && type.reviewReason && type.generationMode === "review-locked" && type.verifiedVariantCount === 0 && type.answerVisualStatus === "locked")) failures.push("원본 연결 잠금 유형의 근거 또는 잠금 사유가 빠졌습니다.");
+const inventoryById = new Map(inventory.items.map(item => [item.sourceItemId, item]));
+const runtimeIds = new Set();
+const sourceIds = new Set();
+const labels = new Set();
+const sectionCounts = { exploration: 0, example: 0, mission: 0 };
 
-for (const subunit of targetSubunits) {
+for (const [groupIndex, subunit] of (unit?.subunits || []).entries()) {
+  check(subunit.types.length === 11, `${subunit.name}: 개념탐구 1 + 예제 4 + Mission 6 = 11유형이어야 하나 ${subunit.types.length}개입니다.`);
+  const expectedGroup = inventory.groups[groupIndex];
+  check(subunit.name === expectedGroup?.name, `${groupIndex + 1}번째 묶음명이 원본과 다릅니다.`);
+  const groupSections = { exploration: 0, example: 0, mission: 0 };
+
   for (const type of subunit.types) {
+    const source = inventoryById.get(type.sourceItemId);
+    check(Boolean(source), `${type.id}: 88개 원장에 없는 원문 ID입니다.`);
+    check(!runtimeIds.has(type.id), `${type.id}: 런타임 유형 주소가 중복됩니다.`);
+    runtimeIds.add(type.id);
+    check(!sourceIds.has(type.sourceItemId), `${type.sourceItemId}: 원문 ID가 중복됩니다.`);
+    sourceIds.add(type.sourceItemId);
+    check(!labels.has(type.label), `${type.sourceItemId}: 유형명 '${type.label}'이 다른 문제와 겹칩니다.`);
+    labels.add(type.label);
+    if (!source) continue;
+
+    check(type.label === source.typeLabel, `${type.sourceItemId}: 유형명이 원장과 다릅니다.`);
+    check(type.sourceVerified === true, `${type.sourceItemId}: 원문 눈검사 표시가 없습니다.`);
+    check(type.sourceEvidence.includes(type.sourceItemId), `${type.sourceItemId}: 출처 문구에 원문 ID가 없습니다.`);
+    check(type.sourcePdfPage === source.sourcePdfPage && type.sourcePrintedPage === source.sourcePrintedPage, `${type.sourceItemId}: PDF·교재 쪽수가 원장과 다릅니다.`);
+    check(type.sourceSection === source.sourceSection, `${type.sourceItemId}: 개념탐구·예제·Mission 구분이 다릅니다.`);
+    check(type.sourceItemLabel === source.sourceItemLabel, `${type.sourceItemId}: 원문 문항 표기가 다릅니다.`);
+    check(type.reviewLocked === source.reviewLocked, `${type.sourceItemId}: 공개·잠금 상태가 원장과 다릅니다.`);
+    check(type.answerVisualRequired === true, `${type.sourceItemId}: 정답 그림 필수 계약이 없습니다.`);
+    sectionCounts[type.sourceSection] += 1;
+    groupSections[type.sourceSection] += 1;
+
     if (type.reviewLocked) {
-      if (!type.sourceItemId && type.sourceVerified) failures.push(`${type.id}: 원본 미연결 유형이 원본 검증 완료로 표시됩니다.`);
+      check(Boolean(type.reviewReason), `${type.sourceItemId}: 잠금 사유가 없습니다.`);
+      check(type.generationMode === "review-locked" && type.verifiedVariantCount === 0 && type.answerVisualStatus === "locked", `${type.sourceItemId}: 잠금 계약이 완전하지 않습니다.`);
+      check(api.generate(type, 0, 0, 4200, type.variant) === null, `${type.sourceItemId}: 잠금 문항이 생성됩니다.`);
       continue;
     }
-    if (!type.sourceVerified || !type.sourceItemId || !String(type.sourceEvidence || "").trim()) {
-      failures.push(`${type.id}: 유형별 원본 근거가 없습니다.`);
-    }
+
+    const sourceModule = perpendicularParallel.SOURCE_IDS.includes(type.sourceItemId) ? perpendicularParallel
+      : parallelAngle.SOURCE_IDS.includes(type.sourceItemId) ? parallelAngle
+        : parallelChainOne.SOURCE_IDS.includes(type.sourceItemId) ? parallelChainOne
+        : null;
+    check(Boolean(sourceModule), `${type.sourceItemId}: 검증 생성기 허용 목록에 없습니다.`);
+    check(type.generatorKey === sourceModule?.GENERATOR_KEY, `${type.sourceItemId}: 검증 생성기가 연결되지 않았습니다.`);
+    check(type.generationMode === "fixed-verified-pool" && type.verifiedVariantCount === 3 && type.answerVisualStatus === "verified", `${type.sourceItemId}: 공개 유형의 고정 검증 계약이 다릅니다.`);
+
     for (const difficulty of [-1, 0, 1]) {
       for (let seed = 1; seed <= 200; seed += 1) {
-        let generated;
-        try {
-          generated = api.generate(type, 0, difficulty, seed, type.variant);
-          generatedCount += 1;
-        } catch (error) {
-          failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: ${error.message}`);
+        const generated = api.generate(type, 0, difficulty, seed, type.variant + seed - 1);
+        generatedCount += 1;
+        const visible = `${generated?.prompt || ""} ${generated?.answer ?? ""} ${generated?.solution || ""}`;
+        if (!generated?.prompt || generated.answer === undefined || !generated?.solution || /undefined|null|NaN|Infinity/.test(visible)) {
+          failures.push(`${type.sourceItemId} / 난이도 ${difficulty} / 시드 ${seed}: 문제·정답·풀이가 깨졌습니다.`);
           break;
         }
-        const combined = `${generated.prompt} ${generated.answer} ${generated.solution}`;
-        if (!generated.prompt || generated.answer === "" || !generated.solution || /undefined|null|NaN|Infinity/.test(combined)) {
-          failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 문제·정답·풀이가 깨졌습니다.`);
-          break;
-        }
-
-        let expected;
-        if (type.generatorKey === "quadPerpParallelDistance") {
-          if (type.variant === 0 || type.variant === 1) {
-            const counts = attr(generated.prompt, "data-line-families").split(",").map(Number);
-            expected = type.variant === 0
-              ? counts[0] * counts[1]
-              : counts.reduce((sum, value) => sum + chooseTwo(value), 0);
-          } else if (type.variant === 2) {
-            const parts = attr(generated.prompt, "data-distance-parts").split(",").map(Number);
-            const total = Number(attr(generated.prompt, "data-distance-total"));
-            const [from, to] = attr(generated.prompt, "data-distance-target").split(",").map(Number);
-            expected = total / parts.reduce((sum, value) => sum + value, 0) * parts.slice(from, to).reduce((sum, value) => sum + value, 0);
-          } else if (type.variant === 5) {
-            const [firstDistance, secondDistance, moveSeconds, turnUnit, turnSeconds, turnAngle] = attr(generated.prompt, "data-robot-path").split(",").map(Number);
-            expected = (firstDistance + secondDistance) * moveSeconds + turnAngle / turnUnit * turnSeconds;
-            if (turnAngle !== 90 || 90 % turnUnit !== 0) failures.push(`${type.id} / 시드 ${seed}: 회전 조건이 90°를 정확히 나누지 못합니다.`);
-          } else if (type.variant === 6) {
-            const [top, bottom, leftAngle, rightAngle, height] = attr(generated.prompt, "data-trapezoid-distance").split(",").map(Number);
-            expected = (bottom - top) / 2;
-            if (leftAngle !== 45 || rightAngle !== 45 || height !== expected) failures.push(`${type.id} / 시드 ${seed}: 45도 사다리꼴의 길이 자료가 맞지 않습니다.`);
-          } else if (type.variant === 7) {
-            const [startLength, increment, drawCount, storedAnswer] = attr(generated.prompt, "data-growing-turn").split(",").map(Number);
-            let horizontalPosition = 0;
-            for (let step = 1; step <= drawCount; step += 2) horizontalPosition += (step % 4 === 1 ? 1 : -1) * (startLength + step * increment);
-            expected = Math.abs(horizontalPosition);
-            if (drawCount % 2 !== 0 || storedAnswer !== expected) failures.push(`${type.id} / 시드 ${seed}: 마지막 선분이 처음 선분과 평행하지 않거나 저장 답이 다릅니다.`);
-          } else if (type.variant === 8) {
-            const [leftGiven, rightGiven, firstTarget, secondTarget] = attr(generated.prompt, "data-perpendicular-angles").split(",").map(Number);
-            expected = `㉠ ${90 - rightGiven}°, ㉡ ${90 - leftGiven}°`;
-            if (firstTarget !== 90 - rightGiven || secondTarget !== 90 - leftGiven) failures.push(`${type.id} / 시드 ${seed}: 수직선 사이의 두 각 자료가 맞지 않습니다.`);
-            const markTags = [...generated.prompt.matchAll(/<g class="perpendicular-angle-mark[^"]*"[^>]*>/g)].map(match => match[0]);
-            const marks = Object.fromEntries(markTags.map(tag => [attr(tag, "data-angle-role"), tag]));
-            const expectedMarks = {
-              "left-given": [leftGiven, 180, leftGiven],
-              "right-given": [rightGiven, 360 - rightGiven, rightGiven],
-              "target-left": [firstTarget, 90, firstTarget],
-              "target-right": [secondTarget, leftGiven, secondTarget]
-            };
-            if (markTags.length !== 4 || (generated.prompt.match(/class="perpendicular-angle-arc"/g) || []).length !== 4) failures.push(`${type.id} / 시드 ${seed}: 원문과 같은 네 각호가 모두 그려지지 않았습니다.`);
-            Object.entries(expectedMarks).forEach(([role, [value, start, span]]) => {
-              const tag = marks[role] || "";
-              if (!tag || Number(attr(tag, "data-angle-value")) !== value || Number(attr(tag, "data-arc-start")) !== start || Number(attr(tag, "data-arc-span")) !== span) failures.push(`${type.id} / 시드 ${seed}: ${role} 각호의 꼭짓점 방향 또는 크기가 원문과 다릅니다.`);
-            });
-          } else if (type.variant === 9) {
-            const [aLabel, mLabel, nLabel, rLabel, dLabel] = attr(generated.prompt, "data-role-labels").split(",");
-            const roles = ["M", "N", "R", "D"];
-            const permutations = values => values.length <= 1 ? [values] : values.flatMap((value, index) => permutations(values.filter((_, other) => other !== index)).map(rest => [value, ...rest]));
-            const isParallel = (left, right) => new Set([left, right]).size === 2 && [left, right].every(role => ["A", "M"].includes(role));
-            const isPerpendicular = (left, right) => [["A", "R"], ["M", "R"], ["D", "N"]].some(pair => pair.includes(left) && pair.includes(right));
-            const isConcurrent = values => values.length === 3 && values.every(role => ["A", "D", "R"].includes(role));
-            const valid = permutations(roles).filter(candidate => {
-              const roleOf = { [aLabel]: "A", [mLabel]: candidate[0], [nLabel]: candidate[1], [rLabel]: candidate[2], [dLabel]: candidate[3] };
-              return isPerpendicular(roleOf[mLabel], roleOf[rLabel])
-                && isPerpendicular(roleOf[nLabel], roleOf[dLabel])
-                && isParallel(roleOf[aLabel], roleOf[mLabel])
-                && isConcurrent([roleOf[aLabel], roleOf[dLabel], roleOf[rLabel]]);
-            });
-            expected = `①${mLabel} ②${nLabel} ③${rLabel} ④${dLabel}`;
-            if (valid.length !== 1 || Number(attr(generated.prompt, "data-unique-assignments")) !== 1) failures.push(`${type.id} / 시드 ${seed}: 가능한 이름 배치가 1개가 아닙니다.`);
-          } else {
-            const values = attr(generated.prompt, "data-staircase-verticals").split(",").map(Number);
-            const hidden = Number(attr(generated.prompt, "data-staircase-hidden"));
-            expected = type.variant === 4 ? values[hidden] : values.reduce((sum, value) => sum + value, 0);
-          }
-        } else if (type.generatorKey === "quadParallelAngleCondition") {
-          if (type.variant === 3) {
-            const [leftAngle, vertexAngle, rightInterior, storedAnswer] = attr(generated.prompt, "data-parallel-v-angles").split(",").map(Number);
-            expected = 180 - rightInterior;
-            if (leftAngle + vertexAngle + rightInterior !== 180 || storedAnswer !== expected) failures.push(`${type.id} / 시드 ${seed}: 평행선 사이 삼각형의 세 각 또는 바깥각이 맞지 않습니다.`);
-            const markTags = [...generated.prompt.matchAll(/<g class="parallel-v-angle-mark[^"]*"[^>]*>/g)].map(match => match[0]);
-            const marks = Object.fromEntries(markTags.map(tag => [attr(tag, "data-angle-role"), tag]));
-            const expectedMarks = {
-              "left-exterior": [leftAngle, 180 - leftAngle, leftAngle],
-              "vertex-interior": [vertexAngle, rightInterior, vertexAngle],
-              "right-exterior": [storedAnswer, 180 + rightInterior, storedAnswer]
-            };
-            if (markTags.length !== 3 || (generated.prompt.match(/class="parallel-v-angle-arc"/g) || []).length !== 3) failures.push(`${type.id} / 시드 ${seed}: 원문과 같은 세 각호가 모두 그려지지 않았습니다.`);
-            Object.entries(expectedMarks).forEach(([role, [value, start, span]]) => {
-              const tag = marks[role] || "";
-              if (!tag || Number(attr(tag, "data-angle-value")) !== value || Number(attr(tag, "data-arc-start")) !== start || Number(attr(tag, "data-arc-span")) !== span) failures.push(`${type.id} / 시드 ${seed}: ${role} 각호의 꼭짓점 방향 또는 크기가 원문과 다릅니다.`);
-            });
-          } else if (type.variant === 0 || type.variant === 1) {
-            const count = Number(attr(generated.prompt, "data-parallel-count"));
-            const angle = Number(attr(generated.prompt, "data-parallel-angle"));
-            expected = (count - 1) * angle;
-          } else {
-            const target = Number(attr(generated.prompt, "data-target-angle"));
-            const candidateAngles = [...generated.prompt.matchAll(/data-candidate="([^"]+)" data-angle="([^"]+)"/g)].map(match => Number(match[2]));
-            expected = candidateAngles.slice(1).filter(value => value === target).length;
-          }
-        } else if (type.generatorKey === "quadAngleChainOne" || (type.generatorKey === "quadAngleChainTwo" && type.variant === 0)) {
-          const directions = attr(generated.prompt, "data-chain-directions").split(",").map(Number);
-          expected = Math.abs(directions[directions.length - 1]);
-          const interiors = attr(generated.prompt, "data-chain-interiors").split(",").map(Number);
-          const lineGap = Number(attr(generated.prompt, "data-chain-line-gap"));
-          if (lineGap < 18) failures.push(`${type.id} / 시드 ${seed}: 두 평행선의 화면 간격이 ${lineGap}px로 너무 좁습니다.`);
-          directions.slice(0, -1).forEach((direction, index) => {
-            const geometricInterior = 180 - Math.abs(direction - directions[index + 1]);
-            if (interiors[index] !== geometricInterior) failures.push(`${type.id} / 시드 ${seed}: SVG 방향과 표시 각이 다릅니다.`);
-          });
-        } else if (type.generatorKey === "quadAngleChainTwo") {
-          const angle = Number(attr(generated.prompt, "data-laser-angle"));
-          expected = 180 - 2 * angle;
-        } else if (type.generatorKey === "quadPropertyRelations") {
-          if (type.variant === 0) {
-            const key = `${attr(generated.prompt, "data-lattice-columns")}x${attr(generated.prompt, "data-lattice-rows")}`;
-            expected = ({ "3x2": 9, "3x3": 70, "4x3": 276 })[key];
-          } else {
-            expected = Number(attr(generated.prompt, "data-parallelogram-angle")) / 2;
-          }
-        } else if (type.generatorKey === "quadPropertyApplication") {
-          const sides = attr(generated.prompt, "data-shape-sides").split(",").map(Number);
-          const side = Number(generated.prompt.match(/한 변의 길이가 (\d+)cm/)?.[1]);
-          expected = (sides.reduce((sum, value) => sum + value, 0) - 2 * (sides.length - 1)) * side;
-        } else if (type.generatorKey === "quadSquareSpecial") {
-          if (type.variant === 0) {
-            const side = Number(attr(generated.prompt, "data-paper-side"));
-            const count = Number(attr(generated.prompt, "data-paper-count"));
-            expected = generated.prompt.includes("사용한 색종이") ? count : 2 * (side + (count - 1) * side / 2 + side);
-          } else if (type.variant === 1) {
-            expected = 90 - Number(attr(generated.prompt, "data-fold-half"));
-          } else {
-            const [a, b, c] = attr(generated.prompt, "data-square-sides").split(",").map(Number);
-            expected = generated.prompt.includes("나와 다의 한 변") ? b : c;
-          }
-        } else if (type.generatorKey === "quadRectangleCount") {
-          if (type.variant <= 2) {
-            const [m, n] = attr(generated.prompt, "data-grid-size").split(",").map(Number);
-            const rectangleCount = m * (m + 1) / 2 * n * (n + 1) / 2;
-            if (type.variant === 0) expected = rectangleCount;
-            if (type.variant === 1) {
-              const [r, c] = attr(generated.prompt, "data-grid-mark").split(",").map(Number);
-              expected = r * (m - r + 1) * c * (n - c + 1);
-            }
-            if (type.variant === 2) {
-              let squares = 0;
-              for (let size = 1; size <= Math.min(m, n); size += 1) squares += (m - size + 1) * (n - size + 1);
-              expected = `${rectangleCount}, ${squares}`;
-            }
-          } else {
-            const widths = attr(generated.prompt, "data-staircase-widths").split(",").map(Number);
-            expected = 0;
-            for (let top = 0; top < widths.length; top += 1) {
-              for (let bottom = top; bottom < widths.length; bottom += 1) {
-                const commonWidth = Math.min(...widths.slice(top, bottom + 1));
-                expected += commonWidth * (commonWidth + 1) / 2;
-              }
-            }
-          }
-        } else if (type.generatorKey === "sourceGrade4AdvancedParallelAngle") {
-          if (generated.answerCandidateCount !== 1 || generated.answerVisualRequired !== true || generated.answerVisualStatus !== "verified") {
-            failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 평행선 각의 단일 정답 또는 답 그림 계약이 없습니다.`);
-            break;
-          }
-        }
-
-        if (expected !== undefined && String(generated.answer) !== String(expected)) {
-          failures.push(`${type.id} / 난이도 ${difficulty} / 시드 ${seed}: 정답 ${generated.answer}, 독립 계산 ${expected}`);
+        if (generated.answerCandidateCount !== 1 || !generated.answerVisual || generated.answerVisualStatus !== "verified") {
+          failures.push(`${type.sourceItemId} / 난이도 ${difficulty} / 시드 ${seed}: 단일 정답·정답 그림 계약이 깨졌습니다.`);
           break;
         }
       }
     }
   }
+
+  check(groupSections.exploration === 1 && groupSections.example === 4 && groupSections.mission === 6, `${subunit.name}: 원문 구간 수가 1·4·6이 아닙니다.`);
 }
 
-if (targetSubunits[0].types.length !== 10) failures.push(`수선과 평행선: ${targetSubunits[0].types.length}유형`);
-if (targetSubunits[1].types.length !== 12) failures.push(`평행선의 조건과 성질: ${targetSubunits[1].types.length}유형`);
-if (targetSubunits[2].types.length !== 3) failures.push(`평행선 사이의 각도 ①: ${targetSubunits[2].types.length}유형`);
-if (targetSubunits[3].types.length !== 2) failures.push(`평행선 사이의 각도 ②: ${targetSubunits[3].types.length}유형`);
-const readyCounts = [9, 10, 0, 0, 0, 0, 0, 0];
-targetSubunits.forEach((subunit, index) => {
-  const ready = subunit.types.filter(type => !type.reviewLocked).length;
-  if (ready !== readyCounts[index]) failures.push(`${subunit.name}: 공개 ${ready}유형, 예상 ${readyCounts[index]}유형`);
-});
+check(sourceIds.size === 88, `고유 원문 ID는 88개여야 하나 ${sourceIds.size}개입니다.`);
+check(sectionCounts.exploration === 8 && sectionCounts.example === 32 && sectionCounts.mission === 48, "런타임 개념탐구·예제·Mission 수가 8·32·48이 아닙니다.");
+check(types.filter(type => !type.reviewLocked).length === 30, "검증 공개 유형은 30개여야 합니다.");
+check(types.filter(type => type.reviewLocked).length === 58, "검수 대기 유형은 58개여야 합니다.");
+check(types.every(type => type.sourceTier === "advanced"), "실력 교재 유형이 심화 사각형 원장에 섞였습니다.");
+check(types.find(type => type.sourceItemId === "4-2-u4-e2-mission-1")?.id === "4-2-u4-t2-7", "기존 평행선 Mission 1 직접 링크가 바뀌었습니다.");
+check(!types.some(type => /^4-2-quad-/.test(type.sourceItemId)), "기존 실력 교재 원문 ID가 심화 원장에 남았습니다.");
 
 if (failures.length) {
-  console.error(`4-2 사각형 유형 감사 실패: ${failures.length}건`);
-  console.error(failures.slice(0, 40).join("\n"));
+  console.error(`4-2 사각형 88유형 감사 실패: ${failures.length}건`);
+  console.error(failures.slice(0, 60).join("\n"));
   process.exit(1);
 }
 
-console.log(`4-2 사각형 원본 연결 21유형 중 19유형 공개 · 근거 부족 2유형과 원본 미연결 24유형 잠금 · ${generatedCount.toLocaleString()}회 독립 검산 통과`);
+console.log(`4-2 사각형 원본 88유형 확정 · 공개 30 · 검수 대기 58 · ${generatedCount.toLocaleString()}회 단일 정답·정답 그림 계약 통과`);

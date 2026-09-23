@@ -5,7 +5,9 @@ require("./source-inventory-4-1.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
+require("./source-4-2-parallel-angle-chain-one.js");
 
 const api = window.HSE_GENERATORS;
 const failures = [];
@@ -18,11 +20,11 @@ const expected = {
     units: [[66, 66, 0, 66], [66, 63, 3, 66], [65, 64, 1, 65], [44, 35, 9, 44], [22, 18, 4, 22], [66, 63, 3, 66]]
   },
   "4-2": {
-    total: 263,
-    ready: 196,
-    locked: 67,
-    sourceLinked: 239,
-    units: [[66, 66, 0, 66], [44, 32, 12, 44], [44, 26, 18, 44], [45, 19, 26, 21], [20, 18, 2, 20], [44, 35, 9, 44]]
+    total: 306,
+    ready: 207,
+    locked: 99,
+    sourceLinked: 306,
+    units: [[66, 66, 0, 66], [44, 32, 12, 44], [44, 26, 18, 44], [88, 30, 58, 88], [20, 18, 2, 20], [44, 35, 9, 44]]
   }
 };
 
@@ -93,10 +95,10 @@ for (const semesterId of Object.keys(expected)) {
   }
 }
 
-const genericQuadrilaterals = flatten(window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2"))
-  .filter(type => type.unitNumber === 4 && !type.sourceItemId);
-if (genericQuadrilaterals.length !== 24 || genericQuadrilaterals.some(type => !type.reviewLocked || type.sourceVerified || type.generationMode !== "review-locked" || type.answerVisualStatus !== "locked")) {
-  failures.push("4-2 사각형의 원본 미연결 24유형이 모두 검수 대기로 차단되지 않았습니다.");
+const quadrilaterals = flatten(window.HSE_CURRICULUM.semesters.find(item => item.id === "4-2"))
+  .filter(type => type.unitNumber === 4);
+if (quadrilaterals.length !== 88 || quadrilaterals.some(type => !type.sourceItemId || !type.sourceVerified)) {
+  failures.push("4-2 사각형의 심화 원본 88유형 연결이 완전하지 않습니다.");
 }
 
 if (failures.length) {
@@ -105,4 +107,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4학년 원본 공개 문턱 감사 통과: 592유형 · 공개 505 · 검수 대기 87 · 원본 연결 568 · ${generatedCount.toLocaleString()}회 생성`);
+console.log(`4학년 원본 공개 문턱 감사 통과: 635유형 · 공개 516 · 검수 대기 119 · 원본 연결 635 · ${generatedCount.toLocaleString()}회 생성`);

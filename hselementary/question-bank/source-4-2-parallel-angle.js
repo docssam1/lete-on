@@ -8,15 +8,15 @@
 
   const GENERATOR_KEY = "sourceGrade4AdvancedParallelAngle";
   const SOURCE_IDS = Object.freeze([
-    "4-2-advanced-quad-2-exploration",
-    "4-2-advanced-quad-2-example-2-3",
-    "4-2-advanced-quad-2-example-2-4",
-    "4-2-advanced-quad-2-mission-1",
-    "4-2-advanced-quad-2-mission-2",
-    "4-2-advanced-quad-2-mission-3",
-    "4-2-advanced-quad-2-mission-4",
-    "4-2-advanced-quad-2-mission-5",
-    "4-2-advanced-quad-2-mission-6"
+    "4-2-u4-e2-exploration",
+    "4-2-u4-e2-example-2-3",
+    "4-2-u4-e2-example-2-4",
+    "4-2-u4-e2-mission-1",
+    "4-2-u4-e2-mission-2",
+    "4-2-u4-e2-mission-3",
+    "4-2-u4-e2-mission-4",
+    "4-2-u4-e2-mission-5",
+    "4-2-u4-e2-mission-6"
   ]);
   const SOURCE_ID_SET = new Set(SOURCE_IDS);
   const ABILITY_SOURCE_ID = "4-2-quad-2-example-2-1";
@@ -666,6 +666,7 @@
   };
 
   const exported = Object.freeze({
+    GEOMETRY: Object.freeze({ esc, fmt, attrs, encoded, requireIntersection, svgStyle, svgLine, svgSegment, framedLine, svgPoint, svgText, lineLabel, angleMark, markByAngles, parallelMark, rightMark, wrapSvg }),
     GENERATOR_KEY,
     SOURCE_IDS,
     ABILITY_SOURCE_ID,

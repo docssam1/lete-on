@@ -116,13 +116,13 @@
 - `source-4-2-line-graph-1-audit.js`: 개념탐구 1 원문 11문항을 공개 10·중복 제외 1로 대조하고, 공개 유형을 세 난이도 15,000회 독립 계산과 세로축 기준값·눈금·숨긴 점 역산으로 검수
 - `source-4-2-line-graph-2-audit.js`: 개념탐구 2 원문 11문항을 공개 8·검수 대기 2·중복 제외 1로 대조하고, 공개 유형을 세 난이도 12,000회 독립 계산과 가로축 실제 비율·굵은선·얇은선·보조 눈금 역산으로 검수
 - `source-4-2-line-graph-1-browser-audit.js`, `source-4-2-line-graph-2-browser-audit.js`: 공개 18유형의 PC·모바일 문제·풀이 72화면과 A4 문제·풀이 36파일을 검사합니다. 숫자 눈금과 보조선, 선 굵기, 범례, 가로축 이름의 겹침을 실제 화면값으로 확인하며, 홀수 마지막 문항이 A4에서 번호만 남는 빈 페이지가 되지 않도록 1열 인쇄 배치를 회귀 검사합니다. 잠금 2유형은 직접 주소에서도 열리지 않습니다.
-- `quadrilateral-taxonomy-audit.js`: 4-2 사각형 8개 개념탐구의 공개 28개 세부 유형을 원본 구조·SVG 각도·정답으로 독립 검산하고, 원본과 맞지 않는 거리의 비 유형과 미구현 복합 도형을 잠금 검수
-- `source-4-2-quadrilateral-robot-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 6의 두 선분 이동·90도 왼쪽 회전 유형을 PC·모바일 문제/풀이에서 검수하고 SVG 두 선분의 내적이 0인지 확인
-- `source-4-2-quadrilateral-trapezoid-browser-audit.js`: 4-2 사각형 개념탐구 1 예제 1-2의 45도 사다리꼴을 PC·모바일 문제/풀이에서 검수하고 위아래 변의 평행과 양쪽 기울기를 좌표로 역산
-- `source-4-2-quadrilateral-growing-turn-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 3의 길이가 늘어나는 반시계 수선을 PC·모바일 문제/풀이에서 검수하고 방향별 가로 이동을 독립 계산
-- `source-4-2-quadrilateral-two-angles-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 1의 수직인 두 직선과 두 빗선을 PC·모바일·A4 문제/풀이에서 검수하고 실제 SVG 좌표에서 네 각호의 방향과 두 주어진 각을 역산
-- `source-4-2-quadrilateral-line-names-browser-audit.js`: 4-2 사각형 개념탐구 1 Mission 4의 다섯 직선 이름 배치를 24가지로 전수 검사하고 PC·모바일의 SVG 좌표에서 평행·수직·한 점 교차와 네 빈칸을 역산
-- `source-4-2-quadrilateral-parallel-v-browser-audit.js`: 4-2 사각형 개념탐구 2 예제 2-1의 두 평행선 사이 브이 모양을 PC·모바일·A4 문제/풀이에서 검수하고, 두 빗선의 실제 각도와 왼쪽 바깥각·아래 꼭짓각·오른쪽 바깥각의 각호 위치를 SVG 좌표에서 역산
+- `source-inventory-4-2-quadrilateral.js`: 4-2 심화 사각형 원본을 개념탐구 8 + 예제 32 + Mission 48 = 88개 유형으로 기록합니다. 실력 교재 유형은 섞지 않으며, 아직 생성·정답·그림 검증이 끝나지 않은 58유형은 잠급니다.
+- `source-4-2-perpendicular-parallel-audit.js`: 개념탐구 1의 예제 4문제와 Mission 6문제를 원문 구조별 생성기로 분리하고, 3개 검증 문제·독립 계산·정답 그림을 검사합니다. 네 물음이 묶인 개념탐구 본문은 계속 잠급니다.
+- `quadrilateral-taxonomy-audit.js`: 88개 원장과 런타임을 1:1 대조하고, 30개 공개 유형의 문제·정답·풀이·단일 정답·정답 그림 계약을 18,000회 검사합니다.
+- `source-4-2-parallel-angle-math-audit.js`, `source-4-2-parallel-angle-browser-audit.js`: 공개된 평행선 각 9유형의 좌표 기하·공식 답·답 유일성을 독립 계산하고 PC·390px·A4 문제/풀이를 검사합니다.
+- `source-4-2-parallel-angle-chain-one-audit.js`, `source-4-2-parallel-angle-chain-one-browser-audit.js`: 개념탐구 3의 본문·예제 4개·Mission 6개를 각각 구분하고 원문과 같은 풀이 구조의 33문항을 검사합니다. 원문의 인쇄 조건을 독립 계산한 Mission 6의 답은 105°이며, 손글씨 125°와의 불일치를 별도로 보존합니다. 숫자 변형을 난이도 상승·하락으로 표시하지 않습니다.
+- `source-inventory/4-2-u4-e3-readiness-review.json`: 원본 대조 결정, 독립 답, 고정 문항 수와 PC·390px·A4 검수 범위를 기록합니다. 개별 두 각이 달라져도 합·차가 일정한지 3,138개 후보를 확인하고, 실제 좌표에서 234개 각을 다시 계산합니다.
+- `fixed-pool-selection-browser-audit.js`: 고정 문항 3개씩 가진 3유형을 섞어 9문항을 만들고, 유형별 중복 방지·문항 수 상한·새 문제 재생성을 PC와 390px에서 확인합니다.
 - `GEOMETRY_VALIDATION.md`: 쌓기나무·입체도형·색종이 접기의 단일정답·가시성 검수 기준
 - `EVIDENCE_PIPELINE.md`: 원본 근거·유형 구분·정답 유일성·학년 적합성·화면·공개 상태를 분리하는 검수 계약
 - `.evidence-pipeline/pipeline.json`: 공개 가능한 근거 ID와 검수 파일만 담는 문항 검수 장부

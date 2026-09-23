@@ -118,8 +118,11 @@
     count: 12,
     questions: [],
     view: "problem",
+    solutionViewerIndex: 0,
     generation: 0
   };
+  let solutionViewerReturnFocus = null;
+  let activePrintMode = null;
 
   function currentLevel() {
     return curriculum.levels.find(level => level.id === state.level) || curriculum.levels[0];
@@ -352,7 +355,8 @@
       let uniquePromptFallback;
       for (let attempt = 0; attempt < 32; attempt += 1) {
         const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
-        const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, index);
+        const variant = type.generationMode === "fixed-verified-pool" ? typePoolIndices.size + attempt : index;
+        const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, variant);
         if (!candidate || seenPrompts.has(candidate.prompt)) continue;
         if (candidate.generationMode === "fixed-verified-pool" && typePoolIndices.has(candidate.verifiedPoolIndex)) continue;
         uniquePromptFallback ||= candidate;
@@ -361,7 +365,8 @@
           break;
         }
       }
-      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, index);
+      const fallbackVariant = type.generationMode === "fixed-verified-pool" ? typePoolIndices.size : index;
+      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, fallbackVariant);
       if (generated.generationMode === "fixed-verified-pool") {
         if (!Number.isInteger(generated.verifiedPoolIndex) || typePoolIndices.has(generated.verifiedPoolIndex)) {
           throw new Error(`${typeDisplayName(type)}의 검증 문항 묶음이 중복되었습니다.`);
@@ -378,6 +383,7 @@
       return { number: index + 1, type, level, difficulty: currentDifficultyLabel(), ...generated };
     });
     state.view = "problem";
+    state.solutionViewerIndex = 0;
     renderWorksheet();
     document.querySelector(".bank-layout").hidden = true;
     $("worksheet").hidden = false;
@@ -415,9 +421,10 @@
     const hasSource61E2Mission6 = question.prompt.includes("source61-e2m6-diagram");
     const hasSource61E4Example1 = question.prompt.includes("source61-e4ex1-diagram");
     const hasSource42ParallelAngle = question.prompt.includes("source42-pa");
+    const hasSource42PerpendicularParallel = question.prompt.includes("source42-pp");
     return needsWidePrint(question) || hasSource61VolumeE4 || hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1
       ? 6
-      : hasSource42ParallelAngle || graphCount === 1
+      : hasSource42ParallelAngle || hasSource42PerpendicularParallel || graphCount === 1
         ? 3
         : graphCount > 1
           ? 6
@@ -443,8 +450,8 @@
   }
 
   function paginateProblems(questions) {
-    const isParallelAngle = question => question.prompt.includes("source42-pa");
-    if (!questions.some(isParallelAngle)) {
+    const usesGeometryPairing = question => question.prompt.includes("source42-pa") || question.prompt.includes("source42-pp");
+    if (!questions.some(usesGeometryPairing)) {
       return paginateWeightedProblems(questions).map(page => ({ questions: page, paired: false }));
     }
     const pages = [];
@@ -520,6 +527,80 @@
     </section>`).join("");
   }
 
+  function renderAnswerKey() {
+    const pages = chunk(state.questions, 32);
+    $("answerKeyView").innerHTML = pages.map((page, pageIndex) => `<section class="answer-key-page">
+      <div class="answer-key-title">정답표 ${pageIndex + 1}</div>
+      <div class="answer-key-grid">${page.map(question => `<div><b>${question.number}</b><span>${renderMathNotation(escapeHtml(question.answer))}</span></div>`).join("")}</div>
+      ${watermark()}
+    </section>`).join("");
+  }
+
+  function renderSolutionViewer() {
+    const question = state.questions[state.solutionViewerIndex];
+    const total = state.questions.length;
+    if (!question || !total) return;
+    $("solutionViewerPosition").textContent = `${question.number} / ${total}`;
+    $("solutionViewerPrevious").disabled = state.solutionViewerIndex === 0;
+    $("solutionViewerNext").disabled = state.solutionViewerIndex === total - 1;
+    $("solutionViewerJump").innerHTML = state.questions.map((item, index) => `<button type="button" data-solution-index="${index}" class="${index === state.solutionViewerIndex ? "is-active" : ""}" aria-current="${index === state.solutionViewerIndex ? "step" : "false"}"><b>${item.number}</b><span>${escapeHtml(typeDisplayName(item.type))}</span></button>`).join("");
+    $("solutionViewerContent").innerHTML = `<div class="solution-viewer-question-meta"><b>${question.number}</b><span>${escapeHtml(question.type.grade)}학년 ${escapeHtml(question.type.term)}학기 · ${escapeHtml(question.type.unitName)} · ${escapeHtml(typeDisplayName(question.type))}</span><em>${escapeHtml(question.difficulty)}</em></div>
+      <div class="solution-viewer-prompt">${renderMathNotation(question.prompt)}</div>
+      <div class="solution-viewer-answer">정답: ${renderMathNotation(escapeHtml(question.answer))}</div>
+      ${question.answerVisual ? `<div class="solution-viewer-answer-visual" aria-label="정답 그림">${renderMathNotation(question.answerVisual)}</div>` : ""}
+      <div class="solution-viewer-solution">${renderMathNotation(question.solution)}</div>`;
+  }
+
+  function openSolutionViewer() {
+    if (!state.questions.length) return;
+    solutionViewerReturnFocus = document.activeElement;
+    state.solutionViewerIndex = Math.max(0, Math.min(state.solutionViewerIndex, state.questions.length - 1));
+    renderSolutionViewer();
+    $("solutionViewer").hidden = false;
+    document.body.classList.add("has-solution-viewer");
+    $("solutionViewerClose").focus();
+  }
+
+  function closeSolutionViewer() {
+    if ($("solutionViewer").hidden) return;
+    $("solutionViewer").hidden = true;
+    document.body.classList.remove("has-solution-viewer");
+    solutionViewerReturnFocus?.focus?.();
+    solutionViewerReturnFocus = null;
+  }
+
+  function changeSolutionViewer(index) {
+    if (!state.questions.length) return;
+    state.solutionViewerIndex = Math.max(0, Math.min(index, state.questions.length - 1));
+    renderSolutionViewer();
+    $("solutionViewerContent").scrollTo({ top: 0, behavior: "auto" });
+  }
+
+  function setPrintMenu(open) {
+    $("printMenuList").hidden = !open;
+    $("printMenuButton").setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function restorePrintView() {
+    if (!activePrintMode) return;
+    document.body.removeAttribute("data-print-mode");
+    $("problemView").hidden = state.view !== "problem";
+    $("solutionView").hidden = state.view !== "solution";
+    $("answerKeyView").hidden = true;
+    activePrintMode = null;
+  }
+
+  function printWorksheet(mode) {
+    if (!state.questions.length) return;
+    setPrintMenu(false);
+    activePrintMode = mode;
+    document.body.dataset.printMode = mode;
+    $("problemView").hidden = mode === "answer-key" || mode === "solution";
+    $("solutionView").hidden = mode === "problem" || mode === "answer-key";
+    $("answerKeyView").hidden = mode !== "answer-key";
+    requestAnimationFrame(() => window.print());
+  }
+
   function renderWorksheet() {
     const student = $("studentNameInput").value.trim();
     const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
@@ -528,6 +609,7 @@
     $("worksheetMeta").textContent = `심화 문제은행 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${state.selected.size}개 유형`;
     $("problemView").hidden = state.view !== "problem";
     $("solutionView").hidden = state.view !== "solution";
+    $("answerKeyView").hidden = true;
     $("problemTab").classList.toggle("is-active", state.view === "problem");
     $("solutionTab").classList.toggle("is-active", state.view === "solution");
     $("problemTab").setAttribute("aria-selected", state.view === "problem" ? "true" : "false");
@@ -541,6 +623,8 @@
     ).join("");
     renderProblems();
     renderSolutions();
+    renderAnswerKey();
+    if (!$("solutionViewer").hidden) renderSolutionViewer();
   }
 
   bindSegment("gradeFilter", "grade", "grade", Number);
@@ -602,10 +686,64 @@
   });
   $("problemTab").addEventListener("click", () => { state.view = "problem"; renderWorksheet(); });
   $("solutionTab").addEventListener("click", () => { state.view = "solution"; renderWorksheet(); });
-  $("printButton").addEventListener("click", () => print());
+  $("solutionViewerButton").addEventListener("click", openSolutionViewer);
+  $("solutionViewerClose").addEventListener("click", closeSolutionViewer);
+  $("solutionViewer").addEventListener("click", event => {
+    if (event.target.matches("[data-solution-viewer-close]")) closeSolutionViewer();
+  });
+  $("solutionViewerPrevious").addEventListener("click", () => changeSolutionViewer(state.solutionViewerIndex - 1));
+  $("solutionViewerNext").addEventListener("click", () => changeSolutionViewer(state.solutionViewerIndex + 1));
+  $("solutionViewerJump").addEventListener("click", event => {
+    const button = event.target.closest("button[data-solution-index]");
+    if (button) changeSolutionViewer(Number(button.dataset.solutionIndex));
+  });
+  $("printMenuButton").addEventListener("click", () => setPrintMenu($("printMenuList").hidden));
+  $("printMenuList").addEventListener("click", event => {
+    const button = event.target.closest("button[data-print-mode]");
+    if (button) printWorksheet(button.dataset.printMode);
+  });
+  document.addEventListener("click", event => {
+    if (!event.target.closest("#printMenu")) setPrintMenu(false);
+  });
+  addEventListener("afterprint", restorePrintView);
   $("watermarkToggle").addEventListener("change", () => { if (state.questions.length) renderWorksheet(); });
   $("studentNameInput").addEventListener("input", () => { if (state.questions.length) renderWorksheet(); });
-  addEventListener("keydown", event => { if (event.key === "Escape") hideTypePreview(true); });
+  addEventListener("keydown", event => {
+    if (!$("solutionViewer").hidden) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeSolutionViewer();
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        changeSolutionViewer(state.solutionViewerIndex - 1);
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        changeSolutionViewer(state.solutionViewerIndex + 1);
+        return;
+      }
+      if (event.key === "Tab") {
+        const focusable = [...$("solutionViewer").querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')];
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+      return;
+    }
+    if (event.key === "Escape") {
+      setPrintMenu(false);
+      hideTypePreview(true);
+    }
+  });
 
   const params = new URLSearchParams(location.search);
   const requestedDifficulty = Number(params.get("difficulty"));
