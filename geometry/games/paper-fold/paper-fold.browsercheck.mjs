@@ -185,7 +185,15 @@ await doubleCutPage.goto(`${baseUrl}/geometry/games/paper-fold/`, { waitUntil: "
 assert.equal((await currentProblem(doubleCutPage)).id, forcedDoubleCut.id);
 assert.equal(await doubleCutPage.locator(".fold-sequence-view figure").count(), 4);
 assert.equal(await doubleCutPage.locator(".side-choice").count(), 0);
-assert.deepEqual((await doubleCutPage.locator(".layer-badge text").allTextContents()).sort(), ["2겹", "2겹", "4겹"]);
+assert.equal(await doubleCutPage.locator(".layer-badge").count(), 0);
+assert.doesNotMatch(await doubleCutPage.locator("body").innerText(), /[24]겹/);
+const stackStates = await doubleCutPage.locator(".fold-sequence-view .paper-diagram").evaluateAll((diagrams) => diagrams.map((diagram) => ({
+  depth: Number(diagram.dataset.stackDepth),
+  sides: diagram.querySelectorAll(".paper-stack-side").length,
+  layers: diagram.querySelectorAll(".paper-stack-layer").length
+})));
+assert.deepEqual(stackStates.map(({ depth }) => depth), [0, 1, 3, 1]);
+assert.ok(stackStates.every(({ depth, sides, layers }) => layers === depth && (depth === 0 ? sides === 0 : sides >= depth)));
 assert.ok(await doubleCutPage.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth) <= 1);
 await doubleCutPage.screenshot({ path: `${output}/double-cut-portrait.png`, fullPage: true });
 await clickPaperSide(doubleCutPage, forcedDoubleCut.unfoldSteps[0]);

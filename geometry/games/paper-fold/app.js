@@ -212,8 +212,30 @@ function paperSvg({ fold = null, polygon = null, segments = [], holes = [], mark
   const shape = polygon || (view === "folded" && fold ? foldedPolygon(fold) : null);
   const baseShape = shape || [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
   const clipId = `clip-${marker}`;
-  const stackLayers = Array.from({ length: Math.max(0, layerCount - 1) }, (_, index) => layerCount - index - 1)
-    .map((depth) => `<polygon class="paper-stack-layer" points="${points(baseShape)}" transform="translate(${depth * 2.2} ${depth * 2.2})"/>`).join("");
+  const stackDepth = Math.max(0, layerCount - 1);
+  const edgeStep = layerCount > 2 ? 3.4 : 5;
+  const winding = Math.sign(baseShape.reduce((sum, point, index) => {
+    const next = baseShape[(index + 1) % baseShape.length];
+    return sum + point.x * next.y - next.x * point.y;
+  }, 0));
+  const visibleEdges = baseShape.flatMap((start, index) => {
+    const end = baseShape[(index + 1) % baseShape.length];
+    return winding * ((end.y - start.y) - (end.x - start.x)) > 0.0001 ? [[start, end]] : [];
+  });
+  const stackLayers = Array.from({ length: stackDepth }, (_, index) => stackDepth - index).map((depth) => {
+    const rear = depth * edgeStep;
+    const front = (depth - 1) * edgeStep;
+    const sideFaces = visibleEdges.map(([start, end]) => {
+      const quad = [
+        { x: start.x + front / 160, y: start.y + front / 160 },
+        { x: end.x + front / 160, y: end.y + front / 160 },
+        { x: end.x + rear / 160, y: end.y + rear / 160 },
+        { x: start.x + rear / 160, y: start.y + rear / 160 }
+      ];
+      return `<polygon class="paper-stack-side" points="${points(quad)}"/>`;
+    }).join("");
+    return `<polygon class="paper-stack-layer" points="${points(baseShape)}" transform="translate(${rear} ${rear})"/>${sideFaces}`;
+  }).join("");
   const paperShape = `${stackLayers}<polygon class="paper-fill paper-top-face${shape ? " folded-sheet" : ""}" points="${points(baseShape)}"/>`;
   const crease = fold && view !== "folded" ? (() => {
     let [x1, y1, x2, y2] = creaseLine(fold);
@@ -232,13 +254,9 @@ function paperSvg({ fold = null, polygon = null, segments = [], holes = [], mark
   const cutAnchor = segments[0]?.[0] || marks.find((mark) => mark.kind === "polygon")?.points?.[0];
   const scissors = showScissors && cutAnchor ? `<text class="scissors" x="${20 + cutAnchor.x * 160 - 8}" y="${20 + cutAnchor.y * 160 - 6}">✂</text>` : "";
   const foldClass = fold ? ` fold-${fold.axis}-${fold.side}` : "";
-  const shapeBounds = polygonBounds(baseShape);
-  const badgeX = Math.max(6, 20 + shapeBounds.maxX * 160 - 48);
-  const badgeY = Math.max(4, 20 + shapeBounds.minY * 160 - 8);
-  const layerBadge = layerCount > 1 ? `<g class="layer-badge" aria-label="${t("layerCount", { count: layerCount })}"><rect x="${badgeX}" y="${badgeY}" width="48" height="24" rx="8"/><text x="${badgeX + 24}" y="${badgeY + 17}">${t("layerCount", { count: layerCount })}</text></g>` : "";
-  return `<svg class="paper-diagram view-${view}${touchStep ? " is-touchable" : ""}${foldClass}" data-touch-action="${touchAction}" data-fold-axis="${fold?.axis || touchStep?.axis || ""}" data-fold-side="${fold?.side || ""}" viewBox="0 0 200 200" role="${touchStep ? "group" : "img"}" aria-label="${label}">
+  return `<svg class="paper-diagram view-${view}${touchStep ? " is-touchable" : ""}${foldClass}" data-touch-action="${touchAction}" data-fold-axis="${fold?.axis || touchStep?.axis || ""}" data-fold-side="${fold?.side || ""}" data-stack-depth="${stackDepth}" viewBox="0 0 200 200" role="${touchStep ? "group" : "img"}" aria-label="${label}">
     <defs><clipPath id="${clipId}"><polygon points="${points(baseShape)}"/></clipPath><marker id="${marker}" markerWidth="7" markerHeight="7" refX="6.4" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 3.5 L0 7 Z"/></marker></defs>
-    ${paperShape}${markShapes(marks)}${crease}${movingFace}${foldArrow}${segmentLines(segments)}${holeCircles(holes)}${scissors}${touchZonesHtml(touchStep, clipId)}${layerBadge}
+    ${paperShape}${markShapes(marks)}${crease}${movingFace}${foldArrow}${segmentLines(segments)}${holeCircles(holes)}${scissors}${touchZonesHtml(touchStep, clipId)}
   </svg>`;
 }
 
