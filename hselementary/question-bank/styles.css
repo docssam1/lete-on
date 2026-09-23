@@ -155,7 +155,7 @@
   background:#fff;
 }
 .source41-bar-graph text {
-  font-family:Arial,"Malgun Gothic",sans-serif;
+  font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;
 }
 .source41-bar-grid {
   stroke:#b8c8d2;
@@ -272,7 +272,7 @@ html,body{
   min-height:100%;
   background:var(--bg);
   color:var(--ink);
-  font-family:Pretendard,"Malgun Gothic",system-ui,sans-serif;
+  font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;
   letter-spacing:0;
 }
 
@@ -1139,7 +1139,7 @@ button{
 .type-preview-question,
 .print-page .solution-item p{
   color:#111;
-  font-family:"Batang","Noto Serif KR",serif;
+  font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;
   font-weight:400;
   letter-spacing:0;
 }
@@ -1150,8 +1150,9 @@ button{
 .solution-item:has(.source42-pp) header{background:#f7f7f7}
 .solution-item:has(.source42-pa) header span{color:#333;font-weight:500}
 .solution-item:has(.source42-pp) header span{color:#333;font-weight:500}
-.solution-item:has(.source42-pa) header strong{color:#111;font-family:"Times New Roman","Batang",serif;font-size:18px;font-weight:400}
-.solution-item:has(.source42-pp) header strong{color:#111;font-family:"Times New Roman","Batang",serif;font-size:18px;font-weight:400}
+.solution-item:has(.source42-pa) header strong{color:#111;font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:18px;font-weight:400}
+.solution-item:has(.source42-pp) header strong{color:#111;font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:18px;font-weight:400}
+.source41-number-card,.number-card,.source-division-work{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-variant-numeric:tabular-nums}
 .print-page .solution-item p{font-size:14px}
 .print-page .question-item header span{color:#444;font-weight:500}
 .print-page .question-item header em{color:#555;font-weight:400}

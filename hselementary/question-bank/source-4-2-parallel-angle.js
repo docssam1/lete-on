@@ -122,14 +122,14 @@
   const encoded = value => encodeURIComponent(JSON.stringify(value));
 
   const svgStyle = `<style>
-    .source42-pa{font-family:"Times New Roman","Batang",serif;overflow:visible}
+    .source42-pa{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;overflow:visible}
     .source42-pa .pa-line{fill:none;stroke:#222;stroke-width:1.25;stroke-linecap:round;vector-effect:non-scaling-stroke}
     .source42-pa .pa-line.is-answer{stroke:#222;stroke-width:1.25}
     .source42-pa .pa-guide{fill:none;stroke:#666;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
     .source42-pa .pa-point{fill:#222;stroke:none}
     .source42-pa .pa-arc{fill:none;stroke:#222;stroke-width:1;stroke-linecap:round;vector-effect:non-scaling-stroke}
-    .geometry-diagram.source42-pa text{font-family:"Times New Roman","Batang",serif;font-size:18px;font-weight:400;letter-spacing:0;fill:#111;stroke:none;text-shadow:none}
-    .geometry-diagram.source42-pa .pa-name{font-family:"Malgun Gothic",Arial,sans-serif;font-size:17px;dominant-baseline:middle}
+    .geometry-diagram.source42-pa text{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:18px;font-weight:400;letter-spacing:0;fill:#111;stroke:none;text-shadow:none}
+    .geometry-diagram.source42-pa .pa-name{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:17px;dominant-baseline:middle}
     .source42-pa .pa-value,.source42-pa .pa-target{text-anchor:middle;dominant-baseline:middle}
     .source42-pa .pa-answer-note{text-anchor:middle}
     .source42-pa .pa-parallel{fill:none;stroke:#222;stroke-width:1;stroke-linecap:round;vector-effect:non-scaling-stroke}

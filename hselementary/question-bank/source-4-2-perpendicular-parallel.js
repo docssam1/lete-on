@@ -106,15 +106,15 @@
   const chooseTwo = value => value * (value - 1) / 2;
 
   const style = `<style>
-    .source42-pp{font-family:"Times New Roman","Batang",serif;overflow:visible}
+    .source42-pp{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;overflow:visible}
     .source42-pp .pp-line{fill:none;stroke:#222;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
     .source42-pp .pp-guide{fill:none;stroke:#666;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
     .source42-pp .pp-dimension{fill:none;stroke:#222;stroke-width:1;vector-effect:non-scaling-stroke}
     .source42-pp .pp-right{fill:none;stroke:#222;stroke-width:1;vector-effect:non-scaling-stroke}
     .source42-pp .pp-answer{fill:none;stroke:#111;stroke-width:2;vector-effect:non-scaling-stroke}
-    .geometry-diagram.source42-pp text{font-family:"Times New Roman","Batang",serif;font-size:21px;font-weight:400;letter-spacing:0;fill:#111;stroke:none;text-shadow:none}
-    .geometry-diagram.source42-pp .pp-name{font-family:"Malgun Gothic",Arial,sans-serif;font-size:20px;dominant-baseline:middle}
-    .geometry-diagram.source42-pp .pp-note{font-family:"Malgun Gothic",Arial,sans-serif;font-size:18px;dominant-baseline:middle}
+    .geometry-diagram.source42-pp text{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:21px;font-weight:400;letter-spacing:0;fill:#111;stroke:none;text-shadow:none}
+    .geometry-diagram.source42-pp .pp-name{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:20px;dominant-baseline:middle}
+    .geometry-diagram.source42-pp .pp-note{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:18px;dominant-baseline:middle}
     .geometry-diagram.source42-pp .pp-small{font-size:18px}
     .geometry-diagram.source42-pp .pp-value{text-anchor:middle;dominant-baseline:middle}
   </style>`;
