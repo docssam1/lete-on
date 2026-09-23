@@ -4718,8 +4718,13 @@ function generateProblem(threadId, lv, rng){
   const params = getLevelParams(threadId, lv);
   const gen = (window.NM_TGEN || {})[genKey];
   if(gen){ return applyOrient(gen(params, rng), params); }
-  const a = Math.floor(rng()*90)+10, b = Math.floor(rng()*9)+1;
-  return { tex:`${a} + ${b} = \\square`, answer:a+b, prompt:{ko:`${a}+${b}=?`,en:`${a}+${b}=?`,zh:`${a}+${b}=?`} };
+  /* 생성기가 없을 때 — 눈에 보이게 실패한다(2026-09-23).
+     전에는 여기서 "두 자리 + 한 자리 덧셈"을 대신 만들어 돌려줬다. 그래서 ws.html 이
+     mid9·mid10 을 안 싣고 있던 동안 중2·중3 주간 학습지가 개념 문장은 「함수와 함숫값」인데
+     문제는 88+8= 로 찍혀 학부모에게 나갔고, 오류가 하나도 안 떠서 아무도 몰랐다.
+     바로 위 "스레드가 없을 때"처럼 표시를 남긴다 — 틀린 문제보다 빈 칸이 낫다. */
+  if(typeof console !== 'undefined') console.error(`[exam] 생성기 없음: ${threadId} → ${genKey} — 이 페이지가 engine/threads 파일을 빠뜨렸다`);
+  return { tex:`\\text{[${threadId} 생성기 없음]}`, answer:0, missingGen:true, prompt:{ko:'',en:'',zh:''} };
 }
 
 /* 문제 배열 생성 (시드 재현 가능) */

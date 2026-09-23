@@ -340,6 +340,9 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 <script src="engine/threads/mid9.js"></script>
 <script src="engine/threads/mid10.js"></script>
 <script src="data/threads.js"></script>
+<!-- courses.js(2026-09-23) — 메뉴에 한 레벨도 없는 유형을 어느 주제에 넣을지(그 유형을 처음
+     가르치는 과정의 tier) 정하는 데만 쓴다. threads.js 만 있으면 되고 화면은 안 건드린다. -->
+<script src="data/courses.js"></script>
 <script src="data/math-tips.js"></script>
 <script src="data/story-comics.js"></script>
 <script src="data/labs.js"></script>
@@ -1003,6 +1006,69 @@ var TOPICS = [
     ]
   }
 ];
+
+/* ── 빠진 레벨 자동 보충 (2026-09-23) ──
+   위 목록은 손으로 적은 것이라 threads.js 에 레벨이 늘 때마다 여기에도 적어야 했다.
+   아무도 안 적어서 657개 중 92개가 문제은행에 없었다 — 중2·중3 교과 연산 MD63~MD82
+   (연립방정식·일차함수·이차방정식·이차함수) 전체와 제곱근의 덧셈·뺄셈(MD83)까지.
+   손으로 다듬은 565개 이름은 그대로 두고, 빠진 레벨만 여기서 채운다.
+   · 그 스레드의 다른 레벨이 이미 실린 주제가 있으면 → 그 주제, 형제 레벨 바로 뒤에
+   · 한 레벨도 안 실린 스레드면 → 그 유형을 처음 가르치는 과정(courses.js)의 tier 와
+     같은 id 의 주제(middle1·middle2·middle3·highmath1·highmath2·algebra·calculus1)
+   · 초등 tier(level3 등)처럼 주제 id 와 안 맞으면 → 같은 접두어 가족(DC6 → DC1~5 가 사는
+     「소수」)의 주제. MD 는 한 가족이 중1~미적분에 걸쳐 있어 tier 가 먼저다
+   · 그래도 못 정하면 → 맨 끝 「새로 추가된 유형」 주제 (숨기지 않는다)
+   이름은 영어·중국어 화면이 이미 쓰는 규칙과 같다 — 제목 = 스레드 이름, 설명 = 레벨 이름.
+   scripts/check-roadmap-sync.js 가 이 보충 결과가 빈틈없는지 검사한다. */
+(function fillMissingLevels(){
+  var T = window.NM_THREADS || {};
+  var have = {}, home = {}, byId = {};
+  TOPICS.forEach(function(tp){
+    byId[tp.id] = tp;
+    (tp.subs || []).forEach(function(s){
+      have[s.thread + '@' + s.level] = true;
+      if(!home[s.thread]) home[s.thread] = tp;
+    });
+  });
+  var tierOf = {};
+  (window.NM_COURSE_SPEC || []).forEach(function(spec){
+    ['drills', 'creative'].forEach(function(k){
+      (spec[k] || []).forEach(function(d){
+        var t = String(d).split('@')[0];
+        if(!tierOf[t]) tierOf[t] = spec.tier;
+      });
+    });
+  });
+  var family = {};                       /* 'DC' → 그 접두어 스레드가 처음 실린 주제 */
+  Object.keys(home).forEach(function(t){
+    var f = t.replace(/\d+$/, '');
+    if(!family[f]) family[f] = home[t];
+  });
+  var extra = null;
+  Object.keys(T).forEach(function(k){
+    var th = T[k];
+    (th.levels || []).forEach(function(lv){
+      if(have[k + '@' + lv.id]) return;
+      var tp = home[k] || byId[tierOf[k]] || (k.indexOf('MD') === 0 ? null : family[k.replace(/\d+$/, '')]);
+      if(!tp){
+        if(!extra){
+          extra = { id:'new', label:'새로 추가된 유형', en:'Newly Added', zh:'新增题型', icon:'🆕', color:'#475569', section:'magic', subs:[] };
+          TOPICS.push(extra);
+        }
+        tp = extra;
+      }
+      var entry = { label:dL(th.name) || k, thread:k, level:lv.id, desc:(lv.label && (lv.label.ko || dL(lv.label))) || ('레벨 ' + lv.id), auto:true };
+      /* 형제 레벨이 있으면 그 스레드의 마지막 항목 바로 뒤에, 없으면 주제 끝에 */
+      var at = -1;
+      tp.subs.forEach(function(s, i){ if(s.thread === k && s.level < lv.id) at = i; });
+      if(at >= 0) tp.subs.splice(at + 1, 0, entry); else tp.subs.push(entry);
+      have[k + '@' + lv.id] = true;
+      if(!home[k]) home[k] = tp;
+    });
+  });
+  window.NM_DRILL_TOPICS = TOPICS;   /* 검사기용 노출 */
+})();
+
 var TOTAL_TOPICS = TOPICS.reduce(function(n,c){ return n + c.subs.length; }, 0);
 
 /* ── 언어 — 앱(nm_state_v1)의 S.lang을 따른다. exam.js examLang()과 같은 관례:

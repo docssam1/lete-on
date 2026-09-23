@@ -1438,11 +1438,11 @@ function maybeShowR0Banner(scr){
 /* ─── roadmap 헬퍼 ─── */
 function roadmapNextLabel(){
   if(!window.NM_ROADMAP)return '';
-  const chapters=NM_ROADMAP.chapters;
-  for(const ch of chapters){
-    for(const uid of (ch.units||[])){   /* 게임 챕터(G0·G1)는 units 없음 */
-      if(!stepDone(uid,'stamp')) return S.lang==='ko'?`이어서: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='en'?`Continue: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='zh'?`继续: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:'';
-    }
+  /* 지도 화면의 "여기부터!"와 같은 유닛을 가리켜야 한다 — 같은 함수를 쓴다(2026-09-23) */
+  const uid=findNextRoadUnit();
+  if(uid){
+    const nm=UNITS[uid]?L(UNITS[uid].title):'...';
+    return S.lang==='ko'?`이어서: ${nm}`:S.lang==='en'?`Continue: ${nm}`:`继续: ${nm}`;
   }
   return S.lang==='ko'?'🏆 전체 완료!':S.lang==='en'?'🏆 All done!':'🏆 全部完成！';
 }
@@ -1580,9 +1580,28 @@ function screenRoadmap(){
   });
 }
 
+/* 학생의 현재 과정이 앱 지도의 어느 챕터에서 시작하는가 (2026-09-23)
+   전에는 지도 맨 앞(유아 수 세기)부터 도장 안 받은 첫 유닛을 "여기부터!"로 찍었다. 그래서
+   진단이나 시작점 고르기로 과정 35(제곱근의 세계)에 선 중3 학생에게도 앱 지도와 마을
+   "이어서:" 배너는 「수 세기」를 권했다 — 학습지·과정 지도와 앱 지도가 서로 다른 아이를 봤다.
+   S.placement.course 의 마법 유닛이 처음 나오는 챕터를 시작점으로 삼는다. */
+function roadStartChapterIdx(){
+  const key=S.placement&&S.placement.course;
+  const c=key&&(window.NM_COURSES||{})[key];
+  if(!c||!window.NM_ROADMAP)return 0;
+  const mine=new Set();
+  (c.sessions||[]).forEach(s=>(s.magic||[]).forEach(u=>mine.add(u)));
+  const chs=NM_ROADMAP.chapters;
+  for(let i=0;i<chs.length;i++) if((chs[i].units||[]).some(u=>mine.has(u))) return i;
+  return 0;
+}
 function findNextRoadUnit(){
   if(!window.NM_ROADMAP)return null;
-  for(const ch of NM_ROADMAP.chapters){
+  const chs=NM_ROADMAP.chapters, start=roadStartChapterIdx();
+  /* 시작점부터 끝까지 먼저, 그다음 앞쪽을 — 로드맵은 잠그지 않으므로 앞 챕터도
+     건너뛴 것일 뿐 사라진 게 아니다. 시작점 뒤를 다 마치면 앞쪽 남은 것을 권한다. */
+  const order=[...chs.slice(start),...chs.slice(0,start)];
+  for(const ch of order){
     if(!ch.units)continue;
     for(const uid of ch.units){
       if(!stepDone(uid,'stamp'))return uid;

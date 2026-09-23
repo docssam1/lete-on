@@ -145,7 +145,10 @@ window.NM_ROADMAP = {
       id:'R6', icon:'🧮', grade:'초2',
       edu:{ko:'초2-2 자릿값 전략',en:'G2-2 Place-value strategies',zh:'小2-2数位计算策略'},
       theme:{ko:'자릿값 계산 전략',en:'Place-Value Calculation Strategies',zh:'数位计算策略'},
-      units:['A-30','A-31','A-32','A-33','A-34'],
+      /* A-35 고대의 수(로마 수, 2026-09-23) — 학습지 과정 10 의 "쉼표 노드"인데 이 지도에 없었다.
+         로마 수는 자릿값이 없던 옛 기수법이라, 자릿값 전략을 다 배운 끝에 두면 대비가 된다.
+         과정 10 과 이 챕터는 같은 단계(계산의 새싹)다. */
+      units:['A-30','A-31','A-32','A-33','A-34','A-35'],
       tip:{ko:'10씩, 100씩 건너뛰는 계산 전략이에요!',en:'Strategies for jumping by 10s and 100s!',zh:'以10、100为单位跳跃的计算策略！'}
     },
 
@@ -249,8 +252,11 @@ window.NM_ROADMAP = {
     {
       id:'T15', icon:'🔢', grade:'초4',
       edu:{ko:'초4-2 소수·초5-1 혼합계산',en:'G4-2 Decimals · G5-1 Order of Ops',zh:'小4-2小数·小5-1混合运算'},
-      theme:{ko:'소수와 혼합계산 — 소수 알기·순서 지키기',en:'Decimals & Mixed Operations — Intro & Order',zh:'小数与混合运算——认识小数·运算顺序'},
-      units:['T-DC1','T-MX1'],
+      theme:{ko:'소수와 혼합계산 — 소수 알기·더하고 빼기·순서 지키기',en:'Decimals & Mixed Operations — Intro, Add & Subtract, Order',zh:'小数与混合运算——认识小数·加减·运算顺序'},
+      /* A-36~38(2026-09-23) — 소수 덧뺄셈. 과정-로드맵.md 가 "초급이 아니라 Level 3 소수 지점이
+         맞다"며 학습지 과정 17로 옮겼는데, 이 지도는 따라 옮기지 않아 어디에도 없었다.
+         소수 알기(T-DC1) 바로 다음, 혼합계산 앞. 과정 17 과 이 챕터는 같은 단계(관계의 발견)다. */
+      units:['T-DC1','A-36','A-37','A-38','T-MX1'],
       tip:{ko:'0.1이 5개면 0.5! 그리고 (3+4)×2는 괄호 먼저 — 순서를 지켜야 답이 맞아요.',en:'Five 0.1s = 0.5! And (3+4)×2 needs brackets first — order matters!',zh:'五个0.1等于0.5！(3+4)×2要先算括号——顺序很重要！'}
     },
 

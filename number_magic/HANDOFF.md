@@ -2324,3 +2324,17 @@ HEAD 대조라 커밋 직전에만 그 4,692건을 실패로 올리고, 커밋 �
 - 검증: check-unit-lang·level-concept·level-coverage·ladder·stages·tex-hygiene·
   answerable·step-equations·new-levels-lang·new-levels-math(68,000문항)·tone·
   about-stats·print-lang·print(657레벨)·solution-steps(6,320문항) 전부 통과.
+
+## GPT 검수 반영 — 세 층 동기화 (2026-09-23)
+
+GPT(Codex) 검수가 로컬 작업트리에서 멈춘 채(푸시 안 됨) 넘어온 발견을 코드로 하나씩 확인하고 고쳤다.
+상세는 `인수인계서.md` §4·§5·§8(8~11번), 남은 일은 `앞으로-진행할-것.md`.
+
+- **주간 학습지 중2·중3 생성기 누락** — `ws.html`이 `mid9`·`mid10`을 안 실어 과정 29·30·31·33·34·36·37의
+  MD63~MD82 문제가 `exam.js`의 조용한 덧셈 대체로 `88+8=`처럼 찍혔다. 태그 추가 + 대체 제거
+  (`[MDxx 생성기 없음]` + 콘솔 에러). 실제 발송분은 없었다(`nm_weekly_pdf`는 C4 테스트뿐, 9/20 배치는 mid9 이전 커밋).
+- **문제은행 92레벨 누락** — `drill.html`에 `fillMissingLevels`: 손 목록에 없는 레벨을 과정 tier로 주제에 붙인다. 657/657.
+- **A-35~38 앱 지도 누락** — A-35 → R6, A-36~38 → T15.
+- **학생 위치 불일치** — `roadStartChapterIdx()`: `S.placement.course`의 마법 유닛이 처음 나오는 챕터부터 "여기부터!"·"이어서:"를 찾는다(끝나면 앞쪽으로 돈다). 잠그지 않는다.
+- **`scripts/check-roadmap-sync.js`** 신설 — 배포(`deploy-pages.yml`)와 주간 학습지(`nm-weekly-worksheets.yml`) 전에 실행, 실패하면 멈춘다.
+- GPT가 맞았고 내 목록이 틀렸던 것: 유아 확인·도전 생략은 정책(`BASIC_FLOW_KEYS`), G0·G1은 이미 게임.
