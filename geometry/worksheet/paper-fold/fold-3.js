@@ -196,7 +196,7 @@ const sharedAxisLabel={vertical:'세로',horizontal:'가로','diag-main':'왼쪽
 
 async function loadSharedGameLevels(){
   try{
-    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-12');
+    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-13');
     module.validateLevels();
     sharedGameLevels=module.levels;
   }catch(error){
@@ -441,8 +441,8 @@ function drawSharedFoldSequence(ctx,item,{startX=55,y=145,size=150,gap=195}={}){
 function renderSharedSolo(ctx,p,showAnswer){
   const isDouble=p.interaction==='hole-result';
   if(p.completeOnUnfold){
-    drawSharedFoldSequence(ctx,p,{startX:45,y:145,size:175,gap:190});
-    const resultX=p.folds.length===2?725:550;
+    drawSharedFoldSequence(ctx,p,{startX:45,y:145,size:175,gap:230});
+    const resultX=p.folds.length===2?805:595;
     drawStepArrow(ctx,resultX-72,245);
     drawSharedPaper(ctx,resultX,145,210,{folds:p.folds,marks:showAnswer?p.markStages.at(-1):[],answer:showAnswer});
     ctx.fillStyle='#52616b';ctx.font='700 15px sans-serif';

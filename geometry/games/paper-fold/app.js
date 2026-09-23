@@ -1,11 +1,16 @@
-import { levels, validateLevels, foldedPolygon } from "./levels.js?v=paper-fold-12";
+import { levels, validateLevels, foldedPolygon } from "./levels.js?v=paper-fold-13";
 import { punchVertices } from "./mark-geometry.js?v=paper-fold-1";
+import { seededRandom, shuffle, sessionQueue, availableProblems, visualProblemKey } from "./session-order.js";
 import { saveGameProgress } from "../../shared/profile-storage.js";
+import { icon } from "../shape-transform/ui-icons.js";
 
 validateLevels();
 
 const $ = (selector) => document.querySelector(selector);
 const params = new URLSearchParams(location.search);
+const embedded = params.get("embedded") === "1" && window.parent !== window;
+const sessionSeed = params.get("seed") || String(Date.now());
+const queueRandom = seededRandom(sessionSeed);
 const lang = localStorage.getItem("gfield-language") || "ko";
 const CHUNK_SIZE = 10;
 const MAX_SESSION_SIZE = 20;
@@ -70,7 +75,16 @@ const t = (key, values = {}) => {
   return value;
 };
 const local = (value) => value?.[lang] || value?.ko || "";
-const shuffled = (items) => [...items].sort(() => Math.random() - .5);
+const flowText = {
+  ko: { fold: "화살표가 시작하는 면을 눌러 접어 보세요.", side: "삼각형은 어느 쪽에 더 생길까요?", pattern: "펼쳤을 때 남는 모양을 고르세요.", holes: "펼쳤을 때 구멍의 모양을 고르세요.", cut: "색칠한 부분 잘라내기", together: "함께하기", battle: "배틀", shortage: "새 문제를 더 준비해야 해요.", foldLabel: "접기", sideLabel: "위치", answerLabel: "모양", success: "잘했어요!" },
+  en: { fold: "Tap where the arrow starts to fold the paper.", side: "Which side gets the other triangle?", pattern: "Choose the paper shape left after opening.", holes: "Choose the hole pattern after opening.", cut: "Cut the colored area", together: "Together", battle: "Battle", shortage: "More new problems are needed.", foldLabel: "Fold", sideLabel: "Position", answerLabel: "Shape", success: "Well done!" },
+  zh: { fold: "点击箭头起点所在的一面，把纸折起来。", side: "另一个三角形会出现在哪一边？", pattern: "选择展开后剩下的形状。", holes: "选择展开后的孔洞图案。", cut: "剪去涂色部分", together: "一起玩", battle: "对战", shortage: "需要准备更多新题。", foldLabel: "折叠", sideLabel: "位置", answerLabel: "形状", success: "做得好！" },
+  ja: { fold: "矢印の始まる面をタップして折りましょう。", side: "もう一つの三角形はどちら側に現れますか？", pattern: "開いたときに残る形を選びましょう。", holes: "開いたときの穴の形を選びましょう。", cut: "色の部分を切り取る", together: "いっしょに", battle: "対戦", shortage: "新しい問題を追加する必要があります。", foldLabel: "折る", sideLabel: "位置", answerLabel: "形", success: "よくできました！" }
+};
+const ft = (key) => (flowText[lang] || flowText.ko)[key];
+const notifyHost = (type, extra = {}) => {
+  if (embedded) parent.postMessage({ type: `paper-fold:${type}`, id: problem()?.id, index: state.index, total: state.queue.length, ...extra }, location.origin);
+};
 
 function readJson(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key) || "") || fallback; } catch { return fallback; }
@@ -79,39 +93,37 @@ function readJson(key, fallback) {
 function idsToProblems(levelIndex, ids = []) {
   const byId = new Map(levels[levelIndex].problems.map((item) => [item.id, item]));
   const problems = ids.map((id) => byId.get(id)).filter(Boolean);
-  return problems.length === ids.length ? problems : [];
+  return problems.length === ids.length && new Set(problems.map(visualProblemKey)).size === problems.length ? problems : [];
 }
 
 function createChunk(levelIndex, count, excluded = new Set()) {
-  const pool = levels[levelIndex].problems;
-  const available = pool.filter((problem) => !excluded.has(problem.id));
-  const source = available.length >= count ? available : pool;
-  const groups = {
-    solo: shuffled(source.filter((problem) => problem.interaction !== "connect-match")),
-    "connect-match": shuffled(source.filter((problem) => problem.interaction === "connect-match"))
-  };
-  const pattern = ["solo", "connect-match", "solo", "solo", "connect-match", "solo", "solo", "connect-match", "solo", "connect-match"];
-  return Array.from({ length: count }, (_, index) => {
-    const kind = pattern[index % pattern.length];
-    return groups[kind].shift() || groups[kind === "solo" ? "connect-match" : "solo"].shift();
-  }).filter(Boolean);
+  const queue = sessionQueue(levels[levelIndex].problems, count, excluded, queueRandom);
+  const requestedOffset = Number(params.get("offset"));
+  const offset = Number.isInteger(requestedOffset) && requestedOffset >= 0 ? requestedOffset % queue.length : 0;
+  if (offset) return queue.slice(offset).concat(queue.slice(0, offset));
+  return params.get("order") === "reverse" ? queue.reverse() : queue;
 }
 
 const saved = readJson(progressKey, {});
 const requestedLevel = Math.max(1, Math.min(2, Number(params.get("level") || saved.level) || 1));
-const canRestore = !params.has("level") && Number(saved.level) === requestedLevel && Array.isArray(saved.queue);
+const canRestore = !embedded && !params.has("level") && !params.has("count") && Number(saved.level) === requestedLevel && Array.isArray(saved.queue);
 const restored = canRestore ? idsToProblems(requestedLevel - 1, saved.queue) : [];
-const initialQueue = restored.length >= CHUNK_SIZE
+const restoreReady = [CHUNK_SIZE, MAX_SESSION_SIZE].includes(restored.length);
+const initialQueue = restoreReady
   ? restored
   : createChunk(requestedLevel - 1, requestedCount);
 
 const state = {
   level: requestedLevel - 1,
   queue: initialQueue,
-  index: canRestore ? Math.max(0, Math.min(initialQueue.length - 1, Number(saved.index) || 0)) : 0,
+  index: restoreReady ? Math.max(0, Math.min(initialQueue.length - 1, Number(saved.index) || 0)) : 0,
   solved: false,
   busy: false,
   phase: 0,
+  foldPhase: 0,
+  generation: 0,
+  mistakes: 0,
+  excludedIds: restoreReady && Array.isArray(saved.excludedIds) ? saved.excludedIds.filter((id) => typeof id === "string") : [],
   selectedLeft: null,
   connections: new Map()
 };
@@ -200,15 +212,15 @@ function holeCircles(holes) {
   return holes.map((hole) => `<circle class="paper-hole" cx="${20 + hole.x * 160}" cy="${20 + hole.y * 160}" r="8"/>`).join("");
 }
 
-function markShapes(marks) {
+function markShapes(marks, removed = false) {
   return marks.map((mark) => {
-    if (mark.kind === "polygon") return `<polygon class="paper-cut-region" points="${points(mark.points)}"/>`;
+    if (mark.kind === "polygon") return `<polygon class="${removed ? "paper-removed-region" : "paper-cut-region"}"${removed ? ' fill="var(--cutout-fill, #fff)" stroke="#c65b77" stroke-width="1.5"' : ""} points="${points(mark.points)}"/>`;
     if (mark.shape === "circle") return `<circle class="paper-shape-hole" cx="${20 + mark.center.x * 160}" cy="${20 + mark.center.y * 160}" r="${mark.radius * 160}"/>`;
     return `<polygon class="paper-shape-hole" points="${points(punchVertices(mark))}"/>`;
   }).join("");
 }
 
-function paperSvg({ fold = null, polygon = null, segments = [], holes = [], marks = [], view = "open", label = "", marker = "arrow", showArrow = false, showScissors = false, layerCount = 1, touchStep = null, touchAction = "fold" }) {
+function paperSvg({ fold = null, polygon = null, segments = [], holes = [], marks = [], removed = false, view = "open", label = "", marker = "arrow", showArrow = false, showScissors = false, layerCount = 1, touchStep = null, touchAction = "fold" }) {
   const shape = polygon || (view === "folded" && fold ? foldedPolygon(fold) : null);
   const baseShape = shape || [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
   const clipId = `clip-${marker}`;
@@ -255,8 +267,8 @@ function paperSvg({ fold = null, polygon = null, segments = [], holes = [], mark
   const scissors = showScissors && cutAnchor ? `<text class="scissors" x="${20 + cutAnchor.x * 160 - 8}" y="${20 + cutAnchor.y * 160 - 6}">✂</text>` : "";
   const foldClass = fold ? ` fold-${fold.axis}-${fold.side}` : "";
   return `<svg class="paper-diagram view-${view}${touchStep ? " is-touchable" : ""}${foldClass}" data-touch-action="${touchAction}" data-fold-axis="${fold?.axis || touchStep?.axis || ""}" data-fold-side="${fold?.side || ""}" data-stack-depth="${stackDepth}" viewBox="0 0 200 200" role="${touchStep ? "group" : "img"}" aria-label="${label}">
-    <defs><clipPath id="${clipId}"><polygon points="${points(baseShape)}"/></clipPath><marker id="${marker}" markerWidth="7" markerHeight="7" refX="6.4" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L7 3.5 L0 7 Z"/></marker></defs>
-    ${paperShape}${markShapes(marks)}${crease}${movingFace}${foldArrow}${segmentLines(segments)}${holeCircles(holes)}${scissors}${touchZonesHtml(touchStep, clipId)}
+    <defs><clipPath id="${clipId}"><polygon points="${points(baseShape)}"/></clipPath><marker id="${marker}" markerWidth="11" markerHeight="11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L11 5.5 L0 11 Z"/></marker></defs>
+    ${paperShape}${markShapes(marks, removed)}${crease}${movingFace}${foldArrow}${segmentLines(segments)}${holeCircles(holes)}${scissors}${touchZonesHtml(touchStep, clipId)}
   </svg>`;
 }
 
@@ -272,102 +284,71 @@ function unfoldStage(p, activePhase, stages) {
   };
 }
 
-function unfoldFigureHtml(p, { reveal, activePhase, suffix, segments = null, holes = null, marks = null }) {
+function unfoldFigureHtml(p, { reveal, activePhase, suffix, segments = null, holes = null, marks = null, interactive = true }) {
   if (reveal) {
-    return `<figure class="result-step">${paperSvg({
+    return `<figure class="result-step" data-result-revealed="true">${paperSvg({
       polygon: p.stagePolygons[0],
       segments: segments?.at(-1) || [], holes: holes?.at(-1) || [], marks: marks?.at(-1) || [],
-      view: "result", label: t("result"), marker: `result-${suffix}`
+      removed: p.kind === "cut-regions", view: "result", label: t("result"), marker: `result-${suffix}`
     })}<figcaption>${segments || p.kind === "cut-regions" ? t("openedCuts") : t("result")}</figcaption></figure>`;
   }
   const current = unfoldStage(p, activePhase, segments || holes || marks);
-  return `<figure class="result-step paper-action-step">${paperSvg({
+  return `<figure class="result-step${interactive ? " paper-action-step" : ""}">${paperSvg({
     fold: current.step.displayFold, polygon: current.polygon,
     segments: segments ? current.marks : [], holes: holes ? current.marks : [], marks: marks ? current.marks : [],
     view: "result", label: t("unfoldStep", { step: current.phase + 1 }), marker: `unfold-${suffix}-${current.phase}`,
-    showArrow: true, layerCount: current.layerCount, touchStep: current.step, touchAction: "unfold"
+    removed: p.kind === "cut-regions", layerCount: current.layerCount, touchStep: interactive ? current.step : null, touchAction: "unfold"
   })}<figcaption>${t("unfoldStep", { step: current.phase + 1 })}</figcaption></figure>`;
 }
 
-function pieceSequenceHtml(p, reveal = false, activePhase = -1) {
+function learningSequenceHtml(p, reveal = false) {
   const suffix = p.id.replace(/[^a-z0-9]/gi, "");
-  if (p.folds.length > 1) {
-    return `<div class="fold-sequence-view four-step${reveal ? " revealing" : ""}">
-      <figure>${paperSvg({ fold: p.folds[0], polygon: p.stagePolygons[0], view: "open", label: t("firstFold"), marker: `first-${suffix}`, showArrow: true })}<figcaption>${t("firstFold")}</figcaption></figure>
-      <span class="step-arrow" aria-hidden="true">→</span>
-      <figure>${paperSvg({ fold: p.folds[1], polygon: p.stagePolygons[1], view: "stage", label: t("secondFold"), marker: `second-${suffix}`, showArrow: true, layerCount: 2 })}<figcaption>${t("secondFold")}</figcaption></figure>
-      <span class="step-arrow" aria-hidden="true">→</span>
-      <figure>${paperSvg({ polygon: p.stagePolygons[2], segments: p.cutSegments, view: "folded", label: t("cutPaper"), marker: `cut-${suffix}`, showScissors: true, layerCount: 4 })}<figcaption>${t("cutPaper")}</figcaption></figure>
-      <span class="step-arrow" aria-hidden="true">→</span>
-      ${unfoldFigureHtml(p, { reveal, activePhase, suffix, segments: p.segmentStages })}
-    </div>`;
-  }
-  return `<div class="fold-sequence-view${reveal ? " revealing" : ""}">
-    <figure>${paperSvg({ fold: p.fold, view: "open", label: t("openPaper"), marker: `fold-${suffix}`, showArrow: true })}<figcaption>${t("openPaper")}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    <figure>${paperSvg({ fold: p.fold, segments: p.cutSegments, view: "folded", label: t("cutPaper"), marker: `cut-${suffix}`, showScissors: true, layerCount: 2 })}<figcaption>${t("cutPaper")}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    ${unfoldFigureHtml(p, { reveal, activePhase, suffix, segments: p.segmentStages })}
-  </div>`;
+  const folding = !reveal && state.foldPhase < p.folds.length;
+  const pending = (label, result = false) => `<figure class="pending-step${result ? " result-step" : ""}"><div class="result-question" aria-label="${t("question")}">?</div><figcaption>${label}</figcaption></figure>`;
+  const figures = p.folds.map((fold, index) => {
+    const label = p.folds.length === 1 ? t("openPaper") : t(index === 0 ? "firstFold" : "secondFold");
+    if (folding && index > state.foldPhase) return pending(label);
+    const active = folding && index === state.foldPhase;
+    const touchStep = active ? { axis: fold.axis, choices: [fold.side, fold.target], answer: fold.side } : null;
+    return `<figure class="fold-start${active ? " paper-action-step" : ""}">${paperSvg({
+      fold, polygon: p.stagePolygons[index], view: "open", label,
+      marker: `fold-${suffix}-${index}`, showArrow: true, layerCount: 2 ** index, touchStep
+    })}<figcaption>${label}</figcaption></figure>`;
+  });
+  const cutLabel = p.kind === "cut-regions" ? ft("cut") : p.kind === "pieces" ? t("cutPaper") : t("punchPaper");
+  figures.push(folding ? pending(cutLabel) : `<figure class="cut-step">${paperSvg({
+    polygon: p.stagePolygons.at(-1), view: "folded", label: cutLabel,
+    marker: `cut-${suffix}`, layerCount: 2 ** p.folds.length,
+    segments: p.cutSegments || [], holes: p.pointStages ? p.punches : [],
+    marks: p.cutMarks || (p.markStages ? p.punches : []) || [],
+    showScissors: p.kind === "cut-regions" || p.kind === "pieces"
+  })}<figcaption>${cutLabel}</figcaption></figure>`);
+  const canShowResult = reveal || (!p.resultChoices && p.interaction !== "hole-result" && state.phase >= p.unfoldSteps.length);
+  figures.push(folding ? pending(t("result"), true) : unfoldFigureHtml(p, {
+    reveal: canShowResult, activePhase: Math.min(state.phase, p.unfoldSteps.length - 1), suffix,
+    segments: p.segmentStages, holes: p.pointStages, marks: p.markStages,
+    interactive: !reveal && state.phase < p.unfoldSteps.length
+  }));
+  return `<div class="fold-sequence-view learning-sequence${p.folds.length > 1 ? " four-step" : ""}${reveal ? " revealing" : ""}" data-learning-stage="${reveal ? "solved" : folding ? "fold" : state.phase < p.unfoldSteps.length ? "side" : "answer"}">${figures.join('<span class="step-arrow" aria-hidden="true">→</span>')}</div>`;
 }
 
-function singleHoleSequenceHtml(p, reveal = false, activePhase = -1) {
-  const suffix = p.id.replace(/[^a-z0-9]/gi, "");
-  return `<div class="fold-sequence-view${reveal ? " revealing" : ""}">
-    <figure>${paperSvg({ fold: p.fold, view: "open", label: t("openPaper"), marker: `fold-${suffix}`, showArrow: true })}<figcaption>${t("openPaper")}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    <figure>${paperSvg({ fold: p.fold, holes: p.punches, view: "folded", label: t("punchPaper"), marker: `punch-${suffix}`, layerCount: 2 })}<figcaption>${t("punchPaper")}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    ${unfoldFigureHtml(p, { reveal, activePhase, suffix, holes: p.pointStages })}
-  </div>`;
+function choiceOrder(choices, id) {
+  return shuffle(choices, seededRandom(`${sessionSeed}:${params.get("player") || "solo"}:${id}`));
 }
 
-function doubleHoleSequenceHtml(p, reveal = false, activePhase = -1) {
-  const suffix = p.id.replace(/[^a-z0-9]/gi, "");
-  return `<div class="fold-sequence-view four-step${reveal ? " revealing" : ""}">
-    <figure>${paperSvg({ fold: p.folds[0], polygon: p.stagePolygons[0], view: "open", label: t("firstFold"), marker: `first-${suffix}`, showArrow: true })}<figcaption>${t("firstFold")}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    <figure>${paperSvg({ fold: p.folds[1], polygon: p.stagePolygons[1], view: "stage", label: t("secondFold"), marker: `second-${suffix}`, showArrow: true, layerCount: 2 })}<figcaption>${t("secondFold")}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    <figure>${paperSvg({ polygon: p.stagePolygons[2], holes: p.punches, view: "folded", label: t("punchPaper"), marker: `punch-${suffix}`, layerCount: 4 })}<figcaption>${t("punchPaper")}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    ${unfoldFigureHtml(p, { reveal, activePhase, suffix, holes: p.pointStages })}
-  </div>`;
-}
-
-function markSequenceHtml(p, reveal = false, activePhase = -1) {
-  const suffix = p.id.replace(/[^a-z0-9]/gi, "");
-  const authoredMarks = p.kind === "cut-regions" ? p.cutMarks : p.punches;
-  const actionLabel = p.kind === "cut-regions"
-    ? local({ ko: "색칠한 부분 잘라내기", zh: "剪去涂色部分", ja: "色の部分を切り取る", en: "Cut the colored area" })
-    : t("punchPaper");
-  const showScissors = p.kind === "cut-regions";
-  if (p.folds.length > 1) {
-    return `<div class="fold-sequence-view four-step${reveal ? " revealing" : ""}">
-      <figure>${paperSvg({ fold: p.folds[0], polygon: p.stagePolygons[0], view: "open", label: t("firstFold"), marker: `first-${suffix}`, showArrow: true })}<figcaption>${t("firstFold")}</figcaption></figure>
-      <span class="step-arrow" aria-hidden="true">→</span>
-      <figure>${paperSvg({ fold: p.folds[1], polygon: p.stagePolygons[1], view: "stage", label: t("secondFold"), marker: `second-${suffix}`, showArrow: true, layerCount: 2 })}<figcaption>${t("secondFold")}</figcaption></figure>
-      <span class="step-arrow" aria-hidden="true">→</span>
-      <figure>${paperSvg({ polygon: p.stagePolygons[2], marks: authoredMarks, view: "folded", label: actionLabel, marker: `mark-${suffix}`, showScissors, layerCount: 4 })}<figcaption>${actionLabel}</figcaption></figure>
-      <span class="step-arrow" aria-hidden="true">→</span>
-      ${unfoldFigureHtml(p, { reveal, activePhase, suffix, marks: p.markStages })}
-    </div>`;
-  }
-  return `<div class="fold-sequence-view${reveal ? " revealing" : ""}">
-    <figure>${paperSvg({ fold: p.fold, view: "open", label: t("openPaper"), marker: `fold-${suffix}`, showArrow: true })}<figcaption>${t("openPaper")}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    <figure>${paperSvg({ fold: p.fold, marks: authoredMarks, view: "folded", label: actionLabel, marker: `mark-${suffix}`, showScissors, layerCount: 2 })}<figcaption>${actionLabel}</figcaption></figure>
-    <span class="step-arrow" aria-hidden="true">→</span>
-    ${unfoldFigureHtml(p, { reveal, activePhase, suffix, marks: p.markStages })}
-  </div>`;
+function patternChoicesHtml(p) {
+  return `<div class="result-choices">${choiceOrder(p.resultChoices, p.id).map((choice, index) => `<button class="result-choice pattern-choice" type="button" data-choice="${choice.key}" aria-label="${t("choiceLabel", { label: index + 1 })}"><b>${index + 1}</b>${paperSvg({
+    marks: choice.marks, removed: p.kind === "cut-regions", view: "result",
+    label: t("choiceLabel", { label: index + 1 }), marker: `choice-${p.id}-${index}`
+  })}</button>`).join("")}</div>`;
 }
 
 function numberChoicesHtml(p) {
-  return `<div class="number-choices">${p.choices.map((choice, index) => `<button class="number-choice" type="button" data-choice="${choice.key}"><b>${index + 1}</b><strong>${choice.value}</strong><span>${t(p.kind === "pieces" ? "piecesUnit" : "holesUnit")}</span></button>`).join("")}</div>`;
+  return `<div class="number-choices">${choiceOrder(p.choices, p.id).map((choice, index) => `<button class="number-choice" type="button" data-choice="${choice.key}"><b>${index + 1}</b><strong>${choice.value}</strong><span>${t(p.kind === "pieces" ? "piecesUnit" : "holesUnit")}</span></button>`).join("")}</div>`;
 }
 
 function holeChoicesHtml(p) {
-  return `<div class="result-choices">${p.choices.map((choice, index) => `<button class="result-choice hole-result-choice" type="button" data-choice="${choice.key}" aria-label="${t("choiceLabel", { label: index + 1 })}"><b>${index + 1}</b>${paperSvg({ holes: choice.points, view: "result", label: t("choiceLabel", { label: index + 1 }), marker: `choice-${p.id}-${index}` })}</button>`).join("")}</div>`;
+  return `<div class="result-choices">${choiceOrder(p.choices, p.id).map((choice, index) => `<button class="result-choice hole-result-choice" type="button" data-choice="${choice.key}" aria-label="${t("choiceLabel", { label: index + 1 })}"><b>${index + 1}</b>${paperSvg({ holes: choice.points, view: "result", label: t("choiceLabel", { label: index + 1 }), marker: `choice-${p.id}-${index}` })}</button>`).join("")}</div>`;
 }
 
 function specimenSvg(item, view, marker) {
@@ -391,7 +372,7 @@ function connectBoardHtml(p) {
   return `<div class="connect-board" id="connectBoard">
     <svg class="connection-lines" id="connectionLines" aria-hidden="true"></svg>
     <div class="connect-column folded-column">${p.pairs.map((item, index) => `<button type="button" class="connect-card folded-card" data-left="${item.key}" aria-label="${t("foldedLabel", { label: index + 1 })}"><b>${index + 1}</b>${specimenSvg(item, "folded", `left-${p.id}-${index}`)}</button>`).join("")}</div>
-    <div class="connect-column result-column">${p.results.map((item, index) => `<button type="button" class="connect-card result-card" data-right="${item.key}" aria-label="${t("resultLabel", { label: index + 1 })}"><b>${String.fromCharCode(65 + index)}</b>${specimenSvg(item, "result", `right-${p.id}-${index}`)}</button>`).join("")}</div>
+    <div class="connect-column result-column">${choiceOrder(p.results, p.id).map((item, index) => `<button type="button" class="connect-card result-card" data-right="${item.key}" aria-label="${t("resultLabel", { label: index + 1 })}"><b>${String.fromCharCode(65 + index)}</b>${specimenSvg(item, "result", `right-${p.id}-${index}`)}</button>`).join("")}</div>
   </div>`;
 }
 
@@ -429,14 +410,18 @@ function toast(message) {
 }
 
 function save() {
-  localStorage.setItem(progressKey, JSON.stringify({ level: state.level + 1, index: state.index, queue: state.queue.map((item) => item.id) }));
+  if (embedded) return;
+  localStorage.setItem(progressKey, JSON.stringify({ level: state.level + 1, index: state.index, queue: state.queue.map((item) => item.id), excludedIds: state.excludedIds }));
   saveGameProgress("paperFold", { level: state.level + 1, problemIndex: state.index, queue: state.queue.map((item) => item.id) });
 }
 
 function resetProblem() {
+  state.generation += 1;
   state.solved = false;
   state.busy = false;
   state.phase = 0;
+  state.foldPhase = 0;
+  state.mistakes = 0;
   state.selectedLeft = null;
   state.connections = new Map();
 }
@@ -460,26 +445,36 @@ function bindPaperTouchZones() {
 function renderSoloPhase() {
   const p = problem();
   const unfoldSteps = p.unfoldSteps || [];
+  const folding = state.foldPhase < p.folds.length;
   const unfolding = state.phase < unfoldSteps.length;
 
-  if (p.interaction === "piece-count") ui.paper.innerHTML = pieceSequenceHtml(p, !unfolding, unfolding ? state.phase : -1);
-  else if (p.interaction === "hole-count") ui.paper.innerHTML = singleHoleSequenceHtml(p, !unfolding, unfolding ? state.phase : -1);
-  else if (p.interaction === "hole-result") ui.paper.innerHTML = doubleHoleSequenceHtml(p, !unfolding, unfolding ? state.phase : -1);
-  else ui.paper.innerHTML = markSequenceHtml(p, !unfolding, unfolding ? state.phase : -1);
+  ui.paper.innerHTML = learningSequenceHtml(p);
+
+  if (folding) {
+    setDirectTouchMode(true);
+    ui.prompt.textContent = ft("fold");
+    ui.answerPrompt.textContent = ft("fold");
+    ui.interaction.innerHTML = "";
+    bindPaperTouchZones();
+    return;
+  }
 
   if (unfolding) {
     setDirectTouchMode(true);
-    const prompt = t("unfoldSidePrompt", { step: state.phase + 1, total: unfoldSteps.length });
+    const prompt = p.kind === "cut-regions" && p.folds.length === 1 ? ft("side") : t("unfoldSidePrompt", { step: state.phase + 1, total: unfoldSteps.length });
     ui.prompt.textContent = prompt;
     ui.answerPrompt.textContent = prompt;
-    ui.interaction.innerHTML = `<p class="touch-instruction">${t("touchUnfoldPrompt")}</p>`;
+    ui.interaction.innerHTML = "";
     bindPaperTouchZones();
     return;
   }
 
   setDirectTouchMode(false);
-  ui.prompt.textContent = t(p.interaction === "piece-count" ? "countPiecesPrompt" : p.interaction === "hole-count" ? "countHolesPrompt" : "holeResultPrompt");
-  if (p.interaction === "piece-count" || p.interaction === "hole-count") {
+  ui.prompt.textContent = p.resultChoices ? ft(p.kind === "cut-regions" ? "pattern" : "holes") : t(p.interaction === "piece-count" ? "countPiecesPrompt" : p.interaction === "hole-count" ? "countHolesPrompt" : "holeResultPrompt");
+  if (p.resultChoices) {
+    ui.answerPrompt.textContent = ui.prompt.textContent;
+    ui.interaction.innerHTML = patternChoicesHtml(p);
+  } else if (p.interaction === "piece-count" || p.interaction === "hole-count") {
     ui.answerPrompt.textContent = t(p.interaction === "piece-count" ? "countPiecesPrompt" : "countHolesPrompt");
     ui.interaction.innerHTML = numberChoicesHtml(p);
   } else {
@@ -511,6 +506,8 @@ function renderProblem() {
       ? local({ ko: "두 번 접은 색종이", zh: "折叠两次的彩纸", ja: "二回折った色紙", en: "Paper folded twice" })
       : t("foldedPaper");
   ui.paper.className = `paper activity-${p.interaction}`;
+  ui.paper.dataset.problemId = p.id;
+  ui.paper.dataset.problemIndex = state.index;
   ui.next.hidden = true;
   ui.next.textContent = t("next");
   ui.interaction.replaceChildren();
@@ -523,34 +520,37 @@ function renderProblem() {
     requestAnimationFrame(renderConnections);
   } else renderSoloPhase();
   save();
+  notifyHost("ready");
 }
 
 async function solve() {
+  const generation = state.generation;
   state.solved = true;
   state.busy = true;
   setDirectTouchMode(false);
   ui.next.hidden = false;
   ui.paper.classList.add("is-solved");
-  if (problem().interaction === "piece-count") ui.paper.innerHTML = pieceSequenceHtml(problem(), true);
-  else if (problem().interaction === "hole-count") ui.paper.innerHTML = singleHoleSequenceHtml(problem(), true);
-  else if (problem().interaction === "hole-result") ui.paper.innerHTML = doubleHoleSequenceHtml(problem(), true);
-  else if (problem().interaction === "region-unfold" || problem().interaction === "mixed-hole-result") ui.paper.innerHTML = markSequenceHtml(problem(), true);
+  if (problem().interaction !== "connect-match") ui.paper.innerHTML = learningSequenceHtml(problem(), true);
   ui.success.classList.remove("show");
   requestAnimationFrame(() => ui.success.classList.add("show"));
   setGuide(t("correct"));
   ui.status.textContent = t("correct");
   await new Promise((resolve) => setTimeout(resolve, 620));
+  if (generation !== state.generation) return;
   state.busy = false;
+  notifyHost("solved", { mistakes: state.mistakes });
   ui.next.focus();
 }
 
 function checkChoice(button) {
   if (state.solved || state.busy) return;
-  if (button.dataset.choice === problem().answer) {
+  if (button.dataset.choice === (problem().resultAnswer || problem().answer)) {
+    ui.toast.classList.remove("show");
     button.classList.add("correct");
     ui.interaction.querySelectorAll("button").forEach((item) => { item.disabled = true; });
     solve();
   } else {
+    state.mistakes += 1;
     button.classList.add("wrong");
     toast(t("wrong"));
     setTimeout(() => button.classList.remove("wrong"), 480);
@@ -559,21 +559,26 @@ function checkChoice(button) {
 
 function checkSide(zone) {
   if (state.solved || state.busy) return;
-  const step = problem().unfoldSteps[state.phase];
+  const generation = state.generation;
+  const folding = state.foldPhase < problem().folds.length;
+  const step = folding ? { answer: problem().folds[state.foldPhase].side } : problem().unfoldSteps[state.phase];
   const figure = zone.closest("figure");
   const diagram = zone.closest(".paper-diagram");
   if (zone.dataset.side === step.answer) {
+    ui.toast.classList.remove("show");
     state.busy = true;
     zone.classList.add("correct");
     figure?.classList.add("touch-correct");
     diagram?.classList.add("touch-correct");
     setTimeout(() => {
-      state.phase += 1;
+      if (generation !== state.generation) return;
+      if (folding) state.foldPhase += 1;
+      else state.phase += 1;
       state.busy = false;
-      if (state.phase >= problem().unfoldSteps.length && (problem().completeOnUnfold || problem().interaction === "hole-result")) solve();
-      else renderSoloPhase();
+      renderSoloPhase();
     }, 420);
   } else {
+    state.mistakes += 1;
     zone.classList.add("wrong");
     figure?.classList.add("touch-wrong");
     toast(t("wrong"));
@@ -608,12 +613,14 @@ function selectRight(button) {
 
 function checkConnections() {
   if (state.solved || state.connections.size !== 3) return;
+  const generation = state.generation;
   const wrong = [...state.connections].filter(([left, right]) => problem().answer[left] !== right);
   if (!wrong.length) {
     ui.paper.querySelectorAll("button").forEach((button) => { button.disabled = true; });
     solve();
     return;
   }
+  state.mistakes += 1;
   state.busy = true;
   wrong.forEach(([left]) => {
     ui.paper.querySelector(`[data-left="${left}"]`)?.classList.add("wrong");
@@ -622,6 +629,7 @@ function checkConnections() {
   });
   toast(t("wrong"));
   setTimeout(() => {
+    if (generation !== state.generation) return;
     ui.paper.querySelectorAll(".wrong").forEach((item) => item.classList.remove("wrong"));
     renderConnections();
     state.busy = false;
@@ -636,12 +644,16 @@ function rememberQueue() {
 }
 
 function showComplete() {
+  notifyHost("complete");
+  if (embedded) return;
   rememberQueue();
-  const canContinue = state.queue.length < MAX_SESSION_SIZE;
-  $("#completeTitle").textContent = t(canContinue ? "complete10" : "complete20");
-  $("#completeText").textContent = t(canContinue ? "completeText10" : "completeText20");
+  const hasNew = availableProblems(level().problems, currentExclusions()).length >= CHUNK_SIZE;
+  const canContinue = state.queue.length < MAX_SESSION_SIZE && hasNew;
+  $("#completeTitle").textContent = t(state.queue.length === CHUNK_SIZE ? "complete10" : "complete20");
+  $("#completeText").textContent = hasNew ? t(state.queue.length === CHUNK_SIZE ? "completeText10" : "completeText20") : ft("shortage");
   $("#nextLevelButton").textContent = t(canContinue ? "continue10" : "otherType");
   $("#practiceButton").textContent = t("new10");
+  $("#practiceButton").hidden = !hasNew;
   ui.complete.querySelector("a").textContent = t("finish");
   ui.complete.hidden = false;
 }
@@ -654,12 +666,16 @@ function nextProblem() {
   } else showComplete();
 }
 
+function currentExclusions() {
+  return new Set([...state.excludedIds, ...state.queue.map((item) => item.id)]);
+}
+
 function continueTen() {
-  if (state.queue.length >= MAX_SESSION_SIZE) {
+  if (state.queue.length >= MAX_SESSION_SIZE || availableProblems(level().problems, currentExclusions()).length < CHUNK_SIZE) {
     selectLevel(state.level === 0 ? 1 : 0);
     return;
   }
-  const excluded = new Set(state.queue.map((item) => item.id));
+  const excluded = currentExclusions();
   state.queue.push(...createChunk(state.level, CHUNK_SIZE, excluded));
   state.index += 1;
   ui.complete.hidden = true;
@@ -667,7 +683,13 @@ function continueTen() {
 }
 
 function newTen() {
-  state.queue = createChunk(state.level, CHUNK_SIZE, new Set(state.queue.map((item) => item.id)));
+  const excluded = currentExclusions();
+  if (availableProblems(level().problems, excluded).length < CHUNK_SIZE) {
+    toast(ft("shortage"));
+    return;
+  }
+  state.queue = createChunk(state.level, CHUNK_SIZE, excluded);
+  state.excludedIds = [...excluded];
   state.index = 0;
   ui.complete.hidden = true;
   renderProblem();
@@ -675,12 +697,14 @@ function newTen() {
 
 function selectLevel(index) {
   state.level = Math.max(0, Math.min(1, index));
+  state.excludedIds = [];
   state.queue = createChunk(state.level, requestedCount);
   state.index = 0;
   ui.levelDialog.hidden = true;
   ui.complete.hidden = true;
   history.replaceState({}, "", `?level=${state.level + 1}`);
   renderProblem();
+  applyLabels();
 }
 
 function renderLevelDialog() {
@@ -693,16 +717,29 @@ function renderLevelDialog() {
 
 function applyLabels() {
   $(".exit").setAttribute("aria-label", t("back"));
+  $(".exit").innerHTML = icon("back");
   $("#levelButton").textContent = t("type");
-  $("#hintButton").textContent = t("hint");
-  $("#retryButton").textContent = t("retry");
-  $(".tool-panel a").textContent = t("worksheet");
+  for (const [selector, name, label] of [["#hintButton", "hint", "hint"], ["#retryButton", "retry", "retry"], [".tool-panel a", "book", "worksheet"]]) {
+    const control = $(selector);
+    control.innerHTML = icon(name);
+    control.title = t(label);
+    control.setAttribute("aria-label", t(label));
+  }
+  $("#success strong").textContent = ft("success");
+  $("#togetherLink").textContent = ft("together");
+  $("#battleLink").textContent = ft("battle");
+  $("#togetherLink").href = `./play.html?mode=together&level=${state.level + 1}`;
+  $("#battleLink").href = `./play.html?mode=battle&level=${state.level + 1}`;
 }
 
 ui.next.addEventListener("click", nextProblem);
 $("#retryButton").addEventListener("click", renderProblem);
 $("#hintButton").addEventListener("click", () => {
   const current = problem();
+  if (current.interaction !== "connect-match" && state.foldPhase < current.folds.length) {
+    setGuide(ft("fold"));
+    return;
+  }
   if (current.interaction === "connect-match") {
     setGuide(t(level().strand === "fold-and-punch" ? "hintHoleConnect" : "hintConnect"));
     return;
@@ -726,5 +763,13 @@ $("#practiceButton").addEventListener("click", newTen);
 addEventListener("resize", () => { if (problem()?.interaction === "connect-match") renderConnections(); });
 
 renderLevelDialog();
+document.body.classList.toggle("embedded", embedded);
+document.body.classList.toggle("together-frame", embedded && params.get("mode") === "together");
+if (embedded) {
+  addEventListener("message", (event) => {
+    if (event.origin !== location.origin || event.source !== parent || event.data?.type !== "paper-fold:next") return;
+    nextProblem();
+  });
+}
 applyLabels();
 renderProblem();

@@ -1,4 +1,4 @@
-import { levels as foldLevels } from "../games/paper-fold/levels.js?v=paper-fold-12";
+import { levels as foldLevels } from "../games/paper-fold/levels.js?v=paper-fold-13";
 import { levels as turnLevels } from "../games/paper-turn/levels.js?v=paper-turn-1";
 import { readProfile } from "../shared/profile-storage.js";
 
