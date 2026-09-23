@@ -1,12 +1,15 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { levels, validateLevels, reflectPoint, foldedPolygon } from "./levels.js";
+import { patternKey } from "./pattern-choices.js";
+import { createPolygonMark } from "./mark-geometry.js";
+import { seededRandom, sessionQueue, visualProblemKey } from "./session-order.js";
 
 validateLevels();
 
 assert.equal(levels.length, 2);
 assert.deepEqual(levels.map((level) => level.title.ko), ["색종이 접어 자르기", "색종이 접어 구멍 뚫기"]);
-assert.ok(levels.every((level) => level.problems.length === 36));
+assert.deepEqual(levels.map((level) => level.problems.length), [52, 36]);
 
 const expectedInteractions = [
   new Set(["piece-count", "region-unfold", "connect-match"]),
@@ -71,6 +74,24 @@ levels.forEach((level, levelIndex) => {
     }
 
     const specimen = problem.interaction === "connect-match" ? problem.pairs[0] : problem;
+    for (const sample of problem.pairs || [problem]) {
+      if (!sample.pointStages) continue;
+      sample.pointStages.forEach((stage, index) => {
+        const polygon = sample.stagePolygons[sample.folds.length - index];
+        const signed = polygon.reduce((sum, a, n) => {
+          const b = polygon[(n + 1) % polygon.length];
+          return sum + a.x * b.y - b.x * a.y;
+        }, 0);
+        for (const hole of stage) {
+          polygon.forEach((a, n) => {
+            const b = polygon[(n + 1) % polygon.length];
+            const distance = Math.sign(signed) * ((b.x - a.x) * (hole.y - a.y) - (b.y - a.y) * (hole.x - a.x)) / Math.hypot(b.x - a.x, b.y - a.y);
+            assert.ok(distance >= .05 - 1e-8, `hole crosses paper edge: ${problem.id} stage ${index}`);
+          });
+        }
+        stage.forEach((a, n) => stage.slice(n + 1).forEach((b) => assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= .1 - 1e-8, `overlapping holes: ${problem.id}`)));
+      });
+    }
     if (specimen.folds.length === 1) {
       const computed = specimen.stagePolygons.at(-1).map(({ x, y }) => `${x},${y}`).sort();
       const displayed = foldedPolygon(specimen.fold).map(({ x, y }) => `${x},${y}`).sort();
@@ -84,7 +105,43 @@ levels.forEach((level, levelIndex) => {
   });
 });
 
-assert.equal(ids.size, 72);
+assert.equal(ids.size, 88);
+
+const reflectIndependent = ({ x, y }, axis) => ({
+  vertical: { x: 1 - x, y }, horizontal: { x, y: 1 - y },
+  "diag-main": { x: y, y: x }, "diag-anti": { x: 1 - y, y: 1 - x }
+})[axis];
+const cutProblems = levels[0].problems.filter((item) => item.resultChoices);
+for (const item of cutProblems) {
+  let expected = item.cutMarks;
+  for (const fold of [...item.folds].reverse()) expected = [...expected, ...expected.map((mark) => createPolygonMark(mark.points.map((p) => reflectIndependent(p, fold.axis))))];
+  assert.equal(patternKey(item.markStages.at(-1)), patternKey(expected), `independent reflection ${item.id}`);
+  assert.equal(new Set(item.resultChoices.map((choice) => patternKey(choice.marks))).size, 3);
+  assert.equal(item.resultChoices.filter((choice) => patternKey(choice.marks) === patternKey(expected)).length, 1);
+}
+const oneFold = cutProblems.filter((p) => p.id.startsWith("paper-one-fold-pattern-"));
+assert.equal(oneFold.length, 16);
+assert.equal(new Set(oneFold.map((p) => JSON.stringify(p.folds) + patternKey(p.cutMarks))).size, 16);
+for (const course of levels) {
+  for (let seed = 0; seed < 30; seed += 1) {
+    for (const count of [10, 20]) {
+      const a = sessionQueue(course.problems, count, new Set(), seededRandom(seed));
+      const b = sessionQueue(course.problems, count, new Set(), seededRandom(seed)).reverse();
+      assert.equal(new Set(a.map((p) => p.id)).size, count);
+      assert.equal(new Set(a.map(visualProblemKey)).size, count);
+      assert.ok(a.every((p, index) => visualProblemKey(p) !== visualProblemKey(b[index])), "battle order has a same-position problem");
+      assert.deepEqual(a.map((p) => p.id).sort(), b.map((p) => p.id).sort());
+      for (const players of [2, 3, 4]) {
+        const queues = Array.from({ length: players }, (_, index) => {
+          const offset = index * Math.floor(count / players);
+          return a.slice(offset).concat(a.slice(0, offset));
+        });
+        for (let index = 0; index < count; index += 1) assert.equal(new Set(queues.map((queue) => visualProblemKey(queue[index]))).size, players);
+      }
+    }
+  }
+  assert.throws(() => sessionQueue(course.problems, 10, new Set(course.problems.map((p) => p.id))), /POOL_EXHAUSTED/);
+}
 
 const coverage = await readFile(new URL("../../docs/25_PAPER_FOLD_SOURCE_COVERAGE.md", import.meta.url), "utf8");
 const coverageIds = new Set([...coverage.matchAll(/\| (PF-[ABC]\d{2}) \|/g)].map((match) => match[1]));
@@ -95,4 +152,4 @@ const expectedCoverageIds = [
 ];
 assert.deepEqual([...coverageIds].sort(), expectedCoverageIds.sort(), "the 33-source coverage matrix is incomplete");
 
-console.log("Paper Fold self-test passed: 33 source pages, 2 current courses, 72 problems, reverse-unfold stages, counts, and matching verified.");
+console.log("Paper Fold self-test passed: 33 source pages, 88 problems, independent reflections, unique choices and 2/3/4-player orders across 120 seeded sets.");

@@ -1,4 +1,5 @@
 import { createPolygonMark, createPunchMark, unfoldMarkStages } from "./mark-geometry.js";
+import { buildPatternChoices, patternKey } from "./pattern-choices.js";
 
 const translations = (ko, zh, ja, en) => ({ ko, zh, ja, en });
 
@@ -311,9 +312,11 @@ function regionCutSpec(folds, index) {
     center.y + (item.y - center.y) * scale
   )))];
   const markStages = unfoldMarkStages(cutMarks, folds).map((stage) => stage.marks);
+  const resultChoices = buildPatternChoices(markStages.at(-1), index % 3);
   return {
     kind: "cut-regions", fold: folds[0], folds, stagePolygons,
-    cutMarks, markStages, unfoldSteps: reverseUnfoldSteps(folds), completeOnUnfold: true
+    cutMarks, markStages, unfoldSteps: reverseUnfoldSteps(folds), completeOnUnfold: true,
+    resultChoices, resultAnswer: resultChoices.find((choice) => choice.correct).key
   };
 }
 
@@ -325,6 +328,17 @@ function bounds(polygon) {
 }
 
 function punchPoints(finalPolygon, index, count = 1) {
+  if (finalPolygon.length === 3) {
+    const inset = Math.floor(index / 3) % 2 ? .21 : .18;
+    return Array.from({ length: count }, (_, offset) => {
+      const corner = (index + offset) % 3;
+      const weights = finalPolygon.map((_, vertex) => vertex === corner ? 1 - inset * 2 : inset);
+      return point(
+        finalPolygon.reduce((sum, p, vertex) => sum + p.x * weights[vertex], 0),
+        finalPolygon.reduce((sum, p, vertex) => sum + p.y * weights[vertex], 0)
+      );
+    });
+  }
   const { minX, maxX, minY, maxY } = bounds(finalPolygon);
   const ratios = [[.24, .27], [.70, .25], [.28, .72], [.72, .68], [.42, .38], [.62, .58]];
   return Array.from({ length: count }, (_, offset) => {
@@ -388,9 +402,11 @@ function mixedHoleSpec(folds, index) {
     createPunchMark("triangle", point(minX + width * .68, minY + height * .68), { radius, angle: (index % 3) * Math.PI / 3 })
   ];
   const markStages = unfoldMarkStages(punches, folds).map((stage) => stage.marks);
+  const resultChoices = buildPatternChoices(markStages.at(-1), index % 3);
   return {
     kind: "mixed-holes", folds, stagePolygons, punches,
-    markStages, unfoldSteps: reverseUnfoldSteps(folds), completeOnUnfold: true
+    markStages, unfoldSteps: reverseUnfoldSteps(folds), completeOnUnfold: true,
+    resultChoices, resultAnswer: resultChoices.find((choice) => choice.correct).key
   };
 }
 
@@ -462,7 +478,15 @@ function levelTwoProblem(index) {
 
 export const levels = levelMeta.map((meta) => ({
   ...meta,
-  problems: Array.from({ length: 36 }, (_, index) => meta.id === 1 ? levelOneProblem(index) : levelTwoProblem(index))
+  problems: [
+    ...(meta.id === 1 ? SINGLE_FOLDS.flatMap((foldSpec, index) => [0, 1].map((variant) => ({
+      id: `paper-one-fold-pattern-${index + 1}-${variant + 1}`, level: 1, interaction: "region-unfold",
+      ...regionCutSpec([foldSpec], index + variant * 5),
+      sourceRef: "user-reference.paper-fold.colored-region-unfold",
+      sourceAuditRefs: ["PF-A11", "PF-A12"], sourceCoverage: "partial"
+    }))) : []),
+    ...Array.from({ length: 36 }, (_, index) => meta.id === 1 ? levelOneProblem(index) : levelTwoProblem(index))
+  ]
 }));
 
 const pointsInPaper = (points) => points.every(({ x, y }) => x >= 0 && x <= 1 && y >= 0 && y <= 1);
@@ -471,7 +495,7 @@ export function validateLevels() {
   if (levels.length !== 2) throw new Error("Paper fold must have exactly two content types.");
   const ids = new Set();
   levels.forEach((level) => {
-    if (level.problems.length !== 36) throw new Error(`Expected 36 problems for ${level.id}`);
+    if (level.problems.length !== (level.id === 1 ? 52 : 36)) throw new Error(`Unexpected problem count for ${level.id}`);
     level.problems.forEach((problem) => {
       if (ids.has(problem.id)) throw new Error(`Duplicate paper-fold id: ${problem.id}`);
       ids.add(problem.id);
@@ -494,6 +518,11 @@ export function validateLevels() {
         if (level.strand === "fold-and-punch" && problem.pairs.some((item) => !item.kind.includes("holes"))) throw new Error(`Hole matching contains a non-hole item: ${problem.id}`);
       } else throw new Error(`Unknown interaction: ${problem.id}`);
       if (problem.choices && (problem.choices.length !== 3 || !problem.choices.some((choice) => choice.key === problem.answer))) throw new Error(`Invalid choices: ${problem.id}`);
+      if (problem.resultChoices) {
+        const keys = problem.resultChoices.map((choice) => patternKey(choice.marks));
+        const correct = problem.resultChoices.filter((choice) => patternKey(choice.marks) === patternKey(problem.markStages.at(-1)));
+        if (new Set(keys).size !== 3 || correct.length !== 1 || correct[0].key !== problem.resultAnswer) throw new Error(`Ambiguous result choices: ${problem.id}`);
+      }
     });
   });
   return true;
