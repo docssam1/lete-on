@@ -4,10 +4,11 @@ const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),challenge=path.join(root,'challenge');
 const browserPath=process.env.HF_PLAYWRIGHT_EXECUTABLE_PATH;
 const variants=require('../challenge/variant-provider.js'),diagnosis=require('../challenge/diagnosis-core.js');
+const taxonomy=require('../challenge/challenge-taxonomy.js'),conceptGuide=require('../challenge/concept-guide.js');
 const contentVersion=process.env.HF_CHALLENGE_CONTENT_VERSION||'challenge-'+new Date().toISOString().replace(/[^0-9]/g,'');
 if(!/^challenge-[0-9]{17}$/.test(contentVersion))throw Error('Invalid challenge content version');
 const out=path.join(root,'output/private-challenge',contentVersion),publicOut=path.join(out,'public/hyper-focus/challenge'),privateOut=path.join(out,'private');
-const manifest={schemaVersion:1,contentVersion,documents:{},bank:{},sources:{}};
+const manifest={schemaVersion:1,contentVersion,documents:{},bank:{},sources:{},concepts:{}};
 const digest=x=>crypto.createHash('sha256').update(x).digest('hex');
 const compactSpriteTypes=new Set(['extra-congruent-partition','r2-three-balance-order','r2-fruit-equations','replace-fruit-pair-cancel']);
 function save(relative,obj){const bytes=Buffer.from(JSON.stringify(obj)),dest=path.join(privateOut,relative);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,bytes);return {path:relative,sha256:digest(bytes)};}
@@ -18,6 +19,13 @@ function answer(q,id,compactSprite=false){
  const normalized=s=>s.replace(/<[^>]*>/g,'').replace(/[\s.。]/g,'').replace(/[−–]/g,'-');
  if(!solution||/풀이 확인 필요|undefined|NaN/.test(solution)||normalized(solution)===normalized(answerHtml))throw Error('Detailed solution missing: '+id);
  return {id,answerHtml,solution,...(q.solutionDiagram?{solutionDiagram:inlineImages(q.solutionDiagram,compactSprite)}:{})};
+}
+function concept(value,sourceTypeId,conceptTypeId){
+ const hierarchy=value?.hierarchy;
+ if(!value||value.typeId!==conceptTypeId||value.status!=='verified'||value.evidenceStatus!=='verified'||!hierarchy||hierarchy.subtype?.id!==conceptTypeId||!Array.isArray(value.steps)||value.steps.length!==3)throw Error('Concept guide contract mismatch: '+sourceTypeId);
+ const result={typeId:value.typeId,title:value.title,hierarchy:{area:{id:hierarchy.area.id,label:hierarchy.area.label},majorType:{id:hierarchy.majorType.id,label:hierarchy.majorType.label},subtype:{id:hierarchy.subtype.id,label:hierarchy.subtype.label}},rule:value.rule,steps:[...value.steps],commonMistake:value.commonMistake,selfCheck:value.selfCheck,evidenceLabel:value.evidenceLabel,status:value.status,evidenceStatus:value.evidenceStatus};
+ const text=JSON.stringify(result);if(/"(?:answer|answerHtml|solution|solutionDiagram|prompt|problemHtml|payload|sourcePrompt|sourceQuestion)"\s*:/.test(text))throw Error('Concept guide contains prohibited source or answer fields: '+sourceTypeId);
+ return result;
 }
 const server=http.createServer((req,res)=>{const pathname=decodeURIComponent(new URL(req.url,'http://local').pathname),file=path.resolve(root,'.'+pathname);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();fs.readFile(file,(err,data)=>{if(err)return res.writeHead(404).end();res.setHeader('Content-Type',({'.js':'text/javascript','.html':'text/html','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'})[path.extname(file)]||'application/octet-stream');res.end(data);});});
 (async()=>{
@@ -36,6 +44,9 @@ const server=http.createServer((req,res)=>{const pathname=decodeURIComponent(new
  }finally{await browser.close();await new Promise(r=>server.close(r));}
  const rows=variants.list(),poolCounts={};
  for(const row of rows){
+  const classified=taxonomy.getTaxonomy(row,row.round,row.section),guide=conceptGuide.forRow({taxonomy:classified});
+  if(manifest.concepts[row.typeId])throw Error('Duplicate source type concept: '+row.typeId);
+  manifest.concepts[row.typeId]={conceptTypeId:classified.typeId,content:save(`v1/concepts/${row.typeId}.json`,{schemaVersion:1,contentVersion,sourceTypeId:row.typeId,conceptTypeId:classified.typeId,concept:concept(guide,row.typeId,classified.typeId)})};
   const source=variants.getSource(row),sourceId=row.key,id='source-'+sourceId;manifest.sources[sourceId]={typeId:row.typeId};
   for(const part of ['questions','answers']){const member=part==='questions'?'question':'answer';manifest.sources[sourceId][part]=save(`v1/sources/${sourceId}.${part}.json`,{schemaVersion:1,contentVersion,sourceId,typeId:row.typeId,part,[member]:part==='questions'?question(source,id):answer(source,id)});}
   for(const difficulty of ['easy','same','hard']){
@@ -50,9 +61,9 @@ const server=http.createServer((req,res)=>{const pathname=decodeURIComponent(new
  const publicCatalog={schemaVersion:1,contentVersion,rounds:[1,2,3,4].map(r=>diagnosis.describeRound(r)),variants:rows.map(row=>({...row,poolCounts:Object.fromEntries(['easy','same','hard'].map(d=>[d,poolCounts[row.typeId+':'+d]||0]))}))};
  const metadata='window.HFChallengePublicCatalog='+JSON.stringify(publicCatalog)+';\n';
  fs.writeFileSync(path.join(publicOut,'public-catalog.js'),metadata);fs.writeFileSync(path.join(challenge,'public-catalog.js'),metadata);
- const safeFiles=['index.html','landing.css','landing.js','intro.html','intro.css','access-catalog.js','access-service.js','admin.html','admin.css','admin.js','exam.html','concepts.html','review.css','exam.css','exam-print-revision.css','concepts-two.css','studio.html','studio.css','studio.js','challenge-taxonomy.js','diagnosis-core.js','content-client.js','secure-document.js','remote-variants.js','studio-loader.js','document-access.js','assets/gfield-logo.png'];
+ const safeFiles=['index.html','landing.css','landing.js','intro.html','intro.css','access-catalog.js','access-service.js','admin.html','admin.css','admin.js','exam.html','concepts.html','review.css','exam.css','exam-print-revision.css','concepts-two.css','studio.html','studio.css','studio.js','challenge-taxonomy.js','diagnosis-core.js','content-client.js','concept-client.js','question-identity.js','secure-document.js','remote-variants.js','studio-loader.js','document-access.js','assets/gfield-logo.png'];
  for(const name of safeFiles){const dest=path.join(publicOut,name);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(path.join(challenge,name),dest);}
  const manifestBytes=Buffer.from(JSON.stringify(manifest));fs.writeFileSync(path.join(privateOut,'manifest.json'),manifestBytes);
- const report={contentVersion,out,manifestSha256:digest(manifestBytes),documents:Object.keys(manifest.documents).length,sources:Object.keys(manifest.sources).length,bankTypes:Object.keys(manifest.bank).length,poolCounts,publicFiles:['public-catalog.js',...safeFiles],remoteWrites:0,deployed:false,release:'held pending independent package and actual private delivery verification'};
- fs.writeFileSync(path.join(out,'build-report.json'),JSON.stringify(report,null,2));fs.writeFileSync(path.join(root,'output/private-challenge/latest.json'),JSON.stringify({out,contentVersion}));console.log(JSON.stringify({out,documents:report.documents,sources:report.sources,bankTypes:report.bankTypes,manifestSha256:report.manifestSha256}));
+ const report={contentVersion,out,manifestSha256:digest(manifestBytes),documents:Object.keys(manifest.documents).length,sources:Object.keys(manifest.sources).length,concepts:Object.keys(manifest.concepts).length,bankTypes:Object.keys(manifest.bank).length,poolCounts,publicFiles:['public-catalog.js',...safeFiles],remoteWrites:0,deployed:false,release:'held pending independent package and actual private delivery verification'};
+ fs.writeFileSync(path.join(out,'build-report.json'),JSON.stringify(report,null,2));fs.writeFileSync(path.join(root,'output/private-challenge/latest.json'),JSON.stringify({out,contentVersion}));console.log(JSON.stringify({out,documents:report.documents,sources:report.sources,concepts:report.concepts,bankTypes:report.bankTypes,manifestSha256:report.manifestSha256}));
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});

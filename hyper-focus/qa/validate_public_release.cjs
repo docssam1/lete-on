@@ -6,7 +6,7 @@ const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const DENIED=Object.freeze([
  'challenge/challenge-bank.js','challenge/exam.js','challenge/exam-editions.js','challenge/exam-replacements.js',
  'challenge/exam-more.js','challenge/exam-priority.js','challenge/exam-supplement.js','challenge/concept-specials.js',
- 'challenge/concept-catalog.js','challenge/concepts-two.js','challenge/variant-provider.js','challenge/variant-core-levels.js',
+ 'challenge/concept-catalog.js','challenge/concepts-two.js','challenge/concept-guide.js','challenge/variant-provider.js','challenge/variant-core-levels.js',
  'challenge/variant-numeric-extension.js','challenge/variant-geometry-extension.js',
  'challenge/variant-replacement-measurement.js','challenge/variant-replacement-spatial.js','challenge/variant-replacement-paths.js',
  'challenge/balance-diagram.js',

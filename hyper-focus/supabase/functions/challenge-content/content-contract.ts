@@ -112,7 +112,9 @@ export function object(v:unknown):v is Obj{return !!v&&typeof v==='object'&&!Arr
 export function exact(v:unknown,keys:string[],optional:string[]=[]):v is Obj{return object(v)&&keys.every(k=>Object.hasOwn(v,k))&&Object.keys(v).every(k=>keys.includes(k)||optional.includes(k));}
 export function requireValid(v:unknown):asserts v{if(!v)throw Error('invalid_private_package');}
 export function requestTarget(body:unknown):Obj|null{
- if(!object(body)||!['questions','answers'].includes(body.part))return null;
+ if(!object(body))return null;
+ if(body.action==='concept'&&exact(body,['action','typeId'])&&BANK_TYPES.has(body.typeId))return {kind:'concept',id:body.typeId,permissionKeys:['challenge-bank-'+body.typeId],path:`v1/concepts/${body.typeId}.json`};
+ if(!['questions','answers'].includes(body.part))return null;
  if(body.action==='document'&&exact(body,['action','productKey','part'])&&DOCUMENT_KEYS.has(body.productKey))return {kind:'document',id:body.productKey,part:body.part,permissionKeys:[body.productKey],path:`v1/documents/${body.productKey}.${body.part}.json`};
  if(body.action==='bank'&&exact(body,['action','typeId','difficulty','seed','part'])&&BANK_TYPES.has(body.typeId)&&['easy','same','hard'].includes(body.difficulty)&&Number.isInteger(body.seed)&&body.seed>=0&&body.seed<=4294967295)return {kind:'bank',id:body.typeId,difficulty:body.difficulty,seed:body.seed,part:body.part,permissionKeys:['challenge-bank-'+body.typeId],path:`v1/bank/${body.typeId}/${body.difficulty}.${body.part}.json`};
  if(body.action==='source'&&exact(body,['action','round','section','number','part'])&&Number.isInteger(body.round)&&Number.isInteger(body.number)&&['main','extra'].includes(body.section)){
@@ -122,7 +124,7 @@ export function requestTarget(body:unknown):Obj|null{
 }
 function reference(v:unknown,path:string){requireValid(exact(v,['path','sha256'])&&v.path===path&&typeof v.sha256==='string'&&/^[a-f0-9]{64}$/.test(v.sha256));}
 export function validateManifest(m:unknown):asserts m is Obj{
- requireValid(exact(m,['schemaVersion','contentVersion','documents','bank','sources'])&&m.schemaVersion===1&&typeof m.contentVersion==='string'&&/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,79}$/.test(m.contentVersion)&&object(m.documents)&&object(m.bank)&&object(m.sources));
+ requireValid(exact(m,['schemaVersion','contentVersion','documents','bank','sources','concepts'])&&m.schemaVersion===1&&typeof m.contentVersion==='string'&&/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,79}$/.test(m.contentVersion)&&object(m.documents)&&object(m.bank)&&object(m.sources)&&object(m.concepts));
  for(const [key,value]of Object.entries(m.documents)){requireValid(DOCUMENT_KEYS.has(key)&&exact(value,['questions','answers']));for(const part of ['questions','answers'])reference(value[part],`v1/documents/${key}.${part}.json`);}
  for(const [id,pools]of Object.entries(m.bank)){requireValid(BANK_TYPES.has(id)&&object(pools));for(const [difficulty,parts]of Object.entries(pools)){
   requireValid(['easy','same','hard'].includes(difficulty)&&object(parts));
@@ -132,10 +134,13 @@ export function validateManifest(m:unknown):asserts m is Obj{
   }else{requireValid(exact(parts,['questions','answers']));for(const part of ['questions','answers'])reference(parts[part],`v1/bank/${id}/${difficulty}.${part}.json`);}
  }}
  for(const [id,value]of Object.entries(m.sources)){requireValid(Object.hasOwn(SOURCE_TYPES,id)&&exact(value,['typeId','questions','answers'])&&value.typeId===SOURCE_TYPES[id]);for(const part of ['questions','answers'])reference(value[part],`v1/sources/${id}.${part}.json`);}
+ requireValid(Object.keys(m.concepts).length===BANK_TYPES.size);
+ for(const id of BANK_TYPES){const value=m.concepts[id];requireValid(exact(value,['conceptTypeId','content'])&&plain(value.conceptTypeId,120)&&value.conceptTypeId.length>0);reference(value.content,`v1/concepts/${id}.json`);}
 }
 export function selectReference(manifest:Obj,target:Obj):Obj{
- const entry=target.kind==='document'?manifest.documents[target.id]:target.kind==='bank'?manifest.bank[target.id]?.[target.difficulty]:manifest.sources[target.id];
+ const entry=target.kind==='document'?manifest.documents[target.id]:target.kind==='bank'?manifest.bank[target.id]?.[target.difficulty]:target.kind==='concept'?manifest.concepts[target.id]:manifest.sources[target.id];
  requireValid(entry);
+ if(target.kind==='concept'){requireValid(entry.content);return {...entry.content,conceptTypeId:entry.conceptTypeId};}
  if(target.kind==='bank'&&Array.isArray(entry.shards)){
   let itemIndex=target.seed%entry.totalCount;for(let shardIndex=0;shardIndex<entry.shards.length;shardIndex++){const shard=entry.shards[shardIndex];if(itemIndex<shard.count)return {...shard[target.part],itemIndex,expectedCount:shard.count,shardIndex};itemIndex-=shard.count;}throw Error('invalid_private_package');
  }
@@ -153,8 +158,21 @@ function html(v:unknown,part:string){
 }
 function question(v:unknown){requireValid(exact(v,['id','prompt','problemHtml'])&&plain(v.id,160)&&v.id.length>0&&plain(v.prompt,12000)&&html(v.problemHtml,'questions'));return {id:v.id,prompt:v.prompt,problemHtml:v.problemHtml};}
 function answer(v:unknown){requireValid(exact(v,['id','answerHtml','solution'],['solutionDiagram'])&&plain(v.id,160)&&v.id.length>0&&html(v.answerHtml,'answers')&&plain(v.solution,20000)&&(v.solutionDiagram===undefined||html(v.solutionDiagram,'answers')));return {id:v.id,answerHtml:v.answerHtml,solution:v.solution,...(v.solutionDiagram===undefined?{}:{solutionDiagram:v.solutionDiagram})};}
+function labeled(v:unknown){return exact(v,['id','label'])&&plain(v.id,120)&&v.id.length>0&&plain(v.label,200)&&v.label.length>0;}
+function concept(v:unknown,conceptTypeId:string){
+ const keys=['typeId','title','hierarchy','rule','steps','commonMistake','selfCheck','evidenceLabel','status','evidenceStatus'];
+ requireValid(exact(v,keys)&&v.typeId===conceptTypeId&&plain(v.title,300)&&v.title.length>0&&plain(v.rule,2000)&&v.rule.length>0&&plain(v.commonMistake,1200)&&v.commonMistake.length>0&&plain(v.selfCheck,1200)&&v.selfCheck.length>0&&plain(v.evidenceLabel,300)&&v.evidenceLabel.length>0&&v.status==='verified'&&v.evidenceStatus==='verified');
+ requireValid(Array.isArray(v.steps)&&v.steps.length===3&&v.steps.every((step:unknown)=>typeof step==='string'&&step.length>0&&plain(step,1200)));
+ requireValid(exact(v.hierarchy,['area','majorType','subtype'])&&labeled(v.hierarchy.area)&&labeled(v.hierarchy.majorType)&&labeled(v.hierarchy.subtype)&&v.hierarchy.subtype.id===conceptTypeId);
+ return {typeId:v.typeId,title:v.title,hierarchy:{area:{id:v.hierarchy.area.id,label:v.hierarchy.area.label},majorType:{id:v.hierarchy.majorType.id,label:v.hierarchy.majorType.label},subtype:{id:v.hierarchy.subtype.id,label:v.hierarchy.subtype.label}},rule:v.rule,steps:[...v.steps],commonMistake:v.commonMistake,selfCheck:v.selfCheck,evidenceLabel:v.evidenceLabel,status:v.status,evidenceStatus:v.evidenceStatus};
+}
 export function selectContent(file:unknown,manifest:Obj,target:Obj):Obj{
- requireValid(object(file)&&file.schemaVersion===1&&file.contentVersion===manifest.contentVersion&&file.part===target.part);
+ requireValid(object(file)&&file.schemaVersion===1&&file.contentVersion===manifest.contentVersion);
+ if(target.kind==='concept'){
+  const selected=selectReference(manifest,target);requireValid(exact(file,['schemaVersion','contentVersion','sourceTypeId','conceptTypeId','concept'])&&file.sourceTypeId===target.id&&file.conceptTypeId===selected.conceptTypeId);
+  return {concept:concept(file.concept,file.conceptTypeId)};
+ }
+ requireValid(file.part===target.part);
  if(target.kind==='document'){
   requireValid(exact(file,['schemaVersion','contentVersion','productKey','part','document'])&&file.productKey===target.id&&exact(file.document,['title','html','styles'])&&plain(file.document.title,200)&&html(file.document.html,target.part)&&Array.isArray(file.document.styles)&&file.document.styles.every((s:unknown)=>typeof s==='string'&&STYLE_KEYS.has(s)));
   return {document:{title:file.document.title,html:file.document.html,styles:[...file.document.styles]}};

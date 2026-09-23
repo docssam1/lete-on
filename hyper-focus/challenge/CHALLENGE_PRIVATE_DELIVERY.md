@@ -1,6 +1,6 @@
 # Challenge 비공개 콘텐츠 전달 계약
 
-2026-09-09. 로컬 서버 구현 및 합성 Auth/DB/Storage 검사. 배포·업로드·DB 변경·학생 승인 변경은 하지 않았다.
+2026-09-24. 로컬 서버 구현 및 합성 Auth/DB/Storage 검사. 배포·업로드·DB 변경·학생 승인 변경은 하지 않았다.
 
 ## 저장소와 현재 공개 상태
 
@@ -20,7 +20,9 @@
 
 저장소의 `.github/workflows/deploy-pages.yml`은 `hyper-focus/.` 전체를 Pages 산출물로 복사한다. 루트 `Dockerfile`도 저장소 전체를 공개 웹 루트로 복사하고, `nginx.conf`는 정적 JS/JSON/이미지에 공개 캐시를 적용한다. 따라서 현재 작업 폴더를 그대로 커밋·푸시·배포하는 방법은 안전하지 않다. 이 파일들은 Hyper Focus 외 상품도 공유하므로 수정하지 않았다.
 
-운영 공개 전에는 사용자에게 공용 배포 설정 변경 범위를 승인받아야 한다. Pages 사용 시 해당 workflow의 Hyper Focus 복사 단계에서 교사용 Challenge 폴더를 제외하고 검수된 공개 묶음만 넣어야 하며, Cloud Run 사용 시 Docker 복사 범위 및 nginx 직접 경로 거부도 함께 검증해야 한다. 다른 상품의 배포 내용은 그대로 보존한다. 어느 운영 경로를 사용하는지 확정하기 전에는 공용 설정이나 원격 배포를 변경하지 않는다.
+2026-09-24 사용자 승인에 따라 공용 Pages workflow의 Hyper Focus 원본 전체 복사를 제거하고, `qa/stage_public_release.cjs`의 허용목록 산출물만 배치한 뒤 `qa/validate_public_release.cjs`와 비공개 경로 부재 검사를 통과해야 업로드 단계로 넘어가도록 바꿨다. 다른 상품의 복사·배포 명령은 그대로 보존했다. 이 변경은 아직 원격 배포하지 않았다. Cloud Run을 선택할 경우에는 별도로 Docker 복사 범위와 nginx 직접 경로 거부를 검증해야 한다.
+
+현재 source-derived 개념 원본 `challenge/concept-guide.js`는 `hyper-focus/.gitignore`에서 공개 Git 추적을 막고, 검수된 로컬 private 패키지에만 포함한다. 향후 저장소를 private으로 전환하더라도 공용 Pages·Docker 배포 경계가 별도로 안전해지기 전에는 이 무시 규칙을 해제하지 않는다.
 
 ## POST API: challenge-content
 
@@ -30,6 +32,7 @@
 | --- | --- | --- |
 | `document` | `action, productKey, part` | 개념 1/2 또는 모의고사 1..4 중 정확한 키 |
 | `bank` | `action, typeId, difficulty, seed, part` | `challenge-bank-${typeId}` |
+| `concept` | `action, typeId` | `challenge-bank-${typeId}` |
 | `source` | `action, round, section, number, part` | 해당 `challenge-mock-${round}` 또는 원본의 정확한 bank 키 |
 
 `part`는 `questions` 또는 `answers`, `difficulty`는 `easy/same/hard`, `seed`는 0~4294967295 정수다. 원문 번호는 고정 104개 출현 목록으로 확인한다. 요청 필드 추가·학생 ID 지정·임의 경로·와일드카드·빈도 범위 밖 값은 거부한다. 본문은 JSON 최대 4KB이며 POST 및 지정 출처만 허용한다.
@@ -39,6 +42,7 @@
 - 문서: `document:{title,html,styles}`
 - 질문/원문 질문: `question:{id,prompt,problemHtml}`
 - 답/원문 답: `answer:{id,answerHtml,solution,solutionDiagram?}`
+- 개념: `concept:{typeId,title,hierarchy,rule,steps,commonMistake,selfCheck,evidenceLabel,status,evidenceStatus}`
 
 학생 이름은 항상 현재 서버 프로필에서 온다. 클라이언트는 이 이름으로 해당 문항·답안에 워터마크를 표시해야 한다. 원문 또는 유형 ID가 같아도 `contentVersion` 또는 반환 `id`가 질문과 답에서 다르면 기존 문항에 새 답을 붙이지 말고 다시 받아야 한다.
 
@@ -48,13 +52,14 @@ Storage를 읽은 뒤 활성 프로필과 승인을 한 번 더 확인한다. �
 
 ## manifest 및 private JSON v1
 
-서버의 고정 `manifest.json`은 `{schemaVersion:1,contentVersion,documents,bank,sources}`이다. 각 파일 참조는 `{path,sha256}`이며 경로는 아래 형식과 정확히 일치해야 한다. 버전은 1~80자의 영문/숫자/점/밑줄/하이픈이며 영문 또는 숫자로 시작한다.
+서버의 고정 `manifest.json`은 `{schemaVersion:1,contentVersion,documents,bank,sources,concepts}`이다. 각 파일 참조는 `{path,sha256}`이며 경로는 아래 형식과 정확히 일치해야 한다. 버전은 1~80자의 영문/숫자/점/밑줄/하이픈이며 영문 또는 숫자로 시작한다.
 
 | manifest 항목 | 파일 경로 |
 | --- | --- |
 | `documents[productKey][part]` | `v1/documents/{productKey}.{part}.json` |
 | `bank[typeId][difficulty][part]` | `v1/bank/{typeId}/{difficulty}.{part}.json` |
 | `sources['1-main-1'][part]` | `v1/sources/{round}-{section}-{number}.{part}.json` |
+| `concepts[typeId]` | `v1/concepts/{typeId}.json` |
 
 `sources` 각 항목에는 `typeId`도 필요하며 서버 고정 출현 매핑과 일치해야 한다. 미검증 난이도는 manifest에서 생략할 수 있지만 다른 난이도로 몰래 대체하지 않는다. 등록되지 않은 유형/출현/문서 키는 허용하지 않는다.
 
@@ -82,15 +87,17 @@ bank pool 파일:
 
 source 파일은 `{schemaVersion,contentVersion,sourceId,typeId,part,question}` 또는 마지막 `answer` 구조다. 문항은 재생성하지 않고 해당 원문 출현의 고정 자료를 반환한다.
 
+concept 파일은 `{schemaVersion,contentVersion,sourceTypeId,concept}` 구조다. 서버는 요청한 원본 `typeId`의 정확한 bank 승인을 확인한 뒤 정해진 개념 필드만 반환한다. 개념 파일에 정답·원문·풀이·출처 내부 경로 필드가 있거나, 분류 경로가 등록 정보와 다르면 패키지와 서버가 모두 거부한다.
+
 스타일은 `exam.css`, `exam-print-revision.css`, `concepts.css`, `concepts-two.css`, `studio.css`만 허용한다. HTML은 pin된 교사 빌드만 받으며 스크립트·이벤트 속성·외부 참조·정답 data 속성 등을 추가로 거부한다. 이 문자열 거부 검사는 범용 HTML 정화기가 아니며 의미상 정답 노출을 자동 증명하지 않는다. 풀이 그림·텍스트 분리는 빌더와 독립 검수에서 확인해야 한다.
 
 Manifest 최대 512KiB, 문서 JSON 최대 12MB, 기타 JSON 최대 8MB, HTML 문자열 최대 8백만 자, pool은 1~1000개다. JSON 바이트의 해시를 검증한 뒤 정해진 필드만 응답한다. 임의 파일 내용의 추가 필드를 복사해서 보내지 않는다.
 
 ## 검증
 
-`qa/validate_challenge_private_content.cjs`: 실제 두 TypeScript 파일을 타입 제거 후 실행하고 Auth/DB/Storage만 모의 처리한 267항목 통과. 요청 부정, 직접 경로 지정, 타학생 지정, 잘못된 역할·세션, 승인 부족·철회·만료, 공개 bucket, manifest/파일 해시 변조, 질문/답 파일 분리, 저장소 읽기 중 권한 변경, 104개 고정 출현 매핑을 포함한다. 나뉜 pool의 전체 count·파일 인덱스·선택 경계·질문/답 대응도 검사한다. 쓰기 API와 서명 URL 생성이 없는지도 검사했다.
+`qa/validate_challenge_private_content.cjs`: 실제 두 TypeScript 파일을 타입 제거 후 실행하고 Auth/DB/Storage만 모의 처리한 287항목 통과. 요청 부정, 직접 경로 지정, 타학생 지정, 잘못된 역할·세션, 승인 부족·철회·만료, 공개 bucket, manifest/파일 해시 변조, 질문/답 파일 분리, 저장소 읽기 중 권한 변경, 104개 고정 출현 매핑과 104개 개념 매핑을 포함한다. 나뉜 pool의 전체 count·파일 인덱스·선택 경계·질문/답 대응도 검사한다. 쓰기 API와 서명 URL 생성이 없는지도 검사했다.
 
-`--package` 옵션은 `output/private-challenge/latest.json`의 실제 로컬 패키지를 대상으로 manifest, 모든 파일 해시, 질문 응답의 정답/풀이 표시 흔적, 모든 질문·답 ID 짝을 검사한다. 검사 출력은 ID/개수/오류 종류만 기록하고 질문·답 내용은 기록하지 않는다. 빌드 버전마다 재실행해야 한다.
+`--package` 옵션은 `output/private-challenge/latest.json`의 실제 로컬 패키지를 대상으로 manifest, 모든 파일 해시, 질문 응답의 정답/풀이 표시 흔적, 모든 질문·답 ID 짝과 개념 파일의 금지 필드를 검사한다. 2026-09-24 최종 로컬 패키지(`challenge-20260923185822199`, manifest SHA-256 `a1bfbcb8ba4e28339f5b0edec4a94b7b1eae507076f61443d793e0cfead05e85`)는 20,453항목을 통과했다. 검사 출력은 ID/개수/오류 종류만 기록하고 질문·답·개념 내용을 기록하지 않는다. 빌드 버전마다 재실행해야 한다.
 
 실제 원격 Auth/RLS/Storage·함수 배포 검증은 아직 하지 않았다. 원격에서 한 작업은 지정 bucket 메타데이터 SELECT 1회뿐이며 학생 정보는 조회하지 않았다. 이 서버와 별도로 공개 배포 산출물의 허용 목록에서 생성기·정답 데이터·private JSON 및 검사 출력물을 제외하고 직접 URL 거부를 확인해야 한다.
 

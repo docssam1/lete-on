@@ -181,7 +181,21 @@ function reflectFold([x,y],fold,size){
    {folds:['diag-main-lower-to-upper','diag-anti-upper-left-to-lower-right'],holes:[[3,1]]},
    {folds:['diag-main-upper-to-lower','diag-anti-lower-right-to-upper-left'],holes:[[0,1]]}
   ];
-  const model=d==='easy'?{folds:['right-to-left'],holes:[[1,1]]}:d==='same'?{folds:['right-to-left','bottom-to-top'],holes:[[1,0]]}:diagonalModels[r(0,diagonalModels.length-1)];
+  const straightModels={
+   easy:[
+    {folds:['right-to-left'],holes:[[1,1]]},
+    {folds:['left-to-right'],holes:[[2,2]]},
+    {folds:['bottom-to-top'],holes:[[2,1]]},
+    {folds:['top-to-bottom'],holes:[[1,2]]}
+   ],
+   same:[
+    {folds:['right-to-left','bottom-to-top'],holes:[[1,0]]},
+    {folds:['left-to-right','top-to-bottom'],holes:[[2,3]]},
+    {folds:['bottom-to-top','left-to-right'],holes:[[3,1]]},
+    {folds:['top-to-bottom','right-to-left'],holes:[[0,2]]}
+   ]
+  };
+  const candidates=d==='hard'?diagonalModels:straightModels[d],model=candidates[r(0,candidates.length-1)];
    const folds=model.folds,holes=model.holes,answerCells=unfoldHoles(size,folds,holes),answer=answerCells.map(([x,y])=>y*size+x),paperSize=108,top=20,stages=buildFoldStages(folds),panelCount=stages.length+1,gap=(660-48-panelCount*paperSize)/(panelCount-1),starts=Array.from({length:panelCount},(_,index)=>24+index*(paperSize+gap));
    const gridArt=left=>Array.from({length:size*size},(_,index)=>rect(left+index%size*paperSize/size,top+Math.floor(index/size)*paperSize/size,paperSize/size,paperSize/size,'#fff')).join('');
    let art=stages.map((stage,index)=>foldStageArt(stage,index,starts[index],top,paperSize,size,index===stages.length-1?holes:[])+txt(starts[index]+paperSize/2,156,index===0?'처음':index===stages.length-1?'접고 구멍 뚫기':`${index}번 접은 뒤`,14)).join('');
@@ -194,7 +208,7 @@ function reflectFold([x,y],fold,size){
    answer,
    answerHtml:'아래 표시한 칸에 동그라미',
    solutionDiagram:foldSolutionDiagram(size,folds,holes),
-   solution:diagonal?`마지막 대각선부터 거꾸로 펼칩니다. 구멍을 대각선 건너 같은 거리에 옮기면 2개가 되고, 첫 대각선을 펼쳐 다시 각각 옮기면 모두 ${answer.length}개입니다.`:`마지막으로 접은 가로선을 먼저 펼쳐 구멍을 위아래 같은 거리에 표시합니다. 이어 세로선을 펼쳐 두 구멍을 좌우 같은 거리에 표시하면 모두 ${answer.length}개입니다.`
+    solution:diagonal?`마지막 대각선부터 거꾸로 펼칩니다. 구멍을 대각선 건너 같은 거리에 옮기면 2개가 되고, 첫 대각선을 펼쳐 다시 각각 옮기면 모두 ${answer.length}개입니다.`:`${folds.slice().reverse().map((fold,index)=>`${index?'그다음':'먼저'} ${fold==='right-to-left'||fold==='left-to-right'?'세로':'가로'} 접은 선을 펼쳐 구멍을 ${fold==='right-to-left'||fold==='left-to-right'?'좌우':'위아래'} 같은 거리에 표시합니다.`).join(' ')} 모두 ${answer.length}개입니다.`
   };
  }
  function foldSolutionDiagram(size,folds,holes){
@@ -244,7 +258,7 @@ function reflectFold([x,y],fold,size){
   return art;
  }
   function cubes(source,d,r){
-   const easy=[[[2,2,1],[2,2,0],[2,0,0]]],same=[[[3,3,1],[3,3,0],[3,1,0]],[[3,3,1],[3,1,1],[3,1,0]]],models=d==='easy'?easy:same,heights=clone(models[r(0,models.length-1)]),width=3,depth=3,boxH=d==='easy'?2:3,placed=sum(heights.flat());
+   const easy=[[[2,2,1],[2,2,0],[2,0,0]],[[2,1,1],[2,2,1],[2,0,0]],[[2,2,0],[2,1,1],[2,1,0]]],same=[[[3,3,1],[3,3,0],[3,1,0]],[[3,3,1],[3,1,1],[3,1,0]]],models=d==='easy'?easy:same,heights=clone(models[r(0,models.length-1)]),width=3,depth=3,boxH=d==='easy'?2:3,placed=sum(heights.flat());
    return{
     payload:{kind:'geo-cubes',width,depth,boxH,heights,viewpoint:'geometry-standard-iso',placed,responseMode:'cube-count'},
     prompt:'점선 상자 안에 같은 크기의 쌓기나무를 쌓았습니다. 쌓기나무는 모두 몇 개일까요?',
@@ -270,10 +284,10 @@ function top(source,d,r){const count=d==='easy'?4:d==='same'?6:7,all=shuffle([0,
   q.solutionDiagram=svg(drawTop(occupied,265,25,43,''),660,185);
   return q;
  }
-function stack(source,d,r){const width=d==='hard'?6:4,depth=3,max=d==='easy'?2:d==='same'?3:4,highWidth=r(0,1)?2:width-2;
+function stack(source,d,r){const width=d==='hard'?6:4,depth=3,max=d==='easy'?2:d==='same'?3:4,highWidth=r(0,1)?2:width-2,easyVerticalSide=d==='easy'?r(0,1):0;
  // Monotone profiles keep the answer-bearing roofs visible; each unit is occupied.
  const profiles=[[[3,3,2,2],[3,3,2,2],[1,1,1,1]],[[3,3,3,3],[3,3,2,2],[1,1,1,1]],[[3,3,3,3],[3,3,3,3],[1,1,1,1]],[[3,3,2,2],[2,2,2,2],[1,1,1,1]]];
- const heights=d==='same'?clone(profiles[r(0,profiles.length-1)]):Array.from({length:depth},(_,y)=>Array.from({length:width},(_,x)=>y===depth-1?1:x<highWidth?max:2));const bricks=[],used=new Set;const free=(x,y,z)=>x>=0&&x<width&&y>=0&&y<depth&&z>=0&&z<heights[y][x]&&!used.has([x,y,z].join());for(let y=0;y<depth;y++)for(let x=0;x<width;x++)for(let z=0;z<heights[y][x];z++){if(!free(x,y,z))continue;let dims;if(z===0&&x<highWidth&&(d==='easy'?y===1:y<2)&&free(x,y,z+1))dims=[1,1,2];else if(free(x+1,y,z))dims=[2,1,1];else if(free(x,y+1,z))dims=[1,2,1];else if(free(x,y,z+1))dims=[1,1,2];else throw Error('두 칸 블록으로 빈틈없이 덮을 수 없습니다.');bricks.push([x,y,z,...dims]);for(let a=x;a<x+dims[0];a++)for(let b=y;b<y+dims[1];b++)for(let c=z;c<z+dims[2];c++)used.add([a,b,c].join());}const answer=bricks.length,layers=Array.from({length:max},(_,i)=>heights.flat().filter(h=>h>i).length),u=width===6?23:30;let art=txt(86,34,'보기',16)+pile([[0,0,0,2,1,1]],76,91,21)+txt(90,143,'블록 1개',15)+pile(bricks,300,130,u);const side=heights.map(a=>Math.max(...a));art+=side.map((h,i)=>Array.from({length:h},(_,z)=>rect(520+i*27,40+(max-1-z)*27,27,27,'#e8f1ec')).join('')).join('')+txt(560,65+max*27,'옆에서 본 모양',15);return{payload:{kind:'geo-stack',bricks,heights,solid:true},prompt:source.prompt,problemHtml:svg(art,660,280,'눕힌 블록과 세운 블록, 가려진 안쪽, 옆모양'),answer,answerHtml:answer+'개',solutionDiagram:stackLayerDiagram(heights),solution:`작은 네모 블록 크기로 나누어 세면 아래층부터 ${layers.join(', ')}칸입니다. 모두 ${layers.join('+')}=${sum(layers)}칸이며 길쭉한 블록 한 개가 두 칸을 차지합니다. 두 칸씩 짝지으면 ${answer}개입니다. 세운 블록을 층마다 중복해서 세지 않습니다.`};}
+  const heights=d==='same'?clone(profiles[r(0,profiles.length-1)]):Array.from({length:depth},(_,y)=>Array.from({length:width},(_,x)=>y===depth-1?1:x<highWidth?max:2));const bricks=[],used=new Set;const free=(x,y,z)=>x>=0&&x<width&&y>=0&&y<depth&&z>=0&&z<heights[y][x]&&!used.has([x,y,z].join());for(let y=0;y<depth;y++)for(let x=0;x<width;x++)for(let z=0;z<heights[y][x];z++){if(!free(x,y,z))continue;let dims;const stand=d==='easy'?y===1&&(easyVerticalSide?x>=2:x<2):x<highWidth&&y<2;if(z===0&&stand&&free(x,y,z+1))dims=[1,1,2];else if(free(x+1,y,z))dims=[2,1,1];else if(free(x,y+1,z))dims=[1,2,1];else if(free(x,y,z+1))dims=[1,1,2];else throw Error('두 칸 블록으로 빈틈없이 덮을 수 없습니다.');bricks.push([x,y,z,...dims]);for(let a=x;a<x+dims[0];a++)for(let b=y;b<y+dims[1];b++)for(let c=z;c<z+dims[2];c++)used.add([a,b,c].join());}const answer=bricks.length,layers=Array.from({length:max},(_,i)=>heights.flat().filter(h=>h>i).length),u=width===6?23:30;let art=txt(86,34,'보기',16)+pile([[0,0,0,2,1,1]],76,91,21)+txt(90,143,'블록 1개',15)+pile(bricks,300,130,u);const side=heights.map(a=>Math.max(...a));art+=side.map((h,i)=>Array.from({length:h},(_,z)=>rect(520+i*27,40+(max-1-z)*27,27,27,'#e8f1ec')).join('')).join('')+txt(560,65+max*27,'옆에서 본 모양',15);return{payload:{kind:'geo-stack',bricks,heights,solid:true},prompt:source.prompt,problemHtml:svg(art,660,280,'눕힌 블록과 세운 블록, 가려진 안쪽, 옆모양'),answer,answerHtml:answer+'개',solutionDiagram:stackLayerDiagram(heights),solution:`작은 네모 블록 크기로 나누어 세면 아래층부터 ${layers.join(', ')}칸입니다. 모두 ${layers.join('+')}=${sum(layers)}칸이며 길쭉한 블록 한 개가 두 칸을 차지합니다. 두 칸씩 짝지으면 ${answer}개입니다. 세운 블록을 층마다 중복해서 세지 않습니다.`};}
 function bricks(source,d,r){const count=r(2,3),bricks=[];if(d==='hard'){for(let y=0;y<2;y++)for(let i=0;i<count;i++)bricks.push([i*2,y,0,2,1,1]);bricks.push([0,0,1,1,2,1],[count*2-1,0,1,1,1,2]);}else{for(let i=0;i<count;i++)bricks.push([i*2,0,0,2,1,1]);for(let i=0;i<count;i++){const x=i*2+r(0,1);bricks.push([x,0,1,1,1,2]);}}const help=d==='easy'?txt(85,133,'한 개를 눕히기',14)+pile([[0,0,0,1,1,2]],80,199,22)+txt(85,240,'같은 한 개를 세우기',14):'';return{payload:{kind:'geo-bricks',bricks,orientationExample:d==='easy'},prompt:source.prompt.replace(/작은 정육면체/g,'작은 네모 블록'),problemHtml:svg(txt(87,26,'보기',17)+pile([[0,0,0,2,1,1]],80,80,22)+help+pile(bricks,300,120,30),660,295),answer:bricks.length,solution:d==='hard'?'바닥에서 좌우로 눕힌 블록, 앞뒤로 길게 놓은 블록, 위로 세운 블록을 나누어 셉니다. 방향이 달라도 모두 같은 두 칸짜리 블록이며 완전히 가려진 블록은 없습니다.':'바닥에 눕힌 블록과 그 위에 세운 블록을 따로 셉니다. 세운 한 블록은 작은 네모 블록 두 개 높이이지만 블록 한 개입니다.'};}
  const TILE_BASES=[[[0,0],[1,0],[2,0],[3,0]],[[0,0],[0,1],[0,2],[1,2]],[[0,0],[1,0],[0,1],[1,1]],[[1,0],[2,0],[0,1],[1,1]],[[0,0],[1,0],[2,0],[1,1]]];
  const transforms=a=>[...new Map(Array.from({length:8},(_,t)=>{const v=transform(a,t);return[key(v),v];})).values()];

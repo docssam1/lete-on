@@ -1,7 +1,7 @@
 (function (global) {
   "use strict";
 
-  const VERSION = "2026-09-08-revision-2";
+  const VERSION = "2026-09-08-revision-3";
   const LEARNER_STAGE = "6세 챌린지 시험 준비 아동";
   const DIFFICULTIES = ["easy", "same", "hard"];
   const DIFFICULTY_LABELS = { easy: "쉽게", same: "같게", hard: "어렵게" };
@@ -458,13 +458,15 @@
     const rng = makeRng(seed);
     const figure = rng.int(normalized === "easy" ? 5 : 6, 8);
     const digit = rng.int(2, Math.min(7, figure - 1));
-    return { typeId: "mountain-digit-count", difficulty: normalized, seed: Number(seed) || 1, figure, digit, answer: mountainDigitCount(figure, digit) };
+    const alignment = ["left", "center", "right"][rng.int(0, 2)];
+    return { typeId: "mountain-digit-count", difficulty: normalized, seed: Number(seed) || 1, figure, digit, alignment, answer: mountainDigitCount(figure, digit) };
   }
 
   function renderMountainCount(payload) {
     const rows = [1, 2, 3].map((peak, rowIndex) => {
       const values = Array.from({ length: peak * 2 - 1 }, (_, index) => index < peak ? index + 1 : peak * 2 - index - 1);
-      return values.map((value, index) => `<g transform="translate(${112 + index * 42 - (peak - 1) * 42} ${18 + rowIndex * 45})"><rect class="logic-cell" width="38" height="36"/><text class="logic-label logic-small" x="19" y="24">${value}</text></g>`).join("");
+      const firstX = payload.alignment === "left" ? 28 : payload.alignment === "right" ? 196 - (values.length - 1) * 42 : 112 - (peak - 1) * 42;
+      return values.map((value, index) => `<g transform="translate(${firstX + index * 42} ${18 + rowIndex * 45})"><rect class="logic-cell" width="38" height="36"/><text class="logic-label logic-small" x="19" y="24">${value}</text></g>`).join("");
     }).join("");
     return `<svg class="challenge-visual" viewBox="0 0 620 170" role="img" aria-label="산 모양 수 배열"><g>${rows}</g><text class="logic-label logic-small" x="430" y="72">${payload.figure}번째 모양에서</text><text class="logic-label logic-small" x="430" y="106">‘${payload.digit}’은 몇 개일까요?</text></svg>`;
   }
@@ -483,12 +485,18 @@
     const top = rng.int(2, 9);
     const left = rng.int(Math.max(1, answer + 1 - top), 9);
     const center = top + left - answer;
-    return { typeId: "triangle-number-rule", difficulty: normalized, seed: Number(seed) || 1, top, left, center, answer };
+    const layout = ["examples-first", "target-first", "two-rows"][rng.int(0, 2)];
+    return { typeId: "triangle-number-rule", difficulty: normalized, seed: Number(seed) || 1, top, left, center, layout, answer };
   }
 
   function renderTriangleRule(payload) {
-    const triangle = (x, top, left, right, center, blank) => `<g transform="translate(${x} 10)"><path d="M100 20 L30 145 H170 Z" fill="#e7eaee" stroke="#8d99a7"/><circle class="logic-card" cx="100" cy="20" r="22"/><circle class="logic-card" cx="30" cy="145" r="22"/><circle class="logic-card" cx="170" cy="145" r="22"/><text class="logic-label logic-small" x="100" y="26">${top}</text><text class="logic-label logic-small" x="30" y="151">${left}</text>${blank ? `<rect class="answer-blank" x="148" y="123" width="44" height="44" rx="22"/>` : `<text class="logic-label logic-small" x="170" y="151">${right}</text>`}<text class="logic-label" x="100" y="103">${center}</text></g>`;
-    return `<svg class="challenge-visual" viewBox="0 0 820 185" role="img" aria-label="세 예시와 빈칸이 있는 삼각형 수 규칙">${triangle(0,5,6,4,7,false)}${triangle(205,8,3,5,6,false)}${triangle(410,4,7,8,3,false)}${triangle(615,payload.top,payload.left,payload.answer,payload.center,true)}</svg>`;
+    const triangle = (x, y, top, left, right, center, blank) => `<g transform="translate(${x} ${y})"><path d="M100 20 L30 145 H170 Z" fill="#e7eaee" stroke="#8d99a7"/><circle class="logic-card" cx="100" cy="20" r="22"/><circle class="logic-card" cx="30" cy="145" r="22"/><circle class="logic-card" cx="170" cy="145" r="22"/><text class="logic-label logic-small" x="100" y="26">${top}</text><text class="logic-label logic-small" x="30" y="151">${left}</text>${blank ? `<rect class="answer-blank" x="148" y="123" width="44" height="44" rx="22"/>` : `<text class="logic-label logic-small" x="170" y="151">${right}</text>`}<text class="logic-label" x="100" y="103">${center}</text></g>`;
+    const examples = [[5,6,4,7],[8,3,5,6],[4,7,8,3]], target = [payload.top,payload.left,payload.answer,payload.center];
+    let art, width = 820, height = 185;
+    if (payload.layout === "target-first") art = triangle(0,10,...target,true) + examples.map((values,index)=>triangle(205+index*205,10,...values,false)).join("");
+    else if (payload.layout === "two-rows") { width=410;height=360;art=examples.slice(0,2).map((values,index)=>triangle(index*205,10,...values,false)).join("")+triangle(0,185,...examples[2],false)+triangle(205,185,...target,true); }
+    else art = examples.map((values,index)=>triangle(index*205,10,...values,false)).join("") + triangle(615,10,...target,true);
+    return `<svg class="challenge-visual" viewBox="0 0 ${width} ${height}" role="img" aria-label="세 예시와 빈칸이 있는 삼각형 수 규칙">${art}</svg>`;
   }
 
   function rotateCells(cells) {
@@ -910,12 +918,13 @@
     for(let x=0;x<=cols;x++) for(let y=0;y<rows;y++) edges.push(`v:${x}:${y}`);
     const remove=new Set([`v:${rng.int(1,cols-1)}:${rng.int(0,rows-1)}`]);
     if(difficulty!=="easy")remove.add(`h:${rng.int(0,cols-1)}:${rng.int(1,rows-1)}`);
-    const p={typeId:"rectangle-count",difficulty,seed,cols,rows,edges:edges.filter(e=>!remove.has(e))};
+    const orientation=["normal","mirror-horizontal","mirror-vertical"][rng.int(0,2)];
+    const p={typeId:"rectangle-count",difficulty,seed,cols,rows,edges:edges.filter(e=>!remove.has(e)),orientation};
     p.answer=rectangleAnswers(p);return p;
   }
 
   function renderRectangleCount(p) {
-    const lines=p.edges.map(e=>{const [kind,a,b]=e.split(':'),x=225+Number(a)*60,y=12+Number(b)*60;return `<path d="M${x} ${y} ${kind==='h'?'h60':'v60'}" fill="none" stroke="#44566a" stroke-width="2"/>`;}).join('');
+    const lines=p.edges.map(e=>{const [kind,a,b]=e.split(':'),column=Number(a),row=Number(b),x=p.orientation==='mirror-horizontal'?225+(p.cols-column-(kind==='h'?1:0))*60:225+column*60,y=p.orientation==='mirror-vertical'?12+(p.rows-row-(kind==='v'?1:0))*60:12+row*60;return `<path d="M${x} ${y} ${kind==='h'?'h60':'v60'}" fill="none" stroke="#44566a" stroke-width="2"/>`;}).join('');
     return `<div class="spatial-pair"><svg class="challenge-visual" viewBox="215 0 210 205" role="img" aria-label="일부 선분이 없는 사각형 그림">${lines}</svg><div class="spatial-asks"><p>(1) 크고 작은 정사각형은 모두 몇 개입니까?</p><p>(2) 정사각형을 포함하여 크고 작은 직사각형은 모두 몇 개입니까?</p></div></div>`;
   }
 

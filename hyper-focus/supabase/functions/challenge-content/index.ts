@@ -17,21 +17,21 @@ async function readBody(req:Request):Promise<ObjectMap|null>{
 
 const BUCKET=Deno.env.get('CHALLENGE_PRIVATE_BUCKET')||'hf-challenge-private',MANIFEST_PATH="manifest.json";
 async function sha256(bytes:ArrayBuffer){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');}
-async function downloadJSON(service:ReturnType<typeof createClient>,path:string,hash:string,maxBytes:number){
+async function downloadJSON(service:any,path:string,hash:string,maxBytes:number){
  if(!/^[a-f0-9]{64}$/.test(hash))throw Error('manifest_pin_required');
  const {data,error}=await service.storage.from(BUCKET).download(path);
  if(error||!data||data.size>maxBytes)throw Error('private_asset_unavailable');
  const bytes=await data.arrayBuffer();if(bytes.byteLength>maxBytes||await sha256(bytes)!==hash)throw Error('private_asset_invalid');
  return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
 }
-async function authorize(client:ReturnType<typeof createClient>,userId:string,permissionKeys:string[],tokenExpiry:number){
+async function authorize(client:any,userId:string,permissionKeys:string[],tokenExpiry:number){
  const now=Date.now();if(now>=tokenExpiry)return null;
  // Caller-scoped existing HF RLS checks the current session, active profile and credential/login version.
- const {data:profile,error:profileError}=await client.from('hf_students').select('id,display_name,account_status').eq('id',userId).maybeSingle();
+ const {data:profileValue,error:profileError}=await client.from('hf_students').select('id,display_name,account_status').eq('id',userId).maybeSingle(),profile=profileValue as Obj|null;
  if(profileError||!profile||profile.id!==userId||profile.account_status!=='active'||typeof profile.display_name!=='string'||!profile.display_name.trim())return null;
- const {data:rows,error}=await client.from('hf_entitlements').select('permission_key,starts_at,expires_at,revoked_at').eq('student_id',userId);
+ const {data:rowValues,error}=await client.from('hf_entitlements').select('permission_key,starts_at,expires_at,revoked_at').eq('student_id',userId),rows=(rowValues||[]) as Obj[];
  if(error)return null;
- const active=(rows||[]).filter((e:Obj)=>permissionKeys.includes(e.permission_key)&&!e.revoked_at&&Number.isFinite(Date.parse(e.starts_at))&&Date.parse(e.starts_at)<=now&&(!e.expires_at||(Number.isFinite(Date.parse(e.expires_at))&&Date.parse(e.expires_at)>now)));
+ const active=rows.filter((e:Obj)=>permissionKeys.includes(e.permission_key)&&!e.revoked_at&&Number.isFinite(Date.parse(e.starts_at))&&Date.parse(e.starts_at)<=now&&(!e.expires_at||(Number.isFinite(Date.parse(e.expires_at))&&Date.parse(e.expires_at)>now)));
  if(!active.length)return null;
  return {studentId:profile.id,approvedStudentName:profile.display_name.trim(),validUntil:Math.min(now+60000,tokenExpiry,...active.filter((e:Obj)=>e.expires_at).map((e:Obj)=>Date.parse(e.expires_at)))};
 }
@@ -50,18 +50,18 @@ export async function handleRequest(request:Request):Promise<Response>{
   const body=await readBody(request),target=requestTarget(body);if(!target)return respond(request,400,{error:'invalid_content_request'});
   const initial=await authorize(caller,user.id,target.permissionKeys,Number(claims.exp)*1000);if(!initial)return respond(request,403,{error:'content_access_denied'});
   const readySetting=Deno.env.get('CHALLENGE_PRIVATE_DELIVERY_READY');
-  if(readySetting===undefined?RELEASE_CONFIG.ready!==true:readySetting!=='true')return respond(request,503,{error:'private_delivery_not_ready'});
+  if(readySetting===undefined?!Boolean(RELEASE_CONFIG.ready):readySetting!=='true')return respond(request,503,{error:'private_delivery_not_ready'});
   const service=createClient(url,secret,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
   const {data:bucket,error:bucketError}=await service.storage.getBucket(BUCKET);
   if(bucketError||!bucket||bucket.id!==BUCKET||bucket.public!==false)return respond(request,503,{error:'private_storage_required'});
   const manifest=await downloadJSON(service,MANIFEST_PATH,Deno.env.get('CHALLENGE_MANIFEST_SHA256')||RELEASE_CONFIG.manifestSha256,524288);
   validateManifest(manifest);const ref=selectReference(manifest,target);
-  const file=await downloadJSON(service,ref.path,ref.sha256,target.kind==='document'?12000000:8000000);
+  const file=await downloadJSON(service,ref.path,ref.sha256,target.kind==='document'?12000000:target.kind==='concept'?32768:8000000);
   const content=selectContent(file,manifest,target);
   // Reject grants/profile/session revoked while storage was loading. No permission result is cached across requests.
   const current=await authorize(caller,user.id,target.permissionKeys,Number(claims.exp)*1000);
   if(!current||current.studentId!==initial.studentId||current.approvedStudentName!==initial.approvedStudentName||Date.now()>=initial.validUntil)return respond(request,403,{error:'content_access_changed'});
-  return respond(request,200,{verified:true,...current,validUntil:Math.min(initial.validUntil,current.validUntil),contentVersion:manifest.contentVersion,part:target.part,...content});
+  return respond(request,200,{verified:true,...current,validUntil:Math.min(initial.validUntil,current.validUntil),contentVersion:manifest.contentVersion,...(target.part?{part:target.part}:{}),...content});
  }catch{return respond(request,503,{error:'private_content_unavailable'});}
 }
 Deno.serve(handleRequest);
