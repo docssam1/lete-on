@@ -41,5 +41,10 @@ body{background:#f4f5ef}
 }
 @media(prefers-reduced-motion:reduce){.studio-intro img{animation:none}}
 .level-copy .level-stage{display:block;min-height:16px;margin-bottom:5px;color:#876126;font-size:10px;font-weight:950}
-#foldLevelGrid,#applicationGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-@media(max-width:850px){#foldLevelGrid .level-card:last-child,#applicationGrid .level-card:last-child{grid-column:auto;display:grid;grid-template-columns:none;grid-template-rows:126px auto;min-height:270px}}
+#foldLevelGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+#applicationGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#overlapGrid{grid-template-columns:minmax(0,1fr)}
+#overlapGrid .level-card{min-height:210px;grid-template-columns:minmax(220px,.38fr) minmax(0,1fr);grid-template-rows:210px}
+#overlapGrid .level-copy{display:flex;flex-direction:column;justify-content:center}
+@media(max-width:850px){#foldLevelGrid{grid-template-columns:repeat(2,minmax(0,1fr))}#applicationGrid .level-card:last-child{grid-column:auto;display:grid;grid-template-columns:none;grid-template-rows:126px auto;min-height:270px}#overlapGrid .level-card{grid-template-columns:135px 1fr;grid-template-rows:190px;min-height:190px}}
+@media(max-width:480px){#overlapGrid .level-card{grid-template-columns:112px 1fr;grid-template-rows:170px;min-height:170px}}

@@ -88,6 +88,8 @@ function solutionText(problem){
     if(p.interaction==='connect-match') return `${foldNames} 순서로 접은 종이를 반대 순서로 펼쳐 구멍 위치를 옮긴 뒤, 각각의 펼친 결과와 연결합니다. (${p.id})`;
     if(p.interaction==='piece-count') return `${foldNames}로 접은 뒤 자른 선을 접은 선 반대쪽에 대칭으로 옮겨 모두 펼칩니다. 나누어진 영역은 ${p.pieceCount}개입니다. (${p.id})`;
     if(p.interaction==='hole-count') return `${foldNames}로 접은 종이를 펼치면 구멍이 접은 선 반대쪽에도 생깁니다. 구멍은 모두 ${p.unfoldedPoints.length}개입니다. (${p.id})`;
+    if(p.interaction==='region-unfold') return `${foldNames} 순서의 반대로 펼치며 색칠한 부분을 접은 선 너머에 대칭으로 옮깁니다. (${p.id})`;
+    if(p.interaction==='mixed-hole-result') return `${foldNames} 순서의 반대로 펼치며 각 구멍의 모양과 방향을 접은 선 너머에 옮깁니다. (${p.id})`;
     return `${foldNames} 순서의 반대로 펼치며 구멍을 대칭 이동합니다. 알맞은 결과는 ${problem.answer}입니다. (${p.id})`;
   }
   if(problem.kind==='hole'){

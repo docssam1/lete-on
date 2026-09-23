@@ -1,3 +1,5 @@
+import { createPolygonMark, createPunchMark, unfoldMarkStages } from "./mark-geometry.js";
+
 const translations = (ko, zh, ja, en) => ({ ko, zh, ja, en });
 
 export const levelMeta = [
@@ -84,19 +86,19 @@ export function foldedPolygon(foldSpec) {
 }
 
 function clipPolygon(polygon, foldSpec) {
-  const keep = (p) => {
-    if (foldSpec.target === "right") return p.x >= .5 - 1e-8;
-    if (foldSpec.target === "left") return p.x <= .5 + 1e-8;
-    if (foldSpec.target === "bottom") return p.y >= .5 - 1e-8;
-    return p.y <= .5 + 1e-8;
+  const lineValue = (p) => {
+    if (foldSpec.axis === "vertical") return p.x - .5;
+    if (foldSpec.axis === "horizontal") return p.y - .5;
+    if (foldSpec.axis === "diag-main") return p.y - p.x;
+    return p.x + p.y - 1;
   };
+  const keepPositive = ["right", "bottom", "lower"].includes(foldSpec.target);
+  const keep = (p) => keepPositive ? lineValue(p) >= -1e-8 : lineValue(p) <= 1e-8;
   const intersect = (a, b) => {
-    if (foldSpec.axis === "vertical") {
-      const t = (.5 - a.x) / (b.x - a.x);
-      return point(.5, a.y + (b.y - a.y) * t);
-    }
-    const t = (.5 - a.y) / (b.y - a.y);
-    return point(a.x + (b.x - a.x) * t, .5);
+    const da = lineValue(a);
+    const db = lineValue(b);
+    const t = da / (da - db);
+    return lerp(a, b, t);
   };
   const output = [];
   polygon.forEach((current, index) => {
@@ -107,7 +109,11 @@ function clipPolygon(polygon, foldSpec) {
     if (currentInside) output.push(current);
     if (!currentInside && previousInside) output.push(intersect(previous, current));
   });
-  return output;
+  const cleaned = output.filter((item, index) => index === 0
+    || item.x !== output[index - 1].x
+    || item.y !== output[index - 1].y);
+  if (cleaned.length > 1 && cleaned[0].x === cleaned.at(-1).x && cleaned[0].y === cleaned.at(-1).y) cleaned.pop();
+  return cleaned;
 }
 
 export function polygonAfterFolds(folds) {
@@ -116,22 +122,39 @@ export function polygonAfterFolds(folds) {
 
 const segmentKey = ([a, b]) => [`${a.x},${a.y}`, `${b.x},${b.y}`].sort().join("|");
 
-function unfoldSegments(segments, folds) {
+function unfoldSegmentStages(segments, folds) {
   let current = segments.map(([a, b]) => [a, b]);
+  const stages = [current];
   for (let index = folds.length - 1; index >= 0; index -= 1) {
     const reflected = current.map(([a, b]) => [reflectPoint(a, folds[index].axis), reflectPoint(b, folds[index].axis)]);
     current = [...new Map([...current, ...reflected].map((segment) => [segmentKey(segment), segment])).values()];
+    stages.push(current);
   }
-  return current;
+  return stages;
 }
 
-function unfoldPoints(points, folds) {
+function unfoldPointStages(points, folds) {
   let current = points.map(({ x, y }) => point(x, y));
+  const stages = [current];
   for (let index = folds.length - 1; index >= 0; index -= 1) {
     const reflected = current.map((item) => reflectPoint(item, folds[index].axis));
     current = [...new Map([...current, ...reflected].map((item) => [`${item.x},${item.y}`, item])).values()];
+    stages.push(current);
   }
-  return current;
+  return stages;
+}
+
+const unfoldSegments = (segments, folds) => unfoldSegmentStages(segments, folds).at(-1);
+const unfoldPoints = (points, folds) => unfoldPointStages(points, folds).at(-1);
+
+function reverseUnfoldSteps(folds) {
+  return folds.slice().reverse().map((step) => ({
+    axis: step.axis,
+    source: step.target,
+    answer: step.side,
+    choices: [step.side, step.target],
+    displayFold: { axis: step.axis, side: step.target, target: step.side }
+  }));
 }
 
 function countPieces(segments, size = 221) {
@@ -247,7 +270,6 @@ function packetSegments(folds, index) {
 }
 
 function pieceSpec(folds, index) {
-  const foldSpec = folds[folds.length - 1];
   let cutSegments, unfoldedSegments, countA;
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const candidateCuts = packetSegments(folds, index + attempt);
@@ -262,14 +284,36 @@ function pieceSpec(folds, index) {
     }
   }
   if (!cutSegments) throw new Error(`Unstable piece count: ${folds.map((item) => `${item.axis}-${item.side}`).join("_")}-${index}`);
+  const stagePolygons = [polygonAfterFolds([]), ...folds.map((_, step) => polygonAfterFolds(folds.slice(0, step + 1)))];
+  const segmentStages = unfoldSegmentStages(cutSegments, folds);
+  const unfoldSteps = reverseUnfoldSteps(folds);
   const choices = numberChoices(countA, index % 3);
   return {
-    kind: "pieces", fold: folds[0], folds, stagePolygons: folds.length > 1 ? [polygonAfterFolds([]), ...folds.map((_, step) => polygonAfterFolds(folds.slice(0, step + 1)))] : undefined,
+    kind: "pieces", fold: folds[0], folds, stagePolygons,
     cutSegments, unfoldedSegments, pieceCount: countA,
-    placementSteps: folds.length === 1
-      ? [{ axis: foldSpec.axis, answer: foldSpec.side, choices: [foldSpec.side, foldSpec.target] }]
-      : folds.map((step) => ({ axis: step.axis, answer: step.target, choices: [step.side, step.target] })),
+    segmentStages, unfoldSteps,
     choices, answer: choices.find((choice) => choice.correct).key
+  };
+}
+
+function regionCutSpec(folds, index) {
+  const stagePolygons = [polygonAfterFolds([]), ...folds.map((_, step) => polygonAfterFolds(folds.slice(0, step + 1)))];
+  const packet = stagePolygons.at(-1);
+  const center = point(
+    packet.reduce((sum, item) => sum + item.x, 0) / packet.length,
+    packet.reduce((sum, item) => sum + item.y, 0) / packet.length
+  );
+  const start = index % packet.length;
+  const vertices = Array.from({ length: 3 }, (_, offset) => packet[(start + offset) % packet.length]);
+  const scale = .28 + (index % 3) * .04;
+  const cutMarks = [createPolygonMark(vertices.map((item) => point(
+    center.x + (item.x - center.x) * scale,
+    center.y + (item.y - center.y) * scale
+  )))];
+  const markStages = unfoldMarkStages(cutMarks, folds).map((stage) => stage.marks);
+  return {
+    kind: "cut-regions", fold: folds[0], folds, stagePolygons,
+    cutMarks, markStages, unfoldSteps: reverseUnfoldSteps(folds), completeOnUnfold: true
   };
 }
 
@@ -292,12 +336,13 @@ function punchPoints(finalPolygon, index, count = 1) {
 function singleHoleSpec(foldSpec, index) {
   const folded = foldedPolygon(foldSpec);
   const punches = punchPoints(folded, index, 1 + (index % 3));
-  const unfoldedPoints = unfoldPoints(punches, [foldSpec]);
+  const pointStages = unfoldPointStages(punches, [foldSpec]);
+  const unfoldedPoints = pointStages.at(-1);
+  const unfoldSteps = reverseUnfoldSteps([foldSpec]);
   const choices = numberChoices(unfoldedPoints.length, index % 3);
   return {
     kind: "single-holes", fold: foldSpec, folds: [foldSpec], stagePolygons: [polygonAfterFolds([]), folded],
-    punches, unfoldedPoints,
-    placementSteps: [{ axis: foldSpec.axis, answer: foldSpec.side, choices: [foldSpec.side, foldSpec.target] }],
+    punches, unfoldedPoints, pointStages, unfoldSteps,
     choices, answer: choices.find((choice) => choice.correct).key
   };
 }
@@ -321,21 +366,46 @@ function holeResultChoices(folds, finalPolygon, punches, index) {
 function doubleHoleSpec(folds, index) {
   const stagePolygons = [polygonAfterFolds([]), polygonAfterFolds([folds[0]]), polygonAfterFolds(folds)];
   const punches = punchPoints(stagePolygons[2], index, 1);
-  const unfoldedPoints = unfoldPoints(punches, folds);
+  const pointStages = unfoldPointStages(punches, folds);
+  const unfoldedPoints = pointStages.at(-1);
+  const unfoldSteps = reverseUnfoldSteps(folds);
   const choices = holeResultChoices(folds, stagePolygons[2], punches, index);
   return {
-    kind: "double-holes", folds, stagePolygons, punches, unfoldedPoints,
-    placementSteps: folds.map((step) => ({ axis: step.axis, answer: step.target, choices: [step.side, step.target] })),
+    kind: "double-holes", folds, stagePolygons, punches, unfoldedPoints, pointStages, unfoldSteps,
     choices, answer: choices.find((choice) => choice.correct).key
+  };
+}
+
+function mixedHoleSpec(folds, index) {
+  const stagePolygons = [polygonAfterFolds([]), polygonAfterFolds([folds[0]]), polygonAfterFolds(folds)];
+  const packet = stagePolygons.at(-1);
+  const { minX, maxX, minY, maxY } = bounds(packet);
+  const width = maxX - minX;
+  const height = maxY - minY;
+  const radius = Math.min(width, height) * .17;
+  const punches = [
+    createPunchMark("square", point(minX + width * .32, minY + height * .34), { radius, angle: (index % 2) * Math.PI / 4 }),
+    createPunchMark("triangle", point(minX + width * .68, minY + height * .68), { radius, angle: (index % 3) * Math.PI / 3 })
+  ];
+  const markStages = unfoldMarkStages(punches, folds).map((stage) => stage.marks);
+  return {
+    kind: "mixed-holes", folds, stagePolygons, punches,
+    markStages, unfoldSteps: reverseUnfoldSteps(folds), completeOnUnfold: true
   };
 }
 
 function levelOneProblem(index) {
   const useDouble = index % 4 >= 2;
   const folds = useDouble ? DOUBLE_FOLDS[index % DOUBLE_FOLDS.length] : [SINGLE_FOLDS[index % SINGLE_FOLDS.length]];
+  if (index % 6 === 2) return {
+    id: `paper-region-cut-${String(index + 1).padStart(2, "0")}`, level: 1, interaction: "region-unfold",
+    ...regionCutSpec(folds, index), sourceRef: "user-reference.paper-fold.colored-region-unfold",
+    sourceAuditRefs: ["PF-A01", "PF-A02", "PF-A03", "PF-B01", "PF-B02", "PF-B03", "PF-B04"], sourceCoverage: "partial"
+  };
   if (index % 3 !== 1) return {
     id: `paper-cut-count-${String(index + 1).padStart(2, "0")}`, level: 1, interaction: "piece-count",
-    ...pieceSpec(folds, index), sourceRef: useDouble ? "user-reference.kinderfacto.double-fold-piece-count" : "user-reference.kinderfacto.single-fold-piece-count"
+    ...pieceSpec(folds, index), sourceRef: useDouble ? "user-reference.kinderfacto.double-fold-piece-count" : "user-reference.kinderfacto.single-fold-piece-count",
+    sourceAuditRefs: ["PF-A07", "PF-B09"], sourceCoverage: "partial"
   };
   const pairs = Array.from({ length: 3 }, (_, pairIndex) => {
     const sourceIndex = index * 3 + pairIndex;
@@ -348,22 +418,30 @@ function levelOneProblem(index) {
   return {
     id: `paper-cut-match-${String(index + 1).padStart(2, "0")}`, level: 1, interaction: "connect-match", content: "cut-lines",
     folds: pairs[0].folds, pairs, results: pairs.slice(shift).concat(pairs.slice(0, shift)),
-    answer: Object.fromEntries(pairs.map((item) => [item.key, item.key])), sourceRef: "user-reference.kinderfacto.fold-cut-match"
+    answer: Object.fromEntries(pairs.map((item) => [item.key, item.key])), sourceRef: "user-reference.kinderfacto.fold-cut-match",
+    sourceAuditRefs: ["PF-A01", "PF-B01", "PF-B03"], sourceCoverage: "partial"
   };
 }
 
 function levelTwoProblem(index) {
   const useDouble = index % 2 === 0;
   const folds = DOUBLE_FOLDS[index % DOUBLE_FOLDS.length];
+  if (index % 6 === 0) return {
+    id: `paper-mixed-hole-${String(index + 1).padStart(2, "0")}`, level: 2, interaction: "mixed-hole-result",
+    ...mixedHoleSpec(folds, index), sourceRef: "user-reference.paper-fold.mixed-shape-hole-unfold",
+    sourceAuditRefs: ["PF-C02", "PF-C04", "PF-C05"], sourceCoverage: "partial"
+  };
   if (index % 3 === 0) return {
     id: `paper-double-hole-${String(index + 1).padStart(2, "0")}`, level: 2, interaction: "hole-result",
-    ...doubleHoleSpec(folds, index), sourceRef: "user-reference.kinderfacto.double-fold-hole-punch"
+    ...doubleHoleSpec(folds, index), sourceRef: "user-reference.kinderfacto.double-fold-hole-punch",
+    sourceAuditRefs: ["PF-A09", "PF-C03", "PF-C05"], sourceCoverage: "partial"
   };
   if (index % 3 === 2) {
     const foldSpec = SINGLE_FOLDS[index % SINGLE_FOLDS.length];
     return {
       id: `paper-hole-count-${String(index + 1).padStart(2, "0")}`, level: 2, interaction: "hole-count",
-      ...singleHoleSpec(foldSpec, index), sourceRef: "user-reference.kinderfacto.single-fold-hole-count"
+      ...singleHoleSpec(foldSpec, index), sourceRef: "user-reference.kinderfacto.single-fold-hole-count",
+      sourceAuditRefs: ["PF-A09"], sourceCoverage: "partial"
     };
   }
   const pairs = Array.from({ length: 3 }, (_, pairIndex) => {
@@ -377,7 +455,8 @@ function levelTwoProblem(index) {
   return {
     id: `paper-hole-match-${String(index + 1).padStart(2, "0")}`, level: 2, interaction: "connect-match", content: "holes",
     folds: pairs[0].folds, pairs, results: pairs.slice(shift).concat(pairs.slice(0, shift)),
-    answer: Object.fromEntries(pairs.map((item) => [item.key, item.key])), sourceRef: "user-reference.kinderfacto.double-fold-hole-match"
+    answer: Object.fromEntries(pairs.map((item) => [item.key, item.key])), sourceRef: "user-reference.kinderfacto.double-fold-hole-match",
+    sourceAuditRefs: ["PF-C03", "PF-C04", "PF-C05"], sourceCoverage: "partial"
   };
 }
 
@@ -396,12 +475,19 @@ export function validateLevels() {
     level.problems.forEach((problem) => {
       if (ids.has(problem.id)) throw new Error(`Duplicate paper-fold id: ${problem.id}`);
       ids.add(problem.id);
-      if (problem.interaction === "piece-count") {
-        if (![1, 2].includes(problem.folds.length) || problem.placementSteps.length !== problem.folds.length || !pointsInPaper(problem.unfoldedSegments.flat())) throw new Error(`Invalid piece problem: ${problem.id}`);
+      if (problem.interaction === "region-unfold") {
+        const expectedCounts = Array.from({ length: problem.folds.length + 1 }, (_, index) => 2 ** index);
+        if (![1, 2].includes(problem.folds.length) || problem.unfoldSteps.length !== problem.folds.length || problem.markStages.length !== problem.folds.length + 1 || problem.cutMarks.some((mark) => mark.kind !== "polygon")) throw new Error(`Invalid region problem: ${problem.id}`);
+        if (problem.markStages.some((stage, index) => stage.length !== expectedCounts[index])) throw new Error(`Invalid region stages: ${problem.id}`);
+      } else if (problem.interaction === "mixed-hole-result") {
+        const shapes = new Set(problem.punches.map((mark) => mark.shape));
+        if (problem.folds.length !== 2 || problem.unfoldSteps.length !== 2 || problem.markStages.length !== 3 || problem.markStages.map((stage) => stage.length).join(",") !== "2,4,8" || !shapes.has("square") || !shapes.has("triangle")) throw new Error(`Invalid mixed-hole problem: ${problem.id}`);
+      } else if (problem.interaction === "piece-count") {
+        if (![1, 2].includes(problem.folds.length) || problem.unfoldSteps.length !== problem.folds.length || problem.segmentStages.length !== problem.folds.length + 1 || !pointsInPaper(problem.unfoldedSegments.flat())) throw new Error(`Invalid piece problem: ${problem.id}`);
       } else if (problem.interaction === "hole-count") {
-        if (problem.folds.length !== 1 || !pointsInPaper(problem.unfoldedPoints)) throw new Error(`Invalid one-fold hole problem: ${problem.id}`);
+        if (problem.folds.length !== 1 || problem.unfoldSteps.length !== 1 || problem.pointStages.length !== 2 || !pointsInPaper(problem.unfoldedPoints)) throw new Error(`Invalid one-fold hole problem: ${problem.id}`);
       } else if (problem.interaction === "hole-result") {
-        if (problem.folds.length !== 2 || problem.placementSteps.length !== 2 || problem.unfoldedPoints.length !== 4) throw new Error(`Invalid two-fold hole problem: ${problem.id}`);
+        if (problem.folds.length !== 2 || problem.unfoldSteps.length !== 2 || problem.pointStages.length !== 3 || problem.unfoldedPoints.length !== 4) throw new Error(`Invalid two-fold hole problem: ${problem.id}`);
       } else if (problem.interaction === "connect-match") {
         if (problem.pairs.length !== 3 || problem.results.length !== 3 || Object.keys(problem.answer).length !== 3) throw new Error(`Invalid matching problem: ${problem.id}`);
         if (level.strand === "fold-and-cut" && problem.pairs.some((item) => item.kind !== "pieces")) throw new Error(`Cut matching contains a non-cut item: ${problem.id}`);
