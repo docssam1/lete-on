@@ -21,8 +21,8 @@
      나눗셈이 딱 떨어진다(가감법의 배수도 계수를 서로소로 잡아 정수).
    - MD64(일차부등식): 경계값 x₀를 먼저 고르고 c=a·x₀+b로 역산 —
      경계가 항상 정수라 "만족하는 가장 큰 정수"도 정수.
-     부등호 방향은 생성기가 계산해 tex에 그대로 실어 보여 준다
-     (MD29 이차부등식과 같은 규약 — 입력은 숫자 칸뿐이므로).
+   부등호 방향은 경계값 풀이 모드에서는 생성기가 계산해 tex에 실어
+     보여 준다. chooseSign 모드는 학생이 ① < / ② >를 직접 고른다.
    - MD65(일차함수): 기울기 m과 y절편 b를 먼저 고르고 두 점을
      y=mx+b 위에서 뽑는다 — (y₂-y₁)/(x₂-x₁)이 항상 m으로 떨어진다.
    - MD66(이차방정식): 두 근 p,q를 먼저 고른다. 완전제곱형은 b를
@@ -160,10 +160,61 @@ NM_TGEN['md63_simultaneous'] = function (params, rng) {
    구한다. 다만 'integer' 모드는 뒤집힘이 실제로 채점에 걸리도록
    "만족하는 가장 큰 정수"를 묻는다.
    mode: 'positive'(a>0, 방향 그대로) · 'flip'(a<0, 방향 뒤집힘) ·
-   'integer'(양변에 x, 정수해 묻기, 실전). */
+   'integer'(양변에 x, 정수해 묻기, 실전) ·
+   'chooseSign'(같은 수/양수/음수 변형 뒤 부등호 직접 선택). */
 NM_TGEN['md64_linearInequality'] = function (params, rng) {
   const mode = params.mode || 'positive';
   const FLIP = { '>': '<', '<': '>', '\\ge': '\\le', '\\le': '\\ge' };
+
+  if (mode === 'chooseSign') {
+    /* 디딤돌 개념연산 2-1A 인쇄 120쪽의 수학적 행동을 보존한다.
+       a<b(또는 a>b)의 양변에 같은 수를 더하고 빼기, 같은 양수/음수를
+       곱하고 나눈 뒤 ○에 들어갈 방향을 학생이 실제로 고른다.
+       보이지 않는 ID로 용량을 부풀리지 않고, 2개 기준 관계 × 48개
+       서로 다른 변형 = learner-visible 96개를 정확한 유한 풀로 둔다. */
+    const ns = [2, 3, 4, 5, 6, 7, 8, 9];
+    const transforms = [];
+    ns.forEach(n => transforms.push({ kind:'add', n, scale:1,
+      left:`a + ${n}`, right:`b + ${n}`,
+      action:{ko:`양변에 ${n}을 더했으므로`,en:`Since ${n} was added to both sides`,zh:`因为两边都加了${n}`} }));
+    ns.forEach(n => transforms.push({ kind:'subtract', n, scale:1,
+      left:`a - ${n}`, right:`b - ${n}`,
+      action:{ko:`양변에서 ${n}을 뺐으므로`,en:`Since ${n} was subtracted from both sides`,zh:`因为两边都减了${n}`} }));
+    ns.forEach(n => transforms.push({ kind:'multiplyPositive', n, scale:n,
+      left:`${n}a`, right:`${n}b`,
+      action:{ko:`양변에 양수 ${n}을 곱했으므로`,en:`Since both sides were multiplied by positive ${n}`,zh:`因为两边都乘了正数${n}`} }));
+    ns.forEach(n => transforms.push({ kind:'dividePositive', n, scale:1 / n,
+      left:`a \\div ${n}`, right:`b \\div ${n}`,
+      action:{ko:`양변을 양수 ${n}으로 나눴으므로`,en:`Since both sides were divided by positive ${n}`,zh:`因为两边都除以正数${n}`} }));
+    ns.forEach(n => transforms.push({ kind:'multiplyNegative', n, scale:-n,
+      left:`-${n}a`, right:`-${n}b`,
+      action:{ko:`양변에 음수 -${n}을 곱했으므로`,en:`Since both sides were multiplied by negative -${n}`,zh:`因为两边都乘了负数-${n}`} }));
+    const divideNs = [2, 3, 4, 5, 6, 7, 8, 9];
+    divideNs.forEach(n => transforms.push({ kind:'divideNegative', n, scale:-1 / n,
+      left:`a \\div (-${n})`, right:`b \\div (-${n})`,
+      action:{ko:`양변을 음수 -${n}으로 나눴으므로`,en:`Since both sides were divided by negative -${n}`,zh:`因为两边都除以负数-${n}`} }));
+    const base = pick(rng, ['<', '>']);
+    const tr = pick(rng, transforms);
+    const result = tr.scale < 0 ? FLIP[base] : base;
+    const answer = result === '<' ? 1 : 2;
+    const direction = tr.scale < 0
+      ? {ko:'방향을 뒤집습니다',en:'the direction flips',zh:'方向要反过来'}
+      : {ko:'방향을 그대로 둡니다',en:'the direction stays the same',zh:'方向保持不变'};
+    return {
+      prompt:{ko:'○에 알맞은 부등호를 고르고 ① 또는 ②를 쓰세요.',
+        en:'Choose the correct inequality sign for the circle, then write 1 or 2.',
+        zh:'选择圆圈中正确的不等号，再填写1或2。'},
+      tex:`a ${base} b \\quad ${tr.left} \\;\\bigcirc\\; ${tr.right} \\qquad \\text{① }< \\quad \\text{② }> \\quad \\Rightarrow\\quad \\square`,
+      answer, answerType:'number', widget:'numpad',
+      answerNote:{ko:result,en:result,zh:result},
+      inequalityDirection:{base, result, kind:tr.kind, operand:tr.n, scale:tr.scale},
+      solution:[
+        {tex:`a ${base} b`},
+        {tex:`\\text{${tr.action.ko}, ${direction.ko}.}`},
+        {tex:`${tr.left} ${result} ${tr.right} \\quad\\Rightarrow\\quad \\text{답 }\\square`,blank:answer}
+      ]
+    };
+  }
 
   if (mode === 'flip') {
     const x0 = nzInt(rng, 1, params.wide ? 12 : 8);

@@ -45,8 +45,12 @@ jobs:
         run: node hselementary/question-bank/public-inventory-review-reason-audit.js
       # 수의 마법 — 유닛·과정·앱 지도·문제은행·주간 학습지가 서로 어긋나면 배포를 멈춘다.
       # 2026-09-20~23 에 ws.html 이 mid9·mid10 을 안 실어 중2·중3 학습지가 88+8= 로 나갔다.
-      - name: Verify number_magic pages load every generator
-        run: node number_magic/scripts/check-roadmap-sync.js
+      - name: Verify Numbers of Magic navigation and loading
+        run: |
+          node number_magic/scripts/check-roadmap-sync.js --self-test
+          node number_magic/scripts/check-ladder.js
+          node number_magic/scripts/check-stages.js
+          node number_magic/scripts/check-about-stats.js
       - name: Stage sites and landing menu
         run: |
           mkdir -p _site/boarding-school-math

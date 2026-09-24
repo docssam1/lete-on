@@ -11,13 +11,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="app/print-editor.css">
 <script defer src="vendor/katex/katex.min.js"></script>
 <style>
 /* ============================================================
    토큰 — about.html·앱 본체와 통일. 리디자인-설계.md §2/§4.
    ============================================================ */
 :root{
-  --paper:#FBFAF7; --paper-warm:#F7F5F0; --mist:#F1F0EC; --line:#E4E2DC;
+  --paper:#FFFFFF; --paper-warm:#F7F8FA; --mist:#EEF1F5; --line:#DCE1E8;
   --ink:#1A2233; --sub:#4a5468;
   --blue:#16417C; --blue-deep:#0E2C57;
   --gold:#C9A063; --gold-soft:#EAC996; --gold-bright:#F5D98B;
@@ -29,8 +30,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;font-family:'Pretendard',sans-serif;color:var(--ink);background:var(--paper-warm)}
-body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:36px 36px;background-attachment:fixed}
+body{background:#F7F8FA}
 .katex{font-size:1em}
 
 /* ── 판면 ── */
@@ -38,7 +38,7 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 #drill-root::before,#drill-root::after{content:"";position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
 #drill-root::before{left:0}#drill-root::after{right:0}
 
-.dr-header{background:rgba(251,250,247,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+.dr-header{background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
   padding:16px 40px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
 .dr-wordmark{font-family:var(--serif);font-weight:700;font-size:16px;color:var(--ink)}
 .dr-wordmark b{color:var(--gold);font-weight:700}
@@ -155,6 +155,27 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 .preview-cell.preview-word{grid-column:1/-1;text-align:left;font-size:13.5px;line-height:1.6;
   justify-content:flex-start;word-break:keep-all}
 
+/* 검색→선택→실행: 작은 화면·키보드에서도 같은 순서로 이동한다. */
+.dr-search-label{padding:14px 16px 0;font-size:12px;font-weight:700;color:var(--sub)}
+.drawer-search,.dr-code-input{font-size:16px;min-height:44px}
+.dr-search-tools{display:flex;gap:6px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--line)}
+#dr-search-status{width:100%;font-size:12px;color:var(--sub)}
+.dr-search-tools button,.dr-back-list{min-height:44px;padding:8px 10px;background:white;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:13px;color:var(--blue-deep);cursor:pointer}
+.dr-search-tools button:disabled{opacity:.45;cursor:default}
+.dr-back-list{margin-bottom:14px}
+.drawer-item{min-height:52px}.drawer-item b{font-size:14px}.drawer-item small{font-size:12px}
+.drawer-item.sel small{color:#E1E9F4}.dg-count{color:var(--sub)}
+.bench{min-width:0;background:white}.bench-head{scroll-margin-top:140px}
+.seg{max-width:100%;flex-wrap:wrap}.seg button,.preview-dice,.dr-check{min-height:44px}
+.seg button{padding:9px 12px}.dr-check input{width:20px;height:20px}
+.gold-btn{background:var(--blue-deep);color:white;border:1px solid var(--blue-deep)}
+.gold-btn::before{display:none}.dr-tab.on{border-bottom-color:var(--blue)}
+.dr-seed-wrap{max-width:100%;flex-wrap:wrap}.dr-seed-code{cursor:text;overflow-wrap:anywhere}
+.preview-cell{min-width:0;overflow-x:auto}
+button:focus-visible,a:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid #2463B3;outline-offset:3px}
+.drawer-item:focus-visible,.seg button:focus-visible{outline-offset:-3px}
+@media(max-width:860px){.drawer{max-height:420px}.bench-head{scroll-margin-top:140px}}
+
 /* ── 코드로 다시 풀기 — 학습지 티켓 ── */
 .dr-ticket{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:10px;
   padding:18px 24px;margin-top:26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;overflow:hidden}
@@ -165,7 +186,7 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 .dr-code-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:1;
   border-left:1px dashed var(--line);padding-left:16px;margin-left:2px}
 @media(max-width:520px){.dr-code-row{border-left:none;padding-left:0;margin-left:0}}
-.dr-code-input{border:1.5px solid var(--line);border-radius:8px;padding:10px 13px;font-size:12.5px;
+.dr-code-input{border:1.5px solid var(--line);border-radius:8px;padding:10px 13px;font-size:16px;
   font-family:var(--mono);width:180px;outline:none;transition:.15s;color:var(--ink);background:var(--paper)}
 .dr-code-input:focus{border-color:var(--blue)}
 .dr-code-label{font-size:11.5px;color:var(--sub)}
@@ -339,10 +360,16 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 <script src="engine/threads/mid8.js"></script>
 <script src="engine/threads/mid9.js"></script>
 <script src="engine/threads/mid10.js"></script>
+<script src="engine/threads/mid11.js"></script>
+<script src="engine/threads/mid12.js"></script>
+<script src="engine/threads/mid13.js"></script>
+<script src="engine/threads/mid14.js"></script>
+<script src="engine/threads/mid15.js"></script>
 <script src="data/threads.js"></script>
-<!-- courses.js(2026-09-23) — 메뉴에 한 레벨도 없는 유형을 어느 주제에 넣을지(그 유형을 처음
-     가르치는 과정의 tier) 정하는 데만 쓴다. threads.js 만 있으면 되고 화면은 안 건드린다. -->
-<script src="data/courses.js"></script>
+<script src="data/middle-concepts.js"></script>
+<script src="data/middle-pacing.js"></script>
+<script src="data/graph-drawing.js"></script>
+<script src="data/drill-topics.js"></script>
 <script src="data/math-tips.js"></script>
 <script src="data/story-comics.js"></script>
 <script src="data/labs.js"></script>
@@ -363,712 +390,7 @@ body{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gr
 'use strict';
 
 /* ── 토픽 정의 ── */
-var TOPICS = [
-  { id:'add', label:'덧셈', en:'Addition', zh:'加法', icon:'＋', color:'#3b82f6', section:'school',
-    subs:[
-      {label:'한 자리 덧셈 (올림 없음)', thread:'AD1', level:1, desc:'합 9 이하'},
-      {label:'받아올림 덧셈 (한 자리)', thread:'AD2', level:1, desc:'합 10 이상'},
-      {label:'세 수 더하기', thread:'AD2', level:2, desc:'받아올림 세 수'},
-      {label:'연이은 덧셈 · 뺄셈 (세 수, 10까지)', thread:'AD10', level:1, desc:'앞에서부터 차례로'},
-      {label:'연이은 덧셈 · 뺄셈 (세 수, 20까지)', thread:'AD10', level:2, desc:'받아올림 · 내림 포함'},
-      {label:'연이은 덧셈 · 뺄셈 (네 수, 20까지)', thread:'AD10', level:3, desc:'네 항을 차례로'},
-      {label:'두 자리 + 한 자리 (올림 없음)', thread:'AD3', level:1, desc:'받아올림 없음'},
-      {label:'두 자리 + 한 자리 (올림)', thread:'AD3', level:2, desc:'받아올림 포함'},
-      {label:'세 자리 + 한 자리', thread:'AD3', level:3, desc:'받아올림 포함'},
-      {label:'두 자리 + 한 자리 (십진블록)', thread:'AD3', level:4, desc:'십진블록으로 더하기'},
-      {label:'두 자리+한 자리 (가로셈·올림)', thread:'AD3', level:5, desc:'10을 만들어 넘어가기'},
-      {label:'두 자리+한 자리 (세로셈·올림)', thread:'AD3', level:6, desc:'올린 1을 위에 적으며'},
-      {label:'두 자리 + 두 자리 (올림 없음)', thread:'AD5', level:1, desc:'23+45 — 자리끼리 그냥'},
-      {label:'두 자리 + 두 자리 (일의 자리 올림)', thread:'AD5', level:2, desc:'47+38 — 10을 묶어 올림'},
-      {label:'두 자리 + 두 자리 (십의 자리 올림)', thread:'AD5', level:3, desc:'53+82 — 백의 자리가 생김'},
-      {label:'두 자리 + 두 자리 (올림 두 번)', thread:'AD5', level:4, desc:'47+68 — 연달아 올림'},
-      {label:'두 자리 + 두 자리 (올림 섞기)', thread:'AD5', level:5, desc:'어디서 올릴지 먼저 보기'},
-      {label:'두 자리+두 자리 (가로셈)', thread:'AD5', level:6, desc:'옆으로 늘어놓고'},
-      {label:'두 자리+두 자리 (세로셈)', thread:'AD5', level:7, desc:'자리 맞춰 세로로'},
-      {label:'세 자리 + 두 자리 (올림 없음)', thread:'AD6', level:1, desc:'342+25 — 자리끼리 그냥'},
-      {label:'세 자리 + 두 자리 (올림)', thread:'AD6', level:2, desc:'348+25 — 한 번 올림'},
-      {label:'세 자리 덧셈 (올림 없음)', thread:'AD6', level:3, desc:'324+153'},
-      {label:'세 자리 덧셈 (올림 한 번)', thread:'AD6', level:4, desc:'어느 자리인지 먼저 보기'},
-      {label:'세 자리 덧셈 (연속 올림)', thread:'AD6', level:5, desc:'478+365 — 일→십 연달아'},
-      {label:'세 자리 덧셈 (가로셈)', thread:'AD6', level:6, desc:'백·십·일로 나눠'},
-      {label:'세 자리 덧셈 (세로셈)', thread:'AD6', level:7, desc:'자리 맞춰 세로로'},
-      {label:'네 자리 덧셈 (올림 없음)', thread:'AD7', level:1, desc:'3241+2536'},
-      {label:'네 자리 덧셈 (올림)', thread:'AD7', level:2, desc:'올림을 빠뜨리지 않기'},
-      {label:'네 자리 덧셈·뺄셈', thread:'AD7', level:3, desc:'4d ± 4d, 자유 혼합'},
-      {label:'몇십 더하기 · 빼기 (올림 없음)', thread:'AD4', level:1, desc:'40+30 — 0을 떼고'},
-      {label:'몇십 더하기 (올림)', thread:'AD4', level:2, desc:'70+50 — 백의 자리가 생김'},
-      {label:'몇백 더하기 · 빼기', thread:'AD4', level:3, desc:'100s ± 100s'},
-      {label:'몇백 더하기 (올림)', thread:'AD4', level:4, desc:'700+500 — 천의 자리가 생김'},
-      {label:'몇십 · 몇백 덧뺄 (수직선)', thread:'AD4', level:5, desc:'수직선으로 점프'},
-    ]
-  },
-  { id:'sub', label:'뺄셈', en:'Subtraction', zh:'减法', icon:'－', color:'#ef4444', section:'school',
-    subs:[
-      {label:'한 자리 뺄셈', thread:'SB1', level:1, desc:'9 이하'},
-      {label:'몇십 − 한 자리', thread:'SB2', level:1, desc:'10s − 1d'},
-      {label:'100 − 수', thread:'SB2', level:2, desc:'100 − 1d/2d'},
-      {label:'두 자리 − 한 자리 (내림 없음)', thread:'SB3', level:1, desc:'받아내림 없음'},
-      {label:'두 자리 − 한 자리 (내림)', thread:'SB3', level:2, desc:'받아내림 있음'},
-      {label:'두 자리−한 자리 (가로셈·내림)', thread:'SB3', level:3, desc:'10을 풀어 끊어 빼기'},
-      {label:'두 자리−한 자리 (세로셈·내림)', thread:'SB3', level:4, desc:'빌린 자리를 표시하며'},
-      {label:'두 자리 − 두 자리 (내림 없음)', thread:'SB4', level:1, desc:'받아내림 없음'},
-      {label:'두 자리 − 두 자리', thread:'SB4', level:2, desc:'받아내림 있음'},
-      {label:'두 자리−두 자리 (가로셈·내림)', thread:'SB4', level:3, desc:'십의 자리부터 끊어 빼기'},
-      {label:'두 자리−두 자리 (세로셈·내림)', thread:'SB4', level:4, desc:'빌린 자리를 표시하며'},
-      {label:'더 빼고 돌려받기 (7·8·9 빼기)', thread:'SB5', level:1, desc:'−10 하고 돌려받기'},
-      {label:'더 빼고 돌려받기 (세 자리)', thread:'SB5', level:2, desc:'3d − 2d, 돌려받기 전략'},
-      {label:'세 자리 뺄셈 (내림 없음)', thread:'SB6', level:1, desc:'768−342 — 그냥 빼기'},
-      {label:'세 자리 뺄셈 (내림 한 번)', thread:'SB6', level:2, desc:'742−328 — 한 번 빌리기'},
-      {label:'세 자리 뺄셈 (연속 내림)', thread:'SB6', level:3, desc:'723−489 — 빌리고 또 빌리기'},
-      {label:'세 자리 뺄셈 (0에서 빌리기)', thread:'SB6', level:4, desc:'302−147 — 가장 많이 틀리는 곳'},
-      {label:'네 자리 뺄셈 (연속 내림)', thread:'SB6', level:5, desc:'4d − 4d'},
-      {label:'세 자리 뺄셈 (세로셈)', thread:'SB6', level:6, desc:'자리 맞춰 세로로'},
-      {label:'네 자리 뺄셈 (세로셈)', thread:'SB6', level:7, desc:'큰 수도 세로로'},
-      {label:'식의 변형 (끼리끼리 묶기)', thread:'SB7', level:1, desc:'같은 수끼리 묶어 계산'},
-      {label:'식의 변형 (10 만들기)', thread:'SB7', level:2, desc:'10의 배수로 바꿔 계산'},
-    ]
-  },
-  { id:'mul', label:'곱셈', en:'Multiplication', zh:'乘法', icon:'×', color:'#10b981', section:'school',
-    subs:[
-      {label:'수직선 뛰어 세기 (2·5단)', thread:'ML25', level:1, desc:'6+6+6=6×3 — 같은 수 여러 번 더하기'},
-      {label:'수직선 뛰어 세기 (6·7단)', thread:'ML25', level:3, desc:'수직선에서 몇 번 뛰었나'},
-      {label:'구구단 2 · 3단', thread:'ML2', level:1, desc:'2단, 3단'},
-      {label:'구구단 4 · 5단', thread:'ML2', level:2, desc:'4단, 5단'},
-      {label:'구구단 2~5단 혼합', thread:'ML2', level:3, desc:'2~5단 mix'},
-      {label:'구구단 2 · 5단', thread:'ML2', level:4, desc:'2단, 5단'},
-      {label:'구구단 3 · 6단', thread:'ML2', level:5, desc:'3단, 6단'},
-      {label:'구구단 6 · 7단', thread:'ML3', level:1, desc:'6단, 7단'},
-      {label:'구구단 8 · 9단', thread:'ML3', level:2, desc:'8단, 9단'},
-      {label:'구구단 6~9단 혼합', thread:'ML3', level:3, desc:'6~9단 mix'},
-      {label:'구구단 4 · 8단', thread:'ML3', level:4, desc:'4단, 8단'},
-      {label:'구구단 7 · 9단', thread:'ML3', level:5, desc:'7단, 9단'},
-      {label:'구구단 전체 (2~9단)', thread:'ML4', level:1, desc:'2~9단 혼합'},
-      {label:'□ 채우기 (역구구)', thread:'ML4', level:2, desc:'빈칸에 인수 찾기'},
-      {label:'몇십 × 한 자리', thread:'ML5', level:1, desc:'10s × 1d'},
-      {label:'몇십 × 몇십', thread:'ML5', level:2, desc:'10s × 10s'},
-      {label:'두 자리 × 한 자리 (올림 없음)', thread:'ML6', level:1, desc:'23×3 — 자리끼리 곱해 더하기'},
-      {label:'두 자리 × 한 자리 (십의 자리 올림)', thread:'ML6', level:2, desc:'51×2 — 백의 자리가 생김'},
-      {label:'두 자리 × 한 자리 (일의 자리 올림)', thread:'ML6', level:3, desc:'15×2 — 올린 수를 십의 자리에'},
-      {label:'두 자리 × 한 자리 (올림이 번져 100↑)', thread:'ML6', level:4, desc:'34×3 — 올린 수로 자리가 늘어남'},
-      {label:'두 자리 × 한 자리 (올림 두 번)', thread:'ML6', level:5, desc:'45×3 — 연달아 올림'},
-      {label:'두 자리 × 한 자리 (올림 섞기)', thread:'ML6', level:6, desc:'어디서 올릴지 먼저 보기'},
-      {label:'두 자리 × 한 자리 (몇십 곱)', thread:'ML6', level:7, desc:'40×6 — 0을 떼고 곱하기'},
-      {label:'세 자리 × 한 자리 (올림 없음)', thread:'ML7', level:1, desc:'123×3 — 백·십·일 따로'},
-      {label:'세 자리 × 한 자리 (올림 한 번)', thread:'ML7', level:2, desc:'어느 자리인지 먼저 보기'},
-      {label:'세 자리 × 한 자리 (올림 두 번)', thread:'ML7', level:3, desc:'156×2 — 연달아 올림'},
-      {label:'세 자리 × 한 자리 (가로 분배)', thread:'ML7', level:4, desc:'자릿수 나눠 암산'},
-      {label:'세 자리 × 한 자리 (세로셈)', thread:'ML7', level:5, desc:'세로로 계산'},
-      {label:'두 자리 × 몇십', thread:'ML8', level:1, desc:'24×30 — 0 하나 붙이기'},
-      {label:'두 자리 × 두 자리 (올림 없음)', thread:'ML8', level:2, desc:'12×34 — 자리만 맞추기'},
-      {label:'두 자리 × 두 자리 (올림 한 번)', thread:'ML8', level:3, desc:'어느 부분곱인지 먼저'},
-      {label:'두 자리 × 두 자리 (올림 두 번)', thread:'ML8', level:4, desc:'줄마다 올림 따로'},
-      {label:'두 자리 × 두 자리 (올림 세 번 이상)', thread:'ML8', level:5, desc:'67×48 — 큰 수끼리'},
-      {label:'두 자리 × 두 자리 (엑스맨, 3자리×2자리)', thread:'ML8', level:6, desc:'세 자리 × 두 자리'},
-      {label:'두 자리 × 두 자리 (엑스맨, 3자리×3자리)', thread:'ML8', level:7, desc:'세 자리 × 세 자리'},
-      {label:'세 자리 × 몇십', thread:'ML9', level:1, desc:'164×50 — 0 하나 붙이기'},
-      {label:'세 자리 × 두 자리 (올림 없음)', thread:'ML9', level:2, desc:'123×12 — 줄 맞추기'},
-      {label:'세 자리 × 두 자리 (올림 한두 번)', thread:'ML9', level:3, desc:'어느 줄인지 먼저'},
-      {label:'세 자리 × 두 자리 (올림 서너 번)', thread:'ML9', level:4, desc:'164×55 — 두 줄 다'},
-      {label:'세 자리 × 두 자리 (올림 다섯 번 이상)', thread:'ML9', level:5, desc:'432×56 — 백의 자리까지'},
-      {label:'두 자리 × 한 자리 암산 (쉬움)', thread:'ML22', level:1, desc:'쉬운 수로 암산'},
-      {label:'두 자리 × 한 자리 암산 (보통)', thread:'ML22', level:2, desc:'자유로운 두 자리 수'},
-      {label:'배수 (×2 / ÷2)', thread:'ML1', level:1, desc:'두 배와 반으로'},
-      {label:'반으로 나누기 (÷2)', thread:'ML1', level:2, desc:'짝수 ÷ 2'},
-      {label:'네 자리 배와 반', thread:'ML1', level:3, desc:'네 자리 수까지 ×2 · ÷2'},
-    ]
-  },
-  { id:'div', label:'나눗셈', en:'Division', zh:'除法', icon:'÷', color:'#f59e0b', section:'school',
-    subs:[
-      {label:'똑같이 나누기 (한 명이 몇 개?)', thread:'DV12', level:1, desc:'나눠주기 이야기 · 2~5명'},
-      {label:'똑같이 나누기 (2~9명)', thread:'DV12', level:2, desc:'나눠주기 이야기'},
-      {label:'묶어서 나누기 (몇 묶음?)', thread:'DV13', level:1, desc:'묶어 세기 이야기'},
-      {label:'나눠주기·묶기 섞어서', thread:'DV13', level:3, desc:'문장을 읽고 무엇을 세는지 정하기'},
-      {label:'곱셈식에서 몫 찾기 (곱하는 수)', thread:'DV17', level:1, desc:'2×□=10 ⇔ 10÷2=□'},
-      {label:'곱셈식에서 몫 찾기 (곱해지는 수)', thread:'DV17', level:2, desc:'□×5=15 ⇔ 15÷5=□'},
-      {label:'나머지가 1인 나눗셈', thread:'DV18', level:1, desc:'11÷2=5…1, 묶고 남는 수'},
-      {label:'나머지가 2인 나눗셈', thread:'DV18', level:2, desc:'묶고 2개 남기'},
-      {label:'나머지가 3인 나눗셈', thread:'DV18', level:3, desc:'11÷4=2…3'},
-      {label:'나머지 섞어 (몫 한 자리)', thread:'DV18', level:4, desc:'나머지가 매번 달라요'},
-      {label:'나머지 있는 나눗셈 (몫 두 자리)', thread:'DV18', level:5, desc:'몫의 십의 자리·일의 자리'},
-      {label:'세로 나눗셈 (몫 한 자리)', thread:'DV19', level:1, desc:'3)17 — 자리에 맞춰 쓰기'},
-      {label:'세로 나눗셈 (몫 한 자리·나머지)', thread:'DV19', level:2, desc:'17÷3=5…2'},
-      {label:'세로 나눗셈 (몫 두 자리)', thread:'DV19', level:3, desc:'몫의 십의 자리부터'},
-      {label:'세로 나눗셈 (몫 두 자리·나머지)', thread:'DV19', level:4, desc:'35÷3=11…2'},
-      {label:'세로 나눗셈 (세 자리÷한 자리)', thread:'DV19', level:5, desc:'자리를 하나씩 내려 가며'},
-      {label:'약수 모두 쓰기', thread:'DV20', level:1, desc:'12의 약수: 1,2,3,4,6,12'},
-      {label:'배수 차례로 쓰기', thread:'DV20', level:2, desc:'3의 배수 5개'},
-      {label:'공약수', thread:'DV20', level:3, desc:'두 수에 공통인 약수'},
-      {label:'최대공약수', thread:'DV20', level:4, desc:'공약수 중 가장 큰 수'},
-      {label:'공배수', thread:'DV20', level:5, desc:'두 수에 공통인 배수'},
-      {label:'최소공배수', thread:'DV20', level:6, desc:'공배수 중 가장 작은 수'},
-      {label:'같은 수를 빼서 나누기', thread:'DV14', level:1, desc:'12−3−3−3−3=0 → 4번'},
-      {label:'같은 수를 빼서 나누기 (남는 수)', thread:'DV14', level:2, desc:'더 못 뺄 때 남는 수 = 나머지'},
-      {label:'곱셈 하나 → 나눗셈 둘', thread:'DV15', level:1, desc:'4×6=24 → 24÷4, 24÷6'},
-      {label:'□÷b=q · a÷□=q', thread:'DV15', level:2, desc:'모르는 수를 곱셈으로 되돌리기'},
-      {label:'두 자리 ÷ 한 자리 (나머지 없음)', thread:'DV2', level:1, desc:'나누어 떨어짐'},
-      {label:'나머지 있는 나눗셈', thread:'DV3', level:1, desc:'2d ÷ 1d, 나머지 있음'},
-      {label:'세 자리 ÷ 한 자리', thread:'DV4', level:1, desc:'3d ÷ 1d'},
-      {label:'세 자리 ÷ 한 자리 (나머지)', thread:'DV4', level:2, desc:'나머지 있음'},
-      {label:'반으로 나누기 (÷2)', thread:'DV1', level:1, desc:'짝수 ÷ 2'},
-      {label:'반으로 나누기 (÷2, 소수)', thread:'DV1', level:2, desc:'홀수 ÷ 2 = 0.5'},
-      {label:'두 자리 ÷ 두 자리', thread:'DV5', level:1, desc:'몫이 한 자리'},
-      {label:'세 자리 ÷ 두 자리 (나머지 없음)', thread:'DV5', level:2, desc:'441÷21 — 몫 자리 예상'},
-      {label:'세 자리 ÷ 두 자리 (나머지 있음)', thread:'DV5', level:3, desc:'나머지 < 나누는 수'},
-      {label:'네 자리 ÷ 두 자리', thread:'DV5', level:4, desc:'자리 내려오며 반복'},
-      {label:'배수 판별법 (2 · 5 · 10)', thread:'DV6', level:1, desc:'끝자리로 판별'},
-      {label:'배수 판별법 (3 · 6 · 9)', thread:'DV6', level:2, desc:'자릿수 합으로 판별'},
-      {label:'배수 판별법 (7)', thread:'DV6', level:3, desc:'뒷자리를 떼고 그 2배를 빼기'},
-      {label:'배수 판별법 (11)', thread:'DV6', level:4, desc:'홀수번째 합과 짝수번째 합의 차'},
-      {label:'약수 찾기', thread:'DV7', level:1, desc:'모든 약수 나열'},
-      {label:'최대공약수', thread:'DV7', level:2, desc:'두 수의 최대공약수'},
-      {label:'최소공배수', thread:'DV7', level:3, desc:'두 수의 최소공배수'},
-      {label:'소수 판별', thread:'DV8', level:1, desc:'소수인지 판별'},
-      {label:'소인수분해', thread:'DV8', level:2, desc:'소인수의 곱으로 나타내기'},
-      {label:'약수의 개수', thread:'DV8', level:3, desc:'약수 개수 구하기'},
-    ]
-  },
-  { id:'fraction', label:'분수', en:'Fractions', zh:'分数', icon:'🍰', color:'#ec4899', section:'school',
-    subs:[
-      {label:'진분수 덧셈 · 뺄셈 (동분모)', thread:'FR1', level:1, desc:'분모가 같은 진분수'},
-      {label:'가분수 ↔ 대분수 변환', thread:'FR2', level:1, desc:'서로 바꾸기'},
-      {label:'대분수 덧셈 · 뺄셈 (받아올림 없음)', thread:'FR3', level:1, desc:'자연수 · 분수 각각 계산'},
-      {label:'대분수 덧셈 · 뺄셈 (받아올림)', thread:'FR3', level:2, desc:'분수끼리 받아올림 · 내림'},
-      {label:'다른 분모 덧셈 · 뺄셈 (진분수)', thread:'FR4', level:1, desc:'통분 후 계산'},
-      {label:'다른 분모 덧셈 · 뺄셈 (대분수)', thread:'FR4', level:2, desc:'통분 후 대분수 계산'},
-      {label:'약분하여 기약분수 만들기', thread:'FR5', level:1, desc:'최대공약수로 약분'},
-      {label:'통분하기 (최소공배수)', thread:'FR5', level:2, desc:'두 분수의 분모를 같게'},
-      {label:'분수 곱셈 (진분수 × 진분수)', thread:'FR6', level:1, desc:'분자끼리, 분모끼리'},
-      {label:'분수 곱셈 (대분수 · 자연수 포함)', thread:'FR6', level:2, desc:'가분수로 바꿔 계산'},
-      {label:'분수 곱셈 (세 분수)', thread:'FR6', level:3, desc:'세 분수를 한 번에'},
-      {label:'분수 나눗셈', thread:'FR7', level:1, desc:'뒤 분수를 뒤집어 곱하기'},
-      {label:'분수 ↔ 소수 변환', thread:'FR8', level:1, desc:'서로 바꾸기'},
-      {label:'분수 덧셈 (분모 같음)', thread:'FR9', level:1, desc:'분자만 더하기'},
-      {label:'분수 뺄셈 (분모 같음)', thread:'FR9', level:2, desc:'분자만 빼기'},
-      {label:'분수 덧셈 (분모 다름)', thread:'FR10', level:1, desc:'통분 후 더하기'},
-      {label:'분수 뺄셈 (분모 다름)', thread:'FR10', level:2, desc:'통분 후 빼기'},
-      {label:'분수 곱셈 (분자 · 분모 각각)', thread:'FR11', level:1, desc:'분자 · 분모 각각 곱하기'},
-      {label:'분수 나눗셈 (역수로 곱하기)', thread:'FR11', level:2, desc:'역수로 바꿔 곱하기'},
-      {label:'분수 전환 나눗셈 (연습)', thread:'FR12', level:1, desc:'나누는 수를 2 · 4 · 5 · 8로'},
-      {label:'분수 전환 나눗셈 (실전)', thread:'FR12', level:2, desc:'20 · 25까지 포함해 나누기'},
-    ]
-  },
-  { id:'decimal', label:'소수', en:'Decimals', zh:'小数', icon:'🔢', color:'#06b6d4', section:'school',
-    subs:[
-      {label:'소수 덧셈 · 뺄셈 (소수 한 자리)', thread:'DC1', level:1, desc:'0.1 단위'},
-      {label:'소수 덧셈 · 뺄셈 (소수 두 자리)', thread:'DC1', level:2, desc:'0.01 단위'},
-      {label:'소수 곱셈', thread:'DC2', level:1, desc:'소수점 위치 맞추기'},
-      {label:'소수 나눗셈', thread:'DC3', level:1, desc:'소수점 이동해서 나누기'},
-      {label:'몫이 소수인 나눗셈 (자연수 ÷ 자연수)', thread:'DC3', level:2, desc:'3 ÷ 4 = 0.75'},
-      {label:'소수를 곱하기 (연습)', thread:'DC4', level:1, desc:'자연수처럼 곱하고 소수점 찍기'},
-      {label:'소수를 곱하기 (실전)', thread:'DC4', level:2, desc:'더 큰 소수로 연습'},
-      {label:'소수를 나누기 (연습)', thread:'DC5', level:1, desc:'소수점을 옮겨서 나누기'},
-      {label:'소수를 나누기 (실전)', thread:'DC5', level:2, desc:'더 큰 소수로 연습'},
-    ]
-  },
-  { id:'tools', label:'연산 도구', en:'Operation Tools', zh:'运算工具', icon:'🛠️', color:'#64748b', section:'school',
-    subs:[
-      {label:'빈칸 찾기 (덧셈 · 뺄셈)', thread:'EL1', level:1, desc:'역연산으로 빈칸 채우기'},
-      {label:'빈칸 찾기 (곱셈 · 나눗셈)', thread:'EL1', level:2, desc:'역연산으로 빈칸 채우기'},
-      {label:'빈칸 찾기 (혼합 · 큰 수)', thread:'EL1', level:3, desc:'사칙연산 혼합, 큰 수'},
-      {label:'검산 (덧셈)', thread:'EL2', level:1, desc:'뺄셈으로 검산'},
-      {label:'검산 (뺄셈)', thread:'EL2', level:2, desc:'덧셈으로 검산'},
-      {label:'검산 (곱셈 · 나눗셈)', thread:'EL2', level:3, desc:'역연산으로 검산'},
-      {label:'크기 비교', thread:'EL3', level:1, desc:'두 수의 대소 비교'},
-      {label:'크기 비교 (큰 수)', thread:'EL3', level:2, desc:'더 큰 범위의 수'},
-      {label:'크기 비교 (차 구하기)', thread:'EL3', level:3, desc:'더 큰 수와 차이 구하기'},
-      {label:'평균 구하기 (세 수)', thread:'EL4', level:1, desc:'세 수의 평균'},
-      {label:'평균 구하기 (다섯 수)', thread:'EL4', level:2, desc:'다섯 수의 평균'},
-      {label:'평균으로 빠진 수 찾기', thread:'EL4', level:3, desc:'평균을 알고 빠진 수 구하기'},
-      {label:'비례식 (빈 항 구하기)', thread:'EL5', level:1, desc:'a:b = c:□'},
-      {label:'비례식 (외항 · 내항의 곱)', thread:'EL5', level:2, desc:'외항 · 내항 곱으로 풀기'},
-      {label:'비례배분', thread:'EL5', level:3, desc:'전체를 주어진 비로 나누기'},
-    ]
-  },
-  { id:'preschool', label:'유아', en:'Preschool', zh:'幼儿', icon:'🧸', color:'#84cc16', section:'school',
-    subs:[
-      {label:'세기 (5까지)', thread:'NL1', level:1, desc:'목표만 콕콕 세기, 5까지'},
-      {label:'세기 (9까지)', thread:'NL1', level:2, desc:'목표만 콕콕 세기, 9까지'},
-      {label:'개수만큼 만들기', thread:'NL1', level:3, desc:'판을 눌러 개수 만들기'},
-      {label:'가르기 (5까지)', thread:'NL2', level:1, desc:'전체를 두 접시로 가르기'},
-      {label:'가르기 (9까지, 0 포함)', thread:'NL2', level:2, desc:'0이 들어간 가르기도 등장'},
-      {label:'모으기', thread:'NL2', level:3, desc:'두 부분을 모아 전체 구하기'},
-      {label:'무당벌레 가르기 (5까지)', thread:'NL3', level:1, desc:'날개 점 개수 가르기'},
-      {label:'무당벌레 가르기 (9까지)', thread:'NL3', level:2, desc:'비대칭 구성도 자주 등장'},
-      {label:'수열 빈칸 (쉬움)', thread:'NL4', level:1, desc:'1~10 이어 세기'},
-      {label:'수열 빈칸 (거꾸로·뛰어세기)', thread:'NL4', level:2, desc:'거꾸로 세기 · 2씩 뛰어세기'},
-      {label:'점 잇기', thread:'NL4', level:3, desc:'1부터 차례로 점을 이어 그림 완성'},
-      {label:'수 피라미드 (쉬움)', thread:'NL5', level:1, desc:'꼭대기 한 칸만 빈칸'},
-      {label:'수 피라미드 (어려움)', thread:'NL5', level:2, desc:'중간·꼭대기 빈칸'},
-      {label:'동전 뛰어세기', thread:'NL5', level:3, desc:'10원씩 뛰어세어 총액 구하기'},
-      {label:'10의 짝꿍', thread:'NL6', level:1, desc:'텐프레임으로 10 채우기'},
-      {label:'1 큰 수 · 1 작은 수', thread:'NL6', level:2, desc:'세어 보고 이웃 수 고르기'},
-      {label:'이어 세기 (쉬움)', thread:'NL7', level:1, desc:'1~10 범위 이어 세기'},
-      {label:'이어 세기 (어려움)', thread:'NL7', level:2, desc:'1~15 범위 이어 세기'},
-      {label:'수-점 매칭', thread:'NL7', level:3, desc:'숫자와 점 그림 짝짓기'},
-      {label:'몇째 찾기 (쉬움)', thread:'NL8', level:1, desc:'왼쪽에서 몇째 콕 짚기'},
-      {label:'몇째 찾기 (어려움)', thread:'NL8', level:2, desc:'왼쪽 · 오른쪽 섞어 몇째 찾기'},
-      {label:'정확히 칠하기', thread:'NL8', level:3, desc:'정해진 개수만 색칠'},
-      {label:'줄서기 (쉬움)', thread:'NL9', level:1, desc:'왼쪽에서 몇째 친구 찾기'},
-      {label:'줄서기 (어려움)', thread:'NL9', level:2, desc:'왼쪽 · 오른쪽 섞어 찾기'},
-      {label:'계단 몇째', thread:'NL9', level:3, desc:'아래에서부터 세어 계단 번호 답하기'},
-      {label:'저울 비교 (5까지)', thread:'NL10', level:1, desc:'더 무겁거나 가벼운 쪽 찾기'},
-      {label:'저울 비교 (9까지)', thread:'NL10', level:2, desc:'더 큰 범위로 비교'},
-      {label:'규칙 보임 (쉬움)', thread:'NL11', level:1, desc:'+n 규칙으로 계산'},
-      {label:'규칙 보임 (어려움)', thread:'NL11', level:2, desc:'+n · -n 규칙으로 계산'},
-      {label:'숨은 규칙 추리', thread:'NL11', level:3, desc:'예시 2개로 규칙 추리'},
-      {label:'길 잇기', thread:'NL12', level:1, desc:'격자 위 길을 순서대로 잇기'},
-      {label:'십자 퍼즐 (쉬움)', thread:'NL12', level:2, desc:'위+아래=왼쪽+오른쪽'},
-      {label:'십자 퍼즐 (어려움)', thread:'NL12', level:3, desc:'더 큰 범위로 연습'},
-      {label:'이야기 셈 (쉬움)', thread:'NL13', level:1, desc:'받거나 나눠 준 후 개수 구하기'},
-      {label:'이야기 셈 (어려움)', thread:'NL13', level:2, desc:'더 큰 범위로 연습'},
-      {label:'분류하기', thread:'NL13', level:3, desc:'종류별로 나눠 담고 세기'},
-      {label:'탤리 만들기 (쉬움)', thread:'NL14', level:1, desc:'막대를 그어 목표 수 만들기'},
-      {label:'탤리 만들기 (어려움)', thread:'NL14', level:2, desc:'9까지 목표 수 만들기'},
-      {label:'수-탤리 매칭', thread:'NL14', level:3, desc:'숫자와 탤리 그림 짝짓기'},
-      {label:'분류하고 세기 (쉬움)', thread:'NL15', level:1, desc:'섞인 것 나눠 담고 세기'},
-      {label:'분류하고 세기 (어려움)', thread:'NL15', level:2, desc:'더 큰 범위로 연습'},
-      {label:'더 많은 쪽 비교', thread:'NL15', level:3, desc:'어느 바구니가 더 많은지 찾기'},
-      {label:'탤리 읽기 (쉬움)', thread:'NL16', level:1, desc:'그어진 막대 세어 답하기'},
-      {label:'탤리 읽기 (어려움)', thread:'NL16', level:2, desc:'9까지 범위로 연습'},
-      {label:'화살표 규칙', thread:'NL16', level:3, desc:'1씩 늘거나 줄어드는 빈칸 찾기'},
-    ]
-  },
-  { id:'wordproblem', label:'문장제', en:'Word Problems', zh:'应用题', icon:'📖', color:'#0ea5e9', section:'school',
-    subs:[
-      {label:'문제 이해 (자연수 + − ×)', thread:'WP1', level:1, desc:'주어진 것과 구하는 것 가려내기'},
-      {label:'문제 이해 (자연수 + − × ÷)', thread:'WP1', level:2, desc:'나눗셈 상황까지, 큰 수'},
-      {label:'문제 이해 (분수·소수 + −)', thread:'WP1', level:3, desc:'길이·들이·무게를 재는 상황'},
-      {label:'연산 찾기 (자연수 + − ×)', thread:'WP3', level:1, desc:'더할까 뺄까 곱할까'},
-      {label:'연산 찾기 (자연수 + − × ÷)', thread:'WP3', level:2, desc:'나누기까지 넣어 고르기'},
-      {label:'연산 찾기 (분수·소수 + −)', thread:'WP3', level:3, desc:'재는 상황에서 식 고르기'},
-      {label:'식으로 나타내기 (자연수 + − ×)', thread:'WP4', level:1, desc:'□ ○ □ = □ 채우기'},
-      {label:'식으로 나타내기 (자연수 + − × ÷)', thread:'WP4', level:2, desc:'나눗셈까지, □가 있는 식'},
-      {label:'식으로 나타내기 (분수·소수 + −)', thread:'WP4', level:3, desc:'재는 상황을 식으로 옮기기'},
-      {label:'점검하기 (자연수 + − ×)', thread:'WP5', level:1, desc:'바르게 풀었는지 다시 보기'},
-      {label:'점검하기 (자연수 + − × ÷)', thread:'WP5', level:2, desc:'나눗셈까지, 어림해 보기'},
-      {label:'점검하기 (분수·소수 + −)', thread:'WP5', level:3, desc:'답이 무엇을 나타내는지 말하기'},
-    ]
-  },
-  { id:'creative', label:'창의수연', en:'Strategy Math', zh:'思维数学', icon:'🧠', color:'#8b5cf6', section:'magic',
-    subs:[
-      {label:'보수 5 찾기', thread:'NS3', level:1, desc:'더해서 5 만들기'},
-      {label:'보수 10 찾기', thread:'NS3', level:2, desc:'더해서 10 만들기'},
-      {label:'보수 100 찾기 (몇십)', thread:'NS4', level:1, desc:'몇십으로 더해서 100 만들기'},
-      {label:'보수 100 찾기', thread:'NS4', level:2, desc:'더해서 100 만들기'},
-      {label:'보수 1000 찾기', thread:'NS4', level:3, desc:'더해서 1000 만들기'},
-      {label:'두 배 수 찾기 (1~10)', thread:'NS5', level:1, desc:'1~10의 두 배'},
-      {label:'두 배 수 찾기 (몇십몇)', thread:'NS5', level:2, desc:'15~95 두 배'},
-      {label:'짝 묶어 더하기 (한 자리)', thread:'AD8', level:1, desc:'4개 수, 짝 10 묶기'},
-      {label:'짝 묶어 더하기 (5~6개 수)', thread:'AD8', level:2, desc:'더 많은 수를 짝 지어 더하기'},
-      {label:'짝 묶어 더하기 (두 자리)', thread:'AD8', level:3, desc:'두 자리 수 포함'},
-      {label:'10 이용 덧셈 (나란히 비교)', thread:'AD9', level:1, desc:'두 가지 방법 비교'},
-      {label:'10 이용 덧셈 (암산 단계)', thread:'AD9', level:2, desc:'머릿속으로 보정하기'},
-      {label:'자릿값 읽기', thread:'NS1', level:1, desc:'두·세 자리 자릿값'},
-      {label:'자릿값 읽기 (네 자리)', thread:'NS1', level:2, desc:'천의 자리까지'},
-      {label:'자릿값 읽기 (큰 수)', thread:'NS1', level:3, desc:'만의 자리까지'},
-      {label:'자릿값 읽기 (십진블록)', thread:'NS1', level:4, desc:'십진블록으로 표현'},
-      {label:'모으기 · 가르기 (5까지)', thread:'NS2', level:1, desc:'5까지 수 가르기'},
-      {label:'모으기 · 가르기', thread:'NS2', level:2, desc:'9까지 수 가르기'},
-    ]
-  },
-  { id:'magicmul', label:'매직 계산법', en:'Magic Mental Math', zh:'神奇速算', icon:'✨', color:'#a855f7', section:'magic',
-    subs:[
-      {label:'19단', thread:'ML10', level:1, desc:'19×N 빠르게 곱하기'},
-      {label:'99단 · 기준곱', thread:'ML10', level:2, desc:'99×N, 기준수 활용'},
-      {label:'25×4 · 37×3 활용', thread:'ML10', level:3, desc:'짝꿍 곱으로 빠르게'},
-      {label:'11²~20² 빠르게 구하기', thread:'ML11', level:1, desc:'11부터 20까지 제곱'},
-      {label:'21²~40² 빠르게 구하기', thread:'ML11', level:2, desc:'21부터 40까지 제곱'},
-      {label:'2 · 3 · 5의 거듭제곱', thread:'ML11', level:3, desc:'거듭제곱 규칙 익히기'},
-      {label:'1로 끝나는 수의 제곱', thread:'ML11', level:4, desc:'일의 자리가 1인 수'},
-      {label:'제곱수 점화식', thread:'ML11', level:5, desc:'이웃한 제곱수의 관계'},
-      {label:'곱해서 10 만들기', thread:'ML12', level:1, desc:'10이 되는 짝꿍 곱'},
-      {label:'곱해서 100 만들기', thread:'ML12', level:2, desc:'100이 되는 짝꿍 곱'},
-      {label:'곱해서 1000 만들기', thread:'ML12', level:3, desc:'1000이 되는 짝꿍 곱'},
-      {label:'9를 곱하라 (연습)', thread:'ML13', level:1, desc:'9단을 빠르게'},
-      {label:'9를 곱하라 (실전)', thread:'ML13', level:2, desc:'더 큰 수 × 9'},
-      {label:'더 곱해주고 빼기 (연습)', thread:'ML14', level:1, desc:'가까운 수로 곱하고 빼기'},
-      {label:'더 곱해주고 빼기 (실전)', thread:'ML14', level:2, desc:'더 큰 수로 연습'},
-      {label:'11의 곱셈법 (연습)', thread:'ML15', level:1, desc:'두 자리 × 11'},
-      {label:'11의 곱셈법 (실전)', thread:'ML15', level:2, desc:'더 큰 수 × 11'},
-      {label:'5의 변신 곱셈 (×5)', thread:'ML16', level:1, desc:'10의 반으로 빠르게'},
-      {label:'5의 변신 나눗셈 (÷5)', thread:'ML16', level:2, desc:'2배 하고 10으로 나누기'},
-      {label:'25의 변신 곱셈 (×25)', thread:'ML17', level:1, desc:'100의 4분의 1로 빠르게'},
-      {label:'25의 변신 나눗셈 (÷25)', thread:'ML17', level:2, desc:'4배 하고 100으로 나누기'},
-      {label:'자리 이동 곱셈 (연습)', thread:'ML18', level:1, desc:'0을 옮겨서 곱하기'},
-      {label:'자리 이동 곱셈 (실전)', thread:'ML18', level:2, desc:'더 큰 수로 연습'},
-      {label:'피라미드 곱셈 (연습)', thread:'ML18', level:3, desc:'자릿수를 쌓아 곱하기'},
-      {label:'피라미드 곱셈 (실전)', thread:'ML18', level:4, desc:'더 큰 수로 연습'},
-      {label:'VEDA 1로 끝나는 곱 (연습)', thread:'ML19', level:1, desc:'일의 자리가 1인 두 수'},
-      {label:'VEDA 1로 끝나는 곱 (실전)', thread:'ML19', level:2, desc:'더 큰 수로 연습'},
-      {label:'차가 2인 두 수의 곱 (연습)', thread:'ML20', level:1, desc:'평균의 제곱 − 1'},
-      {label:'차가 2인 두 수의 곱 (실전)', thread:'ML20', level:2, desc:'더 큰 수로 연습'},
-      {label:'차가 2인 두 수의 곱 (기준수 제시, 연습)', thread:'ML20', level:3, desc:'기준수를 알려주고 계산'},
-      {label:'차가 2인 두 수의 곱 (기준수 제시, 실전)', thread:'ML20', level:4, desc:'더 큰 수로 연습'},
-      {label:'차가 2인 두 수의 곱 (평균 계산, 연습)', thread:'ML20', level:5, desc:'평균을 직접 구해서 계산'},
-      {label:'차가 2인 두 수의 곱 (평균 계산, 실전)', thread:'ML20', level:6, desc:'더 큰 수로 연습'},
-      {label:'차가 2인 두 수의 곱 (유명 기준수 근처)', thread:'ML20', level:7, desc:'10 · 100 등 유명한 수 근처'},
-      {label:'세 자리 수의 제곱', thread:'ML20', level:8, desc:'차가 2인 두 수의 곱으로 빠르게'},
-      {label:'네 자리 수의 제곱', thread:'ML20', level:9, desc:'차가 2인 두 수의 곱으로 빠르게'},
-      {label:'몇 자리 수일까요 (연습)', thread:'ML21', level:1, desc:'곱의 자릿수 어림하기'},
-      {label:'몇 자리 수일까요 (실전)', thread:'ML21', level:2, desc:'더 큰 수로 연습'},
-      {label:'분해 나눗셈 (연습)', thread:'DV9', level:1, desc:'수를 나눠서 계산'},
-      {label:'분해 나눗셈 (실전)', thread:'DV9', level:2, desc:'더 큰 수로 연습'},
-      {label:'약분 나눗셈 (연습)', thread:'DV10', level:1, desc:'먼저 약분하고 나누기'},
-      {label:'약분 나눗셈 (실전)', thread:'DV10', level:2, desc:'더 큰 수로 연습'},
-      {label:'부풀려 나눗셈 (연습)', thread:'DV11', level:1, desc:'양쪽에 곱해서 나누기'},
-      {label:'부풀려 나눗셈 (실전)', thread:'DV11', level:2, desc:'더 큰 수로 연습'},
-      {label:'곱을 이용한 가우스 덧셈 (연습)', thread:'MX6', level:1, desc:'(첫항+끝항)×개수÷2'},
-      {label:'곱을 이용한 가우스 덧셈 (실전)', thread:'MX6', level:2, desc:'더 큰 수열로 연습'},
-      {label:'곱을 이용한 가우스 덧셈 (제곱 공식, 연습)', thread:'MX6', level:3, desc:'제곱 공식으로 빠르게'},
-      {label:'곱을 이용한 가우스 덧셈 (제곱 공식, 실전)', thread:'MX6', level:4, desc:'세 자리 수열로 연습'},
-      {label:'차근차근 곱하기 (연습)', thread:'ML23', level:1, desc:'한 자릿수씩 순서대로'},
-      {label:'차근차근 곱하기 (실전)', thread:'ML23', level:2, desc:'더 큰 수로 연습'},
-      {label:'9로 끝나는 수의 곱 (연습)', thread:'ML24', level:1, desc:'1을 더해 곱하고 빼기'},
-      {label:'9로 끝나는 수의 곱 (실전)', thread:'ML24', level:2, desc:'더 큰 수로 연습'},
-      {label:'사칙 혼합계산 (괄호 없음)', thread:'MX1', level:1, desc:'순서만 지켜 계산'},
-      {label:'사칙 혼합계산 (소괄호)', thread:'MX1', level:2, desc:'소괄호 먼저 계산'},
-      {label:'사칙 혼합계산 (중괄호)', thread:'MX1', level:3, desc:'중괄호까지 포함'},
-      {label:'수열의 합 (1~n)', thread:'MX2', level:1, desc:'1부터 n까지의 합'},
-      {label:'수열의 합 (홀수 · 짝수)', thread:'MX2', level:2, desc:'홀수 또는 짝수만의 합'},
-      {label:'비율을 백분율로', thread:'MX3', level:1, desc:'분수 · 소수 → %'},
-      {label:'할푼리로 나타내기', thread:'MX3', level:2, desc:'백분율을 할푼리로'},
-      {label:'가장 간단한 자연수의 비', thread:'MX3', level:3, desc:'자연수 · 소수 · 분수 비 줄이기'},
-      {label:'비교하는 양 구하기', thread:'MX3', level:4, desc:'기준량 × 비율'},
-      {label:'기준량 구하기', thread:'MX3', level:5, desc:'비교하는 양 ÷ 비율'},
-      {label:'제곱근 구하기 (√121~√400)', thread:'MX4', level:1, desc:'11²~20² 범위'},
-      {label:'제곱근 구하기 (√441~√1600)', thread:'MX4', level:2, desc:'21²~40² 범위'},
-      {label:'분수 · 소수 혼합 총정리', thread:'MX5', level:1, desc:'분수와 소수를 섞어서'},
-    ]
-  },
-  { id:'challenge', label:'경시의 탑', en:'Tower of Challenges', zh:'竞赛之塔', icon:'🏔️', color:'#C9A063', section:'magic',
-    subs:[
-      {label:'한쪽으로 모으기 (연습)', thread:'CH1', level:1, desc:'두 자리×두 자리'},
-      {label:'한쪽으로 모으기', thread:'CH1', level:2, desc:'세 자리×두 자리'},
-      {label:'100 보수 곱 (연습)', thread:'CH2', level:1, desc:'100 미만끼리'},
-      {label:'100 보수 곱', thread:'CH2', level:2, desc:'100 넘는·안 넘는 수'},
-      {label:'1000 보수 곱 (연습)', thread:'CH2', level:3, desc:'1000 미만끼리'},
-      {label:'1000 보수 곱', thread:'CH2', level:4, desc:'1000 넘는·안 넘는 수'},
-      {label:'진법 → 십진수', thread:'CH3', level:1, desc:'5진법 변환'},
-      {label:'십진수 → 진법', thread:'CH3', level:2, desc:'5진법으로 변환'},
-      {label:'16진법 읽기', thread:'CH3', level:3, desc:'16진법 수 변환'},
-      {label:'이진법 곱셈 (연습)', thread:'CH3', level:4, desc:'이진수끼리 곱하기'},
-      {label:'이진법 곱셈 (실전)', thread:'CH3', level:5, desc:'더 큰 이진수 곱셈'},
-      {label:'1001 자릿수 이동법칙 (곱셈, 연습)', thread:'CH4', level:1, desc:'세 자리 곱셈, 기초'},
-      {label:'1001 자릿수 이동법칙', thread:'CH4', level:2, desc:'세 자리 곱셈'},
-      {label:'1001 자릿수 이동법칙 (나눗셈, 연습)', thread:'CH4', level:3, desc:'자릿수 이동으로 나누기'},
-      {label:'1001 자릿수 이동법칙 (나눗셈, 실전)', thread:'CH4', level:4, desc:'더 큰 수로 나누기'},
-      {label:'순환소수 반복마디', thread:'CH5', level:1, desc:'9·99·999로 나누기'},
-      {label:'순환소수 특정 자리 숫자 (연습)', thread:'CH5', level:2, desc:'소수점 아래 n번째 숫자'},
-      {label:'순환소수 특정 자리 숫자 (실전)', thread:'CH5', level:3, desc:'더 먼 자리 숫자 찾기'},
-      {label:'순환소수를 분수로 되돌리기', thread:'CH5', level:4, desc:'순환소수 → 분수 변환'},
-      {label:'100 근처 수의 나눗셈 (연습)', thread:'CH6', level:1, desc:'100 근처 수로 나누기'},
-      {label:'100 근처 수의 나눗셈', thread:'CH6', level:2, desc:'네 자리 ÷ 두 자리'},
-      {label:'10 근처 수의 나눗셈', thread:'CH6', level:3, desc:'10에 가까운 수로 나누기'},
-      {label:'1000 근처 수의 나눗셈', thread:'CH6', level:4, desc:'1000에 가까운 수로 나누기'},
-      {label:'50 근처 수의 제곱', thread:'CH7', level:1, desc:'40~60 제곱'},
-      {label:'100 근처 수의 제곱', thread:'CH7', level:2, desc:'90~110 제곱'},
-      {label:'1000 근처 수의 제곱', thread:'CH7', level:3, desc:'990~1010 제곱'},
-      {label:'제곱·세제곱 계산법', thread:'CH8', level:1, desc:'세 자리 제곱'},
-      {label:'제곱·세제곱 계산법 (세제곱)', thread:'CH8', level:2, desc:'두 자리 수 세제곱'},
-      {label:'분리 제곱법 (연습)', thread:'CH9', level:1, desc:'끝 두 자리 분리'},
-      {label:'분리 제곱법', thread:'CH9', level:2, desc:'다섯 자리 제곱'},
-      {label:'분리 제곱법 (세 자리 분리)', thread:'CH9', level:3, desc:'끝 세 자리 분리, 더 큰 수'},
-      {label:'제곱수의 합 (연습)', thread:'CH10', level:1, desc:'작은 구간'},
-      {label:'제곱수의 합', thread:'CH10', level:2, desc:'세 자리 구간'},
-      {label:'몰아주기 곱', thread:'CH11', level:1, desc:'십의 자리 같음'},
-      {label:'몰아주기 곱 (일의 자리 합 10)', thread:'CH11', level:2, desc:'십의 자리 같고 일의 자리 합 10'},
-      {label:'몰아주기 곱 (십의 자리 합 10)', thread:'CH11', level:3, desc:'일의 자리 같고 십의 자리 합 10'},
-      {label:'몰아주기 곱 (기준수 자유)', thread:'CH11', level:4, desc:'십의 자리가 달라도 적용'},
-      {label:'어림하기 곱셈법 (연습)', thread:'CH12', level:1, desc:'두 자리 곱셈'},
-      {label:'어림하기 곱셈법', thread:'CH12', level:2, desc:'세 자리 곱셈'},
-      {label:'큰 수 정복', thread:'CH13', level:1, desc:'만·억·조'},
-    ]
-  },
-  { id:'middle1', label:'중등 · 정수와 유리수', en:'Middle 1 · Integers & Rationals', zh:'中学·整数与有理数', icon:'🌋', color:'#16417C', section:'magic',
-    subs:[
-      {label:'절댓값·수직선 (연습)', thread:'MD1', level:1, desc:'절댓값 기초'},
-      {label:'절댓값·수직선', thread:'MD1', level:2, desc:'절댓값(실전)'},
-      {label:'정수 대소 비교', thread:'MD1', level:3, desc:'수직선 대소·거리'},
-      {label:'정수 수직선 위 거리', thread:'MD1', level:4, desc:'두 점 사이 거리'},
-      {label:'정수 덧셈(같은 부호)', thread:'MD2', level:1, desc:'절댓값 합'},
-      {label:'정수 덧셈(다른 부호)', thread:'MD2', level:2, desc:'절댓값 차'},
-      {label:'정수 괄호 풀기', thread:'MD2', level:3, desc:'부호 바꿔 덧셈으로'},
-      {label:'세 정수 덧뺄셈 혼합', thread:'MD2', level:4, desc:'앞에서부터 차례로'},
-      {label:'유리수 덧뺄(분모 같음)', thread:'MD3', level:1, desc:'분자만 계산'},
-      {label:'유리수 덧뺄(통분)', thread:'MD3', level:2, desc:'최소공배수로 통분'},
-      {label:'세 유리수 덧뺄 혼합', thread:'MD3', level:3, desc:'통분 후 혼합'},
-      {label:'정수 곱셈', thread:'MD4', level:1, desc:'음수 개수로 부호'},
-      {label:'정수 나눗셈', thread:'MD4', level:2, desc:'음수 개수로 부호'},
-      {label:'세 수 이상 곱셈(홀짝)', thread:'MD4', level:3, desc:'음수 개수 홀짝'},
-      {label:'곱셈·나눗셈 혼합', thread:'MD4', level:4, desc:'앞에서부터 차례로'},
-      {label:'거듭제곱 (-a)ⁿ', thread:'MD5', level:1, desc:'괄호형'},
-      {label:'거듭제곱 -aⁿ', thread:'MD5', level:2, desc:'비괄호형'},
-      {label:'거듭제곱 구분하기', thread:'MD5', level:3, desc:'괄호형·비괄호형 섞임'},
-      {label:'정수 혼합계산(괄호 없이)', thread:'MD6', level:1, desc:'곱셈 먼저'},
-      {label:'정수 혼합계산(괄호)', thread:'MD6', level:2, desc:'괄호 먼저'},
-      {label:'정수 혼합계산(나눗셈 포함)', thread:'MD6', level:3, desc:'사칙 전체 혼합'},
-      {label:'유리수 곱셈', thread:'MD7', level:1, desc:'부호·분자분모'},
-      {label:'유리수 나눗셈(역수)', thread:'MD7', level:2, desc:'역수의 곱셈'},
-      {label:'유리수 곱나눗 혼합', thread:'MD7', level:3, desc:'세 유리수 혼합'},
-      {label:'유한소수 판별(기약분수)', thread:'MD8', level:1, desc:'분모 2·5 판정'},
-      {label:'유한소수 판별(약분 필요)', thread:'MD8', level:2, desc:'약분 후 판정'},
-      {label:'순환소수→분수 (1·1자리)', thread:'MD9', level:1, desc:'비순환1·순환1'},
-      {label:'순환소수→분수 (비순환 2자리)', thread:'MD9', level:2, desc:'비순환2·순환1'},
-      {label:'순환소수→분수 (순환 2자리)', thread:'MD9', level:3, desc:'비순환1·순환2'},
-      {label:'순환소수→분수 (실전)', thread:'MD9', level:4, desc:'비순환2·순환2'},
-      {label:'문자식 표현(한 문자)', thread:'MD47', level:1, desc:'[계수,지수]'},
-      {label:'문자식 표현(나눗셈→분수)', thread:'MD47', level:2, desc:'[분자,분모]'},
-      {label:'문자식 표현(두 문자, 실전)', thread:'MD47', level:3, desc:'[계수,지수1,지수2]'},
-      {label:'식의 값(일차식)', thread:'MD48', level:1, desc:'대입'},
-      {label:'식의 값(이차식, 음수 대입)', thread:'MD48', level:2, desc:'대입'},
-      {label:'식의 값(문자 두 개, 실전)', thread:'MD48', level:3, desc:'대입'},
-      {label:'일차식 계산(분배법칙)', thread:'MD49', level:1, desc:'[계수,상수]'},
-      {label:'일차식 계산(동류항)', thread:'MD49', level:2, desc:'[계수,상수]'},
-      {label:'일차식 계산(분배+동류항, 실전)', thread:'MD49', level:3, desc:'[계수,상수]'},
-      {label:'일차방정식(한 단계)', thread:'MD50', level:1, desc:'ax=c'},
-      {label:'일차방정식(두 단계)', thread:'MD50', level:2, desc:'ax+b=c'},
-      {label:'일차방정식(양변에 미지수, 실전)', thread:'MD50', level:3, desc:'ax+b=cx+d'},
-      {label:'정비례 값', thread:'MD51', level:1, desc:'y=ax'},
-      {label:'반비례 값', thread:'MD51', level:2, desc:'y=a/x'},
-      {label:'정비례·반비례 혼합(실전)', thread:'MD51', level:3, desc:'혼합'},
-    ]
-  },
-  { id:'middle2', label:'중등 · 식의 계산', en:'Middle 2 · Expression Calculus', zh:'中学·式的运算', icon:'📐', color:'#5a4a8a', section:'magic',
-    subs:[
-      {label:'지수법칙 곱셈(aᵐ×aⁿ)', thread:'MD10', level:1, desc:'지수를 더하기'},
-      {label:'거듭제곱의 거듭제곱', thread:'MD10', level:2, desc:'지수를 곱하기'},
-      {label:'지수법칙 나눗셈(aᵐ÷aⁿ)', thread:'MD10', level:3, desc:'지수를 빼기'},
-      {label:'지수법칙 혼합(실전)', thread:'MD10', level:4, desc:'밑 혼합'},
-      {label:'단항식 곱셈', thread:'MD11', level:1, desc:'계수·지수 다칸'},
-      {label:'단항식 나눗셈', thread:'MD11', level:2, desc:'계수·지수 다칸'},
-      {label:'단항식 곱나눗 혼합(실전)', thread:'MD11', level:3, desc:'세 단항식'},
-      {label:'다항식 덧뺄(일차식)', thread:'MD12', level:1, desc:'동류항 정리'},
-      {label:'다항식 덧뺄(이차식)', thread:'MD12', level:2, desc:'x²·x·상수'},
-      {label:'괄호 앞 부호 바꾸기(실전)', thread:'MD12', level:3, desc:'전부 변호'},
-      {label:'(단항식)×(다항식) 이항식', thread:'MD13', level:1, desc:'분배법칙'},
-      {label:'문자 있는 단항식으로 전개', thread:'MD13', level:2, desc:'차수 상승'},
-      {label:'삼항식 전개(실전)', thread:'MD13', level:3, desc:'세 항 분배'},
-      {label:'등식 변형(덧셈식)', thread:'MD14', level:1, desc:'이항 감각'},
-      {label:'등식 변형(뺄셈식)', thread:'MD14', level:2, desc:'이항 감각'},
-      {label:'등식 변형→풀이 완주(실전)', thread:'MD14', level:3, desc:'이항+나눗셈'},
-    ]
-  },
-  { id:'middle3', label:'중등 · 제곱근과 공식', en:'Middle 3 · Roots & Formulas', zh:'中学·平方根与公式', icon:'🌈', color:'#16417C', section:'magic',
-    subs:[
-      {label:'완전제곱수의 제곱근', thread:'MD15', level:1, desc:'√N=k'},
-      {label:'(√a)²=a', thread:'MD15', level:2, desc:'근호 제곱'},
-      {label:'√(a²)=|a|(실전)', thread:'MD15', level:3, desc:'절댓값'},
-      {label:'근호 정리(연습)', thread:'MD16', level:1, desc:'√48=4√3'},
-      {label:'근호 정리(실전)', thread:'MD16', level:2, desc:'더 큰 수'},
-      {label:'계수 있는 근호 정리', thread:'MD16', level:3, desc:'계수까지 곱함'},
-      {label:'제곱근 곱셈(정수로 떨어짐)', thread:'MD17', level:1, desc:'√a×√b'},
-      {label:'제곱근 나눗셈(정수로 떨어짐)', thread:'MD17', level:2, desc:'√a÷√b'},
-      {label:'제곱근 곱셈(근호 남음, 실전)', thread:'MD17', level:3, desc:'근호 정리 연계'},
-      {label:'분모 유리화(기본형)', thread:'MD18', level:1, desc:'1/√n'},
-      {label:'분모 유리화(계수 있음)', thread:'MD18', level:2, desc:'c/√n'},
-      {label:'분모 유리화(분모부터 정리, 실전)', thread:'MD18', level:3, desc:'근호 정리 연계'},
-      {label:'곱셈공식 (x+a)(x+b)', thread:'MD19', level:1, desc:'합과 곱'},
-      {label:'곱셈공식 (x+a)²', thread:'MD19', level:2, desc:'완전제곱식'},
-      {label:'합차공식(실전)', thread:'MD19', level:3, desc:'(x+a)(x-a)'},
-      {label:'인수분해 기초(모두 양수)', thread:'MD20', level:1, desc:'p,q 찾기'},
-      {label:'인수분해 기초(부호 섞임, 실전)', thread:'MD20', level:2, desc:'p,q 찾기'},
-      {label:'인수분해(완전제곱식)', thread:'MD20', level:3, desc:'(x+a)²로'},
-      {label:'인수분해(합차)', thread:'MD20', level:4, desc:'x²-a²'},
-      {label:'인수분해(공통인수 묶어내기)', thread:'MD20', level:5, desc:'a(x+p)(x+q)'},
-      {label:'인수분해(십자곱셈, 실전)', thread:'MD20', level:6, desc:'x² 계수 ≠ 1'},
-    ]
-  },
-  { id:'highmath1', label:'고등 · 공통수학1', en:'High 1 · Common Math 1', zh:'高中·共同数学1', icon:'📦', color:'#0f2e4f', section:'magic',
-    subs:[
-      {label:'다항식 곱셈(이항식×이항식)', thread:'MD21', level:1, desc:'전개 3다칸'},
-      {label:'다항식 나눗셈(조립제법)', thread:'MD21', level:2, desc:'몫·나머지'},
-      {label:'다항식 곱셈(이항×삼항, 실전)', thread:'MD21', level:3, desc:'전개 4다칸'},
-      {label:'곱셈공식 확장 (x+a)³', thread:'MD22', level:1, desc:'계수 3다칸'},
-      {label:'곱셈공식 확장(a 음수)', thread:'MD22', level:2, desc:'부호 포함'},
-      {label:'합·차의 세제곱 공식(실전)', thread:'MD22', level:3, desc:'x³±a³'},
-      {label:'항등식(계수 직접 비교)', thread:'MD23', level:1, desc:'a,b 찾기'},
-      {label:'항등식(전개 후 비교)', thread:'MD23', level:2, desc:'a,b 찾기'},
-      {label:'항등식(전개 후 비교, 실전)', thread:'MD23', level:3, desc:'더 큰 범위'},
-      {label:'나머지정리(이차식)', thread:'MD24', level:1, desc:'P(a) 계산'},
-      {label:'나머지정리(삼차식)', thread:'MD24', level:2, desc:'P(a) 계산'},
-      {label:'나머지정리(계수 역산, 실전)', thread:'MD24', level:3, desc:'나머지→k'},
-      {label:'인수분해 심화(합의 세제곱)', thread:'MD25', level:1, desc:'x³+a³'},
-      {label:'인수분해 심화(차의 세제곱)', thread:'MD25', level:2, desc:'x³-a³'},
-      {label:'인수분해 심화(치환, 실전)', thread:'MD25', level:3, desc:'사차식'},
-      {label:'판별식 D값', thread:'MD26', level:1, desc:'D=b²-4ac'},
-      {label:'판별식(실근 개수)', thread:'MD26', level:2, desc:'개수 판정'},
-      {label:'판별식(중근 조건, 실전)', thread:'MD26', level:3, desc:'k=±'},
-      {label:'근과 계수(a=1)', thread:'MD27', level:1, desc:'합과 곱'},
-      {label:'근과 계수(a≠1)', thread:'MD27', level:2, desc:'합과 곱'},
-      {label:'근과 계수(α²+β², 실전)', thread:'MD27', level:3, desc:'대칭식'},
-      {label:'근의 공식(a=1)', thread:'MD28', level:1, desc:'[p,q,r]'},
-      {label:'근의 공식(a≠1)', thread:'MD28', level:2, desc:'[p,q,r]'},
-      {label:'근의 공식(실전 범위)', thread:'MD28', level:3, desc:'[p,q,r]'},
-      {label:'이차부등식(인수분해된 형태)', thread:'MD29', level:1, desc:'해 구간'},
-      {label:'이차부등식(전개된 형태)', thread:'MD29', level:2, desc:'해 구간'},
-      {label:'이차부등식(x²계수≠1, 실전)', thread:'MD29', level:3, desc:'해 구간'},
-      {label:'행렬 덧셈·뺄셈', thread:'MD30', level:1, desc:'4다칸'},
-      {label:'행렬 스칼라곱', thread:'MD30', level:2, desc:'4다칸'},
-      {label:'행렬곱(실전)', thread:'MD30', level:3, desc:'4다칸'},
-    ]
-  },
-  { id:'highmath2', label:'고등 · 공통수학2', en:'High 2 · Common Math 2', zh:'高中·共同数学2', icon:'📏', color:'#1b6e5b', section:'magic',
-    subs:[
-      {label:'두 점 사이의 거리(연습)', thread:'MD31', level:1, desc:'[계수,근호안]'},
-      {label:'두 점 사이의 거리(더 큰 좌표)', thread:'MD31', level:2, desc:'[계수,근호안]'},
-      {label:'두 점 사이의 거리(음수 좌표, 실전)', thread:'MD31', level:3, desc:'[계수,근호안]'},
-      {label:'중점', thread:'MD32', level:1, desc:'좌표 2다칸'},
-      {label:'내분점(m:n)', thread:'MD32', level:2, desc:'좌표 2다칸'},
-      {label:'외분점(실전)', thread:'MD32', level:3, desc:'좌표 2다칸'},
-      {label:'직선의 방정식(두 점 통과)', thread:'MD33', level:1, desc:'y=ax+b'},
-      {label:'직선의 방정식(일반형→기울기절편형)', thread:'MD33', level:2, desc:'y=ax+b'},
-      {label:'직선의 방정식(실전 범위)', thread:'MD33', level:3, desc:'y=ax+b'},
-      {label:'두 직선의 평행 조건', thread:'MD34', level:1, desc:'k 구하기'},
-      {label:'두 직선의 수직 조건', thread:'MD34', level:2, desc:'k 구하기'},
-      {label:'평행·수직 혼합(실전)', thread:'MD34', level:3, desc:'k 구하기'},
-      {label:'원의 방정식(완성형)', thread:'MD35', level:1, desc:'[중심,반지름]'},
-      {label:'원의 방정식(더 큰 범위)', thread:'MD35', level:2, desc:'[중심,반지름]'},
-      {label:'원의 방정식(공통계수, 실전)', thread:'MD35', level:3, desc:'[중심,반지름]'},
-    ]
-  },
-  { id:'algebra', label:'고등 · 대수', en:'High · Algebra', zh:'高中·代数', icon:'🪜', color:'#5b3a8f', section:'magic',
-    subs:[
-      {label:'유리수 지수(표기법 익히기)', thread:'MD36', level:1, desc:'[분자,분모]'},
-      {label:'유리수 지수(약분 필요)', thread:'MD36', level:2, desc:'[분자,분모]'},
-      {label:'유리수 지수(더 큰 범위, 실전)', thread:'MD36', level:3, desc:'[분자,분모]'},
-      {label:'로그의 정의(로그값 구하기)', thread:'MD37', level:1, desc:'x=log_a N'},
-      {label:'로그의 정의(진수 구하기)', thread:'MD37', level:2, desc:'N=aˣ'},
-      {label:'로그의 정의(더 큰 범위, 실전)', thread:'MD37', level:3, desc:'x=log_a N'},
-      {label:'로그의 성질(덧셈)', thread:'MD38', level:1, desc:'logA+logB'},
-      {label:'로그의 성질(뺄셈)', thread:'MD38', level:2, desc:'logA-logB'},
-      {label:'로그의 성질(밑변환, 정수만, 실전)', thread:'MD38', level:3, desc:'정수 되는 것만'},
-      {label:'삼각비 특수각(정수·기약분수)', thread:'MD39', level:1, desc:'0°·30°·60°·90°'},
-      {label:'삼각비 특수각(근호 있는 값)', thread:'MD39', level:2, desc:'[계수,근호안,분모]'},
-      {label:'삼각비 특수각(전체 혼합, 실전)', thread:'MD39', level:3, desc:'전 14종'},
-      {label:'등차수열(일반항)', thread:'MD40', level:1, desc:'aₙ 값'},
-      {label:'등차수열(두 항→a1,d)', thread:'MD40', level:2, desc:'[a1,d]'},
-      {label:'등차수열(합, 실전)', thread:'MD40', level:3, desc:'Sₙ'},
-      {label:'등비수열(일반항)', thread:'MD41', level:1, desc:'aₙ 값'},
-      {label:'등비수열(두 항→a1,r)', thread:'MD41', level:2, desc:'[a1,r]'},
-      {label:'등비수열(합, 실전)', thread:'MD41', level:3, desc:'Sₙ'},
-      {label:'Σk(무지개 덧셈법)', thread:'MD42', level:1, desc:'n(n+1)÷2'},
-      {label:'Σk²(제곱수의 합)', thread:'MD42', level:2, desc:'n(n+1)(2n+1)÷6'},
-      {label:'Σ(pk+q) 쪼개기(실전)', thread:'MD42', level:3, desc:'pΣk+qn'},
-      {label:'지수방정식(밑이 같음)', thread:'MD52', level:1, desc:'x'},
-      {label:'지수방정식(계수 있음)', thread:'MD52', level:2, desc:'x'},
-      {label:'지수방정식(밑 통일부터, 실전)', thread:'MD52', level:3, desc:'x'},
-      {label:'로그방정식(정의로 풀기)', thread:'MD53', level:1, desc:'x'},
-      {label:'로그방정식(덧셈 성질)', thread:'MD53', level:2, desc:'x'},
-      {label:'로그방정식(뺄셈 성질, 실전)', thread:'MD53', level:3, desc:'x'},
-      {label:'지수부등식', thread:'MD54', level:1, desc:'경계값'},
-      {label:'지수부등식(계수 있음)', thread:'MD54', level:2, desc:'경계값'},
-      {label:'로그부등식(실전)', thread:'MD54', level:3, desc:'경계값'},
-      {label:'사인법칙(30°·90°)', thread:'MD55', level:1, desc:'2R'},
-      {label:'사인법칙(45°, 근호)', thread:'MD55', level:2, desc:'[계수,근호안]'},
-      {label:'사인법칙(거꾸로, 실전)', thread:'MD55', level:3, desc:'변 a'},
-      {label:'코사인법칙(90°)', thread:'MD56', level:1, desc:'변 a'},
-      {label:'코사인법칙(60°)', thread:'MD56', level:2, desc:'변 a'},
-      {label:'코사인법칙(120°, 실전)', thread:'MD56', level:3, desc:'변 a'},
-      {label:'삼각함수 최댓값·최솟값', thread:'MD57', level:1, desc:'[최대,최소]'},
-      {label:'삼각함수 주기(sin·cos)', thread:'MD57', level:2, desc:'[분자,분모]π'},
-      {label:'삼각함수 혼합(주기+tan, 실전)', thread:'MD57', level:3, desc:'혼합'},
-    ]
-  },
-  { id:'calculus1', label:'고등 · 미적분Ⅰ', en:'High · Calculus Ⅰ', zh:'高中·微积分Ⅰ', icon:'🧭', color:'#0d3b66', section:'magic',
-    subs:[
-      {label:'극한(대입형)', thread:'MD43', level:1, desc:'다항식 대입'},
-      {label:'극한(약분형, 0/0)', thread:'MD43', level:2, desc:'인수분해·약분'},
-      {label:'극한(더 큰 범위, 실전)', thread:'MD43', level:3, desc:'인수분해·약분'},
-      {label:'도함수(이차함수, 2다칸)', thread:'MD44', level:1, desc:"f'(x)"},
-      {label:'도함수(삼차함수, 3다칸)', thread:'MD44', level:2, desc:"f'(x)"},
-      {label:"미분계수 f'(a)(실전)", thread:'MD44', level:3, desc:'정수값'},
-      {label:'접선의 기울기', thread:'MD45', level:1, desc:"f'(x0)"},
-      {label:'접선의 방정식(2다칸)', thread:'MD45', level:2, desc:'y=mx+n'},
-      {label:'접선의 방정식(더 큰 범위, 실전)', thread:'MD45', level:3, desc:'y=mx+n'},
-      {label:'부정적분(일차식, 2다칸)', thread:'MD46', level:1, desc:'+C'},
-      {label:'부정적분(이차식, 3다칸)', thread:'MD46', level:2, desc:'+C'},
-      {label:'정적분 값(실전)', thread:'MD46', level:3, desc:'F(q)-F(p)'},
-      {label:'유리화형 극한(분모 근호)', thread:'MD58', level:1, desc:'정수'},
-      {label:'유리화형 극한(분자 근호)', thread:'MD58', level:2, desc:'분수'},
-      {label:'유리화형 극한(혼합, 실전)', thread:'MD58', level:3, desc:'혼합'},
-      {label:'연속조건(제곱 차 인수분해)', thread:'MD59', level:1, desc:'k'},
-      {label:'연속조건(일반 인수분해)', thread:'MD59', level:2, desc:'k'},
-      {label:'연속조건(구간별 경계, 실전)', thread:'MD59', level:3, desc:'b'},
-      {label:'극값을 갖는 x좌표', thread:'MD60', level:1, desc:'[r1,r2]'},
-      {label:'극댓값·극솟값', thread:'MD60', level:2, desc:'[극대,극소]'},
-      {label:'극값(더 큰 범위, 실전)', thread:'MD60', level:3, desc:'[극대,극소]'},
-      {label:'곡선과 x축 사이 넓이', thread:'MD61', level:1, desc:'정적분'},
-      {label:'넓이(음수 교점 포함)', thread:'MD61', level:2, desc:'정적분'},
-      {label:'넓이(더 큰 범위, 실전)', thread:'MD61', level:3, desc:'정적분'},
-      {label:'위치→속도', thread:'MD62', level:1, desc:"s'(t0)"},
-      {label:'속도→거리(0~T)', thread:'MD62', level:2, desc:'정적분'},
-      {label:'속도→거리(구간 [t1,t2], 실전)', thread:'MD62', level:3, desc:'정적분'},
-    ]
-  }
-];
-
-/* ── 빠진 레벨 자동 보충 (2026-09-23) ──
-   위 목록은 손으로 적은 것이라 threads.js 에 레벨이 늘 때마다 여기에도 적어야 했다.
-   아무도 안 적어서 657개 중 92개가 문제은행에 없었다 — 중2·중3 교과 연산 MD63~MD82
-   (연립방정식·일차함수·이차방정식·이차함수) 전체와 제곱근의 덧셈·뺄셈(MD83)까지.
-   손으로 다듬은 565개 이름은 그대로 두고, 빠진 레벨만 여기서 채운다.
-   · 그 스레드의 다른 레벨이 이미 실린 주제가 있으면 → 그 주제, 형제 레벨 바로 뒤에
-   · 한 레벨도 안 실린 스레드면 → 그 유형을 처음 가르치는 과정(courses.js)의 tier 와
-     같은 id 의 주제(middle1·middle2·middle3·highmath1·highmath2·algebra·calculus1)
-   · 초등 tier(level3 등)처럼 주제 id 와 안 맞으면 → 같은 접두어 가족(DC6 → DC1~5 가 사는
-     「소수」)의 주제. MD 는 한 가족이 중1~미적분에 걸쳐 있어 tier 가 먼저다
-   · 그래도 못 정하면 → 맨 끝 「새로 추가된 유형」 주제 (숨기지 않는다)
-   이름은 영어·중국어 화면이 이미 쓰는 규칙과 같다 — 제목 = 스레드 이름, 설명 = 레벨 이름.
-   scripts/check-roadmap-sync.js 가 이 보충 결과가 빈틈없는지 검사한다. */
-(function fillMissingLevels(){
-  var T = window.NM_THREADS || {};
-  var have = {}, home = {}, byId = {};
-  TOPICS.forEach(function(tp){
-    byId[tp.id] = tp;
-    (tp.subs || []).forEach(function(s){
-      have[s.thread + '@' + s.level] = true;
-      if(!home[s.thread]) home[s.thread] = tp;
-    });
-  });
-  var tierOf = {};
-  (window.NM_COURSE_SPEC || []).forEach(function(spec){
-    ['drills', 'creative'].forEach(function(k){
-      (spec[k] || []).forEach(function(d){
-        var t = String(d).split('@')[0];
-        if(!tierOf[t]) tierOf[t] = spec.tier;
-      });
-    });
-  });
-  var family = {};                       /* 'DC' → 그 접두어 스레드가 처음 실린 주제 */
-  Object.keys(home).forEach(function(t){
-    var f = t.replace(/\d+$/, '');
-    if(!family[f]) family[f] = home[t];
-  });
-  var extra = null;
-  Object.keys(T).forEach(function(k){
-    var th = T[k];
-    (th.levels || []).forEach(function(lv){
-      if(have[k + '@' + lv.id]) return;
-      var tp = home[k] || byId[tierOf[k]] || (k.indexOf('MD') === 0 ? null : family[k.replace(/\d+$/, '')]);
-      if(!tp){
-        if(!extra){
-          extra = { id:'new', label:'새로 추가된 유형', en:'Newly Added', zh:'新增题型', icon:'🆕', color:'#475569', section:'magic', subs:[] };
-          TOPICS.push(extra);
-        }
-        tp = extra;
-      }
-      var entry = { label:dL(th.name) || k, thread:k, level:lv.id, desc:(lv.label && (lv.label.ko || dL(lv.label))) || ('레벨 ' + lv.id), auto:true };
-      /* 형제 레벨이 있으면 그 스레드의 마지막 항목 바로 뒤에, 없으면 주제 끝에 */
-      var at = -1;
-      tp.subs.forEach(function(s, i){ if(s.thread === k && s.level < lv.id) at = i; });
-      if(at >= 0) tp.subs.splice(at + 1, 0, entry); else tp.subs.push(entry);
-      have[k + '@' + lv.id] = true;
-      if(!home[k]) home[k] = tp;
-    });
-  });
-  window.NM_DRILL_TOPICS = TOPICS;   /* 검사기용 노출 */
-})();
-
+var TOPICS = window.NM_DRILL_TOPICS;
 var TOTAL_TOPICS = TOPICS.reduce(function(n,c){ return n + c.subs.length; }, 0);
 
 /* ── 언어 — 앱(nm_state_v1)의 S.lang을 따른다. exam.js examLang()과 같은 관례:
@@ -1111,18 +433,18 @@ var state = {
   section: 'school',
   topicKey: null,   // 'catId:subIdx' 형식
   search: '',
+  replayCode: '',
   count: 10,
   timer: 0,
   wordType: 'none', // 'none'|'mix'|'all' — 문장제 유형 (exam.js applyWordProblems 규약 그대로)
   seed: NM_RNG.newCode(),
-  previewSeed: NM_RNG.newCode(),
   lastResult: null
 };
 
 var body = document.getElementById('dr-body');
 
 /* ── 헬퍼 ── */
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 /* 다칸 답(배열) 채점 — app/exam.js의 matchesAnswer와 동일 로직(이 파일은 별도 스코프라 자체 보유) */
 function matchesAnswer(raw, answer){
   if(Array.isArray(answer)){
@@ -1177,18 +499,13 @@ function showHome(){
   state.view = 'home';
   var sec = state.section || 'school';
 
-  /* 현재 섹션에 속하지 않는 topicKey 정리 */
-  if(state.topicKey){
-    var _kp = state.topicKey.split(':');
-    var _kc = TOPICS.find(function(c){ return c.id===_kp[0]; });
-    if(!_kc || _kc.section !== sec){ state.topicKey = null; }
-  }
+  /* 탐색 탭이 바뀌어도 선택한 유형·문항 코드는 보존한다. */
 
   var html = '';
   html += '<div class="dr-hero">';
   html += '<div class="dr-folio"><span class="dr-folio-num">' + TOTAL_TOPICS + '</span><span class="dr-folio-label">' + dt('문제 유형 · '+TOPICS.length+'개 갈래','problem types · '+TOPICS.length+' groups','题型 · '+TOPICS.length+'类') + '</span></div>';
   html += '<h1 class="dr-home-title">' + dt('문제은행','Problem Bank','题库') + '</h1>';
-  html += '<p class="dr-home-desc">' + dt('주제를 고르면 오른쪽에서 바로 문제를 확인할 수 있어요 — 풀거나, 학습지로 인쇄하세요','Pick a topic to preview real problems on the right — solve on screen or print a worksheet','选一个主题，右边立即出现真实题目——在屏幕上做，或打印成学习单') + '</p>';
+  html += '<p class="dr-home-desc">' + dt('유형을 찾아 문제를 풀거나 학습지로 인쇄하세요.','Find a topic, solve problems or print a worksheet.','查找题型，做题或打印学习单。') + '</p>';
   html += '</div>';
 
   html += '<div class="dr-tabs">';
@@ -1197,14 +514,14 @@ function showHome(){
   html += '</div>';
 
   html += '<div class="workshop">';
-  html += '<div class="drawer"><input class="drawer-search" id="dr-search" placeholder="' + dt('주제 검색…','Search topics…','搜索主题…') + '" value="' + esc(state.search) + '"><div class="drawer-list" id="dr-list"></div></div>';
-  html += '<div class="bench" id="dr-bench"></div>';
+  html += '<div class="drawer"><label class="dr-search-label" for="dr-search">' + dt('전체 유형 검색','Search all topics','搜索全部题型') + '</label><input class="drawer-search" id="dr-search" type="search" placeholder="' + dt('예: 제곱근, 소수, 연립방정식','e.g. roots, decimals, equations','例：平方根、小数、方程') + '" value="' + esc(state.search) + '"><div class="dr-search-tools"><span id="dr-search-status" role="status" aria-live="polite"></span><button id="dr-search-clear" type="button">' + dt('지우기','Clear','清除') + '</button><button id="dr-to-bench" type="button">' + dt('선택한 유형 보기','View selected topic','查看已选题型') + '</button></div><div class="drawer-list" id="dr-list"></div></div>';
+  html += '<section class="bench" id="dr-bench" aria-label="' + dt('선택한 유형','Selected topic','已选题型') + '"></section>';
   html += '</div>';
 
   html += '<div class="dr-ticket">';
   html += '<div class="dr-ticket-title">' + dt('학습지 코드로 다시 풀기','Reopen a worksheet by its code','用学习单代码重新做题') + '</div>';
   html += '<div class="dr-code-row">';
-  html += '<input class="dr-code-input" id="dr-code-in" placeholder="#AD2-L1x20-k3f9z" maxlength="32">';
+  html += '<input class="dr-code-input" id="dr-code-in" aria-label="' + dt('학습지 코드','Worksheet code','学习单代码') + '" placeholder="#AD2-L1x20-k3f9z" value="' + esc(state.replayCode) + '" maxlength="2048">';
   html += '<button class="nm-btn nm-btn-primary nm-btn-small" id="dr-code-start">' + dt('시작','Start','开始') + '</button>';
   html += '<span class="dr-code-label">' + dt('같은 문제를 선생님·친구와 공유해요','Share the exact same problems with a teacher or friend','和老师·朋友共享同一份题目') + '</span>';
   html += '</div></div>';
@@ -1218,39 +535,51 @@ function showHome(){
 /* 서랍장(왼쪽 목록) — 섹션+검색에 따라 다시 그린다 */
 function renderDrawer(){
   var sec = state.section || 'school';
-  var q = (state.search||'').trim().toLowerCase();
+  var norm = function(s){return String(s||'').toLowerCase().replace(/\s+/g,'');};
+  var q = norm(state.search);
   var list = document.getElementById('dr-list');
-  var cats = TOPICS.filter(function(c){ return c.section === sec; });
+  var cats = TOPICS.filter(function(c){ return q || c.section === sec; });
   var html = '';
   var shown = 0;
 
   cats.forEach(function(cat){
     var rows = '';
+    var matched = 0;
     cat.subs.forEach(function(sub, i){
       var _lab = subLabel(sub), _dsc = subDesc(sub);
-      if(q && _lab.toLowerCase().indexOf(q)===-1 && _dsc.toLowerCase().indexOf(q)===-1 && sub.label.toLowerCase().indexOf(q)===-1) return;
+      var th=NM_THREADS[sub.thread];
+      if(q && norm([_lab,_dsc,sub.label,catLabel(cat),th&&dL(th.name)].join(' ')).indexOf(q)===-1) return;
       var key = cat.id + ':' + i;
       var sel = state.topicKey === key ? ' sel' : '';
-      rows += '<button class="drawer-item' + sel + '" data-key="' + esc(key) + '"><b>' + esc(_lab) + '</b><small>' + esc(_dsc) + '</small></button>';
+      rows += '<button class="drawer-item' + sel + '" aria-pressed="' + (state.topicKey===key) + '" data-key="' + esc(key) + '"><b>' + esc(_lab) + '</b><small>' + esc(_dsc) + '</small></button>';
       shown++;
+      matched++;
     });
     if(rows){
-      html += '<div class="drawer-group"><div class="drawer-group-h">' + esc(cat.icon + ' ' + catLabel(cat)) + '<span class="dg-count">' + cat.subs.length + '</span></div>' + rows + '</div>';
+      html += '<div class="drawer-group"><div class="drawer-group-h">' + esc(cat.icon + ' ' + catLabel(cat)) + '<span class="dg-count">' + matched + '</span></div>' + rows + '</div>';
     }
   });
 
   if(!shown) html = '<div class="drawer-empty">' + dt('검색 결과가 없어요.<br>다른 낱말로 찾아보세요.','No results.<br>Try a different word.','没有搜索结果。<br>换个词试试吧。') + '</div>';
   list.innerHTML = html;
+  document.getElementById('dr-search-status').textContent=(q?dt('전체 검색','All topics','全部搜索'):dt(sec==='school'?'교과 연산':'Numbers of Magic',sec==='school'?'School Arithmetic':'Numbers of Magic',sec==='school'?'学校运算':'Numbers of Magic'))+' · '+shown+dt('개 유형',' topics','个题型');
+  document.getElementById('dr-search-clear').disabled=!state.search;
+  document.getElementById('dr-to-bench').disabled=!state.topicKey;
 
   list.querySelectorAll('.drawer-item').forEach(function(btn){
     btn.addEventListener('click', function(){
+      if(state.topicKey!==this.dataset.key)state.seed = NM_RNG.newCode();
       state.topicKey = this.dataset.key;
-      state.seed = NM_RNG.newCode();
-      state.previewSeed = NM_RNG.newCode();
-      list.querySelectorAll('.drawer-item').forEach(function(b){ b.classList.toggle('sel', b===btn); });
+      list.querySelectorAll('.drawer-item').forEach(function(b){ b.classList.toggle('sel', b===btn);b.setAttribute('aria-pressed',String(b===btn)); });
       renderBench();
+      document.getElementById('dr-to-bench').disabled=false;
+      focusBench();
     });
   });
+}
+function focusBench(){
+  var head=document.getElementById('dr-bench-title');
+  if(head){head.focus({preventScroll:true});head.scrollIntoView({block:'start'});}
 }
 
 var COUNT_OPTS = [10,20,30];
@@ -1263,12 +592,13 @@ function renderBench(){
   var t = parseTopic(state.topicKey);
 
   if(!t){
-    bench.innerHTML = '<div class="bench-empty">' + dt('왼쪽에서 주제를 골라 보세요.<br>바로 여기서 실제 문제를 확인할 수 있어요.','Pick a topic on the left.<br>Real problems appear right here.','在左边选一个主题。<br>真实题目马上出现在这里。') + '</div>';
+    bench.innerHTML = '<div class="bench-empty">' + dt('유형 목록에서 주제를 골라 보세요.<br>실제 문제와 학습지 설정을 확인할 수 있어요.','Pick a topic from the list.<br>Preview problems and worksheet settings here.','从题型列表选择主题。<br>在这里预览题目和学习单设置。') + '</div>';
     return;
   }
 
   var html = '';
-  html += '<div class="bench-head">' + esc(subLabel(t.sub)) + '</div>';
+  html += '<button class="dr-back-list" id="dr-back-list" type="button">' + dt('← 유형 목록','← Topic list','← 题型列表') + '</button>';
+  html += '<h2 class="bench-head" id="dr-bench-title" tabindex="-1">' + esc(subLabel(t.sub)) + '</h2>';
   html += '<div class="bench-desc">' + esc(t.cat.icon + ' ' + catLabel(t.cat) + ' · ' + subDesc(t.sub)) + '</div>';
 
   html += '<div class="bench-row"><div class="bench-label">' + dt('문항 수','Problems','题量') + '</div><div class="seg" id="dr-seg-count">';
@@ -1286,7 +616,7 @@ function renderBench(){
   WORD_OPTS.forEach(function(o){ html += '<button data-w="' + o.v + '" class="' + (state.wordType===o.v?'on':'') + '">' + esc(o.l()) + '</button>'; });
   html += '</div></div>';
 
-  html += '<div class="preview-hd"><span>' + dt('미리보기','Preview','预览') + '</span><button class="preview-dice" id="dr-dice">' + dt('🎲 다른 문제','🎲 New problems','🎲 换一批') + '</button></div>';
+  html += '<div class="preview-hd"><span>' + dt('대표 문제 3개','3 sample problems','3道示例题') + '</span><button class="preview-dice" id="dr-dice">' + dt('🎲 다른 문제','🎲 New problems','🎲 换一批') + '</button></div>';
   html += '<div class="preview-grid" id="dr-preview"></div>';
 
   html += '<div class="bench-row"><div class="bench-label">' + dt('학습지 구성','Worksheet parts','学习单构成') + '</div><div class="dr-printopts">';
@@ -1297,7 +627,7 @@ function renderBench(){
   html += '<div class="bench-actions">';
   html += '<button class="gold-btn" id="dr-print-btn">' + dt('🖨 학습지 인쇄','🖨 Print worksheet','🖨 打印学习单') + '</button>';
   html += '<button class="nm-btn nm-btn-secondary" id="dr-start-btn">' + dt('▶ 화면으로 풀기','▶ Solve on screen','▶ 在屏幕上做') + '</button>';
-  html += '<div class="dr-seed-wrap"><span class="dr-seed-label">' + dt('코드','Code','代码') + '</span><span class="dr-seed-code" id="dr-seed-disp" title="' + dt('클릭하면 새 코드','Click for a new code','点击换新代码') + '">' + esc(NM_EXAM.worksheetCode(getConfig())) + '</span></div>';
+  html += '<div class="dr-seed-wrap"><span class="dr-seed-label">' + dt('다시 풀기 코드','Replay code','重做代码') + '</span><code class="dr-seed-code" id="dr-seed-disp">' + esc(NM_EXAM.worksheetCode(getConfig())) + '</code></div>';
   html += '</div>';
 
   bench.innerHTML = html;
@@ -1309,7 +639,7 @@ function renderPreview(){
   var t = parseTopic(state.topicKey);
   var host = document.getElementById('dr-preview');
   if(!t || !host) return;
-  var nSeed = NM_RNG.hashSeed(state.previewSeed);
+  var nSeed = NM_RNG.hashSeed(state.seed);
   var probs = NM_EXAM.buildProblems(t.sub.thread, t.sub.level, 3, nSeed);
   if(state.wordType!=='none' && NM_EXAM.applyWordProblems) NM_EXAM.applyWordProblems(probs, state.wordType==='mix'?'all':state.wordType, nSeed);
   /* 미리보기 3문항에 '섞기'를 그대로 걸면 1문항만 바뀌어 차이가 안 보인다 — 미리보기에서만 all로 보여준다 */
@@ -1327,23 +657,25 @@ function renderPreview(){
 }
 
 function bindBench(){
+  document.getElementById('dr-back-list').onclick=function(){
+    var target=document.querySelector('.drawer-item.sel')||document.getElementById('dr-search');
+    target.focus({preventScroll:true});target.scrollIntoView({block:'center'});
+  };
+  document.querySelectorAll('.seg button').forEach(function(b){b.setAttribute('aria-pressed',String(b.classList.contains('on')));});
   var seg1 = document.getElementById('dr-seg-count');
   if(seg1) seg1.querySelectorAll('button').forEach(function(b){
-    b.addEventListener('click', function(){ state.count = parseInt(this.dataset.n); renderBench(); });
+    b.addEventListener('click', function(){ state.count = parseInt(this.dataset.n); renderBench(); document.querySelector('#dr-seg-count .on').focus({preventScroll:true}); });
   });
   var seg2 = document.getElementById('dr-seg-timer');
   if(seg2) seg2.querySelectorAll('button').forEach(function(b){
-    b.addEventListener('click', function(){ state.timer = parseInt(this.dataset.v); renderBench(); });
+    b.addEventListener('click', function(){ state.timer = parseInt(this.dataset.v); renderBench(); document.querySelector('#dr-seg-timer .on').focus({preventScroll:true}); });
   });
   var seg3 = document.getElementById('dr-seg-word');
   if(seg3) seg3.querySelectorAll('button').forEach(function(b){
-    b.addEventListener('click', function(){ state.wordType = this.dataset.w; renderBench(); });
+    b.addEventListener('click', function(){ state.wordType = this.dataset.w; renderBench(); document.querySelector('#dr-seg-word .on').focus({preventScroll:true}); });
   });
   var dice = document.getElementById('dr-dice');
-  if(dice) dice.addEventListener('click', function(){ state.previewSeed = NM_RNG.newCode(); renderPreview(); });
-
-  var seedDisp = document.getElementById('dr-seed-disp');
-  if(seedDisp) seedDisp.addEventListener('click', function(){ state.seed = NM_RNG.newCode(); renderBench(); });
+  if(dice) dice.addEventListener('click', function(){ state.seed = NM_RNG.newCode(); renderPreview(); document.getElementById('dr-seed-disp').textContent=NM_EXAM.worksheetCode(getConfig()); });
 
   var startBtn = document.getElementById('dr-start-btn');
   if(startBtn) startBtn.addEventListener('click', function(){ var cfg = getConfig(); if(!cfg) return; showDrill(cfg); });
@@ -1362,16 +694,18 @@ function bindHome(){
   document.querySelectorAll('.dr-tab').forEach(function(btn){
     btn.addEventListener('click', function(){
       state.section = this.dataset.sec;
-      state.topicKey = null;
-      state.search = '';
-      state.seed = NM_RNG.newCode();
       showHome();
+      document.querySelector('.dr-tab.on').focus({preventScroll:true});
     });
   });
 
   /* 검색 */
   var search = document.getElementById('dr-search');
-  search.addEventListener('input', function(){ state.search = this.value; renderDrawer(); });
+  search.addEventListener('input', function(e){ state.search = this.value; if(!e.isComposing)renderDrawer(); });
+  search.addEventListener('compositionend', function(){ state.search=this.value;renderDrawer(); });
+  document.getElementById('dr-search-clear').onclick=function(){state.search='';search.value='';renderDrawer();search.focus();};
+  document.getElementById('dr-to-bench').onclick=focusBench;
+  document.querySelectorAll('.dr-tab').forEach(function(btn){btn.setAttribute('aria-pressed',String(btn.dataset.sec===state.section));});
 
   /* 코드로 시작 — NM_EXAM.parseWorksheetCode를 그대로 쓴다(직접 정규식을 다시
      짜지 않음). 인쇄 미리보기 편집기(openPrintEditor)가 문항을 바꾼 코드는
@@ -1387,8 +721,9 @@ function bindHome(){
   });
 
   document.getElementById('dr-code-in').addEventListener('keydown', function(e){
-    if(e.key==='Enter') document.getElementById('dr-code-start').click();
+    if(e.key==='Enter'&&!e.isComposing) document.getElementById('dr-code-start').click();
   });
+  document.getElementById('dr-code-in').addEventListener('input', function(){state.replayCode=this.value;});
 }
 
 /* ── 연습 화면 ── */
@@ -1406,7 +741,7 @@ function showDrill(cfg){
   var backBtn = document.createElement('button');
   backBtn.className = 'nm-btn nm-btn-secondary nm-btn-small';
   backBtn.textContent = dt('← 처음으로','← Back to topics','← 回到主题');
-  backBtn.addEventListener('click', showHome);
+  backBtn.addEventListener('click', function(){showHome();focusBench();});
   backRow.appendChild(backBtn);
 
   var topicInfo = document.createElement('span');

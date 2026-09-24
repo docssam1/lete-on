@@ -140,12 +140,12 @@ window.NM_STAGES = [
     key:'middle', icon:'🔤', accent:'#0E2C57', status:'live',
     name:{ko:'중학교 — 기호가 바뀌는 자리',en:'Middle School — where the symbols change',zh:'初中——符号改变的地方'},
     band:{ko:'중학교 1~3학년',en:'Grades 7–9',zh:'初中一~三年级'},
-    chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W8-6','W8-7','W9-1','W9-2','W9-3','W9-4','W10-1','LAB-NUMLINE','W10-2','W10-3','W10-4'],
-    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:100,
+    chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W8-6','W8-7','W8-8','W9-1','W9-2','W9-3','W9-4','W9-5','W10-1','LAB-NUMLINE','W10-2','W10-3','W10-4','W10-5','W10-6','W10-7'],
+    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:113,
     learn:{
-      ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 연립방정식과 일차부등식, 일차함수, 제곱근의 세계, 인수분해와 이차방정식, 이차함수의 꼭짓점.',
-      en:'Integers and rationals, the rules of sign, letters and expressions, equations and proportion, exponents and monomials, polynomials, systems and linear inequalities, linear functions, square roots, factorisation and quadratic equations, the vertex of a parabola.',
-      zh:'整数与有理数、符号法则、字母与式、方程与比例、指数与单项式、多项式、方程组与一次不等式、一次函数、平方根、因式分解与二次方程、抛物线的顶点。'},
+      ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 연립방정식과 일차부등식, 일차함수, 경우의 수, 제곱근, 인수분해와 이차방정식, 이차함수, 산포도, 사분위수·상자그림, 산점도·상관관계.',
+      en:'Integers and rationals, signs, algebraic expressions, equations and proportion, exponents and polynomials, systems and inequalities, functions, counting, roots, factorisation and quadratics, dispersion, quartiles and box plots, and scatter plots and correlation.',
+      zh:'整数与有理数、符号法则、代数式、方程与比例、指数与多项式、方程组与不等式、函数、情况数、平方根、因式分解与二次函数、离散程度、四分位数与箱形图、散点图与相关关系。'},
     how:{
       ko:'기호가 바뀌는 순간이 진짜 고비라, 순서를 말 → 그림 → 내 표기 → 표준 기호로 고정합니다. 음수는 해발과 해저로, √는 땅 위의 9와 뿌리의 3 그림으로 먼저 만납니다. 초등에서 수로 하던 쪼개기가 여기서 문자로 옮겨 갑니다.',
       en:'The real hurdle is the moment the symbols change, so the order is fixed: words → picture → my own notation → the standard symbol. Negatives arrive as altitude and depth, √ as the 9 above ground and the 3 in the root. The splitting done with numbers now moves into letters.',
@@ -155,7 +155,7 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~37 · 주 2회 기준 70주(주 1회 100주) · 실험실 2',en:'Courses 29–37 · 70 weeks at two sheets a week (100 at one) · 2 labs',zh:'课程29~37 · 每周2次约70周(每周1次100周) · 2个实验室'}
+    meta:{ko:'과정 29~37 · 주 2회 기준 79주(주 1회 113주) · 실험실 2',en:'Courses 29–37 · 79 weeks at two sheets a week (113 at one) · 2 labs',zh:'课程29~37 · 每周2次约79周(每周1次113周) · 2个实验室'}
   },
   {
     key:'high', icon:'∫', accent:'#0E2C57', status:'partial',
