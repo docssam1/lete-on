@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>독쌤이 설명하는 안쌤 경시사고력 황소 대비</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#f3f6fb;color:#262b36;font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif}
+  main{width:min(1220px,calc(100% - 32px));margin:34px auto 64px}
+  .eyebrow{color:#1e3a78;font-size:13px;font-weight:900;letter-spacing:.08em}
+  h1{margin:10px 0 22px;font-size:clamp(28px,4.5vw,52px);line-height:1.16;letter-spacing:-.045em}
+  .player{position:relative;overflow:hidden;border:1px solid #dce4f0;border-radius:24px;background:#fff;box-shadow:0 20px 52px rgba(30,58,120,.14)}
+  video{display:block;width:100%;aspect-ratio:16/9;background:#101827}
+  .play-cover{position:absolute;inset:0;display:grid;place-items:center;background:rgba(30,58,120,.08);border:0;cursor:pointer}
+  .play-cover span{display:inline-flex;align-items:center;gap:12px;padding:17px 28px;border-radius:18px;background:#1e3a78;color:#fff;font-size:20px;font-weight:900;box-shadow:0 12px 28px rgba(30,58,120,.3)}
+  .play-cover[hidden]{display:none}
+  .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+  .button{display:flex;min-height:62px;align-items:center;justify-content:center;border:0;border-radius:17px;padding:0 18px;text-align:center;text-decoration:none;font-weight:900;font-size:17px;cursor:pointer}
+  .video-button{background:#262b36;color:#fff}
+  .anssam{background:#f2a51a;color:#fff}
+  .mock{background:#1e3a78;color:#fff}
+  .note{margin-top:18px;padding:20px 22px;border:1px solid #dce4f0;border-radius:18px;background:#fff;color:#5b6577;line-height:1.7}
+  .note strong{color:#262b36}
+  @media(max-width:760px){main{margin-top:18px}.actions{grid-template-columns:1fr}.button{min-height:56px}.play-cover span{font-size:17px}}
+</style>
+<main>
+  <div class="eyebrow">DOCSSAM × 안쌤 경시사고력 × G-FIELD</div>
+  <h1>개념은 안쌤으로,<br>모의고사는 지필드로.</h1>
+  <div class="player">
+    <video id="lessonVideo" controls playsinline preload="metadata" poster="anssem-hs-final-10min-poster.jpg">
+      <source src="anssem-hs-final-10min.mp4" type="video/mp4">
+    </video>
+    <button class="play-cover" id="playCover" type="button" aria-label="영상 재생">
+      <span>▶ 영상으로 보기</span>
+    </button>
+  </div>
+  <div class="actions">
+    <button class="button video-button" id="playButton" type="button">▶ 영상으로 보기</button>
+    <a class="button anssam" href="https://smartstore.naver.com/anssam0819/products/11386078147" target="_blank" rel="noopener">안쌤 경시사고력 교재 보기</a>
+    <a class="button mock" href="https://hs.gfieldacademy.net/promo/" target="_blank" rel="noopener">황소 대비 모의고사 보기</a>
+  </div>
+  <div class="note"><strong>학습 연결:</strong> 안쌤 교재로 개념과 사고 구조를 익히고, 지필드 황소 대비 모의고사로 실제 시험 적용력과 약점을 확인합니다.</div>
+</main>
+<script>
+  const video=document.getElementById('lessonVideo');
+  const cover=document.getElementById('playCover');
+  const play=()=>{cover.hidden=true;video.scrollIntoView({behavior:'smooth',block:'center'});video.play();};
+  cover.addEventListener('click',play);
+  document.getElementById('playButton').addEventListener('click',play);
+  video.addEventListener('play',()=>cover.hidden=true);
+</script>
+</html>
