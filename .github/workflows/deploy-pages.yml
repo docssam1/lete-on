@@ -13,6 +13,7 @@ on:
       - 'number_magic/**'
       - 'personality/**'
       - 'premier/**'
+      - 'promo/anssem-hs/**'
       - 'reading-world/**'
       - 'roadmap/**'
       - 'science-lab/**'
@@ -62,6 +63,7 @@ jobs:
           mkdir -p _site/number_magic
           mkdir -p _site/personality
           mkdir -p _site/premier
+          mkdir -p _site/promo/anssem-hs
           mkdir -p _site/reading-world
           mkdir -p _site/roadmap
           mkdir -p _site/science-lab
@@ -89,6 +91,7 @@ jobs:
           cp -R premier/. _site/premier/
           rm -rf _site/premier/qa
           test ! -e _site/premier/qa
+          cp -R promo/anssem-hs/. _site/promo/anssem-hs/
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
           cp -R science-lab/. _site/science-lab/
