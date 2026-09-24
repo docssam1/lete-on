@@ -111,12 +111,14 @@ function deviationProblem(m){
 function missingProblem(m){
   const shown=m.deviations.map((x,i)=>i===m.missing?'x':String(x)).join(',\\;');
   const known=m.deviations.filter((_,i)=>i!==m.missing),knownSum=sum(known);
-  const knownTex=known.map((x,i)=>i===0?String(x):(x<0?`-${Math.abs(x)}`:`+${x}`)).join('');
+  /* 편차 0은 합에 아무것도 보태지 않는다 — "+0+0"을 늘어놓지 않고 0이 아닌 편차만 더한다(2026-09-25). */
+  const nz=known.filter(x=>x!==0);
+  const knownTex=nz.length?nz.map((x,i)=>i===0?String(x):(x<0?`-${Math.abs(x)}`:`+${x}`)).join('')+'+x':'x';
   return base(
     L3('편차의 합은 0입니다. 빠진 편차를 구합니다.','The deviations add to zero. Find the missing deviation.','偏差的和为0，求缺少的偏差。'),
     `\\text{편차 }(${shown})\\quad\\Rightarrow\\quad x=\\square`,
     m.answer,
-    [{tex:'\\text{편차의 합}=0'},{tex:`${knownTex}+x=0`},{tex:`x=-(${knownSum})=\\square`,blank:m.answer}],
+    [{tex:'\\text{편차의 합}=0'},{tex:`${knownTex}=0`},{tex:`x=-(${knownSum})=\\square`,blank:m.answer}],
     {mode:'missingDeviation',deviations:m.deviations,missing:m.missing,knownSum,answer:m.answer,poolSize:MISSING_POOL.length}
   );
 }

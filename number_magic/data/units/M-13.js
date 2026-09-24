@@ -83,7 +83,7 @@ window.NM_UNITS['M-13'] = {
     generator:'md13_monoTimesPoly', level:'main', count:6,
     params:{mode:'divideBinomial'},
     intro:{
-      ko:'이번에는 모든 항을 같은 단항식으로 나눠요. 계수와 지수를 항마다 확인해 봐요.',
+      ko:'이번에는 모든 항을 같은 단항식으로 나눕니다. 계수와 지수를 항마다 확인합니다.',
       en:'Now divide every term by the same monomial. Check each coefficient and exponent.',
       zh:'这次每一项都除以同一个单项式，逐项检查系数和指数。'
     }

@@ -325,8 +325,14 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
       answer:[result.c,result.x,result.y], answerType:'number', widget:'numpad', negative:false,
       algebra:{operation:'substitute-shape-formula',shape:shape.id,factor:{n:shape.n,d:shape.d},factors,result},
       solution:[
-        {tex:`\\text{계수}:\\ ${shape.n}\\times${factors.map(v=>v.c).join('\\times')}\\div${shape.d}=${result.c}`},
-        {tex:`x^{${factors.map(v=>v.x).join('+')}}y^{${factors.map(v=>v.y).join('+')}}=x^{${result.x}}y^{${result.y}}`},
+        /* 2026-09-25 — 예전 단계는 "1×4×5÷1", "x^{2+0}y^{1+2}"처럼 공식에 없는 1·0을
+           그대로 보였다. 곱하는 계수만, 문자가 실제로 있는 인수만 적는다. */
+        {tex:`\\text{계수}:\\ ${frac}${factors.map(v=>v.c).join('\\times')}=${result.c}`},
+        {tex:[['x','x'],['y','y']].map(([k,s])=>{
+          const pw=factors.map(v=>v[k]).filter(e=>e>0).map(e=>e===1?s:`${s}^{${e}}`);
+          const tot=result[k]===1?s:`${s}^{${result[k]}}`;
+          return pw.length>1?`${pw.join('\\times')}=${tot}`:tot;
+        }).join(',\\quad ')},
         {tex:`${shape.symbol}=\\square x^{\\square}y^{\\square}`,blank:[result.c,result.x,result.y]}
       ]
     };
