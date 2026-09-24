@@ -38,7 +38,10 @@ function loadPlaywright(){
 
 function serve(){
   return new Promise((resolve, reject) => {
-    const py = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
+    // Windows의 python3.exe는 Microsoft Store 설치 안내용 stub일 수 있어 서버가 뜨지 않는다.
+    // 실제 Python 명령을 플랫폼별로 고른다(check-print.js와 같은 계약).
+    const python = process.platform === 'win32' ? 'python' : 'python3';
+    const py = spawn(python, ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
     py.on('error', reject);
     const t0 = Date.now();
     (function ping(){

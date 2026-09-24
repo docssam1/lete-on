@@ -797,8 +797,8 @@ MX4:{ name:{ko:'제곱근',en:'Square roots',zh:'平方根'}, gen:'mx4_sqrt', pr
     en:'A square root is the number that gives the value when multiplied by itself. Since 12×12=144, the square root of 144 is 12.',
     zh:'平方后等于某数的数就是它的平方根。12×12=144，所以144的平方根是12。'},
   widgets:['array','numpad'],
-  levels:[{id:1,label:{ko:'√121~√400',en:'√121-√400',zh:'√121~√400'},params:{hi:400}},
-          {id:2,label:{ko:'√441~√1600',en:'√441-√1600',zh:'√441~√1600'},params:{hi:1600}}] },
+  levels:[{id:1,label:{ko:'√4~√400',en:'√4-√400',zh:'√4~√400'},params:{hi:400}},
+          {id:2,label:{ko:'√4~√1600',en:'√4-√1600',zh:'√4~√1600'},params:{hi:1600}}] },
 MX5:{ name:{ko:'분수·소수 혼합 총정리',en:'Mixed review',zh:'分数小数综合'}, gen:'mx5_mixedReview', prereq:['FR7','DC3','MX1'],
   concept:{ko:'분수와 소수가 섞이면 한쪽으로 통일해요. 나눗셈이 섞였을 땐 분수로 바꾸는 편이 계산이 깔끔해요.',
     en:'When fractions and decimals mix, convert everything to one form. Fractions usually keep division cleaner.',
@@ -1593,7 +1593,11 @@ MD9:{ name:{ko:'순환소수를 분수로',en:'Repeating Decimal to Fraction',zh
   levels:[{id:1,label:{ko:'비순환 1자리·순환 1자리',en:'1 prefix digit · 1 repeat digit',zh:'前缀1位·循环1位'},params:{k:1,m:1}},
           {id:2,label:{ko:'비순환 2자리·순환 1자리',en:'2 prefix digits · 1 repeat digit',zh:'前缀2位·循环1位'},params:{k:2,m:1}},
           {id:3,label:{ko:'비순환 1자리·순환 2자리',en:'1 prefix digit · 2 repeat digits',zh:'前缀1位·循环2位'},params:{k:1,m:2}},
-          {id:4,label:{ko:'비순환 2자리·순환 2자리(실전)',en:'2 prefix · 2 repeat (main)',zh:'前缀2位·循环2位(实战)'},params:{k:2,m:2}}] },
+          {id:4,label:{ko:'비순환 2자리·순환 2자리(실전)',en:'2 prefix · 2 repeat (main)',zh:'前缀2位·循环2位(实战)'},params:{k:2,m:2}},
+          {id:5,label:{ko:'소수점 아래 n번째 자리',en:'digit at the nth decimal place',zh:'小数点后第n位'},params:{mode:'digitAt'},
+           concept:{ko:'순환마디가 처음부터 반복되면 **n을 순환마디의 숫자 개수로 나눈 나머지**가 자리 위치를 알려 줍니다. 나머지가 1이면 첫째, 2이면 둘째이고, **나머지가 0이면 순환마디의 마지막 숫자**입니다.',
+             en:'When the repeating block starts immediately, divide n by the block length. Remainder 1 means the first digit, remainder 2 the second, and remainder 0 means the last digit of the block.',
+             zh:'循环节从小数第一位开始时，用n除以循环节长度。余1看第1位，余2看第2位，余0看循环节的最后一位。'}}] },
 
 /* ── MD 중등 W9(중2 식의 계산) 신규 5종 (2026-08-25) ──
    근거: MASTER-ROADMAP.md §5(중2 W9) — 2022 개정 교육과정 중2 '식의
@@ -1641,7 +1645,15 @@ MD11:{ name:{ko:'단항식의 곱셈과 나눗셈',en:'Multiplying & Dividing Mo
           {id:3,label:{ko:'세 단항식 곱나눗 혼합(실전)',en:'three-monomial × ÷ mix (main)',zh:'三个单项式乘除混合(实战)'},params:{mode:'chain'},
            concept:{ko:'셋 이상이 섞여도 앞에서부터 차례로 합니다. 계수는 계수끼리, 지수는 곱하면 더하고 나누면 뺍니다 — −5x²×2x³÷10x⁴는 −x입니다.',
              en:'With three or more, work left to right: coefficients with coefficients, exponents added when multiplying and subtracted when dividing — −5x²×2x³÷10x⁴ is −x.',
-             zh:'三个以上也从左往右依次算：系数归系数，指数相乘时相加、相除时相减——−5x²×2x³÷10x⁴是−x。'}}] },
+             zh:'三个以上也从左往右依次算：系数归系数，指数相乘时相加、相除时相减——−5x²×2x³÷10x⁴是−x。'}},
+          {id:4,label:{ko:'□ 안의 단항식 구하기',en:'find the missing monomial',zh:'求方框中的单项式'},params:{mode:'solveBox'},
+           concept:{ko:'□를 하나의 단항식으로 보고 역연산합니다. A×□=B이면 □=B÷A, A÷□=B이면 □=A÷B입니다. 곱셈과 나눗셈이 함께 있으면 □만 남긴 뒤 계수와 x·y의 지수를 따로 계산합니다.',
+             en:'Treat the box as one monomial and use inverse operations. From A×□=B, □=B÷A; from A÷□=B, □=A÷B. Then handle the coefficient and each variable exponent separately.',
+             zh:'把方框看作一个单项式并用逆运算。A×□=B时□=B÷A，A÷□=B时□=A÷B；再分别计算系数和各字母的指数。'}},
+          {id:5,label:{ko:'넓이·부피 공식에 대입(집중)',en:'substitute into area and volume formulas',zh:'代入面积和体积公式'},params:{mode:'formulaSub'},
+           concept:{ko:'도형의 넓이·부피 공식을 먼저 쓰고, 주어진 길이의 단항식을 그대로 대입합니다. 그다음 계수는 곱하고 같은 문자의 지수는 더합니다. 1/2이나 1/3도 계수 계산에 포함합니다.',
+             en:'Write the supplied area or volume formula, substitute each monomial length, then multiply coefficients and add exponents of like variables. Include 1/2 or 1/3 in the coefficient calculation.',
+             zh:'先写出给出的面积或体积公式，代入各边的单项式，再乘系数、加同字母指数；1/2或1/3也要计入系数运算。'}}] },
 
 MD12:{ name:{ko:'다항식의 덧셈과 뺄셈',en:'Adding & Subtracting Polynomials',zh:'多项式的加减法'}, gen:'md12_polyAddSub', prereq:['MD2'],
   unit:'M-12',
@@ -1668,11 +1680,11 @@ MD12:{ name:{ko:'다항식의 덧셈과 뺄셈',en:'Adding & Subtracting Polynom
              en:'Remove brackets from the inside out — parentheses, then braces, then square brackets — combining like terms as you go. A minus sign flips every term inside the moment you open it.',
              zh:'按小括号→大括号(中括号)→方括号的顺序从内到外拆括号，边拆边合并同类项。前面是负号，打开的瞬间里面每一项都要变号。'}}] },
 
-MD13:{ name:{ko:'(단항식)×(다항식)의 전개',en:'Expanding Monomial × Polynomial',zh:'单项式乘多项式的展开'}, gen:'md13_monoTimesPoly', prereq:['MD11','MD12'],
+MD13:{ name:{ko:'단항식과 다항식의 곱셈·나눗셈',en:'Multiplying & Dividing Monomials and Polynomials',zh:'单项式与多项式的乘除法'}, gen:'md13_monoTimesPoly', prereq:['MD11','MD12'],
   unit:'M-13',
-  concept:{ko:'분배법칙으로 괄호 앞의 단항식을 안의 모든 항에 하나씩 곱합니다. 곱하는 것이 문자를 가지면 지수법칙이 함께 작동해 차수가 올라갑니다.',
-    en:'Use the distributive law — multiply the monomial outside into every term inside, one at a time. If the multiplier has a letter, the exponent law raises the power too.',
-    zh:'用分配律——把括号外的单项式依次乘括号内的每一项。乘数带字母时，指数法则也一起起作用，次数会升高。'},
+  concept:{ko:'곱셈은 괄호 앞의 단항식을 안의 모든 항에 하나씩 곱하고, 나눗셈은 다항식의 모든 항을 같은 단항식으로 하나씩 나눕니다. 계수와 같은 문자의 지수를 따로 계산합니다.',
+    en:'For multiplication, multiply the outside monomial into every term. For division, divide every polynomial term by the same monomial. Work with coefficients and exponents of like variables separately.',
+    zh:'乘法把括号外的单项式逐项乘进去；除法把多项式每一项都除以同一个单项式。系数和同字母指数分别计算。'},
   widgets:['numpad'],
   levels:[{id:1,label:{ko:'이항식 전개(연습)',en:'binomial expansion (practice)',zh:'二项式展开(练习)'},params:{mode:'binomial'}},
           {id:2,label:{ko:'문자가 있는 단항식으로 전개',en:'expand with a letter-bearing monomial',zh:'用带字母的单项式展开'},params:{mode:'monomialX'},
@@ -1682,7 +1694,19 @@ MD13:{ name:{ko:'(단항식)×(다항식)의 전개',en:'Expanding Monomial × P
           {id:3,label:{ko:'삼항식 전개(실전)',en:'trinomial expansion (main)',zh:'三项式展开(实战)'},params:{mode:'trinomial'},
            concept:{ko:'항이 셋이어도 하나씩 빠짐없이 곱합니다. 마지막 상수항까지 곱해야 끝입니다 — 2(−x²−3x+11)은 −2x²−6x+22입니다.',
              en:'With three terms inside, multiply each one — including the constant at the end: 2(−x²−3x+11) is −2x²−6x+22.',
-             zh:'括号里有三项时要逐项相乘，最后的常数项也不能漏：2(−x²−3x+11)是−2x²−6x+22。'}}] },
+             zh:'括号里有三项时要逐项相乘，最后的常数项也不能漏：2(−x²−3x+11)是−2x²−6x+22。'}},
+          {id:4,label:{ko:'다항식÷단항식(기본)',en:'polynomial ÷ monomial (basic)',zh:'多项式÷单项式(基础)'},params:{mode:'divideBinomial'},
+           concept:{ko:'다항식을 단항식으로 나눌 때에는 **모든 항을 하나씩 같은 단항식으로 나눕니다.** 계수는 나누고, 같은 문자의 지수는 뺍니다 — (12x²−8xy)÷4x=3x−2y입니다.',
+             en:'To divide a polynomial by a monomial, divide every term by that same monomial. Divide coefficients and subtract exponents of like variables: (12x²−8xy)÷4x=3x−2y.',
+             zh:'多项式除以单项式时，每一项都要除以同一个单项式。系数相除，同字母指数相减：(12x²−8xy)÷4x=3x−2y。'}},
+          {id:5,label:{ko:'분수 계수 단항식으로 나누기',en:'divide by a fractional monomial',zh:'除以分数系数单项式'},params:{mode:'divideFraction'},
+           concept:{ko:'분수 계수의 단항식으로 나눌 때에는 그 단항식의 **역수를 곱셈으로 바꾸어** 모든 항에 분배합니다. 부호와 분수의 분자·분모를 먼저 확인합니다.',
+             en:'When the divisor is a fractional monomial, multiply by its reciprocal and distribute it to every term. Check the sign, numerator, and denominator first.',
+             zh:'除数是分数系数单项式时，要改成乘它的倒数，再分配到每一项。先确认符号和分子、分母。'}},
+          {id:6,label:{ko:'세 항÷두 문자 단항식(집중)',en:'three terms ÷ a two-variable monomial',zh:'三项÷二元单项式(集中)'},params:{mode:'divideTrinomial'},
+           concept:{ko:'세 항도 빠짐없이 각각 나눕니다. x와 y를 따로 보고 지수를 빼며, 나누는 단항식이 음수이면 **각 항의 부호가 모두 바뀌는지** 확인합니다.',
+             en:'Divide all three terms without skipping any. Track x and y separately, subtract their exponents, and if the divisor is negative check that every quotient sign changes.',
+             zh:'三项都要逐项相除。x、y分别看指数相减；除数为负时，要检查每一项的商是否都变号。'}}] },
 
 MD14:{ name:{ko:'등식의 변형',en:'Transforming Equations',zh:'等式的变形'}, gen:'md14_isolateX', prereq:['MD2'],
   unit:'M-14',
@@ -1703,7 +1727,7 @@ MD14:{ name:{ko:'등식의 변형',en:'Transforming Equations',zh:'等式的变�
 /* ── MD 중등 W10(중3 제곱근과 실수 · 다항식의 곱셈과 인수분해) 신규
    6종 (2026-08-25) ── 근거: MASTER-ROADMAP.md §5(중3 W10). gen 함수는
    engine/threads/mid3.js. unit은 data/units/M-15.js~M-20.js. */
-MD15:{ name:{ko:'제곱근의 값',en:'Values of Square Roots',zh:'平方根的值'}, gen:'md15_sqrtValue', prereq:['MD1'],
+MD15:{ name:{ko:'제곱근의 값과 대소 관계',en:'Square Root Values & Comparison',zh:'平方根的值与大小比较'}, gen:'md15_sqrtValue', prereq:['MD1'],
   unit:'M-15',
   concept:{ko:'완전제곱수의 제곱근은 정수입니다. 제곱근을 다시 제곱하면 근호가 사라지고, 어떤 수의 제곱을 다시 제곱근으로 풀면 그 수의 절댓값이 나옵니다(결과는 항상 0 이상).',
     en:'The square root of a perfect square is an integer. Squaring a root cancels it, and the square root of a squared number gives its absolute value (the result is always nonnegative).',
@@ -1717,7 +1741,19 @@ MD15:{ name:{ko:'제곱근의 값',en:'Values of Square Roots',zh:'平方根的�
           {id:3,label:{ko:'√(a²)=|a|(실전)',en:'√(a²)=|a| (main)',zh:'√(a²)=|a|(实战)'},params:{mode:'absValue'},
            concept:{ko:'제곱한 것을 다시 제곱근으로 풀면 **절댓값**이 나옵니다 — √((−18)²)은 −18이 아니라 18입니다.',
              en:'Taking the square root of a square gives the absolute value: √((−18)²) is 18, not −18.',
-             zh:'对平方再开平方得到的是绝对值：√((−18)²)是18，不是−18。'}}] },
+             zh:'对平方再开平方得到的是绝对值：√((−18)²)是18，不是−18。'}},
+          {id:4,label:{ko:'양의 제곱근 대소 비교',en:'compare positive square roots',zh:'比较正平方根'},params:{mode:'comparePositive'},
+           concept:{ko:'양의 제곱근끼리는 근호 안의 수를 정확히 비교하면 방향이 같습니다. 분수도 통분하거나 교차곱해 비교하고, 값이 같을 수 있으므로 ① 왼쪽 큼 ② 같음 ③ 오른쪽 큼을 모두 확인합니다.',
+             en:'For nonnegative square roots, compare the radicands exactly; fractions can be compared by cross multiplication. Choose 1 for left greater, 2 for equal, or 3 for right greater.',
+             zh:'比较非负平方根时，准确比较根号内的数；分数可用交叉相乘。左大选1，相等选2，右大选3。'}},
+          {id:5,label:{ko:'음의 제곱근 대소 비교',en:'compare negative square roots',zh:'比较负平方根'},params:{mode:'compareNegative'},
+           concept:{ko:'두 수가 모두 음수이면 절댓값이 큰 쪽이 더 작습니다. 근호 안을 비교한 뒤 **부등호 방향을 한 번 뒤집는 것**이 핵심입니다.',
+             en:'When both numbers are negative, the one with the larger absolute value is smaller. Compare the radicands, then reverse the direction once.',
+             zh:'两个数都是负数时，绝对值大的反而小。先比较根号内，再把不等号方向翻转一次。'}},
+          {id:6,label:{ko:'유리수·제곱근 혼합 비교(실전)',en:'rational and radical comparison (main)',zh:'有理数与根式混合比较(实战)'},params:{mode:'compareMixed'},
+           concept:{ko:'먼저 부호를 확인합니다. 같은 부호이면 절댓값을 제곱해 분수의 **교차곱**으로 정확히 비교하고, 둘 다 음수일 때만 방향을 뒤집습니다. 소수도 분수로 바꾸면 반올림 없이 판정할 수 있습니다.',
+             en:'Check signs first. With the same sign, square the absolute values and compare the fractions exactly; reverse only when both numbers are negative. Convert decimals to fractions to avoid rounding.',
+             zh:'先看符号。同号时平方绝对值并准确比较分数；只有两数都为负时才反向。把小数化成分数可避免近似误差。'}}] },
 
 MD16:{ name:{ko:'근호의 정리',en:'Simplifying Radicals',zh:'根号的化简'}, gen:'md16_simplifyRadical', prereq:['MD15','DV7'],
   unit:'M-16',
@@ -2832,7 +2868,11 @@ MD64:{ name:{ko:'일차부등식',en:'Linear Inequalities',zh:'一元一次不�
           {id:3,label:{ko:'양변에 x · 정수해(실전)',en:'x on both sides, integer solution (main)',zh:'两边有x·整数解(实战)'},params:{mode:'integer',wide:true},
            concept:{ko:'x항을 한쪽으로 모으면 계수가 음수가 될 수 있습니다. 방향을 뒤집어 x<(어떤 수)를 얻었다면, 이를 만족하는 가장 큰 정수는 그 수보다 하나 작은 수입니다.',
              en:'Gathering the x terms can leave a negative coefficient. Once the flip gives x<(some number), the largest integer that works is one less than that number.',
-             zh:'把x项收到一边后系数可能变成负数。反转后得到x<(某个数)时，满足它的最大整数就是比那个数小1的数。'}}] },
+             zh:'把x项收到一边后系数可能变成负数。反转后得到x<(某个数)时，满足它的最大整数就是比那个数小1的数。'}},
+          {id:4,label:{ko:'부등호 방향 직접 고르기',en:'choose the inequality direction',zh:'直接选择不等号方向'},params:{mode:'chooseSign'},
+           concept:{ko:'a<b의 양변에 같은 수를 더하거나 빼면 방향은 그대로입니다. 같은 양수로 곱하거나 나누어도 그대로이고, 같은 음수로 곱하거나 나눌 때만 방향을 뒤집습니다.',
+             en:'Adding or subtracting the same number keeps a<b in the same direction. Multiplying or dividing by the same positive also keeps it; only a negative flips it.',
+             zh:'a<b两边同加或同减一个数，方向不变；同乘或同除以正数也不变，只有同乘或同除以负数时方向反转。'}}] },
 
 MD65:{ name:{ko:'일차함수의 기울기와 절편',en:'Slope & Intercept of a Linear Function',zh:'一次函数的斜率与截距'}, gen:'md65_linearFunction', prereq:['MD51'],
   unit:'M-65',
@@ -2943,7 +2983,7 @@ MD69:{ name:{ko:'정비례·반비례의 그래프',en:'Graphs of Direct & Inver
   widgets:['numpad','graphPlane'],
   levels:[{id:1,label:{ko:'정비례 그래프에서 a 읽기(연습)',en:'read a off a direct-proportion graph (practice)',zh:'从正比例图象读出a(练习)'},params:{mode:'directGraph'}},
           {id:2,label:{ko:'반비례 그래프에서 a 읽기',en:'read a off an inverse-proportion graph',zh:'从反比例图象读出a'},params:{mode:'inverseGraph'},
-           concept:{ko:'반비례 그래프에서는 x와 y를 **곱하면** 늘 같은 수가 나옵니다. 그 수가 a입니다. 정비례가 나누기였던 것과 정반대입니다.',en:'On an inverse-proportion graph, multiplying x by y always gives the same number, and that number is a. Direct proportion divided; this one multiplies.',zh:'在反比例图象上，x乘以y总得到同一个数，那个数就是a。正比例是相除，这里正好相反。'}},
+           concept:{ko:'반비례 그래프에서는 x와 y를 **곱하면** 비례상수 a가 나옵니다. **a>0이면 제1·3사분면**, **a<0이면 제2·4사분면**을 지납니다. 두 좌표의 부호가 같은지 다른지로 확인하세요.',en:'On an inverse-proportion graph, multiplying x by y always gives the same number, and that number is a. Direct proportion divided; this one multiplies.',zh:'在反比例图象上，x乘以y总得到同一个数，那个数就是a。正比例是相除，这里正好相反。'}},
           {id:3,label:{ko:'그래프에서 값 읽기(실전)',en:'read a value off the graph (main)',zh:'从图象读出值(实战)'},params:{mode:'readValue'},
            concept:{ko:'식을 먼저 알아낸 다음 x를 넣습니다. 정비례면 곱하고 반비례면 나눕니다 — 그래프 모양만 봐도 어느 쪽인지 알 수 있습니다.',en:'Work out the formula first, then substitute x: multiply for direct proportion, divide for inverse. The shape of the graph alone tells you which it is.',zh:'先求出式子再代入x：正比例就乘，反比例就除。单看图象的形状就能判断是哪一种。'}}] },
 
@@ -3053,7 +3093,9 @@ MD78:{ name:{ko:'이차함수 y=ax²의 그래프',en:'The Graph of y=ax²',zh:'
           {id:2,label:{ko:'지나는 점으로 a 구하기',en:'finding a from a point',zh:'由经过的点求a'},params:{mode:'findA'},
            concept:{ko:'그래프가 어떤 점을 지난다는 것은 그 좌표를 넣으면 등식이 성립한다는 뜻입니다. y=ax²에 넣으면 a만 남으니, y를 x의 제곱으로 나누면 됩니다.',en:'A graph passing through a point means its coordinates satisfy the formula. Substituting into y=ax2 leaves only a, so divide y by x squared.',zh:'图象经过某点，就是说把坐标代入后等式成立。代入y=ax²只剩下a，所以用y除以x的平方即可。'}},
           {id:3,label:{ko:'그래프에서 a 읽기(실전)',en:'read a off the graph (main)',zh:'从图象读出a(实战)'},params:{mode:'readA'},
-           concept:{ko:'그래프에서 x=1이나 x=2인 자리의 y를 읽으면 a가 바로 나옵니다. 볼록한 방향으로 부호를, 폭으로 크기를 짐작할 수 있습니다.',en:'Read y at x=1 or x=2 on the graph and a follows at once. The direction it opens tells you the sign, and how narrow it is tells you the size.',zh:'在图象上读出x=1或x=2处的y，a就出来了。开口方向告诉你符号，开口宽窄告诉你大小。'}}] },
+           concept:{ko:'그래프에서 x=1이나 x=2인 자리의 y를 읽으면 a가 바로 나옵니다. 볼록한 방향으로 부호를, 폭으로 크기를 짐작할 수 있습니다.',en:'Read y at x=1 or x=2 on the graph and a follows at once. The direction it opens tells you the sign, and how narrow it is tells you the size.',zh:'在图象上读出x=1或x=2处的y，a就出来了。开口方向告诉你符号，开口宽窄告诉你大小。'}},
+          {id:4,label:{ko:'x=−2~2 대응표와 좌우 대칭',en:'the x=−2 to 2 table and symmetry',zh:'x=−2到2的对应表与左右对称'},params:{mode:'symmetryTable'},
+           concept:{ko:'x=−2,−1,0,1,2를 차례로 넣으면 양쪽 y값이 짝을 이룹니다. (−x)²=x²이므로 y(−x)=y(x)이고, 이 표가 포물선이 y축에 대칭인 이유를 보여 줍니다.',en:'Substituting −2, −1, 0, 1 and 2 makes matching pairs of y-values. Since (−x)²=x², y(−x)=y(x), which is why the parabola is symmetric about the y-axis.',zh:'依次代入−2、−1、0、1、2，左右的y值成对相等。因为(−x)²=x²，所以y(−x)=y(x)，这正说明抛物线关于y轴对称。'}}] },
 
 MD79:{ name:{ko:'이차함수의 평행이동',en:'Translating a Parabola',zh:'二次函数的平移'}, gen:'md79_quadShift', prereq:['MD78'],
   unit:'M-79',
@@ -3063,7 +3105,9 @@ MD79:{ name:{ko:'이차함수의 평행이동',en:'Translating a Parabola',zh:'�
           {id:2,label:{ko:'좌우 평행이동',en:'sliding sideways',zh:'左右平移'},params:{mode:'leftRight'},
            concept:{ko:'오른쪽으로 3만큼 옮기면 (x−3)²입니다. "오른쪽인데 왜 빼지?"는 x=3일 때 괄호 안이 0이 되어 그 자리가 꼭짓점이 되기 때문입니다.',en:'Sliding 3 to the right gives (x-3)2. Why a minus for a move to the right? Because the bracket is zero at x=3, and that is exactly where the vertex now sits.',zh:'向右平移3就是(x−3)²。"向右为什么用减？"——因为x=3时括号里为0，那里正好成为顶点。'}},
           {id:3,label:{ko:'두 방향 모두(실전, 2다칸)',en:'both directions (main, 2 slots)',zh:'两个方向都平移(实战，2格)'},params:{mode:'both'},
-           concept:{ko:'두 방향을 함께 옮기면 y=a(x−p)²+q가 되고 꼭짓점은 (p, q)입니다. 옮긴 만큼이 그대로 꼭짓점의 좌표가 되는 셈입니다.',en:'Move in both directions and you get y=a(x-p)2+q, with the vertex at (p, q) - the amounts you moved are simply the vertex coordinates.',zh:'两个方向一起平移就得到y=a(x−p)²+q，顶点是(p, q)——平移了多少，顶点坐标就是多少。'}}] },
+           concept:{ko:'두 방향을 함께 옮기면 y=a(x−p)²+q가 되고 꼭짓점은 (p, q)입니다. 옮긴 만큼이 그대로 꼭짓점의 좌표가 되는 셈입니다.',en:'Move in both directions and you get y=a(x-p)2+q, with the vertex at (p, q) - the amounts you moved are simply the vertex coordinates.',zh:'两个方向一起平移就得到y=a(x−p)²+q，顶点是(p, q)——平移了多少，顶点坐标就是多少。'}},
+          {id:4,label:{ko:'주어진 x의 y값·지나는 점',en:'a y-value and a point on the shifted graph',zh:'平移图象上给定x的y值与点'},params:{mode:'pointValue'},
+           concept:{ko:'그래프 위의 점은 항상 함수식을 만족합니다. 주어진 x를 x−p에 대입한 뒤, ① 괄호 안 ② 제곱 ③ a를 곱하고 q를 더하는 순서로 y좌표를 구합니다.',en:'Every point on the graph satisfies the formula. Substitute the given x into x−p, then work in the order: bracket, square, multiply by a, and add q.',zh:'图象上的每个点都满足函数式。把给定的x代入x−p，再按括号、平方、乘a、加q的顺序求y坐标。'}}] },
 
 MD80:{ name:{ko:'이차함수의 최대·최소와 축과의 교점',en:'Extremes & Axis Crossings of a Parabola',zh:'二次函数的最值与轴交点'}, gen:'md80_quadExtrema', prereq:['MD79'],
   unit:'M-80',
@@ -3104,6 +3148,96 @@ MD82:{ name:{ko:'수직선 위의 위치',en:'Positions on the Number Line',zh:'
            concept:{ko:'|x|=5라면 0에서 5칸 떨어진 자리 둘 — 오른쪽 5와 왼쪽 −5입니다. 절댓값은 거리라 언제나 0 이상이고, 0의 절댓값만 0입니다.',
              en:'If |x|=5 there are two places five steps from zero: 5 on the right and -5 on the left. An absolute value is a distance, so it is never negative, and only zero has an absolute value of zero.',
              zh:'若|x|=5，离0有5格的位置有两个：右边的5和左边的−5。绝对值是距离，所以从不为负；只有0的绝对值是0。'}}] },
+
+/* ── MD84 — 대표값: 중앙값·최빈값과 종합 ──
+   디딤돌 개념연산 중1-2 p.224~230에서 확인한 평균·중앙값·최빈값만 다룬다.
+   p.231 이후는 원본이 절단되어 도수표·그래프 등은 추측해 추가하지 않는다. */
+MD84:{ name:{ko:'대표값: 평균·중앙값·최빈값',en:'Measures of Center: Mean, Median & Mode',zh:'代表值：平均数·中位数·众数'}, gen:'md84_center', prereq:[],
+  unit:'M-84',
+  concept:{ko:'자료를 대표하는 값에는 평균, 중앙값, 최빈값이 있습니다. 중앙값은 자료를 크기순으로 놓았을 때 한가운데 값이고, 자료가 짝수 개면 가운데 두 값의 평균입니다. 최빈값은 가장 많이 나타난 값이며 둘 이상일 수도 있고, 수가 아닌 범주 자료에도 쓸 수 있습니다.',
+    en:'Mean, median, and mode are measures that represent data. The median is the middle after sorting; with an even number of values, average the two middle values. The mode is the most frequent value, can have more than one answer, and can also describe categories.',
+    zh:'平均数、中位数和众数都可代表数据。中位数是排序后正中间的数；数据个数为偶数时，取中间两个数的平均数。众数是出现次数最多的值，可以有多个，也可用于类别数据。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'홀수 개 자료의 중앙값(기본 12)',en:'median of odd-sized data (12 basics)',zh:'奇数个数据的中位数(基础12题)'},params:{mode:'medianOdd'}},
+          {id:2,label:{ko:'짝수 개 자료의 중앙값(기본 12)',en:'median of even-sized data (12 basics)',zh:'偶数个数据的中位数(基础12题)'},params:{mode:'medianEven'},
+           concept:{ko:'자료가 짝수 개이면 한가운데 값이 하나가 아닙니다. 크기순으로 놓고 가운데 두 값의 평균을 중앙값으로 정합니다.',en:'With an even number of values there is no single middle, so sort the data and average the two middle values.',zh:'数据个数为偶数时没有唯一的正中间，因此排序后取中间两个数的平均数。'}},
+          {id:3,label:{ko:'최빈값 하나(기본 12)',en:'one mode (12 basics)',zh:'一个众数(基础12题)'},params:{mode:'modeSingle'},
+           concept:{ko:'자료의 각 값이 몇 번씩 나타나는지 세어 횟수가 가장 큰 값을 고릅니다. 한 값만 가장 많이 나타나면 그 값이 하나뿐인 최빈값입니다.',en:'Count how often each value appears. If one value alone has the greatest frequency, it is the single mode.',zh:'统计各数出现的次数。若只有一个数的次数最多，它就是唯一的众数。'}},
+          {id:4,label:{ko:'최빈값 둘(집중 24)',en:'two modes (24 focused)',zh:'两个众数(集中24题)'},params:{mode:'modeMultiple'},
+           concept:{ko:'가장 많이 나타난 횟수가 같은 값이 둘 이상이면 최빈값도 둘 이상입니다. 하나만 고르지 말고 모두 씁니다.',en:'If two or more values tie for the highest frequency, every tied value is a mode.',zh:'如果有两个或更多数并列出现次数最多，它们都是众数。'}},
+          {id:5,label:{ko:'범주 자료의 최빈값(집중 24)',en:'mode of categorical data (24 focused)',zh:'类别数据的众数(集中24题)'},params:{mode:'modeCategory'},
+           concept:{ko:'최빈값은 숫자 계산이 아니라 횟수 비교이므로 좋아하는 운동·색깔처럼 수가 아닌 자료에서도 구할 수 있습니다. 화면에서는 A~E 항목을 1~5 번호로 입력합니다.',en:'Mode compares frequencies rather than calculating with the values, so it also works for categories such as sports or colors. Enter category A-E as number 1-5.',zh:'众数比较的是出现次数，不是对数值做运算，因此运动、颜色等类别资料也能求众数。A至E请按1至5输入。'}},
+          {id:6,label:{ko:'평균·중앙값·최빈값 종합(집중 24)',en:'mean, median & mode together (24 focused)',zh:'平均数·中位数·众数综合(集中24题)'},params:{mode:'summary'},
+           concept:{ko:'평균은 합÷개수, 중앙값은 정렬 뒤 가운데, 최빈값은 횟수의 최댓값입니다. 세 값은 같은 자료에서도 서로 다를 수 있으므로 정의를 섞지 않고 차례로 구합니다.',en:'Mean is sum divided by count, median is the middle after sorting, and mode is the most frequent. They can differ in the same data set, so apply each definition separately.',zh:'平均数是总和除以个数，中位数是排序后的中间值，众数是出现次数最多的值。同一组数据中三者可能不同。'}}] },
+
+/* ── MD85 — 산포도(2026-09-24) ── 디딤돌 개념연산 중3-2
+   인쇄 p.112~125의 편차·분산·표준편차·두 자료 비교만 재구성한다. */
+MD85:{ name:{ko:'산포도: 편차·분산·표준편차',en:'Dispersion: Deviations, Variance & Standard Deviation',zh:'离散程度：偏差·方差·标准差'}, gen:'md85_dispersion', prereq:['MD84'],
+  unit:'M-85',
+  concept:{ko:'편차는 변량에서 평균을 뺀 값이며 합은 항상 0입니다. 분산은 편차 제곱의 평균이고, 표준편차는 분산의 양의 제곱근입니다. 평균은 중심을, 분산과 표준편차는 평균 주위에 흩어진 정도를 설명합니다.',
+    en:'A deviation is a value minus the mean, and all deviations sum to zero. Variance is the mean of squared deviations, and standard deviation is the positive square root of the variance. The mean locates the center; variance and standard deviation describe spread around it.',
+    zh:'偏差是变量减去平均数，所有偏差之和恒为0。方差是偏差平方的平均数，标准差是方差的正平方根。平均数表示中心，方差和标准差表示数据在中心周围的分散程度。'},
+  widgets:['numpad'],
+  levels:[
+    {id:1,label:{ko:'편차 구하기(기본 12문항)',en:'find a deviation (12 basics)',zh:'求偏差(基础12题)'},params:{mode:'deviation'}},
+    {id:2,label:{ko:'편차의 합과 빠진 편차(핵심 24문항)',en:'sum and missing deviation (24 core)',zh:'偏差之和与缺少的偏差(核心24题)'},params:{mode:'missingDeviation'},
+      concept:{ko:'편차는 모두 더하면 0입니다. 빠진 편차는 보이는 편차의 합에 반대 부호를 붙여 구합니다.',en:'All deviations add to zero. The missing deviation is the opposite of the sum of the visible deviations.',zh:'所有偏差的和为0。缺少的偏差等于已知偏差和的相反数。'}},
+    {id:3,label:{ko:'분산과 표준편차(핵심 24문항)',en:'variance and standard deviation (24 core)',zh:'方差与标准差(核心24题)'},params:{mode:'varianceStd'},
+      concept:{ko:'평균 → 편차 → 편차 제곱의 합 → 개수로 나눈 분산 → 분산의 양의 제곱근인 표준편차 순서로 계산합니다. 분산은 제곱 단위이고 표준편차는 원래 자료와 같은 단위입니다.',en:'Work in order: mean, deviations, squared deviations, variance by dividing by the count, then the positive square root for standard deviation. Variance uses squared units; standard deviation has the data\'s original unit.',zh:'依次计算平均数、偏差、偏差平方和、除以个数得到方差，再取方差的正平方根得到标准差。方差是平方单位，标准差与原数据单位相同。'}},
+    {id:4,label:{ko:'두 자료의 평균·산포도 비교(핵심 24문항)',en:'compare centers and spread (24 core)',zh:'比较两组数据的平均数与离散程度(核心24题)'},params:{mode:'compare'},
+      concept:{ko:'평균이 큰 자료와 더 고른 자료는 같은 뜻이 아닙니다. 중심은 평균끼리, 고른 정도는 분산 또는 표준편차끼리 따로 비교하고, 값이 작은 쪽이 평균 가까이에 더 모여 있습니다.',en:'A larger mean does not mean a more consistent set. Compare means for center and variances or standard deviations for consistency; the smaller spread is more tightly clustered around its mean.',zh:'平均数较大不等于数据更均匀。中心用平均数比较，均匀程度用方差或标准差比较；离散程度较小的一组更集中在平均数附近。'}}
+  ] },
+
+/* ── MD86 — 사분위수와 상자그림(2026-09-24) ── 중3-2 p.128~143. */
+MD86:{ name:{ko:'사분위수와 상자그림',en:'Quartiles & Box Plots',zh:'四分位数与箱形图'}, gen:'md86_quartileBox', prereq:['MD84'],
+  unit:'M-86', widgets:['numpad','graphPlane'],
+  levels:[
+    {id:1,label:{ko:'홀수 개 자료의 사분위수(기본 12문항)',en:'quartiles of odd-sized data (12 basics)',zh:'奇数个数据的四分位数(基础12题)'},params:{mode:'quartilesOdd'},concept:{ko:'자료를 정렬해 중앙값 Q2를 찾고, Q2를 제외한 아래쪽과 위쪽 절반의 중앙값을 각각 Q1, Q3으로 정합니다.',en:'Sort the data, find Q2, then exclude it and take the medians of the lower and upper halves as Q1 and Q3.',zh:'数据排序后先求Q2，再排除Q2，分别取下半部和上半部的中位数作为Q1、Q3。'}},
+    {id:2,label:{ko:'짝수 개 자료의 사분위수(기본 12문항)',en:'quartiles of even-sized data (12 basics)',zh:'偶数个数据的四分位数(基础12题)'},params:{mode:'quartilesEven'},concept:{ko:'자료가 짝수 개이면 가운데에서 같은 개수로 둘로 나눈 뒤, 각 절반의 중앙값을 Q1과 Q3으로 구합니다.',en:'For an even-sized data set, split it into equal lower and upper halves and find the median of each half.',zh:'数据个数为偶数时，从中间等分为上下两半，再分别求两半的中位数。'}},
+    {id:3,label:{ko:'범위와 사분위수 범위(집중 24문항)',en:'range and interquartile range (24 focused)',zh:'极差与四分位距(集中24题)'},params:{mode:'spread'},concept:{ko:'범위는 최댓값−최솟값이고, 사분위수 범위는 Q3−Q1입니다. 가운데 절반의 퍼진 정도는 IQR로 비교합니다.',en:'Range is maximum minus minimum, while interquartile range is Q3 minus Q1 and measures the spread of the middle half.',zh:'极差=最大值−最小值，四分位距=Q3−Q1，用来表示中间一半数据的分散程度。'}},
+    {id:4,label:{ko:'다섯 수 요약(집중 24문항)',en:'five-number summary (24 focused)',zh:'五数概括(集中24题)'},params:{mode:'fiveNumber'},concept:{ko:'최솟값, Q1, 중앙값, Q3, 최댓값을 차례로 쓰면 상자그림을 그리는 다섯 수 요약이 됩니다.',en:'Minimum, Q1, median, Q3 and maximum form the five-number summary used for a box plot.',zh:'最小值、Q1、中位数、Q3、最大值依次组成绘制箱形图的五数概括。'}},
+    {id:5,label:{ko:'상자그림 읽기(집중 24문항)',en:'read a box plot (24 focused)',zh:'读取箱形图(集中24题)'},params:{mode:'boxRead'},concept:{ko:'수염 끝은 최솟값·최댓값, 상자의 양 끝은 Q1·Q3, 상자 안 선은 중앙값입니다. 평균이나 자료 개수는 상자그림만으로 알 수 없습니다.',en:'Whisker ends show minimum and maximum, box edges show Q1 and Q3, and the line in the box is the median. A box plot alone does not reveal the mean or sample size.',zh:'须端表示最小值和最大值，箱体两端表示Q1和Q3，箱内线表示中位数。仅凭箱形图不能知道平均数或数据个数。'}},
+    {id:6,label:{ko:'상자그림 직접 그리기(집중 24문항)',en:'draw a box plot (24 focused)',zh:'绘制箱形图(集中24题)'},params:{mode:'boxDraw'},concept:{ko:'눈금 위에 다섯 수를 먼저 표시하고 Q1~Q3 상자, 중앙값 선, 최솟값·최댓값까지의 수염 순서로 그립니다.',en:'Mark the five values first, then draw the Q1-to-Q3 box, median line and whiskers to the minimum and maximum.',zh:'先在刻度上标出五个数，再画Q1到Q3的箱体、中位数线以及连到最小值和最大值的须。'}}
+  ] },
+
+/* ── MD87 — 산점도와 상관관계(2026-09-24) ── 중3-2 p.144~153. */
+MD87:{ name:{ko:'산점도와 상관관계',en:'Scatter Plots & Correlation',zh:'散点图与相关关系'}, gen:'md87_scatter', prereq:['MD85'],
+  unit:'M-87', widgets:['numpad','graphPlane'], instr:{ko:'표의 순서쌍을 점으로 나타내거나 산점도를 읽어 답하시오.',en:'Plot the ordered pairs or read the scatter plot and answer.',zh:'描出有序数对，或观察散点图作答。'},
+  levels:[
+    {id:1,label:{ko:'순서쌍 직접 찍기(기본 12문항)',en:'plot ordered pairs (12 basics)',zh:'描有序数对(基础12题)'},params:{mode:'plot'}},
+    {id:2,label:{ko:'조건에 맞는 점 세기(집중 24문항)',en:'count points meeting a condition (24 focused)',zh:'数满足条件的点(集中24题)'},params:{mode:'read'},concept:{ko:'부등식의 경계선을 눈으로 세운 뒤 조건을 만족하는 쪽의 점만 하나씩 셉니다. ≥와 ≤이면 경계 위 점도 포함합니다.',en:'Locate the inequality boundary, then count only points on the satisfying side. Include points on the boundary for ≥ and ≤.',zh:'先确定不等式的边界线，再逐个数满足条件一侧的点。使用≥或≤时要包括边界上的点。'}},
+    {id:3,label:{ko:'양·음·무상관 판단(기본 12문항)',en:'positive, negative or no correlation (12 basics)',zh:'判断正相关·负相关·无相关(基础12题)'},params:{mode:'correlation'},concept:{ko:'x가 커질수록 점구름이 대체로 올라가면 양의 상관, 내려가면 음의 상관입니다. 한 방향이 보이지 않으면 상관관계가 없습니다.',en:'A cloud that generally rises as x increases has positive correlation; one that falls has negative correlation. With no overall direction, there is no correlation.',zh:'随着x增大，点云整体上升是正相关，整体下降是负相关；看不出总体方向则没有相关关系。'}},
+    {id:4,label:{ko:'방향과 강도 판단(집중 24문항)',en:'direction and strength (24 focused)',zh:'判断方向与强弱(集中24题)'},params:{mode:'strength'},concept:{ko:'상관의 방향과 강도는 따로 봅니다. 같은 방향이라도 점들이 좁은 띠에 모일수록 강하고, 넓게 흩어질수록 약합니다.',en:'Judge direction and strength separately. For the same direction, a tighter band means stronger correlation and a wider cloud means weaker correlation.',zh:'相关的方向和强弱要分别判断。同一方向上，点越集中成窄带相关越强，越分散则越弱。'}}
+  ] },
+
+/* ── MD88 — 경우의 수(2026-09-24) ── 디딤돌수학 개념연산 중2-2
+   인쇄 p.216~230에서 확인한 계산 유형만 구현한다. p.232 이후와 확률은
+   근거 범위 밖이라 넣지 않는다. gen: mid11.js. */
+MD88:{ name:{ko:'경우의 수',en:'Counting Possibilities',zh:'情况数'}, gen:'md88_countingCases', prereq:['MD4'],
+  unit:'M-88',
+  concept:{ko:'경우의 수는 가능한 결과를 빠짐없이, 겹치지 않게 센 수입니다. 먼저 한 사건의 결과를 직접 세고, 겹치지 않는 A 또는 B는 더하며, A 다음 B처럼 두 단계를 모두 거치면 곱합니다.',
+    en:'A number of possibilities counts every possible result once. Count one event directly; add for non-overlapping A or B; multiply when both stages A then B must happen.',
+    zh:'情况数就是把所有可能结果不重不漏地数出来。先直接数一个事件；互不重叠的A或B用加法；必须依次完成A和B两个步骤时用乘法。'},
+  widgets:['numpad'],
+  levels:[
+    {id:1,label:{ko:'사건의 결과 개수(기본 12문항)',en:'count outcomes (12 basics)',zh:'数事件结果(基础12题)'},params:{mode:'eventCount'}},
+    {id:2,label:{ko:'배타적인 A 또는 B — 덧셈법칙(24문항)',en:'exclusive A or B — addition rule (24)',zh:'互斥的A或B——加法法则(24题)'},params:{mode:'either'},
+      concept:{ko:'A를 고르는 방법과 B를 고르는 방법이 서로 겹치지 않고 둘 중 하나만 택한다면 전체 경우의 수는 A의 경우의 수+B의 경우의 수입니다. 동시에 고를 수 있는 상황에는 그대로 쓰면 안 됩니다.',
+        en:'If choosing A and choosing B do not overlap and exactly one is chosen, add their counts. Do not use this unchanged when the choices can occur together.',
+        zh:'如果选A与选B互不重叠且只能选一个，总情况数就是A的情况数加B的情况数。两者可以同时发生时不能直接套用。'}},
+    {id:3,label:{ko:'A와 B 동시 — 곱셈법칙·경로(24문항)',en:'both A and B — product rule and routes (24)',zh:'同时经过A和B——乘法法则与路线(24题)'},params:{mode:'both'},
+      concept:{ko:'첫 단계의 각 방법마다 둘째 단계의 모든 방법이 이어지면 곱합니다. A→B가 3가지이고 B→C가 4가지이면 각 앞길마다 뒷길 4개가 붙으므로 3×4=12가지입니다.',
+        en:'Multiply when every first-stage choice can be followed by every second-stage choice. Three A-to-B routes followed by four B-to-C routes give 3×4=12 routes.',
+        zh:'第一步的每种方法都能接上第二步的所有方法时用乘法。A到B有3条路，B到C有4条路，共3×4=12条。'}},
+    {id:4,label:{ko:'한 줄 세우기(24문항)',en:'lineups (24)',zh:'排成一列(24题)'},params:{mode:'lineup'},
+      concept:{ko:'서로 다른 사람을 한 줄로 세울 때는 앞자리부터 고릅니다. n명 중 r명을 세우면 첫 자리는 n가지, 다음 자리는 n−1가지로 줄어 n×(n−1)×…을 계산합니다.',
+        en:'For a lineup of distinct people, fill positions from the front. Choosing and lining up r of n gives n choices, then n−1, and so on, so multiply the descending choices.',
+        zh:'不同的人排成一列时从第一个位置开始选。从n人中选r人排队，第一位有n种，下一位有n−1种，依次相乘。'}},
+    {id:5,label:{ko:'특정 자리 고정(24문항)',en:'fixed positions (24)',zh:'固定位置(24题)'},params:{mode:'fixedSeat'},
+      concept:{ko:'조건이 정한 사람을 먼저 자리에 고정하고 남은 사람만 남은 자리에 세웁니다. A와 B가 양 끝처럼 서로 자리를 바꿀 수 있으면 끝자리 배치 2가지를 먼저 곱합니다.',
+        en:'Place the people fixed by the condition first, then arrange only the remaining people in the remaining positions. If A and B may swap the two ends, multiply by the two end assignments.',
+        zh:'先把条件指定的人固定在位置上，再把其余人排进剩余位置。若A、B可互换两端，先乘两种端点安排。'}}
+  ] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

@@ -377,6 +377,14 @@ window.NM_ROADMAP = {
       units:['M-68','M-69'],
       tip:{ko:'가로 먼저 세로 나중 — 정비례는 원점을 지나는 직선, 반비례는 두 가지로 갈라진 곡선이에요!',en:'Across first, up second - direct proportion draws a line through the origin, inverse a curve in two branches!',zh:'先横后纵——正比例是过原点的直线，反比例是分成两支的曲线！'}
     },
+    {
+      /* 중1-2 비기하 통계. 원본에서 확인된 p.224~230 대표값까지만 공개한다. */
+      id:'W8-8', icon:'📊', grade:'중1',
+      edu:{ko:'중1 대표값',en:'G7 Measures of Center',zh:'初一代表值'},
+      theme:{ko:'W8-8 · 대표값 — 평균·홀짝 중앙값·단일·복수·범주 최빈값',en:'W8-8 · Measures of Center — Mean, Median & Mode',zh:'W8-8·代表值——平均数·中位数·众数'},
+      units:['M-84'],
+      tip:{ko:'중앙값은 반드시 정렬부터, 최빈값은 가장 많이 나온 값을 모두 — 숫자가 아닌 범주에도 쓸 수 있어요!',en:'Sort before finding the median, and include every value tied for the mode — categories can have modes too!',zh:'求中位数先排序，众数要把并列最多的值全部写出——类别资料也能求众数！'}
+    },
 
     /* ─────── W9 : 식의 탑 — 중2 식의 계산 (2026-08-25) ─────────
        MASTER-ROADMAP.md §3 "W9 식의 탑(중2)" 스토리 스테이지. W8(음수의
@@ -413,6 +421,15 @@ window.NM_ROADMAP = {
       theme:{ko:'W9-4 · 일차함수 — 함숫값·평행이동·절편·교점·활용',en:'W9-4 · Linear Functions — Values, Translation, Intercepts, Crossings, Uses',zh:'W9-4·一次函数——函数值·平移·截距·交点·应用'},
       units:['M-73','M-74','M-65','M-75','M-76'],
       tip:{ko:'f(x)는 x를 넣으면 나오는 값 — 처음 값이 y절편, 한 칸마다 변하는 양이 기울기예요!',en:'f(x) is what comes out when x goes in - the starting value is the y-intercept and the change per step is the slope!',zh:'f(x)是代入x得到的值——起始值是y截距，每一步的变化量是斜率！'}
+    },
+    {
+      /* 중2-2 비기하 연산 중 실제 원본이 확인된 경우의 수(p.216~230)만 편입한다.
+         p.232 이후와 확률은 근거가 없으므로 이 장에 넣지 않는다. */
+      id:'W9-5',icon:'⋮',grade:'중2',
+      edu:{ko:'중2 경우의 수',en:'G8 Counting Possibilities',zh:'初二情况数'},
+      theme:{ko:'W9-5 · 경우의 수 — 직접 세기·덧셈법칙·곱셈법칙·줄 세우기',en:'W9-5 · Counting — direct counts, sum rule, product rule, lineups',zh:'W9-5·情况数——直接计数·加法法则·乘法法则·排队'},
+      units:['M-88'],
+      tip:{ko:'겹치지 않는 둘 중 하나는 더하고, 두 단계를 모두 거치면 곱해요. 자리가 고정되면 먼저 놓고 남은 자리만 셉니다.',en:'Add disjoint alternatives, multiply stages that both happen, and place fixed seats before counting the rest.',zh:'互斥的二选一用加法，两个步骤都要完成用乘法；先固定指定位置，再数剩余位置。'}
     },
 
     /* ─────── W10 : 근호의 산맥 — 중3 제곱근과 실수 · 다항식의 곱셈과
@@ -462,6 +479,27 @@ window.NM_ROADMAP = {
       theme:{ko:'W10-4 · 이차함수 — y=ax²·평행이동·최대최소·축과의 교점·식 구하기',en:'W10-4 · Quadratic Functions — y=ax2, Translation, Extremes, Crossings, Building the Formula',zh:'W10-4·二次函数——y=ax²·平移·最值·轴交点·求解析式'},
       units:['M-78','M-79','M-67','M-80','M-81'],
       tip:{ko:'위아래는 뒤에 그대로, 좌우는 괄호 안에 반대 부호로 — 꼭짓점의 y가 최댓값·최솟값이에요!',en:'Up and down at the end as they read, sideways inside the bracket with the sign flipped - and the y at the vertex is the extreme!',zh:'上下照原样加在后面，左右进括号并反号——顶点的y就是最值！'}
+    },
+    {
+      id:'W10-5', icon:'📊', grade:'중3',
+      edu:{ko:'중3 산포도',en:'G9 Dispersion',zh:'初三离散程度'},
+      theme:{ko:'W10-5 · 산포도 — 편차·분산·표준편차·두 자료 비교',en:'W10-5 · Dispersion — deviations, variance, standard deviation, comparison',zh:'W10-5·离散程度——偏差·方差·标准差·两组数据比较'},
+      units:['M-85'],
+      tip:{ko:'편차는 모두 더하면 0, 분산은 편차 제곱의 평균, 표준편차는 분산의 양의 제곱근이에요. 더 고른 자료는 산포도가 작은 쪽입니다.',en:'Deviations sum to zero; variance is the mean squared deviation; standard deviation is its positive square root. The smaller spread is more consistent.',zh:'偏差之和为0；方差是偏差平方的平均数；标准差是方差的正平方根。离散程度较小的数据更均匀。'}
+    },
+    {
+      id:'W10-6', icon:'📦', grade:'중3',
+      edu:{ko:'중3 사분위수와 상자그림',en:'G9 Quartiles & Box Plots',zh:'初三四分位数与箱形图'},
+      theme:{ko:'W10-6 · 사분위수와 상자그림 — 다섯 수 요약·IQR·읽기·직접 그리기',en:'W10-6 · Quartiles & Box Plots — five-number summary, IQR, reading and drawing',zh:'W10-6·四分位数与箱形图——五数概括·四分位距·读取·绘制'},
+      units:['M-86'],
+      tip:{ko:'정렬한 뒤 Q1·중앙값·Q3을 찾고, 다섯 수를 눈금에 먼저 표시한 다음 상자와 수염을 그립니다.',en:'Sort first, find Q1, median and Q3, then mark all five values before drawing the box and whiskers.',zh:'先排序求Q1、中位数、Q3，再标出五个数，最后画箱体和须。'}
+    },
+    {
+      id:'W10-7', icon:'⠿', grade:'중3',
+      edu:{ko:'중3 산점도와 상관관계',en:'G9 Scatter Plots & Correlation',zh:'初三散点图与相关关系'},
+      theme:{ko:'W10-7 · 산점도와 상관관계 — 순서쌍 찍기·방향·강도',en:'W10-7 · Scatter Plots & Correlation — plotting pairs, direction and strength',zh:'W10-7·散点图与相关关系——描点·方向·强弱'},
+      units:['M-87'],
+      tip:{ko:'점을 선으로 잇지 말고 점구름 전체가 오른쪽으로 갈수록 올라가는지, 내려가는지, 방향이 없는지 봅니다.',en:'Do not join the dots; judge whether the whole cloud rises, falls or has no direction as x increases.',zh:'不要把点连线；观察整个点云随x增大是上升、下降还是没有方向。'}
     },
 
     /* ─────── W11 : 다항식의 탑 — 공통수학1 (2026-08-25) ─────────

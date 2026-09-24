@@ -152,6 +152,8 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
     const s = signOf(rng);
     const a = s * ma, b = -s * mb;
     const diff = Math.abs(ma - mb);
+    // 절댓값의 차는 큰 쪽에서 작은 쪽을 뺀다. 문항/정답/난수 흐름은 그대로 둔다.
+    const larger = ma >= mb ? a : b, smaller = ma >= mb ? b : a;
     const sum = a + b;
     const wa = wrapSigned(a), wb = wrapSigned(b);
     return {
@@ -163,11 +165,11 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
       tex: `${wa} + ${wb} = \\square`,
       answer: sum, answerType: 'steps', widget: 'steps',
       steps: [
-        { tex: `|${a}| - |${b}| = \\square \\;(\\text{절댓값 차})`, blank: diff },
+        { tex: `|${larger}| - |${smaller}| = \\square \\;(\\text{절댓값 차})`, blank: diff },
         { tex: `${wa} + ${wb} = \\square`, blank: sum }
       ],
       solution: [
-        { tex: `|${a}| - |${b}| = \\square \\;(\\text{절댓값 차})`, blank: diff },
+        { tex: `|${larger}| - |${smaller}| = \\square \\;(\\text{절댓값 차})`, blank: diff },
         { tex: `${wa} + ${wb} = \\square`, blank: sum }
       ]
     };
@@ -732,7 +734,50 @@ NM_TGEN['md8_terminating'] = function (params, rng) {
    여기는 반복 전 자리(비순환부, k자리)가 있는 중2 표준형 0.P\overline{R}까지
    일반화한다 — 공식: 분자 = "P뒤에 R을 이어붙인 수" - P, 분모 = 10^k×(10^m-1).
    (예: 0.41\overline{6} → 416-41=375, 100×9=900 → 375/900 = 5/12) */
+/* n번째 자리 모드는 중2-1의 별도 손동작이다. 순환마디 길이로 n을 나눈
+   나머지를 1-based 위치로 바꾼다. 나머지가 0이면 마지막 자리다.
+   고정 블록×자리의 196개 유한 풀에서 한 번만 뽑아, 숨은 난수 차이가 같은
+   학습자 노출 문항을 만드는 일이 없게 한다. */
+const MD9_DIGIT_BLOCKS = Object.freeze([
+  '13','26','37','58','107','125','208','314','427','503','1247','2031','142857','076923'
+]);
+const MD9_DIGIT_POSITIONS = Object.freeze([5,7,8,10,11,12,17,20,23,30,41,50,73,99]);
+const MD9_DIGIT_AT_POOL = Object.freeze((function(){
+  const pool = [];
+  for(const block of MD9_DIGIT_BLOCKS){
+    for(const n of MD9_DIGIT_POSITIONS) pool.push(Object.freeze({ block, n }));
+  }
+  return pool;
+})());
 NM_TGEN['md9_repeatToFrac'] = function (params, rng) {
+  if (params.mode === 'digitAt') {
+    const chosen = pick(rng, MD9_DIGIT_AT_POOL);
+    const block = chosen.block;
+    const n = chosen.n;
+    const cycleLength = block.length;
+    const quotient = Math.floor(n / cycleLength);
+    const remainder = n % cycleLength;
+    const cyclePosition = remainder === 0 ? cycleLength : remainder;
+    const answer = Number(block.charAt(cyclePosition - 1));
+    return {
+      prompt: {
+        ko: `0.${block}${block}…의 소수점 아래 ${n}번째 자리 숫자를 구합니다 — ${n}을 순환마디 길이 ${cycleLength}로 나눈 나머지를 봅니다`,
+        en: `Find digit number ${n} after the decimal point of 0.${block}${block}… — divide ${n} by the repeating-block length ${cycleLength}`,
+        zh: `求0.${block}${block}…小数点后第${n}位数字——用${n}除以循环节长度${cycleLength}看余数`
+      },
+      tex: `0.\\overline{${block}} \\;\\Rightarrow\\; d_{${n}}=\\square`,
+      answer, answerType: 'number', widget: 'numpad',
+      repeatBlock: block, digitIndex: n, cycleLength, remainder,
+      solution: [
+        { tex: `a=${cycleLength},\\quad n=${n}` },
+        { tex: `${n} = ${cycleLength} \\times ${quotient} + ${remainder}` },
+        { tex: remainder === 0
+          ? `r=0 \\Rightarrow j=a=${cycleLength} \\Rightarrow d_{${n}}=\\square`
+          : `r=${remainder} \\Rightarrow j=${cyclePosition} \\Rightarrow d_{${n}}=\\square`, blank: answer }
+      ]
+    };
+  }
+
   const k = params.k != null ? params.k : 1;   /* 비순환부 자리 수 */
   const m = params.m != null ? params.m : 1;   /* 순환마디 자리 수 */
 

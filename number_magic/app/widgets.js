@@ -1686,7 +1686,11 @@ function renderTallyBuild(problem, container, onAnswer){
   const target = problem.target || 3;
   const interaction = problem.interaction || 'build';
   const isRead = interaction === 'read';
-  let count = isRead ? target : 0, lock=false;
+  const startCount = !isRead && Number.isInteger(problem.startCount)
+    ? Math.max(0, Math.min(target - 1, problem.startCount)) : 0;
+  const readGroups = isRead && Array.isArray(problem.tallyGroups) && problem.tallyGroups.length
+    ? problem.tallyGroups.filter(n=>Number.isInteger(n)&&n>0) : [target];
+  let count = isRead ? target : startCount, lock=false;
 
   const root=document.createElement('div');
   root.className='nm-tb-wrap';
@@ -1704,16 +1708,21 @@ function renderTallyBuild(problem, container, onAnswer){
   const board=root.querySelector('.nm-tb-board');
 
   function draw(){
-    const groups=Math.floor(count/5), rem=count%5, spacing=11;
     let slot=0; const lines=[];
-    for(let g=0; g<groups; g++){
-      const startSlot=slot;
-      for(let i=0;i<4;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
-      const x1=10+startSlot*spacing, x2=10+(slot-1)*spacing;
-      lines.push(`<line x1="${x1}" y1="50" x2="${x2}" y2="15"/>`);
-      slot++;
+    const spacing=11;
+    function drawCount(n){
+      const groups=Math.floor(n/5), rem=n%5;
+      for(let g=0; g<groups; g++){
+        const startSlot=slot;
+        for(let i=0;i<4;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
+        const x1=10+startSlot*spacing, x2=10+(slot-1)*spacing;
+        lines.push(`<line x1="${x1}" y1="50" x2="${x2}" y2="15"/>`);
+        slot++;
+      }
+      for(let i=0;i<rem;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
     }
-    for(let i=0;i<rem;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
+    if(isRead) readGroups.forEach((n,i)=>{ if(i)slot++; drawCount(n); });
+    else drawCount(count);
     svg.innerHTML=lines.join('');
   }
   draw();
@@ -1748,7 +1757,7 @@ function renderTallyBuild(problem, container, onAnswer){
   });
   root.querySelector('.nm-tb-undo').addEventListener('pointerup',e=>{
     e.stopPropagation();
-    if(count>0){ count--; draw(); }
+    if(count>startCount){ count--; draw(); }
   });
   root.querySelector('.nm-tb-done').addEventListener('pointerup',e=>{
     e.stopPropagation();

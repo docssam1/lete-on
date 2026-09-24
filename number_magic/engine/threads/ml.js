@@ -75,7 +75,9 @@ NM_TGEN['ml1_double'] = function(params, rng) {
 NM_TGEN['ml_jumpTT'] = function(params, rng) {
   const tables = params.tables || [6, 7];
   const t = pick(rng, tables);
-  const n = R(rng, 2, 5);                     /* 수직선에 담기는 점프 수 */
+  // 학습지 12문항 + 예시·따라풀기 4문항을 같은 변형 없이 만들 수 있도록
+  // 각 두 단에서 2~9회 점프를 쓴다(레벨당 정확히 16개 보이는 변형).
+  const n = R(rng, 2, 9);
   const seq = [0];
   for(let i = 1; i <= n; i++) seq.push(t * i);
   const sum = new Array(n).fill(t).join(' + ');

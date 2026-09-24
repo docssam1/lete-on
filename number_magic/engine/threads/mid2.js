@@ -37,6 +37,40 @@ function monoTex(c, m, needParen){
   if(c < 0) return needParen ? `(-${body})` : `-${body}`;
   return body;
 }
+/* 두 문자를 쓰는 단항식 표기와 계산 모델. MD11의 역산·공식 대입은
+   결과를 [계수, x의 지수, y의 지수] 세 칸으로 받아 문자열 답 입력을
+   요구하지 않는다. */
+function monoXYTex(m, needParen){
+  const mag = Math.abs(m.c);
+  const x = m.x === 0 ? '' : (m.x === 1 ? 'x' : `x^{${m.x}}`);
+  const y = m.y === 0 ? '' : (m.y === 1 ? 'y' : `y^{${m.y}}`);
+  const vars = `${x}${y}`;
+  const body = `${mag === 1 && vars ? '' : mag}${vars}`;
+  if(m.c < 0) return needParen ? `(-${body})` : `-${body}`;
+  return body;
+}
+function mulMono(a, b){ return { c:a.c * b.c, x:a.x + b.x, y:a.y + b.y }; }
+function divMono(a, b){ return { c:a.c / b.c, x:a.x - b.x, y:a.y - b.y }; }
+function makeMono(rng, coeffHi, expHi){
+  return { c:nzInt(rng, 2, coeffHi || 9), x:R(rng, 0, expHi || 4), y:R(rng, 0, expHi || 4) };
+}
+/* 다항식의 각 항을 교과서식으로 잇는다. MD13 나눗셈은 결과의 계수만
+   답칸으로 받지만, 문제 식에는 두 문자와 지수가 정확히 보여야 한다. */
+function termBody(c, vars){
+  const mag = Math.abs(c);
+  return `${mag === 1 && vars ? '' : mag}${vars || ''}`;
+}
+function polyTex(terms){
+  return terms.map((t, i) => {
+    const body = termBody(t.c, t.vars);
+    if(i === 0) return t.c < 0 ? `-${body}` : body;
+    return t.c < 0 ? `- ${body}` : `+ ${body}`;
+  }).join(' ');
+}
+function fracMonoTex(n, d, vars){
+  const sign = n < 0 ? '-' : '';
+  return `${sign}\\frac{${Math.abs(n)}}{${d}}${vars || ''}`;
+}
 function divisorsOf(n){
   n = Math.abs(n);
   const out = [];
@@ -212,6 +246,91 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
    'chain'(세 단항식 곱나눗 혼합, 앞에서부터 차례로). */
 NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
   const mode = params.mode || 'mul';
+
+  if (mode === 'solveBox') {
+    /* 인쇄 p.80~81의 네 역산 구조를 모두 포함한다. 미지 단항식 M을 먼저
+       정하고 등식의 나머지를 구성하므로 답이 언제나 하나로 정해지고,
+       계수 나눗셈 및 지수 뺄셈에서 음의 지수가 생기지 않는다. */
+    const form = pick(rng, ['mul', 'divide', 'mulDiv', 'divMul']);
+    const missing = { c:nzInt(rng, 2, 9), x:R(rng, 1, 5), y:R(rng, 1, 5) };
+    let a, b, c, tex, isolated;
+    if (form === 'mul') {
+      a = makeMono(rng, 8, 3); b = mulMono(a, missing);
+      tex = `${monoXYTex(a, false)} \\times \\boxed{M} = ${monoXYTex(b, false)}`;
+      isolated = `M=${monoXYTex(b, false)}\\div${monoXYTex(a, true)}`;
+    } else if (form === 'divide') {
+      b = makeMono(rng, 8, 3); a = mulMono(b, missing);
+      tex = `${monoXYTex(a, false)} \\div \\boxed{M} = ${monoXYTex(b, false)}`;
+      isolated = `M=${monoXYTex(a, false)}\\div${monoXYTex(b, true)}`;
+    } else if (form === 'mulDiv') {
+      a = makeMono(rng, 7, 3);
+      const product = mulMono(a, missing);
+      c = { c:pick(rng, divisorsOf(product.c)) * pick(rng, [1, -1]), x:R(rng, 0, product.x), y:R(rng, 0, product.y) };
+      b = divMono(product, c);
+      tex = `${monoXYTex(a, false)} \\times \\boxed{M} \\div ${monoXYTex(b, true)} = ${monoXYTex(c, false)}`;
+      isolated = `M=${monoXYTex(c, false)}\\times${monoXYTex(b, true)}\\div${monoXYTex(a, true)}`;
+    } else {
+      c = makeMono(rng, 7, 3);
+      const product = mulMono(c, missing);
+      b = { c:pick(rng, divisorsOf(product.c)) * pick(rng, [1, -1]), x:R(rng, 0, product.x), y:R(rng, 0, product.y) };
+      a = divMono(product, b);
+      tex = `${monoXYTex(a, false)} \\div \\boxed{M} \\times ${monoXYTex(b, true)} = ${monoXYTex(c, false)}`;
+      isolated = `M=${monoXYTex(a, false)}\\times${monoXYTex(b, true)}\\div${monoXYTex(c, true)}`;
+    }
+    return {
+      prompt:{
+        ko:'곱셈은 나눗셈으로, 나눗셈은 곱셈으로 바꾸어 □에 들어갈 단항식을 구합니다',
+        en:'Use inverse operations to find the monomial that belongs in the box',
+        zh:'用逆运算求方框中应填的单项式'
+      },
+      tex:`${tex},\\qquad M=\\square x^{\\square}y^{\\square}`,
+      answer:[missing.c, missing.x, missing.y], answerType:'number', widget:'numpad', negative:missing.c < 0,
+      algebra:{ operation:'solve-missing-monomial', form, a, b, c:c || null, missing },
+      solution:[
+        { tex:isolated },
+        { tex:'M=\\square x^{\\square}y^{\\square}', blank:[missing.c, missing.x, missing.y] }
+      ]
+    };
+  }
+
+  if (mode === 'formulaSub') {
+    /* p.106~108의 넓이·부피 공식 중 도형을 알아내는 추론은 제외하고,
+       문제에 공식을 직접 주어 단항식을 대입·곱셈하는 연산만 연습한다. */
+    const shapes = [
+      {id:'rectangle',name:'직사각형의 넓이',en:'area of a rectangle',zh:'长方形面积',symbol:'S',n:1,d:1,labels:['가로','세로']},
+      {id:'triangle',name:'삼각형의 넓이',en:'area of a triangle',zh:'三角形面积',symbol:'S',n:1,d:2,labels:['밑변','높이']},
+      {id:'parallelogram',name:'평행사변형의 넓이',en:'area of a parallelogram',zh:'平行四边形面积',symbol:'S',n:1,d:1,labels:['밑변','높이']},
+      {id:'rhombus',name:'마름모의 넓이',en:'area of a rhombus',zh:'菱形面积',symbol:'S',n:1,d:2,labels:['한 대각선','다른 대각선']},
+      {id:'rectPrism',name:'직육면체의 부피',en:'volume of a rectangular prism',zh:'长方体体积',symbol:'V',n:1,d:1,labels:['가로','세로','높이']},
+      {id:'pyramid',name:'각뿔의 부피',en:'volume of a pyramid',zh:'棱锥体积',symbol:'V',n:1,d:3,labels:['밑면의 가로','밑면의 세로','높이']}
+    ];
+    const shape = pick(rng, shapes);
+    const factors = shape.labels.map(() => ({c:R(rng, 2, 8),x:R(rng, 0, 2),y:R(rng, 0, 2)}));
+    /* 1/2·1/3 공식도 정수 계수로 정리되도록 첫 길이에 분모를 포함한다. */
+    factors[0].c *= shape.d;
+    if(factors.every(v => v.x === 0)) factors[0].x = 1;
+    if(factors.every(v => v.y === 0)) factors[factors.length - 1].y = 1;
+    const product = factors.reduce((acc, v) => mulMono(acc, v), {c:shape.n,x:0,y:0});
+    const result = {c:product.c / shape.d,x:product.x,y:product.y};
+    const factorTex = factors.map(v => `\\left(${monoXYTex(v, false)}\\right)`).join('\\times');
+    const frac = shape.d === 1 ? '' : `\\frac{${shape.n}}{${shape.d}}\\times`;
+    const given = shape.labels.map((label, i) => `${label}=${monoXYTex(factors[i], false)}`).join(', ');
+    return {
+      prompt:{
+        ko:`${shape.name}: ${given}. 주어진 공식에 대입하여 식을 간단히 정리합니다`,
+        en:`Substitute the given monomials into the ${shape.en} formula and simplify`,
+        zh:`把给出的单项式代入${shape.zh}公式并化简`
+      },
+      tex:`${shape.symbol}=${frac}${factorTex}=\\square x^{\\square}y^{\\square}`,
+      answer:[result.c,result.x,result.y], answerType:'number', widget:'numpad', negative:false,
+      algebra:{operation:'substitute-shape-formula',shape:shape.id,factor:{n:shape.n,d:shape.d},factors,result},
+      solution:[
+        {tex:`\\text{계수}:\\ ${shape.n}\\times${factors.map(v=>v.c).join('\\times')}\\div${shape.d}=${result.c}`},
+        {tex:`x^{${factors.map(v=>v.x).join('+')}}y^{${factors.map(v=>v.y).join('+')}}=x^{${result.x}}y^{${result.y}}`},
+        {tex:`${shape.symbol}=\\square x^{\\square}y^{\\square}`,blank:[result.c,result.x,result.y]}
+      ]
+    };
+  }
 
   if (mode === 'mul') {
     const c1 = nzInt(rng, 1, 9), c2 = nzInt(rng, 1, 9);
@@ -444,11 +563,14 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
   };
 };
 
-/* ── MD13 — (단항식)×(다항식)의 전개 ──
-   분배법칙으로 괄호를 푼다. lineage: 계보5 '자리의 마법'의 한 걸음
-   (부분곱 원리 → 다항식 곱셈). mode: 'binomial'(이항식) ·
-   'monomialX'(곱하는 단항식에 x가 있어 차수가 하나씩 오름) ·
-   'trinomial'(삼항식, 답 세 칸). */
+/* ── MD13 — 단항식×다항식 · 다항식÷단항식 ──
+   분배법칙으로 곱셈을 풀고, 나눗셈은 다항식의 모든 항을 같은 단항식으로
+   나눈다. 근거: 디딤돌 개념연산 2-1A 인쇄 p.96, 98~99. lineage:
+   계보5 '자리의 마법'의 한 걸음(부분곱 원리 → 다항식 곱셈·나눗셈).
+   mode: 'binomial' · 'monomialX' · 'trinomial' (기존 곱셈) ·
+   'divideBinomial' · 'divideFraction' · 'divideTrinomial' (나눗셈).
+   나눗셈 세 모드는 몫을 먼저 정하고 다시 곱해 피제수를 만들므로 모든 항이
+   나누어떨어지고, 0으로 나누거나 음의 지수가 생기는 문항은 생성되지 않는다. */
 NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
   const mode = params.mode || 'binomial';
 
@@ -486,6 +608,88 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
         { tex: `${k} \\times ${a} = ${k * a}` },
         { tex: `${k} \\times ${b} = ${k * b}` },
         { tex: `\\square x^2 + \\square x`, blank: [k * a, k * b] }
+      ]
+    };
+  }
+
+  if (mode === 'divideBinomial') {
+    /* (d*a*x^2 + d*b*xy) / dx = ax + by. 쉬운 단계는 양의 제수로 시작하고
+       둘째 항의 부호만 섞어, '모든 항을 각각 나눈다'는 동작에 집중한다. */
+    const d = R(rng, 2, 9), a = R(rng, 1, 9), b = nzInt(rng, 1, 9);
+    const dividend = [
+      { c:d * a, x:2, y:0, vars:'x^{2}' },
+      { c:d * b, x:1, y:1, vars:'xy' }
+    ];
+    return {
+      prompt: {
+        ko: `다항식의 두 항을 ${d}x로 각각 나눕니다`,
+        en: `Divide both terms of the polynomial by ${d}x`,
+        zh: `把多项式的两项分别除以${d}x`
+      },
+      tex: `(${polyTex(dividend)}) \\div ${d}x = \\square x + \\square y`,
+      answer:[a, b], answerType:'number', widget:'numpad', negative:b < 0,
+      algebra:{ operation:'poly-div-mono', dividend, divisor:{c:d,x:1,y:0}, quotient:[{c:a,x:1,y:0},{c:b,x:0,y:1}] },
+      solution:[
+        { tex:`\\frac{${termBody(d*a,'x^{2}')}}{${d}x}= ${termBody(a,'x')}` },
+        { tex:`\\frac{${polyTex([{c:d*b,vars:'xy'}])}}{${d}x}= ${polyTex([{c:b,vars:'y'}])}` },
+        { tex:'\\square x + \\square y', blank:[a,b] }
+      ]
+    };
+  }
+
+  if (mode === 'divideFraction') {
+    /* 교재 p.98의 분수 계수 단항식 나눗셈. 몫 계수를 분모의 배수로 정해
+       피제수도 정수 계수로 유지한다. */
+    const frac = pick(rng, [[1,2],[2,3],[1,3],[3,4],[2,5],[3,5],[4,5]]);
+    const sign = pick(rng, [1,-1]), n = sign * frac[0], d = frac[1];
+    const qa = d * nzInt(rng, 1, 6), qb = d * nzInt(rng, 1, 6);
+    const ca = n * (qa / d), cb = n * (qb / d);
+    const dividend = [{c:ca,x:2,y:0,vars:'x^{2}'},{c:cb,x:1,y:1,vars:'xy'}];
+    const divisorTex = fracMonoTex(n, d, 'x');
+    const reciprocalTex = `${sign < 0 ? '-' : ''}\\frac{${d}}{${frac[0]}x}`;
+    return {
+      prompt:{
+        ko:'나누는 분수 단항식의 역수를 곱한 뒤, 두 항에 각각 분배합니다',
+        en:'Multiply by the reciprocal of the fractional monomial, then distribute it to both terms',
+        zh:'乘以分数单项式的倒数，再分别分配到两项'
+      },
+      tex:`(${polyTex(dividend)}) \\div \\left(${divisorTex}\\right) = \\square x + \\square y`,
+      answer:[qa,qb], answerType:'number', widget:'numpad', negative:qa < 0 || qb < 0,
+      algebra:{ operation:'poly-div-mono', dividend, divisor:{n,d,x:1,y:0}, quotient:[{c:qa,x:1,y:0},{c:qb,x:0,y:1}] },
+      solution:[
+        { tex:`\\div\\left(${divisorTex}\\right)=\\times\\left(${reciprocalTex}\\right)` },
+        { tex:`\\frac{${polyTex([{c:ca,vars:'x^{2}'}])}}{${divisorTex}}=${polyTex([{c:qa,vars:'x'}])}` },
+        { tex:`\\frac{${polyTex([{c:cb,vars:'xy'}])}}{${divisorTex}}=${polyTex([{c:qb,vars:'y'}])}` },
+        { tex:'\\square x + \\square y', blank:[qa,qb] }
+      ]
+    };
+  }
+
+  if (mode === 'divideTrinomial') {
+    /* (세 항)÷(부호 있는 dxy). 몫은 이차 동차식이라 계수·부호·지수를
+       함께 추적해야 하는 집중 연습이다. */
+    const dc = nzInt(rng, 2, 7);
+    const a = nzInt(rng, 1, 7), b = nzInt(rng, 1, 7), c = nzInt(rng, 1, 7);
+    const dividend = [
+      {c:dc*a,x:3,y:1,vars:'x^{3}y'},
+      {c:dc*b,x:2,y:2,vars:'x^{2}y^{2}'},
+      {c:dc*c,x:1,y:3,vars:'xy^{3}'}
+    ];
+    const divisorTex = dc < 0 ? `\\left(-${termBody(dc,'xy')}\\right)` : termBody(dc,'xy');
+    return {
+      prompt:{
+        ko:'세 항을 부호 있는 단항식으로 각각 나누고 지수는 같은 문자끼리 뺍니다',
+        en:'Divide all three terms by the signed monomial and subtract exponents of like variables',
+        zh:'三项分别除以带符号的单项式，同字母的指数相减'
+      },
+      tex:`(${polyTex(dividend)}) \\div ${divisorTex} = \\square x^{2} + \\square xy + \\square y^{2}`,
+      answer:[a,b,c], answerType:'number', widget:'numpad', negative:a < 0 || b < 0 || c < 0,
+      algebra:{ operation:'poly-div-mono', dividend, divisor:{c:dc,x:1,y:1}, quotient:[{c:a,x:2,y:0},{c:b,x:1,y:1},{c:c,x:0,y:2}] },
+      solution:[
+        { tex:`x^{3}y\\div xy=x^{2}` },
+        { tex:`x^{2}y^{2}\\div xy=xy` },
+        { tex:`xy^{3}\\div xy=y^{2}` },
+        { tex:'\\square x^{2} + \\square xy + \\square y^{2}', blank:[a,b,c] }
       ]
     };
   }
