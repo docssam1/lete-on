@@ -51,6 +51,26 @@ function rcard(k, parts, x, z, o){
   grp.position.set(x, o.y == null ? 0.035 : o.y, z); grp.rotation.y = o.rot || 0; scene.add(grp); return grp;
 }
 
+/* 근호 식이 윗면에 새겨진 블록 */
+function rtile(k, parts, x, z, o){
+  o = o || {};
+  const { THREE, scene } = k;
+  const w = o.w || 0.5, d = o.d || 0.5, h = o.h || 0.14;
+  const tex = k.canvasTex(512, Math.round(512 * d / w), (g, W, H) => {
+    g.fillStyle = o.bg || '#f3e7cf'; g.fillRect(0, 0, W, H);
+    g.fillStyle = g.strokeStyle = o.color || '#2b2118'; g.textBaseline = 'middle';
+    const t0 = rootLine(k, g, parts, 0, 0, 100, { draw:false });
+    const fs = Math.min(H * 0.56, 100 * W * 0.8 / t0);
+    rootLine(k, g, parts, W / 2, H / 2 + fs * 0.03, fs);
+  });
+  const grp = new THREE.Group();
+  const body = new THREE.Mesh(k.rbox(w, h, d, 0.04), o.side || k.woodMat('#c08a52', [110, 70, 35]));
+  body.castShadow = body.receiveShadow = true; grp.add(body);
+  const top = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.86, d * 0.86), new THREE.MeshStandardMaterial({ map:tex, roughness:0.7 }));
+  top.rotation.x = -Math.PI / 2; top.position.y = h + 0.003; top.receiveShadow = true; grp.add(top);
+  grp.position.set(x, o.y == null ? 0.03 : o.y, z); scene.add(grp); return grp;
+}
+
 export const SCENES_C35 = {
 
   /* 제곱근의 값 — hook: 넓이가 49인 정사각형, 한 변은? 제곱해서 49가 되는 수. stage ④: 6×6=36, √36=6 과 같은 방식 */
@@ -62,7 +82,7 @@ export const SCENES_C35 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.35, 0.1, -0.05], 5.4, 58);
+    k.frame([0.35, 0.1, 0.2], 5.4, 58);
     k.table();
     k.paper(5.9, 3.7, 0.35, 0.1, 0.01);
     /* 7×7 나무 타일 — 넓이 49 */
@@ -147,7 +167,7 @@ export const SCENES_C35 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.1, 0.1, -0.05], 5.5, 56);
+    k.frame([0.1, 0.1, 0.25], 5.5, 56);
     k.table();
     k.paper(5.8, 3.6, 0.1, 0.1, 0.01);
     /* 한 변이 1인 정사각형 나무판 + 대각선 황동 막대 */
@@ -176,6 +196,49 @@ export const SCENES_C35 = {
     const cards = [[c1b, 0.03], [c1l, 0.06], [cr2, 0.2], [cA, 0.32], [cB, 0.44], [cC, 0.64], [cD, 0.76]].map(([g, a]) => ({ g, a, y:g.position.y }));
     k.onFrame(t => { const p = cyc(t, 9);
       put(seg(p, 0.06, 0.2) * (1 - seg(p, 0.86, 0.98)));
+      cards.forEach(o => { o.g.position.y = o.y + 0.2 * hop(p, o.a, o.a + 0.1); }); });
+    k.lights({ key:2.6, spot:16, envOpts:{ intensity:0.55 } });
+  }},
+
+  /* 제곱근의 덧셈과 뺄셈 — hook: x+x=2x 처럼 √2 를 한 문자로. stage ①: 3√2+5√2=8√2, stage ②: √12+√3=2√3+√3=3√3 */
+  'M-83': { seed:283, caps:{ P:10, list:[
+    [0.0, "$x+x=2x$처럼, $\\sqrt{2}$를 하나의 문자로 봅니다: $\\sqrt{2}+\\sqrt{2}=2\\sqrt{2}$", "Like $x+x=2x$, treat $\\sqrt{2}$ as one letter: $\\sqrt{2}+\\sqrt{2}=2\\sqrt{2}$", "就像$x+x=2x$，把$\\sqrt{2}$看成一个字母：$\\sqrt{2}+\\sqrt{2}=2\\sqrt{2}$"],
+    [0.1, "$3\\sqrt{2}$는 $\\sqrt{2}$가 $3$개, $5\\sqrt{2}$는 $\\sqrt{2}$가 $5$개입니다.", "$3\\sqrt{2}$ is three $\\sqrt{2}$'s; $5\\sqrt{2}$ is five $\\sqrt{2}$'s.", "$3\\sqrt{2}$是$3$个$\\sqrt{2}$，$5\\sqrt{2}$是$5$个$\\sqrt{2}$。"],
+    [0.3, "모으면 $\\sqrt{2}$가 $8$개: $3\\sqrt{2}+5\\sqrt{2}=8\\sqrt{2}$ — 근호 안의 $2$는 그대로입니다.", "Together that is eight $\\sqrt{2}$'s: $3\\sqrt{2}+5\\sqrt{2}=8\\sqrt{2}$. The $2$ inside stays.", "合起来是$8$个$\\sqrt{2}$：$3\\sqrt{2}+5\\sqrt{2}=8\\sqrt{2}$——根号里的$2$不变。"],
+    [0.72, "$\\sqrt{12}=2\\sqrt{3}$으로 먼저 정리하면 $\\sqrt{12}+\\sqrt{3}=3\\sqrt{3}$입니다.", "Simplify first, $\\sqrt{12}=2\\sqrt{3}$, so $\\sqrt{12}+\\sqrt{3}=3\\sqrt{3}$.", "先化简$\\sqrt{12}=2\\sqrt{3}$，所以$\\sqrt{12}+\\sqrt{3}=3\\sqrt{3}$。"]
+  ]},
+    build(k){
+    const { THREE, scene } = k;
+    k.frame([0, 0.1, 0.3], 5.5, 58);
+    k.table();
+    k.paper(5.9, 3.3, 0, 0.05, 0.01);
+    /* √2 블록 — 3개(붉은 옻칠)와 5개(짙은 나무) */
+    const T = 0.46, U = 0.53, RZ = -0.95, PLUS = 0.62;
+    const x3 = i => -2.3 + i * U, x5 = i => -2.3 + 3 * U - U + PLUS + U + i * U;   /* 떨어져 있을 때 */
+    const row0 = -3.5 * U;                                                           /* 모였을 때 8개 가운데 맞춤 */
+    const sA = k.lacquer('#8e2a1c'), sB = k.woodMat('#8a5a33', [50, 25, 10]);
+    const blocks = [];
+    for(let i = 0; i < 3; i++) blocks.push({ m:rtile(k, [{ r:'2' }], x3(i), RZ, { w:T, d:T, side:sA }), a:x3(i), b:row0 + i * U });
+    for(let i = 0; i < 5; i++) blocks.push({ m:rtile(k, [{ r:'2' }], x5(i), RZ, { w:T, d:T, side:sB }), a:x5(i), b:row0 + (3 + i) * U });
+    const pX = (x3(2) + x5(0)) / 2, plus = rcard(k, ['+'], pX, RZ, { w:0.36, d:0.36, hmax:0.8 });
+    /* 블록 아래 계수 카드 */
+    const c3 = rcard(k, ['3', { r:'2' }], x3(1), RZ + 0.62, { w:0.9, d:0.44, rot:0.02 });
+    const c5 = rcard(k, ['5', { r:'2' }], x5(2), RZ + 0.62, { w:0.9, d:0.44, rot:-0.02 });
+    const c8 = rcard(k, ['= 8', { r:'2' }], 2.35, RZ + 0.62, { w:1.15, d:0.46, rot:0.02, edge:'#e2c98f', bg:'#f6e7c4' });
+    /* 앞줄: x + x = 2x 와 √12 + √3 */
+    const cx = rcard(k, ['x + x = 2x'], -1.75, 0.42, { w:1.7, d:0.5, rot:-0.02 });
+    const cq = rcard(k, [{ r:'12' }, ' + ', { r:'3' }, ' = 2', { r:'3' }, ' + ', { r:'3' }, ' = 3', { r:'3' }], 0.6, 1.12, { w:3.6, d:0.56, rot:0.01 });
+    const cs = rcard(k, [{ r:'2' }, ' + ', { r:'2' }, ' = 2', { r:'2' }], 1.05, 0.42, { w:2.2, d:0.5, rot:0.015 });
+    /* 움직임: 3개·5개 무리가 톡 → + 가 비켜서고 두 무리가 한 줄(8개)로 모여 하나씩 세고 → 다시 제자리 → 아래 식 카드 */
+    const plusY = plus.position.y;
+    const cards = [[cx, 0.02], [cs, 0.06], [c3, 0.12], [c5, 0.16], [c8, 0.62], [cq, 0.82]].map(([g, a]) => ({ g, a, y:g.position.y }));
+    k.onFrame(t => { const p = cyc(t, 10);
+      const u = seg(p, 0.26, 0.4) * (1 - seg(p, 0.7, 0.84));
+      blocks.forEach((o, i) => { const grp = i < 3 ? 0.12 : 0.16, cnt = 0.44 + i * 0.022;
+        o.m.position.x = o.a + (o.b - o.a) * u;
+        o.m.position.y = 0.03 + 0.18 * hop(p, grp, grp + 0.08) + 0.16 * hop(p, cnt, cnt + 0.06); });
+      const pu = seg(p, 0.22, 0.3) * (1 - seg(p, 0.8, 0.88));
+      plus.position.set(pX, plusY + 0.9 * pu, RZ - 0.5 * pu); plus.scale.setScalar(Math.max(0.001, 1 - pu));
       cards.forEach(o => { o.g.position.y = o.y + 0.2 * hop(p, o.a, o.a + 0.1); }); });
     k.lights({ key:2.6, spot:16, envOpts:{ intensity:0.55 } });
   }},

@@ -90,6 +90,41 @@ function atile(k, parts, x, z, w, d, color, o){
 }
 /* 한지 위 좌표(월드 x,z) → 캔버스 좌표 */
 const onPaper = (PW, PD, PX, PZ, w, h) => [x => (x - PX + PW / 2) / PW * w, z => (z - PZ + PD / 2) / PD * h];
+/* 점토판 — 흙빛 판에 수식을 눌러 새긴 것처럼(어두운 홈 + 아래쪽 밝은 테) */
+function clayTablet(k, parts, x, z, w, d, rot){
+  const { THREE, scene } = k;
+  const clay = k.canvasTex(512, 512, (g, W, H) => { g.fillStyle = '#8f6a4c'; g.fillRect(0, 0, W, H);
+    for(let i = 0; i < 5000; i++){ g.fillStyle = `rgba(${80 + k.rnd() * 60},${55 + k.rnd() * 40},${30 + k.rnd() * 20},${k.rnd() * 0.18})`; g.fillRect(k.rnd() * W, k.rnd() * H, 1 + k.rnd() * 3, 1 + k.rnd() * 3); } });
+  const h = 0.16, grp = new THREE.Group();
+  const body = new THREE.Mesh(k.rbox(w, h, d, 0.12), new THREE.MeshStandardMaterial({ map:clay, roughness:0.95 })); body.castShadow = body.receiveShadow = true; grp.add(body);
+  const ph = Math.round(1024 * d / w);
+  const tex = k.canvasTex(1024, ph, (g, W, H) => {
+    g.fillStyle = '#8f6a4c'; g.fillRect(0, 0, W, H);
+    for(let i = 0; i < 9000; i++){ g.fillStyle = `rgba(${80 + k.rnd() * 60},${55 + k.rnd() * 40},${30 + k.rnd() * 20},${k.rnd() * 0.2})`; g.fillRect(k.rnd() * W, k.rnd() * H, 1 + k.rnd() * 3, 1 + k.rnd() * 3); }
+    for(let i = 0; i < 14; i++){ g.strokeStyle = `rgba(70,45,25,${0.15 + k.rnd() * 0.2})`; g.lineWidth = 1 + k.rnd() * 2; g.beginPath(); const a = k.rnd() * W, b = k.rnd() * H; g.moveTo(a, b); g.lineTo(a + (k.rnd() - 0.5) * 160, b + (k.rnd() - 0.5) * 60); g.stroke(); }
+    g.textBaseline = 'middle';
+    let fs = H * 0.46; const tw = mdraw(k, g, parts, 0, 0, fs, false); if(tw > W * 0.82) fs *= W * 0.82 / tw;
+    const X = (W - mdraw(k, g, parts, 0, 0, fs, false)) / 2;
+    g.fillStyle = g.strokeStyle = 'rgba(214,170,120,.6)'; mdraw(k, g, parts, X + 3, H / 2 + 4, fs, true);
+    g.fillStyle = g.strokeStyle = '#3a2010'; mdraw(k, g, parts, X, H / 2, fs, true);
+  });
+  const top = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.94, d * 0.9), new THREE.MeshStandardMaterial({ map:tex, roughness:0.95 }));
+  top.rotation.x = -Math.PI / 2; top.position.y = h + 0.003; top.receiveShadow = true; grp.add(top);
+  grp.position.set(x, 0.02, z); grp.rotation.y = rot || 0; scene.add(grp); return grp;
+}
+/* 압정·구슬 */
+function pin(k, x, z, color){
+  const { THREE, scene } = k;
+  const g = new THREE.Group();
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.075, 24, 16), new THREE.MeshPhysicalMaterial({ color, roughness:0.25, clearcoat:1 })); head.position.y = 0.12;
+  const nd = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.12, 8), k.metal('#c9c3b5', 0.25)); nd.position.y = 0.05;
+  [head, nd].forEach(m => { m.castShadow = true; g.add(m); });
+  g.position.set(x, 0.02, z); scene.add(g); return g;
+}
+function bead(k, color, r){
+  const m = new k.THREE.Mesh(new k.THREE.SphereGeometry(r || 0.1, 32, 20), new k.THREE.MeshPhysicalMaterial({ color, roughness:0.22, clearcoat:1 }));
+  m.castShadow = true; k.scene.add(m); return m;
+}
 const R2 = { r:'2' };
 
 export const SCENES_C36 = {
@@ -199,6 +234,85 @@ export const SCENES_C36 = {
       sums.forEach((c, i) => { const a = 0.14 + i * 0.12; c.position.y = sy[i] + 0.15 * hop(p, a, a + 0.1); });
       sums[2].userData.mat.emissiveIntensity = 0.8 * hop(p, 0.44, 0.62);
       res.position.y = ry + 0.3 * hop(p, 0.66, 0.86); res.userData.mat.emissiveIntensity = 0.8 * hop(p, 0.66, 0.86); });
+    k.lights({ key:3.0, keyPos:[-4, 7, 5], envOpts:{ intensity:0.6 } });
+  }},
+
+  /* 이차방정식 풀이 — hook: 두 수를 곱해 0 이면 적어도 하나는 0. history: 4000년 전 바빌로니아 점토판.
+     stage ①: x²−5x+6=0 → (x−2)(x−3)=0 → x=2 또는 x=3 */
+  'M-66': { seed:366, caps:{ P:9, list:[
+    [0.0, "$x^2-5x+6=0$은 $(x-2)(x-3)=0$입니다. 곱이 $0$이면 둘 중 하나는 $0$입니다.", "$x^2-5x+6=0$ is $(x-2)(x-3)=0$. If a product is $0$, one factor is $0$.", "$x^2-5x+6=0$就是$(x-2)(x-3)=0$。乘积为$0$，必有一个因式为$0$。"],
+    [0.12, "$x=2$이면 $x-2=0$ — 곱이 $0$이 됩니다.", "At $x=2$, $x-2=0$, so the product is $0$.", "$x=2$时$x-2=0$，乘积为$0$。"],
+    [0.5, "$x=3$이면 $x-3=0$ — 이번에도 곱이 $0$입니다.", "At $x=3$, $x-3=0$: the product is $0$ again.", "$x=3$时$x-3=0$，乘积也为$0$。"],
+    [0.82, "그래서 근은 $x=2$와 $x=3$, 두 개입니다. 옛 점토판은 답을 하나만 찾았습니다.", "So there are two roots, $x=2$ and $x=3$. The old clay tablets found only one answer.", "所以有两个根：$x=2$和$x=3$。古老的泥板只找一个答案。"]
+  ]},
+    build(k){
+    const { THREE } = k;
+    k.frame([0, 0.1, 0.12], 5.8, 66);
+    k.table();
+    const PW = 6.9, PD = 3.5, PX = 0, PZ = 0.2, LZ = 1.0, X = n => -2.25 + 0.9 * n;   /* 수직선: 1 칸 = 1 */
+    k.paper(PW, PD, PX, PZ, 0, (g, w, h, ink) => {
+      const [fx, fz] = onPaper(PW, PD, PX, PZ, w, h), y = fz(LZ);
+      g.strokeStyle = 'rgba(28,20,14,.85)'; g.lineWidth = 7; g.beginPath(); g.moveTo(fx(X(-0.6)), y); g.lineTo(fx(X(5.6)), y); g.stroke();
+      g.beginPath(); g.moveTo(fx(X(5.6)), y); g.lineTo(fx(X(5.6)) - 26, y - 18); g.moveTo(fx(X(5.6)), y); g.lineTo(fx(X(5.6)) - 26, y + 18); g.stroke();
+      for(let n = 0; n <= 5; n++){ g.lineWidth = 5; g.beginPath(); g.moveTo(fx(X(n)), y - 22); g.lineTo(fx(X(n)), y + 22); g.stroke(); ink(g, String(n), fx(X(n)), y + 78, 64); }
+    });
+    clayTablet(k, ['x', { sup:'2' }, ' − 5x + 6 = 0'], -1.75, -0.72, 2.2, 1.0, 0.05);
+    const CO = { d:0.95, hmax:0.44 };
+    const c2 = mcard(k, ['(x − 2)'], 0.35, -0.72, Object.assign({ w:1.05, back:['0'], backOpts:{ bg:'#cfe3ae' } }, CO));
+    const c3 = mcard(k, ['(x − 3)'], 1.5, -0.72, Object.assign({ w:1.05, back:['0'], backOpts:{ bg:'#cfe3ae' } }, CO));
+    mcard(k, ['= 0'], 2.45, -0.72, Object.assign({ w:0.72 }, CO));
+    pin(k, X(2), LZ - 0.16, '#b3221a'); pin(k, X(3), LZ - 0.16, '#b3221a');
+    const r2 = mcard(k, ['x = 2'], X(2), 0.3, { w:0.84, d:0.5, hmax:0.5, bg:'#f3d6cf', edge:'#e2b8ae', glow:true });
+    const r3 = mcard(k, ['x = 3'], X(3), 0.3, { w:0.84, d:0.5, hmax:0.5, bg:'#f3d6cf', edge:'#e2b8ae', glow:true });
+    const bd = bead(k, '#fff3d6', 0.1);
+    /* 움직임: 구슬이 0 에서 2 로 → (x−2) 가 뒤집혀 0 → 3 으로 → (x−3) 이 뒤집혀 0 → 다시 0 으로 */
+    bd.position.set(X(0), 0.12, LZ);
+    k.onFrame(t => { const p = cyc(t, 9);
+      const n = 2 * seg(p, 0.1, 0.28) + seg(p, 0.5, 0.6) - 3 * seg(p, 0.84, 0.98);
+      bd.position.set(X(n), 0.12, LZ);
+      flipPose(c2, seg(p, 0.28, 0.36) * (1 - seg(p, 0.44, 0.5)), 0.04, 0.45, 0.035);
+      flipPose(c3, seg(p, 0.6, 0.68) * (1 - seg(p, 0.76, 0.82)), 0.04, 0.45, 0.035);
+      r2.userData.mat.emissiveIntensity = 0.7 * hop(p, 0.26, 0.5); r3.userData.mat.emissiveIntensity = 0.7 * hop(p, 0.58, 0.82); });
+    k.lights({ key:3.0, keyPos:[-4, 7, 5], envOpts:{ intensity:0.6 } });
+  }},
+
+  /* 이차방정식의 활용 — hook: 넓이 40, 가로가 세로보다 3 긴 직사각형. 세로 x, 가로 x+3, x(x+3)=40.
+     stage ①: x²+3x−40=0 → (x−5)(x+8)=0 → x=5 또는 −8, 길이는 음수가 될 수 없으니 5 */
+  'M-77': { seed:377, caps:{ P:9, list:[
+    [0.0, "넓이가 $40$이고 가로가 세로보다 $3$ 긴 직사각형: $x(x+3)=40$", "A rectangle of area $40$, $3$ wider than it is deep: $x(x+3)=40$", "面积为$40$、长比宽多$3$的长方形：$x(x+3)=40$"],
+    [0.3, "$x^2+3x-40=0$, 곧 $(x-5)(x+8)=0$이라 $x=5$ 또는 $x=-8$입니다.", "$x^2+3x-40=0$ means $(x-5)(x+8)=0$, so $x=5$ or $x=-8$.", "$x^2+3x-40=0$即$(x-5)(x+8)=0$，所以$x=5$或$x=-8$。"],
+    [0.5, "길이는 음수가 될 수 없으니 $x=-8$은 버립니다.", "A length cannot be negative, so $x=-8$ is dropped.", "长度不能为负，所以舍去$x=-8$。"],
+    [0.66, "세로 $5$, 가로 $8$ — $5\\times 8=40$이 맞습니다.", "Depth $5$, width $8$: $5\\times 8=40$ checks out.", "宽$5$，长$8$——$5\\times 8=40$，正确。"]
+  ]},
+    build(k){
+    const { THREE } = k;
+    k.frame([0, 0.1, 0.12], 6.4, 74);
+    k.table();
+    k.paper(6.9, 3.6, 0, 0.2, 0.01);
+    /* 넓이 40 — 한 칸 1 짜리 타일 8 × 5 */
+    const U = 0.38, NX = 8, NZ = 5, RX = -1.62, RZ = -0.2;
+    const tiles = [];
+    for(let j = 0; j < NZ; j++) for(let i = 0; i < NX; i++){
+      const tl = atile(k, null, RX + (i - (NX - 1) / 2) * U, RZ + (j - (NZ - 1) / 2) * U, U - 0.03, U - 0.03, (i + j) % 2 ? '#e0a64c' : '#ebbf66', { h:0.08 });
+      tl.userData.d = i + j; tiles.push(tl); }
+    /* 변의 길이 카드: 세로 x → 5, 가로 x+3 → 8 (뒤집으면 수) */
+    const SO = { d:0.5, hmax:0.52, back:['5'], backOpts:{ bg:'#cfe3ae' } };
+    const sideZ = mcard(k, ['x'], RX + NX * U / 2 + 0.36, RZ, Object.assign({}, SO, { w:0.5, d:0.62 }));
+    const sideX = mcard(k, ['x + 3'], RX, RZ + NZ * U / 2 + 0.36, Object.assign({}, SO, { w:1.1, back:['8'] }));
+    /* 식 카드 */
+    mcard(k, ['x(x + 3) = 40'], 1.85, -0.9, { w:2.3, d:0.66, hmax:0.46 });
+    mcard(k, ['(x − 5)(x + 8) = 0'], 1.85, -0.05, { w:2.3, d:0.66, hmax:0.46 });
+    const ok = mcard(k, ['x = 5'], 1.3, 0.85, { w:1.05, d:0.62, hmax:0.46, bg:'#cfe3ae', edge:'#b7cf92', glow:true });
+    const no = mcard(k, ['x = −8'], 2.45, 0.85, { w:1.1, d:0.62, hmax:0.46, bg:'#f3d6cf', edge:'#e2b8ae', back:[''], backOpts:{ bg:'#6b5a4a' } });
+    /* 움직임: 타일이 한쪽 모서리부터 물결처럼 들렸다 놓이고(넓이 40) → x = −8 카드가 엎어지고(음수 길이는 버림) x = 5 가 빛나고
+       → 변 카드가 뒤집혀 5 와 8 → 모두 제자리로 */
+    const ty = tiles.map(t => t.position.y);
+    k.onFrame(t => { const p = cyc(t, 9);
+      tiles.forEach((tl, i) => { const a = 0.04 + tl.userData.d * 0.018; tl.position.y = ty[i] + 0.16 * hop(p, a, a + 0.1); });
+      const back = 1 - seg(p, 0.86, 0.94);
+      flipPose(no, seg(p, 0.5, 0.58) * back, 0.04, 0.4, 0.035);
+      ok.position.y = 0.035 + 0.2 * hop(p, 0.56, 0.72); ok.userData.mat.emissiveIntensity = 0.8 * hop(p, 0.56, 0.72);
+      const f = seg(p, 0.66, 0.74) * back; flipPose(sideZ, f, 0.04, 0.35, 0.035); flipPose(sideX, f, 0.04, 0.35, 0.035); });
     k.lights({ key:3.0, keyPos:[-4, 7, 5], envOpts:{ intensity:0.6 } });
   }},
 

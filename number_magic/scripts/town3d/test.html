@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Town 3D test</title>
+<style>
+  html,body{margin:0;height:100%;background:#cfe6f2;overflow:hidden;font-family:system-ui,sans-serif}
+  #townVp{position:fixed;inset:0}
+  #log{position:fixed;left:8px;bottom:8px;max-width:60vw;max-height:30vh;overflow:auto;background:rgba(0,0,0,.6);color:#fff;font:12px/1.4 monospace;padding:6px 8px;border-radius:8px;z-index:50;pointer-events:none}
+  #ctrls{position:fixed;right:8px;bottom:8px;display:flex;gap:6px;z-index:50}
+  #ctrls button{width:40px;height:40px;border-radius:50%;border:0;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);font-size:18px}
+</style>
+</head>
+<body>
+<div id="townVp"></div>
+<div id="ctrls"><button id="zin">＋</button><button id="zout">－</button><button id="me">📍</button></div>
+<div id="log"></div>
+<script>window.NM_CHAR_BASE = '../../assets/characters/';</script>
+<script src="../../data/numi-avatar.js"></script>
+<script src="../../app/numi-render.js"></script>
+<script src="../../app/walker.js"></script>
+<script type="module">
+import { mountTown3D } from '../../app/town3d/town3d.js';
+const q = new URLSearchParams(location.search);
+const lang = q.get('lang') || 'ko';
+const log = (m) => { const d = document.getElementById('log'); d.textContent += m + '\n'; d.scrollTop = 1e9; (window.__calls = window.__calls || []).push(m); console.log(m); };
+const spots = [
+  { id:'numberland',   open:true,  label:'📖 BASIC',     sub:{ko:'수의 나라',en:'Number Land',zh:'数字王国'} },
+  { id:'beginner',     open:true,  label:'🏛️ PRIME',     sub:{ko:'초급',en:'Beginner',zh:'初级'} },
+  { id:'advanced',     open:false, label:'⛰️ CHALLENGE', sub:{ko:'고급',en:'Advanced',zh:'高级'} },
+  { id:'intermediate', open:q.get('allopen') ? true : false, label:'🏠 ADVANCE',   sub:{ko:'중급',en:'Intermediate',zh:'中级'} },
+  { id:'_theater',     open:false, label:{ko:'🎬 극장',en:'🎬 Theater',zh:'🎬 剧场'}, sub:{ko:'영상',en:'Videos',zh:'视频'}, lockIcon:'🎬' },
+  { id:'_closet',      open:true,  label:{ko:'🪄 꾸미기',en:'🪄 Dress Up',zh:'🪄 装扮'}, sub:{ko:'마법사 옷장',en:"Wizard's Closet",zh:'魔法师衣橱'} },
+];
+const gates = [
+  { id:'west',  icon:'🧭', name:{ko:'도형 나라',en:'Geometry World',zh:'图形王国'} },
+  { id:'east',  icon:'🗺️', name:{ko:'탐험대 — 지도 맞히기',en:'Explorer — Map Quiz',zh:'探险队 — 认地图'} },
+  { id:'south', icon:'⛵', name:{ko:'바깥 세상 항구',en:'Harbor to the World',zh:'通往世界的港口'} },
+];
+const W = window.renderWalker, N = window.renderNumiChar;
+const characters = [
+  { id:'player', role:'player', html:W('girl', 60), name:'유빈', at:'plaza', lines:[{ko:'안녕! 난 유빈이야 ✨',en:"Hi! I'm Yubin ✨",zh:'你好！我是宥彬 ✨'},{ko:'지도를 콕 찍으면 내가 걸어가!',en:'Tap the map and I will walk there!',zh:'点一下地图，我就走过去！'}] },
+  { id:'buddy',  role:'buddy',  html:N({number:0,color:'blue',bg:'plain'}, 44), lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'}] },
+  { id:'elder',  role:'npc', html:W('elder', 56), name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true, lines:[{ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'}] },
+  { id:'doc',    role:'npc', html:W('doc', 56), name:{ko:'독쌤',en:'Doc-ssaem',zh:'独老师'}, at:'academy', still:true, lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'}] },
+  { id:'poco',   role:'npc', html:N({number:3,color:'gold',bg:'plain'}, 52), wander:true, at:[-1,6], lines:[{ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'}] },
+  { id:'momo',   role:'npc', html:N({number:8,color:'pink',bg:'plain'}, 52), wander:true, at:[-12,8], lines:[{ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'}] },
+];
+const t0 = performance.now();
+const ctl = await mountTown3D(document.getElementById('townVp'), {
+  lang, spots, gates, characters,
+  onSpot: id => log('onSpot ' + id),
+  onGate: id => log('onGate ' + id),
+  onSay: (text, id) => log('say ' + id + ': ' + text),
+  onReady: () => { window.__ready = true; log('ready ' + Math.round(performance.now() - t0) + 'ms'); },
+});
+window.__ctl = ctl;
+if(!ctl){ log('WebGL unavailable → null'); window.__ready = 'null'; }
+document.getElementById('zin').onclick = () => ctl && ctl.zoomIn();
+document.getElementById('zout').onclick = () => ctl && ctl.zoomOut();
+document.getElementById('me').onclick = () => ctl && ctl.focusPlayer();
+</script>
+</body>
+</html>

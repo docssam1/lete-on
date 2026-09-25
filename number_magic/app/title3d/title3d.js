@@ -114,7 +114,7 @@ const CSS = `
 .t3d.narrow .t3d-btn.pill{flex-direction:column;gap:1px;padding:5px 6px 6px;text-align:center;justify-content:center}
 .t3d.narrow .t3d-btn.pill .t3d-ico{width:auto;height:auto;font-size:16px}
 .t3d.narrow .t3d-btn.pill b{font-size:12.5px;line-height:1.15}
-.t3d-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font-size:12px;color:rgba(230,220,255,.55);white-space:nowrap}
+.t3d-hint{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.t3d canvas.t3d-gl{transition:none}}
 .t3d-raster{position:fixed;left:-10000px;top:0;pointer-events:none}
 .t3d-raster .nm-human img{width:100%;height:100%;object-fit:contain;display:block}
@@ -223,14 +223,14 @@ export async function mountTitle3D(container, opts){
   let built;
   try { built = buildWorld(k, choices, playerCanvas); }
   catch(e){ console.error('[title3d]', e); try { r.dispose(); } catch(_){} root.remove(); return null; }
-  const { objs, player, animate, applyLayout } = built;
+  const { objs, player, animate, applyLayout, placeSky, skyU } = built;
 
   /* ---------- HTML 겹 ---------- */
   const logo = document.createElement('div'); logo.className = 't3d-logo';
   const hud = document.createElement('div'); hud.className = 't3d-hud';
   const tag = document.createElement('div'); tag.className = 't3d-tag';
-  const hint = document.createElement('div'); hint.className = 't3d-hint';
-  ui.append(logo, hud);
+  const hint = document.createElement('h2'); hint.className = 't3d-hint';
+  ui.append(hint, logo, hud);
   if(opts.name) ui.append(tag);
   const btns = {};
   choices.forEach(c => {
@@ -248,7 +248,6 @@ export async function mountTitle3D(container, opts){
   const order = [...choices].sort((a, b) => rank(a) - rank(b));
   function rank(c){ return c.primary ? 0 : MODE_IDS.includes(c.id) ? 1 + MODE_IDS.indexOf(c.id) : 10; }
   order.forEach(c => ui.appendChild(btns[c.id]));
-  ui.append(hint);
 
   function fillText(){
     const L = LOGO[lang] || LOGO.ko;
@@ -373,6 +372,8 @@ export async function mountTitle3D(container, opts){
     }
     cam.position.copy(T).addScaledVector(dir, d); cam.lookAt(T); cam.updateMatrixWorld(true);
     camBase.copy(cam.position); tgtBase.copy(T);
+    placeSky(layout === 'portrait');
+    skyU.res.value.set(r.domElement.width, r.domElement.height);
   }
   const camBase = new THREE.Vector3(), tgtBase = new THREE.Vector3();
   /* 버튼의 왼쪽 위 좌표 — 모드·소품은 물건 발밑, 이어서 모험은 문 가운데 */
@@ -487,11 +488,23 @@ function buildWorld(k, choices, playerCanvas){
   const warm = new THREE.PointLight('#ffc873', 26, 10, 1.5); scene.add(warm);
 
   /* ---- 하늘: 세로 그라데이션 구 + 반짝이는 별 + 달 ---- */
+  /* 하늘은 화면 기준 그라데이션 — 섬이 밤하늘 한가운데 떠 있다(내려다봐도 위아래가 다 하늘) */
+  const skyU = { res:{ value:new THREE.Vector2(800, 600) }, t:{ value:0 } };
   const sky = new THREE.Mesh(new THREE.SphereGeometry(80, 32, 16), new THREE.ShaderMaterial({
-    side:THREE.BackSide, depthWrite:false, fog:false,
-    uniforms:{ top:{ value:new THREE.Color('#0d0830') }, mid:{ value:new THREE.Color('#3b2590') }, hor:{ value:new THREE.Color('#9a6fd6') } },
-    vertexShader:'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
-    fragmentShader:'uniform vec3 top, mid, hor; varying vec3 vP; void main(){ float h = vP.y; vec3 c = mix(hor, mid, smoothstep(-0.05, 0.22, h)); c = mix(c, top, smoothstep(0.22, 0.75, h)); gl_FragColor = vec4(c, 1.); }',
+    side:THREE.BackSide, depthWrite:false, fog:false, uniforms:skyU,
+    vertexShader:'void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
+    fragmentShader:`uniform vec2 res; uniform float t;
+      float h2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+        return mix(mix(h2(i), h2(i + vec2(1, 0)), f.x), mix(h2(i + vec2(0, 1)), h2(i + vec2(1, 1)), f.x), f.y); }
+      float fbm(vec2 p){ float v = 0., a = .5; for(int i = 0; i < 4; i++){ v += a * n2(p); p *= 2.03; a *= .5; } return v; }
+      void main(){ vec2 uv = gl_FragCoord.xy / res; float asp = res.x / res.y;
+        vec3 top = vec3(.055, .03, .17), mid = vec3(.20, .12, .47), low = vec3(.33, .19, .60), deep = vec3(.09, .05, .23);
+        float y = uv.y; vec3 c = mix(low, mid, smoothstep(.25, .6, y)); c = mix(c, top, smoothstep(.6, 1., y)); c = mix(deep, c, smoothstep(0., .3, y));
+        vec2 q = vec2(uv.x * asp, uv.y) * 2.2;
+        float neb = fbm(q + vec2(t * .01, 0.)); float neb2 = fbm(q * 1.7 - vec2(3.1, t * .008));
+        c += vec3(.42, .18, .55) * pow(neb, 3.) * .55 + vec3(.12, .25, .55) * pow(neb2, 4.) * .5;
+        gl_FragColor = vec4(c, 1.); }`,
   }));
   sky.renderOrder = -10; scene.add(sky);
 
@@ -501,7 +514,7 @@ function buildWorld(k, choices, playerCanvas){
 
   const STARS = 700;
   { const pos = new Float32Array(STARS * 3), ph = new Float32Array(STARS), sz = new Float32Array(STARS);
-    for(let i = 0; i < STARS; i++){ const a = rnd() * Math.PI * 2, y = 0.08 + Math.pow(rnd(), 0.8) * 0.92, rr = Math.sqrt(1 - y * y);
+    for(let i = 0; i < STARS; i++){ const a = rnd() * Math.PI * 2, y = rnd() * 2 - 1, rr = Math.sqrt(1 - y * y);
       pos.set([Math.cos(a) * rr * 70, y * 70, Math.sin(a) * rr * 70], i * 3); ph[i] = rnd() * 6.28; sz[i] = 1 + rnd() * rnd() * 3.2; }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('ph', new THREE.BufferAttribute(ph, 1)); geo.setAttribute('sz', new THREE.BufferAttribute(sz, 1));
     const mat = new THREE.ShaderMaterial({ transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, fog:false, uniforms:{ t:{ value:0 }, pr:{ value:1 } },
@@ -512,25 +525,13 @@ function buildWorld(k, choices, playerCanvas){
   const moonGrp = new THREE.Group();
   moonGrp.add(new THREE.Mesh(new THREE.SphereGeometry(2.4, 32, 16), new THREE.MeshBasicMaterial({ color:'#fff4d6', fog:false })));
   const mg = glow('#e6d4ff', 16, 0.75); moonGrp.add(mg);
-  moonGrp.position.set(-26, 26, -52); scene.add(moonGrp);
-
-  /* 먼 산·성 실루엣 */
-  const far = new THREE.Group(); scene.add(far);
-  const mountMat = new THREE.MeshStandardMaterial({ color:'#2a1d5c', roughness:1, flatShading:true });
-  for(let i = 0; i < 16; i++){
-    const a = -Math.PI * 0.95 + (i / 15) * Math.PI * 0.9 + (rnd() - 0.5) * 0.1, R = 36 + rnd() * 12;
-    const h = 5 + rnd() * 9, m = new THREE.Mesh(new THREE.ConeGeometry(4 + rnd() * 6, h, 6 + (i % 3)), mountMat);
-    m.position.set(Math.cos(a) * R, h / 2 - 4, Math.sin(a) * R); m.rotation.y = rnd() * 3; far.add(m);
-  }
-  { const cs = new THREE.MeshStandardMaterial({ color:'#3a2a78', roughness:1 }), win = new THREE.MeshBasicMaterial({ color:'#ffd27a', fog:false });
-    const castle = new THREE.Group();
-    [[0, 5.5, 1.1], [-2.2, 3.8, 0.8], [2.1, 4.3, 0.8]].forEach(([x, h, r0]) => {
-      const t = new THREE.Mesh(new THREE.CylinderGeometry(r0, r0 * 1.05, h, 10), cs); t.position.set(x, h / 2, 0); castle.add(t);
-      const roof = new THREE.Mesh(new THREE.ConeGeometry(r0 * 1.3, h * 0.45, 10), new THREE.MeshStandardMaterial({ color:'#553a9e', roughness:.8 })); roof.position.set(x, h + h * 0.22, 0); castle.add(roof);
-      const w = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.45), win); w.position.set(x, h * 0.7, r0 + 0.01); castle.add(w);
-    });
-    const wall = new THREE.Mesh(new THREE.BoxGeometry(4.6, 2.2, 0.8), cs); wall.position.set(0, 1.1, 0); castle.add(wall);
-    castle.position.set(20, 1.2, -44); castle.rotation.y = -0.4; far.add(castle); }
+  scene.add(moonGrp);
+  /* 달·구름은 구도가 정해진 뒤 카메라 기준으로 놓는다(placeSky) */
+  const cloudTex = canvasTex(256, 128, (g, w, h) => { for(let i = 0; i < 26; i++){ const x = w * (0.18 + rnd() * 0.64), y = h * (0.45 + rnd() * 0.25), rr = 18 + rnd() * 34;
+      const gr = g.createRadialGradient(x, y, 0, x, y, rr); gr.addColorStop(0, 'rgba(255,255,255,.42)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); } });
+  const clouds = [];
+  for(let i = 0; i < 9; i++){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:cloudTex, color:i % 3 ? '#b59ae8' : '#e3b8f0', transparent:true, opacity:0.32 + rnd() * 0.2, depthWrite:false, fog:false }));
+    scene.add(sp); clouds.push({ sp, a:rnd(), b:rnd(), s:0.7 + rnd() * 0.7 }); }
 
   /* ---- 떠 있는 섬: 풀밭 윗면 + 바위 밑동 ---- */
   const grassTex = canvasTex(1024, 1024, (g, w, h) => {
@@ -614,7 +615,7 @@ function buildWorld(k, choices, playerCanvas){
           vec3 core = vec3(1.0, .97, .86), mid = vec3(1.0, .80, .42), edge = vec3(.78, .45, .95);
           vec3 c = mix(core, mid, smoothstep(0.05, .7, r)); c = mix(c, edge, smoothstep(.55, 1.15, r));
           c += (sw * .22 + sw2 * .12) * vec3(1., .75, .95) * smoothstep(.1, .8, r);
-          gl_FragColor = vec4(c * (1.25 - r * .35), 1.); }` });
+          gl_FragColor = vec4(c * (1.05 - r * .25), 1.); }` });
     const portal = new THREE.Mesh(pg, pmat); portal.position.set(0, base, 0.02); g.add(portal);
     anim.push(t => { pmat.uniforms.t.value = t; });
     const pgl = glow('#ffd889', 6.2, 0.55); pgl.position.set(0, base + 2.0, 0.6); g.add(pgl);
@@ -623,7 +624,7 @@ function buildWorld(k, choices, playerCanvas){
     const beam = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 3.2), new THREE.MeshBasicMaterial({ map:glowTex, color:'#ffcf7a', transparent:true, opacity:0.5, depthWrite:false, blending:THREE.AdditiveBlending }));
     beam.rotation.x = -Math.PI / 2; beam.position.set(0, 0.03, 1.5); beam.scale.set(1.3, 1, 1); g.add(beam);
     cast(g); portal.castShadow = false; beam.castShadow = false; s1.castShadow = false;
-    return { g, anim, h:5.4, w:4.2, d:1.9, anchor:V3(0, base + 1.35, 0.3), place:'center', light:V3(0, 2.2, 1.6) };
+    return { g, anim, h:5.4, w:4.2, d:1.9, anchor:V3(0, base + 1.35, 0.3), place:'center', anchorBelow:V3(0, 0, 1.0) };
   };
 
   /* 진단하기 — 나침반 탑 */
@@ -847,7 +848,7 @@ function buildWorld(k, choices, playerCanvas){
   /* 매거진 — 잡지 가판대 */
   makers.magazine = () => {
     const g = new THREE.Group(); const anim = [];
-    const wood = woodMat('#5a3a8a', [30, 20, 60]);
+    const wood = woodMat('#9a6ad0', [60, 30, 110]);
     const bodyM = new THREE.Mesh(rbox(0.95, 0.6, 0.45, 0.04), wood); g.add(bodyM);
     const rack = new THREE.Group(); rack.position.set(0, 0.6, 0); rack.rotation.x = -0.35; g.add(rack);
     const back = new THREE.Mesh(rbox(0.95, 0.75, 0.05, 0.02), wood); back.position.z = -0.16; rack.add(back);
@@ -934,6 +935,31 @@ function buildWorld(k, choices, playerCanvas){
     t.scale.setScalar(s); cast(t); scene.add(t); trees.push({ t, a:rnd(), s });
   }
 
+  /* 풀포기·빛나는 꽃 — 인스턴스 두 벌(드로우 콜 2) */
+  const NG = 260, NF = 90;
+  const tuftGeo = new THREE.ConeGeometry(0.05, 0.28, 4); tuftGeo.translate(0, 0.14, 0);
+  const tufts = new THREE.InstancedMesh(tuftGeo, new THREE.MeshStandardMaterial({ color:'#4f8a5c', roughness:0.9 }), NG); tufts.receiveShadow = true; scene.add(tufts);
+  const flowerGeo = new THREE.IcosahedronGeometry(0.07, 0); flowerGeo.translate(0, 0.14, 0);
+  const flowers = new THREE.InstancedMesh(flowerGeo, new THREE.MeshStandardMaterial({ color:'#ffffff', emissive:'#ffffff', emissiveIntensity:0.55, roughness:0.5 }), NF); scene.add(flowers);
+  const fcols = [new THREE.Color('#9fe2ff'), new THREE.Color('#ff9ad8'), new THREE.Color('#ffe08a'), new THREE.Color('#c8a8ff')];
+  for(let i = 0; i < NF; i++) flowers.setColorAt(i, fcols[i % 4]);
+  const scatterSeeds = Array.from({ length:NG + NF }, () => [rnd(), rnd(), rnd(), rnd()]);
+  const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(), _t = new THREE.Vector3();
+  function scatter(ix, iz, icx, icz, avoid){
+    let gi = 0, fi = 0;
+    for(let n = 0; n < scatterSeeds.length && (gi < NG || fi < NF); n++){
+      const [a, b, c, d] = scatterSeeds[n];
+      const ang = a * Math.PI * 2, rr = Math.sqrt(0.08 + b * 0.9) * 0.94;
+      const x = icx + Math.cos(ang) * rr * ix, z = icz + Math.sin(ang) * rr * iz;
+      if(avoid(x, z)) continue;
+      _q.setFromAxisAngle(_t.set(0, 1, 0), c * 6.28);
+      if(n % 4 === 3 && fi < NF){ _s.setScalar(0.7 + d * 0.8); _m.compose(_t.set(x, 0, z), _q, _s); flowers.setMatrixAt(fi++, _m); }
+      else if(gi < NG){ _s.set(1, 0.6 + d, 1); _m.compose(_t.set(x, 0, z), _q, _s); tufts.setMatrixAt(gi++, _m); }
+    }
+    tufts.count = gi; flowers.count = fi;
+    tufts.instanceMatrix.needsUpdate = true; flowers.instanceMatrix.needsUpdate = true;
+  }
+
   /* 섬 가장자리의 등불 기둥 두 개 — 문으로 이어지는 길을 밝힌다 */
   const posts = [];
   for(let i = 0; i < 4; i++){
@@ -949,14 +975,14 @@ function buildWorld(k, choices, playerCanvas){
      portrait : 위에서 아래로 — 문(+캐릭터) / 모드 2칸 × 2줄 / 소품 4칸. 카메라를 더 내려다보게 해서
                 깊이(z)가 화면의 세로가 되게 한다. */
   const layouts = {
-    landscape:{ pitch:30, fov:34, dist:22, target:[0, 1, 0.5], island:[10.2, 7.6, 0, 0.7],
-      pos:{ continue:[0, -2.4, 1], diag:[-6.6, -2.6, 0.95], game:[6.5, -2.4, 0.95], sheet:[-4.6, 1.6, 0.95], road:[4.6, 1.5, 0.95],
-        story:[-3.3, 4.7, 0.95], dex:[-1.1, 4.9, 0.95], hist:[1.1, 4.9, 0.95], magazine:[3.3, 4.7, 0.95] },
-      player:[-2.55, -1.2, 1], plaza:[0, -0.6, 3.6, 2.8], posts:[[-1.3, 1.2], [1.3, 1.2], [-1.8, 3.4], [1.8, 3.4]], motes:[9.5, 4.5, 6.5, 0, 0.6] },
-    portrait:{ pitch:44, fov:40, dist:24, target:[0, 0.5, 0.8], island:[5.3, 9.4, 0, 0.9],
-      pos:{ continue:[0.55, -5.4, 0.78], diag:[-2.3, -1.4, 0.72], game:[2.35, -1.4, 0.72], sheet:[-2.3, 2.5, 0.72], road:[2.35, 2.5, 0.72],
-        story:[-3.15, 6.2, 0.66], dex:[-1.05, 6.2, 0.66], hist:[1.05, 6.2, 0.66], magazine:[3.15, 6.2, 0.66] },
-      player:[-1.95, -4.5, 0.78], plaza:[0, -4.2, 2.8, 2.1], posts:[[-0.9, -3.2], [1.9, -3.2], [-4.2, 0.6], [4.2, 0.6]], motes:[4.8, 4, 8.5, 0, 0.8] },
+    landscape:{ pitch:30, fov:34, dist:22, target:[0, 1, 0.5], island:[10.6, 8.0, 0, 0.6],
+      pos:{ continue:[0, -2.6, 1], diag:[-6.9, -3.1, 0.95], game:[6.8, -2.9, 0.95], sheet:[-5.7, 2.4, 0.95], road:[5.8, 2.3, 0.95],
+        story:[-3.0, 5.1, 0.95], dex:[-1.0, 5.3, 0.95], hist:[1.0, 5.3, 0.95], magazine:[3.0, 5.1, 0.95] },
+      player:[-2.55, -1.4, 1], plaza:[0, -0.8, 3.6, 2.8], posts:[[-1.3, 1.0], [1.3, 1.0], [-1.9, 3.3], [1.9, 3.3]], motes:[9.5, 4.5, 6.5, 0, 0.6], place:{} },
+    portrait:{ pitch:46, fov:40, dist:24, target:[0, 0.5, 0.8], island:[5.4, 11.2, 0, 0.9],
+      pos:{ continue:[0.6, -7.4, 0.95], diag:[-2.3, -2.4, 0.72], game:[2.35, -2.4, 0.72], sheet:[-2.3, 2.6, 0.72], road:[2.35, 2.6, 0.72],
+        story:[-3.15, 7.4, 0.66], dex:[-1.05, 7.4, 0.66], hist:[1.05, 7.4, 0.66], magazine:[3.15, 7.4, 0.66] },
+      player:[-2.25, -5.9, 0.95], plaza:[0.2, -5.6, 3.0, 2.3], posts:[[-0.9, -4.3], [2.1, -4.3], [-4.3, 0.2], [4.3, 0.2]], motes:[4.8, 4, 10, 0, 0.8], place:{ continue:'below' } },
   };
   let extra = 0;
   function applyLayout(name){
@@ -973,7 +999,9 @@ function buildWorld(k, choices, playerCanvas){
       o.holder.position.set(p[0], 0, p[1]); o.holder.scale.setScalar(p[2]);
       o.baseScale = p[2];
       o.holder.updateMatrixWorld(true);
-      o.anchorW.copy(o.def.anchor).multiplyScalar(p[2]).add(o.holder.position);
+      o.place = (L.place && L.place[key]) || o.def.place || 'below';
+      const anc = o.place === 'below' && o.def.anchorBelow ? o.def.anchorBelow : o.def.anchor;
+      o.anchorW.copy(anc).multiplyScalar(p[2]).add(o.holder.position);
       const hw = o.def.w / 2 * p[2], hh = o.def.h * p[2], hd = o.def.d / 2 * p[2], c = o.holder.position;
       o.box = [V3(c.x - hw, 0, c.z + hd), V3(c.x + hw, 0, c.z + hd), V3(c.x - hw, hh, c.z - hd), V3(c.x + hw, hh, c.z - hd), V3(c.x - hw, hh, c.z + hd), V3(c.x + hw, hh, c.z + hd)];
     });
@@ -998,6 +1026,11 @@ function buildWorld(k, choices, playerCanvas){
       tt.t.position.set(x, 0, z); tt.t.scale.setScalar(tt.s * (name === 'portrait' ? 0.8 : 1.1));
     });
     posts.forEach((pp, i) => { const q = L.posts[i]; pp.position.set(q[0], 0, q[1]); pp.scale.setScalar(name === 'portrait' ? 0.8 : 1); });
+    const foot = Object.values(objs).map(o => [o.holder.position.x, o.holder.position.z, Math.max(o.def.w, o.def.d) * 0.62 * o.baseScale + 0.3]);
+    if(player) foot.push([player.g.position.x, player.g.position.z, 0.9]);
+    scatter(ix, iz, icx, icz, (x, z) => {
+      const pdx = (x - L.plaza[0]) / (L.plaza[2] + 0.3), pdz = (z - L.plaza[1]) / (L.plaza[3] + 0.3); if(pdx * pdx + pdz * pdz < 1) return true;
+      return foot.some(([fx, fz, fr]) => (x - fx) * (x - fx) + (z - fz) * (z - fz) < fr * fr); });
     pmat.uniforms.box.value.set(L.motes[0], L.motes[1], L.motes[2]); pmat.uniforms.ctr.value.set(L.motes[3], 0, L.motes[4]);
   }
 
@@ -1005,7 +1038,8 @@ function buildWorld(k, choices, playerCanvas){
   const lerp = (a, b, f) => a + (b - a) * f;
   function animate(t, dt, reduce){
     let moving = false;
-    if(!reduce){ allAnim.forEach(f => f(t, dt)); starMat.uniforms.t.value = t; pmat.uniforms.t.value = t; }
+    if(!reduce){ allAnim.forEach(f => f(t, dt)); starMat.uniforms.t.value = t; pmat.uniforms.t.value = t; skyU.t.value = t;
+      clouds.forEach((c, i) => { if(c.base) c.sp.position.x = c.base.x + Math.sin(t * 0.05 + i) * 1.5; }); }
     starMat.uniforms.pr.value = k.r.getPixelRatio();
     pmat.uniforms.px.value = k.r.domElement.height * 0.9;
     Object.values(objs).forEach(o => {
@@ -1018,7 +1052,7 @@ function buildWorld(k, choices, playerCanvas){
       const bob = !reduce && o.primary ? Math.sin(t * 1.6) * 0.02 : 0;
       o.inner.position.y = (o.hotV * 0.28 + bob) ;
       o.inner.scale.setScalar(1 + o.hotV * 0.05);
-      const pulse = o.primary && !reduce ? 0.35 + Math.sin(t * 2) * 0.15 : o.primary ? 0.35 : 0;
+      const pulse = o.primary && !reduce ? 0.22 + Math.sin(t * 2) * 0.1 : o.primary ? 0.22 : 0;
       o.rm.opacity = Math.max(pulse, o.hotV * 0.95);
       o.ring.rotation.z = t * 0.3;
       void s;
@@ -1028,5 +1062,18 @@ function buildWorld(k, choices, playerCanvas){
     return moving;
   }
 
-  return { objs, player, animate, applyLayout, layouts };
+  /* 달은 화면 위 구석, 구름은 섬 아래·뒤로 — 카메라가 정해진 다음에 */
+  const _p = new THREE.Vector3();
+  function placeSky(portrait){
+    const at = (nx, ny, dist) => { _p.set(nx, ny, 0.5).unproject(cam).sub(cam.position).normalize(); return cam.position.clone().addScaledVector(_p, dist); };
+    moonGrp.position.copy(at(portrait ? 0.78 : -0.8, portrait ? 0.93 : 0.8, 60));
+    const sc = portrait ? 0.8 : 1; moonGrp.scale.setScalar(sc);
+    clouds.forEach((c, i) => {
+      const nx = -1.05 + (i / (clouds.length - 1)) * 2.1 + (c.a - 0.5) * 0.2;
+      const ny = portrait ? -0.92 + c.b * 0.18 : -0.85 + c.b * 0.25;
+      c.sp.position.copy(at(nx, ny, 34 + c.b * 8)); const w = (portrait ? 12 : 18) * c.s; c.sp.scale.set(w, w / 2, 1);
+      c.base = c.sp.position.clone();
+    });
+  }
+  return { objs, player, animate, applyLayout, layouts, placeSky, skyU };
 }
