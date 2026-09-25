@@ -212,7 +212,8 @@ NM_TGEN['el_compare'] = function(params, rng){
       tex: texDiff, answer:[bigger, diff], answerType:'number', widget:'numpad',
       solution: [
         { tex: `${L.tex} = ${L.val}\\, ,\\; ${R2.tex} = ${R2.val}` },
-        { tex: `\\max(${L.val}, ${R2.val}) = \\square \\, ,\\; ${bigger} - ${smaller} = \\square`, blank: [bigger, diff] }
+        /* max 기호는 초·중 교육과정에 없다(2026-09-25) — 식과 같은 "큰 값"으로 */
+        { tex: `\\text{큰 값} = \\square \\, ,\\; ${bigger} - ${smaller} = \\square`, blank: [bigger, diff] }
       ]
     };
   }
@@ -224,7 +225,7 @@ NM_TGEN['el_compare'] = function(params, rng){
     tex, answer:bigger, answerType:'number', widget:'numpad',
     solution: [
       { tex: `${L.tex} = ${L.val}\\, ,\\; ${R2.tex} = ${R2.val}` },
-      { tex: `\\max(${L.val}, ${R2.val}) = \\square`, blank: bigger }
+      { tex: `\\text{큰 값} = \\square`, blank: bigger }
     ]
   };
 };

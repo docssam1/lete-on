@@ -360,7 +360,8 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
       answer: digit, answerType: 'number', widget: 'numpad',
       solution: [
         { tex: `${n} \\times 10^{${k}} = ${scaled}` },
-        { tex: `\\lfloor ${scaled} \\div ${d} \\rfloor \\bmod 10 = \\square`, blank: digit }
+        /* 바닥 함수·mod 는 초·중 교육과정 기호가 아니다(2026-09-25) — "몫의 일의 자리"로 */
+        { tex: `${scaled} \\div ${d}\\text{의 몫의 일의 자리} = \\square`, blank: digit }
       ]
     };
   }

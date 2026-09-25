@@ -66,7 +66,8 @@ window.NM_UNITS['M-01'] = {
     fills:[
       { tex:'|-9| = \\square', answer:9,
         hint:{ ko:'절댓값은 부호를 떼고 거리만!', en:'Absolute value: drop the sign, keep the distance!', zh:'绝对值：去掉符号，只看距离！' } },
-      { tex:'\\max(-4,\\,2) = \\square', answer:2,
+      /* max 기호는 교육과정 용어가 아니다(2026-09-25) — "두 수 중 더 큰 수" */
+      { tex:{ ko:'-4,\\;2\\text{ 중 더 큰 수} = \\square', en:'\\text{the greater of } -4,\\;2 = \\square', zh:'-4,\\;2\\text{ 中较大的数} = \\square' }, answer:2,
         hint:{ ko:'수직선에서 더 오른쪽에 있는 수', en:'The number further right on the number line', zh:'数轴上更靠右的那个数' } }
     ],
     open:{ ko:'−7과 3 중 어느 수가 더 크고, 두 수 사이는 수직선에서 몇 칸 떨어져 있을까요?',

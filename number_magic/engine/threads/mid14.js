@@ -74,9 +74,9 @@ function fiveNumberProblem(rng){
   const d=makeData(rng,'any'),s=d.summary;
   return base('fiveNumber',
     L3('자료를 정렬하여 상자그림에 필요한 다섯 수를 구합니다.','Order the data and find the five numbers needed for a box plot.','排序后求绘制箱形图所需的五个数。'),
-    listTex(d.shown)+'\\quad(\\min,Q_1,Q_2,Q_3,\\max)=\\left('+boxes(5)+'\\right)',
+    listTex(d.shown)+'\\quad(\\text{최솟값},Q_1,Q_2,Q_3,\\text{최댓값})=\\left('+boxes(5)+'\\right)',
     [s.min,s.q1,s.median,s.q3,s.max],
-    [orderedStep(s),{tex:'(\\min,Q_1,Q_2,Q_3,\\max)=\\left('+boxes(5)+'\\right)',blank:[s.min,s.q1,s.median,s.q3,s.max]}],
+    [orderedStep(s),{tex:'(\\text{최솟값},Q_1,Q_2,Q_3,\\text{최댓값})=\\left('+boxes(5)+'\\right)',blank:[s.min,s.q1,s.median,s.q3,s.max]}],
     Object.assign({values:d.shown},s)
   );
 }
@@ -94,7 +94,7 @@ function readProblem(rng){
   const p=base('boxRead',
     L3('상자그림의 선과 상자 끝을 눈금에 맞추어 읽습니다.','Read the whiskers, box edges, and median from the scale.','根据刻度读取须端、箱边和中位数。'),
     '\\text{'+ask.ko+'}=\\square',ask.answer,
-    [{tex:'(\\min,Q_1,Q_2,Q_3,\\max)=\\left('+[s.min,s.q1,s.median,s.q3,s.max].join(',\\;')+'\\right)'},{tex:'\\text{'+ask.ko+'}=\\square',blank:ask.answer}],
+    [{tex:'(\\text{최솟값},Q_1,Q_2,Q_3,\\text{최댓값})=\\left('+[s.min,s.q1,s.median,s.q3,s.max].join(',\\;')+'\\right)'},{tex:'\\text{'+ask.ko+'}=\\square',blank:ask.answer}],
     Object.assign({ask:ask.key,range,iqr},s)
   );
   p.graph=plot(s,false);return p;
@@ -103,9 +103,9 @@ function drawProblem(rng){
   const s=makeFive(rng),values=[s.min,s.q1,s.median,s.q3,s.max];
   const p=base('boxDraw',
     L3('주어진 다섯 수를 눈금에 표시해 상자그림을 완성합니다.','Plot the five-number summary and complete the box plot.','把五数概括标在刻度上，完成箱形图。'),
-    '(\\min,Q_1,Q_2,Q_3,\\max)=\\left('+values.join(',\\;')+'\\right)',values,
+    '(\\text{최솟값},Q_1,Q_2,Q_3,\\text{최댓값})=\\left('+values.join(',\\;')+'\\right)',values,
     [{tex:'Q_1\\text{부터 }Q_3\\text{까지 상자를 그림}'},{tex:'Q_2\\text{에 중앙선, 최솟값과 최댓값까지 수염을 그림}'},
-     {tex:'\\text{그린 상자그림에서 다시 읽기: }(\\min,Q_1,Q_2,Q_3,\\max)=\\left('+boxes(5)+'\\right)',blank:values.slice()}],
+     {tex:'\\text{그린 상자그림에서 다시 읽기: }(\\text{최솟값},Q_1,Q_2,Q_3,\\text{최댓값})=\\left('+boxes(5)+'\\right)',blank:values.slice()}],
     Object.assign({manualDrawing:true},s)
   );
   p.graph=plot(s,true);p.solutionGraph=plot(s,false);
