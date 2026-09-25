@@ -8,6 +8,38 @@ export { THREE };
 
 export const W = 1600, H = 1000;
 
+/* 글꼴 — 앱이 수식에 쓰는 KaTeX 글꼴(vendor/katex/fonts)을 그대로 쓴다(2026-09-26, 원장 "폰트 괜찮은 것 같니").
+   처음엔 DejaVu 를 썼는데, 그림을 굽는 리눅스에만 있고 학생 폰·PC 에는 없어 움직이는 3D 만 다른 글꼴로 나왔다.
+   앱 안에 들어 있는 파일이라 어느 기기에서나 같고, 교과 수식과 같은 모양(수는 바로, 문자는 수학 이탤릭)이 된다.
+   캔버스에 그리기 전에 다 불러 둬야 한다 — fontsReady() 를 장면을 만들기 전에 기다린다. */
+export const MAIN = 'KaTeX_Main, "Times New Roman", serif', MATH = 'KaTeX_Math, "Times New Roman", serif';
+let fontsP = null;
+export function fontsReady(){
+  if(fontsP) return fontsP;
+  const base = new URL('../../vendor/katex/fonts/', import.meta.url);
+  const list = [['KaTeX_Main', 'Regular', 'normal', '400'], ['KaTeX_Main', 'Bold', 'normal', '700'], ['KaTeX_Main', 'Italic', 'italic', '400'],
+    ['KaTeX_Main', 'BoldItalic', 'italic', '700'], ['KaTeX_Math', 'Italic', 'italic', '400'], ['KaTeX_Math', 'BoldItalic', 'italic', '700']];
+  fontsP = Promise.all(list.map(([fam, file, style, weight]) => {
+    try { const f = new FontFace(fam, `url(${new URL(fam + '-' + file + '.woff2', base)}) format("woff2")`, { style, weight });
+      document.fonts.add(f); return f.load().catch(() => null); } catch(e){ return null; }
+  })).then(() => true);
+  return fontsP;
+}
+/* 수식 한 줄을 글자 모양대로 나눠 그린다 — 라틴 문자(x, a, y, O …)는 수학 이탤릭, 수·기호는 바로 선 글자.
+   교과서 수식의 약속. align: 'left' | 'center' | 'right'. 너비를 돌려준다(measure 만 할 때 draw=false). */
+export function mathText(g, txt, x, y, size, o){
+  o = o || {};
+  const bold = !o.weight || /700|bold/.test(String(o.weight));
+  const runs = String(txt).split(/([A-Za-z]+)/).filter(r => r !== '');
+  const fontOf = r => /^[A-Za-z]+$/.test(r) && !o.upright ? `italic ${bold ? 700 : 400} ${size}px ${MATH}` : `${bold ? 700 : 400} ${size}px ${o.font || MAIN}`;
+  let wsum = 0; const ws = runs.map(r => { g.font = fontOf(r); const w = g.measureText(r).width; wsum += w; return w; });
+  if(o.draw === false) return wsum;
+  let cx = o.align === 'left' ? x : o.align === 'right' ? x - wsum : x - wsum / 2;
+  const ta = g.textAlign; g.textAlign = 'left';
+  runs.forEach((r, i) => { g.font = fontOf(r); g.fillText(r, cx, y); cx += ws[i]; });
+  g.textAlign = ta; return wsum;
+}
+
 export function makeKit(seed, opts){
   opts = opts || {};
   const live = !!opts.live;
@@ -71,9 +103,8 @@ export function makeKit(seed, opts){
   /* 먹 글씨 — 붓처럼 여러 번 겹쳐 번지게 */
   function inkText(g, txt, x, y, size, opts){
     opts = opts || {};
-    g.save(); g.textAlign = opts.align || 'center'; g.textBaseline = 'middle';
-    g.font = `${opts.weight || 700} ${size}px ${opts.font || '"DejaVu Serif", Georgia, serif'}`;
-    for(let k = 0; k < 4; k++){ g.globalAlpha = 0.28 + k * 0.16; g.fillStyle = opts.color || 'rgb(28,20,14)'; g.fillText(txt, x + (rnd() - 0.5) * 2, y + (rnd() - 0.5) * 2); }
+    g.save(); g.textBaseline = 'middle';
+    for(let k = 0; k < 4; k++){ g.globalAlpha = 0.28 + k * 0.16; g.fillStyle = opts.color || 'rgb(28,20,14)'; mathText(g, txt, x + (rnd() - 0.5) * 2, y + (rnd() - 0.5) * 2, size, { align:opts.align || 'center', weight:opts.weight }); }
     g.restore();
   }
 
@@ -99,24 +130,25 @@ export function makeKit(seed, opts){
   const faceTex = (txt, opts) => canvasTex(512, Math.round(512 * (opts.aspect || 1)), (g, w, h) => {
     g.fillStyle = opts.bg || '#f3e7cf'; g.fillRect(0, 0, w, h);
     if(opts.grain){ for(let i = 0; i < 70; i++){ g.strokeStyle = `rgba(120,80,40,${0.05 + rnd() * 0.12})`; g.lineWidth = 1 + rnd() * 2; g.beginPath(); const y = rnd() * h; g.moveTo(0, y); for(let x = 0; x <= w; x += 32) g.lineTo(x, y + Math.sin(x / 90 + i) * 4); g.stroke(); } }
-    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = opts.color || '#2b2118';
-    g.font = `${opts.weight || 700} ${opts.size || Math.round(h * 0.62)}px ${opts.font || '"DejaVu Serif", Georgia, serif'}`;
-    const lines = String(txt).split('\n'), lh = (opts.size || h * 0.62) * 1.05;
-    lines.forEach((l, i) => g.fillText(l, w / 2, h / 2 + (i - (lines.length - 1) / 2) * lh + (opts.dy || 0) * h));
+    g.textBaseline = 'middle'; g.fillStyle = opts.color || '#2b2118';
+    const sz = opts.size || Math.round(h * 0.62);
+    const lines = String(txt).split('\n'), lh = sz * 1.05;
+    lines.forEach((l, i) => mathText(g, l, w / 2, h / 2 + (i - (lines.length - 1) / 2) * lh + (opts.dy || 0) * h, sz, { weight:opts.weight }));
   });
   /* 분수·식 한 줄을 판에 그리는 도구 — parts: 문자열 또는 {n, d}(분수). 가운데 정렬로 이어 그린다 */
   const exprTex = (parts, o) => canvasTex(o.pw || 1024, o.ph || 512, (g, w, h) => {
     g.fillStyle = o.bg || '#f3e7cf'; g.fillRect(0, 0, w, h);
     if(o.grain){ for(let i = 0; i < 60; i++){ g.strokeStyle = `rgba(120,80,40,${0.05 + rnd() * 0.1})`; g.lineWidth = 1 + rnd() * 2; g.beginPath(); const y = rnd() * h; g.moveTo(0, y); for(let x = 0; x <= w; x += 32) g.lineTo(x, y + Math.sin(x / 90 + i) * 4); g.stroke(); } }
-    const fs = o.size || h * 0.42, font = sz => `${o.weight || 700} ${sz}px ${o.font || '"DejaVu Serif", Georgia, serif'}`;
+    const fs = o.size || h * 0.42, mo = { weight:o.weight };
     g.fillStyle = o.color || '#2b2118'; g.strokeStyle = o.color || '#2b2118'; g.textBaseline = 'middle';
-    const wOf = p => { if(typeof p === 'string'){ g.font = font(fs); return g.measureText(p).width; } if(p.dot != null){ g.font = font(fs); return g.measureText(p.dot).width; } g.font = font(fs * 0.8); return Math.max(g.measureText(p.n).width, g.measureText(p.d).width) + fs * 0.2; };
+    const tw = (t, sz) => mathText(g, t, 0, 0, sz, Object.assign({ draw:false }, mo));
+    const wOf = p => { if(typeof p === 'string') return tw(p, fs); if(p.dot != null) return tw(p.dot, fs); return Math.max(tw(p.n, fs * 0.8), tw(p.d, fs * 0.8)) + fs * 0.2; };
     const total = parts.reduce((a, p) => a + wOf(p) + fs * 0.08, 0);
     let x = (w - total) / 2; const cy = h / 2;
     parts.forEach(p => { const pw = wOf(p);
-      if(typeof p === 'string'){ g.font = font(fs); g.textAlign = 'left'; g.fillText(p, x, cy); }
-      else if(p.dot != null){ g.font = font(fs); g.textAlign = 'left'; g.fillText(p.dot, x, cy); g.beginPath(); g.arc(x + pw / 2, cy - fs * 0.62, fs * 0.075, 0, Math.PI * 2); g.fill(); }  /* 순환마디 위 점 */
-      else { g.font = font(fs * 0.8); g.textAlign = 'center'; g.fillText(p.n, x + pw / 2, cy - fs * 0.52); g.fillText(p.d, x + pw / 2, cy + fs * 0.58); g.lineWidth = fs * 0.07; g.beginPath(); g.moveTo(x + fs * 0.04, cy); g.lineTo(x + pw - fs * 0.04, cy); g.stroke(); }
+      if(typeof p === 'string') mathText(g, p, x, cy, fs, Object.assign({ align:'left' }, mo));
+      else if(p.dot != null){ mathText(g, p.dot, x, cy, fs, Object.assign({ align:'left' }, mo)); g.beginPath(); g.arc(x + pw / 2, cy - fs * 0.62, fs * 0.075, 0, Math.PI * 2); g.fill(); }  /* 순환마디 위 점 */
+      else { mathText(g, p.n, x + pw / 2, cy - fs * 0.52, fs * 0.8, mo); mathText(g, p.d, x + pw / 2, cy + fs * 0.58, fs * 0.8, mo); g.lineWidth = fs * 0.07; g.beginPath(); g.moveTo(x + fs * 0.04, cy); g.lineTo(x + pw - fs * 0.04, cy); g.stroke(); }
       x += pw + fs * 0.08; });
   });
   /* 얇은 판(카드) — 윗면에 exprTex. w×d, 두께 h */
@@ -228,5 +260,5 @@ export function makeKit(seed, opts){
     m.receiveShadow = true; return m;
   };
 
-  return { THREE, r, scene, cam, rnd, live, frames, onFrame, orbitTarget, canvasTex, woodTex, table, paper, inkText, lacquer, woodMat, plastic, metal, glass, cardboard, faceTex, rbox, tile, rod, label, exprTex, card, frame, env, lights, shoot };
+  return { THREE, r, scene, cam, rnd, live, frames, onFrame, orbitTarget, canvasTex, woodTex, table, paper, inkText, lacquer, woodMat, plastic, metal, glass, cardboard, faceTex, rbox, tile, rod, label, exprTex, card, frame, env, lights, shoot, mathText, MAIN, MATH };
 }

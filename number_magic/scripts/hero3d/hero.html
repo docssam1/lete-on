@@ -2,9 +2,10 @@
 <style>html,body{margin:0;background:#000}canvas{display:block}</style></head><body>
 <!-- scripts/build-hero3d.js 가 ?u=<유닛> 으로 연다. 장면을 찍은 캔버스를 window.__hero 에 둔다. -->
 <script type="module">
-import { makeKit } from '../../app/hero3d/kit.js';
+import { makeKit, fontsReady } from '../../app/hero3d/kit.js';
 import { SCENES } from '../../app/hero3d/scenes.js';
 const u = new URLSearchParams(location.search).get('u');
+await fontsReady();
 try {
   const def = SCENES[u];
   if(!def) throw new Error('장면 없음: ' + u);

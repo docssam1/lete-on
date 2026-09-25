@@ -13,7 +13,7 @@ const fs = require('fs'), path = require('path'), http = require('http');
 const { chromium } = require('./lib/playwright');
 const APP = path.resolve(__dirname, '..'), ROOT = path.resolve(APP, '..');
 const OUT = path.join(APP, 'assets', 'hero3d');
-const TYPES = { '.html':'text/html', '.js':'text/javascript' };
+const TYPES = { '.html':'text/html', '.js':'text/javascript', '.woff2':'font/woff2' };
 const server = http.createServer((req, res) => {
   const p = path.join(ROOT, decodeURIComponent(req.url.split('?')[0]));
   if(!p.startsWith(ROOT) || !fs.existsSync(p) || fs.statSync(p).isDirectory()){ res.writeHead(404); return res.end(); }

@@ -4,15 +4,31 @@
    - 3D 를 못 쓰면(WebGL 없음·만들다 오류) 아무것도 안 한다 — 정지 그림이 그대로 남는다.
    - 동작 줄이기(prefers-reduced-motion)면 장면은 띄우되 저절로 움직이지 않는다(끌어서 돌리기만).
    - 화면 밖·다른 탭이면 멈추고, figure 가 문서에서 빠지면(다음 단계로) 자원을 모두 푼다. */
-import { makeKit, THREE } from './kit.js';
+import { makeKit, fontsReady } from './kit.js';
 import { SCENES } from './scenes.js';
+
+/* 자막 한 줄 → HTML. $…$ 안은 수식 — 앱이 이미 싣는 KaTeX 로(분수는 세로 분수, 문자는 수학 이탤릭).
+   KaTeX 가 아직 없으면 읽을 수 있는 글자로(\dfrac{a}{b} → a/b) — 이때만 빗금이 보인다. */
+const escH = t => String(t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[c]);
+const plainTex = t => t.replace(/\\dfrac\{([^}]*)\}\{([^}]*)\}/g, '$1/$2').replace(/\\times/g, '×').replace(/\\div/g, '÷').replace(/\\cdots/g, '…')
+  .replace(/\\dot\{(\w)\}/g, '$1\u0307').replace(/\\ /g, ' ').replace(/[{}\\]/g, '');
+export function capHtml(txt){
+  return String(txt).split('$').map((part, i) => {
+    if(!(i % 2)) return escH(part);
+    try { if(window.katex) return window.katex.renderToString(part, { throwOnError:false }); } catch(e){}
+    return escH(plainTex(part));
+  }).join('');
+}
 
 const glOK = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch(e){ return false; } };
 
-export function mount(fig, uid, lang){
+/* 글꼴(KaTeX)을 다 불러온 뒤에 장면을 만든다 — 먼저 그리면 수식 글자가 다른 글꼴로 캔버스에 박힌다 */
+export async function mount(fig, uid, lang){
   const def = SCENES[uid];
   if(!def || !fig || fig.__hero3d || !glOK()) return false;
   fig.__hero3d = true;
+  await fontsReady();
+  if(!fig.isConnected){ fig.__hero3d = false; return false; }
   const img = fig.querySelector('img');
   const canvas = document.createElement('canvas');
   canvas.className = 'nm-mzu-hero-live';
@@ -63,7 +79,7 @@ export function mount(fig, uid, lang){
     capEl = document.createElement('div'); capEl.className = 'nm-mzu-hero-cap';
     capNo = document.createElement('i'); capSpan = document.createElement('span');
     capEl.append(capNo, capSpan); fig.appendChild(capEl);
-    if(reduce){ capNo.textContent = caps.list.length + ''; capSpan.textContent = caps.list.map(c => c[li]).join('  →  '); }
+    if(reduce){ capNo.textContent = caps.list.length + ''; capSpan.innerHTML = caps.list.map(c => capHtml(c[li])).join('  →  '); }
   }
   const showCap = t => {
     if(!caps || reduce) return;
@@ -71,7 +87,7 @@ export function mount(fig, uid, lang){
     caps.list.forEach((c, j) => { if(c[0] <= p) i = j; });
     if(i === capIdx) return;
     const first = capIdx < 0; capIdx = i;
-    const put = () => { capNo.textContent = (i + 1) + '/' + caps.list.length; capSpan.textContent = caps.list[i][li]; capSpan.classList.remove('fade'); };
+    const put = () => { capNo.textContent = (i + 1) + '/' + caps.list.length; capSpan.innerHTML = capHtml(caps.list[i][li]); capSpan.classList.remove('fade'); };
     if(first) put(); else { capSpan.classList.add('fade'); setTimeout(put, 250); }
   };
 

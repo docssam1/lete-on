@@ -9,6 +9,7 @@ const ROOT = path.resolve(__dirname, '..');
 global.window = {};
 require(path.join(ROOT, 'data', 'hero3d.js'));
 const H = window.NM_HERO3D || {};
+const katex = require(path.join(ROOT, 'vendor', 'katex', 'katex.min.js'));
 const scenes = fs.readFileSync(path.join(ROOT, 'app', 'hero3d', 'scenes.js'), 'utf8');
 const bad = [];
 const webpSize = buf => {
@@ -41,7 +42,12 @@ for(const [uid, v] of Object.entries(H)){
         if(rows[0][0] !== 0) bad.push(`${uid}: 첫 자막이 0 에서 시작하지 않음`);
         rows.forEach((r, i) => { if(r.length !== 4 || r.slice(1).some(x => typeof x !== 'string' || !x.trim())) bad.push(`${uid}: 자막 ${i + 1}줄 3개 언어 아님`);
           if(i && r[0] <= rows[i - 1][0]) bad.push(`${uid}: 자막 ${i + 1}줄 위치 순서`);
-          if(/\b(mod|gcd|max|min)\b|[≡∈∣]/.test(r.slice(1).join(' '))) bad.push(`${uid}: 자막 ${i + 1}줄 교육과정 밖 표기`); });
+          if(/\b(mod|gcd|max|min)\b|[≡∈∣]/.test(r.slice(1).join(' '))) bad.push(`${uid}: 자막 ${i + 1}줄 교육과정 밖 표기`);
+          /* 수식은 $…$ 로 — KaTeX 로 그려져 분수가 세로 분수가 된다. 빗금 분수(3/4)는 실패(원장 "설마 분수도 2/3 이렇게 나오는거 아니지") */
+          r.slice(1).forEach((t, li) => { const L = ['ko', 'en', 'zh'][li], seg = t.split('$');
+            if(seg.length % 2 === 0) bad.push(`${uid}: 자막 ${i + 1}줄 ${L} $ 짝이 안 맞음`);
+            if(/\d\s*\/\s*\d/.test(t)) bad.push(`${uid}: 자막 ${i + 1}줄 ${L} 빗금 분수 — \\dfrac 으로`);
+            seg.forEach((m, j) => { if(j % 2){ try { katex.renderToString(m, { throwOnError:true }); } catch(e){ bad.push(`${uid}: 자막 ${i + 1}줄 ${L} 수식 오류 ${m}`); } } }); }); });
       }
     }
   }

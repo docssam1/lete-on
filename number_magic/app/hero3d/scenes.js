@@ -10,9 +10,9 @@ export const SCENES = {
 
   /* 정수 개념 — history: 『구장산술』의 붉은 산가지(+)와 검은 산가지(−) */
   'M-01': { seed:7, caps:{ P:7, list:[
-    [0.0, "붉은 산가지 셋은 +3입니다.", "Three red rods make +3.", "三根红算筹是+3。"],
-    [0.45, "검은 산가지 둘은 −2입니다.", "Two black rods make −2.", "两根黑算筹是−2。"],
-    [0.72, "『구장산술』은 이렇게 붉은색(+)과 검은색(−)으로 셈했습니다.", "The Nine Chapters counted this way: red for +, black for −.", "《九章算术》就这样用红(+)和黑(−)来计算。"]
+    [0.0, "붉은 산가지 셋은 $+3$입니다.", "Three red rods make $+3$.", "三根红算筹是$+3$。"],
+    [0.45, "검은 산가지 둘은 $-2$입니다.", "Two black rods make $-2$.", "两根黑算筹是$-2$。"],
+    [0.72, "『구장산술』은 이렇게 붉은색($+$)과 검은색($-$)으로 셈했습니다.", "The Nine Chapters counted this way: red for $+$, black for $-$.", "《九章算术》就这样用红($+$)和黑($-$)来计算。"]
   ]},
     build(k){
     const { THREE, cam } = k;
@@ -33,9 +33,9 @@ export const SCENES = {
 
   /* 일차방정식 — hook: 양팔저울 왼쪽 상자 하나와 추 3개, 오른쪽 추 9개, 평형 */
   'M-50': { seed:11, caps:{ P:7, list:[
-    [0.0, "왼쪽 x 상자와 추 3개, 오른쪽 추 9개 — 평형입니다.", "Box x and 3 weights on the left, 9 on the right: balanced.", "左边x箱和3个砝码，右边9个——平衡。"],
+    [0.0, "왼쪽 $x$ 상자와 추 3개, 오른쪽 추 9개 — 평형입니다.", "Box $x$ and 3 weights on the left, 9 on the right: balanced.", "左边$x$箱和3个砝码，右边9个——平衡。"],
     [0.15, "양쪽에서 추를 3개씩 똑같이 덜어 냅니다.", "Take 3 weights off both sides.", "两边各拿走3个砝码。"],
-    [0.4, "그래도 평형입니다. 그래서 x = 6", "Still balanced, so x = 6.", "仍然平衡，所以 x = 6。"],
+    [0.4, "그래도 평형입니다. 그래서 $x=6$", "Still balanced, so $x=6$.", "仍然平衡，所以$x=6$。"],
     [0.72, "양변에 같은 조작을 해도 등식은 그대로입니다.", "Doing the same to both sides keeps the equation true.", "等式两边做同样的操作，等式不变。"]
   ]},
     build(k){
@@ -129,9 +129,9 @@ export const SCENES = {
   /* 수직선 위의 위치 — hook: 온도계를 눕히면 그대로 수직선(0 가운데, 오른쪽 양수, 왼쪽 음수) */
   'M-82': { seed:21, caps:{ P:10, list:[
     [0.0, "온도계를 눕히면 그대로 수직선이 됩니다.", "Lay a thermometer down and it becomes a number line.", "把温度计放平，就是一条数轴。"],
-    [0.05, "0보다 왼쪽은 음수입니다: −3", "Left of 0 is negative: −3", "0的左边是负数：−3"],
-    [0.4, "0보다 오른쪽은 양수입니다: +4", "Right of 0 is positive: +4", "0的右边是正数：+4"],
-    [0.75, "0을 가운데 두면 모든 수에 제자리가 생깁니다.", "With 0 in the middle, every number has its place.", "把0放在中间，每个数都有自己的位置。"]
+    [0.05, "$0$보다 왼쪽은 음수입니다: $-3$", "Left of $0$ is negative: $-3$", "$0$的左边是负数：$-3$"],
+    [0.4, "$0$보다 오른쪽은 양수입니다: $+4$", "Right of $0$ is positive: $+4$", "$0$的右边是正数：$+4$"],
+    [0.75, "$0$을 가운데 두면 모든 수에 제자리가 생깁니다.", "With $0$ in the middle, every number has its place.", "把$0$放在中间，每个数都有自己的位置。"]
   ]},
     build(k){
     const { THREE, scene } = k;
@@ -152,8 +152,8 @@ export const SCENES = {
       g.fillStyle = '#f6f3ea'; g.fillRect(0, 0, w, h); g.fillStyle = '#2b2b2b';
       const px = t => w * (0.5 + t * U / (BL - 0.12));
       for(let t = -55; t <= 55; t++){ const tt = t / 10, big = t % 10 === 0, mid = t % 5 === 0; g.fillRect(px(tt) - (big ? 3 : 1.5), h * 0.08, big ? 6 : 3, h * (big ? 0.4 : mid ? 0.28 : 0.16)); }
-      g.font = '700 52px "DejaVu Sans", sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      for(let t = -5; t <= 5; t++) g.fillText(t > 0 ? '+' + t : t < 0 ? '−' + (-t) : '0', px(t), h * 0.74); }), roughness:0.5 }));
+      g.textBaseline = 'middle';
+      for(let t = -5; t <= 5; t++) k.mathText(g, t > 0 ? '+' + t : t < 0 ? '−' + (-t) : '0', px(t), h * 0.74, 56); }), roughness:0.5 }));
     board.position.set(0, 0.05, tz); board.castShadow = board.receiveShadow = true; scene.add(board);
     scaleTop.rotation.x = -Math.PI / 2; scaleTop.position.set(0, 0.112, tz + 0.02); scaleTop.receiveShadow = true; scene.add(scaleTop);
     const tubeY = 0.24, tzz = tz - 0.17, x0 = -5.6 * U;
@@ -171,9 +171,9 @@ export const SCENES = {
 
   /* 정수의 덧셈 — hook: 용돈 5(만 원)이 있는데 빌린 돈이 3(만 원). history: 재산은 +, 빚은 − */
   'M-02': { seed:31, caps:{ P:8, list:[
-    [0.0, "용돈 +5, 빌린 돈 −3", "Pocket money +5, borrowed −3", "零花钱+5，借的钱−3"],
-    [0.1, "+1과 −1이 짝을 지으면 0이 됩니다.", "A +1 and a −1 together make 0.", "+1和−1配成一对就是0。"],
-    [0.5, "남은 것은 +2: (+5) + (−3) = +2", "+2 is left: (+5) + (−3) = +2", "剩下+2：(+5) + (−3) = +2"],
+    [0.0, "용돈 $+5$, 빌린 돈 $-3$", "Pocket money $+5$, borrowed $-3$", "零花钱$+5$，借的钱$-3$"],
+    [0.1, "$+1$과 $-1$이 짝을 지으면 $0$이 됩니다.", "A $+1$ and a $-1$ together make $0$.", "$+1$和$-1$配成一对就是$0$。"],
+    [0.5, "남은 것은 $+2$: $(+5)+(-3)=+2$", "$+2$ is left: $(+5)+(-3)=+2$", "剩下$+2$：$(+5)+(-3)=+2$"],
     [0.72, "부호가 다르면 빼고, 큰 쪽 부호를 따릅니다.", "Different signs: subtract and keep the larger sign.", "符号不同就相减，取较大一方的符号。"]
   ]},
     build(k){
@@ -256,9 +256,9 @@ export const SCENES = {
 
   /* 문자식 — hook: 사탕 한 개 a원, 3개를 사면 3a */
   'M-47': { seed:51, caps:{ P:6, list:[
-    [0.0, "사탕 한 개의 값을 a원이라고 합니다.", "Say one candy costs a won.", "设一颗糖的价格是a元。"],
-    [0.08, "1개 a, 2개 2a, 3개 3a", "One a, two 2a, three 3a", "1颗a，2颗2a，3颗3a"],
-    [0.58, "a × 3은 곱셈 기호를 빼고 3a로 씁니다.", "a × 3 is written 3a, without the × sign.", "a × 3 省略乘号写成 3a。"]
+    [0.0, "사탕 한 개의 값을 $a$원이라고 합니다.", "Say one candy costs $a$ won.", "设一颗糖的价格是$a$元。"],
+    [0.08, "1개 $a$, 2개 $2a$, 3개 $3a$", "One $a$, two $2a$, three $3a$", "1颗$a$，2颗$2a$，3颗$3a$"],
+    [0.58, "$a\\times 3$은 곱셈 기호를 빼고 $3a$로 씁니다.", "$a\\times 3$ is written $3a$, without the $\\times$ sign.", "$a\\times 3$省略乘号写成$3a$。"]
   ]},
     build(k){
     const { THREE, scene, cam } = k;
@@ -285,9 +285,9 @@ export const SCENES = {
 
   /* 식의 값 — 3x+2 에서 x=4: 같은 상자 x 셋 + 낱개 둘, 한 상자를 열면 4개 */
   'M-48': { seed:61, caps:{ P:6, list:[
-    [0.0, "x 상자 셋과 낱개 둘: 3x + 2", "Three x boxes and two singles: 3x + 2", "三个x盒子和两个单块：3x + 2"],
-    [0.1, "상자를 열면 x = 4", "Open a box: x = 4", "打开盒子：x = 4"],
-    [0.62, "3 × 4 + 2 = 14", "3 × 4 + 2 = 14", "3 × 4 + 2 = 14"]
+    [0.0, "$x$ 상자 셋과 낱개 둘: $3x+2$", "Three $x$ boxes and two singles: $3x+2$", "三个$x$盒子和两个单块：$3x+2$"],
+    [0.1, "상자를 열면 $x=4$", "Open a box: $x=4$", "打开盒子：$x=4$"],
+    [0.62, "$3\\times 4+2=14$", "$3\\times 4+2=14$", "$3\\times 4+2=14$"]
   ]},
     build(k){
     const { THREE, scene, cam } = k;
@@ -313,10 +313,10 @@ export const SCENES = {
 
   /* 정수의 곱셈 — 음수를 곱할 때마다 방향이 뒤집힌다: 컵을 한 번 뒤집으면 −, 두 번이면 다시 + */
   'M-04': { seed:71, caps:{ P:7, list:[
-    [0.0, "(−1)을 곱할 때마다 컵이 뒤집힙니다.", "Each × (−1) flips the cup.", "每乘一次(−1)，杯子就翻一次。"],
-    [0.12, "두 번 뒤집으면 다시 +입니다.", "Flip twice and it is + again.", "翻两次又变回+。"],
-    [0.45, "음수가 짝수 개면 +, 홀수 개면 −", "Even number of negatives: +. Odd: −.", "负数个数为偶数得+，奇数得−。"],
-    [0.6, "한 번 더 뒤집으면 다시 −입니다.", "One more flip and it is − again.", "再翻一次又变回−。"]
+    [0.0, "$(-1)$을 곱할 때마다 컵이 뒤집힙니다.", "Each $\\times(-1)$ flips the cup.", "每乘一次$(-1)$，杯子就翻一次。"],
+    [0.12, "두 번 뒤집으면 다시 $+$입니다.", "Flip twice and it is $+$ again.", "翻两次又变回$+$。"],
+    [0.45, "음수가 짝수 개면 $+$, 홀수 개면 $-$", "Even number of negatives: $+$. Odd: $-$.", "负数个数为偶数得$+$，奇数得$-$。"],
+    [0.6, "한 번 더 뒤집으면 다시 $-$입니다.", "One more flip and it is $-$ again.", "再翻一次又变回$-$。"]
   ]},
     build(k){
     const { THREE, scene, cam } = k;
@@ -347,9 +347,9 @@ export const SCENES = {
 
   /* 거듭제곱과 부호 — (−2)⁴ = 16 과 −2⁴ = −16: 괄호 하나가 답을 바꾼다(돋보기로 괄호를 본다) */
   'M-05': { seed:81, caps:{ P:7, list:[
-    [0.0, "(−2)⁴ = 16, −2⁴ = −16", "(−2)⁴ = 16, −2⁴ = −16", "(−2)⁴ = 16，−2⁴ = −16"],
-    [0.15, "괄호가 있으면 −2 전체를 네 번 곱합니다.", "With brackets, multiply the whole −2 four times.", "有括号时，把整个−2乘四次。"],
-    [0.55, "괄호가 없으면 2만 네 번 곱하고 −를 붙입니다.", "Without brackets, multiply 2 four times, then put − in front.", "没有括号时，只把2乘四次，再加上−。"]
+    [0.0, "$(-2)^4=16$, $-2^4=-16$", "$(-2)^4=16$, $-2^4=-16$", "$(-2)^4=16$，$-2^4=-16$"],
+    [0.15, "괄호가 있으면 $-2$ 전체를 네 번 곱합니다.", "With brackets, multiply the whole $-2$ four times.", "有括号时，把整个$-2$乘四次。"],
+    [0.55, "괄호가 없으면 $2$만 네 번 곱하고 $-$를 붙입니다.", "Without brackets, multiply $2$ four times, then put $-$ in front.", "没有括号时，只把$2$乘四次，再加上$-$。"]
   ]},
     build(k){
     const { THREE, scene, cam } = k;
@@ -371,9 +371,9 @@ export const SCENES = {
 
   /* 혼합 계산 — −5 + 3 × (−4): 곱셈 먼저(①), 덧셈 나중(②) — 순서를 적은 조약돌 */
   'M-06': { seed:91, caps:{ P:6, list:[
-    [0.0, "−5 + 3 × (−4)", "−5 + 3 × (−4)", "−5 + 3 × (−4)"],
-    [0.1, "① 곱셈 먼저: 3 × (−4) = −12", "① Multiply first: 3 × (−4) = −12", "① 先算乘法：3 × (−4) = −12"],
-    [0.45, "② 그다음 덧셈: −5 + (−12) = −17", "② Then add: −5 + (−12) = −17", "② 再算加法：−5 + (−12) = −17"]
+    [0.0, "$-5+3\\times(-4)$", "$-5+3\\times(-4)$", "$-5+3\\times(-4)$"],
+    [0.1, "① 곱셈 먼저: $3\\times(-4)=-12$", "① Multiply first: $3\\times(-4)=-12$", "① 先算乘法：$3\\times(-4)=-12$"],
+    [0.45, "② 그다음 덧셈: $-5+(-12)=-17$", "② Then add: $-5+(-12)=-17$", "② 再算加法：$-5+(-12)=-17$"]
   ]},
     build(k){
     const { THREE, scene, cam } = k;
@@ -395,9 +395,9 @@ export const SCENES = {
 
   /* 일차식 — hook: 상자 앞의 수는 상자 "안의 모든 것"에 곱해진다. 3(2x+5): 같은 상자 셋, 상자마다 x 둘과 1 다섯 */
   'M-49': { seed:101, caps:{ P:6, list:[
-    [0.0, "3(2x + 5): 같은 상자가 셋", "3(2x + 5): three identical boxes", "3(2x + 5)：三个相同的盒子"],
-    [0.1, "앞의 3은 상자 안 모든 것에 곱해집니다.", "The 3 multiplies everything inside.", "前面的3要乘盒子里的每一样。"],
-    [0.7, "3(2x + 5) = 6x + 15", "3(2x + 5) = 6x + 15", "3(2x + 5) = 6x + 15"]
+    [0.0, "$3(2x+5)$: 같은 상자가 셋", "$3(2x+5)$: three identical boxes", "$3(2x+5)$：三个相同的盒子"],
+    [0.1, "앞의 $3$은 상자 안 모든 것에 곱해집니다.", "The $3$ multiplies everything inside.", "前面的$3$要乘盒子里的每一样。"],
+    [0.7, "$3(2x+5)=6x+15$", "$3(2x+5)=6x+15$", "$3(2x+5)=6x+15$"]
   ]},
     build(k){
     const { THREE, scene } = k;
@@ -422,9 +422,9 @@ export const SCENES = {
 
   /* 일차방정식의 활용 — hook: 연속하는 세 수의 합이 48 → (x−1)+x+(x+1) = 3x, −1 과 +1 이 지워진다(15·16·17) */
   'M-70': { seed:111, caps:{ P:7, list:[
-    [0.0, "연속하는 세 수: x − 1, x, x + 1", "Three consecutive numbers: x − 1, x, x + 1", "三个连续的数：x − 1, x, x + 1"],
-    [0.25, "−1과 +1이 서로 지워집니다.", "The −1 and +1 cancel out.", "−1和+1互相抵消。"],
-    [0.55, "합은 3x = 48, 그래서 x = 16", "The sum is 3x = 48, so x = 16.", "和是 3x = 48，所以 x = 16。"]
+    [0.0, "연속하는 세 수: $x-1$, $x$, $x+1$", "Three consecutive numbers: $x-1$, $x$, $x+1$", "三个连续的数：$x-1$，$x$，$x+1$"],
+    [0.25, "$-1$과 $+1$이 서로 지워집니다.", "The $-1$ and $+1$ cancel out.", "$-1$和$+1$互相抵消。"],
+    [0.55, "합은 $3x=48$, 그래서 $x=16$", "The sum is $3x=48$, so $x=16$.", "和是$3x=48$，所以$x=16$。"]
   ]},
     build(k){
     const { THREE, scene } = k;
@@ -449,9 +449,9 @@ export const SCENES = {
 
   /* 유리수의 나눗셈 — 나눗셈은 역수를 곱하는 것: ÷ 2/5 → × 5/2, 카드를 뒤집는다 */
   'M-07': { seed:121, caps:{ P:7, list:[
-    [0.0, "3/4 ÷ 2/5", "3/4 ÷ 2/5", "3/4 ÷ 2/5"],
+    [0.0, "$\\dfrac{3}{4}\\div \\dfrac{2}{5}$", "$\\dfrac{3}{4}\\div \\dfrac{2}{5}$", "$\\dfrac{3}{4}\\div \\dfrac{2}{5}$"],
     [0.2, "나누는 수를 뒤집으면(역수) 곱셈이 됩니다.", "Flip the divisor (its reciprocal) and multiply.", "把除数颠倒过来(倒数)，就变成乘法。"],
-    [0.45, "3/4 × 5/2 = 15/8", "3/4 × 5/2 = 15/8", "3/4 × 5/2 = 15/8"]
+    [0.45, "$\\dfrac{3}{4}\\times \\dfrac{5}{2}=\\dfrac{15}{8}$", "$\\dfrac{3}{4}\\times \\dfrac{5}{2}=\\dfrac{15}{8}$", "$\\dfrac{3}{4}\\times \\dfrac{5}{2}=\\dfrac{15}{8}$"]
   ]},
     build(k){
     const { THREE, scene } = k;
@@ -479,28 +479,30 @@ export const SCENES = {
 
   /* 유한소수 — hook: 0.375 는 끝나는데 1/3 = 0.333… 은 왜 안 끝날까. 짧은 띠와 끝없이 풀리는 두루마리 */
   'M-08': { seed:131, caps:{ P:8, list:[
-    [0.0, "3/8 = 0.375 — 끝나는 소수", "3/8 = 0.375: it ends", "3/8 = 0.375——有限小数"],
-    [0.35, "1/3 = 0.333… — 끝나지 않는 소수", "1/3 = 0.333…: it never ends", "1/3 = 0.333…——无限小数"],
-    [0.7, "분모 속에 2와 5만 있으면 끝납니다: 8 = 2 × 2 × 2", "Only 2s and 5s in the denominator: it ends. 8 = 2 × 2 × 2", "分母里只有2和5就会结束：8 = 2 × 2 × 2"]
+    [0.0, "$\\dfrac{3}{8}=0.375$ — 끝나는 소수", "$\\dfrac{3}{8}=0.375$: it ends", "$\\dfrac{3}{8}=0.375$——有限小数"],
+    [0.35, "$\\dfrac{1}{3}=0.333\\cdots$ — 끝나지 않는 소수", "$\\dfrac{1}{3}=0.333\\cdots$: it never ends", "$\\dfrac{1}{3}=0.333\\cdots$——无限小数"],
+    [0.7, "분모 속에 $2$와 $5$만 있으면 끝납니다: $8=2\\times 2\\times 2$", "Only $2$s and $5$s in the denominator: it ends. $8=2\\times 2\\times 2$", "分母里只有$2$和$5$就会结束：$8=2\\times 2\\times 2$"]
   ]},
     build(k){
     const { THREE, scene } = k;
     k.frame([0.2, 0.1, 0.05], 6.4, 46);
     k.table();
     const tapeTex = (txt, len) => k.canvasTex(Math.round(len * 300), 90, (g, w, h) => { g.fillStyle = '#f6f2e6'; g.fillRect(0, 0, w, h);
-      g.fillStyle = '#26221c'; g.font = '700 78px "DejaVu Sans Mono", monospace'; g.textBaseline = 'middle'; g.fillText(txt, 20, h / 2 + 3); });
+      g.fillStyle = '#26221c'; g.textBaseline = 'middle'; k.mathText(g, txt, 20, h / 2 + 3, 78, { align:'left' }); });
     const tape = (txt, len, x, z) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(len, 0.3), new THREE.MeshStandardMaterial({ map:tapeTex(txt, len), roughness:0.8 }));
       m.rotation.x = -Math.PI / 2; m.position.set(x + len / 2, 0.012, z); m.receiveShadow = true; scene.add(m); return m; };
     k.card([{ n:'3', d:'8' }, ' ='], -2.65, -0.6, { w:0.9, d:0.8, size:420 });
     tape('0.375', 1.2, -2.1, -0.6);
     k.card([{ n:'1', d:'3' }, ' ='], -2.65, 0.6, { w:0.9, d:0.8, size:420 });
-    /* 0. 뒤로는 3 만 되풀이되는 띠 — 글자 한 칸(모노 폰트 78px ≈ 47px = 0.157) 짜리 3 을 이어 붙인다.
+    /* 0. 뒤로는 3 만 되풀이되는 띠 — 글자 한 칸 너비(띠 글씨 78px, 1 = 300px)를 재서 3 을 이어 붙인다.
        움직일 때 두루마리에서 3 이 끝없이 풀려 나온다 */
-    tape('0.', 0.38, -2.1, 0.6);
-    const CELL = 47 / 300, RL = 4.47;
-    const t3 = k.canvasTex(94, 180, (g, w, h) => { g.fillStyle = '#f6f2e6'; g.fillRect(0, 0, w, h); g.fillStyle = '#26221c'; g.font = '700 156px "DejaVu Sans Mono", monospace'; g.textBaseline = 'middle'; g.textAlign = 'center'; g.fillText('3', w / 2, h / 2 + 6); });
+    const mc = document.createElement('canvas').getContext('2d');
+    const w0 = k.mathText(mc, '0.', 0, 0, 78, { draw:false }), w3 = k.mathText(mc, '3', 0, 0, 78, { draw:false });
+    const L0 = (20 + w0) / 300, CELL = w3 / 300, RL = 4.85 - L0;
+    tape('0.', L0, -2.1, 0.6);
+    const t3 = k.canvasTex(Math.round(w3 * 2), 180, (g, w, h) => { g.fillStyle = '#f6f2e6'; g.fillRect(0, 0, w, h); g.fillStyle = '#26221c'; g.textBaseline = 'middle'; k.mathText(g, '3', w / 2, h / 2 + 6, 156); });
     t3.wrapS = THREE.RepeatWrapping; t3.repeat.set(RL / CELL, 1);
-    const rest = new THREE.Mesh(new THREE.PlaneGeometry(RL, 0.3), new THREE.MeshStandardMaterial({ map:t3, roughness:0.8 })); rest.rotation.x = -Math.PI / 2; rest.position.set(-2.1 + 0.38 + RL / 2, 0.012, 0.6); rest.receiveShadow = true; scene.add(rest);
+    const rest = new THREE.Mesh(new THREE.PlaneGeometry(RL, 0.3), new THREE.MeshStandardMaterial({ map:t3, roughness:0.8 })); rest.rotation.x = -Math.PI / 2; rest.position.set(-2.1 + L0 + RL / 2, 0.012, 0.6); rest.receiveShadow = true; scene.add(rest);
     /* 두루마리 끝 — 아직 풀리지 않은 3 이 감겨 있다 */
     const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.32, 48), new THREE.MeshStandardMaterial({ map:k.canvasTex(512, 128, (g, w, h) => { g.fillStyle = '#f3eedf'; g.fillRect(0, 0, w, h); g.fillStyle = 'rgba(80,70,50,.35)'; for(let i = 0; i < 26; i++) g.fillRect(0, i * 5, w, 1); }), roughness:0.8 }));
     roll.rotation.x = Math.PI / 2; roll.position.set(2.95, 0.29, 0.6); roll.castShadow = roll.receiveShadow = true; scene.add(roll);
@@ -510,15 +512,15 @@ export const SCENES = {
 
   /* 순환소수를 분수로 — history: 끝나지 않고 되풀이되는 소수는 반드시 분수로 돌아간다. 3 이 도는 고리와 1/3 */
   'M-09': { seed:141, caps:{ P:8, list:[
-    [0.0, "3이 끝없이 되풀이됩니다: 0.3̇", "The 3 repeats forever: 0.3̇", "3无限循环：0.3̇"],
-    [0.5, "되풀이되는 소수는 분수로 돌아갑니다: 0.3̇ = 1/3", "A repeating decimal goes back to a fraction: 0.3̇ = 1/3", "循环小数可以化成分数：0.3̇ = 1/3"]
+    [0.0, "$3$이 끝없이 되풀이됩니다: $0.\\dot{3}$", "The $3$ repeats forever: $0.\\dot{3}$", "$3$无限循环：$0.\\dot{3}$"],
+    [0.5, "되풀이되는 소수는 분수로 돌아갑니다: $0.\\dot{3}=\\dfrac{1}{3}$", "A repeating decimal goes back to a fraction: $0.\\dot{3}=\\dfrac{1}{3}$", "循环小数可以化成分数：$0.\\dot{3}=\\dfrac{1}{3}$"]
   ]},
     build(k){
     const { THREE, scene } = k;
     k.frame([0, 0.45, 0], 5.4, 30);
     k.table();
-    const ringTex = k.canvasTex(2048, 160, (g, w, h) => { g.fillStyle = '#f6f2e6'; g.fillRect(0, 0, w, h); g.fillStyle = '#26221c'; g.font = '700 110px "DejaVu Sans Mono", monospace'; g.textBaseline = 'middle'; g.textAlign = 'center';
-      for(let i = 0; i < 16; i++) g.fillText('3', (i + 0.5) * w / 16, h / 2 + 4); });
+    const ringTex = k.canvasTex(2048, 160, (g, w, h) => { g.fillStyle = '#f6f2e6'; g.fillRect(0, 0, w, h); g.fillStyle = '#26221c'; g.textBaseline = 'middle';
+      for(let i = 0; i < 16; i++) k.mathText(g, '3', (i + 0.5) * w / 16, h / 2 + 4, 112); });
     ringTex.wrapS = THREE.RepeatWrapping;
     const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.34, 96, 1, true), new THREE.MeshStandardMaterial({ map:ringTex, roughness:0.8, side:THREE.DoubleSide }));
     ring.position.set(-1.0, 0.18, 0); ring.castShadow = ring.receiveShadow = true; scene.add(ring);
@@ -534,7 +536,7 @@ export const SCENES = {
   'M-51': { seed:151, caps:{ P:6, list:[
     [0.0, "연필 한 자루에 500원: 1자루 500원", "One pencil costs 500 won", "一支铅笔500韩元"],
     [0.28, "2자루 1000원, 3자루 1500원", "Two: 1000 won. Three: 1500 won.", "两支1000，三支1500"],
-    [0.62, "자루 수가 2배, 3배면 값도 2배, 3배: y = 500x", "Twice the pencils, twice the price: y = 500x", "支数变2倍、3倍，价钱也变2倍、3倍：y = 500x"]
+    [0.62, "자루 수가 2배, 3배면 값도 2배, 3배: $y=500x$", "Twice the pencils, twice the price: $y=500x$", "支数变2倍、3倍，价钱也变2倍、3倍：$y=500x$"]
   ]},
     build(k){
     const { THREE, scene } = k;
@@ -563,8 +565,8 @@ export const SCENES = {
   /* 정비례·반비례 그래프 — hook: 하나는 곧은 직선, 하나는 갈라진 곡선. 좌표판 위에 휜 철사 */
   'M-69': { seed:161, caps:{ P:8, list:[
     [0.0, "정비례는 곧은 직선, 반비례는 두 갈래 곡선입니다.", "Direct proportion is a straight line; inverse is a two-part curve.", "正比例是直线，反比例是分成两支的曲线。"],
-    [0.08, "직선: x가 커지면 y도 같은 비율로 커집니다.", "Line: as x grows, y grows in step.", "直线：x变大，y也按同样的比例变大。"],
-    [0.55, "곡선: x가 커질수록 y는 작아지고, 축에 닿지 않습니다.", "Curve: as x grows, y shrinks, never touching the axis.", "曲线：x越大，y越小，但永远碰不到坐标轴。"]
+    [0.08, "직선: $x$가 커지면 $y$도 같은 비율로 커집니다.", "Line: as $x$ grows, $y$ grows in step.", "直线：$x$变大，$y$也按同样的比例变大。"],
+    [0.55, "곡선: $x$가 커질수록 $y$는 작아지고, 축에 닿지 않습니다.", "Curve: as $x$ grows, $y$ shrinks, never touching the axis.", "曲线：$x$越大，$y$越小，但永远碰不到坐标轴。"]
   ]},
     build(k){
     const { THREE, scene } = k;
@@ -574,7 +576,7 @@ export const SCENES = {
     const boardTex = k.canvasTex(1400, 1400, (g, w, h) => { g.fillStyle = '#efe6d2'; g.fillRect(0, 0, w, h);
       g.strokeStyle = 'rgba(80,110,140,.35)'; g.lineWidth = 3; for(let i = 0; i <= N; i++){ const p = i * w / N; g.beginPath(); g.moveTo(p, 0); g.lineTo(p, h); g.stroke(); g.beginPath(); g.moveTo(0, p); g.lineTo(w, p); g.stroke(); }
       g.strokeStyle = '#2b2118'; g.lineWidth = 7; g.beginPath(); g.moveTo(0, h / 2); g.lineTo(w, h / 2); g.moveTo(w / 2, 0); g.lineTo(w / 2, h); g.stroke();
-      g.fillStyle = '#2b2118'; g.font = 'italic 700 64px "DejaVu Serif", serif'; g.fillText('x', w - 60, h / 2 - 22); g.fillText('y', w / 2 + 20, 60); g.font = '700 50px "DejaVu Serif", serif'; g.fillText('O', w / 2 - 50, h / 2 + 56); });
+      g.fillStyle = '#2b2118'; g.textBaseline = 'alphabetic'; k.mathText(g, 'x', w - 44, h / 2 - 22, 66); k.mathText(g, 'y', w / 2 + 38, 64, 66); k.mathText(g, 'O', w / 2 - 36, h / 2 + 60, 56); });
     const board = new THREE.Mesh(k.rbox(S + 0.2, 0.08, S + 0.2, 0.06), k.woodMat('#8a5a33', [50, 25, 10])); board.castShadow = board.receiveShadow = true; scene.add(board);
     const face = new THREE.Mesh(new THREE.PlaneGeometry(S, S), new THREE.MeshStandardMaterial({ map:boardTex, roughness:0.85 })); face.rotation.x = -Math.PI / 2; face.position.y = 0.081; face.receiveShadow = true; scene.add(face);
     const u = S / N, Y = 0.13;
@@ -596,10 +598,10 @@ export const SCENES = {
 
   /* 대표값 — 2, 5, 7, 9, 12 를 정렬하면 가운데가 중앙값 7 */
   'M-84': { seed:171, caps:{ P:9, list:[
-    [0.0, "자료 2, 5, 7, 9, 12", "Data: 2, 5, 7, 9, 12", "数据：2, 5, 7, 9, 12"],
+    [0.0, "자료 $2,\\ 5,\\ 7,\\ 9,\\ 12$", "Data: $2,\\ 5,\\ 7,\\ 9,\\ 12$", "数据：$2,\\ 5,\\ 7,\\ 9,\\ 12$"],
     [0.05, "섞여 있으면 가운데를 알 수 없습니다.", "Mixed up, you cannot see the middle.", "打乱了就看不出中间。"],
     [0.45, "작은 것부터 줄을 세웁니다.", "Line them up from smallest.", "从小到大排好。"],
-    [0.72, "가운데 값 7이 중앙값입니다.", "The middle value, 7, is the median.", "中间的7就是中位数。"]
+    [0.72, "가운데 값 $7$이 중앙값입니다.", "The middle value, $7$, is the median.", "中间的$7$就是中位数。"]
   ]},
     build(k){
     const { THREE, scene } = k;

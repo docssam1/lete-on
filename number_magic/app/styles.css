@@ -3002,12 +3002,13 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   color:#f7ecd8;font-size:12px;font-weight:700;pointer-events:none;z-index:1}
 .nm-mzu-hero.is-live .nm-mzu-hero-hint{display:block}
 @media (prefers-reduced-motion:reduce){.nm-mzu-hero-live{transition:none}}
-/* 움직임 자막(app/hero3d/live.js — 원장 "안내도" → "1") — 그림 바로 아래 띠. 두 줄 높이를 늘 잡아 두어 글이 바뀔 때 화면이 들썩이지 않게 */
-.nm-mzu-hero-cap{display:flex;align-items:center;gap:8px;min-height:3.2em;padding:8px 14px;background:#2a1f18;color:#f7ecd8;
+/* 움직임 자막(app/hero3d/live.js — 원장 "안내도" → "1") — 그림 바로 아래 띠. 세로 분수가 든 줄·두 줄 글 높이를 늘 잡아 두어 글이 바뀔 때 화면이 들썩이지 않게 */
+.nm-mzu-hero-cap{display:flex;align-items:center;gap:8px;min-height:4.4em;padding:8px 14px;background:#2a1f18;color:#f7ecd8;
   font-size:var(--nm-fs-body,15px);line-height:1.45;font-weight:700;word-break:keep-all}
 .nm-mzu-hero-cap i{flex:0 0 auto;font-style:normal;font-size:12px;font-weight:900;color:#2a1f18;background:#e7c58a;border-radius:999px;padding:1px 8px}
 .nm-mzu-hero-cap span{transition:opacity .35s}
 .nm-mzu-hero-cap span.fade{opacity:0}
+.nm-mzu-hero-cap .katex{font-size:1.08em;color:inherit}
 @media (prefers-reduced-motion:reduce){.nm-mzu-hero-cap span{transition:none}}
 .nm-mzu-story{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:center;
   border:1.6px solid #b9cbe0;background:#f6f9fc;border-radius:16px;padding:14px}
