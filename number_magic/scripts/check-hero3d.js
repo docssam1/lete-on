@@ -28,11 +28,27 @@ for(const [uid, v] of Object.entries(H)){
   if(!new RegExp(`'${uid}'\\s*:`).test(scenes)) bad.push(`${uid}: scenes.js 에 장면 없음`);
   /* 앱에서 움직이는 장면이어야 한다(원장 "동작도 하는거야?" → "1") — 장면 본문에 k.onFrame 이 있는지 */
   else { const st = scenes.indexOf(`'${uid}'`), nx = scenes.slice(st + 1).search(/\n  '[A-Z]-\d+'\s*:/); const body = scenes.slice(st, nx < 0 ? undefined : st + 1 + nx);
-    if(!/k\.onFrame\(/.test(body)) bad.push(`${uid}: 움직임(k.onFrame) 없음`); }
+    if(!/k\.onFrame\(/.test(body)) bad.push(`${uid}: 움직임(k.onFrame) 없음`);
+    /* 자막 안내(원장 "안내도" → "1"): caps.P 가 움직임 한 바퀴(cyc(t, N))와 같고, 줄마다 ko·en·zh, 위치는 0 부터 커지는 순 */
+    const cm = body.match(/caps:\{ P:(\d+), list:\[([\s\S]*?)\n  \]\}/);
+    if(!cm) bad.push(`${uid}: 자막(caps) 없음`);
+    else {
+      const P = +cm[1], cy = body.match(/cyc\(t, (\d+)\)/);
+      if(cy && +cy[1] !== P) bad.push(`${uid}: 자막 한 바퀴 ${P}초 ≠ 움직임 ${cy[1]}초`);
+      let rows; try { rows = JSON.parse('[' + cm[2].replace(/\[(\d?\.?\d+),/g, '[$1,') + ']'); } catch(e){ rows = null; }
+      if(!rows || !rows.length) bad.push(`${uid}: 자막 줄을 읽지 못함`);
+      else {
+        if(rows[0][0] !== 0) bad.push(`${uid}: 첫 자막이 0 에서 시작하지 않음`);
+        rows.forEach((r, i) => { if(r.length !== 4 || r.slice(1).some(x => typeof x !== 'string' || !x.trim())) bad.push(`${uid}: 자막 ${i + 1}줄 3개 언어 아님`);
+          if(i && r[0] <= rows[i - 1][0]) bad.push(`${uid}: 자막 ${i + 1}줄 위치 순서`);
+          if(/\b(mod|gcd|max|min)\b|[≡∈∣]/.test(r.slice(1).join(' '))) bad.push(`${uid}: 자막 ${i + 1}줄 교육과정 밖 표기`); });
+      }
+    }
+  }
 }
 for(const f of fs.readdirSync(path.join(ROOT, 'assets', 'hero3d'))){
   const uid = f.replace(/\.webp$/, '');
   if(!H[uid]) bad.push(`${f}: data/hero3d.js 에 등록 안 됨`);
 }
 if(bad.length){ console.log('✗ 실패\n  ' + bad.join('\n  ')); process.exit(1); }
-console.log(`3D 대표 그림 ${Object.keys(H).length}개 — 파일·크기·3개 언어 alt·장면·움직임 모두 있음`);
+console.log(`3D 대표 그림 ${Object.keys(H).length}개 — 파일·크기·3개 언어 alt·장면·움직임·자막(한 바퀴 일치) 모두 있음`);

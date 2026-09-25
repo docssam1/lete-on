@@ -9,7 +9,7 @@ import { SCENES } from './scenes.js';
 
 const glOK = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch(e){ return false; } };
 
-export function mount(fig, uid){
+export function mount(fig, uid, lang){
   const def = SCENES[uid];
   if(!def || !fig || fig.__hero3d || !glOK()) return false;
   fig.__hero3d = true;
@@ -54,6 +54,27 @@ export function mount(fig, uid){
   fig.classList.add('is-live');
   fig.appendChild(canvas);
 
+  /* 자막 안내(원장 "자동으로 재생 또는 안내도" → "1") — 장면의 caps.list = [[한 바퀴 안 위치 0~1, ko, en, zh], …].
+     움직임과 같은 한 바퀴(caps.P 초)를 따라 한 줄씩 바뀐다. 동작 줄이기면 단계를 모두 한 번에 보여 준다. */
+  const caps = def.caps && def.caps.list && def.caps.list.length ? def.caps : null;
+  const li = { ko:1, en:2, zh:3 }[lang] || 1;
+  let capEl = null, capSpan = null, capNo = null, capIdx = -1;
+  if(caps){
+    capEl = document.createElement('div'); capEl.className = 'nm-mzu-hero-cap';
+    capNo = document.createElement('i'); capSpan = document.createElement('span');
+    capEl.append(capNo, capSpan); fig.appendChild(capEl);
+    if(reduce){ capNo.textContent = caps.list.length + ''; capSpan.textContent = caps.list.map(c => c[li]).join('  →  '); }
+  }
+  const showCap = t => {
+    if(!caps || reduce) return;
+    const p = (t % caps.P) / caps.P; let i = 0;
+    caps.list.forEach((c, j) => { if(c[0] <= p) i = j; });
+    if(i === capIdx) return;
+    const first = capIdx < 0; capIdx = i;
+    const put = () => { capNo.textContent = (i + 1) + '/' + caps.list.length; capSpan.textContent = caps.list[i][li]; capSpan.classList.remove('fade'); };
+    if(first) put(); else { capSpan.classList.add('fade'); setTimeout(put, 250); }
+  };
+
   let running = true, visible = true, raf = 0, t0 = performance.now(), last = t0, shown = false;
   const frame = now => {
     raf = 0;
@@ -63,7 +84,7 @@ export function mount(fig, uid){
     if(!drag && now - lastUser > 4000 && (Math.abs(yaw - yaw0) > 1e-3 || Math.abs(pitch - pitch0) > 1e-3)){
       yaw += (yaw0 - yaw) * Math.min(1, dt * 1.5); pitch += (pitch0 - pitch) * Math.min(1, dt * 1.5); place();
     }
-    if(!reduce){ const t = (now - t0) / 1000; for(const f of frames) f(t, dt); }
+    if(!reduce){ const t = (now - t0) / 1000; for(const f of frames) f(t, dt); showCap(t); }
     r.render(scene, cam);
     if(!shown){ shown = true; canvas.classList.add('on'); }
     if(running && visible && (!reduce || drag || now - lastUser < 4600)) raf = requestAnimationFrame(frame);

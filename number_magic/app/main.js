@@ -5296,7 +5296,7 @@ function stepDiscover(body,u){
   /* 3D 대표 그림을 직접 띄워 움직인다(app/hero3d/live.js, 원장 "동작도 하는거야?" → "1"). 3D 라이브러리는 이 단계에서만
      불러온다(약 2MB — 첫 화면에 싣지 않는다). 못 띄우면 정지 그림이 그대로 남는다. */
   const heroFig=body.querySelector('.nm-mzu-hero');
-  if(heroFig) import('./hero3d/live.js').then(m=>m.mount(heroFig,u.id)).catch(()=>{});
+  if(heroFig) import('./hero3d/live.js').then(m=>m.mount(heroFig,u.id,S.lang)).catch(()=>{});
   body.querySelectorAll('.nm-lab-link[data-lab]').forEach(el=>{
     el.onclick=()=>{window.open(el.dataset.lab,'_blank','noopener');};
   });

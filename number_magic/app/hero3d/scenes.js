@@ -9,7 +9,12 @@ const hop = (p, a, b) => Math.sin(Math.PI * Math.min(1, Math.max(0, (p - a) / (b
 export const SCENES = {
 
   /* 정수 개념 — history: 『구장산술』의 붉은 산가지(+)와 검은 산가지(−) */
-  'M-01': { seed:7, build(k){
+  'M-01': { seed:7, caps:{ P:7, list:[
+    [0.0, "붉은 산가지 셋은 +3입니다.", "Three red rods make +3.", "三根红算筹是+3。"],
+    [0.45, "검은 산가지 둘은 −2입니다.", "Two black rods make −2.", "两根黑算筹是−2。"],
+    [0.72, "『구장산술』은 이렇게 붉은색(+)과 검은색(−)으로 셈했습니다.", "The Nine Chapters counted this way: red for +, black for −.", "《九章算术》就这样用红(+)和黑(−)来计算。"]
+  ]},
+    build(k){
     const { THREE, cam } = k;
     cam.position.set(-0.3, 3.0, 4.6); cam.lookAt(0.2, 0, 0.15);
     k.table();
@@ -27,7 +32,13 @@ export const SCENES = {
   }},
 
   /* 일차방정식 — hook: 양팔저울 왼쪽 상자 하나와 추 3개, 오른쪽 추 9개, 평형 */
-  'M-50': { seed:11, build(k){
+  'M-50': { seed:11, caps:{ P:7, list:[
+    [0.0, "왼쪽 x 상자와 추 3개, 오른쪽 추 9개 — 평형입니다.", "Box x and 3 weights on the left, 9 on the right: balanced.", "左边x箱和3个砝码，右边9个——平衡。"],
+    [0.15, "양쪽에서 추를 3개씩 똑같이 덜어 냅니다.", "Take 3 weights off both sides.", "两边各拿走3个砝码。"],
+    [0.4, "그래도 평형입니다. 그래서 x = 6", "Still balanced, so x = 6.", "仍然平衡，所以 x = 6。"],
+    [0.72, "양변에 같은 조작을 해도 등식은 그대로입니다.", "Doing the same to both sides keeps the equation true.", "等式两边做同样的操作，等式不变。"]
+  ]},
+    build(k){
     const { THREE, scene, cam } = k;
     cam.position.set(0, 3.1, 6.4); cam.lookAt(0, 1.25, 0);
     k.table({ base:'#5e3b22' });
@@ -68,7 +79,13 @@ export const SCENES = {
   }},
 
   /* 좌표 — hook: 영화관 표의 "F열 12번", 두 수로 자리 하나 */
-  'M-68': { seed:5, build(k){
+  'M-68': { seed:5, caps:{ P:8, list:[
+    [0.0, "\"F열 12번\"처럼 두 수면 자리 하나가 정해집니다.", "Like \"Row F, Seat 12\", two numbers pick one seat.", "像\"F排12号\"一样，两个数确定一个座位。"],
+    [0.08, "먼저 가로로 몇 번째인지 셉니다.", "First count across.", "先横着数第几个。"],
+    [0.45, "다음 세로로 몇 줄째인지 셉니다.", "Then count up the rows.", "再竖着数第几排。"],
+    [0.72, "가로·세로 두 수의 짝이 좌표입니다.", "That pair of numbers is a coordinate.", "横、竖两个数的组合就是坐标。"]
+  ]},
+    build(k){
     const { THREE, scene, cam } = k;
     scene.background = new THREE.Color('#170d0c');
     cam.position.set(-3.2, 5.2, 5.4); cam.lookAt(0.4, 0.6, -2.4);
@@ -110,7 +127,13 @@ export const SCENES = {
   }},
 
   /* 수직선 위의 위치 — hook: 온도계를 눕히면 그대로 수직선(0 가운데, 오른쪽 양수, 왼쪽 음수) */
-  'M-82': { seed:21, build(k){
+  'M-82': { seed:21, caps:{ P:10, list:[
+    [0.0, "온도계를 눕히면 그대로 수직선이 됩니다.", "Lay a thermometer down and it becomes a number line.", "把温度计放平，就是一条数轴。"],
+    [0.05, "0보다 왼쪽은 음수입니다: −3", "Left of 0 is negative: −3", "0的左边是负数：−3"],
+    [0.4, "0보다 오른쪽은 양수입니다: +4", "Right of 0 is positive: +4", "0的右边是正数：+4"],
+    [0.75, "0을 가운데 두면 모든 수에 제자리가 생깁니다.", "With 0 in the middle, every number has its place.", "把0放在中间，每个数都有自己的位置。"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0, 0, 0.1], 6.2, 52);
     k.table();
@@ -147,7 +170,13 @@ export const SCENES = {
   }},
 
   /* 정수의 덧셈 — hook: 용돈 5(만 원)이 있는데 빌린 돈이 3(만 원). history: 재산은 +, 빚은 − */
-  'M-02': { seed:31, build(k){
+  'M-02': { seed:31, caps:{ P:8, list:[
+    [0.0, "용돈 +5, 빌린 돈 −3", "Pocket money +5, borrowed −3", "零花钱+5，借的钱−3"],
+    [0.1, "+1과 −1이 짝을 지으면 0이 됩니다.", "A +1 and a −1 together make 0.", "+1和−1配成一对就是0。"],
+    [0.5, "남은 것은 +2: (+5) + (−3) = +2", "+2 is left: (+5) + (−3) = +2", "剩下+2：(+5) + (−3) = +2"],
+    [0.72, "부호가 다르면 빼고, 큰 쪽 부호를 따릅니다.", "Different signs: subtract and keep the larger sign.", "符号不同就相减，取较大一方的符号。"]
+  ]},
+    build(k){
     const { THREE, scene, cam } = k;
     k.frame([0, 0, 0.1], 5.2, 50);
     k.table();
@@ -178,7 +207,13 @@ export const SCENES = {
   }},
 
   /* 유리수의 덧셈 — hook: 산을 시속 10으로 오르고 30으로 내려옴. 오를 때 3시간, 내려올 때 1시간(history) */
-  'M-03': { seed:41, build(k){
+  'M-03': { seed:41, caps:{ P:12, list:[
+    [0.0, "오를 때 시속 10 km, 내려올 때 시속 30 km", "Up at 10 km/h, down at 30 km/h", "上山时速10 km，下山时速30 km"],
+    [0.05, "오르막 30 km — 3시간", "Up 30 km: 3 hours", "上坡30 km——3小时"],
+    [0.72, "내리막 30 km — 1시간", "Down 30 km: 1 hour", "下坡30 km——1小时"],
+    [0.97, "60 km를 4시간: 평균 시속 15 km입니다.", "60 km in 4 hours: 15 km/h on average.", "4小时走60 km：平均时速15 km。"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0, 0.55, 0.2], 7.2, 26);
     k.table();
@@ -220,7 +255,12 @@ export const SCENES = {
   }},
 
   /* 문자식 — hook: 사탕 한 개 a원, 3개를 사면 3a */
-  'M-47': { seed:51, build(k){
+  'M-47': { seed:51, caps:{ P:6, list:[
+    [0.0, "사탕 한 개의 값을 a원이라고 합니다.", "Say one candy costs a won.", "设一颗糖的价格是a元。"],
+    [0.08, "1개 a, 2개 2a, 3개 3a", "One a, two 2a, three 3a", "1颗a，2颗2a，3颗3a"],
+    [0.58, "a × 3은 곱셈 기호를 빼고 3a로 씁니다.", "a × 3 is written 3a, without the × sign.", "a × 3 省略乘号写成 3a。"]
+  ]},
+    build(k){
     const { THREE, scene, cam } = k;
     k.frame([-0.2, 0.45, 0.25], 5.6, 30);
     k.table();
@@ -244,7 +284,12 @@ export const SCENES = {
   }},
 
   /* 식의 값 — 3x+2 에서 x=4: 같은 상자 x 셋 + 낱개 둘, 한 상자를 열면 4개 */
-  'M-48': { seed:61, build(k){
+  'M-48': { seed:61, caps:{ P:6, list:[
+    [0.0, "x 상자 셋과 낱개 둘: 3x + 2", "Three x boxes and two singles: 3x + 2", "三个x盒子和两个单块：3x + 2"],
+    [0.1, "상자를 열면 x = 4", "Open a box: x = 4", "打开盒子：x = 4"],
+    [0.62, "3 × 4 + 2 = 14", "3 × 4 + 2 = 14", "3 × 4 + 2 = 14"]
+  ]},
+    build(k){
     const { THREE, scene, cam } = k;
     k.frame([-0.3, 0.1, 0.35], 6.0, 46);
     k.table();
@@ -267,7 +312,13 @@ export const SCENES = {
   }},
 
   /* 정수의 곱셈 — 음수를 곱할 때마다 방향이 뒤집힌다: 컵을 한 번 뒤집으면 −, 두 번이면 다시 + */
-  'M-04': { seed:71, build(k){
+  'M-04': { seed:71, caps:{ P:7, list:[
+    [0.0, "(−1)을 곱할 때마다 컵이 뒤집힙니다.", "Each × (−1) flips the cup.", "每乘一次(−1)，杯子就翻一次。"],
+    [0.12, "두 번 뒤집으면 다시 +입니다.", "Flip twice and it is + again.", "翻两次又变回+。"],
+    [0.45, "음수가 짝수 개면 +, 홀수 개면 −", "Even number of negatives: +. Odd: −.", "负数个数为偶数得+，奇数得−。"],
+    [0.6, "한 번 더 뒤집으면 다시 −입니다.", "One more flip and it is − again.", "再翻一次又变回−。"]
+  ]},
+    build(k){
     const { THREE, scene, cam } = k;
     k.frame([0, 0.25, 0.35], 6.8, 28);
     k.table();
@@ -295,7 +346,12 @@ export const SCENES = {
   }},
 
   /* 거듭제곱과 부호 — (−2)⁴ = 16 과 −2⁴ = −16: 괄호 하나가 답을 바꾼다(돋보기로 괄호를 본다) */
-  'M-05': { seed:81, build(k){
+  'M-05': { seed:81, caps:{ P:7, list:[
+    [0.0, "(−2)⁴ = 16, −2⁴ = −16", "(−2)⁴ = 16, −2⁴ = −16", "(−2)⁴ = 16，−2⁴ = −16"],
+    [0.15, "괄호가 있으면 −2 전체를 네 번 곱합니다.", "With brackets, multiply the whole −2 four times.", "有括号时，把整个−2乘四次。"],
+    [0.55, "괄호가 없으면 2만 네 번 곱하고 −를 붙입니다.", "Without brackets, multiply 2 four times, then put − in front.", "没有括号时，只把2乘四次，再加上−。"]
+  ]},
+    build(k){
     const { THREE, scene, cam } = k;
     k.frame([0.1, 0, 0], 5.4, 50);
     k.table();
@@ -309,12 +365,17 @@ export const SCENES = {
     row(['(', '−2', ')', '^4', '=', '16'], -0.55);
     row(['−2', '^4', '=', '−16'], 0.55);
     /* 움직임: 괄호 두 패가 함께 들렸다 놓인다 — 이 괄호 하나가 16 과 −16 을 가른다 */
-    k.onFrame(t => { const p = cyc(t, 5); const u = hop(p, 0.15, 0.45); parens.forEach(g => { g.position.y = 0.3 * u; g.rotation.z = 0.08 * u * (g.position.x < -1.5 ? 1 : -1); }); });
+    k.onFrame(t => { const p = cyc(t, 7); const u = hop(p, 0.15, 0.45); parens.forEach(g => { g.position.y = 0.3 * u; g.rotation.z = 0.08 * u * (g.position.x < -1.5 ? 1 : -1); }); });
     k.lights({ envOpts:{ intensity:0.45 } });
   }},
 
   /* 혼합 계산 — −5 + 3 × (−4): 곱셈 먼저(①), 덧셈 나중(②) — 순서를 적은 조약돌 */
-  'M-06': { seed:91, build(k){
+  'M-06': { seed:91, caps:{ P:6, list:[
+    [0.0, "−5 + 3 × (−4)", "−5 + 3 × (−4)", "−5 + 3 × (−4)"],
+    [0.1, "① 곱셈 먼저: 3 × (−4) = −12", "① Multiply first: 3 × (−4) = −12", "① 先算乘法：3 × (−4) = −12"],
+    [0.45, "② 그다음 덧셈: −5 + (−12) = −17", "② Then add: −5 + (−12) = −17", "② 再算加法：−5 + (−12) = −17"]
+  ]},
+    build(k){
     const { THREE, scene, cam } = k;
     k.frame([-0.1, 0, 0.05], 5.4, 42);
     k.table();
@@ -333,7 +394,12 @@ export const SCENES = {
   }},
 
   /* 일차식 — hook: 상자 앞의 수는 상자 "안의 모든 것"에 곱해진다. 3(2x+5): 같은 상자 셋, 상자마다 x 둘과 1 다섯 */
-  'M-49': { seed:101, build(k){
+  'M-49': { seed:101, caps:{ P:6, list:[
+    [0.0, "3(2x + 5): 같은 상자가 셋", "3(2x + 5): three identical boxes", "3(2x + 5)：三个相同的盒子"],
+    [0.1, "앞의 3은 상자 안 모든 것에 곱해집니다.", "The 3 multiplies everything inside.", "前面的3要乘盒子里的每一样。"],
+    [0.7, "3(2x + 5) = 6x + 15", "3(2x + 5) = 6x + 15", "3(2x + 5) = 6x + 15"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0, 0.15, 0.3], 6.4, 50);
     k.table();
@@ -355,7 +421,12 @@ export const SCENES = {
   }},
 
   /* 일차방정식의 활용 — hook: 연속하는 세 수의 합이 48 → (x−1)+x+(x+1) = 3x, −1 과 +1 이 지워진다(15·16·17) */
-  'M-70': { seed:111, build(k){
+  'M-70': { seed:111, caps:{ P:7, list:[
+    [0.0, "연속하는 세 수: x − 1, x, x + 1", "Three consecutive numbers: x − 1, x, x + 1", "三个连续的数：x − 1, x, x + 1"],
+    [0.25, "−1과 +1이 서로 지워집니다.", "The −1 and +1 cancel out.", "−1和+1互相抵消。"],
+    [0.55, "합은 3x = 48, 그래서 x = 16", "The sum is 3x = 48, so x = 16.", "和是 3x = 48，所以 x = 16。"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0, 0.9, 0.2], 5.6, 22);
     k.table();
@@ -377,7 +448,12 @@ export const SCENES = {
   }},
 
   /* 유리수의 나눗셈 — 나눗셈은 역수를 곱하는 것: ÷ 2/5 → × 5/2, 카드를 뒤집는다 */
-  'M-07': { seed:121, build(k){
+  'M-07': { seed:121, caps:{ P:7, list:[
+    [0.0, "3/4 ÷ 2/5", "3/4 ÷ 2/5", "3/4 ÷ 2/5"],
+    [0.2, "나누는 수를 뒤집으면(역수) 곱셈이 됩니다.", "Flip the divisor (its reciprocal) and multiply.", "把除数颠倒过来(倒数)，就变成乘法。"],
+    [0.45, "3/4 × 5/2 = 15/8", "3/4 × 5/2 = 15/8", "3/4 × 5/2 = 15/8"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0, 0.2, 0.2], 6.2, 40);
     k.table();
@@ -402,7 +478,12 @@ export const SCENES = {
   }},
 
   /* 유한소수 — hook: 0.375 는 끝나는데 1/3 = 0.333… 은 왜 안 끝날까. 짧은 띠와 끝없이 풀리는 두루마리 */
-  'M-08': { seed:131, build(k){
+  'M-08': { seed:131, caps:{ P:8, list:[
+    [0.0, "3/8 = 0.375 — 끝나는 소수", "3/8 = 0.375: it ends", "3/8 = 0.375——有限小数"],
+    [0.35, "1/3 = 0.333… — 끝나지 않는 소수", "1/3 = 0.333…: it never ends", "1/3 = 0.333…——无限小数"],
+    [0.7, "분모 속에 2와 5만 있으면 끝납니다: 8 = 2 × 2 × 2", "Only 2s and 5s in the denominator: it ends. 8 = 2 × 2 × 2", "分母里只有2和5就会结束：8 = 2 × 2 × 2"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0.2, 0.1, 0.05], 6.4, 46);
     k.table();
@@ -428,7 +509,11 @@ export const SCENES = {
   }},
 
   /* 순환소수를 분수로 — history: 끝나지 않고 되풀이되는 소수는 반드시 분수로 돌아간다. 3 이 도는 고리와 1/3 */
-  'M-09': { seed:141, build(k){
+  'M-09': { seed:141, caps:{ P:8, list:[
+    [0.0, "3이 끝없이 되풀이됩니다: 0.3̇", "The 3 repeats forever: 0.3̇", "3无限循环：0.3̇"],
+    [0.5, "되풀이되는 소수는 분수로 돌아갑니다: 0.3̇ = 1/3", "A repeating decimal goes back to a fraction: 0.3̇ = 1/3", "循环小数可以化成分数：0.3̇ = 1/3"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0, 0.45, 0], 5.4, 30);
     k.table();
@@ -446,7 +531,12 @@ export const SCENES = {
   }},
 
   /* 정비례 — hook: 한 자루 500원인 연필 x 자루 → y = 500x. 1·2·3 자루와 동전 1·2·3 개 */
-  'M-51': { seed:151, build(k){
+  'M-51': { seed:151, caps:{ P:6, list:[
+    [0.0, "연필 한 자루에 500원: 1자루 500원", "One pencil costs 500 won", "一支铅笔500韩元"],
+    [0.28, "2자루 1000원, 3자루 1500원", "Two: 1000 won. Three: 1500 won.", "两支1000，三支1500"],
+    [0.62, "자루 수가 2배, 3배면 값도 2배, 3배: y = 500x", "Twice the pencils, twice the price: y = 500x", "支数变2倍、3倍，价钱也变2倍、3倍：y = 500x"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0.1, 0.1, 0], 5.6, 50);
     k.table();
@@ -471,7 +561,12 @@ export const SCENES = {
   }},
 
   /* 정비례·반비례 그래프 — hook: 하나는 곧은 직선, 하나는 갈라진 곡선. 좌표판 위에 휜 철사 */
-  'M-69': { seed:161, build(k){
+  'M-69': { seed:161, caps:{ P:8, list:[
+    [0.0, "정비례는 곧은 직선, 반비례는 두 갈래 곡선입니다.", "Direct proportion is a straight line; inverse is a two-part curve.", "正比例是直线，反比例是分成两支的曲线。"],
+    [0.08, "직선: x가 커지면 y도 같은 비율로 커집니다.", "Line: as x grows, y grows in step.", "直线：x变大，y也按同样的比例变大。"],
+    [0.55, "곡선: x가 커질수록 y는 작아지고, 축에 닿지 않습니다.", "Curve: as x grows, y shrinks, never touching the axis.", "曲线：x越大，y越小，但永远碰不到坐标轴。"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0, 0.2, 0], 6.0, 52);
     k.table();
@@ -500,7 +595,13 @@ export const SCENES = {
   }},
 
   /* 대표값 — 2, 5, 7, 9, 12 를 정렬하면 가운데가 중앙값 7 */
-  'M-84': { seed:171, build(k){
+  'M-84': { seed:171, caps:{ P:9, list:[
+    [0.0, "자료 2, 5, 7, 9, 12", "Data: 2, 5, 7, 9, 12", "数据：2, 5, 7, 9, 12"],
+    [0.05, "섞여 있으면 가운데를 알 수 없습니다.", "Mixed up, you cannot see the middle.", "打乱了就看不出中间。"],
+    [0.45, "작은 것부터 줄을 세웁니다.", "Line them up from smallest.", "从小到大排好。"],
+    [0.72, "가운데 값 7이 중앙값입니다.", "The middle value, 7, is the median.", "中间的7就是中位数。"]
+  ]},
+    build(k){
     const { THREE, scene } = k;
     k.frame([0, 0.55, 0.2], 5.6, 24);
     k.table();
