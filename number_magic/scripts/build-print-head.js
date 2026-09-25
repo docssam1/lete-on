@@ -33,9 +33,15 @@ server.listen(0, async () => {
   let table = {};
   const magic = {};
   let qr = 0;
-  /* MAGIC_ONLY=1 — 유형 표는 지금 파일 그대로 두고 마법 노트만 다시 잰다(유형 표는 한 시간 넘게 걸린다) */
-  const MAGIC_ONLY = !!process.env.MAGIC_ONLY;
-  if(MAGIC_ONLY){ const w = {}; new Function('window', fs.readFileSync(path.join(ROOT, 'data', 'print-head.js'), 'utf8'))(w); table = w.NM_PRINT_HEAD || {}; qr = w.NM_PRINT_HEAD_QR || 0; }
+  /* 부분만 다시 재기 — PARTS=magic,word 처럼(기본 head,magic,word 전부). 유형 표(head)는 한 시간 넘게 걸린다.
+     재지 않는 부분은 지금 파일 값을 그대로 둔다. MAGIC_ONLY=1 은 PARTS=magic 과 같다. */
+  const PARTS = new Set((process.env.PARTS || (process.env.MAGIC_ONLY ? 'magic' : 'head,magic,word')).split(','));
+  const MAGIC_ONLY = !PARTS.has('head');
+  let word = {}, keepMagic = null;
+  { const w = {}; try { new Function('window', fs.readFileSync(path.join(ROOT, 'data', 'print-head.js'), 'utf8'))(w); } catch(e){}
+    if(!PARTS.has('head')){ table = w.NM_PRINT_HEAD || {}; qr = w.NM_PRINT_HEAD_QR || 0; }
+    if(!PARTS.has('word')) word = w.NM_PRINT_WORD || {};
+    if(!PARTS.has('magic')) keepMagic = w.NM_PRINT_MAGIC || {}; }
   for(const lang of ['ko', 'en', 'zh']){
     const page = await browser.newPage({ viewport:{ width:1100, height:1100 } });
     await page.route('**/*', r => /jsdelivr|supabase|google/.test(r.request().url()) ? r.abort() : r.continue());
@@ -135,7 +141,41 @@ server.listen(0, async () => {
     }, BANDS);
     /* 마법 노트(매거진형 개념 노트) — 유닛마다 밴드별 [판, [단계…], 규칙·체크, 첫 장 쓸 높이, 다음 장 쓸 높이] mm.
        renderMagicNotePage 가 이 값으로 장을 채운다(저학년 큰 글씨에서 두 단계가 첫 장에 들지 않았다 — C20 C-22). */
-    const mg = await page.evaluate(async BANDS => {
+    /* 문장제 회차(wordType 'all') — 같은 유형·레벨이라도 문장 카드는 식 한 줄보다 훨씬 높다(NS5 L1 young: 식 12.7mm,
+       문장 카드 약 37mm). 유형 표의 한 줄 높이로 칸을 짜면 1.5배 학습량 C2 마지막 장이 넘쳤다. 밴드별 한 줄 필요 높이(mm). */
+    if(PARTS.has('word')){
+      const wd = await page.evaluate(async BANDS => {
+        const mm = px => px / (96 / 25.4), out = {};
+        const st = document.createElement('style');
+        st.textContent = '.nm-w2-grid{grid-template-rows:none!important;grid-auto-rows:max-content!important;flex:0 0 auto!important;height:auto!important}.nm-w2-item.nm-print-item{overflow:visible!important;min-height:0!important}';
+        for(const t of Object.keys(NM_THREADS)) for(const l of NM_THREADS[t].levels){
+          const row = [];
+          for(const [band, grade] of BANDS){
+            let need = null;
+            for(const seed of ['word', 'word-b']){
+              try { NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, wordType:'all' }); } catch(e){ continue; }
+              await new Promise(requestAnimationFrame);
+              const items = [...document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item')];
+              if(!document.querySelector('.nm-print-sheet .nm-w2-grid .nm-print-item-word')) continue;
+              document.head.appendChild(st); await new Promise(requestAnimationFrame);
+              const grid = document.querySelector('.nm-print-sheet .nm-w2-grid');
+              const gap = parseFloat(getComputedStyle(grid).rowGap) || 0;
+              document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-print-item-word').forEach(e => { need = Math.max(need || 0, Math.ceil(mm(e.getBoundingClientRect().height + gap) * 10) / 10); });
+              st.remove();
+            }
+            row.push(need);
+          }
+          if(row.some(v => v != null)) out[t + '@' + l.id] = row;
+        }
+        return out;
+      }, BANDS);
+      for(const [k, row] of Object.entries(wd)){
+        const cur = word[k] || (word[k] = [null, null, null]);
+        row.forEach((v, i) => { if(v != null) cur[i] = cur[i] == null ? v : Math.max(cur[i], v); });
+      }
+      console.log(`${lang}: 문장제 ${Object.keys(wd).length}개 레벨`);
+    }
+    const mg = !PARTS.has('magic') ? {} : await page.evaluate(async BANDS => {
       const mm = px => px / (96 / 25.4), out = {};
       for(const uid of Object.keys(window.NM_UNITS || {})){
         const u = NM_UNITS[uid]; if(!u.discover || !Array.isArray(u.discover.stages) || !u.discover.stages.length) continue;
@@ -197,7 +237,9 @@ window.NM_PRINT_HEAD = ${JSON.stringify(table)};
 window.NM_PRINT_HEAD_QR = ${qr};
 /* 마법 노트 유닛마다 [young, mid, senior] 밴드별 [판 높이, [단계 높이…], 규칙·체크·생각해 보기 높이, 첫 장 쓸 높이, 다음 장 쓸 높이] mm
    — ko·en·zh 중 가장 큰(쓸 높이는 가장 작은) 값. renderMagicNotePage 가 장을 나눈다. ${Object.keys(magic).length}개. */
-window.NM_PRINT_MAGIC = ${JSON.stringify(magic)};
+window.NM_PRINT_MAGIC = ${JSON.stringify(keepMagic || magic)};
+/* 문장제 회차(wordType 'all') 한 줄 필요 높이, 레벨마다 [young, mid, senior] mm — 두 시드·세 언어 중 가장 큰 값 */
+window.NM_PRINT_WORD = ${JSON.stringify(word)};
 `;
   fs.writeFileSync(path.join(ROOT, 'data', 'print-head.js'), body);
   console.log(`첫 장 머리 높이 ${n}개 레벨 → data/print-head.js (재도전 QR ${qr}mm)`);

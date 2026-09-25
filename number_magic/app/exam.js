@@ -4894,7 +4894,11 @@ function renderRoundPagesBody(item, opts){
     const row = (window.NM_PRINT_HEAD || {})[m.t + '@' + (m.lv || 1)]; if(!row) return 0;
     const b = row[{ young:0, mid:1, senior:2 }[band]] || worstBand(row);
     return b && b[2] || 0; }));
-  const rowNeed = headBand && (headBand[2] || mixNeed) ? Math.max(headBand[2] || 0, mixNeed) * fsR + 3 : 0;
+  /* 문장제가 섞인 회차는 문장 카드 높이(NM_PRINT_WORD — 같은 유형의 wordType 'all' 을 잰 값)도 본다.
+     식 한 줄 높이로 칸을 짜면 카드가 칸을 넘었다(1.5배 학습량 C2 NS5 L1 young: 식 12.7mm, 카드 37mm). */
+  const wordRow = problems.some(p => p.word) ? (window.NM_PRINT_WORD || {})[item.thread + '@' + item.level] : null;
+  const wordNeed = wordRow ? (wordRow[{ young:0, mid:1, senior:2 }[band]] || (opts.mixed && !opts.band ? Math.max(...wordRow.filter(x => x != null)) : 0) || 0) : 0;
+  const rowNeed = headBand && (headBand[2] || mixNeed || wordNeed) ? Math.max(headBand[2] || 0, mixNeed, wordNeed) * fsR + 3 : 0;
   const midPage = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] || !!item.pacing;
   if(rowNeed && headBand[3] && layout.type !== 'train'){
     const fit = Math.max(1, Math.floor(headBand[3] / rowNeed));
@@ -4997,7 +5001,9 @@ function renderRoundPagesBody(item, opts){
     let avail = plainFirst;
     if(problems.length <= firstRows * layout.cols) avail -= (window.NM_PRINT_HEAD_QR || 0);
     const fitRows = Math.floor(avail / (rowNeed || layout.pitch || 20));
-    firstRows = Math.max(1, Math.min(firstRows, fitRows));
+    /* 중등 연습 면은 한 쪽 6문항 이상(가득 찬 장의 minRows 와 같은 규칙) — 점검 6문항을 4+2 로 쪼개지 않는다 */
+    const minFirst = midPage ? Math.ceil(Math.min(6, problems.length) / layout.cols) : 1;
+    firstRows = Math.max(minFirst, Math.min(firstRows, fitRows));
   } else if(headBand && headBand[0] != null && firstRows > 0){
     let avail = headBand[0] - headBand[1] * (fsR - 1);
     if(problems.length <= firstRows * layout.cols && !item.pacing) avail -= (window.NM_PRINT_HEAD_QR || 0);
