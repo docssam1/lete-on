@@ -382,7 +382,7 @@ export async function mountTitle3D(container, opts){
   const camBase = new THREE.Vector3(), tgtBase = new THREE.Vector3();
   /* 버튼의 왼쪽 위 좌표 — 모드·소품은 물건 발밑, 이어서 모험은 문 가운데 */
   function labelPos(o, ax, ay, s){
-    if(o.place === 'center') return [ax - s[0] / 2, ay - s[1] / 2];
+    if(o.place === 'center' || o.place === 'top') return [ax - s[0] / 2, ay - s[1] / 2];
     return [ax - s[0] / 2, ay + 4];
   }
 
@@ -413,6 +413,10 @@ export async function mountTitle3D(container, opts){
     if(opts.name && player){
       const [tx, ty] = proj(player.tagW);
       tag.style.transform = `translate3d(${Math.round(tx)}px,${Math.round(ty)}px,0) translate(-50%,-100%)`;
+      /* 이름표가 버튼에 가리면 숨긴다(인사말에 이름이 이미 있다) */
+      const tw = tag.offsetWidth || 60, th = tag.offsetHeight || 22, x0 = tx - tw / 2, y0 = ty - th;
+      const hidden = rects.some(R => x0 < R.x + R.w && R.x < x0 + tw && y0 < R.y + R.h && R.y < y0 + th);
+      tag.style.visibility = hidden ? 'hidden' : '';
     }
   }
 
@@ -636,7 +640,7 @@ function buildWorld(k, choices, playerCanvas){
     const beam = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 3.2), new THREE.MeshBasicMaterial({ map:glowTex, color:'#ffcf7a', transparent:true, opacity:0.5, depthWrite:false, blending:THREE.AdditiveBlending }));
     beam.rotation.x = -Math.PI / 2; beam.position.set(0, 0.03, 1.5); beam.scale.set(1.3, 1, 1); g.add(beam);
     cast(g); portal.castShadow = false; beam.castShadow = false; s1.castShadow = false;
-    return { g, anim, h:5.4, w:4.2, d:1.9, anchor:V3(0, base + 1.35, 0.3), place:'center', anchorBelow:V3(0, 0, 1.0) };
+    return { g, anim, h:5.4, w:4.2, d:1.9, anchor:V3(0, base + 1.35, 0.3), place:'center', anchorBelow:V3(0, 0, 1.0), anchorTop:V3(0, base + 3.05, 0.3) };
   };
 
   /* 진단하기 — 나침반 탑 */
@@ -995,7 +999,7 @@ function buildWorld(k, choices, playerCanvas){
     portrait:{ pitch:46, fov:40, dist:24, target:[0, 0.5, 0.8], island:[5.4, 11.8, 0, 0.6],
       pos:{ continue:[-0.55, -8.0, 1.12], diag:[-2.3, -2.0, 0.72], game:[2.35, -2.0, 0.72], sheet:[-2.3, 3.0, 0.72], road:[2.35, 3.0, 0.72],
         story:[-3.15, 7.8, 0.66], dex:[-1.05, 7.8, 0.66], hist:[1.05, 7.8, 0.66], magazine:[3.15, 7.8, 0.66] },
-      player:[2.3, -6.6, 0.95], plaza:[0, -6.2, 3.0, 2.3], posts:[[-0.9, -4.6], [2.1, -4.6], [-4.3, 0.6], [4.3, 0.6]], motes:[4.8, 4, 10, 0, 0.8], place:{} },
+      player:[-0.55, -6.15, 0.95], plaza:[-0.4, -6.2, 3.0, 2.3], posts:[[-0.9, -4.6], [2.1, -4.6], [-4.3, 0.6], [4.3, 0.6]], motes:[4.8, 4, 10, 0, 0.8], place:{ continue:'top' } },
   };
   let extra = 0;
   function applyLayout(name){
@@ -1013,7 +1017,7 @@ function buildWorld(k, choices, playerCanvas){
       o.baseScale = p[2];
       o.holder.updateMatrixWorld(true);
       o.place = (L.place && L.place[key]) || o.def.place || 'below';
-      const anc = o.place === 'below' && o.def.anchorBelow ? o.def.anchorBelow : o.def.anchor;
+      const anc = o.place === 'below' && o.def.anchorBelow ? o.def.anchorBelow : o.place === 'top' && o.def.anchorTop ? o.def.anchorTop : o.def.anchor;
       o.anchorW.copy(anc).multiplyScalar(p[2]).add(o.holder.position);
       const hw = o.def.w / 2 * p[2], hh = o.def.h * p[2], hd = o.def.d / 2 * p[2], c = o.holder.position;
       o.box = [V3(c.x - hw, 0, c.z + hd), V3(c.x + hw, 0, c.z + hd), V3(c.x - hw, hh, c.z - hd), V3(c.x + hw, hh, c.z - hd), V3(c.x - hw, hh, c.z + hd), V3(c.x + hw, hh, c.z + hd)];

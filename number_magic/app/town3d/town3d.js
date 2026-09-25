@@ -1382,11 +1382,16 @@ function buildWorld(scene, renderer, rng, track){
     for(let i = 0; i < 4; i++){ b.cyl(0.1, 0.1, 1.0, 'timber', 1.8 + i * 1.3, dy - 0.8, -2.55, 6); b.cyl(0.1, 0.1, 1.0, 'timber', 1.8 + i * 1.3, dy - 0.8, -1.05, 6); }
     g.add(b.build());
     const bb = builder(M);
-    const hull = new THREE.CylinderGeometry(0.62, 0.62, 2.4, 14, 1, true, Math.PI / 2, Math.PI); hull.rotateZ(Math.PI / 2);
-    bb.add(hull, 'wood', 0, 0.3, 0, 0, 0, 0, 1, 0.7, 1);
-    bb.box(2.2, 0.08, 1.1, 'woodL', 0, -0.05, 0);
-    bb.box(0.12, 0.08, 1.2, 'timber', 0.4, 0.2, 0);
-    bb.add(new THREE.CylinderGeometry(0.04, 0.04, 2.0, 5), 'timber', 0.3, 0.35, 0.6, 0.3, 0, 1.1);
+    /* 조각배 — 뾰족한 렌즈 모양 선체 + 속이 빈 듯 어두운 바닥 + 가로 좌석 + 노 */
+    const lens = (L2, W2) => { const sh = new THREE.Shape(); sh.moveTo(-L2, 0); sh.quadraticCurveTo(0, W2 * 2, L2, 0); sh.quadraticCurveTo(0, -W2 * 2, -L2, 0); return sh; };
+    const hullG = new THREE.ExtrudeGeometry(lens(1.3, 0.55), { depth:0.42, bevelEnabled:true, bevelSize:0.05, bevelThickness:0.05, bevelSegments:1, curveSegments:10 });
+    hullG.rotateX(-Math.PI / 2);
+    bb.add(hullG, 'wood', 0, -0.12, 0);
+    bb.add(new THREE.ShapeGeometry(lens(1.08, 0.44), 10).rotateX(-Math.PI / 2), 'timber', 0, 0.36, 0);
+    bb.box(0.16, 0.06, 0.95, 'woodL', 0.25, 0.3, 0);
+    bb.box(0.16, 0.06, 0.8, 'woodL', -0.55, 0.3, 0);
+    bb.add(new THREE.CylinderGeometry(0.035, 0.035, 2.0, 5), 'woodL', 0.1, 0.45, 0.35, 0.25, 0, 1.25);
+    bb.add(new THREE.BoxGeometry(0.1, 0.03, 0.34), 'woodL', 0.95, 0.12, 0.7, 0, 0.3, 0);
     boat = bb.build(); boat.position.set(6.1, dy - 0.05, -0.2); boat.rotation.y = 0.2; g.add(boat);
     anim.push(t => { boat.position.y = dy - 0.05 + Math.sin(t * 1.3) * 0.05; boat.rotation.z = Math.sin(t * 1.1) * 0.04; });
   }
