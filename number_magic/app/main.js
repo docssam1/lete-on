@@ -5265,9 +5265,27 @@ function stepDiscover(body,u){
           m?`${m.icon} ${esc(L(m.name))}`:'🧪 '+labLead}</button>`;
       }).join('')}</div>`
     :'';
-  body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
+  /* 매거진형(2026-09-25, 원장 "이런 식으로 매거진 형으로 … 풀고 싶게" · "이렇게 디자인 둘 다") — 인쇄의
+     수학 이야기·개념 노트와 같은 짜임: 키커 · 큰 제목 · 여는 물음 · 이야기 카드(두 컷 + 역사 문단) · 네 컷 띠 ·
+     개념 노트. 유아(kid-note)는 예전 그림책 모양 그대로. 내용은 전부 유닛·만화 데이터. */
+  const mzKick=(ko,en,zh)=>`<div class="nm-mzu-kick">${S.lang==='ko'?ko:S.lang==='en'?en:zh}</div>`;
+  const mzStory=(!kid&&st)?`<div class="nm-mzu">
+      ${mzKick('MATH STORY · 수학 이야기','MATH STORY','MATH STORY · 数学故事')}
+      <div class="nm-mzu-top"><div><h2 class="nm-mzu-title">${esc(L(u.title))}</h2>
+        ${st.hook?`<p class="nm-mzu-sub">${L(st.hook)}</p>`:''}</div>
+        <img class="nm-mzu-char" src="${isMidHigh?'assets/docssam.png':'assets/characters/numi-0-happy.png'}" alt=""></div>
+      ${artHtml}
+      ${comic?`<div class="nm-mzu-story"><div class="nm-mzu-story-art">${comic.panels.slice(0,2).map(p=>`<div>${p.art}</div>`).join('')}</div>
+        <div class="nm-mzu-story-txt"><div class="nm-mzu-mini">${S.lang==='ko'?'그때 이야기':S.lang==='en'?'Back then':'那时的故事'}</div>
+        ${st.history?`<p>${L(st.history)}</p>`:''}</div></div>
+      <div class="nm-mzu-sec"><span>01—0${Math.min(4,comic.panels.length)}</span>${S.lang==='ko'?'네 컷으로 읽기':S.lang==='en'?'The story in four frames':'四格读故事'}</div>
+      <div class="nm-mzu-strip">${comic.panels.slice(0,4).map((p,i)=>`<figure><div class="nm-mzu-strip-art">${p.art}</div><figcaption><i>${i+1}</i>${L(p.text)}</figcaption></figure>`).join('')}</div>`
+      :(st.history?`<div class="nm-mzu-story solo"><div class="nm-mzu-story-txt"><div class="nm-mzu-mini">${S.lang==='ko'?'그때 이야기':S.lang==='en'?'Back then':'那时的故事'}</div><p>${L(st.history)}</p></div></div>`:'')}
+      ${mzKick('CONCEPT · '+L(d.title),'CONCEPT · '+L(d.title),'CONCEPT · '+L(d.title))}
+    </div>`:'';
+  body.innerHTML=`<div class="nm-card${kid?' kid-note':''}${mzStory?' nm-mzu-card':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
-    <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
+    ${mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   body.querySelectorAll('.nm-lab-link[data-lab]').forEach(el=>{

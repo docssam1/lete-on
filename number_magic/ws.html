@@ -154,6 +154,20 @@
   var cad = (q.get('cad') === 'w2' || k === 2) ? 'w2' : 'w1';
   /* 학습량 배수(1·1.25·1.5) — 없으면 1배. exam.js getAmount 가 읽는다 */
   if(q.get('amt')) window.NM_WS_AMOUNT = q.get('amt');
+  /* 유닛 데이터는 이 과정에 쓰는 것만 불러온다(2026-09-25). 앱(index.html)은 214개를 다 싣지만 링크 학습지는
+     과정 하나라 몇 개면 된다. 이게 없으면 마법 노트 장이 빠지고, 매거진형 수학 이야기(수학사 지면)의
+     여는 물음·역사 문단·생각해 보기가 비었다(앱 편지함 인쇄와 다른 학습지가 나갔다). */
+  var unitIds = {};
+  course.sessions.forEach(function(s){
+    (s.magic || []).forEach(function(u){ (Array.isArray(u) ? u : [u]).forEach(function(x){ if(x) unitIds[x] = 1; }); });
+    (s.drills || []).concat(s.creative || []).forEach(function(d){ var th = d && NM_THREADS[d.t]; if(th && th.unit) unitIds[th.unit] = 1; });
+  });
+  var loads = Object.keys(unitIds).filter(function(id){ return /^[A-Za-z0-9-]+$/.test(id) && !(window.NM_UNITS && NM_UNITS[id]); }).map(function(id){
+    return new Promise(function(res){ var sc = document.createElement('script'); sc.src = 'data/units/' + id + '.js';
+      sc.onload = sc.onerror = function(){ res(); }; document.head.appendChild(sc); });
+  });
+  Promise.all(loads).then(build);
+  function build(){
   /* 봉투 구성은 exam.js weeklyEnvelope 하나(2026-09-08) — 앱 편지함 인쇄와 같은 학습지가 나온다.
      세션 선택(주 2회 두 번째 회차)·필산 회차·창의 연산 회차·문장제(대안 포함)·표지·마법 유닛 전부 그쪽. */
   var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad });
@@ -180,6 +194,7 @@
   var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
   var timeout = new Promise(function(r){ setTimeout(r, 8000); });
   Promise.race([fontsReady, timeout]).then(function(){ setTimeout(function(){ window.NM_WS_READY = true; }, 300); });
+  }
 })();
 </script>
 </body>

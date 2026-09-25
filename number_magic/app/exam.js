@@ -468,6 +468,43 @@
     word-break:keep-all; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mz-src { flex:0 0 auto; margin-top:3mm; font-size:9.5px; line-height:1.6; color:#777;
     word-break:keep-all; }
+  /* 매거진형 수학 이야기(2026-09-25) — 참고: 원장이 보낸 과학 이야기 지면. 색은 학습지 청록·금색만. */
+  .nm-mzs-page { gap:0; }
+  .nm-mzs-band { flex:0 0 auto; display:flex; align-items:center; gap:3mm; background:#245b60; color:#fff; border-radius:3mm 3mm 0 0;
+    padding:2.5mm 4mm; font-size:12px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-band b { font-size:13px; }
+  .nm-mzs-band span { margin-left:auto; font-size:9.5px; border:1px solid #ffffff99; border-radius:1.5mm; padding:.6mm 2.4mm; }
+  .nm-mzs-dash { flex:0 0 auto; height:1.6mm; background:repeating-linear-gradient(90deg,#C9A063 0 9mm,#fff 9mm 10mm);
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-kick { flex:0 0 auto; align-self:flex-start; margin-top:5mm; background:#fbf3df; border-left:3px solid #C9A063; padding:1mm 3mm;
+    font-size:10.5px; font-weight:800; letter-spacing:.05em; color:#6b5122; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-title { flex:0 0 auto; margin:2.5mm 0 1mm; font-size:27px; line-height:1.18; font-weight:900; color:#245b60; letter-spacing:-.02em; }
+  .nm-mzs-sub { flex:0 0 auto; margin:0 0 4mm; font-size:12.5px; line-height:1.6; color:#5c6b70; word-break:keep-all; }
+  .nm-mzs-story { flex:0 0 auto; display:grid; grid-template-columns:84mm 1fr; gap:5mm; align-items:center; border:1.6px solid #8fb3b5;
+    background:#f7faf9; border-radius:4mm; padding:3.5mm 5mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-story-art { display:grid; grid-template-columns:1fr 1fr; gap:1.5mm; }
+  .nm-mzs-story-art svg { width:100%; height:auto; display:block; }
+  .nm-mzs-story-txt h3 { margin:.5mm 0 1.5mm; font-size:14.5px; line-height:1.4; color:#245b60; word-break:keep-all; }
+  .nm-mzs-story-txt p { margin:0; font-size:12px; line-height:1.72; color:#20343b; word-break:keep-all; }
+  .nm-mzs-mini { font-size:9.5px; font-weight:800; color:#a3521c; letter-spacing:.06em; margin-bottom:1mm; }
+  .nm-mzs-sec { flex:0 0 auto; display:flex; gap:3mm; align-items:baseline; margin:5mm 0 2.5mm; padding-bottom:1.2mm;
+    border-bottom:1.3px solid #245b60; font-size:14px; font-weight:800; color:#20343b; }
+  .nm-mzs-sec span { font-size:10.5px; font-weight:900; color:#a3521c; }
+  .nm-mzs-strip { flex:1; min-height:0; display:grid; grid-template-columns:repeat(4,1fr); gap:3.5mm; align-content:start; }
+  .nm-mzs-strip figure { margin:0; display:flex; flex-direction:column; gap:2mm; min-width:0; }
+  .nm-mzs-strip-art { background:#f3f6f6; border-radius:2.5mm; padding:1.5mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-strip-art svg { width:100%; height:auto; display:block; max-height:44mm; }
+  .nm-mzs-strip figcaption { font-size:11.5px; line-height:1.65; color:#20343b; word-break:keep-all; }
+  .nm-mzs-strip figcaption i { display:inline-grid; place-items:center; width:4.6mm; height:4.6mm; margin-right:1.2mm; border-radius:50%;
+    background:#245b60; color:#fff; font-style:normal; font-weight:900; font-size:8.5px; vertical-align:1px;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-play { flex:0 0 auto; margin-top:4mm; border:1.3px solid #cfdcdc; border-radius:3.5mm; padding:2.5mm 4mm; background:#fbfcfc; }
+  .nm-mzs-write { flex:0 0 auto; margin-top:4mm; border:1.6px solid #8fb3b5; border-radius:4mm; padding:3mm 5mm 1.5mm; }
+  .nm-mzs-write h3 { margin:.5mm 0 1mm; font-size:13.5px; line-height:1.5; color:#20343b; word-break:keep-all; }
+  .nm-mzs-lines i { display:block; height:7.5mm; border-bottom:1px solid #d6dfe0; }
+  /* 남는 높이는 덩어리 사이에 고르게 — 한곳에 몰린 빈칸이 없게 */
+  .nm-mzs-page > .nm-mzs-story, .nm-mzs-page > .nm-mzs-sec, .nm-mzs-page > .nm-mzs-play, .nm-mzs-page > .nm-mzs-write { margin-top:auto; }
+  .nm-mzs-strip { flex:0 0 auto; }
   .nm-hist-labs { flex:0 0 auto; margin-top:6mm; padding-top:5mm; border-top:1px solid #E4E2DC; }
   .nm-hist-labs-t { font-size:11px; font-weight:800; color:#0E2C57; margin-bottom:4mm; }
   /* 실험실 두 개를 나란히(2026-09-06) — 세로로 쌓으면 오른쪽 90mm가 비었다. 1개·3개여도 grid라 문제없다. */
@@ -590,6 +627,25 @@
   .nm-w2-item-vis .nm-divbox { margin:4px auto 0; }
   /* 마법 노트 지면 */
   .nm-w2-page-magic { gap:0; }
+  /* 매거진형 개념 노트(2026-09-25) */
+  .nm-mzc-head { flex:0 0 auto; margin-bottom:2mm; }
+  /* 머리 제목 줄("4 마법 노트 · …")은 매거진 띠·제목과 겹친다 — 이름·날짜 줄만 남긴다. 회차 번호는 띠로 */
+  .nm-w2-page-magic .nm-w2-head-row { display:none; }
+  .nm-w2-page-magic .nm-w2-head { margin-bottom:3mm; }
+  .nm-mzs-no { display:inline-grid; place-items:center; width:6.5mm; height:6.5mm; border-radius:50%; background:#fff; color:#245b60;
+    font-style:normal; font-weight:900; font-size:11px; }
+  .nm-mzc-top { display:flex; align-items:flex-end; gap:4mm; }
+  .nm-mzc-top > div { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .nm-mzc-mascot { flex:0 0 auto; width:22mm; height:auto; margin-bottom:3mm; }
+  .nm-w2-page-magic .nm-mzs-title { font-size:calc(25px * var(--ws-fs, 1)); }
+  .nm-w2-page-magic .nm-mzs-sub { margin-bottom:2mm; }
+  .nm-w2-page-magic .nm-mn-stage { counter-increment:mzc; flex-direction:column; gap:1.5mm; border-top:1.3px solid #245b60; padding:3mm 0 2mm; }
+  .nm-w2-page-magic .nm-mn-stages { counter-reset:mzc; }
+  .nm-w2-page-magic .nm-mn-tag { background:none; color:#a3521c; border-radius:0; padding:0; font-size:calc(11px * var(--ws-fs, 1)); letter-spacing:.04em; }
+  .nm-mn-book { margin-top:2mm; background:#f3f6f6; border-left:3px solid #245b60; border-radius:0 2.5mm 2.5mm 0; padding:2mm 3mm;
+    font-size:calc(11.5px * var(--ws-fs, 1)); line-height:1.6; color:#20343b; word-break:keep-all; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mn-book > b:first-child { display:block; font-size:calc(9.5px * var(--ws-fs, 1)); color:#245b60; letter-spacing:.06em; margin-bottom:.5mm; }
+  .nm-mn-book b { color:#245b60; }
   .nm-mn-board { flex:0 0 auto; margin-bottom:7px; }
   .nm-mn-kicker { font-size:calc(10px * var(--ws-fs, 1)); color:#245b60; font-weight:800; letter-spacing:1px; margin-bottom:3px; }
   .nm-mn-board .nm-w2-concept-badge { font-size:calc(23px * var(--ws-fs, 1)); }
@@ -1999,13 +2055,6 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
   }
   if(!comic && !labFiles.length) return '';
 
-  const panels = comic ? comic.panels.slice(0, 4).map((pn, i) => `
-      <figure class="nm-hist-panel">
-        <span class="nm-hist-no">${i + 1}</span>
-        <div class="nm-hist-art">${pn.art || ''}</div>
-        <figcaption>${esc(pickL(pn.text) || '')}</figcaption>
-      </figure>`).join('') : '';
-
   /* 실험실 블록은 <a>(PDF 링크 주석 — 휴대폰으로 열어 보는 부모가 바로 누른다) + 읽을 수 있는 주소 한 줄.
      이모지 아이콘은 인쇄에서 뺀다(흑백 프린터·글꼴 의존). */
   const labs = labFiles.slice(0, 2).map(f => {
@@ -2025,18 +2074,47 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
   /* 제목: 스레드에서 찾은 만화면 그 회차 이름, 과정의 마법 유닛에서 찾은 만화면 과정 제목
      (2026-09-07 — C4 는 스레드 유닛이 없어 제목 칸이 비어 나왔다). */
   const topicName = comicThread ? (pickL(comicThread.name) || '') : (pickL(comic && comic.title) || fallbackTitle || '');
-  return `<div class="nm-w2-page nm-hist-page">
-  <div class="nm-hist-head">
-    <span class="nm-hist-kicker">${esc(lk('수학사 이야기','A Story from the History of Math','数学史小故事'))}</span>
-    ${topicName ? `<b>${esc(topicName)}</b>` : ''}
-  </div>
-  ${comic ? `<div class="nm-hist-grid">${panels}</div>` : ''}
-  ${labs ? `<div class="nm-hist-labs">
-    <div class="nm-hist-labs-t">${esc(lk('휴대폰으로 QR을 찍으면 실험실이 열려요 — 손으로 움직여 보는 화면이에요.',
-      'Scan with a phone to open the lab — a screen you can move with your hands.',
-      '用手机扫码打开实验室——可以动手操作的画面。'))}</div>
+  /* 매거진형 수학 이야기(2026-09-25, 원장 "이런 식으로 매거진 형으로 … 풀고 싶게" · "이렇게 디자인 둘 다").
+     네 컷 만화를 그대로 두 컷 크게 보여 주고(이야기 카드), 네 컷은 "한눈에 읽기" 띠로, 유닛의 역사 문단·
+     여는 물음·생각해 보기 물음을 한 장에 싣는다. 내용은 전부 유닛·만화 데이터 — 지면에서 새로 지어내지 않는다. */
+  const u = comicUnit ? (window.NM_UNITS || {})[comicUnit] : null;
+  const story = (u && u.discover && u.discover.story) || {};
+  const hook = pickL(story.hook) || '';
+  const history = pickL(story.history) || '';
+  /* 개념 노트의 "생각해 보기"와 겹치지 않게 — 여기서는 읽은 것을 제 말로 적게 한다 */
+  const open = comic ? lk('이 이야기에서 새로 안 것 한 가지를 적어 보세요.', 'Write one thing you learned from this story.', '写下你从这个故事里新知道的一件事。') : '';
+  const mzTitle = (u && pickL(u.title)) || topicName;
+  const kicker = esc(lk('MATH STORY · 수학 이야기', 'MATH STORY', 'MATH STORY · 数学故事'));
+  const storyCard = comic ? `<div class="nm-mzs-story">
+    <div class="nm-mzs-story-art">${comic.panels.slice(0, 2).map(pn => `<div>${pn.art || ''}</div>`).join('')}</div>
+    <div class="nm-mzs-story-txt">
+      <div class="nm-mzs-mini">${esc(lk('그때 이야기', 'Back then', '那时的故事'))}</div>
+      ${u && u.subtitle ? `<h3>${esc(pickL(u.subtitle))}</h3>` : ''}
+      <p>${esc(history || comic.panels.slice(0, 2).map(pn => pickL(pn.text) || '').join(' '))}</p>
+    </div>
+  </div>` : '';
+  const strip = comic ? `<div class="nm-mzs-sec"><span>01—${String(Math.min(4, comic.panels.length)).padStart(2, '0')}</span>${esc(lk('네 컷으로 읽기', 'The story in four frames', '四格读故事'))}</div>
+  <div class="nm-mzs-strip">${comic.panels.slice(0, 4).map((pn, i) => `
+    <figure><div class="nm-mzs-strip-art">${pn.art || ''}</div><figcaption><i>${i + 1}</i>${esc(pickL(pn.text) || '')}</figcaption></figure>`).join('')}
+  </div>` : '';
+  const labsHtml = labs ? `<div class="nm-mzs-play">
+    <div class="nm-mzs-mini">${esc(lk('PLAY · 손으로 움직여 보기', 'PLAY · Try it with your hands', 'PLAY · 动手试一试'))}</div>
     <div class="nm-hist-labs-body">${labs}</div>
-  </div>` : ''}
+  </div>` : '';
+  const writeHtml = open ? `<div class="nm-mzs-write">
+    <div class="nm-mzs-mini">${esc(lk('읽고 적어요', 'Read and write', '读一读，写一写'))}</div>
+    <h3>${esc(open)}</h3><div class="nm-mzs-lines"><i></i><i></i><i></i></div>
+  </div>` : '';
+  return `<div class="nm-w2-page nm-hist-page nm-mzs-page">
+  <div class="nm-mzs-band"><b>${esc(topicName || mzTitle)}</b><span>Numbers of Magic</span></div>
+  <div class="nm-mzs-dash"></div>
+  <div class="nm-mzs-kick">${kicker}</div>
+  <h2 class="nm-mzs-title">${esc(mzTitle)}</h2>
+  ${hook ? `<p class="nm-mzs-sub">${esc(hook)}</p>` : ''}
+  ${storyCard}
+  ${strip}
+  ${labsHtml}
+  ${writeHtml}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
 </div>`;
 }
@@ -4550,6 +4628,14 @@ function magicStepHtml(step){
     ? `<div class="nm-mn-line"><span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span></div>`
     : `<div class="nm-mn-line nm-mn-plain">${esc(t)}</div>`;
 }
+/* 유닛 문장 → 종이용 HTML. <b> 만 남기고 알려진 꾸밈 태그는 떼고, 남은 < 는 글자로 바꾼다(2026-09-25).
+   전에는 "<로 시작해 >까지"를 태그로 보고 지워서, 부등식 문장("2<x<5 …")이 <x …> 요소로 읽혀
+   장의 구조가 깨졌다(M-29 개념 노트가 두 장 모두 넘침). */
+function noteTextHtml(raw){
+  return stripInlineSvg(String(raw || ''))
+    .replace(/<\/?(?:u|span|br|i|em|strong|small|sup|sub|p|div)\b[^>]*>/gi, '')
+    .replace(/<(?!\/?b>)/g, '&lt;');
+}
 function renderMagicNotePage(item, opts){
   opts = opts || {};
   const u = (window.NM_UNITS || {})[item.magicUnit];
@@ -4564,9 +4650,11 @@ function renderMagicNotePage(item, opts){
     const headRaw = pickL(st.head) || '';
     const headHtml = /\\/.test(headRaw) ? `<span class="nm-w2-tex" data-tex="${esc(texDisplay(headRaw))}"></span>` : esc(headRaw);
     /* <b>만 남기고 다른 태그는 뗀다. SVG 는 stripInlineSvg 가 먼저 통째로 걷어낸다. */
-    const descHtml = stripInlineSvg(pickL(st.desc) || '').replace(/<(?!\/?b>)[^>]*>/g, '');
+    const descHtml = noteTextHtml(pickL(st.desc) || '');
     const steps = Array.isArray(st.mathSteps) ? st.mathSteps.map(magicStepHtml).join('') : '';
     const result = pickL(st.result) || '';
+    /* 교과서 말(유닛 stage.book) — 앱의 개념 노트에는 있었는데 종이에는 빠져 있었다(2026-09-25 매거진형) */
+    const book = noteTextHtml(pickL(st.book) || '');
     return `<div class="nm-mn-stage">
   <div class="nm-mn-tag">${esc(tag)}</div>
   <div class="nm-mn-body">
@@ -4574,6 +4662,7 @@ function renderMagicNotePage(item, opts){
     ${descHtml ? `<p class="nm-mn-desc">${descHtml}</p>` : ''}
     ${steps ? `<div class="nm-mn-steps">${steps}</div>` : ''}
     ${result ? `<div class="nm-mn-result">✓ ${esc(result)}</div>` : ''}
+    ${book ? `<div class="nm-mn-book"><b>${esc(lk('교과서 말','In the textbook','课本里的说法'))}</b>${book}</div>` : ''}
   </div>
 </div>`;
   });
@@ -4597,30 +4686,38 @@ function renderMagicNotePage(item, opts){
   const code = 'MAGIC-' + item.magicUnit;
   const headItem = Object.assign({}, item, { topicName: lk('마법 노트 · ','Magic Note · ','魔法笔记 · ') + title, codeLabel: item.magicUnit });
   const wm = `<div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>`;
-  const boardHtml = `<div class="nm-w2-board nm-mn-board">
-    <img class="nm-w2-board-mascot" src="assets/characters/docssam.png" alt="">
-    <div class="nm-w2-board-body">
-      <div class="nm-mn-kicker">${esc(noteTitle)}${u.icon ? ' ' + esc(u.icon) : ''}</div>
-      <div class="nm-w2-concept-badge">${esc(title)}</div>
-      ${sub ? `<p class="nm-w2-concept-sentence">${esc(sub)}</p>` : ''}
+  /* 매거진형 개념 노트(2026-09-25, 원장 "이렇게 디자인 둘 다") — 띠·금색 점선·키커·큰 제목, 단계는 번호 붙은 절. */
+  const boardHtml = `<div class="nm-mzc-head">
+    <div class="nm-mzs-band">${opts.roundNo ? `<i class="nm-mzs-no">${esc(String(opts.roundNo))}</i>` : ''}<b>${esc(title)}</b><span>${esc(noteTitle)}</span></div>
+    <div class="nm-mzs-dash"></div>
+    <div class="nm-mzc-top">
+      <div>
+        <div class="nm-mzs-kick">${esc(lk('CONCEPT · 개념 노트','CONCEPT · Concept note','CONCEPT · 概念笔记'))}</div>
+        <h2 class="nm-mzs-title">${esc(title)}</h2>
+        ${sub ? `<p class="nm-mzs-sub">${esc(sub)}</p>` : ''}
+      </div>
+      <img class="nm-mzc-mascot" src="assets/characters/docssam.png" alt="">
     </div>
   </div>`;
   const foot = `<div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>`;
   /* 단계가 셋이면 두 장(①②는 판과 함께, ③은 규칙·체크와 함께) — 한 장에 다 넣으면 ②가 잘렸다(측정). */
   const stageParts = stageHtml.length ? stageHtml : [];
-  const two = stageParts.length >= 3;
+  /* 매거진형(교과서 말 상자·큰 제목)이 되면서 두 단계도 한 장에 들지 않는다(226개 중 49개 넘침, 2026-09-25) —
+     두 단계 이상이면 두 장: 첫 장에 앞 단계(셋이면 ①②, 둘이면 ①), 둘째 장에 나머지 + 규칙·체크·생각해 보기. */
+  const two = stageParts.length >= 2;
+  const split = stageParts.length >= 3 ? 2 : 1;
   const p1 = `<div class="nm-w2-page nm-w2-page-magic">
   ${wm}
   ${w2HeadHtml(headItem, code, two ? '1/2' : '1/1', null, {roundNo: opts.roundNo, name: opts.name, first: true})}
   ${boardHtml}
-  <div class="nm-mn-stages">${(two ? stageParts.slice(0, 2) : stageParts).join('')}</div>
+  <div class="nm-mn-stages">${(two ? stageParts.slice(0, split) : stageParts).join('')}</div>
   ${two ? '' : ruleHtml + fillsHtml + openHtml}
   ${foot}
 </div>`;
   const p2 = two ? `<div class="nm-w2-page nm-w2-page-magic">
   ${wm}
   ${w2HeadHtml(headItem, code, '2/2', null, {roundNo: opts.roundNo, name: opts.name, first: false})}
-  <div class="nm-mn-stages">${stageParts.slice(2).join('')}</div>
+  <div class="nm-mn-stages">${stageParts.slice(split).join('')}</div>
   ${ruleHtml}${fillsHtml}${openHtml}
   ${foot}
 </div>` : '';
