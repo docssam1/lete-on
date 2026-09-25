@@ -1,193 +1,222 @@
 import assert from "node:assert/strict";
-import { mkdir } from "node:fs/promises";
-import { chromium } from "file:///C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs";
+import { mkdir, stat } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { levels } from "./levels.js";
+import { seededRandom, sessionQueue } from "./session-order.js";
 
-const baseUrl = (process.env.GFIELD_BASE_URL || "http://127.0.0.1:8765").replace(/\/$/, "");
-const output = process.env.GFIELD_SCREENSHOT_DIR || "E:/Codex/visualizations/2026/07/14/019f6069-3d4e-7503-8438-a193bbe6c30a/paper-fold-flexible-ten";
+const base = (process.env.GFIELD_BASE_URL || "http://127.0.0.1:8768").replace(/\/$/, "");
+const output = process.env.GFIELD_SCREENSHOT_DIR || join(tmpdir(), "gfield-paper-fold-learning-flow");
+const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(process.env.PLAYWRIGHT_MODULE).href : "playwright");
 await mkdir(output, { recursive: true });
-
 const browser = await chromium.launch({ headless: true });
 const errors = [];
-
-async function makePage(viewport) {
-  const page = await browser.newPage({ viewport });
-  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+const monitor = (page) => {
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.addInitScript(() => {
-    localStorage.setItem("gfield-audio-muted", "true");
-    localStorage.setItem("gfield-language", "ko");
-    localStorage.removeItem("gfield-paper-fold-progress-v4");
-    localStorage.removeItem("gfield-paper-fold-recent-v4");
-  });
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+};
+async function forcedPage(p, viewport = { width: 1440, height: 900 }, lang = "ko") {
+  const page = await browser.newPage({ viewport });
+  monitor(page);
+  const rest = sessionQueue(levels[p.level - 1].problems, 9, new Set([p.id]), seededRandom("test"));
+  await page.addInitScript(({ item, queue, locale }) => {
+    localStorage.setItem("gfield-language", locale);
+    localStorage.setItem("gfield-paper-fold-progress-v4", JSON.stringify({ level: item.level, index: 0, queue }));
+  }, { item: p, queue: [p.id, ...rest.map((item) => item.id)], locale: lang });
+  await page.goto(base + "/geometry/games/paper-fold/?seed=qa", { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#paper").getAttribute("data-problem-id"), p.id);
+  await page.evaluate(() => document.fonts.ready);
   return page;
 }
-
-async function currentProblem(page) {
-  const saved = JSON.parse(await page.evaluate(() => localStorage.getItem("gfield-paper-fold-progress-v4")));
-  const level = levels[saved.level - 1];
-  const problem = level.problems.find((item) => item.id === saved.queue[saved.index]);
-  assert.ok(problem, `missing current problem ${saved.queue[saved.index]}`);
-  return problem;
-}
-
-async function solveCurrent(page) {
-  const problem = await currentProblem(page);
-  if (problem.interaction !== "connect-match") {
-    assert.equal(await page.locator(".fold-sequence-view figure").count(), problem.interaction === "piece-count" && problem.folds.length === 2 ? 4 : 3);
-    assert.equal(await page.locator(".paper-fold-arrow").count(), problem.folds.length);
-    const marker = page.locator(".fold-sequence-view marker").first();
-    assert.equal(await marker.getAttribute("markerUnits"), "userSpaceOnUse");
-    assert.ok(Number(await marker.getAttribute("markerWidth")) <= 9, "fold arrow head is too large");
-    for (const step of problem.placementSteps) {
-      assert.equal(await page.locator("[data-side]").count(), 2);
-      await page.locator(`[data-side="${step.answer}"]`).click();
-      await page.waitForTimeout(220);
+async function touch(page, side) {
+  const zone = page.locator('.paper-action-step [data-side="' + side + '"]');
+  const point = await zone.evaluate((node) => {
+    const svg = node.ownerSVGElement;
+    const paper = svg.querySelector(".paper-top-face");
+    const box = node.getBBox();
+    const inside = [];
+    for (let row = 1; row < 12; row += 1) {
+      for (let col = 1; col < 12; col += 1) {
+        const p = new DOMPoint(box.x + box.width * col / 12, box.y + box.height * row / 12);
+        if (node.isPointInFill(p) && paper.isPointInFill(p)) inside.push(p);
+      }
     }
-    assert.equal(await page.locator("[data-choice]").count(), 3);
-    await page.locator(`[data-choice="${problem.answer}"]`).click();
+    if (!inside.length) throw new Error("No touchable paper face");
+    const p = new DOMPoint(inside.reduce((sum, p) => sum + p.x, 0) / inside.length, inside.reduce((sum, p) => sum + p.y, 0) / inside.length);
+    const screen = p.matrixTransform(svg.getScreenCTM());
+    return { x: screen.x, y: screen.y };
+  });
+  await page.mouse.click(point.x, point.y);
+  await page.waitForTimeout(460);
+}
+async function foldAll(page, p) {
+  for (const fold of p.folds) {
+    const aligned = await page.locator(".fold-start.paper-action-step .paper-diagram").evaluate((svg, fold) => {
+      const arrow = svg.querySelector(".paper-fold-arrow");
+      const start = arrow.getPointAtLength(0);
+      const end = arrow.getPointAtLength(arrow.getTotalLength());
+      return svg.querySelector('[data-side="' + fold.side + '"]').isPointInFill(start)
+        && svg.querySelector('[data-side="' + fold.target + '"]').isPointInFill(end)
+        && svg.querySelector(".paper-top-face").isPointInFill(start)
+        && svg.querySelector(".paper-top-face").isPointInFill(end);
+    }, fold);
+    assert.ok(aligned, "fold arrow must connect its actual source and target faces");
+    await touch(page, fold.side);
+  }
+  assert.equal(await page.locator(".result-step .paper-fold-arrow").count(), 0, "end diagram must not give an arrow hint");
+  assert.equal(await page.locator("#paper .paper-fold-arrow").count(), p.folds.length);
+  assert.equal(await page.locator("#paper [data-side]").count(), 2);
+  assert.equal(await page.locator(".layer-badge").count(), 0);
+  const stacks = await page.locator(".cut-step .paper-diagram").evaluate((svg) => ({
+    depth: Number(svg.dataset.stackDepth), sides: svg.querySelectorAll(".paper-stack-side").length,
+    layers: svg.querySelectorAll(".paper-stack-layer").length
+  }));
+  assert.equal(stacks.depth, 2 ** p.folds.length - 1);
+  assert.equal(stacks.layers, stacks.depth);
+  assert.ok(stacks.sides >= stacks.depth);
+}
+async function sideAll(page, p) {
+  for (const step of p.unfoldSteps) await touch(page, step.answer);
+  assert.equal(await page.locator("[data-choice]").count(), 3, "final choice must not be skipped");
+  if (p.resultChoices || p.interaction === "hole-result") assert.equal(await page.locator("[data-result-revealed]").count(), 0, "correct result leaked before answer");
+}
+async function solve(page, p) {
+  if (p.interaction === "connect-match") {
+    for (const pair of p.pairs) {
+      await page.locator('[data-left="' + pair.key + '"]').click();
+      await page.locator('[data-right="' + pair.key + '"]').click();
+    }
   } else {
-    assert.equal(await page.locator("[data-left]").count(), 3);
-    assert.equal(await page.locator("[data-right]").count(), 3);
-    assert.equal(await page.locator(".check-button").count(), 0);
-    for (const pair of problem.pairs) {
-      await page.locator(`[data-left="${pair.key}"]`).click();
-      await page.locator(`[data-right="${pair.key}"]`).click();
-    }
-    assert.equal(await page.locator("#connectionLines path").count(), 3);
+    await foldAll(page, p);
+    await sideAll(page, p);
+    await page.locator('[data-choice="' + (p.resultAnswer || p.answer) + '"]').click();
   }
-  await page.locator("#nextButton:not([hidden])").waitFor();
-  return problem;
+  await page.waitForTimeout(700);
+  assert.equal(await page.locator("#nextButton").getAttribute("hidden"), null);
+}
+async function layout(page, name) {
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), name + " horizontal overflow");
+  const clipped = await page.locator("#interaction button, .tool-panel button:not([hidden]), .tool-panel a, .paper-action-step svg").evaluateAll((nodes) => nodes.filter((node) => {
+    const box = node.getBoundingClientRect();
+    return box.width > 0 && box.height > 0 && (box.x < -1 || box.y < -1 || box.right > innerWidth + 1 || box.bottom > innerHeight + 1);
+  }).map((node) => node.className.baseVal || node.className));
+  assert.deepEqual(clipped, [], name + " clipped controls");
+  await page.screenshot({ path: output + "/" + name + ".png", fullPage: true });
 }
 
-async function advance(page) {
-  await page.waitForTimeout(660);
-  await page.locator("#nextButton").click();
-}
-
-async function verifyImmediateWrongRecovery(page) {
-  const problem = await currentProblem(page);
-  assert.equal(problem.interaction, "connect-match");
-  const rightKeys = problem.pairs.map((pair) => pair.key);
-  for (let index = 0; index < problem.pairs.length; index += 1) {
-    const pair = problem.pairs[index];
-    const wrongRight = rightKeys[(index + 1) % rightKeys.length];
-    await page.locator(`[data-left="${pair.key}"]`).click();
-    await page.locator(`[data-right="${wrongRight}"]`).click();
+try {
+  const single = levels[0].problems.find((p) => p.id === "paper-one-fold-pattern-1-1");
+  for (const [name, viewport] of [
+    ["desktop", { width: 1440, height: 900 }],
+    ["portrait", { width: 390, height: 844 }],
+    ["landscape", { width: 844, height: 390 }]
+  ]) {
+    const page = await forcedPage(single, viewport);
+    assert.equal(await page.locator(".fold-start.paper-action-step").count(), 1);
+    assert.equal(await page.locator(".result-step .paper-diagram").count(), 0);
+    await layout(page, name + "-fold");
+    await touch(page, single.folds[0].target);
+    assert.equal(await page.locator(".learning-sequence").getAttribute("data-learning-stage"), "fold");
+    await foldAll(page, single);
+    await layout(page, name + "-side");
+    await touch(page, single.unfoldSteps[0].source);
+    assert.equal(await page.locator(".learning-sequence").getAttribute("data-learning-stage"), "side");
+    await sideAll(page, single);
+    assert.equal(await page.locator(".result-step .paper-removed-region").count(), 1);
+    await layout(page, name + "-choices");
+    const wrong = single.resultChoices.find((c) => c.key !== single.resultAnswer).key;
+    await page.locator('[data-choice="' + wrong + '"]').click();
+    assert.equal(await page.locator("#nextButton").getAttribute("hidden"), "");
+    await page.locator('[data-choice="' + single.resultAnswer + '"]').click();
+    await page.waitForTimeout(700);
+    assert.equal(await page.locator(".result-step .paper-removed-region").count(), 2);
+    await layout(page, name + "-solved");
+    await page.close();
   }
-  await page.locator(".connect-card.wrong").first().waitFor();
-  assert.equal(await page.locator(".check-button").count(), 0);
-  await page.waitForTimeout(620);
-  assert.equal(await page.locator("#connectionLines path").count(), 0);
+  const cases = [
+    ...levels[0].problems.filter((p) => p.id.startsWith("paper-one-fold-pattern-") && p.id.endsWith("-1")).slice(1),
+    levels[0].problems.find((p) => p.interaction === "region-unfold" && p.folds.length === 2),
+    levels[0].problems.find((p) => p.interaction === "piece-count" && p.folds.length === 2),
+    levels[0].problems.find((p) => p.interaction === "connect-match"),
+    levels[1].problems.find((p) => p.interaction === "hole-count"),
+    levels[1].problems.find((p) => p.interaction === "hole-result"),
+    levels[1].problems.find((p) => p.interaction === "mixed-hole-result"),
+    levels[1].problems.find((p) => p.interaction === "connect-match")
+  ];
+  for (const p of cases) {
+    const page = await forcedPage(p, { width: 390, height: 844 });
+    await solve(page, p);
+    await layout(page, p.id);
+    await page.close();
+  }
+  for (const lang of ["en", "zh", "ja"]) {
+    const page = await forcedPage(single, { width: 390, height: 844 }, lang);
+    await foldAll(page, single);
+    await sideAll(page, single);
+    assert.equal(await page.locator("html").getAttribute("lang"), lang);
+    assert.doesNotMatch(await page.locator("#prompt").innerText(), /[가-힣]/);
+    await layout(page, "locale-" + lang);
+    await page.close();
+  }
+  const session = await forcedPage(single);
+  for (let index = 0; index < 10; index += 1) {
+    const id = await session.locator("#paper").getAttribute("data-problem-id");
+    await solve(session, levels[0].problems.find((p) => p.id === id));
+    await session.locator("#nextButton").click();
+  }
+  await session.locator("#completeDialog:not([hidden])").waitFor();
+  await session.locator("#nextLevelButton").click();
+  assert.equal(await session.locator("#problemLabel").innerText(), "11 / 20");
+  const queue = await session.evaluate(() => JSON.parse(localStorage.getItem("gfield-paper-fold-progress-v4")).queue);
+  assert.equal(new Set(queue).size, 20);
+  await session.close();
+  const historyPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  monitor(historyPage);
+  await historyPage.goto(base + "/geometry/games/paper-fold/?level=2&seed=history", { waitUntil: "networkidle" });
+  const firstQueue = sessionQueue(levels[1].problems, 10, new Set(), seededRandom("history-fixture")).map((p) => p.id);
+  await historyPage.evaluate((queue) => localStorage.setItem("gfield-paper-fold-progress-v4", JSON.stringify({ level: 2, index: 9, queue })), firstQueue);
+  await historyPage.goto(base + "/geometry/games/paper-fold/?seed=history", { waitUntil: "networkidle" });
+  await solve(historyPage, levels[1].problems.find((p) => p.id === firstQueue[9]));
+  await historyPage.locator("#nextButton").click();
+  await historyPage.locator("#practiceButton").click();
+  const fresh = await historyPage.evaluate(() => JSON.parse(localStorage.getItem("gfield-paper-fold-progress-v4")));
+  assert.deepEqual(new Set(fresh.excludedIds), new Set(firstQueue));
+  assert.ok(fresh.queue.every((id) => !firstQueue.includes(id)));
+  await historyPage.evaluate((saved) => localStorage.setItem("gfield-paper-fold-progress-v4", JSON.stringify({ ...saved, index: 9 })), fresh);
+  await historyPage.reload({ waitUntil: "networkidle" });
+  await solve(historyPage, levels[1].problems.find((p) => p.id === fresh.queue[9]));
+  await historyPage.locator("#nextButton").click();
+  assert.equal(await historyPage.locator("#nextLevelButton").innerText(), "다른 유형");
+  assert.equal(await historyPage.locator("#practiceButton").isVisible(), false);
+  await historyPage.close();
+  const modes = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  monitor(modes);
+  await modes.goto(base + "/geometry/games/paper-fold/play.html?mode=together&seed=qa", { waitUntil: "networkidle" });
+  await modes.screenshot({ path: output + "/together-ready.png", fullPage: true });
+  await modes.goto(base + "/geometry/games/paper-fold/play.html?mode=battle&seed=qa", { waitUntil: "networkidle" });
+  await modes.screenshot({ path: output + "/battle-ready.png", fullPage: true });
+  const frames = modes.frames().filter((frame) => /index\.html/.test(frame.url()));
+  assert.equal(frames.length, 2);
+  const ids = await Promise.all(frames.map((frame) => frame.locator("#paper").getAttribute("data-problem-id")));
+  assert.notEqual(ids[0], ids[1]);
+  await modes.close();
+  const worksheet = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  monitor(worksheet);
+  for (const level of [1, 2]) {
+    await worksheet.goto(base + "/geometry/worksheet/paper-fold/?mode=game-l" + level + "&count=10", { waitUntil: "networkidle" });
+    await worksheet.locator(".sheet-page").first().waitFor();
+    assert.ok(await worksheet.locator(".problem-card img").count() >= 10);
+    await worksheet.screenshot({ path: output + "/worksheet-" + level + ".png", fullPage: false });
+    await worksheet.emulateMedia({ media: "print" });
+    const file = output + "/worksheet-" + level + "-a4.pdf";
+    await worksheet.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
+    assert.ok((await stat(file)).size > 10000);
+    await worksheet.emulateMedia({ media: "screen" });
+  }
+  await worksheet.close();
+  assert.deepEqual(errors, []);
+  console.log("Paper Fold browser check passed: direct folds, side selection, hidden final answers, all axes, four locales, continuation, modes and A4 rendering.");
+} finally {
+  await browser.close();
 }
-
-const desktop = await makePage({ width: 1280, height: 820 });
-await desktop.goto(`${baseUrl}/geometry/games/paper-fold/?level=1`, { waitUntil: "networkidle" });
-assert.equal(await desktop.locator("#problemLabel").textContent(), "1 / 10");
-assert.equal(await desktop.locator("#levelLabel").textContent(), "색종이 접어 자르기");
-await desktop.locator("#levelButton").click();
-assert.equal(await desktop.locator(".level-card").count(), 2);
-await desktop.locator("#closeLevels").click();
-
-const interactions = new Set();
-for (let index = 0; index < 10; index += 1) {
-  if (index === 1) await verifyImmediateWrongRecovery(desktop);
-  const solved = await solveCurrent(desktop);
-  interactions.add(solved.interaction);
-  if (index === 0) await desktop.screenshot({ path: `${output}/choice-desktop.png`, fullPage: true });
-  if (index === 1) await desktop.screenshot({ path: `${output}/connect-desktop.png`, fullPage: true });
-  await advance(desktop);
-}
-assert.ok(interactions.has("connect-match"));
-assert.ok(interactions.has("piece-count"));
-assert.equal(await desktop.locator("#completeDialog:not([hidden])").count(), 1);
-assert.match(await desktop.locator("#completeTitle").textContent(), /10문제/);
-assert.match(await desktop.locator("#nextLevelButton").textContent(), /10문제 더/);
-await desktop.locator("#nextLevelButton").click();
-assert.equal(await desktop.locator("#problemLabel").textContent(), "11 / 20");
-
-for (let index = 10; index < 20; index += 1) {
-  await solveCurrent(desktop);
-  await advance(desktop);
-}
-assert.equal(await desktop.locator("#completeDialog:not([hidden])").count(), 1);
-assert.match(await desktop.locator("#completeTitle").textContent(), /20문제/);
-
-await desktop.goto(`${baseUrl}/geometry/games/paper-fold/?level=2`, { waitUntil: "networkidle" });
-const doubleFold = await currentProblem(desktop);
-assert.ok([1, 2].includes(doubleFold.folds.length));
-assert.ok(doubleFold.kind.includes("holes"));
-await solveCurrent(desktop);
-await desktop.screenshot({ path: `${output}/double-fold-desktop.png`, fullPage: true });
-
-const forcedDoubleCut = levels[0].problems.find((item) => item.interaction === "piece-count" && item.folds.length === 2);
-assert.ok(forcedDoubleCut, "missing a two-fold cut problem");
-const forcedQueue = [forcedDoubleCut.id, ...levels[0].problems.filter((item) => item.id !== forcedDoubleCut.id).slice(0, 9).map((item) => item.id)];
-const doubleCutPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
-doubleCutPage.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
-doubleCutPage.on("pageerror", (error) => errors.push(error.message));
-await doubleCutPage.addInitScript(({ queue }) => {
-  localStorage.setItem("gfield-audio-muted", "true");
-  localStorage.setItem("gfield-language", "ko");
-  localStorage.setItem("gfield-paper-fold-progress-v4", JSON.stringify({ level: 1, index: 0, queue }));
-}, { queue: forcedQueue });
-await doubleCutPage.goto(`${baseUrl}/geometry/games/paper-fold/`, { waitUntil: "networkidle" });
-assert.equal((await currentProblem(doubleCutPage)).id, forcedDoubleCut.id);
-assert.equal(await doubleCutPage.locator(".fold-sequence-view figure").count(), 4);
-assert.ok(await doubleCutPage.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth) <= 1);
-await doubleCutPage.screenshot({ path: `${output}/double-cut-portrait.png`, fullPage: true });
-await doubleCutPage.close();
-
-for (const [name, viewport] of [["portrait", { width: 390, height: 844 }], ["landscape", { width: 844, height: 390 }]]) {
-  const page = await makePage(viewport);
-  await page.goto(`${baseUrl}/geometry/games/paper-fold/?level=1`, { waitUntil: "networkidle" });
-  let overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  assert.ok(overflow <= 1, `${name} choice overflow: ${overflow}px`);
-  await solveCurrent(page);
-  await advance(page);
-  assert.equal((await currentProblem(page)).interaction, "connect-match");
-  overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  assert.ok(overflow <= 1, `${name} connect overflow: ${overflow}px`);
-  await page.screenshot({ path: `${output}/connect-${name}.png`, fullPage: true });
-  await page.close();
-}
-
-const studio = await makePage({ width: 1280, height: 900 });
-await studio.goto(`${baseUrl}/geometry/origami-studio/`, { waitUntil: "networkidle" });
-assert.equal(await studio.locator("#foldLevelGrid .level-card").count(), 2);
-assert.equal(await studio.locator("#foldLevelGrid .level-card strong").first().textContent(), "색종이 접어 자르기");
-assert.equal(await studio.locator("#foldLevelGrid .level-card strong").nth(1).textContent(), "색종이 접어 구멍 뚫기");
-assert.equal(await studio.locator("#applicationGrid .level-card").count(), 2);
-assert.equal(await studio.locator("#applicationGrid .level-card strong").first().textContent(), "접어 계산하기");
-assert.equal(await studio.locator("#applicationGrid .level-card strong").nth(1).textContent(), "겹친 색종이 순서");
-assert.match(await studio.locator("#applicationGrid .level-card").first().getAttribute("href"), /modes=numcut,numsum,numinv,foldtop/);
-assert.match(await studio.locator("#applicationGrid .level-card").nth(1).getAttribute("href"), /modes=stackfind,stackorder/);
-assert.match(await studio.locator("[data-i18n='fiveEach']").first().textContent(), /10문제/);
-await studio.screenshot({ path: `${output}/origami-studio-two-types.png`, fullPage: true });
-await studio.close();
-
-const worksheet = await makePage({ width: 1440, height: 1000 });
-await worksheet.goto(`${baseUrl}/geometry/worksheet/paper-fold/?mode=game-l1&count=10`, { waitUntil: "networkidle" });
-await worksheet.locator(".sheet-page").first().waitFor();
-assert.equal(await worksheet.locator("#mode option[value^='game-l']").count(), 2);
-assert.match(await worksheet.locator("#mode option[value='game-l1']").textContent(), /접어 자르기/);
-assert.match(await worksheet.locator("#info").textContent(), /paper-cut/);
-assert.ok(await worksheet.locator(".problem-card img").count() >= 10);
-await worksheet.goto(`${baseUrl}/geometry/worksheet/paper-fold/?mode=game-l2&count=10`, { waitUntil: "networkidle" });
-await worksheet.locator(".sheet-page").first().waitFor();
-assert.match(await worksheet.locator("#info").textContent(), /paper-(double-hole|holes)/);
-await worksheet.screenshot({ path: `${output}/worksheet-double-fold-preview.png`, fullPage: false });
-await worksheet.goto(`${baseUrl}/geometry/worksheet/paper-fold/?modes=numcut,numsum,numinv,foldtop&count=10`, { waitUntil: "networkidle" });
-await worksheet.locator(".sheet-page").first().waitFor();
-assert.equal(await worksheet.locator("#modeButtons .mode-button[aria-pressed='true']").count(), 4);
-for (const label of ["잘려나간 수들의 합", "남은 수들의 합", "목표 합", "가장 위의 수"]){
-  assert.match(await worksheet.locator("#modeButtons .mode-button[aria-pressed='true']").allTextContents().then((items)=>items.join(" ")), new RegExp(label));
-}
-await worksheet.goto(`${baseUrl}/geometry/worksheet/paper-fold/?modes=stackfind,stackorder&count=10`, { waitUntil: "networkidle" });
-await worksheet.locator(".sheet-page").first().waitFor();
-assert.equal(await worksheet.locator("#modeButtons .mode-button[aria-pressed='true']").count(), 2);
-await worksheet.close();
-
-assert.deepEqual(errors, []);
-await browser.close();
-console.log("Paper Fold browser check passed: separated cut/hole activities, forced two-fold cuts, immediate choices, responsive layouts, and grouped worksheet links verified.");

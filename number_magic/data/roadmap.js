@@ -145,7 +145,10 @@ window.NM_ROADMAP = {
       id:'R6', icon:'🧮', grade:'초2',
       edu:{ko:'초2-2 자릿값 전략',en:'G2-2 Place-value strategies',zh:'小2-2数位计算策略'},
       theme:{ko:'자릿값 계산 전략',en:'Place-Value Calculation Strategies',zh:'数位计算策略'},
-      units:['A-30','A-31','A-32','A-33','A-34'],
+      /* A-35 고대의 수(로마 수, 2026-09-23) — 학습지 과정 10 의 "쉼표 노드"인데 이 지도에 없었다.
+         로마 수는 자릿값이 없던 옛 기수법이라, 자릿값 전략을 다 배운 끝에 두면 대비가 된다.
+         과정 10 과 이 챕터는 같은 단계(계산의 새싹)다. */
+      units:['A-30','A-31','A-32','A-33','A-34','A-35'],
       tip:{ko:'10씩, 100씩 건너뛰는 계산 전략이에요!',en:'Strategies for jumping by 10s and 100s!',zh:'以10、100为单位跳跃的计算策略！'}
     },
 
@@ -249,8 +252,11 @@ window.NM_ROADMAP = {
     {
       id:'T15', icon:'🔢', grade:'초4',
       edu:{ko:'초4-2 소수·초5-1 혼합계산',en:'G4-2 Decimals · G5-1 Order of Ops',zh:'小4-2小数·小5-1混合运算'},
-      theme:{ko:'소수와 혼합계산 — 소수 알기·순서 지키기',en:'Decimals & Mixed Operations — Intro & Order',zh:'小数与混合运算——认识小数·运算顺序'},
-      units:['T-DC1','T-MX1'],
+      theme:{ko:'소수와 혼합계산 — 소수 알기·더하고 빼기·순서 지키기',en:'Decimals & Mixed Operations — Intro, Add & Subtract, Order',zh:'小数与混合运算——认识小数·加减·运算顺序'},
+      /* A-36~38(2026-09-23) — 소수 덧뺄셈. 과정-로드맵.md 가 "초급이 아니라 Level 3 소수 지점이
+         맞다"며 학습지 과정 17로 옮겼는데, 이 지도는 따라 옮기지 않아 어디에도 없었다.
+         소수 알기(T-DC1) 바로 다음, 혼합계산 앞. 과정 17 과 이 챕터는 같은 단계(관계의 발견)다. */
+      units:['T-DC1','A-36','A-37','A-38','T-MX1'],
       tip:{ko:'0.1이 5개면 0.5! 그리고 (3+4)×2는 괄호 먼저 — 순서를 지켜야 답이 맞아요.',en:'Five 0.1s = 0.5! And (3+4)×2 needs brackets first — order matters!',zh:'五个0.1等于0.5！(3+4)×2要先算括号——顺序很重要！'}
     },
 
@@ -274,7 +280,7 @@ window.NM_ROADMAP = {
       edu:{ko:'초5-1 약수·배수',en:'G5-1 Factors & Multiples',zh:'小5-1因数与倍数'},
       theme:{ko:'약수와 배수 — 공약수·공배수·배수 판정법',en:'Factors & Multiples — GCD, LCM & Divisibility Rules',zh:'因数与倍数——公因数·公倍数·整除规律'},
       units:['T-DV4','T-DV5'],
-      tip:{ko:'GCD로 피자를 공평하게 나누고, LCM으로 두 버스가 다시 만나는 시간을 계산해요!',en:'Use GCD to share pizza fairly, LCM to find when two buses next meet!',zh:'用最大公因数公平分披萨，用最小公倍数计算两路公交何时再次相遇！'}
+      tip:{ko:'최대공약수로 피자를 공평하게 나누고, 최소공배수로 두 버스가 다시 만나는 시간을 계산해요!',en:'Use GCD to share pizza fairly, LCM to find when two buses next meet!',zh:'用最大公因数公平分披萨，用最小公倍数计算两路公交何时再次相遇！'}
     },
 
     /* ─────── CR9~CR11 + CRB : 경시의 탑 (과정 26~28 + Level 3 보강, 2026-08-25 Phase 2) ─────────
@@ -316,9 +322,9 @@ window.NM_ROADMAP = {
     {
       id:'W8-1', icon:'🌋', grade:'중1',
       edu:{ko:'중1 정수의 세계',en:'G7 World of Integers',zh:'初一整数的世界'},
-      theme:{ko:'W8-1 · 정수의 세계 — 개념·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept & ± ',zh:'W8-1·整数的世界——概念与加减法'},
-      units:['M-01','M-02','M-03'],
-      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요!',en:'Above and below sea level, points scored and lost — naming the two directions from 0!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字！'}
+      theme:{ko:'W8-1 · 정수의 세계 — 개념·수직선 위의 자리·덧셈·뺄셈',en:'W8-1 · World of Integers — Concept, Places on the Line, ±',zh:'W8-1·整数的世界——概念·数轴上的位置·加减法'},
+      units:['M-01','M-82','M-02','M-03'],
+      tip:{ko:'해발과 해저, 득점과 실점 — 0을 기준으로 반대 방향에 이름을 붙이는 거예요! 그 이름들이 수직선 위에 제 자리를 얻어요.',en:'Above and below sea level, points scored and lost — naming the two directions from 0, and giving each name a place on the line!',zh:'海拔与海底，得分与失分——给0两侧的方向起名字，再让每个名字在数轴上有自己的位置！'}
     },
     {
       id:'W8-2', icon:'🎲', grade:'중1',
@@ -354,6 +360,31 @@ window.NM_ROADMAP = {
       units:['M-50','M-51'],
       tip:{ko:'등식의 성질은 저울과 같아요 — 양쪽에 같은 걸 더하거나 빼거나 곱하거나 나눠도 저울은 그대로 균형을 유지해요!',en:'The properties of equality are like a balance scale — add, subtract, multiply, or divide both sides by the same thing and it stays balanced!',zh:'等式的性质就像天平——两边同时加、减、乘或除以相同的数，天平依然平衡！'}
     },
+    {
+      /* W8-6·W8-7 신설(2026-09-21, 원장 "일차방정식의 활용도 거리·속력·시간, 원가·정가 등
+         놓치지 마", "정비례 반비례는") — 푸는 법(M-50) 다음에 쓰는 법이, 값(M-51) 다음에
+         그래프가 와야 한다. 둘 다 통째로 비어 있던 자리다. */
+      id:'W8-6', icon:'🗺️', grade:'중1',
+      edu:{ko:'중1 일차방정식의 활용',en:'G7 Linear Equations in Use',zh:'初一一元一次方程的应用'},
+      theme:{ko:'W8-6 · 일차방정식의 활용 — 수·나이·거리속력시간·원가정가',en:'W8-6 · Linear Equations in Use — Numbers, Ages, Speed, Price',zh:'W8-6·一元一次方程的应用——数·年龄·路程速度时间·成本定价'},
+      units:['M-70'],
+      tip:{ko:'구하려는 것을 x로 놓고 문장을 그대로 식으로 옮겨요 — 거리=속력×시간, 정가=원가×(1+이익률)!',en:'Let x be what you want and turn the sentences into an equation - distance = speed x time, price = cost x (1 + markup)!',zh:'把要求的量设为x，把句子直接写成算式——路程=速度×时间，定价=成本×(1+利润率)！'}
+    },
+    {
+      id:'W8-7', icon:'📍', grade:'중1',
+      edu:{ko:'중1 좌표평면과 비례 그래프',en:'G7 Coordinates & Proportion Graphs',zh:'初一坐标平面与比例图象'},
+      theme:{ko:'W8-7 · 좌표평면 — 사분면·대칭점·정비례와 반비례의 그래프',en:'W8-7 · The Coordinate Plane — Quadrants, Reflections, Graphs of Proportion',zh:'W8-7·坐标平面——象限·对称点·正比例与反比例的图象'},
+      units:['M-68','M-69'],
+      tip:{ko:'가로 먼저 세로 나중 — 정비례는 원점을 지나는 직선, 반비례는 두 가지로 갈라진 곡선이에요!',en:'Across first, up second - direct proportion draws a line through the origin, inverse a curve in two branches!',zh:'先横后纵——正比例是过原点的直线，反比例是分成两支的曲线！'}
+    },
+    {
+      /* 중1-2 비기하 통계. 원본에서 확인된 p.224~230 대표값까지만 공개한다. */
+      id:'W8-8', icon:'📊', grade:'중1',
+      edu:{ko:'중1 대표값',en:'G7 Measures of Center',zh:'初一代表值'},
+      theme:{ko:'W8-8 · 대표값 — 평균·홀짝 중앙값·단일·복수·범주 최빈값',en:'W8-8 · Measures of Center — Mean, Median & Mode',zh:'W8-8·代表值——平均数·中位数·众数'},
+      units:['M-84'],
+      tip:{ko:'중앙값은 반드시 정렬부터, 최빈값은 가장 많이 나온 값을 모두 — 숫자가 아닌 범주에도 쓸 수 있어요!',en:'Sort before finding the median, and include every value tied for the mode — categories can have modes too!',zh:'求中位数先排序，众数要把并列最多的值全部写出——类别资料也能求众数！'}
+    },
 
     /* ─────── W9 : 식의 탑 — 중2 식의 계산 (2026-08-25) ─────────
        MASTER-ROADMAP.md §3 "W9 식의 탑(중2)" 스토리 스테이지. W8(음수의
@@ -372,6 +403,34 @@ window.NM_ROADMAP = {
       units:['M-13','M-14'],
       tip:{ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱해요 — 절대 빠뜨리지 마요!',en:'The one outside the brackets visits every term inside, one by one — never skip one!',zh:'括号外的那个乘遍括号里每一项——千万别漏掉！'}
     },
+    {
+      /* W9-3 신설(2026-09-20, 중등 교과 연산 3차) — 중2 교과 연산의 기둥 셋이
+         로드맵에 아예 없었다(연립방정식·일차부등식·일차함수). 원장 지시
+         "교과연산과 창의연산이 같이 되어야 한다"의 중2 쪽 답이다. */
+      id:'W9-3', icon:'🔗', grade:'중2',
+      edu:{ko:'중2 부등식과 연립방정식',en:'G8 Inequalities & Systems',zh:'初二不等式与方程组'},
+      theme:{ko:'W9-3 · 부등식과 연립방정식 — 범위·미지수 둘·활용',en:'W9-3 · Inequalities & Systems — Ranges, Two Unknowns, Applications',zh:'W9-3·不等式与方程组——范围·两个未知数·应用'},
+      units:['M-64','M-71','M-63','M-72'],
+      tip:{ko:'미지수가 둘이면 식도 둘 — 한 문자를 없애면 이미 아는 일차방정식으로 돌아와요!',en:'Two unknowns need two equations — remove one letter and you are back to a linear equation you already know!',zh:'两个未知数就要两个方程——消去一个字母，就回到你已经会的一元一次方程！'}
+    },
+    {
+      /* W9-4 신설(2026-09-21, 원장 "어떻게 일차함수 그래프를 한 번에 배워") — 일차함수를
+         한 마디에 뭉쳐 두었던 것을 교과 차시대로 다섯으로 편다. */
+      id:'W9-4', icon:'📈', grade:'중2',
+      edu:{ko:'중2 일차함수',en:'G8 Linear Functions',zh:'初二一次函数'},
+      theme:{ko:'W9-4 · 일차함수 — 함숫값·평행이동·절편·교점·활용',en:'W9-4 · Linear Functions — Values, Translation, Intercepts, Crossings, Uses',zh:'W9-4·一次函数——函数值·平移·截距·交点·应用'},
+      units:['M-73','M-74','M-65','M-75','M-76'],
+      tip:{ko:'f(x)는 x를 넣으면 나오는 값 — 처음 값이 y절편, 한 칸마다 변하는 양이 기울기예요!',en:'f(x) is what comes out when x goes in - the starting value is the y-intercept and the change per step is the slope!',zh:'f(x)是代入x得到的值——起始值是y截距，每一步的变化量是斜率！'}
+    },
+    {
+      /* 중2-2 비기하 연산 중 실제 원본이 확인된 경우의 수(p.216~230)만 편입한다.
+         p.232 이후와 확률은 근거가 없으므로 이 장에 넣지 않는다. */
+      id:'W9-5',icon:'⋮',grade:'중2',
+      edu:{ko:'중2 경우의 수',en:'G8 Counting Possibilities',zh:'初二情况数'},
+      theme:{ko:'W9-5 · 경우의 수 — 직접 세기·덧셈법칙·곱셈법칙·줄 세우기',en:'W9-5 · Counting — direct counts, sum rule, product rule, lineups',zh:'W9-5·情况数——直接计数·加法法则·乘法法则·排队'},
+      units:['M-88'],
+      tip:{ko:'겹치지 않는 둘 중 하나는 더하고, 두 단계를 모두 거치면 곱해요. 자리가 고정되면 먼저 놓고 남은 자리만 셉니다.',en:'Add disjoint alternatives, multiply stages that both happen, and place fixed seats before counting the rest.',zh:'互斥的二选一用加法，两个步骤都要完成用乘法；先固定指定位置，再数剩余位置。'}
+    },
 
     /* ─────── W10 : 근호의 산맥 — 중3 제곱근과 실수 · 다항식의 곱셈과
        인수분해 (2026-08-25) ───────────────────────────────────
@@ -379,8 +438,11 @@ window.NM_ROADMAP = {
     {
       id:'W10-1', icon:'🔓', grade:'중3',
       edu:{ko:'중3 제곱근의 세계',en:'G9 World of Square Roots',zh:'初三平方根的世界'},
-      theme:{ko:'W10-1 · 제곱근의 세계 — 값·근호 정리·곱나눗',en:'W10-1 · World of Square Roots — Values, Simplifying, × ÷',zh:'W10-1·平方根的世界——值·化简·乘除'},
-      units:['M-15','M-16','M-17'],
+      theme:{ko:'W10-1 · 제곱근의 세계 — 값·근호 정리·곱나눗·덧뺄',en:'W10-1 · World of Square Roots — Values, Simplifying, × ÷, + −',zh:'W10-1·平方根的世界——值·化简·乘除·加减'},
+      /* M-83(2026-09-21) — 학습지 과정 35에는 넣었는데 학습모드 로드맵에는 빠져 있었다.
+         유닛이 두 곳(courses.js 의 magic · roadmap.js 의 chapters)에 각각 실리는 구조라
+         한 쪽만 넣으면 조용히 절반만 보인다. */
+      units:['M-15','M-16','M-17','M-83'],
       tip:{ko:'같은 소인수가 두 번 만나면(짝) 근호 밖으로 나올 수 있어요 — 2와 5가 만나 10이 되던 것과 같은 이치!',en:'When the same prime factor appears twice (a pair), it can step outside the root — the same idea as 2 and 5 meeting to make 10!',zh:'同一质因数出现两次(配对)就能走出根号——和2与5相遇变成10是同样的道理！'}
     },
     {
@@ -399,6 +461,45 @@ window.NM_ROADMAP = {
       theme:{ko:'W10-2 · 곱셈공식과 인수분해 — 전개와 거꾸로 읽기',en:'W10-2 · Formulas & Factoring — Expanding & Reading Backward',zh:'W10-2·乘法公式与因式分解——展开与反着读'},
       units:['M-18','M-19','M-20'],
       tip:{ko:'무지개 덧셈법에서 시작된 여정의 마지막 걸음 — 곱셈공식을 거꾸로 읽으면 인수분해가 돼요!',en:'The final step of a journey that began with rainbow addition — read the multiplication formula backward and you get factoring!',zh:'从彩虹加法法出发的旅程终点——把乘法公式反着读就是因式分解！'}
+    },
+    {
+      /* W10-3 신설(2026-09-20, 중등 교과 연산 3차) — 인수분해까지 와 놓고
+         "그 식을 =0으로 놓는" 한 걸음이 없었다. 중3 교과 연산의 마지막 두 기둥. */
+      id:'W10-3', icon:'🎯', grade:'중3',
+      edu:{ko:'중3 이차방정식과 활용',en:'G9 Quadratic Equations & Their Uses',zh:'初三二次方程与应用'},
+      theme:{ko:'W10-3 · 이차방정식 — 근을 읽고 활용하기',en:'W10-3 · Quadratic Equations — Reading the Roots and Using Them',zh:'W10-3·二次方程——读出根并应用'},
+      units:['M-66','M-77'],
+      tip:{ko:'곱해서 0이면 둘 중 하나가 0 — 인수분해한 식을 =0으로 놓는 순간 근이 그냥 보여요!',en:'A product of zero means one factor is zero — set the factored form to zero and the roots are simply there to read!',zh:'乘积为0就有一个因式为0——把分解好的式子令为0，根就直接看出来了！'}
+    },
+    {
+      /* W10-4 신설(2026-09-21, 원장 "이차함수도 세부화해야지") — 꼭짓점 하나로 뭉쳐 있던
+         것을 y=ax² → 평행이동 → 꼭짓점 → 최대최소·교점 → 식 구하기 다섯으로 편다. */
+      id:'W10-4', icon:'🥣', grade:'중3',
+      edu:{ko:'중3 이차함수',en:'G9 Quadratic Functions',zh:'初三二次函数'},
+      theme:{ko:'W10-4 · 이차함수 — y=ax²·평행이동·최대최소·축과의 교점·식 구하기',en:'W10-4 · Quadratic Functions — y=ax2, Translation, Extremes, Crossings, Building the Formula',zh:'W10-4·二次函数——y=ax²·平移·最值·轴交点·求解析式'},
+      units:['M-78','M-79','M-67','M-80','M-81'],
+      tip:{ko:'위아래는 뒤에 그대로, 좌우는 괄호 안에 반대 부호로 — 꼭짓점의 y가 최댓값·최솟값이에요!',en:'Up and down at the end as they read, sideways inside the bracket with the sign flipped - and the y at the vertex is the extreme!',zh:'上下照原样加在后面，左右进括号并反号——顶点的y就是最值！'}
+    },
+    {
+      id:'W10-5', icon:'📊', grade:'중3',
+      edu:{ko:'중3 산포도',en:'G9 Dispersion',zh:'初三离散程度'},
+      theme:{ko:'W10-5 · 산포도 — 편차·분산·표준편차·두 자료 비교',en:'W10-5 · Dispersion — deviations, variance, standard deviation, comparison',zh:'W10-5·离散程度——偏差·方差·标准差·两组数据比较'},
+      units:['M-85'],
+      tip:{ko:'편차는 모두 더하면 0, 분산은 편차 제곱의 평균, 표준편차는 분산의 양의 제곱근이에요. 더 고른 자료는 산포도가 작은 쪽입니다.',en:'Deviations sum to zero; variance is the mean squared deviation; standard deviation is its positive square root. The smaller spread is more consistent.',zh:'偏差之和为0；方差是偏差平方的平均数；标准差是方差的正平方根。离散程度较小的数据更均匀。'}
+    },
+    {
+      id:'W10-6', icon:'📦', grade:'중3',
+      edu:{ko:'중3 사분위수와 상자그림',en:'G9 Quartiles & Box Plots',zh:'初三四分位数与箱形图'},
+      theme:{ko:'W10-6 · 사분위수와 상자그림 — 다섯 수 요약·IQR·읽기·직접 그리기',en:'W10-6 · Quartiles & Box Plots — five-number summary, IQR, reading and drawing',zh:'W10-6·四分位数与箱形图——五数概括·四分位距·读取·绘制'},
+      units:['M-86'],
+      tip:{ko:'정렬한 뒤 Q1·중앙값·Q3을 찾고, 다섯 수를 눈금에 먼저 표시한 다음 상자와 수염을 그립니다.',en:'Sort first, find Q1, median and Q3, then mark all five values before drawing the box and whiskers.',zh:'先排序求Q1、中位数、Q3，再标出五个数，最后画箱体和须。'}
+    },
+    {
+      id:'W10-7', icon:'⠿', grade:'중3',
+      edu:{ko:'중3 산점도와 상관관계',en:'G9 Scatter Plots & Correlation',zh:'初三散点图与相关关系'},
+      theme:{ko:'W10-7 · 산점도와 상관관계 — 순서쌍 찍기·방향·강도',en:'W10-7 · Scatter Plots & Correlation — plotting pairs, direction and strength',zh:'W10-7·散点图与相关关系——描点·方向·强弱'},
+      units:['M-87'],
+      tip:{ko:'점을 선으로 잇지 말고 점구름 전체가 오른쪽으로 갈수록 올라가는지, 내려가는지, 방향이 없는지 봅니다.',en:'Do not join the dots; judge whether the whole cloud rises, falls or has no direction as x increases.',zh:'不要把点连线；观察整个点云随x增大是上升、下降还是没有方向。'}
     },
 
     /* ─────── W11 : 다항식의 탑 — 공통수학1 (2026-08-25) ─────────

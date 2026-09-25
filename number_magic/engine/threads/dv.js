@@ -62,8 +62,10 @@
         answerType: 'number',
         widget:     'array',
         array:      { n, rows: 2 },
+        /* 2026-09-20: 첫 줄이 `48 = 24 + 24` 라 답이 이미 적혀 있었다 — 아이는 베껴 썼다.
+           같은 관계를 빈칸으로 물으면 "똑같이 둘로 가르기"가 실제 할 일이 된다. */
         solution: [
-          { tex: `${n} = ${half} + ${half}` },
+          { tex: `${n} = \\square + \\square`, blank: [half, half] },
           { tex: `${n} \\div 2 = \\square`, blank: half }
         ]
       };
@@ -135,8 +137,8 @@
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `${dividend} = ${b} \\times \\square + ${r}`, blank: q },
-        { tex: `${dividend} \\div ${b} = \\square`,          blank: q }
+        { tex: `${dividend} = ${b} \\times \\square + ${r}`,        blank: q },
+        { tex: `${dividend} \\div ${b} = \\square \\cdots ${r}`,    blank: q }
       ],
       array: { n: b * q, rows: b }   /* 몫 부분만 배열로 시각화 */
     };
@@ -153,6 +155,7 @@
     const q    = R(rng, qMin, qMax);
     const r    = rem ? R(rng, 1, b - 1) : 0;
     const dv   = b * q + r;                // 피제수
+    const qTens = Math.floor(q / 10), qOnes = q % 10;
 
     if (!rem) {
       return {
@@ -165,12 +168,21 @@
         answer:     q,
         answerType: 'steps',
         widget:     'steps',
-        steps: [
-          { tex: `${dv} \\div ${b} = \\square`, blank: q }
-        ],
-        solution: [
-          { tex: `${dv} \\div ${b} = \\square`, blank: q }
-        ]
+        /* 나누어떨어지는 쪽은 풀이가 문항식 한 줄 복사였다 — 발판이 없었다(2026-09-20).
+           몫을 십의 자리와 일의 자리로 갈라 나눈다(교재의 (세)÷(한) 자리별 셈).
+           몫이 10의 배수여서 가를 것이 없으면 곱셈으로 되돌려 확인한다. */
+        steps: qOnes
+          ? [ { tex: `${b * qTens * 10} \\div ${b} = \\square`, blank: qTens * 10 },
+              { tex: `${b * qOnes} \\div ${b} = \\square`,      blank: qOnes },
+              { tex: `${qTens * 10} + ${qOnes} = \\square`,      blank: q } ]
+          : [ { tex: `${b} \\times \\square = ${dv}`, blank: q },
+              { tex: `${dv} \\div ${b} = \\square`,   blank: q } ],
+        solution: qOnes
+          ? [ { tex: `${b * qTens * 10} \\div ${b} = \\square`, blank: qTens * 10 },
+              { tex: `${b * qOnes} \\div ${b} = \\square`,      blank: qOnes },
+              { tex: `${qTens * 10} + ${qOnes} = \\square`,      blank: q } ]
+          : [ { tex: `${b} \\times \\square = ${dv}`, blank: q },
+              { tex: `${dv} \\div ${b} = \\square`,   blank: q } ]
       };
     }
 
@@ -185,8 +197,8 @@
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `${dv} \\div ${b} = \\square`,      blank: q },
-        { tex: `\\text{나머지}: \\square`,          blank: r }
+        { tex: `${dv} = ${b} \\times \\square + ${r}`,       blank: q },
+        { tex: `${dv} \\div ${b} = \\square \\cdots ${r}`,   blank: q }
       ],
       solution: [
         { tex: `${b} \\times ${q} = ${b * q}` },
@@ -197,53 +209,60 @@
   };
 
   /* ── DV5 — 두 자리로 나누기 (÷2d) ───────────────────────── */
+  /* 교재 D12(나머지 없는 (세)÷(두)) · D13(나머지 있는 (세)÷(두)) · D14·D15(네 자리)가
+     이 자리다(2026-09-20). 고치기 전 두 가지가 어긋나 있었다:
+       ① **나머지를 문항에 미리 적어 줬다** — `856 ÷ 17 = □ ⋯ 5` 꼴이라 몫만 물었다.
+          나머지를 알면 856−5를 17로 나누면 끝이라 "나머지가 나누는 수보다 작아야 한다"는
+          이 단원의 핵심이 사라진다. 이제 DV19와 같이 `= □ ⋯ □`(answer [q, r])로 묻는다.
+       ② **나누는 수가 11~19뿐이었다** — 두 자리로 나누는 단원인데 20~99가 한 번도 안 나왔다.
+          교재 예시가 21·22·23인 이유는 "앞 두 자리와 견줘 몫을 어림"하는 연습이라, 나누는
+          수가 십몇이면 어림할 것이 없다.
+     자릿수만 늘어나는 D14·D15는 한 레벨로 합쳤다(C10 네 자리 곱셈을 뺀 것과 같은 기준). */
   NM_TGEN['dv5_div2d'] = function (params, rng) {
-    const d = (params && params.d) || 2;
-    let b, q, r, dv;
-
-    if (d === 2) {
-      /* 2d÷2d: 피제수 2~3자리 */
-      b  = R(rng, 11, 19);
-      q  = R(rng, 2, 5);
-      r  = R(rng, 0, b - 1);
+    const d    = (params && params.d) || 3;        /* 나누어지는 수의 자릿수 */
+    const rem  = params && params.rem;             /* true=나머지 있음 · false=없음 · undefined=섞기 */
+    let b, q, r, dv, tries = 0;
+    do {
+      /* 나누는 수: 두 자리 전체. 몫 어림이 되도록 L1(두 자리÷두 자리)만 11~49로 둔다. */
+      b = d === 2 ? R(rng, 11, 49) : R(rng, 11, 99);
+      const lo = d === 2 ? 10 : (d === 3 ? 100 : 1000);
+      const hi = d === 2 ? 99 : (d === 3 ? 999 : 9999);
+      const qMin = Math.max(2, Math.ceil((lo + 1) / b));
+      const qMax = Math.floor(hi / b);
+      if (qMax < qMin) continue;
+      q = R(rng, qMin, qMax);
+      const want = (rem === undefined) ? pick(rng, [true, false]) : rem;
+      r = want ? R(rng, 1, b - 1) : 0;
       dv = b * q + r;
-    } else {
-      /* 3d÷2d: 피제수 3자리 */
-      b  = R(rng, 11, 19);
-      const qMin = Math.ceil(100 / b);
-      const qMax = Math.min(50, Math.floor(999 / b));
-      q  = R(rng, qMin, qMax);
-      r  = R(rng, 0, b - 1);
-      dv = b * q + r;
-    }
+    } while ((dv > (d === 2 ? 99 : d === 3 ? 999 : 9999) || dv < (d === 2 ? 10 : d === 3 ? 100 : 1000)) && tries++ < 200);
+    if (tries >= 200) { b = 21; q = 12; r = 5; dv = 257; }
 
-    const steps = r === 0
-      ? [{ tex: `${dv} = ${b} \\times \\square`,            blank: q }]
-      : [
-          { tex: `${dv} = ${b} \\times \\square + ${r}`,   blank: q },
-          { tex: `\\text{나머지}: \\square`,                blank: r }
-        ];
-
-    const solution = r === 0
-      ? [{ tex: `${dv} = ${b} \\times \\square`, blank: q }]
-      : [
-          { tex: `${b} \\times ${q} = ${b * q}` },
-          { tex: `${dv} - ${b * q} = \\square`, blank: r },
-          { tex: `${dv} \\div ${b} = \\square \\cdots ${r}`, blank: q }
-        ];
+    const hasR = r > 0;
+    /* 몫을 어림하는 자리 — 교재의 "앞에서 두 자리만큼 견줘 몫의 자릿수를 예상한다".
+       앞 두 자리가 나누는 수보다 작으면 세 자리를 봐야 한다는 것 자체가 이 단원의 내용이다. */
+    const head2 = +String(dv).slice(0, 2);
+    const digits = String(q).length;
+    const steps = [
+      { tex: `${head2} \\div ${b} \\;\\Rightarrow\\; \\text{몫은 } \\square \\text{자리}`, blank: digits },
+      { tex: `${b} \\times \\square = ${dv - r}`, blank: q }
+    ];
+    if (hasR) steps.push({ tex: `${dv} - ${dv - r} = \\square`, blank: r });
+    steps.push({ tex: hasR ? `${dv} \\div ${b} = \\square \\cdots \\square` : `${dv} \\div ${b} = \\square`,
+                 blank: hasR ? [q, r] : q });
 
     return {
       prompt: {
-        ko: `${dv} ÷ ${b}의 몫과 나머지를 구해요`,
-        en: `Find the quotient and remainder: ${dv} ÷ ${b}`,
-        zh: `求${dv}÷${b}的商和余数`
+        ko: hasR ? `${dv} ÷ ${b}의 몫과 나머지를 구해요` : `${dv} ÷ ${b}을 계산해요`,
+        en: hasR ? `Find the quotient and remainder: ${dv} ÷ ${b}` : `Work out ${dv} ÷ ${b}`,
+        zh: hasR ? `求${dv}÷${b}的商和余数` : `计算${dv}÷${b}`
       },
-      tex:        `${dv} \\div ${b} = \\square \\cdots ${r}`,
-      answer:     q,
+      tex:        hasR ? `${dv} \\div ${b} = \\square \\cdots \\square` : `${dv} \\div ${b} = \\square`,
+      answer:     hasR ? [q, r] : q,
       answerType: 'steps',
       widget:     'steps',
+      divBox:     { a: dv, b, q, r },     /* 인쇄용 세로 나눗셈 상자 — DV19와 같은 계약 */
       steps,
-      solution
+      solution:   steps
     };
   };
 
@@ -331,7 +350,7 @@
         answerType: 'number',
         widget:     'numpad',
         solution: [
-          { tex: `\\text{odd}=${d[0]}+${d[2]}=${odd}\\;,\\;\\text{even}=${d[1]}+${d[3]}=${even}` },
+          { tex: `\\text{홀수째 자리}=${d[0]}+${d[2]}=${odd}\\;,\\;\\text{짝수째 자리}=${d[1]}+${d[3]}=${even}` },
           { tex: `${odd} - ${even} = \\square`, blank: diff }
         ]
       };
@@ -382,7 +401,7 @@
     } else {
       const psum = String(prefix).split('').reduce((s, ch) => s + Number(ch), 0);
       solution = [
-        { tex: `${psum} + \\text{끝자리} \\equiv 0\\ (\\text{mod}\\ ${r}) \\Rightarrow \\{${cands.join(',\\,')}\\}` },
+        { tex: `${psum} + \\text{끝자리가 } ${r}\\text{의 배수} \\Rightarrow \\{${cands.join(',\\,')}\\}` },
         { tex: `\\text{가장 큰 숫자} = \\square`, blank: d }
       ];
     }
@@ -427,7 +446,9 @@
       };
     }
 
-    /* ---- 최대공약수(GCD) — 유클리드 호제법 스텝 ----
+    /* ---- 최대공약수 — 유클리드 호제법 스텝 ----
+       한국어 화면·인쇄물에 GCD·LCM 약어를 쓰지 않는다(2026-09-19 원장 "최소공배수가 맞지") —
+       초·중 교과는 최대공약수·최소공배수로 부른다. 영어 지문(en)만 GCD/LCM 을 쓴다. ----
        고정 목록 대신 a,b를 직접 뽑아 유클리드 호제법을 돌려 본다.
        g<2(재미없는 서로소)나 단계가 너무 많은(3단계 초과) 조합은 다시 뽑아,
        "2~3단계로 끝나는 쌍"이라는 원래 설계 의도는 유지하면서 조합 수를 크게 늘린다. */
@@ -459,15 +480,15 @@
           { tex: `12 = 6 \\times 2 + \\square`,  blank: 0 }
         ];
       }
-      steps.push({ tex: `\\gcd(${a},\\,${b}) = \\square`, blank: g });
+      steps.push({ tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`, blank: g });
 
       return {
         prompt: {
-          ko: `${a}와 ${b}의 최대공약수(GCD)를 구해요`,
+          ko: `${a}와 ${b}의 최대공약수를 구해요`,
           en: `Find the GCD of ${a} and ${b}`,
           zh: `求${a}和${b}的最大公因数`
         },
-        tex:        `\\gcd(${a},\\,${b}) = \\square`,
+        tex:        `\\text{최대공약수}(${a},\\,${b}) = \\square`,
         answer:     g,
         answerType: 'steps',
         widget:     'steps',
@@ -476,7 +497,7 @@
       };
     }
 
-    /* ---- 최소공배수(LCM) — GCD → 공식 ---- */
+    /* ---- 최소공배수 — 최대공약수 → 공식 ---- */
     /* mode === 'lcm' */
     let a, b, g, l;
     let tries = 0;
@@ -492,21 +513,21 @@
 
     return {
       prompt: {
-        ko: `${a}와 ${b}의 최소공배수(LCM)를 구해요`,
+        ko: `${a}와 ${b}의 최소공배수를 구해요`,
         en: `Find the LCM of ${a} and ${b}`,
         zh: `求${a}和${b}的最小公倍数`
       },
-      tex:        `\\text{lcm}(${a},\\,${b}) = \\square`,
+      tex:        `\\text{최소공배수}(${a},\\,${b}) = \\square`,
       answer:     l,
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `\\gcd(${a},\\,${b}) = \\square`,                              blank: g },
-        { tex: `\\text{lcm} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
+        { tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`,                              blank: g },
+        { tex: `\\text{최소공배수} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
       ],
       solution: [
-        { tex: `\\gcd(${a},\\,${b}) = \\square`,                              blank: g },
-        { tex: `\\text{lcm} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
+        { tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`,                              blank: g },
+        { tex: `\\text{최소공배수} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
       ]
     };
   };
@@ -570,8 +591,11 @@
           en: `Prime-factorize ${n}`,
           zh: `对${n}进行质因数分解`
         },
-        tex:        `${n} = ${pf.join(' \\times ')}`,
-        answer:     largestPrime,
+        /* 전에는 `112 = 2×2×2×2×7` 을 그대로 찍고 답이 "가장 큰 소인수" 하나였다 —
+           **문제에 답이 이미 다 적혀 있고 쓸 칸이 없었다**(2026-09-20 점검).
+           이제 소인수 자리를 빈칸으로 두고 소인수 전부를 답으로 받는다. */
+        tex:        `${n} = ${pf.map(() => '\\square').join(' \\times ')}`,
+        answer:     pf.slice(),
         answerType: 'steps',
         widget:     'steps',
         steps,
@@ -694,6 +718,8 @@
   function dvBatchim(w){ const c = w.charCodeAt(w.length-1); return c >= 0xAC00 && c <= 0xD7A3 && ((c - 0xAC00) % 28) !== 0; }
   function dvJosa(w, withB, noB){ return w + (dvBatchim(w) ? withB : noB); }
   /* 숫자 읽기의 받침: 2·4·5·9 → 받침 없음(를), 3·6·7·8·10 → 있음(을) */
+  /* 수를 읽을 때의 받침 — 1·3·6·7·8·0·10 계열은 받침 있음(과), 2·4·5·9 는 없음(와) */
+  function dvNumWa(n){ const d = n % 10; return [2,4,5,9].indexOf(d) >= 0 && d !== 0 ? '와' : '과'; }
   function dvNumJosa(n, withB, noB){ return String(n) + ([2,4,5,9].indexOf(n % 10) >= 0 && n % 10 !== 0 ? noB : withB); }
 
   /* 풀이 사슬(인쇄 예시·따라풀기·정답지 해설용) — 답만 보여 주지 않는다(2026-09-17,
@@ -905,6 +931,216 @@
        배열의 줄 수(사람 수 vs 묶음 수)가 달라지므로 문장을 읽지 않으면 틀린다. */
     if (mix && R(rng, 0, 1) === 0) return dvShareProblem(rng, b, q, item, who);
     return dvGroupProblem(rng, b, q, item, who);
+  };
+
+  /* ── DV17 — 곱셈식에서 나눗셈의 몫 찾기(2026-09-19, 원장이 준 교과서 지면) ──
+     `2 × □ = 10 ⇔ 10 ÷ 2 = □`(곱하는 수 찾기) · `□ × 5 = 15 ⇔ 15 ÷ 5 = □`(곱해지는 수 찾기).
+     같은 답을 두 식으로 보여 주는 것이 문항의 전부라, 두 식을 나란히 쓰고 빈칸은 하나로 잇는다. */
+  NM_TGEN['dv17_quotFromMul'] = function (params, rng) {
+    const mode = (params && params.mode) || 'times';      /* times = 곱하는 수, timesed = 곱해지는 수 */
+    const hi   = !!(params && params.hi);
+    const a = R(rng, 2, hi ? 9 : 5), q = R(rng, 2, 9), c = a * q;
+    const mulTex = mode === 'times' ? `${a} \\times \\square = ${c}` : `\\square \\times ${a} = ${c}`;
+    const divTex = `${c} \\div ${a} = \\square`;
+    const what = mode === 'times'
+      ? { ko: '곱하는 수', en: 'the number being multiplied by', zh: '乘数' }
+      : { ko: '곱해지는 수', en: 'the number being multiplied', zh: '被乘数' };
+    return {
+      prompt: {
+        ko: `곱셈식에서 ${what.ko}를 찾아 나눗셈의 몫을 구해요. ${mode === 'times' ? `${a} × □ = ${c}` : `□ × ${a} = ${c}`}`,
+        en: `Find ${what.en} in the multiplication, and you have the quotient. ${mode === 'times' ? `${a} × □ = ${c}` : `□ × ${a} = ${c}`}`,
+        zh: `在乘法算式里找${what.zh}，就是除法的商。${mode === 'times' ? `${a}×□=${c}` : `□×${a}=${c}`}`
+      },
+      tex: `${mulTex} \\;\\Leftrightarrow\\; ${divTex}`,
+      answer: q, answerType: 'number', widget: 'numpad',
+      sameBlank: true,              /* 두 식의 빈칸이 같은 수 — 예시에서 둘 다 채운다 */
+      solution: [
+        { tex: mulTex, blank: q },
+        { tex: divTex, blank: q }
+      ]
+    };
+  };
+
+  /* ── DV18 — 나머지가 있는 나눗셈, 나머지 크기별(교과서 "나머지가 1인/3인/2인 나눗셈") ──
+     묶음 그림(배열)으로 "11개를 2개씩 묶으면 5묶음 1개가 남아요"를 눈으로 보게 하고,
+     답은 몫과 나머지 두 칸. r 값을 고정해 한 회차가 한 가지 나머지만 다루게 한다. */
+  NM_TGEN['dv18_remFixed'] = function (params, rng) {
+    const want = (params && params.r) || 0;               /* 0 = 아무 나머지 */
+    const twoDigitQ = !!(params && params.q2);            /* 몫이 두 자리 */
+    let b, q, r;
+    if (want) {
+      b = R(rng, want + 1, 9);                            /* 나머지는 나누는 수보다 작아야 한다 */
+      r = want;
+    } else {
+      b = R(rng, 2, 9);
+      r = R(rng, 1, b - 1);
+    }
+    q = twoDigitQ ? R(rng, 10, 19) : R(rng, 2, 9);
+    if (!twoDigitQ && b * q + r > 60) q = Math.max(2, Math.floor((60 - r) / b));   /* 그림으로 보여 줄 만한 크기로 */
+    const a = b * q + r;
+    const item = pick(rng, DV_ITEMS.filter(function(it){ return !it.person; }));   /* 사람을 "묶지"는 않는다 */
+    const word = {
+      ko: `${item.ko} ${a}${dvJosa(item.unit,'을','를')} ${b}${item.unit}씩 묶어요.`,
+      en: `We bundle ${a} ${item.en} into groups of ${b}.`,
+      zh: `把${a}${item.zhU}${item.zh}每${b}${item.zhU}分成一组。`
+    };
+    const ask = {
+      ko: `몇 묶음이 되고 몇 ${dvJosa(item.unit,'이','가')} 남을까요?`,
+      en: `How many groups, and how many are left over?`,
+      zh: `能分成几组？还剩几${item.zhU}？`
+    };
+    return {
+      prompt: { ko: word.ko + ' ' + ask.ko, en: word.en + ' ' + ask.en, zh: word.zh + ask.zh },
+      word, wordAsk: ask,
+      tex: `${a} \\div ${b} = \\square \\cdots \\square`,
+      answer: [q, r], answerType: 'number',
+      /* 배열 위젯은 60칸까지 — 그보다 크면(몫이 두 자리) 숫자판으로 */
+      widget: a <= 60 ? 'array' : 'numpad',
+      array: a <= 60 ? { n: a, rows: q } : undefined,
+      answerNote: { ko: `몫 ${q}, 나머지 ${r}`, en: `quotient ${q}, remainder ${r}`, zh: `商${q}，余${r}` },
+      solution: [
+        { tex: `${b} \\times \\square = ${b * q}`, blank: q },
+        { tex: `${a} - ${b * q} = \\square`, blank: r },
+        { tex: `${a} \\div ${b} = \\square \\cdots \\square`, blank: [q, r] }
+      ]
+    };
+  };
+
+  /* ── DV19 — 세로 나눗셈(2026-09-19, 교과서 "몫이 한/두 자리, 나머지가 2인 (두 자리)÷(한 자리)") ──
+     3)17 처럼 나눗셈 상자를 그리고, 몫을 자리에 맞춰 쓰게 한다. 렌더는 exam.js divBoxHtml. */
+  NM_TGEN['dv19_longDiv'] = function (params, rng) {
+    const rem   = !!(params && params.rem);
+    const q2    = !!(params && params.q2);      /* 몫이 두 자리 */
+    const d3    = !!(params && params.d3);      /* 세 자리 ÷ 한 자리 */
+    /* 레벨이 겹치지 않게 — L3·L4(몫 두 자리)는 나누어지는 수가 두 자리,
+       세 자리는 L5 전용이다(2026-09-19). 나누는 수가 크면 두 자리 몫의 폭이
+       좁아지므로(9면 10~11뿐) q2 레벨은 2~7에서 고른다. */
+    const b = d3 ? R(rng, 2, 9) : (q2 ? R(rng, 2, 7) : R(rng, 2, 9));
+    const r = rem ? R(rng, 1, b - 1) : 0;
+    const q = d3 ? R(rng, 100, 999 / b | 0)
+                 : (q2 ? R(rng, 10, ((99 - r) / b) | 0) : R(rng, 2, 9));
+    const a = b * q + r;
+    /* 자리별 계산 — 나누어지는 수의 자리를 왼쪽부터 내려 가며(몫의 자리가 서는 곳만 단계로 남긴다) */
+    const as = String(a);
+    const steps = [];
+    let cur = 0;
+    for (let i = 0; i < as.length; i++) {
+      cur = cur * 10 + +as[i];
+      if (cur < b && steps.length === 0) continue;     /* 아직 몫이 서지 않는 자리는 건너뛴다 */
+      const qi = Math.floor(cur / b);
+      /* 자리별 단계는 "몫을 몇 세우나"를 묻는 것이지 나눗셈의 답이 아니다 — 전에는
+         `9 \div 6 = \square`(답 1) 이라 **등식으로 읽으면 거짓**이었다(2026-09-20 점검).
+         나머지를 함께 적어 참인 식으로 만든다: `9 \div 6 = 1 \cdots 3`. */
+      const ri = cur - qi * b;
+      steps.push({ tex: ri ? `${cur} \\div ${b} = \\square \\cdots ${ri}`
+                           : `${cur} \\div ${b} = \\square`, blank: qi });
+      cur = ri;
+    }
+    /* 몫이 한 자리면 자리별 단계가 하나뿐이라 마지막 줄과 똑같아진다(2026-09-19) —
+       그 자리는 "몇 배 하면 되는가"를 묻는 곱셈 줄로 바꿔 준다. */
+    if (steps.length <= 1) {
+      steps.length = 0;
+      steps.push({ tex: `${b} \\times \\square = ${a - r}`, blank: q });
+    }
+    steps.push({ tex: rem ? `${a} \\div ${b} = \\square \\cdots \\square` : `${a} \\div ${b} = \\square`,
+                 blank: rem ? [q, r] : q });
+    return {
+      prompt: {
+        ko: `${a} ÷ ${b}을 세로셈으로 계산해요. 몫은 자리에 맞춰 쓰고${rem ? ', 나머지도 써요' : ''}.`,
+        en: `Work out ${a} ÷ ${b} in the long-division box. Line the quotient up by place${rem ? ', and write the remainder' : ''}.`,
+        zh: `用竖式计算${a}÷${b}。商要对齐数位${rem ? '，并写出余数' : ''}。`
+      },
+      tex: rem ? `${a} \\div ${b} = \\square \\cdots \\square` : `${a} \\div ${b} = \\square`,
+      answer: rem ? [q, r] : q,
+      answerType: 'steps', widget: 'steps', steps,
+      divBox: { a, b, q, r },        /* 인쇄용 세로 나눗셈 상자 */
+      solution: steps
+    };
+  };
+
+  /* ── DV20 — 약수와 배수(2026-09-19, 원장 "약수, 배수 이런 것들도 세분화") ──
+     한 덩어리였던 DV7(약수 개수·최대공약수·최소공배수)을 아이가 밟는 순서대로 쪼갠다:
+     약수 모두 쓰기 → 배수 차례로 쓰기 → 공약수 → 최대공약수 → 공배수 → 최소공배수.
+     답이 여러 개인 레벨은 쉼표로 받는다(answer 배열). */
+  function dvFactorsOf(n){ const f=[]; for(let i=1;i<=n;i++) if(n%i===0) f.push(i); return f; }
+  function dvGcd(x,y){ while(y){ const t=x%y; x=y; y=t; } return x; }
+  NM_TGEN['dv20_factorMultiple'] = function (params, rng) {
+    const mode = (params && params.mode) || 'factors';
+    if (mode === 'factors') {                       /* 한 수의 약수 모두 */
+      /* 약수가 일곱 개 이상인 수(24·30·36·40·48…)는 인쇄 칸에서 줄을 넘어간다 —
+         여섯 개 이하만 쓰고, 대신 수를 넉넉히 둬 스무 문항이 겹치지 않게 한다. */
+      const n = pick(rng, [10,12,14,15,16,18,20,21,22,25,26,27,28,32,33,34,35,38,39,
+                           44,45,46,49,50,51,52,55,57,58,62,63,65,68,69,75,76,77,82,
+                           85,86,87,91,92,93,94,95,98,99]);
+      const f = dvFactorsOf(n);
+      return {
+        prompt: { ko: `${n}의 약수를 모두 쓰세요.`, en: `Write every factor of ${n}.`, zh: `写出${n}的所有因数。` },
+        tex: `${n}\\text{의 약수} = ${f.map(function(){ return '\\square'; }).join(',\\,')}`,
+        answer: f, answerType: 'number', widget: 'numpad',
+        /* 2026-09-20: 마지막 줄이 `1,\,3,\,5,\,15` 처럼 답을 그냥 늘어놓고 blank 가 없었다.
+           다칸 넘패드로 받는 답과 모양이 어긋나고, 해설로서도 답을 보여 주기만 했다.
+           문항식과 같은 빈칸 모양으로 되돌려 놓는다. */
+        solution: [{ tex: `1 \\times ${n} = ${n}${f.length>2?',\\;'+f[1]+' \\times '+(n/f[1])+' = '+n:''}` },
+                   { tex: `${n}\\text{의 약수} = ${f.map(function(){ return '\\square'; }).join(',\\,')}`, blank: f }]
+      };
+    }
+    if (mode === 'multiples') {                      /* 배수를 차례로 */
+      /* 2~15의 배수를 4~6개 — 스무 문항이 서로 겹치지 않을 만큼 경우의 수를 둔다 */
+      const n = R(rng, 2, 15), k = R(rng, 4, 6);
+      const ms = []; for (let i=1;i<=k;i++) ms.push(n*i);
+      return {
+        prompt: { ko: `${n}의 배수를 작은 것부터 ${k}개 쓰세요.`, en: `Write the first ${k} multiples of ${n}.`, zh: `从小到大写出${n}的前${k}个倍数。` },
+        tex: `${n}\\text{의 배수} = ${ms.map(function(){ return '\\square'; }).join(',\\,')}`,
+        answer: ms, answerType: 'number', widget: 'numpad',
+        solution: [{ tex: `${n} \\times 1,\\, ${n} \\times 2,\\, \\ldots` },
+                   { tex: `${n}\\text{의 배수} = ${ms.map(function(){ return '\\square'; }).join(',\\,')}`, blank: ms }]
+      };
+    }
+    /* 공약수·최대공약수·공배수·최소공배수 */
+    /* 서로소(공약수가 1뿐)·너무 큰 최소공배수는 다시 뽑는다 — 보여 줄 것이 없거나 아이에게 버겁다 */
+    let a, b, g, l, tries = 0;
+    do {
+      a = R(rng, 4, 24); b = R(rng, 4, 24);
+      g = dvGcd(a, b); l = a * b / g;
+    } while (tries++ < 40 && (a === b || (/^(common|gcd)$/.test(mode) && g < 2) || (/Mul|lcm/.test(mode) && l > 60)));
+    if (mode === 'common') {                         /* 공약수 모두 */
+      const cf = dvFactorsOf(g);
+      return {
+        prompt: { ko: `${a}${dvNumWa(a)} ${b}의 공약수를 모두 쓰세요.`, en: `Write every common factor of ${a} and ${b}.`, zh: `写出${a}和${b}的所有公因数。` },
+        tex: `${a},\\, ${b}\\text{의 공약수} = ${cf.map(function(){ return '\\square'; }).join(',\\,')}`,
+        answer: cf, answerType: 'number', widget: 'numpad',
+        solution: [{ tex: `${a}: ${dvFactorsOf(a).join(',\\,')}` },
+                   { tex: `${b}: ${dvFactorsOf(b).join(',\\,')}` },
+                   { tex: `\\text{공약수} = ${cf.map(function(){ return '\\square'; }).join(',\\,')}`, blank: cf }]
+      };
+    }
+    if (mode === 'gcd') {
+      return {
+        prompt: { ko: `${a}${dvNumWa(a)} ${b}의 최대공약수는?`, en: `What is the greatest common factor of ${a} and ${b}?`, zh: `${a}和${b}的最大公因数是多少？` },
+        tex: `\\text{최대공약수}(${a},\\, ${b}) = \\square`,
+        answer: g, answerType: 'number', widget: 'numpad',
+        solution: [{ tex: `${a}: ${dvFactorsOf(a).join(',\\,')}` },
+                   { tex: `${b}: ${dvFactorsOf(b).join(',\\,')}` },
+                   { tex: `\\text{가장 큰 공약수} = \\square`, blank: g }]
+      };
+    }
+    if (mode === 'commonMul') {                      /* 공배수 3개 */
+      const cm = [l, l*2, l*3];
+      return {
+        prompt: { ko: `${a}${dvNumWa(a)} ${b}의 공배수를 작은 것부터 3개 쓰세요.`, en: `Write the first three common multiples of ${a} and ${b}.`, zh: `从小到大写出${a}和${b}的前三个公倍数。` },
+        tex: `${a},\\, ${b}\\text{의 공배수} = ${cm.map(function(){ return '\\square'; }).join(',\\,')}`,
+        answer: cm, answerType: 'number', widget: 'numpad',
+        solution: [{ tex: `\\text{최소공배수} = ${l}` },
+                   { tex: `\\text{공배수} = ${cm.map(function(){ return '\\square'; }).join(',\\,')}`, blank: cm }]
+      };
+    }
+    return {                                          /* lcm */
+      prompt: { ko: `${a}${dvNumWa(a)} ${b}의 최소공배수는?`, en: `What is the least common multiple of ${a} and ${b}?`, zh: `${a}和${b}的最小公倍数是多少？` },
+      tex: `\\text{최소공배수}(${a},\\, ${b}) = \\square`,
+      answer: l, answerType: 'number', widget: 'numpad',
+      solution: [{ tex: `\\text{최대공약수}(${a},${b}) = ${g}` },
+                 { tex: `${a} \\times ${b} \\div ${g} = \\square`, blank: l }]
+    };
   };
 
   /* ── DV14 — 같은 수를 빼서 나누기(반복 뺄셈) ─────────────── */

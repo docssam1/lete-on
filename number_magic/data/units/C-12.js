@@ -37,11 +37,11 @@ window.NM_UNITS['C-12'] = {
 
       { tag:{ko:'② 자리에 맞춰 합치기',en:'2) Placing and combining',zh:'② 按位合并'},
         head:{ko:'6 | 26 | 24 → 600+260+24 = 884',en:'6 | 26 | 24 → 600+260+24 = 884',zh:'6 | 26 | 24 → 600+260+24 = 884'},
-        desc:{ko:'세 조각을 <b>자리값을 살려</b> 더해요. 백의 조각 6은 600, 십의 조각 26은 260, 일의 조각은 24. 600+260+24=<b>884</b>. 십·일 조각이 10을 넘으면 윗자리로 올려주는 것만 조심하면 돼요!',
+        desc:{ko:'세 조각을 <b>자릿값을 살려</b> 더해요. 백의 조각 6은 600, 십의 조각 26은 260, 일의 조각은 24. 600+260+24=<b>884</b>. 십·일 조각이 10을 넘으면 윗자리로 올려주는 것만 조심하면 돼요!',
               en:'Add the three pieces <b>with their place values</b>. Hundreds piece 6 means 600, tens piece 26 means 260, ones piece is 24. 600+260+24=<b>884</b>. Just mind the carry when a piece exceeds 10!',
               zh:'三块要<b>带着位值</b>相加。百位块6是600，十位块26是260，个位块是24。600+260+24=<b>884</b>。只需注意块超过10时要向上进位！'},
         mathSteps:[{ko:'백: 6 → 600',en:'\\text{hundreds: } 6 → 600',zh:'百位：6 → 600'},{ko:'십: 26 → 260',en:'\\text{tens: } 26 → 260',zh:'十位：26 → 260'},{ko:'일: 24',en:'\\text{ones: } 24',zh:'个位：24'},'600+260+24 = 884'],
-        result:{ko:'34×26=884! 조각×자리값을 더하면 완성.',en:'34×26=884! Add piece × place value and it\'s done.',zh:'34×26=884！块×位值相加即完成。'},
+        result:{ko:'34×26=884! 조각×자릿값을 더하면 완성.',en:'34×26=884! Add piece × place value and it\'s done.',zh:'34×26=884！块×位值相加即完成。'},
         book:{ko:'검산: 자릿수 예측(C-09)으로 3×2=6 → 30×20=600 근처, 3자리 예상. 884는 3자리 ✓.',
               en:'Check: digit prediction (C-09) gives 3×2=6 → near 30×20=600, expecting 3 digits. 884 is 3 digits ✓.',
               zh:'检验：位数预测(C-09)得3×2=6→接近30×20=600，预计3位。884是3位✓。'} },
@@ -57,7 +57,7 @@ window.NM_UNITS['C-12'] = {
               en:'The advanced course extends this to 3-digit×2-digit and 3-digit×3-digit — one more X appears and there are more pieces, but the same idea still works: stack them place by place.',
               zh:'高级课程会扩展到三位数×两位数、三位数×三位数——多一个X、多几块，但原理不变：一位一位错开叠加即可。'} }
     ],
-    rule:{ ko:'① 세로끼리: 십×십(백), 일×일(일)  ② X 교차곱의 합 = 십의 조각  ③ 자리값 살려 더하기(올림 조심)',
+    rule:{ ko:'① 세로끼리: 십×십(백), 일×일(일)  ② X 교차곱의 합 = 십의 조각  ③ 자릿값 살려 더하기(올림 조심)',
       en:'① Columns: tens×tens (hundreds), ones×ones (ones)  ② Sum of X cross-products = tens piece  ③ Add with place values (mind carries)',
       zh:'① 竖列：十×十(百位)，个×个(个位)  ② X交叉积之和=十位块  ③ 带位值相加(注意进位)' }
   },
@@ -97,7 +97,7 @@ window.NM_UNITS['C-12'] = {
 
   voice:{
     correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'X 적중! ❌',en:'X marks the spot!',zh:'X命中！'}, {ko:'대단해! 🌟',en:'Amazing!',zh:'太棒了！'} ],
-    wrong:[ {ko:'X 교차곱 두 개를 더했어?',en:'Did you add both cross-products?',zh:'两个交叉积加了吗？'}, {ko:'자리값을 살려서 더해봐!',en:'Add with place values!',zh:'带着位值加！'} ],
+    wrong:[ {ko:'X 교차곱 두 개를 더했어?',en:'Did you add both cross-products?',zh:'两个交叉积加了吗？'}, {ko:'자릿값을 살려서 더해봐!',en:'Add with place values!',zh:'带着位值加！'} ],
     finish:{ ko:'완벽해! 엑스맨 마법사! ❌✨', en:'Perfect! X-Cross Wizard!', zh:'完美！X交叉魔法师！' }
   }
 };

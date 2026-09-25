@@ -16,12 +16,10 @@
 const fs = require('fs'), path = require('path'), { execSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const ONLY = process.argv.slice(2).map(s => s.toUpperCase());
-const FILES = ['engine/generators.js','engine/rng.js','engine/scene-model.js',
-  'engine/threads/ns_ad.js','engine/threads/sb.js','engine/threads/ml.js','engine/threads/dv.js',
-  'engine/threads/fr.js','engine/threads/dc_mx.js','engine/threads/el.js','engine/threads/nl.js',
-  'engine/threads/wp.js','engine/threads/adv.js','engine/threads/mid.js','engine/threads/mid2.js',
-  'engine/threads/mid3.js','engine/threads/mid4.js','engine/threads/mid5.js','engine/threads/mid6.js',
-  'engine/threads/mid7.js','engine/threads/mid8.js','data/threads.js'];
+/* 엔진 파일 목록은 앱(index.html)이 싣는 순서 그대로 읽는다(2026-09-25). 예전엔 손으로 적은
+   목록이 mid10 에서 멈춰 mid11~15 의 MD84~88 을 "생성기 없음"으로 보고했다. */
+const FILES = [...fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').matchAll(/<script\s+src="(engine\/[^"]+)"/g)]
+  .map(m => m[1]).concat(['data/threads.js']);
 
 function loadEngine(readFile){
   const vm = require('vm'); const w = { document: {}, console, Math, JSON, Object, Array, String, Number, RegExp, Date, parseInt, parseFloat, isNaN, isFinite };
@@ -33,7 +31,8 @@ function loadEngine(readFile){
 const cur = loadEngine(f => fs.readFileSync(path.join(ROOT, f), 'utf8'));
 let head = null;
 try {
-  head = loadEngine(f => execSync(`git show HEAD:number_magic/${f}`, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore','pipe','ignore'] }));
+  /* HEAD 에 아직 없는 새 파일은 빈 파일로 본다 — 한 파일 때문에 비교 전체를 건너뛰지 않는다 */
+  head = loadEngine(f => { try { return execSync(`git show HEAD:number_magic/${f}`, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore','pipe','ignore'] }); } catch(e){ return ''; } });
 } catch(e){ console.log('(HEAD 비교 생략: ' + e.message.split('\n')[0] + ')'); }
 
 const T = cur.NM_THREADS, G = cur.NM_TGEN, R = cur.NM_RNG;
@@ -48,13 +47,21 @@ let fails = 0, checked = 0, withSol = 0;
 for(const k of targets){
   const t = T[k], gen = G[t.gen]; if(!gen){ console.log(`FAIL ${k}: 생성기 없음`); fails++; continue; }
   const hgen = head && head.NM_TGEN[head.NM_THREADS[k] && head.NM_THREADS[k].gen];
+  /* HEAD 대조는 **HEAD에도 있던 레벨**만 한다 (2026-09-21). 새로 만든 레벨의 params 를
+     HEAD 생성기에 넣으면 그 모드를 모르니 기본 갈래로 떨어져 당연히 다른 값이 나온다 —
+     "안 건드린 것이 안 바뀌었나"를 보려던 검사가 **레벨을 새로 만들 때마다 무조건 실패**했다
+     (MD20 4개·MD66 1개를 더하자 100건). 같은 id·같은 params 인 레벨만 비교한다. */
+  const hLevels = {};
+  for(const hl of ((head && head.NM_THREADS[k] && head.NM_THREADS[k].levels) || []))
+    hLevels[hl.id] = JSON.stringify(hl.params || {});
   for(const lv of (t.levels || [])){
     const params = lv.params || {};
+    const sameAsHead = hLevels[lv.id] === JSON.stringify(params);
     for(let i = 0; i < 20; i++){
       const seed = R.hashSeed(`sol-${k}-${lv.id}-${i}`);
       let p; try { p = gen(params, R.mulberry32(seed)); } catch(e){ console.log(`FAIL ${k} L${lv.id} #${i}: 생성기 예외 ${e.message}`); fails++; continue; }
       checked++;
-      if(hgen){ let hp = null; try { hp = hgen(params, head.NM_RNG.mulberry32(seed)); } catch(e){}
+      if(hgen && sameAsHead){ let hp = null; try { hp = hgen(params, head.NM_RNG.mulberry32(seed)); } catch(e){}
         if(hp && strip(hp) !== strip(p)){ console.log(`FAIL ${k} L${lv.id} #${i}: solution 외 출력이 HEAD와 다름`); fails++; } }
       const sol = (Array.isArray(p.solution) && p.solution.length) ? p.solution : ((Array.isArray(p.steps) && p.steps.length) ? p.steps : null);
       if(!sol){ if(i===0) console.log(`MISS ${k} L${lv.id}: solution/steps 없음`); fails++; continue; }

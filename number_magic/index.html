@@ -14,6 +14,7 @@
 (function(){var i=new Image();i.onload=function(){document.documentElement.setAttribute('data-nm-ui','art')};i.src='assets/ui/cube-blue.png'})();</script>
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
 <link rel="stylesheet" href="app/styles.css">
+<link rel="stylesheet" href="app/middle-pacing.css">
 <link rel="stylesheet" href="app/widgets.css">
 <link rel="stylesheet" href="app/closet.css">
 <link rel="stylesheet" href="app/concept-anim.css">
@@ -73,6 +74,7 @@ html.skip-intro #nm-intro{display:none}
 <script src="engine/generators.js"></script>
 <!-- 2. 시드 RNG + NM_TGEN 레지스트리 -->
 <script src="engine/rng.js"></script>
+<script src="engine/tex-tidy.js"></script>
 <!-- 2b. 개념 애니메이션: 도형 학습지 SVG 렌더러(GW_RENDER) 재사용 → 장면 모델 → 렌더러/재생기
      (개념애니-설계.md §6-1 "렌더러는 새로 만들지 않는다"). render.js는 GW_GEN이 없어도
      로드된다 — 쓰는 것은 fmt/polygon/wrapSvg 원시함수뿐이다. -->
@@ -102,9 +104,20 @@ html.skip-intro #nm-intro{display:none}
 <script src="engine/threads/mid6.js"></script>
 <script src="engine/threads/mid7.js"></script>
 <script src="engine/threads/mid8.js"></script>
+<script src="engine/threads/mid9.js"></script>
+<script src="engine/threads/mid10.js"></script>
+<script src="engine/threads/mid11.js"></script>
+<script src="engine/threads/mid12.js"></script>
+<script src="engine/threads/mid13.js"></script>
+<script src="engine/threads/mid14.js"></script>
+<script src="engine/threads/mid15.js"></script>
+<script src="engine/threads/mid16.js"></script>
 <!-- 4. 커리큘럼 + 스레드 메타데이터 -->
 <script src="data/curriculum.js"></script>
 <script src="data/threads.js"></script>
+<script src="data/middle-concepts.js"></script>
+<script src="data/middle-pacing.js"></script>
+<script src="data/graph-drawing.js"></script>
 <script src="data/math-tips.js"></script>
 <script src="data/courses.js"></script>
 <script src="data/roadmap.js"></script>
@@ -296,6 +309,39 @@ html.skip-intro #nm-intro{display:none}
 <script src="data/units/M-60.js"></script>
 <script src="data/units/M-61.js"></script>
 <script src="data/units/M-62.js"></script>
+<!-- 5c-11. 중등 교과 연산 3차(2026-09-20) — 중2 부등식·연립·일차함수(M-63~M-65),
+     중3 이차방정식·이차함수(M-66~M-67) -->
+<script src="data/units/M-63.js"></script>
+<script src="data/units/M-64.js"></script>
+<script src="data/units/M-65.js"></script>
+<script src="data/units/M-66.js"></script>
+<script src="data/units/M-67.js"></script>
+<!-- 5c-12. 중등 교과 연산 4차(2026-09-21) — 좌표·비례(M-68~69) · 활용(M-70~72,76,77)
+     · 함수 세부(M-73~75) · 이차함수 세부(M-78~81) -->
+<script src="data/units/M-68.js"></script>
+<script src="data/units/M-69.js"></script>
+<script src="data/units/M-70.js"></script>
+<script src="data/units/M-71.js"></script>
+<script src="data/units/M-72.js"></script>
+<script src="data/units/M-73.js"></script>
+<script src="data/units/M-74.js"></script>
+<script src="data/units/M-75.js"></script>
+<script src="data/units/M-76.js"></script>
+<script src="data/units/M-77.js"></script>
+<script src="data/units/M-78.js"></script>
+<script src="data/units/M-79.js"></script>
+<script src="data/units/M-80.js"></script>
+<script src="data/units/M-81.js"></script>
+<!-- 수직선 위의 위치(2026-09-21) — 원장 "정수 또는 유리수도 위치 찾기 … 절댓값도" -->
+<script src="data/units/M-82.js"></script>
+<!-- 제곱근의 덧셈과 뺄셈(2026-09-21) — 디딤돌 개념연산 대조로 찾은 구멍 채움 -->
+<script src="data/units/M-83.js"></script>
+<script src="data/units/M-84.js"></script>
+<script src="data/units/M-85.js"></script>
+<script src="data/units/M-86.js"></script>
+<script src="data/units/M-87.js"></script>
+<!-- 경우의 수(2026-09-24) — 중2-2 인쇄 p.216~230 근거, 확률 제외 -->
+<script src="data/units/M-88.js"></script>
 <!-- 5d. 브리지 유닛 (T-* gap-fill units) -->
 <script src="data/units/bridge-units.js"></script>
 <!-- 유닛 데이터 (수의 나라 · 유아 N-01~) -->
@@ -336,6 +382,7 @@ html.skip-intro #nm-intro{display:none}
 <!-- 6c. 수학사 네 컷 만화 (등록된 유닛만 개념 노트에서 만화로 렌더) -->
 <script src="data/story-comics.js"></script>
 <script src="data/paper-tools.js"></script>
+<script src="data/magazine.js"></script>
 <!-- 7. 본체 -->
 <script src="app/concept-anim.js"></script>
 <script src="app/walker.js"></script>

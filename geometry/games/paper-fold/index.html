@@ -4,7 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>GFIELD Paper Fold</title>
-  <link rel="stylesheet" href="./styles.css?v=paper-fold-12" />
+  <link rel="stylesheet" href="./styles.css?v=paper-fold-19" />
+  <link rel="stylesheet" href="./polish.css?v=paper-fold-2" />
   <link rel="stylesheet" href="../../shared/pwa.css?v=2" />
   <script src="../../shared/viewport-fit.js?v=1"></script>
   <link rel="manifest" href="/geometry/manifest.webmanifest" />
@@ -16,8 +17,8 @@
       <a class="icon-button exit" href="../../origami-studio/" aria-label="Back to Origami Studio">&larr;</a>
       <div class="brand"><strong>GFIELD</strong><small>Paper Fold</small></div>
       <div class="progress"><strong id="levelLabel">색종이 접어 자르기</strong><span id="problemLabel">1 / 10</span></div>
-      <button id="soundButton" class="icon-button" type="button" aria-label="Toggle sound">S</button>
       <button id="levelButton" class="level-button" type="button">유형</button>
+      <nav class="play-mode-links" aria-label="Play mode"><a id="togetherLink" href="./play.html?mode=together">함께하기</a><a id="battleLink" href="./play.html?mode=battle">배틀</a></nav>
     </header>
 
     <section class="mission" aria-live="polite">
@@ -77,7 +78,7 @@
     <div id="success" class="success" aria-hidden="true"><span></span><strong>GREAT JOB!</strong></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
-  <script type="module" src="./app.js?v=paper-fold-10"></script>
+  <script type="module" src="./app.js?v=paper-fold-19"></script>
   <script src="../../shared/pwa.js?v=3" defer></script>
 </body>
 </html>

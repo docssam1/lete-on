@@ -31,7 +31,7 @@ window.NM_STAGES = [
     name:{ko:'수의 나라',en:'Number Land',zh:'数字之国'},
     band:{ko:'유아 5~7세',en:'Ages 5–7',zh:'幼儿5~7岁'},
     chapters:['N0','N1','N2','N3','N4'],
-    tiers:[], courses:null, weeks:null,
+    tiers:['level0'], courses:{from:0,to:0}, weeks:19,
     learn:{
       ko:'수 세기와 개수, 순서와 뛰어세기, 몇째와 크기 비교, 수의 여러 표현. 손으로 모으고 가릅니다.',
       en:'Counting and quantity, order and skip-counting, ordinals and comparing, many ways to show a number. Gathering and splitting by hand.',
@@ -45,14 +45,14 @@ window.NM_STAGES = [
     symbolNote:{ko:'연산 기호는 아직 없습니다. + 는 다음 단계 과정 1에서 처음 만납니다.',
       en:'No operation symbols yet. The + sign is first met in Course 1 of the next stage.',
       zh:'还没有运算符号。＋在下一阶段的第1课程首次出现。'},
-    meta:{ko:'로드맵 5칸 · 유닛 15 · 과정 번호 없는 프롤로그',en:'5 map stops · 15 units · a prologue with no course numbers',zh:'地图5站 · 15个单元 · 没有课程编号的序章'}
+    meta:{ko:'과정 0 · 주 2회 기준 13주(주 1회 19주) · 유닛 15',en:'Course 0 · 13 weeks at two sheets a week (19 at one) · 15 units',zh:'课程0 · 每周2次约13周(每周1次19周) · 15个单元'}
   },
   {
     key:'sprout', icon:'🌱', accent:'#16417C', status:'live',
     name:{ko:'계산의 새싹',en:'Sprout',zh:'计算的新芽'},
     band:{ko:'6~7세 · 초등 1학년',en:'Ages 6–7 · Grade 1',zh:'6~7岁 · 小学一年级'},
     chapters:['R0','R1','G0','G1','R2','R3','R4','T4','R5','R6','R7','R8'],
-    tiers:['level1'], courses:{from:1,to:10}, weeks:55,
+    tiers:['level1'], courses:{from:1,to:10}, weeks:78,
     learn:{
       ko:'자릿값과 모으기·가르기, 보수 5와 10, 받아올림·받아내림, 두 자리에서 네 자리 덧뺄셈, 구구단 2~9단, 나눗셈의 시작.',
       en:'Place value, gathering and splitting, complements of 5 and 10, carrying and borrowing, two- to four-digit addition and subtraction, times tables 2–9, the start of division.',
@@ -69,14 +69,14 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.',
       en:'The plan runs ahead of school, so times tables already sit in this stage.',
       zh:'编排比学校进度提前，所以乘法口诀已经在这一阶段。'},
-    meta:{ko:'과정 1~10 · 주 1회 기준 55주',en:'Courses 1–10 · 55 weeks at one sheet a week',zh:'课程1~10 · 每周1次约55周'}
+    meta:{ko:'과정 1~10 · 주 2회 기준 56주(주 1회 78주)',en:'Courses 1–10 · 56 weeks at two sheets a week (78 at one)',zh:'课程1~10 · 每周2次约56周(每周1次78周)'}
   },
   {
     key:'leap', icon:'🚀', accent:'#16417C', status:'live',
     name:{ko:'계산의 도약',en:'Leap',zh:'计算的跃进'},
     band:{ko:'초등 1학년 말 ~ 2학년',en:'End of Grade 1 – Grade 2',zh:'小学一年级末~二年级'},
     chapters:['T8','R9','T9','R10','R11','R12','R13','R14'],
-    tiers:['level2'], courses:{from:11,to:16}, weeks:29,
+    tiers:['level2'], courses:{from:11,to:16}, weeks:32,
     learn:{
       ko:'두 자리×두 자리, 나눗셈과 역연산, 분수의 첫걸음, 세 자리×두 자리, 두 자리로 나누기, 혼합계산.',
       en:'Two-digit × two-digit, division and inverse operations, first steps in fractions, three-digit × two-digit, dividing by two digits, mixed operations.',
@@ -89,16 +89,16 @@ window.NM_STAGES = [
     symbols:[
       {sym:'a/b', tr:{ko:'b로 나눈 것 중 a — 분수 막대 그림이 기호보다 먼저입니다',en:'a of b equal parts — the fraction bar picture comes before the symbol',zh:'分成b份中的a份——分数条的图先于符号'}},
       {sym:'( )', tr:{ko:'먼저 계산할 묶음',en:'the bundle to compute first',zh:'先算的那一组'}}],
-    meta:{ko:'과정 11~16 · 주 1회 기준 29주',en:'Courses 11–16 · 29 weeks at one sheet a week',zh:'课程11~16 · 每周1次约29周'}
+    meta:{ko:'과정 11~16 · 주 2회 기준 24주(주 1회 32주)',en:'Courses 11–16 · 24 weeks at two sheets a week (32 at one)',zh:'课程11~16 · 每周2次约24周(每周1次32周)'}
   },
   {
     key:'mastery', icon:'👑', accent:'#0E2C57', status:'live',
     name:{ko:'계산의 정복',en:'Mastery',zh:'计算的征服'},
     band:{ko:'초등 2학년 말 ~ 3학년',en:'End of Grade 2 – Grade 3',zh:'小学二年级末~三年级'},
     chapters:['T14','R15','T15','R16','CR8','R17'],
-    tiers:['level3'], courses:{from:17,to:25}, weeks:38,
+    tiers:['level3'], courses:{from:17,to:25}, weeks:52,
     learn:{
-      ko:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수·소인수분해, 이분모 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
+      ko:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수·소인수분해, 분모가 다른 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
       en:'Decimal addition, subtraction and multiplication, square numbers, factors and multiples, fractions with unlike denominators, multiplying and dividing fractions, sequences, percentages and ratios.',
       zh:'小数加减与乘法、平方数、约数与倍数与质因数分解、异分母分数、分数乘除、数列、百分数与比。'},
     how:{
@@ -113,14 +113,14 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도로는 초4~5에 나오는 내용을 여기서 만납니다.',
       en:'In school terms this covers Grade 4–5 material.',
       zh:'按学校进度，这里学的是小学四~五年级的内容。'},
-    meta:{ko:'과정 17~25 · 주 1회 기준 38주 · 학교로는 초4~5 내용',en:'Courses 17–25 · 38 weeks · the end of the arithmetic track',zh:'课程17~25 · 约38周 · 运算段的终点'}
+    meta:{ko:'과정 17~25 · 주 2회 기준 39주(주 1회 52주) · 학교로는 초4~5 내용',en:'Courses 17–25 · 39 weeks at two sheets a week (52 at one) · the end of the arithmetic track',zh:'课程17~25 · 每周2次约39周(每周1次52周) · 运算段的终点'}
   },
   {
     key:'tower', icon:'🗼', accent:'#C9A063', status:'live',
     name:{ko:'경시의 탑',en:'The Tower',zh:'竞赛之塔'},
     band:{ko:'초등 심화 · 중등 준비',en:'Elementary deep-dive · bridge to middle school',zh:'小学进阶 · 初中衔接'},
     chapters:['CR9','CR10','CR11','CRB'],
-    tiers:['challenge'], courses:{from:26,to:28}, weeks:15,
+    tiers:['challenge'], courses:{from:26,to:28}, weeks:32,
     learn:{
       ko:'한쪽으로 모으기와 100 보수 곱, 피라미드 곱셈, 진법과 1001의 법칙, 순환소수, 50·100·1000 근처의 제곱.',
       en:'Shifting to one side, complement multiplication near 100, pyramid multiplication, number bases and the 1001 rule, repeating decimals, squares near 50, 100 and 1000.',
@@ -134,18 +134,18 @@ window.NM_STAGES = [
     freeNote:{ko:'권유일 뿐 잠금이 아닙니다. 건너뛰고 중학교로 가도 되고, 나중에 돌아와도 됩니다.',
       en:'A suggestion, never a lock. Skip to middle school and come back later if you like.',
       zh:'只是建议，不是锁。可以跳到初中，以后再回来。'},
-    meta:{ko:'과정 26~28 · 주 1회 기준 15주',en:'Courses 26–28 · 15 weeks',zh:'课程26~28 · 约15周'}
+    meta:{ko:'과정 26~28 · 주 2회 기준 22주(주 1회 32주)',en:'Courses 26–28 · 22 weeks at two sheets a week (32 at one)',zh:'课程26~28 · 每周2次约22周(每周1次32周)'}
   },
   {
     key:'middle', icon:'🔤', accent:'#0E2C57', status:'live',
     name:{ko:'중학교 — 기호가 바뀌는 자리',en:'Middle School — where the symbols change',zh:'初中——符号改变的地方'},
     band:{ko:'중학교 1~3학년',en:'Grades 7–9',zh:'初中一~三年级'},
-    chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W9-1','W9-2','W10-1','LAB-NUMLINE','W10-2'],
-    tiers:['middle1','middle2','middle3'], courses:{from:29,to:35}, weeks:33,
+    chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W8-6','W8-7','W8-8','W9-1','W9-2','W9-3','W9-4','W9-5','W10-1','LAB-NUMLINE','W10-2','W10-3','W10-4','W10-5','W10-6','W10-7'],
+    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:113,
     learn:{
-      ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 제곱근의 세계, 곱셈공식과 인수분해.',
-      en:'Integers and rationals, the rules of sign, letters and expressions, equations and proportion, exponents and monomials, polynomials, square roots, product formulas and factorisation.',
-      zh:'整数与有理数、符号法则、字母与式、方程与比例、指数与单项式、多项式、平方根、乘法公式与因式分解。'},
+      ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 연립방정식과 일차부등식, 일차함수, 경우의 수, 제곱근, 인수분해와 이차방정식, 이차함수, 산포도, 사분위수·상자그림, 산점도·상관관계.',
+      en:'Integers and rationals, signs, algebraic expressions, equations and proportion, exponents and polynomials, systems and inequalities, functions, counting, roots, factorisation and quadratics, dispersion, quartiles and box plots, and scatter plots and correlation.',
+      zh:'整数与有理数、符号法则、代数式、方程与比例、指数与多项式、方程组与不等式、函数、情况数、平方根、因式分解与二次函数、离散程度、四分位数与箱形图、散点图与相关关系。'},
     how:{
       ko:'기호가 바뀌는 순간이 진짜 고비라, 순서를 말 → 그림 → 내 표기 → 표준 기호로 고정합니다. 음수는 해발과 해저로, √는 땅 위의 9와 뿌리의 3 그림으로 먼저 만납니다. 초등에서 수로 하던 쪼개기가 여기서 문자로 옮겨 갑니다.',
       en:'The real hurdle is the moment the symbols change, so the order is fixed: words → picture → my own notation → the standard symbol. Negatives arrive as altitude and depth, √ as the 9 above ground and the 3 in the root. The splitting done with numbers now moves into letters.',
@@ -155,14 +155,14 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~35 · 주 1회 기준 33주 · 실험실 2',en:'Courses 29–35 · 33 weeks · 2 labs',zh:'课程29~35 · 约33周 · 2个实验室'}
+    meta:{ko:'과정 29~37 · 주 2회 기준 79주(주 1회 113주) · 실험실 2',en:'Courses 29–37 · 79 weeks at two sheets a week (113 at one) · 2 labs',zh:'课程29~37 · 每周2次约79周(每周1次113周) · 2个实验室'}
   },
   {
     key:'high', icon:'∫', accent:'#0E2C57', status:'partial',
     name:{ko:'고등 — 새 기호는 아는 마법의 새 이름표',en:'High School — a new symbol is a new label on a magic you know',zh:'高中——新符号只是熟悉魔法的新标签'},
     band:{ko:'공통수학1·2 · 대수 · 미적분Ⅰ',en:'Common Math 1·2 · Algebra · Calculus I',zh:'共同数学1·2 · 代数 · 微积分Ⅰ'},
     chapters:['W11-1','W11-2','W12-1','W12-2','W13-1','W13-2','W13-3','W13-4','W13-5','W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:36,to:45}, weeks:49,
+    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:38,to:47}, weeks:70,
     learn:{
       ko:'다항식과 나머지정리, 이차방정식, 점과 직선·원, 지수와 로그, 삼각함수, 수열과 Σ, 극한과 미분, 접선과 적분.',
       en:'Polynomials and the remainder theorem, quadratic equations, points, lines and circles, exponents and logarithms, trigonometric functions, sequences and Σ, limits and differentiation, tangents and integration.',
@@ -176,7 +176,7 @@ window.NM_STAGES = [
       {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}},
       {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 36~45 · 주 1회 기준 49주 · 실험실 2',en:'Courses 36–45 · 49 weeks · 2 labs',zh:'课程36~45 · 约49周 · 2个实验室'}
+    meta:{ko:'과정 38~47 · 주 2회 기준 49주(주 1회 70주) · 실험실 2',en:'Courses 38–47 · 49 weeks at two sheets a week (70 at one) · 2 labs',zh:'课程38~47 · 每周2次约49周(每周1次70周) · 2个实验室'}
   }
 ];
 
@@ -190,7 +190,7 @@ window.NM_STAGE_OF_CHAPTER = function(id){
 /* 과정 번호(1~45) 또는 'C20' 같은 키. */
 window.NM_STAGE_OF_COURSE = function(n){
   var num = (typeof n === 'string') ? parseInt(String(n).replace(/^C/i,''),10) : n;
-  if(!(num >= 1)) return null;
+  if(!(num >= 0)) return null;   // 과정 0(수의 나라)도 단계가 있다(2026-09-19)
   for(var i=0;i<window.NM_STAGES.length;i++){
     var c = window.NM_STAGES[i].courses;
     if(c && num >= c.from && num <= c.to) return window.NM_STAGES[i];

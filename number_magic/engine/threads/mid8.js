@@ -89,7 +89,7 @@ NM_TGEN['md47_expressionNotation'] = function (params, rng) {
     const v = pick(rng, VARS);
     const answer = [p, q];
     return {
-      prompt: { ko: `문자식에서 나눗셈은 분수로 써요 — ${v}×${m}÷${d}를 계수 하나의 분수로 정리해봐요(기약분수로)`,
+      prompt: { ko: `문자식에서 나눗셈은 분수로 씁니다 — ${v}×${m}÷${d}를 계수 하나의 분수로 정리해봅니다(기약분수로)`,
         en: `In algebraic notation, division becomes a fraction — simplify ${v}×${m}÷${d} into one fractional coefficient (in lowest terms)`,
         zh: `代数式中除法要写成分数——把${v}×${m}÷${d}整理成一个最简分数系数` },
       tex: `${v} \\times ${m} \\div ${d} = \\dfrac{\\square}{\\square} ${v}`,
@@ -109,7 +109,7 @@ NM_TGEN['md47_expressionNotation'] = function (params, rng) {
     const chain2 = new Array(e2).fill(v2).join('\\times ');
     const answer = [c, e1, e2];
     return {
-      prompt: { ko: `같은 문자를 여러 번 곱하면 지수로 써요 — 곱셈 기호를 생략하고 정리해봐요(계수, ${v1}의 지수, ${v2}의 지수 순서)`,
+      prompt: { ko: `같은 문자를 여러 번 곱하면 지수로 씁니다 — 곱셈 기호를 생략하고 정리해봅니다(계수, ${v1}의 지수, ${v2}의 지수 순서)`,
         en: `Multiplying the same letter repeatedly becomes an exponent — drop the multiplication signs and simplify (coefficient, exponent of ${v1}, exponent of ${v2})`,
         zh: `同一字母连乘要写成指数——省略乘号后整理(依次是系数、${v1}的指数、${v2}的指数)` },
       tex: `${c} \\times ${chain1} \\times ${chain2} = \\square ${v1}^{\\square} ${v2}^{\\square}`,
@@ -128,7 +128,7 @@ NM_TGEN['md47_expressionNotation'] = function (params, rng) {
   const chain = new Array(n).fill(v).join('\\times ');
   const answer = [c, n];
   return {
-    prompt: { ko: `곱셈 기호(×)는 생략하고, 숫자는 문자 앞에, 같은 문자를 여러 번 곱한 건 지수로 써요`,
+    prompt: { ko: `곱셈 기호(×)는 생략하고, 숫자는 문자 앞에, 같은 문자를 여러 번 곱한 건 지수로 씁니다`,
       en: `Drop the multiplication sign(×), put the number before the letter, and write a repeated letter as an exponent`,
       zh: `乘号(×)省略，数字写在字母前面，同一字母连乘写成指数` },
     tex: `${c} \\times ${chain} = \\square ${v}^{\\square}`,
@@ -151,7 +151,7 @@ NM_TGEN['md48_expressionValue'] = function (params, rng) {
     const x = nzInt(rng, 1, params.wide ? 8 : 5);
     const answer = a * x * x + b * x + c;
     return {
-      prompt: { ko: `문자에 수를 넣을 땐 곱셈 기호를 살려서 대입해요 — x=${x}를 그대로 넣어 계산해요`,
+      prompt: { ko: `문자에 수를 넣을 땐 곱셈 기호를 살려서 대입합니다 — x=${x}를 그대로 넣어 계산합니다`,
         en: `When substituting a number for a letter, restore the multiplication sign — plug in x=${x} directly`,
         zh: `代入数值时要把乘号补回来——直接代入x=${x}计算` },
       tex: `x=${x}\\text{일 때 } ${coefLead(a)}x^2 ${wrapPlusCoef(b)}x ${wrapPlus(c)} = \\square`,
@@ -169,7 +169,7 @@ NM_TGEN['md48_expressionValue'] = function (params, rng) {
     const x = nzInt(rng, 1, 6), y = nzInt(rng, 1, 6);
     const answer = a * x + b * y;
     return {
-      prompt: { ko: `문자가 두 개면 각각 자리에 맞는 수를 대입해요`,
+      prompt: { ko: `문자가 두 개면 각각 자리에 맞는 수를 대입합니다`,
         en: `With two letters, substitute each one's matching value`,
         zh: `有两个字母就分别代入各自对应的数值` },
       tex: `x=${x},\\;y=${y}\\text{일 때 } ${coefLead(a)}x ${wrapPlusCoef(b)}y = \\square`,
@@ -187,7 +187,7 @@ NM_TGEN['md48_expressionValue'] = function (params, rng) {
   const x = nzInt(rng, 1, params.wide ? 9 : 6);
   const answer = a * x + b;
   return {
-    prompt: { ko: `문자에 수를 넣을 땐 곱셈 기호를 살려서 대입해요`,
+    prompt: { ko: `문자에 수를 넣을 땐 곱셈 기호를 살려서 대입합니다`,
       en: `When substituting a number for a letter, restore the multiplication sign`,
       zh: `代入数值时要把乘号补回来` },
     tex: `x=${x}\\text{일 때 } ${coefLead(a)}x ${wrapPlus(b)} = \\square`,
@@ -215,7 +215,7 @@ NM_TGEN['md49_linearExprOps'] = function (params, rng) {
     const answer = [cx, cc];
     const rhs = `(${coefLead(a2)}x ${wrapPlus(b2)})`;
     return {
-      prompt: { ko: `문자와 차수가 같은 항(동류항)끼리만 더하거나 빼요`,
+      prompt: { ko: `문자와 차수가 같은 항(동류항)끼리만 더하거나 뺍니다`,
         en: `Add or subtract only like terms (same letter, same degree)`,
         zh: `只把文字和次数相同的项(同类项)相加或相减` },
       tex: `(${coefLead(a1)}x ${wrapPlus(b1)}) ${op} ${rhs} = \\square x + \\square`,
@@ -236,7 +236,7 @@ NM_TGEN['md49_linearExprOps'] = function (params, rng) {
     const cc = k * b1 - b2;
     const answer = [cx, cc];
     return {
-      prompt: { ko: `괄호를 먼저 분배법칙으로 풀고, 그 다음 동류항끼리 정리해요`,
+      prompt: { ko: `괄호를 먼저 분배법칙으로 풀고, 그 다음 동류항끼리 정리합니다`,
         en: `First expand the parentheses with the distributive law, then combine like terms`,
         zh: `先用分配律展开括号，再合并同类项` },
       tex: `${k}(${coefLead(a1)}x ${wrapPlus(b1)}) - (${coefLead(a2)}x ${wrapPlus(b2)}) = \\square x + \\square`,
@@ -254,7 +254,7 @@ NM_TGEN['md49_linearExprOps'] = function (params, rng) {
   const a = nzInt(rng, 1, 8), b = nzInt(rng, 1, 8);
   const answer = [k * a, k * b];
   return {
-    prompt: { ko: `괄호 앞의 수를 괄호 안 모든 항에 하나씩 곱해요(분배법칙)`,
+    prompt: { ko: `괄호 앞의 수를 괄호 안 모든 항에 하나씩 곱합니다(분배법칙)`,
       en: `Multiply the number in front of the parentheses by every term inside (distributive law)`,
       zh: `把括号前的数分别乘到括号里每一项(分配律)` },
     tex: `${k}(${coefLead(a)}x ${wrapPlus(b)}) = \\square x + \\square`,
@@ -280,7 +280,7 @@ NM_TGEN['md50_linearEquation'] = function (params, rng) {
     const d = nzInt(rng, 1, 9);
     const b = (c - a) * x + d; /* ax+b=cx+d ⟺ b-d=(c-a)x */
     return {
-      prompt: { ko: `양변에 x가 있으면 x항은 한쪽으로, 상수항은 다른 쪽으로 이항해요`,
+      prompt: { ko: `양변에 x가 있으면 x항은 한쪽으로, 상수항은 다른 쪽으로 이항합니다`,
         en: `When x appears on both sides, move the x-terms to one side and the constants to the other`,
         zh: `两边都有x时，把x项移到一边，常数项移到另一边` },
       tex: `${coefLead(a)}x ${wrapPlus(b)} = ${coefLead(c)}x ${wrapPlus(d)} \\;\\Rightarrow\\; x = \\square`,
@@ -299,7 +299,7 @@ NM_TGEN['md50_linearEquation'] = function (params, rng) {
     const b = nzInt(rng, 1, 9);
     const c = a * x + b;
     return {
-      prompt: { ko: `등식의 성질로 상수항부터 이항하고, 마지막에 x의 계수로 나눠요`,
+      prompt: { ko: `등식의 성질로 상수항부터 이항하고, 마지막에 x의 계수로 나눕니다`,
         en: `Use the properties of equality to move the constant first, then divide by x's coefficient`,
         zh: `先用等式性质移项常数，最后除以x的系数` },
       tex: `${coefLead(a)}x ${wrapPlus(b)} = ${c} \\;\\Rightarrow\\; x = \\square`,
@@ -316,7 +316,7 @@ NM_TGEN['md50_linearEquation'] = function (params, rng) {
   const a = R(rng, 2, params.wide ? 9 : 6);
   const c = a * x;
   return {
-    prompt: { ko: `양변을 x의 계수로 나누면 x만 남아요`,
+    prompt: { ko: `양변을 x의 계수로 나누면 x만 남습니다`,
       en: `Divide both sides by x's coefficient to isolate x`,
       zh: `两边除以x的系数，只留下x` },
     tex: `${a}x = ${c} \\;\\Rightarrow\\; x = \\square`,
@@ -343,7 +343,7 @@ NM_TGEN['md51_proportion'] = function (params, rng) {
     const x1 = divs.length ? pick(rng, divs) : x0;
     const y1 = a / x1; /* x1은 a의 약수이므로 나눗셈이 항상 정수로 떨어짐 */
     return {
-      prompt: { ko: `반비례 y=a/x는 x와 y의 곱이 항상 일정해요(a) — 점(${x0},${y0})으로 a를 구하고, x=${x1}일 때 y를 구해요`,
+      prompt: { ko: `반비례 y=a/x는 x와 y의 곱이 항상 일정합니다(a) — 점(${x0},${y0})으로 a를 구하고, x=${x1}일 때 y를 구합니다`,
         en: `Inverse proportion y=a/x keeps the product of x and y constant(a) — find a from the point (${x0},${y0}), then find y when x=${x1}`,
         zh: `反比例y=a/x中x与y的乘积恒为a——用点(${x0},${y0})求出a，再求x=${x1}时的y` },
       tex: `y=\\dfrac{a}{x},\\;(${x0},\\,${y0})\\text{를 지남} \\;\\Rightarrow\\; x=${x1}\\text{일 때 } y=\\square`,
@@ -361,7 +361,7 @@ NM_TGEN['md51_proportion'] = function (params, rng) {
     const x1 = nzInt(rng, 1, wide ? 9 : 6);
     const y1 = a * x1;
     return {
-      prompt: { ko: `정비례 y=ax는 x와 y의 비율(a)이 항상 일정해요 — 비율을 구한 뒤 x=${x1}일 때 y를 구해요`,
+      prompt: { ko: `정비례 y=ax는 x와 y의 비율(a)이 항상 일정합니다 — 비율을 구한 뒤 x=${x1}일 때 y를 구합니다`,
         en: `Direct proportion y=ax keeps the ratio(a) of y to x constant — find the ratio, then find y when x=${x1}`,
         zh: `正比例y=ax中y与x的比值(a)恒定——求出比值后，再求x=${x1}时的y` },
       tex: `y=ax,\\;a=${a} \\;\\Rightarrow\\; x=${x1}\\text{일 때 } y=\\square`,
@@ -398,7 +398,7 @@ NM_TGEN['md52_expEquation'] = function (params, rng) {
     if (mode === 'unifyBase') {
       const N = Math.pow(a, k);
       return {
-        prompt: { ko: `오른쪽을 먼저 ${a}의 거듭제곱으로 바꾼 뒤(밑 통일), 지수끼리 비교해요`,
+        prompt: { ko: `오른쪽을 먼저 ${a}의 거듭제곱으로 바꾼 뒤(밑 통일), 지수끼리 비교합니다`,
           en: `First rewrite the right side as a power of ${a} (unify the base), then compare exponents`,
           zh: `先把右边化成${a}的幂(统一底数)，再比较指数` },
         tex: `${a}^{${p}x ${wrapPlus(q)}} = ${N} \\;\\Rightarrow\\; x = \\square`,
@@ -411,7 +411,7 @@ NM_TGEN['md52_expEquation'] = function (params, rng) {
       };
     }
     return {
-      prompt: { ko: `밑이 같으면 지수끼리 등식이 성립해요 — ${p}x${wrapPlus(q)}=${k}를 풀어요`,
+      prompt: { ko: `밑이 같으면 지수끼리 등식이 성립합니다 — ${p}x${wrapPlus(q)}=${k}를 풉니다`,
         en: `With equal bases, the exponents themselves form an equation — solve ${p}x${wrapPlus(q)}=${k}`,
         zh: `底数相同时，指数本身构成等式——解${p}x${wrapPlus(q)}=${k}` },
       tex: `${a}^{${p}x ${wrapPlus(q)}} = ${a}^{${k}} \\;\\Rightarrow\\; x = \\square`,
@@ -427,7 +427,7 @@ NM_TGEN['md52_expEquation'] = function (params, rng) {
   const k = R(rng, 1, 9);
   const q = k - x;
   return {
-    prompt: { ko: `밑이 같으면 지수끼리 등식이 성립해요 — x${wrapPlus(q)}=${k}를 풀어요`,
+    prompt: { ko: `밑이 같으면 지수끼리 등식이 성립합니다 — x${wrapPlus(q)}=${k}를 풉니다`,
       en: `With equal bases, the exponents themselves form an equation — solve x${wrapPlus(q)}=${k}`,
       zh: `底数相同时，指数本身构成等式——解x${wrapPlus(q)}=${k}` },
     tex: `${a}^{x ${wrapPlus(q)}} = ${a}^{${k}} \\;\\Rightarrow\\; x = \\square`,
@@ -451,7 +451,7 @@ NM_TGEN['md53_logEquation'] = function (params, rng) {
     const c = R(rng, 2, 6);
     const N = x * c;
     return {
-      prompt: { ko: `log_a X + log_a Y = log_a(XY) — 두 로그의 합을 곱셈으로 바꿔서 x를 구해요`,
+      prompt: { ko: `log_a X + log_a Y = log_a(XY) — 두 로그의 합을 곱셈으로 바꿔서 x를 구합니다`,
         en: `log_a X + log_a Y = log_a(XY) — turn the sum of two logs into a product to find x`,
         zh: `log_a X + log_a Y = log_a(XY)——把两个对数之和化成乘积来求x` },
       tex: `\\log_{${a}} x + \\log_{${a}} ${c} = \\log_{${a}} ${N} \\;\\Rightarrow\\; x = \\square`,
@@ -471,7 +471,7 @@ NM_TGEN['md53_logEquation'] = function (params, rng) {
     const N = Math.pow(a, k) * c; /* (px+q)/c = a^k ⟺ px+q = c·a^k */
     const q = N - p * x;
     return {
-      prompt: { ko: `log_a X - log_a Y = log_a(X÷Y) — 뺄셈을 나눗셈으로 바꾼 뒤, log의 정의(a^k=진수)로 x를 구해요`,
+      prompt: { ko: `log_a X - log_a Y = log_a(X÷Y) — 뺄셈을 나눗셈으로 바꾼 뒤, log의 정의(a^k=진수)로 x를 구합니다`,
         en: `log_a X - log_a Y = log_a(X÷Y) — turn the subtraction into a quotient, then use the definition (a^k=argument) to find x`,
         zh: `log_a X - log_a Y = log_a(X÷Y)——把减法化成除法，再用对数定义(a^k=真数)求x` },
       tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) - \\log_{${a}} ${c} = ${k} \\;\\Rightarrow\\; x = \\square`,
@@ -491,7 +491,7 @@ NM_TGEN['md53_logEquation'] = function (params, rng) {
   const N = Math.pow(a, k);
   const q = N - p * x;
   return {
-    prompt: { ko: `log_a N = k는 a^k=N — 진수를 그 값으로 바꾼 뒤 x에 대해 풀어요`,
+    prompt: { ko: `log_a N = k는 a^k=N — 진수를 그 값으로 바꾼 뒤 x에 대해 풉니다`,
       en: `log_a N = k means a^k=N — replace the argument with that value, then solve for x`,
       zh: `log_a N = k即a^k=N——把真数换成那个值，再解出x` },
     tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) = ${k} \\;\\Rightarrow\\; x = \\square`,
@@ -519,15 +519,16 @@ NM_TGEN['md54_expLogInequality'] = function (params, rng) {
     const N = Math.pow(a, k);
     const q = N - p * x0;
     return {
-      prompt: { ko: `밑(${a})이 1보다 크면 log는 증가함수 — 등호가 성립하는 경계값을 구해요(a^k=진수)`,
+      prompt: { ko: `밑(${a})이 1보다 크면 log는 증가함수 — 등호가 성립하는 경계값을 구합니다(a^k=진수)`,
         en: `Since the base(${a}) exceeds 1, log is increasing — find the boundary value where equality holds (a^k=argument)`,
         zh: `底数(${a})大于1时log是增函数——求出等号成立的边界值(a^k=真数)` },
       tex: `\\log_{${a}}(${p}x ${wrapPlus(q)}) ${cmp} ${k} \\;\\Rightarrow\\; x ${cmp} \\square`,
       answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0,
-      solution: [
-        { tex: `${N} - (${q}) = \\square`, blank: N - q },
-        { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x0 }
-      ]
+      /* p=1 이면 둘째 줄이 `÷1` 이라 답을 옮겨 적는 것뿐이다 — 그럴 땐 한 줄로 끝낸다. */
+      solution: p === 1
+        ? [ { tex: `${N} - (${q}) = \\square`, blank: x0 } ]
+        : [ { tex: `${N} - (${q}) = \\square`, blank: N - q },
+            { tex: `\\dfrac{${N - q}}{${p}} = \\square`, blank: x0 } ]
     };
   }
 
@@ -535,14 +536,15 @@ NM_TGEN['md54_expLogInequality'] = function (params, rng) {
   const k = R(rng, 1, 9);
   const q = k - p * x0;
   return {
-    prompt: { ko: `밑(${a})이 1보다 크면 지수함수는 증가함수 — 등호가 성립하는 경계값을 구해요`,
+    prompt: { ko: `밑(${a})이 1보다 크면 지수함수는 증가함수 — 등호가 성립하는 경계값을 구합니다`,
       en: `Since the base(${a}) exceeds 1, the exponential is increasing — find the boundary value where equality holds`,
       zh: `底数(${a})大于1时指数函数是增函数——求出等号成立的边界值` },
     tex: `${a}^{${p===1?'':p}x ${wrapPlus(q)}} ${cmp} ${a}^{${k}} \\;\\Rightarrow\\; x ${cmp} \\square`,
     answer: x0, answerType: 'number', widget: 'numpad', negative: x0 < 0,
-    solution: [
-      { tex: `${k} - (${q}) = \\square`, blank: k - q },
-      { tex: `\\dfrac{${k - q}}{${p}} = \\square`, blank: x0 }
+    solution: p === 1
+      ? [ { tex: `${k} - (${q}) = \\square`, blank: x0 } ]
+      : [ { tex: `${k} - (${q}) = \\square`, blank: k - q },
+          { tex: `\\dfrac{${k - q}}{${p}} = \\square`, blank: x0 }
     ]
   };
 };
@@ -597,7 +599,7 @@ NM_TGEN['md55_lawOfSines'] = function (params, rng) {
     /* 2R을 주고 a를 구함(30°: a=R, 90°: a=2R) */
     const R2 = A === 30 ? 2 * a : a;
     return {
-      prompt: { ko: `사인법칙을 거꾸로 — a = 2R×sinA. sin${A}°=${A === 30 ? '1/2' : '1'}이니 계산해요`,
+      prompt: { ko: `사인법칙을 거꾸로 — a = 2R×sinA. sin${A}°=${A === 30 ? '1/2' : '1'}이니 계산합니다`,
         en: `Reversing the law of sines — a = 2R×sinA. Since sin${A}°=${A === 30 ? '1/2' : '1'}, compute a`,
         zh: `反过来用正弦定理——a = 2R×sinA。sin${A}°=${A === 30 ? '1/2' : '1'}，算出a` },
       tex: `2R=${R2},\\;A=${A}^\\circ \\;\\Rightarrow\\; a = \\square`,
@@ -610,7 +612,7 @@ NM_TGEN['md55_lawOfSines'] = function (params, rng) {
   }
   const answer = A === 30 ? 2 * a : a;
   return {
-    prompt: { ko: `사인법칙 a/sinA = 2R — sin${A}°=${A === 30 ? '1/2' : '1'}이니 나눗셈이 아니라 곱셈으로 바로 나와요`,
+    prompt: { ko: `사인법칙 a/sinA = 2R — sin${A}°=${A === 30 ? '1/2' : '1'}이니 나눗셈이 아니라 곱셈으로 바로 나옵니다`,
       en: `Law of sines a/sinA = 2R — since sin${A}°=${A === 30 ? '1/2' : '1'}, it comes out by multiplication, not division`,
       zh: `正弦定理a/sinA = 2R——sin${A}°=${A === 30 ? '1/2' : '1'}，用乘法而不是除法就能算出` },
     tex: `\\dfrac{${a}}{\\sin ${A}^\\circ} = 2R \\;\\Rightarrow\\; 2R = \\square`,
@@ -669,7 +671,7 @@ NM_TGEN['md56_lawOfCosines'] = function (params, rng) {
     let [b, c, a] = pick(rng, table);
     if (pick(rng, [true, false])) { const t = b; b = c; c = t; } /* b,c 순서 변주 */
     return {
-      prompt: { ko: `코사인법칙 a²=b²+c²-2bc·cosA — cos${deg}°=${cosTxt}를 대입해 a²을 구한 뒤 제곱근을 취해요`,
+      prompt: { ko: `코사인법칙 a²=b²+c²-2bc·cosA — cos${deg}°=${cosTxt}를 대입해 a²을 구한 뒤 제곱근을 취합니다`,
         en: `Law of cosines a²=b²+c²-2bc·cosA — substitute cos${deg}°=${cosTxt} to find a², then take the square root`,
         zh: `余弦定理a²=b²+c²-2bc·cosA——代入cos${deg}°=${cosTxt}求出a²，再开平方` },
       tex: `b=${b},\\;c=${c},\\;A=${deg}^\\circ \\;\\Rightarrow\\; a = \\square`,
@@ -693,7 +695,7 @@ NM_TGEN['md56_lawOfCosines'] = function (params, rng) {
   } while (gcd(m, n) !== 1 || (m - n) % 2 === 0);
   const b = m * m - n * n, c = 2 * m * n, a = m * m + n * n;
   return {
-    prompt: { ko: `코사인법칙 a²=b²+c²-2bc·cosA — cos90°=0이라 마지막 항이 사라져요(피타고라스 정리와 같아져요)`,
+    prompt: { ko: `코사인법칙 a²=b²+c²-2bc·cosA — cos90°=0이라 마지막 항이 사라집니다(피타고라스 정리와 같아져요)`,
       en: `Law of cosines a²=b²+c²-2bc·cosA — since cos90°=0, the last term vanishes (this is just the Pythagorean theorem)`,
       zh: `余弦定理a²=b²+c²-2bc·cosA——cos90°=0，最后一项消失(就是勾股定理)` },
     tex: `b=${b},\\;c=${c},\\;A=90^\\circ \\;\\Rightarrow\\; a = \\square`,
@@ -720,7 +722,7 @@ NM_TGEN['md57_trigMaxMinPeriod'] = function (params, rng) {
     const c = nzInt(rng, 1, wide ? 12 : 8);
     const answer = [a + c, c - a];
     return {
-      prompt: { ko: `y=a\\${fn}(bx)+c의 최댓값은 a+c, 최솟값은 c-a예요(진폭 a가 위아래로 흔들리는 범위)`,
+      prompt: { ko: `y=a\\${fn}(bx)+c의 최댓값은 a+c, 최솟값은 c-a입니다(진폭 a가 위아래로 흔들리는 범위)`,
         en: `For y=a·${fn}(bx)+c, the max is a+c and the min is c-a (the amplitude a swings up and down)`,
         zh: `y=a\\${fn}(bx)+c的最大值是a+c，最小值是c-a(振幅a上下摆动的范围)` },
       tex: `y = ${a}\\${fn}(${b}x) ${wrapPlus(c)} \\;\\Rightarrow\\; \\text{최댓값}=\\square,\\;\\text{최솟값}=\\square`,
@@ -739,7 +741,7 @@ NM_TGEN['md57_trigMaxMinPeriod'] = function (params, rng) {
     const g = gcd(2, b);
     const answer = [2 / g, b / g];
     return {
-      prompt: { ko: `y=\\${fn}(bx)의 주기는 2π÷b예요 — π의 몇 배인지 기약분수로 나타내요`,
+      prompt: { ko: `y=\\${fn}(bx)의 주기는 2π÷b입니다 — π의 몇 배인지 기약분수로 나타냅니다`,
         en: `The period of y=${fn}(bx) is 2π÷b — express it as a reduced fraction times π`,
         zh: `y=\\${fn}(bx)的周期是2π÷b——用最简分数表示是π的几倍` },
       tex: `y = \\${fn}(${b}x) \\;\\Rightarrow\\; \\text{주기} = \\dfrac{\\square}{\\square}\\pi`,
@@ -754,7 +756,7 @@ NM_TGEN['md57_trigMaxMinPeriod'] = function (params, rng) {
     const b = R(rng, 1, 40); /* 범위 확장(2026-08-27, 중복 감사 대응) */
     const answer = [1, b];
     return {
-      prompt: { ko: `y=\\tan(bx)의 주기는 π÷b예요(sin·cos의 절반 규칙과 다르니 주의!)`,
+      prompt: { ko: `y=\\tan(bx)의 주기는 π÷b입니다(sin·cos의 절반 규칙과 다르니 주의!)`,
         en: `The period of y=tan(bx) is π÷b (different from the sin/cos rule — watch out!)`,
         zh: `y=\\tan(bx)的周期是π÷b(和sin·cos的规则不同，要小心！)` },
       tex: `y = \\tan(${b}x) \\;\\Rightarrow\\; \\text{주기} = \\dfrac{\\square}{\\square}\\pi`,
@@ -800,12 +802,16 @@ NM_TGEN['md58_limitRationalize'] = function (params, rng) {
   function denomCase(){
     const answer = 2 * m;
     return {
-      prompt: { ko: `분모의 근호를 없애려면 켤레(√(x+p)+${m})를 분모·분자에 곱해요 — 그러면 (x-a)가 약분돼요`,
+      prompt: { ko: `분모의 근호를 없애려면 켤레(√(x+p)+${m})를 분모·분자에 곱합니다 — 그러면 (x-a)가 약분됩니다`,
         en: `To clear the root in the denominator, multiply top and bottom by the conjugate (√(x+p)+${m}) — then (x-a) cancels`,
         zh: `要去掉分母的根号，就把分子分母都乘以共轭式(√(x+p)+${m})——这样(x-a)就能约掉` },
       tex: `\\lim_{x\\to ${a}} \\dfrac{x ${wrapPlus(-a)}}{\\sqrt{x ${wrapPlus(p)}} - ${m}} = \\square`,
       answer, answerType: 'number', widget: 'numpad', negative: false,
+      /* 2026-09-20: 이름이 rationalize 인데 켤레를 곱하는 줄이 없어서, 마지막 `m + m` 이
+         어디서 왔는지 설명이 한 글자도 없었다. 약분되는 과정을 두 줄로 편다. */
       solution: [
+        { tex: `(\\sqrt{x ${wrapPlus(p)}} - ${m})(\\sqrt{x ${wrapPlus(p)}} + ${m}) = x ${wrapPlus(-a)}` },
+        { tex: `\\dfrac{x ${wrapPlus(-a)}}{\\sqrt{x ${wrapPlus(p)}} - ${m}} = \\sqrt{x ${wrapPlus(p)}} + ${m}` },
         { tex: `\\sqrt{${a} ${wrapPlus(p)}} = \\sqrt{${m * m}} = ${m}` },
         { tex: `${m} + ${m} = \\square`, blank: answer }
       ]
@@ -814,12 +820,14 @@ NM_TGEN['md58_limitRationalize'] = function (params, rng) {
   function numCase(){
     const answer = [1, 2 * m];
     return {
-      prompt: { ko: `분자의 근호를 없애려면 켤레(√(x+p)+${m})를 분모·분자에 곱해요 — 분자가 (x-a)로 약분되고 분모에 근호값이 남아요`,
+      prompt: { ko: `분자의 근호를 없애려면 켤레(√(x+p)+${m})를 분모·분자에 곱합니다 — 분자가 (x-a)로 약분되고 분모에 근호값이 남습니다`,
         en: `To clear the root in the numerator, multiply top and bottom by the conjugate (√(x+p)+${m}) — the numerator cancels to (x-a), leaving the root's value below`,
         zh: `要去掉分子的根号，就把分子分母都乘以共轭式(√(x+p)+${m})——分子约成(x-a)，根号的值留在分母` },
       tex: `\\lim_{x\\to ${a}} \\dfrac{\\sqrt{x ${wrapPlus(p)}} - ${m}}{x ${wrapPlus(-a)}} = \\dfrac{\\square}{\\square}`,
       answer, answerShape: 'fraction', answerType: 'number', widget: 'numpad', negative: false,
       solution: [
+        { tex: `(\\sqrt{x ${wrapPlus(p)}} - ${m})(\\sqrt{x ${wrapPlus(p)}} + ${m}) = x ${wrapPlus(-a)}` },
+        { tex: `\\dfrac{\\sqrt{x ${wrapPlus(p)}} - ${m}}{x ${wrapPlus(-a)}} = \\dfrac{1}{\\sqrt{x ${wrapPlus(p)}} + ${m}}` },
         { tex: `\\sqrt{${a} ${wrapPlus(p)}} = \\sqrt{${m * m}} = ${m}` },
         { tex: `\\dfrac{1}{${m}+${m}} = \\dfrac{\\square}{\\square}`, blank: answer }
       ]
@@ -844,7 +852,7 @@ NM_TGEN['md59_continuityConstant'] = function (params, rng) {
     const c = nzInt(rng, 1, params.wide ? 9 : 6);
     const b = a2 * c + e - a1 * c; /* a1c+b = a2c+e */
     return {
-      prompt: { ko: `x=c에서 두 조각이 이어지려면 왼쪽 식과 오른쪽 식에 x=c를 넣은 값이 같아야 해요`,
+      prompt: { ko: `x=c에서 두 조각이 이어지려면 왼쪽 식과 오른쪽 식에 x=c를 넣은 값이 같아야 합니다`,
         en: `For the two pieces to meet at x=c, plugging x=c into the left and right expressions must give the same value`,
         zh: `两段函数在x=c处相接，需要把x=c代入左右两式得到相同的值` },
       tex: `f(x)=\\begin{cases}${coefLead(a1)}x + b & (x<${c}) \\\\ ${coefLead(a2)}x ${wrapPlus(e)} & (x\\ge ${c})\\end{cases}\\text{, 연속} \\;\\Rightarrow\\; b=\\square`,
@@ -864,7 +872,7 @@ NM_TGEN['md59_continuityConstant'] = function (params, rng) {
     const b1 = -(a + d), b0 = a * d; /* x²+b1x+b0=(x-a)(x-d) */
     const k = a - d;
     return {
-      prompt: { ko: `f(x)가 x=${a}에서 연속이려면 k는 그 자리의 극한값과 같아야 해요 — 분자를 인수분해해서 약분해요`,
+      prompt: { ko: `f(x)가 x=${a}에서 연속이려면 k는 그 자리의 극한값과 같아야 합니다 — 분자를 인수분해해서 약분합니다`,
         en: `For f(x) to be continuous at x=${a}, k must equal the limit there — factor the numerator and cancel`,
         zh: `f(x)在x=${a}处连续，k必须等于那里的极限值——把分子因式分解后约分` },
       tex: `f(x)=\\begin{cases}\\dfrac{x^2 ${wrapPlusCoef(b1)}x ${wrapPlus(b0)}}{x ${wrapPlus(-a)}} & (x\\ne ${a}) \\\\ k & (x=${a})\\end{cases} \\;\\Rightarrow\\; k=\\square`,
@@ -882,7 +890,7 @@ NM_TGEN['md59_continuityConstant'] = function (params, rng) {
   const a = nzInt(rng, 1, params.wide ? 60 : 40);
   const k = 2 * a;
   return {
-    prompt: { ko: `f(x)가 x=${a}에서 연속이려면 k는 그 자리의 극한값과 같아야 해요 — (x²-a²)=(x-a)(x+a)로 약분해요`,
+    prompt: { ko: `f(x)가 x=${a}에서 연속이려면 k는 그 자리의 극한값과 같아야 합니다 — (x²-a²)=(x-a)(x+a)로 약분합니다`,
       en: `For f(x) to be continuous at x=${a}, k must equal the limit there — cancel using (x²-a²)=(x-a)(x+a)`,
       zh: `f(x)在x=${a}处连续，k必须等于那里的极限值——用(x²-a²)=(x-a)(x+a)约分` },
     tex: `f(x)=\\begin{cases}\\dfrac{x^2-${a * a}}{x ${wrapPlus(-a)}} & (x\\ne ${a}) \\\\ k & (x=${a})\\end{cases} \\;\\Rightarrow\\; k=\\square`,
@@ -914,7 +922,7 @@ NM_TGEN['md60_extrema'] = function (params, rng) {
   if (mode === 'points') {
     const answer = [r1, r2];
     return {
-      prompt: { ko: `f'(x)=0이 되는 x를 구하면 극값을 갖는 자리가 나와요(부호가 +에서 -로 바뀌면 극대, -에서 +로 바뀌면 극소)`,
+      prompt: { ko: `f'(x)=0이 되는 x를 구하면 극값을 갖는 자리가 나옵니다(부호가 +에서 -로 바뀌면 극대, -에서 +로 바뀌면 극소)`,
         en: `Solving f'(x)=0 gives the x-values with extrema (sign + to - is a local max, - to + is a local min)`,
         zh: `解f'(x)=0就能得到取极值的x(符号由+变-是极大，由-变+是极小)` },
       tex: `f(x)=${coefLead(k)}x^3 ${wrapPlusCoef(a2)}x^2 ${wrapPlusCoef(a1)}x ${wrapPlus(a0)} \\;\\Rightarrow\\; f'(x)=0\\text{의 해}: x=\\square,\\;\\square`,
@@ -930,7 +938,7 @@ NM_TGEN['md60_extrema'] = function (params, rng) {
   /* values 또는 wide — 극댓값 f(r1), 극솟값 f(r2) */
   const answer = [f(r1), f(r2)];
   return {
-    prompt: { ko: `f'(x)=0인 x를 구한 뒤, 그 x를 원래 함수 f(x)에 대입하면 극댓값·극솟값이 나와요`,
+    prompt: { ko: `f'(x)=0인 x를 구한 뒤, 그 x를 원래 함수 f(x)에 대입하면 극댓값·극솟값이 나옵니다`,
       en: `Find the x where f'(x)=0, then substitute it back into f(x) to get the local max and min values`,
       zh: `求出f'(x)=0的x后，代回原函数f(x)就能得到极大值·极小值` },
     tex: `f(x)=${coefLead(k)}x^3 ${wrapPlusCoef(a2)}x^2 ${wrapPlusCoef(a1)}x ${wrapPlus(a0)} \\;\\Rightarrow\\; \\text{극댓값}=\\square,\\;\\text{극솟값}=\\square`,
@@ -971,12 +979,15 @@ NM_TGEN['md61_areaUnderCurve'] = function (params, rng) {
   const F = x => (-2 * k) * x * x * x + (3 * k * (p + q)) * x * x + (-6 * k * p * q) * x;
   const answer = F(q) - F(p);
   return {
-    prompt: { ko: `곡선과 x축 사이의 넓이는 두 교점을 적분 구간으로 삼은 정적분값이에요 — 원시함수를 구해서 F(q)-F(p)를 계산해요`,
+    prompt: { ko: `곡선과 x축 사이의 넓이는 두 교점을 적분 구간으로 삼은 정적분값입니다 — 원시함수를 구해서 F(q)-F(p)를 계산합니다`,
       en: `The area between the curve and the x-axis is the definite integral over the interval between the two intersection points — find the antiderivative, then compute F(q)-F(p)`,
       zh: `曲线与x轴之间的面积，就是以两个交点为区间的定积分——求出原函数后计算F(q)-F(p)` },
     tex: `f(x) = ${coefLead(A)}x^2 ${wrapPlusCoef(B)}x ${wrapPlus(C)} \\;\\Rightarrow\\; \\int_{${p}}^{${q}} f(x)\\,dx = \\square`,
     answer, answerType: 'number', widget: 'numpad', negative: false,
+    /* 2026-09-20: 원시함수를 한 번도 안 보여 주고 F(q) 부터 물었다 — 정의되지도 않은 F 에
+       수를 대입하라는 요구였다. 같은 교재군의 MD46 은 F(x) 를 먼저 띄우고 시작한다. */
     solution: [
+      { tex: `F(x) = ${coefLead(-2 * k)}x^3 ${wrapPlusCoef(3 * k * (p + q))}x^2 ${wrapPlusCoef(-6 * k * p * q)}x` },
       { tex: `F(${q}) = \\square`, blank: F(q) },
       { tex: `F(${p}) = \\square`, blank: F(p) },
       { tex: `${F(q)} - ${F(p)} = \\square`, blank: answer }
@@ -1002,7 +1013,7 @@ NM_TGEN['md62_velocityDistance'] = function (params, rng) {
       const S = t => k * t * t * t + j * t * t + e * t;
       const answer = S(t2) - S(t1);
       return {
-        prompt: { ko: `이동 거리는 속도 v(t)를 적분한 값이에요(v(t)가 항상 0 이상이면 거리=이동한 위치 변화량) — 원시함수를 구해 S(t2)-S(t1)을 계산해요`,
+        prompt: { ko: `이동 거리는 속도 v(t)를 적분한 값입니다(v(t)가 항상 0 이상이면 거리=이동한 위치 변화량) — 원시함수를 구해 S(t2)-S(t1)을 계산합니다`,
           en: `Distance traveled is the integral of velocity v(t) (when v(t)≥0 throughout, distance equals the change in position) — find the antiderivative, then compute S(t2)-S(t1)`,
           zh: `移动距离是速度v(t)的积分(当v(t)始终≥0时，距离等于位置变化量)——求出原函数后计算S(t2)-S(t1)` },
         tex: `v(t) = ${coefLead(a)}t^2 ${wrapPlusCoef(b)}t ${wrapPlus(e)} \\;\\Rightarrow\\; \\int_{${t1}}^{${t2}} v(t)\\,dt = \\square`,
@@ -1020,7 +1031,7 @@ NM_TGEN['md62_velocityDistance'] = function (params, rng) {
     const T = R(rng, 1, params.wide ? 9 : 6);
     const answer = k * T * T + b * T;
     return {
-      prompt: { ko: `이동 거리는 속도 v(t)를 0부터 T까지 적분한 값이에요 — 원시함수 S(t)를 구해 S(T)-S(0)을 계산해요`,
+      prompt: { ko: `이동 거리는 속도 v(t)를 0부터 T까지 적분한 값입니다 — 원시함수 S(t)를 구해 S(T)-S(0)을 계산합니다`,
         en: `Distance traveled is the integral of velocity v(t) from 0 to T — find the antiderivative S(t), then compute S(T)-S(0)`,
         zh: `移动距离是速度v(t)从0到T的积分——求出原函数S(t)后计算S(T)-S(0)` },
       tex: `v(t) = ${coefLead(a)}t ${wrapPlus(b)} \\;\\Rightarrow\\; \\int_{0}^{${T}} v(t)\\,dt = \\square`,
@@ -1038,7 +1049,7 @@ NM_TGEN['md62_velocityDistance'] = function (params, rng) {
   const t0 = R(rng, 1, params.wide ? 8 : 5);
   const answer = 2 * a * t0 + b;
   return {
-    prompt: { ko: `속도는 위치함수 s(t)를 미분한 s'(t) — s'(t)를 구한 뒤 t=${t0}을 대입해요`,
+    prompt: { ko: `속도는 위치함수 s(t)를 미분한 s'(t) — s'(t)를 구한 뒤 t=${t0}을 대입합니다`,
       en: `Velocity is the derivative s'(t) of the position function s(t) — find s'(t), then substitute t=${t0}`,
       zh: `速度是位置函数s(t)的导数s'(t)——求出s'(t)后代入t=${t0}` },
     tex: `s(t) = ${coefLead(a)}t^2 ${wrapPlusCoef(b)}t \\;\\Rightarrow\\; s'(${t0}) = \\square`,

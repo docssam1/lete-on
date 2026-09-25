@@ -49,7 +49,7 @@ window.NM_UNITS['A-19'] = {
 
   check:{
     fills:[
-      { tex:'73-48=\\square \\;\\Rightarrow\\; 48+\\square=73', answer:25,
+      { tex:'73-48=\\square \\;\\Rightarrow\\; 48+\\square=73', answer:[25,25],
         hint:{ ko:'48에서 73까지: 50까지 2, 거기서 23 더 → 25', en:'48→73: +2 to 50, +23 more = 25', zh:'48→73：加2到50，再加23，共25' } },
       { tex:'91-88=\\square', answer:3, hint:{ ko:'88+□=91', en:'88+□=91', zh:'88+□=91' } }
     ],

@@ -20,7 +20,9 @@ NM_TGEN['el_inverse'] = function(params, rng){
   const mode = params.mode || 'mix';
   const opKind = mode === 'mix' ? pick(rng, ['as','md']) : mode;
 
-  let tex, answer, ko, en, zh;
+  let tex, answer, ko, en, zh, inv;   /* inv = 역연산 줄. 이게 없으면 "역연산으로 구해요"
+                                         라면서 풀이가 문항식 한 줄 복사뿐이었다 — 아이는
+                                         발판 없이 □ 를 암산해야 했다(2026-09-20). */
 
   if(opKind === 'as'){
     const max = params.max || 100;
@@ -33,6 +35,7 @@ NM_TGEN['el_inverse'] = function(params, rng){
       if(form === 0){ tex = `\\square + ${a} = ${c}`; }
       else{ tex = `${a} + \\square = ${c}`; }
       answer = x;
+      inv = `${c} - ${a} = \\square`;
       ko = `□에 알맞은 수를 역연산으로 구해요: ${tex.replace('\\square','□')}`;
       en = `Find the missing number using the inverse operation: ${a} and ${c} given`;
       zh = `用逆运算求□：${tex.replace('\\square','□')}`;
@@ -43,10 +46,12 @@ NM_TGEN['el_inverse'] = function(params, rng){
       if(form === 0){
         tex = `\\square - ${k} = ${b}`;
         answer = b + k;
+        inv = `${b} + ${k} = \\square`;
       } else {
         const a = b + k; // a > b 보장
         tex = `${a} - \\square = ${b}`;
         answer = a - b;
+        inv = `${a} - ${b} = \\square`;
       }
       ko = `□에 알맞은 수를 역연산으로 구해요`;
       en = `Find the missing number using the inverse operation`;
@@ -63,6 +68,7 @@ NM_TGEN['el_inverse'] = function(params, rng){
       const c = x * a;
       tex = form === 0 ? `\\square \\times ${a} = ${c}` : `${a} \\times \\square = ${c}`;
       answer = x;
+      inv = `${c} \\div ${a} = \\square`;
     } else {
       // □÷a=c  →  □=a×c   또는  c÷□=a → □=c÷a(=주어진 몫)
       const a = R(rng, 2, maxFactor);
@@ -70,10 +76,12 @@ NM_TGEN['el_inverse'] = function(params, rng){
       if(form === 0){
         tex = `\\square \\div ${a} = ${c}`;
         answer = a * c;
+        inv = `${a} \\times ${c} = \\square`;
       } else {
         const dividend = a * c; // 항상 나누어떨어짐
         tex = `${dividend} \\div \\square = ${c}`;
         answer = a;
+        inv = `${dividend} \\div ${c} = \\square`;
       }
     }
     ko = `□에 알맞은 수를 역연산으로 구해요: ${tex.replace('\\square','□')}`;
@@ -84,12 +92,16 @@ NM_TGEN['el_inverse'] = function(params, rng){
   return {
     prompt:{ ko, en, zh },
     tex, answer, answerType:'steps', widget:'steps',
-    steps:[ { tex, blank:answer } ]
+    /* 역연산 줄 → 원래 식에 되돌려 넣어 확인. DV15 가 이미 쓰는 모양이다. */
+    steps:[ { tex: inv, blank:answer }, { tex, blank:answer } ]
   };
 };
 
-/* ── EL2 — 검산: 347+286=633이 맞는지 →  633−286=□ ─────────
-   params.mode: 'add' | 'sub' | 'muldiv' (기본 'add') */
+/* ── EL2 — 검산: 어떤 수+286=633 →  633−286=□ ──────────────
+   params.mode: 'add' | 'sub' | 'muldiv' (기본 'add')
+   ⚠️ 2026-09-20 이전에는 문두가 `347+286=633이 맞는지 검산해요`였고 **답이 347**이었다.
+   즉 정답이 문제 지문 첫 글자에 그대로 찍혀 있어, 계산 없이 베껴 쓰면 100% 맞았다.
+   검산할 식의 한 자리를 '어떤 수'로 가리면 관계는 그대로면서 계산을 해야 답이 나온다. */
 NM_TGEN['el_check'] = function(params, rng){
   const mode = params.mode || 'add';
 
@@ -100,11 +112,11 @@ NM_TGEN['el_check'] = function(params, rng){
     const c = a + b;
     const tex = `${c} - ${b} = \\square`;
     return {
-      prompt:{ ko:`${a}+${b}=${c}가 맞는지 검산해요: ${c}−${b}=□`,
-               en:`Check if ${a}+${b}=${c}: compute ${c}−${b}=□`,
-               zh:`检验${a}+${b}=${c}是否正确：${c}−${b}=□` },
+      prompt:{ ko:`어떤 수 + ${b} = ${c} 예요. 뺄셈으로 검산해서 어떤 수를 구해요`,
+               en:`A number + ${b} = ${c}. Check by subtracting to find the number`,
+               zh:`某数 + ${b} = ${c}。用减法检验，求这个数` },
       tex, answer:a, answerType:'steps', widget:'steps',
-      steps:[ { tex, blank:a } ]
+      steps:[ { tex, blank:a }, { tex:`\\square + ${b} = ${c}`, blank:a } ]
     };
   }
 
@@ -115,11 +127,11 @@ NM_TGEN['el_check'] = function(params, rng){
     const c = a - b;
     const tex = `${c} + ${b} = \\square`;
     return {
-      prompt:{ ko:`${a}−${b}=${c}가 맞는지 검산해요: ${c}+${b}=□`,
-               en:`Check if ${a}−${b}=${c}: compute ${c}+${b}=□`,
-               zh:`检验${a}−${b}=${c}是否正确：${c}+${b}=□` },
+      prompt:{ ko:`어떤 수 − ${b} = ${c} 예요. 덧셈으로 검산해서 어떤 수를 구해요`,
+               en:`A number − ${b} = ${c}. Check by adding to find the number`,
+               zh:`某数 − ${b} = ${c}。用加法检验，求这个数` },
       tex, answer:a, answerType:'steps', widget:'steps',
-      steps:[ { tex, blank:a } ]
+      steps:[ { tex, blank:a }, { tex:`\\square - ${b} = ${c}`, blank:a } ]
     };
   }
 
@@ -132,20 +144,20 @@ NM_TGEN['el_check'] = function(params, rng){
   if(dir === 0){
     const tex = `${c} \\div ${b} = \\square`;
     return {
-      prompt:{ ko:`${a}×${b}=${c}가 맞는지 검산해요: ${c}÷${b}=□`,
-               en:`Check if ${a}×${b}=${c}: compute ${c}÷${b}=□`,
-               zh:`检验${a}×${b}=${c}是否正确：${c}÷${b}=□` },
+      prompt:{ ko:`어떤 수 × ${b} = ${c} 예요. 나눗셈으로 검산해서 어떤 수를 구해요`,
+               en:`A number × ${b} = ${c}. Check by dividing to find the number`,
+               zh:`某数 × ${b} = ${c}。用除法检验，求这个数` },
       tex, answer:a, answerType:'steps', widget:'steps',
-      steps:[ { tex, blank:a } ]
+      steps:[ { tex, blank:a }, { tex:`\\square \\times ${b} = ${c}`, blank:a } ]
     };
   } else {
     const tex = `${c} \\div ${a} = \\square`;
     return {
-      prompt:{ ko:`${c}÷${a}=${b}가 맞는지 검산해요: ${c}÷${a}=□`,
-               en:`Check if ${c}÷${a}=${b}: compute ${c}÷${a}=□`,
-               zh:`检验${c}÷${a}=${b}是否正确：${c}÷${a}=□` },
+      prompt:{ ko:`${a} × 어떤 수 = ${c} 예요. 나눗셈으로 검산해서 어떤 수를 구해요`,
+               en:`${a} × a number = ${c}. Check by dividing to find the number`,
+               zh:`${a} × 某数 = ${c}。用除法检验，求这个数` },
       tex, answer:b, answerType:'steps', widget:'steps',
-      steps:[ { tex, blank:b } ]
+      steps:[ { tex, blank:b }, { tex:`${a} \\times \\square = ${c}`, blank:b } ]
     };
   }
 };
@@ -186,14 +198,18 @@ NM_TGEN['el_compare'] = function(params, rng){
   const bigger = Math.max(L.val, R2.val);
   const smaller = Math.min(L.val, R2.val);
   const diff = bigger - smaller;
-  const tex = `${L.tex} \\;\\bigcirc\\; ${R2.tex}`;
+  /* ○ 는 쓰기 상자로 바뀌지 않아(texDisplay 는 \square 만 키운다) **답 쓸 칸이 없었다**.
+     ○ 로 견주게 하되 뒤에 답 칸을 잇는다(2026-09-20 점검). 이러면 "○에 부등호냐 값이냐"가
+     식만 보고도 분명해져, 프롬프트를 질문 줄로 싣는 특례(exam.js printAskText)도 필요 없다. */
+  const tex = `${L.tex} \\;\\bigcirc\\; ${R2.tex} \\;\\Rightarrow\\; \\text{큰 값} = \\square`;
+  const texDiff = `${L.tex} \\;\\bigcirc\\; ${R2.tex} \\;\\Rightarrow\\; \\text{큰 값} = \\square \\,,\\; \\text{차} = \\square`;
 
   if(mode === 'diff'){
     return {
       prompt:{ ko:`두 식의 값을 비교해요: ${L.tex.replace(/\\times/,'×')} 와 ${R2.tex.replace(/\\times/,'×')} 중 더 큰 값과, 그 차를 순서대로 입력해요`,
                en:`Compare the two expressions and enter [bigger value, difference]`,
                zh:`比较两个算式的值，依次填入[较大值, 差]` },
-      tex, answer:[bigger, diff], answerType:'number', widget:'numpad',
+      tex: texDiff, answer:[bigger, diff], answerType:'number', widget:'numpad',
       solution: [
         { tex: `${L.tex} = ${L.val}\\, ,\\; ${R2.tex} = ${R2.val}` },
         { tex: `\\max(${L.val}, ${R2.val}) = \\square \\, ,\\; ${bigger} - ${smaller} = \\square`, blank: [bigger, diff] }
@@ -293,11 +309,15 @@ NM_TGEN['el_ratio'] = function(params, rng){
 
     return {
       prompt: {
-        ko: `${total}을(를) ${a} : ${b}로 비례배분해요 (□, ○ 차례로)`,
-        en: `Split ${total} in the ratio ${a} : ${b} — give □ then ○`,
-        zh: `把${total}按${a} : ${b}的比例分配（依次填□、○）`
+        ko: `${total}을(를) ${a} : ${b}로 비례배분해요 (가, 나 차례로)`,
+        en: `Split ${total} in the ratio ${a} : ${b} — give the first part, then the second`,
+        zh: `把${total}按${a} : ${b}的比例分配（依次填甲、乙）`
       },
-      tex: `\\square + \\bigcirc = ${total} \\;,\\;\\; \\square : \\bigcirc = ${a} : ${b}`,
+      /* 전에는 `□ + ○ = total , □ : ○ = a : b` 였는데, 같은 미지수가 두 번 나오는데도
+         예시 줄이 \square 를 **독립된 빈칸**으로 보고 차례로 채워 비례식이 깨졌다
+         (`29 + ○ = 261 , 232 : ○ = 1 : 8`). 미지수는 글자로 두고 답 칸을 따로 준다(2026-09-20). */
+      tex: `\\text{가} + \\text{나} = ${total} \\;,\\;\\; \\text{가} : \\text{나} = ${a} : ${b}`
+         + ` \\;\\Rightarrow\\; \\text{가} = \\square \\,,\\; \\text{나} = \\square`,
       answer:     [p1, p2],
       answerType: 'number',
       widget:     'numpad',

@@ -74,6 +74,7 @@ function computeBand(){
     if(recent&&/^N-/.test(recent))return 'young';       // 유아 유닛 진행 중
     const c=(window.NM_COURSES||{})[currentCourseKey()];
     if(c){
+      if(c.tier==='level0')return 'young';              // 수의 나라(과정 0)
       if(c.tier==='level2')return 'mid';
       if(c.tier&&c.tier!=='level1')return 'senior';     // level3·경시의 탑
     }
@@ -614,7 +615,7 @@ function showLineageBadgeOverlay(key){
 /* ---------- 유틸 ---------- */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function math(tex,el){try{katex.render(tex,el,{throwOnError:false,displayMode:false});}catch(e){el.textContent=tex;}}
+function math(tex,el){const t=(window.NM_TEX&&window.NM_TEX.tidy)?window.NM_TEX.tidy(tex):tex;try{katex.render(t,el,{throwOnError:false,displayMode:false});}catch(e){el.textContent=t;}}
 function renderMath(root){(root||document).querySelectorAll('[data-tex]').forEach(el=>{if(el.dataset.done)return;math(el.getAttribute('data-tex'),el);el.dataset.done='1';});}
 /* □ 자리에 입력값을 바로 써 넣기(2026-09-09, 원장 "?에 수를 쓰면 실제 답의 위치에 답이
    써져야지"). 그동안 타이핑한 값은 수식 밑 별도 화면(.nm-numpad-screen)에만 떴고, 수식의
@@ -950,6 +951,7 @@ function render(){
   else if(S.view==='exam')screenExam();
   else if(S.view==='closet')screenCloset();
   else if(S.view==='symboldex')screenSymbolDex();
+  else if(S.view==='magazine')screenMagazine();
   else if(S.view==='histquiz')screenHistQuiz();
   else if(S.view==='report')screenReport();
   else screenTown();
@@ -1327,6 +1329,7 @@ function screenTown(){
       <a class="nm-philobtn" href="about.html">✦ ${S.lang==='ko'?'철학':S.lang==='en'?'Philosophy':'理念'}</a>
       <button class="nm-iconbtn nm-roadbtn" id="townCourseRoad" title="${S.lang==='ko'?'연산 로드맵':S.lang==='en'?'Course Road':'运算路线图'}">🛤️</button>
       <button class="nm-iconbtn nm-dexbtn" id="townDex" title="${S.lang==='ko'?'기호 도감':S.lang==='en'?'Symbol Dex':'符号图鉴'}">📖</button>
+      <button class="nm-iconbtn nm-mzbtn" id="townMagazine" title="${S.lang==='ko'?'매거진':S.lang==='en'?'Magazine':'杂志'}">📰</button>
       <button class="nm-iconbtn nm-mailbtn" id="townMail" title="${S.lang==='ko'?'편지함':S.lang==='en'?'Mailbox':'信箱'}">📬${mailboxUnreadCount()>0?`<span class="nm-mb-dot">${mailboxUnreadCount()}</span>`:''}</button>
       <button class="nm-iconbtn nm-rpbtn" id="townReport" title="${S.lang==='ko'?'리포트':S.lang==='en'?'Report':'学习报告'}">📊</button>
     </div>
@@ -1349,6 +1352,7 @@ function screenTown(){
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
   const cr=$('#townCourseRoad');if(cr)cr.onclick=()=>{S._roadFocus=null;S.view='courseroad';save();render();};
   const db=$('#townDex');if(db)db.onclick=()=>{S._dexFrom='town';S.view='symboldex';save();render();};
+  const mz=$('#townMagazine');if(mz)mz.onclick=()=>{S._mzOpen=null;S.view='magazine';save();render();};
   const rp=$('#townReport');if(rp)rp.onclick=()=>{S.view='report';save();render();};
   maybeShowR0Banner(scr);
   if(S.onboarded && !S.avatar){
@@ -1434,12 +1438,13 @@ function maybeShowR0Banner(scr){
 /* ─── roadmap 헬퍼 ─── */
 function roadmapNextLabel(){
   if(!window.NM_ROADMAP)return '';
-  const chapters=NM_ROADMAP.chapters;
-  for(const ch of chapters){
-    for(const uid of (ch.units||[])){   /* 게임 챕터(G0·G1)는 units 없음 */
-      if(!stepDone(uid,'stamp')) return S.lang==='ko'?`이어서: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='en'?`Continue: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:S.lang==='zh'?`继续: ${UNITS[uid]?L(UNITS[uid].title):'...'}`:'';
-    }
+  /* 지도 화면의 "여기부터!"와 같은 유닛을 가리켜야 한다 — 같은 함수를 쓴다(2026-09-23) */
+  const uid=findNextRoadUnit();
+  if(uid){
+    const nm=UNITS[uid]?L(UNITS[uid].title):'...';
+    return S.lang==='ko'?`이어서: ${nm}`:S.lang==='en'?`Continue: ${nm}`:`继续: ${nm}`;
   }
+  if(hasRoadCourseContext())return S.lang==='ko'?'선택한 시작점 이후 스토리 완료':S.lang==='en'?'Stories from your starting point complete':'所选起点之后的故事已完成';
   return S.lang==='ko'?'🏆 전체 완료!':S.lang==='en'?'🏆 All done!':'🏆 全部完成！';
 }
 
@@ -1455,6 +1460,10 @@ function screenRoadmap(){
       <button class="nm-back" id="roadBack">${t('back')}</button>
       <div class="nm-unit-title">🗺️ ${L(road.title)}</div>
       <div class="nm-road-sub">${L(road.subtitle)}</div>
+      <div class="nm-road-nav">
+        <button class="nm-btn nm-btn-secondary" id="roadSuggested" ${nextId?'':'disabled'}>${S.lang==='ko'?'추천 위치':S.lang==='en'?'Suggested start':'推荐位置'}</button>
+        <button class="nm-btn nm-btn-secondary" id="roadBrowseStart">${S.lang==='ko'?'처음부터 둘러보기':S.lang==='en'?'Browse from the beginning':'从头浏览'}</button>
+      </div>
     </div>
     <div class="nm-road-path">`;
 
@@ -1533,6 +1542,20 @@ function screenRoadmap(){
 
   html+=`</div></div>`;
   scr.innerHTML=html;
+  const goSuggested=(focus)=>{
+    const el=scr.querySelector('.nm-road-stone.next');
+    if(el){el.scrollIntoView({block:'center'});if(focus)el.focus({preventScroll:true});}
+  };
+  scr.querySelectorAll('.nm-road-stone,.nm-road-gamestone').forEach(el=>{
+    el.setAttribute('role','button');el.tabIndex=0;
+    el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}};
+  });
+  $('#roadSuggested').onclick=()=>goSuggested(true);
+  $('#roadBrowseStart').onclick=()=>{
+    scr.querySelector('.nm-road-wrap').scrollTop=0;
+    const first=scr.querySelector('.nm-road-stone,.nm-road-gamestone');
+    if(first)first.focus({preventScroll:true});
+  };
 
   /* R0 배너의 "보러가기"가 세운 챕터 포커스 — courseroad의 scrollIntoView와 같은 패턴.
      한 번 쓰고 지운다(다음 재렌더 때 다시 스크롤 튀지 않게). */
@@ -1540,7 +1563,7 @@ function screenRoadmap(){
     const chEl=scr.querySelector(`.nm-road-chapter[data-chid="${S._roadFocusChapter}"]`);
     if(chEl)chEl.scrollIntoView({block:'start'});
     S._roadFocusChapter=null;
-  }
+  }else if(hasRoadCourseContext())goSuggested(false);
 
   $('#roadBack').onclick=()=>{S.view='town';save();render();};
 
@@ -1576,8 +1599,36 @@ function screenRoadmap(){
   });
 }
 
+/* 학생의 현재 과정이 앱 지도의 어느 챕터에서 시작하는가 (2026-09-23)
+   전에는 지도 맨 앞(유아 수 세기)부터 도장 안 받은 첫 유닛을 "여기부터!"로 찍었다. 그래서
+   진단이나 시작점 고르기로 과정 35(제곱근의 세계)에 선 중3 학생에게도 앱 지도와 마을
+   "이어서:" 배너는 「수 세기」를 권했다 — 학습지·과정 지도와 앱 지도가 서로 다른 아이를 봤다.
+   S.placement.course 의 마법 유닛이 처음 나오는 챕터를 시작점으로 삼는다. */
+function roadStartChapterIdx(){
+  const key=S.placement&&S.placement.course;
+  const c=key&&(window.NM_COURSES||{})[key];
+  if(!c||!window.NM_ROADMAP)return 0;
+  const mine=new Set();
+  (c.sessions||[]).forEach(s=>(s.magic||[]).forEach(u=>mine.add(u)));
+  const chs=NM_ROADMAP.chapters;
+  for(let i=0;i<chs.length;i++) if((chs[i].units||[]).some(u=>mine.has(u))) return i;
+  return 0;
+}
 function findNextRoadUnit(){
   if(!window.NM_ROADMAP)return null;
+  const roadIds=new Set(NM_ROADMAP.chapters.flatMap(ch=>ch.units||[]));
+  /* 명시된 시작점/실제 학습이 있으면 과정 지도의 위치를 재사용한다.
+     기본 C1을 신규 학생의 진도로 간주하지 않는다. 저장값·해금은 바꾸지 않는다. */
+  if(hasRoadCourseContext()){
+    const course=NM_COURSES[currentCourseKey()];
+    if(course){
+      const courses=Object.values(NM_COURSES).filter(c=>c.order>=course.order).sort((a,b)=>a.order-b.order);
+      for(const c of courses)for(const session of c.sessions||[])for(const uid of session.magic||[]){
+        if(roadIds.has(uid)&&UNITS[uid]&&!stepDone(uid,'stamp'))return uid;
+      }
+      return null; // 시작점 이전은 자유 탐색으로만 연다. 유아 첫 유닛으로 되돌리지 않는다.
+    }
+  }
   for(const ch of NM_ROADMAP.chapters){
     if(!ch.units)continue;
     for(const uid of ch.units){
@@ -1592,6 +1643,9 @@ function enterRoadUnit(uid){
   S.unit=uid;S.step=null;S.sub={};S.tierId=null;S.view='unit';
   S._fromRoadmap=true;
   save();render();
+}
+function hasRoadCourseContext(){
+  return !!(window.NM_COURSES&&(mostRecentTouchedUnit()||(S.placement&&NM_COURSES[S.placement.course])));
 }
 
 /* ─── Make-10 미니게임 ─── */
@@ -2063,7 +2117,7 @@ function tierIdForUnit(unitId){
 /* 학습 무대 배경(학습무대-작화지시서.md) — 등급 → 배경 키 4종.
    미확인 등급은 'prime'으로 폴백(가장 낮은 학습 등급이라 안전). */
 function stageKeyForTier(tierId){
-  if(tierId==='numberland') return 'numberland';
+  if(tierId==='numberland' || tierId==='level0') return 'numberland';
   if(tierId==='level1' || tierId==='level2' || tierId==='beginner') return 'prime';
   if(tierId==='level3' || tierId==='intermediate') return 'advance';
   if(tierId==='challenge' || tierId==='advanced' || /^middle/.test(tierId||'') ||
@@ -2178,6 +2232,9 @@ const ROAD_OP_LAST=25;
 
 /* 등급(티어) 표시 정보 — 이름·학년대는 사람이 읽는 말로만 쓴다. */
 const ROAD_TIERS=[
+ {key:'level0',accent:'#6FA85B',
+  name:{ko:'수의 나라',en:'Number Land',zh:'数字之国'},
+  band:{ko:'유아 5~7세 · 수와 문장제와 친해지기',en:'Ages 5–7 · Befriending numbers & word problems',zh:'幼儿5~7岁 · 与数和应用题交朋友'}},
  {key:'level1',accent:'var(--gold-deep)',
   name:{ko:'계산의 새싹',en:'Sprouts of Calculation',zh:'计算的新芽'},
   band:{ko:'6~7세 · 초등 1학년',en:'Ages 6–7 · Grade 1',zh:'6~7岁 · 小学一年级'}},
@@ -2423,6 +2480,43 @@ function courseOutlineHtml(c){
     :`<p class="nm-cs-empty">${lk('이 과정의 편성은 아직 준비 중이에요.','This course is still being put together.','这个课程还在编排中。')}</p>`;
 }
 
+/* 기존 과정/인쇄횟수/통과 기록은 그대로 두고, 중등 1학기 권장 편성표를 별도로 펼친다.
+   이 표에서 인쇄했다고 기존 세션을 완료 처리하지 않으며, 날짜로 진도를 추정하지 않는다. */
+function middlePacingHtml(tier){
+  const match=/^middle([123])$/.exec(tier||'');
+  const data=window.NM_MIDDLE_PACING;
+  if(!match||!data||!data.grades||S.lang!=='ko') return '';
+  const grade=+match[1], plan=data.grades[grade];
+  if(!plan) return '';
+  const blockLabel=b=>{
+    if(b.kind==='drawing') return `${b.title} ${b.n}문항`;
+    const th=(window.NM_THREADS||{})[b.t];
+    const lv=th&&(th.levels||[]).find(l=>l.id===b.lv);
+    return `${th?L(th.name):b.t} · ${lv?L(lv.label):'L'+b.lv} ${b.n}문항`;
+  };
+  return `<details class="nm-middle-pacing" id="middlePacing${grade}">
+    <summary>${esc(plan.title)}<span>주 2회 · 7주 · 14회 권장안 펼치기</span></summary>
+    <p class="nm-mp-intro">${esc(plan.scope)}.<br>
+      한 번에 관련 개념 1~3개를 묶습니다. <strong>쉬운 갈래 12문항 · 핵심 연습 24문항 · 집중 반복 36문항</strong>으로 충분히 연습합니다.
+      시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 7주 진도에 맞추려고 이해를 건너뛰지 마세요.
+      디딤돌의 개념 순서를 참고한 자체 편성으로, 교재의 모든 소유형이나 2학기 전체를 마쳤다는 뜻은 아닙니다.</p>
+    <ol class="nm-mp-sessions">${plan.sessions.map(s=>{
+      const count=s.blocks.reduce((n,b)=>n+b.n,0);
+      const draw=s.blocks.filter(b=>b.kind==='drawing').reduce((n,b)=>n+b.n,0);
+      return `<li class="nm-mp-session">
+        <span class="nm-mp-date"><b>${s.week}주</b>${s.day}회</span>
+        <div><h4>${esc(s.title)}${s.checkpoint?'<span class="nm-mp-check">확인</span>':''}</h4>
+          <p>${esc(s.blocks.map(blockLabel).join(' / '))}</p>
+          <p>총 ${count}문항${draw?` · 손으로 그리기 ${draw}문항 포함`:''} · ${esc(s.timeNote)}</p></div>
+        <button type="button" data-middle-grade="${grade}" data-middle-session="${s.id}" aria-label="${s.week}주 ${s.day}회 ${esc(s.title)} 학습지 미리보기">학습지 보기</button>
+      </li>`;
+    }).join('')}</ol>
+    <p class="nm-mp-notes">${plan.notes.map(esc).join('<br>')}
+      ${(plan.supplementary||[]).map(b=>{const th=(window.NM_THREADS||{})[b.t];const lv=th&&(th.levels||[]).find(l=>l.id===b.lv);return `<br>추천 보충: ${esc(th?L(th.name):b.t)} · ${esc(lv?L(lv.label):'L'+b.lv)} — ${esc(b.reason)}`;}).join('')}
+      <br>기존 과정의 회차와 학습 기록은 유지됩니다. 이 표는 자동 진급·완주 판정이 아닙니다.</p>
+  </details>`;
+}
+
 function openCourseSheet(key){
   const c=(window.NM_COURSES||{})[key];
   if(!c) return;
@@ -2553,6 +2647,15 @@ function checkupKeyFor(num){ return 'C'+num; }
 function isCheckupPoint(num){ return num>0 && num%CHECKUP_EVERY===0; }
 function checkupRecord(num){ return (S.checkups||{})[checkupKeyFor(num)]||null; }
 /* 점검이 볼 과정 세 개(과정 3이면 1·2·3) */
+/* 점검 화면의 셋째 칸 이름(2026-09-19) — 초등은 '창의 연산', 중·고는 '적용'이다.
+   중·고에 창의연산이라는 범주가 없어서다(courses.js 과정 29 위 주석 참조).
+   과정 번호로 가른다 — 중등이 과정 29부터다(stages.js). */
+const CHECKUP_CRE_FROM_MIDDLE = 29;
+function checkupCreLabel(num){
+  return num >= CHECKUP_CRE_FROM_MIDDLE
+    ? lk('적용','Applying','应用')
+    : lk('창의 연산','Creative moves','创意运算');
+}
 function checkupCourseNums(num){
   const out=[];
   for(let n=num-CHECKUP_EVERY+1;n<=num;n++) if(n>=1) out.push(n);
@@ -2731,7 +2834,7 @@ function screenCheckup(){
         'Only what you have already learned. Nothing new here.','只问学过的内容，不会出新东西。')}</p>
       <div class="nm-cu-parts three">
         <div class="nm-cu-part"><b>🔢 ${lk('계산','Calculating','计算')}</b><span>${k.calcTotal}${lk('문제','questions','题')}</span></div>
-        <div class="nm-cu-part cre"><b>✨ ${lk('창의 연산','Creative moves','创意运算')}</b><span>${k.creTotal||0}${lk('문제','questions','题')}</span></div>
+        <div class="nm-cu-part cre"><b>✨ ${esc(checkupCreLabel(k.num))}</b><span>${k.creTotal||0}${lk('문제','questions','题')}</span></div>
         <div class="nm-cu-part wp"><b>📖 ${lk('문장제 이해','Reading','应用题理解')}</b><span>${k.wpTotal}${lk('문제','questions','题')}</span></div>
       </div>
       <p class="nm-cu-count">${lk(`모두 ${k.items.length}문제예요. 중간에 나가도 풀던 자리에서 이어서 할 수 있어요.`,
@@ -2775,9 +2878,13 @@ function screenCheckup(){
     /* 창의(푸는 과정)만 따로 처진 경우는 위 네 갈래로는 안 보인다 — 계산도 문장제도
        되는데 길을 세우는 데서 막히는 아이가 있다. 한 줄을 덧붙여 그 자리를 짚는다. */
     const creNote = (k.creTotal && !creGood)
-      ? lk('창의 연산(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
+      ? (k.num >= CHECKUP_CRE_FROM_MIDDLE
+      ? lk('적용(배운 것을 문제에 쓰는 자리)이 따로 처져요. 계산은 되는데 적용에서 멈춘다면, 문제를 더 푸는 것보다 <b>이 문제가 어느 개념을 부르는지</b>를 먼저 말해 보는 연습이 필요해요.',
+           'Applying what was learned lags on its own. If the computing works but applying stalls, practise naming <b>which idea the problem is calling for</b> before solving more of them.',
+           '应用（把学过的用到题目上）单独落后。如果计算没问题却卡在应用，比起多做题，先练习说出<b>这道题在叫哪个概念</b>。')
+      : lk('창의 연산(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
            'The creative part — building a route — lags on its own. If the answer comes but the step blanks stall, practise saying <b>why</b> the steps go in that order, not more answer drills.',
-           '创意运算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。')
+           '创意运算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。'))
       : (k.creTotal && creGood && !calcGood)
       ? lk('푸는 길은 잘 세워요. 그 길 위에서 손이 느릴 뿐이에요.',
            'You build the route well — the hand on that route is just still slow.',
@@ -2870,7 +2977,7 @@ function screenCheckup(){
     ${wpHtml||`<div class="nm-bubble">${esc(L(cur.prompt))}</div>`}
     ${useWidget?`<div id="cuWidget" class="nm-lab-widget"></div>`:`
     ${hasTex?`<div class="nm-lab-expr">${labExprHtml(texForShow)}</div>`:''}
-    ${wantHint?PV.legendHtml(S.lang, PV.placesUsed(cur.tex)):''}
+    ${(wantHint&&PV.kind(cur.tex)==='place')?PV.legendHtml(S.lang, PV.placesUsed(cur.tex)):''}
     ${isMulti?`<p class="nm-dg-multihint">${lk('답이 여러 개면 쉼표(,)로 나눠 써요','Separate multiple answers with commas','多个答案用逗号分开')}</p>`:''}
     <div class="nm-numpad-screen" id="cuScreen">&nbsp;</div>
     <div class="nm-numpad" id="cuPad"></div>`}
@@ -3059,8 +3166,8 @@ function screenCourseRoad(){
     const cad=S.roadCadence;
     const pace=roadPaceDef(S.roadPace).key;
     const mult=roadPaceMult(pace);
-    const opTotals=roadTotals(1,ROAD_OP_LAST,cad,mult);
-    const allTotals=roadTotals(1,lastNum,cad,mult);
+    const opTotals=roadTotals(0,ROAD_OP_LAST,cad,mult);
+    const allTotals=roadTotals(0,lastNum,cad,mult);
     /* 콘텐츠 준비 현황은 매번 데이터에서 센다 — 숫자를 박아 두지 않는다. */
     const builtCount=list.filter(x=>courseBuilt(x.c)).length;
 
@@ -3113,7 +3220,7 @@ function screenCourseRoad(){
         <div class="nm-cr-cad-h">${lk('목표 기준','Target pace','目标标准')}</div>
         <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 기준','Target pace','目标标准')}">
           ${ROAD_PACES.map(p=>{
-            const mo=roadTotals(1,ROAD_OP_LAST,cad,roadPaceMult(p.key)).months;
+            const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)).months;
             return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
               <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} ${mo}${lk('개월','mo','个月')}</small></button>`;
           }).join('')}
@@ -3203,6 +3310,7 @@ function screenCourseRoad(){
             return `<span class="nm-cr-stready">${r.unknown?'🎒':'⏳'} ${ko?`보통 ${schoolMonthsLabel(r.need)}부터 권해요`
               :en?`Usually from ${schoolMonthsLabel(r.need)}`:`通常从${schoolMonthsLabel(r.need)}起`}</span>`; })()}
         </div>`;
+        if(!again) html+=middlePacingHtml(c.tier);
         prevTier=c.tier;
       }
       const tierDef=roadTierInfo(c.tier);
@@ -3294,6 +3402,13 @@ function screenCourseRoad(){
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
     });
+    body.querySelectorAll('[data-middle-session]').forEach(el=>{
+      el.onclick=()=>{
+        if(window.NM_EXAM&&typeof NM_EXAM.openMiddlePacing==='function'){
+          NM_EXAM.openMiddlePacing(+el.dataset.middleGrade,el.dataset.middleSession);
+        } else toast('학습지 도구를 아직 불러오지 못했어요. 잠시 후 다시 열어 주세요.',true);
+      };
+    });
     body.querySelectorAll('.nm-cr-check[data-chk]').forEach(el=>{
       el.onclick=()=>startCheckup(+el.dataset.chk);
     });
@@ -3376,7 +3491,7 @@ function placementLadder(){
    entry(사다리 칸)는 course 키로 매 렌더 때 사다리에서 찾는다(하드코딩 인덱스
    없음) — placementAgeEntry() 참고. */
 const PLACEMENT_AGES=[
-  {key:'pre', emoji:'🌱', tier:null,        course:null},
+  {key:'pre', emoji:'🌱', tier:'level0',    course:'C0'},
   {key:'g1',  emoji:'🌿', tier:'level1',    course:'C1'},
   {key:'g2',  emoji:'🌳', tier:'level2',    course:'C11'},
   {key:'g3',  emoji:'⛰️', tier:'level3',    course:'C17'},
@@ -3956,6 +4071,7 @@ function screenTitle(){
           <button class="nm-title-pill" id="ttStory">🗺 ${lk('스토리 모드','Story Mode','故事模式')}</button>
           <button class="nm-title-pill" id="ttDex">📖 ${lk('기호 도감','Symbol Dex','符号图鉴')}</button>
           <button class="nm-title-pill" id="ttHist">🏛️ ${lk('수학사 퀴즈','Math History Quiz','数学史问答')}</button>
+          <button class="nm-title-pill" id="ttMz">📰 ${lk('매거진','Magazine','杂志')}</button>
         </div>
       </div>
     </div>
@@ -3968,6 +4084,7 @@ function screenTitle(){
   $('#ttStory').onclick=()=>{ S.view='roadmap'; save(); render(); };
   $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
   $('#ttHist').onclick=()=>{ S.view='histquiz'; save(); render(); };
+  $('#ttMz').onclick=()=>{ S._mzOpen=null; S.view='magazine'; save(); render(); };
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
 function lineageBadgeRowHtml(){
@@ -4170,7 +4287,11 @@ function boostProblem(threadId, level, weekKey, i){
   const th = (window.NM_THREADS||{})[threadId];
   const params = (th && th.levels[level-1] && th.levels[level-1].params) || {};
   const gen = (window.NM_TGEN||{})[th && th.gen];
-  return gen ? gen(params, rng) : {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
+  if(!gen) return {prompt:{ko:'',en:'',zh:''},tex:'?',answer:0,answerType:'number'};
+  const pr=gen(params, rng);
+  /* 레벨이 세로셈으로 지정한 유형은 앱에서도 세로 위젯으로(2026-09-19) */
+  if(pr && params && params.orient){ pr.orient=params.orient; if(params.orient==='v' && !pr.widget) pr.widget='vertical'; }
+  return pr;
 }
 function screenBoost(){
   if(townCleanup){townCleanup();townCleanup=null;}
@@ -5269,6 +5390,91 @@ function screenSymbolDex(){
   </div>`;
   $('#dexBack').onclick=()=>{const back=S._dexFrom||'town';S._dexFrom=null;S.view=back;save();render();};
   bindDexCards(scr);
+}
+
+/* ============================================================
+   매거진(읽을거리) — 마을 가판대 (2026-09-20)
+   원장: "도형이 여기 있을 리는 없어 — 매거진인 거야." / "이 파트도 마을에 있어야지."
+
+   「수의 마법」은 연산 앱이라 평균·도형·확률 이야기는 붙일 유닛이 없다. 억지로 유닛에
+   넣으면 유닛이 망가지므로 **유닛 밖 읽을거리는 매거진 기사**로 싣는다. 데이터는
+   data/magazine.js 하나이고, 같은 글이 학습지(app/exam.js w2MagazinePageHtml)에도 나간다 —
+   한 벌을 두 군데서 쓴다. 읽은 기사는 S.magazine.read 에 남겨 목록에 표시한다.
+   상태: S._mzOpen(지금 펼친 기사 id, 저장 안 함) · S.magazine.read(영구)
+   ============================================================ */
+function mzArticles(){ return (window.NM_MAGAZINE && window.NM_MAGAZINE.articles) || []; }
+function mzRead(id){ return !!((S.magazine||{}).read||{})[id]; }
+function mzMarkRead(id){
+  if(!S.magazine) S.magazine={read:{}};
+  if(!S.magazine.read) S.magazine.read={};
+  S.magazine.read[id]=true;
+}
+function screenMagazine(){
+  const scr=$('#screen'), ko=S.lang==='ko', en=S.lang==='en';
+  const list=mzArticles();
+  const open=S._mzOpen ? list.find(a=>a.id===S._mzOpen) : null;
+  const M=window.NM_MAGAZINE||{};
+  const head=(title,backId)=>`<div class="nm-gc-header">
+      <button class="nm-back" id="${backId}">${t('back')}</button>
+      <div class="nm-gc-title">📰 ${esc(title)}</div>
+    </div>`;
+
+  if(!open){
+    const cards=list.map(a=>`
+      <button class="nm-mzl-card" data-mz="${esc(a.id)}">
+        <div class="nm-mzl-art">${a.art||''}</div>
+        <div class="nm-mzl-txt">
+          <span class="nm-mzl-kicker">${esc(L(a.kicker))}</span>
+          <div class="nm-mzl-title">${esc(L(a.title))}</div>
+          <div class="nm-mzl-lede">${esc(L(a.lede))}</div>
+          ${mzRead(a.id)?`<span class="nm-mzl-read">${ko?'✓ 읽었어요':en?'✓ Read':'✓ 已读'}</span>`:''}
+        </div>
+      </button>`).join('');
+    scr.innerHTML=`<div class="nm-gc-wrap">
+      ${head(L(M.name)||(ko?'매거진':en?'Magazine':'杂志'),'mzBack')}
+      <div class="nm-gc-body">
+        <p class="nm-mzl-sub">${esc(L(M.tagline)||'')}</p>
+        <div class="nm-mzl-grid">${cards}</div>
+      </div>
+    </div>`;
+    $('#mzBack').onclick=()=>{S.view='town';save();render();};
+    scr.querySelectorAll('[data-mz]').forEach(b=>{
+      b.onclick=()=>{S._mzOpen=b.getAttribute('data-mz');render();};
+    });
+    return;
+  }
+
+  /* 기사 — 읽으러 들어온 순간 읽음으로 남긴다(끝까지 내렸는지는 묻지 않는다) */
+  mzMarkRead(open.id); save();
+  const idx=list.indexOf(open), next=list[(idx+1)%list.length];
+  const secs=(open.body||[]).map(b=>`
+    <div class="nm-mza-sec">
+      <h4>${esc(L(b.h))}</h4>
+      <p>${esc(L(b.p))}</p>
+      <div class="nm-mza-fig">${b.art||''}</div>
+    </div>`).join('');
+  scr.innerHTML=`<div class="nm-gc-wrap">
+    ${head(L(M.name)||(ko?'매거진':en?'Magazine':'杂志'),'mzBack')}
+    <div class="nm-gc-body">
+      <article class="nm-mza">
+        <div class="nm-mza-kicker">${esc(L(open.kicker))}</div>
+        <h3 class="nm-mza-title">${esc(L(open.title))}</h3>
+        <p class="nm-mza-lede">${esc(L(open.lede))}</p>
+        <div class="nm-mza-hero">${open.art||''}</div>
+        ${secs}
+        <div class="nm-mza-close">${esc(L(open.close))}</div>
+        <p class="nm-mza-src">${esc(L(open.source))}</p>
+        <div class="nm-mza-nav">
+          <button class="nm-btn ghost" id="mzList">${ko?'목록으로':en?'All articles':'回到目录'}</button>
+          ${list.length>1?`<button class="nm-btn" id="mzNext">${ko?'다음 기사':en?'Next article':'下一篇'} →</button>`:''}
+        </div>
+      </article>
+    </div>
+  </div>`;
+  $('#mzBack').onclick=()=>{S._mzOpen=null;S.view='town';save();render();};
+  $('#mzList').onclick=()=>{S._mzOpen=null;render();};
+  const nx=$('#mzNext');
+  if(nx)nx.onclick=()=>{S._mzOpen=next.id;scr.scrollTop=0;window.scrollTo(0,0);render();};
 }
 
 /* ============================================================

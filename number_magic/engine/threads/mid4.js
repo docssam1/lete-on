@@ -30,6 +30,9 @@ const { R, pick } = NM_RNG;
 
 /* ── 공용 헬퍼 ── */
 function nzInt(rng, lo, hi){ return R(rng, lo, hi) * pick(rng, [1, -1]); }
+/* 음수를 거듭제곱의 밑으로 쓸 때 — `-8^2` 는 TeX·수학 관례 모두 −(8²) 다. (−8)² 를
+   뜻한다면 반드시 괄호로 묶어야 한다(2026-09-20: CH7·MD26·MD35 가 안 묶고 있었다). */
+function par(n){ return n < 0 ? `(${n})` : `${n}`; }
 function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }
 /* 근 r의 일차 인수 표기 — (x - -9) 같은 이중부호를 (x + 9)로 낸다.
    2026-08-28 인쇄 점검에서 MD29가 실제로 `(x - -9)(x - -8)`로 나오고 있었다. */
@@ -53,7 +56,7 @@ NM_TGEN['md21_polyMulDiv'] = function (params, rng) {
     const answer = [a * c, a * d + b * c, b * d];
     return {
       prompt: {
-        ko: `괄호 두 개를 각각 분배해서 곱한 뒤, 같은 차수끼리 모아요`,
+        ko: `괄호 두 개를 각각 분배해서 곱한 뒤, 같은 차수끼리 모읍니다`,
         en: `Distribute both brackets, then collect terms of the same degree`,
         zh: `把两个括号分别展开相乘，再合并同类项`
       },
@@ -76,7 +79,7 @@ NM_TGEN['md21_polyMulDiv'] = function (params, rng) {
     const answer = [m, r];
     return {
       prompt: {
-        ko: `조립제법으로 나눠요 — k를 곱하고 다음 계수를 더하는 걸 반복해요`,
+        ko: `조립제법으로 나눕니다 — k를 곱하고 다음 계수를 더하는 걸 반복합니다`,
         en: `Use synthetic division — multiply by k, add the next coefficient, repeat`,
         zh: `用综合除法——乘以k再加上下一个系数，重复进行`
       },
@@ -96,7 +99,7 @@ NM_TGEN['md21_polyMulDiv'] = function (params, rng) {
   const answer = [a * c, a * d + b * c, a * e + b * d, b * e];
   return {
     prompt: {
-      ko: `이항식의 두 항을 삼항식의 세 항 모두에 각각 분배해요`,
+      ko: `이항식의 두 항을 삼항식의 세 항 모두에 각각 분배합니다`,
       en: `Distribute each term of the binomial across all three terms of the trinomial`,
       zh: `把二项式的两项分别乘三项式的每一项`
     },
@@ -143,7 +146,7 @@ NM_TGEN['md22_cubeFormula'] = function (params, rng) {
     const answer = cubeCoeffs(a);
     return {
       prompt: {
-        ko: `a가 음수여도 공식은 같아요 — 부호까지 그대로 대입해요`,
+        ko: `a가 음수여도 공식은 같습니다 — 부호까지 그대로 대입합니다`,
         en: `The formula stays the same even when a is negative — substitute the sign as-is`,
         zh: `a是负数公式也一样——把符号原样代入`
       },
@@ -168,7 +171,7 @@ NM_TGEN['md22_cubeFormula'] = function (params, rng) {
     : [{ tex: `(x-${a})(x^2+${a}x+${a * a}) = x^3 - ${a}^3` }, { tex: `= x^3 - \\square`, blank: cube }];
   return {
     prompt: {
-      ko: `x³±a³ = (x±a)(x²∓ax+a²) — 두 인수를 곱하면 가운데 항들이 사라져요`,
+      ko: `x³±a³ = (x±a)(x²∓ax+a²) — 두 인수를 곱하면 가운데 항들이 사라집니다`,
       en: `x³±a³ = (x±a)(x²∓ax+a²) — multiplying the two factors cancels the middle terms`,
       zh: `x³±a³ = (x±a)(x²∓ax+a²)——两因式相乘，中间项互相抵消`
     },
@@ -188,7 +191,7 @@ NM_TGEN['md23_identity'] = function (params, rng) {
     const answer = [C, D];
     return {
       prompt: {
-        ko: `모든 x에 대해 항상 성립하는 식(항등식)이면, 양변의 x계수끼리·상수항끼리 같아요`,
+        ko: `모든 x에 대해 항상 성립하는 식(항등식)이면, 양변의 x계수끼리·상수항끼리 같습니다`,
         en: `If an equation holds for every x (an identity), the x-coefficients match and the constants match`,
         zh: `如果对任意x都成立(恒等式)，两边x的系数相等，常数项也相等`
       },
@@ -209,7 +212,7 @@ NM_TGEN['md23_identity'] = function (params, rng) {
   const answer = [a, b];
   return {
     prompt: {
-      ko: `좌변을 먼저 전개해 x계수와 상수항을 정리한 뒤, 우변과 비교해요`,
+      ko: `좌변을 먼저 전개해 x계수와 상수항을 정리한 뒤, 우변과 비교합니다`,
       en: `Expand the left side first to collect the x-coefficient and constant, then compare with the right side`,
       zh: `先展开左边，整理出x的系数和常数项，再和右边比较`
     },
@@ -236,7 +239,7 @@ NM_TGEN['md24_remainderTheorem'] = function (params, rng) {
     const value = a * k * k + b * k + c;
     return {
       prompt: {
-        ko: `P(x)를 (x-a)로 나눈 나머지는 나눗셈 없이 P(a)만 계산하면 바로 나와요`,
+        ko: `P(x)를 (x-a)로 나눈 나머지는 나눗셈 없이 P(a)만 계산하면 바로 나옵니다`,
         en: `The remainder of P(x) divided by (x-a) is just P(a) — no division needed`,
         zh: `P(x)除以(x-a)的余数，不用做除法，直接算P(a)就行`
       },
@@ -255,7 +258,7 @@ NM_TGEN['md24_remainderTheorem'] = function (params, rng) {
     const value = a * k * k * k + b * k * k + c * k + d;
     return {
       prompt: {
-        ko: `삼차식도 같은 원리예요 — 차수가 늘어도 그냥 x자리에 대입만 하면 돼요`,
+        ko: `삼차식도 같은 원리입니다 — 차수가 늘어도 그냥 x자리에 대입만 하면 됩니다`,
         en: `Same principle for a cubic — just substitute into the x's, no matter the degree`,
         zh: `三次式也是同样的道理——不管次数多高，直接把数代入x就行`
       },
@@ -274,7 +277,7 @@ NM_TGEN['md24_remainderTheorem'] = function (params, rng) {
   const remainder = n * n * n + k * n + c0;
   return {
     prompt: {
-      ko: `P(n) = 나머지라는 걸 거꾸로 이용해요 — 대입한 값이 나머지와 같아지는 계수를 찾아요`,
+      ko: `P(n) = 나머지라는 걸 거꾸로 이용합니다 — 대입한 값이 나머지와 같아지는 계수를 찾습니다`,
       en: `Use the relationship backward — find the coefficient that makes the substituted value equal the given remainder`,
       zh: `反过来用P(n)=余数——找出使代入值等于余数的系数`
     },
@@ -300,7 +303,7 @@ NM_TGEN['md25_factorAdvanced'] = function (params, rng) {
     const answer = [a, -a, a * a];
     return {
       prompt: {
-        ko: `x³+a³ = (x+a)(x²-ax+a²) — 부호에 주의해서 세 빈칸을 채워요`,
+        ko: `x³+a³ = (x+a)(x²-ax+a²) — 부호에 주의해서 세 빈칸을 채웁니다`,
         en: `x³+a³ = (x+a)(x²-ax+a²) — fill in the three blanks, watch the signs`,
         zh: `x³+a³ = (x+a)(x²-ax+a²)——注意符号，填出三个空格`
       },
@@ -318,7 +321,7 @@ NM_TGEN['md25_factorAdvanced'] = function (params, rng) {
     const answer = [a, a, a * a];
     return {
       prompt: {
-        ko: `x³-a³ = (x-a)(x²+ax+a²) — 두 빈칸 모두 a가 그대로 들어가요`,
+        ko: `x³-a³ = (x-a)(x²+ax+a²) — 두 빈칸 모두 a가 그대로 들어갑니다`,
         en: `x³-a³ = (x-a)(x²+ax+a²) — both blanks are simply a`,
         zh: `x³-a³ = (x-a)(x²+ax+a²)——两个空格都直接填a`
       },
@@ -338,7 +341,7 @@ NM_TGEN['md25_factorAdvanced'] = function (params, rng) {
   const answer = [m, n];
   return {
     prompt: {
-      ko: `x²를 t로 놓고 보면 t²+bt+c 꼴이에요 — 더해서 b, 곱해서 c인 두 수를 찾아요(작은 값부터)`,
+      ko: `x²를 t로 놓고 보면 t²+bt+c 꼴입니다 — 더해서 b, 곱해서 c인 두 수를 찾습니다(작은 값부터)`,
       en: `Treat x² as t — it becomes t²+bt+c. Find two numbers that add to b and multiply to c (smaller first)`,
       zh: `把x²看成t，就变成t²+bt+c——找相加得b、相乘得c的两个数(先填较小的)`
     },
@@ -364,14 +367,14 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
     const D = b * b - 4 * a * c;
     return {
       prompt: {
-        ko: `근을 구하기 전에 판별식 D=b²-4ac부터 계산해요 — 근을 몇 개 가질지 미리 알려주는 정찰병이에요`,
+        ko: `근을 구하기 전에 판별식 D=b²-4ac부터 계산합니다 — 근을 몇 개 가질지 미리 알려주는 정찰병입니다`,
         en: `Before finding the roots, compute the discriminant D=b²-4ac — it scouts ahead and tells you how many roots there are`,
         zh: `求根之前先算判别式D=b²-4ac——它像侦察兵一样提前告诉你有几个根`
       },
       tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; D = \\square`,
       answer: D, answerType: 'number', widget: 'numpad', negative: D < 0,
       solution: [
-        { tex: `D = ${b}^2 - 4(${a})(${c})` },
+        { tex: `D = ${par(b)}^2 - 4(${a})(${c})` },
         { tex: `= \\square`, blank: D }
       ]
     };
@@ -394,14 +397,16 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
     const count = D > 0 ? 2 : D === 0 ? 1 : 0;
     return {
       prompt: {
-        ko: `D>0이면 서로 다른 두 실근, D=0이면 중근(1개), D<0이면 실근이 없어요`,
+        ko: `D>0이면 서로 다른 두 실근, D=0이면 중근(1개), D<0이면 실근이 없습니다`,
         en: `D>0 means two distinct real roots, D=0 means a repeated root (1), D<0 means no real roots`,
         zh: `D>0是两个不同实根，D=0是重根(1个)，D<0则没有实根`
       },
-      tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\square`,
+      /* □ 에 무엇을 쓰는지 식에 없어 빈 상자만 인쇄됐다 — 같은 생성기 L1 은 `D = □` 라고
+         라벨이 붙어 있는데 이쪽만 빠져 있었다(2026-09-20 점검). */
+      tex: `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0 \\;\\Rightarrow\\; \\text{실근의 개수} = \\square`,
       answer: count, answerType: 'number', widget: 'numpad',
       solution: [
-        { tex: `D = ${b}^2-4(${a})(${c}) = ${D}` },
+        { tex: `D = ${par(b)}^2-4(${a})(${c}) = ${D}` },
         { tex: `D ${D > 0 ? '>0' : D === 0 ? '=0' : '<0'} \\;\\Rightarrow\\; \\square`, blank: count }
       ]
     };
@@ -412,7 +417,7 @@ NM_TGEN['md26_discriminant'] = function (params, rng) {
   const q = m * m;
   return {
     prompt: {
-      ko: `중근을 가지려면 D=0이에요 — k²=4q가 되는 양수 k를 구하고 ±를 붙여요`,
+      ko: `중근을 가지려면 D=0입니다 — k²=4q가 되는 양수 k를 구하고 ±를 붙입니다`,
       en: `A repeated root needs D=0 — find the positive k with k²=4q, then attach ±`,
       zh: `要有重根就要D=0——求出满足k²=4q的正数k，再加上±`
     },
@@ -440,7 +445,7 @@ NM_TGEN['md27_rootsSumProduct'] = function (params, rng) {
     const answer = [-b, c];
     return {
       prompt: {
-        ko: `근을 구하지 않아도 α+β=-b, αβ=c — 계수만 보고 바로 알 수 있어요`,
+        ko: `근을 구하지 않아도 α+β=-b, αβ=c — 계수만 보고 바로 알 수 있습니다`,
         en: `You don't need the roots themselves: α+β=-b, αβ=c — just read it off the coefficients`,
         zh: `不用求出根：α+β=-b，αβ=c——只看系数就知道`
       },
@@ -460,7 +465,7 @@ NM_TGEN['md27_rootsSumProduct'] = function (params, rng) {
     const answer = [S, P];
     return {
       prompt: {
-        ko: `x²의 계수가 1이 아니면 a로 나눠서 α+β=-b/a, αβ=c/a를 써요`,
+        ko: `x²의 계수가 1이 아니면 a로 나눠서 α+β=-b/a, αβ=c/a를 씁니다`,
         en: `When the x² coefficient isn't 1, divide by a: α+β=-b/a, αβ=c/a`,
         zh: `x²的系数不是1时，除以a：α+β=-b/a，αβ=c/a`
       },
@@ -479,7 +484,7 @@ NM_TGEN['md27_rootsSumProduct'] = function (params, rng) {
   const target = S * S - 2 * P;
   return {
     prompt: {
-      ko: `α²+β²은 (α+β)²-2αβ로 바꿔 써요 — 합과 곱만 알면 이런 식도 바로 구해요`,
+      ko: `α²+β²은 (α+β)²-2αβ로 바꿔 씁니다 — 합과 곱만 알면 이런 식도 바로 구합니다`,
       en: `Rewrite α²+β² as (α+β)²-2αβ — knowing just the sum and product unlocks expressions like this`,
       zh: `把α²+β²改写成(α+β)²-2αβ——只要知道和与积，这类式子也能马上求出`
     },
@@ -523,12 +528,13 @@ NM_TGEN['md28_quadraticFormula'] = function (params, rng) {
     : `${a}x^2 ${wrapPlus(b)}x ${wrapPlus(c)} = 0`;
   return {
     prompt: {
-      ko: `근의 공식 x=(-b±√(b²-4ac))/(2a)에 그대로 대입해요 — 기약하지 않은 형태 그대로가 답이에요`,
+      ko: `근의 공식 x=(-b±√(b²-4ac))/(2a)에 그대로 대입합니다 — 기약하지 않은 형태 그대로가 답입니다`,
       en: `Plug straight into the quadratic formula x=(-b±√(b²-4ac))/(2a) — the unreduced form is the answer`,
       zh: `直接代入求根公式x=(-b±√(b²-4ac))/(2a)——不用化简，代入后的形式就是答案`
     },
     tex: `${eqTex} \\;\\Rightarrow\\; x = \\dfrac{\\square \\pm \\sqrt{\\square}}{\\square}`,
-    answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
+    /* 정답지가 "5, 69, 2" 가 아니라 (5±√69)/2 로 찍히게(2026-09-20) — exam.js ansTex 참조 */
+    answer, answerShape: 'quadRoot', answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
     solution: [
       { tex: `D = (${b})^2-4(${a})(${c}) = \\square`, blank: D },
       { tex: `x = \\dfrac{-b\\pm\\sqrt{D}}{2a}` },
@@ -558,7 +564,7 @@ NM_TGEN['md29_quadIneq'] = function (params, rng) {
   if (mode === 'between') {
     return {
       prompt: {
-        ko: `두 인수의 부호가 다를 때만 곱이 음수가 돼요 — 두 근 사이가 해예요`,
+        ko: `두 인수의 부호가 다를 때만 곱이 음수가 됩니다 — 두 근 사이가 해입니다`,
         en: `The product is negative only when the two factors have opposite signs — the solution lies between the two roots`,
         zh: `只有两因式符号相反时乘积才是负——解在两根之间`
       },
@@ -575,7 +581,7 @@ NM_TGEN['md29_quadIneq'] = function (params, rng) {
     const b = -(p + q), c = p * q;
     return {
       prompt: {
-        ko: `먼저 좌변을 인수분해해서 두 근을 찾은 뒤, 그 사이가 해가 돼요`,
+        ko: `먼저 좌변을 인수분해해서 두 근을 찾은 뒤, 그 사이가 해가 됩니다`,
         en: `First factor the left side to find the two roots, then the solution is the interval between them`,
         zh: `先把左边因式分解求出两根，解就在两根之间`
       },
@@ -593,7 +599,7 @@ NM_TGEN['md29_quadIneq'] = function (params, rng) {
   const b = -a * (p + q), c = a * p * q;
   return {
     prompt: {
-      ko: `x²의 계수가 1이 아니어도 먼저 인수분해하면 방법은 똑같아요`,
+      ko: `x²의 계수가 1이 아니어도 먼저 인수분해하면 방법은 똑같습니다`,
       en: `Even when the x² coefficient isn't 1, factor first and the method is identical`,
       zh: `即使x²的系数不是1，先因式分解，方法完全一样`
     },
@@ -623,7 +629,7 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
     const answer = [R2[0][0], R2[0][1], R2[1][0], R2[1][1]];
     return {
       prompt: {
-        ko: `행렬의 덧셈·뺄셈은 같은 자리(성분)끼리만 계산해요`,
+        ko: `행렬의 덧셈·뺄셈은 같은 자리(성분)끼리만 계산합니다`,
         en: `Matrix addition/subtraction works entry by entry, same position only`,
         zh: `矩阵加减法只对相同位置(元素)分别运算`
       },
@@ -642,7 +648,7 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
     const answer = [k * A[0][0], k * A[0][1], k * A[1][0], k * A[1][1]];
     return {
       prompt: {
-        ko: `스칼라곱은 모든 성분에 그 수를 똑같이 곱해요`,
+        ko: `스칼라곱은 모든 성분에 그 수를 똑같이 곱합니다`,
         en: `A scalar multiple multiplies every single entry by that number`,
         zh: `数乘就是把每个元素都乘以同一个数`
       },
@@ -664,7 +670,7 @@ NM_TGEN['md30_matrix2x2'] = function (params, rng) {
   const answer = [r11, r12, r21, r22];
   return {
     prompt: {
-      ko: `행렬곱은 앞 행렬의 행과 뒤 행렬의 열을 하나씩 짝지어 곱하고 더해요`,
+      ko: `행렬곱은 앞 행렬의 행과 뒤 행렬의 열을 하나씩 짝지어 곱하고 더합니다`,
       en: `Matrix multiplication pairs each row of the first with each column of the second, multiplies, and adds`,
       zh: `矩阵乘法把前者的行与后者的列逐个配对相乘再相加`
     },

@@ -1,55 +1,7 @@
 window.HSMIDDLE_DATA = {
-  "students": [
-    "DEMO",
-    "docssam",
-    "오지민",
-    "엄한빈",
-    "이주원",
-    "임도형"
-  ],
-  "studentCode": {
-    "DEMO": "HS-DEMO",
-    "docssam": "01020837265",
-    "오지민": "HS-1329",
-    "엄한빈": "HS-4303",
-    "이주원": "HS-2342",
-    "임도형": "HS-7887"
-  },
-  "access": {
-    "DEMO": [
-      "diagnostic"
-    ],
-    "docssam": [
-      "diagnostic",
-      "mock-1",
-      "mock-2",
-      "mock-3",
-      "final"
-    ],
-    "오지민": [
-      "diagnostic",
-      "mock-1"
-    ],
-    "엄한빈": [
-      "diagnostic",
-      "final"
-    ],
-    "이주원": [
-      "diagnostic",
-      "mock-1",
-      "mock-2",
-      "mock-3",
-      "final"
-    ],
-    "임도형": [
-      "diagnostic"
-    ]
-  },
-  "admins": [
-    "docssam"
-  ],
   "exams": {
-    "diagnostic": "중등 성취도 진단 + 클리닉",
+    "diagnostic": "중등 성취도 진단",
+    "question-bank": "중등 심화 문제은행",
     "mock-1": "실전 모의고사 1회",
     "mock-2": "실전 모의고사 2회",
     "mock-3": "실전 모의고사 3회",

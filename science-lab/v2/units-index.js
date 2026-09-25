@@ -22,6 +22,8 @@ const subsOf = (tx) => tx.elements.map((e) => ({ ...e, types: tx.types.filter((t
 export const READY = {
   's41-u01': { hero: '고리 자석 탑', subs: subsOf(tx41u01) },
   's41-u02': { hero: '얼음 병 저울', subs: subsOf(tx41u02) },
-  's41-u03': { hero: '흙 언덕 물길', subs: subsOf(tx41u03) },
+  's41-u03': { hero: '흙 언덕 물길', subs: subsOf(tx41u03),
+    labs: [{ id: 's41-u03', hero: '흙 언덕 물길', covers: ['E1', 'E2'] }, { id: 's41-u03b', hero: '화산 실험실', covers: ['E3', 'E4', 'E5', 'E6'] }] },
+  's41-u03b': { hero: '화산 실험실', subs: subsOf(tx41u03), hidden: true },   // 땅의 변화의 두 번째 5단계 수업(지도에는 정거장 없음)
   's42-u01': { hero: '부레옥잠 연못', subs: subsOf(tx42u01) },
 };

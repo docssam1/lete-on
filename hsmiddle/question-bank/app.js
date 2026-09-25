@@ -1,8 +1,10 @@
-(() => {
+(async () => {
   const $ = id => document.getElementById(id);
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[character]);
   const params = new URLSearchParams(location.search);
-  const session = window.HSMIDDLE_AUTH.readSession();
-  const isAdmin = window.HSMIDDLE_AUTH.isAdmin(session.name);
+  const savedSession = window.HSMIDDLE_AUTH.readSession();
+  const session = savedSession.valid ? await window.HSMIDDLE_AUTH.refreshSession() : null;
+  const isAdmin = Boolean(session && session.admin);
   const catalog = window.HSMIDDLE_BANK.createCatalog().filter(item => item.available);
   const byNumber = new Map(catalog.map(item => [item.number, item]));
   const state = {
@@ -12,13 +14,14 @@
     student: ""
   };
 
-  const hasAccess = session.valid && (isAdmin || session.access.includes("diagnostic")) && !window.HSMIDDLE_AUTH.isExpired(session.name);
+  const hasAccess = Boolean(session && session.valid && (isAdmin || session.access.includes("question-bank")) && !window.HSMIDDLE_AUTH.isExpired(session.name));
   if (!hasAccess) {
     $("accessGate").hidden = false;
     return;
   }
 
-  state.student = session.name;
+  const requestedStudent = window.HSMIDDLE_AUTH.normalizeName(params.get("student") || "").slice(0, 80);
+  state.student = isAdmin && requestedStudent ? requestedStudent : session.name;
   const canSelect = item => item.releaseStatus !== "locked";
   $("app").hidden = false;
   $("studentName").textContent = `${state.student} 학생`;
@@ -109,46 +112,55 @@
 
   function watermarkMarkup() {
     if (!$("watermarkToggle").checked) return "";
-    return `<div class="watermark" aria-hidden="true"><span>${state.student} · LETE-ON</span><span>${state.student} · LETE-ON</span><span>${state.student} · LETE-ON</span></div>`;
+    const studentName = escapeHtml(state.student);
+    return `<div class="watermark" aria-hidden="true"><span>${studentName} · LETE-ON</span><span>${studentName} · LETE-ON</span><span>${studentName} · LETE-ON</span></div>`;
   }
 
   function selectedItems() {
     return catalog.filter(item => state.selected.has(item.id));
   }
 
-  function pageNumbers(item) {
-    if (state.view === "problem") return item.problemPageNumbers;
+  function pageNumbers(item, view = state.view) {
+    if (view === "problem") return item.problemPageNumbers;
+    if (view === "answer") return item.answerPageNumbers;
     return [...new Set([...item.answerPageNumbers, ...item.solutionPageNumbers])];
+  }
+
+  function sectionMarkup(item, view) {
+    const sectionLabel = view === "solution"
+      ? "정답과 풀이"
+      : view === "answer" ? "빠른정답"
+      : item.sourceVerified ? `문제 ${item.questionCount}문항` : "원본 문제 묶음";
+    const correction = view === "solution" && item.sourceCorrectionNote
+      ? `<aside class="source-correction"><strong>원본 풀이 정정</strong><p>${item.sourceCorrectionNote}</p></aside>`
+      : "";
+    return `<section class="set-section${correction ? " has-correction" : ""}">
+      <header class="set-heading"><div><h2>${item.number}번 연계 · ${item.type}</h2><p>${item.semester} · ${item.unit} · ${item.area} · 난이도 ${item.difficulty}</p></div><span>${sectionLabel}</span></header>
+      ${correction}
+      ${pageNumbers(item, view).map(page => `<article class="page"><img src="${item.assetFolder}/page-${page}.png" alt="${item.type} ${view === "problem" ? "문제" : view === "answer" ? "정답" : "풀이"} ${page}쪽">${watermarkMarkup()}</article>`).join("")}
+    </section>`;
   }
 
   function renderWorksheet() {
     const selected = selectedItems();
     const totalQuestions = selected.reduce((sum, item) => sum + (item.questionCount || 0), 0);
     const pendingBundles = selected.filter(item => !item.sourceVerified).length;
-    $("worksheetHeading").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
-    $("worksheetMeta").textContent = `${selected.length}개 유형 · 확인된 ${totalQuestions}문항${pendingBundles ? ` · 원본 ${pendingBundles}묶음` : ""} · ${state.view === "problem" ? "문제편" : "풀이편"}`;
-    $("pageStream").innerHTML = selected.map(item => {
-      const sectionLabel = state.view === "solution"
-        ? "정답과 풀이"
-        : item.sourceVerified ? `문제 ${item.questionCount}문항` : "원본 문제 묶음";
-      const correction = state.view === "solution" && item.sourceCorrectionNote
-        ? `<aside class="source-correction"><strong>원본 풀이 정정</strong><p>${item.sourceCorrectionNote}</p></aside>`
-        : "";
-      return `<section class="set-section${correction ? " has-correction" : ""}">
-        <header class="set-heading"><div><h2>${item.number}번 연계 · ${item.type}</h2><p>${item.semester} · ${item.unit} · ${item.area} · 난이도 ${item.difficulty}</p></div><span>${sectionLabel}</span></header>
-        ${correction}
-        ${pageNumbers(item).map(page => `<article class="page"><img src="${item.assetFolder}/page-${page}.png" alt="${item.type} ${state.view === "problem" ? "문제" : "풀이"} ${page}쪽">${watermarkMarkup()}</article>`).join("")}
-      </section>`;
-    }).join("");
+    const labels = {problem:"맞춤 유사문제", solution:"맞춤 유사문제 정답·풀이", combined:"맞춤 유사문제 문제 + 정답"};
+    const viewLabels = {problem:"문제편", solution:"풀이편", combined:"문제편 + 빠른정답"};
+    $("worksheetHeading").textContent = labels[state.view];
+    $("worksheetMeta").textContent = `${selected.length}개 유형 · 확인된 ${totalQuestions}문항${pendingBundles ? ` · 원본 ${pendingBundles}묶음` : ""} · ${viewLabels[state.view]}`;
+    $("pageStream").innerHTML = state.view === "combined"
+      ? `<div class="combined-part problem-part"><h2 class="combined-part-title">문제</h2>${selected.map(item => sectionMarkup(item, "problem")).join("")}</div><div class="combined-part answer-part"><h2 class="combined-part-title">빠른정답</h2>${selected.map(item => sectionMarkup(item, "answer")).join("")}</div>`
+      : selected.map(item => sectionMarkup(item, state.view)).join("");
     document.body.dataset.view = state.view;
     document.querySelectorAll(".view-tabs button").forEach(button => button.classList.toggle("active", button.dataset.view === state.view));
   }
 
-  function openWorksheet() {
+  function openWorksheet(initialView = "problem") {
     if (!state.selected.size) return;
     $("builderView").hidden = true;
     $("worksheetView").hidden = false;
-    state.view = "problem";
+    state.view = initialView;
     renderWorksheet();
     scrollTo({top:0,behavior:"smooth"});
   }
@@ -183,10 +195,10 @@
     refreshUnits();
     renderCatalog();
   });
-  $("buildButton").addEventListener("click", openWorksheet);
+  $("buildButton").addEventListener("click", () => openWorksheet());
   $("backToBuilder").addEventListener("click", () => { $("worksheetView").hidden = true; $("builderView").hidden = false; scrollTo({top:0,behavior:"smooth"}); });
   document.querySelector(".view-tabs").addEventListener("click", event => { const button = event.target.closest("button[data-view]"); if (!button) return; state.view = button.dataset.view; renderWorksheet(); scrollTo({top:0,behavior:"smooth"}); });
-  $("printButton").addEventListener("click", async () => {
+  async function printWorksheet() {
     const button = $("printButton");
     const label = button.textContent;
     button.disabled = true;
@@ -197,15 +209,25 @@
     button.disabled = false;
     button.textContent = label;
     print();
-  });
+  }
+  $("printButton").addEventListener("click", printWorksheet);
   $("watermarkToggle").addEventListener("change", () => { if (!$("worksheetView").hidden) renderWorksheet(); });
 
   refreshUnits();
-  const linkedQuestions = (params.get("qs") || "").split(",").map(Number).filter(number => {
+  const requestedQuestions = [...new Set((params.get("qs") || "").split(",").map(Number).filter(Number.isInteger))];
+  const linkedQuestions = requestedQuestions.filter(number => {
     const item = byNumber.get(number);
     return item && canSelect(item);
   });
+  const skippedQuestions = requestedQuestions.filter(number => !linkedQuestions.includes(number));
   linkedQuestions.forEach(number => state.selected.add(byNumber.get(number).id));
   renderCatalog();
-  if (linkedQuestions.length) openWorksheet();
+  if (linkedQuestions.length) {
+    openWorksheet(params.get("mode") === "answer" ? "combined" : "problem");
+    if (skippedQuestions.length) {
+      $("linkedNotice").hidden = false;
+      $("linkedNotice").textContent = `${skippedQuestions.join(", ")}번은 원본 또는 정답 검수가 끝나지 않아 이번 인쇄에서 제외됩니다.`;
+    }
+    if (params.get("autoprint") === "1") setTimeout(printWorksheet, 150);
+  }
 })();

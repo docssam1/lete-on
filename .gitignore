@@ -47,3 +47,10 @@ __pycache__/
 # The deploy snapshot is operational metadata, not public repository content.
 /supabase/functions/highselect-catalog/catalog.json
 out/
+
+# OmniVoice 로컬 시청(원장 PC) — 가상환경과 시청용 음성은 커밋하지 않는다
+.venv-omnivoice/
+audition/
+audition-clone/
+clone/
+clone-ref/

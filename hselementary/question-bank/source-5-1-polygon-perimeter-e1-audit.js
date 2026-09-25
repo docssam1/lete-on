@@ -211,8 +211,17 @@ check(new Set(allTypes.map(type => type.sourceItemId)).size === 75, "5-1 6단원
 check(inventoryItems.length === 75 && new Set(inventoryItems.map(item => item.sourceItemId)).size === 75, "원본 분류표의 75개 ID가 완전하지 않습니다.");
 check(allTypes.every(type => type.sourceItemId && inventoryItems.some(item => item.sourceItemId === type.sourceItemId)), "화면 유형 중 원본 분류표에 없는 항목이 있습니다.");
 check(inventoryItems.every(item => allTypes.some(type => type.sourceItemId === item.sourceItemId)), "원본 분류표 항목 중 화면에서 빠진 유형이 있습니다.");
-check(allTypes.filter(type => !type.reviewLocked).length === 10, "원본 대조가 끝난 10개 외 유형이 공개되었습니다.");
-check(allTypes.slice(11).every(type => type.reviewLocked && !type.generatorKey && type.reviewReason), "개념탐구 2~6의 미구현 유형이 잠금·사유 표시 상태가 아닙니다.");
+check(allTypes.filter(type => !type.reviewLocked).length === 15, "원본 대조가 끝난 15개 외 유형이 공개되었습니다.");
+const newlyReadyGenerators = new Map([
+  ["5-1-u6-e2-example-2-1", "source51RectangleTriangleAreaE2"],
+  ["5-1-u6-e3-exploration-3", "source51TriangleAreaInteriorE3"],
+  ["5-1-u6-e3-exploration-4", "source51TriangleAreaExteriorE3"],
+  ["5-1-u6-e4-exploration-trapezoid", "source51TrapezoidAreaE4"],
+  ["5-1-u6-e4-exploration-rhombus", "source51RhombusAreaE4"]
+]);
+check(allTypes.slice(11).every(type => newlyReadyGenerators.has(type.sourceItemId)
+  ? !type.reviewLocked && type.generatorKey === newlyReadyGenerators.get(type.sourceItemId)
+  : type.reviewLocked && !type.generatorKey && type.reviewReason), "개념탐구 2~6의 공개·잠금 구성이 다릅니다.");
 check(!allTypes.some(type => !type.sourceItemId), "원본 연결 없는 일반 유형이 5-1 6단원에 남았습니다.");
 const inventoryMission5 = inventoryItems.find(item => item.sourceItemId === "5-1-u6-e1-mission-5");
 const inventoryMission6 = inventoryItems.find(item => item.sourceItemId === "5-1-u6-e1-mission-6");

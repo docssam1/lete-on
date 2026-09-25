@@ -87,8 +87,11 @@ h3 { font-family: var(--disp); font-size: 22px; margin: 20px 0 8px; }
 
 /* 3D */
 .stage3d { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.stage3d-view { position: relative; }
 .stage3d canvas { width: 100%; height: 320px; display: block; touch-action: pan-y; }
-.stage3d .cap { min-height: 4.6em; padding: 10px 12px; border-top: 1px solid var(--line); }
+.stage3d-hint { position: absolute; right: 10px; bottom: 10px; padding: 5px 9px; border-radius: 999px; background: rgba(30, 58, 120, .86); color: #fff; font-size: 11px; font-weight: 700; pointer-events: none; }
+.stage3d .cap { min-height: 4.6em; margin: 0; padding: 10px 12px; border-top: 1px solid var(--line); }
+.stage3d-step { display: inline-grid; place-items: center; min-width: 42px; min-height: 25px; margin-right: 7px; border-radius: 999px; background: var(--navy); color: var(--on-navy); font: 700 13px var(--disp); vertical-align: middle; }
 .stage3d .ctl { display: flex; gap: 6px; padding: 0 12px 12px; }
 .stage3d .ctl .btn { min-height: 44px; font-size: 18px; }
 
@@ -172,3 +175,103 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .lab3d-btns .pour { flex: 1 1 100%; min-height: 52px; font-size: 18px; user-select: none; -webkit-user-select: none; touch-action: none; }
 .lab3d-btns .pour.on { filter: brightness(1.15); box-shadow: inset 0 0 0 3px #7cc4ff; }
 .lab3d-btns .btn:not(.pour) { flex: 1 1 0; min-height: 44px; }
+.lab-steps { list-style: none; display: flex; gap: 4px; padding: 0; margin: 4px 0 8px; flex-wrap: wrap; }
+.lab-steps li { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--sub); background: var(--soft); border-radius: 999px; padding: 4px 10px 4px 4px; }
+.lab-steps li span { width: 20px; height: 20px; border-radius: 50%; background: var(--line); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.lab-steps li.on { background: var(--navy); color: var(--on-navy); font-weight: 700; } .lab-steps li.on span { background: #fff; color: var(--navy); }
+.lab-steps li.done { color: var(--ink); } .lab-steps li.done span { background: var(--accent, #2f7d6d); }
+/* 실제 사진·영상 */
+.media video { width: 100%; max-height: 420px; background: #000; border-radius: 12px; display: block; }
+.media figcaption, .media figure figcaption { font-size: 13px; color: var(--sub); margin-top: 6px; line-height: 1.4; }
+.media figcaption a { color: inherit; }
+.media figcaption small { display: block; font-size: 11px; opacity: .8; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.gallery figure { margin: 0; background: var(--soft); border-radius: 12px; overflow: hidden; }
+.gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.gallery figure.tall img { aspect-ratio: 3 / 4; }
+.gallery figcaption { padding: 6px 10px 10px; }
+.card.reading figure.side { float: right; width: 42%; margin: 0 0 8px 12px; }
+.card.reading figure.side img { width: 100%; border-radius: 10px; display: block; }
+.card.reading::after { content: ''; display: block; clear: both; }
+@media (max-width: 480px) { .card.reading figure.side { float: none; width: 100%; margin: 0 0 8px; } .gallery { grid-template-columns: 1fr 1fr; } }
+/* 앱 안 브라우저 안내 띠 */
+.inapp-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; display: flex; align-items: center; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: #1E3A78; color: #fff; font-size: 14px; box-shadow: 0 -6px 20px rgba(0, 0, 0, .35); }
+.inapp-bar p { margin: 0; flex: 1; line-height: 1.35; }
+.inapp-bar button { border: 0; border-radius: 999px; background: #ffb24a; color: #201202; font-weight: 800; padding: 10px 14px; min-height: 44px; cursor: pointer; }
+.inapp-bar button.ghost { background: rgba(255, 255, 255, .15); color: #fff; min-width: 44px; padding: 10px; }
+
+/* ── 오개념 진단·처방 (16차) — 색: 빨강 = 틀림·확정, 노랑 = 의심, 초록 = 해소·맞음, 남색 = 핵심어 강조 ── */
+:root { --warn: #B86E00; --warn-bg: #FFF4DE; --good: #1F7A4D; --good-bg: #E6F4EC; --bad-bg: #FDECEA; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --warn: #F0B45A; --warn-bg: #3A2C12; --good: #6FCF97; --good-bg: #153224; --bad-bg: #3B1C1A; } }
+:root[data-theme="dark"] { --warn: #F0B45A; --warn-bg: #3A2C12; --good: #6FCF97; --good-bg: #153224; --bad-bg: #3B1C1A; }
+.choice { min-width: 0; white-space: normal; line-height: 1.45; }
+.choice.wrong { background: var(--bad-bg); color: var(--point); font-weight: 700; }
+.choice.right { background: var(--soft); }
+.why { line-height: 1.55; }
+.why .ok { color: var(--good); }
+.why .no { color: var(--point); }
+.mis-tag { display: inline-block; margin: 2px 6px 4px 0; padding: 2px 10px; border-radius: 999px; background: var(--bad-bg); color: var(--point); font-weight: 800; font-size: 14px; line-height: 1.5; }
+.fix { display: block; margin: 2px 0 0; color: var(--ink); }
+.fix b, .verdict b { color: var(--navy); font-weight: 800; background: linear-gradient(transparent 62%, var(--soft) 62%); padding: 0 2px; border-radius: 3px; }
+/* 개념 카드 칩(빈칸에 넣을 낱말 고르기) */
+.chips { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.chip-no { font-weight: 800; color: var(--navy); min-width: 1.4em; }
+.chip { min-height: 40px; padding: 6px 14px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--card); cursor: pointer; font-weight: 700; white-space: nowrap; }
+.chip.right { border-color: var(--good); background: var(--good-bg); color: var(--good); }
+.chip.wrong { border-color: var(--point); background: var(--bad-bg); color: var(--point); text-decoration: line-through; }
+.blank.right { color: var(--good); border-bottom-color: var(--good); }
+.blank.wrong { color: var(--good); border-bottom-color: var(--point); }
+.blank.wrong s { color: var(--point); margin-right: 2px; }
+.rx-d summary { cursor: pointer; font-weight: 800; color: var(--navy); padding: 6px 0; }
+.top .diag-link { padding: 0 10px; }
+select.right { border-color: var(--good); background: var(--good-bg); }
+select.wrong { border-color: var(--point); background: var(--bad-bg); color: var(--point); font-weight: 700; }
+/* 점검 뒤 한 판 더 */
+.h-drill { margin: 20px 0 8px; font-family: var(--disp); font-size: 22px; color: var(--point); }
+.card.drill { border-left: 5px solid var(--point); }
+/* 진단 화면 */
+.diag-link { text-decoration: none; font-weight: 800; color: var(--point); border-color: var(--point); }
+.sum { text-align: center; }
+.sum .score { font-family: var(--disp); font-size: 40px; color: var(--navy); margin: 0; }
+.verdict { font-size: 18px; font-weight: 700; margin: 4px 0 8px; }
+.legend { font-size: 13px; color: var(--sub); margin: 0; }
+.st { display: inline-block; padding: 1px 9px; border-radius: 999px; font-weight: 800; font-size: 13px; margin-right: 2px; }
+.st-c { background: var(--bad-bg); color: var(--point); }
+.st-s { background: var(--warn-bg); color: var(--warn); }
+.st-r { background: var(--good-bg); color: var(--good); }
+.card.mis { border-left: 6px solid var(--point); color: var(--ink); background: var(--bad-bg); }
+.card.mis h3 { color: var(--point); }
+.card.mis.st-s { border-left-color: var(--warn); background: var(--warn-bg); } .card.mis.st-s h3 { color: var(--warn); }
+.card.mis.st-r { border-left-color: var(--good); background: var(--good-bg); opacity: .9; } .card.mis.st-r h3 { color: var(--good); }
+.card.mis .st { color: inherit; background: var(--card); }
+.mis-head { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+.mis-head h3 { margin: 0; font-size: 19px; line-height: 1.35; flex: 1; min-width: 0; }
+.mis .fix { margin: 8px 0; font-size: 17px; }
+.mis details { margin: 6px 0; }
+.mis summary { cursor: pointer; font-weight: 700; color: var(--sub); }
+.ev { margin: 6px 0 0; padding-left: 18px; }
+.ev li { margin: 4px 0; color: var(--sub); font-size: 15px; }
+.ev li b { color: var(--ink); margin-right: 4px; }
+.ev .picked { color: var(--point); font-weight: 700; }
+.rx { margin: 10px 0 6px; padding: 8px 12px; border-radius: 10px; background: var(--soft); }
+.rx b { color: var(--navy); margin-right: 6px; }
+.rx-items .card.item { margin-top: 10px; }
+/* 정답률 막대 */
+.bar { display: grid; grid-template-columns: minmax(0, 15em) 1fr auto; align-items: center; gap: 10px; margin: 6px 0; }
+.bar span { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar i { display: block; height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.bar b { display: block; height: 100%; background: var(--navy); border-radius: 999px; }
+.bar b.weak { background: var(--point); }
+.bar b.mid { background: var(--warn); }
+.bar b.good { background: var(--good); }
+.bar em { font-style: normal; font-weight: 800; white-space: nowrap; }
+.bar em small { color: var(--sub); font-weight: 500; }
+@media (max-width: 480px) { .bar { grid-template-columns: 1fr auto; row-gap: 2px; margin: 10px 0; } .bar span { grid-column: 1 / -1; white-space: normal; overflow: visible; font-size: 15px; } .mis-head h3 { font-size: 17px; } }
+@media print {
+  .diag-link, .top, .bottom, .print-bar { display: none !important; }
+  .card.mis, .card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+  .rx-items { display: none; }
+  .mis details { display: block; } .mis details > summary { list-style: none; }
+  .mis details:not([open]) > *:not(summary) { display: block; }
+}

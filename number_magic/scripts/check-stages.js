@@ -20,7 +20,7 @@ const html = fs.readFileSync(path.join(ROOT, 'landing.html'), 'utf8');
 
 const fail = [];
 const w2 = n => Math.ceil(n * 2 / 3);
-const courseNum = c => c.order || c.id;
+const courseNum = c => (c.order != null ? c.order : c.id);   // 과정 0 의 order 0 은 값이다(falsy 함정)
 
 let totalSessions = 0, totalW1 = 0, opW1 = 0, opW2 = 0;
 const seenCourses = new Set();
@@ -47,15 +47,22 @@ for (const st of STAGES) {
   st._w2 = weeksW2;
   if (st.courses.to <= 25) { opW1 += sessions; opW2 += weeksW2; }
 
-  /* 광고 카드의 메타 줄 — "과정 A~B" 와 "N주" 가 실제와 같아야 한다 */
+  /* 광고 카드의 메타 줄 — "과정 A~B" 와 주차 두 개가 실제와 같아야 한다.
+     주 2회가 기본 컨셉이므로 메타는 주 2회를 앞에 적고 주 1회를 괄호에 단다.
+     옛 검사는 첫 "N주" 하나만 봤는데, 그러면 뒤에 적힌 주 1회 숫자가 틀려도
+     조용히 통과한다 — 둘 다 따로 잡는다. */
   const meta = st.meta && st.meta.ko;
   if (meta) {
-    const mc = /과정 (\d+)~(\d+)/.exec(meta);
+    const mc = /과정 (\d+)(?:~(\d+))?/.exec(meta);   // "과정 0" 처럼 한 과정짜리 단계도 있다
     if (!mc) fail.push(`${st.key} meta: 과정 범위 표기가 없다 — "${meta}"`);
-    else if (+mc[1] !== st.courses.from || +mc[2] !== st.courses.to)
-      fail.push(`${st.key} meta: 과정 ${mc[1]}~${mc[2]} ≠ ${st.courses.from}~${st.courses.to}`);
-    const mw = /(\d+)주/.exec(meta);
-    if (mw && +mw[1] !== sessions) fail.push(`${st.key} meta: ${mw[1]}주 ≠ ${sessions}주`);
+    else if (+mc[1] !== st.courses.from || +(mc[2] || mc[1]) !== st.courses.to)
+      fail.push(`${st.key} meta: 과정 ${mc[1]}~${mc[2] || mc[1]} ≠ ${st.courses.from}~${st.courses.to}`);
+    const m2 = /주 2회 기준 (\d+)주/.exec(meta);
+    if (!m2) fail.push(`${st.key} meta: 주 2회 주차 표기가 없다 — "${meta}"`);
+    else if (+m2[1] !== weeksW2) fail.push(`${st.key} meta: 주 2회 ${m2[1]}주 ≠ ${weeksW2}주`);
+    const m1 = /주 1회 (\d+)주/.exec(meta);
+    if (!m1) fail.push(`${st.key} meta: 주 1회 주차 표기가 없다 — "${meta}"`);
+    else if (+m1[1] !== sessions) fail.push(`${st.key} meta: 주 1회 ${m1[1]}주 ≠ ${sessions}주`);
     if (!html.includes(meta)) fail.push(`${st.key} meta 문구가 landing.html 에 없다 — "${meta}"`);
   }
   if (st.name && st.name.ko && !html.includes(st.name.ko.split(' — ')[0]))

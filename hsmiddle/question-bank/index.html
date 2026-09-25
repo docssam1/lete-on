@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f2f5f7">
   <title>LETE-ON | 중등 유사문제 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=20260902a">
+  <link rel="stylesheet" href="./styles.css?v=20260919a">
 </head>
 <body>
   <section class="access-gate" id="accessGate" hidden>
     <div>
       <span>LETE-ON MIDDLE</span>
       <h1>승인 확인이 필요합니다.</h1>
-      <p>중등 성취도 진단 상품이 열린 계정으로 로그인해 주세요.</p>
+      <p>중등 심화 문제은행 상품이 열린 계정으로 로그인해 주세요.</p>
       <a href="../login.html">로그인으로 이동</a>
     </div>
   </section>
@@ -20,7 +20,7 @@
   <div class="app" id="app" hidden>
     <header class="topbar">
       <a class="back-link" href="../library.html" aria-label="서재로 돌아가기">← 서재</a>
-      <div class="brand"><strong>중등 유사문제 문제은행</strong><span>LETE-ON · 진단 모의고사 연계</span></div>
+      <div class="brand"><strong>중등 심화 문제은행</strong><span>LETE-ON · 별도 학습 상품</span></div>
       <div class="student" id="studentName"></div>
     </header>
 
@@ -74,6 +74,7 @@
         <div class="view-tabs" role="tablist" aria-label="문제와 풀이 보기">
           <button class="active" data-view="problem" type="button">문제</button>
           <button data-view="solution" type="button">정답·풀이</button>
+          <button data-view="combined" type="button">문제 + 정답</button>
         </div>
         <button class="print-button" id="printButton" type="button">인쇄</button>
       </div>
@@ -81,17 +82,19 @@
         <div><span>LETE-ON MIDDLE QUESTION BANK</span><h1 id="worksheetHeading">맞춤 유사문제</h1><p id="worksheetMeta"></p></div>
         <dl><div><dt>이름</dt><dd id="worksheetStudent"></dd></div><div><dt>점수</dt><dd></dd></div></dl>
       </header>
+      <p class="linked-notice" id="linkedNotice" hidden></p>
       <section class="page-stream" id="pageStream"></section>
     </main>
   </div>
 
   <script src="../data.js"></script>
   <script src="../shared-auth.js"></script>
+  <script src="../hsm-cloud.js"></script>
   <script src="./data/schema.js?v=20260902a"></script>
   <script src="./data/type-registry.js?v=20260902a"></script>
   <script src="./data/source-page-index.js?v=20260902a"></script>
   <script src="./data/item-index.js?v=20260902a"></script>
   <script src="./catalog.js?v=20260902a"></script>
-  <script src="./app.js?v=20260902a"></script>
+  <script src="./app.js?v=20260920a"></script>
 </body>
 </html>

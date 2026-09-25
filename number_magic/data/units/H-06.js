@@ -53,9 +53,9 @@ window.NM_UNITS['H-06'] = {
 
   check:{
     fills:[
-      { tex:'4^{\\ast}: 396 \\div 99 = \\square \\cdots \\square', answer:4,
+      { tex:'4^{\\ast}: 396 \\div 99 = \\square \\cdots \\square', answer:[4,0],
         hint:{ ko:'396÷100≈3…96, (100−99)×3=3, 96+3=99=99×1 → 몫 4, 나머지 0', en:'396÷100≈3…96, add 1×3=3, 96+3=99 → quotient 4', zh:'396÷100≈3…96，加1×3=3，96+3=99 → 商4' } },
-      { tex:'2900 \\div 97 = \\square \\cdots \\square', answer:29,
+      { tex:'2900 \\div 97 = \\square \\cdots \\square', answer:[29,87],
         hint:{ ko:'2900÷100=29…0, (100−97)×29=87, 87÷97은 안 되니 몫 그대로 29, 나머지 87', en:'2900÷100=29…0, shortfall 3×29=87 < 97, so quotient 29, remainder 87', zh:'2900÷100=29…0，不足3×29=87<97，商仍是29，余87' } }
     ],
     open:{ ko:'34241÷999을 1000 근처 나눗셈으로 풀고, 몇 라운드 만에 끝났는지 말해 봐요.',

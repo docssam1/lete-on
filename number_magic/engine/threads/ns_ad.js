@@ -585,15 +585,22 @@ NM_TGEN['ad4_addTens'] = function(params, rng){
 
   const unit = params.unit || 10;
 
-  /* 최대 배수 (합이 unit*10 이하) */
+  /* 최대 배수 (합이 unit*10 이하) — carry:true 면 한 자리 위로 넘어가게 뽑는다
+     (70 + 50 = 120, 2026-09-19). 전에는 합이 늘 9단위 이하라 올림이 한 번도 안 났다. */
   const maxMult = 9;
-  const aMult = R(rng, 1, maxMult - 1);
-  const bMult = R(rng, 1, maxMult - aMult);
+  let aMult, bMult;
+  if(params.carry){
+    aMult = R(rng, 2, 9);
+    bMult = R(rng, 10 - aMult, 9);        /* aMult + bMult >= 10 */
+  } else {
+    aMult = R(rng, 1, maxMult - 1);
+    bMult = R(rng, 1, maxMult - aMult);
+  }
   const a = aMult * unit;
   const b = bMult * unit;
 
   /* 덧셈 or 뺄셈 (뺄셈이면 a > b 보장) */
-  const op = pick(rng, ['+', '-']);
+  const op = params.carry ? '+' : pick(rng, ['+', '-']);   /* 올림 레벨은 덧셈만(뺄셈은 내림이 안 난다) */
   const bigA = op === '-' ? Math.max(a, b) : a;
   const bigB = op === '-' ? Math.min(a, b) : b;
   const result = op === '+' ? bigA + bigB : bigA - bigB;
@@ -639,32 +646,37 @@ NM_TGEN['ad4_addTens'] = function(params, rng){
 };
 
 /* ── AD5 두 자리+두 자리(올림) ── */
+/* 두 자리 + 두 자리에서 "받아올림이 어디서 나는가"는 그대로 풀이 단계가 달라지는
+   자리다(2026-09-19, 원장 "받아올림이 있는경우 없는 경우 다 단계가 달라").
+   네 경우를 따로 뽑는다:
+     0      올림 없음          23 + 45  — 자리끼리 그냥 더하면 끝
+     1      일의 자리만         47 + 38  — 일의 자리에서 10을 묶어 십의 자리로
+     'tens' 십의 자리만         53 + 82  — 일의 자리는 그대로, 십에서 백으로
+     2      두 번 연속          47 + 68  — 올린 1을 또 올린다
+     'mix'  섞기(예전 기본값)                                                 */
+function _ad5Pick(mode, rng){
+  let a, b, tries = 0;
+  do {
+    a = R(rng, 11, 89);
+    b = R(rng, 11, 89);
+    const oC = (a % 10 + b % 10) >= 10 ? 1 : 0;
+    const tC = (Math.floor(a / 10) + Math.floor(b / 10) + oC) >= 10 ? 1 : 0;
+    if(mode === 0    && !oC && !tC) return [a, b];
+    if(mode === 1    &&  oC && !tC) return [a, b];
+    if(mode === 'tens' && !oC && tC) return [a, b];
+    if(mode === 2    &&  oC &&  tC) return [a, b];
+    if(mode === 'mix' && (oC || tC)) return [a, b];
+  } while(tries++ < 400);
+  return [a, b];
+}
+
 NM_TGEN['ad5_add2d2d'] = function(params, rng){
   params = params || {};
-  const carries = params.carries || 1;
-
-  let a, b;
-  if(carries === 1){
-    /* 일의 자리만 올림, 십의 자리는 올림 없음 */
-    do {
-      const ta = R(rng, 1, 8);
-      const oa = R(rng, 1, 9);
-      const tb = R(rng, 1, 9 - ta);
-      const ob = R(rng, 10 - oa, 9);  /* oa+ob >= 10 */
-      a = ta * 10 + oa;
-      b = tb * 10 + ob;
-    } while(a + b > 99 || Math.floor(a / 10) + Math.floor(b / 10) + 1 > 9);
-  } else {
-    /* 올림 1~2회(2026-09-06) — 전에는 a,b 를 그냥 뽑아 올림이 없는 24+11 도 나왔다. "올림" 스레드의
-       위 레벨(램프 "뒤 6문항은 한 단계 어려운 문제")이 아래 레벨보다 쉬웠던 원인. 일의 자리 올림은
-       항상 있어야 하고, 뽑기마다 절반은 십의 자리도 올리는 꼴(합 ≥ 100)을 요구한다 — 정렬(sortRoundProblems)
-       이 |answer| 순이라 100 넘는 합이 램프 끝에 모인다. 이전 시드의 학습지는 다시 만들어지지 않는다. */
-    const wantTwo = rng() < 0.5;
-    do {
-      a = R(rng, 11, 89);
-      b = R(rng, 11, 89);
-    } while(a % 10 + b % 10 < 10 || (a + b >= 100) !== wantTwo);
-  }
+  /* carries: 0 | 1 | 'tens' | 2 | 'mix'. 예전 값 2 는 "1~2회 자유"였으므로 'mix' 로 옮겼고,
+     이제 2 는 "연속 올림"만 뜻한다. */
+  const carries = (params.carries === undefined) ? 1 : params.carries;
+  const pair = _ad5Pick(carries === 2 ? 2 : carries, rng);
+  let a = pair[0], b = pair[1];
 
   const sum        = a + b;
   const oA         = a % 10;
@@ -704,14 +716,29 @@ NM_TGEN['ad6_add3d'] = function(params, rng){
   params = params || {};
   const bMode = params.b || '2d';
 
-  let a, b;
-  if(bMode === '2d'){
-    a = R(rng, 100, 899);
-    b = R(rng, 10,  99);
-  } else {
-    a = R(rng, 100, 899);
-    b = R(rng, 100, 899);
+  /* 세 자리 덧셈도 "어느 자리에서 올리는가"로 단계가 갈린다(2026-09-19):
+     carry 'none' 올림 없음 · 'one' 한 자리에서만 · 'all' 일→십 연속 · 없으면 자유 */
+  const cMode = params.carry || '';
+  function digits(x){ return [x % 10, Math.floor(x / 10) % 10, Math.floor(x / 100)]; }
+  function carriesOf(x, y){
+    const dx = digits(x), dy = digits(y);
+    const oC = (dx[0] + dy[0]) >= 10 ? 1 : 0;
+    const tC = (dx[1] + dy[1] + oC) >= 10 ? 1 : 0;
+    /* 백 → 천으로 넘어가는 올림도 올림이다(2026-09-19). 빼놓았더니 512+574=1086 이
+       "올림 없음" 레벨에 섞여 나왔다. */
+    const hC = (dx[2] + dy[2] + tC) >= 10 ? 1 : 0;
+    return [oC, tC, hC];
   }
+  let a, b, tries = 0;
+  do {
+    if(bMode === '2d'){ a = R(rng, 100, 899); b = R(rng, 10,  99); }
+    else              { a = R(rng, 100, 899); b = R(rng, 100, 899); }
+    if(!cMode) break;
+    const c = carriesOf(a, b), n = c[0] + c[1] + c[2];
+    if(cMode === 'none' && n === 0) break;
+    if(cMode === 'one'  && n === 1) break;
+    if(cMode === 'all'  && c[0] && c[1]) break;   /* 일→십 연속 올림(백은 나도 좋다) */
+  } while(tries++ < 400);
   const sum = a + b;
 
   const oA = a % 10,          oB = b % 10;
@@ -759,15 +786,32 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
     opChar = '+';
   }
 
-  if(opChar === '+'){
-    a = R(rng, 1000, 8999);
-    b = R(rng, 1000, 9999 - a);
-    result = a + b;
-  } else {
-    a = R(rng, 2000, 9999);
-    b = R(rng, 1000, a - 1);
-    result = a - b;
+  /* 네 자리도 올림·내림 유무로 단계가 갈린다(2026-09-19). carry:'none' 이면
+     자리마다 그냥 더하거나 빼면 끝나는 수만 뽑는다. */
+  const noCarry  = params.carry === 'none';
+  const wantCarry = params.carry === 'any';
+  function placeSafe(x, y, plus){
+    for(let i = 0; i < 4; i++){
+      const dx = Math.floor(x / Math.pow(10, i)) % 10;
+      const dy = Math.floor(y / Math.pow(10, i)) % 10;
+      if(plus ? (dx + dy > 9) : (dx < dy)) return false;
+    }
+    return true;
   }
+  let tries7 = 0;
+  do {
+    if(opChar === '+'){
+      a = R(rng, 1000, 8999);
+      b = R(rng, 1000, 9999 - a);
+      result = a + b;
+    } else {
+      a = R(rng, 2000, 9999);
+      b = R(rng, 1000, a - 1);
+      result = a - b;
+    }
+  } while(tries7++ < 400 && (
+      (noCarry   && !placeSafe(a, b, opChar === '+')) ||
+      (wantCarry &&  placeSafe(a, b, opChar === '+'))));
 
   return {
     prompt: {

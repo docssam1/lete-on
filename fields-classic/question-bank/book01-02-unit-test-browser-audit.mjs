@@ -70,6 +70,36 @@ try {
       assert.deepEqual(types, expected.map((entry) => entry.typeId).sort(), "Only the reviewed source links may reach the worksheet");
       assert.doesNotMatch(await cards.allTextContents().then((texts) => texts.join(" ")), /undefined|NaN|\[object Object\]/);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+      if (bookId === "book-02") {
+        const card = (number) => cards.nth(number - 1);
+        assert.equal(await card(6).locator(".b2-equation-stack").count(), 1);
+        assert.equal(await card(7).locator(".b2-scale").count(), 3);
+        assert.equal(await card(10).locator(".multi-part-visuals>figure").count(), 2);
+        assert.equal(await card(10).locator(".b2-sequence").count(), 2);
+        assert.equal(await card(11).locator(".b2-sequence").count(), 1);
+        assert.equal(await card(13).locator(".b2-house-growth figure").count(), 3);
+        assert.equal(await card(14).locator(".b2-triangle-growth figure").count(), 4);
+        assert.equal(await card(15).locator(".b2-fold-growth figure").count(), 3);
+        assert.equal(await card(16).locator(".b2-number-rule-rows.table>div").count(), 4);
+        assert.equal(await card(17).locator(".b2-number-rule-rows.equation>div").count(), 4);
+        assert.equal(await card(18).locator(".b2-promise-set.triangle figure").count(), 4);
+        assert.equal(await card(19).locator(".b2-sudoku>span").count(), 9);
+        assert.equal(await card(20).locator(".b2-sudoku>span").count(), 16);
+        assert.equal(await card(20).getAttribute("data-type-id"), "sudoku-four-irregular-region");
+        assert.equal(await card(21).locator(".b2-promise-set.diamond figure").count(), 4);
+        assert.equal(await card(23).locator(".b2-equation-stack").count(), 1);
+        assert.equal(await card(25).locator(".b2-stone-growth figure").count(), 6);
+        assert.match(await card(19).locator(".drawing-answer-note").textContent(), /빈칸에 수/);
+        assert.match(await card(20).locator(".drawing-answer-note").textContent(), /빈칸에 수/);
+        await page.locator("#answerButton").click();
+        await page.locator("#answerDialog").waitFor({ state: "visible" });
+        assert.equal(await page.locator("#answerBody>tr").count(), 25);
+        assert.equal(await page.locator("#answerDialog .b2-sudoku").count(), 2);
+        assert.ok(await page.locator("#answerDialog .answer-part-visuals").count() >= 1);
+        assert.doesNotMatch(await page.locator("#answerDialog").textContent(), /undefined|NaN|\[object Object\]/);
+        if (output) await page.locator("#answerDialog").screenshot({ path: path.join(output, `book-02-unit-answers-${width}.png`) });
+        await page.locator("#closeAnswer").click();
+      }
       if (bookId === "book-01") {
         const folding = page.locator(".fold-number-steps");
         assert.equal(await folding.locator("figure").count(), 4);

@@ -1,5 +1,5 @@
 /* 화면 수업 자료(가르치기·스스로 공부하기). 넓은 화면은 16:9 한 장, 좁은 화면은 한 줄로 읽기. */
-.dk { --t: #2F7D4F; --o: #EE8A23; --n: #1E3A78; --r: #E23B2E; min-height: 100vh; background: #16233d; color: #222; display: flex; flex-direction: column; }
+.dk { word-break: keep-all; overflow-wrap: anywhere; --t: #2F7D4F; --o: #EE8A23; --n: #1E3A78; --r: #E23B2E; min-height: 100vh; background: #16233d; color: #222; display: flex; flex-direction: column; }
 .dk-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 16px; color: #dfe7f5; font-size: 14px; }
 .dk-top a { color: #dfe7f5; text-decoration: none; } .dk-top b { color: #fff; }
 .dk-mode { background: var(--o); color: #fff; border-radius: 12px; padding: 2px 10px; font-size: 12px; font-weight: 700; }
@@ -110,3 +110,8 @@
   .dk-stage.dense .dk-q { font-size: 17px; } .dk-stage.dense .dk-choices { gap: 6px; } .dk-stage.dense .dk-choices button { padding: 10px 12px; }
   .dk-stage.media .stage3d .cap { font-size: 16px; }
 }
+.dk-art img { width: 100%; display: block; border-radius: .8cqw; object-fit: cover; max-height: 34cqw; }
+.dk-art .bk-photo figcaption { font-size: 1.2cqw; color: #5B6577; margin-top: .4cqw; } .dk-art .bk-photo figcaption small { display: block; opacity: .8; }
+.dk-art .bk-photo2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1cqw; } .dk-art .bk-photo2 img { max-height: 22cqw; }
+.dk-stage.cover .dk-art.cover img { max-height: 40cqw; }
+@media (max-width: 760px) { .dk-art .bk-photo figcaption { font-size: 12px; } }

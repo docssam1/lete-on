@@ -196,7 +196,7 @@ const sharedAxisLabel={vertical:'세로',horizontal:'가로','diag-main':'왼쪽
 
 async function loadSharedGameLevels(){
   try{
-    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-9');
+    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-13');
     module.validateLevels();
     sharedGameLevels=module.levels;
   }catch(error){
@@ -289,8 +289,14 @@ function buildSharedProblem(mode){
   if(source.interaction==='piece-count') answer=`${source.pieceCount}조각`;
   if(source.interaction==='hole-count') answer=`${source.unfoldedPoints.length}개`;
   if(source.interaction==='hole-result') answer=`${source.choices.findIndex(choice=>choice.key===source.answer)+1}번`;
+  if(source.completeOnUnfold) answer='펼친 모양';
   const foldNames=(source.folds||[source.fold]).map(step=>sharedAxisLabel[step.axis]).join(' → ');
-  return {kind:'game-level',gameLevel:levelNumber,source,answer,text:prompts[levelNumber],info:`${source.id} · ${foldNames}`,src:'게임과 동일한 확정 문항'};
+  const text=source.interaction==='region-unfold'
+    ? ['색종이를 접어 색칠한 부분을 잘랐습니다.','접은 순서의 반대로 펼친 뒤 잘린 부분을 그리세요.']
+    : source.interaction==='mixed-hole-result'
+      ? ['색종이를 두 번 접어 서로 다른 모양의 구멍을 뚫었습니다.','거꾸로 펼쳤을 때 구멍 모양과 위치를 그리세요.']
+      : prompts[levelNumber];
+  return {kind:'game-level',gameLevel:levelNumber,source,answer,text,info:`${source.id} · ${foldNames}`,src:'게임과 동일한 확정 문항'};
 }
 
 function sharedRegionPath(ctx,x,y,size,region){
@@ -379,7 +385,7 @@ function sharedTracePolygon(ctx,x,y,size,polygon){
   ctx.closePath();
 }
 
-function drawSharedPaper(ctx,x,y,size,{polygon=null,folds=[],segments=[],holes=[],answer=false}={}){
+function drawSharedPaper(ctx,x,y,size,{polygon=null,folds=[],segments=[],holes=[],marks=[],answer=false}={}){
   const shape=polygon||[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
   ctx.save();
   sharedTracePolygon(ctx,x,y,size,shape);
@@ -389,6 +395,27 @@ function drawSharedPaper(ctx,x,y,size,{polygon=null,folds=[],segments=[],holes=[
   ctx.strokeStyle=answer?'#27835d':'#b03a5b';ctx.lineWidth=4;ctx.lineCap='round';ctx.lineJoin='round';
   segments.forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(x+a.x*size,y+a.y*size);ctx.lineTo(x+b.x*size,y+b.y*size);ctx.stroke();});
   holes.forEach(point=>{ctx.beginPath();ctx.arc(x+point.x*size,y+point.y*size,Math.max(5,size*.045),0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.stroke();});
+  marks.forEach(mark=>{
+    ctx.save();
+    ctx.fillStyle=mark.kind==='polygon'?'#ef8b91':'#fff';
+    ctx.strokeStyle=answer?'#27835d':'#b03a5b';
+    ctx.lineWidth=2.5;
+    ctx.beginPath();
+    if(mark.kind==='polygon') sharedTracePolygon(ctx,x,y,size,mark.points);
+    else{
+      const cx=x+mark.center.x*size,cy=y+mark.center.y*size,r=mark.radius*size;
+      ctx.translate(cx,cy);
+      ctx.rotate(Math.atan2(mark.direction.y,mark.direction.x));
+      if(mark.parity==='mirrored') ctx.scale(1,-1);
+      if(mark.shape==='circle') ctx.arc(0,0,r,0,Math.PI*2);
+      else if(mark.shape==='triangle'){
+        ctx.moveTo(0,-r);ctx.lineTo(Math.sqrt(3)*r/2,r/2);ctx.lineTo(-Math.sqrt(3)*r/2,r/2);ctx.closePath();
+      }else{
+        const h=r/Math.sqrt(2);ctx.rect(-h,-h,2*h,2*h);
+      }
+    }
+    ctx.fill();ctx.stroke();ctx.restore();
+  });
   ctx.restore();ctx.restore();
 }
 
@@ -397,23 +424,30 @@ function sharedFinalPolygon(item){
   return sharedFoldedPolygon(item.fold);
 }
 
-function sharedPlacementText(problem){
+function sharedUnfoldText(problem){
   const names={left:'왼쪽',right:'오른쪽',top:'위쪽',bottom:'아래쪽',upper:'대각선 위쪽',lower:'대각선 아래쪽'};
-  return problem.placementSteps.map((step,index)=>`${index+1}번째: ${names[step.answer]||step.answer}`).join('  ·  ');
+  return problem.unfoldSteps.map((step,index)=>`${index+1}단계: ${names[step.answer]||step.answer}`).join('  ·  ');
 }
 
 function drawSharedFoldSequence(ctx,item,{startX=55,y=145,size=150,gap=195}={}){
   const stages=item.stagePolygons||[[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}],sharedFinalPolygon(item)];
   stages.forEach((polygon,index)=>{
     const last=index===stages.length-1;
-    drawSharedPaper(ctx,startX+index*gap,y,size,{polygon,folds:index<item.folds.length?[item.folds[index]]:[],segments:last?(item.cutSegments||[]):[],holes:last?(item.punches||[]):[]});
+    drawSharedPaper(ctx,startX+index*gap,y,size,{polygon,folds:index<item.folds.length?[item.folds[index]]:[],segments:last?(item.cutSegments||[]):[],holes:last&&!item.completeOnUnfold?(item.punches||[]):[],marks:last&&item.completeOnUnfold?(item.cutMarks||item.punches||[]):[]});
     if(index<stages.length-1) drawStepArrow(ctx,startX+index*gap+size+12,y+size/2);
   });
 }
 
 function renderSharedSolo(ctx,p,showAnswer){
   const isDouble=p.interaction==='hole-result';
-  if(isDouble){
+  if(p.completeOnUnfold){
+    drawSharedFoldSequence(ctx,p,{startX:45,y:145,size:175,gap:230});
+    const resultX=p.folds.length===2?805:595;
+    drawStepArrow(ctx,resultX-72,245);
+    drawSharedPaper(ctx,resultX,145,210,{folds:p.folds,marks:showAnswer?p.markStages.at(-1):[],answer:showAnswer});
+    ctx.fillStyle='#52616b';ctx.font='700 15px sans-serif';
+    ctx.fillText(showAnswer?'펼친 결과':'펼친 결과를 그려 보세요.',resultX,375);
+  }else if(isDouble){
     drawSharedFoldSequence(ctx,p,{startX:45,y:150,size:130,gap:185});
     p.choices.forEach((choice,index)=>{
       const x=670+index*205,size=150,isCorrect=choice.key===p.answer;
@@ -433,7 +467,7 @@ function renderSharedSolo(ctx,p,showAnswer){
     const result=p.interaction==='piece-count'?`조각 수: ${showAnswer?p.pieceCount:'____'}조각`:`구멍 수: ${showAnswer?p.unfoldedPoints.length:'____'}개`;
     ctx.fillText(result,900,235);
   }
-  ctx.fillStyle='#52616b';ctx.font='700 16px sans-serif';ctx.fillText(`종이가 놓이는 쪽  ${showAnswer?sharedPlacementText(p):'____________________________'}`,55,455);
+  ctx.fillStyle='#52616b';ctx.font='700 16px sans-serif';ctx.fillText(`거꾸로 펼칠 때 새 표시가 생기는 쪽  ${showAnswer?sharedUnfoldText(p):'____________________________'}`,55,455);
 }
 
 function drawSharedMatchItem(ctx,x,y,size,item,view,answer=false){

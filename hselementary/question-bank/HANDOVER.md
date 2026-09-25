@@ -5,10 +5,10 @@
 - Branch: `agent/hsmiddle-question-bank`
 - Local page: `http://127.0.0.1:8878/hselementary/question-bank/`
 - Total runtime types: 1,962 across 6 semesters, 36 major units, and 184 subunits
-- Runtime-available types: 1,064 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 898
+- Runtime-available types: 1,069 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 893
 - Source-linked runtime entries: 1,558 currently carry a source item ID (4-1: 329, 4-2: 239, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `196/263`, 5-1 `272/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `48/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `309/329`, 4-2 `196/263`, 5-1 `277/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `48/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
@@ -33,18 +33,20 @@
 
 ## 2026-09-16 Whole-Public-Bank Layout Sweep
 
-- The browser sweep covers every currently public type: Grade 4 has 505 types and 2,020 desktop/mobile problem-and-solution states, Grade 5 has 272 types and 1,088 states, and Grade 6 has 287 types and 1,148 states. Each grade also receives substantive A4 output checks.
+- The last whole-bank browser sweep covers the 1,064-type baseline: Grade 4 has 505 types and 2,020 desktop/mobile problem-and-solution states, Grade 5 had 272 types and 1,088 states, and Grade 6 has 287 types and 1,148 states. The three 5-1 Unit 6 types released on 2026-09-20 add 36 focused desktop/mobile states and six A4 problem/solution PDFs. The two Exploration 4 types released on 2026-09-21 add 24 states and four A4 PDFs, bringing the public total to 1,069.
 - The sweep loads the same Grade 6 source-specific modules as the real page and respects each type's verified fixed-pool count. It rejects SVG text or line overflow, text-to-text collisions, missing answer visuals, invalid values, and clipped page content.
 - Direct visual review repaired four failures found by the sweep: the pentagonal-prism spiral label collision, the tree-spacing perimeter-label collision, the decimal digit-pair table clipping, and the long strip-graph solution calculation. Targeted independent math audits and desktop, 390px, and A4 reruns pass after the repairs.
 - This is a layout and runtime release check, not a claim that every locked type or every source-book figure has been rebuilt. A public figure must still be based on its individual source item, use a dedicated point/line/data model, include a matching answer figure when required, and pass human visual comparison before release.
 
 ## 2026-09-13 5-1 Unit 6 Source And Notation Correction
 
-- Replaced the three unlocked generic area groups with all 75 source-item types from Explorations 1 through 6. Exploration 1 keeps 10 verified generators and one non-unique locked item; the other 64 source items remain review-locked until their own problem, answer visual, and independent checker are complete.
+- Replaced the three unlocked generic area groups with all 75 source-item types from Explorations 1 through 6. Exploration 1 keeps 10 verified generators and one non-unique locked item. Exploration 2 Example 2-1, Exploration 3 guide items (3) and (4), and Exploration 4's first two figures now add five source-matched generators; the other 60 source items remain review-locked until their own problem, answer visual, and independent checker are complete.
 - Corrected the source inventory collision that had copied Exploration 2 Missions 5 and 6 into Exploration 1. Exploration 1 Mission 5 is the four-rectangle perimeter problem and is ready; Mission 6 is the five-rectangle problem and remains locked because the printed conditions do not determine one perimeter.
 - Fraction layout now uses the widest numerator or denominator as the shared width, so the bar spans the complete fraction and both parts are centered. Fractions, mixed numbers, inline expressions, and squared units inherit the surrounding educational font and remain on one mathematical line.
 - Focused evidence: 30,000 independent Exploration 1 calculations; 121 desktop/mobile captures; 60 A4 problem/solution PDFs; 218,400 math-notation generation samples; and 87,180 whole-bank runtime generations. All passed. Evidence is outside the repository under the 2026-09-13 private geometry audit folder.
-- Do not unlock the remaining 64 Unit 6 items by routing them to `rectangleRightTriangleAreaAdvanced`, `perimeterAreaSquareCompositionAdvanced`, or `quadrilateralAreaAdvanced`. Each printed Exploration, Example, and Mission needs its own source-matched branch.
+- Do not unlock the remaining 60 Unit 6 items by routing them to `rectangleRightTriangleAreaAdvanced`, `perimeterAreaSquareCompositionAdvanced`, or `quadrilateralAreaAdvanced`. Each printed Exploration, Example, and Mission needs its own source-matched branch.
+- 2026-09-20 focused evidence: Example 2-1 passed 900 single-answer calculations and 12 desktop/mobile states plus A4 problem/solution output. Exploration 3 guide items (3) and (4) passed 1,800 formula/cross-product calculations, inside/outside altitude-foot checks, 24 desktop/mobile states, and four A4 PDFs. Private evidence stays outside Git under `E:\Codex\visualizations\2026\09\20\hse-5-1-u6-next-source`.
+- 2026-09-21 focused evidence: Exploration 4's source 16cm/20cm/12cm trapezoid and 18cm/12cm rhombus are each rebuilt with three fixed verified variants, matching answer diagrams, and three difficulty conditions. The dedicated audit parses actual SVG points, parallel and perpendicular lines, right-angle marks, label values and positions, and passes 1,800 independent checks. Desktop and 390px problem/solution QA passed 24 states, and A4 problem/solution QA passed four PDFs.
 
 ## 2026-08-29 4-2 Fraction Completion
 
@@ -109,7 +111,7 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - Page integration and scoped type identity: `app.js`
 - Type metadata: `curriculum.js`
 - Selection UI: grade/term → major unit → subunit → detailed-type tree, with a representative generated question on hover or keyboard focus
-- Runtime availability policy: `runtime-availability-audit.js` checks all 1,064 public types across 20 seeds per difficulty
+- Runtime availability policy: `runtime-availability-audit.js` checks all 1,069 public types across 20 seeds per difficulty
 - 4-1 source policy: `source-inventory-audit.js`, `source-crosswalk-audit.js`, and `source-runtime-taxonomy-audit.js`
 - 4-1 type-language policy: `source-type-language-audit.js` requires 329 unique child-readable Korean type names. Source labels such as `예제 1-1` remain provenance only; they must never replace the explanatory type name.
 - Elementary explanation policy: `elementary-language-audit.js` checks the public runtime types across 100 seeds per difficulty, including the source-mapped public types

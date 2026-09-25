@@ -64,3 +64,7 @@
 .subs .sn { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--navy); color: var(--on-navy); font-family: var(--disp); font-size: 18px; flex: none; }
 .subs .st { flex: 1; font-weight: 600; }
 .subs .sc { font-size: 12px; font-weight: 700; color: var(--sub); }
+.sheet .labs { display: grid; gap: 8px; margin: 8px 0 0; }
+.sheet .labs .btn { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-decoration: none; min-height: 56px; padding: 8px 14px; line-height: 1.25; }
+.sheet .labs .btn b { font-size: 19px; } .sheet .labs .btn small { font-size: 13px; opacity: .85; font-weight: 500; }
+.top .intro-link { margin-left: auto; font-weight: 700; text-decoration: none; background: var(--navy); color: var(--on-navy); border-radius: 999px; padding: 6px 14px; font-size: 14px; white-space: nowrap; }
