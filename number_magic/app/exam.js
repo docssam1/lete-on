@@ -4767,9 +4767,13 @@ function renderRoundPagesBody(item, opts){
   const fsR = ({ s:0.88, m:1, l:1.16, xl:1.34 })[getFontSize()] || 1;
   /* 잰 값은 한 시드의 최댓값 — 다른 시드의 더 긴 문항을 위해 3mm 여유 */
   const rowNeed = headBand && headBand[2] ? headBand[2] * fsR + 3 : 0;
+  const midPage = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] || !!item.pacing;
   if(rowNeed && headBand[3] && layout.type !== 'train'){
     const fit = Math.max(1, Math.floor(headBand[3] / rowNeed));
-    if(fit < layout.rows){ layout.rows = fit; layout.perPage = fit * layout.cols; }
+    /* 중등 연습 면은 한 쪽 6문항 이상(GPT 지면 규칙, 중등 검사기들이 본다) — 그 밑으로는 줄이지 않는다.
+       초등 문장제 카드(WP)는 원래 한 쪽 4~6장으로 설계됐고, 6장을 억지로 넣으면 글이 잘린다 — 잰 높이를 따른다. */
+    const minRows = midPage ? Math.ceil(Math.min(6, layout.perPage) / layout.cols) : 1;
+    if(fit < layout.rows){ layout.rows = Math.max(fit, minRows); layout.perPage = layout.rows * layout.cols; }
   }
   problems = sortRoundProblems(problems, layout.type);
   applyPartialBlanks(problems, layout.type, item);
@@ -4859,6 +4863,10 @@ function renderRoundPagesBody(item, opts){
     const fitRows = Math.floor(avail / (rowNeed || layout.pitch || 20));
     /* 한 줄만 들어가는 자리는 비워 둔다 — 머리 높이는 시드마다 달라(MD39 L1 은 69mm 차) 그 한 줄이 가장 잘 겹친다 */
     firstRows = Math.max(0, Math.min(firstRows, fitRows <= 1 && layout.rows > 2 ? 0 : fitRows));
+    /* 중등 A4 연습 면은 마지막 장이 아니면 한 쪽 6문항 이상(GPT 지면 규칙) — 첫 장에 6문항이 안 들어가면
+       첫 장은 개념·예시만 싣고 문항은 다음 장부터(전부 들어가는 경우는 예외) */
+    const cap1 = firstRows * layout.cols;
+    if(midPage && cap1 > 0 && cap1 < Math.min(6, problems.length)) firstRows = 0;
   }
   const firstCap = firstRows * layout.cols;
   const pages = [];

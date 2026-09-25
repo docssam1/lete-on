@@ -57,6 +57,6 @@ server.listen(0, async () => {
   }, only);
   await browser.close(); server.close();
   console.log(`인쇄 ${r.sets}벌(12·18·24문항) · 서로 다른 문항이 모자라 건너뜀 ${r.skipped}`);
-  if(r.bad.length){ console.log(`\n✗ 실패 ${r.bad.length}건`); r.bad.slice(0, 60).forEach(b => console.log('  ' + b)); process.exit(1); }
+  if(r.bad.length){ console.log(`\n✗ 실패 ${r.bad.length}건`); r.bad.slice(0, 400).forEach(b => console.log('  ' + b)); process.exit(1); }
   console.log('통과 — 모든 유형·레벨의 인쇄 지면에서 문항 칸이 겹치거나 종이 밖으로 나가지 않는다.');
 });
