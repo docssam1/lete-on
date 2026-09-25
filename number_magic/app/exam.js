@@ -3501,6 +3501,31 @@ function texDisplay(tex){
    그렇다고 그 자리를 비우면 학습지 모양이 중등부터 달라져 한 진도로 안 읽히므로,
    그 과정의 마무리 개념을 최고 레벨로 한 벌 더 싣고 이름만 바꾼다(courses.js 주석 참조). */
 const ELEM_TIERS = { level0:1, level1:1, level2:1, level3:1, challenge:1 };
+/* 회차의 세 층을 인쇄 항목으로 — 주간 봉투와 🖨 회차 인쇄가 같이 쓴다(2026-09-25).
+   courses.js 의 annotateRoles 가 만든 school·strategy·application·stretch 를 읽고, 옛 캐시처럼
+   그게 없으면 예전 drills·creative 그대로(창의 칸 = creTag)로 돌아간다.
+   seed(prefix, i): 교과는 ('', drills 자리), 창의 칸 출신은 ('cr', creative 자리). */
+function sessionRoleItems(course, session, seed){
+  const thNm = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
+  const drills = session.drills || [], cre = session.creative || [];
+  const at = (arr, d) => arr.indexOf(d) >= 0 ? arr.indexOf(d) : arr.findIndex(x => x.t === d.t && x.lv === d.lv);
+  const drillItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n, seed:seed('', at(drills, d)),
+    topicName:tag ? tag + thNm(d.t) : undefined });
+  const creItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4, creative:true,
+    topicName:tag + thNm(d.t), seed:seed('cr', at(cre, d)) });
+  if(!session.school){
+    return { school:drills.map(d => drillItem(d)), strategy:cre.filter(d => (window.NM_THREADS||{})[d.t]).map(d => creItem(d, creTag(course.tier))),
+      application:[], stretch:[] };
+  }
+  const appTag = lk('적용 · ', 'Applying · ', '应用 · ');
+  return {
+    school: session.school.map(d => drillItem(d)),
+    strategy: ((session.strategy && session.strategy.practice) || []).map(d => creItem(d, lk('창의 연산 · ', 'Creative · ', '创意运算 · '))),
+    application: (session.application || []).filter(a => a.from !== 'school').map(a =>
+      a.from === 'creative' ? creItem(a, appTag) : drillItem(a, appTag)),
+    stretch: (session.stretch || []).map(d => creItem(d, lk('심화 · ', 'Stretch · ', '拓展 · ')))
+  };
+}
 function creTag(tier){
   return ELEM_TIERS[tier]
     ? lk('창의 연산 · ', 'Creative · ', '创意运算 · ')
@@ -4302,7 +4327,8 @@ function w2ExampleBodyHtml(p, threadId, young){
     });
     /* 이야기가 있는 문항은 답에 단위를 붙여 한 번 더(식만 보면 "8"이 무엇의 8인지 모른다) */
     const unitAns = (p.word && p.wordUnit)
-      ? `<div class="nm-w2-ex-line"><span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(String(fmtAns(p.answer)) + (pickL(p.wordUnit) || ''))}</span></span></div>`
+      /* wordAnswerTex(3√2 같은 온전한 값)가 있으면 정답지와 같은 함수로 — 없으면 "3, 2cm"로 찍혔다(2026-09-25) */
+      ? `<div class="nm-w2-ex-line"><span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${p.wordAnswerTex ? w2AnswerValueHtml(p) : esc(String(fmtAns(p.answer)) + (pickL(p.wordUnit) || ''))}</span></span></div>`
       : '';
     bodyHtml = completedHtml
       + `<div class="nm-w2-ex-steps">${stepParts.join('<span class="nm-w2-ex-arrow">→</span>')}</div>` + unitAns;
@@ -4471,7 +4497,7 @@ function w2WordExampleHtml(threadId, level, code, exclude, young, exactSkip, met
   <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
   <div class="nm-print-word" style="font-size:12.5px">${esc(pickL(w))}</div>
   <div class="nm-w2-ex-line"><span>${esc(lk('식','Equation','算式'))}: <span class="nm-w2-ex-ans">${esc(eq)}</span></span>
-    <span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(String(fmtAns(p.answer)) + unit)}</span></span></div>
+    <span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${p.wordAnswerTex ? w2AnswerValueHtml(p) : esc(String(fmtAns(p.answer)) + unit)}</span></span></div>
   <div class="nm-w2-ex-note">${esc(hint)}</div>
 </div>`;
 }
@@ -4973,20 +4999,43 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       return;
     }
     let candidateSeen=new Set(seen);
-    let r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen });
+    let r = null, initialExhausted = null;
+    try {
+      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen });
+    } catch(e) {
+      /* 선택 문장제의 첫 유형이 앞 교과 회차와 풀을 나눠 쓰다 모자라면
+         아래의 명시된 대체 유형을 계속 시도한다. 일반 회차의 고갈은 그대로 실패한다. */
+      if(it.optionalWord && e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED') initialExhausted = e;
+      else throw e;
+    }
     /* 문장제 회차가 비면 같은 회차의 **다른 유형**으로 다시 시도한다(2026-09-07).
        전에는 세션의 첫 드릴 하나만 보고 그것이 문장으로 안 바뀌면 회차를 통째로 뺐다 —
        45개 과정 중 12개에만 문장제가 붙어 있었던 원인이다(실측). 곱셈·나눗셈 드릴이
        두 번째·세 번째 자리에 있는 과정이 많다. */
-    if(it.optionalWord && !r.problems.some(p => p.word) && (it.wordAlts || []).length){
+    if(it.optionalWord && (!r || !r.problems.some(p => p.word)) && (it.wordAlts || []).length){
+      let exhausted = initialExhausted;
       for(const alt of it.wordAlts){
-        const cand = Object.assign({}, it, alt);
+        /* 앞 후보를 그리는 동안 붙은 재현 상태는 그 스레드 전용이다.
+           다음 유형에 넘기면 충분한 풀도 예전 exactSkip/override 자리에서 충돌해
+           거짓 고갈로 멈춘다. 대체 유형은 자기 시드로 처음부터 독립 생성한다. */
+        const cand = Object.assign({}, it, alt, {
+          overrides:null, guideSeed:null, exampleSkip:null, guideSkips:null
+        });
         const altSeen=new Set(seen);
-        const rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen });
+        let rr;
+        try {
+          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen });
+        } catch(e) {
+          if(e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED'){ exhausted = exhausted || e; continue; }
+          throw e;
+        }
         if(rr.problems.some(p => p.word)){ r = rr;candidateSeen=altSeen; break; }
       }
+      /* 후보가 실제로 고갈됐다면 문장제 회차를 조용히 지우지 않는다.
+         모든 허용 후보를 다 써 본 뒤에도 못 만들 때만 명시적으로 실패한다. */
+      if((!r || !r.problems.some(p => p.word)) && exhausted) throw exhausted;
     }
-    if(it.optionalWord && !r.problems.some(p => p.word)){ droppedWord = true; return; }
+    if(it.optionalWord && (!r || !r.problems.some(p => p.word))){ droppedWord = true; return; }
     candidateSeen.forEach(key=>seen.add(key));
     rounds.push(r);
   });
@@ -5925,20 +5974,17 @@ ${printWatermarkHtml()}
           const course = NM_COURSES[courseKey];
           const session = course && course.sessions && course.sessions[sessionIdx];
           if(!session) return;
-          const raw = session.test ? (session.pool||[]) : (session.drills||[]);
-          const items = raw.map(d => ({
-            thread: d.t, level: d.lv, n: d.n,
-            wordType: roadWordType,
-            seed: NM_RNG.newCode(),
-          }));
-          /* 창의 회차 — 주간 봉투(weeklyEnvelope)에는 있었는데 이 길에는 빠져 있었다
-             (2026-09-16 확인). 원장 "창의 연산은 같이 점검 안 해?"의 절반이 여기였다. */
-          const thNm = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
-          (session.creative || []).forEach(d => {
-            if(!(window.NM_THREADS||{})[d.t]) return;
-            items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4,
-              topicName:creTag(course.tier) + thNm(d.t), seed: NM_RNG.newCode() });
-          });
+          /* 시험 회차는 풀 그대로. 나머지는 주간 봉투와 같은 세 층 순서(2026-09-25) —
+             교과 → 창의 전략 → 적용 → 심화. 창의 칸은 주간 봉투(weeklyEnvelope)에는 있었는데
+             이 길에는 빠져 있던 것을 2026-09-16 에 넣었다(원장 "창의 연산은 같이 점검 안 해?"). */
+          let items;
+          if(session.test){
+            items = (session.pool||[]).map(d => ({ thread:d.t, level:d.lv, n:d.n, wordType:roadWordType, seed:NM_RNG.newCode() }));
+          } else {
+            const R = sessionRoleItems(course, session, () => NM_RNG.newCode());
+            R.school.forEach(it => { it.wordType = roadWordType; });
+            items = [...R.school, ...R.strategy, ...R.application, ...R.stretch];
+          }
           /* 단계 점검 — 과정 3개마다, 그 과정의 **마지막 세션**에만. 매 세션마다
              붙이면 한 과정에서 점검이 다섯 번 나온다. */
           if(sessionIdx === (course.sessions || []).length - 1){
@@ -6585,7 +6631,11 @@ ${round.html}
     if(!session || !(session.drills||[]).length) return null;
     const seedWeek = k === 2 ? (w + '-2') : w;
     const thName = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
-    const items = session.drills.map((d,i) => ({ thread:d.t, level:d.lv, n:d.n, seed:seedOf(seedWeek, i) }));
+    /* 세 층 순서(2026-09-25): 교과 → 마법 노트 → 창의 전략 → 적용·문장제 → 심화.
+       시드는 예전처럼 drills·creative 배열의 원래 자리 번호로 만든다 — 층을 나눠도 같은 주의
+       같은 칸은 같은 문항이 나온다(이미 받은 학습지 링크와 PDF 가 달라지지 않게). */
+    const R = sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i));
+    const items = R.school.slice();
     /* 마법 노트(2026-09-18, 원장 "교과 연산 사이에 매직 오브 넘버스 개념 넣었어?") — 그 세션의 마법 유닛
        (누미의 마법 노트 단계·규칙·핵심 체크)을 교과 회차 다음, 창의 회차(Training Course) 앞에 한 장씩.
        전엔 드릴 스레드에 unit 이 걸린 회차(DV12→B-24 등)만 개념 카드에 실려 대부분의 세션에서
@@ -6596,16 +6646,14 @@ ${round.html}
       items.push({ magicUnit:uid, thread:null, level:null, n:0, count:0,
         topicName:(u.title && (u.title.ko || u.title)) || uid, seed:seedOf(seedWeek + 'mg', mi) });
     });
-    (session.creative || []).forEach((d, ci) => {
-      items.push({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4, creative:true,
-        topicName:creTag(course.tier) + thName(d.t), seed:seedOf(seedWeek + 'cr', ci) });
-    });
+    items.push(...R.strategy, ...R.application);
     /* 문장제 회차는 초등 구간(레벨 1~3·경시의 탑)에만(2026-09-08, 원장 "중등·고등은 문장제보다는
-       적용이지"). 중고등 과정에도 복습 풀의 초등 드릴이 있어 문장제가 만들어지긴 했지만 그 학년의
-       학습지에 실을 것이 아니다. 중고등의 '적용' 회차는 따로 설계할 일이고 여기서 지어내지 않는다. */
-    const ELEM = { level1:1, level2:1, level3:1, challenge:1 };
-    if(ELEM[course.tier]){
-      const d0 = session.drills[0];
+       적용이지"). 중고등의 적용은 위 R.application(활용 스레드)이 맡는다.
+       2026-09-25 부터 이 회차도 courses.js 의 session.application(kind:'word', from:'school')에
+       데이터로 적혀 있다. 여기서는 그 항목이 있을 때만 싣고, 못 바꾸는 식이면 다른 드릴로 대신한다. */
+    const wordItem = (session.application || []).find(a => a.kind === 'word' && a.from === 'school');
+    if(wordItem){
+      const d0 = { t:wordItem.t, lv:wordItem.lv };
       const seen = {}; seen[d0.t] = true; const alts = [];
       const push = d => { if(seen[d.t]) return; seen[d.t] = true;
         alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) }); };
@@ -6614,6 +6662,7 @@ ${round.html}
       items.push({ thread:d0.t, level:d0.lv, n:6, count:6, wordType:'all', optionalWord:true,
         seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t), wordAlts:alts });
     }
+    items.push(...R.stretch);
     /* 단계 점검 — 과정 3개마다(2026-09-16, 원장 "학습지 모드에도 단계마다 넣어").
        문장제 회차 뒤, 회차 목록의 맨 끝에 온다 — 그 주에 배운 것 다음이 순서다. */
     const chk = stageCheckItem(course, c, seedOf(seedWeek, 900));
@@ -7079,7 +7128,11 @@ ${answerSectionsHtml}`;
       const availW = outer.clientWidth - 16;
       const sheetW = sheet.offsetWidth || 1;
       let scale = Math.min(1, availW / sheetW);
-      if(scale < 0.28) scale = 0.28;
+      const narrow = window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
+      /* 좁은 화면에서 A4 전체를 한 번에 맞추면 본문이 6px 안팎까지 작아진다.
+         모바일은 읽을 수 있는 배율을 지키고 종이 영역 안에서만 좌우로 이동한다. */
+      if(narrow && scale < 0.78) scale = 0.78;
+      else if(scale < 0.28) scale = 0.28;
       /* transform은 보이기만 줄이고 210mm 레이아웃 폭을 남겨 모바일 문서 폭을
          밀어낸다. Chromium의 zoom은 레이아웃 자체도 함께 축소하므로 미리보기
          종이의 실제 점유 폭과 보이는 폭을 일치시킨다. */

@@ -30,7 +30,7 @@
 | `app/exam.js` | 학습지 인쇄 |
 | `engine/threads/*.js` | 유형별 문제 생성기 (`NM_TGEN`) |
 | `engine/rng.js` | 시드 난수 — **`Math.random()` 금지** |
-| `data/threads.js` | 216유형 694레벨 |
+| `data/threads.js` | 218유형 700레벨 |
 | `data/middle-concepts.js` | 중등 MD 51유형·202레벨의 원리·절차·주의점 (한국어) |
 | `data/drill-topics.js` | 문제은행 탐색 분류, 등록 레벨 자동 연결 |
 | `data/units/*.js` | 유닛 카드 226개 |

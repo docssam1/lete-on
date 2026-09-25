@@ -185,16 +185,30 @@ core('actual middle-school generators: repeated types stay unique and reproducib
   }
   return {questions};
 });
-core('ML25 finite levels reserve distinct teaching variants after 12 practice questions',()=>{
+core('ML25 finite levels reserve distinct teaching variants after 20 practice questions',()=>{
   const {w,api}=harness(true);
   for(let lv=1;lv<=4;lv++){
     const seen=new Set(),seed=w.NM_RNG.hashSeed('ML25/'+lv);
-    const practice=api.buildProblems('ML25',lv,12,seed,null,null,seen);
+    const practice=api.buildProblems('ML25',lv,20,seed,null,null,seen);
     const teaching=api.buildProblems('ML25',lv,4,seed^0x9e3779b9,null,null,seen);
     unique([...practice,...teaching],'ML25 L'+lv+' repeats');
-    assert.equal(seen.size,16,'ML25 L'+lv+' must expose exactly 16 reserved variants');
+    assert.equal(seen.size,24,'ML25 L'+lv+' must reserve all 24 learner-visible slots');
+    const sameLevel=[{t:'ML25',lv}];
+    const full=api.buildProblems('ML25',lv,32,seed,null,sameLevel);
+    assert.equal(new Set(full.map(p=>api.problemKey(p))).size,32,'ML25 L'+lv+' visible pool must be exactly 32');
+    exhaustion(()=>api.buildProblems('ML25',lv,33,seed,null,sameLevel));
   }
-  return {levels:4,questions:64};
+  return {levels:4,practiceQuestions:80,teachingQuestions:16,capacity:32};
+});
+
+core('NL7 easy count-on reserves 20 practice, one example and three guided variants',()=>{
+  const {w,api}=harness(true),seen=new Set(),seed=w.NM_RNG.hashSeed('NL7/1/weekly');
+  const practice=api.buildProblems('NL7',1,20,seed,null,null,seen);
+  const teaching=api.buildProblems('NL7',1,4,seed^0x517cc1b7,null,null,seen);
+  unique([...practice,...teaching],'NL7 L1 repeats across practice/example/guided');
+  assert.equal(seen.size,24,'NL7 L1 must reserve all 24 learner-visible slots');
+  exhaustion(()=>api.buildProblems('NL7',1,25,seed));
+  return {practiceQuestions:20,teachingQuestions:4,capacity:24};
 });
 core('NL14 and NL16 tally levels reserve 12 practice, one example and three guided variants',()=>{
   const {w,api}=harness(true);
@@ -244,17 +258,17 @@ core('MD82 number-line levels reserve all four teaching variants',()=>{
   const {w,api}=harness(true);
   for(let lv=1;lv<=3;lv++){
     const seen=new Set(),seed=w.NM_RNG.hashSeed('MD82/'+lv);
-    const practice=api.buildProblems('MD82',lv,12,seed,null,null,seen);
+    const practice=api.buildProblems('MD82',lv,lv===1?20:12,seed,null,null,seen);
     const teaching=api.buildProblems('MD82',lv,4,seed^0x85ebca6b,null,null,seen);
     unique([...practice,...teaching],'MD82 L'+lv+' repeats');
-    assert.equal(seen.size,16,'MD82 L'+lv+' must reserve 16 visible variants');
+    assert.equal(seen.size,lv===1?24:16,'MD82 L'+lv+' must reserve every learner-visible slot');
   }
-  return {levels:3,questions:48};
+  return {levels:3,questions:56};
 });
 
 async function browserChecks(){
   // Deliberately a real browser and public editor API, not a fake DOM renderer.
-  const {chromium}=require('playwright'),http=require('http');
+  const {chromium}=require('./lib/playwright'),http=require('http');
   const server=http.createServer((req,res)=>{
     const f=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));
     if(!f.startsWith(root+path.sep)||!fs.existsSync(f)||!fs.statSync(f).isFile()){res.writeHead(404);return res.end();}
@@ -367,6 +381,20 @@ async function browserChecks(){
     const graphTex=await page.locator('.nm-draw-practice .nm-draw-item .nm-w2-tex').evaluateAll(es=>es.map(e=>e.dataset.tex));
     assert.equal(graphTex.length,2);assert.equal(new Set(graphTex).size,2,'Repeated graph rounds reused a practice graph');
     report.browser.push({name:'teaching replay, count-change rebuild, disabled duplicate picker and graph lesson uniqueness',status:'pass'});
+
+    // Optional word-problem fallbacks must start with their own replay state.
+    // C23 k1 used to pass MX2's exact skips into FR8 and falsely exhaust a
+    // 413-variant pool; C2 k1 must skip a truly short AD2 pool and continue.
+    await page.addScriptTag({path:path.join(root,'data','courses.js')});
+    const fallbackChecks=await page.evaluate(()=>[['C23',1],['C2',1]].map(([courseKey,k])=>{
+      const wk=NM_EXAM.weeklyEnvelope(NM_COURSES[courseKey],courseKey,'2026-W39',{k,cad:'w2',name:'중복 검수'});
+      try {
+        NM_EXAM.renderPrintMulti(wk.items,wk.wsId,{mixed:20,cover:wk.cover,units:wk.units});
+        return {courseKey,k,ok:!!document.querySelector('.nm-print-sheet .nm-print-answer-key')};
+      } catch(e) { return {courseKey,k,ok:false,error:e.message}; }
+    }));
+    assert(fallbackChecks.every(x=>x.ok),'Weekly word fallback failed: '+JSON.stringify(fallbackChecks));
+    report.browser.push({name:'independent optional-word fallback state and next-candidate recovery',status:'pass',checks:fallbackChecks});
 
     await page.evaluate(()=>NM_EXAM.openPrintEditor([{thread:'QB1',level:1,count:10,seed:'finite',noTeach:true},{thread:'QA1',level:1,count:10,seed:'recover',noTeach:true}],'부족한 변형 검수',{count:10}));
     assert(await page.locator('#nm-pe-overlay [data-nm-unique-error][role="alert"]').isVisible(),'Pool exhaustion lacks a visible accessible error');

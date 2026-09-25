@@ -390,7 +390,10 @@
       const len   = 5;
       const seq   = [];
       for (let i = 0; i < len; i++) seq.push(start + i);
-      const blank = R(rng, 1, len - 2);   /* 첫 칸(힌트)·마지막 칸 제외 */
+      /* 첫 칸은 출발 힌트로 남기고, 가운데 칸뿐 아니라 마지막 칸도 묻는다.
+         1~10 범위의 6개 수열 × 빈칸 4자리 = 보이는 변형 24개라서
+         주간 학습지 20문항과 예시·따라 풀기 4문항이 겹치지 않는다. */
+      const blank = R(rng, 1, len - 1);
       return {
         prompt: {
           ko: '이어 세기! 순서대로 커지는 빈 칸을 골라요',

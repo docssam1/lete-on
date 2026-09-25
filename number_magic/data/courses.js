@@ -243,7 +243,9 @@ const COURSE_SPEC = [
     위치 찾기 연습도 있어야 하고 절댓값도 위치 찾기가 되어야지"). MD1 은 절댓값을 계산만
     시켰고 수직선 위 어디인지를 묻는 자리가 없었다. */
  {id:29, tier:'middle1', title:{ko:'정수의 세계',en:'World of Integers',zh:'整数的世界'},
-   drills:['MD1','MD82','MD2','MD3','CH5','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','CH5@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','CH5','MD47@3','MD48@3','MD1@4','MD2@4','CH5@4'], minSessions:12, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']], creative:['MD3@3','MD82@3','MD48@3']},
+   drills:['MD1','MD82','MD2','MD3','CH5','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','CH5@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','CH5','MD47@3','MD48@3','MD1@4','MD2@4','CH5@4'], minSessions:12, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']],
+   /* MD89(정수의 활용 — 기온·해발과 해저·수위)는 이 과정의 적용 회차다(2026-09-25). */
+   creative:['MD89@1','MD3@3','MD89@2','MD82@3','MD89@3','MD48@3']},
  /* 30 — 일차방정식은 **푸는 법 다음에 쓰는 법**이 와야 한다(2026-09-21, 원장 "일차방정식의
     활용도 거리·속력·시간, 원가·정가 등 놓치지 마"). MD70 을 MD50 바로 뒤에 붙인다. */
  {id:30, tier:'middle1', title:{ko:'부호의 규칙과 방정식',en:'Rules of Sign & Equations',zh:'符号的规则与方程'},
@@ -262,7 +264,9 @@ const COURSE_SPEC = [
  {id:32, tier:'middle2', title:{ko:'지수와 식의 계산',en:'Exponents & Algebraic Expressions',zh:'指数与式的运算'},
    /* 2026-09-24 — 디딤돌 개념연산 중2-1A p.98~99 대조로 MD13에 다항식÷단항식
       기본·분수 계수·세 항 집중 3레벨을 더했다. 20항목, minSessions 10. */
-   drills:['MD10','MD11','MD12','MD13','MD9','MD10@2','MD11@2','MD12@2','MD13@2','MD10@3','MD11@3','MD12@3','MD13@3','MD10@4','MD10@5','MD12@4','MD12@5','MD13@4','MD13@5','MD13@6'], minSessions:10, magic:[['M-10'],['M-11'],['M-12'],['M-13']], creative:['MD13@6','MD12@5','MD10@5']},
+   drills:['MD10','MD11','MD12','MD13','MD9','MD10@2','MD11@2','MD12@2','MD13@2','MD10@3','MD11@3','MD12@3','MD13@3','MD10@4','MD10@5','MD12@4','MD12@5','MD13@4','MD13@5','MD13@6'], minSessions:10, magic:[['M-10'],['M-11'],['M-12'],['M-13']],
+   /* MD11@5(넓이·부피 공식에 단항식 대입)는 이 과정의 적용 회차다(2026-09-25) — 전엔 과정 32 에 적용이 0개였다. */
+   creative:['MD11@5','MD13@6','MD12@5','MD10@5']},
  {id:33, tier:'middle2', title:{ko:'부등식과 연립방정식',en:'Inequalities & Systems',zh:'不等式与方程组'},
    drills:['MD14','MD64','MD71','MD63','MD72','MD14@2','MD64@2','MD71@2','MD63@2','MD72@2','MD14@3','MD64@3','MD71@3','MD63@3','MD72@3'], minSessions:9, magic:[['M-14'],['M-64'],['M-71'],['M-63'],['M-72']], creative:['MD72@3','MD71@3','MD63@3']},
  {id:34, tier:'middle2', title:{ko:'일차함수와 경우의 수',en:'Linear Functions & Counting',zh:'一次函数与情况数'},
@@ -274,7 +278,9 @@ const COURSE_SPEC = [
    /* 2026-09-21 — 디딤돌 개념연산 중3-1A 대조로 찾은 가장 큰 구멍을 여기에 채운다:
       MD15~17이 "정리하는 법"만 가르치고 "더하거나 빼는 법"이 아예 없었다. MD83(제곱근의
       덧셈과 뺄셈, 6레벨) 신설·편입. 16항목, minSessions 8. */
-   drills:['MD15','MD16','MD17','MD83','MD14','MD15@2','MD16@2','MD17@2','MD83@2','MD15@3','MD16@3','MD17@3','MD83@3','MD83@4','MD83@5','MD83@6'], minSessions:8, magic:[['M-15'],['M-16'],['M-17'],['M-83']], creative:['MD83@6','MD83@5','MD17@3']},
+   drills:['MD15','MD16','MD17','MD83','MD14','MD15@2','MD16@2','MD17@2','MD83@2','MD15@3','MD16@3','MD17@3','MD83@3','MD83@4','MD83@5','MD83@6'], minSessions:8, magic:[['M-15'],['M-16'],['M-17'],['M-83']],
+   /* MD90(제곱근의 활용 — 정사각형의 넓이와 한 변)는 이 과정의 적용 회차다(2026-09-25). */
+   creative:['MD90@1','MD83@6','MD90@2','MD83@5','MD90@3','MD17@3']},
  {id:36, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratic Equations',zh:'因式分解与二次方程'},
    /* 2026-09-21 — MD20 이 4레벨(완전제곱·합차·공통인수·십자곱셈), MD66 이 1레벨(근의 공식)
       늘었다. 드릴 슬롯은 회차마다 2개뿐이라 9회차(18슬롯)로는 19개 항목이 안 들어간다 →
@@ -334,6 +340,51 @@ const COURSE_SPEC = [
    drills:['MD58','MD59','MD60','MD61','MD62','MD46','MD58@2','MD59@2','MD60@2','MD61@2','MD62@2','MD58@3','MD59@3','MD60@3','MD61@3','MD62@3'], minSessions:8,
    magic:[['M-58'],['M-59'],['M-60'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD60@3']},
 ];
+
+/* ── 회차의 세 층(2026-09-25, 원장 "교과 연산과 창의 연산 문장제가 적절히 연결") ──
+   `drills`·`creative` 는 그대로 둔다 — 앱 진도·시험·복습 풀·인쇄 편집기가 모두 이 둘을 읽는다.
+   그 위에 **역할로 나눈 보기**를 덧붙인다. 새 코드는 이쪽을 읽는다.
+     school      교과 연산 — drills 중 적용이 아닌 것
+     strategy    창의 연산 전략 — 그 주의 마법 유닛(units) + 그 전략을 손으로 푸는 드릴(practice)
+     application 연결 문장제·적용 — 활용 스레드, 문장제(WP), 초등은 교과 드릴을 문장제로 바꾼 회차
+     stretch     심화 — 같은 단원의 한 단계 위 드릴(지금 중등 creative 의 대부분)
+   예전엔 `creative` 한 칸이 이 셋을 다 담아서, 초등에선 "창의 연산", 중등에선 "적용"이라고
+   찍혔지만 실제로는 대부분 같은 단원의 어려운 드릴이었다. */
+const APPLY_THREADS = { WP1:1, WP3:1, WP4:1, WP5:1,
+  MD70:1, MD71:1, MD72:1, MD76:1, MD77:1, MD84:1, MD85:1, MD86:1, MD87:1, MD88:1,
+  MD89:1, MD90:1 };
+/* 스레드 전체가 아니라 그 레벨만 적용인 것 — params.mode 로 확인했다 */
+const APPLY_LEVELS = { 'MD19@4':1, 'MD19@5':1, 'MD11@5':1 };
+/* 창의수연 전략 유닛(A·B·C·H)에 걸리지 않았지만 이름 그대로 전략인 드릴 */
+const STRATEGY_THREADS = { AD8:1, AD9:1, DC6:1, NL5:1, NL11:1, NL12:1, ML10:1 };
+const ELEM_WORD_TIERS = { level1:1, level2:1, level3:1, challenge:1 };
+function roleOf(d, tier, fromCreative){
+  const th = (window.NM_THREADS || {})[d.t] || {};
+  if(APPLY_THREADS[d.t] || APPLY_LEVELS[d.t + '@' + d.lv]) return 'application';
+  if(tier === 'level0' && fromCreative) return 'application';   /* 과정 0 의 창의 칸은 줄서기·이야기 셈 문장제 한 벌 */
+  if(STRATEGY_THREADS[d.t] || /^[ABCH]-/.test(th.unit || '') || /^(ML|CH)\d/.test(d.t)) return 'strategy';
+  return 'stretch';
+}
+function annotateRoles(ss, tier){
+  if(ss.test) return;
+  const kindOf = d => /^WP\d/.test(d.t) ? 'word' : 'model';
+  ss.school = []; ss.application = []; ss.stretch = [];
+  ss.strategy = { units:(ss.magic || []).slice(), practice:[] };
+  (ss.drills || []).forEach(d => {
+    if(roleOf(d, tier) === 'application') ss.application.push(Object.assign({ kind:kindOf(d), from:'drills' }, d));
+    else ss.school.push(d);
+  });
+  (ss.creative || []).forEach(d => {
+    const r = roleOf(d, tier, true);
+    if(r === 'application') ss.application.push(Object.assign({ kind:tier === 'level0' ? 'word' : kindOf(d), from:'creative' }, d));
+    else if(r === 'strategy') ss.strategy.practice.push(d);
+    else ss.stretch.push(d);
+  });
+  /* 초등은 그 주 첫 교과 드릴을 문장제로 바꾼 6문항을 싣는다 — 전엔 exam.js 가 인쇄할 때만
+     몰래 붙여서 데이터로는 안 보였다. 문장제로 못 바꾸는 식이면 인쇄 때 다른 드릴로 대신한다. */
+  if(ELEM_WORD_TIERS[tier] && ss.school.length)
+    ss.application.push({ t:ss.school[0].t, lv:ss.school[0].lv, n:6, kind:'word', from:'school', optional:true });
+}
 
 function buildCourses(NM_THREADS){
   NM_THREADS = NM_THREADS || {};
@@ -518,6 +569,8 @@ function buildCourses(NM_THREADS){
       }
       return { magic: seg, drills, creative: cre };
     });
+
+    sessions.forEach(ss => annotateRoles(ss, spec.tier));
 
     /* 회차마다 올라간 레벨을 homeLevel 에 반영한다 — 그래야 이 과정의 시험(pool)과
        뒤 과정의 복습(priorPool)이 **실제로 배운 마지막 레벨**로 나온다. */

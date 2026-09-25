@@ -111,12 +111,14 @@ function deviationProblem(m){
 function missingProblem(m){
   const shown=m.deviations.map((x,i)=>i===m.missing?'x':String(x)).join(',\\;');
   const known=m.deviations.filter((_,i)=>i!==m.missing),knownSum=sum(known);
-  const knownTex=known.map((x,i)=>i===0?String(x):(x<0?`-${Math.abs(x)}`:`+${x}`)).join('');
+  /* 편차 0은 합에 아무것도 보태지 않는다 — "+0+0"을 늘어놓지 않고 0이 아닌 편차만 더한다(2026-09-25). */
+  const nz=known.filter(x=>x!==0);
+  const knownTex=nz.length?nz.map((x,i)=>i===0?String(x):(x<0?`-${Math.abs(x)}`:`+${x}`)).join('')+'+x':'x';
   return base(
     L3('편차의 합은 0입니다. 빠진 편차를 구합니다.','The deviations add to zero. Find the missing deviation.','偏差的和为0，求缺少的偏差。'),
     `\\text{편차 }(${shown})\\quad\\Rightarrow\\quad x=\\square`,
     m.answer,
-    [{tex:'\\text{편차의 합}=0'},{tex:`${knownTex}+x=0`},{tex:`x=-(${knownSum})=\\square`,blank:m.answer}],
+    [{tex:'\\text{편차의 합}=0'},{tex:`${knownTex}=0`},{tex:`x=-(${knownSum})=\\square`,blank:m.answer}],
     {mode:'missingDeviation',deviations:m.deviations,missing:m.missing,knownSum,answer:m.answer,poolSize:MISSING_POOL.length}
   );
 }
@@ -130,7 +132,7 @@ function varianceProblem(m){
      {tex:`\\text{편차}=(${m.deviations.join(',')})`},
      {tex:`\\text{편차 제곱의 합}=${m.squaredSum}`},
      {tex:`\\text{분산}=\\dfrac{${m.squaredSum}}{${m.data.length}}=\\square`,blank:m.variance},
-     {tex:`\\text{표준편차}=\\sqrt{\\square}`,blank:m.variance}],
+     {tex:`(\\text{분산},\\;\\text{표준편차})=\\left(\\square,\\;\\sqrt{\\square}\\right)`,blank:[m.variance,m.variance]}],
     {mode:'varianceStd',data:m.data,mean:m.mean,deviations:m.deviations,squaredSum:m.squaredSum,variance:m.variance,standardDeviation:{coefficient:1,radicand:m.variance},poolSize:VARIANCE_POOL.length}
   );
 }
@@ -142,8 +144,7 @@ function compareProblem(m){
     [m.higherMean,m.moreConsistent],
     [{tex:`\\overline{x}_A=${m.meanA},\\quad \\overline{x}_B=${m.meanB}`},
      {tex:`V_A=${m.varianceA},\\quad V_B=${m.varianceB}`},
-     {tex:'\\overline{x}_{\\max}:\\square',blank:m.higherMean},
-     {tex:'V_{\\min}:\\square',blank:m.moreConsistent}],
+     {tex:'(\\text{큰 평균},\\;\\text{더 고름})=\\left(\\square,\\;\\square\\right)',blank:[m.higherMean,m.moreConsistent]}],
     Object.assign({mode:'compare',poolSize:COMPARE_POOL.length},m)
   );
 }

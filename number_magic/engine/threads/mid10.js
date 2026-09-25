@@ -909,8 +909,9 @@ NM_TGEN['md78_quadBasic'] = function (params, rng) {
       mathModel: { kind:'quadraticTable', a, p:0, q:0, xs:[-2, -1, 0, 1, 2] },
       solution: [
         { tex: `(-2)^2 = 2^2 = 4, \\qquad (-1)^2 = 1^2 = 1` },
-        { tex: `\\left(\\square,\\, \\square,\\, \\square,\\, \\square,\\, \\square\\right)`, blank: values },
-        { tex: `y(-2)=y(2), \\qquad y(-1)=y(1)` }
+        /* 대칭을 먼저 확인하고 표를 채운다 — 풀이의 마지막 줄이 답이어야 한다(2026-09-25) */
+        { tex: `y(-2)=y(2), \\qquad y(-1)=y(1)` },
+        { tex: `\\left(\\square,\\, \\square,\\, \\square,\\, \\square,\\, \\square\\right)`, blank: values }
       ]
     };
   }
@@ -1270,10 +1271,10 @@ NM_TGEN['md82_numberLine'] = function (params, rng) {
   }
 
   /* integer(기본) — 수직선 위 점의 정수 읽기 */
-  /* 12문항 학습지에도 예시1+따라풀기3이 붙는다. 네 교육 문항까지 모두
-     겹치지 않으려면 최소 16곳이 필요하므로, 같은 정수 눈금 난이도에서
-     -8..8의 17개 점을 확보하고 양끝에는 한 칸 여백을 둔다. */
-  const lo = -9, hi = 9;
+  /* 주간 학습지 20문항에도 예시1+따라풀기3이 붙는다. 네 교육 문항까지 모두
+     겹치지 않도록 같은 정수 눈금 난이도에서 -12..12의 25개 점을 확보한다.
+     한 열 전체 폭을 쓰는 지면이라 27개 눈금(-13..13)도 서로 6mm 안팎 떨어진다. */
+  const lo = -13, hi = 13;
   let v = R(rng, lo + 1, hi - 1);
   return {
     prompt: v === 0

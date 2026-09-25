@@ -2,7 +2,7 @@
 'use strict';
 // Local paged proof only. Never reads or publishes private textbook pages.
 const fs=require('fs'),path=require('path'),http=require('http');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..'),out=process.env.NM_CONCEPT_ARTIFACTS;
 if(!out)throw Error('NM_CONCEPT_ARTIFACTS is required');
 const server=http.createServer((req,res)=>{

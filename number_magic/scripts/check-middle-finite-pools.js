@@ -123,14 +123,14 @@ const cases = [
   },
   {
     label:'MD82 L1 integer', thread:'MD82', level:1, gen:'md82_numberLine',
-    params:{mode:'integer'}, pacing:12, teachReserve:4, capacity:17,
-    expected:new Set(range(-8,8).map(String)),
+    params:{mode:'integer'}, pacing:20, teachReserve:4, capacity:25,
+    expected:new Set(range(-12,12).map(String)),
     project:p => String(p.answer),
     validate(p) {
       assert.equal(p.graph.kind, 'numberline');
-      assert.equal(p.graph.lo, -9); assert.equal(p.graph.hi, 9); assert.equal(p.graph.den, 1);
+      assert.equal(p.graph.lo, -13); assert.equal(p.graph.hi, 13); assert.equal(p.graph.den, 1);
       assert.equal(p.graph.pts[0].v, p.answer);
-      assert(Number.isInteger(p.answer) && p.answer >= -8 && p.answer <= 8);
+      assert(Number.isInteger(p.answer) && p.answer >= -12 && p.answer <= 12);
       assert.equal((p.tex.match(/\\square/g)||[]).length,1);
     }
   },

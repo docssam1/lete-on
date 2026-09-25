@@ -9,7 +9,7 @@ const assert = require('assert/strict');
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
-const { chromium } = require('playwright');
+const { chromium } = require('./lib/playwright');
 
 const root = path.resolve(__dirname, '..');
 const server = http.createServer((req, res) => {

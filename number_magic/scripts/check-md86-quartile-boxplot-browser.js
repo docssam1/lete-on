@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const assert=require('assert/strict'),fs=require('fs'),path=require('path'),http=require('http');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..');
 const levelDefs=[
   {id:1,params:{mode:'quartilesOdd'},concept:{ko:'자료를 정렬한 뒤 전체 중앙값을 제외하고 양쪽 절반의 중앙값을 구합니다.'}},
