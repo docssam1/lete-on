@@ -119,7 +119,7 @@ export class Stage {
     if (this.update) this.update(dt, t, raw);
     const pr = this.renderer.getPixelRatio();   // 가로 크게 보기로 높이만 바뀌어도 다시 맞춘다
     if (this.canvas.width !== Math.floor(this.canvas.clientWidth * pr) || this.canvas.height !== Math.floor(this.canvas.clientHeight * pr)) this._resize();
-    fitLabels(this.scene, this.camera, this.canvas.clientHeight, this.canvas.clientWidth < 500 ? 32 : 30, 54, this.canvas.clientWidth);   // 라벨 전체 높이 px(글자는 약 57%)
+    fitLabels(this.scene, this.camera, this.canvas.clientHeight, this.canvas.clientWidth < 500 ? 44 : 40, 72, this.canvas.clientWidth);   // 라벨 그림 전체 높이 px(카드는 약 71%, 글자는 약 45%)
     this.renderer.render(this.scene, this.camera);
     this._requestFrame();
   }

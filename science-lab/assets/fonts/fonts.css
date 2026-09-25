@@ -1,0 +1,6 @@
+/* 사이트에 직접 싣는 글꼴 — 외부 글꼴 서버(구글·jsdelivr)가 느리거나 막혀도 모양이 흔들리지 않게.
+   두 파일 모두 SIL OFL 1.1(같은 폴더 OFL-*.txt). 자주 쓰는 한글 2,350자 + 영문·숫자·기호만 담았다.
+   담지 않은 드문 글자는 글꼴 목록의 다음 글꼴로 넘어간다. */
+@font-face { font-family: "Gaegu"; src: url("./gaegu-700.woff2") format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Pretendard Variable"; src: url("./pretendard-var.woff2") format("woff2-variations"), url("./pretendard-var.woff2") format("woff2"); font-weight: 45 920; font-style: normal; font-display: swap; }
+@font-face { font-family: "Pretendard"; src: url("./pretendard-var.woff2") format("woff2-variations"), url("./pretendard-var.woff2") format("woff2"); font-weight: 45 920; font-style: normal; font-display: swap; }

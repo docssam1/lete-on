@@ -16,7 +16,7 @@
 .bk-no { flex: none; width: 24mm; height: 24mm; border-radius: 50%; background: #fff; color: var(--bk-theme); font: 700 30pt/24mm var(--disp, sans-serif); text-align: center; box-shadow: 0 0 0 2.2mm color-mix(in srgb, #fff 35%, transparent); }
 .bk-kicker { margin: 0 0 1mm; font-size: 10pt; font-weight: 700; opacity: .92; }
 .bk-open h2 { margin: 0; font: 700 30pt/1.1 var(--disp, sans-serif); }
-.bk-vol { margin-left: auto; align-self: flex-start; text-align: right; font-size: 8.5pt; opacity: .95; line-height: 1.3; }
+.bk-vol { margin-left: auto; align-self: center; text-align: right; font-size: 8.5pt; opacity: .95; line-height: 1.3; }
 .bk-vol b { display: block; font: 700 20pt/1 var(--disp, sans-serif); }
 .bk-thumb { position: absolute; top: var(--bk-thumb-top, 60mm); right: 0; width: 7mm; padding: 4mm 0; background: var(--bk-theme); color: #fff; writing-mode: vertical-rl; font-size: 8.5pt; font-weight: 700; text-align: center; border-radius: 3mm 0 0 3mm; letter-spacing: .1em; }
 .even .bk-thumb { right: auto; left: 0; border-radius: 0 3mm 3mm 0; }
