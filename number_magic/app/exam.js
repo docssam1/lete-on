@@ -688,6 +688,10 @@
     min-height:.95em; line-height:1.15; }
   .nm-w2-item-vis.nm-print-item { align-items:center; text-align:center; }
   .nm-w2-item-word.nm-print-item { align-items:flex-start; }
+  /* 풀이 점선 칸은 **남는 높이만큼** — 문장이 길면 줄여서 칸 밖으로 밀리지 않게(2026-09-25, MD72 L2·MD87 L4
+     문장제 칸 세로 넘침 5px). 문장·질문·답 줄은 줄이지 않는다. */
+  .nm-w2-item-word .nm-w2-story-work { flex:0 1 auto; min-height:0; overflow:hidden; }
+  .nm-w2-item-word > :not(.nm-w2-story-work) { flex-shrink:0; }
   /* 문장제 답 줄 "식: ______  답: ______ 개"(2026-09-06) — 식을 먼저 쓰는 자리와 단위. */
   .nm-w2-page .nm-print-word-blank { font-size:calc(12px * var(--ws-fs, 1)); margin-top:8px; display:flex; gap:10mm; flex-wrap:wrap; }
   .nm-w2-page .nm-print-word-blank .nm-w2-blank { height:calc(7mm * var(--ws-fs, 1)); }
@@ -737,6 +741,9 @@
   .nm-print-answer-key .nm-ak-page .nm-ak-grid-middle { grid-template-columns:repeat(5,minmax(0,1fr)); }
   .nm-print-answer-key .nm-ak-page .nm-ak-item { font-size:0.85em; white-space:nowrap; }
   .nm-print-answer-key .nm-ak-grid-middle .nm-ak-item { padding-block:6px; }
+  /* 세로로 큰 분수(\dfrac) 답은 KaTeX 가 줄 상자 밖으로 그려 격자가 6px 넘쳤다(C29 CH5 순환소수 → 분수, 2026-09-25).
+     분수가 든 답 칸만 위아래 여유를 준다. */
+  .nm-print-answer-key .nm-ak-page .nm-ak-item:has(.mfrac) { padding-block:5px; line-height:1.9; }
   .nm-print-answer-key .nm-ak-page .nm-ak-item-w2 { grid-column:span 2; }
   .nm-print-answer-key .nm-ak-page .nm-ak-item-w3 { grid-column:span 3; }
   .nm-ak-boxplot-title { margin:5mm 0 2mm; font-size:12px; color:#183f42; }
@@ -4807,7 +4814,18 @@ function renderRoundPagesBody(item, opts){
   const baseFirst = (conceptLen > 330) ? Math.max(1, Math.min(layout.firstRows || layout.rows, Math.ceil(layout.rows / 2)))
     : Math.max(1, Math.min(layout.rows, layout.firstRows || Math.ceil(layout.rows / 2)));
   /* 그림 머리는 첫 장을 통째로 쓴다(firstRows 0) — 한 줄만 남겨도 칸이 눌려 답 줄이 잘렸다(측정). */
+  /* 중등 개념 지면(2026-09-25, GPT 검수 "개념 전용 페이지의 큰 공백을 없애고 같은 페이지에 연습 6문항") —
+     개념·예시 아래가 A4 의 절반 넘게(중앙값 130mm) 비었다. 식 문항은 그 자리에 연습 6문항을 싣는다
+     (남은 높이를 1fr 로 나눠 쓴다). 문장제·그래프(visual/word)는 한 줄에 75mm 안팎이 필요해 6문항이
+     들어가지 않으므로 전처럼 다음 장부터 — 억지로 넣으면 칸이 잘린다. 따라풀기 장은 그 뒤에 온다. */
+  const midFirstSix = (middleLesson || item.pacing) && !noTeach && !wordOnly
+    && !['word','visual','solve','train'].includes(layout.type) && problems.length >= 6
+    /* 한 열 배치(MD84·MD86 자료열 1열×6행)는 6문항이면 6행이라 첫 장 남은 높이에 들어가지 않는다 */
+    && layout.cols >= 2
+    /* 여러 줄로 세운 식(\\ 줄바꿈 둘 이상 — MD85·MD86 자료 비교 등)은 한 칸에 30mm 넘게 필요하다 */
+    && !problems.some(p => (String(p.tex || '').match(/\\\\/g) || []).length >= 2);
   const firstRows = (wordOnly || noTeach) ? layout.rows
+    : midFirstSix ? Math.ceil(6 / layout.cols)
     : item.pacing ? 0
     : (tallHead || separateGuide) ? 0
     // 저학년 세로셈은 개념·예시·쓰기 상자까지 한 장에 넣으면 연습 답 칸이 잘린다.

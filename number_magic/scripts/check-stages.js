@@ -19,7 +19,7 @@ const STAGES = global.window.NM_STAGES;
 const html = fs.readFileSync(path.join(ROOT, 'landing.html'), 'utf8');
 
 const fail = [];
-const w2 = n => Math.ceil(n * 2 / 3);
+const w2 = n => Math.ceil(n / 2);   // 주 2회 = 한 주에 두 회차(2026-09-25 전 화면 통일)
 const courseNum = c => (c.order != null ? c.order : c.id);   // 과정 0 의 order 0 은 값이다(falsy 함정)
 
 let totalSessions = 0, totalW1 = 0, opW1 = 0, opW2 = 0;

@@ -2206,12 +2206,11 @@ function enterContinueUnit(uid, fromCourseRoad){
    화면에 쓰는 숫자는 전부 data/courses.js에서 그때그때 계산한다(하드코딩 없음).
    - 세션 수      = NM_COURSES['C\'+n].sessions.length
    - 주 1회 주차  = 세션 수
-   - 주 2회 주차  = 올림(세션 수 × 2 ÷ 3)
+   - 주 2회 주차  = 올림(세션 수 ÷ 2)
 
-   ★ 주 2회는 두 배가 아니다. 주차가 3분의 2로 줄 뿐이고, 그 기간에 두 배로
-     만나므로 핵심 세션을 빼고 남는 회차가 생긴다. 그 남는 회차를 창의수연
-     개념 보강과 다지기에 쓴다 — "더 빨리"가 아니라 "더 확실히"가 요점이다.
-     화면 어디에도 "두 배"라고 쓰지 않는다.
+   ★ 2026-09-25 원장 "일주일에 2번 기준인거야" — 주 2회는 **한 주에 두 회차**를 나간다.
+     전에는 세 번째 만남마다 보강으로 빼서 ceil(세션×2/3)로 셌는데, 중등 진도 보기(ceil(회차/2))와
+     화면마다 주차가 달랐다. 전 화면을 ceil(회차/2) 하나로 맞췄다. 보강은 속도·양 조절(0.7배 등)로 한다.
 
    ★ 주차는 연산 트랙만 센 것이다. 원장이 준 GFIELD 로드맵 리포트는 교과·사고력1·
      사고력2·연산을 나란히 놓고 연산 줄에 "연산병행"이라고 적는다. 즉 실제 학원
@@ -2342,9 +2341,9 @@ function courseProgress(c){
   const ids=courseUnitIds(c);
   return { done: ids.filter(u=>stepDone(u,'stamp')).length, total: ids.length };
 }
-/* 주차 — 주 1회는 세션 수 그대로, 주 2회는 그 3분의 2(올림) */
+/* 주차 — 주 1회는 세션 수 그대로, 주 2회는 절반(올림) — 한 주에 두 회차 */
 function courseWeeks(nSessions, cadence){
-  return cadence==='w2' ? Math.ceil(nSessions*2/3) : nSessions;
+  return cadence==='w2' ? Math.ceil(nSessions/2) : nSessions;
 }
 /* ── 목표 기준 배수 ──
    기준 길이 = 연산 구간(과정 1~ROAD_OP_LAST)의 주 1회 개월. courses.js에서
@@ -2367,13 +2366,6 @@ function roadPaceMult(key){
    두고 배수만 곱한다. 한 주보다 짧아지지는 않는다. */
 function coursePaceWeeks(nSessions, cadence, mult){
   return Math.max(1, Math.round(courseWeeks(nSessions,cadence)*(mult||1)));
-}
-/* 주 2회반에서 핵심 세션을 뺀 나머지 회차 = 창의수연 개념 보강·다지기 몫.
-   기간이 늘면 만나는 횟수도 늘어나므로 실제로 쓰는 주차에서 센다
-   (배수 1이면 예전 값과 똑같다). */
-function courseExtraMeets(nSessions, weeks){
-  const w=(weeks===undefined)?Math.ceil(nSessions*2/3):weeks;
-  return Math.max(0, w*2 - nSessions);
 }
 /* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함).
    합계 주차는 과정별로 반올림한 값을 더하지 않고 구간 전체에 배수를 한 번
@@ -3224,9 +3216,9 @@ function screenCourseRoad(){
         <button class="${cad==='w2'?'on':''}" data-cad="w2"${cad==='w2'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 2회반','Twice a week','每周2次')}</button>
       </div>
       <p class="nm-cr-cadnote">${cad==='w2'
-        ? lk('주 2회라고 두 배 빨라지지는 않아요. 한 과정에 걸리는 주차가 3분의 2로 줄고, 그동안 두 배로 만나니 남는 회차가 생겨요. 그 회차는 창의수연 개념을 더 넣고 다지는 데 써서 더 탄탄해져요.',
-             'Meeting twice a week does not make it twice as fast. A course takes about two thirds of the weeks, and the extra meetings go into creative-thinking concepts and consolidation — so it gets sturdier, not just quicker.',
-             '每周2次并不会快一倍。一个课程所需的周数约减为三分之二，多出来的课次用来加入创意思维概念和巩固练习——不只是更快，而是更扎实。')
+        ? lk('한 주에 두 회차씩 나아가요. 한 과정에 걸리는 주차가 절반이 돼요. 더 다지고 싶으면 아래 속도를 낮추면 돼요.',
+             'Two sessions a week — a course takes half the weeks. To consolidate more, lower the speed below.',
+             '每周前进两节课，一个课程所需周数减半。想多巩固，可在下面调低速度。')
         : lk('한 주에 한 세션씩 나아가요. 과정마다 마지막은 확인 세션이에요.',
              'One session per week. Each course ends with a check session.',
              '每周前进一节课。每个课程最后是一次检查课。')}</p>
@@ -3343,7 +3335,6 @@ function screenCourseRoad(){
       {
         const n=(c.sessions||[]).length;
         const wk=coursePaceWeeks(n,cad,mult);
-        const extra=courseExtraMeets(n,wk);
         const prog=courseProgress(c);
         const built=courseBuilt(c);
         const isNow=x.key===curKey;
@@ -3370,7 +3361,7 @@ function screenCourseRoad(){
             <span class="nm-cr-num">${x.num}${isDone?'<i class="nm-cr-flag">🏳️</i>':''}</span>
             <span class="nm-cr-nbody">
               <b>${esc(L(c.title))}${c.boss?' 👑':isTower?' 🗼':''}</b>
-              <span class="nm-cr-meta">${lk('세션','Sessions','课节')} ${n} · ${wk}${lk('주','wk','周')}${cad==='w2'&&extra>0?` · ${lk('보강','Extra','加强')} ${extra}${lk('회','','次')}`:''}</span>
+              <span class="nm-cr-meta">${lk('세션','Sessions','课节')} ${n} · ${wk}${lk('주','wk','周')}</span>
               ${!built?`<span class="nm-cr-soon">${lk('준비 중','Coming soon','准备中')}</span>`:''}
             </span>
             <span class="nm-cr-state">${locked?'🔒':stateLabel}</span>
