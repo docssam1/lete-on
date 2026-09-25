@@ -22,4 +22,9 @@ window.NM_HERO3D = {
   'M-68': { alt:{ ko:'영화관 객석, 한 자리만 금빛으로 밝게', en:'Cinema seats with one seat lit in gold', zh:'电影院座位，只有一个座位亮成金色' } },
   'M-69': { alt:{ ko:'좌표판 위 곧은 철사(정비례)와 둘로 갈라진 구리 곡선(반비례)', en:'On a coordinate board: a straight wire (direct) and a two-part copper curve (inverse)', zh:'坐标板上笔直的铁丝(正比例)和分成两支的铜曲线(反比例)' } },
   'M-84': { alt:{ ko:'블록 기둥 2, 5, 7, 9, 12 — 가운데 7만 초록', en:'Block towers 2, 5, 7, 9, 12, only the middle 7 in green', zh:'积木柱2、5、7、9、12——只有中间的7是绿色' } },
+  /* 중2 C32 (2026-09-26, 에이전트 작성 · 검수) */
+  'M-10': { alt:{ ko:"나무 책상 위에 a가 새겨진 나무 블록이 3개와 4개 두 묶음으로 놓여 있고, 그 앞에 a³ 카드, × 블록, a⁴ 카드, = 블록, a⁷ 카드가 한 줄로 놓여 있습니다.", en:"On a wooden desk, wooden blocks marked a lie in two groups of 3 and 4. In front of them is a row: an a³ card, a × block, an a⁴ card, an = block and an a⁷ card.", zh:"木桌上，刻着a的木块分成3个和4个两组；前面一排依次是a³卡片、×木块、a⁴卡片、=木块和a⁷卡片。" } },
+  'M-11': { alt:{ ko:"나무 책상 위에 3 블록, 윗면에 x²가 붙은 상자, × 블록, 4 블록, 윗면에 x³가 붙은 상자, = 블록, 12x⁵ 카드가 한 줄로 놓여 있습니다.", en:"On a wooden desk, a row: a 3 block, a box labeled x² on top, a × block, a 4 block, a box labeled x³ on top, an = block and a 12x⁵ card.", zh:"木桌上排成一排：3木块、顶面贴着x²的盒子、×木块、4木块、顶面贴着x³的盒子、=木块和12x⁵卡片。" } },
+  'M-12': { alt:{ ko:"나무 책상 왼쪽에 빨간 사과 3개, 오른쪽에 노란 배 2개가 놓여 있고, 그 앞에 3x 카드, + 블록, 2y 카드가 놓여 있습니다.", en:"On a wooden desk, three red apples sit on the left and two yellow pears on the right, with a 3x card, a + block and a 2y card in front.", zh:"木桌左边放着3个红苹果，右边放着2个黄梨，前面是3x卡片、+木块和2y卡片。" } },
+  'M-13': { alt:{ ko:"나무 책상 위에 3, (, 2x, +, 5, ) 블록과 = 블록, 6x + 15 카드가 한 줄로 놓여 있고, 3에서 2x와 5로 구리 철사 화살 두 개가 휘어 이어지며 3 위에 작은 황동 구슬이 있습니다.", en:"On a wooden desk, blocks 3, (, 2x, +, 5, ) and = sit in a row with a 6x + 15 card. Two curved copper-wire arrows run from 3 to 2x and from 3 to 5, and a small brass bead rests on the 3.", zh:"木桌上排着3、(、2x、+、5、)木块和=木块，以及6x + 15卡片；两根弯曲的铜丝箭头从3分别连到2x和5，3上面有一颗小铜珠。" } },
 };

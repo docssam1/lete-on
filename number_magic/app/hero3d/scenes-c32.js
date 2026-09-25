@@ -52,7 +52,7 @@ export const SCENES_C32 = {
       const j = seg(p, 0.55, 0.66) * (1 - seg(p, 0.86, 0.97));
       tiles.forEach((g, i) => { const a = 0.1 + i * 0.062;
         g.position.y = y0[i] + 0.28 * hop(p, a, a + 0.07);
-        g.position.x = x0[i] + (i < 3 ? 0.36 : -0.36) * j; });
+        g.position.x = x0[i] + (i < 3 ? 0.21 : -0.21) * j; });
       res.position.y = ry + 0.3 * hop(p, 0.62, 0.74); });
     k.lights({ envOpts:{ intensity:0.45 } });
   }},
