@@ -309,10 +309,10 @@ export const SCENES_C36 = {
     const ty = tiles.map(t => t.position.y);
     k.onFrame(t => { const p = cyc(t, 9);
       tiles.forEach((tl, i) => { const a = 0.04 + tl.userData.d * 0.018; tl.position.y = ty[i] + 0.16 * hop(p, a, a + 0.1); });
-      const back = 1 - seg(p, 0.86, 0.94);
+      const back = 1 - seg(p, 0.9, 0.97);
       flipPose(no, seg(p, 0.5, 0.58) * back, 0.04, 0.4, 0.035);
       ok.position.y = 0.035 + 0.2 * hop(p, 0.56, 0.72); ok.userData.mat.emissiveIntensity = 0.8 * hop(p, 0.56, 0.72);
-      const f = seg(p, 0.66, 0.74) * back; flipPose(sideZ, f, 0.04, 0.35, 0.035); flipPose(sideX, f, 0.04, 0.35, 0.035); });
+      const f = seg(p, 0.64, 0.72) * back; flipPose(sideZ, f, 0.04, 0.35, 0.035); flipPose(sideX, f, 0.04, 0.35, 0.035); });
     k.lights({ key:3.0, keyPos:[-4, 7, 5], envOpts:{ intensity:0.6 } });
   }},
 

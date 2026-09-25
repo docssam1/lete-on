@@ -115,13 +115,14 @@ function heightAt(x, z){
   return h;
 }
 
+function circlePts(cx, cz, r, n){ const o = []; for(let i = 0; i <= n; i++){ const a = i / n * Math.PI * 2; o.push([cx + Math.cos(a) * r, cz + Math.sin(a) * r]); } return o; }
 /* 길(길이 칠해지고, 걷기 그래프가 된다). w=폭 */
 const PATHS = [
   { id:'main',    w:1.7, pts:[[2,31],[2,22],[1.6,16],[1.8,11],[2.1,6.5],[2.2,4.8]] },
   { id:'academy', w:1.7, pts:[[2.2,0.2],[2.2,-2.2],[2.1,-4.6]] },
   { id:'west',    w:1.5, pts:[[-0.6,3.8],[-4.2,5.2],[-9,6.6],[-13.2,7.6],[-15.2,8.4]] },
-  { id:'gazebo',  w:1.2, pts:[[-4.2,5.2],[-6.2,3.6],[-7.6,2.5]] },
-  { id:'closet',  w:1.3, pts:[[-9.6,-0.6],[-12,-2.6],[-15.2,-4.4],[-18.4,-5.2]] },
+  { id:'gazebo',  w:1.2, pts:[[-4.2,5.2],[-6.2,3.6],[-7.8,2.9],[-9.6,2.4],[-10.6,0.9]] },
+  { id:'closet',  w:1.3, pts:[[-10.6,0.9],[-11.4,-1],[-12.4,-2.8],[-15.2,-4.4],[-18.4,-5.2]] },
   { id:'westgate',w:1.3, pts:[[-19.4,9.6],[-22.6,7.2],[-26,5.2],[-30,4.2]] },
   { id:'east',    w:1.6, pts:[[4.6,3.8],[8.4,3.2],[12.4,1.6],[15.4,-1.2],[17.4,-3]] },
   { id:'theater', w:1.4, pts:[[10.4,2.6],[11.4,-0.8],[12,-3.8]] },
@@ -136,6 +137,8 @@ const NOPAINT = { bridge:1, dock:1 };
 const WALK_ONLY = [
   { id:'bridge', pts:[[17.4,-3],[20.6,-3],[24.2,-3]] },
   { id:'dock',   pts:[[12.6,17.6],[15,17.6],[16.8,17.6]] },
+  { id:'plaza',  pts:circlePts(2.2, 2.4, 3.0, 20) },
+  { id:'nlink',  pts:[[-15.2,8.4],[-14.4,8.2]] },
 ];
 function spiralPts(){
   const out = [[1.2,-5.4],[-0.6,-8.4]];
@@ -147,7 +150,6 @@ function spiralPts(){
   }
   return out;
 }
-function circlePts(cx, cz, r, n){ const o = []; for(let i = 0; i <= n; i++){ const a = i / n * Math.PI * 2; o.push([cx + Math.cos(a) * r, cz + Math.sin(a) * r]); } return o; }
 PATHS.forEach(p => { if(p.spiral) p.pts = spiralPts(); if(p.circle) p.pts = circlePts(p.circle[0], p.circle[1], p.circle[2], 28); });
 
 function resample(pts, step){
@@ -513,8 +515,8 @@ export async function mountTown3D(container, opts){
       for(const [v, w] of nav.adj[u]){ const nd = dist[u] + w; if(nd < dist[v]){ dist[v] = nd; prev[v] = u; } }
     }
     const pts = [];
-    for(let u = b; u >= 0; u = prev[u]) pts.unshift(nav.nodes[u]);
-    if(!pts.length) pts.push(nav.nodes[b]);
+    if(a === b || prev[b] >= 0) for(let u = b; u >= 0; u = prev[u]) pts.unshift(nav.nodes[u]);
+    else pts.push(nav.nodes[b]);                        /* 끊긴 길(없어야 한다) — 곧장 간다 */
     /* 곧바로 갈 수 있을 만큼 가까우면 길로 돌아가지 않는다 */
     const direct = Math.hypot(tx - fx, tz - fz);
     if(direct < 3.2 && Math.abs(heightAt(tx, tz) - heightAt(fx, fz)) < 0.5) return [[tx, tz]];
@@ -732,7 +734,7 @@ export async function mountTown3D(container, opts){
     raf = 0;
     if(disposed) return;
     if(!wrap.isConnected){ dispose(); return; }
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
     const t = (now - t0) / 1000;
     const moving = stepChars(dt, t);
     if(follow && player){
@@ -781,7 +783,7 @@ export async function mountTown3D(container, opts){
   /* 첫 구도 — 넓은 화면은 마을 전체, 좁은 화면은 광장(플레이어) 가까이 */
   resize();
   const narrow = W / H < 0.8;
-  if(narrow && player){ cam.x = player.x - 1; cam.z = player.z - 4; cam.d = 40; }
+  if(narrow && player){ cam.x = player.x - 1.5; cam.z = player.z - 6.5; cam.d = 44; }
   else { cam.x = 0; cam.z = -3; cam.d = W / H > 1.5 ? 58 : 64; }
   placeCam();
   paintLabels(); applyLocks();
@@ -795,7 +797,7 @@ export async function mountTown3D(container, opts){
     zoomOut(){ cam.d *= 1.25; placeCam(); wake(); },
     focusPlayer(){ if(player){ follow = true; cam.d = Math.min(cam.d, 30); cam.x = player.x; cam.z = player.z + 1.5; placeCam(); wake(); } },
     walkTo(x, z){ if(player){ walkTo(player, x, z); follow = true; wake(); } },
-    debug:{ scene, camera, renderer, cam, chars, placeCam,
+    debug:{ scene, camera, renderer, cam, chars, placeCam, nav,
       project(id){ const s = world.spots[id] || world.gates[id]; if(!s) return null; const c = s.center; return project(c.x, c.y, c.z); } }
   };
 }
@@ -1060,7 +1062,7 @@ function buildWorld(scene, renderer, rng, track){
     });
     /* 길 끝과 다른 길 사이 가까운 점 잇기 */
     idOf.forEach(ids => [ids[0], ids[ids.length - 1]].forEach(e => {
-      let best = -1, bd = 2.2 * 2.2;
+      let best = -1, bd = 3.2 * 3.2;
       nav.nodes.forEach((n, i) => { if(ids.includes(i)) return; const d = (n[0] - nav.nodes[e][0]) ** 2 + (n[1] - nav.nodes[e][1]) ** 2; if(d < bd){ bd = d; best = i; } });
       if(best >= 0){ const d = Math.sqrt(bd); nav.adj[e].push([best, d]); nav.adj[best].push([e, d]); }
     }));
@@ -1306,7 +1308,7 @@ function buildWorld(scene, renderer, rng, track){
       s.userData.t += dt; const u = (s.userData.t % 2.2) / 2.2;
       if(u < dt / 2.2 + 0.001){ s.userData.a = rng() * 7; s.userData.r = 0.3 + rng() * 0.6; }
       s.position.set(FOUNTAIN[0] + Math.cos(s.userData.a) * s.userData.r * u * 1.4, gy + 1.8 + Math.sin(u * Math.PI) * 1.7, FOUNTAIN[1] + Math.sin(s.userData.a) * s.userData.r * u * 1.4);
-      s.material.opacity = Math.sin(u * Math.PI); const k = 0.3 + u * 0.35; s.scale.set(k, k, 1);
+      s.material.opacity = Math.sin(u * Math.PI); const k = 0.45 + u * 0.4; s.scale.set(k, k, 1);
     }));
     /* 동작 줄이기면 조용한 위치에 둔다 */
     zeros.forEach((s, i) => { const a = i / 12 * 7; s.position.set(FOUNTAIN[0] + Math.cos(a) * 0.4, gy + 2.1 + (i % 3) * 0.35, FOUNTAIN[1] + Math.sin(a) * 0.4); s.material.opacity = 0.8; });
@@ -1415,9 +1417,9 @@ function buildWorld(scene, renderer, rng, track){
     for(let i = 0; i < 26; i++){ const a = r2() * 7, rr = 5.5 + r2() * 4; tryPlace(MOUNT.cx + Math.cos(a) * rr, MOUNT.cz + Math.sin(a) * rr, 1, 0.7 + r2() * 0.4); }
     const foliage = mergeGeos([
       new THREE.IcosahedronGeometry(1.25, 1).translate(0, 2.4, 0),
-      new THREE.IcosahedronGeometry(0.95, 1).translate(0.7, 2.0, 0.3),
-      new THREE.IcosahedronGeometry(0.9, 1).translate(-0.6, 2.1, -0.2),
-      new THREE.IcosahedronGeometry(0.8, 1).translate(0.1, 3.2, 0.1)]);
+      new THREE.IcosahedronGeometry(0.95, 0).translate(0.7, 2.0, 0.3),
+      new THREE.IcosahedronGeometry(0.9, 0).translate(-0.6, 2.1, -0.2),
+      new THREE.IcosahedronGeometry(0.8, 0).translate(0.1, 3.2, 0.1)]);
     const trunk = new THREE.CylinderGeometry(0.16, 0.24, 1.8, 6).translate(0, 0.9, 0);
     const pineG = mergeGeos([new THREE.ConeGeometry(1.1, 1.9, 8).translate(0, 1.7, 0), new THREE.ConeGeometry(0.85, 1.6, 8).translate(0, 2.6, 0), new THREE.ConeGeometry(0.55, 1.3, 8).translate(0, 3.4, 0)]);
     const pineTrunk = new THREE.CylinderGeometry(0.12, 0.18, 1.0, 5).translate(0, 0.5, 0);
@@ -1469,7 +1471,7 @@ function buildWorld(scene, renderer, rng, track){
       for(let k = 0; k < n; k++){ const s = 1.3 + r2() * 1.3; parts.push(new THREE.IcosahedronGeometry(s, 1).translate(k * 1.5 - n * 0.75, r2() * 0.7, r2() * 1.2)); }
       const m = new THREE.Mesh(mergeGeos(parts), cm);
       m.scale.set(1, 0.62, 0.9);
-      m.position.set(-60 + r2() * 120, 13 + r2() * 9, -44 - r2() * 22); m.scale.multiplyScalar(1.6 + r2());
+      m.position.set(-50 + r2() * 100, 11 + r2() * 5, -27 - r2() * 14); m.scale.multiplyScalar(0.8 + r2() * 0.5);
       m.userData.v = 0.4 + r2() * 0.5;
       scene.add(m); clouds.push(m);
     }

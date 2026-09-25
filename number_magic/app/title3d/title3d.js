@@ -523,8 +523,16 @@ function buildWorld(k, choices, playerCanvas){
     const pts = new THREE.Points(geo, mat); pts.renderOrder = -9; scene.add(pts); var starMat = mat; }
 
   const moonGrp = new THREE.Group();
-  moonGrp.add(new THREE.Mesh(new THREE.SphereGeometry(2.4, 32, 16), new THREE.MeshBasicMaterial({ color:'#fff4d6', fog:false })));
-  const mg = glow('#e6d4ff', 16, 0.75); moonGrp.add(mg);
+  const moonTex = canvasTex(256, 256, (g, w, h) => { const cx = w / 2, cy = h / 2, R = w * 0.46;
+    const gr = g.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.1, cx, cy, R); gr.addColorStop(0, '#fffaf0'); gr.addColorStop(0.7, '#f3e6c8'); gr.addColorStop(1, '#d8c6a4');
+    g.fillStyle = gr; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.fill();
+    g.save(); g.beginPath(); g.arc(cx, cy, R, 0, 7); g.clip();
+    for(let i = 0; i < 14; i++){ const x = cx + (rnd() - 0.5) * R * 1.5, y = cy + (rnd() - 0.5) * R * 1.5, rr = 6 + rnd() * 22; g.fillStyle = `rgba(170,150,120,${0.12 + rnd() * 0.18})`; g.beginPath(); g.arc(x, y, rr, 0, 7); g.fill(); }
+    /* 초승달 느낌 — 오른쪽 아래를 보랏빛 그림자로 */
+    const sh = g.createRadialGradient(cx + R * 0.55, cy + R * 0.35, R * 0.2, cx + R * 0.55, cy + R * 0.35, R * 1.2); sh.addColorStop(0, 'rgba(90,70,150,.45)'); sh.addColorStop(0.6, 'rgba(90,70,150,.12)'); sh.addColorStop(1, 'rgba(60,40,120,0)');
+    g.fillStyle = sh; g.fillRect(0, 0, w, h); g.restore(); });
+  const moonSp = new THREE.Sprite(new THREE.SpriteMaterial({ map:moonTex, transparent:true, fog:false, depthWrite:false })); moonSp.scale.set(4.2, 4.2, 1); moonGrp.add(moonSp);
+  const mg = glow('#d9c4ff', 14, 0.55); moonGrp.add(mg);
   scene.add(moonGrp);
   /* 달·구름은 구도가 정해진 뒤 카메라 기준으로 놓는다(placeSky) */
   const cloudTex = canvasTex(256, 128, (g, w, h) => { for(let i = 0; i < 26; i++){ const x = w * (0.18 + rnd() * 0.64), y = h * (0.45 + rnd() * 0.25), rr = 18 + rnd() * 34;
@@ -686,7 +694,7 @@ function buildWorld(k, choices, playerCanvas){
     /* 숫자 주사위 */
     const cubeCols = [['#ffffff', '#e2415a'], ['#fff7d6', '#2f6fe0'], ['#f6ecff', '#7a3fd6']];
     const nums = [['1', '2', '3', '4', '5', '6'], ['7', '8', '9', '+', '=', '0'], ['×', '÷', '2', '5', '7', '9']];
-    [[-1.35, 2.35, 0.5, 0.42], [1.35, 2.0, 0.55, 0.38], [0.2, 3.55, 0.6, 0.32]].forEach(([x, y, z, s], i) => {
+    [[-1.45, 2.3, 0.6, 0.55], [1.45, 1.95, 0.65, 0.5], [0.55, 3.6, 0.5, 0.42]].forEach(([x, y, z, s], i) => {
       const mats = nums[i].map(n => new THREE.MeshPhysicalMaterial({ map:faceTex(n, { bg:cubeCols[i][0], color:cubeCols[i][1], size:300 }), roughness:0.3, clearcoat:0.6 }));
       const c = new THREE.Mesh(new THREE.BoxGeometry(s, s, s), mats); c.position.set(x, y, z); c.castShadow = true; g.add(c);
       anim.push(t => { c.position.y = y + Math.sin(t * 1.4 + i * 2) * 0.13; c.rotation.x = t * 0.5 + i; c.rotation.y = t * 0.7 + i * 2; });
@@ -750,18 +758,18 @@ function buildWorld(k, choices, playerCanvas){
       pos.push(p.x + nx * W, 0.025, p.z + nz * W, p.x - nx * W, 0.025, p.z - nz * W); uv.push(0, u * 8, 1, u * 8);
       if(i < N){ const a = i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); } }
     const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); rg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); rg.setIndex(idx); rg.computeVertexNormals();
-    const cob = canvasTex(256, 256, (gg, w, h) => { gg.fillStyle = '#b9a27a'; gg.fillRect(0, 0, w, h);
-      for(let i = 0; i < 70; i++){ const x = rnd() * w, y = rnd() * h, rr = 10 + rnd() * 16, c = 170 + rnd() * 50; gg.fillStyle = `rgb(${c},${c * 0.9},${c * 0.75})`; gg.beginPath(); gg.ellipse(x, y, rr, rr * 0.8, rnd() * 3, 0, 7); gg.fill(); gg.strokeStyle = 'rgba(80,60,40,.35)'; gg.stroke(); } });
+    const cob = canvasTex(256, 256, (gg, w, h) => { gg.fillStyle = '#a58c68'; gg.fillRect(0, 0, w, h);
+      for(let i = 0; i < 70; i++){ const x = rnd() * w, y = rnd() * h, rr = 10 + rnd() * 16, c = 175 + rnd() * 45; gg.fillStyle = `rgb(${c},${c * 0.88},${c * 0.68})`; gg.beginPath(); gg.ellipse(x, y, rr, rr * 0.8, rnd() * 3, 0, 7); gg.fill(); gg.strokeStyle = 'rgba(80,60,40,.35)'; gg.stroke(); } });
     cob.wrapS = cob.wrapT = THREE.RepeatWrapping;
+    const mileStone = new THREE.MeshStandardMaterial({ color:'#b8b0c4', roughness:0.8 });
     const road = new THREE.Mesh(rg, new THREE.MeshStandardMaterial({ map:cob, roughness:0.9 })); road.receiveShadow = true; g.add(road);
     /* 길가 이정표 1·2·3 */
     [[0.12, '1', '#7fd0ff'], [0.45, '2', '#ffd35a'], [0.75, '3', '#ff8fb8']].forEach(([u, n, col], i) => {
       const p = curve.getPointAt(u), tg = curve.getTangentAt(u); const side = i % 2 ? 1 : -1;
       const ms = new THREE.Group(); ms.position.set(p.x - tg.z * 0.55 * side, 0, p.z + tg.x * 0.55 * side);
-      const st = new THREE.Mesh(rbox(0.34, 0.5, 0.2, 0.08), stone); ms.add(st);
-      const cap = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), stone); cap.scale.set(1, 0.6, 0.6); cap.position.y = 0.5; ms.add(cap);
-      const plate = new THREE.Mesh(new THREE.CircleGeometry(0.12, 24), new THREE.MeshStandardMaterial({ map:faceTex(n, { bg:col, color:'#2a1a50', size:330 }), roughness:0.5 }));
-      plate.position.set(0, 0.3, 0.102); ms.add(plate);
+      const st = new THREE.Mesh(rbox(0.46, 0.72, 0.16, 0.14), mileStone); ms.add(st);
+      const plate = new THREE.Mesh(new THREE.CircleGeometry(0.17, 28), new THREE.MeshStandardMaterial({ map:faceTex(n, { bg:col, color:'#2a1a50', size:330 }), roughness:0.5 }));
+      plate.position.set(0, 0.42, 0.082); ms.add(plate);
       ms.lookAt(ms.position.x, 0, ms.position.z + 5); /* 앞(카메라)을 본다 */
       g.add(ms);
     });
@@ -939,9 +947,9 @@ function buildWorld(k, choices, playerCanvas){
   const NG = 260, NF = 90;
   const tuftGeo = new THREE.ConeGeometry(0.05, 0.28, 4); tuftGeo.translate(0, 0.14, 0);
   const tufts = new THREE.InstancedMesh(tuftGeo, new THREE.MeshStandardMaterial({ color:'#4f8a5c', roughness:0.9 }), NG); tufts.receiveShadow = true; scene.add(tufts);
-  const flowerGeo = new THREE.IcosahedronGeometry(0.07, 0); flowerGeo.translate(0, 0.14, 0);
-  const flowers = new THREE.InstancedMesh(flowerGeo, new THREE.MeshStandardMaterial({ color:'#ffffff', emissive:'#ffffff', emissiveIntensity:0.55, roughness:0.5 }), NF); scene.add(flowers);
-  const fcols = [new THREE.Color('#9fe2ff'), new THREE.Color('#ff9ad8'), new THREE.Color('#ffe08a'), new THREE.Color('#c8a8ff')];
+  const flowerGeo = new THREE.IcosahedronGeometry(0.05, 0); flowerGeo.translate(0, 0.12, 0);
+  const flowers = new THREE.InstancedMesh(flowerGeo, new THREE.MeshBasicMaterial({ color:'#ffffff' }), NF); scene.add(flowers);
+  const fcols = [new THREE.Color('#7fd8ff'), new THREE.Color('#ff7ecb'), new THREE.Color('#ffd35a'), new THREE.Color('#b48cff')];
   for(let i = 0; i < NF; i++) flowers.setColorAt(i, fcols[i % 4]);
   const scatterSeeds = Array.from({ length:NG + NF }, () => [rnd(), rnd(), rnd(), rnd()]);
   const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(), _t = new THREE.Vector3();
@@ -976,13 +984,13 @@ function buildWorld(k, choices, playerCanvas){
                 깊이(z)가 화면의 세로가 되게 한다. */
   const layouts = {
     landscape:{ pitch:30, fov:34, dist:22, target:[0, 1, 0.5], island:[10.6, 8.0, 0, 0.6],
-      pos:{ continue:[0, -2.6, 1], diag:[-6.9, -3.1, 0.95], game:[6.8, -2.9, 0.95], sheet:[-5.7, 2.4, 0.95], road:[5.8, 2.3, 0.95],
+      pos:{ continue:[0, -2.6, 1], diag:[-6.9, -3.1, 0.95], game:[6.8, -2.9, 0.95], sheet:[-5.7, 2.8, 0.95], road:[5.8, 2.6, 0.95],
         story:[-3.0, 5.1, 0.95], dex:[-1.0, 5.3, 0.95], hist:[1.0, 5.3, 0.95], magazine:[3.0, 5.1, 0.95] },
       player:[-2.55, -1.4, 1], plaza:[0, -0.8, 3.6, 2.8], posts:[[-1.3, 1.0], [1.3, 1.0], [-1.9, 3.3], [1.9, 3.3]], motes:[9.5, 4.5, 6.5, 0, 0.6], place:{} },
-    portrait:{ pitch:46, fov:40, dist:24, target:[0, 0.5, 0.8], island:[5.4, 11.2, 0, 0.9],
-      pos:{ continue:[0.6, -7.4, 0.95], diag:[-2.3, -2.4, 0.72], game:[2.35, -2.4, 0.72], sheet:[-2.3, 2.6, 0.72], road:[2.35, 2.6, 0.72],
-        story:[-3.15, 7.4, 0.66], dex:[-1.05, 7.4, 0.66], hist:[1.05, 7.4, 0.66], magazine:[3.15, 7.4, 0.66] },
-      player:[-2.25, -5.9, 0.95], plaza:[0.2, -5.6, 3.0, 2.3], posts:[[-0.9, -4.3], [2.1, -4.3], [-4.3, 0.2], [4.3, 0.2]], motes:[4.8, 4, 10, 0, 0.8], place:{ continue:'below' } },
+    portrait:{ pitch:46, fov:40, dist:24, target:[0, 0.5, 0.8], island:[5.4, 11.8, 0, 0.6],
+      pos:{ continue:[-0.55, -8.0, 0.95], diag:[-2.3, -2.0, 0.72], game:[2.35, -2.0, 0.72], sheet:[-2.3, 3.0, 0.72], road:[2.35, 3.0, 0.72],
+        story:[-3.15, 7.8, 0.66], dex:[-1.05, 7.8, 0.66], hist:[1.05, 7.8, 0.66], magazine:[3.15, 7.8, 0.66] },
+      player:[2.3, -6.6, 0.95], plaza:[0, -6.2, 3.0, 2.3], posts:[[-0.9, -4.6], [2.1, -4.6], [-4.3, 0.6], [4.3, 0.6]], motes:[4.8, 4, 10, 0, 0.8], place:{ continue:'below' } },
   };
   let extra = 0;
   function applyLayout(name){
@@ -1008,7 +1016,7 @@ function buildWorld(k, choices, playerCanvas){
     if(player){
       const s = L.player[2];
       player.g.position.set(L.player[0], 0, L.player[1]); player.g.scale.setScalar(s);
-      const hgt = 2.3; player.sp.scale.set(hgt * player.ar, hgt, 1);
+      const hgt = 2.6; player.sp.scale.set(hgt * player.ar, hgt, 1);
       player.tagW.set(L.player[0], (hgt + 0.25) * s, L.player[1]);
     }
     /* 문의 금빛 조명은 문 앞에 */
@@ -1066,8 +1074,8 @@ function buildWorld(k, choices, playerCanvas){
   const _p = new THREE.Vector3();
   function placeSky(portrait){
     const at = (nx, ny, dist) => { _p.set(nx, ny, 0.5).unproject(cam).sub(cam.position).normalize(); return cam.position.clone().addScaledVector(_p, dist); };
-    moonGrp.position.copy(at(portrait ? 0.78 : -0.8, portrait ? 0.93 : 0.8, 60));
-    const sc = portrait ? 0.8 : 1; moonGrp.scale.setScalar(sc);
+    moonGrp.position.copy(at(portrait ? 0.86 : -0.84, portrait ? 0.9 : 0.8, 60));
+    const sc = portrait ? 0.75 : 1; moonGrp.scale.setScalar(sc);
     clouds.forEach((c, i) => {
       const nx = -1.05 + (i / (clouds.length - 1)) * 2.1 + (c.a - 0.5) * 0.2;
       const ny = portrait ? -0.92 + c.b * 0.18 : -0.85 + c.b * 0.25;
