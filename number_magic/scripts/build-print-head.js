@@ -39,6 +39,11 @@ server.listen(0, async () => {
     await page.goto(`http://localhost:${server.address().port}/drill.html`);
     await page.emulateMedia({ media:'print' });
     await page.addStyleTag({ content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}' });
+    /* 유닛 데이터(data/units/*.js)를 다 싣고 잰다 — 앱·주간 학습지는 유닛의 개념 문장을 머리에 싣는데
+       drill.html 은 유닛을 안 불러서, 없이 재면 머리가 최대 60mm 짧게 잡혔다(MX6 L1 senior: 173 → 실제 약 230mm,
+       주간 학습지 C31 첫 장 넘침). 유닛이 있는 쪽이 머리가 길다 — 드릴 인쇄에는 안전한 쪽. */
+    for(const f of fs.readdirSync(path.join(ROOT, 'data', 'units')).filter(f => /^[A-Za-z0-9-]+\.js$/.test(f)))
+      await page.addScriptTag({ url:'data/units/' + f });
     const r = await page.evaluate(async BANDS => {
       const mm = px => px / (96 / 25.4), out = {};
       let qr = 0;
@@ -93,9 +98,13 @@ server.listen(0, async () => {
             const tp = [...document.querySelectorAll('.nm-print-sheet .nm-w2-page')];
             const cells = document.querySelectorAll('.nm-print-sheet .nm-w2-item-train');
             if(cells.length){
-              cells.forEach(e => { trainMax = Math.max(trainMax || 0, Math.ceil(mm(e.getBoundingClientRect().height))); });
               const g1 = tp[0] && gridOf(tp[0]);
               if(g1) trainFirst = Math.floor(mm(floorOf(tp[0]) - g1.getBoundingClientRect().top));
+              /* 칸은 내용 높이로 풀어 잰다 — 1fr 로 늘어난 칸을 재면 장이 남긴 공간까지 칸 높이로 잡힌다 */
+              document.head.appendChild(st);
+              await new Promise(requestAnimationFrame);
+              cells.forEach(e => { trainMax = Math.max(trainMax || 0, Math.ceil(mm(e.getBoundingClientRect().height))); });
+              st.remove();
             }
           } catch(e){}
           row.push([avail, head, Math.ceil(mm(need + gap) * 10) / 10, full, guideAvail, trainMax, trainFirst]);
