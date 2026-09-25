@@ -47,11 +47,12 @@ server.listen(0, async () => {
       return { capLevel:cap(L), capPrev:prevRamp ? cap(L - 1) : null, isRampOfPrev:prevRamp,
         rampNext:ownRamp, rampShareOf20:rampCount(t, L, 20), capRampNext:cap(ownRamp) };
     }, [t, L]);
-    /* 한 회차(20문항) + 예시 1 + 따라 풀기 3 을 한 레벨에서 뽑는다고 보면 24가 기준이다 */
+    /* 한 회차(20문항) + 예시 1 + 따라 풀기 3 을 한 레벨에서 뽑는다고 보면 24가 기준이다. */
     const need = 24;
-    /* 램프 회차면 앞 레벨이 14+예시1+따라 풀기3=18, 램프 레벨이 6을 낸다. 아니면 한 레벨이 24를 낸다. */
+    /* 실제 램프 계약: 연습 기본14·램프6, 예시는 램프, 따라풀기는 기본2·램프1.
+       따라서 기본 레벨 16, 램프 레벨 8이 필요하다. */
     const verdict = r.isRampOfPrev
-      ? ((r.capPrev < 18 || r.capLevel < 6) ? 'pool-shortage' : 'engine-conflict')
+      ? ((r.capPrev < 16 || r.capLevel < 8) ? 'pool-shortage' : 'engine-conflict')
       : (r.capLevel < need ? 'pool-shortage' : 'engine-conflict');
     rows.push(Object.assign({ course:'C' + c, k, thread:t, level:L, verdict }, r));
   }

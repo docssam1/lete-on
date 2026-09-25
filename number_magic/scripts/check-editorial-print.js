@@ -66,6 +66,24 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('#nm-pe-overlay .nm-w2-item').count(),12);
       assert.equal(await page.locator('#nm-pe-overlay [class*="nm-w2-scratch"]').count(),0);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2),false);
+      if(width===390){
+        const mobile=await page.evaluate(()=>{
+          const outer=document.querySelector('.nm-pe-scale-outer');
+          const wrap=document.querySelector('.nm-pe-scale-wrap');
+          const sheet=document.querySelector('.nm-pe-sheet');
+          const close=document.querySelector('.nm-pe-close');
+          const swap=document.querySelector('.nm-pe-cell-swap');
+          const rect=e=>{const r=e.getBoundingClientRect();return{w:r.width,h:r.height};};
+          return{zoom:Number(wrap.style.zoom),overflowX:getComputedStyle(outer).overflowX,
+            scrollable:outer.scrollWidth>outer.clientWidth+20,sheet:rect(sheet),close:rect(close),swap:rect(swap)};
+        });
+        assert.ok(mobile.zoom>=.77,'mobile preview must preserve a readable paper scale');
+        assert.equal(mobile.overflowX,'auto');
+        assert.equal(mobile.scrollable,true,'paper must pan inside the preview, not shrink to unreadable text');
+        assert.ok(mobile.sheet.w>580,'mobile paper became too small to read');
+        assert.ok(mobile.close.h>=43,'outside-paper controls need a touch-size target');
+        assert.ok(mobile.swap.w>=43&&mobile.swap.h>=43,'inside-paper controls need a touch-size target after zoom');
+      }
       if(out)await page.screenshot({path:path.join(out,'preview-'+width+'.png')});
       await page.locator('#nm-pe-close').click();assert.equal(await page.locator('#nm-pe-overlay').count(),0);
       if(width===1440){

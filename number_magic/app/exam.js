@@ -4999,20 +4999,43 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       return;
     }
     let candidateSeen=new Set(seen);
-    let r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen });
+    let r = null, initialExhausted = null;
+    try {
+      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen });
+    } catch(e) {
+      /* 선택 문장제의 첫 유형이 앞 교과 회차와 풀을 나눠 쓰다 모자라면
+         아래의 명시된 대체 유형을 계속 시도한다. 일반 회차의 고갈은 그대로 실패한다. */
+      if(it.optionalWord && e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED') initialExhausted = e;
+      else throw e;
+    }
     /* 문장제 회차가 비면 같은 회차의 **다른 유형**으로 다시 시도한다(2026-09-07).
        전에는 세션의 첫 드릴 하나만 보고 그것이 문장으로 안 바뀌면 회차를 통째로 뺐다 —
        45개 과정 중 12개에만 문장제가 붙어 있었던 원인이다(실측). 곱셈·나눗셈 드릴이
        두 번째·세 번째 자리에 있는 과정이 많다. */
-    if(it.optionalWord && !r.problems.some(p => p.word) && (it.wordAlts || []).length){
+    if(it.optionalWord && (!r || !r.problems.some(p => p.word)) && (it.wordAlts || []).length){
+      let exhausted = initialExhausted;
       for(const alt of it.wordAlts){
-        const cand = Object.assign({}, it, alt);
+        /* 앞 후보를 그리는 동안 붙은 재현 상태는 그 스레드 전용이다.
+           다음 유형에 넘기면 충분한 풀도 예전 exactSkip/override 자리에서 충돌해
+           거짓 고갈로 멈춘다. 대체 유형은 자기 시드로 처음부터 독립 생성한다. */
+        const cand = Object.assign({}, it, alt, {
+          overrides:null, guideSeed:null, exampleSkip:null, guideSkips:null
+        });
         const altSeen=new Set(seen);
-        const rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen });
+        let rr;
+        try {
+          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen });
+        } catch(e) {
+          if(e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED'){ exhausted = exhausted || e; continue; }
+          throw e;
+        }
         if(rr.problems.some(p => p.word)){ r = rr;candidateSeen=altSeen; break; }
       }
+      /* 후보가 실제로 고갈됐다면 문장제 회차를 조용히 지우지 않는다.
+         모든 허용 후보를 다 써 본 뒤에도 못 만들 때만 명시적으로 실패한다. */
+      if((!r || !r.problems.some(p => p.word)) && exhausted) throw exhausted;
     }
-    if(it.optionalWord && !r.problems.some(p => p.word)){ droppedWord = true; return; }
+    if(it.optionalWord && (!r || !r.problems.some(p => p.word))){ droppedWord = true; return; }
     candidateSeen.forEach(key=>seen.add(key));
     rounds.push(r);
   });
@@ -7105,7 +7128,11 @@ ${answerSectionsHtml}`;
       const availW = outer.clientWidth - 16;
       const sheetW = sheet.offsetWidth || 1;
       let scale = Math.min(1, availW / sheetW);
-      if(scale < 0.28) scale = 0.28;
+      const narrow = window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
+      /* 좁은 화면에서 A4 전체를 한 번에 맞추면 본문이 6px 안팎까지 작아진다.
+         모바일은 읽을 수 있는 배율을 지키고 종이 영역 안에서만 좌우로 이동한다. */
+      if(narrow && scale < 0.78) scale = 0.78;
+      else if(scale < 0.28) scale = 0.28;
       /* transform은 보이기만 줄이고 210mm 레이아웃 폭을 남겨 모바일 문서 폭을
          밀어낸다. Chromium의 zoom은 레이아웃 자체도 함께 축소하므로 미리보기
          종이의 실제 점유 폭과 보이는 폭을 일치시킨다. */

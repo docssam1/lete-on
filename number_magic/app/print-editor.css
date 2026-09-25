@@ -17,4 +17,15 @@ body.nm-pe-modal-open> :not(.nm-pe-overlay){display:none!important}
 .nm-pe-pick-backdrop{position:fixed;inset:0;z-index:9010;background:transparent}.nm-pe-pick-panel{position:fixed;z-index:9011;background:#fff;border:1px solid var(--line,#dce1e8);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.22);width:min(320px,90vw);max-height:min(70vh,520px);overflow:auto;padding:6px}.nm-pe-pick-sec{margin-bottom:6px}.nm-pe-pick-sec-h{font-size:11px;font-weight:900;color:#245b60;padding:6px 8px 2px}.nm-pe-pick-group-h{font-size:10.5px;font-weight:800;color:#52666b;padding:5px 8px 1px}.nm-pe-pick-item{display:flex;align-items:baseline;gap:6px;width:100%;text-align:left;border:0;background:none;border-radius:8px;padding:6px 8px;font-size:12.5px;color:#20343b;cursor:pointer}.nm-pe-pick-item:hover{background:#f3f6f6}.nm-pe-pick-item b{color:#245b60;font-weight:900;flex:none}.nm-pe-pick-item span{color:#52666b;word-break:keep-all}.nm-pe-pick-empty{padding:10px;font-size:12px;color:#52666b;text-align:center}
 .nm-pe-pick-item:disabled{opacity:.42;cursor:not-allowed;background:#f6f7f7}
 [data-nm-unique-error],[data-nm-swap-error]{margin:12px;padding:12px 14px;border-left:3px solid #b54a32;background:#fff5f2;color:#73301f;font-size:13px;line-height:1.6}
-@media(max-width:640px){.nm-pe-title{font-size:13px}.nm-pe-round-actions{width:100%;margin-left:0}.nm-pe-body{padding:12px 4px 40px}.nm-pe-toolbar{padding:8px}.nm-pe-btn{padding:7px 10px}}
+@media(max-width:640px){
+  .nm-pe-title{font-size:13px}
+  .nm-pe-round-actions{width:100%;margin-left:0}
+  .nm-pe-body{padding:12px 4px 40px;justify-content:flex-start}
+  .nm-pe-scale-outer{justify-content:flex-start;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-gutter:stable}
+  .nm-pe-toolbar{padding:8px}
+  .nm-pe-close,.nm-pe-copy-btn,.nm-pe-btn,.nm-pe-seg button{min-height:44px;padding:9px 12px}
+  /* 아래 조작부는 0.78배 종이 미리보기 안에 있으므로 원본 크기를 더 크게 잡는다. */
+  .nm-pe-mini-btn,.nm-pe-guide-reroll,.nm-pe-remove-btn,.nm-pe-lvl-sel{min-height:56px}
+  .nm-pe-remove-btn{width:56px}
+  .nm-pe-cell-swap{width:56px;height:56px;font-size:20px}
+}

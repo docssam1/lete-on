@@ -39,15 +39,8 @@ const ROOT = path.resolve(__dirname, '..');
 const PORT = process.env.NM_CHECK_PORT || 8791;
 const ONLY = process.argv.slice(2).map(s => s.toUpperCase());
 
-/* Playwright는 이 저장소에 없을 수도 있다(로컬 전역 설치를 씀) — 경로를 넓게 찾는다. */
-function loadPlaywright(){
-  const cands = ['playwright', '/opt/node22/lib/node_modules/playwright'];
-  for(const c of cands){
-    try { return require(c); } catch(e){}
-  }
-  console.error('playwright를 찾지 못했습니다. `npm i -D playwright` 후 다시 실행하세요.');
-  process.exit(2);
-}
+/* 설치 위치와 브라우저 경로는 다른 검사기와 같은 공용 로더에서 찾는다. */
+function loadPlaywright(){ return require('./lib/playwright'); }
 
 function serve(){
   return new Promise((resolve, reject) => {
@@ -67,9 +60,7 @@ function serve(){
 (async () => {
   const { chromium } = loadPlaywright();
   const server = await serve();
-  const browser = await chromium.launch({
-    executablePath: process.env.NM_CHROMIUM || '/opt/pw-browsers/chromium'
-  });
+  const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const pageErrors = [];
   page.on('pageerror', e => pageErrors.push(e.message));
