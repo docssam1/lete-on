@@ -395,6 +395,8 @@ export async function mountTitle3D(container, opts){
   /* 버튼의 왼쪽 위 좌표 — 모드·소품은 물건 발밑, 이어서 모험은 문 가운데 */
   function labelPos(o, ax, ay, s){
     if(o.place === 'center' || o.place === 'top') return [ax - s[0] / 2, ay - s[1] / 2];
+    if(o.place === 'left') return [ax - s[0] - 4, ay - s[1] / 2];
+    if(o.place === 'right') return [ax + 4, ay - s[1] / 2];
     return [ax - s[0] / 2, ay + 4];
   }
 
@@ -409,11 +411,15 @@ export async function mountTitle3D(container, opts){
     });
     /* 겹치면 아래 것을 내린다 — 물건 발밑에 붙는 구도라 거의 안 겹치지만 좁은 폭·긴 번역에 대비 */
     rects.sort((a, b) => a.y - b.y);
-    for(let pass = 0; pass < 3; pass++){
+    for(let pass = 0; pass < 6; pass++){
       for(let i = 0; i < rects.length; i++) for(let j = i + 1; j < rects.length; j++){
         const a = rects[i], b = rects[j];
         if(a.x < b.x + b.w + 4 && b.x < a.x + a.w + 4 && a.y < b.y + b.h + 4 && b.y < a.y + a.h + 4){
-          const ov = a.y + a.h + 4 - b.y; if(ov > 0) b.y += ov;
+          /* 같은 줄이면 옆으로 벌리고, 아니면 아래 것을 내린다 */
+          if(Math.abs(a.y - b.y) < Math.min(a.h, b.h) * 0.5){
+            const L0 = a.x < b.x ? a : b, R0 = L0 === a ? b : a, ov = L0.x + L0.w + 6 - R0.x;
+            if(ov > 0){ L0.x -= ov / 2; R0.x += ov / 2; }
+          } else { const ov = a.y + a.h + 4 - b.y; if(ov > 0) b.y += ov; }
         }
       }
     }
@@ -1008,10 +1014,10 @@ function buildWorld(k, choices, playerCanvas){
       pos:{ continue:[0, -2.6, 1], diag:[-6.9, -3.1, 0.95], game:[6.8, -2.9, 0.95], sheet:[-5.7, 3.3, 0.95], road:[5.8, 3.0, 0.95],
         story:[-3.0, 5.1, 0.95], dex:[-1.0, 5.3, 0.95], hist:[1.0, 5.3, 0.95], magazine:[3.0, 5.1, 0.95] },
       player:[-2.55, -1.4, 1], plaza:[0, -0.8, 3.6, 2.8], posts:[[-1.3, 1.0], [1.3, 1.0], [-1.9, 3.3], [1.9, 3.3]], motes:[9.5, 4.5, 6.5, 0, 0.6], place:{} },
-    wide:{ pitch:34, fov:30, dist:26, target:[0, 1, 0.5], island:[11.8, 6.6, 0, 0.5],
-      pos:{ continue:[0, -2.2, 1], diag:[-8.4, -1.3, 0.95], sheet:[-5.0, 1.6, 0.95], road:[5.0, 1.6, 0.95], game:[8.4, -1.3, 0.95],
-        story:[-2.7, 3.9, 0.85], dex:[-0.9, 4.1, 0.85], hist:[0.9, 4.1, 0.85], magazine:[2.7, 3.9, 0.85] },
-      player:[-2.6, -1.0, 1], plaza:[0, -0.6, 3.6, 2.6], posts:[[-1.3, 1.2], [1.3, 1.2], [-6.8, 3.5], [6.8, 3.5]], motes:[11, 4, 5.5, 0, 0.5], place:{} },
+    wide:{ pitch:34, fov:30, dist:26, target:[0, 1, 0.5], island:[13.2, 6.2, 0, 0.8],
+      pos:{ continue:[0, -2.0, 1], diag:[-10.2, 0.2, 0.9], sheet:[-6.2, 0.9, 0.9], road:[6.2, 0.9, 0.9], game:[10.2, 0.2, 0.9],
+        story:[-4.2, 4.3, 0.85], dex:[-1.4, 4.5, 0.85], hist:[1.4, 4.5, 0.85], magazine:[4.2, 4.3, 0.85] },
+      player:[-2.6, -1.0, 1], plaza:[0, -0.6, 3.6, 2.6], posts:[[-1.3, 1.2], [1.3, 1.2], [-8.2, 3.0], [8.2, 3.0]], motes:[11, 4, 5.5, 0, 0.5], place:{} },
     portrait:{ pitch:46, fov:40, dist:24, target:[0, 0.5, 0.8], island:[5.4, 11.8, 0, 0.6],
       pos:{ continue:[-0.55, -8.0, 1.12], diag:[-2.3, -2.0, 0.72], game:[2.35, -2.0, 0.72], sheet:[-2.3, 3.0, 0.72], road:[2.35, 3.0, 0.72],
         story:[-3.15, 7.8, 0.66], dex:[-1.05, 7.8, 0.66], hist:[1.05, 7.8, 0.66], magazine:[3.15, 7.8, 0.66] },
@@ -1033,7 +1039,8 @@ function buildWorld(k, choices, playerCanvas){
       o.baseScale = p[2];
       o.holder.updateMatrixWorld(true);
       o.place = (L.place && L.place[key]) || o.def.place || 'below';
-      const anc = o.place === 'below' && o.def.anchorBelow ? o.def.anchorBelow : o.place === 'top' && o.def.anchorTop ? o.def.anchorTop : o.def.anchor;
+      const anc = o.place === 'left' ? V3(-o.def.w * 0.42, o.def.h * 0.3, 0) : o.place === 'right' ? V3(o.def.w * 0.42, o.def.h * 0.3, 0)
+        : o.place === 'below' && o.def.anchorBelow ? o.def.anchorBelow : o.place === 'top' && o.def.anchorTop ? o.def.anchorTop : o.def.anchor;
       o.anchorW.copy(anc).multiplyScalar(p[2]).add(o.holder.position);
       const hw = o.def.w / 2 * p[2], hh = o.def.h * p[2], hd = o.def.d / 2 * p[2], c = o.holder.position;
       o.box = [V3(c.x - hw, 0, c.z + hd), V3(c.x + hw, 0, c.z + hd), V3(c.x - hw, hh, c.z - hd), V3(c.x + hw, hh, c.z - hd), V3(c.x - hw, hh, c.z + hd), V3(c.x + hw, hh, c.z + hd)];

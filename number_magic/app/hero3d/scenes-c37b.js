@@ -147,7 +147,7 @@ export const SCENES_C37B = {
     /* 움직임: a 가 작아졌다 커졌다(꼭짓점은 그대로) → 파란 점 (4, 11)을 지나는 a = 2 에서 멈춘다 → 식 카드가 차례로 톡 */
     const y0 = [c1, c2, c3].map(c => c.position.y), qy = pq.position.y, vy = pv.position.y;
     k.onFrame(t => { const p = cyc(t, 9);
-      const a = 2 - 1.3 * seg(p, 0.1, 0.28) + 2.2 * seg(p, 0.32, 0.5) - 0.9 * seg(p, 0.52, 0.64);
+      const a = 2 - 1.3 * seg(p, 0.1, 0.28) + 1.6 * seg(p, 0.32, 0.5) - 0.3 * seg(p, 0.52, 0.64);
       para.scale.z = a / 2;
       pv.position.y = vy + 0.18 * hop(p, 0.02, 0.1);
       pq.position.y = qy + 0.22 * hop(p, 0.64, 0.74);
