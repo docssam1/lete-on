@@ -141,7 +141,7 @@ window.NM_STAGES = [
     name:{ko:'중학교 — 기호가 바뀌는 자리',en:'Middle School — where the symbols change',zh:'初中——符号改变的地方'},
     band:{ko:'중학교 1~3학년',en:'Grades 7–9',zh:'初中一~三年级'},
     chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W8-6','W8-7','W8-8','W9-1','W9-2','W9-3','W9-4','W9-5','W10-1','LAB-NUMLINE','W10-2','W10-3','W10-4','W10-5','W10-6','W10-7'],
-    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:113,
+    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:119,
     learn:{
       ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 연립방정식과 일차부등식, 일차함수, 경우의 수, 제곱근, 인수분해와 이차방정식, 이차함수, 산포도, 사분위수·상자그림, 산점도·상관관계.',
       en:'Integers and rationals, signs, algebraic expressions, equations and proportion, exponents and polynomials, systems and inequalities, functions, counting, roots, factorisation and quadratics, dispersion, quartiles and box plots, and scatter plots and correlation.',
@@ -155,7 +155,7 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~37 · 주 2회 기준 79주(주 1회 113주) · 실험실 2',en:'Courses 29–37 · 79 weeks at two sheets a week (113 at one) · 2 labs',zh:'课程29~37 · 每周2次约79周(每周1次113周) · 2个实验室'}
+    meta:{ko:'과정 29~37 · 주 2회 기준 83주(주 1회 119주) · 실험실 2',en:'Courses 29–37 · 83 weeks at two sheets a week (119 at one) · 2 labs',zh:'课程29~37 · 每周2次约83周(每周1次119周) · 2个实验室'}
   },
   {
     key:'high', icon:'∫', accent:'#0E2C57', status:'partial',

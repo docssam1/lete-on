@@ -19,7 +19,7 @@ w.window = w;
 w.document = {getElementById:()=>({}),querySelector:()=>null,querySelectorAll:()=>[],head:{appendChild(){}},body:{appendChild(){}}};
 w.localStorage = {getItem:k=>store.has(k)?store.get(k):null,setItem:(k,v)=>store.set(k,String(v))};
 vm.createContext(w);
-for(const file of ['engine/rng.js','engine/threads/mid2.js','data/threads.js','data/middle-concepts.js','data/middle-pacing.js','app/exam.js']) {
+for(const file of ['engine/rng.js','engine/threads/mid2.js','data/threads.js','data/middle-concepts.js','data/middle-pacing.js','data/wordable.js','data/courses.js','app/exam.js']) {
   vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),w,{filename:file});
 }
 
@@ -91,6 +91,10 @@ const levels=w.NM_THREADS.MD11.levels;
 assert.deepEqual(plain(levels.slice(-2).map(v=>v.params.mode)),['solveBox','formulaSub']);
 assert.equal(w.NM_MIDDLE_CONCEPTS.MD11.source,'2-1A:66,70,80-81,106-108');
 assert(w.NM_MIDDLE_CONCEPTS.MD11.steps.join(' ').includes('1/2'));
-const extra=w.NM_MIDDLE_PACING.grades[2].supplementary.filter(v=>v.t==='MD11');
-assert.deepEqual(plain(extra.map(v=>[v.lv,v.n])),[[4,12],[5,24]]);
+/* 2026-09-25 통합: 옛 권장 편성의 '보충' 목록 대신 정규 과정 C32 회차에 실린다 —
+   L4 는 교과(12문항 이상), L5(넓이·부피 공식 대입)는 적용 칸. 중등 진도 보기도 같은 회차를 보여 준다. */
+const c32=w.NM_COURSES.C32.sessions.filter(s=>!s.test);
+assert(c32.some(s=>s.school.some(d=>d.t==='MD11'&&d.lv===4&&d.count>=12)),'C32 must schedule MD11 L4 with at least 12 items');
+assert(c32.some(s=>s.application.some(d=>d.t==='MD11'&&d.lv===5&&d.count>=6)),'C32 must schedule MD11 L5 as application');
+assert(w.NM_MIDDLE_PACING.grades[2].sessions.some(s=>s.blocks.some(b=>b.t==='MD11'&&b.lv===5)),'middle view must show MD11 L5');
 console.log('PASS learner-fit: middle2-1 Korean instructions, explicit formulas, no geometry inference, integer three-field response.');

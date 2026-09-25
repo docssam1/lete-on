@@ -116,13 +116,14 @@ for (const test of cases) {
 }
 
 const stage = w.NM_MIDDLE_PACING.grades[3];
-const session = stage.sessions.find(item => item.id === 'M3-S12');
-assert(session, 'missing M3-S12');
-assert(session.blocks.some(item => item.t === 'MD78' && item.lv === 4 && item.n === 12));
-assert(session.blocks.some(item => item.t === 'MD79' && item.lv === 4 && item.n === 12));
-assert(session.blocks.some(item => item.kind === 'drawing' && item.mode === 'quadratic'));
-assert(stage.supplementary.some(item => item.t === 'MD78' && item.lv === 3 && item.n === 12));
-assert(stage.supplementary.some(item => item.t === 'MD79' && item.lv === 3 && item.n === 12));
+/* 2026-09-25 통합: 중3 보기는 정규 과정 C35~C37 에서 계산된다. 옛 번호 M3-S12 는 MD78 L4 회차로 이어지고,
+   L3·L4 는 교과로(12문항 이상), 이차함수 그래프 직접 그리기는 적용 칸에 실린다. */
+const session = w.NM_MIDDLE_PACING.getSession(3, 'M3-S12');
+assert(session && session.blocks.some(item => item.t === 'MD78' && item.lv === 4), 'legacy M3-S12 must open MD78 L4');
+const blocks3 = stage.sessions.flatMap(s => s.blocks);
+for (const [t, lv] of [['MD78', 4], ['MD79', 4], ['MD78', 3], ['MD79', 3]])
+  assert(blocks3.some(item => item.t === t && item.lv === lv && item.n >= 12), `${t} L${lv} must be scheduled with at least 12 items`);
+assert(blocks3.some(item => item.kind === 'drawing' && item.mode === 'quadratic'), 'quadratic drawing must be scheduled');
 const course37 = w.NM_COURSE_SPEC.find(item => item.id === 37);
 assert(course37.drills.includes('MD78@4') && course37.drills.includes('MD79@4'));
 assert.equal(w.NM_THREADS.MD78.levels[3].params.mode, 'symmetryTable');

@@ -2495,11 +2495,12 @@ function middlePacingHtml(tier){
     return `${th?L(th.name):b.t} · ${lv?L(lv.label):'L'+b.lv} ${b.n}문항`;
   };
   return `<details class="nm-middle-pacing" id="middlePacing${grade}">
-    <summary>${esc(plan.title)}<span>주 2회 · 7주 · 14회 권장안 펼치기</span></summary>
+    <summary>${esc(plan.title)}<span>주 2회 · ${plan.weeks}주 · ${plan.sessions.length}회 펼치기</span></summary>
     <p class="nm-mp-intro">${esc(plan.scope)}.<br>
-      한 번에 관련 개념 1~3개를 묶습니다. <strong>쉬운 갈래 12문항 · 핵심 연습 24문항 · 집중 반복 36문항</strong>으로 충분히 연습합니다.
-      시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 7주 진도에 맞추려고 이해를 건너뛰지 마세요.
-      디딤돌의 개념 순서를 참고한 자체 편성으로, 교재의 모든 소유형이나 2학기 전체를 마쳤다는 뜻은 아닙니다.</p>
+      <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
+      위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다. 한 회는 하루 약 30분 —
+      <strong>교과 연산 → 창의 연산 → 적용</strong> 순서이고, 쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.
+      시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</p>
     <ol class="nm-mp-sessions">${plan.sessions.map(s=>{
       const count=s.blocks.reduce((n,b)=>n+b.n,0);
       const draw=s.blocks.filter(b=>b.kind==='drawing').reduce((n,b)=>n+b.n,0);
@@ -2513,7 +2514,7 @@ function middlePacingHtml(tier){
     }).join('')}</ol>
     <p class="nm-mp-notes">${plan.notes.map(esc).join('<br>')}
       ${(plan.supplementary||[]).map(b=>{const th=(window.NM_THREADS||{})[b.t];const lv=th&&(th.levels||[]).find(l=>l.id===b.lv);return `<br>추천 보충: ${esc(th?L(th.name):b.t)} · ${esc(lv?L(lv.label):'L'+b.lv)} — ${esc(b.reason)}`;}).join('')}
-      <br>기존 과정의 회차와 학습 기록은 유지됩니다. 이 표는 자동 진급·완주 판정이 아닙니다.</p>
+      학습 기록은 정규 과정 회차에 그대로 남습니다. 이 표는 자동 진급·완주 판정이 아닙니다.</p>
   </details>`;
 }
 

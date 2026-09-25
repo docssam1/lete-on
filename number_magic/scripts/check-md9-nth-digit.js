@@ -122,8 +122,9 @@ for (const [params, tex, answer] of oldCases) {
 /* 앱의 찾기·권장 진도·정규 과정 세 층에 모두 연결되어야 한다. */
 const topic = w.NM_DRILL_TOPICS.flatMap(category => category.subs).find(item => item.thread === 'MD9' && item.level === 5);
 assert(topic && topic.label.includes('n번째'), 'drill topic missing MD9 L5');
-const pacingBlocks = w.NM_MIDDLE_PACING.grades[2].sessions.flatMap(session => session.blocks);
-assert(pacingBlocks.some(item => item.t === 'MD9' && item.lv === 5 && item.n === 24), 'middle pacing missing 24-question MD9 L5 block');
+/* 2026-09-25 통합: MD9 는 정규 과정 C31(중1)에 있다 — 보기는 그 회차를 보여 준다(12문항 이상). */
+const pacingBlocks = Object.values(w.NM_MIDDLE_PACING.grades).flatMap(g => g.sessions.flatMap(session => session.blocks));
+assert(pacingBlocks.some(item => item.t === 'MD9' && item.lv === 5 && item.n >= 12), 'middle view missing MD9 L5 block');
 const course31 = w.NM_COURSE_SPEC.find(course => course.id === 31);
 assert(course31.drills.includes('MD9@5'), 'course31 missing MD9@5');
 assert.equal(

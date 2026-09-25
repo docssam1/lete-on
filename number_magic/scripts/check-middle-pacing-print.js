@@ -57,7 +57,9 @@ function inspectSheet(){
     const style=await page.addStyleTag({content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}'});
     const targets=await page.evaluate(()=>Object.values(NM_MIDDLE_PACING.grades).flatMap(p=>p.sessions.map(s=>({grade:p.grade,id:s.id,
       questions:s.blocks.reduce((n,b)=>n+b.n,0),numericKeys:s.blocks.filter(b=>b.kind!=='drawing').reduce((n,b)=>n+b.n,0),drawingKeys:s.blocks.filter(b=>b.kind==='drawing').reduce((n,b)=>n+b.n,0)}))));
-    assert.equal(targets.length,42);
+    /* 2026-09-25: 보기는 정규 과정에서 계산 — 회차 수도 데이터에서(옛 판은 42 고정) */
+    assert.equal(targets.length,await page.evaluate(()=>Object.values(NM_MIDDLE_PACING.grades).reduce((n,p)=>n+p.sessions.length,0)));
+    assert(targets.length>0,'중등 진도 보기가 비었다 — 이 페이지가 data/courses.js 를 싣는지 볼 것');
     for(const target of targets.filter(()=>!process.env.NM_PACING_UI_ONLY)){
       try{
         await page.evaluate(async target=>{
@@ -87,8 +89,9 @@ function inspectSheet(){
         if(await page.locator('#townCourseRoad').isVisible())await page.locator('#townCourseRoad').click();
         await page.waitForSelector('#middlePacing1');
         await page.locator('#middlePacing1 summary').click();
-        const target=targets.find(t=>t.id==='M1-S13');
-        await page.locator('[data-middle-grade="1"][data-middle-session="M1-S13"]').click();
+        /* 그리기가 있는 첫 회차(옛 판의 M1-S13 반비례 자리) */
+        const target=targets.find(t=>t.grade===1&&t.drawingKeys);
+        await page.locator(`[data-middle-grade="1"][data-middle-session="${target.id}"]`).click();
         await page.waitForSelector('#nm-pe-overlay');
         assert.equal(await page.locator('#nm-pe-overlay').evaluate(e=>getComputedStyle(e).position),'fixed');
         assert.equal(await page.locator('#nm-pe-overlay .nm-w2-item').count(),target.questions);

@@ -3506,23 +3506,29 @@ const ELEM_TIERS = { level0:1, level1:1, level2:1, level3:1, challenge:1 };
    그게 없으면 예전 drills·creative 그대로(창의 칸 = creTag)로 돌아간다.
    seed(prefix, i): 교과는 ('', drills 자리), 창의 칸 출신은 ('cr', creative 자리). */
 function sessionRoleItems(course, session, seed){
+  /* 2026-09-25 정본: 각 칸의 문항 수는 courses.js planCounts 가 정한 count(30분 분량·난이도별)를 그대로 쓴다.
+     적용 칸의 그래프 직접 그리기(kind 'drawing')는 renderDrawingRound 로 간다. */
   const thNm = t => { const th = (window.NM_THREADS||{})[t]; return (th && th.name && (th.name.ko||t)) || t; };
   const drills = session.drills || [], cre = session.creative || [];
   const at = (arr, d) => arr.indexOf(d) >= 0 ? arr.indexOf(d) : arr.findIndex(x => x.t === d.t && x.lv === d.lv);
-  const drillItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n, seed:seed('', at(drills, d)),
+  const drillItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n, count:d.count || undefined, seed:seed('', at(drills, d)),
     topicName:tag ? tag + thNm(d.t) : undefined });
-  const creItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n || 4, count:d.n || 4, creative:true,
-    topicName:tag + thNm(d.t), seed:seed('cr', at(cre, d)) });
+  const creItem = (d, tag) => ({ thread:d.t, level:d.lv, n:d.n || 4, count:d.count || d.n || 4, creative:true,
+    topicName:tag + thNm(d.t), seed:seed('cr', Math.max(0, at(cre, d))) });
   if(!session.school){
     return { school:drills.map(d => drillItem(d)), strategy:cre.filter(d => (window.NM_THREADS||{})[d.t]).map(d => creItem(d, creTag(course.tier))),
       application:[], stretch:[] };
   }
   const appTag = lk('적용 · ', 'Applying · ', '应用 · ');
+  const reviewTag = lk('복습 · ', 'Review · ', '复习 · ');
   return {
-    school: session.school.map(d => drillItem(d)),
+    school: session.school.map(d => drillItem(d, d.review ? reviewTag : null)),
     strategy: ((session.strategy && session.strategy.practice) || []).map(d => creItem(d, lk('창의 연산 · ', 'Creative · ', '创意运算 · '))),
-    application: (session.application || []).filter(a => a.from !== 'school').map(a =>
-      a.from === 'creative' ? creItem(a, appTag) : drillItem(a, appTag)),
+    application: (session.application || []).filter(a => a.from !== 'school').map((a, ai) => {
+      if(a.kind === 'drawing') return { kind:'drawing', mode:a.mode, thread:a.t, level:a.lv, count:a.count || 6, n:a.count || 6,
+        topicName:(a.title && (a.title.ko || a.title)) || thNm(a.t), seed:seed('dr', ai) };
+      return a.from === 'creative' ? creItem(a, appTag) : drillItem(a, appTag);
+    }),
     stretch: (session.stretch || []).map(d => creItem(d, lk('심화 · ', 'Stretch · ', '拓展 · ')))
   };
 }
@@ -6659,7 +6665,7 @@ ${round.html}
         alts.push({ thread:d.t, level:d.lv, topicName:'문장제 · ' + thName(d.t) }); };
       session.drills.slice(1).forEach(push);
       course.sessions.forEach(s => { if(s !== session && !s.test) (s.drills||[]).forEach(push); });
-      items.push({ thread:d0.t, level:d0.lv, n:6, count:6, wordType:'all', optionalWord:true,
+      items.push({ thread:d0.t, level:d0.lv, n:wordItem.count || 6, count:wordItem.count || 6, wordType:'all', optionalWord:true,
         seed:seedOf(seedWeek + 'wp', 0), topicName:'문장제 · ' + thName(d0.t), wordAlts:alts });
     }
     items.push(...R.stretch);
@@ -6797,7 +6803,7 @@ ${answerSectionsHtml}`;
     const session=window.NM_MIDDLE_PACING && window.NM_MIDDLE_PACING.getSession(grade,sessionId);
     if(!session) return;
     const items=this.middlePacingItems(grade,sessionId);
-    this.openPrintEditor(items,`중${grade}-1 ${session.week}주 ${session.day}회 · ${session.title}`,{pacing:true,count:12});
+    this.openPrintEditor(items,`중${grade} ${session.week}주 ${session.day}회 · ${session.title}`,{pacing:true,count:12});
   },
   openPrintEditor(items, label, opts){
     opts = opts || {};
