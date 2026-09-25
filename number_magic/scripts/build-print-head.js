@@ -160,7 +160,10 @@ server.listen(0, async () => {
               document.head.appendChild(st); await new Promise(requestAnimationFrame);
               const grid = document.querySelector('.nm-print-sheet .nm-w2-grid');
               const gap = parseFloat(getComputedStyle(grid).rowGap) || 0;
-              document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item-word').forEach(e => { need = Math.max(need || 0, Math.ceil(mm(e.getBoundingClientRect().height + gap) * 10) / 10); });
+              /* 풀이 칸(.nm-w2-story-work)은 줄어들도록 설계됐다(min-height:0) — 카드가 꼭 필요한 높이는 그것을 뺀 높이 */
+              document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item-word').forEach(e => {
+                const w = e.querySelector('.nm-w2-story-work'), wh = w ? w.getBoundingClientRect().height : 0;
+                need = Math.max(need || 0, Math.ceil(mm(e.getBoundingClientRect().height - wh + gap) * 10) / 10); });
               st.remove();
             }
             row.push(need);
