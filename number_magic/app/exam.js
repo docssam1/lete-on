@@ -3679,13 +3679,15 @@ function classifyRoundLayout(problems, threadId, young, creative){
   /* 저학년(young)은 글씨가 1.28배라 6문항이면 줄이 겹친다 — 4문항/쪽(2026-09-17) */
   if(!nonWord.length && young) return {type:'word', cols:1, rows:4, perPage:4, flow:'row', firstRows:2, pitch:62};
   if(!nonWord.length) return {type:'word', cols:1, rows:6, perPage:6, flow:'row', firstRows:3, pitch:42};
-  /* 세로 나눗셈 상자는 칸이 크다 — 2열 4행(2026-09-19) */
+  /* 세로 나눗셈 상자는 칸이 크다. 두 자리 몫은 빼는 줄이 두 쌍이라 주간 학습지의
+     머리·재도전 띠까지 함께 놓으면 3열×4행에서 칸을 넘는다(DV5 L2 실측, 2026-09-26).
+     글씨를 줄이지 않고 한 쪽 최소 6문항을 지키도록 2열×3행으로 둔다. */
   if(problems.some(p => p.divBox)){
     /* 필산 줄은 몫의 자릿수만큼 는다 — 상자 키에 맞춰 한 쪽에 담는 수를 줄인다(2026-09-19) */
     let qd = 1;
     problems.forEach(p => { if(p.divBox) qd = Math.max(qd, String(p.divBox.q).length); });
     if(qd >= 3) return {type:'visual', cols:3, rows:3, perPage:9,  flow:'row', firstRows:1, pitch:76};
-    if(qd === 2) return {type:'visual', cols:3, rows:4, perPage:12, flow:'row', firstRows:2, pitch:60};
+    if(qd === 2) return {type:'visual', cols:2, rows:3, perPage:6, flow:'row', firstRows:2, pitch:76};
     return              {type:'visual', cols:3, rows:5, perPage:15, flow:'row', firstRows:2, pitch:46};
   }
   const withTex = nonWord.filter(p => p.tex);
@@ -4873,6 +4875,12 @@ function renderRoundPagesBody(item, opts){
   // 유리화는 분자/분모 쓰기 상자가 두 층이다. 짧은 문자열 길이만으로 높이를 판정하지 않는다.
   if(item.thread==='MD83'&&item.level===5&&!['solve','train','word'].includes(layout.type)){
     Object.assign(layout,{cols:2,rows:5,perPage:10,pitch:40});
+  }
+  // MD58 L3은 분자·분모 쓰기 상자가 두 층인 유리화 극한이다. 문자열 길이 판정으로
+  // 7행을 잡으면 일부 시드가 칸보다 5px 높다. 최대 6행으로 두되 2열을 유지해
+  // 한 쪽 12문항과 최소 6문항 규칙을 함께 지킨다(18·24문항 실측, 2026-09-26).
+  if(item.thread==='MD58'&&item.level===3&&!['solve','train','word','visual'].includes(layout.type)){
+    Object.assign(layout,{cols:2,rows:6,perPage:12,firstRows:3,pitch:42});
   }
   /* 장마다 줄 수를 **잰 높이**로 줄인다(2026-09-25, data/print-head.js — scripts/build-print-head.js).
      판정별 고정표의 줄 수가 그 레벨 문항의 실제 높이보다 많으면 1fr 로 나눈 줄이 내용보다 낮아져
