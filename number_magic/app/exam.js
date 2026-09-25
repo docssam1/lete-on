@@ -4702,26 +4702,37 @@ function renderMagicNotePage(item, opts){
   const foot = `<div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>`;
   /* 단계가 셋이면 두 장(①②는 판과 함께, ③은 규칙·체크와 함께) — 한 장에 다 넣으면 ②가 잘렸다(측정). */
   const stageParts = stageHtml.length ? stageHtml : [];
-  /* 매거진형(교과서 말 상자·큰 제목)이 되면서 두 단계도 한 장에 들지 않는다(226개 중 49개 넘침, 2026-09-25) —
-     두 단계 이상이면 두 장: 첫 장에 앞 단계(셋이면 ①②, 둘이면 ①), 둘째 장에 나머지 + 규칙·체크·생각해 보기. */
-  const two = stageParts.length >= 2;
-  const split = stageParts.length >= 3 ? 2 : 1;
-  const p1 = `<div class="nm-w2-page nm-w2-page-magic">
+  const tailHtml = ruleHtml + fillsHtml + openHtml;
+  /* 장 나누기 — 잰 높이가 있으면(data/print-head.js 의 NM_PRINT_MAGIC, scripts/build-print-head.js) 그것으로 채운다.
+     매거진형(교과서 말 상자·큰 제목)은 저학년 큰 글씨에서 두 단계도 첫 장에 들지 않았다(C20 C-22 ①② 226mm,
+     주간 학습지 +102px). 잰 값: 밴드별 [판 높이, [단계 높이…], 규칙·체크 높이, 첫 장 쓸 높이, 다음 장 쓸 높이] mm.
+     없으면 예전 규칙: 두 단계 이상이면 두 장(셋이면 ①②|③, 둘이면 ①|②) — 226개 중 49개가 한 장에 넘쳤다. */
+  const measured = ((window.NM_PRINT_MAGIC || {})[item.magicUnit] || [])[{ young:0, mid:1, senior:2 }[opts.band || 'mid']];
+  let groups;
+  if(measured && measured[1] && measured[1].length === stageParts.length){
+    const fsR = ({ s:0.88, m:1, l:1.16, xl:1.34 })[getFontSize()] || 1;
+    const [boardH, stageHs, tailH, availFirst, availNext] = measured;
+    groups = [[]]; let used = boardH * fsR, cap = availFirst;
+    stageHs.forEach((h, i) => {
+      if(groups[groups.length-1].length && used + h * fsR > cap - 3){ groups.push([]); used = 0; cap = availNext; }
+      groups[groups.length-1].push(i); used += h * fsR;
+    });
+    /* 규칙·체크·생각해 보기가 남은 자리에 안 들면 제 장으로 */
+    groups.tail = used + tailH * fsR > cap - 3 ? groups.length : groups.length - 1;
+    if(groups.tail === groups.length) groups.push([]);
+  } else {
+    const n = stageParts.length, split = n >= 3 ? 2 : 1;
+    groups = n >= 2 ? [[...Array(split).keys()], [...Array(n - split).keys()].map(i => i + split)] : [[...Array(n).keys()]];
+    groups.tail = groups.length - 1;
+  }
+  const html = groups.map((g, pi) => `<div class="nm-w2-page nm-w2-page-magic">
   ${wm}
-  ${w2HeadHtml(headItem, code, two ? '1/2' : '1/1', null, {roundNo: opts.roundNo, name: opts.name, first: true})}
-  ${boardHtml}
-  <div class="nm-mn-stages">${(two ? stageParts.slice(0, split) : stageParts).join('')}</div>
-  ${two ? '' : ruleHtml + fillsHtml + openHtml}
+  ${w2HeadHtml(headItem, code, (pi + 1) + '/' + groups.length, null, {roundNo: opts.roundNo, name: opts.name, first: pi === 0})}
+  ${pi === 0 ? boardHtml : ''}
+  ${g.length ? `<div class="nm-mn-stages"${g[0] ? ` style="counter-reset:mzc ${g[0]}"` : ''}>${g.map(i => stageParts[i]).join('')}</div>` : ''}
+  ${pi === groups.tail ? tailHtml : ''}
   ${foot}
-</div>`;
-  const p2 = two ? `<div class="nm-w2-page nm-w2-page-magic">
-  ${wm}
-  ${w2HeadHtml(headItem, code, '2/2', null, {roundNo: opts.roundNo, name: opts.name, first: false})}
-  <div class="nm-mn-stages">${stageParts.slice(split).join('')}</div>
-  ${ruleHtml}${fillsHtml}${openHtml}
-  ${foot}
-</div>` : '';
-  const html = p1 + p2;
+</div>`).join('');
   /* 정답지: 핵심 체크의 답만 (가)(나)(다)로 */
   /* 핵심 체크 정답지(2026-09-20) — 전에는 무조건 answer.join(', ') 이라 분수 답이
      "1, 2", 근호 답이 "3, 2" 로 찍혔다(정답 1/2 · 3√2). 문항 식의 빈칸 모양을 보고
@@ -4872,7 +4883,13 @@ function renderRoundPagesBody(item, opts){
     : (headRow[{ young:0, mid:1, senior:2 }[band]] || headRow.find(Boolean)));
   const fsR = ({ s:0.88, m:1, l:1.16, xl:1.34 })[getFontSize()] || 1;
   /* 잰 값은 한 시드의 최댓값 — 다른 시드의 더 긴 문항을 위해 3mm 여유 */
-  const rowNeed = headBand && headBand[2] ? headBand[2] * fsR + 3 : 0;
+  /* 여러 유형을 섞은 회차(단계 점검 threadMix)는 칸 높이를 섞인 유형 중 가장 큰 것으로 — 첫 유형 값만 쓰면
+     더 긴 유형의 문항이 칸을 넘었다(C21 DV20 점검 +10mm, C3 NS1 점검 +4mm). */
+  const mixNeed = Math.max(0, ...(item.threadMix || []).map(m => {
+    const row = (window.NM_PRINT_HEAD || {})[m.t + '@' + (m.lv || 1)]; if(!row) return 0;
+    const b = row[{ young:0, mid:1, senior:2 }[band]] || worstBand(row);
+    return b && b[2] || 0; }));
+  const rowNeed = headBand && (headBand[2] || mixNeed) ? Math.max(headBand[2] || 0, mixNeed) * fsR + 3 : 0;
   const midPage = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] || !!item.pacing;
   if(rowNeed && headBand[3] && layout.type !== 'train'){
     const fit = Math.max(1, Math.floor(headBand[3] / rowNeed));
@@ -4966,7 +4983,17 @@ function renderRoundPagesBody(item, opts){
      data/print-head.js(scripts/build-print-head.js 가 잰 값) = 밴드별 [쓸 수 있는 높이, 머리 높이] mm.
      글자 크기를 키우면 머리도 그만큼 커진다고 보고, 첫 장이 마지막 장이면 재도전 QR 높이를 뺀다.
      한 줄 높이는 잰 값(rowNeed), 없으면 부분 장이 쓰는 layout.pitch(mm). */
-  if(headBand && headBand[0] != null && firstRows > 0){
+  /* 가르치지 않는 회차(점검)·문장제만인 회차는 첫 장 머리가 잰 드릴 머리와 다르다 — 점검은 머리가 없고(가득 찬 장과 같다),
+     문장제만인 회차는 말→식→답 예시 하나(실측 71mm + 지시문 6mm, C8 DV12 L1 senior). 잰 첫 장 값이 없을 때
+     그대로 두면 판정표 줄 수가 그대로 나가 카드가 칸을 넘었다(C8 DV12 6장 +2mm). */
+  const plainFirst = (noTeach || (wordOnly && headBand && headBand[0] == null)) && headBand && headBand[3]
+    ? headBand[3] - (wordOnly ? 80 * fsR * (young ? 1.28 : 1) : 0) : null;
+  if(plainFirst != null && firstRows > 0){
+    let avail = plainFirst;
+    if(problems.length <= firstRows * layout.cols) avail -= (window.NM_PRINT_HEAD_QR || 0);
+    const fitRows = Math.floor(avail / (rowNeed || layout.pitch || 20));
+    firstRows = Math.max(1, Math.min(firstRows, fitRows));
+  } else if(headBand && headBand[0] != null && firstRows > 0){
     let avail = headBand[0] - headBand[1] * (fsR - 1);
     if(problems.length <= firstRows * layout.cols && !item.pacing) avail -= (window.NM_PRINT_HEAD_QR || 0);
     /* Training Course(창의 연산)는 잰 한 줄 높이가 드릴 칸 기준이라 맞지 않는다 — 제 줄 간격(pitch)으로 */
@@ -4998,7 +5025,9 @@ function renderRoundPagesBody(item, opts){
       const est = (14 + 12.8 * (nSteps + 1) + 7 * (bare ? 3 : 1)) * fsR * (young ? 1.28 : 1);
       return trainMax ? Math.max(est, trainMax) : est;
     };
-    const gapMm = 7, fullH = (headBand && headBand[3]) || 235;
+    /* 가득 찬 장 높이는 드릴 장에서 잰 값 — 창의 연산 장은 그 위에 "Training Course" 띠(15mm + 틈)가 더 붙는다
+       (C20 FR10 L1: 112mm 칸 둘이 띠 때문에 종이 아래로 40px 넘쳤다) */
+    const gapMm = 7, fullH = ((headBand && headBand[3]) || 235) - 17 * fsR;
     /* 잰 값이 있으면(scripts/build-print-head.js 가 창의 연산 모양으로 따로 잰 [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이) 그것을.
        없으면 추정: 첫 장에 "Training Course" 띠(약 24mm)가 붙고, 따라 풀기가 드릴보다 약 60mm 길다(C36 CH7 L1: 86mm). */
     const trainMax = headBand && headBand[5] ? headBand[5] * fsR : 0;
@@ -5237,7 +5266,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   items.forEach(it => {
     if(it.magicUnit){
       const mg = renderMagicNotePage(it, { name: studentName, roundNo: rounds.length + 1 });
-      if(mg) rounds.push(mg);
+      if(mg){ mg.__magic = { item:it, roundNo:rounds.length + 1 }; rounds.push(mg); }
       return;
     }
     let candidateSeen=new Set(seen);
@@ -5290,6 +5319,9 @@ function renderMixedSheetBody(items, envelopeCode, opts){
      같은 시드·같은 제외 집합으로 다시 만들므로 문항은 그대로다(다르면 원래 것을 둔다). */
   const sheetBand = printAgeBand(items[0], allProblems);
   rounds.forEach((r, i) => {
+    /* 마법 노트도 장 밴드의 잰 높이로 장을 나눈다 */
+    if(r.__magic){ const mg = renderMagicNotePage(r.__magic.item, { name:studentName, roundNo:r.__magic.roundNo, band:sheetBand });
+      if(mg){ mg.__magic = r.__magic; rounds[i] = mg; } return; }
     if(!r.__redo || !r.band || r.band === sheetBand) return;
     try {
       const rr = renderRoundPages(r.__redo.item, { count:r.__redo.count, name:studentName, roundNo:r.__redo.roundNo,

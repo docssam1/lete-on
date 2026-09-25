@@ -30,8 +30,12 @@ const server = http.createServer((req, res) => {
 const BANDS = [['young', '1'], ['mid', '3'], ['senior', '6']];
 server.listen(0, async () => {
   const browser = await chromium.launch();
-  const table = {};
+  let table = {};
+  const magic = {};
   let qr = 0;
+  /* MAGIC_ONLY=1 — 유형 표는 지금 파일 그대로 두고 마법 노트만 다시 잰다(유형 표는 한 시간 넘게 걸린다) */
+  const MAGIC_ONLY = !!process.env.MAGIC_ONLY;
+  if(MAGIC_ONLY){ const w = {}; new Function('window', fs.readFileSync(path.join(ROOT, 'data', 'print-head.js'), 'utf8'))(w); table = w.NM_PRINT_HEAD || {}; qr = w.NM_PRINT_HEAD_QR || 0; }
   for(const lang of ['ko', 'en', 'zh']){
     const page = await browser.newPage({ viewport:{ width:1100, height:1100 } });
     await page.route('**/*', r => /jsdelivr|supabase|google/.test(r.request().url()) ? r.abort() : r.continue());
@@ -44,7 +48,7 @@ server.listen(0, async () => {
        주간 학습지 C31 첫 장 넘침). 유닛이 있는 쪽이 머리가 길다 — 드릴 인쇄에는 안전한 쪽. */
     for(const f of fs.readdirSync(path.join(ROOT, 'data', 'units')).filter(f => /^[A-Za-z0-9-]+\.js$/.test(f)))
       await page.addScriptTag({ url:'data/units/' + f });
-    const r = await page.evaluate(async BANDS => {
+    const r = MAGIC_ONLY ? { out:{}, qr:0 } : await page.evaluate(async BANDS => {
       const mm = px => px / (96 / 25.4), out = {};
       let qr = 0;
       for(const t of Object.keys(NM_THREADS)) for(const l of NM_THREADS[t].levels){
@@ -72,6 +76,12 @@ server.listen(0, async () => {
           if(gridOf(p1) && footOf(p1)){
             const top = p1.getBoundingClientRect().top, g = gridOf(p1).getBoundingClientRect().top;
             avail = Math.floor(mm(floorOf(p1) - g)); head = Math.ceil(mm(g - top));
+          } else {
+            /* 머리 전용 장도 머리 높이는 잰다 — 비워 두면 머리가 종이보다 긴지(따라 풀기를 뗄지) 판단을 못 해
+               저학년 큰 글씨 첫 장이 넘쳤다(ML19 L1 young 310mm, 주간 학습지 C26). */
+            const top = p1.getBoundingClientRect().top;
+            const kids = [...p1.children].filter(c => !/nm-w2-(wm|foot)/.test(c.className));
+            if(kids.length) head = Math.ceil(mm(Math.max(...kids.map(c => c.getBoundingClientRect().bottom)) - top));
           }
           /* 가득 찬 장 — 첫 장 뒤에서 머리(따라 풀기 등)가 가장 적은 장, 즉 문항 칸이 가장 긴 장 */
           let full = null;
@@ -123,6 +133,46 @@ server.listen(0, async () => {
       }
       return { out, qr };
     }, BANDS);
+    /* 마법 노트(매거진형 개념 노트) — 유닛마다 밴드별 [판, [단계…], 규칙·체크, 첫 장 쓸 높이, 다음 장 쓸 높이] mm.
+       renderMagicNotePage 가 이 값으로 장을 채운다(저학년 큰 글씨에서 두 단계가 첫 장에 들지 않았다 — C20 C-22). */
+    const mg = await page.evaluate(async BANDS => {
+      const mm = px => px / (96 / 25.4), out = {};
+      for(const uid of Object.keys(window.NM_UNITS || {})){
+        const u = NM_UNITS[uid]; if(!u.discover || !Array.isArray(u.discover.stages) || !u.discover.stages.length) continue;
+        try { NM_EXAM.renderPrintMulti([{ magicUnit:uid, thread:null, level:null, n:0, count:0, topicName:uid, seed:'mg' }], 'MG', { mixed:20 }); }
+        catch(e){ continue; }
+        const sheet = document.querySelector('.nm-print-sheet'); if(!sheet) continue;
+        const base = sheet.className.replace(/\bnm-print-age-\w+/g, '').trim();
+        const row = [];
+        for(const [band] of BANDS){
+          sheet.className = base + ' nm-print-age-' + band;
+          await new Promise(requestAnimationFrame);
+          const pages = [...sheet.querySelectorAll('.nm-w2-page-magic')]; if(!pages.length){ row.push(null); continue; }
+          const floorOf = p => { const r = p.getBoundingClientRect(), f = p.querySelector('.nm-w2-foot');
+            return r.bottom - (parseFloat(getComputedStyle(p).paddingBottom) || 0) - (f ? f.getBoundingClientRect().height + 1 : 0); };
+          const p1 = pages[0], board = p1.querySelector('.nm-mzc-head'), st1 = p1.querySelector('.nm-mn-stages');
+          if(!board || !st1){ row.push(null); continue; }
+          const bTop = board.getBoundingClientRect().top;
+          const gap = parseFloat(getComputedStyle(st1).rowGap) || 0;
+          const stages = [...sheet.querySelectorAll('.nm-w2-page-magic .nm-mn-stage')].map(e => Math.ceil(mm(e.getBoundingClientRect().height + gap) * 10) / 10);
+          const last = pages[pages.length - 1], lst = last.querySelector('.nm-mn-stages');
+          const tails = [...last.querySelectorAll('.nm-w2-note, .nm-mn-check, .nm-mn-open')];
+          const tail = tails.length ? Math.ceil(mm(Math.max(...tails.map(e => e.getBoundingClientRect().bottom)) - (lst ? lst.getBoundingClientRect().bottom : tails[0].getBoundingClientRect().top))) : 0;
+          const p2 = pages[1], st2 = p2 && p2.querySelector('.nm-mn-stages');
+          const availFirst = Math.floor(mm(floorOf(p1) - bTop));
+          const availNext = st2 ? Math.floor(mm(floorOf(p2) - st2.getBoundingClientRect().top)) : availFirst;
+          row.push([Math.ceil(mm(st1.getBoundingClientRect().top - bTop)), stages, tail, availFirst, availNext]);
+        }
+        out[uid] = row;
+      }
+      return out;
+    }, BANDS);
+    for(const [uid, row] of Object.entries(mg)){
+      const cur = magic[uid] || (magic[uid] = [null, null, null]);
+      row.forEach((v, i) => { if(!v) return; const c = cur[i];
+        cur[i] = !c || c[1].length !== v[1].length ? v : [Math.max(c[0], v[0]), c[1].map((h, k) => Math.max(h, v[1][k])), Math.max(c[2], v[2]), Math.min(c[3], v[3]), Math.min(c[4], v[4])]; });
+    }
+    console.log(`${lang}: 마법 노트 ${Object.keys(mg).length}개 유닛`);
     await page.close();
     qr = Math.max(qr, r.qr);
     for(const [k, row] of Object.entries(r.out)){
@@ -145,6 +195,9 @@ server.listen(0, async () => {
    — ko·en·zh 중 가장 좁은 값. renderRoundPages 가 장마다 줄 수를 줄여 문항이 겹치지 않게 한다. ${n}개. */
 window.NM_PRINT_HEAD = ${JSON.stringify(table)};
 window.NM_PRINT_HEAD_QR = ${qr};
+/* 마법 노트 유닛마다 [young, mid, senior] 밴드별 [판 높이, [단계 높이…], 규칙·체크·생각해 보기 높이, 첫 장 쓸 높이, 다음 장 쓸 높이] mm
+   — ko·en·zh 중 가장 큰(쓸 높이는 가장 작은) 값. renderMagicNotePage 가 장을 나눈다. ${Object.keys(magic).length}개. */
+window.NM_PRINT_MAGIC = ${JSON.stringify(magic)};
 `;
   fs.writeFileSync(path.join(ROOT, 'data', 'print-head.js'), body);
   console.log(`첫 장 머리 높이 ${n}개 레벨 → data/print-head.js (재도전 QR ${qr}mm)`);
