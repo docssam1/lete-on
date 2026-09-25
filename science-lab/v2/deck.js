@@ -34,7 +34,7 @@ export function buildSlides(ch, art, plan, similar, mode) {
 
   ch.steps.forEach((s, i) => add(`step${i + 1}`, 'lab', `STEP 3 · 실험하기 ${i + 1}/${ch.steps.length}`,
     `<div class="dk-two wide-art"><div class="dk-art">${art[s.art]}</div><div><p class="dk-big">${esc(s.text)}</p><p class="dk-tip rv">도움말 · ${esc(s.tip)}</p></div></div>`, { say: `step${i + 1}` }));
-  add('lab', 'lab', '3D 실험실 · 기울기와 물의 양 바꿔 보기', `<div class="dk-3d" data-mount="lab"></div>`, { say: 'lab', mount: 'lab', layout: 'media' });
+  add('lab', 'lab', `3D 실험실 · ${esc(ch.labTitle || '조건을 바꿔 직접 해 보기')}`, `<div class="dk-3d" data-mount="lab"></div>`, { say: 'lab', mount: 'lab', layout: 'media' });
   add('wonder', 'lab', 'Q. 이런 경우는?', `<p class="dk-q">${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 'wonder')}
     <div class="dk-caution"><h3>주의하세요!</h3><ul>${ch.caution.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>`, { say: 'wonder' });
 
@@ -68,8 +68,7 @@ export function buildSlides(ch, art, plan, similar, mode) {
       : it.choices ? `<div class="dk-ans" hidden>정답 ${esc(text)} — ${esc(it.explanation)}</div>` : ans(`${text} — ${it.explanation}`, `test${i}`);
     add(`test${i + 1}`, 'check', `교과 확인 문제 ${i + 1}/${pick.length}`, `<p class="dk-q">${esc(it.prompt)}</p>${givens}${choices}${reveal}`, { say: 'test', test: !!it.choices, layout: 'dense' });
   });
-  add('end', 'check', '', `<div class="dk-cover"><h1>오늘 배운 것</h1><ul class="dk-points big"><li>흐르는 물은 땅을 <b>깎고(침식)</b> · <b>옮기고(운반)</b> · <b>쌓아요(퇴적)</b>.</li>
-    <li>물이 많고 경사가 급할수록 더 많이 깎이고 옮겨져요.</li><li>강 상류는 침식, 강 하류는 퇴적이 활발해요.</li></ul>
+  add('end', 'check', '', `<div class="dk-cover"><h1>오늘 배운 것</h1><ul class="dk-points big">${(ch.summary || (ch.note?.points || []).map(esc)).map((x) => `<li>${x}</li>`).join('')}</ul>
     <p class="dk-sub">과제 · 교재 ${ch.no}장 교과 확인 문제와 영재성 기르기를 마무리해 오세요.</p></div>`, { layout: 'cover' });
   S.forEach((s) => { s.n = ++n; s.phaseObj = ph[s.phase]; });
   return S;

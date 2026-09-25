@@ -96,7 +96,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
 
   // 8. 영재성 기르기 + 탐구 돌아보기
   const g = ch.gifted;
-  const self = ['가설을 “~할수록 ~할 것이다”로 썼나요?', '바꿀 조건을 하나만 정했나요?', '결과를 표에 빠짐없이 적었나요?', '결론을 실험 결과로 설명했나요?', '실험 결과를 실제 강과 이어 생각했나요?'];
+  const self = ['가설을 “~할수록 ~할 것이다”로 썼나요?', '바꿀 조건을 하나만 정했나요?', '결과를 표에 빠짐없이 적었나요?', '결론을 실험 결과로 설명했나요?', ch.selfLink || '실험 결과를 우리 생활과 이어 생각했나요?'];
   out.push(page(`${banner('영재성 기르기', 'gift')}
     <p class="bk-goal">${esc(g.title)}</p><p class="bk-p">${esc(g.lead)}</p>
     <table class="bk-tbl"><tbody>${g.rows.map((r) => `<tr><th>${esc(r)}</th><td class="tall">${teacher ? `<span class="bk-ans">예) ${esc(g.a[r])}</span>` : ''}</td></tr>`).join('')}</tbody></table>
