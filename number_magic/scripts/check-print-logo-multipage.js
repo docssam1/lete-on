@@ -106,8 +106,10 @@ function logoPixels(file) {
         }))
       };
     });
-    assert.equal(dom.studentPages, 4);
-    assert.equal(dom.marks, 5);
+    /* 쪽 수는 지면 배치(첫 장 연습 6문항 등)에 따라 바뀐다 — 여기서 보는 것은 "여러 쪽 모두에 로고".
+       학생 쪽이 둘 이상이고, 로고 = 학생 쪽 + 정답지 한 장이어야 한다(2026-09-25, 12문항 4쪽 → 3쪽). */
+    assert.ok(dom.studentPages >= 2, 'multipage sheet expected');
+    assert.equal(dom.marks, dom.studentPages + 1);
     assert.ok(dom.rows.every(row => row.aria === 'GFIELD' && row.imageDisplay === 'none' && row.printDisplay === 'flex' && row.printText === 'GFIELD'));
 
     const pdf = path.join(temp, 'md79-logo-proof.pdf');
@@ -116,7 +118,7 @@ function logoPixels(file) {
     const match = info.match(/^Pages:\s+(\d+)/m);
     assert.ok(match, 'pdfinfo page count missing');
     const pages = Number(match[1]);
-    assert.equal(pages, 5);
+    assert.equal(pages, dom.marks);
 
     const prefix = path.join(temp, 'page');
     childProcess.execFileSync('pdftoppm', ['-r', '96', pdf, prefix]);

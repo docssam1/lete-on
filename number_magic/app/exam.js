@@ -4759,6 +4759,18 @@ function renderRoundPagesBody(item, opts){
   if(item.thread==='MD83'&&item.level===5&&!['solve','train','word'].includes(layout.type)){
     Object.assign(layout,{cols:2,rows:5,perPage:10,pitch:40});
   }
+  /* 장마다 줄 수를 **잰 높이**로 줄인다(2026-09-25, data/print-head.js — scripts/build-print-head.js).
+     판정별 고정표의 줄 수가 그 레벨 문항의 실제 높이보다 많으면 1fr 로 나눈 줄이 내용보다 낮아져
+     문항이 겹쳐 찍혔다(가득 찬 장: ML2·ML8·MD25 등). 한 줄 높이는 글자 크기만큼 커진다고 본다. */
+  const headRow = (window.NM_PRINT_HEAD || {})[item.thread + '@' + item.level];
+  const headBand = headRow && (headRow[{ young:0, mid:1, senior:2 }[printAgeBand(item, problems)]] || headRow.find(Boolean));
+  const fsR = ({ s:0.88, m:1, l:1.16, xl:1.34 })[getFontSize()] || 1;
+  /* 잰 값은 한 시드의 최댓값 — 다른 시드의 더 긴 문항을 위해 3mm 여유 */
+  const rowNeed = headBand && headBand[2] ? headBand[2] * fsR + 3 : 0;
+  if(rowNeed && headBand[3] && layout.type !== 'train'){
+    const fit = Math.max(1, Math.floor(headBand[3] / rowNeed));
+    if(fit < layout.rows){ layout.rows = fit; layout.perPage = fit * layout.cols; }
+  }
   problems = sortRoundProblems(problems, layout.type);
   applyPartialBlanks(problems, layout.type, item);
 
@@ -4824,7 +4836,7 @@ function renderRoundPagesBody(item, opts){
     && layout.cols >= 2
     /* 여러 줄로 세운 식(\\ 줄바꿈 둘 이상 — MD85·MD86 자료 비교 등)은 한 칸에 30mm 넘게 필요하다 */
     && !problems.some(p => (String(p.tex || '').match(/\\\\/g) || []).length >= 2);
-  const firstRows = (wordOnly || noTeach) ? layout.rows
+  let firstRows = (wordOnly || noTeach) ? layout.rows
     : midFirstSix ? Math.ceil(6 / layout.cols)
     : item.pacing ? 0
     : (tallHead || separateGuide) ? 0
@@ -4835,18 +4847,37 @@ function renderRoundPagesBody(item, opts){
     // 넘겨 손으로 쓰는 높이를 지킨다(10/20/30문항 모두 같은 분할 규칙).
     : item.thread === 'DC6' ? Math.min(baseFirst, 2)
     : item.thread === 'MD83' ? Math.min(baseFirst, 4) : baseFirst;
+  /* 첫 장 줄 수를 **잰 높이**로 한 번 더 줄인다(2026-09-25). 판정별 고정표는 머리(개념·기억 고리·예시·
+     따라 풀기) 높이를 모른다 — 머리가 긴 레벨은 남은 높이를 1fr 로 나눠 받은 줄이 내용보다 낮아져
+     문항이 겹쳐 찍혔다(main 20문항 기준 312개 레벨, C29 DV8 L1 A4 에서 눈으로 확인).
+     data/print-head.js(scripts/build-print-head.js 가 잰 값) = 밴드별 [쓸 수 있는 높이, 머리 높이] mm.
+     글자 크기를 키우면 머리도 그만큼 커진다고 보고, 첫 장이 마지막 장이면 재도전 QR 높이를 뺀다.
+     한 줄 높이는 잰 값(rowNeed), 없으면 부분 장이 쓰는 layout.pitch(mm). */
+  if(headBand && headBand[0] != null && firstRows > 0 && layout.type !== 'train'){
+    let avail = headBand[0] - headBand[1] * (fsR - 1);
+    if(problems.length <= firstRows * layout.cols && !item.pacing) avail -= (window.NM_PRINT_HEAD_QR || 0);
+    firstRows = Math.max(0, Math.min(firstRows, Math.floor(avail / (rowNeed || layout.pitch || 20))));
+  }
   const firstCap = firstRows * layout.cols;
   const pages = [];
+  /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —
+     따라 풀기만 있는 장은 A4 의 3분의 2가 비었다(2026-09-25 PDF 확인). 그 장은 남은 높이를 1fr 로 나눈다. */
+  const guideWithPractice = midFirstSix && firstCap > 0 && guidePages.length === 1 && problems.length > firstCap
+    /* 따라 풀기가 길면(MD83 L5 두 층 상자 — 214mm) 연습 6문항이 들어가지 않는다: 잰 높이로 판단 */
+    && !(headBand && headBand[4] != null && rowNeed && headBand[4] < Math.ceil(6 / layout.cols) * rowNeed);
   if(problems.length){
     pages.push(problems.slice(0, firstCap));
-    guidePages.forEach(()=>pages.push([])); // 개념·예시 → 따라풀기 → 채점 문항.
-    for(let i = firstCap; i < problems.length; i += layout.perPage) pages.push(problems.slice(i, i + layout.perPage));
+    let from = firstCap;
+    if(guideWithPractice){ pages.push(problems.slice(from, from + 6)); from += 6; }
+    else guidePages.forEach(()=>pages.push([])); // 개념·예시 → 따라풀기 → 채점 문항.
+    for(let i = from; i < problems.length; i += layout.perPage) pages.push(problems.slice(i, i + layout.perPage));
   } else {
     pages.push([]);
   }
   // 중등 12문항을 10+2로 나누면 마지막 장이 낭비된다. 마지막 두 연습 장은
   // 가능할 때 모두 6문항 이상으로 재배분한다(순서·답·총 문항 수는 그대로).
   const balancedPracticePages = new Set();
+  if(guideWithPractice) balancedPracticePages.add(1);
   if(((window.NM_MIDDLE_CONCEPTS || {})[item.thread] || item.pacing) && pages.length >= 2){
     const tail = pages[pages.length-1], prev = pages[pages.length-2];
     if(tail.length > 0 && tail.length < 6 && prev.length + tail.length >= 12){
@@ -4866,7 +4897,12 @@ function renderRoundPagesBody(item, opts){
     if(layout.type === 'train') return 'grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:max-content;align-content:start;gap:7mm 0;flex:0 0 auto;';
     // 첫 장은 개념/따라풀기 뒤의 실제 남은 높이를 쓴다. 고정 pitch는 문항을 종이 밖으로 밀었다.
     const fixedPitch = partial && !first && !balanced;
-    const rows = fixedPitch ? `repeat(${rowsCount},minmax(0,${layout.pitch || 20}mm))` : `repeat(${rowsCount},minmax(0,1fr))`;
+    /* 부분 장의 고정 줄 높이 — 잰 한 줄 높이보다 낮지 않게, 그러나 가득 찬 장 높이를 줄 수로 나눈 값을 넘지 않게
+       (줄 간격 pitch × 줄 수가 종이보다 길어 아래 줄이 종이 밖으로 나갔다 — AD1 L1 18문항) */
+    const fullH = headBand && headBand[3];
+    const pitchMm = Math.max(layout.pitch || 20, Math.ceil(rowNeed));
+    const pitchUse = fullH ? Math.min(pitchMm, Math.floor(fullH / rowsCount - 2)) : pitchMm;
+    const rows = fixedPitch ? `repeat(${rowsCount},minmax(0,${pitchUse}mm))` : `repeat(${rowsCount},minmax(0,1fr))`;
     const flowCol = layout.flow === 'col' ? 'grid-auto-flow:column;' : '';
     const grow = fixedPitch ? 'flex:0 0 auto;align-content:start;' : '';
     return `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:${rows};${flowCol}${grow}`;
