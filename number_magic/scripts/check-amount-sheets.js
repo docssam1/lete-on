@@ -2,7 +2,7 @@
 /* ============================================================
    학습량 배수 검사 (2026-09-25) — 원장 "속도 양 조절하기 기능 추가하자 기본값을 두고 1.5배까지"
    과정 0~47 의 **모든 회차**(점검 제외)를 앱의 실제 학습지 조립(sessionRoleItems → renderMixedSheet)으로
-   1배·1.25배·1.5배로 만들어 본다. 교과 드릴을 늘려도 같은 문제 없이 끝까지 채워져야 한다.
+   0.7·0.85·1·1.25·1.5배로 만들어 본다. 교과 드릴을 늘려도 같은 문제 없이 끝까지 채워져야 한다.
    모자라는 레벨은 courses.js COUNT_CAP 에 **데이터로** 상한을 적는다(인쇄 때 몰래 줄이지 않는다).
    check-weekly-sheets 는 과정마다 두 장만 보므로, 여기서 나머지 회차를 본다.
      node scripts/check-amount-sheets.js            # 전체
@@ -32,7 +32,7 @@ server.listen(0, async () => {
   const courses = only.length ? only : Array.from({ length:48 }, (_, i) => 'C' + i);
   const result = await page.evaluate(courses => {
     const out = { sheets:0, bad:[], grew:0 };
-    for(const amt of [1, 1.25, 1.5]){
+    for(const amt of [0.7, 0.85, 1, 1.25, 1.5]){
       window.NM_WS_AMOUNT = amt;
       for(const c of courses){
         const course = NM_COURSES[c]; if(!course || course.comingSoon) continue;
@@ -52,7 +52,7 @@ server.listen(0, async () => {
     return out;
   }, courses);
   await browser.close(); server.close();
-  console.log(`회차 학습지 ${result.sheets}장(1·1.25·1.5배) · 배수로 늘어난 교과 칸 ${result.grew}`);
+  console.log(`회차 학습지 ${result.sheets}장(0.7~1.5배 5단계) · 배수로 늘어난 교과 칸 ${result.grew}`);
   if(result.bad.length){
     console.log(`\n✗ 실패 ${result.bad.length}장`);
     const by = {};
@@ -60,5 +60,5 @@ server.listen(0, async () => {
     Object.entries(by).forEach(([k, v]) => console.log(`  ${k}: ${v.slice(0, 6).join(', ')}${v.length > 6 ? ` … 외 ${v.length - 6}` : ''}`));
     process.exit(1);
   }
-  console.log('통과 — 1.5배까지 모든 회차가 같은 문제 없이 채워진다.');
+  console.log('통과 — 0.7~1.5배 모든 회차가 같은 문제 없이 채워진다.');
 });

@@ -239,7 +239,7 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      센 주차" 단서와 같은 원칙). 더 빠른 기준을 원하면 직접 고르면 된다. */
   roadPace:'p2',
   /* 속도·양 배수(2026-09-25, 원장 "고정하고 속도 양 조절하기 기능 추가하자 기본값을 두고 1.5배까지").
-     기본 1배 = 정해 둔 편성(회차 30분·중2·중3 40분) 그대로. 둘은 따로 고른다.
+     기본 1배 = 정해 둔 편성(회차 30분·중2·중3 40분) 그대로. 둘은 따로 고른다. 줄이기는 30%(0.7배)까지.
      roadSpeed — 같은 기간에 회차를 더 많이 나감: 로드맵의 주차·개월을 1/배수로 줄인다(회차·내용은 그대로).
      roadAmount — 한 회차 교과 드릴 문항 수를 배수만큼(exam.js getAmount, 6의 배수·상한 지킴). */
   roadSpeed:1, roadAmount:1,
@@ -281,8 +281,10 @@ if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
    아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
    이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
 if(['p0','p1','p2','p3','p4'].indexOf(S.roadPace)<0)S.roadPace='p2';
-if([1,1.25,1.5].indexOf(S.roadSpeed)<0)S.roadSpeed=1;
-if([1,1.25,1.5].indexOf(S.roadAmount)<0)S.roadAmount=1;
+/* 속도·양 배수 — 줄이기 30%(0.7)부터 늘리기 1.5배까지(원장 2026-09-25) */
+const ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
+if(ROAD_MULTS_LIST.indexOf(S.roadSpeed)<0)S.roadSpeed=1;
+if(ROAD_MULTS_LIST.indexOf(S.roadAmount)<0)S.roadAmount=1;
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
@@ -3244,14 +3246,14 @@ function screenCourseRoad(){
       <div class="nm-cr-pace nm-cr-mult">
         <div class="nm-cr-cad-h">${lk('속도 · 양 조절','Speed · amount','速度 · 分量')}</div>
         <div class="nm-cr-multrow"><span>${lk('속도','Speed','速度')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${[1,1.25,1.5].map(v=>
-            `<button class="${speed===v?'on':''}" data-speed="${v}" aria-pressed="${speed===v?'true':'false'}">${v}${lk('배','×','倍')}${v===1?' '+lk('(기본)','(default)','(默认)'):''}</button>`).join('')}</div></div>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>
+            `<button class="${speed===v?'on':''}" data-speed="${v}" aria-pressed="${speed===v?'true':'false'}">${v===1?lk('기본','1×','默认'):v+lk('배','×','倍')}</button>`).join('')}</div></div>
         <div class="nm-cr-multrow"><span>${lk('양','Amount','分量')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${[1,1.25,1.5].map(v=>
-            `<button class="${S.roadAmount===v?'on':''}" data-amount="${v}" aria-pressed="${S.roadAmount===v?'true':'false'}">${v}${lk('배','×','倍')}${v===1?' '+lk('(기본)','(default)','(默认)'):''}</button>`).join('')}</div></div>
-        <p class="nm-cr-pacenote">${lk('기본 1배는 정해 둔 편성 그대로예요(한 회 30분, 중2·중3 40분). 속도를 올리면 같은 기간에 회차를 더 나가서 주차·개월이 줄어요. 양을 올리면 그 주 배우는 계산 문항이 늘어요(복습·창의·적용은 그대로, 같은 문제는 되풀이하지 않아요).',
-             'Default 1× is the set plan (30 min a session; 40 for middle grades 2–3). Raising speed covers more sessions in the same time, so weeks and months shrink. Raising amount adds more practice problems for that week\'s calculation (review, creative and applying stay the same; problems never repeat).',
-             '默认1倍即既定安排（每次30分钟，初二·初三40分钟）。提高速度会在同样时间里上更多课次，周数和月数随之减少。提高分量会增加本周所学运算的练习题（复习·创意·应用不变，题目不重复）。')}</p>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>
+            `<button class="${S.roadAmount===v?'on':''}" data-amount="${v}" aria-pressed="${S.roadAmount===v?'true':'false'}">${v===1?lk('기본','1×','默认'):v+lk('배','×','倍')}</button>`).join('')}</div></div>
+        <p class="nm-cr-pacenote">${lk('기본은 정해 둔 편성 그대로예요(한 회 30분, 중2·중3 40분). 0.7배까지 줄이고 1.5배까지 늘릴 수 있어요. 속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요. 양은 그 주 배우는 계산 문항 수예요(복습·창의·적용은 그대로, 같은 문제는 되풀이하지 않아요).',
+             'Default is the set plan (30 min a session; 40 for middle grades 2–3). Go down to 0.7× or up to 1.5×. Faster speed covers more sessions in the same time, so weeks and months shrink; slower stretches them. Amount is how many problems of that week\'s calculation (review, creative and applying stay the same; problems never repeat).',
+             '默认即既定安排（每次30分钟，初二·初三40分钟）。可减到0.7倍、加到1.5倍。提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。分量是本周所学运算的题数（复习·创意·应用不变，题目不重复）。')}</p>
       </div>
       <div class="nm-cr-cad-h sub">${lk('이 속도로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
       <div class="nm-cr-totals">

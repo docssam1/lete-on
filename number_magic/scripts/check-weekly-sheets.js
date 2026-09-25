@@ -8,7 +8,7 @@
    유형을 나눠 쓰기 때문이다.
      node scripts/check-weekly-sheets.js            # 전체(약 2~4분)
      node scripts/check-weekly-sheets.js C24 C29     # 지정 과정만
-     node scripts/check-weekly-sheets.js --amt=1.5   # 학습량 배수(1·1.25·1.5)로 — 늘린 문항도 중복 없이 채워지는지
+     node scripts/check-weekly-sheets.js --amt=1.5   # 학습량 배수(0.7·0.85·1·1.25·1.5)로 — 바꾼 문항 수도 중복 없이 채워지는지
    실패하면 exit 1, 브라우저가 없으면 exit 2(미실행).
    ============================================================ */
 'use strict';
