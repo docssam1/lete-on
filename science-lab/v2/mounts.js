@@ -15,7 +15,7 @@ export const mountLabOf = (kind) => {
 // 안 되는 기기(iPhone Safari 등)는 화면 가득 채우는 겹침 화면으로 대신한다. 세로로 들고 있으면 돌려 달라고 안내.
 export function addLandscape(host, into) {
   if (!host || !into || into.querySelector('.fl-open')) return;
-  const b = document.createElement('button'); b.type = 'button'; b.className = 'btn fl-open'; b.innerHTML = '<span aria-hidden="true">⤢</span> 가로로 크게';
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'btn fl-open'; b.innerHTML = '<span class="fl-ico" aria-hidden="true">⤢</span>가로로 크게';
   const x = document.createElement('button'); x.type = 'button'; x.className = 'btn fl-close'; x.textContent = '✕ 닫기';
   const hint = document.createElement('p'); hint.className = 'fl-rotate'; hint.textContent = '↻ 휴대폰을 가로로 돌리면 더 커져요';
   into.appendChild(b); host.append(x, hint);

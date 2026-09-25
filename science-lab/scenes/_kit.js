@@ -146,14 +146,16 @@ export function label(text, opts = {}) {
 }
 // 라벨 글자가 화면에서 minPx 보다 작거나 maxPx 보다 크지 않게 크기를 맞춘다(카메라 거리·화면 높이 기준).
 // viewW를 주면 라벨이 화면 밖으로 잘리지 않게 폭을 줄이고, 가장자리에 걸리면 기준점(center)을 옮겨 안으로 밀어 넣는다.
-const _lp = new THREE.Vector3(), _ps = new THREE.Vector3();
+const _lp = new THREE.Vector3(), _ps = new THREE.Vector3(), _pv = new THREE.Vector3();
 export function fitLabels(root, camera, viewH, minPx = 20, maxPx = 34, viewW = 0) {
   if (!viewH) return;
   const k = 2 * Math.tan((camera.fov * Math.PI) / 360) / viewH, M = 8;   // M: 화면 가장자리 여백(px)
+  camera.updateMatrixWorld();
   root.traverseVisible((o) => {
     if (!o.isSprite || !o.userData.isLabel || !o.userData.base) return;
     const u = o.material.map?.userData; if (u?.w) o.userData.base.x = o.userData.base.y * u.w / u.h;   // 글꼴 도착 뒤 다시 그린 폭
-    o.getWorldPosition(_lp); const perPx = _lp.distanceTo(camera.position) * k;   // 1px 당 월드 길이
+    o.getWorldPosition(_lp); _pv.copy(_lp).applyMatrix4(camera.matrixWorldInverse);
+    const perPx = Math.max(0.01, -_pv.z) * k;   // 1px 당 월드 길이 — 거리 말고 시선 방향 깊이로(화면 옆쪽 라벨이 더 크게 보이는 것까지)
     o.parent?.getWorldScale(_ps); const ps = _ps.y || 1;
     const px = (o.userData.base.y * ps) / perPx; let f = Math.max(minPx, Math.min(maxPx, px)) / px;
     if (!viewW) { o.scale.set(o.userData.base.x * f, o.userData.base.y * f, 1); return; }
