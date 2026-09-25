@@ -1682,6 +1682,26 @@ function withPacingPrint(active, render){
 }
 function getSolveMode(){ if(pacingPrintActive) return false; try{ return localStorage.getItem(SOLVE_MODE_KEY) === '1'; }catch(e){ return false; } }
 function setSolveMode(v){ try{ localStorage.setItem(SOLVE_MODE_KEY, v?'1':'0'); }catch(e){} }
+/* ③ 학습량 배수(2026-09-25, 원장 "고정하고 속도 양 조절하기 기능 추가하자 기본값을 두고 1.5배까지").
+   기본 1배 = courses.js planCounts 가 정한 문항 수 그대로. 1.25·1.5배는 **교과 칸의 그 주 드릴**만 늘린다
+   (복습·창의·적용·그리기는 그대로 — 늘릴 것은 그 주 배우는 계산의 연습량이다). 6의 배수로 올리고,
+   데이터 상한(NM_COUNT_CAP, 서로 다른 문항이 적은 레벨)과 36을 넘지 않는다 — 중복으로 채우지 않는다.
+   ws.html 은 주소의 amt 로 window.NM_WS_AMOUNT 를 넘기고, 앱은 localStorage 에 둔다.
+   진도 보기 인쇄 검사(pacingPrintActive)는 데이터 그대로(1배)를 본다. */
+const AMOUNT_KEY = 'nm_ws_amount', AMOUNTS = [1, 1.25, 1.5];
+function normAmount(v){ v = parseFloat(v); return AMOUNTS.indexOf(v) >= 0 ? v : 1; }
+function getAmount(){
+  if(pacingPrintActive) return 1;
+  if(window.NM_WS_AMOUNT != null) return normAmount(window.NM_WS_AMOUNT);
+  try{ return normAmount(localStorage.getItem(AMOUNT_KEY)); }catch(e){ return 1; }
+}
+function setAmount(v){ try{ localStorage.setItem(AMOUNT_KEY, String(normAmount(v))); }catch(e){} }
+function scaleCount(d, count){
+  const a = getAmount();
+  if(a === 1 || !count) return count;
+  const cap = ((window.NM_COUNT_CAP || {})[d.t + '@' + d.lv]) || 36;
+  return Math.max(count, Math.min(cap, 36, Math.ceil(count * a / 6) * 6));
+}
 /* 시트에 붙일 클래스 — 세 렌더 경로(renderMixedSheet·renderPrint·openPrintEditor)가 같이 쓴다 */
 function sheetOptClass(){
   return ' nm-print-fs-' + getFontSize() + (getSolveMode() ? ' nm-print-solve' : '');
@@ -3522,7 +3542,8 @@ function sessionRoleItems(course, session, seed){
   const appTag = lk('적용 · ', 'Applying · ', '应用 · ');
   const reviewTag = lk('복습 · ', 'Review · ', '复习 · ');
   return {
-    school: session.school.map(d => drillItem(d, d.review ? reviewTag : null)),
+    school: session.school.map(d => { const it = drillItem(d, d.review ? reviewTag : null);
+      if(!d.review && it.count) it.count = scaleCount(d, it.count); return it; }),
     strategy: ((session.strategy && session.strategy.practice) || []).map(d => creItem(d, lk('창의 연산 · ', 'Creative · ', '创意运算 · '))),
     application: (session.application || []).filter(a => a.from !== 'school').map((a, ai) => {
       if(a.kind === 'drawing') return { kind:'drawing', mode:a.mode, thread:a.t, level:a.lv, count:a.count || 6, n:a.count || 6,
@@ -5316,6 +5337,7 @@ function stageCheckItem(course, courseKey, seedBase){
 }
 
 const NM_EXAM = {
+  getAmount, setAmount, amounts:AMOUNTS.slice(),
 
   /* LaTeX→평문 치환(KaTeX 미로딩 폴백). drill.html 등 다른 스코프도 이걸 재사용한다. */
   texToPlain,

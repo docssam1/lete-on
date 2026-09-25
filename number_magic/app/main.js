@@ -238,6 +238,11 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      보여 주면 그 자체가 과약속 쪽으로 기운다(원장 지시로 넣은 "연산 트랙만
      센 주차" 단서와 같은 원칙). 더 빠른 기준을 원하면 직접 고르면 된다. */
   roadPace:'p2',
+  /* 속도·양 배수(2026-09-25, 원장 "고정하고 속도 양 조절하기 기능 추가하자 기본값을 두고 1.5배까지").
+     기본 1배 = 정해 둔 편성(회차 30분·중2·중3 40분) 그대로. 둘은 따로 고른다.
+     roadSpeed — 같은 기간에 회차를 더 많이 나감: 로드맵의 주차·개월을 1/배수로 줄인다(회차·내용은 그대로).
+     roadAmount — 한 회차 교과 드릴 문항 수를 배수만큼(exam.js getAmount, 6의 배수·상한 지킴). */
+  roadSpeed:1, roadAmount:1,
   roadPrints:{}, /* 연산 로드맵 세션 인쇄 회수(2026-09-04) — {'C5-0':2, 'C7-3':1, ...}
     key=courseKey+'-'+sessionIdx. exam.js showRoadPick의 "인쇄 N장" 표시·재인쇄 버튼용,
     잠금과 무관한 순수 카운터라 지워져도 학습에 지장 없음. */
@@ -276,6 +281,8 @@ if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
    아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
    이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
 if(['p0','p1','p2','p3','p4'].indexOf(S.roadPace)<0)S.roadPace='p2';
+if([1,1.25,1.5].indexOf(S.roadSpeed)<0)S.roadSpeed=1;
+if([1,1.25,1.5].indexOf(S.roadAmount)<0)S.roadAmount=1;
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
@@ -292,6 +299,8 @@ if(!S.account)S.account={status:hadSave?'active':'trial',code:null,checkedAt:0};
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
+/* 학습량 배수는 인쇄 쪽(exam.js)이 읽는 자리에 옮겨 둔다 — 학생을 바꾸면 그 학생 값으로 */
+function syncAmount(){ try{ if(window.NM_EXAM&&NM_EXAM.setAmount) NM_EXAM.setAmount(S.roadAmount||1); }catch(e){} }
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
 
 /* ---------- 프로필 슬롯 3개 (원장 지시, 형제가 한 기기를 같이 쓸 수 있게) ----------
@@ -904,6 +913,7 @@ function bgKeyForView(){
 }
 
 function render(){
+  syncAmount();
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
   document.documentElement.dataset.nmBg=bgKeyForView();   // 설명·안내 화면 뒤에 깔 사진(styles.css body::before)
@@ -3166,7 +3176,8 @@ function screenCourseRoad(){
   function draw(keepScroll){
     const cad=S.roadCadence;
     const pace=roadPaceDef(S.roadPace).key;
-    const mult=roadPaceMult(pace);
+    const speed=S.roadSpeed||1;
+    const mult=roadPaceMult(pace)/speed;
     const opTotals=roadTotals(0,ROAD_OP_LAST,cad,mult);
     const allTotals=roadTotals(0,lastNum,cad,mult);
     /* 콘텐츠 준비 현황은 매번 데이터에서 센다 — 숫자를 박아 두지 않는다. */
@@ -3221,7 +3232,7 @@ function screenCourseRoad(){
         <div class="nm-cr-cad-h">${lk('목표 기준','Target pace','目标标准')}</div>
         <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 기준','Target pace','目标标准')}">
           ${ROAD_PACES.map(p=>{
-            const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)).months;
+            const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)/speed).months;
             return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
               <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} ${mo}${lk('개월','mo','个月')}</small></button>`;
           }).join('')}
@@ -3229,6 +3240,18 @@ function screenCourseRoad(){
         <p class="nm-cr-pacenote">${lk('같은 길을 어느 속도로 걷느냐만 달라요. 배우는 순서와 내용은 그대로예요. 언제든 바꿔 볼 수 있어요.',
              'Only the walking speed changes — the order and the content of the path stay the same. Switch any time.',
              '只是走这条路的速度不同，学习顺序和内容都一样。随时可以切换。')}</p>
+      </div>
+      <div class="nm-cr-pace nm-cr-mult">
+        <div class="nm-cr-cad-h">${lk('속도 · 양 조절','Speed · amount','速度 · 分量')}</div>
+        <div class="nm-cr-multrow"><span>${lk('속도','Speed','速度')}</span>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${[1,1.25,1.5].map(v=>
+            `<button class="${speed===v?'on':''}" data-speed="${v}" aria-pressed="${speed===v?'true':'false'}">${v}${lk('배','×','倍')}${v===1?' '+lk('(기본)','(default)','(默认)'):''}</button>`).join('')}</div></div>
+        <div class="nm-cr-multrow"><span>${lk('양','Amount','分量')}</span>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${[1,1.25,1.5].map(v=>
+            `<button class="${S.roadAmount===v?'on':''}" data-amount="${v}" aria-pressed="${S.roadAmount===v?'true':'false'}">${v}${lk('배','×','倍')}${v===1?' '+lk('(기본)','(default)','(默认)'):''}</button>`).join('')}</div></div>
+        <p class="nm-cr-pacenote">${lk('기본 1배는 정해 둔 편성 그대로예요(한 회 30분, 중2·중3 40분). 속도를 올리면 같은 기간에 회차를 더 나가서 주차·개월이 줄어요. 양을 올리면 그 주 배우는 계산 문항이 늘어요(복습·창의·적용은 그대로, 같은 문제는 되풀이하지 않아요).',
+             'Default 1× is the set plan (30 min a session; 40 for middle grades 2–3). Raising speed covers more sessions in the same time, so weeks and months shrink. Raising amount adds more practice problems for that week\'s calculation (review, creative and applying stay the same; problems never repeat).',
+             '默认1倍即既定安排（每次30分钟，初二·初三40分钟）。提高速度会在同样时间里上更多课次，周数和月数随之减少。提高分量会增加本周所学运算的练习题（复习·创意·应用不变，题目不重复）。')}</p>
       </div>
       <div class="nm-cr-cad-h sub">${lk('이 속도로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
       <div class="nm-cr-totals">
@@ -3399,6 +3422,12 @@ function screenCourseRoad(){
     });
     body.querySelectorAll('.nm-cr-pacebtn[data-pace]').forEach(el=>{
       el.onclick=()=>{ S.roadPace=el.dataset.pace; save(); draw(true); };
+    });
+    body.querySelectorAll('.nm-cr-seg button[data-speed]').forEach(el=>{
+      el.onclick=()=>{ S.roadSpeed=+el.dataset.speed; save(); draw(true); };
+    });
+    body.querySelectorAll('.nm-cr-seg button[data-amount]').forEach(el=>{
+      el.onclick=()=>{ S.roadAmount=+el.dataset.amount; save(); syncAmount(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);

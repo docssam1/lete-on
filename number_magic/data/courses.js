@@ -427,7 +427,55 @@ const SEC_BY_TIER = { level0:20, level1:25, level2:35, level3:40, challenge:50,
   middle1:40, middle2:45, middle3:50, highmath1:60, highmath2:60, algebra:65, calculus1:70 };
 /* 서로 다른 문항이 적은 레벨의 회차 문항 수 상한 — **데이터로 명시**한다(인쇄 때 몰래 줄이지 않는다, GPT 규칙).
    값 = (실측한 서로 다른 문항 수 − 예시·따라 풀기 4)를 6의 배수로 내림. 실측은 scripts/report-unique-shortfall.js 방식. */
-const COUNT_CAP = { 'MD82@3':12 };   /* |x|=k 로 두 수 찾기 — 서로 다른 문항 18개 */
+/* 2026-09-25 학습량 배수(최대 1.5배)가 생기면서 **교과 칸의 모든 유형·레벨**을 실측해 36 미만인 것을 적었다
+   (scripts/report-count-cap.js, 생성 20000회). MD82@3 도 같은 실측에서 12 다.
+   유아 NL6@1·NL4@3·NL5@3 은 기본 1배 편성(18·24문항)부터 이 값을 넘어 회차 인쇄가 중복 없는 문항을 못 채웠다 — 이제 12. */
+const COUNT_CAP = {
+  'AD1@1':18,   // 서로 다른 문항 26
+  'AD2@1':24,   // 서로 다른 문항 30
+  'DC3@1':18,   // 서로 다른 문항 27
+  'DV14@1':24,   // 서로 다른 문항 32
+  'DV17@1':24,   // 서로 다른 문항 32
+  'DV17@2':24,   // 서로 다른 문항 32
+  'MD19@6':30,   // 서로 다른 문항 34
+  'MD20@4':24,   // 서로 다른 문항 29
+  'MD66@5':18,   // 서로 다른 문항 24
+  'MD69@1':12,   // 서로 다른 문항 16
+  'MD69@2':12,   // 서로 다른 문항 16
+  'MD74@4':24,   // 서로 다른 문항 32
+  'MD78@2':12,   // 서로 다른 문항 18
+  'MD78@3':12,   // 서로 다른 문항 16
+  'MD78@4':12,   // 서로 다른 문항 16
+  'MD82@1':18,   // 서로 다른 문항 25
+  'MD82@2':24,   // 서로 다른 문항 32
+  'MD82@3':12,   // 서로 다른 문항 18
+  'ML25@1':24,   // 서로 다른 문항 32
+  'ML25@2':24,   // 서로 다른 문항 32
+  'ML25@3':24,   // 서로 다른 문항 32
+  'ML25@4':24,   // 서로 다른 문항 32
+  'ML2@1':30,   // 서로 다른 문항 34
+  'ML2@2':30,   // 서로 다른 문항 34
+  'ML2@4':30,   // 서로 다른 문항 34
+  'ML3@1':30,   // 서로 다른 문항 34
+  'ML3@2':30,   // 서로 다른 문항 34
+  'ML3@4':30,   // 서로 다른 문항 34
+  'ML3@5':30,   // 서로 다른 문항 34
+  'ML6@1':30,   // 서로 다른 문항 34
+  'ML6@4':30,   // 서로 다른 문항 34
+  'NL11@1':18,   // 서로 다른 문항 24
+  'NL12@1':12,   // 서로 다른 문항 16
+  'NL14@1':12,   // 서로 다른 문항 20
+  'NL14@2':18,   // 서로 다른 문항 27
+  'NL16@1':12,   // 서로 다른 문항 20
+  'NL3@1':24,   // 서로 다른 문항 30
+  'NL4@1':18,   // 서로 다른 문항 24
+  'NL4@3':12,   // 서로 다른 문항 16
+  'NL5@1':12,   // 서로 다른 문항 20
+  'NL5@3':12,   // 서로 다른 문항 16
+  'NL6@1':12,   // 서로 다른 문항 16
+  'NL7@1':18,   // 서로 다른 문항 24
+  'SB1@1':30,   // 서로 다른 문항 36
+};
 const SESSION_SEC = 1800;
 /* 유아(5~7세)는 20분 — 시간을 재지 않는 단계이고 한 번에 앉아 있는 시간이 짧다(원장 확인 필요, GPT 보고에 적음) */
 /* 중2·중3 은 40분(2026-09-25 원장 결정 "1" — 한 학기 2달을 맞추려고 30분 대신 40분 안팎).
@@ -470,6 +518,13 @@ function planCounts(ss, tier, maxLevel){
   for(let guard = 0; guard < 20 && total() < BUDGET * 0.75; guard++){
     const c = own.slice().sort((a, b) => (b.difficulty === 'hard') - (a.difficulty === 'hard') || a.count - b.count)
       .find(d => d.count + 6 <= cap(d));
+    if(!c) break; c.count += 6;
+  }
+  /* 교과가 상한(COUNT_CAP — 서로 다른 문항이 적은 레벨)에 막혀 더 못 늘면, 적용·창의 칸을 6씩 늘린다(그리기 제외).
+     같은 문제로 채우지 않고 회차 시간을 맞추는 길이다 — 유아 NL6@1·NL14@1 처럼 두 드릴이 모두 12에 막힌 회차. */
+  const more = [...ss.application.filter(d => d.kind !== 'drawing'), ...ss.strategy.practice];
+  for(let guard = 0; guard < 20 && total() < BUDGET * 0.75; guard++){
+    const c = more.slice().sort((a, b) => a.count - b.count).find(d => d.count + 6 <= Math.min(cap(d), 18));
     if(!c) break; c.count += 6;
   }
   ss.minutes = Math.round(total() / 60);
@@ -767,6 +822,7 @@ function buildCourses(NM_THREADS){
 }
 
 window.NM_COURSE_SPEC = COURSE_SPEC;   // 검증 하네스·향후 편집용 원본 노출
+window.NM_COUNT_CAP = COUNT_CAP;       // 학습량 배수(exam.js)도 같은 상한을 지킨다
 window.NM_COURSES = buildCourses(window.NM_THREADS);
 
 if(typeof module!=='undefined'&&module.exports)module.exports={COURSE_SPEC,buildCourses,NM_COURSES:window.NM_COURSES};
