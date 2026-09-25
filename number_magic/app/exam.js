@@ -3776,9 +3776,43 @@ function sortRoundProblems(problems, type){
 /* Training Course 칸의 풀이 줄 — 위젯용 steps, 없으면 예시용 solution(2026-09-26, 창의수연 감사 §3).
    solution 만 내는 스레드(FR9·CH3·DV12 등 17개)는 전에는 "식 = □" 한 줄만 찍혀 푸는 과정이 없었다. */
 function trainStepsOf(p){
-  const src = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : []);
-  return src.filter(x => x && x.tex);
+  if(Array.isArray(p.steps) && p.steps.length) return p.steps.filter(x => x && x.tex);
+  return trainSolution(p).steps;
 }
+/* solution 은 예시·해설용이라 학생 칸에 그대로 쓰면 안 되는 줄이 섞여 있다(2026-09-26 17개 스레드 전수 확인):
+   ① 문제 식을 그대로 되풀이하는 줄(AD9·ML25·DV12·13·17·18·CH5 끝줄) → 뺀다
+   ② 풀이를 말로 적은 줄(\text, CH5) → 뺀다 — 한국어만 있어 en/zh 학습지에 그대로 찍힌다
+   ③ 빈칸 없이 계산 결과를 드러낸 줄(FR11 `3/5×2/3 = 6/15`) → 결과 숫자를 □ 로 바꾸고,
+      다음 줄이 그 결과로 시작하면 앞부분을 떼어 "= □/□" 로 잇는다(안 그러면 다음 줄이 답을 다시 보여 준다)
+   마지막 줄의 빈칸이 곧 답이면 따로 "= □" 답 줄을 두지 않는다(noAns). */
+function trainSolution(p){
+  const norm = t => String(t).replace(/\\(?:quad|qquad|;|,|:| )|\s+/g, '');
+  const q = norm(p.tex), out = [];
+  let revealed = null;
+  for(const x of (Array.isArray(p.solution) ? p.solution : [])){
+    if(!x || !x.tex || /\\text/.test(x.tex) || norm(x.tex) === q) continue;
+    let tex = String(x.tex);
+    if(revealed){
+      const i = tex.indexOf('=');
+      if(i > 0 && norm(tex.slice(0, i)) === revealed) tex = tex.slice(i + 1).trim();
+    }
+    revealed = null;
+    const j = tex.lastIndexOf('=');
+    if(j > 0 && !/\\square/.test(tex)){
+      const rhs = tex.slice(j + 1);
+      if(!/\\times|\\div|\\cdots|\\Rightarrow|[+\-]/.test(rhs) && /\d/.test(rhs)){
+        revealed = norm(rhs);
+        tex = tex.slice(0, j + 1) + rhs.replace(/\d+(?:\.\d+)?/g, '\\square');
+      }
+    }
+    out.push(Object.assign({}, x, { tex }));
+  }
+  const last = out[out.length - 1];
+  const noAns = !!(last && /\\square/.test(last.tex) && 'blank' in last && JSON.stringify(last.blank) === JSON.stringify(p.answer));
+  return { steps: out, noAns };
+}
+/* 칸 높이 추정용 — 빈칸이 든 세로 분수 줄은 상자 두 개가 쌓여 보통 줄보다 약 16mm 높다(C21 FR11 실측) */
+const trainTallLine = t => /\\dfrac\{[^}]*\\square/.test(String(t));
 function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal){
   let cls = 'nm-w2-item nm-print-item';
   let inner;
@@ -3796,7 +3830,9 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       const t = String(x.tex).replace(/\\square/g, box);
       return `<div class="nm-w2-train-step">= <span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span></div>`;
     }).join('');
-    const ansLine = `<div class="nm-w2-train-step nm-w2-train-ans">= <span class="nm-w2-tex" data-tex="${esc(box)}"></span></div>`;
+    /* solution 으로 채운 칸: 마지막 줄 빈칸이 곧 답이거나, 문제 식 안에 이미 답 칸이 있으면(몫 ⋯ 나머지·AD9 두 식) 답 줄을 따로 두지 않는다 */
+    const noAns = !bare && !(Array.isArray(p.steps) && p.steps.length) && (trainSolution(p).noAns || /\\square/.test(raw));
+    const ansLine = noAns ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">= <span class="nm-w2-tex" data-tex="${esc(box)}"></span></div>`;
     const dots = bare ? '<i></i><i></i><i></i>' : '<i></i>';
     const askHtmlT = printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
     const slotAttrT = (p.__slot != null) ? ` data-slot="${esc(String(p.__slot))}"` : '';
@@ -5053,9 +5089,11 @@ function renderRoundPagesBody(item, opts){
     const nT = problems.length;
     const estMm = (p, idx) => {
       const bare = nT > 1 && idx >= Math.ceil(nT * 0.75);
-      const nSteps = bare ? 0 : trainStepsOf(p).length;
+      const stT = bare ? [] : trainStepsOf(p);
+      const nSteps = stT.length + stT.filter(x => trainTallLine(x.tex)).length * 1.25;
+      const ansN = (!bare && !(Array.isArray(p.steps) && p.steps.length) && (trainSolution(p).noAns || /\\square/.test(String(p.tex||'').replace(/=\s*\\square\s*$/,'')))) ? 0 : 1;
       /* 저학년 장은 글씨 배율이 1.28배(.nm-print-age-young --ws-fs) */
-      const est = (14 + 12.8 * (nSteps + 1) + 7 * (bare ? 3 : 1)) * fsR * (young ? 1.28 : 1);
+      const est = (14 + 12.8 * (nSteps + ansN) + 7 * (bare ? 3 : 1)) * fsR * (young ? 1.28 : 1);
       return trainMax ? Math.max(est, trainMax) : est;
     };
     /* 가득 찬 장 높이는 드릴 장에서 잰 값 — 창의 연산 장은 그 위에 "Training Course" 띠(15mm + 틈)가 더 붙는다
