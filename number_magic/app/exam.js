@@ -4884,8 +4884,10 @@ function renderRoundPagesBody(item, opts){
     /* 중등은 남은 문항을 장마다 고르게 나눈다 — 줄 수를 잰 높이로 줄이면 18문항이 8+8+2 처럼 끝에 한두 문항만
        남는 장이 생겨 "한 쪽 6문항" 규칙을 어겼다(C30-S06). 장 수는 그대로, 고르게: 18 → 6+6+6. */
     const rest = problems.length - from;
-    if(midPage && rest > layout.perPage){
-      const n = Math.ceil(rest / layout.perPage);
+    const nEven = Math.ceil(rest / layout.perPage);
+    /* 고르게 나눠도 장마다 6문항 이상일 때만(10문항을 5+5 로 나누면 오히려 규칙을 어긴다 → 8+2, 짧은 장은 마지막) */
+    if(midPage && rest > layout.perPage && rest >= 6 * nEven){
+      const n = nEven;
       for(let j = 0, at = from; j < n; j++){ const size = Math.ceil((problems.length - at) / (n - j)); pages.push(problems.slice(at, at + size)); evenPages.push(pages.length - 1); at += size; }
     } else {
       for(let i = from; i < problems.length; i += layout.perPage) pages.push(problems.slice(i, i + layout.perPage));
