@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Jua&display=swap">
 <style>
   :root{--font-game:'Fredoka','Jua','Pretendard',sans-serif}
-  html,body{margin:0;height:100%;background:#1a1040;overflow:hidden}
+  html,body{margin:0;height:100%;background:#3a2414;overflow:hidden}
   #stage{position:fixed;inset:0}
   #log{position:fixed;left:8px;bottom:8px;z-index:9;font:12px monospace;color:#fff;background:rgba(0,0,0,.5);padding:4px 8px;border-radius:6px;pointer-events:none}
   #log:empty{display:none}
@@ -28,8 +28,16 @@
   window.__picks = [];
   const choices = DEFAULT_CHOICES.map(c => c.id === 'continue'
     ? Object.assign({}, c, { sub:{ ko:'분수의 덧셈 · 3단계', en:'Adding fractions · step 3', zh:'分数加法 · 第3步' } }) : c);
+  /* ?char3d=boy|girl|elder|doc|buddy — 진짜 3D 캐릭터(app/char3d)로 바꿔 끼우기 확인 */
+  let character3d;
+  if(q.get('char3d')){
+    try { const cm = await import('../../app/char3d/char3d.js');
+      character3d = THREE => cm.makeCharacter(THREE, { kind:q.get('char3d'), buddy:{ number:3, color:'blue' } }); }
+    catch(e){ console.warn('char3d 불러오기 실패', e); }
+  }
   try {
     const ctl = await mountTitle3D(document.getElementById('stage'), {
+      character3d,
       lang, choices,
       onPick:id => { window.__picks.push(id); console.log('onPick', id); document.getElementById('log').textContent = 'onPick: ' + id; },
       player: q.has('raw') ? '<div style="width:120px;height:150px;border-radius:40px 40px 10px 10px;background:linear-gradient(#ffd35a,#e2415a)"></div>' : px => window.renderPartyHtml ? window.renderPartyHtml(kind, { number:3, color:'blue' }, px) : '',

@@ -8,6 +8,7 @@ const APP = path.resolve(__dirname, '../..'), ROOT = path.resolve(APP, '..');
 const outArg = process.argv.find(a => a.startsWith('--out='));
 const OUT = outArg ? path.resolve(outArg.slice(6)) : path.join(os.tmpdir(), 'title3d');
 const only = process.argv.find(a => a.startsWith('--only='));
+const quick = process.argv.includes('--quick');   /* 스크린샷만(누르기·Tab 검사 생략) */
 fs.mkdirSync(OUT, { recursive:true });
 const TYPES = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.webp':'image/webp', '.png':'image/png', '.svg':'image/svg+xml', '.woff2':'font/woff2' };
 const server = http.createServer((req, res) => {
@@ -25,12 +26,16 @@ const cases = [
   { name:'desk-still', w:1280, h:800, lang:'ko', q:'&still=1' },
   { name:'phone-raw', w:390, h:844, lang:'ko', q:'&raw=1' },
   { name:'phone-land', w:844, h:390, lang:'ko', mobile:true },
+  /* 3D 캐릭터 바꿔 끼우기(app/char3d — 다른 작업이 만드는 중이라 여기서 난 오류는 경고로만) */
+  { name:'desk-char3d', w:1280, h:800, lang:'ko', q:'&char3d=boy', soft:true },
+  { name:'phone-char3d', w:390, h:844, lang:'ko', q:'&char3d=girl', mobile:true, soft:true },
 ].filter(c => !only || only.slice(7).split(',').includes(c.name));
 const IDS = ['continue', 'diag', 'game', 'sheet', 'road', 'story', 'dex', 'hist', 'magazine'];
 server.listen(0, async () => {
   const browser = await chromium.launch({ args:['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-  const bad = [];
+  const bad0 = [], warn = [];
   for(const c of cases){
+    const bad = c.soft ? warn : bad0;
     const ctx = await browser.newContext({ viewport:{ width:c.w, height:c.h }, deviceScaleFactor:1, hasTouch:!!c.mobile });
     const page = await ctx.newPage();
     const errs = []; page.on('pageerror', e => errs.push(e.message));
@@ -51,7 +56,7 @@ server.listen(0, async () => {
       if(a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h) bad.push(`${c.name}: 겹침 ${a.id}↔${b.id}`); }
     const hs = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     if(hs > 0) bad.push(`${c.name}: 가로 스크롤 ${hs}px`);
-    if(c.name === 'desk-ko' || c.name === 'phone-ko'){
+    if(!quick && (c.name === 'desk-ko' || c.name === 'phone-ko')){
       /* 버튼 클릭 */
       for(const id of IDS){ await page.evaluate(() => { window.__picks = []; }); await page.waitForTimeout(450);
         await page.click(`.t3d-btn[data-id="${id}"]`); const p = await page.evaluate(() => window.__picks.slice());
@@ -82,7 +87,7 @@ server.listen(0, async () => {
       await page.evaluate(() => document.querySelector('.t3d-btn[data-id="sheet"]').focus()); await page.waitForTimeout(700);
       await page.screenshot({ path:path.join(OUT, c.name + '-focus-sheet.png') });
     }
-    if(c.name === 'desk-still'){
+    if(!quick && c.name === 'desk-still'){
       /* 크기 바꾸기 → 다시 구도, 언어 바꾸기, 해제 */
       await page.setViewportSize({ width:600, height:900 }); await page.waitForTimeout(900);
       await page.screenshot({ path:path.join(OUT, c.name + '-resized.png') });
@@ -98,5 +103,6 @@ server.listen(0, async () => {
     await ctx.close();
   }
   await browser.close(); server.close();
-  if(bad.length){ console.log('\n✗\n  ' + bad.join('\n  ')); process.exitCode = 1; } else console.log('\nall ok');
+  if(warn.length) console.log('\n(경고 — 3D 캐릭터 쪽)\n  ' + warn.join('\n  '));
+  if(bad0.length){ console.log('\n✗\n  ' + bad0.join('\n  ')); process.exitCode = 1; } else console.log('\nall ok');
 });
