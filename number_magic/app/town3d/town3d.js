@@ -94,15 +94,38 @@ function plateauAmt(p, x, z){
   const out = (d - 1) * Math.min(p.rx, p.rz) + wob;     // 가장자리 밖으로 몇 단위
   return 1 - sstep(-p.edge, 0, out);
 }
+let MP = null;
+function mountPath(){
+  if(MP) return MP;
+  const pts = spiralPts().slice(2);
+  let tot = 0; const acc = [0];
+  for(let i = 1; i < pts.length; i++){ tot += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); acc.push(tot); }
+  MP = pts.map((p, i) => [p[0], p[1], lerp(1.62, MOUNT.peak + 0.02, acc[i] / tot)]);
+  return MP;
+}
 function heightAt(x, z){
   let h = 0;
   for(const p of PLATEAUS){ const a = plateauAmt(p, x, z); if(a > 0) h = Math.max(h, p.h * a); }
   /* 산 — 꼭대기는 평평(탑 자리), 옆은 가파르다 */
   const md = Math.hypot(x - MOUNT.cx, (z - MOUNT.cz) * 1.05);
   if(md < MOUNT.R + 1){
-    const t = sstep(MOUNT.R, MOUNT.top, md + (fbm(x * 0.5, z * 0.5) - 0.5) * 1.6);
-    const rock = md > MOUNT.top + 0.6 ? (fbm(x * 1.3, z * 1.3) - 0.5) * 0.7 * t : 0;
+    const t0 = sstep(MOUNT.R, MOUNT.top, md + (fbm(x * 0.5, z * 0.5) - 0.5) * 1.6);
+    /* 계단식 산 — 풀 덮인 턱 네 단과 바위 벼랑(그림처럼) */
+    const k = Math.min(3, Math.floor(t0 * 4)), fr = t0 * 4 - k;
+    const t = t0 >= 1 ? 1 : (k + sstep(0.45, 1, fr)) / 4 * 0.75 + t0 * 0.25;
+    const rock = md > MOUNT.top + 0.6 ? (fbm(x * 1.3, z * 1.3) - 0.5) * 0.5 * t : 0;
     h = Math.max(h, MOUNT.peak * t + rock);
+    /* 산길 — 나선 길을 따라 턱을 깎고 돋워 길 폭만큼 평평한 선반을 만든다 */
+    const mp = mountPath();
+    let best = 9, bh = 0;
+    for(let i = 1; i < mp.length; i++){
+      const a = mp[i - 1], b = mp[i], ex = b[0] - a[0], ez = b[1] - a[1], l2 = ex * ex + ez * ez;
+      const u = clamp(((x - a[0]) * ex + (z - a[1]) * ez) / l2, 0, 1);
+      const dx = x - (a[0] + ex * u), dz = z - (a[1] + ez * u), d = dx * dx + dz * dz;
+      if(d < best){ best = d; bh = lerp(a[2], b[2], u); }
+    }
+    best = Math.sqrt(best);
+    if(best < 1.8) h = lerp(h, bh, 1 - sstep(0.62, 1.8, best));
   }
   /* 북쪽 먼 언덕 — 지평선을 둘러싼다 */
   const far = sstep(-25, -40, z) * (3 + 5 * fbm(x * 0.08, z * 0.08));
@@ -540,7 +563,7 @@ export async function mountTown3D(container, opts){
   function placeCam(){
     cam.x = clamp(cam.x, BOUND.x0, BOUND.x1); cam.z = clamp(cam.z, BOUND.z0, BOUND.z1); cam.d = clamp(cam.d, dMin, dMax);
     const zt = (cam.d - dMin) / (dMax - dMin);
-    const pitch = lerp(1.0, 0.5, Math.pow(zt, 0.75));                 // 가까이 가면 더 내려다보고, 멀리 가면 그림처럼 눕힌다
+    const pitch = lerp(0.84, 0.5, Math.pow(zt, 0.75));                 // 가까이 가면 더 내려다보고, 멀리 가면 그림처럼 눕힌다
     const ty = 1.2 + zt * 2.5;
     camera.position.set(cam.x, ty + Math.sin(pitch) * cam.d, cam.z + Math.cos(pitch) * cam.d);
     camera.lookAt(cam.x, ty, cam.z);
@@ -940,7 +963,7 @@ function buildWorld(scene, renderer, rng, track){
       col.copy(grassA).lerp(grassB, clamp(n * 1.3 - 0.2, 0, 1));
       if(h > 1.2) col.lerp(grassTop, 0.25);
       /* 비탈은 바위(층층이 줄무늬) */
-      const rk = sstep(0.75, 1.35, slope);
+      const rk = sstep(0.95, 1.6, slope);
       if(rk > 0){ const band = 0.5 + 0.5 * Math.sin(h * 5.2 + n * 3); col.lerp(rockA.clone().lerp(rockB, band * 0.7), rk); }
       /* 남쪽을 향한 비탈은 살짝 밝게, 북쪽은 어둡게 — 그림 같은 명암 */
       col.multiplyScalar(1 + clamp(-gx * 0.05 + gz * 0.06, -0.12, 0.12));

@@ -63,14 +63,80 @@ function bead(k, color, r){
   const m = new k.THREE.Mesh(new k.THREE.SphereGeometry(r || 0.085, 24, 16), new k.THREE.MeshPhysicalMaterial({ color, roughness:0.22, clearcoat:1 }));
   m.castShadow = true; k.scene.add(m); return m;
 }
-/* 글자 크기를 카드 폭에 맞춘 k.card — 식 한 줄이 카드의 fill 비율을 넘지 않게(뒷면 o.backTxt 도 같은 크기로) */
+/* 수식 조각 그리기 — 문자열(mathText), {r:'2'}(근호), {n:[…], d:[…]}(분수, 안에 근호 가능), {sup:'2'}(윗첨자).
+   너비를 돌려준다(draw=false 면 재기만) */
+function mdraw(k, g, parts, x, cy, fs, draw){
+  let cx = x;
+  parts.forEach(p => {
+    if(typeof p === 'string'){ const w = k.mathText(g, p, cx, cy, fs, { align:'left', draw }); cx += w; return; }
+    if(p.sup != null){ const w = k.mathText(g, p.sup, cx - fs * 0.02, cy - fs * 0.32, fs * 0.62, { align:'left', draw }); cx += w + fs * 0.02; return; }
+    if(p.r != null){
+      const rw = k.mathText(g, p.r, 0, 0, fs, { draw:false }), lw = fs * 0.62, W = lw + rw + fs * 0.12;
+      if(draw !== false){
+        g.save(); g.lineWidth = fs * 0.065; g.lineJoin = 'round'; g.lineCap = 'round';
+        g.beginPath(); g.moveTo(cx + fs * 0.04, cy + fs * 0.06); g.lineTo(cx + fs * 0.16, cy - fs * 0.02);
+        g.lineTo(cx + fs * 0.34, cy + fs * 0.46); g.lineTo(cx + fs * 0.56, cy - fs * 0.6); g.lineTo(cx + W, cy - fs * 0.6); g.stroke(); g.restore();
+        k.mathText(g, p.r, cx + lw + fs * 0.04, cy + fs * 0.02, fs, { align:'left' });
+      }
+      cx += W + fs * 0.04; return;
+    }
+    if(p.n){
+      const s = fs * 0.8, wn = mdraw(k, g, p.n, 0, 0, s, false), wd = mdraw(k, g, p.d, 0, 0, s, false), W = Math.max(wn, wd) + fs * 0.3;
+      if(draw !== false){
+        mdraw(k, g, p.n, cx + (W - wn) / 2, cy - fs * 0.62, s, true);
+        mdraw(k, g, p.d, cx + (W - wd) / 2, cy + fs * 0.7, s, true);
+        g.save(); g.lineWidth = fs * 0.065; g.beginPath(); g.moveTo(cx + fs * 0.06, cy); g.lineTo(cx + W - fs * 0.06, cy); g.stroke(); g.restore();
+      }
+      cx += W + fs * 0.06;
+    }
+  });
+  return cx - x;
+}
+/* 수식 판 텍스처 — 폭에 맞춰 글자 크기를 줄인다 */
+function mtex(k, parts, pw, ph, o){
+  o = o || {};
+  return k.canvasTex(pw, ph, (g, w, h) => {
+    g.fillStyle = o.bg || '#f3e7cf'; g.fillRect(0, 0, w, h);
+    if(o.frame){ g.strokeStyle = o.frame; g.lineWidth = Math.min(w, h) * 0.035; g.strokeRect(g.lineWidth, g.lineWidth, w - 2 * g.lineWidth, h - 2 * g.lineWidth); }
+    g.fillStyle = g.strokeStyle = o.color || '#2b2118'; g.textBaseline = 'middle';
+    let fs = h * (o.hmax || 0.5); const tw = mdraw(k, g, parts, 0, 0, fs, false);
+    if(tw > w * (o.fill || 0.84)) fs *= w * (o.fill || 0.84) / tw;
+    const W = mdraw(k, g, parts, 0, 0, fs, false);
+    mdraw(k, g, parts, (w - W) / 2, h / 2 + (o.dy || 0) * h, fs, true);
+  });
+}
+/* 수식 카드 — k.card 와 같은 몸통에 mtex 윗면, o.back 이면 뒷면(반 바퀴 z 회전하면 읽힘), o.glow 면 윗면이 빛날 수 있다 */
+function mcard(k, parts, x, z, o){
+  o = o || {};
+  const { THREE, scene } = k;
+  const w = o.w || 1.0, d = o.d || 0.8, h = o.h || 0.04, pw = 1024, ph = Math.round(1024 * d / w);
+  const grp = new THREE.Group();
+  const body = new THREE.Mesh(k.rbox(w, h, d, Math.min(0.04, d * 0.1)), new THREE.MeshStandardMaterial({ color:o.edge || '#e9dcc0', roughness:0.85 }));
+  body.castShadow = body.receiveShadow = true; grp.add(body);
+  const tex = mtex(k, parts, pw, ph, o);
+  const mat = new THREE.MeshStandardMaterial({ map:tex, roughness:0.8 });
+  if(o.glow){ mat.emissive = new THREE.Color('#ffd89a'); mat.emissiveMap = tex; mat.emissiveIntensity = 0; }
+  const top = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.94, d * 0.92), mat);
+  top.rotation.x = -Math.PI / 2; top.position.y = h + 0.002; top.receiveShadow = true; grp.add(top);
+  if(o.back){ const bt = mtex(k, o.back, pw, ph, Object.assign({}, o, o.backOpts || {})); bt.center.set(0.5, 0.5); bt.rotation = Math.PI;
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.94, d * 0.92), new THREE.MeshStandardMaterial({ map:bt, roughness:0.8 }));
+    back.rotation.x = Math.PI / 2; back.position.y = -0.002; grp.add(back); }
+  grp.position.set(x, o.y == null ? 0.035 : o.y, z); grp.rotation.y = o.rot || 0; scene.add(grp);
+  grp.userData.mat = mat; return grp;
+}
+/* 'x²' 같은 문자열을 mdraw 조각으로 — ² 는 진짜 윗첨자로 그린다 */
+const parts = t => { const out = []; t.split('²').forEach((s, i) => { if(i) out.push({ sup:'2' }); if(s) out.push(s); }); return out; };
+/* 글자 크기를 카드 폭에 맞춘 식 카드 — 식 한 줄이 fill 비율을 넘지 않게(뒷면 o.backTxt 도 같은 크기로) */
 function fitCard(k, txt, x, z, o){
-  o = Object.assign({}, o); const w = o.w || 1.2, d = o.d || 0.8, ph = Math.round(1024 * d / w);
-  const g = document.createElement('canvas').getContext('2d');
-  const tw = Math.max(k.mathText(g, txt, 0, 0, 100, { draw:false }), o.backTxt ? k.mathText(g, o.backTxt, 0, 0, 100, { draw:false }) : 0);
-  o.size = Math.min(ph * (o.hmax || 0.62), 100 * 1024 * (o.fill || 0.84) / tw);
-  if(o.backTxt) o.back = [o.backTxt];
-  return k.card([txt], x, z, o);
+  o = Object.assign({ hmax:0.56, fill:0.84 }, o);
+  if(o.backTxt){
+    const g = document.createElement('canvas').getContext('2d');
+    const w = o.w || 1.0, d = o.d || 0.8, ph = Math.round(1024 * d / w);
+    const t1 = mdraw(k, g, parts(txt), 0, 0, 100, false), t2 = mdraw(k, g, parts(o.backTxt), 0, 0, 100, false);
+    const fs = Math.min(ph * o.hmax, 100 * 1024 * o.fill / Math.max(t1, t2));
+    o.hmax = fs / ph; o.fill = 0.99; o.back = parts(o.backTxt);
+  }
+  return mcard(k, parts(txt), x, z, o);
 }
 /* 고리(꼭짓점 표시) */
 function ring(k, p, color){
@@ -91,7 +157,7 @@ export const SCENES_C37 = {
   ]},
     build(k){
     const { THREE } = k;
-    k.frame([0, 0.05, 0.45], 4.9, 58);
+    k.frame([0, 0.05, 0.3], 5.5, 58);
     k.table();
     const B = board(k, { x0:-4, x1:4, y0:-1, y1:10, ux:0.46, uy:0.27, cx:0, cz:-0.35, fs:0.15, xs:[-3, -2, -1, 1, 2, 3], ys:[1, 2, 3, 4, 5, 6, 7, 8, 9] });
     const f = x => x * x;
@@ -99,14 +165,13 @@ export const SCENES_C37 = {
     const XS = [-3, -2, -1, 0, 1, 2, 3];
     const pins = XS.map(x => pin(k, B.P(x, f(x)), x === 0 ? '#2f7a4a' : '#b3221a'));
     /* 값의 표 — 윗줄 x, 아랫줄 y (카드) */
-    const cw = 0.44, gap = 0.5, X0 = -3.5 * gap - 0.02, zx = 1.62, zy = 2.1;
+    const cw = 0.44, gap = 0.5, X0 = -3.5 * gap - 0.02, zx = 1.52, zy = 1.97;
     fitCard(k, 'x', X0 - 0.06, zx, { w:0.4, d:0.4, edge:'#d7c7a3', bg:'#e6d7b6' });
     fitCard(k, 'y', X0 - 0.06, zy, { w:0.4, d:0.4, edge:'#d7c7a3', bg:'#e6d7b6' });
     const tx = [], ty = [];
     XS.forEach((x, i) => { const px = X0 + (i + 1) * gap;
       tx.push(fitCard(k, x < 0 ? '−' + (-x) : String(x), px, zx, { w:cw, d:0.4, fill:0.72 }));
       ty.push(fitCard(k, String(f(x)), px, zy, { w:cw, d:0.4, fill:0.72, bg:'#f6e3c9' })); });
-    fitCard(k, 'y = x²', 1.95, -2.35, { w:1.1, d:0.42, rot:0.03 });
     /* 구슬 — 정지 그림에서는 꼭짓점(원점)에 */
     const bd = bead(k, '#fff3d6', 0.075);
     const put = x => { bd.position.copy(B.P(x, f(x))); bd.position.y += 0.07; };
@@ -134,7 +199,7 @@ export const SCENES_C37 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.15, 0.05, 0.3], 5.0, 58);
+    k.frame([0.15, 0.05, 0.3], 5.3, 58);
     k.table();
     const B = board(k, { x0:-3.6, x1:6.6, y0:-2, y1:9.6, ux:0.4, uy:0.27, cx:0, cz:-0.35, fs:0.14, xs:[-3, -2, -1, 1, 2, 3, 4, 5, 6], ys:[1, 2, 3, 4, 5, 6, 7, 8, 9] });
     /* 원래 곡선 y = x²(어두운 황동, 판에 붙어) · 옮긴 곡선 y = (x − 3)²(구리, 살짝 떠서) */
@@ -148,16 +213,16 @@ export const SCENES_C37 = {
     const A0 = B.P(0.15, -1.35, 0.12), A1 = B.P(2.7, -1.35, 0.12);
     const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, A1.x - A0.x, 12), brass); shaft.rotation.z = Math.PI / 2; shaft.position.set((A0.x + A1.x) / 2, 0.12, A0.z); shaft.castShadow = true; scene.add(shaft);
     const head = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.2, 18), brass); head.rotation.z = -Math.PI / 2; head.position.set(A1.x + 0.08, 0.12, A1.z); head.castShadow = true; scene.add(head);
-    fitCard(k, 'y = x²', -1.55, 1.75, { w:1.1, d:0.44, edge:'#cdbf9c' });
-    const cR = fitCard(k, 'y = (x − 3)²', 0.45, 1.75, { w:1.6, d:0.44, edge:'#e2b597' });
-    const cZ = fitCard(k, 'x = 3', 2.2, 1.75, { w:0.9, d:0.44, bg:'#f6e3c9' });
+    fitCard(k, 'y = x²', -1.3, 1.72, { w:1.0, d:0.44, edge:'#cdbf9c' });
+    const cR = fitCard(k, 'y = (x − 3)²', 0.4, 1.72, { w:1.5, d:0.44, edge:'#e2b597' });
+    const cZ = fitCard(k, 'x = 3', 1.95, 1.72, { w:0.85, d:0.44, bg:'#f6e3c9' });
     const dx = 3 * B.ux;
     /* 움직임: 구리 곡선이 y = x² 자리로 돌아갔다가(꼭짓점 구슬도 함께) 다시 오른쪽으로 3칸 → x = 3 카드와 고리가 톡 */
     k.onFrame(t => { const p = cyc(t, 9);
       const back = seg(p, 0.06, 0.26) * (1 - seg(p, 0.34, 0.58));
       mv.group.position.x = -dx * back;
-      cZ.position.y = 0.16 * hop(p, 0.6, 0.72); r3.position.y = 0.1 + 0.2 * hop(p, 0.6, 0.72);
-      cR.position.y = 0.12 * hop(p, 0.78, 0.9); });
+      cZ.position.y = 0.035 + 0.16 * hop(p, 0.6, 0.72); r3.position.y = 0.1 + 0.2 * hop(p, 0.6, 0.72);
+      cR.position.y = 0.035 + 0.12 * hop(p, 0.78, 0.9); });
     k.lights({ key:3.0, keyPos:[-4, 7, 5], spotPos:[0.3, 7, 2], spotAt:[0.3, 0, 0.3], envOpts:{ intensity:0.7 } });
   }},
 
@@ -192,10 +257,9 @@ export const SCENES_C37 = {
     k.onFrame(t => { const p = cyc(t, 9);
       const x = 3 + (xL - 3) * seg(p, 0.04, 0.14) + (3 - xL) * seg(p, 0.16, 0.28) + (xR - 3) * seg(p, 0.36, 0.44) + (3 - xR) * seg(p, 0.44, 0.52);
       put(x);
-      const h = hop(p, 0.28, 0.38); rg.position.y = 0.1 + 0.2 * h; cV.position.y = 0.14 * h;
+      const h = hop(p, 0.28, 0.38); rg.position.y = 0.1 + 0.2 * h; cV.position.y = 0.035 + 0.14 * h;
       const fl = seg(p, 0.54, 0.64) * (1 - seg(p, 0.8, 0.9)), ang = Math.PI * fl;
-      card.rotation.z = ang; card.position.y = c0 + 1.05 * Math.abs(Math.sin(ang)) + 0.06 * Math.min(1, fl * 8) * (fl > 0.99 ? 1 : 1);
-      if(fl > 0.999) card.position.y = c0 + 0.06; });
+      card.rotation.z = ang; card.position.y = c0 + 0.9 * Math.sin(ang) + 0.045 * fl; });
     k.lights({ key:3.0, keyPos:[-4, 7, 5], spotPos:[0.3, 7, 2], spotAt:[0.2, 0, 0.3], envOpts:{ intensity:0.7 } });
   }},
 
@@ -223,16 +287,16 @@ export const SCENES_C37 = {
     const cE = fitCard(k, '(x − 2)(x − 3) = 0', 1.25, 1.72, { w:2.0, d:0.48, bg:'#f6e3c9' });
     const bd = bead(k, '#fff3d6', 0.078);
     const put = x => { bd.position.copy(B.P(x, f(x))); bd.position.y += 0.07; };
-    put(0);
+    put(2.5);
     const y0 = [p2, p3, p6].map(g => g.position.y);
     /* 움직임: 구슬이 y축 교점 (0, 6) 에서 곡선을 타고 내려가 x = 2, x = 3 을 지나며(압정이 톡) 올라갔다가 되돌아온다 */
     k.onFrame(t => { const p = cyc(t, 9);
-      const x = 4.9 * seg(p, 0.14, 0.74) - 4.9 * seg(p, 0.8, 0.97);
+      const x = 2.5 - 2.5 * seg(p, 0.03, 0.16) + 4.9 * seg(p, 0.24, 0.72) - 2.4 * seg(p, 0.8, 0.96);
       put(x);
-      const fw = p < 0.76 ? 1 : 0;
-      p6.position.y = y0[2] + 0.25 * hop(p, 0.02, 0.12);
+      const fw = p > 0.22 && p < 0.76 ? 1 : 0;
+      p6.position.y = y0[2] + 0.25 * hop(p, 0.15, 0.25);
       p2.position.y = y0[0] + 0.25 * bump(x, 2, 0.18) * fw; p3.position.y = y0[1] + 0.25 * bump(x, 3, 0.18) * fw;
-      cF.position.y = 0.12 * hop(p, 0.02, 0.12); cE.position.y = 0.12 * hop(p, 0.28, 0.4); });
+      cF.position.y = 0.035 + 0.12 * hop(p, 0.15, 0.25); cE.position.y = 0.035 + 0.12 * hop(p, 0.28, 0.4); });
     k.lights({ key:3.0, keyPos:[-4, 7, 5], spotPos:[0.3, 7, 2], spotAt:[0.2, 0, 0.3], envOpts:{ intensity:0.7 } });
   }}
 };
