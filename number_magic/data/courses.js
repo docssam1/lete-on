@@ -431,6 +431,18 @@ const COUNT_CAP = { 'MD82@3':12 };   /* |x|=k 로 두 수 찾기 — 서로 다�
 const SESSION_SEC = 1800;
 /* 유아(5~7세)는 20분 — 시간을 재지 않는 단계이고 한 번에 앉아 있는 시간이 짧다(원장 확인 필요, GPT 보고에 적음) */
 const SESSION_SEC_BY_TIER = { level0:1200 };
+/* 한 회차에 싣는 교과 항목 수(2026-09-25, 원장 "보통 2달에 한학기 끝내기").
+   중등은 "회차마다 드릴 2개"로는 한 학년이 7개월(주 2회 24~29주)이 걸렸다. 그래서 중등만
+   **시간 예산이 허락하는 만큼** 싣는다 — 교과 항목마다 최소 12문항 + 창의 6(×1.2) + 적용 6
+   (그래프 그리기면 6×90초)이 30분+15% 안에 드는 가장 큰 수, 최대 3. 초등은 이미 한 학기 2달
+   안팎이라(주 2회 35~39주 / 4학기) 옛 규칙(회차마다 2개)을 그대로 쓴다. */
+const PACK_TIERS = { middle1:3, middle2:3, middle3:3 };
+function packCapacity(tier, drawing){
+  /* 예산은 planCounts 와 같은 30분+15% 를 **분 단위로 올림**(34.5 → 35분) — 화면에 분으로 보이는 값과 맞춘다 */
+  const sec = SEC_BY_TIER[tier] || 45, budget = Math.ceil((SESSION_SEC_BY_TIER[tier] || SESSION_SEC) * 1.15 / 60) * 60;
+  const fixed = 6 * sec * 1.2 + (drawing ? 6 * 90 : 6 * sec);
+  return Math.max(1, Math.min(PACK_TIERS[tier], Math.floor((budget - fixed) / (12 * sec))));
+}
 function planCounts(ss, tier, maxLevel){
   const sec = SEC_BY_TIER[tier] || 45;
   const BUDGET = SESSION_SEC_BY_TIER[tier] || SESSION_SEC;
@@ -481,6 +493,12 @@ function composeSession(ss, i, spec, lists, maxLevel){
     const src = ss.school.find(d => !d.review && wordable(d));
     if(src) ss.application.push({ t:src.t, lv:src.lv, n:6, kind:'word', from:'school' });
     else if(!ss.application.length){ const a = rotate(lists.wp); if(a) ss.application.push({ t:a.t, lv:a.lv, n:6, kind:'word', from:'creative' }); }
+  } else if(lists.apply.length && lists.apply[i % lists.apply.length].draw){
+    /* 그래프 그리기 차례 — 복습에서 넘어온 적용 한 벌이 자리를 차지하고 있어도 그리기를 싣는다
+       (그 복습은 뺀다, 시간은 packCapacity 가 그리기 회차로 계산해 두었다) */
+    const a = lists.apply[i % lists.apply.length];
+    ss.application = ss.application.filter(x => !x.review);
+    ss.application.push({ t:DRAWING[a.draw].t, lv:1, n:6, kind:'drawing', mode:a.draw, title:DRAWING[a.draw].title, from:'creative' });
   } else if(!ss.application.length){
     const a = rotate(lists.apply);
     if(a && a.draw) ss.application.push({ t:DRAWING[a.draw].t, lv:1, n:6, kind:'drawing', mode:a.draw, title:DRAWING[a.draw].title, from:'creative' });
@@ -566,6 +584,18 @@ function buildCourses(NM_THREADS){
       .map(d => ({ t:d.t, pin:d.pin, lv:Math.min(d.pin || 1, maxLevel(d.t)), n:4 }));
     const creEmitted = {};   /* 창의 스레드를 이미 몇 회차에 실었나 */
 
+    /* 세 층 목록 — 창의 전략·적용은 과정 표(COURSE_STRATEGY·COURSE_APPLY)가 있으면 그것,
+       없으면 그 과정의 창의 칸·드릴에서 역할로 골라낸다. */
+    const P = raw => { if(raw && raw.draw) return raw; const d = parsePin(raw); return NM_THREADS[d.t] ? { t:d.t, lv:Math.min(d.pin || 1, maxLevel(d.t)) } : null; };
+    const lists = {
+      strategy:(COURSE_STRATEGY[spec.id] || []).map(P).filter(Boolean)
+        .concat(creative.filter(d => roleOf(d, spec.tier) === 'strategy').map(d => ({ t:d.t, lv:d.lv })))
+        .concat(ownDrills.filter(d => roleOf(d, spec.tier) === 'strategy').map(d => ({ t:d.t, lv:d.lv }))),
+      apply:(COURSE_APPLY[spec.id] || []).map(P).filter(Boolean)
+        .concat(creative.filter(d => roleOf(d, spec.tier, true) === 'application').map(d => ({ t:d.t, lv:d.lv }))),
+      wp:(WP_BY_TIER[spec.tier] || []).map(P).filter(Boolean),
+      school:ownDrills.filter(d => roleOf(d, spec.tier) !== 'application').map(d => ({ t:d.t, lv:d.lv }))
+    };
     let segments = spec.magic.slice();
     /* maxSessions: 과정 6·7처럼 구구 B-유닛 묶음을 얹어 5를 넘는 과정만 6까지 허용(2026-09-03) */
     /* minSessions(2026-09-20, 원장 "회차 늘려도 되지") — 그 과정의 레벨 계단을 다 밟으려면
@@ -574,8 +604,18 @@ function buildCourses(NM_THREADS){
        이미 폈고, 이 주들은 **같은 개념을 한 단계 위에서 손으로 다지는** 자리다. */
     const minSess = spec.minSessions || 0;
     const capSess = Math.max(spec.maxSessions || 5, minSess);
-    const targetCount = (spec.boss || spec.comingSoon) ? 3
+    /* 2026-09-25 원장 "보통 2달에 한학기 끝내기" — 회차 수는 **싣는 교과 항목 수 ÷ 한 회차에 싣는 수**로
+       정한다(PACK_TIERS · packCapacity, 중등만). 중등의 옛 minSessions 는 "회차마다 드릴 2개" 시절의 값이라 쓰지 않는다. */
+    const pack = !!PACK_TIERS[spec.tier] && !spec.boss && !spec.comingSoon;
+    /* 회차 i 의 적용 칸이 그래프 그리기인가 — composeSession 의 순환(과정 표의 i 번째)과 같은 규칙 */
+    const capAt = i => packCapacity(spec.tier, !!(lists.apply.length && lists.apply[i % lists.apply.length].draw));
+    let targetCount = (spec.boss || spec.comingSoon) ? 3
       : Math.min(Math.max(segments.length, 3, minSess), capSess);
+    if(pack){
+      targetCount = 3;
+      const capSum = n => Array.from({ length:n }, (_, i) => capAt(i)).reduce((a, b) => a + b, 0);
+      while(capSum(targetCount) < ownDrills.length) targetCount++;
+    }
     if(segments.length === 0){
       segments = new Array(targetCount).fill(null);
     } else {
@@ -608,17 +648,20 @@ function buildCourses(NM_THREADS){
            모자라 주마다 드릴이 하나로 줄었다. 막아야 하는 것은 "같은 유형이 같은 레벨로 두 벌"
            찍히는 것이지, 한 주에 한 단계씩 오르는 것이 아니다. */
         if(!queue.length) queue = ownDrills.slice();
-        const ownA = queue.shift();
-        let ownB = null;
-        for(let k = 0; k < queue.length; k++){
-          if(queue[k].t !== ownA.t){ ownB = queue.splice(k, 1)[0]; break; }
+        /* 한 회차에 2개(중등은 시간이 허락하는 만큼, 남은 회차에 고르게 나눈다). 짝은 다른 스레드 먼저,
+           없으면 같은 스레드라도 이미 뽑은 것과 레벨이 다른 항목. */
+        let want = 2;
+        if(pack){
+          let later = 0; for(let j = i + 1; j < targetCount; j++) later += capAt(j);
+          want = Math.min(capAt(i), Math.max(1, Math.ceil(queue.length * capAt(i) / (capAt(i) + later))));
         }
-        if(!ownB){
-          for(let k = 0; k < queue.length; k++){
-            if(queue[k].lv !== ownA.lv){ ownB = queue.splice(k, 1)[0]; break; }
-          }
+        const picked = [queue.shift()];
+        while(picked.length < want && queue.length){
+          let k = queue.findIndex(q => !picked.some(p => p.t === q.t));
+          if(k < 0) k = queue.findIndex(q => !picked.some(p => p.t === q.t && p.lv === q.lv));
+          if(k < 0) break;
+          picked.push(queue.splice(k, 1)[0]);
         }
-        const picked = ownB ? [ownA, ownB] : [ownA];
         /* 회차마다 한 칸씩(2026-09-20, 원장 "계단형 자동 + 갈래형 수동").
            전에는 한 과정에 한 번 실린 스레드가 그 과정 내내 레벨 1에 머물렀다 — 그래서
            **190개 중 127개가 만들어 둔 상위 레벨에 학습지로는 영영 안 닿았다**
@@ -681,18 +724,6 @@ function buildCourses(NM_THREADS){
       return { magic: seg, drills, creative: cre };
     });
 
-    /* 세 층 목록 — 창의 전략·적용은 과정 표(COURSE_STRATEGY·COURSE_APPLY)가 있으면 그것,
-       없으면 그 과정의 창의 칸·드릴에서 역할로 골라낸다. */
-    const P = raw => { if(raw && raw.draw) return raw; const d = parsePin(raw); return NM_THREADS[d.t] ? { t:d.t, lv:Math.min(d.pin || 1, maxLevel(d.t)) } : null; };
-    const lists = {
-      strategy:(COURSE_STRATEGY[spec.id] || []).map(P).filter(Boolean)
-        .concat(creative.filter(d => roleOf(d, spec.tier) === 'strategy').map(d => ({ t:d.t, lv:d.lv })))
-        .concat(ownDrills.filter(d => roleOf(d, spec.tier) === 'strategy').map(d => ({ t:d.t, lv:d.lv }))),
-      apply:(COURSE_APPLY[spec.id] || []).map(P).filter(Boolean)
-        .concat(creative.filter(d => roleOf(d, spec.tier, true) === 'application').map(d => ({ t:d.t, lv:d.lv }))),
-      wp:(WP_BY_TIER[spec.tier] || []).map(P).filter(Boolean),
-      school:ownDrills.filter(d => roleOf(d, spec.tier) !== 'application').map(d => ({ t:d.t, lv:d.lv }))
-    };
     sessions.forEach((ss, i) => composeSession(ss, i, spec, lists, maxLevel));
 
     /* 회차마다 올라간 레벨을 homeLevel 에 반영한다 — 그래야 이 과정의 시험(pool)과
