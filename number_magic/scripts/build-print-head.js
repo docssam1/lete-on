@@ -85,7 +85,20 @@ server.listen(0, async () => {
           let need = 0; document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item').forEach(e => { need = Math.max(need, e.getBoundingClientRect().height); });
           const gap = parseFloat(getComputedStyle(grid).rowGap) || 0;
           st.remove();
-          row.push([avail, head, Math.ceil(mm(need + gap) * 10) / 10, full, guideAvail]);
+          /* 창의 연산(Training Course) 모양 — 칸 높이가 풀이 줄 수로 달라 따로 잰다: [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이 */
+          let trainMax = null, trainFirst = null;
+          try {
+            NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, creative:true });
+            await new Promise(requestAnimationFrame);
+            const tp = [...document.querySelectorAll('.nm-print-sheet .nm-w2-page')];
+            const cells = document.querySelectorAll('.nm-print-sheet .nm-w2-item-train');
+            if(cells.length){
+              cells.forEach(e => { trainMax = Math.max(trainMax || 0, Math.ceil(mm(e.getBoundingClientRect().height))); });
+              const g1 = tp[0] && gridOf(tp[0]);
+              if(g1) trainFirst = Math.floor(mm(floorOf(tp[0]) - g1.getBoundingClientRect().top));
+            }
+          } catch(e){}
+          row.push([avail, head, Math.ceil(mm(need + gap) * 10) / 10, full, guideAvail, trainMax, trainFirst]);
           if(!qr){
             NM_EXAM.renderPrint({ thread:t, level:l.id, count:4, seed:'qr', grade });
             await new Promise(requestAnimationFrame);
@@ -96,7 +109,7 @@ server.listen(0, async () => {
         /* 시드 두 개 중 좁은 쪽 — 한 시드만 재면 다른 시드의 긴 문항이 칸을 넘었다(DV5 L4·MD39 L1) */
         const lo = (a, b) => a == null ? b : b == null ? a : Math.min(a, b), hi = (a, b) => a == null ? b : b == null ? a : Math.max(a, b);
         const merged = [0, 1, 2].map(i => { const a = row[i * 2], b = row[i * 2 + 1]; if(!a || !b) return a || b || null;
-          return [lo(a[0], b[0]), hi(a[1], b[1]), hi(a[2], b[2]), lo(a[3], b[3]), lo(a[4], b[4])]; });
+          return [lo(a[0], b[0]), hi(a[1], b[1]), hi(a[2], b[2]), lo(a[3], b[3]), lo(a[4], b[4]), hi(a[5], b[5]), lo(a[6], b[6])]; });
         if(merged.some(Boolean)) out[t + '@' + l.id] = merged;
       }
       return { out, qr };
@@ -109,7 +122,7 @@ server.listen(0, async () => {
         if(!v) return;
         /* 언어 중 가장 좁은 쪽(쓸 수 있는 높이 최소, 머리 높이 최대) */
         const lo = (a, b) => a == null ? b : b == null ? a : Math.min(a, b), hi = (a, b) => a == null ? b : b == null ? a : Math.max(a, b);
-        cur[i] = cur[i] ? [lo(cur[i][0], v[0]), hi(cur[i][1], v[1]), hi(cur[i][2], v[2]), lo(cur[i][3], v[3]), lo(cur[i][4], v[4])] : v.slice();
+        cur[i] = cur[i] ? [lo(cur[i][0], v[0]), hi(cur[i][1], v[1]), hi(cur[i][2], v[2]), lo(cur[i][3], v[3]), lo(cur[i][4], v[4]), hi(cur[i][5], v[5]), lo(cur[i][6], v[6])] : v.slice();
       });
     }
     console.log(`${lang}: ${Object.keys(r.out).length}개 레벨`);
@@ -118,7 +131,8 @@ server.listen(0, async () => {
   const n = Object.keys(table).length;
   const body = `/* 생성 파일 — 손으로 고치지 말 것. node scripts/build-print-head.js (2026-09-25 신설)
    학습지 첫 장에서 문항 칸이 쓸 수 있는 높이와 머리(개념·예시·따라 풀기) 높이, mm.
-   레벨마다 [young, mid, senior] 밴드별 [첫 장 쓸 수 있는 높이, 머리 높이, 한 줄 필요 높이, 가득 찬 장 쓸 수 있는 높이, 따라 풀기+연습 장 높이]
+   레벨마다 [young, mid, senior] 밴드별 [첫 장 쓸 수 있는 높이, 머리 높이, 한 줄 필요 높이, 가득 찬 장 쓸 수 있는 높이, 따라 풀기+연습 장 높이,
+   창의 연산 가장 큰 칸, 창의 연산 첫 장 문항 칸 높이]
    — ko·en·zh 중 가장 좁은 값. renderRoundPages 가 장마다 줄 수를 줄여 문항이 겹치지 않게 한다. ${n}개. */
 window.NM_PRINT_HEAD = ${JSON.stringify(table)};
 window.NM_PRINT_HEAD_QR = ${qr};

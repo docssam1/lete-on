@@ -4832,7 +4832,9 @@ function renderRoundPagesBody(item, opts){
      "그 문항만 바뀐다"는 편집기의 전제가 깨진다(2026-09-05). 실제 회차 코드
      (헤더·정답지·?ws= 되돌리기용)는 overrides/guideSeed까지 실은 code다. */
   const baseCode = NM_EXAM.worksheetCode({thread:item.thread, level:item.level, count, seed:item.seed});
-  const young = printAgeBand(item, problems) === 'young';
+  /* 묶음 학습지는 장 전체의 밴드로 다시 짤 수 있게 opts.band 를 받는다(renderMixedSheetBody) */
+  const band = opts.band || printAgeBand(item, problems);
+  const young = band === 'young';
   const layout = classifyRoundLayout(problems, item.thread, young, !!item.creative);
   const middleSix = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] && ['visual','word'].includes(layout.type);
   if(middleSix || (item.pacing && ['visual','word'].includes(layout.type))){
@@ -4860,7 +4862,14 @@ function renderRoundPagesBody(item, opts){
      판정별 고정표의 줄 수가 그 레벨 문항의 실제 높이보다 많으면 1fr 로 나눈 줄이 내용보다 낮아져
      문항이 겹쳐 찍혔다(가득 찬 장: ML2·ML8·MD25 등). 한 줄 높이는 글자 크기만큼 커진다고 본다. */
   const headRow = (window.NM_PRINT_HEAD || {})[item.thread + '@' + item.level];
-  const headBand = headRow && (headRow[{ young:0, mid:1, senior:2 }[printAgeBand(item, problems)]] || headRow.find(Boolean));
+  /* 여러 회차를 묶는 학습지(주간 봉투·편집기)는 글씨 크기 밴드를 장 전체(첫 항목 + 모든 문항)로 정한다 —
+     회차 하나로 고른 밴드와 다를 수 있어(C4: 회차는 mid, 장은 young 큰 글씨) 세 밴드 중 가장 좁은 값을 쓴다. */
+  const worstBand = row => { const v = (row || []).filter(Boolean); if(!v.length) return null;
+    const lo = i => { const a = v.map(x => x[i]).filter(x => x != null); return a.length ? Math.min(...a) : null; };
+    const hi = i => { const a = v.map(x => x[i]).filter(x => x != null); return a.length ? Math.max(...a) : null; };
+    return [lo(0), hi(1), hi(2), lo(3), lo(4), hi(5), lo(6)]; };
+  const headBand = headRow && (opts.mixed && !opts.band ? worstBand(headRow)
+    : (headRow[{ young:0, mid:1, senior:2 }[band]] || headRow.find(Boolean)));
   const fsR = ({ s:0.88, m:1, l:1.16, xl:1.34 })[getFontSize()] || 1;
   /* 잰 값은 한 시드의 최댓값 — 다른 시드의 더 긴 문항을 위해 3mm 여유 */
   const rowNeed = headBand && headBand[2] ? headBand[2] * fsR + 3 : 0;
@@ -4912,7 +4921,10 @@ function renderRoundPagesBody(item, opts){
   item.guideSkips=guided.problems&&guided.problems.length?guided.skips:null;
   const code = NM_EXAM.worksheetCode({thread:item.thread, level:item.level, count, seed:item.seed,
     overrides:item.overrides, guideSeed:item.guideSeed,exampleSkip:item.exampleSkip,guideSkips:item.guideSkips});
-  const separateGuide = (middleLesson || graphRound || (item.thread==='MD83' && item.level===5)) && !!guided.html;
+  /* 잰 머리(개념·예시·따라 풀기) 높이가 한 장을 넘으면 따라 풀기를 제 장으로 뗀다(2026-09-25) — 저학년 큰 글씨·
+     고등 긴 개념에서 문항 없는 첫 장이 종이보다 길었다(MD19 L6 473mm, 주간 학습지 36쪽). */
+  const headTooTall = !!(headBand && headBand[1] != null && headBand[1] * fsR > 250);
+  const separateGuide = (middleLesson || graphRound || headTooTall || (item.thread==='MD83' && item.level===5)) && !!guided.html;
   const guidePages = separateGuide ? (guided.pages || [guided.html]) : [];
 
   /* 첫 장 용량(2026-09-06) — 판정별 고정표 layout.firstRows(classifyRoundLayout 주석). 개념 패널이
@@ -4954,10 +4966,11 @@ function renderRoundPagesBody(item, opts){
      data/print-head.js(scripts/build-print-head.js 가 잰 값) = 밴드별 [쓸 수 있는 높이, 머리 높이] mm.
      글자 크기를 키우면 머리도 그만큼 커진다고 보고, 첫 장이 마지막 장이면 재도전 QR 높이를 뺀다.
      한 줄 높이는 잰 값(rowNeed), 없으면 부분 장이 쓰는 layout.pitch(mm). */
-  if(headBand && headBand[0] != null && firstRows > 0 && layout.type !== 'train'){
+  if(headBand && headBand[0] != null && firstRows > 0){
     let avail = headBand[0] - headBand[1] * (fsR - 1);
     if(problems.length <= firstRows * layout.cols && !item.pacing) avail -= (window.NM_PRINT_HEAD_QR || 0);
-    const fitRows = Math.floor(avail / (rowNeed || layout.pitch || 20));
+    /* Training Course(창의 연산)는 잰 한 줄 높이가 드릴 칸 기준이라 맞지 않는다 — 제 줄 간격(pitch)으로 */
+    const fitRows = Math.floor(avail / (layout.type === 'train' ? (layout.pitch || 78) : (rowNeed || layout.pitch || 20)));
     /* 한 줄만 들어가는 자리는 비워 둔다 — 머리 높이는 시드마다 달라(MD39 L1 은 69mm 차) 그 한 줄이 가장 잘 겹친다 */
     firstRows = Math.max(0, Math.min(firstRows, fitRows <= 1 && layout.rows > 2 ? 0 : fitRows));
     /* 중등 A4 연습 면은 마지막 장이 아니면 한 쪽 6문항 이상(GPT 지면 규칙) — 첫 장에 6문항이 안 들어가면
@@ -4973,7 +4986,33 @@ function renderRoundPagesBody(item, opts){
   const guideWithPractice = midFirstSix && firstCap > 0 && guidePages.length === 1 && problems.length > firstCap
     /* 따라 풀기가 길면(MD83 L5 두 층 상자 — 214mm) 연습 6문항이 들어가지 않는다: 잰 높이로 판단 */
     && !(headBand && headBand[4] != null && rowNeed && headBand[4] < Math.ceil(6 / layout.cols) * rowNeed);
-  if(problems.length){
+  /* Training Course(창의 연산)는 칸 높이가 문항마다 다르다 — 풀이 줄 수로 거의 정확히 정해진다
+     (실측: 식 8mm + 줄마다 12.8mm + 점선 7mm, 2026-09-25). 한 장 3문항 고정이면 다섯 줄 문항 셋(248mm)이
+     종이(약 235mm)를 넘었다(C37 CH9 L3). 첫 장은 잰 남은 높이, 다음 장은 가득 찬 장 높이까지 채운다. */
+  if(layout.type === 'train' && problems.length && !getSolveMode()){
+    const nT = problems.length;
+    const estMm = (p, idx) => {
+      const bare = nT > 1 && idx >= Math.ceil(nT * 0.75);
+      const nSteps = bare ? 0 : (Array.isArray(p.steps) ? p.steps.filter(x => x && x.tex).length : 0);
+      /* 저학년 장은 글씨 배율이 1.28배(.nm-print-age-young --ws-fs) */
+      const est = (14 + 12.8 * (nSteps + 1) + 7 * (bare ? 3 : 1)) * fsR * (young ? 1.28 : 1);
+      return trainMax ? Math.max(est, trainMax) : est;
+    };
+    const gapMm = 7, fullH = (headBand && headBand[3]) || 235;
+    /* 잰 값이 있으면(scripts/build-print-head.js 가 창의 연산 모양으로 따로 잰 [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이) 그것을.
+       없으면 추정: 첫 장에 "Training Course" 띠(약 24mm)가 붙고, 따라 풀기가 드릴보다 약 60mm 길다(C36 CH7 L1: 86mm). */
+    const trainMax = headBand && headBand[5] ? headBand[5] * fsR : 0;
+    const firstH = headBand && headBand[6] != null ? headBand[6] - (headBand[1] || 0) * (fsR - 1)
+      : headBand && headBand[0] != null ? headBand[0] - headBand[1] * (fsR - 1) - 24 - (guided.html ? 60 : 0) : null;
+    let at = 0;
+    const pack = cap => { const pg = []; let h = 0;
+      while(at < nT){ const e = estMm(problems[at], at); if(pg.length && h + gapMm + e > cap - 3) break; if(!pg.length && e > cap - 3 && cap !== fullH) break;
+        h += (pg.length ? gapMm : 0) + e; pg.push(problems[at]); at++; }
+      return pg; };
+    pages.push(firstH != null ? pack(firstH) : problems.slice(0, firstCap)); if(firstH == null) at = firstCap;
+    guidePages.forEach(()=>pages.push([]));
+    while(at < nT){ const pg = pack(fullH); if(!pg.length){ pages.push([problems[at]]); at++; } else pages.push(pg); }
+  } else if(problems.length){
     pages.push(problems.slice(0, firstCap));
     let from = firstCap;
     if(guideWithPractice){ pages.push(problems.slice(from, from + 6)); from += 6; }
@@ -5011,7 +5050,7 @@ function renderRoundPagesBody(item, opts){
      둘째 장에 8문항이 남으면 2행이 페이지 전체로 늘어나 문항 사이가 텅 비어 보였다(원장: "문항 배치도 잘").
      가득 찬 장은 1fr(남는 높이를 고루), 부분 장은 layout.pitch(mm) 고정 행 + 위 정렬(align-content:start)
      으로 전체 장과 같은 간격을 쓴다. 남은 지면을 무의미한 풀이·검산 상자로 채우지 않는다. */
-  function gridStyleFor(rowsCount, partial, first, balanced){
+  function gridStyleFor(rowsCount, partial, first, balanced, extraMm){
     /* Training Course 는 위에서부터 차곡차곡(남는 높이를 칸에 나눠 주면 문항 하나가 장 가운데 떠 버린다) */
     if(layout.type === 'train') return 'grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:max-content;align-content:start;gap:7mm 0;flex:0 0 auto;';
     // 첫 장은 개념/따라풀기 뒤의 실제 남은 높이를 쓴다. 고정 pitch는 문항을 종이 밖으로 밀었다.
@@ -5020,7 +5059,8 @@ function renderRoundPagesBody(item, opts){
        (줄 간격 pitch × 줄 수가 종이보다 길어 아래 줄이 종이 밖으로 나갔다 — AD1 L1 18문항) */
     const fullH = headBand && headBand[3];
     const pitchMm = Math.max(layout.pitch || 20, Math.ceil(rowNeed));
-    const pitchUse = fullH ? Math.min(pitchMm, Math.floor(fullH / rowsCount - 2)) : pitchMm;
+    /* 마지막 장의 재도전 QR·첫 연습 장의 지시문 줄이 차지하는 높이(extraMm)를 뺀다(C4 AD5 L1 마지막 장 17mm 넘침) */
+    const pitchUse = fullH ? Math.min(pitchMm, Math.floor((fullH - (extraMm || 0)) / rowsCount - 2)) : pitchMm;
     const rows = fixedPitch ? `repeat(${rowsCount},minmax(0,${pitchUse}mm))` : `repeat(${rowsCount},minmax(0,1fr))`;
     const flowCol = layout.flow === 'col' ? 'grid-auto-flow:column;' : '';
     const grow = fixedPitch ? 'flex:0 0 auto;align-content:start;' : '';
@@ -5078,7 +5118,7 @@ function renderRoundPagesBody(item, opts){
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
   ${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first ? exampleHtml : ''}${separateGuide ? (guidePages[pi-1] || '') : (first ? guided.html : '')}${instrHtml}${pvLegend}
-  ${headOnly ? '' : `<div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial, first, balancedPracticePages.has(pi))}">${cellsHtml}</div>`}
+  ${headOnly ? '' : `<div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial, first, balancedPracticePages.has(pi), ((pi === totalPages - 1 && !item.pacing) ? (window.NM_PRINT_HEAD_QR || 0) : 0) + (instrPage && !first ? 8 : 0))}">${cellsHtml}</div>`}
   ${(pi === totalPages - 1 && !item.pacing) ? retryQrHtml(code) : ''}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>
 </div>`;
@@ -5090,7 +5130,7 @@ function renderRoundPagesBody(item, opts){
   /* thread: 정답지가 그 회차의 수학 팁을 찾는 데 쓴다(w2AnswerKeySectionHtml, 2026-09-08). */
   /* level — 정답지의 해설이 그 회차의 공부 전략 한 줄을 다시 찾을 때 쓴다(2026-09-16).
      전에는 round에 레벨이 없어 해설의 "핵심" 줄이 늘 레벨 미상으로 나갔다. */
-  return { html, problems, code, thName, thread: item.thread, level: item.level,
+  return { html, problems, code, thName, thread: item.thread, level: item.level, band,
     threadMix: item.threadMix || null,
     guidedProblems: guided.problems, pageSizes: pages.map(pg => pg.length) };
 }
@@ -5201,9 +5241,10 @@ function renderMixedSheetBody(items, envelopeCode, opts){
       return;
     }
     let candidateSeen=new Set(seen);
-    let r = null, initialExhausted = null;
+    const seenBefore=new Set(seen);
+    let r = null, initialExhausted = null, usedItem = it;
     try {
-      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen });
+      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true });
     } catch(e) {
       /* 선택 문장제의 첫 유형이 앞 교과 회차와 풀을 나눠 쓰다 모자라면
          아래의 명시된 대체 유형을 계속 시도한다. 일반 회차의 고갈은 그대로 실패한다. */
@@ -5226,12 +5267,12 @@ function renderMixedSheetBody(items, envelopeCode, opts){
         const altSeen=new Set(seen);
         let rr;
         try {
-          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen });
+          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen, mixed:true });
         } catch(e) {
           if(e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED'){ exhausted = exhausted || e; continue; }
           throw e;
         }
-        if(rr.problems.some(p => p.word)){ r = rr;candidateSeen=altSeen; break; }
+        if(rr.problems.some(p => p.word)){ r = rr;candidateSeen=altSeen; usedItem = cand; break; }
       }
       /* 후보가 실제로 고갈됐다면 문장제 회차를 조용히 지우지 않는다.
          모든 허용 후보를 다 써 본 뒤에도 못 만들 때만 명시적으로 실패한다. */
@@ -5239,10 +5280,24 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     }
     if(it.optionalWord && (!r || !r.problems.some(p => p.word))){ droppedWord = true; return; }
     candidateSeen.forEach(key=>seen.add(key));
+    r.__redo = { item:usedItem, count:usedItem.count || perTypeCount, roundNo:rounds.length + 1, seenBefore };
     rounds.push(r);
   });
   const allProblems = [];
   rounds.forEach(r => allProblems.push.apply(allProblems, r.problems));
+  /* 장 전체의 글씨 밴드(아래 sheet 클래스)와 회차가 제 문항으로 고른 밴드가 다르면 그 회차를 장 밴드로 다시 짠다
+     (2026-09-25) — C4: 두 자리 덧셈 회차는 mid 로 칸을 짰는데 장은 young 큰 글씨라 세로셈 칸이 눌렸다.
+     같은 시드·같은 제외 집합으로 다시 만들므로 문항은 그대로다(다르면 원래 것을 둔다). */
+  const sheetBand = printAgeBand(items[0], allProblems);
+  rounds.forEach((r, i) => {
+    if(!r.__redo || !r.band || r.band === sheetBand) return;
+    try {
+      const rr = renderRoundPages(r.__redo.item, { count:r.__redo.count, name:studentName, roundNo:r.__redo.roundNo,
+        exclude:new Set(r.__redo.seenBefore), mixed:true, band:sheetBand });
+      const same = rr.problems.length === r.problems.length && rr.problems.every((p, k) => problemKey(p) === problemKey(r.problems[k]));
+      if(same) rounds[i] = rr;
+    } catch(e){ /* 다시 짜지 못하면 처음 것을 둔다 */ }
+  });
 
   const sheet = document.createElement('div');
   sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems) + sheetOptClass() + schoolTierClass(items[0]);
@@ -6765,7 +6820,7 @@ ${printWatermarkHtml()}
      "renderPrint는 같은 회차 렌더러를 쓰되 옵션이 바뀌지 않는다"). */
   renderPrint(config){
     const { thread, level, count, seed, wordType } = config;
-    const item = { thread, level, wordType, seed, topicName: config.topicName, grade: config.grade, noTeach:config.noTeach };
+    const item = { thread, level, wordType, seed, topicName: config.topicName, grade: config.grade, noTeach:config.noTeach, creative:!!config.creative };
     const round = renderRoundPages(item, { count });
 
     const old = document.querySelector('.nm-print-sheet');
