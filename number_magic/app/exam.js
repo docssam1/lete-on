@@ -4872,6 +4872,7 @@ function renderRoundPagesBody(item, opts){
   const pages = [];
   /* 중등 개념 쪽에 연습 6문항을 실은 경우(midFirstSix), 따라 풀기 한 장은 **다음 연습 6문항과 같은 장**에 —
      따라 풀기만 있는 장은 A4 의 3분의 2가 비었다(2026-09-25 PDF 확인). 그 장은 남은 높이를 1fr 로 나눈다. */
+  const evenPages = [];   /* 고르게 나눈 장 — 부분 장이어도 고정 줄 높이 대신 남은 높이(1fr)를 쓴다 */
   const guideWithPractice = midFirstSix && firstCap > 0 && guidePages.length === 1 && problems.length > firstCap
     /* 따라 풀기가 길면(MD83 L5 두 층 상자 — 214mm) 연습 6문항이 들어가지 않는다: 잰 높이로 판단 */
     && !(headBand && headBand[4] != null && rowNeed && headBand[4] < Math.ceil(6 / layout.cols) * rowNeed);
@@ -4880,7 +4881,15 @@ function renderRoundPagesBody(item, opts){
     let from = firstCap;
     if(guideWithPractice){ pages.push(problems.slice(from, from + 6)); from += 6; }
     else guidePages.forEach(()=>pages.push([])); // 개념·예시 → 따라풀기 → 채점 문항.
-    for(let i = from; i < problems.length; i += layout.perPage) pages.push(problems.slice(i, i + layout.perPage));
+    /* 중등은 남은 문항을 장마다 고르게 나눈다 — 줄 수를 잰 높이로 줄이면 18문항이 8+8+2 처럼 끝에 한두 문항만
+       남는 장이 생겨 "한 쪽 6문항" 규칙을 어겼다(C30-S06). 장 수는 그대로, 고르게: 18 → 6+6+6. */
+    const rest = problems.length - from;
+    if(midPage && rest > layout.perPage){
+      const n = Math.ceil(rest / layout.perPage);
+      for(let j = 0, at = from; j < n; j++){ const size = Math.ceil((problems.length - at) / (n - j)); pages.push(problems.slice(at, at + size)); evenPages.push(pages.length - 1); at += size; }
+    } else {
+      for(let i = from; i < problems.length; i += layout.perPage) pages.push(problems.slice(i, i + layout.perPage));
+    }
   } else {
     pages.push([]);
   }
@@ -4888,6 +4897,7 @@ function renderRoundPagesBody(item, opts){
   // 가능할 때 모두 6문항 이상으로 재배분한다(순서·답·총 문항 수는 그대로).
   const balancedPracticePages = new Set();
   if(guideWithPractice) balancedPracticePages.add(1);
+  evenPages.forEach(i => balancedPracticePages.add(i));
   if(((window.NM_MIDDLE_CONCEPTS || {})[item.thread] || item.pacing) && pages.length >= 2){
     const tail = pages[pages.length-1], prev = pages[pages.length-2];
     if(tail.length > 0 && tail.length < 6 && prev.length + tail.length >= 12){
