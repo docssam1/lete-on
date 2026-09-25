@@ -3773,6 +3773,12 @@ function sortRoundProblems(problems, type){
    .nm-bond·.nm-b10·.nm-nl·.nm-print-word-blank·.nm-print-word-eq·.nm-print-vp)를
    그대로 달아 두고, 박스 자체는 CSS에서 `.nm-w2-item.nm-print-item`으로
    덮어써 없앤다(선택자 검사기를 새로 손대지 않기 위함). */
+/* Training Course 칸의 풀이 줄 — 위젯용 steps, 없으면 예시용 solution(2026-09-26, 창의수연 감사 §3).
+   solution 만 내는 스레드(FR9·CH3·DV12 등 17개)는 전에는 "식 = □" 한 줄만 찍혀 푸는 과정이 없었다. */
+function trainStepsOf(p){
+  const src = (Array.isArray(p.steps) && p.steps.length) ? p.steps : (Array.isArray(p.solution) ? p.solution : []);
+  return src.filter(x => x && x.tex);
+}
 function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal){
   let cls = 'nm-w2-item nm-print-item';
   let inner;
@@ -3784,7 +3790,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
   if(layoutType === 'train' && !p.graph){
     const raw = String(p.tex||'').replace(/=\s*\\square\s*$/,'').trim();
     const bare = cellTotal > 1 && cellIdx >= Math.ceil(cellTotal * 0.75);
-    const st = bare ? [] : (Array.isArray(p.steps) ? p.steps.filter(x => x && x.tex) : []);
+    const st = bare ? [] : trainStepsOf(p);
     const box = '\\square';   /* texDisplay 가 쓰기 상자(WRITE_BOX)로 바꾼다 */
     const stepLines = st.map(x => {
       const t = String(x.tex).replace(/\\square/g, box);
@@ -5047,7 +5053,7 @@ function renderRoundPagesBody(item, opts){
     const nT = problems.length;
     const estMm = (p, idx) => {
       const bare = nT > 1 && idx >= Math.ceil(nT * 0.75);
-      const nSteps = bare ? 0 : (Array.isArray(p.steps) ? p.steps.filter(x => x && x.tex).length : 0);
+      const nSteps = bare ? 0 : trainStepsOf(p).length;
       /* 저학년 장은 글씨 배율이 1.28배(.nm-print-age-young --ws-fs) */
       const est = (14 + 12.8 * (nSteps + 1) + 7 * (bare ? 3 : 1)) * fsR * (young ? 1.28 : 1);
       return trainMax ? Math.max(est, trainMax) : est;
