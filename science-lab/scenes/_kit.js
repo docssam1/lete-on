@@ -87,46 +87,87 @@ export function liquid(r, hMax, color = PALETTE.water, opacity = 0.75) {
   return m;
 }
 
-// 라벨 스프라이트 — 캔버스에 한글을 그려 붙인다. size는 월드 단위 높이.
+// 라벨 스프라이트 — 손글씨(Gaegu) 종이 꼬리표. size는 월드 단위 높이.
 // 화면에서는 fitLabels()가 매 프레임 "최소 글자 높이(px)"를 보장한다(멀거나 화면이 작아도 읽히게).
+// 글꼴이 늦게 오면(구글 폰트는 한글을 조각으로 나눠 보낸다) 그 글자 조각이 도착한 뒤 같은 텍스처에 다시 그린다.
+const LABEL_FONT = (fs) => `700 ${fs}px "Gaegu", "Jua", "Pretendard", "Apple SD Gothic Neo", sans-serif`;
+const PAPER = '#FFF8E6', INK = '#1B2A4E';
+if (typeof document !== 'undefined' && !document.querySelector('link[href*="family=Gaegu"]')) {
+  const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Gaegu:wght@700&display=swap'; document.head.appendChild(l);
+}
 const _labelCache = new Map();
+function drawTag(text, color, bg) {
+  const c = document.createElement('canvas'); const ctx = c.getContext('2d');
+  const fs = 64, font = LABEL_FONT(fs), S = 3; ctx.font = font;
+  const pad = 26, sh = 7, w = Math.ceil(ctx.measureText(text).width) + pad * 2 + sh + 10, h = fs + 26 + sh;
+  c.width = w * S; c.height = h * S; ctx.scale(S, S); ctx.font = font;
+  // 글자마다 같은 떨림이 나오게 글에서 씨앗을 뽑는다(다시 그려도 모양이 같다).
+  let seed = 7; for (const ch of text) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+  const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296 - 0.5);
+  const W = w - sh, H = h - sh, r = 16;
+  const wobble = (ox, oy, amp) => {                       // 손으로 그은 듯 살짝 떨리는 둥근 사각형
+    const pts = [], seg = (x0, y0, x1, y1) => { const n = Math.max(2, Math.round(Math.hypot(x1 - x0, y1 - y0) / 22)); for (let i = 0; i < n; i++) { const t = i / n; pts.push([x0 + (x1 - x0) * t + rnd() * amp, y0 + (y1 - y0) * t + rnd() * amp]); } };
+    const arc = (cx, cy, a0) => { for (let i = 0; i < 4; i++) { const a = a0 + (i / 4) * Math.PI / 2; pts.push([cx + Math.cos(a) * r + rnd() * amp * 0.6, cy + Math.sin(a) * r + rnd() * amp * 0.6]); } };
+    const L = ox + 2, T = oy + 2, R = ox + W - 2, B = oy + H - 2;
+    seg(L + r, T, R - r, T); arc(R - r, T + r, -Math.PI / 2); seg(R, T + r, R, B - r); arc(R - r, B - r, 0);
+    seg(R - r, B, L + r, B); arc(L + r, B - r, Math.PI / 2); seg(L, B - r, L, T + r); arc(L + r, T + r, Math.PI);
+    ctx.beginPath(); pts.forEach(([x, y], i) => { if (!i) ctx.moveTo(x, y); else { const [px, py] = pts[i - 1]; ctx.quadraticCurveTo(px, py, (px + x) / 2, (py + y) / 2); } }); ctx.closePath();
+  };
+  ctx.fillStyle = 'rgba(27,42,78,0.22)'; wobble(sh * 0.6, sh, 0.8); ctx.fill();          // 그림자(아래로 살짝)
+  ctx.fillStyle = bg; wobble(0, 0, 0.8); ctx.fill();
+  if (bg === PAPER) {                                                                       // 종이 결: 옅은 줄 두 개
+    ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(214,170,90,0.18)'; ctx.lineWidth = 2;
+    for (const yy of [H * 0.78]) { ctx.beginPath(); ctx.moveTo(8, yy); ctx.lineTo(W - 8, yy); ctx.stroke(); } ctx.restore();
+  }
+  ctx.lineJoin = 'round'; ctx.lineWidth = 3; ctx.strokeStyle = color === '#fff' || color === '#ffffff' ? 'rgba(255,255,255,0.75)' : 'rgba(27,42,78,0.7)';
+  wobble(0, 0, 1.6); ctx.stroke();
+  ctx.lineWidth = 1.2; ctx.globalAlpha = 0.35; wobble(0, 0, 2.2); ctx.stroke(); ctx.globalAlpha = 1;   // 연필로 한 번 더 그은 선
+  ctx.fillStyle = color; ctx.textBaseline = 'middle'; ctx.fillText(text, pad + 5, H / 2 + 4);
+  return { c, w, h };
+}
 export function label(text, opts = {}) {
-  const size = opts.size ?? 0.42, color = opts.color ?? '#0f172a', bg = opts.bg ?? 'rgba(255,255,255,0.96)';
+  const size = opts.size ?? 0.42, color = opts.color ?? INK;
+  const bg = opts.bg == null || /^rgba\(255,\s*255,\s*255/.test(opts.bg) ? PAPER : opts.bg;
   const key = `${text}|${color}|${bg}`;
   let tex = _labelCache.get(key);
   if (!tex) {
-    const c = document.createElement('canvas'); const ctx = c.getContext('2d');
-    const fs = 56, font = `700 ${fs}px "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif`, S = 3;
-    ctx.font = font;
-    const pad = 26, sh = 8, w = Math.ceil(ctx.measureText(text).width) + pad * 2 + sh, h = fs + 34 + sh;
-    c.width = w * S; c.height = h * S; ctx.scale(S, S); ctx.font = font;
-    ctx.fillStyle = 'rgba(15,23,42,0.18)'; roundRect(ctx, sh * 0.5, sh, w - sh, h - sh, 18); ctx.fill();          // 그림자
-    ctx.fillStyle = bg; roundRect(ctx, 0, 0, w - sh, h - sh, 18); ctx.fill();
-    ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(15,23,42,0.22)'; roundRect(ctx, 1.25, 1.25, w - sh - 2.5, h - sh - 2.5, 17); ctx.stroke();
-    ctx.fillStyle = color; ctx.textBaseline = 'middle'; ctx.fillText(text, pad, (h - sh) / 2 + 3);
+    const { c, w, h } = drawTag(text, color, bg);
     tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
     tex.userData = { w, h }; _labelCache.set(key, tex);
+    const f = LABEL_FONT(64);
+    if (document.fonts && !document.fonts.check(f, text)) document.fonts.load(f, text).then(() => {
+      if (!document.fonts.check(f, text)) return;
+      const d = drawTag(text, color, bg); tex.image = d.c; tex.userData = { w: d.w, h: d.h }; tex.dispose(); tex.needsUpdate = true;
+    }).catch(() => {});
   }
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false, toneMapped: false }));
   const { w, h } = tex.userData; s.scale.set(size * w / h, size, 1); s.renderOrder = 10;
   s.userData.isLabel = true; s.userData.base = s.scale.clone(); return s;
 }
 // 라벨 글자가 화면에서 minPx 보다 작거나 maxPx 보다 크지 않게 크기를 맞춘다(카메라 거리·화면 높이 기준).
-const _lp = new THREE.Vector3();
-export function fitLabels(root, camera, viewH, minPx = 20, maxPx = 34) {
+// viewW를 주면 라벨이 화면 밖으로 잘리지 않게 폭을 줄이고, 가장자리에 걸리면 기준점(center)을 옮겨 안으로 밀어 넣는다.
+const _lp = new THREE.Vector3(), _ps = new THREE.Vector3();
+export function fitLabels(root, camera, viewH, minPx = 20, maxPx = 34, viewW = 0) {
   if (!viewH) return;
-  const k = 2 * Math.tan((camera.fov * Math.PI) / 360) / viewH;
+  const k = 2 * Math.tan((camera.fov * Math.PI) / 360) / viewH, M = 8;   // M: 화면 가장자리 여백(px)
   root.traverseVisible((o) => {
     if (!o.isSprite || !o.userData.isLabel || !o.userData.base) return;
+    const u = o.material.map?.userData; if (u?.w) o.userData.base.x = o.userData.base.y * u.w / u.h;   // 글꼴 도착 뒤 다시 그린 폭
     o.getWorldPosition(_lp); const perPx = _lp.distanceTo(camera.position) * k;   // 1px 당 월드 길이
-    const pw = new THREE.Vector3(); o.parent?.getWorldScale(pw); const ps = pw.y || 1;
-    const px = (o.userData.base.y * ps) / perPx, want = Math.max(minPx, Math.min(maxPx, px)), f = want / px;
+    o.parent?.getWorldScale(_ps); const ps = _ps.y || 1;
+    const px = (o.userData.base.y * ps) / perPx; let f = Math.max(minPx, Math.min(maxPx, px)) / px;
+    if (!viewW) { o.scale.set(o.userData.base.x * f, o.userData.base.y * f, 1); return; }
+    let wPx = (o.userData.base.x * ps * f) / perPx;
+    if (wPx > viewW - 2 * M) { f *= (viewW - 2 * M) / wPx; wPx = viewW - 2 * M; }
     o.scale.set(o.userData.base.x * f, o.userData.base.y * f, 1);
+    _lp.project(camera); let cx = 0.5;
+    if (_lp.z < 1) {
+      const x = (_lp.x + 1) / 2 * viewW;                                   // 화면 x(px)
+      if (x + wPx / 2 > viewW - M) cx = 1 - (viewW - M - x) / wPx;
+      else if (x - wPx / 2 < M) cx = (x - M) / wPx;
+    }
+    o.center.x = Math.max(0, Math.min(1, cx));
   });
-}
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
 }
 
 // 화살표: from→to. 굵기는 월드 단위.

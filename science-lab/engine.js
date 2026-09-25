@@ -114,13 +114,12 @@ export class Stage {
   _loop() {
     this._raf = 0; if (!this.running || !this.active) return;
     const raw = this.clock.getDelta(), dt = Math.min(0.25, raw), t = this.clock.elapsedTime; const o = this.orbit;
-    // 장면은 가로로 넓은 화면(약 1.8:1) 기준으로 짜여 있다. 휴대폰처럼 좁은 화면이면 좌우가 잘리지 않게 카메라를 물린다.
-    const fitA = this.fitAspect ?? 1.8, d = o.dist * Math.max(1, Math.pow(fitA / Math.max(0.3, this.camera.aspect), 0.6));
-    const x = o.target.x + d * Math.sin(o.phi) * Math.sin(o.theta), y = o.target.y + d * Math.cos(o.phi), z = o.target.z + d * Math.sin(o.phi) * Math.cos(o.theta);
+    const x = o.target.x + o.dist * Math.sin(o.phi) * Math.sin(o.theta), y = o.target.y + o.dist * Math.cos(o.phi), z = o.target.z + o.dist * Math.sin(o.phi) * Math.cos(o.theta);
     this.camera.position.set(x, y, z); this.camera.lookAt(o.target);
     if (this.update) this.update(dt, t, raw);
-    if (this.canvas.width !== Math.floor(this.canvas.clientWidth * this.renderer.getPixelRatio())) this._resize();
-    fitLabels(this.scene, this.camera, this.canvas.clientHeight, this.canvas.clientWidth < 500 ? 32 : 30, 54);   // 라벨 전체 높이 px(글자는 약 57%)
+    const pr = this.renderer.getPixelRatio();   // 가로 크게 보기로 높이만 바뀌어도 다시 맞춘다
+    if (this.canvas.width !== Math.floor(this.canvas.clientWidth * pr) || this.canvas.height !== Math.floor(this.canvas.clientHeight * pr)) this._resize();
+    fitLabels(this.scene, this.camera, this.canvas.clientHeight, this.canvas.clientWidth < 500 ? 32 : 30, 54, this.canvas.clientWidth);   // 라벨 전체 높이 px(글자는 약 57%)
     this.renderer.render(this.scene, this.camera);
     this._requestFrame();
   }

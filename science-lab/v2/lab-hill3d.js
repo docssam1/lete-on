@@ -7,9 +7,9 @@ import { createSim, GRID, WATERS, SLOPES, toCells } from './hill-sim.js';
 const TIP = '언덕 위쪽을 눌러 컵 자리를 정하고, <b>물 붓기</b>를 누르고 있어요.';
 
 export async function mountHill3D(el, opts = {}) {
-  let THREE, Stage;
+  let THREE, Stage, K;
   try {
-    [{ Stage }, THREE] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js')]);
+    [{ Stage }, THREE, K] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/hill-stream.js')]);
     const t = document.createElement('canvas'); if (!(t.getContext('webgl2') || t.getContext('webgl'))) throw new Error('no webgl');
   } catch (_) { return mountHill(el, opts); }
   const rows = opts.rows || [], onRecord = opts.onRecord;
@@ -39,61 +39,67 @@ export async function mountHill3D(el, opts = {}) {
 
   const { x0, x1, z0, z1, nx, nz } = GRID, NV = (nx + 1) * (nz + 1);
   const mat = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: o.r ?? 0.6, metalness: o.m ?? 0, transparent: o.op != null, opacity: o.op ?? 1 });
-  // 쟁반
-  const tray = new THREE.Group();
-  const bed = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.16, 3.2), mat(0xa9b2bb, { r: 0.45, m: 0.35 })); bed.position.y = -0.08; tray.add(bed);
-  for (const [x, z, w, d] of [[0, 1.62, 5.0, 0.06], [0, -1.62, 5.0, 0.06], [2.5, 0, 0.06, 3.3], [-2.5, 0, 0.06, 3.3]]) {
-    const r = new THREE.Mesh(new THREE.BoxGeometry(w, 0.24, d), mat(0x98a2ac, { r: 0.4, m: 0.4 })); r.position.set(x, 0.04, z); tray.add(r);
+  // 유수대: 둥근 성형 쟁반(배수 구멍 3개) — 쟁반·흙·물·컵은 rig 안에 두고 rig째 기울인다(받침 블록이 위쪽 끝을 괸다).
+  // 흙 시뮬레이션 좌표는 rig 안의 좌표 그대로다(누른 자리는 rig.worldToLocal로 바꿔 쓴다).
+  const rig = new THREE.Group(); stage.root.add(rig);
+  const tray = K.makeTray(); tray.position.x = K.TRAY.cx; rig.add(tray);
+  let block = null;
+  const TILTS = { '완만': 0.05, '가파름': 0.09 };
+  function setTilt() {
+    const r = K.tiltRig(TILTS[slope] ?? 0.06, 0), p = { position: new THREE.Vector3(), rotation: { z: 0 } }; r.place(p);
+    rig.position.copy(p.position); rig.rotation.z = p.rotation.z;
+    if (block) { stage.root.remove(block); block.geometry.dispose(); block.material.dispose(); }
+    block = K.makeBlock(r.blockH); block.position.x = r.blockX; stage.root.add(block);
   }
-  tray.position.x = 0.65; tray.traverse((o) => { o.receiveShadow = true; }); stage.root.add(tray);
   // 지형(흙)과 물막
   const mkGeo = () => { const g = new THREE.PlaneGeometry(x1 - x0, z1 - z0, nx, nz); g.rotateX(-Math.PI / 2); g.translate((x0 + x1) / 2, 0, (z0 + z1) / 2); g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(NV * 3), 3)); return g; };
-  const soil = new THREE.Mesh(mkGeo(), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.97 }));
-  soil.castShadow = soil.receiveShadow = true; stage.root.add(soil);
+  const soilGeo = mkGeo(); soilGeo.setAttribute('sand', new THREE.BufferAttribute(new Float32Array(NV), 1));
+  const soil = new THREE.Mesh(soilGeo, K.soilMaterial());
+  soil.castShadow = soil.receiveShadow = true; rig.add(soil);
+  const pebbles = K.makePebbles(K.PEBBLE_SPOTS); rig.add(pebbles);
   const film = new THREE.Mesh(mkGeo(), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.78 }));
-  stage.root.add(film);
+  rig.add(film);
   // 물방울(흘러내리는 물)과 컵
   const MAXD = 700, drops = new THREE.InstancedMesh(new THREE.SphereGeometry(0.028, 6, 5), mat(0xcfe8ff, { r: 0.05, op: 0.85 }), MAXD);
-  drops.count = 0; stage.root.add(drops);
-  const cup = new THREE.Group();
-  const wall = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.18, 0.42, 28, 1, true), new THREE.MeshStandardMaterial({ color: 0xf4f4ef, roughness: 0.6, side: THREE.DoubleSide }));
-  const inside = new THREE.Mesh(new THREE.CircleGeometry(0.19, 24), mat(0x5fa8e0, { op: 0.85 })); inside.rotation.x = -Math.PI / 2; inside.position.y = 0.05;
-  cup.add(wall, inside); cup.traverse((o) => { o.castShadow = true; }); stage.root.add(cup);
-  const NF = 12, fall = new THREE.InstancedMesh(new THREE.SphereGeometry(0.03, 8, 6), mat(0x9fd0f5, { r: 0.05, op: 0.8 }), NF); fall.count = 0; stage.root.add(fall);
+  drops.count = 0; rig.add(drops);
+  const cup = K.makeCup(1); rig.add(cup);
+  const NF = 12, fall = new THREE.InstancedMesh(new THREE.SphereGeometry(0.03, 8, 6), mat(0x9fd0f5, { r: 0.05, op: 0.8 }), NF); fall.count = 0; rig.add(fall);
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.13, 0.17, 32), new THREE.MeshBasicMaterial({ color: 0xe23b2e, transparent: true, opacity: 0.8, side: THREE.DoubleSide }));
-  ring.rotation.x = -Math.PI / 2; stage.root.add(ring);
+  ring.rotation.x = -Math.PI / 2; rig.add(ring);
 
   const DRY = new THREE.Color(0xc9a06a), DARK = new THREE.Color(0x9a7246), WET = new THREE.Color(0x6b4c2f), SAND = new THREE.Color(0x2ec4b6);
   const CLEAR = new THREE.Color(0x4f9fdc), MUD = new THREE.Color(0x8b7255), FOAM = new THREE.Color(0xe9f5ff);
   const grain = new Float32Array(NV); for (let k = 0; k < NV; k++) { const s = Math.sin(k * 12.9898) * 43758.5453; grain[k] = s - Math.floor(s); }
   let sim, full, t = 0;
   function paint() {
-    const sp = soil.geometry.attributes.position, sc = soil.geometry.attributes.color, fp = film.geometry.attributes.position, fc = film.geometry.attributes.color, c = new THREE.Color();
+    const sp = soil.geometry.attributes.position, sc = soil.geometry.attributes.color, sa = soil.geometry.attributes.sand, fp = film.geometry.attributes.position, fc = film.geometry.attributes.color, c = new THREE.Color();
     for (let k = 0; k < NV; k++) {
       const h = sim.h[k]; sp.setY(k, h);
-      c.copy(DRY).lerp(DARK, grain[k] * 0.35).lerp(WET, sim.wet[k] * 0.75).lerp(SAND, sim.sand[k] > 0.12 ? Math.min(0.95, sim.sand[k] * 1.1) : 0);
+      const sd = sim.sand[k] > 0.12 ? Math.min(0.95, sim.sand[k] * 1.1) : 0; sa.array[k] = sd;
+      c.copy(DRY).lerp(DARK, grain[k] * 0.35).lerp(WET, sim.wet[k] * 0.75).lerp(SAND, sd * 0.6);
       sc.setXYZ(k, c.r, c.g, c.b);
       const f = sim.flow[k], on = f > 0.03;
       fp.setY(k, on ? h + 0.012 + f * 0.018 : h - 0.03);
       const i = k % (nx + 1), wave = Math.max(0, Math.sin(i * 0.9 - t * 10 + (k / (nx + 1)) * 0.7)) ** 3;
       c.copy(CLEAR).lerp(MUD, Math.min(0.85, sim.mud[k] * 0.6 + 0.25)).lerp(FOAM, wave * 0.5 * f); fc.setXYZ(k, c.r, c.g, c.b);
     }
-    sp.needsUpdate = sc.needsUpdate = fp.needsUpdate = fc.needsUpdate = true;
-    soil.geometry.computeVertexNormals();
+    sp.needsUpdate = sc.needsUpdate = sa.needsUpdate = fp.needsUpdate = fc.needsUpdate = true;
+    soil.geometry.computeVertexNormals(); pebbles.userData.place(sim.heightAt);
   }
   function placeCup() {
     const y = sim.heightAt(sim.src.x, sim.src.z);
     ring.position.set(sim.src.x, y + 0.02, sim.src.z);
-    cup.position.set(sim.src.x - 0.22, y + 0.55, sim.src.z); cup.rotation.z = pouring ? -0.9 : -0.35;
+    let under = y; for (const dx of [-0.5, -0.25, 0]) for (const dz of [-0.2, 0, 0.2]) under = Math.max(under, sim.heightAt(sim.src.x + dx, sim.src.z + dz));   // 컵이 비탈에 파묻히지 않게
+    cup.position.set(sim.src.x - 0.22, Math.max(y + 0.55, under + 0.4), sim.src.z); cup.rotation.z = pouring ? -0.9 : -0.35;
   }
   function read() {
     const left = Math.max(0, 1 - sim.poured / full);
-    $('[data-r=cup]').textContent = Math.round(left * 100);
+    $('[data-r=cup]').textContent = Math.round(left * 100); cup.setFill(left);
     $('[data-r=cut]').textContent = toCells(sim.eroded, sim.dx);
     $('[data-r=pile]').textContent = toCells(sim.deposited, sim.dx);
   }
   const tip = (html) => { $('[data-r=tip]').innerHTML = html; };
-  function reset() { sim = createSim(slope); full = WATERS[water]; pouring = false; drops.count = 0; fall.count = 0; paint(); placeCup(); read(); tip(TIP); }
+  function reset() { setTilt(); sim = createSim(slope); full = WATERS[water]; pouring = false; drops.count = 0; fall.count = 0; paint(); placeCup(); read(); tip(TIP); }
   reset();
 
   const M = new THREE.Matrix4(), LIP = new THREE.Vector3(), HIT = new THREE.Vector3();
@@ -130,7 +136,7 @@ export async function mountHill3D(el, opts = {}) {
     if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 8 || performance.now() - down.t > 400) return;
     const r = canvas.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, stage.camera); const hit = ray.intersectObject(soil)[0]; if (!hit) return;
-    HIT.copy(hit.point);
+    rig.worldToLocal(HIT.copy(hit.point));
     if (sim.heightAt(HIT.x, HIT.z) < sim.HH * 0.35) { tip('더 높은 곳을 눌러 봐요. 물은 <b>언덕 위쪽</b>에서 부어요.'); return; }
     sim.src.x = HIT.x; sim.src.z = HIT.z; placeCup(); tip(TIP);
   });

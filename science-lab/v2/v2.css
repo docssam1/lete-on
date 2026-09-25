@@ -275,3 +275,76 @@ select.wrong { border-color: var(--point); background: var(--bad-bg); color: var
   .mis details { display: block; } .mis details > summary { list-style: none; }
   .mis details:not([open]) > *:not(summary) { display: block; }
 }
+
+/* ── 80년대 광택 플라스틱 단추 ─────────────────────────────
+   통통한 사탕 플라스틱: 위쪽 반은 빛 반사 띠, 아래는 두꺼운 옆면(누르면 쏙 들어감). */
+:root {
+  --b1-top: #3F66B8; --b1-bot: #1E3A78; --b1-edge: #10224C; --b1-ink: #FFFFFF;
+  --b2-top: #FFFDF6; --b2-bot: #F3E6C8; --b2-edge: #C9AE78; --b2-ink: #2A2F3C;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --b1-top: #A9C4F7; --b1-bot: #6A8FDB; --b1-edge: #34528F; --b1-ink: #0E1526; --b2-top: #34405C; --b2-bot: #252F47; --b2-edge: #0E1422; --b2-ink: #E8EDF6; }
+}
+:root[data-theme="dark"] { --b1-top: #A9C4F7; --b1-bot: #6A8FDB; --b1-edge: #34528F; --b1-ink: #0E1526; --b2-top: #34405C; --b2-bot: #252F47; --b2-edge: #0E1422; --b2-ink: #E8EDF6; }
+.btn, .modes button, .icon-btn {
+  position: relative; color: var(--b2-ink); border: 1.5px solid var(--b2-edge); font-family: var(--disp); font-weight: 700; letter-spacing: .01em;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 42%, rgba(255,255,255,0) 50%) top / 100% 100% no-repeat,
+    linear-gradient(180deg, var(--b2-top), var(--b2-bot));
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,.9), inset 0 -3px 6px rgba(120,90,40,.12), 0 4px 0 var(--b2-edge), 0 7px 12px rgba(30,40,70,.18);
+  text-shadow: 0 1px 0 rgba(255,255,255,.55);
+  transition: transform .08s ease, box-shadow .08s ease, filter .15s;
+}
+.btn.primary, .modes button[aria-selected="true"], .modes button[aria-pressed="true"] {
+  color: var(--b1-ink); border-color: var(--b1-edge);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,.18) 44%, rgba(255,255,255,0) 50%) top / 100% 100% no-repeat,
+    radial-gradient(120% 70% at 50% 110%, rgba(140,190,255,.55), rgba(140,190,255,0) 60%),
+    linear-gradient(180deg, var(--b1-top), var(--b1-bot));
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,.55), inset 0 -3px 6px rgba(0,0,0,.18), 0 4px 0 var(--b1-edge), 0 7px 14px rgba(16,34,76,.32);
+  text-shadow: 0 -1px 0 rgba(0,0,0,.28);
+}
+.btn:hover, .modes button:hover, .icon-btn:hover { filter: brightness(1.05) saturate(1.05); }
+.btn:active, .modes button:active, .icon-btn:active, .lab3d-btns .pour.on {
+  transform: translateY(3px);
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,.5), inset 0 2px 6px rgba(0,0,0,.2), 0 1px 0 var(--b2-edge), 0 2px 4px rgba(30,40,70,.18);
+}
+.btn.primary:active { box-shadow: inset 0 2px 6px rgba(0,0,0,.3), 0 1px 0 var(--b1-edge), 0 2px 4px rgba(16,34,76,.3); }
+.modes button { font-size: 18px; }
+.lab3d-btns .pour.on { filter: brightness(1.12); }
+@media (prefers-reduced-motion: reduce) { .btn, .modes button, .icon-btn { transition: none; } }
+.diag-link.icon-btn, .icon-btn.diag-link { border-color: var(--point); color: var(--point); }
+@media print { .btn, .modes button, .icon-btn { box-shadow: none; background: #fff; text-shadow: none; } }
+
+/* ── 가로로 크게 보기 ───────────────────────────────────────
+   캔버스는 화면 왼쪽을 꽉 채우고, 설명·단추·표는 오른쪽 칸에서 스크롤. 세로로 들면 위=캔버스, 아래=설명. */
+.fl-close, .fl-rotate { display: none; }
+.stage3d .ctl { flex-wrap: wrap; }
+.stage3d .ctl .btn { flex: 1 1 0; white-space: nowrap; }
+.stage3d .ctl .btn.fl-open, .lab3d-btns .btn.fl-open { flex: 1 1 100%; white-space: nowrap; }
+@media (min-width: 760px) and (pointer: fine) { .stage3d .ctl .btn.fl-open { flex: 0 0 auto; margin-left: auto; } .lab3d-btns .btn.fl-open { flex: 0 1 auto; } }
+html.fl-lock, html.fl-lock body { overflow: hidden; }
+.full-land {
+  --fl-w: 64vw;
+  position: fixed !important; inset: 0; z-index: 60; margin: 0 !important; max-width: none !important; border: 0 !important; border-radius: 0 !important;
+  background: var(--bg); overflow-y: auto; overscroll-behavior: contain;
+  padding: max(10px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) calc(var(--fl-w) + 12px) !important;
+}
+.full-land .lab3d, .full-land .stage3d-view { border: 0; background: none; overflow: visible; }
+.full-land canvas { position: fixed; left: 0; top: 0; width: var(--fl-w) !important; height: 100% !important; height: 100dvh !important; z-index: 0; background: var(--card); box-shadow: 1px 0 0 var(--line); }
+.full-land .stage3d-hint { position: fixed; left: 12px; right: auto; bottom: 12px; }
+.full-land .fl-open { display: none; }
+.full-land .fl-close { display: inline-flex; align-items: center; position: fixed; z-index: 2; top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); min-height: 42px; font-size: 18px; }
+.full-land .cap { border-top: 0; font-size: 17px; }
+.full-land .ctl { padding: 0 0 8px; flex-wrap: wrap; }
+.full-land .lab3d-read, .full-land .lab3d-tip, .full-land .lab3d-btns { padding-left: 0; padding-right: 0; margin-left: 0; margin-right: 0; }
+.full-land .lab3d-read { grid-template-columns: repeat(2, 1fr); }
+.full-land > * { position: relative; }
+@media (orientation: portrait) {
+  .full-land { --fl-h: 58vh; padding: calc(var(--fl-h) + 10px) 12px max(12px, env(safe-area-inset-bottom)) !important; }
+  .full-land canvas { width: 100% !important; height: var(--fl-h) !important; box-shadow: 0 1px 0 var(--line); }
+  .full-land .lab3d-read { grid-template-columns: repeat(3, 1fr); }
+  .full-land .stage3d-hint { bottom: auto; top: calc(var(--fl-h) - 42px); }
+  .full-land .fl-rotate { display: flex; gap: 6px; align-items: center; position: fixed; z-index: 2; top: max(10px, env(safe-area-inset-top)); right: 10px; margin: 0; max-width: 58vw;
+    padding: 6px 10px; border-radius: 12px; background: rgba(30,58,120,.9); color: #fff; font: 700 15px/1.25 var(--disp); pointer-events: none; }
+}
