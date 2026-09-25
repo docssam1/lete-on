@@ -2,7 +2,7 @@
 'use strict';
 
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..');
 const out=process.env.NM_MD15_ARTIFACTS;
 const server=http.createServer((req,res)=>{

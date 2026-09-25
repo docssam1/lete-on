@@ -3,7 +3,7 @@
 // Real 190mm print body, then actual roadmap → preview → reroll → print → close.
 // Produces JSON/PNG evidence only; deliberately never calls page.pdf().
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..'),out=process.env.NM_CONCEPT_ARTIFACTS;
 const server=http.createServer((req,res)=>{
   const f=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));

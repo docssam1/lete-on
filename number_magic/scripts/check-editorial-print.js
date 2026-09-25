@@ -2,7 +2,7 @@
 'use strict';
 // Real A4 body / desktop / narrow preview. No publishing or learner records.
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..'),out=process.env.NM_CONCEPT_ARTIFACTS;
 const server=http.createServer((req,res)=>{
   const f=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));

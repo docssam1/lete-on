@@ -4,7 +4,7 @@
 /* Real Chromium gate for MD88: 12/24 count, concept flow, A4 and 390 px. */
 const assert=require('assert/strict');
 const fs=require('fs'),http=require('http'),path=require('path');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..');
 const out=process.env.NM_MD88_ARTIFACTS;
 const server=http.createServer((req,res)=>{

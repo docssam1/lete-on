@@ -254,7 +254,7 @@ core('MD82 number-line levels reserve all four teaching variants',()=>{
 
 async function browserChecks(){
   // Deliberately a real browser and public editor API, not a fake DOM renderer.
-  const {chromium}=require('playwright'),http=require('http');
+  const {chromium}=require('./lib/playwright'),http=require('http');
   const server=http.createServer((req,res)=>{
     const f=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));
     if(!f.startsWith(root+path.sep)||!fs.existsSync(f)||!fs.statSync(f).isFile()){res.writeHead(404);return res.end();}

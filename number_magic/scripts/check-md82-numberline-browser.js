@@ -3,7 +3,7 @@
 
 /* MD82 actual-render gate: A4/390 and the two visible boxes for |x|=k. */
 const assert=require('assert/strict'),fs=require('fs'),http=require('http'),path=require('path');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..');
 const server=http.createServer((req,res)=>{
   const file=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));

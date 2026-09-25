@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const assert=require('assert/strict'),fs=require('fs'),path=require('path'),http=require('http');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..');
 const server=http.createServer((req,res)=>{
   const f=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));

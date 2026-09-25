@@ -2,7 +2,7 @@
 'use strict';
 // NODE_PATH / NM_CHROMIUM: 기존 브라우저 재사용. NM_CONCEPT_ARTIFACTS 지정 시 대표 PDF/PNG도 생성.
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..'),out=process.env.NM_CONCEPT_ARTIFACTS;
 const server=http.createServer((req,res)=>{
   const f=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));

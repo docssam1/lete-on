@@ -3,7 +3,7 @@
 /* A4 실제 폭에서 세로 잘림을 검사한다. check-print.js의 가로 검사 보완.
  * NODE_PATH로 Playwright 설치 경로를 지정할 수 있다. 문항/학습 기록은 쓰지 않는다. */
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
-const {chromium}=require('playwright');
+const {chromium}=require('./lib/playwright');
 const root=path.resolve(__dirname,'..');
 const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{

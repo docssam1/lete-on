@@ -7,7 +7,7 @@ const fs = require('fs');
 const http = require('http');
 const os = require('os');
 const path = require('path');
-const { chromium } = require('playwright');
+const { chromium } = require('./lib/playwright');
 
 const root = path.resolve(__dirname, '..');
 const artifactDir = process.env.NM_LOGO_ARTIFACTS && path.resolve(process.env.NM_LOGO_ARTIFACTS);
