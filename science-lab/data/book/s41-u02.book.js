@@ -111,7 +111,7 @@ export const art = {
     <text x="480" y="34" text-anchor="middle" font-size="24" font-weight="700" fill="${INK}">끓음</text>
     <path d="M410 70 V150 Q410 156 416 156 H544 Q550 156 550 150 V70" fill="#fff" stroke="#7a8794" stroke-width="3"/><rect x="413" y="84" width="134" height="70" fill="${WATER}"/>
     ${[[436, 140, 6], [452, 118, 5], [470, 136, 7], [488, 108, 5], [506, 132, 6], [524, 114, 5], [462, 96, 4], [512, 94, 4]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#eaf6fd" stroke="#fff"/>`).join('')}
-    ${[450, 480, 510].map((x) => `<path d="M${x} 66 q-6 -9 0 -18 q6 -9 0 -18" fill="none" stroke="#9aa7b4" stroke-width="2.5"/>`).join('')}
+    ${[450, 480, 510].map((x) => `<path d="M${x} 66 q-5 -6 0 -12 q5 -6 0 -12" fill="none" stroke="#9aa7b4" stroke-width="2.5"/>`).join('')}
     ${[440, 466, 494, 520].map((x) => `<path d="M${x} 176 q-8 -10 0 -18 q8 8 0 18Z" fill="#f9a825"/>`).join('')}
     <text x="480" y="204" text-anchor="middle" font-size="18" fill="${INK}">물속에서도 기포, 빠르게</text>`),
 
@@ -120,17 +120,20 @@ export const art = {
     <rect x="10" y="46" width="130" height="30" fill="#9aa7b4"/><rect x="180" y="46" width="130" height="30" fill="#9aa7b4"/>
     <path d="M140 46 Q160 26 180 46 V76 Q160 96 140 76Z" fill="${ICE}" stroke="#7fb6db" stroke-width="2"/>
     <path d="M140 46 l8 7 l-7 6 l8 7 l-9 10 M180 46 l-8 7 l7 6 l-8 7 l9 10" fill="none" stroke="#6b7682" stroke-width="2"/>
-    <text x="160" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="${RED}">얼면서 부피가 늘어 터져요</text>
+    <text x="160" y="24" text-anchor="middle" font-size="21" font-weight="700" fill="${RED}">얼면 부피가 늘어 터져요</text>
     <rect x="10" y="126" width="300" height="30" fill="#9aa7b4"/>
     <rect x="30" y="118" width="260" height="46" rx="10" fill="#f2c9a0" stroke="#c98f5b" stroke-width="2"/>
     ${[60, 100, 140, 180, 220, 260].map((x) => `<path d="M${x} 118 V164" stroke="#dfa878" stroke-width="3"/>`).join('')}
-    <text x="160" y="188" text-anchor="middle" font-size="13" font-weight="700" fill="${INK}">헌 옷·보온재로 감싸 막아요</text>`),
+    <text x="160" y="192" text-anchor="middle" font-size="21" font-weight="700" fill="${INK}">보온재로 감싸 막아요</text>`),
 };
 
 export const chapter = {
   unit: 's41-u02', book: 'GFIELD 실험 과학 영재', vol: '4-1', no: 2, title: '얼었다 녹는 물기둥', theme: '#2A6FB0',
   link: { course: '4학년 1학기', unit: 'Ⅱ. 물의 상태 변화', topics: ['물이 얼 때와 얼음이 녹을 때의 변화', '증발과 끓음', '응결', '물의 이용과 물 부족'] },
   skills: ['가설 설정', '변인 통제', '측정', '자료 해석', '결론 도출'],
+  labTitle: '물의 양 바꿔 얼리고 녹이기',
+  selfLink: '실험 결과를 겨울철 수도관·얼음 틀과 이어 생각했나요?',
+  summary: ['물이 얼면 <b>부피가 늘어나고</b>, 얼음이 녹으면 <b>부피가 줄어들어요</b>.', '물이 얼거나 얼음이 녹아도 <b>무게는 변하지 않아요</b>.', '물은 <b>증발·끓음</b>으로 수증기가 되고, 수증기는 차가운 곳에서 <b>응결</b>해 물이 돼요.'],
   qr: { scene: '../assets/qr-s41-u02-scene.svg', lab: '../assets/qr-s41-u02-lab.svg', kit: '../assets/qr-s41-u02-kit.svg' },
   intro: [
     '냉동실에 넣어 둔 요구르트 병에서 얼음이 입구 위로 볼록 솟아 있거나, 얼음 틀의 얼음 가운데가 불룩 올라온 것을 본 적이 있나요? 아주 추운 겨울에는 바깥 수도관이 얼어 터지기도 해요.',
