@@ -132,7 +132,7 @@ function varianceProblem(m){
      {tex:`\\text{편차}=(${m.deviations.join(',')})`},
      {tex:`\\text{편차 제곱의 합}=${m.squaredSum}`},
      {tex:`\\text{분산}=\\dfrac{${m.squaredSum}}{${m.data.length}}=\\square`,blank:m.variance},
-     {tex:`\\text{표준편차}=\\sqrt{\\square}`,blank:m.variance}],
+     {tex:`(\\text{분산},\\;\\text{표준편차})=\\left(\\square,\\;\\sqrt{\\square}\\right)`,blank:[m.variance,m.variance]}],
     {mode:'varianceStd',data:m.data,mean:m.mean,deviations:m.deviations,squaredSum:m.squaredSum,variance:m.variance,standardDeviation:{coefficient:1,radicand:m.variance},poolSize:VARIANCE_POOL.length}
   );
 }
@@ -144,8 +144,7 @@ function compareProblem(m){
     [m.higherMean,m.moreConsistent],
     [{tex:`\\overline{x}_A=${m.meanA},\\quad \\overline{x}_B=${m.meanB}`},
      {tex:`V_A=${m.varianceA},\\quad V_B=${m.varianceB}`},
-     {tex:'\\overline{x}_{\\max}:\\square',blank:m.higherMean},
-     {tex:'V_{\\min}:\\square',blank:m.moreConsistent}],
+     {tex:'(\\text{큰 평균},\\;\\text{더 고름})=\\left(\\square,\\;\\square\\right)',blank:[m.higherMean,m.moreConsistent]}],
     Object.assign({mode:'compare',poolSize:COMPARE_POOL.length},m)
   );
 }

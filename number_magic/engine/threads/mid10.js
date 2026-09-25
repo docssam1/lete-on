@@ -909,8 +909,9 @@ NM_TGEN['md78_quadBasic'] = function (params, rng) {
       mathModel: { kind:'quadraticTable', a, p:0, q:0, xs:[-2, -1, 0, 1, 2] },
       solution: [
         { tex: `(-2)^2 = 2^2 = 4, \\qquad (-1)^2 = 1^2 = 1` },
-        { tex: `\\left(\\square,\\, \\square,\\, \\square,\\, \\square,\\, \\square\\right)`, blank: values },
-        { tex: `y(-2)=y(2), \\qquad y(-1)=y(1)` }
+        /* 대칭을 먼저 확인하고 표를 채운다 — 풀이의 마지막 줄이 답이어야 한다(2026-09-25) */
+        { tex: `y(-2)=y(2), \\qquad y(-1)=y(1)` },
+        { tex: `\\left(\\square,\\, \\square,\\, \\square,\\, \\square,\\, \\square\\right)`, blank: values }
       ]
     };
   }

@@ -16,12 +16,10 @@
 const fs = require('fs'), path = require('path'), { execSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const ONLY = process.argv.slice(2).map(s => s.toUpperCase());
-const FILES = ['engine/generators.js','engine/rng.js','engine/scene-model.js',
-  'engine/threads/ns_ad.js','engine/threads/sb.js','engine/threads/ml.js','engine/threads/dv.js',
-  'engine/threads/fr.js','engine/threads/dc_mx.js','engine/threads/el.js','engine/threads/nl.js',
-  'engine/threads/wp.js','engine/threads/adv.js','engine/threads/mid.js','engine/threads/mid2.js',
-  'engine/threads/mid3.js','engine/threads/mid4.js','engine/threads/mid5.js','engine/threads/mid6.js',
-  'engine/threads/mid7.js','engine/threads/mid8.js','engine/threads/mid9.js','engine/threads/mid10.js','data/threads.js'];
+/* 엔진 파일 목록은 앱(index.html)이 싣는 순서 그대로 읽는다(2026-09-25). 예전엔 손으로 적은
+   목록이 mid10 에서 멈춰 mid11~15 의 MD84~88 을 "생성기 없음"으로 보고했다. */
+const FILES = [...fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').matchAll(/<script\s+src="(engine\/[^"]+)"/g)]
+  .map(m => m[1]).concat(['data/threads.js']);
 
 function loadEngine(readFile){
   const vm = require('vm'); const w = { document: {}, console, Math, JSON, Object, Array, String, Number, RegExp, Date, parseInt, parseFloat, isNaN, isFinite };
@@ -33,7 +31,8 @@ function loadEngine(readFile){
 const cur = loadEngine(f => fs.readFileSync(path.join(ROOT, f), 'utf8'));
 let head = null;
 try {
-  head = loadEngine(f => execSync(`git show HEAD:number_magic/${f}`, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore','pipe','ignore'] }));
+  /* HEAD 에 아직 없는 새 파일은 빈 파일로 본다 — 한 파일 때문에 비교 전체를 건너뛰지 않는다 */
+  head = loadEngine(f => { try { return execSync(`git show HEAD:number_magic/${f}`, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore','pipe','ignore'] }); } catch(e){ return ''; } });
 } catch(e){ console.log('(HEAD 비교 생략: ' + e.message.split('\n')[0] + ')'); }
 
 const T = cur.NM_THREADS, G = cur.NM_TGEN, R = cur.NM_RNG;

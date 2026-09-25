@@ -99,11 +99,15 @@ function common(prompt,tex,answer,model,plotted,labels){
 }
 function plotProblem(m){
   const points=clonePoints(m.points),answer=points.length;
-  return common(
+  const p=common(
     L3('표의 순서쌍을 빈 모눈에 모두 찍습니다. 점을 서로 선으로 잇지 않습니다.','Plot every ordered pair on the blank grid. Do not join the points.','把表中的有序数对全部描在空白方格中，不要把点连起来。'),
     `\\text{순서쌍 }${points.length}\\text{개를 모두 찍고, 찍은 점의 수}=\\square`,answer,
     {mode:'plot',points:Object.freeze(points.map(Object.freeze)),answer,poolSize:PLOT_POOL.length},false,
     ['x 자료','y 자료']);
+  /* 다른 모드처럼 풀이 줄을 둔다 — 없으면 예시·해설에 풀이가 비어 나간다(2026-09-25) */
+  p.solution=[{tex:'\\text{표의 순서쌍마다 }(x,\\;y)\\text{ 자리에 점 하나}'},
+    {tex:'\\text{찍은 점의 수}=\\square',blank:answer}];
+  return p;
 }
 function queryTex(q){
   if(q.kind==='xAtLeast')return `x\\ge ${q.value}`;
