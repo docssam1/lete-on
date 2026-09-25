@@ -22,7 +22,8 @@ const server = http.createServer((req, res) => {
 });
 server.listen(0, async () => {
   fs.mkdirSync(OUT, { recursive:true });
-  const src = fs.readFileSync(path.join(APP, 'app', 'hero3d', 'scenes.js'), 'utf8');
+  const HD = path.join(APP, 'app', 'hero3d');
+  const src = fs.readdirSync(HD).filter(f => /^scenes.*\.js$/.test(f)).map(f => fs.readFileSync(path.join(HD, f), 'utf8')).join('\n');
   const all = [...src.matchAll(/^\s*'(M-\d+|[A-Z]-\d+)'\s*:/gm)].map(m => m[1]);
   const want = process.argv.slice(2).filter(a => /^[A-Z]-\d+$/.test(a));
   const ids = want.length ? want : all;

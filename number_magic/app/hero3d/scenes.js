@@ -2,11 +2,11 @@
    나오는 물건만 쓴다 — 지면에서 새 이야기를 지어내지 않는다. 글자 없이 숫자·수식 기호만.
    움직임(k.onFrame)은 앱에서만 돈다(app/hero3d/live.js). 장면을 만든 직후의 모습이 곧 정지 그림(인쇄·첫 화면)이므로
    움직임은 한 바퀴의 처음·끝이 그 모습이 되게 짠다 — 정지 그림에서 움직임으로 넘어갈 때 튀지 않게. */
-const ease = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
-const seg = (p, a, b) => ease((p - a) / (b - a));          /* p 가 a→b 를 지나는 동안 0→1 */
-const cyc = (t, P) => (t % P) / P;                          /* 한 바퀴 P 초 안의 위치 0~1 */
-const hop = (p, a, b) => Math.sin(Math.PI * Math.min(1, Math.max(0, (p - a) / (b - a))));  /* a~b 동안 한 번 뛰었다 내려옴 */
-export const SCENES = {
+import { ease, seg, cyc, hop } from './anim.js';
+import { SCENES_C32 } from './scenes-c32.js';
+import { SCENES_C33 } from './scenes-c33.js';
+import { SCENES_C34 } from './scenes-c34.js';
+const SCENES_C29_31 = {
 
   /* 정수 개념 — history: 『구장산술』의 붉은 산가지(+)와 검은 산가지(−) */
   'M-01': { seed:7, caps:{ P:7, list:[
@@ -619,3 +619,6 @@ export const SCENES = {
     k.lights({ envOpts:{ intensity:0.45 } });
   }},
 };
+
+/* 과정별 파일을 한데 모은다 — 과정마다 파일을 나눠 여럿이 동시에 만들어도 서로 덮어쓰지 않게(2026-09-26) */
+export const SCENES = Object.assign({}, SCENES_C29_31, SCENES_C32, SCENES_C33, SCENES_C34);

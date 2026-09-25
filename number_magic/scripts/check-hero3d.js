@@ -10,7 +10,8 @@ global.window = {};
 require(path.join(ROOT, 'data', 'hero3d.js'));
 const H = window.NM_HERO3D || {};
 const katex = require(path.join(ROOT, 'vendor', 'katex', 'katex.min.js'));
-const scenes = fs.readFileSync(path.join(ROOT, 'app', 'hero3d', 'scenes.js'), 'utf8');
+const HD = path.join(ROOT, 'app', 'hero3d');
+const scenes = fs.readdirSync(HD).filter(f => /^scenes.*\.js$/.test(f)).map(f => fs.readFileSync(path.join(HD, f), 'utf8')).join('\n');
 const bad = [];
 const webpSize = buf => {
   if(buf.toString('ascii', 0, 4) !== 'RIFF' || buf.toString('ascii', 8, 12) !== 'WEBP') return null;
