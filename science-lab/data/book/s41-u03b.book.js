@@ -2,6 +2,7 @@
 // 교과서 화산 활동 모형 실험(마시멜로·알루미늄 포일)과 백반 결정 실험을 합쳐 우리 흐름으로 새로 썼다. 그림은 직접 그리고,
 // 실제 사진·영상은 위키미디어 공용의 자유 이용 자료를 출처와 함께 쓴다(data/media/s41-u03b.media.js).
 import { media } from '../media/s41-u03b.media.js';
+import { reading } from '../reading/s41-u03b.reading.js';
 export { media };
 
 const S = (w, h, body) => `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" role="img" font-family="Pretendard, 'Noto Sans KR', sans-serif">${body}</svg>`;
@@ -52,6 +53,7 @@ export const art = {
 };
 
 export const chapter = {
+  reading,
   unit: 's41-u03b', book: 'GFIELD 실험 과학 영재', vol: '4-1', no: 4, title: '화산 실험실', theme: '#B23A2E',
   link: { course: '4학년 1학기', unit: 'Ⅲ. 땅의 변화', topics: ['화산과 화산 분출물', '화강암과 현무암', '화산 활동과 지진'] },
   skills: ['관찰', '모형 실험', '비교', '자료 해석', '결론 도출'],

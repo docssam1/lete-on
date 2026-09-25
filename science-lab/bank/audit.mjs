@@ -18,8 +18,18 @@ const TRACKS = new Set(['교과', '영재성']);
 
 let fail = 0;
 const err = (m) => { fail++; console.log('  ✗ ' + m); };
-for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !/\.(lesson|similar|taxonomy)\.js$/.test(x))) {
-  const { unit, items } = await import(pathToFileURL(join(unitsDir, f)).href);
+// 기본 단원 모듈만 검사한다. lesson/similar/taxonomy/misc 같은 보조 모듈은
+// 각자 다른 계약을 가지므로 파일명이 늘어날 때마다 제외 목록을 추가하지 않는다.
+const unitFiles = readdirSync(unitsDir).filter((x) => /^s\d{2}-u\d{2}[a-z]?\.js$/.test(x));
+for (const f of unitFiles) {
+  let mod;
+  try { mod = await import(pathToFileURL(join(unitsDir, f)).href); }
+  catch (e) { err(`${f} 불러오기 실패: ${e.message}`); continue; }
+  const { unit, items } = mod;
+  if (!unit?.id || !unit?.title || !Array.isArray(items)) {
+    err(`${f} 기본 단원 계약 누락(unit.id·unit.title·items[])`);
+    continue;
+  }
   console.log(`${unit.id} ${unit.title}: ${items.length}문항`);
   const ids = new Set();
   const pos = [0, 0, 0, 0, 0];

@@ -99,6 +99,7 @@ export async function mountHill3D(el, opts = {}) {
   const M = new THREE.Matrix4(), LIP = new THREE.Vector3(), HIT = new THREE.Vector3();
   let acc = 0, dirty = 0;
   stage.update = (dt) => {
+    if (opts.isActive && !opts.isActive()) return;
     t += dt;
     const active = sim.drops.length > 0, canPour = pouring && sim.poured < full;
     if (active || canPour) {
@@ -160,5 +161,5 @@ export async function mountHill3D(el, opts = {}) {
   renderRows();
   const off = () => { if (!el.isConnected) { stage.dispose(); removeEventListener('hashchange', chk); } };
   const chk = () => setTimeout(off); addEventListener('hashchange', chk);
-  return { rows };
+  return { rows, pause: stop, dispose: () => { stage.dispose(); removeEventListener('hashchange', chk); } };
 }

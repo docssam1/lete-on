@@ -122,6 +122,47 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .preview b { font-family: var(--disp); font-size: 16px; color: var(--navy); }
 .level { font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--sub); }
 
+/* 서술형 연습: 원문과 정답을 보존하고, 학생의 쓰기/비교/자기 점검을 분리 */
+.written-practice { min-width: 0; margin-top: 16px; border-top: 1px solid var(--line); }
+.written-note { font-size: 13px; color: var(--sub); margin: 10px 0; }
+.written-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 2px solid var(--line); margin-bottom: 16px; }
+.written-tabs button { min-width: 0; min-height: 48px; padding: 8px 4px; border: 0; border-bottom: 3px solid transparent; margin-bottom: -2px; background: transparent; color: var(--sub); cursor: pointer; font-weight: 700; }
+.written-tabs button[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--navy); }
+.written-practice [hidden] { display: none !important; }
+.written-practice h4 { margin: 16px 0 6px; font-size: 16px; }
+.writing-help { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.writing-help summary { cursor: pointer; min-height: 44px; padding: 10px 0; font-weight: 700; }
+.writing-help p { margin: 6px 0; }
+.writing-guides { display: flex; flex-wrap: wrap; gap: 6px; }
+.writing-guides button { min-height: 44px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--card); cursor: pointer; }
+.writing-guides button[aria-pressed="true"] { background: var(--soft); border-color: var(--navy); }
+.writing-guide-content ol { padding-left: 1.5em; }
+.writing-guide-content li { margin: 6px 0; }
+.writing-label { display: block; font-weight: 700; margin-bottom: 8px; }
+.writing-answer { min-height: 144px; resize: vertical; border-radius: 4px; }
+.writing-paper { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+.writing-paper input, .writing-criteria input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--navy); }
+.writing-copy { white-space: pre-wrap; overflow-wrap: anywhere; margin: 8px 0 16px; padding: 10px 12px; border-left: 3px solid var(--navy); background: var(--soft); }
+.writing-sample { margin: 8px 0; }
+.writing-criteria { list-style: none; padding: 0; margin: 8px 0; }
+.writing-criteria li { border-bottom: 1px solid var(--line); }
+.writing-criteria label { display: flex; align-items: flex-start; gap: 8px; padding: 10px 0; min-height: 48px; cursor: pointer; }
+.writing-check-count, .writing-status { color: var(--sub); font-size: 14px; }
+.writing-status:empty { display: none; }
+.written-practice :is(button, textarea, input, summary, [role="tabpanel"]):focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+/* 긴 제목과 말풍선이 좁은 화면을 밀어내지 않게 한다. */
+.top h1 { min-width: 0; }
+.top .back, .top .icon-btn { flex-shrink: 0; }
+.teacher, .teacher.big { grid-template-columns: minmax(0, 1fr) 34%; }
+.teacher.big { grid-template-columns: minmax(0, 1fr) 42%; }
+.teacher > * { min-width: 0; }
+@media (max-width: 520px) {
+  .top .wrap { flex-wrap: wrap; gap: 4px 8px; padding-top: 4px; padding-bottom: 4px; }
+  .top .dots { order: 5; flex-basis: 100%; justify-content: center; padding-bottom: 6px; }
+  .teacher .bubble { width: auto; min-width: 0; max-width: 100%; font-size: 20px; padding: 10px; }
+}
+
 /* 결과 */
 .result { text-align: center; }
 .result .score { font-family: var(--disp); font-size: 44px; color: var(--navy); }
