@@ -126,7 +126,7 @@ export const SCENES_C37B = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.5, 0, 0.3], 6.9, 60);
+    k.frame([0.45, 0, 0.25], 6.3, 62);
     k.table();
     const B = board(k, { x0:-1, x1:5.4, y0:-1, y1:12.2, ux:0.52, uy:0.27, cx:-0.95, cz:0.1, xs:[1, 2, 3, 4, 5], ys:[3, 6, 9, 11], fs:0.2 });
     /* 포물선 철사 — 꼭짓점을 원점으로 둔 모양(a=2)을 무리에 담고, z 축 배율로 a 를 바꾼다 */
@@ -140,7 +140,7 @@ export const SCENES_C37B = {
     scene.add(para);
     const pv = pin(k, B.P(2, 3, 0.17), '#c0392b', 0.085), pq = pin(k, B.P(4, 11, 0.17), '#2e6fb5', 0.085);
     /* 식 카드 — 시작하는 꼴 → 점을 넣은 식 → a */
-    const c1 = mcard(k, ['y = a(x − 2)', { sup:'2' }, ' + 3'], 2.35, -1.05, { w:2.2, d:0.62, hmax:0.52, rot:-0.03 });
+    const c1 = mcard(k, ['y = a(x − 2)', { sup:'2' }, ' + 3'], 2.3, -1.05, { w:2.1, d:0.62, hmax:0.6, fill:0.92, rot:-0.03 });
     const c2 = mcard(k, ['11 = 4a + 3'], 2.35, -0.05, { w:1.9, d:0.58, hmax:0.52, rot:0.02 });
     const c3 = mcard(k, ['a = 2'], 2.35, 0.9, { w:1.3, d:0.58, hmax:0.56, rot:-0.02, edge:'#d9c49a', bg:'#f6e3b8' });
     /* 움직임: a 가 작아졌다 커졌다(꼭짓점은 그대로) → 파란 점 (4, 11)을 지나는 a = 2 에서 멈춘다 → 식 카드가 차례로 톡 */
