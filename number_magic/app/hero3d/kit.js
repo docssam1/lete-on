@@ -1,17 +1,26 @@
 /* 수학 이야기 3D 대표 그림 — 공용 무대(2026-09-26, 원장 "좀 실사 느낌이 되었으면 좋겠어 막대도 실제 막대처럼 정 안되면 3d로").
    책상(나뭇결) · 한지 · 옻칠 막대 · 나무 블록 · 유리 · 금속 같은 실물 재질과 부드러운 그림자로 한 장면을 찍는다.
    글자는 넣지 않는다 — 숫자·수식 기호만(ko·en·zh 공용, assets/images/story 삽화와 같은 규칙).
-   scripts/build-hero3d.js 가 장면마다 이 무대를 새로 만들어 assets/hero3d/<유닛>.webp 로 굽는다. */
+   scripts/build-hero3d.js 가 장면마다 이 무대를 새로 만들어 assets/hero3d/<유닛>.webp 로 굽는다.
+   앱에서는 app/hero3d/live.js 가 같은 장면을 직접 띄워 움직인다(opts.live — 원장 "동작도 하는거야?" → "1", 2026-09-26). */
 import * as THREE from '../../../world-explorer/vendor/three.module.js';
 export { THREE };
 
 export const W = 1600, H = 1000;
 
-export function makeKit(seed){
+export function makeKit(seed, opts){
+  opts = opts || {};
+  const live = !!opts.live;
   let s = seed || 7;
   const rnd = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
-  const r = new THREE.WebGLRenderer({ antialias:true, preserveDrawingBuffer:true });
-  r.setSize(W, H); r.setPixelRatio(1);
+  const r = new THREE.WebGLRenderer({ antialias:true, preserveDrawingBuffer:!live, canvas:opts.canvas || undefined, powerPreference:'low-power' });
+  if(live){ r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5)); r.setSize(opts.width || W, opts.height || H, false); }
+  else { r.setSize(W, H); r.setPixelRatio(1); }
+  const SHADOW = live ? 1024 : 2048;
+  /* 움직임 — 장면이 onFrame(fn(t 초, dt))으로 등록한다. 굽기(정지 그림)에서는 부르지 않으므로
+     장면을 만든 직후의 모습이 곧 정지 그림이다. */
+  const frames = [];
+  const onFrame = fn => { frames.push(fn); };
   r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
   r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 0.95; r.outputColorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#2a1f18');
@@ -119,6 +128,10 @@ export function makeKit(seed){
     body.castShadow = true; body.receiveShadow = true; grp.add(body);
     const top = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.94, d * 0.92), new THREE.MeshStandardMaterial({ map:exprTex(parts, Object.assign({ pw:1024, ph:Math.round(1024 * d / w) }, o)), roughness:0.8 }));
     top.rotation.x = -Math.PI / 2; top.position.y = h + 0.002; top.receiveShadow = true; grp.add(top);
+    /* 뒷면(o.back) — 카드를 z 축으로 반 바퀴 뒤집으면 바로 읽히게 180° 돌려 그린다 */
+    if(o.back){ const bt = exprTex(o.back, Object.assign({ pw:1024, ph:Math.round(1024 * d / w) }, o, o.backOpts || {})); bt.center.set(0.5, 0.5); bt.rotation = Math.PI;
+      const back = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.94, d * 0.92), new THREE.MeshStandardMaterial({ map:bt, roughness:0.8 }));
+      back.rotation.x = Math.PI / 2; back.position.y = -0.002; grp.add(back); }
     grp.position.set(x, o.y || 0, z); grp.rotation.set(o.rx || 0, o.rot || 0, o.rz || 0); scene.add(grp); return grp;
   };
   /* 모서리를 둥글린 상자 */
@@ -172,7 +185,7 @@ export function makeKit(seed){
     if(o.env !== false) env(o.envOpts);
     scene.add(new THREE.HemisphereLight('#fff4e0', '#3a2618', o.hemi == null ? 0.55 : o.hemi));
     const key = new THREE.DirectionalLight('#ffe7c4', o.key == null ? 2.9 : o.key);
-    key.position.set(...(o.keyPos || [-5, 6, 4])); key.castShadow = true; key.shadow.mapSize.set(2048, 2048);
+    key.position.set(...(o.keyPos || [-5, 6, 4])); key.castShadow = true; key.shadow.mapSize.set(SHADOW, SHADOW);
     Object.assign(key.shadow.camera, { left:-8, right:8, top:8, bottom:-8, near:1, far:30 });
     key.shadow.radius = 8; key.shadow.blurSamples = 16; key.shadow.bias = -0.0005; key.shadow.normalBias = 0.02; scene.add(key);
     const fill = new THREE.DirectionalLight('#b8c8ff', 0.35); fill.position.set(5, 4, -3); scene.add(fill);
@@ -187,6 +200,15 @@ export function makeKit(seed){
     const p = THREE.MathUtils.degToRad(pitch == null ? 38 : pitch), y = THREE.MathUtils.degToRad(yaw || 0);
     cam.position.set(c[0] + Math.sin(y) * Math.cos(p) * dist, c[1] + Math.sin(p) * dist, c[2] + Math.cos(y) * Math.cos(p) * dist);
     cam.lookAt(c[0], c[1], c[2]);
+    view.target = new THREE.Vector3(c[0], c[1], c[2]);
+  };
+  /* 구도를 frame() 없이 cam.position/lookAt 으로 정한 장면도 돌려 볼 수 있게 — 시선이 책상(y=0)에 닿는 점을 중심으로 */
+  const view = { target:null };
+  const orbitTarget = () => {
+    if(view.target) return view.target.clone();
+    const d = new THREE.Vector3(); cam.getWorldDirection(d);
+    const t = d.y < -0.05 ? -cam.position.y / d.y : 6;
+    return cam.position.clone().add(d.multiplyScalar(t));
   };
 
   /* 찍고 가장자리를 살짝 어둡게 — 결과 캔버스를 돌려준다 */
@@ -206,5 +228,5 @@ export function makeKit(seed){
     m.receiveShadow = true; return m;
   };
 
-  return { THREE, r, scene, cam, rnd, canvasTex, woodTex, table, paper, inkText, lacquer, woodMat, plastic, metal, glass, cardboard, faceTex, rbox, tile, rod, label, exprTex, card, frame, env, lights, shoot };
+  return { THREE, r, scene, cam, rnd, live, frames, onFrame, orbitTarget, canvasTex, woodTex, table, paper, inkText, lacquer, woodMat, plastic, metal, glass, cardboard, faceTex, rbox, tile, rod, label, exprTex, card, frame, env, lights, shoot };
 }

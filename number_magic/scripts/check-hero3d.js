@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* 수학 이야기 3D 대표 그림 검사(2026-09-26)
    data/hero3d.js 에 등록된 유닛마다: 유닛이 있고, assets/hero3d/<유닛>.webp 가 있고(1600×1000 WebP),
-   alt 가 ko·en·zh 셋 다 있고, scripts/hero3d/scenes.js 에 장면이 있다(다시 구울 수 있어야 한다).
+   alt 가 ko·en·zh 셋 다 있고, app/hero3d/scenes.js 에 장면이 있고(다시 구울 수 있어야 한다), 그 장면이 움직인다(k.onFrame).
    그림 파일만 있고 등록이 없는 유닛도 실패 — 앱·인쇄에 안 나오는 그림이 된다. */
 'use strict';
 const fs = require('fs'), path = require('path');
@@ -9,7 +9,7 @@ const ROOT = path.resolve(__dirname, '..');
 global.window = {};
 require(path.join(ROOT, 'data', 'hero3d.js'));
 const H = window.NM_HERO3D || {};
-const scenes = fs.readFileSync(path.join(ROOT, 'scripts', 'hero3d', 'scenes.js'), 'utf8');
+const scenes = fs.readFileSync(path.join(ROOT, 'app', 'hero3d', 'scenes.js'), 'utf8');
 const bad = [];
 const webpSize = buf => {
   if(buf.toString('ascii', 0, 4) !== 'RIFF' || buf.toString('ascii', 8, 12) !== 'WEBP') return null;
@@ -26,10 +26,13 @@ for(const [uid, v] of Object.entries(H)){
   else { const sz = webpSize(fs.readFileSync(f)); if(!sz || sz[0] !== 1600 || sz[1] !== 1000) bad.push(`${uid}: 그림 크기 ${sz ? sz.join('×') : 'WebP 아님'} (1600×1000 이어야)`); }
   for(const l of ['ko', 'en', 'zh']) if(!(v.alt && typeof v.alt[l] === 'string' && v.alt[l].trim())) bad.push(`${uid}: alt.${l} 없음`);
   if(!new RegExp(`'${uid}'\\s*:`).test(scenes)) bad.push(`${uid}: scenes.js 에 장면 없음`);
+  /* 앱에서 움직이는 장면이어야 한다(원장 "동작도 하는거야?" → "1") — 장면 본문에 k.onFrame 이 있는지 */
+  else { const st = scenes.indexOf(`'${uid}'`), nx = scenes.slice(st + 1).search(/\n  '[A-Z]-\d+'\s*:/); const body = scenes.slice(st, nx < 0 ? undefined : st + 1 + nx);
+    if(!/k\.onFrame\(/.test(body)) bad.push(`${uid}: 움직임(k.onFrame) 없음`); }
 }
 for(const f of fs.readdirSync(path.join(ROOT, 'assets', 'hero3d'))){
   const uid = f.replace(/\.webp$/, '');
   if(!H[uid]) bad.push(`${f}: data/hero3d.js 에 등록 안 됨`);
 }
 if(bad.length){ console.log('✗ 실패\n  ' + bad.join('\n  ')); process.exit(1); }
-console.log(`3D 대표 그림 ${Object.keys(H).length}개 — 파일·크기·3개 언어 alt·장면 모두 있음`);
+console.log(`3D 대표 그림 ${Object.keys(H).length}개 — 파일·크기·3개 언어 alt·장면·움직임 모두 있음`);

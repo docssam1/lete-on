@@ -1,5 +1,11 @@
 /* 유닛별 3D 장면. 장면은 그 유닛의 이야기(data/units/<유닛>.js discover.story 의 hook·history)나 개념 단계에 실제로
-   나오는 물건만 쓴다 — 지면에서 새 이야기를 지어내지 않는다. 글자 없이 숫자·수식 기호만. */
+   나오는 물건만 쓴다 — 지면에서 새 이야기를 지어내지 않는다. 글자 없이 숫자·수식 기호만.
+   움직임(k.onFrame)은 앱에서만 돈다(app/hero3d/live.js). 장면을 만든 직후의 모습이 곧 정지 그림(인쇄·첫 화면)이므로
+   움직임은 한 바퀴의 처음·끝이 그 모습이 되게 짠다 — 정지 그림에서 움직임으로 넘어갈 때 튀지 않게. */
+const ease = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
+const seg = (p, a, b) => ease((p - a) / (b - a));          /* p 가 a→b 를 지나는 동안 0→1 */
+const cyc = (t, P) => (t % P) / P;                          /* 한 바퀴 P 초 안의 위치 0~1 */
+const hop = (p, a, b) => Math.sin(Math.PI * Math.min(1, Math.max(0, (p - a) / (b - a))));  /* a~b 동안 한 번 뛰었다 내려옴 */
 export const SCENES = {
 
   /* 정수 개념 — history: 『구장산술』의 붉은 산가지(+)와 검은 산가지(−) */
@@ -9,8 +15,12 @@ export const SCENES = {
     k.table();
     k.paper(6.2, 4.4, 0, 0.35, 0.03, (g, w, h, ink) => { ink(g, '+', w * 0.27, h * 0.14, 150); ink(g, '−', w * 0.6, h * 0.14, 150); });
     const red = k.lacquer('#7d1a10'), black = k.lacquer('#1b1511');
-    [-1.35, -1.0, -0.65].forEach(x => k.rod(red, x + (k.rnd() - .5) * 0.03, 0.35, Math.PI / 2 + (k.rnd() - .5) * 0.04));
-    [0.75, 1.1].forEach(x => k.rod(black, x + (k.rnd() - .5) * 0.03, 0.35, Math.PI / 2 + (k.rnd() - .5) * 0.04));
+    const counted = [];
+    [-1.35, -1.0, -0.65].forEach(x => counted.push(k.rod(red, x + (k.rnd() - .5) * 0.03, 0.35, Math.PI / 2 + (k.rnd() - .5) * 0.04)));
+    [0.75, 1.1].forEach(x => counted.push(k.rod(black, x + (k.rnd() - .5) * 0.03, 0.35, Math.PI / 2 + (k.rnd() - .5) * 0.04)));
+    /* 움직임: 붉은 산가지 하나·둘·셋(+3), 쉬었다가 검은 산가지 하나·둘(−2) — 세듯이 차례로 들렸다 놓인다 */
+    const y0 = counted.map(g => g.position.y);
+    k.onFrame(t => { const p = cyc(t, 7); counted.forEach((g, i) => { const a = 0.08 + i * 0.1 + (i > 2 ? 0.12 : 0); g.position.y = y0[i] + 0.22 * hop(p, a, a + 0.1); }); });
     for(let i = 0; i < 7; i++) k.rod(i % 3 ? red : black, -0.2 + (k.rnd() - .5) * 0.4, -2.45 + i * 0.115, 0.08 + (k.rnd() - .5) * 0.12, (i % 2) * 0.1);
     for(let i = 0; i < 4; i++) k.rod(i % 2 ? black : red, 2.6 + (k.rnd() - .5) * 0.2, -0.2 + i * 0.13, 0.55 + (k.rnd() - .5) * 0.08);
     k.lights({ env:false, spot:12, key:2.5, hemi:0.45 });
@@ -41,9 +51,16 @@ export const SCENES = {
     };
     const yl = pan(-1.85), yr = pan(1.85);
     /* 추(황동 원기둥) — 같은 크기 */
-    const wt = (x, y, z) => { add(new THREE.CylinderGeometry(0.13, 0.13, 0.22, 32), brass, x, y + 0.11, z); add(new THREE.CylinderGeometry(0.05, 0.06, 0.06, 16), brass, x, y + 0.25, z); };
-    [[-1.5, 0.2], [-1.25, -0.15], [-1.85, 0.4]].forEach(([x, z]) => wt(x, yl, z));
-    [[1.35, -0.4], [1.65, -0.4], [1.95, -0.4], [1.35, -0.05], [1.65, -0.05], [1.95, -0.05], [1.5, 0.3], [1.8, 0.3], [2.1, 0.3]].forEach(([x, z]) => wt(x, yr, z));
+    const wt = (x, y, z) => { const g = new THREE.Group();
+      const a = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.22, 32), brass); a.position.y = 0.11;
+      const b = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.06, 16), brass); b.position.y = 0.25;
+      [a, b].forEach(m => { m.castShadow = m.receiveShadow = true; g.add(m); }); g.position.set(x, y, z); scene.add(g); return g; };
+    const L = [[-1.5, 0.2], [-1.25, -0.15], [-1.85, 0.4]].map(([x, z]) => wt(x, yl, z));
+    const R = [[1.35, -0.4], [1.65, -0.4], [1.95, -0.4], [1.35, -0.05], [1.65, -0.05], [1.95, -0.05], [1.5, 0.3], [1.8, 0.3], [2.1, 0.3]].map(([x, z]) => wt(x, yr, z));
+    /* 움직임: 양쪽에서 추를 3개씩 함께 들어낸다 — 저울은 그대로 평형(x + 3 = 9 → x = 6) */
+    const lift = [...L, R[6], R[7], R[8]], ly = lift.map(g => g.position.y);
+    k.onFrame(t => { const p = cyc(t, 7); const u = seg(p, 0.15, 0.35) * (1 - seg(p, 0.7, 0.9));
+      lift.forEach((g, i) => { g.position.y = ly[i] + 1.05 * u; g.scale.setScalar(1 - 0.15 * u); }); });
     /* 무게를 모르는 상자 x */
     const box = new THREE.Mesh(k.rbox(0.62, 0.55, 0.62, 0.04), k.cardboard()); box.position.set(-2.1, yl, -0.2); box.castShadow = box.receiveShadow = true; scene.add(box);
     const lab = k.label('x', 0.38, 0.38, { bg:'#efe3c6', size:330, weight:'italic 700' }); lab.position.set(-2.1, yl + 0.29, -0.2 + 0.31 + 0.03); scene.add(lab);
@@ -80,6 +97,16 @@ export const SCENES = {
     Object.assign(key.shadow.camera, { left:-9, right:9, top:9, bottom:-9, near:1, far:30 }); key.shadow.radius = 6; key.shadow.bias = -0.0005; scene.add(key);
     const hx = (HOT[0] - (cols - 1) / 2) * GAP, hz = -HOT[1] * DEPTH, hy = STEP * (HOT[1] + 1);
     const spot = new THREE.SpotLight('#fff1c8', 90, 16, 0.14, 0.45, 1.2); spot.position.set(hx - 1, hy + 7, hz + 2.5); spot.target.position.set(hx, hy + 0.4, hz); spot.castShadow = true; scene.add(spot, spot.target);
+    /* 움직임: 빛 한 점이 앞줄을 따라 가로로(몇 번째), 그다음 통로를 따라 세로로(몇 열) 가서 그 자리에 닿는다 — 두 수로 한 자리 */
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.14, 20, 14), new THREE.MeshBasicMaterial({ color:'#fff4c2', transparent:true }));
+    const glow = new THREE.PointLight('#ffd98a', 0, 2.2, 1.6); dot.add(glow); scene.add(dot); dot.visible = false;
+    const x0 = -(cols - 1) / 2 * GAP, seatY = r0 => STEP * (r0 + 1) + 1.02, seatZ = r0 => -r0 * DEPTH - 0.1;
+    k.onFrame(t => { const p = cyc(t, 8);
+      if(p < 0.06 || p > 0.9){ dot.visible = false; spot.intensity = 90; return; }
+      dot.visible = true; const a = seg(p, 0.08, 0.4), b = seg(p, 0.45, 0.72);
+      const r0 = b * HOT[1]; dot.position.set(x0 + (hx - x0) * a, seatY(r0), seatZ(r0));
+      const fade = 1 - seg(p, 0.82, 0.9); dot.material.opacity = fade; glow.intensity = 5 * fade;
+      spot.intensity = 90 + 70 * hop(p, 0.72, 0.88); }); 
   }},
 
   /* 수직선 위의 위치 — hook: 온도계를 눕히면 그대로 수직선(0 가운데, 오른쪽 양수, 왼쪽 음수) */
@@ -112,6 +139,10 @@ export const SCENES = {
     const xEnd = 2 * U, len = xEnd - x0;
     const liq = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, len, 16), new THREE.MeshPhysicalMaterial({ color:'#c0161e', roughness:0.2, clearcoat:1 }));
     liq.rotation.z = Math.PI / 2; liq.position.set(x0 + len / 2, tubeY, tzz); scene.add(liq);
+    /* 움직임: 온도가 +2 에서 −3 까지 내려갔다가 +4 까지 올라가고 다시 +2 — 액체 끝이 수직선의 수를 따라간다 */
+    k.onFrame(t => { const p = cyc(t, 10);
+      const v = p < 0.35 ? 2 - 5 * seg(p, 0.05, 0.35) : p < 0.7 ? -3 + 7 * seg(p, 0.4, 0.7) : 4 - 2 * seg(p, 0.75, 0.95);
+      const L2 = v * U - x0; liq.scale.y = L2 / len; liq.position.x = x0 + L2 / 2; });
     k.lights({ envOpts:{ intensity:0.35 } });
   }},
 
@@ -125,18 +156,24 @@ export const SCENES = {
       for(let i = 0; i < 3; i++){ g.beginPath(); g.ellipse(w * (0.22 + i * 0.14), h * 0.5, w * 0.058, h * 0.33, 0, 0, Math.PI * 2); g.stroke(); }
       g.setLineDash([]);
     });
-    const gold = k.metal('#e6bd5c', 0.22);
-    const coin = (x, z) => { const grp = new THREE.Group();
+    const gold = k.metal('#e6bd5c', 0.22), coins = [], chips = [];
+    const coin = (x, z) => { const grp = new THREE.Group(); coins.push(grp);
       const c = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.06, 48), gold); c.castShadow = c.receiveShadow = true; grp.add(c);
       const face = new THREE.Mesh(new THREE.CircleGeometry(0.22, 40), new THREE.MeshStandardMaterial({ map:k.faceTex('+', { bg:'#c89b3e', color:'#6b4c12', size:360 }), metalness:0.8, roughness:0.35 }));
       face.rotation.x = -Math.PI / 2; face.position.y = 0.031; grp.add(face); grp.position.set(x, 0.05, z); scene.add(grp); };
-    const chip = (x, z) => { const grp = new THREE.Group();
+    const chip = (x, z) => { const grp = new THREE.Group(); chips.push(grp);
       const c = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.07, 48), k.plastic('#9c1c1c', 0.4)); c.castShadow = c.receiveShadow = true; grp.add(c);
       const face = new THREE.Mesh(new THREE.CircleGeometry(0.22, 40), new THREE.MeshStandardMaterial({ map:k.faceTex('−', { bg:'#a52424', color:'#f5e6d0', size:360 }), roughness:0.45 }));
       face.rotation.x = -Math.PI / 2; face.position.y = 0.036; grp.add(face); grp.position.set(x, 0.055, z); scene.add(grp); };
     const X = i => -1.72 + i * 0.78;
     for(let i = 0; i < 5; i++) coin(X(i), -0.35);
     for(let i = 0; i < 3; i++) chip(X(i), 0.55);
+    /* 움직임: 점선으로 묶인 짝(+ 하나와 − 하나)이 차례로 떠올라 사라진다 → + 둘만 남는다(5 + (−3) = 2) */
+    const cy = coins[0].position.y, hy = chips[0].position.y;
+    k.onFrame(t => { const p = cyc(t, 8);
+      for(let i = 0; i < 3; i++){ const a = 0.1 + i * 0.13, u = seg(p, a, a + 0.1) * (1 - seg(p, 0.82, 0.95));
+        [coins[i], chips[i]].forEach((g, j) => { g.position.y = (j ? hy : cy) + 0.9 * u; g.scale.setScalar(Math.max(0.001, 1 - u));
+          g.position.z = (j ? 0.55 : -0.35) + (j ? -0.45 : 0.45) * u; }); } });
     k.lights({ envOpts:{ intensity:1.0 } });
   }},
 
@@ -160,6 +197,13 @@ export const SCENES = {
     for(let t = 0.02; t <= 1.0001; t += 0.02){ const x = t * 2.2, z = 0.12 * t; pts.push(new THREE.Vector3(x, hAt(x, z) + 0.15, z)); }
     const road = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 400, 0.03, 8), new THREE.MeshStandardMaterial({ color:'#e8dcc0', roughness:0.9 }));
     road.position.z = -0.3; road.castShadow = true; scene.add(road);
+    /* 움직임: 등산객(붉은 점)이 오르막은 느리게(3시간), 내리막은 빠르게(1시간) — 시간이 3 : 1 */
+    const up = new THREE.CatmullRomCurve3(pts.slice(0, 51)), down = new THREE.CatmullRomCurve3(pts.slice(50));
+    const hiker = new THREE.Mesh(new THREE.SphereGeometry(0.1, 20, 14), new THREE.MeshPhysicalMaterial({ color:'#d23a2a', roughness:0.3, clearcoat:0.8 }));
+    hiker.castShadow = true; scene.add(hiker); hiker.visible = false;
+    k.onFrame(t => { const p = cyc(t, 12); hiker.visible = p > 0.03 && p < 0.97;
+      const q = (p - 0.05) / 0.9; const pt = q < 0.75 ? up.getPointAt(Math.max(0, q / 0.75)) : down.getPointAt(Math.min(1, (q - 0.75) / 0.25));
+      hiker.position.set(pt.x, pt.y + 0.09, pt.z - 0.3); });
     const hg = (x, z) => { const grp = new THREE.Group(); const wood = k.woodMat('#5b3a1f', [30, 15, 5]);
       [0, 0.72].forEach(y => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.05, 32), wood); p.position.y = y + 0.025; p.castShadow = p.receiveShadow = true; grp.add(p); });
       for(let i = 0; i < 3; i++){ const a = i * Math.PI * 2 / 3; const post = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.67, 8), wood); post.position.set(Math.cos(a) * 0.16, 0.385, Math.sin(a) * 0.16); post.castShadow = true; grp.add(post); }
@@ -193,7 +237,9 @@ export const SCENES = {
     /* 값을 모르는 가격표 a */
     const tag = k.label('a', 0.42, 0.3, { bg:'#f3e2b8', size:230, weight:'italic 700' }); tag.position.set(-1.5, 0.75, 0.43); tag.rotation.y = 0.05; scene.add(tag);
     /* 산 사탕 셋 */
-    [0.2, 0.8, 1.4].forEach((x, i) => { const c = candy(x, 0.14, 0.1, cols[i * 2]); c.rotation.set(0, 0.3 * i, 0); });
+    const bought = [0.2, 0.8, 1.4].map((x, i) => { const c = candy(x, 0.14, 0.1, cols[i * 2]); c.rotation.set(0, 0.3 * i, 0); return c; });
+    /* 움직임: 사탕 하나(a)·둘(2a)·셋(3a)을 차례로 세고, 셋이 함께 한 번 더 — 3 × a = 3a */
+    k.onFrame(t => { const p = cyc(t, 6); bought.forEach((c, i) => { const a = 0.08 + i * 0.14; c.position.y = 0.14 + 0.35 * hop(p, a, a + 0.12) + 0.28 * hop(p, 0.6, 0.74); }); });
     k.lights({ envOpts:{ intensity:0.6 } });
   }},
 
@@ -203,7 +249,7 @@ export const SCENES = {
     k.frame([-0.3, 0.1, 0.35], 6.0, 46);
     k.table();
     k.paper(5.8, 3.4, 0, 0.3, 0.02, (g, w, h, ink) => { ink(g, '3x + 2', w * 0.5, h * 0.13, 110, { weight:'italic 700' }); ink(g, 'x = 4', w * 0.84, h * 0.86, 80, { weight:'italic 700' }); });
-    const cube = (x, y, z, c) => { const m = new THREE.Mesh(k.rbox(0.2, 0.2, 0.2, 0.025), k.woodMat(c || '#d9b27c')); m.position.set(x, y, z); m.rotation.y = (k.rnd() - 0.5) * 0.2; m.castShadow = m.receiveShadow = true; scene.add(m); };
+    const cube = (x, y, z, c) => { const m = new THREE.Mesh(k.rbox(0.2, 0.2, 0.2, 0.025), k.woodMat(c || '#d9b27c')); m.position.set(x, y, z); m.rotation.y = (k.rnd() - 0.5) * 0.2; m.castShadow = m.receiveShadow = true; scene.add(m); return m; };
     const box = (x, z, open) => { const cb = k.cardboard();
       const grp = new THREE.Group();
       if(!open){ const b = new THREE.Mesh(k.rbox(0.7, 0.42, 0.7, 0.03), cb); b.castShadow = b.receiveShadow = true; grp.add(b);
@@ -213,7 +259,9 @@ export const SCENES = {
       }
       grp.position.set(x, 0.03, z); scene.add(grp); return grp; };
     box(-2.0, 0.3); box(-1.1, 0.3); box(-0.2, 0.3, true);
-    [[-0.3, -0.07], [-0.08, -0.07], [-0.3, 0.15], [-0.08, 0.15]].forEach(([x, z]) => cube(x, 0.07, 0.3 + z));
+    const four = [[-0.3, -0.07], [-0.08, -0.07], [-0.3, 0.15], [-0.08, 0.15]].map(([x, z]) => cube(x, 0.07, 0.3 + z));
+    /* 움직임: 열린 상자 속 x 가 하나·둘·셋·넷 — x = 4 */
+    k.onFrame(t => { const p = cyc(t, 6); four.forEach((m, i) => { const a = 0.1 + i * 0.12; m.position.y = 0.07 + 0.45 * hop(p, a, a + 0.13); }); });
     cube(0.95, 0.03, 0.35); cube(1.3, 0.03, 0.35);
     k.lights({ envOpts:{ intensity:0.35 } });
   }},
@@ -235,8 +283,14 @@ export const SCENES = {
       const c = new THREE.Mesh(new THREE.LatheGeometry(prof, 64), cupM); c.castShadow = c.receiveShadow = true; grp.add(c);
       const b = new THREE.Mesh(new THREE.CylinderGeometry(0.43, 0.405, 0.12, 64, 1, true), bandM); b.position.y = 0.62; grp.add(b);
       if(flip){ grp.rotation.x = Math.PI; grp.position.set(x, 0.82, 0.55); } else grp.position.set(x, 0.03, 0.55);
-      scene.add(grp); };
-    cup(-2.0, false); cup(0, true); cup(2.0, false);
+      scene.add(grp); return grp; };
+    const cups = [cup(-2.0, false), cup(0, true), cup(2.0, false)];
+    /* 움직임: × (−1) 할 때마다 한 번 뒤집힌다 — 가운데 컵(−)이 한 번 더 뒤집혀 +, 다시 뒤집혀 − */
+    const mid = cups[1];
+    const pose = a => { /* a: 0 = 뒤집힌 모양(−), 1 = 바로 선 모양(+). 컵 가운데(높이 0.4)를 축으로 돈다 */
+      const th = Math.PI * (1 - a), cyy = 0.43; mid.rotation.x = th;
+      mid.position.y = cyy - Math.cos(th) * 0.4 + 0.42 * Math.sin(Math.PI * a); mid.position.z = 0.55 + Math.sin(th) * 0.4 * 0; };
+    k.onFrame(t => { const p = cyc(t, 7); pose(seg(p, 0.12, 0.3) * (1 - seg(p, 0.6, 0.78))); });
     k.lights({ envOpts:{ intensity:0.45 } });
   }},
 
@@ -249,9 +303,13 @@ export const SCENES = {
     const row = (parts, z) => { let x = -2.3; parts.forEach(p => { const sup = p === '^4', t = sup ? '4' : p;
       const w = sup ? 0.4 : t.length > 2 ? 0.95 : t.length > 1 ? 0.72 : 0.5;
       const par = /^[()]$/.test(t);
-      k.tile(t, x + w / 2, z - (sup ? 0.14 : 0), { w, d:sup ? 0.36 : 0.62, h:sup ? 0.12 : 0.16, size:sup ? 330 : /^[()+×=]$/.test(t) ? 400 : 270, grain:!par, bg:par ? '#a3231c' : undefined, color:par ? '#f7ead2' : undefined, side:par ? k.lacquer('#8c1c14') : undefined }); x += w + 0.06; }); };
+      const g = k.tile(t, x + w / 2, z - (sup ? 0.14 : 0), { w, d:sup ? 0.36 : 0.62, h:sup ? 0.12 : 0.16, size:sup ? 330 : /^[()+×=]$/.test(t) ? 400 : 270, grain:!par, bg:par ? '#a3231c' : undefined, color:par ? '#f7ead2' : undefined, side:par ? k.lacquer('#8c1c14') : undefined });
+      if(par) parens.push(g); x += w + 0.06; }); };
+    const parens = [];
     row(['(', '−2', ')', '^4', '=', '16'], -0.55);
     row(['−2', '^4', '=', '−16'], 0.55);
+    /* 움직임: 괄호 두 패가 함께 들렸다 놓인다 — 이 괄호 하나가 16 과 −16 을 가른다 */
+    k.onFrame(t => { const p = cyc(t, 5); const u = hop(p, 0.15, 0.45); parens.forEach(g => { g.position.y = 0.3 * u; g.rotation.z = 0.08 * u * (g.position.x < -1.5 ? 1 : -1); }); });
     k.lights({ envOpts:{ intensity:0.45 } });
   }},
 
@@ -265,8 +323,12 @@ export const SCENES = {
     const stone = (n, px, pz) => { const geo = new THREE.SphereGeometry(0.26, 32, 20); geo.scale(1, 0.42, 0.9);
       const m = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color:'#3c4550', roughness:0.35, clearcoat:0.6 })); m.castShadow = m.receiveShadow = true; m.position.set(px, 0.1, pz); scene.add(m);
       const face = new THREE.Mesh(new THREE.CircleGeometry(0.17, 32), new THREE.MeshStandardMaterial({ map:k.faceTex(n, { bg:'#3c4550', color:'#f2e8d4', size:330 }), transparent:false, roughness:0.4 }));
-      face.rotation.x = -Math.PI / 2; face.position.set(px, 0.215, pz); scene.add(face); };
-    stone('1', xs[3], -0.55); stone('2', xs[1], -0.55);
+      face.rotation.x = -Math.PI / 2; face.position.set(px, 0.215, pz); scene.add(face); return [m, face]; };
+    const s1 = stone('1', xs[3], -0.55), s2 = stone('2', xs[1], -0.55);
+    /* 움직임: 조약돌 1(곱셈)이 먼저, 그다음 2(덧셈) — 계산 순서 */
+    const b1 = s1.map(o => o.position.y), b2 = s2.map(o => o.position.y);
+    k.onFrame(t => { const p = cyc(t, 6); const u1 = hop(p, 0.1, 0.35), u2 = hop(p, 0.45, 0.7);
+      s1.forEach((o, i) => { o.position.y = b1[i] + 0.35 * u1; }); s2.forEach((o, i) => { o.position.y = b2[i] + 0.35 * u2; }); });
     k.lights({ envOpts:{ intensity:0.4 } });
   }},
 
@@ -284,8 +346,11 @@ export const SCENES = {
         const l = k.label('x', 0.22, 0.2, { bg:'#dbe7f3', size:360, weight:'italic 700' }); l.rotation.x = -Math.PI / 2; l.position.set(-0.2, 0.155, dz - 0.05); grp.add(l); });
       /* 1 다섯 */
       for(let i = 0; i < 5; i++){ const c = new THREE.Mesh(k.rbox(0.16, 0.16, 0.16, 0.02), k.woodMat('#d9b27c')); c.position.set(0.47, 0.03, -0.38 + i * 0.19); c.castShadow = c.receiveShadow = true; grp.add(c); }
-      grp.position.set(cx, 0.03, cz); scene.add(grp); };
-    [-2.0, 0, 2.0].forEach(x => openBox(x, 0.55));
+      grp.position.set(cx, 0.03, cz); scene.add(grp); return grp.children.slice(5); };
+    const inside = [-2.0, 0, 2.0].map(x => openBox(x, 0.55));
+    /* 움직임: 상자 하나·둘·셋의 속(x 둘과 1 다섯)이 차례로 들린다 — 앞의 3 이 상자 안 모든 것에 곱해진다 */
+    const base = inside.map(a => a.map(o => o.position.y));
+    k.onFrame(t => { const p = cyc(t, 6); inside.forEach((a, i) => { const st = 0.1 + i * 0.18; const u = hop(p, st, st + 0.22); a.forEach((o, j) => { o.position.y = base[i][j] + 0.35 * u; }); }); });
     k.lights({ envOpts:{ intensity:0.4 } });
   }},
 
@@ -299,6 +364,14 @@ export const SCENES = {
     col(-1.1, 15); col(0, 16); col(1.1, 16);
     /* 17 의 맨 위 한 칸을 떼어 15 쪽으로 옮기는 중 — 옮기고 나면 셋 다 16 */
     const mv = new THREE.Mesh(k.rbox(0.5, U - 0.006, 0.5, 0.02), k.woodMat('#b8433a', [80, 20, 15])); mv.position.set(-0.55, 15 * U + 0.42, 0); mv.rotation.z = 0.22; mv.castShadow = true; scene.add(mv);
+    /* 움직임: 가장 높은 기둥(x + 1) 맨 위 칸이 가장 낮은 기둥(x − 1) 위로 옮겨 간다 — 셋 다 x(=16), 그래서 합 = 3x */
+    const P0 = new THREE.Vector3(1.1, 16 * U, 0), P1 = new THREE.Vector3(-1.1, 15 * U, 0), Pm = mv.position.clone(), R0 = mv.rotation.z;
+    k.onFrame(t => { const p = cyc(t, 7);
+      if(p < 0.12){ const u = seg(p, 0, 0.12); mv.position.lerpVectors(Pm, P0, u); mv.rotation.z = R0 * (1 - u); return; }
+      if(p < 0.25){ mv.position.copy(P0); mv.rotation.z = 0; return; }
+      if(p < 0.55){ const u = seg(p, 0.25, 0.55); mv.position.set(P0.x + (P1.x - P0.x) * u, P0.y + (P1.y - P0.y) * u + 0.9 * Math.sin(Math.PI * u), 0); mv.rotation.z = 0.25 * Math.sin(Math.PI * u); return; }
+      if(p < 0.85){ mv.position.copy(P1); mv.rotation.z = 0; return; }
+      const u = seg(p, 0.85, 1); mv.position.lerpVectors(P1, Pm, u); mv.rotation.z = R0 * u; });
     [[-1.1, 'x − 1'], [0, 'x'], [1.1, 'x + 1']].forEach(([x, t]) => k.card([t], x, 0.75, { w:0.9, d:0.42, size:300, weight:'italic 700' }));
     k.lights({ envOpts:{ intensity:0.45 }, keyPos:[-5, 7, 5] });
   }},
@@ -312,7 +385,17 @@ export const SCENES = {
     c([{ n:'3', d:'4' }], -2.4);
     k.tile('÷', -1.5, 0.25, { w:0.5, d:0.5, size:400, grain:true });
     /* 뒤집히는 중인 카드: 앞면 2/5 가 들려 있다 */
-    const fl = c([{ n:'2', d:'5' }], -0.5, { y:0.3, rz:-0.75 });
+    const fl = c([{ n:'2', d:'5' }], -0.5, { y:0.3, rz:-0.75, back:[{ n:'5', d:'2' }], backOpts:{ bg:'#f7e4b5' } });
+    /* 움직임: 2/5 카드가 반 바퀴 뒤집혀 5/2 가 된다(역수) — 나눗셈 ÷ 2/5 가 곱셈 × 5/2 로 */
+    const H0 = 0.03;
+    const at = (rz, y) => { fl.rotation.z = rz; fl.position.y = y; };
+    k.onFrame(t => { const p = cyc(t, 7);
+      if(p < 0.1) return at(-0.75 * (1 - seg(p, 0, 0.1)), 0.3 * (1 - seg(p, 0, 0.1)));
+      if(p < 0.2) return at(0, 0);
+      if(p < 0.42){ const u = seg(p, 0.2, 0.42); return at(-Math.PI * u, H0 * u + 0.55 * Math.sin(Math.PI * u)); }
+      if(p < 0.65) return at(-Math.PI, H0);
+      if(p < 0.85){ const u = seg(p, 0.65, 0.85); return at(-Math.PI * (1 - u), H0 * (1 - u) + 0.55 * Math.sin(Math.PI * u)); }
+      const u = seg(p, 0.85, 1); at(-0.75 * u, 0.3 * u); });
     k.tile('×', 0.55, 0.25, { w:0.5, d:0.5, size:400, grain:true });
     c([{ n:'5', d:'2' }], 1.45, { bg:'#f7e4b5' });
     k.lights({ envOpts:{ intensity:0.45 } });
@@ -330,10 +413,17 @@ export const SCENES = {
     k.card([{ n:'3', d:'8' }, ' ='], -2.65, -0.6, { w:0.9, d:0.8, size:420 });
     tape('0.375', 1.2, -2.1, -0.6);
     k.card([{ n:'1', d:'3' }, ' ='], -2.65, 0.6, { w:0.9, d:0.8, size:420 });
-    tape('0.333333333333', 4.9, -2.1, 0.6);
+    /* 0. 뒤로는 3 만 되풀이되는 띠 — 글자 한 칸(모노 폰트 78px ≈ 47px = 0.157) 짜리 3 을 이어 붙인다.
+       움직일 때 두루마리에서 3 이 끝없이 풀려 나온다 */
+    tape('0.', 0.38, -2.1, 0.6);
+    const CELL = 47 / 300, RL = 4.47;
+    const t3 = k.canvasTex(94, 180, (g, w, h) => { g.fillStyle = '#f6f2e6'; g.fillRect(0, 0, w, h); g.fillStyle = '#26221c'; g.font = '700 156px "DejaVu Sans Mono", monospace'; g.textBaseline = 'middle'; g.textAlign = 'center'; g.fillText('3', w / 2, h / 2 + 6); });
+    t3.wrapS = THREE.RepeatWrapping; t3.repeat.set(RL / CELL, 1);
+    const rest = new THREE.Mesh(new THREE.PlaneGeometry(RL, 0.3), new THREE.MeshStandardMaterial({ map:t3, roughness:0.8 })); rest.rotation.x = -Math.PI / 2; rest.position.set(-2.1 + 0.38 + RL / 2, 0.012, 0.6); rest.receiveShadow = true; scene.add(rest);
     /* 두루마리 끝 — 아직 풀리지 않은 3 이 감겨 있다 */
     const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.32, 48), new THREE.MeshStandardMaterial({ map:k.canvasTex(512, 128, (g, w, h) => { g.fillStyle = '#f3eedf'; g.fillRect(0, 0, w, h); g.fillStyle = 'rgba(80,70,50,.35)'; for(let i = 0; i < 26; i++) g.fillRect(0, i * 5, w, 1); }), roughness:0.8 }));
     roll.rotation.x = Math.PI / 2; roll.position.set(2.95, 0.29, 0.6); roll.castShadow = roll.receiveShadow = true; scene.add(roll);
+    k.onFrame((t, dt) => { t3.offset.x += dt * 0.35; roll.rotation.y -= dt * 1.2; });
     k.lights({ envOpts:{ intensity:0.4 } });
   }},
 
@@ -347,6 +437,8 @@ export const SCENES = {
     ringTex.wrapS = THREE.RepeatWrapping;
     const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.34, 96, 1, true), new THREE.MeshStandardMaterial({ map:ringTex, roughness:0.8, side:THREE.DoubleSide }));
     ring.position.set(-1.0, 0.18, 0); ring.castShadow = ring.receiveShadow = true; scene.add(ring);
+    /* 움직임: 3 이 끝없이 돌아 나온다(순환) */
+    k.onFrame((t, dt) => { ring.rotation.y += dt * 0.35; });
     k.card(['0.', { dot:'3' }], -1.0, 1.35, { w:1.3, d:0.55, size:300 });
     k.tile('=', 0.35, 0.25, { w:0.5, d:0.5, size:400, grain:true });
     k.card([{ n:'1', d:'3' }], 1.4, 0.25, { w:0.9, d:1.0, size:560, h:0.05 });
@@ -359,18 +451,22 @@ export const SCENES = {
     k.frame([0.1, 0.1, 0], 5.6, 50);
     k.table();
     const yellow = k.plastic('#f2c230', 0.45), woodTip = k.woodMat('#e6c79a'), lead = k.plastic('#2a2a2a', 0.5), pink = k.plastic('#e79aa0', 0.6), ferr = k.metal('#c9c3b5', 0.3);
+    const rowsObj = [[], [], []];
     const pencil = (x, z) => { const grp = new THREE.Group();
       const body = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 1.5, 6), yellow); body.rotation.z = Math.PI / 2; grp.add(body);
       const tip = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.22, 6), woodTip); tip.rotation.z = -Math.PI / 2; tip.position.x = 0.86; grp.add(tip);
       const pt = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.07, 12), lead); pt.rotation.z = -Math.PI / 2; pt.position.x = 0.965; grp.add(pt);
       const fe = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.068, 0.12, 24), ferr); fe.rotation.z = Math.PI / 2; fe.position.x = -0.81; grp.add(fe);
       const er = new THREE.Mesh(new THREE.CylinderGeometry(0.064, 0.064, 0.1, 24), pink); er.rotation.z = Math.PI / 2; er.position.x = -0.92; grp.add(er);
-      grp.children.forEach(o => { o.castShadow = o.receiveShadow = true; }); grp.position.set(x, 0.066, z); scene.add(grp); };
-    const coin = (x, y, z) => { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.05, 48), new THREE.MeshStandardMaterial({ color:'#d9d5ca', metalness:0.55, roughness:0.3 })); c.position.set(x, y + 0.025, z); c.castShadow = c.receiveShadow = true; scene.add(c); };
+      grp.children.forEach(o => { o.castShadow = o.receiveShadow = true; }); grp.position.set(x, 0.066, z); scene.add(grp); return grp; };
+    const coin = (x, y, z) => { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.05, 48), new THREE.MeshStandardMaterial({ color:'#d9d5ca', metalness:0.55, roughness:0.3 })); c.position.set(x, y + 0.025, z); c.castShadow = c.receiveShadow = true; scene.add(c); return c; };
     [1, 2, 3].forEach((n, r0) => { const z = -1.0 + r0 * 0.95;
-      for(let i = 0; i < n; i++) pencil(-1.1, z - 0.16 * (n - 1) / 2 + i * 0.16);
-      for(let i = 0; i < n; i++) coin(0.75 + i * 0.46, 0, z);
+      for(let i = 0; i < n; i++) rowsObj[r0].push(pencil(-1.1, z - 0.16 * (n - 1) / 2 + i * 0.16));
+      for(let i = 0; i < n; i++) rowsObj[r0].push(coin(0.75 + i * 0.46, 0, z));
       k.card([String(n)], -2.35, z, { w:0.5, d:0.5, size:640 }); });
+    /* 움직임: 1자루·2자루·3자루 줄이 차례로 — 연필이 2배, 3배가 되면 동전도 2배, 3배 */
+    const by = rowsObj.map(a => a.map(o => o.position.y));
+    k.onFrame(t => { const p = cyc(t, 6); rowsObj.forEach((a, r0) => { const st = 0.08 + r0 * 0.2; const u = hop(p, st, st + 0.16); a.forEach((o, j) => { o.position.y = by[r0][j] + 0.3 * u; }); }); });
     k.lights({ envOpts:{ intensity:0.7 } });
   }},
 
@@ -393,6 +489,13 @@ export const SCENES = {
     const hyp = (s0) => { const pts = []; for(let t = 0; t <= 1.0001; t += 0.02){ const x = s0 * (0.72 + t * 3.2); pts.push(P(x, 3 / x)); } return pts; };
     const cu = k.metal('#c46a3a', 0.28);
     wire(hyp(1), cu); wire(hyp(-1), cu);                                 /* y = 3/x */
+    /* 움직임: 직선 위 구슬은 x 가 커지는 만큼 y 도 커지고, 곡선 위 구슬은 x 가 커질수록 y 가 줄어 축에 다가가기만 한다 */
+    const line = new THREE.LineCurve3(P(-2.4, -3.6), P(2.4, 3.6)), hc = new THREE.CatmullRomCurve3(hyp(1));
+    const bead = c => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.085, 24, 16), new THREE.MeshPhysicalMaterial({ color:c, roughness:0.25, clearcoat:1 })); m.castShadow = true; scene.add(m); m.visible = false; return m; };
+    const b1 = bead('#ffffff'), b2 = bead('#ffe7a0');
+    k.onFrame(t => { const p = cyc(t, 8), u = p < 0.5 ? seg(p, 0.05, 0.45) : 1 - seg(p, 0.55, 0.95);
+      b1.visible = b2.visible = true;
+      b1.position.copy(line.getPointAt(u)).y += 0.06; b2.position.copy(hc.getPointAt(u)).y += 0.06; });
     k.lights({ envOpts:{ intensity:0.7 } });
   }},
 
@@ -402,9 +505,14 @@ export const SCENES = {
     k.frame([0, 0.55, 0.2], 5.6, 24);
     k.table();
     const U = 0.16, wood = k.woodMat('#d9b27c'), hot = k.woodMat('#3f7a5a', [20, 50, 30]);
-    [2, 5, 7, 9, 12].forEach((n, i) => { const x = (i - 2) * 0.95;
-      for(let j = 0; j < n; j++){ const m = new THREE.Mesh(k.rbox(0.5, U - 0.008, 0.5, 0.02), i === 2 ? hot : wood); m.position.set(x, j * U, 0); m.castShadow = m.receiveShadow = true; scene.add(m); }
-      k.card([String(n)], x, 0.72, { w:0.62, d:0.42, size:470, bg:i === 2 ? '#dcebd9' : undefined }); });
+    const stacks = [2, 5, 7, 9, 12].map((n, i) => { const x = (i - 2) * 0.95, g = new THREE.Group();
+      for(let j = 0; j < n; j++){ const m = new THREE.Mesh(k.rbox(0.5, U - 0.008, 0.5, 0.02), i === 2 ? hot : wood); m.position.set(0, j * U, 0); m.castShadow = m.receiveShadow = true; g.add(m); }
+      const c = k.card([String(n)], 0, 0.72, { w:0.62, d:0.42, size:470, bg:i === 2 ? '#dcebd9' : undefined }); scene.remove(c); g.add(c);
+      g.position.x = x; scene.add(g); return g; });
+    /* 움직임: 섞인 순서(9, 2, 12, 5, 7)에서 작은 것부터 줄을 세우면 가운데에 7 — 중앙값 */
+    const sortedX = [0, 1, 2, 3, 4].map(i => (i - 2) * 0.95), mixed = [1, 3, 4, 0, 2];  /* 값 i 가 섞였을 때 선 자리 */
+    k.onFrame(t => { const p = cyc(t, 9); const u = seg(p, 0.05, 0.25) * (1 - seg(p, 0.45, 0.7));
+      stacks.forEach((g, i) => { g.position.x = sortedX[i] + (sortedX[mixed[i]] - sortedX[i]) * u; g.position.z = 0.35 * Math.sin(Math.PI * u) * (i % 2 ? 1 : -1); }); });
     k.lights({ envOpts:{ intensity:0.45 } });
   }},
 };

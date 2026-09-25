@@ -2,7 +2,7 @@
 /* ============================================================
    수학 이야기 3D 대표 그림 굽기 (2026-09-26)
    원장 "좀 실사 느낌이 되었으면 좋겠어 막대도 실제 막대처럼 정 안되면 3d로".
-   scripts/hero3d/scenes.js 의 장면을 헤드리스 Chromium(WebGL, swiftshader)으로 찍어
+   app/hero3d/scenes.js 의 장면을 헤드리스 Chromium(WebGL, swiftshader)으로 찍어
    assets/hero3d/<유닛>.webp(1600×1000)로 저장한다. 앱 발견 단계·인쇄 수학 이야기 쪽이
    data/hero3d.js 에 등록된 유닛만 싣는다(그림 설명 alt 는 거기 3개 언어로).
      node scripts/build-hero3d.js            # 전부
@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
 });
 server.listen(0, async () => {
   fs.mkdirSync(OUT, { recursive:true });
-  const src = fs.readFileSync(path.join(__dirname, 'hero3d', 'scenes.js'), 'utf8');
+  const src = fs.readFileSync(path.join(APP, 'app', 'hero3d', 'scenes.js'), 'utf8');
   const all = [...src.matchAll(/^\s*'(M-\d+|[A-Z]-\d+)'\s*:/gm)].map(m => m[1]);
   const want = process.argv.slice(2).filter(a => /^[A-Z]-\d+$/.test(a));
   const ids = want.length ? want : all;

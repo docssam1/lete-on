@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>hero3d live test</title>
+<link rel="stylesheet" href="../../app/styles.css">
+<style>body{margin:0;background:#fff}.nm-mzu-hero{width:800px}</style></head><body>
+<!-- scripts/check-hero3d-live.js 가 ?u=<유닛> 으로 연다: 앱과 같은 live.js 로 띄우고 window.__live 로 알린다 -->
+<figure class="nm-mzu-hero"><img alt="" width="1600" height="1000"><figcaption class="nm-mzu-hero-hint">drag</figcaption></figure>
+<script type="module">
+const u = new URLSearchParams(location.search).get('u');
+document.querySelector('img').src = '../../assets/hero3d/' + u + '.webp';
+import('../../app/hero3d/live.js').then(m => { window.__live = m.mount(document.querySelector('.nm-mzu-hero'), u); }).catch(e => { window.__liveErr = String(e && e.stack || e); });
+</script></body></html>

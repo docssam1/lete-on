@@ -5271,7 +5271,8 @@ function stepDiscover(body,u){
   /* 3D 대표 그림(data/hero3d.js · assets/hero3d, 2026-09-26 원장 "실사 느낌 … 막대도 실제 막대처럼 정 안되면 3d로") —
      등록된 유닛만. 제목 바로 아래 가장 크게, alt 는 그림에 놓인 것(3개 언어). */
   const hero=(window.NM_HERO3D||{})[u.id];
-  const heroHtml=hero?`<figure class="nm-mzu-hero"><img src="assets/hero3d/${esc(u.id)}.webp" alt="${esc(L(hero.alt))}" loading="lazy" width="1600" height="1000"></figure>`:'';
+  const heroHtml=hero?`<figure class="nm-mzu-hero"><img src="assets/hero3d/${esc(u.id)}.webp" alt="${esc(L(hero.alt))}" loading="lazy" width="1600" height="1000">
+    <figcaption class="nm-mzu-hero-hint">${S.lang==='ko'?'끌어서 돌려 보세요':S.lang==='en'?'Drag to turn':'拖动可以旋转'}</figcaption></figure>`:'';
   const mzKick=(ko,en,zh)=>`<div class="nm-mzu-kick">${S.lang==='ko'?ko:S.lang==='en'?en:zh}</div>`;
   const mzStory=(!kid&&st)?`<div class="nm-mzu">
       ${mzKick('MATH STORY · 수학 이야기','MATH STORY','MATH STORY · 数学故事')}
@@ -5292,6 +5293,10 @@ function stepDiscover(body,u){
     ${mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
+  /* 3D 대표 그림을 직접 띄워 움직인다(app/hero3d/live.js, 원장 "동작도 하는거야?" → "1"). 3D 라이브러리는 이 단계에서만
+     불러온다(약 2MB — 첫 화면에 싣지 않는다). 못 띄우면 정지 그림이 그대로 남는다. */
+  const heroFig=body.querySelector('.nm-mzu-hero');
+  if(heroFig) import('./hero3d/live.js').then(m=>m.mount(heroFig,u.id)).catch(()=>{});
   body.querySelectorAll('.nm-lab-link[data-lab]').forEach(el=>{
     el.onclick=()=>{window.open(el.dataset.lab,'_blank','noopener');};
   });
