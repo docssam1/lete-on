@@ -69,8 +69,8 @@ const CUTPLANT = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s}
   <g fill="none" stroke="#6b4a5e" stroke-width="1.6" stroke-linecap="round"><path d="M-6 2 C-12 18 -16 32 -14 52"/><path d="M-2 3 C-4 22 -6 40 -2 60"/><path d="M3 3 C6 20 8 38 5 56"/><path d="M7 2 C14 16 18 30 17 46"/>
     <path d="M-14 22 l-6 3 M-15 34 l-6 2 M-4 26 l-6 3 M-4 42 l6 2 M6 20 l6 2 M7 36 l-6 3 M15 26 l6 1 M17 38 l6 2" stroke-width="1"/></g>
   <ellipse cx="0" cy="30" rx="16" ry="24" fill="#7d5a6e" opacity=".18"/>
-  <ellipse cx="0" cy="0" rx="12" ry="4" fill="#6f9e4f" stroke="#4f8a3a"/>
-  <g fill="#9fd06f" stroke="#4f8a3a" stroke-width="1.2">${[-40, -14, 12, 38].map((a) => `<g transform="rotate(${a})"><path d="M-3 -1 L-3 -9 L3 -9 L3 -1Z"/><ellipse cx="0" cy="-9" rx="3" ry="1.3" fill="#e3f4cf"/></g>`).join('')}</g></g>`;
+  <ellipse cx="0" cy="0" rx="14" ry="5" fill="#6f9e4f" stroke="#4f8a3a"/>
+  <g fill="#9fd06f" stroke="#4f8a3a" stroke-width="1.2">${[-44, -15, 15, 44].map((a) => `<g transform="rotate(${a})"><path d="M-5 -1 C-6 -6 -5 -11 -4 -14 L4 -14 C5 -11 6 -6 5 -1Z"/><ellipse cx="0" cy="-14" rx="4" ry="1.6" fill="#e3f4cf"/></g>`).join('')}</g></g>`;
 // 잎자루 가로 단면(속이 스펀지처럼 작은 구멍이 가득)
 const SECTION = (cx, cy, r) => {
   let holes = '';
@@ -101,10 +101,10 @@ export const art = {
 
   step1: S(300, 170, `${TANK(40, 22, 220, 138, 84)}${HYA(150, 90, 0.8, { leaves: [-50, -18, 16, 48] })}${WFRONT(40, 84, 220, 160)}
     <g font-size="12" fill="#1E3A78" font-weight="700"><text x="210" y="34">잎몸</text><text x="214" y="76">잎자루</text><text x="206" y="140">뿌리</text></g>
-    <path d="M208 30 L184 30 M212 72 L176 78 M204 136 L168 128" stroke="#E23B2E" stroke-width="1.3"/>
+    <path d="M208 30 L190 44 M212 72 L176 78 M204 136 L168 128" stroke="#E23B2E" stroke-width="1.3"/>
     <text x="8" y="16" font-size="12" fill="#5B6577">물에 띄우고 생김새를 살펴요</text>`),
   step2: S(300, 170, `<path d="M114 156 C96 144 86 120 90 98 C94 78 106 62 114 42 L124 42 C132 62 144 78 148 98 C152 120 142 144 124 156Z" fill="#9fd06f" stroke="#4f8a3a" stroke-width="2"/>
-    <path d="M100 120 C98 104 102 90 108 78" fill="none" stroke="#d6efb8" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="119" cy="42" rx="5" ry="2" fill="#e3f4cf" stroke="#4f8a3a"/><path d="M100 120 C98 104 102 90 108 78" fill="none" stroke="#d6efb8" stroke-width="4" stroke-linecap="round"/>
     <path d="M70 104 L168 104" stroke="#E23B2E" stroke-width="2.5" stroke-dasharray="6 4"/><text x="174" y="108" font-size="12" font-weight="700" fill="#E23B2E">① 가로로 자르기</text>
     <path d="M119 30 L119 166" stroke="#1E3A78" stroke-width="2.5" stroke-dasharray="6 4"/><text x="8" y="62" font-size="12" font-weight="700" fill="#1E3A78">② 세로로</text><text x="8" y="78" font-size="12" font-weight="700" fill="#1E3A78">자르기</text>
     ${SCISSORS(206, 56, 160)}
@@ -119,10 +119,10 @@ export const art = {
     <text x="216" y="44" font-size="15" font-weight="700" fill="#E23B2E">꾹!</text><text x="34" y="96" font-size="13" font-weight="700" fill="#1E3A78">무엇이 나올까?</text>
     <text x="8" y="16" font-size="12" fill="#5B6577">자른 잎자루를 물속에서 눌러요</text>`),
   step4: S(300, 170, `${HYA(64, 82, 0.6)}${CUTPLANT(182, 82, 0.6)}
-    ${PET(256, 112, -20, 0.9)}${PET(266, 128, 10, 0.9)}${PET(250, 140, -4, 0.9)}
-    ${SCISSORS(116, 44, 30)}
+    ${PET(256, 118, -20, 0.6)}${PET(268, 132, 12, 0.6)}${PET(250, 144, -4, 0.6)}
+    ${SCISSORS(140, 44, 30)}
     <g font-size="13" font-weight="700" fill="#1E3A78"><text x="64" y="164" text-anchor="middle">가: 그대로</text><text x="182" y="164" text-anchor="middle">나: 잎자루를 떼어 냄</text></g>
-    <text x="258" y="100" font-size="10" fill="#5B6577" text-anchor="middle">떼어 낸 잎자루</text>
+    <text x="258" y="104" font-size="10" fill="#5B6577" text-anchor="middle">떼어 낸 잎자루</text>
     <text x="8" y="16" font-size="12" fill="#5B6577">크기가 비슷한 두 포기를 골라요</text>`),
   step5: S(300, 170, `${TANK(16, 108, 268, 58, 124)}
     ${HYA(84, 66, 0.5, { leaves: [-44, -12, 20, 50] })}${CUTPLANT(212, 66, 0.5)}
@@ -136,8 +136,8 @@ export const art = {
     <rect x="270" y="30" width="230" height="160" rx="10" fill="#fff" stroke="#8a9aad" stroke-width="2" stroke-dasharray="7 5"/>
     <circle cx="135" cy="112" r="56" fill="none" stroke="#c9d3e3" stroke-width="2"/>
     <rect x="345" y="50" width="80" height="120" rx="36" fill="none" stroke="#c9d3e3" stroke-width="2"/>
-    <g font-size="15" font-weight="700" fill="#1E3A78"><text x="30" y="20">① 가로로 자른 면</text><text x="280" y="20">② 세로로 자른 면</text></g>
-    <g font-size="11" fill="#8a9aad"><text x="135" y="182" text-anchor="middle">여기에 그려요</text><text x="385" y="182" text-anchor="middle">여기에 그려요</text></g>`),
+    <g font-size="21" font-weight="700" fill="#1E3A78"><text x="24" y="22">① 가로로 자른 면</text><text x="274" y="22">② 세로로 자른 면</text></g>
+    <g font-size="16" fill="#8a9aad"><text x="135" y="182" text-anchor="middle">여기에 그려요</text><text x="385" y="182" text-anchor="middle">여기에 그려요</text></g>`),
 
   // 개념 노트: 연못 단면 — 물에 사는 식물의 네 가지 모습 + 잎자루 단면
   pond: S(640, 260, `<rect width="640" height="260" fill="#eef6fb"/>
@@ -149,15 +149,14 @@ export const art = {
     ${LILY(262, 186, 96)}
     ${HYDRILLA(402, 218, 100)}
     ${[[462, 96], [476, 97], [488, 95]].map(([x, y]) => DUCK(x, y)).join('')}
-    ${HYA(556, 102, 0.72, { leaves: [-48, -16, 16, 48] })}${WFRONT(430, 96, 210, 124)}
-    <g font-size="15" font-weight="700" fill="#1E3A78"><text x="104" y="22">물가</text><text x="220" y="22">잎이 떠서</text><text x="346" y="22">물속에 잠겨</text><text x="476" y="22">물에 떠서</text></g>
-    <g font-size="12" fill="#5B6577"><text x="100" y="38">부들</text><text x="232" y="38">수련</text><text x="366" y="38">검정말</text><text x="466" y="38">개구리밥·부레옥잠</text></g>
-    <path d="M598 146 L574 90" stroke="#E23B2E" stroke-width="1.5" stroke-dasharray="4 3"/><circle cx="572" cy="86" r="7" fill="none" stroke="#E23B2E" stroke-width="1.5"/>${SECTION(606, 170, 24)}
-    <text x="606" y="210" font-size="12" font-weight="700" fill="#E23B2E" text-anchor="middle">잎자루 단면</text>`),
+    ${HYA(556, 100, 0.62, { leaves: [-48, -16, 16, 48] })}
+    <g font-size="22" font-weight="700" fill="#1E3A78" text-anchor="middle"><text x="34" y="30">물가</text><text x="262" y="30">잎이 떠서</text><text x="400" y="30">물속에 잠겨</text><text x="556" y="30">물에 떠서</text></g>
+    <g font-size="17" fill="#5B6577" text-anchor="middle"><text x="34" y="52">부들</text><text x="262" y="52">수련</text><text x="400" y="52">검정말</text><text x="556" y="52">부레옥잠·개구리밥</text></g>
+    <path d="M598 146 L568 92" stroke="#E23B2E" stroke-width="1.5" stroke-dasharray="4 3"/><circle cx="566" cy="88" r="7" fill="none" stroke="#E23B2E" stroke-width="1.5"/>${SECTION(606, 170, 24)}
+    <text x="634" y="212" font-size="17" font-weight="700" fill="#E23B2E" text-anchor="end">잎자루 단면</text>`),
 
   // 개념 플러스: 사막과 극지방의 식물
   lands: S(320, 200, `<rect width="160" height="200" fill="#fbecc8"/><rect x="160" width="160" height="200" fill="#e3f0fa"/>
-    <circle cx="130" cy="30" r="14" fill="#f7c948"/>
     <path d="M0 168 Q80 156 160 168 L160 200 L0 200Z" fill="#e2c07c"/><path d="M160 168 Q240 160 320 168 L320 200 L160 200Z" fill="#fff" stroke="#c9d9e8"/>
     <g fill="#5fa050" stroke="#3d7a35" stroke-width="1.5"><rect x="64" y="56" width="30" height="116" rx="15"/><path d="M64 122 h-18 a8 8 0 0 1 -8 -8 v-30 a8 8 0 0 1 16 0 v22 h10z"/><path d="M94 108 h16 v-28 a8 8 0 0 1 16 0 v36 a8 8 0 0 1 -8 8 h-24z"/></g>
     <path d="M72 64 v100 M79 60 v108 M86 64 v100" stroke="#8cc47a" stroke-width="1"/>
@@ -166,10 +165,10 @@ export const art = {
     <path d="M178 167 C220 162 260 163 308 165" stroke="#7a5a3a" stroke-width="3" fill="none"/>
     <g fill="#e8b0c8"><ellipse cx="216" cy="152" rx="3" ry="6"/><ellipse cx="268" cy="151" rx="3" ry="6"/></g>
     <g fill="#fff" stroke="#c9d9e8">${[[186, 58], [226, 86], [296, 52], [262, 112], [200, 120], [304, 128]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3"/>`).join('')}</g>
-    <path d="M308 82 h-44 M308 94 h-30" stroke="#8fb4d6" stroke-width="3" stroke-linecap="round"/><text x="232" y="74" font-size="15" fill="#5B6577">바람</text>
-    <g font-size="20" font-weight="700" fill="#1E3A78"><text x="8" y="26">사막</text><text x="168" y="26">극지방</text></g>
-    <g font-size="16" font-weight="700" fill="#5B6577"><text x="8" y="192">선인장</text><text x="206" y="192">북극버들</text></g>
-    <path d="M118 80 L130 62" stroke="#E23B2E" stroke-width="1.5"/><text x="100" y="56" font-size="15" font-weight="700" fill="#E23B2E">가시=잎</text>`),
+    <path d="M308 82 h-44 M308 94 h-30" stroke="#8fb4d6" stroke-width="3" stroke-linecap="round"/><text x="226" y="72" font-size="19" fill="#5B6577">바람</text>
+    <g font-size="24" font-weight="700" fill="#1E3A78"><text x="8" y="28">사막</text><text x="168" y="28">극지방</text></g>
+    <g font-size="19" font-weight="700" fill="#5B6577"><text x="6" y="194">선인장</text><text x="200" y="194">북극버들</text></g>
+    <path d="M118 80 L126 58" stroke="#E23B2E" stroke-width="1.5"/><text x="118" y="52" font-size="19" font-weight="700" fill="#E23B2E" text-anchor="middle">가시=잎</text>`),
 };
 
 export const chapter = {
