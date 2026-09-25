@@ -10,13 +10,13 @@ escapeInApp();
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
   ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')), misc: await import('../data/units/s41-u01.misc.js') }),
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
-  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }),
+  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')), misc: await import('../data/units/s41-u02.misc.js') }),
   's41-u03': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03.lesson.js')),
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's41-u03b': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03b.lesson.js')),
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),
-  ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')) }) };
+  ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')), misc: await import('../data/units/s42-u01.misc.js') }) };
 const DATA_UNIT = { 's41-u03b': 's41-u03' }; const du = (u) => DATA_UNIT[u] || u; // 기록은 문항을 가진 단원 id로
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
