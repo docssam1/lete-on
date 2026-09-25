@@ -115,6 +115,16 @@ const CSS = `
 .t3d.narrow .t3d-btn.pill .t3d-ico{width:auto;height:auto;font-size:16px}
 .t3d.narrow .t3d-btn.pill b{font-size:12.5px;line-height:1.15}
 .t3d-hint{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.t3d.short .t3d-btn{padding:4px 11px 5px 5px;gap:6px;border-radius:13px}
+.t3d.short .t3d-btn small{display:none}
+.t3d.short .t3d-btn .t3d-ico{width:26px;height:26px;font-size:14px}
+.t3d.short .t3d-btn b{font-size:14.5px}
+.t3d.short .t3d-btn.primary{padding:6px 16px 6px 7px}
+.t3d.short .t3d-btn.primary small{display:block;font-size:11px}
+.t3d.short .t3d-btn.primary .t3d-ico{width:32px;height:32px}
+.t3d.short .t3d-btn.primary b{font-size:18px}
+.t3d.short .t3d-hello{font-size:13px}
+.t3d.short .t3d-chip{font-size:12px;padding:2px 9px}
 @media (prefers-reduced-motion:reduce){.t3d canvas.t3d-gl{transition:none}}
 .t3d-raster{position:fixed;left:-10000px;top:0;pointer-events:none}
 .t3d-raster .nm-human img{width:100%;height:100%;object-fit:contain;display:block}
@@ -313,9 +323,11 @@ export async function mountTitle3D(container, opts){
     r.setSize(VW, VH, false);
     cam.aspect = VW / VH;
     const portrait = VW / VH < 0.9;
+    const short = !portrait && VH < 560;
     narrow = VW < 560;
     root.classList.toggle('narrow', narrow);
-    root.style.setProperty('--t3d-logo', (narrow ? Math.min(46, VW * 0.115) : Math.min(64, Math.max(44, VH * 0.075))) + 'px');
+    root.classList.toggle('short', short);
+    root.style.setProperty('--t3d-logo', (narrow ? Math.min(46, VW * 0.115) : short ? Math.max(30, VH * 0.085) : Math.min(64, Math.max(44, VH * 0.075))) + 'px');
     root.style.setProperty('--t3d-logosub', (narrow ? 11 : 13) + 'px');
     /* 버튼 폭 한도 — 세로: 모드 2칸, 소품 4칸 */
     choices.forEach(c => {
@@ -325,12 +337,12 @@ export async function mountTitle3D(container, opts){
         b.style.width = !c.primary && !MODE_IDS.includes(c.id) ? Math.floor((VW - 28) / 4 - 4) + 'px' : '';
       } else { b.style.maxWidth = c.primary ? '360px' : '250px'; b.style.width = ''; }
     });
-    layout = portrait ? 'portrait' : 'landscape';
+    layout = portrait ? 'portrait' : short ? 'wide' : 'landscape';
     applyLayout(layout);
     /* HUD 자리: 가로 = 오른쪽 위 구석, 세로 = 로고 아래 가운데 */
     if(portrait){ hud.style.left = '50%'; hud.style.right = ''; hud.style.transform = 'translateX(-50%)'; }
-    else { hud.style.left = ''; hud.style.right = '22px'; hud.style.transform = ''; hud.style.top = '20px'; }
-    logo.style.top = (portrait ? 10 : 14) + 'px';
+    else { hud.style.left = ''; hud.style.right = short ? '12px' : '22px'; hud.style.transform = ''; hud.style.top = short ? '8px' : '20px'; }
+    logo.style.top = (portrait ? 10 : short ? 6 : 14) + 'px';
     /* 로고가 폭을 넘으면(영어 긴 제목) 글자를 줄인다 */
     const lk = logo.querySelector('.t3d-logo-kr');
     if(lk){ const cur = parseFloat(getComputedStyle(root).getPropertyValue('--t3d-logo')) || 46; const lw = lk.offsetWidth;
@@ -471,7 +483,7 @@ export async function mountTitle3D(container, opts){
     setLang(l){ if(disposed) return; lang = l || 'ko'; fillText(); relayout(); },
     dispose,
     /* 검사용 */
-    _debug:{ objs, cam, proj:p => proj(p), btns, get layout(){ return layout; } },
+    _debug:{ objs, cam, proj:p => proj(p), btns, hitAt:(x, y) => hitAt({ clientX:x, clientY:y }), get layout(){ return layout; } },
   };
 }
 
@@ -761,7 +773,7 @@ function buildWorld(k, choices, playerCanvas){
   makers.road = () => {
     const g = new THREE.Group(); const anim = [];
     const curve = new THREE.CatmullRomCurve3([V3(-1.35, 0, 0.9), V3(-0.55, 0, 0.55), V3(0.15, 0, 0.9), V3(0.95, 0, 0.35), V3(0.7, 0, -0.35), V3(-0.2, 0, -0.55), V3(0.35, 0, -1.15)]);
-    const N = 90, W = 0.34, pos = [], uv = [], idx = [];
+    const N = 90, W = 0.27, pos = [], uv = [], idx = [];
     for(let i = 0; i <= N; i++){ const u = i / N, p = curve.getPointAt(u), tg = curve.getTangentAt(u); const nx = -tg.z, nz = tg.x;
       pos.push(p.x + nx * W, 0.025, p.z + nz * W, p.x - nx * W, 0.025, p.z - nz * W); uv.push(0, u * 8, 1, u * 8);
       if(i < N){ const a = i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); } }
@@ -776,18 +788,18 @@ function buildWorld(k, choices, playerCanvas){
       const p = curve.getPointAt(u), tg = curve.getTangentAt(u); const side = i % 2 ? 1 : -1;
       const ms = new THREE.Group(); ms.position.set(p.x - tg.z * 0.55 * side, 0, p.z + tg.x * 0.55 * side);
       /* 네모 돌 기둥 — 윗면에 색 번호판(내려다보는 시점에서 읽힌다) */
-      const st = new THREE.Mesh(rbox(0.44, 0.42, 0.44, 0.06), mileStone); ms.add(st);
-      const plate = new THREE.Mesh(new THREE.PlaneGeometry(0.36, 0.36), new THREE.MeshStandardMaterial({ map:faceTex(n, { bg:col, color:'#2a1a50', size:330 }), roughness:0.5 }));
-      plate.rotation.x = -Math.PI / 2; plate.position.set(0, 0.425, 0); ms.add(plate);
+      const st = new THREE.Mesh(rbox(0.36, 0.36, 0.36, 0.05), mileStone); ms.add(st);
+      const plate = new THREE.Mesh(new THREE.PlaneGeometry(0.29, 0.29), new THREE.MeshStandardMaterial({ map:faceTex(n, { bg:col, color:'#2a1a50', size:330 }), roughness:0.5 }));
+      plate.rotation.x = -Math.PI / 2; plate.position.set(0, 0.365, 0); ms.add(plate);
       ms.rotation.y = (rnd() - 0.5) * 0.4;
       g.add(ms);
     });
     /* 끝의 깃발 */
     const end = curve.getPointAt(1);
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 1.8, 8), gold); pole.position.set(end.x, 0.9, end.z); g.add(pole);
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 1.35, 8), gold); pole.position.set(end.x, 0.675, end.z); g.add(pole);
     const fg = new THREE.PlaneGeometry(0.7, 0.42, 10, 1); fg.translate(0.35, 0, 0);
     const flagT = canvasTex(256, 160, (gg, w, h) => { gg.fillStyle = '#8b37e0'; gg.fillRect(0, 0, w, h); gg.fillStyle = '#ffe08a'; gg.font = `700 110px ${MAIN}`; gg.textAlign = 'center'; gg.textBaseline = 'middle'; gg.fillText('★', w / 2, h / 2 + 6); });
-    const flag = new THREE.Mesh(fg, new THREE.MeshStandardMaterial({ map:flagT, roughness:0.7, side:THREE.DoubleSide })); flag.position.set(end.x + 0.03, 1.55, end.z); g.add(flag);
+    const flag = new THREE.Mesh(fg, new THREE.MeshStandardMaterial({ map:flagT, roughness:0.7, side:THREE.DoubleSide })); flag.position.set(end.x + 0.03, 1.13, end.z); g.add(flag);
     const fp = fg.attributes.position, fx0 = Float32Array.from({ length:fp.count }, (_, i) => fp.getX(i));
     anim.push(t => { for(let i = 0; i < fp.count; i++){ const x = fx0[i]; fp.setZ(i, Math.sin(x * 8 - t * 4.5) * 0.07 * x / 0.7); } fp.needsUpdate = true; });
     /* 길 위를 걷는 빛 구슬 */
@@ -795,7 +807,7 @@ function buildWorld(k, choices, playerCanvas){
     const og = glow('#ffd36e', 0.8, 0.9); g.add(og);
     anim.push(t => { const u = (t * 0.09) % 1; const p = curve.getPointAt(u); orb.position.set(p.x, 0.22 + Math.abs(Math.sin(t * 5)) * 0.08, p.z); og.position.copy(orb.position); });
     cast(g); road.castShadow = false;
-    return { g, anim, h:1.9, w:2.8, d:2.6, anchor:V3(0, 0, 1.25) };
+    return { g, anim, h:1.5, w:2.8, d:2.6, anchor:V3(0, 0, 1.25) };
   };
 
   /* 스토리 모드 — 표지판에 걸린 두루마리 지도 */
@@ -993,9 +1005,13 @@ function buildWorld(k, choices, playerCanvas){
                 깊이(z)가 화면의 세로가 되게 한다. */
   const layouts = {
     landscape:{ pitch:30, fov:34, dist:22, target:[0, 1, 0.5], island:[10.6, 8.0, 0, 0.6],
-      pos:{ continue:[0, -2.6, 1], diag:[-6.9, -3.1, 0.95], game:[6.8, -2.9, 0.95], sheet:[-5.7, 2.8, 0.95], road:[5.8, 2.6, 0.95],
+      pos:{ continue:[0, -2.6, 1], diag:[-6.9, -3.1, 0.95], game:[6.8, -2.9, 0.95], sheet:[-5.7, 3.3, 0.95], road:[5.8, 3.0, 0.95],
         story:[-3.0, 5.1, 0.95], dex:[-1.0, 5.3, 0.95], hist:[1.0, 5.3, 0.95], magazine:[3.0, 5.1, 0.95] },
       player:[-2.55, -1.4, 1], plaza:[0, -0.8, 3.6, 2.8], posts:[[-1.3, 1.0], [1.3, 1.0], [-1.9, 3.3], [1.9, 3.3]], motes:[9.5, 4.5, 6.5, 0, 0.6], place:{} },
+    wide:{ pitch:34, fov:30, dist:26, target:[0, 1, 0.5], island:[11.8, 6.6, 0, 0.5],
+      pos:{ continue:[0, -2.2, 1], diag:[-8.4, -1.3, 0.95], sheet:[-5.0, 1.6, 0.95], road:[5.0, 1.6, 0.95], game:[8.4, -1.3, 0.95],
+        story:[-2.7, 3.9, 0.85], dex:[-0.9, 4.1, 0.85], hist:[0.9, 4.1, 0.85], magazine:[2.7, 3.9, 0.85] },
+      player:[-2.6, -1.0, 1], plaza:[0, -0.6, 3.6, 2.6], posts:[[-1.3, 1.2], [1.3, 1.2], [-6.8, 3.5], [6.8, 3.5]], motes:[11, 4, 5.5, 0, 0.5], place:{} },
     portrait:{ pitch:46, fov:40, dist:24, target:[0, 0.5, 0.8], island:[5.4, 11.8, 0, 0.6],
       pos:{ continue:[-0.55, -8.0, 1.12], diag:[-2.3, -2.0, 0.72], game:[2.35, -2.0, 0.72], sheet:[-2.3, 3.0, 0.72], road:[2.35, 3.0, 0.72],
         story:[-3.15, 7.8, 0.66], dex:[-1.05, 7.8, 0.66], hist:[1.05, 7.8, 0.66], magazine:[3.15, 7.8, 0.66] },

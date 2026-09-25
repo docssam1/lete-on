@@ -84,12 +84,16 @@ function waterDist(x, z){
   let d = 1e9;
   if(z < RIVER_END + 2) d = Math.abs(x - riverX(z)) - RIVER_W * (1 + 0.2 * Math.max(0, (z - RIVER_END + 6) / 6));
   const ex = (x - LAKE.cx) / LAKE.rx, ez = (z - LAKE.cz) / LAKE.rz;
-  const dl = (Math.sqrt(ex * ex + ez * ez) - 1) * Math.min(LAKE.rx, LAKE.rz) + (fbm(x * 0.4, z * 0.4) - 0.5) * 1.2;
+  let dl = (Math.sqrt(ex * ex + ez * ez) - 1) * Math.min(LAKE.rx, LAKE.rz);
+  if(dl < 3) dl += (fbm(x * 0.4, z * 0.4) - 0.5) * 1.2;
   return Math.min(d, dl);
 }
 function plateauAmt(p, x, z){
   const dx = Math.abs(x - p.cx) / p.rx, dz = Math.abs(z - p.cz) / p.rz;
   const d = Math.pow(Math.pow(dx, p.n) + Math.pow(dz, p.n), 1 / p.n);
+  const mr = Math.min(p.rx, p.rz), band = (p.edge + 1) / mr;
+  if(d > 1 + band) return 0;
+  if(d < 1 - band) return 1;
   const wob = (fbm(x * 0.35 + p.cx, z * 0.35 + p.cz) - 0.5) * 1.4;
   const out = (d - 1) * Math.min(p.rx, p.rz) + wob;     // 가장자리 밖으로 몇 단위
   return 1 - sstep(-p.edge, 0, out);
@@ -128,9 +132,8 @@ function heightAt(x, z){
     if(best < 1.8) h = lerp(h, bh, 1 - sstep(0.62, 1.8, best));
   }
   /* 북쪽 먼 언덕 — 지평선을 둘러싼다 */
-  const far = sstep(-25, -40, z) * (3 + 5 * fbm(x * 0.08, z * 0.08));
-  const side = sstep(34, 44, Math.abs(x)) * (2 + 3 * fbm(x * 0.1 + 3, z * 0.1));
-  h = Math.max(h, far, side);
+  if(z < -25) h = Math.max(h, sstep(-25, -40, z) * (3 + 5 * fbm(x * 0.08, z * 0.08)));
+  if(Math.abs(x) > 34) h = Math.max(h, sstep(34, 44, Math.abs(x)) * (2 + 3 * fbm(x * 0.1 + 3, z * 0.1)));
   h += (fbm(x * 0.22, z * 0.22) - 0.5) * 0.35;           // 잔물결
   /* 강·호수 파내기 */
   const wd = waterDist(x, z);
@@ -698,11 +701,12 @@ export async function mountTown3D(container, opts){
       const p = project(ch.x, hy, ch.z);
       if(ch.nameEl){
         const w = ch.nameEl.offsetWidth || 40;
-        ch.nameEl.style.transform = p.vis ? `translate(${Math.round(p.x - w / 2)}px,${Math.round(p.y - 2)}px)` : 'translate(-9999px,-9999px)';
+        const nh = ch.nameEl.offsetHeight || 16;
+        ch.nameEl.style.transform = p.vis && p.x > -w && p.x < W + w ? `translate(${Math.round(clamp(p.x - w / 2, 2, W - w - 2))}px,${Math.round(p.y - nh - 3)}px)` : 'translate(-9999px,-9999px)';
       }
       if(ch.bubT > 0){
         const bw = ch.bub.offsetWidth, bh = ch.bub.offsetHeight;
-        const x = clamp(p.x - bw / 2, 4, W - bw - 4), y = clamp(p.y - bh - (ch.nameEl ? 22 : 10), 4, H - bh - 4);
+        const x = clamp(p.x - bw / 2, 4, W - bw - 4), y = clamp(p.y - bh - (ch.nameEl ? 26 : 10), 4, H - bh - 4);
         ch.bub.style.transform = `translate(${Math.round(x)}px,${Math.round(y)}px)`;
       }
     }
@@ -776,12 +780,14 @@ export async function mountTown3D(container, opts){
   if(io) io.observe(wrap);
   const onVis = () => { running = !document.hidden; if(running) wake(); };
   document.addEventListener('visibilitychange', onVis);
+  /* 화면이 바뀌어 container 가 문서에서 빠지면(멈춰 있는 동안이라도) 스스로 푼다 */
+  const alive = setInterval(() => { if(!wrap.isConnected) dispose(); }, 2000);
   const ro = 'ResizeObserver' in window ? new ResizeObserver(() => { resize(); wake(); }) : null;
   if(ro) ro.observe(wrap); else window.addEventListener('resize', resize);
 
   function dispose(){
     if(disposed) return; disposed = true;
-    if(raf) cancelAnimationFrame(raf); raf = 0;
+    if(raf) cancelAnimationFrame(raf); raf = 0; clearInterval(alive);
     if(io) io.disconnect(); if(ro) ro.disconnect(); else window.removeEventListener('resize', resize);
     document.removeEventListener('visibilitychange', onVis);
     canvas.removeEventListener('pointerdown', onDown); canvas.removeEventListener('pointermove', onMove);
@@ -954,10 +960,14 @@ function buildWorld(scene, renderer, rng, track){
     const grassA = new THREE.Color('#9cc95e'), grassB = new THREE.Color('#6ea345'), grassTop = new THREE.Color('#b5d56b');
     const rockA = new THREE.Color('#b59c7a'), rockB = new THREE.Color('#86705a'), bank = new THREE.Color('#d6c28f'), under = new THREE.Color('#4f8f96');
     const col = new THREE.Color();
+    /* 높이는 칸마다 한 번만 재고, 경사는 이웃 칸 차이로 */
+    const hg = new Float32Array(lw * lh), ddx = SX / lw, ddz = SZ / lh;
+    for(let j = 0; j < lh; j++) for(let i = 0; i < lw; i++) hg[j * lw + i] = heightAt(X0 + (i + 0.5) * ddx, Z0 + (j + 0.5) * ddz);
+    const H = (i, j) => hg[clamp(j, 0, lh - 1) * lw + clamp(i, 0, lw - 1)];
     for(let j = 0; j < lh; j++) for(let i = 0; i < lw; i++){
-      const x = X0 + (i + 0.5) / lw * SX, z = Z0 + (j + 0.5) / lh * SZ, e = 0.35;
-      const h = heightAt(x, z);
-      const gx = (heightAt(x + e, z) - heightAt(x - e, z)) / (2 * e), gz = (heightAt(x, z + e) - heightAt(x, z - e)) / (2 * e);
+      const x = X0 + (i + 0.5) * ddx, z = Z0 + (j + 0.5) * ddz;
+      const h = H(i, j);
+      const gx = (H(i + 1, j) - H(i - 1, j)) / (2 * ddx), gz = (H(i, j + 1) - H(i, j - 1)) / (2 * ddz);
       const slope = Math.hypot(gx, gz);
       const n = fbm(x * 0.3, z * 0.3);
       col.copy(grassA).lerp(grassB, clamp(n * 1.3 - 0.2, 0, 1));
@@ -1147,8 +1157,9 @@ function buildWorld(scene, renderer, rng, track){
       c.fillStyle = '#d9a632'; c.fillRect(34, 60, 60, 44); c.strokeStyle = '#8a6418'; c.lineWidth = 4; c.strokeRect(34, 60, 60, 44);
       c.fillStyle = '#5a3f10'; c.beginPath(); c.arc(64, 78, 6, 0, 7); c.fill(); c.fillRect(61, 80, 6, 14);
     }));
-    const s = new THREE.Sprite(track(new THREE.SpriteMaterial({ map:tex, depthTest:true })));
-    s.scale.set(1.3, 1.3, 1); s.userData.noDim = true; g.add(s); return g;
+    const s = new THREE.Sprite(track(new THREE.SpriteMaterial({ map:tex, depthTest:false, transparent:true })));
+    s.renderOrder = 10; s.raycast = () => {};
+    s.scale.set(1.1, 1.1, 1); s.userData.noDim = true; g.add(s); return g;
   }
 
   /* 1) 수의 나라(BASIC) — 버섯 지붕 집, 모래밭, 그네, 숫자 블록 */
@@ -1189,7 +1200,7 @@ function buildWorld(scene, renderer, rng, track){
     b.box(6.2, 3.0, 3.2, 'plaster', 0, 0.7, -0.6);
     for(let i = 0; i < 6; i++) b.cyl(0.24, 0.28, 3.0, 'marble', -2.7 + i * 1.08, 0.7, 1.75, 12);
     b.box(6.9, 0.35, 4.6, 'marble', 0, 3.7, 0.1);
-    b.gable(6.9, 4.6, 1.5, 'roofBr', 0, 4.05, 0.1, Math.PI / 2, 0.35);
+    b.gable(4.6, 6.9, 1.5, 'roofBr', 0, 4.05, 0.1, Math.PI / 2, 0.35);
     /* 박공 앞면 — 펼친 책 */
     const bookT = track(canvasTex(256, 128, (g, w, h) => {
       g.fillStyle = '#f1ece2'; g.fillRect(0, 0, w, h);
@@ -1201,7 +1212,7 @@ function buildWorld(scene, renderer, rng, track){
     const tri = new THREE.Shape(); tri.moveTo(-2.9, 0); tri.lineTo(2.9, 0); tri.lineTo(0, 1.35); tri.lineTo(-2.9, 0);
     const tg2 = new THREE.ShapeGeometry(tri); const uv = tg2.attributes.uv, pp = tg2.attributes.position;
     for(let i = 0; i < uv.count; i++) uv.setXY(i, (pp.getX(i) + 2.9) / 5.8, pp.getY(i) / 1.35);
-    b.add(tg2, 'book', 0, 4.1, 2.43);
+    b.add(tg2, 'book', 0, 4.12, 2.77);
     b.box(1.3, 2.0, 0.12, 'door', 0, 0.7, 1.0);
     b.box(0.9, 1.1, 0.1, 'glow', -2.0, 1.6, 1.0); b.box(0.9, 1.1, 0.1, 'glow', 2.0, 1.6, 1.0);
     for(let i = 0; i < 3; i++) b.box(3.2 - i * 0.1, 0.24, 0.5, 'marble', 0, 0, 3.0 - i * 0.45 + 0.9);
@@ -1259,7 +1270,7 @@ function buildWorld(scene, renderer, rng, track){
     b.box(5.2, 3.4, 3.4, 'cream', 0, 0.3, -0.4);
     for(let i = 0; i < 4; i++) b.cyl(0.22, 0.26, 2.9, 'marble', -1.95 + i * 1.3, 0.3, 1.75, 12);
     b.box(5.6, 0.5, 4.1, 'marble', 0, 3.2, 0.05);
-    b.gable(5.6, 4.1, 1.0, 'roofB', 0, 3.7, 0.05, Math.PI / 2, 0.25);
+    b.gable(4.1, 5.6, 1.0, 'roofB', 0, 3.7, 0.05, Math.PI / 2, 0.25);
     b.box(1.6, 2.0, 0.1, 'door', 0, 0.3, 1.32);
     /* 간판(전구) */
     b.box(3.4, 0.55, 0.14, 'red', 0, 2.55, 1.35);
@@ -1499,7 +1510,7 @@ function buildWorld(scene, renderer, rng, track){
       for(let k = 0; k < n; k++){ const s = 1.3 + r2() * 1.3; parts.push(new THREE.IcosahedronGeometry(s, 1).translate(k * 1.5 - n * 0.75, r2() * 0.7, r2() * 1.2)); }
       const m = new THREE.Mesh(mergeGeos(parts), cm);
       m.scale.set(1, 0.62, 0.9);
-      m.position.set(-50 + r2() * 100, 11 + r2() * 5, -27 - r2() * 14); m.scale.multiplyScalar(0.8 + r2() * 0.5);
+      m.position.set(-50 + r2() * 100, 13 + r2() * 5, -36 - r2() * 14); m.scale.multiplyScalar(0.8 + r2() * 0.5);
       m.userData.v = 0.4 + r2() * 0.5;
       scene.add(m); clouds.push(m);
     }
@@ -1528,3 +1539,6 @@ function buildWorld(scene, renderer, rng, track){
   out.animate = (t, dt) => { for(const f of anim) f(t, dt); };
   return out;
 }
+
+/* 검사용 — 지형 함수(순수 계산) */
+export const __test = { heightAt, waterDist, standY, SPOT_POS, GATE_POS };

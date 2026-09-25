@@ -22,6 +22,8 @@ const cases = [
   { name:'phone-en', w:390, h:844, lang:'en', mobile:true },
   { name:'phone-zh', w:390, h:844, lang:'zh', mobile:true },
   { name:'tab-land', w:1024, h:640, lang:'ko' },
+  { name:'desk-still', w:1280, h:800, lang:'ko', q:'&still=1' },
+  { name:'phone-land', w:844, h:390, lang:'ko', mobile:true },
 ].filter(c => !only || only.slice(7).split(',').includes(c.name));
 const IDS = ['continue', 'diag', 'game', 'sheet', 'road', 'story', 'dex', 'hist', 'magazine'];
 server.listen(0, async () => {
@@ -32,7 +34,7 @@ server.listen(0, async () => {
     const page = await ctx.newPage();
     const errs = []; page.on('pageerror', e => errs.push(e.message));
     page.on('console', m => { if(m.type() === 'error' && !/Failed to load resource|fonts\.g/.test(m.text())) errs.push(m.text()); });
-    await page.goto(`http://localhost:${server.address().port}/number_magic/scripts/title3d/test.html?lang=${c.lang}`);
+    await page.goto(`http://localhost:${server.address().port}/number_magic/scripts/title3d/test.html?lang=${c.lang}${c.q || ''}`);
     try { await page.waitForFunction(() => window.__ready, null, { timeout:90000 }); } catch(e){ bad.push(c.name + ': 시간 초과'); await ctx.close(); continue; }
     const rd = await page.evaluate(() => window.__ready);
     if(rd !== 'ok'){ bad.push(c.name + ': ' + rd); await ctx.close(); continue; }
@@ -56,9 +58,16 @@ server.listen(0, async () => {
       /* 3D 물건 클릭(버튼과 안 겹치는 물건의 윗부분) */
       for(const id of IDS){
         await page.evaluate(() => { window.__picks = []; }); await page.waitForTimeout(450);
-        const pt = await page.evaluate(id => { const d = window.__t3d._debug, o = d.objs[id]; const b = o.box; const THREEp = b[2].clone().lerp(b[5], 0.5); THREEp.y *= 0.7; THREEp.z = o.holder.position.z; return d.proj(THREEp); }, id);
-        const under = await page.evaluate(([x, y]) => { const el = document.elementFromPoint(x, y); return el ? el.className : ''; }, pt);
-        if(!/t3d-gl/.test(under)){ console.log(`  (${c.name} 3D ${id}: 그 점은 ${under} 가 덮음 — 건너뜀)`); continue; }
+        /* 물건의 화면 상자 안을 훑어, 캔버스가 드러나 있고 레이캐스트가 그 물건을 맞히는 점을 찾는다 */
+        const pt = await page.evaluate(id => { const d = window.__t3d._debug, o = d.objs[id];
+          let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; o.box.forEach(p => { const [x, y] = d.proj(p); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); });
+          for(let j = 1; j < 12; j++) for(let i = 1; i < 12; i++){ const x = x0 + (x1 - x0) * i / 12, y = y0 + (y1 - y0) * j / 12;
+            const el = document.elementFromPoint(x, y); if(el && /t3d-gl/.test(el.className) && d.hitAt(x, y) === id) return [x, y]; }
+          return null; }, id);
+        if(!pt){ bad.push(`${c.name}: 3D ${id} 누를 자리 없음`); continue; }
+        await page.mouse.move(pt[0], pt[1]); await page.waitForTimeout(120);
+        const lit = await page.evaluate(id => document.querySelector(`.t3d-btn[data-id="${id}"]`).classList.contains('on'), id);
+        if(!lit) bad.push(`${c.name}: 3D ${id} 위에 올려도 버튼 강조 없음`);
         await page.mouse.click(pt[0], pt[1]); const p = await page.evaluate(() => window.__picks.slice());
         if(p[0] !== id) bad.push(`${c.name}: 3D ${id} @${pt.map(v => v | 0)} → ${JSON.stringify(p)}`);
       }
@@ -71,6 +80,17 @@ server.listen(0, async () => {
       /* 포커스 강조 스크린샷 */
       await page.evaluate(() => document.querySelector('.t3d-btn[data-id="sheet"]').focus()); await page.waitForTimeout(700);
       await page.screenshot({ path:path.join(OUT, c.name + '-focus-sheet.png') });
+    }
+    if(c.name === 'desk-still'){
+      /* 크기 바꾸기 → 다시 구도, 언어 바꾸기, 해제 */
+      await page.setViewportSize({ width:600, height:900 }); await page.waitForTimeout(900);
+      await page.screenshot({ path:path.join(OUT, c.name + '-resized.png') });
+      await page.evaluate(() => window.__t3d.setLang('en')); await page.waitForTimeout(500);
+      const lab = await page.evaluate(() => document.querySelector('.t3d-btn[data-id="sheet"] b').textContent);
+      if(lab !== 'Worksheet Mode') bad.push(`${c.name}: setLang 안 됨 (${lab})`);
+      await page.evaluate(() => window.__t3d.dispose());
+      const left = await page.evaluate(() => document.querySelectorAll('.t3d').length);
+      if(left) bad.push(`${c.name}: dispose 뒤에도 .t3d 남음`);
     }
     if(errs.length) bad.push(`${c.name}: ${errs.join(' | ')}`);
     console.log(`${c.name} ✓ shot`);
