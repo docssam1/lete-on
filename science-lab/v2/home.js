@@ -1,5 +1,5 @@
 // 홈 = 탐구 지도: 학기별로 구불한 길 위에 단원 정거장. 끝낸 곳 깃발, 다음 정거장에 docssam, "이어서 하기".
-import { SEMS, READY } from './units-index.js';
+import { SEMS, READY, BOOK_UNITS } from './units-index.js';
 
 const ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ'];
 const XS = [24, 50, 76, 50];      // 정거장 가로 위치(%) — 지그재그
@@ -72,6 +72,7 @@ export function pageHome($app, store, teacher) {
     const k = stateOf(store, u.id), [g, h] = u.id.slice(1, 3).split('');
     $sheet.innerHTML = `<div class="grab" aria-hidden="true"></div><p class="step-label">${g}학년 ${h}학기 ${ROMAN[u.no - 1]}</p><h2 id="sheet-t">${esc(u.title)}</h2>
       ${r.lesson === false ? '<p class="lead">5단계 탐구 화면은 준비 중이에요. 소단원 문제부터 풀어 봐요.</p>' : r.labs ? `<div class="labs">${r.labs.map((l) => { const ks = stateOf(store, l.id).kind; return `<a class="btn primary" href="${hrefOf(store, l.id)}"><b>${esc(l.hero)}</b><small>소단원 ${l.covers.map((c) => r.subs.findIndex((x) => x.id === c) + 1).join('·')} · ${ks === 'doing' ? '이어서 하기' : ks === 'passed' ? '다시 보기' : '5단계 탐구 시작'}</small></a>`; }).join('')}</div>` : `<a class="btn primary" href="${hrefOf(store, u.id)}">${k.kind === 'doing' ? '5단계 탐구 이어서 하기' : '5단계 탐구 시작하기'}</a>`}
+      ${(r.labs || [{ id: u.id, hero: r.hero }]).filter((l) => BOOK_UNITS.has(l.id)).map((l) => `<a class="btn book-start" href="#/${l.id}/start"><span class="bs-ico" aria-hidden="true">📘</span>${esc(l.hero)} · 실험 교재와 수업</a>`).join('')}
       <h3>소단원</h3><ol class="subs">${r.subs.map((s, i) => `<li><a href="#/${u.id}/sub/${s.id}"><span class="sn">${i + 1}</span><span class="st">${esc(s.name)}</span><span class="sc">유형 ${s.types}</span></a></li>`).join('')}</ol>
       <button type="button" class="btn" data-close>닫기</button>`;
     $sheet.querySelector('[data-close]').addEventListener('click', close);

@@ -409,3 +409,20 @@ h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
 .report label { font-size: 16px; font-weight: 700; }
 .h-drill { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
 @media (min-width: 768px) { h2 { font-size: 27px; } .bubble { font-size: 19px; } }
+
+/* ── 첫 화면: 무엇을 할지 바로 고르기(성향 검사 질문 카드 결) ── */
+.start h2 { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.start-no { display: inline-grid; place-items: center; min-width: 40px; height: 40px; border-radius: 12px; background: var(--k-badge); color: #fff; font-size: 18px; font-weight: 800; }
+.start-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 8px 0 12px; }
+.start-card { position: relative; display: flex; flex-direction: column; gap: 6px; min-height: 148px; padding: 18px 18px 16px; border-radius: 18px; text-decoration: none; color: var(--k-ink);
+  background: linear-gradient(180deg, var(--k-top) 52%, var(--k-bot) 100%); border: 1px solid var(--k-line); box-shadow: var(--k-shadow); transition: transform .15s ease, box-shadow .15s ease; }
+.start-card b { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
+.start-card span:not(.sc-ico) { color: var(--sub); font-size: 14px; line-height: 1.55; }
+.start-card .sc-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; background: var(--k-badge); margin-bottom: 4px; }
+.start-card.primary { background: linear-gradient(180deg, var(--k-navy2), var(--k-navy)); color: var(--k-on); border-color: transparent; box-shadow: var(--k-navy-shadow); }
+.start-card.primary span:not(.sc-ico) { color: color-mix(in srgb, var(--k-on) 78%, transparent); }
+@media (hover: hover) { .start-card:hover { transform: translateY(-2px); box-shadow: var(--k-shadow-hi); } }
+.start-card:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+.start-more { text-align: center; font-size: 14px; } .start-more a { color: var(--sub); }
+@media (max-width: 520px) { .start-grid { grid-template-columns: 1fr; } .start-card { min-height: 0; } }
+.book-start { display: flex; align-items: center; gap: 8px; width: 100%; justify-content: center; margin: 4px 0 10px; text-decoration: none; }

@@ -115,3 +115,55 @@
 .dk-art .bk-photo2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1cqw; } .dk-art .bk-photo2 img { max-height: 22cqw; }
 .dk-stage.cover .dk-art.cover img { max-height: 40cqw; }
 @media (max-width: 760px) { .dk-art .bk-photo figcaption { font-size: 12px; } }
+
+/* ── 스스로 공부하기: 독쌤 안내 줄(무대를 가리지 않게 아래 막대 안) ── */
+.dk-self .dk-bar { justify-content: flex-end; gap: 10px; padding: 8px 14px 10px; }
+.dk-guide { flex: 1 1 auto; min-width: 0; }
+.dg { display: flex; align-items: center; gap: 12px; min-height: 64px; }
+.dg-char { position: relative; flex: none; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #2196F3, #7C4DFF); box-shadow: 0 6px 16px rgba(0, 0, 0, .25); contain: paint; }
+.dg-char img { position: absolute; width: 150px; left: -43px; top: -8px; height: auto; }
+.dg-char .dg-f { display: none; width: 49.8px; left: calc(-43px + 150px * .3125); top: calc(-8px + 225px * .13021); }
+.dg-say { flex: 1; min-width: 0; margin: 0; padding: 10px 14px; border-radius: 14px 14px 14px 4px; background: #fff; color: #1B2340; font-size: 16px; font-weight: 600; line-height: 1.5; letter-spacing: -0.3px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .18); min-height: 44px; display: flex; align-items: center; }
+.dg-ctl { display: flex; gap: 6px; flex: none; }
+.dg-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .25); background: rgba(255, 255, 255, .1); color: #fff; font-size: 16px; cursor: pointer; }
+.dg-btn[aria-pressed="false"][data-g="sound"], .dg-btn[aria-pressed="true"][data-g="pause"] { background: rgba(255, 255, 255, .28); }
+/* 자동 넘김: '다음' 단추가 차오르면 넘어간다. 멈춤(⏸)을 누르면 기다린다. */
+.dk-next { position: relative; overflow: hidden; }
+.dk-next .dk-fill { position: absolute; inset: 0; background: rgba(124, 196, 255, .45); transform-origin: left; transform: scaleX(0); pointer-events: none; }
+.dk-next.auto .dk-fill { animation: dkFill var(--auto, 3000ms) linear forwards; }
+.dk-next .dk-nt { position: relative; }
+.dk-next.ready:not(.auto) { box-shadow: 0 0 0 3px rgba(124, 196, 255, .8), var(--k-navy-shadow); }
+@keyframes dkFill { to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .dk-next.auto .dk-fill { animation: none; transform: scaleX(1); opacity: .5; } }
+/* 쓰기 → 확인 → 스스로 O/X */
+.dk-inrow { display: flex; gap: .8cqw; align-items: flex-start; }
+.dk-mic { flex: none; width: 4.4cqw; height: 4.4cqw; min-width: 40px; min-height: 40px; border-radius: 1cqw; border: 1.5px solid #cfd8e6; background: #fff; cursor: pointer; font-size: 1.8cqw; }
+.dk-mic.on { border-color: var(--r); background: #fff0ee; animation: dkPulse 1s ease-in-out infinite; }
+@keyframes dkPulse { 50% { box-shadow: 0 0 0 .6cqw rgba(226, 59, 46, .15); } }
+.dk-self .dk-ans { color: #1B2340; background: #eef5ff; border-left-color: #2196F3; font-weight: 600; }
+.dk-self .dk-ans b { color: #1E3A78; margin-right: .6cqw; }
+.dk-act { display: flex; gap: 1cqw; align-items: center; margin-top: 1.2cqw; }
+.dk-act button { font: inherit; font-size: 1.7cqw; font-weight: 700; border-radius: 1cqw; padding: .8cqw 2.2cqw; min-height: 40px; cursor: pointer; border: 1px solid #D6E2F5;
+  background: linear-gradient(180deg, #fff 52%, #EAF3FF); color: #1B2340; box-shadow: 0 6px 16px rgba(30, 99, 200, .12); }
+.dk-act .dk-go { background: linear-gradient(180deg, #243184, #141B5D); color: #fff; border-color: transparent; }
+.dk-act .dk-go:disabled { opacity: .45; cursor: default; }
+.dk-sc { display: inline-flex; gap: 1cqw; } .dk-o { color: #1a7f44 !important; } .dk-x { color: var(--r) !important; }
+.dk-hint { margin: .8cqw 0; padding: .9cqw 1.4cqw; border-radius: .8cqw; background: #fff8e6; border-left: .6cqw solid var(--o); font-size: 1.8cqw; color: #4a3a12; }
+.dk-hint b { color: var(--o); margin-right: .6cqw; }
+.dk-sol { margin-left: .8cqw; font: inherit; font-size: 1.5cqw; font-weight: 700; border: 1px solid #e3cfa0; background: #fff; border-radius: .7cqw; padding: .3cqw 1cqw; cursor: pointer; }
+/* ── 가르치기 배틀: 공통 문제 + 두 팀 실험을 나란히 ── */
+.dk-battle { display: flex; flex-direction: column; gap: 1cqw; height: 100%; }
+.dk-bq { margin: 0; font-size: 1.8cqw; font-weight: 600; padding: .8cqw 1.4cqw; border-radius: .8cqw; background: #eef5ff; }
+.dk-bq b { color: #fff; background: linear-gradient(135deg, #2196F3, #7C4DFF); padding: .2cqw .9cqw; border-radius: .6cqw; margin-right: .6cqw; }
+.dk-bt { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.6cqw; }
+.dk-bt section { min-width: 0; overflow: auto; border: 1.5px solid #D6E2F5; border-radius: 1cqw; padding: .8cqw; }
+.dk-bt h3 { margin: 0 0 .6cqw; font-size: 1.9cqw; color: var(--n); }
+.dk-bt section:first-child h3 { color: #1E6FD9; } .dk-bt section:last-child h3 { color: #C2410C; }
+.dk-bt .dk-3d[data-mount=lab] { display: block; min-height: 0; }
+.dk-bt .dk-3d canvas { height: 22cqw !important; max-height: none; }
+.dk-bt .lab-table { font-size: 1.1cqw; }
+@media (max-width: 760px) { .dg-say { font-size: 14px; } .dg-char { width: 52px; height: 52px; } .dg-char img { width: 122px; left: -35px; } .dg-char .dg-f { width: 40.5px; left: calc(-35px + 122px * .3125); top: calc(-8px + 183px * .13021); } .dk-bt { grid-template-columns: 1fr; } }
+.dk-fix { margin: .6cqw 0 0; font-weight: 500; color: #1B2340; } .dk-fix b { color: var(--t); margin-right: .6cqw; }
+.dk-sc[hidden], .dk-go[hidden] { display: none !important; }
+@media (max-width: 760px) { .dk-act button { font-size: 15px; padding: 8px 16px; } .dk-hint, .dk-bq { font-size: 15px; } .dk-sol { font-size: 14px; } .dk-mic { font-size: 18px; } .dk-fix { font-size: 15px; } .dk-bt h3 { font-size: 16px; } }

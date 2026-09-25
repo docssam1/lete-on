@@ -37,7 +37,7 @@ export function addLandscape(host, into) {
 const REDUCED = matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 // 3D (기존 engine.js 재사용)
-export async function mount3D(el, sceneName, { autoplay, preview = false }) {
+export async function mount3D(el, sceneName, { autoplay, preview = false, onDone } = {}) {
   el.innerHTML = `<div class="stage3d"><div class="stage3d-view"><canvas aria-label="3D 실험 장면. 끌어서 돌려 볼 수 있어요."></canvas><span class="stage3d-hint">끌어서 회전 · 두 손가락으로 확대</span></div><p class="cap"><b class="stage3d-step">1/1</b><span>장면을 준비하고 있어요…</span></p>
     <div class="ctl"><button class="btn primary" data-a="play">재생</button><button class="btn" data-a="prev">이전</button><button class="btn" data-a="next">다음</button></div></div>`;
   try {
@@ -46,7 +46,9 @@ export async function mount3D(el, sceneName, { autoplay, preview = false }) {
     const stage = new Stage(el.querySelector('canvas')), player = new Player(stage);
     addLandscape(el.querySelector('.stage3d'), el.querySelector('.ctl'));   // 장면이 무거워도 단추는 먼저
     const $cap = el.querySelector('.cap span'), $step = el.querySelector('.stage3d-step'), $play = el.querySelector('[data-a=play]');
-    player.onChange = () => { $cap.textContent = player.beats[player.index]?.text || ''; $step.textContent = `${player.index + 1}/${player.beats.length}`; $play.textContent = player.playing ? '멈춤' : '재생'; };
+    let fired = false;   // 끝까지 재생되면 한 번 알린다(스스로 공부하기의 자동 넘김)
+    player.onChange = () => { $cap.textContent = player.beats[player.index]?.text || ''; $step.textContent = `${player.index + 1}/${player.beats.length}`; $play.textContent = player.playing ? '멈춤' : '재생';
+      if (player.done && !fired && onDone) { fired = true; onDone(); } };
     await player.load(mod.default);
     if (preview) { player.beats = player.beats.slice(0, 3); player.speed = 1.15; }
     player.onChange();

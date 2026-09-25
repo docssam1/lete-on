@@ -447,11 +447,27 @@ function pageBook(u, L, items, mode) {
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
 const BOOKS = { 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
-function labBar(u, cur) {
-  const b = (href, t, k) => `<a class="btn${cur === k ? ' primary' : ''}" href="${href}">${t}</a>`;
-  return `<div class="bk-bar no-print">${b(`#/${u}/lab-book/student`, '교재 · 학생용', 'student')}${b(`#/${u}/lab-book/teacher`, '교재 · 강사용', 'teacher')}
-    <button class="btn" onclick="print()">A4 인쇄</button><span class="sep"></span>
-    ${b(`#/${u}/lab-class/self`, '스스로 공부하기', 'self')}${b(`#/${u}/lab-class/teach`, '가르치기 (수업 화면)', 'teach')}</div>`;
+// 교재·수업 화면 위쪽: 모드를 다시 고르는 메뉴는 두지 않는다(첫 화면에서 이미 골랐다). 처음으로 + 필요하면 인쇄만.
+function labBar(u, { print = false } = {}) {
+  return `<div class="bk-bar no-print"><a class="btn" href="#/${u}/start">‹ 처음으로</a>${print ? '<button class="btn primary" onclick="print()">A4 인쇄</button>' : ''}</div>`;
+}
+// 첫 화면: 무엇을 할지 처음에 바로 고른다 — 학생 교재 · 교사 교재 · 스스로 공부 · 가르치기
+async function pageStart(u) {
+  const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null;
+  if (!bookMod) { location.replace(`#/${u}`); return; }
+  const ch = bookMod.chapter;
+  const card = (href, ico, t, d, primary) => `<a class="start-card${primary ? ' primary' : ''}" href="${href}"><span class="sc-ico" aria-hidden="true">${ico}</span><b>${t}</b><span>${d}</span></a>`;
+  $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header>
+    <main class="wrap start"><p class="step-label">${esc(ch.link?.course || '')} ${esc(ch.link?.unit || '')}</p>
+      <h2><span class="start-no">${esc(ch.no)}</span>${esc(ch.title)}</h2><p class="lead">무엇을 할까요?</p>
+      <div class="start-grid">
+        ${card(`#/${u}/lab-class/self/1`, '🧪', '스스로 공부하기', '독쌤이 한 단계씩 안내해요. 하나를 마치면 다음으로 자동으로 넘어가요.', true)}
+        ${card(`#/${u}/lab-class/teach/1`, '🖥️', '가르치기', '전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요.')}
+        ${card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
+        ${card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
+      </div>
+      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a></p></main>`;
+  scrollTo(0, 0);
 }
 function pageReading(u, L, mode) {
   const article = L.elaborate?.reading?.magazine;
@@ -471,8 +487,8 @@ async function pageLabBook(u, mod, mode) {
   const bookMod = await BOOKS[u]().catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
   const [{ chapter, art, media }, { renderChapter, fitPages }, { wireLive }] = await Promise.all([bookMod, import('./book.js'), import('./live.js')]);
-  $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(chapter.book)} · ${esc(chapter.title)}</h1></div></header>
-    <main class="wrap">${labBar(u, mode)}</main>${renderChapter(chapter, art, mod.similar || [], { teacher: mode === 'teacher', live: true, media })}`;
+  $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="#/${u}/start">‹ 처음으로</a><h1>${esc(chapter.book)} · ${esc(chapter.title)}</h1></div></header>
+    <main class="wrap">${labBar(u, { print: true })}</main>${renderChapter(chapter, art, mod.similar || [], { teacher: mode === 'teacher', live: true, media })}`;
   scrollTo(0, 0);
   const bk = $app.querySelector('.bk'), fit = () => bk.isConnected && fitPages(bk), L = mod.lesson;
   fit(); document.fonts?.ready.then(fit);
@@ -491,9 +507,15 @@ async function pageLabClass(u, mod, L, mode, idx) {
   const bookMod = await BOOKS[u]().catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
   const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([bookMod, import('./deck.js')]);
-  renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx,
-    mount3D: (el) => mount3D(el, L.engage.scene, { autoplay: false }),
-    mountLab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }) });
+  const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((x) => [x.id, x]));
+  renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx, misc: MISC,
+    mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, onDone: o.onDone }),
+    // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.
+    mountLab: (el, o = {}) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab,
+      rows: o.personal === false ? (o.rows || []) : store.get(u).labRows || [],
+      onRecord: (rows) => { if (o.personal !== false) store.set(u, { labRows: rows }); o.onRecord?.(rows); } }),
+    // 스스로 공부하기의 확인 문제: 첫 시도만 진단 기록에 남긴다
+    onAnswer: (id, ok, picked) => { if (I[id]) record(du(u), I[id], 'deck', ok, { picked }, MISC); } });
 }
 
 // ── 라우터 ──
@@ -504,7 +526,8 @@ async function route() {
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, items }; MISC = mod.misc || null;
   if (a === 'sub') return pageSub(u, L, b);
-  if (!mod.lesson && !['print', 'lab-book', 'lab-class'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
+  if (!mod.lesson && !['print', 'lab-book', 'lab-class', 'start'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
+  if (a === 'start') return pageStart(u);
   if (a === 'kit') return pageKit(u, L);
   if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
   if (a === 'report') return pageReport(u, L);
