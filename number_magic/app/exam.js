@@ -4327,7 +4327,8 @@ function w2ExampleBodyHtml(p, threadId, young){
     });
     /* 이야기가 있는 문항은 답에 단위를 붙여 한 번 더(식만 보면 "8"이 무엇의 8인지 모른다) */
     const unitAns = (p.word && p.wordUnit)
-      ? `<div class="nm-w2-ex-line"><span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(String(fmtAns(p.answer)) + (pickL(p.wordUnit) || ''))}</span></span></div>`
+      /* wordAnswerTex(3√2 같은 온전한 값)가 있으면 정답지와 같은 함수로 — 없으면 "3, 2cm"로 찍혔다(2026-09-25) */
+      ? `<div class="nm-w2-ex-line"><span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${p.wordAnswerTex ? w2AnswerValueHtml(p) : esc(String(fmtAns(p.answer)) + (pickL(p.wordUnit) || ''))}</span></span></div>`
       : '';
     bodyHtml = completedHtml
       + `<div class="nm-w2-ex-steps">${stepParts.join('<span class="nm-w2-ex-arrow">→</span>')}</div>` + unitAns;
@@ -4496,7 +4497,7 @@ function w2WordExampleHtml(threadId, level, code, exclude, young, exactSkip, met
   <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
   <div class="nm-print-word" style="font-size:12.5px">${esc(pickL(w))}</div>
   <div class="nm-w2-ex-line"><span>${esc(lk('식','Equation','算式'))}: <span class="nm-w2-ex-ans">${esc(eq)}</span></span>
-    <span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${esc(String(fmtAns(p.answer)) + unit)}</span></span></div>
+    <span>${esc(lk('답','Answer','答'))}: <span class="nm-w2-ex-ans">${p.wordAnswerTex ? w2AnswerValueHtml(p) : esc(String(fmtAns(p.answer)) + unit)}</span></span></div>
   <div class="nm-w2-ex-note">${esc(hint)}</div>
 </div>`;
 }

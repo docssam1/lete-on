@@ -3238,6 +3238,37 @@ MD88:{ name:{ko:'경우의 수',en:'Counting Possibilities',zh:'情况数'}, gen
         en:'Place the people fixed by the condition first, then arrange only the remaining people in the remaining positions. If A and B may swap the two ends, multiply by the two end assignments.',
         zh:'先把条件指定的人固定在位置上，再把其余人排进剩余位置。若A、B可互换两端，先乘两种端点安排。'}}
   ] },
+
+/* ── MD89·MD90 중등 적용(2026-09-25) — 회차 세 층 검사가 과정 29·35 에 적용 문제가 한 회차도
+   없다고 잡았다. 그 과정의 교과 연산을 그대로 쓰는 적용만 넣는다. gen: engine/threads/mid16.js */
+MD89:{ name:{ko:'정수의 활용',en:'Integers in Context',zh:'整数的应用'}, gen:'md89_intApply', prereq:['MD2'],
+  concept:{ko:'기준을 0으로 정하면 기준보다 높거나 따뜻한 쪽은 양수, 낮거나 차가운 쪽은 음수입니다. 올라가면 더하고 내려가면 뺍니다. 두 값의 차는 큰 값에서 작은 값을 뺍니다.',
+    en:'Once a reference is set to 0, above or warmer is positive and below or colder is negative. Going up adds, going down subtracts, and a difference is the larger value minus the smaller.',
+    zh:'把基准定为0，高于或暖于基准为正数，低于或冷于基准为负数。上升就加，下降就减；两个值的差用大数减小数。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'기온의 변화와 차',en:'temperature change and gap',zh:'气温变化与温差'},params:{mode:'temp'}},
+          {id:2,label:{ko:'해발과 해저',en:'above and below sea level',zh:'海拔与海面以下'},params:{mode:'altitude'},
+           concept:{ko:'해수면을 0m로 두면 해발은 양수, 해저는 음수입니다. 해발 50m와 해저 20m의 높이 차는 50−(−20)=70m입니다.',
+             en:'With sea level at 0 m, heights above are positive and depths below are negative: 50 m up and 20 m down are 50−(−20)=70 m apart.',
+             zh:'以海平面为0m，海拔为正数，海面以下为负数。海拔50m与海面下20m的高度差是50−(−20)=70m。'}},
+          {id:3,label:{ko:'여러 번 오르내림',en:'several ups and downs',zh:'多次升降'},params:{mode:'level'},
+           concept:{ko:'여러 번 오르내리면 처음 값에 올라간 만큼 더하고 내려간 만큼 빼면서 왼쪽부터 차례로 계산합니다.',
+             en:'For several ups and downs, start from the first value and add each rise and subtract each drop, left to right.',
+             zh:'多次升降时，从最初的值开始，上升的加、下降的减，从左到右依次计算。'}}] },
+MD90:{ name:{ko:'제곱근의 활용',en:'Square Roots in Context',zh:'平方根的应用'}, gen:'md90_rootApply', prereq:['MD83'],
+  concept:{ko:'정사각형의 한 변은 넓이의 양의 제곱근입니다. 넓이가 18이면 한 변은 √18=3√2입니다. 길이를 더하거나 뺄 때는 근호를 먼저 정리해 같은 근호끼리 계산합니다.',
+    en:'The side of a square is the positive square root of its area: area 18 gives side √18=3√2. To add or subtract lengths, simplify the roots first and combine like roots.',
+    zh:'正方形的边长是面积的正平方根：面积为18时边长是√18=3√2。长度相加减时，先把根号化简，再合并同类根式。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'넓이에서 한 변',en:'side from area',zh:'由面积求边长'},params:{mode:'side'}},
+          {id:2,label:{ko:'두 정사각형을 이어 붙인 길이',en:'two squares side by side',zh:'两个正方形拼接的长度'},params:{mode:'joined'},
+           concept:{ko:'이어 붙인 길이는 두 한 변의 합입니다. √12+√27=2√3+3√3=5√3처럼 먼저 정리한 뒤 계수끼리 더합니다.',
+             en:'The joined length is the sum of the two sides: √12+√27=2√3+3√3=5√3 — simplify first, then add the coefficients.',
+             zh:'拼接后的长度是两条边长之和：√12+√27=2√3+3√3=5√3，先化简再把系数相加。'}},
+          {id:3,label:{ko:'한 변의 길이의 차',en:'difference of sides',zh:'边长之差'},params:{mode:'diff'},
+           concept:{ko:'한 변의 길이의 차는 큰 쪽에서 작은 쪽을 뺍니다. √50−√8=5√2−2√2=3√2입니다.',
+             en:'The difference of sides is the larger minus the smaller: √50−√8=5√2−2√2=3√2.',
+             zh:'边长之差用大的减小的：√50−√8=5√2−2√2=3√2。'}}] },
 };
 
 if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;

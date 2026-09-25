@@ -658,9 +658,9 @@ var CURATED_TOPICS = [
    처음 등장한 스레드는 갈래를 명시해야 한다. */
 var ADDITIONAL_THREADS = {
   decimal:['DC6'],
-  middle1:['MD68','MD69','MD70','MD73','MD82','MD84'],
+  middle1:['MD68','MD69','MD70','MD73','MD82','MD84','MD89'],
   middle2:['MD63','MD64','MD65','MD71','MD72','MD74','MD75','MD76','MD88'],
-  middle3:['MD66','MD67','MD77','MD78','MD79','MD80','MD81','MD83','MD85','MD86','MD87']
+  middle3:['MD66','MD67','MD77','MD78','MD79','MD80','MD81','MD83','MD85','MD86','MD87','MD90']
 };
 function buildTopics(threads){
   if(!threads) throw new Error('drill-topics: threads.js must load first');
