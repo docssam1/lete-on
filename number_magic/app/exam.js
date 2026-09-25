@@ -484,6 +484,8 @@
     background:#f7faf9; border-radius:4mm; padding:3.5mm 5mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mzs-story-art { display:grid; grid-template-columns:1fr 1fr; gap:1.5mm; }
   .nm-mzs-story-art svg { width:100%; height:auto; display:block; }
+  .nm-mzs-story-art.nm-mzs-hero { display:block; border-radius:2.5mm; overflow:hidden; background:#2a1f18; }
+  .nm-mzs-story-art.nm-mzs-hero img { display:block; width:100%; height:auto; aspect-ratio:16/10; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mzs-story-txt h3 { margin:.5mm 0 1.5mm; font-size:14.5px; line-height:1.4; color:#245b60; word-break:keep-all; }
   .nm-mzs-story-txt p { margin:0; font-size:12px; line-height:1.72; color:#20343b; word-break:keep-all; }
   .nm-mzs-mini { font-size:9.5px; font-weight:800; color:#a3521c; letter-spacing:.06em; margin-bottom:1mm; }
@@ -2086,8 +2088,14 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
   const open = comic ? lk('이 이야기에서 새로 안 것 한 가지를 적어 보세요.', 'Write one thing you learned from this story.', '写下你从这个故事里新知道的一件事。') : '';
   const mzTitle = (u && pickL(u.title)) || topicName;
   const kicker = esc(lk('MATH STORY · 수학 이야기', 'MATH STORY', 'MATH STORY · 数学故事'));
+  /* 3D 대표 그림이 있는 유닛은 두 컷 대신 그 그림(data/hero3d.js, 2026-09-26 원장 "실사 느낌 … 3d로").
+     네 컷 띠는 그대로라 만화는 아래에서 읽힌다. */
+  const hero = comicUnit && (window.NM_HERO3D || {})[comicUnit];
+  const storyArt = hero
+    ? `<div class="nm-mzs-story-art nm-mzs-hero"><img src="assets/hero3d/${esc(comicUnit)}.webp" alt="${esc(pickL(hero.alt) || '')}"></div>`
+    : `<div class="nm-mzs-story-art">${comic ? comic.panels.slice(0, 2).map(pn => `<div>${pn.art || ''}</div>`).join('') : ''}</div>`;
   const storyCard = comic ? `<div class="nm-mzs-story">
-    <div class="nm-mzs-story-art">${comic.panels.slice(0, 2).map(pn => `<div>${pn.art || ''}</div>`).join('')}</div>
+    ${storyArt}
     <div class="nm-mzs-story-txt">
       <div class="nm-mzs-mini">${esc(lk('그때 이야기', 'Back then', '那时的故事'))}</div>
       ${u && u.subtitle ? `<h3>${esc(pickL(u.subtitle))}</h3>` : ''}

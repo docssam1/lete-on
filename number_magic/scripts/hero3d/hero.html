@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><title>hero3d</title>
+<style>html,body{margin:0;background:#000}canvas{display:block}</style></head><body>
+<!-- scripts/build-hero3d.js 가 ?u=<유닛> 으로 연다. 장면을 찍은 캔버스를 window.__hero 에 둔다. -->
+<script type="module">
+import { makeKit } from './kit.js';
+import { SCENES } from './scenes.js';
+const u = new URLSearchParams(location.search).get('u');
+try {
+  const def = SCENES[u];
+  if(!def) throw new Error('장면 없음: ' + u);
+  const kit = makeKit(def.seed || 7);
+  def.build(kit);
+  const out = kit.shoot();
+  document.body.appendChild(out);
+  window.__hero = out.toDataURL('image/webp', 0.84);
+} catch(e){ window.__heroErr = String(e && e.stack || e); }
+window.__done = true;
+</script></body></html>
