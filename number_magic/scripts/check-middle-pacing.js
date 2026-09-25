@@ -27,7 +27,8 @@ for(const plan of Object.values(data.grades)){
     assert.equal(s.week,Math.floor(i/2)+1);assert.equal(s.day,i%2+1);
     assert.equal(data.getSession(plan.grade,s.id),s);
     assert(s.title&&s.blocks.length>=3,s.id+' 교과·창의·적용 블록');
-    assert(s.minutes>=20&&s.minutes<=38,s.id+' 30분 안팎');
+    const hi=plan.grade===1?38:42;   /* 중1 30분 · 중2·중3 40분(원장 결정 2026-09-25) */
+    assert(s.minutes>=20&&s.minutes<=hi,s.id+' 회차 시간 안팎');
     const seen=new Set();let count=0;
     s.blocks.forEach(b=>{
       assert(b.n>0,s.id+' 문항 수');count+=b.n;

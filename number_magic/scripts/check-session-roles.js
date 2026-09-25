@@ -11,7 +11,7 @@
         같은 유형·레벨**이어야 한다 — 같은 계산을 문장으로 다시 푸는 것이 "연결"이다
      D. 복습은 같은 학교 구간(유아·초등·중등)에서 처음 배운 유형만 — 중등에 초등 복습 금지
      E. 한 회차 안에서 같은 유형·레벨이 두 층에 실리지 않는다(C 의 문장제만 예외)
-     F. 모든 칸에 count 가 있고, 회차 예상 시간이 30분 안팎(유아 20분)이다 — 쉬운 유형 12 이상,
+     F. 모든 칸에 count 가 있고, 회차 예상 시간이 30분 안팎(유아 20분, 중2·중3 40분)이다 — 쉬운 유형 12 이상,
         어려운 유형은 쉬운 유형보다 적지 않다
      G. 중등 진도 보기(NM_MIDDLE_PACING)가 정규 과정 C29~C37 과 **회차·블록이 똑같다**(두 번째 편성 금지),
         옛 번호 M1-S01~M3-S14 가 모두 정규 회차로 이어진다
@@ -70,7 +70,9 @@ for(let n = 0; n <= 37; n++){
     const hard = own.filter(d => d.difficulty === 'hard'), easy = own.filter(d => d.difficulty === 'easy');
     if(hard.length && easy.length && Math.min(...hard.map(d => d.count)) < Math.max(...easy.map(d => d.count)))
       fail.push(`F · ${at}: 어려운 유형이 쉬운 유형보다 적게 배정됐다`);
-    const lo = c.tier === 'level0' ? 15 : 20, hi = c.tier === 'level0' ? 25 : 38;
+    /* 유아 20분 · 중2·중3 40분(원장 결정 2026-09-25) · 나머지 30분 */
+    const forty = c.tier === 'middle2' || c.tier === 'middle3';
+    const lo = c.tier === 'level0' ? 15 : forty ? 30 : 20, hi = c.tier === 'level0' ? 25 : forty ? 42 : 38;
     if(!(s.minutes >= lo && s.minutes <= hi)) fail.push(`F · ${at}: 예상 ${s.minutes}분 — ${lo}~${hi}분 밖`);
     mins.push(s.minutes);
   });
@@ -103,7 +105,7 @@ console.log(`\n과정 0~37 회차 ${sessions} · 세 층이 모두 있는 과정
 
 function finish(){
   if(fail.length){ console.log(`\n✗ 실패 ${fail.length}건`); fail.slice(0, 60).forEach(s => console.log('  ' + s)); if(fail.length > 60) console.log(`  … ${fail.length - 60}건 더`); process.exit(1); }
-  console.log('\n통과 — 모든 회차가 교과 → 창의 → 적용을 갖고, 문장제는 그 회차 교과와 이어지며, 30분 안팎이다.');
+  console.log('\n통과 — 모든 회차가 교과 → 창의 → 적용을 갖고, 문장제는 그 회차 교과와 이어지며, 회차 시간(30분·유아 20분·중2·중3 40분) 안팎이다.');
 }
 if(!process.argv.includes('--browser')) finish();
 else {

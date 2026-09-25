@@ -430,22 +430,26 @@ const SEC_BY_TIER = { level0:20, level1:25, level2:35, level3:40, challenge:50,
 const COUNT_CAP = { 'MD82@3':12 };   /* |x|=k 로 두 수 찾기 — 서로 다른 문항 18개 */
 const SESSION_SEC = 1800;
 /* 유아(5~7세)는 20분 — 시간을 재지 않는 단계이고 한 번에 앉아 있는 시간이 짧다(원장 확인 필요, GPT 보고에 적음) */
-const SESSION_SEC_BY_TIER = { level0:1200 };
+/* 중2·중3 은 40분(2026-09-25 원장 결정 "1" — 한 학기 2달을 맞추려고 30분 대신 40분 안팎).
+   1문항 어림이 45·50초라 30분에는 교과 2개밖에 안 들어가 한 학기가 2.6·3.3개월이 됐다. */
+const SESSION_SEC_BY_TIER = { level0:1200, middle2:2400, middle3:2400 };
+/* 넘침 허용 — 30분은 +15%(35분)까지, 40분은 +5%(42분)까지. 40분에 15%를 주면 46분이 되어 "40분 안팎"이 아니다. */
+const SESSION_OVER_BY_TIER = { middle2:1.05, middle3:1.05 };
 /* 한 회차에 싣는 교과 항목 수(2026-09-25, 원장 "보통 2달에 한학기 끝내기").
    중등은 "회차마다 드릴 2개"로는 한 학년이 7개월(주 2회 24~29주)이 걸렸다. 그래서 중등만
    **시간 예산이 허락하는 만큼** 싣는다 — 교과 항목마다 최소 12문항 + 창의 6(×1.2) + 적용 6
-   (그래프 그리기면 6×90초)이 30분+15% 안에 드는 가장 큰 수, 최대 3. 초등은 이미 한 학기 2달
+   (그래프 그리기면 6×90초)이 회차 시간(중1 30분+15%, 중2·중3 40분+5%) 안에 드는 가장 큰 수, 최대 3. 초등은 이미 한 학기 2달
    안팎이라(주 2회 35~39주 / 4학기) 옛 규칙(회차마다 2개)을 그대로 쓴다. */
 const PACK_TIERS = { middle1:3, middle2:3, middle3:3 };
 function packCapacity(tier, drawing){
-  /* 예산은 planCounts 와 같은 30분+15% 를 **분 단위로 올림**(34.5 → 35분) — 화면에 분으로 보이는 값과 맞춘다 */
-  const sec = SEC_BY_TIER[tier] || 45, budget = Math.ceil((SESSION_SEC_BY_TIER[tier] || SESSION_SEC) * 1.15 / 60) * 60;
+  /* 예산은 planCounts 와 같은 값(30분+15%, 중2·중3 40분+5%)을 **분 단위로 올림**(34.5 → 35분) — 화면에 분으로 보이는 값과 맞춘다 */
+  const sec = SEC_BY_TIER[tier] || 45, budget = Math.ceil((SESSION_SEC_BY_TIER[tier] || SESSION_SEC) * (SESSION_OVER_BY_TIER[tier] || 1.15) / 60) * 60;
   const fixed = 6 * sec * 1.2 + (drawing ? 6 * 90 : 6 * sec);
   return Math.max(1, Math.min(PACK_TIERS[tier], Math.floor((budget - fixed) / (12 * sec))));
 }
 function planCounts(ss, tier, maxLevel){
   const sec = SEC_BY_TIER[tier] || 45;
-  const BUDGET = SESSION_SEC_BY_TIER[tier] || SESSION_SEC;
+  const BUDGET = SESSION_SEC_BY_TIER[tier] || SESSION_SEC, OVER = SESSION_OVER_BY_TIER[tier] || 1.15;
   const diff = d => { const mx = maxLevel(d.t); if(mx <= 1) return 2; if(d.lv <= 1) return 1; return d.lv >= mx ? 3 : 2; };
   const cost = d => d.kind === 'drawing' ? 90 : d.kind === 'word' ? sec * 1.6 : sec;
   const cap = d => COUNT_CAP[d.t + '@' + d.lv] || 36;
@@ -456,13 +460,13 @@ function planCounts(ss, tier, maxLevel){
     + ss.application.reduce((a, d) => a + d.count * cost(d), 0);
   const own = ss.school.filter(d => !d.review);
   /* 넘치면 쉬운 것부터 6씩 덜고(최소 12 — 어려운 유형은 뒤에 덜린다), 모자라면 어려운 것부터 6씩 더한다(최대 36) */
-  for(let guard = 0; guard < 20 && total() > BUDGET * 1.15; guard++){
+  for(let guard = 0; guard < 20 && total() > BUDGET * OVER; guard++){
     const c = own.slice().sort((a, b) => (a.difficulty === 'hard') - (b.difficulty === 'hard') || b.count - a.count)
       .find(d => d.count > 12);
     if(!c) break; c.count -= 6;
   }
   /* 그래도 넘치면 복습 한 벌을 뺀다 — 그 주 교과·창의·적용이 먼저다 */
-  if(total() > BUDGET * 1.15) ss.school = ss.school.filter(d => !d.review);
+  if(total() > BUDGET * OVER) ss.school = ss.school.filter(d => !d.review);
   for(let guard = 0; guard < 20 && total() < BUDGET * 0.75; guard++){
     const c = own.slice().sort((a, b) => (b.difficulty === 'hard') - (a.difficulty === 'hard') || a.count - b.count)
       .find(d => d.count + 6 <= cap(d));
