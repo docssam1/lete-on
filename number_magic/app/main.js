@@ -4109,6 +4109,38 @@ function screenTitle(){
   $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
   $('#ttHist').onclick=()=>{ S.view='histquiz'; save(); render(); };
   $('#ttMz').onclick=()=>{ S._mzOpen=null; S.view='magazine'; save(); render(); };
+  mountTitle3DInto(scr, summary, badge);
+}
+/* 3D 모드 선택 화면(2026-09-26, 원장 "학습지 모드, 게임모드 이런것들 고르는 화면서 3d로 제대로 구현") — app/title3d/title3d.js.
+   2D 타이틀을 먼저 그려 두고, 3D 가 서면 그 위를 덮는다. 고르면 2D 버튼을 그대로 누른다 —
+   이동 규칙(이어서 모험·진단·게임·학습지 …)이 한 곳(위 onclick)에만 있게. WebGL 이 없으면 2D 가 그대로 남는다. */
+function mountTitle3DInto(scr, summary, badge){
+  const card=scr.querySelector('.nm-title');
+  if(!card)return;
+  const BTN={continue:'ttContinue',diag:'ttDiag',game:'ttGame',sheet:'ttSheet',road:'ttRoad',story:'ttStory',dex:'ttDex',hist:'ttHist',magazine:'ttMz'};
+  const box=document.createElement('div');
+  box.className='nm-title3d';
+  box.style.visibility='hidden';
+  scr.appendChild(box);
+  const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
+  if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
+  if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
+  import('./title3d/title3d.js').then(m=>{
+    const choices=m.DEFAULT_CHOICES.map(c=>c.id==='continue'&&summary?Object.assign({},c,{sub:summary}):c);
+    return m.mountTitle3D(box,{
+      lang:S.lang, choices,
+      onPick:id=>{const b=document.getElementById(BTN[id]);if(b)b.click();},
+      player:px=>window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,px):'',
+      name:S.name||'', coins:S.coins, chips, extraHtml:lineageBadgeRowHtml()
+    });
+  }).then(ctl=>{
+    if(!ctl){box.remove();return;}
+    if(!box.isConnected){ctl.dispose();return;}
+    box.style.visibility='';
+    card.classList.add('is-3d-covered');
+    const prev=townCleanup;
+    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); box.remove(); };
+  }).catch(()=>{box.remove();});
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
 function lineageBadgeRowHtml(){

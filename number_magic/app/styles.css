@@ -3037,3 +3037,6 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-town3d{position:absolute;inset:0;z-index:5;cursor:default}
 #townVp.is-3d #townWorld{display:none}
 #townVp.is-3d{background:#9fcf8a;cursor:default}
+/* 3D 모드 선택 화면(app/title3d) — 2D 타이틀 위를 화면 가득 덮는다. 2D 버튼은 남겨 두되(고르면 그 버튼을 누른다) 가려서 안 보이게 */
+.nm-title3d{position:fixed;inset:0;z-index:40}
+.nm-title.is-3d-covered{visibility:hidden}
