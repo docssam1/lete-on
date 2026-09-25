@@ -660,7 +660,8 @@
   .nm-mn-steps { display:inline-block; background:var(--w2-soft, #F5F3EE); border-left:3px solid var(--w2-gold, #C9A063); border-radius:0 8px 8px 0;
     padding:4px 12px 4px 10px; margin:2px 0 4px; }
   .nm-mn-line { font-size:calc(15px * var(--ws-fs, 1)); line-height:1.5; }
-  .nm-mn-line .nm-w2-tex { font-size:calc(15px * var(--ws-fs, 1)); }
+  /* 세로 분수(\\dfrac)가 줄 높이를 넘어 윗줄 분모와 아랫줄 분자가 겹쳤다(C-22 ②, 2026-09-25 A4) — 식 한 줄을 제 높이의 상자로 */
+  .nm-mn-line .nm-w2-tex { font-size:calc(15px * var(--ws-fs, 1)); display:inline-block; padding:.32em 0; }
   .nm-mn-plain { font-family:'Fredoka','Jua',Pretendard,sans-serif; letter-spacing:.5px; color:#1A2233; }
   .nm-mn-result { font-size:calc(13px * var(--ws-fs, 1)); font-weight:900; color:#1F8A5A; }
   .nm-mn-check { flex:0 0 auto; margin-top:8px; border:1.5px solid #d8d3c5; border-radius:10px; padding:6px 12px; background:var(--w2-soft, #fff); }
@@ -4719,7 +4720,11 @@ function renderMagicNotePage(item, opts){
     });
     /* 규칙·체크·생각해 보기가 남은 자리에 안 들면 제 장으로 */
     groups.tail = used + tailH * fsR > cap - 3 ? groups.length : groups.length - 1;
-    if(groups.tail === groups.length) groups.push([]);
+    if(groups.tail === groups.length){
+      /* 규칙·체크만 있는 장은 3분의 2가 빈다 — 앞 장의 마지막 단계가 함께 들어가면 그 장으로 옮긴다(단계 둘 이상인 장에서만) */
+      const prev = groups[groups.length-1], k = prev[prev.length-1];
+      groups.push(prev.length > 1 && (stageHs[k] + tailH) * fsR <= availNext - 3 ? [prev.pop()] : []);
+    }
   } else {
     const n = stageParts.length, split = n >= 3 ? 2 : 1;
     groups = n >= 2 ? [[...Array(split).keys()], [...Array(n - split).keys()].map(i => i + split)] : [[...Array(n).keys()]];
