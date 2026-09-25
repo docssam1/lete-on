@@ -6,6 +6,10 @@ import { ease, seg, cyc, hop } from './anim.js';
 import { SCENES_C32 } from './scenes-c32.js';
 import { SCENES_C33 } from './scenes-c33.js';
 import { SCENES_C34 } from './scenes-c34.js';
+import { SCENES_C35 } from './scenes-c35.js';
+import { SCENES_C36 } from './scenes-c36.js';
+import { SCENES_C37 } from './scenes-c37.js';
+import { SCENES_C37B } from './scenes-c37b.js';
 const SCENES_C29_31 = {
 
   /* 정수 개념 — history: 『구장산술』의 붉은 산가지(+)와 검은 산가지(−) */
@@ -621,4 +625,4 @@ const SCENES_C29_31 = {
 };
 
 /* 과정별 파일을 한데 모은다 — 과정마다 파일을 나눠 여럿이 동시에 만들어도 서로 덮어쓰지 않게(2026-09-26) */
-export const SCENES = Object.assign({}, SCENES_C29_31, SCENES_C32, SCENES_C33, SCENES_C34);
+export const SCENES = Object.assign({}, SCENES_C29_31, SCENES_C32, SCENES_C33, SCENES_C34, SCENES_C35, SCENES_C36, SCENES_C37, SCENES_C37B);
