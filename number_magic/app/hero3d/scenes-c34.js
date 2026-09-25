@@ -100,7 +100,7 @@ export const SCENES_C34 = {
     add(k.rbox(BW, BH, BD, 0.07), k.lacquer('#8e1c16'), MX, 0, MZ);
     add(k.rbox(BW + 0.06, 0.08, BD + 0.06, 0.04), k.metal('#b8b3a8', 0.3), MX, BH, MZ);
     /* 앞면: 식 판(빛나는), 동전 투입구, 꺼내는 곳 */
-    const lab = plate(k, 'f(x) = 2x + 1', 1.34, 0.46, { glow:true, fill:0.6 }); lab.position.set(MX, 1.68, FZ + 0.012); scene.add(lab);
+    const lab = plate(k, 'f(x) = 2x + 1', 1.34, 0.46, { glow:true, fill:0.6 }); lab.position.set(MX, 1.68, FZ + 0.02); scene.add(lab);
     const frameM = k.metal('#c9c3b5', 0.28);
     add(new THREE.BoxGeometry(1.42, 0.54, 0.02), frameM, MX, 1.68, FZ + 0.002);
     const SX = MX + 0.5, SY = 1.05;
@@ -160,8 +160,10 @@ export const SCENES_C34 = {
     /* 자 — 직선 옆에 나란히 */
     const dir = new THREE.Vector3().subVectors(Z, A), len = dir.length(); dir.normalize();
     const nrm = new THREE.Vector3(-dir.z, 0, dir.x);   /* 판 위에서 직선에 수직 */
-    const ruler = new THREE.Mesh(k.rbox(len + 0.3, 0.035, 0.22, 0.02), k.woodMat('#e3c48d', [150, 110, 60]));
-    const rc = A.clone().add(Z).multiplyScalar(0.5).add(nrm.clone().multiplyScalar(-0.2)); ruler.position.set(rc.x, 0.085, rc.z);
+    /* 자는 직선 윗부분 옆에만(눈금 숫자를 가리지 않게) */
+    const RA = B.P(0.7, f(0.7)), rl = RA.distanceTo(Z);
+    const ruler = new THREE.Mesh(k.rbox(rl + 0.2, 0.035, 0.22, 0.02), k.woodMat('#e3c48d', [150, 110, 60]));
+    const rc = RA.clone().add(Z).multiplyScalar(0.5).add(nrm.clone().multiplyScalar(0.2)); ruler.position.set(rc.x, 0.085, rc.z);
     ruler.rotation.y = -Math.atan2(dir.z, dir.x); ruler.castShadow = ruler.receiveShadow = true; scene.add(ruler);
     /* 두 점(붉은 압정)과 확인하는 세 번째 점(초록 압정) */
     const p1 = pin(k, B.P(1, 3), '#b3221a'), p2 = pin(k, B.P(2, 5), '#b3221a'), p3 = pin(k, B.P(3, 7), '#2f7a4a');
@@ -187,7 +189,7 @@ export const SCENES_C34 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.15, 0.3, 0.55], 6.3, 24);
+    k.frame([0.15, 0.3, 0.5], 6.3, 28);
     k.table();
     const L = 5.2, R = L * 0.08, X0 = -2.5, DZ = 1.1, Z0 = -0.2;   /* 가로 100 → L, 세로 8 → R */
     /* 흙 쐐기 + 아스팔트 길 */
@@ -259,7 +261,6 @@ export const SCENES_C34 = {
     put(b1, l1, u1X, -0.06); put(b2, l2, u2X, 0.06);
     k.onFrame(t => { const p = cyc(t, 8); const away = seg(p, 0.06, 0.34) * (1 - seg(p, 0.44, 0.74)), close = 1 - seg(p, 0.66, 0.74);
       put(b1, l1, u1X + (u1F - u1X) * away, -0.06 * close); put(b2, l2, u2X + (u2F - u2X) * away, 0.06 * close);
-      if(p > 0.74) { b1.position.x = b1.position.x; }
       ring.position.y = 0.1 + 0.22 * hop(p, 0.76, 0.9); });
     k.lights({ envOpts:{ intensity:0.7 } });
   }},
@@ -279,7 +280,7 @@ export const SCENES_C34 = {
     const A = B.P(0, 5), Z = B.P(10, 35);
     wire(k, A, Z, k.metal('#3f6fa0', 0.3));
     pin(k, A, '#b3221a');
-    fitCard(k, 'y = 3x + 5', -1.2, 1.75, { w:1.5, d:0.48 });
+    fitCard(k, 'y = 3x + 5', -1.75, 1.85, { w:1.5, d:0.48 });
     const bd = bead(k, '#fff3d6', 0.075);
     /* 물통: 유리 원통 + 물 + 눈금자(0~35) + 수도꼭지 */
     const TX = -2.1, TZ = -0.1, TR = 0.52, TH = 2.1, LPU = 0.052;   /* 1L 당 높이 */
@@ -323,7 +324,7 @@ export const SCENES_C34 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.6, 0.05, 0.45], 7.0, 60);
+    k.frame([0.6, 0.05, 0.2], 6.4, 60);
     k.table();
     const fabric = c => new THREE.MeshPhysicalMaterial({ color:c, roughness:0.92, sheen:1, sheenRoughness:0.6, sheenColor:new THREE.Color('#ffffff').multiplyScalar(0.25) });
     const flat = (shape, mat, s) => { const geo = new THREE.ExtrudeGeometry(shape, { depth:0.035, bevelEnabled:true, bevelThickness:0.012, bevelSize:0.012, bevelSegments:2, curveSegments:10 });
@@ -351,7 +352,7 @@ export const SCENES_C34 = {
     cx.forEach((x, i) => rz.forEach((z, j) => { const g = new THREE.Group();
       const a = flat(shirt, tops[i], 0.85); a.position.set(0, 0.035, -0.28); const b = flat(pants, bots[j], 0.8); b.position.set(0, 0.03, 0.3);
       g.add(a, b); g.position.set(x, 0.03, z); scene.add(g); cells.push({ g, i, j }); }));
-    const sum = fitCard(k, '3 × 2 = 6', 1.5, 2.6, { w:1.7, d:0.52 });
+    const sum = fitCard(k, '3 × 2 = 6', -1.25, -1.2, { w:1.3, d:0.8, hmax:0.75, fill:0.9, rot:0.03 });
     /* 움직임: 상의 하나마다 하의 둘 — 여섯 벌이 차례로 톡, 그때마다 그 벌의 상의·하의도 함께 → 마지막에 3 × 2 = 6 */
     const y0 = { t:hdrTop.map(m => m.position.y), b:hdrBot.map(m => m.position.y), c:cells.map(c => c.g.position.y), s:sum.position.y };
     k.onFrame(t => { const p = cyc(t, 9); const ht = [0, 0, 0], hb = [0, 0];
