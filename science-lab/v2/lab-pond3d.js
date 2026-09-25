@@ -55,7 +55,7 @@ export async function mountPond3D(el, opts = {}) {
     const zone = where(x), res = pondResult(name, zone), g = make[name]();
     g.traverse((o) => { if (o.material && !res.ok) { o.material = o.material.clone(); o.material.color.lerp(new THREE.Color(0x9a8a5a), 0.55); } });
     const floor = bottomAt(x);
-    const P = { g, zone, ok: res.ok, text: res.text, x, z, t0: performance.now() / 1000, floor };
+    const P = { g, zone, ok: res.ok, text: res.text, x, z, t0: t, floor };
     g.position.set(x, SURF + 1.0, z); stage.root.add(g); planted[name] = P; last = { name, ...P };
     ring.position.set(x, (x < BANK_X ? SURF + 0.17 : SURF + 0.01), z); ring.visible = true;
     tip(`<b>${name}</b>을 <b>${zone === '물' ? '깊은 물' : zone}</b>에 심었어요 → ${res.ok ? '' : '<b style="color:#c0392b">'}${res.text}${res.ok ? '' : '</b>'}`);
@@ -64,9 +64,10 @@ export async function mountPond3D(el, opts = {}) {
   // 떨어지는 동작과 사는 모습
   let push = 0, pushV = 0, pressing = false, bubT = -1, t = 0;
   stage.update = (dt) => {
+    if (opts.isActive && !opts.isActive()) return;
     t += dt; pondG.userData.ripple(t);
     for (const [name, P] of Object.entries(planted)) {
-      const g = P.g, age = performance.now() / 1000 - P.t0, drop = Math.min(1, age / 0.9), e = 1 - (1 - drop) ** 3;
+      const g = P.g, age = t - P.t0, drop = Math.min(1, age / 0.9), e = 1 - (1 - drop) ** 3;
       if (name === '부레옥잠') {
         const land = P.zone === '땅' ? SURF + 0.16 : SURF;
         let y = SURF + 1.0 + (land - SURF - 1.0) * e;
@@ -125,5 +126,5 @@ export async function mountPond3D(el, opts = {}) {
   });
   renderRows();
   const chk = () => setTimeout(() => { if (!el.isConnected) { stage.dispose(); removeEventListener('hashchange', chk); } }); addEventListener('hashchange', chk);
-  return { rows };
+  return { rows, pause: stop, dispose: () => { stage.dispose(); removeEventListener('hashchange', chk); } };
 }

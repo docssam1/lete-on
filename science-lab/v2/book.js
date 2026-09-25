@@ -2,12 +2,13 @@
 // 쪽 구성: 머리띠(색 띠) · 본문 · 옆날개(플러스 노트·용어풀이·빈칸 답) · 단원 손잡이 탭 · 쪽 번호.
 // 홀수 쪽은 옆날개가 오른쪽, 짝수 쪽은 왼쪽(책을 펼쳤을 때 바깥쪽).
 // 학생용은 빈칸·쓰는 줄, 교사용(teacher)은 같은 자리에 답·채점 기준을 빨간 글씨로 넣는다.
+import { readingHtml } from './reading.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const NUM = ['①', '②', '③', '④', '⑤', '⑥'];
 const BL = 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝ';
 
 export function renderChapter(ch, art, similar, { teacher = false, live = false, media = null } = {}) {
-  let pageNo = 0;
+  let pageNo = 0, noteNo = 0;
   // live: 웹 화면용 — 영상이 쪽 안에서 재생되고, 누르면 3D·실험실이 책 밖으로 튀어나온다. 인쇄에는 늘 그림·QR만 남는다.
   const web = (h) => (live ? `<div class="bk-web">${h}</div>` : '');
   const pop = (kind, label) => (live ? `<button type="button" class="bk-pop-btn" data-pop="${kind}">▶ ${esc(label)}</button>` : '');
@@ -28,12 +29,14 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
     const key = keys.length && !teacher ? `<div class="bk-key">${keys.map(([m, a]) => `${m} ${esc(a)}`).join('  ')}</div>` : '';
     return `<aside class="bk-rail"><div class="bk-rail-tag">플러스 노트</div>${notes}${glHtml}${key}</aside>`;
   };
-  const page = (body, { cls = '', band = '' } = {}) => {
+  const page = (body, { cls = '', band = '', full = false } = {}) => {
     const n = ++pageNo, side = n % 2 ? 'odd' : 'even';
+    // 독립 읽을거리 쪽을 끼워도 기존 쪽의 용어·답 노트가 밀리지 않는다.
+    const notes = full ? '' : rail(++noteNo);
     const html = `<section class="bk-page ${side} ${cls}">
       <div class="bk-band">${band || `<span class="bk-band-no">${String(ch.no).padStart(2, '0')}</span><span class="bk-band-t">${esc(ch.title)}</span><span class="bk-band-u">교과 연계 실험 · ${esc(ch.link.unit)}</span>`}</div>
       <div class="bk-thumb">${esc(ch.link.unit)}</div>
-      <div class="bk-grid"><div class="bk-main">${body}</div>${rail(n)}</div>
+      <div class="bk-grid"><div class="bk-main">${body}</div>${notes}</div>
       <footer class="bk-foot"><span class="bk-pn">${n}</span><span>${n % 2 ? `${String(ch.no).padStart(2, '0')} ${esc(ch.title)}` : `${esc(ch.book)} ${esc(ch.vol)}`}</span>${teacher ? '<em>교사용</em>' : ''}</footer></section>`;
     keys = [];
     return html;
@@ -88,9 +91,10 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
     <div class="bk-more"><h4>${esc(ch.more.title)}</h4><p>${esc(ch.more.text)}</p></div>`));
 
   // 7. 창의사고력 기르기: 휘어진 강 → 창의 문제 → 토의
+  if (ch.reading) out.push(page(readingHtml(ch.reading, { teacher }), { cls: 'bk-magazine', full: true }));
   const n = ch.note;
   out.push(page(`${banner('창의사고력 기르기', 'think')}
-    <div class="bk-read"><div class="bk-two art-r"><div><h4>${esc(n.plus.title)}</h4><p>${esc(n.plus.text)}</p></div><div class="bk-art">${art[n.plus.art]}</div></div></div>
+    ${ch.reading ? '' : `<div class="bk-read"><div class="bk-two art-r"><div><h4>${esc(n.plus.title)}</h4><p>${esc(n.plus.text)}</p></div><div class="bk-art">${art[n.plus.art]}</div></div></div>`}
     ${step(6, '창의력 키우기')}<p class="bk-p">${esc(ch.creative.q)}</p>${ans(ch.creative.a, 5)}
     ${step(7, '개념 넓혀 토의하기')}<p class="bk-p">${esc(ch.discuss.q)}</p>${ans(ch.discuss.a, 5)}`));
 
@@ -144,6 +148,7 @@ export function fitPages(root) {
   if (matchMedia('(max-width: 700px)').matches && !root.classList.contains('a4')) return;
   const mm = (() => { const d = document.createElement('div'); d.style.width = '100mm'; root.appendChild(d); const w = d.getBoundingClientRect().width / 100; d.remove(); return w; })();
   root.querySelectorAll('.bk-page').forEach((pg) => {
+    if (pg.classList.contains('bk-magazine')) return; // 명시적으로 조판·검수한 읽을거리 글자는 자동 축소하지 않는다.
     const grid = pg.querySelector('.bk-grid'), main = pg.querySelector('.bk-main');
     main.style.cssText = ''; main.querySelectorAll('.bk-lines i.fit').forEach((i) => i.remove()); main.querySelectorAll('.bk-stepcard, td, .bk-two, .bk-main > *').forEach((x) => x.removeAttribute('style'));
     const avail = () => grid.clientHeight - parseFloat(getComputedStyle(grid).paddingTop);

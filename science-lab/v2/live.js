@@ -3,9 +3,18 @@
 //  · [data-pop] 버튼 → 3D 장면·체험 실험실이 누른 자리에서 책 밖으로 튀어나옴(닫으면 3D 정리)
 //  · 사진 누르면 크게 · 빈칸 누르면 답 · 확인 문제 누르면 바로 채점
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+import { createLabWorkspace } from './lab-workspace.js';
+import { wireReading } from './reading-live.js';
+import { pauseLearningMedia } from './media-session.js';
+const bindings = new WeakMap();
 
 // misc: 오개념표(data/units/<u>.misc.js) — 있으면 개념 정리 빈칸이 낱말 칩이 되고, 확인 문제를 틀리면 교정 상자(.bk-fix)가 붙는다. onAnswer(kind, payload)는 기록용.
 export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer = null } = {}) {
+  bindings.get(root)?.();
+  const workspace = lab ? createLabWorkspace(root, { title: title || '3D 체험 실험실', mount: lab }) : null;
+  const releaseReading = wireReading(root, { openLab: from => workspace?.open(from) });
+  const release = () => { releaseReading(); workspace?.dispose(); };
+  bindings.set(root, release);
   const chips = misc?.bookChips || null;
   root.querySelectorAll('.bk-video').forEach((v) => v.querySelector('.bk-play')?.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -17,6 +26,7 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
   root.querySelectorAll('[data-pop]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
     const k = b.dataset.pop;
+    if (k === 'lab' && workspace) { workspace.open(b); return; }
     openPop(b, k === 'scene' ? '3D로 보기' : '3D 체험 실험실', (el) => (k === 'scene' ? scene?.(el) : lab?.(el)), { wide: k === 'lab' });
   }));
   root.querySelectorAll('[data-video]').forEach((b) => b.addEventListener('click', (e) => {
@@ -56,10 +66,12 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
       onAnswer?.('item', { id: ol.dataset.id, ok: key.includes(j), picked: j, el: ol });
     }));
   });
+  return release;
 }
 
 // 누른 자리(from)에서 커지며 나타나는 창. mount(el)가 3D를 띄우면 닫을 때 그 무대를 정리한다.
 export async function openPop(from, title, mount, { wide = false } = {}) {
+  pauseLearningMedia();
   const { Stage } = await import('../engine.js');
   document.querySelector('.bk-pop-wrap')?.__close?.();
   const before = new Set(Stage.live);

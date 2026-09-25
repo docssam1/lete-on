@@ -20,10 +20,11 @@ export async function mountVolcano3D(el, opts = {}) {
   let THREE, Stage, watchDetached, K;
   try {
     [{ Stage, watchDetached }, THREE, K] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/_kit.js')]);
+    if (!el.isConnected) return;
     const t = document.createElement('canvas'); if (!(t.getContext('webgl2') || t.getContext('webgl'))) throw new Error('no webgl');
   } catch (_) { return mountVolcano2D(el, opts); }
   const rows = opts.rows || [], onRecord = opts.onRecord;
-  let exp = '화산 모형', heat = '강하게', cool = '얼음물(빨리)', holding = false, step = 0;
+  let exp = '화산 모형', heat = '강하게', cool = '얼음물(빨리)', holding = false, keyboardHolding = false, step = 0;
   const grp = (name, key, keys, cur) => `<div class="modes" role="group" aria-label="${name}"><span class="lab-lbl">${name}</span>${keys.map((k) => `<button type="button" data-${key}="${k}" aria-pressed="${k === cur}">${k}</button>`).join('')}</div>`;
   el.innerHTML = `
     <div class="modes" role="tablist" aria-label="실험"><span class="lab-lbl">실험</span><button type="button" role="tab" data-x="화산 모형" aria-selected="true">① 화산 모형</button><button type="button" role="tab" data-x="식히기" aria-selected="false">② 식히기</button></div>
@@ -209,6 +210,7 @@ export async function mountVolcano3D(el, opts = {}) {
   };
   const resetAll = () => { Object.assign(S, { temp: 20, melt: 0, set: 0, smoke: 0, lit: false, foilY: 4, temp2: 80, grow: 0, beakerY: 3 }); puffs.length = 0; smoke.count = 0; steam.count = 0; setCrystals(0, cool); holding = false; $main.classList.remove('on'); goStep(0); refresh(); };
   stage.update = (dt, t) => {
+    if (opts.isActive && !opts.isActive()) return;
     if (A.visible) {
       if (S.foilY > 0) { S.foilY = Math.max(0, S.foilY - dt * 4); }
       if (S.lit && holding) { S.temp = Math.min(260, S.temp + HEATS[heat] * dt); flame.scale.y = (heat === '강하게' ? 1.3 : 0.85) * (1 + Math.sin(t * 20) * 0.08); }
@@ -234,11 +236,12 @@ export async function mountVolcano3D(el, opts = {}) {
     refresh();
   };
   // 주 버튼: 단계에 따라 누르기 / 누르고 있기
-  const start = (e) => { e.preventDefault(); if (!isHold()) return; if (A.visible && !S.lit) return; holding = true; $main.classList.add('on'); };
-  const stop = () => { if (!holding) return; holding = false; $main.classList.remove('on'); refresh(); };
+  const start = (e) => { e.preventDefault(); if (!isHold()) return; if (A.visible && !S.lit) return; keyboardHolding = e.type === 'keydown'; holding = true; $main.classList.add('on'); };
+  const stop = (e) => { if (e?.type === 'pointerleave' && keyboardHolding) return; keyboardHolding = false; if (!holding) return; holding = false; $main.classList.remove('on'); refresh(); };
   $main.addEventListener('pointerdown', start); $main.addEventListener('pointerup', stop); $main.addEventListener('pointerleave', stop); $main.addEventListener('pointercancel', stop);
   $main.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && !holding && isHold()) start(e); });
   $main.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'Enter') stop(); });
+  $main.addEventListener('blur', () => stop());
   $main.addEventListener('contextmenu', (e) => e.preventDefault());
   $main.addEventListener('click', () => {
     if (isHold()) return;
@@ -274,8 +277,8 @@ export async function mountVolcano3D(el, opts = {}) {
   }
   $('[data-act=record]').addEventListener('click', record);
   renderRows(); resetAll(); applyExp();
-  watchDetached(el, () => stage.dispose());
-  return { rows };
+  const dispose = watchDetached(el, () => stage.dispose());
+  return { rows, pause: stop, dispose };
 }
 
 // WebGL이 없는 기기: 조건을 고르면 결과를 읽는 실험실
