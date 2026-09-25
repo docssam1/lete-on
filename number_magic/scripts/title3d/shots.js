@@ -23,6 +23,7 @@ const cases = [
   { name:'phone-zh', w:390, h:844, lang:'zh', mobile:true },
   { name:'tab-land', w:1024, h:640, lang:'ko' },
   { name:'desk-still', w:1280, h:800, lang:'ko', q:'&still=1' },
+  { name:'phone-raw', w:390, h:844, lang:'ko', q:'&raw=1' },
   { name:'phone-land', w:844, h:390, lang:'ko', mobile:true },
 ].filter(c => !only || only.slice(7).split(',').includes(c.name));
 const IDS = ['continue', 'diag', 'game', 'sheet', 'road', 'story', 'dex', 'hist', 'magazine'];

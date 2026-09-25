@@ -1359,6 +1359,7 @@ function screenTown(){
       </div>
     </div>`;
   townCleanup=initTownWorld(scr);
+  mountTown3DInto(scr);
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
@@ -4627,6 +4628,82 @@ function showGateModal(){
 function enterTier(id){S.view='tier';S.tierId=id;save();render();}
 function exitTier(){S.view='town';S.tierId=null;save();render();}
 
+/* 3D 마을(2026-09-26, 원장 "마을 지도야 … 3d로 제대로 구현") — app/town3d/town3d.js.
+   2D 지도를 먼저 그려 두고(곧바로 보이고, 3D 를 못 쓰면 그대로 남는다) 3D 가 준비되면 그 위를 덮는다.
+   건물·관문을 누르면 2D 와 같은 안내(townSpotAction·showGateLinksModal). 잠금 규칙도 2D 와 같다. */
+function mountTown3DInto(scr){
+  const vp=scr.querySelector('#townVp');
+  if(!vp)return;
+  const lang=S.lang;
+  const spots=TOWN_SPOTS.map(sp=>{
+    const open=sp.tier==='_theater'?false:TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tierById(sp.tier));
+    return { id:sp.tier, open, label:sp.tag, sub:sp.sub, lockIcon:sp.lockIcon };
+  });
+  const gates=TOWN_GATES.map(g=>({ id:g.id, icon:g.icon, name:g.name }));
+  const walker=(k,n)=>window.renderWalker?window.renderWalker(k,n):'';
+  const numi=(c,n)=>window.renderNumiChar?window.renderNumiChar(c,n):'';
+  const myName=S.name?S.name:('#'+S.character.number);
+  const characters=[
+    { id:'player', role:'player', html:walker(avatarKind(),60), name:myName, at:'plaza',
+      lines:[{ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`},{ko:'길을 콕 찍으면 내가 걸어가!',en:'Tap a path and I will walk there!',zh:'点一下小路，我就走过去！'}] },
+    { id:'buddy', role:'buddy', html:numi(S.character,44),
+      lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'},{ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'}] },
+    { id:'elder', role:'npc', html:walker('elder',56), name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true,
+      lines:[{ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'},{ko:'정자에 앉아 숫자 이야기 들려줄까?',en:'Shall I tell you a number story at the gazebo?',zh:'在凉亭坐下，听我讲讲数字的故事？'},{ko:'천천히 해도 괜찮단다',en:'It is fine to take your time',zh:'慢慢来也没关系'},{ko:'항구에 가면 수학 이야기 퀴즈가 있단다',en:'There is a math-story quiz down at the harbor',zh:'去港口有数学故事问答哦'}] },
+    { id:'doc', role:'npc', html:walker('doc',56), name:{ko:'독쌤',en:'Doc-ssaem',zh:'独老师'}, at:'academy', still:true,
+      lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'},{ko:'오늘 배울 마법은 도서관에 있어',en:"Today's magic is in the library",zh:'今天要学的魔法在图书馆里'},{ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'}] },
+    { id:'poco', role:'npc', html:numi({number:3,color:'gold',bg:'plain'},52), at:'plaza', wander:true,
+      lines:[{ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'},{ko:'7이랑 만나면 10! 🔟',en:'With 7 we make 10! 🔟',zh:'和7在一起就是10！🔟'},{ko:'게임하러 가자!',en:"Let's go play!",zh:'去玩游戏吧！'}] },
+    { id:'momo', role:'npc', html:numi({number:8,color:'pink',bg:'plain'},52), at:'numberland', wander:true,
+      lines:[{ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'},{ko:'2랑 만나면 10! 🔟',en:'With 2 we make 10! 🔟',zh:'和2在一起就是10！🔟'},{ko:'실수는 괜찮아!',en:'Mistakes are okay!',zh:'出错也没关系！'}] }
+  ];
+  const box=document.createElement('div');
+  box.className='nm-town3d';
+  /* 3D 층 안의 끌기·휠·탭이 아래 2D 지도의 처리기(지도 이동·탭 이동)로 새지 않게 */
+  ['pointerdown','pointermove','pointerup','pointercancel','wheel'].forEach(ev=>box.addEventListener(ev,e=>e.stopPropagation()));
+  box.style.pointerEvents='none';   /* 준비되기 전엔 아래 2D 지도를 그대로 누를 수 있게 */
+  vp.appendChild(box);
+  const muted=()=>{const mb=scr.querySelector('#townMute');return !mb||mb.textContent.indexOf('🔇')>=0;};
+  import('./town3d/town3d.js').then(m=>m.mountTown3D(box,{
+    lang, spots, gates, characters,
+    onSpot:id=>townSpotAction(id),
+    onGate:id=>{const g=TOWN_GATES.find(x=>x.id===id);if(g)showGateLinksModal(g);},
+    onSay:text=>{if(!muted()&&S.lang==='ko')say(text);}
+  })).then(ctl=>{
+    if(!ctl){box.remove();return;}
+    if(!box.isConnected){ctl.dispose();return;}
+    /* 3D 가 섰다 — 2D 지도의 움직임(분수·반짝임·걷기)을 멈추고 숨긴다. 음소거·배경음은 2D 쪽 버튼 그대로 */
+    const prev=townCleanup;
+    if(prev)prev();
+    vp.classList.add('is-3d');
+    box.style.pointerEvents='';
+    const zi=scr.querySelector('#townZin'), zo=scr.querySelector('#townZout'), me=scr.querySelector('#townMe');
+    if(zi)zi.onclick=()=>ctl.zoomIn();
+    if(zo)zo.onclick=()=>ctl.zoomOut();
+    if(me)me.onclick=()=>ctl.focusPlayer();
+    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); };
+  }).catch(()=>{box.remove();});
+}
+/* 마을 건물 탭 → 안내 모달(2D 지도·3D 마을 공통) */
+function townSpotAction(id){
+  if(id==='_theater'){
+    const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
+    const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
+      S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
+    showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();});
+    return;
+  }
+  if(id==='_closet'){
+    const cl=S.lang==='ko'?'🪄 마법사 옷장':S.lang==='en'?"🪄 Wizard's Closet":'🪄 魔法师衣橱';
+    const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
+      S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
+    showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
+    return;
+  }
+  const tier=tierById(id);
+  if(tierOpen(tier)) showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc),()=>enterTier(id));
+  else showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc)+' — '+t('locked'),null);
+}
 /* 마을 상호작용(드래그/핀치줌/구름/분수/숫자친구/배경음) — 화면을 나갈 때 반드시 cleanup() 호출 */
 function initTownWorld(scr){
   const vp=scr.querySelector('#townVp'), world=scr.querySelector('#townWorld');
@@ -4721,24 +4798,7 @@ function initTownWorld(scr){
   scr.querySelectorAll('.nm-zone').forEach(z=>{
     z.addEventListener('pointerup',e=>{
       if(moved)return;e.stopPropagation();
-      const id=z.dataset.spot;
-      if(id==='_theater'){
-        const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
-        const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
-          S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
-        showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();});
-        return;
-      }
-      if(id==='_closet'){
-        const cl=S.lang==='ko'?'🪄 마법사 옷장':S.lang==='en'?"🪄 Wizard's Closet":'🪄 魔法师衣橱';
-        const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
-          S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
-        showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
-        return;
-      }
-      const tier=tierById(id);
-      if(tierOpen(tier)) showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc),()=>enterTier(id));
-      else showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc)+' — '+t('locked'),null);
+      townSpotAction(z.dataset.spot);
     });
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');

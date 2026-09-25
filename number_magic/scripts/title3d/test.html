@@ -32,7 +32,7 @@
     const ctl = await mountTitle3D(document.getElementById('stage'), {
       lang, choices,
       onPick:id => { window.__picks.push(id); console.log('onPick', id); document.getElementById('log').textContent = 'onPick: ' + id; },
-      player: px => window.renderPartyHtml ? window.renderPartyHtml(kind, { number:3, color:'blue' }, px) : '',
+      player: q.has('raw') ? '<div style="width:120px;height:150px;border-radius:40px 40px 10px 10px;background:linear-gradient(#ffd35a,#e2415a)"></div>' : px => window.renderPartyHtml ? window.renderPartyHtml(kind, { number:3, color:'blue' }, px) : '',
       name: q.get('name') || '민준',
       coins: 120,
       chips: [{ icon:'📅', text:{ ko:'5일', en:'Day 5', zh:'第5天' } }],

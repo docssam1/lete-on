@@ -219,10 +219,12 @@ export async function mountTitle3D(container, opts){
   let [VW, VH] = sizeOf();
 
   await fontsReady();
-  let playerCanvas = null;
+  let playerCanvas = null, playerHtml = null;
   try {
     const mk = typeof opts.player === 'function' ? opts.player(220) : opts.player;
     playerCanvas = await rasterizeMarkup(mk);
+    /* 캔버스로 못 찍으면(외부 그림 등) 빈 판을 세우고 HTML 그대로 발판 위에 띄운다 */
+    if(!playerCanvas && mk){ playerCanvas = document.createElement('canvas'); playerCanvas.width = 80; playerCanvas.height = 100; playerHtml = mk; }
   } catch(e){ playerCanvas = null; }
   if(!root.isConnected) return null;
 
@@ -242,6 +244,9 @@ export async function mountTitle3D(container, opts){
   const hint = document.createElement('h2'); hint.className = 't3d-hint';
   ui.append(hint, logo, hud);
   if(opts.name) ui.append(tag);
+  let playerEl = null;
+  if(playerHtml){ playerEl = document.createElement('div'); playerEl.className = 't3d-player-html'; playerEl.setAttribute('aria-hidden', 'true');
+    playerEl.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none;will-change:transform'; playerEl.innerHTML = playerHtml; ui.prepend(playerEl); }
   const btns = {};
   choices.forEach(c => {
     const b = document.createElement('button'); b.type = 'button';
@@ -428,6 +433,10 @@ export async function mountTitle3D(container, opts){
       const b = btns[R.o.id];
       b.style.transform = `translate3d(${Math.round(R.x)}px,${Math.round(R.y)}px,0)`;
     });
+    if(playerEl && player){ const [fx, fy] = proj(player.g.position), [hx, hy] = proj(player.tagW);
+      const hpx = Math.max(40, fy - hy), s0 = playerEl.firstElementChild ? playerEl.firstElementChild.offsetHeight || 220 : 220;
+      playerEl.style.transform = `translate3d(${Math.round(fx)}px,${Math.round(fy)}px,0) translate(-50%,-100%) scale(${(hpx * 0.9 / s0).toFixed(3)})`;
+      playerEl.style.transformOrigin = '50% 100%'; }
     if(opts.name && player){
       const [tx, ty] = proj(player.tagW);
       tag.style.transform = `translate3d(${Math.round(tx)}px,${Math.round(ty)}px,0) translate(-50%,-100%)`;
@@ -1017,7 +1026,7 @@ function buildWorld(k, choices, playerCanvas){
     wide:{ pitch:34, fov:30, dist:26, target:[0, 1, 0.5], island:[13.2, 6.2, 0, 0.8],
       pos:{ continue:[0, -2.0, 1], diag:[-10.2, 0.2, 0.9], sheet:[-6.2, 0.9, 0.9], road:[6.2, 0.9, 0.9], game:[10.2, 0.2, 0.9],
         story:[-4.2, 4.3, 0.85], dex:[-1.4, 4.5, 0.85], hist:[1.4, 4.5, 0.85], magazine:[4.2, 4.3, 0.85] },
-      player:[-2.6, -1.0, 1], plaza:[0, -0.6, 3.6, 2.6], posts:[[-1.3, 1.2], [1.3, 1.2], [-8.2, 3.0], [8.2, 3.0]], motes:[11, 4, 5.5, 0, 0.5], place:{} },
+      player:[-3.7, -0.9, 1], plaza:[-0.4, -0.6, 4.0, 2.6], posts:[[-1.3, 1.2], [1.3, 1.2], [-8.2, 3.0], [8.2, 3.0]], motes:[11, 4, 5.5, 0, 0.5], place:{} },
     portrait:{ pitch:46, fov:40, dist:24, target:[0, 0.5, 0.8], island:[5.4, 11.8, 0, 0.6],
       pos:{ continue:[-0.55, -8.0, 1.12], diag:[-2.3, -2.0, 0.72], game:[2.35, -2.0, 0.72], sheet:[-2.3, 3.0, 0.72], road:[2.35, 3.0, 0.72],
         story:[-3.15, 7.8, 0.66], dex:[-1.05, 7.8, 0.66], hist:[1.05, 7.8, 0.66], magazine:[3.15, 7.8, 0.66] },

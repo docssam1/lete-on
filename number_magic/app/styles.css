@@ -3033,3 +3033,7 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   .nm-mzu-strip figure{flex:0 0 72%;scroll-snap-align:start}
   .nm-mzu-char{width:52px}
 }
+/* 3D 마을(app/town3d) — 2D 지도(#townWorld) 위를 덮는다. 준비되면 2D 는 숨긴다 */
+.nm-town3d{position:absolute;inset:0;z-index:5;cursor:default}
+#townVp.is-3d #townWorld{display:none}
+#townVp.is-3d{background:#9fcf8a;cursor:default}
