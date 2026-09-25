@@ -4856,7 +4856,9 @@ function renderRoundPagesBody(item, opts){
   if(headBand && headBand[0] != null && firstRows > 0 && layout.type !== 'train'){
     let avail = headBand[0] - headBand[1] * (fsR - 1);
     if(problems.length <= firstRows * layout.cols && !item.pacing) avail -= (window.NM_PRINT_HEAD_QR || 0);
-    firstRows = Math.max(0, Math.min(firstRows, Math.floor(avail / (rowNeed || layout.pitch || 20))));
+    const fitRows = Math.floor(avail / (rowNeed || layout.pitch || 20));
+    /* 한 줄만 들어가는 자리는 비워 둔다 — 머리 높이는 시드마다 달라(MD39 L1 은 69mm 차) 그 한 줄이 가장 잘 겹친다 */
+    firstRows = Math.max(0, Math.min(firstRows, fitRows <= 1 && layout.rows > 2 ? 0 : fitRows));
   }
   const firstCap = firstRows * layout.cols;
   const pages = [];
