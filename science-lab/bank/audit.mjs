@@ -18,7 +18,7 @@ const TRACKS = new Set(['교과', '영재성']);
 
 let fail = 0;
 const err = (m) => { fail++; console.log('  ✗ ' + m); };
-for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !/\.(lesson|similar|taxonomy)\.js$/.test(x))) {
+for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.js') && !/\.(lesson|similar|taxonomy|misc)\.js$/.test(x))) {
   const { unit, items } = await import(pathToFileURL(join(unitsDir, f)).href);
   console.log(`${unit.id} ${unit.title}: ${items.length}문항`);
   const ids = new Set();

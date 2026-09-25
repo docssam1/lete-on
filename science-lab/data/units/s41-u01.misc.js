@@ -153,3 +153,19 @@ export const remedy = {
   M06: { step: 3 }, M07: { step: 3 }, M08: { step: 3 }, M09: { step: 3 },
   M10: { step: 3 }, M11: { step: 3 }, M12: { step: 3 }, M13: { step: 4 }, M14: { step: 2 }, M15: { step: 3 },
 };
+
+// 서술형 부분점수 규칙 — 흔한 오답을 점수 규칙과 오개념 코드로 잇는다(science-lab/bank/written-score.mjs).
+// cap: 이 오답이 보이면 최대 n점 · deduct: n점 감점 · m: 오개념 코드. 확실한 오답 유형만 적는다.
+export const written = {
+  's41-u01-a19': { partial: [{ id: 'p1', when: '같은 극끼리 마주 보아 끌어당긴다고 씀', cap: 1, m: 'M09' }] },
+  's41-u01-a20': { partial: [{ id: 'p1', when: '같게 할 조건으로 비교하려는 자석(크기·종류)을 같게 한다고 씀', cap: 1, m: 'M14' }] },
+  's41-u01-v017': { partial: [{ id: 'p1', when: '동쪽에 막대자석의 N극을 가까이 한다고 씀', cap: 0, m: 'M09' }] },
+  's41-u01-v024': { partial: [{ id: 'p1', when: '철 못이 자석에서 밀려난다고 씀', cap: 0, m: 'M15' }] },
+  's41-u01-v047': { partial: [{ id: 'p1', when: '가운데에 클립이 가장 많이 붙는다는 예상이 맞다고 씀', cap: 0, m: 'M06' }] },
+  's41-u01-v057': { partial: [{ id: 'p1', when: '나침반이 고장 나거나 흔들려서 방향이 다르다고 씀', cap: 0, m: 'M12' }] },
+  's41-u01-v065': { partial: [
+    { id: 'p1', when: '유리나 물 때문에 자석의 힘이 통하지 않는다고 씀', cap: 0, m: 'M03' },
+    { id: 'p2', when: '자석 대신 막대기·그물 같은 다른 도구로 꺼낸다고 씀', cap: 0, m: 'M05' },
+  ] },
+  's41-u01-v072': { partial: [{ id: 'p1', when: '다른 극끼리 마주 보게 한다고 씀', cap: 0, m: 'M09' }] },
+};

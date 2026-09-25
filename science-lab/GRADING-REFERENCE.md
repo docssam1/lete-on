@@ -95,3 +95,26 @@ rubric: {
 4. partial의 오개념 기록 규칙(1절)을 진단 절에 추가.
 5. 채점 모드에서 예시 답·기준 공개 시점을 「제출 후」로.
 6. 배점은 교재 기준으로 고정. 계약의 「원장 결정 표」에서 배점 척도 항목을 뺀다.
+
+## 7. 구현됨 (2026-09-25) — 채점 엔진·규칙·감사
+
+AI 호출은 아직 없다. 공급자와 무관한 판정 검증·점수 계산과 데이터 계약만 만들었다.
+
+| 파일 | 하는 일 |
+|---|---|
+| `bank/written-score.mjs` | `rubricOf`(현행 `required[]` → 요소 id·배점, 문장 해시 id, 루브릭 버전) · `buildGradeRequest`(모델 요청: 답안은 `<답안>` 구분자 안의 데이터, 학생 식별 정보 없음, 점수 요구 안 함) · `validateJudgement`(요소 빠짐·중복·모르는 id, 근거가 답안에 실제로 있는지, 모순) · `scoreWritten`(서버 점수) · `gradeWritten`(검증 실패 = `needs_review`) |
+| `data/units/s41-u01.misc.js`, `s41-u03.misc.js` | `export const written` — 서술형 흔한 오답의 부분점수 규칙 17개(15문항), 기존 오개념 코드에 연결 |
+| `bank/written-audit.mjs` | 전 단원 서술형 39문항 무결성 검사(총점 = 배점 합, 규칙 범위, 오개념 코드 존재) |
+| `bank/written-score.test.mjs` | 단위 테스트 13개(만점·부분·cap·deduct·근거 조작·모순·누락·점수 끼워 넣기·요청 조립) |
+
+```bash
+node science-lab/bank/written-audit.mjs
+node --test science-lab/bank/written-score.test.mjs
+```
+
+- 배점: 지금 데이터에는 교재 배점이 없어 요소 1개 = 1점으로 계산된다. 교재 배점을 옮길 때는 `rubric.criteria: [{ id, text, points }]`로 적으면 그대로 쓴다.
+- 근거 비교는 공백·문장부호를 없앤 뒤 부분 문자열로 본다(띄어쓰기 차이로 검토 대기가 쌓이지 않게).
+- 진단 기록: 만점만 맞음. 부분 정답은 틀림 + 걸린 규칙의 오개념(없으면 단순 누락) → 기존 「서로 다른 문항 2개면 확정」 규칙 그대로.
+- 부분점수 규칙이 없는 단원: s41-u02·s42-u01(오개념 진단표가 아직 없음).
+- 곁가지 수정: `bank/audit.mjs`가 오개념 파일(`*.misc.js`)까지 단원 파일로 읽어 main에서 멈춰 있던 것을 고침.
+- 다음 단계: Supabase Edge Function에서 `buildGradeRequest` → 모델 호출 → `gradeWritten`. 실제 학생 답안 전송은 채점 계약의 개인정보 조건을 맞춘 뒤.
