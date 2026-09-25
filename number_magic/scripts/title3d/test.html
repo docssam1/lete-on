@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Title 3D test</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Jua&display=swap">
+<style>
+  :root{--font-game:'Fredoka','Jua','Pretendard',sans-serif}
+  html,body{margin:0;height:100%;background:#1a1040;overflow:hidden}
+  #stage{position:fixed;inset:0}
+  #log{position:fixed;left:8px;bottom:8px;z-index:9;font:12px monospace;color:#fff;background:rgba(0,0,0,.5);padding:4px 8px;border-radius:6px;pointer-events:none}
+  #log:empty{display:none}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="log"></div>
+<!-- 캐릭터 렌더러(앱과 같은 파일) — renderPartyHtml 로 실제 캐릭터 HTML 을 만든다 -->
+<script>window.NM_CHAR_BASE = '../../assets/characters/';</script>
+<script src="../../data/numi-avatar.js"></script>
+<script src="../../app/numi-render.js"></script>
+<script type="module">
+  import { mountTitle3D, DEFAULT_CHOICES } from '../../app/title3d/title3d.js';
+  const q = new URLSearchParams(location.search);
+  const lang = q.get('lang') || 'ko';
+  const kind = q.get('kid') || 'boy';
+  window.__picks = [];
+  const choices = DEFAULT_CHOICES.map(c => c.id === 'continue'
+    ? Object.assign({}, c, { sub:{ ko:'분수의 덧셈 · 3단계', en:'Adding fractions · step 3', zh:'分数加法 · 第3步' } }) : c);
+  try {
+    const ctl = await mountTitle3D(document.getElementById('stage'), {
+      lang, choices,
+      onPick:id => { window.__picks.push(id); console.log('onPick', id); document.getElementById('log').textContent = 'onPick: ' + id; },
+      player: px => window.renderPartyHtml ? window.renderPartyHtml(kind, { number:3, color:'blue' }, px) : '',
+      name: q.get('name') || '민준',
+      coins: 120,
+      chips: [{ icon:'📅', text:{ ko:'5일', en:'Day 5', zh:'第5天' } }],
+      reducedMotion: q.has('still') ? true : undefined,
+    });
+    window.__t3d = ctl;
+    window.__ready = ctl ? 'ok' : 'null';
+  } catch(e){ window.__ready = 'err:' + (e && e.stack || e); console.error(e); }
+</script>
+</body>
+</html>

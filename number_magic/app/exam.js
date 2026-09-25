@@ -5090,7 +5090,7 @@ function renderRoundPagesBody(item, opts){
     const estMm = (p, idx) => {
       const bare = nT > 1 && idx >= Math.ceil(nT * 0.75);
       const stT = bare ? [] : trainStepsOf(p);
-      const nSteps = stT.length + stT.filter(x => trainTallLine(x.tex)).length * 1.25;
+      const nSteps = stT.length + stT.filter(x => trainTallLine(x.tex)).length * 1.5;
       const ansN = (!bare && !(Array.isArray(p.steps) && p.steps.length) && (trainSolution(p).noAns || /\\square/.test(String(p.tex||'').replace(/=\s*\\square\s*$/,'')))) ? 0 : 1;
       /* 저학년 장은 글씨 배율이 1.28배(.nm-print-age-young --ws-fs) */
       const est = (14 + 12.8 * (nSteps + ansN) + 7 * (bare ? 3 : 1)) * fsR * (young ? 1.28 : 1);
