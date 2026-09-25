@@ -2,7 +2,7 @@
 // 자막이 원본이다: 화면 캡션·대본·음성이 전부 같은 문자열을 쓴다.
 // 비트는 시간(dur) 또는 학습자의 조작으로 넘어가고, 음성이 끝나기를 기다리지 않는다.
 import * as THREE from '../world-explorer/vendor/three.module.js';
-import { PALETTE, ease } from './scenes/_kit.js';
+import { PALETTE, ease, fitLabels } from './scenes/_kit.js';
 
 const REDUCED = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -16,12 +16,13 @@ export class Stage {
     this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, lowPower ? 1.5 : 2));
     this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.NeutralToneMapping; this.renderer.toneMappingExposure = 1.0;
     this.scene = new THREE.Scene(); this.scene.background = new THREE.Color(PALETTE.paper);
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
     this.root = new THREE.Group(); this.scene.add(this.root);
     this.orbit = { theta: 0.55, phi: 1.12, dist: 9, target: new THREE.Vector3(0, 0.8, 0), home: null };
     this._shadowSize = lowPower ? 1024 : 2048;
-    this._setupLights(); this._setupGround(); this._setupInput();
+    this._setupEnv(); this._setupLights(); this._setupGround(); this._setupInput();
     this.clock = new THREE.Clock(); this.update = null; this.running = true;
     this._resizeHandler = () => this._resize(); this._on(window, 'resize', this._resizeHandler);
     this._visibilityHandler = () => { this._pageVisible = document.visibilityState !== 'hidden'; this._updateActivity(); };
@@ -33,17 +34,40 @@ export class Stage {
     this._loop = this._loop.bind(this); this._resize(); this._updateActivity();
   }
   _on(target, type, handler, options) { target.addEventListener(type, handler, options); this._cleanups.push(() => target.removeEventListener(type, handler, options)); }
+  // 반사 환경: 코드로 만든 작은 사진 스튜디오(밝은 천장·창 두 개·따뜻한 바닥)를 PMREM으로 구워 재질에 비춘다.
+  // 외부 HDR 파일 없이 유리·물·금속·플라스틱에 자연스러운 반짝임과 입체감이 생긴다.
+  _setupEnv() {
+    try {
+      const room = new THREE.Scene(), geo = new THREE.SphereGeometry(20, 32, 16), col = [];
+      const pos = geo.attributes.position, top = new THREE.Color(0xfbfaf6), mid = new THREE.Color(0xe7e2d6), low = new THREE.Color(0x9b8f7c), c = new THREE.Color();
+      for (let i = 0; i < pos.count; i++) { const y = pos.getY(i) / 20; c.copy(y > 0 ? mid.clone().lerp(top, y) : mid.clone().lerp(low, -y)); col.push(c.r, c.g, c.b); }
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+      room.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide })));
+      for (const [x, y, z, w, h] of [[8, 9, -6, 9, 5], [-9, 7, 5, 6, 4], [0, 14, 0, 10, 10]]) {
+        const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+        p.position.set(x, y, z); p.lookAt(0, 0, 0); room.add(p);
+      }
+      const pm = new THREE.PMREMGenerator(this.renderer);
+      this.scene.environment = pm.fromScene(room, 0.03).texture; this.scene.environmentIntensity = 0.45;
+      pm.dispose(); room.traverse((o) => { o.geometry?.dispose(); o.material?.dispose(); });
+    } catch { /* 환경맵이 안 되는 기기면 조명만으로 */ }
+  }
   _setupLights() {
-    const hemi = new THREE.HemisphereLight(0xffffff, 0xcbbfa9, 0.9); this.scene.add(hemi);
+    const hemi = new THREE.HemisphereLight(0xffffff, 0xcbbfa9, 0.7); this.scene.add(hemi);
     const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(4, 8, 5); key.castShadow = true;
     key.shadow.mapSize.set(this._shadowSize, this._shadowSize); const s = 7; Object.assign(key.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 1, far: 30 });
-    key.shadow.bias = -0.0005; this.scene.add(key);
+    key.shadow.bias = -0.0005; key.shadow.normalBias = 0.02; key.shadow.radius = 4; this.scene.add(key);
     const fill = new THREE.DirectionalLight(0xdfe9ff, 0.5); fill.position.set(-5, 3, -4); this.scene.add(fill);
   }
   _setupGround() {
-    const g = new THREE.Mesh(new THREE.CircleGeometry(9, 64), new THREE.MeshStandardMaterial({ color: PALETTE.board, roughness: 0.95 }));
+    // 실험대: 가운데가 밝고 가장자리로 갈수록 배경에 녹아드는 원판(방사형 그라데이션) + 아주 옅은 눈금
+    const cv = document.createElement('canvas'); cv.width = cv.height = 512; const cx = cv.getContext('2d');
+    const gr = cx.createRadialGradient(256, 256, 30, 256, 256, 256); gr.addColorStop(0, '#efe8da'); gr.addColorStop(0.62, '#e4dccb'); gr.addColorStop(1, '#f7f2e8');
+    cx.fillStyle = gr; cx.fillRect(0, 0, 512, 512);
+    const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+    const g = new THREE.Mesh(new THREE.CircleGeometry(11, 96), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.92 }));
     g.rotation.x = -Math.PI / 2; g.receiveShadow = true; this.scene.add(g);
-    const grid = new THREE.GridHelper(12, 24, 0xd6ccb8, 0xe3dbcb); grid.position.y = 0.002; grid.material.transparent = true; grid.material.opacity = 0.55; this.scene.add(grid);
+    const grid = new THREE.GridHelper(10, 20, 0xd9d0bf, 0xe3dbcb); grid.position.y = 0.002; grid.material.transparent = true; grid.material.opacity = 0.28; this.scene.add(grid);
   }
   _setupInput() {
     const c = this.canvas; let drag = null, pinch = null;
@@ -94,6 +118,7 @@ export class Stage {
     this.camera.position.set(x, y, z); this.camera.lookAt(o.target);
     if (this.update) this.update(dt, t, raw);
     if (this.canvas.width !== Math.floor(this.canvas.clientWidth * this.renderer.getPixelRatio())) this._resize();
+    fitLabels(this.scene, this.camera, this.canvas.clientHeight, this.canvas.clientWidth < 500 ? 32 : 30, 54);   // 라벨 전체 높이 px(글자는 약 57%)
     this.renderer.render(this.scene, this.camera);
     this._requestFrame();
   }

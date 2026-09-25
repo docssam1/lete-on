@@ -35,16 +35,34 @@ export function glassMat(color = PALETTE.glass, opacity = 0.35) {
   });
 }
 
-export function box(w, h, d, color, opts) {
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(color, opts));
+// 모서리가 둥근 상자(three.js 예제 RoundedBoxGeometry와 같은 방식: 가운데 칸을 평면으로 늘리고 바깥 칸을 둥글게 편다).
+// 공유하면 호출하는 쪽의 geometry.translate()가 서로 번지므로 매번 새로 만든다.
+export function roundedBoxGeometry(w, h, d, r, seg = 3) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2, d / 2));
+  if (r < 1e-4) return new THREE.BoxGeometry(w, h, d);
+  const s = seg * 2 + 1, geo = new THREE.BoxGeometry(1, 1, 1, s, s, s).toNonIndexed();
+  const pos = geo.attributes.position, nor = geo.attributes.normal, half = 0.5 / s;
+  const inner = new THREE.Vector3(w / 2 - r, h / 2 - r, d / 2 - r), p = new THREE.Vector3(), n = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    p.fromBufferAttribute(pos, i);
+    n.set(p.x - Math.sign(p.x) * half, p.y - Math.sign(p.y) * half, p.z - Math.sign(p.z) * half).normalize();
+    pos.setXYZ(i, inner.x * Math.sign(p.x) + n.x * r, inner.y * Math.sign(p.y) + n.y * r, inner.z * Math.sign(p.z) + n.z * r);
+    nor.setXYZ(i, n.x, n.y, n.z);
+  }
+  geo.computeBoundingBox(); geo.computeBoundingSphere();
+  return geo;
+}
+export function box(w, h, d, color, opts = {}) {
+  const r = opts.radius ?? Math.min(0.08, Math.min(w, h, d) * 0.22);
+  const m = new THREE.Mesh(roundedBoxGeometry(w, h, d, r), mat(color, opts));
   m.castShadow = true; m.receiveShadow = true; return m;
 }
 export function cylinder(rTop, rBot, h, color, opts = {}) {
-  const m = new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBot, h, opts.seg ?? 32, 1, !!opts.open), mat(color, opts));
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBot, h, opts.seg ?? 48, 1, !!opts.open), mat(color, opts));
   m.castShadow = true; m.receiveShadow = true; return m;
 }
 export function sphere(r, color, opts = {}) {
-  const m = new THREE.Mesh(new THREE.SphereGeometry(r, opts.seg ?? 24, opts.seg ?? 16), mat(color, opts));
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r, opts.seg ?? 36, opts.seg ? Math.round(opts.seg * 0.7) : 26), mat(color, opts));
   m.castShadow = true; return m;
 }
 export function plane(w, h, color, opts = {}) {
@@ -70,25 +88,41 @@ export function liquid(r, hMax, color = PALETTE.water, opacity = 0.75) {
 }
 
 // 라벨 스프라이트 — 캔버스에 한글을 그려 붙인다. size는 월드 단위 높이.
+// 화면에서는 fitLabels()가 매 프레임 "최소 글자 높이(px)"를 보장한다(멀거나 화면이 작아도 읽히게).
 const _labelCache = new Map();
 export function label(text, opts = {}) {
-  const size = opts.size ?? 0.42, color = opts.color ?? '#1f2a37', bg = opts.bg ?? 'rgba(255,255,255,0.86)';
-  const key = `${text}|${size}|${color}|${bg}`;
+  const size = opts.size ?? 0.42, color = opts.color ?? '#0f172a', bg = opts.bg ?? 'rgba(255,255,255,0.96)';
+  const key = `${text}|${color}|${bg}`;
   let tex = _labelCache.get(key);
   if (!tex) {
     const c = document.createElement('canvas'); const ctx = c.getContext('2d');
-    const fs = 44; ctx.font = `600 ${fs}px "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif`;
-    const w = Math.ceil(ctx.measureText(text).width) + 44, h = fs + 30;
-    c.width = w * 2; c.height = h * 2; ctx.scale(2, 2);
-    ctx.font = `600 ${fs}px "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif`;
-    ctx.fillStyle = bg; roundRect(ctx, 0, 0, w, h, 14); ctx.fill();
-    ctx.fillStyle = color; ctx.textBaseline = 'middle'; ctx.fillText(text, 22, h / 2 + 2);
-    tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+    const fs = 56, font = `700 ${fs}px "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif`, S = 3;
+    ctx.font = font;
+    const pad = 26, sh = 8, w = Math.ceil(ctx.measureText(text).width) + pad * 2 + sh, h = fs + 34 + sh;
+    c.width = w * S; c.height = h * S; ctx.scale(S, S); ctx.font = font;
+    ctx.fillStyle = 'rgba(15,23,42,0.18)'; roundRect(ctx, sh * 0.5, sh, w - sh, h - sh, 18); ctx.fill();          // 그림자
+    ctx.fillStyle = bg; roundRect(ctx, 0, 0, w - sh, h - sh, 18); ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(15,23,42,0.22)'; roundRect(ctx, 1.25, 1.25, w - sh - 2.5, h - sh - 2.5, 17); ctx.stroke();
+    ctx.fillStyle = color; ctx.textBaseline = 'middle'; ctx.fillText(text, pad, (h - sh) / 2 + 3);
+    tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
     tex.userData = { w, h }; _labelCache.set(key, tex);
   }
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false, toneMapped: false }));
   const { w, h } = tex.userData; s.scale.set(size * w / h, size, 1); s.renderOrder = 10;
-  s.userData.isLabel = true; return s;
+  s.userData.isLabel = true; s.userData.base = s.scale.clone(); return s;
+}
+// 라벨 글자가 화면에서 minPx 보다 작거나 maxPx 보다 크지 않게 크기를 맞춘다(카메라 거리·화면 높이 기준).
+const _lp = new THREE.Vector3();
+export function fitLabels(root, camera, viewH, minPx = 20, maxPx = 34) {
+  if (!viewH) return;
+  const k = 2 * Math.tan((camera.fov * Math.PI) / 360) / viewH;
+  root.traverseVisible((o) => {
+    if (!o.isSprite || !o.userData.isLabel || !o.userData.base) return;
+    o.getWorldPosition(_lp); const perPx = _lp.distanceTo(camera.position) * k;   // 1px 당 월드 길이
+    const pw = new THREE.Vector3(); o.parent?.getWorldScale(pw); const ps = pw.y || 1;
+    const px = (o.userData.base.y * ps) / perPx, want = Math.max(minPx, Math.min(maxPx, px)), f = want / px;
+    o.scale.set(o.userData.base.x * f, o.userData.base.y * f, 1);
+  });
 }
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
@@ -150,6 +184,6 @@ export { THREE };
 export function relabel(sprite, text, opts = {}) {
   if (!sprite || !sprite.userData || !sprite.userData.isLabel) return sprite;
   if (sprite.userData.text === text) return sprite;
-  const fresh = label(text, opts); sprite.material.map = fresh.material.map; sprite.scale.copy(fresh.scale); sprite.userData.text = text;
+  const fresh = label(text, opts); sprite.material.map = fresh.material.map; sprite.scale.copy(fresh.scale); sprite.userData.base = fresh.userData.base; sprite.userData.text = text;
   fresh.material.dispose(); return sprite;
 }
