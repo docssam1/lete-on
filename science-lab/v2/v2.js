@@ -432,7 +432,7 @@ function pageBook(u, L, items, mode) {
 }
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
-const BOOKS = { 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js') };
+const BOOKS = { 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
 function labBar(u, cur) {
   const b = (href, t, k) => `<a class="btn${cur === k ? ' primary' : ''}" href="${href}">${t}</a>`;
   return `<div class="bk-bar no-print">${b(`#/${u}/lab-book/student`, '교재 · 학생용', 'student')}${b(`#/${u}/lab-book/teacher`, '교재 · 강사용', 'teacher')}
@@ -441,7 +441,9 @@ function labBar(u, cur) {
 }
 async function pageLabBook(u, mod, mode) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, media }, { renderChapter, fitPages }, { wireLive }] = await Promise.all([BOOKS[u](), import('./book.js'), import('./live.js')]);
+  const bookMod = await BOOKS[u]().catch(() => null);
+  if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
+  const [{ chapter, art, media }, { renderChapter, fitPages }, { wireLive }] = await Promise.all([bookMod, import('./book.js'), import('./live.js')]);
   $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(chapter.book)} · ${esc(chapter.title)}</h1></div></header>
     <main class="wrap">${labBar(u, mode)}</main>${renderChapter(chapter, art, mod.similar || [], { teacher: mode === 'teacher', live: true, media })}`;
   scrollTo(0, 0);
@@ -459,7 +461,9 @@ async function pageLabBook(u, mod, mode) {
 }
 async function pageLabClass(u, mod, L, mode, idx) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([BOOKS[u](), import('./deck.js')]);
+  const bookMod = await BOOKS[u]().catch(() => null);
+  if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
+  const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([bookMod, import('./deck.js')]);
   renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx,
     mount3D: (el) => mount3D(el, L.engage.scene, { autoplay: false }),
     mountLab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }) });
