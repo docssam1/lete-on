@@ -156,11 +156,11 @@ server.listen(0, async () => {
               try { NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, wordType:'all' }); } catch(e){ continue; }
               await new Promise(requestAnimationFrame);
               const items = [...document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item')];
-              if(!document.querySelector('.nm-print-sheet .nm-w2-grid .nm-print-item-word')) continue;
+              if(!document.querySelector('.nm-print-sheet .nm-w2-grid .nm-w2-item-word')) continue;
               document.head.appendChild(st); await new Promise(requestAnimationFrame);
               const grid = document.querySelector('.nm-print-sheet .nm-w2-grid');
               const gap = parseFloat(getComputedStyle(grid).rowGap) || 0;
-              document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-print-item-word').forEach(e => { need = Math.max(need || 0, Math.ceil(mm(e.getBoundingClientRect().height + gap) * 10) / 10); });
+              document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item-word').forEach(e => { need = Math.max(need || 0, Math.ceil(mm(e.getBoundingClientRect().height + gap) * 10) / 10); });
               st.remove();
             }
             row.push(need);
