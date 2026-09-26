@@ -153,7 +153,10 @@ const CSS = `
 .t3d-logo-sub{font-family:var(--t3d-serif-ko);font-size:calc(var(--t3d-logosub,14px) * 1.08);font-weight:400;letter-spacing:.3em;color:var(--la-ink-2);line-height:1.3}
 .t3d-logo-sub span{margin-right:-.3em}
 .t3d-story{width:0;min-width:100%;white-space:normal;margin-top:.5em;font-family:var(--t3d-serif-ko);font-size:calc(var(--t3d-logosub,14px) * .98);line-height:1.5;
-  color:var(--la-ink-2);letter-spacing:.01em;text-wrap:balance;word-break:keep-all}
+  color:var(--la-ink);letter-spacing:.01em;text-wrap:balance;word-break:keep-all;
+  /* 창밖 숲 그림 위에 얹히므로 반투명 유리 띠를 깔아 읽히게(2026-09-26 검토) */
+  box-sizing:border-box;padding:.35em .9em;border-radius:12px;background:rgba(255,255,255,.74);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 2px 10px rgba(38,48,74,.08)}
 .t3d-story::before{content:"";display:inline-block;width:.62em;height:.62em;margin-right:.45em;vertical-align:.05em;background:var(--la-gold);
   -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2.5c.6 5.2 4.3 8.9 9.5 9.5-5.2.6-8.9 4.3-9.5 9.5-.6-5.2-4.3-8.9-9.5-9.5 5.2-.6 8.9-4.3 9.5-9.5z'/></svg>") center/contain no-repeat;
   mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2.5c.6 5.2 4.3 8.9 9.5 9.5-5.2.6-8.9 4.3-9.5 9.5-.6-5.2-4.3-8.9-9.5-9.5 5.2-.6 8.9-4.3 9.5-9.5z'/></svg>") center/contain no-repeat}
