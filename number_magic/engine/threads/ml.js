@@ -75,23 +75,38 @@ NM_TGEN['ml1_double'] = function(params, rng) {
 NM_TGEN['ml_jumpTT'] = function(params, rng) {
   const tables = params.tables || [6, 7];
   const t = pick(rng, tables);
-  const n = R(rng, 2, 5);                     /* 수직선에 담기는 점프 수 */
+  // 주간 학습지 20문항 + 예시·따라풀기 4문항을 같은 변형 없이 만들 수 있도록
+  // 각 두 단에서 2~9회 점프하고, 보이는 질문을 '횟수'와 '도착값'으로 나눈다
+  // (레벨당 정확히 32개 보이는 변형). 질문한 값을 문장이나 수직선에 미리 쓰지 않는다.
+  const n = R(rng, 2, 9);
+  const ask = pick(rng, ['hops', 'total']);
   const seq = [0];
   for(let i = 1; i <= n; i++) seq.push(t * i);
   const sum = new Array(n).fill(t).join(' + ');
+  const product = t * n;
   return {
-    prompt: {
-      ko: `${t}씩 ${n}번 뛰면 얼마일까요? 몇 번 뛰었는지 □에 써요.`,
-      en: `Hop ${n} times by ${t} — write how many hops in the □.`,
-      zh: `每次跳${t}，跳${n}次是多少？在□里写跳了几次。`
+    prompt: ask === 'hops' ? {
+      ko: `수직선에서 ${t}씩 뛰었습니다. 호를 세어 몇 번 뛰었는지 □에 씁니다.`,
+      en: `The line hops by ${t}. Count the arcs and write the number of hops.`,
+      zh: `数轴上每次跳${t}。数一数弧线，写出跳了几次。`
+    } : {
+      ko: `${t}씩 ${n}번 뛰었습니다. 마지막에 도착한 수를 □에 씁니다.`,
+      en: `Hop ${n} times by ${t}. Write the number reached at the end.`,
+      zh: `每次跳${t}，跳${n}次。写出最后到达的数。`
     },
-    tex: `${sum} = ${t} \\times \\square = ${t * n}`,
-    answer: n, answerType: 'number',
+    tex: ask === 'hops'
+      ? `${sum} = ${t} \\times \\square = ${product}`
+      : `${sum} = ${t} \\times ${n} = \\square`,
+    answer: ask === 'hops' ? n : product, answerType: 'number',
     widget: 'numline',
-    numline: { start: 0, step: t, seq, blank: -1 },        /* blank -1 = 빈 마디 없음(전부 보여 준다) */
+    numline: { start: 0, step: t, seq, blank: ask === 'total' ? n : -1 },
     solution: [
-      { tex: `${sum} = \\square`, blank: t * n },
-      { tex: `${t} \\times \\square = ${t * n}`, blank: n }
+      ask === 'hops'
+        ? { tex: `\\text{호의 수} = \\square`, blank: n }
+        : { tex: `${t} \\times ${n} = \\square`, blank: product },
+      ask === 'hops'
+        ? { tex: `${t} \\times \\square = ${product}`, blank: n }
+        : { tex: `${sum} = \\square`, blank: product }
     ]
   };
 };

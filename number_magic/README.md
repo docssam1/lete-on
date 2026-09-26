@@ -1,7 +1,8 @@
 # 수의 마법 (Numbers of Magic) 🪄
 
-유아 5세부터 미적분Ⅰ까지, **48과정 383회차**의 연산 학습 시스템.
-문항은 사람이 쓰지 않고 **생성기가 매번 새로 만든다** — 같은 유형을 몇 번이든 다시 낼 수 있다.
+유아 5세부터 미적분Ⅰ까지, **48과정 396회차**의 연산 학습 시스템.
+문항은 시드 생성기가 만들며, 한 학습지에서 학생에게 보이는 변형을 다시 쓰지 않는다.
+유한한 유형의 후보를 모두 썼다면 중복으로 채우지 않고 부족을 알리며 출력을 막는다.
 
 **배포** https://lete-on.gfieldacademy.net/number_magic/ (`main` 푸시 시 GitHub Actions 자동 배포)
 **빌드 도구 없음** — 순수 HTML·JS·CSS. `index.html`이 스크립트를 순서대로 읽는다.
@@ -29,12 +30,14 @@
 | `app/exam.js` | 학습지 인쇄 |
 | `engine/threads/*.js` | 유형별 문제 생성기 (`NM_TGEN`) |
 | `engine/rng.js` | 시드 난수 — **`Math.random()` 금지** |
-| `data/threads.js` | 211유형 657레벨 |
-| `data/units/*.js` | 유닛 카드 221개 |
+| `data/threads.js` | 218유형 700레벨 |
+| `data/middle-concepts.js` | 중등 MD 51유형·202레벨의 원리·절차·주의점 (한국어) |
+| `data/drill-topics.js` | 문제은행 탐색 분류, 등록 레벨 자동 연결 |
+| `data/units/*.js` | 유닛 카드 226개 |
 | `data/courses.js` | 48과정 편성 (학습지) |
-| `data/roadmap.js` | 66챕터 (앱 「마법 학습 여행」) |
+| `data/roadmap.js` | 71챕터 (앱 「마법 학습 여행」) |
 | `data/stages.js` | 7단계 (광고 로드맵) |
-| `scripts/check-*.js` | 검사기 20종 |
+| `scripts/check-*.js` | 동기화·수학·무중복·A4·모바일 검사기 |
 
 ---
 
@@ -44,6 +47,7 @@
 cd number_magic
 
 # 데이터를 고쳤으면 매번 (각 수 초)
+node scripts/check-roadmap-sync.js --self-test
 node scripts/check-ladder.js
 node scripts/check-stages.js
 node scripts/check-answerable.js
@@ -52,10 +56,17 @@ node scripts/check-tone.js
 
 # 커밋 전 (수 분)
 node scripts/check-print.js
+node scripts/check-print-page.js
+node scripts/check-middle-concepts.js
+node scripts/check-worksheet-uniqueness.js --browser
+node scripts/check-middle-pacing-print.js
 node scripts/check-solution-steps.js
 node scripts/check-new-levels-math.js
 ```
 
 **새 유형·유닛을 추가할 때는 `인수인계서.md` §4의 여덟 걸음을 그대로 따를 것.**
-네 번째(`index.html` 태그)와 여섯 번째(`data/roadmap.js` 챕터)를 빠뜨리면
-**검사기는 전부 통과하는데 화면에서만 안 보인다.** 실제로 두 번 났던 사고다.
+네 번째(`index.html` 태그)와 여섯 번째(`data/roadmap.js` 챕터) 누락 사고를
+`check-roadmap-sync`가 잡는다. 새 생성기 파일은 `index.html`·`drill.html`·`ws.html`
+태그를 함께 확인하고, 새 스레드는 `data/drill-topics.js` 분류에 넣는다.
+설계·검증·남은 항목은 `docs/sync-ux-20260922.md` 참고.
+중등 개념 원본 대조와 학습지 설계는 `docs/middle-concepts-source-audit.md` 참고.

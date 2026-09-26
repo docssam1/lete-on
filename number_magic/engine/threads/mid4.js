@@ -183,6 +183,7 @@ NM_TGEN['md22_cubeFormula'] = function (params, rng) {
    mode: 'direct'(계수 직접 대응, 항등식의 정의 확인) · 'expand'
    (a(x-p)+b(x-q)≡Cx+D 전개 후 계수비교, 답 [a,b]) · 'expandWide'
    (같은 구조, 실전 범위). */
+/* ≡ 기호는 고등 교과서가 쓰지 않는다 — "x에 대한 항등식"이라고 말로 적고 등호를 쓴다(2026-09-25) */
 NM_TGEN['md23_identity'] = function (params, rng) {
   const mode = params.mode || 'direct';
 
@@ -195,11 +196,11 @@ NM_TGEN['md23_identity'] = function (params, rng) {
         en: `If an equation holds for every x (an identity), the x-coefficients match and the constants match`,
         zh: `如果对任意x都成立(恒等式)，两边x的系数相等，常数项也相等`
       },
-      tex: `\\square x + \\square \\equiv ${C}x ${wrapPlus(D)}`,
+      tex: `\\square x + \\square = ${C}x ${wrapPlus(D)} \\;\\;(x\\text{에 대한 항등식})`,
       answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
       solution: [
         { tex: `${C}x ${wrapPlus(D)}` },
-        { tex: `\\square x + \\square \\equiv ${C}x ${wrapPlus(D)}`, blank: answer }
+        { tex: `\\square x + \\square = ${C}x ${wrapPlus(D)} \\;\\;(x\\text{에 대한 항등식})`, blank: answer }
       ]
     };
   }
@@ -216,12 +217,12 @@ NM_TGEN['md23_identity'] = function (params, rng) {
       en: `Expand the left side first to collect the x-coefficient and constant, then compare with the right side`,
       zh: `先展开左边，整理出x的系数和常数项，再和右边比较`
     },
-    tex: `\\square(x - ${p}) + \\square(x - ${q}) \\equiv ${C}x ${wrapPlus(D)}`,
+    tex: `\\square(x - ${p}) + \\square(x - ${q}) = ${C}x ${wrapPlus(D)} \\;\\;(x\\text{에 대한 항등식})`,
     answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
     solution: [
       { tex: `${a}(x-${p})+${b}(x-${q}) = (${a}+${b})x-(${a}\\times${p}+${b}\\times${q})` },
       { tex: `= ${C}x ${wrapPlus(D)}` },
-      { tex: `\\square(x - ${p}) + \\square(x - ${q}) \\equiv ${C}x ${wrapPlus(D)}`, blank: answer }
+      { tex: `\\square(x - ${p}) + \\square(x - ${q}) = ${C}x ${wrapPlus(D)} \\;\\;(x\\text{에 대한 항등식})`, blank: answer }
     ]
   };
 };

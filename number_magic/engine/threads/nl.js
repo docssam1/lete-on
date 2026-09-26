@@ -175,7 +175,31 @@
     { name: { ko: '물고기', en: 'fish', zh: '鱼' }, close: true,
       pts: [[10,50],[35,26],[70,30],[90,50],[70,70],[35,74]] },
     { name: { ko: '별', en: 'star', zh: '星星' }, close: true,
-      pts: [[50,5],[61,36],[94,36],[67,57],[78,90],[50,70],[22,90],[33,57],[6,36],[39,36]] }
+      pts: [[50,5],[61,36],[94,36],[67,57],[78,90],[50,70],[22,90],[33,57],[6,36],[39,36]] },
+    { name: { ko: '왕관', en: 'crown', zh: '王冠' }, close: true,
+      pts: [[12,72],[20,28],[42,52],[58,20],[76,52],[90,28],[86,82],[18,82]] },
+    { name: { ko: '배', en: 'boat', zh: '小船' }, close: true,
+      pts: [[12,58],[88,58],[72,82],[30,82],[18,68]] },
+    { name: { ko: '나무', en: 'tree', zh: '树' }, close: true,
+      pts: [[50,8],[78,42],[65,42],[88,72],[62,72],[62,92],[38,92],[38,72],[12,72],[35,42],[22,42]] },
+    { name: { ko: '연', en: 'kite', zh: '风筝' }, close: true,
+      pts: [[50,8],[84,46],[50,80],[16,46]] },
+    { name: { ko: '왕관 모자', en: 'party hat', zh: '尖顶帽' }, close: true,
+      pts: [[50,10],[84,84],[16,84]] },
+    { name: { ko: '봉투', en: 'envelope', zh: '信封' }, close: true,
+      pts: [[12,25],[88,25],[88,78],[12,78],[50,48]] },
+    { name: { ko: '고양이 얼굴', en: 'cat face', zh: '猫脸' }, close: true,
+      pts: [[18,32],[18,10],[38,24],[62,24],[82,10],[82,58],[68,82],[32,82],[18,58]] },
+    { name: { ko: '버섯', en: 'mushroom', zh: '蘑菇' }, close: true,
+      pts: [[14,52],[24,26],[50,12],[76,26],[86,52],[64,52],[66,88],[34,88],[36,52]] },
+    { name: { ko: '우산', en: 'umbrella', zh: '雨伞' }, close: true,
+      pts: [[10,52],[24,28],[50,16],[76,28],[90,52],[70,48],[50,56],[30,48]] },
+    { name: { ko: '연필', en: 'pencil', zh: '铅笔' }, close: true,
+      pts: [[12,70],[58,24],[80,24],[88,32],[88,46],[42,92],[16,88]] },
+    { name: { ko: '실루엣 새', en: 'bird', zh: '小鸟' }, close: true,
+      pts: [[12,56],[34,34],[52,50],[72,28],[88,52],[68,72],[38,76]] },
+    { name: { ko: '화분', en: 'flowerpot', zh: '花盆' }, close: true,
+      pts: [[30,52],[18,34],[34,18],[50,36],[66,18],[82,34],[70,52],[76,88],[24,88]] }
   ];
 
   /* ── NL2 — 수의 순서 ──────────────────────────────────────
@@ -242,11 +266,20 @@
     const lv   = (params && params.level) || 'main';
 
     if (mode === 'coins') {
-      const n = lv === 'practice' ? R(rng, 2, 5) : R(rng, 3, 9);
+      /* main은 3~10닢×2가지 풀이 행동으로 딱 16개를 예약한다.
+         직접 총액을 세는 문항과 한 닢을 더 놓은 뒤의 총액을
+         이어 세는 문항은 화면에 보이는 동전 수와 풀이가 둘 다 다르다. */
+      const n = lv === 'practice' ? R(rng, 2, 5) : R(rng, 3, 10);
+      const addOne = lv === 'practice' ? false : pick(rng, [true, false]);
+      const shown = addOne ? n - 1 : n;
       const items = [];
-      for (let i = 0; i < n; i++) items.push({ e: '🪙', t: true });
+      for (let i = 0; i < shown; i++) items.push({ e: '🪙', t: true });
       return {
-        prompt: {
+        prompt: addOne ? {
+          ko: '보이는 10원짜리 동전에 한 닢을 더 놓아요. 10원씩 이어 세면 모두 얼마일까요?',
+          en: 'Add one more 10-won coin to those shown. Count on by 10. How much altogether?',
+          zh: '在图中的10元硬币上再放一枚。按10继续数，一共多少元？'
+        } : {
           ko: '한 닢에 10원! 10, 20, 30… 뛰어세며 톡톡 — 모두 얼마인지 골라요',
           en: 'Each coin is 10! Tap along — 10, 20, 30… then pick the total',
           zh: '一枚10元！10、20、30……跳着数，选出一共多少'
@@ -320,9 +353,17 @@
     }
 
     /* ---- tenpair: 텐프레임에서 10의 짝꿍 만들기 ---- */
-    const n = R(rng, 3, 9);
+    /* 2~9×2가지 학습자 행동 = 16개의 유한 풀. 도형을 채우는
+       활동과 빈칸을 세는 활동은 같은 10의 짝꿍 개념이지만
+       학습지에서 보고 하는 풀이 행동이 다르다. */
+    const n = R(rng, 2, 9);
+    const countEmpty = pick(rng, [true, false]);
     return {
-      prompt: {
+      prompt: countEmpty ? {
+        ko: `${n}개가 채워진 10칸을 보고 빈칸을 세어요. 빈칸은 몇 개일까요?`,
+        en: `Look at the ten-frame with ${n} filled spaces. How many empty spaces are there?`,
+        zh: `看一看已填${n}格的十格阵，还有几个空格？`
+      } : {
         ko: `${n}의 10 짝꿍을 찾아요! 빈 칸을 눌러 10을 가득 채워 봐요`,
         en: `Find ${n}'s partner to 10! Tap the empty squares to fill up to 10`,
         zh: `找${n}的凑十好朋友！点空格把10填满`
@@ -349,7 +390,10 @@
       const len   = 5;
       const seq   = [];
       for (let i = 0; i < len; i++) seq.push(start + i);
-      const blank = R(rng, 1, len - 2);   /* 첫 칸(힌트)·마지막 칸 제외 */
+      /* 첫 칸은 출발 힌트로 남기고, 가운데 칸뿐 아니라 마지막 칸도 묻는다.
+         1~10 범위의 6개 수열 × 빈칸 4자리 = 보이는 변형 24개라서
+         주간 학습지 20문항과 예시·따라 풀기 4문항이 겹치지 않는다. */
+      const blank = R(rng, 1, len - 1);
       return {
         prompt: {
           ko: '이어 세기! 순서대로 커지는 빈 칸을 골라요',
@@ -608,7 +652,19 @@
     { pts: [[20,30],[50,30],[50,70],[80,70]] },
     { pts: [[20,80],[20,50],[50,50],[50,20],[80,20]] },
     { pts: [[15,80],[15,55],[40,55],[40,30],[65,30],[65,10]] },
-    { pts: [[15,20],[50,20],[50,50],[85,50],[85,80],[50,80]] }
+    { pts: [[15,20],[50,20],[50,50],[85,50],[85,80],[50,80]] },
+    { pts: [[12,18],[12,82],[42,82],[42,48],[78,48],[78,18]] },
+    { pts: [[15,15],[45,15],[45,42],[75,42],[75,75],[45,75]] },
+    { pts: [[12,70],[32,70],[32,24],[62,24],[62,52],[88,52]] },
+    { pts: [[14,22],[14,52],[38,52],[38,82],[68,82],[68,42],[88,42]] },
+    { pts: [[10,50],[30,50],[30,18],[58,18],[58,72],[86,72]] },
+    { pts: [[16,84],[16,58],[46,58],[46,30],[76,30],[76,12]] },
+    { pts: [[12,24],[34,24],[34,76],[58,76],[58,46],[88,46]] },
+    { pts: [[14,78],[40,78],[40,18],[66,18],[66,52],[88,52]] },
+    { pts: [[12,12],[12,38],[44,38],[44,68],[76,68],[76,88]] },
+    { pts: [[16,18],[48,18],[48,82],[82,82],[82,48],[66,48]] },
+    { pts: [[10,82],[34,82],[34,46],[60,46],[60,16],[88,16]] },
+    { pts: [[14,50],[38,50],[38,16],[70,16],[70,82],[88,82]] }
   ];
 
   /* ── NL13 — 수 퍼즐·추론 ───────────────────────────────────
@@ -766,10 +822,24 @@
       };
     }
 
-    /* ---- build: 탤리를 탭해서 목표 수 만들기 ---- */
-    const target = lv === 'practice' ? R(rng, 2, 5) : R(rng, 3, 9);
+    /* ---- build: 탤리를 탭해서 목표 수 만들기 ----
+       학습지 한 회차는 연습 12 + 예시/따라풀기 4개를 모두 서로 다르게
+       예약한다. 목표 수만 바꾸면 쉬움 4개·어려움 7개에서 끝나므로, 이미
+       그어진 막대에서 목표까지 완성하는 실제 활동까지 유한 풀에 넣는다. */
+    const buildPool = [];
+    const lo = lv === 'practice' ? 2 : 3, hi = lv === 'practice' ? 6 : 9;
+    for (let target = lo; target <= hi; target++) {
+      const maxStart = lv === 'practice' ? target - 1 : Math.min(target - 1, 3);
+      for (let startCount = 0; startCount <= maxStart; startCount++) buildPool.push({ target, startCount });
+    }
+    const variant = pick(rng, buildPool);
+    const target = variant.target, startCount = variant.startCount;
     return {
-      prompt: {
+      prompt: startCount ? {
+        ko: `막대 ${startCount}개가 그어져 있어요. 탤리(산가지)가 ${target}개가 되도록 더 그어요`,
+        en: `${startCount} tally marks are already drawn. Add marks to make ${target} in all`,
+        zh: `已经画了${startCount}笔。继续画到一共有${target}笔`
+      } : {
         ko: `탤리(산가지)로 ${target}을(를) 만들어요! 판을 톡톡 눌러 막대를 더해요`,
         en: `Make ${target} with tally marks! Tap the board to add strokes`,
         zh: `用计数符号做出${target}！点一点板子加一笔`
@@ -777,7 +847,8 @@
       answer:     target,
       answerType: 'number',
       widget:     'tallyBuild',
-      target
+      target,
+      startCount
     };
   };
 
@@ -872,19 +943,29 @@
       };
     }
 
-    /* ---- read: 미리 그려진 탤리를 세어 답하기 ---- */
-    const target = lv === 'practice' ? R(rng, 2, 6) : R(rng, 3, 9);
+    /* ---- read: 떨어져 있는 탤리 묶음을 모두 세어 답하기 ----
+       한 묶음과 순서가 보이는 두 묶음 분할을 함께 사용한다. 쉬움은
+       2~6에서 20개, 어려움은 3~9에서 42개의 보이는 배열을 확보한다. */
+    const readPool = [];
+    const lo = lv === 'practice' ? 2 : 3, hi = lv === 'practice' ? 6 : 9;
+    for (let target = lo; target <= hi; target++) {
+      readPool.push({ target, tallyGroups:[target] });
+      for (let first = 1; first < target; first++) readPool.push({ target, tallyGroups:[first, target - first] });
+    }
+    const variant = pick(rng, readPool);
+    const target = variant.target, tallyGroups = variant.tallyGroups;
     return {
       prompt: {
-        ko: '탤리(산가지)를 세어 봐요! 모두 몇 개일까요?',
-        en: 'Count the tally marks! How many are there?',
-        zh: '数一数计数符号！一共有几个？'
+        ko: tallyGroups.length > 1 ? '떨어져 있는 탤리(산가지)를 빠짐없이 세어 봐요! 모두 몇 개일까요?' : '탤리(산가지)를 세어 봐요! 모두 몇 개일까요?',
+        en: tallyGroups.length > 1 ? 'Count every separated group of tally marks. How many are there in all?' : 'Count the tally marks! How many are there?',
+        zh: tallyGroups.length > 1 ? '把分开的每组计数符号都数进去！一共有几个？' : '数一数计数符号！一共有几个？'
       },
       answer:     target,
       answerType: 'number',
       widget:     'tallyBuild',
       interaction:'read',
-      target
+      target,
+      tallyGroups
     };
   };
 

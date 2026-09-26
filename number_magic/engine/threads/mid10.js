@@ -42,6 +42,14 @@ function wrapPlus(n){ return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`; }
 function coefLead(n){ return n===1?'':n===-1?'-':String(n); }
 function hasNeg(v){ return Array.isArray(v) ? v.some(x => x < 0) : v < 0; }
 function divisorsOf(n){ n=Math.abs(n); const out=[]; for(let d=1; d<=n; d++) if(n%d===0) out.push(d); return out; }
+/* Expand a finite bank without throwing away every old seeded result. The first
+   draw is exactly the legacy pick; a second draw keeps it with probability
+   legacy/(legacy+extra), otherwise it selects an added member. Every member of
+   the expanded bank therefore remains equiprobable. */
+function expandedPick(rng, legacy, extra){
+  const old = pick(rng, legacy);
+  return rng() * (legacy.length + extra.length) < legacy.length ? old : pick(rng, extra);
+}
 /* 세 언어를 한 번에 — 활용 문항이 story·ask 를 늘 세 벌로 내야 한다(wp.js 계약). */
 function L3(ko, en, zh){ return { ko, en, zh }; }
 /* 문장제 한 벌 조립 — wp.js assemble 과 같은 모양(prompt·word·wordAsk·wordUnit). */
@@ -132,8 +140,11 @@ NM_TGEN['md69_proportionGraph'] = function (params, rng) {
   const xr = [-6, 6], yr = [-8, 8];
 
   if (mode === 'inverseGraph') {
-    /* y=k/x — 눈금에서 읽히도록 k 를 작은 정수로, 지나는 점은 약수에서 고른다 */
-    const k = pick(rng, [2, 3, 4, 6, -2, -3, -4, -6]);
+    /* y=k/x — 12문항+예시 1개를 중복 없이 만들 수 있는 16개 유한 풀.
+       |k|<=8 이므로 기존 [-6,6]×[-8,8] 판 안에서 정수 점을 반드시 잡을 수 있다. */
+    const k = expandedPick(rng,
+      [2, 3, 4, 6, -2, -3, -4, -6],
+      [1, 5, 7, 8, -1, -5, -7, -8]);
     const ds = divisorsOf(k).filter(d => d <= 6 && Math.abs(k / d) <= 8);
     const px = ds.length ? ds[ds.length - 1] : 1;
     return {
@@ -190,8 +201,13 @@ NM_TGEN['md69_proportionGraph'] = function (params, rng) {
   }
 
   /* directGraph(기본) — 원점을 지나는 직선에서 비례상수 */
-  const a = pick(rng, [1, 2, 3, 4, -1, -2, -3, -4]);
-  const px = Math.abs(a) >= 3 ? 2 : 3;
+  /* 12문항 연습 + 예시·따라풀기 4개가 모두 달라야 하므로 정수 기울기
+     ±1..±8의 정확한 16개 풀을 쓴다. |a|>=3은 x=1을 표시해 [-8,8]
+     모눈 밖으로 나가지 않게 한다. */
+  const a = expandedPick(rng,
+    [1, 2, 3, 4, -1, -2, -3, -4],
+    [5, 6, 7, 8, -5, -6, -7, -8]);
+  const px = Math.abs(a) >= 3 ? 1 : 3;
   return {
     prompt: { ko: `정비례 y=ax의 그래프는 원점을 지나는 직선입니다 — 지나는 점에서 y를 x로 나누면 a가 나옵니다`,
       en: `The graph of a direct proportion y=ax is a straight line through the origin — divide y by x at any point to get a`,
@@ -827,7 +843,9 @@ NM_TGEN['md77_quadApply'] = function (params, rng) {
 
   if (mode === 'projectile') {
     /* 높이 y = vt - 5t² 꼴 — 땅에 떨어지는 시각을 답으로 */
-    const t = R(rng, 2, 8);
+    /* 일반 학습지의 연습10+예시1+따라풀기3을 모두 다르게 구성할 수
+       있도록 착지 시각 2..20초의 19개 실제 수학 변형을 둔다. */
+    const t = R(rng, 2, 20);
     const v = 5 * t;                       /* y = vt - 5t² = 0 ⟹ t = v/5 */
     return wordItem(
       L3(`지면에서 초속 ${v}m로 똑바로 위로 쏘아 올린 물체의 t초 뒤 높이는 (${v}t − 5t²)m예요.`,
@@ -844,7 +862,10 @@ NM_TGEN['md77_quadApply'] = function (params, rng) {
   }
 
   /* consecutive(기본) — 연속하는 두 자연수의 곱 */
-  const n = R(rng, 4, 15);
+  /* 24문항+예시 1개를 넘는 26개 유한 풀. 먼저 예전 4~15를 뽑아 두고
+     12:14 비율로 유지/확장해, 가능한 예전 시드 결과를 그대로 보존한다. */
+  const legacyN = R(rng, 4, 15);
+  const n = rng() * 26 < 12 ? legacyN : R(rng, 16, 29);
   const prod = n * (n + 1);
   return wordItem(
     L3(`연속하는 두 자연수의 곱이 ${prod}이에요.`,
@@ -863,9 +884,37 @@ NM_TGEN['md77_quadApply'] = function (params, rng) {
 /* ── MD78 — 이차함수 y=ax²의 그래프 ──
    MD67 은 곧바로 꼭짓점부터였다. 그 앞 — **가장 단순한 포물선 y=ax²** —
    을 떼어 낸다. mode: 'value'(함숫값) · 'findA'(지나는 점으로 a) ·
-   'readA'(그래프에서 a 읽기). */
+   'readA'(그래프에서 a 읽기) · 'symmetryTable'(x=-2~2 대응표). */
 NM_TGEN['md78_quadBasic'] = function (params, rng) {
   const mode = params.mode || 'value';
+
+  if (mode === 'symmetryTable') {
+    /* 연습 12문항+예시 1문항을 학습자 노출 중복 없이 뽑는 16개 유한 풀.
+       음수 x도 제곱하면 양수가 된다는 것과 y(-x)=y(x)를 표 한 줄에서
+       직접 확인한다. 새 그래프 UI가 아니라 기존 다칸 숫자 응답을 쓴다. */
+    const a = expandedPick(rng,
+      [1, 2, -1, -2],
+      [3, 4, 5, 6, 7, 8, -3, -4, -5, -6, -7, -8]);
+    const values = [4 * a, a, 0, a, 4 * a];
+    return {
+      prompt: { ko: `x와 −x를 제곱하면 같습니다 — 대응표의 왼쪽·오른쪽 y값을 짝지어 좌우 대칭을 확인하세요`,
+        en: `Squaring x and −x gives the same result — pair the y-values on the left and right of the table to check the symmetry`,
+        zh: `x和−x的平方相同——把表格左右的y值配对，确认对称性` },
+      tex: `{\\small y = ${coefLead(a)}x^2 \\quad
+        \\begin{array}{c|ccccc}
+          x & -2 & -1 & 0 & 1 & 2 \\\\\\\\ \\hline
+          y & \\square & \\square & \\square & \\square & \\square
+        \\end{array}}`,
+      answer: values, answerType: 'number', widget: 'numpad', negative: a < 0,
+      mathModel: { kind:'quadraticTable', a, p:0, q:0, xs:[-2, -1, 0, 1, 2] },
+      solution: [
+        { tex: `(-2)^2 = 2^2 = 4, \\qquad (-1)^2 = 1^2 = 1` },
+        /* 대칭을 먼저 확인하고 표를 채운다 — 풀이의 마지막 줄이 답이어야 한다(2026-09-25) */
+        { tex: `y(-2)=y(2), \\qquad y(-1)=y(1)` },
+        { tex: `\\left(\\square,\\, \\square,\\, \\square,\\, \\square,\\, \\square\\right)`, blank: values }
+      ]
+    };
+  }
 
   if (mode === 'findA') {
     const a = pick(rng, [1, 2, 3, -1, -2, -3]);
@@ -885,8 +934,12 @@ NM_TGEN['md78_quadBasic'] = function (params, rng) {
   }
 
   if (mode === 'readA') {
-    const a = pick(rng, [1, 2, -1, -2]);
-    const px = Math.abs(a) === 1 ? 2 : 2;
+    /* 12문항+예시 1개를 중복 없이 만들 수 있는 16개 유한 풀. |a|>2는
+       x=1인 정수 점을 표시해 y가 기존 세로 범위 [-8,8]을 벗어나지 않게 한다. */
+    const a = expandedPick(rng,
+      [1, 2, -1, -2],
+      [3, 4, 5, 6, 7, 8, -3, -4, -5, -6, -7, -8]);
+    const px = Math.abs(a) <= 2 ? 2 : 1;
     return {
       prompt: { ko: `y=ax²의 그래프는 원점이 꼭짓점입니다 — 지나는 점 하나로 a를 구합니다`,
         en: `The graph of y=ax² has its vertex at the origin — one point on it gives a`,
@@ -922,9 +975,40 @@ NM_TGEN['md78_quadBasic'] = function (params, rng) {
 /* ── MD79 — 이차함수의 평행이동 ──
    y=ax² 에서 y=a(x-p)²+q 로 가는 **세 걸음**을 따로 밟는다. 이걸 한 번에
    주면 "괄호 안은 반대로"가 규칙 암기가 된다.
-   mode: 'upDown'(y=ax²+q) · 'leftRight'(y=a(x-p)²) · 'both'(둘 다, 2칸). */
+   mode: 'upDown'(y=ax²+q) · 'leftRight'(y=a(x-p)²) · 'both'(둘 다, 2칸)
+   · 'pointValue'(주어진 x에서 지나는 점의 y값). */
 NM_TGEN['md79_quadShift'] = function (params, rng) {
   const mode = params.mode || 'upDown';
+
+  if (mode === 'pointValue') {
+    /* 48개의 정확한 유한 풀. p,q는 0이 아니어서 실제 평행이동한
+       포물선만 다루고, x-p가 ±1,±2가 되게 해 중3 대입 연산에 집중한다. */
+    const cases = [];
+    const aa = [1, 2, 3, -1, -2, -3], pp = [-3, -1, 1, 3], qq = [-3, 3];
+    aa.forEach((ca, ai) => pp.forEach((cp, pi) => qq.forEach((cq, qi) => {
+      const deltas = [-2, -1, 1, 2];
+      const d = deltas[(ai + 2 * pi + qi) % deltas.length];
+      cases.push({ a:ca, p:cp, q:cq, x:cp+d, pointStyle:(ai + pi + qi) % 2 === 0 });
+    })));
+    const c = pick(rng, cases), d = c.x - c.p, y = c.a * d * d + c.q;
+    const formula = `y = ${coefLead(c.a)}(x ${wrapPlus(-c.p)})^2 ${wrapPlus(c.q)}`;
+    return {
+      prompt: { ko: `x의 값을 (x−p)에 먼저 넣고, 제곱·a배·q의 순서로 계산하면 그 x에서 포물선이 지나는 y좌표가 됩니다`,
+        en: `Substitute x into (x−p), then square, multiply by a and add q to get the y-coordinate of the point on the parabola`,
+        zh: `先把x代入(x−p)，再按平方、乘a、加q的顺序计算，就能得到抛物线经过点的y坐标` },
+      tex: c.pointStyle
+        ? `${formula} \\quad\\Rightarrow\\quad \\left(${c.x},\\, \\square\\right)\\text{를 지나요}`
+        : `${formula} \\quad\\Rightarrow\\quad x=${c.x}\\text{일 때 }y=\\square`,
+      answer: y, answerType: 'number', widget: 'numpad', negative: y < 0,
+      mathModel: { kind:'quadraticPoint', a:c.a, p:c.p, q:c.q, x:c.x },
+      solution: [
+        { tex: `${c.x} ${wrapPlus(-c.p)} = \\square`, blank: d },
+        { tex: `y = ${c.a}\\times(${d})^2 ${wrapPlus(c.q)} = \\square`, blank: y },
+        { tex: `\\left(${c.x},\\, \\square\\right)`, blank: y }
+      ]
+    };
+  }
+
   const a = pick(rng, [1, 2, 3, -1, -2]);
 
   if (mode === 'leftRight') {
@@ -1147,39 +1231,68 @@ NM_TGEN['md82_numberLine'] = function (params, rng) {
   }
 
   if (mode === 'absolute') {
-    /* |x| = k 를 만족하는 수는 원점에서 같은 거리에 있는 **둘**이다. 수직선에 그 두 점을
-       찍어 두고 왼쪽(작은 수)을 묻는다 — 절댓값을 계산이 아니라 자리로 읽게 한다. */
-    const k = R(rng, 2, 6);
+    /* |x| = k 를 만족하는 수는 원점에서 같은 거리에 있는 **둘**이다. 같은 그림에서
+       왼쪽·오른쪽·두 점 모두를 읽게 해 15개의 실제 과제를 만든다(숨은 ID 변형 아님).
+       k=1~6과 [-7,7] 판은 그대로라 기존 학년·눈금 범위도 유지된다. */
+    const k = R(rng, 1, 6);
+    const ask = pick(rng, ['left', 'right', 'both']);
+    const answer = ask === 'left' ? -k : ask === 'right' ? k : [-k, k];
+    /* left는 예전 문항의 "작은 수" 표기를 그대로 두어 그 갈래의 시드 결과를 보존한다. */
+    const askTex = ask === 'left' ? '\\text{작은 수}' : ask === 'right' ? '\\text{오른쪽 수}' : '\\text{두 수}';
+    /* 두 칸 모두 실제 TeX 명령이어야 한다. `\\ \square`는 JS가 둘째 `\square`의
+       백슬래시를 문자열 이스케이프로 먹어 `\\ square`가 되었고, 학생용에는 첫 칸만
+       남았다. 간격도 TeX 명령으로 명시해 파서와 인쇄가 같은 두 칸을 보게 한다. */
+    const blankTex = ask === 'both' ? '\\square,\\quad\\square' : '\\square';
     return {
-      prompt: { ko: `절댓값이 같은 수는 원점에서 같은 거리에 있는 두 개입니다 — 왼쪽 수를 답합니다`,
-        en: `Two numbers share an absolute value, one on each side of zero — give the one on the left`,
-        zh: `绝对值相同的数有两个，分别在0的两侧——回答左边那个` },
-      tex: `|x| = ${k} \\quad\\Rightarrow\\quad \\text{작은 수} = \\square`,
-      answer: -k, answerType: 'number', widget: 'graphPlane', negative: true,
+      prompt: ask === 'left'
+        ? { ko: `절댓값이 같은 수는 원점에서 같은 거리에 있는 두 개입니다 — 왼쪽 수를 답합니다`,
+            en: `Two numbers share an absolute value, one on each side of zero — give the one on the left`,
+            zh: `绝对值相同的数有两个，分别在0的两侧——回答左边那个` }
+        : ask === 'right'
+          ? { ko: `절댓값이 같은 두 수는 0의 양쪽에 있습니다 — 오른쪽 수를 답합니다`,
+              en: `The two numbers with this absolute value lie on opposite sides of zero — give the one on the right`,
+              zh: `绝对值相同的两个数在0的两侧——回答右边那个` }
+          : { ko: `원점에서 같은 거리만큼 떨어진 두 수를 왼쪽부터 차례로 답합니다`,
+              en: `Give both numbers at this distance from zero, from left to right`,
+              zh: `写出到原点距离相同的两个数，按从左到右的顺序作答` },
+      tex: `|x| = ${k} \\quad\\Rightarrow\\quad ${askTex} = ${blankTex}`,
+      answer, answerType: 'number', widget: 'graphPlane', negative: hasNeg(answer),
       graph: { kind: 'numberline', lo: -7, hi: 7, den: 1,
         pts: [{ v: -k, label: 'A' }, { v: k, label: 'B' }] },
       solution: [
         { tex: `\\text{원점에서 거리 } ${k}` },
-        { tex: `\\text{오른쪽} = ${k}, \\quad \\text{왼쪽} = \\square`, blank: -k }
+        ask === 'left'
+          ? { tex: `\\text{오른쪽} = ${k}, \\quad \\text{왼쪽} = \\square`, blank: -k }
+          : ask === 'right'
+            ? { tex: `\\text{왼쪽} = ${-k}, \\quad \\text{오른쪽} = \\square`, blank: k }
+            : { tex: `\\text{왼쪽부터 } \\square,\\ \\square`, blank: [-k, k] }
       ]
     };
   }
 
   /* integer(기본) — 수직선 위 점의 정수 읽기 */
-  const lo = -7, hi = 7;
+  /* 주간 학습지 20문항에도 예시1+따라풀기3이 붙는다. 네 교육 문항까지 모두
+     겹치지 않도록 같은 정수 눈금 난이도에서 -12..12의 25개 점을 확보한다.
+     한 열 전체 폭을 쓰는 지면이라 27개 눈금(-13..13)도 서로 6mm 안팎 떨어진다. */
+  const lo = -13, hi = 13;
   let v = R(rng, lo + 1, hi - 1);
-  if (v === 0) v = 1;
   return {
-    prompt: { ko: `0에서 오른쪽은 양수, 왼쪽은 음수입니다 — 눈금을 세어 점이 나타내는 수를 읽습니다`,
-      en: `Right of zero is positive and left is negative — count the marks and read the number at the dot`,
-      zh: `0的右边是正数、左边是负数——数刻度读出点表示的数` },
+    prompt: v === 0
+      ? { ko: `수직선에서 0인 자리를 원점이라고 합니다 — 점이 원점에 있으면 나타내는 수는 0입니다`,
+          en: `Zero is the origin on a number line — a point at the origin represents 0`,
+          zh: `数轴上表示0的位置叫原点——点在原点时表示的数就是0` }
+      : { ko: `0에서 오른쪽은 양수, 왼쪽은 음수입니다 — 눈금을 세어 점이 나타내는 수를 읽습니다`,
+          en: `Right of zero is positive and left is negative — count the marks and read the number at the dot`,
+          zh: `0的右边是正数、左边是负数——数刻度读出点表示的数` },
     tex: `\\text{점 P가 나타내는 수} = \\square`,
     answer: v, answerType: 'number', widget: 'graphPlane', negative: v < 0,
     graph: { kind: 'numberline', lo: lo, hi: hi, den: 1, pts: [{ v: v, label: 'P' }] },
-    solution: [
-      { tex: `\\text{0에서 } ${v < 0 ? '왼쪽' : '오른쪽'} \\text{으로 } \\square \\text{칸}`, blank: Math.abs(v) },
-      { tex: `\\text{점 P} = \\square`, blank: v }
-    ]
+    solution: v === 0
+      ? [{ tex: `\\text{점 P는 원점} \\quad\\Rightarrow\\quad \\text{점 P} = \\square`, blank: 0 }]
+      : [
+          { tex: `\\text{0에서 } ${v < 0 ? '왼쪽' : '오른쪽'} \\text{으로 } \\square \\text{칸}`, blank: Math.abs(v) },
+          { tex: `\\text{점 P} = \\square`, blank: v }
+        ]
   };
 };
 

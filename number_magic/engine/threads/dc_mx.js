@@ -28,17 +28,27 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
   if (target === 1 && places === 1) {
     const a = R(rng, 1, 9);              /* 0.1 ~ 0.9 */
     const b = 10 - a;
+    /* 한 자리 보수는 값만 보면 9쌍뿐이다. 12문항 학습지와 교사용 예시가
+       같은 식을 되풀이하지 않도록, 교환법칙에 따른 좌우 배치도 눈에 보이는
+       별도 변형으로 쓴다(9 x 2 = 18개). 답의 의미와 난이도는 그대로다. */
+    const blankFirst = R(rng, 0, 1) === 1;
+    const digitTex = blankFirst
+      ? `\\square + ${a} = 10 \\;(\\text{십분의 자리})`
+      : `${a} + \\square = 10 \\;(\\text{십분의 자리})`;
+    const decimalTex = blankFirst
+      ? `0.\\square + 0.${a} = 1`
+      : `0.${a} + 0.\\square = 1`;
     return {
       prompt: { ko: `1을 만드는 짝꿍을 찾아요`,
                 en: `Find the partner that makes 1`,
                 zh: `找出凑成1的伙伴` },
-      tex:        `0.${a} + 0.\\square = 1`,
+      tex:        decimalTex,
       answer:     b,
       answerType: 'steps',
       widget:     'numpad',
       steps: [
-        { tex: `${a} + \\square = 10 \\;(\\text{십분의 자리})`, blank: b },
-        { tex: `0.${a} + 0.\\square = 1`,                        blank: b }
+        { tex: digitTex,   blank: b },
+        { tex: decimalTex, blank: b }
       ]
     };
   }

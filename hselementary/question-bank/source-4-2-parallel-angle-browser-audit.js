@@ -225,7 +225,7 @@ async function collectProblemState(page) {
       }
       const textStyleClear = [...svg.querySelectorAll("text")].every(text => {
         const style = getComputedStyle(text);
-        const expectedFamily = text.classList.contains("pa-name") ? "Malgun Gothic" : "Times New Roman";
+        const expectedFamily = "Pretendard";
         return style.fontWeight === "400" && style.fill === "rgb(17, 17, 17)" && style.stroke === "none" && style.fontFamily.includes(expectedFamily);
       });
       const lineElements = [...svg.querySelectorAll(".pa-line, .pa-arc, .pa-parallel, .pa-right, .pa-leader")];
@@ -389,7 +389,7 @@ async function collectSolutionState(page) {
       }
       const textStyleClear = [...svg.querySelectorAll("text")].every(text => {
         const style = getComputedStyle(text);
-        const expectedFamily = text.classList.contains("pa-name") ? "Malgun Gothic" : "Times New Roman";
+        const expectedFamily = "Pretendard";
         return style.fontWeight === "400" && style.fill === "rgb(17, 17, 17)" && style.stroke === "none" && style.fontFamily.includes(expectedFamily);
       });
       const lineElements = [...svg.querySelectorAll(".pa-line, .pa-arc, .pa-parallel, .pa-right, .pa-leader")];

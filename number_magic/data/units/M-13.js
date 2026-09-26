@@ -1,4 +1,4 @@
-/* Numbers of Magic — 유닛 M-13: (단항식)×(다항식)의 전개 (중등 W9 · 중2 식의 계산 · 계보5 '자리의 마법') */
+/* Numbers of Magic — 유닛 M-13: 단항식과 다항식의 곱셈·나눗셈 (중등 W9 · 중2 식의 계산 · 계보5 '자리의 마법') */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
@@ -7,8 +7,8 @@ window.NM_UNITS['M-13'] = {
   id:'M-13', tier:'middle2', level:'32', order:4,
   lineage:['place-magic'],
   generator:'md13_monoTimesPoly',
-  title:{ ko:'(단항식)×(다항식)의 전개', en:'Expanding Monomial × Polynomial', zh:'单项式乘多项式的展开' },
-  subtitle:{ ko:'괄호 밖의 하나가 안의 모든 항을 하나씩 찾아가 곱합니다', en:'The one outside the brackets visits every term inside, one by one', zh:'括号外的那一个，会一个个找到括号里的每一项相乘' },
+  title:{ ko:'단항식과 다항식의 곱셈·나눗셈', en:'Monomial–Polynomial Multiplication & Division', zh:'单项式与多项式的乘除法' },
+  subtitle:{ ko:'곱해도 나누어도 다항식의 모든 항을 빠짐없이 계산합니다', en:'Whether multiplying or dividing, operate on every term of the polynomial', zh:'无论乘还是除，多项式的每一项都不能漏' },
   icon:'🎁',
 
   practice:{
@@ -44,11 +44,22 @@ window.NM_UNITS['M-13'] = {
         result:{ko:'곱하는 게 x를 가지면 지수법칙이 함께 작동합니다!',en:'When the multiplier has x, the exponent law kicks in too!',zh:'乘数带x时，指数法则也一起起作用！'},
         book:{ko:'단항식×다항식은 분배법칙 + 지수법칙(문자끼리 곱할 때)을 함께 씁니다. 항이 세 개(삼항식)여도 방법은 같습니다.',
               en:'Monomial × polynomial uses the distributive law together with the exponent law (when letters multiply). Even with three terms (a trinomial), the method is the same.',
-              zh:'单项式乘多项式要同时用分配律和指数法则(字母相乘时)。就算是三项(三项式)，方法也一样。'} }
+              zh:'单项式乘多项式要同时用分配律和指数法则(字母相乘时)。就算是三项(三项式)，方法也一样。'} },
+
+      { tag:{ko:'③ 나눗셈 — 모든 항을 같은 단항식으로',en:'3) Division — divide every term by the same monomial',zh:'③ 除法——每一项都除以同一个单项式'},
+        head:{ko:'(12x²−8xy)÷4x = 3x−2y',en:'(12x²−8xy)÷4x = 3x−2y',zh:'(12x²−8xy)÷4x = 3x−2y'},
+        desc:{ko:'다항식 전체를 한 번에 나누는 것이 아니라 <b>각 항을 4x로 하나씩</b> 나눕니다. 계수는 나누고, 같은 문자의 지수는 뺍니다. 분수 계수로 나눌 때에는 역수를 곱합니다.',
+              en:'Do not divide the polynomial as one opaque block: <b>divide each term by 4x</b>. Divide coefficients and subtract exponents of like variables. For a fractional divisor, multiply by its reciprocal.',
+              zh:'不是把整个多项式当成一块来除，而是<b>每一项分别除以4x</b>。系数相除，同字母指数相减；除以分数系数时要乘倒数。'},
+        mathSteps:['(12x^2-8xy)\\div4x','=12x^2\\div4x-8xy\\div4x','=3x-2y'],
+        result:{ko:'나눗셈도 모든 항을 빠짐없이 계산합니다!',en:'Division also applies to every term — none skipped!',zh:'除法也要逐项计算，一个都不能漏！'},
+        book:{ko:'나누는 단항식은 0이 아니어야 합니다. 부호·계수·문자의 지수를 항마다 따로 확인합니다.',
+              en:'The divisor monomial must be nonzero. Check the sign, coefficient, and variable exponents term by term.',
+              zh:'除数单项式必须不为0。每一项分别检查符号、系数和字母指数。'} }
     ],
-    rule:{ ko:'① 괄호 앞의 것을 안의 모든 항에 하나씩 곱하기  ② 계수는 계수끼리, 문자는 지수법칙으로  ③ 항이 몇 개든 원칙은 같음',
-      en:'① Multiply the outside term into every term inside, one at a time  ② Coefficients with coefficients, letters with the exponent law  ③ Same principle no matter how many terms',
-      zh:'① 把括号外的乘到里面每一项  ② 系数归系数，字母用指数法则  ③ 不管几项原理都一样' }
+    rule:{ ko:'① 곱셈은 괄호 안 모든 항에 곱하기  ② 나눗셈은 모든 항을 같은 단항식으로 나누기  ③ 계수와 같은 문자의 지수를 따로 계산하기',
+      en:'① Multiply every term inside  ② Divide every term by the same monomial  ③ Work with coefficients and exponents of like variables separately',
+      zh:'① 乘法要乘到括号内每一项  ② 除法每一项都除以同一个单项式  ③ 系数和同字母指数分别计算' }
   },
 
   check:{
@@ -56,7 +67,9 @@ window.NM_UNITS['M-13'] = {
       { tex:'4(x + 3) = \\square x + \\square', answer:[4,12],
         hint:{ ko:'4를 x에 한 번, 3에 한 번', en:'4 multiplies x once, then 3 once', zh:'4先乘x一次，再乘3一次' } },
       { tex:'3x(x + 2) = \\square x^2 + \\square x', answer:[3,6],
-        hint:{ ko:'x×x=x², 계수는 3×1과 3×2', en:'x×x=x², coefficients are 3×1 and 3×2', zh:'x×x=x²，系数是3×1和3×2' } }
+        hint:{ ko:'x×x=x², 계수는 3×1과 3×2', en:'x×x=x², coefficients are 3×1 and 3×2', zh:'x×x=x²，系数是3×1和3×2' } },
+      { tex:'(12x^2-8xy)\\div4x = \\square x + \\square y', answer:[3,-2],
+        hint:{ ko:'12x²와 −8xy를 각각 4x로 나눕니다', en:'Divide 12x² and −8xy separately by 4x', zh:'12x²和−8xy分别除以4x' } }
     ],
     open:{ ko:'-2(3x - 5)는 어떻게 전개할까요?',
       en:'How do you expand -2(3x - 5)?',
@@ -67,19 +80,19 @@ window.NM_UNITS['M-13'] = {
   },
 
   lab:{
-    generator:'md13_monoTimesPoly', level:'main', count:4,
-    params:{mode:'monomialX'},
+    generator:'md13_monoTimesPoly', level:'main', count:6,
+    params:{mode:'divideBinomial'},
     intro:{
-      ko:'이번엔 곱하는 것도 x를 가져! 차수가 하나씩 올라가는 걸 잘 봐봐.',
-      en:'This time the multiplier has x too! Watch how the power goes up by one each time.',
-      zh:'这次乘数也带x！看清楚次数是怎么升高的。'
+      ko:'이번에는 모든 항을 같은 단항식으로 나눕니다. 계수와 지수를 항마다 확인합니다.',
+      en:'Now divide every term by the same monomial. Check each coefficient and exponent.',
+      zh:'这次每一项都除以同一个单项式，逐项检查系数和指数。'
     }
   },
 
   arena:{
-    generator:'md13_monoTimesPoly', level:'main', count:8, timeLimit:300,
-    params:{mode:'trinomial'},
-    rule:{ ko:'5분 안에 삼항식 전개를 모두 풉니다!', en:'Solve all the trinomial expansions in 5 minutes!', zh:'5分钟内解答所有三项式展开题！' }
+    generator:'md13_monoTimesPoly', level:'main', count:12, timeLimit:480,
+    params:{mode:'divideTrinomial'},
+    rule:{ ko:'8분 안에 세 항 나눗셈을 풀고, 모든 항의 부호와 지수를 확인합니다!', en:'Solve all three-term divisions in 8 minutes and check every sign and exponent!', zh:'8分钟内完成三项除法，并检查每一项的符号和指数！' }
   },
 
   stamp:{ label:{ ko:'분배법칙 요정', en:'Distributive Fairy', zh:'分配律精灵' }, coins:43 },

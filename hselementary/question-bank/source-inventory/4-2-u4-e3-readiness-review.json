@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0.0",
+  "reviewDate": "2026-09-22",
+  "status": "verified-fixed-source-pool",
+  "semester": "4-2",
+  "unit": "U4",
+  "sourceGroup": "E3",
+  "source": {
+    "catalogRef": "hse-source-4-2-advanced",
+    "pdfPages": [39, 40],
+    "printedPages": [44, 45],
+    "directImageReview": true,
+    "officialAnswerClaimed": false
+  },
+  "generation": {
+    "module": "source-4-2-parallel-angle-chain-one.js",
+    "typeCount": 11,
+    "variantsPerType": 3,
+    "totalQuestions": 33,
+    "mode": "fixed-verified-pool",
+    "difficulty": "source-advanced",
+    "numericChangeOnly": true,
+    "difficultyAdjustmentEnabled": false,
+    "answerDiagrams": true
+  },
+  "sourceAnswers": [
+    { "sourceItemId": "4-2-u4-e3-exploration", "degrees": 122 },
+    { "sourceItemId": "4-2-u4-e3-example-3-1", "degrees": 10 },
+    { "sourceItemId": "4-2-u4-e3-example-3-2", "degrees": 235 },
+    { "sourceItemId": "4-2-u4-e3-example-3-3", "degrees": 40 },
+    { "sourceItemId": "4-2-u4-e3-example-3-4", "degrees": 25 },
+    { "sourceItemId": "4-2-u4-e3-mission-1", "degrees": 30 },
+    { "sourceItemId": "4-2-u4-e3-mission-2", "degrees": 36 },
+    { "sourceItemId": "4-2-u4-e3-mission-3", "degrees": 144 },
+    { "sourceItemId": "4-2-u4-e3-mission-4", "degrees": 18 },
+    { "sourceItemId": "4-2-u4-e3-mission-5", "degrees": 120 },
+    { "sourceItemId": "4-2-u4-e3-mission-6", "degrees": 105 }
+  ],
+  "sourceDecisions": [
+    {
+      "sourceItemId": "4-2-u4-e3-example-3-3",
+      "decision": "The 60-degree given is at the upper end of the internal segment, not at the leftmost vertex. The 120-degree given is the lower exterior angle."
+    },
+    {
+      "sourceItemId": "4-2-u4-e3-mission-6",
+      "handwrittenDegrees": 125,
+      "independentlyCalculatedDegrees": 105,
+      "calculation": "95 + 90 - 80 = 105",
+      "decision": "Preserve printed parallel and right-angle conditions. Handwriting is not an official answer."
+    }
+  ],
+  "verification": {
+    "mathAudit": "source-4-2-parallel-angle-chain-one-audit.js",
+    "browserAudit": "source-4-2-parallel-angle-chain-one-browser-audit.js",
+    "independentPoolChecks": 33,
+    "generatedChecks": 1133,
+    "freeAngleCandidates": 3138,
+    "coordinateAngleChecks": 234,
+    "pcAnd390pxStates": 44,
+    "a4PdfFiles": 22,
+    "failures": 0,
+    "visualReview": "Source pages, problem and solution screenshots, and selected rasterized A4 pages inspected. Automated bounds/collision checks cover every pool and output profile."
+  },
+  "scopeLimit": "This decision covers E3 only. Other unresolved source groups remain locked. It does not certify easier/harder reasoning-level variants or unlimited generation."
+}

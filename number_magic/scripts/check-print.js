@@ -39,19 +39,12 @@ const ROOT = path.resolve(__dirname, '..');
 const PORT = process.env.NM_CHECK_PORT || 8791;
 const ONLY = process.argv.slice(2).map(s => s.toUpperCase());
 
-/* Playwright는 이 저장소에 없을 수도 있다(로컬 전역 설치를 씀) — 경로를 넓게 찾는다. */
-function loadPlaywright(){
-  const cands = ['playwright', '/opt/node22/lib/node_modules/playwright'];
-  for(const c of cands){
-    try { return require(c); } catch(e){}
-  }
-  console.error('playwright를 찾지 못했습니다. `npm i -D playwright` 후 다시 실행하세요.');
-  process.exit(2);
-}
+/* 설치 위치와 브라우저 경로는 다른 검사기와 같은 공용 로더에서 찾는다. */
+function loadPlaywright(){ return require('./lib/playwright'); }
 
 function serve(){
   return new Promise((resolve, reject) => {
-    const py = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
+    const py = spawn(process.platform === 'win32' ? 'python' : 'python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
     py.on('error', reject);
     const t0 = Date.now();
     (function ping(){
@@ -67,9 +60,7 @@ function serve(){
 (async () => {
   const { chromium } = loadPlaywright();
   const server = await serve();
-  const browser = await chromium.launch({
-    executablePath: process.env.NM_CHROMIUM || '/opt/pw-browsers/chromium'
-  });
+  const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const pageErrors = [];
   page.on('pageerror', e => pageErrors.push(e.message));
@@ -116,7 +107,13 @@ function serve(){
         /* 잇기(matchLine)의 `answer`는 고를 값이 아니라 **이어야 할 줄 수**다(늘 3 또는 4).
            인쇄물에서 아이는 선을 긋고, 정답지에는 짝(`3→②`)이 찍힌다 — 4를 안다고
            풀리는 문항이 아니므로 쏠림 검사에서 뺀다. 안 빼면 NL7L3·NL14L3이 영영 경고다. */
-        ps.forEach(p => { if(p.widget !== 'matchLine') res.answers.push(JSON.stringify(p.answer)); });
+        ps.forEach(p => {
+          const scatterCompletion = p.scatterPlot && p.scatterPlot.mode === 'plot' &&
+            Array.isArray(p.scatterPlot.points) && p.answer === p.scatterPlot.points.length;
+          /* 산점도 직접 찍기의 answer는 계산 답이 아니라, 표의 점을 모두 찍었는지
+             확인하는 완료 개수다. 점 좌표 자체는 problemKey와 전용 검사에서 검증한다. */
+          if(p.widget !== 'matchLine' && !scatterCompletion) res.answers.push(JSON.stringify(p.answer));
+        });
       }
 
       /* 2) 표기 검사 */

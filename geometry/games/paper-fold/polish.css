@@ -344,6 +344,22 @@ body, .fold-shell, .paper-panel, .paper-stage { background: #fff; }
   .foldy-guide { display: none; }
 }
 
+body:not(.embedded) .fold-shell:has(.answer-dock.direct-touch-mode) {
+  grid-template-rows: 58px 82px minmax(0, 1fr) 0;
+}
+body:not(.embedded) .answer-dock.direct-touch-mode,
+body:not(.embedded) .fold-shell:has(.answer-dock.direct-touch-mode) .fold-status { display: none; }
+@media (orientation: portrait) and (max-width: 600px) {
+  body:not(.embedded) .fold-shell:has(.answer-dock.direct-touch-mode) {
+    grid-template-rows: 54px 92px minmax(0, 1fr) 0;
+  }
+}
+@media (orientation: landscape) and (max-height: 560px) {
+  body:not(.embedded) .fold-shell:has(.answer-dock.direct-touch-mode) {
+    grid-template-rows: 44px 48px minmax(0, 1fr) 0;
+  }
+}
+
 body.embedded .fold-shell { grid-template-rows: 64px minmax(0, 1fr) auto; }
 body.embedded :is(.topbar, .foldy-guide, .tool-panel, .mission > div,
   #levelButton, #levelDialog, #nextButton) { display: none; }

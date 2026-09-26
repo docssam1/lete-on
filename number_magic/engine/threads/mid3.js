@@ -55,12 +55,170 @@ function squarefreeRange(lo, hi){
 const SQFREE_NARROW = squarefreeRange(2, 30);   /* MD16 basic·withCoeff, MD18 coef */
 const SQFREE_WIDE = squarefreeRange(2, 120);    /* MD16 wide, MD18 plain */
 const SQFREE_SMALL = squarefreeRange(2, 22);    /* MD18 messyDenom(분모 배수라 작게 유지) */
+/* MD19 L5는 위의 검증된 2..30 제곱인수 없는 수를 그대로 쓴다.
+   서로 다른 두 수를 a>b로 정규화하면 18C2=153쌍이다. 가까운 수끼리만
+   묶던 이전 17쌍 풀을 넓히되, 범위·수의 성질·공식은 바꾸지 않는다. */
+const MD19_RADICAL_PAIRS = [];
+for (let ai = 1; ai < SQFREE_NARROW.length; ai++) {
+  for (let bi = 0; bi < ai; bi++) MD19_RADICAL_PAIRS.push([SQFREE_NARROW[ai], SQFREE_NARROW[bi]]);
+}
+/* 레벨 개념에 이미 보여 준 (√3+√2)(√3−√2)는 연습 문항으로 다시
+   내지 않는다. 전체 원천 풀 153쌍 중 152쌍이 실제 연습 후보다. */
+const MD19_RADICAL_PRACTICE_PAIRS = MD19_RADICAL_PAIRS.filter(([a, b]) => a !== 3 || b !== 2);
+
+/* MD15 L4~6 제곱근 대소 비교. 실수 근삿값(Math.sqrt/epsilon) 없이
+   부호와 절댓값의 제곱을 유리수 교차곱으로 판정한다. 표시용 분수는
+   약분 전 모양을 따로 보존해 √(8/2)=√4 같은 '다른 표기, 같은 값'도
+   실제 연습 문항으로 낼 수 있다. */
+function positiveGcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a||1; }
+function normalizedFraction(n,d){
+  if(d===0) throw new RangeError('A comparison denominator cannot be zero.');
+  if(d<0){ n=-n; d=-d; }
+  const g=positiveGcd(n,d);
+  return {n:n/g,d:d/g};
+}
+function comparisonTerm(kind,n,d,sign,display){
+  const q=normalizedFraction(Math.abs(n),Math.abs(d||1));
+  return {kind,n:q.n,d:q.d,sign:q.n===0?0:(sign<0?-1:1),display:display||null};
+}
+function rootTerm(n,d,sign,rawN,rawD){
+  return comparisonTerm('root',n,d,sign,{kind:'root',n:rawN==null?n:rawN,d:rawD==null?(d||1):rawD});
+}
+function rationalTerm(n,d,sign,style,text){
+  return comparisonTerm('rational',n,d,sign,{kind:style||((d||1)===1?'integer':'fraction'),text:text||null});
+}
+function fractionCmp(aN,aD,bN,bD){
+  const left=aN*bD, right=bN*aD;
+  return left===right?0:(left>right?1:-1);
+}
+function magnitudeSquare(term){
+  return term.kind==='root'
+    ? {n:term.n,d:term.d}
+    : {n:term.n*term.n,d:term.d*term.d};
+}
+function compareExactTerms(left,right){
+  if(left.sign!==right.sign) return left.sign>right.sign?1:-1;
+  if(left.sign===0) return 0;
+  const a=magnitudeSquare(left), b=magnitudeSquare(right);
+  const mag=fractionCmp(a.n,a.d,b.n,b.d);
+  return left.sign>0?mag:-mag;
+}
+function unsignedFractionTex(n,d){ return d===1?`${n}`:`\\dfrac{${n}}{${d}}`; }
+function termTex(term){
+  const sign=term.sign<0?'-':'';
+  if(term.kind==='root'){
+    const raw=term.display||{n:term.n,d:term.d};
+    return `${sign}\\sqrt{${unsignedFractionTex(raw.n,raw.d)}}`;
+  }
+  if(term.display&&term.display.kind==='decimal') return `${sign}${term.display.text}`;
+  return `${sign}${unsignedFractionTex(term.n,term.d)}`;
+}
+function squaredMagnitudeTex(term){
+  const sq=magnitudeSquare(term);
+  return unsignedFractionTex(sq.n,sq.d);
+}
+function relationFromCmp(cmp){ return cmp>0?'>':(cmp<0?'<':'='); }
+function answerFromCmp(cmp){ return cmp>0?1:(cmp<0?3:2); }
+function comparisonPairKey(left,right){ return `${termTex(left)}|${termTex(right)}`; }
+function buildComparisonPools(){
+  const positive=[], negative=[], mixed=[];
+  const seen={positive:new Set(),negative:new Set(),mixed:new Set()};
+  function add(target,seenSet,left,right){
+    const key=comparisonPairKey(left,right);
+    if(seenSet.has(key)) return;
+    seenSet.add(key); target.push({left,right});
+  }
+  /* 양의 근호: 자연수 근호의 모든 서로 다른 순서쌍 + 분수 근호와
+     값은 같지만 표기가 다른 동치쌍. */
+  for(let a=2;a<=80;a++){
+    for(let b=2;b<=80;b++) if(a!==b)
+      add(positive,seen.positive,rootTerm(a,1,1),rootTerm(b,1,1));
+    add(positive,seen.positive,rootTerm(a,1,1),rootTerm(a,1,1,a*2,2));
+    add(positive,seen.positive,rootTerm(a,1,1,a*3,3),rootTerm(a,1,1));
+  }
+  for(let d=2;d<=9;d++) for(let n=1;n<=45;n++) if(positiveGcd(n,d)===1){
+    const left=rootTerm(n,d,1);
+    const right=rootTerm(n+d,d,1);
+    add(positive,seen.positive,left,right);
+    add(positive,seen.positive,right,left);
+    add(positive,seen.positive,left,rootTerm(n,d,1,n*2,d*2));
+  }
+  /* 음의 근호는 같은 절댓값 풀을 부호만 바꾼다. 이때 대소 방향이
+     반드시 뒤집히므로 양의 근호 규칙을 그대로 적용할 수 없다. */
+  positive.forEach(({left,right})=>add(negative,seen.negative,
+    Object.assign({},left,{sign:-1}),Object.assign({},right,{sign:-1})));
+
+  /* 혼합: 유리수(정수·분수·유한소수)와 근호를 비교한다. 각 유리수 q에
+     대해 q²의 바로 아래·같음·바로 위를 만들고 좌우·부호를 바꾸어
+     >,=,<와 부호 우선 판정이 모두 넉넉히 나오게 한다. */
+  const rationals=[];
+  for(let d=1;d<=8;d++) for(let n=1;n<=32;n++) if(positiveGcd(n,d)===1)
+    rationals.push(rationalTerm(n,d,1));
+  for(let n=1;n<=49;n++) if(n%10!==0)
+    rationals.push(rationalTerm(n,10,1,'decimal',(n/10).toFixed(1)));
+  rationals.forEach((q,i)=>{
+    const exactRoot=rootTerm(q.n*q.n,q.d*q.d,1);
+    const lowerRoot=rootTerm(Math.max(1,q.n*q.n-1),q.d*q.d,1);
+    const upperRoot=rootTerm(q.n*q.n+1,q.d*q.d,1);
+    for(const r of [lowerRoot,exactRoot,upperRoot]){
+      add(mixed,seen.mixed,q,r); add(mixed,seen.mixed,r,q);
+      add(mixed,seen.mixed,Object.assign({},q,{sign:-1}),Object.assign({},r,{sign:-1}));
+      add(mixed,seen.mixed,Object.assign({},r,{sign:-1}),Object.assign({},q,{sign:-1}));
+    }
+    /* 서로 다른 부호는 제곱 계산 전에 결정한다. */
+    const far=rootTerm(((i%29)+2),1,-1);
+    add(mixed,seen.mixed,q,far);
+    add(mixed,seen.mixed,far,q);
+  });
+  return {comparePositive:positive,compareNegative:negative,compareMixed:mixed};
+}
+const MD15_COMPARISON_POOLS=buildComparisonPools();
+function comparisonProblem(mode,pair,index,poolSize){
+  const {left,right}=pair;
+  const cmp=compareExactTerms(left,right), relation=relationFromCmp(cmp), answer=answerFromCmp(cmp);
+  const leftTex=termTex(left), rightTex=termTex(right);
+  const signsDiffer=left.sign!==right.sign;
+  const negativePair=left.sign<0&&right.sign<0;
+  const reasonKo=signsDiffer
+    ? '부호가 다르므로 양수가 음수보다 큽니다'
+    : `${negativePair?'두 수가 모두 음수이므로 절댓값의 제곱을 비교한 뒤 방향을 뒤집습니다':'두 수의 절댓값을 제곱해 정확히 비교합니다'}`;
+  return {
+    prompt:{
+      ko:`${reasonKo}. ① 왼쪽이 큼 ② 같음 ③ 오른쪽이 큼 중 번호를 고르세요.`,
+      en:'Compare exactly. Choose 1 if the left is greater, 2 if equal, or 3 if the right is greater.',
+      zh:'准确比较。左边大选1，相等选2，右边大选3。'
+    },
+    tex:`${leftTex} \\; \\square \\; ${rightTex} \\quad (①>\\;②=\\;③<)`,
+    answer, answerType:'number', widget:'numpad',
+    completedTex:`${leftTex} ${relation} ${rightTex}`,
+    answerRelationTex:`${answer}\\;(${leftTex} ${relation} ${rightTex})`,
+    comparison:{
+      mode,left:{kind:left.kind,n:left.n,d:left.d,sign:left.sign},
+      right:{kind:right.kind,n:right.n,d:right.d,sign:right.sign},
+      relation,poolIndex:index,poolSize
+    },
+    solution:[
+      signsDiffer
+        ? {tex:`${leftTex} ${relation} ${rightTex}\\quad(\\text{부호를 먼저 비교})`}
+        : {tex:`|${leftTex}|^2=${squaredMagnitudeTex(left)},\\quad |${rightTex}|^2=${squaredMagnitudeTex(right)}`},
+      {tex:`${leftTex} ${relation} ${rightTex}`},
+      {tex:'\\text{선택 번호}=\\square',blank:answer}
+    ]
+  };
+}
 
 /* ── MD15 — 제곱근의 값 ──
    mode: 'perfect'(완전제곱수의 제곱근) · 'squareOfSqrt'((√a)²=a) ·
-   'absValue'(√(a²)=|a|, a가 음수일 수 있음 — 결과는 항상 0 이상). */
+   'absValue'(√(a²)=|a|, a가 음수일 수 있음 — 결과는 항상 0 이상) ·
+   'comparePositive' · 'compareNegative' · 'compareMixed'(정확 비교). */
 NM_TGEN['md15_sqrtValue'] = function (params, rng) {
   const mode = params.mode || 'perfect';
+
+  if(MD15_COMPARISON_POOLS[mode]){
+    const pool=MD15_COMPARISON_POOLS[mode];
+    const index=Math.floor(rng()*pool.length);
+    return comparisonProblem(mode,pool[index],index,pool.length);
+  }
 
   if (mode === 'perfect') {
     const k = R(rng, 2, 80);
@@ -418,8 +576,7 @@ NM_TGEN['md19_expandFormula'] = function (params, rng) {
      정수 부분을 얹을 자리가 없다 — 억지로 끼워 맞추지 않고 다음 판 과제로
      남긴다(주석에 남겨 둔다: 정수+계수근호 두 부분 답 모양이 새로 필요). */
   if (mode === 'radicalApplication') {
-    const idx1 = R(rng, 0, SQFREE_NARROW.length - 2);
-    const a = SQFREE_NARROW[idx1 + 1], b = SQFREE_NARROW[idx1];   /* a > b, 서로 다름 */
+    const [a, b] = pick(rng, MD19_RADICAL_PRACTICE_PAIRS);   /* a > b, 서로 다름 */
     const ans = a - b;
     return {
       prompt: { ko: `(√a+√b)(√a-√b) = a-b — 합차공식과 같은 자리에서 근호가 사라집니다`,

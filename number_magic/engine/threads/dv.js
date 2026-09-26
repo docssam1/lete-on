@@ -395,7 +395,8 @@
     let solution;
     if (r === 2 || r === 5 || r === 10) {
       solution = [
-        { tex: `${r}\\text{의 배수} \\Rightarrow \\text{끝자리} \\in \\{${cands.join(',\\,')}\\}` },
+        /* 집합 기호(∈)는 초등 교과에 없다(2026-09-25) — "끝자리가 0 또는 5" */
+        { tex: `${r}\\text{의 배수} \\Rightarrow \\text{끝자리가 } ${cands.join(',\\,')}\\text{ 중 하나}` },
         { tex: `\\text{가장 큰 숫자} = \\square`, blank: d }
       ];
     } else {
@@ -480,7 +481,7 @@
           { tex: `12 = 6 \\times 2 + \\square`,  blank: 0 }
         ];
       }
-      steps.push({ tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`, blank: g });
+      steps.push({ tex: `${a},\\,${b}\\text{의 최대공약수} = \\square`, blank: g });
 
       return {
         prompt: {
@@ -488,7 +489,7 @@
           en: `Find the GCD of ${a} and ${b}`,
           zh: `求${a}和${b}的最大公因数`
         },
-        tex:        `\\text{최대공약수}(${a},\\,${b}) = \\square`,
+        tex:        `${a},\\,${b}\\text{의 최대공약수} = \\square`,
         answer:     g,
         answerType: 'steps',
         widget:     'steps',
@@ -517,16 +518,16 @@
         en: `Find the LCM of ${a} and ${b}`,
         zh: `求${a}和${b}的最小公倍数`
       },
-      tex:        `\\text{최소공배수}(${a},\\,${b}) = \\square`,
+      tex:        `${a},\\,${b}\\text{의 최소공배수} = \\square`,
       answer:     l,
       answerType: 'steps',
       widget:     'steps',
       steps: [
-        { tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`,                              blank: g },
+        { tex: `${a},\\,${b}\\text{의 최대공약수} = \\square`,                              blank: g },
         { tex: `\\text{최소공배수} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
       ],
       solution: [
-        { tex: `\\text{최대공약수}(${a},\\,${b}) = \\square`,                              blank: g },
+        { tex: `${a},\\,${b}\\text{의 최대공약수} = \\square`,                              blank: g },
         { tex: `\\text{최소공배수} = ${a} \\times ${b} \\div ${g} = \\square`,      blank: l }
       ]
     };
@@ -1117,7 +1118,7 @@
     if (mode === 'gcd') {
       return {
         prompt: { ko: `${a}${dvNumWa(a)} ${b}의 최대공약수는?`, en: `What is the greatest common factor of ${a} and ${b}?`, zh: `${a}和${b}的最大公因数是多少？` },
-        tex: `\\text{최대공약수}(${a},\\, ${b}) = \\square`,
+        tex: `${a},\\, ${b}\\text{의 최대공약수} = \\square`,
         answer: g, answerType: 'number', widget: 'numpad',
         solution: [{ tex: `${a}: ${dvFactorsOf(a).join(',\\,')}` },
                    { tex: `${b}: ${dvFactorsOf(b).join(',\\,')}` },
@@ -1136,9 +1137,9 @@
     }
     return {                                          /* lcm */
       prompt: { ko: `${a}${dvNumWa(a)} ${b}의 최소공배수는?`, en: `What is the least common multiple of ${a} and ${b}?`, zh: `${a}和${b}的最小公倍数是多少？` },
-      tex: `\\text{최소공배수}(${a},\\, ${b}) = \\square`,
+      tex: `${a},\\, ${b}\\text{의 최소공배수} = \\square`,
       answer: l, answerType: 'number', widget: 'numpad',
-      solution: [{ tex: `\\text{최대공약수}(${a},${b}) = ${g}` },
+      solution: [{ tex: `${a},\\,${b}\\text{의 최대공약수} = ${g}` },
                  { tex: `${a} \\times ${b} \\div ${g} = \\square`, blank: l }]
     };
   };

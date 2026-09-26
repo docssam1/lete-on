@@ -242,36 +242,46 @@ const COURSE_SPEC = [
  /* 29 — 수직선 위의 위치(MD82)를 MD1 바로 뒤에 붙인다(2026-09-21, 원장 "정수 또는 유리수도
     위치 찾기 연습도 있어야 하고 절댓값도 위치 찾기가 되어야지"). MD1 은 절댓값을 계산만
     시켰고 수직선 위 어디인지를 묻는 자리가 없었다. */
- {id:29, tier:'middle1', title:{ko:'정수의 세계',en:'World of Integers',zh:'整数的世界'},
-   drills:['MD1','MD82','MD2','MD3','CH5','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','CH5@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','CH5','MD47@3','MD48@3','MD1@4','MD2@4','CH5@4'], minSessions:12, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']], creative:['MD3@3','MD82@3','MD48@3']},
+ {id:29, tier:'middle1', title:{ko:'소인수분해와 정수의 세계',en:'Prime Factorisation & Integers',zh:'质因数分解与整数'},
+   /* 2026-09-25 — 중1-1 첫 단원 소인수분해·최대공약수(DV8·DV7)를 옛 중등 권장 편성에서 옮겨 맨 앞에 싣는다. */
+   drills:['DV8@1','DV8@2','DV8@3','DV7@2','DV7@3','MD1','MD82','MD2','MD3','CH5','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','CH5@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','CH5','MD47@3','MD48@3','MD1@4','MD2@4','CH5@4'], minSessions:15, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']],
+   /* MD89(정수의 활용 — 기온·해발과 해저·수위)는 이 과정의 적용 회차다(2026-09-25). */
+   creative:['MD89@1','MD3@3','MD89@2','MD82@3','MD89@3','MD48@3']},
  /* 30 — 일차방정식은 **푸는 법 다음에 쓰는 법**이 와야 한다(2026-09-21, 원장 "일차방정식의
     활용도 거리·속력·시간, 원가·정가 등 놓치지 마"). MD70 을 MD50 바로 뒤에 붙인다. */
  {id:30, tier:'middle1', title:{ko:'부호의 규칙과 방정식',en:'Rules of Sign & Equations',zh:'符号的规则与方程'},
    drills:['MD4','MD5','MD6','MD49','MD50','MD70','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD70@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD70@3','MD4@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50'],['M-70']], creative:['MD70@3','MD50@3','MD6@3']},
  /* 31 — 좌표평면(MD68)과 정비례·반비례 그래프(MD69)를 여기서 연다. 원장 "정비례 반비례는".
     MD51 은 값만 다뤘고 그래프가 없었다 — 이 둘이 뒤의 일차함수·이차함수 그래프의 바닥이다. */
- {id:31, tier:'middle1', title:{ko:'유리수와 좌표평면',en:'Rationals & the Coordinate Plane',zh:'有理数与坐标平面'},
-   drills:['MD7','MD8','MD9','MD51','MD68','MD69','MD7@2','MD8','MD9@2','MD51@2','MD68@2','MD69@2','MD7@3','MD9@3','MD51@3','MD68@3','MD69@3'], minSessions:9, magic:[['M-07'],['M-08'],['M-09'],['M-51'],['M-68'],['M-69']], creative:['MD69@3','MD68@3','MD51@3']},
+  {id:31, tier:'middle1', title:{ko:'유리수·좌표와 대표값',en:'Rationals, Coordinates & Measures of Center',zh:'有理数·坐标与代表值'},
+   /* MD9의 5단계와 중1-2 비기하 통계 MD84를 함께 실제 회차에 싣는다.
+      MD84는 확인된 p.224~230의 대표값만 포함하며 도수표 이후는 넣지 않는다. */
+   drills:['MD7','MD8','MD9','MD51','MD68','MD69','MD84','MD7@2','MD8','MD9@2','MD51@2','MD68@2','MD69@2','MD84@2','MD7@3','MD9@3','MD51@3','MD68@3','MD69@3','MD9@4','MD9@5','MD84@3','MD84@4','MD84@5','MD84@6'], minSessions:13, magic:[['M-07'],['M-08'],['M-09'],['M-51'],['M-68'],['M-69'],['M-84']], creative:['MD84@6','MD84@4','MD69@3']},
 
  /* 32~37 중등 재편(2026-09-21) — 원장 "한 단원씩이 아니잖아". 한 과정에 한 단원씩 서도록
     7과정 → 9과정으로 늘렸다. 중2 일차함수(34)와 중3 이차함수(37)가 새로 선 과정이고,
     부등식·연립의 활용(33)과 이차방정식의 활용(36)은 각 풀이 과정 뒤에 붙였다.
     이 두 과정을 끼우느라 고등 36~45 가 38~47 로 밀렸다(stages.js 범위도 함께 고침). */
  {id:32, tier:'middle2', title:{ko:'지수와 식의 계산',en:'Exponents & Algebraic Expressions',zh:'指数与式的运算'},
-   /* 2026-09-21 — 디딤돌 개념연산 중2-1A 대조로 MD10 이 1레벨(지수의 분배), MD12 가
-      2레벨(계수가 분수 꼴인 다항식·여러 가지 괄호) 늘었다. 17항목, minSessions 9. */
-   drills:['MD10','MD11','MD12','MD13','MD9','MD10@2','MD11@2','MD12@2','MD13@2','MD10@3','MD11@3','MD12@3','MD13@3','MD10@4','MD10@5','MD12@4','MD12@5'], minSessions:9, magic:[['M-10'],['M-11'],['M-12'],['M-13']], creative:['MD12@5','MD10@5','MD11@3']},
+   /* 2026-09-24 — 디딤돌 개념연산 중2-1A p.98~99 대조로 MD13에 다항식÷단항식
+      기본·분수 계수·세 항 집중 3레벨을 더했다. 20항목, minSessions 10. */
+   drills:['MD10','MD11','MD12','MD13','MD9','MD10@2','MD11@2','MD12@2','MD13@2','MD10@3','MD11@3','MD12@3','MD13@3','MD10@4','MD10@5','MD12@4','MD12@5','MD13@4','MD13@5','MD13@6','MD11@4'], minSessions:11, magic:[['M-10'],['M-11'],['M-12'],['M-13']],
+   /* MD11@5(넓이·부피 공식에 단항식 대입)는 이 과정의 적용 회차다(2026-09-25) — 전엔 과정 32 에 적용이 0개였다. */
+   creative:['MD11@5','MD13@6','MD12@5','MD10@5']},
  {id:33, tier:'middle2', title:{ko:'부등식과 연립방정식',en:'Inequalities & Systems',zh:'不等式与方程组'},
-   drills:['MD14','MD64','MD71','MD63','MD72','MD14@2','MD64@2','MD71@2','MD63@2','MD72@2','MD14@3','MD64@3','MD71@3','MD63@3','MD72@3'], minSessions:9, magic:[['M-14'],['M-64'],['M-71'],['M-63'],['M-72']], creative:['MD72@3','MD71@3','MD63@3']},
- {id:34, tier:'middle2', title:{ko:'일차함수',en:'Linear Functions',zh:'一次函数'},
+   drills:['MD14','MD64','MD71','MD63','MD72','MD14@2','MD64@2','MD71@2','MD63@2','MD72@2','MD14@3','MD64@3','MD71@3','MD63@3','MD72@3','MD64@4'], minSessions:9, magic:[['M-14'],['M-64'],['M-71'],['M-63'],['M-72']], creative:['MD72@3','MD71@3','MD63@3']},
+ {id:34, tier:'middle2', title:{ko:'일차함수와 경우의 수',en:'Linear Functions & Counting',zh:'一次函数与情况数'},
    /* 2026-09-21 — MD74 가 5레벨(두 점 대입·절편·기울기로 둘째 점·그래프 읽기·평행이동)이 됐다.
-      10회차 20슬롯에 19항목이라 회차는 안 늘린다. */
-   drills:['MD73','MD74','MD65','MD75','MD76','MD73@2','MD74@2','MD65@2','MD75@2','MD76@2','MD73@3','MD74@3','MD65@3','MD75@3','MD76@3','MD74@4','MD65@4','MD74@5','MD65@5'], minSessions:10, magic:[['M-73'],['M-74'],['M-65'],['M-75'],['M-76']], creative:['MD76@3','MD65@5','MD75@3']},
+      2026-09-24 — 중2-2 인쇄 p.216~230에서 확인한 경우의 수 5단계를 뒤에 붙인다.
+      24드릴=12회차라 주2회 기준 8주, 한 학기 두 달 목표에 맞는다. */
+   drills:['MD73','MD74','MD65','MD75','MD76','MD73@2','MD74@2','MD65@2','MD75@2','MD76@2','MD73@3','MD74@3','MD65@3','MD75@3','MD76@3','MD74@4','MD65@4','MD74@5','MD65@5','MD88','MD88@2','MD88@3','MD88@4','MD88@5'], minSessions:12, magic:[['M-73'],['M-74'],['M-65'],['M-75'],['M-76'],['M-88']], creative:['MD88@5','MD88@4','MD76@3']},
  {id:35, tier:'middle3', title:{ko:'제곱근의 세계',en:'World of Square Roots',zh:'平方根的世界'},
    /* 2026-09-21 — 디딤돌 개념연산 중3-1A 대조로 찾은 가장 큰 구멍을 여기에 채운다:
       MD15~17이 "정리하는 법"만 가르치고 "더하거나 빼는 법"이 아예 없었다. MD83(제곱근의
       덧셈과 뺄셈, 6레벨) 신설·편입. 16항목, minSessions 8. */
-   drills:['MD15','MD16','MD17','MD83','MD14','MD15@2','MD16@2','MD17@2','MD83@2','MD15@3','MD16@3','MD17@3','MD83@3','MD83@4','MD83@5','MD83@6'], minSessions:8, magic:[['M-15'],['M-16'],['M-17'],['M-83']], creative:['MD83@6','MD83@5','MD17@3']},
+   drills:['MD15','MD16','MD17','MD83','MD14','MD15@2','MD16@2','MD17@2','MD83@2','MD15@3','MD16@3','MD17@3','MD83@3','MD83@4','MD83@5','MD83@6','MD15@4','MD15@5','MD15@6'], minSessions:10, magic:[['M-15'],['M-16'],['M-17'],['M-83']],
+   /* MD90(제곱근의 활용 — 정사각형의 넓이와 한 변)는 이 과정의 적용 회차다(2026-09-25). */
+   creative:['MD90@1','MD83@6','MD90@2','MD83@5','MD90@3','MD17@3']},
  {id:36, tier:'middle3', title:{ko:'인수분해와 이차방정식',en:'Factoring & Quadratic Equations',zh:'因式分解与二次方程'},
    /* 2026-09-21 — MD20 이 4레벨(완전제곱·합차·공통인수·십자곱셈), MD66 이 1레벨(근의 공식)
       늘었다. 드릴 슬롯은 회차마다 2개뿐이라 9회차(18슬롯)로는 19개 항목이 안 들어간다 →
@@ -280,8 +290,10 @@ const COURSE_SPEC = [
       활용), MD66 이 3레벨(중근·근의 개수·이차방정식 구하기) 더 늘었다. 27항목,
       minSessions 14. */
    drills:['MD18','MD19','MD20','MD66','MD77','MD18@2','MD19@2','MD20@2','MD66@2','MD77@2','MD19@3','MD20@3','MD66@3','MD77@3','MD18@3','MD20@4','MD66@4','MD20@5','MD20@6','MD19@4','MD19@5','MD19@6','MD19@7','MD19@8','MD66@5','MD66@6','MD66@7'], minSessions:14, magic:[['M-18'],['M-19'],['M-20'],['M-66'],['M-77']], creative:['MD19@8','MD66@7','MD77@3']},
- {id:37, tier:'middle3', title:{ko:'이차함수',en:'Quadratic Functions',zh:'二次函数'},
-   drills:['MD78','MD79','MD67','MD80','MD81','MD78@2','MD79@2','MD67@2','MD80@2','MD81@2','MD78@3','MD79@3','MD67@3','MD80@3','MD81@3','MD67@4'], minSessions:10, magic:[['M-78'],['M-79'],['M-67'],['M-80'],['M-81']], creative:['MD81@3','MD67@4','MD80@3']},
+ {id:37, tier:'middle3', title:{ko:'이차함수와 자료 분석',en:'Quadratic Functions & Data Analysis',zh:'二次函数与数据分析'},
+   /* 중3-2 비도형 자료 분석 MD85~87을 마지막 중등 과정에 연결한다. 전체 32항목이라
+      주 2회 기준 8주인 16회차로 편성한다. 쉬운 갈래12, 핵심·그리기 갈래24문항. */
+   drills:['MD78','MD79','MD67','MD80','MD81','MD78@2','MD79@2','MD67@2','MD80@2','MD81@2','MD78@3','MD79@3','MD78@4','MD79@4','MD67@3','MD80@3','MD81@3','MD67@4','MD85','MD85@2','MD85@3','MD85@4','MD86','MD86@2','MD86@3','MD86@4','MD86@5','MD86@6','MD87','MD87@2','MD87@3','MD87@4'], minSessions:16, magic:[['M-78'],['M-79'],['M-67'],['M-80'],['M-81'],['M-85'],['M-86'],['M-87']], creative:['MD86@6','MD87@4','MD85@4']},
 
  /* 38~41 실배치(2026-08-25, 고등 W11·W12; 2026-09-21 중등 두 과정을 끼우며 36~39 → 38~41): MASTER-ROADMAP.md §6.
     course38은 W10 마지막 재료 MD20을, course40(공통수학2 진입부)은
@@ -330,6 +342,234 @@ const COURSE_SPEC = [
    magic:[['M-58'],['M-59'],['M-60'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD60@3']},
 ];
 
+/* ── 회차의 세 층 — 교과 연산 → 창의 연산 → 연결 문장제·적용 (2026-09-25 정본) ──
+   원장 "학습지는 교과 연산과 창의 연산 문장제가 적절히 연결" · "문항수는 하루 30분 풀 분량,
+   난이도별로 연습도 되어야지". 과정 0~37 의 **모든 회차**가 세 칸을 데이터로 갖는다.
+     school       교과 연산(그 주 드릴 + 같은 학교 구간의 바로 앞 복습 1벌)
+     strategy     창의 연산 — 그 주 마법 유닛(units, 개념 노트) + 전략을 손으로 푸는 드릴(practice, 매 회차 1벌)
+     application  연결 문장제·적용 — 초등: 그 주 첫 교과 드릴을 **같은 계산의 문장제**로(kind 'word'),
+                  유아: 이야기 셈, 중등: 활용 스레드·자료·그래프 직접 그리기(kind 'model'|'drawing')
+   `drills`·`creative` 는 옛 화면(진도·시험·복습 풀·인쇄 편집기)이 읽으므로 계속 채운다 —
+   drills = 교과 + 드릴 출신 적용, creative = 창의 전략 드릴 + 창의 칸 출신 적용.
+   각 칸에는 count(그 칸의 문항 수)가 붙는다 — planCounts 가 난이도와 30분 예산으로 정한다.
+   예전 `creative` 한 칸은 초등에선 "창의 연산", 중등에선 "적용"으로 찍혔지만 실제로는 대부분
+   같은 단원의 어려운 드릴이었다 — 그 드릴은 교과 드릴 계단에 이미 있으므로 따로 싣지 않는다. */
+/* 활용 스레드 — 드릴로 실려도 적용 칸으로 간다. 통계(MD84~88)는 **교과 계산**이라 여기 넣지 않는다
+   (넣으면 통계 주간의 교과 칸이 복습 4문항만 남았다). 통계를 적용으로 쓰는 회차는 COURSE_APPLY 에 적는다. */
+const APPLY_THREADS = { WP1:1, WP3:1, WP4:1, WP5:1,
+  MD70:1, MD71:1, MD72:1, MD76:1, MD77:1, MD89:1, MD90:1 };
+/* 스레드 전체가 아니라 그 레벨만 적용인 것 — params.mode 로 확인했다 */
+const APPLY_LEVELS = { 'MD19@4':1, 'MD19@5':1, 'MD11@5':1 };
+/* 창의수연 전략 유닛(A·B·C·H)에 걸리지 않았지만 이름 그대로 전략인 드릴 */
+const STRATEGY_THREADS = { AD8:1, AD9:1, DC6:1, NL5:1, NL11:1, NL12:1, ML10:1 };
+const ELEM_WORD_TIERS = { level1:1, level2:1, level3:1, challenge:1 };
+const BAND_OF = { level0:'pre', level1:'elem', level2:'elem', level3:'elem', challenge:'elem',
+  middle1:'middle', middle2:'middle', middle3:'middle',
+  highmath1:'high', highmath2:'high', algebra:'high', calculus1:'high' };
+const RECENT_REVIEW = 8;       /* 복습은 같은 구간에서 가장 최근에 배운 8유형 안에서만 */
+/* 중등 창의 연산 — 창의수연 고급 전략 가운데 **그 단원 계산과 같은 구조**인 것만 붙인다.
+   (원본의 초급·중급·고급 배열이 아니라 넘버스 매직 과정 순서로 다시 놓는다.)
+     29 정수·유리수      CH5 순환소수 나눗셈 — 유리수를 소수로, 되풀이 마디 찾기
+     30 부호의 규칙·방정식 CH1 한쪽으로 모으기 — 같은 수를 묶어 분배법칙으로(일차식 정리와 같은 손)
+     31 유리수·좌표·대표값 MX6 곱을 이용한 가우스 덧셈 — 합 = 평균 × 개수(대표값의 평균)
+     32 지수와 식의 계산   CH3 진법 — 자릿값이 거듭제곱 · CH8 제곱·세제곱 계산법
+     33 부등식과 연립      CH12 어림하기 곱셈법 — 범위를 먼저 잡는 부등식 감각
+     34 일차함수·경우의 수 MX6 가우스 덧셈(등차 = 일차함수 값의 합)
+     35 제곱근            CH8 제곱·세제곱 계산법 · CH10 제곱수의 합
+     36 곱셈공식·인수분해  CH7 50·100 근처 수의 제곱 · CH9 분리 제곱법 · ML20 차가 2인 두 수의 곱
+     37 이차함수·자료      CH9 분리 제곱법(완전제곱식 = 꼭짓점) · CH7 */
+const COURSE_STRATEGY = {
+  /* 초등에서 창의 칸이 비던 과정 — 그 주 계산과 같은 손동작의 전략 */
+  2:['AD9@1','ML1@1'],                 /* 받아올림 = 10 만들어 보정 · 두 배 수 = 배와 반 */
+  6:['ML25@3','ML25@4','AD9@2'],       /* 구구 6~9단 = 수직선 뛰어 세기 · 세 자리 뺄셈 = 보정 */
+  7:['ML25@4','AD8@3'],                /* 구구 종합 · 네 자리 연산 = 짝 묶기 */
+  29:['CH5@1','CH5@2','CH5@3'], 30:['CH1@1','CH1@2'], 31:['MX6@1','MX6@2','MX6@3'],
+  32:['CH3@1','CH3@2','CH8@1','CH8@2'], 33:['CH12@1','CH12@2'], 34:['MX6@3','MX6@4'],
+  35:['CH8@1','CH8@2','CH10@1','CH10@2'], 36:['CH7@1','CH7@2','CH9@1','CH9@2','ML20@3','ML20@5'],
+  37:['CH9@2','CH9@3','CH7@3']
+};
+/* 중등 적용 — 과정마다 교과 적용 문제(활용 스레드·자료·그래프 직접 그리기). 드릴에 이미 있는 활용
+   스레드는 드릴 출신으로 쓰고, 여기 적힌 것은 드릴이 활용이 아닌 회차를 채운다. */
+const COURSE_APPLY = {
+  29:['MD89@1','MD89@2','MD89@3'], 30:['MD70@1','MD70@2','MD70@3'],
+  31:[{draw:'direct'},{draw:'inverse'},'MD84@1','MD84@4','MD84@6'],
+  32:['MD11@5'], 33:['MD71@1','MD71@2','MD71@3','MD72@1','MD72@2','MD72@3'],
+  34:[{draw:'linear'},'MD76@1','MD76@2','MD76@3','MD88@2','MD88@3'],
+  35:['MD90@1','MD90@2','MD90@3'], 36:['MD77@1','MD77@2','MD77@3','MD19@4','MD19@5'],
+  37:[{draw:'quadratic'},'MD85@2','MD86@4','MD87@2']
+};
+/* 그래프 직접 그리기(GPT 편성에서 옮김) — 빈 좌표평면에 6문항, 교사가 그림으로 확인 */
+const DRAWING = {
+  direct:{ t:'MD51', title:{ko:'정비례 그래프 직접 그리기',en:'Drawing direct proportion',zh:'画正比例图像'} },
+  inverse:{ t:'MD69', title:{ko:'반비례 그래프 직접 그리기',en:'Drawing inverse proportion',zh:'画反比例图像'} },
+  linear:{ t:'MD74', title:{ko:'일차함수 그래프 직접 그리기',en:'Drawing linear functions',zh:'画一次函数图像'} },
+  quadratic:{ t:'MD78', title:{ko:'이차함수 그래프 직접 그리기',en:'Drawing quadratic functions',zh:'画二次函数图像'} }
+};
+/* 초등 문장제로 바뀌는 유형·레벨 — data/wordable.js(생성 파일, scripts/build-wordable.js)가 앱의 문장제 변환으로
+   직접 확인한 목록이다. 이름으로 짐작했더니 17개가 틀렸다. 이 표에 없는 드릴만 있는 회차는 그 구간의
+   문장제 스레드(WP)로 적용 칸을 채운다. */
+const wordable = d => !!((window.NM_WORDABLE || {})[d.t + '@' + d.lv]);
+const WP_BY_TIER = { level1:['WP1@1','WP3@1','WP4@1'], level2:['WP1@2','WP3@2','WP4@2','WP5@1'],
+  level3:['WP1@3','WP3@3','WP4@3','WP5@2'], challenge:['WP4@3','WP5@3'] };
+
+function roleOf(d, tier, fromCreative){
+  const th = (window.NM_THREADS || {})[d.t] || {};
+  if(APPLY_THREADS[d.t] || APPLY_LEVELS[d.t + '@' + d.lv]) return 'application';
+  if(tier === 'level0' && fromCreative) return 'application';   /* 과정 0 의 창의 칸은 줄서기·이야기 셈 문장제 한 벌 */
+  if(STRATEGY_THREADS[d.t] || /^[ABCH]-/.test(th.unit || '') || /^(ML|CH)\d/.test(d.t)) return 'strategy';
+  return 'stretch';
+}
+
+/* ── 30분 분량(2026-09-25 원장) ── 문항 하나에 드는 시간(초)을 구간·난이도로 어림하고,
+   교과는 쉬운 유형 12 · 핵심 18 · 어려운 유형 24(뒤 30%는 한 단계 위 레벨로 — 하위 유형 2개)로 시작해
+   회차 합이 30분(±15%)에 들도록 교과 문항 수만 6씩 조정한다. 창의·적용은 6문항(그리기 6). */
+const SEC_BY_TIER = { level0:20, level1:25, level2:35, level3:40, challenge:50,
+  middle1:40, middle2:45, middle3:50, highmath1:60, highmath2:60, algebra:65, calculus1:70 };
+/* 서로 다른 문항이 적은 레벨의 회차 문항 수 상한 — **데이터로 명시**한다(인쇄 때 몰래 줄이지 않는다, GPT 규칙).
+   값 = (실측한 서로 다른 문항 수 − 예시·따라 풀기 4)를 6의 배수로 내림. 실측은 scripts/report-unique-shortfall.js 방식. */
+/* 2026-09-25 학습량 배수(최대 1.5배)가 생기면서 **교과 칸의 모든 유형·레벨**을 실측해 36 미만인 것을 적었다
+   (scripts/report-count-cap.js, 생성 20000회). MD82@3 도 같은 실측에서 12 다.
+   유아 NL6@1·NL4@3·NL5@3 은 기본 1배 편성(18·24문항)부터 이 값을 넘어 회차 인쇄가 중복 없는 문항을 못 채웠다 — 이제 12. */
+const COUNT_CAP = {
+  'AD1@1':18,   // 서로 다른 문항 26
+  'AD2@1':24,   // 서로 다른 문항 30
+  'DC3@1':18,   // 서로 다른 문항 27
+  'DV14@1':24,   // 서로 다른 문항 32
+  'DV17@1':24,   // 서로 다른 문항 32
+  'DV17@2':24,   // 서로 다른 문항 32
+  'MD19@6':30,   // 서로 다른 문항 34
+  'MD20@4':24,   // 서로 다른 문항 29
+  'MD66@5':18,   // 서로 다른 문항 24
+  'MD69@1':12,   // 서로 다른 문항 16
+  'MD69@2':12,   // 서로 다른 문항 16
+  'MD74@4':24,   // 서로 다른 문항 32
+  'MD78@2':12,   // 서로 다른 문항 18
+  'MD78@3':12,   // 서로 다른 문항 16
+  'MD78@4':12,   // 서로 다른 문항 16
+  'MD82@1':18,   // 서로 다른 문항 25
+  'MD82@2':24,   // 서로 다른 문항 32
+  'MD82@3':12,   // 서로 다른 문항 18
+  'ML25@1':24,   // 서로 다른 문항 32
+  'ML25@2':24,   // 서로 다른 문항 32
+  'ML25@3':24,   // 서로 다른 문항 32
+  'ML25@4':24,   // 서로 다른 문항 32
+  'ML2@1':30,   // 서로 다른 문항 34
+  'ML2@2':30,   // 서로 다른 문항 34
+  'ML2@4':30,   // 서로 다른 문항 34
+  'ML3@1':30,   // 서로 다른 문항 34
+  'ML3@2':30,   // 서로 다른 문항 34
+  'ML3@4':30,   // 서로 다른 문항 34
+  'ML3@5':30,   // 서로 다른 문항 34
+  'ML6@1':30,   // 서로 다른 문항 34
+  'ML6@4':30,   // 서로 다른 문항 34
+  'NL11@1':18,   // 서로 다른 문항 24
+  'NL12@1':12,   // 서로 다른 문항 16
+  'NL14@1':12,   // 서로 다른 문항 20
+  'NL14@2':18,   // 서로 다른 문항 27
+  'NL16@1':12,   // 서로 다른 문항 20
+  'NL3@1':24,   // 서로 다른 문항 30
+  'NL4@1':18,   // 서로 다른 문항 24
+  'NL4@3':12,   // 서로 다른 문항 16
+  'NL5@1':12,   // 서로 다른 문항 20
+  'NL5@3':12,   // 서로 다른 문항 16
+  'NL6@1':12,   // 서로 다른 문항 16
+  'NL7@1':18,   // 서로 다른 문항 24
+  'SB1@1':30,   // 서로 다른 문항 36
+};
+const SESSION_SEC = 1800;
+/* 유아(5~7세)는 20분 — 시간을 재지 않는 단계이고 한 번에 앉아 있는 시간이 짧다(원장 확인 필요, GPT 보고에 적음) */
+/* 중2·중3 은 40분(2026-09-25 원장 결정 "1" — 한 학기 2달을 맞추려고 30분 대신 40분 안팎).
+   1문항 어림이 45·50초라 30분에는 교과 2개밖에 안 들어가 한 학기가 2.6·3.3개월이 됐다. */
+const SESSION_SEC_BY_TIER = { level0:1200, middle2:2400, middle3:2400 };
+/* 넘침 허용 — 30분은 +15%(35분)까지, 40분은 +5%(42분)까지. 40분에 15%를 주면 46분이 되어 "40분 안팎"이 아니다. */
+const SESSION_OVER_BY_TIER = { middle2:1.05, middle3:1.05 };
+/* 한 회차에 싣는 교과 항목 수(2026-09-25, 원장 "보통 2달에 한학기 끝내기").
+   중등은 "회차마다 드릴 2개"로는 한 학년이 7개월(주 2회 24~29주)이 걸렸다. 그래서 중등만
+   **시간 예산이 허락하는 만큼** 싣는다 — 교과 항목마다 최소 12문항 + 창의 6(×1.2) + 적용 6
+   (그래프 그리기면 6×90초)이 회차 시간(중1 30분+15%, 중2·중3 40분+5%) 안에 드는 가장 큰 수, 최대 3. 초등은 이미 한 학기 2달
+   안팎이라(주 2회 35~39주 / 4학기) 옛 규칙(회차마다 2개)을 그대로 쓴다. */
+const PACK_TIERS = { middle1:3, middle2:3, middle3:3 };
+function packCapacity(tier, drawing){
+  /* 예산은 planCounts 와 같은 값(30분+15%, 중2·중3 40분+5%)을 **분 단위로 올림**(34.5 → 35분) — 화면에 분으로 보이는 값과 맞춘다 */
+  const sec = SEC_BY_TIER[tier] || 45, budget = Math.ceil((SESSION_SEC_BY_TIER[tier] || SESSION_SEC) * (SESSION_OVER_BY_TIER[tier] || 1.15) / 60) * 60;
+  const fixed = 6 * sec * 1.2 + (drawing ? 6 * 90 : 6 * sec);
+  return Math.max(1, Math.min(PACK_TIERS[tier], Math.floor((budget - fixed) / (12 * sec))));
+}
+function planCounts(ss, tier, maxLevel){
+  const sec = SEC_BY_TIER[tier] || 45;
+  const BUDGET = SESSION_SEC_BY_TIER[tier] || SESSION_SEC, OVER = SESSION_OVER_BY_TIER[tier] || 1.15;
+  const diff = d => { const mx = maxLevel(d.t); if(mx <= 1) return 2; if(d.lv <= 1) return 1; return d.lv >= mx ? 3 : 2; };
+  const cost = d => d.kind === 'drawing' ? 90 : d.kind === 'word' ? sec * 1.6 : sec;
+  const cap = d => COUNT_CAP[d.t + '@' + d.lv] || 36;
+  ss.school.forEach(d => { d.count = Math.min(cap(d), d.review ? 6 : ({1:12, 2:18, 3:24})[diff(d)]);  /* 복습도 6 — A4 연습 면은 한 쪽 6문항 이상(GPT 지면 규칙) */ d.difficulty = d.review ? 'review' : ['','easy','core','hard'][diff(d)]; });
+  ss.strategy.practice.forEach(d => { d.count = 6; });
+  ss.application.forEach(d => { d.count = 6; });
+  const total = () => [...ss.school, ...ss.strategy.practice].reduce((a, d) => a + d.count * sec * (ss.strategy.practice.indexOf(d) >= 0 ? 1.2 : 1), 0)
+    + ss.application.reduce((a, d) => a + d.count * cost(d), 0);
+  const own = ss.school.filter(d => !d.review);
+  /* 넘치면 쉬운 것부터 6씩 덜고(최소 12 — 어려운 유형은 뒤에 덜린다), 모자라면 어려운 것부터 6씩 더한다(최대 36) */
+  for(let guard = 0; guard < 20 && total() > BUDGET * OVER; guard++){
+    const c = own.slice().sort((a, b) => (a.difficulty === 'hard') - (b.difficulty === 'hard') || b.count - a.count)
+      .find(d => d.count > 12);
+    if(!c) break; c.count -= 6;
+  }
+  /* 그래도 넘치면 복습 한 벌을 뺀다 — 그 주 교과·창의·적용이 먼저다 */
+  if(total() > BUDGET * OVER) ss.school = ss.school.filter(d => !d.review);
+  for(let guard = 0; guard < 20 && total() < BUDGET * 0.75; guard++){
+    const c = own.slice().sort((a, b) => (b.difficulty === 'hard') - (a.difficulty === 'hard') || a.count - b.count)
+      .find(d => d.count + 6 <= cap(d));
+    if(!c) break; c.count += 6;
+  }
+  /* 교과가 상한(COUNT_CAP — 서로 다른 문항이 적은 레벨)에 막혀 더 못 늘면, 적용·창의 칸을 6씩 늘린다(그리기 제외).
+     같은 문제로 채우지 않고 회차 시간을 맞추는 길이다 — 유아 NL6@1·NL14@1 처럼 두 드릴이 모두 12에 막힌 회차. */
+  const more = [...ss.application.filter(d => d.kind !== 'drawing'), ...ss.strategy.practice];
+  for(let guard = 0; guard < 20 && total() < BUDGET * 0.75; guard++){
+    const c = more.slice().sort((a, b) => a.count - b.count).find(d => d.count + 6 <= Math.min(cap(d), 18));
+    if(!c) break; c.count += 6;
+  }
+  ss.minutes = Math.round(total() / 60);
+}
+
+function composeSession(ss, i, spec, lists, maxLevel){
+  if(ss.test) return;
+  const tier = spec.tier;
+  const kindOf = d => /^WP\d/.test(d.t) ? 'word' : 'model';
+  const drillsIn = ss.drills || [];
+  ss.school = drillsIn.filter(d => roleOf(d, tier) !== 'application');
+  ss.application = drillsIn.filter(d => roleOf(d, tier) === 'application').map(d => Object.assign({ kind:kindOf(d), from:'drills' }, d));
+  ss.strategy = { units:(ss.magic || []).slice(), practice:[] };
+  const taken = d => [...ss.school, ...ss.application, ...ss.strategy.practice].some(x => x.t === d.t && x.lv === d.lv);
+  const rotate = (list, n) => { for(let k = 0; k < list.length; k++){ const c = list[(i + k) % list.length]; if(c.draw || !taken(c)) return c; } return null; };
+  /* 그 주에 뽑힌 드릴이 전부 활용이면 교과 칸이 복습만 남는다 — 과정의 교과 드릴 하나를 싣는다 */
+  if(!ss.school.some(d => !d.review)){ const c = rotate(lists.school); if(c) ss.school.unshift({ t:c.t, lv:c.lv, n:6 }); }
+  /* 창의 연산 — 매 회차 한 벌 */
+  const st = rotate(lists.strategy);
+  if(st) ss.strategy.practice.push({ t:st.t, lv:st.lv, n:4 });
+  /* 연결 문장제·적용 — 매 회차 한 벌 이상 */
+  if(tier === 'level0'){
+    const a = rotate(lists.apply); if(a) ss.application.push({ t:a.t, lv:a.lv, n:4, kind:'word', from:'creative' });
+  } else if(ELEM_WORD_TIERS[tier]){
+    const src = ss.school.find(d => !d.review && wordable(d));
+    if(src) ss.application.push({ t:src.t, lv:src.lv, n:6, kind:'word', from:'school' });
+    else if(!ss.application.length){ const a = rotate(lists.wp); if(a) ss.application.push({ t:a.t, lv:a.lv, n:6, kind:'word', from:'creative' }); }
+  } else if(lists.apply.length && lists.apply[i % lists.apply.length].draw){
+    /* 그래프 그리기 차례 — 복습에서 넘어온 적용 한 벌이 자리를 차지하고 있어도 그리기를 싣는다
+       (그 복습은 뺀다, 시간은 packCapacity 가 그리기 회차로 계산해 두었다) */
+    const a = lists.apply[i % lists.apply.length];
+    ss.application = ss.application.filter(x => !x.review);
+    ss.application.push({ t:DRAWING[a.draw].t, lv:1, n:6, kind:'drawing', mode:a.draw, title:DRAWING[a.draw].title, from:'creative' });
+  } else if(!ss.application.length){
+    const a = rotate(lists.apply);
+    if(a && a.draw) ss.application.push({ t:DRAWING[a.draw].t, lv:1, n:6, kind:'drawing', mode:a.draw, title:DRAWING[a.draw].title, from:'creative' });
+    else if(a) ss.application.push({ t:a.t, lv:a.lv, n:4, kind:kindOf(a), from:'creative' });
+  }
+  ss.stretch = [];
+  planCounts(ss, tier, maxLevel);
+  /* 옛 화면용 필드 — 교과·드릴 출신 적용은 drills, 창의 전략·창의 칸 출신 적용은 creative */
+  ss.drills = [...ss.school, ...ss.application.filter(a => a.from === 'drills')];
+  ss.creative = [...ss.strategy.practice, ...ss.application.filter(a => a.from === 'creative' && a.kind !== 'drawing')];
+}
+
 function buildCourses(NM_THREADS){
   NM_THREADS = NM_THREADS || {};
   const maxLevel = t => {
@@ -369,6 +609,7 @@ function buildCourses(NM_THREADS){
   const homeLevel = {};   // thread -> level assigned when it's OWN material (escalates on reuse, capped)
   const priorPool = [];   // ordered list of distinct threads introduced as OWN material by earlier courses
   const seenPool = {};
+  const poolBand = {};    // thread -> 처음 배운 학교 구간(elem·middle·high) — 복습을 같은 구간으로 묶는다
   let globalSessionIdx = 0;
   const OUT = {};
 
@@ -402,6 +643,18 @@ function buildCourses(NM_THREADS){
       .map(d => ({ t:d.t, pin:d.pin, lv:Math.min(d.pin || 1, maxLevel(d.t)), n:4 }));
     const creEmitted = {};   /* 창의 스레드를 이미 몇 회차에 실었나 */
 
+    /* 세 층 목록 — 창의 전략·적용은 과정 표(COURSE_STRATEGY·COURSE_APPLY)가 있으면 그것,
+       없으면 그 과정의 창의 칸·드릴에서 역할로 골라낸다. */
+    const P = raw => { if(raw && raw.draw) return raw; const d = parsePin(raw); return NM_THREADS[d.t] ? { t:d.t, lv:Math.min(d.pin || 1, maxLevel(d.t)) } : null; };
+    const lists = {
+      strategy:(COURSE_STRATEGY[spec.id] || []).map(P).filter(Boolean)
+        .concat(creative.filter(d => roleOf(d, spec.tier) === 'strategy').map(d => ({ t:d.t, lv:d.lv })))
+        .concat(ownDrills.filter(d => roleOf(d, spec.tier) === 'strategy').map(d => ({ t:d.t, lv:d.lv }))),
+      apply:(COURSE_APPLY[spec.id] || []).map(P).filter(Boolean)
+        .concat(creative.filter(d => roleOf(d, spec.tier, true) === 'application').map(d => ({ t:d.t, lv:d.lv }))),
+      wp:(WP_BY_TIER[spec.tier] || []).map(P).filter(Boolean),
+      school:ownDrills.filter(d => roleOf(d, spec.tier) !== 'application').map(d => ({ t:d.t, lv:d.lv }))
+    };
     let segments = spec.magic.slice();
     /* maxSessions: 과정 6·7처럼 구구 B-유닛 묶음을 얹어 5를 넘는 과정만 6까지 허용(2026-09-03) */
     /* minSessions(2026-09-20, 원장 "회차 늘려도 되지") — 그 과정의 레벨 계단을 다 밟으려면
@@ -410,8 +663,18 @@ function buildCourses(NM_THREADS){
        이미 폈고, 이 주들은 **같은 개념을 한 단계 위에서 손으로 다지는** 자리다. */
     const minSess = spec.minSessions || 0;
     const capSess = Math.max(spec.maxSessions || 5, minSess);
-    const targetCount = (spec.boss || spec.comingSoon) ? 3
+    /* 2026-09-25 원장 "보통 2달에 한학기 끝내기" — 회차 수는 **싣는 교과 항목 수 ÷ 한 회차에 싣는 수**로
+       정한다(PACK_TIERS · packCapacity, 중등만). 중등의 옛 minSessions 는 "회차마다 드릴 2개" 시절의 값이라 쓰지 않는다. */
+    const pack = !!PACK_TIERS[spec.tier] && !spec.boss && !spec.comingSoon;
+    /* 회차 i 의 적용 칸이 그래프 그리기인가 — composeSession 의 순환(과정 표의 i 번째)과 같은 규칙 */
+    const capAt = i => packCapacity(spec.tier, !!(lists.apply.length && lists.apply[i % lists.apply.length].draw));
+    let targetCount = (spec.boss || spec.comingSoon) ? 3
       : Math.min(Math.max(segments.length, 3, minSess), capSess);
+    if(pack){
+      targetCount = 3;
+      const capSum = n => Array.from({ length:n }, (_, i) => capAt(i)).reduce((a, b) => a + b, 0);
+      while(capSum(targetCount) < ownDrills.length) targetCount++;
+    }
     if(segments.length === 0){
       segments = new Array(targetCount).fill(null);
     } else {
@@ -444,17 +707,20 @@ function buildCourses(NM_THREADS){
            모자라 주마다 드릴이 하나로 줄었다. 막아야 하는 것은 "같은 유형이 같은 레벨로 두 벌"
            찍히는 것이지, 한 주에 한 단계씩 오르는 것이 아니다. */
         if(!queue.length) queue = ownDrills.slice();
-        const ownA = queue.shift();
-        let ownB = null;
-        for(let k = 0; k < queue.length; k++){
-          if(queue[k].t !== ownA.t){ ownB = queue.splice(k, 1)[0]; break; }
+        /* 한 회차에 2개(중등은 시간이 허락하는 만큼, 남은 회차에 고르게 나눈다). 짝은 다른 스레드 먼저,
+           없으면 같은 스레드라도 이미 뽑은 것과 레벨이 다른 항목. */
+        let want = 2;
+        if(pack){
+          let later = 0; for(let j = i + 1; j < targetCount; j++) later += capAt(j);
+          want = Math.min(capAt(i), Math.max(1, Math.ceil(queue.length * capAt(i) / (capAt(i) + later))));
         }
-        if(!ownB){
-          for(let k = 0; k < queue.length; k++){
-            if(queue[k].lv !== ownA.lv){ ownB = queue.splice(k, 1)[0]; break; }
-          }
+        const picked = [queue.shift()];
+        while(picked.length < want && queue.length){
+          let k = queue.findIndex(q => !picked.some(p => p.t === q.t));
+          if(k < 0) k = queue.findIndex(q => !picked.some(p => p.t === q.t && p.lv === q.lv));
+          if(k < 0) break;
+          picked.push(queue.splice(k, 1)[0]);
         }
-        const picked = ownB ? [ownA, ownB] : [ownA];
         /* 회차마다 한 칸씩(2026-09-20, 원장 "계단형 자동 + 갈래형 수동").
            전에는 한 과정에 한 번 실린 스레드가 그 과정 내내 레벨 1에 머물렀다 — 그래서
            **190개 중 127개가 만들어 둔 상위 레벨에 학습지로는 영영 안 닿았다**
@@ -473,12 +739,15 @@ function buildCourses(NM_THREADS){
       if(spec.id > 1 && priorPool.length){
         /* 복습 한 벌 — 그 주 드릴에 이미 있는 스레드면 건너뛴다(2026-09-20).
            안 그러면 같은 학습지에 같은 유형이 두 벌 찍힌다(C27 DV6 · C28 MX4). */
+        /* 복습은 같은 학교 구간(초등·중등·고등)에서, **바로 앞에 배운 유형** 가운데서만(2026-09-25).
+           전엔 전역 풀을 회차 번호로 돌려 중2·중3 학습지에 초등 "몇십 곱"이 20문항 붙었다(GPT 검수). */
+        const recent = priorPool.filter(t => poolBand[t] === BAND_OF[spec.tier]).slice(-RECENT_REVIEW);
         let pt = null;
-        for(let k = 0; k < priorPool.length; k++){
-          const cand = priorPool[(globalSessionIdx + k) % priorPool.length];
+        for(let k = 0; k < recent.length; k++){
+          const cand = recent[(globalSessionIdx + k) % recent.length];
           if(!drills.some(d => d.t === cand)){ pt = cand; break; }
         }
-        if(pt) drills.push({t:pt, lv:homeLevel[pt], n:4});
+        if(pt) drills.push({t:pt, lv:homeLevel[pt], n:4, review:true});
       }
       globalSessionIdx++;
       /* 창의 회차는 세션마다 하나씩 순환 — 한 주 학습지에 필산 뒤 창의 한 벌.
@@ -514,6 +783,8 @@ function buildCourses(NM_THREADS){
       return { magic: seg, drills, creative: cre };
     });
 
+    sessions.forEach((ss, i) => composeSession(ss, i, spec, lists, maxLevel));
+
     /* 회차마다 올라간 레벨을 homeLevel 에 반영한다 — 그래야 이 과정의 시험(pool)과
        뒤 과정의 복습(priorPool)이 **실제로 배운 마지막 레벨**로 나온다. */
     sessions.forEach(ss => (ss.drills || []).forEach(d => {
@@ -544,13 +815,14 @@ function buildCourses(NM_THREADS){
     /* 유아 드릴(level0)은 복습 풀에 넣지 않는다 — 풀은 끝까지 순환하므로 넣으면 중등 과정
        학습지에도 '수 세기'가 복습으로 따라붙는다. */
     if(spec.tier !== 'level0')
-      ownDrills.forEach(d => { if(!seenPool[d.t]){ seenPool[d.t]=true; priorPool.push(d.t); } });
+      ownDrills.forEach(d => { if(!seenPool[d.t]){ seenPool[d.t]=true; priorPool.push(d.t); poolBand[d.t]=BAND_OF[spec.tier]; } });
   });
 
   return OUT;
 }
 
 window.NM_COURSE_SPEC = COURSE_SPEC;   // 검증 하네스·향후 편집용 원본 노출
+window.NM_COUNT_CAP = COUNT_CAP;       // 학습량 배수(exam.js)도 같은 상한을 지킨다
 window.NM_COURSES = buildCourses(window.NM_THREADS);
 
 if(typeof module!=='undefined'&&module.exports)module.exports={COURSE_SPEC,buildCourses,NM_COURSES:window.NM_COURSES};
