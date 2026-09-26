@@ -28,12 +28,52 @@ export function mat(color, opts = {}) {
     emissiveIntensity: opts.emissiveIntensity ?? 1,
   });
 }
+// 유리: 굴절(transmission)은 속의 물·입자(반투명)를 가려서 쓰지 않는다. 대신 매끈한 겉면 + 코팅 층으로
+// 스튜디오 환경의 창 모양 반사가 또렷이 맺히게 해서 "유리"로 읽히게 한다.
 export function glassMat(color = PALETTE.glass, opacity = 0.35) {
   return new THREE.MeshPhysicalMaterial({
-    color, roughness: 0.15, metalness: 0, transparent: true, opacity,
-    transmission: 0, side: THREE.DoubleSide, depthWrite: false,
+    color, roughness: 0.04, metalness: 0, transparent: true, opacity, ior: 1.5, specularIntensity: 1,
+    clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 1.35, side: THREE.DoubleSide, depthWrite: false,
   });
 }
+// 광택 플라스틱·칠(자석·버튼·교구): 반광택 겉칠 한 겹.
+export function glossMat(color, opts = {}) {
+  return new THREE.MeshPhysicalMaterial({ color, roughness: opts.roughness ?? 0.38, metalness: opts.metalness ?? 0, clearcoat: opts.clearcoat ?? 0.7, clearcoatRoughness: opts.clearcoatRoughness ?? 0.2, emissive: opts.emissive ?? 0x000000, emissiveIntensity: opts.emissiveIntensity ?? 1 });
+}
+
+// 부드러운 뭉게 입자(연기·김·냉기·화산 가스·불빛): 점마다 크기(월드 단위)·투명도가 다른 점 구름 하나.
+// 구 여러 개를 쓰면 가장자리가 딱딱하고 밝은 배경에서 사라지는데, 이것은 가장자리가 흐리게 번진다.
+// set(i, x, y, z, size, alpha) 로 채우고 commit(개수) 로 그린다. additive:true 면 빛(불꽃·용암 빛무리)처럼 더해진다.
+const PUFF_VS = `attribute float size; attribute float alpha; varying float vA; uniform float uScale;
+void main(){ vA = alpha; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = size * uScale / max(0.05, -mv.z); gl_Position = projectionMatrix * mv; }`;
+const PUFF_FS = `uniform vec3 uColor; uniform float uOpacity; uniform float uSoft; varying float vA;
+void main(){ vec2 c = gl_PointCoord - 0.5; float d = length(c) * 2.0; if (d > 1.0) discard;
+  float a = pow(1.0 - smoothstep(0.0, 1.0, d), 1.0 + uSoft * 2.0) * vA * uOpacity;
+  gl_FragColor = vec4(uColor, a);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}`;
+export function puffCloud(n, opts = {}) {
+  const geo = new THREE.BufferGeometry(), pos = new Float32Array(n * 3), size = new Float32Array(n), alpha = new Float32Array(n);
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('size', new THREE.BufferAttribute(size, 1).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1).setUsage(THREE.DynamicDrawUsage));
+  geo.setDrawRange(0, 0);
+  const m = new THREE.ShaderMaterial({
+    uniforms: { uColor: { value: new THREE.Color(opts.color ?? 0xffffff) }, uOpacity: { value: opts.opacity ?? 1 }, uSoft: { value: opts.soft ?? 0.5 }, uScale: { value: 400 } },
+    vertexShader: PUFF_VS, fragmentShader: PUFF_FS, transparent: true, depthWrite: false,
+    blending: opts.additive ? THREE.AdditiveBlending : THREE.NormalBlending, toneMapped: !opts.additive,
+  });
+  const p = new THREE.Points(geo, m); p.frustumCulled = false; p.renderOrder = opts.renderOrder ?? 4;
+  const _v = new THREE.Vector2();
+  p.onBeforeRender = (renderer, scene, camera) => { renderer.getDrawingBufferSize(_v); m.uniforms.uScale.value = _v.y / (2 * Math.tan((camera.fov * Math.PI) / 360)); };
+  p.userData.set = (i, x, y, z, s, a) => { pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z; size[i] = s; alpha[i] = a; };
+  p.userData.commit = (count) => { geo.setDrawRange(0, count); geo.attributes.position.needsUpdate = geo.attributes.size.needsUpdate = geo.attributes.alpha.needsUpdate = true; };
+  p.userData.max = n;
+  return p;
+}
+// 입자 수를 기기 화질에 맞춘다(무대 캔버스의 data-quality: high·mid·low·min).
+export const particleBudget = (canvas, n) => { const q = canvas?.dataset?.quality; return Math.max(8, Math.round(n * (q === 'min' ? 0.35 : q === 'low' ? 0.55 : q === 'mid' ? 0.8 : 1))); };
 
 // 모서리가 둥근 상자(three.js 예제 RoundedBoxGeometry와 같은 방식: 가운데 칸을 평면으로 늘리고 바깥 칸을 둥글게 편다).
 // 공유하면 호출하는 쪽의 geometry.translate()가 서로 번지므로 매번 새로 만든다.

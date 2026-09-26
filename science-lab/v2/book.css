@@ -219,3 +219,120 @@
 .bk-fix b { color: #1E3A78; font-weight: 800; }
 .bk.live .bk-choices li.no { background: #FDECEA; color: #C8321F; font-weight: 700; }
 @media print { .bk-chips, .bk-fix { display: none !important; } }
+
+/* ════ 잡지형 교재(2026-09-26) — 읽을거리(reading.css)와 광고 책의 결에 맞춘 편집 디자인 ════
+   · 쪽 머리: 무거운 색 띠 대신 흰 바탕 + 단원색 가는 줄(러닝 헤드). 첫 쪽만 표지처럼 크게.
+   · 꼭지: 작은 영문 머리글 + 큰 제목 + 단원색 줄. 단계는 큰 번호.
+   · 상자: 알아볼까요(생각)·궁금해요(질문)·잠깐!(주의)·개념 더하기 — 색 옆줄과 머리 칩.
+   · 목표는 인용구, 사진은 캡션·출처. 글꼴은 Pretendard 한 가지(굵기·자간으로 위계). A4 인쇄 그대로. */
+.bk { --bk-ink: #17213A; --bk-mute: #5B6577; --bk-hair: #D9E0EA; --bk-tint: color-mix(in srgb, var(--bk-theme) 7%, #fff); --bk-tint2: color-mix(in srgb, var(--bk-theme) 14%, #fff); }
+.bk-page { color: var(--bk-ink); line-height: 1.68; }
+/* 러닝 헤드 */
+.bk-band { height: 12mm; background: #fff; color: var(--bk-theme); border-bottom: .5mm solid var(--bk-theme); gap: 2.5mm; }
+.bk-band::after { left: 14mm; right: auto; width: 26mm; bottom: -1.3mm; height: 1.3mm; background: var(--bk-orange); opacity: 1; }
+.even .bk-band::after { left: auto; right: 14mm; }
+.bk-band-no { width: 7.5mm; height: 7.5mm; font: 900 10.5pt/1 var(--disp, sans-serif); background: var(--bk-theme); color: #fff; }
+.bk-band-t { font: 800 11pt/1 var(--disp, sans-serif); letter-spacing: -.02em; color: var(--bk-ink); }
+.bk-band-u { color: var(--bk-mute); font-size: 7.8pt; font-weight: 700; letter-spacing: .02em; opacity: 1; }
+/* 첫 쪽: 표지 같은 여는 면 */
+.first .bk-band { height: 46mm; border-bottom: 0; color: #fff; padding-bottom: 6mm;
+  background: radial-gradient(120mm 60mm at 85% 0%, color-mix(in srgb, #fff 18%, transparent), transparent 70%), linear-gradient(135deg, var(--bk-theme) 0 62%, color-mix(in srgb, var(--bk-theme) 62%, #000) 100%); }
+.first .bk-band::after { left: 14mm; right: 14mm; width: auto; bottom: 0; height: 1.6mm; background: repeating-linear-gradient(90deg, var(--bk-orange) 0 22mm, transparent 22mm 24mm); }
+.first .bk-no { width: 22mm; height: 22mm; font: 900 28pt/22mm var(--disp, sans-serif); background: transparent; color: #fff; box-shadow: inset 0 0 0 .8mm rgba(255, 255, 255, .9); }
+.bk-kicker { display: flex; align-items: center; gap: 2.5mm; font-size: 9pt; font-weight: 700; letter-spacing: .01em; }
+.bk-exp { font-size: 7.5pt; font-weight: 900; letter-spacing: .18em; padding: .6mm 2.2mm; border-radius: 99mm; background: rgba(255, 255, 255, .18); box-shadow: inset 0 0 0 .3mm rgba(255, 255, 255, .6); }
+.bk-open h2 { font: 900 32pt/1.05 var(--disp, sans-serif); letter-spacing: -.05em; text-shadow: 0 .6mm 2mm rgba(0, 0, 0, .18); }
+.first .bk-vol { font-weight: 700; } .first .bk-vol b { font-weight: 900; letter-spacing: -.02em; }
+/* 옆날개(플러스 노트) — 단원색 옅은 칸 */
+.bk-rail { background: var(--bk-tint); box-shadow: inset 0 1.2mm 0 var(--bk-theme); border-radius: 0 0 4mm 4mm; }
+.first .bk-rail { box-shadow: none; }
+.bk-rail-tag { font-weight: 900; letter-spacing: .04em; border-radius: 1.2mm; padding: .7mm 2.4mm; }
+.bk-rn h5 { color: var(--bk-ink); font-weight: 800; } .bk-rn h5::before { content: ''; display: inline-block; width: 1.8mm; height: 1.8mm; border-radius: 50%; background: var(--bk-orange); margin-right: 1.4mm; vertical-align: .3mm; }
+.bk-gl { border-top: .3mm solid var(--bk-hair); } .bk-gl h5 { background: none; color: var(--bk-theme); padding: 0; font-weight: 900; letter-spacing: .04em; }
+.bk-gl b { color: var(--bk-ink); }
+.bk-key { border-top: .3mm dashed var(--bk-hair); color: var(--bk-mute); }
+/* 꼭지 여는 머리 */
+.bk-banner { display: block; margin: 0 0 4.5mm; padding: 0 0 2.2mm; border-bottom: .6mm solid var(--bk-ink); position: relative; }
+.bk-banner::after { content: ''; position: absolute; left: 0; bottom: -.6mm; width: 22mm; height: .6mm; border: 0; background: var(--bk-orange); flex: none; }
+.bk-banner .bk-kick { display: block; margin: 0 0 1mm; font: 900 7.4pt/1 var(--disp, sans-serif); letter-spacing: .18em; color: var(--bk-orange); }
+.bk-banner span, .bk-banner.design span, .bk-banner.concept span, .bk-banner.check span, .bk-banner.report span { display: block; background: none; box-shadow: none; padding: 0; border-radius: 0; color: var(--bk-ink); font: 900 19pt/1.15 var(--disp, sans-serif); letter-spacing: -.045em; }
+.bk-banner.design .bk-kick { color: var(--bk-navy); } .bk-banner.concept .bk-kick, .bk-banner.check .bk-kick { color: var(--bk-theme); }
+.bk-banner.report .bk-kick { color: #1E6B8F; } .bk-banner.gift .bk-kick { color: #B7791F; } .bk-banner.think .bk-kick { color: #6D4BC8; }
+/* 단계 머리: 큰 번호 */
+.bk-step { gap: 3mm; margin: 5.5mm 0 2.2mm; font: 800 12.5pt/1.2 var(--disp, sans-serif); letter-spacing: -.03em; color: var(--bk-ink); }
+.bk-step span { background: none; color: var(--bk-theme); padding: 0; border-radius: 0; font: 900 8pt/1 var(--disp, sans-serif); letter-spacing: .16em; border-right: .4mm solid var(--bk-hair); padding-right: 3mm; }
+.bk-step::after { content: ''; flex: 1; height: 0; border-bottom: .3mm dotted var(--bk-hair); }
+/* 인용구 같은 탐구 목표 */
+.bk-goal { position: relative; border: 0; padding: 3mm 0 3mm 11mm; margin: 0 0 4mm; font: 800 12.5pt/1.45 var(--disp, sans-serif); letter-spacing: -.03em; color: var(--bk-ink);
+  border-top: .3mm solid var(--bk-hair); border-bottom: .3mm solid var(--bk-hair); }
+.bk-goal::before { content: '“'; position: absolute; left: 0; top: -1.5mm; font: 900 34pt/1 Georgia, 'Times New Roman', serif; color: var(--bk-orange); }
+/* 본문 */
+.bk-p { text-indent: 0; margin: 0 0 2.6mm; }
+.first .bk-main > .bk-p:first-of-type { font-size: 11pt; font-weight: 600; line-height: 1.65; }
+.first .bk-main > .bk-p:first-of-type::first-letter { float: left; font: 900 26pt/.9 var(--disp, sans-serif); color: var(--bk-theme); margin: 1mm 2mm 0 0; }
+.bk-hint { color: var(--bk-mute); }
+/* 상자: 머리 칩 + 색 옆줄 */
+.bk-box, .bk-more { position: relative; border: 0; border-radius: 0 3mm 3mm 0; padding: 3mm 4mm 3mm 5mm; box-shadow: inset 1.2mm 0 0 var(--bx, var(--bk-navy)); background: var(--bxb, #F5F8FD); }
+.bk-box::before, .bk-more::before { display: inline-block; margin: 0 0 1.2mm; font: 900 7.4pt/1 var(--disp, sans-serif); letter-spacing: .14em; padding: .9mm 2.2mm; border-radius: 99mm; color: #fff; background: var(--bx, var(--bk-navy)); }
+.bk-box h4 { color: var(--bx, var(--bk-navy)); font-weight: 900; letter-spacing: -.02em; }
+.bk-box.think { --bx: var(--bk-theme); --bxb: var(--bk-tint); } .bk-box.think::before { content: '알아볼까요'; }
+.bk-box.q { --bx: #C27A12; --bxb: #FFF8EC; } .bk-box.q::before { content: '궁금해요'; }
+.bk-box.caution { --bx: var(--bk-point); --bxb: #FFF4F2; border: 0; } .bk-box.caution::before { content: '잠깐!'; }
+.bk-box.self { --bx: var(--bk-theme); --bxb: #fff; box-shadow: inset 1.2mm 0 0 var(--bx), inset 0 0 0 .3mm var(--bk-hair); } .bk-box.self::before { content: '스스로 점검'; }
+.bk-box.self.tight::before { margin-bottom: .6mm; }
+.bk-more { --bx: var(--bk-theme); --bxb: var(--bk-tint); } .bk-more::before { content: '개념 더하기'; }
+.bk-more h4 { margin: 0 0 1mm; display: block; background: none; color: var(--bk-ink); padding: 0; font-size: 10.5pt; font-weight: 900; }
+.bk-read { border: 0; border-radius: 3mm; background: #FFF6EA; box-shadow: inset 0 1.2mm 0 var(--bk-orange); padding: 4mm; }
+.bk-read h4 { color: var(--bk-ink); font-weight: 900; font-size: 12pt; letter-spacing: -.03em; }
+/* 준비물·탐구 요소 */
+.bk-tag { background: var(--bk-tint); border-radius: 2mm; } .bk-tag b, .bk-mat b { color: var(--bk-theme); font-weight: 900; }
+.bk-mat { border: .3mm solid var(--bk-hair); border-radius: 2mm; background: #fff; }
+/* 실험 단계 카드 */
+.bk-stepcard { background: #fff; border-radius: 3mm; padding: 2.6mm; box-shadow: 0 0 0 .3mm var(--bk-hair), 0 1mm 3mm rgba(20, 40, 80, .06); }
+.bk-stepcard .bk-art { background: var(--bk-tint); border-radius: 2mm; padding: 1mm; }
+.bk-n { width: 8.5mm; height: 8.5mm; font: 900 12pt/1 var(--disp, sans-serif); background: var(--bk-theme); border-radius: 2mm; margin-bottom: 1.5mm; }
+.bk-stepcard p { font-size: 10pt; } .bk-tip { color: #1E6B8F; } .bk-tip::before { font-weight: 900; color: #1E6B8F; }
+/* 표: 가는 줄 */
+.bk-tbl th, .bk-tbl td { border-color: var(--bk-hair); }
+.bk-tbl thead th { background: var(--bk-tint2); color: var(--bk-ink); font-weight: 800; }
+.bk-tbl th { background: var(--bk-tint); font-weight: 700; }
+.bk-lines i { border-bottom-color: #C6D0DE; }
+/* 개념 정리 */
+.bk-cs h3 { font: 900 13pt/1.2 var(--disp, sans-serif); letter-spacing: -.03em; }
+.bk-letter { background: var(--bk-theme); border-radius: 2mm; font-weight: 900; }
+.bk-flow div { background: #fff; border: .3mm solid var(--bk-hair); box-shadow: inset 0 1mm 0 var(--bk-theme); }
+/* 사진: 캡션·출처 */
+.bk-photo img { border-radius: 2mm; }
+.bk-photo figcaption { padding-left: 2mm; border-left: .6mm solid var(--bk-orange); }
+/* 첫 쪽 이 장의 순서 */
+.bk-road-steps span { border: 0; background: var(--bk-tint); font-weight: 700; } .bk-road-steps b { background: var(--bk-theme); border-radius: 1.2mm; }
+/* 확인 문제: 큰 번호 */
+.bk-qn { font: 900 15pt/1 var(--disp, sans-serif); letter-spacing: -.04em; }
+.bk-items { column-rule: .3mm solid var(--bk-hair); }
+/* 쪽 번호(폴리오) */
+.bk-foot { font-size: 7.8pt; font-weight: 700; letter-spacing: .04em; color: var(--bk-mute); }
+.bk-pn { font: 900 12pt/1 var(--disp, sans-serif); }
+/* 웹 교재 영상: 사진 위에 영상 표시 */
+.bk-video { border-radius: 3mm; box-shadow: 0 1.5mm 5mm rgba(20, 40, 80, .18); }
+.bk-video::before { content: 'VIDEO · 실제 영상'; position: absolute; left: 3mm; top: 3mm; z-index: 1; font: 900 7.4pt/1 var(--disp, sans-serif); letter-spacing: .14em; color: #fff; background: rgba(226, 59, 46, .92); padding: 1.2mm 2.4mm; border-radius: 99mm; }
+@media (max-width: 700px) {
+  .bk:not(.a4) .bk-banner span { font-size: 22px; } .bk:not(.a4) .bk-banner .bk-kick { font-size: 10px; }
+  .bk:not(.a4) .bk-goal { font-size: 16px; }
+  .bk:not(.a4) .first .bk-band { height: auto; }
+  .bk:not(.a4) .bk-band { height: 44px; }
+}
+@media print { .bk-video::before { display: none; } }
+/* 상자 머리 칩은 윗변에 걸친 탭 — 높이를 더하지 않는다 */
+.bk-box, .bk-more { margin-top: 5mm; }
+.bk-box::before, .bk-more::before { position: absolute; left: 4mm; top: 0; transform: translateY(-55%); margin: 0; }
+.bk-box.self.tight { margin-top: 4.2mm; }
+.bk-more h4 { margin-top: .6mm; }
+.bk-box.think, .bk-box.q, .bk-box.caution, .bk-box.self { background: var(--bxb); border: 0; }
+.bk-box.think h4 { color: var(--bk-theme); }
+/* 빽빽한 쪽(개념 정리·탐구보고서)이 A4 한 장을 넘지 않게 */
+.bk-banner { margin-bottom: 3.6mm; }
+.bk-banner span, .bk-banner.design span, .bk-banner.concept span, .bk-banner.check span, .bk-banner.report span { font-size: 18pt; }
+.bk-rep > li { margin-bottom: 1.6mm; } .bk-rep .bk-lines i { height: 5mm; }
+.bk-box.self.tight { margin-top: 3.4mm; padding-top: 2.4mm; padding-bottom: 1.6mm; }
+.bk-more { padding-top: 2.6mm; padding-bottom: 2.4mm; }
+.bk-cs { margin-bottom: 3.2mm; }

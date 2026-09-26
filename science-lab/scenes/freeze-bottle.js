@@ -107,11 +107,13 @@ function buildScale() {
     tl.position.set(x, FY - 0.1, FZ + 0.001); g.add(tl);
   });
   g.userData.lcd = lcd;
+  g.userData.setLcd = (text) => { if (lcd.userData.text === text) return; lcd.userData.text = text; const c = lcdTex.image; drawLcd(c.getContext('2d'), c.width, c.height, text); lcdTex.needsUpdate = true; };
   return g;
 }
 
 // ── 투명 PET 병 ──────────────────────────────────────────────
-function buildBottle() {
+// kan: 가상 실험실용 눈금 — { y0, unit, max } 이면 mL 대신 "칸" 눈금(1칸마다 선, 5칸마다 숫자)을 그린다.
+function buildBottle(kan = null) {
   const g = new THREE.Group();
   const pet = new THREE.MeshPhysicalMaterial({ color: 0xe4f0f8, transparent: true, opacity: 0.24, roughness: 0.04, metalness: 0,
     clearcoat: 1, clearcoatRoughness: 0.04, side: THREE.DoubleSide, depthWrite: false });
@@ -133,7 +135,15 @@ function buildBottle() {
   const y0 = 0.2, y1 = 1.42, arcL = 0.9, arcS = 0.55 - arcL / 2 + 0.05;
   const CW = 256, CH = Math.round(CW / (arcL * (R + 0.004)) * (y1 - y0));
   const toPx = (y) => CH - (y - y0) / (y1 - y0) * CH;
-  const scaleTex = canvasTex(CW, CH, (c) => {
+  const scaleTex = kan ? canvasTex(CW, CH, (c) => {
+    c.fillStyle = 'rgba(38,58,78,0.92)'; c.font = '800 64px "Pretendard", "Noto Sans KR", sans-serif'; c.textBaseline = 'middle';
+    for (let k = 0; k <= kan.max; k++) {
+      const y = toPx(kan.y0 + k * kan.unit), major = k % 5 === 0;
+      c.fillRect(6, y - (major ? 3.5 : 2), major ? 70 : 40, major ? 7 : 4);
+      if (major) c.fillText(String(k), 90, y + 2);
+    }
+    c.font = '800 44px "Pretendard", "Noto Sans KR", sans-serif'; c.fillText('칸', 96, toPx(1.39));
+  }) : canvasTex(CW, CH, (c) => {
     c.fillStyle = 'rgba(38,58,78,0.92)'; c.font = '800 64px "Pretendard", "Noto Sans KR", sans-serif'; c.textBaseline = 'middle';
     for (let ml = 50; ml <= 500; ml += 50) {
       const y = toPx(0.3 + (ml - 100) / 100 * 0.25), major = ml % 100 === 0;
@@ -187,6 +197,10 @@ function buildBeaker() {
   for (let i = 1; i <= 4; i++) { const t = new THREE.Mesh(new THREE.TorusGeometry(0.343, 0.004, 4, 24, 0.5), mat(0x2c3e50)); t.rotation.x = Math.PI / 2; t.rotation.z = 0.78; t.position.y = 0.12 + i * 0.15; g.add(t); }
   return g;
 }
+
+// 가상 실험실(v2/lab-freeze.js)이 같은 저울·병·얼음 통을 쓴다.
+export const BOTTLE_DIM = { R, H, RW, PAN_Y, ICE };
+export { buildScale, buildBottle, buildBath, buildBeaker, waterGeo, canvasTex, rng };
 
 export default {
   view: { theta: 0.55, phi: 1.2, dist: 7.0, target: [0, 1.4, 0] },

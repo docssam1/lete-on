@@ -27,14 +27,14 @@ export function buildSlides(ch, art, plan, similar, mode) {
   add('scene', 'open', '3D로 먼저 보기', `<div class="dk-3d" data-mount="scene"></div>`, { say: 'scene', mount: 'scene', layout: 'media', kind: 'scene' });
 
   add('goal', 'design', '탐구 목표', `<p class="dk-goal">${esc(ch.goal)}</p><div class="dk-two"><div class="dk-card"><h3>준비물</h3><p>${ch.materials.kit.map(esc).join(', ')}</p></div>
-    <div class="dk-card"><h3>학생 준비물</h3><p>${ch.materials.student.map(esc).join(', ')}</p></div></div>`, { kind: 'read' });
+    <div class="dk-card"><h3>학생 준비물</h3><p>${ch.materials.student.map(esc).join(', ')}</p></div></div>`, { kind: 'read', layout: 'goal' });
   add('hypo', 'design', 'STEP 1 · 가설 세우기', `<p class="dk-q">${esc(ch.hypothesis.hint)}</p>${ans(ch.hypothesis.a, 'hypo')}`, { say: 'hypo', kind: 'write' });
   const d = ch.design;
   add('design', 'design', 'STEP 2 · 실험 설계하기', `<table class="dk-tbl">${[d.change, d.same, d.measure].map((r, i) => `<tr><th>${esc(r.q)}</th><td>${ans(r.a, `design${i}`)}</td></tr>`).join('')}</table>
     <p class="dk-sub">알맞은 실험은 바꿀 조건을 하나만 정하고, 나머지는 모두 같게 해요.</p>`, { say: 'design', kind: 'write' });
 
   ch.steps.forEach((s, i) => add(`step${i + 1}`, 'lab', `STEP 3 · 실험하기 ${i + 1}/${ch.steps.length}`,
-    `<div class="dk-two wide-art"><div class="dk-art">${art[s.art]}</div><div><p class="dk-big">${esc(s.text)}</p><p class="dk-tip rv">도움말 · ${esc(s.tip)}</p></div></div>`, { say: `step${i + 1}`, kind: 'read' }));
+    `<div class="dk-two wide-art"><div class="dk-art">${art[s.art]}</div><div><span class="dk-stepno" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><p class="dk-big">${esc(s.text)}</p><p class="dk-tip rv">도움말 · ${esc(s.tip)}</p></div></div>`, { say: `step${i + 1}`, kind: 'read', layout: 'step' }));
   add('lab', 'lab', `3D 실험실 · ${esc(ch.labTitle || '조건을 바꿔 직접 해 보기')}`, `<div class="dk-3d" data-mount="lab"></div>`, { say: 'lab', mount: 'lab', layout: 'media', kind: 'lab' });
   add('wonder', 'lab', 'Q. 이런 경우는?', `<p class="dk-q">${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 'wonder')}
     <div class="dk-caution"><h3>주의하세요!</h3><ul>${ch.caution.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>`, { say: 'wonder', kind: 'write' });
@@ -48,8 +48,8 @@ export function buildSlides(ch, art, plan, similar, mode) {
   const nt = ch.note;
   add('note', 'concept', `개념 노트 · ${nt.title}`, `<div class="dk-two"><div class="dk-art">${art[nt.art]}</div>
     <table class="dk-tbl note"><tr>${nt.table.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>${nt.table.rows.map((r) => `<tr><th>${esc(r[0])}</th>${r.slice(1).map((c) => `<td><span class="${teach ? 'rv' : ''}">${esc(c)}</span></td>`).join('')}</tr>`).join('')}</table></div>
-    <ul class="dk-points">${nt.points.map((p) => `<li class="${teach ? 'rv' : ''}">${esc(p)}</li>`).join('')}</ul>`, { say: 'note', kind: 'read' });
-  add('plus', 'concept', `개념 플러스 · ${nt.plus.title}`, `<div class="dk-two"><div class="dk-art">${art[nt.plus.art]}</div><p class="dk-big">${esc(nt.plus.text)}</p></div>`, { say: 'plus', kind: 'read' });
+    <ul class="dk-points">${nt.points.map((p) => `<li class="${teach ? 'rv' : ''}">${esc(p)}</li>`).join('')}</ul>`, { say: 'note', kind: 'read', layout: 'feature' });
+  add('plus', 'concept', `개념 플러스 · ${nt.plus.title}`, `<div class="dk-two"><div class="dk-art">${art[nt.plus.art]}</div><p class="dk-big">${esc(nt.plus.text)}</p></div>`, { say: 'plus', kind: 'read', layout: 'feature plus' });
 
   add('discuss', 'extend', 'STEP 6 · 개념 넓혀 토의하기', `<p class="dk-q">${esc(ch.discuss.q)}</p>${ans(ch.discuss.a, 'discuss')}`, { say: 'discuss', kind: 'write' });
   add('creative', 'extend', 'STEP 7 · 창의력 키우기', `<p class="dk-q">${esc(ch.creative.q)}</p>${ans(ch.creative.a, 'creative')}`, { kind: 'write' });
@@ -75,6 +75,42 @@ export function buildSlides(ch, art, plan, similar, mode) {
   return S;
 }
 
+// 스스로 공부하기의 독쌤: 단원마다 한 번 만들고 슬라이드끼리 이어 쓴다. 스스로 공부하기를 떠나면 치운다.
+let guideState = null, guideAvoid = () => [];
+function guideFor(u) {
+  if (guideState?.u === u && guideState.alive && guideState.guide?.alive !== false) return guideState.p;
+  guideState?.p.then(({ guide }) => guide.destroy());
+  const st = { u, alive: true };
+  st.p = import('./docssam.js').then(async (m) => { const V = await m.loadVoice(u); st.guide = m.mountGuide(V, { canPause: true, avoid: () => guideAvoid() }); if (!st.alive || !/\/lab-class\/self\//.test(location.hash)) st.guide.destroy(); return { V, guide: st.guide }; });
+  guideState = st; return st.p;
+}
+if (typeof window !== 'undefined') addEventListener('hashchange', () => {
+  if (guideState && !/\/lab-class\/self\//.test(location.hash)) { const s = guideState; guideState = null; s.alive = false; s.p.then(({ guide }) => guide.destroy()); }
+});
+const rectsOf = (root, sel) => (root ? (sel ? [...root.querySelectorAll(sel)] : [...root.querySelectorAll('h1,h2,h3,p,li,button,textarea,input,table,figure,img,.dk-art svg,video,.dk-choices,.dk-ans,.dk-hint,.dk-act,.dk-card,.dk-given,.lab-table,.lab3d-btns,.lab3d-read,.lab3d-tip,.lab-tip,.ctl,.cap,.stage3d-hint')])
+  .filter((el) => el.offsetParent !== null).map((el) => el.getBoundingClientRect()).filter((r) => r.width > 4 && r.height > 4 && r.width * r.height < innerWidth * innerHeight * 0.5) : []);
+// 상황에 따라 표정: 답을 쓰는 동안 생각하는 얼굴, 보기를 고르는 중에도 잠깐 생각
+function wireMoods(stage, G) {
+  stage.addEventListener('focusin', (e) => { if (e.target.matches?.('textarea,input[type=text]')) G.mood('think'); });
+  stage.addEventListener('focusout', (e) => { if (e.target.matches?.('textarea,input[type=text]')) G.mood('listen'); });
+  stage.addEventListener('pointerenter', (e) => { if (e.target.closest?.('.dk-choices')) G.mood('think'); }, true);
+}
+// 실험실 도움말을 말풍선 둘째 줄에 비추고, 방법이 틀렸다는 도움말이면 놀람 → 격려, 해냈다는 도움말이면 칭찬
+const METHOD_ERR = /먼저 |뒤에 적어|더 높은 곳|비었어요|다시 해 봐|아직 /;
+const GOOD = /^(적었어요|굳었어요|다 부었어요)|다시 떠올라요|성공|잘했어요/;
+function watchLabTips(host, G) {
+  let last = '';
+  const read = () => {
+    const tip = host.querySelector('.lab3d-tip, .lab-tip'); if (!tip) return;
+    const t = tip.textContent.trim(); if (t === last) return; last = t;
+    G.status(t);
+    if (METHOD_ERR.test(t)) G.react('surprise', 1100, 'shake'), G.mood('encourage', { calm: 5000 });
+    else if (GOOD.test(t)) G.react('praise', 1500, 'hop'), G.mood('encourage', { calm: 5000 });
+  };
+  const mo = new MutationObserver(read); mo.observe(host, { childList: true, subtree: true, characterData: true });
+  addEventListener('hashchange', () => mo.disconnect(), { once: true });
+}
+
 let battle = false;   // 가르치기 · 실험 화면: 기본은 한 화면, 켜면 두 팀 배틀
 let recog = null;     // 말로 쓰기(학생이 🎤를 눌렀을 때만)
 
@@ -88,9 +124,9 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     <div class="dk-top no-print"><a href="#/${u}/start">‹ 처음으로</a><b>${esc(ch.title)}</b><span class="dk-mode">${teach ? '가르치기 · 강사용' : '스스로 공부하기 · 학생용'}</span>
       <nav class="dk-phases">${phases}</nav></div>
     <div class="dk-stage-wrap"><section class="dk-stage ${s.layout || ''}" aria-live="polite">
-      ${s.title ? `<h2 class="dk-h">${esc(s.title)}</h2>` : ''}<div class="dk-body">${s.body}</div>
+      ${s.title ? `<p class="dk-kick">${esc(p?.name || '')}<span>${String(s.n).padStart(2, '0')}</span></p><h2 class="dk-h">${esc(s.title)}</h2>` : ''}<div class="dk-body">${s.body}</div>
       <footer class="dk-foot"><span>${esc(ch.book)}</span><span>${s.n} / ${S.length}</span></footer></section></div>
-    <div class="dk-bar no-print">${teach ? '' : '<div class="dk-guide"></div>'}<button class="btn" data-a="prev" ${i ? '' : 'disabled'}>‹ 이전</button>
+    <div class="dk-bar no-print"><button class="btn" data-a="prev" ${i ? '' : 'disabled'}>‹ 이전</button>
       ${teach ? `<span class="dk-count">${s.n} / ${S.length} · ${esc(p?.name || '')}</span>` : ''}
       <button class="btn primary dk-next" data-a="next"><span class="dk-fill" aria-hidden="true"></span><span class="dk-nt">${i === S.length - 1 ? '처음으로' : '다음 ›'}</span></button>
       ${teach && isLab ? `<button class="btn" data-a="battle" aria-pressed="${battle}" title="두 팀이 같은 문제를 나란히 실험">⚔ 배틀 ${battle ? '끄기' : ''}</button>` : ''}
@@ -122,6 +158,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   addEventListener('hashchange', () => { removeEventListener('keydown', onKey); try { recog?.stop(); } catch { /* */ } }, { once: true });
 
   if (teach) {
+    import('./docssam.js').then((m) => m.dropGuide());   // 가르치기에는 독쌤이 없다
     // 확인 문제: 정답 공개 때 표시
     stage.querySelectorAll('.dk-choices').forEach((ol) => {
       const key = ol.dataset.key.split(',').filter(Boolean).map(Number), a = stage.querySelector('.dk-ans.rv');
@@ -142,7 +179,8 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   }
 
   // ── 스스로 공부하기: 독쌤이 한 번에 한 행동을 말하고, 그 행동이 끝나면 저절로 다음 장으로 ──
-  let timer = 0, pending = 0, G = null;
+  //    독쌤은 화면 구석의 작은 말풍선(docssam.js) — 슬라이드가 바뀌어도 같은 독쌤이 이어서 말한다(다시 그리지 않음).
+  let timer = 0, pending = 0;
   const cancelAuto = () => { clearTimeout(timer); timer = 0; pending = 0; $next.classList.remove('auto'); };
   const auto = (ms) => {
     if (i === S.length - 1 || !alive()) return;
@@ -150,12 +188,15 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     $next.classList.remove('auto'); void $next.offsetWidth; $next.style.setProperty('--auto', `${ms}ms`); $next.classList.add('auto', 'ready');
     clearTimeout(timer); timer = setTimeout(() => { if (alive() && !G?.paused) next(); }, ms);
   };
-  const guideHost = $app.querySelector('.dk-guide');
-  import('./docssam.js').then(async ({ loadVoice, mountGuide }) => {
-    const V = await loadVoice(u); if (!alive()) return;
-    G = mountGuide(guideHost, V);
+  addEventListener('hashchange', cancelAuto, { once: true });
+  let G = null;
+  guideFor(u).then(({ V, guide }) => {
+    if (!alive() || !guide.alive) return;
+    G = guide; G.reset();
+    // 가리면 안 되는 것: 슬라이드의 글·단추·입력·표·실험 조작부, 아래 막대의 단추
+    guideAvoid = () => [...rectsOf(stage.querySelector('.dk-body')), ...rectsOf(stage, '.dk-h'), ...rectsOf($app.querySelector('.dk-bar'), 'button')];
     G.onPause = (paused) => { if (paused) { const ms = pending; clearTimeout(timer); timer = 0; pending = ms; $next.classList.remove('auto'); } else if (pending) auto(pending); };
-    addEventListener('hashchange', () => { G.destroy(); cancelAuto(); }, { once: true });
+    wireMoods(stage, G);
     run(V);
   });
   const cue = (V, dflt) => V.slides[s.id] || dflt;
@@ -169,7 +210,8 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
       mount3D(m, { autoplay: true, onDone: async () => { if (!alive()) return; await G.say('dk-scene-done', { mood: 'praise' }); auto(900); } }); return; }
     if (k === 'lab') { G.say(cue(V, 'dk-lab')); const m = stage.querySelector('[data-mount]'); let done = false;
       m.addEventListener('pointerdown', () => { if (timer) cancelAuto(); }, true);   // 실험을 더 하면 넘기지 않는다
-      mountLab(m, { personal: true, onRecord: async () => { if (done) return; done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } }); return; }
+      mountLab(m, { personal: true, onRecord: async () => { if (done) return; done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });
+      watchLabTips(m, G); return; }
     if (k === 'test') return runTest(V);
     return runWrite(V);
   }
@@ -181,7 +223,9 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
       <span class="dk-sc" hidden><button type="button" class="dk-o" data-w="o">O 비슷해요</button><button type="button" class="dk-x" data-w="x">X 고칠래요</button></span></div>`);
     const $chk = body.querySelector('[data-w=check]'), $sc = body.querySelector('.dk-sc');
     const tas = boxes.map((b) => b.querySelector('textarea'));
-    const ready = () => { $chk.disabled = !tas.every((t) => t.value.trim().length >= 2); };
+    // 확인 문제의 쓰기(ㄴ·ㄷ 같은 한 글자 답)는 한 글자면 되고, 생각 쓰기는 두 글자 이상
+    const minLen = s.id.startsWith('test') ? 1 : 2;
+    const ready = () => { $chk.disabled = !tas.every((t) => t.value.trim().length >= minLen); };
     boxes.forEach((b) => {
       const key = `${u}:${b.dataset.k}`, ta = b.querySelector('textarea');
       ta.value = memo.get(key); ta.addEventListener('input', () => { memo.set(key, ta.value); ready(); });

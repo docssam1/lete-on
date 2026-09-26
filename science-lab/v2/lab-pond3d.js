@@ -11,10 +11,10 @@ const PLANTS = {
 export const pondResult = (plant, zone) => { const P = PLANTS[plant], ok = P.ok.includes(zone); return { ok, text: ok ? P.how : P.no[zone] }; };
 
 export async function mountPond3D(el, opts = {}) {
-  let THREE, Stage, K, KIT;
+  let THREE, Stage, watchDetached, K, KIT;
   try {
-    [{ Stage }, THREE, K, KIT] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/_pond.js'), import('../scenes/_kit.js')]);
-    const t = document.createElement('canvas'); if (!(t.getContext('webgl2') || t.getContext('webgl'))) throw new Error('no webgl');
+    [{ Stage, watchDetached }, THREE, K, KIT] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/_pond.js'), import('../scenes/_kit.js')]);
+    if (!Stage.canWebGL()) throw new Error('no webgl');   // 확인용 문맥은 바로 돌려준다
   } catch (_) { el.innerHTML = '<p class="lab3d-tip">이 기기에서는 3D 실험실을 열 수 없어요. 3D 장면으로 관찰해 보세요.</p>'; return {}; }
   const rows = opts.rows || [], onRecord = opts.onRecord;
   let pick = '부레옥잠', last = null;
@@ -51,7 +51,7 @@ export async function mountPond3D(el, opts = {}) {
   const planted = {};           // 식물 이름 → { g, zone, ok, x, z, t0 }
   const make = { '부레옥잠': () => K.hyacinth(), '수련': () => K.waterLily(), '검정말': () => K.hydrilla(0.6), '부들': () => K.cattail(1.4) };
   function plant(name, x, z) {
-    if (planted[name]) stage.root.remove(planted[name].g);
+    if (planted[name]) { stage.root.remove(planted[name].g); stage._disposeObjects([planted[name].g]); }   // 다시 심으면 옛 식물의 GPU 자원도 내린다
     const zone = where(x), res = pondResult(name, zone), g = make[name]();
     g.traverse((o) => { if (o.material && !res.ok) { o.material = o.material.clone(); o.material.color.lerp(new THREE.Color(0x9a8a5a), 0.55); } });
     const floor = bottomAt(x);
@@ -125,6 +125,6 @@ export async function mountPond3D(el, opts = {}) {
     renderRows(); onRecord?.(rows); tip('적었어요! 다른 식물이나 다른 곳에도 심어 봐요.');
   });
   renderRows();
-  const chk = () => setTimeout(() => { if (!el.isConnected) { stage.dispose(); removeEventListener('hashchange', chk); } }); addEventListener('hashchange', chk);
-  return { rows, pause: stop, dispose: () => { stage.dispose(); removeEventListener('hashchange', chk); } };
+  const dispose = watchDetached(el, () => stage.dispose());
+  return { rows, pause: stop, dispose };
 }

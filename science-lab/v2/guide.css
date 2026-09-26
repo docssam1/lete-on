@@ -1,0 +1,88 @@
+/* docssam 안내 — 화면 구석 작은 말풍선(docssam.js). 표정 그림은 겹쳐 두고 한 장만 보인다. 움직임은 transform만. */
+.dsg { position: fixed; z-index: 70; bottom: 12px; left: 12px; display: flex; align-items: flex-end; gap: 4px; max-width: calc(100vw - 24px);
+  pointer-events: none; font-family: var(--body, "Pretendard Variable", sans-serif); word-break: keep-all; overflow-wrap: anywhere; }
+.dsg > * { pointer-events: auto; }
+.dsg[data-side="right"] { left: auto; right: 12px; flex-direction: row-reverse; }
+/* 몸(전신) — 96×144 */
+.dsg-fig { position: relative; flex: none; width: 96px; height: 144px; padding: 0; border: 0; background: none; cursor: default; -webkit-tap-highlight-color: transparent; }
+.dsg-fig:focus-visible { outline: 3px solid #2196F3; outline-offset: 2px; border-radius: 16px; }
+.dsg-fig::before { content: ""; position: absolute; left: 22%; right: 22%; bottom: 1%; height: 6%; border-radius: 50%; background: radial-gradient(closest-side, rgba(10, 30, 70, .30), rgba(10, 30, 70, 0)); }
+.dsg-pose, .dsg-act, .dsg-sway, .dsg-bob { position: absolute; inset: 0; display: block; transform-origin: 50% 96%; }
+.dsg-pose { transition: transform .5s cubic-bezier(.3, .7, .2, 1); }
+.dsg-fig[data-pose="lean"] .dsg-pose { transform: rotate(-6deg) translateX(-2px); }
+.dsg-sway { animation: dsg-idle 5.2s ease-in-out infinite; }
+.dsg-fig[data-speaking] .dsg-sway { animation: dsg-talk-tilt 1.5s ease-in-out infinite; }
+.dsg-fig[data-speaking] .dsg-bob { animation: dsg-bob .36s ease-in-out infinite alternate; }
+.dsg-bob { filter: drop-shadow(0 8px 10px rgba(10, 30, 70, .22)); }
+.dsg-b { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; opacity: 0; user-select: none; }
+.dsg-b.on { opacity: 1; }
+/* 입·눈 겹그림: A1 그림의 얼굴 자리(원본 683×1024 기준 left 31.25%, top 13.02%, width 33.2%) */
+.dsg-face { position: absolute; left: 31.25%; top: 13.021%; width: 33.203%; aspect-ratio: 227 / 213; }
+.dsg-face img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.dsg-face img.on { opacity: 1; }
+.dsg-fig[data-motion="hop"] .dsg-act { animation: dsg-hop .8s cubic-bezier(.3, .7, .3, 1); }
+.dsg-fig[data-motion="hop"]::before { animation: dsg-shadow .8s cubic-bezier(.3, .7, .3, 1); }
+.dsg-fig[data-motion="shake"] .dsg-act { animation: dsg-shake .56s ease-in-out; }
+.dsg-fig[data-motion="nod"] .dsg-act { animation: dsg-nod .7s ease-in-out; }
+.dsg-fig[data-motion="present"] .dsg-act { animation: dsg-present .7s ease-out; }
+.dsg-dot { position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #E23B2E; box-shadow: 0 0 0 2px #fff; display: none; }
+.dsg[data-unread] .dsg-dot { display: block; animation: dsg-ping 1.4s ease-in-out infinite; }
+/* 말풍선 — 성향 검사 「AI 맞춤 상담」 카드 결(--k-*) */
+.dsg-bubble { position: relative; width: min(400px, calc(100vw - 140px)); margin-bottom: 30px; padding: 11px 14px 9px; border-radius: 18px;
+  background: linear-gradient(180deg, #fff 55%, #EEF5FF); color: #1B2340; border: 1px solid #DCE6F7; box-shadow: 0 14px 34px rgba(12, 32, 80, .22), 0 2px 6px rgba(12, 32, 80, .08); }
+.dsg-bubble::before { content: ""; position: absolute; left: -7px; bottom: 26px; width: 14px; height: 14px; background: #F4F8FF; border-left: 1px solid #DCE6F7; border-bottom: 1px solid #DCE6F7; transform: rotate(45deg); border-radius: 0 0 0 3px; }
+.dsg[data-side="right"] .dsg-bubble::before { left: auto; right: -7px; transform: rotate(-135deg); }
+.dsg-say { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.5; letter-spacing: -.3px; min-height: 1.5em; }
+.dsg-status { margin: 5px 0 0; padding-left: 10px; border-left: 3px solid #BCD3F5; font-size: 13.5px; line-height: 1.45; color: #3D4E70; }
+.dsg-status[hidden] { display: none; }
+.dsg[data-mood="surprise"] .dsg-status { border-color: #F1B874; color: #7A4A12; font-weight: 700; }
+.dsg[data-mood="praise"] .dsg-bubble { box-shadow: 0 14px 34px rgba(12, 32, 80, .22), 0 0 0 4px rgba(76, 175, 110, .16); }
+.dsg-bubble.new .dsg-say, .dsg-bubble.new .dsg-status { animation: dsg-rise .42s cubic-bezier(.2, .8, .2, 1); }
+.dsg-ctl { display: flex; gap: 6px; justify-content: flex-end; margin-top: 7px; }
+.dsg-ctl button { min-height: 32px; padding: 0 11px; border-radius: 999px; border: 1px solid #DCE6F7; background: linear-gradient(180deg, #fff 52%, #EAF3FF); color: #1B2340;
+  font: 700 12.5px/1 var(--body, sans-serif); cursor: pointer; box-shadow: 0 3px 8px rgba(30, 99, 200, .10); }
+.dsg-ctl [data-g="voice"][aria-pressed="true"] { background: linear-gradient(180deg, #243184, #141B5D); color: #fff; border-color: transparent; }
+.dsg.talking .dsg-ctl [data-g="voice"] { background: linear-gradient(180deg, #E8873A, #C9651D); color: #fff; border-color: transparent; }
+.dsg-ctl [data-g="pause"][aria-pressed="true"] { background: #FFF4E4; border-color: #F1C891; }
+.dsg-ctl button:focus-visible { outline: 3px solid #2196F3; outline-offset: 2px; }
+/* 접힘: 동그란 얼굴만(누르면 펼침) */
+.dsg.folded .dsg-bubble { display: none; }
+.dsg.folded .dsg-fig { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; cursor: pointer; background: radial-gradient(circle at 50% 35%, #F3F8FF, #CFE0FA);
+  box-shadow: 0 6px 16px rgba(10, 30, 70, .28), 0 0 0 3px #fff; }
+.dsg.folded .dsg-fig::before { display: none; }
+.dsg.folded .dsg-pose { inset: auto; left: -43px; top: -8px; width: 150px; height: 225px; transform: none; }
+.dsg.folded .dsg-bob { filter: none; }
+.dsg.folded .dsg-dot { right: 4px; top: 4px; }
+/* 휴대폰: 아래 띠(작은 얼굴 + 1~2줄 + 단추). 몸에 여백(--dsg-pad)을 주어 내용이 띠 밑에 숨지 않게 */
+body.has-dsg { padding-bottom: var(--dsg-pad, 0px); }
+.dsg.compact { left: 6px; right: 6px; bottom: max(6px, env(safe-area-inset-bottom)); max-width: none; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 16px;
+  background: linear-gradient(180deg, #fff 55%, #EEF5FF); border: 1px solid #DCE6F7; box-shadow: 0 8px 22px rgba(12, 32, 80, .22); pointer-events: auto; }
+.dsg.compact[data-side] { flex-direction: row; }
+.dsg.compact .dsg-fig { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 35%, #F3F8FF, #CFE0FA); }
+.dsg.compact .dsg-fig::before { display: none; }
+.dsg.compact .dsg-pose { inset: auto; left: -32px; top: -6px; width: 112px; height: 168px; }
+.dsg.compact .dsg-bob { filter: none; }
+.dsg.compact .dsg-bubble { flex: 1; min-width: 0; width: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; display: flex; align-items: center; gap: 6px; }
+.dsg.compact .dsg-bubble::before { display: none; }
+.dsg.compact .dsg-say { flex: 1; min-width: 0; font-size: 14px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.dsg.compact .dsg-status { display: none; }
+.dsg.compact .dsg-ctl { margin: 0; gap: 4px; flex: none; }
+.dsg.compact .dsg-ctl button { min-height: 40px; min-width: 40px; padding: 0 8px; font-size: 12px; }
+.dsg.compact .dsg-ctl [data-g="again"] { display: none; }
+.dsg.compact.folded { left: 8px; right: auto; padding: 0; border: 0; background: none; box-shadow: none; }
+.dsg.compact.folded .dsg-fig { width: 52px; height: 52px; box-shadow: 0 6px 16px rgba(10, 30, 70, .28), 0 0 0 3px #fff; cursor: pointer; }
+@keyframes dsg-idle { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-1.5px) rotate(1deg); } }
+@keyframes dsg-talk-tilt { 0%, 100% { transform: rotate(-1.8deg); } 50% { transform: rotate(2deg); } }
+@keyframes dsg-bob { to { transform: translateY(-2.5px); } }
+@keyframes dsg-hop { 0% { transform: none; } 16% { transform: scale(1.05, .93); } 42% { transform: translateY(-18px) scale(.97, 1.04) rotate(-2deg); } 66% { transform: scale(1.04, .95); } 82% { transform: translateY(-5px); } 100% { transform: none; } }
+@keyframes dsg-shadow { 0%, 100% { transform: none; opacity: 1; } 42% { transform: scale(.7); opacity: .5; } 82% { transform: scale(.9); } }
+@keyframes dsg-shake { 0%, 100% { transform: none; } 12% { transform: translateY(-6px); } 30% { transform: translateX(-5px) rotate(-3.5deg); } 48% { transform: translateX(5px) rotate(3deg); } 66% { transform: translateX(-3px) rotate(-2deg); } 84% { transform: translateX(2px) rotate(1deg); } }
+@keyframes dsg-nod { 0%, 100% { transform: none; } 30% { transform: translateY(3px) rotate(1.8deg); } 60% { transform: translateY(-1px); } 80% { transform: translateY(2px) rotate(.6deg); } }
+@keyframes dsg-present { 0% { transform: none; } 40% { transform: translateY(-3px) rotate(2.5deg); } 100% { transform: none; } }
+@keyframes dsg-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes dsg-ping { 50% { transform: scale(1.3); } }
+@media (prefers-reduced-motion: reduce) {
+  .dsg-sway, .dsg-bob, .dsg-act, .dsg-fig::before, .dsg-dot, .dsg-bubble.new .dsg-say, .dsg-bubble.new .dsg-status { animation: none !important; }
+  .dsg-pose { transition: none; }
+}
+@media print { .dsg { display: none !important; } body.has-dsg { padding-bottom: 0; } }

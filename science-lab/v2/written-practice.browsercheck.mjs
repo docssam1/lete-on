@@ -63,7 +63,7 @@ try {
     await first.screenshot({ path: join(output, `writing-${width}.png`) });
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `overflow in writing at ${width}`);
     await page.goto(`${base}#/s41-u03b/4`);
-    await page.locator('.teacher .bubble').waitFor();
+    await page.locator('.dsg .dsg-say').waitFor(); // 독쌤은 이제 화면 구석의 작은 말풍선
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `overflow with teacher at ${width}`);
     await page.screenshot({ path: join(output, `teacher-${width}.png`) });
     await page.goto(`${base}#/s41-u03/sub/E3`);

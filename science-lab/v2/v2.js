@@ -26,9 +26,6 @@ const STEPS = [
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },
 ];
 const A = '../assets/';
-const BODY = { talk: 'docssam-A1-mouth-closed.webp', surprised: 'docssam-B1-surprised.webp', thinking: 'docssam-B2-thinking.webp', praise: 'docssam-B3-praise.webp', encourage: 'docssam-B4-encourage.webp' };
-const FACE = { half: 'face-A2-mouth-half.webp', open: 'face-A3-mouth-open.webp', o: 'face-A4-mouth-o.webp', blink: 'face-A5-eyes-closed.webp' };
-const REDUCED = matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const $app = document.getElementById('app');
 let releasePage = () => {}, stopTeacher = () => {};
 document.addEventListener('science:media-focus', () => stopTeacher());
@@ -43,42 +40,28 @@ const store = {
   set(u, patch) { try { const a = this.all(); a[u] = { ...(a[u] || {}), ...patch }; localStorage.setItem(KEY, JSON.stringify(a)); } catch { /* 저장 불가 기기 */ } },
 };
 
-// ── docssam: 말하기(모음에 따라 입 모양) · 깜빡임 · 표정 ──
-function mouthFor(ch) {
-  const c = ch.charCodeAt(0) - 0xac00; if (c < 0 || c > 11171) return null;
-  const j = Math.floor(c / 28) % 21;
-  if ([0, 2, 4, 6, 9, 14].includes(j)) return 'open';
-  if ([8, 12, 13, 17].includes(j)) return 'o';
-  return 'half';
-}
 let voiceOn = false;
+// 5단계 화면·지도: 독쌤은 화면 구석의 작은 말풍선(docssam.js). 이 대사에는 음성 파일이 없어 자막만 — 입은 움직이지 않는다.
+// (「소리」를 켜면 기기 음성으로 읽어 줄 뿐, 입 모양은 실제 음성 파일이 재생될 때만 움직인다.)
+let stepGuide = null;
+const MOOD = { talk: 'talk', surprised: 'surprise', thinking: 'think', praise: 'praise', encourage: 'encourage' };
 function teacher(el, lines, { big = false } = {}) {
   stopTeacher();
-  el.innerHTML = `<div class="teacher ${big ? 'big' : ''}"><div class="bubble" aria-live="polite"></div>
-    <div class="char"><img class="body" alt="docssam 선생님"><img class="face" alt=""></div></div>`;
-  const $b = el.querySelector('.bubble'), $c = el.querySelector('.char'), $body = el.querySelector('.body'), $face = el.querySelector('.face');
-  let alive = true, talking = false;
-  const face = (k) => { if (!k) { $face.style.display = 'none'; return; } $face.src = A + FACE[k]; $face.style.display = 'block'; };
-  stopTeacher = () => { alive = false; talking = false; $c.classList.remove('talk'); face(null); $b.textContent = lines.map(l => l.text).join(' '); };
-  const blink = () => setTimeout(() => { if (!alive || !el.isConnected) return; if (!talking && $body.dataset.mood === 'talk') { face('blink'); setTimeout(() => !talking && face(null), 140); } blink(); }, 3000 + Math.random() * 2000);
-  async function say(line) {
-    if (!alive || !el.isConnected) return;
-    const mood = line.mood || 'talk'; $body.src = A + BODY[mood] ; $body.dataset.mood = mood; face(null);
-    $b.classList.toggle('ask', mood === 'surprised' || mood === 'thinking');
-    if (voiceOn && 'speechSynthesis' in window) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(line.text); u.lang = 'ko-KR'; speechSynthesis.speak(u); } catch { /* 음성 없음 */ } }
-    if (REDUCED) { $b.textContent = line.text; return; }
-    talking = true; $c.classList.add('talk'); $b.textContent = '';
-    for (const ch of line.text) {
-      if (!alive) return; $b.textContent += ch;
-      const m = mood === 'talk' ? mouthFor(ch) : null; face(m);
-      await new Promise((r) => setTimeout(r, m ? 90 : 150));
-      if (m) { face(null); await new Promise((r) => setTimeout(r, 20)); }
+  if (el) { el.innerHTML = ''; el.hidden = true; }
+  let alive = true;
+  (async () => {
+    const d = await import('./docssam.js'); if (!alive) return;
+    if (!stepGuide?.alive) stepGuide = d.mountGuide(null, { avoid: () => [...$app.querySelectorAll('main :is(h2, h3, p, .card, .choice, button, canvas, table, video, img)')].filter((x) => x.offsetParent).map((x) => x.getBoundingClientRect()) });
+    stepGuide.reset();
+    for (const l of lines) {
+      if (!alive) return;
+      if (voiceOn && 'speechSynthesis' in window) { try { speechSynthesis.cancel(); const t = new SpeechSynthesisUtterance(l.text); t.lang = 'ko-KR'; speechSynthesis.speak(t); } catch { /* 음성 없음 */ } }
+      await stepGuide.say({ text: l.text }, { mood: MOOD[l.mood] || 'talk' });
+      await new Promise((r) => setTimeout(r, 500));
     }
-    talking = false; $c.classList.remove('talk'); face(null);
-  }
-  (async () => { for (const l of lines) { if (!alive) break; await say(l); await new Promise((r) => setTimeout(r, 700)); } })();
-  blink();
-  return { say, stop: stopTeacher };
+  })();
+  stopTeacher = () => { alive = false; stepGuide?.stop(); };
+  return { stop: () => stopTeacher() };
 }
 
 // ── 문항 렌더러 (화면·교재 공용) ──
@@ -90,6 +73,8 @@ function blanksHtml(text, blanks, { print, show }) {
     return `<button type="button" class="blank" data-k="${k}" aria-label="빈칸 ${k + 1}, 눌러서 열기">?</button>`;
   });
 }
+// 낱말 칩 순서는 그릴 때마다 섞는다(정답이 늘 같은 자리에 오지 않게)
+const shuffled = (a) => { const o = [...a]; for (let k = o.length - 1; k > 0; k--) { const r = Math.floor(Math.random() * (k + 1)); [o[k], o[r]] = [o[r], o[k]]; } return o; };
 function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const ac = it.answerContract, lv = `<span class="level">${esc(it.taxonomy.track)} · ${esc(it.taxonomy.level)}</span>`;
   const fig = it.visualModel?.kind === 'authored-svg' ? `<div class="fig">${FIG[it.visualModel.figure] || ''}</div>` : '';
@@ -99,7 +84,7 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const head = `<p>${no ? `<span class="no">${no}.</span>` : ''}${ac.type === 'cloze' ? blanksHtml(it.prompt, ac.blanks, { print, show }) : esc(it.prompt)}</p>`;
   let body = '';
   const CZ = !print && ac.type === 'cloze' && MISC?.cloze?.[it.id];
-  if (CZ) body = `<div class="chips">${CZ.options.map((opts, k) => `<div class="chip-row" data-k="${k}"><span class="chip-no">${CIRC[k]}</span>${opts.map((o) => `<button type="button" class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>`).join('')}</div><p class="why" hidden></p>`;
+  if (CZ) body = `<div class="chips">${CZ.options.map((opts, k) => `<div class="chip-row" data-k="${k}"><span class="chip-no">${CIRC[k]}</span>${shuffled(opts).map((o) => `<button type="button" class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>`).join('')}</div><p class="why" hidden></p>`;
   if (ac.type === 'single-choice') {
     body = print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${show && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${esc(c)}</div>`).join('')}</div>`
       : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${esc(c)}</button>`).join('')}</div><p class="why" hidden></p>`;
@@ -469,7 +454,7 @@ async function pageStart(u) {
       <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a></p></main>`;
   scrollTo(0, 0);
 }
-function pageReading(u, L, mode) {
+async function pageReading(u, L, mode) {
   const article = L.elaborate?.reading?.magazine;
   if (!article) { location.replace(`#/${u}/4`); return; }
   const teacher = mode === 'teacher';
@@ -479,28 +464,69 @@ function pageReading(u, L, mode) {
     <button type="button" class="btn primary" data-reading-print>A4 인쇄</button><p>${teacher ? '교사용 · 지도 팁 포함' : '학생용 읽을거리'}</p>
     </nav>${readingHtml(article, { teacher })}</main>`;
   $app.querySelector('[data-reading-print]').addEventListener('click', () => window.print());
-  releasePage = wireReading($app.querySelector('.reading-page'), { mountLab: readingLab(u, L) });
+  const rel = wireReading($app.querySelector('.reading-page'), { mountLab: readingLab(u, L), autoplay: true });
+  let guide = null;
+  releasePage = () => { rel(); guide?.destroy(); };
   scrollTo(0, 0);
+  if (teacher) return;   // 교사용 읽을거리에는 독쌤이 없다
+  const d = await import('./docssam.js'), V = await d.loadVoice(u);
+  if (!$app.querySelector('.reading-page') || !location.hash.includes(`/${u}/reading`)) return;
+  guide = d.mountGuide(V, { avoid: () => [...$app.querySelectorAll('.sl-reading :is(h2, h3, p, img, video, .sl-reading-player, a, figure, aside)')].filter((el) => el.offsetParent).map((el) => el.getBoundingClientRect()) });
+  guide.say({ text: BOOK_SAY.reading[1] });
+  // 읽는 동안 생각하는 얼굴, 영상을 보는 동안 조용히 듣는 얼굴
+  const art = $app.querySelector('.sl-reading'); let tRead = 0;
+  addEventListener('scroll', function onScroll() { if (!art.isConnected) { removeEventListener('scroll', onScroll); return; } clearTimeout(tRead); guide.mood('think'); tRead = setTimeout(() => guide.mood('listen'), 1400); }, { passive: true });
 }
-async function pageLabBook(u, mod, mode) {
+// 교재 쪽마다 독쌤이 한 가지만 말한다 — 단원 대사(음성 있음)가 있으면 그것, 없으면 자막만 나오는 짧은 안내.
+const BOOK_SAY = {
+  cover: [['cover'], '사진과 영상을 보며, 오늘 무엇을 알아볼지 생각해 봐.'],
+  design: [['design', 'hypo'], '바꿀 조건, 같게 할 조건, 잴 것을 칸마다 생각해 봐.'],
+  step: [['step1'], '그림을 보며 실험 순서를 차례로 읽어 봐.'],
+  lab: [['lab'], '조건을 골라 직접 해 보고, 표에 적기를 눌러 봐.'],
+  result: [['res1'], '실험에서 본 것을 떠올리며 결과와 결론을 적어 봐.'],
+  concept: [['note'], '빈칸을 눌러 알맞은 낱말을 골라 봐.'],
+  reading: [[], '먼저 영상을 보고, 관찰해 봐요 질문의 답을 찾으며 읽어 봐.'],
+  creative: [['creative'], '정답이 하나가 아니야. 떠오르는 생각을 자유롭게 적어 봐.'],
+  gifted: [['gifted'], '장소마다 해야 할 일을 되도록 많이 생각해 봐.'],
+  report: [[], '실험 기록을 떠올리며 탐구보고서 칸을 하나씩 채워 봐.'],
+  formative: [[], '보기를 잘 읽고 하나를 골라 봐. 틀리면 까닭을 알려 줄게.'],
+  check: [[], '보기를 잘 읽고 하나를 골라 봐. 틀리면 까닭을 알려 줄게.'],
+};
+function bookLine(V, key, { split, live } = {}) {
+  // 실험실이 쪽 옆에 살아 있으면 순서 쪽에서 바로 해 보자고 한다
+  if (split && key === 'step' && live?.some((x) => x.k === 'lab')) { const id = V.slides.lab; return id && V.lines.has(id) ? id : { text: '오른쪽 실험실에서 그림 순서대로 직접 해 봐.' }; }
+  const [slides, text] = BOOK_SAY[key] || [[], ''];
+  for (const s of slides) { const id = V.slides[s]; if (id && V.lines.has(id) && !/^dk-(write|choose)/.test(id)) return id; }
+  if (key === 'formative' || key === 'check') return V.lines.has('dk-choose') ? 'dk-choose' : { text };
+  return text ? { text } : null;
+}
+let bookToken = 0;
+async function pageLabBook(u, mod, mode, pageNo = 1) {
+  const my = ++bookToken, stale = () => my !== bookToken || !location.hash.includes(`/${u}/lab-book/${mode}`);
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
   const bookMod = await BOOKS[u]().catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, media }, { renderChapter, fitPages }, { wireLive }] = await Promise.all([bookMod, import('./book.js'), import('./live.js')]);
-  $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="#/${u}/start">‹ 처음으로</a><h1>${esc(chapter.book)} · ${esc(chapter.title)}</h1></div></header>
-    <main class="wrap">${labBar(u, { print: true })}</main>${renderChapter(chapter, art, mod.similar || [], { teacher: mode === 'teacher', live: true, media })}`;
-  scrollTo(0, 0);
-  const bk = $app.querySelector('.bk'), fit = () => bk.isConnected && fitPages(bk), L = mod.lesson;
-  fit(); document.fonts?.ready.then(fit);
+  const teacherEd = mode === 'teacher';
+  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js'), import('./book-view.js')]);
+  if (stale()) return;
+  const L = mod.lesson;
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));
   const onAnswer = (kind, p) => {
     if (kind === 'item' && I[p.id]) record(du(u), I[p.id], 'book', p.ok, { picked: p.picked }, MISC);
     if (kind === 'blank' && MISC) { const pseudo = { id: `book:${p.chip}`, taxonomy: { element: MISC.misconceptions[MISC.bookChips?.[p.chip]?.[1]]?.element } };
       record(du(u), pseudo, 'book-concept', p.ok, { chip: p.ok ? null : p.chip, revealed: p.revealed }, MISC); }
   };
-  if (L) releasePage = wireLive(bk, { scene: (el) => mount3D(el, L.engage.scene, { autoplay: true }),
-    lab: readingLab(u, L),
-    misc: MISC, onAnswer });
+  // 학생용 교재에만 독쌤(교사용·가르치기에는 없음)
+  let guide = null, sayFor = null;
+  if (!teacherEd) {
+    const d = await import('./docssam.js'); const V = await d.loadVoice(u);
+    if (stale()) return;
+    guide = d.mountGuide(V, { label: '독쌤' }); sayFor = (key, o) => bookLine(V, key, o);
+  }
+  releasePage = mountBookView($app, { u, bookHtml: renderChapter(chapter, art, mod.similar || [], { teacher: teacherEd, live: true, media }),
+    title: `${chapter.book} · ${chapter.title}`, teacher: teacherEd, page: pageNo, backHref: `#/${u}/start`,
+    scene: L ? (el) => mount3D(el, L.engage.scene, { autoplay: true }) : null, lab: L ? readingLab(u, L) : null,
+    misc: MISC, onAnswer, guide, sayFor });
 }
 async function pageLabClass(u, mod, L, mode, idx) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
@@ -520,7 +546,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
 
 // ── 라우터 ──
 async function route() {
-  releasePage(); releasePage = () => {}; stopTeacher();
+  releasePage(); releasePage = () => {}; stopTeacher(); stepGuide?.destroy(); stepGuide = null;
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
@@ -533,7 +559,7 @@ async function route() {
   if (a === 'report') return pageReport(u, L);
   if (a === 'reading') return pageReading(u, L, b);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
-  if (a === 'lab-book') return pageLabBook(u, mod, b || 'student');
+  if (a === 'lab-book') return pageLabBook(u, mod, b || 'student', +location.hash.split('/')[4] || 1);
   if (a === 'lab-class') return pageLabClass(u, mod, L, b || 'teach', +location.hash.split('/')[4] || 1);
   const step = Math.min(5, Math.max(1, +a || (store.get(u).step ?? 0) + 1));
   if (!a) { location.replace(`#/${u}/${step}`); return; }

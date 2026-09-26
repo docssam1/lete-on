@@ -1,0 +1,110 @@
+/* 살아 있는 교재 보기(book-view.js) — 어두운 무대 위에 A4 쪽(또는 펼침)을 화면에 꽉 맞춘다. 오른쪽은 살아 있는 화면. */
+.bv { --bv-bg: #121c33; --bv-ink: #E8EEFC; --bv-dim: #A9B6D3; --bv-line: rgba(255, 255, 255, .16);
+  height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; color: var(--bv-ink);
+  background: radial-gradient(1200px 700px at 30% 20%, #20305a 0%, var(--bv-bg) 60%, #0c1426 100%); }
+.bv * { box-sizing: border-box; }
+.bv-top { flex: none; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 14px; border-bottom: 1px solid var(--bv-line); background: rgba(8, 14, 30, .35); backdrop-filter: blur(6px); }
+.bv-back { color: var(--bv-ink); text-decoration: none; font-weight: 700; font-size: 15px; white-space: nowrap; min-height: 40px; display: inline-flex; align-items: center; }
+.bv-title { flex: 1; min-width: 0; margin: 0; display: flex; align-items: center; gap: 8px; }
+.bv-title b { font-size: 16px; font-weight: 800; letter-spacing: -.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bv-ed { flex: none; font-size: 11.5px; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: #2F7D4F; color: #fff; }
+.bv-ed.t { background: #C8321F; }
+.bv-pager { display: flex; align-items: center; gap: 6px; }
+.bv-jump select { min-height: 40px; border-radius: 999px; border: 1px solid var(--bv-line); background: rgba(255, 255, 255, .08); color: var(--bv-ink); font: 700 14px var(--body, sans-serif); padding: 0 12px; }
+.bv-jump select option { color: #1B2340; }
+.bv-tools { display: flex; gap: 6px; }
+.bv-btn { min-height: 40px; min-width: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--bv-line); background: rgba(255, 255, 255, .08); color: var(--bv-ink);
+  font: 700 14px/1 var(--body, sans-serif); cursor: pointer; white-space: nowrap; transition: background .15s, transform .15s; }
+.bv-btn:hover:not(:disabled) { background: rgba(255, 255, 255, .16); }
+.bv-btn:disabled { opacity: .35; cursor: default; }
+.bv-btn[aria-pressed="true"] { background: #fff; color: #141B5D; }
+.bv-btn.primary { background: linear-gradient(180deg, #fff 55%, #E6EEFF); color: #141B5D; border-color: transparent; box-shadow: 0 6px 16px rgba(0, 0, 0, .25); }
+.bv-pager .bv-btn { font-size: 20px; padding: 0; width: 40px; }
+.bv-btn:focus-visible, .bv-jump select:focus-visible, .bv-back:focus-visible { outline: 3px solid #7CC4FF; outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.bv-main { flex: 1; min-height: 0; display: flex; gap: 0; }
+.bv-space { position: relative; flex: 1 1 auto; min-width: 0; overflow: hidden; outline: none; }
+.bv.zoom .bv-space { overflow: auto; overscroll-behavior: contain; }
+.bv-sizer { position: relative; }
+.bv-scale { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+/* 책: 보이는 쪽만 흐름에, 나머지는 화면 밖에 둔 채 조판(쪽 맞춤 계산이 되도록) */
+.bk.viewer { display: flex; gap: 22px; align-items: flex-start; width: max-content; }
+.bk.viewer .bk-page { flex: none; width: 210mm; max-width: none; margin: 0; border-radius: 3px; box-shadow: 0 24px 60px rgba(0, 0, 0, .45), 0 2px 6px rgba(0, 0, 0, .25); }
+.bk.viewer .bk-page:not(.on) { position: absolute; left: -30000px; top: 0; visibility: hidden; pointer-events: none; }
+.bv[data-spread="1"] .bk.viewer .bk-page.on:first-child, .bv[data-spread="1"] .bk.viewer .bk-page.on + .bk-page.on { box-shadow: 0 24px 60px rgba(0, 0, 0, .45); }
+/* 오른쪽 살아 있는 화면 */
+.bv-live { flex: 1 1 0; min-width: 360px; display: flex; flex-direction: column; margin: 10px 10px 10px 0; border-radius: 18px; overflow: hidden; container-type: inline-size;
+  background: linear-gradient(180deg, #F7FAFF, #EAF1FC); color: #1B2340; box-shadow: 0 24px 60px rgba(0, 0, 0, .40); }
+.bv-live[hidden] { display: none; }
+.bv-live.flash { animation: bvFlash .9s ease-out; }
+@keyframes bvFlash { 0% { box-shadow: 0 0 0 0 rgba(124, 196, 255, .9), 0 24px 60px rgba(0, 0, 0, .4); } 100% { box-shadow: 0 0 0 18px rgba(124, 196, 255, 0), 0 24px 60px rgba(0, 0, 0, .4); } }
+.bv-tabs { flex: none; display: flex; gap: 6px; padding: 10px 12px 0; flex-wrap: wrap; }
+.bv-tabs button { min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid #D6E2F5; background: #fff; color: #1B2340; font: 700 14px var(--body, sans-serif); cursor: pointer; }
+.bv-tabs button[aria-selected="true"] { background: linear-gradient(180deg, #243184, #141B5D); color: #fff; border-color: transparent; box-shadow: 0 6px 14px rgba(20, 27, 93, .25); }
+.bv-tab1 { margin: 0; font: 800 15px var(--body, sans-serif); color: #1E3A78; letter-spacing: -.3px; }
+.bv-hosts { flex: 1; min-height: 0; overflow: auto; padding: 10px 12px; overscroll-behavior: contain; }
+.bv-host[hidden] { display: none; }
+.bv-dockslot { flex: none; }
+.bv-dockslot:empty { display: none; }
+/* 영상: 대기 사진이 바로 보이고, 소리 없이 저절로 재생 */
+.bv-video { margin: 0; }
+.bv-vbox { position: relative; aspect-ratio: 16 / 9; background: #0e1424; border-radius: 12px; overflow: hidden; }
+.bv-vbox video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #0e1424; cursor: pointer; }
+.bv-vplay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); min-height: 52px; padding: 0 24px; border: 0; border-radius: 999px; background: rgba(226, 59, 46, .95); color: #fff; font: 800 17px var(--body, sans-serif); cursor: pointer; box-shadow: 0 8px 20px rgba(0, 0, 0, .35); }
+.bv-vsound { position: absolute; right: 10px; bottom: 10px; min-height: 38px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(8, 14, 30, .78); color: #fff; font: 700 13px var(--body, sans-serif); cursor: pointer; }
+.bv-vplay[hidden], .bv-vsound[hidden], .bv-vfail[hidden] { display: none; }
+.bv-vfail { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 10px 14px; background: rgba(8, 14, 30, .85); color: #fff; font-size: 14px; }
+.bv-vfail a { color: #FFB24A; font-weight: 800; }
+.bv-video figcaption { margin-top: 8px; font-size: 13px; line-height: 1.5; color: #4A5875; }
+.bv-video figcaption b { color: #1E3A78; margin-right: 4px; }
+/* 3D 장면·실험실: 오른쪽 화면에 크게 */
+.bv-host .stage3d canvas { height: clamp(260px, 52vh, 620px); }
+.bv-host .lab3d canvas { height: clamp(240px, 46vh, 560px); }
+.bv-host .lab-svg { max-height: 52vh; }
+@container (min-width: 700px) {
+  .bv-host[data-k="lab"] .lab3d { display: grid; grid-template-columns: minmax(0, 1fr) 250px; grid-template-rows: auto 1fr auto; }
+  .bv-host[data-k="lab"] .lab3d canvas { grid-column: 1; grid-row: 1 / 4; height: clamp(300px, calc(100dvh - 330px), 600px); }
+  .bv-host[data-k="lab"] .lab3d-read { grid-column: 2; grid-row: 1; padding-top: 14px; }
+  .bv-host[data-k="lab"] .lab3d-tip { grid-column: 2; grid-row: 2; align-self: center; }
+  .bv-host[data-k="lab"] .lab3d-btns { grid-column: 2; grid-row: 3; align-content: end; }
+}
+.bv-host .lab3d-btns .btn { white-space: nowrap; }
+/* 독쌤이 오른쪽 화면 아래 칸에 들어갈 때(가리지 않는 띠) */
+.dsg.docked { position: relative; inset: auto; left: auto; right: auto; bottom: auto; max-width: none; margin: 0; padding: 8px 12px 10px 8px; border-top: 1px solid #DCE6F7; background: linear-gradient(180deg, #F2F7FF, #E6EFFC); flex-direction: row !important; align-items: flex-end; }
+.dsg.docked .dsg-fig { width: 78px; height: 117px; margin: -34px 0 -6px; }
+.dsg.docked .dsg-bubble { flex: 1; width: auto; margin: 0 0 4px; }
+.dsg.docked.folded { padding: 6px 10px; justify-content: flex-start; }
+.dsg.docked.folded .dsg-fig { margin: 0; width: 52px; height: 52px; }
+/* 크게 보기: 쪽 하나를 폭에 맞춰 키우고 위아래로 읽기 */
+.bv.zoom .bk.viewer { gap: 0; }
+/* 아래 넘김 막대는 휴대폰에서만 */
+.bv-bottom { display: none; }
+/* 휴대폰: 한 쪽씩 줄바꿈해 읽기 */
+.bv[data-layout="phone"] { height: auto; min-height: 100dvh; overflow: visible; background: #16233d; }
+.bv[data-layout="phone"] .bv-top { position: sticky; top: 0; z-index: 20; gap: 6px; padding: 6px 8px; flex-wrap: wrap; background: rgba(12, 20, 38, .92); }
+.bv[data-layout="phone"] .bv-title { order: 3; flex-basis: 100%; }
+.bv[data-layout="phone"] .bv-title b { font-size: 14px; }
+.bv[data-layout="phone"] .bv-tools .bv-btn:not(.primary) { display: none; }
+.bv[data-layout="phone"] .bv-pager { margin-left: auto; }
+.bv[data-layout="phone"] .bv-jump select { max-width: 120px; }
+.bv[data-layout="phone"] .bv-main { display: block; }
+.bv[data-layout="phone"] .bv-space { overflow: visible; }
+.bv[data-layout="phone"] .bv-sizer, .bv[data-layout="phone"] .bv-scale { position: static; transform: none; width: auto; height: auto; }
+.bv[data-layout="phone"] .bk.viewer { display: block; width: auto; }
+.bv[data-layout="phone"] .bk.viewer .bk-page { width: auto; margin: 0; border-radius: 0; box-shadow: none; }
+.bv[data-layout="phone"] .bk.viewer .bk-page:not(.on) { display: none; }
+.bv[data-layout="phone"] .bv-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 12px 16px; }
+.bv[data-layout="phone"] .bv-count { color: var(--bv-dim); font-weight: 700; font-size: 14px; }
+.bk-video-inline { margin: 2mm 0 3mm; } .bk-video-inline video { width: 100%; border-radius: 10px; background: #111; display: block; }
+.bk-video-inline figcaption { font-size: 12px; color: #5B6577; margin-top: 4px; }
+@media (max-width: 1100px) { .bv-title b { font-size: 14px; } .bv-tools .bv-btn { padding: 0 10px; } }
+@media (prefers-reduced-motion: reduce) { .bv-live.flash { animation: none; } .bv-btn { transition: none; } }
+@media print {
+  .bv { height: auto !important; min-height: 0; display: block; overflow: visible !important; background: #fff !important; color: #222; }
+  .bv-top, .bv-live, .bv-bottom { display: none !important; }
+  .bv-main { display: block !important; }
+  .bv-space { overflow: visible !important; width: auto !important; height: auto !important; }
+  .bv-sizer, .bv-scale { position: static !important; transform: none !important; width: auto !important; height: auto !important; }
+  .bk.viewer { display: block !important; width: auto !important; }
+  .bk.viewer .bk-page, .bk.viewer .bk-page:not(.on) { position: static !important; left: auto !important; visibility: visible !important; display: flex !important; box-shadow: none !important; border-radius: 0 !important; pointer-events: auto; }
+}

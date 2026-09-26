@@ -8,7 +8,7 @@
 .dk-phases span { font-size: 12px; padding: 2px 8px; border-radius: 10px; background: rgba(255, 255, 255, .08); color: #b7c3d9; }
 .dk-phases span.on { background: #fff; color: var(--n); font-weight: 700; }
 .dk-stage-wrap { flex: 1; display: grid; place-items: center; padding: 4px 12px; min-height: 0; }
-.dk-stage { position: relative; background: #fff; width: min(100%, calc((100vh - 150px) * 16 / 9)); aspect-ratio: 16 / 9; container-type: inline-size; border-radius: 8px; overflow: hidden;
+.dk-stage { position: relative; background: #fff; width: min(100%, calc((100dvh - 112px) * 16 / 9)); aspect-ratio: 16 / 9; container-type: inline-size; border-radius: 8px; overflow: hidden;
   display: flex; flex-direction: column; padding: 3cqw 4.5cqw 2.2cqw; font-size: 1.9cqw; line-height: 1.55; box-shadow: 0 10px 40px rgba(0, 0, 0, .35); }
 .dk-stage::before { content: ''; position: absolute; left: 0; top: 0; right: 0; height: .9cqw; background: linear-gradient(90deg, var(--t) 0 70%, var(--o) 70%); }
 .dk-h { margin: 0 0 1.4cqw; font: 700 2.9cqw/1.2 var(--disp, sans-serif); color: var(--n); display: flex; align-items: center; gap: 1cqw; }
@@ -116,18 +116,8 @@
 .dk-stage.cover .dk-art.cover img { max-height: 40cqw; }
 @media (max-width: 760px) { .dk-art .bk-photo figcaption { font-size: 12px; } }
 
-/* ── 스스로 공부하기: 독쌤 안내 줄(무대를 가리지 않게 아래 막대 안) ── */
+/* ── 스스로 공부하기: 독쌤은 화면 구석의 작은 말풍선(guide.css). 아래 막대에는 이전·다음·전체 화면만 ── */
 .dk-self .dk-bar { justify-content: flex-end; gap: 10px; padding: 8px 14px 10px; }
-.dk-guide { flex: 1 1 auto; min-width: 0; }
-.dg { display: flex; align-items: center; gap: 12px; min-height: 64px; }
-.dg-char { position: relative; flex: none; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #2196F3, #7C4DFF); box-shadow: 0 6px 16px rgba(0, 0, 0, .25); contain: paint; }
-.dg-char img { position: absolute; width: 150px; left: -43px; top: -8px; height: auto; }
-.dg-char .dg-f { display: none; width: 49.8px; left: calc(-43px + 150px * .3125); top: calc(-8px + 225px * .13021); }
-.dg-say { flex: 1; min-width: 0; margin: 0; padding: 10px 14px; border-radius: 14px 14px 14px 4px; background: #fff; color: #1B2340; font-size: 16px; font-weight: 600; line-height: 1.5; letter-spacing: -0.3px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, .18); min-height: 44px; display: flex; align-items: center; }
-.dg-ctl { display: flex; gap: 6px; flex: none; }
-.dg-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .25); background: rgba(255, 255, 255, .1); color: #fff; font-size: 16px; cursor: pointer; }
-.dg-btn[aria-pressed="false"][data-g="sound"], .dg-btn[aria-pressed="true"][data-g="pause"] { background: rgba(255, 255, 255, .28); }
 /* 자동 넘김: '다음' 단추가 차오르면 넘어간다. 멈춤(⏸)을 누르면 기다린다. */
 .dk-next { position: relative; overflow: hidden; }
 .dk-next .dk-fill { position: absolute; inset: 0; background: rgba(124, 196, 255, .45); transform-origin: left; transform: scaleX(0); pointer-events: none; }
@@ -163,7 +153,77 @@
 .dk-bt .dk-3d[data-mount=lab] { display: block; min-height: 0; }
 .dk-bt .dk-3d canvas { height: 22cqw !important; max-height: none; }
 .dk-bt .lab-table { font-size: 1.1cqw; }
-@media (max-width: 760px) { .dg-say { font-size: 14px; } .dg-char { width: 52px; height: 52px; } .dg-char img { width: 122px; left: -35px; } .dg-char .dg-f { width: 40.5px; left: calc(-35px + 122px * .3125); top: calc(-8px + 183px * .13021); } .dk-bt { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .dk-bt { grid-template-columns: 1fr; } }
 .dk-fix { margin: .6cqw 0 0; font-weight: 500; color: #1B2340; } .dk-fix b { color: var(--t); margin-right: .6cqw; }
 .dk-sc[hidden], .dk-go[hidden] { display: none !important; }
 @media (max-width: 760px) { .dk-act button { font-size: 15px; padding: 8px 16px; } .dk-hint, .dk-bq { font-size: 15px; } .dk-sol { font-size: 14px; } .dk-mic { font-size: 18px; } .dk-fix { font-size: 15px; } .dk-bt h3 { font-size: 16px; } }
+
+/* ════ 잡지형 슬라이드(2026-09-26) — 교재·읽을거리와 같은 편집 결: 작은 머리글 + 큰 제목, 표지형 첫 장, 큰 번호, 인용구 ════ */
+.dk-kick { display: flex; align-items: center; gap: .8cqw; margin: 0 0 .5cqw; font: 900 1.1cqw/1 var(--disp, sans-serif); letter-spacing: .18em; color: var(--o); text-transform: uppercase; }
+.dk-kick span { color: #9AA6BD; letter-spacing: .06em; font-weight: 800; }
+.dk-h { font: 900 3.1cqw/1.15 var(--disp, sans-serif); letter-spacing: -.045em; color: #17213A; padding-bottom: 1cqw; margin-bottom: 1.8cqw; border-bottom: .15cqw solid #E3E8F0; position: relative; }
+.dk-h::before { display: none; }
+.dk-h::after { content: ''; position: absolute; left: 0; bottom: -.15cqw; width: 7cqw; height: .3cqw; background: var(--o); }
+.dk-stage::before { height: .6cqw; }
+/* 표지형 첫 장: 그림이 오른쪽을 가득 채우고, 왼쪽 어두운 면에 큰 제목 */
+.dk-stage.cover:not(:has(.dk-points)) { padding: 0; background: #0F1E36; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-body { display: block; position: relative; overflow: hidden; color: #fff; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-art.cover { position: absolute; top: 0; right: 0; bottom: 0; width: 64%; margin: 0; border-radius: 0; box-shadow: none; display: flex; align-items: center; background: #EEF2F7;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22%); mask-image: linear-gradient(90deg, transparent 0, #000 22%); }
+.dk-stage.cover:not(:has(.dk-points)) .dk-art.cover > * { width: 100%; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-art.cover img { height: 100%; max-height: none; object-fit: cover; border-radius: 0; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-art.cover .bk-photo { height: 100%; } .dk-stage.cover:not(:has(.dk-points)) .dk-art.cover figcaption { position: absolute; right: 1.5cqw; bottom: 1cqw; color: #fff; text-shadow: 0 0 4px #000; font-size: 1cqw; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-cover { position: absolute; z-index: 2; left: 5cqw; top: 0; bottom: 0; width: 42cqw; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-kick { display: none; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-cover .dk-kick, .dk-cover > .dk-kick { display: block; }
+.dk-cover .dk-kick { color: #FFB45C; font-size: 1.3cqw; letter-spacing: .2em; font-weight: 900; opacity: 1; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-bign { background: none; color: #fff; box-shadow: inset 0 0 0 .35cqw rgba(255, 255, 255, .9); font-weight: 900; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-cover h1 { font-size: 5.6cqw; font-weight: 900; letter-spacing: -.05em; line-height: 1.05; text-shadow: 0 .3cqw 1.2cqw rgba(0, 0, 0, .35); }
+.dk-stage.cover:not(:has(.dk-points)) .dk-link b { background: var(--o); }
+.dk-stage.cover:not(:has(.dk-points)) .dk-foot { position: absolute; left: 5cqw; right: 3cqw; bottom: 1.4cqw; color: rgba(255, 255, 255, .6); z-index: 2; }
+/* 도입: 큰 사진 + 첫 문단 머리글자 */
+.dk-stage.intro .dk-two { grid-template-columns: 1.3fr 1fr; align-items: start; }
+.dk-stage.intro .dk-body p:first-child { font-size: 2cqw; font-weight: 600; line-height: 1.6; }
+.dk-stage.intro .dk-body p:first-child::first-letter { float: left; font: 900 4.6cqw/.9 var(--disp, sans-serif); color: var(--o); margin: .4cqw 1cqw 0 0; }
+.dk-art .bk-photo figcaption { border-left: .3cqw solid var(--o); padding-left: .8cqw; }
+.dk-art img { border-radius: 1cqw; }
+/* 실험 단계: 큰 번호 */
+.dk-stepno { display: block; font: 900 7cqw/1 var(--disp, sans-serif); letter-spacing: -.06em; color: var(--o); margin: 0 0 .8cqw; }
+.dk-stage.step .dk-big { font-size: 2.5cqw; font-weight: 700; letter-spacing: -.03em; line-height: 1.5; }
+.dk-stage.step .dk-tip { border-left: .35cqw solid #1E6B8F; padding-left: 1cqw; }
+.dk-stage.step .dk-art { background: #F4F7FB; border-radius: 1.2cqw; padding: .6cqw; }
+/* 탐구 목표: 인용구 */
+.dk-goal { position: relative; border: 0; padding: 1.4cqw 0 1.4cqw 5.4cqw; margin: 0 0 2cqw; font: 800 2.7cqw/1.4 var(--disp, sans-serif); letter-spacing: -.035em; color: #17213A; border-top: .15cqw solid #E3E8F0; border-bottom: .15cqw solid #E3E8F0; }
+.dk-goal::before { content: '“'; position: absolute; left: 0; top: .2cqw; font: 900 6.5cqw/1 Georgia, 'Times New Roman', serif; color: var(--o); }
+.dk-card { border-radius: 1.2cqw; box-shadow: inset .5cqw 0 0 var(--t); }
+/* 개념 노트·플러스: 핵심 상자 */
+.dk-stage.feature .dk-points { position: relative; margin: 2.2cqw 0 0; padding: 2cqw 2cqw 1.2cqw 3.6cqw; border-radius: 0 1.2cqw 1.2cqw 0; background: #EEF6F0; box-shadow: inset .6cqw 0 0 var(--t); }
+.dk-stage.feature .dk-points::before { content: '핵심 정리'; position: absolute; left: 2cqw; top: 0; transform: translateY(-55%); font: 900 1.05cqw/1 var(--disp, sans-serif); letter-spacing: .14em; color: #fff; background: var(--t); padding: .5cqw 1cqw; border-radius: 99px; }
+.dk-stage.feature .dk-points li { font-weight: 600; }
+.dk-stage.plus .dk-big { font-size: 2.4cqw; font-weight: 600; line-height: 1.6; border-left: .5cqw solid var(--o); padding-left: 1.8cqw; }
+.dk-stage.plus .dk-big::first-line { font-weight: 800; }
+@media (max-width: 760px) {
+  .dk-kick { font-size: 11px; } .dk-h { font-size: 22px; padding-bottom: 8px; } .dk-h::after { width: 48px; height: 3px; }
+  .dk-stage.cover:not(:has(.dk-points)) { padding: 0; }
+  .dk-stage.cover:not(:has(.dk-points)) .dk-body { display: flex; flex-direction: column-reverse; }
+  .dk-stage.cover:not(:has(.dk-points)) .dk-art.cover { position: relative; width: 100%; height: 220px; -webkit-mask-image: linear-gradient(0deg, transparent 0, #000 30%); mask-image: linear-gradient(0deg, transparent 0, #000 30%); }
+  .dk-stage.cover:not(:has(.dk-points)) .dk-cover { position: relative; left: auto; width: auto; padding: 8px 18px 20px; }
+  .dk-stage.cover:not(:has(.dk-points)) .dk-cover h1 { font-size: 30px; }
+  .dk-stage.cover:not(:has(.dk-points)) .dk-foot { position: static; padding: 0 18px 12px; }
+  .dk-stage.intro .dk-two { grid-template-columns: 1fr; } .dk-stage.intro .dk-body p:first-child { font-size: 16px; } .dk-stage.intro .dk-body p:first-child::first-letter { font-size: 36px; }
+  .dk-stepno { font-size: 44px; } .dk-stage.step .dk-big { font-size: 17px; }
+  .dk-goal { font-size: 18px; padding-left: 34px; } .dk-goal::before { font-size: 44px; }
+  .dk-stage.feature .dk-points { padding: 16px 14px 10px 22px; } .dk-stage.feature .dk-points::before { font-size: 11px; padding: 4px 8px; }
+  .dk-stage.plus .dk-big { font-size: 16px; }
+}
+/* 3D 실험실 슬라이드: 조작 단추가 세로로 찌그러지지 않게 */
+@media (min-width: 761px) { .dk-3d[data-mount=lab] .lab3d-btns { display: flex; flex-wrap: wrap; } .dk-3d[data-mount=lab] .lab3d-btns .btn { flex: 1 1 auto; white-space: nowrap; } }
+.dk-stage.cover:not(:has(.dk-points)) .dk-art.cover .bk-photo, .dk-stage.cover:not(:has(.dk-points)) .dk-art.cover .bk-photo img { height: 100% !important; width: 100%; }
+.dk-stage.cover:not(:has(.dk-points)) .dk-art.cover .bk-photo { position: relative; margin: 0; }
+@media (max-width: 760px) { .dk-stage.cover:not(:has(.dk-points)) .dk-art.cover .bk-photo img { height: 220px !important; } }
+@media (max-width: 760px) {
+  .dk-stage.cover:not(:has(.dk-points)) .dk-cover { left: 0 !important; width: auto !important; padding: 10px 18px 16px; }
+  .dk-cover .dk-kick { font-size: 11px; letter-spacing: .14em; }
+  .dk-stage.cover:not(:has(.dk-points)) .dk-art.cover figcaption { font-size: 10px; }
+}
+@media (max-width: 760px) { .dk-stage.cover:not(:has(.dk-points)) .dk-body { align-items: stretch; } }

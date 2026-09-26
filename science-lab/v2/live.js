@@ -9,15 +9,17 @@ import { pauseLearningMedia } from './media-session.js';
 const bindings = new WeakMap();
 
 // misc: 오개념표(data/units/<u>.misc.js) — 있으면 개념 정리 빈칸이 낱말 칩이 되고, 확인 문제를 틀리면 교정 상자(.bk-fix)가 붙는다. onAnswer(kind, payload)는 기록용.
-export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer = null } = {}) {
+// panel: 교재 보기(book-view.js)의 오른쪽 살아 있는 화면 — panel.open(kind, from, data)가 true면 거기서 보이고 화면을 바꾸지 않는다.
+export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer = null, panel = null } = {}) {
   bindings.get(root)?.();
   const workspace = lab ? createLabWorkspace(root, { title: title || '3D 체험 실험실', mount: lab }) : null;
-  const releaseReading = wireReading(root, { openLab: from => workspace?.open(from) });
+  const releaseReading = wireReading(root, { openLab: from => panel?.open('lab', from) || workspace?.open(from) });
   const release = () => { releaseReading(); workspace?.dispose(); };
   bindings.set(root, release);
   const chips = misc?.bookChips || null;
   root.querySelectorAll('.bk-video').forEach((v) => v.querySelector('.bk-play')?.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (panel?.open('video', v, { src: v.dataset.src })) return;
     v.innerHTML = `<video controls autoplay playsinline><source src="${v.dataset.src}" type="video/webm">${v.dataset.mp4 ? `<source src="${v.dataset.mp4}" type="video/mp4">` : ''}<source src="${v.dataset.full}" type="video/webm"></video>`;
     const vid = v.querySelector('video');
     vid.addEventListener('error', () => { v.innerHTML = `<div class="bk-video-fail"><p>이 브라우저에서는 영상이 열리지 않아요.</p><a href="${v.dataset.page}" target="_blank" rel="noopener">새 창에서 영상 보기</a></div>`; }, true);
@@ -26,11 +28,19 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
   root.querySelectorAll('[data-pop]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
     const k = b.dataset.pop;
+    if (panel?.open(k, b)) return;
     if (k === 'lab' && workspace) { workspace.open(b); return; }
     openPop(b, k === 'scene' ? '3D로 보기' : '3D 체험 실험실', (el) => (k === 'scene' ? scene?.(el) : lab?.(el)), { wide: k === 'lab' });
   }));
   root.querySelectorAll('[data-video]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (panel?.open('video', b, { src: b.dataset.src })) return;
+    // 휴대폰: 창을 띄우지 않고 쪽 안(단추 바로 아래)에서 재생
+    if (matchMedia('(max-width: 700px)').matches) {
+      const host = b.closest('.bk-video-compare') || b; let fig = host.nextElementSibling?.classList.contains('bk-video-inline') ? host.nextElementSibling : null;
+      if (!fig) { fig = document.createElement('figure'); fig.className = 'bk-video-inline bk-web'; fig.innerHTML = `<video controls playsinline preload="metadata"><source src="${esc(b.dataset.src)}" type="video/webm">${b.dataset.mp4 ? `<source src="${esc(b.dataset.mp4)}" type="video/mp4">` : ''}<source src="${esc(b.dataset.full)}" type="video/webm"></video><figcaption>${b.dataset.prompt ? `<b>관찰할 점</b> ${esc(b.dataset.prompt)} · ` : ''}${esc(b.dataset.credit || '')}</figcaption>`; host.after(fig); }
+      fig.querySelector('video').play?.().catch(() => {}); return;
+    }
     openPop(b, b.dataset.title || '실제 영상', (el) => {
       el.innerHTML = `<div class="bk-video-pop"><video controls autoplay playsinline preload="metadata"><source src="${esc(b.dataset.src)}" type="video/webm">${b.dataset.mp4 ? `<source src="${esc(b.dataset.mp4)}" type="video/mp4">` : ''}<source src="${esc(b.dataset.full)}" type="video/webm"></video>${b.dataset.prompt ? `<p class="bk-video-prompt"><b>관찰할 점</b>${esc(b.dataset.prompt)}</p>` : ''}<p class="bk-video-credit">${esc(b.dataset.credit || '')} · <a href="${esc(b.dataset.page)}" target="_blank" rel="noopener">원본 보기</a></p></div>`;
       const vid = el.querySelector('video');
@@ -49,7 +59,9 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
     if (!C) { b.classList.toggle('open'); b.querySelector('i').textContent = b.classList.contains('open') ? a : b.dataset.m; if (b.classList.contains('open')) onAnswer?.('blank', { chip: a, ok: true, revealed: true }); return; }
     root.querySelector('.bk-chips')?.remove();
     const pop = document.createElement('span'); pop.className = 'bk-chips';
-    pop.innerHTML = C[0].map((o) => `<button type="button" data-v="${esc(o)}">${esc(o)}</button>`).join('');
+    // 보기 순서를 그때그때 섞는다 — 정답이 늘 첫 칩이면 읽지 않고 눌러도 맞는다
+    const opts = [...C[0]]; for (let k = opts.length - 1; k > 0; k--) { const r = Math.floor(Math.random() * (k + 1)); [opts[k], opts[r]] = [opts[r], opts[k]]; }
+    pop.innerHTML = opts.map((o) => `<button type="button" data-v="${esc(o)}">${esc(o)}</button>`).join('');
     b.after(pop);
     pop.querySelectorAll('button').forEach((bt) => bt.addEventListener('click', (ev) => {
       ev.stopPropagation(); const ok = bt.dataset.v === a; b.dataset.done = '1'; b.classList.add('open', ok ? 'ok' : 'no'); b.querySelector('i').textContent = a;

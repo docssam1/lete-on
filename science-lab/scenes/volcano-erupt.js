@@ -1,6 +1,6 @@
 // 4-1 Ⅲ 땅의 변화 — 화산 분출. 땅속을 비춰 보면(반투명) 마그마 방과 통로가 보이고, 분출하면 용암 분수·화산재 기둥·
 // 암석 조각이 나온다. 용암은 땅 위에서 빨리 식어 현무암, 땅속 마그마는 천천히 식어 화강암이 된다.
-import { label, mat, THREE, clamp01, lerp } from './_kit.js';
+import { label, mat, THREE, clamp01, lerp, puffCloud } from './_kit.js';
 
 const H = 2.4, R = 2.6, CR = 0.32, Y0 = 2.6;   // Y0: 땅 표면 높이(그 아래가 땅속 단면)                      // 산 높이·밑반지름·분화구 반지름
 const hash = (i) => { const s = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return s - Math.floor(s); };
@@ -169,27 +169,59 @@ function setFountain(m, t, strength, period = 2.2) {
   }
   m.count = k; m.instanceMatrix.needsUpdate = true;
 }
-// 용암류: 산비탈을 따라 흘러내리는 띠 세 줄기(지형 높이를 따라감)
+// 용암류: 산비탈을 따라 흘러내리는 세 줄기. 단면이 볼록한 띠(두께가 있는 흐름)이고, 겉은 식은 검은 껍질 조각,
+// 그 사이 갈라진 틈으로 속의 뜨거운 용암이 빛난다(발광 무늬). 무늬가 아래로 흘러가고 빛이 가물거린다. 식으면(k→1) 빛이 꺼진다.
+let _lavaTex = null;
+function lavaTextures() {
+  if (_lavaTex) return _lavaTex;
+  const S = 192, mk = (draw) => { const c = document.createElement('canvas'); c.width = c.height = S; draw(c.getContext('2d')); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+  // 껍질 조각 중심(보로노이 비슷하게): 가까운 두 점 거리 차가 작으면 틈
+  const pts = Array.from({ length: 34 }, (_, i) => [hash(i * 2 + 1) * S, hash(i * 2 + 2) * S]);
+  const crack = new Float32Array(S * S);
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    let d1 = 1e9, d2 = 1e9; for (const [px, py] of pts) for (const ox of [-S, 0, S]) for (const oy of [-S, 0, S]) { const d = Math.hypot(x - px - ox, y - py - oy); if (d < d1) { d2 = d1; d1 = d; } else if (d < d2) d2 = d; }
+    crack[y * S + x] = Math.max(0, 1 - (d2 - d1) / 5.5);
+  }
+  const paint = (fn) => (g) => { const im = g.createImageData(S, S); for (let i = 0; i < S * S; i++) { const [r, gg, b] = fn(crack[i], hash2(i % S, (i / S) | 0)); im.data.set([r, gg, b, 255], i * 4); } g.putImageData(im, 0, 0); };
+  _lavaTex = {
+    map: mk(paint((c, n) => { const k = c * c; return [58 + 70 * k + n * 22, 48 + 22 * k + n * 18, 44 + 8 * k + n * 16]; })),          // 검은 껍질 + 틈은 짙은 적갈색(빛은 발광 무늬가 낸다)
+    glow: mk(paint((c, n) => { const k = Math.pow(c, 1.6); return [255 * Math.min(1, k * 1.2 + 0.05), 150 * k + 20 * k * n, 40 * k]; })),   // 틈만 빛난다
+  };
+  return _lavaTex;
+}
 function lavaFlows() {
-  const g = new THREE.Group(), N = 60, W = 0.3, hot = new THREE.Color(0xffd166), mid = new THREE.Color(0xff5400), cool = new THREE.Color(0x231d1a), c = new THREE.Color();
+  const g = new THREE.Group(), N = 60, C = 6, W = 0.3, tex = lavaTextures(), hot = new THREE.Color(1, 0.92, 0.8), cool = new THREE.Color(0.34, 0.32, 0.31), c = new THREE.Color();
   const dirs = [[1, 0.35], [-0.7, 0.75], [0.2, -1]];
+  const matL = new THREE.MeshStandardMaterial({ map: tex.map, emissiveMap: tex.glow, emissive: 0xffffff, emissiveIntensity: 1.6, roughness: 0.62, metalness: 0, vertexColors: true });
   const meshes = dirs.map(([dx, dz], j) => {
-    const geo = new THREE.PlaneGeometry(1, 1, 1, N - 1), pos = geo.attributes.position, col = new Float32Array(pos.count * 3); geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, emissive: 0xff4d00, emissiveIntensity: 1, roughness: 0.55, side: THREE.DoubleSide }));
+    const geo = new THREE.BufferGeometry(), nv = N * (C + 1), pos = new Float32Array(nv * 3), col = new Float32Array(nv * 3), uv = new Float32Array(nv * 2), idx = [];
+    for (let i = 0; i < N - 1; i++) for (let k = 0; k < C; k++) { const q = i * (C + 1) + k; idx.push(q, q + C + 1, q + 1, q + 1, q + C + 1, q + C + 2); }
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); geo.setIndex(idx);
+    const m = new THREE.Mesh(geo, matL); m.castShadow = true; m.receiveShadow = true;
     const L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L, len = 2.9 + j * 0.4;
+    let lastP = -1, lastK = -1;
     m.userData.set = (p, k) => {
-      for (let i = 0; i < pos.count; i++) {
-        const row = Math.floor(i / 2), side = i % 2 ? 1 : -1, t = row / (N - 1), d = CR * 0.8 + t * len * p, w = W * (0.7 + 0.5 * Math.sin(t * 7 + j)) * (0.6 + p * 0.4);
-        const wig = Math.sin(t * 5 + j * 2) * 0.18 * t;
-        const x = ux * d - uz * (side * w + wig), z = uz * d + ux * (side * w + wig);
-        pos.setXYZ(i, x, hillY(x, z) + 0.06, z);
-        c.copy(hot).lerp(mid, Math.min(1, t * 1.5)).lerp(cool, k * (0.5 + 0.5 * t)); col.set([c.r, c.g, c.b], i * 3);
+      m.visible = p > 0.01; if (!m.visible || (Math.abs(p - lastP) < 1e-4 && Math.abs(k - lastK) < 1e-4)) return; lastP = p; lastK = k;
+      for (let i = 0; i < N; i++) {
+        const t = i / (N - 1), d = CR * 0.8 + t * len * p, w = W * (0.7 + 0.5 * Math.sin(t * 7 + j)) * (0.6 + p * 0.4) * (1 - 0.25 * Math.pow(t, 3));
+        const wig = Math.sin(t * 5 + j * 2) * 0.18 * t, hgt = 0.1 * (1 - 0.45 * t) * (0.5 + 0.5 * p);
+        for (let q = 0; q <= C; q++) {
+          const th = (q / C) * Math.PI, side = Math.cos(th), x = ux * d - uz * (side * w + wig), z = uz * d + ux * (side * w + wig), o = i * (C + 1) + q;
+          pos.set([x, hillY(x, z) + 0.035 + Math.sin(th) * hgt, z], o * 3);
+          const heat = (1 - Math.min(1, t * 1.3)) * (1 - k); c.copy(cool).lerp(hot, 0.35 + 0.65 * heat); col.set([c.r, c.g, c.b], o * 3);
+          uv.set([q / C * 1.1 + j * 0.3, t * len * 1.7], o * 2);
+        }
       }
-      pos.needsUpdate = true; geo.attributes.color.needsUpdate = true; geo.computeVertexNormals(); m.material.emissiveIntensity = (1 - k) * 1.1; m.visible = p > 0.01;
+      geo.attributes.position.needsUpdate = geo.attributes.color.needsUpdate = geo.attributes.uv.needsUpdate = true; geo.computeVertexNormals(); geo.computeBoundingSphere();
     };
     m.userData.set(0, 0); g.add(m); return m;
   });
-  g.userData.set = (p, k) => meshes.forEach((m) => m.userData.set(p, k));
+  g.userData.set = (p, k, t = 0) => {
+    meshes.forEach((m) => m.userData.set(p, k));
+    tex.glow.offset.y = tex.map.offset.y = -t * 0.12;                                       // 무늬가 비탈 아래로 흘러간다
+    matL.emissiveIntensity = (1 - k) * (1.5 + 0.25 * Math.sin(t * 7.3) + 0.15 * Math.sin(t * 13.1));   // 가물거리는 빛
+    matL.roughness = 0.62 + 0.25 * k;
+  };
   return g;
 }
 // 암석 표본: 잘라 닦은 윗면이 보이는 울퉁불퉁한 돌덩이(현무암 = 어둡고 알갱이 작고 구멍 / 화강암 = 밝고 알갱이 큼)
@@ -220,6 +252,7 @@ export default {
     const bombs = fountain(26, 0.13, 0x4a3f38, { roughness: 1 }); world.add('bombs', bombs);
     const flows = lavaFlows(); world.add('flows', flows);
     const glow = new THREE.PointLight(0xff6a00, 0, 9, 2); glow.position.set(0, H + 0.6, 0); world.add('glow', glow);
+    const halo = puffCloud(3, { color: 0xff7a2a, opacity: 0.9, additive: true, soft: 1 }); glow.add(halo);   // 분화구 위 빛무리(분출할 때만)
     const lbM = label('땅속 마그마 방', { size: 0.48, color: '#7f1d0f', bg: 'rgba(255,238,218,0.96)' }); lbM.position.set(0, 1.05, 2.7); world.add('lbM', lbM);
     const lbQ = label('화산에서는 무엇이 나올까?', { size: 0.48, color: '#1E3A78' }); lbQ.position.set(0, H + 1.2, 0); world.add('lbQ', lbQ);
     const lbG = label('화산 가스 — 기체', { size: 0.46, color: '#1E3A78', bg: 'rgba(230,240,255,0.96)' }); lbG.position.set(-3.2, H + 4.2, 0); world.add('lbG', lbG);
@@ -238,7 +271,9 @@ export default {
       const e = st.erupt * (1 - st.cool);
       setAsh(ash, t, e); setFountain(fire, t, e); setFountain(bombs, t * 0.8, e, 2.6);
       glow.intensity = e * (26 + Math.sin(t * 9) * 8) + (st.erupt > 0 ? 3 * (1 - st.cool) : 0);
-      flows.userData.set(Math.min(1, st.erupt * 1.15), st.cool);
+      flows.userData.set(Math.min(1, st.erupt * 1.15), st.cool, t);
+      const hg = e * (0.85 + 0.15 * Math.sin(t * 9) + 0.08 * Math.sin(t * 23));
+      halo.userData.set(0, 0, -0.35, 0, 2.4 * hg, 0.55 * hg); halo.userData.set(1, 0, 0.3, 0, 4.2 * hg, 0.2 * hg); halo.userData.set(2, 0, -0.5, 0, 1.1 * hg, 0.8 * hg); halo.userData.commit(e > 0.01 ? 3 : 0);
     } };
   },
   beats: [

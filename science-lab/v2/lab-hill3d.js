@@ -7,10 +7,10 @@ import { createSim, GRID, WATERS, SLOPES, toCells } from './hill-sim.js';
 const TIP = '언덕 위쪽을 눌러 컵 자리를 정하고, <b>물 붓기</b>를 누르고 있어요.';
 
 export async function mountHill3D(el, opts = {}) {
-  let THREE, Stage, K;
+  let THREE, Stage, watchDetached, K;
   try {
-    [{ Stage }, THREE, K] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/hill-stream.js')]);
-    const t = document.createElement('canvas'); if (!(t.getContext('webgl2') || t.getContext('webgl'))) throw new Error('no webgl');
+    [{ Stage, watchDetached }, THREE, K] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/hill-stream.js')]);
+    if (!Stage.canWebGL()) throw new Error('no webgl');   // 확인용 문맥은 바로 돌려준다
   } catch (_) { return mountHill(el, opts); }
   const rows = opts.rows || [], onRecord = opts.onRecord;
   let slope = '완만', water = '적게', pouring = false;
@@ -57,8 +57,10 @@ export async function mountHill3D(el, opts = {}) {
   const soil = new THREE.Mesh(soilGeo, K.soilMaterial());
   soil.castShadow = soil.receiveShadow = true; rig.add(soil);
   const pebbles = K.makePebbles(K.PEBBLE_SPOTS); rig.add(pebbles);
-  const film = new THREE.Mesh(mkGeo(), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.78 }));
-  rig.add(film);
+  // 물막: 정점마다 색 + 투명도(RGBA). 마른 곳은 투명도 0으로 흙 위에 그대로 얹어 두어, 흙 속으로 숨기던 방식의 가는 조각(얼룩)이 안 생긴다.
+  const filmGeo = mkGeo(); filmGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(NV * 4), 4));
+  const film = new THREE.Mesh(filmGeo, new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.05, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+  film.renderOrder = 2; rig.add(film);
   // 물방울(흘러내리는 물)과 컵
   const MAXD = 700, drops = new THREE.InstancedMesh(new THREE.SphereGeometry(0.028, 6, 5), mat(0xcfe8ff, { r: 0.05, op: 0.85 }), MAXD);
   drops.count = 0; rig.add(drops);
@@ -78,10 +80,10 @@ export async function mountHill3D(el, opts = {}) {
       const sd = sim.sand[k] > 0.12 ? Math.min(0.95, sim.sand[k] * 1.1) : 0; sa.array[k] = sd;
       c.copy(DRY).lerp(DARK, grain[k] * 0.35).lerp(WET, sim.wet[k] * 0.75).lerp(SAND, sd * 0.6);
       sc.setXYZ(k, c.r, c.g, c.b);
-      const f = sim.flow[k], on = f > 0.03;
-      fp.setY(k, on ? h + 0.012 + f * 0.018 : h - 0.03);
+      const f = sim.flow[k], a = Math.min(1, Math.max(0, (f - 0.02) / 0.1));
+      fp.setY(k, h + 0.01 + f * 0.018);
       const i = k % (nx + 1), wave = Math.max(0, Math.sin(i * 0.9 - t * 10 + (k / (nx + 1)) * 0.7)) ** 3;
-      c.copy(CLEAR).lerp(MUD, Math.min(0.85, sim.mud[k] * 0.6 + 0.25)).lerp(FOAM, wave * 0.5 * f); fc.setXYZ(k, c.r, c.g, c.b);
+      c.copy(CLEAR).lerp(MUD, Math.min(0.85, sim.mud[k] * 0.6 + 0.25)).lerp(FOAM, wave * 0.5 * f); fc.setXYZW(k, c.r, c.g, c.b, a * a * (3 - 2 * a) * 0.86);
     }
     sp.needsUpdate = sc.needsUpdate = sa.needsUpdate = fp.needsUpdate = fc.needsUpdate = true;
     soil.geometry.computeVertexNormals(); pebbles.userData.place(sim.heightAt);
@@ -165,7 +167,7 @@ export async function mountHill3D(el, opts = {}) {
     renderRows(); onRecord?.(rows); tip('적었어요! 경사나 물의 양을 바꿔 한 번 더 해 봐요.');
   });
   renderRows();
-  const off = () => { if (!el.isConnected) { stage.dispose(); removeEventListener('hashchange', chk); } };
-  const chk = () => setTimeout(off); addEventListener('hashchange', chk);
-  return { rows, pause: stop, dispose: () => { stage.dispose(); removeEventListener('hashchange', chk); } };
+  // 책장을 넘겨 실험실이 문서에서 빠지면(해시가 안 바뀌어도) 바로 정리한다.
+  const dispose = watchDetached(el, () => stage.dispose());
+  return { rows, pause: stop, dispose };
 }

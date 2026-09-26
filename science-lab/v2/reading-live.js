@@ -2,7 +2,8 @@ import { createLabWorkspace } from './lab-workspace.js';
 import { pauseLearningMedia } from './media-session.js';
 
 // The same reading stays in the book. Video sources load only on an explicit play.
-export function wireReading(root, { mountLab = null, openLab = null } = {}) {
+// autoplay: the video starts muted when it comes into view (not with reduced motion); sound stays the learner's choice.
+export function wireReading(root, { mountLab = null, openLab = null, autoplay = false } = {}) {
   const abort = new AbortController(), { signal } = abort;
   const workspace = mountLab ? createLabWorkspace(root, { title: '화산 실험실', mount: mountLab }) : null;
   const articles = [...root.querySelectorAll('.sl-reading')];
@@ -18,7 +19,7 @@ export function wireReading(root, { mountLab = null, openLab = null } = {}) {
     const failedSources = new Set();
     let attempt = 0;
     const fail = () => { status.hidden = false; play.hidden = false; play.textContent = '영상 다시 재생'; };
-    const start = async () => {
+    const start = async ({ quiet = false } = {}) => {
       if (signal.aborted) return;
       const currentAttempt = ++attempt;
       status.hidden = true;
@@ -37,7 +38,7 @@ export function wireReading(root, { mountLab = null, openLab = null } = {}) {
         reload = true;
       }
       if (!video.querySelector('source')) { fail(); return; }
-      pauseLearningMedia(video);
+      if (!quiet) { video.muted = false; pauseLearningMedia(video); }
       if (reload) { failedSources.clear(); video.load(); }
       try { await video.play(); } catch (error) {
         // Closing, changing pages or retrying may cancel a pending play intentionally.
@@ -45,6 +46,13 @@ export function wireReading(root, { mountLab = null, openLab = null } = {}) {
       }
     };
     play.addEventListener('click', event => { event.stopPropagation(); start(); }, { signal });
+    if (autoplay && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      const seen = new IntersectionObserver(([entry]) => {
+        if (!entry?.isIntersecting || signal.aborted) return;
+        seen.disconnect(); if (video.paused && !video.currentTime) { video.muted = true; start({ quiet: true }); }
+      }, { threshold: 0.5 });
+      seen.observe(box); signal.addEventListener('abort', () => seen.disconnect());
+    }
     article.querySelector('[data-reading-watch]')?.addEventListener('click', event => {
       event.preventDefault(); event.stopPropagation(); video.scrollIntoView({ block: 'center', behavior: 'instant' }); start();
     }, { signal });

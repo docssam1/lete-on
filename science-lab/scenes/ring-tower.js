@@ -162,6 +162,13 @@ function ruler() {
   return m;
 }
 
+// 가상 실험실(v2/lab-ring-tower.js)이 같은 교구를 쓴다 — 받침·연필·자·고리 자석과 극 표시 도구.
+export const TOWER = { R_OUT, R_IN, T, COLORS, VIEW_TH, PEN_TOP, N, S };
+export function towerParts(colors = COLORS) {
+  POLE = poleKit();
+  return { base: woodBase(), rod: pencil(), ruler: ruler(), rings: colors.map((c) => ring(c)), setUp, placeBadge };
+}
+
 export default {
   view: { theta: 0.5, phi: 1.14, dist: 7.35, target: [0, 1.98, 0] },
   build(kit, world) {

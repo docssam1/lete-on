@@ -54,3 +54,9 @@
 }
 @media (prefers-reduced-motion: reduce) { .sl-lab-workspace { transition: none; transform: none; } }
 @media print { .sl-lab-workspace { display: none !important; } }
+
+/* 3D 고리 자석 탑: 고리 뒤집기 번호 단추(고리 색 점) */
+.rt-flips { display: flex; flex: 1 1 100%; gap: 6px; flex-wrap: wrap; }
+.lab3d-btns .rt-flips .rt-flip { flex: 1 1 64px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.rt-flip i { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.7), 0 1px 2px rgba(0,0,0,.25); }
+.lab3d-read .lab-read b.rt-shape { font-size: 20px; letter-spacing: .08em; white-space: nowrap; }
