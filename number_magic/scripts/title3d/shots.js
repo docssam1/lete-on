@@ -87,7 +87,10 @@ server.listen(0, async () => {
         const pt = await page.evaluate(id => { const d = window.__t3d._debug, o = d.objs[id];
           let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; o.box.forEach(p => { const [x, y] = d.proj(p); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); });
           for(let j = 1; j < 12; j++) for(let i = 1; i < 12; i++){ const x = x0 + (x1 - x0) * i / 12, y = y0 + (y1 - y0) * j / 12;
-            const el = document.elementFromPoint(x, y); if(el && /t3d-gl/.test(el.className) && d.hitAt(x, y) === id) return [x, y]; }
+            /* 가장자리 한 점은 정수 좌표로 누를 때 빗나갈 수 있다 — 둘레 3px 도 같은 물건인 점만 */
+            const ok = (px, py) => { const el = document.elementFromPoint(px, py); return el && /t3d-gl/.test(el.className) && d.hitAt(px, py) === id; };
+            const X = Math.round(x), Y = Math.round(y);
+            if(ok(X, Y) && ok(X - 3, Y) && ok(X + 3, Y) && ok(X, Y - 3) && ok(X, Y + 3)) return [X, Y]; }
           return null; }, id);
         if(!pt){ bad.push(`${c.name}: 3D ${id} 누를 자리 없음`); continue; }
         await page.mouse.move(pt[0], pt[1]); await page.waitForTimeout(120);

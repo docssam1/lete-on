@@ -268,8 +268,10 @@ export async function mountStory3D(container, opts){
       fitCZ += cy * wpp * 0.9 / Math.sin(p);
       if(!narrow) fitCX += ((x0 + x1) / 2 - (leftPad + availW / 2)) * wpp * 0.9;
     }
-    const visHalf = dist * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * cam.aspect * 0.9;
-    panMax = narrow ? Math.max(0, W.halfW + 0.2 - visHalf) : 0; panMin = -panMax;
+    /* 팬 범위: 가장 바깥 이정표(+꼬리표 반폭)가 좌우 단추 안쪽까지 들어올 만큼 */
+    const visHalf = dist * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * cam.aspect * (VW - side * 2) / VW;
+    const edgeX = Math.max(...W.stops.map(s => Math.abs(s.x))) + 0.3;
+    panMax = narrow ? Math.max(0, edgeX - visHalf) : 0; panMin = -panMax;
     panGoal = clampPan(narrow ? W.stops[curIdx].x : 0);
     if(!introDone || reduce) panX = panGoal; else panX = clampPan(panX);
     updateArrows();
@@ -303,13 +305,13 @@ export async function mountStory3D(container, opts){
         }
       }
     }
-    const gb = box(goBtn), sb = box(story), al = narrow ? box(aL) : null, ar = narrow ? box(aR) : null;
+    const gb = box(goBtn), sb = box(story), eg = narrow ? 54 : 4;   /* 좁으면 좌우 단추 안쪽으로 */
     rects.forEach(R => {
       const b = tags[R.i];
-      const x = Math.max(4, Math.min(VW - R.w - 4, R.x)), y = Math.max(4, Math.min(VH - R.h - 4, R.y));
+      const x = Math.max(eg, Math.min(VW - R.w - eg, R.x)), y = Math.max(4, Math.min(VH - R.h - 4, R.y));
       const inter = q => q && x < q[0] + q[2] && q[0] < x + R.w && y < q[1] + q[3] && q[1] < y + R.h;
       /* 가장자리 밖이거나 알약·이야기 쪽지와 겹치면 숨긴다(포커스를 받으면 panTo 로 불러와 다시 보인다) */
-      const hide = R.cx < -10 || R.cx > VW + 10 || (narrow && (R.cx < 30 || R.cx > VW - 30)) || inter(gb) || inter(sb) || inter(al) || inter(ar);
+      const hide = R.cx < -10 || R.cx > VW + 10 || (narrow && (R.cx < 30 || R.cx > VW - 30)) || inter(gb) || inter(sb);
       b.classList.toggle('off', hide && document.activeElement !== b);
       b.style.transform = `translate3d(${Math.round(x)}px,${Math.round(y)}px,0)`;
     });

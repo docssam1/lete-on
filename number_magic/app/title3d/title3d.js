@@ -139,7 +139,7 @@ const CSS = `
 .t3d-logo{position:absolute;left:50%;top:14px;transform:translateX(-50%);text-align:center;white-space:nowrap;pointer-events:none}
 .t3d-plate{position:relative;display:inline-flex;flex-direction:column;align-items:center;padding:.04em .4em .1em;isolation:isolate}
 .t3d-plate::before{content:"";position:absolute;inset:-18% -10% -12%;z-index:-1;border-radius:50%;
-  background:radial-gradient(closest-side,rgba(255,255,255,.78),rgba(255,255,255,.42) 55%,rgba(255,255,255,0))}
+  background:radial-gradient(closest-side,rgba(255,255,255,.86),rgba(255,255,255,.55) 58%,rgba(255,255,255,0))}
 .t3d-word{display:block;font-family:var(--t3d-logo-font);font-size:var(--t3d-logo,52px);line-height:1.02;font-weight:400;letter-spacing:-.015em;
   font-optical-sizing:auto;font-variation-settings:"SOFT" 0,"WONK" 0;color:var(--la-ink);
   background:linear-gradient(100deg,#26304a 0%,#26304a 36%,#6b5fc4 44%,#3d9a93 50%,#4f7fc9 55%,#26304a 63%,#26304a 100%);background-size:260% 100%;background-position:100% 0;
@@ -431,10 +431,12 @@ export async function mountTitle3D(container, opts){
     Object.values(objs).forEach(o => { o.hotT = o.id === id ? 1 : 0; });
     wake();
   }
-  let picked = false;
+  /* 두 번 눌림 막기 — 벽시계로 잰다(무거운 프레임 뒤에 타이머가 늦게 돌아도 400ms 뒤엔 다시 받는다) */
+  let lastPick = -1e9;
   function pick(id){
-    if(picked || disposed) return; picked = true;
-    try { opts.onPick && opts.onPick(id); } finally { setTimeout(() => { picked = false; }, 400); }
+    const now = performance.now();
+    if(now - lastPick < 400 || disposed) return; lastPick = now;
+    opts.onPick && opts.onPick(id);
   }
 
   /* ---------- 레이캐스트 ---------- */
@@ -1507,7 +1509,7 @@ function buildWorld(k, choices, playerSpec){
   rt.texture.colorSpace = THREE.LinearSRGBColorSpace;
   const back = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map:rt.texture, depthWrite:true }));
   back.renderOrder = -1; back.visible = false; scene.add(back);
-  let outDirty = true;
+  let outDirty = true, outT = -1;
   const _a = new THREE.Vector3(), _b = new THREE.Vector3(), _n = new THREE.Vector3(), _up = new THREE.Vector3(), _rd = new THREE.Vector3();
   function onFit(cam){
     /* 판: 아래 변 = 창턱의 뒤 끝, 면 = 카메라 시선에 수직. 위 변 = 화면 맨 위 선이 판과 만나는 곳 */
@@ -1540,7 +1542,9 @@ function buildWorld(k, choices, playerSpec){
   const lerp = (a, b, f) => a + (b - a) * f;
   function animate(t, dt, reduce){
     let moving = false;
-    if(!reduce){ allAnim.forEach(f => f(t, dt)); dust.uniforms.t.value = t; sparks.uniforms.t.value = t; outside.update(t); outDirty = true; }
+    if(!reduce){ allAnim.forEach(f => f(t, dt)); dust.uniforms.t.value = t; sparks.uniforms.t.value = t;
+      /* 창밖은 구름이 천천히 흐를 뿐이라 초당 10번만 다시 찍는다 */
+      if(t - outT > 0.1 || t < outT){ outT = t; outside.update(t); outDirty = true; } }
     if(outDirty && back.visible){ outDirty = false; const prevRT = r.getRenderTarget(), sh = r.shadowMap.autoUpdate; r.shadowMap.autoUpdate = false;
       r.setRenderTarget(rt); r.render(outside.scene, outside.cam); r.setRenderTarget(prevRT); r.shadowMap.autoUpdate = sh; }
     const px = k.r.domElement.height * 0.9;
@@ -1725,29 +1729,6 @@ function buildOutside(k){
   const setBird = (b, t) => { const f = Math.sin(t * 4 + b.ph) * 0.8, p = b.l.geometry.attributes.position; p.setXYZ(0, -b.s, f * b.s * 0.6, 0); p.setXYZ(1, 0, 0, 0); p.setXYZ(2, b.s, f * b.s * 0.6, 0); p.needsUpdate = true; };
   birds.forEach(b => setBird(b, 0));
 
-  /* 창틀 — 활짝 열어 젖힌 흰 여닫이창 두 짝이 풍경 양 끝을 감싼다(눈높이 카메라 바로 앞) */
-  const frames = new THREE.Group(); scene.add(frames);
-  {
-    const paint = own(new THREE.MeshStandardMaterial({ color:'#fbfaf6', roughness:0.5, fog:false, flatShading:false }));
-    const glassM = own(new THREE.MeshPhysicalMaterial({ color:'#e8f1fb', roughness:0.04, metalness:0, transparent:true, opacity:0.28, fog:false, clearcoat:1 }));
-    const bar = own(new THREE.BoxGeometry(1, 1, 1));
-    const sash = (w, h) => { const g = new THREE.Group(); const t = 0.35;
-      [[0, h / 2, w, t], [0, -h / 2, w, t], [-w / 2, 0, t, h], [w / 2, 0, t, h], [0, 0, w, t * 0.6], [0, 0, t * 0.6, h]].forEach(([x, y, bw, bh]) => { const m = new THREE.Mesh(bar, paint); m.scale.set(bw, bh, 0.3); m.position.set(x, y, 0); g.add(m); });
-      const gl = new THREE.Mesh(own(new THREE.PlaneGeometry(w, h)), glassM); g.add(gl); return g; };
-    frames.userData.sash = sash;
-  }
-  function placeFrames(){
-    /* 카메라 화각 양 끝에, 바깥으로 젖혀진 창 두 짝 */
-    while(frames.children.length) frames.remove(frames.children[0]);
-    const vH = 2 * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)), D = 9;
-    const hw = vH * D * cam.aspect / 2, hh = vH * D / 2;
-    if(cam.aspect < 1.2) return;   /* 세로 화면(좁은 띠)에서는 창틀을 뺀다 */
-    [-1, 1].forEach(sd => { const w = Math.min(hw * 0.5, hh * 1.4), g = frames.userData.sash(w, hh * 2.6);
-      const pivot = new THREE.Group(); pivot.position.set(cam.position.x + sd * hw * 1.02, cam.position.y - hh * 0.2, cam.position.z - D); pivot.rotation.y = sd * 1.05;
-      g.position.x = -sd * w / 2; pivot.add(g); frames.add(pivot); });
-  }
-
-  let lastAspect = 0;
   return {
     scene, cam,
     fit(aspect){
