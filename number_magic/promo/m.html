@@ -52,7 +52,7 @@
   --sans:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
   --wm:'Fraunces',Georgia,serif;
   --col:440px; --gutter:16px; --bar-h:72px;
-  --glow-op:.55;
+  --glow-op:.42;
 }
 @media (prefers-color-scheme: dark){
   :root{
@@ -98,7 +98,7 @@ h2{font-size:clamp(23px,6.2vw,27px)}
 .lead{color:var(--la-ink-2);font-size:15.5px;margin-top:12px}
 
 /* 워드마크 */
-.wm{font-family:var(--wm);font-weight:500;font-size:22px;letter-spacing:-.01em;line-height:1;display:inline-flex;align-items:baseline;gap:.28em;text-decoration:none}
+.wm{font-family:var(--wm);font-weight:500;font-size:22px;letter-spacing:-.01em;line-height:1;display:inline-flex;align-items:baseline;gap:.28em;text-decoration:none;min-height:44px;padding-top:14px}
 .wm em{font-style:italic;font-weight:400;opacity:.85}
 .wm small{font-family:var(--serif);font-size:11px;font-weight:500;letter-spacing:.2em;color:var(--la-ink-2);margin-left:.3em}
 
@@ -124,8 +124,8 @@ h2{font-size:clamp(23px,6.2vw,27px)}
   filter:blur(18px);opacity:calc(var(--glow-op) * .9)}
 .stage{position:relative;aspect-ratio:16/9;border-radius:13px;overflow:hidden;background:#e9e4d8}
 .stage video{width:100%;height:100%;object-fit:cover}
-.stage .btn-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;border:1px solid var(--hair);background:rgba(255,255,255,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(38,48,74,.22),0 0 0 10px rgba(255,255,255,.28);display:grid;place-items:center;cursor:pointer;color:var(--la-ink);transition:transform .15s,opacity .2s}
-.stage .btn-play svg{width:30px;height:30px;margin-left:3px}
+.stage .btn-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:68px;height:68px;border-radius:50%;border:1px solid var(--hair);background:rgba(255,255,255,.86);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(38,48,74,.22),0 0 0 10px rgba(255,255,255,.28);display:grid;place-items:center;cursor:pointer;color:var(--la-ink);transition:transform .15s,opacity .2s}
+.stage .btn-play svg{width:28px;height:28px;margin-left:3px}
 .stage .btn-play:active{transform:translate(-50%,-50%) scale(.95)}
 .stage.playing .btn-play{opacity:0;pointer-events:none}
 .stage .btn-sound{position:absolute;left:10px;bottom:10px;min-height:44px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 12px;border-radius:var(--pill);border:1px solid var(--hair);background:rgba(255,255,255,.9);color:#26304a;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(38,48,74,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
@@ -137,7 +137,7 @@ h2{font-size:clamp(23px,6.2vw,27px)}
 .stage .bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.35)}
 .stage .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--la-glow-a),var(--la-glow-b),var(--la-gold));transition:width .25s linear}
 .reel .under{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 8px 6px;font-size:12.5px;color:var(--la-ink-2)}
-.reel .under a{display:inline-flex;align-items:center;gap:5px;min-height:32px;font-weight:600;color:var(--la-ink);text-decoration:none;border-bottom:1px solid var(--hair)}
+.reel .under a{display:inline-flex;align-items:center;gap:5px;min-height:44px;font-weight:600;color:var(--la-ink);text-decoration:none;border-bottom:1px solid var(--hair)}
 .reel .under a svg{width:14px;height:14px}
 
 /* 버튼 */
@@ -167,6 +167,8 @@ h2{font-size:clamp(23px,6.2vw,27px)}
 .card .pic{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--la-bg-2)}
 .card .pic img{width:100%;height:100%;object-fit:cover;object-position:center}
 .card .pic img.top{object-position:top}
+.card .pic img.crop{height:115%;object-position:center top}   /* 앱 화면 아래 구석의 개발용 표시(ready·확대 버튼)는 잘라 낸다 */
+.card .pic img.crop-s{height:109%;object-position:center top}  /* 3D 캐릭터 렌더의 아래 통계 줄 */
 .card .pic .num{position:absolute;left:12px;top:12px;font-family:var(--wm);font-style:italic;font-size:13px;padding:4px 10px;border-radius:var(--pill);background:rgba(255,255,255,.88);color:#26304a;border:1px solid var(--hair)}
 .card .pic .tag{position:absolute;right:12px;top:12px;font-size:11px;letter-spacing:.08em;padding:4px 9px;border-radius:var(--pill);background:rgba(38,48,74,.66);color:#fff}
 .card .body{padding:16px 16px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
@@ -202,8 +204,8 @@ h2{font-size:clamp(23px,6.2vw,27px)}
 .pace{margin-top:18px;background:var(--card);border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .pace .shot{position:relative;aspect-ratio:358/196;overflow:hidden;background:#fff}
 .pace .shot img{width:100%;height:auto;object-fit:cover;object-position:top}
-.pace .shot::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(180deg,transparent,var(--card-solid))}
-.pace .inner{padding:4px 16px 18px}
+.pace .shot::after{content:"";position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(180deg,rgba(255,255,255,0),var(--card-solid))}
+.pace .inner{padding:4px 16px 18px;background:var(--card-solid)}
 .pace .now{font-family:var(--serif);font-size:15px;color:var(--la-ink-2)}
 .pace .three{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
 .pace .three span{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:12px;border:1px solid var(--hair);background:rgba(255,255,255,.55);font-size:12px;font-weight:600;text-align:center;line-height:1.3}
@@ -221,13 +223,14 @@ h2{font-size:clamp(23px,6.2vw,27px)}
 .steps .n{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--la-pearl);border:1px solid var(--hair);font-family:var(--wm);font-style:italic;font-size:18px;color:#26304a}
 .steps b{display:block;font-family:var(--serif);font-weight:500;font-size:17px}
 .steps p{font-size:13.5px;color:var(--la-ink-2);margin-top:3px}
-.steps a{color:var(--la-gold-ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--hair)}
+.steps a,.quote small a{color:var(--la-gold-ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--hair);padding:16px 0;margin:-16px 0}
 .steps li::after{content:"";position:absolute;left:33px;bottom:-11px;width:1px;height:12px;background:var(--la-gold);opacity:.6}
 .steps li:last-child::after{display:none}
 
 /* 3막 함께 */
 .together{position:relative;margin-top:18px;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-lg);border:1px solid var(--hair)}
-.together img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.together .pic{position:relative;aspect-ratio:2/1;overflow:hidden;background:#e2e2dc}
+.together .pic img{position:absolute;left:50%;top:0;width:165%;max-width:none;height:auto;transform:translateX(-50%)}  /* 캐릭터 줄을 키우고 아래 통계 줄은 밖으로 */
 .together .txt{padding:18px 18px 20px;background:var(--card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .together .txt p{font-family:var(--serif);font-size:17px;line-height:1.55}
 .together .txt p b{font-weight:600;color:var(--la-gold-ink)}
@@ -242,7 +245,7 @@ h2{font-size:clamp(23px,6.2vw,27px)}
 footer{padding:28px 0 20px;color:var(--la-ink-3);font-size:12px;text-align:center}
 footer .wm{font-size:16px;color:var(--la-ink-2)}
 footer nav{display:flex;justify-content:center;gap:14px;margin-top:8px}
-footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:32px;display:inline-flex;align-items:center}
+footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:0 10px;display:inline-flex;align-items:center}
 
 /* 늘 보이는 아래 CTA */
 .cta-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom,0px));
@@ -272,6 +275,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:32px;display:
   .col{padding:0 20px}
   section{padding:44px 0}
   .sky .a{width:70vmax;height:70vmax}
+  :root{--glow-op:.34}
   .card{flex-basis:calc(100% - 60px)}
   .cta-bar{left:50%;right:auto;bottom:18px;width:var(--col);transform:translateX(-50%);border:1px solid var(--hair);border-radius:var(--pill);padding:8px;box-shadow:var(--shadow-lg)}
   .cta-bar .in{gap:8px}
@@ -361,7 +365,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:32px;display:
     </div>
     <blockquote class="quote rv">
       수를 가지고 놀고, 문장을 이해하고, 셈을 할 수 있어야 합니다.
-      <small>— 독쌤의 철학 · <a href="../about.html" style="color:inherit">전문 읽기</a></small>
+      <small>— 독쌤의 철학 · <a href="../about.html">전문 읽기</a></small>
     </blockquote>
   </section>
 
@@ -375,7 +379,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:32px;display:
       <div class="car" id="car" role="region" aria-roledescription="carousel" aria-label="학습 흐름 카드" tabindex="0">
 
         <article class="card" aria-label="1 / 9 · 철학">
-          <div class="pic"><img src="../assets/promo/shots/chars-close.webp" alt="3D로 만든 독쌤과 마을 친구들의 캐릭터 네 명" loading="eager" width="1400" height="700"><span class="num">01</span><span class="tag">철학</span></div>
+          <div class="pic"><img class="crop-s" src="../assets/promo/shots/chars-close.webp" alt="3D로 만든 독쌤과 마을 친구들의 캐릭터 네 명" loading="eager" width="1400" height="700"><span class="num">01</span><span class="tag">철학</span></div>
           <div class="body">
             <h3>독쌤의 철학</h3>
             <p class="nar">독쌤의 철학은 한쪽으로 치우치지 않는 것입니다. 언어와 사고력과 연산을 골고루 연습해야, 수를 정복하고 수학을 정복합니다.</p>
@@ -393,7 +397,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:32px;display:
         </article>
 
         <article class="card" aria-label="3 / 9 · 로드맵">
-          <div class="pic"><img src="../assets/promo/shots/road.webp" alt="연산 로드맵 — 언덕길 위에 과정 번호 표지판이 이어진 풍경" loading="lazy" width="1280" height="800"><span class="num">03</span><span class="tag">로드맵</span></div>
+          <div class="pic"><img class="crop" src="../assets/promo/shots/road.webp" alt="연산 로드맵 — 언덕길 위에 과정 번호 표지판이 이어진 풍경" loading="lazy" width="1280" height="800"><span class="num">03</span><span class="tag">로드맵</span></div>
           <div class="body">
             <h3>설계가 끝나면 길이 보입니다</h3>
             <p class="nar">유아부터 고등까지 한 길로 이어진 연산 로드맵 위에서, 주 1회, 주 2회, 속도와 양을 아이에게 맞게 정합니다.</p>
@@ -402,7 +406,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:32px;display:
         </article>
 
         <article class="card" aria-label="4 / 9 · 마을">
-          <div class="pic"><img src="../assets/promo/shots/village.webp" alt="3D 수학 마을 — 숲과 오두막 사이 길을 걷는 아이 캐릭터" loading="lazy" width="1280" height="800"><span class="num">04</span><span class="tag">마을</span></div>
+          <div class="pic"><img class="crop" src="../assets/promo/shots/village.webp" alt="3D 수학 마을 — 숲과 오두막 사이 길을 걷는 아이 캐릭터" loading="lazy" width="1280" height="800"><span class="num">04</span><span class="tag">마을</span></div>
           <div class="body">
             <h3>이제 아이의 차례</h3>
             <p class="nar">마을을 걸으며 오늘 배울 마법을 찾습니다. 유아부터 미적분까지, 그 길은 하나의 이야기로 이어집니다.</p>
@@ -466,7 +470,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:32px;display:
         </article>
 
         <article class="card" aria-label="9 / 9 · 함께">
-          <div class="pic"><img src="../assets/promo/shots/village-plaza.webp" alt="마을 광장에서 독쌤과 아이들, 숫자 친구가 함께 있는 장면" loading="lazy" width="1280" height="800"><span class="num">09</span><span class="tag">함께</span></div>
+          <div class="pic"><img class="crop" src="../assets/promo/shots/village-plaza.webp" alt="마을 광장에서 독쌤과 아이들, 숫자 친구가 함께 있는 장면" loading="lazy" width="1280" height="800"><span class="num">09</span><span class="tag">함께</span></div>
           <div class="body">
             <h3>그냥 던져 주는 학습지가 아닙니다</h3>
             <p class="nar">학생과 부모님과 학원이 함께 문화를 만들어야 한다는 독쌤의 철학, 넘버스 오브 매직에서 경험하세요.</p>
@@ -528,7 +532,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:32px;display:
     <div class="kicker rv"><span class="act">Act 3</span> 함께</div>
     <h2 id="h-together" class="rv">학생과 부모님과 학원이 함께</h2>
     <div class="together rv">
-      <img src="../assets/promo/shots/chars-lineup.webp" alt="독쌤과 아이들, 숫자 친구들이 한 줄로 선 3D 캐릭터 라인업" loading="lazy" width="1600" height="620" style="aspect-ratio:1600/620">
+      <div class="pic"><img src="../assets/promo/shots/chars-lineup.webp" alt="독쌤과 아이들, 숫자 친구들이 한 줄로 선 3D 캐릭터 라인업" loading="lazy" width="1600" height="620"></div>
       <div class="txt">
         <p>그냥 던져 주는 학습지가 아닙니다. 학생과 부모님과 학원이 <b>함께 문화를 만들어야 한다</b>는 독쌤의 철학, Numbers of Magic에서 경험하세요.</p>
         <span class="age"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>만 5세부터 시작합니다</span>

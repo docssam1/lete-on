@@ -184,6 +184,86 @@ function spanKey(plain, tex){
   });
 }
 
+/* ── 짝 색(pair, 2026-09-26 창의 연산) ─────────────────────────
+   설계 §3-4: "합이 10·100 되는 두 수를 같은 색", "첫수·끝수 같은 색, 최대 4쌍".
+   짝 만들기(F1)·무지개 덧셈(F7) 창의 회차의 식 줄과 ★마법 자리 줄에만 쓴다.
+     mode 'sum'  — 덧셈 항끼리 합이 10·100, 곱셈 항끼리 곱이 10·100·1000(곱해서 10/100/1000 · ML12)
+     mode 'ends' — 수열(… 이 있는 덧셈)의 첫수·끝수, 둘째·끝에서 둘째 …
+   쌍마다 다른 색이지만 자리 색과 **같은 팔레트**(명도 차가 있어 흑백 인쇄에서도 쌍이 갈린다).
+   항은 정수 하나일 때만 짝이 된다(소수·분수·제곱은 짝이 아니다 — 분수·소수엔 색을 안 준다, §6 Q5). */
+function splitTerms(lhs){
+  /* 맨 위 수준의 + 또는 \times 로 나눈다. 괄호가 있으면 짝을 찾지 않는다(구조가 흐려진다). */
+  var s = String(lhs);
+  if(/[()\-]|\\div|\\frac|\\dfrac|\^|_|\\sqrt|\\text|\\square|\./.test(s)) return null;
+  var mul = /\\times|\\cdot/.test(s), add = /\+/.test(s);
+  if(mul === add) return null;                       /* 덧셈만이거나 곱셈만일 때 */
+  var parts = mul ? s.split(/\\times|\\cdot/) : s.split('+');
+  return { op: mul ? 'mul' : 'add', terms: parts.map(function(x){ return x.trim(); }) };
+}
+function pairsOf(tex, mode, maxPairs){
+  var max = maxPairs || 4;
+  var lhs = String(tex || '').split('=')[0];
+  var sp = splitTerms(lhs);
+  if(!sp) return [];
+  var t = sp.terms, out = [], used = {};
+  var isNum = function(x){ return /^\d+$/.test(x); };
+  if(mode === 'ends'){
+    if(sp.op !== 'add' || !t.some(function(x){ return x === '\\cdots' || x === '\\ldots'; })) return [];
+    for(var i = 0, j = t.length - 1; i < j && out.length < max; i++, j--){
+      if(!isNum(t[i]) || !isNum(t[j])) break;
+      out.push({ a:i, b:j, va:+t[i], vb:+t[j] });
+    }
+    return out;
+  }
+  if(!t.every(isNum)) return [];
+  var targets = sp.op === 'add' ? [10, 100] : [10, 100, 1000];
+  for(var a = 0; a < t.length && out.length < max; a++){
+    if(used[a]) continue;
+    for(var b = a + 1; b < t.length; b++){
+      if(used[b]) continue;
+      var v = sp.op === 'add' ? (+t[a]) + (+t[b]) : (+t[a]) * (+t[b]);
+      if(targets.indexOf(v) >= 0 && +t[a] > 0 && +t[b] > 0){ used[a] = used[b] = 1; out.push({ a:a, b:b, va:+t[a], vb:+t[b] }); break; }
+    }
+  }
+  return out;
+}
+/* 식 줄 — 짝이 된 항(자리 index)에 쌍 색을 입힌다 */
+function pairTint(tex, pairs){
+  if(!pairs || !pairs.length) return tex;
+  var s = String(tex), eq = s.indexOf('=');
+  var lhs = eq >= 0 ? s.slice(0, eq) : s, rest = eq >= 0 ? s.slice(eq) : '';
+  var sp = splitTerms(lhs); if(!sp) return tex;
+  var col = {};
+  pairs.forEach(function(p, k){ col[p.a] = col[p.b] = COLORS[k % COLORS.length]; });
+  var sep = sp.op === 'mul' ? (/\\cdot/.test(lhs) ? ' \\cdot ' : ' \\times ') : ' + ';
+  var body = sp.terms.map(function(x, i){ return col[i] ? '\\color{' + col[i] + '}{' + x + '}' : x; }).join(sep);
+  return body + (rest ? ' ' + rest : '');
+}
+/* ★마법 자리 줄 — 같은 수가 나오면 식 줄과 같은 색(값으로 맞춘다, 등호 왼쪽만) */
+function pairTintValues(tex, pairs){
+  if(!pairs || !pairs.length) return tex;
+  var s = String(tex), eq = s.indexOf('=');
+  var lhs = eq >= 0 ? s.slice(0, eq) : s, rest = eq >= 0 ? s.slice(eq) : '';
+  var left = [];
+  pairs.forEach(function(p, k){ var c = COLORS[k % COLORS.length]; left.push({ v:p.va, c:c }); left.push({ v:p.vb, c:c }); });
+  var hit = 0;
+  lhs = lhs.replace(/(^|[^\d.\\{^_])(\d+)(?![\d.])/g, function(m, pre, num){
+    for(var i = 0; i < left.length; i++){
+      if(left[i] && left[i].v === +num){ var c = left[i].c; left[i] = null; hit++; return pre + '\\color{' + c + '}{' + num + '}'; }
+    }
+    return m;
+  });
+  return hit ? lhs + rest : tex;
+}
+/* 짝 색 범례 — 쓴 쌍 수만큼 칩 */
+function pairLegendHtml(lang, lead, n){
+  var chips = '';
+  for(var k = 0; k < Math.max(1, Math.min(n || 1, COLORS.length)); k++){
+    chips += '<span class="nm-pv-chip"><i style="background:' + COLORS[k] + '"></i><i style="background:' + COLORS[k] + '"></i></span>';
+  }
+  return '<div class="nm-pv-legend nm-pv-legend-pair"><b>' + String(lead || '').replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</b>' + chips + '</div>';
+}
+
 /* 몇 번째 문제에 힌트를 줄 것인가 — 전부 칠하면 색이 배경이 되어 힌트가 아니게 된다.
    every(기본 3)마다 하나, 즉 세 문제에 한 번. index는 0부터. */
 function hintAt(index, every){
@@ -205,6 +285,10 @@ window.NM_PLACE_COLOR = {
   placesUsed: placesUsed,
   legendHtml: legendHtml,
   spanDigits: spanDigits,
+  pairsOf: pairsOf,
+  pairTint: pairTint,
+  pairTintValues: pairTintValues,
+  pairLegendHtml: pairLegendHtml,
   hintAt: hintAt
 };
 

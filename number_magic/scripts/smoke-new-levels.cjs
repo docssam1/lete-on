@@ -5,7 +5,10 @@
 const { spawn } = require('child_process');
 const path = require('path');
 const http = require('http');
-const ROOT = path.resolve(__dirname, '..');
+/* 저장소 루트를 띄운다(운영 GitHub Pages 와 같은 배치). number_magic 만 띄우면 앱이 형제 폴더에서
+   가져오는 ../world-explorer/vendor/three.module.js · ../geometry/worksheet/render.js 가 404 가 된다. */
+const ROOT = path.resolve(__dirname, '..', '..');
+const APP = `/number_magic`;
 const PORT = 8799;
 const OUT = process.env.SHOT_DIR || '/tmp/nm-shots';
 require('fs').mkdirSync(OUT, { recursive: true });
@@ -15,7 +18,7 @@ function loadPW(){ return require('./lib/playwright.js'); }
 function serve(){ return new Promise((res, rej) => {
   const py = spawn('python3', ['-m','http.server',String(PORT)], { cwd: ROOT, stdio:'ignore' });
   const t0 = Date.now();
-  (function ping(){ http.get(`http://localhost:${PORT}/drill.html`, r => { r.resume(); res(py); })
+  (function ping(){ http.get(`http://localhost:${PORT}${APP}/drill.html`, r => { r.resume(); res(py); })
     .on('error', () => Date.now()-t0>8000 ? rej(new Error('server')) : setTimeout(ping,150)); })();
 }); }
 
@@ -56,7 +59,7 @@ const NEW = [
     /* ── ① 앱 온보딩 ── */
     /* ?enter=1 = 인트로 영상 건너뛰기(index.html 21행). 안 붙이면 온보딩 카드가
        전체화면 영상 뒤에 가려 클릭이 안 된다. 프로필은 여전히 비어 있어 온보딩부터다. */
-    await page.goto(`http://localhost:${PORT}/index.html?enter=1`, { waitUntil:'networkidle' });
+    await page.goto(`http://localhost:${PORT}${APP}/index.html?enter=1`, { waitUntil:'networkidle' });
     /* 온보딩은 이제 나 고르기 → 학년 → 이름 3단계다(scripts/lib/nm-onboard.js). */
     try {
       const prof = await onboard(page, { name: '검사' });
@@ -66,7 +69,7 @@ const NEW = [
 
     /* ── ② drill.html에서 신규 레벨을 실제로 풀기 ── */
     for (const { sec, label } of NEW) {
-      await page.goto(`http://localhost:${PORT}/drill.html`, { waitUntil:'networkidle' });
+      await page.goto(`http://localhost:${PORT}${APP}/drill.html`, { waitUntil:'networkidle' });
       if (sec !== 'school') { await page.click(`.dr-tab[data-sec="${sec}"]`); await page.waitForTimeout(250); }
       /* 서랍장에서 라벨로 주제 선택 */
       const btn = page.locator('.drawer-item', { hasText: label }).first();
