@@ -26,7 +26,10 @@
            lines?  : [string|{ko,en,zh}] 눌렀을 때 말풍선으로 하나씩
            at?     : 'plaza'|'gazebo'|'academy'|'numberland'|'harbor'|'theater'|[x,z]  처음 자리
            still?  : true 면 제자리(할아버지·독쌤)   wander?: true 면 길을 따라 돌아다님(Poco·Momo)
-           height? : 월드 높이(기본 walker 1.9, 그 밖 1.35)
+           height? : 월드 높이(기본 walker 1.9, 그 밖 1.35 / model 은 MODEL_H)
+           model?  : { kind:'boy'|'girl'|'elder'|'doc'|'buddy', buddy?:{number,color,hat,cape} }
+                     있으면 app/char3d 의 진짜 3D 캐릭터(makeCharacter)로 만든다 — 걷기·방향·손 흔들기.
+                     만들기에 실패하면(모듈을 못 불러오거나 예외) html 을 굽는 옛 빌보드로 돌아간다.
        }],
        onSay?  : (text, charId) => void   말풍선이 뜰 때(앱이 음성을 켰으면 TTS 를 여기서)
        onReady?: () => void               첫 장면을 그린 뒤
@@ -292,6 +295,8 @@ const POSES = {
               { legL:'rotate(-26)', legR:'rotate(26)', armL:'rotate(20)', armR:'rotate(-20)', body:'translate(0,-2.5)' }],
 };
 const CW = 160, CH = 200;
+/* 진짜 3D 캐릭터 키(월드 단위). 건물(문 높이 ≈ 2)에 비해 조금 크게 — 그림책처럼, 390px 폰에서도 읽히게 */
+const MODEL_H = { boy:2.3, girl:2.25, elder:2.45, doc:2.5, buddy:1.5, npcBuddy:1.6 };
 /* walker(.nm-walker) → { s:[3], n:[3], e:[3], w:[3] } 캔버스 */
 async function bakeWalker(svgEl){
   const views = { s:'wk-front', n:'wk-back', e:'wk-side' };
@@ -498,9 +503,50 @@ export async function mountTown3D(container, opts){
   }));
   const shadowMat = track(new THREE.MeshBasicMaterial({ map:shadowTex, transparent:true, depthWrite:false }));
   const shadowGeo = track(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2));
-  const baked = await Promise.all((opts.characters || []).map(c => bakeChar(c.html).catch(() => null)));
+  /* 진짜 3D 캐릭터(char3d) — model 이 있는 캐릭터만. 모듈은 필요할 때만 불러오고, 못 불러오면 빌보드로 */
+  const defs = opts.characters || [];
+  let C3 = null;
+  if(defs.some(d => d && d.model)){
+    try { C3 = await import('../char3d/char3d.js'); } catch(e){ console.warn('[town3d] char3d unavailable — billboard fallback', e); }
+  }
+  const models = defs.map(def => {
+    if(!C3 || !def || !def.model) return null;
+    try {
+      const kind = def.model.kind || 'boy';
+      const hgt = def.height || (kind === 'buddy' ? (def.role === 'buddy' ? MODEL_H.buddy : MODEL_H.npcBuddy) : (MODEL_H[kind] || MODEL_H.boy));
+      /* 마을엔 해 그림자(shadow map)가 있으므로 키트의 접지 원판(blob)은 끄고 진짜 그림자만 드리운다 */
+      const c = C3.makeCharacter(THREE, { kind, buddy:def.model.buddy, height:hgt, blob:false, shadows:true });
+      return { c, hgt };
+    } catch(e){ console.warn('[town3d] makeCharacter failed — billboard fallback', def.id, e); return null; }
+  });
+  const baked = await Promise.all(defs.map((c, i) => models[i] ? null : bakeChar(c.html).catch(() => null)));
   if(!wrap.isConnected){ /* 굽는 사이 화면이 바뀌었다 */ }
-  (opts.characters || []).forEach((def, i) => {
+  const hitGeo = track(new THREE.CylinderGeometry(1, 1, 1, 10).translate(0, 0.5, 0));
+  const hitMat = track(new THREE.MeshBasicMaterial());   /* 그리지 않는다(visible=false) — Raycaster 는 visible 을 안 본다 */
+  defs.forEach((def, i) => {
+    const md = models[i];
+    if(md){
+      const { c, hgt } = md;
+      /* 손가락으로 누르기 쉽게 몸보다 조금 넓은 보이지 않는 원통(레이캐스트 전용) */
+      const hit = new THREE.Mesh(hitGeo, hitMat);
+      const hr = def.model.kind === 'buddy' ? hgt * 0.42 : hgt * 0.26;
+      hit.scale.set(hr, hgt * 1.04, hr); hit.visible = false;
+      c.object.add(hit);
+      scene.add(c.object);
+      let p = def.at;
+      if(typeof p === 'string') p = PLACES[p];
+      if(!Array.isArray(p)) p = def.role === 'player' ? PLACES.plaza : def.role === 'buddy' ? [PLACES.plaza[0] - 1.3, PLACES.plaza[1] + 0.6] : PLACES.plaza;
+      c.faceNow(def.role === 'buddy' ? 0.35 : 0);
+      const ch = { def, model:c, obj:c.object, hit, hgt, spr:null, sh:null, tex:null, walker:false, x:p[0], z:p[1], route:[], dir:'s', phase:0,
+        speed:def.role === 'npc' ? 1.5 : 3.4, idle:rng() * 4, bub:null, bubT:0 };
+      if(def.name){
+        const el = document.createElement('div'); el.className = 't3d-name'; ov.appendChild(el);
+        names.push({ def, el, ch, w:0 }); ch.nameEl = el;
+      }
+      const bub = document.createElement('div'); bub.className = 't3d-bub'; ov.appendChild(bub); ch.bub = bub;
+      chars.push(ch);
+      return;
+    }
     const bk = baked[i]; if(!bk) return;
     const tex = {};
     for(const d in bk.frames) tex[d] = bk.frames[d].map(c => { const t = track(new THREE.CanvasTexture(c)); t.colorSpace = THREE.SRGBColorSpace; return t; });
@@ -589,10 +635,14 @@ export async function mountTown3D(container, opts){
     ndc.set((cx - r.left) / r.width * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, camera);
     /* 캐릭터 → 건물·관문 → 땅 순서 */
-    const sprs = chars.map(c => c.spr);
-    const hc = ray.intersectObjects(sprs, false)[0];
+    const targets = [], owner = new Map();
+    for(const c of chars){
+      if(c.model){ for(const m of c.model.meshes){ targets.push(m); owner.set(m, c); } targets.push(c.hit); owner.set(c.hit, c); }
+      else { targets.push(c.spr); owner.set(c.spr, c); }
+    }
+    const hc = ray.intersectObjects(targets, false)[0];
     const hb = ray.intersectObjects(world.pickables, true)[0];
-    if(hc && (!hb || hc.distance < hb.distance + 1)) return { char:chars.find(c => c.spr === hc.object) };
+    if(hc && (!hb || hc.distance < hb.distance + 1)) return { char:owner.get(hc.object) };
     if(hb){
       let o = hb.object; while(o && !o.userData.spot && !o.userData.gate) o = o.parent;
       if(o) return o.userData.spot ? { spot:o.userData.spot } : { gate:o.userData.gate };
@@ -669,6 +719,12 @@ export async function mountTown3D(container, opts){
     if(!lines.length) return;
     const text = L(lines[Math.floor(Math.random() * lines.length)], lang);
     ch.bub.textContent = text; ch.bub.classList.add('on'); ch.bubT = 2.6;
+    if(ch.model){
+      /* 돌아다니던 친구는 잠깐 멈춰 이쪽(카메라)을 보고 손을 흔든다 */
+      if(ch.def.role === 'npc'){ ch.route = []; ch.idle = Math.max(ch.idle, 3); }
+      if(!ch.route.length) ch.model.face(Math.atan2(camera.position.x - ch.x, camera.position.z - ch.z));
+      ch.model.wave();
+    }
     opts.onSay && opts.onSay(text, ch.def.id);
   }
 
@@ -697,7 +753,7 @@ export async function mountTown3D(container, opts){
   }
   function layoutChars(){
     for(const ch of chars){
-      const hy = ch.spr.position.y + ch.spr.scale.y * (1 - ch.spr.center.y) * 0.98;
+      const hy = ch.model ? ch.obj.position.y + ch.hgt * 1.1 : ch.spr.position.y + ch.spr.scale.y * (1 - ch.spr.center.y) * 0.98;
       const p = project(ch.x, hy, ch.z);
       if(ch.nameEl){
         const w = ch.nameEl.offsetWidth || 40;
@@ -715,7 +771,7 @@ export async function mountTown3D(container, opts){
     let moving = false;
     for(const ch of chars){
       if(ch.def.role === 'buddy' && player){
-        const bx = player.x - 1.2, bz = player.z + 0.7;
+        const bx = player.x - (ch.model ? 1.55 : 1.2), bz = player.z + (ch.model ? 0.35 : 0.7);   /* 3D 모델은 더 커서 조금 더 옆으로 */
         const d = Math.hypot(bx - ch.x, bz - ch.z);
         ch.route = d > 0.25 ? [[bx, bz]] : [];
         ch.speed = clamp(d * 2.2, 1.2, 4.4);
@@ -738,6 +794,19 @@ export async function mountTown3D(container, opts){
         walking = true; moving = true;
       }
       const y = standY(ch.x, ch.z);
+      if(ch.model){
+        const m = ch.model;
+        if(walking && ch.route.length){
+          const [tx, tz] = ch.route[0];
+          if(Math.hypot(tx - ch.x, tz - ch.z) > 0.05) m.face(Math.atan2(tx - ch.x, tz - ch.z));
+        }
+        /* 걸음 빠르기를 이동 속도에 맞춘다(발이 미끄러지지 않게) */
+        m.setWalking(walking, clamp(ch.speed / (ch.hgt * (m.recipe && m.recipe.human ? 1.0 : 1.3)), 0.6, 2.4));
+        ch.obj.position.set(ch.x, y, ch.z);
+        if(!reduce || walking || ch.bubT > 0) m.update(dt, reduce ? 0 : t);
+        if(ch.bubT > 0){ ch.bubT -= dt; if(ch.bubT <= 0) ch.bub.classList.remove('on'); moving = true; }
+        continue;
+      }
       ch.phase += walking ? dt : 0;
       const bob = walking ? Math.abs(Math.sin(ch.phase * 11)) * 0.08 : (reduce ? 0 : Math.sin(t * 2.2 + ch.idle) * 0.015);
       ch.spr.position.set(ch.x, y + bob, ch.z);
@@ -793,6 +862,9 @@ export async function mountTown3D(container, opts){
     canvas.removeEventListener('pointerdown', onDown); canvas.removeEventListener('pointermove', onMove);
     canvas.removeEventListener('pointerup', onUp); canvas.removeEventListener('pointercancel', onUp);
     canvas.removeEventListener('wheel', onWheel); canvas.removeEventListener('keydown', onKey);
+    /* 3D 캐릭터는 키트가 지오메트리·재질을 캐릭터끼리 공유한다 — 장면 순회로 하나씩 버리지 말고 떼어 낸 뒤 캐시째 비운다 */
+    for(const ch of chars) if(ch.model){ if(ch.hit) ch.obj.remove(ch.hit); ch.model.dispose(); }
+    if(C3){ try { C3.disposeCharacterCache(THREE); } catch(e){} }
     const seen = new Set();
     scene.traverse(o => {
       if(o.geometry && !seen.has(o.geometry)){ seen.add(o.geometry); o.geometry.dispose(); }

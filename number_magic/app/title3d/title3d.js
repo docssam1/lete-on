@@ -25,8 +25,11 @@
      onPick:  id => {},                      // 버튼 또는 3D 물건을 눌렀을 때(한 번만 부른다)
      player:  '<div class="nm-party">…'       // renderPartyHtml(...) 결과 HTML, 또는 (px)=>HTML 함수.
                                              // 그 안의 <img>/<svg> 를 캔버스로 찍어 책상 가장자리의 종이 인형(스탠디)으로 세운다.
-     character3d: THREE => ({object, update(dt,t), dispose}),  // (선택) 진짜 3D 캐릭터(app/char3d/char3d.js makeCharacter).
-                                             // 주면 player 대신 이걸 나무 받침 위에 세운다. 만들다 실패하면 player 로 돌아간다.
+     playerModel: { kind:'boy'|'girl'|'elder'|'doc', buddy:{number,color,hat,cape}? },
+                                             // (선택) 진짜 3D 캐릭터 — 이 모듈이 app/char3d/char3d.js 를 불러 아이(+숫자 친구)를
+                                             // 책상 가장자리 나무 받침에 함께 세운다. 이어서 모험에 올리거나 포커스하면 둘이 손을 흔든다.
+                                             // 불러오기·만들기가 실패하면 player(HTML)로 돌아간다.
+     character3d: THREE => ({object, update(dt,t), wave?, dispose}),  // (선택) 직접 만든 3D 캐릭터 하나. playerModel 보다 먼저 쓴다.
      name:    '민준',                         // 인사말·이름표
      coins:   120,                           // 동전 쪽지
      chips:   [{icon:'📅', text:{ko:'5일',en:'Day 5',zh:'第5天'}}, {icon:'🏅', text:'…', gold:true}],
@@ -205,10 +208,9 @@ const CSS = `
 .t3d-raster .nm-party .nm-party-buddy{position:absolute;right:-22%;bottom:0}
 `;
 function injectCss(){
-  const old = document.getElementById('t3d-style');
-  if(old && old.dataset.v === 'desk2') return;
-  if(old) old.remove();
-  const s = document.createElement('style'); s.id = 't3d-style'; s.dataset.v = 'desk2'; s.textContent = CSS; document.head.appendChild(s);
+  /* id 는 마을(town3d)의 't3d-style' 과 겹치지 않게 따로 쓴다 */
+  if(document.getElementById('title3d-style')) return;
+  const s = document.createElement('style'); s.id = 'title3d-style'; s.textContent = CSS; document.head.appendChild(s);
 }
 
 /* ---------- 캐릭터 HTML → 캔버스 (img·svg 를 화면에 놓인 그대로 찍는다) ---------- */
@@ -379,8 +381,12 @@ export async function mountTitle3D(container, opts){
 
   /* ---------- 강조(hover/focus/3D hover) ---------- */
   let hot = null, hotSrc = null;
+  let lastWave = -1e9;
   function setHot(id, src){
+    const prev = hot;
     hot = id; hotSrc = id ? src : null;
+    /* 이어서 모험에 올리거나 포커스하면 캐릭터가 손을 흔든다(3D 캐릭터일 때, 동작 줄이기면 안 함) */
+    if(id && id !== prev && player && player.wave && !reduce && objs[id] && objs[id].primary && performance.now() - lastWave > 1800){ lastWave = performance.now(); player.wave(); }
     Object.keys(btns).forEach(k2 => btns[k2].classList.toggle('on', k2 === id));
     canvas.classList.toggle('hot', !!id && src === 'gl');
     Object.values(objs).forEach(o => { o.hotT = o.id === id ? 1 : 0; });
@@ -550,11 +556,13 @@ export async function mountTitle3D(container, opts){
 
   /* ---------- 루프 ---------- */
   let raf = 0, running = !document.hidden, visible = true, disposed = false, t0 = performance.now(), last = t0, shown = false, settle = 0;
-  function frame(now){
+  function frame(){
+    /* rAF 의 시각은 무거운 첫 프레임 뒤에 t0 보다 앞설 수 있다 — 직접 잰다 */
+    const now = performance.now();
     raf = 0; if(disposed) return;
     if(!root.isConnected){ dispose(); return; }
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    const t = reduce ? 0 : (now - t0) / 1000;
+    const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
+    const t = reduce ? 0 : Math.max(0, (now - t0) / 1000);
     const moving = animate(t, dt, reduce);
     placeLabels();
     r.render(scene, cam);
@@ -608,11 +616,24 @@ export async function mountTitle3D(container, opts){
    opts.character3d(THREE) → {object, update(dt,t), dispose} 가 있으면 진짜 3D 캐릭터.
    없거나 실패하면 opts.player HTML 을 캔버스로 찍어 종이 인형(스탠디)으로. 그것도 안 되면 HTML 을 그대로 띄운다. */
 async function preparePlayer(opts){
+  const ok3d = c => c && c.object && c.object.isObject3D;
   if(typeof opts.character3d === 'function'){
+    try { const c = await opts.character3d(THREE); if(ok3d(c)) return { kind:'3d', list:[{ c, fit:true, rot:0.35 }] }; }
+    catch(e){ console.warn('[title3d] character3d', e); }
+  }
+  const pm = opts.playerModel;
+  if(pm && pm.kind){
+    const made = [];
     try {
-      const c = await opts.character3d(THREE);
-      if(c && c.object && c.object.isObject3D) return { kind:'3d', c };
-    } catch(e){ console.warn('[title3d] character3d', e); }
+      const m = await import('../char3d/char3d.js');
+      const kid = m.makeCharacter(THREE, { kind:pm.kind, height:2.3, blob:false }); made.push(kid);
+      const list = [{ c:kid, x:pm.buddy ? -0.3 : 0, rot:0.32 }];
+      if(pm.buddy){
+        try { const bd = m.makeCharacter(THREE, { kind:'buddy', buddy:pm.buddy, height:1.45, blob:false }); made.push(bd); list.push({ c:bd, x:0.42, z:0.12, rot:0.05 }); }
+        catch(e){ console.warn('[title3d] buddy', e); }
+      }
+      if(ok3d(kid)) return { kind:'3d', list };
+    } catch(e){ console.warn('[title3d] playerModel', e); made.forEach(c => { try { c.dispose(); } catch(_){} }); }
   }
   try {
     const mk = typeof opts.player === 'function' ? opts.player(220) : opts.player;
@@ -623,8 +644,12 @@ async function preparePlayer(opts){
     return { kind:'html', html:mk };
   } catch(e){ return null; }
 }
+/* 3D 캐릭터는 지오메트리·재질을 캐릭터끼리(마을과도) 나눠 쓴다 — 장면을 비우기 전에 각자 dispose()로 떼어 내
+   아래의 장면 정리가 공용 자원을 건드리지 않게 한다 */
 function disposePlayerSpec(spec){
-  if(spec && spec.kind === '3d' && spec.c && typeof spec.c.dispose === 'function' && !spec.disposed){ spec.disposed = true; try { spec.c.dispose(); } catch(e){} }
+  if(!spec || spec.kind !== '3d' || spec.disposed) return;
+  spec.disposed = true;
+  spec.list.forEach(it => { try { it.c.dispose && it.c.dispose(); } catch(e){} if(it.c.object && it.c.object.parent) it.c.object.parent.remove(it.c.object); });
 }
 
 /* ============================================================
@@ -1073,7 +1098,7 @@ function buildWorld(k, choices, playerSpec){
     const tokenGeo = new THREE.LatheGeometry([[0, 0], [0.1, 0], [0.1, 0.03], [0.05, 0.07], [0.045, 0.16], [0.07, 0.2], [0, 0.24]].map(([x, y]) => new THREE.Vector2(x, y)), 18);
     const token = new THREE.Mesh(tokenGeo, gold); g.add(token);
     const curve = new THREE.CatmullRomCurve3(P.map(p => toW(p)), false, 'centripetal');
-    const place = u => { const p = curve.getPointAt(u); token.position.set(p.x, 0.03, p.z); };
+    const place = u => { const p = curve.getPointAt(Math.min(1, Math.max(0, u || 0))); token.position.set(p.x, 0.03, p.z); };
     place(0.18);
     anim.push(t => { const u = 0.02 + ((t * 0.035) % 1) * 0.96; place(u); token.position.y = 0.03 + Math.abs(Math.sin(t * 5)) * 0.03; });
     cast(g); map.castShadow = false;
@@ -1218,28 +1243,42 @@ function buildWorld(k, choices, playerSpec){
     if(!spec) return null;
     const pg = new THREE.Group();
     const H = 2.5;
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.47, 0.12, 40), woodMat('#9a6a3e', [70, 40, 18]));
-    base.position.y = 0.06; pg.add(base);
-    const inlay = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.016, 8, 48), brass); inlay.rotation.x = Math.PI / 2; inlay.position.y = 0.12; pg.add(inlay);
-    let update = null, sp = null;
+    const pair = spec.kind === '3d' && spec.list.length > 1;
+    const woodB = woodMat('#9a6a3e', [70, 40, 18]);
+    if(pair){
+      /* 둘이 함께 서는 둥근 나무 받침 */
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, 0.12, 48), woodB); base.scale.set(1.55, 1, 1); base.position.set(0.06, 0.06, 0.02); pg.add(base);
+      const inlay = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.016, 8, 48), brass); inlay.scale.set(1.55, 1, 1); inlay.rotation.x = Math.PI / 2; inlay.position.set(0.06, 0.12, 0.02); pg.add(inlay);
+    } else {
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.47, 0.12, 40), woodB); base.position.y = 0.06; pg.add(base);
+      const inlay = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.016, 8, 48), brass); inlay.rotation.x = Math.PI / 2; inlay.position.y = 0.12; pg.add(inlay);
+    }
+    let update = null, sp = null, wave = null, height = H;
     if(spec.kind === '3d'){
-      const holder = new THREE.Group();
-      const o = spec.c.object; holder.add(o);
-      const bb = new THREE.Box3().setFromObject(o); const h0 = Math.max(0.01, bb.max.y - bb.min.y);
-      const s = H / h0; holder.scale.setScalar(s); holder.position.y = 0.12 - bb.min.y * s; holder.rotation.y = 0.35;
-      pg.add(holder);
-      update = (t, dt) => { try { spec.c.update && spec.c.update(dt, t); } catch(e){} };
+      height = 0;
+      spec.list.forEach(it => {
+        const holder = new THREE.Group(); const o = it.c.object; holder.add(o);
+        const bb = new THREE.Box3().setFromObject(o);
+        if(it.fit){ const h0 = Math.max(0.01, bb.max.y - bb.min.y), s = H / h0; holder.scale.setScalar(s); holder.position.y = 0.12 - bb.min.y * s; height = Math.max(height, H); }
+        else { holder.position.y = 0.12; height = Math.max(height, bb.max.y); }
+        holder.position.x = it.x || 0; holder.position.z = it.z || 0; holder.rotation.y = it.rot || 0;
+        pg.add(holder);
+        try { it.c.update && it.c.update(0, 0); } catch(e){}
+      });
+      if(!(height > 0.2)) height = H;
+      update = (t, dt) => { spec.list.forEach(it => { try { it.c.update && it.c.update(dt, t); } catch(e){} }); };
+      wave = () => { spec.list.forEach(it => { try { it.c.wave && it.c.wave(); } catch(e){} }); };
     } else if(spec.kind === 'card'){
       const tex = new THREE.CanvasTexture(spec.canvas); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
       const ar = spec.canvas.width / spec.canvas.height;
       sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, transparent:true, alphaTest:0.02 }));
       sp.center.set(0.5, 0.0); sp.scale.set(H * ar, H, 1); sp.position.set(0, 0.12, 0.16); pg.add(sp);
     }
-    cast(pg);
-    const shB = blob(1.5, 1.1, 0.7); pg.add(shB);
+    pg.children.forEach(ch => { if(ch.isMesh){ ch.castShadow = true; ch.receiveShadow = true; } });
+    const shB = blob(pair ? 2.2 : 1.5, 1.1, 0.7); pg.add(shB);
     scene.add(pg);
     /* 머리 위 점 — 종이 인형(화면을 보는 판)은 카메라 위쪽으로, 3D 캐릭터는 세상 위쪽으로 잰다 */
-    const P = { g:pg, sp, H, s:1, billboard:spec.kind !== '3d', tagW:new THREE.Vector3(), footW:new THREE.Vector3(), box:[], update };
+    const P = { g:pg, sp, H:height, s:1, billboard:spec.kind !== '3d', tagW:new THREE.Vector3(), footW:new THREE.Vector3(), box:[], update, wave };
     const _up = new THREE.Vector3();
     P.topAt = (cam, pad) => {
       if(P.billboard) _up.set(0, 1, 0).applyQuaternion(cam.quaternion); else _up.set(0, 1, 0);
@@ -1310,7 +1349,7 @@ function buildWorld(k, choices, playerSpec){
     portrait:{ pitch:64, fov:36, dist:26, target:[0, 0, 0.8],
       pos:{ continue:[0.75, -6.2, 0.8, 0], diag:[-1.7, -1.5, 0.8, 4], game:[1.75, -1.5, 0.8, -6], sheet:[-1.7, 2.6, 0.78, -4], road:[1.75, 2.6, 0.72, 3],
         story:[-2.45, 6.4, 0.62, 4], dex:[-0.82, 6.5, 0.62, -4], hist:[0.82, 6.5, 0.62, 0], magazine:[2.45, 6.4, 0.62, 5] },
-      player:[-2.3, -5.6, 0.92], mat:[0.75, -6.2, 4.3, 3.3],
+      player:[-2.35, -5.55, 1.02], mat:[0.75, -6.2, 4.3, 3.3],
       decor:{ rods:[3.1, -3.9, 0.8, 70], cup:[-3.5, -3.3, 0.7, 0] },
       dust:[-1.5, -5, 3, 5, 5], sun:[-7, 14, -9] },
   };

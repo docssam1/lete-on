@@ -4675,18 +4675,29 @@ function mountTown3DInto(scr){
   const walker=(k,n)=>window.renderWalker?window.renderWalker(k,n):'';
   const numi=(c,n)=>window.renderNumiChar?window.renderNumiChar(c,n):'';
   const myName=S.name?S.name:('#'+S.character.number);
+  /* 진짜 3D 캐릭터(app/char3d) 모델 — html 은 모델을 못 만들 때의 빌보드 대체용으로 그대로 둔다.
+     버디: 기호 캐릭터는 S.character.symbol(id), 숫자는 number. char3d 는 0~10 과 기호 10종만 빚으므로
+     그 밖의 숫자(11·20·42…)는 모델 없이 옛 그림으로 보여 준다(엉뚱한 숫자가 서 있지 않게). */
+  const C3_SYMS=['plus','minus','times','divide','equal','percent','pi','sigma','infinity','sqrt'];
+  const buddyModel=(()=>{
+    const c=S.character||{};
+    let id=c.symbol!=null?c.symbol:c.number;
+    if(typeof id==='string'&&/^\d+$/.test(id))id=+id;
+    const ok=(typeof id==='number'&&id>=0&&id<=10&&Math.floor(id)===id)||C3_SYMS.indexOf(id)>=0;
+    return ok?{kind:'buddy',buddy:{number:id,color:c.color,hat:c.hat||'none',cape:c.cape||'none'}}:null;
+  })();
   const characters=[
-    { id:'player', role:'player', html:walker(avatarKind(),60), name:myName, at:'plaza',
+    { id:'player', role:'player', html:walker(avatarKind(),60), model:{kind:avatarKind()==='girl'?'girl':'boy'}, name:myName, at:'plaza',
       lines:[{ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`},{ko:'길을 콕 찍으면 내가 걸어가!',en:'Tap a path and I will walk there!',zh:'点一下小路，我就走过去！'}] },
-    { id:'buddy', role:'buddy', html:numi(S.character,44),
+    { id:'buddy', role:'buddy', html:numi(S.character,44), model:buddyModel||undefined,
       lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'},{ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'}] },
-    { id:'elder', role:'npc', html:walker('elder',56), name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true,
+    { id:'elder', role:'npc', html:walker('elder',56), model:{kind:'elder'}, name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true,
       lines:[{ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'},{ko:'정자에 앉아 숫자 이야기 들려줄까?',en:'Shall I tell you a number story at the gazebo?',zh:'在凉亭坐下，听我讲讲数字的故事？'},{ko:'천천히 해도 괜찮단다',en:'It is fine to take your time',zh:'慢慢来也没关系'},{ko:'항구에 가면 수학 이야기 퀴즈가 있단다',en:'There is a math-story quiz down at the harbor',zh:'去港口有数学故事问答哦'}] },
-    { id:'doc', role:'npc', html:walker('doc',56), name:{ko:'독쌤',en:'Doc-ssaem',zh:'独老师'}, at:'academy', still:true,
+    { id:'doc', role:'npc', html:walker('doc',56), model:{kind:'doc'}, name:{ko:'독쌤',en:'Doc-ssaem',zh:'独老师'}, at:'academy', still:true,
       lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'},{ko:'오늘 배울 마법은 도서관에 있어',en:"Today's magic is in the library",zh:'今天要学的魔法在图书馆里'},{ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'}] },
-    { id:'poco', role:'npc', html:numi({number:3,color:'gold',bg:'plain'},52), at:'plaza', wander:true,
+    { id:'poco', role:'npc', html:numi({number:3,color:'gold',bg:'plain'},52), model:{kind:'buddy',buddy:{number:3,color:'gold'}}, at:'plaza', wander:true,
       lines:[{ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'},{ko:'7이랑 만나면 10! 🔟',en:'With 7 we make 10! 🔟',zh:'和7在一起就是10！🔟'},{ko:'게임하러 가자!',en:"Let's go play!",zh:'去玩游戏吧！'}] },
-    { id:'momo', role:'npc', html:numi({number:8,color:'pink',bg:'plain'},52), at:'numberland', wander:true,
+    { id:'momo', role:'npc', html:numi({number:8,color:'pink',bg:'plain'},52), model:{kind:'buddy',buddy:{number:8,color:'pink'}}, at:'numberland', wander:true,
       lines:[{ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'},{ko:'2랑 만나면 10! 🔟',en:'With 2 we make 10! 🔟',zh:'和2在一起就是10！🔟'},{ko:'실수는 괜찮아!',en:'Mistakes are okay!',zh:'出错也没关系！'}] }
   ];
   const box=document.createElement('div');

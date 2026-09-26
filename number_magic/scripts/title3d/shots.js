@@ -28,7 +28,8 @@ const cases = [
   { name:'phone-land', w:844, h:390, lang:'ko', mobile:true },
   /* 3D 캐릭터 바꿔 끼우기(app/char3d — 다른 작업이 만드는 중이라 여기서 난 오류는 경고로만) */
   { name:'desk-char3d', w:1280, h:800, lang:'ko', q:'&char3d=boy', soft:true },
-  { name:'phone-char3d', w:390, h:844, lang:'ko', q:'&char3d=girl', mobile:true, soft:true },
+  { name:'desk-model', w:1280, h:800, lang:'ko', q:'&model=boy', soft:true, wave:true },
+  { name:'phone-model', w:390, h:844, lang:'ko', q:'&model=girl', mobile:true, soft:true },
 ].filter(c => !only || only.slice(7).split(',').includes(c.name));
 const IDS = ['continue', 'diag', 'game', 'sheet', 'road', 'story', 'dex', 'hist', 'magazine'];
 server.listen(0, async () => {
@@ -97,6 +98,11 @@ server.listen(0, async () => {
       await page.evaluate(() => window.__t3d.dispose());
       const left = await page.evaluate(() => document.querySelectorAll('.t3d').length);
       if(left) bad.push(`${c.name}: dispose 뒤에도 .t3d 남음`);
+    }
+    if(c.wave){
+      /* 이어서 모험에 올리면 손 흔들기 — 흔드는 중간을 찍어 눈으로 확인 */
+      await page.hover('.t3d-btn[data-id="continue"]'); await page.waitForTimeout(650);
+      await page.screenshot({ path:path.join(OUT, c.name + '-wave.png') });
     }
     if(errs.length) bad.push(`${c.name}: ${errs.join(' | ')}`);
     console.log(`${c.name} ✓ shot`);

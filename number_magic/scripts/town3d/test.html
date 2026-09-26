@@ -40,13 +40,15 @@ const gates = [
 ];
 const W = window.renderWalker, N = window.renderNumiChar;
 const characters = [
-  { id:'player', role:'player', html:W('girl', 60), name:'유빈', at:'plaza', lines:[{ko:'안녕! 난 유빈이야 ✨',en:"Hi! I'm Yubin ✨",zh:'你好！我是宥彬 ✨'},{ko:'지도를 콕 찍으면 내가 걸어가!',en:'Tap the map and I will walk there!',zh:'点一下地图，我就走过去！'}] },
-  { id:'buddy',  role:'buddy',  html:N({number:0,color:'blue',bg:'plain'}, 44), lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'}] },
-  { id:'elder',  role:'npc', html:W('elder', 56), name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true, lines:[{ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'}] },
-  { id:'doc',    role:'npc', html:W('doc', 56), name:{ko:'독쌤',en:'Doc-ssaem',zh:'独老师'}, at:'academy', still:true, lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'}] },
-  { id:'poco',   role:'npc', html:N({number:3,color:'gold',bg:'plain'}, 52), wander:true, at:[-1,6], lines:[{ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'}] },
-  { id:'momo',   role:'npc', html:N({number:8,color:'pink',bg:'plain'}, 52), wander:true, at:[-12,8], lines:[{ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'}] },
+  { id:'player', role:'player', html:W('girl', 60), model:{kind:'girl'}, name:'유빈', at:'plaza', lines:[{ko:'안녕! 난 유빈이야 ✨',en:"Hi! I'm Yubin ✨",zh:'你好！我是宥彬 ✨'},{ko:'지도를 콕 찍으면 내가 걸어가!',en:'Tap the map and I will walk there!',zh:'点一下地图，我就走过去！'}] },
+  { id:'buddy',  role:'buddy',  html:N({number:0,color:'blue',bg:'plain'}, 44), model:{kind:'buddy',buddy:{number:0,color:'blue'}}, lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'}] },
+  { id:'elder',  role:'npc', html:W('elder', 56), model:{kind:'elder'}, name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true, lines:[{ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'}] },
+  { id:'doc',    role:'npc', html:W('doc', 56), model:{kind:'doc'}, name:{ko:'독쌤',en:'Doc-ssaem',zh:'独老师'}, at:'academy', still:true, lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'}] },
+  { id:'poco',   role:'npc', html:N({number:3,color:'gold',bg:'plain'}, 52), model:{kind:'buddy',buddy:{number:3,color:'gold'}}, wander:true, at:[-1,6], lines:[{ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'}] },
+  { id:'momo',   role:'npc', html:N({number:8,color:'pink',bg:'plain'}, 52), model:{kind:'buddy',buddy:{number:8,color:'pink'}}, wander:true, at:[-12,8], lines:[{ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'}] },
 ];
+/* ?sprite=1 — 옛 빌보드(모델 없이)로 비교 */
+if(q.get('sprite')) characters.forEach(c => delete c.model);
 const t0 = performance.now();
 const ctl = await mountTown3D(document.getElementById('townVp'), {
   lang, spots, gates, characters,
