@@ -396,12 +396,14 @@ export async function mountStory3D(container, opts){
 
   relayout();
   wake();
-  return {
+  const api = {
     dispose,
     /* 화면 쪽에서 단계를 알려 주면(목록 스크롤 등) 좁은 화면은 그쪽으로 옮겨 간다 */
     focusStage(key){ const i = stages.findIndex(s => s.key === key); if(i >= 0 && narrow) panTo(W.stops[i].x); },
-    _debug:{ cam, proj:p => proj(p), stops:W.stops, tags, hitAt:(x, y) => hitAt({ clientX:x, clientY:y }), get narrow(){ return narrow; } },
+    _debug:{ cam, proj:p => proj(p), stops:W.stops, tags, hitAt:(x, y) => hitAt({ clientX:x, clientY:y }), get narrow(){ return narrow; }, get pan(){ return [panMin, panGoal, panMax, dist]; } },
   };
+  root._sd3dbg = api._debug;   /* DBGTMP */
+  return api;
 }
 
 /* ============================================================
