@@ -36,7 +36,7 @@ const PLAN = [
   { seg:'road',       out:10.0, n:'n05', at:0.6, cap:{ ko:'지금 어디까지 왔는지, 한 길로',       en:'See the whole road at a glance',           pos:'bl' } },
   { seg:'pace',       out:8.4,  n:'n06', at:0.3, cap:{ ko:'아이 빠르기에 맞춰 속도와 양을 조절', en:"Set the pace and amount to fit your child", pos:'bl' } },
   { seg:'notify',     out:8.0,  n:'n07', at:0.5, cap:{ ko:'학부모님 휴대폰으로 매주 안내',       en:"Weekly updates to parents' phones",        pos:'bl' } },
-  { seg:'hero-M-14',  out:4.1,  n:'n08', at:0.5, cap:{ ko:'개념은 손에 잡히는 3D로',             en:'Concepts you can almost touch',            pos:'tl', span:3 } },
+  { seg:'hero-M-14',  out:4.1,  n:'n08', at:0.5, span_n:true, cap:{ ko:'개념은 손에 잡히는 3D로',             en:'Concepts you can almost touch',            pos:'tl', span:3 } },
   { seg:'hero-M-19',  out:4.1 },
   { seg:'hero-M-80',  out:4.1 },
   { seg:'creative',   out:11.2, n:'n09', at:0.6, cap:{ ko:'창의 연산 — 어려운 수를 쉬운 수로 펼쳐요', en:'Creative arithmetic: unfold hard numbers into easy ones', pos:'br' } },
@@ -81,8 +81,8 @@ function normalize(inp, out){   /* 두 번 재는 loudnorm → AAC 192k */
     x.d = x.out - x.in; x.start = t; t += x.d - (i < segs.length - 1 ? XF : 0); });
   const total = t;
   const lines = segs.filter(x => x.n).map(x => ({ n:x.n, f:x.nf, a:x.start + x.at, d:x.nd, seg:x.seg }));
-  lines.forEach((l, i) => { const nextStart = (segs[segs.indexOf(segs.find(s => s.seg === l.seg)) + 1] || { start:total }).start;
-    const room = nextStart - (l.a + l.d); l.room = room; if(room < 0.5) console.log(`  ⚠ ${l.n} 뒤 여유 ${room.toFixed(2)}초 — 다음 장면과 겹칠 수 있다`); });
+  lines.forEach((l, i) => { const nx = lines[i + 1]; l.room = (nx ? nx.a : total) - (l.a + l.d);
+    if(l.room < 0.8) console.log(`  ⚠ ${l.n} 뒤 다음 내레이션까지 ${l.room.toFixed(2)}초`); });
 
   /* 3. 자막 PNG */
   const capDir = path.join(OUT, 'captions-v2'); fs.mkdirSync(capDir, { recursive:true });

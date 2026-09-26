@@ -235,11 +235,11 @@ const SCENES = {
     await ctx.close();
   },
   /* 6. 학습지 — 책상 위에서 천천히 훑는다(stage-sheets.html) */
-  async sheets(browser, base){ await stageScene(browser, base, 'sheets', 'stage-sheets.html?src=/__sheets/', 9.4); },
+  async sheets(browser, base){ await stageScene(browser, base, 'sheets', 'stage-sheets.html?src=/__sheets/', 10.8); },
   /* 창의 연산 — Training Course 칸을 손글씨로 한 칸씩 채운다(stage-creative.html) */
-  async creative(browser, base){ await stageScene(browser, base, 'creative', 'stage-creative.html?src=/__sheets/', 11.2); },
+  async creative(browser, base){ await stageScene(browser, base, 'creative', 'stage-creative.html?src=/__sheets/', 12.6); },
   /* 7. 끝 카드 */
-  async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 9.6); },
+  async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 11.0); },
 
   /* 독쌤의 철학 — about.html 을 그대로 띄우고, 카메라로 짚으며 핵심 구절에 금빛 형광을 긋는다 */
   async philosophy(browser, base){
@@ -249,7 +249,7 @@ const SCENES = {
     await until(page, () => document.readyState === 'complete' && document.fonts.status === 'loaded', null, 60000);
     await L.advance(page, 800, 100);
     await page.evaluate(PHILO_SETUP);
-    await runScene('philosophy', page, { dur:13.6, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
+    await runScene('philosophy', page, { dur:14.8, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
     await ctx.close();
   },
 
@@ -276,7 +276,7 @@ const SCENES = {
     const go = (t, sel, d = 0.6) => pos(sel).then(p => cur.move(t, p[0], p[1] + 4, d));
     const press = sel => async t => { const p = await pos(sel); cur.at(p[0], p[1] + 4); cur.tap(t); await page.evaluate(sel => document.querySelector(sel).click(), sel); };
     let scrollT = null;
-    await runScene('pace', page, { dur:8.4, cursor:cur,
+    await runScene('pace', page, { dur:9.6, cursor:cur,
       perFrame: async t => { if(t >= 3.9 && t <= 5.3){ const u = L.ease((t - 3.9) / 1.4); await page.evaluate(y => { window.__sp.scrollTop = y; }, L.lerp(sc.top, sc.end, u)); } },
       events:[
         [0.2, async t => { cur.show(t, true); await go(t, '.nm-cr-seg button[data-cad="w2"]', 0.9); }],
@@ -332,7 +332,7 @@ const SCENES = {
     ev.push([2.9, async t => { await tapAt(t, '#nmNotifyDow'); await app().evaluate(() => { const s = document.querySelector('#nmNotifyDow'); s.value = '1'; s.dispatchEvent(new Event('change', { bubbles:true })); s.classList.add('sr-pick'); const e = document.querySelector('#nmNotifyPhone'); e.blur(); e.classList.remove('sr-pick'); }); }]);
     ev.push([3.6, async t => { await tapAt(t, '#nmNotifyConsent'); await app().evaluate(() => { document.querySelector('#nmNotifyConsent').checked = true; document.querySelector('#nmNotifyDow').classList.remove('sr-pick'); }); }]);
     const cdp = await page.context().newCDPSession(page);
-    const dur = 8.0, n = Math.round(dur * FPS), ms = 1000 / FPS;
+    const dur = 9.2, n = Math.round(dur * FPS), ms = 1000 / FPS;
     const enc = L.encoder(path.join(OUT, 'seg-notify.mp4'), W, H, FPS);
     for(let i = 0; i < n; i++){
       const t = i / FPS;
@@ -385,9 +385,9 @@ function PHILO_SETUP(){
     [2.9,  H.x + H.w * 0.62, (T.y + H.y + H.h) / 2 + 6, 1.62],
     [4.5,  Ld.x + Ld.w * 0.5 + 60, Ld.y + Ld.h * 0.5, 1.6],
     [8.0,  Ld.x + Ld.w * 0.5 + 60, Ld.y + Ld.h * 0.52, 1.64],
-    [10.4, (H.x + Ld.x + Ld.w) / 2, (T.y + Ld.y + Ld.h) / 2 + 20, 1.34],
+    [10.4, (H.x + Ld.x + Ld.w) / 2, (T.y + Ld.y + Ld.h) / 2 + 30, 1.2],
   ];
-  const K2 = [ [11.0, PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 - 20, 1.55], [13.6, PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 - 10, 1.63] ];
+  const K2 = [ [11.0, PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 + 8, 1.55], [13.6, PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 - 10, 1.63] ];
   const ease = t => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
   const camAt = (K, t) => { let i = 0; while(i < K.length - 2 && K[i + 1][0] <= t) i++; const a = K[i], b = K[i + 1] || a;
     const u = b === a ? 0 : ease((t - a[0]) / (b[0] - a[0])); return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, Math.exp(Math.log(a[3]) + (Math.log(b[3]) - Math.log(a[3])) * u)]; };

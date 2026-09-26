@@ -50,7 +50,8 @@ window.tap = (t, x, y) => { taps.push([t, x, y]); };
 window.render = t => {
   /* 카메라: 카드로 2배 → 4초쯤 물러나 두 휴대폰 */
   const zi = ease(t / 0.9), zo = ease((t - 3.9) / 0.9), k = zi * (1 - zo);
-  const S = 1 + 1.0 * k, cx = 640 + (focus[0] - 640) * k, cy = 360 + (focus[1] - 360) * k;
+  const z2 = ease((t - 5.7) / 2.2);   /* 문자가 도착한 뒤 두 휴대폰 쪽으로 천천히 다가간다 */
+  const S = 1 + 1.0 * k + 0.3 * z2, cx = 640 + (focus[0] - 640) * k + 120 * z2, cy = 360 + (focus[1] - 360) * k - 50 * z2;
   $('cam').style.transform = `translate(${640 - cx * S}px,${360 - cy * S}px) scale(${S})`;
   const u = back((t - 4.4) / .8);
   $('pb').style.opacity = cl((t - 4.4) / .35);

@@ -10,9 +10,9 @@
   #pg{position:absolute;left:0;top:0;width:900px;transform-origin:0 0;background:#fff;border-radius:3px;
     box-shadow:0 2px 3px rgba(60,40,20,.14),0 24px 50px rgba(60,40,20,.22)}
   #pg img{display:block;width:100%}
-  .ink{position:absolute;display:flex;align-items:center;justify-content:center;padding-left:14%;box-sizing:border-box;font-family:'Nanum Pen Script',cursive;color:#2c4f9e;
+  .ink{position:absolute;display:flex;align-items:center;justify-content:center;box-sizing:border-box;font-family:'Nanum Pen Script',cursive;color:#2c4f9e;
     font-size:40px;line-height:1;white-space:nowrap;clip-path:inset(0 100% 0 0)}
-  .ok{position:absolute;font:italic 500 58px/1 'Fraunces',serif;color:#c9a44c;opacity:0;text-shadow:0 0 14px rgba(245,217,139,.9)}
+  .ok{position:absolute;opacity:0;filter:drop-shadow(0 0 8px rgba(245,217,139,.95))}
   #pen{position:absolute;left:0;top:0;width:46px;height:46px;opacity:0;filter:drop-shadow(0 6px 6px rgba(20,30,60,.3));transform-origin:4px 42px}
   #vig{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 90% 85% at 50% 50%,rgba(0,0,0,0) 60%,rgba(60,40,15,.16) 100%)}
 </style></head><body>
@@ -51,9 +51,9 @@ fetch(SRC + 'training-boxes.json').then(r => r.json()).then(async bx => {
   bx.sort((a, b) => (a.y - b.y) || (a.x - b.x)); boxes = bx; im.src = SRC + 'training.png'; await im.decode(); await document.fonts.ready;
   PH = PW * im.naturalHeight / im.naturalWidth;
   bx.forEach((b, i) => { const d = document.createElement('div'); d.className = 'ink'; d.textContent = VAL[i] || '';
-    Object.assign(d.style, { left:b.x * PW + 'px', top:b.y * PH + 'px', width:b.w * PW + 'px', height:b.h * PH + 'px', fontSize:Math.round(b.h * PH * (VAL[i].length > 1 ? 0.7 : 0.95)) + 'px' });
+    Object.assign(d.style, { left:b.x * PW + 'px', top:b.y * PH + 'px', width:b.w * PW + 'px', height:b.h * PH + 'px', fontSize:Math.round(b.h * PH * (VAL[i].length > 1 ? 0.6 : 0.95)) + 'px', paddingLeft:Math.round(b.w * PW * (VAL[i].length > 1 ? 0.14 : 0.2)) + 'px' });
     pg.appendChild(d); inks.push(d); });
-  OK.forEach(([, k]) => { const b = bx[k]; const d = document.createElement('div'); d.className = 'ok'; d.textContent = '✓';
+  OK.forEach(([, k]) => { const b = bx[k]; const d = document.createElement('div'); d.className = 'ok'; d.innerHTML = '<svg width="64" height="56" viewBox="0 0 64 56"><path d="M6 30 L24 48 L58 8" fill="none" stroke="#c9a44c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     Object.assign(d.style, { left:(b.x + b.w) * PW + 40 + 'px', top:(b.y - b.h * 0.6) * PH + 'px' }); pg.appendChild(d); oks.push(d); });
   pg.appendChild(pen);
   window.render(0); window.__ready = true;
