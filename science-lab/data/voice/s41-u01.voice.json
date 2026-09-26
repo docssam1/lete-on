@@ -1,0 +1,36 @@
+{
+  "voice": "ko-KR-Chirp3-HD-Puck",
+  "fallbackVoice": "ko-KR-Neural2-C",
+  "note": "둥실 고리 자석 탑(s41-u01) 스스로 공부하기 — 슬라이드별 docssam 안내. slides의 값이 없으면 deck-common의 기본 줄을 쓴다(확인 문제 = dk-choose).",
+  "slides": {
+    "cover": "s41u01-cover", "intro": "s41u01-intro", "think1": "s41u01-think1", "think2": "s41u01-think2", "scene": "s41u01-scene", "goal": "s41u01-goal",
+    "hypo": "dk-write-why", "design": "dk-design",
+    "step1": "s41u01-step1", "step2": "s41u01-step2", "step3": "s41u01-step3", "step4": "s41u01-step4", "step5": "s41u01-step5",
+    "lab": "s41u01-lab", "wonder": "s41u01-wonder", "res1": "s41u01-res1", "res2": "s41u01-res2", "res3": "s41u01-res3", "concl": "s41u01-concl",
+    "note": "s41u01-note", "plus": "s41u01-plus", "discuss": "s41u01-discuss", "creative": "s41u01-creative", "gifted": "s41u01-gifted", "end": "dk-end"
+  },
+  "lines": [
+    { "id": "s41u01-cover", "text": "안녕! 오늘은 고리 자석으로 둥실 떠 있는 탑을 쌓아 볼 거야. 같이 시작하자!" },
+    { "id": "s41u01-intro", "text": "똑같은 고리 자석인데 어떤 건 붙고, 어떤 건 공중에 떠. 왜 그럴까?" },
+    { "id": "s41u01-think1", "text": "냉장고 자석을 떠올려 봐. 자석에 붙은 물체와 안 붙은 물체를 써 봐." },
+    { "id": "s41u01-think2", "text": "자석 두 개를 가까이 댔을 때 손에 어떤 느낌이 들었는지 써 봐." },
+    { "id": "s41u01-scene", "text": "3D 고리 자석 탑을 끝까지 봐. 어떤 고리가 붙고 어떤 고리가 뜨는지 찾아봐." },
+    { "id": "s41u01-goal", "text": "오늘은 고리를 끼우는 방향에 따라 탑이 어떻게 달라지는지 알아볼 거야." },
+    { "id": "s41u01-step1", "text": "받침에 연필을 똑바로 꽂아. 연필이 기울면 고리가 잘 안 끼워져." },
+    { "id": "s41u01-step2", "text": "클립이 가장 많이 붙는 곳이 극이야. 고리마다 N과 S가 붙은 면을 확인해." },
+    { "id": "s41u01-step3", "text": "둘째 고리를 끼워 봐. 붙으면 빼서 뒤집어 끼우고, 달라진 점을 봐." },
+    { "id": "s41u01-step4", "text": "고리 네 개로 가장 높은 탑과 가장 낮은 탑을 각각 만들어 봐." },
+    { "id": "s41u01-step5", "text": "자로 탑 높이를 재고, 떠 있는 층이 몇 개인지 세어서 표에 적어." },
+    { "id": "s41u01-lab", "text": "고리를 눌러 뒤집어 보고, 탑 모양이 마음에 들면 표에 적기를 눌러 봐." },
+    { "id": "s41u01-wonder", "text": "떠 있는 고리 위에 지우개를 올리면 간격이 어떻게 될까? 네 생각을 써 봐." },
+    { "id": "s41u01-res1", "text": "붙었을 때와 떠 있을 때, 위 고리의 두 면에 어떤 극이 올지 써 봐." },
+    { "id": "s41u01-res2", "text": "네 개로 쌓은 탑들을 비교해서, 떠 있는 층과 높이를 써 봐." },
+    { "id": "s41u01-res3", "text": "가장 높은 탑에서 아래쪽 간격과 위쪽 간격을 잘 비교해 봐." },
+    { "id": "s41u01-concl", "text": "'같은 극'과 '다른 극'이라는 말을 꼭 넣어서 결론을 써 봐." },
+    { "id": "s41u01-note", "text": "막대자석은 양쪽 끝, 고리 자석은 윗면과 아랫면이 극이야. 표를 천천히 읽어 봐." },
+    { "id": "s41u01-plus", "text": "나침반 바늘도 작은 자석이야. 그래서 자석을 가까이 대면 바늘이 돌아가." },
+    { "id": "s41u01-discuss", "text": "집과 교실에서 자석이 든 물건을 찾고, 어떤 성질을 쓰는지 까닭과 함께 써 봐." },
+    { "id": "s41u01-creative", "text": "떠 있는 고리 자석으로 생활을 편하게 해 줄 물건을 발명해 봐." },
+    { "id": "s41u01-gifted", "text": "자석이 모두 사라진다면? 집, 학교, 밖으로 나눠서 되도록 많이 써 봐." }
+  ]
+}

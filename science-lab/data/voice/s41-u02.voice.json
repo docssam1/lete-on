@@ -1,0 +1,37 @@
+{
+  "voice": "ko-KR-Chirp3-HD-Puck",
+  "fallbackVoice": "ko-KR-Neural2-C",
+  "note": "얼었다 녹는 물기둥(s41-u02) 스스로 공부하기 — 슬라이드별 docssam 안내. slides의 값이 없으면 deck-common의 기본 줄을 쓴다(선택형 확인 문제 = dk-choose).",
+  "slides": {
+    "cover": "s41u02-cover", "intro": "s41u02-intro", "think1": "s41u02-think1", "think2": "s41u02-think2", "scene": "s41u02-scene", "goal": "s41u02-goal",
+    "hypo": "dk-write-why", "design": "dk-design",
+    "step1": "s41u02-step1", "step2": "s41u02-step2", "step3": "s41u02-step3", "step4": "s41u02-step4", "step5": "s41u02-step5",
+    "lab": "s41u02-lab", "wonder": "s41u02-wonder", "res1": "s41u02-res1", "res2": "s41u02-res2", "res3": "s41u02-res3", "concl": "s41u02-concl",
+    "note": "s41u02-note", "plus": "s41u02-plus", "discuss": "s41u02-discuss", "creative": "s41u02-creative", "gifted": "s41u02-gifted",
+    "test4": "dk-write-word", "test6": "dk-write-word", "end": "dk-end"
+  },
+  "lines": [
+    { "id": "s41u02-cover", "text": "안녕! 오늘은 시험관 속 물을 얼렸다 녹이면서 높이와 무게를 재 볼 거야." },
+    { "id": "s41u02-intro", "text": "얼린 요구르트 병이 볼록 솟은 걸 본 적 있지? 오늘 그 까닭을 찾아보자." },
+    { "id": "s41u02-think1", "text": "얼린 페트병이 처음보다 뚱뚱해진 까닭을 네 생각대로 써 봐." },
+    { "id": "s41u02-think2", "text": "얼음이 녹으면 무게가 어떻게 될까? 생각과 까닭을 같이 써 봐." },
+    { "id": "s41u02-scene", "text": "3D 물병을 끝까지 봐. 얼기 전과 뒤에 무엇이 달라지는지 찾아봐." },
+    { "id": "s41u02-goal", "text": "오늘은 물이 얼고 녹을 때, 높이와 무게가 어떻게 되는지 알아볼 거야." },
+    { "id": "s41u02-step1", "text": "시험관에 물을 3분의 1쯤 넣고 마개를 막아. 물 높이에 빨간 선을 그어." },
+    { "id": "s41u02-step2", "text": "빈 컵을 올려 저울을 0에 맞추고, 시험관을 세워 무게를 재서 적어." },
+    { "id": "s41u02-step3", "text": "얼음에 굵은 소금을 섞어 시험관을 꽂아. 물이 다 얼 때까지 기다려." },
+    { "id": "s41u02-step4", "text": "다 얼면 얼음 높이에 파란 선을 긋고, 바깥 물기를 닦은 뒤 무게를 재." },
+    { "id": "s41u02-step5", "text": "따뜻한 물에 얼음을 다 녹여. 물기를 닦고 높이와 무게를 한 번 더 재." },
+    { "id": "s41u02-lab", "text": "물의 양을 고르고 얼리기를 눌러 봐. 바뀐 값을 보고 표에 적기를 눌러." },
+    { "id": "s41u02-wonder", "text": "물을 가득 채우고 마개를 꽉 막아 얼리면 어떻게 될까? 네 생각을 써 봐." },
+    { "id": "s41u02-res1", "text": "세 번 잰 높이와 무게를 표에 차례대로 적어 봐." },
+    { "id": "s41u02-res2", "text": "빨간 선과 파란 선을 비교해 봐. 저울 숫자도 함께 떠올려서 써." },
+    { "id": "s41u02-res3", "text": "3D 실험실에서 물의 양을 바꿨을 때, 높이와 무게를 비교해서 써 봐." },
+    { "id": "s41u02-concl", "text": "얼 때와 녹을 때를 나눠서, 부피와 무게를 따로따로 써 봐." },
+    { "id": "s41u02-note", "text": "증발과 끓음은 모두 물이 수증기가 되는 거야. 표에서 다른 점을 찾아봐." },
+    { "id": "s41u02-plus", "text": "겨울철 수도관이 왜 터지는지, 오늘 실험과 이어서 읽어 봐." },
+    { "id": "s41u02-discuss", "text": "겨울에 물이 얼어 생길 문제와 막는 방법을 까닭과 함께 써 봐." },
+    { "id": "s41u02-creative", "text": "바닷물에서 마실 물을 얻는 장치를 생각해 봐. 증발과 응결을 꼭 넣어서!" },
+    { "id": "s41u02-gifted", "text": "물이 얼면 부피가 늘어서 생기는 일, 곤란한 일도 좋은 일도 많이 써 봐." }
+  ]
+}

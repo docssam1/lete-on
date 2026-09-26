@@ -1,0 +1,37 @@
+{
+  "voice": "ko-KR-Chirp3-HD-Puck",
+  "fallbackVoice": "ko-KR-Neural2-C",
+  "note": "둥둥 부레옥잠의 비밀(s42-u01) 스스로 공부하기 — 슬라이드별 docssam 안내. slides의 값이 없으면 deck-common의 기본 줄을 쓴다(선택형 확인 문제 = dk-choose).",
+  "slides": {
+    "cover": "s42u01-cover", "intro": "s42u01-intro", "think1": "s42u01-think1", "think2": "s42u01-think2", "scene": "s42u01-scene", "goal": "s42u01-goal",
+    "hypo": "dk-write-why", "design": "dk-design",
+    "step1": "s42u01-step1", "step2": "s42u01-step2", "step3": "s42u01-step3", "step4": "s42u01-step4", "step5": "s42u01-step5",
+    "lab": "s42u01-lab", "wonder": "s42u01-wonder", "res1": "s42u01-res1", "res2": "s42u01-res2", "res3": "s42u01-res3", "concl": "s42u01-concl",
+    "note": "s42u01-note", "plus": "s42u01-plus", "discuss": "s42u01-discuss", "creative": "s42u01-creative", "gifted": "s42u01-gifted",
+    "test1": "dk-write-choice", "test2": "dk-write-choice", "end": "dk-end"
+  },
+  "lines": [
+    { "id": "s42u01-cover", "text": "안녕! 오늘은 물 위에 둥둥 뜨는 부레옥잠의 비밀을 풀어 볼 거야." },
+    { "id": "s42u01-intro", "text": "연못에는 사는 모습이 저마다 다른 식물이 많아. 천천히 읽어 봐." },
+    { "id": "s42u01-think1", "text": "튜브나 구명조끼를 입으면 왜 몸이 잘 뜰까? 떠오르는 대로 써 봐." },
+    { "id": "s42u01-think2", "text": "연못이나 강가에서 본 식물이 어디서, 어떤 모습으로 자랐는지 써 봐." },
+    { "id": "s42u01-scene", "text": "3D 연못을 끝까지 봐. 식물마다 어디에서 사는지 찾아봐." },
+    { "id": "s42u01-goal", "text": "오늘은 잎자루가 있을 때와 없을 때, 물에 뜨는 모습을 비교해 볼 거야." },
+    { "id": "s42u01-step1", "text": "부레옥잠을 수조에 띄우고, 볼록한 잎자루를 살짝 눌러 느낌을 적어." },
+    { "id": "s42u01-step2", "text": "가위는 꼭 보호자와 함께 써. 잎자루를 가로, 세로로 잘라 돋보기로 봐." },
+    { "id": "s42u01-step3", "text": "잘라 낸 조각을 물속에서 꾹 눌러 봐. 무엇이 나오는지 잘 봐." },
+    { "id": "s42u01-step4", "text": "비슷한 두 포기를 골라, 한 포기만 볼록한 잎자루를 모두 떼어 내." },
+    { "id": "s42u01-step5", "text": "두 포기를 같은 수조에 띄우고, 물 위로 나온 정도를 비교해." },
+    { "id": "s42u01-lab", "text": "식물을 연못에 심거나 부레옥잠을 눌러 보고, 표에 적기를 눌러 봐." },
+    { "id": "s42u01-wonder", "text": "잎자루 조각을 꼭 짜서 다시 물에 넣으면 어떻게 될까? 네 생각을 써 봐." },
+    { "id": "s42u01-res1", "text": "자른 면의 모습과, 물속에서 눌렀을 때 나온 것을 써 봐." },
+    { "id": "s42u01-res2", "text": "그대로 둔 포기와 잎자루를 뗀 포기가 어떻게 떴는지 비교해서 써." },
+    { "id": "s42u01-res3", "text": "식물 카드 아홉 장을 사는 모습에 따라 네 무리로 나눠 써 봐." },
+    { "id": "s42u01-concl", "text": "잎자루의 생김새와 이어서, 부레옥잠이 물에 뜨는 까닭을 써 봐." },
+    { "id": "s42u01-note", "text": "식물은 사는 곳에 알맞은 생김새를 가지고 있어. 표를 천천히 읽어 봐." },
+    { "id": "s42u01-plus", "text": "사막의 선인장과 극지방의 북극버들은 어떻게 다른지 비교하며 읽어 봐." },
+    { "id": "s42u01-discuss", "text": "관찰한 부레옥잠을 하천에 놓아줘도 될까? 까닭과 함께 써 봐." },
+    { "id": "s42u01-creative", "text": "잎자루를 본떠서, 물에 빠진 사람을 도울 물건을 설계해 봐." },
+    { "id": "s42u01-gifted", "text": "속에 든 공기 덕분에 물에 뜨는 것을 갈래마다 되도록 많이 찾아 써 봐." }
+  ]
+}
