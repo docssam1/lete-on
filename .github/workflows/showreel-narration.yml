@@ -6,6 +6,11 @@ name: Showreel Narration (Numbers of Magic)
 # 대본이 바뀔 때마다 두 엔진이 같이 돌며 과금되지 않게.
 on:
   workflow_dispatch:
+  # 2026-09-26: 원장 목소리 복제 참조가 수업 중간 녹음이라 말끝(~나타냈다)을 따라 해 반복됨 →
+  # 깨끗한 참조를 받는 동안 쓸 예비 내레이션(Leda)을 v6 대본으로. 이 파일이 바뀔 때만 돈다.
+  push:
+    paths:
+      - '.github/workflows/showreel-narration.yml'
 
 concurrency:
   group: showreel-narration-${{ github.ref }}
