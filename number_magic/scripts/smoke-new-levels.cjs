@@ -10,7 +10,8 @@ const PORT = 8799;
 const OUT = process.env.SHOT_DIR || '/tmp/nm-shots';
 require('fs').mkdirSync(OUT, { recursive: true });
 
-function loadPW(){ for(const c of ['playwright','/opt/node22/lib/node_modules/playwright']){ try{return require(c);}catch(e){} } throw new Error('no playwright'); }
+const { onboard, SWIFTSHADER_ARGS } = require('./lib/nm-onboard.js');
+function loadPW(){ return require('./lib/playwright.js'); }
 function serve(){ return new Promise((res, rej) => {
   const py = spawn('python3', ['-m','http.server',String(PORT)], { cwd: ROOT, stdio:'ignore' });
   const t0 = Date.now();
@@ -35,7 +36,7 @@ const NEW = [
 (async () => {
   const { chromium } = loadPW();
   const server = await serve();
-  const browser = await chromium.launch({ executablePath: process.env.NM_CHROMIUM || '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch({ args: SWIFTSHADER_ARGS });
   const problems = [];
   const netErrs = [];
   let solvedTotal = 0;
@@ -56,10 +57,11 @@ const NEW = [
     /* ?enter=1 = 인트로 영상 건너뛰기(index.html 21행). 안 붙이면 온보딩 카드가
        전체화면 영상 뒤에 가려 클릭이 안 된다. 프로필은 여전히 비어 있어 온보딩부터다. */
     await page.goto(`http://localhost:${PORT}/index.html?enter=1`, { waitUntil:'networkidle' });
-    await page.waitForSelector('#obName', { timeout: 10000 });
-    await page.fill('#obName', '검사');
-    await page.click('#obGo');
-    await page.waitForTimeout(1200);
+    /* 온보딩은 이제 나 고르기 → 학년 → 이름 3단계다(scripts/lib/nm-onboard.js). */
+    try {
+      const prof = await onboard(page, { name: '검사' });
+      if (!prof || prof.name !== '검사') problems.push(`[${vp.tag}] 온보딩 후 프로필 이름이 저장되지 않음: ${JSON.stringify(prof)}`);
+    } catch (e) { problems.push(`[${vp.tag}] 온보딩을 통과하지 못함: ${e.message.split('\n')[0]}`); }
     await page.screenshot({ path: `${OUT}/app-${vp.tag}.png`, fullPage: false });
 
     /* ── ② drill.html에서 신규 레벨을 실제로 풀기 ── */
