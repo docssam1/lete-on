@@ -27548,7 +27548,7 @@
         const [ex, ey] = polar(cx, cy, radius, start + angle);
         return `M ${cx} ${cy} L ${sx.toFixed(2)} ${sy.toFixed(2)} A ${radius} ${radius} 0 ${angle > 180 ? 1 : 0} 1 ${ex.toFixed(2)} ${ey.toFixed(2)} Z`;
       };
-      const chartMarkup = ({ chart, cx, cy, radius, solved, chartIndex, chartCount }) => {
+      const chartMarkup = ({ chart, cx, cy, radius, solved, chartIndex, chartCount, singleColumn = false }) => {
         const angleTotal = chart.segments.reduce((sum, segment) => sum + segment.angle, 0);
         if (Math.abs(angleTotal - 360) > 1e-8) throw new Error(`${sourceItemId}: 원그래프 중심각의 합이 ${angleTotal}도입니다.`);
         let start = chart.startAngle ?? -90;
@@ -27561,25 +27561,28 @@
           let degreeMarkup = "";
           if (degree !== undefined && degree !== null) {
             const [dx, dy] = polar(cx, cy, radius * .48, midpoint);
-            degreeMarkup = `<path class="source61-e3-angle-arc" data-angle-owner="${esc(segment.label)}" data-angle-value="${degree}" data-angle-start="${segmentStart}" data-angle-end="${segmentStart + segment.angle}" d="${arcPath(cx, cy, radius * .32, segmentStart + 5, Math.max(1, segment.angle - 10))}" fill="none" stroke="#a85f00" stroke-width="2"/><text class="source61-e3-angle-label" x="${dx.toFixed(2)}" y="${(dy + 4).toFixed(2)}" text-anchor="middle" fill="#7a4300" font-size="${chartCount === 3 ? 8.5 : 10}" font-weight="900">${esc(degree)}°</text>`;
+            const angleFontSize = singleColumn ? 14 : chartCount === 3 ? 8.5 : 10;
+            degreeMarkup = `<path class="source61-e3-angle-arc" data-angle-owner="${esc(segment.label)}" data-angle-value="${degree}" data-angle-start="${segmentStart}" data-angle-end="${segmentStart + segment.angle}" d="${arcPath(cx, cy, radius * .32, segmentStart + 5, Math.max(1, segment.angle - 10))}" fill="none" stroke="#a85f00" stroke-width="2"/><text class="source61-e3-angle-label" x="${dx.toFixed(2)}" y="${(dy + 4).toFixed(2)}" text-anchor="middle" fill="#7a4300" font-size="${angleFontSize}" font-weight="900" style="font-size:${angleFontSize}px">${esc(degree)}°</text>`;
           }
           return `<g class="source61-e3-sector${highlight ? " is-solved" : ""}" data-chart-index="${chartIndex}" data-segment-index="${segmentIndex}" data-segment-label="${esc(segment.label)}" data-segment-angle="${solved ? segment.angle : ""}" data-segment-start="${solved ? segmentStart : ""}" data-segment-end="${solved ? segmentStart + segment.angle : ""}"><path d="${sectorPath(cx, cy, radius, segmentStart, segment.angle)}" fill="${highlight ? "#ffd86b" : colors[segmentIndex % colors.length]}" stroke="#183b56" stroke-width="1.4"/>${degreeMarkup}</g>`;
         }).join("");
         const titleY = cy - radius - 18;
         const legendStartY = cy + radius + 22;
-        const legendColumns = chartCount === 1 ? 2 : 1;
+        const legendColumns = singleColumn ? 1 : chartCount === 1 && variant !== 7 ? 2 : 1;
+        const legendRowGap = variant === 7 ? 36 : singleColumn ? 30 : 18;
         const legendWidth = chartCount === 1 ? 210 : chartCount === 2 ? 205 : 126;
         const legend = chart.segments.filter(segment => segment.label).map((segment, index) => {
           const col = index % legendColumns;
           const row = Math.floor(index / legendColumns);
           const chartEdgeInset = chartCount === 3 ? 10 : 0;
           const x = cx - (legendColumns === 2 ? 190 : radius) + chartEdgeInset + col * legendWidth;
-          const y = legendStartY + row * 18;
+          const y = legendStartY + row * legendRowGap;
           const rawDisplay = solved ? (segment.answerText ?? segment.problemText ?? "") : (segment.problemText ?? "");
           const degree = solved ? (segment.answerDegree ?? segment.problemDegree) : segment.problemDegree;
           const display = degree === undefined || degree === null ? rawDisplay : rawDisplay.replace(new RegExp(`^${String(degree).replace(".", "\\.")}°(?:\\s*·\\s*)?`), "");
           const text = `${segment.label}${display ? ` · ${display}` : ""}`;
-          return `<rect x="${x}" y="${y - 9}" width="9" height="9" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width=".7"/><text x="${x + 13}" y="${y}" text-anchor="start" fill="#183b56" font-size="${chartCount === 3 ? 7.5 : 8.5}">${esc(text)}</text>`;
+          const fontSize = singleColumn || variant === 7 ? 16 : chartCount === 1 ? 12 : chartCount === 2 ? 10 : 11;
+          return `<rect x="${x}" y="${y - 9}" width="9" height="9" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width=".7"/><text class="source61-e3-legend-label" x="${x + 13}" y="${y}" text-anchor="start" fill="#183b56" font-size="${fontSize}" style="font-size:${fontSize}px;text-anchor:start">${esc(text)}</text>`;
         }).join("");
         return `<g class="source61-e3-chart" data-chart-title="${esc(chart.title)}" data-angle-signature="${solved ? chart.segments.map(segment => segment.angle).join(",") : ""}"><text x="${cx}" y="${titleY}" text-anchor="middle" fill="#183b56" font-size="11" font-weight="900">${esc(chart.title)}</text>${sectors}${legend}</g>`;
       };
@@ -27587,12 +27590,32 @@
         const count = charts.length;
         const positions = count === 1 ? [{ cx: 270, cy: 160, radius: 82 }] : count === 2 ? [{ cx: 145, cy: 150, radius: 70 }, { cx: 395, cy: 150, radius: 70 }] : [{ cx: 92, cy: 145, radius: 58 }, { cx: 270, cy: 145, radius: 58 }, { cx: 448, cy: 145, radius: 58 }];
         const maxSegments = Math.max(...charts.map(chart => chart.segments.length));
-        const legendRows = count === 1 ? Math.ceil(maxSegments / 2) : maxSegments;
-        const resultY = (count === 3 ? 233 : count === 2 ? 246 : 272) + legendRows * 18 + (extra ? 34 : 0);
-        const height = resultY + (solved && resultText ? 50 : 24);
-        const markup = charts.map((chart, index) => chartMarkup({ chart, ...positions[index], solved, chartIndex: index, chartCount: count })).join("");
-        const final = solved && resultText ? `<rect class="source61-e3-result-box" data-final-answer="${esc(resultText)}" x="92" y="${resultY}" width="356" height="30" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/><text x="270" y="${resultY + 20}" text-anchor="middle" fill="#183b56" font-size="10" font-weight="900">답: ${esc(resultText)}</text>` : "";
-        return `<svg class="geometry-diagram source61-graphs-e3-diagram" style="width:min(620px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e3-structure="${esc(title)}" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="${solved ? values.join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="520" height="${height - 18}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">${esc(title)}</text>${markup}${extra}${final}</svg>`;
+        const compactSingleChart = count === 1 && variant === 7;
+        const renderDesktop = () => {
+          const legendRows = count === 1 && variant !== 7 ? Math.ceil(maxSegments / 2) : maxSegments;
+          const legendRowGap = count === 1 && variant === 7 ? 36 : 18;
+          const resultY = (count === 3 ? 233 : count === 2 ? 246 : 272) + legendRows * legendRowGap + (extra ? 34 : 0);
+          const height = resultY + (solved && resultText ? 50 : 24);
+          const viewBox = compactSingleChart ? `0 0 440 ${height}` : `0 0 540 ${height}`;
+          const frameWidth = compactSingleChart ? 420 : 520;
+          const contentTransform = compactSingleChart ? ` transform="translate(-50 0)"` : "";
+          const markup = charts.map((chart, index) => chartMarkup({ chart, ...positions[index], solved, chartIndex: index, chartCount: count, singleColumn: compactSingleChart })).join("");
+          const final = solved && resultText ? `<rect class="source61-e3-result-box" data-final-answer="${esc(resultText)}" x="92" y="${resultY}" width="356" height="30" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/><text x="270" y="${resultY + 20}" text-anchor="middle" fill="#183b56" font-size="10" font-weight="900">답: ${esc(resultText)}</text>` : "";
+          const layoutClass = count > 1 ? "source61-e3-desktop-chart" : "";
+          return `<svg class="geometry-diagram source61-graphs-e3-diagram ${layoutClass}" style="width:min(620px,100%);height:auto" viewBox="${viewBox}" role="img" aria-label="${esc(title)}" data-source61-graphs-e3-structure="${esc(title)}" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="${solved ? values.join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="${frameWidth}" height="${height - 18}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><g${contentTransform}><text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">${esc(title)}</text>${markup}${extra}${final}</g></svg>`;
+        };
+        const renderMobileStacked = () => charts.map((chart, index) => {
+          const cx = 270;
+          const cy = 175;
+          const radius = 72;
+          const legendStartY = cy + radius + 22;
+          const mobileHeight = Math.max(370, legendStartY + Math.max(0, chart.segments.length - 1) * 24 + 42);
+          const markup = chartMarkup({ chart, cx, cy, radius, solved, chartIndex: index, chartCount: 1, singleColumn: true });
+          const heading = index === 0 ? `<text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">${esc(title)}</text>` : "";
+          return `<svg class="geometry-diagram source61-graphs-e3-diagram source61-e3-mobile-chart" style="width:min(620px,100%);height:auto" viewBox="0 0 440 ${mobileHeight}" role="img" aria-label="${esc(chart.title)}" data-source61-graphs-e3-structure="${esc(title)}" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="${solved ? values.join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="420" height="${mobileHeight - 18}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><g transform="translate(-50 0)">${heading}${markup}${index === 0 ? extra : ""}</g></svg>`;
+        }).join("");
+        if (count < 2) return renderDesktop();
+        return `<style>.source61-e3-mobile-chart{display:none!important}@media(max-width:520px){.source61-e3-desktop-chart{display:none!important}.source61-e3-mobile-chart{display:block!important}}</style>${renderDesktop()}${renderMobileStacked()}`;
       };
       const table = (headers, rows, solved = false) => `<table class="problem-table source61-e3-table" data-source61-e3-summary-table="student-and-percent" data-phase="${solved ? "answer" : "problem"}"><thead><tr>${headers.map(value => `<th>${esc(value)}</th>`).join("")}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
       const blankCircle = () => {
@@ -27608,7 +27631,7 @@
         const guides = ticks.map((tick, index) => `<line data-empty-circle-tick="${index}" x1="${cx}" y1="${cy}" x2="${tick.x}" y2="${tick.y}" stroke="#8296a6" stroke-width="1" stroke-dasharray="3 3"/><text x="${tick.tx}" y="${tick.ty}" text-anchor="middle" fill="#526b7d" font-size="10" font-weight="800">${tick.label}</text>`).join("");
         return `<svg class="geometry-diagram source61-graphs-e3-diagram source61-e3-empty-chart" style="width:min(620px,100%);height:auto" viewBox="0 0 540 275" role="img" aria-label="0·25·50·75 눈금의 빈 원그래프" data-source61-graphs-e3-structure="empty-circle-grid" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="" data-phase="problem"><rect x="10" y="10" width="520" height="247" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">0·25·50·75 눈금의 빈 원그래프</text><g data-empty-circle="true"><circle class="source61-e3-empty-circle-outline" cx="${cx}" cy="${cy}" r="${radius}" fill="#fff" stroke="#183b56" stroke-width="2"/>${guides}<circle cx="${cx}" cy="${cy}" r="3" fill="#183b56"/></g></svg>`;
       };
-      const fixed = (prompt, answer, solution, promptVisual, answerVisual, values, resultContract = "single-value") => result(`${prompt}${promptVisual}${support("원그래프의 전체를 360° 또는 100%로 보고, 같은 항목끼리 연결하세요.")}${challenge}${evidence(values, "problem", resultContract)}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e3-visibility-contract="${esc(visibilityContracts[variant])}" data-source61-e3-answer-contract="${esc(answerContracts[variant])}" data-final-answer="${esc(answer)}">${evidence(values, "answer", resultContract)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId, resultContract });
+      const fixed = (prompt, answer, solution, promptVisual, answerVisual, values, resultContract = "single-value") => result(`${prompt}${promptVisual}${support("원그래프의 전체를 360° 또는 100%로 보고, 같은 항목끼리 연결하세요.")}${challenge}${evidence(values, "problem", resultContract)}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e3-answer" style="width:100%;justify-items:center" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e3-visibility-contract="${esc(visibilityContracts[variant])}" data-source61-e3-answer-contract="${esc(answerContracts[variant])}" data-final-answer="${esc(answer)}">${evidence(values, "answer", resultContract)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId, resultContract });
       const segment = (label, percent, problemText = "", answerText = problemText, options = {}) => ({ label, angle: percent * 3.6, problemText, answerText, ...options });
 
       if (variant === 0) {
@@ -27752,11 +27775,13 @@
         const rates = [100 - 7 - 2 - d.otherRate, 7, 2, d.otherRate];
         const labels = ["수분", "탄수화물", "단백질", "기타"];
         const perFruit = d.weight * d.otherRate * d.part / 10000;
-        const answerCount = Math.ceil(d.need / perFruit);
+        const answerCount = Math.floor((d.need + perFruit - 1) / perFruit);
+        const amountBeforeEnough = (answerCount - 1) * perFruit;
+        const shortfall = d.need - amountBeforeEnough;
         const segments = solved => labels.map((label, index) => segment(label, rates[index], `${rates[index]}%`, `${rates[index]}%${solved && index === 3 ? ` · 한 개에 칼륨 ${perFruit}g` : ""}`, { highlight: index === 3 }));
         const values = [d.weight, ...rates, d.part, d.need, perFruit, answerCount];
         const answer = `${answerCount}개`;
-        return fixed(`참외 1개의 무게는 ${d.weight}g이고, 원그래프의 기타 성분 가운데 ${d.part}%가 칼륨입니다. 칼륨의 하루 충분 섭취량 ${d.need}g을 참외만으로 채우려면 적어도 몇 개를 먹어야 하는지 구하세요.`, answer, `기타 성분은 ${d.weight}×${d.otherRate}%=${d.weight * d.otherRate / 100}g이고 그중 칼륨은 ${d.part}%인 ${perFruit}g입니다. ${d.need}÷${perFruit}=${d.need / perFruit}이므로 적어도 ${answerCount}개가 필요합니다.`, circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(false) }], values }), circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(true) }], values, solved: true, resultText: answer }), values);
+        return fixed(`참외 1개의 무게는 ${d.weight}g이고, 원그래프의 기타 성분 가운데 ${d.part}%가 칼륨입니다. 칼륨의 하루 충분 섭취량 ${d.need}g을 참외만으로 채우려면 적어도 몇 개를 먹어야 하는지 구하세요.`, answer, `기타 성분은 ${d.weight}×${d.otherRate}%=${d.weight * d.otherRate / 100}g이고 그중 칼륨은 ${d.part}%인 ${perFruit}g입니다. 참외 ${answerCount - 1}개로는 ${amountBeforeEnough}g이어서 ${shortfall}g 부족하므로 ${answerCount}개가 필요합니다.`, circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(false) }], values }), circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(true) }], values, solved: true, resultText: answer }), values);
       }
 
       if (variant === 8) {

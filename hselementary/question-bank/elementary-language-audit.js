@@ -2,8 +2,25 @@
 
 global.window = {};
 require("./source-inventory-4-1.js");
+require("./source-inventory-4-2-quadrilateral.js");
+require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-4-2-perpendicular-parallel.js");
+require("./source-4-2-parallel-angle.js");
+require("./source-4-2-parallel-angle-chain-one.js");
+require("./source-4-2-parallel-angle-chain-two-mission3.js");
+require("./source-grade6-decimal-e1-mission4.js");
+require("./source-grade6-decimal-e1-mission3.js");
+require("./source-grade6-decimal-e2-example2.js");
+require("./source-grade6-decimal-e2-example4.js");
+require("./source-grade6-decimal-e2-mission6.js");
+require("./source-grade6-decimal-e4-example1.js");
+require("./source-grade6-decimal-e4-mission4.js");
+require("./source-grade6-volume-e2.js");
+require("./source-grade6-volume-e3-mission3.js");
+require("./source-grade6-volume-e4.js");
+require("./source-grade6-surface-e1.js");
 
 const api = window.HSE_GENERATORS;
 const allTypes = window.HSE_CURRICULUM.semesters

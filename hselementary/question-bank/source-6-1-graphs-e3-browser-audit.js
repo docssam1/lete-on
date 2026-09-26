@@ -73,8 +73,8 @@ async function inspectPage(page, generated, sourceId, variant, difficulty, view,
   await page.waitForTimeout(30);
   const state = await page.evaluate(() => {
     const item = document.querySelector(".question-item,.solution-item");
-    const svgs = [...document.querySelectorAll("svg.source61-graphs-e3-diagram")];
     const visible = node => { const s=getComputedStyle(node), b=node.getBoundingClientRect(); return s.display!=="none" && s.visibility!=="hidden" && b.width>0 && b.height>0; };
+    const svgs = [...document.querySelectorAll("svg.source61-graphs-e3-diagram")].filter(visible);
     const textOverlaps = [];
     svgs.forEach((svg, svgIndex) => {
       const texts = [...svg.querySelectorAll("text")].map(node => ({ node, box: node.getBoundingClientRect() })).filter(x => visible(x.node));
@@ -112,15 +112,18 @@ async function inspectPage(page, generated, sourceId, variant, difficulty, view,
     const finalAnswers = [...document.querySelectorAll("[data-final-answer]")].map(node => node.getAttribute("data-final-answer") || "");
     const contracts = [...document.querySelectorAll("[data-visibility-contract],[data-source61-e3-visibility-contract]")].map(node => node.getAttribute("data-visibility-contract") || node.getAttribute("data-source61-e3-visibility-contract") || "");
     const answerContracts = [...document.querySelectorAll("[data-answer-contract],[data-source61-e3-answer-contract]")].map(node => node.getAttribute("data-answer-contract") || node.getAttribute("data-source61-e3-answer-contract") || "");
-    const angleLabels=[...document.querySelectorAll(".source61-e3-angle-label")].map(node=>({text:(node.textContent||"").trim(),box:node.getBoundingClientRect(),owner:node.previousElementSibling?.dataset.angleOwner||""}));
+    const angleLabels=[...document.querySelectorAll(".source61-e3-angle-label")].filter(visible).map(node=>({text:(node.textContent||"").trim(),box:node.getBoundingClientRect(),owner:node.previousElementSibling?.dataset.angleOwner||""}));
+    const legendLabels=[...document.querySelectorAll(".source61-e3-legend-label")].filter(visible).map(node=>({text:(node.textContent||"").trim(),box:node.getBoundingClientRect()}));
     const emptyCircles=[...document.querySelectorAll(".source61-e3-empty-circle-outline")].map(node=>{const b=node.getBoundingClientRect();return{width:b.width,height:b.height,stroke:parseFloat(getComputedStyle(node).strokeWidth)||0,ticks:node.parentElement?.querySelectorAll("[data-empty-circle-tick]").length||0};});
-    return { item: itemBox?{left:itemBox.left,right:itemBox.right,scrollWidth:item.scrollWidth,clientWidth:item.clientWidth}:null, svgs:boxes, values, textOverlaps, textClips, segmentChecks, angleLabels, emptyCircles, pageOverflow:document.documentElement.scrollWidth>innerWidth+2, itemText:document.body.innerText||"", finalAnswers, contracts, answerContracts, answerWrappers:document.querySelectorAll(".source61-graphs-e3-answer").length, resultHighlights:document.querySelectorAll("[data-result-highlight]").length, markers:document.querySelectorAll("[data-source61-graphs-e3-kind]").length };
+    return { item: itemBox?{left:itemBox.left,right:itemBox.right,scrollWidth:item.scrollWidth,clientWidth:item.clientWidth}:null, svgs:boxes, values, textOverlaps, textClips, segmentChecks, angleLabels, legendLabels, emptyCircles, pageOverflow:document.documentElement.scrollWidth>innerWidth+2, itemText:document.body.innerText||"", finalAnswers, contracts, answerContracts, answerWrappers:document.querySelectorAll(".source61-graphs-e3-answer").length, resultHighlights:document.querySelectorAll("[data-result-highlight]").length, markers:document.querySelectorAll("[data-source61-graphs-e3-kind]").length };
   });
   const label=`${sourceId}/v${variant}/d${difficulty}/${view}/${viewportName}`;
   if (!state.item || state.pageOverflow || state.item.scrollWidth > state.item.clientWidth + 2 || state.item.left < -2 || state.item.right > viewportWidth(viewportName) + 2) fail(`${label}: 화면 밖 또는 가로 넘침`);
   if (state.svgs.length < 1 || state.svgs.some(svg=>svg.width<=0||svg.height<=0||svg.bbox.width<=0||svg.bbox.height<=0||!svg.layout||(view === "answer" && !svg.values))) fail(`${label}: 빈 그림 또는 자료 속성 누락`);
   if (state.textOverlaps.length) fail(`${label}: SVG 글자 겹침 ${state.textOverlaps.join(",")}`);
   if (state.textClips.length) fail(`${label}: SVG 글자 잘림 ${state.textClips.join(",")}`);
+  if (variant === 7 && state.legendLabels.some(entry => entry.box.height < 8)) fail(`${label}: 영양 원그래프 범례 글자가 모바일·인쇄에서 읽기 어렵게 작습니다.`);
+  if (variant === 7 && state.legendLabels.some((entry, index) => index > 0 && entry.box.y - state.legendLabels[index - 1].box.bottom < 3)) fail(`${label}: 영양 원그래프 범례 줄이 서로 붙거나 겹칩니다.`);
   if (state.segmentChecks.length) fail(`${label}: 구간 검산 실패 ${state.segmentChecks.join(",")}`);
   if (/undefined|null|NaN|Infinity|\$\{[^}]+\}/.test(state.itemText)) fail(`${label}: 깨진 값 노출`);
   if (view === "problem" && (state.resultHighlights || state.answerWrappers)) fail(`${label}: 문제 화면에 답 표시 노출`);

@@ -1,15 +1,21 @@
 "use strict";
 
 global.window = {};
+require("./source-inventory-4-1.js");
 require("./curriculum.js");
 require("./generators.js");
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "4-1");
 const expectedCounts = new Map([
-  ["4-1-u4", 12],
-  ["4-1-u5", 6],
-  ["4-1-u6", 23]
+  ["4-1-u4", 44],
+  ["4-1-u5", 22],
+  ["4-1-u6", 66]
+]);
+const expectedReadyCounts = new Map([
+  ["4-1-u4", 35],
+  ["4-1-u5", 18],
+  ["4-1-u6", 63]
 ]);
 const expectedRuleVariants = new Map([
   ["advancedLinePattern", ["다음 수열의", "두 규칙이 번갈아", "분자와 분모의 규칙"]],
@@ -18,7 +24,7 @@ const expectedRuleVariants = new Map([
   ["advancedOperationRule", ["★의 규칙", "두 연산의 규칙", "세 꼭짓점의 수"]],
   ["conditionedNumberCount", ["수 카드", "자연수를 차례로 쓸 때 숫자", "차례로 썼습니다"]]
 ]);
-const allowedTiers = new Set(["ability", "advanced", "advanced-contest-overlap"]);
+const allowedTiers = new Set(["advanced", "advanced-contest-overlap"]);
 const failures = [];
 const seenIds = new Set();
 let generatedCount = 0;
@@ -37,6 +43,8 @@ for (const [unitId, expectedCount] of expectedCounts) {
     subunitName: subunit.name
   })));
   if (types.length !== expectedCount) failures.push(`${unit.name}: ${types.length}유형이며 예상 ${expectedCount}유형과 다릅니다.`);
+  const ready = types.filter(type => !type.reviewLocked && api.generatorKey(type));
+  if (ready.length !== expectedReadyCounts.get(unitId)) failures.push(`${unit.name}: 공개 ${ready.length}유형이며 예상 ${expectedReadyCounts.get(unitId)}유형과 다릅니다.`);
 
   for (const subunit of unit.subunits) {
     if (subunit.types.length === 3) {
@@ -50,12 +58,15 @@ for (const [unitId, expectedCount] of expectedCounts) {
     seenIds.add(type.id);
     if (![-1, 0, 1].includes(type.difficultyBand)) failures.push(`${type.id}: 심화 난이도 층이 없습니다.`);
     if (!allowedTiers.has(type.sourceTier)) failures.push(`${type.id}: 허용되지 않은 원본 층 ${type.sourceTier}`);
-    if (!type.sourceVerified || !type.sourceEvidence) failures.push(`${type.id}: 원본 대조 근거가 없습니다.`);
-    if (!type.sourceEvidence.includes(type.label)) failures.push(`${type.id}: 유형 구조명이 원본 대조 근거에 없습니다.`);
+    if (!type.sourceVerified || !type.sourceItemId || !type.sourceEvidence || !type.sourceEvidence.includes(type.sourceItemId)) failures.push(`${type.id}: 원문 문항 ID에 연결된 대조 근거가 없습니다.`);
     if (type.sourceTier.includes("contest") && type.sourceTier !== "advanced-contest-overlap") {
       failures.push(`${type.id}: 중복 구조를 경시 고유로 표시했습니다.`);
     }
-    if (!api.generatorKey(type)) failures.push(`${type.id}: 생성기가 연결되지 않았습니다.`);
+    if (type.reviewLocked || !api.generatorKey(type)) {
+      if (!type.reviewLocked || api.generatorKey(type)) failures.push(`${type.id}: 잠금 문항의 공개 상태가 잘못되었습니다.`);
+      if (api.generate(type, 0, 0, 4100, type.variant) !== null) failures.push(`${type.id}: 잠금 문항에서 문제가 생성됩니다.`);
+      continue;
+    }
 
     for (const difficulty of [-1, 0, 1]) {
       for (let seed = 1; seed <= 200; seed += 1) {
@@ -95,4 +106,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-1 평면도형 이동·막대그래프·규칙 찾기 41개 세부 유형 · ${generatedCount.toLocaleString()}회 생성 검수 통과`);
+console.log(`4-1 평면도형 이동·막대그래프·규칙 찾기: 132개 유형 중 출제 가능 116개, 잠금 16개 · ${generatedCount.toLocaleString()}회 생성 검수 통과`);
