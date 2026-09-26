@@ -24,7 +24,9 @@ const FPS = +(process.env.SR_FPS || L.FPS);
 const outArg = process.argv.find(a => a.startsWith('--out='));
 const OUT = outArg ? path.resolve(outArg.slice(6)) : path.join(os.tmpdir(), 'nm-showreel');
 fs.mkdirSync(OUT, { recursive:true });
-const W = 1920, H = 1080, CW = 1280, CH = 720, DPR = 1.5;   /* CSS 1280×720 배치를 1.5배로 = 1920×1080 */
+/* CSS 1280×720 배치를 1.5배로 = 1920×1080. SR_VERT=1 이면 세로 1080×1920(폰 배치 540×960 을 2배) — 15초 세로 컷용 */
+const VERT = process.env.SR_VERT === '1';
+const W = VERT ? 1080 : 1920, H = VERT ? 1920 : 1080, CW = VERT ? 540 : 1280, CH = VERT ? 960 : 720, DPR = VERT ? 2 : 1.5;
 /* 유닛 → 찍기 시작하는 장면 시각(초). 한 바퀴 중 움직임이 가장 잘 보이는 대목부터 */
 const HEROES = { 'M-14':2.6, 'M-19':0.9, 'M-80':2.2, 'M-73':1.5, 'M-86':0.8 };   /* v2 릴은 앞의 셋만 쓴다(compose.js) */
 
@@ -280,7 +282,7 @@ const SCENES = {
     const { ctx, page } = await openApp(browser, base, 'ttRoad', st);
     await until(page, () => !!document.querySelector('#crPaceCmp .nm-pc-apply') && !!document.querySelector('.r3d .r3d-arrow'), null, 120000);
     await L.advance(page, 1000, 100);
-    const S = 1.42;
+    const S = VERT ? 1.0 : 1.42;
     const geo = await page.evaluate(S => { const c = document.querySelector('#crPaceCmp'); let p = c.parentElement;
       while(p && !(p.scrollHeight > p.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
       window.__sp = p; p.style.scrollBehavior = 'auto';
@@ -358,7 +360,7 @@ const SCENES = {
     await cursorInit(page);
     await page.evaluate(() => { document.body.style.transformOrigin = '50% 45%'; document.body.style.transform = 'scale(1.15)'; });
     /* 화면의 식(a×b×c)을 읽어 답을 계산해 숫자판을 누른다 — 못 읽으면 숫자 하나만 */
-    const ans = await page.evaluate(() => { const m = (document.querySelector('#screen').innerText.match(/(\d+)\s*[×x]\s*(\d+)\s*[×x]\s*(\d+)/) || []); return m.length ? String(+m[1] * +m[2] * +m[3]) : '7'; });
+    const ans = await page.evaluate(() => { const m = document.querySelector('#screen').innerText.match(/\d+(?:\s*[×x]\s*\d+)+/); return m ? String(m[0].split(/[×x]/).map(v => +v.trim()).reduce((a, b) => a * b, 1)) : '7'; });
     const key = ch => page.evaluate(ch => { const b = [...document.querySelectorAll('#screen button')].find(b => b.offsetParent && b.textContent.trim() === ch); if(!b) return null; const r = b.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, ch);
     const cur = mkCursor(); cur.at(1000, 700);
     const ev = [];
@@ -495,6 +497,8 @@ const SCENES = {
   /* 7. 끝 카드 */
   async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 11, 'n12'); },
   /* S3 — 언어·사고력·연산 세 구슬이 저울대에서 균형을 잡는 카드(stage-pillars.html) */
+  /* 세로 컷 끝 카드(stage-vend.html) */
+  async vend(browser, base){ await stageScene(browser, base, 'vend', 'stage-vend.html', 5.0); },
   async pillars(browser, base){ await stageScene(browser, base, 'pillars', 'stage-pillars.html', 11, 'n03'); },
 
   /* 독쌤의 철학 — about.html 을 그대로 띄우고, 카메라로 짚으며 핵심 구절에 금빛 형광을 긋는다.
@@ -502,6 +506,7 @@ const SCENES = {
      실제 목소리 길이에 맞춰 이 클립을 살짝 늘리거나 줄이므로(stretch) 목소리를 바꿔도 다시 찍지 않아도 된다. */
   async philosophy(browser, base){ await philoScene(browser, base, 'philosophy', 'n02', 1); },
   async philosophy2(browser, base){ await philoScene(browser, base, 'philosophy2', 'n03', 2); },
+  async mathbox(browser, base){ await philoScene(browser, base, 'mathbox', null, 3); },
 
 
   /* 학습 속도 — 연산 로드맵 아래 '학습 속도' 카드에서 주 1회반→주 2회반 · 목표 빠르기 · 속도/양을 눌러 주·개월이 바뀌는 모습 */
@@ -607,7 +612,7 @@ async function philoScene(browser, base, name, nid, part){
   await until(page, () => document.readyState === 'complete' && document.fonts.status === 'loaded', null, 60000);
   await L.advance(page, 800, 100);
   /* 줄 길이: 실제 파일이 있으면 그 길이, 없거나 짧으면 원고 글자 수로 어림(한국어 낭독 ≈ 0.15초/자) — 자리표시 목소리로 찍어도 박자가 크게 어긋나지 않게 */
-  const D = lineD(nid);
+  const D = nid ? lineD(nid) : 4.2;
   await page.evaluate(PHILO_SETUP, [D, part]);
   await runScene(name, page, { dur:0.5 + D + 0.9, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
   await ctx.close();
@@ -647,9 +652,8 @@ function PHILO_SETUP([D, part]){
   };
   const docRect = el => { const r = el.getBoundingClientRect(); return { x:r.left + scrollX, y:r.top + scrollY, w:r.width, h:r.height }; };
   const T = docRect(q('[data-i18n="ch1Thesis"]')), H = docRect(q('[data-i18n="pH2"]')), Ld = docRect(lead), PH = docRect(q('[data-i18n="phH2"]')), PL = docRect(phLead), PQ = docRect(q('.pullquote')), CT = docRect(q('.cta-body h2')), CMP = docRect(q('.compare'));
-  /* .mathbox 는 폭 100% 블록이고 내용은 왼쪽에 몰려 있다 — 내용(단계·메모)의 합집합에 카메라를 맞춘다 */
-  const MB = (() => { const rs = [...document.querySelectorAll('.mathbox .step, .mathbox .note')].map(docRect); const x0 = Math.min(...rs.map(r => r.x)), y0 = Math.min(...rs.map(r => r.y));
-    return { x:x0, y:y0, w:Math.max(...rs.map(r => r.x + r.w)) - x0, h:Math.max(...rs.map(r => r.y + r.h)) - y0 }; })();
+  /* .mathbox 와 그 안의 .step 은 폭 100% 블록이고 글은 왼쪽에 몰려 있다 — 왼쪽 가장자리에서 일정 폭을 본다 */
+  const MBb = docRect(q('.mathbox')); const MB = { x:MBb.x, y:MBb.y, w:Math.min(MBb.w, 760), h:MBb.h };
   const W = innerWidth, Hh = innerHeight;
   const a0 = 0.5, at = f => a0 + f * D;
   const ease = t => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
@@ -670,6 +674,11 @@ function PHILO_SETUP([D, part]){
     ];
     HL = [['h2', at(.02), 1.0], ['bad', at(.23), 0.6], ['good', at(.32), 0.6], ['mb2', at(.5), 0.6], ['note', at(.62), 1.3]];
     fades = [[at(.17), at(.25)], [at(.42), at(.5)]];
+  } else if(part === 3){
+    /* 세로 컷: 1275 − 788 → 1275 = 999 + 1 + 275 펼치기(내레이션 없음, D 초) */
+    const sc = Math.min(1.4, (W - 40) / MB.w);
+    K = [[0.0, MB.x + MB.w * 0.5, MB.y + MB.h * 0.5, sc], [at(1) + .9, MB.x + MB.w * 0.5, MB.y + MB.h * 0.5 + 6, sc * 1.06]];
+    HL = [['mb2', at(.12), 0.7], ['note', at(.45), 1.2]];
   } else {
     /* n03: 내가 다루기 쉬운 수로 펼치고(0–.25) · 생각하는 힘과 문장을 읽는 힘(.25–.55) · 수를 정복해야 수학을 정복(.55–.78) · 이것이 독쌤의 철학(.78–1) */
     K = [
