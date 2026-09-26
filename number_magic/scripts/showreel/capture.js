@@ -294,7 +294,8 @@ const SCENES = {
       const g = { top:y(c) - 10, tl:y(q('.nm-pc-tl')) - 30, up:y(q('.nm-pc-up')) - 60 };
       document.body.style.transformOrigin = '0 0';
       const cx = cr.left + cr.width / 2, cy = pr.top + (innerHeight / S) / 2;
-      document.body.style.transform = `translate(${innerWidth / 2 - cx * S}px,${innerHeight / 2 - cy * S}px) scale(${S})`;
+      window.__srCam = k => { const s2 = S * k; document.body.style.transform = `translate(${innerWidth / 2 - cx * s2}px,${innerHeight / 2 - cy * s2}px) scale(${s2})`; };
+      window.__srCam(1);
       const st = document.createElement('style'); st.textContent = '.sr-glow{box-shadow:0 0 0 3px rgba(201,164,76,.7),0 0 26px rgba(245,217,139,.9)!important;transition:none}'; document.head.appendChild(st);
       return g;
     }, S);
@@ -306,9 +307,12 @@ const SCENES = {
     const scrollAt = t => { let i = 0; while(i < K.length - 2 && K[i + 1][0] <= t) i++; const a = K[i], b = K[i + 1]; return L.lerp(a[1], b[1], L.ease((t - a[0]) / (b[0] - a[0]))); };
     const pos = sel => page.evaluate(sel => { const e = document.querySelector(sel); if(!e) return null; const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sel);
     const APPLY = '#crPaceCmp [data-pc-apply][data-speed="1.25"]';
-    await runScene('compare', page, { dur:12.8, cursor:cur,
-      perFrame: t => page.evaluate(([y, t]) => { window.__sp.scrollTop = y;
-        const v = document.querySelector('#crPaceCmp .nm-pc-verdict'); if(v) v.classList.toggle('sr-glow', (t > 0.4 && t < 1.8) || t > 10.0); }, [scrollAt(t), t]),
+    /* 길이는 n04 에 맞춘다(원장 녹음 22.7초). 뒤집힌 판정에 머무는 동안 천천히 다가가(1→1.09배) 화면이 멈춘 듯 보이지 않게 */
+    const dur = Math.max(12.8, lineD('n04') - 2.0);
+    await runScene('compare', page, { dur, cursor:cur,
+      perFrame: t => page.evaluate(([y, t, dur]) => { window.__sp.scrollTop = y;
+        if(t > 9.8 && window.__srCam){ const u = Math.min(1, (t - 9.8) / Math.max(1, dur - 9.8)); window.__srCam(1 + 0.09 * (1 - Math.pow(1 - u, 2))); }
+        const v = document.querySelector('#crPaceCmp .nm-pc-verdict'); if(v) v.classList.toggle('sr-glow', (t > 0.4 && t < 1.8) || t > 10.0); }, [scrollAt(t), t, dur]),
       events:[
         [0.5, async t => { const p = await pos('#crPaceCmp .nm-pc-ladder, #crPaceCmp .nm-pc-rung'); cur.show(t, true); if(p) cur.move(t, p[0], p[1] + 10, 0.9); }],
         [2.4, t => cur.show(t, false, 0.3)],

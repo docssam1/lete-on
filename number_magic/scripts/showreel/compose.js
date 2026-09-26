@@ -69,8 +69,9 @@ const PLANS = {
   60:[
     { seg:'compare', in:7.4, out:10.7, hook:HOOK, foot:true },
     { seg:'philosophy', in:0.0, n:'n02', at:0.4, sent:2, xf:['fadewhite', 0.45], stretch:true, pos:'br', from:0.05 },
-    { seg:'diagnose', in:0.0, out:3.6, n:'n04', at:0.35, sent:2, xf:['slideup', 0.4], pos:'br' },
-    { seg:'compare', in:0.0, xf:['fade', 0.35], min:9.0, foot:true },
+    /* 60초 안에 들려면 n04 는 첫 문장("그 첫걸음은 진단입니다.")까지만 — 나머지는 훅과 카드가 그림으로 말한다 */
+    { seg:'diagnose', in:0.0, out:3.6, n:'n04', at:0.35, sent:1, xf:['slideup', 0.4], pos:'br' },
+    { seg:'compare', in:0.0, xf:['fade', 0.35], min:8.6, foot:true },
     { seg:'creative3', in:0.1, n:'n08', at:0.3, xf:['circleopen', 0.45], min:7.2, pos:'br' },
     { seg:'examroad', in:0.0, out:4.2, n:'n10', at:0.15, xf:['smoothleft', 0.3], pos:'br' },
     { seg:'creative', in:2.2, out:5.2, xf:['fadewhite', 0.35] },
