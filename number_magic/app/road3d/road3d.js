@@ -253,7 +253,11 @@ export async function mountRoad3D(container, opts){
     const bd = bands[run.band] || {};
     el.style.setProperty('--acc', bd.color || '#c9a063');
     const a = courses[run.from].num, b = courses[run.to].num;
-    el.innerHTML = `<b>${esc(bd.name || run.band)}</b><small>${esc(L(T.course))} <i>${a === b ? a : a + '–' + b}</i>${run.again ? ' · ' + esc(L(T.again)) : ''}</small>`;
+    /* 돌 하나 = 과정 하나(여러 주), 한 주가 아니다 — 원장 "중학교 1학년이 3번 만에 끝나?"(2026-09-26).
+       그래서 이름표에 그 구간의 수업 횟수를 함께 적는다(주기와 무관한 값이라 주 1·2회를 바꿔도 맞다). */
+    let nSess = 0; for(let k = run.from; k <= run.to; k++) nSess += courses[k].sessions || 0;
+    const sessTxt = nSess ? ' · ' + (lang === 'en' ? nSess + ' lessons' : lang === 'zh' ? nSess + '次课' : '수업 ' + nSess + '회') : '';
+    el.innerHTML = `<b>${esc(bd.name || run.band)}</b><small>${esc(L(T.course))} <i>${a === b ? a : a + '–' + b}</i>${esc(sessTxt)}${run.again ? ' · ' + esc(L(T.again)) : ''}</small>`;
     return el;
   });
   const stoneEls = courses.map((c, i) => {

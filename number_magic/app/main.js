@@ -3591,7 +3591,7 @@ function mountRoad3DInto(heroEl, o){
     const c=x.c, isDone=courseConquered(c), isNow=x.key===curKey;
     const isGoal=!isDone&&!isNow&&x.key===goalKey;
     const prog=courseProgress(c);
-    return { id:x.key, num:x.num, title:L(c.title), band:c.tier,
+    return { id:x.key, num:x.num, title:L(c.title), band:c.tier, sessions:(c.sessions||[]).length,
       state:isNow?'now':isDone?'done':isGoal?'goal':(prog.done>0?'doing':'ahead'),
       boss:!!c.boss, tower:c.tier==='challenge' };
   });
