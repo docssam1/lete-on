@@ -1475,7 +1475,7 @@ function screenRoadmap(){
   let html=`<div class="nm-road-wrap nm-storyroad">
     <div class="nm-road-header">
       <button class="nm-back" id="roadBack">${t('back')}</button>
-      <div class="nm-unit-title">🗺️ ${L(road.title)}</div>
+      <div class="nm-unit-title"><span class="nm-road-title-ic" aria-hidden="true">🗺️</span> ${L(road.title)}</div>
       <div class="nm-road-sub">${L(road.subtitle)}</div>
       <div class="nm-road-nav">
         <button class="nm-btn nm-btn-secondary" id="roadSuggested" ${nextId?'':'disabled'}>${S.lang==='ko'?'추천 위치':S.lang==='en'?'Suggested start':'推荐位置'}</button>
@@ -1504,10 +1504,15 @@ function screenRoadmap(){
           (c2&&c2.units||[]).forEach(uid=>{ if(UNITS[uid]){tot++; if(stepDone(uid,'stamp'))don++;} });
         });
         const pct=tot?Math.round(don/tot*100):0;
+        /* 이야기 장 번호 + 한 줄 이야기(2026-09-26, 원장 "스토리가 있어야지") — 3D 그림책과 같은 글 */
+        const chN=storyStages.findIndex(x=>x.key===st.key)+1;
+        const beat=STORY_BEATS[st.key]?L(STORY_BEATS[st.key]):'';
         html+=`<div class="nm-road-stage" data-stage="${esc(st.key)}" style="--st:${esc(st.accent||'#0E2C57')}">
+          ${chN>0?`<div class="nm-road-stage-eb">${esc(S.lang==='ko'?`제${chN}장`:S.lang==='en'?`Chapter ${chN}`:`第${chN}章`)}</div>`:''}
           <div class="nm-road-stage-top"><span class="nm-road-stage-ic">${st.icon||''}</span>
             <b>${esc(L(st.name).split(' — ')[0])}</b>
             <span class="nm-road-stage-band">${esc(L(st.band))}</span></div>
+          ${beat?`<p class="nm-road-stage-beat">${esc(beat)}</p>`:''}
           <div class="nm-road-stage-bar"><i style="width:${pct}%"></i></div>
           <div class="nm-road-stage-meta">${esc(L(st.meta))} · ${pct}%</div>
         </div>`;
@@ -1629,6 +1634,32 @@ function screenRoadmap(){
   });
 }
 
+/* ── 스토리 모드의 장(章)마다 한 줄 이야기 (2026-09-26, 원장 "스토리가 있어야지") ──
+   마을 세계관(마을세계관-설계.md — 북쪽 경시의 탑, 동쪽 다리 건너 중등·고등)과 data/stages.js 의
+   단계 설명(□가 자라 x, 해발과 해저 …)에서만 가져온 분위기 글이다. 새 수학 내용을 지어내지 않는다. */
+const STORY_BEATS={
+  numberland:{ko:'여행은 병아리들이 사는 수의 나라에서 시작돼요. 톡톡 짚으며 하나, 둘, 셋 — 마지막 수가 전체 개수예요.',
+    en:'The journey begins in Number Land, where the chicks live. Tap and count one, two, three — the last number tells how many.',
+    zh:'旅程从小鸡们住的数字之国开始。点一点，数一、二、三——最后的数就是总数。'},
+  sprout:{ko:'마을 밭에 새싹이 돋았어요. 숫자 친구와 짝을 지어 10을 만들면 계산이 쑥쑥 자라요.',
+    en:'Sprouts are coming up in the village field. Pair up with your number friend to make 10, and your sums start to grow.',
+    zh:'村子的田里冒出了新芽。和数字朋友配对凑成10，计算就会一点点长大。'},
+  leap:{ko:'새싹이 로켓처럼 뛰어올라요. 큰 수도 조각조각 쪼개면 곱셈이 가벼워져요.',
+    en:'The sprout leaps up like a rocket. Split a big number into pieces and multiplication gets light.',
+    zh:'新芽像火箭一样跃起。把大数拆成小块，乘法就变轻了。'},
+  mastery:{ko:'수와 수 사이의 비밀 관계를 찾으면 왕관이 반짝여요. 계산을 줄이는 마법을 모아요.',
+    en:'Find the secret links between numbers and the crown begins to shine. Collect the magic that makes calculating shorter.',
+    zh:'找到数与数之间的秘密关系，王冠就会闪闪发光。收集让计算变短的魔法吧。'},
+  tower:{ko:'마을 북쪽, 어려운 문제를 좋아하는 아이들이 오르는 탑이에요. 건너뛰어도 괜찮아요 — 언제든 돌아올 수 있어요.',
+    en:'North of the village stands the tower for children who love hard puzzles. You may skip it and come back any time.',
+    zh:'村子北边，是喜欢难题的孩子们攀登的塔。跳过也没关系——随时都可以回来。'},
+  middle:{ko:'동쪽 다리를 건너면 기호가 바뀌는 땅이에요. 초등의 □가 자라 x가 되고, 해발과 해저가 음수가 돼요.',
+    en:'Cross the east bridge into the land where symbols change. The □ from Grade 1 grows into x, and altitude and depth become negative numbers.',
+    zh:'走过东边的桥，就是符号改变的土地。小学的□长成了x，海拔和海底变成了负数。'},
+  high:{ko:'구름 걸린 봉우리에서 새 기호들이 기다려요. 이미 아는 마법에 새 이름표를 붙이는 곳이에요.',
+    en:'On the cloud-wrapped peak, new symbols are waiting. Here you give new labels to magic you already know.',
+    zh:'云雾缭绕的山峰上，新的符号在等你。在这里，给熟悉的魔法贴上新标签。'}
+};
 /* ── 스토리 모드 3D 그림책(app/story3d) 도우미 (2026-09-26) ──
    단계 목록: 지도 챕터에 처음 나오는 순서대로, 단계 머리와 같은 진도 계산(잠금 없음). */
 function roadStoryStages(road){
@@ -1638,7 +1669,8 @@ function roadStoryStages(road){
     const st=ch.id&&stageOf(ch.id); if(!st||seen[st.key])return; seen[st.key]=1;
     let tot=0,don=0;
     st.chapters.forEach(cid=>{const c2=road.chapters.find(x=>x.id===cid);(c2&&c2.units||[]).forEach(uid=>{if(UNITS[uid]){tot++;if(stepDone(uid,'stamp'))don++;}});});
-    out.push({key:st.key,icon:st.icon||'',accent:st.accent||'#0E2C57',name:L(st.name).split(' — ')[0],band:L(st.band),pct:tot?Math.round(don/tot*100):0});
+    out.push({key:st.key,icon:st.icon||'',accent:st.accent||'#0E2C57',name:L(st.name).split(' — ')[0],band:L(st.band),pct:tot?Math.round(don/tot*100):0,
+      beat:STORY_BEATS[st.key]?L(STORY_BEATS[st.key]):''});
   });
   return out;
 }
@@ -1658,7 +1690,9 @@ function roadScrollToStage(scr,key){
   const hd=scr.querySelector('.nm-road-header');
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   const top=wrap.scrollTop+el.getBoundingClientRect().top-wrap.getBoundingClientRect().top-(hd?hd.offsetHeight:0)-10;
-  if(wrap.scrollTo)wrap.scrollTo({top:Math.max(0,top),behavior:reduce?'auto':'smooth'});else wrap.scrollTop=Math.max(0,top);
+  /* 멀리 뛰면(화면 세 장 넘게) 부드럽게 굴리지 않고 바로 간다 — 긴 목록을 몇 초씩 굴러가지 않게 */
+  const far=Math.abs(top-wrap.scrollTop)>wrap.clientHeight*3;
+  if(wrap.scrollTo)wrap.scrollTo({top:Math.max(0,top),behavior:reduce||far?'auto':'smooth'});else wrap.scrollTop=Math.max(0,top);
   el.classList.remove('is-flash');void el.offsetWidth;el.classList.add('is-flash');
   if(!el.hasAttribute('tabindex'))el.tabIndex=-1;
   el.focus({preventScroll:true});
@@ -2574,12 +2608,14 @@ function middlePacingHtml(tier){
     return `${th?L(th.name):b.t} · ${lv?L(lv.label):'L'+b.lv} ${b.n}문항`;
   };
   return `<details class="nm-middle-pacing" id="middlePacing${grade}">
-    <summary>${esc(plan.title)}<span>주 2회 · ${plan.weeks}주 · ${plan.sessions.length}회 펼치기</span></summary>
-    <p class="nm-mp-intro">${esc(plan.scope)}.<br>
-      <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
-      위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다. 한 회는 하루 약 ${plan.grade===1?30:40}분 —
-      <strong>교과 연산 → 창의 연산 → 적용</strong> 순서이고, 쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.
-      시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</p>
+    <summary><span class="nm-mp-sumt"><small>정규 과정 회차표</small>${esc(plan.title)}</span><span class="nm-mp-summeta">주 2회 · <span class="nm-cr-tnum">${plan.weeks}</span>주 · 수업 <span class="nm-cr-tnum">${plan.sessions.length}</span>회 · 펼쳐 보기</span></summary>
+    <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
+    <p class="nm-mp-intro"><b>${esc(plan.scope)}.</b> 위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다.</p>
+    <ul class="nm-mp-facts">
+      <li>한 회는 하루 약 ${plan.grade===1?30:40}분 — <strong>교과 연산 → 창의 연산 → 적용</strong> 순서입니다.</li>
+      <li>쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.</li>
+      <li>시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</li>
+    </ul>
     <ol class="nm-mp-sessions">${plan.sessions.map(s=>{
       const count=s.blocks.reduce((n,b)=>n+b.n,0);
       const draw=s.blocks.filter(b=>b.kind==='drawing').reduce((n,b)=>n+b.n,0);
@@ -3187,6 +3223,27 @@ function openStudentSwitch(){
   document.getElementById('whoAge').onclick=()=>{ close(); openAgeSheet(()=>render()); };
 }
 
+/* 연산 로드맵의 선 아이콘(2026-09-26 v2 "밝은 신비") — 제목 앞 이모지 대신 1.6px 선 그림.
+   색은 currentColor(잉크 남색 또는 가는 금선) — 글자와 같은 무게로 읽힌다. */
+function crIc(name){
+  const P={
+    flag:'<path d="M6 21V4"/><path d="M6 4.5h11l-2.6 3.8L17 12H6"/>',
+    pin:'<path d="M12 21s-6.5-6.9-6.5-11.5a6.5 6.5 0 0 1 13 0C18.5 14.1 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.2"/>',
+    target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".9" fill="currentColor"/>',
+    compass:'<circle cx="12" cy="12" r="8.5"/><path d="M15.2 8.8l-1.9 4.5-4.5 1.9 1.9-4.5z"/>',
+    check:'<circle cx="12" cy="12" r="8.5"/><path d="M8.2 12.3l2.6 2.5 5-5.4"/>',
+    clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.2"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/>',
+    crown:'<path d="M4.5 17.5h15l1-9-5 3.5L12 6l-3.5 6-5-3.5z"/>',
+    tower:'<path d="M8 21V9h8v12"/><path d="M7 9l5-5 5 5"/><path d="M11 21v-4h2v4"/>',
+    flask:'<path d="M9.5 3.5h5"/><path d="M10.5 3.5v5.2L5.6 17.6A2 2 0 0 0 7.4 20.5h9.2a2 2 0 0 0 1.8-2.9l-4.9-8.9V3.5"/><path d="M7.8 15h8.4"/>',
+    steps:'<path d="M4 19.5h4.5v-4.5H13v-4.5h4.5V6H21"/>',
+    star:'<path d="M12 3.8l1.9 5.3 5.3 1.9-5.3 1.9L12 18.2l-1.9-5.3L4.8 11l5.3-1.9z"/>',
+    arrow:'<path d="M5 12h13"/><path d="M13 7l5 5-5 5"/>',
+    pack:'<path d="M4.5 8.5L12 4.5l7.5 4v8L12 20.5l-7.5-4z"/><path d="M4.5 8.5L12 12.5l7.5-4"/><path d="M12 12.5v8"/>'
+  };
+  return `<svg class="nm-cr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[name]||''}</svg>`;
+}
 function screenCourseRoad(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -3215,8 +3272,8 @@ function screenCourseRoad(){
       <div class="nm-cr-titlerow">
         <button class="nm-back" id="crBack">${t('back')}</button>
         <div class="nm-cr-title"><span class="nm-cr-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 20.5c0-4.6 9.5-3.2 9.5-7.6 0-3.6-6.2-3.2-6.2-6.6" stroke-dasharray="2.4 2.2"/><circle cx="5.5" cy="20" r="1.4" fill="currentColor" stroke="none"/><path d="M15.6 3.2v8M15.6 3.6h4.6l-1.5 2 1.5 2h-4.6"/></svg></span><span class="nm-cr-title-t">${lk('연산 로드맵','Course Road','运算路线图')}</span></div>
-        <button class="nm-cr-diagbtn" id="crDiag">🧭 ${lk('진단하기','Level Check','水平测评')}</button>
-        <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}" aria-label="${lk('시작점 고르기','Pick your start','选择起点')}">🎯</button>
+        <button class="nm-cr-diagbtn" id="crDiag">${crIc('compass')}<span>${lk('진단하기','Level Check','水平测评')}</span></button>
+        <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}" aria-label="${lk('시작점 고르기','Pick your start','选择起点')}">${crIc('target')}</button>
       </div>
     </div>
     <div class="nm-cr-body" id="crBody">
@@ -3230,7 +3287,8 @@ function screenCourseRoad(){
         <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}${schoolNowLabel()?` <em class="nm-cr-who-gr">${esc(schoolNowLabel())}</em>`:''}</b></span>
         <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
       </button>
-      <div class="nm-cr-sub">${lk('지금 어디까지 왔고 앞으로 어디로 가는지, 한 길로 보여요.','See the whole path — where you are now and where it leads.','用一条路看清现在走到哪里、接下来去哪里。')}</div>
+      <div class="nm-cr-sub"><span class="nm-cr-eyebrow">${lk('나의 연산 길','My arithmetic path','我的运算之路')}</span>
+        <span class="nm-cr-lead">${lk('어디까지 왔고 어디로 가는지, 한 길 위에서 봐요.','Where you are and where it leads — all on one road.','走到了哪里、要去哪里，都在一条路上。')}</span></div>
       <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
            DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
            따로 노는 은유를 만들지 않도록 그 문장을 여기서 다시 말하고 원문으로 잇는다. -->
@@ -3238,7 +3296,7 @@ function screenCourseRoad(){
         <span>${lk('수를 정복한다는 건 빨리 푸는 게 아니라, 어려운 수를 <b>내가 다루기 쉽게 펼칠</b> 수 있게 되는 거예요.',
              'Conquering numbers isn\'t about speed — it\'s being able to <b>unfold</b> a hard number into ones you handle easily.',
              '征服数字不是算得快，而是能把难的数<b>展开</b>成自己好处理的数。')}</span>
-        <a class="nm-philobtn nm-cr-philolink" href="about.html">✦ ${lk('철학','Philosophy','理念')}</a>
+        <a class="nm-philobtn nm-cr-philolink" href="about.html">${lk('철학 읽기','Our philosophy','阅读理念')}${crIc('arrow')}</a>
       </div>
       </div>
       <div id="crList"></div>
@@ -3279,82 +3337,97 @@ function screenCourseRoad(){
 
     let html=`<div class="nm-cr-conq">
       <div class="nm-cr-conq-top">
-        <span class="nm-cr-conq-lbl">${lk('정복한 과정','Courses conquered','已征服课程')}</span>
+        <span class="nm-cr-conq-hd"><span class="nm-cr-eyebrow">${lk('정복 현황','Progress','征服进度')}</span>
+          <span class="nm-cr-conq-lbl">${lk('정복한 과정','Courses conquered','已征服课程')}</span></span>
         <span class="nm-cr-conq-num"><b>${conq.done}</b><i>/ ${conq.total}</i></span>
       </div>
       <div class="nm-cr-bar"><span style="width:${conq.pct}%"></span></div>
       <div class="nm-cr-conq-sub">${lk('계산의 새싹부터 경시의 탑까지','From the first sprouts to the Tower of Challenge','从计算的新芽到竞赛之塔')} · ${lk('과정','Course','课程')} 1~${conqLast}</div>
       ${fresh
-        ? `<div class="nm-cr-conq-line start">🚩 ${lk('과정 1에서 출발해요.','Starting at course 1.','从课程1出发。')}</div>`
-        : `<div class="nm-cr-conq-line now">📍 ${lk('지금 여기','You are here','当前位置')} — ${curC?courseLine(curKey,curC):''}</div>
-           ${goalC?`<div class="nm-cr-conq-line goal">🎯 ${lk('다음 목표','Next goal','下一个目标')} — ${courseLine(goalKey,goalC)}</div>`:''}`}
-      <div class="nm-cr-conq-all">${lk('전체 길','Whole path','整条路')} ${conqAll.done} / ${conqAll.total}</div>
+        ? `<div class="nm-cr-conq-line start">${crIc('flag')}<span>${lk('과정 1에서 출발해요.','Starting at course 1.','从课程1出发。')}</span></div>`
+        : `<div class="nm-cr-conq-line now">${crIc('pin')}<span><em>${lk('지금 여기','You are here','当前位置')}</em>${curC?courseLine(curKey,curC):''}</span></div>
+           ${goalC?`<div class="nm-cr-conq-line goal">${crIc('flag')}<span><em>${lk('다음 목표','Next goal','下一个目标')}</em>${courseLine(goalKey,goalC)}</span></div>`:''}`}
+      <div class="nm-cr-conq-all"><span>${lk('전체 길','Whole path','整条路')}</span><b>${conqAll.done} / ${conqAll.total}</b></div>
     </div>`;
 
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
+    const segBtn=(attr,v,on,label)=>`<button class="${on?'on':''}" data-${attr}="${v}" aria-pressed="${on?'true':'false'}">${label}</button>`;
+    const multLbl=v=>v===1?lk('기본','1×','默认'):v+lk('배','×','倍');
     html+=`<div class="nm-cr-cad" id="crPace">
-      <div class="nm-cr-cad-h big">⏱ ${lk('학습 속도 정하기','Set the pace','设定学习速度')}</div>
-      <p class="nm-cr-cadlead">${lk('수업 횟수와 목표 속도를 고르면 아래 주차·개월이 그대로 바뀌어요. 배우는 순서와 내용은 그대로예요.',
-           'Pick how often you meet and how fast you aim to go — the weeks and months below follow. The order and content of the path stay the same.',
-           '选择上课次数和目标速度，下面的周数和月数会跟着变。学习顺序和内容保持不变。')}</p>
-      <p class="nm-cr-caveat">${lk('여기 주차는 연산 트랙만 센 거예요. 사고력·교과를 함께하면 그만큼 더 걸려요.',
-           'These weeks count the arithmetic track only. Doing thinking-math and school-math alongside takes longer.',
-           '这里的周数只算运算课程。同时上思维和教材课程会更久。')}</p>
-      <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
-        <button class="${cad==='w1'?'on':''}" data-cad="w1"${cad==='w1'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 1회반','Once a week','每周1次')}</button>
-        <button class="${cad==='w2'?'on':''}" data-cad="w2"${cad==='w2'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 2회반','Twice a week','每周2次')}</button>
+      <div class="nm-cr-sec">
+        <span class="nm-cr-eyebrow">${lk('학습 속도','Pace','学习速度')}</span>
+        <div class="nm-cr-cad-h big">${lk('어느 빠르기로 걸어갈까요?','How fast shall we walk?','要以什么速度走？')}</div>
+        <p class="nm-cr-cadlead">${lk('수업 횟수와 목표를 고르면 아래 주차·개월이 바로 바뀌어요. 배우는 순서와 내용은 그대로예요.',
+             'Pick how often you meet and your target — the weeks and months below follow. The order and content stay the same.',
+             '选择上课次数和目标，下面的周数和月数随之改变。学习顺序和内容不变。')}</p>
+        <p class="nm-cr-caveat">${crIc('info')}<span>${lk('연산 트랙만 센 주차예요. 사고력·교과를 함께하면 그만큼 더 걸려요.',
+             'Weeks count the arithmetic track only — thinking-math and school-math alongside take longer.',
+             '周数只算运算课程，同时上思维和教材课程会更久。')}</span></p>
       </div>
-      <p class="nm-cr-cadnote">${cad==='w2'
-        ? lk('한 주에 두 회차씩 나아가요. 한 과정에 걸리는 주차가 절반이 돼요. 더 다지고 싶으면 아래 속도를 낮추면 돼요.',
-             'Two sessions a week — a course takes half the weeks. To consolidate more, lower the speed below.',
-             '每周前进两节课，一个课程所需周数减半。想多巩固，可在下面调低速度。')
-        : lk('한 주에 한 세션씩 나아가요. 과정마다 마지막은 확인 세션이에요.',
-             'One session per week. Each course ends with a check session.',
-             '每周前进一节课。每个课程最后是一次检查课。')}</p>
-      <div class="nm-cr-pace">
-        <div class="nm-cr-cad-h">${lk('목표 기준','Target pace','目标标准')}</div>
-        <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 기준','Target pace','目标标准')}">
+      <div class="nm-cr-step">
+        <div class="nm-cr-cad-h"><i>1</i>${lk('수업 횟수','Classes per week','上课次数')}</div>
+        <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
+          ${segBtn('cad','w1',cad==='w1',lk('주 1회반','Once a week','每周1次'))}
+          ${segBtn('cad','w2',cad==='w2',lk('주 2회반','Twice a week','每周2次'))}
+        </div>
+        <p class="nm-cr-cadnote">${cad==='w2'
+          ? lk('한 주에 수업 2회 — 한 과정에 드는 주가 절반이 돼요. 더 다지고 싶으면 아래에서 속도를 낮춰요.',
+               'Two classes a week — a course takes half the weeks. To consolidate more, lower the speed below.',
+               '每周上课2次，一个课程所需周数减半。想多巩固，可在下面调低速度。')
+          : lk('한 주에 수업 1회 — 과정마다 마지막 회는 확인 수업이에요.',
+               'One class a week — each course ends with a check class.',
+               '每周上课1次，每个课程最后一次是检查课。')}</p>
+      </div>
+      <div class="nm-cr-step nm-cr-pace">
+        <div class="nm-cr-cad-h"><i>2</i>${lk('목표 빠르기','Target pace','目标速度')}</div>
+        <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 빠르기','Target pace','目标速度')}">
           ${ROAD_PACES.map(p=>{
             const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)/speed).months;
             return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
-              <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} ${mo}${lk('개월','mo','个月')}</small></button>`;
+              <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} <span class="nm-cr-tnum">${mo}</span>${lk('개월','mo','个月')}</small></button>`;
           }).join('')}
         </div>
-        <p class="nm-cr-pacenote">${lk('같은 길을 어느 속도로 걷느냐만 달라요. 배우는 순서와 내용은 그대로예요. 언제든 바꿔 볼 수 있어요.',
-             'Only the walking speed changes — the order and the content of the path stay the same. Switch any time.',
-             '只是走这条路的速度不同，学习顺序和内容都一样。随时可以切换。')}</p>
+        <p class="nm-cr-pacenote">${lk('길은 같고 걷는 빠르기만 달라요. 언제든 바꿀 수 있어요.',
+             'Same road, only the walking speed changes. Switch any time.',
+             '路是同一条，只是走的速度不同。随时可以切换。')}</p>
       </div>
-      <div class="nm-cr-pace nm-cr-mult">
-        <div class="nm-cr-cad-h">${lk('속도 · 양 조절','Speed · amount','速度 · 分量')}</div>
+      <div class="nm-cr-step nm-cr-pace nm-cr-mult">
+        <div class="nm-cr-cad-h"><i>3</i>${lk('속도 · 양 조절','Speed · amount','速度 · 分量')}<small>${lk('선택','optional','可选')}</small></div>
         <div class="nm-cr-multrow"><span>${lk('속도','Speed','速度')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>
-            `<button class="${speed===v?'on':''}" data-speed="${v}" aria-pressed="${speed===v?'true':'false'}">${v===1?lk('기본','1×','默认'):v+lk('배','×','倍')}</button>`).join('')}</div></div>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>segBtn('speed',v,speed===v,multLbl(v))).join('')}</div></div>
         <div class="nm-cr-multrow"><span>${lk('양','Amount','分量')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>
-            `<button class="${S.roadAmount===v?'on':''}" data-amount="${v}" aria-pressed="${S.roadAmount===v?'true':'false'}">${v===1?lk('기본','1×','默认'):v+lk('배','×','倍')}</button>`).join('')}</div></div>
-        <p class="nm-cr-pacenote">${lk('기본은 정해 둔 편성 그대로예요(한 회 30분, 중2·중3 40분). 0.7배까지 줄이고 1.5배까지 늘릴 수 있어요. 속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요. 양은 그 주 배우는 계산 문항 수예요(복습·창의·적용은 그대로, 같은 문제는 되풀이하지 않아요).',
-             'Default is the set plan (30 min a session; 40 for middle grades 2–3). Go down to 0.7× or up to 1.5×. Faster speed covers more sessions in the same time, so weeks and months shrink; slower stretches them. Amount is how many problems of that week\'s calculation (review, creative and applying stay the same; problems never repeat).',
-             '默认即既定安排（每次30分钟，初二·初三40分钟）。可减到0.7倍、加到1.5倍。提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。分量是本周所学运算的题数（复习·创意·应用不变，题目不重复）。')}</p>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>segBtn('amount',v,S.roadAmount===v,multLbl(v))).join('')}</div></div>
+        <details class="nm-cr-more">
+          <summary>${lk('속도와 양이 뭔가요?','What do speed and amount do?','速度和分量是什么？')}</summary>
+          <ul>
+            <li>${lk('기본은 정해 둔 편성 그대로예요 — 한 회 30분, 중2·중3은 40분.','Default is the set plan — 30 minutes a class, 40 for middle grades 2–3.','默认即既定安排：每次30分钟，初二·初三40分钟。')}</li>
+            <li>${lk('0.7배까지 줄이고 1.5배까지 늘릴 수 있어요.','Go down to 0.7× or up to 1.5×.','可减到0.7倍、加到1.5倍。')}</li>
+            <li>${lk('속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요.','Faster speed covers more classes in the same time, so weeks and months shrink; slower stretches them.','提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。')}</li>
+            <li>${lk('양은 그 주에 배우는 계산의 문항 수예요. 복습·창의·적용은 그대로이고, 같은 문제는 되풀이하지 않아요.','Amount is how many problems of that week\'s calculation. Review, creative and applying stay the same; problems never repeat.','分量是本周所学运算的题数。复习·创意·应用不变，题目不重复。')}</li>
+          </ul>
+        </details>
       </div>
-      <div class="nm-cr-cad-h sub">${lk('이 속도로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
-      <div class="nm-cr-totals">
-        <div class="nm-cr-total">
-          <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~${ROAD_OP_LAST}</small></b>
-          <span>${opTotals.weeks}${lk('주','wk','周')} · ${lk('약','about','约')} ${opTotals.months}${lk('개월','mo','个月')}</span>
+      <div class="nm-cr-step nm-cr-est">
+        <div class="nm-cr-cad-h sub">${lk('이 빠르기로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
+        <div class="nm-cr-totals">
+          <div class="nm-cr-total">
+            <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~${ROAD_OP_LAST}</small></b>
+            <span><em class="nm-cr-tnum">${opTotals.weeks}</em>${lk('주','wk','周')} <i>·</i> ${lk('약','about','约')} <em class="nm-cr-tnum">${opTotals.months}</em>${lk('개월','mo','个月')}</span>
+          </div>
+          <div class="nm-cr-total">
+            <b>${lk('전체 길','Whole path','整条路')} <small>${lk('과정','Course','课程')} 1~${lastNum}</small></b>
+            <span><em class="nm-cr-tnum">${allTotals.weeks}</em>${lk('주','wk','周')} <i>·</i> ${lk('약','about','约')} <em class="nm-cr-tnum">${allTotals.months}</em>${lk('개월','mo','个月')}</span>
+          </div>
         </div>
-        <div class="nm-cr-total">
-          <b>${lk('전체 길','Whole path','整条路')} <small>${lk('과정','Course','课程')} 1~${lastNum}</small></b>
-          <span>${allTotals.weeks}${lk('주','wk','周')} · ${lk('약','about','约')} ${allTotals.months}${lk('개월','mo','个月')}</span>
-        </div>
+        <div class="nm-cr-built">${builtCount===list.length
+          ? `${crIc('check')}<span>${lk(`과정 ${list.length}개 모두 배울 내용이 준비돼 있어요.`,`All ${list.length} courses have their content ready.`,`全部${list.length}个课程的内容都已备妥。`)}</span>`
+          : `${crIc('pack')}<span>${lk(`과정 ${list.length}개 중 ${builtCount}개가 준비됐어요.`,`${builtCount} of ${list.length} courses are ready.`,`${list.length}个课程中已备妥${builtCount}个。`)}</span>`}</div>
+        <p class="nm-cr-cadfoot">${lk('4주를 한 달로 셌어요.','Counted as 4 weeks per month.','按4周为一个月计算。')}
+          ${lk('권장 학습 시간은 한 회 40~50분','Recommended study time: 40–50 minutes a class','建议学习时间：每次40~50分钟')}
+          — ${cad==='w2'
+            ? lk('주 2회면 한 주에 80~100분이에요.','about 80–100 minutes a week.','每周约80~100分钟。')
+            : lk('주 1회면 한 주에 40~50분이에요.','about 40–50 minutes a week.','每周约40~50分钟。')}</p>
       </div>
-      <div class="nm-cr-built">${builtCount===list.length
-        ? `✅ ${lk(`과정 ${list.length}개 모두 배울 내용이 준비돼 있어요.`,`All ${list.length} courses have their content ready.`,`全部${list.length}个课程的内容都已备妥。`)}`
-        : `📦 ${lk(`과정 ${list.length}개 중 ${builtCount}개가 준비됐어요.`,`${builtCount} of ${list.length} courses are ready.`,`${list.length}个课程中已备妥${builtCount}个。`)}`}</div>
-      <p class="nm-cr-cadfoot">${lk('4주를 한 달로 셌어요.','Counted as 4 weeks per month.','按4周为一个月计算。')}
-        ${lk('권장 학습 시간은 한 세션 40~50분','Recommended study time: 40–50 minutes per session','建议学习时间：每节课40~50分钟')}
-        — ${cad==='w2'
-          ? lk('주 2회면 한 주에 80~100분(권장)','about 80–100 minutes a week (recommended)','每周约80~100分钟（建议）')
-          : lk('주 1회면 한 주에 40~50분(권장)','about 40–50 minutes a week (recommended)','每周约40~50分钟（建议）')}.</p>
     </div>`;
 
     if(S.placement&&S.placement.course){
@@ -3363,8 +3436,8 @@ function screenCourseRoad(){
       if(pc){
         const weak=S.placement.weak||[];
         const label=S.placement.self
-          ? `🎯 ${lk('내가 고른 시작점','My chosen start','我选的起点')}`
-          : `🧭 ${lk('진단 추천','Check-up suggests','测评建议')}`;
+          ? `${crIc('target')}<b>${lk('내가 고른 시작점','My chosen start','我选的起点')}</b>`
+          : `${crIc('compass')}<b>${lk('진단 추천','Check-up suggests','测评建议')}</b>`;
         let suffix='';
         if(!S.placement.self && weak.length){
           const names=weak.slice(0,3).map(tid=>{
@@ -3373,7 +3446,7 @@ function screenCourseRoad(){
           });
           suffix=` · ${lk('연습 필요','needs practice','需要练习')} ${weak.length}: ${names.join(', ')}`;
         }
-        html+=`<div class="nm-cr-diagchip">${label} — ${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</div>`;
+        html+=`<div class="nm-cr-diagchip">${label}<span>${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</span></div>`;
       }
     }
 
@@ -3403,7 +3476,7 @@ function screenCourseRoad(){
         const embHtml=embs.length?`<span class="nm-cr-stemb">${embs.map(e=>
           `<span class="nm-cr-emb${e.earned?' on':''}" title="${esc(L(e.name))}">${e.emblem}</span>`).join('')}</span>`:'';
         const segLabel=segAll===0?''
-          :segState==='won'?`<span class="nm-cr-stwin">🏳️ ${lk('정복함','Conquered','已征服')}</span>`
+          :segState==='won'?`<span class="nm-cr-stwin">${crIc('flag')}${lk('정복함','Conquered','已征服')}</span>`
           :segState==='climbing'?`<span class="nm-cr-stclimb">${segDone}/${segAll}</span>`:'';
         html+=`<div class="nm-cr-station ${segState}" style="--acc:${tierDef.accent}">
           <span class="nm-cr-strow">
@@ -3411,10 +3484,10 @@ function screenCourseRoad(){
             ${segLabel}
           </span>
           ${again?'':`<span class="nm-cr-stband">${esc(L(tierDef.band))}</span>`}
-          <span class="nm-cr-strange">${lk('과정','Course','课程')} ${rangeTxt}${embHtml}</span>
+          <span class="nm-cr-strange">${lk('과정','Course','课程')} <span class="nm-cr-tnum">${rangeTxt}</span>${embHtml}</span>
           ${(()=>{ const r=tierReadiness(c.tier); if(!r||r.ready) return '';
             /* 한국어는 "초1 8월부터"처럼 붙여 써야 한다 — 조사 앞에 빈칸을 두면 어색하다 */
-            return `<span class="nm-cr-stready">${r.unknown?'🎒':'⏳'} ${ko?`보통 ${schoolMonthsLabel(r.need)}부터 권해요`
+            return `<span class="nm-cr-stready">${crIc(r.unknown?'info':'clock')}${ko?`보통 ${schoolMonthsLabel(r.need)}부터 권해요`
               :en?`Usually from ${schoolMonthsLabel(r.need)}`:`通常从${schoolMonthsLabel(r.need)}起`}</span>`; })()}
         </div>`;
         if(!again) html+=middlePacingHtml(c.tier);
@@ -3438,22 +3511,22 @@ function screenCourseRoad(){
         /* 상태 말은 셋뿐이다 — 정복함 / 지금 여기 / 다음 목표.
            나머지는 옅게 두고 굳이 "예정" 같은 시스템 말을 붙이지 않는다.
            과정 25는 정복 판정 근거가 없으므로 마무리 관문으로만 표시한다. */
-        const stateLabel=isDone?`🏳️ ${lk('정복함','Conquered','已征服')}`
-          :isNow?`📍 ${lk('지금 여기','You are here','当前位置')}`
-          :isGoal?`🎯 ${lk('다음 목표','Next goal','下一个目标')}`
+        const stateLabel=isDone?`${crIc('flag')}${lk('정복함','Conquered','已征服')}`
+          :isNow?`${crIc('pin')}${lk('지금 여기','You are here','当前位置')}`
+          :isGoal?`${crIc('flag')}${lk('다음 목표','Next goal','下一个目标')}`
           :c.boss?lk('마무리 관문','Final gate','最后关卡')
           :isDoing?`${prog.done}/${prog.total}`
           :'';
         html+=`<div class="nm-cr-row ${ci%2?'right':'left'}">
           ${isNow?`<div class="nm-cr-here">${window.renderHumanChar?window.renderHumanChar(avatarKind(),44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
           <button class="nm-cr-node ${st}${locked?' trial-locked':''}" data-c="${x.key}" style="--acc:${tierDef.accent}"${isNow?' id="crNow"':''}>
-            <span class="nm-cr-num">${x.num}${isDone?'<i class="nm-cr-flag">🏳️</i>':''}</span>
+            <span class="nm-cr-num">${x.num}${isDone?`<i class="nm-cr-flag">${crIc('check')}</i>`:''}</span>
             <span class="nm-cr-nbody">
-              <b>${esc(L(c.title))}${c.boss?' 👑':isTower?' 🗼':''}</b>
-              <span class="nm-cr-meta">${lk('세션','Sessions','课节')} ${n} · ${wk}${lk('주','wk','周')}</span>
+              <b>${esc(L(c.title))}${c.boss?`<span class="nm-cr-tt" title="${lk('마무리 관문','Final gate','最后关卡')}">${crIc('crown')}</span>`:isTower?`<span class="nm-cr-tt">${crIc('tower')}</span>`:''}</b>
+              <span class="nm-cr-meta">${ko?`수업 ${n}회 · ${wk}주`:en?`${n} lessons · ${wk} wk`:`${n}次课 · ${wk}周`}</span>
               ${!built?`<span class="nm-cr-soon">${lk('준비 중','Coming soon','准备中')}</span>`:''}
             </span>
-            <span class="nm-cr-state">${locked?'🔒':stateLabel}</span>
+            <span class="nm-cr-state">${locked?`<span aria-label="${lk('잠김','Locked','已锁定')}">🔒</span>`:stateLabel}</span>
           </button>
         </div>`;
         ci++;
@@ -3468,13 +3541,13 @@ function screenCourseRoad(){
           const nums=checkupCourseNums(x.num);
           const qN=buildCheckupItems(x.num).length;
           const scoreTxt=going
-            ? `▶ ${lk('이어서 하기','Continue','继续')} · ${going.i}/${going.items.length}`
+            ? `${lk('이어서 하기','Continue','继续')} · ${going.i}/${going.items.length}`
             : rec
-            ? `🔢 ${rec.calcOk}/${rec.calcTotal} · 📖 ${rec.wpOk}/${rec.wpTotal}`
+            ? `${lk('계산','Calc','计算')} ${rec.calcOk}/${rec.calcTotal} · ${lk('문장제','Word problems','应用题')} ${rec.wpOk}/${rec.wpTotal}`
             : `${due?lk('지금 할 차례','Your turn now','轮到你了'):lk('과정 3개마다','every 3 courses','每3个课程')} · ${qN}${lk('문제','questions','题')}`;
           html+=`<div class="nm-cr-checkrow">
             <button class="nm-cr-check ${cls}" data-chk="${x.num}">
-              <span class="nm-cr-check-ic">🩺</span>
+              <span class="nm-cr-check-ic">${crIc(cls==='done'?'check':'steps')}</span>
               <span class="nm-cr-check-body">
                 <b>${lk('연산 점검','Check-up','运算检查')} · ${lk('과정','Course','课程')} ${nums[0]}~${nums[nums.length-1]}</b>
                 <span class="nm-cr-check-meta">${scoreTxt}</span>
@@ -3488,8 +3561,9 @@ function screenCourseRoad(){
 
     /* ── 수학 실험실 ── */
     html+=`<div class="nm-cr-labs">
-      <div class="nm-cr-labs-h">🔬 ${lk('수학 실험실','Math Lab','数学实验室')}</div>
-      <p class="nm-cr-labs-sub">${lk('과정과 상관없이 언제든 열어 볼 수 있어요. 새 창에서 열려요.','Open any of these any time, whatever course you are on. They open in a new tab.','不论在哪个课程，随时都能打开。会在新窗口打开。')}</p>
+      <span class="nm-cr-eyebrow">${lk('언제든 열어 보기','Open any time','随时打开')}</span>
+      <div class="nm-cr-labs-h">${crIc('flask')}${lk('수학 실험실','Math Lab','数学实验室')}</div>
+      <p class="nm-cr-labs-sub">${lk('과정과 상관없이 열 수 있어요. 새 창에서 열려요.','Whatever course you are on. They open in a new tab.','不论在哪个课程都能打开，会在新窗口打开。')}</p>
       <div class="nm-cr-lab-grid">${ROAD_LABS.map(lab=>`
         <button class="nm-cr-lab" data-lab="${esc(lab.file)}">
           <span class="nm-cr-lab-ic">${lab.icon}</span>
@@ -3596,7 +3670,7 @@ function mountRoad3DInto(heroEl, o){
       boss:!!c.boss, tower:c.tier==='challenge' };
   });
   const bands={};
-  list.forEach(x=>{ if(bands[x.c.tier]) return; const d=roadTierInfo(x.c.tier); bands[x.c.tier]={name:L(d.name), color:roadAccentHex(d.accent)}; });
+  list.forEach(x=>{ if(bands[x.c.tier]) return; const d=roadTierInfo(x.c.tier); bands[x.c.tier]={name:L(d.name), sub:L(d.band), color:roadAccentHex(d.accent)}; });
   const checkups=[];
   list.forEach(x=>{
     if(!isCheckupPoint(x.num)) return;
