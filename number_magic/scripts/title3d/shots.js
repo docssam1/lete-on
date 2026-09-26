@@ -31,6 +31,23 @@ const cases = [
   { name:'desk-model', w:1280, h:800, lang:'ko', q:'&model=boy', soft:true, wave:true },
   { name:'phone-model', w:390, h:844, lang:'ko', q:'&model=girl', mobile:true, soft:true },
 ].filter(c => !only || only.slice(7).split(',').includes(c.name));
+/* 웹 글꼴(Google Fonts · Pretendard) — 이 검사 브라우저는 에이전트 프록시의 인증서를 믿지 않아 직접 못 받는다.
+   curl(프록시·인증서 설정을 따른다)로 받아 넘겨 준다. 못 받으면 그 요청만 끊고 대체 글꼴로 검사한다. */
+const { execFileSync } = require('child_process');
+const fontCache = new Map();
+const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
+async function routeFonts(ctx){
+  await ctx.route(/^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net)\//, async route => {
+    const url = route.request().url();
+    try {
+      if(!fontCache.has(url)) fontCache.set(url, execFileSync('curl', ['-sSfL', '--max-time', '25', '-A', UA, url], { maxBuffer:64 << 20, stdio:['ignore', 'pipe', 'ignore'] }));
+      const ext = (url.split('?')[0].match(/\.(\w+)$/) || [])[1];
+      const type = /googleapis/.test(url) || ext === 'css' ? 'text/css' : ext === 'woff' ? 'font/woff' : ext === 'ttf' ? 'font/ttf' : 'font/woff2';
+      await route.fulfill({ status:200, body:fontCache.get(url), headers:{ 'content-type':type, 'access-control-allow-origin':'*' } });
+    } catch(e){ fontsMissed.add(url.replace(/\?.*/, '')); await route.abort(); }
+  });
+}
+const fontsMissed = new Set();
 const IDS = ['continue', 'diag', 'game', 'sheet', 'road', 'story', 'dex', 'hist', 'magazine'];
 server.listen(0, async () => {
   const browser = await chromium.launch({ args:['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
@@ -38,6 +55,7 @@ server.listen(0, async () => {
   for(const c of cases){
     const bad = c.soft ? warn : bad0;
     const ctx = await browser.newContext({ viewport:{ width:c.w, height:c.h }, deviceScaleFactor:1, hasTouch:!!c.mobile });
+    await routeFonts(ctx);
     const page = await ctx.newPage();
     const errs = []; page.on('pageerror', e => errs.push(e.message));
     page.on('console', m => { if(m.type() === 'error' && !/Failed to load resource|fonts\.g/.test(m.text())) errs.push(m.text()); });
@@ -109,6 +127,7 @@ server.listen(0, async () => {
     await ctx.close();
   }
   await browser.close(); server.close();
+  if(fontsMissed.size) console.log('\n(웹 글꼴을 못 받음 — 대체 글꼴로 검사함)\n  ' + [...fontsMissed].slice(0, 6).join('\n  '));
   if(warn.length) console.log('\n(경고 — 3D 캐릭터 쪽)\n  ' + warn.join('\n  '));
   if(bad0.length){ console.log('\n✗\n  ' + bad0.join('\n  ')); process.exitCode = 1; } else console.log('\nall ok');
 });

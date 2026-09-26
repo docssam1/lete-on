@@ -208,8 +208,9 @@ const CSS = `
 .r3d-me:hover{box-shadow:inset 0 0 0 1px var(--r3d-gold),0 0 0 4px rgba(185,167,255,.26),0 8px 18px rgba(38,48,74,.16)}
 .r3d-me:focus-visible{outline:3px solid #26304a;outline-offset:3px}
 .r3d-hint{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.r3d.narrow .r3d-story{left:10px;top:9px;padding:7px 11px 8px;max-width:calc(100% - 20px)}
-.r3d.narrow .r3d-story b{font-size:15.5px}
+.r3d.narrow .r3d-story{left:10px;top:8px;padding:6px 11px 7px;max-width:calc(100% - 20px)}
+.r3d.narrow .r3d-story small{display:none}
+.r3d.narrow .r3d-story b{font-size:15px;margin-top:0}
 .r3d.narrow .r3d-story p{font-size:11.5px;line-height:1.45}
 .r3d.narrow .r3d-band{padding:4px 9px 4px 8px}
 .r3d.narrow .r3d-band b{font-size:12.5px}
@@ -401,11 +402,11 @@ export async function mountRoad3D(container, opts){
     narrow = VW < 560;
     root.classList.toggle('narrow', narrow);
     /* 위쪽 3할은 하늘·지평선 자리 — 길(돌·랜드마크 발치)이 그 아래에 들어오게 맞춘다 */
-    topPad = Math.round(VH * (narrow ? 0.38 : 0.36)); botPad = narrow ? 58 : 64;
+    topPad = Math.round(VH * (narrow ? 0.33 : 0.36)); botPad = narrow ? 58 : 64;
     let lo = 2, hi = 60;
     for(let it = 0; it < 22; it++){
       camD = (lo + hi) / 2; placeCam();
-      const top = proj(camT.x, 0, Z_TOP)[1], bot = proj(camT.x, 0, Z_BOT)[1];
+      const top = proj(camT.x, 0, narrow ? -1.85 : Z_TOP)[1], bot = proj(camT.x, 0, narrow ? 2.15 : Z_BOT)[1];
       if(top >= topPad && bot <= VH - botPad) hi = camD; else lo = camD;
     }
     camD = hi;
@@ -415,7 +416,7 @@ export async function mountRoad3D(container, opts){
     visW = wAt();
     if(visW > SP * 12){ camD *= SP * 12 / visW; placeCam(); visW = wAt(); }
     /* 지평선 — 화면 위에서 18% 쯤에 땅이 끝나고 하늘이 시작한다 */
-    { let a = -14, b = Z_TOP - 0.35; const want = VH * (narrow ? 0.25 : 0.23);
+    { let a = -14, b = Z_TOP - 0.35; const want = VH * (narrow ? 0.2 : 0.23);
       if(proj(camT.x, 0, b)[1] <= want) a = b;
       else for(let it = 0; it < 26; it++){ const m = (a + b) / 2; if(proj(camT.x, 0, m)[1] < want) a = m; else b = m; }
       world.setHorizon(a, camD, visW); }
@@ -595,7 +596,8 @@ export async function mountRoad3D(container, opts){
     const put = (el, rc) => { el.classList.remove('off'); el.style.transform = `translate3d(${Math.round(rc[0])}px,${Math.round(rc[1])}px,0)`; occ.push(rc); };
     /* 지금 여기 — 아이 머리 위(화면 밖이면 가장자리에 붙여 방향을 알려 준다) */
     { const [w, h] = sizes.now;
-      if(hx < -20 || hx > VW + 20){ const y = clamp(hy - h - 10, 6, VH - botPad - h - 6); put(nowEl, [hx < 0 ? 8 : VW - w - 8, y, w, h]); nowEl.dataset.edge = hx < 0 ? 'l' : 'r'; }
+      if(hx < -20 || hx > VW + 20){ let y = clamp(hy - h - 10, 6, VH - botPad - h - 6);
+        if(hx < 0 && sizes.story[0] && y < story.offsetTop + sizes.story[1] + 8) y = Math.min(VH - botPad - h - 6, story.offsetTop + sizes.story[1] + 8); put(nowEl, [hx < 0 ? 8 : VW - w - 8, y, w, h]); nowEl.dataset.edge = hx < 0 ? 'l' : 'r'; }
       else {
         delete nowEl.dataset.edge;
         const cands = [[hx - w / 2, hy - h - 12], [hx - w * 0.15, hy - h - 12], [hx - w * 0.85, hy - h - 12], [hx + pw / 2 + 6, hy - 4], [hx - pw / 2 - w - 6, hy - 4]]
@@ -736,8 +738,8 @@ const BIOME = {
   middle3:  { top:'#b2c0ee', hor:'#f4eff4', g1:'#c0d4bf', g2:'#dde6da', stars:0.05 },
   highmath1:{ top:'#bab7ee', hor:'#fbefe8', g1:'#c6d8b2', g2:'#dfe8cb', stars:0.12 },
   highmath2:{ top:'#c0b5ec', hor:'#fdeae2', g1:'#cfdab5', g2:'#e6e8cd', stars:0.2 },
-  algebra:  { top:'#b1a4e6', hor:'#fbe5df', g1:'#c8cfc0', g2:'#dcdfd6', stars:0.55 },
-  calculus1:{ top:'#a298de', hor:'#f5e0e8', g1:'#c3c6dc', g2:'#d9daec', stars:0.85 },
+  algebra:  { top:'#b1a4e6', hor:'#fbe5df', g1:'#c7d7bd', g2:'#e1e7d3', stars:0.55 },
+  calculus1:{ top:'#a298de', hor:'#f5e0e8', g1:'#cdd3e6', g2:'#e6e4f2', stars:0.85 },
 };
 const BIO_DEF = BIOME.level0;
 const IRI = [new THREE.Color('#b9a7ff'), new THREE.Color('#8fe3d2'), new THREE.Color('#9cc8ff')];

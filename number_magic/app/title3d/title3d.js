@@ -97,14 +97,14 @@ const tr = (v, lang) => v == null ? '' : typeof v === 'string' || typeof v === '
 const glOK = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch(e){ return false; } };
 
 /* 글꼴 — index.html 과 같은 Google Fonts 묶음. 이미 있으면 붙이지 않고, 오래 걸리면 기다리지 않는다 */
-const FONT_HREF = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Gowun+Batang:wght@400;700&display=swap';
+const FONT_HREF = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&family=Gowun+Batang:wght@400;700&display=swap';
 function ensureFonts(){
   try {
     if(![...document.querySelectorAll('link[rel="stylesheet"]')].some(l => /family=Fraunces/.test(l.href))){
       const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = FONT_HREF; l.dataset.title3d = '1'; document.head.appendChild(l);
     }
     if(!document.fonts || !document.fonts.load) return Promise.resolve();
-    const want = ['500 40px Fraunces', 'italic 400 40px Fraunces', '400 16px "Gowun Batang"', '700 16px "Gowun Batang"'];
+    const want = ['400 40px Fraunces', '500 20px Fraunces', 'italic 400 40px Fraunces', '400 16px "Gowun Batang"', '700 16px "Gowun Batang"'];
     return Promise.race([Promise.all(want.map(f => document.fonts.load(f, 'Numbers of Magic 수의 마법').catch(() => null))), new Promise(res => setTimeout(res, 2500))]);
   } catch(e){ return Promise.resolve(); }
 }
@@ -140,8 +140,8 @@ const CSS = `
 .t3d-plate{position:relative;display:inline-flex;flex-direction:column;align-items:center;padding:.04em .4em .1em;isolation:isolate}
 .t3d-plate::before{content:"";position:absolute;inset:-18% -10% -12%;z-index:-1;border-radius:50%;
   background:radial-gradient(closest-side,rgba(255,255,255,.78),rgba(255,255,255,.42) 55%,rgba(255,255,255,0))}
-.t3d-word{display:block;font-family:var(--t3d-logo-font);font-size:var(--t3d-logo,52px);line-height:1.02;font-weight:500;letter-spacing:-.012em;
-  font-optical-sizing:auto;font-variation-settings:"SOFT" 30,"WONK" 0;color:var(--la-ink);
+.t3d-word{display:block;font-family:var(--t3d-logo-font);font-size:var(--t3d-logo,52px);line-height:1.02;font-weight:400;letter-spacing:-.015em;
+  font-optical-sizing:auto;font-variation-settings:"SOFT" 0,"WONK" 0;color:var(--la-ink);
   background:linear-gradient(100deg,#26304a 0%,#26304a 36%,#6b5fc4 44%,#3d9a93 50%,#4f7fc9 55%,#26304a 63%,#26304a 100%);background-size:260% 100%;background-position:100% 0;
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:t3d-sheen 11s ease-in-out 1.2s infinite}
 .t3d-word .of{font-style:italic;font-weight:400;font-size:.8em;margin:0 .1em 0 .12em;letter-spacing:0}
