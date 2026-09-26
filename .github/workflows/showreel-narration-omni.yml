@@ -35,15 +35,15 @@ jobs:
         run: python number_magic/scripts/showreel/narrate-omni.py
       - name: mp3 로 줄여 커밋
         run: |
-          cd number_magic/scripts/showreel/narration/omnivoice
-          for f in *.wav; do ffmpeg -loglevel error -y -i "$f" -codec:a libmp3lame -b:a 128k "${f%.wav}.mp3" && rm "$f"; done
-          ls -la
-          cd "$GITHUB_WORKSPACE"
+          for f in number_magic/scripts/showreel/narration/*/n*.wav; do
+            [ -e "$f" ] || continue
+            ffmpeg -loglevel error -y -i "$f" -codec:a libmp3lame -b:a 128k "${f%.wav}.mp3" && rm "$f"
+          done
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add number_magic/scripts/showreel/narration/omnivoice
+          git add number_magic/scripts/showreel/narration
           if git diff --cached --quiet; then echo "no change"; else
-            git commit -m "수의 마법 쇼릴 내레이션 — OmniVoice(누미 목소리 복제) MP3 (자동 생성)"
+            git commit -m "수의 마법 쇼릴 내레이션 — OmniVoice MP3 (자동 생성)"
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi

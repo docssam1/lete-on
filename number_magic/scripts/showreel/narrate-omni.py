@@ -17,10 +17,15 @@ ovclone = importlib.util.module_from_spec(spec); spec.loader.exec_module(ovclone
 
 def main():
     cfg = json.load(open(os.path.join(HERE, "narration.json"), encoding="utf-8"))
-    out = os.path.join(HERE, "narration", "omnivoice")
-    os.makedirs(out, exist_ok=True)
     omni = cfg.get("omni") or {}
-    if omni.get("refText"):
+    out = os.path.join(HERE, "narration", omni.get("outDir") or "omnivoice")
+    os.makedirs(out, exist_ok=True)
+    if omni.get("refAudio"):
+        # v4: 원장이 보낸 원본 녹음을 참조로. 전사를 모르면 None → OmniVoice 가 스스로 받아쓴다
+        ref_wav = os.path.join(HERE, omni["refAudio"])
+        ref_text = omni.get("refText")
+        print(f"참조: {ref_wav} · 전사 {'자동' if not ref_text else ref_text}", flush=True)
+    elif omni.get("refText"):
         # 참조 줄을 대본에서 지정(v3: 더 활기찬 누미 대사) — tts-map 에 있는 그 문장의 실제 음성을 받는다
         import urllib.request, librosa, soundfile as sf0
         url = (ovclone.load_map().get("ko") or {}).get(omni["refText"])
@@ -38,7 +43,7 @@ def main():
         if "ko" not in refs:
             sys.exit("한국어 참조 음성을 만들지 못했습니다")
         ref_wav, ref_text = refs["ko"]
-    json.dump({"ref_text": ref_text, "ref_voice": ovclone.VOICE_OF.get("ko")}, open(os.path.join(out, "_ref.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    json.dump({"ref_text": ref_text or "(자동 전사)", "ref_voice": ("원장 녹음 " + omni["refAudio"]) if omni.get("refAudio") else ovclone.VOICE_OF.get("ko")}, open(os.path.join(out, "_ref.json"), "w", encoding="utf-8"), ensure_ascii=False)
 
     import torch, soundfile as sf
     from omnivoice import OmniVoice
