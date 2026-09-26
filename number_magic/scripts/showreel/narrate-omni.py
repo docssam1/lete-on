@@ -19,10 +19,25 @@ def main():
     cfg = json.load(open(os.path.join(HERE, "narration.json"), encoding="utf-8"))
     out = os.path.join(HERE, "narration", "omnivoice")
     os.makedirs(out, exist_ok=True)
-    refs = ovclone.build_refs(["ko"], os.path.join(ROOT, ".omni-ref"))
-    if "ko" not in refs:
-        sys.exit("한국어 참조 음성을 만들지 못했습니다")
-    ref_wav, ref_text = refs["ko"]
+    omni = cfg.get("omni") or {}
+    if omni.get("refText"):
+        # 참조 줄을 대본에서 지정(v3: 더 활기찬 누미 대사) — tts-map 에 있는 그 문장의 실제 음성을 받는다
+        import urllib.request, librosa, soundfile as sf0
+        url = (ovclone.load_map().get("ko") or {}).get(omni["refText"])
+        if not url:
+            sys.exit("refText 가 tts-map.js 에 없습니다: " + omni["refText"])
+        os.makedirs(os.path.join(ROOT, ".omni-ref"), exist_ok=True)
+        tmp = os.path.join(ROOT, ".omni-ref", "ko-pick.mp3")
+        open(tmp, "wb").write(urllib.request.urlopen(url, timeout=60).read())
+        y0, sr0 = librosa.load(tmp, sr=24000, mono=True)
+        ref_wav = os.path.join(ROOT, ".omni-ref", "ko-pick.wav"); sf0.write(ref_wav, y0, sr0)
+        ref_text = omni["refText"]
+        print(f"참조: {len(y0)/sr0:.1f}초 · {ref_text}", flush=True)
+    else:
+        refs = ovclone.build_refs(["ko"], os.path.join(ROOT, ".omni-ref"))
+        if "ko" not in refs:
+            sys.exit("한국어 참조 음성을 만들지 못했습니다")
+        ref_wav, ref_text = refs["ko"]
     json.dump({"ref_text": ref_text, "ref_voice": ovclone.VOICE_OF.get("ko")}, open(os.path.join(out, "_ref.json"), "w", encoding="utf-8"), ensure_ascii=False)
 
     import torch, soundfile as sf
@@ -34,7 +49,8 @@ def main():
     print(f"모델 준비 {time.time()-t0:.0f}초 · {dev}", flush=True)
     for line in cfg["lines"]:
         t = time.time()
-        y = model.generate(text=line["text"], ref_audio=ref_wav, ref_text=ref_text)[0]
+        y = model.generate(text=line["text"], language="ko", ref_audio=ref_wav, ref_text=ref_text,
+                           speed=omni.get("speed"))[0]
         f = os.path.join(out, line["id"] + ".wav")
         sf.write(f, y, 24000)
         secs = len(y) / 24000.0

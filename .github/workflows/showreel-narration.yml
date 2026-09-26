@@ -2,13 +2,10 @@ name: Showreel Narration (Numbers of Magic)
 
 # 쇼릴 내레이션 MP3 — 대본(narration.json)이나 생성기가 바뀌어 푸시되면 그 브랜치에서 돈다.
 # 결과 MP3 를 같은 브랜치에 커밋해 돌려준다(작은 파일 몇십 개).
+# 2026-09-26: 내레이션은 OmniVoice 로 바뀌었다(showreel-narration-omni.yml). 이 구글 판은 손으로만 돌린다 —
+# 대본이 바뀔 때마다 두 엔진이 같이 돌며 과금되지 않게.
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'number_magic/scripts/showreel/narration.json'
-      - 'number_magic/scripts/showreel/narrate.js'
-      - '.github/workflows/showreel-narration.yml'
 
 concurrency:
   group: showreel-narration-${{ github.ref }}
