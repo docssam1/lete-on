@@ -10,7 +10,7 @@ Drive 「녹음 2026-09-24 045754.mp4」(15.9초, 쉼 없이 이어 말함, 녹�
      (10초에서 그냥 자르면 낱말 중간이 잘려 자동 전사가 어긋난다).
   2) 독쌤 대사를 모은다: science-lab/data/voice/*.voice.json + science-lab/intro/narration.json 의 lines.
   3) 참조로 복제 프롬프트를 **한 번만** 만든다(참조 전사는 모델의 Whisper 가 한 번 — 지어내지 않는다).
-  4) 한 줄씩 복제 음성을 만들고, 같은 Whisper 로 **다시 받아 적어** 원문과 비교한다(글자 오류율 CER).
+  4) 한 줄씩 복제 음성을 만들고(기대 길이의 1.25배를 넘으면 꼬리 반복으로 보고 길이를 고정해 다시), 같은 Whisper 로 **다시 받아 적어** 원문과 비교한다(글자 오류율 CER).
      어긋나면 최대 3번까지 다시 만들고 가장 나은 것을 쓴다. 끝까지 CER > 0.35 이면 **올리지 않는다** —
      그 줄은 사이트가 예전 목소리(Supabase)로 읽는다. 엉뚱하게 읽은 음성을 아이에게 들려주지 않기 위해서다.
   5) science-lab/audio/docssam/<id>-<sha1("docssam-clone-v1|"+text) 앞 10자>.mp3 로 저장(글이 같으면 건너뜀).
@@ -125,9 +125,21 @@ def cer(ref, hyp):
     return d[len(b)] / len(a)
 
 
+def expected(text):
+    """음절 수로 잡은 기대 길이(초) — 수의 마법 쇼릴에서 쓰던 식."""
+    return len(re.findall(r"[가-힣0-9]", text)) / 5.6 + 0.25 * len(re.findall(r"[,.!?]", text))
+
+
 def to_mp3(wav, mp3):
     run([ffmpeg_exe(), "-y", "-v", "error", "-i", wav, "-af", "loudnorm=I=-18:TP=-1.5:LRA=11", "-ac", "1", "-ar", "24000",
          "-c:a", "libmp3lame", "-b:a", "64k", mp3])
+
+
+def read_wav(path):
+    """참조 음성을 24kHz 모노 float32 로(윈도에 ffmpeg 가 PATH 에 없어도 되게 파이프라인에 파일 경로를 주지 않는다)."""
+    import numpy as np
+    pcm = run([ffmpeg_exe(), "-v", "error", "-i", path, "-ac", "1", "-ar", str(SR), "-f", "s16le", "-"])
+    return np.frombuffer(pcm, np.int16).astype(np.float32) / 32768.0
 
 
 def write_wav(path, y):
@@ -197,20 +209,31 @@ def main():
         from omnivoice import OmniVoice
         model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=torch.float16 if dev.startswith("cuda") else torch.float32)
         model.load_asr_model()
-        prompt = model.create_voice_clone_prompt(ref_audio=ref_wav)
-        print(f"참조 전사(Whisper): {prompt.ref_text}", flush=True)
+        ko = lambda audio: model._asr_pipe(audio, generate_kwargs={"language": "korean"})["text"].strip()
+        # 참조 전사는 한국어로 못 박는다 — 자동 언어 감지가 틀리면 문장 끝에 참조의 남은 말이 붙는다
+        # (수의 마법 쇼릴, 2026-09-26 원장: "문장 끝나고 '하넸다' 이런 것처럼 말을 반복해")
+        ref_text = ko({"raw": read_wav(ref_wav), "sampling_rate": SR})
+        print(f"참조 전사(Whisper, 한국어): {ref_text}", flush=True)
+        json.dump({"ref_text": ref_text}, open(os.path.join(WORK, "ref.json"), "w", encoding="utf-8"), ensure_ascii=False)
+        prompt = model.create_voice_clone_prompt(ref_audio=ref_wav, ref_text=ref_text)
         t0 = time.time(); audio_s = 0.0
         for n, (lid, text) in enumerate(todo, 1):
             t = time.time(); say = spoken(text); best = None
+            exp = expected(say); dur = None
             for k in range(TRIES):
                 try:
-                    y = model.generate(text=say, language="ko", voice_clone_prompt=prompt)[0]
+                    y = model.generate(text=say, language="ko", voice_clone_prompt=prompt, duration=dur)[0]
                 except Exception as e:
                     print(f"  ✗ {lid}: {e}", flush=True); break
                 y = y.reshape(-1)
+                if len(y) / SR > exp * 1.25:          # 꼬리 반복 — 기대 길이로 고정해 다시
+                    print(f"    ↻ {lid} 너무 김 {len(y) / SR:.1f}초 > 기대 {exp:.1f}초", flush=True)
+                    dur = round(exp * 1.08, 2)
+                    if k < TRIES - 1:
+                        continue
                 if a.no_check:
                     best = (0.0, "", y); break
-                hyp = model.transcribe((y, SR)); c = cer(say, hyp)
+                hyp = ko({"raw": y.astype("float32"), "sampling_rate": SR}); c = cer(say, hyp)
                 if best is None or c < best[0]:
                     best = (c, hyp, y)
                 if c <= CER_RETRY:
