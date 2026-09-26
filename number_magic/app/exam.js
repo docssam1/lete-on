@@ -4838,6 +4838,186 @@ function applyPartialBlanks(problems, layoutType, item){
   });
 }
 
+/* ============================================================
+   창의 연산 과정 빈칸 (2026-09-26) — 설계 docs/creative-stages-design-2026-09-26.md §3-3
+   원장 "창의 연산 때 한 문제는 빈칸 넣기도 있어야". applyPartialBlanks 의 짝이지만 빈칸을
+   답이 아니라 **풀이 과정 안에** 둔다: 식과 최종 답을 주고, 생성기가 낸 풀이 줄 가운데
+   ★마법 자리 줄의 수 하나를 가린다(꼴 A). 보정·불변 기법(F2·F4)은 "바꾼 만큼 되돌린 수 /
+   양쪽에 똑같이 바꾼 수"를 가린다(꼴 B 거꾸로). 표는 data/creative-process.js.
+   ── 지어내지 않는다 ──
+   가리는 수는 이미 있는 줄(p.steps, 없으면 p.solution)의 수다. 그 줄을 다시 계산해
+   (tex 산술 → cpEval) □ 가 **정수 하나로만** 풀릴 때만 쓴다. 안 되면 그 회차의 다른 문항을
+   찾고, 회차 전체에 쓸 줄이 없으면 손대지 않고 NM_PROCESS_LOG 에 남긴다(가짜 빈칸 금지).
+   Training Course(layout.type === 'train')에서만 부른다.
+   ============================================================ */
+function cpCfg(){ return (window.NM_CREATIVE_PROCESS && window.NM_CREATIVE_PROCESS.cfg) || null; }
+function cpOf(threadId, level){
+  return window.NM_CREATIVE_PROCESS ? window.NM_CREATIVE_PROCESS.of(threadId, level)
+    : { fam:null, key:0, blank:'key', mapped:false };
+}
+/* Training Course 의 "스스로 풀기"(점선만) 구간 — 뒤 1/4. 과정 빈칸 문항은 점선 문항이 되지 않는다. */
+function trainBareStart(n){ return n > 1 ? Math.ceil(n * 0.75) : n; }
+function trainIsBare(p, idx, n){ return !(p && p.__process) && n > 1 && idx >= trainBareStart(n); }
+/* 과정 빈칸 자리 — 6문항이면 (4), 12문항이면 (4)(8) (cfg 로 바꾼다) */
+function processBlankIndexes(n){
+  const c = cpCfg(); if(!c || !(n > c.blankOffset)) return [];
+  const bare = c.blankKeepBare ? trainBareStart(n) : n, out = [];
+  for(let i = 0; i < n; i++) if(i % c.blankEvery === c.blankOffset && i < bare) out.push(i);
+  if(!out.length && c.blankAtLeastOne) out.push(c.blankOffset);
+  return out;
+}
+/* tex 산술 한 줄 → 수(못 읽으면 NaN). + − × ÷ · 괄호 · 거듭제곱 · \dfrac 만. 설명 글(\text)·기호는 지운다. */
+function cpEval(tex){
+  let s = String(tex)
+    .replace(/\(\s*\\text\{[^}]*\}\s*\)/g, '').replace(/\\text\{[^}]*\}/g, '')
+    .replace(/\\left|\\right|\\displaystyle/g, '')
+    .replace(/\\(?:quad|qquad|;|,|!|:| )/g, '').replace(/\s+/g, '');
+  for(let g = 0; g < 6 && /\\d?frac\{/.test(s); g++) s = s.replace(/\\d?frac\{([^{}]*)\}\{([^{}]*)\}/g, '(($1)/($2))');
+  s = s.replace(/\^\{([^{}]*)\}/g, '^($1)').replace(/\\times|\\cdot/g, '*').replace(/\\div/g, '/').replace(/−/g, '-');
+  if(!/^[\d.+\-*/()^]+$/.test(s)) return NaN;
+  let i = 0;
+  const peek = () => s[i];
+  function num(){ const m = /^\d+(?:\.\d+)?/.exec(s.slice(i)); if(!m) throw 0; i += m[0].length; return +m[0]; }
+  function atom(){
+    if(peek() === '('){ i++; const v = expr(); if(peek() !== ')') throw 0; i++; return v; }
+    if(peek() === '-'){ i++; return -pow(); }
+    return num();
+  }
+  function pow(){ const b = atom(); if(peek() === '^'){ i++; return Math.pow(b, pow()); } return b; }
+  function term(){ let v = pow(); while(peek() === '*' || peek() === '/'){ const o = s[i++]; const r = pow(); v = o === '*' ? v * r : v / r; } return v; }
+  function expr(){ let v = term(); while(peek() === '+' || peek() === '-'){ const o = s[i++]; const r = term(); v = o === '+' ? v + r : v - r; } return v; }
+  try { const v = expr(); return i === s.length ? v : NaN; } catch(e){ return NaN; }
+}
+const cpNear = (a, b) => Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
+/* 한 줄(□ 하나)이 x 에서 참인가 — 등호가 있으면 모든 변이 같아야, 없으면 사슬의 값(최종 답)과 같아야 */
+function cpHolds(line, x, chainValue){
+  const t = String(line).replace(/\\square/g, '(' + x + ')');
+  const segs = t.split('=');
+  if(segs.length < 2) return cpNear(cpEval(t), chainValue);
+  const vals = segs.map(cpEval);
+  return vals.every(v => cpNear(v, vals[0]));
+}
+/* 학습지에 찍히는 풀이 줄과 같은 줄(trainStepsOf 의 원천)을 값까지 채운 채로 */
+function cpSourceLines(p){
+  if(Array.isArray(p.steps) && p.steps.length) return p.steps.filter(x => x && x.tex);
+  const norm = t => String(t).replace(/\\(?:quad|qquad|;|,|:| )|\s+/g, '');
+  const q = norm(p.tex);
+  return (Array.isArray(p.solution) ? p.solution : []).filter(x => x && x.tex && !/\\text/.test(x.tex) && norm(x.tex) !== q);
+}
+function cpFill(tex, blank){
+  if(!/\\square/.test(tex)) return String(tex);
+  if(blank == null) return null;
+  let k = 0, bad = false;
+  const out = String(tex).replace(/\\square/g, () => {
+    const v = Array.isArray(blank) ? blank[k++] : blank;
+    if(v == null || typeof v === 'object' || !Number.isFinite(+v)) { bad = true; return ''; }
+    return String(fmtAns(+v));
+  });
+  return bad ? null : out;
+}
+/* 줄 안의 정수 토큰(가릴 수 있는 수) — 소수의 일부·지수·첨자·\text 안·\color 인자는 뺀다. 등호 왼쪽만. */
+function cpTokens(line){
+  const s = String(line), last = s.lastIndexOf('='), lim = last > 0 ? last : s.length, out = [];
+  const re = /\d+(?:\.\d+)?/g; let m;
+  while((m = re.exec(s)) && m.index < lim){
+    const st = m.index, tok = m[0], en = st + tok.length;
+    if(tok.indexOf('.') >= 0 || s[st-1] === '.' || s[en] === '.') continue;
+    const pre = s.slice(Math.max(0, st - 2), st);
+    if(/[\^_#]$/.test(pre) || pre === '^{' || pre === '_{') continue;
+    const tx = s.lastIndexOf('\\text{', st); if(tx >= 0 && s.indexOf('}', tx) > st) continue;
+    const ov = s.lastIndexOf('\\overline{', st); if(ov >= 0 && s.indexOf('}', ov) > st) continue;
+    out.push({ st, en, v:+tok });
+  }
+  return out;
+}
+const NM_PROCESS_LOG = (window.NM_PROCESS_LOG = window.NM_PROCESS_LOG || []);
+/* 한 문항에서 과정 빈칸을 만든다 — 못 만들면 null(문항은 그대로) */
+function cpBuild(p, conf){
+  if(!p || p.word || p.graph || p.__ramp || p.__process || !p.tex) return null;
+  const src = cpSourceLines(p);
+  if(!src.length) return null;
+  const lines = src.map(x => cpFill(x.tex, x.blank));
+  if(lines.some(l => l == null)) return null;
+  const expr = cpFill(p.tex, p.answer);
+  const final = typeof p.answer === 'number' ? p.answer : NaN;
+  if(expr == null) return null;
+  const origNums = new Set((String(p.tex).match(/\d+/g) || []).map(Number));
+  const chainBefore = li => { const set = new Set();
+    src.slice(0, li).forEach(x => [].concat(x.blank == null ? [] : x.blank).forEach(v => { if(Number.isFinite(+v)) set.add(+v); })); return set; };
+  const form = conf.blank === 'reverse' ? 'B' : 'A';
+  const first = form === 'B' && conf.at != null && conf.at < lines.length ? conf.at : Math.min(conf.key || 0, lines.length - 1);
+  const order = [first].concat(first !== (conf.key || 0) && (conf.key || 0) < lines.length ? [conf.key || 0] : [])
+    .concat(lines.map((_, i) => i)).filter((v, i, a) => a.indexOf(v) === i);
+  for(const li of order){
+    const toks = cpTokens(lines[li]).reverse();          /* 뒤쪽 수부터 — 바꾼 수·돌려받는 수는 대개 뒤에 온다 */
+    const chain = chainBefore(li);
+    const intro = toks.filter(t => !origNums.has(t.v) && !chain.has(t.v));
+    const free = toks.filter(t => !chain.has(t.v));
+    const groups = (form === 'B' && li === conf.at) ? [free, toks] : [intro, free, toks];
+    const seen = new Set();
+    for(const g of groups) for(const t of g){
+      if(seen.has(t.st)) continue; seen.add(t.st);
+      const v = t.v;
+      if(!Number.isInteger(v) || v < 1 || v === final) continue;
+      const cand = lines[li].slice(0, t.st) + '\\square' + lines[li].slice(t.en);
+      const chainValue = Number.isFinite(final) ? final : NaN;
+      if(!cpHolds(cand, v, chainValue)) continue;
+      /* 정수 하나로만 풀리는가 — 0 부터 넉넉한 범위까지 전부 대 본다 */
+      const hi = Math.max(200, v * 3 + 20);
+      let sols = 0;
+      for(let x = 0; x <= hi && sols < 2; x++) if(x !== v && cpHolds(cand, x, chainValue)) sols++;
+      if(sols) continue;
+      return { form, value:v, line:li, expr, chain:lines.slice(), lines:lines.map((l, i) => i === li ? cand : l) };
+    }
+  }
+  return null;
+}
+function applyProcessBlank(problems, item){
+  if(!problems || !problems.length || !item || !item.creative || item.noTeach) return;
+  const n = problems.length, want = processBlankIndexes(n);
+  if(!want.length) return;
+  const conf = cpOf(item.thread, item.level);
+  const taken = new Set();
+  want.forEach(w => {
+    /* 정한 자리부터, 안 되면 가까운 자리(점선 문항·이미 쓴 자리 제외)로 — 회차의 빈칸 수는 줄이지 않는다 */
+    const tryAt = [w];
+    for(let d = 1; d < n; d++){ tryAt.push(w - d, w + d); }
+    for(const i of tryAt){
+      if(i < 0 || i >= n || taken.has(i) || want.indexOf(i) >= 0 && i !== w) continue;
+      if(i !== w && trainIsBare(problems[i], i, n)) continue;
+      const p = problems[i], r = cpBuild(p, conf);
+      if(!r) continue;
+      p.__process = Object.assign({ fam:conf.fam, origAnswer:p.answer, origShape:p.answerShape || null, at:i, want:w }, r);
+      p.answer = r.value;
+      delete p.answerShape; delete p.answerNote;
+      taken.add(i);
+      return;
+    }
+    NM_PROCESS_LOG.push({ thread:item.thread, level:item.level, seed:item.seed, index:w, reason:'no usable magic step' });
+    if(typeof console !== 'undefined') console.warn(`[exam] 과정 빈칸을 만들 줄이 없다: ${item.thread}@${item.level} (${w + 1})`);
+  });
+}
+/* 창의 회차 색 힌트(§3-4) — (2)(5)…, 과정 빈칸 문항 제외, 초등 학교 급·어린 학년만, 분수·소수·수의 성질·기준수 가족 제외.
+   덧뺄 place · 곱나눗 key · 짝 만들기/무지개 덧셈은 pair(짝 색). 결과는 p.__cpTint 에 남겨 w2CellHtml 이 칠한다. */
+function applyTrainColor(problems, item){
+  const c = cpCfg(), PV = window.NM_PLACE_COLOR;
+  if(!c || !PV || !problems || !item || !item.creative || !pvOn()) return;
+  if(c.colorSchoolTiers && c.colorSchoolTiers.indexOf(item.schoolTier || 'elem') < 0) return;
+  if((window.NM_MIDDLE_CONCEPTS || {})[item.thread]) return;
+  const conf = cpOf(item.thread, item.level);
+  if(conf.fam && c.noColorFamilies.indexOf(conf.fam) >= 0) return;
+  problems.forEach((p, i) => {
+    if(i % c.colorEvery !== c.colorOffset || p.__process || p.word || p.graph || !p.tex) return;
+    const raw = String(p.tex).replace(/=\s*\\square\s*$/, '').trim();
+    if(conf.fam && c.pairFamilies.indexOf(conf.fam) >= 0){
+      const pairs = PV.pairsOf(raw, conf.fam === 'F7' ? 'ends' : 'sum', c.maxPairs);
+      if(pairs.length){ p.__cpTint = { kind:'pair', pairs, key:conf.key || 0 }; return; }
+    }
+    const k = PV.kind(raw);
+    if(k) p.__cpTint = { kind:k, key:conf.key || 0 };
+  });
+}
+
 function drawingTableHtml(problem, solved){
   return `<table class="nm-draw-table"><tbody><tr><th>x</th>${problem.xValues.map(x=>`<td>${esc(String(x))}</td>`).join('')}</tr><tr><th>y</th>${problem.yValues.map(y=>`<td>${solved?esc(String(y)):'&nbsp;'}</td>`).join('')}</tr></tbody></table>`;
 }
