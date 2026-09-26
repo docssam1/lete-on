@@ -383,21 +383,14 @@ const SCENES = {
   /* 창의 연산 — Training Course 칸을 손글씨로 한 칸씩 채운다(stage-creative.html) */
   async creative(browser, base){ await stageScene(browser, base, 'creative', 'stage-creative.html?src=/__sheets/', 12.6); },
   /* 7. 끝 카드 */
-  async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 11.0); },
+  async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 9.0); },
 
-  /* 독쌤의 철학 — about.html 을 그대로 띄우고, 카메라로 짚으며 핵심 구절에 금빛 형광을 긋는다 */
-  async philosophy(browser, base){
-    const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:null });
-    await L.virtualTime(page);
-    await page.goto(base + '/number_magic/about.html');
-    await until(page, () => document.readyState === 'complete' && document.fonts.status === 'loaded', null, 60000);
-    await L.advance(page, 800, 100);
-    /* v3: 형광·카메라 박자를 지금 목소리 폴더의 n02 길이에 맞춘다(비율) — 목소리를 바꾸면 이 장면만 다시 찍으면 된다(1분) */
-    const D = narrDur('n02') || 11;
-    await page.evaluate(PHILO_SETUP, D);
-    await runScene('philosophy', page, { dur:0.5 + D + 1.0, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
-    await ctx.close();
-  },
+  /* 독쌤의 철학 — about.html 을 그대로 띄우고, 카메라로 짚으며 핵심 구절에 금빛 형광을 긋는다.
+     v4: 두 장면(n02 → philosophy, n03 → philosophy2). 형광·카메라 박자는 그 줄의 길이에 비례(narrDur) — compose.js 가
+     실제 목소리 길이에 맞춰 이 클립을 살짝 늘리거나 줄이므로(stretch) 목소리를 바꿔도 다시 찍지 않아도 된다. */
+  async philosophy(browser, base){ await philoScene(browser, base, 'philosophy', 'n02', 1); },
+  async philosophy2(browser, base){ await philoScene(browser, base, 'philosophy2', 'n03', 2); },
+
 
   /* 학습 속도 — 연산 로드맵 아래 '학습 속도' 카드에서 주 1회반→주 2회반 · 목표 빠르기 · 속도/양을 눌러 주·개월이 바뀌는 모습 */
   async pace(browser, base){
@@ -495,7 +488,20 @@ const SCENES = {
 };
 
 /* about.html — 찍는 동안에만 쓰는 카메라·형광펜(앱·페이지 파일은 그대로) */
-function PHILO_SETUP(D){
+async function philoScene(browser, base, name, nid, part){
+  const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:null });
+  await L.virtualTime(page);
+  await page.goto(base + '/number_magic/about.html');
+  await until(page, () => document.readyState === 'complete' && document.fonts.status === 'loaded', null, 60000);
+  await L.advance(page, 800, 100);
+  /* 줄 길이: 실제 파일이 있으면 그 길이, 없거나 짧으면 원고 글자 수로 어림(한국어 낭독 ≈ 0.15초/자) — 자리표시 목소리로 찍어도 박자가 크게 어긋나지 않게 */
+  const txt = (JSON.parse(fs.readFileSync(path.join(__dirname, 'narration.json'), 'utf8')).lines.find(l => l.id === nid) || {}).text || '';
+  const D = Math.max(narrDur(nid) || 0, txt.replace(/\s/g, '').length * 0.15);
+  await page.evaluate(PHILO_SETUP, [D, part]);
+  await runScene(name, page, { dur:0.5 + D + 0.9, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
+  await ctx.close();
+}
+function PHILO_SETUP([D, part]){
   const css = document.createElement('style');
   css.textContent = `.skipbtn,.lang-sw,.langsw,[class*="lang"]{visibility:hidden!important}
     html,body{overflow:hidden!important} body{transform-origin:0 0;will-change:transform}
@@ -505,62 +511,75 @@ function PHILO_SETUP(D){
   document.head.appendChild(css);
   const fade = document.createElement('div'); fade.id = 'srFade'; document.documentElement.appendChild(fade);
   window.scrollTo(0, 0);
-  /* 텍스트 한 조각(같은 텍스트 노드 안)을 span 으로 감싼다 */
   const wrapText = (root, phrase) => { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
     while((n = w.nextNode())){ const i = n.data.indexOf(phrase); if(i < 0) continue;
       const r = document.createRange(); r.setStart(n, i); r.setEnd(n, i + phrase.length); const s = document.createElement('span'); s.className = 'sr-hl'; r.surroundContents(s); return [s]; }
     return []; };
   const wrapEl = el => { const s = document.createElement('span'); s.className = 'sr-hl'; while(el.firstChild) s.appendChild(el.firstChild); el.appendChild(s); return [s]; };
   const q = s => document.querySelector(s);
-  const lead = q('[data-i18n="pLead"]');
+  const lead = q('[data-i18n="pLead"]'), phLead = q('[data-i18n="phLead"]');
   const G = {
-    thesis:wrapEl(q('[data-i18n="ch1Thesis"]')),
     h2:wrapEl(q('[data-i18n="pH2"]')),
-    think:wrapText(lead, '수를 가지고 놀며 사고하는 과정'),
+    phH2:wrapEl(q('[data-i18n="phH2"]')),
+    grammar:wrapText(phLead, '단어와 문법(공식)을 외우기만 해서는'),
+    free:wrapEl(phLead.querySelectorAll('b')[0]),
+    many:wrapEl(phLead.querySelectorAll('b')[1]),
     unfold:wrapEl(lead.querySelectorAll('b')[1]),
+    think:wrapText(lead, '수를 가지고 놀며 사고하는 과정'),
     conquer:[...wrapText(lead, '수를 정복하기 위한'), ...wrapEl(lead.querySelectorAll('b')[0]), ...wrapText(lead, '의 철학')],
     q1:wrapEl(q('[data-i18n="qLine1"]')),
     q2:wrapEl(q('[data-i18n="qLine2"]')),
   };
   const docRect = el => { const r = el.getBoundingClientRect(); return { x:r.left + scrollX, y:r.top + scrollY, w:r.width, h:r.height }; };
-  const A = docRect(q('.chapter .folio')), T = docRect(q('[data-i18n="ch1Thesis"]')), H = docRect(q('[data-i18n="pH2"]')), Ld = docRect(lead), PQ = docRect(q('.pullquote')), CT = docRect(q('.cta-body h2'));
+  const T = docRect(q('[data-i18n="ch1Thesis"]')), H = docRect(q('[data-i18n="pH2"]')), Ld = docRect(lead), PH = docRect(q('[data-i18n="phH2"]')), PL = docRect(phLead), PQ = docRect(q('.pullquote')), CT = docRect(q('.cta-body h2'));
   const W = innerWidth, Hh = innerHeight;
-  /* 카메라 키: [시각, 중심x, 중심y, 배율] */
-  /* v3 원고: "연산만… 아닙니다(0~27%) · 독쌤의 철학이 그대로 들어간 수의 마법(27~48%) · 수는 마법이고, 생각과 문장이(48~75%) · 수를 정복해야 수학을 정복(75~100%)" */
   const a0 = 0.5, at = f => a0 + f * D;
-  const K = [
-    [0.0,     H.x + H.w * 0.52, H.y + H.h * 0.5, 1.75],
-    [at(.22), H.x + H.w * 0.56, H.y + H.h * 0.5, 1.8],
-    [at(.30), Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.4, 1.7],
-    [at(.44), Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.42, 1.72],
-    [at(.50), T.x + 260, T.y + T.h * 0.5 + 40, 1.8],
-    [at(.60), T.x + 300, (T.y + H.y + H.h) / 2, 1.6],
-    [at(.66), Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.45, 1.7],
-    [at(.76), (H.x + Ld.x + Ld.w) / 2, (T.y + Ld.y + Ld.h) / 2 + 30, 1.22],
-    [at(1) + 1.0, (H.x + Ld.x + Ld.w) / 2, (T.y + Ld.y + Ld.h) / 2 + 30, 1.26],
-  ];
   const ease = t => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
   const camAt = (K, t) => { let i = 0; while(i < K.length - 2 && K[i + 1][0] <= t) i++; const a = K[i], b = K[i + 1] || a;
     const u = b === a ? 0 : ease((t - a[0]) / (b[0] - a[0])); return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, Math.exp(Math.log(a[3]) + (Math.log(b[3]) - Math.log(a[3])) * u)]; };
-  const HL = [['h2', at(.04), 1.0], ['conquer', at(.30), 1.0], ['thesis', at(.49), 0.6], ['think', at(.60), 0.8], ['unfold', at(.68), 0.7], ['conquer2', at(.80), 0.5]];
-  G.conquer2 = [];
+  let K, HL, fades = [], glow = null;
+  if(part === 1){
+    /* n02: 답을 빨리 구하는 계산 학습이 아닙니다(0–.2) · 연산만/창의 연산만 아닙니다(.2–.42) · 수는 언어입니다(.42–.52) · 단어와 문법만(.52–.72) · 내 마음대로 펼칠 수 있어야(.72–1) */
+    K = [
+      [0.0,     H.x + H.w * 0.52, H.y + H.h * 0.5, 1.75],
+      [at(.18), H.x + H.w * 0.56, H.y + H.h * 0.5, 1.82],
+      [at(.405), H.x + H.w * 0.56, H.y + H.h * 0.5, 1.82],
+      [at(.415), PH.x + 330, (PH.y + PL.y + PL.h) / 2 - 10, 1.5],
+      [at(.72), PH.x + 340, (PH.y + PL.y + PL.h) / 2, 1.54],
+      [at(1) + .9, PH.x + 340, (PH.y + PL.y + PL.h) / 2 + 4, 1.58],
+    ];
+    HL = [['h2', at(.02), 1.0], ['phH2', at(.44), 0.5], ['grammar', at(.53), 0.8], ['free', at(.74), 0.6], ['many', at(.86), 0.6]];
+    fades = [[at(.37), at(.45)]];
+  } else {
+    /* n03: 내가 다루기 쉬운 수로 펼치고(0–.25) · 생각하는 힘과 문장을 읽는 힘(.25–.55) · 수를 정복해야 수학을 정복(.55–.78) · 이것이 독쌤의 철학(.78–1) */
+    K = [
+      [0.0,     Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.45, 1.66],
+      [at(.33), Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.45, 1.72],
+      [at(.34), PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 + 8, 1.55],
+      [at(.675), PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 - 6, 1.62],
+      [at(.685), Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.42, 1.7],
+      [at(1) + .9, Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.42, 1.76],
+    ];
+    HL = [['unfold', at(.02), 0.8], ['think', at(.26), 0.8], ['q1', at(.36), 0.8], ['q2', at(.5), 0.8], ['conquer', at(.7), 0.9]];
+    fades = [[at(.30), at(.37)], [at(.645), at(.715)]];
+    glow = at(.86);
+  }
   window.__phRender = t => {
     const [cx, cy, s] = camAt(K, t);
     document.body.style.transform = `translate(${W / 2 - cx * s}px,${Hh / 2 - cy * s}px) scale(${s})`;
-    fade.style.opacity = 0;
+    let f = 0; for(const [a, b] of fades){ const m = (a + b) / 2, d = (b - a) / 2; if(t > a && t < b) f = 1 - Math.abs(t - m) / d; }
+    fade.style.opacity = f;
     for(const [k, t0, d] of HL){ const els = G[k]; const n = els.length;
       els.forEach((e, i) => { const u = Math.max(0, Math.min(1, ((t - t0) / d) * n - i)); e.style.backgroundSize = `${(u * 100).toFixed(1)}% 100%`; }); }
-    /* 마지막 "수를 정복해야 수학을 정복" — 정복 구절이 금빛으로 한 번 빛난다 */
-    const g = Math.max(0, 1 - Math.abs(t - at(.86)) / 0.6);
-    G.conquer.forEach(e => { e.style.textShadow = g > 0.01 ? `0 0 ${14 * g}px rgba(245,190,80,${0.9 * g})` : ''; });
+    if(glow != null){ const g = Math.max(0, 1 - Math.abs(t - glow) / 0.6); G.conquer.forEach(e => { e.style.textShadow = g > 0.01 ? `0 0 ${14 * g}px rgba(245,190,80,${0.9 * g})` : ''; }); }
   };
   window.__phRender(0);
 }
 
 /* 지금 쓰는 목소리 폴더(SR_VOICE, 기본 omnivoice)의 내레이션 길이(초) */
 function narrDur(n){
-  const dir = path.join(__dirname, 'narration', process.env.SR_VOICE || 'omnivoice');
-  const f = path.join(dir, n + '.mp3'); if(!fs.existsSync(f)) return 0;
+  const cands = [process.env.SR_VOICE, 'omnivoice-rec', 'omnivoice', 'ko-KR-Chirp3-HD-Leda'].filter(Boolean).map(v => path.join(__dirname, 'narration', v, n + '.mp3'));
+  const f = cands.find(p => fs.existsSync(p)); if(!f) return 0;
   const r = require('child_process').spawnSync(L.FF, ['-hide_banner', '-i', f], { encoding:'utf8' });
   const m = String(r.stderr).match(/Duration: (\d+):(\d+):([\d.]+)/); return m ? +m[1] * 3600 + +m[2] * 60 + +m[3] : 0;
 }
@@ -584,7 +603,7 @@ async function stageScene(browser, base, name, url, dur){
 
 (async () => {
   const want = process.argv.slice(2).filter(a => !a.startsWith('--'));
-  const all = ['mapreveal', 'diagnose', 'compare', 'creative3', 'title', 'philosophy', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
+  const all = ['mapreveal', 'diagnose', 'compare', 'creative3', 'title', 'philosophy', 'philosophy2', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
   const list = want.length ? want : all;
   const { server, base } = await L.serve({ '/__sheets/':path.join(OUT, 'sheets-src') });
   const browser = await L.launch();
