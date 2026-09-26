@@ -70,11 +70,13 @@ async function foldAll(page, p) {
   assert.equal(await page.locator(".layer-badge").count(), 0);
   const stacks = await page.locator(".cut-step .paper-diagram").evaluate((svg) => ({
     depth: Number(svg.dataset.stackDepth), sides: svg.querySelectorAll(".paper-stack-side").length,
-    layers: svg.querySelectorAll(".paper-stack-layer").length
+    layers: svg.querySelectorAll(".paper-stack-layer").length,
+    viewBox: [svg.viewBox.baseVal.x, svg.viewBox.baseVal.y, svg.viewBox.baseVal.width, svg.viewBox.baseVal.height]
   }));
   assert.equal(stacks.depth, 2 ** p.folds.length - 1);
   assert.equal(stacks.layers, stacks.depth);
   assert.ok(stacks.sides >= stacks.depth);
+  assert.deepEqual(stacks.viewBox, [-stacks.depth * 3.5, -stacks.depth * 3.5, 200 + stacks.depth * 7, 200 + stacks.depth * 7]);
 }
 async function sideAll(page, p) {
   for (const step of p.unfoldSteps) await touch(page, step.answer);

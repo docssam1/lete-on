@@ -51,7 +51,6 @@ const text = {
     countHolesPrompt: "완전히 펼쳤을 때 생기는 구멍 수를 고르세요.",
     holeResultPrompt: "두 번 거꾸로 펼쳤을 때의 구멍 위치를 고르세요.",
     piecesUnit: "조각", holesUnit: "개",
-    layerCount: "{count}겹",
     side_left: "왼쪽", side_right: "오른쪽", side_top: "위쪽", side_bottom: "아래쪽", side_upper: "대각선 위쪽", side_lower: "대각선 아래쪽",
     soundOn: "소리 켜기", soundOff: "소리 끄기"
   },
@@ -225,7 +224,8 @@ function paperSvg({ fold = null, polygon = null, segments = [], holes = [], mark
   const baseShape = shape || [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
   const clipId = `clip-${marker}`;
   const stackDepth = Math.max(0, layerCount - 1);
-  const edgeStep = layerCount > 2 ? 3.4 : 5;
+  const edgeStep = 7;
+  const viewPadding = stackDepth * edgeStep / 2;
   const winding = Math.sign(baseShape.reduce((sum, point, index) => {
     const next = baseShape[(index + 1) % baseShape.length];
     return sum + point.x * next.y - next.x * point.y;
@@ -266,7 +266,7 @@ function paperSvg({ fold = null, polygon = null, segments = [], holes = [], mark
   const cutAnchor = segments[0]?.[0] || marks.find((mark) => mark.kind === "polygon")?.points?.[0];
   const scissors = showScissors && cutAnchor ? `<text class="scissors" x="${20 + cutAnchor.x * 160 - 8}" y="${20 + cutAnchor.y * 160 - 6}">✂</text>` : "";
   const foldClass = fold ? ` fold-${fold.axis}-${fold.side}` : "";
-  return `<svg class="paper-diagram view-${view}${touchStep ? " is-touchable" : ""}${foldClass}" data-touch-action="${touchAction}" data-fold-axis="${fold?.axis || touchStep?.axis || ""}" data-fold-side="${fold?.side || ""}" data-stack-depth="${stackDepth}" viewBox="0 0 200 200" role="${touchStep ? "group" : "img"}" aria-label="${label}">
+  return `<svg class="paper-diagram view-${view}${touchStep ? " is-touchable" : ""}${foldClass}" data-touch-action="${touchAction}" data-fold-axis="${fold?.axis || touchStep?.axis || ""}" data-fold-side="${fold?.side || ""}" data-stack-depth="${stackDepth}" viewBox="${-viewPadding} ${-viewPadding} ${200 + viewPadding * 2} ${200 + viewPadding * 2}" role="${touchStep ? "group" : "img"}" aria-label="${label}">
     <defs><clipPath id="${clipId}"><polygon points="${points(baseShape)}"/></clipPath><marker id="${marker}" markerWidth="11" markerHeight="11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L11 5.5 L0 11 Z"/></marker></defs>
     ${paperShape}${markShapes(marks, removed)}${crease}${movingFace}${foldArrow}${segmentLines(segments)}${holeCircles(holes)}${scissors}${touchZonesHtml(touchStep, clipId)}
   </svg>`;
