@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<!-- 쇼릴 자막 한 장(투명 PNG) — compose.js 가 ?ko=&en=&n=&pos= 로 열어 찍고 ffmpeg 로 영상 위에 겹친다.
+     밝은 신비(Luminous Arcana): 먹빛 남색 글자 · 서리 진주 알약 · 금실 한 줄 · 세리프. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,300..500&family=Hahmlet:wght@500;600&family=Gowun+Batang:wght@700&display=swap">
+<style>
+  html,body{margin:0;background:transparent;width:1920px;height:1080px;overflow:hidden}
+  .cap{position:absolute;display:flex;align-items:center;gap:26px;padding:26px 44px 26px 30px;border-radius:999px;
+    background:linear-gradient(135deg,rgba(255,255,255,.93) 0%,rgba(246,242,255,.92) 40%,rgba(238,250,246,.92) 75%,rgba(255,250,238,.93) 100%);
+    box-shadow:0 18px 50px rgba(30,36,64,.22),0 2px 0 rgba(255,255,255,.9) inset,0 0 0 1.5px rgba(201,164,76,.55);
+    color:#26304a}
+  .cap::after{content:"";position:absolute;left:34px;right:34px;bottom:10px;height:1px;background:linear-gradient(90deg,rgba(201,164,76,0),rgba(201,164,76,.85) 20%,rgba(201,164,76,.85) 80%,rgba(201,164,76,0))}
+  .num{flex:0 0 auto;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;
+    font:italic 500 27px/1 'Fraunces',Georgia,serif;color:#8a6a1f;background:radial-gradient(circle at 35% 30%,#fffaf0,#f3e6c4);box-shadow:0 0 0 1.5px rgba(201,164,76,.75),0 4px 12px rgba(160,120,40,.18)}
+  .txt{display:flex;flex-direction:column;gap:6px}
+  .ko{font:600 42px/1.2 'Hahmlet','Gowun Batang',serif;letter-spacing:-.01em;white-space:nowrap}
+  .en{font:italic 400 25px/1.2 'Fraunces',Georgia,serif;color:#5a6380;letter-spacing:.01em;white-space:nowrap}
+  .bl{left:72px;bottom:64px} .bc{left:50%;bottom:64px;transform:translateX(-50%)} .tl{left:72px;top:64px} .br{right:72px;bottom:64px}
+</style></head>
+<body>
+<div class="cap" id="cap"><div class="num" id="n"></div><div class="txt"><div class="ko" id="ko"></div><div class="en" id="en" lang="en"></div></div></div>
+<script>
+  const q = new URLSearchParams(location.search);
+  document.getElementById('ko').textContent = q.get('ko') || '';
+  document.getElementById('en').textContent = q.get('en') || '';
+  const n = q.get('n'); if(n) document.getElementById('n').textContent = n; else document.getElementById('n').remove();
+  document.getElementById('cap').classList.add(q.get('pos') || 'bl');
+  document.fonts.ready.then(() => { window.__ready = true; });
+</script>
+</body></html>
