@@ -30,6 +30,8 @@ load('engine/rng.js');
 load('engine/threads/mid9.js');
 load('data/threads.js');
 load('data/middle-pacing.js');
+load('data/wordable.js');
+load('data/courses.js');
 load('app/exam.js');
 
 const gen = w.NM_TGEN.md64_linearInequality;
@@ -117,14 +119,11 @@ assert.throws(
   err => err && err.code === 'NM_UNIQUE_POOL_EXHAUSTED'
 );
 
-// Pacing: easy recognition gets 12 items, while solving/integers retain 24 each (60 total).
-const session = w.NM_MIDDLE_PACING.grades[2].sessions.find(s => s.id === 'M2-S06');
-assert(session);
-assert.deepEqual(JSON.parse(JSON.stringify(session.blocks)), [
-  { t:'MD64', lv:4, n:12, role:'practice' },
-  { t:'MD64', lv:2, n:24, role:'practice' },
-  { t:'MD64', lv:3, n:24, role:'practice' }
-]);
+// 2026-09-25 통합: 정규 과정 C33 이 MD64 L2·L3·L4 를 교과로 싣고(각 12문항 이상), 옛 번호 M2-S06 은 L4 가 실린 회차로 이어진다.
+const c33 = w.NM_COURSES.C33.sessions.filter(s => !s.test);
+for (const lv of [2, 3, 4]) assert(c33.some(s => s.school.some(d => d.t === 'MD64' && d.lv === lv && d.count >= 12)), 'C33 must schedule MD64 L' + lv);
+const session = w.NM_MIDDLE_PACING.getSession(2, 'M2-S06');
+assert(session && session.blocks.some(b => b.t === 'MD64' && b.lv === 4), 'legacy M2-S06 must open the session with MD64 L4');
 
 const learnerFit = {
   id:'learner-fit', learner_stage:'중2 1학기 일차부등식',

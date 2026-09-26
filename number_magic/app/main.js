@@ -238,6 +238,11 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      보여 주면 그 자체가 과약속 쪽으로 기운다(원장 지시로 넣은 "연산 트랙만
      센 주차" 단서와 같은 원칙). 더 빠른 기준을 원하면 직접 고르면 된다. */
   roadPace:'p2',
+  /* 속도·양 배수(2026-09-25, 원장 "고정하고 속도 양 조절하기 기능 추가하자 기본값을 두고 1.5배까지").
+     기본 1배 = 정해 둔 편성(회차 30분·중2·중3 40분) 그대로. 둘은 따로 고른다. 줄이기는 30%(0.7배)까지.
+     roadSpeed — 같은 기간에 회차를 더 많이 나감: 로드맵의 주차·개월을 1/배수로 줄인다(회차·내용은 그대로).
+     roadAmount — 한 회차 교과 드릴 문항 수를 배수만큼(exam.js getAmount, 6의 배수·상한 지킴). */
+  roadSpeed:1, roadAmount:1,
   roadPrints:{}, /* 연산 로드맵 세션 인쇄 회수(2026-09-04) — {'C5-0':2, 'C7-3':1, ...}
     key=courseKey+'-'+sessionIdx. exam.js showRoadPick의 "인쇄 N장" 표시·재인쇄 버튼용,
     잠금과 무관한 순수 카운터라 지워져도 학습에 지장 없음. */
@@ -276,6 +281,10 @@ if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
    아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
    이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
 if(['p0','p1','p2','p3','p4'].indexOf(S.roadPace)<0)S.roadPace='p2';
+/* 속도·양 배수 — 줄이기 30%(0.7)부터 늘리기 1.5배까지(원장 2026-09-25) */
+const ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
+if(ROAD_MULTS_LIST.indexOf(S.roadSpeed)<0)S.roadSpeed=1;
+if(ROAD_MULTS_LIST.indexOf(S.roadAmount)<0)S.roadAmount=1;
 if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
@@ -292,6 +301,8 @@ if(!S.account)S.account={status:hadSave?'active':'trial',code:null,checkedAt:0};
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
+/* 학습량 배수는 인쇄 쪽(exam.js)이 읽는 자리에 옮겨 둔다 — 학생을 바꾸면 그 학생 값으로 */
+function syncAmount(){ try{ if(window.NM_EXAM&&NM_EXAM.setAmount) NM_EXAM.setAmount(S.roadAmount||1); }catch(e){} }
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
 
 /* ---------- 프로필 슬롯 3개 (원장 지시, 형제가 한 기기를 같이 쓸 수 있게) ----------
@@ -904,6 +915,7 @@ function bgKeyForView(){
 }
 
 function render(){
+  syncAmount();
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
   document.documentElement.dataset.nmBg=bgKeyForView();   // 설명·안내 화면 뒤에 깔 사진(styles.css body::before)
@@ -2194,12 +2206,11 @@ function enterContinueUnit(uid, fromCourseRoad){
    화면에 쓰는 숫자는 전부 data/courses.js에서 그때그때 계산한다(하드코딩 없음).
    - 세션 수      = NM_COURSES['C\'+n].sessions.length
    - 주 1회 주차  = 세션 수
-   - 주 2회 주차  = 올림(세션 수 × 2 ÷ 3)
+   - 주 2회 주차  = 올림(세션 수 ÷ 2)
 
-   ★ 주 2회는 두 배가 아니다. 주차가 3분의 2로 줄 뿐이고, 그 기간에 두 배로
-     만나므로 핵심 세션을 빼고 남는 회차가 생긴다. 그 남는 회차를 창의수연
-     개념 보강과 다지기에 쓴다 — "더 빨리"가 아니라 "더 확실히"가 요점이다.
-     화면 어디에도 "두 배"라고 쓰지 않는다.
+   ★ 2026-09-25 원장 "일주일에 2번 기준인거야" — 주 2회는 **한 주에 두 회차**를 나간다.
+     전에는 세 번째 만남마다 보강으로 빼서 ceil(세션×2/3)로 셌는데, 중등 진도 보기(ceil(회차/2))와
+     화면마다 주차가 달랐다. 전 화면을 ceil(회차/2) 하나로 맞췄다. 보강은 속도·양 조절(0.7배 등)로 한다.
 
    ★ 주차는 연산 트랙만 센 것이다. 원장이 준 GFIELD 로드맵 리포트는 교과·사고력1·
      사고력2·연산을 나란히 놓고 연산 줄에 "연산병행"이라고 적는다. 즉 실제 학원
@@ -2330,9 +2341,9 @@ function courseProgress(c){
   const ids=courseUnitIds(c);
   return { done: ids.filter(u=>stepDone(u,'stamp')).length, total: ids.length };
 }
-/* 주차 — 주 1회는 세션 수 그대로, 주 2회는 그 3분의 2(올림) */
+/* 주차 — 주 1회는 세션 수 그대로, 주 2회는 절반(올림) — 한 주에 두 회차 */
 function courseWeeks(nSessions, cadence){
-  return cadence==='w2' ? Math.ceil(nSessions*2/3) : nSessions;
+  return cadence==='w2' ? Math.ceil(nSessions/2) : nSessions;
 }
 /* ── 목표 기준 배수 ──
    기준 길이 = 연산 구간(과정 1~ROAD_OP_LAST)의 주 1회 개월. courses.js에서
@@ -2355,13 +2366,6 @@ function roadPaceMult(key){
    두고 배수만 곱한다. 한 주보다 짧아지지는 않는다. */
 function coursePaceWeeks(nSessions, cadence, mult){
   return Math.max(1, Math.round(courseWeeks(nSessions,cadence)*(mult||1)));
-}
-/* 주 2회반에서 핵심 세션을 뺀 나머지 회차 = 창의수연 개념 보강·다지기 몫.
-   기간이 늘면 만나는 횟수도 늘어나므로 실제로 쓰는 주차에서 센다
-   (배수 1이면 예전 값과 똑같다). */
-function courseExtraMeets(nSessions, weeks){
-  const w=(weeks===undefined)?Math.ceil(nSessions*2/3):weeks;
-  return Math.max(0, w*2 - nSessions);
 }
 /* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함).
    합계 주차는 과정별로 반올림한 값을 더하지 않고 구간 전체에 배수를 한 번
@@ -2495,11 +2499,12 @@ function middlePacingHtml(tier){
     return `${th?L(th.name):b.t} · ${lv?L(lv.label):'L'+b.lv} ${b.n}문항`;
   };
   return `<details class="nm-middle-pacing" id="middlePacing${grade}">
-    <summary>${esc(plan.title)}<span>주 2회 · 7주 · 14회 권장안 펼치기</span></summary>
+    <summary>${esc(plan.title)}<span>주 2회 · ${plan.weeks}주 · ${plan.sessions.length}회 펼치기</span></summary>
     <p class="nm-mp-intro">${esc(plan.scope)}.<br>
-      한 번에 관련 개념 1~3개를 묶습니다. <strong>쉬운 갈래 12문항 · 핵심 연습 24문항 · 집중 반복 36문항</strong>으로 충분히 연습합니다.
-      시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 7주 진도에 맞추려고 이해를 건너뛰지 마세요.
-      디딤돌의 개념 순서를 참고한 자체 편성으로, 교재의 모든 소유형이나 2학기 전체를 마쳤다는 뜻은 아닙니다.</p>
+      <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
+      위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다. 한 회는 하루 약 ${plan.grade===1?30:40}분 —
+      <strong>교과 연산 → 창의 연산 → 적용</strong> 순서이고, 쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.
+      시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</p>
     <ol class="nm-mp-sessions">${plan.sessions.map(s=>{
       const count=s.blocks.reduce((n,b)=>n+b.n,0);
       const draw=s.blocks.filter(b=>b.kind==='drawing').reduce((n,b)=>n+b.n,0);
@@ -2513,7 +2518,7 @@ function middlePacingHtml(tier){
     }).join('')}</ol>
     <p class="nm-mp-notes">${plan.notes.map(esc).join('<br>')}
       ${(plan.supplementary||[]).map(b=>{const th=(window.NM_THREADS||{})[b.t];const lv=th&&(th.levels||[]).find(l=>l.id===b.lv);return `<br>추천 보충: ${esc(th?L(th.name):b.t)} · ${esc(lv?L(lv.label):'L'+b.lv)} — ${esc(b.reason)}`;}).join('')}
-      <br>기존 과정의 회차와 학습 기록은 유지됩니다. 이 표는 자동 진급·완주 판정이 아닙니다.</p>
+      학습 기록은 정규 과정 회차에 그대로 남습니다. 이 표는 자동 진급·완주 판정이 아닙니다.</p>
   </details>`;
 }
 
@@ -3165,7 +3170,8 @@ function screenCourseRoad(){
   function draw(keepScroll){
     const cad=S.roadCadence;
     const pace=roadPaceDef(S.roadPace).key;
-    const mult=roadPaceMult(pace);
+    const speed=S.roadSpeed||1;
+    const mult=roadPaceMult(pace)/speed;
     const opTotals=roadTotals(0,ROAD_OP_LAST,cad,mult);
     const allTotals=roadTotals(0,lastNum,cad,mult);
     /* 콘텐츠 준비 현황은 매번 데이터에서 센다 — 숫자를 박아 두지 않는다. */
@@ -3210,9 +3216,9 @@ function screenCourseRoad(){
         <button class="${cad==='w2'?'on':''}" data-cad="w2"${cad==='w2'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 2회반','Twice a week','每周2次')}</button>
       </div>
       <p class="nm-cr-cadnote">${cad==='w2'
-        ? lk('주 2회라고 두 배 빨라지지는 않아요. 한 과정에 걸리는 주차가 3분의 2로 줄고, 그동안 두 배로 만나니 남는 회차가 생겨요. 그 회차는 창의수연 개념을 더 넣고 다지는 데 써서 더 탄탄해져요.',
-             'Meeting twice a week does not make it twice as fast. A course takes about two thirds of the weeks, and the extra meetings go into creative-thinking concepts and consolidation — so it gets sturdier, not just quicker.',
-             '每周2次并不会快一倍。一个课程所需的周数约减为三分之二，多出来的课次用来加入创意思维概念和巩固练习——不只是更快，而是更扎实。')
+        ? lk('한 주에 두 회차씩 나아가요. 한 과정에 걸리는 주차가 절반이 돼요. 더 다지고 싶으면 아래 속도를 낮추면 돼요.',
+             'Two sessions a week — a course takes half the weeks. To consolidate more, lower the speed below.',
+             '每周前进两节课，一个课程所需周数减半。想多巩固，可在下面调低速度。')
         : lk('한 주에 한 세션씩 나아가요. 과정마다 마지막은 확인 세션이에요.',
              'One session per week. Each course ends with a check session.',
              '每周前进一节课。每个课程最后是一次检查课。')}</p>
@@ -3220,7 +3226,7 @@ function screenCourseRoad(){
         <div class="nm-cr-cad-h">${lk('목표 기준','Target pace','目标标准')}</div>
         <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 기준','Target pace','目标标准')}">
           ${ROAD_PACES.map(p=>{
-            const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)).months;
+            const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)/speed).months;
             return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
               <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} ${mo}${lk('개월','mo','个月')}</small></button>`;
           }).join('')}
@@ -3228,6 +3234,18 @@ function screenCourseRoad(){
         <p class="nm-cr-pacenote">${lk('같은 길을 어느 속도로 걷느냐만 달라요. 배우는 순서와 내용은 그대로예요. 언제든 바꿔 볼 수 있어요.',
              'Only the walking speed changes — the order and the content of the path stay the same. Switch any time.',
              '只是走这条路的速度不同，学习顺序和内容都一样。随时可以切换。')}</p>
+      </div>
+      <div class="nm-cr-pace nm-cr-mult">
+        <div class="nm-cr-cad-h">${lk('속도 · 양 조절','Speed · amount','速度 · 分量')}</div>
+        <div class="nm-cr-multrow"><span>${lk('속도','Speed','速度')}</span>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>
+            `<button class="${speed===v?'on':''}" data-speed="${v}" aria-pressed="${speed===v?'true':'false'}">${v===1?lk('기본','1×','默认'):v+lk('배','×','倍')}</button>`).join('')}</div></div>
+        <div class="nm-cr-multrow"><span>${lk('양','Amount','分量')}</span>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>
+            `<button class="${S.roadAmount===v?'on':''}" data-amount="${v}" aria-pressed="${S.roadAmount===v?'true':'false'}">${v===1?lk('기본','1×','默认'):v+lk('배','×','倍')}</button>`).join('')}</div></div>
+        <p class="nm-cr-pacenote">${lk('기본은 정해 둔 편성 그대로예요(한 회 30분, 중2·중3 40분). 0.7배까지 줄이고 1.5배까지 늘릴 수 있어요. 속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요. 양은 그 주 배우는 계산 문항 수예요(복습·창의·적용은 그대로, 같은 문제는 되풀이하지 않아요).',
+             'Default is the set plan (30 min a session; 40 for middle grades 2–3). Go down to 0.7× or up to 1.5×. Faster speed covers more sessions in the same time, so weeks and months shrink; slower stretches them. Amount is how many problems of that week\'s calculation (review, creative and applying stay the same; problems never repeat).',
+             '默认即既定安排（每次30分钟，初二·初三40分钟）。可减到0.7倍、加到1.5倍。提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。分量是本周所学运算的题数（复习·创意·应用不变，题目不重复）。')}</p>
       </div>
       <div class="nm-cr-cad-h sub">${lk('이 속도로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
       <div class="nm-cr-totals">
@@ -3317,7 +3335,6 @@ function screenCourseRoad(){
       {
         const n=(c.sessions||[]).length;
         const wk=coursePaceWeeks(n,cad,mult);
-        const extra=courseExtraMeets(n,wk);
         const prog=courseProgress(c);
         const built=courseBuilt(c);
         const isNow=x.key===curKey;
@@ -3344,7 +3361,7 @@ function screenCourseRoad(){
             <span class="nm-cr-num">${x.num}${isDone?'<i class="nm-cr-flag">🏳️</i>':''}</span>
             <span class="nm-cr-nbody">
               <b>${esc(L(c.title))}${c.boss?' 👑':isTower?' 🗼':''}</b>
-              <span class="nm-cr-meta">${lk('세션','Sessions','课节')} ${n} · ${wk}${lk('주','wk','周')}${cad==='w2'&&extra>0?` · ${lk('보강','Extra','加强')} ${extra}${lk('회','','次')}`:''}</span>
+              <span class="nm-cr-meta">${lk('세션','Sessions','课节')} ${n} · ${wk}${lk('주','wk','周')}</span>
               ${!built?`<span class="nm-cr-soon">${lk('준비 중','Coming soon','准备中')}</span>`:''}
             </span>
             <span class="nm-cr-state">${locked?'🔒':stateLabel}</span>
@@ -3398,6 +3415,12 @@ function screenCourseRoad(){
     });
     body.querySelectorAll('.nm-cr-pacebtn[data-pace]').forEach(el=>{
       el.onclick=()=>{ S.roadPace=el.dataset.pace; save(); draw(true); };
+    });
+    body.querySelectorAll('.nm-cr-seg button[data-speed]').forEach(el=>{
+      el.onclick=()=>{ S.roadSpeed=+el.dataset.speed; save(); draw(true); };
+    });
+    body.querySelectorAll('.nm-cr-seg button[data-amount]').forEach(el=>{
+      el.onclick=()=>{ S.roadAmount=+el.dataset.amount; save(); syncAmount(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
@@ -5242,9 +5265,27 @@ function stepDiscover(body,u){
           m?`${m.icon} ${esc(L(m.name))}`:'🧪 '+labLead}</button>`;
       }).join('')}</div>`
     :'';
-  body.innerHTML=`<div class="nm-card${kid?' kid-note':''}">
+  /* 매거진형(2026-09-25, 원장 "이런 식으로 매거진 형으로 … 풀고 싶게" · "이렇게 디자인 둘 다") — 인쇄의
+     수학 이야기·개념 노트와 같은 짜임: 키커 · 큰 제목 · 여는 물음 · 이야기 카드(두 컷 + 역사 문단) · 네 컷 띠 ·
+     개념 노트. 유아(kid-note)는 예전 그림책 모양 그대로. 내용은 전부 유닛·만화 데이터. */
+  const mzKick=(ko,en,zh)=>`<div class="nm-mzu-kick">${S.lang==='ko'?ko:S.lang==='en'?en:zh}</div>`;
+  const mzStory=(!kid&&st)?`<div class="nm-mzu">
+      ${mzKick('MATH STORY · 수학 이야기','MATH STORY','MATH STORY · 数学故事')}
+      <div class="nm-mzu-top"><div><h2 class="nm-mzu-title">${esc(L(u.title))}</h2>
+        ${st.hook?`<p class="nm-mzu-sub">${L(st.hook)}</p>`:''}</div>
+        <img class="nm-mzu-char" src="${isMidHigh?'assets/docssam.png':'assets/characters/numi-0-happy.png'}" alt=""></div>
+      ${artHtml}
+      ${comic?`<div class="nm-mzu-story"><div class="nm-mzu-story-art">${comic.panels.slice(0,2).map(p=>`<div>${p.art}</div>`).join('')}</div>
+        <div class="nm-mzu-story-txt"><div class="nm-mzu-mini">${S.lang==='ko'?'그때 이야기':S.lang==='en'?'Back then':'那时的故事'}</div>
+        ${st.history?`<p>${L(st.history)}</p>`:''}</div></div>
+      <div class="nm-mzu-sec"><span>01—0${Math.min(4,comic.panels.length)}</span>${S.lang==='ko'?'네 컷으로 읽기':S.lang==='en'?'The story in four frames':'四格读故事'}</div>
+      <div class="nm-mzu-strip">${comic.panels.slice(0,4).map((p,i)=>`<figure><div class="nm-mzu-strip-art">${p.art}</div><figcaption><i>${i+1}</i>${L(p.text)}</figcaption></figure>`).join('')}</div>`
+      :(st.history?`<div class="nm-mzu-story solo"><div class="nm-mzu-story-txt"><div class="nm-mzu-mini">${S.lang==='ko'?'그때 이야기':S.lang==='en'?'Back then':'那时的故事'}</div><p>${L(st.history)}</p></div></div>`:'')}
+      ${mzKick('CONCEPT · '+L(d.title),'CONCEPT · '+L(d.title),'CONCEPT · '+L(d.title))}
+    </div>`:'';
+  body.innerHTML=`<div class="nm-card${kid?' kid-note':''}${mzStory?' nm-mzu-card':''}">
     ${kid?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
-    <div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}<div id="cstages"></div>
+    ${mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   body.querySelectorAll('.nm-lab-link[data-lab]').forEach(el=>{

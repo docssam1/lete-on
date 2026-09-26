@@ -117,13 +117,16 @@ function eventProblem(model){
     rule=String(model.k);
   }else if(model.kind==='multiple'){
     condition=`${model.d}의 배수`; conditionEn=`a multiple of ${model.d}`; conditionZh=`${model.d}的倍数`;
-    tex=`1\\le x\\le ${model.n},\\quad ${model.d}\\mid x\\quad\\Rightarrow\\quad\\square\\text{가지}`;
-    rule=`\\left\\lfloor\\dfrac{${model.n}}{${model.d}}\\right\\rfloor`;
+    /* 나누어떨어짐 기호(∣)·바닥/천장 함수는 중학교 교과 기호가 아니다(2026-09-25) — 말과 몫으로 */
+    tex=`1\\le x\\le ${model.n},\\quad x\\text{는 ${model.d}의 배수}\\quad\\Rightarrow\\quad\\square\\text{가지}`;
+    rule=`${model.n}\\div ${model.d}\\text{의 몫}`;
   }else{
     const odd=model.kind==='odd';
     condition=odd?'홀수':'짝수'; conditionEn=odd?'odd':'even'; conditionZh=odd?'奇数':'偶数';
     tex=`1\\le x\\le ${model.n},\\quad x\\text{는 ${condition}}\\quad\\Rightarrow\\quad\\square\\text{가지}`;
-    rule=odd?`\\left\\lceil\\dfrac{${model.n}}2\\right\\rceil`:`\\left\\lfloor\\dfrac{${model.n}}2\\right\\rfloor`;
+    /* 홀수 개수 = n 이 홀수면 (n+1)÷2, 짝수 개수 = n 이 홀수면 (n−1)÷2 — 짝수 n 은 둘 다 n÷2 */
+    const nOdd=model.n%2===1;
+    rule=!nOdd?`${model.n}\\div 2`:odd?`(${model.n}+1)\\div 2`:`(${model.n}-1)\\div 2`;
   }
   return baseProblem(
     L3(`1부터 ${model.n}까지 적힌 카드에서 ${condition}인 카드를 한 장 고를 때, 가능한 결과의 수를 구합니다.`,

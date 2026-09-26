@@ -42,7 +42,7 @@ window.NM_UNITS['H-10'] = {
               zh:'并不总是从1开始。要算4²到8²之和，就<b>用1到8的和，减去1到3的和</b>！1到8：8×9×17÷6=204。1到3：3×4×7÷6=14。204−14=<b>190</b>。从更大的区间里去掉不需要的前面部分——这其实是更常见的情况。'},
         mathSteps:['8×9×17÷6 = 204 (1~8)','3×4×7÷6 = 14 (1~3)','204−14 = 190'],
         result:{ko:'4²+…+8²=190! 큰 구간에서 필요 없는 앞부분을 빼요.',en:'4²+…+8²=190! Subtract the unneeded front from the bigger range.',zh:'4²+…+8²=190！从大区间里减去不需要的前面部分。'},
-        book:{ko:'홀수·짝수만 더하는 것(고급C)과 달리, 이 공식은 <b>연속한 모든 자연수</b>의 제곱에만 통해요 — 등차가 다른 수열엔 못 써요.',
+        book:{ko:'홀수·짝수만 더하는 것(홀수의 합·짝수의 합 마법)과 달리, 이 공식은 <b>연속한 모든 자연수</b>의 제곱에만 통해요 — 등차가 다른 수열엔 못 써요.',
               en:'Unlike summing only odd or even numbers, this formula only works for squares of <b>every consecutive whole number</b> — not for sequences with a different common difference.',
               zh:'和只加奇数或偶数不同，这个公式只对<b>每一个连续自然数</b>的平方有效——公差不同的数列用不了。'} }
     ],

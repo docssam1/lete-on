@@ -76,17 +76,20 @@ NM_TGEN['md1_intConcept'] = function (params, rng) {
     const askMax = pick(rng, [true, false]);
     const answer = askMax ? Math.max(a, b) : Math.min(a, b);
     const cmp = a > b ? '>' : '<';
+    /* 교육과정 말로(2026-09-25, 원장 "정수 개념에 max라는 표현을 어떻게 써 교육과정 용어에 안맞아").
+       중1 은 수의 대소를 부등호와 "두 수 중 더 큰 수"로 말한다 — max·min 기호는 교과서에 없다.
+       식에는 두 수와 답 칸만 두고(= 없음), 물음은 인쇄 질문 줄(printAskText)이 3개 언어로 싣는다. */
     return {
       prompt: {
-        ko: `${a}와 ${b} 중 ${askMax ? '더 큰' : '더 작은'} 수는 무엇일까요?`,
-        en: `Which is ${askMax ? 'greater' : 'smaller'}, ${a} or ${b}?`,
-        zh: `${a}和${b}中，哪个${askMax ? '更大' : '更小'}？`
+        ko: `두 수 중 ${askMax ? '더 큰' : '더 작은'} 수를 구하시오.`,
+        en: `Write the ${askMax ? 'greater' : 'smaller'} of the two numbers.`,
+        zh: `写出两个数中${askMax ? '较大' : '较小'}的数。`
       },
-      tex: `${askMax ? '\\max' : '\\min'}(${a},\\,${b}) = \\square`,
+      tex: `${a},\\;\\; ${b} \\qquad \\square`,
       answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
       solution: [
         { tex: `${a} ${cmp} ${b}` },
-        { tex: `${askMax ? '\\max' : '\\min'}(${a},\\,${b}) = \\square`, blank: answer }
+        { tex: `${a} ${cmp} ${b} \\;\\Rightarrow\\; \\square`, blank: answer }
       ]
     };
   }

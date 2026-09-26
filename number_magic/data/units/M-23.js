@@ -32,18 +32,18 @@ window.NM_UNITS['M-23'] = {
     },
     stages:[
       { tag:{ko:'① 계수를 그대로 비교',en:'1) Compare coefficients directly',zh:'① 直接比较系数'},
-        head:{ko:'ax+b \\equiv 5x-3 \\;\\Rightarrow\\; a=5,\\,b=-3',en:'ax+b \\equiv 5x-3 \\;\\Rightarrow\\; a=5,\\,b=-3',zh:'ax+b \\equiv 5x-3 \\;\\Rightarrow\\; a=5,\\,b=-3'},
-        desc:{ko:'≡(항등) 기호는 "모든 x에서 참"이라는 뜻입니다. x의 계수끼리 같아야 하니 a=5, 상수항끼리 같아야 하니 b=-3 — <b>계수를 그대로 맞춰 읽으면</b> 끝입니다.',
-              en:'The ≡ (identity) symbol means "true for every x." The x-coefficients must match, so a=5; the constants must match, so b=-3 — <b>just read off the matching coefficients</b> and you\'re done.',
-              zh:'≡(恒等)符号意味着"对任意x都成立"。x的系数必须相等，所以a=5；常数项必须相等，所以b=-3——<b>直接对应读出系数</b>就行了。'},
-        mathSteps:['ax+b\\equiv5x-3', 'a=5', 'b=-3'],
+        head:{ko:'ax+b = 5x-3 \\;\\Rightarrow\\; a=5,\\,b=-3',en:'ax+b = 5x-3 \\;\\Rightarrow\\; a=5,\\,b=-3',zh:'ax+b = 5x-3 \\;\\Rightarrow\\; a=5,\\,b=-3'},
+        desc:{ko:'ax+b와 5x-3이 모든 x에서 같으려면 x의 계수끼리 같아야 하므로 a=5, 상수항끼리 같아야 하므로 b=-3입니다. <b>계수를 그대로 맞춰 읽으면</b> 끝입니다.',
+              en:'The equality must be true for every x. The x-coefficients must match, so a=5; the constants must match, so b=-3 — <b>just read off the matching coefficients</b> and you\'re done.',
+              zh:'这个等式要对任意x都成立。x的系数必须相等，所以a=5；常数项必须相等，所以b=-3——<b>直接对应读出系数</b>就行了。'},
+        mathSteps:['ax+b=5x-3', 'a=5', 'b=-3'],
         result:{ko:'항등식은 양변의 계수를 그대로 대응시킵니다!',en:'An identity matches the coefficients on both sides directly!',zh:'恒等式让两边的系数直接对应！'},
-        book:{ko:'ax+b≡cx+d가 항등식이면 a=c, b=d — x의 차수별로 계수가 각각 같아야 합니다.',
-              en:'If ax+b≡cx+d is an identity, then a=c and b=d — the coefficients must match for each power of x.',
-              zh:'若ax+b≡cx+d是恒等式，则a=c，b=d——每个x次数的系数都必须分别相等。'} },
+        book:{ko:'ax+b와 cx+d가 모든 x에서 같은 식이면 a=c, b=d입니다. x의 차수별로 계수가 각각 같아야 합니다.',
+              en:'If ax+b=cx+d is true for every x, then a=c and b=d — the coefficients must match for each power of x.',
+              zh:'若ax+b=cx+d对任意x都成立，则a=c，b=d——每个x次数的系数都必须分别相等。'} },
 
       { tag:{ko:'② 전개한 뒤 비교',en:'2) Expand, then compare',zh:'② 展开后再比较'},
-        head:{ko:'a(x-1)+b(x-2) \\equiv 3x-7',en:'a(x-1)+b(x-2) \\equiv 3x-7',zh:'a(x-1)+b(x-2) \\equiv 3x-7'},
+        head:{ko:'a(x-1)+b(x-2) = 3x-7',en:'a(x-1)+b(x-2) = 3x-7',zh:'a(x-1)+b(x-2) = 3x-7'},
         desc:{ko:'좌변을 먼저 펼치면 (a+b)x + (-a-2b). x계수 a+b=3, 상수항 -a-2b=-7 — 두 식을 연립하면 <b>a=-1, b=4</b>.',
               en:'Expand the left side first: (a+b)x + (-a-2b). x-coefficient a+b=3, constant -a-2b=-7 — solving the system gives <b>a=-1, b=4</b>.',
               zh:'先展开左边：(a+b)x + (-a-2b)。x系数a+b=3，常数项-a-2b=-7——联立求解得<b>a=-1，b=4</b>。'},
@@ -60,17 +60,17 @@ window.NM_UNITS['M-23'] = {
 
   check:{
     fills:[
-      { tex:'ax+b \\equiv -2x+9 \\;\\Rightarrow\\; a=\\square,\\; b=\\square', answer:[-2,9],
+      { tex:'ax+b = -2x+9 \\;\\Rightarrow\\; a=\\square,\\; b=\\square', answer:[-2,9],
         hint:{ ko:'x계수끼리, 상수항끼리', en:'match x-coefficients and constants', zh:'x系数对应，常数项对应' } },
-      { tex:'a(x-1) + b(x+1) \\equiv 4x + 2 \\;\\Rightarrow\\; a=\\square,\\; b=\\square', answer:[1,3],
-        hint:{ ko:'전개: (a+b)x + (-a+b) ≡ 4x+2', en:'expand: (a+b)x + (-a+b) ≡ 4x+2', zh:'展开：(a+b)x + (-a+b) ≡ 4x+2' } }
+      { tex:'a(x-1) + b(x+1) = 4x + 2 \\;\\Rightarrow\\; a=\\square,\\; b=\\square', answer:[1,3],
+        hint:{ ko:'전개하면 (a+b)x + (-a+b) = 4x+2입니다.', en:'expand: (a+b)x + (-a+b) = 4x+2', zh:'展开：(a+b)x + (-a+b) = 4x+2' } }
     ],
-    open:{ ko:'a(x+2)+b(x-3)≡5x+5일 때 a,b를 구하는 과정을 설명해봅니다.',
-      en:'Explain how to find a,b when a(x+2)+b(x-3)≡5x+5.',
-      zh:'说说求a(x+2)+b(x-3)≡5x+5中a,b的过程。' },
-    openHint:{ ko:'전개하면 (a+b)x+(2a-3b)≡5x+5 → a+b=5, 2a-3b=5 → a=4, b=1',
-      en:'Expand to (a+b)x+(2a-3b)≡5x+5 → a+b=5, 2a-3b=5 → a=4, b=1',
-      zh:'展开为(a+b)x+(2a-3b)≡5x+5 → a+b=5，2a-3b=5 → a=4，b=1' }
+    open:{ ko:'a(x+2)+b(x-3)와 5x+5가 모든 x에서 같을 때 a,b를 구하는 과정을 설명해봅니다.',
+      en:'Explain how to find a,b when a(x+2)+b(x-3)=5x+5 for every x.',
+      zh:'说说当a(x+2)+b(x-3)=5x+5对所有x成立时，怎样求a,b。' },
+    openHint:{ ko:'전개한 (a+b)x+(2a-3b)와 5x+5의 계수를 비교하면 a+b=5, 2a-3b=5이므로 a=4, b=1입니다.',
+      en:'Expand to (a+b)x+(2a-3b)=5x+5 → a+b=5, 2a-3b=5 → a=4, b=1',
+      zh:'展开为(a+b)x+(2a-3b)=5x+5 → a+b=5，2a-3b=5 → a=4，b=1' }
   },
 
   lab:{

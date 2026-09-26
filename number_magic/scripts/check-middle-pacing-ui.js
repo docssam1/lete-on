@@ -28,16 +28,18 @@ const server=http.createServer((req,res)=>{
       if(await page.locator('#townCourseRoad').isVisible())await page.locator('#townCourseRoad').click();
       await page.waitForSelector('#middlePacing1');
       assert.equal(await page.locator('.nm-middle-pacing').count(),3);
-      assert.equal(await page.locator('[data-middle-session]').count(),42);
+      /* 2026-09-25: 보기는 정규 과정에서 계산된다 — 기대값도 데이터에서 읽는다(옛 판은 42·14 고정) */
+      const expect=await page.evaluate(()=>Object.values(NM_MIDDLE_PACING.grades).map(p=>({n:p.sessions.length,first:p.sessions[0].id})));
+      assert.equal(await page.locator('[data-middle-session]').count(),expect.reduce((a,e)=>a+e.n,0));
       await page.evaluate(()=>{window.__pacingCalls=[];NM_EXAM.openMiddlePacing=(grade,id)=>window.__pacingCalls.push({grade,id});});
       for(const grade of [1,2,3]){
         const plan=page.locator('#middlePacing'+grade);
         await plan.locator('summary').click();
-        assert.equal(await plan.locator('.nm-mp-session').count(),14);
+        assert.equal(await plan.locator('.nm-mp-session').count(),expect[grade-1].n);
         const buttons=plan.locator('[data-middle-session]');
         await buttons.first().focus();await page.keyboard.press('Enter');
         const received=await page.evaluate(()=>window.__pacingCalls.pop());
-        assert.equal(received.grade,grade);assert.equal(received.id,'M'+grade+'-S01');
+        assert.equal(received.grade,grade);assert.equal(received.id,expect[grade-1].first);
         const bounds=await plan.evaluate(e=>{
           const r=e.getBoundingClientRect();
           return {left:r.left,right:r.right,width:innerWidth,overflow:[...e.querySelectorAll('h4,p,button')].some(x=>x.scrollWidth>x.clientWidth+3)};
@@ -49,7 +51,7 @@ const server=http.createServer((req,res)=>{
         await buttons.last().scrollIntoViewIfNeeded();
         const tail=await buttons.last().boundingBox();
         assert(tail&&tail.y>=0&&tail.y+tail.height<=1100,'last session must be reachable inside the scrolling roadmap');
-        checks.push({width,grade,rows:14,keyboardRoute:received.id,overflow:false});
+        checks.push({width,grade,rows:expect[grade-1].n,keyboardRoute:received.id,overflow:false});
         await plan.locator('summary').click();
       }
     }
