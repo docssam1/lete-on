@@ -104,8 +104,8 @@ async function until(page, fn, arg, maxMs = 60000, step = 100){
 }
 
 /* 앱 열기(타이틀) — 필요하면 모드 버튼까지 */
-async function openApp(browser, base, btn){
-  const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR });
+async function openApp(browser, base, btn, state){
+  const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:state || L.STATE });
   /* 찍는 동안에만: 3D 마을 ctl 을 window.__srTown 에 건다(카메라를 천천히 움직이려고). 앱 파일은 그대로. */
   await ctx.route(/\/number_magic\/app\/town3d\/town3d\.js/, async route => {
     const src = fs.readFileSync(path.join(L.APP, 'app/town3d/town3d.js'), 'utf8').replace('  return {\n    dispose,\n    setLang(l){ lang', '  return window.__srTown = {\n    dispose,\n    setLang(l){ lang');
@@ -233,7 +233,7 @@ const SCENES = {
     const tileAt = i => page.evaluate(i => { const r = document.querySelectorAll('#expr .nm-tile')[i].getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, i);
     const cur = mkCursor(); cur.at(900, 620);
     let steps = null, flashT = -9;
-    await runScene('creative3', page, { dur:10.6, cursor:cur,
+    await runScene('creative3', page, { dur:12.4, cursor:cur,
       perFrame: async t => {
         await page.evaluate(([t, flashT]) => { const f = document.getElementById('srFlash'); const k = (t - flashT) / 0.5; f.style.opacity = k < 0 || k > 1 ? 0 : Math.sin(Math.PI * k) * 0.95; }, [t, flashT]);
         if(steps){ await page.evaluate(([t, s]) => {
@@ -268,6 +268,47 @@ const SCENES = {
             [...b.children].forEach(e => { e.style.opacity = 0; }); return [q.left + q.width / 2, q.top + q.height / 2]; });
           steps = { t0:t + 0.55, r };
         }],
+      ] });
+    await ctx.close();
+  },
+
+  /* v3 속도 비교 진단(연산 로드맵 '속도 비교 진단' 카드, app/pace-compare.js) — 6세 · 과정 10 · 주 1회 표준.
+     판정 사다리 → 언제 닿을까요 → '상위 레벨이 되려면' 속도 1.25배 '이 설정으로 바꾸기' → 판정이 KMO 로 바뀐다 */
+  async compare(browser, base){
+    const st = Object.assign({}, L.STATE, { placement:{ course:'C10', self:true }, schoolAge:{ entryYear:2028, setAt:Date.now() }, roadCadence:'w1', roadPace:'p2', roadSpeed:1 });
+    const { ctx, page } = await openApp(browser, base, 'ttRoad', st);
+    await until(page, () => !!document.querySelector('#crPaceCmp .nm-pc-apply') && !!document.querySelector('.r3d .r3d-arrow'), null, 120000);
+    await L.advance(page, 1000, 100);
+    const S = 1.42;
+    const geo = await page.evaluate(S => { const c = document.querySelector('#crPaceCmp'); let p = c.parentElement;
+      while(p && !(p.scrollHeight > p.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
+      window.__sp = p; p.style.scrollBehavior = 'auto';
+      const pr = p.getBoundingClientRect(), y = e => p.scrollTop + e.getBoundingClientRect().top - pr.top;
+      const q = sel => c.querySelector(sel);
+      const cr = c.getBoundingClientRect();
+      const g = { top:y(c) - 10, tl:y(q('.nm-pc-tl')) - 30, up:y(q('.nm-pc-up')) - 60 };
+      document.body.style.transformOrigin = '0 0';
+      const cx = cr.left + cr.width / 2, cy = pr.top + (innerHeight / S) / 2;
+      document.body.style.transform = `translate(${innerWidth / 2 - cx * S}px,${innerHeight / 2 - cy * S}px) scale(${S})`;
+      const st = document.createElement('style'); st.textContent = '.sr-glow{box-shadow:0 0 0 3px rgba(201,164,76,.7),0 0 26px rgba(245,217,139,.9)!important;transition:none}'; document.head.appendChild(st);
+      return g;
+    }, S);
+    await page.evaluate(y => { window.__sp.scrollTop = y; }, geo.top);
+    await L.advance(page, 300, 100);
+    const cur = mkCursor(); cur.at(1000, 650);
+    const K = [[0, geo.top], [2.6, geo.top], [3.6, geo.tl], [5.8, geo.tl], [6.8, geo.up], [8.9, geo.up], [9.8, geo.top], [13, geo.top]];
+    const scrollAt = t => { let i = 0; while(i < K.length - 2 && K[i + 1][0] <= t) i++; const a = K[i], b = K[i + 1]; return L.lerp(a[1], b[1], L.ease((t - a[0]) / (b[0] - a[0]))); };
+    const pos = sel => page.evaluate(sel => { const e = document.querySelector(sel); if(!e) return null; const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sel);
+    const APPLY = '#crPaceCmp [data-pc-apply][data-speed="1.25"]';
+    await runScene('compare', page, { dur:12.8, cursor:cur,
+      perFrame: t => page.evaluate(([y, t]) => { window.__sp.scrollTop = y;
+        const v = document.querySelector('#crPaceCmp .nm-pc-verdict'); if(v) v.classList.toggle('sr-glow', (t > 0.4 && t < 1.8) || t > 10.0); }, [scrollAt(t), t]),
+      events:[
+        [0.5, async t => { const p = await pos('#crPaceCmp .nm-pc-ladder, #crPaceCmp .nm-pc-rung'); cur.show(t, true); if(p) cur.move(t, p[0], p[1] + 10, 0.9); }],
+        [2.4, t => cur.show(t, false, 0.3)],
+        [6.9, async t => { const p = await pos(APPLY) || await pos('#crPaceCmp .nm-pc-apply'); cur.show(t, true); if(p) cur.move(t, p[0], p[1] + 6, 0.9); }],
+        [8.1, async t => { cur.tap(t); await page.evaluate(sel => { const b = document.querySelector(sel) || document.querySelector('#crPaceCmp .nm-pc-apply'); b.click(); }, APPLY); }],
+        [8.8, t => cur.show(t, false, 0.4)],
       ] });
     await ctx.close();
   },
@@ -543,7 +584,7 @@ async function stageScene(browser, base, name, url, dur){
 
 (async () => {
   const want = process.argv.slice(2).filter(a => !a.startsWith('--'));
-  const all = ['mapreveal', 'diagnose', 'creative3', 'title', 'philosophy', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
+  const all = ['mapreveal', 'diagnose', 'compare', 'creative3', 'title', 'philosophy', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
   const list = want.length ? want : all;
   const { server, base } = await L.serve({ '/__sheets/':path.join(OUT, 'sheets-src') });
   const browser = await L.launch();

@@ -47,9 +47,9 @@ const PLAN = [
     cap:{ ko:'마을을 걸으며 오늘의 마법을 찾아요', en:"Explore the village, find today's magic", pos:'bl' } },
   { seg:'story', in:0.4, n:'n04', at:0.35, xf:['smoothleft', 0.4], min:4.8,
     cap:{ ko:'유아부터 미적분까지, 한 권의 모험 이야기', en:'One adventure, from preschool to calculus', pos:'bl' } },
-  { seg:'diagnose', in:0.0, out:4.4, n:'n05', at:0.35, xf:['slideup', 0.4],
+  { seg:'diagnose', in:0.0, out:3.6, n:'n05', at:0.35, xf:['slideup', 0.4],
     cap:{ ko:'연산 단계 진단 · 지금 속도 비교', en:'Diagnose the level, compare the pace', pos:'br' } },
-  HAS_COMPARE ? { seg:'compare', in:0.0, xf:['fade', 0.35] } : { seg:'pace', in:3.7, out:9.6, xf:['fade', 0.35] },
+  HAS_COMPARE ? { seg:'compare', in:0.0, xf:['fade', 0.35], min:9.0 } : { seg:'pace', in:3.7, out:9.6, xf:['fade', 0.35] },
   { seg:'road', in:6.5, out:9.4, n:'n06', at:0.25, xf:['smoothright', 0.4],
     cap:{ ko:'내 길이 한눈에 · 속도와 양은 딱 맞게', en:'Your road at a glance, the pace that fits', pos:'br' } },
   { seg:'pace', in:0.9, out:7.4, xf:['fade', 0.35], min:2.5 },
@@ -153,7 +153,11 @@ function normalize(inp, out){
     fl.push(`[${cur}]fade=t=in:st=0:d=0.4,fade=t=out:st=${(total - 0.8).toFixed(3)}:d=0.8:color=white,format=yuv420p[out]`);
     args.push('-filter_complex', fl.join(';'), '-map', '[out]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', '30', '-t', total.toFixed(3), video);
     console.log(`영상 잇는 중… ${total.toFixed(2)}초`);
-    ff(args); }
+    /* 이 ffmpeg 빌드는 큰 필터 그래프에서 가끔 SIGSEGV 로 죽는다(같은 명령을 다시 돌리면 된다) — 세 번까지, 둘째부터는 필터 스레드 1 */
+    for(let k = 0; ; k++){
+      try { ff(k ? ['-filter_complex_threads', '1', ...args] : args); break; }
+      catch(e){ if(k >= 2 || e.signal !== 'SIGSEGV') throw e; console.log(`  (ffmpeg ${e.signal} — 다시 ${k + 2}번째)`); }
+    } }
 
   /* 4. 내레이션 트랙 (+ 인트로 영상 자체 소리) */
   const introSeg = segs.find(x => x.audio);
