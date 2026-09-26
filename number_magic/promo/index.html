@@ -145,7 +145,8 @@ p{margin:0}
 .hero-top .wm-ko{font-size:clamp(12px,1.2vw,14px)}
 .hero-top .open{font-family:var(--serif);font-size:clamp(17px,2vw,22px);color:var(--la-ink-2);margin-top:8px;max-width:34em}
 .hero-top .open b{font-weight:500;color:var(--la-ink)}
-.reel{position:relative;border-radius:18px;isolation:isolate}
+.reel{position:relative;border-radius:18px;isolation:isolate;margin-inline:auto;width:100%;max-width:min(1120px,calc((100vh - 330px) * 16 / 9))}
+@media (max-height:640px){.reel{max-width:none}}
 .reel::before{content:"";position:absolute;inset:-6% -4%;z-index:-1;border-radius:40px;opacity:var(--glow-alpha);filter:blur(40px);pointer-events:none;
   background:
     radial-gradient(45% 55% at 20% 30%,var(--la-glow-a),transparent 70%),

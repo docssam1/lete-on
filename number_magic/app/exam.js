@@ -2357,6 +2357,7 @@ function pvOn(){
 /* 이 문항에 색을 줄 차례인가 — 줄 차례면 true를 돌려주고 카운터를 올린다.
    eligible이 아니면 카운터를 올리지 않는다(세는 대상이 아니다). */
 let pvPlaceOnPage = false;
+let pvPairOnPage = 0;     /* 이 쪽에 짝 색(창의 회차)을 쓴 쌍의 최대 수 — 범례 "같은 색 = 짝꿍" */
 function pvTake(canTint){
   if(!pvOn() || !canTint) return false;
   const take = (pvSeen % 3) === 0;
@@ -3822,12 +3823,40 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
      쓰므로 좌표평면이 통째로 빠지고 `y = □x + □` 만 남아 **종이로는 풀 수가 없다**.
      적용(창의) 회차에도 MD65@5 같은 그래프 레벨이 실리므로 여기서 먼저 걸러 낸다. */
   if(layoutType === 'train' && !p.graph){
-    const raw = String(p.tex||'').replace(/=\s*\\square\s*$/,'').trim();
-    const bare = cellTotal > 1 && cellIdx >= Math.ceil(cellTotal * 0.75);
-    const st = bare ? [] : trainStepsOf(p);
     const box = '\\square';   /* texDisplay 가 쓰기 상자(WRITE_BOX)로 바꾼다 */
-    const stepLines = st.map(x => {
-      const t = String(x.tex).replace(/\\square/g, box);
+    const slotAttrP = (p.__slot != null) ? ` data-slot="${esc(String(p.__slot))}"` : '';
+    /* 과정 빈칸 문항(2026-09-26, applyProcessBlank) — 식과 최종 답을 주고, 풀이 줄은 채운 채 ★자리 수 하나만 □ */
+    if(p.__process){
+      const P = p.__process, CP = window.NM_CREATIVE_PROCESS || {};
+      const askObj = (CP.ask || {})[P.form === 'B' ? (P.fam === 'F4' ? 'reverseSame' : 'reverse') : 'key'];
+      const askP = askObj ? pickL(askObj) : '';
+      const lines = P.lines.map(t =>
+        `<div class="nm-w2-train-step">= <span class="nm-w2-tex" data-tex="${esc(texDisplay(String(t)))}"></span></div>`).join('');
+      return `<div class="${cls} nm-w2-item-train nm-w2-item-process" data-process="${P.form}"${slotAttrP}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askP ? `<div class="nm-print-ask nm-w2-process-ask">${esc(askP)}</div>` : ''}
+  <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(texDisplay(P.expr))}"></span></div>
+  ${lines}<div class="nm-w2-train-dots"><i></i></div></div>`;
+    }
+    let raw = String(p.tex||'').replace(/=\s*\\square\s*$/,'').trim();
+    const bare = trainIsBare(p, cellIdx, cellTotal);
+    const st = bare ? [] : trainStepsOf(p);
+    /* 창의 회차 색 힌트(2026-09-26, applyTrainColor) — 식 줄과 ★마법 자리 줄 두 줄에만 */
+    const T = p.__cpTint, PVt = window.NM_PLACE_COLOR;
+    let tintStep = null;
+    if(T && PVt){
+      if(T.kind === 'pair'){
+        raw = PVt.pairTint(raw, T.pairs);
+        tintStep = s => PVt.pairTintValues(s, T.pairs);
+        pvPairOnPage = Math.max(pvPairOnPage, T.pairs.length);
+      } else {
+        raw = PVt.tint(raw);
+        tintStep = s => PVt.tint(s);
+        if(T.kind === 'place') pvPlaceOnPage = true;
+      }
+      pvOnPage = true;
+    }
+    const stepLines = st.map((x, si) => {
+      let t = String(x.tex).replace(/\\square/g, box);
+      if(tintStep && si === (T.key || 0)) t = tintStep(t);
       return `<div class="nm-w2-train-step">= <span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span></div>`;
     }).join('');
     /* solution 으로 채운 칸: 마지막 줄 빈칸이 곧 답이거나, 문제 식 안에 이미 답 칸이 있으면(몫 ⋯ 나머지·AD9 두 식) 답 줄을 따로 두지 않는다 */
@@ -3835,7 +3864,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
     const ansLine = noAns ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">= <span class="nm-w2-tex" data-tex="${esc(box)}"></span></div>`;
     const dots = bare ? '<i></i><i></i><i></i>' : '<i></i>';
     const askHtmlT = printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
-    const slotAttrT = (p.__slot != null) ? ` data-slot="${esc(String(p.__slot))}"` : '';
+    const slotAttrT = slotAttrP + (T && PVt ? ` data-cptint="${T.kind}"` : '');
     return `<div class="${cls} nm-w2-item-train"${slotAttrT}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askHtmlT}
   <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(texDisplay(raw))}"></span></div>
   ${stepLines}${ansLine}<div class="nm-w2-train-dots">${dots}</div></div>`;
@@ -5147,6 +5176,11 @@ function renderRoundPagesBody(item, opts){
   }
   problems = sortRoundProblems(problems, layout.type);
   applyPartialBlanks(problems, layout.type, item);
+  /* 창의 연산(Training Course)만 — 과정 빈칸 한 문항 + 색 힌트(2026-09-26, data/creative-process.js) */
+  if(layout.type === 'train' && !getSolveMode()){
+    applyProcessBlank(problems, item);
+    applyTrainColor(problems, item);
+  }
 
   /* 램프가 있으면 예시는 한 단계 위 레벨로 — 개념 문장이 설명하는 기술(받아내림 등)을
      예시가 실제로 보여 주도록. */
@@ -5268,12 +5302,13 @@ function renderRoundPagesBody(item, opts){
   if(layout.type === 'train' && problems.length && !getSolveMode()){
     const nT = problems.length;
     const estMm = (p, idx) => {
-      const bare = nT > 1 && idx >= Math.ceil(nT * 0.75);
-      const stT = bare ? [] : trainStepsOf(p);
+      const bare = trainIsBare(p, idx, nT);
+      /* 과정 빈칸 문항은 풀이 줄을 다 찍고 답 줄이 없으며 지시 한 줄(약 6mm)이 붙는다 */
+      const stT = p.__process ? p.__process.lines.map(tex => ({ tex })) : bare ? [] : trainStepsOf(p);
       const nSteps = stT.length + stT.filter(x => trainTallLine(x.tex)).length * 1.5;
-      const ansN = (!bare && !(Array.isArray(p.steps) && p.steps.length) && (trainSolution(p).noAns || /\\square/.test(String(p.tex||'').replace(/=\s*\\square\s*$/,'')))) ? 0 : 1;
+      const ansN = p.__process ? 0 : (!bare && !(Array.isArray(p.steps) && p.steps.length) && (trainSolution(p).noAns || /\\square/.test(String(p.tex||'').replace(/=\s*\\square\s*$/,'')))) ? 0 : 1;
       /* 저학년 장은 글씨 배율이 1.28배(.nm-print-age-young --ws-fs) */
-      const est = (14 + 12.8 * (nSteps + ansN) + 7 * (bare ? 3 : 1)) * fsR * (young ? 1.28 : 1);
+      const est = (14 + 12.8 * (nSteps + ansN) + 7 * (bare ? 3 : 1) + (p.__process ? 6 : 0)) * fsR * (young ? 1.28 : 1);
       return trainMax ? Math.max(est, trainMax) : est;
     };
     /* 가득 찬 장 높이는 드릴 장에서 잰 값 — 창의 연산 장은 그 위에 "Training Course" 띠(15mm + 틈)가 더 붙는다
@@ -5373,7 +5408,7 @@ function renderRoundPagesBody(item, opts){
        세로로 늘어선다(2026-09-06 확인). 열 수만큼 나눠 위에서부터 채우도록 자리를 직접 지정한다. */
     const partialCol = partial && layout.flow === 'col';
     const rowsPerCol = partialCol ? rowsCount : 0;
-    pvOnPage = false; pvPlaceOnPage = false;   /* 이 쪽에 자리 색을 쓴 문항이 있으면 아래에서 범례를 붙인다 */
+    pvOnPage = false; pvPlaceOnPage = false; pvPairOnPage = 0;   /* 이 쪽에 자리 색을 쓴 문항이 있으면 아래에서 범례를 붙인다 */
     const cellsHtml = pageItems.map((p, i) => {
       const isFirstRamp = !!p.__ramp && !rampTagged;
       if(isFirstRamp) rampTagged = true;
@@ -5392,7 +5427,9 @@ function renderRoundPagesBody(item, opts){
         pvPlaces = Math.max(pvPlaces, window.NM_PLACE_COLOR.placesUsed(String(p.tex||'')));
       });
     }
-    const pvLegend = pvPlaceOnPage ? pvLegendHtml(pvPlaces || 2) : '';
+    const pvLegend = (pvPlaceOnPage ? pvLegendHtml(pvPlaces || 2) : '')
+      + (pvPairOnPage && window.NM_PLACE_COLOR && window.NM_PLACE_COLOR.pairLegendHtml
+        ? window.NM_PLACE_COLOR.pairLegendHtml(examLang(), pickL((window.NM_CREATIVE_PROCESS || {}).pairLegend) || '같은 색 = 짝꿍', pvPairOnPage) : '');
     /* 워터마크는 문항 페이지 안에 한 장씩(.nm-w2-wm, 화면에선 숨김) — 시트 전체 fixed 오버레이 대신 */
     return `<div class="nm-w2-page${middleSix ? ' nm-mid-six' : ''}">
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
