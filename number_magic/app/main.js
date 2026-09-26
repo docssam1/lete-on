@@ -3132,14 +3132,22 @@ function screenCourseRoad(){
   const list=roadCourseList();
   const lastNum=list.length?list[list.length-1].num:0;
 
-  scr.innerHTML=`<div class="nm-cr-wrap">
+  /* 2026-09-26 원장 "로드맵도 이제 이런 느낌으로" — 머리에 3D 길 지도(app/road3d)를 얹고, 아래 목록은
+     모드 선택 3D 책상과 같은 재질(나무 책상 · 종이 카드 · 가죽+금박 · 놋쇠 꼬리표)로 입힌다.
+     헤더는 한 줄(뒤로 · 제목 · 진단하기 · 🎯)만 고정하고, 학생 칩·안내·철학은 스크롤 안으로 옮겼다
+     — 폰에서 고정 머리가 화면의 3분의 1을 먹던 것을 풀어 3D 지도와 목록이 자리를 얻게. */
+  scr.innerHTML=`<div class="nm-cr-wrap nm-cr-desk">
     <div class="nm-cr-header">
-      <button class="nm-back" id="crBack">${t('back')}</button>
       <div class="nm-cr-titlerow">
-        <div class="nm-cr-title">🛤️ ${lk('연산 로드맵','Course Road','运算路线图')}</div>
+        <button class="nm-back" id="crBack">${t('back')}</button>
+        <div class="nm-cr-title"><span class="nm-cr-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 20.5c0-4.6 9.5-3.2 9.5-7.6 0-3.6-6.2-3.2-6.2-6.6" stroke-dasharray="2.4 2.2"/><circle cx="5.5" cy="20" r="1.4" fill="currentColor" stroke="none"/><path d="M15.6 3.2v8M15.6 3.6h4.6l-1.5 2 1.5 2h-4.6"/></svg></span><span class="nm-cr-title-t">${lk('연산 로드맵','Course Road','运算路线图')}</span></div>
         <button class="nm-cr-diagbtn" id="crDiag">🧭 ${lk('진단하기','Level Check','水平测评')}</button>
-        <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}">🎯</button>
+        <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}" aria-label="${lk('시작점 고르기','Pick your start','选择起点')}">🎯</button>
       </div>
+    </div>
+    <div class="nm-cr-body" id="crBody">
+      <div class="nm-cr-hero" id="crHero"></div>
+      <div class="nm-cr-intro">
       <!-- 누구의 로드맵인지 (2026-09-16 원장 "선택한 학생의 연산 로드맵이 나와야지").
            한 기기를 형제가 같이 쓰므로 슬롯 3개가 이미 있는데, 로드맵에는 누구 것인지
            표시가 없어 남의 진도를 자기 것으로 읽을 수 있었다. 칩을 누르면 바로 바꾼다. -->
@@ -3153,13 +3161,14 @@ function screenCourseRoad(){
            DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
            따로 노는 은유를 만들지 않도록 그 문장을 여기서 다시 말하고 원문으로 잇는다. -->
       <div class="nm-cr-philo">
-        ${lk('수를 정복한다는 건 빨리 푸는 게 아니라, 어려운 수를 <b>내가 다루기 쉽게 펼칠</b> 수 있게 되는 거예요.',
+        <span>${lk('수를 정복한다는 건 빨리 푸는 게 아니라, 어려운 수를 <b>내가 다루기 쉽게 펼칠</b> 수 있게 되는 거예요.',
              'Conquering numbers isn\'t about speed — it\'s being able to <b>unfold</b> a hard number into ones you handle easily.',
-             '征服数字不是算得快，而是能把难的数<b>展开</b>成自己好处理的数。')}
+             '征服数字不是算得快，而是能把难的数<b>展开</b>成自己好处理的数。')}</span>
         <a class="nm-philobtn nm-cr-philolink" href="about.html">✦ ${lk('철학','Philosophy','理念')}</a>
       </div>
+      </div>
+      <div id="crList"></div>
     </div>
-    <div class="nm-cr-body" id="crBody"></div>
   </div>`;
   $('#crBack').onclick=()=>{S._roadFocus=null;S.view='town';save();render();};
   $('#crDiag').onclick=()=>startPlacement();
@@ -3167,6 +3176,11 @@ function screenCourseRoad(){
   $('#crWho').onclick=()=>openStudentSwitch();
 
   const body=$('#crBody');
+  const listEl=$('#crList');
+  const heroEl=$('#crHero');
+  /* 3D 지도가 처음 비출 과정 — draw(false)가 S._roadFocus 를 지우기 전에 잡아 둔다 */
+  const heroFocus=S._roadFocus||null;
+  const hero3dLikely=!!heroEl && road3dLikely();
 
   function draw(keepScroll){
     const cad=S.roadCadence;
@@ -3410,7 +3424,7 @@ function screenCourseRoad(){
     </div>`;
 
     const keep=keepScroll?body.scrollTop:0;
-    body.innerHTML=html;
+    listEl.innerHTML=html;
     body.querySelectorAll('.nm-cr-seg button[data-cad]').forEach(el=>{
       el.onclick=()=>{ S.roadCadence=el.dataset.cad; save(); draw(true); };
     });
@@ -3454,14 +3468,86 @@ function screenCourseRoad(){
 
     if(keepScroll){ body.scrollTop=keep; }
     else {
-      /* 처음 열 때만 현재 위치(또는 진단이 추천한 과정)로 스크롤 */
-      const focusKey=S._roadFocus||curKey;
-      const target=body.querySelector(`.nm-cr-node[data-c="${focusKey}"]`)||body.querySelector('#crNow');
-      if(target) target.scrollIntoView({block:'center'});
+      /* 처음 열 때만 현재 위치(또는 진단이 추천한 과정)로 스크롤.
+         3D 지도가 뜰 수 있으면 맨 위(지도)를 보여 주고, 지도가 그 과정을 비춘다.
+         단, 다른 화면이 "이 과정을 보여 줘"(S._roadFocus)라고 보냈으면 목록의 그 과정으로 간다. */
+      if(S._roadFocus||!hero3dLikely){
+        const focusKey=S._roadFocus||curKey;
+        const target=listEl.querySelector(`.nm-cr-node[data-c="${focusKey}"]`)||listEl.querySelector('#crNow');
+        if(target) target.scrollIntoView({block:'center'});
+      } else body.scrollTop=0;
       S._roadFocus=null;
     }
   }
   draw(false);
+  if(heroEl){
+    if(hero3dLikely) mountRoad3DInto(heroEl,{curKey,focus:heroFocus,listEl,body});
+    else heroEl.remove();
+  }
+}
+/* WebGL 을 쓸 수 있을 것 같은가(없으면 3D 지도 자리를 만들지 않고 옛 동작 그대로) */
+function road3dLikely(){
+  try{ const c=document.createElement('canvas'); return !!(c.getContext('webgl2')||c.getContext('webgl')); }catch(e){ return false; }
+}
+/* CSS 변수(var(--blue) 등)로 적힌 등급 색을 3D 가 쓸 #hex 로 */
+function roadAccentHex(v){
+  const m=/^var\((--[\w-]+)\)$/.exec(String(v||'').trim());
+  if(!m) return v||'#8a6a40';
+  const got=getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return got||'#8a6a40';
+}
+/* 목록에서 한 줄을 찾아 가운데로 보이고 잠깐 빛나게(3D 지도에서 누른 과정·점검) */
+function roadFlashRow(el,body){
+  if(!el) return;
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'});
+  el.classList.remove('nm-cr-flash'); void el.offsetWidth; el.classList.add('nm-cr-flash');
+  clearTimeout(el._flashT); el._flashT=setTimeout(()=>el.classList.remove('nm-cr-flash'),2600);
+  try{ el.focus({preventScroll:true}); }catch(e){}
+}
+/* 3D 연산 로드맵 지도(2026-09-26) — app/road3d/road3d.js. 목록(2D)이 먼저 서 있고, 3D 는 그 위 머리 자리에 선다.
+   이정표를 누르면 목록의 그 과정으로 스크롤해 빛나게 한다(과정 시트는 목록의 버튼을 눌러 연다 — 여는 길은 한 곳).
+   WebGL 이 없거나 실패하면 머리 자리를 치우고 옛 화면 그대로(현재 과정으로 스크롤). */
+function mountRoad3DInto(heroEl, o){
+  const list=roadCourseList();
+  const curKey=o.curKey, goalKey=nextGoalKey(curKey);
+  const courses=list.map(x=>{
+    const c=x.c, isDone=courseConquered(c), isNow=x.key===curKey;
+    const isGoal=!isDone&&!isNow&&x.key===goalKey;
+    const prog=courseProgress(c);
+    return { id:x.key, num:x.num, title:L(c.title), band:c.tier,
+      state:isNow?'now':isDone?'done':isGoal?'goal':(prog.done>0?'doing':'ahead'),
+      boss:!!c.boss, tower:c.tier==='challenge' };
+  });
+  const bands={};
+  list.forEach(x=>{ if(bands[x.c.tier]) return; const d=roadTierInfo(x.c.tier); bands[x.c.tier]={name:L(d.name), color:roadAccentHex(d.accent)}; });
+  const checkups=[];
+  list.forEach(x=>{
+    if(!isCheckupPoint(x.num)) return;
+    const nums=checkupCourseNums(x.num);
+    const going=checkupInProgress(x.num), rec=checkupRecord(x.num), due=checkupDue(x.num);
+    checkups.push({num:x.num, from:nums[0], to:nums[nums.length-1], state:going||due?'due':rec?'done':'ahead'});
+  });
+  const failBack=()=>{
+    heroEl.remove();
+    /* 지도가 안 섰다 — 아무도 스크롤하지 않았으면 옛 화면처럼 지금 과정으로 */
+    if(o.body&&o.body.isConnected&&o.body.scrollTop===0){
+      const t=o.listEl.querySelector(`.nm-cr-node[data-c="${o.focus||curKey}"]`)||o.listEl.querySelector('#crNow');
+      if(t) t.scrollIntoView({block:'center'});
+    }
+  };
+  import('./road3d/road3d.js').then(m=>m.mountRoad3D(heroEl,{
+    lang:S.lang, courses, bands, checkups, current:curKey, goal:goalKey, focus:o.focus,
+    avatar:{kind:avatarKind()},
+    onCourse:id=>roadFlashRow(o.listEl.querySelector(`.nm-cr-node[data-c="${id}"]`),o.body),
+    onCheckup:num=>roadFlashRow(o.listEl.querySelector(`.nm-cr-check[data-chk="${num}"]`),o.body)
+  })).then(ctl=>{
+    if(!ctl){ if(heroEl.isConnected) failBack(); return; }
+    if(!heroEl.isConnected){ ctl.dispose(); return; }
+    heroEl.classList.add('is-3d');
+    const prev=townCleanup;
+    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); };
+  }).catch(e=>{ console.warn('[road3d]',e); if(heroEl.isConnected) failBack(); });
 }
 
 /* ============================================================
