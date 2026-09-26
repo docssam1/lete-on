@@ -42,6 +42,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Use Node.js 22 for verified Hyper Focus staging
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Verify public question bank metadata
         run: node hselementary/question-bank/public-inventory-review-reason-audit.js
       # 수의 마법 — 유닛·과정·앱 지도·문제은행·주간 학습지가 서로 어긋나면 배포를 멈춘다.
@@ -59,7 +63,6 @@ jobs:
           mkdir -p _site/hselementary
           mkdir -p _site/hsmiddle
           mkdir -p _site/geometry
-          mkdir -p _site/hyper-focus
           mkdir -p _site/number_magic
           mkdir -p _site/personality
           mkdir -p _site/premier
@@ -86,6 +89,11 @@ jobs:
           test ! -e _site/hsmiddle/question-bank/audits
           cp -R geometry/. _site/geometry/
           node hyper-focus/qa/stage_public_release.cjs --source hyper-focus --dest _site/hyper-focus
+          node hyper-focus/qa/validate_public_release.cjs --source hyper-focus --dest _site/hyper-focus
+          test ! -e _site/hyper-focus/challenge/concept-guide.js
+          test ! -e _site/hyper-focus/qa
+          test ! -e _site/hyper-focus/supabase
+          test ! -e _site/hyper-focus/output
           cp -R number_magic/. _site/number_magic/
           cp -R personality/. _site/personality/
           cp -R premier/. _site/premier/
