@@ -1,5 +1,6 @@
 // docssam 안내 — 화면 구석의 **작은 말풍선**(스스로 공부하기·학생용 교재·읽을거리). 가르치기·교사용에는 쓰지 않는다.
-//  · 목소리: 광고와 같은 docssam 음성 MP3(data/voice/*.voice.json → scripts/generate-audio.js → Supabase).
+//  · 목소리: 원장님 녹음 복제 음성(audio/docssam/, clone-voice.js)이 있으면 그것, 없는 줄은 광고와 같은 docssam 음성 MP3
+//    (data/voice/*.voice.json → scripts/generate-audio.js → Supabase).
 //    파일이 없거나 재생이 막히면 **자막만** 보여 준다(기기 음성으로 바꿔 읽지 않고, 음성이 있다고 표시하지도 않는다).
 //  · 표정: 승인된 전신 그림 5장(A1 기본·B1 놀람·B2 생각·B3 칭찬·B4 격려)을 겹쳐 두고 **한 장만** 보인다(통째로 바꿔 끼우기).
 //    입 모양 겹그림(A2 반·A3 벌림·A4 오·A5 눈 감음)은 A1 위에만 얹는다 — 얼굴을 새로 그리지 않는다.
@@ -8,6 +9,7 @@
 //    prefers-reduced-motion이면 움직이지 않고 표정만 바뀐다.
 //  · 자리: 화면 아래 구석(왼쪽/오른쪽) 중 내용을 덜 가리는 쪽에 앉고, 어디든 가리면 스스로 접혀 얼굴만 남는다.
 //    휴대폰은 아래쪽 얇은 띠(작은 얼굴 + 1~2줄).
+import { cloneUrl } from './clone-voice.js';
 const SUPA = 'https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio/science-lab/';
 const A = new URL('../assets/', import.meta.url).href;
 const BODY = { A1: 'docssam-A1-mouth-closed.webp', B1: 'docssam-B1-surprised.webp', B2: 'docssam-B2-thinking.webp', B3: 'docssam-B3-praise.webp', B4: 'docssam-B4-encourage.webp' };
@@ -163,7 +165,7 @@ export function mountGuide(V, { avoid = () => [], canPause = false, label = '독
       arrangeSoon();
       let played = false;
       if (pref.sound && V?.voice && typeof id === 'string' && !loudVideo()) {
-        let src; try { src = await urlOf(V.voice, id, text); } catch { src = null; }
+        let src; try { src = (await cloneUrl(id, text)) || await urlOf(V.voice, id, text); } catch { src = null; }
         if (my !== token) return false;
         if (src) {
           const a = new Audio(src), v = { audio: a, text, flapping: false, mouth: null, off: [] };

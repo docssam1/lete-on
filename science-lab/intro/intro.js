@@ -6,6 +6,7 @@ import { wireLive } from '../v2/live.js';
 import { mount3D, mountLabOf } from '../v2/mounts.js';
 import { SEMS, READY } from '../v2/units-index.js';
 import { escapeInApp } from '../v2/inapp.js';
+import { cloneUrl } from '../v2/clone-voice.js';
 import * as misc from '../data/units/s41-u03.misc.js';
 import { record, analyze, remedyItems } from '../v2/progress.js';
 const LOGU = 's41-u03';   // 이 책의 확인 문제·개념 빈칸 기록이 쌓이는 단원 id(v2 화면과 같은 곳)
@@ -71,10 +72,10 @@ async function say(ids) {
     if (my !== sayToken) return;
     try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ }
     if (soundOn) {
-      // 독쌤 음성 파일이 있으면 그것으로, 없으면 기기 음성으로 읽는다
+      // 원장님 목소리(복제) → 독쌤 음성 파일 → 기기 음성 순서로 읽는다
       let fell = false;
       const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
-      const src = await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
+      const src = (await cloneUrl(line.id, line.text)) || await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
       audio = new Audio(src); audio.preload = 'auto';
       audio.addEventListener('error', fall, { once: true });
       audio.addEventListener('playing', () => { voiceMode('독쌤 음성'); }, { once: true });
