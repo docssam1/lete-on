@@ -1,8 +1,16 @@
 import { icon } from "../../geometry/games/shape-transform/ui-icons.js";
-import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts } from "./golden-bell-hands-on-folding.js?v=20260925a";
-import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clockValueAfterQuarterTurns, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20260925a";
-import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20260925a";
+import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clockValueAfterQuarterTurns, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20260926-book01d";
+import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20260926-book01g";
+import { digitalScene } from "./golden-bell-hands-on-digital.js?v=20260925b";
+import { mirrorShapeScene } from "./golden-bell-hands-on-mirror.js?v=20260925b";
+import { preferenceScene } from "./golden-bell-hands-on-preference.js?v=20260925b";
+import { equalLineScene } from "./golden-bell-hands-on-equal-lines.js?v=20260925b";
+import { foldQuarterScene } from "./golden-bell-hands-on-fold-quarters.js?v=20260925b";
+import { kakuroScene } from "./golden-bell-hands-on-kakuro.js?v=20260925b";
+import { inferenceScene, inferenceReady } from "./golden-bell-hands-on-inference.js?v=20260925b";
+import { foldShapeScene } from "./golden-bell-hands-on-fold-shape.js?v=20260925b";
+import { createHandsOnVoice } from "./golden-bell-hands-on-voice.js?v=20260926-book01g";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sessions = new Map();
@@ -11,8 +19,15 @@ const button = (action, label, symbol, { value, disabled = false, cls = "" } = {
 
 function task(activity, round) {
   if (activity.kind === "clock") return `${round.start}에서 ${round.turns < 0 ? "시계 반대" : "시계"} 방향으로 ${Math.abs(round.turns) === 4 ? "한 바퀴" : Math.abs(round.turns) === 2 ? "반 바퀴" : "반의 반 바퀴"} 돌리세요.`;
-  if (activity.kind === "mirror") return `${round.axis.kind === "vertical" ? "오른쪽" : "아래쪽"} 거울에 비칠 모양을 완성하세요.`;
-  if (activity.kind === "fold") return `색종이를 ${round.model.folds.map((d) => direction[d]).join(", 다시 ")}으로 접어 표시한 칸을 자릅니다. 펼치면 잘릴 칸을 모두 고르세요.`;
+  if (activity.kind === "digital") return `디지털 숫자 ${round.source.join("")}을 ${round.operation === "rotate-half" ? "반 바퀴 돌린" : "오른쪽으로 뒤집은"} 뒤 보이는 수를 읽으세요.`;
+  if (activity.kind === "mirror-shape") return `${{ right: "오른쪽", left: "왼쪽", top: "위쪽", bottom: "아래쪽" }[round.mirror]} 거울에 비칠 선 모양을 고르세요.`;
+  if (activity.kind === "preference") return "세 친구가 서로 다른 것을 좋아합니다. 조건에 맞게 한 가지씩 짝지으세요.";
+  if (activity.kind === "equal-lines") return "두 줄의 합이 같게 되도록 빈칸에 수를 놓으세요.";
+  if (activity.kind === "fold-quarters") return "1~4번 칸이 적힌 색종이를 두 번 접습니다. 맨 위에 오는 칸을 찾으세요.";
+  if (activity.kind === "kakuro") return "숫자 카드를 한 번씩 놓아 위쪽과 오른쪽의 줄 합을 맞추세요.";
+  if (activity.kind === "inference") return round.prompt;
+  if (activity.kind === "fold-shape") return "색종이를 한 번 접어 자릅니다. 펼치면 어떤 모양이 될까요?";
+  if (activity.kind === "fold") return `색종이를 ${round.model.folds.map((d) => direction[d]).join(", 다시 ")}으로 접어 자릅니다. 펼친 뒤 잘린 칸을 고르고 그 칸의 수를 더하세요.`;
   if (activity.kind === "cross") return `1, 2, 3, 4, 5를 한 번씩 놓아 가로줄과 세로줄의 합을 같게 만드세요. 가운데 수는 ${round.center}입니다.`;
   if (activity.kind === "order") return "네 친구를 조건에 맞게 앞에서부터 놓으세요.";
   return `A는 ${round.left}개, B는 ${round.right}개를 가졌습니다. A가 B에게 주어 두 사람의 개수를 같게 만드세요.`;
@@ -25,28 +40,21 @@ function clockScene(round, state) {
     return `<text x="${130 + 95 * Math.sin(a)}" y="${130 - 95 * Math.cos(a)}">${i + 1}</text>`;
   }).join("");
   const marks = Array.from({ length: 12 }, (_, i) => `<path transform="rotate(${i * 30} 130 130)" d="M130 13V20"/>`).join("");
-  return `<div class="hand-clock"><svg viewBox="0 0 260 260" role="img" aria-label="${round.start}에서 출발한 바늘이 현재 ${clockValueAfterQuarterTurns(round.start, state.turns)}을 가리키는 시계"><circle cx="130" cy="130" r="122" class="clock-rim"/><g class="clock-ticks">${marks}</g>${labels}<path class="clock-start" transform="rotate(${round.start * 30} 130 130)" d="M130 130V66"/><g class="clock-hand" style="transform:rotate(${angle}deg)"><path d="M130 134V55M122 64L130 54L138 64"/></g><circle cx="130" cy="130" r="6" class="clock-pin"/></svg><p class="hand-measure">돌린 양 <strong>${Math.abs(state.turns)} / 4 바퀴</strong><span>${state.turns === 0 ? "출발" : state.turns < 0 ? "시계 반대 방향" : "시계 방향"}</span></p><div class="hand-controls">${button("turn", "시계 반대로 ¼바퀴", "retry", { value: -1, disabled: state.solved || state.turns <= -8 })}${button("turn", "시계 방향으로 ¼바퀴", "clockwise", { value: 1, disabled: state.solved || state.turns >= 8 })}</div></div>`;
+  return `<div class="hand-clock"><svg viewBox="0 0 260 260" role="img" aria-label="${round.start}에서 출발한 바늘이 현재 ${clockValueAfterQuarterTurns(round.start, state.turns)}을 가리키는 시계"><circle cx="130" cy="130" r="122" class="clock-rim"/><g class="clock-ticks">${marks}</g>${labels}<path class="clock-start" transform="rotate(${round.start * 30} 130 130)" d="M130 130V66"/><g class="clock-hand" style="transform:rotate(${angle}deg)"><path d="M130 134V55M122 64L130 54L138 64"/></g><circle cx="130" cy="130" r="6" class="clock-pin"/></svg><p class="hand-measure">돌린 양 <strong>${state.turns === 0 ? "아직 돌리지 않음" : `반의 반 바퀴 ${Math.abs(state.turns)}번`}</strong><span>${state.turns === 0 ? "출발" : state.turns < 0 ? "시계 반대 방향" : "시계 방향"}</span></p><div class="hand-controls">${button("turn", "시계 반대 방향으로 반의 반 바퀴", "retry", { value: -1, disabled: state.solved || state.turns <= -8 })}${button("turn", "시계 방향으로 반의 반 바퀴", "clockwise", { value: 1, disabled: state.solved || state.turns >= 8 })}</div></div>`;
 }
 
-function cellGrid(state, { given = [], axis, enabled = true, label, pair = null }) {
+function cellGrid(state, { given = [], axis, enabled = true, label, pair = null, numbers = null }) {
   const painted = given.map(([x, y]) => y * 4 + x);
   const cells = Array.from({ length: 16 }, (_, i) => {
     const sourceSide = axis && (axis.kind === "vertical" ? i % 4 < 2 : Math.floor(i / 4) < 2);
     const selected = state.cells.includes(i);
     const classes = `hand-cell${painted.includes(i) ? " given" : ""}${selected ? " selected" : ""}${pair?.[1] === i ? " pair-source" : ""}`;
-    const cellLabel = `${Math.floor(i / 4) + 1}행 ${i % 4 + 1}열`;
+    const cellLabel = `${Math.floor(i / 4) + 1}행 ${i % 4 + 1}열${numbers ? `, ${numbers[i]}` : ""}`;
     if (sourceSide) return `<span class="${classes}" role="img" aria-label="${cellLabel}${painted.includes(i) ? " 색칠한 칸" : " 빈 칸"}"></span>`;
-    return `<button type="button" class="${classes}" data-hand-action="cell" data-value="${i}" aria-label="${cellLabel}" aria-pressed="${selected}" ${!enabled || state.solved ? "disabled" : ""}>${selected ? icon("check") : ""}</button>`;
+    return `<button type="button" class="${classes}" data-hand-action="cell" data-value="${i}" aria-label="${cellLabel}" aria-pressed="${selected}" ${!enabled || state.solved ? "disabled" : ""}>${numbers ? numbers[i] : selected ? icon("check") : ""}</button>`;
   }).join("");
   const link = pair ? `<svg class="hand-pair-guide" viewBox="0 0 4 4" preserveAspectRatio="none" aria-hidden="true"><path d="M${pair[0] % 4 + .5} ${Math.floor(pair[0] / 4) + .5}L${pair[1] % 4 + .5} ${Math.floor(pair[1] / 4) + .5}"/><circle cx="${pair[0] % 4 + .5}" cy="${Math.floor(pair[0] / 4) + .5}" r=".055"/><circle cx="${pair[1] % 4 + .5}" cy="${Math.floor(pair[1] / 4) + .5}" r=".055"/></svg>` : "";
   return `<div class="hand-grid ${axis ? `mirror-${axis.kind}` : ""}" role="group" aria-label="${esc(label)}">${cells}${link}</div>`;
-}
-
-function mirrorScene(round, state) {
-  const selected = state.cells.at(-1);
-  const counterpart = selected === undefined ? null : reflectCell([selected % 4, Math.floor(selected / 4)], round.axis);
-  const pair = counterpart ? [selected, counterpart[1] * 4 + counterpart[0]] : null;
-  return `<div class="hand-mirror"><p class="hand-diagram-label">주어진 모양 · 거울 · 비친 모양</p>${cellGrid(state, { given: round.given, axis: round.axis, label: "거울 모양 만들기", pair })}<p class="hand-diagram-label">${pair ? "점선으로 이은 두 칸은 거울선에서 같은 거리입니다." : `${round.axis.kind === "vertical" ? "가운데 세로선" : "가운데 가로선"}이 거울입니다.`}</p></div>`;
 }
 
 const points = (poly) => poly.map(({ x, y }) => `${20 + x * 200},${20 + y * 200}`).join(" ");
@@ -79,7 +87,8 @@ function foldScene(round, state, animateFold = false) {
   const grid = [70, 120, 170].map((p) => `<path d="M${p} 20V220M20 ${p}H220"/>`).join("");
   const svg = `<svg viewBox="0 0 240 240" role="img" aria-label="${state.solved ? "완전히 펼친 색종이" : `${state.foldStep}번 접은 색종이${state.cut ? ", 표시한 칸을 자름" : ""}`}"><defs><clipPath id="hand-fold-grid-clip"><polygon points="${points(shape)}"/></clipPath></defs><rect class="hand-fold-outline" x="20" y="20" width="200" height="200"/><polygon class="hand-fold-paper" points="${points(shape)}"/><g class="hand-fold-grid" clip-path="url(#hand-fold-grid-clip)">${grid}</g>${crease}${next ? foldArrow(next, bounds) : ""}${cuts.map((poly) => `<polygon class="${state.cut ? "hand-fold-hole" : "hand-fold-mark"}" points="${points(poly)}"/>`).join("")}${animateFold ? movingFlap(round, count) : ""}</svg>`;
   const doneFold = state.foldStep === round.model.folds.length;
-  return `<div class="hand-fold-layout"><figure>${svg}<figcaption>${state.solved ? "펼친 뒤" : state.cut ? "자른 뒤" : `${state.foldStep}번 접은 뒤`}</figcaption></figure><div><p class="hand-diagram-label">펼치면 잘릴 칸</p>${cellGrid(state, { enabled: state.cut, label: "잘릴 칸 예상" })}</div></div><div class="hand-controls">${button("fold", doneFold ? "접기 완료" : `${direction[round.model.folds[state.foldStep]]}으로 접기`, "next", { disabled: doneFold || state.solved })}${button("cut", "표시한 칸 자르기", null, { disabled: !doneFold || state.cut || state.solved })}</div>`;
+  const sum = state.cut ? `<div class="hand-fold-sum"><span>잘린 칸의 합</span><output aria-live="polite">${state.sumAnswer || "?"}</output><button type="button" data-hand-action="fold-sum-erase" aria-label="마지막 숫자 지우기" ${!state.sumAnswer || state.solved ? "disabled" : ""}>⌫</button></div><div class="hand-digital-keypad" role="group" aria-label="합 입력">${Array.from({ length: 10 }, (_, digit) => `<button type="button" data-hand-action="fold-sum-digit" data-value="${digit}" aria-label="${digit} 입력" ${state.sumAnswer.length >= 2 || state.solved ? "disabled" : ""}>${digit}</button>`).join("")}</div>` : "";
+  return `<div class="hand-fold-layout"><figure>${svg}<figcaption>${state.solved ? "펼친 뒤" : state.cut ? "자른 뒤" : `${state.foldStep}번 접은 뒤`}</figcaption></figure><div><p class="hand-diagram-label">펼치면 잘릴 칸</p>${cellGrid(state, { enabled: state.cut, label: "잘릴 칸 예상", numbers: round.values })}</div></div><div class="hand-controls">${button("fold", doneFold ? "접기 완료" : `${direction[round.model.folds[state.foldStep]]}으로 접기`, "next", { disabled: doneFold || state.solved })}${button("cut", "표시한 칸 자르기", null, { disabled: !doneFold || state.cut || state.solved })}</div>${sum}`;
 }
 
 function cardsAndSlots(activity, round, state) {
@@ -99,7 +108,33 @@ function transferScene(round, state) {
   return `<div class="hand-piles">${pile("A", state.left, 1)}${pile("B", state.right, -1)}</div><div class="hand-sums"><span>옮긴 개수 <b>${state.moved}</b></span><span>두 사람의 차이 <b>${Math.abs(state.left - state.right)}</b></span></div>`;
 }
 
-function renderActivity(container, unit, session, onQuestions) {
+function readyForFeedback(activity, round, state) {
+  switch (activity.kind) {
+    case "clock": return state.turns !== 0;
+    case "transfer": return state.moved !== 0;
+    case "digital": return state.digitalShown && state.digitalAnswer.length === round.result.length;
+    case "mirror-shape": return state.mirrorChoice !== null;
+    case "preference": return state.cells.length === 3;
+    case "equal-lines": return state.equalChoice !== null;
+    case "fold-quarters": return state.foldStep === 2 && state.quarterChoice !== null;
+    case "kakuro": return !state.cells.includes(null);
+    case "inference": return inferenceReady(round, state);
+    case "fold-shape": return state.cut && state.foldShapeChoice !== null;
+    case "fold": return state.cut && state.cells.length === 4 && state.sumAnswer.length === 2;
+    case "cross":
+    case "order": return state.slots.every((slot) => slot !== null);
+    default: return false;
+  }
+}
+
+const answerActions = new Set(["turn", "move", "digit", "mirror-choice", "preference", "equal-choice", "quarter-choice", "kakuro-cell", "exchange", "mark", "place", "fold-shape-choice", "cell", "fold-sum-digit", "slot"]);
+
+function cancelAutoAdvance(session) {
+  clearTimeout(session.autoAdvanceTimer);
+  session.autoAdvanceTimer = null;
+}
+
+function renderActivity(container, unit, session, onQuestions, voice) {
   const previousTurn = container.querySelector(".clock-hand")?.style.transform;
   const previousActivity = container.dataset.handActivity;
   const previousFoldStep = Number(container.querySelector(".hand-scene")?.dataset.handFoldStep ?? -1);
@@ -110,12 +145,28 @@ function renderActivity(container, unit, session, onQuestions) {
   const kind = activity.kind;
   const guide = handsOnGuide(activity, round, state);
   const portrait = state.solved ? "docssam-praise.webp" : state.checked ? "docssam-thinking.webp" : "docssam-guide.webp";
-  const scene = kind === "clock" ? clockScene(round, state) : kind === "mirror" ? mirrorScene(round, state) : kind === "fold" ? foldScene(round, state, previousActivity === session.active && state.foldStep > previousFoldStep && previousFoldStep >= 0) : ["cross", "order"].includes(kind) ? cardsAndSlots(activity, round, state) : transferScene(round, state);
+  const scene = kind === "clock" ? clockScene(round, state) : kind === "digital" ? digitalScene(round, state) : kind === "mirror-shape" ? mirrorShapeScene(round, state) : kind === "preference" ? preferenceScene(round, state) : kind === "equal-lines" ? equalLineScene(round, state) : kind === "fold-quarters" ? foldQuarterScene(round, state) : kind === "kakuro" ? kakuroScene(round, state) : kind === "inference" ? inferenceScene(round, state) : kind === "fold-shape" ? foldShapeScene(round, state) : kind === "fold" ? foldScene(round, state, previousActivity === session.active && state.foldStep > previousFoldStep && previousFoldStep >= 0) : ["cross", "order"].includes(kind) ? cardsAndSlots(activity, round, state) : transferScene(round, state);
   const atEnd = state.roundIndex === activity.rounds.length - 1;
-  container.innerHTML = `<div class="hand-toolbar"><nav class="hand-activity-tabs" aria-label="단원 체험">${unit.activities.map((id) => `<button type="button" data-hand-activity="${id}" aria-current="${id === session.active ? "true" : "false"}" class="${id === session.active ? "active" : ""}">${esc(HANDS_ON_ACTIVITIES[id].title)}</button>`).join("")}</nav><span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? "questions" : "next", atEnd ? "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: kind === "fold" && !state.cut })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
+  const voiceButton = voice.hasCue(session.active, guide)
+    ? `<button type="button" class="hand-guide-voice" data-hand-voice aria-pressed="${voice.enabled}" title="독쌤 음성 ${voice.enabled ? "끄기" : "켜기"}" aria-label="독쌤 음성 ${voice.enabled ? "끄기" : "켜기"}">${icon(voice.enabled ? "sound" : "muted")}</button>` : "";
+  container.innerHTML = `
+    <div class="hand-toolbar"><nav class="hand-activity-tabs" aria-label="단원 체험">${unit.activities.map((id) => `<button type="button" data-hand-activity="${id}" aria-current="${id === session.active ? "true" : "false"}" class="${id === session.active ? "active" : ""}">${esc(HANDS_ON_ACTIVITIES[id].title)}</button>`).join("")}</nav><span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div>
+    <h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p>
+    <div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><div class="hand-guide-heading"><strong>독쌤</strong>${voiceButton}</div><p>${esc(guide.text)}</p></div></div>
+    <div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div>
+    <p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" role="status" aria-live="polite" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${state.checked && !state.solved ? "아직 아니에요. " : ""}${esc(state.feedback)}${state.solved && !atEnd ? " 2초 뒤 다음 도전으로 넘어갑니다." : ""}</span></p>
+    <div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? "questions" : "next", atEnd ? "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : ""}</div>
+    ${state.solved && atEnd ? `<p class="hand-finished">체험 도전 ${activity.rounds.length}개 완료</p>` : ""}`;
+  voice.update(session.active, guide, state.roundIndex);
+  container.querySelector("[data-hand-voice]")?.addEventListener("click", () => {
+    voice.toggle(session.active, guide, state.roundIndex);
+    renderActivity(container, unit, session, onQuestions, voice);
+    container.querySelector("[data-hand-voice]")?.focus({ preventScroll: true });
+  });
   container.querySelectorAll("[data-hand-activity]").forEach((tab) => tab.addEventListener("click", () => {
+    cancelAutoAdvance(session);
     session.active = tab.dataset.handActivity;
-    renderActivity(container, unit, session, onQuestions);
+    renderActivity(container, unit, session, onQuestions, voice);
     container.querySelector(`[data-hand-activity="${session.active}"]`).focus({ preventScroll: true });
   }));
   const hand = container.querySelector(".clock-hand");
@@ -124,12 +175,23 @@ function renderActivity(container, unit, session, onQuestions) {
   }
   container.querySelectorAll("[data-hand-action]").forEach((control) => control.addEventListener("click", () => {
     const action = control.dataset.handAction;
-    const value = control.dataset.value === undefined ? undefined : kind === "order" && action === "choose" ? control.dataset.value : Number(control.dataset.value);
-    if (action === "questions") return onQuestions(activity.lesson);
+    const value = control.dataset.value === undefined ? undefined : kind === "order" && action === "choose" || kind === "inference" && action === "mark" ? control.dataset.value : Number(control.dataset.value);
+    cancelAutoAdvance(session);
+    if (action === "questions") return onQuestions();
     if (action === "reset") session.states[session.active] = newActivityState(session.active, state.roundIndex);
     else if (action === "next" && state.solved && !atEnd) session.states[session.active] = newActivityState(session.active, state.roundIndex + 1);
     else if (!applyActivityAction(state, action, value)) return;
-    renderActivity(container, unit, session, onQuestions);
+    if (answerActions.has(action) && readyForFeedback(activity, round, state)) applyActivityAction(state, "check");
+    renderActivity(container, unit, session, onQuestions, voice);
+    if (state.solved && !atEnd && answerActions.has(action)) {
+      const activityId = session.active;
+      session.autoAdvanceTimer = setTimeout(() => {
+        session.autoAdvanceTimer = null;
+        if (!container.isConnected || !container.closest("dialog")?.open || session.active !== activityId || session.states[activityId] !== state) return;
+        session.states[activityId] = newActivityState(activityId, state.roundIndex + 1);
+        renderActivity(container, unit, session, onQuestions, voice);
+      }, 2000);
+    }
     const selector = `[data-hand-action="${action}"]${control.dataset.value === undefined ? "" : `[data-value="${control.dataset.value}"]`}`;
     const focusTarget = container.querySelector(`${selector}:not(:disabled)`) || container.querySelector('.hand-primary:not(:disabled)') || container.querySelector('[data-hand-activity]');
     focusTarget?.focus({ preventScroll: true });
@@ -145,22 +207,24 @@ export function mountHandsOn(container, { bookId, lessonId, onQuestions, onOpen 
   const host = document.createElement("section");
   host.className = "gold-hands-on";
   host.dataset.handUnit = unit.id;
-  host.innerHTML = `<h3>직접 해보기</h3><div class="hand-launches">${unit.activities.map((id) => `<button type="button" data-hand-open="${id}">${icon("play")}<span>${esc(HANDS_ON_ACTIVITIES[id].title)}</span></button>`).join("")}</div><dialog class="hand-modal" aria-label="직접 해보기"><div class="hand-modal-shell"><header class="hand-modal-header"><strong>직접 해보기</strong><button type="button" class="hand-close icon-only" data-hand-close title="체험 닫기" aria-label="체험 닫기">${icon("close")}</button></header><div class="hand-content"></div></div></dialog>`;
+  host.innerHTML = `<h3>직접 해보기</h3><div class="hand-launches">${unit.activities.map((id) => `<button type="button" data-hand-open="${id}">${icon("play")}<span>${esc(HANDS_ON_ACTIVITIES[id].title)}</span></button>`).join("")}</div><dialog class="hand-modal" aria-label="직접 해보기"><div class="hand-modal-shell"><header class="hand-modal-header"><strong>직접 해보기</strong><button type="button" class="hand-close icon-only" data-hand-close title="체험 닫기" aria-label="체험 닫기">${icon("close")}</button></header><div class="hand-content"></div></div><audio class="hand-voice-player" preload="none" hidden></audio></dialog>`;
   const lead = container.querySelector(".lesson-lead");
   if (lead) lead.after(host); else container.prepend(host);
   const dialog = host.querySelector(".hand-modal");
   const content = host.querySelector(".hand-content");
+  const voice = createHandsOnVoice(host.querySelector(".hand-voice-player"));
   let trigger;
-  const close = () => { if (dialog.open) dialog.close(); };
+  const close = () => { cancelAutoAdvance(session); voice.stop(); if (dialog.open) dialog.close(); };
   host.querySelectorAll("[data-hand-open]").forEach((launch) => launch.addEventListener("click", () => {
     trigger = launch;
     session.active = launch.dataset.handOpen;
     onOpen();
-    renderActivity(content, unit, session, (target) => { close(); onQuestions(target); });
+    voice.stop();
+    renderActivity(content, unit, session, () => { close(); onQuestions(lessonId); }, voice);
     dialog.showModal();
     host.querySelector("[data-hand-close]").focus({ preventScroll: true });
   }));
   host.querySelector("[data-hand-close]").addEventListener("click", close);
-  dialog.addEventListener("close", () => { if (trigger?.isConnected) trigger.focus({ preventScroll: true }); });
+  dialog.addEventListener("close", () => { cancelAutoAdvance(session); voice.stop(); if (trigger?.isConnected) trigger.focus({ preventScroll: true }); });
   host.addEventListener("keydown", (event) => event.stopPropagation());
 }

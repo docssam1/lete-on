@@ -20,6 +20,10 @@
 .gold-hands-on .hand-guide-copy::before, .gold-hands-on .hand-guide-copy::after { content: ""; position: absolute; top: 50%; right: 100%; width: 0; height: 0; border: 10px solid transparent; border-right-color: #b9c7d5; transform: translateY(-50%); }
 .gold-hands-on .hand-guide-copy::after { margin-right: -2px; border-right-color: #fff; }
 .gold-hands-on .hand-guide-copy strong { font-size: 14px; color: #146a76; }
+.gold-hands-on .hand-guide-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gold-hands-on .hand-guide-voice { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #b9c7d5; border-radius: 4px; background: #fff; color: #244260; cursor: pointer; }
+.gold-hands-on .hand-guide-voice[aria-pressed="false"] { color: #566274; }
+.gold-hands-on .hand-guide-voice:focus-visible { outline: 3px solid #d69a2d; outline-offset: 2px; }
 .gold-hands-on .hand-guide-copy p { margin: 4px 0 0; font-size: 16px; font-weight: 650; line-height: 1.5; word-break: keep-all; }
 .gold-hands-on [data-guide-phase="retry"] .hand-guide-copy { border-color: #b42332; }
 .gold-hands-on [data-guide-phase="retry"] .hand-guide-copy::before { border-right-color: #b42332; }
@@ -28,7 +32,7 @@
 .gold-hands-on .hand-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .gold-hands-on .hand-round { white-space: nowrap; font-size: 13px; color: var(--hand-muted); }
 .gold-hands-on .hand-title { margin: 20px 0 8px; font-size: 22px; line-height: 1.4; }
-.gold-hands-on .hand-task { margin: 0 0 4px; font-size: 18px; line-height: 1.65; word-break: keep-all; overflow-wrap: anywhere; }
+.gold-hands-on .hand-task { margin: 0 0 8px; color: #183248; font-family: var(--display, 'Noto Sans KR', 'Malgun Gothic', sans-serif); font-size: 24px; font-weight: 800; line-height: 1.45; word-break: keep-all; overflow-wrap: anywhere; }
 .gold-hands-on button { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #566274; border-radius: 4px; background: #fff; color: var(--hand-ink); padding: 8px 12px; font: inherit; font-size: 15px; cursor: pointer; line-height: 1.4; }
 .gold-hands-on button:hover:not(:disabled) { background: #eaf0ff; border-color: #2456c4; }
 .gold-hands-on button:disabled { cursor: default; opacity: .55; }
@@ -83,6 +87,8 @@
 .gold-hands-on .hand-fold-moving.horizontal { animation: hand-fold-horizontal 420ms ease-in-out both; }
 .gold-hands-on .hand-fold-mark { fill: #f2ba67; stroke: #754407; stroke-width: 2; stroke-dasharray: 4 2; }
 .gold-hands-on .hand-fold-hole { fill: #fff; stroke: #2456c4; stroke-width: 2; }
+.gold-hands-on .hand-fold-sum { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 20px 0 12px; }
+.gold-hands-on .hand-fold-sum output { min-width: 72px; min-height: 48px; padding: 6px 12px; border: 2px solid #2456c4; text-align: center; font-size: 24px; font-weight: 700; }
 .gold-hands-on .hand-cross { display: flex; justify-content: center; align-items: center; gap: 24px; }
 .gold-hands-on .hand-cross-grid { display: grid; grid-template-columns: repeat(3, 58px); grid-template-rows: repeat(3, 58px); gap: 8px; }
 .gold-hands-on .hand-slot { font-size: 22px; font-weight: 700; border: 2px dashed #566274; padding: 4px; min-width: 0; }
@@ -107,6 +113,72 @@
 .gold-hands-on .hand-tokens { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 27px; align-content: start; gap: 6px; min-height: 170px; }
 .gold-hands-on .hand-tokens i { display: block; max-width: 30px; background: #72abd9; border: 2px solid #2456c4; border-radius: 3px; }
 .gold-hands-on .hand-pile.b .hand-tokens i { background: #8cd3b4; border-color: #16734b; }
+.gold-hands-on .hand-mirror-stage { display: flex; align-items: center; justify-content: center; gap: 16px; min-height: 250px; }
+.gold-hands-on .hand-mirror-stage.mirror-left { flex-direction: row-reverse; }
+.gold-hands-on .hand-mirror-stage.mirror-top { flex-direction: column-reverse; }
+.gold-hands-on .hand-mirror-stage.mirror-bottom { flex-direction: column; }
+.gold-hands-on .hand-mirror-paper { width: 130px; height: 130px; display: grid; place-items: center; background: #fff; border: 1px solid #d8dee8; font-size: 42px; color: #566274; }
+.gold-hands-on .hand-mirror-paper svg, .gold-hands-on .hand-mirror-options svg { display: block; width: 100%; height: 100%; }
+.gold-hands-on .hand-mirror-paper polyline, .gold-hands-on .hand-mirror-options polyline { fill: none; stroke: #146a76; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.gold-hands-on .hand-mirror-glass { display: block; width: 5px; height: 138px; background: #b75371; box-shadow: 0 0 0 3px #f5e8ed; }
+.gold-hands-on :is(.mirror-top, .mirror-bottom) .hand-mirror-glass { width: 138px; height: 5px; }
+.gold-hands-on .hand-mirror-options { display: grid; grid-template-columns: repeat(4, minmax(0, 92px)); justify-content: center; gap: 8px; margin-top: 16px; }
+.gold-hands-on .hand-mirror-options button { position: relative; height: 100px; padding: 6px; }
+.gold-hands-on .hand-mirror-options button span { position: absolute; top: 4px; left: 6px; font-size: 13px; color: #566274; }
+.gold-hands-on .hand-preference { max-width: 640px; margin: auto; }
+.gold-hands-on .hand-preference-grid { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: center; }
+.gold-hands-on .hand-preference-grid caption { text-align: left; font-weight: 700; margin: 0 0 8px; }
+.gold-hands-on .hand-preference-grid th, .gold-hands-on .hand-preference-grid td { border: 1px solid #b9c7d5; padding: 4px; }
+.gold-hands-on .hand-preference-grid th { background: #eaf0ff; font-size: 15px; word-break: keep-all; }
+.gold-hands-on .hand-preference-cell { width: 100%; height: 52px; padding: 4px; font-size: 23px; color: #16734b; }
+.gold-hands-on .hand-preference-cell:disabled { opacity: 1; }
+.gold-hands-on .hand-equal-lines { max-width: 500px; margin: auto; text-align: center; }
+.gold-hands-on .hand-equal-lines > svg { width: min(280px, 100%); height: auto; }
+.gold-hands-on .hand-equal-links polyline { fill: none; stroke: #4b83a2; stroke-width: 3; }
+.gold-hands-on .hand-equal-points circle { fill: #fff; stroke: #24799d; stroke-width: 2; }
+.gold-hands-on .hand-equal-points circle.missing { fill: #fff6de; stroke: #a46900; stroke-width: 3; }
+.gold-hands-on .hand-equal-points text { text-anchor: middle; dominant-baseline: central; fill: #182230; font: 700 22px sans-serif; }
+.gold-hands-on .hand-equal-choices { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin: 20px auto 0; max-width: 400px; }
+.gold-hands-on .hand-equal-choices button { font-size: 18px; font-weight: 700; }
+.gold-hands-on .hand-equal-choices button:disabled { opacity: 1; }
+.gold-hands-on .hand-quarter-stage { min-height: 215px; display: grid; place-items: center; }
+.gold-hands-on .hand-quarter-original { width: 180px; height: 180px; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); background: #ddf4f5; border: 2px solid #146a76; }
+.gold-hands-on .hand-quarter-original span { display: grid; place-items: center; font-size: 26px; font-weight: 700; }
+.gold-hands-on .hand-quarter-original span:nth-child(odd) { border-right: 1px dashed #24799d; }
+.gold-hands-on .hand-quarter-original span:nth-child(-n+2) { border-bottom: 1px dashed #24799d; }
+.gold-hands-on .hand-quarter-folded { display: grid; place-items: center; margin: auto; background: #a9dfe3; border: 2px solid #146a76; box-shadow: 5px 5px 0 #e2f5f5; color: #182230; font-size: 30px; font-weight: 700; }
+.gold-hands-on .hand-quarter-folded.step-1.tall { width: 90px; height: 180px; }
+.gold-hands-on .hand-quarter-folded.step-1.wide { width: 180px; height: 90px; }
+.gold-hands-on .hand-quarter-folded.step-2 { width: 90px; height: 90px; }
+.gold-hands-on .hand-quarter-choices { display: flex; justify-content: center; gap: 12px; }
+.gold-hands-on .hand-quarter-choices button { width: 60px; height: 58px; font-size: 24px; font-weight: 700; }
+.gold-hands-on .hand-fold-shape-stage svg { display: block; width: 200px; height: 200px; margin: auto; }
+.gold-hands-on .hand-shape-outline { fill: none; stroke: #8c97a8; stroke-width: 2; stroke-dasharray: 5 4; }
+.gold-hands-on .hand-shape-paper { fill: #b8e4e8; stroke: #146a76; stroke-width: 2; }
+.gold-hands-on .hand-shape-crease { fill: none; stroke: #2456c4; stroke-width: 2; stroke-dasharray: 6 5; }
+.gold-hands-on .hand-shape-mark { fill: #f2ba67; stroke: #754407; stroke-width: 2; stroke-dasharray: 4 3; }
+.gold-hands-on .hand-shape-hole { fill: #fff; stroke: #2456c4; stroke-width: 2; }
+.gold-hands-on .hand-fold-shape-options { display: grid; grid-template-columns: repeat(4, minmax(0, 96px)); justify-content: center; gap: 8px; }
+.gold-hands-on .hand-fold-shape-options button { position: relative; height: 102px; min-width: 0; padding: 6px; }
+.gold-hands-on .hand-fold-shape-options button span { position: absolute; top: 2px; left: 5px; font-size: 13px; }
+.gold-hands-on .hand-fold-shape-options svg { display: block; width: 100%; height: 100%; }
+.gold-hands-on .hand-fold-shape-options button:disabled { opacity: 1; }
+.gold-hands-on .hand-digital { width: min(520px, 100%); margin: auto; }
+.gold-hands-on .hand-digital-row { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); align-items: center; gap: 8px; }
+.gold-hands-on .hand-digital-row figure { min-width: 0; }
+.gold-hands-on .hand-digital-digits, .gold-hands-on .hand-digital-result { min-height: 148px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.gold-hands-on .hand-digital-digits svg { width: clamp(50px, 12vw, 74px); height: 127px; flex: 0 1 74px; }
+.gold-hands-on .hand-digital-digits.right-flip { transform: scaleX(-1); }
+.gold-hands-on .hand-digital-digits.half-turn { transform: rotate(180deg); }
+.gold-hands-on .hand-digital-on, .gold-hands-on .hand-digital-off { fill: none; stroke-width: 10; stroke-linecap: round; }
+.gold-hands-on .hand-digital-on { stroke: #146a76; }
+.gold-hands-on .hand-digital-off { stroke: #dce7e8; }
+.gold-hands-on .hand-digital-arrow { text-align: center; font-size: 28px; color: #2456c4; }
+.gold-hands-on .hand-digital-hidden { font-size: 42px; color: #566274; }
+.gold-hands-on .hand-digital-answer { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 20px 0 12px; }
+.gold-hands-on .hand-digital-answer output { min-width: 72px; min-height: 48px; padding: 6px 12px; border: 2px solid #2456c4; text-align: center; font-size: 24px; font-weight: 700; }
+.gold-hands-on .hand-digital-keypad { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; max-width: 360px; margin: auto; }
+.gold-hands-on .hand-digital-keypad button { font-size: 20px; font-weight: 700; }
 @keyframes hand-slide-in { from { opacity: .4; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes hand-fold-vertical { from { transform: scaleX(1); opacity: 1; } 85% { transform: scaleX(-1); opacity: 1; } to { transform: scaleX(-1); opacity: 0; } }
 @keyframes hand-fold-horizontal { from { transform: scaleY(1); opacity: 1; } 85% { transform: scaleY(-1); opacity: 1; } to { transform: scaleY(-1); opacity: 0; } }
@@ -122,6 +194,7 @@
   .gold-hands-on .hand-guide-copy::before, .gold-hands-on .hand-guide-copy::after { border-width: 7px; }
   .gold-hands-on .hand-guide-copy p { font-size: 15px; }
   .gold-hands-on .hand-title { font-size: 21px; }
+  .gold-hands-on .hand-task { font-size: 21px; line-height: 1.5; }
   .gold-hands-on .hand-fold-layout { grid-template-columns: 1fr; gap: 16px; }
   .gold-hands-on .hand-fold-layout figure svg { width: 180px; }
   .gold-hands-on .hand-cross { flex-direction: column; gap: 12px; }
@@ -132,6 +205,16 @@
   .gold-hands-on .hand-pile { padding: 0; }
   .gold-hands-on .hand-pile > button { flex-direction: column; padding: 6px; font-size: 14px; }
   .gold-hands-on .hand-tokens { gap: 4px; grid-auto-rows: 23px; }
+  .gold-hands-on .hand-digital-digits svg { width: clamp(38px, 10vw, 56px); height: 100px; }
+  .gold-hands-on .hand-digital-digits, .gold-hands-on .hand-digital-result { min-height: 112px; gap: 3px; }
+  .gold-hands-on .hand-mirror-paper { width: 108px; height: 108px; }
+  .gold-hands-on .hand-mirror-stage { gap: 10px; min-height: 215px; }
+  .gold-hands-on .hand-mirror-glass { height: 110px; }
+  .gold-hands-on :is(.mirror-top, .mirror-bottom) .hand-mirror-glass { width: 110px; }
+  .gold-hands-on .hand-mirror-options button { height: 82px; padding: 4px; }
+  .gold-hands-on .hand-preference-grid th, .gold-hands-on .hand-preference-grid td { padding: 2px; }
+  .gold-hands-on .hand-preference-grid th { font-size: 13px; }
+  .gold-hands-on .hand-fold-shape-options button { height: 84px; padding: 3px; }
 }
 @media (prefers-reduced-motion: reduce) { .gold-hands-on .clock-hand { transition: none; } .gold-hands-on .hand-content, .gold-hands-on .hand-fold-moving { animation: none; } .gold-hands-on .hand-fold-moving { display: none; } }
 @media print { .gold-hands-on { display: none !important; } }
