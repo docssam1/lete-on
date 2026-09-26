@@ -1,0 +1,40 @@
+name: Showreel Narration (Numbers of Magic)
+
+# 쇼릴 내레이션 MP3 — 대본(narration.json)이나 생성기가 바뀌어 푸시되면 그 브랜치에서 돈다.
+# 결과 MP3 를 같은 브랜치에 커밋해 돌려준다(작은 파일 몇십 개).
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'number_magic/scripts/showreel/narration.json'
+      - 'number_magic/scripts/showreel/narrate.js'
+      - '.github/workflows/showreel-narration.yml'
+
+concurrency:
+  group: showreel-narration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  narrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Generate narration MP3s
+        env:
+          GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
+        run: node number_magic/scripts/showreel/narrate.js
+      - name: Commit MP3s back to this branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add number_magic/scripts/showreel/narration
+          if git diff --cached --quiet; then echo "no change"; else
+            git commit -m "수의 마법 쇼릴 내레이션 MP3 (자동 생성)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
