@@ -1468,7 +1468,11 @@ function screenRoadmap(){
   if(!window.NM_ROADMAP){scr.innerHTML='<div class="nm-card">roadmap.js 없음</div>';return;}
   const road=NM_ROADMAP;
   const nextId=findNextRoadUnit();
-  let html=`<div class="nm-road-wrap">
+  /* 3D 여행 그림책(app/story3d, 2026-09-26)과 그 2D 대체(단계 꼬리표 줄)가 같이 쓰는 단계 목록 —
+     아래 단계 머리와 같은 계산(도장 받은 유닛 비율). 잠그지 않는다. */
+  const storyStages=roadStoryStages(road);
+  const storyCur=roadStoryCurrentStage(road,nextId);
+  let html=`<div class="nm-road-wrap nm-storyroad">
     <div class="nm-road-header">
       <button class="nm-back" id="roadBack">${t('back')}</button>
       <div class="nm-unit-title">🗺️ ${L(road.title)}</div>
@@ -1477,6 +1481,9 @@ function screenRoadmap(){
         <button class="nm-btn nm-btn-secondary" id="roadSuggested" ${nextId?'':'disabled'}>${S.lang==='ko'?'추천 위치':S.lang==='en'?'Suggested start':'推荐位置'}</button>
         <button class="nm-btn nm-btn-secondary" id="roadBrowseStart">${S.lang==='ko'?'처음부터 둘러보기':S.lang==='en'?'Browse from the beginning':'从头浏览'}</button>
       </div>
+    </div>
+    <div class="nm-story-hero" id="storyHero">
+      <nav class="nm-story-stages" aria-label="${esc(S.lang==='ko'?'학습 단계':S.lang==='en'?'Stages':'学习阶段')}">${storyStages.map(s=>`<button type="button" class="nm-story-chip${s.key===storyCur?' here':''}" data-stage="${esc(s.key)}" style="--st:${esc(s.accent)}"><span aria-hidden="true">${s.icon||''}</span><b>${esc(s.name)}</b><small>${s.pct}%</small></button>`).join('')}</nav>
     </div>
     <div class="nm-road-path">`;
 
@@ -1572,11 +1579,21 @@ function screenRoadmap(){
 
   /* R0 배너의 "보러가기"가 세운 챕터 포커스 — courseroad의 scrollIntoView와 같은 패턴.
      한 번 쓰고 지운다(다음 재렌더 때 다시 스크롤 튀지 않게). */
+  /* 3D 그림책이 서면 첫 화면은 그림책(아이가 추천 단계 옆에 서 있다)이고, 목록으로 자동으로 내려가지 않는다.
+     3D 를 못 쓰면 예전처럼 추천 위치로 바로 내려간다. */
+  let autoSuggest=false;
   if(S._roadFocusChapter){
     const chEl=scr.querySelector(`.nm-road-chapter[data-chid="${S._roadFocusChapter}"]`);
     if(chEl)chEl.scrollIntoView({block:'start'});
     S._roadFocusChapter=null;
-  }else if(hasRoadCourseContext())goSuggested(false);
+  }else if(hasRoadCourseContext())autoSuggest=true;
+  const goStage=key=>roadScrollToStage(scr,key);
+  scr.querySelectorAll('.nm-story-chip[data-stage]').forEach(b=>{b.onclick=()=>goStage(b.dataset.stage);});
+  mountStory3DInto(scr,storyStages,storyCur,nextId,{
+    onStage:goStage,
+    onHere:()=>goSuggested(true),
+    onFail:()=>{ if(autoSuggest)goSuggested(false); }
+  });
 
   $('#roadBack').onclick=()=>{S.view='town';save();render();};
 
@@ -1610,6 +1627,63 @@ function screenRoadmap(){
       window.open(el.dataset.link,'_blank','noopener');
     };
   });
+}
+
+/* ── 스토리 모드 3D 그림책(app/story3d) 도우미 (2026-09-26) ──
+   단계 목록: 지도 챕터에 처음 나오는 순서대로, 단계 머리와 같은 진도 계산(잠금 없음). */
+function roadStoryStages(road){
+  const stageOf=window.NM_STAGE_OF_CHAPTER; if(!stageOf||!road)return[];
+  const out=[],seen={};
+  road.chapters.forEach(ch=>{
+    const st=ch.id&&stageOf(ch.id); if(!st||seen[st.key])return; seen[st.key]=1;
+    let tot=0,don=0;
+    st.chapters.forEach(cid=>{const c2=road.chapters.find(x=>x.id===cid);(c2&&c2.units||[]).forEach(uid=>{if(UNITS[uid]){tot++;if(stepDone(uid,'stamp'))don++;}});});
+    out.push({key:st.key,icon:st.icon||'',accent:st.accent||'#0E2C57',name:L(st.name).split(' — ')[0],band:L(st.band),pct:tot?Math.round(don/tot*100):0});
+  });
+  return out;
+}
+/* 아이가 서 있는 단계 — "여기부터!" 유닛의 단계, 없으면 과정 시작 챕터의 단계 */
+function roadStoryCurrentStage(road,nextId){
+  const stageOf=window.NM_STAGE_OF_CHAPTER; if(!stageOf||!road)return null;
+  let ch=nextId?road.chapters.find(c=>(c.units||[]).indexOf(nextId)>=0):null;
+  if(!ch)ch=road.chapters[roadStartChapterIdx()]||road.chapters[0];
+  const st=ch&&ch.id&&stageOf(ch.id);
+  return st?st.key:null;
+}
+/* 단계 머리로 스크롤(끈적이는 머리 띠 밑에 오게) + 잠깐 금빛으로 알려 준다 */
+function roadScrollToStage(scr,key){
+  const wrap=scr.querySelector('.nm-road-wrap');
+  const el=scr.querySelector(`.nm-road-stage[data-stage="${key}"]`);
+  if(!wrap||!el)return;
+  const hd=scr.querySelector('.nm-road-header');
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const top=wrap.scrollTop+el.getBoundingClientRect().top-wrap.getBoundingClientRect().top-(hd?hd.offsetHeight:0)-10;
+  if(wrap.scrollTo)wrap.scrollTo({top:Math.max(0,top),behavior:reduce?'auto':'smooth'});else wrap.scrollTop=Math.max(0,top);
+  el.classList.remove('is-flash');void el.offsetWidth;el.classList.add('is-flash');
+  if(!el.hasAttribute('tabindex'))el.tabIndex=-1;
+  el.focus({preventScroll:true});
+}
+/* 스토리 모드 머리에 3D 여행 그림책을 세운다 — 못 세우면 2D 단계 꼬리표 줄이 그대로 남는다.
+   정리는 mountTitle3DInto·road3d 와 같이 townCleanup 사슬에 건다(render()가 화면을 떠날 때 부른다). */
+function mountStory3DInto(scr,stages,current,nextId,o){
+  const hero=scr.querySelector('#storyHero');
+  if(!hero||!stages.length){ if(o.onFail)o.onFail(); return; }
+  const box=document.createElement('div');
+  box.className='nm-story3d';
+  hero.appendChild(box);
+  hero.classList.add('is-3d');   /* 자리를 먼저 잡는다(3D 가 서는 동안 목록이 튀지 않게). 실패하면 되돌린다 */
+  const u=nextId&&UNITS[nextId];
+  const here=u?{label:S.lang==='ko'?'여기부터!':S.lang==='en'?'Start here!':'从这里！',sub:L(u.title)}:null;
+  const fail=()=>{ box.remove(); hero.classList.remove('is-3d'); if(hero.isConnected&&o.onFail)o.onFail(); };
+  import('./story3d/story3d.js').then(m=>m.mountStory3D(box,{
+    lang:S.lang, stages, current, here, avatar:{kind:avatarKind()},
+    onStage:o.onStage, onHere:o.onHere
+  })).then(ctl=>{
+    if(!ctl){ fail(); return; }
+    if(!box.isConnected){ ctl.dispose(); return; }
+    const prev=townCleanup;
+    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); };
+  }).catch(e=>{ console.warn('[story3d]',e); fail(); });
 }
 
 /* 학생의 현재 과정이 앱 지도의 어느 챕터에서 시작하는가 (2026-09-23)
@@ -3500,7 +3574,9 @@ function roadAccentHex(v){
 function roadFlashRow(el,body){
   if(!el) return;
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  el.scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'});
+  /* 멀면 바로 옮기고(긴 부드러운 스크롤은 느린 기기에서 한참 걸린다) 가까우면 부드럽게 */
+  const far=body?Math.abs(el.getBoundingClientRect().top-body.getBoundingClientRect().top-body.clientHeight/2)>body.clientHeight*1.5:true;
+  el.scrollIntoView({block:'center',behavior:reduce||far?'auto':'smooth'});
   el.classList.remove('nm-cr-flash'); void el.offsetWidth; el.classList.add('nm-cr-flash');
   clearTimeout(el._flashT); el._flashT=setTimeout(()=>el.classList.remove('nm-cr-flash'),2600);
   try{ el.focus({preventScroll:true}); }catch(e){}
