@@ -3438,3 +3438,111 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   .nm-cr-desk .nm-cr-titlerow{gap:6px}
   .nm-cr-desk .nm-cr-diagbtn .nm-cr-ic{display:none}
 }
+
+/* ============================================================
+   속도 비교 진단(2026-09-26) — 학습 속도 카드 바로 아래 한 장.
+   같은 서리 카드·명조 제목·선 아이콘. 표지는 모양이 달라 색 없이도 구분된다:
+   우리 아이 = 초록 원(흰 테) · A반 = 회청 마름모 · 프리미어 = 금색 원 + 표준~빠른 쪽 띠 · KMO = 보라 네모.
+   ============================================================ */
+.nm-cr-desk .nm-cr-pc{max-width:560px;margin:0 auto 14px;padding:18px 18px 16px;border-radius:14px;background:var(--la-card);color:var(--la-ink);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--la-line),var(--la-shadow);
+  --pc-you:#23866a;--pc-a:#6b7390;--pc-p:#b0831f;--pc-k:#6f5bd6}
+.nm-cr-desk .nm-pc-needage{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:4px;padding:11px 12px;border-radius:12px;background:rgba(156,200,255,.16);font-size:14px;line-height:1.55}
+.nm-cr-desk .nm-pc-needage .nm-cr-ic{color:#4a78b8}
+.nm-cr-desk .nm-pc-needage span{flex:1 1 180px;min-width:0;word-break:keep-all}
+.nm-cr-desk .nm-pc-agebtn{min-height:44px;padding:0 16px;border:0;border-radius:999px;background:var(--la-pearl);color:var(--la-ink);font:inherit;font-weight:600;font-size:14px;cursor:pointer;
+  box-shadow:inset 0 0 0 1px var(--la-gold),0 3px 10px rgba(38,48,74,.1)}
+.nm-cr-desk .nm-pc-agebtn.sm{min-height:36px;padding:0 13px;font-size:13px;margin-left:auto}
+.nm-cr-desk .nm-pc-agebtn:focus-visible,.nm-cr-desk .nm-pc-apply:focus-visible{outline:3px solid var(--la-ink);outline-offset:2px}
+.nm-cr-desk .nm-pc-age{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin:2px 0 14px;padding:6px 6px 6px 12px;border-radius:12px;background:rgba(255,255,255,.66);
+  box-shadow:inset 0 0 0 1px rgba(38,48,74,.08);font-size:13px}
+.nm-cr-desk .nm-pc-age>span{color:var(--la-ink-2);font-weight:600;letter-spacing:.04em}
+.nm-cr-desk .nm-pc-age b{font-family:var(--la-serif);font-weight:500;font-size:15px}
+.nm-cr-desk .nm-pc-age em{font-style:normal;color:var(--la-ink-2);font-weight:500}
+
+/* 판정 */
+.nm-cr-desk .nm-pc-verdict{padding:14px 16px;border-radius:14px;background:var(--la-pearl);box-shadow:inset 0 0 0 1px var(--la-line)}
+.nm-cr-desk .nm-pc-verdict.none,.nm-cr-desk .nm-pc-verdict.out{background:rgba(255,255,255,.7)}
+.nm-cr-desk .nm-pc-vpre{display:block;color:var(--la-ink-2);font-size:12.5px;font-weight:600;letter-spacing:.06em}
+.nm-cr-desk .nm-pc-vt{display:block;margin-top:3px;font-family:var(--la-serif);font-weight:500;font-size:22px;line-height:1.35;color:var(--la-ink);word-break:keep-all}
+.nm-cr-desk .nm-pc-verdict.none .nm-pc-vt,.nm-cr-desk .nm-pc-verdict.out .nm-pc-vt{font-size:18px}
+.nm-cr-desk .nm-pc-verdict p{margin:7px 0 0;color:var(--la-ink-2);font-size:13.5px;line-height:1.6;word-break:keep-all}
+
+/* 세 단 사다리 — 낮은 기준 → 높은 기준, 닿은 곳까지 켜진다 */
+.nm-cr-desk .nm-pc-ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0 0;padding:0;list-style:none;position:relative}
+.nm-cr-desk .nm-pc-rung{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 9px;border-radius:12px;text-align:center;
+  background:rgba(255,255,255,.6);box-shadow:inset 0 0 0 1px rgba(38,48,74,.08);min-width:0}
+.nm-cr-desk .nm-pc-rung b{font-family:var(--la-serif);font-weight:500;font-size:13.5px;line-height:1.3;word-break:keep-all}
+.nm-cr-desk .nm-pc-rung small{color:var(--la-ink-2);font-size:11.5px;font-weight:600}
+.nm-cr-desk .nm-pc-dot{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.5px rgba(38,48,74,.18);color:#fff}
+.nm-cr-desk .nm-pc-dot .nm-cr-ic{width:16px;height:16px}
+.nm-cr-desk .nm-pc-rung.on .nm-pc-dot{background:linear-gradient(135deg,#5fc9b5,#23866a);box-shadow:none}
+.nm-cr-desk .nm-pc-rung.cur{background:var(--la-pearl);box-shadow:inset 0 0 0 1.5px var(--la-gold),0 0 0 4px rgba(185,167,255,.18),0 6px 16px rgba(38,48,74,.1)}
+.nm-cr-desk .nm-pc-rung.out{opacity:.6}
+.nm-cr-desk .nm-pc-rung.off small{color:#8a4b2f}
+
+/* 타임라인 */
+.nm-cr-desk .nm-pc-tl{margin-top:16px;padding-top:15px;border-top:1px solid rgba(38,48,74,.08)}
+.nm-cr-desk .nm-pc-legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:-2px 0 10px;color:var(--la-ink-2);font-size:12px;font-weight:600}
+.nm-cr-desk .nm-pc-legend span{display:inline-flex;align-items:center;gap:6px}
+.nm-cr-desk .nm-pc-legend i{display:inline-block;width:10px;height:10px}
+.nm-cr-desk .nm-pc-legend .you i,.nm-cr-desk .nm-pc-mk.you{border-radius:50%;background:var(--pc-you);box-shadow:0 0 0 2px #fff,0 0 0 3px var(--pc-you)}
+.nm-cr-desk .nm-pc-legend .a i,.nm-cr-desk .nm-pc-mk.a{background:var(--pc-a);transform:rotate(45deg);border-radius:1.5px}
+.nm-cr-desk .nm-pc-legend .p i,.nm-cr-desk .nm-pc-mk.p{border-radius:50%;background:#fff;box-shadow:inset 0 0 0 3px var(--pc-p)}
+.nm-cr-desk .nm-pc-legend .k i,.nm-cr-desk .nm-pc-mk.k{background:var(--pc-k);border-radius:2px}
+.nm-cr-desk .nm-pc-rows{margin:0;padding:0;list-style:none}
+.nm-cr-desk .nm-pc-row{padding:9px 0 10px;border-bottom:1px dashed rgba(38,48,74,.1)}
+.nm-cr-desk .nm-pc-row:last-child{border-bottom:0}
+.nm-cr-desk .nm-pc-rowh{display:flex;align-items:baseline;gap:8px;justify-content:space-between}
+.nm-cr-desk .nm-pc-rowh b{font-family:var(--la-serif);font-weight:500;font-size:14.5px;line-height:1.35;word-break:keep-all}
+.nm-cr-desk .nm-pc-rowh small{flex:none;color:var(--la-ink-3);font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.nm-cr-desk .nm-pc-track{position:relative;height:22px;margin:7px 6px 5px;background:linear-gradient(rgba(38,48,74,.12),rgba(38,48,74,.12)) center/100% 2px no-repeat}
+.nm-cr-desk .nm-pc-now{position:absolute;top:-2px;bottom:-2px;width:0;border-left:1.5px dashed rgba(122,103,216,.55)}
+.nm-cr-desk .nm-pc-band{position:absolute;top:50%;height:8px;margin-top:-4px;border-radius:4px;background:rgba(201,164,76,.28)}
+.nm-cr-desk .nm-pc-mk{position:absolute;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px}
+.nm-cr-desk .nm-pc-mk.p{width:12px;height:12px;margin:-6px 0 0 -6px}
+.nm-cr-desk .nm-pc-mk.you{width:13px;height:13px;margin:-6.5px 0 0 -6.5px;z-index:2}
+.nm-cr-desk .nm-pc-row.passed .nm-pc-track{opacity:.55}
+.nm-cr-desk .nm-pc-facts{display:flex;flex-wrap:wrap;gap:2px 12px;color:var(--la-ink-2);font-size:12px;font-weight:500;line-height:1.5}
+.nm-cr-desk .nm-pc-facts b{color:var(--la-ink);font-weight:600}
+.nm-cr-desk .nm-pc-facts .you b{color:var(--pc-you)}
+.nm-cr-desk .nm-pc-facts i{font-style:normal;color:var(--la-ink-3)}
+.nm-cr-desk .nm-pc-facts sup{color:var(--la-ink-3)}
+.nm-cr-desk .nm-pc-axis{position:relative;height:18px;margin:2px 6px 0;border-top:1px solid rgba(38,48,74,.14)}
+.nm-cr-desk .nm-pc-axis span{position:absolute;top:0;transform:translateX(-50%);padding-top:4px;color:var(--la-ink-3);font-size:11px;font-weight:600;white-space:nowrap}
+.nm-cr-desk .nm-pc-axis span::before{content:"";position:absolute;left:50%;top:-4px;height:4px;border-left:1px solid rgba(38,48,74,.25)}
+.nm-cr-desk .nm-pc-axis span:first-child{transform:none}
+.nm-cr-desk .nm-pc-axis span:first-child::before{left:0}
+.nm-cr-desk .nm-pc-axis span:last-child{transform:translateX(-100%)}
+.nm-cr-desk .nm-pc-axis span:last-child::before{left:auto;right:0}
+
+/* 상위 레벨이 되려면 */
+.nm-cr-desk .nm-pc-up{margin-top:16px;padding-top:15px;border-top:1px solid rgba(38,48,74,.08)}
+.nm-cr-desk .nm-pc-up .nm-cr-cad-h .nm-cr-ic{color:#7a67d8}
+.nm-cr-desk .nm-pc-need{margin:0 0 10px;font-size:14px;line-height:1.6;word-break:keep-all}
+.nm-cr-desk .nm-pc-need b{font-family:var(--la-serif);font-weight:600;font-size:16px}
+.nm-cr-desk .nm-pc-opts{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.nm-cr-desk .nm-pc-opt{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:10px 10px 10px 13px;border-radius:12px;background:rgba(255,255,255,.72);
+  box-shadow:inset 0 0 0 1px rgba(38,48,74,.08)}
+.nm-cr-desk .nm-pc-opttxt{flex:1 1 110px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.nm-cr-desk .nm-pc-opttxt b{font-size:14px;font-weight:600;line-height:1.4;word-break:keep-all}
+.nm-cr-desk .nm-pc-opttxt small{color:#23866a;font-size:12.5px;font-weight:600}
+.nm-cr-desk .nm-pc-apply{flex:none;min-height:44px;padding:0 15px;border:0;border-radius:999px;cursor:pointer;font:inherit;font-size:13.5px;font-weight:600;color:var(--la-ink);
+  background:var(--la-pearl);box-shadow:inset 0 0 0 1px var(--la-gold),0 3px 10px rgba(38,48,74,.1)}
+.nm-cr-desk .nm-pc-apply:hover{box-shadow:inset 0 0 0 1px var(--la-gold),0 0 0 4px rgba(185,167,255,.2),0 6px 16px rgba(38,48,74,.12)}
+.nm-cr-desk .nm-pc-fine{margin:8px 0 0;color:var(--la-ink-3);font-size:12px;line-height:1.6;word-break:keep-all}
+
+/* 범위 · 출처 */
+.nm-cr-desk .nm-pc-scope{margin:16px 0 0;padding:11px 12px 11px 28px;border-radius:10px;background:rgba(38,48,74,.035);color:var(--la-ink-2);font-size:12px;line-height:1.6}
+.nm-cr-desk .nm-pc-scope li{margin:2px 0;word-break:keep-all}
+.nm-cr-desk .nm-pc-scope li::marker{color:var(--la-gold)}
+.nm-cr-desk .nm-pc-tablewrap{overflow-x:auto;margin:4px 0 0}
+.nm-cr-desk .nm-pc-table{width:100%;border-collapse:collapse;font-size:12px;color:var(--la-ink-2)}
+.nm-cr-desk .nm-pc-table th,.nm-cr-desk .nm-pc-table td{padding:6px 6px;border-bottom:1px solid rgba(38,48,74,.08);text-align:left;vertical-align:top;white-space:nowrap}
+.nm-cr-desk .nm-pc-table tbody th{white-space:normal;min-width:120px;color:var(--la-ink);font-weight:500}
+.nm-cr-desk .nm-pc-table thead th{color:var(--la-ink-3);font-weight:600;font-size:11.5px}
+@media(max-width:420px){
+  .nm-cr-desk .nm-cr-pc{padding:16px 14px 14px}
+  .nm-cr-desk .nm-pc-vt{font-size:19px}
+  .nm-cr-desk .nm-pc-rung b{font-size:12.5px}
+}

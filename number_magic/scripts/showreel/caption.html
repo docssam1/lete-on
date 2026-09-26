@@ -25,6 +25,18 @@
   document.getElementById('en').textContent = q.get('en') || '';
   const n = q.get('n'); if(n) document.getElementById('n').textContent = n; else document.getElementById('n').remove();
   document.getElementById('cap').classList.add(q.get('pos') || 'bl');
+  /* v3 튀어나오기: window.pose(p) — p 0→1 들어올 때(살짝 튕김), -1→0 은 나갈 때 */
+  const cap = document.getElementById('cap');
+  const pos = q.get('pos') || 'bl';
+  cap.style.transformOrigin = /r/.test(pos) ? '100% 50%' : /c/.test(pos) ? '50% 50%' : '0% 50%';
+  const back = t => { const c = 2.2; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+  window.pose = p => {
+    const base = pos === 'bc' ? 'translateX(-50%) ' : '';
+    if(p >= 0){ const b = back(Math.min(1, p)); cap.style.opacity = Math.min(1, p * 2.2);
+      cap.style.transform = base + `translateY(${(1 - b) * 26}px) scale(${0.72 + 0.28 * b})`;
+      const nEl = document.getElementById('n'); if(nEl) nEl.style.transform = `rotate(${(1 - Math.min(1, p)) * -90}deg)`; }
+    else { const u = -p; cap.style.opacity = 1 - u; cap.style.transform = base + `translateY(${u * 14}px) scale(${1 - 0.06 * u})`; }
+  };
   document.fonts.ready.then(() => { window.__ready = true; });
 </script>
 </body></html>

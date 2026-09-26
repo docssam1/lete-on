@@ -1,96 +1,120 @@
 #!/usr/bin/env node
 /* ============================================================
-   수의 마법 쇼릴 v2 — 잇기 (capture.js 다음)
-   seg-*.mp4 를 잘라(in/out) 0.5초 교차 페이드로 잇고, 자막(caption.html → 투명 PNG)을 겹치고,
-   내레이션(narration/<목소리>/nNN.mp3)을 장면마다 놓고, 수식으로 만든 배경 소리(ambient-bed.py)를 아주 낮게 깐다.
+   수의 마법 쇼릴 v3 — 잇기 (capture.js 다음)
+   원장 피드백(2026-09-26): 인트로 영상 → 맵 · "환영합니다" · 설명이 졸리지 않게(대사 + 0.6초) · 배경음 ON ·
+   곱해서 10 만들기 · 진단 속도 비교.
 
-     node scripts/showreel/compose.js --out=/tmp/reel                       # capture.js 와 같은 --out
-     node scripts/showreel/compose.js --out=/tmp/reel --voice=ko-KR-Chirp3-HD-Aoede
-       (기본은 narration/omnivoice, 없으면 narration.json 의 voice. 빠진 줄은 narration.json 의 voice 로 채우고 알린다.
-        목소리를 바꿔도 영상은 다시 찍지 않는다 — 장면 길이는 여기서 파일 길이로 다시 정한다. --dry = 목소리 울림 없이)
+   장면(PLAN)은 여러 토막(seg)을 한 내레이션 줄에 묶을 수 있다. 줄이 붙은 묶음의 길이 =
+   시작 여유(at) + 내레이션 길이 + 숨(BREATH) + 전환(XF) — 마지막 토막만 늘거나 줄고, 찍은 길이를 넘으면 마지막 장면을 멈춘 채 늘린다.
+   그래서 목소리 폴더를 바꿔도(--voice) 다시 찍지 않고 이것만 다시 돌리면 된다(약 4분).
+
+     node scripts/showreel/compose.js --out=<capture.js 와 같은 폴더> [--voice=omnivoice|ko-KR-Chirp3-HD-Leda] [--dry] [--no-bed] [--breath=0.6]
 
    만드는 것(--out 안):
-     numbers-of-magic-showreel-v2.mp4            영상 + 내레이션 + 배경 소리
-     numbers-of-magic-showreel-v2-voiceonly.mp4  영상 + 내레이션만
-     numbers-of-magic-preview-10s.mp4            10초 미리보기(v2, 소리 포함)
-     numbers-of-magic-contact-sheet.png          12칸 밀착 인화지
-   소리: AAC 192k 48kHz 스테레오, 두 번 재는 loudnorm 으로 -16 LUFS / -1.5 dBTP.
+     numbers-of-magic-showreel-v3.mp4 / -v3-voiceonly.mp4        crf 20 원본
+     numbers-of-magic-showreel-v3-send.mp4 / -v3-voiceonly-send.mp4   메신저로 보내기용(crf 23, 29MB 미만이 되게 자동 조정)
+     numbers-of-magic-v3-preview-10s.mp4 · numbers-of-magic-v3-contact-sheet.png
+   소리: AAC 192k 48kHz 스테레오, 두 번 재는 loudnorm → -16 LUFS / -1.5 dBTP.
+   seg-compare.mp4(진단 속도 비교, 다른 작업이 만드는 화면)가 있으면 진단 장면에 넣고, 없으면 학습 속도 카드로 대신한다.
    ============================================================ */
 'use strict';
 const fs = require('fs'), path = require('path'), os = require('os');
-const { execFileSync } = require('child_process');
+const { execFileSync, spawnSync } = require('child_process');
 const L = require('./lib');
 const arg = k => { const a = process.argv.find(x => x.startsWith(`--${k}=`)); return a ? a.slice(k.length + 3) : null; };
 const OUT = arg('out') ? path.resolve(arg('out')) : path.join(os.tmpdir(), 'nm-showreel');
 const FF = L.FF;
-const XF = 0.5;
+const XF = 0.4;
+const BREATH = +(arg('breath') || 0.6);
 const NAR = JSON.parse(fs.readFileSync(path.join(__dirname, 'narration.json'), 'utf8'));
-/* 목소리 폴더 한 곳만 바꾸면 된다: --voice=<narration 아래 폴더>. 기본 = omnivoice(원장 2026-09-26 "음성은 이제 omni보이스"),
-   없으면 narration.json 의 voice(ko-KR-Chirp3-HD-Leda). 줄마다 빠진 파일은 narration.json 의 voice 로 채운다. */
+/* 목소리 폴더 한 곳: --voice. 기본 omnivoice(원장 "음성은 이제 omni보이스"), 없으면 narration.json 의 voice. 빠진 줄은 그 voice 로 */
 const VOICE = arg('voice') || (fs.existsSync(path.join(__dirname, 'narration', 'omnivoice', 'n01.mp3')) ? 'omnivoice' : NAR.voice);
-/* '신비로운 만화 음성' — 음높이는 건드리지 않고, 짧은 방 울림 + 살짝 맑게. --dry 면 원음 그대로 */
-const VOICE_FX = process.argv.includes('--dry') ? '' : ',highpass=f=70,equalizer=f=5200:t=q:w=1.1:g=1.6,aecho=0.9:0.55:31|57|89:0.14|0.10|0.06';
+/* '신비로운 만화 음성' — 음높이는 그대로, 짧은 방 울림 + 살짝 맑게. --dry 면 원음 */
+const VOICE_FX = process.argv.includes('--dry') ? '' : ',highpass=f=70,equalizer=f=5200:t=q:w=1.1:g=1.8,aecho=0.9:0.55:31|57|89:0.15|0.11|0.07';
 const NOBED = process.argv.includes('--no-bed');
+const INTRO = path.join(L.APP, 'assets/gemini_generated_video_c12e6123.mp4');
+const HAS_COMPARE = fs.existsSync(path.join(OUT, 'seg-compare.mp4'));
 
-/* 장면 순서 · 자르기 · 내레이션 · 자막. at = 장면 시작에서 내레이션이 시작하는 초 */
+/* 토막: seg(파일 seg-<이름>.mp4 또는 file), in/out(초), xf(이 토막으로 들어오는 전환 종류·길이).
+   n 이 있는 토막 = 묶음의 시작(뒤따르는 토막 중 n 없는 것까지 한 묶음). cap = 자막(묶음 전체에 걸친다). */
 const PLAN = [
-  { seg:'title',      out:6.6,  n:'n01', at:0.5, cap:{ ko:'숫자가 마법이 되는 곳',              en:'Where numbers become magic',               pos:'tl' } },
-  { seg:'philosophy', out:13.6, n:'n02', at:0.6, cap:{ ko:'독쌤의 철학 — 수는 마법이다',        en:"DOCSSAM's philosophy: numbers are magic",  pos:'br', from:11.4, to:-0.6 } },
-  { seg:'village',    out:9.6,  n:'n03', at:0.6, cap:{ ko:'마을을 걸으며 오늘의 마법을 찾아요', en:"Explore the village, find today's magic",   pos:'bl' } },
-  { seg:'story',      out:9.6,  n:'n04', at:0.7, cap:{ ko:'유아부터 미적분까지, 한 권의 이야기', en:'One story, from preschool to calculus',    pos:'bl' } },
-  { seg:'road',       out:10.0, n:'n05', at:0.6, cap:{ ko:'지금 어디까지 왔는지, 한 길로',       en:'See the whole road at a glance',           pos:'bl' } },
-  { seg:'pace',       out:8.4,  n:'n06', at:0.3, cap:{ ko:'아이 빠르기에 맞춰 속도와 양을 조절', en:"Set the pace and amount to fit your child", pos:'br' } },
-  { seg:'notify',     out:8.0,  n:'n07', at:0.5, cap:{ ko:'학부모님 휴대폰으로 매주 안내',       en:"Weekly updates to parents' phones",        pos:'bl' } },
-  { seg:'hero-M-14',  out:4.1,  n:'n08', at:0.5, span_n:true, cap:{ ko:'개념은 손에 잡히는 3D로',             en:'Concepts you can almost touch',            pos:'tl', span:3 } },
-  { seg:'hero-M-19',  out:4.1 },
-  { seg:'hero-M-80',  out:4.1 },
-  { seg:'creative',   out:11.2, n:'n09', at:0.6, cap:{ ko:'창의 연산 — 어려운 수를 쉬운 수로 펼쳐요', en:'Creative arithmetic: unfold hard numbers into easy ones', pos:'br' } },
-  { seg:'sheets',     out:9.4,  n:'n10', at:0.6, cap:{ ko:'종이 학습지도 같은 흐름으로',         en:'The same flow, on paper',                  pos:'bl' } },
-  { seg:'end',        out:9.6,  n:'n11', at:0.9 },
+  { seg:'introvid', file:INTRO, in:0.9, out:9.6, audio:true },
+  { seg:'mapreveal', in:0.0, out:5.6, n:'n01', at:0.35, xf:['fade', 0.9], min:4.2,
+    cap:{ ko:'수학 마법 나라에 온 걸 환영해요', en:'Welcome to the land of math magic', pos:'bl' } },
+  { seg:'philosophy', in:0.0, n:'n02', at:0.5, xf:['fadewhite', 0.45],
+    cap:{ ko:'독쌤의 철학 — 수를 정복해야 수학을 정복한다', en:"DOCSSAM's philosophy: master numbers, master math", pos:'br', from:0.72 } },
+  { seg:'village', in:0.9, n:'n03', at:0.35, xf:['circleopen', 0.45], min:4.6,
+    cap:{ ko:'마을을 걸으며 오늘의 마법을 찾아요', en:"Explore the village, find today's magic", pos:'bl' } },
+  { seg:'story', in:0.4, n:'n04', at:0.35, xf:['smoothleft', 0.4], min:4.8,
+    cap:{ ko:'유아부터 미적분까지, 한 권의 모험 이야기', en:'One adventure, from preschool to calculus', pos:'bl' } },
+  { seg:'diagnose', in:0.0, out:4.4, n:'n05', at:0.35, xf:['slideup', 0.4],
+    cap:{ ko:'연산 단계 진단 · 지금 속도 비교', en:'Diagnose the level, compare the pace', pos:'br' } },
+  HAS_COMPARE ? { seg:'compare', in:0.0, xf:['fade', 0.35] } : { seg:'pace', in:3.7, out:9.6, xf:['fade', 0.35] },
+  { seg:'road', in:6.5, out:9.4, n:'n06', at:0.25, xf:['smoothright', 0.4],
+    cap:{ ko:'내 길이 한눈에 · 속도와 양은 딱 맞게', en:'Your road at a glance, the pace that fits', pos:'br' } },
+  { seg:'pace', in:0.9, out:7.4, xf:['fade', 0.35], min:2.5 },
+  { seg:'notify', in:0.5, n:'n07', at:0.3, xf:['slideleft', 0.4], min:4.8,
+    cap:{ ko:'학부모님 휴대폰으로 매주 안내', en:"Weekly updates to parents' phones", pos:'bl' } },
+  { seg:'creative3', in:0.1, n:'n08', at:0.3, xf:['circleopen', 0.45], min:7.2,
+    cap:{ ko:'창의 연산 — 2×5=10 짝을 먼저!', en:'Creative arithmetic: pair 2×5=10 first', pos:'br' } },
+  { seg:'hero-M-14', in:0.4, out:3.1, n:'n09', at:0.3, xf:['fadewhite', 0.4],
+    cap:{ ko:'개념은 손에 잡히는 3D로', en:'Concepts you can almost touch', pos:'tl' } },
+  { seg:'hero-M-19', in:0.3, out:2.9, xf:['smoothleft', 0.35] },
+  { seg:'hero-M-80', in:0.3, out:3.4, xf:['smoothleft', 0.35], min:2.2 },
+  { seg:'creative', in:2.2, out:5.2, n:'n10', at:0.3, xf:['slideup', 0.4],
+    cap:{ ko:'같은 흐름 그대로, 종이 학습지로', en:'The same flow, on paper', pos:'br' } },
+  { seg:'sheets', in:4.4, out:9.4, xf:['fade', 0.4], min:2.4 },
+  { seg:'end', in:0.0, out:7.4, n:'n11', at:0.9, xf:['fadewhite', 0.6], min:6.2 },
 ];
 
 function probe(f){
-  try { execFileSync(FF, ['-hide_banner', '-i', f], { stdio:['ignore', 'pipe', 'pipe'] }); } catch(e){
-    const m = String(e.stderr).match(/Duration: (\d+):(\d+):([\d.]+)/); if(m) return +m[1] * 3600 + +m[2] * 60 + +m[3]; }
+  const r = spawnSync(FF, ['-hide_banner', '-i', f], { encoding:'utf8' });
+  const m = String(r.stderr).match(/Duration: (\d+):(\d+):([\d.]+)/); if(m) return +m[1] * 3600 + +m[2] * 60 + +m[3];
   throw new Error('길이를 못 읽음 ' + f);
 }
-const ff = (args, quiet = true) => execFileSync(FF, ['-y', '-hide_banner', '-loglevel', quiet ? 'error' : 'info', ...args], { stdio:['ignore', 'pipe', 'pipe'], maxBuffer:64 << 20 });
-function measure(f){
-  const p = require('child_process').spawnSync(FF, ['-hide_banner', '-i', f, '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json', '-f', 'null', '-'], { encoding:'utf8', maxBuffer:64 << 20 });
+const ff = args => execFileSync(FF, ['-y', '-hide_banner', '-loglevel', 'error', ...args], { stdio:['ignore', 'pipe', 'pipe'], maxBuffer:64 << 20 });
+function measure(f, extra = ''){
+  const p = spawnSync(FF, ['-hide_banner', '-i', f, '-af', `${extra}loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json`, '-f', 'null', '-'], { encoding:'utf8', maxBuffer:64 << 20 });
   const m = p.stderr.match(/\{[\s\S]*?\}/g); return JSON.parse(m[m.length - 1]);
 }
-function normalize(inp, out){   /* 두 번 재는 loudnorm → AAC 192k */
+function normalize(inp, out){
   const m = measure(inp);
   ff(['-i', inp, '-af', `loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=${m.input_i}:measured_TP=${m.input_tp}:measured_LRA=${m.input_lra}:measured_thresh=${m.input_thresh}:offset=${m.target_offset}:linear=true,aresample=48000`,
     '-ac', '2', '-c:a', 'aac', '-b:a', '192k', out]);
-  const r = measure(out); return r.input_i;
+  return measure(out).input_i;
 }
 
 (async () => {
-  /* 1. 장면 */
-  const segs = PLAN.map(p => Object.assign({ f:path.join(OUT, `seg-${p.seg}.mp4`) }, p));
+  /* 1. 토막 · 묶음 · 길이 */
+  const segs = PLAN.map(p => Object.assign({ f:p.file || path.join(OUT, `seg-${p.seg}.mp4`) }, p));
   const miss = segs.filter(x => !fs.existsSync(x.f)); if(miss.length) throw new Error('없는 장면: ' + miss.map(x => x.seg).join(', '));
-  /* 2. 내레이션 길이에 맞춰 장면 길이를 정한다 — 목소리 폴더를 바꿔도 다시 찍지 않고 이것만 다시 돌리면 된다.
-        장면 길이 ≥ (내레이션 시작 + 길이 + 숨 BREATH + 교차 XF). 찍은 길이보다 길어야 하면 마지막 장면을 멈춘 채 늘리고 알린다. */
-  const BREATH = +(arg('breath') || 0.9);
-  const voiceDir = n => { const a = path.join(__dirname, 'narration', VOICE, n + '.mp3'); if(fs.existsSync(a)) return a;
-    const b = path.join(__dirname, 'narration', NAR.voice, n + '.mp3'); console.log(`  (${VOICE} 에 ${n} 없음 → ${NAR.voice})`); return b; };
+  const voiceFile = n => { const a = path.join(__dirname, 'narration', VOICE, n + '.mp3'); if(fs.existsSync(a)) return a;
+    console.log(`  (${VOICE} 에 ${n} 없음 → ${NAR.voice})`); return path.join(__dirname, 'narration', NAR.voice, n + '.mp3'); };
+  segs.forEach(x => { x.full = probe(x.f); x.in = x.in || 0; x.out = Math.min(x.out || x.full, x.full); x.xfd = x.xf ? x.xf[1] : 0; });
+  /* 묶음 */
+  const groups = []; segs.forEach(x => { if(x.n || !groups.length) groups.push([x]); else groups[groups.length - 1].push(x); });
+  groups.forEach((g, gi) => {
+    const head = g[0]; if(!head.n) return;
+    head.nf = voiceFile(head.n); head.nd = probe(head.nf);
+    const nextXf = (groups[gi + 1] && groups[gi + 1][0].xfd) || 0;
+    const need = head.at + head.nd + BREATH + nextXf;
+    /* 묶음 길이(겹침 빼고) = Σd - Σ(묶음 안 전환) */
+    const last = g[g.length - 1];
+    const others = g.slice(0, -1).reduce((a, x) => a + (x.out - x.in), 0) - g.slice(1).reduce((a, x) => a + x.xfd, 0);
+    let dl = Math.max(last.min || 1.2, need - others);
+    last.out = last.in + dl;
+    last.hold = Math.max(0, last.out - last.full);
+    if(last.hold > 0.05) console.log(`  ⚠ ${last.seg}: 찍은 길이보다 ${last.hold.toFixed(2)}초 길다 — 마지막 장면을 멈춘 채 늘림`);
+  });
   let t = 0;
-  segs.forEach((x, i) => {
-    const full = probe(x.f); x.in = x.in || 0;
-    if(x.n){ x.nf = voiceDir(x.n); x.nd = probe(x.nf); }
-    const need = x.n && !x.span_n ? x.in + x.at + x.nd + BREATH + XF : 0;
-    x.out = Math.max(x.out || full, need);
-    x.hold = Math.max(0, x.out - full);
-    if(x.hold > 0.05) console.log(`  ⚠ ${x.seg}: 내레이션이 길어 마지막 장면을 ${x.hold.toFixed(2)}초 멈춰 늘림(찍은 길이 ${full.toFixed(2)}초)`);
-    x.d = x.out - x.in; x.start = t; t += x.d - (i < segs.length - 1 ? XF : 0); });
+  segs.forEach((x, i) => { x.d = x.out - x.in; if(i) t -= x.xfd; x.start = t; t += x.d; });
   const total = t;
   const lines = segs.filter(x => x.n).map(x => ({ n:x.n, f:x.nf, a:x.start + x.at, d:x.nd, seg:x.seg }));
-  lines.forEach((l, i) => { const nx = lines[i + 1]; l.room = (nx ? nx.a : total) - (l.a + l.d);
-    if(l.room < 0.8) console.log(`  ⚠ ${l.n} 뒤 다음 내레이션까지 ${l.room.toFixed(2)}초`); });
+  lines.forEach((l, i) => { const nx = lines[i + 1]; l.room = (nx ? nx.a : total) - (l.a + l.d); });
+  const gEnd = x => { const g = groups.find(g => g[0] === x); const l = g[g.length - 1]; return l.start + l.d; };
 
-  /* 3. 자막 PNG */
-  const capDir = path.join(OUT, 'captions-v2'); fs.mkdirSync(capDir, { recursive:true });
+  /* 2. 자막 — 튀어나오기(0.42초, 살짝 튕김) → 머묾 → 사라지기(0.3초) 프레임 */
+  const capDir = path.join(OUT, 'captions-v3'); fs.rmSync(capDir, { recursive:true, force:true }); fs.mkdirSync(capDir, { recursive:true });
   const caps = [];
   { const { server, base } = await L.serve();
     const browser = await L.launch();
@@ -100,85 +124,104 @@ function normalize(inp, out){   /* 두 번 재는 loudnorm → AAC 192k */
       if(!x.cap) continue; k++;
       const c = Object.assign({ n:String(k).padStart(2, '0') }, x.cap);
       await page.goto(`${base}/number_magic/scripts/showreel/caption.html?` + new URLSearchParams({ ko:c.ko, en:c.en, n:c.n, pos:c.pos }));
-      await page.waitForFunction(() => window.__ready === true); await page.waitForTimeout(300);
-      c.png = path.join(capDir, `cap-${c.n}.png`);
-      await page.screenshot({ path:c.png, omitBackground:true });
-      const i = segs.indexOf(x), last = segs[i + (c.span || 1) - 1];
-      c.a = x.start + (c.from != null ? c.from : 0.55);   /* from: 화면 글이 많은 장면은 늦게 띄운다 */ c.b = last.start + last.d + (c.to != null ? c.to : -0.5);
+      await page.waitForFunction(() => window.__ready === true); await page.waitForTimeout(250);
+      c.dir = path.join(capDir, c.n); fs.mkdirSync(c.dir);
+      for(let i = 0; i < 13; i++){ await page.evaluate(p => window.pose(p), i / 12); await page.screenshot({ path:path.join(c.dir, `in${String(i).padStart(2, '0')}.png`), omitBackground:true }); }
+      for(let i = 0; i < 10; i++){ await page.evaluate(p => window.pose(-p), (i + 1) / 10); await page.screenshot({ path:path.join(c.dir, `out${String(i).padStart(2, '0')}.png`), omitBackground:true }); }
+      const end = gEnd(x);
+      c.a = x.start + (c.from != null ? (c.from < 1 ? x.at + c.from * x.nd : c.from) : x.xfd + 0.1);
+      c.b = end - 0.35;
       caps.push(c);
     }
     await ctx.close(); await browser.close(); server.close(); }
 
-  /* 4. 영상(무음) */
-  const video = path.join(OUT, 'v2-video.mp4');
+  /* 3. 영상 */
+  const video = path.join(OUT, 'v3-video.mp4');
   { const args = [];
     segs.forEach(x => args.push('-i', x.f));
-    caps.forEach(c => args.push('-loop', '1', '-framerate', '30', '-t', (c.b - c.a + 0.1).toFixed(3), '-i', c.png));
+    caps.forEach(c => { args.push('-framerate', '30', '-i', path.join(c.dir, 'in%02d.png'), '-framerate', '30', '-i', path.join(c.dir, 'out%02d.png')); });
     const fl = [];
-    segs.forEach((x, i) => fl.push(`[${i}:v]${x.hold > 0.05 ? `tpad=stop_mode=clone:stop_duration=${(x.hold + 0.1).toFixed(3)},` : ''}trim=start=${x.in}:end=${x.out},setpts=PTS-STARTPTS,settb=AVTB,fps=30,format=yuv420p,setsar=1[v${i}]`));
+    segs.forEach((x, i) => fl.push(`[${i}:v]${x.hold > 0.05 ? `tpad=stop_mode=clone:stop_duration=${(x.hold + 0.2).toFixed(3)},` : ''}trim=start=${x.in}:end=${x.out},setpts=PTS-STARTPTS,scale=1920:1080:flags=lanczos,settb=AVTB,fps=30,format=yuv420p,setsar=1[v${i}]`));
     let cur = 'v0';
-    for(let i = 1; i < segs.length; i++){ fl.push(`[${cur}][v${i}]xfade=transition=fade:duration=${XF}:offset=${segs[i].start.toFixed(3)}[x${i}]`); cur = `x${i}`; }
-    caps.forEach((c, k) => { const j = segs.length + k, d = c.b - c.a;
-      fl.push(`[${j}:v]format=rgba,fade=t=in:st=0:d=0.45:alpha=1,fade=t=out:st=${(d - 0.45).toFixed(3)}:d=0.45:alpha=1,setpts=PTS+${c.a.toFixed(3)}/TB[c${k}]`);
-      fl.push(`[${cur}][c${k}]overlay=0:0:eof_action=pass:enable='between(t,${c.a.toFixed(3)},${c.b.toFixed(3)})'[o${k}]`); cur = `o${k}`; });
-    fl.push(`[${cur}]fade=t=in:st=0:d=0.5,fade=t=out:st=${(total - 0.9).toFixed(3)}:d=0.9:color=white,format=yuv420p[out]`);
-    args.push('-filter_complex', fl.join(';'), '-map', '[out]', '-c:v', 'libx264', '-preset', 'slow', '-crf', process.env.SR_CRF || '20',
-      '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', '30', '-t', total.toFixed(3), video);
+    for(let i = 1; i < segs.length; i++){ const [tr, d] = segs[i].xf || ['fade', 0.4];
+      fl.push(`[${cur}][v${i}]xfade=transition=${tr}:duration=${d}:offset=${segs[i].start.toFixed(3)}[x${i}]`); cur = `x${i}`; }
+    caps.forEach((c, k) => { const j = segs.length + k * 2, hold = Math.max(0.2, c.b - c.a - 0.43 - 0.33);
+      fl.push(`[${j}:v]format=rgba,tpad=stop_mode=clone:stop_duration=${hold.toFixed(3)}[ci${k}]`);
+      fl.push(`[${j + 1}:v]format=rgba[co${k}]`);
+      fl.push(`[ci${k}][co${k}]concat=n=2:v=1:a=0,setpts=PTS+${c.a.toFixed(3)}/TB[c${k}]`);
+      fl.push(`[${cur}][c${k}]overlay=0:0:eof_action=pass:enable='between(t,${c.a.toFixed(3)},${(c.b + 0.05).toFixed(3)})'[o${k}]`); cur = `o${k}`; });
+    fl.push(`[${cur}]fade=t=in:st=0:d=0.4,fade=t=out:st=${(total - 0.8).toFixed(3)}:d=0.8:color=white,format=yuv420p[out]`);
+    args.push('-filter_complex', fl.join(';'), '-map', '[out]', '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', '30', '-t', total.toFixed(3), video);
     console.log(`영상 잇는 중… ${total.toFixed(2)}초`);
     ff(args); }
 
-  /* 5. 소리 — 내레이션 트랙 */
-  const voiceWav = path.join(OUT, 'v2-voice.wav');
-  { const args = [];
-    lines.forEach(l => args.push('-i', l.f));
+  /* 4. 내레이션 트랙 (+ 인트로 영상 자체 소리) */
+  const introSeg = segs.find(x => x.audio);
+  const voiceWav = path.join(OUT, 'v3-voice.wav');
+  { const args = []; lines.forEach(l => args.push('-i', l.f));
     const fl = lines.map((l, i) => `[${i}:a]aresample=48000,aformat=channel_layouts=stereo,adelay=${Math.round(l.a * 1000)}|${Math.round(l.a * 1000)}[a${i}]`);
     fl.push(`${lines.map((_, i) => `[a${i}]`).join('')}amix=inputs=${lines.length}:normalize=0${VOICE_FX},apad=whole_dur=${total.toFixed(3)},atrim=0:${total.toFixed(3)}[v]`);
     ff([...args, '-filter_complex', fl.join(';'), '-map', '[v]', '-c:a', 'pcm_s16le', voiceWav]); }
+  const introWav = path.join(OUT, 'v3-intro.wav');
+  { const d = introSeg.out - introSeg.in;
+    ff(['-ss', String(introSeg.in), '-t', String(d + 1.0), '-i', introSeg.f, '-af', `aresample=48000,aformat=channel_layouts=stereo,afade=t=in:d=0.3,afade=t=out:st=${(d - 0.3).toFixed(2)}:d=1.0,apad=whole_dur=${total.toFixed(3)},atrim=0:${total.toFixed(3)}`, '-c:a', 'pcm_s16le', introWav]); }
+  const vI = +measure(voiceWav).input_i;
+  const iI = +measure(introWav).input_i;
+  const introGain = (vI - 3) - iI;   /* 인트로 소리는 목소리보다 3dB 아래 */
+  const voiceOnly = path.join(OUT, 'v3-voiceonly.wav');
+  ff(['-i', voiceWav, '-i', introWav, '-filter_complex', `[1:a]volume=${introGain.toFixed(2)}dB[i];[0:a][i]amix=inputs=2:normalize=0:duration=first[m]`, '-map', '[m]', '-c:a', 'pcm_s16le', voiceOnly]);
 
-  /* 6. 배경 소리(수식) — 목소리보다 약 20dB 아래 */
-  const mixWav = path.join(OUT, 'v2-mix.wav');
+  /* 5. 배경 음악(수식) — 목소리보다 약 14dB 아래, 말할 때 더 내려간다 */
+  const mixWav = path.join(OUT, 'v3-mix.wav');
   if(!NOBED){
-    const bed = path.join(OUT, 'v2-bed.wav');
-    execFileSync('python3', [path.join(__dirname, 'ambient-bed.py'), bed, total.toFixed(3), segs.map(x => x.start.toFixed(3)).join(','),
-      lines.map(l => `${l.a.toFixed(2)}-${(l.a + l.d).toFixed(2)}`).join(',')], { stdio:'inherit' });
-    const vI = +measure(voiceWav).input_i, bI = +measure(bed).input_i;
-    const gain = (vI - 20) - bI;
-    console.log(`  음량: 목소리 ${vI} LUFS · 배경 ${bI} LUFS → 배경 ${gain.toFixed(1)} dB (목소리 −20)`);
-    ff(['-i', voiceWav, '-i', bed, '-filter_complex', `[1:a]volume=${gain.toFixed(2)}dB[b];[0:a][b]amix=inputs=2:normalize=0:duration=first[m]`, '-map', '[m]', '-c:a', 'pcm_s16le', mixWav]);
+    const bed = path.join(OUT, 'v3-bed.wav');
+    const bedStart = introSeg.start + introSeg.d - 0.8;
+    const starts = [introSeg.start + introSeg.d - 0.6, ...groups.slice(2).map(g => g[0].start)];
+    execFileSync('python3', [path.join(__dirname, 'ambient-bed.py'), bed, total.toFixed(3), starts.map(v => v.toFixed(3)).join(','),
+      lines.map(l => `${l.a.toFixed(2)}-${(l.a + l.d).toFixed(2)}`).join(','), groups.slice(1).map(g => g[0].start.toFixed(3)).join(','), 'v3', bedStart.toFixed(2)], { stdio:'inherit' });
+    const bI = +measure(bed).input_i;
+    const gain = (vI - 14) - bI;
+    console.log(`  음량: 목소리 ${vI} · 인트로 ${iI}(→${introGain.toFixed(1)}dB) · 배경 ${bI} LUFS → 배경 ${gain.toFixed(1)} dB (목소리 −14)`);
+    ff(['-i', voiceOnly, '-i', bed, '-filter_complex', `[1:a]volume=${gain.toFixed(2)}dB[b];[0:a][b]amix=inputs=2:normalize=0:duration=first[m]`, '-map', '[m]', '-c:a', 'pcm_s16le', mixWav]);
   }
 
-  /* 7. 소리 맞추기 + 합치기 */
+  /* 6. 소리 맞추기 + 합치기 + 보내기용 */
   const outs = [];
-  for(const [name, wav] of [['numbers-of-magic-showreel-v2-voiceonly.mp4', voiceWav], ...(NOBED ? [] : [['numbers-of-magic-showreel-v2.mp4', mixWav]])]){
-    const aac = path.join(OUT, name.replace('.mp4', '.m4a'));
+  for(const [name, wav] of [['numbers-of-magic-showreel-v3-voiceonly', voiceOnly], ...(NOBED ? [] : [['numbers-of-magic-showreel-v3', mixWav]])]){
+    const aac = path.join(OUT, name + '.m4a');
     const li = normalize(wav, aac);
-    const o = path.join(OUT, name);
+    const o = path.join(OUT, name + '.mp4');
     ff(['-i', video, '-i', aac, '-map', '0:v', '-map', '1:a', '-c', 'copy', '-movflags', '+faststart', '-shortest', o]);
+    /* 보내기용: crf 23 부터, 29MB 넘으면 올린다 */
+    const send = path.join(OUT, name + '-send.mp4');
+    for(const crf of [23, 25, 27, 29]){
+      ff(['-i', video, '-i', aac, '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', String(crf), '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-c:a', 'copy', '-movflags', '+faststart', '-shortest', send]);
+      if(fs.statSync(send).size < 29 * 1048576) break;
+    }
     fs.unlinkSync(aac);
-    outs.push([o, li]);
+    outs.push([o, li, send]);
   }
   const main = outs[outs.length - 1][0];
 
-  /* 8. 10초 미리보기 — 장면마다 한 토막(소리 포함) */
-  const at = Object.fromEntries(segs.map(x => [x.seg, x]));
-  const picks = [['title', 3.0], ['philosophy', 8.4], ['village', 5.4], ['story', 4.0], ['pace', 5.6], ['notify', 5.4], ['hero-M-14', 1.0], ['creative', 3.0], ['sheets', 6.8], ['end', 2.2]]
-    .map(([s, o]) => at[s].start + o);
+  /* 7. 10초 미리보기(소리 포함) */
+  const pick = (s, o) => { const x = segs.find(y => y.seg === s); return x.start + Math.min(o, x.d - 1); };
+  const picks = [pick('introvid', 5.5), pick('mapreveal', 1.2), pick('philosophy', 3.5), pick('village', 2.6), pick('diagnose', 1.2), pick('notify', 4.4), pick('creative3', 1.6), pick('creative3', 5.4), pick('hero-M-19', 0.6), pick('end', 2.0)];
   { const fl = [], ins = [];
     picks.forEach((p, i) => { fl.push(`[0:v]trim=start=${p.toFixed(2)}:duration=1,setpts=PTS-STARTPTS,scale=960:540:flags=lanczos[v${i}]`);
       fl.push(`[0:a]atrim=start=${p.toFixed(2)}:duration=1,asetpts=PTS-STARTPTS,afade=t=in:d=0.04,afade=t=out:st=0.94:d=0.06[a${i}]`); ins.push(`[v${i}][a${i}]`); });
     fl.push(`${ins.join('')}concat=n=${picks.length}:v=1:a=1[v][a]`);
     ff(['-i', main, '-filter_complex', fl.join(';'), '-map', '[v]', '-map', '[a]', '-c:v', 'libx264', '-crf', '23', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-r', '30',
-      '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', path.join(OUT, 'numbers-of-magic-preview-10s.mp4')]); }
+      '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', path.join(OUT, 'numbers-of-magic-v3-preview-10s.mp4')]); }
 
-  /* 9. 밀착 인화지 12칸 */
-  const frames = path.join(OUT, 'cs'); fs.mkdirSync(frames, { recursive:true });
+  /* 8. 밀착 인화지 12칸 */
+  const frames = path.join(OUT, 'cs3'); fs.mkdirSync(frames, { recursive:true });
   Array.from({ length:12 }, (_, i) => 1.4 + i * (total - 2.8) / 11).forEach((tt, i) =>
     ff(['-ss', tt.toFixed(2), '-i', main, '-frames:v', '1', '-vf', 'scale=640:360', path.join(frames, `f${String(i).padStart(2, '0')}.png`)]));
-  ff(['-framerate', '1', '-i', path.join(frames, 'f%02d.png'), '-vf', 'tile=4x3:padding=8:margin=8:color=white', '-frames:v', '1', path.join(OUT, 'numbers-of-magic-contact-sheet.png')]);
+  ff(['-framerate', '1', '-i', path.join(frames, 'f%02d.png'), '-vf', 'tile=4x3:padding=8:margin=8:color=white', '-frames:v', '1', path.join(OUT, 'numbers-of-magic-v3-contact-sheet.png')]);
 
   console.log('\n장면 시각 (내레이션)');
-  segs.forEach(x => { const l = lines.find(y => y.seg === x.seg);
-    console.log(`  ${x.seg.padEnd(11)} ${x.start.toFixed(2)}–${(x.start + x.d).toFixed(2)}${l ? `   ${l.n} ${l.a.toFixed(2)}–${(l.a + l.d).toFixed(2)} (여유 ${l.room.toFixed(1)}초)` : ''}`); });
-  outs.forEach(([o, li]) => console.log(`✓ ${o}  ${(fs.statSync(o).size / 1048576).toFixed(1)} MB  ${li} LUFS`));
-  console.log(`  목소리: ${VOICE}   총 ${total.toFixed(2)}초`);
-})().catch(e => { console.error(e.stderr ? String(e.stderr) : e); process.exit(1); });
+  segs.forEach(x => { const l = lines.find(y => y.seg === x.seg && x.n);
+    console.log(`  ${x.seg.padEnd(11)} ${x.start.toFixed(2)}–${(x.start + x.d).toFixed(2)}  [${x.in.toFixed(1)}–${x.out.toFixed(1)}]${l ? `   ${l.n} ${l.a.toFixed(2)}–${(l.a + l.d).toFixed(2)} (다음 줄까지 ${l.room.toFixed(1)}초)` : ''}`); });
+  outs.forEach(([o, li, send]) => console.log(`✓ ${o}  ${(fs.statSync(o).size / 1048576).toFixed(1)} MB  ${li} LUFS\n  ${send}  ${(fs.statSync(send).size / 1048576).toFixed(1)} MB`));
+  console.log(`  목소리: ${VOICE}   총 ${total.toFixed(2)}초   진단 비교 화면: ${HAS_COMPARE ? 'seg-compare' : '없음(학습 속도 카드로 대신)'}`);
+})().catch(e => { console.error(e.stderr ? String(e.stderr) : '', 'signal=' + e.signal, 'status=' + e.status, String(e.message || e).slice(0, 300)); process.exit(1); });

@@ -14,6 +14,10 @@ SR = 48000
 out, total = sys.argv[1], float(sys.argv[2])
 starts = [float(x) for x in sys.argv[3].split(',') if x]
 voice = [tuple(map(float, v.split('-'))) for v in sys.argv[4].split(',') if v] if len(sys.argv) > 4 else []
+# v3: 장면 전환 '휙'(걸러진 잡음 스윕) 시각들 + 활기 모드(8분음표 첼레스타 아르페지오, 낮은 박동)
+whoosh = [float(x) for x in sys.argv[5].split(',') if x] if len(sys.argv) > 5 else []
+LIVELY = len(sys.argv) > 6 and sys.argv[6] == 'v3'
+BED_START = float(sys.argv[7]) if len(sys.argv) > 7 else 0.0   # 이 시각 전(인트로 영상 자체 소리)은 비운다
 n = int(total * SR)
 t = np.arange(n) / SR
 rng = np.random.default_rng(7)
@@ -82,7 +86,42 @@ for i, s0 in enumerate(starts):
         chime[ia:ib] += v * (0.55 - 0.1 * j)
 chime /= np.max(np.abs(chime)) + 1e-9
 
-dry = 0.85 * pad + 0.28 * chime
+arp = np.zeros(n); pulse = np.zeros(n); wh = np.zeros(n)
+if LIVELY:
+    BPM = 104.0; step = 60.0 / BPM / 2   # 8분음표
+    for i, s0 in enumerate(starts):
+        s1 = bounds[i + 1]
+        ch = CHORDS[i % len(CHORDS)]
+        notes = [m + 24 for m in ch[1:]] + [ch[2] + 36]
+        pat = [0, 2, 1, 3, 2, 4, 1, 3]
+        k = 0; tt0 = s0 + 0.15
+        while tt0 < s1 - 0.1:
+            m = notes[pat[k % len(pat)] % len(notes)]
+            ia = int(tt0 * SR); L2 = int(0.9 * SR); ib = min(n, ia + L2)
+            if ia < n:
+                q = np.arange(ib - ia) / SR; f = hz(m)
+                v = (np.sin(2 * np.pi * f * q) + 0.3 * np.sin(2 * np.pi * 2 * f * q) * np.exp(-q * 6)) * np.exp(-q * 5.5) * np.clip(q / 0.003, 0, 1)
+                arp[ia:ib] += v * (0.8 if k % 2 == 0 else 0.55)
+            k += 1; tt0 += step
+        # 낮은 박동(4분음표, 부드러운 킥 느낌의 사인 드롭)
+        tt0 = s0 + 0.15
+        while tt0 < s1 - 0.1:
+            ia = int(tt0 * SR); ib = min(n, ia + int(0.35 * SR))
+            if ia < n:
+                q = np.arange(ib - ia) / SR
+                pulse[ia:ib] += np.sin(2 * np.pi * (58 + 50 * np.exp(-q * 30)) * q) * np.exp(-q * 11)
+            tt0 += step * 2
+    arp /= np.max(np.abs(arp)) + 1e-9; pulse /= np.max(np.abs(pulse)) + 1e-9
+for w0 in whoosh:
+    ia = int(max(0, w0 - 0.45) * SR); ib = min(n, ia + int(0.9 * SR))
+    q = np.arange(ib - ia) / SR
+    noise = rng.standard_normal(ib - ia)
+    # 올라가는 대역 통과: 간단히 두 번 미분·적분 대신 이동 평균 길이를 줄여 가며 밝아지게
+    env = np.sin(np.pi * np.clip(q / 0.9, 0, 1)) ** 2
+    bright = np.convolve(noise, np.ones(6) / 6, mode='same') - np.convolve(noise, np.ones(40) / 40, mode='same')
+    wh[ia:ib] += bright * env
+if len(whoosh): wh /= np.max(np.abs(wh)) + 1e-9
+dry = 0.85 * pad + 0.28 * chime + (0.34 * arp * duck + 0.16 * pulse * duck + 0.22 * wh if LIVELY else 0)
 # 잔향 — 좌우를 다른 IR 로(넓게)
 L = int(2.4 * SR)
 tt = np.arange(L) / SR
@@ -95,7 +134,7 @@ wr = fftconvolve(dry, ir(2))[:n]
 left = 0.6 * dry + 0.55 * wl
 right = 0.6 * dry + 0.55 * wr
 # 끝 페이드
-fade = np.clip((total - t) / 2.5, 0, 1) * np.clip(t / 1.5, 0, 1)
+fade = np.clip((total - t) / 2.5, 0, 1) * np.clip((t - BED_START) / 1.2, 0, 1)
 st = np.stack([left * fade, right * fade], axis=1)
 st /= np.max(np.abs(st)) + 1e-9
 st *= 0.5

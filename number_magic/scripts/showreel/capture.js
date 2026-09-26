@@ -170,6 +170,108 @@ const SCENES = {
     await ctx.close();
   },
 
+  /* v3 인트로 뒤 — 영상이 걷히면 3D 마을 지도가 드러난다: 광장 가까이에서 마을 전체로 천천히 물러나는 한 컷(커서 없음) */
+  async mapreveal(browser, base){
+    const { ctx, page } = await openApp(browser, base, 'ttGame');
+    await until(page, () => !!(window.__srTown && document.querySelector('#townVp.is-3d')), null, 120000);
+    await L.advance(page, 2500, 100);
+    const c0 = await page.evaluate(() => { const c = window.__srTown.debug.cam; return { x:c.x, z:c.z, d:c.d }; });
+    await runScene('mapreveal', page, { dur:6.4, perFrame: t => { const u = L.ease(t / 6.0);
+      return page.evaluate(o => { const d = window.__srTown.debug; d.cam.x = o.x; d.cam.z = o.z; d.cam.d = o.d; d.placeCam(); },
+        { x:L.lerp(c0.x + 3.0, c0.x, u), z:L.lerp(c0.z + 3.2, c0.z, u), d:L.lerp(c0.d * 0.5, c0.d * 1.02, u) }); } });
+    await ctx.close();
+  },
+
+  /* v3 진단하기 — 타이틀 '진단하기' → 나이 고르기 → 첫 문제 */
+  async diagnose(browser, base){
+    const { ctx, page } = await openApp(browser, base, 'ttDiag');
+    await until(page, () => !!document.querySelector('#dgSkip'), null, 60000);
+    await L.advance(page, 800, 100);
+    const cur = mkCursor(); cur.at(900, 640);
+    const card = () => page.evaluate(() => { const b = [...document.querySelectorAll('#screen button')].find(x => /2학년 말/.test(x.textContent)); const r = b.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+    await runScene('diagnose', page, { dur:5.6, cursor:cur,
+      perFrame: t => page.evaluate(t => { const u = Math.max(0, Math.min(1, (t - 1.5) / 1.1)), e = u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2, S = 1 + 0.4 * e;
+        document.body.style.transformOrigin = '50% 32%'; document.body.style.transform = `scale(${S})`; }, t),
+      events:[
+      [0.2, async t => { const p = await card(); cur.show(t, true); cur.move(t, p[0], p[1] + 6, 0.8); }],
+      [1.15, async t => { cur.tap(t); await page.evaluate(() => { const b = [...document.querySelectorAll('#screen button')].find(x => /2학년 말/.test(x.textContent)); b.click(); }); }],
+      [1.6, t => cur.move(t, cur.st.x + 260, cur.st.y + 120, 1.0)],
+      [4.6, t => cur.show(t, false, 0.5)],
+    ] });
+    await ctx.close();
+  },
+
+  /* v3 창의 연산 — 유닛 C-02 '곱해서 10 만들기': 매직 랩(짝 찾기 타일)에서 곱해서 10 인 두 수를 고르고,
+     마법 노트 계단식 수식으로 4×7×5 = (4×5)×7 = 20×7 = 140. 이 계단 한 줄만은 찍는 동안에 한해 첫 예(3×2×5)를
+     4×7×5 로 바꿔 보여 준다(같은 유닛 ③ 에 있는 예 5×4×7→(4×5)×7=140 과 같은 계산, 앱 파일은 그대로). */
+  async creative3(browser, base){
+    const st = Object.assign({}, L.STATE, { progress:{ 'C-02':{ touchedAt:Date.now() } } });
+    const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:st });
+    await L.virtualTime(page);
+    await page.goto(base + '/number_magic/index.html?enter=1');
+    await until(page, () => !!window.NM_AVATAR && !!document.getElementById('ttContinue'), null, 90000);
+    /* 새 친구 도착 모달이 줄줄이 뜨지 않게 — 이미 연 것으로 해 둔다 */
+    await page.evaluate(() => { const s = JSON.parse(localStorage.getItem('nm_state_v1')); s.character_unlocked = s.character_unlocked || {};
+      (NM_AVATAR.numbers || []).forEach(i => { s.character_unlocked['number_' + i.id] = true; }); (NM_AVATAR.symbols || []).forEach(i => { s.character_unlocked['symbol_' + i.id] = true; });
+      localStorage.setItem('nm_state_v1', JSON.stringify(s)); });
+    await page.reload();
+    await until(page, () => !!window.NM_UNITS && !!document.getElementById('ttContinue'), null, 90000);
+    await page.evaluate(() => { window.NM_UNITS['C-02'].discover.stages[0].mathSteps = ['4 × 7 × 5', '= (4 × 5) × 7', '= 20 × 7', '= 140']; });
+    await L.advance(page, 1200, 100);
+    await page.evaluate(() => document.getElementById('ttContinue').click());
+    await until(page, () => !!document.querySelector('[data-step="lab"]'), null, 60000);
+    await page.evaluate(() => document.querySelector('[data-step="lab"]').click());
+    await until(page, () => document.querySelectorAll('#expr .nm-tile').length > 1, null, 60000);
+    await L.advance(page, 600, 100);
+    await cursorInit(page);
+    await page.evaluate(() => { const st = document.createElement('style'); st.textContent = `#srFlash{position:fixed;inset:0;background:radial-gradient(circle at 50% 45%,#fff,#f6f0ff 60%,#e9fbf6);opacity:0;pointer-events:none;z-index:2147483600}
+      body{transform-origin:0 0} .sr-hide{opacity:0} .nm-mstep-line,.nm-mstep-arrow{will-change:transform,opacity}`; document.head.appendChild(st);
+      const f = document.createElement('div'); f.id = 'srFlash'; document.documentElement.appendChild(f); });
+    /* 곱해서 10 인 두 타일(문제는 앱이 무작위로 낸다) */
+    const pair = await page.evaluate(() => { const t = [...document.querySelectorAll('#expr .nm-tile')].map(e => +e.textContent);
+      for(let i = 0; i < t.length; i++) for(let j = i + 1; j < t.length; j++) if(t[i] * t[j] === 10) return [i, j]; return [0, 1]; });
+    const tileAt = i => page.evaluate(i => { const r = document.querySelectorAll('#expr .nm-tile')[i].getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, i);
+    const cur = mkCursor(); cur.at(900, 620);
+    let steps = null, flashT = -9;
+    await runScene('creative3', page, { dur:10.6, cursor:cur,
+      perFrame: async t => {
+        await page.evaluate(([t, flashT]) => { const f = document.getElementById('srFlash'); const k = (t - flashT) / 0.5; f.style.opacity = k < 0 || k > 1 ? 0 : Math.sin(Math.PI * k) * 0.95; }, [t, flashT]);
+        if(steps){ await page.evaluate(([t, s]) => {
+          const box = document.querySelector('.nm-mstep-box'); if(!box) return;
+          const kids = [...box.children];   /* 줄·화살표 번갈아 */
+          const lines = kids.filter(e => e.classList.contains('nm-mstep-line'));
+          kids.forEach(e => { const li = e.classList.contains('nm-mstep-line') ? lines.indexOf(e) : lines.indexOf(e.nextElementSibling);
+            const t0 = s.t0 + li * 0.62 - (e.classList.contains('nm-mstep-arrow') ? 0.15 : 0);
+            const u = Math.max(0, Math.min(1, (t - t0) / 0.35)); const c = 1.7, b = 1 + (c + 1) * Math.pow(u - 1, 3) + c * Math.pow(u - 1, 2);
+            e.style.opacity = u; e.style.transform = `translateY(${(1 - b) * 14}px) scale(${0.85 + 0.15 * b})`; });
+          lines[1] && (lines[1].style.textShadow = t > s.t0 + 0.9 ? '0 0 14px rgba(245,217,139,.95)' : '');
+          lines[3] && (lines[3].style.color = t > s.t0 + 2.2 ? '#8a6a1f' : '');
+          /* 카메라: 계단 상자로 1.45배 */
+          const r0 = s.r, S = 1 + 1.05 * Math.min(1, Math.max(0, (t - s.t0 + 0.4) / 0.8)) ** 0.6;
+          const cx = r0[0], cy = r0[1];
+          document.body.style.transform = `translate(${innerWidth / 2 - cx * S + (cx - innerWidth / 2) * 0}px,${innerHeight / 2 - cy * S}px) scale(${S})`;
+        }, [t, steps]); }
+      },
+      events:[
+        [0.2, async t => { const p = await tileAt(pair[0]); cur.show(t, true); cur.move(t, p[0], p[1] + 8, 0.7); }],
+        [1.0, async t => { cur.tap(t); await page.evaluate(i => document.querySelectorAll('#expr .nm-tile')[i].click(), pair[0]); }],
+        [1.1, async t => { const p = await tileAt(pair[1]); cur.move(t, p[0], p[1] + 8, 0.5); }],
+        [1.7, async t => { cur.tap(t); await page.evaluate(i => document.querySelectorAll('#expr .nm-tile')[i].click(), pair[1]); }],
+        [1.9, async t => { const p = await center(page, '#pick'); if(p) cur.move(t, p[0], p[1] + 6, 0.45); }],
+        [2.45, async t => { cur.tap(t); await page.evaluate(() => { const b = document.getElementById('pick'); if(b && !b.disabled) b.click(); }); }],
+        [3.3, t => { cur.show(t, false, 0.3); flashT = t; }],
+        [3.55, async t => {
+          await page.evaluate(() => document.querySelector('[data-step="discover"]').click());
+          await L.advance(page, 200, 100);
+          const r = await page.evaluate(() => { const b = document.querySelector('.nm-mstep-box'); let p = b.parentElement; while(p && !(p.scrollHeight > p.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
+            if(p){ p.style.scrollBehavior = 'auto'; const q0 = b.getBoundingClientRect(); p.scrollTop += q0.top + q0.height / 2 - innerHeight * 0.55; } const q = b.getBoundingClientRect();
+            [...b.children].forEach(e => { e.style.opacity = 0; }); return [q.left + q.width / 2, q.top + q.height / 2]; });
+          steps = { t0:t + 0.55, r };
+        }],
+      ] });
+    await ctx.close();
+  },
+
   /* 3. 스토리 모드 — 팝업 그림책이 펼쳐지고(인트로), 장(章)을 차례로 짚는다 */
   async story(browser, base){
     const { ctx, page } = await openApp(browser, base, 'ttStory');
@@ -249,8 +351,10 @@ const SCENES = {
     await page.goto(base + '/number_magic/about.html');
     await until(page, () => document.readyState === 'complete' && document.fonts.status === 'loaded', null, 60000);
     await L.advance(page, 800, 100);
-    await page.evaluate(PHILO_SETUP);
-    await runScene('philosophy', page, { dur:14.8, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
+    /* v3: 형광·카메라 박자를 지금 목소리 폴더의 n02 길이에 맞춘다(비율) — 목소리를 바꾸면 이 장면만 다시 찍으면 된다(1분) */
+    const D = narrDur('n02') || 11;
+    await page.evaluate(PHILO_SETUP, D);
+    await runScene('philosophy', page, { dur:0.5 + D + 1.0, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
     await ctx.close();
   },
 
@@ -350,7 +454,7 @@ const SCENES = {
 };
 
 /* about.html — 찍는 동안에만 쓰는 카메라·형광펜(앱·페이지 파일은 그대로) */
-function PHILO_SETUP(){
+function PHILO_SETUP(D){
   const css = document.createElement('style');
   css.textContent = `.skipbtn,.lang-sw,.langsw,[class*="lang"]{visibility:hidden!important}
     html,body{overflow:hidden!important} body{transform-origin:0 0;will-change:transform}
@@ -381,26 +485,43 @@ function PHILO_SETUP(){
   const A = docRect(q('.chapter .folio')), T = docRect(q('[data-i18n="ch1Thesis"]')), H = docRect(q('[data-i18n="pH2"]')), Ld = docRect(lead), PQ = docRect(q('.pullquote')), CT = docRect(q('.cta-body h2'));
   const W = innerWidth, Hh = innerHeight;
   /* 카메라 키: [시각, 중심x, 중심y, 배율] */
-  const K1 = [
-    [0.0,  H.x + H.w * 0.55, (T.y + H.y + H.h) / 2 - 8, 1.55],
-    [2.9,  H.x + H.w * 0.62, (T.y + H.y + H.h) / 2 + 6, 1.62],
-    [4.5,  Ld.x + Ld.w * 0.5 + 60, Ld.y + Ld.h * 0.5, 1.6],
-    [8.0,  Ld.x + Ld.w * 0.5 + 60, Ld.y + Ld.h * 0.52, 1.64],
-    [10.4, (H.x + Ld.x + Ld.w) / 2, (T.y + Ld.y + Ld.h) / 2 + 30, 1.2],
+  /* v3 원고: "연산만… 아닙니다(0~27%) · 독쌤의 철학이 그대로 들어간 수의 마법(27~48%) · 수는 마법이고, 생각과 문장이(48~75%) · 수를 정복해야 수학을 정복(75~100%)" */
+  const a0 = 0.5, at = f => a0 + f * D;
+  const K = [
+    [0.0,     H.x + H.w * 0.52, H.y + H.h * 0.5, 1.75],
+    [at(.22), H.x + H.w * 0.56, H.y + H.h * 0.5, 1.8],
+    [at(.30), Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.4, 1.7],
+    [at(.44), Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.42, 1.72],
+    [at(.50), T.x + 260, T.y + T.h * 0.5 + 40, 1.8],
+    [at(.60), T.x + 300, (T.y + H.y + H.h) / 2, 1.6],
+    [at(.66), Ld.x + Ld.w * 0.5 + 40, Ld.y + Ld.h * 0.45, 1.7],
+    [at(.76), (H.x + Ld.x + Ld.w) / 2, (T.y + Ld.y + Ld.h) / 2 + 30, 1.22],
+    [at(1) + 1.0, (H.x + Ld.x + Ld.w) / 2, (T.y + Ld.y + Ld.h) / 2 + 30, 1.26],
   ];
-  const K2 = [ [11.0, PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 + 8, 1.55], [13.6, PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 - 10, 1.63] ];
   const ease = t => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
   const camAt = (K, t) => { let i = 0; while(i < K.length - 2 && K[i + 1][0] <= t) i++; const a = K[i], b = K[i + 1] || a;
     const u = b === a ? 0 : ease((t - a[0]) / (b[0] - a[0])); return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, Math.exp(Math.log(a[3]) + (Math.log(b[3]) - Math.log(a[3])) * u)]; };
-  const HL = [['thesis', 0.8, 0.7], ['h2', 2.2, 1.1], ['think', 4.6, 0.9], ['unfold', 5.9, 0.9], ['conquer', 8.0, 1.2], ['q1', 11.5, 0.9], ['q2', 12.3, 0.8]];
+  const HL = [['h2', at(.04), 1.0], ['conquer', at(.30), 1.0], ['thesis', at(.49), 0.6], ['think', at(.60), 0.8], ['unfold', at(.68), 0.7], ['conquer2', at(.80), 0.5]];
+  G.conquer2 = [];
   window.__phRender = t => {
-    const [cx, cy, s] = t < 10.75 ? camAt(K1, t) : camAt(K2, t);
+    const [cx, cy, s] = camAt(K, t);
     document.body.style.transform = `translate(${W / 2 - cx * s}px,${Hh / 2 - cy * s}px) scale(${s})`;
-    fade.style.opacity = t < 10.35 ? 0 : t < 10.75 ? (t - 10.35) / 0.4 : t < 11.2 ? 1 - (t - 10.75) / 0.45 : 0;
+    fade.style.opacity = 0;
     for(const [k, t0, d] of HL){ const els = G[k]; const n = els.length;
       els.forEach((e, i) => { const u = Math.max(0, Math.min(1, ((t - t0) / d) * n - i)); e.style.backgroundSize = `${(u * 100).toFixed(1)}% 100%`; }); }
+    /* 마지막 "수를 정복해야 수학을 정복" — 정복 구절이 금빛으로 한 번 빛난다 */
+    const g = Math.max(0, 1 - Math.abs(t - at(.86)) / 0.6);
+    G.conquer.forEach(e => { e.style.textShadow = g > 0.01 ? `0 0 ${14 * g}px rgba(245,190,80,${0.9 * g})` : ''; });
   };
   window.__phRender(0);
+}
+
+/* 지금 쓰는 목소리 폴더(SR_VOICE, 기본 omnivoice)의 내레이션 길이(초) */
+function narrDur(n){
+  const dir = path.join(__dirname, 'narration', process.env.SR_VOICE || 'omnivoice');
+  const f = path.join(dir, n + '.mp3'); if(!fs.existsSync(f)) return 0;
+  const r = require('child_process').spawnSync(L.FF, ['-hide_banner', '-i', f], { encoding:'utf8' });
+  const m = String(r.stderr).match(/Duration: (\d+):(\d+):([\d.]+)/); return m ? +m[1] * 3600 + +m[2] * 60 + +m[3] : 0;
 }
 
 /* 무대 페이지(render(t) 를 가진 정적 페이지)를 한 장씩 */
@@ -422,7 +543,7 @@ async function stageScene(browser, base, name, url, dur){
 
 (async () => {
   const want = process.argv.slice(2).filter(a => !a.startsWith('--'));
-  const all = ['title', 'philosophy', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
+  const all = ['mapreveal', 'diagnose', 'creative3', 'title', 'philosophy', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
   const list = want.length ? want : all;
   const { server, base } = await L.serve({ '/__sheets/':path.join(OUT, 'sheets-src') });
   const browser = await L.launch();

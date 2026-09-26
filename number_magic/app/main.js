@@ -3244,6 +3244,208 @@ function crIc(name){
   };
   return `<svg class="nm-cr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[name]||''}</svg>`;
 }
+/* ============================================================
+   속도 비교 진단 (2026-09-26, 원장 "지금 속도면 S학원 A반 / S학원 프리미어 / KMO 속도를
+   알 수 있고, 상위 레벨이 되려면 어떻게 해야 하고 기간을 줄여야 하는지").
+   기준표·마일스톤 대응·판정은 app/pace-compare.js(출처 주석 포함). 여기서는 주차 계산을
+   새로 하지 않고 이 화면이 이미 쓰는 roadTotals()/coursePaceWeeks()/roadPaceMult() 를 넘긴다.
+   아무것도 잠그지 않는다 — 안내뿐이다.
+   ============================================================ */
+/* 설정 하나(cad·pace·speed)에서 "지금 자리 → 과정 N 시작"까지 주. 지금 과정에서 끝낸 몫은 뺀다. */
+function paceWeeksToFn(curNum, curFrac, cad, pace, speed){
+  const mult=roadPaceMult(pace)/(speed||1);
+  const cur=roadCourseList().find(x=>x.num===curNum);
+  const curW=cur?coursePaceWeeks((cur.c.sessions||[]).length,cad,mult):0;
+  return target=>{
+    if(target<=curNum) return 0;
+    return Math.max(0, roadTotals(curNum,target-1,cad,mult).weeks - curFrac*curW);
+  };
+}
+/* 판정 한 벌 — 화면과 검사기(window.NM_PACE_DIAG)가 같은 것을 쓴다.
+   o 로 설정·과정·나이를 바꿔 볼 수 있다(검사기용). 나이를 모르면 null. */
+function paceCompareResult(o){
+  const PC=window.NM_PACE_COMPARE;
+  if(!PC) return null;
+  o=o||{};
+  const smNow=o.smNow!=null?o.smNow:schoolMonths();
+  if(smNow==null) return null;
+  const curKey=o.curKey||currentCourseKey();
+  const c=(window.NM_COURSES||{})[curKey];
+  const curNum=parseInt(String(curKey).replace(/^C/,''),10);
+  let curFrac=o.curFrac;
+  if(curFrac==null){ const p=c?courseProgress(c):{done:0,total:0}; curFrac=p.total?p.done/p.total:0; }
+  const cur={cad:o.cad||S.roadCadence, pace:o.pace||roadPaceDef(S.roadPace).key, speed:o.speed||S.roadSpeed||1};
+  const ctx={curNum, curFrac, smNow, weeksTo:paceWeeksToFn(curNum,curFrac,cur.cad,cur.pace,cur.speed)};
+  const ev=PC.evaluate(ctx);
+  let sugg=[];
+  if(ev.target){
+    const settings=[];
+    ['w1','w2'].forEach(cad=>ROAD_PACES.forEach(p=>ROAD_MULTS_LIST.forEach(speed=>{
+      settings.push({cad, pace:p.key, speed, weeksTo:paceWeeksToFn(curNum,curFrac,cad,p.key,speed)});
+    })));
+    sugg=PC.suggest(ctx, ev.target.key, cur, settings, ROAD_PACES.map(p=>p.key));
+  }
+  return {ctx, cur, curKey, ev, sugg};
+}
+window.NM_PACE_DIAG=paceCompareResult;
+/* 학령개월 → 사람 말. 미취학은 한국 나이 "6세 9월", 취학 뒤는 "초1 11월"(schoolMonthsLabel). */
+function pcAgeLabel(sm){
+  sm=Math.round(sm);
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if(sm<0){
+    const t=sm+98, a=Math.floor(t/12), m=t%12+1;
+    return ko?`${a}세 ${m}월`:en?`Age ${a} · ${MON[m-1]}`:`${a}岁${m}月`;
+  }
+  if(en){ const g=Math.floor(sm/12)+1, m=((sm%12)+2)%12+1; return `G${g} · ${MON[m-1]}`; }
+  return schoolMonthsLabel(sm);
+}
+function pcTickLabel(sm){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  if(sm<0){ const a=8+Math.round(sm/12); return ko?`${a}세`:en?`Age ${a}`:`${a}岁`; }
+  const g=Math.round(sm/12)+1;
+  return g<=6?(ko?'초'+g:en?'G'+g:'小'+g):g<=9?(ko?'중'+(g-6):en?'G'+g:'初'+(g-6)):(ko?'고'+(g-9):en?'G'+g:'高'+(g-9));
+}
+function paceCompareHtml(){
+  const PC=window.NM_PACE_COMPARE;
+  if(!PC) return '';
+  const T=k=>L(PC.STR[k]);
+  const F=(k,v)=>PC.fmt(L(PC.STR[k]),v);
+  const ko=S.lang==='ko';
+  const head=`<span class="nm-cr-eyebrow">${T('eyebrow')}</span>
+    <div class="nm-cr-cad-h big">${T('title')}</div>
+    <p class="nm-cr-cadlead">${T('lead')}</p>`;
+  const R=paceCompareResult();
+  if(!R){
+    return `<div class="nm-cr-pc" id="crPaceCmp">${head}
+      <div class="nm-pc-needage">${crIc('info')}<span>${T('needAge')}</span>
+        <button class="nm-pc-agebtn" id="pcAge">${T('needAgeBtn')}</button></div></div>`;
+  }
+  const {ctx, ev, sugg, cur}=R;
+  const rowOf=k=>ev.rows.find(r=>r.key===k);
+  const bName=k=>esc(L(PC.bench(k).name));
+  const mo=v=>Math.max(1,Math.round(Math.abs(v)));
+  const deltaTxt=r=>{
+    if(r.status==='out') return T('outShort');
+    if(Math.abs(r.delta)<0.5) return T('even');
+    return r.delta<0?F('ahead',{n:mo(r.delta)}):F('behind',{n:mo(r.delta)});
+  };
+  /* 나이 줄 */
+  const ageRow=`<div class="nm-pc-age"><span>${T('ageNow')}</span><b class="nm-cr-tnum">${esc(pcAgeLabel(ctx.smNow))}</b>
+    <em>${T('today')}</em><button class="nm-pc-agebtn sm" id="pcAge">${T('change')}</button></div>`;
+
+  /* 판정 + 세 단 사다리 게이지 */
+  const vKey=ev.verdict?ev.verdict.key:null;
+  const vRank=vKey?PC.bench(vKey).rank:0;
+  let verdictHtml;
+  if(ev.out){
+    verdictHtml=`<div class="nm-pc-verdict out"><b class="nm-pc-vt">${T('outTitle')}</b><p>${T('outBody')}</p></div>`;
+  } else {
+    const fast=vKey==='p'&&ev.verdict.fastDelta!=null&&ev.verdict.fastDelta<=PC.TOL;
+    verdictHtml=`<div class="nm-pc-verdict${vKey?'':' none'}">
+      <span class="nm-pc-vpre">${T('verdictPre')}</span>
+      ${vKey?`<b class="nm-pc-vt">${ko?`${bName(vKey)} ${T('verdictPost')}`:S.lang==='en'?`${bName(vKey)} ${T('verdictPost')}`:`${bName(vKey)}${T('verdictPost')}`}</b>`
+        :`<b class="nm-pc-vt">${T('verdictNone')}</b>`}
+      ${fast?`<p class="nm-pc-vsub">${T('verdictFast')}</p>`:''}
+      ${vKey==='k'?`<p class="nm-pc-vsub">${T('verdictTop')}</p>`:''}
+    </div>`;
+  }
+  /* 비교 범위 밖(초3 6월 이후)이면 사다리를 그리지 않는다 — "늦어요"를 빨갛게 보여 줄 근거가 없다 */
+  const ladder=ev.out?'':`<ol class="nm-pc-ladder" aria-label="${T('eyebrow')}">${['a','p','k'].map(k=>{
+    const r=rowOf(k), rank=PC.bench(k).rank;
+    const cls=r.status==='out'?'out':rank<=vRank?'on':'off';
+    return `<li class="nm-pc-rung ${cls}${k===vKey?' cur':''}" data-bench="${k}">
+      <span class="nm-pc-dot" aria-hidden="true">${cls==='on'?crIc('check'):''}</span>
+      <b>${bName(k)}</b><small class="nm-cr-tnum">${esc(deltaTxt(r))}</small></li>`;
+  }).join('')}</ol>`;
+
+  /* 마일스톤별 타임라인 — x = 나이(학령개월), 네 줄 공통 눈금 */
+  const rowsDef=['G6','MID','HIGH'].map(id=>{
+    const m=PC.milestone(id);
+    const a=PC.bench('a').anchors.find(x=>x.id===id);
+    const p=PC.bench('p').anchors.find(x=>x.id===id);
+    const pf=(PC.bench('p').fast||[]).find(x=>x.id===id);
+    const k=PC.bench('k').anchors.find(x=>x.id===id);
+    const passed=ctx.curNum>=m.course;
+    const you=passed?null:PC.childSmAt(ctx,m.course);
+    return {m,a,p,pf,k,passed,you};
+  });
+  const vals=[ctx.smNow];
+  rowsDef.forEach(r=>{ [r.a,r.p,r.pf,r.k].forEach(x=>{ if(x) vals.push(x.sm); }); if(r.you!=null) vals.push(r.you); });
+  const x0=Math.floor((Math.min.apply(null,vals)-2)/12)*12;
+  const x1=Math.ceil((Math.max.apply(null,vals)+2)/12)*12;
+  const X=v=>((v-x0)/(x1-x0)*100).toFixed(2)+'%';
+  const ticks=[]; for(let v=x0; v<=x1; v+=12) ticks.push(v);
+  const tickEvery=ticks.length>9?2:1;
+  const axis=`<div class="nm-pc-axis" aria-hidden="true">${ticks.map((v,i)=>
+    `<span style="left:${X(v)}"${i%tickEvery?' class="minor"':''}>${i%tickEvery?'':esc(pcTickLabel(v))}</span>`).join('')}</div>`;
+  const mk=(cls,sm,label)=>`<span class="nm-pc-mk ${cls}" style="left:${X(sm)}" title="${esc(label)} · ${esc(pcAgeLabel(sm))}"></span>`;
+  const rowsHtml=rowsDef.map(r=>{
+    const facts=[];
+    facts.push(r.passed?`<span class="you">${T('you')} <b>${T('passedTxt')}</b></span>`
+      :`<span class="you">${T('you')} <b class="nm-cr-tnum">${esc(pcAgeLabel(r.you))}</b></span>`);
+    if(r.a) facts.push(`<span class="a">${bName('a')} <b class="nm-cr-tnum">${esc(pcAgeLabel(r.a.sm))}</b>${r.a.beyondGrid?'<sup>†</sup>':''}</span>`);
+    if(r.p) facts.push(`<span class="p">${bName('p')} <b class="nm-cr-tnum">${esc(pcAgeLabel(r.p.sm))}</b>${r.pf?` <i class="nm-cr-tnum">(~${esc(pcAgeLabel(r.pf.sm))})</i>`:''}</span>`);
+    if(r.k) facts.push(`<span class="k">${bName('k')} <b class="nm-cr-tnum">${esc(pcAgeLabel(r.k.sm))}</b></span>`);
+    const band=(r.p&&r.pf)?`<span class="nm-pc-band" style="left:${X(r.pf.sm)};width:calc(${X(r.p.sm)} - ${X(r.pf.sm)})" title="${esc(T('legendBand'))}"></span>`:'';
+    return `<li class="nm-pc-row${r.passed?' passed':''}" data-ms="${r.m.id}">
+      <div class="nm-pc-rowh"><b>${esc(L(r.m.name))}</b><small>${T('course')} ${r.m.course}</small></div>
+      <div class="nm-pc-track">
+        <span class="nm-pc-now" style="left:${X(ctx.smNow)}"></span>
+        ${band}
+        ${r.a?mk('a',r.a.sm,L(PC.bench('a').name)):''}
+        ${r.p?mk('p',r.p.sm,L(PC.bench('p').name)):''}
+        ${r.k?mk('k',r.k.sm,'KMO'):''}
+        ${r.you!=null?mk('you',r.you,T('you')):''}
+      </div>
+      <div class="nm-pc-facts">${facts.join('')}</div>
+    </li>`;
+  }).join('');
+  const legend=`<div class="nm-pc-legend">
+    <span class="you"><i></i>${T('you')}</span><span class="a"><i></i>${bName('a')}</span>
+    <span class="p"><i></i>${bName('p')}</span><span class="k"><i></i>${bName('k')}</span></div>`;
+  const timeline=`<div class="nm-pc-tl">
+    <div class="nm-cr-cad-h sub">${T('rowsHead')}</div>${legend}
+    <ul class="nm-pc-rows">${rowsHtml}</ul>${axis}</div>`;
+
+  /* 상위 레벨이 되려면 */
+  let upHtml='';
+  if(!ev.out && ev.target){
+    const t=ev.target;
+    const pName=k=>{ const p=ROAD_PACES.find(x=>x.key===k); return p?L(p.name):k; };
+    const optTxt=s=>{
+      const parts=[];
+      if(s.cad!==cur.cad) parts.push(s.cad==='w2'?T('optCad'):T('optCadBack'));
+      if(s.pace!==cur.pace) parts.push(F('optPace',{v:esc(pName(s.pace))}));
+      if(s.speed!==cur.speed) parts.push(F('optSpeed',{v:s.speed}));
+      return parts.join(' + ');
+    };
+    upHtml=`<div class="nm-pc-up">
+      <div class="nm-cr-cad-h sub">${crIc('steps')}${T('upHead')}</div>
+      <p class="nm-pc-need">${F('upNeed',{name:bName(t.key), milestone:esc(L(PC.milestone(t.horizon.id)?PC.milestone(t.horizon.id).name:{ko:'',en:'',zh:''})), n:`<b class="nm-cr-tnum">${mo(t.delta)}</b>`})}</p>
+      ${sugg.length?`<ul class="nm-pc-opts">${sugg.map((s,i)=>`<li class="nm-pc-opt">
+          <span class="nm-pc-opttxt"><b>${optTxt(s)}</b>${s.saved!=null?`<small class="nm-cr-tnum">${F('saved',{n:mo(s.saved)})}</small>`:''}</span>
+          <button class="nm-pc-apply" data-pc-apply="${i}" data-cad="${s.cad}" data-pace="${s.pace}" data-speed="${s.speed}">${T('apply')}</button>
+        </li>`).join('')}</ul>
+        <p class="nm-pc-fine">${T('amountNote')}</p>`
+      :`<p class="nm-pc-fine">${T('upNone')}</p>`}
+    </div>`;
+  }
+
+  /* 기준표·대응 (접힘) — 숫자가 어디서 왔는지 부모가 직접 볼 수 있게 */
+  const srcRows=PC.MILESTONES.map(m=>{
+    const cell=k=>{ const a=PC.bench(k).anchors.find(x=>x.id===m.id); return a?esc(pcAgeLabel(a.sm))+(a.beyondGrid?'†':''):'—'; };
+    return `<tr><th scope="row">${esc(L(m.name))}</th><td class="nm-cr-tnum">${m.course}</td><td>${cell('a')}</td><td>${cell('p')}</td><td>${cell('k')}</td></tr>`;
+  }).join('');
+  const srcHtml=`<details class="nm-cr-more nm-pc-src"><summary>${T('srcHead')}</summary>
+    <div class="nm-pc-tablewrap"><table class="nm-pc-table"><thead><tr><th>${T('srcMilestone')}</th><th>${T('srcOurs')}</th><th>${bName('a')}</th><th>${bName('p')}</th><th>KMO</th></tr></thead>
+    <tbody>${srcRows}</tbody></table></div>
+    <p class="nm-pc-fine">† ${T('beyondGrid')} · KMO ${T('course')} 2 = ${esc(pcAgeLabel(PC.bench('k').anchors[0].sm))} (${T('derived')})</p></details>`;
+
+  return `<div class="nm-cr-pc" id="crPaceCmp">${head}${ageRow}${verdictHtml}${ladder}${timeline}${upHtml}
+    <ul class="nm-pc-scope"><li>${T('scope1')}</li><li>${T('scope2')}</li><li>${T('scope3')}</li></ul>${srcHtml}</div>`;
+}
+
 function screenCourseRoad(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -3429,6 +3631,8 @@ function screenCourseRoad(){
             : lk('주 1회면 한 주에 40~50분이에요.','about 40–50 minutes a week.','每周约40~50分钟。')}</p>
       </div>
     </div>`;
+    /* 속도 비교 진단 — 위에서 고른 빠르기 그대로 세 기준과 견준다(2026-09-26) */
+    html+=paceCompareHtml();
 
     if(S.placement&&S.placement.course){
       const pc=(window.NM_COURSES||{})[S.placement.course];
@@ -3587,6 +3791,16 @@ function screenCourseRoad(){
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
+    });
+    const pcAge=body.querySelector('#pcAge');
+    if(pcAge) pcAge.onclick=()=>openAgeSheet(()=>draw(true));
+    body.querySelectorAll('[data-pc-apply]').forEach(el=>{
+      el.onclick=()=>{
+        S.roadCadence=el.dataset.cad; S.roadPace=el.dataset.pace; S.roadSpeed=+el.dataset.speed;
+        save(); draw(true);
+        const PC=window.NM_PACE_COMPARE;
+        if(PC) toast(L(PC.STR.applied));
+      };
     });
     body.querySelectorAll('[data-middle-session]').forEach(el=>{
       el.onclick=()=>{
