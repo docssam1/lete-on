@@ -5,6 +5,24 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,300..500&family=Hahmlet:wght@500;600&family=Gowun+Batang:wght@700&display=swap">
 <style>
   html,body{margin:0;background:transparent;width:1920px;height:1080px;overflow:hidden}
+  body.v{width:1080px;height:1920px}
+  body.v .ko{font-size:38px;white-space:normal;max-width:760px} body.v .en{font-size:22px;white-space:normal;max-width:760px}
+  body.v .cap{padding:22px 34px 22px 26px;gap:18px} body.v .bl,body.v .br{left:56px;right:56px;bottom:150px;justify-content:flex-start} body.v .tl{left:56px;right:56px;top:150px}
+  /* 훅(hook): 큰 글 한 장, 화면 가운데 — 소리 없이도 읽힌다 */
+  .hook{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:1120px;padding:54px 70px 48px;border-radius:40px;text-align:center;
+    background:linear-gradient(135deg,rgba(255,255,255,.94) 0%,rgba(246,242,255,.93) 40%,rgba(238,250,246,.93) 75%,rgba(255,250,238,.94) 100%);
+    box-shadow:0 30px 80px rgba(30,36,64,.28),0 2px 0 rgba(255,255,255,.9) inset,0 0 0 1.5px rgba(201,164,76,.6);color:#26304a}
+  .hook .hk{font:700 62px/1.25 'Hahmlet','Gowun Batang',serif;letter-spacing:-.01em;word-break:keep-all}
+  .hook .hk b{color:#8a6a1f}
+  .hook .he{margin-top:16px;font:italic 400 27px/1.3 'Fraunces',Georgia,serif;color:#5a6380}
+  .hook .orn{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px auto 0;width:360px;color:#c9a44c}
+  .hook .orn i{flex:1;height:1px;background:linear-gradient(90deg,rgba(201,164,76,0),rgba(201,164,76,.9))}.hook .orn i:last-child{background:linear-gradient(90deg,rgba(201,164,76,.9),rgba(201,164,76,0))}.hook .orn b{width:16px;height:16px}
+  body.v .hook{width:900px;padding:48px 50px 42px} body.v .hook .hk{font-size:58px} body.v .hook .he{font-size:25px}
+  /* 각주(foot): 작은 알약, 위 가운데 — 속도 비교 카드가 보이는 동안 늘 붙는다 */
+  .foot{position:absolute;left:50%;top:44px;transform:translateX(-50%);padding:12px 26px;border-radius:999px;white-space:nowrap;
+    background:rgba(255,255,255,.86);box-shadow:0 8px 24px rgba(30,36,64,.16),0 0 0 1px rgba(201,164,76,.55);color:#26304a;font:500 22px/1.3 'Hahmlet','Gowun Batang',serif;text-align:center}
+  .foot small{display:block;font:italic 400 16px/1.3 'Fraunces',Georgia,serif;color:#5a6380}
+  body.v .foot{top:110px;white-space:normal;width:820px;font-size:24px}
   .cap{position:absolute;display:flex;align-items:center;gap:26px;padding:26px 44px 26px 30px;border-radius:999px;
     background:linear-gradient(135deg,rgba(255,255,255,.93) 0%,rgba(246,242,255,.92) 40%,rgba(238,250,246,.92) 75%,rgba(255,250,238,.93) 100%);
     box-shadow:0 18px 50px rgba(30,36,64,.22),0 2px 0 rgba(255,255,255,.9) inset,0 0 0 1.5px rgba(201,164,76,.55);
@@ -21,6 +39,20 @@
 <div class="cap" id="cap"><div class="num" id="n"></div><div class="txt"><div class="ko" id="ko"></div><div class="en" id="en" lang="en"></div></div></div>
 <script>
   const q = new URLSearchParams(location.search);
+  if(q.get('v') === '1') document.body.classList.add('v');
+  if(q.get('hook') === '1' || q.get('foot') === '1'){
+    document.getElementById('cap').remove();
+    const d = document.createElement('div');
+    if(q.get('hook') === '1'){ d.className = 'hook'; d.innerHTML = `<div class="hk">${(q.get('ko') || '').replace(/</g, '&lt;').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>')}</div><div class="orn"><i></i><b><svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 2.5c.6 5.2 4.3 8.9 9.5 9.5-5.2.6-8.9 4.3-9.5 9.5-.6-5.2-4.3-8.9-9.5-9.5 5.2-.6 8.9-4.3 9.5-9.5z" fill="currentColor"/></svg></b><i></i></div><div class="he">${(q.get('en') || '').replace(/</g, '&lt;')}</div>`; }
+    else { d.className = 'foot'; d.innerHTML = `${(q.get('ko') || '').replace(/</g, '&lt;')}<small>${(q.get('en') || '').replace(/</g, '&lt;')}</small>`; }
+    document.body.appendChild(d);
+    const back = t => { const c = 1.6; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+    window.pose = p => { if(d.className === 'foot'){ d.style.opacity = Math.max(0, Math.min(1, Math.abs(p))); return; }
+      if(p >= 0){ const b = back(Math.min(1, p)); d.style.opacity = Math.min(1, p * 2.2); d.style.transform = `translate(-50%,-50%) translateY(${(1 - b) * 30}px) scale(${0.8 + 0.2 * b})`; }
+      else { const u = -p; d.style.opacity = 1 - u; d.style.transform = `translate(-50%,-50%) translateY(${-u * 20}px) scale(${1 - 0.05 * u})`; } };
+    document.fonts.ready.then(() => { window.__ready = true; });
+    throw new Error('hook/foot mode');   /* 아래 자막 코드는 건너뛴다 */
+  }
   document.getElementById('ko').textContent = q.get('ko') || '';
   document.getElementById('en').textContent = q.get('en') || '';
   const n = q.get('n'); if(n) document.getElementById('n').textContent = n; else document.getElementById('n').remove();

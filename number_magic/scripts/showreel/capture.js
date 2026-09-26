@@ -179,9 +179,11 @@ const SCENES = {
     await L.advance(page, 2500, 100);
     const c0 = await page.evaluate(() => { const c = window.__srTown.debug.cam; return { x:c.x, z:c.z, d:c.d }; });
     /* v4: 높은 하늘에서 천천히 내려온다(원장: "마을을 위에서 내려다보다 내려오며") */
+    /* 앱이 카메라 거리를 제한해 '높은 하늘' 이 안 나온다 — 화면 자체를 1.0→1.22배로 천천히 당겨 내려오는 느낌을 더한다 */
+    await page.evaluate(() => { document.body.style.transformOrigin = '50% 46%'; });
     await runScene('mapreveal', page, { dur:8.4, perFrame: t => { const u = L.ease(t / 8.0);
-      return page.evaluate(o => { const d = window.__srTown.debug; d.cam.x = o.x; d.cam.z = o.z; d.cam.d = o.d; d.placeCam(); },
-        { x:L.lerp(c0.x, c0.x + 0.6, u), z:L.lerp(c0.z - 2.0, c0.z + 1.4, u), d:L.lerp(c0.d * 2.3, c0.d * 0.95, u) }); } });
+      return page.evaluate(o => { const d = window.__srTown.debug; d.cam.x = o.x; d.cam.z = o.z; d.cam.d = o.d; d.placeCam(); document.body.style.transform = `scale(${o.s})`; },
+        { x:L.lerp(c0.x, c0.x + 0.6, u), z:L.lerp(c0.z - 2.0, c0.z + 1.4, u), d:L.lerp(c0.d * 2.3, c0.d * 0.95, u), s:1 + 0.22 * u }); } });
     await ctx.close();
   },
 
@@ -299,7 +301,8 @@ const SCENES = {
     await page.evaluate(y => { window.__sp.scrollTop = y; }, geo.top);
     await L.advance(page, 300, 100);
     const cur = mkCursor(); cur.at(1000, 650);
-    const K = [[0, geo.top], [2.6, geo.top], [3.6, geo.tl], [5.8, geo.tl], [6.8, geo.up], [8.9, geo.up], [9.8, geo.top], [13, geo.top]];
+    /* 8.1초 '이 설정으로 바꾸기' 를 누르면 카드가 다시 그려져 짧아진다 — 그 순간 판정 칸으로 바로 올라가 뒤집힘을 본다 */
+    const K = [[0, geo.top], [2.6, geo.top], [3.6, geo.tl], [5.8, geo.tl], [6.8, geo.up], [8.08, geo.up], [8.2, geo.top], [13, geo.top]];
     const scrollAt = t => { let i = 0; while(i < K.length - 2 && K[i + 1][0] <= t) i++; const a = K[i], b = K[i + 1]; return L.lerp(a[1], b[1], L.ease((t - a[0]) / (b[0] - a[0]))); };
     const pos = sel => page.evaluate(sel => { const e = document.querySelector(sel); if(!e) return null; const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sel);
     const APPLY = '#crPaceCmp [data-pc-apply][data-speed="1.25"]';
@@ -360,7 +363,9 @@ const SCENES = {
     await cursorInit(page);
     await page.evaluate(() => { document.body.style.transformOrigin = '50% 45%'; document.body.style.transform = 'scale(1.15)'; });
     /* 화면의 식(a×b×c)을 읽어 답을 계산해 숫자판을 누른다 — 못 읽으면 숫자 하나만 */
-    const ans = await page.evaluate(() => { const m = document.querySelector('#screen').innerText.match(/\d+(?:\s*[×x]\s*\d+)+/); return m ? String(m[0].split(/[×x]/).map(v => +v.trim()).reduce((a, b) => a * b, 1)) : '7'; });
+    const ans = await page.evaluate(() => { /* 화면 글에는 유닛 부제 '2×5=10!' 도 있다 — 인수가 가장 많은 식(문제)을 고른다 */
+      const ms = [...document.querySelector('#screen').innerText.matchAll(/\d+(?:\s*[×x]\s*\d+)+/g)].map(m => m[0]); if(!ms.length) return '7';
+      const best = ms.reduce((a, b) => b.split(/[×x]/).length > a.split(/[×x]/).length ? b : a); return String(best.split(/[×x]/).map(v => +v.trim()).reduce((a, b) => a * b, 1)); });
     const key = ch => page.evaluate(ch => { const b = [...document.querySelectorAll('#screen button')].find(b => b.offsetParent && b.textContent.trim() === ch); if(!b) return null; const r = b.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, ch);
     const cur = mkCursor(); cur.at(1000, 700);
     const ev = [];
@@ -653,7 +658,11 @@ function PHILO_SETUP([D, part]){
   const docRect = el => { const r = el.getBoundingClientRect(); return { x:r.left + scrollX, y:r.top + scrollY, w:r.width, h:r.height }; };
   const T = docRect(q('[data-i18n="ch1Thesis"]')), H = docRect(q('[data-i18n="pH2"]')), Ld = docRect(lead), PH = docRect(q('[data-i18n="phH2"]')), PL = docRect(phLead), PQ = docRect(q('.pullquote')), CT = docRect(q('.cta-body h2')), CMP = docRect(q('.compare'));
   /* .mathbox 와 그 안의 .step 은 폭 100% 블록이고 글은 왼쪽에 몰려 있다 — 왼쪽 가장자리에서 일정 폭을 본다 */
-  const MBb = docRect(q('.mathbox')); const MB = { x:MBb.x, y:MBb.y, w:Math.min(MBb.w, 760), h:MBb.h };
+  const MBb = docRect(q('.mathbox'));
+  /* 글이 실제로 차지하는 폭(라벨·수식·메모 span 의 합집합) — 세로 컷은 이 폭을 화면에 꽉 채운다 */
+  const MBt = (() => { const rs = [...document.querySelectorAll('.mathbox .lbl, .mathbox [data-tex], .mathbox .katex, .mathbox .note')].map(docRect).filter(r => r.w > 0);
+    const x0 = Math.min(...rs.map(r => r.x)), x1 = Math.max(...rs.map(r => Math.min(r.x + r.w, MBb.x + MBb.w))); return { x0, x1 }; })();
+  const MB = { x:MBb.x, y:MBb.y, w:Math.min(MBb.w, 760), h:MBb.h, tx:MBt.x0 - 16, tw:(MBt.x1 - MBt.x0) + 32 };
   const W = innerWidth, Hh = innerHeight;
   const a0 = 0.5, at = f => a0 + f * D;
   const ease = t => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
@@ -676,8 +685,8 @@ function PHILO_SETUP([D, part]){
     fades = [[at(.17), at(.25)], [at(.42), at(.5)]];
   } else if(part === 3){
     /* 세로 컷: 1275 − 788 → 1275 = 999 + 1 + 275 펼치기(내레이션 없음, D 초) */
-    const sc = Math.min(1.4, (W - 40) / MB.w);
-    K = [[0.0, MB.x + MB.w * 0.5, MB.y + MB.h * 0.5, sc], [at(1) + .9, MB.x + MB.w * 0.5, MB.y + MB.h * 0.5 + 6, sc * 1.06]];
+    const sc = Math.min(2.4, (W - 24) / MB.tw), cx = MB.tx + MB.tw * 0.5;
+    K = [[0.0, cx, MB.y + MB.h * 0.5, sc], [at(1) + .9, cx, MB.y + MB.h * 0.5 + 4, sc * 1.05]];
     HL = [['mb2', at(.12), 0.7], ['note', at(.45), 1.2]];
   } else {
     /* n03: 내가 다루기 쉬운 수로 펼치고(0–.25) · 생각하는 힘과 문장을 읽는 힘(.25–.55) · 수를 정복해야 수학을 정복(.55–.78) · 이것이 독쌤의 철학(.78–1) */
