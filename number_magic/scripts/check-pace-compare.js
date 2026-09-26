@@ -19,7 +19,7 @@ global.window={};
 const PC=require(path.join(APP,'app/pace-compare.js'));
 require(path.join(APP,'data/courses.js'));
 const C=global.window.NM_COURSES;
-const BANNED=/소마|황소/;
+const BANNED=/소마|황소|S학원|Academy S|S学院/;
 
 check('기준표 = roadmap/index.html 원본', ()=>{
   const src=fs.readFileSync(path.join(ROOT,'roadmap/index.html'),'utf8');
@@ -90,7 +90,7 @@ check('문구 3개 언어 · 이름', ()=>{
   });
   PC.BENCH.forEach(b=>['ko','en','zh'].forEach(l=>{ assert(b.name[l]); all.push(b.name[l]); }));
   PC.MILESTONES.forEach(m=>['ko','en','zh'].forEach(l=>{ assert(m.name[l]); all.push(m.name[l]); }));
-  assert.equal(PC.bench('a').name.ko,'S학원 A반'); assert.equal(PC.bench('p').name.ko,'S학원 프리미어'); assert.equal(PC.bench('k').name.ko,'KMO');
+  assert.equal(PC.bench('a').name.ko,'이과 최상위권'); assert.equal(PC.bench('p').name.ko,'초등 KMO 경험'); assert.equal(PC.bench('k').name.ko,'초4 고등수학 진도');
   all.forEach(s=>assert(!BANNED.test(s), '실제 학원 이름: '+s));
 });
 check('순수 판정 — 빠를수록 위로', ()=>{
@@ -193,7 +193,7 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
         assert(txt, '#crPaceCmp 없음');
         assert(!BANNED.test(txt), '실제 학원 이름이 보임');
         assert(/KMO/.test(txt));
-        assert(lang==='ko'?/S학원 A반/.test(txt):lang==='en'?/Academy S · Class A/.test(txt):/S学院 A班/.test(txt));
+        assert(lang==='ko'?/이과 최상위권/.test(txt):lang==='en'?/Top science track/.test(txt):/理科顶尖/.test(txt));
       });
     }
     check('앱: 페이지 오류 없음', ()=>assert.deepEqual(errors,[]));
