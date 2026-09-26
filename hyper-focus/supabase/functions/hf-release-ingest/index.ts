@@ -3,50 +3,59 @@
 import { createClient } from "npm:@supabase/supabase-js@2.112.3";
 import { RELEASE } from "./release-settings.ts";
 
+type FilePin = { sha256: string; bytes: number };
+type ReleaseShape = {
+  issuedAt: number;
+  expiresAt: number;
+  tokenSha256: string;
+  files: Record<string, FilePin>;
+};
+const RELEASE_DATA = RELEASE as unknown as ReleaseShape;
+
 const BUCKET = Deno.env.get("CHALLENGE_PRIVATE_BUCKET") || "hf-challenge-private";
 const MAX_BYTES = 6 * 1024 * 1024;
 const MAX_LEASE = 6 * 60 * 60 * 1000;
 const HEX = /^[a-f0-9]{64}$/;
 
-function pathAllowed(path) {
+function pathAllowed(path: unknown): path is string {
   return typeof path === "string" && path.length <= 300 &&
     /^[A-Za-z0-9_./-]+\.json$/.test(path) &&
     path.split("/").every(part => part && part !== "." && part !== "..");
 }
 
 function settingsValid() {
-  return RELEASE && Number.isSafeInteger(RELEASE.issuedAt) && Number.isSafeInteger(RELEASE.expiresAt) &&
-    RELEASE.expiresAt > RELEASE.issuedAt && RELEASE.expiresAt - RELEASE.issuedAt <= MAX_LEASE &&
-    HEX.test(RELEASE.tokenSha256) && RELEASE.files && typeof RELEASE.files === "object" &&
-    !Array.isArray(RELEASE.files) && Object.keys(RELEASE.files).length > 0 &&
-    Object.entries(RELEASE.files).every(([path, file]) => pathAllowed(path) && file &&
+  return RELEASE_DATA && Number.isSafeInteger(RELEASE_DATA.issuedAt) && Number.isSafeInteger(RELEASE_DATA.expiresAt) &&
+    RELEASE_DATA.expiresAt > RELEASE_DATA.issuedAt && RELEASE_DATA.expiresAt - RELEASE_DATA.issuedAt <= MAX_LEASE &&
+    HEX.test(RELEASE_DATA.tokenSha256) && RELEASE_DATA.files && typeof RELEASE_DATA.files === "object" &&
+    !Array.isArray(RELEASE_DATA.files) && Object.keys(RELEASE_DATA.files).length > 0 &&
+    Object.entries(RELEASE_DATA.files).every(([path, file]) => pathAllowed(path) && file &&
       HEX.test(file.sha256) && Number.isSafeInteger(file.bytes) && file.bytes > 0 && file.bytes <= MAX_BYTES);
 }
 
 function live() {
   const now = Date.now();
-  return settingsValid() && RELEASE.issuedAt <= now && now < RELEASE.expiresAt;
+  return settingsValid() && RELEASE_DATA.issuedAt <= now && now < RELEASE_DATA.expiresAt;
 }
 
-function response(status, body) {
+function response(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), { status, headers: {
     "content-type": "application/json; charset=utf-8", "cache-control": "no-store",
     "x-content-type-options": "nosniff"
   } });
 }
 
-async function digest(bytes) {
+async function digest(bytes: BufferSource) {
   return new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
 }
-function hex(bytes) { return Array.from(bytes, n => n.toString(16).padStart(2, "0")).join(""); }
-function equalHash(actual, expected) {
+function hex(bytes: Uint8Array) { return Array.from(bytes, n => n.toString(16).padStart(2, "0")).join(""); }
+function equalHash(actual: Uint8Array, expected: string) {
   // Both hashes are fixed 32-byte values; never stop at the first differing byte.
   let mismatch = actual.length ^ 32;
   for (let i = 0; i < 32; i++) mismatch |= actual[i] ^ parseInt(expected.slice(i * 2, i * 2 + 2), 16);
   return mismatch === 0;
 }
 
-async function readLimited(request, limit) {
+async function readLimited(request: Request, limit: number) {
   if (!request.body) throw Error("invalid_body");
   const reader = request.body.getReader(), chunks = [];
   let size = 0;
@@ -73,7 +82,7 @@ function serviceKey() {
   return Deno.env.get("SUPABASE_SECRET_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 }
 
-async function privateBucket(storage) {
+async function privateBucket(storage: any) {
   let bucket = await storage.getBucket(BUCKET);
   if (bucket.error) {
     if (String(bucket.error.statusCode ?? bucket.error.status) !== "404") throw Error("bucket_unavailable");
@@ -88,14 +97,14 @@ async function privateBucket(storage) {
   if (!bucket.data || bucket.data.public !== false || bucket.data.id !== BUCKET) throw Error("bucket_not_private");
 }
 
-async function readback(store, path, expected) {
+async function readback(store: any, path: string, expected: FilePin) {
   const { data, error } = await store.download(path);
   if (error || !data) return "unavailable";
   if (data.size !== expected.bytes || data.size > MAX_BYTES) return "mismatch";
   return equalHash(await digest(await data.arrayBuffer()), expected.sha256) ? "match" : "mismatch";
 }
 
-Deno.serve(async request => {
+Deno.serve(async (request: Request) => {
   if (request.method !== "POST") return response(405, { status: "method_not_allowed" });
   if (request.headers.has("origin")) return response(403, { status: "browser_disallowed" });
   if (!live()) return response(404, { status: "unavailable" });
@@ -104,10 +113,10 @@ Deno.serve(async request => {
     return response(401, { status: "unauthorized" });
   }
   const path = request.headers.get("x-release-path") || "";
-  if (!pathAllowed(path) || !Object.prototype.hasOwnProperty.call(RELEASE.files, path)) {
+  if (!pathAllowed(path) || !Object.prototype.hasOwnProperty.call(RELEASE_DATA.files, path)) {
     return response(403, { status: "path_disallowed" });
   }
-  const expected = RELEASE.files[path];
+  const expected = RELEASE_DATA.files[path];
   const mime = (request.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
   if (!["application/json", "application/octet-stream"].includes(mime) || request.headers.has("content-encoding")) {
     return response(415, { status: "content_type_disallowed" });
@@ -137,8 +146,9 @@ Deno.serve(async request => {
     return response(200, { path, sha256: hex(await digest(body)), bytes: body.byteLength,
       status: uploaded.error ? "already_present" : "uploaded" });
   } catch (error) {
-    return response(error?.message === "too_large" ? 413 : 503, {
-      status: error?.message === "too_large" ? "too_large" : "operation_failed"
+    const message = error instanceof Error ? error.message : "";
+    return response(message === "too_large" ? 413 : 503, {
+      status: message === "too_large" ? "too_large" : "operation_failed"
     });
   }
 });

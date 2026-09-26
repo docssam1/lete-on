@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const { stripTypeScriptTypes } = require('node:module');
 const { webcrypto, createHash } = require('node:crypto');
 const filename = path.resolve(__dirname, '../supabase/functions/hf-release-ingest/index.ts');
 const source = fs.readFileSync(filename, 'utf8');
@@ -64,7 +65,8 @@ function harness(options = {}) {
     Deno: { env: { get: k => options.noEnv ? undefined : ({ SUPABASE_URL: 'https://fixture.invalid', SUPABASE_SERVICE_ROLE_KEY: 'service-fixture' })[k] }, serve: fn => { context.handler = fn; } }
   };
   vm.createContext(context);
-  vm.runInContext(source.replace(/^import .*;\r?\n/gm, ''), context, { filename });
+  const executable = stripTypeScriptTypes(source.replace(/^import .*;\r?\n/gm, ''), { mode: 'strip' });
+  vm.runInContext(executable, context, { filename });
   return { calls, objects, release, expire() { now += 100_000; }, async request(opts = {}) {
     const headers = { authorization: 'Bearer ' + token, 'x-release-path': objectPath, 'content-type': 'application/json', ...opts.headers };
     for (const k of opts.removeHeaders || []) delete headers[k];

@@ -15,7 +15,12 @@ async function readBody(req:Request):Promise<ObjectMap|null>{
  try{const data=JSON.parse(new TextDecoder("utf-8",{fatal:true}).decode(bytes));return data&&typeof data==="object"&&!Array.isArray(data)?data:null;}catch{return null;}
 }
 
-const BUCKET=Deno.env.get('CHALLENGE_PRIVATE_BUCKET')||'hf-challenge-private',MANIFEST_PATH="manifest.json";
+function releasePrefix(){
+ const value=Deno.env.get('CHALLENGE_RELEASE_PREFIX')||RELEASE_CONFIG.releasePrefix||'';
+ if(value&&!/^[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)*\/$/.test(value))throw Error('invalid_release_prefix');
+ return value;
+}
+const BUCKET=Deno.env.get('CHALLENGE_PRIVATE_BUCKET')||'hf-challenge-private',RELEASE_PREFIX=releasePrefix(),MANIFEST_PATH=RELEASE_PREFIX+"manifest.json";
 async function sha256(bytes:ArrayBuffer){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function downloadJSON(service:any,path:string,hash:string,maxBytes:number){
  if(!/^[a-f0-9]{64}$/.test(hash))throw Error('manifest_pin_required');
@@ -56,7 +61,7 @@ export async function handleRequest(request:Request):Promise<Response>{
   if(bucketError||!bucket||bucket.id!==BUCKET||bucket.public!==false)return respond(request,503,{error:'private_storage_required'});
   const manifest=await downloadJSON(service,MANIFEST_PATH,Deno.env.get('CHALLENGE_MANIFEST_SHA256')||RELEASE_CONFIG.manifestSha256,524288);
   validateManifest(manifest);const ref=selectReference(manifest,target);
-  const file=await downloadJSON(service,ref.path,ref.sha256,target.kind==='document'?12000000:target.kind==='concept'?32768:8000000);
+  const file=await downloadJSON(service,RELEASE_PREFIX+ref.path,ref.sha256,target.kind==='document'?12000000:target.kind==='concept'?32768:8000000);
   const content=selectContent(file,manifest,target);
   // Reject grants/profile/session revoked while storage was loading. No permission result is cached across requests.
   const current=await authorize(caller,user.id,target.permissionKeys,Number(claims.exp)*1000);
