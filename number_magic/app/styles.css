@@ -818,7 +818,8 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 /* ── 옷장 화면 뼈대(§4) — nm-closet-cnt(closet.js 렌더) 아래로 슬롯 카드, 그
    아래로 계정·알림 설정 접이식. 카드 순서만 담당, 각 카드 자체 스타일은 기존 것 그대로 */
 .nm-closet-wrap{padding:2px 0 24px}
-.nm-closet-settings{margin:16px 14px 0;border:1px solid var(--line);border-radius:16px;
+/* flex-shrink:0 — 높이가 고정된 세로 flex(.nm-closet-wrap, overflow:hidden) 안에서 2px 로 눌려 펼쳐도 알림·계정 카드가 안 보였다(2026-09-26 쇼릴 촬영 중 발견) */
+.nm-closet-settings{flex-shrink:0;margin:16px 14px 0;border:1px solid var(--line);border-radius:16px;
   background:#fff;overflow:hidden}
 .nm-closet-settings summary{list-style:none;cursor:pointer;padding:13px 15px;
   font-size:13.5px;font-weight:800;color:var(--sub);display:flex;align-items:center;

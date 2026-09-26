@@ -6,7 +6,8 @@
 
      node scripts/showreel/compose.js --out=/tmp/reel                       # capture.js 와 같은 --out
      node scripts/showreel/compose.js --out=/tmp/reel --voice=ko-KR-Chirp3-HD-Aoede
-       (목소리 폴더는 narration.json 의 voice 가 기본. 그 폴더에 없는 줄은 기본 목소리로 채우고 알린다)
+       (기본은 narration/omnivoice, 없으면 narration.json 의 voice. 빠진 줄은 narration.json 의 voice 로 채우고 알린다.
+        목소리를 바꿔도 영상은 다시 찍지 않는다 — 장면 길이는 여기서 파일 길이로 다시 정한다. --dry = 목소리 울림 없이)
 
    만드는 것(--out 안):
      numbers-of-magic-showreel-v2.mp4            영상 + 내레이션 + 배경 소리
@@ -24,17 +25,21 @@ const OUT = arg('out') ? path.resolve(arg('out')) : path.join(os.tmpdir(), 'nm-s
 const FF = L.FF;
 const XF = 0.5;
 const NAR = JSON.parse(fs.readFileSync(path.join(__dirname, 'narration.json'), 'utf8'));
-const VOICE = arg('voice') || NAR.voice;
+/* 목소리 폴더 한 곳만 바꾸면 된다: --voice=<narration 아래 폴더>. 기본 = omnivoice(원장 2026-09-26 "음성은 이제 omni보이스"),
+   없으면 narration.json 의 voice(ko-KR-Chirp3-HD-Leda). 줄마다 빠진 파일은 narration.json 의 voice 로 채운다. */
+const VOICE = arg('voice') || (fs.existsSync(path.join(__dirname, 'narration', 'omnivoice', 'n01.mp3')) ? 'omnivoice' : NAR.voice);
+/* '신비로운 만화 음성' — 음높이는 건드리지 않고, 짧은 방 울림 + 살짝 맑게. --dry 면 원음 그대로 */
+const VOICE_FX = process.argv.includes('--dry') ? '' : ',highpass=f=70,equalizer=f=5200:t=q:w=1.1:g=1.6,aecho=0.9:0.55:31|57|89:0.14|0.10|0.06';
 const NOBED = process.argv.includes('--no-bed');
 
 /* 장면 순서 · 자르기 · 내레이션 · 자막. at = 장면 시작에서 내레이션이 시작하는 초 */
 const PLAN = [
   { seg:'title',      out:6.6,  n:'n01', at:0.5, cap:{ ko:'숫자가 마법이 되는 곳',              en:'Where numbers become magic',               pos:'tl' } },
-  { seg:'philosophy', out:13.6, n:'n02', at:0.6, cap:{ ko:'독쌤의 철학 — 수는 마법이다',        en:"DOCSSAM's philosophy: numbers are magic",  pos:'br', to:-0.6 } },
+  { seg:'philosophy', out:13.6, n:'n02', at:0.6, cap:{ ko:'독쌤의 철학 — 수는 마법이다',        en:"DOCSSAM's philosophy: numbers are magic",  pos:'br', from:11.4, to:-0.6 } },
   { seg:'village',    out:9.6,  n:'n03', at:0.6, cap:{ ko:'마을을 걸으며 오늘의 마법을 찾아요', en:"Explore the village, find today's magic",   pos:'bl' } },
   { seg:'story',      out:9.6,  n:'n04', at:0.7, cap:{ ko:'유아부터 미적분까지, 한 권의 이야기', en:'One story, from preschool to calculus',    pos:'bl' } },
   { seg:'road',       out:10.0, n:'n05', at:0.6, cap:{ ko:'지금 어디까지 왔는지, 한 길로',       en:'See the whole road at a glance',           pos:'bl' } },
-  { seg:'pace',       out:8.4,  n:'n06', at:0.3, cap:{ ko:'아이 빠르기에 맞춰 속도와 양을 조절', en:"Set the pace and amount to fit your child", pos:'bl' } },
+  { seg:'pace',       out:8.4,  n:'n06', at:0.3, cap:{ ko:'아이 빠르기에 맞춰 속도와 양을 조절', en:"Set the pace and amount to fit your child", pos:'br' } },
   { seg:'notify',     out:8.0,  n:'n07', at:0.5, cap:{ ko:'학부모님 휴대폰으로 매주 안내',       en:"Weekly updates to parents' phones",        pos:'bl' } },
   { seg:'hero-M-14',  out:4.1,  n:'n08', at:0.5, span_n:true, cap:{ ko:'개념은 손에 잡히는 3D로',             en:'Concepts you can almost touch',            pos:'tl', span:3 } },
   { seg:'hero-M-19',  out:4.1 },
@@ -99,7 +104,7 @@ function normalize(inp, out){   /* 두 번 재는 loudnorm → AAC 192k */
       c.png = path.join(capDir, `cap-${c.n}.png`);
       await page.screenshot({ path:c.png, omitBackground:true });
       const i = segs.indexOf(x), last = segs[i + (c.span || 1) - 1];
-      c.a = x.start + 0.55; c.b = last.start + last.d + (c.to != null ? c.to : -0.5);
+      c.a = x.start + (c.from != null ? c.from : 0.55);   /* from: 화면 글이 많은 장면은 늦게 띄운다 */ c.b = last.start + last.d + (c.to != null ? c.to : -0.5);
       caps.push(c);
     }
     await ctx.close(); await browser.close(); server.close(); }
@@ -127,7 +132,7 @@ function normalize(inp, out){   /* 두 번 재는 loudnorm → AAC 192k */
   { const args = [];
     lines.forEach(l => args.push('-i', l.f));
     const fl = lines.map((l, i) => `[${i}:a]aresample=48000,aformat=channel_layouts=stereo,adelay=${Math.round(l.a * 1000)}|${Math.round(l.a * 1000)}[a${i}]`);
-    fl.push(`${lines.map((_, i) => `[a${i}]`).join('')}amix=inputs=${lines.length}:normalize=0,apad=whole_dur=${total.toFixed(3)},atrim=0:${total.toFixed(3)}[v]`);
+    fl.push(`${lines.map((_, i) => `[a${i}]`).join('')}amix=inputs=${lines.length}:normalize=0${VOICE_FX},apad=whole_dur=${total.toFixed(3)},atrim=0:${total.toFixed(3)}[v]`);
     ff([...args, '-filter_complex', fl.join(';'), '-map', '[v]', '-c:a', 'pcm_s16le', voiceWav]); }
 
   /* 6. 배경 소리(수식) — 목소리보다 약 20dB 아래 */
