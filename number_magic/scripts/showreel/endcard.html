@@ -23,7 +23,10 @@
   .orn i:last-child{background:linear-gradient(90deg,rgba(201,164,76,.9),rgba(201,164,76,0))}
   .orn b{width:20px;height:20px}
   .sub{font-family:"Gowun Batang",serif;font-size:26px;letter-spacing:.42em;margin-right:-.42em;color:var(--ink2)}
-  .tag{margin-top:34px;font-family:"Hahmlet","Gowun Batang",serif;font-weight:600;font-size:30px;letter-spacing:-.01em}
+  .tag{margin-top:30px;font-family:"Hahmlet","Gowun Batang",serif;font-weight:600;font-size:34px;letter-spacing:-.01em}
+  .tag span{display:inline-block}
+  .small{margin-top:14px;font-family:"Gowun Batang",serif;font-size:17px;letter-spacing:.06em;color:var(--ink2)}
+  .sub{transition:none}
   .tag-en{margin-top:8px;font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:19px;color:var(--ink2)}
   .row{position:fixed;left:0;right:0;bottom:104px;display:flex;justify-content:center;align-items:flex-end;gap:30px;height:156px}
   .row img{height:150px;width:auto;transform-origin:50% 100%;filter:drop-shadow(0 10px 12px rgba(38,48,74,.18))}
@@ -38,8 +41,9 @@
   <div class="word" id="word" lang="en">Numbers<span class="of">of</span>Magic</div>
   <div class="orn" id="orn"><i></i><b><svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 2.5c.6 5.2 4.3 8.9 9.5 9.5-5.2.6-8.9 4.3-9.5 9.5-.6-5.2-4.3-8.9-9.5-9.5 5.2-.6 8.9-4.3 9.5-9.5z" fill="currentColor"/></svg></b><i></i></div>
   <div class="sub" id="sub">수의 마법</div>
-  <div class="tag" id="tag">숫자가 마법이 되는 곳, 유아부터 미적분까지</div>
-  <div class="tag-en" id="tagen" lang="en">Where numbers become magic, from preschool to calculus</div>
+  <div class="tag"><span id="tag1">수를 정복해야,</span> <span id="tag2">수학을 정복한다</span></div>
+  <div class="tag-en" id="tagen" lang="en">Master numbers, and you master mathematics</div>
+  <div class="small" id="small">숫자가 마법이 되는 곳 · 유아부터 미적분까지</div>
 </div>
 <div class="row" id="row">
   <img src="../../assets/characters/poco-3.png" class="sm"><img src="../../assets/characters/sym-plus.png" class="sm"><img src="../../assets/characters/kid-boy.png"><img src="../../assets/characters/numi-wizard.png"><img src="../../assets/characters/sym-pi.png" class="sm"><img src="../../assets/characters/momo-8.png" class="sm">
@@ -63,11 +67,13 @@ window.render = t => {
   rise($('word'), .3, 1.1, 26);
   $('word').style.backgroundPosition = `${100 - 100 * ease((t - 1.3) / 2.2)}% 0`;
   const o = ease((t - 1.0) / 1.0); $('orn').style.opacity = o; $('orn').style.width = (140 + 420 * o) + 'px';
-  rise($('sub'), 1.35, .9, 10);
-  rise($('tag'), 2.0, .9, 14); rise($('tagen'), 2.25, .9, 12);
-  [...$('row').children].forEach((im, i) => { const t0 = 2.9 + [2, 1, 0, 0.5, 1.5, 2.5][i] * .16; const u = back((t - t0) / .7);
+  rise($('sub'), 1.1, .9, 10);
+  /* 내레이션(n11, +0.9초): "수를 정복해야," 0.9 · "수학을 정복합니다." 2.1 · "수의 마법." 4.3 */
+  rise($('tag1'), 0.95, .8, 14); rise($('tag2'), 2.1, .8, 14); rise($('tagen'), 2.7, .9, 10); rise($('small'), 3.3, .9, 8);
+  const g = Math.max(0, 1 - Math.abs(t - 4.7) / 0.9); $('sub').style.textShadow = `0 0 ${18 * g}px rgba(201,164,76,${.9 * g})`; $('sub').style.color = g > .01 ? `rgb(${Math.round(90 + (138 - 90) * g)},${Math.round(99 + (106 - 99) * g)},${Math.round(128 + (31 - 128) * g)})` : '';
+  [...$('row').children].forEach((im, i) => { const t0 = 3.6 + [2, 1, 0, 0.5, 1.5, 2.5][i] * .16; const u = back((t - t0) / .7);
     im.style.opacity = cl((t - t0) / .25); im.style.transform = `translateY(${(1 - u) * 60 + Math.sin(t * 2.1 + i) * 3 * cl(t - t0 - .7)}px) scale(${.6 + .4 * u})`; });
-  rise($('foot'), 4.3, 1.0, 8);
+  rise($('foot'), 5.0, 1.0, 8);
 };
 document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode().catch(() => {})))).then(() => { window.render(0); window.__ready = true; });
 </script></body></html>

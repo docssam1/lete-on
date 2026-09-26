@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<!-- 쇼릴용 무대: 왼쪽 휴대폰 = 진짜 앱(iframe, 옷장 › 계정·알림 설정 › 학부모 알림 받기),
+     오른쪽 휴대폰 = 그 번호로 가는 문자의 모양(supabase/functions/weekly-notify 의 단문 형식 그대로).
+     capture.js 가 iframe 안을 조작하고, 이 페이지의 render(t) 로 휴대폰·말풍선을 움직인다. -->
+<title>showreel notify</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  html,body{margin:0;height:100%;overflow:hidden}
+  body{background:linear-gradient(135deg,#ffffff 0%,#f4efff 35%,#e9fbf6 70%,#fff8e8 100%);font-family:'Noto Sans KR',sans-serif;color:#26304a}
+  .orb{position:fixed;border-radius:50%;filter:blur(60px);opacity:.5}
+  .o1{width:460px;height:460px;left:-80px;top:-120px;background:#d9cffd}.o2{width:520px;height:520px;right:-140px;bottom:-160px;background:#c8f0e6}
+  .phone{position:absolute;border-radius:46px;background:#1e2436;padding:11px;box-shadow:0 40px 80px rgba(20,24,40,.3),0 0 0 1.5px rgba(201,164,76,.6)}
+  .phone .scr{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:#fff}
+  .phone .notch{position:absolute;left:50%;top:11px;width:104px;height:22px;margin-left:-52px;border-radius:0 0 14px 14px;background:#1e2436;z-index:3}
+  #pa{left:330px;top:34px;width:282px;height:560px}
+  #pa iframe{position:absolute;left:0;top:0;width:390px;height:807px;border:0;transform:scale(.66667);transform-origin:0 0}
+  #pb{left:770px;top:70px;width:250px;height:490px;opacity:0}
+  #pb .scr{background:linear-gradient(180deg,#f7f5ff,#eefaf6)}
+  #pb .top{height:78px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding-bottom:8px;box-sizing:border-box;border-bottom:1px solid rgba(38,48,74,.08);background:rgba(255,255,255,.75)}
+  #pb .top i{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b9a7ff,#8fe3d2);display:grid;place-items:center;color:#fff;font:italic 500 16px/1 'Fraunces',serif}
+  #pb .top b{font-size:11.5px;font-weight:500}
+  #pb .lbl{text-align:center;font-size:10.5px;color:#8a90a6;margin:14px 0 8px}
+  #pb .bub{margin:0 12px;max-width:214px;padding:11px 13px;border-radius:18px 18px 18px 5px;background:#fff;font-size:13px;line-height:1.55;box-shadow:0 4px 14px rgba(38,48,74,.1);word-break:break-all;transform-origin:0 100%;opacity:0}
+  #pb .bub u{color:#3e63b8}
+  #arc{position:absolute;left:612px;top:210px;width:170px;height:90px;opacity:0}
+  #cam{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0}
+  #rip{position:absolute;left:0;top:0;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;border:3px solid rgba(201,164,76,.95);box-shadow:0 0 20px rgba(185,167,255,.85);opacity:0;z-index:9;pointer-events:none}
+</style></head><body>
+<div class="orb o1"></div><div class="orb o2"></div>
+<div id="cam">
+<div class="phone" id="pa"><div class="scr"><iframe id="app" src="../../index.html?enter=1"></iframe></div><div class="notch"></div></div>
+<svg id="arc" viewBox="0 0 170 90"><path d="M8 70 C 50 5, 120 5, 160 50" fill="none" stroke="#c9a44c" stroke-width="2.4" stroke-dasharray="5 7" stroke-linecap="round"/><path d="M150 38 L162 52 L145 55" fill="none" stroke="#c9a44c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<div class="phone" id="pb"><div class="scr"><div class="top"><i>N</i><b>학원 문자</b></div><div class="lbl">문자 메시지</div>
+  <div class="bub" id="bub">[numbers of magic] 민준 9월 3주차<br><u>https://docssam1.github.io/lete-on/w/?2639.C21</u></div></div><div class="notch"></div></div>
+<div id="rip"></div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const cl = v => Math.max(0, Math.min(1, v));
+const back = t => { t = cl(t); const c = 1.4; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+let taps = [];
+/* iframe 안의 css 좌표 → 이 페이지 좌표 */
+/* iframe 안 css 좌표 → #cam 안 좌표(카메라 변환 전) */
+window.toStage = (x, y) => [330 + 11 + x * .66667, 34 + 11 + y * .66667];
+let focus = [640, 360];
+window.setFocus = (x, y) => { focus = [x, y]; };
+const ease = t => { t = cl(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+window.tap = (t, x, y) => { taps.push([t, x, y]); };
+window.render = t => {
+  /* 카메라: 카드로 2배 → 4초쯤 물러나 두 휴대폰 */
+  const zi = ease(t / 0.9), zo = ease((t - 3.9) / 0.9), k = zi * (1 - zo);
+  const S = 1 + 1.0 * k, cx = 640 + (focus[0] - 640) * k, cy = 360 + (focus[1] - 360) * k;
+  $('cam').style.transform = `translate(${640 - cx * S}px,${360 - cy * S}px) scale(${S})`;
+  const u = back((t - 4.4) / .8);
+  $('pb').style.opacity = cl((t - 4.4) / .35);
+  $('pb').style.transform = `translate(${(1 - u) * 70}px,${(1 - u) * 24}px) rotate(${(1 - u) * 4 + 1.2}deg)`;
+  $('pa').style.transform = `rotate(${-1.2 * cl((t - 4.2) / .8)}deg)`;
+  $('arc').style.opacity = cl((t - 4.6) / .5); $('arc').style.strokeDashoffset = 0;
+  const v = back((t - 5.3) / .6); $('bub').style.opacity = cl((t - 5.3) / .25); $('bub').style.transform = `scale(${.6 + .4 * v})`;
+  const tp = taps.filter(q => t >= q[0] && t < q[0] + .6).pop();
+  if(tp){ const k = (t - tp[0]) / .6; $('rip').style.opacity = 1 - k; $('rip').style.transform = `translate(${tp[1]}px,${tp[2]}px) scale(${.35 + 1.05 * (1 - Math.pow(1 - k, 3))})`; }
+  else $('rip').style.opacity = 0;
+};
+window.render(0); window.__ready = true;
+</script></body></html>

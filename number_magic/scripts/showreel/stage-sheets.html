@@ -29,15 +29,13 @@ const imgs = SHEETS.map(s => { const d = document.createElement('div'); d.classN
   d.style.cssText += `left:${s.x}px;top:${s.y}px;transform:rotate(${s.r}deg);z-index:${s.z}`;
   const i = new Image(); i.src = SRC + s.k + '.png'; d.appendChild(i); desk.appendChild(d); return i; });
 /* 카메라 키: [시각, 중심x, 중심y, 배율] — 사이는 부드럽게 */
-const KEYS = [
-  [0.0,  1520, 345, 2.0],
-  [3.8,  1520, 560, 1.9],
-  [5.8,   920, 370, 1.45],
-  [8.0,   920, 450, 1.42],
-  [9.9,  2120, 370, 1.45],
-  [11.6, 2120, 450, 1.42],
-  [14.6, 1560, 570, 0.43],
-  [15.6, 1560, 570, 0.425],
+const KEYS = [   /* v2(9.4초): 개념 노트 → 수학 이야기 → 다섯 쪽 전체 */
+  [0.0,   920, 360, 1.5],
+  [2.3,   920, 430, 1.45],
+  [4.1,  2120, 380, 1.45],
+  [5.6,  2120, 440, 1.42],
+  [8.4,  1560, 570, 0.43],
+  [9.4,  1560, 570, 0.425],
 ];
 const ease = t => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 window.render = t => {

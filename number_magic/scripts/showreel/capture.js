@@ -25,7 +25,7 @@ const OUT = outArg ? path.resolve(outArg.slice(6)) : path.join(os.tmpdir(), 'nm-
 fs.mkdirSync(OUT, { recursive:true });
 const W = 1920, H = 1080, CW = 1280, CH = 720, DPR = 1.5;   /* CSS 1280×720 배치를 1.5배로 = 1920×1080 */
 /* 유닛 → 찍기 시작하는 장면 시각(초). 한 바퀴 중 움직임이 가장 잘 보이는 대목부터 */
-const HEROES = { 'M-14':2.6, 'M-19':0.9, 'M-73':1.5, 'M-80':2.2, 'M-86':0.8 };
+const HEROES = { 'M-14':2.6, 'M-19':0.9, 'M-80':2.2, 'M-73':1.5, 'M-86':0.8 };   /* v2 릴은 앞의 셋만 쓴다(compose.js) */
 
 /* ---------- 공용: 커서·탭 물결(찍는 동안에만 문서에 얹는 DOM) ---------- */
 async function cursorInit(page){
@@ -150,19 +150,21 @@ const SCENES = {
     const cur = mkCursor(); cur.at(1180, 690);
     let walking = false, tgt = null;
     const A = { x:c0.x, z:c0.z, d:c0.d }, B = { x:c0.x + 2.2, z:c0.z + 2.4, d:c0.d * 0.84 };
-    await runScene('village', page, { dur:11.6, cursor:cur,
+    /* v2(2026-09-26): 9.6초로 줄임 — 0.3 커서 → 1.35 땅 누르기(걷기) → 5.2 독쌤 누르기(말풍선·손 흔들기) */
+    await runScene('village', page, { dur:9.6, cursor:cur,
       perFrame: async t => {
-        if(!walking){ const u = L.ease(t / 3.6); await setCam({ x:L.lerp(A.x, B.x, u), z:L.lerp(A.z, B.z, u), d:L.lerp(A.d, B.d, u) }); }
-        else { const u = L.ease((t - 3.0) / 5.0); await setCam({ d:L.lerp(B.d, c0.d * 0.5, u) }); }
+        if(!walking){ const u = L.ease(t / 2.6); await setCam({ x:L.lerp(A.x, B.x, u), z:L.lerp(A.z, B.z, u), d:L.lerp(A.d, B.d, u) }); }
+        else { const u = L.ease((t - 1.35) / 4.6); const w = L.ease(t / 2.6);
+          await setCam({ d:L.lerp(L.lerp(A.d, B.d, w), c0.d * 0.5, u) }); }
       },
       events:[
-        [1.4, async t => { tgt = await proj(4.3, 0.6, -2.3); cur.show(t, true); cur.move(t, tgt[0], tgt[1], 1.4); }],
-        [2.95, async t => { tgt = await proj(4.3, 0.6, -2.3); cur.at(tgt[0], tgt[1]); cur.tap(t); await page.mouse.move(tgt[0], tgt[1]); await page.mouse.down(); await page.mouse.up(); walking = true; }],
-        [3.3, async t => { cur.move(t, cur.st.x + 140, cur.st.y + 90, 1.2); }],
-        [6.9, async t => { const p = await docPos(); cur.move(t, p[0], p[1], 1.0); }],
-        [7.95, async t => { const p = await docPos(); cur.at(p[0], p[1]); cur.tap(t); await page.mouse.move(p[0], p[1]); await page.mouse.down(); await page.mouse.up(); }],
-        [8.6, async t => { cur.move(t, cur.st.x + 120, cur.st.y + 130, 1.1); }],
-        [10.4, t => cur.show(t, false, 0.6)],
+        [0.2, async t => { tgt = await proj(4.3, 0.6, -2.3); cur.show(t, true); cur.move(t, tgt[0], tgt[1], 1.0); }],
+        [1.35, async t => { tgt = await proj(4.3, 0.6, -2.3); cur.at(tgt[0], tgt[1]); cur.tap(t); await page.mouse.move(tgt[0], tgt[1]); await page.mouse.down(); await page.mouse.up(); walking = true; }],
+        [1.7, async t => { cur.move(t, cur.st.x + 140, cur.st.y + 90, 1.2); }],
+        [4.3, async t => { const p = await docPos(); cur.move(t, p[0], p[1], 0.8); }],
+        [5.2, async t => { const p = await docPos(); cur.at(p[0], p[1]); cur.tap(t); await page.mouse.move(p[0], p[1]); await page.mouse.down(); await page.mouse.up(); }],
+        [5.8, async t => { cur.move(t, cur.st.x + 120, cur.st.y + 130, 1.1); }],
+        [8.2, t => cur.show(t, false, 0.6)],
       ] });
     await ctx.close();
   },
@@ -216,54 +218,210 @@ const SCENES = {
     await ctx.close();
   },
 
-  /* 6. 학습지 — 진짜 인쇄 쪽을 찍어 두고(sheets-src) 책상 위에서 천천히 훑는다(stage-sheets.html) */
-  async sheets(browser, base){
+  /* 학습지 원본 쪽 찍기(sheets·creative 공용) — ws.html 의 진짜 인쇄 쪽 PNG + Training Course 빈칸 위치(JSON) */
+  async sheetsSrc(browser, base){
     const src = path.join(OUT, 'sheets-src'); fs.mkdirSync(src, { recursive:true });
-    {
-      const { ctx, page } = await L.newPage(browser, { w:1100, h:1400, dpr:2.4, state:null });
-      await page.goto(base + '/number_magic/ws.html?w=2026-W39&c=C21&n=%EB%AF%BC%EC%A4%80&k=1&cad=w2&auto=0', { waitUntil:'load' });
-      await page.waitForTimeout(5000);
-      const els = await page.$$('.nm-print-cover, .nm-w2-page, .nm-print-answer-key');
-      const pick = { cover:0, concept:10, training:15, story:24, key:27 };
-      for(const [k, i] of Object.entries(pick)) await els[i].screenshot({ path:path.join(src, k + '.png') });
-      await ctx.close();
-    }
+    const { ctx, page } = await L.newPage(browser, { w:1100, h:1400, dpr:2.4, state:null });
+    await page.goto(base + '/number_magic/ws.html?w=2026-W39&c=C21&n=%EB%AF%BC%EC%A4%80&k=1&cad=w2&auto=0', { waitUntil:'load' });
+    await page.waitForTimeout(5000);
+    const els = await page.$$('.nm-print-cover, .nm-w2-page, .nm-print-answer-key');
+    const pick = { cover:0, concept:10, training:15, story:24, key:27 };
+    for(const [k, i] of Object.entries(pick)) await els[i].screenshot({ path:path.join(src, k + '.png') });
+    /* Training Course(창의 연산) 쪽의 □ 칸 — 쪽 기준 비율 좌표 */
+    const boxes = await els[pick.training].evaluate(pg => { const P = pg.getBoundingClientRect();
+      return [...pg.querySelectorAll('.fbox')].map(e => { const r = e.getBoundingClientRect(); return { x:(r.left - P.left) / P.width, y:(r.top - P.top) / P.height, w:r.width / P.width, h:r.height / P.height }; }); });
+    fs.writeFileSync(path.join(src, 'training-boxes.json'), JSON.stringify(boxes));
+    console.log(`✓ sheets-src (Training Course 칸 ${boxes.length}개)`);
+    await ctx.close();
+  },
+  /* 6. 학습지 — 책상 위에서 천천히 훑는다(stage-sheets.html) */
+  async sheets(browser, base){ await stageScene(browser, base, 'sheets', 'stage-sheets.html?src=/__sheets/', 9.4); },
+  /* 창의 연산 — Training Course 칸을 손글씨로 한 칸씩 채운다(stage-creative.html) */
+  async creative(browser, base){ await stageScene(browser, base, 'creative', 'stage-creative.html?src=/__sheets/', 11.2); },
+  /* 7. 끝 카드 */
+  async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 9.6); },
+
+  /* 독쌤의 철학 — about.html 을 그대로 띄우고, 카메라로 짚으며 핵심 구절에 금빛 형광을 긋는다 */
+  async philosophy(browser, base){
     const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:null });
-    await page.goto(`${base}/number_magic/scripts/showreel/stage-sheets.html?src=${encodeURIComponent('/__sheets/')}`);
-    await page.waitForFunction(() => window.__ready === true, null, { timeout:60000 });
-    const cdp = await page.context().newCDPSession(page);
-    const dur = 15.6, n = Math.round(dur * FPS);
-    const enc = L.encoder(path.join(OUT, 'seg-sheets.mp4'), W, H, FPS);
-    for(let i = 0; i < n; i++){
-      await page.evaluate(t => window.render(t), i / FPS);
-      const r = await cdp.send('Page.captureScreenshot', { format:'jpeg', quality:94 });
-      await enc.push(Buffer.from(r.data, 'base64'));
-    }
-    await enc.close(); console.log('✓ seg-sheets.mp4 ' + n);
+    await L.virtualTime(page);
+    await page.goto(base + '/number_magic/about.html');
+    await until(page, () => document.readyState === 'complete' && document.fonts.status === 'loaded', null, 60000);
+    await L.advance(page, 800, 100);
+    await page.evaluate(PHILO_SETUP);
+    await runScene('philosophy', page, { dur:13.6, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
     await ctx.close();
   },
 
-  /* 7. 끝 카드 */
-  async end(browser, base){
-    const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:null });
-    await page.goto(`${base}/number_magic/scripts/showreel/endcard.html`);
-    await page.waitForFunction(() => window.__ready === true, null, { timeout:60000 });
+  /* 학습 속도 — 연산 로드맵 아래 '학습 속도' 카드에서 주 1회반→주 2회반 · 목표 빠르기 · 속도/양을 눌러 주·개월이 바뀌는 모습 */
+  async pace(browser, base){
+    const { ctx, page } = await openApp(browser, base, 'ttRoad');
+    await until(page, () => !!document.querySelector('#crPace') && !!document.querySelector('.r3d .r3d-arrow'), null, 120000);
+    await L.advance(page, 1200, 100);
+    const sc = await page.evaluate(() => { const c = document.querySelector('#crPace'); let p = c.parentElement;
+      while(p && !(p.scrollHeight > p.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
+      window.__sp = p; p.style.scrollBehavior = 'auto';
+      const top = p.scrollTop + c.getBoundingClientRect().top - p.getBoundingClientRect().top - 14;
+      const est = document.querySelector('.nm-cr-est'); const end = p.scrollTop + est.getBoundingClientRect().bottom - p.getBoundingClientRect().bottom + 24;
+      p.scrollTop = top;
+      /* 찍는 동안에만: 카드 쪽으로 1.36배 — 카드 위 끝(스크롤 상자 윗변)부터 보이게 */
+      const cr = c.getBoundingClientRect(), pr = p.getBoundingClientRect(), S = 1.36;
+      const cx = cr.left + cr.width / 2, cy = pr.top + (innerHeight / S) / 2;
+      document.body.style.transformOrigin = '0 0';
+      document.body.style.transform = `translate(${innerWidth / 2 - cx * S}px,${innerHeight / 2 - cy * S}px) scale(${S})`;
+      return { top, end:end + (innerHeight - pr.top - innerHeight / S) + 16 }; });
+    await L.advance(page, 400, 100);
+    const cur = mkCursor(); cur.at(1000, 600);
+    const pos = sel => page.evaluate(sel => { const e = document.querySelector(sel); const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sel);
+    const go = (t, sel, d = 0.6) => pos(sel).then(p => cur.move(t, p[0], p[1] + 4, d));
+    const press = sel => async t => { const p = await pos(sel); cur.at(p[0], p[1] + 4); cur.tap(t); await page.evaluate(sel => document.querySelector(sel).click(), sel); };
+    let scrollT = null;
+    await runScene('pace', page, { dur:8.4, cursor:cur,
+      perFrame: async t => { if(t >= 3.9 && t <= 5.3){ const u = L.ease((t - 3.9) / 1.4); await page.evaluate(y => { window.__sp.scrollTop = y; }, L.lerp(sc.top, sc.end, u)); } },
+      events:[
+        [0.2, async t => { cur.show(t, true); await go(t, '.nm-cr-seg button[data-cad="w2"]', 0.9); }],
+        [1.55, press('.nm-cr-seg button[data-cad="w2"]')],
+        [2.2, t => go(t, '.nm-cr-pacebtn[data-pace]', 0.7)],
+        [3.05, press('.nm-cr-pacebtn[data-pace]')],
+        [3.9, t => cur.move(t, cur.st.x + 240, cur.st.y + 40, 1.3)],
+        [5.3, t => go(t, '.nm-cr-seg button[data-speed="1.25"]', 0.5)],
+        [5.85, press('.nm-cr-seg button[data-speed="1.25"]')],
+        [6.2, t => go(t, '.nm-cr-seg button[data-amount="1.25"]', 0.45)],
+        [6.7, press('.nm-cr-seg button[data-amount="1.25"]')],
+        [7.5, t => cur.show(t, false, 0.6)],
+      ] });
+    await ctx.close();
+  },
+
+  /* 학부모 알림 — 무대(stage-notify.html)의 왼쪽 휴대폰 안에 진짜 앱(iframe)을 띄워
+     옷장 › 계정·알림 설정 › '학부모 알림 받기' 카드에 번호(가짜 010-0000-0000)를 치고 요일·동의를 고른다.
+     오른쪽 휴대폰은 그 번호로 가는 문자의 모양(weekly-notify 단문 형식). 알림톡은 아직 미개통이라 쓰지 않는다. */
+  async notify(browser, base){
+    const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR });
+    await L.virtualTime(page);
+    await page.goto(`${base}/number_magic/scripts/showreel/stage-notify.html`);
+    const app = () => page.frames().find(f => /index\.html/.test(f.url()));
+    const step = async (ms) => { await page.clock.runFor(ms); for(const f of page.frames()){ try { await f.evaluate(s => window.__srFlush && window.__srFlush(s), ms); } catch(e){} } };
+    const wait = async (fn, max = 90000) => { for(let t = 0; t < max; t += 100){ const f = app(); if(f){ try { if(await f.evaluate(fn)) return; } catch(e){} } await step(100); await new Promise(r => setTimeout(r, 30)); } throw new Error('notify: 시간 초과 ' + fn); };
+    await wait(() => !!document.getElementById('ttRoad') && !!document.querySelector('.nm-title3d .t3d-btn'));
+    await step(800);
+    await app().evaluate(() => document.getElementById('ttRoad').click());
+    await wait(() => !!document.querySelector('#charChipBtn'));
+    await app().evaluate(() => document.querySelector('#charChipBtn').click());
+    await wait(() => !!document.querySelector('.nm-notify-card #nmNotifyPhone'));
+    for(let i = 0; i < 20; i++) await step(100);
+    await app().evaluate(() => {
+      const det = document.querySelector('.nm-closet-settings');
+      det.open = true; det.style.flexShrink = '0';   /* 앱 버그 우회: 세로 flex 안에서 details 가 2px 로 눌려 펼쳐도 안 보인다 */
+      const card = document.querySelector('.nm-notify-card');
+      let p = card.parentElement; while(p && !(p.scrollHeight > p.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
+      if(p){ p.style.scrollBehavior = 'auto'; p.scrollTop += card.getBoundingClientRect().top - 230; }
+      const st = document.createElement('style'); st.textContent = '#nmNotifyDow.sr-pick,#nmNotifyPhone.sr-pick{box-shadow:0 0 0 3px rgba(201,164,76,.5)}'; document.head.appendChild(st);
+    });
+    for(let i = 0; i < 6; i++) await step(100);
+    { const r = await app().evaluate(() => { const e = document.querySelector('.nm-notify-card').getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
+      await page.evaluate(([x, y]) => { const p = window.toStage(x, y); window.setFocus(p[0], p[1]); }, r); }
+    const at = async sel => { const r = await app().evaluate(sel => { const e = document.querySelector(sel).getBoundingClientRect(); return [e.left + Math.min(e.width / 2, 90), e.top + e.height / 2]; }, sel);
+      return page.evaluate(([x, y]) => window.toStage(x, y), r); };
+    const tapAt = async (t, sel) => { const p = await at(sel); await page.evaluate(([t, x, y]) => window.tap(t, x, y), [t, p[0], p[1]]); };
+    const PHONE = '010-0000-0000';
+    const ev = [
+      [0.9, async t => { await tapAt(t, '#nmNotifyPhone'); await app().evaluate(() => { const e = document.querySelector('#nmNotifyPhone'); e.focus(); e.classList.add('sr-pick'); }); }],
+    ];
+    [...PHONE].forEach((c, i) => ev.push([1.2 + i * 0.11, () => app().evaluate(v => { const e = document.querySelector('#nmNotifyPhone'); e.value = v; e.dispatchEvent(new Event('input', { bubbles:true })); }, PHONE.slice(0, i + 1))]));
+    ev.push([2.9, async t => { await tapAt(t, '#nmNotifyDow'); await app().evaluate(() => { const s = document.querySelector('#nmNotifyDow'); s.value = '1'; s.dispatchEvent(new Event('change', { bubbles:true })); s.classList.add('sr-pick'); const e = document.querySelector('#nmNotifyPhone'); e.blur(); e.classList.remove('sr-pick'); }); }]);
+    ev.push([3.6, async t => { await tapAt(t, '#nmNotifyConsent'); await app().evaluate(() => { document.querySelector('#nmNotifyConsent').checked = true; document.querySelector('#nmNotifyDow').classList.remove('sr-pick'); }); }]);
     const cdp = await page.context().newCDPSession(page);
-    const dur = 9.0, n = Math.round(dur * FPS);
-    const enc = L.encoder(path.join(OUT, 'seg-end.mp4'), W, H, FPS);
+    const dur = 8.0, n = Math.round(dur * FPS), ms = 1000 / FPS;
+    const enc = L.encoder(path.join(OUT, 'seg-notify.mp4'), W, H, FPS);
     for(let i = 0; i < n; i++){
-      await page.evaluate(t => window.render(t), i / FPS);
-      const r = await cdp.send('Page.captureScreenshot', { format:'jpeg', quality:95 });
+      const t = i / FPS;
+      while(ev.length && ev[0][0] <= t + 1e-6){ const [, fn] = ev.shift(); await fn(t); }
+      await page.evaluate(t => window.render(t), t);
+      await step(ms);
+      const r = await cdp.send('Page.captureScreenshot', { format:'jpeg', quality:94 });
       await enc.push(Buffer.from(r.data, 'base64'));
     }
-    await enc.close(); console.log('✓ seg-end.mp4 ' + n);
+    await enc.close(); console.log(`✓ seg-notify.mp4  ${n} frames`);
+    if(page.__errs.length) console.log('  (notify 페이지 오류) ' + page.__errs.slice(0, 3).join(' | '));
     await ctx.close();
   },
 };
 
+/* about.html — 찍는 동안에만 쓰는 카메라·형광펜(앱·페이지 파일은 그대로) */
+function PHILO_SETUP(){
+  const css = document.createElement('style');
+  css.textContent = `.skipbtn,.lang-sw,.langsw,[class*="lang"]{visibility:hidden!important}
+    html,body{overflow:hidden!important} body{transform-origin:0 0;will-change:transform}
+    .reveal,.reveal *{opacity:1!important;transform:none!important;transition:none!important}
+    .sr-hl{background-image:linear-gradient(transparent 58%,rgba(245,217,139,.75) 58%,rgba(245,217,139,.75) 92%,transparent 92%);background-repeat:no-repeat;background-size:0% 100%;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+    #srFade{position:fixed;inset:0;background:#faf8f3;opacity:0;pointer-events:none;z-index:99999}`;
+  document.head.appendChild(css);
+  const fade = document.createElement('div'); fade.id = 'srFade'; document.documentElement.appendChild(fade);
+  window.scrollTo(0, 0);
+  /* 텍스트 한 조각(같은 텍스트 노드 안)을 span 으로 감싼다 */
+  const wrapText = (root, phrase) => { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
+    while((n = w.nextNode())){ const i = n.data.indexOf(phrase); if(i < 0) continue;
+      const r = document.createRange(); r.setStart(n, i); r.setEnd(n, i + phrase.length); const s = document.createElement('span'); s.className = 'sr-hl'; r.surroundContents(s); return [s]; }
+    return []; };
+  const wrapEl = el => { const s = document.createElement('span'); s.className = 'sr-hl'; while(el.firstChild) s.appendChild(el.firstChild); el.appendChild(s); return [s]; };
+  const q = s => document.querySelector(s);
+  const lead = q('[data-i18n="pLead"]');
+  const G = {
+    thesis:wrapEl(q('[data-i18n="ch1Thesis"]')),
+    h2:wrapEl(q('[data-i18n="pH2"]')),
+    think:wrapText(lead, '수를 가지고 놀며 사고하는 과정'),
+    unfold:wrapEl(lead.querySelectorAll('b')[1]),
+    conquer:[...wrapText(lead, '수를 정복하기 위한'), ...wrapEl(lead.querySelectorAll('b')[0]), ...wrapText(lead, '의 철학')],
+    q1:wrapEl(q('[data-i18n="qLine1"]')),
+    q2:wrapEl(q('[data-i18n="qLine2"]')),
+  };
+  const docRect = el => { const r = el.getBoundingClientRect(); return { x:r.left + scrollX, y:r.top + scrollY, w:r.width, h:r.height }; };
+  const A = docRect(q('.chapter .folio')), T = docRect(q('[data-i18n="ch1Thesis"]')), H = docRect(q('[data-i18n="pH2"]')), Ld = docRect(lead), PQ = docRect(q('.pullquote')), CT = docRect(q('.cta-body h2'));
+  const W = innerWidth, Hh = innerHeight;
+  /* 카메라 키: [시각, 중심x, 중심y, 배율] */
+  const K1 = [
+    [0.0,  H.x + H.w * 0.55, (T.y + H.y + H.h) / 2 - 8, 1.55],
+    [2.9,  H.x + H.w * 0.62, (T.y + H.y + H.h) / 2 + 6, 1.62],
+    [4.5,  Ld.x + Ld.w * 0.5 + 60, Ld.y + Ld.h * 0.5, 1.6],
+    [8.0,  Ld.x + Ld.w * 0.5 + 60, Ld.y + Ld.h * 0.52, 1.64],
+    [10.4, (H.x + Ld.x + Ld.w) / 2, (T.y + Ld.y + Ld.h) / 2 + 20, 1.34],
+  ];
+  const K2 = [ [11.0, PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 - 20, 1.55], [13.6, PQ.x + 250, (PQ.y + CT.y + CT.h) / 2 - 10, 1.63] ];
+  const ease = t => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  const camAt = (K, t) => { let i = 0; while(i < K.length - 2 && K[i + 1][0] <= t) i++; const a = K[i], b = K[i + 1] || a;
+    const u = b === a ? 0 : ease((t - a[0]) / (b[0] - a[0])); return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, Math.exp(Math.log(a[3]) + (Math.log(b[3]) - Math.log(a[3])) * u)]; };
+  const HL = [['thesis', 0.8, 0.7], ['h2', 2.2, 1.1], ['think', 4.6, 0.9], ['unfold', 5.9, 0.9], ['conquer', 8.0, 1.2], ['q1', 11.5, 0.9], ['q2', 12.3, 0.8]];
+  window.__phRender = t => {
+    const [cx, cy, s] = t < 10.75 ? camAt(K1, t) : camAt(K2, t);
+    document.body.style.transform = `translate(${W / 2 - cx * s}px,${Hh / 2 - cy * s}px) scale(${s})`;
+    fade.style.opacity = t < 10.35 ? 0 : t < 10.75 ? (t - 10.35) / 0.4 : t < 11.2 ? 1 - (t - 10.75) / 0.45 : 0;
+    for(const [k, t0, d] of HL){ const els = G[k]; const n = els.length;
+      els.forEach((e, i) => { const u = Math.max(0, Math.min(1, ((t - t0) / d) * n - i)); e.style.backgroundSize = `${(u * 100).toFixed(1)}% 100%`; }); }
+  };
+  window.__phRender(0);
+}
+
+/* 무대 페이지(render(t) 를 가진 정적 페이지)를 한 장씩 */
+async function stageScene(browser, base, name, url, dur){
+  const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:null });
+  await page.goto(`${base}/number_magic/scripts/showreel/${url}`);
+  await page.waitForFunction(() => window.__ready === true, null, { timeout:60000 });
+  const cdp = await page.context().newCDPSession(page);
+  const n = Math.round(dur * FPS);
+  const enc = L.encoder(path.join(OUT, `seg-${name}.mp4`), W, H, FPS);
+  for(let i = 0; i < n; i++){
+    await page.evaluate(t => window.render(t), i / FPS);
+    const r = await cdp.send('Page.captureScreenshot', { format:'jpeg', quality:95 });
+    await enc.push(Buffer.from(r.data, 'base64'));
+  }
+  await enc.close(); console.log(`✓ seg-${name}.mp4  ${n} frames`);
+  await ctx.close();
+}
+
 (async () => {
   const want = process.argv.slice(2).filter(a => !a.startsWith('--'));
-  const all = ['title', 'village', 'story', 'road', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheets', 'end'];
+  const all = ['title', 'philosophy', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
   const list = want.length ? want : all;
   const { server, base } = await L.serve({ '/__sheets/':path.join(OUT, 'sheets-src') });
   const browser = await L.launch();

@@ -28,7 +28,17 @@ const fontCache = new Map();
 async function routeNet(ctx){
   await ctx.route(url => !/^http:\/\/localhost/.test(url.href) && !/^(data|blob):/.test(url.href), async route => {
     const url = route.request().url();
-    if(!/^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net\/gh\/orioncactus)\//.test(url)) return route.abort();
+    /* Pretendard(jsdelivr)는 이 컨테이너에서 막혀 있다 — 가장 가까운 Noto Sans KR(Google Fonts)을 'Pretendard' 이름으로 대신 넘긴다.
+       안 하면 한글이 시스템 대체 글꼴(WenQuanYi)로 찍힌다. */
+    if(/cdn\.jsdelivr\.net\/gh\/orioncactus\/pretendard/.test(url)){
+      const g = 'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap';
+      try {
+        if(!fontCache.has(g)) fontCache.set(g, execFileSync('curl', ['-sSfL', '--max-time', '30', '-A', UA, g], { maxBuffer:64 << 20, stdio:['ignore', 'pipe', 'ignore'] }));
+        const css = fontCache.get(g).toString().replace(/font-family: 'Noto Sans KR'/g, "font-family: 'Pretendard'");
+        return route.fulfill({ status:200, body:css, headers:{ 'content-type':'text/css', 'access-control-allow-origin':'*' } });
+      } catch(e){ return route.abort(); }
+    }
+    if(!/^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com)\//.test(url)) return route.abort();
     try {
       if(!fontCache.has(url)) fontCache.set(url, execFileSync('curl', ['-sSfL', '--max-time', '30', '-A', UA, url], { maxBuffer:64 << 20, stdio:['ignore', 'pipe', 'ignore'] }));
       const ext = (url.split('?')[0].match(/\.(\w+)$/) || [])[1];
