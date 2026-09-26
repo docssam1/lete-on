@@ -1,4 +1,5 @@
 // 더클래식 1과정 1권 전용 시각 자료. 화면과 인쇄에서 같은 구조를 사용한다.
+import { foldingQuestionMarkup } from "./golden-bell-book01-folding.js?v=20260922d";
 
 const esc = (value) => String(value).replace(/[&<>"']/g, (character) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -81,7 +82,7 @@ const SEGMENT_PATHS = Object.freeze({
 });
 const DIGIT_SEGMENTS = Object.freeze({ 0:"abcdef",1:"bc",2:"abdeg",3:"abcdg",4:"bcfg",5:"acdfg",6:"acdefg",7:"abc",8:"abcdefg",9:"abcdfg" });
 
-function digitalDigit(value) {
+export function digitalDigit(value) {
   const segments = DIGIT_SEGMENTS[value] || "";
   return `<svg class="b1-digit" viewBox="0 0 45 74" role="img" aria-label="디지털 숫자 ${value}">${Object.entries(SEGMENT_PATHS).map(([name, path]) => `<path class="${segments.includes(name) ? "on" : ""}" d="${path}"/>`).join("")}</svg>`;
 }
@@ -267,6 +268,7 @@ function foldChoiceBoardMarkup(visual) {
 }
 
 function foldNumberSumMarkup(visual) {
+  if (visual.foldModel) return foldingQuestionMarkup(visual);
   const selected = new Set(visual.selected);
   const rows = visual.numbers.length;
   const columns = visual.numbers[0].length;
@@ -274,6 +276,7 @@ function foldNumberSumMarkup(visual) {
 }
 
 function foldLandingMarkup(visual) {
+  if (visual.foldModel) return foldingQuestionMarkup(visual);
   const labels = visual.labels.flat();
   return `<div class="b1-fold-landing"><div class="b1-fold-landing-grid">${labels.map((label) => `<span>${label}</span>`).join("")}</div><div class="b1-fold-steps">${visual.folds.map((fold, index) => `<span><b>${index + 1}</b>${esc(fold)}</span>`).join("")}</div><div class="b1-fold-stack"><i></i><i></i><i></i><strong>?</strong></div><p>두 번 접은 뒤 가장 위에 놓이는 번호</p></div>`;
 }

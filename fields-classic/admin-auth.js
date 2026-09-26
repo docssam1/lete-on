@@ -31,13 +31,22 @@
     try{return await refreshing}finally{refreshing=null}
   }
   async function getSession(){return refresh(false)}
-  async function signIn(name,approvalCode){
-    var response=await fetch(SUPABASE_URL+'/functions/v1/hs-admin-session',{method:'POST',headers:{apikey:PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({action:'login',name:String(name||'').trim(),approvalCode:String(approvalCode||'').trim(),deviceToken:read(DEVICE_KEY)})});
-    var result=await parse(response);
+  function acceptLogin(result,name){
     var role=result&&result.session&&result.session.user&&result.session.user.app_metadata&&result.session.user.app_metadata.role;
     if(role!=='admin'&&role!=='teacher')throw new Error('관리자 권한을 확인하지 못했습니다.');
     if(result.deviceToken&&!write(DEVICE_KEY,String(result.deviceToken)))throw new Error('관리자 기기 정보를 저장하지 못했습니다.');
     return saveSession(result.session,name);
+  }
+  async function signIn(name,approvalCode){
+    var response=await fetch(SUPABASE_URL+'/functions/v1/hs-admin-session',{method:'POST',headers:{apikey:PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({action:'login',name:String(name||'').trim(),approvalCode:String(approvalCode||'').trim(),deviceToken:read(DEVICE_KEY)})});
+    var result=await parse(response);
+    return acceptLogin(result,name);
+  }
+  async function signInFromStudentPage(name,approvalCode){
+    var response=await fetch(SUPABASE_URL+'/functions/v1/fields-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'admin-login',name:String(name||'').trim(),code:String(approvalCode||'').trim(),deviceToken:read(DEVICE_KEY)}),cache:'no-store'});
+    var result=await parse(response);
+    if(result.type!=='admin')throw new Error('관리자 권한을 확인하지 못했습니다.');
+    return acceptLogin(result,name);
   }
   async function functionCall(slug,body){
     async function send(current){return fetch(SUPABASE_URL+'/functions/v1/'+encodeURIComponent(slug),{method:'POST',headers:{apikey:PUBLISHABLE_KEY,Authorization:'Bearer '+current.access_token,'Content-Type':'application/json'},body:JSON.stringify(body||{})})}
@@ -53,5 +62,5 @@
     try{await fetch(SUPABASE_URL+'/auth/v1/logout',{method:'POST',headers:{apikey:PUBLISHABLE_KEY,Authorization:'Bearer '+current.access_token,'Content-Type':'application/json'},body:'{}'})}catch(e){}
   }
 
-  global.GFIELD_FIELDS_ADMIN_AUTH={signIn:signIn,signOut:signOut,getSession:getSession,functionCall:functionCall};
+  global.GFIELD_FIELDS_ADMIN_AUTH={signIn:signIn,signInFromStudentPage:signInFromStudentPage,signOut:signOut,getSession:getSession,functionCall:functionCall};
 })(window);

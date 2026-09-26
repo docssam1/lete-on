@@ -1,0 +1,47 @@
+.book01-fold-question, .book01-fold-frame { width: 100%; min-width: 0; }
+.book01-fold-sequence { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 8px; }
+.book01-fold-sequence:has(> :nth-child(2):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 420px; margin-inline: auto; }
+.book01-fold-question figure, .book01-fold-frame > figure, .book01-fold-solution figure { margin: 0; min-width: 0; text-align: center; }
+.book01-fold-paper { display: block; width: 100%; max-width: 230px; aspect-ratio: 1; margin: auto; overflow: visible; }
+.book01-fold-paper .fold-outline { fill: #fff; stroke: #8b9cab; stroke-dasharray: 4 4; stroke-width: 1; }
+.book01-fold-paper .fold-face { fill: #dff1f6; stroke: #36788d; stroke-width: 1.6; }
+.book01-fold-paper .fold-cut { fill: #216d87; stroke: #216d87; stroke-width: .5; }
+.book01-fold-paper .fold-opening { fill: #fff; stroke: none; }
+.book01-fold-paper .fold-grid { fill: none; stroke: #8caab5; stroke-width: .8; stroke-dasharray: 3 3; }
+.book01-fold-paper .fold-crease { fill: none; stroke: #36788d; stroke-width: 1.2; stroke-dasharray: 4 3; }
+.book01-fold-paper .fold-direction { fill: none; stroke: #c23f4c; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.book01-fold-paper .fold-number-cut, .book01-fold-paper .fold-position { fill: #cbe9d8; stroke: #16734b; stroke-width: 2; }
+.book01-fold-paper text { fill: #173943; font: 600 19px system-ui, sans-serif; dominant-baseline: middle; text-anchor: middle; stroke: none; }
+.book01-fold-question figcaption, .book01-fold-frame figcaption, .book01-fold-solution figcaption { color: #566274; font-size: 14px; line-height: 1.5; word-break: keep-all; overflow-wrap: anywhere; }
+.book01-fold-board { margin: 16px auto 0; width: min(100%, 220px); }
+.book01-fold-frame > figure, .book01-fold-solution { max-width: 300px; margin: 16px auto; }
+.book01-fold-solution > p { color: #16734b; font-size: 21px; font-weight: 700; text-align: center; }
+.book01-fold-frame { min-height: 300px; }
+.source-animation[data-source-family="book01-fold"] .source-animation-scene { min-height: 420px; }
+.source-animation[data-source-family="book01-fold"] .source-animation-problem { word-break: keep-all; }
+@media screen and (min-width: 601px) {
+  .source-animation[data-source-family="book01-fold"] .book01-fold-question:not(.without-board) { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1.2fr); align-items: start; gap: 12px; }
+  .source-animation[data-source-family="book01-fold"] .book01-fold-board { margin: 0; width: auto; }
+}
+@media (max-width: 600px) {
+  .book01-fold-sequence { gap: 4px; }
+  .book01-fold-question figcaption { font-size: 12px; }
+  .book01-fold-question { margin-inline: auto; }
+}
+@media print {
+  .book01-fold-print > .gold-print-concept { font-size: 11pt; line-height: 1.5; }
+  .book01-fold-frame { min-height: 0; }
+  .book01-fold-print .source-animation-print-frame { margin: 4mm 0; padding: 2mm 0; }
+  .book01-fold-print .source-animation-print-frame > p { margin: 1mm 0; font-size: 10pt; }
+  .book01-fold-print .book01-fold-question { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); align-items: start; gap: 3mm; }
+  .book01-fold-print .book01-fold-board { margin: 0; width: auto; }
+  .book01-fold-print .book01-fold-question.without-board { display: block; }
+  .book01-fold-print .book01-fold-paper { max-width: 36mm; }
+  .book01-fold-print .book01-fold-frame > figure, .book01-fold-print .book01-fold-solution { margin: 0 auto; }
+  .book01-fold-print .book01-fold-solution > p { margin: 1mm 0; font-size: 13pt; }
+  .gold-print-source-item .book01-fold-question { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 2mm; }
+  .gold-print-source-item .book01-fold-board { margin: 0; width: auto; }
+  .gold-print-source-item .book01-fold-paper { max-width: 35mm; }
+  .gold-print-source-item .book01-fold-solution .book01-fold-paper { max-width: 44mm; }
+  .book01-fold-question figcaption, .book01-fold-frame figcaption, .book01-fold-solution figcaption { font-size: 9pt; }
+}

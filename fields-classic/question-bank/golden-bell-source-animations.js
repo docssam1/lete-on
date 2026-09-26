@@ -1,5 +1,6 @@
 import { cubeSourceAnimation, renderCubeSourceFrame } from "./golden-bell-cube-animation.js?v=20260918a";
 import { book10SourceAnimation, renderBook10SourceFrame } from "./golden-bell-book10-animation.js?v=20260918a";
+import { book01FoldAnimations, renderBook01FoldFrame } from "./golden-bell-book01-folding.js?v=20260922d";
 
 const CONCEPT_EXAMPLES = {
   "hidden-cube-count": [
@@ -120,6 +121,8 @@ export function conceptAnimationExamplesForLesson(lessonId) {
 }
 
 export function sourceAnimationsForLesson(lesson) {
+  const folds = book01FoldAnimations(lesson.id);
+  if (folds.length) return folds;
   const builder = lesson.id === "hidden-cube-count" ? cubeSourceAnimation : lesson.id === "catch-up-acorns" ? book10SourceAnimation : null;
   if (!builder) return [];
   return conceptAnimationExamplesForLesson(lesson.id).map((item) => {
@@ -129,6 +132,7 @@ export function sourceAnimationsForLesson(lesson) {
 }
 
 export function sourceAnimationFrame(animation, step, options = {}) {
+  if (animation.family === "book01-fold") return renderBook01FoldFrame(animation, step, options);
   return animation.family === "cube-hidden-count"
     ? renderCubeSourceFrame(animation, step, options)
     : renderBook10SourceFrame(animation, step, options);

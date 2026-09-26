@@ -16,6 +16,8 @@ function contentFits(page) {
 
 function exerciseFamily(page) {
   const part = page.dataset.printPart;
+  if (part.startsWith("hands-on-activity-")) return "hands-on-student";
+  if (part.startsWith("answers-hands-on-")) return "hands-on-answer";
   if (part.startsWith("story-")) return "story";
   if (part.startsWith("original-")) return "source";
   if (part.startsWith("answers-")) return "answer";
@@ -25,10 +27,13 @@ function exerciseFamily(page) {
 function exerciseNodes(page) {
   const family = exerciseFamily(page);
   if (!family) return null;
+  if (family.startsWith("hands-on-")) return [...page.querySelectorAll(".hand-paper-item")];
   return [...page.querySelectorAll(family === "story" ? ".gold-print-story" : ".gold-print-source-item")];
 }
 
 function needsFullWidth(question) {
+  if (question.classList.contains("hand-paper-item-wide")) return true;
+  if (question.querySelector(".book01-fold-question")) return true;
   if (question.querySelectorAll(".gold-print-part-answers > span").length > 4) return true;
   const rect = question.getBoundingClientRect();
   return [...question.querySelectorAll("*")].some((node) => node instanceof HTMLElement
@@ -53,7 +58,7 @@ function packExercisePages(pages) {
     sheet = first.cloneNode(false);
     sheet.classList.add("compact-exercise-page", "two-column-exercises");
     grid = document.createElement("div");
-    grid.className = "gold-print-exercise-grid";
+    grid.className = `gold-print-exercise-grid${exerciseFamily(first)?.startsWith("hands-on-") ? " hand-paper-grid" : ""}`;
     sheet.append(header.cloneNode(true), ...(packed.length ? [] : extras), grid, footer.cloneNode(true));
     first.before(sheet);
     packed.push(sheet);
@@ -107,7 +112,10 @@ export function compactGoldenBellPrint(root) {
       if (!exerciseNodes(page)) continue;
       const group = [page];
       while (pages[index + 1] && exerciseNodes(pages[index + 1])
-        && (exerciseFamily(pages[index + 1]) === "answer") === (exerciseFamily(page) === "answer")
+        && (exerciseFamily(page).startsWith("hands-on-")
+          ? exerciseFamily(pages[index + 1]) === exerciseFamily(page)
+          : !exerciseFamily(pages[index + 1]).startsWith("hands-on-")
+            && (exerciseFamily(pages[index + 1]) === "answer") === (exerciseFamily(page) === "answer"))
         && pages[index + 1].dataset.printLesson === page.dataset.printLesson
         && pages[index + 1].dataset.printBook === page.dataset.printBook) {
         group.push(pages[++index]);

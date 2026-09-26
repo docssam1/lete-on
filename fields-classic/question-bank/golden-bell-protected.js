@@ -9,7 +9,11 @@ async function request(path, body, token = "") {
     cache: "no-store"
   });
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(payload.error || `request_failed_${response.status}`);
+  if (!response.ok) {
+    const error = new Error(payload.error || `request_failed_${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
   return payload;
 }
 
@@ -19,7 +23,9 @@ export async function ensureFieldsSession(student) {
     try {
       await request("fields-auth", { action: "session" }, existing);
       return existing;
-    } catch {
+    } catch (error) {
+      // Service outages do not invalidate an otherwise valid login session.
+      if (error.status !== 401) throw error;
       sessionStorage.removeItem(SESSION_KEY);
     }
   }

@@ -3,9 +3,11 @@ import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
+import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 import { hydrateProtectedAnswers } from "./golden-bell-protected.js";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js";
+import { goldenBellPracticeItems } from "./golden-bell-faithful-practice.js";
+import { installFaithfulPractice } from "./golden-bell-faithful-protected.js";
 import "../../geometry/worksheet/generators.js";
 import { sourceAnimationsForLesson } from "./golden-bell-source-animations.js";
 
@@ -40,6 +42,7 @@ if (privateFixture) {
   for (const book of GOLDEN_BELL_BOOKS) {
     hydrateProtectedAnswers(book, privateFixture.books[book.id]);
     appendProtectedRecoveryItems(book, privateFixture.books[book.id]);
+    installFaithfulPractice(book, privateFixture.books[book.id]);
   }
 }
 const captureDirectory = process.env.FIELDS_CAPTURE_DIR;
@@ -61,8 +64,9 @@ function lessonParts(lesson) {
   const animation = sourceAnimationsForLesson(lesson)[0];
   const frameCount = animation ? (animation.printSteps || [0, animation.beats.length - 1]).length : 0;
   const framesPerPage = animation?.conceptExample ? 2 : animation?.family.startsWith("book10-") ? 1 : 2;
-  const animationParts = Array.from({ length: Math.ceil(frameCount / framesPerPage) }, (_, index) => `animation-${index + 1}`);
-  const storyParts = Array.from({ length: 1 + (lesson.similarPractice || []).length }, (_, index) => `story-${index + 1}`);
+  const animationParts = Array.from({ length: animation?.family === "book01-fold" ? sourceAnimationsForLesson(lesson).length : Math.ceil(frameCount / framesPerPage) }, (_, index) => `animation-${index + 1}`);
+  const book = GOLDEN_BELL_BOOKS.find((entry) => entry.lessons.includes(lesson));
+  const storyParts = goldenBellPracticeItems(lesson, book.id).map((_, index) => `story-${index + 1}`);
   return [...vocabulary, ...animationParts, ...sourceParts(lesson), ...storyParts];
 }
 
@@ -132,10 +136,13 @@ try {
     assert.deepEqual(await page.locator('.gold-print-page:not([data-print-part="cover"])').evaluateAll((nodes) => [...new Set(nodes.flatMap((node) => JSON.parse(node.dataset.printParts).map((part) => JSON.stringify([node.dataset.printLesson, part]))))].map((entry) => JSON.parse(entry))), book.lessons.flatMap((lesson) => lessonParts(lesson).map((part) => [lesson.id, part])), `${bookId}: book print order or contents mismatch`);
     for (const lesson of book.lessons) {
       const content = page.locator(`.gold-print-page[data-print-lesson="${lesson.id}"]`);
-      const expectedStories = 1 + (lesson.similarPractice || []).length;
+      const expectedStories = goldenBellPracticeItems(lesson, book.id).length;
       assert.deepEqual(await content.locator(".gold-print-story").evaluateAll((nodes) => nodes.map((node) => Number(node.dataset.storyNumber))), Array.from({ length: expectedStories }, (_, index) => index + 1), `${bookId}/${lesson.id}: additional practice lost or reordered`);
       assert.equal(await content.locator(".gold-print-story .gold-print-item").count(), expectedStories, `${bookId}/${lesson.id}: an answer area is missing`);
       assert.equal(await content.locator(".gold-print-story .gold-print-item > span:not(.gold-print-answer,.gold-print-part-answers,.gold-print-options)").count(), 0, "Duplicated story prompt");
+      if (bookId === "book-06") {
+        assert.equal(await content.locator(".gold-print-story .gold-print-visual").count(), expectedStories, `${bookId}/${lesson.id}: an additional-practice visual is missing`);
+      }
       const expectedSources = lesson.original.visual?.kind === "book03-six-original" ? 0 : lesson.original.items.length;
       assert.equal(await content.locator(".gold-print-source-item").count(), expectedSources, `${bookId}/${lesson.id}: source exercise lost`);
       assert.deepEqual(await content.locator(".gold-print-source-item [data-print-part-id]").evaluateAll((nodes) => nodes.map((node) => node.dataset.printPartId)), lesson.original.items.flatMap((item) => (item.parts || []).map((part) => part.id)), `${bookId}/${lesson.id}: multipart answer order changed`);
@@ -144,6 +151,13 @@ try {
     assert.deepEqual(await page.locator('#goldPrintRoot img').evaluateAll((nodes) => nodes.filter((node) => !node.complete || !node.naturalWidth).map((node) => node.getAttribute('src'))), [], `${bookId}: print image missing or not loaded`);
 
     await page.emulateMedia({ media: "print" });
+    if (bookId === "book-06") {
+      const collapsedVisuals = await page.locator('.gold-print-page[data-print-book="book-06"] .gold-print-visual .book06-visual > *').evaluateAll((nodes) => nodes.filter((node) => {
+        const rect = node.getBoundingClientRect();
+        return rect.width < 5 || rect.height < 5;
+      }).map((node) => node.outerHTML.slice(0, 120)));
+      assert.deepEqual(collapsedVisuals, [], `${bookId}: a print visual collapsed: ${JSON.stringify(collapsedVisuals)}`);
+    }
     if (bookId === "book-03") {
       const columns = await page.locator('.gold-print-page[data-print-lesson="basic-vertical-cryptarithm"] .guided-cryptarithm-stack').first().evaluate((stack) => {
         const centerX = (node) => {

@@ -1,0 +1,131 @@
+.hand-paper-page {
+  color: #172124;
+  background: #fff;
+  font-size: 11pt;
+  line-height: 1.4;
+  letter-spacing: 0;
+  overflow: visible;
+}
+
+.hand-paper-page *,
+.hand-paper-page *::before,
+.hand-paper-page *::after {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+
+.hand-paper-page .hand-paper-head {
+  align-items: start;
+  gap: 4mm;
+  padding-bottom: 3mm;
+  border-bottom: .6mm solid #207e79;
+}
+
+.hand-paper-page .hand-paper-head h1 {
+  margin: 1mm 0;
+  font-size: 16pt;
+  line-height: 1.3;
+}
+
+.hand-paper-page .hand-paper-head span,
+.hand-paper-page .hand-paper-head p {
+  margin: 0;
+  font-size: 11pt;
+  line-height: 1.4;
+}
+
+.hand-paper-head > div { min-width: 0; }
+.hand-paper-head .hand-paper-student { flex: 0 1 42mm; overflow-wrap: anywhere; }
+.hand-paper-student > span { min-height: 8mm; border-bottom: .3mm solid #526669; }
+
+.hand-paper-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 4mm 5mm;
+  margin: 3mm 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.hand-paper-item {
+  min-width: 0;
+  margin: 0;
+  padding: 2mm 0 3mm;
+  border: 0;
+  border-top: .4mm solid #8da6a4;
+  background: #fff;
+  font-size: 11pt;
+  line-height: 1.4;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.hand-paper-item-wide { grid-column: 1 / -1; }
+.hand-paper-item .hand-paper-item-title { margin: 0 0 1.5mm; color: #185f67; font-size: 12pt; line-height: 1.4; }
+.hand-paper-item-title > span { color: #172124; font-size: 11pt; font-weight: 600; }
+.hand-paper-prompt, .hand-paper-cards, .hand-paper-answer-summary { margin: 0 0 2mm; font-size: 11pt; }
+.hand-paper-provenance { margin: 2mm 0; font-size: 11pt; color: #394f53; }
+.hand-paper-accepted-rule { margin: 2mm 0 0; padding-left: 2mm; border-left: .6mm solid #207e79; font-size: 11pt; }
+
+.hand-paper-figure { min-width: 0; margin: 1mm 0 2mm; text-align: center; break-inside: avoid; }
+.hand-paper-figure > figcaption { margin-top: 1mm; font-size: 11pt; line-height: 1.3; overflow-wrap: anywhere; }
+.hand-paper-figures { display: flex; flex-wrap: wrap; justify-content: center; align-items: start; gap: 2mm; }
+.hand-paper-figures > .hand-paper-figure { flex: 1 1 36mm; max-width: 48mm; }
+
+.hand-paper-diagram {
+  display: block;
+  width: 42mm;
+  min-width: 90px;
+  max-width: 100%;
+  height: auto;
+  min-height: 90px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.hand-paper-diagram text { font-family: inherit; }
+.hand-paper-blocks { width: 100%; max-width: 90mm; aspect-ratio: 395 / 180; }
+.hand-paper-fold-scene { width: 32mm; }
+.hand-paper-fold-sequence { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 2mm; }
+.hand-paper-fold-sequence > .hand-paper-figure { flex: 1 1 30mm; max-width: 42mm; }
+.hand-paper-fold-sequence > .hand-paper-drawing-response { flex-basis: 42mm; }
+
+.hand-paper-responses { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5mm 2mm; margin: 2mm 0 0; }
+.hand-paper-response { display: flex; flex-wrap: wrap; align-items: center; gap: 1mm; min-width: 0; font-size: 11pt; }
+.hand-paper-response-wide { grid-column: 1 / -1; }
+.hand-paper-blank { display: inline-block; flex: 1 0 9mm; min-width: 9mm; min-height: 8mm; border: .3mm solid #526669; background: #fff; }
+.hand-paper-response-wide .hand-paper-blank { min-width: 22mm; }
+.hand-paper-reason { margin-top: 2mm; font-size: 11pt; }
+.hand-paper-writing-lines { height: 14mm; border-bottom: .3mm solid #6d8185; position: relative; }
+.hand-paper-writing-lines::before { content: ""; position: absolute; top: 7mm; left: 0; right: 0; border-top: .3mm solid #6d8185; }
+.hand-paper-clues, .hand-paper-solution-steps { margin: 2mm 0; padding-left: 5mm; font-size: 11pt; }
+.hand-paper-clues > li, .hand-paper-solution-steps > li { margin-bottom: 1mm; }
+
+.hand-paper-order { display: grid; grid-template-columns: auto repeat(4, minmax(0, 1fr)) auto; align-items: center; gap: 1.5mm; min-height: 90px; margin: 2mm 0; font-size: 11pt; }
+.hand-paper-order-slot { min-width: 0; text-align: center; }
+.hand-paper-order-slot > b { display: grid; place-items: center; height: 11mm; border: .4mm solid #273b40; background: #fff; font-size: 14pt; }
+.hand-paper-order-slot > small { display: block; margin-top: 1mm; font-size: 11pt; }
+.hand-paper-page .hand-paper-footer { color: #394f53; font-size: 11pt; line-height: 1.3; }
+
+@media print {
+  .hand-paper-page {
+    padding: 5mm 6mm 12mm;
+    overflow: visible;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .hand-paper-page *, .hand-paper-page *::before, .hand-paper-page *::after {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .hand-paper-page .hand-paper-head { display: flex; }
+  .hand-paper-page .hand-paper-footer { left: 6mm; right: 6mm; bottom: 4mm; }
+  .hand-paper-item, .hand-paper-figure, .hand-paper-responses { break-inside: avoid; page-break-inside: avoid; }
+  .hand-paper-item-title { break-after: avoid; page-break-after: avoid; }
+}

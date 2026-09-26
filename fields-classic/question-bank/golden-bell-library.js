@@ -1,8 +1,14 @@
 import { GOLDEN_BELL_BOOKS as courseOneBooks } from "./golden-bell-data.js?v=20260905e";
 import { COURSE_CATALOG, courseById, resolveCourseBook } from "./course-catalog.js";
 import { COURSE23_PILOT_BOOKS } from "./golden-bell-course23-data.js?v=20260913d";
+import { enhanceBook06Workbook } from "./golden-bell-book06-workbook.js?v=20260922a";
+import { enhanceFaithfulConcepts } from "./golden-bell-faithful-concepts.js?v=20260922a";
+import { enhanceBook01Flow } from "./golden-bell-book01-flow.js?v=20260922d";
 
 export { COURSE_CATALOG };
+enhanceBook01Flow(courseOneBooks);
+enhanceBook06Workbook(courseOneBooks);
+enhanceFaithfulConcepts(courseOneBooks);
 const pilotById = new Map(COURSE23_PILOT_BOOKS.map((book) => [book.id, book]));
 export const GOLDEN_BELL_BOOKS = COURSE_CATALOG.flatMap((course) => course.books.map((metadata) => {
   if (course.id === "course-01") return { ...courseOneBooks.find((book) => book.id === metadata.id), courseId: course.id };

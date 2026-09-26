@@ -1,0 +1,93 @@
+/* Load after the existing workbook styles. Color only; no answer-state rules. */
+.book01-visual,
+.book01-fold-question {
+  background-color: #fff;
+}
+
+/* Paper faces and occupied cells share teal; all choices keep the same palette. */
+.book01-visual .b1-cell-grid i.filled {
+  background-color: #cceee9;
+  border-color: #207e79;
+}
+
+.book01-fold-question .book01-fold-paper .fold-face {
+  fill: #cceee9;
+  stroke: #207e79;
+}
+
+.book01-fold-question .book01-fold-paper .fold-outline {
+  fill: #fff;
+  stroke: #8b9cab;
+}
+
+.book01-fold-question .book01-fold-paper .fold-grid {
+  stroke: #8b9cab;
+}
+
+.book01-fold-question .book01-fold-paper .fold-crease,
+.book01-fold-question .book01-fold-paper .fold-direction {
+  stroke: #2456c4;
+}
+
+/* Orange marks only an existing cut, never a computed result or selected answer. */
+.book01-fold-question .book01-fold-paper .fold-cut {
+  fill: #c45b17;
+  stroke: #c45b17;
+}
+
+/* Preserve the red partition guides explicitly named in the question wording. */
+.book01-visual .b1-rotation-border {
+  stroke: #207e79;
+}
+
+.book01-visual .b1-rotation-cell {
+  fill: #fff;
+  stroke: #a8bbc2;
+}
+
+.book01-visual .b1-circle-magic line,
+.book01-visual .b1-ring-lines line {
+  stroke: #2456c4;
+}
+
+.book01-visual .b1-circle-magic circle,
+.book01-visual .b1-ring-lines circle {
+  fill: #fff;
+  stroke: #207e79;
+}
+
+/* The outer ring follows the connecting lines; only number nodes are opaque. */
+.book01-visual .b1-ring-lines circle:first-of-type {
+  fill: none;
+}
+
+/* These are given conditions (center / target mirror), not correct choices. */
+.book01-visual .b1-circle-magic .center {
+  fill: #cceee9;
+  stroke: #207e79;
+}
+
+.book01-visual .b1-circle-magic .sum,
+.book01-visual .b1-ring-lines .sum {
+  fill: #2456c4;
+}
+
+.book01-visual .b1-mirror-work .mirrors rect.target {
+  fill: #eaf0ff;
+  stroke: #2456c4;
+}
+
+.book01-visual .b1-mirror-work .source path,
+.book01-visual .b1-mirror-work .choice path {
+  stroke: #207e79;
+}
+
+@media print {
+  .gold-print-root .book01-visual,
+  .gold-print-root .book01-visual *,
+  .gold-print-root .book01-fold-question,
+  .gold-print-root .book01-fold-question * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

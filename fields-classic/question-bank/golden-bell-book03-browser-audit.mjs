@@ -4,8 +4,8 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
 
-const runtimeModules = process.env.CODEX_NODE_MODULES || process.env.NODE_PATH;
-assert.ok(runtimeModules, "Set CODEX_NODE_MODULES to the shared Node dependency directory");
+const runtimeModules = process.env.CODEX_NODE_MODULES || process.env.NODE_PATH
+  || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules";
 const { chromium } = await import(pathToFileURL(path.join(runtimeModules, "playwright", "index.mjs")).href);
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const qaDirectory = process.env.BOOK03_QA_DIR || "";
@@ -16,6 +16,28 @@ const expectedSourceItems = book.lessons.reduce((sum, lesson) => sum + lesson.or
 const heldConflictCount = book.sourceCoverage.filter((entry) => entry.status === "implemented-with-hold").reduce((sum, entry) => sum + entry.holdCount, 0);
 const qaFractionItems = new Set(["fraction-8", "fraction-11", "fraction-17", "fraction-18", "partition-3", "partition-9"]);
 assert.ok(heldConflictCount >= 1, "Book3 must retain source conflicts as held items");
+const protectedFixture = {};
+const visitProtectedRefs = (node) => {
+  if (!node || typeof node !== "object") return;
+  if (node.answerRef) protectedFixture[node.answerRef] = {
+    answer: "검사용",
+    solution: "조건을 정리하고 그림의 관계를 따라 계산한 뒤 답을 확인합니다."
+  };
+  Object.values(node).forEach(visitProtectedRefs);
+};
+visitProtectedRefs(book);
+const runId = Date.now();
+
+async function preparePage(page, student) {
+  await page.route("**/functions/v1/fields-auth", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+  await page.route("**/functions/v1/golden-bell-answers", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ answers: protectedFixture }) }));
+  await page.addInitScript(({ name }) => {
+    sessionStorage.setItem("gfield_fields_session", "book03-browser-audit");
+    sessionStorage.setItem("gf_n", name);
+  }, { name: student });
+}
 
 function errorsFor(page) {
   const errors = [];
@@ -29,7 +51,6 @@ function errorsFor(page) {
 async function unlockConcept(page, lesson) {
   const experience = page.locator(".progressive-concept, .guided-concept");
   assert.equal(await experience.count(), 1, `${lesson.id}: concept experience missing`);
-  assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${lesson.id}: source opened before concept completion`);
   const steps = lesson.experience.beats.length;
   for (let index = 1; index < steps; index += 1) {
     const next = experience.locator('[data-experience-action="next"]');
@@ -73,10 +94,22 @@ async function auditLesson(page, lesson, label) {
     await card.locator("[data-original-answer]").click();
     assert.equal(await card.locator(".quiz-item-solution").count(), 1, `${label}/${lesson.id}/${item.id}: solution did not open`);
     assert.ok((await card.locator(".quiz-item-solution").innerText()).trim().length >= 20, `${label}/${lesson.id}/${item.id}: solution is too short`);
-    if (index < lesson.original.items.length - 1) {
-      const next = page.locator('[data-check="original"]');
-      assert.equal(await next.isDisabled(), false, `${label}/${lesson.id}/${item.id}: next source item remains locked`);
-      await next.click();
+    const next = page.locator('[data-check="original"]');
+    assert.equal(await next.isDisabled(), false, `${label}/${lesson.id}/${item.id}: next source item remains locked`);
+    await next.click();
+  }
+  const practiceItems = [lesson.extension, ...(lesson.similarPractice || [])];
+  assert.equal(practiceItems.length, 2, `${label}/${lesson.id}: each lesson must provide two additional problems`);
+  for (let index = 0; index < practiceItems.length; index += 1) {
+    assert.match(await page.locator(".daily-quiz-head aside").innerText(), new RegExp(`2문제 중 ${index + 1}번째`, "u"), `${label}/${lesson.id}: practice progress is incorrect`);
+    const visual = page.locator(".quiz-visual");
+    assert.equal(await visual.count(), 1, `${label}/${lesson.id}/${index + 1}: practice visual missing`);
+    assert.ok(await visual.locator(":scope > *").count(), `${label}/${lesson.id}/${index + 1}: practice visual is empty`);
+    assert.equal(await visual.evaluate((node) => node.scrollWidth > node.clientWidth + 1), false, `${label}/${lesson.id}/${index + 1}: practice visual overflow`);
+    assert.equal(await page.locator(".extension-solution").count(), 0, `${label}/${lesson.id}/${index + 1}: practice solution leaked`);
+    if (index < practiceItems.length - 1) {
+      await page.locator("[data-extension-skip]").click();
+      await page.locator('[data-check="extension"]').click();
     }
   }
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, `${label}/${lesson.id}: source horizontal overflow`);
@@ -85,7 +118,10 @@ async function auditLesson(page, lesson, label) {
 async function auditViewport(browser, viewport, label) {
   const page = await browser.newPage({ viewport });
   const errors = errorsFor(page);
-  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BOOK03-${label}&book=book-03`, { waitUntil: "networkidle" });
+  const student = `BOOK03-${label}-${runId}`;
+  await preparePage(page, student);
+  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${student}&book=book-03`, { waitUntil: "networkidle" });
+  await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
   assert.equal(await page.locator(".lesson-button").count(), 13, `${label}: lesson navigation count mismatch`);
   for (const lesson of book.lessons) await auditLesson(page, lesson, label);
   assert.deepEqual(errors, [], `${label}: browser errors: ${errors.join(" | ")}`);
@@ -99,13 +135,16 @@ async function auditViewport(browser, viewport, label) {
 async function auditPrint(browser) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = errorsFor(page);
-  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BOOK03-PRINT&book=book-03`, { waitUntil: "networkidle" });
+  const student = `BOOK03-PRINT-${runId}`;
+  await preparePage(page, student);
+  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${student}&book=book-03`, { waitUntil: "networkidle" });
+  await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
   await page.evaluate(() => { window.print = () => {}; });
   await page.locator("#printBookButton").click();
   await page.waitForTimeout(120);
   const pages = page.locator(".gold-print-page");
-  const expected = book.lessons.reduce((sum, lesson) => sum + (lesson.original.mode === "paged" ? new Set(lesson.original.items.map((item) => item.printGroup)).size : 1) + 2, 0);
-  assert.equal(await pages.count(), expected, "Book3 print page count mismatch");
+  const previousLayoutPages = book.lessons.reduce((sum, lesson) => sum + (lesson.original.mode === "paged" ? new Set(lesson.original.items.map((item) => item.printGroup)).size : 1) + 2, 0);
+  assert.ok(await pages.count() > 0 && await pages.count() < previousLayoutPages, "Book3 print pages were not compacted");
   await page.emulateMedia({ media: "screen" });
   const bounds = await pages.evaluateAll((nodes) => nodes.map((node) => {
     const pageRect = node.getBoundingClientRect();

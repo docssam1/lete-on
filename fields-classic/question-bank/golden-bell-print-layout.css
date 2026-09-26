@@ -15,10 +15,12 @@
   .gold-print-cover-path { padding: 4mm 0; border-top: .35mm solid #cbd7da; border-bottom: .35mm solid #cbd7da; }
   .gold-print-cover-path h2,.gold-print-cover-concepts h2 { margin: 0 0 3mm; font-size: 11pt; }
   .gold-print-cover-path ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3mm; margin: 0; padding: 0; list-style: none; }
+  .gold-print-cover.has-hands-on .gold-print-cover-path ol { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .gold-print-cover-path li { display: grid; grid-template-columns: 8mm minmax(0, 1fr); align-items: center; gap: 2mm; min-height: 12mm; padding: 2mm; border-left: 1.2mm solid #2456c4; background: #eaf0ff; }
   .gold-print-cover-path li:nth-child(2) { border-color: #16734b; background: #eaf6ef; }
   .gold-print-cover-path li:nth-child(3) { border-color: #a56600; background: #fff7df; }
   .gold-print-cover-path li:nth-child(4) { border-color: #8b4f9f; background: #f5edf8; }
+  .gold-print-cover.has-hands-on .gold-print-cover-path li:nth-child(5) { border-color: #2456c4; background: #eaf0ff; }
   .gold-print-cover-path b { display: grid; place-items: center; width: 7mm; height: 7mm; border: .4mm solid currentColor; font-size: 9pt; }
   .gold-print-cover-path span { font-size: 9pt; font-weight: 850; }
   .gold-print-cover-concepts { min-height: 0; }
@@ -121,6 +123,7 @@
     line-height: 1.5;
     margin: 0 0 2mm;
   }
+  .compact-exercise-page .gold-print-story > p > span { display: block; }
   .compact-exercise-page .gold-print-story > .gold-print-visual {
     min-height: 0;
     margin: 1mm 0 2mm;
@@ -143,6 +146,38 @@
   .compact-exercise-page .gold-print-story .gold-print-options {
     display: block;
     line-height: 1.6;
+  }
+  .gold-print-page[data-print-book="book-06"]:has(.gold-print-story) .gold-print-exercise-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3mm 5mm;
+  }
+  .gold-print-page[data-print-book="book-06"]:has(.gold-print-story) .gold-print-source-item {
+    grid-column: 1 / -1;
+  }
+  .gold-print-page[data-print-book="book-06"] .gold-print-story-context { display: none; }
+  .gold-print-page[data-print-book="book-06"] .gold-print-story > p {
+    margin-bottom: 1mm;
+    font-size: 9.5pt;
+    line-height: 1.35;
+  }
+  .gold-print-page[data-print-book="book-06"] .gold-print-story > .gold-print-visual {
+    max-height: 34mm;
+    margin: .5mm 0 1mm;
+    padding: 0;
+  }
+  .gold-print-page[data-print-book="book-06"] .gold-print-story > .gold-print-visual > *,
+  .gold-print-page[data-print-book="book-06"] .gold-print-story > .gold-print-visual svg {
+    max-height: 32mm;
+  }
+  .gold-print-page[data-print-book="book-06"] .gold-print-story .book06-visual {
+    min-height: 0;
+    padding: 0;
+  }
+  .gold-print-page[data-print-book="book-06"] .gold-print-story .gold-print-item {
+    padding-bottom: 1mm;
+  }
+  .gold-print-page[data-print-book="book-06"] .gold-print-story .gold-print-answer {
+    height: 7mm;
   }
   .gold-print-page-number { margin-left: 4mm; }
 }

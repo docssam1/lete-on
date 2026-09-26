@@ -1,9 +1,11 @@
 import { book02Markup } from "./book02-renderers.js?v=20260904b";
+import { digitalDigit } from "./book01-renderers.js?v=20260922c";
 import { book03Markup } from "./book03-renderers.js?v=20260905a";
-import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20260905e";
 import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20260918a";
+import { BOOK06_WORKBOOK_FAMILIES, enhanceBook06Workbook } from "./golden-bell-book06-workbook.js?v=20260922a";
+import { renderBook06Guided } from "./golden-bell-book06-guided.js?v=20260920d";
 import { renderBook07Guided } from "./golden-bell-book07-guided.js?v=20260918a";
 import { renderBook08Guided } from "./golden-bell-book08-guided.js?v=20260918a";
 
@@ -49,6 +51,7 @@ const BOOK_NINE_PHASES = ["problem", "organize", "calculate", "verify"];
 const BOOK_NINE_GUIDED_FAMILIES = new Set(["book09-area", "book09-cube", "book09-magic", "book09-consecutive"]);
 const SEQUENCED_PRINT_FAMILIES = new Set([
   ...BOOK_FOUR_GUIDED_FAMILIES,
+  ...BOOK06_WORKBOOK_FAMILIES,
   ...BOOK_SEVEN_GUIDED_FAMILIES,
   ...BOOK_EIGHT_GUIDED_FAMILIES,
   ...BOOK_NINE_GUIDED_FAMILIES
@@ -98,6 +101,7 @@ function normalizeBookSevenGuidedBeats() {
   }
 }
 
+enhanceBook06Workbook(COURSE_ONE_BOOKS);
 normalizeBookSevenGuidedBeats();
 normalizeBookNineGuidedBeats();
 
@@ -105,7 +109,7 @@ function foldVisual(phase) {
   const folded = ["folded", "cut"].includes(phase);
   const cut = ["cut", "unfolded"].includes(phase);
   const unfolded = phase === "unfolded";
-  return `<svg class="guided-fold-svg" viewBox="0 0 260 170" role="img" aria-label="색종이를 접고 자른 뒤 펼치는 과정"><rect class="guided-paper" x="40" y="30" width="180" height="110" /><path class="guided-crease" d="M130 30V140" /><g class="guided-fold-half ${folded ? "is-folded" : ""}"><rect x="40" y="30" width="90" height="110" /><path d="M52 85H112M104 77L114 85L104 93" /></g>${cut ? '<path class="guided-cut right" d="M151 70L168 85L151 100" />' : ""}${unfolded ? '<path class="guided-cut left" d="M109 70L92 85L109 100" />' : ""}<text x="130" y="160">${phase === "flat" ? "접기 전" : phase === "folded" ? "반으로 접기" : phase === "cut" ? "접은 채 자르기" : "거울처럼 펼치기"}</text></svg>`;
+  return `<svg class="guided-fold-svg flow-fold" viewBox="0 0 260 220" role="img" aria-label="왼쪽 반을 오른쪽으로 접고 자른 뒤 펼치는 과정" data-fold-phase="${phase}"><rect class="fold-outline" x="50" y="20" width="160" height="160"/><rect class="fold-paper" x="${folded ? 130 : 50}" y="20" width="${folded ? 80 : 160}" height="160"/><path class="guided-crease" d="M130 20V180"/>${phase === "flat" ? '<path class="fold-direction" d="M76 110Q130 30 184 110M173 105L184 110L182 97"/>' : ""}${cut ? '<path class="fold-hole" d="M150 70L170 90L150 110Z"/>' : ""}${unfolded ? '<path class="fold-hole" d="M110 70L90 90L110 110Z"/>' : ""}<text x="130" y="208">${phase === "flat" ? "접기 전" : phase === "folded" ? "두 겹으로 접기" : phase === "cut" ? "두 겹 함께 자르기" : "접은 선 양쪽에 마주 보는 모양"}</text></svg>`;
 }
 
 function doubleFoldVisual(phase) {
@@ -117,7 +121,10 @@ function doubleFoldVisual(phase) {
     "open-one": "마지막 가로 접기를 먼저 펼치면 자국이 2개가 돼요.",
     "open-two": "첫 세로 접기까지 펼치면 자국이 4개가 돼요."
   };
-  return `<div class="guided-double-fold ${phase}" role="img" aria-label="색종이를 두 번 접고 마지막 접기부터 거꾸로 펼치는 과정"><div class="guided-double-fold-paper"><i class="vertical"></i><i class="horizontal"></i>${Array.from({ length: marks }, (_, index) => `<b class="m${index + 1}">★</b>`).join("")}</div><div class="guided-double-fold-order"><span>접기 1</span><span>접기 2</span><strong>펼치기 2</strong><strong>펼치기 1</strong></div><p>${captions[phase]}</p></div>`;
+  const half = ["first", "second", "open-one"].includes(phase);
+  const quarter = phase === "second";
+  const holes = [[185, 145], [185, 55], [95, 55], [95, 145]].slice(0, marks);
+  return `<div class="guided-double-fold ${phase}" role="img" aria-label="오른쪽, 아래쪽으로 접은 종이를 위쪽, 왼쪽으로 펼치는 과정"><svg class="flow-fold" viewBox="0 0 280 210" data-fold-phase="${phase}"><rect class="fold-outline" x="60" y="20" width="160" height="160"/><rect class="fold-paper" x="${half ? 140 : 60}" y="${quarter ? 100 : 20}" width="${half ? 80 : 160}" height="${quarter ? 80 : 160}"/><path class="guided-crease" d="M140 20V180M60 100H220"/>${holes.map(([x,y]) => `<circle class="fold-hole" cx="${x}" cy="${y}" r="8"/>`).join("")}</svg><p>${captions[phase]}</p></div>`;
 }
 
 function equalLineVisual(phase, model) {
@@ -141,7 +148,7 @@ function logicVisual(phase, model) {
   const states = {
     start: [["possible", "possible", "possible"], ["possible", "possible", "possible"], ["possible", "possible", "possible"]],
     fixed: [["yes", "no", "no"], ["no", "possible", "possible"], ["no", "possible", "possible"]],
-    eliminate: [["yes", "no", "no"], ["no", "yes", "no"], ["no", "no", "yes"]],
+    eliminate: [["yes", "no", "no"], ["no", "yes", "no"], ["no", "no", "possible"]],
     solved: [["yes", "no", "no"], ["no", "yes", "no"], ["no", "no", "yes"]]
   };
   const cells = states[phase] || states.start;
@@ -229,7 +236,8 @@ function magicLineTargetVisual(phase, model) {
 function mirrorDirectionVisual(phase) {
   const sideVisible = ["side", "vertical", "compare"].includes(phase);
   const verticalVisible = ["vertical", "compare"].includes(phase);
-  return `<div class="guided-mirror-direction ${phase}" role="img" aria-label="거울 방향에 따라 선이 좌우 또는 위아래로 바뀌는 과정"><svg viewBox="0 0 420 210"><path class="axis vertical" d="M210 16V194"/><path class="axis horizontal" d="M35 105H385"/><g class="source" transform="translate(105 66)"><path d="M0 32V-25M0-15L-30-15"/></g>${sideVisible ? '<g class="side" transform="translate(315 66)"><path d="M0 32V-25M0-15L30-15"/></g>' : ''}${verticalVisible ? '<g class="bottom" transform="translate(105 148)"><path d="M0-32V25M0 15L-30 15"/></g>' : ''}<text x="105" y="22">처음 모양</text><text x="315" y="22">좌우 거울</text><text x="105" y="203">위아래 거울</text></svg><p>${phase === "source" ? "비스듬한 선이 세로선의 위쪽 왼편에 있습니다." : phase === "side" ? "옆 거울에서는 높이는 그대로, 왼쪽과 오른쪽만 바뀝니다." : phase === "vertical" ? "위아래 거울에서는 좌우는 그대로, 높이만 바뀝니다." : "거울선에서 같은 거리인지 세 방향을 다시 비교합니다."}</p></div>`;
+  const shape = '<path d="M0 30V-25L-25 0"/>';
+  return `<div class="guided-mirror-direction ${phase}" role="img" aria-label="거울 방향에 따라 선이 좌우 또는 위아래로 바뀌는 과정"><svg viewBox="0 0 420 250"><path class="axis vertical" d="M210 30V225"/><path class="axis horizontal" d="M35 125H385"/><g class="source" transform="translate(105 75)">${shape}</g>${sideVisible ? `<g class="side" transform="translate(315 75) scale(-1 1)">${shape}</g>` : ""}${verticalVisible ? `<g class="bottom" transform="translate(105 175) scale(1 -1)">${shape}</g>` : ""}<text x="105" y="22">처음 모양</text><text x="315" y="22">옆 거울</text><text x="105" y="242">위아래 거울</text></svg><p>${phase === "source" ? "비스듬한 선이 세로선의 위쪽 왼편에 있습니다." : phase === "side" ? "옆 거울에서는 높이는 그대로, 왼쪽과 오른쪽만 바뀝니다." : phase === "vertical" ? "위아래 거울에서는 좌우는 그대로, 높이만 바뀝니다." : "거울선에서 같은 거리인지 세 모양을 다시 비교합니다."}</p></div>`;
 }
 
 function digitalTransformVisual(phase, model) {
@@ -237,10 +245,11 @@ function digitalTransformVisual(phase, model) {
     ["source", model.source, "처음 숫자의 켜진 선을 봅니다."],
     ["flip", model.flipped, "좌우로 뒤집으면 2와 5가 서로 바뀝니다."],
     ["half", model.halfTurned, "반 바퀴에서는 위아래와 자리 순서도 함께 바뀝니다."],
-    ["equation", `${model.source} + ${model.flipped}`, "바뀐 수를 먼저 적고 계산합니다."]
+    ["equation", model.source, "처음 숫자를 각각 좌우로 뒤집은 결과와 반 바퀴 돌린 결과입니다."]
   ];
   const active = Math.max(0, steps.findIndex(([name]) => name === phase));
-  return `<div class="guided-digital-transform ${phase}" role="img" aria-label="디지털 숫자의 선분을 움직여 뒤집고 돌리는 과정"><div>${steps.map(([name, value], index) => `<span class="${index <= active ? "visible" : ""}"><small>${index + 1}</small><b>${value}</b><i>${name === "source" ? "처음" : name === "flip" ? "좌우" : name === "half" ? "반 바퀴" : "계산"}</i></span>`).join("")}</div><p>${steps[active][2]}</p></div>`;
+  const shown = steps.slice(0, 3).filter((_, index) => index <= active);
+  return `<div class="guided-digital-transform flow-digital ${phase}" role="img" aria-label="같은 디지털 숫자 2를 각각 좌우로 뒤집거나 반 바퀴 돌린 모습"><div>${shown.map(([name, value]) => `<figure data-digital-operation="${name}">${digitalDigit(value)}<figcaption>${name === "source" ? "처음" : name === "flip" ? "처음 숫자를 좌우로 뒤집기" : "처음 숫자를 반 바퀴 돌리기"}</figcaption></figure>`).join("")}</div><p>${steps[active][2]}</p></div>`;
 }
 
 function sumGridPlacementVisual(phase) {
@@ -290,11 +299,6 @@ function bookTwoSourceVisual(experience, beat, step) {
 function bookThreeSourceVisual(experience, beat, step) {
   const itemVisual = beat.visual || experience.model?.visuals?.[step] || experience.model?.visual;
   return `<div class="book03-visual guided-book3-source ${beat.phase || "step"}" data-book3-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book03Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
-}
-
-function bookSixSourceVisual(experience, beat, step) {
-  const itemVisual = beat.visual || experience.model?.visual;
-  return `<div class="book06-visual guided-book6-source" data-book6-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book06Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
 }
 
 const BOOK_NINE_COLOR = Object.freeze({
@@ -488,7 +492,7 @@ export function guidedConceptVisual(experience, step) {
   if (experience.family?.startsWith("book2-")) return bookTwoSourceVisual(experience, beat, step);
   if (experience.family?.startsWith("book3-")) return bookThreeSourceVisual(experience, beat, step);
   if (BOOK_FOUR_GUIDED_FAMILIES.has(experience.family)) return renderBook04Guided(experience, beat, step);
-  if (experience.family === "book06-source") return bookSixSourceVisual(experience, beat, step);
+  if (BOOK06_WORKBOOK_FAMILIES.has(experience.family)) return renderBook06Guided(experience, beat, step);
   if (BOOK_SEVEN_GUIDED_FAMILIES.has(experience.family)) return renderBook07Guided(experience, beat, step);
   if (experience.family?.startsWith("book08-")) return renderBook08Guided(experience, beat, step);
   if (experience.family?.startsWith("book09-")) return bookNineSourceVisual(experience, beat, step);
@@ -523,6 +527,10 @@ function guidedPrintPhase(beat, index, total) {
 }
 
 export function guidedConceptPrintSummary(experience) {
+  if (experience.flowRevision) {
+    const conditions = (experience.openingConditions || []).map(bookNineEscape).join(" ");
+    return `<div class="gold-print-experience guided-print-summary flow-print-summary"><p class="flow-print-problem"><strong>함께 풀어보기</strong> ${bookNineEscape(experience.openingPrompt)} ${conditions}</p><div class="flow-print-figures">${[0, experience.beats.length - 1].map((step) => `<figure><figcaption>${step === 0 ? "문제" : "풀이 확인"}</figcaption>${guidedConceptVisual(experience, step)}</figure>`).join("")}</div><ol>${experience.beats.map((beat) => `<li>${bookNineEscape(beat.caption)}</li>`).join("")}</ol></div>`;
+  }
   if (SEQUENCED_PRINT_FAMILIES.has(experience.family)) {
     const phaseLabels = { problem: "문제 보기", given: "주어진 조건", organize: "구조 정리", calculate: "계산·추론", verify: "검산" };
     const total = experience.beats.length;

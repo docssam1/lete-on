@@ -450,7 +450,7 @@ body[data-course-pilot="true"] .quiz-visual {min-height:0;overflow:visible}
   .course-answer-item>.course-answer-working {grid-area:working}
   .course-answer-item>.course-answer-result {grid-area:result}
   .course-answer-item>.course-solution-visual {grid-area:visual}
-  .gold-print-root .compact-exercise-page .course-answer-item>p {margin:0;font-size:8.5pt;line-height:1.25}
+  .gold-print-root .compact-exercise-page .course-answer-item>p {margin:0;font-size:10pt;line-height:1.35}
   .course-answer-item .course-solution-visual {margin-top:3mm}
   .gold-print-page[data-print-book^="course-"] .gold-print-visual {min-height:0;max-height:none;padding:1mm;overflow:visible}
 }

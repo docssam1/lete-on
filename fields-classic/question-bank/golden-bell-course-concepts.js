@@ -1,4 +1,5 @@
 import { repeatingPatternModel, equalQuotientRemainderModel } from "./course-learning-models.js";
+import { goldenBellPracticeItems } from "./golden-bell-faithful-practice.js?v=20260922a";
 import { book02Markup } from "./book02-renderers.js?v=20260913a";
 import { course02PolygonConceptMarkup } from "./golden-bell-course02-polygon-lesson.js";
 import { course02StoneGrowthConceptMarkup } from "./golden-bell-course02-stone-growth-lesson.js";
@@ -111,7 +112,7 @@ export function courseConceptPrintPages(lesson, book, student) {
   }).join("");
 }
 
-export function courseAnswerPrintPages(lesson, book, student, { quick = false } = {}) {
+export function courseAnswerPrintPages(lesson, book, student, { quick = false, renderVisual = courseConceptMarkup } = {}) {
   const courseLabels = { "course-01": "1과정", "course-02": "2과정", "course-03": "3과정" };
   if (!Object.hasOwn(courseLabels, book.courseId)) throw new Error("A supported courseId is required for answer printing");
 
@@ -136,7 +137,8 @@ export function courseAnswerPrintPages(lesson, book, student, { quick = false } 
   };
   const protectedContent = (item) => {
     const answer = validAnswer(item?.answer) ? answerText(item.answer) : combineParts(item || {}, "answer");
-    const solution = hasText(item?.solution) ? item.solution.trim() : combineParts(item || {}, "solution");
+    const solution = hasText(item?.solution) ? item.solution.trim()
+      : hasText(item?.explanation) ? item.explanation.trim() : combineParts(item || {}, "solution");
     if (!answer || !solution) throw new Error(`Protected worked answers are required for printing (${item?.id || "unknown item"})`);
     const verificationCandidates = [item.verification, item.check, item.explanation]
       .filter((value) => hasText(value) && value.trim() !== solution);
@@ -150,6 +152,7 @@ export function courseAnswerPrintPages(lesson, book, student, { quick = false } 
   const conditionText = (item) => [item?.prompt, ...(Array.isArray(item?.conditions) ? item.conditions : [])]
     .filter(hasText).map((value) => value.trim()).join("\n");
   const verifyVisual = (item) => {
+    if (item.solutionVisual) return `<div class="course-solution-visual">${renderVisual(item.solutionVisual)}</div>`;
     if (!item?.visual || typeof item.visual !== "object" || Array.isArray(item.visual)) return "";
     const markup = courseConceptMarkup({ ...item.visual, phase: "verify" });
     return hasText(markup) ? `<div class="course-solution-visual">${markup}</div>` : "";
@@ -157,7 +160,7 @@ export function courseAnswerPrintPages(lesson, book, student, { quick = false } 
 
   const items = [
     ...(lesson.original?.items || []).map((item, index) => ({ item, label: `연습 ${index + 1}` })),
-    ...[lesson.extension, ...(lesson.similarPractice || [])].filter(Boolean)
+    ...goldenBellPracticeItems(lesson, book.id).filter(Boolean)
       .map((item, index) => ({ item, label: `추가 학습 ${index + 1}` }))
   ];
   return items.map(({ item, label }, index) => {

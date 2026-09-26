@@ -1,21 +1,28 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20260913e";
-import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20260918a";
-import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260906c";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20260922d";
+import { faithfulVisualMarkup } from "./golden-bell-faithful-concepts.js?v=20260922a";
+import { goldenBellPracticeItems } from "./golden-bell-faithful-practice.js?v=20260922a";
+import { installFaithfulPractice } from "./golden-bell-faithful-protected.js?v=20260922a";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20260922d";
+import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260922b";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260918c";
-import { book01Markup } from "./book01-renderers.js?v=20260904c";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260922c";
+import { book01Markup } from "./book01-renderers.js?v=20260922d";
+import { reviewBook01FoldSolutions } from "./golden-bell-book01-folding.js?v=20260922d";
 import { book02Markup } from "./book02-renderers.js?v=20260913a";
 import { book03Markup } from "./book03-renderers.js?v=20260905a";
 import { book04Markup } from "./book04-renderers.js?v=20260905d";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
-import { book06Markup } from "./book06-renderers.js?v=20260905d";
+import { book06Markup } from "./book06-renderers.js?v=20260920a";
 import { book07Markup } from "./book07-renderers.js?v=20260906a";
 import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
-import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
-import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20260909b";
+import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260922d";
+import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20260922d";
+import { mountHandsOn } from "./golden-bell-hands-on.js?v=20260925c";
+import { handsOnPrintPages } from "./golden-bell-hands-on-print.js?v=20260924b";
+import { HANDS_ON_ACTIVITIES, clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20260922a";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -33,13 +40,17 @@ async function ensureProtectedBook(bookId) {
   const task = loadProtectedGoldenBellBook(bookId, student).then((payload) => {
     const book = goldenBellBookById(bookId);
     hydrateProtectedAnswers(book, payload.answers);
+    if (book.id === "book-01") reviewBook01FoldSolutions(book);
     const recovery = appendProtectedRecoveryItems(book, payload.answers);
+    installFaithfulPractice(book, payload.answers);
     for (const lessonId of recovery.lessonIds) sourceAnimationCache.delete(book.lessons.find((lesson) => lesson.id === lessonId));
     protectedBooks.add(bookId);
     protectedMessage = "";
     return true;
   }).catch((error) => {
-    protectedMessage = error.message === "login_required"
+    protectedMessage = error.status === 402
+      ? "정답 서버의 이용 한도가 초과되어 채점과 풀이를 불러올 수 없습니다. 관리자 확인이 필요합니다."
+      : error.message === "login_required"
       ? "정답과 풀이를 보려면 학습 서재에서 승인번호로 접속해 주세요."
       : error.message === "protected_answers_incomplete"
         ? "정답 자료를 모두 불러오지 못해 채점을 잠시 멈췄어요. 오답으로 기록하지 않습니다."
@@ -109,7 +120,7 @@ function activeExperience() {
 }
 function lessonProgress(lesson = activeLesson()) { return state.progress[state.bookId]?.[lesson?.id] || {}; }
 function extensionItems(lesson = activeLesson()) {
-  return [{ ...lesson.extension, id: `${lesson.id}:extension`, estimatedMinutes: 4 }, ...(lesson.similarPractice || [])];
+  return goldenBellPracticeItems(lesson, state.bookId);
 }
 function activeExtensionItem(lesson = activeLesson()) { return extensionItems(lesson)[state.extensionIndex] || extensionItems(lesson)[0]; }
 
@@ -192,10 +203,6 @@ function setPhase(phase) {
   render();
 }
 
-function clockValueAfterQuarterTurns(start, quarterTurns) {
-  return ((start - 1 + quarterTurns * 3) % 12 + 12) % 12 + 1;
-}
-
 function clockGeometry(value, centerX = 120, centerY = 90, handLength = 46) {
   const angle = ((value % 12) * Math.PI) / 6;
   return {
@@ -220,26 +227,27 @@ function experienceClockMarkup(experience, sceneState = state.experience) {
   const step = Math.max(0, Math.min(sceneState.step, experience.beats.length - 1));
   const previousStep = Math.max(0, Math.min(sceneState.previousStep, experience.beats.length - 1));
   const beat = experience.beats[step];
-  const previous = experience.beats[previousStep] || beat;
   const start = experience.start;
   const current = clockValueAfterQuarterTurns(start, beat.quarterTurns);
-  const previousValue = clockValueAfterQuarterTurns(start, previous.quarterTurns);
   const animate = step !== previousStep;
-  const fromRotation = clockGeometry(previousValue).rotation;
-  let toRotation = clockGeometry(current).rotation;
-  if (beat.quarterTurns === 4 && previous.quarterTurns === 0) toRotation = fromRotation + 360;
+  // Each demonstration starts at the given number, not at the previous answer.
+  const fromRotation = clockGeometry(start).rotation;
+  const toRotation = fromRotation + beat.quarterTurns * 90;
   const ticks = Array.from({ length: 12 }, (_, index) => {
     const point = clockGeometry(index + 1, 120, 90, 61);
     const inner = clockGeometry(index + 1, 120, 90, 55);
     return `<line x1="${inner.x.toFixed(1)}" y1="${inner.y.toFixed(1)}" x2="${point.x.toFixed(1)}" y2="${point.y.toFixed(1)}" />`;
   }).join("");
-  const labels = [[12, 120, 30], [3, 180, 94], [6, 120, 154], [9, 60, 94]];
+  const labels = Array.from({ length: 12 }, (_, index) => {
+    const point = clockGeometry(index + 1, 120, 90, 50);
+    return [index + 1, point.x.toFixed(1), point.y.toFixed(1)];
+  });
   const trace = beat.action === "transform" ? clockArcPath(start, beat.quarterTurns) : "";
   return `<div class="experience-clock" data-experience-step="${step}" data-current-value="${current}"><svg viewBox="0 0 240 180" role="img" aria-label="${start}에서 출발해 ${current}을 가리키는 시계 바늘"><circle class="experience-clock-face" cx="120" cy="90" r="66" />${ticks}<g class="experience-clock-labels">${labels.map(([value, x, y]) => `<text x="${x}" y="${y}">${value}</text>`).join("")}</g>${trace}<g class="experience-clock-hand ${animate ? "is-moving" : ""}" style="--from-angle:${fromRotation}deg;--to-angle:${toRotation}deg"><line x1="120" y1="90" x2="120" y2="44" /><circle cx="120" cy="90" r="6" /></g><text class="experience-clock-current" x="120" y="176">지금 바늘: ${current}</text></svg><p class="experience-caption" aria-live="polite">${beat.caption}</p></div>`;
 }
 
 function clockExperienceSummaryMarkup(experience) {
-  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> 2에서 시작해 한 바퀴는 2, 반 바퀴는 8, 반의 반 바퀴는 시계 방향 5·반대 방향 11을 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
+  return `<div class="gold-print-experience flow-clock-summary"><p><strong>함께 풀어보기</strong> ${escapeAttribute(experience.openingPrompt || "바늘이 2에서 출발합니다. 돌린 뒤의 수를 알아보세요.")}</p><div>${experience.beats.slice(1).map((beat) => experienceClockMarkup({ ...experience, beats: [beat] }, { step: 0, previousStep: 0 })).join("")}</div></div>`;
 }
 
 function experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled }) {
@@ -273,6 +281,7 @@ function triangularExperienceSummaryMarkup(experience) {
 }
 
 function experienceSummaryMarkup(experience) {
+  if (experience.workedExample) return `<section class="gold-print-experience faithful-print-example"><h3>개념 예제</h3><p>${escapeAttribute(experience.workedExample.prompt)}</p><div class="faithful-print-given">${visualMarkup(experience.workedExample.visual)}</div><ol>${experience.beats.slice(1).map((beat) => `<li>${escapeAttribute(beat.caption)}</li>`).join("")}</ol><div class="faithful-print-result">${visualMarkup(experience.beats.at(-1).visual)}</div></section>`;
   if (experience.kind === "clock-turning") return clockExperienceSummaryMarkup(experience);
   if (experience.kind === "triangular-stair") return triangularExperienceSummaryMarkup(experience);
   if (experience.kind === "guided-concept") return guidedConceptPrintSummary(experience);
@@ -443,11 +452,75 @@ function progressiveSumMatrixMarkup(lesson, visualStep, currentStep) {
   return `<div class="progressive-sum-matrix" data-matrix-step="${currentStep + 1}" role="img" aria-label="도형값을 차례로 바꾸어 넣는 덧셈 매트릭스"><div class="b8-sum-matrix"><div class="cells">${cells}</div><div class="rows">${visual.rowTotals.map((value) => `<b>${value}</b>`).join("")}</div><div class="columns">${visual.columnTotals.map((value) => `<b class="${value === "?" ? "target" : ""}">${value === "?" ? target : value}</b>`).join("")}</div></div><p class="matrix-substitution-ledger">${visualStep.calculation}</p></div>`;
 }
 
+function progressivePolyominoMarkup(currentStep) {
+  const lTriomino = [[0, 0], [0, 1], [1, 1]];
+  const rotatedLTriomino = [[0, 0], [1, 0], [0, 1]];
+  const tetrominoes = [
+    [[0, 0], [1, 0], [2, 0], [3, 0]],
+    [[0, 0], [1, 0], [0, 1], [1, 1]],
+    [[0, 0], [1, 0], [2, 0], [1, 1]],
+    [[0, 0], [0, 1], [0, 2], [1, 2]],
+    [[1, 0], [2, 0], [0, 1], [1, 1]]
+  ];
+  if (currentStep === 0) {
+    return `<div class="progressive-polyomino attach" role="img" aria-label="정사각형은 꼭짓점이 아니라 변끼리 붙입니다"><div class="polyomino-attach-example valid"><span>${polyominoShapeMarkup([[0, 0], [1, 0]], "변끼리 붙인 도미노")}</span><b>변끼리</b></div><div class="polyomino-attach-example invalid"><span class="vertex-touch"><i></i><i></i></span><b>꼭짓점만</b></div></div>`;
+  }
+  if (currentStep === 1) {
+    return `<div class="progressive-polyomino overlay" role="img" aria-label="돌려서 포개지는 두 트리미노는 같은 모양입니다"><div>${polyominoShapeMarkup(lTriomino, "L자 트리미노")}</div><span aria-hidden="true">&#8635;</span><div class="rotated">${polyominoShapeMarkup(rotatedLTriomino, "돌린 L자 트리미노")}</div><strong>같은 모양</strong></div>`;
+  }
+  return `<div class="progressive-polyomino families" role="img" aria-label="돌리거나 뒤집어도 포개지지 않는 테트로미노 다섯 종류">${tetrominoes.map((shape, index) => `<div><span>${polyominoShapeMarkup(shape, `테트로미노 ${index + 1}`)}</span><b>${index + 1}</b></div>`).join("")}</div>`;
+}
+
+function progressivePathGridMarkup(lesson, currentStep) {
+  const source = lesson.original.visual.panels[0].visual;
+  const targetIndex = source.target.index;
+  const clues = currentStep === 0
+    ? [0]
+    : currentStep === 1
+      ? source.path.map((_, index) => index).filter((index) => index <= Math.min(8, targetIndex - 1))
+      : source.path.map((_, index) => index).filter((index) => index !== targetIndex);
+  const visual = { kind: "book5", ...source, clues };
+  return `<div class="progressive-book05 path" data-path-step="${currentStep + 1}">${book05Markup(visual)}</div>`;
+}
+
+function progressiveDigitCardsMarkup(currentStep) {
+  if (currentStep === 0) {
+    return `<div class="progressive-digit-cards choose" role="img" aria-label="숫자 카드 네 장 중 세 장을 고릅니다"><div>${[0, 2, 4, 5].map((digit) => `<span>${digit}</span>`).join("")}</div><p><i></i><i></i><i></i></p></div>`;
+  }
+  if (currentStep === 1) {
+    return `<div class="progressive-digit-cards leading-zero" role="img" aria-label="0은 세 자리 수의 맨 앞에 놓지 않습니다"><div class="invalid"><span>0</span><span>2</span><span>4</span><b>&#215;</b></div><div class="valid"><span>2</span><span>0</span><span>4</span><b>&#10003;</b></div></div>`;
+  }
+  return `<div class="progressive-digit-cards rank" role="img" aria-label="가장 높은 자리부터 비교해 작은 수부터 늘어놓습니다">${[204, 205, 240, 245, 250].map((value, index) => `<span class="${index === 4 ? "target" : ""}"><i>${index + 1}</i><b>${value}</b></span>`).join("")}</div>`;
+}
+
+function progressiveEqualizeMarkup(currentStep) {
+  const visual = currentStep === 0
+    ? { people: [{ label: "가", value: 14 }, { label: "나", value: 8 }], steps: ["차 14 - 8 = 6"] }
+    : currentStep === 1
+      ? { people: [{ label: "가", value: 14 }, { label: "나", value: 8 }], steps: ["6 ÷ 2 = 3", "가에서 나로 3개"] }
+      : { people: [{ label: "가", value: 14 }, { label: "나", value: 8 }], steps: ["14 - 3", "8 + 3"], finalValues: [11, 11], final: 11 };
+  return `<div class="progressive-equalize" data-equalize-step="${currentStep + 1}">${book08Markup({ kind: "book8", subtype: "transfer", ...visual })}</div>`;
+}
+
+function progressiveReverseProcessMarkup(currentStep) {
+  const visual = currentStep === 0
+    ? { start: "?", steps: ["+4", "-1"], result: 9, relation: "마지막 수부터 시작" }
+    : currentStep === 1
+      ? { start: 9, steps: ["+1", "-4"], result: 6, relation: "반대 계산" }
+      : { start: 6, steps: ["+4", "-1"], result: 9, relation: "원래 순서로 확인" };
+  return `<div class="progressive-reverse-process" data-reverse-step="${currentStep + 1}">${book08Markup({ kind: "book8", subtype: "process", ...visual })}</div>`;
+}
+
 function progressiveVisualMarkup(lesson, experience, currentStep) {
   const beatVisual = experience.beats[currentStep]?.visual;
   if (beatVisual) return visualMarkup(beatVisual);
   const visualStep = experience.visualProgression?.[currentStep];
   if (lesson.id === "addition-sum-matrix" && visualStep) return progressiveSumMatrixMarkup(lesson, visualStep, currentStep);
+  if (lesson.id === "polyomino-family-count") return progressivePolyominoMarkup(currentStep);
+  if (lesson.id === "path-number-grid") return progressivePathGridMarkup(lesson, currentStep);
+  if (lesson.id === "digit-card-ranked-number") return progressiveDigitCardsMarkup(currentStep);
+  if (lesson.id === "equalize-transfer") return progressiveEqualizeMarkup(currentStep);
+  if (lesson.id === "reverse-operation-chain") return progressiveReverseProcessMarkup(currentStep);
   return visualMarkup(lesson.original.visual);
 }
 
@@ -908,6 +981,8 @@ function simplePracticeMarkup(visual) {
 
 function visualMarkup(visual) {
   if (!visual) return "";
+  const faithful = faithfulVisualMarkup(visual);
+  if (faithful) return faithful;
   const courseMarkup = courseConceptMarkup(visual);
   if (courseMarkup) return courseMarkup;
   if (visual.kind === "book2") return `<div class="book02-visual">${book02Markup(visual)}</div>`;
@@ -1044,7 +1119,8 @@ function renderStageSteps() {
 
 function conceptOpeningQuestion(lesson) {
   const experience = lesson.experience;
-  return experience?.openingPrompt
+  return experience?.workedExample?.prompt
+    || experience?.openingPrompt
     || experience?.check?.prompt
     || experience?.typeTracks?.[0]?.check?.prompt
     || experience?.beats?.[0]?.check?.prompt
@@ -1052,17 +1128,23 @@ function conceptOpeningQuestion(lesson) {
     || lesson.story.mission;
 }
 
+function conceptTypeOverview(lesson) {
+  if (!lesson.typeOverview?.length) return "";
+  return `<section class="concept-type-overview"><h3>이 단원에서 만나는 문제</h3><div>${lesson.typeOverview.map((item, index) => `<article><span>${index + 1}</span><strong>${item.label}</strong><p>${item.text}</p></article>`).join("")}</div></section>`;
+}
+
 function renderConcept(lesson) {
   if (lesson.experience?.kind === "course-concept") return `<p class="lesson-kicker">${escapeAttribute(lesson.unit)} · 개념 학습</p><h2>${escapeAttribute(lesson.title)}</h2><p class="lesson-lead">${escapeAttribute(lesson.representativeConcept)}</p>${renderExperience(lesson)}<button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
-  if (sourceTracks(lesson).length) return `<p class="lesson-kicker">${escapeAttribute(lesson.unit)} · 개념 학습</p><h2>${escapeAttribute(lesson.title)}</h2>${renderSourceExperience(lesson)}<button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
+  if (sourceTracks(lesson).length) return `<p class="lesson-kicker">${escapeAttribute(lesson.unit)} · 개념 학습</p><h2>${escapeAttribute(lesson.title)}</h2><p class="lesson-lead">${escapeAttribute(lesson.representativeConcept)}</p>${conceptTypeOverview(lesson)}${renderSourceExperience(lesson)}<button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
   const tutorialSteps = lesson.explanation.steps.map((step, index) => `<li><span>${index + 1}</span><div><strong>${index + 1}단계</strong><p>${step}</p></div></li>`).join("");
   const experience = renderExperience(lesson);
   const openingQuestion = conceptOpeningQuestion(lesson);
+  const conditions = lesson.experience?.openingConditions || [];
+  const opening = `<section class="concept-opening-question"><span>생각할 문제</span><strong>${escapeAttribute(openingQuestion)}</strong>${conditions.length ? `<ul>${conditions.map((condition) => `<li>${escapeAttribute(condition)}</li>`).join("")}</ul>` : ""}</section>`;
+  const story = lesson.experience?.flowRevision ? "" : `<div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div>`;
   const terminology = lesson.id === "polyomino-family-count" ? polyominoVocabularyMarkup() : "";
-  const typeOverview = lesson.typeOverview?.length
-    ? `<section class="concept-type-overview"><h3>이 단원에서 만나는 문제</h3><div>${lesson.typeOverview.map((item, index) => `<article><span>${index + 1}</span><strong>${item.label}</strong><p>${item.text}</p></article>`).join("")}</div></section>`
-    : "";
-  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p>${terminology}<section class="concept-opening-question"><span>생각할 문제</span><strong>${openingQuestion}</strong></section><div class="story-band"><span class="story-icon" aria-hidden="true">?</span><div><small>상황 이해</small><strong>${lesson.story.title}</strong><p>${lesson.story.text}</p></div></div>${typeOverview}${experience}<section class="concept-tutorial"><header><span>${experience ? "핵심 정리" : "풀이 튜토리얼"}</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original" ${conceptReady(lesson) ? "" : "disabled"}>문제로 확인하기</button>`;
+  const typeOverview = conceptTypeOverview(lesson);
+  return `<p class="lesson-kicker">${lesson.unit} · 개념 튜토리얼</p><h2>${lesson.title}</h2><p class="lesson-lead">${lesson.representativeConcept}</p>${terminology}${opening}${story}${typeOverview}${experience}<section class="concept-tutorial"><header><span>${experience ? "핵심 정리" : "풀이 튜토리얼"}</span><strong>${lesson.explanation.headline}</strong></header><ol class="tutorial-steps">${tutorialSteps}</ol><p class="tutorial-check"><strong>문제에서 확인할 것</strong><span>${lesson.story.mission}</span></p></section><button type="button" class="primary-action" data-next-phase="original" ${conceptReady(lesson) ? "" : "disabled"}>문제로 확인하기</button>`;
 }
 
 function choiceButtons(groupId, options) {
@@ -1085,6 +1167,14 @@ function normalizedSetAnswer(value) {
 function answersMatch(actual, expected, resultContract) {
   if (!hasAnswer(actual) || !hasProtectedAnswer({ answer: expected })) return false;
   const approved = Array.isArray(expected) ? expected : [expected];
+  if (resultContract?.type === "tuple") {
+    const parts = (value) => String(value).normalize("NFC").trim().split(/[;,，；\s]+/u).filter(Boolean);
+    const given = parts(actual);
+    return approved.some((value) => {
+      const target = parts(value);
+      return given.length === target.length && given.every((entry, index) => entry === target[index]);
+    });
+  }
   if (resultContract?.type === "set") {
     const actualSet = normalizedSetAnswer(actual);
     return approved.some((value) => {
@@ -1163,11 +1253,11 @@ function renderOriginal(lesson) {
     const correct = Boolean(state.originalChecks[item.id]?.passed || result?.passed && result.itemId === item.id);
     const status = assist === "skipped" ? "skipped" : assist === "revealed" ? "assisted" : correct ? "correct" : result && result.itemId === item.id ? "incorrect" : "";
     const solution = assist === "revealed"
-      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
+      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.solution)}</p>${item.solutionVisual ? visualMarkup(item.solutionVisual) : ""}<strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
       : assist === "skipped"
         ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 학습 기록에서 다시 확인할 수 있어요.</p>'
         : correct
-          ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
+          ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${escapeAttribute(item.solution)}</p>${item.solutionVisual ? visualMarkup(item.solutionVisual) : ""}<strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
           : "";
     const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemComplete(candidate) ? "complete" : ""}" role="img" title="${escapeAttribute(candidate.sourceNo || index + 1)}" aria-label="${index + 1}번째 문제 · 원문 번호 ${escapeAttribute(candidate.sourceNo || index + 1)}" ${index === state.originalIndex ? 'aria-current="step"' : ""}>${index + 1}</span>`).join("");
     const nextLabel = state.originalIndex === items.length - 1 ? "추가 학습으로" : "다음 문제";
@@ -1211,15 +1301,17 @@ function renderExtension(lesson) {
   const resolved = correct || revealed || skipped;
   const status = skipped ? "skipped" : revealed ? "assisted" : correct ? "correct" : result ? "incorrect" : "";
   const solution = correct || revealed
-    ? `<section class="extension-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.explanation)}</p><strong>답 ${escapeAttribute(approvedAnswer(item))}</strong></section>`
+    ? `<section class="extension-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.explanation)}</p>${item.solutionVisual ? visualMarkup(item.solutionVisual) : ""}<strong>답 ${escapeAttribute(approvedAnswer(item))}</strong></section>`
     : skipped
       ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 완료 뒤 이 유형을 다시 연습할 수 있어요.</p>'
       : "";
   const dots = items.map((candidate, index) => `<span class="${index === state.extensionIndex ? "active" : index < state.extensionIndex ? "complete" : ""}">${index + 1}</span>`).join("");
   const nextLabel = state.extensionIndex === items.length - 1 ? "학습 완료" : "다음 문제";
   const pilot = activeBook().status === "pilot";
-  const minutes = pilot ? "" : ` · 약 ${activeBook().dailyPractice?.estimatedMinutes || 30}분`;
-  return `<div class="quiz-head daily-quiz-head"><div><span>오늘의 추가 학습 · ${item.title || item.typeLabel || lesson.title}</span><h2>${item.story || lesson.title}</h2></div><aside><strong>${items.length}문제 중 ${state.extensionIndex + 1}번째</strong><small>추가 학습 ${activeBook().dailyPractice?.problemCount || 8}문제${minutes}</small></aside></div><div class="daily-question-progress" aria-label="추가 학습 문제 진행">${dots}</div><p class="lesson-lead">${pilot ? escapeAttribute(item.prompt) : "배운 원리를 같은 유형의 새 문제에 적용해 보세요."}</p><div class="quiz-visual">${visualMarkup(item.visual)}</div><section class="quiz-item extension-study ${status}">${pilot ? "" : `<strong>${item.prompt}</strong>`}${answerControl(groupId, item, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>풀이 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? nextLabel : "확인"}</button>`;
+  const lessonMinutes = lesson.dailyPractice?.estimatedMinutes || Math.max(3, items.length);
+  const bookPractice = activeBook().dailyPractice?.problemCount || items.length;
+  const practiceNote = pilot ? `${items.length}문제` : `이 학습 ${items.length}문제 · 약 ${lessonMinutes}분 / 이 권 ${bookPractice}문제`;
+  return `<div class="quiz-head daily-quiz-head"><div><span>오늘의 추가 학습 · ${item.title || item.typeLabel || lesson.title}</span><h2>${item.story || lesson.title}</h2></div><aside><strong>${items.length}문제 중 ${state.extensionIndex + 1}번째</strong><small>${practiceNote}</small></aside></div><div class="daily-question-progress" aria-label="추가 학습 문제 진행">${dots}</div><p class="lesson-lead">${pilot ? escapeAttribute(item.prompt) : "배운 원리를 같은 유형의 새 문제에 적용해 보세요."}</p><div class="quiz-visual">${visualMarkup(item.visual)}</div><section class="quiz-item extension-study ${status}">${pilot ? "" : `<strong>${item.prompt}</strong>`}${answerControl(groupId, item, "extension")}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-extension-answer>풀이 보기</button><button type="button" class="secondary-action" data-extension-skip>${skipped ? "넘어감" : "넘어가기"}</button></div></section>${solution}${result ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="extension" ${hasAnswer(selected) || resolved ? "" : "disabled"}>${resolved ? nextLabel : "확인"}</button>`;
 }
 
 function renderComplete(lesson) {
@@ -1257,6 +1349,11 @@ function printSourceItemVisual(item, fallback) {
 
 function printSourceStoryboards(lesson, lessonNumber, book) {
   if (!sourceTracks(lesson).length || !protectedBooks.has(book.id)) return "";
+  const foldTracks = sourceTracks(lesson).filter((track) => track.family === "book01-fold");
+  if (foldTracks.length) return foldTracks.map((animation, index) => {
+    const frames = animation.printSteps.map((step) => `<section class="source-animation-print-frame"><h2>${escapeAttribute(animation.beats[step].phase === "given" ? "문제" : animation.beats[step].phase === "verify" ? "확인" : animation.beats[step].phase === "fold" ? "접힌 모양" : "펼쳐 보기")}</h2>${sourceAnimationFrame(animation, step)}<p>${escapeAttribute(animation.beats[step].caption)}</p></section>`).join("");
+    return `<article class="gold-print-page book01-fold-print" data-print-book="${book.id}" data-print-lesson="${lesson.id}" data-print-part="animation-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD"><header class="gold-print-head"><div><span>FIELDS CLASSIC · 개념 학습</span><h1>${book.label} ${lessonNumber}. ${escapeAttribute(animation.title)}</h1></div></header><p class="gold-print-concept">${escapeAttribute(animation.problem)}</p>${frames}<footer class="gold-print-footer">${book.label} · ${escapeAttribute(lesson.unit)} · 개념 ${index + 1}</footer></article>`;
+  }).join("");
   const animation = lesson === activeLesson() ? activeSourceAnimation(lesson) : sourceTracks(lesson)[0];
   const selectedSteps = animation.printSteps || [0, animation.beats.length - 1];
   const pages = [];
@@ -1282,10 +1379,12 @@ function printBookCover(book, lessons, { includeAnswers = false } = {}) {
   const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "필즈 더 클래식";
   const conceptRows = lessons.map((lesson, index) => `<li><span>${String(index + 1).padStart(2, "0")}</span><div><small>${escapeAttribute(lesson.unit)}</small><strong>${escapeAttribute(lesson.title)}</strong><p>${escapeAttribute(lesson.representativeConcept)}</p></div></li>`).join("");
   const densityClass = lessons.length > 12 ? " is-dense is-crowded" : lessons.length > 6 ? " is-dense" : "";
-  return `<article class="gold-print-page gold-print-cover${densityClass}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
+  const hasHandsOn = book.id === "book-01" && lessons.some((lesson) => Object.values(HANDS_ON_ACTIVITIES).some((activity) => activity.lesson === lesson.id));
+  const pathSteps = ["개념 그림", ...(hasHandsOn ? ["직접 해보기"] : []), "골든벨", "유사 연습", includeAnswers ? "답안과 풀이" : "스스로 점검"];
+  return `<article class="gold-print-page gold-print-cover${densityClass}${hasHandsOn ? " has-hands-on" : ""}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
     <header class="gold-print-cover-head"><span>FIELDS CLASSIC · GOLDEN BELL</span><strong>${escapeAttribute(courseLabel)}</strong></header>
     <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)}</small><h1>${escapeAttribute(book.title || "골든벨 개념 학습")}</h1><p>개념을 그림으로 이해하고, 교재 문제와 유사문제로 확인합니다.</p><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
-    <section class="gold-print-cover-path" aria-label="교재 학습 순서"><h2>학습 순서</h2><ol><li><b>1</b><span>개념 그림</span></li><li><b>2</b><span>골든벨</span></li><li><b>3</b><span>유사 연습</span></li><li><b>4</b><span>${includeAnswers ? "답안과 풀이" : "스스로 점검"}</span></li></ol></section>
+    <section class="gold-print-cover-path" aria-label="교재 학습 순서"><h2>학습 순서</h2><ol>${pathSteps.map((label, index) => `<li><b>${index + 1}</b><span>${label}</span></li>`).join("")}</ol></section>
     <section class="gold-print-cover-concepts"><h2>이 권의 핵심 개념</h2><ol>${conceptRows}</ol></section>
     <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · 개념 학습 교재</footer>
   </article>`;
@@ -1327,7 +1426,7 @@ function printLessonExercises(lesson, lessonNumber, book) {
   const storyPages = extensionItems(lesson).map((item, index, items) => {
     const visual = item.visual ? visualMarkup(item.visual) : "";
     const context = item.story || item.title || item.typeLabel || lesson.title;
-    return `<article class="gold-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(sourcePageCount + index + 1).padStart(2, "0"))}<section class="gold-print-block gold-print-story" data-story-number="${index + 1}"><h2>추가 학습 ${index + 1} / ${items.length}</h2><p>${escapeAttribute(context)}<br>${escapeAttribute(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}<ol class="gold-print-items"><li class="gold-print-item">${printResponseMarkup(item)}</li></ol></section>${footer}</article>`;
+    return `<article class="gold-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="story-${index + 1}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(sourcePageCount + index + 1).padStart(2, "0"))}<section class="gold-print-block gold-print-story" data-story-number="${index + 1}"><h2>추가 학습 ${index + 1} / ${items.length}</h2><p><span class="gold-print-story-context">${escapeAttribute(context)}</span><span>${escapeAttribute(item.prompt)}</span></p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}<ol class="gold-print-items"><li class="gold-print-item">${printResponseMarkup(item)}</li></ol></section>${footer}</article>`;
   }).join("");
   if (sourcePrintPaged) {
     const groups = new Map();
@@ -1343,7 +1442,10 @@ function printLessonExercises(lesson, lessonNumber, book) {
     const sourcePages = [...groups.entries()].map(([group, items], pageIndex) => {
       const blocks = items.map((item) => {
         const visual = printSourceItemVisual(item, lesson.original.visual);
-        return `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo)}</span>${escapeAttribute(item.typeLabel)}</h2><p>${escapeAttribute(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}${printResponseMarkup(item)}</section>`;
+        const heading = item.sourceNo || item.typeLabel
+          ? `<h2><span>${escapeAttribute(item.sourceNo || "문제")}</span>${escapeAttribute(item.typeLabel || "")}</h2>`
+          : "";
+        return `<section class="gold-print-source-item">${heading}<p>${escapeAttribute(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}${printResponseMarkup(item)}</section>`;
       }).join("");
       const printConcept = !separateConceptPrint && pageIndex === 0 ? concept + sourceExperience : "";
       return `<article class="gold-print-page source-practice-print" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original-${group}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(pageIndex + 1 + (separateConceptPrint ? 1 : 0)).padStart(2, "0"))}${printConcept}<section class="gold-print-block"><h2>교재 연습 ${pageIndex + 1} / ${groups.size}</h2>${blocks}</section>${footer}</article>`;
@@ -1375,8 +1477,14 @@ async function printLessons(lessons, { includeCover = false } = {}) {
   $("printStatus").textContent = "인쇄 분량을 정리하고 있습니다.";
   try {
     const cover = includeCover && (mode === "study" || mode === "both") ? printBookCover(book, lessons, { includeAnswers: mode === "both" }) : "";
-    const study = mode === "study" || mode === "both" ? lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") : "";
-    const answers = mode === "study" ? "" : lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: mode === "quick" })).join("");
+    const study = mode === "study" || mode === "both" ? lessons.map((lesson) =>
+      printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)
+      + handsOnPrintPages(book, [lesson], { mode: "study", student })
+    ).join("") : "";
+    const answers = mode === "study" ? "" : lessons.map((lesson) =>
+      courseAnswerPrintPages(lesson, book, student, { quick: mode === "quick", renderVisual: visualMarkup })
+      + handsOnPrintPages(book, [lesson], { mode: mode === "quick" ? "quick" : "answers", student })
+    ).join("");
     root.innerHTML = cover + study + answers;
     if (document.fonts?.ready) await document.fonts.ready;
     await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode()));
@@ -1704,6 +1812,19 @@ function renderContent() {
       : state.phase === "extension" ? renderExtension(lesson)
         : renderComplete(lesson);
   $("lessonContent").innerHTML = markup;
+  if (state.phase === "concept") mountHandsOn($("lessonContent"), {
+    bookId: book.id, lessonId: lesson.id,
+    onOpen: () => {
+      clearExperiencePlayback();
+      const playButton = $("lessonContent").querySelector('[data-experience-action="play"]');
+      if (playButton) playButton.textContent = "재생";
+    },
+    onQuestions: (lessonId) => {
+      state.lessonId = lessonId;
+      resetExperience();
+      setPhase("original");
+    }
+  });
   if (lesson.experience?.kind === "course-concept") {
     const item = state.phase === "original" ? lesson.original.items[state.originalIndex] : state.phase === "extension" ? activeExtensionItem(lesson) : null;
     const solution = $("lessonContent").querySelector(".quiz-item-solution,.extension-solution");
@@ -1735,6 +1856,7 @@ function renderContent() {
 function renderSummary() {
   const book = activeBook();
   document.body.dataset.coursePilot = String(book.status === "pilot");
+  document.body.dataset.activeBook = book.id;
   $("coursePrintModeWrap").hidden = !book.lessons.length;
   $("courseSelect").value = book.courseId || "";
   $("courseBrand").textContent = book.courseId ? `FIELDS CLASSIC · COURSE ${book.courseId.slice(-2)}` : "FIELDS CLASSIC";
@@ -1792,7 +1914,7 @@ window.addEventListener("keydown", (event) => {
     updateExperienceStep(0);
   } else if (event.key === "End") {
     event.preventDefault();
-    updateExperienceStep(lesson.experience.beats.length - 1);
+    updateExperienceStep(activeExperience().beats.length - 1);
   } else if (event.key === " ") {
     event.preventDefault();
     playExperience();

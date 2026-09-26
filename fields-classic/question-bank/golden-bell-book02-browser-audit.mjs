@@ -11,11 +11,32 @@ const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const qaDirectory = process.env.BOOK02_QA_DIR || "";
 const book = GOLDEN_BELL_BOOKS.find((candidate) => candidate.id === "book-02");
 assert.ok(book, "book-02 is missing");
+const protectedFixture = {};
+const visitProtectedRefs = (node) => {
+  if (!node || typeof node !== "object") return;
+  if (node.answerRef) protectedFixture[node.answerRef] = {
+    answer: "검사용",
+    solution: "조건을 정리하고 그림의 관계를 따라 계산한 뒤 답을 확인합니다."
+  };
+  Object.values(node).forEach(visitProtectedRefs);
+};
+visitProtectedRefs(book);
+const runId = Date.now();
+
+async function preparePage(page, student) {
+  await page.route("**/functions/v1/fields-auth", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+  await page.route("**/functions/v1/golden-bell-answers", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ answers: protectedFixture }) }));
+  await page.addInitScript(({ name }) => {
+    sessionStorage.setItem("gfield_fields_session", "book02-browser-audit");
+    sessionStorage.setItem("gf_n", name);
+  }, { name: student });
+}
 
 async function unlockConcept(page, lesson) {
   const experience = page.locator(".guided-concept");
   assert.equal(await experience.count(), 1, `${lesson.id}: guided concept missing`);
-  assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), true, `${lesson.id}: source questions must begin locked`);
   for (let step = 1; step < lesson.experience.beats.length; step += 1) {
     await experience.locator('[data-experience-action="next"]').click();
   }
@@ -32,10 +53,14 @@ async function auditViewport(browser, viewport, label) {
   page.on("console", (message) => {
     if (message.type() === "error" && !message.text().includes("ERR_NETWORK_ACCESS_DENIED")) errors.push(message.text());
   });
-  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BOOK02-${label}&book=book-02`, { waitUntil: "networkidle" });
+  const student = `BOOK02-${label}-${runId}`;
+  await preparePage(page, student);
+  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${student}&book=book-02`, { waitUntil: "networkidle" });
+  await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
   assert.equal(await page.locator(".lesson-button").count(), 18, `${label}: lesson navigation must contain 18 source lessons`);
 
   let checkedItems = 0;
+  let checkedPractice = 0;
   for (const lesson of book.lessons) {
     await page.locator(`.lesson-button[data-lesson="${lesson.id}"]`).click();
     await unlockConcept(page, lesson);
@@ -60,17 +85,31 @@ async function auditViewport(browser, viewport, label) {
       assert.equal(await solution.count(), 1, `${label}/${lesson.id}/${item.id}: worked solution did not open`);
       assert.ok((await solution.locator("p").innerText()).trim().length >= 24, `${label}/${lesson.id}/${item.id}: worked solution is too short`);
       checkedItems += 1;
-      if (index < lesson.original.items.length - 1) {
-        const next = page.locator('[data-check="original"]');
-        assert.equal(await next.isDisabled(), false, `${label}/${lesson.id}/${item.id}: next question remains locked after solution view`);
-        await next.click();
+      const next = page.locator('[data-check="original"]');
+      assert.equal(await next.isDisabled(), false, `${label}/${lesson.id}/${item.id}: next question remains locked after solution view`);
+      await next.click();
+    }
+    assert.equal(await page.locator('.stage-step[data-phase="extension"]').getAttribute("aria-current"), "step", `${label}/${lesson.id}: source completion did not open additional practice`);
+    const practiceItems = [lesson.extension, ...(lesson.similarPractice || [])];
+    assert.equal(practiceItems.length, 2, `${label}/${lesson.id}: each lesson must provide two additional problems`);
+    for (let index = 0; index < practiceItems.length; index += 1) {
+      assert.match(await page.locator(".daily-quiz-head aside").innerText(), new RegExp(`2문제 중 ${index + 1}번째`, "u"), `${label}/${lesson.id}: practice progress is incorrect`);
+      const visual = page.locator(".quiz-visual");
+      assert.equal(await visual.count(), 1, `${label}/${lesson.id}/${index + 1}: practice visual missing`);
+      assert.ok(await visual.locator(":scope > *").count(), `${label}/${lesson.id}/${index + 1}: practice visual is empty`);
+      assert.equal(await visual.evaluate((node) => node.scrollWidth > node.clientWidth + 1), false, `${label}/${lesson.id}/${index + 1}: practice visual overflows horizontally`);
+      assert.equal(await page.locator(".extension-solution").count(), 0, `${label}/${lesson.id}/${index + 1}: practice solution leaked`);
+      checkedPractice += 1;
+      if (index < practiceItems.length - 1) {
+        await page.locator("[data-extension-skip]").click();
+        await page.locator('[data-check="extension"]').click();
       }
     }
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, `${label}/${lesson.id}: page overflows horizontally`);
   }
   assert.deepEqual(errors, [], `${label}: browser errors: ${errors.join(" | ")}`);
   await page.close();
-  return checkedItems;
+  return { checkedItems, checkedPractice };
 }
 
 async function captureEvidence(browser) {
@@ -78,7 +117,10 @@ async function captureEvidence(browser) {
   await mkdir(qaDirectory, { recursive: true });
 
   const desktop = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
-  await desktop.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BOOK02-QA-DESKTOP&book=book-02`, { waitUntil: "networkidle" });
+  const desktopStudent = `BOOK02-QA-DESKTOP-${runId}`;
+  await preparePage(desktop, desktopStudent);
+  await desktop.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${desktopStudent}&book=book-02`, { waitUntil: "networkidle" });
+  await desktop.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
   const matrix = book.lessons.find((lesson) => lesson.id === "addition-matrix");
   await desktop.locator('.lesson-button[data-lesson="addition-matrix"]').click();
   await unlockConcept(desktop, matrix);
@@ -91,7 +133,10 @@ async function captureEvidence(browser) {
   await desktop.close();
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await mobile.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BOOK02-QA-MOBILE&book=book-02`, { waitUntil: "networkidle" });
+  const mobileStudent = `BOOK02-QA-MOBILE-${runId}`;
+  await preparePage(mobile, mobileStudent);
+  await mobile.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${mobileStudent}&book=book-02`, { waitUntil: "networkidle" });
+  await mobile.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
   const sudoku = book.lessons.find((lesson) => lesson.id === "sudoku");
   await mobile.locator('.lesson-button[data-lesson="sudoku"]').click();
   await unlockConcept(mobile, sudoku);
@@ -106,10 +151,10 @@ async function captureEvidence(browser) {
 
 const browser = await chromium.launch({ headless: true });
 try {
-  const desktopItems = await auditViewport(browser, { width: 1440, height: 1050 }, "desktop");
-  const mobileItems = await auditViewport(browser, { width: 390, height: 844 }, "mobile");
+  const desktop = await auditViewport(browser, { width: 1440, height: 1050 }, "desktop");
+  const mobile = await auditViewport(browser, { width: 390, height: 844 }, "mobile");
   await captureEvidence(browser);
-  console.log(`BOOK02_GOLDEN_BELL_BROWSER_OK lessons=18 desktopItems=${desktopItems} mobileItems=${mobileItems} controls=pass overflow=pass`);
+  console.log(`BOOK02_GOLDEN_BELL_BROWSER_OK lessons=18 desktopItems=${desktop.checkedItems} mobileItems=${mobile.checkedItems} desktopPractice=${desktop.checkedPractice} mobilePractice=${mobile.checkedPractice} controls=pass overflow=pass`);
 } finally {
   await browser.close();
 }

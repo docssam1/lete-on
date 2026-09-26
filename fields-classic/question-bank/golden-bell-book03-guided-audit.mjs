@@ -21,8 +21,9 @@ for (const lesson of book.lessons) {
   assert.equal(experience?.kind, "guided-concept", `${lesson.id}: must be guided-concept`);
   assert.ok(experience.title?.trim() && experience.hint?.trim(), `${lesson.id}: title/hint missing`);
   assert.ok(Array.isArray(experience.beats) && experience.beats.length >= 2, `${lesson.id}: guided beats missing`);
-  assert.ok(experience.check?.prompt?.trim() && experience.check?.answer !== undefined, `${lesson.id}: concept check missing`);
-  assert.equal(experience.check.options?.filter((option) => option === experience.check.answer).length, 1, `${lesson.id}: check answer is not unique`);
+  assert.ok(experience.check?.prompt?.trim() && experience.check?.answerRef, `${lesson.id}: protected concept check missing`);
+  assert.equal(new Set(experience.check.options).size, experience.check.options.length, `${lesson.id}: check options are not unique`);
+  assert.equal("answer" in experience.check, false, `${lesson.id}: public concept data contains an answer`);
   const visual = guidedConceptVisual(experience, experience.beats.length - 1);
   const summary = guidedConceptPrintSummary(experience);
   assert.ok(text(visual), `${lesson.id}: final guided visual is empty`);

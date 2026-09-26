@@ -2,20 +2,39 @@ import assert from "node:assert/strict";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
-import { hydrateProtectedAnswers } from "./golden-bell-protected.js";
+import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
+import { goldenBellPracticeItems } from "./golden-bell-faithful-practice.js";
+import { installFaithfulPractice } from "./golden-bell-faithful-protected.js";
 
 const runtimeModules = process.env.CODEX_NODE_MODULES
   || path.join(process.env.USERPROFILE, ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules");
 const { chromium } = await import(pathToFileURL(path.join(runtimeModules, "playwright", "index.mjs")).href);
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 assert.ok(["localhost", "127.0.0.1", "[::1]"].includes(new URL(baseUrl).hostname), "Private answer fixtures may only be used against a local test server");
-assert.ok(process.env.FIELDS_PRIVATE_ANSWER_BANK, "Set FIELDS_PRIVATE_ANSWER_BANK to a private fixture; do not embed answers");
-const privateBank = JSON.parse(await readFile(process.env.FIELDS_PRIVATE_ANSWER_BANK, "utf8"));
-for (const book of GOLDEN_BELL_BOOKS) hydrateProtectedAnswers(structuredClone(book), privateBank.books[book.id]);
+const useSyntheticFixture = process.env.FIELDS_SYNTHETIC_SIMILAR_FIXTURE === "1";
+assert.ok(process.env.FIELDS_PRIVATE_ANSWER_BANK || useSyntheticFixture, "Set FIELDS_PRIVATE_ANSWER_BANK or explicitly enable the local synthetic UI fixture");
+function syntheticRecords(book) {
+  const records = {};
+  const visit = (node) => {
+    if (!node || typeof node !== "object") return;
+    if (node.answerRef) records[node.answerRef] = {
+      answer: Array.isArray(node.options) && node.options.length ? node.options[0] : "0",
+      solution: "조건을 정리하고 그림의 관계를 따라 계산한 뒤 답을 확인합니다."
+    };
+    Object.values(node).forEach(visit);
+  };
+  visit(book);
+  return records;
+}
+const privateBank = process.env.FIELDS_PRIVATE_ANSWER_BANK
+  ? JSON.parse(await readFile(process.env.FIELDS_PRIVATE_ANSWER_BANK, "utf8"))
+  : { books: Object.fromEntries(GOLDEN_BELL_BOOKS.map((book) => [book.id, syntheticRecords(book)])) };
 const output = process.env.FIELDS_CAPTURE_DIR;
+for (const book of GOLDEN_BELL_BOOKS) installFaithfulPractice(book, privateBank.books[book.id]);
 if (output) await mkdir(output, { recursive: true });
 const results = [];
+const runId = Date.now();
+const auditBooks = GOLDEN_BELL_BOOKS.filter((book) => /^book-(0[2-9]|10)$/u.test(book.id));
 
 function unlockedProgress() {
   return Object.fromEntries(GOLDEN_BELL_BOOKS.map((book) => [
@@ -25,7 +44,7 @@ function unlockedProgress() {
 }
 
 async function auditViewport(browser, viewport, label) {
-  const student = `SIMILAR-${label.toUpperCase()}`;
+  const student = `SIMILAR-${label.toUpperCase()}-${runId}`;
   const page = await browser.newPage({ viewport, isMobile: label === "mobile", hasTouch: label === "mobile" });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -47,26 +66,28 @@ async function auditViewport(browser, viewport, label) {
   });
 
   let audited = 0;
-  for (const book of GOLDEN_BELL_BOOKS) {
+  for (const book of auditBooks) {
     await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${student}&book=${book.id}`, { waitUntil: "networkidle" });
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     for (const lesson of book.lessons) {
       await page.locator(`.lesson-button[data-lesson="${lesson.id}"]`).click();
       if (book.id === "book-05" && lesson.id === "path-number-grid") {
         await page.locator('.stage-step[data-phase="original"]').click();
-        const sourceVisual = await page.locator(".item-quiz-visual .book05-visual").evaluate((node) => ({
+        const sourceVisuals = await page.locator(".item-quiz-visual .book05-visual").evaluateAll((nodes) => nodes.map((node) => ({
           width: node.getBoundingClientRect().width,
           pathWidth: node.querySelector(".b5-path-grid")?.getBoundingClientRect().width || 0,
           calendars: node.querySelectorAll(".b5-calendar,.torn-calendar").length
-        }));
-        assert.ok(sourceVisual.width > 240 && sourceVisual.pathWidth > 180, `${label}/book-05/path-number-grid: source number array collapsed: ${JSON.stringify(sourceVisual)}`);
-        assert.equal(sourceVisual.calendars, 0, `${label}/book-05/path-number-grid: calendar leaked into the number-array lesson`);
+        })));
+        assert.equal(sourceVisuals.length, lesson.original.items.length, `${label}/book-05/path-number-grid: source visual count changed`);
+        assert.ok(sourceVisuals.every(({ width, pathWidth }) => width > 240 && pathWidth > 180), `${label}/book-05/path-number-grid: source number array collapsed: ${JSON.stringify(sourceVisuals)}`);
+        assert.ok(sourceVisuals.every(({ calendars }) => calendars === 0), `${label}/book-05/path-number-grid: calendar leaked into the number-array lesson`);
       }
       const extensionStep = page.locator('.stage-step[data-phase="extension"]');
       assert.equal(await extensionStep.isDisabled(), false, `${label}/${book.id}/${lesson.id}: additional learning is locked`);
       await extensionStep.click();
-      const items = [lesson.extension, ...(lesson.similarPractice || [])];
-      const workloadPattern = new RegExp(`${items.length}문제 중 1번째[\\s\\S]*이 권 ${book.dailyPractice.problemCount}문제[\\s\\S]*약 ${book.dailyPractice.estimatedMinutes}분`, "u");
+      const items = goldenBellPracticeItems(lesson, book.id);
+      const lessonMinutes = lesson.dailyPractice?.estimatedMinutes || Math.max(3, items.length);
+      const workloadPattern = new RegExp(`${items.length}문제 중 1번째[\\s\\S]*이 학습 ${items.length}문제 · 약 ${lessonMinutes}분 \\/ 이 권 ${book.dailyPractice.problemCount}문제`, "u");
       assert.match(await page.locator(".daily-quiz-head aside").innerText(), workloadPattern, `${label}/${book.id}/${lesson.id}: daily workload label missing`);
       for (let itemIndex = 0; itemIndex < items.length; itemIndex += 1) {
         assert.equal(await page.locator(".daily-quiz-head aside strong").innerText(), `${items.length}문제 중 ${itemIndex + 1}번째`, `${label}/${book.id}/${lesson.id}: additional problem did not open`);

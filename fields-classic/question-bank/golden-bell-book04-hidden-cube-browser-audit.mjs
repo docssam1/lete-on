@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 
 const runtimeModules = process.env.CODEX_NODE_MODULES
   || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules";
@@ -9,13 +10,41 @@ const { chromium } = await import(pathToFileURL(path.join(runtimeModules, "playw
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const captureDir = process.env.FIELDS_CAPTURE_DIR || "";
 if (captureDir) await fs.mkdir(captureDir, { recursive: true });
+const book = GOLDEN_BELL_BOOKS.find((candidate) => candidate.id === "book-04");
+assert.ok(book, "book-04 is missing");
+const protectedFixture = {};
+const visitProtectedRefs = (node) => {
+  if (!node || typeof node !== "object") return;
+  if (node.answerRef) protectedFixture[node.answerRef] = {
+    answer: Array.isArray(node.options) && node.options.length ? node.options[0] : "0",
+    solution: "보이는 윗면의 높이를 모두 더해 전체 수를 구하고, 보이는 기둥 수를 빼서 확인합니다."
+  };
+  Object.values(node).forEach(visitProtectedRefs);
+};
+visitProtectedRefs(book);
+protectedFixture[book.lessons.find((lesson) => lesson.id === "hidden-cube-count").experience.check.answerRef].answer = "4개";
+const runId = Date.now();
 const browser = await chromium.launch({ headless: true });
+
+async function preparePage(page, student) {
+  await page.route("**/functions/v1/fields-auth", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+  await page.route("**/functions/v1/golden-bell-answers", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ answers: protectedFixture }) }));
+  await page.addInitScript(({ name }) => {
+    sessionStorage.setItem("gfield_fields_session", "book04-hidden-browser-audit");
+    sessionStorage.setItem("gf_n", name);
+  }, { name: student });
+}
 
 async function openLesson(viewport, suffix) {
   const page = await browser.newPage({ viewport });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BOOK04-HIDDEN-${suffix}&book=book-04`, { waitUntil: "networkidle" });
+  const student = `BOOK04-HIDDEN-${suffix}-${runId}`;
+  await preparePage(page, student);
+  await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${student}&book=book-04`, { waitUntil: "networkidle" });
+  await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
   await page.locator('.lesson-button[data-lesson="hidden-cube-count"]').click();
   return { page, errors };
 }
@@ -27,28 +56,18 @@ async function assertNoOverflow(page, label) {
 
 async function auditConcept(viewport, label) {
   const { page, errors } = await openLesson(viewport, label);
-  const experience = page.locator('.progressive-concept[data-progressive-family="cube-hidden-count"]');
+  const experience = page.locator('.source-animation[data-source-family="cube-hidden-count"]');
   assert.equal(await experience.count(), 1, `${label}: source-backed concept animation missing`);
-  assert.equal(await experience.locator('.hidden-cube-concept-visual[data-hidden-cube-phase="height"]').count(), 1, `${label}: height-reading scene missing`);
-  assert.equal(await experience.locator(".ws-iso-top-label").count(), 3, `${label}: first scene needs three top-face height labels`);
-  assert.equal(await experience.locator(".cube-scene-set").count(), 0, `${label}: concept must not show three source questions side by side`);
-  await assertNoOverflow(page, `${label}/height`);
-
-  await experience.locator('[data-experience-action="next"]').click();
-  assert.equal(await experience.locator('.hidden-cube-concept-visual[data-hidden-cube-phase="total"]').count(), 1, `${label}: total-count scene missing`);
-  assert.equal(await experience.locator(".ws-iso-top-label").count(), 4, `${label}: total scene needs four top-face height labels`);
-  assert.equal(await experience.locator(".cube-height-map .filled").count(), 4, `${label}: top-view height map is incomplete`);
-  assert.match(await experience.locator(".hidden-cube-equation").innerText(), /3\s*\+\s*2\s*\+\s*2\s*\+\s*2\s*=\s*9/u, `${label}: height total equation changed`);
-  await assertNoOverflow(page, `${label}/total`);
-
-  await experience.locator('[data-experience-action="next"]').click();
-  assert.equal(await experience.locator('.hidden-cube-concept-visual[data-hidden-cube-phase="hidden"]').count(), 1, `${label}: hidden-count scene missing`);
-  assert.equal(await experience.locator(".ws-iso-top-label").count(), 6, `${label}: final scene needs six top-face height labels`);
-  assert.match(await experience.locator(".hidden-cube-equation").innerText(), /10\s*-\s*6\s*=\s*4/u, `${label}: hidden-count equation changed`);
-  assert.equal(await experience.locator('[data-experience-choice="4개"]').count(), 1, `${label}: approved concept answer is not unique`);
-  await experience.locator('[data-experience-choice="4개"]').click();
+  assert.equal(await experience.locator("[data-source-track] option").count(), 3, `${label}: three independent concept examples are required`);
+  for (const [index, stage] of ["given", "target", "transform", "verify"].entries()) {
+    assert.equal(await experience.locator(`[data-concept-stage="${stage}"]`).count(), 1, `${label}: ${stage} scene missing`);
+    if (index >= 2) assert.ok(await experience.locator(".ws-iso-top-label").count(), `${label}: ${stage} scene needs top-face height labels`);
+    await assertNoOverflow(page, `${label}/${stage}`);
+    if (index < 3) await experience.locator('[data-experience-action="next"]').click();
+  }
+  assert.ok(await experience.locator("[data-answer-value]").count(), `${label}: verified hidden count is missing`);
+  await page.locator('[data-next-phase="original"]').click();
   assert.equal(await page.locator('.stage-step[data-phase="original"]').isDisabled(), false, `${label}: verified concept did not unlock source questions`);
-  await assertNoOverflow(page, `${label}/hidden`);
   if (captureDir) await page.screenshot({ path: path.join(captureDir, `book04-hidden-${label}.png`), fullPage: true });
   assert.deepEqual(errors, [], `${label}: browser errors: ${errors.join(" | ")}`);
   await page.close();
@@ -56,11 +75,7 @@ async function auditConcept(viewport, label) {
 
 async function auditPerQuestionAnswersAndPrint() {
   const { page, errors } = await openLesson({ width: 1440, height: 1050 }, "DESKTOP-SOURCE");
-  const experience = page.locator('.progressive-concept[data-progressive-family="cube-hidden-count"]');
-  await experience.locator('[data-experience-action="next"]').click();
-  await experience.locator('[data-experience-action="next"]').click();
-  await experience.locator('[data-experience-answer]').click();
-  await page.locator('.stage-step[data-phase="original"]').click();
+  await page.locator('[data-next-phase="original"]').click();
 
   const expectedLabelCounts = [3, 4, 6];
   for (let index = 0; index < expectedLabelCounts.length; index += 1) {

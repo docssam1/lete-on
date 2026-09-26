@@ -1,5 +1,6 @@
 import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20260920a";
 import { GENERATORS } from "./generators.js?v=20260920a";
+import { questionContentSignature, takeUniqueQuestion, buildUniqueQuestions } from "./question-selection.js?v=20260922a";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20260919a";
 import { book02Markup } from "./book02-renderers.js?v=20260918b";
@@ -79,7 +80,9 @@ const state = {
   includeSolution: true,
   watermark: true,
   printMode: "questions",
-  questions: []
+  questions: [],
+  usedQuestionSignatures: new Set(),
+  requestedCount: 0
 };
 
 function normalizeSearchText(value) {
@@ -1132,35 +1135,33 @@ function generatedProblem(item, sequence, reference, fixedSeed = null, attempt =
 }
 
 function problemSignature(problem) {
-  return JSON.stringify([problem.reference, problem.type.id, problem.prompt, problem.visual || null, problem.image || null]);
+  return questionContentSignature({
+    prompt: problem.prompt,
+    visual: problem.image ? null : worksheetVisualMarkup(problem),
+    image: problem.image,
+    responseKind: problem.responseKind
+  });
 }
 
-function buildQuestions() {
+function buildQuestions({ reuseHistory = false } = {}) {
   let references = selectedReferences().filter((item) => isSelectableType(typeById(item.typeId)));
   if (!references.length) return;
   if (state.order === "domain") references.sort((a, b) => domainIndex[typeById(a.typeId).domain] - domainIndex[typeById(b.typeId).domain]);
   if (state.order === "mixed") references = shuffle(references);
-  const counters = new Map();
-  const signatures = new Set();
-  const questions = Array.from({ length: state.count }, (_, index) => {
-    const reference = references[index % references.length];
+  const { questions, signatures, missing } = buildUniqueQuestions(references, state.count, (reference, sequence, attempt) => {
     const item = typeById(reference.typeId);
-    const sequence = counters.get(item.id) || 0;
-    counters.set(item.id, sequence + 1);
-    let problem = null;
-    for (let attempt = 0; attempt < 80; attempt += 1) {
-      problem = generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification, reference.generationCase);
-      if (!problem || !signatures.has(problemSignature(problem))) break;
-    }
-    if (problem) signatures.add(problemSignature(problem));
-    return problem;
-  });
-  if (questions.some((problem) => !problem)) {
-    state.questions = [];
-    window.alert("문항을 끝까지 만들지 못했습니다. 같은 선택으로 다시 생성해 주세요.");
+    return generatedProblem(item, sequence, reference.reference, reference.fixedSeed, attempt, reference.difficulty, reference.classification, reference.generationCase);
+  }, problemSignature, reuseHistory ? state.usedQuestionSignatures : []);
+  if (!questions.length) {
+    window.alert("중복되지 않는 새 문항을 구성하지 못했습니다. 유형을 추가하거나 선택 범위를 다시 정해 주세요. 기존 학습지는 유지됩니다.");
     return;
   }
   state.questions = questions;
+  state.usedQuestionSignatures = signatures;
+  state.requestedCount = state.count;
+  $("generationStatus").textContent = missing
+    ? `요청한 ${state.count}문항 중 중복 없이 ${questions.length}문항을 구성했습니다. 나머지 ${missing}문항은 확보하지 못했습니다. 유형을 추가하거나 문항 수를 줄여 주세요.`
+    : "";
   state.printMode = questions.every((question) => question.generationCase?.sourceKind === "unit-test")
     ? "questions-with-compact"
     : "questions";
@@ -1192,18 +1193,12 @@ function replaceQuestion(index) {
   const current = state.questions[index];
   if (!current) return;
   if (current.generationCase?.mode === "source") return;
-  const currentSignature = problemSignature(current);
-  const otherSignatures = new Set(state.questions.filter((_, questionIndex) => questionIndex !== index).map(problemSignature));
-  let replacement = null;
-  for (let attempt = 0; attempt < 120; attempt += 1) {
-    const candidate = generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty, current.classification, current.generationCase);
-    if (candidate && problemSignature(candidate) !== currentSignature && !otherSignatures.has(problemSignature(candidate))) {
-      replacement = candidate;
-      break;
-    }
-  }
+  const replacement = takeUniqueQuestion(
+    (attempt) => generatedProblem(current.type, index + attempt, current.reference, null, attempt, current.generationDifficulty, current.classification, current.generationCase),
+    state.usedQuestionSignatures, problemSignature, 120
+  );
   if (!replacement) {
-    window.alert("같은 유형의 새 문항을 만들지 못했습니다. 잠시 후 다시 눌러 주세요.");
+    window.alert("중복되지 않는 새 문항을 찾지 못해 현재 문항을 유지합니다. 다른 유형을 추가하거나 문항 수를 줄여 주세요.");
     return;
   }
   state.questions[index] = replacement;
@@ -1216,6 +1211,8 @@ function removeQuestion(index) {
     return;
   }
   state.questions.splice(index, 1);
+  state.requestedCount = state.questions.length;
+  $("generationStatus").textContent = "";
   syncQuestionCountControls();
   renderWorksheet();
 }
@@ -3794,6 +3791,9 @@ function renderWorksheet() {
   hideTypePreview();
   const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "필즈 더 클래식 단원 학습지" : "유형별 맞춤 학습지";
   $("worksheetTitle").textContent = title;
+  $("worksheetCount").textContent = state.requestedCount > state.questions.length
+    ? `실제 ${state.questions.length}문항 · 요청 ${state.requestedCount}문항`
+    : `${state.questions.length}문항`;
   const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
     const visualPolicy = question.visual?.layoutRole === "support"
@@ -3914,9 +3914,9 @@ function initControls() {
   }));
   $("solutionToggle").addEventListener("change", (event) => { state.includeSolution = event.target.checked; });
   $("watermarkToggle").addEventListener("change", (event) => { state.watermark = event.target.checked; });
-  $("buildButton").addEventListener("click", buildQuestions);
+  $("buildButton").addEventListener("click", () => buildQuestions());
   $("backToBuilder").addEventListener("click", () => { $("worksheetSection").hidden = true; $("builderPanel").hidden = false; });
-  $("regenerateButton").addEventListener("click", buildQuestions);
+  $("regenerateButton").addEventListener("click", () => buildQuestions({ reuseHistory: true }));
   $("answerButton").addEventListener("click", openAnswers);
   $("worksheetPrintMode").addEventListener("change", (event) => { state.printMode = event.target.value; });
   $("printButton").addEventListener("click", printWorksheet);

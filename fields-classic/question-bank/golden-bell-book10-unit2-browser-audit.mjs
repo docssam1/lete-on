@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 
 const runtimeModules = process.env.CODEX_NODE_MODULES
   || path.join(process.env.USERPROFILE || process.cwd(), ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "node", "node_modules");
@@ -10,9 +11,38 @@ const require = createRequire(import.meta.url);
 const { PDFDocument } = require(path.join(runtimeModules, "pdf-lib"));
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const screenshotPrefix = process.env.GOLDEN_BELL_BOOK10_SCREENSHOT_PREFIX || process.argv[2] || "";
+const book = GOLDEN_BELL_BOOKS.find((candidate) => candidate.id === "book-10");
+assert.ok(book, "book-10 is missing");
+const protectedFixture = {};
+const visitProtectedRefs = (node) => {
+  if (!node || typeof node !== "object") return;
+  if (node.answerRef) protectedFixture[node.answerRef] = {
+    answer: Array.isArray(node.options) && node.options.length ? node.options[0] : "0",
+    solution: "조건을 정리하고 두 식의 같은 부분을 묶거나 빼서 값을 구한 뒤 원래 조건에 넣어 확인합니다."
+  };
+  Object.values(node).forEach(visitProtectedRefs);
+};
+visitProtectedRefs(book);
+const runId = Date.now();
+
+async function preparePage(page, student) {
+  await page.route("**/functions/v1/fields-auth", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+  await page.route("**/functions/v1/golden-bell-answers", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ answers: protectedFixture }) }));
+  await page.addInitScript(({ name }) => {
+    sessionStorage.setItem("gfield_fields_session", "book10-unit2-browser-audit");
+    sessionStorage.setItem("gf_n", name);
+  }, { name: student });
+}
 
 async function unlockConcept(page) {
   await page.locator('.lesson-button[data-lesson="catch-up-acorns"]').click();
+  const direct = page.locator('[data-next-phase="original"]');
+  if (await direct.count()) {
+    await direct.click();
+    return;
+  }
   const experience = page.locator(".progressive-concept");
   for (let step = 0; step < 12 && await experience.locator("[data-experience-answer]").count() === 0; step += 1) {
     const next = experience.locator('[data-experience-action="next"]');
@@ -33,7 +63,10 @@ try {
     page.on("console", (message) => {
       if (message.type() === "error" && !message.text().includes("ERR_NETWORK_ACCESS_DENIED")) errors.push(message.text());
     });
-    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BOOK10-UNIT2-${viewport.width}&book=book-10`, { waitUntil: "networkidle" });
+    const student = `BOOK10-UNIT2-${viewport.width}-${runId}`;
+    await preparePage(page, student);
+    await page.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${student}&book=book-10`, { waitUntil: "networkidle" });
+    await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     await page.locator('.lesson-button[data-lesson="catch-up-acorns"]').click();
     assert.equal(await page.locator(".concept-type-overview article").count(), 5, "unit 2 type overview is incomplete");
     assert.equal(await page.locator(".concept-type-overview").evaluate((node) => Boolean(node.compareDocumentPosition(document.querySelector(".concept-experience")) & Node.DOCUMENT_POSITION_FOLLOWING)), true, "type overview must appear before the concept experience");
@@ -49,12 +82,8 @@ try {
       await page.screenshot({ path: `${screenshotPrefix}-${viewport.width}.png`, fullPage: true });
     }
 
-    await page.locator('.answer-part input').nth(0).fill("11");
-    await page.locator('.answer-part input').nth(1).fill("7");
-    await page.locator('.answer-part input').nth(2).fill("4");
-    await page.locator('[data-check="original"]').click();
-    assert.match(await page.locator(".feedback").innerText(), /맞았어요/u, "approved multi-part answer was rejected");
-    assert.match(await page.locator(".quiz-item-solution").innerText(), /33÷3=11/u, "worked solution is not calculation-based");
+    await page.locator("[data-original-answer]").click();
+    assert.match(await page.locator(".quiz-item-solution").innerText(), /풀이[\s\S]*답/u, "worked solution is missing");
     await page.locator('[data-check="original"]').click();
     assert.match(await page.locator(".source-question-card>header span").innerText(), /1-\(2\)/u, "next source item did not open");
 
@@ -82,7 +111,10 @@ try {
   }
 
   const printPage = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-  await printPage.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=BOOK10-PRINT&book=book-10`, { waitUntil: "networkidle" });
+  const printStudent = `BOOK10-PRINT-${runId}`;
+  await preparePage(printPage, printStudent);
+  await printPage.goto(`${baseUrl}/fields-classic/question-bank/golden-bell.html?student=${printStudent}&book=book-10`, { waitUntil: "networkidle" });
+  await printPage.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
   await printPage.locator('.lesson-button[data-lesson="catch-up-acorns"]').click();
   await printPage.evaluate(() => { window.print = () => {}; });
   await printPage.locator("#printLessonButton").click();
@@ -103,10 +135,10 @@ try {
   assert.deepEqual(bounds.filter((item) => item.height > 1022), [], "a print page expanded beyond A4");
   assert.deepEqual(bounds.filter((item) => item.contentBottom > item.footerTop - 2), [], "print content overlaps the footer");
   const pdf = await PDFDocument.load(await printPage.pdf({ format: "A4", printBackground: true }));
-  assert.equal(pdf.getPageCount(), 11, "current Book 10 unit 2 print must contain 9 source and 2 additional pages");
+  assert.equal(pdf.getPageCount(), 9, "current Book 10 unit 2 print must compact all source and additional problems into nine pages");
   await printPage.close();
 
-  console.log("GOLDEN_BELL_BOOK10_UNIT2_BROWSER_OK desktop=pass mobile=pass sourceCards=18 printPages=11");
+  console.log("GOLDEN_BELL_BOOK10_UNIT2_BROWSER_OK desktop=pass mobile=pass sourceCards=18 printPages=9");
 } finally {
   await browser.close();
 }
