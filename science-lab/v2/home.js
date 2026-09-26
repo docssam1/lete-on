@@ -1,63 +1,153 @@
-// 홈 = 탐구 지도: 학기별로 구불한 길 위에 단원 정거장. 끝낸 곳 깃발, 다음 정거장에 docssam, "이어서 하기".
+// 홈 = 로드맵 입구(매거진형). 표지(한 줄 약속 + 이어서 하기) → 지금 열린 실험 수업(3D 실험실 사진 카드)
+// → 3~6학년 로드맵(학기마다 정거장 줄) → 한 교재 네 가지 수업. 정거장을 누르면 소단원 시트.
 import { SEMS, READY, BOOK_UNITS } from './units-index.js';
 
 const ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ'];
-const XS = [24, 50, 76, 50];      // 정거장 가로 위치(%) — 지그재그
-const ROW = 118;                   // 정거장 간격(px)
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const A = '../assets/';
+
+// 열린 실험 수업(실험 교재 한 장 = 수업 하나). 사진 = 그 수업의 3D 실험실(assets/thumbs, 실제 화면 캡처).
+const LABS = [
+  { id: 's41-u01', lab: '고리 자석 방향 바꿔 탑 쌓기', skills: ['가설 설정', '변인 통제', '측정'], sem: '4-1', unit: 'Ⅰ. 자석의 이용', title: '둥실 고리 자석 탑', q: '왜 어떤 자석은 떠 있을까?', theme: '#2F5DA8' },
+  { id: 's41-u02', lab: '물의 양 바꿔 얼리고 녹이기', skills: ['가설 설정', '측정', '자료 해석'], sem: '4-1', unit: 'Ⅱ. 물의 상태 변화', title: '얼었다 녹는 물기둥', q: '얼리면 높이와 무게는 어떻게 될까?', theme: '#2A6FB0' },
+  { id: 's41-u03', lab: '기울기와 물의 양 바꿔 보기', skills: ['변인 통제', '관찰', '자료 해석'], sem: '4-1', unit: 'Ⅲ. 땅의 변화', title: '흙 언덕 물길', q: '흐르는 물은 흙을 어디로 옮길까?', theme: '#8A5A2B' },
+  { id: 's41-u03b', lab: '불 세기와 식히는 빠르기 바꿔 보기', skills: ['모형 실험', '비교', '결론 도출'], sem: '4-1', unit: 'Ⅲ. 땅의 변화', title: '화산 실험실', q: '화산에서는 무엇이 나올까?', theme: '#B23A2E' },
+  { id: 's42-u01', lab: '연못에 식물 심고 부레옥잠 눌러 보기', skills: ['관찰', '분류', '결론 도출'], sem: '4-2', unit: 'Ⅰ. 식물의 생활', title: '둥둥 부레옥잠의 비밀', q: '부레옥잠은 어떻게 물에 뜰까?', theme: '#2B7A62' },
+];
 
 function stateOf(store, id) {
   if (!READY[id]) return { kind: 'locked' };
   const st = store.get(id);
   if (st.passed) return { kind: 'passed', st };
-  if ((st.done || []).length) return { kind: 'doing', st };
+  if ((st.done || []).length || st.step != null) return { kind: 'doing', st };
   return { kind: 'open', st };
 }
-
-// 이어서 할 곳: 진행 중인 단원 → 아직 안 끝낸 열린 단원 → 첫 열린 단원
-function nextUnit(store) {
-  const all = SEMS.flatMap((s) => s.units).filter((u) => READY[u.id]);
-  return all.find((u) => stateOf(store, u.id).kind === 'doing') || all.find((u) => stateOf(store, u.id).kind === 'open') || null;
+const ALL = SEMS.flatMap((s) => s.units);
+// 이어서 할 곳: 진행 중인 수업 → 아직 안 끝낸 수업 → 없음
+function nextLab(store) {
+  return LABS.find((l) => stateOf(store, l.id).kind === 'doing') || LABS.find((l) => stateOf(store, l.id).kind === 'open') || null;
 }
-const hrefOf = (store, id) => { const st = store.get(id); return `#/${id}/${!st.passed && st.step != null ? st.step + 1 : 1}`; };
+const startOf = (id) => (BOOK_UNITS.has(id) ? `#/${id}/start` : `#/${id}/1`);
+const pct = (store, id) => { const k = stateOf(store, id); return k.kind === 'passed' ? 100 : Math.round(((k.st?.done || []).length / 5) * 100); };
+
+const ICO = {
+  self: '<svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6.5L4.8 18.2A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.8L14 9.5V3"/><path d="M7.5 15h9"/></svg>',
+  teach: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>',
+  book: '<svg viewBox="0 0 24 24"><path d="M2 5.5C4.5 4 8 4 12 6c4-2 7.5-2 10-.5V19c-2.5-1.5-6-1.5-10 .5-4-2-7.5-2-10-.5z"/><path d="M12 6v13.5"/></svg>',
+  print: '<svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>',
+  flag: '<svg viewBox="0 0 24 24"><path d="M6 21V4h10l-2 3.5L16 11H8v10z"/></svg>',
+  arrow: '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+};
+
+function labCard(store, l, feature) {
+  const k = stateOf(store, l.id), p = pct(store, l.id);
+  const badge = k.kind === 'passed' ? '<span class="h-badge done">끝냄</span>' : k.kind === 'doing' ? `<span class="h-badge doing">${p}% 진행</span>` : '<span class="h-badge">새 수업</span>';
+  return `<article class="h-lab${feature ? ' feature' : ''}" style="--t:${l.theme}">
+    <a class="h-lab-img" href="${startOf(l.id)}" aria-label="${esc(l.title)} 시작 화면">
+      <img src="${A}thumbs/${l.id}.webp" alt="${esc(l.title)} 3D 실험실 화면" loading="${feature ? 'eager' : 'lazy'}" width="1200" height="675">
+      ${badge}
+    </a>
+    <div class="h-lab-body">
+      <p class="h-kicker">${esc(l.sem.replace('-', '학년 '))}학기 · ${esc(l.unit)}</p>
+      <h3><a href="${startOf(l.id)}">${esc(l.title)}</a></h3>
+      <p class="h-q">“${esc(l.q)}”</p>
+      ${feature ? `<p class="h-exp"><span>오늘의 실험</span>${esc(l.lab)}</p><ul class="h-skills">${l.skills.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+      <div class="h-prog" role="progressbar" aria-label="진행" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}"><i style="width:${p}%"></i></div>
+      <div class="h-lab-go">
+        <a class="h-btn solid" href="#/${l.id}/lab-class/self/1">${ICO.self}${k.kind === 'doing' ? '이어서 공부' : '스스로 공부'}</a>
+        <a class="h-btn" href="#/${l.id}/lab-class/teach/1">${ICO.teach}가르치기</a>
+        <a class="h-btn" href="#/${l.id}/lab-book/student">${ICO.book}교재</a>
+      </div>
+    </div>
+  </article>`;
+}
+
+function roadmap(store, nx) {
+  const grades = [3, 4, 5, 6];
+  return grades.map((g) => `<div class="h-grade">
+    <div class="h-grade-no"><b>${g}</b><span>학년</span></div>
+    <div class="h-sems">${SEMS.filter((s) => s.sem.startsWith(`${g}-`)).map((s) => {
+      const open = s.units.filter((u) => READY[u.id]).length;
+      return `<div class="h-sem">
+        <p class="h-sem-t">${s.sem.split('-')[1]}학기 <small>${open ? `${open}개 열림` : '준비 중'}</small></p>
+        <ol class="h-track" style="--n:${s.units.length}">${s.units.map((u) => {
+          const k = stateOf(store, u.id), isNext = nx && (u.id === nx.id || (READY[nx.id]?.hidden && u.id === 's41-u03' && nx.id === 's41-u03b'));
+          const label = `${s.sem.replace('-', '학년 ')}학기 ${ROMAN[u.no - 1]}. ${u.title}${k.kind === 'passed' ? ', 끝냄' : k.kind === 'locked' ? ', 준비 중' : ''}`;
+          const inner = `<span class="h-dot">${k.kind === 'passed' ? ICO.flag : ROMAN[u.no - 1]}</span><span class="h-name">${esc(u.title)}</span>`;
+          return `<li class="h-stop ${k.kind}${isNext ? ' next' : ''}">${READY[u.id]
+            ? `<a href="${startOf(u.id)}" data-unit="${u.id}" aria-label="${esc(label)}">${inner}</a>`
+            : `<button type="button" aria-label="${esc(label)}">${inner}</button>`}${isNext ? '<span class="h-here">지금 여기</span>' : ''}</li>`;
+        }).join('')}</ol></div>`;
+    }).join('')}</div></div>`).join('');
+}
 
 export function pageHome($app, store, teacher) {
-  const nx = nextUnit(store), nxs = nx && stateOf(store, nx.id);
-  const go = nx || SEMS.flatMap((s) => s.units).find((u) => READY[u.id]);
-  const cta = !nx ? '다시 보기' : nxs.kind === 'doing' ? '이어서 하기' : '탐구 시작하기';
-  $app.innerHTML = `<div class="lab-bg" aria-hidden="true"></div><header class="top"><div class="wrap"><h1>docssam 과학 탐구 랩</h1><a class="intro-link" href="../intro/">교재 소개 ›</a></div></header>
-    <main class="wrap home">
-      <div id="t"></div>
-      ${SEMS.map((s) => {
-        const [g, h] = s.sem.split('-');
-        const pts = s.units.map((u, i) => [XS[i % 4], i * ROW + 56]);
-        const d = pts.map(([x, y], i) => (i ? 'L' : 'M') + x + ' ' + y).join(' ');
-        return `<section class="sem" aria-label="${g}학년 ${h}학기">
-          <h2 class="sem-title">${g}학년 ${h}학기</h2>
-          <div class="path" style="height:${s.units.length * ROW}px">
-            <svg class="road" viewBox="0 0 100 ${s.units.length * ROW}" preserveAspectRatio="none" aria-hidden="true"><path class="edge" d="${d}" /><path class="lane" d="${d}" /><path class="mid" d="${d}" /></svg>
-            ${s.units.map((u, i) => {
-              const k = stateOf(store, u.id), [x, y] = pts[i], isNext = nx && u.id === nx.id;
-              const done = new Set(k.st?.done || []);
-              const body = `<span class="dot">${k.kind === 'passed' ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4h10l-2 3.5L16 11H8v10z"/></svg>' : ROMAN[u.no - 1]}</span>
-                <span class="name">${esc(u.title)}</span>
-                ${READY[u.id] ? `<span class="bars" aria-hidden="true">${['실험', '개념', '확장'].map((b, j) => `<i class="${done.has(j + 1) ? 'on' : ''}" title="${b}"></i>`).join('')}</span>` : '<span class="soon">준비 중</span>'}`;
-              const label = `${g}학년 ${h}학기 ${ROMAN[u.no - 1]}. ${u.title}${k.kind === 'passed' ? ', 끝냄' : k.kind === 'locked' ? ', 준비 중' : ''}`;
-              return `<${READY[u.id] ? `a href="${hrefOf(store, u.id)}"` : 'button type="button"'} class="stop ${k.kind}${isNext ? ' next' : ''}" style="left:${x}%;top:${y}px" aria-label="${esc(label)}">${body}${isNext ? `<img class="guide ${x > 50 ? 'l' : 'r'}" src="../assets/docssam-B4-encourage.webp" alt="">` : ''}</${READY[u.id] ? 'a' : 'button'}>`;
-            }).join('')}
-          </div></section>`;
-      }).join('')}
-      <p class="lead home-foot">정거장을 끝내면 깃발이 꽂혀요. 준비 중인 정거장은 곧 열려요.</p>
+  const nx = nextLab(store), go = nx || LABS[0], gok = stateOf(store, go.id);
+  const passedN = ALL.filter((u) => stateOf(store, u.id).kind === 'passed').length;
+  const openN = ALL.filter((u) => READY[u.id]).length;
+  const cta = !nx ? '다시 보기' : gok.kind === 'doing' ? '이어서 하기' : '첫 수업 시작하기';
+  const feature = go, rest = LABS.filter((l) => l !== feature);
+  $app.innerHTML = `<div class="h">
+    <header class="h-top"><div class="h-wrap">
+      <a class="h-brand" href="#/"><img src="${A}docssam-A1-mouth-closed.webp" alt="" width="28" height="42"><span>docssam <b>과학 탐구 랩</b></span></a>
+      <nav class="h-nav" aria-label="바로 가기"><a href="#h-labs">실험 수업</a><a href="#h-map">로드맵</a><a href="#h-modes">수업 방식</a><a class="h-intro" href="../intro/">교재 소개</a></nav>
+    </div></header>
+
+    <section class="h-hero"><div class="h-wrap h-hero-in">
+      <div class="h-hero-copy">
+        <p class="h-eyebrow">초등 과학 3~6학년 · 교과서 ${ALL.length}개 단원</p>
+        <h1>교과서 단원마다,<br><em>실험 한 장씩.</em></h1>
+        <p class="h-lede">예상하고, 3D 실험실에서 직접 해 보고, 내 말로 정리해요. 이 길을 따라가면 초등 과학이 하나로 이어져요.</p>
+        <div class="h-cta">
+          <a class="h-btn solid big" href="${startOf(go.id)}">${cta} · ${esc(go.title)}${ICO.arrow}</a>
+          <a class="h-btn big ghost" href="#h-map">로드맵 보기</a>
+        </div>
+        <dl class="h-stats">
+          <div><dt>열린 실험 수업</dt><dd>${LABS.length}<small>개</small></dd></div>
+          <div><dt>열린 단원</dt><dd>${openN}<small>/${ALL.length}</small></dd></div>
+          <div><dt>모은 깃발</dt><dd>${passedN}<small>개</small></dd></div>
+        </dl>
+      </div>
+      <div class="h-hero-art" aria-hidden="true">
+        <div class="h-orbit"></div>
+        <figure class="h-shot" style="--t:${feature.theme}"><img src="${A}thumbs/${feature.id}.webp" alt="" width="1200" height="675"><figcaption><small>다음 수업</small>${esc(feature.title)}</figcaption></figure>
+        <img class="h-doc" src="${A}docssam-B4-encourage.webp" alt="" width="360" height="540">
+      </div>
+    </div></section>
+
+    <main>
+      <section class="h-sec" id="h-labs"><div class="h-wrap">
+        <header class="h-sec-head"><p class="h-num">01</p><div><h2>지금 열린 실험 수업</h2><p>실험 교재 한 장이 수업 하나예요. 3D 실험실에서 직접 바꿔 보고, 기록하고, 결론을 써요.</p></div></header>
+        <div class="h-labs">${labCard(store, feature, true)}${rest.map((l) => labCard(store, l, false)).join('')}</div>
+      </div></section>
+
+      <section class="h-sec alt" id="h-map"><div class="h-wrap">
+        <header class="h-sec-head"><p class="h-num">02</p><div><h2>3학년부터 6학년까지, 한 길로</h2><p>정거장 하나가 교과서 단원 하나예요. 파란 정거장은 지금 열려 있고, 끝내면 깃발이 꽂혀요.</p></div></header>
+        <div class="h-legend" aria-hidden="true"><span><i class="open"></i>열림</span><span><i class="passed"></i>끝냄</span><span><i class="locked"></i>준비 중</span></div>
+        <div class="h-map">${roadmap(store, nx)}</div>
+      </div></section>
+
+      <section class="h-sec" id="h-modes"><div class="h-wrap">
+        <header class="h-sec-head"><p class="h-num">03</p><div><h2>한 교재, 네 가지 수업</h2><p>같은 실험 한 장을 집에서도, 교실에서도, 종이로도 써요.</p></div></header>
+        <div class="h-modes">
+          <a class="h-mode" href="#/${go.id}/lab-class/self/1"><span class="h-mode-ico">${ICO.self}</span><b>스스로 공부하기</b><p>독쌤이 한 단계씩 안내해요. 하나를 마치면 다음으로 저절로 넘어가요.</p><span class="h-more">해 보기${ICO.arrow}</span></a>
+          <a class="h-mode" href="#/${go.id}/lab-class/teach/1"><span class="h-mode-ico">${ICO.teach}</span><b>가르치기</b><p>전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요. 두 팀 배틀까지.</p><span class="h-more">수업 화면${ICO.arrow}</span></a>
+          <a class="h-mode" href="#/${go.id}/lab-book/student"><span class="h-mode-ico">${ICO.book}</span><b>살아 있는 교재</b><p>종이 교재를 펼치듯 넘기다가, 실험 그림에서 3D 실험실과 영상이 바로 열려요.</p><span class="h-more">교재 펼치기${ICO.arrow}</span></a>
+          <a class="h-mode" href="#/${go.id}/lab-book/teacher"><span class="h-mode-ico">${ICO.print}</span><b>A4로 인쇄하기</b><p>학생용 교재와 정답·지도 팁이 든 교사용 교재를 A4로 뽑아요.</p><span class="h-more">교사용 교재${ICO.arrow}</span></a>
+        </div>
+      </div></section>
     </main>
-    ${go ? `<div class="bottom"><div class="wrap"><a class="btn primary" href="${hrefOf(store, go.id)}" style="display:flex;align-items:center;justify-content:center;text-decoration:none">${cta} · ${esc(go.title)}</a></div></div>` : ''}
-    <div class="toast" role="status" aria-live="polite" hidden></div>
-    <div class="sheet-bg" hidden></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t" hidden></section>`;
-  const passedN = SEMS.flatMap((s) => s.units).filter((u) => stateOf(store, u.id).kind === 'passed').length;
-  teacher(document.getElementById('t'), [passedN
-    ? { mood: 'praise', text: `깃발을 ${passedN}개 모았어요! 다음 정거장으로 가 볼까요?` }
-    : { mood: 'talk', text: `안녕하세요! 오늘은 ${nx ? nx.title : '과학'} 정거장부터 탐구해요.` }]);
+    <footer class="h-foot"><div class="h-wrap"><p><b>docssam 과학 탐구 랩</b> · 지필드 실험 과학 영재</p><p>정거장을 끝내면 깃발이 꽂혀요. 준비 중인 정거장은 차례로 열려요.</p></div></footer>
+  </div>
+  <div class="toast" role="status" aria-live="polite" hidden></div>
+  <div class="sheet-bg" hidden></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t" hidden></section>`;
+
+  teacher(null, [passedN
+    ? { mood: 'praise', text: `깃발을 ${passedN}개 모았어요! 다음 수업으로 가 볼까요?` }
+    : { mood: 'talk', text: `안녕하세요! 오늘은 ${go.title}부터 탐구해요.` }]);
+
   const $toast = $app.querySelector('.toast'); let tm;
-  $app.querySelectorAll('button.stop').forEach((b) => b.addEventListener('click', () => {
+  $app.querySelectorAll('.h-stop button').forEach((b) => b.addEventListener('click', () => {
     $toast.textContent = '이 정거장은 준비 중이에요. 열리면 알려 줄게요.'; $toast.hidden = false;
     clearTimeout(tm); tm = setTimeout(() => { $toast.hidden = true; }, 2200);
   }));
@@ -66,19 +156,21 @@ export function pageHome($app, store, teacher) {
   const close = () => { $sheet.hidden = $bg.hidden = true; };
   $bg.addEventListener('click', close);
   addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  $app.querySelectorAll('a.stop').forEach((a) => a.addEventListener('click', (e) => {
-    const u = SEMS.flatMap((s) => s.units).find((x) => a.getAttribute('href').startsWith(`#/${x.id}/`)); const r = READY[u.id];
+  $app.querySelectorAll('.h-stop a[data-unit]').forEach((a) => a.addEventListener('click', (e) => {
+    const u = ALL.find((x) => x.id === a.dataset.unit), r = READY[u.id];
     if (!r?.subs) return; e.preventDefault();
-    const k = stateOf(store, u.id), [g, h] = u.id.slice(1, 3).split('');
+    const [g, h] = u.id.slice(1, 3).split('');
+    const labs = r.labs || [{ id: u.id, hero: r.hero }];
     $sheet.innerHTML = `<div class="grab" aria-hidden="true"></div><p class="step-label">${g}학년 ${h}학기 ${ROMAN[u.no - 1]}</p><h2 id="sheet-t">${esc(u.title)}</h2>
-      ${r.lesson === false ? '<p class="lead">5단계 탐구 화면은 준비 중이에요. 소단원 문제부터 풀어 봐요.</p>' : r.labs ? `<div class="labs">${r.labs.map((l) => { const ks = stateOf(store, l.id).kind; return `<a class="btn primary" href="${hrefOf(store, l.id)}"><b>${esc(l.hero)}</b><small>소단원 ${l.covers.map((c) => r.subs.findIndex((x) => x.id === c) + 1).join('·')} · ${ks === 'doing' ? '이어서 하기' : ks === 'passed' ? '다시 보기' : '5단계 탐구 시작'}</small></a>`; }).join('')}</div>` : `<a class="btn primary" href="${hrefOf(store, u.id)}">${k.kind === 'doing' ? '5단계 탐구 이어서 하기' : '5단계 탐구 시작하기'}</a>`}
-      ${(r.labs || [{ id: u.id, hero: r.hero }]).filter((l) => BOOK_UNITS.has(l.id)).map((l) => `<a class="btn book-start" href="#/${l.id}/start"><span class="bs-ico" aria-hidden="true">📘</span>${esc(l.hero)} · 실험 교재와 수업</a>`).join('')}
+      <div class="labs">${labs.map((l) => { const ks = stateOf(store, l.id).kind, meta = LABS.find((x) => x.id === l.id); return `<a class="btn primary" href="${startOf(l.id)}"><b>${esc(meta?.title || l.hero)}</b><small>${l.covers ? `소단원 ${l.covers.map((c) => r.subs.findIndex((x) => x.id === c) + 1).join('·')} · ` : ''}${ks === 'doing' ? '이어서 하기' : ks === 'passed' ? '다시 보기' : '실험 수업 시작'}</small></a>`; }).join('')}</div>
       <h3>소단원</h3><ol class="subs">${r.subs.map((s, i) => `<li><a href="#/${u.id}/sub/${s.id}"><span class="sn">${i + 1}</span><span class="st">${esc(s.name)}</span><span class="sc">유형 ${s.types}</span></a></li>`).join('')}</ol>
       <button type="button" class="btn" data-close>닫기</button>`;
     $sheet.querySelector('[data-close]').addEventListener('click', close);
     $sheet.hidden = $bg.hidden = false; $sheet.querySelector('a').focus();
   }));
-  // 다음 정거장이 화면에 오도록
-  const $n = $app.querySelector('.stop.next');
-  if ($n) requestAnimationFrame(() => $n.scrollIntoView({ block: 'center' }));
+  // 부드러운 이동(메뉴)
+  $app.querySelectorAll('a[href^="#h-"]').forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault(); document.getElementById(a.getAttribute('href').slice(1))?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }));
+  scrollTo(0, 0);
 }
