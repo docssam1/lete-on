@@ -176,9 +176,10 @@ const SCENES = {
     await until(page, () => !!(window.__srTown && document.querySelector('#townVp.is-3d')), null, 120000);
     await L.advance(page, 2500, 100);
     const c0 = await page.evaluate(() => { const c = window.__srTown.debug.cam; return { x:c.x, z:c.z, d:c.d }; });
-    await runScene('mapreveal', page, { dur:6.4, perFrame: t => { const u = L.ease(t / 6.0);
+    /* v4: 높은 하늘에서 천천히 내려온다(원장: "마을을 위에서 내려다보다 내려오며") */
+    await runScene('mapreveal', page, { dur:8.4, perFrame: t => { const u = L.ease(t / 8.0);
       return page.evaluate(o => { const d = window.__srTown.debug; d.cam.x = o.x; d.cam.z = o.z; d.cam.d = o.d; d.placeCam(); },
-        { x:L.lerp(c0.x + 3.0, c0.x, u), z:L.lerp(c0.z + 3.2, c0.z, u), d:L.lerp(c0.d * 0.5, c0.d * 1.02, u) }); } });
+        { x:L.lerp(c0.x, c0.x + 0.6, u), z:L.lerp(c0.z - 2.0, c0.z + 1.4, u), d:L.lerp(c0.d * 2.3, c0.d * 0.95, u) }); } });
     await ctx.close();
   },
 
@@ -313,6 +314,115 @@ const SCENES = {
     await ctx.close();
   },
 
+  /* S9 수학사 퀴즈 — 네 컷 만화의 순서를 맞추는 화면: 컷을 이야기 순서대로 짚는다 */
+  async hist(browser, base){
+    const { ctx, page } = await openApp(browser, base, 'ttHist');
+    await until(page, () => document.querySelectorAll('.nm-hq-panel').length >= 4, null, 60000);
+    await L.advance(page, 600, 100);
+    await page.evaluate(() => { const p = document.querySelector('.nm-hq-panel'); let e = p.parentElement; while(e && !(e.scrollHeight > e.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(e).overflowY))) e = e.parentElement;
+      if(e){ e.style.scrollBehavior = 'auto'; e.scrollTop += p.getBoundingClientRect().top - 300; }
+      document.body.style.transformOrigin = '50% 55%'; document.body.style.transform = 'scale(1.08)'; });
+    await L.advance(page, 300, 100);
+    const cur = mkCursor(); cur.at(1000, 660);
+    /* 이야기 순서: 체스를 만든 현자(2) → 1·2·4·8(3) → 무섭게 커져요(1) → 2^63(0). 화면에서 컷은 무작위일 수 있어 글로 찾는다 */
+    /* 만화는 접속마다 다른 이야기가 나온다(순환소수·두 배 마법 …) — 순서는 화면 순서대로 짚는다(3초 컷이라 정답 여부는 보이지 않는다) */
+    const order = [0, 1, 2, 3];
+    const pos = i => page.evaluate(i => { const e = [...document.querySelectorAll('.nm-hq-panel')].filter(p => p.offsetParent)[i]; const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + Math.min(r.height / 2, 120)]; }, i);
+    const ev = [];
+    order.forEach((i, k) => { const t0 = 0.4 + k * 0.7;
+      ev.push([t0, async t => { const p = await pos(i); if(k === 0) cur.show(t, true); cur.move(t, p[0], p[1], 0.4); }]);
+      ev.push([t0 + 0.45, async t => { cur.tap(t); await page.evaluate(i => { const e = [...document.querySelectorAll('.nm-hq-panel')].filter(p => p.offsetParent)[i]; e && e.click(); }, i); }]); });
+    ev.push([3.45, t => cur.show(t, false, 0.3)]);
+    await runScene('hist', page, { dur:4.2, cursor:cur, events:ev });
+    await ctx.close();
+  },
+
+  /* S9 게임 — C-02 아레나(⚔️, 시간 제한 계산 게임): 문제가 뜨고 숫자판을 두드려 답한다 */
+  async arena(browser, base){
+    const st = Object.assign({}, L.STATE, { progress:{ 'C-02':{ touchedAt:Date.now() } } });
+    const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:st });
+    await L.virtualTime(page);
+    await page.goto(base + '/number_magic/index.html?enter=1');
+    await until(page, () => !!window.NM_AVATAR && !!document.getElementById('ttContinue'), null, 90000);
+    await page.evaluate(() => { const s = JSON.parse(localStorage.getItem('nm_state_v1')); s.character_unlocked = s.character_unlocked || {};
+      (NM_AVATAR.numbers || []).forEach(i => { s.character_unlocked['number_' + i.id] = true; }); (NM_AVATAR.symbols || []).forEach(i => { s.character_unlocked['symbol_' + i.id] = true; });
+      localStorage.setItem('nm_state_v1', JSON.stringify(s)); });
+    await page.reload();
+    await until(page, () => !!window.NM_UNITS && !!document.getElementById('ttContinue'), null, 90000);
+    await L.advance(page, 1000, 100);
+    await page.evaluate(() => document.getElementById('ttContinue').click());
+    await until(page, () => !!document.querySelector('[data-step="arena"]'), null, 60000);
+    await page.evaluate(() => document.querySelector('[data-step="arena"]').click());
+    await until(page, () => [...document.querySelectorAll('#screen button')].some(b => /^[0-9]$/.test(b.textContent.trim())), null, 60000);
+    await L.advance(page, 800, 100);
+    await cursorInit(page);
+    await page.evaluate(() => { document.body.style.transformOrigin = '50% 45%'; document.body.style.transform = 'scale(1.15)'; });
+    /* 화면의 식(a×b×c)을 읽어 답을 계산해 숫자판을 누른다 — 못 읽으면 숫자 하나만 */
+    const ans = await page.evaluate(() => { const m = (document.querySelector('#screen').innerText.match(/(\d+)\s*[×x]\s*(\d+)\s*[×x]\s*(\d+)/) || []); return m.length ? String(+m[1] * +m[2] * +m[3]) : '7'; });
+    const key = ch => page.evaluate(ch => { const b = [...document.querySelectorAll('#screen button')].find(b => b.offsetParent && b.textContent.trim() === ch); if(!b) return null; const r = b.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, ch);
+    const cur = mkCursor(); cur.at(1000, 700);
+    const ev = [];
+    [...ans].forEach((ch, k) => { const t0 = 0.5 + k * 0.5;
+      ev.push([t0, async t => { const p = await key(ch); if(!p) return; if(k === 0) cur.show(t, true); cur.move(t, p[0], p[1], 0.35); }]);
+      ev.push([t0 + 0.38, async t => { cur.tap(t); await page.evaluate(ch => { const b = [...document.querySelectorAll('#screen button')].find(b => b.offsetParent && b.textContent.trim() === ch); b && b.click(); }, ch); }]); });
+    const tEnd = 0.5 + ans.length * 0.5;
+    ev.push([tEnd + 0.1, async t => { const p = await key('✓') || await page.evaluate(() => { const b = [...document.querySelectorAll('#screen button')].find(b => b.offsetParent && /확인|✓|제출/.test(b.textContent)); if(!b) return null; const r = b.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }); if(p) cur.move(t, p[0], p[1], 0.35); }]);
+    ev.push([tEnd + 0.5, async t => { cur.tap(t); await page.evaluate(() => { const b = [...document.querySelectorAll('#screen button')].find(b => b.offsetParent && /^(확인|✓|제출)$/.test(b.textContent.trim())); b && b.click(); }); }]);
+    ev.push([tEnd + 1.0, t => cur.show(t, false, 0.3)]);
+    await runScene('arena', page, { dur:tEnd + 2.0, cursor:cur, events:ev });
+    await ctx.close();
+  },
+
+  /* S10 학습지 모드 ① — 학습지 & 시험 홈 → '연산 로드맵' 카드 → 지금 과정 줄의 '🖨 학습지' */
+  async examroad(browser, base){
+    const { ctx, page } = await openApp(browser, base, 'ttSheet');
+    await until(page, () => document.querySelectorAll('.nm-ex-sec-card').length >= 3, null, 60000);
+    await L.advance(page, 500, 100);
+    const cur = mkCursor(); cur.at(1000, 660);
+    const zoom = k => page.evaluate(k => { document.body.style.transformOrigin = '50% 42%'; document.body.style.transform = `scale(${k})`; }, k);
+    await zoom(1.12);
+    const card = () => page.evaluate(() => { const r = document.querySelectorAll('.nm-ex-sec-card')[2].getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+    const printBtn = () => page.evaluate(() => { const b = [...document.querySelectorAll('.nm-ex-road-print-btn')].find(b => b.offsetParent); if(!b) return null; const r = b.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+    await runScene('examroad', page, { dur:5.0, cursor:cur, events:[
+      [0.2, async t => { const p = await card(); cur.show(t, true); cur.move(t, p[0], p[1] + 8, 0.7); }],
+      [1.0, async t => { cur.tap(t); await page.evaluate(() => document.querySelectorAll('.nm-ex-sec-card')[2].click()); }],
+      [1.5, async () => { await page.evaluate(() => { const row = [...document.querySelectorAll('.nm-ex-road-course-row')].find(r => /지금 여기/.test(r.textContent)); let e = row && row.parentElement; while(e && !(e.scrollHeight > e.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(e).overflowY))) e = e.parentElement;
+        if(row && e){ e.style.scrollBehavior = 'auto'; e.scrollTop += row.getBoundingClientRect().top - 190; } }); }],
+      [1.9, async t => { const p = await printBtn(); if(p) cur.move(t, p[0], p[1] + 4, 0.7); }],
+      [2.75, async t => { cur.tap(t); await page.evaluate(() => { const b = [...document.querySelectorAll('.nm-ex-road-print-btn')].find(b => b.offsetParent); b && b.click(); }); }],
+      [3.3, t => cur.show(t, false, 0.4)],
+    ] });
+    await ctx.close();
+  },
+
+  /* S10 학습지 모드 ② — 더 연습: '유형당 40문항' · '🖨️ 이번 주 학습지 한 장 더'; 더 높은 난이도: '수의 마법 탐험'의 레벨 고르기 */
+  async exammore(browser, base){
+    const { ctx, page } = await openApp(browser, base, 'ttSheet');
+    await until(page, () => document.querySelectorAll('.nm-ex-sec-card').length >= 3, null, 60000);
+    await page.evaluate(() => document.querySelectorAll('.nm-ex-sec-card')[2].click());
+    await until(page, () => !!document.querySelector('#nm-road-thisweek'), null, 60000);
+    await L.advance(page, 500, 100);
+    await page.evaluate(() => { document.body.style.transformOrigin = '50% 30%'; document.body.style.transform = 'scale(1.16)';
+      const st = document.createElement('style'); st.textContent = '.sr-pick{box-shadow:0 0 0 3px rgba(201,164,76,.6)!important}'; document.head.appendChild(st); });
+    const cur = mkCursor(); cur.at(1000, 660);
+    const byText = re => page.evaluate(src => { const re = new RegExp(src); const b = [...document.querySelectorAll('#screen button, #screen select')].find(b => b.offsetParent && re.test(b.textContent)); if(!b) return null; const r = b.getBoundingClientRect(); return [r.left + Math.min(r.width / 2, 120), r.top + r.height / 2]; }, re.source);
+    const clickText = re => page.evaluate(src => { const re = new RegExp(src); const b = [...document.querySelectorAll('#screen button')].find(b => b.offsetParent && re.test(b.textContent)); if(b){ b.click(); b.classList.add('sr-pick'); } }, re.source);
+    await runScene('exammore', page, { dur:6.6, cursor:cur, events:[
+      [0.2, async t => { const p = await byText(/유형당 40문항/); cur.show(t, true); if(p) cur.move(t, p[0], p[1] + 4, 0.7); }],
+      [1.0, async t => { cur.tap(t); await clickText(/유형당 40문항/); }],
+      [1.3, async t => { const p = await byText(/한 장 더/); if(p) cur.move(t, p[0], p[1] + 4, 0.6); }],
+      [2.0, async t => { cur.tap(t); await page.evaluate(() => { const b = document.querySelector('#nm-road-thisweek'); b && b.classList.add('sr-pick'); }); }],
+      [2.6, async t => { const p = await byText(/뒤로/); if(p) cur.move(t, p[0], p[1], 0.4); }],
+      [3.0, async t => { cur.tap(t); await page.evaluate(() => { const b = document.querySelector('#nm-ex-back-road'); b && b.click(); }); }],
+      [3.3, async t => { const p = await page.evaluate(() => { const r = document.querySelectorAll('.nm-ex-sec-card')[1].getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }); cur.move(t, p[0], p[1] + 6, 0.5); }],
+      [3.9, async t => { cur.tap(t); await page.evaluate(() => document.querySelectorAll('.nm-ex-sec-card')[1].click()); }],
+      [4.4, async t => { const p = await byText(/두세 자리|레벨|Level/) || await page.evaluate(() => { const e = document.querySelector('#nm-ex-level'); if(!e) return null; const r = e.getBoundingClientRect(); return [r.left + Math.min(r.width / 2, 120), r.top + r.height / 2]; }); if(p) cur.move(t, p[0], p[1], 0.5); }],
+      [5.0, async t => { cur.tap(t); await page.evaluate(() => { const e = document.querySelector('#nm-ex-level'); if(!e) return; e.selectedIndex = e.options.length - 1; e.dispatchEvent(new Event('change', { bubbles:true })); e.classList.add('sr-pick'); }); }],
+      [5.9, t => cur.show(t, false, 0.4)],
+    ] });
+    await ctx.close();
+  },
+
   /* 3. 스토리 모드 — 팝업 그림책이 펼쳐지고(인트로), 장(章)을 차례로 짚는다 */
   async story(browser, base){
     const { ctx, page } = await openApp(browser, base, 'ttStory');
@@ -383,7 +493,9 @@ const SCENES = {
   /* 창의 연산 — Training Course 칸을 손글씨로 한 칸씩 채운다(stage-creative.html) */
   async creative(browser, base){ await stageScene(browser, base, 'creative', 'stage-creative.html?src=/__sheets/', 12.6); },
   /* 7. 끝 카드 */
-  async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 9.0); },
+  async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 11, 'n12'); },
+  /* S3 — 언어·사고력·연산 세 구슬이 저울대에서 균형을 잡는 카드(stage-pillars.html) */
+  async pillars(browser, base){ await stageScene(browser, base, 'pillars', 'stage-pillars.html', 11, 'n03'); },
 
   /* 독쌤의 철학 — about.html 을 그대로 띄우고, 카메라로 짚으며 핵심 구절에 금빛 형광을 긋는다.
      v4: 두 장면(n02 → philosophy, n03 → philosophy2). 형광·카메라 박자는 그 줄의 길이에 비례(narrDur) — compose.js 가
@@ -495,8 +607,7 @@ async function philoScene(browser, base, name, nid, part){
   await until(page, () => document.readyState === 'complete' && document.fonts.status === 'loaded', null, 60000);
   await L.advance(page, 800, 100);
   /* 줄 길이: 실제 파일이 있으면 그 길이, 없거나 짧으면 원고 글자 수로 어림(한국어 낭독 ≈ 0.15초/자) — 자리표시 목소리로 찍어도 박자가 크게 어긋나지 않게 */
-  const txt = (JSON.parse(fs.readFileSync(path.join(__dirname, 'narration.json'), 'utf8')).lines.find(l => l.id === nid) || {}).text || '';
-  const D = Math.max(narrDur(nid) || 0, txt.replace(/\s/g, '').length * 0.15);
+  const D = lineD(nid);
   await page.evaluate(PHILO_SETUP, [D, part]);
   await runScene(name, page, { dur:0.5 + D + 0.9, perFrame:t => page.evaluate(t => window.__phRender(t), t) });
   await ctx.close();
@@ -529,9 +640,16 @@ function PHILO_SETUP([D, part]){
     conquer:[...wrapText(lead, '수를 정복하기 위한'), ...wrapEl(lead.querySelectorAll('b')[0]), ...wrapText(lead, '의 철학')],
     q1:wrapEl(q('[data-i18n="qLine1"]')),
     q2:wrapEl(q('[data-i18n="qLine2"]')),
+    bad:wrapEl(q('[data-i18n="vsBadBig"]')),
+    good:wrapEl(q('[data-i18n="vsGoodBig"]')),
+    mb2:wrapEl(q('.mathbox .step:nth-child(2)')),
+    note:wrapEl(q('[data-i18n="mbNote"]')),
   };
   const docRect = el => { const r = el.getBoundingClientRect(); return { x:r.left + scrollX, y:r.top + scrollY, w:r.width, h:r.height }; };
-  const T = docRect(q('[data-i18n="ch1Thesis"]')), H = docRect(q('[data-i18n="pH2"]')), Ld = docRect(lead), PH = docRect(q('[data-i18n="phH2"]')), PL = docRect(phLead), PQ = docRect(q('.pullquote')), CT = docRect(q('.cta-body h2'));
+  const T = docRect(q('[data-i18n="ch1Thesis"]')), H = docRect(q('[data-i18n="pH2"]')), Ld = docRect(lead), PH = docRect(q('[data-i18n="phH2"]')), PL = docRect(phLead), PQ = docRect(q('.pullquote')), CT = docRect(q('.cta-body h2')), CMP = docRect(q('.compare'));
+  /* .mathbox 는 폭 100% 블록이고 내용은 왼쪽에 몰려 있다 — 내용(단계·메모)의 합집합에 카메라를 맞춘다 */
+  const MB = (() => { const rs = [...document.querySelectorAll('.mathbox .step, .mathbox .note')].map(docRect); const x0 = Math.min(...rs.map(r => r.x)), y0 = Math.min(...rs.map(r => r.y));
+    return { x:x0, y:y0, w:Math.max(...rs.map(r => r.x + r.w)) - x0, h:Math.max(...rs.map(r => r.y + r.h)) - y0 }; })();
   const W = innerWidth, Hh = innerHeight;
   const a0 = 0.5, at = f => a0 + f * D;
   const ease = t => { t = Math.max(0, Math.min(1, t)); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
@@ -539,17 +657,19 @@ function PHILO_SETUP([D, part]){
     const u = b === a ? 0 : ease((t - a[0]) / (b[0] - a[0])); return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, Math.exp(Math.log(a[3]) + (Math.log(b[3]) - Math.log(a[3])) * u)]; };
   let K, HL, fades = [], glow = null;
   if(part === 1){
-    /* n02: 답을 빨리 구하는 계산 학습이 아닙니다(0–.2) · 연산만/창의 연산만 아닙니다(.2–.42) · 수는 언어입니다(.42–.52) · 단어와 문법만(.52–.72) · 내 마음대로 펼칠 수 있어야(.72–1) */
+    /* n02: 답을 빨리 구하는 계산 학습이 아닙니다(0–.2) · 연산만/창의 연산만 아닙니다(.2–.42, 비교 두 칸) · 수의 정복을 넘어 수학을(.42–.58) · 수를 가지고 놀고, 문장을 이해하고, 셈을(.58–1, 1275 = 999 + 276 예) */
     K = [
       [0.0,     H.x + H.w * 0.52, H.y + H.h * 0.5, 1.75],
       [at(.18), H.x + H.w * 0.56, H.y + H.h * 0.5, 1.82],
-      [at(.405), H.x + H.w * 0.56, H.y + H.h * 0.5, 1.82],
-      [at(.415), PH.x + 330, (PH.y + PL.y + PL.h) / 2 - 10, 1.5],
-      [at(.72), PH.x + 340, (PH.y + PL.y + PL.h) / 2, 1.54],
-      [at(1) + .9, PH.x + 340, (PH.y + PL.y + PL.h) / 2 + 4, 1.58],
+      [at(.205), H.x + H.w * 0.56, H.y + H.h * 0.5, 1.82],
+      [at(.215), CMP.x + CMP.w * 0.5, CMP.y + CMP.h * 0.45, 1.32],
+      [at(.44), CMP.x + CMP.w * 0.5, CMP.y + CMP.h * 0.45, 1.36],
+      [at(.455), CMP.x + CMP.w * 0.5, CMP.y + CMP.h * 0.45, 1.36],
+      [at(.465), MB.x + MB.w * 0.5, MB.y + MB.h * 0.5, 1.5],
+      [at(1) + .9, MB.x + MB.w * 0.5, MB.y + MB.h * 0.5 + 4, 1.56],
     ];
-    HL = [['h2', at(.02), 1.0], ['phH2', at(.44), 0.5], ['grammar', at(.53), 0.8], ['free', at(.74), 0.6], ['many', at(.86), 0.6]];
-    fades = [[at(.37), at(.45)]];
+    HL = [['h2', at(.02), 1.0], ['bad', at(.23), 0.6], ['good', at(.32), 0.6], ['mb2', at(.5), 0.6], ['note', at(.62), 1.3]];
+    fades = [[at(.17), at(.25)], [at(.42), at(.5)]];
   } else {
     /* n03: 내가 다루기 쉬운 수로 펼치고(0–.25) · 생각하는 힘과 문장을 읽는 힘(.25–.55) · 수를 정복해야 수학을 정복(.55–.78) · 이것이 독쌤의 철학(.78–1) */
     K = [
@@ -576,7 +696,12 @@ function PHILO_SETUP([D, part]){
   window.__phRender(0);
 }
 
-/* 지금 쓰는 목소리 폴더(SR_VOICE, 기본 omnivoice)의 내레이션 길이(초) */
+/* 줄 길이: 실제 파일이 있으면 그 길이, 없거나 짧으면 원고 글자 수로 어림(한국어 낭독 ≈ 0.15초/자) — 자리표시 목소리로 찍어도 박자가 크게 어긋나지 않게 */
+function lineD(nid){
+  const txt = (JSON.parse(fs.readFileSync(path.join(__dirname, 'narration.json'), 'utf8')).lines.find(l => l.id === nid) || {}).text || '';
+  return Math.max(narrDur(nid) || 0, txt.replace(/\s/g, '').length * 0.15);
+}
+/* 지금 쓰는 목소리 폴더(SR_VOICE > omnivoice-rec > omnivoice > Leda)의 내레이션 길이(초) */
 function narrDur(n){
   const cands = [process.env.SR_VOICE, 'omnivoice-rec', 'omnivoice', 'ko-KR-Chirp3-HD-Leda'].filter(Boolean).map(v => path.join(__dirname, 'narration', v, n + '.mp3'));
   const f = cands.find(p => fs.existsSync(p)); if(!f) return 0;
@@ -585,8 +710,9 @@ function narrDur(n){
 }
 
 /* 무대 페이지(render(t) 를 가진 정적 페이지)를 한 장씩 */
-async function stageScene(browser, base, name, url, dur){
+async function stageScene(browser, base, name, url, dur, nid){
   const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:null });
+  if(nid){ const D = lineD(nid); url += (url.includes('?') ? '&' : '?') + 'd=' + D.toFixed(2); dur = (nid === 'n12' ? 0.9 : 0.5) + D + 1.4; }
   await page.goto(`${base}/number_magic/scripts/showreel/${url}`);
   await page.waitForFunction(() => window.__ready === true, null, { timeout:60000 });
   const cdp = await page.context().newCDPSession(page);
@@ -603,7 +729,7 @@ async function stageScene(browser, base, name, url, dur){
 
 (async () => {
   const want = process.argv.slice(2).filter(a => !a.startsWith('--'));
-  const all = ['mapreveal', 'diagnose', 'compare', 'creative3', 'title', 'philosophy', 'philosophy2', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
+  const all = ['mapreveal', 'diagnose', 'compare', 'creative3', 'hist', 'arena', 'examroad', 'exammore', 'pillars', 'title', 'philosophy', 'philosophy2', 'village', 'story', 'road', 'pace', 'notify', ...Object.keys(HEROES).map(u => 'hero-' + u), 'sheetsSrc', 'creative', 'sheets', 'end'];
   const list = want.length ? want : all;
   const { server, base } = await L.serve({ '/__sheets/':path.join(OUT, 'sheets-src') });
   const browser = await L.launch();

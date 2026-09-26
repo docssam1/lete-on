@@ -1,83 +1,106 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8">
-<!-- 쇼릴 끝 카드 — 타이틀 로고와 같은 글꼴·색(Fraunces 워드마크 + 먹빛 남색 광택, 금실 장식, Gowun Batang). render(t) 로 한 장씩. -->
+<!-- 쇼릴 끝 카드 v4 (n12): "그냥 던져 주는 학습지가 아닙니다" → 학생·부모님·학원이 금빛 고리로 이어진다("함께 만드는 문화")
+     → Numbers of Magic 워드마크(타이틀과 같은 Fraunces·광택) + 수의 마법 + 캐릭터 + GFIELD. ?d=<내레이션 길이> 로 박자. render(t) 로 한 장씩. -->
 <title>showreel end card</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@500;600;700&display=swap">
 <style>
   :root{--ink:#26304a;--ink2:#5a6380;--gold:#c9a44c}
   html,body{margin:0;height:100%;overflow:hidden}
   body{background:linear-gradient(135deg,#ffffff 0%,#f6f2ff 35%,#eefaf6 70%,#fffaf0 100%);color:var(--ink)}
   .orb{position:fixed;border-radius:50%;filter:blur(60px);opacity:.55}
-  .o1{width:520px;height:520px;left:-120px;top:-160px;background:#d9cffd}
-  .o2{width:560px;height:560px;right:-160px;top:120px;background:#c8f0e6}
-  .o3{width:600px;height:420px;left:320px;bottom:-260px;background:#fde9bf}
-  #dust{position:fixed;inset:0}
-  #dust i{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(201,164,76,.8)}
-  .card{position:fixed;left:0;right:0;top:78px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .o1{width:520px;height:520px;left:-120px;top:-160px;background:#d9cffd}.o2{width:560px;height:560px;right:-160px;top:120px;background:#c8f0e6}.o3{width:600px;height:420px;left:320px;bottom:-260px;background:#fde9bf}
+  #dust{position:fixed;inset:0}#dust i{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(201,164,76,.8)}
+  .ph{position:fixed;inset:0;opacity:0}
+  /* 1막 */
+  .line1{position:absolute;left:0;right:0;top:250px;text-align:center;font-family:"Hahmlet","Gowun Batang",serif;font-weight:600;font-size:52px;letter-spacing:-.01em}
+  .line1 b{color:#8a6a1f;font-weight:700}
+  .line1-en{position:absolute;left:0;right:0;top:330px;text-align:center;font:italic 400 21px 'Fraunces',Georgia,serif;color:var(--ink2)}
+  /* 2막 */
+  .ring{position:absolute;left:50%;top:360px;width:640px;height:640px;margin:-320px 0 0 -320px}
+  .who{position:absolute;top:0;width:190px;height:190px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(246,242,255,.94) 40%,rgba(238,250,246,.94) 75%,rgba(255,250,238,.96));
+    box-shadow:0 22px 50px rgba(30,36,64,.2),0 0 0 2px rgba(201,164,76,.7),0 2px 0 #fff inset;opacity:0}
+  .who svg{width:64px;height:64px;stroke:#26304a;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .who b{font-family:"Hahmlet",serif;font-size:24px;font-weight:600}.who small{font:italic 400 13px 'Fraunces',serif;color:var(--ink2);margin-top:-6px}
+  .cult{position:absolute;left:0;right:0;top:560px;text-align:center;font-family:"Hahmlet",serif;font-weight:600;font-size:34px;opacity:0}
+  .cult-en{position:absolute;left:0;right:0;top:606px;text-align:center;font:italic 400 18px 'Fraunces',serif;color:var(--ink2);opacity:0}
+  /* 3막 */
+  .card{position:fixed;left:0;right:0;top:112px;display:flex;flex-direction:column;align-items:center;text-align:center}
   .word{font-family:"Fraunces",Georgia,serif;font-size:112px;line-height:1.02;font-weight:400;letter-spacing:-.015em;font-optical-sizing:auto;font-variation-settings:"SOFT" 0,"WONK" 0;
     background:linear-gradient(100deg,#26304a 0%,#26304a 36%,#6b5fc4 44%,#3d9a93 50%,#4f7fc9 55%,#26304a 63%,#26304a 100%);background-size:260% 100%;background-position:100% 0;
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding:0 .1em}
   .word .of{font-style:italic;font-size:.8em;margin:0 .1em 0 .12em}
   .orn{display:flex;align-items:center;justify-content:center;gap:14px;width:560px;margin:14px 0 6px;color:var(--gold)}
-  .orn i{flex:1;height:1px;background:linear-gradient(90deg,rgba(201,164,76,0),rgba(201,164,76,.9))}
-  .orn i:last-child{background:linear-gradient(90deg,rgba(201,164,76,.9),rgba(201,164,76,0))}
-  .orn b{width:20px;height:20px}
+  .orn i{flex:1;height:1px;background:linear-gradient(90deg,rgba(201,164,76,0),rgba(201,164,76,.9))}.orn i:last-child{background:linear-gradient(90deg,rgba(201,164,76,.9),rgba(201,164,76,0))}.orn b{width:20px;height:20px}
   .sub{font-family:"Gowun Batang",serif;font-size:26px;letter-spacing:.42em;margin-right:-.42em;color:var(--ink2)}
-  .tag{margin-top:30px;font-family:"Hahmlet","Gowun Batang",serif;font-weight:600;font-size:34px;letter-spacing:-.01em}
-  .tag span{display:inline-block}
-  .small{margin-top:14px;font-family:"Gowun Batang",serif;font-size:17px;letter-spacing:.06em;color:var(--ink2)}
-  .from{margin-top:10px;font-family:"Hahmlet","Gowun Batang",serif;font-size:21px;color:var(--ink);letter-spacing:.02em}
-  .from b{color:#8a6a1f;font-weight:600}
-  .from i{font:italic 400 16px 'Fraunces',Georgia,serif;color:var(--ink2)}
-  .sub{transition:none}
-  .tag-en{margin-top:8px;font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:19px;color:var(--ink2)}
-  .row{position:fixed;left:0;right:0;bottom:96px;display:flex;justify-content:center;align-items:flex-end;gap:26px;height:130px}
-  .row img{height:124px;width:auto;transform-origin:50% 100%;filter:drop-shadow(0 10px 12px rgba(38,48,74,.18))}
-  .row img.sm{height:102px}
-  .foot{position:fixed;left:0;right:0;bottom:34px;display:flex;justify-content:center;align-items:center;gap:16px;color:var(--ink2);font:500 14px/1 "Fraunces",Georgia,serif;letter-spacing:.24em}
-  .foot img{height:44px}
-  .foot span{display:inline-block;width:1px;height:26px;background:rgba(201,164,76,.7)}
+  .tag{margin-top:26px;font-family:"Hahmlet","Gowun Batang",serif;font-weight:600;font-size:30px}
+  .small{margin-top:10px;font-family:"Gowun Batang",serif;font-size:17px;letter-spacing:.06em;color:var(--ink2)}
+  .row{position:fixed;left:0;right:0;bottom:104px;display:flex;justify-content:center;align-items:flex-end;gap:26px;height:130px}
+  .row img{height:124px;width:auto;transform-origin:50% 100%;filter:drop-shadow(0 10px 12px rgba(38,48,74,.18))}.row img.sm{height:102px}
+  .foot{position:fixed;left:0;right:0;bottom:36px;display:flex;justify-content:center}.foot img{height:44px}
 </style></head><body>
-<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
-<div id="dust"></div>
-<div class="card">
-  <div class="word" id="word" lang="en">Numbers<span class="of">of</span>Magic</div>
-  <div class="orn" id="orn"><i></i><b><svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 2.5c.6 5.2 4.3 8.9 9.5 9.5-5.2.6-8.9 4.3-9.5 9.5-.6-5.2-4.3-8.9-9.5-9.5 5.2-.6 8.9-4.3 9.5-9.5z" fill="currentColor"/></svg></b><i></i></div>
-  <div class="sub" id="sub">수의 마법</div>
-  <div class="tag"><span id="tag1">수를 정복해야,</span> <span id="tag2">수학을 정복한다</span></div>
-  <div class="tag-en" id="tagen" lang="en">Master numbers, and you master mathematics</div>
-  <div class="small" id="small">숫자가 마법이 되는 곳 · 유아부터 미적분까지</div>
-  <div class="from" id="from"><b>만 5세부터</b> 시작합니다 · <i>Starting at age 5</i></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div id="dust"></div>
+<div class="ph" id="p1">
+  <div class="line1" id="l1">그냥 <b>던져 주는</b> 학습지가 아닙니다</div>
+  <div class="line1-en" id="l1en">Not worksheets simply handed out</div>
 </div>
-<div class="row" id="row">
-  <img src="../../assets/characters/poco-3.png" class="sm"><img src="../../assets/characters/sym-plus.png" class="sm"><img src="../../assets/characters/kid-boy.png"><img src="../../assets/characters/numi-wizard.png"><img src="../../assets/characters/sym-pi.png" class="sm"><img src="../../assets/characters/momo-8.png" class="sm">
+<div class="ph" id="p2">
+  <div class="ring">
+    <svg id="ringsvg" viewBox="0 0 640 640" width="640" height="640" style="position:absolute;left:0;top:0"><circle id="ringc" cx="320" cy="320" r="236" fill="none" stroke="#c9a44c" stroke-width="2.5" stroke-dasharray="1483" stroke-dashoffset="1483" transform="rotate(-90 320 320)" style="filter:drop-shadow(0 0 8px rgba(245,217,139,.9))"/></svg>
+    <div class="who" id="w0" style="left:225px;top:-10px"><svg viewBox="0 0 64 64"><circle cx="32" cy="22" r="10"/><path d="M14 54c2-11 9-16 18-16s16 5 18 16"/><path d="M22 14l10-6 10 6"/></svg><b>학생</b><small>Student</small></div>
+    <div class="who" id="w1" style="left:12px;top:300px"><svg viewBox="0 0 64 64"><circle cx="22" cy="20" r="8"/><circle cx="42" cy="24" r="6.5"/><path d="M6 54c1-10 7-15 16-15 4 0 7 1 9 3"/><path d="M30 54c1-9 5-13 12-13s11 4 12 13"/></svg><b>부모님</b><small>Parents</small></div>
+    <div class="who" id="w2" style="left:438px;top:300px"><svg viewBox="0 0 64 64"><path d="M8 54V26l24-14 24 14v28"/><path d="M4 54h56"/><rect x="26" y="38" width="12" height="16"/><path d="M14 34h8v8h-8zM42 34h8v8h-8z"/><path d="M32 6v6"/></svg><b>학원</b><small>Academy</small></div>
+  </div>
+  <div class="cult" id="cult">함께 만드는 <span style="color:#8a6a1f">문화</span></div>
+  <div class="cult-en" id="culten">A culture built together</div>
 </div>
-<div class="foot" id="foot"><img src="../../assets/gfield-logo.svg" alt="GFIELD"></div>
+<div class="ph" id="p3">
+  <div class="card">
+    <div class="word" id="word" lang="en">Numbers<span class="of">of</span>Magic</div>
+    <div class="orn" id="orn"><i></i><b><svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 2.5c.6 5.2 4.3 8.9 9.5 9.5-5.2.6-8.9 4.3-9.5 9.5-.6-5.2-4.3-8.9-9.5-9.5 5.2-.6 8.9-4.3 9.5-9.5z" fill="currentColor"/></svg></b><i></i></div>
+    <div class="sub" id="sub">수의 마법</div>
+    <div class="tag" id="tag">수를 정복해야, 수학을 정복한다</div>
+    <div class="small" id="small">만 5세부터 · 학생 · 부모님 · 학원이 함께</div>
+  </div>
+  <div class="row" id="row">
+    <img src="../../assets/characters/poco-3.png" class="sm"><img src="../../assets/characters/sym-plus.png" class="sm"><img src="../../assets/characters/kid-boy.png"><img src="../../assets/characters/numi-wizard.png"><img src="../../assets/characters/sym-pi.png" class="sm"><img src="../../assets/characters/momo-8.png" class="sm">
+  </div>
+  <div class="foot" id="foot"><img src="../../assets/gfield-logo.svg" alt="GFIELD"></div>
+</div>
 <script>
 const $ = id => document.getElementById(id);
 const cl = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const ease = t => { t = cl(t); return 1 - Math.pow(1 - t, 3); };
 const back = t => { t = cl(t); const c = 1.6; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
-/* 금가루 — 고정 씨앗 */
+const D = +(new URLSearchParams(location.search).get('d') || 9.3);
+/* 내레이션: 그냥 던져 주는 학습지가 아닙니다(0–.25) · 학생과 부모님과 학원이 함께 문화를(.25–.6) · 독쌤의 철학, 넘버스 오브 매직에서(.6–1) */
+const A0 = 0.9, at = f => A0 + f * D;
+const P2 = at(.27), P3 = at(.64);
 let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
-const dust = Array.from({ length:46 }, () => { const i = document.createElement('i'); $('dust').appendChild(i);
-  return { el:i, x:rnd() * 1280, y:rnd() * 720, v:6 + rnd() * 14, ph:rnd() * 6.28, sz:.5 + rnd() * .9 }; });
-const rise = (el, t0, d = .9, dy = 18) => { const u = ease((T - t0) / d); el.style.opacity = u; el.style.transform = `translateY(${(1 - u) * dy}px)`; };
-let T = 0;
+const dust = Array.from({ length:46 }, () => { const i = document.createElement('i'); $('dust').appendChild(i); return { el:i, x:rnd() * 1280, y:rnd() * 720, v:6 + rnd() * 14, ph:rnd() * 6.28, sz:.5 + rnd() * .9 }; });
+const rise = (el, t, t0, d = .9, dy = 18) => { const u = ease((t - t0) / d); el.style.opacity = u; el.style.transform = `translateY(${(1 - u) * dy}px)`; };
 window.render = t => {
-  T = t;
-  dust.forEach(d => { const y = (d.y - d.v * t + 720) % 720; d.el.style.transform = `translate(${d.x + Math.sin(t * .8 + d.ph) * 8}px,${y}px) scale(${d.sz})`;
-    d.el.style.opacity = cl(t / 1.2) * (.35 + .45 * (.5 + .5 * Math.sin(t * 2.2 + d.ph))); });
-  rise($('word'), .3, 1.1, 26);
-  $('word').style.backgroundPosition = `${100 - 100 * ease((t - 1.3) / 2.2)}% 0`;
-  const o = ease((t - 1.0) / 1.0); $('orn').style.opacity = o; $('orn').style.width = (140 + 420 * o) + 'px';
-  rise($('sub'), 1.1, .9, 10);
-  /* 내레이션(n11, +0.9초): "수를 정복해야," 0.9 · "수학을 정복합니다." 2.1 · "수의 마법." 4.3 */
-  rise($('tag1'), 0.95, .8, 14); rise($('tag2'), 2.1, .8, 14); rise($('tagen'), 2.7, .9, 10); rise($('small'), 3.1, .9, 8); rise($('from'), 3.9, .8, 12);
-  const g = Math.max(0, 1 - Math.abs(t - 4.7) / 0.9); $('sub').style.textShadow = `0 0 ${18 * g}px rgba(201,164,76,${.9 * g})`; $('sub').style.color = g > .01 ? `rgb(${Math.round(90 + (138 - 90) * g)},${Math.round(99 + (106 - 99) * g)},${Math.round(128 + (31 - 128) * g)})` : '';
-  [...$('row').children].forEach((im, i) => { const t0 = 3.2 + [2, 1, 0, 0.5, 1.5, 2.5][i] * .16; const u = back((t - t0) / .7);
+  dust.forEach(d => { const y = (d.y - d.v * t + 720) % 720; d.el.style.transform = `translate(${d.x + Math.sin(t * .8 + d.ph) * 8}px,${y}px) scale(${d.sz})`; d.el.style.opacity = cl(t / 1.2) * (.35 + .45 * (.5 + .5 * Math.sin(t * 2.2 + d.ph))); });
+  /* 1막 */
+  $('p1').style.opacity = cl((t - 0.3) / 0.5) * (1 - cl((t - P2 + 0.5) / 0.45));
+  rise($('l1'), t, 0.5, .9, 22); rise($('l1en'), t, 1.0, .9, 12);
+  /* 2막 */
+  $('p2').style.opacity = cl((t - P2) / 0.45) * (1 - cl((t - P3 + 0.5) / 0.45));
+  ['w0', 'w1', 'w2'].forEach((id, i) => { const t0 = P2 + 0.1 + i * 0.28, u = back((t - t0) / 0.6); const e = $(id); e.style.opacity = cl((t - t0) / 0.25); e.style.transform = `scale(${.5 + .5 * u})`; });
+  $('ringc').setAttribute('stroke-dashoffset', String(1483 * (1 - ease((t - P2 - 0.9) / 1.3))));
+  rise($('cult'), t, P2 + 1.6, .9, 16); rise($('culten'), t, P2 + 1.9, .9, 10);
+  /* 3막 */
+  const T = t - P3;
+  $('p3').style.opacity = cl(T / 0.4);
+  rise($('word'), t, P3 + .2, 1.0, 26);
+  $('word').style.backgroundPosition = `${100 - 100 * ease((T - 1.0) / 2.2)}% 0`;
+  const o = ease((T - 0.8) / 1.0); $('orn').style.opacity = o; $('orn').style.width = (140 + 420 * o) + 'px';
+  rise($('sub'), t, P3 + 1.0, .9, 10); rise($('tag'), t, P3 + 1.5, .8, 14); rise($('small'), t, P3 + 2.0, .8, 8);
+  const g = Math.max(0, 1 - Math.abs(T - 1.6) / 0.9); $('sub').style.textShadow = `0 0 ${18 * g}px rgba(201,164,76,${.9 * g})`;
+  [...$('row').children].forEach((im, i) => { const t0 = P3 + 1.9 + [2, 1, 0, 0.5, 1.5, 2.5][i] * .14; const u = back((t - t0) / .7);
     im.style.opacity = cl((t - t0) / .25); im.style.transform = `translateY(${(1 - u) * 60 + Math.sin(t * 2.1 + i) * 3 * cl(t - t0 - .7)}px) scale(${.6 + .4 * u})`; });
-  rise($('foot'), 4.8, 1.0, 8);
+  rise($('foot'), t, P3 + 3.0, 1.0, 8);
 };
 document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode().catch(() => {})))).then(() => { window.render(0); window.__ready = true; });
 </script></body></html>

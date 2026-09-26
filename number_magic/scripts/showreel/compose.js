@@ -40,24 +40,28 @@ const HAS_COMPARE = fs.existsSync(path.join(OUT, 'seg-compare.mp4'));
 
 /* 토막: seg(파일 seg-<이름>.mp4 또는 file), in/out(초), xf(이 토막으로 들어오는 전환 종류·길이).
    n 이 있는 토막 = 묶음의 시작(뒤따르는 토막 중 n 없는 것까지 한 묶음). cap = 자막(묶음 전체에 걸친다). */
+/* v4 최종(원장 shot list, 3막): 왜(철학) → 어떻게(가족의 여정) → 함께(문화). n09→n10 은 문장이 이어져 숨 0 */
 const PLAN = [
   { seg:'introvid', file:INTRO, in:0.9, out:9.6, audio:true },
-  { seg:'mapreveal', in:0.0, out:5.6, n:'n01', at:0.35, xf:['fade', 0.9], min:4.2, pos:'bl' },
-  { seg:'philosophy', in:0.0, n:'n02', at:0.5, xf:['fadewhite', 0.45], stretch:true, pos:'br', from:0.06 },
-  { seg:'philosophy2', in:0.0, n:'n03', at:0.5, xf:['fade', 0.4], stretch:true, pos:'br', from:0.72 },
+  { seg:'mapreveal', in:0.0, n:'n01', at:0.35, xf:['fade', 0.9], min:5.0, pos:'bl' },
+  { seg:'philosophy', in:0.0, n:'n02', at:0.5, xf:['fadewhite', 0.45], stretch:true, pos:'br', from:0.05 },
+  { seg:'pillars', in:0.0, n:'n03', at:0.5, xf:['fadewhite', 0.5], stretch:true, pos:'bl', from:0.42 },
   { seg:'diagnose', in:0.0, out:3.6, n:'n04', at:0.35, xf:['slideup', 0.4], pos:'br' },
-  { seg:'compare', in:0.0, xf:['fade', 0.35], min:9.0 },
+  { seg:'compare', in:0.0, xf:['fade', 0.35], min:9.5 },
   { seg:'road', in:5.5, out:9.4, n:'n05', at:0.3, xf:['smoothright', 0.4], pos:'br' },
   { seg:'pace', in:0.6, xf:['fade', 0.35], min:4.0 },
   { seg:'village', in:0.9, n:'n06', at:0.35, xf:['circleopen', 0.45], min:4.6, pos:'bl' },
   { seg:'story', in:0.4, n:'n07', at:0.35, xf:['smoothleft', 0.4], min:4.8, pos:'bl' },
   { seg:'creative3', in:0.1, n:'n08', at:0.3, xf:['circleopen', 0.45], min:7.2, pos:'br' },
-  { seg:'hero-M-19', in:0.3, out:3.0, n:'n09', at:0.3, xf:['fadewhite', 0.4], breath:0.0, pos:'tl' },
-  { seg:'hero-M-80', in:0.3, xf:['smoothleft', 0.35], min:2.0 },
-  { seg:'creative', in:2.2, out:5.2, n:'n10', at:0.15, xf:['smoothleft', 0.3], pos:'br' },
-  { seg:'sheets', in:4.4, xf:['fade', 0.4], min:2.4 },
+  { seg:'hero-M-19', in:0.3, out:3.4, n:'n09', at:0.3, xf:['fadewhite', 0.4], breath:0.0, pos:'tl' },
+  { seg:'hist', in:0.2, out:3.6, xf:['smoothleft', 0.35] },
+  { seg:'arena', in:0.2, xf:['smoothleft', 0.35], min:1.8 },
+  { seg:'examroad', in:0.0, out:4.2, n:'n10', at:0.15, xf:['smoothleft', 0.3], pos:'br' },
+  { seg:'creative', in:2.2, out:5.2, xf:['fadewhite', 0.35] },
+  { seg:'sheets', in:4.4, out:6.8, xf:['fade', 0.35] },
+  { seg:'exammore', in:0.0, xf:['slideup', 0.4], min:4.5 },
   { seg:'notify', in:0.5, n:'n11', at:0.3, xf:['slideleft', 0.4], min:4.8, pos:'bl' },
-  { seg:'end', in:0.0, n:'n12', at:0.9, xf:['fadewhite', 0.6], min:6.2 },
+  { seg:'end', in:0.0, n:'n12', at:0.9, xf:['fadewhite', 0.6], stretch:true, min:8.0 },
 ];
 
 function probe(f){
@@ -182,7 +186,7 @@ function normalize(inp, out){
     const bedStart = introSeg.start + introSeg.d - 0.8;
     const starts = [introSeg.start + introSeg.d - 0.6, ...groups.slice(2).map(g => g[0].start)];
     execFileSync('python3', [path.join(__dirname, 'ambient-bed.py'), bed, total.toFixed(3), starts.map(v => v.toFixed(3)).join(','),
-      lines.map(l => `${l.a.toFixed(2)}-${(l.a + l.d).toFixed(2)}`).join(','), groups.slice(1).map(g => g[0].start.toFixed(3)).join(','), 'v3', bedStart.toFixed(2)], { stdio:'inherit' });
+      lines.map(l => `${l.a.toFixed(2)}-${(l.a + l.d).toFixed(2)}`).join(','), groups.slice(1).map(g => g[0].start.toFixed(3)).join(','), 'v4', bedStart.toFixed(2)], { stdio:'inherit' });
     const bI = +measure(bed).input_i;
     const gain = (vI - 14) - bI;
     console.log(`  음량: 목소리 ${vI} · 인트로 ${iI}(→${introGain.toFixed(1)}dB) · 배경 ${bI} LUFS → 배경 ${gain.toFixed(1)} dB (목소리 −14)`);
@@ -209,7 +213,7 @@ function normalize(inp, out){
 
   /* 7. 10초 미리보기(소리 포함) */
   const pick = (s, o) => { const x = segs.find(y => y.seg === s); return x.start + Math.min(o, x.d - 1); };
-  const picks = [pick('introvid', 5.5), pick('mapreveal', 1.2), pick('philosophy', 3.0), pick('philosophy2', 4.0), pick('compare', 8.6), pick('pace', 1.0), pick('village', 2.6), pick('creative3', 5.4), pick('hero-M-19', 0.6), pick('notify', 4.4)];
+  const picks = [pick('introvid', 5.5), pick('mapreveal', 2.0), pick('philosophy', 3.0), pick('pillars', 6.5), pick('compare', 8.6), pick('village', 2.6), pick('creative3', 5.4), pick('hist', 1.8), pick('examroad', 2.2), pick('end', 3.4)];
   { const fl = [], ins = [];
     picks.forEach((p, i) => { fl.push(`[0:v]trim=start=${p.toFixed(2)}:duration=1,setpts=PTS-STARTPTS,scale=960:540:flags=lanczos[v${i}]`);
       fl.push(`[0:a]atrim=start=${p.toFixed(2)}:duration=1,asetpts=PTS-STARTPTS,afade=t=in:d=0.04,afade=t=out:st=0.94:d=0.06[a${i}]`); ins.push(`[v${i}][a${i}]`); });

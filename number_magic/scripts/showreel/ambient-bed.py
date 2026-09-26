@@ -16,7 +16,8 @@ starts = [float(x) for x in sys.argv[3].split(',') if x]
 voice = [tuple(map(float, v.split('-'))) for v in sys.argv[4].split(',') if v] if len(sys.argv) > 4 else []
 # v3: 장면 전환 '휙'(걸러진 잡음 스윕) 시각들 + 활기 모드(8분음표 첼레스타 아르페지오, 낮은 박동)
 whoosh = [float(x) for x in sys.argv[5].split(',') if x] if len(sys.argv) > 5 else []
-LIVELY = len(sys.argv) > 6 and sys.argv[6] == 'v3'
+LIVELY = len(sys.argv) > 6 and sys.argv[6] in ('v3', 'v4')
+SWELL = len(sys.argv) > 6 and sys.argv[6] == 'v4'   # 마지막 장면(엔딩 카드)에서 살짝 부풀었다가 D 장조로 맺는다
 BED_START = float(sys.argv[7]) if len(sys.argv) > 7 else 0.0   # 이 시각 전(인트로 영상 자체 소리)은 비운다
 n = int(total * SR)
 t = np.arange(n) / SR
@@ -54,6 +55,18 @@ for i, s0 in enumerate(starts):
         seg += 0.18 * amp * lfo * np.sin(2 * np.pi * 2 * f * tt)  # 옅은 옥타브
     pad[ia:ib] += seg * env
 pad /= np.max(np.abs(pad)) + 1e-9
+if SWELL and len(starts):
+    s_last = starts[-1]
+    ramp = np.clip((t - s_last) / 2.5, 0, 1); ramp = ramp * ramp * (3 - 2 * ramp)
+    pad *= 1 + 0.7 * ramp
+    # 맺음 화음(D 장조, 마지막 2.5초에서 조용히 떠오른다)
+    ia = int(max(0, total - 3.2) * SR); q = np.arange(n - ia) / SR
+    env = np.clip(q / 1.6, 0, 1) ** 2
+    fin = np.zeros(n - ia)
+    for k, m in enumerate([50, 57, 62, 66, 69, 74]):
+        fin += (0.9 / (1 + 0.3 * k)) * np.sin(2 * np.pi * hz(m) * q)
+    pad[ia:] += 0.35 * fin / (np.max(np.abs(fin)) + 1e-9) * env
+    pad /= np.max(np.abs(pad)) + 1e-9
 
 # 목소리 구간에서 패드를 더 낮춘다
 duck = np.ones(n)
