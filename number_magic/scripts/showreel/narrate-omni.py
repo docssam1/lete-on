@@ -24,7 +24,7 @@ def main():
         # v4: 원장이 보낸 원본 녹음을 참조로. 전사를 모르면 None → OmniVoice 가 스스로 받아쓴다
         ref_wav = os.path.join(HERE, omni["refAudio"])
         ref_text = omni.get("refText")
-        print(f"참조: {ref_wav} · 전사 {'자동' if not ref_text else ref_text}", flush=True)
+        print(f"참조: {ref_wav} · 전사 {'자동(아래에 찍음)' if not ref_text else ref_text}", flush=True)
     elif omni.get("refText"):
         # 참조 줄을 대본에서 지정(v3: 더 활기찬 누미 대사) — tts-map 에 있는 그 문장의 실제 음성을 받는다
         import urllib.request, librosa, soundfile as sf0
@@ -43,23 +43,45 @@ def main():
         if "ko" not in refs:
             sys.exit("한국어 참조 음성을 만들지 못했습니다")
         ref_wav, ref_text = refs["ko"]
-    json.dump({"ref_text": ref_text or "(자동 전사)", "ref_voice": ("원장 녹음 " + omni["refAudio"]) if omni.get("refAudio") else ovclone.VOICE_OF.get("ko")}, open(os.path.join(out, "_ref.json"), "w", encoding="utf-8"), ensure_ascii=False)
 
-    import torch, soundfile as sf
+    import re, torch, soundfile as sf
     from omnivoice import OmniVoice
     dev = "cuda:0" if torch.cuda.is_available() else "cpu"
     dtype = torch.float16 if dev.startswith("cuda") else torch.float32
     t0 = time.time()
     model = OmniVoice.from_pretrained("k2-fsa/OmniVoice", device_map=dev, dtype=dtype)
     print(f"모델 준비 {time.time()-t0:.0f}초 · {dev}", flush=True)
+    if not ref_text:
+        # 전사를 모르면 직접 받아써서 **찍고 저장한다** — 자동 전사가 틀리면 문장 끝에 참조의 남은 말이 붙는다
+        # (2026-09-26 원장: "문장 끝나고 '하넸다' 이런 것처럼 말을 반복해")
+        model.load_asr_model()
+        ref_text = model._asr_pipe(ref_wav, generate_kwargs={"language": "korean"})["text"].strip()
+        print(f"참조 전사: {ref_text}", flush=True)
+    json.dump({"ref_text": ref_text, "ref_voice": ("원장 녹음 " + omni["refAudio"]) if omni.get("refAudio") else ovclone.VOICE_OF.get("ko")},
+              open(os.path.join(out, "_ref.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    # 꼬리 검사: 음절 수로 기대 길이를 잡고, 1.25배를 넘으면 기대 길이로 고정해 다시 만든다
+    def expected(text):
+        syl = len(re.findall(r"[가-힣0-9]", text))
+        pauses = len(re.findall(r"[,.!?]", text))
+        return syl / 5.6 + 0.25 * pauses
+    report = []
     for line in cfg["lines"]:
         t = time.time()
+        exp = expected(line["text"])
         y = model.generate(text=line["text"], language="ko", ref_audio=ref_wav, ref_text=ref_text,
                            speed=omni.get("speed"))[0]
+        secs = len(y) / 24000.0
+        fixed = False
+        if secs > exp * 1.25:
+            y = model.generate(text=line["text"], language="ko", ref_audio=ref_wav, ref_text=ref_text,
+                               duration=round(exp * 1.08, 2))[0]
+            fixed = True
+            secs = len(y) / 24000.0
         f = os.path.join(out, line["id"] + ".wav")
         sf.write(f, y, 24000)
-        secs = len(y) / 24000.0
-        print(f"  ✓ {line['id']} {secs:.1f}초 / {time.time()-t:.0f}초 걸림", flush=True)
+        report.append({"id": line["id"], "sec": round(secs, 2), "expected": round(exp, 2), "fixedLength": fixed})
+        print(f"  ✓ {line['id']} {secs:.1f}초 (기대 {exp:.1f}초){' · 길이 고정해 다시 만듦' if fixed else ''} / {time.time()-t:.0f}초 걸림", flush=True)
+    json.dump(report, open(os.path.join(out, "_lengths.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 if __name__ == "__main__":
     main()

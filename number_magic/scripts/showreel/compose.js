@@ -48,7 +48,7 @@ const PLANS = {
     { seg:'introvid', file:INTRO, in:0.9, out:9.6, audio:true },
     { seg:'mapreveal', in:0.0, n:'n01', at:0.35, xf:['fade', 0.9], min:5.0, pos:'bl' },
     { seg:'philosophy', in:0.0, n:'n02', at:0.5, xf:['fadewhite', 0.45], stretch:true, pos:'br', from:0.05 },
-    { seg:'pillars', in:0.0, n:'n03', at:0.5, xf:['fadewhite', 0.5], stretch:true, pos:'bl', from:0.42 },
+    { seg:'pillars', in:0.0, n:'n03', at:0.5, xf:['fadewhite', 0.5], stretch:true, pos:'bl', from:0.40, until:0.71 },   /* .74 에 '수를 정복하고…' 가 그 자리에 뜬다 */
     { seg:'diagnose', in:0.0, out:3.6, n:'n04', at:0.35, xf:['slideup', 0.4], pos:'br' },
     { seg:'compare', in:0.0, xf:['fade', 0.35], min:9.5, foot:true },
     { seg:'road', in:5.5, out:9.4, n:'n05', at:0.3, xf:['smoothright', 0.4], pos:'br' },
@@ -68,15 +68,16 @@ const PLANS = {
   ],
   60:[
     { seg:'compare', in:7.4, out:10.7, hook:HOOK, foot:true },
-    { seg:'philosophy', in:0.0, n:'n02', at:0.4, sent:2, xf:['fadewhite', 0.45], stretch:true, pos:'br', from:0.05 },
-    /* 60초 안에 들려면 n04 는 첫 문장("그 첫걸음은 진단입니다.")까지만 — 나머지는 훅과 카드가 그림으로 말한다 */
+    /* n02 는 통째로(13초) — 두 번째 문장 끝의 쉼이 쉼표 쉼과 구별되지 않아 자르지 않는다. 대신 그림만 있는 토막을 줄여 60초 언저리에 맞춘다 */
+    { seg:'philosophy', in:0.0, n:'n02', at:0.4, xf:['fadewhite', 0.45], stretch:true, pos:'br', from:0.05 },
+    /* n04 는 첫 문장("그 첫걸음은 진단입니다.")까지만 — 나머지는 훅과 카드가 그림으로 말한다 */
     { seg:'diagnose', in:0.0, out:3.6, n:'n04', at:0.35, sent:1, xf:['slideup', 0.4], pos:'br' },
-    { seg:'compare', in:0.0, xf:['fade', 0.35], min:8.6, foot:true },
+    { seg:'compare', in:0.0, xf:['fade', 0.35], min:7.4, foot:true },
     { seg:'creative3', in:0.1, n:'n08', at:0.3, xf:['circleopen', 0.45], min:7.2, pos:'br' },
-    { seg:'examroad', in:0.0, out:4.2, n:'n10', at:0.15, xf:['smoothleft', 0.3], pos:'br' },
+    { seg:'examroad', in:0.0, out:3.7, n:'n10', at:0.15, xf:['smoothleft', 0.3], pos:'br' },
     { seg:'creative', in:2.2, out:5.2, xf:['fadewhite', 0.35] },
-    { seg:'sheets', in:4.4, out:6.8, xf:['fade', 0.35] },
-    { seg:'exammore', in:0.0, xf:['slideup', 0.4], min:4.5 },
+    { seg:'sheets', in:4.4, out:6.4, xf:['fade', 0.35] },
+    { seg:'exammore', in:0.0, xf:['slideup', 0.4], min:3.9 },
     { seg:'end', in:0.0, n:'n12', at:0.9, xf:['fadewhite', 0.6], stretch:true, min:8.0 },
   ],
   vert:[
@@ -104,14 +105,16 @@ function normalize(inp, out, I = -16){
     '-ac', '2', '-c:a', 'aac', '-b:a', '192k', out]);
   return measure(out).input_i;
 }
-/* k번째 문장의 끝(초) — 무음 틈(≥0.18초) 중 원고상 문장 비율에 가장 가까운 것. 틈의 시작 + 0.1 에서 자른다 */
+/* k번째 문장의 끝(초) — 무음 틈(≥0.25초, 이 녹음에서 문장 끝 쉼은 0.29초 이상·쉼표는 대개 0.24 이하) 중
+   '앞 k문장의 글자 비율 × 길이' 에 가장 가까운 것. 틈의 시작 + 0.1 에서 자른다. 낱말 중간은 절대 아니다 */
 function sentenceCut(file, text, k, dur){
-  const nS = (text.match(/[.!?]/g) || []).length || 1;
-  const p = spawnSync(FF, ['-hide_banner', '-i', file, '-af', 'silencedetect=n=-35dB:d=0.18', '-f', 'null', '-'], { encoding:'utf8' });
+  const ss = text.split(/(?<=[.!?])\s*/).filter(Boolean); if(k >= ss.length) return null;
+  const chars = ss.map(x => x.replace(/\s/g, '').length), tot = chars.reduce((a, b) => a + b, 0);
+  const target = dur * chars.slice(0, k).reduce((a, b) => a + b, 0) / tot;
+  const p = spawnSync(FF, ['-hide_banner', '-i', file, '-af', 'silencedetect=n=-35dB:d=0.15', '-f', 'null', '-'], { encoding:'utf8' });
   const gaps = []; let st = null;
-  for(const m of String(p.stderr).matchAll(/silence_(start|end): ([\d.]+)/g)){ if(m[1] === 'start') st = +m[2]; else if(st != null){ if(st > 0.3 && +m[2] < dur - 0.2) gaps.push({ s:st, e:+m[2] }); st = null; } }
+  for(const m of String(p.stderr).matchAll(/silence_(start|end): ([\d.]+)/g)){ if(m[1] === 'start') st = +m[2]; else if(st != null){ if(st > 0.3 && +m[2] < dur - 0.2 && +m[2] - st >= 0.25) gaps.push({ s:st, e:+m[2] }); st = null; } }
   if(!gaps.length) return null;
-  const target = dur * k / nS;
   const g = gaps.reduce((a, b) => Math.abs(b.s - target) < Math.abs(a.s - target) ? b : a);
   return Math.min(dur, g.s + 0.1);
 }
@@ -170,7 +173,8 @@ function sentenceCut(file, text, k, dur){
       const line = x.n && NAR.lines.find(l => l.id === x.n);
       const capTxt = (line && line.cap) || x.cap;
       if(capTxt){ k++; const c = Object.assign({ n:String(k).padStart(2, '0'), kind:'cap' }, capTxt);
-        c.a = x.start + (x.from != null ? (x.from < 1 && x.nd ? x.at + x.from * x.nd : x.from) : x.xfd + 0.1); c.b = gEnd(x) - 0.35;
+        c.a = x.start + (x.from != null ? (x.from < 1 && x.nd ? x.at + x.from * x.nd : x.from) : x.xfd + 0.1);
+        c.b = x.until != null && x.nd ? x.start + x.at + x.until * x.nd : (x.n ? gEnd(x) : x.start + x.d) - 0.35;   /* until: 내레이션 비율로 일찍 거둔다. 줄 없는 토막의 자막은 그 토막까지만 */
         await shoot(c, { ko:c.ko, en:c.en, n:c.n, pos:x.pos || 'bl' }); }
       if(x.hook){ const c = Object.assign({ n:'', kind:'hook' }, x.hook); c.a = x.start + 0.25; c.b = x.start + x.d - 0.25;
         await shoot(c, { hook:'1', ko:c.ko, en:c.en }); }

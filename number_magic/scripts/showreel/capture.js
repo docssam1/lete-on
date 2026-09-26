@@ -9,12 +9,16 @@
      node scripts/showreel/capture.js --out=/tmp/reel       # 출력 폴더(기본 OS 임시/nm-showreel)
      SR_FPS=10 node scripts/showreel/capture.js road        # 동선만 빨리 확인(10fps)
 
-   장면(v2 순서): title · philosophy(about.html) · village · story · road · pace · notify · hero-M-14/19/80 · sheetsSrc → creative · sheets · end
-   다 찍은 뒤: node scripts/showreel/compose.js --out=<같은 폴더> [--voice=omnivoice|ko-KR-Chirp3-HD-Leda] [--dry] [--no-bed]
-     → numbers-of-magic-showreel-v2.mp4 · -v2-voiceonly.mp4 · numbers-of-magic-preview-10s.mp4 · numbers-of-magic-contact-sheet.png
-   목소리를 바꿀 때는 compose.js 만 다시 돌린다(장면 길이는 내레이션 파일 길이로 다시 정해진다).
+   장면(v4): introvid(앱 인트로 영상, compose 가 직접 씀) · mapreveal · philosophy(about.html, n02) · pillars(언어·사고력·연산 저울, n03) ·
+     diagnose · compare(속도 비교 카드 → '이 설정으로 바꾸기' 뒤집힘) · road · pace · village · story · creative3(C-02 곱해서 10) ·
+     hero-M-19 · hist(수학사 만화 순서 맞추기) · arena(아레나 게임) · examroad/exammore(학습지 모드) · sheetsSrc→creative/sheets · notify · end
+     세로 컷용(SR_VERT=1, --out=<폴더>/vert): compare · mathbox(1275 = 999 + 276) · vend
+   다 찍은 뒤(세 컷): node scripts/showreel/compose.js --out=<같은 폴더> --cut=full | --cut=60 | --cut=vert
+     [--voice=omnivoice-rec|omnivoice|ko-KR-Chirp3-HD-Leda] [--dry] [--no-bed]
+   목소리를 바꿀 때는 compose.js 만 다시 돌린다 — 장면 길이는 내레이션 파일 길이로 다시 정해지고, philosophy·pillars·end 는 비례로 늘인다.
+     (형광 박자가 크게 어긋나면 그 장면만 다시: capture.js philosophy pillars end — 1분 남짓)
    ffmpeg 는 libx264 가 든 것(FFMPEG=경로, 기본은 이 세션의 imageio_ffmpeg 바이너리). 만든 영상·프레임은 저장소에 넣지 않는다.
-   파일: lib.js(서버·가짜 시계·인코더·글꼴) · caption.html(자막 PNG) · stage-hero/sheets/creative/notify.html · endcard.html · ambient-bed.py(배경 소리)
+   파일: lib.js(서버·가짜 시계·인코더·글꼴) · caption.html(자막·훅·각주 PNG) · stage-hero/sheets/creative/notify/pillars/vend.html · endcard.html · ambient-bed.py(배경 음악)
    앱 코드는 건드리지 않는다. 마을 카메라만은 찍는 동안에 한해 town3d.js 응답 끝의 ctl 을 window 에 걸어 쓴다(route).
    ============================================================ */
 'use strict';
