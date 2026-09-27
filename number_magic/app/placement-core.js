@@ -96,7 +96,7 @@ function buildLadder(){
     const key='C'+s.id;
     const c=courses[key];
     if(!c || !courseBuiltLocal(c)) return;
-    const drills = s.drills || [];
+    const drills = (s.drills || []).map(t=>String(t).split('@')[0]);   // 'NS1@4' → 'NS1'
     let chosen = null;
     for(let i=0;i<drills.length;i++){ if(isScalarDrill(drills[i])){ chosen=drills[i]; break; } }
     if(!chosen) chosen = drills[0];
@@ -187,7 +187,9 @@ function fineZoneThreads(zoneCourseKeys, excludeThreadIds){
     const num=parseInt(String(key).replace(/^C/,''), 10);
     const s=spec.find(x=>x.id===num);
     if(!s) return;
-    (s.drills||[]).forEach(t=>{
+    (s.drills||[]).forEach(t0=>{
+      // 드릴에 레벨이 붙은 항목('NS1@4')도 있다 — 세부 진단은 스레드 단위로 묻는다
+      const t=String(t0).split('@')[0];
       if(seen[t] || exclude[t]) return;
       seen[t]=true;
       (isScalarDrill(t) ? scalar : arr).push(t);
@@ -204,7 +206,7 @@ function recommendationAdjust(K, zoneCourseKeys, log){
   const s=spec.find(x=>'C'+x.id===prevKey);
   if(!s) return K;
   let fails=0;
-  (s.drills||[]).forEach(t=>{
+  (s.drills||[]).map(t=>String(t).split('@')[0]).filter((t,i,a)=>a.indexOf(t)===i).forEach(t=>{
     const e=(log||[]).find(l=>l.t===t);
     if(e && !e.ok) fails++;
   });
