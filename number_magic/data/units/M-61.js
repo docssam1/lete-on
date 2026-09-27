@@ -44,9 +44,9 @@ window.NM_UNITS['M-61'] = {
 
       { tag:{ko:'② 원시함수를 구해 F(q)-F(p)만 계산합니다',en:'2) Find the antiderivative and just compute F(q)-F(p)',zh:'② 求出原函数只需算F(q)-F(p)'},
         head:{ko:'F(x)=-\\dfrac{x^3}{3}+\\dfrac{5x^2}{2}-4x \\;\\Rightarrow\\; F(4)-F(1)=\\dfrac{9}{2}',en:'F(x)=-\\dfrac{x^3}{3}+\\dfrac{5x^2}{2}-4x \\;\\Rightarrow\\; F(4)-F(1)=\\dfrac{9}{2}',zh:'F(x)=-\\dfrac{x^3}{3}+\\dfrac{5x^2}{2}-4x \\;\\Rightarrow\\; F(4)-F(1)=\\dfrac{9}{2}'},
-        desc:{ko:'MD46처럼 계수를 (지수+1)의 배수로 미리 골라두면 F(x)는 분수 없이 정수 계수가 됩니다. F(4)-F(1)만 계산하면 넓이가 <b>바로</b> 나옵니다.',
-              en:'Just like in MD46, pre-choosing coefficients as multiples of (exponent+1) makes F(x) come out with integer coefficients, no fractions. Computing F(4)-F(1) gives the area <b>directly</b>.',
-              zh:'和MD46一样，把系数预先取成(指数+1)的倍数，F(x)的系数就会是整数，不带分数。只需计算F(4)-F(1)就<b>直接</b>得到面积。'},
+        desc:{ko:'이 예시의 F(x)에는 분수 계수가 있지만, 연습 문항은 MD46처럼 계수를 (지수+1)의 배수로 미리 골라 두어 F(x)가 정수 계수가 됩니다. 어느 쪽이든 F(4)-F(1)만 계산하면 넓이가 <b>바로</b> 나옵니다.',
+              en:'This example\'s F(x) has fractional coefficients, but the practice problems pre-choose coefficients as multiples of (exponent+1), just like in MD46, so F(x) comes out with integer coefficients. Either way, computing F(4)-F(1) gives the area <b>directly</b>.',
+              zh:'这个例子的F(x)带分数系数；练习题则和MD46一样，把系数预先取成(指数+1)的倍数，F(x)的系数就是整数。无论哪种，只需计算F(4)-F(1)就<b>直接</b>得到面积。'},
         mathSteps:['F(4)-F(1)', '', ''],
         result:{ko:'넓이 = F(오른쪽 교점) - F(왼쪽 교점)!',en:'Area = F(right intersection) - F(left intersection)!',zh:'面积 = F(右交点) - F(左交点)！'},
         book:{ko:'만약 곡선이 x축 아래로 파여 있으면(f(x)≤0) 정적분값 자체는 음수가 나옵니다 — 그럴 땐 절댓값을 취해야 진짜 넓이입니다.',
