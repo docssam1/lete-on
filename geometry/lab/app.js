@@ -27,7 +27,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     { value: 5, label: "5 · 종합 추리" }
   ];
   const DICE_TYPE_DETAILS = {
-    sequence: { code: "DR-B", note: "굴릴 때마다 바닥에 닿는 눈을 순서대로 기록" },
+    sequence: { code: "DR-B", note: "굴리 때마다 바닥에 닿는 눈을 순서대로 기록" },
     target: { code: "DR-T", note: "목표 칸에서 바닥에 닿는 눈 하나 구하기" },
     sum: { code: "DR-S", note: "표시한 칸의 밑면 눈을 찾아 모두 더하기" },
     paired: { code: "DR-P", note: "두 경로의 마지막 밑면 관계로 빈 눈 찾기" },
@@ -298,7 +298,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
   }
 
   // 랩에서 "제공 중"인 단계는 생성형 학습지를 만들 수 있는 단계 ∪ 고정 문제
-  // 학습지가 있는 단계 ∪ 색종이 유형이 있는 단계다. 키즈는 생성기가 아직
+  // 학습지가 있는 단계 ∪ 색종이 유형이 있는 단계다. 킨더·키즈는 생성기가 아직
   // 문제를 만들지 못하지만 고정 문제 학습지가 있으므로 더 이상 준비 중이
   // 아니다 — generators.js의 LEVELS.available은 생성기 자신의 사정이라 그대로
   // 두고, 카탈로그를 합쳐 보는 판단은 입구인 여기서 한다.
@@ -1167,7 +1167,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
       return;
     }
     // 학습지 생성기와 같은 rng 요리법 — 미리보기가 실제 출제와 다른 분포로
-    // 뽑히면 보여 줄 의미가 없다.
+    // 뽑히면 보여 준 의미가 없다.
     const rng = GEN.createRng("GWP:" + state.previewSeed + ":" + state.level + ":" + state.intensity + ":" + state.previewType);
     let problem = null;
     try {
