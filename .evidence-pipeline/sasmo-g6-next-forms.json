@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "task": {
+    "id": "sasmo-g6-next-real-paper-forms",
+    "title": "SASMO Grade 6 real-paper form audit after 2019",
+    "domain": "math",
+    "objective": "Admit a distinct year paper to local diagnosis only after source, answer, visual, and delivery checks",
+    "learner_stage": "SASMO Primary 6 ages 11-12",
+    "release_authority": "user-curriculum-lead",
+    "updated": "2026-09-25",
+    "gate_set_version": "1",
+    "validator_version": "pipeline-gate-v2"
+  },
+  "items": [
+    {
+      "id": "sasmo-2018-g6-paper-audit",
+      "title": "2018 Primary 6 scanned paper and scanned solutions",
+      "work_key": "2d3dc56bb47e2c0ec61a60e3d30079527e0ce45a7edf61c731fe2bf5ad141728",
+      "work_status": "in-progress",
+      "evidence_status": "conflict",
+      "release_status": "locked",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "The scans cover questions and solutions 1-25, but item 6 has a source-answer conflict: the problem requires exactly two instances of a digit while the printed solution includes the all-three case. Exhaustive enumeration disagrees with the printed choice. The whole form remains locked pending item-level adjudication, organizer equivalence, and remaining checks.",
+      "claims": [],
+      "gates": [
+        {
+          "id": "source-identity",
+          "required": true,
+          "status": "pending",
+          "evidence": [
+            {
+              "role": "source",
+              "locator": "https://www.k12mathcontests.com/download/sasmo/2018/primary6",
+              "note": "Archive lists separate problem and solution scans; direct equivalence to an organizer-controlled original remains to be checked."
+            },
+            {
+              "role": "source",
+              "locator": "https://jco.simcc.org/frm_display/display-contest-registration-for-each-country-3-3/",
+              "note": "Organizer lists a 2018 Grade 6 past-year practice paper; equivalence to the archived scans has not yet been established."
+            }
+          ]
+        },
+        {
+          "id": "source-shape",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "audit:sasmo-2018-g6-scanned-pages-all",
+              "note": "Visually inspected all 10 question pages and all 6 two-page solution scans. Printed question and solution numbers each run from 1 through 25 without a visible gap. This proves page coverage, not answer correctness."
+            }
+          ]
+        },
+        {
+          "id": "answer-contract",
+          "required": true,
+          "status": "blocked",
+          "evidence": [
+            {
+              "role": "source",
+              "locator": "2018 Primary 6 scan: question PDF p3 q6; solution PDF p2 left q6",
+              "note": "The original wording and printed explanation disagree on whether the all-three case is allowed."
+            },
+            {
+              "role": "test",
+              "locator": "audit:sasmo-2018-g6-q06-exhaustive-three-digit-string-count",
+              "note": "All zero-padded three-position codes were enumerated under the literal condition and the broader condition; their counts differ by the all-three case. No scoring key is approved."
+            }
+          ]
+        },
+        { "id": "single-answer-visibility", "required": true, "status": "pending", "evidence": [] },
+        { "id": "learner-fit", "required": true, "status": "pending", "evidence": [] },
+        { "id": "privacy-and-rights", "required": true, "status": "pending", "evidence": [] },
+        { "id": "render-surfaces", "required": true, "status": "pending", "evidence": [] },
+        { "id": "regression", "required": true, "status": "pending", "evidence": [] }
+      ]
+    },
+    {
+      "id": "sasmo-2020-g6-paper-audit",
+      "title": "2020 Primary 6 official past-year paper and solutions",
+      "work_key": "2f8ad3d8057efdf6b62e46176917b25dd3d2ee88ab85b5f7f7100dcaa2d7b295",
+      "work_status": "in-progress",
+      "evidence_status": "draft",
+      "release_status": "locked",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "The organizer lists this 25-page PDF as a 2020 past-year paper, while its cover also says GEP Practice. Private 25-row answer and axis-mapping drafts now exist. Item 2 gives an intended pattern but no unique rule in its prompt, so scoring and diagnostic use remain blocked pending policy review. The 2019 score-only architecture shows that a future approved policy could keep all 25 items in printed-key scoring while excluding Q2 from domain evidence; that policy has not been approved or implemented for 2020. Two axes have only one item even before exclusion. Learner-fit, delivery rights, approved intake metadata, and student browser/print checks remain incomplete.",
+      "claims": [],
+      "gates": [
+        {
+          "id": "source-identity",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "source",
+              "locator": "https://form.simcc.org/2020-sasmo-past-year-paper/",
+              "note": "The organizer page still lists Primary 6 and links a 25-page PDF whose visible cover and Q2 match the local reference. The local copy has SHA-256 e7e438f492090eaf12026dbc391db8753cf1a40d5a6d7abb5708c0df7523c3d9; byte-for-byte equivalence to the current online copy has not been rechecked. The cover says GEP Practice and even the question pages carry a Solutions running header; retain both provenance caveats."
+            }
+          ]
+        },
+        {
+          "id": "source-shape",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "audit:sasmo-2020-g6-official-pdf-p2-p25",
+              "note": "PDF pages 2-13 contain each problem number 1-25 exactly once; pages 14-25 contain each solution number 1-25 exactly once."
+            }
+          ]
+        },
+        {
+          "id": "answer-contract",
+          "required": true,
+          "status": "blocked",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "audit:sasmo-2020-g6-private-25-item-answer-audit-20260924",
+              "note": "A private 25-row item audit records source and solution pages, independent calculations or visual checks, and agreement with printed answers. Q2's finite sequence has no declared rule, so its official intended continuation is not a rigorous unique-answer contract. Intake metadata and release checks remain incomplete."
+            },
+            {
+              "role": "test",
+              "locator": "audit:sasmo-2020-g6-private-q17-nine-segment-enumeration-20260924",
+              "note": "A private normalized source-topology model enumerates 17 vertices and 42 triangles from nine complete segments, independently agreeing with the printed total."
+            }
+          ]
+        },
+        {
+          "id": "single-answer-visibility",
+          "required": true,
+          "status": "blocked",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "audit:sasmo-2020-g6-visual-q9-source-image-reviewed",
+              "note": "The clock-on-cube item was checked against the source PDF's six embedded images. Its perspective-correct orientation was distinguishable at high resolution. A student-facing mobile and print render check is still required."
+            },
+            {
+              "role": "audit",
+              "locator": "audit:sasmo-2020-g6-q02-pattern-rule-ambiguity-20260924",
+              "note": "The reviewed problem page presents six finite sequence terms and asks for a next term without declaring a rule. The worked solution adds successive squares and matches the printed key, but this does not establish a unique mathematical continuation. The 2019 score-only design is only a candidate for a separately approved 2020 policy; item-level scoring remains locked."
+            }
+          ]
+        },
+        { "id": "learner-fit", "required": true, "status": "pending", "evidence": [] },
+        {
+          "id": "privacy-and-rights",
+          "required": true,
+          "status": "pending",
+          "evidence": [
+            {
+              "role": "source",
+              "locator": "https://simcc.org/wp-content/uploads/2025/03/2020-SASMO-G6.pdf#page=1",
+              "note": "The organizer-hosted PDF's cover has an explicit all-rights-reserved reproduction and transmission notice. A public copy, translation, or bundled answer key is not approved; any eventual delivery must stay within a separately reviewed private local-file boundary."
+            }
+          ]
+        },
+        { "id": "render-surfaces", "required": true, "status": "pending", "evidence": [] },
+        { "id": "regression", "required": true, "status": "pending", "evidence": [] }
+      ]
+    }
+  ]
+}

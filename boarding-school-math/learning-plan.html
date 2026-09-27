@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="진단 근거를 오늘의 개념 학습, 워크북, 숙제, 재확인으로 연결하는 G·MAP 학습 계획">
+  <title>나의 학습 계획 | G·MAP</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./gfield-tokens.css">
+  <link rel="stylesheet" href="./academy-ui.css">
+  <link rel="stylesheet" href="./learning-plan.css">
+</head>
+<body class="academy-page page-learning-plan">
+  <a class="skip-link" href="#main">본문으로 바로가기</a>
+  <header class="site-header plan-header">
+    <a class="brand" href="./index.html" aria-label="G·MAP 홈"><span class="brand-mark" aria-hidden="true">G</span><span>G·<strong>MAP</strong></span></a>
+    <nav aria-label="주요 탐색"><a href="./learning-plan.html" aria-current="page">나의 학습 계획</a><a href="./assessment-entry.html">학교 평가 입력</a><a href="./diagnostic.html">진단</a><a href="./concept-learning.html">개념 교재</a><a href="./sasmo.html">경시</a></nav>
+    <a class="teacher-link" id="header-teacher-link" href="#teacher-pack">교사용 자료 미리보기</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="plan-intro">
+      <div class="plan-shell">
+        <p class="eyebrow">G·MAP LEARNING PATH</p>
+        <h1>진단 결과가<br><span>오늘의 공부가 됩니다.</span></h1>
+        <p>보딩스쿨 과정, 승급시험, 경시 준비를 따로 찾지 않습니다. 목표일과 실제 진단 근거를 바탕으로 개념 교재, 수업 워크북, 숙제, 재확인을 한 계획으로 배정합니다.</p>
+      </div>
+    </section>
+
+    <section class="plan-workspace plan-shell" aria-labelledby="plan-setup-title">
+      <form class="plan-form" id="plan-form">
+        <div class="section-heading"><p class="eyebrow">01 · SET THE GOAL</p><h2 id="plan-setup-title">학습 조건을 입력하세요.</h2><p>성적 예측은 실제 최초 진단 또는 처음 푼 실전 모의고사 뒤에만 표시됩니다.</p></div>
+        <a class="assessment-import" href="./assessment-entry.html"><span>학교 시험 결과가 있나요?</span><strong>Placement · MAP · CTP · SSAT · ISEE 입력하기 →</strong></a>
+        <label>목표 과정<select id="goal-id" name="goalId"><option value="school-g6">Grade 6 학교 과정·배치</option><option value="sasmo-primary6">SASMO Primary 6</option><option value="promotion-g6">Grade 6 승급·선발 대비</option></select></label>
+        <div class="form-row"><label>목표일<input id="target-date" name="targetDate" type="date" required></label><label>주당 학습일<select id="study-days" name="studyDaysPerWeek"><option value="3">주 3일</option><option value="4" selected>주 4일</option><option value="5">주 5일</option><option value="6">주 6일</option></select></label></div>
+        <label>하루 학습 시간<select id="minutes-per-day" name="minutesPerDay"><option value="30">30분</option><option value="45" selected>45분</option><option value="60">60분</option><option value="75">75분</option><option value="90">90분</option></select></label>
+        <fieldset><legend>현재 가장 먼저 보완할 영역</legend><div class="priority-options" role="radiogroup" aria-label="현재 우선 보완 영역"><label><input type="radio" name="priority" value="geometry" checked><span><b>기하·공간 추론</b><small>그림·도형 조건을 관계식으로 바꾸기</small></span></label><label><input type="radio" name="priority" value="ratio"><span><b>비와 비례</b><small>표·비율·단위율로 관계 이해하기</small></span></label><label><input type="radio" name="priority" value="algebra"><span><b>식과 방정식</b><small>식의 구조를 읽고 미지수 관계 세우기</small></span></label></div></fieldset>
+        <button class="primary-action" type="submit">내 학습 계획 계산</button>
+      </form>
+
+      <aside class="plan-summary" aria-live="polite">
+        <div class="summary-top"><span id="plan-state" class="state-chip">진단 연결 전</span><span id="goal-program">Grade 6 학교 과정·배치</span></div>
+        <h2 id="plan-title">나의 8주 학습 계획</h2>
+        <p id="plan-description">학습 시간을 먼저 계산한 뒤, 진단 결과가 들어오면 약점과 난이도에 맞게 계획을 조정합니다.</p>
+        <dl class="plan-numbers"><div><dt>남은 기간</dt><dd id="days-remaining">—</dd></div><div><dt>학습일</dt><dd id="study-day-count">—</dd></div><div><dt>사용 가능 시간</dt><dd id="capacity-minutes">—</dd></div></dl>
+        <section class="prediction-panel" aria-labelledby="prediction-title"><p class="eyebrow">SCORE OUTLOOK</p><h3 id="prediction-title">예상 성적은 진단 후 계산합니다.</h3><p id="prediction-copy">처음 푼 진단과 실전 모의고사의 영역별 정답률·난이도·시간 기록이 쌓이면 점수 범위와 신뢰도를 보여 줍니다.</p></section>
+        <a class="diagnostic-action" id="diagnostic-action" href="./diagnostic.html">Grade 6 42문항 진단 시작</a>
+      </aside>
+    </section>
+
+    <section class="today-section plan-shell" aria-labelledby="today-title">
+      <div class="section-heading"><p class="eyebrow">02 · TODAY'S STUDY</p><h2 id="today-title">오늘 무엇을, 얼마나 할까요?</h2><p id="today-description">현재 우선 약점에 맞춘 45분 학습 예시입니다. 실제 진단 뒤에는 두 개 이하의 약점만 배정합니다.</p></div>
+      <div class="today-layout"><article class="today-total"><span>오늘</span><strong id="today-minutes">45분</strong><small id="today-problems">—문항</small><p>문항 수를 고정하지 않습니다. 개념 결손이면 설명 시간을 늘리고, 계산 실수면 짧은 연습을 늘립니다.</p></article><ol class="today-blocks" id="today-blocks"></ol></div>
+    </section>
+
+    <section class="learning-loop" aria-labelledby="loop-title"><div class="plan-shell"><div class="section-heading"><p class="eyebrow">03 · ONE CONNECTED LOOP</p><h2 id="loop-title">수업과 숙제가 끊기지 않게 합니다.</h2></div><ol><li><b>진단</b><span>영역·유형·오류 원인 확인</span></li><li><b>개념 교재</b><span>모델·대표 예제·핵심 언어</span></li><li><b>교사 수업</b><span>수업 워크북과 관찰 포인트</span></li><li><b>가정 학습</b><span>약점 보완과 혼합 연습</span></li><li><b>재확인</b><span>1·3·7·14일 뒤 유지 확인</span></li></ol></div></section>
+
+    <section class="teacher-section plan-shell" id="teacher-pack" aria-labelledby="teacher-title">
+      <div class="section-heading"><p class="eyebrow">TEACHER · ONE LESSON PACK</p><h2 id="teacher-title">한 약점 군을 한 수업 세트로 엽니다.</h2><p>학생용 자료에는 답을 넣지 않고, 교사용 지도서에서만 풀이·관찰 포인트·정답을 확인합니다.</p></div>
+      <div class="teacher-context"><div><span>PUBLIC TEACHER PREVIEW</span><strong id="teacher-pack-state">현재 선택한 영역의 수업 자료</strong><small>계정·공유 학생 기록·실제 배정 기능은 없는 공개 미리보기입니다.</small></div><a href="./catalog.html?role=teacher">교사용 문제은행 열기</a></div>
+      <div class="teacher-grid" id="teacher-grid"></div>
+    </section>
+  </main>
+  <footer class="site-footer"><span>G·MAP · 진단에서 오늘의 학습까지</span><span><a href="./index.html">전체 과정 지도</a> · <a href="./assessment-entry.html">학교 평가 입력</a> · <a href="./catalog.html?role=teacher">교사용 문제은행</a></span></footer>
+  <script src="./competition/sasmo-mock-catalog.js?v=20260924-1"></script>
+  <script src="./assessment/sasmo-mock-readiness.js?v=20260925-1"></script>
+  <script src="./shared/gmap-local-learning-record.js?v=20260925-1"></script>
+  <script src="./learning/learner-plan-engine.js?v=20260922-2"></script>
+  <script src="./learning-plan.js?v=20260925-1"></script>
+</body>
+</html>
