@@ -52,6 +52,19 @@ async function onboard(page, opts){
   });
 }
 
+/* 브라우저 실행 인자 — 3D(마을 app/town3d · 로드맵 app/road3d · 타이틀 app/title3d)를 켤지 말지.
+   2026-09-26 부터 마을·로드맵·타이틀이 WebGL 이 있으면 3D 로 덮인다. 이 컨테이너엔 GPU 가 없어
+   swiftshader(소프트웨어 GL)로 그리는데, 로드맵 3D 의 첫 프레임이 30~50초 걸리고 이후에도
+   초당 2~4프레임이라 그동안 메인 스레드가 막혀 클릭이 30초 시간 초과로 떨어진다(실측).
+   진단·문제은행·개념 노트를 보는 스모크는 3D 가 대상이 아니므로 기본은 WebGL 을 끈다 —
+   앱이 스스로 갖춘 2D 대체 경로(각 mount…Into 의 "WebGL 이 없으면 2D 그대로")로 간다.
+   3D 를 켠 채로 돌리려면 NM_SMOKE_WEBGL=1(그때는 swiftshader 인자를 쓴다). */
 const SWIFTSHADER_ARGS = ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
+const NO_WEBGL_ARGS = ['--disable-3d-apis', '--disable-webgl', '--disable-webgl2'];
+const WEBGL_ON = process.env.NM_SMOKE_WEBGL === '1';
+function browserArgs(opts){
+  const force2d = opts && opts.force2d;
+  return (WEBGL_ON && !force2d) ? SWIFTSHADER_ARGS.slice() : NO_WEBGL_ARGS.slice();
+}
 
-module.exports = { onboard, blockProfileCloud, SWIFTSHADER_ARGS };
+module.exports = { onboard, blockProfileCloud, browserArgs, SWIFTSHADER_ARGS, NO_WEBGL_ARGS, WEBGL_ON };

@@ -10,7 +10,7 @@ const path = require('path');
 const http = require('http');
 const { spawn } = require('child_process');
 const { chromium } = require('./lib/playwright.js');
-const { onboard: onboardProfile, SWIFTSHADER_ARGS } = require('./lib/nm-onboard.js');
+const { onboard: onboardProfile, browserArgs } = require('./lib/nm-onboard.js');
 
 const GIVEN = process.argv[2] || process.env.BASE_URL || null;
 const BASE = GIVEN || 'http://127.0.0.1:8799/number_magic/index.html?enter=1';
@@ -84,6 +84,18 @@ async function noOverflow(page, where){
    ❌ 칩이 충분히 나온다는 걸로 충분하다). */
 async function answerWrong(page){
   if (await page.$('#dgWidget')){
+    /* 10칸 틀(widget:'tenframe')은 "빈 칸을 눌러 10 만들기"라 틀리게 답할 길이 없고, 다 채워야
+       넘어간다. 아래의 "처음 눌리는 버튼"을 쓰면 빈 칸을 채웠다가(1회) 다음 회에 그 칸을 다시
+       눌러 비우기를 끝없이 되풀이해, 세부 진단이 25문항까지 "늘어난" 것처럼 보이고 결과에
+       못 닿았다(문항이 무작위라 4번에 1~2번꼴로 걸림). 빈 칸만 골라 끝까지 채운다. */
+    if (await page.$('#dgWidget .nm-w-tf-empty')){
+      for (let i = 0; i < 12; i++){
+        const slot = await page.$('#dgWidget .nm-w-tf-empty');
+        if (!slot) break;
+        await slot.dispatchEvent('pointerup');
+      }
+      return true;
+    }
     const btn = await page.$('#dgWidget .nm-tc-choice')
              || await page.$('#dgWidget .nm-nb-done')
              || await page.$('#dgWidget .nm-key.ok')
@@ -109,7 +121,7 @@ async function atResult(page){ return !!(await page.$('.nm-dg-course')); }
 
 async function run(view){
   console.log(`\n===== ${view.name} ${view.viewport.width}x${view.viewport.height} =====`);
-  const browser = await chromium.launch({ executablePath: CHROMIUM, args: SWIFTSHADER_ARGS });
+  const browser = await chromium.launch({ executablePath: CHROMIUM, args: browserArgs() });
   const ctx = await browser.newContext({ viewport: view.viewport });
   const page = await ctx.newPage();
   const errors = [];
@@ -173,10 +185,19 @@ async function run(view){
       await page.screenshot({ path: path.join(OUT, `diag-fine-q-${view.name}.png`), fullPage: true });
       shotFine = true;
     }
+    const before = await page.evaluate(() => { const q = document.querySelector('.nm-dg-step'); return q ? q.textContent.trim() : ''; });
     const answered = await answerWrong(page);
     if (!answered) break;
     if (fine) fineQ++; else bracketQ++;
-    await page.waitForTimeout(950);
+    /* 다음 문제(또는 결과)가 뜰 때까지 기다린다. 예전엔 950ms 고정이었는데, 위젯은 답을 낸 뒤
+       한 번 더 쉬었다 넘어가므로(10칸 틀: 500ms 후 onAnswer) 부하가 걸린 PC 에서는 같은 문제를
+       한 번 더 "답해" 문항 수가 부풀었다(세부 진단 9문항 → 8문항 상한 FAIL). */
+    await page.waitForFunction(prev => {
+      if (document.querySelector('.nm-dg-course')) return true;
+      const q = document.querySelector('.nm-dg-step');
+      return !q || q.textContent.trim() !== prev;
+    }, before, { timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(300);
   }
   check(sawFineHeader, 'fine-stage header (세부 진단 / Skill check) appeared during the run');
   check(bracketQ <= 9, `bracketing stayed within its 9-question cap (${bracketQ} asked)`);

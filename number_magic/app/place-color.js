@@ -236,7 +236,8 @@ function pairTint(tex, pairs){
   var col = {};
   pairs.forEach(function(p, k){ col[p.a] = col[p.b] = COLORS[k % COLORS.length]; });
   var sep = sp.op === 'mul' ? (/\\cdot/.test(lhs) ? ' \\cdot ' : ' \\times ') : ' + ';
-  var body = sp.terms.map(function(x, i){ return col[i] ? '\\color{' + col[i] + '}{' + x + '}' : x; }).join(sep);
+  /* {\color{c}{x}} — 바깥 괄호가 없으면 KaTeX 의 \color 가 뒤따르는 글자(=, □)까지 물들인다 */
+  var body = sp.terms.map(function(x, i){ return col[i] ? '{\\color{' + col[i] + '}{' + x + '}}' : x; }).join(sep);
   return body + (rest ? ' ' + rest : '');
 }
 /* ★마법 자리 줄 — 같은 수가 나오면 식 줄과 같은 색(값으로 맞춘다, 등호 왼쪽만) */
@@ -249,7 +250,7 @@ function pairTintValues(tex, pairs){
   var hit = 0;
   lhs = lhs.replace(/(^|[^\d.\\{^_])(\d+)(?![\d.])/g, function(m, pre, num){
     for(var i = 0; i < left.length; i++){
-      if(left[i] && left[i].v === +num){ var c = left[i].c; left[i] = null; hit++; return pre + '\\color{' + c + '}{' + num + '}'; }
+      if(left[i] && left[i].v === +num){ var c = left[i].c; left[i] = null; hit++; return pre + '{\\color{' + c + '}{' + num + '}}'; }
     }
     return m;
   });

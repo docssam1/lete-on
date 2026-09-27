@@ -1,7 +1,10 @@
 'use strict';
 /* 아이가 실제로 가는 길로 A-05 마법 노트까지 — localStorage를 심지 않고
    온보딩부터 클릭만으로 간다. 마을 → PRIME초급 → 유닛 보러가기 → 100의 보수 찾기 → 마법 노트 */
-const { chromium } = require('playwright');
+/* playwright 는 이 PC 전역에 없을 수 있다 — 공용 로더(scripts/lib/playwright.js)로 찾는다.
+   예전엔 require('playwright') 만 해서 MODULE_NOT_FOUND 로 바로 죽었다. */
+const { chromium } = require('./lib/playwright.js');
+const { onboard, browserArgs } = require('./lib/nm-onboard.js');
 const http = require('http'); const fs = require('fs'); const path = require('path');
 const ROOT = path.join(__dirname, '..', '..');
 const MIME = { '.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.mp4':'video/mp4','.mp3':'audio/mpeg','.json':'application/json' };
@@ -11,7 +14,9 @@ const srv = http.createServer((req,rep)=>{ const u=decodeURIComponent(req.url.sp
 
 srv.listen(0,'127.0.0.1', async () => {
   const base='http://127.0.0.1:'+srv.address().port+'/number_magic/index.html?enter=1';
-  const b=await chromium.launch(); const ctx=await b.newContext({viewport:{width:1280,height:900}});
+  /* 마을 3D(app/town3d)가 서면 2D 건물 버튼([data-spot])이 숨는다. 이 검사는 2D 지도 위의
+     실제 클릭 경로를 따라가므로 WebGL 을 끄고 앱의 2D 마을로 간다(browserArgs 의 설명 참고). */
+  const b=await chromium.launch({ args: browserArgs({ force2d: true }) }); const ctx=await b.newContext({viewport:{width:1280,height:900}});
   const p=await ctx.newPage();
   const errs=[]; p.on('pageerror',e=>errs.push('pageerror: '+e.message));
   p.on('console',m=>{ if(m.type()==='error' && !/TUNNEL|jsdelivr/.test(m.text())) errs.push('console: '+m.text()); });
@@ -20,11 +25,10 @@ srv.listen(0,'127.0.0.1', async () => {
 
   await p.goto(base,{waitUntil:'networkidle'}); await p.waitForTimeout(1000);
 
-  await step('온보딩(이름 입력 → 시작)', async () => {
-    const name = p.locator('input').first();
-    if (await name.count()) await name.fill('아이');
-    await p.getByText('짜잔! 시작하기 ✨').first().click({force:true});
-    await p.waitForTimeout(4000);
+  await step('온보딩(나 고르기 → 학년 건너뛰기 → 이름 입력 → 시작)', async () => {
+    /* 온보딩이 3단계가 됐다(scripts/lib/nm-onboard.js). 여전히 클릭만으로, localStorage 는 심지 않는다. */
+    await onboard(p, { name: '아이' });
+    await p.waitForSelector('[data-spot="beginner"]', { timeout: 20000 });
   });
   await step('마을에서 PRIME초급 건물 탭', () => p.locator('[data-spot="beginner"]').first().click({force:true}));
   await step('"유닛 보러가기 →"', () => p.getByText('유닛 보러가기').first().click({force:true}));

@@ -13,7 +13,7 @@ const PORT = 8799;
 const OUT = process.env.SHOT_DIR || '/tmp/nm-shots';
 require('fs').mkdirSync(OUT, { recursive: true });
 
-const { onboard, SWIFTSHADER_ARGS } = require('./lib/nm-onboard.js');
+const { onboard, browserArgs } = require('./lib/nm-onboard.js');
 function loadPW(){ return require('./lib/playwright.js'); }
 function serve(){ return new Promise((res, rej) => {
   const py = spawn('python3', ['-m','http.server',String(PORT)], { cwd: ROOT, stdio:'ignore' });
@@ -39,7 +39,7 @@ const NEW = [
 (async () => {
   const { chromium } = loadPW();
   const server = await serve();
-  const browser = await chromium.launch({ args: SWIFTSHADER_ARGS });
+  const browser = await chromium.launch({ args: browserArgs() });
   const problems = [];
   const netErrs = [];
   let solvedTotal = 0;

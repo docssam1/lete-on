@@ -682,6 +682,8 @@
   .nm-w2-train-step { font-size:calc(17px * var(--ws-fs, 1)); padding:3px 0 2px; border-bottom:1px dotted #C9A063; }
   .nm-w2-train-step .nm-w2-tex { font-size:calc(17px * var(--ws-fs, 1)); }
   .nm-w2-train-dots i { display:block; height:7mm; border-bottom:1px dotted #C9A063; }
+  /* 과정 빈칸 문항(2026-09-26) — 지시 한 줄. 식 줄의 최종 답은 이미 주어졌다 */
+  .nm-w2-process-ask { font-size:calc(11.5px * var(--ws-fs, 1)); font-weight:700; color:#5b4a26; margin:0 0 1px; }
   /* 저학년 문장제 카드 — 번호는 빨간 동그라미(STORY), 풀이 점선 */
   .nm-w2-story-work { display:none; }
   .nm-print-age-young .nm-w2-story-work { display:block; width:100%; margin-top:6px; }
@@ -805,6 +807,10 @@
   .nm-print-answer-key .nm-ak-page .nm-ak-item:has(.mfrac) { padding-block:5px; line-height:1.9; }
   .nm-print-answer-key .nm-ak-page .nm-ak-item-w2 { grid-column:span 2; }
   .nm-print-answer-key .nm-ak-page .nm-ak-item-w3 { grid-column:span 3; }
+  /* 과정 빈칸 정답(2026-09-26) — 값 + 완성 사슬, 한 줄 전체 */
+  .nm-print-answer-key .nm-ak-page .nm-ak-item-chain { grid-column:1 / -1; white-space:normal; }
+  .nm-ak-process-val { font-weight:900; margin-right:4px; }
+  .nm-ak-process-chain { color:#4a4436; }
   .nm-ak-boxplot-title { margin:5mm 0 2mm; font-size:12px; color:#183f42; }
   .nm-ak-boxplot-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:3mm 8mm; }
   .nm-ak-boxplot-item { break-inside:avoid; page-break-inside:avoid; font-size:10px; }
@@ -3641,11 +3647,12 @@ function sessionRoleItems(course, session, seed){
   return {
     school: session.school.map(d => { const it = drillItem(d, d.review ? reviewTag : null);
       if(!d.review && it.count) it.count = scaleCount(d, it.count); return it; }),
-    strategy: ((session.strategy && session.strategy.practice) || []).map(d => creItem(d, lk('창의 연산 · ', 'Creative · ', '创意运算 · '))),
+    strategy: ((session.strategy && session.strategy.practice) || []).map(d => Object.assign(creItem(d, lk('창의 연산 · ', 'Creative · ', '创意运算 · ')), { role:'strategy' })),
     application: (session.application || []).filter(a => a.from !== 'school').map((a, ai) => {
       if(a.kind === 'drawing') return { kind:'drawing', mode:a.mode, thread:a.t, level:a.lv, count:a.count || 6, n:a.count || 6,
         topicName:(a.title && (a.title.ko || a.title)) || thNm(a.t), seed:seed('dr', ai) };
-      return a.from === 'creative' ? creItem(a, appTag) : drillItem(a, appTag);
+      /* role 'application' — 적용 칸은 Training Course 모양을 빌려 쓰지만 창의 회차가 아니다(과정 빈칸·색 힌트 없음) */
+      return a.from === 'creative' ? Object.assign(creItem(a, appTag), { role:'application' }) : drillItem(a, appTag);
     }),
     stretch: (session.stretch || []).map(d => creItem(d, lk('심화 · ', 'Stretch · ', '拓展 · ')))
   };
@@ -3814,6 +3821,20 @@ function trainSolution(p){
 }
 /* 칸 높이 추정용 — 빈칸이 든 세로 분수 줄은 상자 두 개가 쌓여 보통 줄보다 약 16mm 높다(C21 FR11 실측) */
 const trainTallLine = t => /\\dfrac\{[^}]*\\square/.test(String(t));
+/* 창의 회차 ★줄의 곱나눗 강조(2026-09-26) — 식 줄에 없던 수(바꾼 수) 하나, 없으면 식 줄의 강조 수 */
+function keyStepTint(stepTex, exprTex){
+  const PV = window.NM_PLACE_COLOR; if(!PV) return stepTex;
+  const s = String(stepTex), eq = s.indexOf('='), lhs = eq >= 0 ? s.slice(0, eq) : s, rest = eq >= 0 ? s.slice(eq) : '';
+  const orig = new Set((String(exprTex).match(/\d+/g) || []));
+  const toks = lhs.match(/\d+/g) || [];
+  const pick = toks.find(t => !orig.has(t)) || PV.keyOperand(exprTex);
+  if(pick == null || toks.indexOf(String(pick)) < 0) return stepTex;
+  let done = false;
+  return lhs.replace(/(^|[^\d.])(\d+)(?![\d.])/g, (m, pre, n) => {
+    if(done || n !== String(pick)) return m;
+    done = true; return pre + '{\\color{' + (PV.COLORS ? PV.COLORS[0] : '#C62828') + '}{' + n + '}}';
+  }) + rest;
+}
 function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal){
   let cls = 'nm-w2-item nm-print-item';
   let inner;
@@ -3848,8 +3869,12 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
         tintStep = s => PVt.pairTintValues(s, T.pairs);
         pvPairOnPage = Math.max(pvPairOnPage, T.pairs.length);
       } else {
-        raw = PVt.tint(raw);
-        tintStep = s => PVt.tint(s);
+        /* {\color{c}{x}} 로 가둔다 — 그대로면 KaTeX \color 가 뒤따르는 "= □" 까지 물들인다 */
+        const fence = t => String(t).replace(/\\color\{([^}]*)\}\{([^{}]*)\}/g, '{\\color{$1}{$2}}');
+        const rawPlain = raw;
+        raw = fence(PVt.tint(raw));
+        /* 곱나눗(key)의 ★줄은 그 줄에 새로 들어온 수(딱 떨어지는 수 10·100, 쪼갠 조각)를 빨강 — 없으면 식 줄에서 칠한 수 */
+        tintStep = T.kind === 'key' ? s => keyStepTint(s, rawPlain) : s => fence(PVt.tint(s));
         if(T.kind === 'place') pvPlaceOnPage = true;
       }
       pvOnPage = true;
@@ -4044,6 +4069,15 @@ function w2AnswerKeyItemsHtml(problems, numStart){
     return `<div class="nm-ak-item${wide}">(${n}) ${inner}</div>`;
   }
   return problems.map((p,i) => {
+    /* 과정 빈칸 문항(2026-09-26, §3-6) — 빈칸 값을 먼저 굵게, 그 뒤 완성 사슬(식 = 최종 답 → 풀이 줄들).
+       사슬은 길어 한 줄을 통째로 쓴다(.nm-ak-item-chain). 클래스는 그대로 .nm-ak-item — 문항 수 = 정답 수 검사 유지. */
+    if(p.__process){
+      const P = p.__process;
+      const chainTex = [P.expr].concat(P.chain.map((l, li) => li === P.line
+        ? P.lines[li].replace(/\\square/, `\\mathbf{${fmtAns(P.value)}}`) : l)).join(' \\;\\Rightarrow\\; ');
+      return `<div class="nm-ak-item nm-ak-item-chain" data-process="${P.form}">(${base+i+1}) <b class="nm-ak-process-val">${esc(String(fmtAns(P.value)))}</b>`
+        + ` <span class="nm-ak-process-chain"><span class="nm-w2-tex" data-tex="${esc(texDisplay(chainTex))}"></span></span></div>`;
+    }
     const steps = printSteps(p);
     if(steps){
       const txt = steps.map(s => fmtAns(s.blank)).join(' , ');
@@ -4898,7 +4932,7 @@ function processBlankIndexes(n){
 /* tex 산술 한 줄 → 수(못 읽으면 NaN). + − × ÷ · 괄호 · 거듭제곱 · \dfrac 만. 설명 글(\text)·기호는 지운다. */
 function cpEval(tex){
   let s = String(tex)
-    .replace(/\(\s*\\text\{[^}]*\}\s*\)/g, '').replace(/\\text\{[^}]*\}/g, '')
+    .replace(/\((?:[^()]*?)\\text\{[^}]*\}[^()]*\)/g, '').replace(/\\text\{[^}]*\}/g, '')
     .replace(/\\left|\\right|\\displaystyle/g, '')
     .replace(/\\(?:quad|qquad|;|,|!|:| )/g, '').replace(/\s+/g, '');
   for(let g = 0; g < 6 && /\\d?frac\{/.test(s); g++) s = s.replace(/\\d?frac\{([^{}]*)\}\{([^{}]*)\}/g, '(($1)/($2))');
@@ -4944,22 +4978,69 @@ function cpFill(tex, blank){
   });
   return bad ? null : out;
 }
-/* 줄 안의 정수 토큰(가릴 수 있는 수) — 소수의 일부·지수·첨자·\text 안·\color 인자는 뺀다. 등호 왼쪽만. */
-function cpTokens(line){
-  const s = String(line), last = s.lastIndexOf('='), lim = last > 0 ? last : s.length, out = [];
+/* 줄 안의 정수 토큰(가릴 수 있는 수) — 소수의 일부·지수·첨자·\text·\overline 안은 뺀다.
+   수 하나만 있는 변(계산 결과 `= 510`)의 수도 뺀다: 결과는 다음 줄에 다시 나와 빈칸이 보이게 된다.
+   skipSeg(변 문자열) 이 참인 변(식 줄을 되풀이하는 변)의 수도 뺀다. */
+function cpTokens(line, skipSeg){
+  const s = String(line), out = [];
+  const bounds = []; let from = 0;
+  s.split('=').forEach(sg => { bounds.push([from, from + sg.length, sg]); from += sg.length + 1; });
+  const lone = sg => /^\d+$/.test(String(sg).replace(/\((?:[^()]*?)\\text\{[^}]*\}[^()]*\)/g, '').replace(/\\text\{[^}]*\}/g, '')
+    .replace(/\\(?:quad|qquad|;|,|!|:| )|\s+/g, ''));
   const re = /\d+(?:\.\d+)?/g; let m;
-  while((m = re.exec(s)) && m.index < lim){
+  while((m = re.exec(s))){
     const st = m.index, tok = m[0], en = st + tok.length;
     if(tok.indexOf('.') >= 0 || s[st-1] === '.' || s[en] === '.') continue;
     const pre = s.slice(Math.max(0, st - 2), st);
     if(/[\^_#]$/.test(pre) || pre === '^{' || pre === '_{') continue;
     const tx = s.lastIndexOf('\\text{', st); if(tx >= 0 && s.indexOf('}', tx) > st) continue;
     const ov = s.lastIndexOf('\\overline{', st); if(ov >= 0 && s.indexOf('}', ov) > st) continue;
+    const seg = bounds.find(b => st >= b[0] && st < b[1]);
+    if(!seg || lone(seg[2]) || (skipSeg && skipSeg(seg[2]))) continue;
     out.push({ st, en, v:+tok });
   }
   return out;
 }
 const NM_PROCESS_LOG = (window.NM_PROCESS_LOG = window.NM_PROCESS_LOG || []);
+/* 식 줄에 찍을 것 — 원식(첫 변) = 최종 답. 답이 식 한가운데 □ 로 들어 있는 문항(ML25 `5+5+5 = 5×□ = 15`)은
+   가운데 변을 빼고 첫 변 = 끝 변만 준다(가운데 변을 채워 찍으면 과정 빈칸의 답이 식 줄에 그대로 보인다).
+   □ 가 첫 변에 있으면(DC6 `0.4 + 0.□ = 1`) 그 자리를 답으로 채운다. 분수 모양 답은 ansTex. */
+function cpExprLine(p){
+  const tex = String(p.tex || '');
+  const segs = tex.split('=');
+  const nSq = (tex.match(/\\square/g) || []).length;
+  const nAns = Array.isArray(p.answer) ? p.answer.length : 1;
+  /* 식이 둘 이상 나란한 문항(AD9 `13 + 10 = □,\ 13 + 11 = □`)은 빈칸을 모두 답으로 채운다 */
+  if(/,/.test(tex)) return (nSq === nAns || !Array.isArray(p.answer)) ? cpFill(tex, p.answer) : null;
+  if(segs.length >= 2 && !/\\square/.test(segs[0])){
+    const last = segs[segs.length - 1];
+    if(/^\s*\\square\s*$/.test(last)){
+      /* 끝 변만 □. 식이 ⇒ 로 이어진 문항(DV15 `3 × 2 = 6 ⇒ 6 ÷ 2 = □`)은 그 앞이 전부 식이다.
+         그냥 등호로 이어진 문항(ML25 `5+5+5 = 5×3 = □`)은 가운데 변이 풀이(힌트)라 첫 변만 준다. */
+      const head = /\\Rightarrow|\\Leftrightarrow|;/.test(tex) ? tex.slice(0, tex.lastIndexOf('=')).trim() : segs[0].trim();
+      if(/\\square/.test(head)) return null;
+      const at = ansTex(p);
+      if(at) return head + ' = ' + at;
+      if(nAns !== 1) return null;
+      return head + ' = ' + fmtAns(p.answer);
+    }
+    if(/\\square/.test(last)){ if(nSq !== nAns) return null; const f = cpFill(last, p.answer); return f == null ? null : segs[0].trim() + ' = ' + f.trim(); }
+    return segs[0].trim() + ' = ' + last.trim();
+  }
+  if(nSq !== nAns && Array.isArray(p.answer)) return null;
+  return cpFill(tex, p.answer);
+}
+/* 같은 말을 되풀이하는 줄인가 — 줄의 모든 변이 식 줄의 어느 변과 같으면(곱·합은 순서 무시) 그 줄은 과정이 아니다 */
+function cpSig(seg){
+  const t = String(seg).replace(/\\(?:quad|qquad|;|,|:|!| )|\s+|\\left|\\right/g, '');
+  if(/^\(?[\d]+(?:\\times[\d]+)+\)?$/.test(t)) return 'x:' + t.replace(/[()]/g, '').split('\\times').sort().join(',');
+  if(/^\(?[\d]+(?:\+[\d]+)+\)?$/.test(t)) return '+:' + t.replace(/[()]/g, '').split('+').sort().join(',');
+  return t;
+}
+function cpRestates(line, expr){
+  const es = new Set(String(expr).split('=').map(cpSig));
+  return String(line).split('=').every(sg => es.has(cpSig(sg)));
+}
 /* 한 문항에서 과정 빈칸을 만든다 — 못 만들면 null(문항은 그대로) */
 function cpBuild(p, conf){
   if(!p || p.word || p.graph || p.__ramp || p.__process || !p.tex) return null;
@@ -4967,18 +5048,21 @@ function cpBuild(p, conf){
   if(!src.length) return null;
   const lines = src.map(x => cpFill(x.tex, x.blank));
   if(lines.some(l => l == null)) return null;
-  const expr = cpFill(p.tex, p.answer);
-  const final = typeof p.answer === 'number' ? p.answer : NaN;
+  const expr = cpExprLine(p);
   if(expr == null) return null;
+  const eSegs = expr.split('=');
+  const finalShown = cpEval(eSegs[eSegs.length - 1]);     /* 사슬의 값 — 등호 없는 줄은 이 값과 같아야 한다 */
   const origNums = new Set((String(p.tex).match(/\d+/g) || []).map(Number));
   const chainBefore = li => { const set = new Set();
     src.slice(0, li).forEach(x => [].concat(x.blank == null ? [] : x.blank).forEach(v => { if(Number.isFinite(+v)) set.add(+v); })); return set; };
   const form = conf.blank === 'reverse' ? 'B' : 'A';
-  const first = form === 'B' && conf.at != null && conf.at < lines.length ? conf.at : Math.min(conf.key || 0, lines.length - 1);
-  const order = [first].concat(first !== (conf.key || 0) && (conf.key || 0) < lines.length ? [conf.key || 0] : [])
-    .concat(lines.map((_, i) => i)).filter((v, i, a) => a.indexOf(v) === i);
+  const key = Math.min(conf.key || 0, lines.length - 1);
+  const first = form === 'B' && conf.at != null && conf.at < lines.length ? conf.at : key;
+  const order = [first, key].concat(lines.map((_, i) => i)).filter((v, i, a) => a.indexOf(v) === i);
   for(const li of order){
-    const toks = cpTokens(lines[li]).reverse();          /* 뒤쪽 수부터 — 바꾼 수·돌려받는 수는 대개 뒤에 온다 */
+    if(cpRestates(lines[li], expr)) continue;
+    const eSig = new Set(eSegs.map(cpSig));
+    const toks = cpTokens(lines[li], sg => eSig.has(cpSig(sg))).reverse();   /* 뒤쪽 수부터 — 바꾼 수·돌려받는 수는 대개 뒤에 온다 */
     const chain = chainBefore(li);
     const intro = toks.filter(t => !origNums.has(t.v) && !chain.has(t.v));
     const free = toks.filter(t => !chain.has(t.v));
@@ -4987,33 +5071,39 @@ function cpBuild(p, conf){
     for(const g of groups) for(const t of g){
       if(seen.has(t.st)) continue; seen.add(t.st);
       const v = t.v;
-      if(!Number.isInteger(v) || v < 1 || v === final) continue;
+      if(!Number.isInteger(v) || v < 1 || cpNear(v, finalShown)) continue;
+      /* 뒤 줄에 같은 수가 다시 나오면(`6/□` 다음 줄 `6/12`) 빈칸이 그대로 보인다 */
+      if(lines.slice(li + 1).some(l => (String(l).match(/\d+(?:\.\d+)?/g) || []).some(x => +x === v))) continue;
       const cand = lines[li].slice(0, t.st) + '\\square' + lines[li].slice(t.en);
-      const chainValue = Number.isFinite(final) ? final : NaN;
-      if(!cpHolds(cand, v, chainValue)) continue;
-      /* 정수 하나로만 풀리는가 — 0 부터 넉넉한 범위까지 전부 대 본다 */
-      const hi = Math.max(200, v * 3 + 20);
-      let sols = 0;
-      for(let x = 0; x <= hi && sols < 2; x++) if(x !== v && cpHolds(cand, x, chainValue)) sols++;
-      if(sols) continue;
+      /* 한 변이 □ 하나뿐이면(`□ = 1×5² + …`) 식 줄의 수를 옮겨 쓰는 것뿐이다 */
+      if(cand.split('=').some(sg => /^\s*\\square\s*$/.test(sg))) continue;
+      if(!cpHolds(cand, v, finalShown)) continue;
+      /* 정수 하나로만 풀리는가 — 작은 수 몇 개와 v 둘레·몇 배 자리를 대 본다. □ 가 줄에 한 번만 나오고
+         연산이 + − × ÷ · 거듭제곱뿐이라 0 이상에서 값이 한 방향으로만 변한다(곱하기 0 만 예외 — 그땐 v±1 에서도 참이라 걸린다).
+         검사기(scripts/check-creative-process.js)는 0~400 전부와 v±50 을 따로 다시 대 본다. */
+      const probe = [0, 1, 2, 3, 5, 10, 100, v * 2, Math.floor(v / 2), v * 10];
+      [1, 2, 3, 10].forEach(d => probe.push(v - d, v + d));
+      if(probe.some(x => x >= 0 && x !== v && cpHolds(cand, x, finalShown))) continue;
       return { form, value:v, line:li, expr, chain:lines.slice(), lines:lines.map((l, i) => i === li ? cand : l) };
     }
   }
   return null;
 }
 function applyProcessBlank(problems, item){
-  if(!problems || !problems.length || !item || !item.creative || item.noTeach) return;
+  if(!problems || !problems.length || !item || !item.creative || item.noTeach || item.role === 'application') return;
   const n = problems.length, want = processBlankIndexes(n);
   if(!want.length) return;
   const conf = cpOf(item.thread, item.level);
   const taken = new Set();
   want.forEach(w => {
     /* 정한 자리부터, 안 되면 가까운 자리(점선 문항·이미 쓴 자리 제외)로 — 회차의 빈칸 수는 줄이지 않는다 */
-    const tryAt = [w];
-    for(let d = 1; d < n; d++){ tryAt.push(w - d, w + d); }
+    /* 스스로 풀기(점선) 문항은 맨 나중 — 그것밖에 없으면 그 문항을 쓴다(빈칸 하나가 원장 요청이라 먼저다) */
+    const near = [w];
+    for(let d = 1; d < n; d++){ near.push(w - d, w + d); }
+    const ok = i => i >= 0 && i < n && !taken.has(i) && !(want.indexOf(i) >= 0 && i !== w);
+    const tryAt = near.filter(i => ok(i) && (i === w || !trainIsBare(problems[i], i, n)))
+      .concat(near.filter(i => ok(i) && i !== w && trainIsBare(problems[i], i, n)));
     for(const i of tryAt){
-      if(i < 0 || i >= n || taken.has(i) || want.indexOf(i) >= 0 && i !== w) continue;
-      if(i !== w && trainIsBare(problems[i], i, n)) continue;
       const p = problems[i], r = cpBuild(p, conf);
       if(!r) continue;
       p.__process = Object.assign({ fam:conf.fam, origAnswer:p.answer, origShape:p.answerShape || null, at:i, want:w }, r);
@@ -5030,7 +5120,7 @@ function applyProcessBlank(problems, item){
    덧뺄 place · 곱나눗 key · 짝 만들기/무지개 덧셈은 pair(짝 색). 결과는 p.__cpTint 에 남겨 w2CellHtml 이 칠한다. */
 function applyTrainColor(problems, item){
   const c = cpCfg(), PV = window.NM_PLACE_COLOR;
-  if(!c || !PV || !problems || !item || !item.creative || !pvOn()) return;
+  if(!c || !PV || !problems || !item || !item.creative || item.role === 'application' || !pvOn()) return;
   if(c.colorSchoolTiers && c.colorSchoolTiers.indexOf(item.schoolTier || 'elem') < 0) return;
   if((window.NM_MIDDLE_CONCEPTS || {})[item.thread]) return;
   const conf = cpOf(item.thread, item.level);
@@ -5320,8 +5410,10 @@ function renderRoundPagesBody(item, opts){
     const firstH = headBand && headBand[6] != null ? headBand[6] - (headBand[1] || 0) * (fsR - 1)
       : headBand && headBand[0] != null ? headBand[0] - headBand[1] * (fsR - 1) - 24 - (guided.html ? 60 : 0) : null;
     let at = 0;
-    const pack = cap => { const pg = []; let h = 0;
-      while(at < nT){ const e = estMm(problems[at], at); if(pg.length && h + gapMm + e > cap - 3) break; if(!pg.length && e > cap - 3 && cap !== fullH) break;
+    /* 창의 회차 색 힌트가 있으면 그 쪽에 범례 한 줄(약 9mm)이 붙는다(2026-09-26) */
+    const legendMm = problems.some(p => p.__cpTint) ? 9 : 0;
+    const pack = cap => { const pg = []; let h = 0; const capL = cap - legendMm;
+      while(at < nT){ const e = estMm(problems[at], at); if(pg.length && h + gapMm + e > capL - 3) break; if(!pg.length && e > capL - 3 && cap !== fullH) break;
         h += (pg.length ? gapMm : 0) + e; pg.push(problems[at]); at++; }
       return pg; };
     pages.push(firstH != null ? pack(firstH) : problems.slice(0, firstCap)); if(firstH == null) at = firstCap;
@@ -5431,7 +5523,8 @@ function renderRoundPagesBody(item, opts){
       + (pvPairOnPage && window.NM_PLACE_COLOR && window.NM_PLACE_COLOR.pairLegendHtml
         ? window.NM_PLACE_COLOR.pairLegendHtml(examLang(), pickL((window.NM_CREATIVE_PROCESS || {}).pairLegend) || '같은 색 = 짝꿍', pvPairOnPage) : '');
     /* 워터마크는 문항 페이지 안에 한 장씩(.nm-w2-wm, 화면에선 숨김) — 시트 전체 fixed 오버레이 대신 */
-    return `<div class="nm-w2-page${middleSix ? ' nm-mid-six' : ''}">
+    /* data-cre — 창의 칸(strategy)과 적용 칸(application)을 검사기가 가를 수 있게(인쇄에는 영향 없음) */
+    return `<div class="nm-w2-page${middleSix ? ' nm-mid-six' : ''}"${item.creative ? ` data-cre="${esc(item.role || 'creative')}"` : ''}>
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
   ${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first ? exampleHtml : ''}${separateGuide ? (guidePages[pi-1] || '') : (first ? guided.html : '')}${instrHtml}${pvLegend}
@@ -5938,6 +6031,9 @@ const NM_EXAM = {
      drill.html의 서랍장 미리보기가 재사용(2026-08-28, 리디자인). 생성 로직은 그대로. */
   buildProblems,
   problemKey,
+  /* 창의 연산 과정 빈칸(2026-09-26) — scripts/check-creative-process.js 가 같은 함수로 확인한다 */
+  applyProcessBlank, processBlankIndexes, trainIsBare,
+  processInternals: { cpBuild, cpExprLine, cpSourceLines, cpOf, cpEval, applyTrainColor },
 
   /* 문장제 변환 노출 — drill.html 미리보기가 유형(숫자/문장제) 선택을 그대로 비추는 데 쓴다. */
   applyWordProblems,
@@ -7388,7 +7484,7 @@ ${answerSectionsHtml}`;
       seed: it.seed || NM_RNG.newCode(),
       topicName: it.topicName, grade: it.grade, schoolTier:it.schoolTier,
       kind:it.kind,mode:it.mode,variant:it.variant,pacing:it.pacing,noTeach:it.noTeach,
-      creative:it.creative,threadMix:it.threadMix,subLabel:it.subLabel,sessionLabel:it.sessionLabel,
+      creative:it.creative,role:it.role,threadMix:it.threadMix,subLabel:it.subLabel,sessionLabel:it.sessionLabel,
       overrides: Object.assign({}, it.overrides || {}),
       guideSeed: it.guideSeed || null,
       exampleSkip:Number.isInteger(it.exampleSkip)?it.exampleSkip:null,

@@ -103,7 +103,25 @@ var threads = {
   FR11: { fam:'F11', key:0, blank:'key' },
   FR12: { fam:'F11', key:0, blank:'key' },
   DC4:  { fam:'F11', key:0, blank:'key' },
-  DC5:  { fam:'F11', key:0, blank:'key' }
+  DC5:  { fam:'F11', key:0, blank:'key' },
+  /* 초급 창의 기법 스레드(2026-09-26, engine/threads/cre.js) — key 는 그 생성기 steps 의 ★줄 index.
+     AD8 L4·L5(새치기·100 짝)와 ML1 L4(둘로 쪼개기)는 위 AD8·ML1 줄이 그대로 맞는다(★짝·★첫 자리 반이 0번 줄). */
+  AD11: { fam:'F2', key:0, blank:'key' },                 /* ★작은 수 가르기(7 = 2 + □) */
+  SB14: { fam:'F2', key:0, blank:'reverse', at:2,         /* ★1000 = □ + 1 · 되돌리는 줄 +1 */
+          levels:{ 4:{ fam:'F3', key:0, blank:'key' } } }, /* L4 10에서 부족한 수 = 자리마다 */
+  AD12: { fam:'F3', key:0, blank:'key' },                 /* ★십 먼저 */
+  AD13: { fam:'F3', key:0, blank:'key' },                 /* ★십끼리 */
+  AD14: { fam:'F3', key:0, blank:'key' },                 /* ★앞 자리 조각끼리 */
+  AD15: { fam:'F3', key:0, blank:'key' },                 /* ★큰 자리부터(L5 는 빼는 두 수 묶기) */
+  SB8:  { fam:'F3', key:0, blank:'key' },                 /* ★십 먼저 빼기 / 빼는 수 가르기 */
+  SB10: { fam:'F3', key:0, blank:'key' },                 /* ★234 = □ + 100 */
+  SB13: { fam:'F3', key:0, blank:'key' },                 /* ★460 = □ + 30 */
+  MX7:  { fam:'F3', key:0, blank:'key', levels:{ 3:{ fam:'F11', key:0, blank:'key' } } },  /* ★더하는 수끼리 */
+  SB12: { fam:'F4', key:0, blank:'reverse' },             /* ★두 수에 같은 수 ± */
+  SB9:  { fam:'F5', key:0, blank:'key' },                 /* ★48 + □ = 50 */
+  EL6:  { fam:'F5', key:0, blank:'key' },                 /* ★합 − 차 / (합±차) ÷ 2 / 합 ÷ 2 */
+  MX8:  { fam:'F7', key:0, blank:'key' },                 /* ★끝 수 − 첫 수 / 첫 수 + 끝 수 */
+  AD16: { fam:'F9', key:0, blank:'key' }                  /* ★기준수 × 개수 */
 };
 
 var DEFAULT = { fam:null, key:0, blank:'key' };
