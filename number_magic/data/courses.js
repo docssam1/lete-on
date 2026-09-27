@@ -152,7 +152,7 @@ const COURSE_SPEC = [
  {id:4, tier:'level1', title:{ko:'두 자리 올림 덧뺄셈',en:'Two-digit ± with Carrying',zh:'两位数进位加减'},
    drills:['AD5','SB4','AD6','AD5','SB4','AD6','AD5','SB4','AD6','AD5','SB4','AD6','AD5','AD6','AD5','AD6','AD5','AD6'], minSessions:9, magic:[['A-05'],['A-06'],['A-07'],['A-08'],['A-09']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 AD8@1 이 9회차 내내 나왔다. 두 자리 짝 · 끼리끼리 · 수 이사 2 · 100 짝 묶기 */
-   creative:['AD8@3','AD13@1','AD11@3','AD8@5','AD13@2','AD8@3','AD11@3','AD13@2','AD8@5']},
+   creative:['AD8@3','AD13@1','AD11@3','AD8@5','AD13@2','AD13@3','AD11@3','AD13@2','AD8@5']},
  {id:5, tier:'level1', title:{ko:'뺄셈 마법과 구구단 첫걸음',en:'Subtraction Magic & Times Tables Begin',zh:'减法魔法与乘法口诀入门'},
    drills:['SB5','ML1','ML25','ML2','SB5','ML1','ML25','ML2','ML1','ML25','ML2','ML25','ML2','ML2'], minSessions:7, magic:[['A-10'],['A-11'],['A-12'],['B-01','B-02','B-03'],['B-04','B-05','B-06']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25·ML1·ML2(구구단 드릴)였다. 자리별·쉬었다 빼기 · 돌려받기 · 덧셈끼리·뺄셈끼리 */
@@ -162,7 +162,7 @@ const COURSE_SPEC = [
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25·ML3(구구단)이었다. 같은 수 ± · 백을 떼어 · 반대로 채우기(SB9 = 설계의 EL1 countUp).
       설계 표의 SB10@2·@3(자릿수 이동·풀어서 쓰기)은 원본 사진 확인 전이라(원장 결정 Q1) 아직 없다 —
       그 자리는 이미 있는 SB10@1·SB12@2 로 채웠다. AD10 은 옛 명세(창의 칸에 안 실림). */
-   creative:['SB12@1','SB10@1','SB12@2','SB9@1','SB10@1','SB12@3','SB12@2','AD10'], maxSessions:6},
+   creative:['SB12@1','SB10@1','SB12@2','SB9@1','SB8@3','SB12@3','AD14@1','AD10'], maxSessions:6},
  {id:7, tier:'level1', title:{ko:'구구단 종합과 네 자리 연산',en:'Times Tables Mix & 4-digit ±',zh:'乘法口诀综合与四位数运算'},
    drills:['ML4','AD7','ML4','AD7','AD7'], magic:[['B-13','B-14','B-15'],['A-18','A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25@4·AD8@3·ML4(구구단)였다. 끊어서 · 앞부터 · 쪼개서 빼기 · 기준수 · 덧뺄 끼리끼리 2.
@@ -234,7 +234,7 @@ const COURSE_SPEC = [
  {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
    drills:['MX2','FR8','DC3','MX2@2','DC3@2'], minSessions:7, magic:[['C-05'],['C-35'],['C-33']], creative:['MX6@1','DC5@1','WP4@3','MX6@2','DC5@2','MX6@3','MX6@4']},
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
-   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','MX3@3','DV8@3','EL4@3','MX3@4','MX3@5'], minSessions:6, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1','CH12@2','EL5@2','EL5@3']},
+   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','MX3@3','DV8@3','EL4@3','MX3@4','MX3@5'], minSessions:6, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1','CH12@2','EL5@2','EL5@3','AD16@2']},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
    drills:['MX5'], magic:[], /* 레벨 보스는 세션이 3개로 고정이라 창의도 3종만 실린다(4개를 적으면 마지막이 안 나온다).
       레벨 3을 대표하는 셋 — 분수 · 소수 · 수열(가우스). */
