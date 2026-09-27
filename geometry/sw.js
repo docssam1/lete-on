@@ -14,6 +14,7 @@ const CORE = [
   "/geometry/lab/app.js?v=lab-studio-15",
   "/geometry/shared/question-bank.js?v=20260829g",
   "/geometry/worksheet/generators.js?v=20260911a",
+  "/geometry/worksheet/taxonomy.js?v=20260927a",
   "/geometry/worksheet/render.js?v=20260911a",
   "/geometry/worksheet/card.js?v=20260829g",
   "/geometry/mirror-manor/",
