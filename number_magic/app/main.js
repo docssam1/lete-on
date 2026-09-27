@@ -3395,7 +3395,7 @@ function paceCompareHtml(){
         ${band}
         ${r.a?mk('a',r.a.sm,L(PC.bench('a').name)):''}
         ${r.p?mk('p',r.p.sm,L(PC.bench('p').name)):''}
-        ${r.k?mk('k',r.k.sm,'KMO'):''}
+        ${r.k?mk('k',r.k.sm,L(PC.bench('k').name)):''}
         ${r.you!=null?mk('you',r.you,T('you')):''}
       </div>
       <div class="nm-pc-facts">${facts.join('')}</div>
@@ -3438,9 +3438,9 @@ function paceCompareHtml(){
     return `<tr><th scope="row">${esc(L(m.name))}</th><td class="nm-cr-tnum">${m.course}</td><td>${cell('a')}</td><td>${cell('p')}</td><td>${cell('k')}</td></tr>`;
   }).join('');
   const srcHtml=`<details class="nm-cr-more nm-pc-src"><summary>${T('srcHead')}</summary>
-    <div class="nm-pc-tablewrap"><table class="nm-pc-table"><thead><tr><th>${T('srcMilestone')}</th><th>${T('srcOurs')}</th><th>${bName('a')}</th><th>${bName('p')}</th><th>KMO</th></tr></thead>
+    <div class="nm-pc-tablewrap"><table class="nm-pc-table"><thead><tr><th>${T('srcMilestone')}</th><th>${T('srcOurs')}</th><th>${bName('a')}</th><th>${bName('p')}</th><th>${bName('k')}</th></tr></thead>
     <tbody>${srcRows}</tbody></table></div>
-    <p class="nm-pc-fine">† ${T('beyondGrid')} · KMO ${T('course')} 2 = ${esc(pcAgeLabel(PC.bench('k').anchors[0].sm))} (${T('derived')})</p></details>`;
+    <p class="nm-pc-fine">† ${T('beyondGrid')} · ${bName('k')} ${T('course')} 2 = ${esc(pcAgeLabel(PC.bench('k').anchors[0].sm))} (${T('derived')})</p></details>`;
 
   return `<div class="nm-cr-pc" id="crPaceCmp">${head}${ageRow}${verdictHtml}${ladder}${timeline}${upHtml}
     <ul class="nm-pc-scope"><li>${T('scope1')}</li><li>${T('scope2')}</li><li>${T('scope3')}</li></ul>${srcHtml}</div>`;
