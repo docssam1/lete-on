@@ -7,7 +7,7 @@
  },
  {
   "id": "n02",
-  "sec": 13.04,
+  "sec": 12.88,
   "expected": 15.5,
   "fixedLength": false
  },
@@ -55,13 +55,13 @@
  },
  {
   "id": "n10",
-  "sec": 9.64,
+  "sec": 9.63,
   "expected": 10.93,
   "fixedLength": false
  },
  {
   "id": "n11",
-  "sec": 3.93,
+  "sec": 3.96,
   "expected": 4.36,
   "fixedLength": false
  },
