@@ -1635,6 +1635,10 @@ function printWatermarkHtml(){
 }
 /* main.js의 L(obj)와 같은 꼴 — {ko,en,zh} 필드에서 한 벌 고르기. 옛 pickKo를 대신한다.
    문자열이 그대로 오는 경우(호출부가 실어 보낸 topicName 등 한국어 전용 값)도 받는다. */
+/* 중·고등 과정 학습지에 초등 단계의 창의 스레드가 실릴 때(C30·C31·C33·C34) 해요체 대신 합니다체.
+   concept 에 koMid 가 있으면 그 문장을 쓴다. 급은 renderRoundPagesBody 가 회차 항목에서 정한다. */
+let W2_TIER = 'elem';
+function pickConcept(c){ if(c && c.koMid && W2_TIER !== 'elem' && examLang() === 'ko') return c.koMid; return pickL(c); }
 function pickL(field){
   if(!field) return '';
   if(typeof field === 'string') return field;
@@ -4453,7 +4457,7 @@ function w2StrategyLine(threadId, level){
   const th = (window.NM_THREADS||{})[threadId];
   if(!th) return '';
   const lvObj = (th.levels || []).find(l => l.id === level);
-  const sentence = pickL((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || th.concept) || '';
+  const sentence = pickConcept((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || th.concept) || '';
   const line = truncateConceptLine(stripConceptTags(sentence), 150);
   return line || pickL(th.instr || W2_INSTR[threadId]) || '';
 }
@@ -4483,7 +4487,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
   const middle = examLang() === 'ko' && (window.NM_MIDDLE_CONCEPTS || {})[threadId];
   if(middle){
     // 레벨의 목표를 공통 개념으로 덮어쓰지 않는다. 원본 재구성 설명은 한국어만 제공한다.
-    const focus = pickL((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || info.thread.concept) || '';
+    const focus = pickConcept((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || info.thread.concept) || '';
     return `<section class="nm-w2-concept nm-mid-concept" aria-label="개념 이해" data-middle-concept="${esc(threadId)}">
       <h3>개념 이해 · ${esc(nm)}</h3>
       <p><b>왜 이렇게 할까요?</b> ${esc(middle.why)}</p>
@@ -4498,7 +4502,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
   /* extra.skipSentence — 공부 전략 띠가 이미 같은 문장을 썼을 때(풀이형). 한 쪽에
      같은 문장이 두 번 찍히면 읽는 사람이 둘 중 하나를 못 읽은 것으로 여긴다. */
   const sentence = extra.skipSentence ? ''
-    : pickL((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || info.thread.concept) || '';
+    : pickConcept((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || info.thread.concept) || '';
   const stages = (info.unit && info.unit.discover && Array.isArray(info.unit.discover.stages))
     ? info.unit.discover.stages.slice(0, 2) : [];
   const stageLines = stages.map((s, i) => {
@@ -5328,6 +5332,7 @@ function renderRoundPages(item, opts){
   return result;
 }
 function renderRoundPagesBody(item, opts){
+  W2_TIER = schoolTierOf(item);
   opts = opts || {};
   if(item.kind==='drawing') return renderDrawingRound(item,opts);
   /* 풀이형은 한 문항이 한 쪽의 1/4을 먹는다 — 요청한 문항 수를 그대로 쓰면
