@@ -5206,6 +5206,10 @@ function cpBuild(p, conf){
   const key = Math.min(conf.key || 0, lines.length - 1);
   const first = form === 'B' && conf.at != null && conf.at < lines.length ? conf.at : key;
   const order = [first, key].concat(lines.map((_, i) => i)).filter((v, i, a) => a.indexOf(v) === i);
+  /* 꼴 B 불변(F4, at 없음)은 "양쪽에 똑같이 바꾼 수"(식에 없던 수)를 먼저 모든 줄에서 찾는다 — 마법 자리 줄의 그 수가
+     다음 줄에 다시 나오면(SB12 `27 + 3`, `36 + 3`) 둘째 줄에서 가린다. 없을 때만 원래 순서로. */
+  const passes = (form === 'B' && conf.at == null) ? ['intro', 'all'] : ['all'];
+  for(const pass of passes)
   for(const li of order){
     if(cpRestates(lines[li], expr)) continue;
     const eSig = new Set(eSegs.map(cpSig));
@@ -5213,7 +5217,7 @@ function cpBuild(p, conf){
     const chain = chainBefore(li);
     const intro = toks.filter(t => !origNums.has(t.v) && !chain.has(t.v));
     const free = toks.filter(t => !chain.has(t.v));
-    const groups = (form === 'B' && li === conf.at) ? [free, toks] : [intro, free, toks];
+    const groups = pass === 'intro' ? [intro] : (form === 'B' && li === conf.at) ? [free, toks] : [intro, free, toks];
     const seen = new Set();
     for(const g of groups) for(const t of g){
       if(seen.has(t.st)) continue; seen.add(t.st);
