@@ -22,7 +22,7 @@ export const SCENES_E3 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.5, 0, -0.35], 5.4, 58);
+    k.frame([0.75, 0, -0.35], 6.1, 58);
     k.table();
     /* 세로셈: 자연수 칸(x=-0.85)·소수점(구슬, x=-0.3)·소수 칸(x=0.25) */
     const XW = -0.85, XP = -0.3, XT = 0.25, ZS = [-1.55, -0.75, 0.35], TO = { w:0.72, d:0.72, h:0.2, fs:0.46 };
@@ -35,9 +35,9 @@ export const SCENES_E3 = {
     k.rod(k.lacquer('#3a2a1e'), -0.6, -0.2, 0);                     /* 세로셈의 가로줄 */
     const w3 = tileF(k, '3', XW, ZS[2], Object.assign({}, TO, ans)), t3 = tileF(k, '7', XT, ZS[2], Object.assign({}, TO, tenth, ans)); point(ZS[2]);
     /* 오른쪽: 부분 덧셈 카드 */
-    const cT = cardF(k, ['0.3 + 0.4 = 0.7'], 2.35, -1.2, { w:2.6, d:0.7, fs:0.32, bg:'#dbe7f2' });
-    const cW = cardF(k, ['2 + 1 = 3'], 2.35, -0.25, { w:2.6, d:0.7, fs:0.32 });
-    const cA = cardF(k, ['2.3 + 1.4 = 3.7'], 2.35, 0.7, { w:2.6, d:0.7, fs:0.32, bg:'#f1e0b8' });
+    const cT = cardF(k, ['0.3 + 0.4 = 0.7'], 2.35, -1.2, { w:2.5, d:0.7, fs:0.3, bg:'#dbe7f2' });
+    const cW = cardF(k, ['2 + 1 = 3'], 2.35, -0.25, { w:2.5, d:0.7, fs:0.3 });
+    const cA = cardF(k, ['2.3 + 1.4 = 3.7'], 2.35, 0.7, { w:2.5, d:0.7, fs:0.3, bg:'#f1e0b8' });
     /* 움직임: 소수 칸 3·4 → 0.7 카드·답 7 → 자연수 칸 2·1 → 2+1=3 카드·답 3 → 답 줄 전체 */
     k.onFrame(t => { const p = cyc(t, 8);
       t1.position.y = 0.2 * hop(p, 0.14, 0.26); t2.position.y = 0.2 * hop(p, 0.18, 0.3);
@@ -62,7 +62,7 @@ export const SCENES_E3 = {
     /* 자리 칸: 일(x=-0.85) · 소수 첫째(0) · 소수 둘째(0.85). 소수점은 붉은 구슬 */
     const XS = [-0.85, 0, 0.85], TO = { w:0.72, d:0.8, h:0.22, fs:0.5 }, Z1 = -1.35, Z2 = -0.3;
     const bead = k.lacquer('#9b2a1c');
-    const point = (x, z) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.09, 24, 16), bead); m.castShadow = true; m.position.set(x, 0.09, z + 0.26); scene.add(m); return m; };
+    const point = (x, z) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.11, 24, 16), bead); m.castShadow = true; m.position.set(x, 0.11, z + 0.3); scene.add(m); return m; };
     tileF(k, '4', XS[0], Z1, TO); tileF(k, '3', XS[1], Z1, TO);
     const p1 = point(-0.425, Z1);
     const zeros = [tileF(k, '0', XS[0], Z2, Object.assign({}, TO, { bg:'#e6dcc8', color:'#7a6a55' })), tileF(k, '0', XS[1], Z2, Object.assign({}, TO, { bg:'#e6dcc8', color:'#7a6a55' }))];
@@ -73,10 +73,10 @@ export const SCENES_E3 = {
     /* 움직임: 구슬이 43. 자리로 갔다가 한 칸 스키 → 4.3 / 7. 자리로 갔다가 두 칸 스키, 지나가며 0 이 채워짐 → 0.07 */
     k.onFrame(t => { const p = cyc(t, 8);
       const u1 = seg(p, 0.03, 0.12) * (1 - seg(p, 0.18, 0.32));
-      p1.position.x = -0.425 + 0.85 * u1; p1.position.y = 0.09 + 0.25 * hop(p, 0.18, 0.32);
+      p1.position.x = -0.425 + 0.85 * u1; p1.position.y = 0.11 + 0.25 * hop(p, 0.18, 0.32);
       c1.position.y = 0.16 * hop(p, 0.32, 0.44);
       const u2 = seg(p, 0.36, 0.44) * (1 - seg(p, 0.5, 0.72));
-      p2.position.x = -0.425 + 1.7 * u2; p2.position.y = 0.09 + 0.25 * hop(p, 0.5, 0.72);
+      p2.position.x = -0.425 + 1.7 * u2; p2.position.y = 0.11 + 0.25 * hop(p, 0.5, 0.72);
       zeros.forEach((z, i) => { const s = 1 - seg(u2, i ? 0.15 : 0.55, i ? 0.45 : 0.9); z.scale.setScalar(Math.max(0.001, s)); });
       c2.position.y = 0.16 * hop(p, 0.74, 0.86); });
     k.lights(Object.assign({}, LIGHT, { spotAt:[0, 0, -0.3] }));
@@ -90,7 +90,7 @@ export const SCENES_E3 = {
     [0.72, "$2\\times50$, $5\\times20$도 $100$, $8\\times125$는 $1000$이에요.", "$2\\times50$ and $5\\times20$ make $100$ too, and $8\\times125=1000$.", "$2\\times50$、$5\\times20$也是$100$，$8\\times125$是$1000$。"]
   ]},
     build(k){
-    k.frame([0, 0, -0.2], 5.8, 58);
+    k.frame([0, 0, -0.2], 6.3, 58);
     k.table();
     /* 뒷줄: 블록 4 × 7 × 25 — 황금 쌍 4·25 는 금빛 옆면 */
     const gold = k.metal('#c9a24a', 0.35), BZ = -1.45, BO = { h:0.26, d:0.85, fs:0.46 };
@@ -103,7 +103,7 @@ export const SCENES_E3 = {
     const eq = cardF(k, ['(4 × 25) × 7 = 100 × 7 = 700'], 0, -0.25, { w:5.0, d:0.75, fs:0.32, bg:'#f1e0b8' });
     /* 앞줄: 황금 쌍 카드 */
     const pairs = ['4 × 25 = 100', '2 × 50 = 100', '5 × 20 = 100', '8 × 125 = 1000'].map((s, i) =>
-      cardF(k, [s], -2.1 + i * 1.4, 0.85, { w:1.3, d:0.62, fs:0.18, bg:i ? '#efe3c8' : '#f6e3a8' }));
+      cardF(k, [s], -2.25 + i * 1.5, 0.85, { w:1.42, d:0.62, fs:0.165, bg:i ? '#efe3c8' : '#f6e3a8' }));
     /* 움직임: 4·25 블록이 들려 서로 다가갔다 돌아옴(쌍 만들기) → 식 카드 → 황금 쌍 카드 차례로 */
     const x4 = b4.position.x, x25 = b25.position.x;
     k.onFrame(t => { const p = cyc(t, 8);
@@ -159,7 +159,7 @@ export const SCENES_E3 = {
     [0.66, "$15$칸 중 $8$칸, 그래서 $\\dfrac{2}{3}\\times\\dfrac{4}{5}=\\dfrac{8}{15}$이에요.", "$8$ of $15$ squares, so $\\dfrac{2}{3}\\times\\dfrac{4}{5}=\\dfrac{8}{15}$.", "$15$格中的$8$格，所以$\\dfrac{2}{3}\\times\\dfrac{4}{5}=\\dfrac{8}{15}$。"]
   ]},
     build(k){
-    k.frame([0, 0, -0.2], 5.4, 58);
+    k.frame([0, 0, -0.6], 5.4, 60);
     k.table();
     /* 3줄 × 5칸 블록판. 위 2줄(2/3)은 연한 주황, 그중 왼쪽 4칸(8칸)은 진한 주황 */
     const S = 0.62, X0 = -0.3 - 2 * S, Z0 = -1.65;
@@ -170,7 +170,7 @@ export const SCENES_E3 = {
       tiles.push({ r, c, g:k.tile(null, X0 + c * S, Z0 + r * S, { w:S - 0.06, d:S - 0.06, h:0.18, side }) }); }
     /* 가장자리 분수: 줄 옆 2/3, 칸 아래 4/5 */
     cardF(k, [{ n:'2', d:'3' }], X0 + 5 * S + 0.2, Z0 + 0.5 * S, { w:0.6, d:0.95, fs:0.3, bg:'#f5dcb8' });
-    cardF(k, [{ n:'4', d:'5' }], X0 - S - 0.05, Z0 + 0.5 * S, { w:0.6, d:0.95, fs:0.3, bg:'#f3c6a4' });
+    cardF(k, [{ n:'4', d:'5' }], X0 + 1.5 * S, Z0 - 0.82, { w:0.62, d:0.9, fs:0.3, bg:'#f3c6a4' });
     const eq = cardF(k, [{ n:'2', d:'3' }, '×', { n:'4', d:'5' }, '=', { n:'2 × 4', d:'3 × 5' }, '=', { n:'8', d:'15' }], 0, 0.8, { w:4.4, d:1.0, fs:0.3, bg:'#f1e0b8' });
     /* 움직임: 위 2줄 → 진한 8칸 → 식 카드 */
     k.onFrame(t => { const p = cyc(t, 8);
@@ -248,7 +248,7 @@ export const SCENES_E3 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0, 0.55, -0.1], 5.6, 34);
+    k.frame([0.25, 0.85, -0.25], 6.6, 36);
     k.table();
     /* 지구본: 받침 + 금속 고리 + 바다·땅 무늬 공 */
     const GC = new THREE.Vector3(-0.9, 1.35, -0.9), GR = 0.95;
@@ -276,14 +276,14 @@ export const SCENES_E3 = {
     const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, GC.y - GR - 0.05, 16), wood); stem.position.set(GC.x, (GC.y - GR - 0.05) / 2 + 0.06, GC.z); stem.castShadow = true; scene.add(stem);
     const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.5, 0.1, 48), wood); foot.position.set(GC.x, 0.05, GC.z); foot.castShadow = foot.receiveShadow = true; scene.add(foot);
     /* 해: 오른쪽 위 빛나는 공 + 나란한 햇살 */
-    const sun = new THREE.Mesh(new THREE.SphereGeometry(0.32, 40, 24), new THREE.MeshBasicMaterial({ color:new THREE.Color('#ffd27a').multiplyScalar(1.6) }));
-    sun.position.set(2.5, 1.95, -1.1); scene.add(sun);
+    const sun = new THREE.Mesh(new THREE.SphereGeometry(0.32, 40, 24), new THREE.MeshBasicMaterial({ color:'#ffc23a', toneMapped:false }));
+    sun.position.set(2.45, 1.9, -1.0); scene.add(sun);
     const rayM = new THREE.MeshBasicMaterial({ color:'#ffd98a', transparent:true, opacity:0.55, depthWrite:false });
     const rays = [1.35, 1.65, 1.95, 2.25].map(y => { const r = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 2.0, 8), rayM.clone());
       r.rotation.z = Math.PI / 2; r.position.set(1.15, y - 0.25, -0.75); scene.add(r); return r; });
     /* 앞줄: 식 카드 */
-    const c1 = cardF(k, ['7.2° × 50 = 360°'], -1.2, 1.1, { w:2.6, d:0.7, fs:0.3, bg:'#f1e0b8' });
-    const c2 = cardF(k, ['800 × 50 = 40000'], 1.45, 1.1, { w:2.6, d:0.7, fs:0.3, bg:'#f1e0b8' });
+    const c1 = cardF(k, ['7.2° × 50 = 360°'], -1.35, 1.0, { w:2.6, d:0.8, fs:0.26, bg:'#f1e0b8' });
+    const c2 = cardF(k, ['800 × 50 = 40000'], 1.35, 1.0, { w:2.6, d:0.8, fs:0.26, bg:'#f1e0b8' });
     /* 움직임: 지구본이 살짝 돌았다 돌아오고, 햇살이 반짝 → 7.2° 카드 → 800 × 50 카드 */
     k.onFrame(t => { const p = cyc(t, 8);
       globe.rotation.y = -0.25 * Math.sin(Math.PI * 2 * p) * (1 - seg(p, 0.5, 1)) ;
