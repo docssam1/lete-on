@@ -8,6 +8,8 @@ const COLORS = [0x3b6fd1, 0xf0b429, 0x3fae5b, 0xe0743a];   // 가상 실험실(2
 const N = 0xe24b4a, S = 0x3a6bc6;
 const START = ['N', 'S', 'S', 'N'], TALL = ['N', 'S', 'N', 'S'];
 const Y0 = [0.3, 0.98, 1.26, 2.09], Y1 = [0.3, 0.98, 1.76, 2.64];
+// 준비: 받침 옆 탁자에 네 개를 포개 둔다(첫 장면부터 자석이 보이게). 끼울 때는 연필 위로 들어 올렸다가 내려놓는다.
+const PILE = { x: 2.35, z: -1.35 };
 const VIEW_TH = 0.5;                                        // 카메라가 있는 쪽(글자·표를 이쪽으로 돌린다)
 const PEN_R = 0.2, PEN_TOP = 3.22;                          // 연필 외접 반지름, 칠한 부분 끝 높이
 const LABEL_Y = 3.92;
@@ -201,10 +203,22 @@ export default {
     };
   },
   beats: [
-    { text: '받침에 막대를 세우고 고리 자석 네 개를 준비해요.', show: ['base', 'rod', 'lbQ'], dur: 3,
-      reset(o) { START.forEach((u, i) => { const r = o['r' + i]; setUp(r, u); r.position.y = 5 + i; r.userData.top.visible = r.userData.bot.visible = false; }); } },
-    { text: '고리 자석을 하나씩 끼워요. 어떤 자석은 떠 있고, 어떤 자석은 붙어 있어요.', show: ['r0', 'r1', 'r2', 'r3'], dur: 5,
-      anim(p, o) { Y0.forEach((y, i) => { const q = Math.min(1, Math.max(0, p * 1.6 - i * 0.2)); o['r' + i].position.y = 5 + i + (y - 5 - i) * q; }); } },
+    { text: '받침에 막대를 세우고 고리 자석 네 개를 준비해요.', show: ['base', 'rod', 'lbQ', 'r0', 'r1', 'r2', 'r3'], dur: 3,
+      reset(o) { START.forEach((u, i) => { const r = o['r' + i]; setUp(r, u); r.position.set(PILE.x, (3 - i) * T, PILE.z); r.userData.top.visible = r.userData.bot.visible = false; }); } },
+    { text: '고리 자석을 하나씩 끼워요. 어떤 자석은 떠 있고, 어떤 자석은 붙어 있어요.', dur: 7,
+      anim(p, o) {
+        const LIFT = PEN_TOP + 0.75;
+        Y0.forEach((y, i) => {
+          const r = o['r' + i], q = Math.min(1, Math.max(0, p * 2.2 - i * 0.4)), y0 = (3 - i) * T;
+          if (q < 0.5) {                                   // 들어 올려 연필 위로 옮긴다
+            const a = q / 0.5, e = a * a * (3 - 2 * a);
+            r.position.set(PILE.x * (1 - e), y0 + (LIFT - y0) * Math.sin(a * Math.PI / 2), PILE.z * (1 - e));
+          } else {                                          // 연필에 끼워 내려놓는다
+            const a = (q - 0.5) / 0.5;
+            r.position.set(0, LIFT + (y - LIFT) * a * a, 0);
+          }
+        });
+      } },
     { text: '떠 있는 곳은 마주 보는 면이 같은 극이에요. 서로 밀어 내요.', show: ['lbSame', 'push'], hide: ['lbQ'], dur: 5,
       anim(p, o) { for (let i = 0; i < 4; i++) o['r' + i].userData.top.visible = o['r' + i].userData.bot.visible = p > 0.1; } },
     { text: '붙어 있는 곳은 마주 보는 면이 다른 극이에요. 서로 끌어당겨요.', show: ['lbDiff', 'pull'], hide: ['lbSame', 'push'], dur: 5 },
