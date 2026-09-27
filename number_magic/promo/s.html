@@ -9,6 +9,10 @@
 <meta name="theme-color" content="#1a1612" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="canonical" href="https://lete-on.gfieldacademy.net/number_magic/promo/s.html">
+<link rel="alternate" hreflang="ko" href="https://lete-on.gfieldacademy.net/number_magic/promo/s.html?lang=ko">
+<link rel="alternate" hreflang="en" href="https://lete-on.gfieldacademy.net/number_magic/promo/s.html?lang=en">
+<link rel="alternate" hreflang="zh-Hans" href="https://lete-on.gfieldacademy.net/number_magic/promo/s.html?lang=zh">
+<link rel="alternate" hreflang="x-default" href="https://lete-on.gfieldacademy.net/number_magic/promo/s.html">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="Numbers of Magic · 수의 마법">
@@ -29,6 +33,10 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&family=Hahmlet:wght@400;500&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&display=swap">
 <link rel="preload" as="image" href="../assets/promo/video/poster-15s-vertical.jpg">
+<script>
+/* 한·영·중: 첫 그림 전에 언어를 정한다(?lang= → localStorage → navigator.language). 본문 사전은 문서 끝에. */
+(function(){var S=['ko','en','zh'],l=null;try{l=new URLSearchParams(location.search).get('lang')}catch(e){}if(S.indexOf(l)<0){l=null;try{l=localStorage.getItem('nmLang')}catch(e){}}if(S.indexOf(l)<0){var n=(navigator.language||'').toLowerCase();l=n.indexOf('zh')===0?'zh':n.indexOf('ko')===0?'ko':'en'}var h=document.documentElement;h.setAttribute('data-lang',l);h.setAttribute('lang',l==='zh'?'zh-Hans':l);if(l!=='ko')h.classList.add('i18n-wait');if(l==='zh'){var k=document.createElement('link');k.id='nmZhFont';k.rel='stylesheet';k.href='https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap';document.head.appendChild(k)}})();
+</script>
 <style>
 /* ============================================================
    Numbers of Magic — 세로형 "링크 페이지" (Instagram · Shorts 유입용)
@@ -258,6 +266,27 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
   .in{padding-top:44px;padding-bottom:52px;gap:9px}
   h2{font-size:21px}.cap{font-size:13px}.hero h1{font-size:24px}
 }
+
+/* ---------- 한·영·중 ---------- */
+.i18n-wait body{visibility:hidden}
+:root:lang(zh){--serif:'Noto Serif SC','Noto Serif KR',Georgia,serif;--sans:'Noto Sans SC','Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+:root:lang(en) body,:root:lang(zh) body{word-break:normal;overflow-wrap:break-word}
+:root:lang(zh) body{letter-spacing:0}
+:root:lang(zh) h1,:root:lang(zh) h2,:root:lang(zh) h3{letter-spacing:0}
+.langsw{display:inline-flex;align-items:center;gap:0;flex:none}
+.langsw a{font:500 12.5px/1 var(--sans);color:var(--la-ink-2);text-decoration:none;min-height:44px;min-width:44px;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;letter-spacing:.02em;white-space:nowrap}
+.langsw a:hover{color:var(--la-ink)}
+.langsw a[aria-current="true"]{color:var(--la-ink);font-weight:600;text-decoration:underline;text-decoration-color:var(--la-gold);text-underline-offset:5px;text-decoration-thickness:1px}
+.langsw i{width:3px;height:3px;border-radius:50%;background:var(--la-gold);opacity:.8;flex:none}
+.langsw a:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:-2px}
+.hero .bottom .langsw{align-self:flex-end;margin:-10px -8px -12px 0}
+:root:lang(en) h1,:root:lang(en) h2,:root:lang(en) .cap,:root:lang(en) .quote,:root:lang(en) .pillar span,:root:lang(en) .hero .lead,:root:lang(en) .fin p.body,
+:root:lang(zh) h1,:root:lang(zh) h2,:root:lang(zh) .cap,:root:lang(zh) .quote,:root:lang(zh) .pillar span,:root:lang(zh) .hero .lead,:root:lang(zh) .fin p.body{word-break:normal;overflow-wrap:break-word}
+:root:lang(en) .hero h1{font-size:30px}
+:root:lang(en) .ctas .btn,:root:lang(zh) .ctas .btn{white-space:normal;line-height:1.15;padding:8px 10px}
+:root:lang(en) .toast,:root:lang(zh) .toast{white-space:normal;max-width:calc(100% - 32px);text-align:center}
+.full .vcap{position:absolute;left:12px;right:12px;top:38px;z-index:2;display:none;font-size:12px;line-height:1.4;color:#fbf6ea;padding:5px 10px;border-radius:10px;background:rgba(42,35,32,.6);backdrop-filter:blur(6px);pointer-events:none;text-align:center}
+.full.playing .vcap.on{display:block}
 </style>
 </head>
 <body>
@@ -273,7 +302,7 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
 </div>
 <div class="stage-note" aria-hidden="true">
   <span class="wm">Numbers <i>of</i> Magic</span>
-  <span>Instagram · Shorts 링크 페이지 — 휴대폰에서는 전체 화면으로 열립니다</span>
+  <span data-i18n="stage.note">Instagram · Shorts 링크 페이지 — 휴대폰에서는 전체 화면으로 열립니다</span>
 </div>
 
 <div class="frame">
@@ -281,151 +310,153 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
   <main class="scroller" id="scroller">
 
     <!-- ===== 0 · 훅: 15초 세로 쇼릴 루프 ===== -->
-    <section class="slide hero on" id="s0" data-title="우리 아이, 지금 속도로 어디까지 갈 수 있을까요?">
-      <img class="poster" src="../assets/promo/video/poster-15s-vertical.jpg" alt="속도 비교 진단 카드 — 초4 고등수학 진도, 초등 KMO 경험, 이과 최상위권 중 지금 속도가 어디인지 보여 주는 화면" width="1080" height="1920" fetchpriority="high">
-      <video id="reel" muted loop playsinline preload="metadata" poster="../assets/promo/video/poster-15s-vertical.jpg" aria-label="Numbers of Magic 15초 쇼릴 — 진단, 로드맵, 마을, 이야기, 창의 연산, 3D 개념, 학습지">
+    <section class="slide hero on" id="s0" data-title="우리 아이, 지금 속도로 어디까지 갈 수 있을까요?" data-i18n-attr="data-title:t0">
+      <img class="poster" src="../assets/promo/video/poster-15s-vertical.jpg" alt="속도 비교 진단 카드 — 초4 고등수학 진도, 초등 KMO 경험, 이과 최상위권 중 지금 속도가 어디인지 보여 주는 화면" data-i18n-attr="alt:poster.alt" width="1080" height="1920" fetchpriority="high">
+      <video id="reel" muted loop playsinline preload="metadata" poster="../assets/promo/video/poster-15s-vertical.jpg" aria-label="Numbers of Magic 15초 쇼릴 — 진단, 로드맵, 마을, 이야기, 창의 연산, 3D 개념, 학습지" data-i18n-attr="aria-label:reel.label">
         <source src="../assets/promo/video/showreel-15s-vertical.mp4" type="video/mp4">
       </video>
-      <button class="play" id="play" type="button" aria-label="영상 재생">
+      <button class="play" id="play" type="button" aria-label="영상 재생" data-i18n-attr="aria-label:play">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>
       </button>
       <div class="top">
-        <a class="wm" href="../index.html" aria-label="Numbers of Magic 수의 마법 — 앱으로">Numbers <i>of</i> Magic<small>수의 마법</small></a>
-        <button class="snd" id="snd" type="button" aria-pressed="false" aria-label="소리 켜기">
+        <a class="wm" href="../index.html" aria-label="Numbers of Magic 수의 마법 — 앱으로" data-i18n-attr="aria-label:top.home">Numbers <i>of</i> Magic<small>수의 마법</small></a>
+        <button class="snd" id="snd" type="button" aria-pressed="false" aria-label="소리 켜기" data-i18n-attr="aria-label:snd.on">
           <svg class="ic off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M16 9l5 5M21 9l-5 5"/></svg>
           <svg class="ic on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
         </button>
       </div>
       <div class="bottom">
-        <div class="kicker"><b>GFIELD</b> 수학 마법 나라에 오신 걸 환영합니다</div>
-        <h1>우리 아이,<br><em>지금 속도로</em> 어디까지<br>갈 수 있을까요?</h1>
-        <p class="lead">답을 빨리 구하는 계산 학습이 아닙니다. 수를 가지고 놀고, 문장을 이해하고, 셈을 할 수 있어야 수학을 정복합니다.</p>
-        <a class="btn pearl" href="../index.html">마법의 마을로 들어가기
+        <nav class="langsw" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></nav>
+        <div class="kicker"><b>GFIELD</b> <span data-i18n="hero.kicker">수학 마법 나라에 오신 걸 환영합니다</span></div>
+        <h1 data-i18n-html="hero.h1">우리 아이,<br><em>지금 속도로</em> 어디까지<br>갈 수 있을까요?</h1>
+        <p class="lead" data-i18n="hero.lead">답을 빨리 구하는 계산 학습이 아닙니다. 수를 가지고 놀고, 문장을 이해하고, 셈을 할 수 있어야 수학을 정복합니다.</p>
+        <a class="btn pearl" href="../index.html"><span data-i18n="cta.village">마법의 마을로 들어가기</span>
           <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <div class="hint" id="hint" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></svg>
-          <span>위로 밀어서 이야기 보기</span>
+          <span data-i18n="hint">위로 밀어서 이야기 보기</span>
         </div>
       </div>
     </section>
 
     <!-- ===== 1막 · 왜 ===== -->
-    <section class="slide" id="s1" data-title="답을 빨리 구하는 계산 학습이 아닙니다">
+    <section class="slide" id="s1" data-title="답을 빨리 구하는 계산 학습이 아닙니다" data-i18n-attr="data-title:t1">
       <div class="in">
-        <div class="kicker rv"><b>01</b> 왜 — 수는 언어입니다</div>
-        <h2 class="rv">답을 빨리 구하는<br><em>계산 학습이 아닙니다.</em></h2>
+        <div class="kicker rv"><b>01</b> <span data-i18n="k1">왜 — 수는 언어입니다</span></div>
+        <h2 class="rv" data-i18n-html="h1">답을 빨리 구하는<br><em>계산 학습이 아닙니다.</em></h2>
         <figure class="media rv cropb" style="margin:0">
-          <img src="../assets/promo/shots/chars-close.webp" loading="lazy" decoding="async" alt="Numbers of Magic 3D 캐릭터들 — 아이들과 수염 난 수학 마법사, 안경 쓴 학자가 나란히 서 있다" width="1400" height="700">
-          <figcaption class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z"/><path d="M19 16l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>수를 마법처럼 다루는 법</figcaption>
+          <img src="../assets/promo/shots/chars-close.webp" loading="lazy" decoding="async" alt="Numbers of Magic 3D 캐릭터들 — 아이들과 수염 난 수학 마법사, 안경 쓴 학자가 나란히 서 있다" data-i18n-attr="alt:chars.alt" width="1400" height="700">
+          <figcaption class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4z"/><path d="M19 16l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg><span data-i18n="chars.tag">수를 마법처럼 다루는 법</span></figcaption>
         </figure>
-        <p class="cap rv">연산만 하는 학습도, 창의 연산만 하는 학습도 아닙니다. 수의 정복을 넘어 수학을 정복하려면 <b>수를 가지고 놀고, 문장을 이해하고, 셈을 할 수 있어야</b> 합니다.</p>
+        <p class="cap rv" data-i18n-html="a1.lead">연산만 하는 학습도, 창의 연산만 하는 학습도 아닙니다. 수의 정복을 넘어 수학을 정복하려면 <b>수를 가지고 놀고, 문장을 이해하고, 셈을 할 수 있어야</b> 합니다.</p>
       </div>
     </section>
 
     <!-- ===== 1막 · 독쌤의 철학: 골고루 ===== -->
-    <section class="slide" id="s2" data-title="언어 · 사고력 · 연산을 골고루">
+    <section class="slide" id="s2" data-title="언어 · 사고력 · 연산을 골고루" data-i18n-attr="data-title:t2">
       <div class="in">
-        <div class="kicker rv"><b>02</b> 독쌤의 철학</div>
-        <h2 class="rv">한쪽으로 치우치지 않기.<br>언어 · 사고력 · 연산을 <em>골고루.</em></h2>
+        <div class="kicker rv"><b>02</b> <span data-i18n="k2">독쌤의 철학</span></div>
+        <h2 class="rv" data-i18n-html="h2">한쪽으로 치우치지 않기.<br>언어 · 사고력 · 연산을 <em>골고루.</em></h2>
         <figure class="media rv ar54" style="margin:0">
-          <img src="../assets/hero3d/M-14.webp" loading="lazy" decoding="async" alt="양팔 저울 3D 그림 — 한쪽에 x 상자, 다른 쪽에 추가 놓여 x + 7 = 12 를 이룬다" width="1600" height="1000">
-          <figcaption class="tag tl"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 20h16M12 6l-6 6h12z"/></svg>어느 한쪽으로도 기울지 않게</figcaption>
+          <img src="../assets/hero3d/M-14.webp" loading="lazy" decoding="async" alt="양팔 저울 3D 그림 — 한쪽에 x 상자, 다른 쪽에 추가 놓여 x + 7 = 12 를 이룬다" data-i18n-attr="alt:scale.alt" width="1600" height="1000">
+          <figcaption class="tag tl"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 20h16M12 6l-6 6h12z"/></svg><span data-i18n="scale.tag">어느 한쪽으로도 기울지 않게</span></figcaption>
         </figure>
         <div class="pillars rv">
-          <div class="pillar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v10H9l-4 4v-4H4z"/><path d="M8 9h8M8 12h5"/></svg><b>언어</b><span>수는 언어 — 문장을 이해하기</span></div>
-          <div class="pillar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.7.5 1 1.3 1 2.1h5c0-.8.3-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><b>사고력</b><span>왜 그런지, 여러 길로 생각하기</span></div>
-          <div class="pillar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M12 4v16M4 12h16"/><path d="M8 7v3M6.5 8.5h3M14.5 8.5h3M6.5 16.5h3M14.5 15.5h3M14.5 17.5h3"/></svg><b>연산</b><span>셈을 정확하게, 내 속도로</span></div>
+          <div class="pillar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v10H9l-4 4v-4H4z"/><path d="M8 9h8M8 12h5"/></svg><b data-i18n="pil.l1">언어</b><span data-i18n="pil.s1">수는 언어 — 문장을 이해하기</span></div>
+          <div class="pillar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.7.5 1 1.3 1 2.1h5c0-.8.3-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><b data-i18n="pil.l2">사고력</b><span data-i18n="pil.s2">왜 그런지, 여러 길로 생각하기</span></div>
+          <div class="pillar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M12 4v16M4 12h16"/><path d="M8 7v3M6.5 8.5h3M14.5 8.5h3M6.5 16.5h3M14.5 15.5h3M14.5 17.5h3"/></svg><b data-i18n="pil.l3">연산</b><span data-i18n="pil.s3">셈을 정확하게, 내 속도로</span></div>
         </div>
-        <blockquote class="quote rv"><p>골고루 연습해야 수를 정복하고,<br>수를 정복해야 <em>수학을 정복합니다.</em></p><footer>— 독쌤</footer></blockquote>
+        <blockquote class="quote rv"><p data-i18n-html="quote">골고루 연습해야 수를 정복하고,<br>수를 정복해야 <em>수학을 정복합니다.</em></p><footer data-i18n="by">— 독쌤</footer></blockquote>
       </div>
     </section>
 
     <!-- ===== 2막 · 진단 ===== -->
-    <section class="slide" id="s3" data-title="그 첫걸음은 진단입니다">
+    <section class="slide" id="s3" data-title="그 첫걸음은 진단입니다" data-i18n-attr="data-title:t3">
       <div class="in">
-        <div class="kicker rv"><b>03</b> 첫걸음 — 진단</div>
-        <h2 class="rv">그 첫걸음은 <em>진단</em>입니다.</h2>
+        <div class="kicker rv"><b>03</b> <span data-i18n="k3">첫걸음 — 진단</span></div>
+        <h2 class="rv" data-i18n-html="h3">그 첫걸음은 <em>진단</em>입니다.</h2>
         <div class="pace-wrap rv">
           <figure class="media phone" style="margin:0 34px">
-            <img src="../assets/promo/video/poster-15s-vertical.jpg" loading="lazy" decoding="async" alt="속도 비교 진단 카드 — 기준 나이 6세 9월, 지금 속도는 초등 KMO 경험 속도. 이과 최상위권·초등 KMO 경험·초4 고등수학 진도와 나란히 놓고 '우리 아이, 지금 속도로 어디까지 갈 수 있을까요?'를 묻는 화면" width="1080" height="1920">
+            <img src="../assets/promo/video/poster-15s-vertical.jpg" loading="lazy" decoding="async" alt="속도 비교 진단 카드 — 기준 나이 6세 9월, 지금 속도는 초등 KMO 경험 속도. 이과 최상위권·초등 KMO 경험·초4 고등수학 진도와 나란히 놓고 '우리 아이, 지금 속도로 어디까지 갈 수 있을까요?'를 묻는 화면" data-i18n-attr="alt:pace.alt" width="1080" height="1920">
           </figure>
-          <p class="note" style="text-align:center">참고용 비교 · 결과를 약속하지 않습니다 · 연산 트랙 기준</p>
+          <p class="note" style="text-align:center" data-i18n="disc">참고용 비교 · 결과를 약속하지 않습니다 · 연산 트랙 기준</p>
         </div>
-        <p class="cap rv">지금 속도가 <b>초4 고등수학 진도 · 초등 KMO 경험 · 이과 최상위권</b> 중 어디인지 보고, 상위 레벨로 가려면 무엇을 바꾸고 기간을 어떻게 줄일지 — 학습 성향과 관리, 가능한 속도를 보고 설계해 드립니다.</p>
+        <p class="cap rv" data-i18n-html="pace.cap">지금 속도가 <b>초4 고등수학 진도 · 초등 KMO 경험 · 이과 최상위권</b> 중 어디인지 보고, 상위 레벨로 가려면 무엇을 바꾸고 기간을 어떻게 줄일지 — 학습 성향과 관리, 가능한 속도를 보고 설계해 드립니다.</p>
       </div>
     </section>
 
     <!-- ===== 2막 · 로드맵과 속도 ===== -->
-    <section class="slide" id="s4" data-title="설계가 끝나면 길이 보입니다">
+    <section class="slide" id="s4" data-title="설계가 끝나면 길이 보입니다" data-i18n-attr="data-title:t4">
       <div class="in">
-        <div class="kicker rv"><b>04</b> 로드맵과 속도</div>
-        <h2 class="rv">설계가 끝나면<br><em>길이 보입니다.</em></h2>
+        <div class="kicker rv"><b>04</b> <span data-i18n="k4">로드맵과 속도</span></div>
+        <h2 class="rv" data-i18n-html="h4">설계가 끝나면<br><em>길이 보입니다.</em></h2>
         <figure class="media phone rv" style="margin:0 34px">
-          <img src="../assets/promo/shots/road-phone.webp" loading="lazy" decoding="async" alt="연산 로드맵 화면 — 중학교 1학년 구간, 지금 여기 표시와 다음 목표 30까지 이어지는 길" width="390" height="844">
+          <img src="../assets/promo/shots/road-phone.webp" loading="lazy" decoding="async" alt="연산 로드맵 화면 — 중학교 1학년 구간, 지금 여기 표시와 다음 목표 30까지 이어지는 길" data-i18n-attr="alt:road.alt" width="390" height="844">
         </figure>
-        <p class="cap rv">유아부터 고등까지 <b>한 길로 이어진 연산 로드맵</b> 위에서, 주 1회·주 2회, 속도와 양을 아이에게 맞게 정합니다.</p>
+        <p class="cap rv" data-i18n-html="road.cap">유아부터 고등까지 <b>한 길로 이어진 연산 로드맵</b> 위에서, 주 1회·주 2회, 속도와 양을 아이에게 맞게 정합니다.</p>
       </div>
     </section>
 
     <!-- ===== 2막 · 마을과 이야기 ===== -->
-    <section class="slide" id="s5" data-title="마을을 걸으며 오늘의 마법을 찾아요">
+    <section class="slide" id="s5" data-title="마을을 걸으며 오늘의 마법을 찾아요" data-i18n-attr="data-title:t5">
       <div class="in">
-        <div class="kicker rv"><b>05</b> 이제 아이의 차례</div>
-        <h2 class="rv">마을을 걸으며<br><em>오늘의 마법</em>을 찾아요.</h2>
+        <div class="kicker rv"><b>05</b> <span data-i18n="k5">이제 아이의 차례</span></div>
+        <h2 class="rv" data-i18n-html="h5">마을을 걸으며<br><em>오늘의 마법</em>을 찾아요.</h2>
         <figure class="media rv pos-c" style="margin:0">
-          <img src="../assets/promo/shots/village-plaza.webp" loading="lazy" decoding="async" alt="3D 마을 광장 — 분수대 곁을 걷는 아이 캐릭터와 잔디, 붉은 지붕 집들" width="1280" height="800">
-          <figcaption class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9l8-5 8 5v10"/><path d="M9 19v-6h6v6"/></svg>3D 마을 · 오늘의 마법</figcaption>
+          <img src="../assets/promo/shots/village-plaza.webp" loading="lazy" decoding="async" alt="3D 마을 광장 — 분수대 곁을 걷는 아이 캐릭터와 잔디, 붉은 지붕 집들" data-i18n-attr="alt:plaza.alt" width="1280" height="800">
+          <figcaption class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9l8-5 8 5v10"/><path d="M9 19v-6h6v6"/></svg><span data-i18n="plaza.tag">3D 마을 · 오늘의 마법</span></figcaption>
         </figure>
-        <p class="cap rv">유아부터 미적분까지, 그 길은 <b>하나의 이야기</b>로 이어집니다.</p>
+        <p class="cap rv" data-i18n-html="story.cap">유아부터 미적분까지, 그 길은 <b>하나의 이야기</b>로 이어집니다.</p>
       </div>
     </section>
 
     <!-- ===== 2막 · 창의 연산 + 3D 개념 ===== -->
-    <section class="slide" id="s6" data-title="답은 하나, 길은 여러 개">
+    <section class="slide" id="s6" data-title="답은 하나, 길은 여러 개" data-i18n-attr="data-title:t6">
       <div class="in">
-        <div class="kicker rv"><b>06</b> 오늘의 마법은 이렇게</div>
-        <h2 class="rv">답은 하나,<br><em>길은 여러 개.</em></h2>
-        <div class="eq rv" role="img" aria-label="4 곱하기 7 곱하기 5. 곱해서 10이 되는 짝을 먼저 묶으면 (4 곱하기 5) 곱하기 7, 곧 20 곱하기 7 = 140">
-          <div class="row"><span>4 × 7 × 5</span><small>곱해서 10이 되는<br>짝을 먼저</small></div>
+        <div class="kicker rv"><b>06</b> <span data-i18n="k6">오늘의 마법은 이렇게</span></div>
+        <h2 class="rv" data-i18n-html="h6">답은 하나,<br><em>길은 여러 개.</em></h2>
+        <div class="eq rv" role="img" aria-label="4 곱하기 7 곱하기 5. 곱해서 10이 되는 짝을 먼저 묶으면 (4 곱하기 5) 곱하기 7, 곧 20 곱하기 7 = 140" data-i18n-attr="aria-label:eq.label">
+          <div class="row"><span>4 × 7 × 5</span><small data-i18n-html="eq.small">곱해서 10이 되는<br>짝을 먼저</small></div>
           <div class="row"><span>= <mark>(4 × 5)</mark> × 7</span></div>
           <div class="row"><span>= 20 × 7 = <span class="ans">140</span></span></div>
         </div>
         <figure class="media rv ar43" style="margin:0">
-          <img src="../assets/hero3d/M-19.webp" loading="lazy" decoding="async" alt="넓이 타일 3D 그림 — (x+2)(x+3) 을 x², x, 1 타일로 펼쳐 x² + 5x + 6 이 되는 모습" width="1600" height="1000">
-          <figcaption class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8l8-4 8 4-8 4z"/><path d="M4 8v8l8 4 8-4V8"/><path d="M12 12v8"/></svg>3D 개념 · 수학사 · 게임</figcaption>
+          <img src="../assets/hero3d/M-19.webp" loading="lazy" decoding="async" alt="넓이 타일 3D 그림 — (x+2)(x+3) 을 x², x, 1 타일로 펼쳐 x² + 5x + 6 이 되는 모습" data-i18n-attr="alt:tiles.alt" width="1600" height="1000">
+          <figcaption class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8l8-4 8 4-8 4z"/><path d="M4 8v8l8 4 8-4V8"/><path d="M12 12v8"/></svg><span data-i18n="tiles.tag">3D 개념 · 수학사 · 게임</span></figcaption>
         </figure>
-        <p class="cap rv">어려운 개념은 손에 잡히는 3D로 만나고, 수학사와 게임을 통해 <b>왜 그런지, 그 증명 과정까지</b> 알게 됩니다.</p>
+        <p class="cap rv" data-i18n-html="concept.cap">어려운 개념은 손에 잡히는 3D로 만나고, 수학사와 게임을 통해 <b>왜 그런지, 그 증명 과정까지</b> 알게 됩니다.</p>
       </div>
     </section>
 
     <!-- ===== 2막 · 종이 학습지 + 휴대폰 안내 ===== -->
-    <section class="slide" id="s7" data-title="그리고 공부는 종이에 합니다">
+    <section class="slide" id="s7" data-title="그리고 공부는 종이에 합니다" data-i18n-attr="data-title:t7">
       <div class="in">
-        <div class="kicker rv"><b>07</b> 공부는 종이에</div>
-        <h2 class="rv">그리고 공부는<br><em>종이에</em> 합니다.</h2>
+        <div class="kicker rv"><b>07</b> <span data-i18n="k7">공부는 종이에</span></div>
+        <h2 class="rv" data-i18n-html="h7">그리고 공부는<br><em>종이에</em> 합니다.</h2>
         <figure class="media rv" style="margin:0 26px">
-          <img src="../assets/promo/shots/sheet-c21.webp" loading="lazy" decoding="async" alt="인쇄 학습지 — 창의 연산 · 분수의 곱셈·나눗셈 Training Course 페이지" width="719" height="1048">
+          <img src="../assets/promo/shots/sheet-c21.webp" loading="lazy" decoding="async" alt="인쇄 학습지 — 창의 연산 · 분수의 곱셈·나눗셈 Training Course 페이지" data-i18n-attr="alt:sheet.alt" width="719" height="1048">
         </figure>
-        <div class="notice rv"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/><path d="M17 7l1.5-1.5M19 10h2M18 13l1.5 1.5"/></svg><span>매주 학습지와 진도 안내는 <b>학부모님 휴대폰으로</b> 갑니다.</span></div>
-        <p class="cap rv">매주 한두 번 학습지를 받거나 인쇄하고, 더 연습하고 싶으면 <b>같은 과정을 더 풀거나 더 높은 난이도로</b> 올라갑니다.</p>
+        <div class="notice rv"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/><path d="M17 7l1.5-1.5M19 10h2M18 13l1.5 1.5"/></svg><span data-i18n-html="notice">매주 학습지와 진도 안내는 <b>학부모님 휴대폰으로</b> 갑니다.</span></div>
+        <p class="cap rv" data-i18n-html="sheet.cap">매주 한두 번 학습지를 받거나 인쇄하고, 더 연습하고 싶으면 <b>같은 과정을 더 풀거나 더 높은 난이도로</b> 올라갑니다.</p>
       </div>
     </section>
 
     <!-- ===== 3막 · 함께 만드는 문화 + CTA ===== -->
-    <section class="slide fin" id="s8" data-title="함께 만드는 문화">
+    <section class="slide fin" id="s8" data-title="함께 만드는 문화" data-i18n-attr="data-title:t8">
       <div class="in">
-        <div class="kicker rv"><b>08</b> 함께 만드는 문화</div>
-        <h2 class="rv">그냥 던져 주는<br>학습지가 <em>아닙니다.</em></h2>
-        <p class="body rv">학생과 부모님과 학원이 <b>함께 문화를 만들어야 한다</b>는 독쌤의 철학, 넘버스 오브 매직에서 경험하세요. <b>만 5세부터</b> 시작합니다.</p>
+        <div class="kicker rv"><b>08</b> <span data-i18n="k8">함께 만드는 문화</span></div>
+        <h2 class="rv" data-i18n-html="h8">그냥 던져 주는<br>학습지가 <em>아닙니다.</em></h2>
+        <p class="body rv" data-i18n-html="fin.body">학생과 부모님과 학원이 <b>함께 문화를 만들어야 한다</b>는 독쌤의 철학, 넘버스 오브 매직에서 경험하세요. <b>만 5세부터</b> 시작합니다.</p>
         <div class="full rv" id="full">
-          <span class="lbl">전체 영상 · 2:25 · 소리 있음</span>
-          <video id="fullv" preload="none" playsinline poster="../assets/promo/shots/village.webp" aria-label="Numbers of Magic 전체 쇼릴 영상, 2분 25초">
+          <span class="lbl" data-i18n="full.lbl">전체 영상 · 2:25 · 소리 있음</span>
+          <span class="vcap" id="vcap" aria-hidden="true"></span>
+          <video id="fullv" preload="none" playsinline poster="../assets/promo/shots/village.webp" aria-label="Numbers of Magic 전체 쇼릴 영상, 2분 25초" data-i18n-attr="aria-label:full.label">
             <source src="../assets/promo/video/showreel-full.mp4" type="video/mp4">
           </video>
-          <button class="go" id="fullgo" type="button" aria-label="전체 영상 재생"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span></button>
+          <button class="go" id="fullgo" type="button" aria-label="전체 영상 재생" data-i18n-attr="aria-label:full.play"><span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span></button>
         </div>
         <div class="ctas rv">
-          <a class="btn pearl" href="../index.html">마법의 마을로 들어가기
+          <a class="btn pearl" href="../index.html"><span data-i18n="cta.village">마법의 마을로 들어가기</span>
             <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           <div class="row2">
             <!-- ★★★★★ 원장님이 채우는 자리 ★★★★★
@@ -434,29 +465,180 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
                    카카오채널: data-contact="https://pf.kakao.com/_xxxxx"
                  비어 있으면 버튼을 눌렀을 때 "상담 링크 준비 중" 안내만 뜹니다. -->
             <a class="btn glass" id="contact" href="#" data-contact="">
-              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>상담 문의</a>
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span data-i18n="cta.contact">상담 문의</span></a>
             <a class="btn glass" href="../about.html">
-              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M8 7h8M8 10.5h6"/></svg>독쌤의 철학</a>
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5M8 7h8M8 10.5h6"/></svg><span data-i18n="foot.phil">독쌤의 철학</span></a>
           </div>
         </div>
         <div class="foot rv">
           <span class="wm" aria-hidden="true">Numbers <i>of</i> Magic</span>
-          <span>GFIELD · <a href="../ws.html">학습지 보기</a></span>
+          <span>GFIELD · <a href="../ws.html" data-i18n="foot.sheets">학습지 보기</a></span>
         </div>
       </div>
     </section>
 
   </main>
 
-  <ol class="dots" id="dots" aria-label="장면 이동"></ol>
+  <ol class="dots" id="dots" aria-label="장면 이동" data-i18n-attr="aria-label:dots.label"></ol>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 </div>
 
 <script>
+window.__NM_KO = {
+  'snd.on':'소리 켜기', 'snd.off':'소리 끄기', 'toast.contact':'상담 링크는 준비 중입니다 · 마을에서 먼저 만나요',
+  'caps':null
+};
+window.__NM_EN = {
+  'meta.title':"Numbers of Magic · How far can your child go at today's pace?",
+  'meta.desc':'This is not speed-drill arithmetic. Language, thinking and arithmetic in balance — diagnostic, roadmap, village, story, creative arithmetic, 3D concepts and paper worksheets. Numbers of Magic, from age 5.',
+  'lang.label':'Language', 'stage.note':'Instagram · Shorts link page — opens full-screen on a phone',
+  't0':"How far can your child go at today's pace?",
+  'poster.alt':'Pace-comparison card — showing where today\'s pace sits among high-school math by grade 4, KMO in elementary and the top science track',
+  'reel.label':'Numbers of Magic 15-second reel — diagnostic, roadmap, village, story, creative arithmetic, 3D concepts, worksheets (on-screen text in Korean)',
+  'play':'Play video', 'top.home':'Numbers of Magic — to the app', 'snd.on':'Unmute', 'snd.off':'Mute',
+  'hero.kicker':'Welcome to the land of math magic', 'hero.h1':'How far can<br>your child go<br><em>at today\'s pace?</em>',
+  'hero.lead':"This is not speed-drill arithmetic. Play with numbers, understand the sentence, do the sum — that's how mathematics is mastered.",
+  'cta.village':'Enter the Magic Village', 'hint':'Swipe up for the story',
+  't1':'This is not speed-drill arithmetic', 'k1':'Why — numbers are a language', 'h1':'This is not<br><em>speed-drill arithmetic.</em>',
+  'chars.alt':'Numbers of Magic 3D characters — children, a bearded math wizard and a scholar in glasses standing side by side', 'chars.tag':'Handling numbers like magic',
+  'a1.lead':'Not arithmetic alone, and not creative arithmetic alone either. To go beyond numbers and master mathematics, a child must be able to <b>play with numbers, understand the sentence, and do the sum</b>.',
+  't2':'Language · thinking · arithmetic, in balance', 'k2':"Docssam's philosophy", 'h2':'Never leaning to one side.<br>Language · thinking · arithmetic, <em>in balance.</em>',
+  'scale.alt':'3D balance scale — an x box on one side and weights on the other, making x + 7 = 12', 'scale.tag':'Tipping to neither side',
+  'pil.l1':'Language', 'pil.l2':'Thinking', 'pil.l3':'Arithmetic',
+  'pil.s1':'Numbers are a language — understand the sentence', 'pil.s2':'Ask why, think along many paths', 'pil.s3':'Sums done accurately, at your own pace',
+  'quote':'Practise in balance to master numbers,<br>and master numbers to <em>master the math.</em>', 'by':'— Docssam',
+  't3':'The first step is a diagnostic', 'k3':'First step — diagnostic', 'h3':'The first step is a <em>diagnostic</em>.',
+  'pace.alt':"Pace-comparison card — reference age 6 years, September; today's pace matches KMO in elementary. Set beside top science track, KMO in elementary and high-school math by grade 4, it asks: how far can your child go at today's pace?",
+  'disc':'For reference only · no outcomes promised · arithmetic track',
+  'pace.cap':'See where today\'s pace sits among <b>high-school math by grade 4 · KMO in elementary · top science track</b>, and to move up a level — what to change and how to shorten the time — we design it around how the child learns, how study is managed, and the pace that is realistic.',
+  't4':'Once the plan is set, the road appears', 'k4':'Roadmap and pace', 'h4':'Once the plan is set,<br><em>the road appears.</em>',
+  'road.alt':"Arithmetic roadmap screen — the Grade 7 stretch, with a 'you are here' marker and the road on to the next goal, course 30",
+  'road.cap':'On <b>one arithmetic roadmap from preschool to high school</b>, we set once or twice a week — pace and volume — to fit the child.',
+  't5':"Walk the village, find today's magic", 'k5':"Now it's the child's turn", 'h5':"Walk the village,<br>find <em>today's magic</em>.",
+  'plaza.alt':'3D village plaza — a child walking by the fountain, lawns and red-roofed houses', 'plaza.tag':"3D village · today's magic",
+  'story.cap':'From preschool to calculus, the road runs on as <b>a single story</b>.',
+  't6':'One answer, many paths', 'k6':"Today's magic, like this", 'h6':'One answer,<br><em>many paths.</em>',
+  'eq.label':'4 times 7 times 5. Pair the two that make 10 first: (4 times 5) times 7, that is 20 times 7 = 140', 'eq.small':'Pair the two<br>that make 10 first',
+  'tiles.alt':'3D area tiles — (x+2)(x+3) unfolded into x², x and 1 tiles, becoming x² + 5x + 6', 'tiles.tag':'3D concepts · math history · games',
+  'concept.cap':'Hard concepts are met in tangible 3D, and through math history and games children learn <b>why — right down to the proof</b>.',
+  't7':'And the real work happens on paper', 'k7':'Work on paper', 'h7':'And the real work<br>happens <em>on paper</em>.',
+  'sheet.alt':'Printed worksheet — Creative arithmetic · multiplying and dividing fractions, Training Course page',
+  'notice':"Every week the worksheets and a progress note go <b>to the parent's phone</b>.",
+  'sheet.cap':'Once or twice a week, receive or print the worksheets; for more practice, <b>do more of the same course or step up a level</b>.',
+  't8':'A culture built together', 'k8':'A culture built together', 'h8':'Not worksheets<br>tossed <em>over the fence.</em>',
+  'fin.body':"It's Docssam's philosophy that <b>students, parents and the academy build the culture together</b> — experience it at Numbers of Magic. <b>From age 5.</b>",
+  'full.lbl':'Full film · 2:25 · sound on · Korean narration', 'full.label':'Numbers of Magic full film, 2 min 25 s, narrated in Korean', 'full.play':'Play the full film',
+  'cta.contact':'Contact us', 'foot.phil':"Docssam's philosophy", 'foot.sheets':'See the worksheets',
+  'toast.contact':'Contact link coming soon · meet us in the village first', 'dots.label':'Go to scene',
+  'caps':[[0,'Where numbers become magic'],[9,'This is not speed-drill arithmetic'],[24,'Language, thinking and arithmetic — in balance'],[33,'Diagnose the level · see where this pace leads'],[58,'One road · the pace that fits the child'],[70,"Walk the village, find today's magic"],[78,'From preschool to calculus, one story'],[84,'Creative arithmetic — unfold the number'],[98,'3D concepts · math history · games — down to the why'],[110,'Work on paper — 1–2 sets a week'],[124,"Weekly, to the parent's phone"],[130,'A culture built together']]
+};
+window.__NM_ZH = {
+  'meta.title':'Numbers of Magic · 孩子以现在的节奏，能走多远？',
+  'meta.desc':'这不是追求快速求解的计算训练。语言、思维、运算均衡发展——诊断、路线图、小镇、故事、创意运算、3D概念、纸质学习单。5周岁起的 Numbers of Magic。',
+  'lang.label':'语言', 'stage.note':'Instagram · Shorts 链接页——手机上全屏打开',
+  't0':'孩子以现在的节奏，能走多远？',
+  'poster.alt':'速度对比诊断卡——显示现在的节奏在小四进入高中数学、小学阶段体验KMO、理科顶尖中的位置',
+  'reel.label':'Numbers of Magic 15秒短片——诊断、路线图、小镇、故事、创意运算、3D概念、学习单（画面文字为韩语）',
+  'play':'播放视频', 'top.home':'Numbers of Magic — 前往应用', 'snd.on':'打开声音', 'snd.off':'静音',
+  'hero.kicker':'欢迎来到数学魔法国度', 'hero.h1':'孩子以<em>现在的节奏</em>，<br>能走多远？',
+  'hero.lead':'这不是追求快速求解的计算训练。会玩数、读得懂题、算得出来，才能征服数学。',
+  'cta.village':'进入魔法小镇', 'hint':'上滑查看故事',
+  't1':'这不是追求快速求解的计算训练', 'k1':'为什么——数是一种语言', 'h1':'这不是<br><em>追求快速求解的计算训练。</em>',
+  'chars.alt':'Numbers of Magic 3D角色——孩子们、长胡子的数学魔法师和戴眼镜的学者并排站着', 'chars.tag':'像施展魔法一样运用数',
+  'a1.lead':'既不是只练运算，也不是只练创意运算。要从征服数走向征服数学，孩子必须<b>会玩数、读得懂题、算得出来</b>。',
+  't2':'语言 · 思维 · 运算，均衡发展', 'k2':'Docssam老师的理念', 'h2':'不偏向任何一边。<br>语言 · 思维 · 运算，<em>均衡发展。</em>',
+  'scale.alt':'3D天平——一边是x盒子，另一边是砝码，构成 x + 7 = 12', 'scale.tag':'不向任何一边倾斜',
+  'pil.l1':'语言', 'pil.l2':'思维', 'pil.l3':'运算',
+  'pil.s1':'数是语言——读懂句子', 'pil.s2':'追问为什么，从多条路去想', 'pil.s3':'算得准确，按自己的节奏',
+  'quote':'均衡练习才能征服数，<br>征服了数，才能<em>征服数学。</em>', 'by':'— Docssam老师',
+  't3':'第一步，是诊断', 'k3':'第一步——诊断', 'h3':'第一步，是<em>诊断</em>。',
+  'pace.alt':'速度对比诊断卡——基准年龄6岁9月，现在的节奏对应小学阶段体验KMO。与理科顶尖、小学阶段体验KMO、小四进入高中数学并排，问：孩子以现在的节奏，能走多远？',
+  'disc':'仅供参考 · 不承诺结果 · 以运算路线为准',
+  'pace.cap':'看看现在的节奏在<b>小四进入高中数学 · 小学阶段体验KMO · 理科顶尖</b>中的位置；想往上一级走——该改变什么、如何缩短周期——我们会根据学习习惯、管理情况和可行的速度来设计。',
+  't4':'设计完成，路就看得见了', 'k4':'路线图与节奏', 'h4':'设计完成，<br><em>路就看得见了。</em>',
+  'road.alt':'运算路线图画面——初一区间，“现在在这里”的标记和通往下一个目标第30课的路',
+  'road.cap':'在<b>一条从幼儿到高中的运算路线图</b>上，每周一次或两次，节奏和分量按孩子来定。',
+  't5':'走进小镇，寻找今天的魔法', 'k5':'现在轮到孩子上场', 'h5':'走进小镇，<br>寻找<em>今天的魔法</em>。',
+  'plaza.alt':'3D小镇广场——走在喷泉旁的孩子、草坪和红屋顶的房子', 'plaza.tag':'3D小镇 · 今天的魔法',
+  'story.cap':'从幼儿到微积分，这条路连成<b>一个故事</b>。',
+  't6':'答案一个，路有很多', 'k6':'今天的魔法，这样学', 'h6':'答案只有一个，<br><em>路却有很多条。</em>',
+  'eq.label':'4乘7乘5。先把凑成10的一对配好：(4乘5)乘7，即 20乘7 = 140', 'eq.small':'先配好<br>凑成10的一对',
+  'tiles.alt':'3D面积方块——把 (x+2)(x+3) 拆成 x²、x、1 方块，变成 x² + 5x + 6', 'tiles.tag':'3D概念 · 数学史 · 游戏',
+  'concept.cap':'难懂的概念用触手可及的3D来认识，再通过数学史和游戏弄懂<b>为什么，连证明过程也明白</b>。',
+  't7':'而真正的学习，在纸上', 'k7':'学习在纸上', 'h7':'而真正的学习，<br>在<em>纸上</em>。',
+  'sheet.alt':'打印的学习单——创意运算 · 分数的乘除 Training Course 页',
+  'notice':'每周的学习单和进度说明，<b>发到家长手机上</b>。',
+  'sheet.cap':'每周一两次收到或打印学习单，想多练就<b>同一课程多做几套，或者升到更高难度</b>。',
+  't8':'一起营造的文化', 'k8':'一起营造的文化', 'h8':'这不是随手发下的<br>一沓<em>练习题。</em>',
+  'fin.body':'<b>学生、家长和学院要一起营造学习文化</b>——Docssam老师的这一理念，请在 Numbers of Magic 亲身体验。<b>5周岁起。</b>',
+  'full.lbl':'完整影片 · 2:25 · 有声音 · 韩语旁白', 'full.label':'Numbers of Magic 完整影片，2分25秒，韩语旁白', 'full.play':'播放完整影片',
+  'cta.contact':'咨询', 'foot.phil':'Docssam老师的理念', 'foot.sheets':'查看学习单',
+  'toast.contact':'咨询链接准备中 · 先到小镇见', 'dots.label':'跳转场景',
+  'caps':[[0,'数字变成魔法的地方'],[9,'这不是追求快速求解的计算训练'],[24,'语言 · 思维 · 运算，均衡发展'],[33,'诊断运算阶段 · 看看现在的节奏通向哪里'],[58,'一条路线图 · 适合孩子的节奏'],[70,'走进小镇，寻找今天的魔法'],[78,'从幼儿到微积分，一本故事书'],[84,'创意运算——把数拆开就变简单'],[98,'3D概念 · 数学史 · 游戏——弄懂为什么'],[110,'学习在纸上——每周1~2次'],[124,'每周发到家长手机上'],[130,'一起营造的文化']]
+};
+
+/* ---------- 한·영·중 (i18n) ----------
+   순서: ?lang= → localStorage(nmLang) → navigator.language. 한국어 원문은 HTML 에 그대로 두고,
+   첫 실행 때 data-i18n 요소에서 거둬 ko 사전으로 삼는다(중복 없음). en·zh 는 아래 사전. */
+(function(){
+  'use strict';
+  var SUP = ['ko', 'en', 'zh'], KEY = 'nmLang';
+  var DICT = { ko: window.__NM_KO || {}, en: window.__NM_EN || {}, zh: window.__NM_ZH || {} };
+  var lang = document.documentElement.getAttribute('data-lang') || 'ko';
+  var harvested = false;
+  function harvest(){
+    if(harvested) return; harvested = true;
+    var ko = DICT.ko;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){ var k = el.getAttribute('data-i18n'); if(!(k in ko)) ko[k] = el.textContent; });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){ var k = el.getAttribute('data-i18n-html'); if(!(k in ko)) ko[k] = el.innerHTML; });
+    document.querySelectorAll('[data-i18n-attr]').forEach(function(el){
+      el.getAttribute('data-i18n-attr').split(';').forEach(function(p){ var a = p.split(':'); if(a.length < 2) return; var k = a[1].trim(); if(!(k in ko)) ko[k] = el.getAttribute(a[0].trim()) || ''; });
+    });
+    var m = document.querySelector('meta[name="description"]');
+    if(!('meta.title' in ko)) ko['meta.title'] = document.title;
+    if(m && !('meta.desc' in ko)) ko['meta.desc'] = m.getAttribute('content') || '';
+  }
+  function t(k){ var d = DICT[lang] || {}; if(k in d) return d[k]; if(k in DICT.ko) return DICT.ko[k]; return k; }
+  function zhFont(){
+    if(document.getElementById('nmZhFont')) return;
+    var l = document.createElement('link'); l.id = 'nmZhFont'; l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap';
+    document.head.appendChild(l);
+  }
+  function apply(){
+    harvest();
+    if(lang === 'zh') zhFont();
+    document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-Hans' : lang);
+    document.documentElement.setAttribute('data-lang', lang);
+    document.querySelectorAll('[data-i18n]').forEach(function(el){ var s = t(el.getAttribute('data-i18n')); if(el.textContent !== s) el.textContent = s; });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){ var s = t(el.getAttribute('data-i18n-html')); if(el.innerHTML !== s) el.innerHTML = s; });
+    document.querySelectorAll('[data-i18n-attr]').forEach(function(el){
+      el.getAttribute('data-i18n-attr').split(';').forEach(function(p){ var a = p.split(':'); if(a.length < 2) return; el.setAttribute(a[0].trim(), t(a[1].trim())); });
+    });
+    document.title = t('meta.title');
+    var m = document.querySelector('meta[name="description"]'); if(m) m.setAttribute('content', t('meta.desc'));
+    document.querySelectorAll('.langsw [data-lang]').forEach(function(b){ var on = b.getAttribute('data-lang') === lang; b.setAttribute('aria-current', on ? 'true' : 'false'); });
+    document.documentElement.classList.remove('i18n-wait');
+    try{ document.dispatchEvent(new CustomEvent('nm:lang', { detail:{ lang:lang } })); }catch(e){}
+  }
+  function set(l){
+    if(SUP.indexOf(l) < 0 || l === lang) return;
+    lang = l;
+    try{ localStorage.setItem(KEY, l); }catch(e){}
+    try{ var u = new URL(location.href); u.searchParams.set('lang', l); history.replaceState(null, '', u.toString()); }catch(e){}
+    apply();
+  }
+  document.querySelectorAll('.langsw [data-lang]').forEach(function(b){ b.addEventListener('click', function(e){ e.preventDefault(); set(b.getAttribute('data-lang')); }); });
+  window.NM_I18N = { t:t, set:set, apply:apply, get lang(){ return lang; } };
+  apply();
+})();
+</script>
+<script>
 (function(){
   'use strict';
   var $ = function(s, r){ return (r || document).querySelector(s); };
+  var T = function(k){ return window.NM_I18N ? window.NM_I18N.t(k) : k; };
   var scroller = $('#scroller'), slides = [].slice.call(scroller.querySelectorAll('.slide'));
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -474,6 +656,7 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
   slides.forEach(function(sl, i){
     var li = document.createElement('li'), b = document.createElement('button');
     b.type = 'button'; b.setAttribute('aria-label', (i + 1) + '/' + slides.length + ' · ' + (sl.getAttribute('data-title') || ''));
+    document.addEventListener('nm:lang', function(){ b.setAttribute('aria-label', (i + 1) + '/' + slides.length + ' · ' + (sl.getAttribute('data-title') || '')); });
     b.innerHTML = '<i></i>';
     b.addEventListener('click', function(){ sl.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
     li.appendChild(b); dots.appendChild(li);
@@ -517,19 +700,28 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
   snd.addEventListener('click', function(){
     var on = snd.getAttribute('aria-pressed') !== 'true';
     reel.muted = !on; snd.setAttribute('aria-pressed', on ? 'true' : 'false');
-    snd.setAttribute('aria-label', on ? '소리 끄기' : '소리 켜기');
+    snd.setAttribute('aria-label', T(on ? 'snd.off' : 'snd.on'));
     if(on){ wantPlay = true; tryPlay(); }
   });
 
   /* ---------- 전체 영상(마지막 장): 누르면 소리와 함께 재생 ---------- */
   var full = $('#full'), fullv = $('#fullv'), fullPending = null;
   $('#fullgo').addEventListener('click', function(){
-    heroIn = false; pause(); reel.muted = true; snd.setAttribute('aria-pressed','false'); snd.setAttribute('aria-label','소리 켜기');
+    heroIn = false; pause(); reel.muted = true; snd.setAttribute('aria-pressed','false'); snd.setAttribute('aria-label', T('snd.on'));
     fullv.controls = true; fullv.muted = false;
     var p = fullv.play();
     if(p && p.then){ fullPending = p; p.then(function(){ fullPending = null; }).catch(function(){ fullPending = null; }); }
   });
   fullv.addEventListener('play', function(){ full.classList.add('playing'); });
+  /* 자막 줄(en·zh): 내레이션이 한국어라 전체 영상 위에 그 언어의 장면 자막을 띄운다. ko 는 영상에 자막이 박혀 있어 생략 */
+  var vcap = $('#vcap');
+  fullv.addEventListener('timeupdate', function(){
+    var C = T('caps'); if(!C || typeof C === 'string'){ vcap.classList.remove('on'); return; }
+    var t = fullv.currentTime, s = C[0][1];
+    for(var i = 0; i < C.length; i++){ if(t >= C[i][0]) s = C[i][1]; }
+    if(vcap.textContent !== s) vcap.textContent = s;
+    vcap.classList.add('on');
+  });
   fullv.addEventListener('pause', function(){ if(fullv.currentTime === 0) full.classList.remove('playing'); });
   /* 마지막 장을 벗어나면 전체 영상은 멈춘다 */
   new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting && !fullPending && !fullv.paused) fullv.pause(); }); }, { root: scroller, threshold: .2 }).observe($('#s8'));
@@ -540,7 +732,7 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
   var dest = (contact.getAttribute('data-contact') || '').trim();
   if(dest){ contact.href = dest; if(/^https?:/.test(dest)){ contact.target = '_blank'; contact.rel = 'noopener'; } }
   else {
-    contact.addEventListener('click', function(e){ e.preventDefault(); say('상담 링크는 준비 중입니다 · 마을에서 먼저 만나요'); });
+    contact.addEventListener('click', function(e){ e.preventDefault(); say(T('toast.contact')); });
   }
 
   /* ---------- 키보드: ↑↓ / PageUp·Down 으로 한 장씩 ---------- */
