@@ -152,6 +152,8 @@ function sentenceCut(file, text, k, dur){
   const total = t;
   const lines = segs.filter(x => x.n).map(x => ({ n:x.n, f:x.nf, a:x.start + x.at, d:x.nd, cut:x.ncut, seg:x.seg }));
   lines.forEach((l, i) => { const nx = lines[i + 1]; l.room = (nx ? nx.a : total) - (l.a + l.d); });
+  /* --plan-only: 영상은 만들지 않고 줄마다 시작 시각만 JSON 으로 — 광고 페이지 자막 타이밍 맞출 때 */
+  if(process.argv.includes('--plan-only')){ console.log(JSON.stringify({ cut:CUT, total:+total.toFixed(2), lines:lines.map(l => ({ id:l.n, at:+l.a.toFixed(2), dur:+l.d.toFixed(2) })) })); return; }
   const gEnd = x => { const g = groups.find(g => g.includes(x)); const l = g[g.length - 1]; return l.start + l.d; };
 
   /* 2. 자막·훅·각주 PNG — 튀어나오기(13장) → 머묾 → 사라지기(10장) */
