@@ -120,6 +120,7 @@ h2{font-size:clamp(23px,6.2vw,27px)}
 /* 히어로 마법서 — 폰 폭 기둥 밖으로 무대를 넓힌다 */
 .hero .bk{width:100vw;margin:14px 0 0 calc(50% - 50vw)}
 .hero .bk-stage{height:clamp(400px,min(58vh,112vw),560px)}
+@media (min-width:760px){.hero .bk-stage{height:clamp(380px,50vh,460px)}}
 .hero-cta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .hero-cta .btn{padding:0 12px;font-size:15px}
 .hero .under{display:flex;align-items:center;justify-content:center;gap:4px 16px;flex-wrap:wrap;margin-top:6px;font-size:12.5px;color:var(--la-ink-2)}
@@ -309,7 +310,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
 .bk.ready .bk-stage{opacity:1;transform:none}
 @media (min-width:720px){.bk-stage{height:clamp(440px,min(68vh,100vw),700px)}}
 /* 아침 햇살: 창에서 비스듬히 들어오는 빛기둥 + 책 뒤의 밝은 웅덩이 */
-.bk-stage::before{content:"";position:absolute;inset:-10% -20%;z-index:-1;pointer-events:none;
+.bk-stage::before{content:"";position:absolute;inset:0 -20%;z-index:-1;pointer-events:none;
   background:
     radial-gradient(38% 46% at 50% 44%,var(--bk-pool-2),transparent 70%),
     linear-gradient(112deg,transparent 18%,color-mix(in srgb,var(--bk-pool) 55%,transparent) 34%,transparent 48%,transparent 56%,color-mix(in srgb,var(--bk-pool) 35%,transparent) 64%,transparent 74%);
@@ -325,9 +326,9 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
 .bk-f{position:absolute;left:0;top:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 
 /* 탁자: 햇빛 웅덩이 + 창살 그림자(아주 옅게) */
-.bk-table{position:absolute;left:-800px;top:-560px;width:1600px;height:1120px;transform:translateZ(calc(var(--T) / -2 - 2px));pointer-events:none;
+.bk-table{position:absolute;left:-560px;top:-400px;width:1120px;height:800px;transform:translateZ(calc(var(--T) / -2 - 2px));pointer-events:none;
   background:
-    radial-gradient(closest-side,var(--bk-pool),color-mix(in srgb,var(--bk-pool) 40%,transparent) 45%,transparent 72%)}
+    radial-gradient(closest-side,var(--bk-pool),color-mix(in srgb,var(--bk-pool) 35%,transparent) 42%,transparent 66%)}
 
 .bk-book{position:absolute;left:calc(var(--pw) / -2);top:calc(var(--ph) / -2);width:var(--pw);height:var(--ph);transform-style:preserve-3d;
   transition:transform 1.45s var(--bk-ease) .12s}
@@ -560,7 +561,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
   background:var(--bk-card);border:1px solid var(--bk-line);box-shadow:var(--bk-shadow);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   animation:bk-hint 2.6s ease-in-out infinite;transition:opacity .4s ease,transform .4s ease}
 .bk-hint svg{width:18px;height:18px;color:var(--la-gold,#c9a44c)}
-@keyframes bk-hint{0%,100%{transform:translateY(0);box-shadow:var(--bk-shadow),0 0 0 0 rgba(201,164,76,.0)}50%{transform:translateY(-3px);box-shadow:var(--bk-shadow),0 0 0 8px rgba(201,164,76,.12)}}
+@keyframes bk-hint{0%,100%{transform:translateY(0);box-shadow:var(--bk-shadow),0 0 0 0 rgba(201,164,76,.0)}50%{transform:translateY(-3px);box-shadow:var(--bk-shadow),0 0 0 7px rgba(201,164,76,.09)}}
 .bk.open .bk-hint,.bk.opening .bk-hint{opacity:0;transform:translateY(8px);animation:none}
 .bk-ctl{position:absolute;display:flex;gap:8px;align-items:center;opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease;pointer-events:none}
 .bk.shown .bk-ctl{opacity:1;transform:none;pointer-events:auto;transition:opacity .6s ease .3s,transform .6s ease .3s}
@@ -571,10 +572,10 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
 .bk-btn:active{transform:none}
 .bk-btn svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .bk-btn.ic{padding:0;width:44px}
-.bk-seg{display:inline-flex;padding:3px;border-radius:999px;border:1px solid var(--bk-line);background:var(--bk-card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--bk-shadow)}
-.bk-seg button{min-height:38px;min-width:44px;padding:0 13px;border:0;border-radius:999px;background:transparent;cursor:pointer;font:600 13px/1 var(--sans,system-ui);color:var(--bk-ink-2);
+.bk-seg{display:inline-flex;padding:0 2px;border-radius:999px;border:1px solid var(--bk-line);background:var(--bk-card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--bk-shadow)}
+.bk-seg button{min-height:44px;min-width:44px;padding:0 13px;border:0;border-radius:999px;background:transparent;cursor:pointer;font:600 13px/1 var(--sans,system-ui);color:var(--bk-ink-2);
   font-variant-numeric:tabular-nums}
-.bk-seg{min-height:44px;align-items:center}
+.bk-seg{min-height:48px;align-items:center}
 .bk-seg button[aria-pressed="true"]{background:var(--la-pearl,linear-gradient(135deg,#fff,#f4efff 35%,#e9fbf6 70%,#fff8e8));color:var(--bk-ink);box-shadow:0 1px 4px rgba(38,48,74,.14)}
 .bk-lbl{display:none}
 @media (min-width:560px){.bk-lbl{display:inline}.bk-btn.tx{padding:0 16px 0 13px;width:auto}}
@@ -1378,7 +1379,8 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
     a.addEventListener('click', function(e){
       var t = document.getElementById(root.getAttribute('data-next')); if(!t) return;
       e.preventDefault();
-      t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'start' });
+      var bar = document.querySelector('.topbar'), off = bar ? bar.offsetHeight : 0;   /* 고정 상단바에 가리지 않게 */
+      window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - off, behavior: reduce ? 'auto' : 'smooth' });
     });
   });
 })();
