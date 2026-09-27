@@ -682,6 +682,8 @@
   .nm-w2-train-step { font-size:calc(17px * var(--ws-fs, 1)); padding:3px 0 2px; border-bottom:1px dotted #C9A063; }
   .nm-w2-train-step .nm-w2-tex { font-size:calc(17px * var(--ws-fs, 1)); }
   .nm-w2-train-dots i { display:block; height:7mm; border-bottom:1px dotted #C9A063; }
+  /* 곁 계산 줄(원래 식과 다른 양) — "=" 대신 옅은 화살표 */
+  .nm-w2-train-side { color:#A08A5C; font-weight:700; }
   /* 과정 빈칸 문항(2026-09-26) — 지시 한 줄. 식 줄의 최종 답은 이미 주어졌다 */
   .nm-w2-process-ask { font-size:calc(11.5px * var(--ws-fs, 1)); font-weight:700; color:#5b4a26; margin:0 0 1px; }
   /* 저학년 문장제 카드 — 번호는 빨간 동그라미(STORY), 풀이 점선 */
@@ -3787,38 +3789,169 @@ function trainStepsOf(p){
   if(Array.isArray(p.steps) && p.steps.length) return p.steps.filter(x => x && x.tex);
   return trainSolution(p).steps;
 }
-/* solution 은 예시·해설용이라 학생 칸에 그대로 쓰면 안 되는 줄이 섞여 있다(2026-09-26 17개 스레드 전수 확인):
+/* solution 은 예시·해설용이라 학생 칸에 그대로 쓰면 안 되는 줄이 섞여 있다(2026-09-26 17개 스레드 전수 확인,
+   2026-09-26 밤 독립 검수 반영):
    ① 문제 식을 그대로 되풀이하는 줄(AD9·ML25·DV12·13·17·18·CH5 끝줄) → 뺀다
-   ② 풀이를 말로 적은 줄(\text, CH5) → 뺀다 — 한국어만 있어 en/zh 학습지에 그대로 찍힌다
-   ③ 빈칸 없이 계산 결과를 드러낸 줄(FR11 `3/5×2/3 = 6/15`) → 결과 숫자를 □ 로 바꾸고,
-      다음 줄이 그 결과로 시작하면 앞부분을 떼어 "= □/□" 로 잇는다(안 그러면 다음 줄이 답을 다시 보여 준다)
-   마지막 줄의 빈칸이 곧 답이면 따로 "= □" 답 줄을 두지 않는다(noAns). */
+   ② 풀이를 말로 적은 줄(\text)이 **하나라도** 있으면 풀이 줄을 통째로 쓰지 않고 "식 = □" 로 둔다 —
+      말 줄만 빼면 핵심 단계가 빠진 사슬이 나가고(CH5·MD11), 한국어만 있어 en/zh 학습지에 그대로 찍힌다
+   ③ 줄 첫머리의 "=" · "⇒" 는 뗀다 — 칸이 "=" 를 따로 붙이므로 "= =" 가 찍혔다(MD19·25·27·30)
+   ④ 빈칸 없이 계산 결과를 드러낸 줄(FR11 `3/5×2/3 = 6/15`) → 결과 숫자를 □ 로 바꾸고(지수는 그대로),
+      다음 줄이 그 결과로 시작하면 앞부분을 떼어 잇는다. 앞 줄 빈칸의 값(두 자리 이상·음수·소수)이 뒤 줄에
+      글자로 나오면 그 자리도 □ 로(MD3 `-32/56`, AD9 `23 + 1`)
+   ⑤ 그래도 답의 수(음수는 절댓값)가 글자로 남은 줄은 뺀다 — MD83·MD23·MD29·MD33 에서 답이 통째로 보였다
+   마지막 줄의 빈칸이 곧 답이면 따로 "= □" 답 줄을 두지 않는다(noAns).
+   orig = 가리기 전 줄(□ 는 blank 로 채워 계산할 수 있다) — 사슬 판정(trainCellPlan)이 쓴다. */
+const trainAnsLits = p => [].concat(p.answer == null ? [] : p.answer).filter(v => v !== '' && Number.isFinite(+v))
+  .map(v => String(fmtAns(Math.abs(+v))));
+function trainLitCount(tex, lit){
+  const s = String(tex).replace(/\\square/g, ' ');
+  const re = /\d+(?:\.\d+)?/g; let m, n = 0;
+  while((m = re.exec(s))){ if(m[0] === lit && s[m.index - 1] !== '.') n++; }
+  return n;
+}
+function trainHasLit(tex, lit){ return trainLitCount(tex, lit) > 0; }
+/* solution 줄이 답을 드러내는가 — 답의 수가 **모두** 글자로 있거나(MD23 `15(x−10)+10(x−15)`, MD33 `1y = −10x + 5`),
+   답의 수 하나라도 문제 식보다 더 많이 나오면(MD83 `√39+√21`, MD29 `4(x+9)(x+1)`) 드러낸 것이다.
+   문제 식에 이미 있는 만큼(FR11 `3/4 × 2/3` 의 4)은 새로 드러낸 것이 아니다. */
+function trainRevealsAnswer(p, tex, lits){
+  if(!lits.length) return false;
+  if(lits.every(l => trainHasLit(tex, l))) return true;
+  return lits.some(l => trainLitCount(tex, l) > trainLitCount(p.tex, l));
+}
+/* 글자 lit(수)를 □ 로 — 더 긴 수의 일부·소수·지수(^2, ^{2})·첨자는 건드리지 않는다 */
+function trainMaskLit(tex, lit){
+  const s = String(tex); let out = '', i = 0;
+  while(i < s.length){
+    const k = s.indexOf(lit, i);
+    if(k < 0){ out += s.slice(i); break; }
+    const before = s[k - 1] || '', after = s[k + lit.length] || '', before2 = s.slice(Math.max(0, k - 2), k);
+    const exp = before === '^' || before === '_' || before2 === '^{' || before2 === '_{';
+    if(/[\d.]/.test(before) || /[\d.]/.test(after) || exp){ out += s.slice(i, k + 1); i = k + 1; continue; }
+    out += s.slice(i, k) + '\\square'; i = k + lit.length;
+  }
+  return out;
+}
 function trainSolution(p){
   const norm = t => String(t).replace(/\\(?:quad|qquad|;|,|:| )|\s+/g, '');
-  const q = norm(p.tex), out = [];
+  const sol = (Array.isArray(p.solution) ? p.solution : []).filter(x => x && x.tex);
+  if(sol.some(x => /\\text/.test(x.tex))) return { steps: [], noAns: false, plain: true };
+  const q = norm(p.tex), out = [], lits = trainAnsLits(p);
+  const seenVals = [];
   let revealed = null;
-  for(const x of (Array.isArray(p.solution) ? p.solution : [])){
-    if(!x || !x.tex || /\\text/.test(x.tex) || norm(x.tex) === q) continue;
-    let tex = String(x.tex);
+  for(const x of sol){
+    if(norm(x.tex) === q) continue;
+    let tex = String(x.tex).trim().replace(/^(?:=|\\Rightarrow)(?:\\[;,:! ]|\s)*/, '');
+    if(!tex) continue;
     if(revealed){
       const i = tex.indexOf('=');
       if(i > 0 && norm(tex.slice(0, i)) === revealed) tex = tex.slice(i + 1).trim();
     }
     revealed = null;
+    const orig = tex;
     const j = tex.lastIndexOf('=');
     if(j > 0 && !/\\square/.test(tex)){
       const rhs = tex.slice(j + 1);
-      if(!/\\times|\\div|\\cdots|\\Rightarrow|[+\-]/.test(rhs) && /\d/.test(rhs)){
+      if(!/\\times|\\div|\\cdots|\\Rightarrow|[+\-<>]/.test(rhs) && /\d/.test(rhs)){
         revealed = norm(rhs);
-        tex = tex.slice(0, j + 1) + rhs.replace(/\d+(?:\.\d+)?/g, '\\square');
+        tex = tex.slice(0, j + 1) + rhs.replace(/(\^\{?)?(\d+(?:\.\d+)?)/g, (m, pw) => pw ? m : '\\square');
       }
     }
-    out.push(Object.assign({}, x, { tex }));
+    /* 앞 줄 빈칸 값이 이 줄에 글자로 — 그 자리를 □ 로 */
+    seenVals.forEach(v => { tex = trainMaskLit(tex, String(fmtAns(v))); });
+    if(trainRevealsAnswer(p, tex, lits)) {
+      [].concat(x.blank == null ? [] : x.blank).forEach(v => { if(Number.isFinite(+v)) seenVals.push(+v); });
+      continue;
+    }
+    out.push(Object.assign({}, x, { tex, orig }));
+    [].concat(x.blank == null ? [] : x.blank).forEach(v => {
+      const n = +v;
+      if(Number.isFinite(n) && (Math.abs(n) >= 10 || n < 0 || !Number.isInteger(n))) seenVals.push(n);
+    });
   }
   const last = out[out.length - 1];
   const noAns = !!(last && /\\square/.test(last.tex) && 'blank' in last && JSON.stringify(last.blank) === JSON.stringify(p.answer));
   return { steps: out, noAns };
 }
+/* 원래 식의 값 — 풀이 줄이 "= …" 로 이어져도 되는지(같은 값인지) 판정하는 기준. 모르면 NaN */
+function trainChainValue(p){
+  const tex = String(p.tex || '');
+  if(/,/.test(tex)) return NaN;                                /* 식이 둘 이상(AD9 `13 + 10 = □,\ 13 + 11 = □`) */
+  const nSq = (tex.match(/\\square/g) || []).length;
+  if(typeof p.answer === 'number' && nSq === 1 && /=\s*\\square\s*$/.test(tex)) return p.answer;
+  const at = ansTex(p);
+  if(at && nSq >= 1 && /=\s*\\square\s*$/.test(tex)) return cpEval(at);
+  const lhs = tex.split('=')[0];
+  return /\\square/.test(lhs) ? NaN : cpEval(lhs);
+}
+/* 풀이 줄 하나가 원래 식과 같은 값인가(= 로 이어도 되는가).
+   계산되는 줄: 모든 변이 원래 식의 값과 같을 때만 true(다른 양을 구하는 곁 계산 `69 + 1 = □` 은 false).
+   계산이 안 되는 줄: 식 하나(기호식 이어 쓰기)면 true, 등식이면 false(= 를 붙이면 "= y = 5x" 가 된다). */
+function trainStepChains(x, V){
+  const src = x.orig != null ? x.orig : x.tex;
+  const full = cpFill(src, x.blank);
+  const txt = full == null ? String(x.tex) : full;
+  const segs = txt.split('=');
+  const vals = segs.map(cpEval);
+  if(full != null && vals.every(Number.isFinite)) return Number.isFinite(V) && vals.every(v => cpNear(v, V));
+  return segs.length < 2 && !/<|>|\\le|\\ge|\\Rightarrow|\\therefore/.test(txt);
+}
+/* Training Course 칸 한 개의 짜임 — 칸(w2CellHtml)과 칸 높이 추정(estMm)과 검사기(check-train-steps)가 같이 쓴다.
+   steps[i].eq: "=" 로 이을 줄인가(false 면 곁 계산 → 화살표). ans: 끝에 "= [상자]" 답 줄을 둘까. */
+/* 생성기 풀이 줄(p.steps)을 칸에 싣기 전에 — 두 가지만 손본다(수를 지어내지 않는다).
+   ① 어림 몫 줄 `4633 ÷ 100 = □`(46) 은 등식으로 읽으면 거짓이다(4633 ÷ 100 = 46.33). 몫 ⋯ 나머지 꼴로
+      `= □ ⋯ 33` — 나머지는 그 줄의 두 수와 몫에서 바로 나온다(CH6).
+   ② 답을 그대로 되풀이하는 줄(`⇒ 220 = □` · `810 + 0 = □` · `49 × 10⁰ = □`)은 뺀다 — 답이 글자로 보인다.
+      답과 우연히 같은 수가 **다른 값을 구하는 줄의 재료**로 나오는 것(SB8 `61 − 30`, 답 30)은 그대로 둔다. */
+function trainTidySteps(p, src){
+  const ans = typeof p.answer === 'number' ? p.answer : NaN;
+  const lits = trainAnsLits(p);
+  return src.map(x => {
+    /* 줄 첫머리 "=" · "⇒" 는 뗀다 — 칸이 "=" 를 따로 붙여 "= =" 가 찍혔다(FR7) */
+    const t = String(x.tex).trim().replace(/^(?:=|\\Rightarrow)(?:\\[;,:! ]|\s)*/, ''), q = x.blank;
+    const m = /(\d+)\s*\\div\s*(\d+)\s*=\s*\\square(?!\s*\\cdots)/.exec(t);
+    if(m && (t.match(/\\square/g) || []).length === 1 && typeof q === 'number' && Number.isInteger(q)){
+      const A = +m[1], B = +m[2];
+      if(B > 0 && A % B !== 0 && q === Math.floor(A / B)){
+        const at = m.index + m[0].length;
+        return Object.assign({}, x, { tex: t.slice(0, at) + ' \\cdots ' + (A - B * q) + t.slice(at) });
+      }
+    }
+    return t === x.tex ? x : Object.assign({}, x, { tex:t });
+  }).filter(x => {
+    /* 계산해 보면 거짓인 줄은 싣지 않는다(FR4 받아올림 `4/6 + 2/6 = 0/6` — 뜻은 "분수 부분"이지만 등식으로는 틀렸다) */
+    const f = cpFill(x.tex, x.blank);
+    if(f != null && /=/.test(f)){ const v = f.split('=').map(cpEval); if(v.every(Number.isFinite) && !v.every(y => cpNear(y, v[0]))) return false; }
+    return true;
+  }).filter(x => {
+    if(!lits.length) return true;
+    const t = String(x.tex);
+    const bare = sg => String(sg).replace(/\((?:[^()]*?)\\text\{[^}]*\}[^()]*\)/g, '').replace(/\\text\{[^}]*\}/g, '')
+      .replace(/\\(?:quad|qquad|;|,|!|:| )|\\Rightarrow|\\therefore|\s+/g, '');
+    if(t.split('=').some(sg => lits.indexOf(bare(sg)) >= 0)) return false;
+    if(!Number.isFinite(ans) || !lits.some(l => trainHasLit(t, l))) return true;
+    const f = cpFill(t, x.blank); if(f == null) return true;
+    const sg = f.split('='), v = cpEval(sg[sg.length - 1]);
+    return !cpNear(v, ans);
+  });
+}
+function trainCellPlan(p, idx, n){
+  const raw = String(p.tex || '').replace(/=\s*\\square\s*$/, '').trim();
+  const bare = trainIsBare(p, idx, n);
+  const fromSteps = Array.isArray(p.steps) && p.steps.length > 0;
+  const src0 = bare ? [] : trainStepsOf(p);
+  const src = fromSteps ? trainTidySteps(p, src0) : src0;
+  const V = trainChainValue(p);
+  const steps = src.map(x => ({ tex:String(x.tex), eq:trainStepChains(x, V),
+    fill:cpFill(x.orig != null ? x.orig : x.tex, x.blank) }));
+  let ans = true;
+  const last = src[src.length - 1];
+  if(!bare && /\\square/.test(raw)) ans = false;               /* 문제 식 안에 이미 답 칸(몫 ⋯ 나머지·AD9 두 식) */
+  else if(last && /\\square/.test(last.tex) && 'blank' in last
+    && (JSON.stringify(last.blank) === JSON.stringify(p.answer) || (!Array.isArray(last.blank) && typeof p.answer === 'number' && cpNear(+last.blank, p.answer)))) ans = false;
+  return { raw, bare, steps, ans, value:V, from: fromSteps ? 'steps' : 'solution' };
+}
+/* 곁 계산 줄 머리(원래 식과 다른 양) — "=" 대신 */
+const TRAIN_SIDE = '<span class="nm-w2-train-side" aria-hidden="true">→</span> ';
 /* 칸 높이 추정용 — 빈칸이 든 세로 분수 줄은 상자 두 개가 쌓여 보통 줄보다 약 16mm 높다(C21 FR11 실측) */
 const trainTallLine = t => /\\dfrac\{[^}]*\\square/.test(String(t));
 /* 창의 회차 ★줄의 곱나눗 강조(2026-09-26) — 식 줄에 없던 수(바꾼 수) 하나, 없으면 식 줄의 강조 수 */
@@ -3851,15 +3984,19 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       const P = p.__process, CP = window.NM_CREATIVE_PROCESS || {};
       const askObj = (CP.ask || {})[P.form === 'B' ? (P.fam === 'F4' ? 'reverseSame' : 'reverse') : 'key'];
       const askP = askObj ? pickL(askObj) : '';
-      const lines = P.lines.map(t =>
-        `<div class="nm-w2-train-step">= <span class="nm-w2-tex" data-tex="${esc(texDisplay(String(t)))}"></span></div>`).join('');
+      /* 원래 식과 같은 값인 줄만 "=" 로 잇는다 — 곁 계산은 화살표(trainStepChains, 채운 줄로 판정) */
+      const Vp = cpEval(String(P.expr).split('=').pop());
+      const lines = P.lines.map((t, li) =>
+        `<div class="nm-w2-train-step">${trainStepChains({ tex:P.chain[li] }, Vp) ? '= ' : TRAIN_SIDE}<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(t)))}"></span></div>`).join('');
       return `<div class="${cls} nm-w2-item-train nm-w2-item-process" data-process="${P.form}"${slotAttrP}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askP ? `<div class="nm-print-ask nm-w2-process-ask">${esc(askP)}</div>` : ''}
   <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(texDisplay(P.expr))}"></span></div>
   ${lines}<div class="nm-w2-train-dots"><i></i></div></div>`;
     }
-    let raw = String(p.tex||'').replace(/=\s*\\square\s*$/,'').trim();
-    const bare = trainIsBare(p, cellIdx, cellTotal);
-    const st = bare ? [] : trainStepsOf(p);
+    /* 칸의 짜임(식·풀이 줄·"=" 로 이을지·답 줄)은 trainCellPlan 한 곳에서 — 높이 추정·검사기와 같은 판정 */
+    const plan = trainCellPlan(p, cellIdx, cellTotal);
+    let raw = plan.raw;
+    const bare = plan.bare;
+    const st = plan.steps;
     /* 창의 회차 색 힌트(2026-09-26, applyTrainColor) — 식 줄과 ★마법 자리 줄 두 줄에만 */
     const T = p.__cpTint, PVt = window.NM_PLACE_COLOR;
     let tintStep = null;
@@ -3879,14 +4016,16 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       }
       pvOnPage = true;
     }
+    /* 원래 식과 같은 값인 줄만 "= …" 로 잇는다(2026-09-26 밤, 원장 검수 C6 SB12 — "26 − 19" 아래 "= 19 + 1 = □" 가
+       거짓 등식으로 읽혔다). 다른 양을 구하는 곁 계산은 화살표로 */
     const stepLines = st.map((x, si) => {
       let t = String(x.tex).replace(/\\square/g, box);
       if(tintStep && si === (T.key || 0)) t = tintStep(t);
-      return `<div class="nm-w2-train-step">= <span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span></div>`;
+      return `<div class="nm-w2-train-step${x.eq ? '' : ' nm-w2-train-sidestep'}">${x.eq ? '= ' : TRAIN_SIDE}<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span></div>`;
     }).join('');
-    /* solution 으로 채운 칸: 마지막 줄 빈칸이 곧 답이거나, 문제 식 안에 이미 답 칸이 있으면(몫 ⋯ 나머지·AD9 두 식) 답 줄을 따로 두지 않는다 */
-    const noAns = !bare && !(Array.isArray(p.steps) && p.steps.length) && (trainSolution(p).noAns || /\\square/.test(raw));
-    const ansLine = noAns ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">= <span class="nm-w2-tex" data-tex="${esc(box)}"></span></div>`;
+    /* 답 줄 — 마지막 줄의 빈칸이 곧 답이거나 문제 식 안에 답 칸이 있으면 두지 않는다. 둘 때는 진짜 쓰기 상자로
+       (전엔 \square 를 texDisplay 없이 넘겨 상자 없는 작은 "= □" 글자가 찍혔다) */
+    const ansLine = !plan.ans ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">= <span class="nm-w2-tex" data-tex="${esc(texDisplay(box))}"></span></div>`;
     const dots = bare ? '<i></i><i></i><i></i>' : '<i></i>';
     const askHtmlT = printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
     const slotAttrT = slotAttrP + (T && PVt ? ` data-cptint="${T.kind}"` : '');
@@ -4931,8 +5070,12 @@ function processBlankIndexes(n){
 }
 /* tex 산술 한 줄 → 수(못 읽으면 NaN). + − × ÷ · 괄호 · 거듭제곱 · \dfrac 만. 설명 글(\text)·기호는 지운다. */
 function cpEval(tex){
+  /* 설명 글: 괄호로 묶은 것(`(\text{어림 몫})`)과 맨 끝에 붙은 것만 지운다. 수 사이에 낀 말(`\text{홀수 }22\text{개의 합}`)이
+     남으면 그 변은 수식이 아니다 — NaN */
   let s = String(tex)
-    .replace(/\((?:[^()]*?)\\text\{[^}]*\}[^()]*\)/g, '').replace(/\\text\{[^}]*\}/g, '')
+    .replace(/\((?:[^()]*?)\\text\{[^}]*\}[^()]*\)/g, '').replace(/(?:\\[;,:! ]|\s)*\\text\{[^}]*\}\s*$/, '');
+  if(/\\text/.test(s)) return NaN;
+  s = s
     .replace(/\\left|\\right|\\displaystyle/g, '')
     .replace(/\\(?:quad|qquad|;|,|!|:| )/g, '').replace(/\s+/g, '');
   for(let g = 0; g < 6 && /\\d?frac\{/.test(s); g++) s = s.replace(/\\d?frac\{([^{}]*)\}\{([^{}]*)\}/g, '(($1)/($2))');
@@ -4962,10 +5105,14 @@ function cpHolds(line, x, chainValue){
 }
 /* 학습지에 찍히는 풀이 줄과 같은 줄(trainStepsOf 의 원천)을 값까지 채운 채로 */
 function cpSourceLines(p){
-  if(Array.isArray(p.steps) && p.steps.length) return p.steps.filter(x => x && x.tex);
+  /* 칸에 찍히는 것과 같은 줄 — 어림 몫은 몫 ⋯ 나머지, 답 되풀이 줄은 뺀 것(trainTidySteps) */
+  if(Array.isArray(p.steps) && p.steps.length) return trainTidySteps(p, p.steps.filter(x => x && x.tex));
   const norm = t => String(t).replace(/\\(?:quad|qquad|;|,|:| )|\s+/g, '');
   const q = norm(p.tex);
-  return (Array.isArray(p.solution) ? p.solution : []).filter(x => x && x.tex && !/\\text/.test(x.tex) && norm(x.tex) !== q);
+  /* 줄 첫머리 "=" · "⇒" 는 뗀다(칸이 "=" 를 따로 붙인다 — trainSolution 과 같은 규칙) */
+  return (Array.isArray(p.solution) ? p.solution : []).filter(x => x && x.tex && !/\\text/.test(x.tex) && norm(x.tex) !== q)
+    .map(x => Object.assign({}, x, { tex:String(x.tex).trim().replace(/^(?:=|\\Rightarrow)(?:\\[;,:! ]|\s)*/, '') }))
+    .filter(x => x.tex && norm(x.tex) !== q);
 }
 function cpFill(tex, blank){
   if(!/\\square/.test(tex)) return String(tex);
@@ -5392,11 +5539,12 @@ function renderRoundPagesBody(item, opts){
   if(layout.type === 'train' && problems.length && !getSolveMode()){
     const nT = problems.length;
     const estMm = (p, idx) => {
-      const bare = trainIsBare(p, idx, nT);
+      const plan = p.__process ? null : trainCellPlan(p, idx, nT);
+      const bare = plan ? plan.bare : false;
       /* 과정 빈칸 문항은 풀이 줄을 다 찍고 답 줄이 없으며 지시 한 줄(약 6mm)이 붙는다 */
-      const stT = p.__process ? p.__process.lines.map(tex => ({ tex })) : bare ? [] : trainStepsOf(p);
+      const stT = p.__process ? p.__process.lines.map(tex => ({ tex })) : plan.steps;
       const nSteps = stT.length + stT.filter(x => trainTallLine(x.tex)).length * 1.5;
-      const ansN = p.__process ? 0 : (!bare && !(Array.isArray(p.steps) && p.steps.length) && (trainSolution(p).noAns || /\\square/.test(String(p.tex||'').replace(/=\s*\\square\s*$/,'')))) ? 0 : 1;
+      const ansN = p.__process ? 0 : (plan.ans ? 1 : 0);
       /* 저학년 장은 글씨 배율이 1.28배(.nm-print-age-young --ws-fs) */
       const est = (14 + 12.8 * (nSteps + ansN) + 7 * (bare ? 3 : 1) + (p.__process ? 6 : 0)) * fsR * (young ? 1.28 : 1);
       return trainMax ? Math.max(est, trainMax) : est;
@@ -6033,6 +6181,8 @@ const NM_EXAM = {
   problemKey,
   /* 창의 연산 과정 빈칸(2026-09-26) — scripts/check-creative-process.js 가 같은 함수로 확인한다 */
   applyProcessBlank, processBlankIndexes, trainIsBare,
+  /* Training Course 칸 짜임(풀이 줄 · "=" 로 이을지 · 답 줄) — scripts/check-train-steps.js */
+  trainCellPlan,
   processInternals: { cpBuild, cpExprLine, cpSourceLines, cpOf, cpEval, applyTrainColor },
 
   /* 문장제 변환 노출 — drill.html 미리보기가 유형(숫자/문장제) 선택을 그대로 비추는 데 쓴다. */
