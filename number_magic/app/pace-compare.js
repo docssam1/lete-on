@@ -16,7 +16,7 @@
    예: 7세 12월 = −3 · 6세 9월 = −18 · 초1 11월 = 8 · 초3 6월 = 27.
 
    ── 이름 ──
-   원장 2026-09-26: 이름은 학원이 아니라 목적지로 — "이과 최상위권"(L4) · "초등 수학올림피아드 경험"(L1) · "초5 중등 수학올림피아드 수준"(실측선). 학원 실명은 어디에도 쓰지 않는다.
+   원장 2026-09-26: 이름은 학원이 아니라 목적지로 — "이과 최상위권"(L4) · "초6 수학올림피아드 수준"(L1) · "초5 중등 수학올림피아드 수준"(실측선). 학원 실명은 어디에도 쓰지 않는다.
    실제 학원 이름은 화면 문구 어디에도 쓰지 않는다(검사기가 막는다).
 
    ── 어떤 것도 잠그지 않는다. 합격·결과를 약속하지 않는다. 안내만 한다. ──
@@ -70,8 +70,8 @@ function milestone(id){ return MILESTONES.find(m=>m.id===id)||null; }
                                    5권 6세 5월 · 6권 6세 11월  (그 뒤 "복합연산·정확도 유지")
         각 레벨은 L0 을 shift 개월 뒤로 민 것: L0 0 · L1 3 · L2 7 · L3 10 · L4 12.
         "끝난 달의 다음 달 초 = 도달"로 적는다.
-        L4 "안정적 상위권 A반" → 이과 최상위권 · L1 "프리미어 표준 진도" → 초등 수학올림피아드 경험 ·
-        L0 "선행이 빠른 프리미어 합격생" → 초등 수학올림피아드 경험의 빠른 쪽 끝(따로 이름 붙이지 않음).
+        L4 "안정적 상위권 A반" → 이과 최상위권 · L1 "프리미어 표준 진도" → 초6 수학올림피아드 수준 ·
+        L0 "선행이 빠른 프리미어 합격생" → 초6 수학올림피아드 수준의 빠른 쪽 끝(따로 이름 붙이지 않음).
         ⚠ 이 표의 격자는 5세 5월 ~ 7세 7월(sm −8)까지다. L4 의 6권 끝(7세 11월)은 격자 밖이고
           shift 규칙(+12)으로만 나온다 → beyondGrid 로 표시.
    (나) KMO — number_magic/과정-로드맵.md §18 "남은 것" (원장 실측):
@@ -95,7 +95,7 @@ const BENCH = [
     name:{ko:'이과 최상위권',en:'Top science track',zh:'理科顶尖'},   /* 원장 2026-09-26: 이름은 목적지로(L4 안정적 상위권 A반 선) */
     anchors: roadmapAnchors(12) },
   { key:'p', rank:2, shift:3, src:'roadmap/index.html L1 (빠른 쪽 끝 = L0)',
-    name:{ko:'초등 수학올림피아드 경험',en:'Math Olympiad in elementary',zh:'小学阶段体验数学奥林匹克'},   /* L1 프리미어 표준 진도 선 */
+    name:{ko:'초6 수학올림피아드 수준',en:'AMC 10 level by grade 6',zh:'小六达到数学竞赛水平'},   /* L1 프리미어 표준 진도 선 */
     anchors: roadmapAnchors(3), fast: roadmapAnchors(0) },
   { key:'k', rank:3, src:'과정-로드맵.md §18 원장 실측',
     name:{ko:'초5 중등 수학올림피아드 수준',en:'AMC 12 level by grade 5 (AIME track)',zh:'小五达到初中数学竞赛水平'},   /* 원장 실측선: 초3 6월 고등 연산 */
@@ -195,7 +195,7 @@ const STR = {
   change:{ko:'바꾸기',en:'Change',zh:'修改'},
   verdictPre:{ko:'지금 속도라면',en:'At this pace',zh:'按现在的速度'},
   verdictPost:{ko:'속도예요',en:'pace',zh:'的速度'},
-  verdictFast:{ko:'초등 수학올림피아드 경험 기준에서도 빠른 쪽과 나란해요.',en:'Level with the fast end of the Math-Olympiad-in-elementary pace.',zh:'与“小学阶段体验数学奥林匹克”中较快的一端持平。'},
+  verdictFast:{ko:'초6 수학올림피아드 수준 기준에서도 빠른 쪽과 나란해요.',en:'Level with the fast end of the AMC 10 level by grade 6 pace.',zh:'与“小六达到数学竞赛水平”中较快的一端持平。'},
   verdictNone:{ko:'지금 속도로는 세 기준보다 조금 천천히 가요.',en:'At this pace the road runs a little slower than all three benchmarks.',zh:'按现在的速度，比三个标准都稍慢一些。'},
   verdictTop:{ko:'가장 빠른 기준과 나란해요. 이제는 속도보다 정확도와 문장제를 다지는 게 좋아요.',en:'Level with the fastest benchmark. From here, accuracy and word problems matter more than speed.',zh:'已与最快的标准持平。现在比起速度，更该巩固准确度和应用题。'},
   outTitle:{ko:'이 비교는 유아~초3 선행 기준이에요',en:'These benchmarks cover pre-school to Grade 3',zh:'这些标准只覆盖学龄前到小三'},
@@ -224,9 +224,9 @@ const STR = {
   optSpeed:{ko:'속도 {v}배',en:'Speed {v}×',zh:'速度{v}倍'},
   optCadBack:{ko:'주 1회반으로',en:'Once a week',zh:'改为每周1次'},
   amountNote:{ko:'“양”은 한 회의 문항 수라 기간은 줄이지 않아요.',en:'“Amount” changes problems per class, not the length of the road.',zh:'“分量”只改变每次题数，不缩短期间。'},
-  scope1:{ko:'이과 최상위권·초등 수학올림피아드 경험 기준선은 5~7세 상담용 진도표(연산과정 줄)에서 가져왔어요. 7세가 넘으면 초4 고등수학 기준선만 근거가 있어요.',
-          en:'The top-science and elementary Math Olympiad lines come from an ages-5–7 consulting chart (its arithmetic row). Past age 7 only the grade-4 line is sourced.',
-          zh:'理科顶尖·小学数学奥林匹克两条标准线取自5~7岁咨询用进度表（运算一行）。7岁以后只有小四高中数学线有依据。'},
+  scope1:{ko:'이과 최상위권·초6 수학올림피아드 수준 기준선은 5~7세 상담용 진도표(연산과정 줄)에서 가져왔어요. 7세가 넘으면 초4 고등수학 기준선만 근거가 있어요.',
+          en:'The top-science and AMC 10 level lines come from an ages-5–7 consulting chart (its arithmetic row). Past age 7 only the grade-4 line is sourced.',
+          zh:'理科顶尖·小六数学竞赛水平两条标准线取自5~7岁咨询用进度表（运算一行）。7岁以后只有小四高中数学线有依据。'},
   scope2:{ko:'연산 트랙만 센 기간이에요 — 사고력·교과는 별도예요. 교과 진도는 연산 진도보다 보통 2~3개월 뒤에 따라와요. 주차는 빠짐없이 수업했을 때 기준이라 방학·결석·복습이 있으면 그만큼 늦어져요.',
           en:'Counts the arithmetic track only — thinking-math and school-math are separate. School-math progress usually follows the arithmetic track by about 2–3 months. Weeks assume no missed classes; holidays, absences and review add time.',
           zh:'只计算运算课程——思维和教材另算。教材进度通常比运算进度晚2~3个月。周数按不缺课计算，假期、缺课、复习都会让时间变长。'},
@@ -238,7 +238,7 @@ const STR = {
   srcOurs:{ko:'우리 과정',en:'Our course',zh:'我们的课程'},
   beyondGrid:{ko:'진도표 칸 밖(같은 간격으로 이어 계산)',en:'beyond the chart (extended at the same offset)',zh:'超出进度表（按同样间隔推算）'},
   derived:{ko:'4.6년에서 거꾸로 계산',en:'back-calculated from 4.6 years',zh:'由4.6年倒推'},
-  legendBand:{ko:'초등 수학올림피아드 경험 · 표준~빠른 쪽',en:'Math Olympiad in elementary · standard–fast',zh:'小学体验KMO · 标准~快'}
+  legendBand:{ko:'초6 수학올림피아드 수준 · 표준~빠른 쪽',en:'AMC 10 level by grade 6 · standard–fast',zh:'小学体验KMO · 标准~快'}
 };
 function fmt(s, vars){ return String(s).replace(/\{(\w+)\}/g,(m,k)=>vars&&vars[k]!=null?vars[k]:m); }
 

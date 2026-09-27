@@ -90,7 +90,7 @@ check('문구 3개 언어 · 이름', ()=>{
   });
   PC.BENCH.forEach(b=>['ko','en','zh'].forEach(l=>{ assert(b.name[l]); all.push(b.name[l]); }));
   PC.MILESTONES.forEach(m=>['ko','en','zh'].forEach(l=>{ assert(m.name[l]); all.push(m.name[l]); }));
-  assert.equal(PC.bench('a').name.ko,'이과 최상위권'); assert.equal(PC.bench('p').name.ko,'초등 수학올림피아드 경험'); assert.equal(PC.bench('k').name.ko,'초5 중등 수학올림피아드 수준');
+  assert.equal(PC.bench('a').name.ko,'이과 최상위권'); assert.equal(PC.bench('p').name.ko,'초6 수학올림피아드 수준'); assert.equal(PC.bench('k').name.ko,'초5 중등 수학올림피아드 수준');
   all.forEach(s=>assert(!BANNED.test(s), '실제 학원 이름: '+s));
 });
 check('순수 판정 — 빠를수록 위로', ()=>{
@@ -192,7 +192,7 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
       check(`화면(${lang}): 카드·판정·이름`, ()=>{
         assert(txt, '#crPaceCmp 없음');
         assert(!BANNED.test(txt), '실제 학원 이름이 보임');
-        assert(/수학올림피아드|Math Olympiad|数学奥林匹克/.test(txt));
+        assert(/수학올림피아드|AMC|数学竞赛/.test(txt));
         assert(lang==='ko'?/이과 최상위권/.test(txt):lang==='en'?/Top science track/.test(txt):/理科顶尖/.test(txt));
       });
     }
