@@ -213,14 +213,14 @@ export const SCENES_C46 = {
     const c2 = mcard(k, ['2', { sup:[{ c:RUST, t:'x' }] }, ' = 2', { sup:[{ c:RUST, t:'3' }] }], RX, -0.55, { w:2.2, d:0.72, hmax:0.46, glow:true });
     const c3 = mcard(k, [{ c:RUST, t:'x = 3' }], RX, 0.35, { w:2.2, d:0.72, hmax:0.46, bg:GREEN, edge:GEDGE, glow:true });
     const c4 = mcard(k, ['2', { sup:'x' }, ' = 16 = 2', { sup:'4' }, '  ⇒  x = 4'], RX, 1.25, { w:2.6, d:0.66, hmax:0.44, fill:0.92, glow:true });
-    /* 움직임: 정육면체가 모두 떠올라 흩어졌다가 2 → 4 → 8 순서로 내려앉아 쌓이고(작은 카드가 차례로) → 식 카드 */
-    const lift = cubes.map((m, n) => new THREE.Vector3(CX + 1.2 + (n % 4) * 0.12, 1.6 + Math.floor(n / 4) * 0.1, CZ - 0.9));
+    /* 움직임: 정육면체가 모두 떠오르며 사라졌다가 2 → 4 → 8 순서로 내려앉아 쌓이고(작은 카드가 차례로) → 식 카드 */
+    const lift = home.map(P0 => P0.clone().add(new THREE.Vector3(0, 0.9, 0)));
     k.onFrame(t => { const p = cyc(t, 10);
       pop(c1, p, 0.0, 0.12);
       order.forEach((grp, gi) => { const a = 0.16 + gi * 0.13;
         grp.forEach((n, q) => { const m = cubes[n];
           const out = seg(p, 0.03 + n * 0.008, 0.1 + n * 0.008) * (1 - seg(p, a + q * 0.015, a + 0.08 + q * 0.015));
-          m.position.lerpVectors(home[n], lift[n], out); m.visible = out < 0.97; }); });
+          m.position.lerpVectors(home[n], lift[n], out); m.scale.setScalar(Math.max(0.001, 1 - out)); }); });
       small.forEach((c, i) => pop(c, p, 0.2 + i * 0.13, 0.32 + i * 0.13));
       pop(c2, p, 0.6, 0.72); pop(c3, p, 0.68, 0.8); pop(c4, p, 0.82, 0.96); });
     k.lights({ key:3.0, keyPos:[-4, 7, 5], spotPos:[-0.5, 7, 2], spotAt:[-0.5, 0, 0], envOpts:{ intensity:0.7 } });
