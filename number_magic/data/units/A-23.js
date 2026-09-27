@@ -42,7 +42,7 @@ window.NM_UNITS['A-23'] = {
   check:{
     fills:[
       { tex:'73-38: 73+\\square=80', answer:7, hint:{ ko:'73에서 80까지 몇이에요?', en:'How far from 73 to 80?', zh:'从73到80差多少？' } },
-      { tex:'80-45=\\square', answer:35, hint:{ ko:'8-4=4, 0-5→빌려서 30+5=35', en:'80-45=35', zh:'80-45=35' } }
+      { tex:'80-45=\\square', answer:35, hint:{ ko:'0-5는 안 되니 10을 빌려 10-5=5, 십의 자리는 7-4=3 → 35', en:'80-45=35', zh:'80-45=35' } }
     ],
     open:{ ko:'이사시켜 빼기(A-23)와 같은수 빼서 빼기(A-21)의 차이점을 설명해봐요.', en:'Explain the difference between A-23 (move up) and A-21 (subtract same to round down minuend).', zh:'说说A-23（向上凑整）和A-21（向下凑整）有什么不同。' },
     openHint:{ ko:'A-21은 빼지는 수를 아래로(d를 빼서), A-23은 위로(d를 더해서) □0으로 만들어요.', en:'A-21 rounds the minuend DOWN (subtracts d); A-23 rounds it UP (adds d).', zh:'A-21把被减数向下降（减d），A-23向上升（加d）。' }

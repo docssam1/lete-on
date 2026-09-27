@@ -36,7 +36,7 @@ window.NM_UNITS['H-02'] = {
               zh:'代数上，(100−p)(100−q)=100(100−p−q)+pq——前面是100−p−q，后面是pq。'} },
 
       { tag:{ko:'② 100을 넘으면 반대로 빼요',en:'2) Over 100? Subtract instead',zh:'② 超过100就改成减'},
-        head:{ko:'103×97 = 103+(−3) → 100−300 = 9991',en:'103×97: add then subtract the cross-product',zh:'103×97：先加后减交叉积'},
+        head:{ko:'103×97 = 103+(−3) → 100 | −9 → 10000−9 = 9991',en:'103×97: add then subtract the cross-product',zh:'103×97：先加后减交叉积'},
         desc:{ko:'103은 100보다 3 <b>많고</b>, 97은 100보다 3 <b>적어요</b>. 이번엔 앞자리를 <b>더해서</b> 만들어요: 103+(−3)=100. 뒷자리는 여전히 두 차이를 곱하지만, 이번엔 <b>빼요</b>: 3×3=9 → 10000−9=9991. 100 미만끼리는 더하고, 하나가 넘으면 뺀다 — 이 차이만 기억하면 돼요!',
               en:'103 is 3 <b>over</b> 100, and 97 is 3 <b>under</b>. This time build the front by <b>adding</b>: 103+(−3)=100. The back is still the product of the two gaps, but now you <b>subtract</b>: 3×3=9 → 10000−9=9991. Both-under adds; one-over subtracts — remember just that one flip!',
               zh:'103比100<b>多</b>3，97比100<b>少</b>3。这次前面用<b>加</b>法：103+(−3)=100。后面还是两个差相乘，但这次要<b>减</b>：3×3=9 → 10000−9=9991。都小于100就用加，有一个超过就改用减——只要记住这一个反转！'},
