@@ -1088,16 +1088,12 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
            1) 전화: href 를 tel:010-0000-0000 처럼 실제 번호로, data-contact 는 "phone"
            2) 카카오 채널: href 를 https://pf.kakao.com/_XXXXX 처럼 실제 채널 주소로, data-contact 는 "kakao"
            href 가 "#" 이면 화면에 '준비 중' 안내만 뜬다(폼 없음). ▼▼▼ -->
-      <a class="btn btn-pearl" href="#" data-contact="phone" data-placeholder="전화 상담 번호를 여기에 넣어 주세요 (tel:)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
-        <span data-i18n="contact.phone">전화로 상담하기</span>
-      </a>
-      <a class="btn btn-glass" href="#" data-contact="kakao" data-placeholder="카카오 채널 링크를 여기에 넣어 주세요 (https://pf.kakao.com/…)">
+      <a class="btn btn-pearl" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" data-contact="kakao">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4C7 4 3 7.2 3 11.2c0 2.5 1.6 4.7 4 6l-.8 3.3 3.7-2.3c.7.1 1.4.2 2.1.2 5 0 9-3.2 9-7.2S17 4 12 4z"/></svg>
-        <span data-i18n="contact.kakao">카카오 채널로 문의</span>
+        <span data-i18n="contact.kakao">카카오톡으로 상담하기</span>
       </a>
       <!-- ▲▲▲ 원장이 채울 자리 ▲▲▲ -->
-      <p class="note" data-i18n="contact.note">상담은 전화·카카오 채널로만 받습니다. 이 페이지는 아무 정보도 수집하지 않습니다.</p>
+      <p class="note" data-i18n="contact.note">상담은 카카오톡 오픈채팅으로 받습니다. 이 페이지는 아무 정보도 수집하지 않습니다.</p>
     </div>
   </section>
 
@@ -1155,13 +1151,13 @@ window.__NM_EN = {
   'a1.lead':'Not arithmetic alone, and not creative arithmetic alone. To go beyond numbers and master mathematics, all three have to grow together.',
   'pil.l1':'Language', 'pil.l2':'Thinking', 'pil.l3':'Arithmetic',
   'pil.s1':'Numbers are a language —<br>understand the sentence', 'pil.s2':'One answer,<br>many paths', 'pil.s3':'Unfold numbers,<br>handle them with ease',
-  'quote':'Play with numbers, understand the sentence, and do the sum.', 'quote.by':'— Docssam\'s philosophy · <a href="../about.html">Read in full</a>',
+  'quote':'Play with numbers, understand the sentence, and do the sum.', 'quote.by':'— Doc-T\'s philosophy · <a href="../about.html">Read in full</a>',
   'a2.kicker':'How', 'a2.h2':'In the order a family experiences it', 'a2.lead':'Swipe sideways. The scenes from the film, as real screens.',
   'car.label':'Learning-flow cards',
   'card.1':'1 / 9 · Philosophy', 'card.2':'2 / 9 · Diagnostic', 'card.3':'3 / 9 · Roadmap', 'card.4':'4 / 9 · Village', 'card.5':'5 / 9 · Creative arithmetic', 'card.6':'6 / 9 · 3D concepts & math history', 'card.7':'7 / 9 · Worksheets', 'card.8':'8 / 9 · Updates', 'card.9':'9 / 9 · Together',
   'tag.1':'Philosophy', 'tag.2':'Diagnostic', 'tag.3':'Roadmap', 'tag.4':'Village', 'tag.5':'Creative arithmetic', 'tag.6':'3D · history', 'tag.7':'Worksheets', 'tag.8':'Updates', 'tag.9':'Together',
-  'c1.alt':'Four 3D characters: Docssam and the village friends', 'c1.h':"Docssam's philosophy",
-  'c1.n':"Docssam's philosophy is to never lean to one side. Practise language, thinking and arithmetic in balance, and you master numbers — then mathematics.",
+  'c1.alt':'Four 3D characters: Doc-T and the village friends', 'c1.h':"Doc-T's philosophy",
+  'c1.n':"Doc-T's philosophy is to never lean to one side. Practise language, thinking and arithmetic in balance, and you master numbers — then mathematics.",
   'c1.p':'<b>For parents</b> Not arithmetic that only measures speed: written arithmetic that follows the school curriculum, building number sense.',
   'c2.alt':"Pace-comparison screen — How far can your child go at today's pace? Top science track · KMO in elementary · High-school math by grade 4", 'c2.h':'The first step: a diagnostic',
   'c2.n':"We check the child's arithmetic level and show which benchmark today's pace matches: high-school math by grade 4, KMO in elementary, or the top science track.",
@@ -1184,8 +1180,8 @@ window.__NM_EN = {
   'c8.stage':'Sample text message to a parent — [numbers of magic] name, week and worksheet link', 'c8.from':'Academy text', 'c8.bub':'[numbers of magic] Minjun · Sept week 3<br><u>https://…/w/?2639.C21</u>', 'c8.ex':'Sample', 'c8.h':'Weekly, to your phone',
   'c8.n':"Every week, the worksheets and a progress note go to the parent's phone.",
   'c8.p':"<b>For parents</b> Open the link in the text message and there's this week's worksheet. Print it, work through it, and next week another arrives.",
-  'c9.alt':'Docssam, children and a number friend together in the village plaza', 'c9.h':'Not worksheets tossed over the fence',
-  'c9.n':"Docssam's philosophy is that students, parents and the academy build the culture together. Come and experience it at Numbers of Magic.",
+  'c9.alt':'Doc-T, children and a number friend together in the village plaza', 'c9.h':'Not worksheets tossed over the fence',
+  'c9.n':"Doc-T's philosophy is that students, parents and the academy build the culture together. Come and experience it at Numbers of Magic.",
   'c9.p':"<b>For parents</b> Reading comprehension has to grow together with arithmetic. That's why the three of us walk together.",
   'nav.dots':'Choose a card', 'nav.dot':'Card {n}', 'nav.prev':'Previous card', 'nav.next':'Next card',
   'pace.kicker':'Pace comparison', 'pace.h2':'At today\'s pace, how far can your child go?',
@@ -1200,11 +1196,11 @@ window.__NM_EN = {
   'st.2':'Worksheets', 'st.2p':'Choose once or twice a week, and paper worksheets are prepared at the pace and volume that fit the child. <a href="../ws.html">See the worksheets</a>',
   'st.3':'Weekly updates', 'st.3p':"Every week the worksheets and a progress note go to the parent's phone. Print, work through, and receive the next set next week.",
   'a3.kicker':'Together', 'a3.h2':'Students, parents and the academy — together',
-  'tog.alt':'3D character line-up: Docssam, the children and the number friends in a row',
-  'tog.p':"Not worksheets tossed over the fence. It's Docssam's philosophy that <b>students, parents and the academy build the culture together</b> — experience it at Numbers of Magic.",
+  'tog.alt':'3D character line-up: Doc-T, the children and the number friends in a row',
+  'tog.p':"Not worksheets tossed over the fence. It's Doc-T's philosophy that <b>students, parents and the academy build the culture together</b> — experience it at Numbers of Magic.",
   'age':'Starts at age 5',
   'contact.h2':'Ask us anything', 'contact.lead':"Tell us your child's age and the arithmetic they're doing now, and we'll look at where to start together.",
-  'contact.phone':'Call us', 'contact.kakao':'Message us on KakaoTalk Channel', 'contact.note':'Enquiries by phone or KakaoTalk Channel only. This page collects no information.',
+  'contact.phone':'Call us', 'contact.kakao':'Chat with us on KakaoTalk', 'contact.note':'Enquiries via KakaoTalk open chat. This page collects no information.',
   'toast.phone':'The phone number is coming soon.', 'toast.kakao':'The KakaoTalk Channel opens soon.', 'toast.copied':'Link copied — paste it into a chat.',
   'share.text':'This is not speed-drill arithmetic — Numbers of Magic in 60 seconds',
   'foot.label':'Quick links', 'foot.village':'Magic Village', 'foot.phil':'Philosophy', 'foot.sheets':'Worksheets',
@@ -1230,13 +1226,13 @@ window.__NM_ZH = {
   'a1.lead':'既不是只练运算，也不是只练创意运算。要从征服数走向征服数学，三者必须一起成长。',
   'pil.l1':'语言', 'pil.l2':'思维', 'pil.l3':'运算',
   'pil.s1':'数是语言，<br>读懂句子', 'pil.s2':'答案一个，<br>路有很多', 'pil.s3':'把数拆开，<br>轻松驾驭',
-  'quote':'会玩数，读得懂题，算得出来。', 'quote.by':'— Docssam老师的理念 · <a href="../about.html">阅读全文</a>',
+  'quote':'会玩数，读得懂题，算得出来。', 'quote.by':'— 独先生的理念 · <a href="../about.html">阅读全文</a>',
   'a2.kicker':'怎么做', 'a2.h2':'按一个家庭亲身经历的顺序', 'a2.lead':'向左滑动，把影片中的场景换成真实画面再看一遍。',
   'car.label':'学习流程卡片',
   'card.1':'1 / 9 · 理念', 'card.2':'2 / 9 · 诊断', 'card.3':'3 / 9 · 路线图', 'card.4':'4 / 9 · 小镇', 'card.5':'5 / 9 · 创意运算', 'card.6':'6 / 9 · 3D概念与数学史', 'card.7':'7 / 9 · 学习单', 'card.8':'8 / 9 · 通知', 'card.9':'9 / 9 · 一起',
   'tag.1':'理念', 'tag.2':'诊断', 'tag.3':'路线图', 'tag.4':'小镇', 'tag.5':'创意运算', 'tag.6':'3D · 数学史', 'tag.7':'学习单', 'tag.8':'通知', 'tag.9':'一起',
-  'c1.alt':'Docssam老师和小镇朋友的四个3D角色', 'c1.h':'Docssam老师的理念',
-  'c1.n':'Docssam老师的理念是不偏向任何一边。语言、思维、运算均衡练习，才能征服数，进而征服数学。',
+  'c1.alt':'独先生和小镇朋友的四个3D角色', 'c1.h':'独先生的理念',
+  'c1.n':'独先生的理念是不偏向任何一边。语言、思维、运算均衡练习，才能征服数，进而征服数学。',
   'c1.p':'<b>给家长</b> 不是只掐时间的运算，而是跟着教材脉络的笔算，培养数感。',
   'c2.alt':'速度对比诊断画面——孩子以现在的节奏，能走多远？理科顶尖 · 小学阶段体验KMO · 小四进入高中数学', 'c2.h':'第一步：诊断',
   'c2.n':'先确认孩子的运算阶段，再看看现在的节奏对应哪条基准：小四进入高中数学、小学阶段体验KMO，还是理科顶尖。',
@@ -1259,8 +1255,8 @@ window.__NM_ZH = {
   'c8.stage':'发给家长的短信示例——[numbers of magic] 姓名、周次和学习单链接', 'c8.from':'学院短信', 'c8.bub':'[numbers of magic] 民俊 9月第3周<br><u>https://…/w/?2639.C21</u>', 'c8.ex':'示例画面', 'c8.h':'每周发到手机',
   'c8.n':'每周的学习单和进度说明，都会发到家长的手机上。',
   'c8.p':'<b>给家长</b> 打开短信里的链接，就是本周的学习单。打印出来做，下周再收到新的。',
-  'c9.alt':'小镇广场上，Docssam老师、孩子们和数字朋友在一起', 'c9.h':'这不是随手发下的一沓练习题',
-  'c9.n':'学生、家长和学院一起营造学习文化——Docssam老师的这一理念，请在 Numbers of Magic 亲身体验。',
+  'c9.alt':'小镇广场上，独先生、孩子们和数字朋友在一起', 'c9.h':'这不是随手发下的一沓练习题',
+  'c9.n':'学生、家长和学院一起营造学习文化——独先生的这一理念，请在 Numbers of Magic 亲身体验。',
   'c9.p':'<b>给家长</b> 读题理解力要和运算一起成长。所以三方一起走。',
   'nav.dots':'选择卡片', 'nav.dot':'第{n}张卡片', 'nav.prev':'上一张', 'nav.next':'下一张',
   'pace.kicker':'速度对比诊断', 'pace.h2':'孩子以现在的节奏，能走多远？',
@@ -1275,11 +1271,11 @@ window.__NM_ZH = {
   'st.2':'学习单', 'st.2p':'选择每周一次或两次，就会按适合孩子的节奏和分量准备纸质学习单。<a href="../ws.html">查看学习单</a>',
   'st.3':'每周通知', 'st.3p':'每周的学习单和进度说明发到家长手机上。打印出来做，下周再收到新的。',
   'a3.kicker':'一起', 'a3.h2':'学生、家长和学院一起',
-  'tog.alt':'3D角色阵容：Docssam老师、孩子们和数字朋友站成一排',
-  'tog.p':'这不是随手发下的一沓练习题。<b>学生、家长和学院要一起营造学习文化</b>——Docssam老师的这一理念，请在 Numbers of Magic 亲身体验。',
+  'tog.alt':'3D角色阵容：独先生、孩子们和数字朋友站成一排',
+  'tog.p':'这不是随手发下的一沓练习题。<b>学生、家长和学院要一起营造学习文化</b>——独先生的这一理念，请在 Numbers of Magic 亲身体验。',
   'age':'5周岁起步',
   'contact.h2':'有疑问，尽管问', 'contact.lead':'告诉我们孩子的年龄和现在在做的运算，我们一起看看从哪里开始。',
-  'contact.phone':'电话咨询', 'contact.kakao':'通过Kakao频道咨询', 'contact.note':'咨询仅通过电话和Kakao频道。本页面不收集任何信息。',
+  'contact.phone':'电话咨询', 'contact.kakao':'通过KakaoTalk咨询', 'contact.note':'咨询请通过KakaoTalk开放聊天。本页面不收集任何信息。',
   'toast.phone':'咨询电话即将公布。', 'toast.kakao':'Kakao频道即将开通。', 'toast.copied':'链接已复制，粘贴到聊天里即可。',
   'share.text':'这不是追求快速求解的计算训练——Numbers of Magic 60秒',
   'foot.label':'快捷链接', 'foot.village':'魔法小镇', 'foot.phil':'理念', 'foot.sheets':'学习单',

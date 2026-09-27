@@ -1316,7 +1316,7 @@ function screenTown(){
           <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker('elder',56):(window.renderHumanChar?window.renderHumanChar('elder',52):'')}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-doc nb-walker" id="nbDoc"><div class="speech"></div>
-          <div class="nb-name">${S.lang==='ko'?'독쌤':S.lang==='en'?'Doc-ssaem':'独老师'}</div>
+          <div class="nb-name">${S.lang==='ko'?'독쌤':S.lang==='en'?'Doc-T':'独先生'}</div>
           <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker('doc',56):(window.renderHumanChar?window.renderHumanChar('doc',52):'')}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbPoco"><div class="speech"></div>
@@ -1876,7 +1876,7 @@ function docStripHtml(size,lineHtml){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   return `<div class="nm-host doc">
     ${window.renderHumanChar?window.renderHumanChar('doc',size||44):''}
-    <div class="nm-host-bubble"><b>${lk('독쌤','Doc-ssaem','独老师')}</b><span>${lineHtml}</span></div>
+    <div class="nm-host-bubble"><b>${lk('독쌤','Doc-T','独先生')}</b><span>${lineHtml}</span></div>
   </div>`;
 }
 /* 유닛 화면 상단의 독쌤 학습 안내 — 유닛의 "첫 스텝"에서만 뜬다(연습/도장 등은 X). */
@@ -4498,7 +4498,7 @@ function screenTitle(){
              만드는 데 쓴다(2026-09-16). 한 요소에 text-stroke와 background-clip:text를 같이 주면
              테두리가 그라데이션을 덮어 흰 글자로 보인다 — 인트로 영상 로고와 같은 결로 맞춘 것. -->
         <div class="nm-title-logo-kr" data-text="${lk('수의 마법','Numbers of Magic','数字魔法')}">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
-        <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','NUMBER VILLAGE · DOCSSAM','NUMBERS OF MAGIC')}</div>
+        <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','NUMBER VILLAGE · Doc-T','NUMBERS OF MAGIC')}</div>
       </div>
       <!-- 캐릭터 크기 88→136(2026-09-16, 원장 "캐릭터를 더 키워야지"). 원본 해상도로 크게 그려야
            흐려지지 않는다 — CSS 확대가 아니라 렌더 크기 자체를 키운다. -->
@@ -5017,7 +5017,7 @@ function screenMailbox(){
   }
 
   const weeks = mailboxWeeks();
-  const fromDoc = `<span class="nm-mb-env-from">${lk('From. 독쌤','From. Doc-ssaem','来自 独老师')}</span>`;
+  const fromDoc = `<span class="nm-mb-env-from">${lk('From. 독쌤','From. Doc-T','来自 独先生')}</span>`;
   const rows = weeks.map(w=>`<button class="nm-mb-env-card${w.opened?' opened':''}" data-week="${w.weekKey}">
     <span class="nm-mb-env-icon">${w.opened?'📭':'📬'}</span>
     <span class="nm-mb-env-body">
@@ -5034,7 +5034,7 @@ function screenMailbox(){
   <div class="nm-step-body nm-wsh-wrap">
     <div class="nm-doc-strip">
       ${window.renderHumanChar?window.renderHumanChar('doc',64):''}
-      <div class="nm-doc-strip-bubble">${lk('독쌤이 이번 주 편지를 보냈어요. 봉투를 열어 볼까?',"Doc-ssaem sent this week's letter. Open the envelope?","独老师寄来了本周的信，打开看看？")}</div>
+      <div class="nm-doc-strip-bubble">${lk('독쌤이 이번 주 편지를 보냈어요. 봉투를 열어 볼까?',"Doc-T sent this week's letter. Open the envelope?","独先生寄来了本周的信，打开看看？")}</div>
     </div>
     <p class="nm-wsh-sentence" style="margin-bottom:12px">${lk('매주 월요일, 지금 배우는 곳에 맞춘 학습지 봉투가 도착해요.','Every Monday, a worksheet envelope arrives matched to what you’re learning.','每周一，会收到一份配合学习进度的学习单信封。')}</p>
     <div class="nm-mb-env-list">${rows || `<div class="nm-card">${lk('봉투가 없어요.','No envelopes yet.','暂无信封。')}</div>`}</div>
@@ -5143,8 +5143,8 @@ function mountTown3DInto(scr){
       lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'},{ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'}] },
     { id:'elder', role:'npc', html:walker('elder',56), model:{kind:'elder'}, name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true,
       lines:[{ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'},{ko:'정자에 앉아 숫자 이야기 들려줄까?',en:'Shall I tell you a number story at the gazebo?',zh:'在凉亭坐下，听我讲讲数字的故事？'},{ko:'천천히 해도 괜찮단다',en:'It is fine to take your time',zh:'慢慢来也没关系'},{ko:'항구에 가면 수학 이야기 퀴즈가 있단다',en:'There is a math-story quiz down at the harbor',zh:'去港口有数学故事问答哦'}] },
-    { id:'doc', role:'npc', html:walker('doc',56), model:{kind:'doc'}, name:{ko:'독쌤',en:'Doc-ssaem',zh:'独老师'}, at:'academy', still:true,
-      lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'},{ko:'오늘 배울 마법은 도서관에 있어',en:"Today's magic is in the library",zh:'今天要学的魔法在图书馆里'},{ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'}] },
+    { id:'doc', role:'npc', html:walker('doc',56), model:{kind:'doc'}, name:{ko:'독쌤',en:'Doc-T',zh:'独先生'}, at:'academy', still:true,
+      lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-T 📚',zh:'你好！我是独先生 📚'},{ko:'오늘 배울 마법은 도서관에 있어',en:"Today's magic is in the library",zh:'今天要学的魔法在图书馆里'},{ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'}] },
     { id:'poco', role:'npc', html:numi({number:3,color:'gold',bg:'plain'},52), model:{kind:'buddy',buddy:{number:3,color:'gold'}}, at:'plaza', wander:true,
       lines:[{ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'},{ko:'7이랑 만나면 10! 🔟',en:'With 7 we make 10! 🔟',zh:'和7在一起就是10！🔟'},{ko:'게임하러 가자!',en:"Let's go play!",zh:'去玩游戏吧！'}] },
     { id:'momo', role:'npc', html:numi({number:8,color:'pink',bg:'plain'},52), model:{kind:'buddy',buddy:{number:8,color:'pink'}}, at:'numberland', wander:true,
@@ -5338,7 +5338,7 @@ function initTownWorld(scr){
     {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
       lines:[L({ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'}),L({ko:'정자에 앉아 숫자 이야기 들려줄까?',en:'Shall I tell you a number story at the gazebo?',zh:'在凉亭坐下，听我讲讲数字的故事？'}),L({ko:'천천히 해도 괜찮단다',en:'It is fine to take your time',zh:'慢慢来也没关系'}),L({ko:'항구에 가면 수학 이야기 퀴즈가 있단다',en:'There is a math-story quiz down at the harbor',zh:'去港口有数学故事问答哦'})]},
     {el:scr.querySelector('#nbDoc'),x:47,y:60,tx:47,ty:60,spd:0,still:true,
-      lines:[L({ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'}),L({ko:'오늘 배울 마법은 도서관에 있어',en:'Today\'s magic is in the library',zh:'今天要学的魔法在图书馆里'}),L({ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'})]},
+      lines:[L({ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-T 📚',zh:'你好！我是独先生 📚'}),L({ko:'오늘 배울 마법은 도서관에 있어',en:'Today\'s magic is in the library',zh:'今天要学的魔法在图书馆里'}),L({ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'})]},
     {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:[L({ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'}),L({ko:'7이랑 만나면 10! 🔟',en:'With 7 we make 10! 🔟',zh:'和7在一起就是10！🔟'}),L({ko:'게임하러 가자!',en:'Let\'s go play!',zh:'去玩游戏吧！'})]},
     {el:scr.querySelector('#nbMomo'),x:37,y:66,tx:37,ty:66,spd:.08,lines:[L({ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'}),L({ko:'2랑 만나면 10! 🔟',en:'With 2 we make 10! 🔟',zh:'和2在一起就是10！🔟'}),L({ko:'실수는 괜찮아!',en:'Mistakes are okay!',zh:'出错也没关系！'})]}
   ];
