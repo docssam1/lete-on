@@ -36,9 +36,11 @@ const NEW = [
   { sec:'magic',  label:'기준량 구하기' },
 ];
 
+/* 도중에 죽어도(시간 초과 등) 정적 서버를 남기지 않게 바깥에 둔다 — 남으면 다음 실행이 옛 서버를 쓴다 */
+let server = null;
 (async () => {
   const { chromium } = loadPW();
-  const server = await serve();
+  server = await serve();
   const browser = await chromium.launch({ args: browserArgs() });
   const problems = [];
   const netErrs = [];
@@ -130,4 +132,4 @@ const NEW = [
   if (netErrs.length) { console.log(`\n[참고] 네트워크 리소스 실패(코드 무관) ${netErrs.length}건 — 서로 다른 주소:`); [...new Set(netErrs)].forEach(e => console.log('  ' + e)); }
   if (problems.length) { console.log(`\n[FAIL] ${problems.length}건`); [...new Set(problems)].forEach(p => console.log('  ' + p)); process.exit(1); }
   console.log('통과 — pageerror 0, 신규 레벨 전부 화면에서 풀림.');
-})().catch(e => { console.error(e); process.exit(2); });
+})().catch(e => { console.error(e); if (server) server.kill(); process.exit(2); });

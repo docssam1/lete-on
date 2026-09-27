@@ -48,9 +48,10 @@ const TARGETS = [['WP1', 1], ['WP1', 2], ['WP1', 3], ['WP3', 1], ['WP3', 2], ['W
                  ['WP4', 1], ['WP4', 2], ['WP4', 3], ['WP5', 1], ['WP5', 2], ['WP5', 3]];
 const fails = [];
 
+let server = null;   // 도중에 죽어도 정적 서버를 남기지 않게
 (async () => {
   const { chromium } = loadPlaywright();
-  const server = await serve();
+  server = await serve();
   const browser = await chromium.launch({ args: browserArgs() });
 
   for (const width of [1280, 430]) {
@@ -178,4 +179,4 @@ const fails = [];
     process.exit(1);
   }
   console.log('\n통과 — WP 스레드가 화면·인쇄 양쪽에서 성립한다.');
-})().catch(e => { console.error(e); process.exit(2); });
+})().catch(e => { console.error(e); if (server) server.kill(); process.exit(2); });
