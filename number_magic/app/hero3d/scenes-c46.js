@@ -284,8 +284,8 @@ export const SCENES_C46 = {
     });
     /* 유리판 — 높이 8 칸(2³) */
     const glassM = new THREE.MeshPhysicalMaterial({ color:'#cfe6f0', roughness:0.08, transmission:0.6, transparent:true, opacity:0.35, emissive:new THREE.Color('#9fd4ff'), emissiveIntensity:0 });
-    const glass = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.02, 0.9), glassM); glass.position.set(X0 + 1.5 * DX, 8 * H, Z0); scene.add(glass);
-    const edge = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.03, 0.03), k.metal('#b8b3a8', 0.3)); edge.position.set(X0 + 1.5 * DX, 8 * H, Z0 + 0.45); scene.add(edge);
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(3.9, 0.02, 0.9), glassM); glass.position.set(X0 + 1.5 * DX, 8 * H, Z0); scene.add(glass);
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(3.9, 0.03, 0.03), k.metal('#b8b3a8', 0.3)); edge.position.set(X0 + 1.5 * DX, 8 * H, Z0 + 0.45); scene.add(edge);
     /* 기둥 앞 카드 */
     const labs = [['2', { sup:'1' }, ' = 2'], ['2', { sup:'2' }, ' = 4'], ['2', { sup:'3' }, ' = 8'], ['2', { sup:'4' }, ' = 16']].map((t, i) =>
       mcard(k, t, X0 + i * DX, 0.75, { w:0.9, d:0.52, hmax:0.44, glow:true }));
