@@ -20,6 +20,9 @@ import { SCENES_C42 } from './scenes-c42.js';
 import { SCENES_C44 } from './scenes-c44.js';
 import { SCENES_C46 } from './scenes-c46.js';
 import { SCENES_C47 } from './scenes-c47.js';
+import { SCENES_E1 } from './scenes-e1.js';
+import { SCENES_E2 } from './scenes-e2.js';
+import { SCENES_E3 } from './scenes-e3.js';
 const SCENES_C29_31 = {
 
   /* 정수 개념 — history: 『구장산술』의 붉은 산가지(+)와 검은 산가지(−) */
@@ -635,4 +638,4 @@ const SCENES_C29_31 = {
 };
 
 /* 과정별 파일을 한데 모은다 — 과정마다 파일을 나눠 여럿이 동시에 만들어도 서로 덮어쓰지 않게(2026-09-26) */
-export const SCENES = Object.assign({}, SCENES_C29_31, SCENES_C32, SCENES_C33, SCENES_C34, SCENES_C35, SCENES_C36, SCENES_C37, SCENES_C37B, SCENES_C26, SCENES_C27, SCENES_C28, SCENES_C38, SCENES_C39, SCENES_C40, SCENES_C42, SCENES_C44, SCENES_C46, SCENES_C47);
+export const SCENES = Object.assign({}, SCENES_C29_31, SCENES_C32, SCENES_C33, SCENES_C34, SCENES_C35, SCENES_C36, SCENES_C37, SCENES_C37B, SCENES_C26, SCENES_C27, SCENES_C28, SCENES_C38, SCENES_C39, SCENES_C40, SCENES_C42, SCENES_C44, SCENES_C46, SCENES_C47, SCENES_E1, SCENES_E2, SCENES_E3);
