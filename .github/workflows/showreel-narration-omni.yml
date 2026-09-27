@@ -2,13 +2,10 @@ name: Showreel Narration — OmniVoice (Numbers of Magic)
 
 # 원장: "음성은 이제 omni보이스 사용해" (2026-09-26). 앱의 누미 목소리를 복제해 쇼릴 대본을 읽힌다.
 # 비밀키를 쓰지 않는다(참조 음성은 공개 URL, 모델은 Hugging Face 공개 가중치). 결과 mp3 를 같은 브랜치에 커밋.
+# 2026-09-27: 원장 PC(GPU)에서 만들기로 해서 푸시 자동 실행을 껐다 — 스크립트만 고쳐도 서버 CPU 로
+# 한 시간 넘게 돌고 옛 참조로 만든 mp3 를 커밋했다(d8f5cd6d). 필요하면 Actions 에서 수동 실행.
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'number_magic/scripts/showreel/narration.json'
-      - 'number_magic/scripts/showreel/narrate-omni.py'
-      - '.github/workflows/showreel-narration-omni.yml'
 
 concurrency:
   group: showreel-narration-omni-${{ github.ref }}
