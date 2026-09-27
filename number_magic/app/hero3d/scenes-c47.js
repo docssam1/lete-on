@@ -17,7 +17,11 @@ function mdraw(k, g, parts, x, cy, fs, draw){
   if(typeof parts === 'string') parts = [parts];
   let cx = x;
   parts.forEach(p => {
-    if(typeof p === 'string'){ cx += gtext(k, g, p, cx, cy, fs, draw); return; }
+    if(typeof p === 'string'){
+      /* 도(°) — 글꼴의 ° 는 자리가 어긋나서 작은 원으로 그린다 */
+      p.split(/(°)/).filter(r => r !== '').forEach(r => { if(r === '°'){ if(draw !== false){ g.save(); g.lineWidth = fs * 0.055; g.beginPath(); g.arc(cx + fs * 0.13, cy - fs * 0.3, fs * 0.08, 0, Math.PI * 2); g.stroke(); g.restore(); } cx += fs * 0.26; }
+        else cx += gtext(k, g, r, cx, cy, fs, draw); });
+      return; }
     if(p.c){ const old = g.fillStyle, olds = g.strokeStyle; if(draw !== false){ g.fillStyle = g.strokeStyle = p.c; }
       cx += mdraw(k, g, p.t, cx, cy, fs, draw); if(draw !== false){ g.fillStyle = old; g.strokeStyle = olds; } return; }
     if(p.sup != null){ const sp = typeof p.sup === 'string' ? [p.sup] : p.sup, fr = sp.some(q => q && q.n);
@@ -160,7 +164,7 @@ export const SCENES_C47 = {
 
   /* 연속조건 상수 결정 — hook: 연필을 떼지 않고 그리는 그래프, x=3 에서만 값이 k 인 이상한 점.
      stage ①: (x²−9)/(x−3) = x+3 → 극한값 6 → k=6. stage ②: x+b 와 3x−1 이 x=2 에서 만나려면 2+b=5 → b=3.
-     그래프 한지 위에 y=x+3 직선(구멍 (3, 6)) · 구멍을 메우는 구슬 k · 연필, 오른쪽에 식 카드 */
+     그래프 한지 위에 y=x+3 직선(구멍 (3, 6)) · 구멍을 메우는 원판 k · 연필, 오른쪽에 식 카드 */
   'M-59': { seed:459, caps:{ P:10, list:[
     [0.0, "$x=3$에서만 값이 $k$인 점입니다. $k$가 맞지 않으면 그래프가 그 점에서 끊어집니다.", "Only at $x=3$ is the value $k$. If $k$ is wrong, the graph breaks at that point.", "只有在$x=3$处函数值是$k$。$k$不对，图像就在那一点断开。"],
     [0.24, "$x\\ne 3$이면 $\\dfrac{x^2-9}{x-3}=\\dfrac{(x-3)(x+3)}{x-3}=x+3$이므로 극한값은 $3+3=6$입니다.", "For $x\\ne 3$, $\\dfrac{x^2-9}{x-3}=\\dfrac{(x-3)(x+3)}{x-3}=x+3$, so the limit is $3+3=6$.", "当$x\\ne 3$时，$\\dfrac{x^2-9}{x-3}=\\dfrac{(x-3)(x+3)}{x-3}=x+3$，所以极限值是$3+3=6$。"],
@@ -193,7 +197,7 @@ export const SCENES_C47 = {
       g.lineWidth = 8; g.beginPath(); g.arc(gu(3), gv(6), R, 0, Math.PI * 2); g.stroke(); g.restore();
       ink(g, 'y = x + 3', gu(4.1), gv(4.9), 76, { color:'#8e2a12' });
     });
-    /* 구슬 k — 구멍 (3, 6) 에 들어가 있다 */
+    /* 원판 k — 구멍 (3, 6) 에 들어가 있다 */
     const kb = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.05, 40), new THREE.MeshPhysicalMaterial({ color:'#c8962e', roughness:0.25, metalness:0.6, clearcoat:1 }));
     kb.castShadow = kb.receiveShadow = true; scene.add(kb);
     const HOLE = world(3, 6, 0.05), HIGH = world(3, 7.6, 0.05);
@@ -214,13 +218,13 @@ export const SCENES_C47 = {
     const c2 = mcard(k, [{ lim:'x → 3' }, ' (x + 3) = 3 + 3 = 6'], X, -0.12, { w:2.5, d:0.72, hmax:0.34, dy:-0.06, glow:true });
     const c3 = mcard(k, [{ c:'#8a5a0e', t:'k' }, ' = 6'], X, 0.7, { w:1.3, d:0.66, hmax:0.52, bg:GREEN, edge:GEDGE, glow:true });
     const c4 = mcard(k, '2 + b = 3 × 2 − 1 = 5  ⇒  b = 3', X, 1.5, { w:2.5, d:0.62, hmax:0.4, glow:true });
-    /* 움직임: 구슬 k 가 엉뚱한 높이로 튀어 구멍이 드러났다가(끊김) → 식 카드 → 구슬이 6 자리로 돌아와 메움 → 연필이 끊김 없이 긋고 돌아옴 → b=3 */
+    /* 움직임: 원판 k 가 엉뚱한 높이로 튀어 구멍이 드러났다가(끊김) → 식 카드 → 원판이 6 자리로 돌아와 메움 → 연필이 끊김 없이 긋고 돌아옴 → b=3 */
     k.onFrame(t => { const p = cyc(t, 10);
       const u = seg(p, 0.04, 0.14) * (1 - seg(p, 0.4, 0.5));
       kb.position.lerpVectors(HOLE, HIGH, u); kb.position.y = HOLE.y + 0.25 * Math.sin(Math.PI * u);
       pop(c1, p, 0.22, 0.36); pop(c2, p, 0.3, 0.46); pop(c3, p, 0.46, 0.62);
       const w = seg(p, 0.5, 0.74) * (1 - seg(p, 0.8, 0.96));
-      pen.position.lerpVectors(P0, P1, w); pen.position.y = P0.y + 0.18 * hop(p, 0.8, 0.96) + 0.07 * Math.exp(-Math.pow((w - 0.54) / 0.05, 2)) * (p < 0.8 ? 1 : 0);  /* 메운 구슬 위를 미끄러져 지남 */
+      pen.position.lerpVectors(P0, P1, w); pen.position.y = P0.y + 0.18 * hop(p, 0.8, 0.96) + 0.07 * Math.exp(-Math.pow((w - 0.54) / 0.05, 2)) * (p < 0.8 ? 1 : 0);  /* 메운 자리 위를 미끄러져 지남 */
       pop(c4, p, 0.78, 0.96); });
     k.lights({ key:3.0, keyPos:[-4, 7, 5], spotPos:[-0.5, 7, 2], spotAt:[-0.3, 0, 0.2], envOpts:{ intensity:0.7 } });
   }},
@@ -230,7 +234,7 @@ export const SCENES_C47 = {
      y=x³−3x² 모양의 레일(x −1.1 ~ 3.1) · 수레 · 꼭대기와 골짜기의 수평 막대, 앞에 식 카드 */
   'M-60': { seed:460, caps:{ P:10, list:[
     [0.0, "롤러코스터가 꼭대기에 닿는 순간 잠깐 수평이 됩니다 — 기울기가 $0$입니다.", "At the top, the coaster is level for an instant: the slope is $0$.", "过山车到达顶点的瞬间是水平的——斜率为$0$。"],
-    [0.24, "$f(x)=x^3-3x^2$이면 $f'(x)=3x^2-6x=3x(x-2)$이므로 $f'(x)=0$의 해는 $x=0,\\;2$입니다.", "For $f(x)=x^3-3x^2$, $f'(x)=3x^2-6x=3x(x-2)$, so $f'(x)=0$ at $x=0,\\;2$.", "$f(x)=x^3-3x^2$时，$f'(x)=3x^2-6x=3x(x-2)$，所以$f'(x)=0$的解是$x=0,\\;2$。"],
+    [0.24, "$f(x)=x^3-3x^2$이면 $f'(x)=3x^2-6x=3x(x-2)$이므로 $f'(x)=0$의 해는 $x=0,\;2$입니다.", "For $f(x)=x^3-3x^2$, $f'(x)=3x^2-6x=3x(x-2)$, so $f'(x)=0$ at $x=0,\;2$.", "$f(x)=x^3-3x^2$时，$f'(x)=3x^2-6x=3x(x-2)$，所以$f'(x)=0$的解是$x=0,\;2$。"],
     [0.42, "골짜기도 기울기가 $0$입니다. 높이는 $f(2)=8-12=-4$ — 극솟값 $-4$입니다.", "The valley is level too. Its height is $f(2)=8-12=-4$: the local minimum $-4$.", "谷底的斜率也是$0$。高度是$f(2)=8-12=-4$——极小值$-4$。"],
     [0.72, "꼭대기 높이는 $f(0)=0$ — 극댓값 $0$입니다.", "The top's height is $f(0)=0$: the local maximum $0$.", "顶点的高度是$f(0)=0$——极大值$0$。"]
   ]},
@@ -397,10 +401,10 @@ export const SCENES_C47 = {
     const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.05, 24), k.metal('#b8914a', 0.3)); hub.rotation.x = Math.PI / 2; hub.position.z = 0.08; dial.add(hub);
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.5, 16), k.metal('#3b3024', 0.4)); post.position.set(0, -0.66, -0.05); dial.add(post);
     dial.traverse(m => { if(m.isMesh) m.castShadow = true; });
-    dial.position.set(2.3, 0.9, -1.62); dial.rotation.set(-0.35, -0.22, 0); scene.add(dial);
+    dial.position.set(2.3, 0.84, -1.5); dial.rotation.set(-0.35, -0.22, 0); scene.add(dial);
     const setV = v => { needle.rotation.z = (210 - v * 24) * Math.PI / 180; };
     setV(7);
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.06, 32), k.woodMat('#5b3a20', [40, 20, 8])); base.position.set(2.3 + 0.0, 0.03, -1.62 + 0.0); base.castShadow = base.receiveShadow = true; scene.add(base);
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.06, 32), k.woodMat('#5b3a20', [40, 20, 8])); base.position.set(2.3, 0.03, -1.5); base.castShadow = base.receiveShadow = true; scene.add(base);
     /* 식 카드 */
     const c0 = mcard(k, ['s(t) = t', { sup:'2' }, ' + 3t'], -2.0, 0.72, { w:1.9, d:0.62, hmax:0.46, glow:true });
     const c1 = mcard(k, ['s', { sup:'′' }, '(t) = 2t + 3'], 0.0, 0.72, { w:1.9, d:0.62, hmax:0.46, glow:true });

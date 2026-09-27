@@ -193,7 +193,7 @@ export const SCENES_C46 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([-0.1, 0.25, 0.05], 6.9, 57);
+    k.frame([-0.1, 0.25, 0.1], 6.3, 60);
     k.table();
     /* 정육면체 8 개 — 2 × 2 × 2 */
     const S = 0.5, G = 0.03, CX = -1.65, CZ = -0.35, mats = [k.woodMat('#d9a466', [120, 80, 40]), k.woodMat('#c48a52', [110, 70, 35])];
@@ -270,7 +270,7 @@ export const SCENES_C46 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.3, 0.55, 0.25], 7.0, 38);
+    k.frame([0.3, 0.5, -0.1], 6.8, 38);
     k.table();
     /* 기둥 — 블록 하나 높이 H, x = 1~4 에 2ˣ 개 */
     const H = 0.14, S = 0.46, X0 = -2.6, DX = 1.0, Z0 = -0.2;
@@ -415,7 +415,7 @@ export const SCENES_C46 = {
   ]},
     build(k){
     const { THREE, scene } = k;
-    k.frame([0.1, 0.3, 0.45], 8.6, 54);
+    k.frame([0.2, 0.3, 0.55], 8.1, 58);
     k.table();
     const PI = Math.PI, f = x => 3 * Math.sin(2 * x) + 1;
     const B = board(k, { x0:-0.35, x1:2 * PI + 0.35, y0:-3.4, y1:5.4, ux:0.72, uy:0.4, gx:PI / 4, gy:1, cx:0.95, cz:-0.2, fs:0.2, xlo:1.05,
