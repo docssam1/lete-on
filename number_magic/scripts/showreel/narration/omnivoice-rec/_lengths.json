@@ -1,73 +1,73 @@
 [
  {
   "id": "n01",
-  "sec": 6.48,
+  "sec": 5.28,
   "expected": 7.29,
   "fixedLength": false
  },
  {
   "id": "n02",
-  "sec": 12.88,
+  "sec": 10.6,
   "expected": 15.5,
   "fixedLength": false
  },
  {
   "id": "n03",
-  "sec": 8.6,
+  "sec": 6.99,
   "expected": 9.86,
   "fixedLength": false
  },
  {
   "id": "n04",
-  "sec": 22.28,
+  "sec": 18.08,
   "expected": 25.75,
   "fixedLength": false
  },
  {
   "id": "n05",
-  "sec": 9.52,
+  "sec": 7.72,
   "expected": 11.07,
   "fixedLength": false
  },
  {
   "id": "n06",
-  "sec": 5.68,
+  "sec": 4.64,
   "expected": 6.64,
   "fixedLength": false
  },
  {
   "id": "n07",
-  "sec": 4.16,
+  "sec": 3.4,
   "expected": 4.79,
   "fixedLength": false
  },
  {
   "id": "n08",
-  "sec": 10.64,
+  "sec": 8.64,
   "expected": 11.96,
   "fixedLength": false
  },
  {
   "id": "n09",
-  "sec": 7.16,
+  "sec": 5.7,
   "expected": 8.07,
   "fixedLength": false
  },
  {
   "id": "n10",
-  "sec": 9.63,
+  "sec": 7.84,
   "expected": 10.93,
   "fixedLength": false
  },
  {
   "id": "n11",
-  "sec": 3.96,
+  "sec": 3.24,
   "expected": 4.36,
   "fixedLength": false
  },
  {
   "id": "n12",
-  "sec": 9.28,
+  "sec": 7.52,
   "expected": 10.57,
   "fixedLength": false
  }

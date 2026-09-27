@@ -114,7 +114,9 @@ async function openApp(browser, base, btn, state){
   const { ctx, page } = await L.newPage(browser, { w:CW, h:CH, dpr:DPR, state:state || L.STATE });
   /* 찍는 동안에만: 3D 마을 ctl 을 window.__srTown 에 건다(카메라를 천천히 움직이려고). 앱 파일은 그대로. */
   await ctx.route(/\/number_magic\/app\/town3d\/town3d\.js/, async route => {
-    const src = fs.readFileSync(path.join(L.APP, 'app/town3d/town3d.js'), 'utf8').replace('  return {\n    dispose,\n    setLang(l){ lang', '  return window.__srTown = {\n    dispose,\n    setLang(l){ lang');
+    const raw = fs.readFileSync(path.join(L.APP, 'app/town3d/town3d.js'), 'utf8');
+    const src = raw.replace(/  return \{\r?\n    dispose,\r?\n    setLang\(l\)\{ lang/, '  return window.__srTown = {\n    dispose,\n    setLang(l){ lang');
+    if(src === raw) throw new Error('town3d 촬영 연결 지점을 찾지 못했습니다.');
     await route.fulfill({ status:200, body:src, headers:{ 'content-type':'text/javascript' } });
   });
   await L.virtualTime(page);

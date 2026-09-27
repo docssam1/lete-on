@@ -49,7 +49,11 @@ async function routeNet(ctx){
 }
 
 async function launch(){
-  return chromium.launch({ args:['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--disable-background-timer-throttling', '--disable-renderer-backgrounding'] });
+  const common = ['--ignore-gpu-blocklist', '--disable-background-timer-throttling', '--disable-renderer-backgrounding'];
+  const args = process.env.SR_USE_GPU === '1'
+    ? ['--use-gl=angle', '--use-angle=d3d11', '--enable-gpu-rasterization', ...common]
+    : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', ...common];
+  return chromium.launch({ args });
 }
 
 const STATE = { lang:'ko', onboarded:true, name:'민준', view:'town', avatar:{ kind:'boy' }, account:{ status:'active' }, placement:{ course:'C29', self:true }, coins:120 };
