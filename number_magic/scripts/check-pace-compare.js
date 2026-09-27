@@ -19,7 +19,7 @@ global.window={};
 const PC=require(path.join(APP,'app/pace-compare.js'));
 require(path.join(APP,'data/courses.js'));
 const C=global.window.NM_COURSES;
-const BANNED=/소마|황소|S학원|Academy S|S学院/;
+const BANNED=/소마|황소|S학원|Academy S|S学院|프리미어|Premier|합격생|admits|录取生/i;
 
 check('기준표 = roadmap/index.html 원본', ()=>{
   const src=fs.readFileSync(path.join(ROOT,'roadmap/index.html'),'utf8');

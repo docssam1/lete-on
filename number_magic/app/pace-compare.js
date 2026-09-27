@@ -195,7 +195,7 @@ const STR = {
   change:{ko:'바꾸기',en:'Change',zh:'修改'},
   verdictPre:{ko:'지금 속도라면',en:'At this pace',zh:'按现在的速度'},
   verdictPost:{ko:'속도예요',en:'pace',zh:'的速度'},
-  verdictFast:{ko:'프리미어 중에서도 빠른 쪽(선행이 빠른 합격생 진도)과 나란해요.',en:'Level with the fast end of Premier (early-ahead admits).',zh:'与Premier中较快的一端（超前较快的录取生进度）持平。'},
+  verdictFast:{ko:'초등 KMO 경험 기준에서도 빠른 쪽과 나란해요.',en:'Level with the fast end of the KMO-in-elementary pace.',zh:'与“小学阶段体验KMO”中较快的一端持平。'},
   verdictNone:{ko:'지금 속도로는 세 기준보다 조금 천천히 가요.',en:'At this pace the road runs a little slower than all three benchmarks.',zh:'按现在的速度，比三个标准都稍慢一些。'},
   verdictTop:{ko:'가장 빠른 기준과 나란해요. 이제는 속도보다 정확도와 문장제를 다지는 게 좋아요.',en:'Level with the fastest benchmark. From here, accuracy and word problems matter more than speed.',zh:'已与最快的标准持平。现在比起速度，更该巩固准确度和应用题。'},
   outTitle:{ko:'이 비교는 유아~초3 선행 기준이에요',en:'These benchmarks cover pre-school to Grade 3',zh:'这些标准只覆盖学龄前到小三'},
@@ -238,7 +238,7 @@ const STR = {
   srcOurs:{ko:'우리 과정',en:'Our course',zh:'我们的课程'},
   beyondGrid:{ko:'진도표 칸 밖(같은 간격으로 이어 계산)',en:'beyond the chart (extended at the same offset)',zh:'超出进度表（按同样间隔推算）'},
   derived:{ko:'4.6년에서 거꾸로 계산',en:'back-calculated from 4.6 years',zh:'由4.6年倒推'},
-  legendBand:{ko:'프리미어 표준~빠른 쪽',en:'Premier standard–fast',zh:'Premier 标准~快'}
+  legendBand:{ko:'초등 KMO 경험 · 표준~빠른 쪽',en:'KMO in elementary · standard–fast',zh:'小学体验KMO · 标准~快'}
 };
 function fmt(s, vars){ return String(s).replace(/\{(\w+)\}/g,(m,k)=>vars&&vars[k]!=null?vars[k]:m); }
 
