@@ -36,9 +36,9 @@ window.NM_UNITS['B-09'] = {
         desc:{ko:'3과 6은 특별한 관계예요. <b>6의 배수는 모두 3의 배수</b>이고, 3의 배수 중 <b>짝수는 6의 배수</b>예요. 두 단을 함께 외우면 더욱 강해져요!',
               en:'3 and 6 have a special relationship. <b>Every multiple of 6 is also a multiple of 3</b>, and any <b>even multiple of 3 is also a multiple of 6</b>. Learning them together makes you twice as strong!',
               zh:'3和6有特殊关系。<b>6的每个倍数都是3的倍数</b>，而3的倍数中<b>偶数也是6的倍数</b>。一起学两张口诀表，实力翻倍！'},
-        mathSteps:[{ko:'3의 배수: 3,6,9,12,15,18,21,24,27',en:'\\text{multiples of 3: } 3,6,9,12,15,18,21,24,27',zh:'3的倍数：3,6,9,12,15,18,21,24,27'},{ko:'6의 배수: 6,12,18,24,30,36,42,48,54',en:'\\text{multiples of 6: } 6,12,18,24,30,36,42,48,54',zh:'6的倍数：6,12,18,24,30,36,42,48,54'},{ko:'6의 배수 ⊂ 3의 배수!',en:'\\text{multiples of 6} ⊂ \\text{multiples of 3!}',zh:'6的倍数 ⊂ 3的倍数！'}],
+        mathSteps:[{ko:'3의 배수: 3,6,9,12,15,18,21,24,27',en:'\\text{multiples of 3: } 3,6,9,12,15,18,21,24,27',zh:'3的倍数：3,6,9,12,15,18,21,24,27'},{ko:'6의 배수: 6,12,18,24,30,36,42,48,54',en:'\\text{multiples of 6: } 6,12,18,24,30,36,42,48,54',zh:'6的倍数：6,12,18,24,30,36,42,48,54'},{ko:'6의 배수는 모두 3의 배수!',en:'\\text{every multiple of 6 is a multiple of 3!}',zh:'6的倍数都是3的倍数！'}],
         result:{ko:'6의 배수(6,12,18,24…)는 전부 3의 배수에 들어 있어요. 집합 관계!', en:'All 6× answers (6, 12, 18, 24 …) appear inside the 3× list. It is a subset!', zh:'所有6的倍数（6、12、18、24……）都包含在3的倍数中，是子集关系！'},
-        book:{ko:'6의 배수 ⊂ 3의 배수. 이 집합 관계를 알면 "이 수가 3의 배수인가? 6의 배수인가?" 두 가지를 한꺼번에 판단할 수 있어요.', en:'6× ⊂ 3×. Knowing this subset relationship lets you decide at once whether a number is a multiple of 3, of 6, or both.', zh:'6的倍数 ⊂ 3的倍数。知道这个子集关系，就能一次判断一个数是3的倍数、6的倍数还是两者都是。'} },
+        book:{ko:'6의 배수는 모두 3의 배수입니다. 이 관계를 알면 "이 수가 3의 배수인가? 6의 배수인가?" 두 가지를 한꺼번에 판단할 수 있어요.', en:'Every multiple of 6 is a multiple of 3. Knowing this relationship lets you decide at once whether a number is a multiple of 3, of 6, or both.', zh:'6的倍数都是3的倍数。知道这个关系，就能一次判断一个数是3的倍数、6的倍数还是两者都是。'} },
 
       { tag:{ko:'② 자릿수 합 = 3의 배수 판별법', en:'2) Digit-sum divisibility rule for 3', zh:'② 数位之和判断是否是3的倍数'},
         head:{ko:'자릿수를 더해 3으로 나눠봐요', en:'Add the digits and divide by 3', zh:'把各位数字相加，看能否被3整除'},

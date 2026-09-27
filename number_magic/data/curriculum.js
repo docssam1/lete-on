@@ -33,7 +33,7 @@ window.NM_CURRICULUM = {
     /* ===== PRIME · 초급 (A~I) ===== */
     {
       id:'beginner', name:'PRIME', grade:'PRIME', order:1,
-      title:'PRIME', subtitle:{ko:'초급 · A~I단계',en:'Beginner · Levels A–I',zh:'初级 · A~I阶段'},
+      title:'PRIME', subtitle:{ko:'펼침의 숲 · 덧셈·뺄셈을 쉽게 만드는 마법',en:'Forest of Unfolding · Magic that makes adding & subtracting easy',zh:'展开之林·让加减法变简单的魔法'},
       ageFrom:5, ageLabel:'만 5세+',
       color:'#16417C', accent:'#EAC996',
       desc:{ko:'수를 펼쳐 쉽게 만드는 첫 마법 — 더하기의 여러 전략',
@@ -91,7 +91,7 @@ window.NM_CURRICULUM = {
     /* ===== ADVANCE · 중급 (구구 기초 + 창의 전략 8단계) ===== */
     {
       id:'intermediate', name:'ADVANCE', grade:'ADVANCE', order:2,
-      title:'ADVANCE', subtitle:{ko:'중급 · 구구 기초 + 창의 전략 8단계',en:'Intermediate · Times Tables + Creative Math A–F',zh:'中级 · 口诀基础 + 创意数学A~F'},
+      title:'ADVANCE', subtitle:{ko:'곱셈의 마을 · 구구와 곱셈·나눗셈 전략',en:'Village of Multiplying · Times tables & multiply–divide strategies',zh:'乘法之村·口诀与乘除策略'},
       ageFrom:7, ageLabel:'7세+',
       color:'#5a4a8a', accent:'#EAC996',
       desc:{ko:'곱셈의 기초 구구부터 창의 전략까지 — 분해·조합·패턴으로 수를 정복해요',
@@ -157,7 +157,7 @@ window.NM_CURRICULUM = {
     /* ===== CHALLENGE · 고급 ===== */
     {
       id:'advanced', name:'CHALLENGE', grade:'CHALLENGE', order:3,
-      title:'CHALLENGE', subtitle:{ko:'고급 · 상관관계·경시',en:'Advanced · Relationships & Competition',zh:'高级 · 关联关系与竞赛'},
+      title:'CHALLENGE', subtitle:{ko:'제곱의 언덕 · 수의 관계와 경시 전략',en:'Hill of Squares · Number relationships & contest strategies',zh:'平方之丘·数的关系与竞赛策略'},
       ageFrom:8, ageLabel:'초1 말+ (영재)',
       color:'#C9A063', accent:'#16417C',
       desc:{ko:'수들의 관계로 푸는 마법 — 등차수열과 경시로 가는 길',
@@ -177,7 +177,7 @@ window.NM_CURRICULUM = {
           title:{ko:'28 제곱의 산',en:'28 · Mountain of Squares',zh:'28·平方之山'},
           units:['H-07','H-08','H-09','H-10'] },
         { id:'boost', available:true,
-          title:{ko:'초·중급 보강 · 몰아주기·어림하기·큰 수',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
+          title:{ko:'보강 · 몰아주기·어림하기·큰 수',en:'Booster · Anchoring, Estimating & Big Numbers',zh:'补强·集中相乘·估算·大数'},
           units:['H-11','H-12','H-13'] }
       ]
     },

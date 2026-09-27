@@ -28,17 +28,27 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
   if (target === 1 && places === 1) {
     const a = R(rng, 1, 9);              /* 0.1 ~ 0.9 */
     const b = 10 - a;
+    /* 한 자리 보수는 값만 보면 9쌍뿐이다. 12문항 학습지와 교사용 예시가
+       같은 식을 되풀이하지 않도록, 교환법칙에 따른 좌우 배치도 눈에 보이는
+       별도 변형으로 쓴다(9 x 2 = 18개). 답의 의미와 난이도는 그대로다. */
+    const blankFirst = R(rng, 0, 1) === 1;
+    const digitTex = blankFirst
+      ? `\\square + ${a} = 10 \\;(\\text{십분의 자리})`
+      : `${a} + \\square = 10 \\;(\\text{십분의 자리})`;
+    const decimalTex = blankFirst
+      ? `0.\\square + 0.${a} = 1`
+      : `0.${a} + 0.\\square = 1`;
     return {
       prompt: { ko: `1을 만드는 짝꿍을 찾아요`,
                 en: `Find the partner that makes 1`,
                 zh: `找出凑成1的伙伴` },
-      tex:        `0.${a} + 0.\\square = 1`,
+      tex:        decimalTex,
       answer:     b,
       answerType: 'steps',
       widget:     'numpad',
       steps: [
-        { tex: `${a} + \\square = 10 \\;(\\text{십분의 자리})`, blank: b },
-        { tex: `0.${a} + 0.\\square = 1`,                        blank: b }
+        { tex: digitTex,   blank: b },
+        { tex: decimalTex, blank: b }
       ]
     };
   }
@@ -691,7 +701,9 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       zh: `将${decStr}用割·分·厘表示`
     },
     tex:        `${decStr} = \\square\\,\\text{할}\\;\\square\\,\\text{푼}\\;\\square\\,\\text{리}`,
-    answer:     hal,                         /* 할(가장 큰 자리) */
+    /* 빈칸은 셋(할·푼·리)인데 답이 할 하나였다 — 예시 줄이 마지막 칸(리)에만 할을 채워
+       "0.215 는 2리" 로 읽혔고, 정답지도 푼·리를 채점할 수 없었다(2026-09-20 점검). */
+    answer:     [hal, pun, ri],
     answerType: 'steps',
     widget:     'steps',
     steps: [
@@ -699,12 +711,10 @@ NM_TGEN['mx3_ratio'] = function(params, rng) {
       { tex: `\\text{푼 (0.01 단위)} = \\square`, blank: pun },
       { tex: `\\text{리 (0.001 단위)} = \\square`, blank: ri  }
     ],
-    /* answer는 가장 큰 자리(할)이므로 solution의 마지막 줄도 할로 끝낸다
-       (steps 필드는 자리 순서 그대로 두고, solution만 답 순서에 맞춘다) */
     solution: [
+      { tex: `\\text{할 (0.1 단위)} = \\square`, blank: hal },
       { tex: `\\text{푼 (0.01 단위)} = \\square`, blank: pun },
-      { tex: `\\text{리 (0.001 단위)} = \\square`, blank: ri  },
-      { tex: `\\text{할 (0.1 단위)} = \\square`, blank: hal }
+      { tex: `\\text{리 (0.001 단위)} = \\square`, blank: ri  }
     ]
   };
 };
@@ -735,9 +745,11 @@ NM_TGEN['mx4_sqrt'] = function(params, rng) {
     answerType: 'number',
     widget:     'array',
     array:      { n: sq, rows: n },
+    /* 2026-09-20: 첫 줄에 답이 숫자로 박혀 있었다 — 제곱근을 찾는 것이 이 유형의 할 일인데
+       그 수를 미리 알려 주고 있었다. 같은 관계를 빈칸으로 물어 탐색이 되게 한다. */
     solution: [
-      { tex: `${n} \\times ${n} = \\square`, blank: sq },
-      { tex: `\\sqrt{${sq}} = \\square`,      blank: n }
+      { tex: `\\square \\times \\square = ${sq}`, blank: [n, n] },
+      { tex: `\\sqrt{${sq}} = \\square`,            blank: n }
     ]
   };
 };
@@ -761,7 +773,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
     const sum = a + b;                       /* 합 분자 (가분수 가능) */
     return {
       prompt: {
-        ko: `동분모 분수 덧셈: \\dfrac{${a}}{${d}} + \\dfrac{${b}}{${d}}`,
+        ko: `분모가 같은 분수의 덧셈: \\dfrac{${a}}{${d}} + \\dfrac{${b}}{${d}}`,
         en: `Same-denominator fraction addition: \\dfrac{${a}}{${d}} + \\dfrac{${b}}{${d}}`,
         zh: `同分母分数加法：\\dfrac{${a}}{${d}} + \\dfrac{${b}}{${d}}`
       },
@@ -784,7 +796,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
     const diff = a - b;
     return {
       prompt: {
-        ko: `동분모 분수 뺄셈: \\dfrac{${a}}{${d}} - \\dfrac{${b}}{${d}}`,
+        ko: `분모가 같은 분수의 뺄셈: \\dfrac{${a}}{${d}} - \\dfrac{${b}}{${d}}`,
         en: `Same-denominator fraction subtraction: \\dfrac{${a}}{${d}} - \\dfrac{${b}}{${d}}`,
         zh: `同分母分数减法：\\dfrac{${a}}{${d}} - \\dfrac{${b}}{${d}}`
       },
@@ -841,7 +853,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
     const fsum = fa + fb;
     return {
       prompt: {
-        ko: `동분모 분수 덧셈: \\dfrac{${fa}}{${fd}} + \\dfrac{${fb}}{${fd}}`,
+        ko: `분모가 같은 분수의 덧셈: \\dfrac{${fa}}{${fd}} + \\dfrac{${fb}}{${fd}}`,
         en: `Same-denominator fraction addition: \\dfrac{${fa}}{${fd}} + \\dfrac{${fb}}{${fd}}`,
         zh: `同分母分数加法：\\dfrac{${fa}}{${fd}} + \\dfrac{${fb}}{${fd}}`
       },
@@ -869,7 +881,7 @@ NM_TGEN['mx5_mixedReview'] = function(params, rng) {
     answerType: 'steps',
     widget:     'steps',
     steps: [
-      { tex: `\\gcd(${a},\\,${d}) = \\square`,                                   blank: g  },
+      { tex: `\\text{최대공약수}(${a},\\,${d}) = \\square`,                                   blank: g  },
       { tex: `\\dfrac{${a} \\div ${g}}{${d} \\div ${g}} = \\dfrac{\\square}{${sd}}`, blank: sn }
     ]
   };

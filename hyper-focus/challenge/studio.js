@@ -6,13 +6,15 @@
   const freeze = value => { if(value && typeof value === 'object' && !Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);} return value; };
   const diagnosis = window.HFChallengeDiagnosis;
   const variants = window.HFChallengeVariants;
+  const conceptGuide = window.HFChallengeConceptGuide;
+  const questionIdentity = window.HFQuestionIdentity;
   const localHost = ['localhost','127.0.0.1','[::1]'].includes(location.hostname);
   const localPreview = localHost && new URLSearchParams(location.search).get('teacherPreview')==='1';
-  const state = {tab:'grade',round:1,bankRound:'all',responses:new Map(),selected:{bank:new Set(),wrong:new Set()},query:'',area:'',type:'',section:'all',difficulty:'same',snapshot:null,report:null,preview:null,composing:false,busy:false,printRevision:0,approvedIdentity:null,localName:''};
+  const state = {tab:'grade',round:1,bankRound:'all',responses:new Map(),selected:{bank:new Set(),wrong:new Set()},query:'',area:'',subarea:'',type:'',section:'all',difficulty:'same',snapshot:null,report:null,preview:null,composing:false,busy:false,printRevision:0,approvedIdentity:null,localName:''};
   const rounds = new Map();
   const rows = new Map();
   const hoverCache = new Map();
-  let hoverTimer=0,hoverRequest=0;
+  let hoverTimer=0,hoverRequest=0,conceptRequest=0,conceptReturnFocus=null,suppressConceptFocusRestore=false;
   const statusLabels = {insufficient:'판단 자료 부족',pending:'채점 미완료',strength:'강점 근거 있음',developing:'추가 확인',review:'보완 필요'};
   const levelLabels = {easy:'더 쉽게',same:'같은 난이도',hard:'더 어렵게'};
   function message(text, error=false){$('studioMessage').textContent=text;$('studioMessage').classList.toggle('error',error);}
@@ -22,6 +24,7 @@
   }
   function permitted(row){return allowed('challenge-bank',row.typeId);}
   function selectedSet(){return state.selected[state.tab==='wrong'?'wrong':'bank'];}
+  function subareaGroupKey(row){const t=row.taxonomy;return `${t.areaId}:${t.subareaId}`;}
   function typeGroupKey(row){const t=row.taxonomy;return `${t.areaId}:${t.subareaId}:${t.typeId}`;}
   function selectionLimit(){return Math.min(20,...[...selectedSet()].map(id=>eligibility(rows.get(id)).poolCounts?.[state.difficulty]??20));}
   function currentRound(){return rounds.get(state.round);}
@@ -44,7 +47,7 @@
   function activeWrong(row){const response=state.responses.get(row.occurrenceId);return row.section==='main'&&response?.status==='wrong'&&response.fingerprint===row.fingerprint;}
   function syncWrongSelection(){let removed=0;for(const id of state.selected.wrong){if(!activeWrong(rows.get(id))){state.selected.wrong.delete(id);removed++;}}return removed;}
   function changeTab(tab,focus=false){
-    state.tab=tab;state.query='';state.area='';state.type='';state.section='all';$('studioSearch').value='';$('sectionFilter').value='all';
+    state.tab=tab;state.query='';state.area='';state.subarea='';state.type='';state.section='all';$('studioSearch').value='';$('sectionFilter').value='all';
     document.querySelectorAll('[data-tab]').forEach(button=>{const active=button.dataset.tab===tab;button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;if(active&&focus)button.focus();});
     $('roundContext').hidden=tab==='bank';$('bankRoundControl').hidden=tab!=='bank';
     $('grade-panel').hidden=tab!=='grade';$('bank-panel').hidden=tab==='grade';$('bank-panel').setAttribute('aria-labelledby',`tab-${tab==='wrong'?'wrong':'bank'}`);
@@ -75,54 +78,81 @@
     const result=analyze();state.report=freeze(copy({result,round:state.round,student:identity(),approvedIdentity:verifiedIdentity()}));
     const lead=result.complete?`${result.score}점. ${result.score>=60?'기준 60점에 도달했습니다.':`기준까지 ${60-result.score}점입니다.`}`:`채점 ${20-result.pendingCount}/20문항. 미입력 ${result.pendingCount}문항은 점수나 약점으로 판단하지 않습니다.`;
     const groups=result.groups;
-    $('diagnosisPanel').innerHTML=`<div class="diagnosis-toolbar"><div><h2>${escape(identity().name||'학생')}의 ${state.round}회 진단</h2><p class="diagnosis-note">교사 입력 결과 · 공식 성적표 아님</p></div><button type="button" id="printDiagnosis">진단지 인쇄 보기</button></div><p class="diagnosis-lead">${escape(lead)}</p><p class="diagnosis-note">한두 문항의 결과만으로 강점·약점을 단정하지 않습니다. 영역에서 잘 풀었더라도 틀린 세부 유형은 따로 확인합니다.</p><section class="diagnosis-group"><h3>대영역</h3>${groupTable(groups.areas)}</section><section class="diagnosis-group"><h3>소영역</h3>${groupTable(groups.subareas)}</section><details class="diagnosis-group"><summary>세부 유형별 근거 보기</summary>${groupTable(groups.types)}</details><section class="diagnosis-group"><h3>다음에 맞혀 볼 문제</h3><p class="diagnosis-note">${escape(result.scorePlan?.statement||'틀린 유형의 조건과 풀이 방법을 다시 확인합니다.')}</p>${recommendationsHtml(result)}</section><button type="button" class="primary" id="practiceWrong">틀린 문제의 유사유형 선택</button>`;
+    $('diagnosisPanel').innerHTML=`<div class="diagnosis-toolbar"><div><h2>${escape(identity().name||'학생')}의 ${state.round}회 진단</h2><p class="diagnosis-note">교사 입력 결과 · 공식 성적표 아님</p></div><button type="button" id="printDiagnosis">진단지 인쇄 보기</button></div><p class="diagnosis-lead">${escape(lead)}</p><p class="diagnosis-note">한두 문항의 결과만으로 강점·약점을 단정하지 않습니다. 영역에서 잘 풀었더라도 틀린 소유형은 따로 확인합니다.</p><section class="diagnosis-group"><h3>영역</h3>${groupTable(groups.areas)}</section><section class="diagnosis-group"><h3>대유형</h3>${groupTable(groups.subareas)}</section><details class="diagnosis-group"><summary>소유형별 근거 보기</summary>${groupTable(groups.types)}</details><section class="diagnosis-group"><h3>다음에 맞혀 볼 문제</h3><p class="diagnosis-note">${escape(result.scorePlan?.statement||'틀린 유형의 조건과 풀이 방법을 다시 확인합니다.')}</p>${recommendationsHtml(result)}</section><button type="button" class="primary" id="practiceWrong">틀린 문제의 유사유형 선택</button>`;
     $('diagnosisPanel').hidden=false;$('diagnosisPanel').scrollIntoView({block:'start',behavior:'auto'});
   }
   function baseRows(){return [...rows.values()].filter(row=>state.tab==='wrong'?(row.round===state.round&&activeWrong(row)):(state.bankRound==='all'||row.round===Number(state.bankRound)));}
   function sectionRows(){return baseRows().filter(row=>state.section==='all'||row.section===state.section);}
   function renderAreaFilter(){
     const areas=new Map(sectionRows().map(row=>[row.taxonomy.areaId,row.taxonomy.areaLabel]));
-    if(state.area&&!areas.has(state.area)){state.area='';state.type='';}
+    if(state.area&&!areas.has(state.area)){state.area='';state.subarea='';state.type='';}
     $('areaFilter').innerHTML='<option value="">전체 영역</option>'+[...areas].map(([id,label])=>`<option value="${escape(id)}">${escape(label)}</option>`).join('');$('areaFilter').value=state.area;
   }
-  function renderTypeFilter(){
-    const candidates=sectionRows().filter(row=>!state.area||row.taxonomy.areaId===state.area),types=new Map();
-    candidates.forEach(row=>{const t=row.taxonomy,key=typeGroupKey(row),label=state.area?`${t.subareaLabel} · ${t.typeLabel}`:`${t.areaLabel} · ${t.typeLabel}`;if(!types.has(key))types.set(key,label);});
-    if(state.type&&!types.has(state.type))state.type='';
-    $('typeFilter').innerHTML='<option value="">전체 유형</option>'+[...types].map(([id,label])=>`<option value="${escape(id)}">${escape(label)}</option>`).join('');$('typeFilter').value=state.type;
+  function renderSubareaFilter(){
+    const candidates=sectionRows().filter(row=>!state.area||row.taxonomy.areaId===state.area),subareas=new Map();
+    candidates.forEach(row=>{const t=row.taxonomy,key=subareaGroupKey(row),label=state.area?t.subareaLabel:`${t.areaLabel} · ${t.subareaLabel}`;if(!subareas.has(key))subareas.set(key,label);});
+    if(state.subarea&&!subareas.has(state.subarea)){state.subarea='';state.type='';}
+    $('subareaFilter').innerHTML='<option value="">전체 대유형</option>'+[...subareas].map(([id,label])=>`<option value="${escape(id)}">${escape(label)}</option>`).join('');$('subareaFilter').value=state.subarea;
   }
-  function renderBankFilters(){renderAreaFilter();renderTypeFilter();}
+  function renderTypeFilter(){
+    const candidates=sectionRows().filter(row=>(!state.area||row.taxonomy.areaId===state.area)&&(!state.subarea||subareaGroupKey(row)===state.subarea)),types=new Map();
+    candidates.forEach(row=>{const t=row.taxonomy,key=typeGroupKey(row),label=state.subarea?t.typeLabel:state.area?`${t.subareaLabel} · ${t.typeLabel}`:`${t.areaLabel} · ${t.subareaLabel} · ${t.typeLabel}`;if(!types.has(key))types.set(key,label);});
+    if(state.type&&!types.has(state.type))state.type='';
+    $('typeFilter').innerHTML='<option value="">전체 소유형</option>'+[...types].map(([id,label])=>`<option value="${escape(id)}">${escape(label)}</option>`).join('');$('typeFilter').value=state.type;
+  }
+  function renderBankFilters(){renderAreaFilter();renderSubareaFilter();renderTypeFilter();}
   function visibleRows(){const query=state.query.normalize('NFC').replace(/\s+/g,'').toLocaleLowerCase();return baseRows().filter(row=>{
     if(state.area&&row.taxonomy.areaId!==state.area)return false;
+    if(state.subarea&&subareaGroupKey(row)!==state.subarea)return false;
     if(state.type&&typeGroupKey(row)!==state.type)return false;
     if(state.section!=='all'&&row.section!==state.section)return false;
     if(!query)return true;
     const question=permitted(row)?sourceFor(row):null;
     return `${pathLabel(row)} ${rowLabel(row)} ${question?.prompt||''}`.normalize('NFC').replace(/\s+/g,'').toLocaleLowerCase().includes(query);
   });}
+  function bankRowMarkup(row,selected){
+    const description=eligibility(row),access=permitted(row),can=access&&description.eligibility[state.difficulty];
+    const levels=Object.entries(levelLabels).filter(([level])=>description.eligibility[level]).map(([,label])=>label),t=row.taxonomy;
+    const guideButton=access&&conceptGuide?.has(t.typeId)?`<button type="button" class="concept-guide-button" data-concept="${escape(row.occurrenceId)}" aria-label="${escape(t.typeLabel)} AI 개념보기">AI 개념보기</button>`:'';
+    return `<article class="bank-row ${selected.has(row.occurrenceId)?'is-selected':''}" data-hover-preview="${escape(row.occurrenceId)}" tabindex="${access?'0':'-1'}" aria-label="${escape(pathLabel(row))} 문제 미리보기" ${access?'':'aria-disabled="true"'}><label><input type="checkbox" data-select="${escape(row.occurrenceId)}" ${selected.has(row.occurrenceId)?'checked':''} ${!can&&!selected.has(row.occurrenceId)?'disabled':''}><span><b>${escape(rowLabel(row))} · ${escape(t.typeLabel)}</b><small>영역 ${escape(t.areaLabel)} / 대유형 ${escape(t.subareaLabel)}</small><small class="availability ${can?'':'unavailable'}" title="${escape(description.heldReason||'')}">${!access?'소유형별 이용 승인 필요':can?`${levels.join(' · ')} 선택 가능`:`${levelLabels[state.difficulty]} · 검수 중`}</small></span></label><div class="bank-row-actions">${guideButton}<span class="hover-preview-note" aria-hidden="true">올려서 보기</span></div></article>`;
+  }
+  function groupedBankMarkup(visible,selected){
+    const areas=new Map();
+    visible.forEach(row=>{
+      const t=row.taxonomy;
+      if(!areas.has(t.areaId))areas.set(t.areaId,{taxonomy:t,subareas:new Map(),rows:[]});
+      const area=areas.get(t.areaId),key=subareaGroupKey(row);
+      area.rows.push(row);if(!area.subareas.has(key))area.subareas.set(key,{taxonomy:t,rows:[]});area.subareas.get(key).rows.push(row);
+    });
+    let areaIndex=0,subareaIndex=0;
+    return [...areas.values()].map(area=>{
+      const areaId=`bank-area-${++areaIndex}`,areaTypeCount=new Set(area.rows.map(typeGroupKey)).size;
+      const subareas=[...area.subareas.values()].map(({taxonomy,rows:groupRows})=>{
+        const typeCount=new Set(groupRows.map(typeGroupKey)).size,id=`bank-subarea-${++subareaIndex}`;
+        return `<section class="bank-group" aria-labelledby="${id}"><div class="bank-group-heading"><h3 id="${id}">${escape(taxonomy.subareaLabel)}</h3><span>${groupRows.length}개 원문 · ${typeCount}개 소유형</span></div>${groupRows.map(row=>bankRowMarkup(row,selected)).join('')}</section>`;
+      }).join('');
+      return `<section class="bank-area-group" aria-labelledby="${areaId}"><header class="bank-area-heading"><div><small>영역</small><h3 id="${areaId}">${escape(area.taxonomy.areaLabel)}</h3></div><span>${area.subareas.size}개 대유형 · ${areaTypeCount}개 소유형</span></header><div class="bank-subarea-groups">${subareas}</div></section>`;
+    }).join('');
+  }
   function renderBank(){
     hideHoverPreview();
-    const wrong=state.tab==='wrong';$('bankTitle').textContent=wrong?'오답에서 다음 학습 고르기':'영역·유형 문제은행';$('bankScope').textContent=wrong?`${state.round}회에서 오답으로 입력한 본시험 문항만 표시합니다. 미입력·추가 연습은 포함하지 않습니다.`:state.bankRound==='all'?'전체 4회에서 영역과 유형을 골라 한 학습지로 인쇄할 수 있습니다.':'선택한 회차에서 영역과 유형을 골라 한 학습지로 인쇄할 수 있습니다.';
-    const visible=visibleRows(),visibleTypes=new Set(visible.map(typeGroupKey));$('resultCount').textContent=`${visible.length}개 원문 · ${visibleTypes.size}개 학습 유형`;
+    const wrong=state.tab==='wrong';$('bankTitle').textContent=wrong?'오답에서 다음 학습 고르기':'영역·대유형·소유형 문제은행';$('bankScope').textContent=wrong?`${state.round}회에서 오답으로 입력한 본시험 문항을 영역 → 대유형 → 소유형으로 나누어 표시합니다. 미입력·추가 연습은 포함하지 않습니다.`:state.bankRound==='all'?'전체 4회 문항을 영역 → 대유형 → 소유형 순서로 골라 한 학습지로 인쇄할 수 있습니다.':'선택한 회차의 문항을 영역 → 대유형 → 소유형 순서로 골라 한 학습지로 인쇄할 수 있습니다.';
+    const visible=visibleRows(),visibleSubareas=new Set(visible.map(subareaGroupKey)),visibleTypes=new Set(visible.map(typeGroupKey));$('resultCount').textContent=`${visible.length}개 원문 · ${visibleSubareas.size}개 대유형 · ${visibleTypes.size}개 소유형`;
     const selected=selectedSet();
-    $('bankRows').innerHTML=visible.length?visible.map(row=>{
-      const description=eligibility(row), access=permitted(row), can=access&&description.eligibility[state.difficulty];
-      const levels=Object.entries(levelLabels).filter(([level])=>description.eligibility[level]).map(([,label])=>label);
-      return `<article class="bank-row ${selected.has(row.occurrenceId)?'is-selected':''}" data-hover-preview="${escape(row.occurrenceId)}" tabindex="${access?'0':'-1'}" aria-label="${escape(row.taxonomy.typeLabel)} 문제 미리보기" ${access?'':'aria-disabled="true"'}><label><input type="checkbox" data-select="${escape(row.occurrenceId)}" ${selected.has(row.occurrenceId)?'checked':''} ${!can&&!selected.has(row.occurrenceId)?'disabled':''}><span><b>${escape(rowLabel(row))} · ${escape(row.taxonomy.typeLabel)}</b><small>${escape(row.taxonomy.areaLabel)} / ${escape(row.taxonomy.subareaLabel)}</small><small class="availability ${can?'':'unavailable'}" title="${escape(description.heldReason||'')}">${!access?'유형별 이용 승인 필요':can?`${levels.join(' · ')} 선택 가능`:`${levelLabels[state.difficulty]} · 검수 중`}</small></span></label><span class="hover-preview-note" aria-hidden="true">올려서 보기</span></article>`;
-    }).join(''):`<p class="bank-empty">${wrong&&!baseRows().length?'이 회차에 입력된 오답이 없습니다. 채점 화면에서 확인한 오답을 표시하세요.':'현재 조건에 맞는 유형이 없습니다.'}</p>`;
-    const areaRows=state.area?sectionRows().filter(row=>row.taxonomy.areaId===state.area):[],typeRows=state.type?sectionRows().filter(row=>typeGroupKey(row)===state.type):[];
-    $('selectArea').disabled=!state.area||!areaRows.some(canSelect);$('selectType').disabled=!state.type||!typeRows.some(canSelect);$('selectVisible').disabled=!visible.some(canSelect);$('clearVisible').disabled=!visible.some(row=>selected.has(row.occurrenceId));renderSelection();
+    $('bankRows').innerHTML=visible.length?groupedBankMarkup(visible,selected):`<p class="bank-empty">${wrong&&!baseRows().length?'이 회차에 입력된 오답이 없습니다. 채점 화면에서 확인한 오답을 표시하세요.':'현재 조건에 맞는 소유형이 없습니다.'}</p>`;
+    const areaRows=state.area?sectionRows().filter(row=>row.taxonomy.areaId===state.area):[],subareaRows=state.subarea?sectionRows().filter(row=>subareaGroupKey(row)===state.subarea):[],typeRows=state.type?sectionRows().filter(row=>typeGroupKey(row)===state.type):[];
+    $('selectArea').disabled=!state.area||!areaRows.some(canSelect);$('selectSubarea').disabled=!state.subarea||!subareaRows.some(canSelect);$('selectType').disabled=!state.type||!typeRows.some(canSelect);$('selectVisible').disabled=!visible.some(canSelect);$('clearVisible').disabled=!visible.some(row=>selected.has(row.occurrenceId));renderSelection();
   }
   function renderSelection(){
     const selected=selectedSet(),visible=new Set(visibleRows().map(row=>row.occurrenceId));
     const hidden=[...selected].filter(id=>!visible.has(id)).length;
-    const selectedRows=[...selected].map(id=>rows.get(id)).filter(Boolean),typeCount=new Set(selectedRows.map(typeGroupKey)).size;
-    $('selectionCount').textContent=`선택 ${selected.size}개 원문 · ${typeCount}개 학습 유형${hidden?` · 현재 결과 밖 ${hidden}개`:''}`;
+    const selectedRows=[...selected].map(id=>rows.get(id)).filter(Boolean),subareaCount=new Set(selectedRows.map(subareaGroupKey)).size,typeCount=new Set(selectedRows.map(typeGroupKey)).size;
+    $('selectionCount').textContent=`선택 ${selected.size}개 원문 · ${subareaCount}개 대유형 · ${typeCount}개 소유형${hidden?` · 현재 결과 밖 ${hidden}개`:''}`;
     $('jumpAssembly').textContent=`선택 ${selected.size}개 · 구성으로 이동`;
     $('selectedList').innerHTML=[...selected].map(id=>{const row=rows.get(id);return `<li><span>${escape(rowLabel(row))} · ${escape(row.taxonomy.typeLabel)}${canSelect(row)?'':' · 현재 사용 불가'}</span><button type="button" data-remove="${escape(id)}" aria-label="${escape(rowLabel(row))} 선택 해제">해제</button></li>`;}).join('');
     const limit=selectionLimit();$('variantCount').max=String(limit);const count=Number($('variantCount').value),valid=Number.isInteger(count)&&count>0&&count<=limit, total=valid?count*selected.size:0;
     const locked=[...selected].filter(id=>!canSelect(rows.get(id))).length;
-    $('assemblySummary').textContent=locked?`선택 중 ${locked}개 유형이 현재 난이도에서 사용 불가합니다. 난이도를 바꾸거나 해당 선택을 해제하세요.`:!selected.size?'원문 유형을 선택하세요.':!valid?`선택한 유형은 원문당 1~${limit}문항으로 구성할 수 있습니다.`:total>100?'총 100문항 이내로 문항 수를 줄여 주세요.':`${selected.size}개 원문 유형 × ${count}문항 = 총 ${total}문항`;
+    $('assemblySummary').textContent=locked?`선택 중 ${locked}개 소유형이 현재 난이도에서 사용 불가합니다. 난이도를 바꾸거나 해당 선택을 해제하세요.`:!selected.size?'원문 소유형을 선택하세요.':!valid?`선택한 소유형은 원문당 1~${limit}문항으로 구성할 수 있습니다.`:total>100?'총 100문항 이내로 문항 수를 줄여 주세요.':`${selected.size}개 원문 소유형 × ${count}문항 = 총 ${total}문항`;
     $('buildPractice').disabled=state.busy||!selected.size||!valid||total>100||locked>0;
     $('clearSelection').disabled=!selected.size;
   }
@@ -137,7 +167,30 @@
     $('previewQuestion').dataset.watermark=approvedWatermark();$('previewAnswer').dataset.watermark=approvedWatermark();$('questionPreview').dataset.zoom='false';$('togglePreviewZoom').hidden=!question.problemHtml;$('togglePreviewZoom').textContent='그림 크게 보기';$('togglePreviewZoom').setAttribute('aria-pressed','false');
     $('questionPreview').showModal();
   }
+  function clearConceptGuide(restoreFocus=true){
+    conceptRequest++;
+    for(const id of ['conceptGuideHierarchy','conceptGuideTitle','conceptGuideEvidence','conceptGuideRule','conceptGuideMistake','conceptGuideSelfCheck'])$(id).textContent='';
+    $('conceptGuideSteps').replaceChildren();
+    const target=conceptReturnFocus;conceptReturnFocus=null;
+    if(restoreFocus&&target?.isConnected&&!target.disabled&&target.getAttribute('aria-disabled')!=='true')target.focus({preventScroll:true});
+  }
+  async function showConceptGuide(id,trigger){
+    const row=rows.get(id);if(!row||!permitted(row))return message('이 소유형의 이용 승인이 필요합니다.',true);
+    const requestedIdentity=verifiedIdentity(),token=++conceptRequest;conceptReturnFocus=trigger||document.activeElement;hideHoverPreview();
+    if(trigger){trigger.disabled=true;trigger.setAttribute('aria-busy','true');}
+    let guide;
+    try{guide=await conceptGuide.forRow(row);}catch(error){if(token===conceptRequest)message(error.message,true);return;}
+    finally{if(trigger?.isConnected){trigger.disabled=false;trigger.removeAttribute('aria-busy');}}
+    if(token!==conceptRequest||!permitted(row)||!sameIdentity(requestedIdentity,verifiedIdentity()))return;
+    if(!Array.isArray(guide?.steps)||guide.steps.length!==3||![guide.title,guide.rule,guide.commonMistake,guide.selfCheck,guide.evidenceLabel].every(value=>typeof value==='string'&&value.trim()))return message('이 소유형의 개념 설명을 검수해야 합니다.',true);
+    const hierarchy=guide.hierarchy;
+    if(!hierarchy?.area?.label||!hierarchy?.majorType?.label||!hierarchy?.subtype?.label)return message('이 소유형의 분류 설명을 검수해야 합니다.',true);
+    $('conceptGuideHierarchy').textContent=`영역 ${hierarchy.area.label} / 대유형 ${hierarchy.majorType.label} / 소유형 ${hierarchy.subtype.label}`;
+    $('conceptGuideTitle').textContent=`${guide.title} · AI 개념보기`;$('conceptGuideEvidence').textContent=guide.evidenceLabel;$('conceptGuideRule').textContent=guide.rule;$('conceptGuideSteps').replaceChildren(...guide.steps.map(step=>{const li=document.createElement('li');li.textContent=step;return li;}));$('conceptGuideMistake').textContent=guide.commonMistake;$('conceptGuideSelfCheck').textContent=guide.selfCheck;
+    $('conceptGuideDialog').showModal();$('closeConceptGuide').focus({preventScroll:true});
+  }
   function hideHoverPreview(){clearTimeout(hoverTimer);hoverTimer=0;hoverRequest++;const panel=$('hoverPreview');panel.hidden=true;panel.innerHTML='';delete panel.dataset.watermark;}
+  function hideRenderedHoverPreview(){if(!$('hoverPreview').hidden)hideHoverPreview();}
   function positionHoverPreview(trigger){const panel=$('hoverPreview'),rect=trigger.getBoundingClientRect(),gap=12,margin=14,width=Math.min(430,innerWidth-margin*2);panel.style.width=`${width}px`;let left=rect.right+gap;if(left+width>innerWidth-margin)left=rect.left-width-gap;if(left<margin)left=margin;const height=panel.getBoundingClientRect().height;panel.style.left=`${Math.round(left)}px`;panel.style.top=`${Math.round(Math.max(margin,Math.min(rect.top,innerHeight-height-margin)))}px`;}
   function hoverQuestion(row){if(hoverCache.has(row.occurrenceId))return hoverCache.get(row.occurrenceId);const request=Promise.resolve(sourceFor(row)).catch(error=>{hoverCache.delete(row.occurrenceId);throw error;});hoverCache.set(row.occurrenceId,request);return request;}
   async function showHoverPreview(id,trigger){
@@ -192,32 +245,42 @@
   }
   function snapshotAllowed(snapshot){return sameIdentity(snapshot.approvedIdentity,verifiedIdentity())&&snapshot.entries.every(entry=>allowed('challenge-bank',entry.source.typeId))&&(localPreview||!!verifiedIdentity());}
   function snapshotPrintAllowed(snapshot){if(!snapshot)return false;if(snapshot.kind==='diagnosis')return allowed(`challenge-mock-${snapshot.round}`)&&sameIdentity(snapshot.approvedIdentity,verifiedIdentity())&&(localPreview||!!verifiedIdentity());return snapshotAllowed(snapshot);}
-  function selectionScope(selected){const areas=new Map(selected.map(row=>[row.taxonomy.areaId,row.taxonomy.areaLabel])),types=new Map(selected.map(row=>[typeGroupKey(row),row.taxonomy.typeLabel]));if(types.size===1){const label=[...types.values()][0];return {kind:'type',label:`${label} 유형`,title:`${label} 유형 유사문제 학습지`};}if(areas.size===1){const label=[...areas.values()][0];return {kind:'area',label:`${label} 영역 · ${types.size}개 유형`,title:`${label} 영역 유사문제 학습지`};}return {kind:'mixed',label:`${areas.size}개 영역 · ${types.size}개 유형`,title:'선택 유형 유사문제 학습지'};}
+  function selectionScope(selected){const areas=new Map(selected.map(row=>[row.taxonomy.areaId,row.taxonomy.areaLabel])),subareas=new Map(selected.map(row=>[subareaGroupKey(row),row.taxonomy.subareaLabel])),types=new Map(selected.map(row=>[typeGroupKey(row),row.taxonomy.typeLabel]));if(types.size===1){const label=[...types.values()][0];return {kind:'type',label:`${label} 소유형`,title:`${label} 유형(소유형) 유사문제 학습지`};}if(subareas.size===1){const label=[...subareas.values()][0];return {kind:'subarea',label:`${label} 대유형 · ${types.size}개 소유형`,title:`${label} 대유형 유사문제 학습지`};}if(areas.size===1){const label=[...areas.values()][0];return {kind:'area',label:`${label} 영역 · ${subareas.size}개 대유형 · ${types.size}개 소유형`,title:`${label} 영역 유사문제 학습지`};}return {kind:'mixed',label:`${areas.size}개 영역 · ${subareas.size}개 대유형 · ${types.size}개 소유형`,title:'선택 소유형 유사문제 학습지'};}
+  async function inParallelBatches(items,limit,worker){
+    const output=[];
+    for(let start=0;start<items.length;start+=limit){const batch=items.slice(start,start+limit);output.push(...await Promise.all(batch.map(worker)));}
+    return output;
+  }
   async function buildPractice(){
     if(state.busy)return;
     const selected=[...selectedSet()].map(id=>rows.get(id)),count=Number($('variantCount').value),difficulty=state.difficulty;
     if(!selected.length||!Number.isInteger(count)||count<1||count>selectionLimit()||selected.length*count>100||selected.some(row=>!canSelect(row)))return message('유형별 사용 상태와 문항 수를 확인하세요.',true);
     if(state.tab==='wrong'&&selected.some(row=>!activeWrong(row)))return message('채점이 바뀐 문항이 있습니다. 오답 선택을 다시 확인하세요.',true);
     const startingIdentity=verifiedIdentity();
-    state.busy=true;renderSelection();message('선택한 유형의 문항을 확인하고 있습니다.');await new Promise(resolve=>requestAnimationFrame(resolve));
+    state.busy=true;renderSelection();message('선택한 소유형의 문항을 겹치지 않게 구성하고 있습니다.');await new Promise(resolve=>requestAnimationFrame(resolve));
     try{
-      const entries=[],seen=new Set(),seed=Date.now()%2000000000;
-      for(const row of selected){
-        for(let i=0;i<count;i++){
-          let accepted=null;
-          for(let retry=0;retry<25;retry++){
-            if(!permitted(row)||!sameIdentity(startingIdentity,verifiedIdentity()))throw new Error('유형 이용 상태나 승인 학생이 바뀌었습니다.');
-            const result=await variants.generate({round:row.round,section:row.section,number:row.number,difficulty,seed:seed+entries.length*1009+i*103+retry*7919});
-            if(result.status!=='verified'||!result.question)throw new Error(`${rowLabel(row)}: ${result.reason||'검증된 유사문제가 준비되지 않았습니다.'}`);
-            const signature=JSON.stringify([result.question.prompt,result.question.payload,result.question.problemHtml]);
-            if(seen.has(signature))continue;
-            if(!result.question.remoteReference){if(result.question.answerHtml==null&&result.question.answer==null)throw new Error(`${rowLabel(row)}: 답안을 확인할 수 없습니다.`);if(!result.question.solution)throw new Error(`${rowLabel(row)}: 인쇄용 풀이를 확인할 수 없습니다.`);}
-            seen.add(signature);accepted={question:result.question,source:{...result.source,round:row.round,section:row.section,number:row.number,typeId:row.typeId},occurrenceId:row.occurrenceId};break;
-          }
-          if(!accepted)throw new Error(`${rowLabel(row)}의 서로 다른 문항이 부족합니다. 문항 수를 줄여 주세요.`);
-          entries.push(accepted);
+      const registry=questionIdentity.createRegistry(),baseSeed=Date.now()%2000000000;
+      const slots=selected.flatMap(row=>Array.from({length:count},(_,copyIndex)=>({row,copyIndex,index:0,accepted:null}))).map((slot,index)=>({...slot,index}));
+      let unresolved=slots;
+      for(let retry=0;retry<80&&unresolved.length;retry++){
+        if(!sameIdentity(startingIdentity,verifiedIdentity())||unresolved.some(slot=>!permitted(slot.row)))throw new Error('유형 이용 상태나 승인 학생이 바뀌었습니다.');
+        const round=await inParallelBatches(unresolved,10,async slot=>{
+          const row=slot.row,seed=(baseSeed+slot.index*1009+slot.copyIndex*103+retry*7919)>>>0;
+          const result=await variants.generate({round:row.round,section:row.section,number:row.number,difficulty,seed});
+          return {slot,result};
+        });
+        const next=[];
+        for(const {slot,result} of round){
+          const row=slot.row;
+          if(result.status!=='verified'||!result.question)throw new Error(`${rowLabel(row)}: ${result.reason||'검증된 유사문제가 준비되지 않았습니다.'}`);
+          if(!registry.add(result.question)){next.push(slot);continue;}
+          if(!result.question.remoteReference){if(result.question.answerHtml==null&&result.question.answer==null)throw new Error(`${rowLabel(row)}: 답안을 확인할 수 없습니다.`);if(!result.question.solution)throw new Error(`${rowLabel(row)}: 인쇄용 풀이를 확인할 수 없습니다.`);}
+          slot.accepted={question:result.question,source:{...result.source,round:row.round,section:row.section,number:row.number,typeId:row.typeId},occurrenceId:row.occurrenceId};
         }
+        unresolved=next;
       }
+      if(unresolved.length){const labels=[...new Set(unresolved.map(slot=>rowLabel(slot.row)))].join(', ');throw new Error(`${labels}에서 전체 선택과 겹치지 않는 문항을 충분히 만들지 못했습니다. 원문당 문항 수나 선택 소유형 수를 줄여 주세요.`);}
+      const entries=slots.map(slot=>slot.accepted);
       const scope=selectionScope(selected),snapshot=freeze(copy({kind:'practice',title:state.tab==='wrong'?'오답 유사문제 학습지':scope.title,scope,student:identity(),approvedIdentity:startingIdentity,difficulty,entries,createdAt:new Date().toISOString()}));
       state.snapshot=snapshot;$('printMode').value='questions';await renderWorksheet();message(`${entries.length}문항을 구성했습니다. 보기와 인쇄 범위를 바꿔도 문제는 바뀌지 않습니다.`);if(!$('worksheetPanel').hidden){$('worksheetTitle').focus({preventScroll:true});$('worksheetPanel').scrollIntoView({block:'start'});}
     }catch(error){message(`${error.message} 기존 학습지는 변경하지 않았습니다.`,true);}
@@ -261,8 +324,8 @@
   function reportPages(snapshot){
     const {result,round,student}=snapshot;
     const summary=`<h3>${round}회 진단</h3><p class="diagnosis-lead">${result.complete?`${result.score}점 / 100점`:`채점 미완료 · 확보 ${result.earnedPoints}점`} · 기준 60점</p><p class="diagnosis-note">정답 ${result.correctCount} · 오답 ${result.wrongCount} · 미입력 ${result.pendingCount}<br>교사 입력 결과로 만든 로컬 진단지이며 공식 성적표가 아닙니다.</p>`;
-    let pages=[page('챌린지 학습 진단',summary+'<h3>대영역</h3>'+groupTable(result.groups.areas)+`<p class="diagnosis-note">${escape(result.scorePlan?.statement||'미입력은 약점으로 판단하지 않습니다.')}</p>`,student,'print-diagnosis-page')];
-    for(const [title,groups] of [['소영역',result.groups.subareas],['세부 유형',result.groups.types]])chunks(groups,12).forEach(group=>pages.push(page('챌린지 학습 진단',`<h3>${title}</h3>${groupTable(group)}<p class="diagnosis-note">채점한 문항 수가 적으면 판단 자료 부족으로 표시합니다.</p>`,student,'print-diagnosis-page')));
+    let pages=[page('챌린지 학습 진단',summary+'<h3>영역</h3>'+groupTable(result.groups.areas)+`<p class="diagnosis-note">${escape(result.scorePlan?.statement||'미입력은 약점으로 판단하지 않습니다.')}</p>`,student,'print-diagnosis-page')];
+    for(const [title,groups] of [['대유형',result.groups.subareas],['소유형',result.groups.types]])chunks(groups,12).forEach(group=>pages.push(page('챌린지 학습 진단',`<h3>${title}</h3>${groupTable(group)}<p class="diagnosis-note">채점한 문항 수가 적으면 판단 자료 부족으로 표시합니다.</p>`,student,'print-diagnosis-page')));
     chunks(result.recommendations,5).forEach(group=>pages.push(page('다음에 맞혀 볼 문제',recommendationsHtml({...result,recommendations:group}),student,'print-diagnosis-page')));
     return pages;
   }
@@ -273,11 +336,12 @@
     try{await waitImages($('worksheetPages'));if(revision!==state.printRevision||!sameIdentity(snapshot.approvedIdentity,verifiedIdentity()))return;if(!setFolios())throw new Error('승인 학생 워터마크를 모든 페이지에 넣지 못했습니다.');document.body.dataset.watermarkReady='true';document.body.dataset.printReady='true';$('printWorksheet').disabled=false;}catch(error){lockPrint();message(error.message,true);}
   }
   function ready(){
-    if(!diagnosis||!variants)throw new Error('진단·유사문제 자료를 불러오지 못했습니다. 새로고침해 주세요.');
+    if(!diagnosis||!variants||!conceptGuide||!questionIdentity)throw new Error('진단·유사문제·개념보기·중복 검사 자료를 불러오지 못했습니다. 새로고침해 주세요.');
     for(let round=1;round<=4;round++){
       const description=diagnosis.describeRound(round);rounds.set(round,description);
       [...description.questions,...description.extra].forEach(row=>rows.set(row.occurrenceId,{...row,round}));
     }
+    const missingConcepts=[...new Set([...rows.values()].filter(row=>!conceptGuide.has(row.taxonomy.typeId)).map(row=>row.taxonomy.typeLabel))];if(missingConcepts.length)throw new Error(`AI 개념보기 확인 필요: ${missingConcepts.join(', ')}`);
     if(!localPreview&&!window.HFChallengeAccess)throw new Error(localHost?'교사용 로컬 미리보기는 주소에 ?teacherPreview=1을 붙여 여세요.':'교사용 접근 확인이 필요합니다. 이 주소에서는 로컬 미리보기를 사용할 수 없습니다.');
     const initialParams=new URLSearchParams(location.search),initialRound=Number(initialParams.get('round'));if([1,2,3,4].includes(initialRound)){state.round=initialRound;$('studioRound').value=String(initialRound);}const requestedBankRound=initialParams.get('bankRound')||(initialParams.has('round')?String(state.round):'all');if(['all','1','2','3','4'].includes(requestedBankRound))state.bankRound=requestedBankRound;$('bankRoundFilter').value=state.bankRound;updateExamLink();
     document.querySelectorAll('[data-tab]').forEach(button=>button.addEventListener('click',()=>changeTab(button.dataset.tab)));
@@ -285,13 +349,14 @@
       if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
       const tabs=['grade','wrong','bank'],index=tabs.indexOf(state.tab);event.preventDefault();changeTab(event.key==='Home'?tabs[0]:event.key==='End'?tabs[2]:tabs[(index+(event.key==='ArrowRight'?1:2))%3],true);
     });
-    $('studioRound').addEventListener('change',()=>{state.round=Number($('studioRound').value);updateExamLink();state.area='';state.type='';if(state.tab==='grade')renderGrade();else{renderBankFilters();renderBank();}message('');});
+    $('studioRound').addEventListener('change',()=>{state.round=Number($('studioRound').value);updateExamLink();state.area='';state.subarea='';state.type='';if(state.tab==='grade')renderGrade();else{renderBankFilters();renderBank();}message('');});
     $('gradeRows').addEventListener('change',event=>{
       const input=event.target;if(!input.dataset.grade)return;const row=rows.get(input.dataset.grade);
       state.responses.set(row.occurrenceId,{occurrenceId:row.occurrenceId,fingerprint:row.fingerprint,status:input.value});const removed=syncWrongSelection();renderScore();$('diagnosisPanel').hidden=true;state.report=null;
       if(removed)message(`채점 변경으로 오답이 아닌 ${removed}개 선택을 오답 구성에서 제외했습니다.`);
     });
     $('workspace').addEventListener('click',event=>{
+      const concept=event.target.closest('[data-concept]');if(concept){event.preventDefault();event.stopPropagation();void showConceptGuide(concept.dataset.concept,concept);}
       const preview=event.target.closest('[data-preview]');if(preview)showPreview(preview.dataset.preview);
       const enlarge=event.target.closest('[data-enlarge]');if(enlarge)showGeneratedPreview(Number(enlarge.dataset.enlarge));
       const remove=event.target.closest('[data-remove]');if(remove){selectedSet().delete(remove.dataset.remove);renderBank();}
@@ -306,12 +371,14 @@
     $('studioSearch').addEventListener('compositionend',()=>{state.composing=false;state.query=$('studioSearch').value;renderBank();});
     $('studioSearch').addEventListener('input',()=>{if(!state.composing){state.query=$('studioSearch').value;renderBank();}});
     $('studioSearch').addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.isComposing||state.composing))event.preventDefault();});
-    $('bankRoundFilter').addEventListener('change',()=>{state.bankRound=$('bankRoundFilter').value;state.area='';state.type='';renderBankFilters();renderBank();});
-    $('areaFilter').addEventListener('change',()=>{state.area=$('areaFilter').value;state.type='';renderTypeFilter();renderBank();});
+    $('bankRoundFilter').addEventListener('change',()=>{state.bankRound=$('bankRoundFilter').value;state.area='';state.subarea='';state.type='';renderBankFilters();renderBank();});
+    $('areaFilter').addEventListener('change',()=>{state.area=$('areaFilter').value;state.subarea='';state.type='';renderSubareaFilter();renderTypeFilter();renderBank();});
+    $('subareaFilter').addEventListener('change',()=>{state.subarea=$('subareaFilter').value;state.type='';renderTypeFilter();renderBank();});
     $('typeFilter').addEventListener('change',()=>{state.type=$('typeFilter').value;renderBank();});
     $('sectionFilter').addEventListener('change',()=>{state.section=$('sectionFilter').value;renderBankFilters();renderBank();});
     $('bankRows').addEventListener('change',event=>{const input=event.target,row=rows.get(input.dataset.select);if(!row)return;if(input.checked&&canSelect(row))selectedSet().add(row.occurrenceId);else selectedSet().delete(row.occurrenceId);renderBank();});
     $('selectArea').addEventListener('click',()=>{if(state.area)sectionRows().filter(row=>row.taxonomy.areaId===state.area&&canSelect(row)).forEach(row=>selectedSet().add(row.occurrenceId));renderBank();});
+    $('selectSubarea').addEventListener('click',()=>{if(state.subarea)sectionRows().filter(row=>subareaGroupKey(row)===state.subarea&&canSelect(row)).forEach(row=>selectedSet().add(row.occurrenceId));renderBank();});
     $('selectType').addEventListener('click',()=>{if(state.type)sectionRows().filter(row=>typeGroupKey(row)===state.type&&canSelect(row)).forEach(row=>selectedSet().add(row.occurrenceId));renderBank();});
     $('selectVisible').addEventListener('click',()=>{visibleRows().filter(canSelect).forEach(row=>selectedSet().add(row.occurrenceId));renderBank();});
     $('clearVisible').addEventListener('click',()=>{visibleRows().forEach(row=>selectedSet().delete(row.occurrenceId));renderBank();});
@@ -322,6 +389,8 @@
     $('closePreview').addEventListener('click',()=>$('questionPreview').close());
     $('questionPreview').addEventListener('close',()=>{state.preview=null;$('previewAnswer').innerHTML='';$('previewQuestion').innerHTML='';delete $('previewQuestion').dataset.watermark;delete $('previewAnswer').dataset.watermark;});
     $('togglePreviewZoom').addEventListener('click',()=>{const zoom=$('questionPreview').dataset.zoom!=='true';$('questionPreview').dataset.zoom=String(zoom);$('togglePreviewZoom').textContent=zoom?'전체 그림 보기':'그림 크게 보기';$('togglePreviewZoom').setAttribute('aria-pressed',String(zoom));});
+    $('closeConceptGuide').addEventListener('click',()=>$('conceptGuideDialog').close());
+    $('conceptGuideDialog').addEventListener('close',()=>{const restore=!suppressConceptFocusRestore;suppressConceptFocusRestore=false;clearConceptGuide(restore);});
     $('revealPreview').addEventListener('click',async()=>{if(!state.preview)return;const captured=state.preview,{row,access,approvedIdentity}=captured;let question=captured.question;if(!sameIdentity(approvedIdentity,verifiedIdentity())||!(access==='mock'?allowed(`challenge-mock-${row.round}`):permitted(row)))return;try{if(variants.answers)question=await variants.answers(question);}catch(e){return message(e.message,true);}if(state.preview!==captured||!sameIdentity(approvedIdentity,verifiedIdentity()))return;$('previewAnswer').innerHTML=`<h3>정답 ${escape(question.answerHtml==null?question.answer:question.answerHtml)}</h3><p>${escape(question.solution||'풀이 설명 확인 필요')}</p>${question.solutionDiagram?`<div class="studio-art">${question.solutionDiagram}</div>`:''}`;$('previewAnswer').hidden=false;$('revealPreview').hidden=true;});
     $('printMode').addEventListener('change',renderWorksheet);
     $('closeWorksheet').addEventListener('click',()=>{$('worksheetPanel').hidden=true;document.body.dataset.worksheetOpen='false';lockPrint();});
@@ -330,24 +399,24 @@
       window.print();
     });
     const fineHover=()=>matchMedia('(hover:hover) and (pointer:fine)').matches;
-    $('bankRows').addEventListener('pointerover',event=>{const trigger=event.target.closest('[data-hover-preview]');if(!fineHover()||!trigger||trigger.contains(event.relatedTarget))return;scheduleHoverPreview(trigger);});
+    $('bankRows').addEventListener('pointerover',event=>{const trigger=event.target.closest('[data-hover-preview]');if(event.target.closest('[data-concept]')){hideHoverPreview();return;}if(!fineHover()||!trigger||trigger.contains(event.relatedTarget))return;scheduleHoverPreview(trigger);});
     $('bankRows').addEventListener('pointerout',event=>{const trigger=event.target.closest('[data-hover-preview]');if(trigger&&!trigger.contains(event.relatedTarget))hideHoverPreview();});
     $('bankRows').addEventListener('focusin',event=>{const trigger=event.target.closest('[data-hover-preview]');if(trigger&&event.target===trigger)scheduleHoverPreview(trigger);});
     $('bankRows').addEventListener('focusout',event=>{const trigger=event.target.closest('[data-hover-preview]');if(trigger&&!trigger.contains(event.relatedTarget))hideHoverPreview();});
-    $('bankRows').addEventListener('keydown',event=>{const trigger=event.target.closest('[data-hover-preview]');if(trigger&&['Enter',' '].includes(event.key)){event.preventDefault();hideHoverPreview();showPreview(trigger.dataset.hoverPreview);}});
+    $('bankRows').addEventListener('keydown',event=>{const trigger=event.target.closest('[data-hover-preview]');if(trigger&&!event.target.closest('button,input')&&['Enter',' '].includes(event.key)){event.preventDefault();hideHoverPreview();showPreview(trigger.dataset.hoverPreview);}});
     $('bankRows').addEventListener('click',event=>{const trigger=event.target.closest('[data-hover-preview]');if(trigger&&!fineHover()&&!event.target.closest('label,input,button')){hideHoverPreview();showPreview(trigger.dataset.hoverPreview);}});
-    window.addEventListener('scroll',hideHoverPreview,{passive:true,capture:true});window.addEventListener('resize',hideHoverPreview,{passive:true});
+    window.addEventListener('scroll',hideRenderedHoverPreview,{passive:true,capture:true});window.addEventListener('resize',hideHoverPreview,{passive:true});
     window.addEventListener('beforeprint',()=>{if(document.body.dataset.printReady!=='true'||!snapshotPrintAllowed(state.snapshot)||!setFolios()){lockPrint();message('승인 학생 이름의 3줄 워터마크를 확인할 수 없어 인쇄를 중단했습니다.',true);return;}document.body.dataset.watermarkReady='true';});
     window.addEventListener('hfchallengeaccesschange',()=>{
       const approved=verifiedIdentity();if(!sameIdentity(state.approvedIdentity,approved)){state.responses.clear();state.selected.wrong.clear();state.report=null;state.approvedIdentity=approved;}
-      state.printRevision++;updateAccessNotice();
+      state.printRevision++;state.snapshot=null;updateAccessNotice();
       document.body.dataset.worksheetOpen='false';
-      hoverCache.clear();hideHoverPreview();if($('questionPreview').open)$('questionPreview').close();$('diagnosisPanel').hidden=true;$('worksheetPages').innerHTML='';$('worksheetPanel').hidden=true;lockPrint();
+      hoverCache.clear();hideHoverPreview();if($('questionPreview').open)$('questionPreview').close();if($('conceptGuideDialog').open){suppressConceptFocusRestore=true;$('conceptGuideDialog').close();}else clearConceptGuide(false);$('diagnosisPanel').hidden=true;$('worksheetPages').innerHTML='';$('worksheetPanel').hidden=true;lockPrint();
       renderGrade();if(state.tab!=='grade')renderBank();message('이용 승인 상태가 변경되었습니다. 선택한 자료를 다시 확인하세요.');
     });
     $('refreshAccess').addEventListener('click',async()=>{$('refreshAccess').disabled=true;await window.HFChallengeAccess.refresh();updateAccessNotice();renderGrade();if(state.tab!=='grade')renderBank();$('refreshAccess').disabled=false;});
     state.approvedIdentity=verifiedIdentity();updateAccessNotice();renderGrade();if(['bank','wrong'].includes(initialParams.get('tab')))changeTab(initialParams.get('tab'));
-    window.HFChallengeStudio=Object.freeze({getSnapshot:()=>state.snapshot?copy(state.snapshot):null,getResponses:()=>copy(roundResponses()),getSelection:()=>[...selectedSet()],isLocalPreview:localPreview});
+    window.HFChallengeStudio=Object.freeze({getSnapshot:()=>state.snapshot&&snapshotPrintAllowed(state.snapshot)?copy(state.snapshot):null,getResponses:()=>copy(roundResponses()),getSelection:()=>[...selectedSet()],isLocalPreview:localPreview});
   }
   (async()=>{try{if(!window.HFChallengeAccess)throw new Error('이용 승인 확인 기능을 불러오지 못했습니다.');await window.HFChallengeAccess.refresh();ready();}catch(error){message(error.message,true);$('gradeRows').innerHTML='';$('scoreSummary').innerHTML='';$('makeDiagnosis').disabled=true;document.querySelectorAll('[data-tab]').forEach(button=>{button.disabled=true;});}})();
 })();

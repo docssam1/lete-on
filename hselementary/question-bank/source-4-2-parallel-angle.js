@@ -8,15 +8,15 @@
 
   const GENERATOR_KEY = "sourceGrade4AdvancedParallelAngle";
   const SOURCE_IDS = Object.freeze([
-    "4-2-advanced-quad-2-exploration",
-    "4-2-advanced-quad-2-example-2-3",
-    "4-2-advanced-quad-2-example-2-4",
-    "4-2-advanced-quad-2-mission-1",
-    "4-2-advanced-quad-2-mission-2",
-    "4-2-advanced-quad-2-mission-3",
-    "4-2-advanced-quad-2-mission-4",
-    "4-2-advanced-quad-2-mission-5",
-    "4-2-advanced-quad-2-mission-6"
+    "4-2-u4-e2-exploration",
+    "4-2-u4-e2-example-2-3",
+    "4-2-u4-e2-example-2-4",
+    "4-2-u4-e2-mission-1",
+    "4-2-u4-e2-mission-2",
+    "4-2-u4-e2-mission-3",
+    "4-2-u4-e2-mission-4",
+    "4-2-u4-e2-mission-5",
+    "4-2-u4-e2-mission-6"
   ]);
   const SOURCE_ID_SET = new Set(SOURCE_IDS);
   const ABILITY_SOURCE_ID = "4-2-quad-2-example-2-1";
@@ -122,14 +122,14 @@
   const encoded = value => encodeURIComponent(JSON.stringify(value));
 
   const svgStyle = `<style>
-    .source42-pa{font-family:"Times New Roman","Batang",serif;overflow:visible}
+    .source42-pa{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;overflow:visible}
     .source42-pa .pa-line{fill:none;stroke:#222;stroke-width:1.25;stroke-linecap:round;vector-effect:non-scaling-stroke}
     .source42-pa .pa-line.is-answer{stroke:#222;stroke-width:1.25}
     .source42-pa .pa-guide{fill:none;stroke:#666;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
     .source42-pa .pa-point{fill:#222;stroke:none}
     .source42-pa .pa-arc{fill:none;stroke:#222;stroke-width:1;stroke-linecap:round;vector-effect:non-scaling-stroke}
-    .geometry-diagram.source42-pa text{font-family:"Times New Roman","Batang",serif;font-size:18px;font-weight:400;letter-spacing:0;fill:#111;stroke:none;text-shadow:none}
-    .geometry-diagram.source42-pa .pa-name{font-family:"Malgun Gothic",Arial,sans-serif;font-size:17px;dominant-baseline:middle}
+    .geometry-diagram.source42-pa text{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:18px;font-weight:400;letter-spacing:0;fill:#111;stroke:none;text-shadow:none}
+    .geometry-diagram.source42-pa .pa-name{font-family:Pretendard,"Malgun Gothic",Arial,sans-serif;font-size:17px;dominant-baseline:middle}
     .source42-pa .pa-value,.source42-pa .pa-target{text-anchor:middle;dominant-baseline:middle}
     .source42-pa .pa-answer-note{text-anchor:middle}
     .source42-pa .pa-parallel{fill:none;stroke:#222;stroke-width:1;stroke-linecap:round;vector-effect:non-scaling-stroke}
@@ -176,7 +176,7 @@
   };
   const pathPoint = position => `${fmt(position.x)} ${fmt(position.y)}`;
 
-  const angleMark = ({ role, vertex, rayA, rayB, label, value, solved, direction = "minor", radius = 22, labelRadius = 43, labelPosition = null }) => {
+  const angleMark = ({ role, vertex, rayA, rayB, label, value, solved, direction = "minor", radius = 22, labelRadius = 43, labelPosition = null, labelClearance = 10 }) => {
     const firstAngle = angleOf(vertex, rayA);
     const secondAngle = angleOf(vertex, rayB);
     const cw = clockwise(firstAngle, secondAngle);
@@ -208,7 +208,7 @@
       return halfWidth * Math.abs(Math.sin(radians)) + halfHeight * Math.abs(Math.cos(radians));
     });
     const halfSpanSine = Math.sin(span * Math.PI / 360);
-    const collisionFreeLabelRadius = Math.ceil((Math.max(...projectedHalfSize) + 4) / Math.max(halfSpanSine, 0.08));
+    const collisionFreeLabelRadius = Math.ceil((Math.max(...projectedHalfSize) + labelClearance) / Math.max(halfSpanSine, 0.08));
     const resolvedLabelRadius = Math.max(labelRadius, collisionFreeLabelRadius, resolvedRadius + 12);
     const midpoint = pointAt(vertex, bisectorAngle, resolvedRadius);
     const labelPoint = labelPosition ? point(labelPosition.x, labelPosition.y) : pointAt(vertex, bisectorAngle, resolvedLabelRadius);
@@ -366,7 +366,7 @@
     const marks = [
       markByAngles({ role: "large-given", vertex: topCross, start: facts.descending, value: facts.large, label: `${facts.large}°`, solved, radius: 17, labelRadius: 36 }),
       markByAngles({ role: "small-given", vertex: risingCross, start: facts.steep, value: facts.small, label: `${facts.small}°`, solved, radius: 18, labelRadius: 38, labelPosition: point(438, 145) }),
-      markByAngles({ role: "circle-1", vertex: firstTarget, start: facts.rising + 180, value: facts.first, label: "㉠", solved: false, radius: 18, labelRadius: 37 }),
+      markByAngles({ role: "circle-1", vertex: firstTarget, start: facts.rising + 180, value: facts.first, label: "㉠", solved: false, radius: 18, labelRadius: 37, labelClearance: 7 }),
       markByAngles({ role: "circle-2", vertex: secondTarget, start: facts.descending + 180, value: facts.second, label: "㉡", solved: false, radius: 18, labelRadius: 39 })
     ].join("");
     const model = { kind: "example-2-4", lines: [["가", 0], ["나", 0], ["내려가는 빗선", facts.descending], ["완만한 빗선", facts.rising], ["가파른 빗선", facts.steep]], givens: [facts.large, facts.small], targets: [facts.first, facts.second], sum: facts.sum };
@@ -386,9 +386,9 @@
     const mrLine = line("ㅁㄹ", r, facts.cross);
     const m = requireIntersection(lower, mrLine, "나와 ㅁㄹ");
     const marks = [
-      markByAngles({ role: "first-given", vertex: g, start: facts.base, value: facts.first, label: `${facts.first}°`, solved, radius: 17, labelRadius: 35 }),
-      markByAngles({ role: "second-given", vertex: d, start: facts.cross + 180, value: facts.second, label: `${facts.second}°`, solved, radius: 17, labelRadius: 92 }),
-      markByAngles({ role: "target", vertex: r, start: facts.connector, value: facts.target, label: "㉠", solved, radius: 20, labelRadius: 30 })
+      markByAngles({ role: "first-given", vertex: g, start: facts.base, value: facts.first, label: `${facts.first}°`, solved, radius: 17, labelRadius: 35, labelClearance: 4 }),
+      markByAngles({ role: "second-given", vertex: d, start: facts.cross + 180, value: facts.second, label: `${facts.second}°`, solved, radius: 17, labelRadius: 92, labelClearance: 4 }),
+      markByAngles({ role: "target", vertex: r, start: facts.connector, value: facts.target, label: "㉠", solved, radius: 20, labelRadius: 30, labelClearance: 4 })
     ].join("");
     const labels = [
       [pointAt(linePoint(upper, -215), facts.base + 90, 32), "가"],
@@ -426,7 +426,7 @@
       markByAngles({ role: "first-given", vertex: firstTop, start: 180, value: facts.firstGiven, label: `${facts.firstGiven}°`, solved, radius: 18, labelRadius: 38 }),
       markByAngles({ role: "second-given", vertex: secondTop, start: 180, value: facts.secondGiven, label: `${facts.secondGiven}°`, solved, radius: 18, labelRadius: 40 }),
       markByAngles({ role: "circle-1", vertex: center, start: facts.firstGiven, value: facts.firstTarget, label: "㉠", solved, radius: 18, labelRadius: 34 }),
-      markByAngles({ role: "circle-2", vertex: secondTarget, start: facts.secondGiven, value: facts.secondTarget, label: "㉡", solved, radius: 27, labelRadius: 52 })
+      markByAngles({ role: "circle-2", vertex: secondTarget, start: facts.secondGiven, value: facts.secondTarget, label: "㉡", solved, radius: 27, labelRadius: 40, labelClearance: 4 })
     ].join("");
     const model = { kind: "mission-2", lines: [["가", 0], ["나", 0], ["다", 90], ["첫째 빗선", facts.firstGiven], ["둘째 빗선", facts.secondGiven]], intersections: { upperCommon: firstTop, lowerCommon: center, secondTarget }, givens: [facts.firstGiven, facts.secondGiven], targets: [facts.firstTarget, facts.secondTarget], difference: facts.difference };
     const frame = { left: 55, right: 485, top: 35, bottom: 340 };
@@ -502,7 +502,7 @@
       markByAngles({ role: "outer-given", vertex: topRight, start: 0, value: facts.outer, label: `${facts.outer}°`, solved, radius: 18, labelRadius: 38 }),
       markByAngles({ role: "gap-given", vertex: leftJoint, start: facts.leftInner, value: facts.gap, label: `${facts.gap}°`, solved, radius: 17, labelRadius: 35, labelPosition: point(leftJoint.x - 60, leftJoint.y + 35) }),
       markByAngles({ role: "unused-given", vertex: rightJoint, start: facts.outer, value: facts.unused, label: `${facts.unused}°`, solved, radius: 17, labelRadius: 36, labelPosition: point(rightJoint.x + 70, rightJoint.y + 33) }),
-      markByAngles({ role: "target", vertex: lowerTarget, start: 0, value: facts.target, label: "㉠", solved, radius: 20, labelRadius: 40 })
+      markByAngles({ role: "target", vertex: lowerTarget, start: 0, value: facts.target, label: "㉠", solved, radius: 20, labelRadius: 40, labelClearance: 4 })
     ].join("");
     const model = { kind: "mission-5", lines: [["가", 0], ["나", 0], ["다", facts.outer], ["라", facts.outer], ["왼쪽 안쪽선", facts.leftInner], ["오른쪽 안쪽선", facts.rightInner]], givens: [facts.outer, facts.gap, facts.unused], target: facts.target, targetIntersection: "나-왼쪽 안쪽선", apex: [round(apex.x), round(apex.y)] };
     const frame = { left: 55, right: 485, top: 35, bottom: 330 };
@@ -666,6 +666,7 @@
   };
 
   const exported = Object.freeze({
+    GEOMETRY: Object.freeze({ esc, fmt, attrs, encoded, requireIntersection, svgStyle, svgLine, svgSegment, framedLine, svgPoint, svgText, lineLabel, angleMark, markByAngles, parallelMark, rightMark, wrapSvg }),
     GENERATOR_KEY,
     SOURCE_IDS,
     ABILITY_SOURCE_ID,

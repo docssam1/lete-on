@@ -37,6 +37,40 @@ function monoTex(c, m, needParen){
   if(c < 0) return needParen ? `(-${body})` : `-${body}`;
   return body;
 }
+/* 두 문자를 쓰는 단항식 표기와 계산 모델. MD11의 역산·공식 대입은
+   결과를 [계수, x의 지수, y의 지수] 세 칸으로 받아 문자열 답 입력을
+   요구하지 않는다. */
+function monoXYTex(m, needParen){
+  const mag = Math.abs(m.c);
+  const x = m.x === 0 ? '' : (m.x === 1 ? 'x' : `x^{${m.x}}`);
+  const y = m.y === 0 ? '' : (m.y === 1 ? 'y' : `y^{${m.y}}`);
+  const vars = `${x}${y}`;
+  const body = `${mag === 1 && vars ? '' : mag}${vars}`;
+  if(m.c < 0) return needParen ? `(-${body})` : `-${body}`;
+  return body;
+}
+function mulMono(a, b){ return { c:a.c * b.c, x:a.x + b.x, y:a.y + b.y }; }
+function divMono(a, b){ return { c:a.c / b.c, x:a.x - b.x, y:a.y - b.y }; }
+function makeMono(rng, coeffHi, expHi){
+  return { c:nzInt(rng, 2, coeffHi || 9), x:R(rng, 0, expHi || 4), y:R(rng, 0, expHi || 4) };
+}
+/* 다항식의 각 항을 교과서식으로 잇는다. MD13 나눗셈은 결과의 계수만
+   답칸으로 받지만, 문제 식에는 두 문자와 지수가 정확히 보여야 한다. */
+function termBody(c, vars){
+  const mag = Math.abs(c);
+  return `${mag === 1 && vars ? '' : mag}${vars || ''}`;
+}
+function polyTex(terms){
+  return terms.map((t, i) => {
+    const body = termBody(t.c, t.vars);
+    if(i === 0) return t.c < 0 ? `-${body}` : body;
+    return t.c < 0 ? `- ${body}` : `+ ${body}`;
+  }).join(' ');
+}
+function fracMonoTex(n, d, vars){
+  const sign = n < 0 ? '-' : '';
+  return `${sign}\\frac{${Math.abs(n)}}{${d}}${vars || ''}`;
+}
 function divisorsOf(n){
   n = Math.abs(n);
   const out = [];
@@ -59,7 +93,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const m = R(rng, 2, 9), n = R(rng, 2, 9);
     return {
       prompt: {
-        ko: `밑이 같은 거듭제곱끼리 곱할 땐 지수를 더해요`,
+        ko: `밑이 같은 거듭제곱끼리 곱할 땐 지수를 더합니다`,
         en: `Multiplying powers with the same base — add the exponents`,
         zh: `同底数幂相乘——指数相加`
       },
@@ -76,7 +110,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const m = R(rng, 2, 5), n = R(rng, 2, 4);
     return {
       prompt: {
-        ko: `거듭제곱을 다시 거듭제곱하면 지수끼리 곱해요`,
+        ko: `거듭제곱을 다시 거듭제곱하면 지수끼리 곱합니다`,
         en: `A power raised to another power — multiply the exponents`,
         zh: `幂的乘方——指数相乘`
       },
@@ -93,7 +127,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const n = R(rng, 1, 8), m = R(rng, n + 1, n + 8);
     return {
       prompt: {
-        ko: `밑이 같은 거듭제곱끼리 나누면 지수를 빼요(큰 지수 − 작은 지수)`,
+        ko: `밑이 같은 거듭제곱끼리 나누면 지수를 뺍니다(큰 지수 − 작은 지수)`,
         en: `Dividing powers with the same base — subtract the exponents (bigger minus smaller)`,
         zh: `同底数幂相除——指数相减(大指数减小指数)`
       },
@@ -102,6 +136,33 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
       solution: [
         { tex: `${base}^{${m}} \\div ${base}^{${n}} = ${base}^{${m}-${n}}` },
         { tex: `${base}^{${m}-${n}} = ${base}^{\\square}`, blank: m - n }
+      ]
+    };
+  }
+
+  /* ── distribute(2026-09-21) — 지수의 분배 ──
+     디딤돌 개념연산 중2-1A 대조(p.66): (ab)ⁿ=aⁿbⁿ. 이 파일이 문자를 늘 하나만
+     쓰는 관례(주석 참조)라 두 번째 문자 대신 **계수**로 분배를 가르친다 —
+     (c·base^m)^n = c^n · base^(mn). 교재가 짚는 실수("(2xy)³을 2x³y³로
+     잘못 계산")와 같은 자리: 계수도 반드시 거듭제곱해야 한다는 것. */
+  if (mode === 'distribute') {
+    const c = nzInt(rng, 2, 5);
+    const m = R(rng, 2, 4), n = R(rng, 2, 4);
+    let cn = 1; for (let i = 0; i < n; i++) cn *= c;
+    const exp = m * n;
+    const body = `${c}${base}^{${m}}`;
+    return {
+      prompt: {
+        ko: `괄호 전체를 거듭제곱할 땐 계수와 문자 둘 다에 지수를 나눠 곱합니다 — 계수는 그 자체를 거듭제곱하고, 문자는 지수끼리 곱합니다`,
+        en: `Raising the whole bracket to a power distributes the exponent to both the coefficient and the letter — the coefficient is raised to that power, the letter's exponent is multiplied`,
+        zh: `括号整体乘方时，指数要分别分配给系数和字母——系数本身要乘方，字母的指数相乘`
+      },
+      tex: `(${body})^{${n}} = \\square ${base}^{\\square}`,
+      answer: [cn, exp], answerType: 'number', widget: 'numpad', negative: cn < 0,
+      solution: [
+        { tex: `(${body})^{${n}} = ${c}^{${n}} \\times (${base}^{${m}})^{${n}}` },
+        { tex: `${c}^{${n}} = ${cn}, \\quad ${base}^{${m}\\times${n}} = ${base}^{${exp}}` },
+        { tex: `\\square ${base}^{\\square}`, blank: [cn, exp] }
       ]
     };
   }
@@ -115,7 +176,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const answer = mid + k;
     return {
       prompt: {
-        ko: `(${base}^{${m}})^{${n}}을 먼저 하나의 거듭제곱으로 합치고, 곱셈 법칙을 적용해요`,
+        ko: `(${base}^{${m}})^{${n}}을 먼저 하나의 거듭제곱으로 합치고, 곱셈 법칙을 적용합니다`,
         en: `First collapse (${base}^${m})^${n} into one power, then apply the multiplication law`,
         zh: `先把(${base}^{${m}})^{${n}}合成一个幂，再用乘法法则`
       },
@@ -139,7 +200,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
     const answer = sum - k;
     return {
       prompt: {
-        ko: `곱셈으로 지수를 먼저 더한 뒤, 나눗셈으로 지수를 빼요`,
+        ko: `곱셈으로 지수를 먼저 더한 뒤, 나눗셈으로 지수를 뺍니다`,
         en: `Add exponents for the multiplication first, then subtract for the division`,
         zh: `先用乘法把指数相加，再用除法把指数相减`
       },
@@ -162,7 +223,7 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
   const answer = inner * p;
   return {
     prompt: {
-      ko: `괄호 안을 먼저 하나의 거듭제곱으로 합치고, 바깥 지수를 곱해요`,
+      ko: `괄호 안을 먼저 하나의 거듭제곱으로 합치고, 바깥 지수를 곱합니다`,
       en: `Combine inside the brackets into one power first, then multiply by the outer exponent`,
       zh: `先把括号内合成一个幂，再乘以外面的指数`
     },
@@ -186,13 +247,104 @@ NM_TGEN['md10_expLaw'] = function (params, rng) {
 NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
   const mode = params.mode || 'mul';
 
+  if (mode === 'solveBox') {
+    /* 인쇄 p.80~81의 네 역산 구조를 모두 포함한다. 미지 단항식 M을 먼저
+       정하고 등식의 나머지를 구성하므로 답이 언제나 하나로 정해지고,
+       계수 나눗셈 및 지수 뺄셈에서 음의 지수가 생기지 않는다. */
+    const form = pick(rng, ['mul', 'divide', 'mulDiv', 'divMul']);
+    const missing = { c:nzInt(rng, 2, 9), x:R(rng, 1, 5), y:R(rng, 1, 5) };
+    let a, b, c, tex, isolated;
+    if (form === 'mul') {
+      a = makeMono(rng, 8, 3); b = mulMono(a, missing);
+      tex = `${monoXYTex(a, false)} \\times \\boxed{M} = ${monoXYTex(b, false)}`;
+      isolated = `M=${monoXYTex(b, false)}\\div${monoXYTex(a, true)}`;
+    } else if (form === 'divide') {
+      b = makeMono(rng, 8, 3); a = mulMono(b, missing);
+      tex = `${monoXYTex(a, false)} \\div \\boxed{M} = ${monoXYTex(b, false)}`;
+      isolated = `M=${monoXYTex(a, false)}\\div${monoXYTex(b, true)}`;
+    } else if (form === 'mulDiv') {
+      a = makeMono(rng, 7, 3);
+      const product = mulMono(a, missing);
+      c = { c:pick(rng, divisorsOf(product.c)) * pick(rng, [1, -1]), x:R(rng, 0, product.x), y:R(rng, 0, product.y) };
+      b = divMono(product, c);
+      tex = `${monoXYTex(a, false)} \\times \\boxed{M} \\div ${monoXYTex(b, true)} = ${monoXYTex(c, false)}`;
+      isolated = `M=${monoXYTex(c, false)}\\times${monoXYTex(b, true)}\\div${monoXYTex(a, true)}`;
+    } else {
+      c = makeMono(rng, 7, 3);
+      const product = mulMono(c, missing);
+      b = { c:pick(rng, divisorsOf(product.c)) * pick(rng, [1, -1]), x:R(rng, 0, product.x), y:R(rng, 0, product.y) };
+      a = divMono(product, b);
+      tex = `${monoXYTex(a, false)} \\div \\boxed{M} \\times ${monoXYTex(b, true)} = ${monoXYTex(c, false)}`;
+      isolated = `M=${monoXYTex(a, false)}\\times${monoXYTex(b, true)}\\div${monoXYTex(c, true)}`;
+    }
+    return {
+      prompt:{
+        ko:'곱셈은 나눗셈으로, 나눗셈은 곱셈으로 바꾸어 □에 들어갈 단항식을 구합니다',
+        en:'Use inverse operations to find the monomial that belongs in the box',
+        zh:'用逆运算求方框中应填的单项式'
+      },
+      tex:`${tex},\\qquad M=\\square x^{\\square}y^{\\square}`,
+      answer:[missing.c, missing.x, missing.y], answerType:'number', widget:'numpad', negative:missing.c < 0,
+      algebra:{ operation:'solve-missing-monomial', form, a, b, c:c || null, missing },
+      solution:[
+        { tex:isolated },
+        { tex:'M=\\square x^{\\square}y^{\\square}', blank:[missing.c, missing.x, missing.y] }
+      ]
+    };
+  }
+
+  if (mode === 'formulaSub') {
+    /* p.106~108의 넓이·부피 공식 중 도형을 알아내는 추론은 제외하고,
+       문제에 공식을 직접 주어 단항식을 대입·곱셈하는 연산만 연습한다. */
+    const shapes = [
+      {id:'rectangle',name:'직사각형의 넓이',en:'area of a rectangle',zh:'长方形面积',symbol:'S',n:1,d:1,labels:['가로','세로']},
+      {id:'triangle',name:'삼각형의 넓이',en:'area of a triangle',zh:'三角形面积',symbol:'S',n:1,d:2,labels:['밑변','높이']},
+      {id:'parallelogram',name:'평행사변형의 넓이',en:'area of a parallelogram',zh:'平行四边形面积',symbol:'S',n:1,d:1,labels:['밑변','높이']},
+      {id:'rhombus',name:'마름모의 넓이',en:'area of a rhombus',zh:'菱形面积',symbol:'S',n:1,d:2,labels:['한 대각선','다른 대각선']},
+      {id:'rectPrism',name:'직육면체의 부피',en:'volume of a rectangular prism',zh:'长方体体积',symbol:'V',n:1,d:1,labels:['가로','세로','높이']},
+      {id:'pyramid',name:'각뿔의 부피',en:'volume of a pyramid',zh:'棱锥体积',symbol:'V',n:1,d:3,labels:['밑면의 가로','밑면의 세로','높이']}
+    ];
+    const shape = pick(rng, shapes);
+    const factors = shape.labels.map(() => ({c:R(rng, 2, 8),x:R(rng, 0, 2),y:R(rng, 0, 2)}));
+    /* 1/2·1/3 공식도 정수 계수로 정리되도록 첫 길이에 분모를 포함한다. */
+    factors[0].c *= shape.d;
+    if(factors.every(v => v.x === 0)) factors[0].x = 1;
+    if(factors.every(v => v.y === 0)) factors[factors.length - 1].y = 1;
+    const product = factors.reduce((acc, v) => mulMono(acc, v), {c:shape.n,x:0,y:0});
+    const result = {c:product.c / shape.d,x:product.x,y:product.y};
+    const factorTex = factors.map(v => `\\left(${monoXYTex(v, false)}\\right)`).join('\\times');
+    const frac = shape.d === 1 ? '' : `\\frac{${shape.n}}{${shape.d}}\\times`;
+    const given = shape.labels.map((label, i) => `${label}=${monoXYTex(factors[i], false)}`).join(', ');
+    return {
+      prompt:{
+        ko:`${shape.name}: ${given}. 주어진 공식에 대입하여 식을 간단히 정리합니다`,
+        en:`Substitute the given monomials into the ${shape.en} formula and simplify`,
+        zh:`把给出的单项式代入${shape.zh}公式并化简`
+      },
+      tex:`${shape.symbol}=${frac}${factorTex}=\\square x^{\\square}y^{\\square}`,
+      answer:[result.c,result.x,result.y], answerType:'number', widget:'numpad', negative:false,
+      algebra:{operation:'substitute-shape-formula',shape:shape.id,factor:{n:shape.n,d:shape.d},factors,result},
+      solution:[
+        /* 2026-09-25 — 예전 단계는 "1×4×5÷1", "x^{2+0}y^{1+2}"처럼 공식에 없는 1·0을
+           그대로 보였다. 곱하는 계수만, 문자가 실제로 있는 인수만 적는다. */
+        {tex:`\\text{계수}:\\ ${frac}${factors.map(v=>v.c).join('\\times')}=${result.c}`},
+        {tex:[['x','x'],['y','y']].map(([k,s])=>{
+          const pw=factors.map(v=>v[k]).filter(e=>e>0).map(e=>e===1?s:`${s}^{${e}}`);
+          const tot=result[k]===1?s:`${s}^{${result[k]}}`;
+          return pw.length>1?`${pw.join('\\times')}=${tot}`:tot;
+        }).join(',\\quad ')},
+        {tex:`${shape.symbol}=\\square x^{\\square}y^{\\square}`,blank:[result.c,result.x,result.y]}
+      ]
+    };
+  }
+
   if (mode === 'mul') {
     const c1 = nzInt(rng, 1, 9), c2 = nzInt(rng, 1, 9);
     const m = R(rng, 1, 5), n = R(rng, 1, 5);
     const coeff = c1 * c2, exp = m + n;
     return {
       prompt: {
-        ko: `단항식끼리 곱할 땐 계수는 계수끼리 곱하고, 문자는 지수법칙으로 합쳐요`,
+        ko: `단항식끼리 곱할 땐 계수는 계수끼리 곱하고, 문자는 지수법칙으로 합칩니다`,
         en: `Multiply monomials: multiply the coefficients, combine the letter parts with the exponent law`,
         zh: `单项式相乘：系数乘系数，字母部分用指数法则合并`
       },
@@ -218,7 +370,7 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
     const coeff = k, exp = m - n;
     return {
       prompt: {
-        ko: `단항식끼리 나눌 땐 계수는 계수끼리 나누고, 문자는 지수법칙으로 빼요`,
+        ko: `단항식끼리 나눌 땐 계수는 계수끼리 나누고, 문자는 지수법칙으로 뺍니다`,
         en: `Divide monomials: divide the coefficients, subtract exponents for the letter parts`,
         zh: `单项式相除：系数除以系数，字母部分用指数法则相减`
       },
@@ -263,7 +415,7 @@ NM_TGEN['md11_monoMulDiv'] = function (params, rng) {
   const expChainTex = terms.map((t, i) => i === 0 ? String(t.m) : ` ${t.op === '\\times' ? '+' : '-'} ${t.m}`).join('');
   return {
     prompt: {
-      ko: `세 단항식의 곱셈·나눗셈 혼합이에요. 앞에서부터 차례로 계산해요`,
+      ko: `세 단항식의 곱셈·나눗셈 혼합입니다. 앞에서부터 차례로 계산합니다`,
       en: `Mixed × and ÷ of three monomials — work left to right`,
       zh: `三个单项式的乘除混合——从左到右依次计算`
     },
@@ -292,7 +444,7 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
     const cc = op === '+' ? b1 + b2 : b1 - b2;
     return {
       prompt: {
-        ko: `동류항끼리(문자와 차수가 같은 항끼리)만 더하거나 빼요`,
+        ko: `동류항끼리(문자와 차수가 같은 항끼리)만 더하거나 뺍니다`,
         en: `Combine like terms — same letter, same power — only`,
         zh: `只把同类项(字母和次数都相同)相加或相减`
       },
@@ -315,7 +467,7 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
     const cc = op === '+' ? c1 + c2 : c1 - c2;
     return {
       prompt: {
-        ko: `x², x, 상수 — 차수가 같은 항끼리 각각 정리해요`,
+        ko: `x², x, 상수 — 차수가 같은 항끼리 각각 정리합니다`,
         en: `Sort by degree — x² terms, x terms, and constants each combine separately`,
         zh: `按次数分类——x²项、x项、常数项分别合并`
       },
@@ -330,13 +482,79 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
     };
   }
 
+  /* ── fracCoef(2026-09-21) — 계수가 분수 꼴인 다항식의 덧셈과 뺄셈 ──
+     디딤돌 개념연산 중2-1A 대조(p.88): "(i) 통분 (ii) 분자의 괄호를 풀기
+     (iii) 동류항끼리 계산". 두 일차식을 각각 정수 분모로 나눈 분수 꼴로
+     내고, 공통분모(d1×d2)로 통분한 뒤 하나의 분수로 합친 결과의 분자
+     [x계수, 상수] 두 칸을 받는다(분모는 tex에 그대로 보여 계산 대상에서
+     뺀다 — §7 답 환원 원칙, 분모까지 답으로 받으면 세 칸이라 번거롭다). */
+  if (mode === 'fracCoef') {
+    const a1 = nzInt(rng, 1, 4), b1 = nzInt(rng, 1, 9);
+    const a2 = nzInt(rng, 1, 4), b2 = nzInt(rng, 1, 9);
+    const d1 = pick(rng, [2, 3, 4]);
+    let d2 = pick(rng, [2, 3, 4, 5]);
+    if (d2 === d1) d2 = d2 === 5 ? 4 : d2 + 1;
+    const D = d1 * d2;
+    const op = pick(rng, ['+', '-']);
+    const k1 = D / d1, k2 = D / d2;
+    const A = op === '+' ? a1 * k1 + a2 * k2 : a1 * k1 - a2 * k2;
+    const B = op === '+' ? b1 * k1 + b2 * k2 : b1 * k1 - b2 * k2;
+    return {
+      prompt: {
+        ko: `분모의 최소공배수로 통분하고, 분자의 괄호를 푼 뒤, 동류항끼리 계산합니다`,
+        en: `Find a common denominator, expand the numerators, then combine like terms`,
+        zh: `先通分，再展开分子的括号，最后合并同类项`
+      },
+      tex: `\\dfrac{${a1}x ${wrapPlus(b1)}}{${d1}} ${op} \\dfrac{${a2}x ${wrapPlus(b2)}}{${d2}} = \\dfrac{\\square x + \\square}{${D}}`,
+      answer: [A, B], answerType: 'number', widget: 'numpad', negative: A < 0 || B < 0,
+      solution: [
+        { tex: `\\dfrac{${k1}(${a1}x ${wrapPlus(b1)})}{${D}} ${op} \\dfrac{${k2}(${a2}x ${wrapPlus(b2)})}{${D}}` },
+        { tex: `\\dfrac{${a1 * k1}x ${wrapPlus(b1 * k1)}}{${D}} ${op} \\dfrac{${a2 * k2}x ${wrapPlus(b2 * k2)}}{${D}}` },
+        { tex: `\\dfrac{\\square x + \\square}{${D}}`, blank: [A, B] }
+      ]
+    };
+  }
+
+  /* ── nestedBrackets(2026-09-21) — 여러 가지 괄호가 있는 식 ──
+     디딤돌 개념연산 중2-1A 대조(p.94): "소괄호 → 중괄호 → 대괄호 순서로
+     괄호를 풀며 동류항끼리 정리". x·y 두 문자로 낸다(교재 예시가 그렇다 —
+     MD12의 다른 모드처럼 x 하나만으로는 "안의 항이 겉으로 나오며 부호가
+     바뀐다"는 감각이 잘 안 보인다). 안쪽부터 부호를 미리 계산해 답은
+     [x계수, y계수] 두 칸. */
+  if (mode === 'nestedBrackets') {
+    const p = nzInt(rng, 2, 6), q = nzInt(rng, 2, 6);           /* 소괄호 안: px + qy */
+    let a = nzInt(rng, 2, 6);                                    /* 중괄호의 앞항: ay */
+    const signMid = pick(rng, ['+', '-']);                       /* ay ± (px+qy) */
+    if (signMid === '-' && a === q) a += 1;                      /* y계수가 0으로 사라지지 않게 */
+    const mx = signMid === '+' ? p : -p;
+    const my = signMid === '+' ? a + q : a - q;
+    let b = nzInt(rng, 2, 6);                                    /* 대괄호의 앞항: bx */
+    const signOuter = pick(rng, ['+', '-']);                     /* bx ± {ay±(...)} */
+    if (signOuter === '-' && b === mx) b += 1;                   /* x계수가 0으로 사라지지 않게 */
+    const X = signOuter === '+' ? b + mx : b - mx;
+    const Y = signOuter === '+' ? my : -my;
+    return {
+      prompt: {
+        ko: `소괄호 → 중괄호의 순서로 안쪽부터 괄호를 풀면서, 앞의 부호에 따라 안의 모든 항의 부호를 바꿉니다`,
+        en: `Remove brackets from the inside out — parentheses first, then braces — flipping every inner sign when the sign in front is minus`,
+        zh: `从内到外拆括号——先小括号再大括号——括号前是负号就把里面所有项的符号都改变`
+      },
+      tex: `${b}x ${signOuter} \\{ ${a}y ${signMid} (${p}x ${wrapPlus(q)}y) \\} = \\square x + \\square y`,
+      answer: [X, Y], answerType: 'number', widget: 'numpad', negative: X < 0 || Y < 0,
+      solution: [
+        { tex: `${a}y ${signMid} (${p}x ${wrapPlus(q)}y) = ${mx}x ${wrapPlus(my)}y` },
+        { tex: `${b}x ${signOuter} (${mx}x ${wrapPlus(my)}y) = \\square x + \\square y`, blank: [X, Y] }
+      ]
+    };
+  }
+
   /* brackets — 괄호 앞이 −라서 안의 모든 항의 부호를 바꿔야 함(뺄셈 고정) */
   const a1 = nzInt(rng, 1, 9), b1 = nzInt(rng, 1, 20);
   const a2 = nzInt(rng, 1, 9), b2 = nzInt(rng, 1, 20);
   const xc = a1 - a2, cc = b1 - b2;
   return {
     prompt: {
-      ko: `괄호 앞이 −이면 괄호 안 모든 항의 부호를 바꿔서 풀어요`,
+      ko: `괄호 앞이 −이면 괄호 안 모든 항의 부호를 바꿔서 풉니다`,
       en: `A minus sign in front of the brackets flips the sign of every term inside`,
       zh: `括号前是−号，就要把括号里每一项的符号都变号`
     },
@@ -351,11 +569,14 @@ NM_TGEN['md12_polyAddSub'] = function (params, rng) {
   };
 };
 
-/* ── MD13 — (단항식)×(다항식)의 전개 ──
-   분배법칙으로 괄호를 푼다. lineage: 계보5 '자리의 마법'의 한 걸음
-   (부분곱 원리 → 다항식 곱셈). mode: 'binomial'(이항식) ·
-   'monomialX'(곱하는 단항식에 x가 있어 차수가 하나씩 오름) ·
-   'trinomial'(삼항식, 답 세 칸). */
+/* ── MD13 — 단항식×다항식 · 다항식÷단항식 ──
+   분배법칙으로 곱셈을 풀고, 나눗셈은 다항식의 모든 항을 같은 단항식으로
+   나눈다. 근거: 디딤돌 개념연산 2-1A 인쇄 p.96, 98~99. lineage:
+   계보5 '자리의 마법'의 한 걸음(부분곱 원리 → 다항식 곱셈·나눗셈).
+   mode: 'binomial' · 'monomialX' · 'trinomial' (기존 곱셈) ·
+   'divideBinomial' · 'divideFraction' · 'divideTrinomial' (나눗셈).
+   나눗셈 세 모드는 몫을 먼저 정하고 다시 곱해 피제수를 만들므로 모든 항이
+   나누어떨어지고, 0으로 나누거나 음의 지수가 생기는 문항은 생성되지 않는다. */
 NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
   const mode = params.mode || 'binomial';
 
@@ -364,7 +585,7 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
     const a = nzInt(rng, 1, 9), b = nzInt(rng, 1, 20);
     return {
       prompt: {
-        ko: `분배법칙으로 괄호 안의 두 항에 각각 곱해요`,
+        ko: `분배법칙으로 괄호 안의 두 항에 각각 곱합니다`,
         en: `Distribute — multiply each term inside the brackets`,
         zh: `用分配律——分别乘括号里的每一项`
       },
@@ -383,7 +604,7 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
     const a = nzInt(rng, 1, 9), b = nzInt(rng, 1, 20);
     return {
       prompt: {
-        ko: `${k}x를 괄호 안 두 항에 각각 곱해요 — 차수가 하나씩 올라가요`,
+        ko: `${k}x를 괄호 안 두 항에 각각 곱합니다 — 차수가 하나씩 올라갑니다`,
         en: `Multiply ${k}x by each term inside — the power of x goes up by one each time`,
         zh: `把${k}x分别乘括号里的每一项——x的次数各加1`
       },
@@ -397,12 +618,94 @@ NM_TGEN['md13_monoTimesPoly'] = function (params, rng) {
     };
   }
 
+  if (mode === 'divideBinomial') {
+    /* (d*a*x^2 + d*b*xy) / dx = ax + by. 쉬운 단계는 양의 제수로 시작하고
+       둘째 항의 부호만 섞어, '모든 항을 각각 나눈다'는 동작에 집중한다. */
+    const d = R(rng, 2, 9), a = R(rng, 1, 9), b = nzInt(rng, 1, 9);
+    const dividend = [
+      { c:d * a, x:2, y:0, vars:'x^{2}' },
+      { c:d * b, x:1, y:1, vars:'xy' }
+    ];
+    return {
+      prompt: {
+        ko: `다항식의 두 항을 ${d}x로 각각 나눕니다`,
+        en: `Divide both terms of the polynomial by ${d}x`,
+        zh: `把多项式的两项分别除以${d}x`
+      },
+      tex: `(${polyTex(dividend)}) \\div ${d}x = \\square x + \\square y`,
+      answer:[a, b], answerType:'number', widget:'numpad', negative:b < 0,
+      algebra:{ operation:'poly-div-mono', dividend, divisor:{c:d,x:1,y:0}, quotient:[{c:a,x:1,y:0},{c:b,x:0,y:1}] },
+      solution:[
+        { tex:`\\frac{${termBody(d*a,'x^{2}')}}{${d}x}= ${termBody(a,'x')}` },
+        { tex:`\\frac{${polyTex([{c:d*b,vars:'xy'}])}}{${d}x}= ${polyTex([{c:b,vars:'y'}])}` },
+        { tex:'\\square x + \\square y', blank:[a,b] }
+      ]
+    };
+  }
+
+  if (mode === 'divideFraction') {
+    /* 교재 p.98의 분수 계수 단항식 나눗셈. 몫 계수를 분모의 배수로 정해
+       피제수도 정수 계수로 유지한다. */
+    const frac = pick(rng, [[1,2],[2,3],[1,3],[3,4],[2,5],[3,5],[4,5]]);
+    const sign = pick(rng, [1,-1]), n = sign * frac[0], d = frac[1];
+    const qa = d * nzInt(rng, 1, 6), qb = d * nzInt(rng, 1, 6);
+    const ca = n * (qa / d), cb = n * (qb / d);
+    const dividend = [{c:ca,x:2,y:0,vars:'x^{2}'},{c:cb,x:1,y:1,vars:'xy'}];
+    const divisorTex = fracMonoTex(n, d, 'x');
+    const reciprocalTex = `${sign < 0 ? '-' : ''}\\frac{${d}}{${frac[0]}x}`;
+    return {
+      prompt:{
+        ko:'나누는 분수 단항식의 역수를 곱한 뒤, 두 항에 각각 분배합니다',
+        en:'Multiply by the reciprocal of the fractional monomial, then distribute it to both terms',
+        zh:'乘以分数单项式的倒数，再分别分配到两项'
+      },
+      tex:`(${polyTex(dividend)}) \\div \\left(${divisorTex}\\right) = \\square x + \\square y`,
+      answer:[qa,qb], answerType:'number', widget:'numpad', negative:qa < 0 || qb < 0,
+      algebra:{ operation:'poly-div-mono', dividend, divisor:{n,d,x:1,y:0}, quotient:[{c:qa,x:1,y:0},{c:qb,x:0,y:1}] },
+      solution:[
+        { tex:`\\div\\left(${divisorTex}\\right)=\\times\\left(${reciprocalTex}\\right)` },
+        { tex:`\\frac{${polyTex([{c:ca,vars:'x^{2}'}])}}{${divisorTex}}=${polyTex([{c:qa,vars:'x'}])}` },
+        { tex:`\\frac{${polyTex([{c:cb,vars:'xy'}])}}{${divisorTex}}=${polyTex([{c:qb,vars:'y'}])}` },
+        { tex:'\\square x + \\square y', blank:[qa,qb] }
+      ]
+    };
+  }
+
+  if (mode === 'divideTrinomial') {
+    /* (세 항)÷(부호 있는 dxy). 몫은 이차 동차식이라 계수·부호·지수를
+       함께 추적해야 하는 집중 연습이다. */
+    const dc = nzInt(rng, 2, 7);
+    const a = nzInt(rng, 1, 7), b = nzInt(rng, 1, 7), c = nzInt(rng, 1, 7);
+    const dividend = [
+      {c:dc*a,x:3,y:1,vars:'x^{3}y'},
+      {c:dc*b,x:2,y:2,vars:'x^{2}y^{2}'},
+      {c:dc*c,x:1,y:3,vars:'xy^{3}'}
+    ];
+    const divisorTex = dc < 0 ? `\\left(-${termBody(dc,'xy')}\\right)` : termBody(dc,'xy');
+    return {
+      prompt:{
+        ko:'세 항을 부호 있는 단항식으로 각각 나누고 지수는 같은 문자끼리 뺍니다',
+        en:'Divide all three terms by the signed monomial and subtract exponents of like variables',
+        zh:'三项分别除以带符号的单项式，同字母的指数相减'
+      },
+      tex:`(${polyTex(dividend)}) \\div ${divisorTex} = \\square x^{2} + \\square xy + \\square y^{2}`,
+      answer:[a,b,c], answerType:'number', widget:'numpad', negative:a < 0 || b < 0 || c < 0,
+      algebra:{ operation:'poly-div-mono', dividend, divisor:{c:dc,x:1,y:1}, quotient:[{c:a,x:2,y:0},{c:b,x:1,y:1},{c:c,x:0,y:2}] },
+      solution:[
+        { tex:`x^{3}y\\div xy=x^{2}` },
+        { tex:`x^{2}y^{2}\\div xy=xy` },
+        { tex:`xy^{3}\\div xy=y^{2}` },
+        { tex:'\\square x^{2} + \\square xy + \\square y^{2}', blank:[a,b,c] }
+      ]
+    };
+  }
+
   /* trinomial — 삼항식 전개 */
   const k = nzInt(rng, 2, 7);
   const a = nzInt(rng, 1, 6), b = nzInt(rng, 1, 9), c = nzInt(rng, 1, 15);
   return {
     prompt: {
-      ko: `분배법칙으로 괄호 안 세 항 모두에 곱해요`,
+      ko: `분배법칙으로 괄호 안 세 항 모두에 곱합니다`,
       en: `Distribute across all three terms inside the brackets`,
       zh: `用分配律乘括号里的三项`
     },
@@ -431,7 +734,7 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
     const b = x + a;
     return {
       prompt: {
-        ko: `x + ${a} = ${b}: 좌변의 +${a}를 우변으로 넘기면 부호가 바뀌어요`,
+        ko: `x + ${a} = ${b}: 좌변의 +${a}를 우변으로 넘기면 부호가 바뀝니다`,
         en: `x + ${a} = ${b}: move +${a} to the other side — the sign flips`,
         zh: `x + ${a} = ${b}：把左边的+${a}移到右边，符号要变`
       },
@@ -449,7 +752,7 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
     const b = x - a;
     return {
       prompt: {
-        ko: `x - ${a} = ${b}: 좌변의 -${a}를 우변으로 넘기면 부호가 바뀌어요`,
+        ko: `x - ${a} = ${b}: 좌변의 -${a}를 우변으로 넘기면 부호가 바뀝니다`,
         en: `x - ${a} = ${b}: move -${a} to the other side — the sign flips`,
         zh: `x - ${a} = ${b}：把左边的-${a}移到右边，符号要变`
       },
@@ -469,7 +772,7 @@ NM_TGEN['md14_isolateX'] = function (params, rng) {
   const c = aC * x0 + b;
   return {
     prompt: {
-      ko: `상수항을 이항한 뒤, 양변을 x의 계수로 나눠요`,
+      ko: `상수항을 이항한 뒤, 양변을 x의 계수로 나눕니다`,
       en: `Move the constant term across, then divide both sides by the coefficient of x`,
       zh: `先把常数项移项，再用x的系数除以两边`
     },

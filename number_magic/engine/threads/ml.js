@@ -59,8 +59,9 @@ NM_TGEN['ml1_double'] = function(params, rng) {
       answerType: 'number',
       widget: 'array',
       array: { n, rows: 2 },
+      /* 2026-09-20: 첫 줄이 `12 = 6 + 6` 이라 답이 이미 적혀 있었다(DV1 도 같은 결함). */
       solution: [
-        { tex: `${n} = ${answer} + ${answer}` },
+        { tex: `${n} = \\square + \\square`, blank: [answer, answer] },
         { tex: `${n} \\div 2 = \\square`, blank: answer }
       ]
     };
@@ -68,6 +69,48 @@ NM_TGEN['ml1_double'] = function(params, rng) {
 };
 
 /* ── ML2 — 곱셈구구 2~5단 ─────────────────────────────────── */
+/* ── 수직선 뛰어 세기로 곱셈구구(2026-09-19, 원장이 준 교과서 지면 "6, 7의 단 곱셈구구") ──
+   0에서 t씩 n번 뛰면 t×n. 같은 수를 여러 번 더하는 것이 곱셈이라는 것을 수직선으로 보여 주고,
+   식은 `6+6+6=6×□=18` 처럼 덧셈–곱셈을 한 줄에 잇는다(빈칸은 뛴 횟수). */
+NM_TGEN['ml_jumpTT'] = function(params, rng) {
+  const tables = params.tables || [6, 7];
+  const t = pick(rng, tables);
+  // 주간 학습지 20문항 + 예시·따라풀기 4문항을 같은 변형 없이 만들 수 있도록
+  // 각 두 단에서 2~9회 점프하고, 보이는 질문을 '횟수'와 '도착값'으로 나눈다
+  // (레벨당 정확히 32개 보이는 변형). 질문한 값을 문장이나 수직선에 미리 쓰지 않는다.
+  const n = R(rng, 2, 9);
+  const ask = pick(rng, ['hops', 'total']);
+  const seq = [0];
+  for(let i = 1; i <= n; i++) seq.push(t * i);
+  const sum = new Array(n).fill(t).join(' + ');
+  const product = t * n;
+  return {
+    prompt: ask === 'hops' ? {
+      ko: `수직선에서 ${t}씩 뛰었습니다. 호를 세어 몇 번 뛰었는지 □에 씁니다.`,
+      en: `The line hops by ${t}. Count the arcs and write the number of hops.`,
+      zh: `数轴上每次跳${t}。数一数弧线，写出跳了几次。`
+    } : {
+      ko: `${t}씩 ${n}번 뛰었습니다. 마지막에 도착한 수를 □에 씁니다.`,
+      en: `Hop ${n} times by ${t}. Write the number reached at the end.`,
+      zh: `每次跳${t}，跳${n}次。写出最后到达的数。`
+    },
+    tex: ask === 'hops'
+      ? `${sum} = ${t} \\times \\square = ${product}`
+      : `${sum} = ${t} \\times ${n} = \\square`,
+    answer: ask === 'hops' ? n : product, answerType: 'number',
+    widget: 'numline',
+    numline: { start: 0, step: t, seq, blank: ask === 'total' ? n : -1 },
+    solution: [
+      ask === 'hops'
+        ? { tex: `\\text{호의 수} = \\square`, blank: n }
+        : { tex: `${t} \\times ${n} = \\square`, blank: product },
+      ask === 'hops'
+        ? { tex: `${t} \\times \\square = ${product}`, blank: n }
+        : { tex: `${sum} = \\square`, blank: product }
+    ]
+  };
+};
+
 NM_TGEN['ml2_tt25'] = function(params, rng) {
   const tables = params.tables || [2, 3];
   const t      = pick(rng, tables);
@@ -273,11 +316,41 @@ NM_TGEN['ml5_tensMul'] = function(params, rng) {
 };
 
 /* ── ML6 — 두 자리×한 자리 (분배 암산) ──────────────────────── */
+/* (두 자리)×(한 자리)는 "올림이 어디서 나는가"로 단계가 갈린다 — 교재 초등연산 C05~C08이
+   네 단원으로 나눠 가르치는 자리다(2026-09-19 확인).
+     'tens'  십의 자리에서만 올림    51 × 2 = 102  (일의 자리는 그대로, 백의 자리가 생김)
+     'ones'  일의 자리에서만 올림    15 × 2 = 30   (올린 1을 십의 자리에 더함)
+     'over'  일의 자리 올림이 번져 100 이상   34 × 3 = 102
+     'both'  올림 2회               45 × 3 = 135
+   carry 를 안 주면 예전처럼 easy 로 뽑는다. */
+function _ml6Carry(a, b){
+  const o    = (a % 10) * b;                      /* 일의 자리 곱 */
+  const oC   = o >= 10 ? Math.floor(o / 10) : 0;  /* 일 → 십 올림 */
+  const tRaw = Math.floor(a / 10) * b;            /* 십의 자리 곱(올림 더하기 전) */
+  const tC   = (tRaw + oC) >= 10 ? 1 : 0;         /* 십 → 백 올림 */
+  return { oC: oC, tC: tC, tRaw: tRaw };
+}
 NM_TGEN['ml6_mul2d1dMental'] = function(params, rng) {
-  const easy = params.easy !== false;
+  const easy  = params.easy !== false;
+  const cMode = params.carry || '';
   let a, b;
 
-  if (easy) {
+  if (cMode) {
+    let tries = 0;
+    do {
+      a = R(rng, 11, 99);
+      b = R(rng, 2, 9);
+      if (a % 10 === 0) continue;                 /* 일의 자리 0은 올림 이야기가 안 된다 */
+      const c = _ml6Carry(a, b);
+      if (cMode === 'tens' && !c.oC &&  c.tC) break;
+      if (cMode === 'ones' &&  c.oC && !c.tC) break;
+      /* 'over' 는 십의 자리 곱 자체는 10을 안 넘는데 올린 1 때문에 넘는 경우(34×3),
+         'both' 는 십의 자리 곱이 이미 10을 넘는 경우(45×3)다 — 교재가 나눠 가르치는 지점. */
+      if (cMode === 'over' &&  c.oC && c.tC && c.tRaw < 10) break;
+      if (cMode === 'both' &&  c.oC && c.tC && c.tRaw >= 10) break;
+      if (cMode === 'none' && !c.oC && !c.tC) break;
+    } while (tries++ < 500);
+  } else if (easy) {
     /* easy: a가 몇십이거나 b가 2~3 */
     if (R(rng, 0, 1) === 0) {
       a = R(rng, 1, 9) * 10;   /* 10·20…90 */
@@ -318,11 +391,33 @@ NM_TGEN['ml6_mul2d1dMental'] = function(params, rng) {
 };
 
 /* ── ML7 — 세 자리×한 자리 ───────────────────────────────── */
+/* (세 자리)×(한 자리)도 올림 횟수로 단계를 가른다 — 교재 초등연산 C09가 "올림이 2회
+   있는 (세 자리)×(한 자리)"를 따로 한 단원으로 쓴다(2026-09-19).
+   일·십 두 자리에서 각각 올림이 나는지를 센다(백→천 올림은 자릿수가 늘 뿐이라 안 센다). */
+function _ml7Carries(a, b){
+  const o = a % 10, t = Math.floor(a / 10) % 10;
+  const oC = Math.floor((o * b) / 10);
+  const tC = Math.floor((t * b + oC) / 10);
+  return (oC ? 1 : 0) + (tC ? 1 : 0);
+}
 NM_TGEN['ml7_mul3d1d'] = function(params, rng) {
   const vertical = params.vertical === true;
   const lv       = params.level || 'main';
-  const a        = R(rng, lv === 'practice' ? 101 : 100, lv === 'practice' ? 399 : 999);
-  const b        = R(rng, 2, lv === 'practice' ? 4 : 9);
+  const cMode    = params.carry || '';        /* 'none' | 'one' | 'two' */
+  let a, b, tries = 0;
+  do {
+    a = R(rng, lv === 'practice' ? 101 : 100, lv === 'practice' ? 399 : 999);
+    b = R(rng, 2, lv === 'practice' ? 4 : 9);
+    if (!cMode) break;
+    /* 일·십의 자리가 0이면 단계가 "0 × 7 = 0"으로 비어 버린다(210×8 · 909×7 꼴) */
+    if (a % 10 === 0 || Math.floor(a / 10) % 10 === 0) continue;
+    const n = _ml7Carries(a, b);
+    /* 올림 없음 레벨은 백의 자리도 넘지 않게 — 답이 세 자리로 끝나야 123×3=369 꼴이 된다.
+       안 그러면 210×8=1680 처럼 천의 자리가 생겨 이름과 어긋난다(2026-09-19). */
+    if (cMode === 'none' && n === 0 && Math.floor(a / 100) * b <= 9) break;
+    if (cMode === 'one'  && n === 1) break;
+    if (cMode === 'two'  && n === 2) break;
+  } while (tries++ < 500);
   const h        = Math.floor(a / 100);
   const t        = Math.floor((a % 100) / 10);
   const o        = a % 10;
@@ -391,6 +486,22 @@ NM_TGEN['ml7_mul3d1d'] = function(params, rng) {
 };
 
 /* ── ML8 — 두 자리×두 자리 ───────────────────────────────── */
+/* (두 자리)×(두 자리)도 올림 횟수로 단계를 가른다 — 창의수연 C11이 "올림 없는 (두)×(두)",
+   D권이 올림 1~4회를 네 단원으로 쓴다(2026-09-19). 세로셈은 부분곱이 둘이라 올림 자리가
+   넷이다: 곱하는 수의 일의 자리로 두 번(일·십), 십의 자리로 또 두 번.
+   부분곱을 더할 때 나는 올림은 세지 않는다 — 그건 덧셈이지 곱셈의 올림이 아니고,
+   교재의 단원 이름도 곱하는 과정의 올림만 센다(12×34도 48+360에서 자리가 넘는다). */
+function _ml8Carries(a, b){
+  const ao = a % 10, at = Math.floor(a / 10);
+  const bo = b % 10, bt = Math.floor(b / 10);
+  const n = (x, y) => {            /* (두 자리)×(한 자리) 한 번에 나는 올림 수 */
+    if (!y) return 0;              /* 몇십을 곱할 땐 그 부분곱이 통째로 0 */
+    const oC = Math.floor((x % 10) * y / 10);
+    const tC = Math.floor((Math.floor(x / 10) * y + oC) / 10);
+    return (oC ? 1 : 0) + (tC ? 1 : 0);
+  };
+  return n(a, bo) + n(a, bt);
+}
 NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
   /* ── 고급 C-1 확장: 엑스맨 곱셈 (세 자리 이상) ─────────────────
      원본(고급 C '엑스맨 곱셈')은 3자리×2자리 · 3자리×3자리만 실제
@@ -461,10 +572,49 @@ NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
     };
   }
 
-  const easy = params.easy !== false;
+  /* ── (두 자리)×(몇십) — 교재의 앞 단원. ×(십의 자리) 한 번 하고 끝에 0 하나를 붙인다 ── */
+  if (params.tens === true) {
+    const lv = params.level || 'main';
+    let aT = R(rng, lv === 'practice' ? 11 : 12, lv === 'practice' ? 49 : 99);
+    if (aT % 10 === 0) aT += R(rng, 1, 9);   /* 몇십×몇십은 이 단원이 아니다(50×90) */
+    const bT = R(rng, 2, 9);
+    const bb = bT * 10;
+    const half = aT * bT;
+    return {
+      prompt: {
+        ko: `${aT} × ${bb}은 ${aT} × ${bT}을 하고 끝에 0을 하나 붙여요`,
+        en: `For ${aT} × ${bb}, do ${aT} × ${bT} and put one zero at the end`,
+        zh: `${aT} × ${bb}先算${aT} × ${bT}，再在末尾添一个0`
+      },
+      tex: `${aT} \\times ${bb} = \\square`,
+      answer: aT * bb,
+      answerType: 'steps',
+      widget: 'vertical',
+      steps: [
+        { tex: `${aT} \\times ${bT} = \\square`,   blank: half },
+        { tex: `${half} \\times 10 = \\square`,    blank: aT * bb }
+      ]
+    };
+  }
+
+  const cMode = params.carry || '';      /* 'none' | 'one' | 'two' | 'many'(3~4회) */
+  const easy = !cMode && params.easy !== false;
   let a, b;
 
-  if (easy) {
+  if (cMode) {
+    let tries = 0;
+    do {
+      a = R(rng, 11, 99);
+      b = R(rng, 11, 99);
+      /* 몇십은 부분곱 하나가 통째로 비어 올림 수를 세는 뜻이 없어진다(30×24 꼴) */
+      if (a % 10 === 0 || b % 10 === 0) continue;
+      const n = _ml8Carries(a, b);
+      if (cMode === 'none' && n === 0) break;
+      if (cMode === 'one'  && n === 1) break;
+      if (cMode === 'two'  && n === 2) break;
+      if (cMode === 'many' && n >= 3) break;
+    } while (tries++ < 600);
+  } else if (easy) {
     a = R(rng, 11, 99);
     /* easy b: 몇십(×1d급) 또는 십의 자리=1(11~19) */
     const easyBs = [10,20,30,40,50,60,70,80,90,
@@ -481,6 +631,27 @@ NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
   const part1  = a * bTens * 10;
   const part2  = a * bOnes;
   const answer = a * b;
+
+  /* 곱하는 수가 몇십이면 둘째 부분곱이 통째로 0이라 "83 × 0 = 0" 이라는 빈 단계가 생긴다
+     (easy 레벨과 C-12 연습에서 실제로 그렇게 나갔다, 2026-09-19). 그럴 땐 몇십 곱하기와
+     같은 두 단계로 — ×(십의 자리) 한 번, 끝에 0 하나. */
+  if (bOnes === 0) {
+    return {
+      prompt: {
+        ko: `${a} × ${b}은 ${a} × ${bTens}을 하고 끝에 0을 하나 붙여요`,
+        en: `For ${a} × ${b}, do ${a} × ${bTens} and put one zero at the end`,
+        zh: `${a} × ${b}先算${a} × ${bTens}，再在末尾添一个0`
+      },
+      tex: `${a} \\times ${b} = \\square`,
+      answer,
+      answerType: 'steps',
+      widget: 'vertical',
+      steps: [
+        { tex: `${a} \\times ${bTens} = \\square`,      blank: a * bTens },
+        { tex: `${a * bTens} \\times 10 = \\square`,    blank: answer }
+      ]
+    };
+  }
 
   return {
     prompt: {
@@ -501,16 +672,70 @@ NM_TGEN['ml8_mul2d2d'] = function(params, rng) {
 };
 
 /* ── ML9 — 세 자리×두 자리 ───────────────────────────────── */
+/* 여기도 올림 횟수로 가른다 — 교재 D07이 "올림이 4회 있는 (세 자리)×(두 자리)",
+   E01이 "올림이 6회"를 각각 한 회차로 쓴다(2026-09-19).
+   ⚠️ 세는 방법이 ML7과 다르다. (세 자리)×(한 자리)의 C09는 백→천 올림을 안 세지만
+   (그래서 최대 2회), (세)×(두)의 E01은 6회 = 한 줄에 3회씩이라 백→천도 센다
+   (432×6: 2×6=12 · 3×6+1=19 · 4×6+1=25 — 세 번). D07의 예(164×5)는 백의 자리에서
+   올림이 없어 한 줄에 2회씩 4회다 — 두 회차가 같은 규칙을 쓰고 있다. */
+function _ml9Carries(a, b){
+  const row = (x, y) => {
+    if (!y) return 0;
+    let carry = 0, n = 0;
+    for (let p = 1; p <= 100; p *= 10) {
+      const prod = (Math.floor(x / p) % 10) * y + carry;
+      carry = Math.floor(prod / 10);
+      if (carry) n++;
+    }
+    return n;
+  };
+  return row(a, b % 10) + row(a, Math.floor(b / 10));
+}
 NM_TGEN['ml9_mul3d2d'] = function(params, rng) {
-  const a      = R(rng, 100, 999);
-  const b      = R(rng, 11, 99);
-  const answer = a * b;
+  const cMode = params.carry || '';      /* 'none' | 'few'(1~2) | 'mid'(3~4) | 'many'(5~6) */
 
-  /* b를 십의 자리·일의 자리로 나눠 두 번 곱하고 더한다 */
-  const bTens = Math.floor(b / 10) * 10;
-  const bOnes = b % 10;
-  const p1    = a * bOnes;
-  const p2    = a * bTens;
+  /* (세 자리)×(몇십) — 교재가 (세)×(두) 앞에 두는 자리. ×(십의 자리) 한 번 하고 0 하나. */
+  if (params.tens === true) {
+    const aT = R(rng, 102, 999);
+    const bT = R(rng, 2, 9);
+    const bb = bT * 10;
+    const half = aT * bT;
+    return {
+      prompt: {
+        ko: `${aT} × ${bb}은 ${aT} × ${bT}을 하고 끝에 0을 하나 붙여요`,
+        en: `For ${aT} × ${bb}, do ${aT} × ${bT} and put one zero at the end`,
+        zh: `${aT} × ${bb}先算${aT} × ${bT}，再在末尾添一个0`
+      },
+      tex: `${aT} \\times ${bb} = \\square`,
+      answer: aT * bb,
+      answerType: 'steps',
+      widget: 'vertical',
+      steps: [
+        { tex: `${aT} \\times ${bT} = \\square`,   blank: half },
+        { tex: `${half} \\times 10 = \\square`,    blank: aT * bb }
+      ]
+    };
+  }
+
+  let a, b, tries = 0;
+  do {
+    a = R(rng, 100, 999);
+    b = R(rng, 11, 99);
+    if (!cMode) break;
+    /* 몇십은 부분곱 한 줄이 통째로 비어 올림 수를 세는 뜻이 없어진다 */
+    if (b % 10 === 0) continue;
+    const n = _ml9Carries(a, b);
+    if (cMode === 'none' && n === 0) break;
+    if (cMode === 'few'  && n >= 1 && n <= 2) break;
+    if (cMode === 'mid'  && n >= 3 && n <= 4) break;
+    if (cMode === 'many' && n >= 5) break;
+  } while (tries++ < 800);
+
+  const answer = a * b;
+  const bTens  = Math.floor(b / 10) * 10;
+  const bOnes  = b % 10;
+  const p1     = a * bOnes;
+  const p2     = a * bTens;
 
   return {
     prompt: {
@@ -520,13 +745,18 @@ NM_TGEN['ml9_mul3d2d'] = function(params, rng) {
     },
     tex: `${a} \\times ${b} = \\square`,
     answer,
-    answerType: 'number',
+    answerType: 'steps',
     widget: 'vertical',
+    steps: [
+      { tex: `${a} \\times ${bOnes} = \\square`,  blank: p1 },
+      { tex: `${a} \\times ${bTens} = \\square`,  blank: p2 },
+      { tex: `${p1} + ${p2} = \\square`,          blank: answer }
+    ],
     solution: [
       { tex: `${b} = ${bTens} + ${bOnes}` },
-      { tex: `${a} \\times ${bOnes} = \\square`, blank: p1 },
-      { tex: `${a} \\times ${bTens} = \\square`, blank: p2 },
-      { tex: `${p1} + ${p2} = \\square`, blank: answer }
+      { tex: `${a} \\times ${bOnes} = \\square`,  blank: p1 },
+      { tex: `${a} \\times ${bTens} = \\square`,  blank: p2 },
+      { tex: `${p1} + ${p2} = \\square`,          blank: answer }
     ]
   };
 };
@@ -1281,14 +1511,20 @@ NM_TGEN['ml_x25'] = function(params, rng) {
 
 /* ── ML_DIV_DECOMP — 분해 나눗셈 ────────────────────────────── */
 NM_TGEN['ml_div_decomp'] = function(params, rng) {
+  /* ⚠️ 분해한 두 조각이 **각각** 나누어떨어져야 한다(2026-09-20 점검).
+     전에는 a 를 먼저 만들고 `Math.floor(a/100)*100` 으로 잘라, 앞 조각이 b 의 배수가
+     아닌 경우가 대부분이었다 — 단계 정답이 `166.66666666666666` 같은 소수로 나가
+     engine/rng.js 의 "steps 의 blank 는 항상 정수" 계약을 깼고 예시 줄에 그대로 찍혔다.
+     이제 거꾸로 만든다: 앞 조각은 100 과 b 의 공배수(백의 자리로 끝나면서 b 로 나눠짐),
+     뒤 조각은 100 미만의 b 의 배수. 교재의 115÷5 = 100÷5 + 15÷5 와 같은 모양이다. */
   const lv = params.level || 'main';
   const bMax = lv === 'practice' ? 5 : 9;
   const b      = R(rng, 2, bMax);
-  const q1     = R(rng, 10, 99);  /* 백의 몫 */
-  const q2     = R(rng, 1,  9);   /* 십의 몫 */
-  const a      = (q1 * 10 + q2) * b;  /* a = (q1×10+q2)×b, 항상 딱 나눔 */
-  const hPart  = Math.floor(a / 100) * 100;    /* 내림백자리 */
-  const rest   = a - hPart;
+  const gcdN   = (x, y) => y === 0 ? x : gcdN(y, x % y);
+  const unit   = 100 * b / gcdN(100, b);        /* lcm(100, b) — 앞 조각의 최소 단위 */
+  const hPart  = unit * R(rng, 1, lv === 'practice' ? 2 : 3);
+  const rest   = b * R(rng, 1, Math.floor(99 / b));   /* 100 미만, b 의 배수 */
+  const a      = hPart + rest;
   const answer = a / b;
 
   return {
@@ -1308,19 +1544,26 @@ NM_TGEN['ml_div_decomp'] = function(params, rng) {
 /* ── ML_DIV_SIMPLIFY — 약분 나눗셈 ─────────────────────────── */
 NM_TGEN['ml_div_simplify'] = function(params, rng) {
   const lv = params.level || 'main';
-  /* 고정 (a,b) 목록 대신 나누는 수 b와 몫 q를 직접 뽑아 a=b×q를 만든다.
-     gcd(b×q, b) = b 이므로 항상 약분→정수 나눗셈으로 이어진다.
-     교재 사례(5427÷9, 3668÷28)처럼 main은 두 자리 나누는 수·큰 몫까지 확대 */
-  const bRange = lv === 'practice' ? [4, 12] : [4, 60];
+  /* 2026-09-20 재작성. 전에는 b와 몫 q를 뽑아 a=b×q 로 만들었는데, 그러면 gcd(a,b)=b 라
+     첫 단계 `a ÷ b`(=약분할 공약수로 나누기)가 **문제 전체와 같은 식**이 됐다. 아이는 답을
+     먼저 치고 `b ÷ b = 1`, `q ÷ 1 = q` 라는 껍데기 두 줄을 더 채웠다 — 순서가 거꾸로였다.
+     이제 약분할 공약수 g와 **약분 뒤의 나누는 수** n을 먼저 뽑는다(둘 다 2 이상).
+       b = g × n,  a = b × q  →  a ÷ g = n×q,  b ÷ g = n,  (n×q) ÷ n = q
+     첫 줄이 문제보다 확실히 쉬워지고(나누는 수가 b 에서 n 으로 줄어든다), 마지막 줄에서야
+     답이 나온다. 교재 사례(5427÷9, 3668÷28)의 수 크기는 그대로 유지한다. */
+  const bMax = lv === 'practice' ? 12 : 60;
   const qRange = lv === 'practice' ? [3, 20] : [10, 400];
-  const b      = R(rng, bRange[0], bRange[1]);
+  let g, n, b, tries = 0;
+  do {
+    g = R(rng, 2, lv === 'practice' ? 3 : 9);
+    n = R(rng, 2, lv === 'practice' ? 4 : 9);
+    b = g * n;
+  } while (b > bMax && ++tries < 40);
+  if (b > bMax) { g = 2; n = 2; b = 4; }
   const q      = R(rng, qRange[0], qRange[1]);
   const a      = b * q;
-  const gcd    = (x, y) => y === 0 ? x : gcd(y, x % y);
-  const g      = gcd(a, b);
-  const sa     = a / g;
-  const sb     = b / g;
-  const answer = a / b;
+  const sa     = a / g;          /* 약분한 나누어지는 수 = n × q */
+  const answer = q;
 
   return {
     prompt:{ ko:`${a} ÷ ${b}를 약분해서 계산해요`,
@@ -1330,8 +1573,8 @@ NM_TGEN['ml_div_simplify'] = function(params, rng) {
     answer, answerType:'steps', widget:'steps',
     steps:[
       { tex:`${a} \\div ${g} = \\square`, blank:sa },
-      { tex:`${b} \\div ${g} = \\square`, blank:sb },
-      { tex:`${sa} \\div ${sb} = \\square`, blank:answer }
+      { tex:`${b} \\div ${g} = \\square`, blank:n },
+      { tex:`${sa} \\div ${n} = \\square`, blank:answer }
     ]
   };
 };

@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js@2.5.0/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { FieldsAccessError, isFieldsAdminName, authenticateFieldsAdmin, resolveFieldsSession } from "../_shared/fields-admin-access.js";
 
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
@@ -8,6 +9,8 @@ const ALLOWED_ORIGINS = new Set([
   "http://127.0.0.1:8794",
   "http://localhost:8793",
   "http://localhost:8794",
+  "http://127.0.0.1:8796",
+  "http://localhost:8796",
 ]);
 
 function headers(req: Request) {
@@ -63,12 +66,29 @@ Deno.serve(async (req: Request) => {
   try {
     const body = await req.json();
     const action = String(body?.action || "login");
-    if (action === "login") {
+    if (action === "login" || action === "admin-login") {
       const code = String(body?.code || "").trim().toUpperCase();
       const suppliedName = String(body?.name || "").replace(/\s+/gu, "").trim();
       if (code.length < 6 || code.length > 64 || suppliedName.length < 1 || suppliedName.length > 30) {
         return json(req, { error: "credentials_invalid" }, 400);
       }
+      if (isFieldsAdminName(suppliedName)) {
+        const account = await authenticateFieldsAdmin(service, url, key, req, suppliedName, String(body.code).trim(), fetch, {
+          retainSession: action === "admin-login", deviceToken: action === "admin-login" ? body.deviceToken : "",
+        });
+        if (action === "admin-login") {
+          if (!("session" in account)) return json(req, { error: "admin_auth_unavailable" }, 503);
+          return json(req, { name: account.name, type: "admin", session: account.session, deviceToken: account.deviceToken });
+        }
+        const token = randomToken();
+        const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
+        const { error } = await service.from("fields_access_sessions").insert({
+          token_hash: await sha256(token), admin_user_id: account.adminUserId, expires_at: expiresAt,
+        });
+        if (error) return json(req, { error: "session_create_failed" }, 503);
+        return json(req, { token, expiresAt, name: account.name, permissions: account.permissions, type: account.type });
+      }
+      if (action === "admin-login") return json(req, { error: "credentials_invalid" }, 401);
       const codeHash = await sha256(code);
       const { data: account, error } = await service.from("fields_access_accounts")
         .select("student_name,code_hash,permissions,student_type,active").eq("student_name", suppliedName).maybeSingle();
@@ -91,26 +111,25 @@ Deno.serve(async (req: Request) => {
     if (!/^[a-f0-9]{64}$/u.test(token)) return json(req, { error: "session_required" }, 401);
     const tokenHash = await sha256(token);
     if (action === "logout") {
-      await service.from("fields_access_sessions").delete().eq("token_hash", tokenHash);
+      const { error } = await service.from("fields_access_sessions").delete().eq("token_hash", tokenHash);
+      if (error) return json(req, { error: "session_delete_failed" }, 503);
       return json(req, { ok: true });
     }
     if (action !== "session") return json(req, { error: "action_invalid" }, 400);
-    const { data: session, error } = await service.from("fields_access_sessions")
-      .select("student_name,expires_at").eq("token_hash", tokenHash).gt("expires_at", new Date().toISOString()).maybeSingle();
-    if (error || !session) return json(req, { error: "session_invalid" }, 401);
-    const { data: account, error: accountError } = await service.from("fields_access_accounts")
-      .select("student_name,permissions,student_type,active").eq("student_name", session.student_name).maybeSingle();
-    if (accountError) return json(req, { error: "account_lookup_failed" }, 503);
-    if (!account?.active) return json(req, { error: "session_invalid" }, 401);
+    const account = await resolveFieldsSession(service, tokenHash);
     await service.from("fields_access_sessions").update({ last_seen_at: new Date().toISOString() }).eq("token_hash", tokenHash);
     return json(req, {
       ok: true,
-      name: account.student_name,
+      name: account.name,
       permissions: account.permissions,
-      type: account.student_type,
-      expiresAt: session.expires_at,
+      type: account.type,
+      expiresAt: account.expiresAt,
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof FieldsAccessError) return json(req, { error: error.message }, error.status);
+    if (error instanceof TypeError || (error instanceof Error && error.name === "TimeoutError")) {
+      return json(req, { error: "auth_unavailable" }, 503);
+    }
     return json(req, { error: "request_invalid" }, 400);
   }
 });

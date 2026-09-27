@@ -16,6 +16,7 @@ import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20260909b";
+import { mountHandsOn } from "./golden-bell-hands-on.js?v=20260925-release";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -1704,6 +1705,20 @@ function renderContent() {
       : state.phase === "extension" ? renderExtension(lesson)
         : renderComplete(lesson);
   $("lessonContent").innerHTML = markup;
+  if (state.phase === "concept") mountHandsOn($("lessonContent"), {
+    bookId: book.id,
+    lessonId: lesson.id,
+    onOpen: () => {
+      clearExperiencePlayback();
+      const playButton = $("lessonContent").querySelector('[data-experience-action="play"]');
+      if (playButton) playButton.textContent = "재생";
+    },
+    onQuestions: (lessonId) => {
+      state.lessonId = lessonId;
+      resetExperience();
+      setPhase("original");
+    }
+  });
   if (lesson.experience?.kind === "course-concept") {
     const item = state.phase === "original" ? lesson.original.items[state.originalIndex] : state.phase === "extension" ? activeExtensionItem(lesson) : null;
     const solution = $("lessonContent").querySelector(".quiz-item-solution,.extension-solution");

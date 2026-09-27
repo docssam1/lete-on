@@ -13,8 +13,10 @@ on:
       - 'number_magic/**'
       - 'personality/**'
       - 'premier/**'
+      - 'promo/anssem-hs/**'
       - 'reading-world/**'
       - 'roadmap/**'
+      - 'science-lab/**'
       - 'vocab-quiz/**'
       - 'world-explorer/**'
       - 'yubin-yujun-store/**'
@@ -40,8 +42,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Use Node.js 22 for verified Hyper Focus staging
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Verify public question bank metadata
         run: node hselementary/question-bank/public-inventory-review-reason-audit.js
+      # 수의 마법 — 유닛·과정·앱 지도·문제은행·주간 학습지가 서로 어긋나면 배포를 멈춘다.
+      # 2026-09-20~23 에 ws.html 이 mid9·mid10 을 안 실어 중2·중3 학습지가 88+8= 로 나갔다.
+      - name: Verify Numbers of Magic navigation and loading
+        run: |
+          node number_magic/scripts/check-roadmap-sync.js --self-test
+          node number_magic/scripts/check-ladder.js
+          node number_magic/scripts/check-stages.js
+          node number_magic/scripts/check-about-stats.js
       - name: Stage sites and landing menu
         run: |
           mkdir -p _site/boarding-school-math
@@ -49,12 +63,13 @@ jobs:
           mkdir -p _site/hselementary
           mkdir -p _site/hsmiddle
           mkdir -p _site/geometry
-          mkdir -p _site/hyper-focus
           mkdir -p _site/number_magic
           mkdir -p _site/personality
           mkdir -p _site/premier
+          mkdir -p _site/promo/anssem-hs
           mkdir -p _site/reading-world
           mkdir -p _site/roadmap
+          mkdir -p _site/science-lab
           mkdir -p _site/vocab-quiz
           mkdir -p _site/world-explorer
           mkdir -p _site/yubin-yujun-store
@@ -74,13 +89,23 @@ jobs:
           test ! -e _site/hsmiddle/question-bank/audits
           cp -R geometry/. _site/geometry/
           node hyper-focus/qa/stage_public_release.cjs --source hyper-focus --dest _site/hyper-focus
+          node hyper-focus/qa/validate_public_release.cjs --source hyper-focus --dest _site/hyper-focus
+          test ! -e _site/hyper-focus/challenge/concept-guide.js
+          test ! -e _site/hyper-focus/qa
+          test ! -e _site/hyper-focus/supabase
+          test ! -e _site/hyper-focus/output
           cp -R number_magic/. _site/number_magic/
           cp -R personality/. _site/personality/
           cp -R premier/. _site/premier/
           rm -rf _site/premier/qa
           test ! -e _site/premier/qa
+          cp -R promo/anssem-hs/. _site/promo/anssem-hs/
           cp -R reading-world/. _site/reading-world/
           cp -R roadmap/. _site/roadmap/
+          cp -R science-lab/. _site/science-lab/
+          rm -rf _site/science-lab/bank/tools _site/science-lab/bank/audit.mjs _site/science-lab/bank/taxonomy/build.mjs
+          find _site/science-lab -type f -name '*.md' -delete
+          test ! -e _site/science-lab/bank/tools
           cp -R vocab-quiz/. _site/vocab-quiz/
           cp -R world-explorer/. _site/world-explorer/
           cp -R yubin-yujun-store/. _site/yubin-yujun-store/

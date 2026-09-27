@@ -62,8 +62,143 @@ const render = (bookId, problem) => {
   return "";
 };
 
+const permutationsOf = (values) => {
+  if (values.length <= 1) return [values];
+  return values.flatMap((value, index) => permutationsOf(values.filter((_, itemIndex) => itemIndex !== index)).map((tail) => [value, ...tail]));
+};
+
+function sudokuCompletionCount(meta) {
+  const { size, cells } = meta;
+  const board = [...cells];
+  const digits = Array.from({ length: size }, (_, index) => index + 1);
+  const regionOf = (index) => meta.regionMap
+    ? meta.regionMap[index]
+    : Math.floor(Math.floor(index / size) / meta.regionRows) * (size / meta.regionColumns) + Math.floor((index % size) / meta.regionColumns);
+  const valid = (index, value) => {
+    const row = Math.floor(index / size);
+    const column = index % size;
+    for (let cursor = 0; cursor < size; cursor += 1) {
+      if (board[row * size + cursor] === value || board[cursor * size + column] === value) return false;
+    }
+    const region = regionOf(index);
+    return !board.some((item, itemIndex) => item === value && regionOf(itemIndex) === region);
+  };
+  const visit = () => {
+    const index = board.indexOf(null);
+    if (index < 0) return 1;
+    let count = 0;
+    for (const value of digits) {
+      if (!valid(index, value)) continue;
+      board[index] = value;
+      count += visit();
+      board[index] = null;
+      if (count > 1) return count;
+    }
+    return count;
+  };
+  return visit();
+}
+
 function independentCheck(entry, problem, prefix) {
   const meta = problem.meta;
+  if (meta?.sourceNumber && ![1, 2, 22].includes(meta.sourceNumber)) {
+    const answerNumber = Number.parseInt(problem.answer, 10);
+    if ([3, 5].includes(meta.sourceNumber)) {
+      assert(meta.larger + meta.smaller === meta.total, `${prefix}: two-target total disagrees`);
+      assert(meta.larger - meta.smaller === meta.gap, `${prefix}: two-target difference disagrees`);
+      assert(problem.answer.includes(String(meta.larger)) && problem.answer.includes(String(meta.smaller)), `${prefix}: both target values must be in the answer`);
+    } else if (meta.sourceNumber === 6) {
+      const solutions = permutationsOf(meta.cards).filter(([square, circle, diamond, cross]) => square * 2 === diamond && circle * 2 === square + diamond && square + circle === cross);
+      assert(solutions.length === 1, `${prefix}: q6 must have one shape assignment`);
+      assert(solutions[0][3] === answerNumber && answerNumber === meta.values.cross, `${prefix}: q6 target disagrees`);
+    } else if (meta.sourceNumber === 7) {
+      const { diamond, circle, square, star } = meta.weights;
+      assert(circle === diamond * 2 && square * 2 === diamond + circle * 2 && star === diamond + square, `${prefix}: q7 balance chain disagrees`);
+      assert(answerNumber === star, `${prefix}: q7 answer disagrees`);
+    } else if (meta.sourceNumber === 8) {
+      const solutions = permutationsOf(meta.cards).filter(([diamond, square, triangle, circle]) => diamond * 3 === square * 4 && diamond * 2 === triangle + square && triangle + circle === diamond + square);
+      assert(solutions.length === 1, `${prefix}: q8 must have one shape assignment`);
+      assert(solutions[0][3] === answerNumber && answerNumber === meta.values.circle, `${prefix}: q8 target disagrees`);
+    } else if (meta.sourceNumber === 9) {
+      const { diamond, circle, square, star } = meta.weights;
+      assert(circle === diamond * 2 && square * 2 === diamond + circle && star * 2 === diamond + square, `${prefix}: q9 balance chain disagrees`);
+      assert(answerNumber === star, `${prefix}: q9 answer disagrees`);
+    } else if (meta.sourceNumber === 10) {
+      assert(meta.patterns.length === 2 && meta.answers.length === 2, `${prefix}: q10 needs two subproblems`);
+      meta.patterns.forEach((pattern, index) => {
+        const shown = meta.shown[index];
+        assert(shown.length >= pattern.length * 2 + 1, `${prefix}: q10 must show at least two full repeats and one extra item`);
+        assert(shown.every((value, position) => value === pattern[position % pattern.length]), `${prefix}: q10 shown pattern ${index + 1} disagrees`);
+        assert(meta.answers[index] === pattern[shown.length % pattern.length], `${prefix}: q10 next shape ${index + 1} disagrees`);
+      });
+      assert(problem.parts?.length === 2 && problem.answerVisuals?.length === 2, `${prefix}: q10 multipart drawing contract missing`);
+    } else if (meta.sourceNumber === 11) {
+      const targetShape = meta.shapeCycle[(meta.targetIndex - 1) % meta.shapeCycle.length];
+      const filled = meta.filledPositions.includes(meta.targetIndex);
+      assert(meta.answerToken === `${filled ? "filled-" : ""}${targetShape}`, `${prefix}: q11 shape/fill cycles disagree`);
+      assert(problem.answerVisual, `${prefix}: q11 drawing answer visual missing`);
+    } else if (meta.sourceNumber === 12) {
+      assert(meta.rows.length === 2 && problem.parts?.length === 2, `${prefix}: q12 needs two independent sequences`);
+      meta.rows.forEach((row, index) => {
+        const values = [...row.values];
+        values[row.blankIndex] = row.answer;
+        if (index === 0) {
+          assert(values.every((value, position) => position < 3 || value === values[position - 3] + 4), `${prefix}: q12 first grouped sequence disagrees`);
+        } else {
+          assert(values.every((value, position) => position < 3 || value === values[position - 3] + 1), `${prefix}: q12 second grouped sequence disagrees`);
+        }
+      });
+    } else if (meta.sourceNumber === 13) {
+      assert(meta.answer === meta.first + meta.increase * (meta.target - 1), `${prefix}: q13 shared-side growth disagrees`);
+      assert(answerNumber === meta.answer && meta.target === 7, `${prefix}: q13 source target changed`);
+    } else if (meta.sourceNumber === 14) {
+      assert(meta.white - meta.dark === meta.answer && meta.answer === meta.target, `${prefix}: q14 triangle color difference disagrees`);
+      assert(answerNumber === meta.answer && meta.target === 8, `${prefix}: q14 source target changed`);
+    } else if (meta.sourceNumber === 15) {
+      assert(2 ** meta.folds === meta.pieces, `${prefix}: q15 reverse fold count disagrees`);
+      assert(answerNumber === meta.folds, `${prefix}: q15 answer must be the fold count`);
+    } else if (meta.sourceNumber === 16) {
+      assert(meta.rows.every(([left, center, right]) => left + right === center), `${prefix}: q16 row sums disagree`);
+      assert(answerNumber === meta.answer && meta.answer === meta.rows[3][1] % 10, `${prefix}: q16 target digit disagrees`);
+    } else if (meta.sourceNumber === 17) {
+      assert(meta.rows.every(([first, second, third, fourth]) => first - second + third === fourth), `${prefix}: q17 row rule disagrees`);
+      assert(answerNumber === meta.answer, `${prefix}: q17 answer disagrees`);
+    } else if (meta.sourceNumber === 18) {
+      assert(meta.items.every(({ top, left, center, right }) => top + left + center === right), `${prefix}: q18 triangle relation disagrees`);
+      assert(answerNumber === meta.answer, `${prefix}: q18 answer disagrees`);
+    } else if ([19, 20].includes(meta.sourceNumber)) {
+      const digits = Array.from({ length: meta.size }, (_, index) => index + 1).join(",");
+      const rows = Array.from({ length: meta.size }, (_, row) => meta.solution.slice(row * meta.size, row * meta.size + meta.size));
+      const columns = Array.from({ length: meta.size }, (_, column) => rows.map((row) => row[column]));
+      assert([...rows, ...columns].every((line) => [...line].sort((a, b) => a - b).join(",") === digits), `${prefix}: sudoku row or column invalid`);
+      const regionOf = (index) => meta.regionMap
+        ? meta.regionMap[index]
+        : Math.floor(Math.floor(index / meta.size) / meta.regionRows) * (meta.size / meta.regionColumns) + Math.floor((index % meta.size) / meta.regionColumns);
+      const regions = Array.from({ length: meta.size }, (_, region) => meta.solution.filter((_, index) => regionOf(index) === region));
+      assert(regions.every((region) => [...region].sort((a, b) => a - b).join(",") === digits), `${prefix}: sudoku region invalid`);
+      assert(meta.cells.every((value, index) => value == null || value === meta.solution[index]), `${prefix}: sudoku clue disagrees with answer`);
+      assert(sudokuCompletionCount(meta) === 1, `${prefix}: sudoku must have one completion`);
+      assert(problem.answerVisual?.cells?.every((value, index) => value === meta.solution[index]), `${prefix}: full sudoku answer visual missing`);
+    } else if (meta.sourceNumber === 21) {
+      assert(meta.items.every(({ top, left, right, bottom, center }) => top + center === left + right + bottom), `${prefix}: q21 diamond relation disagrees`);
+      assert(answerNumber === meta.answer, `${prefix}: q21 answer disagrees`);
+    } else if (meta.sourceNumber === 23) {
+      let count = 0;
+      let target = null;
+      for (let square = 1; square <= 9; square += 1) for (let diamond = 1; diamond <= 9; diamond += 1) for (let triangle = 1; triangle <= 9; triangle += 1) for (let circle = 1; circle <= 9; circle += 1) {
+        if (new Set([square, diamond, triangle, circle]).size !== 4) continue;
+        if (diamond * 3 !== square * 4 || triangle * 3 !== square * 5 || diamond + triangle !== square + circle) continue;
+        count += 1;
+        target = circle;
+      }
+      assert(count === 1 && target === answerNumber && answerNumber === meta.values.circle, `${prefix}: q23 must have one assignment`);
+    } else if (meta.sourceNumber === 25) {
+      assert(meta.previous.white <= meta.previous.black, `${prefix}: q25 previous stage already qualifies`);
+      assert(meta.current.white > meta.current.black && meta.current.stage === meta.previous.stage + 1, `${prefix}: q25 first qualifying stage disagrees`);
+      assert(answerNumber === meta.target, `${prefix}: q25 answer disagrees`);
+    }
+    return;
+  }
   if (entry.typeId === "fold-number-cut-sum-textbook") {
     const folded = (index, direction) => ["down", "right"].includes(direction)
       ? Math.max(index, 3 - index) - 2 : Math.min(index, 3 - index);
@@ -162,8 +297,8 @@ const auditGeneratedContracts = (bookId, links) => {
       assert(!/undefined|NaN|\[object Object\]/.test(`${problem.prompt}${problem.answer}${problem.solution}`), `${prefix}: invalid generated text`);
       assert((problem.responseKind || "text") === entry.generatorContract.responseKind, `${prefix}: generated response kind differs from contract`);
       independentCheck(entry, problem, prefix);
-      const markup = render(bookId, problem);
-      if (problem.visual?.kind === "book1" || problem.visual?.kind === "book2") {
+      const markup = [render(bookId, problem), ...(problem.parts || []).map((part) => render(bookId, part))].join("");
+      if (problem.visual?.kind === "book1" || problem.visual?.kind === "book2" || problem.parts?.some((part) => ["book1", "book2"].includes(part.visual?.kind))) {
         assert(markup.trim().length > 30, `${prefix}: renderer produced blank markup`);
       }
     }
@@ -191,13 +326,34 @@ const auditBook02MatrixStress = () => {
   }
 };
 
+const BOOK02_STRESS_VARIANTS = 20;
+const auditBook02SourceStress = () => {
+  for (const entry of BOOK02_UNIT_TEST_LINKS) {
+    const type = typeById(entry.typeId);
+    const sourceCase = {
+      mode: entry.generationCaseMode,
+      sourceKey: `unit-test:book-02:q${entry.number}`,
+      sourceKind: "unit-test",
+      sourceId: "book-02",
+      number: entry.number,
+      sourceFidelity: entry.sourceFidelity
+    };
+    for (const difficulty of [1, 2, 3]) {
+      for (let sample = 0; sample < BOOK02_STRESS_VARIANTS; sample += 1) {
+        const problem = GENERATORS[type.generator]({ difficulty, sourceCase });
+        independentCheck(entry, problem, `book-02 q${String(entry.number).padStart(2, "0")} source stress d${difficulty} sample${sample + 1}`);
+      }
+    }
+  }
+};
+
 assert(LEARNER_STAGE === "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정", "learner stage contract changed");
 assert(BOOK01_02_UNIT_TEST_LINKS["book-01"] === BOOK01_UNIT_TEST_LINKS, "book-01 export alias mismatch");
 assert(BOOK01_02_UNIT_TEST_LINKS["book-02"] === BOOK02_UNIT_TEST_LINKS, "book-02 export alias mismatch");
 for (const [bookId, links] of Object.entries(BOOK01_02_UNIT_TEST_LINKS)) {
   assert(CURRICULUM.find((book) => book.id === bookId).source.unitTestQuestions.length === links.length, `${bookId}: inventory is not connected`);
 }
-assert(BOOK02_UNIT_TEST_LINKS.filter((entry) => [7, 9, 23].includes(entry.number)).every((entry) => !entry.verified), "Source-incompatible division and equation contracts must remain held");
+assert(BOOK02_UNIT_TEST_LINKS.every((entry) => entry.verified), "Every Book 2 source contract must have a verified source-shaped generator");
 assert(BOOK02_UNIT_TEST_LINKS.filter((entry) => [1, 2, 22].includes(entry.number)).every((entry) => entry.verified), "Source-shaped matrix generators must stay enabled");
 
 auditLinks("book-01", BOOK01_UNIT_TEST_LINKS);
@@ -205,6 +361,7 @@ auditLinks("book-02", BOOK02_UNIT_TEST_LINKS);
 auditGeneratedContracts("book-01", BOOK01_UNIT_TEST_LINKS);
 auditGeneratedContracts("book-02", BOOK02_UNIT_TEST_LINKS);
 auditBook02MatrixStress();
+auditBook02SourceStress();
 
 const counts = (links) => ({ total: links.length, verified: links.filter((entry) => entry.verified).length, held: links.filter((entry) => !entry.verified).length });
 const result = {
@@ -215,6 +372,7 @@ const result = {
   },
   generatedVariantsPerVerifiedLink: Math.min(variants, 3),
   matrixStressSamples: 3 * 3 * 100,
+  book02SourceStressSamples: 25 * 3 * BOOK02_STRESS_VARIANTS,
   status: failures.length ? "FAIL" : "BOOK01_BOOK02_UNIT_TEST_LINKS_OK",
   failures
 };

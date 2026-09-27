@@ -32,6 +32,11 @@ window.NM_UNITS['T-AD1'] = {
       en:'Bigger numbers, same method! Add place by place. Warm up with addition!',
       zh:'数字变大方法不变！按数位相加。先热身做加法！' } },
   discover:{
+    story:{
+      hook:{ ko:'비밀번호를 수첩에 적어 두면 위험하죠. 그런데 적어 두고도 안전한 방법이 있어요. 무엇일까요?', en:'Writing your PIN in a notebook is risky. Yet there is a way to write it down and still be safe. What is it?', zh:'把密码写在本子上很危险。但有一种办法，写下来也依然安全。是什么呢？' },
+      history:{ ko:'자리마다 <b>열쇠 수</b>를 더해서 적는 거예요. 비밀번호가 2001이고 열쇠가 2345라면 천의 자리끼리 2+2=4, 백의 자리끼리 0+3=3, 십의 자리끼리 0+4=4, 일의 자리끼리 1+5=6 — 수첩에는 <b>4346</b>이라고 적습니다. 열쇠만 머릿속에 있으면 자리끼리 다시 빼서 2001을 되찾을 수 있고, 남이 4346을 봐도 알 길이 없어요. 네 자리 덧셈과 뺄셈이 그대로 암호가 되는 거예요.', en:'You add a <b>key number</b> place by place. If the PIN is 2001 and the key is 2345, then thousands 2+2=4, hundreds 0+3=3, tens 0+4=4, ones 1+5=6 — and you write <b>4346</b> in your notebook. Keep only the key in your head and you can subtract place by place to get 2001 back, while anyone reading 4346 learns nothing. Four-digit adding and subtracting becomes a code.', zh:'办法是按数位加上一个<b>钥匙数</b>。密码是2001，钥匙是2345，那么千位2+2=4，百位0+3=3，十位0+4=4，个位1+5=6——本子上写的是<b>4346</b>。钥匙只记在脑子里，按数位减回去就得到2001；别人看见4346也毫无头绪。四位数的加减法就这样变成了密码。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 저금통 이야기',en:'1) Piggy bank story',zh:'① 存钱罐的故事'},
@@ -99,6 +104,11 @@ window.NM_UNITS['T-NS1'] = {
       en:'First review place names: ones, tens, hundreds, thousands. Find the digit at each place!',
       zh:'先复习数位名称：个·十·百·千。找出每个数位上的数字！' } },
   discover:{
+    story:{
+      hook:{ ko:'선거권자가 3천5백만 명이에요. 누가 이길지 알아보려면 몇 명에게 물어봐야 할까요?', en:'Thirty-five million people can vote. To predict who wins, how many of them do you have to ask?', zh:'有三千五百万人拥有选票。要预测谁会赢，需要问多少人？' },
+      history:{ ko:'1천5백 명이면 됩니다. 3천5백만을 1천5백으로 나누면 약 2만 3천 — <b>2만 3천 명 중 한 명</b>에게만 물어보는 셈이에요. 대신 조사 기관은 답을 말할 때 오차도 함께 말합니다. "지지도 40.3%, 표본오차 ±2.0%"는 진짜 값이 <b>38.3%와 42.3% 사이</b>라는 뜻이에요. 그래서 40.3%와 39.9%처럼 차이가 작으면 결과가 뒤집힐 수도 있습니다. 큰 수는 전부 세지 않고도 다룰 수 있지만, 그때는 오차를 같이 말해야 해요.', en:'Fifteen hundred is enough. Thirty-five million divided by fifteen hundred is about twenty-three thousand — so <b>one person in 23,000</b> is asked. In return, pollsters always report the margin with the answer. "40.3% support, margin of error ±2.0%" means the true figure sits <b>between 38.3% and 42.3%</b>. That is why 40.3% against 39.9% can still flip. Big numbers can be handled without counting every one — but then the error has to be said out loud too.', zh:'一千五百人就够了。三千五百万除以一千五百约等于两万三千——也就是<b>每两万三千人里只问一个</b>。作为代价，调查机构公布结果时一定会附上误差：“支持率40.3%，抽样误差±2.0%”意思是真实数值落在<b>38.3%到42.3%之间</b>。所以40.3%对39.9%仍可能反转。大数不必一个个数也能把握，但必须把误差一起说清楚。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 조회수 이야기',en:'1) View-count story',zh:'① 播放量的故事'},
@@ -377,6 +387,11 @@ window.NM_UNITS['T-FR1'] = {
       en:"Let's learn fractions with pizza! Just count total pieces and eaten pieces.",
       zh:'用比萨学分数！数一数总块数和吃掉的块数就行。' } },
   discover:{
+    story:{
+      hook:{ ko:'기타 줄의 한가운데를 누르고 튕기면 어떤 소리가 날까요?', en:'Press a guitar string exactly in the middle and pluck it. What note comes out?', zh:'按住吉他弦的正中间再拨动，会发出什么音？' },
+      history:{ ko:'같은 <b>도</b>인데, 한 옥타브 높은 도가 납니다. 줄의 길이를 <b>1/2</b>로 줄이면 떨리는 횟수가 두 배가 되기 때문이에요. 1 m짜리 줄에서 도가 났다면, 0.5 m 지점을 눌러 한 옥타브 위 도를, <b>2/3</b>인 약 0.67 m 지점을 눌러 솔을 얻습니다. 음계의 이름은 사실 <b>분수의 이름</b>이었던 거예요.', en:'The same note <b>do</b> — but an octave higher. Halving the string to <b>1/2</b> doubles how fast it vibrates. If a 1 m string sounds do, press at 0.5 m for the do an octave up, and at <b>2/3</b> of the string, about 0.67 m, for sol. The names of the scale are really the names of <b>fractions</b>.', zh:'是同一个<b>do</b>，但高了一个八度。弦长缩成<b>1/2</b>，振动次数就翻倍。1米的弦发出do，按在0.5米处得到高八度的do，按在弦长<b>2/3</b>约0.67米处得到sol。音阶的名字，其实就是<b>分数的名字</b>。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 피자 한 조각',en:'1) One pizza slice',zh:'① 一块比萨'},
@@ -455,7 +470,7 @@ window.NM_UNITS['T-FR2'] = {
           zh:'一个蛋糕切4块。有<b>7块</b>是几个蛋糕？4块拼成<b>一整个</b>，还剩3块→<b>1又3/4</b>！像7/4这样分子≥分母的叫<b>假分数</b>，写成"1又3/4"的叫<b>带分数</b>。'},
         mathSteps:['\\dfrac{7}{4}',{ko:'4조각 = 1판, 3조각 남음',en:'\\text{4 slices = 1 pizza, 3 left}',zh:'4块 = 1个，剩3块'},'= 1\\dfrac{3}{4}'],
         result:{ko:'같은 양이에요! 옷만 갈아입은 것.',en:'The same amount — just a change of clothes!',zh:'同一个量——只是换了衣服！'},
-        book:{ko:'가분수→대분수는 나눗셈: 7÷4=1…3 → 몫이 정수, 나머지가 분자!',en:'Improper→mixed is division: 7÷4=1 r3 → quotient is the whole, remainder the numerator!',zh:'假分数→带分数用除法：7÷4=1……3→商是整数部分，余数是分子！'} },
+        book:{ko:'가분수→대분수는 나눗셈: 7÷4=1…3 → 몫이 자연수, 나머지가 분자!',en:'Improper→mixed is division: 7÷4=1 r3 → quotient is the whole, remainder the numerator!',zh:'假分数→带分数用除法：7÷4=1……3→商是整数部分，余数是分子！'} },
       { tag:{ko:'② 나눗셈으로 변신',en:'2) Transform by division',zh:'② 用除法变身'},
         head:{ko:'가분수→대분수: 분자÷분모!',en:'Improper→mixed: top ÷ bottom!',zh:'假分数→带分数：分子÷分母！'},
         desc:{ko:'몫과 나머지를 배웠으니 이제 써먹을 시간! <b>분자÷분모</b>를 하면 몫이 "몇 판", 나머지가 "남은 조각". 9/4라면 9÷4=2…1이니 <b>2와 1/4</b>. 나머지 나눗셈이 분수 나라에서 이렇게 다시 만나요!',
@@ -465,15 +480,15 @@ window.NM_UNITS['T-FR2'] = {
         result:{ko:'배운 마법은 꼭 다시 쓰여요 — 나머지 나눗셈처럼!',en:'Old magic always returns — like remainder division!',zh:'学过的魔法总会再用上——就像余数除法！'},
         book:null },
       { tag:{ko:'③ 반대로 변신',en:'3) Transform back',zh:'③ 反向变身'},
-        head:{ko:'대분수→가분수: 정수×분모+분자!',en:'Mixed→improper: whole×bottom+top!',zh:'带分数→假分数：整数×分母+分子！'},
-        desc:{ko:'2와 1/4을 가분수로 되돌리려면? 판 2개는 조각 <b>2×4=8개</b>, 더하기 낱조각 1개 = <b>9조각</b> → 9/4! 공식: <b>정수×분모+분자</b>가 새 분자. 계산할 땐 가분수가, 크기를 느낄 땐 대분수가 편해요.',
+        head:{ko:'대분수→가분수: 자연수×분모+분자!',en:'Mixed→improper: whole×bottom+top!',zh:'带分数→假分数：整数×分母+分子！'},
+        desc:{ko:'2와 1/4을 가분수로 되돌리려면? 판 2개는 조각 <b>2×4=8개</b>, 더하기 낱조각 1개 = <b>9조각</b> → 9/4! 공식: <b>자연수×분모+분자</b>가 새 분자. 계산할 땐 가분수가, 크기를 느낄 땐 대분수가 편해요.',
           en:'Turn 2¼ back: 2 cakes are <b>2×4=8 pieces</b>, plus 1 loose piece = <b>9</b> → 9/4! Formula: <b>whole×bottom+top</b> gives the new numerator. Improper is handy for computing; mixed for sensing size.',
           zh:'把2又1/4变回去：2个蛋糕是<b>2×4=8块</b>，加1块散的＝<b>9块</b>→9/4！公式：<b>整数×分母+分子</b>＝新分子。计算用假分数方便，感受大小用带分数直观。'},
         mathSteps:['2\\dfrac{1}{4}','2 \\times 4 + 1 = 9','= \\dfrac{9}{4}'],
         result:{ko:'두 방향 다 자유자재로 — 분수 변신술 완성!',en:'Both directions mastered — transformation complete!',zh:'两个方向都熟练——分数变身术完成！'},
         book:null }
     ],
-    rule:{ ko:'① 가분수(분자≥분모) ↔ 대분수(정수+진분수) ② 가→대: 분자÷분모(몫…나머지) ③ 대→가: 정수×분모+분자',
+    rule:{ ko:'① 가분수(분자≥분모) ↔ 대분수(자연수+진분수) ② 가→대: 분자÷분모(몫…나머지) ③ 대→가: 자연수×분모+분자',
       en:'① Improper (top≥bottom) ↔ mixed (whole+proper) ② Improper→mixed: divide top by bottom ③ Mixed→improper: whole×bottom+top',
       zh:'① 假分数(分子≥分母)↔带分数(整数+真分数) ② 假→带：分子÷分母 ③ 带→假：整数×分母+分子' }
   },
@@ -584,6 +599,11 @@ window.NM_UNITS['T-DV3'] = {
       en:'Find every number that divides 12 — hunt in pairs so you miss none!',
       zh:'找出所有能整除12的数——成对找就不会漏！' } },
   discover:{
+    story:{
+      hook:{ ko:'1부터 50까지 죽 써 놓고 배수를 차례로 지워 나가면, 마지막에 무엇이 남을까요?', en:'Write 1 to 50 in a row and cross out the multiples one family at a time. What is left at the end?', zh:'把1到50依次写下来，再一组一组划掉倍数，最后会剩下什么？' },
+      history:{ ko:'먼저 1을 지우고, 2는 남긴 뒤 2의 배수를 전부 지웁니다. 다음에 살아남은 3을 남기고 3의 배수를 지우고, 그 다음 5, 그 다음 7… 이렇게 하면 <b>약수가 1과 자기 자신뿐인 수</b>만 남아요. 소수입니다. 이 방법을 만든 사람은 그림자로 지구 둘레를 잰 <b>에라토스테네스</b>고, 촘촘한 구멍으로 걸러 낸다고 해서 <b>체</b>라고 부릅니다. 소수는 몇 개까지 있을까요? 유클리드가 2300년 전에 답했어요 — 끝이 없습니다.', en:'Cross out 1, keep 2 and delete every multiple of 2. Keep the next survivor, 3, and delete its multiples; then 5, then 7… What remains are the numbers <b>whose only divisors are 1 and themselves</b> — the primes. The method comes from <b>Eratosthenes</b>, the man who measured the Earth with a shadow, and it is called a <b>sieve</b> because it strains the numbers through. How many primes are there? Euclid answered 2,300 years ago — they never run out.', zh:'先划掉1，留下2并划掉所有2的倍数；再留下幸存的3，划掉3的倍数；然后是5、7……最后剩下的，就是<b>约数只有1和自己</b>的数——质数。这个方法出自用影子量出地球周长的<b>埃拉托色尼</b>，因为像筛子一样把数滤过去，所以叫作<b>筛法</b>。质数有多少个？欧几里得在2300年前就回答了——没有尽头。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 타일 직사각형',en:'1) Tile rectangles',zh:'① 瓷砖长方形'},
@@ -649,57 +669,62 @@ window.NM_UNITS['T-DV4'] = {
   subtitle:{ ko:'두 수가 함께 가진 약수와 배수를 찾아요!', en:'Find the common factors and multiples of two numbers!', zh:'找两个数共同拥有的因数和倍数！' },
   icon:'🔗',
   practice:{ generator:'dv7_gcdLcm', level:'practice', count:4, params:{ mode:'gcd' },
-    intro:{ ko:'두 수 모두의 약수 = 공약수! 그 중 가장 큰 것 = 최대공약수(GCD).',
+    intro:{ ko:'두 수 모두의 약수 = 공약수! 그 중 가장 큰 것 = 최대공약수.',
       en:'A factor of both numbers = common factor! The largest one = GCD.',
-      zh:'两个数共同的因数=公因数！其中最大的=最大公因数(GCD)。' } },
+      zh:'两个数共同的因数=公因数！其中最大的=最大公因数。' } },
   discover:{
+    story:{
+      hook:{ ko:'올해가 갑진년이라면, 다음 갑진년은 몇 년 뒤에 올까요?', en:'If this year is called gapjin, how many years until the next gapjin?', zh:'如果今年叫甲辰年，下一个甲辰年要等多少年？' },
+      history:{ ko:'60년 뒤입니다. 해 이름의 앞 글자는 <b>십간</b> 열 개(갑·을·병·정·무·기·경·신·임·계), 뒷 글자는 <b>십이지</b> 열두 개(자·축·인·묘…)가 한 칸씩 같이 돌아가요. 두 바퀴가 다시 겹치는 때가 <b>10과 12의 최소공배수인 60</b>이라 60년마다 같은 이름이 돌아옵니다. 태어난 해 이름이 다시 오는 예순 살을 <b>환갑</b>이라고 하는 이유예요. 앞 글자가 갑인 해는 늘 끝자리가 4 — 갑신정변은 1884년, 갑오년은 1894년이었습니다.', en:'Sixty years. The first syllable of a year name cycles through <b>ten</b> heavenly stems, the second through <b>twelve</b> earthly branches, both stepping one place at a time. The two wheels line up again after <b>the least common multiple of 10 and 12, which is 60</b> — so the same name returns every sixty years. That is why turning sixty, when your birth-year name comes back, has its own name in Korean: <b>hwangap</b>. Years starting with gap always end in 4 — the Gapsin coup was 1884, the gapo year was 1894.', zh:'六十年后。年份名称的第一个字在<b>十天干</b>（甲乙丙丁戊己庚辛壬癸）中轮转，第二个字在<b>十二地支</b>（子丑寅卯……）中轮转，两者各走一格。两个轮子重新对上，正是<b>10和12的最小公倍数60</b>，所以同名的年份每六十年回来一次。六十岁时出生那年的名字重现，因此叫作<b>花甲</b>。以甲开头的年份末位总是4——甲申政变在1884年，甲午年是1894年。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 공약수',en:'1) Common factors',zh:'① 公因数'},
         head:{ko:'두 수가 함께 가진 약수!',en:'Factors shared by two numbers!',zh:'两个数共同拥有的因数！'},
-        desc:{ko:'12의 약수: <b>1, 2, 3, 4, 6, 12</b>. 18의 약수: <b>1, 2, 3, 6, 9, 18</b>. 둘 다 가진 약수 = <b>공약수: 1, 2, 3, 6</b>! 그 중 가장 큰 <b>6 = 최대공약수(GCD)</b>. 최대공약수의 약수 = 전체 공약수, 이것만 알면 다 찾을 수 있어요!',
+        desc:{ko:'12의 약수: <b>1, 2, 3, 4, 6, 12</b>. 18의 약수: <b>1, 2, 3, 6, 9, 18</b>. 둘 다 가진 약수 = <b>공약수: 1, 2, 3, 6</b>! 그 중 가장 큰 <b>6 = 최대공약수</b>. 최대공약수의 약수 = 전체 공약수, 이것만 알면 다 찾을 수 있어요!',
           en:'Factors of 12: <b>1, 2, 3, 4, 6, 12</b>. Factors of 18: <b>1, 2, 3, 6, 9, 18</b>. Shared ones = <b>common factors: 1, 2, 3, 6</b>! The biggest, <b>6 = GCD</b>. All factors of the GCD are common factors — super handy!',
           zh:'12的因数：<b>1、2、3、4、6、12</b>。18的因数：<b>1、2、3、6、9、18</b>。两者共有的=<b>公因数：1、2、3、6</b>！其中最大的<b>6=最大公因数</b>。最大公因数的因数就是全部公因数！'},
-        mathSteps:['12: 1,2,3,4,6,12','18: 1,2,3,6,9,18',{ko:'공약수: 1,2,3,6 → GCD=6',en:'\\text{common factors: } 1,2,3,6 → GCD=6',zh:'公约数：1,2,3,6 → GCD=6'}],
-        result:{ko:'공약수 = GCD의 약수!',en:'Common factors = factors of the GCD!',zh:'公因数＝最大公因数的因数！'},
-        book:{ko:'GCD는 "두 수를 동시에 나눌 수 있는 가장 큰 수"예요. 직사각형 타일 문제에서 자주 나와요!',en:'GCD = "the largest number that divides both" — appears in tiling and sharing problems!',zh:'最大公因数=能同时整除两数的最大数——常出现在铺瓷砖和分组问题中！'} },
+        mathSteps:['12: 1,2,3,4,6,12','18: 1,2,3,6,9,18',{ko:'공약수: 1,2,3,6 → 최대공약수=6',en:'\\text{common factors: } 1,2,3,6 → GCD=6',zh:'公约数：1,2,3,6 → 最大公因数=6'}],
+        result:{ko:'공약수 = 최대공약수의 약수!',en:'Common factors = factors of the GCD!',zh:'公因数＝最大公因数的因数！'},
+        book:{ko:'최대공약수는 "두 수를 동시에 나눌 수 있는 가장 큰 수"예요. 직사각형 타일 문제에서 자주 나와요!',en:'GCD = "the largest number that divides both" — appears in tiling and sharing problems!',zh:'最大公因数=能同时整除两数的最大数——常出现在铺瓷砖和分组问题中！'} },
       { tag:{ko:'② 유클리드 호제법',en:'2) Euclidean algorithm',zh:'② 辗转相除法'},
-        head:{ko:'큰 수도 몇 단계면 GCD 완성!',en:'Even big numbers: GCD in just a few steps!',zh:'大数也能几步求出最大公因数！'},
-        desc:{ko:'48과 36의 GCD? 직접 약수 찾기엔 오래 걸려요. <b>유클리드 호제법</b>: ①큰 수 ÷ 작은 수의 나머지를 구하고 ②나머지가 0이 될 때까지 반복! <b>48 = 36×1 + 12 → 36 = 12×3 + 0</b> → GCD = <b>12</b>!',
+        head:{ko:'큰 수도 몇 단계면 최대공약수 완성!',en:'Even big numbers: GCD in just a few steps!',zh:'大数也能几步求出最大公因数！'},
+        desc:{ko:'48과 36의 최대공약수는? 직접 약수 찾기엔 오래 걸려요. <b>유클리드 호제법</b>: ①큰 수 ÷ 작은 수의 나머지를 구하고 ②나머지가 0이 될 때까지 반복! <b>48 = 36×1 + 12 → 36 = 12×3 + 0</b> → 최대공약수 = <b>12</b>!',
           en:'GCD of 48 and 36? Finding all factors takes too long. <b>Euclidean algorithm</b>: ① find the remainder of big÷small, ② repeat until remainder=0! <b>48 = 36×1+12 → 36 = 12×3+0</b> → GCD = <b>12</b>!',
           zh:'48和36的最大公因数？直接找因数太慢。<b>辗转相除法</b>：①求大数÷小数的余数，②余数为0时停止！<b>48=36×1+12→36=12×3+0</b>→最大公因数=<b>12</b>！'},
-        mathSteps:['48 ÷ 36 = 1 ··· 12','36 ÷ 12 = 3 ··· 0','GCD(48, 36) = 12'],
-        result:{ko:'나머지가 0이 될 때 마지막 나누는 수 = GCD!',en:'The last divisor before remainder=0 is the GCD!',zh:'余数变为0时的最后除数＝最大公因数！'},
+        mathSteps:['48 ÷ 36 = 1 ··· 12','36 ÷ 12 = 3 ··· 0',{ko:'최대공약수(48, 36) = 12',en:'\\gcd(48, 36) = 12',zh:'最大公因数(48, 36) = 12'}],
+        result:{ko:'나머지가 0이 될 때 마지막 나누는 수 = 최대공약수!',en:'The last divisor before remainder=0 is the GCD!',zh:'余数变为0时的最后除数＝最大公因数！'},
         book:null },
       { tag:{ko:'③ 최소공배수',en:'3) LCM',zh:'③ 最小公倍数'},
-        head:{ko:'GCD만 알면 LCM도 1초!',en:'Know the GCD? LCM takes 1 second!',zh:'知道最大公因数，最小公倍数1秒搞定！'},
-        desc:{ko:'공배수는 두 수 모두의 배수. 4의 배수: 4,8,12,16,20,<b>24</b>… 6의 배수: 6,12,18,<b>24</b>… 공배수: 12, 24, 36… 그 중 가장 작은 <b>12 = 최소공배수(LCM)</b>! 공식: <b>LCM = a × b ÷ GCD</b>. 4×6÷2 = <b>12</b>!',
+        head:{ko:'최대공약수만 알면 최소공배수도 1초!',en:'Know the GCD? LCM takes 1 second!',zh:'知道最大公因数，最小公倍数1秒搞定！'},
+        desc:{ko:'공배수는 두 수 모두의 배수. 4의 배수: 4,8,12,16,20,<b>24</b>… 6의 배수: 6,12,18,<b>24</b>… 공배수: 12, 24, 36… 그 중 가장 작은 <b>12 = 최소공배수</b>! 공식: <b>최소공배수 = a × b ÷ 최대공약수</b>. 4×6÷2 = <b>12</b>!',
           en:'Common multiples appear in both lists. Multiples of 4: 4,8,12… Multiples of 6: 6,12,18… First shared: <b>12 = LCM</b>! Formula: <b>LCM = a × b ÷ GCD</b>. 4×6÷2 = <b>12</b>!',
-          zh:'公倍数是两个数共同的倍数。4的倍数：4、8、12……6的倍数：6、12、18……最小公倍数：<b>12</b>！公式：<b>LCM = a × b ÷ GCD</b>。4×6÷2 = <b>12</b>！'},
-        mathSteps:['GCD(4, 6) = 2','LCM = 4 × 6 ÷ 2','= 12'],
-        result:{ko:'LCM = 두 수의 곱 ÷ GCD!',en:'LCM = product of two numbers ÷ GCD!',zh:'LCM＝两数之积÷最大公因数！'},
+          zh:'公倍数是两个数共同的倍数。4的倍数：4、8、12……6的倍数：6、12、18……最小公倍数：<b>12</b>！公式：<b>最小公倍数 = a × b ÷ 最大公因数</b>。4×6÷2 = <b>12</b>！'},
+        mathSteps:[{ko:'최대공약수(4, 6) = 2',en:'\\gcd(4, 6) = 2',zh:'最大公因数(4, 6) = 2'},{ko:'최소공배수 = 4 × 6 ÷ 2',en:'\\text{lcm} = 4 \\times 6 \\div 2',zh:'最小公倍数 = 4 × 6 ÷ 2'},'= 12'],
+        result:{ko:'최소공배수 = 두 수의 곱 ÷ 최대공약수!',en:'LCM = product of two numbers ÷ GCD!',zh:'最小公倍数＝两数之积÷最大公因数！'},
         book:null }
     ],
-    rule:{ ko:'① 공약수 = GCD의 약수 ② GCD: 나머지 0까지 나누기 반복 ③ LCM = a×b÷GCD',
+    rule:{ ko:'① 공약수 = 최대공약수의 약수 ② 최대공약수: 나머지 0까지 나누기 반복 ③ 최소공배수 = a×b÷최대공약수',
       en:'① Common factors = factors of GCD ② GCD: divide until remainder=0 ③ LCM = a×b÷GCD',
-      zh:'① 公因数=最大公因数的因数 ② 辗转相除至余数为0 ③ LCM=a×b÷最大公因数' }
+      zh:'① 公因数=最大公因数的因数 ② 辗转相除至余数为0 ③ 最小公倍数=a×b÷最大公因数' }
   },
   check:{
     fills:[
-      { tex:'\\gcd(12,\\,18) = \\square', answer:6,
+      { tex:{ko:'\\text{최대공약수}(12,\\,18) = \\square',en:'\\gcd(12,\\,18) = \\square',zh:'\\text{最大公因数}(12,\\,18) = \\square'}, answer:6,
         hint:{ ko:'12의 약수: 1,2,3,4,6,12 / 18의 약수: 1,2,3,6,9,18 → 공약수 1,2,3,6', en:'Factors of 12: 1,2,3,4,6,12 / Factors of 18: 1,2,3,6,9,18 → common: 1,2,3,6', zh:'12的因数：1,2,3,4,6,12 / 18的因数：1,2,3,6,9,18 → 公因数：1,2,3,6' } },
-      { tex:'\\text{lcm}(4,\\,6) = \\square', answer:12,
-        hint:{ ko:'GCD(4,6)=2, LCM=4×6÷2=12', en:'GCD(4,6)=2, LCM=4×6÷2=12', zh:'GCD(4,6)=2，LCM=4×6÷2=12' } }
+      { tex:{ko:'\\text{최소공배수}(4,\\,6) = \\square',en:'\\text{lcm}(4,\\,6) = \\square',zh:'\\text{最小公倍数}(4,\\,6) = \\square'}, answer:12,
+        hint:{ ko:'4와 6의 최대공약수=2, 최소공배수=4×6÷2=12', en:'GCD(4,6)=2, LCM=4×6÷2=12', zh:'4和6的最大公因数=2，最小公倍数=4×6÷2=12' } }
     ],
     open:{ ko:'24와 36의 최대공약수를 유클리드 호제법으로 구해 보세요.',
       en:'Find GCD(24, 36) using the Euclidean algorithm.',
       zh:'用辗转相除法求24和36的最大公因数。' },
-    openHint:{ ko:'36 ÷ 24 = 1 ··· 12 → 24 ÷ 12 = 2 ··· 0 → GCD = 12',
+    openHint:{ ko:'36 ÷ 24 = 1 ··· 12 → 24 ÷ 12 = 2 ··· 0 → 최대공약수 = 12',
       en:'36 ÷ 24 = 1 r 12 → 24 ÷ 12 = 2 r 0 → GCD = 12',
-      zh:'36÷24=1余12→24÷12=2余0→GCD=12' }
+      zh:'36÷24=1余12→24÷12=2余0→最大公因数=12' }
   },
   lab:{ generator:'dv7_gcdLcm', level:'main', count:4, params:{ mode:'lcm' },
-    intro:{ ko:'이제 최소공배수! GCD를 먼저 구하고 공식에 넣어요.',
+    intro:{ ko:'이제 최소공배수! 최대공약수를 먼저 구하고 공식에 넣어요.',
       en:'Now for LCM! Find the GCD first, then apply the formula.',
       zh:'现在求最小公倍数！先求最大公因数，再套公式。' } },
   arena:{ generator:'dv7_gcdLcm', level:'main', count:8, timeLimit:300, params:{ mode:'gcd' },
@@ -860,6 +885,11 @@ window.NM_UNITS['T-MX1'] = {
       en:'Addition and multiplication in one line — who goes first? Learn the rule!',
       zh:'加法和乘法在一个算式里——谁先算？来学规则！' } },
   discover:{
+    story:{
+      hook:{ ko:'"3에 5를 더한 다음 2를 곱해"와 "3에, 5에 2를 곱한 것을 더해". 말은 비슷한데 답은 같을까요?', en:'"Add 5 to 3, then multiply by 2" and "To 3, add 5 multiplied by 2." The words look alike — do the answers match?', zh:'“3加5，再乘2”和“3加上5乘2”。说法差不多，答案一样吗？' },
+      history:{ ko:'다릅니다. 앞은 (3+5)×2 = <b>16</b>, 뒤는 3+(5×2) = <b>13</b>이에요. 말로 하면 길어지고, 길어지면 이렇게 헷갈립니다. 그래서 수학은 <b>기호</b>를 씁니다 — 괄호를 치고, "곱셈과 나눗셈을 먼저"라는 약속을 정해 두면 한 줄로 쓰고도 뜻이 단 하나로 정해져요. 혼합 계산의 규칙은 외워야 할 잔소리가 아니라, <b>모호함을 없애려고 사람들이 정한 약속</b>입니다.', en:'They differ: the first is (3+5)×2 = <b>16</b>, the second is 3+(5×2) = <b>13</b>. Said in words it gets long, and long sentences get confusing. That is why mathematics uses <b>symbols</b> — put in brackets, agree that multiplication and division come first, and one short line has exactly one meaning. The rules of mixed calculation are not nagging to memorise; they are <b>an agreement people made to remove the ambiguity</b>.', zh:'不一样：前者是(3+5)×2 = <b>16</b>，后者是3+(5×2) = <b>13</b>。用话说会变长，一长就容易混。所以数学要用<b>符号</b>——加上括号，再约定“先乘除后加减”，一行字就只有一种意思。混合运算的规则不是要死记的唠叨，而是<b>人们为了消除歧义而定下的约定</b>。' }
+    },
+   
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
       { tag:{ko:'① 문방구 이야기',en:'1) Stationery story',zh:'① 文具店的故事'},

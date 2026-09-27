@@ -49,7 +49,7 @@ window.NM_UNITS['H-05'] = {
               en:'Let x=0.333…. Multiply by 10: 10x=3.333…. Now subtract <b>10x−x</b>, and the repeating part vanishes: 9x=3, so x=3/9=<b>1/3</b>! For a two-digit block (like 0.232323…), multiply by 100 and subtract 100x−x — shift by exactly the block\'s length before subtracting.',
               zh:'设x=0.333…。乘以10：10x=3.333…。现在做<b>10x−x</b>，重复的部分就消失了：9x=3，所以x=3/9=<b>1/3</b>！如果循环节是两位（比如0.232323…），就乘100再做100x−x——关键是按循环节的长度移位再相减。'},
         mathSteps:['x = 0.333…','10x = 3.333…','10x−x = 9x = 3','x = 3/9 = 1/3'],
-        result:{ko:'0.\\overline{3} = 1/3! 자리를 옮겨 빼면 반복되는 부분이 사라져요.',en:'0.\\overline{3} = 1/3! Shifting and subtracting erases the repeat.',zh:'0.\\overline{3} = 1/3！移位相减，重复部分就消失了。'},
+        result:{ko:'0.333… = 1/3! 자리를 옮겨 빼면 반복되는 부분이 사라져요.',en:'0.333… = 1/3! Shifting and subtracting erases the repeat.',zh:'0.333… = 1/3！移位相减，重复部分就消失了。'},
         book:{ko:'이 방정식 방법(10★−★=정수)은 중학교 2학년에서 배우는 내용이에요. 여러분은 벌써 알고 있는 거예요!',
               en:'This equation trick (10★−★=whole number) is taught in middle school — you already know it!',
               zh:'这个方程小技巧（10★−★=整数）是初中才学的——你已经提前会了！'} }
@@ -66,9 +66,9 @@ window.NM_UNITS['H-05'] = {
       { tex:'17 \\div 99 = 0.\\overline{\\square}', answer:17,
         hint:{ ko:'99로 나누면 두 자리씩 그대로', en:'÷99 repeats two digits at a time', zh:'除以99两位两位重复' } }
     ],
-    open:{ ko:'0.\\overline{45}를 방정식으로 분수로 바꾸고, 왜 100을 곱해야 하는지 설명해 봐요.',
-      en:'Turn 0.\\overline{45} into a fraction using the equation method, and explain why you multiply by 100.',
-      zh:'用方程法把0.\\overline{45}化成分数，说说为什么要乘以100。' },
+    open:{ ko:'0.454545…를 방정식으로 분수로 바꾸고, 왜 100을 곱해야 하는지 설명해 봐요.',
+      en:'Turn 0.454545… into a fraction using the equation method, and explain why you multiply by 100.',
+      zh:'用方程法把0.454545…化成分数，说说为什么要乘以100。' },
     openHint:{ ko:'예) x=0.454545…, 100x=45.454545…, 100x−x=99x=45, x=45/99. 반복마디가 두 자리라서 100을 곱해야 자리가 맞아 빼져요.',
       en:'e.g. x=0.454545…, 100x=45.454545…, 100x−x=99x=45, x=45/99. The block is 2 digits, so ×100 lines things up for subtracting.',
       zh:'例）x=0.454545…，100x=45.454545…，100x−x=99x=45，x=45/99。循环节是两位，所以要乘100才能对齐相减。' }

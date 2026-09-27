@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#155d62" />
+  <title>GFIELD Paper Fold</title>
+  <link rel="stylesheet" href="./play.css?v=1" />
+</head>
+<body class="pf-play">
+  <header class="pf-header">
+    <a id="exitLink" class="pf-exit" href="../../origami-studio/" title="Exit" aria-label="Exit">&larr;</a>
+    <div class="pf-brand"><strong>GFIELD</strong><span data-text="title">Paper Fold</span></div>
+    <div class="pf-header-actions"><button id="setupToggle" type="button" aria-controls="setupArea" aria-expanded="false" data-text="settings" hidden>설정</button><button id="headerNewRound" type="button" data-text="newRound" hidden>새로 시작</button></div>
+    <label class="pf-language"><span class="pf-sr-only" data-text="language">Language</span><select id="languageSelect"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option><option value="ja">日本語</option></select></label>
+  </header>
+  <main class="pf-main">
+    <div id="setupArea">
+    <nav class="pf-modes" aria-label="Play mode" id="modeNav">
+      <a id="soloLink" href="./index.html" data-text="solo">혼자 풀기</a>
+      <a id="togetherLink" href="?mode=together" data-text="together">함께 풀기</a>
+      <a id="battleLink" href="?mode=battle" data-text="battle">한 기기 배틀</a>
+    </nav>
+    <form id="settingsForm" class="pf-settings">
+      <label><span data-text="level">유형</span><select id="levelSelect" name="level"><option value="1" data-text="level1">접어 자르기</option><option value="2" data-text="level2">접어 구멍 뚫기</option></select></label>
+      <label><span data-text="count">문제 수</span><select id="countSelect" name="count"><option value="10">10</option><option value="20">20</option></select></label>
+      <label id="playersLabel" hidden><span data-text="participants">참가 인원</span><select id="playersSelect" name="players"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
+      <button type="submit" class="pf-secondary" data-text="newRound">새로 시작</button>
+    </form>
+    <section class="pf-summary" aria-labelledby="sessionTitle">
+      <div><h1 id="sessionTitle"></h1><p id="sessionStatus" role="status" aria-live="polite" aria-atomic="true"></p></div>
+      <div class="pf-tallies" id="playerTallies"></div>
+      <label class="pf-shared" id="sharedProgressLabel"><span data-text="sharedProgress">함께 해결한 문제</span><progress id="sharedProgress" max="10" value="0"></progress><strong id="sharedCount">0 / 10</strong></label>
+    </section>
+    </div>
+    <section id="finishBanner" class="pf-results" tabindex="-1" aria-labelledby="finishTitle" hidden><h2 id="finishTitle"></h2><p id="finishText"></p><div id="resultRows"></div><button id="playAgain" class="pf-primary" type="button" data-text="playAgain">한 번 더</button></section>
+    <div id="gameFrames" class="pf-frames"></div>
+    <noscript><p>JavaScript is required. / JavaScript를 켜 주세요.</p></noscript>
+  </main>
+  <script type="module" src="./play.js?v=1"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
-import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js";
+import { BOOK01_02_UNIT_TEST_LINKS } from "./book01-02-unit-test-links.js?v=20260918a";
 
 // 시험 시기 — 학생이 공부하는 시기가 아니라 그 시험지가 실제로 치러지는 시기다.
 // id는 URL 파라미터와 EXAMS의 stage 참조에 쓰이므로 바꾸지 않는다.

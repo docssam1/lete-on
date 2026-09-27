@@ -86,7 +86,7 @@ window.NM_UNITS['H-09'] = {
 
   voice:{
     correct:[ {ko:'정답이야! ✨',en:'Correct!',zh:'答对了！'}, {ko:'딱 좋은 곳에서 쪼갰어! ✂️',en:'Split in just the right spot!',zh:'拆分位置刚刚好！'}, {ko:'대단해! 🌟',en:'Amazing!',zh:'太棒了！'} ],
-    wrong:[ {ko:'가운데 항(2×앞×뒤)을 잊지 않았는지 확인해봐!',en:'Check you didn\'t forget the middle term (2×front×back)!',zh:'检查是否漏掉了中间项(2×前×后)！'}, {ko:'세 조각을 자리값에 맞게 더했는지 봐!',en:'Make sure the three pieces are added at the right place value!',zh:'看看三块是否按正确的位值相加了！'} ],
+    wrong:[ {ko:'가운데 항(2×앞×뒤)을 잊지 않았는지 확인해봐!',en:'Check you didn\'t forget the middle term (2×front×back)!',zh:'检查是否漏掉了中间项(2×前×后)！'}, {ko:'세 조각을 자릿값에 맞게 더했는지 봐!',en:'Make sure the three pieces are added at the right place value!',zh:'看看三块是否按正确的位值相加了！'} ],
     finish:{ ko:'완벽해! 분리 제곱 대마법사! ✂️✨', en:'Perfect! Split-Square Archmage!', zh:'完美！分离平方大魔法师！' }
   }
 };

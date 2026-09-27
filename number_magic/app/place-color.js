@@ -44,7 +44,56 @@ var MAX_PLACES = 4;
 
 /* 정수 사칙연산 식인가 — 여기 없는 것이 하나라도 있으면 칠하지 않는다.
    \square(빈칸)·\times·\div·\cdot 와 숫자·+·-·=·괄호·공백만 허용한다. */
+/* 어떤 식인가(2026-09-19, 원장 "같은 자리 같은 색은 덧셈과 뺄셈에서만, 곱셈·나눗셈에서는 중요 부분만"):
+     'place' — 정수 덧셈·뺄셈: 자리마다 색(같은 자리 = 같은 색)
+     'key'   — 정수 곱셈·나눗셈: 곱하는 수·나누는 수(자리 수가 적은 쪽) 하나만 빨강
+     null    — 칠하지 않는다 */
+function kind(tex){
+  if(!tex) return null;
+  var t = String(tex);
+  var stripped = t.replace(/\\square/g, '')
+                  .replace(/\\times|\\div|\\cdot/g, '')
+                  .replace(/[0-9+\-=()\s]/g, '');
+  if(stripped !== '') return null;
+  var nums = t.match(/\d+/g);
+  if(!nums || !nums.length) return null;
+  var mulDiv = /\\times|\\div|\\cdot/.test(t);
+  if(mulDiv){
+    /* 곱셈·나눗셈은 자리 색 대신 '중요 부분' — 피연산자가 둘 이상일 때만 */
+    var ops = t.split(/=/)[0].match(/\d+/g) || [];
+    return ops.length >= 2 ? 'key' : null;
+  }
+  var maxLen = 0;
+  for(var i=0;i<nums.length;i++) if(nums[i].length > maxLen) maxLen = nums[i].length;
+  if(maxLen < 2 || maxLen > MAX_PLACES) return null;
+  return 'place';
+}
+/* 곱셈·나눗셈에서 강조할 수 — 곱하는 수·나누는 수(자리 수가 적은 쪽, 같으면 뒤쪽). 없으면 null */
+function keyOperand(tex){
+  var lhs = String(tex||'').split(/=/)[0];
+  var ops = lhs.match(/\d+/g) || [];
+  if(ops.length < 2) return null;
+  var best = ops[ops.length-1];
+  for(var i=0;i<ops.length;i++) if(ops[i].length < best.length) best = ops[i];
+  return best;
+}
+function keyTint(tex){
+  var k = keyOperand(tex); if(k == null) return tex;
+  var lhs = String(tex).split(/=/)[0], rest = String(tex).slice(lhs.length);
+  var done = false;
+  lhs = lhs.replace(/\d+/g, function(num){
+    if(done || num !== k) return num;
+    done = true;
+    return '\\color{' + KEY_COLOR + '}{' + num + '}';
+  });
+  return lhs + rest;
+}
+var KEY_COLOR = '#C62828';
+
 function eligible(tex){
+  return kind(tex) != null;
+}
+function eligiblePlace(tex){
   if(!tex) return false;
   var t = String(tex);
   /* 허용 명령만 남기고 지운 뒤, 남은 글자가 숫자·연산·공백뿐인지 본다 */
@@ -66,7 +115,9 @@ function eligible(tex){
 /* 식의 모든 수에 자리 색을 입힌다. eligible이 아니면 원본 그대로 돌려준다
    (부르는 쪽이 매번 검사하지 않아도 안전하도록). */
 function tint(tex){
-  if(!eligible(tex)) return tex;
+  var k = kind(tex);
+  if(k === 'key') return keyTint(tex);
+  if(k !== 'place') return tex;
   return String(tex).replace(/\d+/g, function(num){
     var out = '';
     for(var i=0;i<num.length;i++){
@@ -123,6 +174,16 @@ function spanDigits(numStr){
   return out;
 }
 
+/* 큰 숫자 칸(plain 문자열)용 — 곱셈·나눗셈의 중요 수 하나만 빨강 <span>. □ 는 호출부가 따로 그린다. */
+function spanKey(plain, tex){
+  var k = keyOperand(tex); var done = false;
+  return String(plain).replace(/\d+/g, function(num){
+    if(done || num !== k) return num;
+    done = true;
+    return '<span style="color:' + KEY_COLOR + '">' + num + '</span>';
+  });
+}
+
 /* 몇 번째 문제에 힌트를 줄 것인가 — 전부 칠하면 색이 배경이 되어 힌트가 아니게 된다.
    every(기본 3)마다 하나, 즉 세 문제에 한 번. index는 0부터. */
 function hintAt(index, every){
@@ -135,6 +196,11 @@ window.NM_PLACE_COLOR = {
   NAMES: NAMES,
   MAX_PLACES: MAX_PLACES,
   eligible: eligible,
+  eligiblePlace: eligiblePlace,
+  kind: kind,
+  keyOperand: keyOperand,
+  keyTint: keyTint,
+  spanKey: spanKey,
   tint: tint,
   placesUsed: placesUsed,
   legendHtml: legendHtml,

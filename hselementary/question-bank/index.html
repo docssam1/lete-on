@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f3f5f4">
   <title>LETE-ON | 황소 초등 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=bank-20260916b">
+  <link rel="stylesheet" href="./styles.css?v=bank-20260924a">
+  <link rel="stylesheet" href="./worksheet-tools.css?v=bank-20260921a">
+  <link rel="stylesheet" href="./typography.css?v=bank-20260924a">
 </head>
 <body>
   <div class="app-shell">
@@ -134,7 +136,16 @@
         </div>
         <div class="toolbar-actions">
           <button id="newProblemButton" class="secondary-button" type="button">새 문제</button>
-          <button id="printButton" class="primary-button" type="button">인쇄</button>
+          <button id="solutionViewerButton" class="secondary-button" type="button">전체 해설</button>
+          <div class="print-menu" id="printMenu">
+            <button id="printMenuButton" class="primary-button" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="printMenuList">인쇄 선택</button>
+            <div id="printMenuList" class="print-menu-list" role="menu" hidden>
+              <button type="button" role="menuitem" data-print-mode="problem">문제만 인쇄</button>
+              <button type="button" role="menuitem" data-print-mode="answer-key">정답만 인쇄</button>
+              <button type="button" role="menuitem" data-print-mode="solution">정답·풀이 인쇄</button>
+              <button type="button" role="menuitem" data-print-mode="all">문제+정답·풀이 인쇄</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="review-layout">
@@ -153,16 +164,43 @@
           <header class="review-stage-head"><span>선택한 문제 목록</span><strong id="reviewStageMeta"></strong></header>
           <div class="question-pages" id="problemView"></div>
           <div class="answer-pages" id="solutionView" hidden></div>
+          <div class="answer-key-pages" id="answerKeyView" hidden></div>
         </section>
+      </div>
+    </section>
+
+    <section id="solutionViewer" class="solution-viewer" hidden aria-labelledby="solutionViewerTitle">
+      <div class="solution-viewer-backdrop" data-solution-viewer-close></div>
+      <div class="solution-viewer-dialog" role="dialog" aria-modal="true" aria-labelledby="solutionViewerTitle" tabindex="-1">
+        <header class="solution-viewer-head">
+          <div>
+            <span>전체 해설</span>
+            <h2 id="solutionViewerTitle">문항별 정답과 풀이</h2>
+          </div>
+          <button id="solutionViewerClose" class="solution-viewer-close" type="button" aria-label="전체 해설 닫기">×</button>
+        </header>
+        <div class="solution-viewer-body">
+          <nav id="solutionViewerJump" class="solution-viewer-jump" aria-label="해설 문항 바로가기"></nav>
+          <article id="solutionViewerContent" class="solution-viewer-content" aria-live="polite"></article>
+        </div>
+        <footer class="solution-viewer-footer">
+          <button id="solutionViewerPrevious" class="secondary-button" type="button">← 이전</button>
+          <strong id="solutionViewerPosition" aria-live="polite">1 / 1</strong>
+          <button id="solutionViewerNext" class="primary-button" type="button">다음 →</button>
+        </footer>
       </div>
     </section>
   </div>
 
   <script defer src="./source-inventory-4-1.js?v=bank-20260913f"></script>
+  <script defer src="./source-inventory-4-2-quadrilateral.js?v=bank-20260922d"></script>
   <script defer src="./source-inventory-grade6.js?v=bank-20260909a"></script>
-  <script defer src="./curriculum.js?v=bank-20260916b"></script>
+  <script defer src="./curriculum.js?v=bank-20260922a"></script>
   <script defer src="./generators.js?v=bank-20260916b"></script>
-  <script defer src="./source-4-2-parallel-angle.js?v=bank-20260916b"></script>
+  <script defer src="./source-4-2-perpendicular-parallel.js?v=bank-20260924a"></script>
+  <script defer src="./source-4-2-parallel-angle.js?v=bank-20260924a"></script>
+  <script defer src="./source-4-2-parallel-angle-chain-one.js?v=bank-20260922d"></script>
+  <script defer src="./source-4-2-parallel-angle-chain-two-mission3.js?v=bank-20260924a"></script>
   <script defer src="./source-grade6-volume-e2.js?v=bank-20260909g"></script>
   <script defer src="./source-grade6-volume-e3-mission3.js?v=bank-20260909a"></script>
   <script defer src="./source-grade6-decimal-e1-mission4.js?v=bank-20260909a"></script>
@@ -176,6 +214,6 @@
   <script defer src="./source-grade6-surface-e1.js?v=bank-20260906a"></script>
   <script defer src="./math-notation.js?v=bank-20260827l"></script>
   <script defer src="./identity.js?v=identity-20260824a"></script>
-  <script defer src="./app.js?v=bank-20260916b"></script>
+  <script defer src="./app.js?v=bank-20260922d"></script>
 </body>
 </html>

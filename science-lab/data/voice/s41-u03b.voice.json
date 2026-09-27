@@ -1,0 +1,35 @@
+{
+  "voice": "ko-KR-Chirp3-HD-Puck",
+  "fallbackVoice": "ko-KR-Neural2-C",
+  "note": "화산 실험실(s41-u03b) 스스로 공부하기 — 슬라이드별 docssam 안내. slides의 값이 없으면 deck-common의 기본 줄을 쓴다.",
+  "slides": {
+    "cover": "v3b-cover", "intro": "v3b-intro", "think1": "dk-write", "think2": "v3b-think2", "scene": "v3b-scene", "goal": "v3b-goal",
+    "hypo": "dk-write-why", "design": "v3b-design",
+    "step1": "v3b-step1", "step2": "v3b-step2", "step3": "v3b-step3", "step4": "v3b-step4", "step5": "v3b-step5",
+    "lab": "v3b-lab", "wonder": "v3b-wonder", "res1": "v3b-res1", "res2": "dk-write-evidence", "res3": "v3b-res3", "concl": "v3b-concl",
+    "note": "v3b-note", "plus": "v3b-plus", "discuss": "v3b-discuss", "creative": "v3b-creative", "gifted": "v3b-gifted", "end": "dk-end"
+  },
+  "lines": [
+    { "id": "v3b-cover", "text": "안녕! 오늘은 화산을 우리 손으로 분출시켜 볼 거야. 같이 시작하자!" },
+    { "id": "v3b-intro", "text": "사진을 잘 봐. 땅속의 뜨거운 마그마가 밖으로 나오면 화산이 돼." },
+    { "id": "v3b-think2", "text": "제주도 돌은 왜 검고 구멍이 많을까? 떠오르는 대로 써 봐." },
+    { "id": "v3b-scene", "text": "3D 화산을 끝까지 봐. 화산에서 무엇이 나오는지 찾아봐." },
+    { "id": "v3b-goal", "text": "오늘 알아볼 건 두 가지야. 무엇이 나오는지, 그리고 식는 빠르기에 따라 돌이 어떻게 달라지는지." },
+    { "id": "v3b-design", "text": "바꿀 조건, 같게 할 조건, 잴 것을 칸마다 써 봐." },
+    { "id": "v3b-step1", "text": "알루미늄 포일을 산 모양으로 접고, 꼭대기에 작은 구멍을 뚫어." },
+    { "id": "v3b-step2", "text": "포일 안에 마시멜로를 넣고 빨간 색소를 두세 방울 떨어뜨려." },
+    { "id": "v3b-step3", "text": "삼발이 위에 화산 모형을 올리고, 아래에 알코올램프를 놓아." },
+    { "id": "v3b-step4", "text": "불과 뜨거운 도구는 혼자 만지지 마. 보호자와 함께 하거나, 화면에서 먼저 관찰하자." },
+    { "id": "v3b-step5", "text": "백반 물을 얼음물과 상자에 나눠 식혀서, 결정의 크기를 비교해." },
+    { "id": "v3b-lab", "text": "불 세기나 식히는 빠르기를 골라 직접 해 보고, 표에 적기를 눌러 봐." },
+    { "id": "v3b-wonder", "text": "구멍이 커지거나 마시멜로가 많아지면 어떻게 될까? 네 생각을 써 봐." },
+    { "id": "v3b-res1", "text": "모형에서 나온 것을 실제 화산 분출물과 짝지어 써 봐." },
+    { "id": "v3b-res3", "text": "얼음물과 상자에서 생긴 결정을 비교해서 써 봐." },
+    { "id": "v3b-concl", "text": "빨리 식으면 작게, 천천히 식으면 크게. 이걸 떠올리며 결론을 써 봐." },
+    { "id": "v3b-note", "text": "사진을 크게 보고 현무암과 화강암의 알갱이 크기를 비교해 봐." },
+    { "id": "v3b-plus", "text": "천지와 백록담은 모두 화산 꼭대기의 분화구에 물이 고인 거야." },
+    { "id": "v3b-discuss", "text": "근거가 사진이나 실험과 이어지는지 생각하며 써 봐." },
+    { "id": "v3b-creative", "text": "화산재가 날리는 날을 떠올리며 안전 규칙 세 가지를 써 봐." },
+    { "id": "v3b-gifted", "text": "장소마다 해야 할 일을 되도록 많이 써 봐." }
+  ]
+}

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GFIELD | 생각하는 황소 중등 서재</title>
-<meta name="description" content="생각하는 황소 중등 성취도 진단 + 클리닉 서재">
+<meta name="description" content="생각하는 황소 중등 성취도 진단 서재">
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 :root{
@@ -124,7 +124,7 @@ button,input{font:inherit}
     <div class="mark">G</div>
     <div>
       <b>GFIELD 서재</b>
-      <span>생각하는 황소 중등 진단 + 클리닉</span>
+      <span>생각하는 황소 중등 성취도 진단</span>
     </div>
   </div>
   <div class="links" id="links">
@@ -164,8 +164,8 @@ if (!session.valid || !session.access.length) {
 }
 
 const access = new Set(session.access);
-const isOpen = key => access.has(key);
 const name = session.name;
+const isOpen = key => HSMIDDLE_AUTH.isAdmin(name) || access.has(key);
 
 function logout(){ HSMIDDLE_AUTH.clearSession(); location.replace("./login.html"); }
 
@@ -211,9 +211,16 @@ const catalog = [
   {
     key:"diagnostic", tile:"진단", accent:"#1d679f",
     title:"중등 성취도 진단",
-    copy:"40문항을 풀고 O/X 또는 답안으로 채점하면 학기·영역·난이도·단원 분석과 처방이 바로 나옵니다.",
-    chips:["40문항","유사문제 400문항","풀이 영상"],
-    take:"./diagnostic.html", report:"./report.html", bank:"./question-bank/"
+    copy:"40문항을 풀고 O/X 또는 답안으로 채점하면 학기·영역·난이도·단원 분석과 학습 계획이 바로 나옵니다.",
+    chips:["40문항","성적 저장","진단 분석지"],
+    take:"./diagnostic.html", report:"./report.html", tracked:true
+  },
+  {
+    key:"question-bank", tile:"문제", accent:"#24745b",
+    title:"중등 심화 문제은행",
+    copy:"학기·단원·영역·난이도별로 심화 유형을 골라 문제편과 정답·풀이편을 구성하는 별도 상품입니다.",
+    chips:["별도 상품","유형별 선택","문제·정답 인쇄"],
+    take:"./question-bank/", takeLabel:"문제은행 열기", tracked:false
   },
   {
     key:"mock-1", tile:"1회", accent:"#3f6ea8",
@@ -269,7 +276,7 @@ async function init(){
   document.getElementById("pfill").style.width = Math.round(openCount / catalog.length * 100) + "%";
 
   const counts = {};
-  await Promise.all(catalog.filter(item => isOpen(item.key)).map(async item => {
+  await Promise.all(catalog.filter(item => isOpen(item.key) && item.tracked !== false).map(async item => {
     counts[item.key] = await attemptCount(item.key);
   }));
 
@@ -283,10 +290,10 @@ async function init(){
         </div>
         <h2>${item.title}</h2>
         <p>${item.copy}</p>
-        <div class="chips">${item.chips.map(c => `<span>${c}</span>`).join("")}${open ? `<span>응시 ${counts[item.key]}/3</span>` : ""}</div>
+        <div class="chips">${item.chips.map(c => `<span>${c}</span>`).join("")}${open && item.tracked !== false ? `<span>응시 ${counts[item.key]}/3</span>` : ""}</div>
         <div class="acts">
           ${open
-          ? `<a href="${item.take}">응시 · 채점</a><a class="ghost" href="${item.report}">분석지</a>${item.bank?`<a class="bank" href="${item.bank}">문제은행</a>`:""}`
+          ? `<a href="${item.take}">${item.takeLabel || "응시 · 채점"}</a>${item.report ? `<a class="ghost" href="${item.report}">분석지</a>` : ""}`
             : `<button class="off" type="button" disabled>잠김</button><a class="ask" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">신청 문의</a>`}
         </div>
       </article>

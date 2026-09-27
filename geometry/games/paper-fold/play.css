@@ -1,0 +1,100 @@
+@font-face{font-family:"Paper Fold Display";src:url("./fonts/GmarketSansMedium.otf") format("opentype");font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:"Paper Fold Text";src:url("./fonts/SUIT-Variable.woff2") format("woff2");font-style:normal;font-weight:100 900;font-display:swap}
+.pf-play{--pf-ink:#263b3c;--pf-teal:#155d62;--pf-line:#d5dfdc;--pf-coral:#a9435c;--pf-body-font:"Paper Fold Text","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;--pf-title-font:"Paper Fold Display",var(--pf-body-font);margin:0;background:#f3f6f4;color:var(--pf-ink);font:16px/1.5 var(--pf-body-font);letter-spacing:0}
+:lang(zh) .pf-play{--pf-body-font:"PingFang SC","Microsoft YaHei","Noto Sans SC","Heiti SC",system-ui,sans-serif;--pf-title-font:var(--pf-body-font)}
+:lang(ja) .pf-play{--pf-body-font:"Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo","Noto Sans JP",system-ui,sans-serif;--pf-title-font:var(--pf-body-font)}
+.pf-play :is(h1,h2,h3),.pf-brand strong{font-family:var(--pf-title-font);font-weight:500}
+.pf-play *{box-sizing:border-box;letter-spacing:0}
+.pf-play [hidden]{display:none!important}
+.pf-play button,.pf-play select,.pf-play a{font:inherit}
+.pf-play button,.pf-play a,.pf-play select{touch-action:manipulation}
+.pf-play button,.pf-play select{min-height:44px;max-width:100%;border:1px solid var(--pf-line);border-radius:6px;padding:8px 12px}
+.pf-play button{cursor:pointer;font-weight:700;white-space:normal;overflow-wrap:anywhere}
+.pf-play button:disabled{cursor:wait;opacity:.65}
+.pf-play select{background:#fff;color:var(--pf-ink)}
+.pf-play a{color:inherit;text-underline-offset:4px}
+.pf-play :focus-visible{outline:3px solid #c65073;outline-offset:4px}
+.pf-header{display:flex;align-items:center;gap:14px;min-height:70px;padding:12px 24px;background:var(--pf-teal);color:#fff}
+.pf-exit{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border:1px solid #ffffff70;border-radius:6px;text-decoration:none;font-size:25px!important}
+.pf-brand{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;min-width:0}
+.pf-brand strong{font-size:20px}.pf-brand span{font-size:16px}
+.pf-language{margin-left:auto}.pf-language select{width:105px;padding:8px}
+.pf-main{max-width:1800px;margin:0 auto;padding:0 24px 40px}
+.pf-modes{display:flex;gap:4px;border-bottom:1px solid var(--pf-line);padding-top:10px}
+.pf-modes a{display:grid;place-items:center;min-height:48px;padding:10px 18px;border-bottom:3px solid transparent;text-decoration:none;font-weight:700;text-align:center;overflow-wrap:anywhere}
+.pf-modes a[aria-current=page]{border-color:var(--pf-teal);color:var(--pf-teal);background:#e5eeea}
+.pf-settings{display:flex;flex-wrap:wrap;align-items:end;gap:12px;padding:18px 0;border-bottom:1px solid var(--pf-line)}
+.pf-settings label{display:grid;gap:4px;font-size:13px;font-weight:700;min-width:0}.pf-settings label:first-child{max-width:100%}
+.pf-settings select{font-size:15px}.pf-settings button{margin-left:auto}
+.pf-secondary{background:#fff;color:var(--pf-teal)}.pf-primary{background:var(--pf-teal);border-color:var(--pf-teal)!important;color:#fff}
+.pf-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px 24px;padding:20px 0}
+.pf-summary h1{font-size:24px;line-height:1.3;margin:0 0 5px}.pf-summary p{margin:0;font-size:15px;min-height:23px}
+.pf-tallies{display:flex;gap:24px}.pf-tally{display:grid;grid-template-columns:1fr auto;align-items:center;gap:15px;border-left:4px solid var(--pf-teal);padding-left:10px}.pf-tally span{font-size:14px}.pf-tally strong{font-size:26px;font-variant-numeric:tabular-nums}.pf-b{border-color:var(--pf-coral)}
+.pf-tallies[data-mode=battle] .pf-tally{min-width:0;gap:4px 12px}
+.pf-tallies[data-mode=battle] .pf-player-label{grid-column:1/-1}
+.pf-tallies[data-mode=battle] .pf-solved-count{grid-column:1/-1;font-size:14px;font-weight:400;overflow-wrap:anywhere}
+.pf-points{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pf-points span{font-size:13px;overflow-wrap:anywhere}.pf-points strong{font-size:26px}
+.pf-shared{grid-column:1/-1;display:flex;align-items:center;gap:12px;font-size:13px}.pf-shared strong{min-width:65px;text-align:right;font-variant-numeric:tabular-nums}
+.pf-play progress{accent-color:var(--pf-teal);height:10px;border:0;width:100%;min-width:0}.pf-shared>span{white-space:nowrap}
+.pf-frames{display:grid;grid-template-columns:minmax(0,1fr);gap:24px}.pf-frames[data-mode=battle]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pf-game{min-width:0;border:1px solid #b9cbc5;border-top:4px solid var(--pf-teal);border-radius:6px;overflow:hidden;background:#fff}
+.pf-game[data-player=B]{border-top-color:var(--pf-coral)}
+.pf-game-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:12px 16px;background:#fff}.pf-game-header h2{margin:0;font-size:18px}.pf-game-header strong{font-size:15px;font-variant-numeric:tabular-nums}.pf-game-header progress{grid-column:1/-1;margin:0}
+.pf-game[data-player=B] progress{accent-color:var(--pf-coral)}
+.pf-frame-area{position:relative;height:max(650px,calc(100dvh - 300px));min-height:650px;background:#f1f5f1}
+.pf-frame-area iframe{display:block;width:100%;height:100%;border:0;background:#fff}
+.pf-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;padding:28px;background:#f8fbf8f5;text-align:center}
+.pf-overlay h3{font-size:24px;line-height:1.4;margin:0;max-width:480px;overflow-wrap:anywhere}.pf-overlay p{margin:0;max-width:480px;overflow-wrap:anywhere}.pf-overlay img{width:90px;height:100px;object-fit:contain}.pf-overlay button{min-width:150px;max-width:100%}
+.pf-game-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;min-height:72px;border-top:1px solid var(--pf-line)}.pf-game-actions p{margin:0;font-size:14px}.pf-game-actions button{flex-shrink:0;max-width:60%}
+.pf-finish{display:grid;grid-template-columns:1fr auto;gap:6px 24px;align-items:center;padding:20px 0;margin-bottom:20px;border-top:3px solid var(--pf-teal);border-bottom:1px solid var(--pf-line)}.pf-finish h2{margin:0;font-size:22px}.pf-finish p{margin:0;grid-column:1}.pf-finish button{grid-column:2;grid-row:1/3}
+.pf-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:1100px){.pf-frames[data-mode=together]{max-width:1200px;margin:0 auto}}
+@media(max-width:1099px){.pf-frames[data-mode=battle]{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.pf-header{padding:10px 12px;gap:10px}.pf-main{padding:0 10px 28px}.pf-brand{display:grid;gap:0}.pf-brand strong{font-size:17px}.pf-brand span{font-size:12px}.pf-modes a{flex:1;padding:10px 6px;font-size:14px}.pf-settings{gap:10px;padding:12px 0}.pf-settings label:first-child{flex:1}.pf-settings button{font-size:14px;margin-left:0}.pf-settings select{padding:8px;font-size:14px}.pf-summary{grid-template-columns:1fr;padding:16px 2px;gap:10px}.pf-summary h1{font-size:22px}.pf-tallies{justify-content:space-between;gap:14px}.pf-tally{flex:1;gap:8px}.pf-tally strong{font-size:23px}.pf-shared{flex-wrap:wrap;gap:5px 10px}.pf-shared>span{width:100%}.pf-shared progress{flex:1}.pf-frame-area{height:650px}.pf-game-header{padding:10px}.pf-game-actions{padding:10px;flex-wrap:wrap}.pf-game-actions button{max-width:100%}.pf-overlay{padding:20px}.pf-overlay h3{font-size:22px}.pf-finish{grid-template-columns:1fr}.pf-finish button{grid-column:1;grid-row:auto;justify-self:start}.pf-frames{gap:24px}}
+@media(prefers-reduced-motion:reduce){.pf-play *{scroll-behavior:auto!important}}
+.pf-header-actions{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.pf-header-actions button{background:#fff;color:var(--pf-teal);font-size:14px}
+.pf-header-actions:has(button:not([hidden]))+.pf-language{margin-left:0}
+.pf-tallies{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.pf-tally[data-player=B],.pf-game[data-player=B]{--pf-player:#a9435c}
+.pf-tally[data-player=C],.pf-game[data-player=C]{--pf-player:#3959a5}
+.pf-tally[data-player=D],.pf-game[data-player=D]{--pf-player:#876415}
+.pf-tally[data-player]{border-left-color:var(--pf-player,var(--pf-teal))}
+.pf-game[data-player]{border-top-color:var(--pf-player,var(--pf-teal))}
+.pf-game[data-player] progress{accent-color:var(--pf-player,var(--pf-teal))}
+.pf-player-stats{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px 16px;font-variant-numeric:tabular-nums}
+.pf-frame-points{font-size:18px;font-weight:800;color:var(--pf-player,var(--pf-teal))}
+.pf-play[data-stage=playing][data-mode=battle] .pf-header{position:sticky;top:0;z-index:20;min-height:56px;padding:6px 12px;gap:10px}
+.pf-play[data-stage=playing][data-mode=battle] .pf-brand{display:none}
+.pf-play[data-stage=playing][data-mode=battle] .pf-main{padding:10px 12px 24px}
+.pf-play[data-stage=playing][data-mode=battle] .pf-frames{gap:16px}
+.pf-play[data-stage=playing][data-mode=battle] .pf-frame-area{height:max(650px,calc(100dvh - 188px))}
+.pf-play[data-stage=playing][data-mode=battle] .pf-game-actions{min-height:58px;padding:6px 12px}
+.pf-play[data-stage=playing][data-mode=battle] .pf-game-header{padding:8px 12px}
+.pf-results{max-width:1000px;margin:32px auto;padding:24px 0;border-top:4px solid var(--pf-teal)}
+.pf-results h2{margin:0 0 10px;font-size:28px;line-height:1.3;overflow-wrap:anywhere}
+.pf-results>p{margin:0 0 24px;overflow-wrap:anywhere}
+.pf-results-table{border-collapse:collapse;width:100%;table-layout:fixed;margin:0 0 24px;background:#fff}
+.pf-results-table th,.pf-results-table td{padding:16px 12px;text-align:left;border-bottom:1px solid var(--pf-line);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.pf-results-table thead th{font-size:14px;background:#e8efec}
+.pf-results-table tr[data-rank="1"]{background:#e3f2eb}
+.pf-results-table td{font-size:20px;font-weight:700}
+.pf-results-table tbody th{font-size:16px}
+.pf-results>button{min-width:160px}
+.pf-overlay[data-state=waiting]{background:#f3f6f4}
+.pf-overlay[data-state=waiting] p{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--pf-player,var(--pf-teal))}
+@media(min-width:1100px){
+  .pf-play[data-stage=playing][data-mode=battle] .pf-main{padding:8px 12px 12px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-frames{height:calc(100dvh - 76px);grid-template-rows:minmax(0,1fr);gap:12px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-frames:is([data-players="3"],[data-players="4"]){grid-template-rows:repeat(2,minmax(0,1fr))}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game{display:grid;grid-template-rows:48px minmax(0,1fr) 44px;min-height:0}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-frame-area{height:100%;min-height:0}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game-header{padding:4px 10px;gap:3px 10px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game-header h2{font-size:16px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game-header progress{height:6px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-frame-points{font-size:17px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game-actions{height:44px;min-height:0;padding:3px 10px;gap:8px;flex-wrap:nowrap}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game-actions button{min-height:36px;padding:4px 10px;font-size:14px}
+}
+@media(max-width:600px){.pf-header-actions{gap:6px}.pf-header-actions button{padding:8px;font-size:13px}.pf-play[data-stage=playing][data-mode=battle] .pf-main{padding:8px 8px 24px}.pf-play[data-stage=playing][data-mode=battle] .pf-frame-area{height:650px}.pf-player-stats{gap:8px}.pf-game-header h2{font-size:16px}.pf-frame-points{font-size:17px}.pf-results{margin:20px auto;padding-top:18px}.pf-results h2{font-size:24px}.pf-results-table th,.pf-results-table td{padding:12px 6px}.pf-results-table thead th{font-size:12px}.pf-results-table tbody th{font-size:13px}.pf-results-table td{font-size:18px}.pf-play[data-stage=result] .pf-header{flex-wrap:wrap}.pf-play[data-stage=result] .pf-brand{display:none}}

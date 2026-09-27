@@ -22,11 +22,13 @@ function art(e){
 }
 
 function renderKaTeX(tex){
+  /* 표기 다듬기(engine/tex-tidy.js) — 화면 위젯도 인쇄와 같은 식을 보여 준다. */
+  const t = (window.NM_TEX && window.NM_TEX.tidy) ? window.NM_TEX.tidy(tex) : tex;
   if(window.katex){
-    try{ return katex.renderToString(tex,{throwOnError:false,displayMode:false}); }
+    try{ return katex.renderToString(t,{throwOnError:false,displayMode:false}); }
     catch(e){}
   }
-  return '<span>'+esc(tex)+'</span>';
+  return '<span>'+esc(t)+'</span>';
 }
 
 function buildNumpad(container, cb, opts){
@@ -220,6 +222,7 @@ function render(problem, container, onAnswer){
     case 'numline':      return renderNumline(problem,container,onAnswer);
     case 'base10':       return renderBase10(problem,container,onAnswer);
     case 'compareSteps': return renderCompareSteps(problem,container,onAnswer);
+    case 'graphPlane':   return renderGraphPlane(problem,container,onAnswer);
     default:             return renderFallback(problem,container,onAnswer);
   }
 }
@@ -1683,7 +1686,11 @@ function renderTallyBuild(problem, container, onAnswer){
   const target = problem.target || 3;
   const interaction = problem.interaction || 'build';
   const isRead = interaction === 'read';
-  let count = isRead ? target : 0, lock=false;
+  const startCount = !isRead && Number.isInteger(problem.startCount)
+    ? Math.max(0, Math.min(target - 1, problem.startCount)) : 0;
+  const readGroups = isRead && Array.isArray(problem.tallyGroups) && problem.tallyGroups.length
+    ? problem.tallyGroups.filter(n=>Number.isInteger(n)&&n>0) : [target];
+  let count = isRead ? target : startCount, lock=false;
 
   const root=document.createElement('div');
   root.className='nm-tb-wrap';
@@ -1701,16 +1708,21 @@ function renderTallyBuild(problem, container, onAnswer){
   const board=root.querySelector('.nm-tb-board');
 
   function draw(){
-    const groups=Math.floor(count/5), rem=count%5, spacing=11;
     let slot=0; const lines=[];
-    for(let g=0; g<groups; g++){
-      const startSlot=slot;
-      for(let i=0;i<4;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
-      const x1=10+startSlot*spacing, x2=10+(slot-1)*spacing;
-      lines.push(`<line x1="${x1}" y1="50" x2="${x2}" y2="15"/>`);
-      slot++;
+    const spacing=11;
+    function drawCount(n){
+      const groups=Math.floor(n/5), rem=n%5;
+      for(let g=0; g<groups; g++){
+        const startSlot=slot;
+        for(let i=0;i<4;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
+        const x1=10+startSlot*spacing, x2=10+(slot-1)*spacing;
+        lines.push(`<line x1="${x1}" y1="50" x2="${x2}" y2="15"/>`);
+        slot++;
+      }
+      for(let i=0;i<rem;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
     }
-    for(let i=0;i<rem;i++){ const x=10+slot*spacing; lines.push(`<line x1="${x}" y1="15" x2="${x}" y2="50"/>`); slot++; }
+    if(isRead) readGroups.forEach((n,i)=>{ if(i)slot++; drawCount(n); });
+    else drawCount(count);
     svg.innerHTML=lines.join('');
   }
   draw();
@@ -1745,7 +1757,7 @@ function renderTallyBuild(problem, container, onAnswer){
   });
   root.querySelector('.nm-tb-undo').addEventListener('pointerup',e=>{
     e.stopPropagation();
-    if(count>0){ count--; draw(); }
+    if(count>startCount){ count--; draw(); }
   });
   root.querySelector('.nm-tb-done').addEventListener('pointerup',e=>{
     e.stopPropagation();
@@ -2060,6 +2072,92 @@ function renderFallback(problem, container, onAnswer){
 }
 
 /* ─────────────────────────────────────────
+   GRAPHPLANE  widget:'graphPlane'  (2026-09-21)
+   원장 "일차함수 그래프는" — 일차함수를 넣어 놓고 좌표를 **숫자로만** 주고
+   있었다. 기울기가 "오른쪽 1칸에 위로 몇 칸"이라는 건 격자 위에서만 보인다.
+   problem.graph = {
+     kind:'line'|'parabola',
+     m,b            — 직선 y=mx+b
+     a,p,q          — 포물선 y=a(x-p)²+q
+     pts:[[x,y],…]  — 격자점 표시(선택)
+     xr:[min,max], yr:[min,max]
+   }
+   답은 숫자 하나(기울기)일 수도, 배열([m,b]·[p,q])일 수도 있어 둘 다 받는다.
+   화면·인쇄가 **같은 그림**이어야 하므로 좌표 계산 규약을 exam.js graphSvg 와
+   맞춰 둔다(축 눈금 1칸 = 정수 1, 원점은 0,0 자리).
+───────────────────────────────────────── */
+/* 화면 좌표평면 — **geometry 와 모눈·곡선 그리기는 exam.js 한 벌**을 쓴다.
+   (2026-09-21, 원장 "그래프는 정확히 모눈에 좌표평면 그려줘" — 한 칸이 정사각형이
+   아니었던 것을 고치면서, 두 벌로 두면 또 갈라지므로 아예 공유로 바꿨다.) */
+function graphPlaneSvg(g){
+  const E = window.NM_EXAM || {};
+  if(!E.graphGeom || !E.graphPaperSvg) return '';
+  if(g.kind === 'numberline') return E.numberLineSvg ? E.numberLineSvg(g, null) : '';
+  const CELL = 16, pad = 20;
+  const gm = E.graphGeom(g, CELL, pad);
+  const { xr, yr, W, H, X, Y } = gm;
+  let s = E.graphPaperSvg(gm, 'nm-gp');
+  const cid = 'gpw' + [g.kind, g.m, g.b, g.a, g.p, g.q, g.k].join('_').replace(/[^A-Za-z0-9]/g,'');
+  const d = E.curvePath ? E.curvePath(g, xr, X, Y) : '';
+  s = `<defs><clipPath id="${cid}"><rect x="${pad}" y="${pad}" width="${W-pad*2}" height="${H-pad*2}"/></clipPath></defs>` + s
+    + (d ? `<path class="nm-gp-curve" clip-path="url(#${cid})" d="${d}"/>` : '');
+  (g.pts||[]).forEach(pt => {
+    if(pt[0]<xr[0]||pt[0]>xr[1]||pt[1]<yr[0]||pt[1]>yr[1]) return;
+    s += `<circle class="nm-gp-pt" cx="${X(pt[0])}" cy="${Y(pt[1])}" r="5"/>`;
+  });
+  return `<svg class="nm-gp-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
+    style="aspect-ratio:${W}/${H}">${s}</svg>`;
+}
+
+function renderGraphPlane(problem, container, onAnswer){
+  const g = problem.graph || {};
+  const lang0=(window.S&&window.S.lang)||'ko';
+  const hint0 = lang0==='en' ? 'Count the squares on the grid!'
+              : lang0==='zh' ? '数一数格子！' : '격자의 칸을 세어 봐요!';
+  const root=document.createElement('div');
+  root.className='nm-w-graph';
+  root.innerHTML=`
+    <div class="nm-gp-hint">${esc(hint0)}</div>
+    ${graphPlaneSvg(g)}
+    <div class="nm-gp-tex" id="gpTex"></div>
+    <div class="nm-numpad-screen" id="gpScreen">&nbsp;</div>
+    <div class="nm-numpad" id="gpPad"></div>
+  `;
+  container.appendChild(root);
+  const texEl=root.querySelector('#gpTex');
+  if(problem.tex) texEl.innerHTML=renderKaTeX(problem.tex); else texEl.remove();
+
+  const screen=root.querySelector('#gpScreen');
+  let submitted=false;
+  if(Array.isArray(problem.answer)){
+    const mp=multiPadState(screen,problem.answer,problem.answerShape);
+    buildNumpad(root.querySelector('#gpPad'),val=>{
+      if(submitted)return;
+      if(val==='ok'){
+        if(!mp.isFull())return;
+        submitted=true;
+        onAnswer(mp.values().map(Number));
+        return;
+      }
+      mp.handle(val);
+    },{decimal:false,negative:true});
+    return;
+  }
+  const ns=numpadState(screen,4);
+  buildNumpad(root.querySelector('#gpPad'),val=>{
+    if(submitted)return;
+    if(val==='ok'){
+      const inp=ns.get();
+      if(!inp||inp==='-')return;
+      submitted=true;
+      onAnswer(parseFloat(inp));
+      return;
+    }
+    ns.handle(val);
+  },{decimal:false,negative:true});
+}
+
+/* ─────────────────────────────────────────
    EXPORT
 ───────────────────────────────────────── */
 window.NM_WIDGETS={
@@ -2086,6 +2184,7 @@ window.NM_WIDGETS={
   renderSortBasket,
   renderTallyBuild,
   renderNumline,
+  renderGraphPlane,
   renderBase10,
   renderCompareSteps,
   // 다칸 답 화면 HTML — main.js의 multiScreenHtml()이 재사용(분수 모양 렌더 공유)

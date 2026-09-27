@@ -1,0 +1,24 @@
+/* 학기 계획은 지도 위에 놓이는 종이 목차. 기존 과정/학습 기록의 장식은 바꾸지 않는다. */
+.nm-middle-pacing { position:relative; width:100%; box-sizing:border-box; margin:14px 0 26px; padding:18px 20px; border-block:2px solid #245b60; background:#fff; color:#20343b; text-align:left; font-family:'Pretendard',sans-serif; }
+.nm-middle-pacing summary { cursor:pointer; min-height:44px; font-size:18px; font-weight:800; line-height:1.5; }
+.nm-middle-pacing summary span { display:block; margin:3px 0 0 16px; font-size:13px; font-weight:600; color:#486369; }
+.nm-middle-pacing summary:focus-visible,.nm-mp-session button:focus-visible { outline:3px solid #245b60; outline-offset:4px; }
+.nm-mp-intro,.nm-mp-notes { font-size:13px; line-height:1.7; word-break:keep-all; }
+.nm-mp-intro { margin:12px 0 16px; }
+.nm-mp-intro strong { font-weight:800; }
+.nm-mp-sessions { list-style:none; margin:0; padding:0; }
+.nm-mp-session { display:grid; grid-template-columns:54px minmax(0,1fr) auto; gap:10px; align-items:center; padding:13px 0; border-top:1px solid #d7e0e1; }
+.nm-mp-session .nm-mp-date { align-self:start; font-size:12px; line-height:1.5; color:#486369; }
+.nm-mp-session .nm-mp-date b { display:block; color:#245b60; font-size:17px; }
+.nm-mp-session h4 { margin:0 0 4px; font-size:15px; line-height:1.45; color:#20343b; }
+.nm-mp-session p { margin:2px 0; font-size:12px; line-height:1.55; color:#486369; word-break:keep-all; }
+.nm-mp-session button { min-height:44px; min-width:76px; padding:8px 10px; border:1px solid #9aafb2; border-radius:4px; background:#fff; color:#245b60; font:700 13px/1.4 'Pretendard',sans-serif; cursor:pointer; }
+.nm-mp-session button:hover { background:#eef5f5; border-color:#245b60; }
+.nm-mp-check { display:inline; margin-left:6px; font-size:11px; font-weight:600; color:#486369; }
+.nm-mp-notes { margin:16px 0 0; padding-top:12px; border-top:1px solid #d7e0e1; color:#486369; }
+@media(max-width:520px) {
+  .nm-middle-pacing { padding:14px 12px; }
+  .nm-middle-pacing summary { font-size:16px; }
+  .nm-mp-session { grid-template-columns:40px minmax(0,1fr); gap:8px; }
+  .nm-mp-session button { grid-column:2; justify-self:start; }
+}

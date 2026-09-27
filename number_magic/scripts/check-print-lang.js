@@ -42,17 +42,11 @@ const LANGS = ['ko', 'en', 'zh'];
 const HANGUL = /[가-힣ㄱ-ㅎㅏ-ㅣ]/;
 const HAN    = /[㐀-䶿一-鿿]/;
 
-function loadPlaywright(){
-  for(const c of ['playwright', '/opt/node22/lib/node_modules/playwright']){
-    try { return require(c); } catch(e){}
-  }
-  console.error('playwright를 찾지 못했습니다. `npm i -D playwright` 후 다시 실행하세요.');
-  process.exit(2);
-}
+function loadPlaywright(){ return require('./lib/playwright'); }
 
 function serve(){
   return new Promise((resolve, reject) => {
-    const py = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
+    const py = spawn(process.platform === 'win32' ? 'python' : 'python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
     py.on('error', reject);
     const t0 = Date.now();
     (function ping(){
@@ -68,9 +62,7 @@ function serve(){
 (async () => {
   const { chromium } = loadPlaywright();
   const server = await serve();
-  const browser = await chromium.launch({
-    executablePath: process.env.NM_CHROMIUM || '/opt/pw-browsers/chromium'
-  });
+  const browser = await chromium.launch();
 
   const fails = [], warns = [];
   const counts = {};

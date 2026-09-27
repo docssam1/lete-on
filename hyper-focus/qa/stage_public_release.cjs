@@ -7,7 +7,7 @@ const CHALLENGE_PUBLIC=Object.freeze([
  'public-catalog.js','index.html','landing.css','landing.js','intro.html','intro.css','access-catalog.js','access-service.js',
  'admin.html','admin.css','admin.js','exam.html','mock-video.js','concepts.html','review.css','exam.css','exam-print-revision.css',
  'concepts-two.css','concept-video.js','studio.html','studio.css','studio.js','challenge-taxonomy.js','diagnosis-core.js',
- 'content-client.js','secure-document.js','remote-variants.js','studio-loader.js','document-access.js','assets/gfield-logo.png'
+ 'content-client.js','concept-client.js','question-identity.js','secure-document.js','remote-variants.js','studio-loader.js','document-access.js','assets/gfield-logo.png'
 ]);
 // Reviewed runtime entry points; new tracked files are never automatically published.
 const LEGACY_RUNTIME=Object.freeze([
@@ -66,6 +66,7 @@ function plan(sourceInput){
  const tracked=trackedFiles(source),all=[...new Set([...tracked,...APPROVED_ADDITIONS])].filter(file=>isAllowed(file,tracked)).sort();
  for(const file of LEGACY_RUNTIME)if(!tracked.has(file))throw Error('Required legacy runtime is not tracked: '+file);
  for(const file of [...LEGACY_RUNTIME,...APPROVED_ADDITIONS])if(!all.includes(file))throw Error('Required public runtime excluded: '+file);
+ if(all.includes('challenge/concept-guide.js'))throw Error('Private concept guide must never be staged publicly.');
  const files=all.map(file=>{
   const absolute=path.join(source,...file.split('/'));assertPlainPath(absolute,source);
   if(!fs.existsSync(absolute)||!fs.lstatSync(absolute).isFile())throw Error('Public runtime file is missing/not regular: '+file);

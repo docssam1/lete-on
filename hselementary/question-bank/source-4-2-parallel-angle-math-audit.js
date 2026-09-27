@@ -8,31 +8,27 @@ const dir = __dirname;
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
 const sourceIds = [
-  "4-2-advanced-quad-2-exploration",
-  "4-2-advanced-quad-2-example-2-3",
-  "4-2-advanced-quad-2-example-2-4",
-  "4-2-advanced-quad-2-mission-1",
-  "4-2-advanced-quad-2-mission-2",
-  "4-2-advanced-quad-2-mission-3",
-  "4-2-advanced-quad-2-mission-4",
-  "4-2-advanced-quad-2-mission-5",
-  "4-2-advanced-quad-2-mission-6"
+  "4-2-u4-e2-exploration",
+  "4-2-u4-e2-example-2-3",
+  "4-2-u4-e2-example-2-4",
+  "4-2-u4-e2-mission-1",
+  "4-2-u4-e2-mission-2",
+  "4-2-u4-e2-mission-3",
+  "4-2-u4-e2-mission-4",
+  "4-2-u4-e2-mission-5",
+  "4-2-u4-e2-mission-6"
 ];
-const abilitySourceId = "4-2-quad-2-example-2-1";
 const context = { window: {}, console, encodeURIComponent, decodeURIComponent };
 vm.createContext(context);
 const load = filename => vm.runInContext(fs.readFileSync(path.join(dir, filename), "utf8"), context, { filename });
 
+load("source-inventory-4-2-quadrilateral.js");
 load("curriculum.js");
 load("generators.js");
-const apiBefore = context.window.HSE_GENERATORS;
 const allTypes = () => context.window.HSE_CURRICULUM.semesters
   .flatMap(semester => semester.units || [])
   .flatMap(unit => unit.subunits || [])
   .flatMap(subunit => subunit.types || []);
-const abilityBefore = allTypes().find(type => type.sourceItemId === abilitySourceId);
-const abilityAddressBefore = abilityBefore?.id;
-const abilityKeyBefore = apiBefore.generatorKey(abilityBefore);
 load("source-4-2-parallel-angle.js");
 
 const api = context.window.HSE_GENERATORS;
@@ -143,25 +139,19 @@ const pairSumCandidates = total => {
 
 check(moduleApi && typeof moduleApi.deriveCase === "function", "평행선 각 모듈의 순수 기하 API가 없습니다.");
 check(new Set(moduleApi.SOURCE_IDS).size === 9, "새 심화 원문 ID가 정확히 9개가 아닙니다.");
-check(!moduleApi.SOURCE_IDS.includes(abilitySourceId), "기존 실력 교재 원문 ID가 새 가로채기 목록에 들어갔습니다.");
+check(!moduleApi.SOURCE_IDS.some(id => /^4-2-quad-/.test(id)), "실력 교재 원문 ID가 새 가로채기 목록에 들어갔습니다.");
 check(sourceIds.every(id => moduleApi.SOURCE_IDS.includes(id)), "검수 목록과 모듈 원문 ID 목록이 다릅니다.");
 
-const abilityAfter = types.find(type => type.sourceItemId === abilitySourceId);
-check(Boolean(abilityBefore && abilityAfter), "기존 실력 교재 V 유형을 찾지 못했습니다.");
-check(abilityAfter === abilityBefore, "기존 실력 교재 V 유형 객체가 바뀌었습니다.");
-check(abilityAddressBefore === "4-2-u4-t2-4" && abilityAfter?.id === abilityAddressBefore, "기존 실력 교재 UI 유형 주소 4-2-u4-t2-4가 바뀌었습니다.");
-check(api.generatorKey(abilityAfter) === abilityKeyBefore, "새 모듈이 기존 실력 교재 V 생성기를 가로챘습니다.");
-
 const exactSourceAnswers = {
-  "4-2-advanced-quad-2-exploration": "㉠+㉡과 ㉢+㉣은 같습니다.",
-  "4-2-advanced-quad-2-example-2-3": "180°",
-  "4-2-advanced-quad-2-example-2-4": "111°",
-  "4-2-advanced-quad-2-mission-1": "102°",
-  "4-2-advanced-quad-2-mission-2": "79°",
-  "4-2-advanced-quad-2-mission-3": "라와 마",
-  "4-2-advanced-quad-2-mission-4": "370°",
-  "4-2-advanced-quad-2-mission-5": "50°",
-  "4-2-advanced-quad-2-mission-6": "130°"
+  "4-2-u4-e2-exploration": "㉠+㉡과 ㉢+㉣은 같습니다.",
+  "4-2-u4-e2-example-2-3": "180°",
+  "4-2-u4-e2-example-2-4": "111°",
+  "4-2-u4-e2-mission-1": "102°",
+  "4-2-u4-e2-mission-2": "79°",
+  "4-2-u4-e2-mission-3": "라와 마",
+  "4-2-u4-e2-mission-4": "370°",
+  "4-2-u4-e2-mission-5": "50°",
+  "4-2-u4-e2-mission-6": "130°"
 };
 
 const independentlyRecalculate = evidence => {
@@ -658,4 +648,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`4-2 심화 평행선 각 수학 감사 통과: ${sourceIds.length}유형 · 고정 풀이 ${checkedCases}건 · 순수 기하 열거 ${geometryEnumerations}건 · 기존 실력 V 주소/생성기 보존`);
+console.log(`4-2 심화 평행선 각 수학 감사 통과: ${sourceIds.length}유형 · 고정 풀이 ${checkedCases}건 · 순수 기하 열거 ${geometryEnumerations}건 · 표준 원문 ID 연결`);

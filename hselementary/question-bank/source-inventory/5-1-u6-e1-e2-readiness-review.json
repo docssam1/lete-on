@@ -380,9 +380,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "오른쪽 아래 직사각형의 넓이가 전체의 절반으로 정해지고 가로가 40cm이므로 세로와 ㉢은 각각 하나로 정해집니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원본의 50cm·80cm·40cm와 ㉢ 위치는 확인했지만 중앙 생성기 연결 전입니다."
+      "implementationStatus": "implemented-fixed-verified-pool",
+      "publicDecision": "ready",
+      "lockReason": ""
     },
     {
       "sourceItemId": "5-1-u6-e2-example-2-2",

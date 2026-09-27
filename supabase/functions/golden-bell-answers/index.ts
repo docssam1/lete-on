@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js@2.5.0/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { isFieldsGoldenBellBookId } from "../_shared/fields-golden-bell-book-id.js";
+import { FieldsAccessError, resolveFieldsSession } from "../_shared/fields-admin-access.js";
 
 const ALLOWED_ORIGINS = new Set([
   "https://lete-on.gfieldacademy.net",
@@ -9,6 +10,8 @@ const ALLOWED_ORIGINS = new Set([
   "http://127.0.0.1:8794",
   "http://localhost:8793",
   "http://localhost:8794",
+  "http://127.0.0.1:8796",
+  "http://localhost:8796",
 ]);
 
 function responseHeaders(req: Request) {
@@ -60,9 +63,7 @@ Deno.serve(async (req: Request) => {
 
   try {
     const tokenHash = await sha256(token);
-    const { data: session, error: sessionError } = await service.from("fields_access_sessions")
-      .select("student_name,expires_at").eq("token_hash", tokenHash).gt("expires_at", new Date().toISOString()).maybeSingle();
-    if (sessionError || !session) return json(req, { error: "session_invalid" }, 401);
+    await resolveFieldsSession(service, tokenHash);
     const body = await req.json();
     const bookId = String(body?.bookId || "");
     if (!isFieldsGoldenBellBookId(bookId)) return json(req, { error: "book_invalid" }, 400);
@@ -71,7 +72,8 @@ Deno.serve(async (req: Request) => {
     if (bookError || !book) return json(req, { error: "answer_book_unavailable" }, 404);
     await service.from("fields_access_sessions").update({ last_seen_at: new Date().toISOString() }).eq("token_hash", tokenHash);
     return json(req, { bookId, answers: book.payload, revision: book.payload_sha256, updatedAt: book.updated_at });
-  } catch {
+  } catch (error) {
+    if (error instanceof FieldsAccessError) return json(req, { error: error.message }, error.status);
     return json(req, { error: "request_invalid" }, 400);
   }
 });

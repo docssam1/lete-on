@@ -10,6 +10,7 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const ttsCache = require('./tts-cache.js');
 
 const GOOGLE_TTS_KEY = process.env.GOOGLE_TTS_KEY;
 const VOICE_NAME = 'en-US-Neural2-F';
@@ -109,7 +110,7 @@ async function generateMp3(text) {
   return Buffer.from(json.audioContent, 'base64');
 }
 
-async function uploadToSupabase(buffer, storagePath) {
+async function uploadToSupabase(buffer, storagePath, contentType) {
   const response = await httpRequest({
     hostname: new URL(SUPABASE_URL).hostname,
     path: `/storage/v1/object/audio/${storagePath}`,
@@ -117,7 +118,7 @@ async function uploadToSupabase(buffer, storagePath) {
     headers: {
       Authorization: `Bearer ${SUPABASE_KEY}`,
       apikey: SUPABASE_KEY,
-      'Content-Type': 'audio/mpeg',
+      'Content-Type': contentType || 'audio/mpeg',
       'x-upsert': 'true',
     },
   }, buffer);
@@ -133,16 +134,38 @@ async function main() {
   console.log(`📚 CARS Plus Level D: ${tasks.length} passages, ${totalChars.toLocaleString()} characters`);
   console.log(`🎙 Voice: ${VOICE_NAME}`);
 
+  /* 재합성 캐시(2026-09-21) — 이 스크립트는 건너뛰기가 아예 없어 매 실행 전 지문을 다시
+     샀다. 글·목소리가 그대로면 사지 않는다. 사정은 scripts/tts-cache.js 머리말. */
+  const cache = await ttsCache.load(httpRequest, SUPABASE_URL, SUPABASE_KEY, 'cars-d');
+  console.log(`🗂 TTS 캐시: 기록 ${Object.keys(cache).length}건${ttsCache.SEED ? ' · 씨앗 모드' : ''}`);
+
   let done = 0;
   let failed = 0;
+  let cached = 0;
+  let savedChars = 0;
   for (const task of tasks) {
     const label = `${task.lessonId}-${task.type}`;
+    const hash = ttsCache.hashOf(task.text, VOICE_NAME);
+    if (cache[task.storagePath] === hash) {
+      cached++; savedChars += task.text.length;
+      continue;
+    }
+    if (ttsCache.SEED) {
+      const info = await httpRequest({
+        hostname: new URL(SUPABASE_URL).hostname,
+        path: `/storage/v1/object/info/public/audio/${task.storagePath}`,
+        method: 'GET', headers: { Authorization: `Bearer ${SUPABASE_KEY}`, apikey: SUPABASE_KEY },
+      });
+      if (info.status === 200) { cache[task.storagePath] = hash; cached++; savedChars += task.text.length; }
+      continue;
+    }
     process.stdout.write(`  🎙 ${label} (${task.text.length} chars)... `);
     try {
       const mp3 = await generateMp3(task.text);
       const localPath = path.join(OUT_DIR, `${label}.mp3`);
       fs.writeFileSync(localPath, mp3);
       const url = await uploadToSupabase(mp3, task.storagePath);
+      cache[task.storagePath] = hash;
       done++;
       console.log(`✅ ${(mp3.length / 1024).toFixed(0)} KB → ${url}`);
     } catch (error) {
@@ -151,7 +174,10 @@ async function main() {
     }
   }
 
-  console.log(`\nComplete: ${done}/${tasks.length}, failed: ${failed}`);
+  await ttsCache.save(uploadToSupabase, cache, 'cars-d');
+
+  console.log(`\nComplete: ${done}/${tasks.length}, cached(skip): ${cached}, failed: ${failed}`);
+  console.log(`💰 Characters saved by cache: ~${savedChars.toLocaleString()}`);
   if (failed) process.exit(1);
 }
 

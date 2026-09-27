@@ -12,6 +12,12 @@
 
 문항 제작, 보기 구성, 그림 렌더, 검산, 저작권 원본 저장 기준은 [`QUESTION-AUTHORING-GUIDE.md`](./QUESTION-AUTHORING-GUIDE.md)를 먼저 확인합니다.
 
+## 다른 교재·프로젝트 연결
+
+다른 문제은행에 `source-data.js`가 있다고 가정하지 않습니다. JSON, CSV·엑셀 변환 결과, 여러 JS 모듈, DB 또는 API에서 유형과 출처 문항을 읽더라도 [`QUESTION-BANK-SOURCE-ADAPTER-CONTRACT.md`](./QUESTION-BANK-SOURCE-ADAPTER-CONTRACT.md)의 공통 계약으로 정규화합니다.
+
+기존 생성기·렌더러·검산·검색·인쇄 기능을 먼저 재사용하고, 풀이 원리와 그림 구조가 실제로 다른 경우에만 새 세부유형을 만듭니다.
+
 ## 쌓기나무
 
 쌓기나무 문제는 `geometry/cube-town/`의 기존 데이터와 출력기를 사용합니다. 새 그림을 복제하지 않습니다.

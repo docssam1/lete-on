@@ -28,22 +28,58 @@ function watch(page, label) {
   });
 }
 
+async function mockServerSession(page, admin) {
+  await page.route("**/functions/v1/hsmiddle-records", async route => {
+    const body = JSON.parse(route.request().postData() || "{}");
+    if (body.action !== "session") {
+      await route.fulfill({ status: 400, contentType: "application/json", body: JSON.stringify({ error: "unexpected_action" }) });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: true,
+        name: admin ? "docssam" : "DEMO",
+        access: admin ? ["diagnostic", "mock-1", "mock-2", "mock-3", "final"] : ["question-bank"],
+        admin,
+        expiresAt: new Date(Date.now() + 3600000).toISOString(),
+        startedAt: "2026-09-01T00:00:00.000Z"
+      })
+    });
+  });
+}
+
 async function enter(page, destination) {
+  await mockServerSession(page, false);
   await page.goto(destination || url, { waitUntil: "domcontentloaded" });
   await page.evaluate(function () {
     localStorage.setItem("hs-student", "DEMO");
-    localStorage.setItem("hs-code", "HS-DEMO");
+    localStorage.setItem("hsm-session-token-v2", "a".repeat(64));
+    localStorage.setItem("hsm-session-profile-v2", JSON.stringify({
+      name: "DEMO",
+      access: ["question-bank"],
+      admin: false,
+      expiresAt: new Date(Date.now() + 3600000).toISOString()
+    }));
   });
   await page.reload({ waitUntil: "networkidle" });
   await page.locator("#app:not([hidden])").waitFor({ state: "visible" });
 }
 
 async function enterAsAdmin(page, destination) {
+  await mockServerSession(page, true);
   await page.goto(destination || url, { waitUntil: "domcontentloaded" });
   await page.evaluate(function () {
-    const name = window.HSMIDDLE_DATA.admins[0];
+    const name = "docssam";
     localStorage.setItem("hs-student", name);
-    localStorage.setItem("hs-code", window.HSMIDDLE_DATA.studentCode[name]);
+    localStorage.setItem("hsm-session-token-v2", "b".repeat(64));
+    localStorage.setItem("hsm-session-profile-v2", JSON.stringify({
+      name,
+      access: ["diagnostic", "mock-1", "mock-2", "mock-3", "final"],
+      admin: true,
+      expiresAt: new Date(Date.now() + 3600000).toISOString()
+    }));
   });
   await page.reload({ waitUntil: "networkidle" });
   await page.locator("#app:not([hidden])").waitFor({ state: "visible" });
@@ -140,7 +176,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
   try {
     const desktop = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
     watch(desktop, "desktop");
-    await enter(desktop);
+    await enterAsAdmin(desktop);
     await noOverflow(desktop, "desktop catalog");
 
     const bodyText = await desktop.locator("body").innerText();
@@ -314,7 +350,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
 
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
     watch(mobile, "mobile");
-    await enter(mobile);
+    await enterAsAdmin(mobile);
     await noOverflow(mobile, "mobile catalog");
     const mobileQ02 = card(mobile, 2);
     const cardBox = await mobileQ02.boundingBox();
@@ -356,7 +392,7 @@ async function auditVisualSource(browser, number, problemPageNumbers) {
 
     const directLink = await browser.newPage({ viewport: { width: 1024, height: 768 }, deviceScaleFactor: 1 });
     watch(directLink, "direct-link");
-    await enter(directLink, `${url}?qs=${Array.from({ length: 40 }, function (_, index) { return index + 1; }).join(",")}`);
+    await enterAsAdmin(directLink, `${url}?qs=${Array.from({ length: 40 }, function (_, index) { return index + 1; }).join(",")}`);
     const directSelected = await directLink.locator('.type-card input[type="checkbox"]:checked').evaluateAll(function (inputs) {
       return inputs.map(function (input) {
         return Number(input.closest(".type-card").querySelector(".q-number").textContent);

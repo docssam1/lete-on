@@ -28,17 +28,14 @@ const ROOT = path.resolve(__dirname, '..');
 const PORT = process.env.NM_CHECK_PORT || 8792;
 const ONLY = process.argv.slice(2).map(s => s.toUpperCase());
 
-function loadPlaywright(){
-  for(const c of ['playwright', '/opt/node22/lib/node_modules/playwright']){
-    try { return require(c); } catch(e){}
-  }
-  console.error('playwright를 찾지 못했습니다. `npm i -D playwright` 후 다시 실행하세요.');
-  process.exit(2);
-}
+function loadPlaywright(){ return require('./lib/playwright'); }
 
 function serve(){
   return new Promise((resolve, reject) => {
-    const py = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
+    // Windows의 python3.exe는 Microsoft Store 설치 안내용 stub일 수 있어 서버가 뜨지 않는다.
+    // 실제 Python 명령을 플랫폼별로 고른다(check-print.js와 같은 계약).
+    const python = process.platform === 'win32' ? 'python' : 'python3';
+    const py = spawn(python, ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
     py.on('error', reject);
     const t0 = Date.now();
     (function ping(){
@@ -54,9 +51,7 @@ function serve(){
 (async () => {
   const { chromium } = loadPlaywright();
   const server = await serve();
-  const browser = await chromium.launch({
-    executablePath: process.env.NM_CHROMIUM || '/opt/pw-browsers/chromium'
-  });
+  const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const pageErrors = [];
   page.on('pageerror', e => pageErrors.push(e.message));

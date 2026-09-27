@@ -55,7 +55,7 @@ window.NM_UNITS['C-22'] = {
 
       { tag:{ko:'③ 통분 3단계 완성',en:'3) The three-step routine',zh:'③ 通分三步曲'},
         head:{ko:'맞추고 → 바꾸고 → 더하고!',en:'Match → convert → add!',zh:'统一→转换→相加！'},
-        desc:{ko:'어떤 이분모 분수도 3단계로: ①<b>공통 분모 정하기</b>(분모끼리 곱하면 항상 성공) ②<b>각 분수 바꾸기</b> — 분모에 곱한 수를 분자에도 똑같이 ③<b>분자끼리 더하기</b>. 예: 2/3+1/4 → 공통분모 12 → 8/12+3/12 = <b>11/12</b>. 뺄셈도 같은 3단계예요!',
+        desc:{ko:'분모가 다른 어떤 분수도 3단계로: ①<b>공통 분모 정하기</b>(분모끼리 곱하면 항상 성공) ②<b>각 분수 바꾸기</b> — 분모에 곱한 수를 분자에도 똑같이 ③<b>분자끼리 더하기</b>. 예: 2/3+1/4 → 공통분모 12 → 8/12+3/12 = <b>11/12</b>. 뺄셈도 같은 3단계예요!',
               en:'Any unlike-denominator pair takes three steps: ①<b>Pick the common denominator</b> (the product always works) ②<b>Convert each fraction</b> — whatever multiplies the bottom multiplies the top ③<b>Add the numerators</b>. E.g. 2/3+1/4 → common 12 → 8/12+3/12 = <b>11/12</b>. Subtraction uses the same three steps!',
               zh:'任何异分母分数都是三步：①<b>定公分母</b>(分母相乘一定行) ②<b>转换每个分数</b>——分母乘几分子也乘几 ③<b>分子相加</b>。例：2/3+1/4→公分母12→8/12+3/12 = <b>11/12</b>。减法也是同样三步！'},
         mathSteps:[{ko:'\\dfrac{2}{3} + \\dfrac{1}{4} \\;(\\text{공통분모 12})',en:'\\dfrac{2}{3} + \\dfrac{1}{4} \\;(\\text{common denominator 12})',zh:'\\dfrac{2}{3} + \\dfrac{1}{4} \\;(\\text{公分母12})'},'\\dfrac{2}{3}=\\dfrac{8}{12},\\; \\dfrac{1}{4}=\\dfrac{3}{12}','\\dfrac{8}{12} + \\dfrac{3}{12} = \\dfrac{11}{12}'],

@@ -8,6 +8,8 @@ const ALLOWED_ORIGINS = new Set([
   "http://127.0.0.1:8794",
   "http://localhost:8793",
   "http://localhost:8794",
+  "http://127.0.0.1:8796",
+  "http://localhost:8796",
   "http://127.0.0.1:8000",
   "http://localhost:8000",
 ]);

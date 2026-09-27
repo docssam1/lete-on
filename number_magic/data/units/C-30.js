@@ -38,7 +38,7 @@ window.NM_UNITS['C-30'] = {
               zh:'数百年前的数学家就用这个方法！234×56要画<b>3列(2,3,4)×2行(5,6)</b>的格子。每格画一条<b>对角线</b>，填入行×列的积：十位写在线上方，个位写在下方。例：3×5=15→上面1，下面5。'},
         mathSteps:[{ko:'가로: 2 | 3 | 4',en:'\\text{across: } 2 | 3 | 4',zh:'横：2 | 3 | 4'},{ko:'세로: 5, 6',en:'\\text{down: } 5, 6',zh:'竖：5, 6'},{ko:'각 칸: 곱을 십/일로 나눠 적기',en:'\\text{each cell: split the product into tens/ones}',zh:'每格：把积分成十位/个位来写'}],
         result:{ko:'격자 6칸에 곱 6개가 차곡차곡! 한 칸 = 한 곱셈.',en:'Six little products stored in six cells! One cell = one product.',zh:'6个格子装6个积！一格=一个乘法。'},
-        book:{ko:'격자의 각 칸은 자리값 조각이에요. 2(백)×5(십)의 칸은 사실 200×50=10000의 조각. 대각선이 같은 자리값끼리 모아줘요.',
+        book:{ko:'격자의 각 칸은 자릿값 조각이에요. 2(백)×5(십)의 칸은 사실 200×50=10000의 조각. 대각선이 같은 자릿값끼리 모아줘요.',
               en:'Each cell is a place-value piece: the 2(hundreds)×5(tens) cell really holds 200×50=10000. The diagonals collect pieces of equal place value.',
               zh:'每个格子是一个位值块：2(百)×5(十)的格子其实装着200×50=10000。对角线把相同位值的块聚在一起。'} },
 
@@ -77,7 +77,7 @@ window.NM_UNITS['C-30'] = {
     open:{ ko:'격자 곱셈에서 대각선 줄이 왜 같은 자리끼리 모이는지 설명해 봐요.',
       en:'Explain why each diagonal band in grid multiplication collects digits of the same place value.',
       zh:'解释格子乘法中为什么每条对角带聚集的是相同数位。' },
-    openHint:{ ko:'예) 한 칸의 자리값 = 가로 자리 × 세로 자리. 왼쪽으로 한 칸(×10)이나 아래로 한 칸(×10) 모두 자리값이 10배씩 커져서, 대각선 방향으로는 자리값이 같아요.',
+    openHint:{ ko:'예) 한 칸의 자릿값 = 가로 자리 × 세로 자리. 왼쪽으로 한 칸(×10)이나 아래로 한 칸(×10) 모두 자릿값이 10배씩 커져서, 대각선 방향으로는 자릿값이 같아요.',
       en:'e.g. A cell\'s value = column place × row place. Moving one cell left (×10) or one cell down (×10) both raise the value tenfold, so along a diagonal the place value stays equal.',
       zh:'例）格子的位值=列位×行位。向左一格(×10)或向下一格(×10)位值都扩大10倍，所以沿对角线方向位值相同。' }
   },

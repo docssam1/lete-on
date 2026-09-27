@@ -1,3 +1,7 @@
+if (typeof module !== "undefined" && module.exports && typeof window !== "undefined" && !window.HSE_SOURCE_INVENTORY_42_QUADRILATERAL) {
+  require("./source-inventory-4-2-quadrilateral.js");
+}
+
 (() => {
   const detailed = (name, generatorKey, labels) => ({
     name,
@@ -530,7 +534,7 @@
             number: subunitIndex + 1,
             name: definition.name,
             types: typeDefinitions.map((type, typeIndex) => ({
-              id: `${id}-u${unitIndex + 1}-t${subunitIndex + 1}${typeIndex ? `-${typeIndex + 1}` : ""}`,
+              id: type.id || `${id}-u${unitIndex + 1}-t${subunitIndex + 1}${typeIndex ? `-${typeIndex + 1}` : ""}`,
               number: typeIndex + 1,
               typeNumber: ++typeNumber,
               name: type.name || type.label || definition.name,
@@ -549,9 +553,13 @@
               reviewLocked: Boolean(type.reviewLocked),
               reviewReason: type.reviewReason || type.reviewLockReason || "",
               generationMode: type.generationMode || "",
+              implementationStatus: type.implementationStatus || "",
+              verifiedVariantTarget: Number.isInteger(type.verifiedVariantTarget) ? type.verifiedVariantTarget : undefined,
               verifiedVariantCount: Number.isInteger(type.verifiedVariantCount) ? type.verifiedVariantCount : undefined,
+              verifiedVariantProvenance: Array.isArray(type.verifiedVariantProvenance) ? [...type.verifiedVariantProvenance] : undefined,
               answerVisualRequired: Boolean(type.answerVisualRequired),
-              answerVisualStatus: type.answerVisualStatus || ""
+              answerVisualStatus: type.answerVisualStatus || "",
+              status: type.status || ""
             }))
           };
         })
@@ -559,12 +567,25 @@
     })
   });
 
-  const lockedPerimeterAreaGroup51 = (name, exploration, firstPdfPage, items) => detailed(
-    name,
-    "",
-    items.map(([suffix, label, sourceItemLabel]) => {
+  const perimeterAreaGenerator51 = new Map([
+    ["5-1-u6-e2-example-2-1", "source51RectangleTriangleAreaE2"],
+    ["5-1-u6-e3-exploration-3", "source51TriangleAreaInteriorE3"],
+    ["5-1-u6-e3-exploration-4", "source51TriangleAreaExteriorE3"],
+    ["5-1-u6-e3-example-3-1", "source51OverlappingParallelogramsE3"],
+    ["5-1-u6-e3-mission-2", "source51ParallelogramTileArrayE3"],
+    ["5-1-u6-e4-exploration-trapezoid", "source51TrapezoidAreaE4"],
+    ["5-1-u6-e4-exploration-rhombus", "source51RhombusAreaE4"],
+    ["5-1-u6-e4-example-4-1", "source51TrapezoidShadedRatioHeightE4"],
+    ["5-1-u6-e4-example-4-3", "source51RhombusRectangleOverlapE4"],
+    ["5-1-u6-e4-example-4-4", "source51MovingPointTrapezoidE4"]
+  ]);
+  const perimeterAreaReadyIds51 = new Set(perimeterAreaGenerator51.keys());
+
+  const lockedPerimeterAreaGroup51 = (name, exploration, firstPdfPage, items) => {
+    const group = detailed(name, "", items.map(([suffix, label, sourceItemLabel]) => {
       const sourceItemId = `5-1-u6-e${exploration}-${suffix}`;
       const isMission = suffix.startsWith("mission-");
+      const isReady = perimeterAreaReadyIds51.has(sourceItemId);
       return {
         ...sourceItem51(
           label,
@@ -572,13 +593,25 @@
           sourceItemId,
           firstPdfPage + (isMission ? 1 : 0),
           firstPdfPage + 1 + (isMission ? 1 : 0),
-          true,
-          "원문 문항과 유형은 확인했지만, 같은 구조의 문제·정답 그림과 독립 검산기가 모두 갖춰질 때까지 출제하지 않습니다."
+          !isReady,
+          isReady
+            ? "원문 그림 구조와 넓이 관계를 독립 계산으로 확인했습니다."
+            : "원문 문항과 유형은 확인했지만, 같은 구조의 문제·정답 그림과 독립 검산기가 모두 갖춰질 때까지 출제하지 않습니다."
         ),
-        ...(sourceItemLabel ? { sourceItemLabel } : {})
+        ...(sourceItemLabel ? { sourceItemLabel } : {}),
+        ...(isReady ? {
+          generationMode: "fixed-verified-pool",
+          verifiedVariantCount: 3,
+          answerVisualRequired: true,
+          answerVisualStatus: "verified"
+        } : {})
       };
-    })
-  );
+    }));
+    group.types.forEach(type => {
+      if (perimeterAreaReadyIds51.has(type.sourceItemId)) type.generatorKey = perimeterAreaGenerator51.get(type.sourceItemId);
+    });
+    return group;
+  };
 
   const perimeterAreaPendingGroups51 = [
     lockedPerimeterAreaGroup51("직사각형과 직각삼각형의 넓이", 2, 63, [
@@ -1388,6 +1421,58 @@
     ]));
   };
 
+  const buildSourceSemester42Quadrilateral = legacySemester => {
+    const inventory = window.HSE_SOURCE_INVENTORY_42_QUADRILATERAL;
+    if (!inventory?.items?.length) return legacySemester;
+
+    const groups = [];
+    for (const item of inventory.items) {
+      let group = groups.find(entry => entry.number === item.exploration);
+      if (!group) {
+        group = { number: item.exploration, name: item.groupTitle, types: [] };
+        groups.push(group);
+      }
+      group.types.push({
+        id: item.runtimeTypeId || "",
+        label: item.typeLabel,
+        generatorKey: item.generatorKey,
+        variant: item.variant,
+        difficultyBand: item.difficultyBand,
+        sourceTier: item.sourceTier,
+        sourceVerified: item.sourceVerified,
+        sourceEvidence: `4-2 심화 PDF p.${item.sourcePdfPage} · 교재 p.${item.sourcePrintedPage} · ${item.sourceItemId}`,
+        sourceItemId: item.sourceItemId,
+        sourceItemLabel: item.sourceItemLabel,
+        sourceSection: item.sourceSection,
+        sourcePdfPage: item.sourcePdfPage,
+        sourcePrintedPage: item.sourcePrintedPage,
+        reviewLocked: item.reviewLocked,
+        reviewReason: item.reviewReason,
+        generationMode: item.generationMode,
+        implementationStatus: item.implementationStatus,
+        verifiedVariantTarget: item.verifiedVariantTarget,
+        verifiedVariantCount: item.verifiedVariantCount,
+        verifiedVariantProvenance: item.reviewLocked ? [] : ["source-values", "source-structure-variant", "source-structure-variant"],
+        answerVisualRequired: item.answerVisualRequired,
+        answerVisualStatus: item.answerVisualStatus,
+        status: item.reviewLocked ? "review-locked" : "verified"
+      });
+    }
+
+    groups.sort((first, second) => first.number - second.number);
+    const rebuiltUnit = semester("4-2", [
+      ["자리표시"],
+      ["자리표시"],
+      ["자리표시"],
+      [inventory.unitName, ...groups.map(group => ({ name: group.name, types: group.types }))]
+    ]).units[3];
+
+    return {
+      ...legacySemester,
+      units: legacySemester.units.map(unit => unit.number === inventory.unit ? rebuiltUnit : unit)
+    };
+  };
+
   const buildSourceSemesterGrade6 = legacySemester => {
     const inventory = window.HSE_SOURCE_INVENTORY_GRADE6;
     const sourceItems = inventory?.items?.filter(item => item.semester === legacySemester.id) || [];
@@ -1456,6 +1541,8 @@
   };
 
   semesters[0] = buildSourceSemester41(semesters[0]);
+  const semester42Index = semesters.findIndex(item => item.id === "4-2");
+  if (semester42Index >= 0) semesters[semester42Index] = buildSourceSemester42Quadrilateral(semesters[semester42Index]);
   for (const semesterId of ["6-1", "6-2"]) {
     const index = semesters.findIndex(item => item.id === semesterId);
     if (index >= 0) semesters[index] = buildSourceSemesterGrade6(semesters[index]);

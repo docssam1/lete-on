@@ -47,9 +47,9 @@ window.NM_UNITS['C-19'] = {
 
       { tag:{ko:'③ 한 번에 크게 줄이기',en:'3) One big shrink',zh:'③ 一次大缩'},
         head:{ko:'최대공약수를 알면 지름길!',en:'Knowing the GCD is the shortcut!',zh:'知道最大公约数就是捷径！'},
-        desc:{ko:'익숙해지면 <b>한 번에 크게</b> 줄일 수 있어요. 72÷12에서 12가 둘 다의 약수임을 바로 보면: 72÷12 → 6÷1 = <b>6</b>. 이 "가장 크게 줄일 수 있는 수"가 <b>최대공약수(GCD)</b>예요. 구구단이 밝을수록 큰 공약수가 한눈에 보인답니다!',
+        desc:{ko:'익숙해지면 <b>한 번에 크게</b> 줄일 수 있어요. 72÷12에서 12가 둘 다의 약수임을 바로 보면: 72÷12 → 6÷1 = <b>6</b>. 이 "가장 크게 줄일 수 있는 수"가 <b>최대공약수</b>예요. 구구단이 밝을수록 큰 공약수가 한눈에 보인답니다!',
               en:'With practice you can shrink <b>big in one step</b>. Seeing that 12 divides both in 72÷12: → 6÷1 = <b>6</b>. That "biggest possible shrinker" is the <b>greatest common divisor (GCD)</b>. The brighter your times tables, the faster big common factors jump out!',
-              zh:'熟练后可以<b>一步大缩</b>。在72÷12中一眼看出12是公约数：→ 6÷1 = <b>6</b>。这个"能缩的最大的数"就是<b>最大公约数(GCD)</b>。口诀越熟，大公约数越容易一眼看出！'},
+              zh:'熟练后可以<b>一步大缩</b>。在72÷12中一眼看出12是公约数：→ 6÷1 = <b>6</b>。这个"能缩的最大的数"就是<b>最大公约数</b>。口诀越熟，大公约数越容易一眼看出！'},
         mathSteps:['72 ÷ 12',{ko:'양쪽 ÷12 (최대공약수)',en:'\\text{both ÷12 (the GCD)}',zh:'两边÷12（最大公约数）'},'= 6 ÷ 1','= 6'],
         result:{ko:'72÷12=6! 최대공약수로 한 방에 끝.',en:'72÷12=6! One shot with the GCD.',zh:'72÷12=6！用最大公约数一步到位。'},
         book:null }
