@@ -145,6 +145,14 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     foldCount: 20,
     studioByDomain: {},
     studioCount: 20,
+    // 쌓기나무 유형 그리드 안의 3단 분류(대영역 → 소영역) — GEN.domains()/
+    // areasOf()가 유일한 원본이다. null이면 ensureCubeTaxonomy가 화면을
+    // 그리기 직전에 첫 대영역·첫 소영역으로 채운다. 이 페이지의 최상위
+    // "영역" 탭(state.domain, DOMAIN_CUBE 등 — 학습지 엔진을 고르는 축)과는
+    // 완전히 다른 축이라 이름을 cubeDomain/cubeArea로 분리해 헷갈리지 않게
+    // 한다.
+    cubeDomain: null,
+    cubeArea: null,
     diceActivities: [],
     diceLevel: 3,
     levelNote: "",
@@ -290,7 +298,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
   }
 
   // 랩에서 "제공 중"인 단계는 생성형 학습지를 만들 수 있는 단계 ∪ 고정 문제
-  // 학습지가 있는 단계 ∪ 색종이 유형이 있는 단계다. 킨더·키즈는 생성기가 아직
+  // 학습지가 있는 단계 ∪ 색종이 유형이 있는 단계다. 키즈는 생성기가 아직
   // 문제를 만들지 못하지만 고정 문제 학습지가 있으므로 더 이상 준비 중이
   // 아니다 — generators.js의 LEVELS.available은 생성기 자신의 사정이라 그대로
   // 두고, 카탈로그를 합쳐 보는 판단은 입구인 여기서 한다.
@@ -536,11 +544,93 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     renderPreviewTabs();
   }
 
+  // 쌓기나무 유형의 대영역·소영역 — GEN.domains()/GEN.areasOf()/GEN.typesOf()가
+  // 유일한 원본이다. 여기에도 목록을 베껴 두면 generators.js가 대영역을 하나
+  // 늘린 날 이 화면만 옛 분류를 보여 주게 된다.
+  function ensureCubeTaxonomy() {
+    const domains = GEN.domains();
+    if (!domains.length) { state.cubeDomain = null; state.cubeArea = null; return; }
+    if (!state.cubeDomain || domains.indexOf(state.cubeDomain) === -1) state.cubeDomain = domains[0];
+    const areas = GEN.areasOf(state.cubeDomain);
+    if (!state.cubeArea || areas.indexOf(state.cubeArea) === -1) state.cubeArea = areas[0] || null;
+  }
+
+  // 대영역 탭 — 대영역이 하나뿐이면(지금 쌓기나무 엔진은 대부분 "입체") 눌러도
+  // 아무것도 바뀌지 않는 탭 하나만 떠 있는 화면이 되므로, 이때는 줄 자체를
+  // 그리지 않는다. 대영역이 늘어나면 자동으로 탭이 나타난다.
+  function renderTaxDomainRow(grid) {
+    const domains = GEN.domains();
+    if (domains.length < 2) return;
+    const row = document.createElement("div");
+    row.className = "tax-domain-row";
+    row.setAttribute("role", "tablist");
+    row.setAttribute("aria-label", "대영역");
+    domains.forEach((domain) => {
+      const codes = GEN.typesOf(domain);
+      const offered = codes.filter(supportsLevel).length;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tax-domain-btn" + (domain === state.cubeDomain ? " is-active" : "");
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", String(domain === state.cubeDomain));
+      button.innerHTML = "<span></span><small></small>";
+      button.querySelector("span").textContent = domain;
+      button.querySelector("small").textContent = "이 단계 " + offered + "/" + codes.length;
+      button.addEventListener("click", () => {
+        if (state.cubeDomain === domain) return;
+        state.cubeDomain = domain;
+        state.cubeArea = null; // 새 대영역의 첫 소영역으로 다시 고른다.
+        renderAll();
+      });
+      row.appendChild(button);
+    });
+    grid.appendChild(row);
+  }
+
+  // 소영역 줄 — 고른 대영역 안의 활동 묶음. 대영역과 같은 이유로 소영역이
+  // 하나뿐이면 줄을 그리지 않는다.
+  function renderTaxAreaRow(grid) {
+    const areas = GEN.areasOf(state.cubeDomain);
+    if (areas.length < 2) return;
+    const row = document.createElement("div");
+    row.className = "tax-area-row";
+    row.setAttribute("role", "tablist");
+    row.setAttribute("aria-label", "소영역");
+    areas.forEach((area) => {
+      const codes = GEN.typesOf(state.cubeDomain, area);
+      const offered = codes.filter(supportsLevel).length;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tax-area-btn" + (area === state.cubeArea ? " is-active" : "");
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", String(area === state.cubeArea));
+      button.innerHTML = "<span></span><small></small>";
+      button.querySelector("span").textContent = area;
+      button.querySelector("small").textContent = offered + "/" + codes.length;
+      button.addEventListener("click", () => {
+        if (state.cubeArea === area) return;
+        state.cubeArea = area;
+        renderAll();
+      });
+      row.appendChild(button);
+    });
+    grid.appendChild(row);
+  }
+
   function renderCubeTypes(grid) {
     if (!state.book) ensurePreviewType();
+    ensureCubeTaxonomy();
+    renderTaxDomainRow(grid);
+    renderTaxAreaRow(grid);
     const previewAudit = {};
+    // 지금 고른 대영역·소영역에 속한 세부유형만 카드로 그린다 — 다른
+    // 소영역에서 이미 체크해 둔 유형은 화면에서만 잠깐 숨을 뿐 state.types에
+    // 그대로 남아 있으므로(체크박스 상태가 아니라 배열 자체를 지우지 않는다),
+    // 소영역을 오가도 선택이 사라지지 않는다.
+    const areaCodes = state.cubeArea ? GEN.typesOf(state.cubeDomain, state.cubeArea) : [];
+    const visibleTypes = areaCodes.map((code) => GEN.typeInfo(code)).filter(Boolean);
     typeGroupHeading(grid, "생성 유형", "여러 개 선택 가능");
-    GEN.TYPES.forEach((type) => {
+    visibleTypes.forEach((type) => {
       const ok = supportsLevel(type.code);
       const visual = cubeTypePreview(type);
       if (visual) previewAudit[type.code] = {
@@ -757,7 +847,10 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
       } else if (state.book) {
         note.textContent = "준비된 학습지는 한 번에 하나만 열어요. 생성 유형을 고르면 여러 유형을 한 학습지에 섞을 수 있어요.";
       } else {
-        note.textContent = "체크한 생성 유형이 한 학습지에 고르게 섞여 나와요.";
+        const areaCodes = state.cubeArea ? GEN.typesOf(state.cubeDomain, state.cubeArea) : [];
+        const elsewhere = state.types.filter((code) => areaCodes.indexOf(code) === -1).length;
+        note.textContent = "체크한 생성 유형이 한 학습지에 고르게 섞여 나와요." +
+          (elsewhere ? " 다른 소영역에서도 " + elsewhere + "개를 골라 뒀어요." : "");
       }
       note.classList.toggle("is-warn", Boolean(incompatibleBook || incompatibleFold || state.typeAutoNote));
     }
@@ -1074,7 +1167,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
       return;
     }
     // 학습지 생성기와 같은 rng 요리법 — 미리보기가 실제 출제와 다른 분포로
-    // 뽑히면 보여 준 의미가 없다.
+    // 뽑히면 보여 줄 의미가 없다.
     const rng = GEN.createRng("GWP:" + state.previewSeed + ":" + state.level + ":" + state.intensity + ":" + state.previewType);
     let problem = null;
     try {
