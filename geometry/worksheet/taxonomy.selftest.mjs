@@ -7,9 +7,10 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 require("./generators.js");
+require("./taxonomy.js");
 const GEN = global.GW_GEN;
 
-// 사람이 확인한 정답표 — generators.js 안의 TYPE_TAXONOMY를 베끼지 않고
+// 사람이 확인한 정답표 — taxonomy.js 안의 TYPE_TAXONOMY를 베끼지 않고
 // 독립적으로 다시 적어, 복사-붙여넣기 오타나 표 자체의 실수를 잡는다.
 const EXPECTED = {
   TC: { domain: "입체", area: "바탕그림" },
