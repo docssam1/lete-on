@@ -25,7 +25,22 @@ def clean_ref(path):
     try:
         y, sr = librosa.load(path, sr=24000, mono=True)
     except Exception as e:
-        sys.exit(f"참조 녹음을 열지 못했습니다({type(e).__name__}: {e}). 휴대폰 녹음 앱에서 m4a·wav 로 다시 내보내 주세요.")
+        # mp4·m4a 는 librosa 가 못 여는 PC 가 많다 — ffmpeg 가 든 imageio-ffmpeg 로 wav 를 뽑아 다시 읽는다
+        print(f"  librosa 로 못 열어서({type(e).__name__}) ffmpeg 로 소리만 뽑습니다...", flush=True)
+        try:
+            import subprocess
+            try:
+                import imageio_ffmpeg
+            except ImportError:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "imageio-ffmpeg"])
+                import imageio_ffmpeg
+            os.makedirs(os.path.join(ROOT, ".omni-ref"), exist_ok=True)
+            tmp = os.path.join(ROOT, ".omni-ref", "ref-extract.wav")
+            subprocess.check_call([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-i", path,
+                                   "-vn", "-ac", "1", "-ar", "24000", tmp])
+            y, sr = librosa.load(tmp, sr=24000, mono=True)
+        except Exception as e2:
+            sys.exit(f"참조 녹음을 열지 못했습니다({type(e2).__name__}: {e2}). 휴대폰 녹음 앱에서 m4a·wav 로 다시 내보내 주세요.")
     y, _ = librosa.effects.trim(y, top_db=35)
     secs = len(y) / sr
     rms = float(np.sqrt(np.mean(y ** 2))) if len(y) else 0.0
