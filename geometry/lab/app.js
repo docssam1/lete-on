@@ -27,7 +27,7 @@ import { ACTIVITIES as DICE_ACTIVITIES } from "../worksheet/dice-roll/workbook-c
     { value: 5, label: "5 · 종합 추리" }
   ];
   const DICE_TYPE_DETAILS = {
-    sequence: { code: "DR-B", note: "굴리 때마다 바닥에 닿는 눈을 순서대로 기록" },
+    sequence: { code: "DR-B", note: "굴릴 때마다 바닥에 닿는 눈을 순서대로 기록" },
     target: { code: "DR-T", note: "목표 칸에서 바닥에 닿는 눈 하나 구하기" },
     sum: { code: "DR-S", note: "표시한 칸의 밑면 눈을 찾아 모두 더하기" },
     paired: { code: "DR-P", note: "두 경로의 마지막 밑면 관계로 빈 눈 찾기" },
