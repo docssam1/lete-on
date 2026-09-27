@@ -682,7 +682,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
       <span data-i18n="share">공유</span>
     </button>
   </header>
-  <div class="langrow"><nav class="langsw" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></nav></div>
+  <div class="langrow"><div role="navigation" class="langsw" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></div></div>
 
   <!-- ───── 히어로 · 60초 쇼릴 ───── -->
   <section class="hero" aria-labelledby="h1">
@@ -874,7 +874,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
       <a href="../assets/promo/video/showreel-full.mp4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg><span data-i18n="meta.full">전체 영상 2:25</span></a>
     </div>
 
-    <div class="chips" aria-label="한눈에">
+    <div class="chips" aria-label="한눈에" data-i18n-attr="aria-label:chips.label">
       <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg><span data-i18n="chip.age">만 5세부터</span></span>
       <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 17c4-8 8-8 12-4s6 2 6-6"/></svg><span data-i18n="chip.road">유아부터 고등까지 한 길</span></span>
       <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i18n="chip.pace">주 1회 · 주 2회</span></span>
@@ -1148,9 +1148,9 @@ window.__NM_EN = {
   'bk.play':'Play the intro film', 'bk.pauseFilm':'Pause the intro film', 'bk.pause':'Pause', 'bk.resume':'Play', 'bk.muteOff':'Mute', 'bk.muteOn':'Unmute',
   'bk.hit':'Open the spellbook to watch the intro film (plays with sound, narrated in Korean)', 'bk.hint':'Tap the book to open it',
   'bk.ctl':'Intro film controls', 'bk.restart':'From the start', 'bk.lenLabel':'Film length', 'bk.full':'Full 2:25', 'bk.short':'1 min', 'bk.close':'Close the book',
-  'cta.more':'See how it works', 'cta.village':'To the Magic Village', 'cta.contact':'Contact us',
+  'cta.more':'See how it works', 'cta.village':'Go to the village', 'cta.contact':'Contact us',
   'under.sub':'Narrated in Korean · captions below the film', 'meta.60':'1-minute film (file)', 'meta.full':'Full film 2:25',
-  'chip.age':'From age 5', 'chip.road':'One road, preschool to high school', 'chip.pace':'Once or twice a week', 'chip.paper':'Work on paper',
+  'chips.label':'At a glance', 'chip.age':'From age 5', 'chip.road':'One road, preschool to high school', 'chip.pace':'Once or twice a week', 'chip.paper':'Work on paper',
   'a1.kicker':'Why', 'a1.h2':'Never leaning to one side',
   'a1.lead':'Not arithmetic alone, and not creative arithmetic alone. To go beyond numbers and master mathematics, all three have to grow together.',
   'pil.l1':'Language', 'pil.l2':'Thinking', 'pil.l3':'Arithmetic',
@@ -1185,7 +1185,7 @@ window.__NM_EN = {
   'c8.n':"Every week, the worksheets and a progress note go to the parent's phone.",
   'c8.p':"<b>For parents</b> Open the link in the text message and there's this week's worksheet. Print it, work through it, and next week another arrives.",
   'c9.alt':'Docssam, children and a number friend together in the village plaza', 'c9.h':'Not worksheets tossed over the fence',
-  'c9.n':"Students, parents and the academy building the culture together — Docssam's philosophy, experienced at Numbers of Magic.",
+  'c9.n':"Docssam's philosophy is that students, parents and the academy build the culture together. Come and experience it at Numbers of Magic.",
   'c9.p':"<b>For parents</b> Reading comprehension has to grow together with arithmetic. That's why the three of us walk together.",
   'nav.dots':'Choose a card', 'nav.dot':'Card {n}', 'nav.prev':'Previous card', 'nav.next':'Next card',
   'pace.kicker':'Pace comparison', 'pace.h2':'At today\'s pace, how far can your child go?',
@@ -1225,7 +1225,7 @@ window.__NM_ZH = {
   'bk.ctl':'介绍影片控制', 'bk.restart':'从头播放', 'bk.lenLabel':'影片长度', 'bk.full':'完整版 2:25', 'bk.short':'1分钟', 'bk.close':'合上书',
   'cta.more':'了解更多', 'cta.village':'去魔法小镇', 'cta.contact':'咨询',
   'under.sub':'韩语旁白 · 影片下方有中文字幕', 'meta.60':'1分钟影片（文件）', 'meta.full':'完整影片 2:25',
-  'chip.age':'5周岁起', 'chip.road':'从幼儿到高中一条路', 'chip.pace':'每周1次 · 每周2次', 'chip.paper':'学习在纸上',
+  'chips.label':'一览', 'chip.age':'5周岁起', 'chip.road':'从幼儿到高中一条路', 'chip.pace':'每周1次 · 每周2次', 'chip.paper':'学习在纸上',
   'a1.kicker':'为什么', 'a1.h2':'不偏向任何一边',
   'a1.lead':'既不是只练运算，也不是只练创意运算。要从征服数走向征服数学，三者必须一起成长。',
   'pil.l1':'语言', 'pil.l2':'思维', 'pil.l3':'运算',
@@ -1404,7 +1404,7 @@ window.__NM_ZH = {
   var segs = root.querySelectorAll('.bk-seg button'), cap = document.getElementById('bkCap'), lab = document.getElementById('bkLab'), idleT = document.getElementById('bkIdleT');
   var fx = root.querySelector('.bk-fx'), motes = root.querySelector('.bk-motes'), dusts = root.querySelector('.bk-dusts');
   var SRC = { full: root.getAttribute('data-src-full'), short: root.getAttribute('data-src-short') };
-  var T = function(k){ return window.NM_I18N ? window.NM_I18N.t(k) : k; };
+  var tr = function(k){ return window.NM_I18N ? window.NM_I18N.t(k) : k; };   /* 사전 조회 — T 는 아래서 책 두께로 쓰므로 이름을 나눈다 */
   var which = root.getAttribute('data-default') === 'short' ? 'short' : 'full';
   var state = 'closed', timers = [], userPaused = false, autoPaused = false;
   var KEY = 'nmBookOpened';
@@ -1545,7 +1545,7 @@ window.__NM_ZH = {
 
   /* ---------- 영상 ---------- */
   /* 자막 줄: 전체 영상은 세 언어 모두 시간표(caps). 1분 컷은 한국어 자막이 영상에 박혀 있어 ko 는 고정 문구, en·zh 는 시간표(caps60) */
-  function capsFor(){ var c = T(which === 'short' ? 'caps60' : 'caps'); return (c && typeof c !== 'string') ? c : null; }
+  function capsFor(){ var c = tr(which === 'short' ? 'caps60' : 'caps'); return (c && typeof c !== 'string') ? c : null; }
   var ICON = {
     pause:'<path d="M8 5v14M16 5v14"/>', play:'<path d="M7 4.8v14.4L19 12z"/>',
     on:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
@@ -1554,10 +1554,10 @@ window.__NM_ZH = {
   function setWhich(w){
     which = w;
     segs.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-v') === w ? 'true' : 'false'); });
-    lab.innerHTML = '<b>Chapter I</b>' + T(w === 'full' ? 'bk.lab.full' : 'bk.lab.short');
+    lab.innerHTML = '<b>Chapter I</b>' + tr(w === 'full' ? 'bk.lab.full' : 'bk.lab.short');
     var cs = capsFor();
-    cap.textContent = cs ? cs[0][1] : T('bk.capShort');
-    v.setAttribute('aria-label', T('bk.vlabel').replace('{len}', T(w === 'full' ? 'bk.len.full' : 'bk.len.short')));
+    cap.textContent = cs ? cs[0][1] : tr('bk.capShort');
+    v.setAttribute('aria-label', tr('bk.vlabel').replace('{len}', tr(w === 'full' ? 'bk.len.full' : 'bk.len.short')));
   }
   document.addEventListener('nm:lang', function(){ setWhich(which); syncUI(); });
   function attach(){
@@ -1566,10 +1566,10 @@ window.__NM_ZH = {
   }
   function syncUI(){
     var p = v.paused;
-    bPlay.setAttribute('aria-label', T(p ? 'bk.resume' : 'bk.pause')); bPlay.querySelector('svg').innerHTML = p ? ICON.play : ICON.pause;
-    bMute.setAttribute('aria-label', T(v.muted ? 'bk.muteOn' : 'bk.muteOff')); bMute.setAttribute('aria-pressed', v.muted ? 'true' : 'false');
+    bPlay.setAttribute('aria-label', tr(p ? 'bk.resume' : 'bk.pause')); bPlay.querySelector('svg').innerHTML = p ? ICON.play : ICON.pause;
+    bMute.setAttribute('aria-label', tr(v.muted ? 'bk.muteOn' : 'bk.muteOff')); bMute.setAttribute('aria-pressed', v.muted ? 'true' : 'false');
     bMute.querySelector('svg').innerHTML = v.muted ? ICON.off : ICON.on;
-    plateBtn.setAttribute('aria-label', T(p ? 'bk.play' : 'bk.pauseFilm'));
+    plateBtn.setAttribute('aria-label', tr(p ? 'bk.play' : 'bk.pauseFilm'));
   }
   function play(withSound){
     attach();
@@ -1582,7 +1582,7 @@ window.__NM_ZH = {
   }
   v.addEventListener('playing', function(){ plate.classList.add('vid-on'); syncUI(); });
   v.addEventListener('play', syncUI); v.addEventListener('pause', syncUI); v.addEventListener('volumechange', syncUI);
-  v.addEventListener('ended', function(){ v.currentTime = 0; plate.classList.remove('vid-on'); idleT.firstChild.setAttribute('data-i18n', 'bk.again'); idleT.firstChild.textContent = T('bk.again'); syncUI(); });
+  v.addEventListener('ended', function(){ v.currentTime = 0; plate.classList.remove('vid-on'); idleT.firstChild.setAttribute('data-i18n', 'bk.again'); idleT.firstChild.textContent = tr('bk.again'); syncUI(); });
   v.addEventListener('timeupdate', function(){
     var C = capsFor(); if(!C) return;
     var t = v.currentTime, s = C[0][1];

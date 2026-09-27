@@ -279,7 +279,7 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
 .langsw a[aria-current="true"]{color:var(--la-ink);font-weight:600;text-decoration:underline;text-decoration-color:var(--la-gold);text-underline-offset:5px;text-decoration-thickness:1px}
 .langsw i{width:3px;height:3px;border-radius:50%;background:var(--la-gold);opacity:.8;flex:none}
 .langsw a:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:-2px}
-.hero .bottom .langsw{align-self:flex-end;margin:-10px -8px -12px 0}
+.hero .bottom .langsw{align-self:flex-start;margin:-10px 0 -12px -7px}   /* 오른쪽은 진행 점(.dots)이 차지하므로 왼쪽에 */
 :root:lang(en) h1,:root:lang(en) h2,:root:lang(en) .cap,:root:lang(en) .quote,:root:lang(en) .pillar span,:root:lang(en) .hero .lead,:root:lang(en) .fin p.body,
 :root:lang(zh) h1,:root:lang(zh) h2,:root:lang(zh) .cap,:root:lang(zh) .quote,:root:lang(zh) .pillar span,:root:lang(zh) .hero .lead,:root:lang(zh) .fin p.body{word-break:normal;overflow-wrap:break-word}
 :root:lang(en) .hero h1{font-size:30px}
@@ -326,7 +326,7 @@ h1 em,h2 em{font-style:normal;background:linear-gradient(color-mix(in srgb,var(-
         </button>
       </div>
       <div class="bottom">
-        <nav class="langsw" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></nav>
+        <div role="navigation" class="langsw" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></div>
         <div class="kicker"><b>GFIELD</b> <span data-i18n="hero.kicker">수학 마법 나라에 오신 걸 환영합니다</span></div>
         <h1 data-i18n-html="hero.h1">우리 아이,<br><em>지금 속도로</em> 어디까지<br>갈 수 있을까요?</h1>
         <p class="lead" data-i18n="hero.lead">답을 빨리 구하는 계산 학습이 아닙니다. 수를 가지고 놀고, 문장을 이해하고, 셈을 할 수 있어야 수학을 정복합니다.</p>

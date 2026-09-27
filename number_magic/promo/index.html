@@ -779,7 +779,7 @@ footer nav a:hover{color:var(--la-ink)}
   <nav aria-label="페이지 안내" data-i18n-attr="aria-label:nav.label">
     <a href="#act1" data-i18n="nav.why">왜</a><a href="#act2" data-i18n="nav.how">어떻게</a><a href="#act3" data-i18n="nav.together">함께</a><a href="#faq" data-i18n="nav.faq">자주 묻는 질문</a>
   </nav>
-  <nav class="langsw" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></nav>
+  <div role="navigation" class="langsw" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></div>
 </div>
 
 <main id="top">
@@ -791,7 +791,7 @@ footer nav a:hover{color:var(--la-ink)}
     <circle cx="1120" cy="200" r="1.1"/><circle cx="880" cy="40" r="1.2"/><circle cx="60" cy="520" r="1.2"/><circle cx="1150" cy="560" r="1.4"/>
   </svg>
   <div class="wrap">
-    <nav class="langsw hero-lang" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></nav>
+    <div role="navigation" class="langsw hero-lang" aria-label="언어" data-i18n-attr="aria-label:lang.label"><a href="?lang=ko" data-lang="ko" lang="ko" hreflang="ko">한국어</a><i aria-hidden="true"></i><a href="?lang=en" data-lang="en" lang="en" hreflang="en">English</a><i aria-hidden="true"></i><a href="?lang=zh" data-lang="zh" lang="zh-Hans" hreflang="zh-Hans">中文</a></div>
     <div class="hero-top">
       <p class="kicker" data-i18n="hero.kicker">숫자가 마법이 되는 곳</p>
       <h1 id="h1" class="sr" data-i18n="hero.h1">Numbers of Magic · 수의 마법</h1>
@@ -1500,7 +1500,7 @@ window.__NM_EN = {
   'q5':'What do parents need to do?',
   'a5':'Arithmetic is done at home, every day. So what we provide is not lessons but worksheets, a diagnostic and a plan. When the weekly worksheets and progress note arrive <b>by text message on your phone</b>, print the envelope and sit alongside your child. Choose the pace that suits sitting down together — once or twice a week — and hold to the philosophy with us: thinking and reading comprehension must grow together with arithmetic. Students, parents and the academy build the culture together.',
   'fin.kicker':'Master the numbers, master the math',
-  'fin.p':"Students, parents and the academy building the culture together — Docssam's philosophy, experienced at Numbers of Magic.",
+  'fin.p':"Docssam's philosophy is that students, parents and the academy build the culture together. Come and experience it at Numbers of Magic.",
   'contact.soon':'Contact details coming soon.',
   'foot.label':'Related pages', 'foot.app':'App · Magic Village', 'foot.phil':"Docssam's philosophy", 'foot.sheets':'Worksheets', 'foot.film':'Intro film (2:25)',
   'foot.note':'The pace-comparison screen is for reference only and promises no outcomes · arithmetic track · ages use Korean counting age',
@@ -1771,7 +1771,7 @@ document.querySelectorAll('a[data-contact="placeholder"]').forEach(function(a){
   var segs = root.querySelectorAll('.bk-seg button'), cap = document.getElementById('bkCap'), lab = document.getElementById('bkLab'), idleT = document.getElementById('bkIdleT');
   var fx = root.querySelector('.bk-fx'), motes = root.querySelector('.bk-motes'), dusts = root.querySelector('.bk-dusts');
   var SRC = { full: root.getAttribute('data-src-full'), short: root.getAttribute('data-src-short') };
-  var T = function(k){ return window.NM_I18N ? window.NM_I18N.t(k) : k; };
+  var tr = function(k){ return window.NM_I18N ? window.NM_I18N.t(k) : k; };   /* 사전 조회 — T 는 아래서 책 두께로 쓰므로 이름을 나눈다 */
   var LANG = function(){ return window.NM_I18N ? window.NM_I18N.lang : 'ko'; };
   var which = root.getAttribute('data-default') === 'short' ? 'short' : 'full';
   var state = 'closed', timers = [], userPaused = false, autoPaused = false;
@@ -1913,7 +1913,7 @@ document.querySelectorAll('a[data-contact="placeholder"]').forEach(function(a){
 
   /* ---------- 영상 ---------- */
   /* 자막 줄: 전체 영상은 세 언어 모두 시간표(caps). 1분 컷은 한국어 자막이 영상에 박혀 있어 ko 는 고정 문구, en·zh 는 시간표(caps60) */
-  function capsFor(){ var c = T(which === 'short' ? 'caps60' : 'caps'); return (c && typeof c !== 'string') ? c : null; }
+  function capsFor(){ var c = tr(which === 'short' ? 'caps60' : 'caps'); return (c && typeof c !== 'string') ? c : null; }
   var ICON = {
     pause:'<path d="M8 5v14M16 5v14"/>', play:'<path d="M7 4.8v14.4L19 12z"/>',
     on:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
@@ -1922,10 +1922,10 @@ document.querySelectorAll('a[data-contact="placeholder"]').forEach(function(a){
   function setWhich(w){
     which = w;
     segs.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-v') === w ? 'true' : 'false'); });
-    lab.innerHTML = '<b>Chapter I</b>' + T(w === 'full' ? 'bk.lab.full' : 'bk.lab.short');
+    lab.innerHTML = '<b>Chapter I</b>' + tr(w === 'full' ? 'bk.lab.full' : 'bk.lab.short');
     var cs = capsFor();
-    cap.textContent = cs ? cs[0][1] : T('bk.capShort');
-    v.setAttribute('aria-label', T('bk.vlabel').replace('{len}', T(w === 'full' ? 'bk.len.full' : 'bk.len.short')));
+    cap.textContent = cs ? cs[0][1] : tr('bk.capShort');
+    v.setAttribute('aria-label', tr('bk.vlabel').replace('{len}', tr(w === 'full' ? 'bk.len.full' : 'bk.len.short')));
   }
   document.addEventListener('nm:lang', function(){ setWhich(which); syncUI(); });
   function attach(){
@@ -1934,10 +1934,10 @@ document.querySelectorAll('a[data-contact="placeholder"]').forEach(function(a){
   }
   function syncUI(){
     var p = v.paused;
-    bPlay.setAttribute('aria-label', T(p ? 'bk.resume' : 'bk.pause')); bPlay.querySelector('svg').innerHTML = p ? ICON.play : ICON.pause;
-    bMute.setAttribute('aria-label', T(v.muted ? 'bk.muteOn' : 'bk.muteOff')); bMute.setAttribute('aria-pressed', v.muted ? 'true' : 'false');
+    bPlay.setAttribute('aria-label', tr(p ? 'bk.resume' : 'bk.pause')); bPlay.querySelector('svg').innerHTML = p ? ICON.play : ICON.pause;
+    bMute.setAttribute('aria-label', tr(v.muted ? 'bk.muteOn' : 'bk.muteOff')); bMute.setAttribute('aria-pressed', v.muted ? 'true' : 'false');
     bMute.querySelector('svg').innerHTML = v.muted ? ICON.off : ICON.on;
-    plateBtn.setAttribute('aria-label', T(p ? 'bk.play' : 'bk.pauseFilm'));
+    plateBtn.setAttribute('aria-label', tr(p ? 'bk.play' : 'bk.pauseFilm'));
   }
   function play(withSound){
     attach();
@@ -1950,7 +1950,7 @@ document.querySelectorAll('a[data-contact="placeholder"]').forEach(function(a){
   }
   v.addEventListener('playing', function(){ plate.classList.add('vid-on'); syncUI(); });
   v.addEventListener('play', syncUI); v.addEventListener('pause', syncUI); v.addEventListener('volumechange', syncUI);
-  v.addEventListener('ended', function(){ v.currentTime = 0; plate.classList.remove('vid-on'); idleT.firstChild.setAttribute('data-i18n', 'bk.again'); idleT.firstChild.textContent = T('bk.again'); syncUI(); });
+  v.addEventListener('ended', function(){ v.currentTime = 0; plate.classList.remove('vid-on'); idleT.firstChild.setAttribute('data-i18n', 'bk.again'); idleT.firstChild.textContent = tr('bk.again'); syncUI(); });
   v.addEventListener('timeupdate', function(){
     var C = capsFor(); if(!C) return;
     var t = v.currentTime, s = C[0][1];
