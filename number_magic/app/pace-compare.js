@@ -238,7 +238,7 @@ const STR = {
   srcOurs:{ko:'우리 과정',en:'Our course',zh:'我们的课程'},
   beyondGrid:{ko:'진도표 칸 밖(같은 간격으로 이어 계산)',en:'beyond the chart (extended at the same offset)',zh:'超出进度表（按同样间隔推算）'},
   derived:{ko:'4.6년에서 거꾸로 계산',en:'back-calculated from 4.6 years',zh:'由4.6年倒推'},
-  legendBand:{ko:'초6 수학올림피아드 수준 · 표준~빠른 쪽',en:'AMC 10 level by grade 6 · standard–fast',zh:'小学体验KMO · 标准~快'}
+  legendBand:{ko:'초6 수학올림피아드 수준 · 표준~빠른 쪽',en:'AMC 10 level by grade 6 · standard–fast',zh:'小六达到数学竞赛水平 · 标准~快'}
 };
 function fmt(s, vars){ return String(s).replace(/\{(\w+)\}/g,(m,k)=>vars&&vars[k]!=null?vars[k]:m); }
 
