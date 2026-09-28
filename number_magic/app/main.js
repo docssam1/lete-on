@@ -3288,6 +3288,103 @@ function paceCompareResult(o){
   return {ctx, cur, curKey, ev, sugg};
 }
 window.NM_PACE_DIAG=paceCompareResult;
+/* ── 로드맵 시기(2026-09-28, 원장 "각 과정이 언제 시작하고 언제 끝나는지") ──
+   과정마다 시작·끝 학령개월. 계산은 **속도 비교 카드와 똑같은 것**을 쓴다 —
+   paceWeeksToFn(지금 자리 → 과정 N 시작까지 주) + NM_PACE_COMPARE.childSmAt.
+   과정 N 의 끝 = 과정 N+1 의 시작이라 과정 사이에 빈틈이 없다(check-road-timing.js).
+   지금 과정은 시작이 "지금"이고, 앞의 과정은 지났다. 나이를 모르면 sm 값은 null(주차만). */
+function roadTiming(o){
+  o=o||{};
+  const PC=window.NM_PACE_COMPARE;
+  const smNow=o.smNow!==undefined?o.smNow:schoolMonths();
+  const curKey=o.curKey||currentCourseKey();
+  const c=(window.NM_COURSES||{})[curKey];
+  const curNum=parseInt(String(curKey).replace(/^C/,''),10);
+  let curFrac=o.curFrac;
+  if(curFrac==null){ const p=c?courseProgress(c):{done:0,total:0}; curFrac=p.total?p.done/p.total:0; }
+  const cad=o.cad||S.roadCadence, pace=o.pace||roadPaceDef(S.roadPace).key, speed=o.speed||S.roadSpeed||1;
+  const weeksTo=paceWeeksToFn(curNum,curFrac,cad,pace,speed);
+  const ctx={curNum, curFrac, smNow, weeksTo};
+  const WPM=PC?PC.WEEKS_PER_MONTH:52/12;
+  const at=n=>smNow==null?null:(PC?PC.childSmAt(ctx,n):(n<=curNum?null:smNow+weeksTo(n)/WPM));
+  const rows={};
+  roadCourseList().forEach(x=>{
+    const past=x.num<curNum, cur=x.num===curNum;
+    rows[x.key]={ num:x.num, past, cur,
+      startWeeks: past?null:weeksTo(x.num), endWeeks: past?null:weeksTo(x.num+1),
+      startSm: past||cur?null:at(x.num), endSm: past?null:at(x.num+1) };
+  });
+  return {smNow, curNum, curFrac, cad, pace, speed, rows};
+}
+window.NM_ROAD_TIMING=roadTiming;
+/* 3D 지도 이름표용 — 과정 키 → 시작 시기 한 마디("초1 5월" · "지금" · 지난 과정은 빈 문자열). 나이를 모르면 전부 빈 문자열 */
+function roadStartLabels(){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const tm=roadTiming(), out={};
+  Object.keys(tm.rows).forEach(k=>{
+    const r=tm.rows[k];
+    out[k]=tm.smNow==null||r.past?'':r.cur?(ko?'지금':en?'Now':'现在'):pcAgeLabel(r.startSm);
+  });
+  return out;
+}
+/* 길 위의 이정표 — 중등·중2·고등·미적분이 시작되는 과정. 번호는 데이터에서 찾는다
+   (중등·고등 = 속도 비교 마일스톤, 중2·미적분 = 그 tier 의 첫 과정). */
+function roadMilestones(){
+  const PC=window.NM_PACE_COMPARE;
+  const firstOf=tier=>{ const x=roadCourseList().find(x=>x.c.tier===tier); return x?x.num:null; };
+  const ms=m=>m?m.course:null;
+  return [
+    {id:'MID',  course:PC?ms(PC.milestone('MID')):firstOf('middle1'),   name:PC&&PC.milestone('MID')?PC.milestone('MID').name:{ko:'중등 연산 시작',en:'Start of middle-school arithmetic',zh:'开始初中运算'}},
+    {id:'M2',   course:firstOf('middle2'),   name:{ko:'중2 연산 시작',en:'Start of Grade 8 arithmetic',zh:'开始初二运算'}},
+    {id:'HIGH', course:PC?ms(PC.milestone('HIGH')):firstOf('highmath1'), name:PC&&PC.milestone('HIGH')?PC.milestone('HIGH').name:{ko:'고등 연산 시작',en:'Start of high-school arithmetic',zh:'开始高中运算'}},
+    {id:'CAL',  course:firstOf('calculus1'), name:{ko:'미적분 시작',en:'Start of calculus',zh:'开始微积分'}}
+  ].filter(m=>m.course!=null);
+}
+/* 한 과정의 시기 문구 — "초1 5월 시작 → 초1 8월 끝" / 지금 / 지났어요 / (나이 모름) null */
+function roadWhenHtml(r){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  if(!r) return '';
+  if(r.past) return `<span class="nm-cr-when past">${lk('지났어요','Already past','已经过了')}</span>`;
+  if(r.endSm==null) return '';
+  const e=esc(pcAgeLabel(r.endSm));
+  if(r.cur) return `<span class="nm-cr-when cur"><b>${lk('지금','Now','现在')}</b> → <b class="nm-cr-tnum">${e}</b> ${lk('끝','end','结束')}</span>`;
+  const s=esc(pcAgeLabel(r.startSm));
+  if(s===e) return `<span class="nm-cr-when"><b class="nm-cr-tnum">${s}</b> · ${lk('한 달 안에 끝나요','done within the month','一个月内完成')}</span>`;
+  return `<span class="nm-cr-when"><b class="nm-cr-tnum">${s}</b> ${lk('시작','start','开始')} → <b class="nm-cr-tnum">${e}</b> ${lk('끝','end','结束')}</span>`;
+}
+/* 과정 설명(한 번 눌러 펼침) — 전부 데이터에서 만든다(courses.js 회차 · threads.js 이름 · 유닛 제목 · hero3d).
+   무엇을 배우나(교과 연산 스레드) · 창의 연산 · 문장제·적용 · 마법 개념(3D 그림 표시) · 마치면 할 수 있는 것. */
+function courseExplainHtml(c){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const TH=window.NM_THREADS||{}, H3=window.NM_HERO3D||{};
+  const uniq=a=>a.filter((v,i)=>a.indexOf(v)===i);
+  const school=[], top={}, creative=[], apply=[];
+  (c.sessions||[]).forEach(s=>{
+    if(s.test) return;
+    (s.school||s.drills||[]).forEach(d=>{ if(d.review) return; school.push(d.t); top[d.t]=Math.max(top[d.t]||0,d.lv||1); });
+    ((s.strategy&&s.strategy.practice)||[]).forEach(d=>creative.push(d.t));
+    (s.application||[]).forEach(d=>{ if(d.review) return; apply.push(d.kind==='drawing'&&d.title?L(d.title):(TH[d.t]?L(TH[d.t].name):d.t)); });
+  });
+  const nm=t=>TH[t]?L(TH[t].name):t;
+  const schoolIds=uniq(school), creIds=uniq(creative).filter(t=>schoolIds.indexOf(t)<0);
+  const units=courseUnitIds(c);
+  const li=(h,body)=>body?`<div class="nm-cr-ex-row"><b>${h}</b><span>${body}</span></div>`:'';
+  const join=a=>a.map(esc).join(' · ');
+  const unitHtml=units.map(u=>`<span class="nm-cr-ex-unit">${esc(L(UNITS[u].title))}${H3[u]?`<i class="nm-cr-ex-3d" title="${lk('3D 그림이 있어요','Has a 3D picture','有3D图')}">3D</i>`:''}</span>`).join('');
+  /* 마치면 — 그 과정에서 닿는 가장 높은 레벨의 이름표(threads.js levels.label) */
+  const after=schoolIds.map(t=>{
+    const th=TH[t]; const lv=th&&(th.levels||[]).find(l=>l.id===top[t]);
+    return esc(nm(t))+(lv&&lv.label?` <small>(${esc(L(lv.label))})</small>`:'');
+  }).join(' · ');
+  const body=li(lk('교과 연산','School arithmetic','教材运算'),join(schoolIds.map(nm)))
+    +li(lk('창의 연산','Creative arithmetic','创意运算'),join(creIds.map(nm)))
+    +li(lk('문장제 · 적용','Word problems · applying','应用题 · 应用'),join(uniq(apply)))
+    +(units.length?`<div class="nm-cr-ex-row"><b>${lk('마법 개념','Magic concepts','魔法概念')}</b><span class="nm-cr-ex-units">${unitHtml}</span></div>`:'')
+    +(after?`<p class="nm-cr-ex-after">${lk('마치면 스스로 풀 수 있어요','Afterwards you can solve on your own','学完后能独立完成')} — ${after}</p>`:'');
+  return body||`<p class="nm-cr-ex-after">${lk('이 과정의 편성은 아직 준비 중이에요.','This course is still being put together.','这个课程还在编排中。')}</p>`;
+}
 /* 학령개월 → 사람 말. 미취학은 한국 나이 "6세 9월", 취학 뒤는 "초1 11월"(schoolMonthsLabel). */
 function pcAgeLabel(sm){
   sm=Math.round(sm);
@@ -3515,6 +3612,9 @@ function screenCourseRoad(){
   /* 3D 지도가 처음 비출 과정 — draw(false)가 S._roadFocus 를 지우기 전에 잡아 둔다 */
   const heroFocus=S._roadFocus||null;
   const hero3dLikely=!!heroEl && road3dLikely();
+  const openEx={};          /* 펼친 과정 설명(다시 그려도 유지) */
+  let road3dCtl=null;       /* 3D 지도 — 설정이 바뀌면 시작 달 이름표를 다시 쓴다 */
+  function syncRoad3dTimes(){ if(road3dCtl&&road3dCtl.setTimes) road3dCtl.setTimes(roadStartLabels()); }
 
   function draw(keepScroll){
     const cad=S.roadCadence;
@@ -3654,6 +3754,31 @@ function screenCourseRoad(){
       }
     }
 
+    /* ── 진단하기 입구(2026-09-28) — 아직 시작점을 안 정했으면 길 바로 위에 크게 ── */
+    if(!(S.placement&&S.placement.course)){
+      html+=`<button class="nm-cr-diagcta" id="crDiagCta">
+        <span class="nm-cr-diagcta-ic">${crIc('compass')}</span>
+        <span class="nm-cr-diagcta-txt"><b>${lk('진단하기','Level Check','水平测评')}</b>
+          <small>${lk('지금 몇 학년 연산인지 알려 주거나, 몇 문제로 나에게 맞는 시작점을 찾아요.',
+            'Tell us which grade’s arithmetic you are on, or find your start with a few questions.',
+            '告诉我们现在做几年级的运算，或做几道题找到适合的起点。')}</small></span>
+        ${crIc('arrow')}
+      </button>`;
+    }
+    /* ── 시기 — 과정마다 언제 시작하고 끝나는지(속도 비교 카드와 같은 계산) ── */
+    const tm=roadTiming();
+    const ageKnown=tm.smNow!=null;
+    const MS=roadMilestones();
+    if(!ageKnown){
+      html+=`<button class="nm-cr-agecue" id="crAgeCue">${crIc('clock')}<span>${lk('나이를 알려 주면 과정마다 언제 시작하고 끝나는지 나와요.',
+        'Tell us the age and each course shows when it starts and ends.',
+        '告诉我们年龄，就能看到每个课程何时开始、何时结束。')}</span><b>${lk('나이 알려주기','Set age','填写年龄')}</b></button>`;
+    } else {
+      html+=`<p class="nm-cr-whenlead">${crIc('clock')}<span>${lk('과정마다 적힌 시기는 위에서 고른 빠르기로 지금부터 쉬지 않고 갔을 때예요.',
+        'The dates on each course assume the pace chosen above, starting now, with no breaks.',
+        '每个课程标注的时间，是按上面选的速度从现在开始不间断地学习时的估算。')}</span></p>`;
+    }
+
     /* ── 길 ── */
     /* 등급이 바뀌는 자리마다 역을 세운다 — 과정 번호 순서를 절대 흐트러뜨리지
        않으려고 "같은 등급을 전부 모으기"가 아니라 "연속 구간"으로 끊는다.
@@ -3689,6 +3814,14 @@ function screenCourseRoad(){
           </span>
           ${again?'':`<span class="nm-cr-stband">${esc(L(tierDef.band))}</span>`}
           <span class="nm-cr-strange">${lk('과정','Course','课程')} <span class="nm-cr-tnum">${rangeTxt}</span>${embHtml}</span>
+          ${(()=>{ /* 이 구간의 시작 → 끝(2026-09-28) */
+            if(!ageKnown) return '';
+            const a=tm.rows[runItems[0].key], b=tm.rows[runItems[runItems.length-1].key];
+            if(!a||!b) return '';
+            if(b.past) return `<span class="nm-cr-stwhen past">${lk('지났어요','Already past','已经过了')}</span>`;
+            const e=esc(pcAgeLabel(b.endSm));
+            const s=a.past||a.cur?lk('지금','Now','现在'):esc(pcAgeLabel(a.startSm));
+            return `<span class="nm-cr-stwhen">${crIc('clock')}<b class="nm-cr-tnum">${s}</b> → <b class="nm-cr-tnum">${e}</b></span>`; })()}
           ${(()=>{ const r=tierReadiness(c.tier); if(!r||r.ready) return '';
             /* 한국어는 "초1 8월부터"처럼 붙여 써야 한다 — 조사 앞에 빈칸을 두면 어색하다 */
             return `<span class="nm-cr-stready">${crIc(r.unknown?'info':'clock')}${ko?`보통 ${schoolMonthsLabel(r.need)}부터 권해요`
@@ -3721,17 +3854,33 @@ function screenCourseRoad(){
           :c.boss?lk('마무리 관문','Final gate','最后关卡')
           :isDoing?`${prog.done}/${prog.total}`
           :'';
-        html+=`<div class="nm-cr-row ${ci%2?'right':'left'}">
+        /* 이정표(중등·중2·고등·미적분 시작) — 그 과정 바로 앞에 깃발 한 줄 */
+        const ms=MS.find(m=>m.course===x.num);
+        if(ms){
+          const r=tm.rows[x.key];
+          const when=!ageKnown||!r?'':r.past?lk('지났어요','Already past','已经过了')
+            :r.cur?lk('지금','Now','现在'):esc(pcAgeLabel(r.startSm));
+          html+=`<div class="nm-cr-msrow" data-ms="${ms.id}"><span class="nm-cr-ms">${crIc('flag')}<b>${esc(L(ms.name))}</b>${when?`<em class="nm-cr-tnum">${when}</em>`:''}</span></div>`;
+        }
+        const isPlaced=!!(S.placement&&S.placement.course===x.key);
+        const placedChip=isPlaced?`<span class="nm-cr-placed">${S.placement.self?lk('내가 고른 시작점','My chosen start','我选的起点'):lk('진단 추천','Check-up pick','测评推荐')}</span>`:'';
+        html+=`<div class="nm-cr-row ${ci%2?'right':'left'}${isPlaced?' placed':''}">
           ${isNow?`<div class="nm-cr-here">${window.renderHumanChar?window.renderHumanChar(avatarKind(),44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
           <button class="nm-cr-node ${st}${locked?' trial-locked':''}" data-c="${x.key}" style="--acc:${tierDef.accent}"${isNow?' id="crNow"':''}>
             <span class="nm-cr-num">${x.num}${isDone?`<i class="nm-cr-flag">${crIc('check')}</i>`:''}</span>
             <span class="nm-cr-nbody">
               <b>${esc(L(c.title))}${c.boss?`<span class="nm-cr-tt" title="${lk('마무리 관문','Final gate','最后关卡')}">${crIc('crown')}</span>`:isTower?`<span class="nm-cr-tt">${crIc('tower')}</span>`:''}</b>
               <span class="nm-cr-meta">${ko?`수업 ${n}회 · ${wk}주`:en?`${n} lessons · ${wk} wk`:`${n}次课 · ${wk}周`}</span>
+              ${ageKnown?roadWhenHtml(tm.rows[x.key]):''}
+              ${placedChip}
               ${!built?`<span class="nm-cr-soon">${lk('준비 중','Coming soon','准备中')}</span>`:''}
             </span>
             <span class="nm-cr-state">${locked?`<span aria-label="${lk('잠김','Locked','已锁定')}">🔒</span>`:stateLabel}</span>
           </button>
+          <details class="nm-cr-explain" style="--acc:${tierDef.accent}" data-c="${x.key}">
+            <summary>${lk('무엇을 배우나요','What you learn','学什么')}</summary>
+            <div class="nm-cr-ex-body"></div>
+          </details>
         </div>`;
         ci++;
         /* ── 세 과정마다 연산 점검 정거장(2026-09-16) ──
@@ -3792,6 +3941,17 @@ function screenCourseRoad(){
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
     });
+    /* 과정 설명 — 펼칠 때 채운다. 설정을 바꿔 다시 그려도 펼친 것은 펼친 채로 */
+    body.querySelectorAll('.nm-cr-explain[data-c]').forEach(el=>{
+      const fill=()=>{ const b=el.querySelector('.nm-cr-ex-body'); if(b&&!b.childElementCount){ const c=(window.NM_COURSES||{})[el.dataset.c]; if(c) b.innerHTML=courseExplainHtml(c); } };
+      if(openEx[el.dataset.c]){ el.open=true; fill(); }
+      el.addEventListener('toggle',()=>{ openEx[el.dataset.c]=el.open; if(el.open) fill(); });
+    });
+    const ageCue=body.querySelector('#crAgeCue');
+    if(ageCue) ageCue.onclick=()=>openAgeSheet(()=>{ draw(true); syncRoad3dTimes(); });
+    const diagCta=body.querySelector('#crDiagCta');
+    if(diagCta) diagCta.onclick=()=>startPlacement();
+    syncRoad3dTimes();
     const pcAge=body.querySelector('#pcAge');
     if(pcAge) pcAge.onclick=()=>openAgeSheet(()=>draw(true));
     body.querySelectorAll('[data-pc-apply]').forEach(el=>{
@@ -3836,14 +3996,16 @@ function screenCourseRoad(){
       if(S._roadFocus||!hero3dLikely){
         const focusKey=S._roadFocus||curKey;
         const target=listEl.querySelector(`.nm-cr-node[data-c="${focusKey}"]`)||listEl.querySelector('#crNow');
-        if(target) target.scrollIntoView({block:'center'});
+        /* 진단·시작점 고르기에서 왔으면 그 과정을 잠깐 빛나게(2026-09-28) */
+        if(target&&S._roadFocus) roadFlashRow(target,body);
+        else if(target) target.scrollIntoView({block:'center'});
       } else body.scrollTop=0;
       S._roadFocus=null;
     }
   }
   draw(false);
   if(heroEl){
-    if(hero3dLikely) mountRoad3DInto(heroEl,{curKey,focus:heroFocus,listEl,body});
+    if(hero3dLikely) mountRoad3DInto(heroEl,{curKey,focus:heroFocus,listEl,body,onCtl:ctl=>{ road3dCtl=ctl; }});
     else heroEl.remove();
   }
 }
@@ -3875,13 +4037,14 @@ function roadFlashRow(el,body){
 function mountRoad3DInto(heroEl, o){
   const list=roadCourseList();
   const curKey=o.curKey, goalKey=nextGoalKey(curKey);
+  const whenMap=roadStartLabels();
   const courses=list.map(x=>{
     const c=x.c, isDone=courseConquered(c), isNow=x.key===curKey;
     const isGoal=!isDone&&!isNow&&x.key===goalKey;
     const prog=courseProgress(c);
     return { id:x.key, num:x.num, title:L(c.title), band:c.tier, sessions:(c.sessions||[]).length,
       state:isNow?'now':isDone?'done':isGoal?'goal':(prog.done>0?'doing':'ahead'),
-      boss:!!c.boss, tower:c.tier==='challenge' };
+      boss:!!c.boss, tower:c.tier==='challenge', when:whenMap[x.key]||'' };
   });
   const bands={};
   list.forEach(x=>{ if(bands[x.c.tier]) return; const d=roadTierInfo(x.c.tier); bands[x.c.tier]={name:L(d.name), sub:L(d.band), color:roadAccentHex(d.accent)}; });
@@ -3909,6 +4072,7 @@ function mountRoad3DInto(heroEl, o){
     if(!ctl){ if(heroEl.isConnected) failBack(); return; }
     if(!heroEl.isConnected){ ctl.dispose(); return; }
     heroEl.classList.add('is-3d');
+    if(o.onCtl) o.onCtl(ctl);
     const prev=townCleanup;
     townCleanup=()=>{ if(prev)prev(); ctl.dispose(); };
   }).catch(e=>{ console.warn('[road3d]',e); if(heroEl.isConnected) failBack(); });
@@ -3975,6 +4139,58 @@ const PLACEMENT_AGES=[
   {key:'m3',  emoji:'📙', tier:'middle3',   course:'C34'},
   {key:'hi',  emoji:'🎓', tier:'highmath1', course:'C36'}
 ];
+/* ── "지금 몇 학년 연산을 하고 있어요?" — 학교 학년 → 시작 과정 (2026-09-28) ──
+   원장 "진단하기는 지금 몇 학년 연산을 하는지 말하거나 그냥 진행할 수 있게".
+   과정 번호를 새로 정하지 않는다. 행마다 근거가 되는 데이터를 적어 두고, 가능한 곳은
+   실행할 때 데이터에서 직접 찾는다(tier 의 첫 과정 · 속도 비교 마일스톤).
+     tier      : data/courses.js 에서 그 tier 의 **첫 과정**(번호가 가장 작은 것)
+     milestone : app/pace-compare.js MILESTONES 의 course (출처: 기적의 계산법 권별 주제 —
+                 CURRICULUM-SOURCES.md §9, 상담 도구 roadmap/index.html)
+     course    : 위 둘로 못 짚는 초5·초6 — CURRICULUM-SOURCES.md §9 권별 주제와
+                 data/courses.js 과정 제목이 같은 자리(scripts/check-road-timing.js 가 제목을 대조)
+   | 학년        | 근거                                                                 | 과정 |
+   | 유아(5~6세) | tier level0 (stages.js 수의 나라 "유아 5~7세")                         | 0   |
+   | 초1         | milestone K = 수 감각 끝 → 과정 1 (§9 1·2권 초1 자연수 덧뺄)            | 1   |
+   | 초2         | milestone G2 = 한 자리 덧뺄 끝 → 과정 3 (§9 3·4권 초2 덧뺄 고급·구구단)   | 3   |
+   | 초3         | milestone G4 = 구구단 끝 → 과정 8 (§9 5·6권 초3 곱셈·나눗셈)             | 8   |
+   | 초4         | milestone G6 = "초3 연산 끝" → 과정 13 (§9 7·8권 초4 곱나눗 고급·분수)   | 13  |
+   | 초5         | §9 9권 "약수배수·약분통분·이분모 분수(초5)" = 과정 19 「약수와 배수…」    | 19  |
+   | 초6         | §9 11권 "분수·소수 나눗셈(초6)" = 과정 22 「분수 나눗셈」                 | 22  |
+   | 중1·중2·중3 | tier middle1·middle2·middle3 첫 과정                                 | 29·32·35 |
+   | 고등        | tier highmath1 첫 과정(공통수학1 — 공통수학2 는 그 뒤 40)               | 38  |
+   | 대수·미적분Ⅰ | tier algebra·calculus1 첫 과정                                       | 41·43 |
+   학기(1·2학기) 구분은 넣지 않았다 — 학기마다 과정을 가를 근거가 데이터에 없다. */
+const PLACEMENT_GRADES=[
+  {key:'pre', tier:'level0',     label:{ko:'유아 (5~6세)',en:'Preschool (ages 5–6)',zh:'幼儿（5~6岁）'}},
+  {key:'e1',  milestone:'K',     label:{ko:'초1',en:'Grade 1',zh:'小1'}},
+  {key:'e2',  milestone:'G2',    label:{ko:'초2',en:'Grade 2',zh:'小2'}},
+  {key:'e3',  milestone:'G4',    label:{ko:'초3',en:'Grade 3',zh:'小3'}},
+  {key:'e4',  milestone:'G6',    label:{ko:'초4',en:'Grade 4',zh:'小4'}},
+  {key:'e5',  course:19,         label:{ko:'초5',en:'Grade 5',zh:'小5'}},
+  {key:'e6',  course:22,         label:{ko:'초6',en:'Grade 6',zh:'小6'}},
+  {key:'m1',  tier:'middle1',    label:{ko:'중1',en:'Grade 7',zh:'初1'}},
+  {key:'m2',  tier:'middle2',    label:{ko:'중2',en:'Grade 8',zh:'初2'}},
+  {key:'m3',  tier:'middle3',    label:{ko:'중3',en:'Grade 9',zh:'初3'}},
+  {key:'hi',  tier:'highmath1',  label:{ko:'고등 (공통수학1·2)',en:'High school (Common Math 1·2)',zh:'高中（共同数学1·2）'}},
+  {key:'alg', tier:'algebra',    label:{ko:'대수',en:'Algebra',zh:'代数'}},
+  {key:'cal', tier:'calculus1',  label:{ko:'미적분Ⅰ',en:'Calculus I',zh:'微积分Ⅰ'}}
+];
+/* 학년 행 → 과정 번호(데이터에서 찾는다). 못 찾으면 null */
+function placementGradeCourseNum(g){
+  if(g.course!=null) return g.course;
+  if(g.milestone){ const PC=window.NM_PACE_COMPARE, m=PC&&PC.milestone(g.milestone); return m?m.course:null; }
+  if(g.tier){ const x=roadCourseList().find(x=>x.c.tier===g.tier); return x?x.num:null; }
+  return null;
+}
+function placementGradeCourseKey(g){ const n=placementGradeCourseNum(g); return n==null?null:'C'+n; }
+/* 과정 → "학교로 치면 몇 학년 연산" — 표의 행 가운데 시작 과정이 그 과정 이하인 마지막 행 */
+function gradeBandOfCourse(key){
+  const num=parseInt(String(key).replace(/^C/,''),10);
+  let hit=null;
+  PLACEMENT_GRADES.forEach(g=>{ const n=placementGradeCourseNum(g); if(n!=null&&n<=num) hit=g; });
+  return hit;
+}
+window.NM_PLACEMENT_GRADES=()=>PLACEMENT_GRADES.map(g=>({key:g.key, label:g.label, course:placementGradeCourseNum(g)}));
 /* 수의 나라 구간의 이름·나이 — curriculum.js에서 읽고, 없으면 같은 문구로 적는다. */
 function placementPreLabel(){
   const tiers=(window.NM_CURRICULUM&&window.NM_CURRICULUM.tiers)||[];
@@ -4090,7 +4306,7 @@ function placementFinish(d){
   const weak=profile.filter(p=>!p.ok).map(p=>p.t);
   const slow=profile.filter(p=>p.ok&&p.sec>25).map(p=>p.t);
   S.placement={ at:Date.now(), course:recommended, asked:d.asked||0, correct:d.correct||0,
-    age:d.age||null, cleared:d.boundaryIdx, profile, weak, slow, self:false };
+    age:d.age||null, grade:d.grade||null, cleared:d.boundaryIdx, profile, weak, slow, self:false };
   d.stage='result';
   save();
 }
@@ -4181,6 +4397,11 @@ function screenPlacement(){
           'We will start with questions that fit your age. Just a few questions.',
           '我们从适合你年龄的题目开始，只要几道题就好。')}</p>
         <div class="nm-dg-ages">${opts}</div>
+        <button class="nm-dg-gradeask" id="dgGradeAsk">
+          <span class="nm-dg-gradeask-ic" aria-hidden="true">📚</span>
+          <span class="nm-dg-gradeask-txt"><b>${lk('지금 몇 학년 연산을 하고 있어요?','What grade’s arithmetic are you on now?','现在在做几年级的运算？')}</b>
+            <small>${lk('학년을 고르면 그 자리에서 시작하거나, 짧게 확인하고 시작해요.','Pick the grade — start right there, or take a short check first.','选好年级，可以直接从那里开始，也可以先简单确认再开始。')}</small></span>
+        </button>
         <button class="nm-dg-selfpick" id="dgSelfPick">🎯 ${lk('진단 없이 직접 고를래요','Skip the check — pick myself','不测评，自己选')}</button>
         <button class="nm-dg-again" id="dgSkip">${lk('잘 모르겠어요 · 건너뛰기','Not sure · Skip','不太清楚 · 跳过')}</button>
       </div>
@@ -4193,6 +4414,70 @@ function screenPlacement(){
     /* 건너뛰기 = 예전 그대로 맨 아래 칸부터 */
     $('#dgSkip').onclick=()=>{ d.age='skip'; d.entry=0; d.stage='q'; save(); screenPlacement(); };
     $('#dgSelfPick').onclick=()=>{ S._diag=null; S.view='startpick'; save(); render(); };
+    $('#dgGradeAsk').onclick=()=>{ d.stage='grade'; d.gradePick=null; save(); screenPlacement(); };
+    return;
+  }
+
+  /* ── 지금 하는 학교 학년 연산 고르기(2026-09-28) — 고른 뒤 "이 과정부터" 또는 "짧게 확인하고" ── */
+  if(d.stage==='grade'){
+    const pick=PLACEMENT_GRADES.find(g=>g.key===d.gradePick)||null;
+    const chips=PLACEMENT_GRADES.map(g=>{
+      const n=placementGradeCourseNum(g);
+      if(n==null||!(window.NM_COURSES||{})['C'+n]) return '';
+      return `<button class="nm-dg-grade${pick&&pick.key===g.key?' on':''}" data-g="${g.key}" aria-pressed="${pick&&pick.key===g.key?'true':'false'}">${esc(L(g.label))}</button>`;
+    }).join('');
+    let preview='';
+    if(pick){
+      const key=placementGradeCourseKey(pick), c=(window.NM_COURSES||{})[key];
+      const tierDef=c?roadTierInfo(c.tier):null;
+      const num=String(key).replace(/^C/,'');
+      preview=`<div class="nm-dg-gradeprev" style="--acc:${tierDef?tierDef.accent:'var(--blue)'}">
+        <small>${lk(`${L(pick.label)} 연산이면 여기서 시작해요`,`For ${L(pick.label)} arithmetic, start here`,`${L(pick.label)}的运算，从这里开始`)}</small>
+        <b>${lk('과정','Course','课程')} ${num}${c?` · ${esc(L(c.title))}`:''}</b>
+        ${tierDef?`<span>${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</span>`:''}
+      </div>
+      <button class="nm-btn full" id="dgGradeStart">🚩 ${lk('이 과정부터 시작','Start from this course','从这个课程开始')}</button>
+      <button class="nm-btn full ghost" id="dgGradeCheck">🧭 ${lk('짧게 확인하고 시작','Take a short check first','先简单确认再开始')}</button>
+      <p class="nm-dg-free">${lk('짧게 확인하면 이 과정 근처부터 몇 문제만 물어봐요. 어느 쪽이든 나중에 자유롭게 바꿀 수 있어요.',
+        'The short check asks just a few questions starting near this course. Either way, you can change it freely later.',
+        '简单确认只会从这个课程附近问几道题。不管选哪个，以后都可以自由更改。')}</p>`;
+    }
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="dgBack">${t('back')}</button>
+      <div class="nm-unit-title">🧭 ${lk('진단하기','Level Check','水平测评')}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap nm-dg-wrap">
+      <div class="nm-card center">
+        <div class="nm-card-h">${lk('지금 몇 학년 연산을 하고 있어요?','What grade’s arithmetic are you on now?','现在在做几年级的运算？')}</div>
+        <p class="nm-dg-ask">${lk('학교 학년이 아니라, 지금 풀고 있는 연산이 몇 학년 것인지 골라요.',
+          'Not your school year — pick the grade of the arithmetic you are working on now.',
+          '不是学校的年级，而是现在正在做的运算属于几年级。')}</p>
+        <div class="nm-dg-grades" role="group" aria-label="${lk('학년','Grade','年级')}">${chips}</div>
+        ${preview}
+        <button class="nm-dg-again" id="dgGradeBack">${lk('나이로 고를래요','Choose by age instead','改为按年龄选')}</button>
+      </div>
+    </div>`;
+    $('#dgBack').onclick=back;
+    $('#dgGradeBack').onclick=()=>{ d.stage='age'; d.gradePick=null; save(); screenPlacement(); };
+    scr.querySelectorAll('.nm-dg-grade').forEach(b=>{
+      b.onclick=()=>{ d.gradePick=b.dataset.g; save(); screenPlacement();
+        const s=$('#dgGradeStart'); if(s) s.scrollIntoView({block:'nearest'}); };
+    });
+    if(pick){
+      const key=placementGradeCourseKey(pick);
+      /* 시작점 고르기(startpick)와 같은 모양으로 저장한다 — 로드맵이 "내가 고른 시작점"으로 표시 */
+      $('#dgGradeStart').onclick=()=>{
+        S.placement={ at:Date.now(), course:key, self:true, grade:pick.key,
+          asked:0, correct:0, profile:[], weak:[], slow:[] };
+        S._diag=null; S._roadFocus=key; S.view='courseroad'; save(); render();
+      };
+      /* 짧게 확인 = 기존 적응형 진단을 그 과정의 사다리 칸에서 시작(유아·못 찾으면 맨 아래 칸) */
+      $('#dgGradeCheck').onclick=()=>{
+        const CORE=window.NM_PLACEMENT_CORE;
+        const idx=CORE?CORE.rungIndexOfCourse(placementLadder(), key):-1;
+        d.grade=pick.key; d.age=null; d.entry=idx>=0?idx:0; d.stage='q'; save(); screenPlacement();
+      };
+    }
     return;
   }
 
@@ -4342,6 +4627,11 @@ function renderPlacementResult(d){
         const f=window.NM_STAGE_OF_COURSE, st=f?f(num):null;
         return st?`<div class="nm-dg-stage">${st.icon||''} ${esc(L(st.name).split(' — ')[0])} · ${esc(L(st.band))}</div>`:'';
       })()}
+      ${(function(){ /* 이 과정이 학교로 치면 몇 학년 연산인지(2026-09-28) — PLACEMENT_GRADES 표에서 */
+        const g=gradeBandOfCourse(key); if(!g) return '';
+        const gl=esc(L(g.label));
+        return `<div class="nm-dg-gradeband">📚 ${lk(`학교 진도로 치면 <b>${gl}</b> 연산 무렵이에요`,`In school terms, about <b>${gl}</b> arithmetic`,`按学校进度，大约是<b>${gl}</b>的运算`)}</div>`;
+      })()}
       ${placementAgeNoteHtml(S.placement,lk)}
       <div class="nm-score">${S.placement.correct||0} / ${S.placement.asked||0}</div>
       <p class="nm-wsh-sentence">${lk('맞힌 문제까지가 이미 익숙한 곳이에요. 여기서부터 새로 배우면 딱 맞아요.','Everything you answered is already comfortable — starting here fits just right.','答对的部分已经很熟练了，从这里开始正好。')}</p>
@@ -4360,6 +4650,10 @@ function renderPlacementResult(d){
 /* 결과 화면에서 "몇 살이라고 했는지"를 한 줄로 되짚어 준다. 건너뛴/직접
    고른 경우엔 없음(둘 다 age가 없거나 'skip'). */
 function placementAgeNoteHtml(d,lk){
+  if(d.grade){ /* "지금 몇 학년 연산" 으로 들어온 경우(2026-09-28) */
+    const g=PLACEMENT_GRADES.find(x=>x.key===d.grade);
+    return g?`<div class="nm-dg-agenote">📚 ${lk('고른 학년 연산','Grade picked','所选年级运算')} · ${esc(L(g.label))}</div>`:'';
+  }
   if(!d.age||d.age==='skip')return'';
   const opt=PLACEMENT_AGES.find(o=>o.key===d.age);
   if(!opt)return'';

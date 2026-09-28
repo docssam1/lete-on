@@ -45,6 +45,7 @@ const T = {
         en:'Course road map — pick a milestone to see that course in the list below. Use the left and right arrow keys to move.',
         zh:'运算路线图 — 点路标，下面的列表就会显示那个课程。用左右方向键移动。' },
   again:{ ko:'이어서', en:'continued', zh:'续' },
+  startsAt:{ ko:'시작', en:'start', zh:'开始' },
 };
 /* 지역 이야기 — 길이 지나는 곳마다 한두 줄(2026-09-26 원장 "스토리가 있어야지").
    마을 세계관(마을세계관-설계.md: 경시의 탑은 "어려운 문제를 좋아하는 아이가 가는 길")과 교육과정 지명·설명
@@ -155,6 +156,7 @@ const CSS = `
 .r3d-band b{font-family:var(--r3d-serif);font-weight:500;font-size:13.5px;line-height:1.2}
 .r3d-band small{font-size:10.5px;color:var(--r3d-ink2);font-variant-numeric:tabular-nums}
 .r3d-band small i{font-style:normal}
+.r3d-band em.w{font-style:normal;font-size:10.5px;font-weight:600;color:#6b4a14;font-variant-numeric:tabular-nums;letter-spacing:.01em}
 .r3d-band.off{visibility:hidden}
 
 /* 공통 알약 버튼 */
@@ -309,16 +311,24 @@ export async function mountRoad3D(container, opts){
   const hint = document.createElement('p'); hint.className = 'r3d-hint'; hint.id = hintId; hint.textContent = L(T.map);
   root.setAttribute('aria-describedby', hintId);
   const tip = document.createElement('div'); tip.className = 'r3d-tip'; tip.setAttribute('aria-hidden', 'true');
-  const bandEls = lay.runs.map(run => {
-    const el = document.createElement('div'); el.className = 'r3d-band r3d-frost'; el.setAttribute('aria-hidden', 'true');
+  /* 구간 이름표 — 이름 · (시작 시기, 2026-09-28) · 과정 범위 · 수업 횟수.
+     시작 시기(courses[i].when)는 main.js 가 속도 비교 카드와 같은 계산으로 넘긴다. 좁은 화면에선
+     과정 범위(small)는 숨고 시작 시기만 남는다. setTimes() 로 빠르기를 바꿀 때 다시 쓴다. */
+  const bandHtml = run => {
     const bd = bands[run.band] || {};
-    el.style.setProperty('--acc', bd.color || '#c9a063');
     const a = courses[run.from].num, b = courses[run.to].num;
     /* 돌 하나 = 과정 하나(여러 주), 한 주가 아니다 — 원장 "중학교 1학년이 3번 만에 끝나?"(2026-09-26).
        그래서 이름표에 그 구간의 수업 횟수를 함께 적는다(주기와 무관한 값이라 주 1·2회를 바꿔도 맞다). */
     let nSess = 0; for(let k = run.from; k <= run.to; k++) nSess += courses[k].sessions || 0;
     const sessTxt = nSess ? ' · ' + (lang === 'en' ? nSess + ' lessons' : lang === 'zh' ? nSess + '次课' : '수업 ' + nSess + '회') : '';
-    el.innerHTML = `<b>${esc(bd.name || run.band)}</b><small>${esc(L(T.course))} <i>${a === b ? a : a + '–' + b}</i>${esc(sessTxt)}${run.again ? ' · ' + esc(L(T.again)) : ''}</small>`;
+    const when = courses[run.from].when || '';
+    return `<b>${esc(bd.name || run.band)}</b>${when ? `<em class="w">${esc(when)}~</em>` : ''}<small>${esc(L(T.course))} <i>${a === b ? a : a + '–' + b}</i>${esc(sessTxt)}${run.again ? ' · ' + esc(L(T.again)) : ''}</small>`;
+  };
+  const bandEls = lay.runs.map(run => {
+    const el = document.createElement('div'); el.className = 'r3d-band r3d-frost'; el.setAttribute('aria-hidden', 'true');
+    const bd = bands[run.band] || {};
+    el.style.setProperty('--acc', bd.color || '#c9a063');
+    el.innerHTML = bandHtml(run);
     /* 이름표를 누르지는 않지만, 이야기 띠가 이미 같은 이름을 말하고 있으면 숨긴다(두 번 말하지 않게) */
     return el;
   });
@@ -441,7 +451,8 @@ export async function mountRoad3D(container, opts){
     hot = i; world.setHot(i);
     if(i >= 0){ const c = courses[i];
       const st = c.state === 'done' ? L(T.done) : c.state === 'now' ? L(T.here) : c.state === 'goal' ? L(T.goal) : c.state === 'doing' ? '…' : '';
-      tip.innerHTML = `<b>${c.num}</b>${esc(c.title)}${st && st !== '…' ? `<small>${esc(st)}</small>` : ''}`; }
+      const sub = [st && st !== '…' ? st : '', c.when && c.state !== 'now' ? c.when + ' ' + L(T.startsAt) : ''].filter(Boolean).join(' · ');
+      tip.innerHTML = `<b>${c.num}</b>${esc(c.title)}${sub ? `<small>${esc(sub)}</small>` : ''}`; }
     tip.classList.toggle('on', i >= 0);
     dirty = true; wake();
   }
@@ -707,6 +718,14 @@ export async function mountRoad3D(container, opts){
   wake();
   const api = {
     focusCourse(id, instant){ if(disposed || idx[id] == null) return; aimAt(idx[id], instant); },
+    /* 시작 시기 이름표 갈아 쓰기 — map: 과정 id → 문구(빈 문자열이면 표시 안 함) */
+    setTimes(map){
+      if(disposed || !map) return;
+      courses.forEach(c => { c.when = map[c.id] || ''; });
+      lay.runs.forEach((run, j) => { bandEls[j].innerHTML = bandHtml(run); });
+      if(hot >= 0){ const h = hot; hot = -1; setHot(h); }
+      sizes = null; dirty = true; wake();
+    },
     dispose,
     get disposed(){ return disposed; },
     _debug:{ cam, scene, proj:(x, y, z) => proj(x, y, z), world, hitAt, get camX(){ return camT.x; }, get visW(){ return visW; }, get camD(){ return camD; }, renderer:r, redraw:() => { dirty = true; wake(); } },
