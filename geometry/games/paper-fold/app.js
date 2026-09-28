@@ -1,4 +1,4 @@
-import { levels, validateLevels, foldedPolygon } from "./levels.js?v=paper-fold-13";
+import { levels, validateLevels, foldedPolygon } from "./levels.js?v=paper-fold-14";
 import { punchVertices } from "./mark-geometry.js?v=paper-fold-1";
 import { seededRandom, shuffle, sessionQueue, availableProblems, visualProblemKey } from "./session-order.js";
 import { saveGameProgress } from "../../shared/profile-storage.js";
@@ -52,19 +52,19 @@ const text = {
     holeResultPrompt: "두 번 거꾸로 펼쳤을 때의 구멍 위치를 고르세요.",
     piecesUnit: "조각", holesUnit: "개",
     side_left: "왼쪽", side_right: "오른쪽", side_top: "위쪽", side_bottom: "아래쪽", side_upper: "대각선 위쪽", side_lower: "대각선 아래쪽",
-    soundOn: "소리 켜기", soundOff: "소리 끄기"
+    reverseLinePrompt: "이 모양이 되게 접는 선을 눌러요.", reverseLineWrong: "이 선으로 접으면 그 모양이 안 돼요.", reverseLineCorrect: "맞았어요. 이 선을 접으면 그 모양이 돼요.", reverseResultPrompt: "한 번 접어 만들 수 있는 것을 모두 눌러요.", reverseMultiNote: "정답은 두 개예요.", reverseResultMore: "하나 더 찾아요.", reverseResultImpossible: "이 모양은 한 번 접어서 만들 수 없어요.", reverseResultCorrect: "맞았어요. 두 모양 모두 한 번 접어 만들 수 있어요.", reverseLineHint: "접은 자리를 거울로 생각하고 양쪽을 겹쳐 보세요.", reverseResultHint: "겹친 두 겹이 처음 종이와 맞는지 하나씩 살펴보세요.", reverseOpenLabel: "펼친 종이", reverseFoldedLabel: "한 번 접은 모양", reverseLineLabel: "접는 선 {label}", reverseShapeLabel: "모양 {label}", soundOn: "소리 켜기", soundOff: "소리 끄기"
   },
   zh: {
     back: "返回折纸思维乐园", type: "类型", hint: "提示", retry: "重来", worksheet: "学习单", next: "下一题", chooseType: "选择类型", close: "关闭", finish: "完成",
-    choicePrompt: "选择彩纸展开后出现的图形。", connectPrompt: "把折剪后的彩纸和展开结果连起来。", holeConnectPrompt: "把打孔后的纸和展开结果连起来。", selectFolded: "先选择左边折剪后的彩纸。", selectResult: "再选择对应的展开结果。", check: "确认", correct: "答对了。两边图形关于折痕对称。", wrong: "把折痕想成镜子，再看一看。", hintChoice: "把剪线映到折痕的另一边。", hintConnect: "比较折痕方向和剪线的转折。", hintHoleConnect: "按相反顺序逐条展开折痕，比较孔的位置。", complete10: "完成10题！", complete20: "完成全部20题！", continue10: "再做10题", new10: "新的10题", otherType: "其他类型", completeText10: "还可以继续完成同类型的10题。", completeText20: "你完成了连线和选择题。", openPaper: "展开的彩纸", foldedPaper: "对折一次", cutPaper: "沿线剪开", result: "展开结果", question: "会是什么图形？", problemCount: "{current} / {total}", choiceLabel: "选项{label}", foldedLabel: "折剪彩纸{label}", resultLabel: "展开结果{label}", whereDraw: "还要画在哪一边？", openedCuts: "展开后的剪线", punchPaper: "打孔后的彩纸", firstFold: "第一次折叠", secondFold: "第二次折叠", mirrorSidePrompt: "展开后，应在哪一边补上相同的线或孔？", foldSidePrompt: "第{step}次折叠后，彩纸落在哪一边？", touchPaperPrompt: "请直接点击题目图中的彩纸面。", unfoldStep: "第{step}步展开", unfoldSidePrompt: "从最后一道折痕开始反向展开。点击新标记出现的一面。({step}/{total})", touchUnfoldPrompt: "沿虚线展开，直接点击新剪线或孔会出现的纸面。", countPiecesPrompt: "观察完整剪线，选择纸片数量。", countHolesPrompt: "选择完全展开后的孔数。", holeResultPrompt: "选择反向展开两次后的孔位。", piecesUnit: "片", holesUnit: "个", layerCount: "{count}层", side_left: "左边", side_right: "右边", side_top: "上边", side_bottom: "下边", side_upper: "对角线上方", side_lower: "对角线下方", soundOn: "开启声音", soundOff: "关闭声音"
+    choicePrompt: "选择彩纸展开后出现的图形。", connectPrompt: "把折剪后的彩纸和展开结果连起来。", holeConnectPrompt: "把打孔后的纸和展开结果连起来。", selectFolded: "先选择左边折剪后的彩纸。", selectResult: "再选择对应的展开结果。", check: "确认", correct: "答对了。两边图形关于折痕对称。", wrong: "把折痕想成镜子，再看一看。", hintChoice: "把剪线映到折痕的另一边。", hintConnect: "比较折痕方向和剪线的转折。", hintHoleConnect: "按相反顺序逐条展开折痕，比较孔的位置。", complete10: "完成10题！", complete20: "完成全部20题！", continue10: "再做10题", new10: "新的10题", otherType: "其他类型", completeText10: "还可以继续完成同类型的10题。", completeText20: "你完成了连线和选择题。", openPaper: "展开的彩纸", foldedPaper: "对折一次", cutPaper: "沿线剪开", result: "展开结果", question: "会是什么图形？", problemCount: "{current} / {total}", choiceLabel: "选项{label}", foldedLabel: "折剪彩纸{label}", resultLabel: "展开结果{label}", whereDraw: "还要画在哪一边？", openedCuts: "展开后的剪线", punchPaper: "打孔后的彩纸", firstFold: "第一次折叠", secondFold: "第二次折叠", mirrorSidePrompt: "展开后，应在哪一边补上相同的线或孔？", foldSidePrompt: "第{step}次折叠后，彩纸落在哪一边？", touchPaperPrompt: "请直接点击题目图中的彩纸面。", unfoldStep: "第{step}步展开", unfoldSidePrompt: "从最后一道折痕开始反向展开。点击新标记出现的一面。({step}/{total})", touchUnfoldPrompt: "沿虚线展开，直接点击新剪线或孔会出现的纸面。", countPiecesPrompt: "观察完整剪线，选择纸片数量。", countHolesPrompt: "选择完全展开后的孔数。", holeResultPrompt: "选择反向展开两次后的孔位。", piecesUnit: "片", holesUnit: "个", side_left: "左边", side_right: "右边", side_top: "上边", side_bottom: "下边", side_upper: "对角线上方", side_lower: "对角线下方", reverseLinePrompt: "点击能折出这个形状的折线。", reverseLineWrong: "沿这条线折，折不出那个形状。", reverseLineCorrect: "答对了。沿这条线折就会变成那个形状。", reverseResultPrompt: "把折一次能做出的形状全部点出来。", reverseMultiNote: "正确答案有两个。", reverseResultMore: "还要再找一个。", reverseResultImpossible: "这个形状折一次做不出来。", reverseResultCorrect: "答对了。这两个形状都能折一次做出来。", reverseLineHint: "把折痕当成镜子，看看两边能不能重合。", reverseResultHint: "逐个检查重叠的两层和原来的纸是否相符。", reverseOpenLabel: "展开的纸", reverseFoldedLabel: "折一次后的形状", reverseLineLabel: "折线{label}", reverseShapeLabel: "形状{label}", soundOn: "开启声音", soundOff: "关闭声音"
   },
   ja: {
     back: "色紙思考ひろばへ戻る", type: "種類", hint: "ヒント", retry: "もう一度", worksheet: "プリント", next: "次の問題", chooseType: "種類を選ぶ", close: "閉じる", finish: "終わる",
-    choicePrompt: "折った色紙を開いたときの形を選びましょう。", connectPrompt: "折って切った形と開いた結果を線で結びましょう。", holeConnectPrompt: "穴をあけた形と開いた結果を線で結びましょう。", selectFolded: "左の折って切った色紙を先に選びます。", selectResult: "対応する開いた結果を選びます。", check: "確かめる", correct: "正解です。折り線をはさんで対称です。", wrong: "折り線を鏡だと考えて見直しましょう。", hintChoice: "切った線を折り線の反対側に映します。", hintConnect: "折り線の向きと切った線の曲がり方を比べます。", hintHoleConnect: "折った順と反対に一つずつ開き、穴の位置を比べます。", complete10: "10問できました！", complete20: "20問すべてできました！", continue10: "あと10問", new10: "新しい10問", otherType: "別の種類", completeText10: "同じ種類をあと10問続けられます。", completeText20: "線結びと選択問題を解きました。", openPaper: "開いた色紙", foldedPaper: "一回折った色紙", cutPaper: "線にそって切る", result: "開いた結果", question: "どんな形？", problemCount: "{current} / {total}", choiceLabel: "選択肢{label}", foldedLabel: "折って切った色紙{label}", resultLabel: "開いた結果{label}", whereDraw: "どちら側にもう一つ描きますか？", openedCuts: "開いた切り線", punchPaper: "穴をあけた色紙", firstFold: "一回目の折り", secondFold: "二回目の折り", mirrorSidePrompt: "開いたとき、同じ線や穴を加える側を選びましょう。", foldSidePrompt: "{step}回目に折った後、色紙はどちら側に重なりますか？", touchPaperPrompt: "問題の図にある色紙の面を直接タップしましょう。", unfoldStep: "{step}段階目を開く", unfoldSidePrompt: "最後の折り目から逆に開きます。新しい印が現れる面をタップします。({step}/{total})", touchUnfoldPrompt: "点線の折り目を見て、新しい切り線や穴が現れる紙面を直接タップします。", countPiecesPrompt: "完成した切り線を見て、紙片の数を選びましょう。", countHolesPrompt: "全部開いたときの穴の数を選びましょう。", holeResultPrompt: "二回逆に開いたときの穴の位置を選びましょう。", piecesUnit: "枚", holesUnit: "個", layerCount: "{count}枚重ね", side_left: "左", side_right: "右", side_top: "上", side_bottom: "下", side_upper: "対角線の上側", side_lower: "対角線の下側", soundOn: "音を出す", soundOff: "音を消す"
+    choicePrompt: "折った色紙を開いたときの形を選びましょう。", connectPrompt: "折って切った形と開いた結果を線で結びましょう。", holeConnectPrompt: "穴をあけた形と開いた結果を線で結びましょう。", selectFolded: "左の折って切った色紙を先に選びます。", selectResult: "対応する開いた結果を選びます。", check: "確かめる", correct: "正解です。折り線をはさんで対称です。", wrong: "折り線を鏡だと考えて見直しましょう。", hintChoice: "切った線を折り線の反対側に映します。", hintConnect: "折り線の向きと切った線の曲がり方を比べます。", hintHoleConnect: "折った順と反対に一つずつ開き、穴の位置を比べます。", complete10: "10問できました！", complete20: "20問すべてできました！", continue10: "あと10問", new10: "新しい10問", otherType: "別の種類", completeText10: "同じ種類をあと10問続けられます。", completeText20: "線結びと選択問題を解きました。", openPaper: "開いた色紙", foldedPaper: "一回折った色紙", cutPaper: "線にそって切る", result: "開いた結果", question: "どんな形？", problemCount: "{current} / {total}", choiceLabel: "選択肢{label}", foldedLabel: "折って切った色紙{label}", resultLabel: "開いた結果{label}", whereDraw: "どちら側にもう一つ描きますか？", openedCuts: "開いた切り線", punchPaper: "穴をあけた色紙", firstFold: "一回目の折り", secondFold: "二回目の折り", mirrorSidePrompt: "開いたとき、同じ線や穴を加える側を選びましょう。", foldSidePrompt: "{step}回目に折った後、色紙はどちら側に重なりますか？", touchPaperPrompt: "問題の図にある色紙の面を直接タップしましょう。", unfoldStep: "{step}段階目を開く", unfoldSidePrompt: "最後の折り目から逆に開きます。新しい印が現れる面をタップします。({step}/{total})", touchUnfoldPrompt: "点線の折り目を見て、新しい切り線や穴が現れる紙面を直接タップします。", countPiecesPrompt: "完成した切り線を見て、紙片の数を選びましょう。", countHolesPrompt: "全部開いたときの穴の数を選びましょう。", holeResultPrompt: "二回逆に開いたときの穴の位置を選びましょう。", piecesUnit: "枚", holesUnit: "個", side_left: "左", side_right: "右", side_top: "上", side_bottom: "下", side_upper: "対角線の上側", side_lower: "対角線の下側", reverseLinePrompt: "この形になる折り線をタップしましょう。", reverseLineWrong: "この線で折ってもその形になりません。", reverseLineCorrect: "正解です。この線で折るとその形になります。", reverseResultPrompt: "一回折ってできる形をぜんぶタップしましょう。", reverseMultiNote: "正解は二つです。", reverseResultMore: "もう一つ見つけましょう。", reverseResultImpossible: "この形は一回折ってはできません。", reverseResultCorrect: "正解です。二つとも一回折ってできます。", reverseLineHint: "折り線を鏡と考えて、両側が重なるか見ましょう。", reverseResultHint: "重なった二枚が元の紙と合うか一つずつ確かめましょう。", reverseOpenLabel: "開いた紙", reverseFoldedLabel: "一回折った形", reverseLineLabel: "折り線{label}", reverseShapeLabel: "形{label}", soundOn: "音を出す", soundOff: "音を消す"
   },
   en: {
     back: "Back to Paper Thinking Studio", type: "Type", hint: "Hint", retry: "Restart", worksheet: "Worksheet", next: "Next", chooseType: "Choose a type", close: "Close", finish: "Finish",
-    choicePrompt: "Choose the shape that appears when the folded paper opens.", connectPrompt: "Connect each folded cut to its open result.", holeConnectPrompt: "Connect each punched paper to its open result.", selectFolded: "Choose a folded cut on the left first.", selectResult: "Now choose its open result.", check: "Check", correct: "Correct. The two sides mirror across the crease.", wrong: "Treat the crease like a mirror and look again.", hintChoice: "Reflect the cut line across the crease.", hintConnect: "Compare both the crease direction and the turns in the cut.", hintHoleConnect: "Open the creases in reverse order and compare each hole position.", complete10: "10 problems complete!", complete20: "All 20 problems complete!", continue10: "Do 10 more", new10: "New set of 10", otherType: "Other type", completeText10: "You can continue with 10 more problems of this type.", completeText20: "You completed both matching and choice problems.", openPaper: "Open paper", foldedPaper: "Paper folded once", cutPaper: "Cut along the line", result: "Open result", question: "What will appear?", problemCount: "{current} / {total}", choiceLabel: "Choice {label}", foldedLabel: "Folded cut {label}", resultLabel: "Open result {label}", whereDraw: "Which side needs another mark?", openedCuts: "Open cut lines", punchPaper: "Punched paper", firstFold: "First fold", secondFold: "Second fold", mirrorSidePrompt: "Choose the side that needs the matching line or hole when opened.", foldSidePrompt: "Which side holds the paper after fold {step}?", touchPaperPrompt: "Tap the paper face directly in the problem picture.", unfoldStep: "Unfold step {step}", unfoldSidePrompt: "Open the last crease first. Tap the face where the new mark will appear. ({step}/{total})", touchUnfoldPrompt: "Use the dashed crease and tap the paper face where the reflected cut or hole will appear.", countPiecesPrompt: "Use the completed cut lines to choose the number of pieces.", countHolesPrompt: "Choose the number of holes after the paper opens completely.", holeResultPrompt: "Choose the hole positions after opening both folds in reverse.", piecesUnit: "pieces", holesUnit: "holes", layerCount: "{count} layers", side_left: "Left", side_right: "Right", side_top: "Top", side_bottom: "Bottom", side_upper: "Above the diagonal", side_lower: "Below the diagonal", soundOn: "Turn sound on", soundOff: "Mute sound"
+    choicePrompt: "Choose the shape that appears when the folded paper opens.", connectPrompt: "Connect each folded cut to its open result.", holeConnectPrompt: "Connect each punched paper to its open result.", selectFolded: "Choose a folded cut on the left first.", selectResult: "Now choose its open result.", check: "Check", correct: "Correct. The two sides mirror across the crease.", wrong: "Treat the crease like a mirror and look again.", hintChoice: "Reflect the cut line across the crease.", hintConnect: "Compare both the crease direction and the turns in the cut.", hintHoleConnect: "Open the creases in reverse order and compare each hole position.", complete10: "10 problems complete!", complete20: "All 20 problems complete!", continue10: "Do 10 more", new10: "New set of 10", otherType: "Other type", completeText10: "You can continue with 10 more problems of this type.", completeText20: "You completed both matching and choice problems.", openPaper: "Open paper", foldedPaper: "Paper folded once", cutPaper: "Cut along the line", result: "Open result", question: "What will appear?", problemCount: "{current} / {total}", choiceLabel: "Choice {label}", foldedLabel: "Folded cut {label}", resultLabel: "Open result {label}", whereDraw: "Which side needs another mark?", openedCuts: "Open cut lines", punchPaper: "Punched paper", firstFold: "First fold", secondFold: "Second fold", mirrorSidePrompt: "Choose the side that needs the matching line or hole when opened.", foldSidePrompt: "Which side holds the paper after fold {step}?", touchPaperPrompt: "Tap the paper face directly in the problem picture.", unfoldStep: "Unfold step {step}", unfoldSidePrompt: "Open the last crease first. Tap the face where the new mark will appear. ({step}/{total})", touchUnfoldPrompt: "Use the dashed crease and tap the paper face where the reflected cut or hole will appear.", countPiecesPrompt: "Use the completed cut lines to choose the number of pieces.", countHolesPrompt: "Choose the number of holes after the paper opens completely.", holeResultPrompt: "Choose the hole positions after opening both folds in reverse.", piecesUnit: "pieces", holesUnit: "holes", side_left: "Left", side_right: "Right", side_top: "Top", side_bottom: "Bottom", side_upper: "Above the diagonal", side_lower: "Below the diagonal", reverseLinePrompt: "Tap the crease that makes this shape.", reverseLineWrong: "Folding on this line does not make that shape.", reverseLineCorrect: "Correct. Folding on this line makes that shape.", reverseResultPrompt: "Tap every shape one fold can make.", reverseMultiNote: "Two answers are correct.", reverseResultMore: "Find one more.", reverseResultImpossible: "One fold can never make this shape.", reverseResultCorrect: "Correct. One fold can make both shapes.", reverseLineHint: "Treat the crease as a mirror and see if the two sides cover each other.", reverseResultHint: "Check each shape: do the two stacked layers fit the original paper?", reverseOpenLabel: "Open paper", reverseFoldedLabel: "Shape after one fold", reverseLineLabel: "Crease {label}", reverseShapeLabel: "Shape {label}", soundOn: "Turn sound on", soundOff: "Mute sound"
   }
 };
 
@@ -104,7 +104,7 @@ function createChunk(levelIndex, count, excluded = new Set()) {
 }
 
 const saved = readJson(progressKey, {});
-const requestedLevel = Math.max(1, Math.min(2, Number(params.get("level") || saved.level) || 1));
+const requestedLevel = Math.max(1, Math.min(levels.length, Number(params.get("level") || saved.level) || 1));
 const canRestore = !embedded && !params.has("level") && !params.has("count") && Number(saved.level) === requestedLevel && Array.isArray(saved.queue);
 const restored = canRestore ? idsToProblems(requestedLevel - 1, saved.queue) : [];
 const restoreReady = [CHUNK_SIZE, MAX_SESSION_SIZE].includes(restored.length);
@@ -332,6 +332,159 @@ function learningSequenceHtml(p, reveal = false) {
   return `<div class="fold-sequence-view learning-sequence${p.folds.length > 1 ? " four-step" : ""}${reveal ? " revealing" : ""}" data-learning-stage="${reveal ? "solved" : folding ? "fold" : state.phase < p.unfoldSteps.length ? "side" : "answer"}">${figures.join('<span class="step-arrow" aria-hidden="true">→</span>')}</div>`;
 }
 
+/* ===== 레벨 3 · 접는 방법 거꾸로 찾기 =====
+   결과 도형은 합집합 다각형을 계산하지 않는다. 같은 색 조각을 겹쳐 그린 뒤 같은
+   조각으로 한 번 더 덮으면 안쪽 선이 지워지고 남는 것이 곧 합집합 외곽선이다.
+   접힌 상태는 숫자 배지 없이 종이 측면(paper-stack-side)과 층 경계
+   (paper-stack-layer)의 두께로만 나타낸다. */
+const REVERSE_INTERACTIONS = ["fold-line-pick", "fold-result-multi"];
+const isReverse = (item) => REVERSE_INTERACTIONS.includes(item?.interaction);
+const viewX = (value) => 20 + value * 160;
+const shiftPiece = (piece, offset) => piece.map((item) => ({ x: item.x + offset / 160, y: item.y + offset / 160 }));
+
+function silhouetteLayers(pieces, baseClass) {
+  return pieces.map((piece) => `<polygon class="${baseClass} reverse-outline" points="${points(piece)}"/>`).join("")
+    + pieces.map((piece) => `<polygon class="${baseClass} reverse-cover" points="${points(piece)}"/>`).join("");
+}
+
+function creaseBand(crease, halfWidth = 2.4) {
+  const [a, b] = crease;
+  const length = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+  const nx = (-(b.y - a.y) / length) * (halfWidth / 160);
+  const ny = ((b.x - a.x) / length) * (halfWidth / 160);
+  return [
+    { x: a.x + nx, y: a.y + ny }, { x: b.x + nx, y: b.y + ny },
+    { x: b.x - nx, y: b.y - ny }, { x: a.x - nx, y: a.y - ny }
+  ];
+}
+
+const creaseSvgLine = (crease, extra = "") => `<line class="paper-crease reverse-crease" x1="${viewX(crease[0].x)}" y1="${viewX(crease[0].y)}" x2="${viewX(crease[1].x)}" y2="${viewX(crease[1].y)}"${extra}/>`;
+
+function reverseDiagram({ frame, paper = null, pieces = null, crease = null, layered = false, thickness = 0, creases = [], touchLines = [], arrow = null, label = "", marker }) {
+  const stack = thickness && pieces ? silhouetteLayers(pieces.map((piece) => shiftPiece(piece, thickness)), "paper-stack-layer") : "";
+  const body = pieces ? silhouetteLayers(pieces, "paper-fill") : `<polygon class="paper-fill" points="${points(paper)}"/>`;
+  const layerEdge = layered && pieces?.[1] ? `<polygon class="reverse-layer-edge" points="${points(pieces[1])}"/>` : "";
+  const spine = layered && crease ? `<polygon class="paper-stack-side" points="${points(creaseBand(crease))}"/>` : "";
+  const clipId = `${marker}-clip`;
+  const shownCreases = creases.map((item) => creaseSvgLine(item)).join("");
+  const zones = touchLines.length
+    ? `${touchLines.map((item) => creaseSvgLine(item.chord)).join("")}<g class="paper-touch-zones" clip-path="url(#${clipId})">${touchLines.map((item) => `<polygon class="paper-touch-zone reverse-line-zone" data-line="${item.key}" role="button" tabindex="0" aria-label="${t("reverseLineLabel", { label: item.key.toUpperCase() })}" points="${points(item.band)}"/>`).join("")}</g>`
+    : "";
+  const arrowMark = arrow
+    ? `<path class="paper-fold-arrow" d="M${viewX(arrow.from.x)} ${viewX(arrow.from.y)} L${viewX(arrow.to.x)} ${viewX(arrow.to.y)}" marker-end="url(#${marker})"/>`
+    : "";
+  const view = `${viewX(frame.x)} ${viewX(frame.y)} ${frame.size * 160} ${frame.size * 160}`;
+  return `<svg class="paper-diagram reverse-diagram" viewBox="${view}" role="${touchLines.length ? "group" : "img"}" aria-label="${label}">
+    <defs>${paper ? `<clipPath id="${clipId}"><polygon points="${points(paper)}"/></clipPath>` : ""}<marker id="${marker}" markerWidth="11" markerHeight="11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L11 5.5 L0 11 Z"/></marker></defs>
+    ${stack}${body}${layerEdge}${spine}${shownCreases}${zones}${arrowMark}
+  </svg>`;
+}
+
+function foldLineBoardHtml(p, solved = false) {
+  const suffix = p.id.replace(/[^a-z0-9]/gi, "");
+  const answer = p.lineChoices.find((choice) => choice.key === p.answerKey);
+  const start = `<figure class="fold-start${solved ? "" : " paper-action-step"}">${reverseDiagram({
+    frame: p.frame, paper: p.paper, touchLines: solved ? [] : p.lineChoices,
+    creases: solved ? [answer.chord] : [], arrow: solved ? answer.arrow : null,
+    label: local(p.paperLabel), marker: `reverse-line-${suffix}`
+  })}<figcaption>${t("reverseOpenLabel")}</figcaption></figure>`;
+  const result = `<figure class="result-step">${reverseDiagram({
+    frame: p.frame, pieces: p.resultPieces, thickness: 5,
+    label: t("reverseFoldedLabel"), marker: `reverse-line-result-${suffix}`
+  })}<figcaption>${t("reverseFoldedLabel")}</figcaption></figure>`;
+  return `<div class="fold-sequence-view reverse-sequence" data-learning-stage="${solved ? "solved" : "crease"}">${start}<span class="step-arrow" aria-hidden="true">&rarr;</span>${result}</div>`;
+}
+
+function foldResultBoardHtml(p, solved = false) {
+  const suffix = p.id.replace(/[^a-z0-9]/gi, "");
+  const start = `<figure class="fold-start">${reverseDiagram({
+    frame: p.frame, paper: p.paper,
+    creases: solved ? p.creaseHints.map((hint) => hint.chord) : [],
+    arrow: solved ? p.creaseHints[0].arrow : null,
+    label: local(p.paperLabel), marker: `reverse-result-${suffix}`
+  })}<figcaption>${t("reverseOpenLabel")}</figcaption></figure>`;
+  return `<div class="fold-sequence-view reverse-sequence single" data-learning-stage="${solved ? "solved" : "choose"}">${start}</div>`;
+}
+
+function foldResultChoicesHtml(p) {
+  return `<div class="result-choices reverse-choices">${choiceOrder(p.resultOptions, p.id).map((choice, index) => `<button class="result-choice reverse-choice" type="button" data-shape="${choice.key}" aria-pressed="false" aria-label="${t("reverseShapeLabel", { label: index + 1 })}"><b>${index + 1}</b>${reverseDiagram({
+    frame: p.frame, pieces: choice.pieces, crease: choice.crease, layered: true, thickness: 4,
+    label: t("reverseShapeLabel", { label: index + 1 }), marker: `reverse-shape-${p.id}-${index}`
+  })}</button>`).join("")}</div>`;
+}
+
+function bindFoldLineZones() {
+  ui.paper.querySelectorAll("[data-line]").forEach((zone) => {
+    zone.addEventListener("click", () => checkFoldLine(zone));
+    zone.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      checkFoldLine(zone);
+    });
+  });
+}
+
+function renderReversePhase() {
+  const p = problem();
+  if (p.interaction === "fold-line-pick") {
+    ui.paper.innerHTML = foldLineBoardHtml(p);
+    setDirectTouchMode(true);
+    ui.prompt.textContent = t("reverseLinePrompt");
+    ui.answerPrompt.textContent = t("reverseLinePrompt");
+    ui.interaction.innerHTML = "";
+    bindFoldLineZones();
+    return;
+  }
+  ui.paper.innerHTML = foldResultBoardHtml(p);
+  setDirectTouchMode(false);
+  ui.prompt.textContent = `${t("reverseResultPrompt")} ${t("reverseMultiNote")}`;
+  ui.answerPrompt.textContent = `${t("reverseResultPrompt")} ${t("reverseMultiNote")}`;
+  ui.interaction.innerHTML = foldResultChoicesHtml(p);
+  ui.interaction.querySelectorAll("[data-shape]").forEach((button) => button.addEventListener("click", () => checkFoldShape(button)));
+}
+
+function checkFoldLine(zone) {
+  if (state.solved || state.busy) return;
+  if (zone.dataset.line === problem().answerKey) {
+    ui.toast.classList.remove("show");
+    zone.classList.add("correct");
+    zone.closest("figure")?.classList.add("touch-correct");
+    solve();
+    return;
+  }
+  state.mistakes += 1;
+  zone.classList.add("wrong");
+  zone.closest("figure")?.classList.add("touch-wrong");
+  toast(t("reverseLineWrong"));
+  setTimeout(() => {
+    zone.classList.remove("wrong");
+    zone.closest("figure")?.classList.remove("touch-wrong");
+  }, 480);
+}
+
+function checkFoldShape(button) {
+  if (state.solved || state.busy) return;
+  const p = problem();
+  if (!p.answerKeys.includes(button.dataset.shape)) {
+    state.mistakes += 1;
+    button.classList.add("wrong");
+    toast(t("reverseResultImpossible"));
+    setTimeout(() => button.classList.remove("wrong"), 520);
+    return;
+  }
+  if (button.getAttribute("aria-pressed") === "true") return;
+  ui.toast.classList.remove("show");
+  button.classList.add("correct");
+  button.setAttribute("aria-pressed", "true");
+  if (ui.interaction.querySelectorAll('[data-shape][aria-pressed="true"]').length < p.answerKeys.length) {
+    ui.answerPrompt.textContent = t("reverseResultMore");
+    setGuide(t("reverseResultMore"));
+    return;
+  }
+  ui.interaction.querySelectorAll("button").forEach((item) => { item.disabled = true; });
+  solve();
+}
+
 function choiceOrder(choices, id) {
   return shuffle(choices, seededRandom(`${sessionSeed}:${params.get("player") || "solo"}:${id}`));
 }
@@ -500,11 +653,14 @@ function renderProblem() {
   $("#missionTitle").textContent = local(level().title);
   $("#stars").textContent = p.interaction === "connect-match" ? "●—●" : "○  ○  ○";
   const connectionPrompt = level().strand === "fold-and-punch" ? "holeConnectPrompt" : "connectPrompt";
-  ui.prompt.textContent = t(p.interaction === "connect-match" ? connectionPrompt : p.interaction === "piece-count" ? "countPiecesPrompt" : p.interaction === "hole-count" ? "countHolesPrompt" : "holeResultPrompt");
-  ui.status.textContent = p.interaction === "connect-match" ? t(connectionPrompt)
-    : p.folds.length === 2
-      ? local({ ko: "두 번 접은 색종이", zh: "折叠两次的彩纸", ja: "二回折った色紙", en: "Paper folded twice" })
-      : t("foldedPaper");
+  ui.prompt.textContent = isReverse(p)
+    ? t(p.interaction === "fold-line-pick" ? "reverseLinePrompt" : "reverseResultPrompt")
+    : t(p.interaction === "connect-match" ? connectionPrompt : p.interaction === "piece-count" ? "countPiecesPrompt" : p.interaction === "hole-count" ? "countHolesPrompt" : "holeResultPrompt");
+  ui.status.textContent = isReverse(p) ? local(p.paperLabel)
+    : p.interaction === "connect-match" ? t(connectionPrompt)
+      : p.folds.length === 2
+        ? local({ ko: "두 번 접은 색종이", zh: "折叠两次的彩纸", ja: "二回折った色紙", en: "Paper folded twice" })
+        : t("foldedPaper");
   ui.paper.className = `paper activity-${p.interaction}`;
   ui.paper.dataset.problemId = p.id;
   ui.paper.dataset.problemIndex = state.index;
@@ -518,7 +674,8 @@ function renderProblem() {
     ui.paper.querySelectorAll("[data-left]").forEach((button) => button.addEventListener("click", () => selectLeft(button)));
     ui.paper.querySelectorAll("[data-right]").forEach((button) => button.addEventListener("click", () => selectRight(button)));
     requestAnimationFrame(renderConnections);
-  } else renderSoloPhase();
+  } else if (isReverse(p)) renderReversePhase();
+  else renderSoloPhase();
   save();
   notifyHost("ready");
 }
@@ -530,11 +687,16 @@ async function solve() {
   setDirectTouchMode(false);
   ui.next.hidden = false;
   ui.paper.classList.add("is-solved");
-  if (problem().interaction !== "connect-match") ui.paper.innerHTML = learningSequenceHtml(problem(), true);
+  if (problem().interaction === "fold-line-pick") ui.paper.innerHTML = foldLineBoardHtml(problem(), true);
+  else if (problem().interaction === "fold-result-multi") ui.paper.innerHTML = foldResultBoardHtml(problem(), true);
+  else if (problem().interaction !== "connect-match") ui.paper.innerHTML = learningSequenceHtml(problem(), true);
   ui.success.classList.remove("show");
   requestAnimationFrame(() => ui.success.classList.add("show"));
-  setGuide(t("correct"));
-  ui.status.textContent = t("correct");
+  const praise = problem().interaction === "fold-line-pick"
+    ? t("reverseLineCorrect")
+    : problem().interaction === "fold-result-multi" ? t("reverseResultCorrect") : t("correct");
+  setGuide(praise);
+  ui.status.textContent = praise;
   await new Promise((resolve) => setTimeout(resolve, 620));
   if (generation !== state.generation) return;
   state.busy = false;
@@ -672,7 +834,7 @@ function currentExclusions() {
 
 function continueTen() {
   if (state.queue.length >= MAX_SESSION_SIZE || availableProblems(level().problems, currentExclusions()).length < CHUNK_SIZE) {
-    selectLevel(state.level === 0 ? 1 : 0);
+    selectLevel((state.level + 1) % levels.length);
     return;
   }
   const excluded = currentExclusions();
@@ -696,7 +858,7 @@ function newTen() {
 }
 
 function selectLevel(index) {
-  state.level = Math.max(0, Math.min(1, index));
+  state.level = Math.max(0, Math.min(levels.length - 1, index));
   state.excludedIds = [];
   state.queue = createChunk(state.level, requestedCount);
   state.index = 0;
@@ -736,6 +898,10 @@ ui.next.addEventListener("click", nextProblem);
 $("#retryButton").addEventListener("click", renderProblem);
 $("#hintButton").addEventListener("click", () => {
   const current = problem();
+  if (isReverse(current)) {
+    setGuide(t(current.interaction === "fold-line-pick" ? "reverseLineHint" : "reverseResultHint"));
+    return;
+  }
   if (current.interaction !== "connect-match" && state.foldPhase < current.folds.length) {
     setGuide(ft("fold"));
     return;
